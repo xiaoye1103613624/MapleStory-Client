@@ -18,6 +18,8 @@
 #pragma once
 
 #include <array>
+#include <stdexcept>
+#include <string>
 
 namespace ms
 {
