@@ -14,3 +14,11 @@
 Settings
 
 /includes/WzLib
+
+# IDE / 助手工作目录（.codebuddy 仅加入忽略列表，绝不删除、绝不提交）
+/.idea
+/.codebuddy
+
+# 构建日志与中间产物（tools/build_smoke.bat 的输出）
+/build_log.txt
+/includes/NoLifeNx/nlnx/*/obj-*

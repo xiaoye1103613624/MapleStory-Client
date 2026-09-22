@@ -1,0 +1,30 @@
+# 行尾与二进制策略
+#
+# 背景：本仓库历史提交中存在混用换行的情况，且 `core.autocrlf = true`（Windows 检出为 CRLF）。
+# 本文件的作用是**固化策略**，避免二进制资源被当成文本改写，并让脚本换行与平台约定一致。
+# 注意：只声明策略，**不执行** `git add --renormalize`；仓库现存内容不动，避免无意义的大规模改写。
+
+# 文本文件：入库统一 LF，检出按平台决定（配合 core.autocrlf 生效）
+* text=auto
+
+# 二进制：禁止任何文本/行尾转换与逐行 diff
+*.lib   binary
+*.pdb   binary
+*.dll   binary
+*.exe   binary
+*.obj   binary
+*.nx    binary
+*.wz    binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.bmp   binary
+*.ico   binary
+*.ttf   binary
+*.otf   binary
+*.mp3   binary
+
+# 脚本：Windows 批处理固定 CRLF，类 Unix 脚本固定 LF
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.sh   text eol=lf
