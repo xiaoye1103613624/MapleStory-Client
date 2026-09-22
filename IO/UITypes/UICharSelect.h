@@ -60,12 +60,25 @@ namespace ms
 		void select_last_slot();
 		std::string get_slot_text();
 		std::string pad_number_with_leading_zero(uint8_t value) const;
-		Point<int16_t> get_character_slot_pos(size_t index) const;
+		/// <summary>
+		/// 取第 index 个角色槽的帧内坐标。
+		/// occupied 用于区分参照的纵向锚点：IDA 中占用槽与空槽的 CFadeWnd 选项点不同
+		/// （1384 / 1348，差 36px），故需由调用方告知该槽是否已有角色。
+		/// </summary>
+		Point<int16_t> get_character_slot_pos(size_t index, bool occupied = false) const;
 		Point<int16_t> get_infolabel_pos(size_t index) const;
 		std::string get_infolabel(size_t index, StatsEntry character_stats) const;
 		void request_pic();
 
-		static constexpr uint8_t PAGESIZE = 12;
+		/// 每页槽位数。
+		///
+		/// 依据 IDA：参考版 `CUICharDetail::CUICharDetail`(0x60292F) 的槽位坐标为
+		///   x = 130 * (a4 % 3) - 220（a4 为**绝对**角色索引），y = 占用 1384 / 空 1348
+		/// —— **y 与索引无关**，只有 x 按 %3 循环，说明参考版同时在屏上只显示 **3** 个槽位，
+		/// 翻页时换掉这 3 个槽承载的角色（故位置按 3 循环）。
+		/// 且 `CUICharSelect::OnButtonClicked`(0x601667) 只处理 1000/1001/1002 三个按钮、
+		/// 无翻页按钮，进一步印证「固定 3 槽 + 分页换角色」的模型。
+		static constexpr uint8_t PAGESIZE = 3;
 		static constexpr int16_t CHARSLOT_Y_MAX = 24;
 
 		enum Buttons : uint16_t
