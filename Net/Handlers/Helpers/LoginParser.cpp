@@ -122,7 +122,11 @@ namespace ms
 		for (size_t i = 0; i < 3; i++)
 			statsentry.petids.push_back(recv.read_long());
 
-		statsentry.stats[MapleStat::Id::LEVEL] = recv.read_short();
+		// 北斗 gms083 服务端（实测包体）把 level 写成 **1 字节**，而非 short。
+		// 证据：CHARLIST 实包 153B，name(13)+gender(1)+skin(1)+face(4)+hair(4)+petid×3(8)
+		// 到 54 字节结束，55 字节为 level=0x01，其后 job 起均为 short 对齐
+		// （job=0, str=12, dex=5, int=4, luk=4, hp/maxhp=50, mp/maxmp=5 全部自洽）。
+		statsentry.stats[MapleStat::Id::LEVEL] = recv.read_byte();
 		statsentry.stats[MapleStat::Id::JOB] = recv.read_short();
 		statsentry.stats[MapleStat::Id::STR] = recv.read_short();
 		statsentry.stats[MapleStat::Id::DEX] = recv.read_short();
@@ -134,7 +138,9 @@ namespace ms
 		statsentry.stats[MapleStat::Id::MAXMP] = recv.read_short();
 		statsentry.stats[MapleStat::Id::AP] = recv.read_short();
 		statsentry.stats[MapleStat::Id::SP] = recv.read_short();
-		statsentry.exp = recv.read_int();
+		// exp 为 8 字节（北斗 writeLong）；实测 gachaExp=10000、mapId=2、spawnPoint=0
+		// 恰好在 exp(8) 之后对齐。
+		statsentry.exp = recv.read_long();
 		statsentry.stats[MapleStat::Id::FAME] = recv.read_short();
 
 		recv.skip(4); // gachaexp
@@ -142,8 +148,8 @@ namespace ms
 		statsentry.mapid = recv.read_int();
 		statsentry.portal = recv.read_byte();
 
-		recv.skip(4); // timestamp
-
+		// 注意：北斗包体在此**没有**尾部 timestamp(int)，旧代码多 skip(4) 会让
+		// 后续 parse_look 整体前移 4 字节、等值槽位循环读不到 0xFF 而抛 PacketError。
 		return statsentry;
 	}
 
