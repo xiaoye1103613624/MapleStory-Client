@@ -1,0 +1,23 @@
+int __thiscall CFadeWnd::SetOption(
+        CFadeWnd *this,
+        int a2,
+        int a3,
+        int a4,
+        struct tagPOINT a5,
+        struct tagPOINT a6,
+        struct tagPOINT a7,
+        int a8,
+        int a9,
+        int a10)
+{
+  *(this + 31) = a2;
+  *(this + 32) = a3;
+  *(this + 33) = a4;
+  *(this + 148) = a5;
+  *(this + 156) = a6;
+  *(this + 164) = a7;
+  *(this + 34) = a8;
+  *(this + 35) = a9;
+  *(this + 36) = a10;
+  return a10;
+}

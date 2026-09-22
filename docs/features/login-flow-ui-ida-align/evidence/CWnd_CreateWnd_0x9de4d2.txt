@@ -1,0 +1,166 @@
+int *__thiscall CWnd::CreateWnd(
+        int *this,
+        int nLeft,
+        int nTop,
+        int *nWidth,
+        int nHeight,
+        int z,
+        int bScreenCoord,
+        VARIANTARG *pData,
+        int bSetFocus)
+{
+  int **v10; // eax
+  int v11; // eax
+  int v12; // eax
+  bool v13; // zf
+  int **LT; // eax
+  int v15; // ecx
+  int v16; // eax
+  int v17; // eax
+  int **v18; // eax
+  int *v19; // eax
+  int v20; // ecx
+  int v21; // eax
+  int v22; // eax
+  int v23; // eax
+  int *v24; // esi
+  int v25; // edi
+  int v26; // eax
+  int v27; // esi
+  int v28; // eax
+  int *result; // eax
+  int *v30; // esi
+  int v31; // [esp-4h] [ebp-64h]
+  VARIANTARG v32; // [esp+Ch] [ebp-54h] BYREF
+  VARIANTARG v33; // [esp+1Ch] [ebp-44h] BYREF
+  VARIANTARG pvargDest; // [esp+2Ch] [ebp-34h] BYREF
+  VARIANTARG pvarg; // [esp+3Ch] [ebp-24h] BYREF
+  struct tagPOINT v36; // [esp+4Ch] [ebp-14h] BYREF
+  int v37; // [esp+5Ch] [ebp-4h]
+
+  *(this + 5) = ++dword_BF1604;
+  dword_BF0410(a1: this + 11);
+  (*(*this + 8))(a1: this, a2: nLeft, a3: nTop, a4: nWidth, a5: nHeight, a6: z, a7: bScreenCoord, a8: pData, a9: v31);
+  if ( *(this + 6) == 0 )
+  {
+    *(this + 9) = nWidth;
+    *(this + 10) = nHeight;
+    sub_402F85(&pvargDest, pvargSrc: &pvargSrc);
+    v37 = 0;
+    sub_402FAB(a1: 0, a2: 3);
+    LOBYTE(v37) = 1;
+    if ( dword_BF14EC == 0 )
+      _com_issue_error(a1: -2147467261);
+    v10 = IWzGr2D::CreateLayer(
+            this: dword_BF14EC,
+            a2: &nWidth,
+            nLeft: 0,
+            nTop: 0,
+            uWidth: 0,
+            uHeight: 0,
+            z: 0,
+            vCanvas: &pvarg,
+            dwFilter: &pvargDest);
+    sub_428712(a1: *v10);
+    sub_4156C5(a1: &nWidth);
+    LOBYTE(v37) = 0;
+    v11 = ZComAPI::ZComVariantCopy(&pvarg);
+    if ( v11 < 0 )
+      _com_issue_error(a1: v11);
+    v37 = -1;
+    v12 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+    if ( v12 < 0 )
+      _com_issue_error(a1: v12);
+    sub_410FDF(this: &pvargDest, a2: *(TSingleton<CWndMan>::ms_pInstance + 220), a3: 1);
+    v13 = *(this + 6) == 0;
+    v37 = 2;
+    if ( v13 )
+      _com_issue_error(a1: -2147467261);
+    LT = IWzGr2DLayer::GetLT(a1: &nHeight);
+    v13 = *LT == 0;
+    LOBYTE(v37) = 3;
+    if ( v13 )
+      _com_issue_error(a1: -2147467261);
+    v15 = **LT;
+    nWidth = *LT;
+    v16 = (*(v15 + 100))(
+            a1: nWidth,
+            a2: *&pvargDest.vt,
+            a3: pvargDest.decVal.Hi32,
+            a4: pvargDest.lVal,
+            a5: pvargDest.cyVal.Hi);
+    if ( v16 < 0 )
+      _com_issue_errorex(a1: v16, a2: nWidth, a3: dword_BD8348);
+    sub_41569E(a1: &nHeight);
+    v37 = -1;
+    v17 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+    if ( v17 < 0 )
+      _com_issue_error(a1: v17);
+    sub_402F85(pvargDest: &v32, pvargSrc: &pvargSrc);
+    v37 = 4;
+    sub_402F85(pvargDest: &v33, pvargSrc: &pvargSrc);
+    v13 = *(this + 6) == 0;
+    LOBYTE(v37) = 5;
+    if ( v13 )
+      _com_issue_error(a1: -2147467261);
+    v18 = IWzGr2DLayer::GetLT(a1: &bScreenCoord);
+    v13 = *v18 == 0;
+    LOBYTE(v37) = 6;
+    if ( v13 )
+      _com_issue_error(a1: -2147467261);
+    v19 = *v18;
+    v20 = *v19;
+    nWidth = v19;
+    v21 = (*(v20 + 144))(
+            a1: v19,
+            a2: nLeft,
+            a3: nTop,
+            a4: *&v33.vt,
+            a5: v33.decVal.Hi32,
+            a6: v33.lVal,
+            a7: v33.cyVal.Hi,
+            a8: *&v32.vt,
+            a9: v32.decVal.Hi32,
+            a10: v32.lVal,
+            a11: v32.cyVal.Hi);
+    if ( v21 < 0 )
+      _com_issue_errorex(a1: v21, a2: nWidth, a3: dword_BD8348);
+    sub_41569E(a1: &bScreenCoord);
+    LOBYTE(v37) = 4;
+    v22 = ZComAPI::ZComVariantCopy(pvarg: &v33);
+    if ( v22 < 0 )
+      _com_issue_error(a1: v22);
+    v37 = -1;
+    v23 = ZComAPI::ZComVariantCopy(pvarg: &v32);
+    if ( v23 < 0 )
+      _com_issue_error(a1: v23);
+    v24 = this + 6;
+    if ( *(this + 6) == 0 )
+      _com_issue_error(a1: -2147467261);
+    v25 = *v24;
+    v26 = (*(*v25 + 180))(a1: v25, a2: z);
+    if ( v26 < 0 )
+      _com_issue_errorex(a1: v26, a2: v25, a3: _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf);
+    if ( *v24 == 0 )
+      _com_issue_error(a1: -2147467261);
+    v27 = *v24;
+    v28 = (*(*v27 + 224))(a1: v27, a2: -1);
+    if ( v28 < 0 )
+      _com_issue_errorex(a1: v28, a2: v27, a3: _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf);
+  }
+  (*(*this + 12))(a1: this, a2: pData);
+  CWnd::InvalidateRect(this, a2: 0);
+  CWndMan::InsertWindow(a1: this);
+  if ( bSetFocus != 0 )
+    CWndMan::SetFocus(this: TSingleton<CWndMan>::ms_pInstance, a2: this != 0 ? (this + 1) : 0);
+  CWndMan::GetCursorPos(this: TSingleton<CWndMan>::ms_pInstance, a2: &v36, a3: 0);
+  result = CWndMan::GetHandlerFromPoint(this: TSingleton<CWndMan>::ms_pInstance, a2: v36.x, a3: v36.y);
+  v30 = result;
+  if ( result != 0 )
+  {
+    result = (*(*result + 32))(a1: result);
+    if ( result != 0 )
+      return (*(*v30 + 20))(a1: v30, a2: 1);
+  }
+  return result;
+}

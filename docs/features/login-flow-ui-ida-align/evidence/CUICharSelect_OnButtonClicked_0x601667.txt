@@ -1,0 +1,24 @@
+void __thiscall CUICharSelect::OnButtonClicked(CLogin **this, unsigned int a2)
+{
+  if ( CUICharSelect::IsRequestValid(this) != 0 )
+  {
+    CUICharSelect::SetKeyFocus(this, a2: -1);
+    *(this + 29) = (a2 - 1000);
+    switch ( a2 )
+    {
+      case 0x3E8u:
+        CLogin::SendSelectCharPacket(this: *(this + 28));
+        break;
+      case 0x3E9u:
+        CLogin::OnNewCharStep(this: *(this + 28));
+        break;
+      case 0x3EAu:
+        CLogin::SendDeleteCharPacket(this: *(this + 28));
+        break;
+      default:
+        break;
+    }
+    if ( TSingleton<CWndMan>::ms_pInstance != 0 )
+      CWndMan::SetFocus(this: TSingleton<CWndMan>::ms_pInstance, a2: this != 0 ? (this + 1) : 0);
+  }
+}

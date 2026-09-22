@@ -1,0 +1,31 @@
+[CS-DUMP] ===== Login.img/CharSelect 布局 =====
+  CharSelect children: BtDelete BtNew BtSelect adventure aran charInfo charInfo1 charInfo2 charInfo3 character effect icon knight nameTag pageL pageR scroll
+  CharSelect/pos children:
+  charSlot/pos = <absent>
+  charSlot/worldInfoLT = <absent>
+  charSlot/worldInfoRB = <absent>
+  pageNew/pos = <absent>
+  pageNew/numberpos = <absent>
+  pos/avatarPos children:
+  avatarPos/avatarLT = <absent>
+  avatarPos/avatarRB = <absent>
+  avatarPos/avatarSpace = <absent>
+  pos/detailPos children:
+  detailPos/jobPos = <absent>
+  detailPos/levelPos = <absent>
+  detailPos/namePos = <absent>
+[CS-DUMP] BtSelect children: disabled keyFocused mouseOver normal pressed
+  BtSelect/pos = <absent>
+[CS-DUMP] BtNew children: disabled keyFocused mouseOver normal pressed
+  BtNew/pos = <absent>
+[CS-DUMP] BtDelete children: disabled keyFocused mouseOver normal pressed
+  BtDelete/pos = <absent>
+[CS-DUMP] pageL children: 0 1
+  pageL/pos = <absent>
+[CS-DUMP] pageR children: 0 1
+  pageR/pos = <absent>
+[CS-DUMP] EditCharList/BtCharacter children:
+  EditCharList/BtCharacter/pos = <absent>
+  Common/BtChangePIC/pos = <absent>
+  Common/BtPreview/pos = <absent>
+[CS-DUMP] ===== end =====

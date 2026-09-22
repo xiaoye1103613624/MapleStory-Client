@@ -1,0 +1,660 @@
+    0 void __thiscall CUITitle::OnCreate(CUITitle *this, void *pData)
+    1 {
+    2   Concurrency::details::SchedulerProxy *v2;
+    3  // edi
+    4   bool v4;
+    5  // zf
+    6   _BYTE *v5;
+    7  // eax
+    8   char *v6;
+    9  // edi
+   10   _DWORD *Instance;
+   11  // eax
+   12   int StringW;
+   13  // eax
+   14   CCtrlEdit *v9;
+   15  // eax
+   16   _DWORD *v10;
+   17  // eax
+   18   _DWORD *v11;
+   19  // eax
+   20   int v12;
+   21  // eax
+   22   CCtrlEdit *v13;
+   23  // eax
+   24   _DWORD *v14;
+   25  // eax
+   26   _DWORD *v15;
+   27  // eax
+   28   int v16;
+   29  // eax
+   30   CCtrlEdit *v17;
+   31  // eax
+   32   _DWORD *v18;
+   33  // eax
+   34   _DWORD *v19;
+   35  // eax
+   36   int v20;
+   37  // eax
+   38   CCtrlEdit *v21;
+   39  // eax
+   40   _DWORD *v22;
+   41  // eax
+   42   _DWORD *v23;
+   43  // eax
+   44   int v24;
+   45  // eax
+   46   CCtrlEdit *v25;
+   47  // eax
+   48   _DWORD *v26;
+   49  // eax
+   50   _DWORD *v27;
+   51  // eax
+   52   int v28;
+   53  // eax
+   54   CCtrlEdit *v29;
+   55  // eax
+   56   _DWORD *v30;
+   57  // eax
+   58   _DWORD *v31;
+   59  // eax
+   60   int v32;
+   61  // eax
+   62   CCtrlEdit *v33;
+   63  // eax
+   64   _DWORD *v34;
+   65  // eax
+   66   CCtrlEdit *v35;
+   67  // eax
+   68   int v36;
+   69  // eax
+   70   int v37;
+   71  // ecx
+   72   CCtrlEdit *v38;
+   73  // eax
+   74   int v39;
+   75  // eax
+   76   int v40;
+   77  // ecx
+   78   int v41;
+   79  // eax
+   80   int v42;
+   81  // eax
+   82   int v43;
+   83  // ecx
+   84   _DWORD *v44;
+   85  // eax
+   86   int v45;
+   87  // eax
+   88   int *v46;
+   89  // eax
+   90   int v47;
+   91  // eax
+   92   int v48;
+   93  // eax
+   94   int v49;
+   95  // eax
+   96   int v50;
+   97  // eax
+   98   int v51;
+   99  // eax
+  100   int v52;
+  101  // eax
+  102   int v53;
+  103  // ecx
+  104   _DWORD *v54;
+  105  // eax
+  106   int v55;
+  107  // eax
+  108   int *v56;
+  109  // eax
+  110   int v57;
+  111  // eax
+  112   int v58;
+  113  // eax
+  114   int v59;
+  115  // eax
+  116   int v60;
+  117  // eax
+  118   int v61;
+  119  // [esp-14h] [ebp-B8h] BYREF
+  120   VARIANTARG *p_pvargDest;
+  121  // [esp-10h] [ebp-B4h]
+  122   VARIANTARG *p_pvarg;
+  123  // [esp-Ch] [ebp-B0h]
+  124   int v64;
+  125  // [esp-8h] [ebp-ACh]
+  126   int v65;
+  127  // [esp-4h] [ebp-A8h]
+  128   VARIANTARG v66;
+  129  // [esp+Ch] [ebp-98h] BYREF
+  130   char v67[4];
+  131  // [esp+1Ch] [ebp-88h] BYREF
+  132   int v68;
+  133  // [esp+20h] [ebp-84h]
+  134   int v69;
+  135  // [esp+24h] [ebp-80h]
+  136   int v70;
+  137  // [esp+28h] [ebp-7Ch]
+  138   int v71;
+  139  // [esp+2Ch] [ebp-78h]
+  140   int v72;
+  141  // [esp+38h] [ebp-6Ch]
+  142   int v73;
+  143  // [esp+40h] [ebp-64h]
+  144   int v74;
+  145  // [esp+44h] [ebp-60h]
+  146   int v75;
+  147  // [esp+4Ch] [ebp-58h]
+  148   VARIANTARG pvargDest;
+  149  // [esp+54h] [ebp-50h] BYREF
+  150   Concurrency::details::SchedulerProxy *v77;
+  151  // [esp+64h] [ebp-40h]
+  152   VARIANTARG pvarg;
+  153  // [esp+68h] [ebp-3Ch] BYREF
+  154   int *v79;
+  155  // [esp+78h] [ebp-2Ch]
+  156   int v80;
+  157  // [esp+7Ch] [ebp-28h] BYREF
+  158   _DWORD v81[3];
+  159  // [esp+80h] [ebp-24h] BYREF
+  160   int v82;
+  161  // [esp+8Ch] [ebp-18h] BYREF
+  162   _BYTE *v83;
+  163  // [esp+90h] [ebp-14h] BYREF
+  164   CCtrlEdit *Unknown;
+  165  // [esp+94h] [ebp-10h] BYREF
+  166   int v85;
+  167  // [esp+A0h] [ebp-4h]
+  168 
+  169   v83 = 0;
+  170  /*0x62055a*/
+  171   v2 = TSingleton<CConfig>::ms_pInstance;
+  172  /*0x620561*/
+  173   v77 = TSingleton<CConfig>::ms_pInstance;
+  174  /*0x620574*/
+  175   ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF);
+  176  /*0x620577*/
+  177   v85 = 0;
+  178  /*0x62057c*/
+  179   v80 = 0;
+  180  /*0x620580*/
+  181   ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF);
+  182  /*0x62058a*/
+  183   *(this + 33) = *(v2 + 1);
+  184  /*0x620594*/
+  185   v4 = *(v2 + 1) == 0;
+  186  /*0x62059a*/
+  187   LOBYTE(v85) = 1;
+  188  /*0x62059d*/
+  189   if ( !v4 ) /*0x6205a1*/
+  190   {
+  191     v5 = *(v2 + 2);
+  192  /*0x6205a3*/
+  193     v6 = v2 + 8;
+  194  /*0x6205a6*/
+  195     if ( v5 != 0 && *v5 != 0 ) /*0x6205af*/
+  196       ZXString<char>::operator=(a1: v6);
+  197  /*0x6205b5*/
+  198   }
+  199   v82 = 0;
+  200  /*0x6205ba*/
+  201   v81[0] = 1;
+  202  /*0x6205bd*/
+  203   v81[1] = 0;
+  204  /*0x6205c4*/
+  205   v81[2] = 0;
+  206  /*0x6205c7*/
+  207   LOBYTE(v85) = 2;
+  208  /*0x6205d3*/
+  209   Instance = StringPool::GetInstance();
+  210  /*0x6205d7*/
+  211   StringW = StringPool::GetStringW(this: Instance, a2: &Unknown, a3: SP_1345_UI_LOGINIMG_TITLE_BTLOGIN);
+  212  /*0x6205de*/
+  213   LOBYTE(v85) = 3;
+  214  /*0x6205e7*/
+  215   ZXString<unsigned short>::operator=(a1: StringW);
+  216  /*0x6205eb*/
+  217   LOBYTE(v85) = 2;
+  218  /*0x6205f3*/
+  219   ZXString<unsigned short>::_Release(a1: &Unknown);
+  220  /*0x6205f7*/
+  221   v9 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  222  /*0x620609*/
+  223   Unknown = v9;
+  224  /*0x62060e*/
+  225   LOBYTE(v85) = 4;
+  226  /*0x620613*/
+  227   if ( v9 != 0 ) /*0x620617*/
+  228     v10 = CCtrlButton::CCtrlButton(this: v9);
+  229  /*0x62061b*/
+  230   else
+  231     v10 = 0;
+  232  /*0x620622*/
+  233   LOBYTE(v85) = 2;
+  234  /*0x62062b*/
+  235   sub_4284FF(a1: v10);
+  236  /*0x62062f*/
+  237   (*(**(this + 37) + 32))(a1: *(this + 37), a2: this, a3: 1000, a4: 213, a5: -5, a6: 0, a7: v81);
+  238  /*0x62064f*/
+  239   v11 = StringPool::GetInstance();
+  240  /*0x62065b*/
+  241   v12 = StringPool::GetStringW(this: v11, a2: &Unknown, a3: SP_1347_UI_LOGINIMG_TITLE_BTLOGINIDSAVE);
+  242  /*0x620662*/
+  243   LOBYTE(v85) = 5;
+  244  /*0x62066b*/
+  245   ZXString<unsigned short>::operator=(a1: v12);
+  246  /*0x62066f*/
+  247   LOBYTE(v85) = 2;
+  248  /*0x620677*/
+  249   ZXString<unsigned short>::_Release(a1: &Unknown);
+  250  /*0x62067b*/
+  251   v13 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  252  /*0x620683*/
+  253   Unknown = v13;
+  254  /*0x620688*/
+  255   LOBYTE(v85) = 6;
+  256  /*0x62068d*/
+  257   if ( v13 != 0 ) /*0x620691*/
+  258     v14 = CCtrlButton::CCtrlButton(this: v13);
+  259  /*0x620695*/
+  260   else
+  261     v14 = 0;
+  262  /*0x62069c*/
+  263   LOBYTE(v85) = 2;
+  264  /*0x6206a5*/
+  265   sub_4284FF(a1: v14);
+  266  /*0x6206a9*/
+  267   (*(**(this + 39) + 32))(a1: *(this + 39), a2: this, a3: 1001, a4: 37, a5: 74, a6: 0, a7: v81);
+  268  /*0x6206c6*/
+  269   v15 = StringPool::GetInstance();
+  270  /*0x6206d2*/
+  271   v16 = StringPool::GetStringW(this: v15, a2: &Unknown, a3: SP_1348_UI_LOGINIMG_TITLE_BTLOGINIDLOST);
+  272  /*0x6206d9*/
+  273   LOBYTE(v85) = 7;
+  274  /*0x6206e2*/
+  275   ZXString<unsigned short>::operator=(a1: v16);
+  276  /*0x6206e6*/
+  277   LOBYTE(v85) = 2;
+  278  /*0x6206ee*/
+  279   ZXString<unsigned short>::_Release(a1: &Unknown);
+  280  /*0x6206f2*/
+  281   v17 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  282  /*0x6206fa*/
+  283   Unknown = v17;
+  284  /*0x6206ff*/
+  285   LOBYTE(v85) = 8;
+  286  /*0x620704*/
+  287   if ( v17 != 0 ) /*0x620708*/
+  288     v18 = CCtrlButton::CCtrlButton(this: v17);
+  289  /*0x62070c*/
+  290   else
+  291     v18 = 0;
+  292  /*0x620713*/
+  293   LOBYTE(v85) = 2;
+  294  /*0x62071c*/
+  295   sub_4284FF(a1: v18);
+  296  /*0x620720*/
+  297   (*(**(this + 41) + 32))(a1: *(this + 41), a2: this, a3: 1002, a4: 144, a5: 73, a6: 0, a7: v81);
+  298  /*0x620740*/
+  299   v19 = StringPool::GetInstance();
+  300  /*0x62074c*/
+  301   v20 = StringPool::GetStringW(this: v19, a2: &Unknown, a3: SP_1349_UI_LOGINIMG_TITLE_BTPASSWDLOST);
+  302  /*0x620753*/
+  303   LOBYTE(v85) = 9;
+  304  /*0x62075c*/
+  305   ZXString<unsigned short>::operator=(a1: v20);
+  306  /*0x620760*/
+  307   LOBYTE(v85) = 2;
+  308  /*0x620768*/
+  309   ZXString<unsigned short>::_Release(a1: &Unknown);
+  310  /*0x62076c*/
+  311   v21 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  312  /*0x620774*/
+  313   Unknown = v21;
+  314  /*0x620779*/
+  315   LOBYTE(v85) = 10;
+  316  /*0x62077e*/
+  317   if ( v21 != 0 ) /*0x620782*/
+  318     v22 = CCtrlButton::CCtrlButton(this: v21);
+  319  /*0x620786*/
+  320   else
+  321     v22 = 0;
+  322  /*0x62078d*/
+  323   LOBYTE(v85) = 2;
+  324  /*0x620796*/
+  325   sub_4284FF(a1: v22);
+  326  /*0x62079a*/
+  327   (*(**(this + 43) + 32))(a1: *(this + 43), a2: this, a3: 1003, a4: 226, a5: 74, a6: 0, a7: v81);
+  328  /*0x6207ba*/
+  329   v23 = StringPool::GetInstance();
+  330  /*0x6207c6*/
+  331   v24 = StringPool::GetStringW(this: v23, a2: &Unknown, a3: SP_1350_UI_LOGINIMG_TITLE_BTNEW);
+  332  /*0x6207cd*/
+  333   LOBYTE(v85) = 11;
+  334  /*0x6207d6*/
+  335   ZXString<unsigned short>::operator=(a1: v24);
+  336  /*0x6207da*/
+  337   LOBYTE(v85) = 2;
+  338  /*0x6207e2*/
+  339   ZXString<unsigned short>::_Release(a1: &Unknown);
+  340  /*0x6207e6*/
+  341   v25 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  342  /*0x6207ee*/
+  343   Unknown = v25;
+  344  /*0x6207f3*/
+  345   LOBYTE(v85) = 12;
+  346  /*0x6207f8*/
+  347   if ( v25 != 0 ) /*0x6207fc*/
+  348     v26 = CCtrlButton::CCtrlButton(this: v25);
+  349  /*0x620800*/
+  350   else
+  351     v26 = 0;
+  352  /*0x620807*/
+  353   LOBYTE(v85) = 2;
+  354  /*0x620810*/
+  355   sub_4284FF(a1: v26);
+  356  /*0x620814*/
+  357   (*(**(this + 45) + 32))(a1: *(this + 45), a2: this, a3: 1004, a4: 14, a5: 122, a6: 0, a7: v81);
+  358  /*0x620831*/
+  359   v27 = StringPool::GetInstance();
+  360  /*0x62083d*/
+  361   v28 = StringPool::GetStringW(this: v27, a2: &Unknown, a3: SP_1351_UI_LOGINIMG_TITLE_BTHOMEPAGE);
+  362  /*0x620844*/
+  363   LOBYTE(v85) = 13;
+  364  /*0x62084d*/
+  365   ZXString<unsigned short>::operator=(a1: v28);
+  366  /*0x620851*/
+  367   LOBYTE(v85) = 2;
+  368  /*0x620859*/
+  369   ZXString<unsigned short>::_Release(a1: &Unknown);
+  370  /*0x62085d*/
+  371   v29 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  372  /*0x620865*/
+  373   Unknown = v29;
+  374  /*0x62086a*/
+  375   LOBYTE(v85) = 14;
+  376  /*0x62086f*/
+  377   if ( v29 != 0 ) /*0x620873*/
+  378     v30 = CCtrlButton::CCtrlButton(this: v29);
+  379  /*0x620877*/
+  380   else
+  381     v30 = 0;
+  382  /*0x62087e*/
+  383   LOBYTE(v85) = 2;
+  384  /*0x620887*/
+  385   sub_4284FF(a1: v30);
+  386  /*0x62088b*/
+  387   (*(**(this + 47) + 32))(a1: *(this + 47), a2: this, a3: 1005, a4: 114, a5: 120, a6: 0, a7: v81);
+  388  /*0x6208a8*/
+  389   v31 = StringPool::GetInstance();
+  390  /*0x6208b4*/
+  391   v32 = StringPool::GetStringW(this: v31, a2: &Unknown, a3: SP_1352_UI_LOGINIMG_TITLE_BTQUIT);
+  392  /*0x6208bb*/
+  393   LOBYTE(v85) = 15;
+  394  /*0x6208c4*/
+  395   ZXString<unsigned short>::operator=(a1: v32);
+  396  /*0x6208c8*/
+  397   LOBYTE(v85) = 2;
+  398  /*0x6208d0*/
+  399   ZXString<unsigned short>::_Release(a1: &Unknown);
+  400  /*0x6208d4*/
+  401   v33 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  402  /*0x6208dc*/
+  403   Unknown = v33;
+  404  /*0x6208e1*/
+  405   LOBYTE(v85) = 16;
+  406  /*0x6208e6*/
+  407   if ( v33 != 0 ) /*0x6208ea*/
+  408     v34 = CCtrlButton::CCtrlButton(this: v33);
+  409  /*0x6208ee*/
+  410   else
+  411     v34 = 0;
+  412  /*0x6208f5*/
+  413   LOBYTE(v85) = 2;
+  414  /*0x6208fe*/
+  415   sub_4284FF(a1: v34);
+  416  /*0x620902*/
+  417   (*(**(this + 49) + 32))(a1: *(this + 49), a2: this, a3: 1006, a4: 214, a5: 120, a6: 0, a7: v81);
+  418  /*0x620922*/
+  419   CCtrlEdit::CREATEPARAM::CREATEPARAM(a1: v67);
+  420  /*0x62092b*/
+  421   v72 = -1;
+  422  /*0x620930*/
+  423   v71 = 2;
+  424  /*0x62093b*/
+  425   v69 = 0;
+  426  /*0x620940*/
+  427   LOBYTE(v85) = 17;
+  428  /*0x62094b*/
+  429   v73 = 0xFFFFFF;
+  430  /*0x62094f*/
+  431   v68 = 2;
+  432  /*0x620956*/
+  433   v70 = 2;
+  434  /*0x62095c*/
+  435   v35 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 184);
+  436  /*0x62095f*/
+  437   Unknown = v35;
+  438  /*0x620964*/
+  439   LOBYTE(v85) = 18;
+  440  /*0x620969*/
+  441   if ( v35 != 0 ) /*0x62096d*/
+  442     v36 = CCtrlEdit::CCtrlEdit(this: v35);
+  443  /*0x620971*/
+  444   else
+  445     v36 = 0;
+  446  /*0x620978*/
+  447   LOBYTE(v85) = 17;
+  448  /*0x620981*/
+  449   sub_473956(a1: v36);
+  450  /*0x620985*/
+  451   ZXString<char>::operator=(a1: &v83);
+  452  /*0x620994*/
+  453   v37 = *(this + 51);
+  454  /*0x620999*/
+  455   v75 = 12;
+  456  /*0x6209b6*/
+  457   (*(*v37 + 8))(a1: v37, a2: this, a3: 1007, a4: 67, a5: 12, a6: 132, a7: 15, a8: v67);
+  458  /*0x6209c0*/
+  459   v38 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 184);
+  460  /*0x6209c6*/
+  461   Unknown = v38;
+  462  /*0x6209cb*/
+  463   LOBYTE(v85) = 19;
+  464  /*0x6209d0*/
+  465   if ( v38 != 0 ) /*0x6209d4*/
+  466     v39 = CCtrlEdit::CCtrlEdit(this: v38);
+  467  /*0x6209d8*/
+  468   else
+  469     v39 = 0;
+  470  /*0x6209df*/
+  471   LOBYTE(v85) = 17;
+  472  /*0x6209e8*/
+  473   sub_473956(a1: v39);
+  474  /*0x6209ec*/
+  475   ZXString<char>::operator=(a1: &v80);
+  476  /*0x6209fb*/
+  477   v40 = *(this + 53);
+  478  /*0x620a00*/
+  479   v74 = 1;
+  480  /*0x620a1a*/
+  481   v75 = 12;
+  482  /*0x620a21*/
+  483   (*(*v40 + 8))(a1: v40, a2: this, a3: 1008, a4: 67, a5: 40, a6: 120, a7: 15, a8: v67);
+  484  /*0x620a2b*/
+  485   VariantInit(&pvarg);
+  486  /*0x620a38*/
+  487   v41 = ZtlTaskMemFreeImp(pvargDest: &pvarg, pvargSrc: &pvargSrc);
+  488  /*0x620a44*/
+  489   if ( v41 < 0 ) /*0x620a4d*/
+  490     _com_issue_error(a1: v41);
+  491  /*0x620a50*/
+  492   LOBYTE(v85) = 20;
+  493  /*0x620a59*/
+  494   VariantInit(pvarg: &pvargDest);
+  495  /*0x620a5d*/
+  496   v42 = ZtlTaskMemFreeImp(&pvargDest, pvargSrc: &pvargSrc);
+  497  /*0x620a64*/
+  498   v43 = v65;
+  499  /*0x620a6c*/
+  500   if ( v42 < 0 ) /*0x620a6d*/
+  501     _com_issue_error(a1: v42);
+  502  /*0x620a70*/
+  503   v65 = 0;
+  504  /*0x620a75*/
+  505   v64 = 0;
+  506  /*0x620a77*/
+  507   p_pvarg = &pvarg;
+  508  /*0x620a7c*/
+  509   p_pvargDest = &pvargDest;
+  510  /*0x620a80*/
+  511   v61 = v43;
+  512  /*0x620a81*/
+  513   v79 = &v61;
+  514  /*0x620a84*/
+  515   LOBYTE(v85) = 21;
+  516  /*0x620a8d*/
+  517   v44 = StringPool::GetInstance();
+  518  /*0x620a91*/
+  519   StringPool::GetBSTR(this: v44, a2: &v61, a3: SP_1353_UI_LOGINIMG_TITLE_CHECK_0);
+  520  /*0x620a98*/
+  521   LOBYTE(v85) = 21;
+  522  /*0x620aa4*/
+  523   v45 = sub_406472();
+  524  /*0x620aa8*/
+  525   v46 = sub_402680(a1: v45);
+  526  /*0x620aaf*/
+  527   IWzResMan::GetObjectA(this: v46, pvargDest: &v66, sUOL: v61, vParam: p_pvargDest, vAux: p_pvarg);
+  528  /*0x620ab6*/
+  529   LOBYTE(v85) = 23;
+  530  /*0x620abd*/
+  531   Unknown = Ztl_variant_t::GetUnknown(a1: v64, a2: v65);
+  532  /*0x620ac6*/
+  533   v47 = sub_41E527(a1: &Unknown);
+  534  /*0x620ad3*/
+  535   if ( v47 < 0 && v47 != -2147467262 ) /*0x620ae1*/
+  536     _com_issue_error(a1: v47);
+  537  /*0x620ae4*/
+  538   LOBYTE(v85) = 21;
+  539  /*0x620af0*/
+  540   v48 = ZComAPI::ZComVariantCopy(pvarg: &v66);
+  541  /*0x620af4*/
+  542   if ( v48 < 0 ) /*0x620afc*/
+  543     _com_issue_error(a1: v48);
+  544  /*0x620aff*/
+  545   LOBYTE(v85) = 20;
+  546  /*0x620b08*/
+  547   v49 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+  548  /*0x620b0c*/
+  549   if ( v49 < 0 ) /*0x620b14*/
+  550     _com_issue_error(a1: v49);
+  551  /*0x620b17*/
+  552   LOBYTE(v85) = 17;
+  553  /*0x620b20*/
+  554   v50 = ZComAPI::ZComVariantCopy(&pvarg);
+  555  /*0x620b24*/
+  556   if ( v50 < 0 ) /*0x620b2c*/
+  557     _com_issue_error(a1: v50);
+  558  /*0x620b2f*/
+  559   VariantInit(pvarg: &pvargDest);
+  560  /*0x620b38*/
+  561   v51 = ZtlTaskMemFreeImp(&pvargDest, pvargSrc: &pvargSrc);
+  562  /*0x620b3f*/
+  563   if ( v51 < 0 ) /*0x620b48*/
+  564     _com_issue_error(a1: v51);
+  565  /*0x620b4b*/
+  566   LOBYTE(v85) = 24;
+  567  /*0x620b54*/
+  568   VariantInit(&pvarg);
+  569  /*0x620b58*/
+  570   v52 = ZtlTaskMemFreeImp(pvargDest: &pvarg, pvargSrc: &pvargSrc);
+  571  /*0x620b5f*/
+  572   v53 = v65;
+  573  /*0x620b69*/
+  574   if ( v52 < 0 ) /*0x620b6a*/
+  575     _com_issue_error(a1: v52);
+  576  /*0x620b6d*/
+  577   v65 = 0;
+  578  /*0x620b72*/
+  579   v64 = 0;
+  580  /*0x620b73*/
+  581   p_pvarg = &pvargDest;
+  582  /*0x620b77*/
+  583   p_pvargDest = &pvarg;
+  584  /*0x620b7b*/
+  585   v61 = v53;
+  586  /*0x620b7c*/
+  587   v79 = &v61;
+  588  /*0x620b7f*/
+  589   LOBYTE(v85) = 25;
+  590  /*0x620b88*/
+  591   v54 = StringPool::GetInstance();
+  592  /*0x620b8c*/
+  593   StringPool::GetBSTR(this: v54, a2: &v61, a3: SP_1354_UI_LOGINIMG_TITLE_CHECK_1);
+  594  /*0x620b93*/
+  595   LOBYTE(v85) = 25;
+  596  /*0x620b9f*/
+  597   v55 = sub_406472();
+  598  /*0x620ba3*/
+  599   v56 = sub_402680(a1: v55);
+  600  /*0x620baa*/
+  601   IWzResMan::GetObjectA(this: v56, pvargDest: &v66, sUOL: v61, vParam: p_pvargDest, vAux: p_pvarg);
+  602  /*0x620bb1*/
+  603   LOBYTE(v85) = 27;
+  604  /*0x620bb8*/
+  605   Unknown = Ztl_variant_t::GetUnknown(a1: v64, a2: v65);
+  606  /*0x620bc1*/
+  607   v57 = sub_41E527(a1: &Unknown);
+  608  /*0x620bce*/
+  609   if ( v57 < 0 && v57 != -2147467262 ) /*0x620bdc*/
+  610     _com_issue_error(a1: v57);
+  611  /*0x620bdf*/
+  612   LOBYTE(v85) = 25;
+  613  /*0x620beb*/
+  614   v58 = ZComAPI::ZComVariantCopy(pvarg: &v66);
+  615  /*0x620bef*/
+  616   if ( v58 < 0 ) /*0x620bf7*/
+  617     _com_issue_error(a1: v58);
+  618  /*0x620bfa*/
+  619   LOBYTE(v85) = 24;
+  620  /*0x620c03*/
+  621   v59 = ZComAPI::ZComVariantCopy(&pvarg);
+  622  /*0x620c07*/
+  623   if ( v59 < 0 ) /*0x620c0f*/
+  624     _com_issue_error(a1: v59);
+  625  /*0x620c12*/
+  626   LOBYTE(v85) = 17;
+  627  /*0x620c1b*/
+  628   v60 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+  629  /*0x620c1f*/
+  630   if ( v60 < 0 ) /*0x620c27*/
+  631     _com_issue_error(a1: v60);
+  632  /*0x620c2a*/
+  633   if ( *(v77 + 1) != 0 && v83 != 0 && *v83 != 0 ) /*0x620c41*/
+  634     v65 = *(this + 53);
+  635  /*0x620c43*/
+  636   else
+  637     v65 = *(this + 51);
+  638  /*0x620c4b*/
+  639   CWnd::SetFocusChild(this, a2: v65);
+  640  /*0x620c53*/
+  641   *(this + 32) = pData;
+  642  /*0x620c61*/
+  643   LOBYTE(v85) = 2;
+  644  /*0x620c67*/
+  645   CCtrlEdit::CREATEPARAM::~CREATEPARAM(this: v67);
+  646  /*0x620c6b*/
+  647   LOBYTE(v85) = 1;
+  648  /*0x620c73*/
+  649   ZXString<unsigned short>::_Release(a1: &v82);
+  650  /*0x620c77*/
+  651   LOBYTE(v85) = 0;
+  652  /*0x620c7c*/
+  653   ZXString<char>::_Release(a1: &v80);
+  654  /*0x620c83*/
+  655   v85 = -1;
+  656  /*0x620c88*/
+  657   ZXString<char>::_Release(a1: &v83);
+  658  /*0x620c8f*/
+  659 }

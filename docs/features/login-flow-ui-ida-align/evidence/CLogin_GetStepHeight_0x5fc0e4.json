@@ -1,0 +1,1 @@
+﻿{"addr":"0x5fc0e4","code":"int __thiscall CLogin::GetStepHeight(CLogin *this, int a2)\n{\n  int v2; // eax\n\n  if ( *(this + 90) == 4 ) /*0x5fc0eb*/\n    v2 = *(this + 133); /*0x5fc0ed*/\n  else\n    v2 = 0; /*0x5fc0f5*/\n  return -8 - 600 * (v2 + a2); /*0x5fc108*/\n}"}

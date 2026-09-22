@@ -1,0 +1,25 @@
+_DWORD *__fastcall CUICharDetail::CUICharDetail(_DWORD *a1, int a2, int a3, int a4)
+{
+  _DWORD *v5; // ecx
+  BOOL v6; // ecx
+  struct tagPOINT v8; // [esp-14h] [ebp-30h]
+
+  CFadeWnd::CFadeWnd(this: a1);
+  dword_BEDA50 = a1 + 53 != 0 ? a1 : 0;
+  a1[56] = 0;
+  `eh vector constructor iterator'(a1: a1 + 58, a2: 4u, a3: 2, a4: sub_4B250B, a5: sub_4145C6);
+  a1[53] = a3;
+  *a1 = &off_AF6E3C;
+  a1[1] = &off_AF6DF0;
+  a1[2] = &off_AF6DEC;
+  a1[54] = a4;
+  v5 = (16 * a4 + *(a3 + 408));
+  v6 = *v5 != 0 && v5[2] != 0;
+  a1[57] = v6;
+  a1[55] = 0;
+  v8.y = v6 ? 1384 : 1348;
+  v8.x = 130 * (a4 % 3) - 220;
+  CFadeWnd::SetOption(this: a1, a2: 0, a3: 255, a4: 0, a5: v8, a6: v8, a7: v8, a8: 80, a9: 0, a10: 80);
+  CFadeWnd::CreateFadeWnd(this: a1, a2: 183, a3: a1[57] != 0 ? 151 : 115, a4: 0, a5: 20, a6: 0, a7: 0);
+  return a1;
+}

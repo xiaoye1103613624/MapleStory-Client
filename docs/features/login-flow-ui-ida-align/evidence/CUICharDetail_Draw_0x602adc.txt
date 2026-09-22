@@ -1,0 +1,326 @@
+DETAIL
+wchar_t *__thiscall sub_602ADC(_DWORD *this, int a2)
+{
+  int v3; // eax
+  wchar_t *v4; // ebx
+  int v5; // eax
+  _DWORD *Instance; // eax
+  bool v7; // zf
+  size_t v8; // eax
+  wchar_t *v9; // eax
+  int v10; // ecx
+  int v11; // eax
+  int *v12; // eax
+  int v13; // eax
+  int v14; // eax
+  int v15; // eax
+  int v16; // eax
+  int v17; // ecx
+  int v18; // eax
+  int v19; // eax
+  int *v20; // esi
+  char v21; // al
+  char *job_name; // eax
+  int v23; // eax
+  int v24; // ecx
+  _DWORD *v25; // eax
+  int v26; // eax
+  int v27; // eax
+  void *v28; // esp
+  unsigned __int8 v29; // al
+  wchar_t *v30; // edi
+  int *v31; // ecx
+  _DWORD *v32; // eax
+  int v33; // eax
+  int v34; // eax
+  void *v35; // esp
+  __int16 v36; // ax
+  wchar_t *v37; // edi
+  int *v38; // ecx
+  _DWORD *v39; // eax
+  int v40; // eax
+  int v41; // eax
+  void *v42; // esp
+  __int16 v43; // ax
+  int *v44; // ecx
+  _DWORD *v45; // eax
+  int v46; // eax
+  int v47; // eax
+  void *v48; // esp
+  __int16 v49; // ax
+  int *v50; // ecx
+  _DWORD *v51; // eax
+  int v52; // eax
+  int v53; // eax
+  void *v54; // esp
+  __int16 v55; // ax
+  int *v56; // ecx
+  _DWORD *v57; // eax
+  int v58; // eax
+  int v59; // eax
+  void *v60; // esp
+  __int16 v61; // ax
+  wchar_t *v62; // esi
+  int *v63; // ecx
+  _DWORD *v64; // eax
+  int v65; // eax
+  int v66; // eax
+  int *v67; // ecx
+  _DWORD *v68; // eax
+  _DWORD *v69; // eax
+  int v70; // eax
+  int v71; // eax
+  int v72; // esi
+  _DWORD *v73; // eax
+  wchar_t **StringW; // eax
+  wchar_t *v75; // eax
+  wchar_t *v76; // ecx
+  int v77; // edi
+  int v78; // eax
+  wchar_t *v79; // eax
+  int *v80; // ecx
+  _DWORD *v81; // eax
+  int v82; // eax
+  int v83; // eax
+  void *v84; // esp
+  int v85; // eax
+  wchar_t *v86; // edi
+  unsigned int v87; // ecx
+  int v88; // eax
+  int v89; // ecx
+  _DWORD *v90; // eax
+  int v91; // eax
+  int v92; // eax
+  int v93; // esi
+  bool v94; // sf
+  void **v95; // esi
+  _DWORD *v96; // eax
+  wchar_t *v97; // eax
+  int v98; // eax
+  int v99; // eax
+  wchar_t *v100; // eax
+  int v101; // ecx
+  int v102; // eax
+  int *v103; // eax
+  int v104; // eax
+  int v105; // eax
+  int v106; // eax
+  int v107; // eax
+  int v108; // edx
+  int v109; // eax
+  int v110; // eax
+  int v111; // eax
+  _DWORD *v112; // eax
+  wchar_t **v113; // eax
+  int v114; // eax
+  wchar_t *v115; // eax
+  wchar_t *v116; // ecx
+  int v117; // eax
+  int v118; // eax
+  int v119; // eax
+  wchar_t *v120; // eax
+  int *v121; // ecx
+  _DWORD *v122; // eax
+  int v123; // eax
+  int v124; // eax
+  void *v125; // esp
+  int v126; // eax
+  int v127; // eax
+  VARIANTARG *v128; // ecx
+  int v129; // eax
+  int v130; // eax
+  int v131; // eax
+  int *v132; // ecx
+  _DWORD *v133; // eax
+  int v134; // eax
+  int v135; // eax
+  _DWORD *v136; // eax
+  int v137; // eax
+  __int16 v138; // ax
+  int v139; // eax
+  int v140; // eax
+  wchar_t *v141; // eax
+  int v142; // ecx
+  int v143; // eax
+  int *v144; // eax
+  int v145; // eax
+  int v146; // eax
+  int v147; // eax
+  int v148; // eax
+  wchar_t *v149; // esi
+  int v150; // eax
+  int v151; // eax
+  int v152; // eax
+  int v153; // eax
+  void **v154; // esi
+  _DWORD *v155; // eax
+  wchar_t *v156; // eax
+  int v157; // eax
+  int v158; // eax
+  wchar_t *v159; // eax
+  int v160; // ecx
+  int v161; // eax
+  int *v162; // eax
+  int v163; // eax
+  int v164; // eax
+  int v165; // eax
+  int v166; // eax
+  wchar_t *v167; // ebx
+  int v168; // eax
+  int v169; // eax
+  wchar_t *result; // eax
+  int v171; // [esp-F8h] [ebp-210h]
+  int v172; // [esp-F4h] [ebp-20Ch] BYREF
+  VARIANTARG v173; // [esp-F0h] [ebp-208h] BYREF
+  _DWORD v174[4]; // [esp-E0h] [ebp-1F8h] BYREF
+  int *v175; // [esp-D0h] [ebp-1E8h] BYREF
+  int v176; // [esp-CCh] [ebp-1E4h]
+  wchar_t *v177; // [esp-C8h] [ebp-1E0h] BYREF
+  StringPoolStrings v178; // [esp-C4h] [ebp-1DCh]
+  _DWORD v179[2]; // [esp-C0h] [ebp-1D8h] BYREF
+  VARIANTARG *v180; // [esp-B8h] [ebp-1D0h]
+  int v181; // [esp-B4h] [ebp-1CCh] BYREF
+  int *v182; // [esp-B0h] [ebp-1C8h] BYREF
+  VARIANTARG *v183; // [esp-ACh] [ebp-1C4h]
+  VARIANTARG *v184; // [esp-A8h] [ebp-1C0h]
+  StringPoolStrings v185; // [esp-A4h] [ebp-1BCh]
+  _DWORD v186[2]; // [esp-A0h] [ebp-1B8h] BYREF
+  VARIANTARG *v187; // [esp-98h] [ebp-1B0h]
+  int v188; // [esp-94h] [ebp-1ACh] BYREF
+  int *v189; // [esp-90h] [ebp-1A8h] BYREF
+  VARIANTARG *v190; // [esp-8Ch] [ebp-1A4h]
+  VARIANTARG *p_p_lVal; // [esp-88h] [ebp-1A0h] BYREF
+  StringPoolStrings v192; // [esp-84h] [ebp-19Ch]
+  _DWORD v193[2]; // [esp-80h] [ebp-198h] BYREF
+  int v194; // [esp-78h] [ebp-190h]
+  int v195; // [esp-74h] [ebp-18Ch]
+  int *v196; // [esp-70h] [ebp-188h] BYREF
+  int v197; // [esp-6Ch] [ebp-184h]
+  wchar_t *v198; // [esp-68h] [ebp-180h] BYREF
+  StringPoolStrings v199; // [esp-64h] [ebp-17Ch]
+  int v200; // [esp-60h] [ebp-178h] BYREF
+  int *v201; // [esp-50h] [ebp-168h] BYREF
+  int v202; // [esp-4Ch] [ebp-164h]
+  VARIANTARG *v203; // [esp-48h] [ebp-160h]
+  VARIANTARG *v204; // [esp-44h] [ebp-15Ch]
+  int v205; // [esp-40h] [ebp-158h] BYREF
+  int *v206; // [esp-30h] [ebp-148h] BYREF
+  int v207; // [esp-2Ch] [ebp-144h]
+  VARIANTARG *v208; // [esp-28h] [ebp-140h]
+  VARIANTARG *v209; // [esp-24h] [ebp-13Ch]
+  int v210; // [esp-20h] [ebp-138h] BYREF
+  int v211; // [esp-14h] [ebp-12Ch] BYREF
+  VARIANTARG v212; // [esp-10h] [ebp-128h] BYREF
+  VARIANTARG v213; // [esp+Ch] [ebp-10Ch] BYREF
+  VARIANTARG v214; // [esp+1Ch] [ebp-FCh] BYREF
+  VARIANTARG v215; // [esp+2Ch] [ebp-ECh] BYREF
+  VARIANTARG v216; // [esp+3Ch] [ebp-DCh] BYREF
+  VARIANTARG v217; // [esp+4Ch] [ebp-CCh] BYREF
+  VARIANTARG v218; // [esp+5Ch] [ebp-BCh] BYREF
+  VARIANTARG pvargDest; // [esp+6Ch] [ebp-ACh] BYREF
+  VARIANTARG pvarg; // [esp+7Ch] [ebp-9Ch] BYREF
+  int Unknown; // [esp+8Ch] [ebp-8Ch] BYREF
+  int v222; // [esp+90h] [ebp-88h] BYREF
+  int v223; // [esp+94h] [ebp-84h]
+  _BYTE v224[4]; // [esp+98h] [ebp-80h] BYREF
+  VARIANTARG v225; // [esp+9Ch] [ebp-7Ch] BYREF
+  VARIANTARG v226; // [esp+ACh] [ebp-6Ch] BYREF
+  int v227; // [esp+BCh] [ebp-5Ch] BYREF
+  int *v228; // [esp+C0h] [ebp-58h] BYREF
+  int v229; // [esp+C4h] [ebp-54h]
+  int *v230; // [esp+C8h] [ebp-50h]
+  _DWORD *v231; // [esp+CCh] [ebp-4Ch]
+  VARIANTARG v232; // [esp+D0h] [ebp-48h] BYREF
+  wchar_t *v233; // [esp+E0h] [ebp-38h] BYREF
+  VARIANTARG v234; // [esp+E4h] [ebp-34h] BYREF
+  wchar_t *v235; // [esp+F4h] [ebp-24h]
+  wchar_t *v236; // [esp+F8h] [ebp-20h] BYREF
+  int v237; // [esp+FCh] [ebp-1Ch] BYREF
+  wchar_t *v238; // [esp+100h] [ebp-18h] BYREF
+  wchar_t *v239; // [esp+104h] [ebp-14h] BYREF
+  tagVARIANT::$::$2E851DBA257FA738680F86C475CAC6EB::$E3ADF3533BFFE4E09553D0C58E41D45E *p_lVal; // [esp+108h] [ebp-10h] BYREF
+  int v241; // [esp+114h] [ebp-4h]
+
+  v231 = this;
+  CWnd::GetCanvas(&v239);
+  v3 = *(*(this + 53) + 404) + 684 * *(*(this + 53) + 400);
+  v241 = 0;
+  v230 = v3;
+  if ( v239 == 0 )
+    _com_issue_error(-2147467261);
+  v4 = v239;
+  v5 = (*(*v239 + 140))(v239, 0, 0, 183, *(this + 57) != 0 ? 148 : 112, 822083328);
+  if ( v5 < 0 )
+    _com_issue_errorex(v5, v4, _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e);
+  Instance = StringPool::GetInstance();
+  StringPool::GetStringW(Instance, v224, SP_1322_UI_LOGINIMG_CHARSELECT_CHARINFO);
+  v7 = *(this + 57) == 0;
+  LOBYTE(v241) = 1;
+  if ( !v7 )
+  {
+    v8 = wcslen(L"1");
+    sub_48EF51(L"1", v8);
+  }
+  sub_402F85(&v218, &pvargSrc);
+  LOBYTE(v241) = 2;
+  sub_402F85(&v217, &pvargSrc);
+  v212.cyVal.int64 = 0;
+  v212.decVal.Hi32 = &v218;
+  *&v212.vt = &v217;
+  LOBYTE(v241) = 3;
+  v9 = sub_41468C(v224);
+  v211 = v10;
+  v228 = &v211;
+  _bstr_t::_bstr_t(v9);
+  LOBYTE(v241) = 3;
+  v11 = sub_406472();
+  v12 = sub_402680(v11);
+  IWzResMan::GetObjectA(v12, &v214, v211, *&v212.vt, v212.decVal.Hi32);
+  LOBYTE(v241) = 5;
+  Unknown = Ztl_variant_t::GetUnknown(v212.cVal, SBYTE4(v212.decVal.Lo64));
+  v223 = 0;
+  if ( Unknown != 0 )
+  {
+    v13 = sub_41E527(&Unknown);
+    if ( v13 < 0 && v13 != -2147467262 )
+      _com_issue_error(v13);
+  }
+  LOBYTE(v241) = 9;
+  v14 = ZComAPI::ZComVariantCopy(&v214);
+  if ( v14 < 0 )
+    _com_issue_error(v14);
+  LOBYTE(v241) = 8;
+  v15 = ZComAPI::ZComVariantCopy(&v217);
+  if ( v15 < 0 )
+    _com_issue_error(v15);
+  LOBYTE(v241) = 7;
+  v16 = ZComAPI::ZComVariantCopy(&v218);
+  if ( v16 < 0 )
+    _com_issue_error(v16);
+  sub_402F85(&v234, &pvargSrc);
+  LOBYTE(v241) = 10;
+  if ( v239 == 0 )
+    _com_issue_error(-2147467261);
+  v17 = *v239;
+  v211 = v223;
+  v212 = v234;
+  v235 = v239;
+  v18 = (*(v17 + 128))(v239, 0, 0, v223, *&v234.vt, v234.decVal.Hi32, v234.lVal, v234.cyVal.Hi);
+  if ( v18 < 0 )
+    _com_issue_errorex(v18, v235, _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e);
+  LOBYTE(v241) = 7;
+  v19 = ZComAPI::ZComVariantCopy(&v234);
+  if ( v19 < 0 )
+    _com_issue_error(v19);
+  get_basic_font(&v237, 1);
+  v20 = v230;
+  v212.decVal.Hi32 = *(v230 + 61);
+  LOBYTE(v241) = 11;
+  v228 = (v230 + 57);
+  v21 = _ZtlSecureFuse<short>(v230 + 57, v212.decVal.Hi32);
+  job_name = get_job_name(v21);
+  v227 = 0;
+  ZXString<char>::GetBuffer(job_name, 0xFFFFFFFF);
+  LOBYTE(v241) = 12;
+  sub_402F85(&v232, &pvargSrc);
+  LOBY

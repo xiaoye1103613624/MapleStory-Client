@@ -1,0 +1,9 @@
+signed int __thiscall CWndMan::UpdateWindowPosition(void *this, int a2)
+{
+  if ( a2 != 0 )
+  {
+    CWndMan::RemoveWindow(a1: this);
+    CWndMan::InsertWindow(a1: this);
+  }
+  return 1;
+}

@@ -1,0 +1,76 @@
+void __userpurge sub_60148D(int a1@<ecx>, int a2@<edi>, _DWORD *a3)
+{
+  _DWORD *Instance; // eax
+  int StringW; // eax
+  _DWORD *v6; // ecx
+  _DWORD *v7; // eax
+  _DWORD *v8; // eax
+  int v9; // eax
+  _DWORD *v10; // eax
+  _DWORD *v11; // eax
+  _DWORD *v12; // eax
+  int v13; // eax
+  _DWORD *v14; // eax
+  _DWORD *v15; // eax
+  _DWORD v16[3]; // [esp+8h] [ebp-20h] BYREF
+  _DWORD v17[2]; // [esp+14h] [ebp-14h] BYREF
+  int v18; // [esp+24h] [ebp-4h]
+
+  *(a1 + 112) = a3;
+  v17[0] = 0;
+  v16[0] = 1;
+  v16[1] = 0;
+  v16[2] = 0;
+  v18 = 0;
+  Instance = StringPool::GetInstance();
+  StringW = StringPool::GetStringW(this: Instance, a2: &a3, a3: SP_1319_UI_LOGINIMG_CHARSELECT_BTSELECT);
+  ZXString<unsigned short>::operator=(a1: StringW);
+  if ( a3 != 0 )
+    ZXString<unsigned short>::_Release(lpAddend: a3 - 3);
+  v6 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  a3 = v6;
+  LOBYTE(v18) = 2;
+  if ( v6 != 0 )
+    v7 = CCtrlButton::CCtrlButton(this: v6);
+  else
+    v7 = 0;
+  LOBYTE(v18) = 0;
+  sub_4284FF(a1: v7);
+  (*(**(a1 + 124) + 32))(a1: *(a1 + 124), a2: a1, a3: 1000, a4: 4, a5: -2, a6: 0, a7: v16, a8: a2);
+  v8 = StringPool::GetInstance();
+  v9 = StringPool::GetStringW(this: v8, a2: &a3, a3: SP_1320_UI_LOGINIMG_CHARSELECT_BTNEW);
+  LOBYTE(v18) = 3;
+  ZXString<unsigned short>::operator=(a1: v9);
+  LOBYTE(v18) = 0;
+  ZXString<unsigned short>::_Release(a1: &a3);
+  v10 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  a3 = v10;
+  LOBYTE(v18) = 4;
+  if ( v10 != 0 )
+    v11 = CCtrlButton::CCtrlButton(this: v10);
+  else
+    v11 = 0;
+  LOBYTE(v18) = 0;
+  sub_4284FF(a1: v11);
+  (*(**(a1 + 132) + 32))(a1: *(a1 + 132), a2: a1, a3: 1001, a4: 4, a5: 36, a6: 0);
+  v12 = StringPool::GetInstance();
+  v13 = StringPool::GetStringW(this: v12, a2: &a3, a3: SP_1321_UI_LOGINIMG_CHARSELECT_BTDELETE);
+  LOBYTE(v18) = 5;
+  ZXString<unsigned short>::operator=(a1: v13);
+  LOBYTE(v18) = 0;
+  ZXString<unsigned short>::_Release(a1: &a3);
+  v14 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444);
+  v17[1] = v14;
+  LOBYTE(v18) = 6;
+  if ( v14 != 0 )
+    v15 = CCtrlButton::CCtrlButton(this: v14);
+  else
+    v15 = 0;
+  LOBYTE(v18) = 0;
+  sub_4284FF(a1: v15);
+  (*(**(a1 + 140) + 32))(a1: *(a1 + 140), a2: a1, a3: 1002, a4: 4, a5: 85, a6: 0, a7: v16);
+  if ( *dword_BE7918 != 0 && *(*dword_BE7918 + 8328) == 0 && *(*dword_BE7918 + 8332) != 0 )
+    sub_602727(a1);
+  v18 = -1;
+  ZXString<unsigned short>::_Release(a1: v17);
+}

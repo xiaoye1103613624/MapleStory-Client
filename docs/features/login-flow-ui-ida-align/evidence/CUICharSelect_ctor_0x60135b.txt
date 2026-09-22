@@ -1,0 +1,23 @@
+_DWORD *__fastcall CUICharSelect::CUICharSelect(_DWORD *a1, int a2, VARIANTARG *a3)
+{
+  CWnd::CWnd(this: a1);
+  dword_BEDA54 = a1 + 27 != 0 ? a1 : 0;
+  a1[27] = 0;
+  a1[29] = 0;
+  a1[28] = a3;
+  `eh vector constructor iterator'(a1: a1 + 30, a2: 8u, a3: 3, a4: sub_47391D, a5: ZRef<CCtrlButton>::_ReleaseRaw);
+  *a1 = &off_AF6D90;
+  a1[1] = &off_AF6D44;
+  a1[2] = &off_AF6D40;
+  CWnd::CreateWnd(
+    this: a1,
+    nLeft: 200,
+    nTop: -1359,
+    nWidth: 0x65,
+    nHeight: 131,
+    z: 10,
+    bScreenCoord: 0,
+    pData: a3,
+    bSetFocus: 1);
+  return a1;
+}

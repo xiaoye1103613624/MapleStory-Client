@@ -1,0 +1,2 @@
+﻿[DBG-BG] bei=Y frame=Y map=Y
+[DBG-BG] forest path=Map001/Back/login.img valid=Y back1=Y back2=Y ani=Y

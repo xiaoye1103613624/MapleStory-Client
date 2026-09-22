@@ -1,0 +1,200 @@
+CWnd *__thiscall CWnd::PreCreateWnd(CWnd *this, int a2, int a3, int a4, int a5, int a6, int a7, void *a8)
+{
+  CWnd *v8; // edi
+  int **v9; // eax
+  int *v10; // edi
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  int v14; // eax
+  bool v15; // zf
+  _DWORD *LT; // eax
+  int v17; // eax
+  int v18; // eax
+  int *v19; // eax
+  int v20; // eax
+  int v21; // eax
+  int v22; // eax
+  char *v23; // esi
+  void *v24; // eax
+  IWzGr2DLayer *v25; // eax
+  CWnd *result; // eax
+  VARIANTARG v27; // [esp+Ch] [ebp-7Ch] BYREF
+  VARIANTARG v28; // [esp+1Ch] [ebp-6Ch] BYREF
+  VARIANTARG pvargDest; // [esp+2Ch] [ebp-5Ch] BYREF
+  VARIANTARG v30; // [esp+3Ch] [ebp-4Ch] BYREF
+  VARIANTARG v31; // [esp+4Ch] [ebp-3Ch] BYREF
+  VARIANTARG pvarg; // [esp+5Ch] [ebp-2Ch] BYREF
+  int *v33; // [esp+6Ch] [ebp-1Ch] BYREF
+  int *v34; // [esp+70h] [ebp-18h] BYREF
+  CWnd *v35; // [esp+74h] [ebp-14h]
+  int v36; // [esp+78h] [ebp-10h] BYREF
+  int v37; // [esp+84h] [ebp-4h]
+  int v38; // [esp+A4h] [ebp+1Ch]
+  int v39; // [esp+A4h] [ebp+1Ch]
+
+  v8 = this;
+  v35 = this;
+  v36 = 0;
+  *(this + 15) = a7;
+  if ( a4 != 0 && a5 != 0 )
+  {
+    sub_402F85(&pvargDest, pvargSrc: &pvargSrc);
+    v36 = 1;
+    v37 = 0;
+    sub_402F85(pvargDest: &v30, pvargSrc: &pvargSrc);
+    v36 = 3;
+    v37 = 1;
+    if ( dword_BF14EC == 0 )
+      _com_issue_error(a1: -2147467261);
+    v9 = IWzGr2D::CreateLayer(
+           this: dword_BF14EC,
+           a2: &v33,
+           nLeft: 0,
+           nTop: 0,
+           uWidth: a4,
+           uHeight: a5,
+           z: 0,
+           vCanvas: &v30,
+           dwFilter: &pvargDest);
+    v36 = 7;
+    v8 = v35;
+  }
+  else
+  {
+    sub_402F85(pvargDest: &v31, pvargSrc: &pvargSrc);
+    v36 = 8;
+    v37 = 3;
+    sub_402FAB(a1: 0, a2: 3);
+    v36 = 24;
+    v37 = 4;
+    if ( dword_BF14EC == 0 )
+      _com_issue_error(a1: -2147467261);
+    v9 = IWzGr2D::CreateLayer(
+           this: dword_BF14EC,
+           a2: &v34,
+           nLeft: 0,
+           nTop: 0,
+           uWidth: 0,
+           uHeight: 0,
+           z: 0,
+           vCanvas: &pvarg,
+           dwFilter: &v31);
+    v36 = 56;
+  }
+  v10 = (v8 + 24);
+  sub_428712(this: v10, a2: *v9);
+  if ( (v36 & 0x20) != 0 )
+  {
+    v36 &= ~0x20u;
+    sub_4156C5(a1: &v34);
+  }
+  v37 = 3;
+  if ( (v36 & 0x10) != 0 )
+  {
+    v36 &= ~0x10u;
+    v11 = ZComAPI::ZComVariantCopy(&pvarg);
+    if ( v11 < 0 )
+      _com_issue_error(a1: v11);
+  }
+  v37 = 2;
+  if ( (v36 & 8) != 0 )
+  {
+    v36 &= ~8u;
+    v12 = ZComAPI::ZComVariantCopy(pvarg: &v31);
+    if ( v12 < 0 )
+      _com_issue_error(a1: v12);
+  }
+  if ( (v36 & 4) != 0 )
+  {
+    v36 &= ~4u;
+    sub_4156C5(a1: &v33);
+  }
+  v37 = 0;
+  if ( (v36 & 2) != 0 )
+  {
+    v36 &= ~2u;
+    v13 = ZComAPI::ZComVariantCopy(pvarg: &v30);
+    if ( v13 < 0 )
+      _com_issue_error(a1: v13);
+  }
+  v37 = -1;
+  if ( (v36 & 1) != 0 )
+  {
+    v14 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+    if ( v14 < 0 )
+      _com_issue_error(a1: v14);
+  }
+  if ( a7 != 0 )
+  {
+    sub_410FDF(this: &pvargDest, a2: *(TSingleton<CWndMan>::ms_pInstance + 220), a3: 1);
+    v15 = *v10 == 0;
+    v37 = 5;
+    if ( v15 )
+      _com_issue_error(a1: -2147467261);
+    LT = IWzGr2DLayer::GetLT(a1: &v33);
+    v15 = *LT == 0;
+    LOBYTE(v37) = 6;
+    if ( v15 )
+      _com_issue_error(a1: -2147467261);
+    v38 = *LT;
+    v17 = (*(**LT + 100))(
+            a1: *LT,
+            a2: *&pvargDest.vt,
+            a3: pvargDest.decVal.Hi32,
+            a4: pvargDest.lVal,
+            a5: pvargDest.cyVal.Hi);
+    if ( v17 < 0 )
+      _com_issue_errorex(a1: v17, a2: v38, a3: dword_BD8348);
+    sub_41569E(a1: &v33);
+    v37 = -1;
+    v18 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest);
+    if ( v18 < 0 )
+      _com_issue_error(a1: v18);
+  }
+  sub_402F85(pvargDest: &v27, pvargSrc: &pvargSrc);
+  v37 = 7;
+  sub_402F85(pvargDest: &v28, pvargSrc: &pvargSrc);
+  v15 = *(v35 + 6) == 0;
+  LOBYTE(v37) = 8;
+  if ( v15 )
+    _com_issue_error(a1: -2147467261);
+  v19 = IWzGr2DLayer::GetLT(a1: &v36);
+  v15 = *v19 == 0;
+  LOBYTE(v37) = 9;
+  if ( v15 )
+    _com_issue_error(a1: -2147467261);
+  v39 = *v19;
+  v20 = (*(*v39 + 144))(
+          a1: v39,
+          a2,
+          a3,
+          a4: *&v28.vt,
+          a5: v28.decVal.Hi32,
+          a6: v28.lVal,
+          a7: v28.cyVal.Hi,
+          a8: *&v27.vt,
+          a9: v27.decVal.Hi32,
+          a10: v27.lVal,
+          a11: v27.cyVal.Hi);
+  if ( v20 < 0 )
+    _com_issue_errorex(a1: v20, a2: v39, a3: dword_BD8348);
+  sub_41569E(a1: &v36);
+  LOBYTE(v37) = 7;
+  v21 = ZComAPI::ZComVariantCopy(pvarg: &v28);
+  if ( v21 < 0 )
+    _com_issue_error(a1: v21);
+  v37 = -1;
+  v22 = ZComAPI::ZComVariantCopy(pvarg: &v27);
+  if ( v22 < 0 )
+    _com_issue_error(a1: v22);
+  v23 = v35 + 24;
+  v24 = sub_4281FB(a1: v35 + 24);
+  sub_61738F(this: v24, a2: a6);
+  v25 = sub_4281FB(a1: v23);
+  IWzGr2DLayer::Putcolor(this: v25, a2: 0xFFFFFFFF);
+  result = v35;
+  *(v35 + 9) = a4;
+  *(result + 10) = a5;
+  return result;
+}

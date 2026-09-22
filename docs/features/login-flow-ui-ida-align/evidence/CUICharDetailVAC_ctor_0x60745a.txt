@@ -1,0 +1,31 @@
+_DWORD *__fastcall CUICharDetailVAC::CUICharDetailVAC(_DWORD *a1, int a2, int a3, int a4)
+{
+  _DWORD *v5; // eax
+  BOOL v6; // eax
+
+  CFadeWnd::CFadeWnd(this: a1);
+  dword_BEDA3C = a1 + 53 != 0 ? a1 : 0;
+  a1[55] = 0;
+  `eh vector constructor iterator'(a1: a1 + 57, a2: 4u, a3: 2, a4: sub_4B250B, a5: sub_4145C6);
+  a1[53] = a3;
+  a1[54] = a4;
+  *a1 = &off_AF6F88;
+  a1[1] = &off_AF6F3C;
+  a1[2] = &off_AF6F38;
+  v5 = (16 * a4 + *(a3 + 316));
+  v6 = *v5 != 0 && v5[2] != 0;
+  a1[56] = v6;
+  CFadeWnd::SetOption(
+    this: a1,
+    a2: 0,
+    a3: 255,
+    a4: 0,
+    a5: 0xFFFFFD3A00000094uLL,
+    a6: 0xFFFFFD3A00000094uLL,
+    a7: 0xFFFFFD3A00000094uLL,
+    a8: 80,
+    a9: 0,
+    a10: 80);
+  CFadeWnd::CreateFadeWnd(this: a1, a2: 0xAA, a3: 210, a4: 0, a5: 11, a6: 0, a7: 0);
+  return a1;
+}

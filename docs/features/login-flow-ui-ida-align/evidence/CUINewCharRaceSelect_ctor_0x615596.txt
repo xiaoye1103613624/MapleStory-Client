@@ -1,0 +1,35 @@
+CWnd *__fastcall CUINewCharRaceSelect::CUINewCharRaceSelect(CWnd *a1, int a2, int a3)
+{
+  CWnd::CWnd(this: a1);
+  dword_BEDA6C = (a1 + 108) != 0 ? a1 : 0;
+  *(a1 + 27) = a3;
+  *(a1 + 28) = 1;
+  *(a1 + 29) = 0;
+  *(a1 + 30) = 0;
+  *(a1 + 31) = 0;
+  *(a1 + 33) = 0;
+  *(a1 + 34) = 0;
+  *(a1 + 35) = 0;
+  *(a1 + 37) = 0;
+  *(a1 + 38) = 0;
+  *(a1 + 39) = 0;
+  *(a1 + 41) = 0;
+  *(a1 + 42) = 0;
+  *(a1 + 43) = 0;
+  *(a1 + 44) = 0;
+  *(a1 + 46) = 0;
+  *a1 = &off_AF7360;
+  *(a1 + 1) = &off_AF7314;
+  *(a1 + 2) = &off_AF7310;
+  CWnd::CreateWnd(
+    this: a1,
+    nLeft: -372,
+    nTop: -2128,
+    nWidth: 0x2BC,
+    nHeight: 460,
+    z: 10,
+    bScreenCoord: 0,
+    pData: 0,
+    bSetFocus: 1);
+  return a1;
+}
