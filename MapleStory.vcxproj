@@ -382,7 +382,6 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="Util\WzNxBootstrap.cpp" />
     <ClCompile Include="Util\ImgFiles.cpp">
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

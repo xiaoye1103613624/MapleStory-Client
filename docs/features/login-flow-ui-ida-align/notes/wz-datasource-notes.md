@@ -23,7 +23,7 @@
 ```
 1. chore(tools) — tools/vendor/NoLifeWzToNx-master/**（源码 + 随包预编译库）
 2. chore(build) — includes/SDL3/**
-3. feat(data)   — vcxproj 接线 + Util/{WzRuntime,WzNxBootstrap,DataFiles,ImgFiles,WzFiles} + NoLifeNx wz_file + Configuration 等
+3. feat(data)   — vcxproj 接线 + Util/{WzRuntime,DataFiles,ImgFiles,WzFiles} + NoLifeNx wz_file + Configuration 等
 ```
 
 **反向引用核对**：`IO/KeyCodes.h`、`includes/NoLifeNx/nlnx/wz.hpp`、`Util/DataFiles.h`、`Util/ImgFiles.h`
@@ -50,14 +50,22 @@
 
 ---
 
-## 3. 核对中发现的待办（未修，需你决定）
+## 3. 核对中发现的待办（已处置）
 
 1. **`Util/WzNxBootstrap::prepare()` 无任何调用者**（全仓 `grep WzNxBootstrap` 只命中其自身 `.h/.cpp` 与 vcxproj）
    ⇒ 当前为**死代码**：能编译但不产生任何效果。
 2. **`Util/WzNxBootstrap.cpp` 引用了 `Error.h` 中不存在的枚举**
    `WZ_CONVERTER_MISSING` / `WZ_CONVERSION_FAILED`；因门控 `#if defined(USE_NX) && defined(AUTO_CONVERT_WZ)`
    未定义而**当前不会编译到**，一旦启用 `AUTO_CONVERT_WZ` 即**编译失败**。
-   > 若本意是启用「缺失即引导转换」，需同时补 `Error.h` 枚举并接上调用点。
+
+**结论：移除 `WzNxBootstrap`（`.cpp` / `.h` / vcxproj 条目），依据如下：**
+- 全仓无任何调用点（`MapleStory.cpp` 启动链路从未调用 `prepare()`），留之仅为占用编译单元、且是潜在「一旦开宏即编译失败」的雷。
+- 其本职「首次运行调用 `NoLifeWzToNx.exe` 把 `.wz` 转 `.nx`」已被运行时分发架构取代：
+  - WZ 后端 `WzFiles::init()` 直接经由 `nl::wz::load_all()` 加载 `.wz`，**不需要** `.nx` 中间产物；
+  - IMG 后端 `ImgFiles::init()` 自带 `.nxcache` 自转换逻辑，亦不消费 `WzNxBootstrap` 的输出。
+- 故移除不影响任一数据源路径，反而消除死门控与 `Error.h` 缺失枚举的隐患。
+
+> 备注：`Error.h` 中无需再补 `WZ_CONVERTER_MISSING` / `WZ_CONVERSION_FAILED`，随 `WzNxBootstrap` 一并作废。
 
 3. **历史提交的一个小瑕疵（不修历史）**：`IO/LoginBackground.cpp` 在提交 `7d5ad8d` 中入库，
    但其 `vcxproj` 条目随 `c7d8bef` 才落地 ⇒ 单独检出 `7d5ad8d` 时该文件不参与编译。
