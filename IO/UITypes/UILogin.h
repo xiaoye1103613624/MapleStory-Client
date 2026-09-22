@@ -78,6 +78,21 @@ namespace ms
 		ColorBox background;
 		Point<int16_t> title_pos;
 
+		// BeiDou 原生布局（Login.img/Title 缺少 backgrd/mapleID/PW）：
+		// 面板与控件的绝对坐标由原客户端硬编码给出，这里按同样坐标重建。
+		bool bedou;
+		Point<int16_t> panel_pos;
+		ColorBox panel_box;
+		Point<int16_t> account_pos;
+		Point<int16_t> password_pos;
+		Point<int16_t> check_pos;
+
+		// BeiDou 数据缺少输入框贴图，用色块补齐可见的输入框。
+		ColorBox account_border;
+		ColorBox account_field;
+		ColorBox password_border;
+		ColorBox password_field;
+
 		bool saveid;
 		bool nexon;
 	};

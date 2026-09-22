@@ -41,6 +41,9 @@ namespace ms
 		Animation Wizet;
 		Texture WizetEnd;
 
+		// Wizet 标志的绘制原点（居中于屏幕）
+		Point<int16_t> logo_pos;
+
 		bool wizet_ended;
 		bool user_clicked;
 	};

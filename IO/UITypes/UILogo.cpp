@@ -20,6 +20,7 @@
 #include "UILogin.h"
 
 #include "../../Configuration.h"
+#include "../../Constants.h"
 
 #include "../../Audio/Audio.h"
 
@@ -44,6 +45,17 @@ namespace ms
 
 		Wizet = Logo["Wizet"];
 		WizetEnd = Logo["Wizet"]["28"];
+
+		// 开头加载/Logo 画面居中播放：
+		// 目标 top-left = 屏幕中心 - 尺寸/2；绘制原点 = top-left + sprite origin。
+		Point<int16_t> screen_center(
+			Constants::Constants::get().get_viewwidth() / 2,
+			Constants::Constants::get().get_viewheight() / 2
+		);
+		Point<int16_t> dim = WizetEnd.get_dimensions();
+		Point<int16_t> origin = WizetEnd.get_origin();
+
+		logo_pos = screen_center - Point<int16_t>(dim.x() / 2, dim.y() / 2) + origin;
 	}
 
 	void UILogo::draw(float inter) const
@@ -51,13 +63,13 @@ namespace ms
 		if (!user_clicked)
 		{
 			if (!wizet_ended)
-				Wizet.draw(position, inter);
+				Wizet.draw(logo_pos, inter);
 			else
-				WizetEnd.draw(position);
+				WizetEnd.draw(logo_pos);
 		}
 		else
 		{
-			WizetEnd.draw(position);
+			WizetEnd.draw(logo_pos);
 		}
 	}
 

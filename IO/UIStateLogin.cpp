@@ -25,6 +25,8 @@
 
 #include "../Configuration.h"
 
+#include "LoginBackground.h"
+
 namespace ms
 {
 	UIStateLogin::UIStateLogin()
@@ -41,6 +43,15 @@ namespace ms
 
 	void UIStateLogin::draw(float inter, Point<int16_t> cursor) const
 	{
+		// BeiDou 登录流程共用背景（地图 + 书页外框）。Logo 画面不叠加。
+		if (LoginBackground::get().available())
+		{
+			UIElement* logo = const_cast<UIStateLogin*>(this)->get(UIElement::Type::START);
+
+			if (!logo || !logo->is_active())
+				LoginBackground::get().draw(inter);
+		}
+
 		for (auto iter : elements)
 		{
 			UIElement* element = iter.second.get();
@@ -55,6 +66,9 @@ namespace ms
 
 	void UIStateLogin::update()
 	{
+		if (LoginBackground::get().available())
+			LoginBackground::get().update();
+
 		for (auto iter : elements)
 		{
 			UIElement* element = iter.second.get();
