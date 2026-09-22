@@ -29,9 +29,18 @@ namespace ms
 	{
 		Error init()
 		{
+			// 宽松校验：NoLifeNx 在根文件缺失时生成空节点而非致命错误
+			// （见 Util/ImgFiles.cpp 注释：BeiDou 数据不带 Base 目录，缺失根应作为
+			// 空节点而非加载失败）。故不再要求 28 个根全齐，仅当「一个都没有」时
+			// 才判定为路径配错 / 数据缺失，给出明确错误。
+			bool any_present = false;
+
 			for (auto filename : filenames)
-				if (std::ifstream{ filename }.good() == false)
-					return Error(Error::Code::MISSING_FILE, filename);
+				if (std::ifstream{ filename }.good())
+					any_present = true;
+
+			if (!any_present)
+				return Error(Error::Code::MISSING_FILE, "no NX root files found; expected the .nx set in the working directory");
 
 			try
 			{

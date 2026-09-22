@@ -43,6 +43,7 @@ namespace ms
 			AUDIO,
 			MISSING_ICON,
 			FONT_PATH,
+			DATA_FORMAT,   // DataFormat value not in {img, nx, wz}
 			LENGTH
 		};
 
@@ -56,7 +57,8 @@ namespace ms
 
 		constexpr bool can_retry() const
 		{
-			return code == Code::CONNECTION || code == Code::MISSING_FILE || code == Code::WRONG_UI_FILE || code == Code::MISSING_ICON || code == Code::FONT_PATH;
+			// DATA_FORMAT is also retryable: the user fixes Settings and re-runs init.
+			return code == Code::CONNECTION || code == Code::MISSING_FILE || code == Code::WRONG_UI_FILE || code == Code::MISSING_ICON || code == Code::FONT_PATH || code == Code::DATA_FORMAT;
 		}
 
 		constexpr const char* get_message() const
@@ -92,7 +94,8 @@ namespace ms
 			"Failed to create window.",
 			"Failed to initialize audio.",
 			"Could not load icon.",
-			"Could not load fonts."
+			"Could not load fonts.",
+			"Invalid DataFormat setting; use \"img\", \"nx\" or \"wz\"."
 		};
 	};
 }

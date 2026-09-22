@@ -20,42 +20,40 @@
 #include "DataFiles.h"
 #include "../Configuration.h"
 #include "ImgFiles.h"
+#include "NxFiles.h"
+#include "WzFiles.h"
 
-#include <nlnx/nx.hpp>
-#include <nlnx/wz.hpp>
-
-#include <fstream>
-#include <stdexcept>
 #include <string>
 
 namespace ms
 {
 	namespace DataFiles
 	{
+		// 运行时分发器：根据 Configuration::get_data_format() 选择数据源，并委托给
+		// 对应的权威加载器。三种加载器各自带「28 个标准根文件齐备性校验 + UI 版本校验 +
+		// 语义正确的错误码」，避免在此重复实现导致行为漂移。
+		//
+		// 此前把任何非 "img"/"nx" 的值都静默当成 "wz"（见旧实现），会把「DataFormat 写错」
+		// 伪装成「WZ 数据有问题」，排障方向被带偏。这里改为显式三值匹配，未知值给出
+		// 明确的可重试错误。
 		Error init()
 		{
 			const std::string fmt = Configuration::get().get_data_format();
 
-			// 调试日志（默认关闭，避免启动期刷屏）。
-			std::ofstream dbg;
-
 			if (fmt == "img")
 				return ImgFiles::init();
 
-			try
-			{
-				if (fmt == "nx")
-					nl::nx::load_all();
-				else
-					nl::wz::load_all(); // "wz" (and any unknown value) is the default
-			}
-			catch (const std::exception& ex)
-			{
-				static const std::string message = ex.what();
-				return Error(Error::Code::NLNX, message.c_str());
-			}
+			if (fmt == "nx")
+				return NxFiles::init();
 
-			return Error::Code::NONE;
+			if (fmt == "wz")
+				return WzFiles::init();
+
+			// 未知取值：明确提示合法取值，且可被既有重试机制重试
+			// （用户改好 Settings 后重跑 init 即可重新加载）。
+			static const std::string message =
+				"Unknown DataFormat \"" + fmt + "\"; expected \"img\", \"nx\" or \"wz\".";
+			return Error(Error::Code::DATA_FORMAT, message.c_str());
 		}
 	}
 }

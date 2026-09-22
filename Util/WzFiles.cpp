@@ -17,11 +17,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "WzFiles.h"
 
-#ifndef USE_NX
+// 与 WzFiles.h 一致：移除 `#ifndef USE_NX`，让 WZ 后端始终参与编译（运行时按 DataFormat 选择）。
 #include <fstream>
 
 #include <nlnx/nx.hpp>
 #include <nlnx/wz.hpp>
+
+// WZ 后端复用了 NX 后端同款的 UI 版本校验（nl::nx::UI.resolve(...)），
+// 该表达式依赖 nl::node::type::bitmap，因此需要显式引入 node.hpp
+// （nx.hpp 在本构建配置下不会把它带入作用域）。
+#include <nlnx/node.hpp>
 
 namespace ms
 {
@@ -29,9 +34,16 @@ namespace ms
 	{
 		Error init()
 		{
+			// 宽松校验：与 NxFiles::init() 一致 —— 容忍缺失根（BeiDou 类数据不保证 28 个根全齐），
+			// 仅当「一个 .wz 根都没有」时才判定为数据缺失，给出明确错误。
+			bool any_present = false;
+
 			for (auto filename : filenames)
-				if (std::ifstream{ filename }.good() == false)
-					return Error(Error::Code::MISSING_FILE, filename);
+				if (std::ifstream{ filename }.good())
+					any_present = true;
+
+			if (!any_present)
+				return Error(Error::Code::MISSING_FILE, "no WZ root files found; expected the .wz set in the working directory");
 
 			try
 			{
@@ -54,4 +66,3 @@ namespace ms
 		}
 	}
 }
-#endif

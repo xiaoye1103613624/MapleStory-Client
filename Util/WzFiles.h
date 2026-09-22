@@ -19,7 +19,9 @@
 
 #include "../MapleStory.h"
 
-#ifndef USE_NX
+// 说明：此处原为 `#ifndef USE_NX` 的编译期开关（旧设计是「NX 与 WZ 二选一」）。
+// 现在数据源改为**运行时**由 DataFormat 选择（见 Util/DataFiles.cpp），
+// NX 与 WZ 两套后端都必须可用，故移除该开关，让 WzFiles 始终参与编译。
 #include "../Error.h"
 
 #include <array>
@@ -76,4 +78,3 @@ namespace ms
 		Error init();
 	};
 }
-#endif
