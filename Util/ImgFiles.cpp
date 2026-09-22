@@ -12,9 +12,9 @@
 //	This program is distributed in the hope that it will be useful,				//
 //	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
 //	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
-//	GNU Affero General Public License for more details.							//
+//	GNU Affero Public License for more details.							//
 //																				//
-//	You should have received a copy of the GNU Affero General Public License	//
+//	You should have received a copy of the GNU Affero Public License			//
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 ////////////////////////////////////////////////////////////////////////////////
 #include "ImgFiles.h"
@@ -27,7 +27,6 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -82,11 +81,6 @@ namespace ms
 			fs::path original = fs::current_path(ec);
 			fs::current_path(cache, ec);
 
-			// 调试日志（登录布局已确认，默认关闭，避免启动期刷屏）。
-			std::ofstream dbg;
-			dbg << "[DBG-IMG] base=" << base.string()
-				<< " cache=" << cache.string() << std::endl;
-
 			try
 			{
 				auto gather = [&](fs::path const & dir) -> std::vector<std::string>
@@ -125,8 +119,6 @@ namespace ms
 						if (imgs.empty())
 							continue;
 
-						dbg << "[DBG-IMG] converting " << root
-							<< " (" << imgs.size() << " files)" << std::endl;
 						nl::convert_img_files_to_nx(imgs, (cache / root).string(), rootdir.string());
 					}
 					else
@@ -190,8 +182,6 @@ namespace ms
 						fs::path map001nx = cache / "Map001.nx";
 						if (!fs::exists(map001nx, ec) && !helper_imgs.empty())
 						{
-							dbg << "[DBG-IMG] converting Map001 helpers ("
-								<< helper_imgs.size() << " files)" << std::endl;
 							nl::convert_img_files_to_nx(helper_imgs, (cache / "Map001").string(), rootdir.string());
 						}
 						// Map.nx = same helpers (game uses bare nl::nx::Map for Obj/Tile/...)
@@ -205,8 +195,6 @@ namespace ms
 						fs::path map002nx = cache / "Map002.nx";
 						if (!fs::exists(map002nx, ec) && !map_relpaths.empty())
 						{
-							dbg << "[DBG-IMG] converting Map002 maps ("
-								<< map_relpaths.size() << " files)" << std::endl;
 							nl::convert_img_files_to_nx(map_relpaths, (cache / "Map002").string());
 						}
 					}
@@ -228,7 +216,6 @@ namespace ms
 						fs::path nxpath = cache / (name + ".nx");
 						if (fs::exists(nxpath, ec))
 							continue;
-						dbg << "[DBG-IMG] converting loose root " << name << std::endl;
 						nl::convert_single_img_to_nx(it->path().string(), name);
 					}
 				}
@@ -239,58 +226,9 @@ namespace ms
 				// roots (e.g. BeiDou data ships no Base directory) as empty,
 				// valid nodes rather than failing.
 				nl::nx::load_all();
-
-				// TEMP DEBUG [DBG-IMG]: inspect which branch ran and whether the
-				// UI root + Login.img actually resolved. Use bool()/size()/name()
-				// (NOT data_type(), since container nodes read as type 0).
-				dbg << "[DBG-IMG] after load_all: exists Base.nx="
-					<< (std::ifstream("Base.nx").good() ? "Y" : "N")
-					<< " exists Data.nx="
-					<< (std::ifstream("Data.nx").good() ? "Y" : "N") << std::endl;
-				dbg << "[DBG-IMG] UI valid=" << (nl::nx::UI ? "Y" : "N")
-					<< " size=" << nl::nx::UI.size()
-					<< " name='" << nl::nx::UI.name() << "'" << std::endl;
-				dbg << "[DBG-IMG] Login.img valid=" << (nl::nx::UI["Login.img"] ? "Y" : "N")
-					<< " name='" << nl::nx::UI["Login.img"].name() << "'"
-					<< " size=" << nl::nx::UI["Login.img"].size() << std::endl;
-				dbg << "[DBG-IMG] Login.img children:";
-				for (auto it = nl::nx::UI["Login.img"].begin(); it != nl::nx::UI["Login.img"].end(); ++it)
-					dbg << " '" << it.name() << "'";
-				dbg << std::endl;
-				dbg << "[DBG-IMG] Title children:";
-				for (auto it = nl::nx::UI["Login.img"]["Title"].begin(); it != nl::nx::UI["Login.img"]["Title"].end(); ++it)
-					dbg << " '" << it.name() << "'";
-				dbg << std::endl;
-				dbg << "[DBG-IMG] Title_new children:";
-				for (auto it = nl::nx::UI["Login.img"]["Title_new"].begin(); it != nl::nx::UI["Login.img"]["Title_new"].end(); ++it)
-					dbg << " '" << it.name() << "'";
-				dbg << std::endl;
-				dbg << "[DBG-IMG] Title_new valid=" << (nl::nx::UI["Login.img"]["Title_new"] ? "Y" : "N")
-					<< " mapleID type=" << static_cast<int>(nl::nx::UI["Login.img"]["Title_new"]["mapleID"].data_type())
-					<< std::endl;
-				dbg << "[DBG-IMG] UI top-level children:";
-				for (auto it = nl::nx::UI.begin(); it != nl::nx::UI.end(); ++it)
-					dbg << " '" << it.name() << "'";
-				dbg << std::endl;
-				dbg << "[DBG-IMG] Map001 valid=" << (nl::nx::Map001 ? "Y" : "N")
-					<< " size=" << nl::nx::Map001.size() << std::endl;
-				dbg << "[DBG-IMG] Map001[Back] valid=" << (nl::nx::Map001["Back"] ? "Y" : "N")
-					<< " UI_login.img valid=" << (nl::nx::Map001["Back"]["UI_login.img"] ? "Y" : "N") << std::endl;
-				dbg << "[DBG-IMG] Map001 top children:";
-				for (auto it = nl::nx::Map001.begin(); it != nl::nx::Map001.end(); ++it)
-					dbg << " '" << it.name() << "'";
-				dbg << std::endl;
-				dbg << "[DBG-IMG] Map[Back] valid=" << (nl::nx::Map["Back"] ? "Y" : "N")
-					<< " Map[Obj] valid=" << (nl::nx::Map["Obj"] ? "Y" : "N")
-					<< " Map[WorldMap] valid=" << (nl::nx::Map["WorldMap"] ? "Y" : "N") << std::endl;
-				dbg << "[DBG-IMG] Map002 valid=" << (nl::nx::Map002 ? "Y" : "N")
-					<< " Map002[Map] valid=" << (nl::nx::Map002["Map"] ? "Y" : "N") << std::endl;
 			}
 			catch (const std::exception& ex)
 			{
-				// TEMP DEBUG [DBG-IMG]
-				dbg << "[DBG-IMG] EXCEPTION: " << ex.what() << std::endl;
-
 				fs::current_path(original, ec);
 				static const std::string message = ex.what();
 				return Error(Error::Code::NLNX, message.c_str());

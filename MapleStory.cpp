@@ -26,58 +26,34 @@
 
 #include "Util/DataFiles.h"
 
-#include <fstream>
-
 namespace ms
 {
-	// TEMP DEBUG [DBG-START]: Release GUI builds compile LOG() to nothing and
-	// have no console. Stage markers are written to a file so the post-data
-	// startup path (window/sound/game init) can be diagnosed when the client
-	// exits silently. Remove once the startup is verified.
-	static void dbg_stage(const char* stage)
-	{
-		std::ofstream f("_start_debug.log", std::ios::app);
-		f << stage << std::endl;
-	}
-
 	Error init()
 	{
-		dbg_stage("[STAGE] begin");
-
 		// 确保配置先加载，宽高会同步到 Constants，Window 创建时才能取到正确分辨率。
 		Configuration::get();
 
 		if (Error error = Session::get().init()) {
-			dbg_stage("[STAGE] Session::init FAILED");
 			return error;
 		}
-		dbg_stage("[STAGE] Session::init OK");
 
 		// The data backend (nx / wz / img) is selected at runtime from the
 		// DataFormat setting, so every format goes through this single entry.
 		if (Error error = DataFiles::init()) {
-			dbg_stage("[STAGE] DataFiles::init FAILED");
 			return error;
 		}
-		dbg_stage("[STAGE] DataFiles::init OK");
 
 		if (Error error = Window::get().init()) {
-			dbg_stage("[STAGE] Window::init FAILED");
 			return error;
 		}
-		dbg_stage("[STAGE] Window::init OK");
 
 		if (Error error = Sound::init()) {
-			dbg_stage("[STAGE] Sound::init FAILED");
 			return error;
 		}
-		dbg_stage("[STAGE] Sound::init OK");
 
 		if (Error error = Music::init()) {
-			dbg_stage("[STAGE] Music::init FAILED");
 			return error;
 		}
-		dbg_stage("[STAGE] Music::init OK");
 
 		Char::init();
 		DamageNumber::init();
@@ -85,7 +61,6 @@ namespace ms
 		Stage::get().init();
 		UI::get().init();
 		LoginBackground::get().init();
-		dbg_stage("[STAGE] game init OK");
 
 		return Error::NONE;
 	}
@@ -162,7 +137,6 @@ namespace ms
 
 	void start()
 	{
-		dbg_stage("[START] entering");
 		try
 		{
 			// Initialize and check for errors
@@ -171,8 +145,6 @@ namespace ms
 				const char* message = error.get_message();
 				const char* args = error.get_args();
 				bool can_retry = error.can_retry();
-
-				dbg_stage(("[START] init error: " + std::string(message) + (args ? args : "")).c_str());
 
 				if (args && args[0])
 					LOG(LOG_ERROR, message << args);
@@ -190,13 +162,11 @@ namespace ms
 			}
 			else
 			{
-				dbg_stage("[START] entering loop");
 				loop();
 			}
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception&)
 		{
-			dbg_stage(("[START] UNCAUGHT exception: " + std::string(ex.what())).c_str());
 		}
 	}
 }
