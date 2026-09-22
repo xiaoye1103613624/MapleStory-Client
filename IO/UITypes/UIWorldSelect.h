@@ -33,6 +33,14 @@ namespace ms
 		static constexpr bool FOCUSED = false;
 		static constexpr bool TOGGLED = false;
 
+		// 按钮容量：世界按钮槽数量与频道按钮数量。
+		// 集中定义并由本类 Buttons 枚举**表达式推导**出各 id 段起点，
+		// 避免历史上「BtChannel0 隐式=5、BtGoWorld 硬编码=35」这种与枚举顺序
+		// 彼此独立写死的耦合——一旦增删世界按钮就会静默错位到频道按钮段。
+		// 取值对齐参考版（gms083）容量：15 个世界、30 个频道。
+		static constexpr uint16_t WORLD_BUTTON_COUNT = 15U;
+		static constexpr uint16_t CHANNEL_BUTTON_COUNT = 30U;
+
 		UIWorldSelect();
 
 		void draw(float alpha) const override;
@@ -53,7 +61,7 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
-		static constexpr uint8_t COLUMNS = 5U;
+		static constexpr uint8_t COLUMNS = 4U; // 频道面板 chBackgrn 宽 449，4 列(100px)才不溢出；与 channel_cell_offset 的 COLS=4 对齐
 		static constexpr uint8_t FLAG_SIZE = 3U;
 		// This is from the server in ServerConstants
 		static constexpr int32_t CHANNEL_LOAD = 100;
@@ -62,6 +70,25 @@ namespace ms
 		void clear_selected_world();
 		uint16_t get_next_world(uint16_t id, bool upward);
 
+		/// <summary>
+		/// 取第 index 个世界按钮（0 起）；索引越界返回 nullptr，并做**限频告警**。
+		///
+		/// 为什么必须统一走本函数：基类的 buttons 是
+		/// `std::map&lt;uint16_t, std::unique_ptr&lt;Button&gt;&gt;`，不是数组。
+		/// 直接用 `buttons[BtWorld0 + index]` 访问越界 key 时：
+		///   1) 若该 key 恰好落在频道/进入/退出按钮的 id 段内 → 误改那些按钮的状态；
+		///   2) 若该 key 完全不存在 → operator[] 会静默插入一个空 unique_ptr，
+		///      紧接着的 `-&gt;set_state()` 即空指针解引用崩溃。
+		/// 服务端下发的世界 id/世界数不受客户端控制，故必须在此收敛。
+		/// </summary>
+		Button* get_world_button(uint16_t index) const;
+
+		/// 取第 index 个频道按钮（0 起）；语义同 get_world_button。
+		Button* get_channel_button(uint16_t index) const;
+
+		/// 可参与键盘导航的世界槽数量 = min(服务端下发世界数, 世界按钮容量)。
+		uint16_t navigable_world_count() const;
+
 		enum Buttons : uint16_t
 		{
 			BtWorld0,
@@ -69,8 +96,18 @@ namespace ms
 			BtWorld2,
 			BtWorld3,
 			BtWorld4,
-			BtChannel0,
-			BtGoWorld = 35U,
+			BtWorld5,
+			BtWorld6,
+			BtWorld7,
+			BtWorld8,
+			BtWorld9,
+			BtWorld10,
+			BtWorld11,
+			BtWorld12,
+			BtWorld13,
+			BtWorld14,
+			BtChannel0 = BtWorld0 + WORLD_BUTTON_COUNT,
+			BtGoWorld = BtChannel0 + CHANNEL_BUTTON_COUNT,
 			BtRegion,
 			BtExit
 		};
@@ -137,6 +174,7 @@ namespace ms
 		bool world_selected;
 
 		nl::node worldsrc;
+		nl::node worldnamesrc;
 		nl::node channelsrc;
 	};
 }
