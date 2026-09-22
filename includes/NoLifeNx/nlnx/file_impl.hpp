@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // NoLifeNx - Part of the NoLifeStory project                               //
-// Copyright © 2013 Peter Atashian                                          //
+// Copyright Â© 2013 Peter Atashian                                          //
 //                                                                          //
 // This program is free software: you can redistribute it and/or modify     //
 // it under the terms of the GNU Affero General Public License as           //
@@ -21,6 +21,7 @@
 #include "node_impl.hpp"
 
 namespace nl {
+    class wz_file;
 #pragma pack(push, 1)
     struct file::header {
         uint32_t const magic;
@@ -41,6 +42,9 @@ namespace nl {
         uint64_t const * bitmap_table = nullptr;
         uint64_t const * audio_table = nullptr;
         file::header const * header = nullptr;
+        // Non-null for the direct WZ backend. The regular NX members above
+        // keep their original meaning and layout.
+        wz_file * wz = nullptr;
 #ifdef _WIN32
         void * file_handle = nullptr;
         void * map = nullptr;

@@ -17,23 +17,32 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "bitmap.hpp"
+#include "wz.hpp"
 #include <lz4.h>
 #include <vector>
 
 namespace nl {
     bitmap::bitmap(void const * d, uint16_t w, uint16_t h) :
         m_data(d), m_width(w), m_height(h) {}
+    bitmap::bitmap(wz_file * f, uint32_t i, uint16_t w, uint16_t h) :
+        m_wz(f), m_wz_index(i), m_width(w), m_height(h) {}
     bool bitmap::operator<(bitmap const & o) const {
-        return m_data < o.m_data;
+        if (m_wz != o.m_wz)
+            return m_wz < o.m_wz;
+        return m_wz ? m_wz_index < o.m_wz_index : m_data < o.m_data;
     }
     bool bitmap::operator==(bitmap const & o) const {
-        return m_data == o.m_data;
+        return m_data == o.m_data && m_wz == o.m_wz && m_wz_index == o.m_wz_index;
     }
     bitmap::operator bool() const {
-        return m_data ? true : false;
+        return m_data || m_wz;
     }
     std::vector<char> bitmap_buf;
     void const * bitmap::data() const {
+        if (m_wz) {
+            m_wz->decode_bitmap(m_wz_index, bitmap_buf);
+            return bitmap_buf.empty() ? nullptr : bitmap_buf.data();
+        }
         if (!m_data)
             return nullptr;
         auto const l = length();
@@ -53,6 +62,8 @@ namespace nl {
         return 4u * m_width * m_height;
     }
     size_t bitmap::id() const {
+        if (m_wz)
+            return reinterpret_cast<size_t>(m_wz) ^ (static_cast<size_t>(m_wz_index) << 1);
         return reinterpret_cast<size_t>(m_data);
     }
 }

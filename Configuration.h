@@ -60,6 +60,10 @@ namespace ms
 		std::string get_title() const;
 		// Get private member VERSION
 		std::string get_version() const;
+		// Get the data backend format ("nx", "wz" or "img")
+		std::string get_data_format() const;
+		// Get the IMG data directory (used only when the format is "img")
+		std::string get_data_dir() const;
 		// Get private member LoginMusic
 		std::string get_login_music() const;
 		// Get private member LoginMusicSEA
@@ -228,6 +232,11 @@ namespace ms
 		friend struct Setting;
 
 		const char* FILENAME = "Settings";
+		// Optional deployment configuration, read from the executable's
+		// directory. Flat "Key: value" YAML. Values found here take priority
+		// over FILENAME, so a deployment can pin the server address and the
+		// data backend without touching the user's saved settings.
+		const char* XYCONFIG_FILENAME = "xy-config.yaml";
 		const char* TITLE = "MapleStory";
 		const char* VERSION = "228.3";
 		const char* LoginMusic = "BgmUI.img/Title";
@@ -250,7 +259,7 @@ namespace ms
 		const int32_t auto_cid = 0;
 		bool rightclicksell = false;
 		bool show_weekly = true;
-		bool start_shown = false;
+		bool start_shown = true; // TEMP DEBUG
 		std::string MACS;
 		std::string HWID;
 		int16_t MAXWIDTH;
@@ -275,6 +284,20 @@ namespace ms
 		ServerPort() : StringEntry("ServerPort", "8484") {}
 	};
 
+	// Data backend selection: "nx", "wz" or "img".
+	// Defaults to "wz" to preserve the current direct-WZ loading behavior.
+	struct DataFormat : public Configuration::StringEntry
+	{
+		DataFormat() : StringEntry("DataFormat", "wz") {}
+	};
+
+	// Directory containing the classic standalone .img data (one subdirectory
+	// per standard root). Used only when DataFormat is "img".
+	struct DataDir : public Configuration::StringEntry
+	{
+		DataDir() : StringEntry("DataDir", "Data") {}
+	};
+
 	// Whether to start in full screen mode
 	struct Fullscreen : public Configuration::BoolEntry
 	{
@@ -284,13 +307,13 @@ namespace ms
 	// The width of the screen
 	struct Width : public Configuration::ShortEntry
 	{
-		Width() : ShortEntry("Width", "800") {}
+		Width() : ShortEntry("Width", "1280") {}
 	};
 
 	// The height of the screen
 	struct Height : public Configuration::ShortEntry
 	{
-		Height() : ShortEntry("Height", "600") {}
+		Height() : ShortEntry("Height", "720") {}
 	};
 
 	// Whether to use VSync

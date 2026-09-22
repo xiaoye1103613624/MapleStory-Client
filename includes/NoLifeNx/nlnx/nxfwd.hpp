@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // NoLifeNx - Part of the NoLifeStory project                               //
-// Copyright © 2013 Peter Atashian                                          //
+// Copyright Â© 2013 Peter Atashian                                          //
 //                                                                          //
 // This program is free software: you can redistribute it and/or modify     //
 // it under the terms of the GNU Affero General Public License as           //
@@ -23,4 +23,5 @@ namespace nl {
     class file;
     class bitmap;
     class audio;
+    class wz_file;
 }

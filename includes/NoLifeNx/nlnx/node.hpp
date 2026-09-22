@@ -135,6 +135,7 @@ namespace nl {
         data const * m_data = nullptr;
         _file_data const * m_file = nullptr;
         friend file;
+        friend wz_file;
     };
     //More convenience string concatenation operators
     std::string operator+(std::string, node);

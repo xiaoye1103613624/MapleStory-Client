@@ -88,32 +88,63 @@ namespace nl
 				Etc = Base["Etc"];
 				Item = Base["Item"];
 				Map = Base["Map"];
-				Map001 = Base["Map001"];
-				Map002 = Base["Map002"];
-				Map2 = Base["Map2"];
+				Map001 = Map["Map001"];
+				Map002 = Map["Map002"];
+				Map2 = Map["Map2"];
 				Mob = Base["Mob"];
-				Mob001 = Base["Mob001"];
-				Mob002 = Base["Mob002"];
-				Mob2 = Base["Mob2"];
+				Mob001 = Mob["Mob001"];
+				Mob002 = Mob["Mob002"];
+				Mob2 = Mob["Mob2"];
 				Morph = Base["Morph"];
 				Npc = Base["Npc"];
 				Quest = Base["Quest"];
 				Reactor = Base["Reactor"];
 				Skill = Base["Skill"];
-				Skill001 = Base["Skill001"];
-				Skill002 = Base["Skill002"];
-				Skill003 = Base["Skill003"];
+				Skill001 = Skill["Skill001"];
+				Skill002 = Skill["Skill002"];
+				Skill003 = Skill["Skill003"];
 				Sound = Base["Sound"];
-				Sound001 = Base["Sound001"];
-				Sound002 = Base["Sound002"];
-				Sound2 = Base["Sound2"];
+				Sound001 = Sound["Sound001"];
+				Sound002 = Sound["Sound002"];
+				Sound2 = Sound["Sound2"];
 				String = Base["String"];
 				TamingMob = Base["TamingMob"];
 				UI = Base["UI"];
 			}
 			else
 			{
-				throw std::runtime_error("Failed to locate nx files.");
+				// No standard "Base.nx"/"Data.nx" aggregate. Still attempt to
+				// load whichever individual root files are present so partial
+				// datasets (e.g. an IMG extraction that ships no Base
+				// directory) can be used; missing roots simply stay empty.
+				Base = add_file("Base.nx");
+				Character = add_file("Character.nx");
+				Effect = add_file("Effect.nx");
+				Etc = add_file("Etc.nx");
+				Item = add_file("Item.nx");
+				Map = add_file("Map.nx");
+				Map001 = add_file("Map001.nx");
+				Map002 = add_file("Map002.nx");
+				Map2 = add_file("Map2.nx");
+				Mob = add_file("Mob.nx");
+				Mob001 = add_file("Mob001.nx");
+				Mob002 = add_file("Mob002.nx");
+				Mob2 = add_file("Mob2.nx");
+				Morph = add_file("Morph.nx");
+				Npc = add_file("Npc.nx");
+				Quest = add_file("Quest.nx");
+				Reactor = add_file("Reactor.nx");
+				Skill = add_file("Skill.nx");
+				Skill001 = add_file("Skill001.nx");
+				Skill002 = add_file("Skill002.nx");
+				Skill003 = add_file("Skill003.nx");
+				Sound = add_file("Sound.nx");
+				Sound001 = add_file("Sound001.nx");
+				Sound002 = add_file("Sound002.nx");
+				Sound2 = add_file("Sound2.nx");
+				String = add_file("String.nx");
+				TamingMob = add_file("TamingMob.nx");
+				UI = add_file("UI.nx");
 			}
 		}
 	}

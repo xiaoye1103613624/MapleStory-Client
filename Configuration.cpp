@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Configuration.h"
 
+#include "Constants.h"
 #include "Util/Misc.h"
 
 #include <fstream>
@@ -27,6 +28,8 @@ namespace ms
 	{
 		settings.emplace<ServerIP>();
 		settings.emplace<ServerPort>();
+		settings.emplace<DataFormat>();
+		settings.emplace<DataDir>();
 		settings.emplace<Fullscreen>();
 		settings.emplace<Width>();
 		settings.emplace<Height>();
@@ -101,6 +104,52 @@ namespace ms
 			}
 		}
 
+		// Optional deployment configuration: "xy-config.yaml" next to the
+		// executable. Flat "Key: value" YAML, taking priority over the legacy
+		// "Settings" file so a deployment can pin the server address and the
+		// data backend without touching the user's saved settings.
+		{
+			std::ifstream xyconfig(XYCONFIG_FILENAME);
+
+			if (xyconfig.is_open())
+			{
+				auto trim = [](const std::string& s)
+				{
+					auto first = s.find_first_not_of(" \t\r\n");
+
+					if (first == std::string::npos)
+						return std::string();
+
+					auto last = s.find_last_not_of(" \t\r\n");
+
+					return s.substr(first, last - first + 1);
+				};
+
+				std::string line;
+
+				while (getline(xyconfig, line))
+				{
+					std::string entry = trim(line);
+
+					if (entry.empty() || entry[0] == '#')
+						continue;
+
+					size_t split = entry.find(':');
+
+					if (split == std::string::npos)
+						continue;
+
+					std::string key = trim(entry.substr(0, split));
+					std::string value = trim(entry.substr(split + 1));
+
+					if (key.empty() || value.empty())
+						continue;
+
+					rawsettings[key] = value;
+				}
+			}
+		}
+
 		// Replace default values with loaded values
 		for (auto& setting : settings)
 		{
@@ -109,6 +158,10 @@ namespace ms
 			if (rsiter != rawsettings.end())
 				setting.second->value = rsiter->second;
 		}
+
+		// 将配置中的宽高同步到运行时常量，供 Window/渲染/布局使用。
+		Constants::Constants::get().set_viewwidth(Setting<Width>::get().load());
+		Constants::Constants::get().set_viewheight(Setting<Height>::get().load());
 	}
 
 	void Configuration::save() const
@@ -217,6 +270,16 @@ namespace ms
 	std::string Configuration::get_version() const
 	{
 		return VERSION;
+	}
+
+	std::string Configuration::get_data_format() const
+	{
+		return Setting<DataFormat>::get().load();
+	}
+
+	std::string Configuration::get_data_dir() const
+	{
+		return Setting<DataDir>::get().load();
 	}
 
 	std::string Configuration::get_login_music() const

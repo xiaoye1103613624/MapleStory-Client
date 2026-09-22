@@ -20,12 +20,14 @@
 #include "../Error.h"
 
 #include "../Template/Singleton.h"
+#include "KeyCodes.h"
 
 #define GLEW_STATIC
 #include <glew.h>
-#include <glfw3.h>
+#include <SDL3/SDL.h>
 
 #include <functional>
+#include <string>
 
 namespace ms
 {
@@ -52,10 +54,12 @@ namespace ms
 
 	private:
 		void updateopc();
+		void poll_events();
 
-		GLFWwindow* glwnd;
-		GLFWwindow* context;
+		SDL_Window* glwnd;
+		SDL_GLContext glcontext;
 		bool fullscreen;
+		bool close_requested;
 		float opacity;
 		float opcstep;
 		std::function<void()> fadeprocedure;

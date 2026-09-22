@@ -20,6 +20,7 @@
 #include "file_impl.hpp"
 #include "bitmap.hpp"
 #include "audio.hpp"
+#include "wz.hpp"
 #include <cstring>
 #include <stdexcept>
 #include <vector>
@@ -215,12 +216,14 @@ namespace nl {
         return def;
     }
     bitmap node::get_bitmap() const {
-        if (m_data && m_data->type == type::bitmap && m_file->header->bitmap_count)
+        if (m_data && m_data->type == type::bitmap &&
+            (m_file->wz || m_file->header->bitmap_count))
             return to_bitmap();
         return {nullptr, 0, 0};
     }
     audio node::get_audio() const {
-        if (m_data && m_data->type == type::audio && m_file->header->audio_count)
+        if (m_data && m_data->type == type::audio &&
+            (m_file->wz || m_file->header->audio_count))
             return to_audio();
         return {nullptr, 0};
     }
@@ -239,6 +242,8 @@ namespace nl {
     std::string node::name() const {
         if (!m_data)
             return {};
+        if (m_file->wz)
+            return m_file->wz->get_string(m_data->name);
         auto const s = reinterpret_cast<char const *>(m_file->base)
             + m_file->string_table[m_data->name];
         return {s + 2, *reinterpret_cast<uint16_t const *>(s)};
@@ -252,6 +257,12 @@ namespace nl {
     node node::get_child(char const * const o, uint16_t const l) const {
         if (!m_data)
             return {nullptr, m_file};
+        if (m_file->wz) {
+            auto const parent = static_cast<uint32_t>(m_data - m_file->node_table);
+            auto const child = m_file->wz->find_child(parent, o, l);
+            return child ? node{m_file->node_table + child, m_file}
+                : node{nullptr, m_file};
+        }
         auto p = m_file->node_table + m_data->children;
         auto n = m_data->num;
         auto const b = reinterpret_cast<const char *>(m_file->base);
@@ -296,6 +307,8 @@ namespace nl {
         return m_data->dreal;
     }
     std::string node::to_string() const {
+        if (m_file->wz)
+            return m_file->wz->get_string(m_data->string);
         auto const s = reinterpret_cast<char const *>(m_file->base)
             + m_file->string_table[m_data->string];
         return {s + 2, *reinterpret_cast<uint16_t const *>(s)};
@@ -304,11 +317,23 @@ namespace nl {
         return {m_data->vector[0], m_data->vector[1]};
     }
     bitmap node::to_bitmap() const {
+        if (m_file->wz) {
+            auto owner = m_file->wz;
+            auto bitmap_id = m_data->bitmap.index;
+            auto width = m_data->bitmap.width;
+            auto height = m_data->bitmap.height;
+            auto const node_id = static_cast<uint32_t>(m_data - m_file->node_table);
+            owner->resolve_bitmap(node_id, owner, bitmap_id, width, height);
+            return {owner, bitmap_id, width, height};
+        }
         return {reinterpret_cast<char const *>(m_file->base)
             + m_file->bitmap_table[m_data->bitmap.index],
             m_data->bitmap.width, m_data->bitmap.height};
     }
     audio node::to_audio() const {
+        if (m_file->wz)
+            return {m_file->wz->get_audio(m_data->audio.index),
+                m_data->audio.length};
         return {reinterpret_cast<char const *>(m_file->base)
             + m_file->audio_table[m_data->audio.index],
             m_data->audio.length};

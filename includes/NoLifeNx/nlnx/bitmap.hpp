@@ -22,6 +22,7 @@
 #include <cstddef>
 
 namespace nl {
+    class wz_file;
     class bitmap {
     public:
         bitmap() = default;
@@ -44,7 +45,10 @@ namespace nl {
         size_t id() const;
     private:
         bitmap(void const *, uint16_t, uint16_t);
+        bitmap(wz_file *, uint32_t, uint16_t, uint16_t);
         void const * m_data = nullptr;
+        wz_file * m_wz = nullptr;
+        uint32_t m_wz_index = 0;
         uint16_t m_width = 0;
         uint16_t m_height = 0;
         friend node;

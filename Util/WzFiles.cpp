@@ -20,6 +20,9 @@
 #ifndef USE_NX
 #include <fstream>
 
+#include <nlnx/nx.hpp>
+#include <nlnx/wz.hpp>
+
 namespace ms
 {
 	namespace WzFiles
@@ -32,7 +35,7 @@ namespace ms
 
 			try
 			{
-				//nl::nx::load_all();
+				nl::wz::load_all();
 			}
 			catch (const std::exception& ex)
 			{
@@ -41,10 +44,11 @@ namespace ms
 				return Error(Error::Code::WZ, message.c_str());
 			}
 
-			//constexpr const char* POSTCHAOS_BITMAP = "Login.img/WorldSelect/BtChannel/layer:bg";
-			//
-			//if (nl::nx::ui.resolve(POSTCHAOS_BITMAP).data_type() != nl::node::type::bitmap)
-			//	return Error::Code::WRONG_UI_FILE;
+			// Verify the UI archive is the expected version before launching.
+			constexpr const char* POSTCHAOS_BITMAP = "Login.img/WorldSelect/BtChannel/layer:bg";
+
+			if (nl::nx::UI.resolve(POSTCHAOS_BITMAP).data_type() != nl::node::type::bitmap)
+				return Error::Code::WRONG_UI_FILE;
 
 			return Error::Code::NONE;
 		}
