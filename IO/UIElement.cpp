@@ -18,12 +18,24 @@
 #include "UIElement.h"
 
 #include "../Audio/Audio.h"
+#include "../Constants.h"
 
 namespace ms
 {
 	UIElement::UIElement(Point<int16_t> p, Point<int16_t> d, bool a) : position(p), dimension(d), active(a) {}
 	UIElement::UIElement(Point<int16_t> p, Point<int16_t> d) : UIElement(p, d, true) {}
 	UIElement::UIElement() : UIElement(Point<int16_t>(), Point<int16_t>()) {}
+
+	void UIElement::center_on_screen()
+	{
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		position = Point<int16_t>(
+			static_cast<int16_t>((vieww - dimension.x()) / 2),
+			static_cast<int16_t>((viewh - dimension.y()) / 2)
+		);
+	}
 
 	void UIElement::draw(float alpha) const
 	{
@@ -86,11 +98,13 @@ namespace ms
 
 	void UIElement::remove_cursor()
 	{
+		// 防御：buttons map 中可能存在 operator[] 只读访问产生的空 unique_ptr 条目
+		//（见 UIMiniMap::update_buttons 历史 bug），必须判空后再解引用。
 		for (auto& btit : buttons)
 		{
 			auto button = btit.second.get();
 
-			if (button->get_state() == Button::State::MOUSEOVER)
+			if (button && button->get_state() == Button::State::MOUSEOVER)
 				button->set_state(Button::State::NORMAL);
 		}
 	}
@@ -101,6 +115,9 @@ namespace ms
 
 		for (auto& btit : buttons)
 		{
+			if (!btit.second)
+				continue;
+
 			if (btit.second->is_active() && btit.second->bounds(position).contains(cursor_position))
 			{
 				if (btit.second->get_state() == Button::State::NORMAL)

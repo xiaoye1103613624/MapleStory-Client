@@ -21,7 +21,9 @@
 #include "UICharInfo.h"
 #include "UIChat.h"
 #include "UIEquipInventory.h"
+#include "UIDailyGift.h"
 #include "UIEvent.h"
+#include "UIHelp.h"
 #include "UIItemInventory.h"
 #include "UIJoypad.h"
 #include "UIKeyConfig.h"
@@ -39,7 +41,14 @@
 #include "../../Character/ExpTable.h"
 #include "../../Gameplay/Stage.h"
 
+#include "../../Data/ItemData.h"
+#include "../../Data/SkillData.h"
 #include "../../Net/Packets/GameplayPackets.h"
+#include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
+#include "../KeyConfig.h"
+#include "../KeyType.h"
+#include "UIChatBar.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -59,13 +68,26 @@ namespace ms
 		community_active = false;
 		character_active = false;
 		event_active = false;
+		classic_mode = UiAssetResolve::is_classic_hud();
 
+		if (classic_mode)
+		{
+			LOG(LOG_DEBUG, "UIStatusBar: using StatusBar.img classic HUD");
+			init_classic();
+			return;
+		}
+
+		init_modern();
+	}
+
+	void UIStatusBar::init_modern()
+	{
 		std::string stat = "status";
 
 		if (VWIDTH == 800)
 			stat += "800";
 
-		nl::node mainBar = nl::nx::UI["StatusBar3.img"]["mainBar"];
+		nl::node mainBar = UiAssetResolve::status_bar_root()["mainBar"];
 		nl::node status = mainBar[stat];
 		nl::node EXPBar = mainBar["EXPBar"];
 		nl::node EXPBarRes = EXPBar[VWIDTH];
@@ -366,6 +388,12 @@ namespace ms
 
 	void UIStatusBar::draw(float alpha) const
 	{
+		if (classic_mode)
+		{
+			draw_classic(alpha);
+			return;
+		}
+
 		UIElement::draw_sprites(alpha);
 
 		for (size_t i = 0; i <= Buttons::BT_EVENT; i++)
@@ -496,6 +524,12 @@ namespace ms
 
 	void UIStatusBar::update()
 	{
+		if (classic_mode)
+		{
+			update_classic();
+			return;
+		}
+
 		UIElement::update();
 
 		for (Sprite sprite : hpmp_sprites)
@@ -561,14 +595,104 @@ namespace ms
 	{
 		switch (id)
 		{
+			case Buttons::BT_CLASSIC_SHOP:
 			case Buttons::BT_CASHSHOP:
 			{
 				EnterCashShopPacket().dispatch();
 				break;
 			}
+			case Buttons::BT_CLASSIC_MENU:
 			case Buttons::BT_MENU:
 			{
+				if (classic_mode)
+				{
+					// BtMenu 位图为「目录」：打开系统选项，勿直接 Quit。
+					UI::get().emplace<UIOptionMenu>();
+					break;
+				}
+
 				toggle_menu();
+				break;
+			}
+			case Buttons::BT_CLASSIC_EQUIP:
+			{
+				if (!UiAssetResolve::usable(UiAssetResolve::window("Equip")))
+					break;
+
+				UI::get().emplace<UIEquipInventory>(
+					Stage::get().get_player().get_inventory()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_INV:
+			{
+				if (!UiAssetResolve::usable(UiAssetResolve::window("Item")))
+					break;
+
+				UI::get().emplace<UIItemInventory>(
+					Stage::get().get_player().get_inventory()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_STAT:
+			{
+				if (!UiAssetResolve::usable(UiAssetResolve::window("Stat")))
+					break;
+
+				UI::get().emplace<UIStatsInfo>(
+					Stage::get().get_player().get_stats()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_SKILL:
+			{
+				if (!UiAssetResolve::usable(UiAssetResolve::window("Skill")))
+					break;
+
+				UI::get().emplace<UISkillBook>(
+					Stage::get().get_player().get_stats(),
+					Stage::get().get_player().get_skills()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_KEYSET:
+			{
+				UI::get().emplace<UIKeyConfig>(
+					Stage::get().get_player().get_inventory(),
+					Stage::get().get_player().get_skills()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_QS:
+			case Buttons::BT_CLASSIC_QSD:
+			{
+				quickslot_active = !quickslot_active;
+				break;
+			}
+			case Buttons::BT_CLASSIC_NPT:
+			{
+				// BtNPT 位图为「帮助」；旧逻辑误开 QuestLog，缺资源时易卡死。
+				UI::get().emplace<UIHelp>();
+				break;
+			}
+			case Buttons::BT_CLASSIC_SHORT:
+			{
+				// BtShort 位图为「界面」→ 快捷键设置。
+				UI::get().emplace<UIKeyConfig>(
+					Stage::get().get_player().get_inventory(),
+					Stage::get().get_player().get_skills()
+				);
+				break;
+			}
+			case Buttons::BT_CLASSIC_WHISPER:
+			{
+				if (auto chatbar = UI::get().get_element<UIChatBar>())
+					chatbar->focus_whisper();
+				break;
+			}
+			case Buttons::BT_CLASSIC_CLAIM:
+			{
+				// v83 Claim has no dedicated UI in this client — quiet no-op.
 				break;
 			}
 			case Buttons::BT_OPTIONS:
@@ -618,9 +742,14 @@ namespace ms
 			case Buttons::BT_MENU_BATTLE:
 			case Buttons::BT_MENU_ACHIEVEMENT:
 			case Buttons::BT_MENU_FISHING:
-			case Buttons::BT_MENU_HELP:
 			case Buttons::BT_MENU_CLAIM:
 			{
+				remove_menus();
+				break;
+			}
+			case Buttons::BT_MENU_HELP:
+			{
+				UI::get().emplace<UIHelp>();
 				remove_menus();
 				break;
 			}
@@ -763,6 +892,8 @@ namespace ms
 			}
 			case Buttons::BT_EVENT_DAILY:
 			{
+				UI::get().emplace<UIDailyGift>();
+
 				remove_menus();
 				break;
 			}
@@ -784,9 +915,17 @@ namespace ms
 			}
 			else if (keycode == KeyAction::Id::RETURN)
 			{
+				// 修复：buttons 可能有缺失条目，禁止 operator[] 只读访问（会插入空 unique_ptr 再解引用）。
+				auto btn_at = [this](uint16_t id) -> Button*
+				{
+					auto it = buttons.find(id);
+					return (it != buttons.end()) ? it->second.get() : nullptr;
+				};
+
 				for (size_t i = Buttons::BT_MENU_QUEST; i <= Buttons::BT_EVENT_DAILY; i++)
-					if (buttons[i]->get_state() == Button::State::MOUSEOVER)
-						button_pressed(i);
+					if (btn_at(static_cast<uint16_t>(i))
+						&& btn_at(static_cast<uint16_t>(i))->get_state() == Button::State::MOUSEOVER)
+						button_pressed(static_cast<uint16_t>(i));
 			}
 			else if (keycode == KeyAction::Id::UP || keycode == KeyAction::Id::DOWN)
 			{
@@ -820,13 +959,20 @@ namespace ms
 
 				uint16_t id = min_id;
 
+				auto btn_at = [this](uint16_t bid) -> Button*
+				{
+					auto it = buttons.find(bid);
+					return (it != buttons.end()) ? it->second.get() : nullptr;
+				};
+
 				for (size_t i = min_id; i <= max_id; i++)
 				{
-					if (buttons[i]->get_state() != Button::State::NORMAL)
+					Button* b = btn_at(static_cast<uint16_t>(i));
+					if (b && b->get_state() != Button::State::NORMAL)
 					{
-						id = i;
+						id = static_cast<uint16_t>(i);
 
-						buttons[i]->set_state(Button::State::NORMAL);
+						b->set_state(Button::State::NORMAL);
 						break;
 					}
 				}
@@ -846,7 +992,8 @@ namespace ms
 						id = max_id;
 				}
 
-				buttons[id]->set_state(Button::State::MOUSEOVER);
+				if (Button* b = btn_at(id))
+					b->set_state(Button::State::MOUSEOVER);
 			}
 		}
 	}
@@ -917,27 +1064,49 @@ namespace ms
 
 	void UIStatusBar::toggle_qs()
 	{
+		if (classic_mode)
+		{
+			quickslot_active = !quickslot_active;
+			return;
+		}
+
 		if (!menu_active && !setting_active && !community_active && !character_active && !event_active)
 			toggle_qs(!quickslot_active);
 	}
 
 	void UIStatusBar::toggle_qs(bool quick_slot_active)
 	{
+		if (classic_mode)
+		{
+			quickslot_active = quick_slot_active;
+			return;
+		}
+
 		if (quickslot_active == quick_slot_active)
 			return;
 
 		quickslot_active = quick_slot_active;
-		buttons[Buttons::BT_FOLD_QS]->set_active(quickslot_active);
-		buttons[Buttons::BT_EXTEND_QS]->set_active(!quickslot_active);
+
+		// 修复：禁止 operator[] 只读访问（可能插入空 unique_ptr 再解引用）。
+		auto btn_at = [this](uint16_t id) -> Button*
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end()) ? it->second.get() : nullptr;
+		};
+
+		if (Button* b = btn_at(Buttons::BT_FOLD_QS))
+			b->set_active(quickslot_active);
+		if (Button* b = btn_at(Buttons::BT_EXTEND_QS))
+			b->set_active(!quickslot_active);
 
 		if (VWIDTH > 800)
 		{
-			buttons[Buttons::BT_CASHSHOP]->set_active(!quickslot_active);
-			buttons[Buttons::BT_MENU]->set_active(!quickslot_active);
-			buttons[Buttons::BT_OPTIONS]->set_active(!quickslot_active);
-			buttons[Buttons::BT_CHARACTER]->set_active(!quickslot_active);
-			buttons[Buttons::BT_COMMUNITY]->set_active(!quickslot_active);
-			buttons[Buttons::BT_EVENT]->set_active(!quickslot_active);
+			for (uint16_t bid : { Buttons::BT_CASHSHOP, Buttons::BT_MENU, Buttons::BT_OPTIONS,
+				Buttons::BT_CHARACTER, Buttons::BT_COMMUNITY, Buttons::BT_EVENT })
+			{
+				if (Button* b = btn_at(bid))
+					b->set_active(!quickslot_active);
+			}
 		}
 	}
 
@@ -1120,5 +1289,219 @@ namespace ms
 		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
 
 		return static_cast<float>(mp) / maxmp;
+	}
+
+	void UIStatusBar::init_classic()
+	{
+		nl::node sb = UiAssetResolve::status_bar_root();
+		nl::node base = sb["base"];
+		nl::node gauge = sb["gauge"];
+
+		classic_backgrnd = Texture(base["backgrnd"]);
+		classic_backgrnd2 = Texture(base["backgrnd2"]);
+		classic_quickslot = Texture(base["quickSlot"]);
+		classic_graduation = Texture(gauge["graduation"]);
+		classic_gauge_bar = Texture(gauge["bar"]);
+		classic_exp_gray = Texture(gauge["gray"]);
+		classic_exp_temp = Texture(gauge["tempExp"]);
+
+		// HP/MP fill uses gauge/bar clipped by Gauge; flash canvases as cover sprites.
+		hpmp_pos = Point<int16_t>(233, 16);
+		hpset_pos = Point<int16_t>(339, 20);
+		mpset_pos = Point<int16_t>(339, 36);
+		statset_pos = Point<int16_t>(450, 52);
+		levelset_pos = Point<int16_t>(19, 20);
+		namelabel_pos = Point<int16_t>(50, 18);
+		exp_pos = Point<int16_t>(23, 54);
+		// quickslot_pos 在下方随 right=VWIDTH-800 一并赋值
+
+		if (gauge["hpFlash"]["0"])
+			hpmp_sprites.emplace_back(gauge["hpFlash"]["0"], hpmp_pos);
+
+		if (gauge["mpFlash"]["0"])
+			hpmp_sprites.emplace_back(gauge["mpFlash"]["0"], hpmp_pos + Point<int16_t>(0, 16));
+
+		hpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, 109, 0.0f);
+		mpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, 109, 0.0f);
+		// bar 三联：HP | MP | EXP，每段约 113；MP 从中段起裁。
+		mpbar.set_clip_left(113);
+		expbar = Gauge(Gauge::Type::DEFAULT, classic_exp_temp, static_cast<int16_t>(std::max(200, VWIDTH - 120)), 0.0f);
+
+		if (sb["number"])
+		{
+			statset = Charset(sb["number"], Charset::Alignment::LEFT);
+			hpmpset = Charset(sb["number"], Charset::Alignment::LEFT);
+			levelset = Charset(sb["FontMemo"] ? sb["FontMemo"] : sb["number"], Charset::Alignment::LEFT);
+		}
+
+		namelabel = OutlinedText(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
+
+		// MapleButton 锚点 = CreateCtrl TL + canvas origin（BtShop/Menu/NPT origin 为中心 21,17）。
+		auto add_btn = [&](Buttons id, nl::node node, int16_t x, int16_t y)
+		{
+			if (!node)
+				return;
+
+			Point<int16_t> origin;
+			if (node["normal"]["0"])
+				origin = Texture(node["normal"]["0"]).get_origin();
+
+			buttons[id] = std::make_unique<MapleButton>(
+				node,
+				Point<int16_t>(static_cast<int16_t>(x + origin.x()), static_cast<int16_t>(y + origin.y()))
+			);
+		};
+
+		// IDA CUIStatusBar::OnCreate：全屏高度窗体坐标 → 折算到 CLASSIC_BAR_H=71 底条。
+		// CreateWnd top≈22 / height=578 → 底条相对 y = CreateY - (578-71)。
+		// 800 基准；1280 等宽屏 right = VWIDTH-800 右移右侧控件。
+		int16_t right = static_cast<int16_t>(std::max(0, VWIDTH - 800));
+		quickslot_pos = Point<int16_t>(static_cast<int16_t>(648 + right), -9);
+
+		// y=543 → bar 36；BtNPT 硬编码路径确认 x=629。
+		add_btn(Buttons::BT_CLASSIC_SHOP, sb["BtShop"], static_cast<int16_t>(573 + right), 36);
+		add_btn(Buttons::BT_CLASSIC_NPT, sb["BtNPT"], static_cast<int16_t>(629 + right), 36);
+		add_btn(Buttons::BT_CLASSIC_MENU, sb["BtMenu"], static_cast<int16_t>(685 + right), 36);
+		add_btn(Buttons::BT_CLASSIC_SHORT, sb["BtShort"], static_cast<int16_t>(741 + right), 36);
+
+		// y=515 → bar 8；Equip/Inven/Stat/Skill/KeySet/QS 在右区，非角色头像左侧。
+		add_btn(Buttons::BT_CLASSIC_EQUIP, sb["EquipKey"], static_cast<int16_t>(618 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_INV, sb["InvenKey"], static_cast<int16_t>(648 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_STAT, sb["StatKey"], static_cast<int16_t>(678 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_SKILL, sb["SkillKey"], static_cast<int16_t>(708 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_KEYSET, sb["KeySet"], static_cast<int16_t>(738 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_QS, sb["QuickSlot"], static_cast<int16_t>(768 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_QSD, sb["QuickSlotD"], static_cast<int16_t>(573 + right), 8);
+
+		if (sb["BtWhisper"])
+			add_btn(Buttons::BT_CLASSIC_WHISPER, sb["BtWhisper"], static_cast<int16_t>(376 + right), 45);
+
+		if (sb["BtClaim"])
+			add_btn(Buttons::BT_CLASSIC_CLAIM, sb["BtClaim"], static_cast<int16_t>(396 + right), 45);
+
+		quickslot[0] = classic_quickslot;
+		quickslot_active = true;
+		quickslot_adj = Point<int16_t>(0, 0);
+
+		position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
+		position_x = 0;
+		position_y = position.y();
+		dimension = Point<int16_t>(VWIDTH, CLASSIC_BAR_H);
+
+		refresh_classic_qs_icons();
+	}
+
+	void UIStatusBar::refresh_classic_qs_icons()
+	{
+		// KeyConfig quickslot cluster (2x4): Insert/Home/PgUp/Scroll + Del/End/PgDn/F1
+		static constexpr uint8_t kQsKeys[CLASSIC_QS_SLOTS] = {
+			KeyConfig::Key::INSERT,
+			KeyConfig::Key::HOME,
+			KeyConfig::Key::PAGE_UP,
+			KeyConfig::Key::SCROLL_LOCK,
+			KeyConfig::Key::DELETE,
+			KeyConfig::Key::END,
+			KeyConfig::Key::PAGE_DOWN,
+			KeyConfig::Key::F1
+		};
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+
+		for (size_t i = 0; i < CLASSIC_QS_SLOTS; i++)
+		{
+			classic_qs_icons[i] = Texture();
+			Keyboard::Mapping mapping = keyboard.get_maple_mapping(kQsKeys[i]);
+
+			if (mapping.type == KeyType::Id::SKILL)
+			{
+				const SkillData& skill = SkillData::get(mapping.action);
+				const Texture& icon = skill.get_icon(SkillData::Icon::NORMAL);
+
+				if (icon.is_valid())
+					classic_qs_icons[i] = icon;
+			}
+			else if (mapping.type == KeyType::Id::ITEM)
+			{
+				const ItemData& item = ItemData::get(mapping.action);
+
+				if (item)
+					classic_qs_icons[i] = item.get_icon(false);
+			}
+		}
+	}
+
+	void UIStatusBar::draw_classic(float alpha) const
+	{
+		if (classic_backgrnd)
+			classic_backgrnd.draw(DrawArgument(position, Point<int16_t>(VWIDTH, 0)));
+
+		if (classic_backgrnd2)
+			classic_backgrnd2.draw(position + Point<int16_t>(0, 0));
+
+		if (classic_graduation)
+			classic_graduation.draw(position + Point<int16_t>(220, 12));
+
+		// gauge/bar = HP|MP|EXP 三联图（约 340×31）。HP/MP 各约 109 宽、上下叠放；
+		// 用 CLIP 裁左侧填充，禁止 DEFAULT 把整张 340 拉伸成漂浮条。
+		hpbar.draw(position + hpmp_pos);
+		mpbar.draw(position + hpmp_pos + Point<int16_t>(0, 16));
+		expbar.draw(position + exp_pos);
+
+		for (const Sprite& sprite : hpmp_sprites)
+			sprite.draw(position, alpha);
+
+		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
+		int16_t hp = stats.get_stat(MapleStat::Id::HP);
+		int16_t mp = stats.get_stat(MapleStat::Id::MP);
+		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
+		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
+
+		levelset.draw(std::to_string(level), position + levelset_pos);
+		namelabel.draw(position + namelabel_pos);
+		hpmpset.draw(std::to_string(hp) + "/" + std::to_string(maxhp), position + hpset_pos);
+		hpmpset.draw(std::to_string(mp) + "/" + std::to_string(maxmp), position + mpset_pos);
+
+		std::string expstring = std::to_string(100 * getexppercent());
+		statset.draw(expstring.substr(0, expstring.find('.') + 3) + "%", position + statset_pos);
+
+		if (quickslot_active && classic_quickslot)
+		{
+			classic_quickslot.draw(position + quickslot_pos);
+
+			// 151×80 面板：2×4 槽。Icon 纹理带 +32 y shift，裸 Texture 须同样下移才对齐槽位。
+			constexpr int16_t slot = 32;
+			constexpr int16_t pad_x = 8;
+			constexpr int16_t pad_y = 8;
+			constexpr int16_t gap = 3;
+			constexpr int16_t icon_origin_y = 32;
+
+			for (size_t i = 0; i < CLASSIC_QS_SLOTS; i++)
+			{
+				if (!classic_qs_icons[i])
+					continue;
+
+				int16_t col = static_cast<int16_t>(i % 4);
+				int16_t row = static_cast<int16_t>(i / 4);
+				Point<int16_t> icon_pos = position + quickslot_pos
+					+ Point<int16_t>(pad_x + col * (slot + gap), pad_y + row * (slot + gap) + icon_origin_y);
+				classic_qs_icons[i].draw(icon_pos);
+			}
+		}
+
+		UIElement::draw_buttons(alpha);
+	}
+
+	void UIStatusBar::update_classic()
+	{
+		UIElement::update();
+
+		for (Sprite& sprite : hpmp_sprites)
+			sprite.update();
+
+		expbar.update(getexppercent());
+		hpbar.update(gethppercent());
+		mpbar.update(getmppercent());
+		namelabel.change_text(stats.get_name());
+		refresh_classic_qs_icons();
 	}
 }

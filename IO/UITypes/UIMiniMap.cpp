@@ -24,6 +24,10 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/MapleMap/Npc.h"
+#include "../../Util/Misc.h"
+#include "../../Util/UiAssetResolve.h"
+
+#include <cmath>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -46,23 +50,50 @@ namespace ms
 
 		nl::node UIWindow2 = nl::nx::UI["UIWindow2.img"];
 
+		if (!UIWindow2)
+			UIWindow2 = nl::nx::UI["UIWindow.img"];
+
 		std::string node = simpleMode ? "MiniMapSimpleMode" : "MiniMap";
-		MiniMap = UIWindow2[node];
-		listNpc = UIWindow2["MiniMap"]["ListNpc"];
+		MiniMap = UiAssetResolve::window(node.c_str());
+
+		if (!MiniMap && simpleMode)
+			MiniMap = UiAssetResolve::window("MiniMap");
+
+		listNpc = UiAssetResolve::window("MiniMap")["ListNpc"];
 		MapHelper = nl::nx::Map["MapHelper.img"];
 
-		buttons[Buttons::BT_MIN] = std::make_unique<MapleButton>(MiniMap["BtMin"], Point<int16_t>(195, -6));
-		buttons[Buttons::BT_MAX] = std::make_unique<MapleButton>(MiniMap["BtMax"], Point<int16_t>(209, -6));
-		buttons[Buttons::BT_SMALL] = std::make_unique<MapleButton>(MiniMap["BtSmall"], Point<int16_t>(223, -6));
-		buttons[Buttons::BT_BIG] = std::make_unique<MapleButton>(MiniMap["BtBig"], Point<int16_t>(223, -6));
-		buttons[Buttons::BT_MAP] = std::make_unique<MapleButton>(MiniMap["BtMap"], Point<int16_t>(237, -6));
-		buttons[Buttons::BT_NPC] = std::make_unique<MapleButton>(MiniMap["BtNpc"], Point<int16_t>(276, -6));
+		if (!UiAssetResolve::usable(MiniMap))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
+		if (MiniMap)
+		{
+			// BeiDou UIWindow.img/MiniMap 仅有 BtMap；Min/MaxMap 是窗体底板不是按钮。
+			auto add_mm_btn = [&](Buttons id, nl::node node, Point<int16_t> pos)
+			{
+				if (node && (node["normal"] || node["0"]))
+					buttons[id] = std::make_unique<MapleButton>(node, pos);
+			};
+
+			add_mm_btn(Buttons::BT_MIN, MiniMap["BtMin"], Point<int16_t>(195, -6));
+			add_mm_btn(Buttons::BT_MAX, MiniMap["BtMax"], Point<int16_t>(209, -6));
+			add_mm_btn(Buttons::BT_SMALL, MiniMap["BtSmall"], Point<int16_t>(223, -6));
+			add_mm_btn(Buttons::BT_BIG, MiniMap["BtBig"], Point<int16_t>(223, -6));
+			add_mm_btn(Buttons::BT_MAP, MiniMap["BtMap"], Point<int16_t>(237, -6));
+			add_mm_btn(Buttons::BT_NPC, MiniMap["BtNpc"], Point<int16_t>(276, -6));
+		}
 
 		region_text = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
 		town_text = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
 		combined_text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE);
 
-		marker = Setting<MiniMapDefaultHelpers>::get().load() ? UIWindow2["MiniMapSimpleMode"]["DefaultHelper"] : MapHelper["minimap"];
+		if (Setting<MiniMapDefaultHelpers>::get().load() && UIWindow2["MiniMapSimpleMode"]["DefaultHelper"])
+			marker = UIWindow2["MiniMapSimpleMode"]["DefaultHelper"];
+		else
+			marker = MapHelper["minimap"];
 
 		player_marker = Animation(marker["user"]);
 		selected_marker = Animation(MiniMap["iconNpc"]);
@@ -132,10 +163,48 @@ namespace ms
 			nl::node town = Map["info"]["town"];
 			nl::node miniMap = Map["miniMap"];
 
-			if (!miniMap)
+			// Official tutorial maps ship miniMap canvases up to ~6000px wide.
+			// Uploading those into the 8192 atlas on the main thread freezes the
+			// client (black screen + Not Responding) right after enter-game.
+			// Guard both the width/height metadata AND the canvas bitmap itself —
+			// some packs report small metadata while canvas pixels are huge.
+			constexpr int32_t kMaxCanvasEdge = 2048;
+			int32_t canvas_w = miniMap ? static_cast<int32_t>(miniMap["width"]) : 0;
+			int32_t canvas_h = miniMap ? static_cast<int32_t>(miniMap["height"]) : 0;
+			int32_t bmp_w = 0;
+			int32_t bmp_h = 0;
+
+			if (miniMap)
+			{
+				nl::node canvas_node = miniMap["canvas"];
+
+				if (canvas_node && canvas_node.data_type() == nl::node::type::bitmap)
+				{
+					nl::bitmap canvas_bmp = canvas_node;
+					bmp_w = static_cast<int32_t>(canvas_bmp.width());
+					bmp_h = static_cast<int32_t>(canvas_bmp.height());
+				}
+			}
+
+			const bool meta_bad = !miniMap
+				|| canvas_w <= 0 || canvas_h <= 0
+				|| canvas_w > kMaxCanvasEdge || canvas_h > kMaxCanvasEdge;
+			const bool bmp_bad = bmp_w <= 0 || bmp_h <= 0
+				|| bmp_w > kMaxCanvasEdge || bmp_h > kMaxCanvasEdge;
+			const bool canvas_too_large = meta_bad || bmp_bad;
+
+			if (!miniMap || canvas_too_large)
 			{
 				has_map = false;
 				type = Type::MIN;
+
+				if (canvas_too_large && miniMap)
+				{
+					LOG(LOG_WARN, "UIMiniMap: skip oversized canvas meta="
+						<< canvas_w << "x" << canvas_h
+						<< " bmp=" << bmp_w << "x" << bmp_h
+						<< " map=" << mapid);
+				}
 			}
 			else
 			{
@@ -147,8 +216,23 @@ namespace ms
 					type = user_type;
 			}
 
-			scale = std::pow(2, (int)miniMap["mag"]);
-			center_offset = Point<int16_t>(miniMap["centerX"], miniMap["centerY"]);
+			if (miniMap)
+			{
+				int mag = static_cast<int>(miniMap["mag"]);
+
+				if (mag < 0)
+					mag = 0;
+				else if (mag > 8)
+					mag = 8;
+
+				scale = static_cast<int16_t>(std::pow(2, mag));
+				center_offset = Point<int16_t>(miniMap["centerX"], miniMap["centerY"]);
+			}
+			else
+			{
+				scale = 16;
+				center_offset = {};
+			}
 
 			update_text();
 			update_buttons();
@@ -327,7 +411,8 @@ namespace ms
 			}
 			case BT_MAP:
 			{
-				UI::get().emplace<UIWorldMap>();
+				if (UiAssetResolve::usable(UiAssetResolve::window("WorldMap")))
+					UI::get().emplace<UIWorldMap>();
 				break;
 			}
 			case BT_NPC:
@@ -347,45 +432,61 @@ namespace ms
 
 	void UIMiniMap::update_buttons()
 	{
-		// Add one pixel for a space to the right of each button
-		bt_min_width = buttons[Buttons::BT_MIN]->width() + 1;
-		bt_max_width = buttons[Buttons::BT_MAX]->width() + 1;
-		bt_map_width = buttons[Buttons::BT_MAP]->width() + 1;
+		// Buttons may be missing when UIWindow2/UIWindow MiniMap nodes are incomplete.
+		// 修复：只读访问必须用 find，禁止 map::operator[]（会插入空 unique_ptr 条目，
+		// 导致 UIElement::remove_cursor 遍历时对空指针解引用崩溃 0xC0000005）。
+		auto btn_width = [this](Buttons id) -> int16_t
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end() && it->second) ? it->second->width() + 1 : 0;
+		};
+
+		bt_min_width = btn_width(Buttons::BT_MIN);
+		bt_max_width = btn_width(Buttons::BT_MAX);
+		bt_map_width = btn_width(Buttons::BT_MAP);
 
 		combined_text_width = combined_text.width();
 	}
 
 	void UIMiniMap::toggle_buttons()
 	{
+		auto btn = [this](Buttons id) -> Button*
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end()) ? it->second.get() : nullptr;
+		};
+
 		int16_t bt_min_x;
 
 		if (type == Type::MIN)
 		{
-			buttons[Buttons::BT_MAP]->set_active(true);
-			buttons[Buttons::BT_MAX]->set_active(true);
-			buttons[Buttons::BT_MIN]->set_active(true);
-			buttons[Buttons::BT_NPC]->set_active(false);
-			buttons[Buttons::BT_SMALL]->set_active(false);
-			buttons[Buttons::BT_BIG]->set_active(false);
+			if (Button* b = btn(Buttons::BT_MAP)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_MAX)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_MIN)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_NPC)) b->set_active(false);
+			if (Button* b = btn(Buttons::BT_SMALL)) b->set_active(false);
+			if (Button* b = btn(Buttons::BT_BIG)) b->set_active(false);
 
-			buttons[Buttons::BT_MIN]->set_state(Button::State::DISABLED);
+			if (Button* b = btn(Buttons::BT_MIN))
+				b->set_state(Button::State::DISABLED);
 
-			if (has_map)
-				buttons[Buttons::BT_MAX]->set_state(Button::State::NORMAL);
-			else
-				buttons[Buttons::BT_MAX]->set_state(Button::State::DISABLED);
+			if (Button* b = btn(Buttons::BT_MAX))
+				b->set_state(has_map ? Button::State::NORMAL : Button::State::DISABLED);
 
 			bt_min_x = combined_text_width + 11;
 
-			buttons[Buttons::BT_MIN]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_MIN))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_min_width;
 
-			buttons[Buttons::BT_MAX]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_MAX))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_max_width;
 
-			buttons[Buttons::BT_MAP]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_MAP))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			min_dimensions = Point<int16_t>(bt_min_x + bt_map_width + 7, 20);
 
@@ -399,49 +500,63 @@ namespace ms
 		{
 			bool has_npcs = Stage::get().get_npcs().get_npcs()->size() > 0;
 
-			buttons[Buttons::BT_MAP]->set_active(true);
-			buttons[Buttons::BT_MAX]->set_active(true);
-			buttons[Buttons::BT_MIN]->set_active(true);
-			buttons[Buttons::BT_NPC]->set_active(has_npcs);
+			if (Button* b = btn(Buttons::BT_MAP)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_MAX)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_MIN)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_NPC)) b->set_active(has_npcs);
 
 			if (big_map)
 			{
-				buttons[Buttons::BT_BIG]->set_active(false);
-				buttons[Buttons::BT_SMALL]->set_active(true);
+				if (Button* b = btn(Buttons::BT_BIG)) b->set_active(false);
+				if (Button* b = btn(Buttons::BT_SMALL)) b->set_active(true);
 			}
 			else
 			{
-				buttons[Buttons::BT_BIG]->set_active(true);
-				buttons[Buttons::BT_SMALL]->set_active(false);
+				if (Button* b = btn(Buttons::BT_BIG)) b->set_active(true);
+				if (Button* b = btn(Buttons::BT_SMALL)) b->set_active(false);
 			}
 
-			buttons[Buttons::BT_MIN]->set_state(Button::State::NORMAL);
+			if (Button* b = btn(Buttons::BT_MIN))
+				b->set_state(Button::State::NORMAL);
 
-			bt_min_x = middle_right_x - (bt_min_width + buttons[Buttons::BT_SMALL]->width() + 1 + bt_max_width + bt_map_width + (has_npcs ? buttons[Buttons::BT_NPC]->width() : 0));
+			auto btn_at = [this](Buttons id) -> Button*
+			{
+				auto it = buttons.find(id);
+				return (it != buttons.end()) ? it->second.get() : nullptr;
+			};
 
-			buttons[Buttons::BT_MIN]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			int16_t small_w = btn_at(Buttons::BT_SMALL) ? btn_at(Buttons::BT_SMALL)->width() + 1 : 0;
+			int16_t npc_w = (has_npcs && btn_at(Buttons::BT_NPC)) ? btn_at(Buttons::BT_NPC)->width() : 0;
+
+			bt_min_x = middle_right_x - (bt_min_width + small_w + bt_max_width + bt_map_width + npc_w);
+
+			if (Button* b = btn(Buttons::BT_MIN))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_max_width;
 
-			buttons[Buttons::BT_MAX]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_MAX))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_max_width;
 
-			buttons[Buttons::BT_SMALL]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
-			buttons[Buttons::BT_BIG]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_SMALL))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_BIG))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_max_width;
 
-			buttons[Buttons::BT_MAP]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_MAP))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			bt_min_x += bt_map_width;
 
-			buttons[Buttons::BT_NPC]->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
+			if (Button* b = btn(Buttons::BT_NPC))
+				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
-			if (type == Type::MAX)
-				buttons[Buttons::BT_MAX]->set_state(Button::State::DISABLED);
-			else
-				buttons[Buttons::BT_MAX]->set_state(Button::State::NORMAL);
+			if (Button* b = btn(Buttons::BT_MAX))
+				b->set_state(type == Type::MAX ? Button::State::DISABLED : Button::State::NORMAL);
 
 			set_npclist_active(listNpc_enabled && has_npcs);
 
@@ -463,6 +578,15 @@ namespace ms
 		normal_sprites.clear();
 		max_sprites.clear();
 
+		if (!MiniMap)
+		{
+			min_dimensions = Point<int16_t>(128, 23);
+			normal_dimensions = min_dimensions;
+			max_dimensions = min_dimensions;
+			dimension = min_dimensions;
+			return;
+		}
+
 		nl::node Min, Normal, Max;
 
 		if (simpleMode)
@@ -478,8 +602,20 @@ namespace ms
 			Max = MiniMap["MaxMap"];
 		}
 
-		map_sprite = Texture(Map["miniMap"]["canvas"]);
-		Point<int16_t> map_dimensions = map_sprite.get_dimensions();
+		Point<int16_t> map_dimensions(0, 0);
+
+		// Only decode/upload the miniMap canvas when we actually draw it.
+		// Giant tutorial canvases (e.g. 5944x1311) must never hit the atlas here.
+		// has_map already incorporates bitmap-edge checks before Texture().
+		if (has_map)
+		{
+			map_sprite = Texture(Map["miniMap"]["canvas"]);
+			map_dimensions = map_sprite.get_dimensions();
+		}
+		else
+		{
+			map_sprite = Texture();
+		}
 
 		// 48 (offset for text) + longer text's width + 10 (space for right side border)
 		int16_t mark_text_width = 48 + std::max(region_text.width(), town_text.width()) + 10;
