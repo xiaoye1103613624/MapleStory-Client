@@ -19,6 +19,30 @@
 
 namespace ms
 {
+	namespace
+	{
+		// WZ 字符集节点名 → 实际字符。
+		// v83 的 StatusBar.img/number 用可读转义名表示非字母数字字形：
+		//   Lbracket -> '['   Rbracket -> ']'   slash -> '/'   percent -> '%'
+		// 旧实现只取节点名首字符，导致 '[' 映射成 'L'、'/' 映射成 's'、'%' 映射成 'p'，
+		// 于是 HP/MP 的 "hp/maxhp" 与 EXP 的 "12%" 全部画错（表现为 "000" 之类的乱码）。
+		// 反斜杠名（'\'）在部分 WZ 里代表 '/'，一并处理。
+		char charset_char(const std::string& name)
+		{
+			if (name == "Lbracket")
+				return '[';
+			if (name == "Rbracket")
+				return ']';
+			if (name == "slash" || name == "\\")
+				return '/';
+			if (name == "percent")
+				return '%';
+
+			// 其余（数字 0-9 等）节点名即字符本身。
+			return name.empty() ? '\0' : name[0];
+		}
+	}
+
 	Charset::Charset() : Charset({}, Charset::Alignment::LEFT) {}
 
 	Charset::Charset(nl::node src, Alignment alignment) : alignment(alignment)
@@ -30,10 +54,10 @@ namespace ms
 			if (node.data_type() != nl::node::type::bitmap || name.empty())
 				continue;
 
-			char c = *name.begin();
+			char c = charset_char(name);
 
-			if (c == '\\')
-				c = '/';
+			if (c == '\0')
+				continue;
 
 			chars.emplace(c, node);
 		}

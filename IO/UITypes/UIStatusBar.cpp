@@ -54,6 +54,9 @@
 #include <nlnx/nx.hpp>
 #endif
 
+// 经典底条的分段裁框使用 Range<int16_t>（Texture::draw 的水平裁剪参数）。
+#include "../../Template/Range.h"
+
 namespace ms
 {
 	UIStatusBar::UIStatusBar(const CharStats& st) : stats(st)
@@ -1299,33 +1302,74 @@ namespace ms
 
 		classic_backgrnd = Texture(base["backgrnd"]);
 		classic_backgrnd2 = Texture(base["backgrnd2"]);
-		classic_quickslot = Texture(base["quickSlot"]);
 		classic_graduation = Texture(gauge["graduation"]);
 		classic_gauge_bar = Texture(gauge["bar"]);
-		classic_exp_gray = Texture(gauge["gray"]);
-		classic_exp_temp = Texture(gauge["tempExp"]);
 
-		// HP/MP fill uses gauge/bar clipped by Gauge; flash canvases as cover sprites.
-		hpmp_pos = Point<int16_t>(233, 16);
-		hpset_pos = Point<int16_t>(339, 20);
-		mpset_pos = Point<int16_t>(339, 36);
-		statset_pos = Point<int16_t>(450, 52);
-		levelset_pos = Point<int16_t>(19, 20);
-		namelabel_pos = Point<int16_t>(50, 18);
-		exp_pos = Point<int16_t>(23, 54);
-		// quickslot_pos 在下方随 right=VWIDTH-800 一并赋值
+		// 快捷栏面板按槽数取图集变体：quickSlot08=151x80(4列x2行=8槽)、
+		// quickSlot=466x80(13列=26槽)、quickSlot32=571x80(16列=32槽)。
+		// 经典底条只有 8 个键位（Insert/Home/PgUp/Scroll + Del/End/PgDn/F1），
+		// 且 IDA 的 CreateCtrl x=648 只有配 151 宽才恰好落在 800 网格内（648+151=799）；
+		// 旧代码取 466 宽的 quickSlot 却按 151 宽摆放，右侧 314px 被截出屏外。
+		classic_quickslot = Texture(base["quickSlot08"] ? base["quickSlot08"] : base["quickSlot"]);
 
+		// ============ 经典底条布局（800 设计网格，bar 原点整体居中）============
+		// 权威来源：
+		//  a) IDA BeiDou v17.7 脚本化 CreateCtrl(node, id, x, y, type)（sub_8D01B2）：
+		//       BtShop=1000/(573,543)  BtNPT=1001/(629,543)  BtMenu=1002/(685,543)
+		//       BtShort=1007/(741,543)  EquipKey=2000/(618,515) InvenKey=2001/(648,515)
+		//       StatKey=2002/(678,515) SkillKey=2003/(708,515) KeySet=2004/(738,515)
+		//       QuickSlot=2005/(768,515) QuickSlotD=2006/(573,515)
+		//     创建窗体高 578、top≈22 → 底条相对 y = CreateY - 507：543→36、515→8。
+		//     x 末端 741+54=795 / 768+28=796，证明设计网格宽 800（而非右移贴边）。
+		//  b) StatusBar.img 节点实测（resource-probe 递归 dump）：
+		//       base/backgrnd  817x71  ← 固定尺寸精灵，旧代码拉伸到 VWIDTH 会失真
+		//       base/backgrnd2 570x71  ← 叠加层：上带亮板 y6..29（名字）；
+		//                                下带深色量表面板 y36..69 x0..562，LV 盒 x0..84
+		//       gauge/bar & gauge/graduation 340x31 三联图集（同行排列，非上下叠放）：
+		//         填充 HP 红 x2..106 / MP 蓝 x110..214 / EXP 绿 x223..337，均 y15..28
+		//         边框 HP x0..107  / MP x109..215  / EXP x222..339，均 y15..30
+		//       gauge/hpFlash|mpFlash 109x18（5 帧闪光覆盖层）
+		//       number 字符集 0-9(5x7)+Lbracket/Rbracket(2x9)+slash/percent(7x7)，无 '.' 字形
+		//       FontMemo 0-9(6x7) 等级数字
+		//       base/quickSlot08 151x80 = 4列x2行；槽 28x28，列距 35（首槽 x=9），行距 34（首行 y=9）
+		//  c) 分辨率：北斗把 800 宽设计网格整体居中 left=(VWIDTH-800)/2，不拉伸也不右移。
+		constexpr int16_t BAR_GRID_W = 800;
+
+		// 量表三联同行：图集 340 宽在 570 宽面板中水平居中；边框 y15..30 落在面板 y38..53。
+		constexpr int16_t GAUGE_X = 115;
+		constexpr int16_t GAUGE_Y = 23;
+		// 图集内分段左裁量（CLIP 模式把分段平移到绘制点）。
+		constexpr int16_t SEG_HP = 0;
+		constexpr int16_t SEG_MP = 109;
+		constexpr int16_t SEG_EXP = 222;
+		constexpr int16_t GAUGE_LEN = 109;
+
+		hpmp_pos = Point<int16_t>(GAUGE_X, GAUGE_Y);
+		exp_pos = Point<int16_t>(GAUGE_X, GAUGE_Y);
+		// 数值行：量表框 y38..53 之下方面板 y56..63。
+		hpset_pos = Point<int16_t>(GAUGE_X, 56);
+		mpset_pos = Point<int16_t>(static_cast<int16_t>(GAUGE_X + 110), 56);
+		statset_pos = Point<int16_t>(static_cast<int16_t>(GAUGE_X + 222), 56);
+		// LV 盒 x0..84 y38..60，位图内已含 "LV." 字样（x6..26 y46..58），数字接排其后。
+		levelset_pos = Point<int16_t>(31, 47);
+		// 名字：上带亮板 y6..29。
+		namelabel_pos = Point<int16_t>(88, 9);
+
+		// 三联填充：同一图集按分段裁剪，HP/MP/EXP 各绘在各自分段起点。
+		hpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, GAUGE_LEN, 0.0f);
+		hpbar.set_clip_left(SEG_HP);
+		mpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, GAUGE_LEN, 0.0f);
+		mpbar.set_clip_left(SEG_MP);
+		expbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, static_cast<int16_t>(GAUGE_LEN + 9), 0.0f);
+		expbar.set_clip_left(SEG_EXP);
+
+		// 闪光覆盖层对齐各分段可视框：图集帧从 y15 起，故可视 y = GAUGE_Y + 15，
+		// 再按 109x18 外扩 1px。（此前误用 GAUGE_Y，闪光画到了亮板上。）
 		if (gauge["hpFlash"]["0"])
-			hpmp_sprites.emplace_back(gauge["hpFlash"]["0"], hpmp_pos);
+			hpmp_sprites.emplace_back(gauge["hpFlash"]["0"], hpmp_pos + Point<int16_t>(-1, 14));
 
 		if (gauge["mpFlash"]["0"])
-			hpmp_sprites.emplace_back(gauge["mpFlash"]["0"], hpmp_pos + Point<int16_t>(0, 16));
-
-		hpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, 109, 0.0f);
-		mpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, 109, 0.0f);
-		// bar 三联：HP | MP | EXP，每段约 113；MP 从中段起裁。
-		mpbar.set_clip_left(113);
-		expbar = Gauge(Gauge::Type::DEFAULT, classic_exp_temp, static_cast<int16_t>(std::max(200, VWIDTH - 120)), 0.0f);
+			hpmp_sprites.emplace_back(gauge["mpFlash"]["0"], hpmp_pos + Point<int16_t>(108, 14));
 
 		if (sb["number"])
 		{
@@ -1336,7 +1380,8 @@ namespace ms
 
 		namelabel = OutlinedText(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 
-		// MapleButton 锚点 = CreateCtrl TL + canvas origin（BtShop/Menu/NPT origin 为中心 21,17）。
+		// MapleButton 锚点 = CreateCtrl TL + canvas origin（StatusBar.img 各按钮 origin 实测均为 (0,0)，
+		// 故锚点即网格坐标本身；保留 origin 相加以防更换资源后 origin 非零）。
 		auto add_btn = [&](Buttons id, nl::node node, int16_t x, int16_t y)
 		{
 			if (!node)
@@ -1352,41 +1397,37 @@ namespace ms
 			);
 		};
 
-		// IDA CUIStatusBar::OnCreate：全屏高度窗体坐标 → 折算到 CLASSIC_BAR_H=71 底条。
-		// CreateWnd top≈22 / height=578 → 底条相对 y = CreateY - (578-71)。
-		// 800 基准；1280 等宽屏 right = VWIDTH-800 右移右侧控件。
-		int16_t right = static_cast<int16_t>(std::max(0, VWIDTH - 800));
-		quickslot_pos = Point<int16_t>(static_cast<int16_t>(648 + right), -9);
+		// IDA CreateCtrl：y=543 → 底条 36；y=515 → 底条 8。800 网格原值，不再加 right 偏移。
+		add_btn(Buttons::BT_CLASSIC_SHOP, sb["BtShop"], 573, 36);
+		add_btn(Buttons::BT_CLASSIC_NPT, sb["BtNPT"], 629, 36);
+		add_btn(Buttons::BT_CLASSIC_MENU, sb["BtMenu"], 685, 36);
+		add_btn(Buttons::BT_CLASSIC_SHORT, sb["BtShort"], 741, 36);
 
-		// y=543 → bar 36；BtNPT 硬编码路径确认 x=629。
-		add_btn(Buttons::BT_CLASSIC_SHOP, sb["BtShop"], static_cast<int16_t>(573 + right), 36);
-		add_btn(Buttons::BT_CLASSIC_NPT, sb["BtNPT"], static_cast<int16_t>(629 + right), 36);
-		add_btn(Buttons::BT_CLASSIC_MENU, sb["BtMenu"], static_cast<int16_t>(685 + right), 36);
-		add_btn(Buttons::BT_CLASSIC_SHORT, sb["BtShort"], static_cast<int16_t>(741 + right), 36);
-
-		// y=515 → bar 8；Equip/Inven/Stat/Skill/KeySet/QS 在右区，非角色头像左侧。
-		add_btn(Buttons::BT_CLASSIC_EQUIP, sb["EquipKey"], static_cast<int16_t>(618 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_INV, sb["InvenKey"], static_cast<int16_t>(648 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_STAT, sb["StatKey"], static_cast<int16_t>(678 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_SKILL, sb["SkillKey"], static_cast<int16_t>(708 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_KEYSET, sb["KeySet"], static_cast<int16_t>(738 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_QS, sb["QuickSlot"], static_cast<int16_t>(768 + right), 8);
-		add_btn(Buttons::BT_CLASSIC_QSD, sb["QuickSlotD"], static_cast<int16_t>(573 + right), 8);
+		add_btn(Buttons::BT_CLASSIC_EQUIP, sb["EquipKey"], 618, 8);
+		add_btn(Buttons::BT_CLASSIC_INV, sb["InvenKey"], 648, 8);
+		add_btn(Buttons::BT_CLASSIC_STAT, sb["StatKey"], 678, 8);
+		add_btn(Buttons::BT_CLASSIC_SKILL, sb["SkillKey"], 708, 8);
+		add_btn(Buttons::BT_CLASSIC_KEYSET, sb["KeySet"], 738, 8);
+		add_btn(Buttons::BT_CLASSIC_QS, sb["QuickSlot"], 768, 8);
+		add_btn(Buttons::BT_CLASSIC_QSD, sb["QuickSlotD"], 573, 8);
 
 		if (sb["BtWhisper"])
-			add_btn(Buttons::BT_CLASSIC_WHISPER, sb["BtWhisper"], static_cast<int16_t>(376 + right), 45);
+			add_btn(Buttons::BT_CLASSIC_WHISPER, sb["BtWhisper"], 376, 45);
 
 		if (sb["BtClaim"])
-			add_btn(Buttons::BT_CLASSIC_CLAIM, sb["BtClaim"], static_cast<int16_t>(396 + right), 45);
+			add_btn(Buttons::BT_CLASSIC_CLAIM, sb["BtClaim"], 396, 45);
 
 		quickslot[0] = classic_quickslot;
 		quickslot_active = true;
 		quickslot_adj = Point<int16_t>(0, 0);
+		// quickSlot08 151x80：面板上沿高出底条 9px（y=-9），与 71 高的底条合计 80。
+		quickslot_pos = Point<int16_t>(648, -9);
 
-		position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
+		// 800 设计网格整体居中：left=(VWIDTH-800)/2。底条贴屏幕底部。
+		position = Point<int16_t>(static_cast<int16_t>(std::max(0, VWIDTH - BAR_GRID_W) / 2), static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
 		position_x = 0;
 		position_y = position.y();
-		dimension = Point<int16_t>(VWIDTH, CLASSIC_BAR_H);
+		dimension = Point<int16_t>(BAR_GRID_W, CLASSIC_BAR_H);
 
 		refresh_classic_qs_icons();
 	}
@@ -1432,20 +1473,49 @@ namespace ms
 
 	void UIStatusBar::draw_classic(float alpha) const
 	{
+		// backgrnd 是 817x71 固定尺寸精灵：按自然尺寸绘制。
+		// 旧代码用 DrawArgument(position, Point<int16_t>(VWIDTH, 0)) 把它拉伸到整个屏宽，
+		// 金属边框被横向拉扁，是 HUD 整体失真的主因之一。
 		if (classic_backgrnd)
-			classic_backgrnd.draw(DrawArgument(position, Point<int16_t>(VWIDTH, 0)));
+			classic_backgrnd.draw(position);
 
 		if (classic_backgrnd2)
-			classic_backgrnd2.draw(position + Point<int16_t>(0, 0));
+			classic_backgrnd2.draw(position);
 
+		// gauge/graduation 与 gauge/bar 同为 340x31 三联图集（HP|MP|EXP 同行）。
+		// 边框逐段用水平 Range 裁出，锚在该段绘制点；填充由 Gauge(CLIP) 裁同段。
 		if (classic_graduation)
-			classic_graduation.draw(position + Point<int16_t>(220, 12));
+		{
+			constexpr int16_t atlas_w = 340;
 
-		// gauge/bar = HP|MP|EXP 三联图（约 340×31）。HP/MP 各约 109 宽、上下叠放；
-		// 用 CLIP 裁左侧填充，禁止 DEFAULT 把整张 340 拉伸成漂浮条。
+			// HP 段：图集 x0..107（108 宽）
+			classic_graduation.draw(
+				DrawArgument(position + hpmp_pos),
+				{},
+				Range<int16_t>(0, static_cast<int16_t>(atlas_w - 108))
+			);
+
+			// MP 段：图集 x109..215（107 宽）
+			classic_graduation.draw(
+				DrawArgument(position + hpmp_pos + Point<int16_t>(-109, 0)),
+				{},
+				Range<int16_t>(109, static_cast<int16_t>(atlas_w - 216))
+			);
+
+			// EXP 段：图集 x222..339（118 宽）
+			classic_graduation.draw(
+				DrawArgument(position + hpmp_pos + Point<int16_t>(-222, 0)),
+				{},
+				Range<int16_t>(222, 0)
+			);
+		}
+
+		// Gauge(CLIP) 的 -clip_left 平移会与 GraphicsGL Range 的 +first 平移抵消，
+		// 使每个分段都锚定在传入的 x 上；因此三段填充必须各传自己分段的 x，
+		// 否则 MP/EXP 会叠画在 HP 之上（表现为 HP 条被蓝色覆盖）。
 		hpbar.draw(position + hpmp_pos);
-		mpbar.draw(position + hpmp_pos + Point<int16_t>(0, 16));
-		expbar.draw(position + exp_pos);
+		mpbar.draw(position + hpmp_pos + Point<int16_t>(109, 0));
+		expbar.draw(position + hpmp_pos + Point<int16_t>(222, 0));
 
 		for (const Sprite& sprite : hpmp_sprites)
 			sprite.draw(position, alpha);
@@ -1461,29 +1531,37 @@ namespace ms
 		hpmpset.draw(std::to_string(hp) + "/" + std::to_string(maxhp), position + hpset_pos);
 		hpmpset.draw(std::to_string(mp) + "/" + std::to_string(maxmp), position + mpset_pos);
 
-		std::string expstring = std::to_string(100 * getexppercent());
-		statset.draw(expstring.substr(0, expstring.find('.') + 3) + "%", position + statset_pos);
+		// number 字符集没有 '.' 字形（0-9 + [ ] / %），真客户端也不显示小数：
+		// 旧代码 substr(0, find('.')+3) 在无小数点时把整个串后面多截 3 字符，画出一串错字（"000"）。
+		int32_t exppercent = static_cast<int32_t>(100.0f * getexppercent());
+		statset.draw(std::to_string(exppercent) + "%", position + statset_pos);
 
 		if (quickslot_active && classic_quickslot)
 		{
 			classic_quickslot.draw(position + quickslot_pos);
 
-			// 151×80 面板：2×4 槽。Icon 纹理带 +32 y shift，裸 Texture 须同样下移才对齐槽位。
-			constexpr int16_t slot = 32;
-			constexpr int16_t pad_x = 8;
-			constexpr int16_t pad_y = 8;
-			constexpr int16_t gap = 3;
-			constexpr int16_t icon_origin_y = 32;
+			// quickSlot08 151x80 = 4列x2行：槽 28x28，列距 35（首槽 x=9），行距 34（首行 y=9）。
+			// 图标纹理自带 +32 y 偏移（WZ 图标锚点在贴图下方），裸 Texture 须同样下移。
+			constexpr int16_t slot = 28;
+			constexpr int16_t pitch_x = 35;
+			constexpr int16_t pitch_y = 34;
+			constexpr int16_t first_x = 9;
+			constexpr int16_t first_y = 9;
+			constexpr int16_t icon_shift_y = 32;
+			constexpr int16_t cols = 4;
 
 			for (size_t i = 0; i < CLASSIC_QS_SLOTS; i++)
 			{
 				if (!classic_qs_icons[i])
 					continue;
 
-				int16_t col = static_cast<int16_t>(i % 4);
-				int16_t row = static_cast<int16_t>(i / 4);
+				int16_t col = static_cast<int16_t>(i % cols);
+				int16_t row = static_cast<int16_t>(i / cols);
 				Point<int16_t> icon_pos = position + quickslot_pos
-					+ Point<int16_t>(pad_x + col * (slot + gap), pad_y + row * (slot + gap) + icon_origin_y);
+					+ Point<int16_t>(
+						static_cast<int16_t>(first_x + col * pitch_x),
+						static_cast<int16_t>(first_y + row * pitch_y + icon_shift_y)
+					);
 				classic_qs_icons[i].draw(icon_pos);
 			}
 		}

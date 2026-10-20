@@ -57,16 +57,24 @@ namespace ms
 		void toggle_menu();
 		void remove_menus();
 		bool is_menu_active();
+		bool is_classic() const { return classic_mode; }
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
 		static constexpr int16_t QUICKSLOT_MAX = 211;
+		static constexpr int16_t CLASSIC_BAR_H = 71;
 
 		float getexppercent() const;
 		float gethppercent() const;
 		float getmppercent() const;
+
+		void init_modern();
+		void init_classic();
+		void draw_classic(float alpha) const;
+		void update_classic();
+		void refresh_classic_qs_icons();
 
 		void toggle_qs(bool quick_slot_active);
 		void toggle_setting();
@@ -113,7 +121,21 @@ namespace ms
 			BT_CHARACTER_EQUIP,
 			BT_CHARACTER_ITEM,
 			BT_EVENT_SCHEDULE,
-			BT_EVENT_DAILY
+			BT_EVENT_DAILY,
+			// v83 StatusBar.img direct keys
+			BT_CLASSIC_SHOP,
+			BT_CLASSIC_MENU,
+			BT_CLASSIC_NPT,
+			BT_CLASSIC_SHORT,
+			BT_CLASSIC_WHISPER,
+			BT_CLASSIC_CLAIM,
+			BT_CLASSIC_EQUIP,
+			BT_CLASSIC_INV,
+			BT_CLASSIC_STAT,
+			BT_CLASSIC_SKILL,
+			BT_CLASSIC_KEYSET,
+			BT_CLASSIC_QS,
+			BT_CLASSIC_QSD
 		};
 
 		const CharStats& stats;
@@ -129,6 +151,16 @@ namespace ms
 		Texture menubackground[3];
 		OutlinedText namelabel;
 		std::vector<Sprite> hpmp_sprites;
+
+		static constexpr size_t CLASSIC_QS_SLOTS = 8;
+
+		// Classic StatusBar.img chrome
+		Texture classic_backgrnd;
+		Texture classic_backgrnd2;
+		Texture classic_quickslot;
+		Texture classic_graduation;
+		Texture classic_gauge_bar;
+		Texture classic_qs_icons[CLASSIC_QS_SLOTS];
 
 		Point<int16_t> exp_pos;
 		Point<int16_t> hpmp_pos;
@@ -158,5 +190,6 @@ namespace ms
 		bool community_active;
 		bool character_active;
 		bool event_active;
+		bool classic_mode;
 	};
 }
