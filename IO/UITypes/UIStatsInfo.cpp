@@ -28,6 +28,8 @@
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Util/UiAssetResolve.h"
 
+#include "../../Character/ExpTable.h"
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -73,6 +75,7 @@ namespace ms
 
 		nl::node main = Stat["main"];
 		bool classic = !UiAssetResolve::usable(main);
+		this->classic = classic;
 
 		if (classic)
 			main = Stat;
@@ -83,12 +86,18 @@ namespace ms
 
 		if (classic)
 		{
+			// v83 经典布局：主窗只绘 backgrnd（208x347，标签行烘焙在精灵里）。
+			// backgrnd2（218x203）是「详细」属性板——仅详细模式绘于窗口右侧；
+			// basicStat（159x121）是「基本属性点」帮助弹框——绘于窗口上方。
+			// 旧实现把三者叠绘在 (0,0)，详细板与帮助框会盖住主窗上半部
+			// （用户截图中的行错乱/重影），坐标依据见
+			// docs/features/beidou-v17-parity/notes/r05-ui-layout.md §1。
 			if (Stat["backgrnd"])
 				sprites.emplace_back(Stat["backgrnd"]);
-			if (Stat["backgrnd2"])
-				sprites.emplace_back(Stat["backgrnd2"]);
-			if (Stat["basicStat"])
-				sprites.emplace_back(Stat["basicStat"]);
+
+			classic_detail = Texture(Stat["backgrnd2"]);
+			classic_help = Texture(Stat["basicStat"]);
+			classic_help_dim = classic_help.get_dimensions();
 		}
 		else
 		{
@@ -193,19 +202,42 @@ namespace ms
 		Point<int16_t> statoffset = Point<int16_t>(73, 29);
 		int16_t statoffset_y = 18;
 
-		statoffsets[StatLabel::NAME] = statoffset;
-		statoffsets[StatLabel::JOB] = statoffset + Point<int16_t>(1, statoffset_y * 1);
-		statoffsets[StatLabel::GUILD] = statoffset + Point<int16_t>(1, statoffset_y * 2);
-		statoffsets[StatLabel::FAME] = statoffset + Point<int16_t>(1, statoffset_y * 3);
-		statoffsets[StatLabel::MIN_DAMAGE] = statoffset + Point<int16_t>(15, statoffset_y * 4);
-		statoffsets[StatLabel::MAX_DAMAGE] = statoffset + Point<int16_t>(19, statoffset_y * 5);
-		statoffsets[StatLabel::HP] = statoffset + Point<int16_t>(1, statoffset_y * 6);
-		statoffsets[StatLabel::MP] = statoffset + Point<int16_t>(1, statoffset_y * 7);
-		statoffsets[StatLabel::AP] = statoffset + Point<int16_t>(19, 167);
-		statoffsets[StatLabel::STR] = statoffset + Point<int16_t>(1, 196);
-		statoffsets[StatLabel::DEX] = statoffset + Point<int16_t>(1, 214);
-		statoffsets[StatLabel::INT] = statoffset + Point<int16_t>(1, 232);
-		statoffsets[StatLabel::LUK] = statoffset + Point<int16_t>(1, 250);
+		if (classic)
+		{
+			// v83 Stat/backgrnd（208x347）芯片行实测（r05-ui-layout.md §1）：
+			// 名字31/职业49/等级77/家族95/HP113/MP131/经验值149/人气度167；
+			// 能力值输入框 (62..86, 215..227)；力量243/敏捷271/智力297/运气325。
+			// 信息行芯片右缘 x=54，取值文本自 x=60 起；AP 右对齐至框右缘 84。
+			statoffsets[StatLabel::NAME] = Point<int16_t>(60, 31);
+			statoffsets[StatLabel::JOB] = Point<int16_t>(61, 49);
+			statoffsets[StatLabel::LEVEL] = Point<int16_t>(61, 77);
+			statoffsets[StatLabel::GUILD] = Point<int16_t>(61, 95);
+			statoffsets[StatLabel::HP] = Point<int16_t>(61, 113);
+			statoffsets[StatLabel::MP] = Point<int16_t>(61, 131);
+			statoffsets[StatLabel::EXP] = Point<int16_t>(61, 149);
+			statoffsets[StatLabel::FAME] = Point<int16_t>(61, 167);
+			statoffsets[StatLabel::AP] = Point<int16_t>(84, 216);
+			statoffsets[StatLabel::STR] = Point<int16_t>(61, 243);
+			statoffsets[StatLabel::DEX] = Point<int16_t>(61, 271);
+			statoffsets[StatLabel::INT] = Point<int16_t>(61, 297);
+			statoffsets[StatLabel::LUK] = Point<int16_t>(61, 325);
+		}
+		else
+		{
+			statoffsets[StatLabel::NAME] = statoffset;
+			statoffsets[StatLabel::JOB] = statoffset + Point<int16_t>(1, statoffset_y * 1);
+			statoffsets[StatLabel::GUILD] = statoffset + Point<int16_t>(1, statoffset_y * 2);
+			statoffsets[StatLabel::FAME] = statoffset + Point<int16_t>(1, statoffset_y * 3);
+			statoffsets[StatLabel::MIN_DAMAGE] = statoffset + Point<int16_t>(15, statoffset_y * 4);
+			statoffsets[StatLabel::MAX_DAMAGE] = statoffset + Point<int16_t>(19, statoffset_y * 5);
+			statoffsets[StatLabel::HP] = statoffset + Point<int16_t>(1, statoffset_y * 6);
+			statoffsets[StatLabel::MP] = statoffset + Point<int16_t>(1, statoffset_y * 7);
+			statoffsets[StatLabel::AP] = statoffset + Point<int16_t>(19, 167);
+			statoffsets[StatLabel::STR] = statoffset + Point<int16_t>(1, 196);
+			statoffsets[StatLabel::DEX] = statoffset + Point<int16_t>(1, 214);
+			statoffsets[StatLabel::INT] = statoffset + Point<int16_t>(1, 232);
+			statoffsets[StatLabel::LUK] = statoffset + Point<int16_t>(1, 250);
+		}
 
 		// Detailed
 		statlabels[StatLabel::MIN_DAMAGE_DETAILED] = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::EMPEROR);
@@ -271,13 +303,31 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
+		// v83：「基本属性点」帮助弹框。参考端该框位于主窗上方（不叠窗内容）；
+		// 上方空间不足时改放窗口下方，避免越屏（r05-ui-layout.md §1）。
+		if (classic && classic_help.is_valid())
+		{
+			int16_t help_y = position.y() - classic_help_dim.y() - 2;
+
+			if (help_y < 0)
+				help_y = position.y() + dimension.y() + 2;
+
+			classic_help.draw(DrawArgument(position + Point<int16_t>(2, static_cast<int16_t>(help_y - position.y())), alpha));
+		}
+
 		if (jobId == Job::Level::BEGINNER)
 		{
 			cover0.draw(position, alpha);
 			cover1.draw(position, alpha);
 		}
 
-		if (showdetail && textures_detail.size() >= 4)
+		if (classic)
+		{
+			// v83：「详细」属性板（backgrnd2 218x203）仅在详细模式绘于窗口右侧。
+			if (showdetail && classic_detail.is_valid())
+				classic_detail.draw(DrawArgument(position + Point<int16_t>(212, 0), alpha));
+		}
+		else if (showdetail && textures_detail.size() >= 4)
 		{
 			Point<int16_t> detail_pos(position + Point<int16_t>(212, 0));
 
@@ -293,23 +343,44 @@ namespace ms
 			inner_ability[false].draw(detail_pos + Point<int16_t>(0, 38));
 		}
 
-		size_t last = showdetail ? StatLabel::NUM_LABELS : StatLabel::NUM_NORMAL;
-
-		for (size_t i = 0; i < last; i++)
+		if (classic)
 		{
-			Point<int16_t> labelpos = position + statoffsets[i];
+			// v83 八信息行 + 能力值 + 四属性（芯片行实测，r05-ui-layout.md §1）。
+			// 与 GMS 现代分支不同：新手也显示能力值/四属性行（backgrnd 已烘焙该区）。
+			static const StatLabel classic_normal[] = {
+				StatLabel::NAME, StatLabel::JOB, StatLabel::LEVEL, StatLabel::GUILD,
+				StatLabel::HP, StatLabel::MP, StatLabel::EXP, StatLabel::FAME
+			};
 
-			if (i >= StatLabel::NUM_NORMAL)
-				labelpos.shift_x(213);
+			for (StatLabel label : classic_normal)
+				statlabels[label].draw(position + statoffsets[label]);
 
-			if (jobId == Job::Level::BEGINNER)
+			statlabels[StatLabel::AP].draw(position + statoffsets[StatLabel::AP]);
+			statlabels[StatLabel::STR].draw(position + statoffsets[StatLabel::STR]);
+			statlabels[StatLabel::DEX].draw(position + statoffsets[StatLabel::DEX]);
+			statlabels[StatLabel::INT].draw(position + statoffsets[StatLabel::INT]);
+			statlabels[StatLabel::LUK].draw(position + statoffsets[StatLabel::LUK]);
+		}
+		else
+		{
+			size_t last = showdetail ? StatLabel::NUM_LABELS : StatLabel::NUM_NORMAL;
+
+			for (size_t i = 0; i < last; i++)
 			{
-				if (i < AP || i > NUM_NORMAL)
+				Point<int16_t> labelpos = position + statoffsets[i];
+
+				if (i >= StatLabel::NUM_NORMAL)
+					labelpos.shift_x(213);
+
+				if (jobId == Job::Level::BEGINNER)
+				{
+					if (i < AP || i > NUM_NORMAL)
+						statlabels[i].draw(labelpos);
+				}
+				else
+				{
 					statlabels[i].draw(labelpos);
-			}
-			else
-			{
-				statlabels[i].draw(labelpos);
+				}
 			}
 		}
 
@@ -348,6 +419,9 @@ namespace ms
 			update_ap();
 
 		statlabels[StatLabel::NAME].change_text(stats.get_name());
+		statlabels[StatLabel::LEVEL].change_text(std::to_string(stats.get_stat(MapleStat::Id::LEVEL)));
+		update_exp_label();
+
 		statlabels[StatLabel::GUILD].change_text("-");
 		statlabels[StatLabel::HP].change_text(std::to_string(stats.get_stat(MapleStat::Id::HP)) + " / " + std::to_string(stats.get_total(EquipStat::Id::HP)));
 		statlabels[StatLabel::MP].change_text(std::to_string(stats.get_stat(MapleStat::Id::MP)) + " / " + std::to_string(stats.get_total(EquipStat::Id::MP)));
@@ -418,7 +492,18 @@ namespace ms
 				update_simple(StatLabel::FAME, MapleStat::Id::FAME);
 				break;
 			}
-		}
+			case MapleStat::Id::LEVEL:
+			{
+				statlabels[StatLabel::LEVEL].change_text(std::to_string(stats.get_stat(MapleStat::Id::LEVEL)));
+				update_exp_label();
+				break;
+			}
+			case MapleStat::Id::EXP:
+			{
+				update_exp_label();
+				break;
+			}
+			}
 	}
 
 	Button::State UIStatsInfo::button_pressed(uint16_t id)
@@ -585,6 +670,24 @@ namespace ms
 				b->set_state(newstate);
 
 		hasap = nowap;
+	}
+
+	// v83 经典窗「经验值」行：当前经验(百分比%)，百分比与 UIStatusBar::getexppercent 同源
+	void UIStatsInfo::update_exp_label()
+	{
+		int16_t level = static_cast<int16_t>(stats.get_stat(MapleStat::Id::LEVEL));
+		int64_t exp = stats.get_exp();
+		std::string exptext = std::to_string(exp);
+
+		if (level > 0 && level < ExpTable::LEVELCAP)
+		{
+			int32_t pct = static_cast<int32_t>(
+				static_cast<double>(exp) / static_cast<double>(ExpTable::values[level]) * 100.0
+				);
+			exptext += "(" + std::to_string(pct) + "%)";
+		}
+
+		statlabels[StatLabel::EXP].change_text(exptext);
 	}
 
 	void UIStatsInfo::update_simple(StatLabel label, MapleStat::Id stat)

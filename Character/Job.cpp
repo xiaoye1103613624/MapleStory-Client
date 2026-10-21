@@ -102,131 +102,133 @@ namespace ms
 		return level;
 	}
 
+	// v83 参考端（BeiDou V17.7）职业名为中文，硬编码于 ijl15.dll 的定长字符串表
+	// （文件偏移 0x2c868 起，每项 8 字节，GBK 编码；String.nx 无 Job.img 节点）。
+	// 各名称来源（偏移 → 文本，解码后按 UTF-8 写入本文件）：
+	// 0x2c868 新手 / 0x2c870 战士 / 0x2c878 弓箭手 / 0x2c880 飞侠 / 0x2c888 海盗 /
+	// 0x2c890 管理员 / 0x2c8a8 剑客 / 0x2c8b0 勇士 / 0x2c8b8 英雄 / 0x2c8c0 准骑士 /
+	// 0x2c8c8 骑士 / 0x2c8d0 圣骑士 / 0x2c8d8 枪战士 / 0x2c8e0 龙骑士 / 0x2c8e8 黑骑士 /
+	// 0x2c8f0 法师 / 0x2c908 法师(火,毒) / 0x2c914 巫师(火,毒) / 0x2c920 魔导师(火,毒) /
+	// 0x2c930 法师(冰,雷) / 0x2c93c 巫师(冰,雷) / 0x2c948 魔导师(冰,雷) /
+	// 0x2c958 牧师 / 0x2c960 祭司 / 0x2c968 主教 / 0x2c970 猎人 / 0x2c978 射手 /
+	// 0x2c980 神射手 / 0x2c988 弩弓手 / 0x2c990 游侠 / 0x2c998 箭神 / 0x2c9a0 刺客 /
+	// 0x2c9a8 无影人 / 0x2c9b0 隐士 / 0x2c9b8 侠客 / 0x2c9c0 独行客 / 0x2c9c8 侠盗 /
+	// 0x2c9d0 拳手 / 0x2c9d8 斗士 / 0x2c9e0 冲锋队长 / 0x2c9ec 火枪手 / 0x2c9f4 大副 /
+	// 0x2c9fc 船长 / 0x2ca04 初心者。
 	std::string Job::get_name(uint16_t jid) const
 	{
 		switch (jid)
 		{
 			case 0:
-				return "Beginner";
+				return "新手";
 			case 100:
-				return "Swordsman";
+				return "战士";
 			case 110:
-				return "Fighter";
+				return "剑客";
 			case 111:
-				return "Crusader";
+				return "勇士";
 			case 112:
-				return "Hero";
+				return "英雄";
 			case 120:
-				return "Page";
+				return "准骑士";
 			case 121:
-				return "White Knight";
+				return "骑士";
 			case 122:
-				return "Paladin";
+				return "圣骑士";
 			case 130:
-				return "Spearman";
+				return "枪战士";
 			case 131:
-				return "Dragon Knight";
+				return "龙骑士";
 			case 132:
-				return "Dark Knight";
+				return "黑骑士";
 			case 200:
-				return "Magician";
+				return "法师";
 			case 210:
-				return "Wizard (F/P)";
+				return "法师(火,毒)";
 			case 211:
-				return "Mage (F/P)";
+				return "巫师(火,毒)";
 			case 212:
-				return "Archmage (F/P)";
+				return "魔导师(火,毒)";
 			case 220:
-				return "Wizard (I/L)";
+				return "法师(冰,雷)";
 			case 221:
-				return "Mage (I/L)";
+				return "巫师(冰,雷)";
 			case 222:
-				return "Archmage (I/L)";
+				return "魔导师(冰,雷)";
 			case 230:
-				return "Cleric";
+				return "牧师";
 			case 231:
-				return "Priest";
+				return "祭司";
 			case 232:
-				return "Bishop";
+				return "主教";
 			case 300:
-				return "Archer";
+				return "弓箭手";
 			case 310:
-				return "Hunter";
+				return "猎人";
 			case 311:
-				return "Ranger";
+				return "射手";
 			case 312:
-				return "Bowmaster";
+				return "神射手";
 			case 320:
-				return "Crossbowman";
+				return "弩弓手";
 			case 321:
-				return "Sniper";
+				return "游侠";
 			case 322:
-				return "Marksman";
+				return "箭神";
 			case 400:
-				return "Rogue";
+				return "飞侠";
 			case 410:
-				return "Assassin";
+				return "刺客";
 			case 411:
-				return "Hermit";
+				return "无影人";
 			case 412:
-				return "Nightlord";
+				return "隐士";
 			case 420:
-				return "Bandit";
+				return "侠客";
 			case 421:
-				return "Chief Bandit";
+				return "独行客";
 			case 422:
-				return "Shadower";
+				return "侠盗";
 			case 500:
-				return "Pirate";
+				return "海盗";
 			case 510:
-				return "Brawler";
+				return "拳手";
 			case 511:
-				return "Marauder";
+				return "斗士";
 			case 512:
-				return "Buccaneer";
+				return "冲锋队长";
 			case 520:
-				return "Gunslinger";
+				return "火枪手";
 			case 521:
-				return "Outlaw";
+				return "大副";
 			case 522:
-				return "Corsair";
+				return "船长";
 			case 1000:
-				return "Noblesse";
+				return "初心者";
 			case 1100:
 			case 1110:
 			case 1111:
 			case 1112:
-				return "Dawn Warrior";
 			case 1200:
 			case 1210:
 			case 1211:
 			case 1212:
-				return "Blaze Wizard";
 			case 1300:
 			case 1310:
 			case 1311:
 			case 1312:
-				return "Wind Archer";
 			case 1400:
 			case 1410:
 			case 1411:
 			case 1412:
-				return "Night Walker";
 			case 1500:
 			case 1510:
 			case 1511:
 			case 1512:
-				return "Thunder Breaker";
-			case 2000:
-			case 2100:
-			case 2110:
-			case 2111:
-			case 2112:
-				return "Aran";
+				return "骑士团";
 			case 900:
-				return "GM";
 			case 910:
-				return "SuperGM";
+				return "管理员";
 			default:
 				return "";
 		}

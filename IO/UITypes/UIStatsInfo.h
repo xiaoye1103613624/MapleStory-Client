@@ -52,6 +52,11 @@ namespace ms
 			// Normal
 			NAME,
 			JOB,
+			// v83 经典「角色能力」窗（Stat/backgrnd）八行专用：
+			// 名字/职业/等级/家族/HP/MP/经验值/人气度（芯片行实测见
+			// docs/features/beidou-v17-parity/notes/r05-ui-layout.md）。
+			LEVEL,
+			EXP,
 			GUILD,
 			FAME,
 			MIN_DAMAGE,
@@ -87,6 +92,7 @@ namespace ms
 		};
 
 		void update_ap();
+		void update_exp_label();
 		void update_simple(StatLabel label, MapleStat::Id stat);
 		void update_basevstotal(StatLabel label, MapleStat::Id bstat, EquipStat::Id tstat);
 		void update_buffed(StatLabel label, EquipStat::Id stat);
@@ -128,6 +134,14 @@ namespace ms
 
 		std::vector<Texture> textures_detail;
 		bool showdetail;
+
+		// v83 经典布局（Stat 无 main 子节点）：backgrnd2 为「详细」属性板，
+		// 仅详细模式绘于窗口右侧；basicStat 为「基本属性点」帮助弹框，
+		// 绘于窗口上方——二者都不再叠绘到主窗上（修复见 r05-ui-layout.md §1）。
+		bool classic;
+		Texture classic_detail;
+		Texture classic_help;
+		Point<int16_t> classic_help_dim;
 
 		bool hasap;
 		uint16_t jobId;

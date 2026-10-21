@@ -1,0 +1,45 @@
+size=175x289
+y= 42 mean=  56.7 delta=-198.3
+y= 43 mean=  66.6 delta=   9.9
+y= 45 mean= 245.6 delta= 177.6
+y= 55 mean=  68.0 delta=-178.1
+y= 56 mean= 153.0 delta=  85.0
+y= 57 mean= 111.4 delta= -41.6
+y= 58 mean= 120.2 delta=   8.8
+y= 59 mean= 125.9 delta=   5.8
+y= 60 mean= 130.2 delta=   4.3
+y= 61 mean= 194.2 delta=  64.0
+y= 62 mean=  59.7 delta=-134.6
+y= 63 mean=  63.7 delta=   4.1
+y= 81 mean= 197.9 delta= 133.9
+y= 82 mean= 192.3 delta=  -5.6
+y= 85 mean= 211.0 delta=  18.0
+y= 86 mean=  69.8 delta=-141.2
+y= 87 mean= 254.9 delta= 185.1
+y= 88 mean= 244.0 delta= -10.9
+y= 91 mean= 165.9 delta= -79.7
+y= 92 mean= 220.9 delta=  55.0
+y= 94 mean= 238.3 delta=  15.8
+y= 95 mean= 246.4 delta=   8.1
+y=257 mean= 238.0 delta=  -5.5
+y=258 mean= 222.3 delta= -15.7
+y=261 mean= 119.0 delta=-102.0
+y=262 mean= 206.8 delta=  87.8
+y=264 mean= 175.7 delta= -32.6
+y=265 mean= 111.7 delta= -64.0
+y=266 mean= 206.2 delta=  94.5
+y=267 mean= 210.6 delta=   4.4
+y=270 mean= 196.5 delta=  -9.2
+y=271 mean= 201.4 delta=   4.9
+y=274 mean= 202.6 delta=   4.4
+y=275 mean= 196.9 delta=  -5.8
+y=276 mean= 203.5 delta=   6.6
+y=277 mean= 198.6 delta=  -4.8
+y=279 mean= 210.5 delta=  14.3
+y=281 mean= 112.2 delta=-100.8
+y=282 mean= 202.0 delta=  89.9
+y=283 mean= 176.4 delta= -25.6
+y=285 mean= 120.8 delta= -57.0
+y=286 mean= 206.1 delta=  85.3
+y=287 mean= 255.0 delta=  48.9
+y=288 mean=   0.0 delta=-255.0

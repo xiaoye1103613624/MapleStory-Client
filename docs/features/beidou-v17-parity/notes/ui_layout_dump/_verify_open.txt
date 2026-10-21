@@ -1,0 +1,9 @@
+shot 1280x720
+Stat min_diff=623.97 at (1072,373) size=208x347  [match if < 25]
+    next_best=632.12 at (np.int64(0), np.int64(0))
+Equip min_diff=671.67 at (0,0) size=175x304  [match if < 25]
+    next_best=671.67 at (np.int64(0), np.int64(20))
+Skill min_diff=659.03 at (0,0) size=175x289  [match if < 25]
+    next_best=659.03 at (np.int64(0), np.int64(20))
+Item min_diff=706.92 at (0,0) size=175x289  [match if < 25]
+    next_best=706.92 at (np.int64(0), np.int64(20))

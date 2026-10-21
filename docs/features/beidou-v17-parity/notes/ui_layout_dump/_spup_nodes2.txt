@@ -1,0 +1,14 @@
+﻿===== UIWindow.img/Skill/BtSpUp
+BtSpUp [null]
+  disabled [null]
+    0 [bitmap] bitmap 12x12
+      origin [vector] (877087568, 43859)
+  mouseOver [null]
+    0 [bitmap] bitmap 12x12
+      origin [vector] (877087568, 43859)
+  normal [null]
+    0 [bitmap] bitmap 12x12
+      origin [vector] (877087568, 43859)
+  pressed [null]
+    0 [bitmap] bitmap 12x12
+      origin [vector] (877087568, 43859)

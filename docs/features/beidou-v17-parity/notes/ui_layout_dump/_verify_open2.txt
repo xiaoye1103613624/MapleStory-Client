@@ -1,0 +1,20 @@
+=== shot stat 1280x720
+   tpl Stat   min_diff= 623.97 at (1072,373)
+   tpl Equip  min_diff= 671.67 at (0,0)
+   tpl Skill  min_diff= 659.03 at (0,0)
+   tpl Item   min_diff= 706.92 at (0,0)
+=== shot equip 1280x720
+   tpl Stat   min_diff= 623.97 at (1072,373)
+   tpl Equip  min_diff= 671.67 at (0,0)
+   tpl Skill  min_diff= 659.03 at (0,0)
+   tpl Item   min_diff= 706.92 at (0,0)
+=== shot skill 1280x720
+   tpl Stat   min_diff= 623.97 at (1072,373)
+   tpl Equip  min_diff= 671.67 at (0,0)
+   tpl Skill  min_diff= 659.03 at (0,0)
+   tpl Item   min_diff= 706.92 at (0,0)
+=== shot item 1280x720
+   tpl Stat   min_diff= 623.97 at (1072,373)
+   tpl Equip  min_diff= 671.67 at (0,0)
+   tpl Skill  min_diff= 659.03 at (0,0)
+   tpl Item   min_diff= 706.92 at (0,0)

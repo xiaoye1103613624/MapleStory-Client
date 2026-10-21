@@ -30,8 +30,6 @@
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Util/UiAssetResolve.h"
 
-#include <fstream> // [DBG-SKB] 临时诊断用，定位后删除
-
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -134,20 +132,15 @@ namespace ms
 	{
 		nl::node Skill = UiAssetResolve::window("Skill");
 
-		// [DBG-SKB] 临时诊断：确认构造是否进入、节点可用性与最终位置（定位后删除）。
-		{
-			std::ofstream bf("E:/MXD/BeiDou-Client-xy/_skb.log", std::ios::app);
-			bf << "ctor usable=" << (UiAssetResolve::usable(Skill) ? 1 : 0)
-				<< " pos=(" << position.x() << "," << position.y() << ")"
-				<< " active=" << (active ? 1 : 0) << "\n";
-		}
-
 		if (!UiAssetResolve::usable(Skill))
 		{
 			active = false;
 			dimension = Point<int16_t>(0, 0);
 			return;
 		}
+
+		// v83 经典窗无 main 子节点：单列布局（r05-ui-layout.md §3）。
+		classic = !UiAssetResolve::usable(Skill["main"]);
 
 		nl::node main = Skill["main"];
 
@@ -157,7 +150,6 @@ namespace ms
 		nl::node ui_backgrnd = main["backgrnd"] ? main["backgrnd"] : Skill["backgrnd"];
 
 		bg_dimensions = Texture(ui_backgrnd).get_dimensions();
-		ui_backgrnd_tex_valid = Texture(ui_backgrnd).is_valid(); // [DBG-SKB]
 
 		skilld = main["skill0"] ? main["skill0"] : Skill["skill0"];
 		skille = main["skill1"] ? main["skill1"] : Skill["skill1"];
@@ -250,10 +242,17 @@ namespace ms
 			uint16_t x_adj = 0;
 			uint16_t spupid = i - Buttons::BT_SPUP0;
 
+			// v83 经典窗列表区只有 4 行，多余升级钮会画到窗口外（无裁剪）。
+			if (classic && spupid >= CLASSIC_ROWS)
+				break;
+
 			if (spupid % 2)
 				x_adj = ROW_WIDTH;
 
-			Point<int16_t> spup_position = SKILL_OFFSET + Point<int16_t>(124 + x_adj, 20 + y_adj);
+			// v83 经典单列：升级钮固定在行右侧（现代双列时才有第二列）。
+			Point<int16_t> spup_position = classic
+				? CLASSIC_SKILL_OFFSET + Point<int16_t>(130, static_cast<int16_t>(4 + ROW_HEIGHT * spupid))
+				: SKILL_OFFSET + Point<int16_t>(124 + x_adj, 20 + y_adj);
 			buttons[i] = std::make_unique<MapleButton>(bt_spup, spup_position);
 
 			if (spupid % 2)
@@ -263,18 +262,31 @@ namespace ms
 		booktext = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, "", 150);
 		splabel = Text(Text::Font::A12M, Text::Alignment::RIGHT, Color::Name::BLACK);
 
-		slider = Slider(
-			Slider::Type::DEFAULT_SILVER, Range<int16_t>(93, 317), 295, ROWS, 1,
-			[&](bool upwards)
-			{
-				int16_t shift = upwards ? -1 : 1;
-				bool above = offset + shift >= 0;
-				bool below = offset + 4 + shift <= skillcount;
+		slider = classic
+			? Slider(
+				Slider::Type::DEFAULT_SILVER, Range<int16_t>(CLASSIC_SKILL_OFFSET.y(), 258), 158, CLASSIC_ROWS, 1,
+				[&](bool upwards)
+				{
+					int16_t shift = upwards ? -1 : 1;
+					bool above = offset + shift >= 0;
+					bool below = offset + 4 + shift <= skillcount;
 
-				if (above && below)
-					change_offset(offset + shift);
-			}
-		);
+					if (above && below)
+						change_offset(offset + shift);
+				}
+				)
+			: Slider(
+				Slider::Type::DEFAULT_SILVER, Range<int16_t>(93, 317), 295, ROWS, 1,
+				[&](bool upwards)
+				{
+					int16_t shift = upwards ? -1 : 1;
+					bool above = offset + shift >= 0;
+					bool below = offset + 4 + shift <= skillcount;
+
+					if (above && below)
+						change_offset(offset + shift);
+				}
+				);
 
 		change_job(stats.get_stat(MapleStat::Id::JOB));
 
@@ -283,61 +295,98 @@ namespace ms
 
 		dimension = bg_dimensions;
 		dragarea = Point<int16_t>(dimension.x(), 20);
-
-		// [DBG-SKB] 临时诊断：构造完成时的最终状态（定位后删除）。
-		{
-			std::ofstream bf("E:/MXD/BeiDou-Client-xy/_skb.log", std::ios::app);
-			bf << "ctor done dim=(" << dimension.x() << "," << dimension.y() << ")"
-				<< " sprites=" << sprites.size()
-				<< " bg_valid=" << (ui_backgrnd_tex_valid ? 1 : 0)
-				<< " active=" << (active ? 1 : 0) << "\n";
-		}
 	}
 
 	void UISkillBook::draw(float alpha) const
 	{
 		UIElement::draw_sprites(alpha);
 
-		bookicon.draw(position + Point<int16_t>(11, 85));
-		booktext.draw(position + Point<int16_t>(173, 59));
-		splabel.draw(position + Point<int16_t>(304, 23));
-
-		Point<int16_t> skill_position_l = position + SKILL_OFFSET + Point<int16_t>(-1, 0);
-		Point<int16_t> skill_position_r = position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
-
-		for (size_t i = 0; i < ROWS; i++)
+		if (classic)
 		{
-			Point<int16_t> pos = skill_position_l;
+			// v83 经典窗（175x289）分区实测（r05-ui-layout.md §3）：
+			// 标题 0-22、tab 条 23-54、书封条 55-86（书封图标已烘焙在背景里，
+			// 故图标对齐到 55 而非旧值 85）、列表区 87-258、技能点行 258-281。
+			bookicon.draw(position + Point<int16_t>(11, 55));
+			booktext.draw(position + Point<int16_t>(28, 68));
+			splabel.draw(position + Point<int16_t>(109, 267));
+		}
+		else
+		{
+			bookicon.draw(position + Point<int16_t>(11, 85));
+			booktext.draw(position + Point<int16_t>(173, 59));
+			splabel.draw(position + Point<int16_t>(304, 23));
+		}
 
-			if (i % 2)
-				pos = skill_position_r;
+		const int16_t rows = visible_rows();
 
-			if (i < skills.size())
+		if (classic)
+		{
+			// 单列技能行：起点 (10,87)（列表区顶 y=87..257），行距 40，可见 4 行；
+			// 现代双列布局（第二列 x=153 已越出 175 宽窗口）仅现代窗使用。
+			for (int16_t i = 0; i < rows; i++)
 			{
-				if (check_required(skills[i].get_id()))
+				Point<int16_t> pos = position + CLASSIC_SKILL_OFFSET + Point<int16_t>(0, static_cast<int16_t>(ROW_HEIGHT * i));
+				size_t index = skill_index(i);
+
+				if (index < skills.size())
 				{
-					skille.draw(pos);
+					if (check_required(skills[index].get_id()))
+					{
+						skille.draw(pos);
+					}
+					else
+					{
+						skilld.draw(pos);
+						skills[index].get_icon()->set_state(StatefulIcon::State::DISABLED);
+					}
+
+					skills[index].draw(pos + SKILL_META_OFFSET);
+
+					if (i < rows - 1)
+						line.draw(pos + LINE_OFFSET);
+				}
+			}
+		}
+		else
+		{
+			Point<int16_t> skill_position_l = position + SKILL_OFFSET + Point<int16_t>(-1, 0);
+			Point<int16_t> skill_position_r = position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
+
+			for (int16_t i = 0; i < rows; i++)
+			{
+				Point<int16_t> pos = skill_position_l;
+				size_t index = skill_index(i);
+
+				if (i % 2)
+					pos = skill_position_r;
+
+				if (index < skills.size())
+				{
+					if (check_required(skills[index].get_id()))
+					{
+						skille.draw(pos);
+					}
+					else
+					{
+						skilld.draw(pos);
+						skills[index].get_icon()->set_state(StatefulIcon::State::DISABLED);
+					}
+
+					skills[index].draw(pos + SKILL_META_OFFSET);
 				}
 				else
 				{
-					skilld.draw(pos);
-					skills[i].get_icon()->set_state(StatefulIcon::State::DISABLED);
+					skillb.draw(pos);
 				}
 
-				skills[i].draw(pos + SKILL_META_OFFSET);
-			}
-			else
-			{
-				skillb.draw(pos);
-			}
+				if (i < rows - 2)
+					line.draw(pos + LINE_OFFSET);
 
-			if (i < ROWS - 2)
-				line.draw(pos + LINE_OFFSET);
-
-			if (i % 2)
-			{
-				skill_position_l.shift_y(ROW_HEIGHT);
-				skill_position_r.shift_y(ROW_HEIGHT);
+				if (i % 2)
+				{
+					skill_position_l.shift_y(ROW_HEIGHT);
+					skill_position_r.shift_y(ROW_HEIGHT);
+				}
 			}
 		}
 
@@ -553,16 +602,29 @@ namespace ms
 			}
 		}
 
-		Point<int16_t> skill_position_l = position + SKILL_OFFSET + Point<int16_t>(-1, 0);
-		Point<int16_t> skill_position_r = position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
+		// v83 经典单列：左右列同点、每行推进；现代双列：奇偶分列、两行推进。
+		Point<int16_t> skill_position_l = classic
+			? position + CLASSIC_SKILL_OFFSET
+			: position + SKILL_OFFSET + Point<int16_t>(-1, 0);
+		Point<int16_t> skill_position_r = classic
+			? position + CLASSIC_SKILL_OFFSET
+			: position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
 
 		if (!grabbing)
 		{
-			for (size_t i = 0; i < skills.size(); i++)
+			// v83 经典单列：一行一个技能、每行推进；现代双列：奇偶分列、每两行推进。
+			const int16_t rows = visible_rows();
+
+			for (int16_t r = 0; r < rows; r++)
 			{
+				size_t i = skill_index(r);
+
+				if (i >= skills.size())
+					break;
+
 				Point<int16_t> skill_position = skill_position_l;
 
-				if (i % 2)
+				if (!classic && r % 2)
 					skill_position = skill_position_r;
 
 				constexpr Rectangle<int16_t> bounds = Rectangle<int16_t>(0, 32, 0, 32);
@@ -599,7 +661,7 @@ namespace ms
 					}
 				}
 
-				if (i % 2)
+				if (classic || r % 2)
 				{
 					skill_position_l.shift_y(ROW_HEIGHT);
 					skill_position_r.shift_y(ROW_HEIGHT);
@@ -607,9 +669,8 @@ namespace ms
 			}
 
 			for (size_t i = 0; i < skills.size(); i++)
-			{
 				skills[i].get_icon()->set_state(StatefulIcon::State::NORMAL);
-			}
+
 			clear_tooltip();
 		}
 		else
@@ -753,19 +814,33 @@ namespace ms
 			skillcount++;
 		}
 
-		slider.setrows(ROWS, skillcount);
+		slider.setrows(visible_rows(), skillcount);
 		change_offset(0);
 		change_sp();
+	}
+
+	int16_t UISkillBook::visible_rows() const
+	{
+		return classic ? CLASSIC_ROWS : ROWS;
+	}
+
+	size_t UISkillBook::skill_index(int16_t row) const
+	{
+		// 现代双列：offset 以「行对」为单位，可见第 row 个槽位对应 2*offset + row。
+		// 经典单列：一行一个技能，直接 offset + row。
+		return classic
+			? static_cast<size_t>(offset + row)
+			: static_cast<size_t>(2 * offset + row);
 	}
 
 	void UISkillBook::change_offset(uint16_t new_offset)
 	{
 		offset = new_offset;
 
-		for (int16_t i = 0; i < ROWS; i++)
+		for (int16_t i = 0; i < visible_rows(); i++)
 		{
 			uint16_t index = Buttons::BT_SPUP0 + i;
-			uint16_t row = offset + i;
+			size_t row = skill_index(i);
 			auto* btn = find_btn(buttons, index);
 
 			if (!btn)
@@ -899,27 +974,26 @@ namespace ms
 	{
 		int16_t x = cursorpos.x();
 
-		if (x < SKILL_OFFSET.x() || x > SKILL_OFFSET.x() + 2 * ROW_WIDTH)
+		// v83 经典单列：行起点 y=87；现代双列见下。
+		const int16_t base_x = classic ? CLASSIC_SKILL_OFFSET.x() : SKILL_OFFSET.x();
+		const int16_t base_y = classic ? CLASSIC_SKILL_OFFSET.y() : SKILL_OFFSET.y();
+
+		if (x < base_x || x > base_x + (classic ? ROW_WIDTH : 2 * ROW_WIDTH))
 			return nullptr;
 
 		int16_t y = cursorpos.y();
 
-		if (y < SKILL_OFFSET.y())
+		if (y < base_y)
 			return nullptr;
 
-		uint16_t row = (y - SKILL_OFFSET.y()) / ROW_HEIGHT;
+		uint16_t row = (y - base_y) / ROW_HEIGHT;
 
-		if (row < 0 || row >= ROWS)
+		if (row >= visible_rows())
 			return nullptr;
 
-		uint16_t offset_row = offset + row;
+		uint16_t col = classic ? 0 : (x - base_x) / ROW_WIDTH;
 
-		if (offset_row >= ROWS)
-			return nullptr;
-
-		uint16_t col = (x - SKILL_OFFSET.x()) / ROW_WIDTH;
-
-		uint16_t skill_idx = 2 * offset_row + col;
+		size_t skill_idx = skill_index(static_cast<int16_t>(row)) + col;
 
 		if (skill_idx >= skills.size())
 			return nullptr;

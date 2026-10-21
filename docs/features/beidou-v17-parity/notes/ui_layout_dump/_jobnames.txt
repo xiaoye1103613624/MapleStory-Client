@@ -1,0 +1,3 @@
+root=None
+children of 'String': ['Cash.img', 'Consume.img', 'EULA.img', 'Eqp.img', 'Etc.img', 'GLcloneC.img', 'GuestEULA.img', 'Ins.img', 'Map.img', 'Mob.img', 'MonsterBook.img', 'NameChange.img', 'Npc.img', 'Pet.img', 'PetDialog.img', 'Skill.img', 'TestEULA.img', 'ToolTipHelp.img', 'TransferWorld.img', 'TrialEULA.img']
+Job.img=None

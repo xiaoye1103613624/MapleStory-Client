@@ -96,6 +96,11 @@ namespace ms
 		void change_tab(uint16_t new_tab);
 		void change_offset(uint16_t new_offset);
 
+		// 当前布局下窗口内实际可见的行数（经典单列 4 行 / 现代双列 12 行）。
+		int16_t visible_rows() const;
+		// 可见第 row 行对应的 skills 下标（现代双列 offset 以「行对」为单位）。
+		size_t skill_index(int16_t row) const;
+
 		void show_skill(int32_t skill_id);
 		void clear_tooltip();
 
@@ -148,6 +153,10 @@ namespace ms
 		static constexpr int16_t ROW_HEIGHT = 40;
 		static constexpr int16_t ROW_WIDTH = 143;
 		static constexpr Point<int16_t> SKILL_OFFSET = Point<int16_t>(11, 93);
+		// v83 经典窗单列技能行基准（列表区顶 y=87，见 r05-ui-layout.md §3）。
+		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(10, 87);
+		// v83 经典窗列表区实测 y=87..257（170px），行高 40 → 可见 4 行。
+		static constexpr int16_t CLASSIC_ROWS = 4;
 		static constexpr Point<int16_t> SKILL_META_OFFSET = Point<int16_t>(2, 2);
 		static constexpr Point<int16_t> LINE_OFFSET = Point<int16_t>(0, 37);
 
@@ -175,7 +184,11 @@ namespace ms
 		bool grabbing;
 
 		Point<int16_t> bg_dimensions;
-		bool ui_backgrnd_tex_valid = false; // [DBG-SKB] 临时诊断，定位后删除
+
+		// v83 经典布局（Skill 无 main 子节点，backgrnd 175x289）：
+		// 单列技能行 + tab 名绘于 tab 条 + 技能点行内显示 SP，
+		// 坐标依据见 docs/features/beidou-v17-parity/notes/r05-ui-layout.md §3。
+		bool classic = false;
 
 		bool macro_enabled;
 		Texture macro_backgrnd;

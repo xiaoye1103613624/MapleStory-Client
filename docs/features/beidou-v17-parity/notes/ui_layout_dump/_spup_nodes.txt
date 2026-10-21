@@ -1,0 +1,6 @@
+﻿===== UIWindow.img/Skill/BtSpUp
+BtSpUp [null]
+  disabled [null]
+  mouseOver [null]
+  normal [null]
+  pressed [null]

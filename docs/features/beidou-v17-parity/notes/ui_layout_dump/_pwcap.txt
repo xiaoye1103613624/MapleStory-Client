@@ -1,0 +1,1 @@
+hwnd=5113900 title=XiaoYE MS v0.0.1【1-Admin】【当前时间：2026-10-22 07:23:48】【在线时长：00 00:02:10】 size=1280x720 PrintWindow=1 GetDIBits=720 mean=10.1 -> E:/MXD/BeiDou-Client-xy/_cap_pw_5113900.png

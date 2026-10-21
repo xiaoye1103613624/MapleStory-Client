@@ -122,6 +122,8 @@ namespace ms
 		case MapleStat::Id::MP:
 		case MapleStat::Id::MAXMP:
 		case MapleStat::Id::AP:
+		case MapleStat::Id::LEVEL:
+		case MapleStat::Id::EXP:
 			return true;
 		default:
 			return false;

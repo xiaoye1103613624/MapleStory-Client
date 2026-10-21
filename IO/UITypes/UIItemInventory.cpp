@@ -94,11 +94,15 @@ namespace ms
 		}
 		else
 		{
-			// v83 BeiDou Item：无 pos 节点。槽步进 36（与 IDA 滚动条 x=152 / 4 列对齐）。
+			// v83 BeiDou Item：无 pos 节点，按 backgrnd（175x289）槽位格实测
+			// （r05-ui-layout.md §4）：列 x=8/45/81/117（步进 36）、
+			// 行 y=51/85/119/153/187/221（步进 34）、4 列 6 行、格 32px。
+			// 旧回退值行步进取 36（space_y=4），与背景格错位累计最多 10px，
+			// 导致道具图标越靠下越偏离格线。
 			slot_col = 4;
 			slot_row = 6;
 			slot_space_x = 4;
-			slot_space_y = 4;
+			slot_space_y = 2;
 			slot_pos = Point<int16_t>(8, 51);
 		}
 

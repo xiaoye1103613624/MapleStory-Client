@@ -66,24 +66,35 @@ namespace ms
 
 		if (classic_layout)
 		{
-			// IDA CUIEquip 槽位表 dword_BE2260（32x32）；仅 v83 身体部位。
-			iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(38, 35);
-			iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(38, 68);
-			iconpositions[EquipSlot::Id::EYEACC] = Point<int16_t>(71, 101);
-			iconpositions[EquipSlot::Id::EARACC] = Point<int16_t>(104, 101);
-			iconpositions[EquipSlot::Id::TOP] = Point<int16_t>(38, 134);
-			iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(38, 167);
-			iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(71, 200);
-			iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(5, 167);
-			iconpositions[EquipSlot::Id::CAPE] = Point<int16_t>(5, 134);
-			iconpositions[EquipSlot::Id::SHIELD] = Point<int16_t>(137, 134);
-			iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(137, 134);
-			iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(104, 134);
-			iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(104, 167);
-			iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(137, 167);
-			iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(104, 68);
-			iconpositions[EquipSlot::Id::RING4] = Point<int16_t>(137, 68);
-			iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(71, 134);
+			// v83 Equip/backgrnd（175x304）槽位格逐格实测（r05-ui-layout.md §2）：
+			// 列 x=5/38/71/104/137（步进 33），行 y=32/65/98/131/164/197/230（步进 33）。
+			// 每格标签烘焙在精灵里，实际版式：
+			//   行1 帽子(3列)；行2 勋章/额饰/戒指/戒指；
+			//   行3 眼饰/耳饰；行4 披风/上衣/项链/武器/盾牌；
+			//   行5 手套/裤·裙/腰带/指环/指环；行6 鞋子(3列)；行7 骑兽/鞍子。
+			// 旧表 HAT 落在第 2 列 (38,35)——帽子标签实际在第 3 列，
+			// 导致帽子图标压到额饰格、帽子格空置。
+			iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(71, 32);
+			iconpositions[EquipSlot::Id::MEDAL] = Point<int16_t>(5, 65);
+			iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(38, 65);
+			iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(104, 65);
+			iconpositions[EquipSlot::Id::RING4] = Point<int16_t>(137, 65);
+			iconpositions[EquipSlot::Id::EYEACC] = Point<int16_t>(71, 98);
+			iconpositions[EquipSlot::Id::EARACC] = Point<int16_t>(104, 98);
+			iconpositions[EquipSlot::Id::CAPE] = Point<int16_t>(5, 131);
+			iconpositions[EquipSlot::Id::TOP] = Point<int16_t>(38, 131);
+			iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(71, 131);
+			iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(104, 131);
+			iconpositions[EquipSlot::Id::SHIELD] = Point<int16_t>(137, 131);
+			iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(137, 131);
+			iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(5, 164);
+			iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(38, 164);
+			iconpositions[EquipSlot::Id::BELT] = Point<int16_t>(71, 164);
+			iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(104, 164);
+			iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(137, 164);
+			iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(71, 197);
+			iconpositions[EquipSlot::Id::TAMEDMOB] = Point<int16_t>(5, 230);
+			iconpositions[EquipSlot::Id::SADDLE] = Point<int16_t>(38, 230);
 		}
 		else
 		{
