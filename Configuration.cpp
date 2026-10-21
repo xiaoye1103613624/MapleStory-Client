@@ -107,6 +107,9 @@ namespace ms
 		{ "小地图",     "minimap.simple",				"是否使用简约模式" },
 		{ "小地图",     "minimap.default_helpers",		"是否绘制默认标志物（NPC/传送点等）" },
 
+		// 界面开关
+		{ "界面",       "ui.buff_timer",				"是否在 buff 图标上显示剩余时间" },
+
 		// 界面位置（关闭客户端时的最后窗口位置）
 		{ "界面位置",   "ui.position.stats",			"角色属性面板" },
 		{ "界面位置",   "ui.position.eqinv",			"装备栏" },
@@ -162,6 +165,7 @@ namespace ms
 		settings.emplace<Width>();
 		settings.emplace<Height>();
 		settings.emplace<VSync>();
+		settings.emplace<BuffTimer>();
 		settings.emplace<FontPathNormal>();
 		settings.emplace<FontPathBold>();
 		settings.emplace<BGMVolume>();
@@ -657,6 +661,11 @@ namespace ms
 	std::string Configuration::get_keyfile() const
 	{
 		return Setting<KeyFile>::get().load();
+	}
+
+	bool Configuration::get_buff_timer() const
+	{
+		return Setting<BuffTimer>::get().load();
 	}
 
 	bool Configuration::get_patch_enabled() const

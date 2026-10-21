@@ -94,6 +94,8 @@ namespace ms
 		ms::res::KeyMode get_keymode() const;
 		// 外部密钥文件路径（data.keyfile），空字符串表示关闭。
 		std::string get_keyfile() const;
+		// Buff 图标剩余时间文本是否开启（ui.buff_timer）。
+		bool get_buff_timer() const;
 		// HTTP 补丁：是否启用（patch.enabled）。
 		bool get_patch_enabled() const;
 		// HTTP 补丁：manifest URL（patch.url）。
@@ -458,6 +460,14 @@ namespace ms
 	struct VSync : public Configuration::BoolEntry
 	{
 		VSync() : BoolEntry("window.vsync", "true") {}
+	};
+
+	// Whether to overlay the remaining time on buff icons
+	// buff 图标上的剩余时间文本（1 秒粒度，对齐 BeiDou V17.7 的 BuffTimer）。
+	// 关闭后仅保留图标与冷却遮罩，不再绘制数字。
+	struct BuffTimer : public Configuration::BoolEntry
+	{
+		BuffTimer() : BoolEntry("ui.buff_timer", "true") {}
 	};
 
 	// The normal font which will be used

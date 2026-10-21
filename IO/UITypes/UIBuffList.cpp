@@ -17,8 +17,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIBuffList.h"
 
+#include "../../Configuration.h"
 #include "../../Data/ItemData.h"
 #include "../../Util/Misc.h"
+
+#include <cstdio>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -26,12 +29,17 @@
 
 namespace ms
 {
-	BuffIcon::BuffIcon(int32_t buff, int32_t dur) : cover(IconCover::BUFF, dur - FLASH_TIME)
+	BuffIcon::BuffIcon(int32_t buff, int32_t dur, bool timer) :
+		cover(IconCover::BUFF, dur - FLASH_TIME),
+		buffid(buff),
+		duration(dur),
+		shown_seconds(-1),
+		opcstep(-0.05f),
+		show_timer(timer),
+		timelabel(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW),
+		timeoutline(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK)
 	{
-		buffid = buff;
-		duration = dur;
 		opacity.set(1.0f);
-		opcstep = -0.05f;
 
 		if (buffid >= 0)
 		{
@@ -43,12 +51,40 @@ namespace ms
 		{
 			icon = ItemData::get(-buffid).get_icon(true);
 		}
+
+		refresh_label();
 	}
 
 	void BuffIcon::draw(Point<int16_t> position, float alpha) const
 	{
 		icon.draw(DrawArgument(position, opacity.get(alpha)));
 		cover.draw(position + Point<int16_t>(1, -31), alpha);
+
+		if (timelabel.empty())
+			return;
+
+		// 图标精灵以底边对齐 position，故画布坐标 y=21 对应屏幕 y = position.y - 32 + 21；
+		// 水平方向按参考端规则在 32px 内居中。
+		Point<int16_t> labelpos = position + Point<int16_t>(
+			static_cast<int16_t>((ICON_SIZE - timelabel.width()) / 2),
+			LABEL_TOP - ICON_SIZE
+		);
+
+		float opc = opacity.get(alpha);
+
+		// 黑色描边：先铺 8 个方向的偏移副本，再叠黄色正文（对齐参考端 9 次黑色 + 1 次黄色）。
+		for (int16_t dy = -1; dy <= 1; dy++)
+		{
+			for (int16_t dx = -1; dx <= 1; dx++)
+			{
+				if (dx == 0 && dy == 0)
+					continue;
+
+				timeoutline.draw(DrawArgument(labelpos + Point<int16_t>(dx, dy), opc));
+			}
+		}
+
+		timelabel.draw(DrawArgument(labelpos, opc));
 	}
 
 	bool BuffIcon::update()
@@ -68,10 +104,52 @@ namespace ms
 
 		duration -= Constants::TIMESTEP;
 
+		refresh_label();
+
 		return duration < Constants::TIMESTEP;
 	}
 
-	UIBuffList::UIBuffList()
+	void BuffIcon::refresh_label()
+	{
+		if (!show_timer)
+			return;
+
+		int32_t seconds = (duration + 999) / 1000;
+
+		if (seconds < 1)
+			seconds = 1;
+
+		if (seconds == shown_seconds)
+			return;
+
+		shown_seconds = seconds;
+
+		std::string text = format_time(duration);
+		timelabel.change_text(text);
+		timeoutline.change_text(text);
+	}
+
+	std::string BuffIcon::format_time(int32_t milliseconds)
+	{
+		int32_t seconds = (milliseconds + 999) / 1000;
+
+		if (seconds < 1)
+			seconds = 1;
+
+		char buffer[24];
+
+		if (seconds >= 3600)
+			std::snprintf(buffer, sizeof(buffer), "%dh%dm", seconds / 3600, (seconds % 3600) / 60);
+		else if (seconds >= 60)
+			std::snprintf(buffer, sizeof(buffer), "%dm%ds", seconds / 60, seconds % 60);
+		else
+			std::snprintf(buffer, sizeof(buffer), "%ds", seconds);
+
+		return buffer;
+	}
+
+	UIBuffList::UIBuffList() :
+		show_timer(Configuration::get().get_buff_timer())
 	{
 		int16_t height = Constants::Constants::get().get_viewheight();
 		int16_t width = Constants::Constants::get().get_viewwidth();
@@ -124,7 +202,7 @@ namespace ms
 		icons.emplace(
 			std::piecewise_construct,
 			std::forward_as_tuple(buffid),
-			std::forward_as_tuple(buffid, duration)
+			std::forward_as_tuple(buffid, duration, show_timer)
 		);
 	}
 }
