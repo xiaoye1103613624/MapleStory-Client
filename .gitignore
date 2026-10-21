@@ -41,7 +41,8 @@ Settings
 # 工具产物与缓存
 /tools/capture/
 /tools/stat_out/
-/tools/__pycache__/
+__pycache__/
+*.pyc
 /tools/*.obj
 /tools/*.exe
 /tools/setup_run.log

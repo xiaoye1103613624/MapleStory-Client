@@ -1,0 +1,1976 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.51.36257.0 (940cb4b6).
+//
+// E:\project\MapleStory-Client\tools\msdia140.tlh
+//
+// C++ source equivalent of type library D:\\software\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\msdia140.dll
+// compiler-generated file - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("106173a0-0173-4e5c-84e7-e915422be997"))
+/* LIBID */ __Dia2Lib;
+struct /* coclass */ DiaSource;
+struct __declspec(uuid("79f1bb5f-b66e-48e5-b6a9-1545c323ca3d"))
+/* interface */ IDiaDataSource;
+struct __declspec(uuid("2f609ee1-d1c8-4e24-8288-3326badcd211"))
+/* interface */ IDiaSession;
+struct __declspec(uuid("cb787b2f-bd6c-4635-ba52-933126bd2dcd"))
+/* interface */ IDiaSymbol;
+enum SymTagEnum : int;
+struct __declspec(uuid("cab72c48-443b-48f5-9b0b-42f0820ab29a"))
+/* interface */ IDiaEnumSymbols;
+struct __declspec(uuid("fe30e878-54ac-44f1-81ba-39de940f6052"))
+/* interface */ IDiaEnumLineNumbers;
+struct __declspec(uuid("b388eb14-be4d-421d-a8a1-6cf7ab057086"))
+/* interface */ IDiaLineNumber;
+struct __declspec(uuid("a2ef5353-f5a8-4eb3-90d2-cb526acb3cdd"))
+/* interface */ IDiaSourceFile;
+struct __declspec(uuid("3bfe56b0-390c-4863-9430-1f3d083b7684"))
+/* interface */ IDiaInputAssemblyFile;
+struct __declspec(uuid("c65c2b0a-1150-4d7a-afcc-e05bf3dee81e"))
+/* interface */ IDiaEnumTables;
+struct __declspec(uuid("4a59fb77-abac-469b-a30b-9ecc85bfef14"))
+/* interface */ IDiaTable;
+struct __declspec(uuid("624b7d9c-24ea-4421-9d06-3b577471c1fa"))
+/* interface */ IDiaEnumSymbolsByAddr;
+struct __declspec(uuid("10f3dbd9-664f-4469-b808-9471c7a50538"))
+/* interface */ IDiaEnumSourceFiles;
+struct __declspec(uuid("d5612573-6925-4468-8883-98cdec8c384a"))
+/* interface */ IDiaEnumInjectedSources;
+struct __declspec(uuid("ae605cdc-8105-4a23-b710-3259f1e26112"))
+/* interface */ IDiaInjectedSource;
+struct __declspec(uuid("08cbb41e-47a6-4f87-92f1-1c9c87ced044"))
+/* interface */ IDiaEnumDebugStreams;
+struct __declspec(uuid("486943e8-d187-4a6b-a3c4-291259fff60d"))
+/* interface */ IDiaEnumDebugStreamData;
+struct __declspec(uuid("1c7ff653-51f7-457e-8419-b20f57ef7e4d"))
+/* interface */ IDiaEnumInputAssemblyFiles;
+struct __declspec(uuid("1a21eb69-962a-4bc4-8bd3-681797d38b23"))
+/* interface */ IDiaDataSourceEx;
+struct /* coclass */ DiaSourceAlt;
+struct /* coclass */ DiaStackWalker;
+struct __declspec(uuid("5485216b-a54c-469f-9670-52b24d5229bb"))
+/* interface */ IDiaStackWalker;
+struct __declspec(uuid("21f81b1b-c5bb-42a3-bc4f-ccbaa75b9f19"))
+/* interface */ IDiaStackWalkHelper;
+enum MemoryTypeEnum : int;
+struct __declspec(uuid("a39184b7-6a36-42de-8eec-7df9f3f59f33"))
+/* interface */ IDiaFrameData;
+struct __declspec(uuid("07c590c1-438d-4f47-bdcd-4397bc81ad75"))
+/* interface */ IDiaStackWalkFrame;
+struct __declspec(uuid("ec9d461d-ce74-4711-a020-7d8f9a1dd255"))
+/* interface */ IDiaEnumStackFrames;
+struct __declspec(uuid("5edbc96d-cdd6-4792-afbe-cc89007d9610"))
+/* interface */ IDiaStackFrame;
+enum CV_CPU_TYPE_e : int;
+struct __declspec(uuid("0cf4b60e-35b1-4c6c-bdd8-854b9c8e3857"))
+/* interface */ IDiaSectionContrib;
+struct __declspec(uuid("1994deb2-2c82-4b1d-a57f-aff424d54a68"))
+/* interface */ IDiaEnumSectionContribs;
+struct __declspec(uuid("611e86cd-b7d1-4546-8a15-070e2b07a427"))
+/* interface */ IDiaSymbol2;
+struct __declspec(uuid("99b665f7-c1b2-49d3-89b2-a384361acab5"))
+/* interface */ IDiaSymbol3;
+struct __declspec(uuid("bf6c88a7-e9d6-4346-99a1-d053de5a7808"))
+/* interface */ IDiaSymbol4;
+struct __declspec(uuid("abe2de00-dc2d-4793-af9a-ef1d90832644"))
+/* interface */ IDiaSymbol5;
+struct __declspec(uuid("8133dad3-75fe-4234-ac7e-f8e7a1d3cbb3"))
+/* interface */ IDiaSymbol6;
+struct __declspec(uuid("64ce6cd5-7315-4328-86d6-10e303e010b4"))
+/* interface */ IDiaSymbol7;
+struct __declspec(uuid("7f2e041f-1294-41bd-b83a-e715972d2ce3"))
+/* interface */ IDiaSymbol8;
+struct __declspec(uuid("a89e5969-92a1-4f8a-b704-00121c37abbb"))
+/* interface */ IDiaSymbol9;
+struct __declspec(uuid("9034a70b-b0b7-4605-8a97-33772f3a7b8c"))
+/* interface */ IDiaSymbol10;
+struct __declspec(uuid("b6f54fcd-05e3-433d-b305-b0c1437d2d16"))
+/* interface */ IDiaSymbol11;
+struct DiaTagValue;
+struct __declspec(uuid("1e45bd02-be45-4d71-ba32-0e576cfcd59f"))
+/* interface */ IDiaEnumSymbolsByAddr2;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(IDiaInputAssemblyFile, __uuidof(IDiaInputAssemblyFile));
+_COM_SMARTPTR_TYPEDEF(IDiaTable, __uuidof(IDiaTable));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumTables, __uuidof(IDiaEnumTables));
+_COM_SMARTPTR_TYPEDEF(IDiaInjectedSource, __uuidof(IDiaInjectedSource));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumInjectedSources, __uuidof(IDiaEnumInjectedSources));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumDebugStreamData, __uuidof(IDiaEnumDebugStreamData));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumDebugStreams, __uuidof(IDiaEnumDebugStreams));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumInputAssemblyFiles, __uuidof(IDiaEnumInputAssemblyFiles));
+_COM_SMARTPTR_TYPEDEF(IDiaStackFrame, __uuidof(IDiaStackFrame));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumStackFrames, __uuidof(IDiaEnumStackFrames));
+_COM_SMARTPTR_TYPEDEF(IDiaDataSource, __uuidof(IDiaDataSource));
+_COM_SMARTPTR_TYPEDEF(IDiaDataSourceEx, __uuidof(IDiaDataSourceEx));
+_COM_SMARTPTR_TYPEDEF(IDiaSession, __uuidof(IDiaSession));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol, __uuidof(IDiaSymbol));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumSymbols, __uuidof(IDiaEnumSymbols));
+_COM_SMARTPTR_TYPEDEF(IDiaSourceFile, __uuidof(IDiaSourceFile));
+_COM_SMARTPTR_TYPEDEF(IDiaLineNumber, __uuidof(IDiaLineNumber));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumLineNumbers, __uuidof(IDiaEnumLineNumbers));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumSymbolsByAddr, __uuidof(IDiaEnumSymbolsByAddr));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumSourceFiles, __uuidof(IDiaEnumSourceFiles));
+_COM_SMARTPTR_TYPEDEF(IDiaSectionContrib, __uuidof(IDiaSectionContrib));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumSectionContribs, __uuidof(IDiaEnumSectionContribs));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol2, __uuidof(IDiaSymbol2));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol3, __uuidof(IDiaSymbol3));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol4, __uuidof(IDiaSymbol4));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol5, __uuidof(IDiaSymbol5));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol6, __uuidof(IDiaSymbol6));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol7, __uuidof(IDiaSymbol7));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol8, __uuidof(IDiaSymbol8));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol9, __uuidof(IDiaSymbol9));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol10, __uuidof(IDiaSymbol10));
+_COM_SMARTPTR_TYPEDEF(IDiaSymbol11, __uuidof(IDiaSymbol11));
+_COM_SMARTPTR_TYPEDEF(IDiaEnumSymbolsByAddr2, __uuidof(IDiaEnumSymbolsByAddr2));
+_COM_SMARTPTR_TYPEDEF(IDiaStackWalker, __uuidof(IDiaStackWalker));
+_COM_SMARTPTR_TYPEDEF(IDiaStackWalkHelper, __uuidof(IDiaStackWalkHelper));
+_COM_SMARTPTR_TYPEDEF(IDiaFrameData, __uuidof(IDiaFrameData));
+_COM_SMARTPTR_TYPEDEF(IDiaStackWalkFrame, __uuidof(IDiaStackWalkFrame));
+
+//
+// Type library items
+//
+
+struct __declspec(uuid("e6756135-1e65-4d17-8576-610761398c3c"))
+DiaSource;
+    // [ default ] interface IDiaDataSource
+    // interface IDiaDataSourceEx
+
+enum SymTagEnum : int
+{
+    SymTagNull = 0,
+    SymTagExe = 1,
+    SymTagCompiland = 2,
+    SymTagCompilandDetails = 3,
+    SymTagCompilandEnv = 4,
+    SymTagFunction = 5,
+    SymTagBlock = 6,
+    SymTagData = 7,
+    SymTagAnnotation = 8,
+    SymTagLabel = 9,
+    SymTagPublicSymbol = 10,
+    SymTagUDT = 11,
+    _SymTagEnum = 12,
+    SymTagFunctionType = 13,
+    SymTagPointerType = 14,
+    SymTagArrayType = 15,
+    SymTagBaseType = 16,
+    SymTagTypedef = 17,
+    SymTagBaseClass = 18,
+    SymTagFriend = 19,
+    SymTagFunctionArgType = 20,
+    SymTagFuncDebugStart = 21,
+    SymTagFuncDebugEnd = 22,
+    SymTagUsingNamespace = 23,
+    SymTagVTableShape = 24,
+    SymTagVTable = 25,
+    SymTagCustom = 26,
+    SymTagThunk = 27,
+    SymTagCustomType = 28,
+    SymTagManagedType = 29,
+    SymTagDimension = 30,
+    SymTagCallSite = 31,
+    SymTagInlineSite = 32,
+    SymTagBaseInterface = 33,
+    SymTagVectorType = 34,
+    SymTagMatrixType = 35,
+    SymTagHLSLType = 36,
+    SymTagCaller = 37,
+    SymTagCallee = 38,
+    SymTagExport = 39,
+    SymTagHeapAllocationSite = 40,
+    SymTagCoffGroup = 41,
+    SymTagInlinee = 42,
+    SymTagTaggedUnionCase = 43,
+    SymTagMax = 44
+};
+
+struct __declspec(uuid("3bfe56b0-390c-4863-9430-1f3d083b7684"))
+IDiaInputAssemblyFile : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_uniqueId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_index (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_timeStamp (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_pdbAvailableAtILMerge (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_fileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_version (
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+};
+
+struct __declspec(uuid("4a59fb77-abac-469b-a30b-9ecc85bfef14"))
+IDiaTable : IEnumUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_name (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ IUnknown * * element ) = 0;
+};
+
+struct __declspec(uuid("c65c2b0a-1150-4d7a-afcc-e05bf3dee81e"))
+IDiaEnumTables : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ VARIANT index,
+        /*[out,retval]*/ struct IDiaTable * * table ) = 0;
+      virtual HRESULT __stdcall Next (
+        unsigned long celt,
+        struct IDiaTable * * rgelt,
+        unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumTables * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("ae605cdc-8105-4a23-b710-3259f1e26112"))
+IDiaInjectedSource : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_crc (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_length (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_fileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_objectFileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualFilename (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sourceCompression (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_source (
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+};
+
+struct __declspec(uuid("d5612573-6925-4468-8883-98cdec8c384a"))
+IDiaEnumInjectedSources : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaInjectedSource * * injectedSource ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaInjectedSource * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumInjectedSources * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("486943e8-d187-4a6b-a3c4-291259fff60d"))
+IDiaEnumDebugStreamData : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_name (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumDebugStreamData * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("08cbb41e-47a6-4f87-92f1-1c9c87ced044"))
+IDiaEnumDebugStreams : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ VARIANT index,
+        /*[out,retval]*/ struct IDiaEnumDebugStreamData * * stream ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaEnumDebugStreamData * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumDebugStreams * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("1c7ff653-51f7-457e-8419-b20f57ef7e4d"))
+IDiaEnumInputAssemblyFiles : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaInputAssemblyFile * * file ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaInputAssemblyFile * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumInputAssemblyFiles * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("91904831-49ca-4766-b95c-25397e2dd6dc"))
+DiaSourceAlt;
+    // [ default ] interface IDiaDataSource
+    // interface IDiaDataSourceEx
+
+struct __declspec(uuid("ce4a85db-5768-475b-a4e1-c0bca2112a6b"))
+DiaStackWalker;
+    // [ default ] interface IDiaStackWalker
+
+enum MemoryTypeEnum : int
+{
+    MemTypeCode = 0,
+    MemTypeData = 1,
+    MemTypeStack = 2,
+    MemTypeCodeOnHeap = 3,
+    MemTypeAny = -1
+};
+
+struct __declspec(uuid("5edbc96d-cdd6-4792-afbe-cc89007d9610"))
+IDiaStackFrame : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_type (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_base (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_size (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_returnAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_localsBase (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthLocals (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthParams (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthProlog (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthSavedRegisters (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_systemExceptionHandling (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_cplusplusExceptionHandling (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_functionStart (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_allocatesBasePointer (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_maxStack (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_registerValue (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("ec9d461d-ce74-4711-a020-7d8f9a1dd255"))
+IDiaEnumStackFrames : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaStackFrame * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+};
+
+enum CV_CPU_TYPE_e : int
+{
+    CV_CFL_8080 = 0,
+    CV_CFL_8086 = 1,
+    CV_CFL_80286 = 2,
+    CV_CFL_80386 = 3,
+    CV_CFL_80486 = 4,
+    CV_CFL_PENTIUM = 5,
+    CV_CFL_PENTIUMII = 6,
+    CV_CFL_PENTIUMPRO = 6,
+    CV_CFL_PENTIUMIII = 7,
+    CV_CFL_MIPS = 16,
+    CV_CFL_MIPSR4000 = 16,
+    CV_CFL_MIPS16 = 17,
+    CV_CFL_MIPS32 = 18,
+    CV_CFL_MIPS64 = 19,
+    CV_CFL_MIPSI = 20,
+    CV_CFL_MIPSII = 21,
+    CV_CFL_MIPSIII = 22,
+    CV_CFL_MIPSIV = 23,
+    CV_CFL_MIPSV = 24,
+    CV_CFL_M68000 = 32,
+    CV_CFL_M68010 = 33,
+    CV_CFL_M68020 = 34,
+    CV_CFL_M68030 = 35,
+    CV_CFL_M68040 = 36,
+    CV_CFL_ALPHA = 48,
+    CV_CFL_ALPHA_21064 = 48,
+    CV_CFL_ALPHA_21164 = 49,
+    CV_CFL_ALPHA_21164A = 50,
+    CV_CFL_ALPHA_21264 = 51,
+    CV_CFL_ALPHA_21364 = 52,
+    CV_CFL_PPC601 = 64,
+    CV_CFL_PPC603 = 65,
+    CV_CFL_PPC604 = 66,
+    CV_CFL_PPC620 = 67,
+    CV_CFL_PPCFP = 68,
+    CV_CFL_PPCBE = 69,
+    CV_CFL_SH3 = 80,
+    CV_CFL_SH3E = 81,
+    CV_CFL_SH3DSP = 82,
+    CV_CFL_SH4 = 83,
+    CV_CFL_SHMEDIA = 84,
+    CV_CFL_ARM3 = 96,
+    CV_CFL_ARM4 = 97,
+    CV_CFL_ARM4T = 98,
+    CV_CFL_ARM5 = 99,
+    CV_CFL_ARM5T = 100,
+    CV_CFL_ARM6 = 101,
+    CV_CFL_ARM_XMAC = 102,
+    CV_CFL_ARM_WMMX = 103,
+    CV_CFL_ARM7 = 104,
+    CV_CFL_OMNI = 112,
+    CV_CFL_IA64 = 128,
+    CV_CFL_IA64_1 = 128,
+    CV_CFL_IA64_2 = 129,
+    CV_CFL_CEE = 144,
+    CV_CFL_AM33 = 160,
+    CV_CFL_M32R = 176,
+    CV_CFL_TRICORE = 192,
+    CV_CFL_X64 = 208,
+    CV_CFL_AMD64 = 208,
+    CV_CFL_EBC = 224,
+    CV_CFL_THUMB = 240,
+    CV_CFL_ARMNT = 244,
+    CV_CFL_ARM64 = 246,
+    CV_CFL_HYBRID_X86_ARM64 = 247,
+    CV_CFL_ARM64EC = 248,
+    CV_CFL_ARM64X = 249,
+    CV_CFL_UNKNOWN = 255,
+    CV_CFL_D3D11_SHADER = 256
+};
+
+#pragma pack(push, 1)
+
+struct DiaTagValue
+{
+    unsigned char value[16];
+    unsigned char valueSizeBytes;
+};
+
+#pragma pack(pop)
+
+struct __declspec(uuid("79f1bb5f-b66e-48e5-b6a9-1545c323ca3d"))
+IDiaDataSource : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_lastError (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall loadDataFromPdb (
+        /*[in]*/ LPWSTR pdbPath ) = 0;
+      virtual HRESULT __stdcall loadAndValidateDataFromPdb (
+        /*[in]*/ LPWSTR pdbPath,
+        /*[in]*/ GUID * pcsig70,
+        /*[in]*/ unsigned long sig,
+        /*[in]*/ unsigned long age ) = 0;
+      virtual HRESULT __stdcall loadDataForExe (
+        /*[in]*/ LPWSTR executable,
+        /*[in]*/ LPWSTR searchPath,
+        /*[in]*/ IUnknown * pCallback ) = 0;
+      virtual HRESULT __stdcall loadDataFromIStream (
+        /*[in]*/ struct IStream * pIStream ) = 0;
+      virtual HRESULT __stdcall openSession (
+        /*[out]*/ struct IDiaSession * * ppSession ) = 0;
+      virtual HRESULT __stdcall loadDataFromCodeViewInfo (
+        /*[in]*/ LPWSTR executable,
+        /*[in]*/ LPWSTR searchPath,
+        /*[in]*/ unsigned long cbCvInfo,
+        /*[in]*/ unsigned char * pbCvInfo,
+        /*[in]*/ IUnknown * pCallback ) = 0;
+      virtual HRESULT __stdcall loadDataFromMiscInfo (
+        /*[in]*/ LPWSTR executable,
+        /*[in]*/ LPWSTR searchPath,
+        /*[in]*/ unsigned long timeStampExe,
+        /*[in]*/ unsigned long timeStampDbg,
+        /*[in]*/ unsigned long sizeOfExe,
+        /*[in]*/ unsigned long cbMiscInfo,
+        /*[in]*/ unsigned char * pbMiscInfo,
+        /*[in]*/ IUnknown * pCallback ) = 0;
+};
+
+struct __declspec(uuid("1a21eb69-962a-4bc4-8bd3-681797d38b23"))
+IDiaDataSourceEx : IDiaDataSource
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall loadDataFromPdbEx (
+        /*[in]*/ LPWSTR pdbPath,
+        /*[in]*/ long fPdbPrefetching ) = 0;
+      virtual HRESULT __stdcall loadAndValidateDataFromPdbEx (
+        /*[in]*/ LPWSTR pdbPath,
+        /*[in]*/ GUID * pcsig70,
+        /*[in]*/ unsigned long sig,
+        /*[in]*/ unsigned long age,
+        /*[in]*/ long fPdbPrefetching ) = 0;
+      virtual HRESULT __stdcall loadDataForExeEx (
+        /*[in]*/ LPWSTR executable,
+        /*[in]*/ LPWSTR searchPath,
+        /*[in]*/ IUnknown * pCallback,
+        /*[in]*/ long fPdbPrefetching ) = 0;
+      virtual HRESULT __stdcall loadDataFromIStreamEx (
+        /*[in]*/ struct IStream * pIStream,
+        /*[in]*/ long fPdbPrefetching ) = 0;
+      virtual HRESULT __stdcall getStreamSize (
+        /*[in]*/ LPWSTR stream,
+        /*[out]*/ unsigned __int64 * pcb ) = 0;
+      virtual HRESULT __stdcall getStreamRawData (
+        /*[in]*/ LPWSTR stream,
+        /*[in]*/ unsigned __int64 cbOffset,
+        /*[in]*/ unsigned __int64 cbRead,
+        /*[out]*/ unsigned __int64 * pcbRead,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __cdecl __MIDL____MIDL_itf_dia2_0000_00050000 (
+        void * pvContext,
+        unsigned long dwErrorCode,
+        LPWSTR szObjOrPdb,
+        LPWSTR szLib ) = 0;
+      virtual HRESULT __stdcall setPfnMiniPDBErrorCallback2 (
+        /*[in]*/ void * pvContext,
+        /*[in]*/ struct IDiaDataSourceEx * pfn ) = 0;
+      virtual HRESULT __stdcall ValidatePdb (
+        /*[in]*/ LPWSTR pdbPath,
+        /*[in]*/ GUID * pcsig70,
+        /*[in]*/ unsigned long sig,
+        /*[in]*/ unsigned long age,
+        /*[out]*/ long * pfStripped ) = 0;
+};
+
+struct __declspec(uuid("2f609ee1-d1c8-4e24-8288-3326badcd211"))
+IDiaSession : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_loadAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall put_loadAddress (
+        /*[in]*/ unsigned __int64 pRetVal ) = 0;
+      virtual HRESULT __stdcall get_globalScope (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall getEnumTables (
+        /*[out]*/ struct IDiaEnumTables * * ppEnumTables ) = 0;
+      virtual HRESULT __stdcall getSymbolsByAddr (
+        /*[out]*/ struct IDiaEnumSymbolsByAddr * * ppEnumbyAddr ) = 0;
+      virtual HRESULT __stdcall findChildren (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenEx (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByAddr (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByRVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findSymbolByAddr (
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall findSymbolByRVA (
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall findSymbolByVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall findSymbolByToken (
+        /*[in]*/ unsigned long token,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall symsAreEquiv (
+        /*[in]*/ struct IDiaSymbol * symbolA,
+        /*[in]*/ struct IDiaSymbol * symbolB ) = 0;
+      virtual HRESULT __stdcall symbolById (
+        /*[in]*/ unsigned long id,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall findSymbolByRVAEx (
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol,
+        /*[out]*/ long * displacement ) = 0;
+      virtual HRESULT __stdcall findSymbolByVAEx (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol,
+        /*[out]*/ long * displacement ) = 0;
+      virtual HRESULT __stdcall findFile (
+        /*[in]*/ struct IDiaSymbol * pCompiland,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[out]*/ struct IDiaEnumSourceFiles * * ppResult ) = 0;
+      virtual HRESULT __stdcall findFileById (
+        /*[in]*/ unsigned long uniqueId,
+        /*[out]*/ struct IDiaSourceFile * * ppResult ) = 0;
+      virtual HRESULT __stdcall findLines (
+        /*[in]*/ struct IDiaSymbol * compiland,
+        /*[in]*/ struct IDiaSourceFile * file,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findLinesByAddr (
+        /*[in]*/ unsigned long seg,
+        /*[in]*/ unsigned long offset,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findLinesByRVA (
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findLinesByVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findLinesByLinenum (
+        /*[in]*/ struct IDiaSymbol * compiland,
+        /*[in]*/ struct IDiaSourceFile * file,
+        /*[in]*/ unsigned long linenum,
+        /*[in]*/ unsigned long column,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInjectedSource (
+        /*[in]*/ LPWSTR srcFile,
+        /*[out]*/ struct IDiaEnumInjectedSources * * ppResult ) = 0;
+      virtual HRESULT __stdcall getEnumDebugStreams (
+        /*[out]*/ struct IDiaEnumDebugStreams * * ppEnumDebugStreams ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByAddr (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByRVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLines (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByAddr (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByRVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByVA (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByLinenum (
+        /*[in]*/ struct IDiaSymbol * compiland,
+        /*[in]*/ struct IDiaSourceFile * file,
+        /*[in]*/ unsigned long linenum,
+        /*[in]*/ unsigned long column,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineesByName (
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long option,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findAcceleratorInlineeLinesByLinenum (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ struct IDiaSourceFile * file,
+        /*[in]*/ unsigned long linenum,
+        /*[in]*/ unsigned long column,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findSymbolsForAcceleratorPointerTag (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long tagValue,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findSymbolsByRVAForAcceleratorPointerTag (
+        /*[in]*/ struct IDiaSymbol * parent,
+        /*[in]*/ unsigned long tagValue,
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findAcceleratorInlineesByName (
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long option,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall addressForVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ unsigned long * pISect,
+        /*[out]*/ unsigned long * pOffset ) = 0;
+      virtual HRESULT __stdcall addressForRVA (
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ unsigned long * pISect,
+        /*[out]*/ unsigned long * pOffset ) = 0;
+      virtual HRESULT __stdcall findILOffsetsByAddr (
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findILOffsetsByRVA (
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findILOffsetsByVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInputAssemblyFiles (
+        /*[out]*/ struct IDiaEnumInputAssemblyFiles * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInputAssembly (
+        /*[in]*/ unsigned long index,
+        /*[out]*/ struct IDiaInputAssemblyFile * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInputAssemblyById (
+        /*[in]*/ unsigned long uniqueId,
+        /*[out]*/ struct IDiaInputAssemblyFile * * ppResult ) = 0;
+      virtual HRESULT __stdcall getFuncMDTokenMapSize (
+        /*[out]*/ unsigned long * pcb ) = 0;
+      virtual HRESULT __stdcall getFuncMDTokenMap (
+        /*[in]*/ unsigned long cb,
+        /*[out]*/ unsigned long * pcb,
+        /*[out]*/ unsigned char * pb ) = 0;
+      virtual HRESULT __stdcall getTypeMDTokenMapSize (
+        /*[out]*/ unsigned long * pcb ) = 0;
+      virtual HRESULT __stdcall getTypeMDTokenMap (
+        /*[in]*/ unsigned long cb,
+        /*[out]*/ unsigned long * pcb,
+        /*[out]*/ unsigned char * pb ) = 0;
+      virtual HRESULT __stdcall getNumberOfFunctionFragments_VA (
+        /*[in]*/ unsigned __int64 vaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[out]*/ unsigned long * pNumFragments ) = 0;
+      virtual HRESULT __stdcall getNumberOfFunctionFragments_RVA (
+        /*[in]*/ unsigned long rvaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[out]*/ unsigned long * pNumFragments ) = 0;
+      virtual HRESULT __stdcall getFunctionFragments_VA (
+        /*[in]*/ unsigned __int64 vaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[in]*/ unsigned long cFragments,
+        /*[out]*/ unsigned __int64 * pVaFragment,
+        /*[out]*/ unsigned long * pLenFragment ) = 0;
+      virtual HRESULT __stdcall getFunctionFragments_RVA (
+        /*[in]*/ unsigned long rvaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[in]*/ unsigned long cFragments,
+        /*[out]*/ unsigned long * pRvaFragment,
+        /*[out]*/ unsigned long * pLenFragment ) = 0;
+      virtual HRESULT __stdcall getExports (
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall getHeapAllocationSites (
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInputAssemblyFile (
+        /*[in]*/ struct IDiaSymbol * pSymbol,
+        /*[out]*/ struct IDiaInputAssemblyFile * * ppResult ) = 0;
+};
+
+struct __declspec(uuid("cb787b2f-bd6c-4635-ba52-933126bd2dcd"))
+IDiaSymbol : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_symIndexId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_symTag (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_name (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lexicalParent (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_classParent (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_type (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_dataKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_locationType (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_relativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_registerId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_offset (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_length (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_slot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_volatileType (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_constType (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_unalignedType (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_access (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_libraryName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_platform (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_language (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_editAndContinueEnabled (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_frontEndMajor (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_frontEndMinor (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_frontEndBuild (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_backEndMajor (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_backEndMinor (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_backEndBuild (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sourceFileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_unused (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_thunkOrdinal (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_thisAdjust (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualBaseOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtual (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_intro (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_pure (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_callingConvention (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_value (
+        /*[out,retval]*/ VARIANT * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_baseType (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_token (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_timeStamp (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_guid (
+        /*[out,retval]*/ GUID * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_symbolsFileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_reference (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_bitPosition (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_arrayIndexType (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_packed (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_constructor (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_overloadedOperator (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_nested (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasNestedTypes (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasAssignmentOperator (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasCastOperator (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_scoped (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualBaseClass (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_indirectVirtualBaseClass (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualBasePointerOffset (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualTableShape (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lexicalParentId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_classParentId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_typeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_arrayIndexTypeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualTableShapeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_code (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_function (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_managed (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_msil (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualBaseDispIndex (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_undecoratedName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_age (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_signature (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_compilerGenerated (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressTaken (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_rank (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lowerBound (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_upperBound (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lowerBoundId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_upperBoundId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_dataBytes (
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __stdcall findChildren (
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenEx (
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByAddr (
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByVA (
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findChildrenExByRVA (
+        /*[in]*/ enum SymTagEnum symTag,
+        /*[in]*/ LPWSTR name,
+        /*[in]*/ unsigned long compareFlags,
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall get_targetSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_targetOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_targetRelativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_targetVirtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_machineType (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_oemId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_oemSymbolId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_types (
+        /*[in]*/ unsigned long cTypes,
+        /*[out]*/ unsigned long * pcTypes,
+        /*[out]*/ struct IDiaSymbol * * pTypes ) = 0;
+      virtual HRESULT __stdcall get_typeIds (
+        /*[in]*/ unsigned long cTypeIds,
+        /*[out]*/ unsigned long * pcTypeIds,
+        /*[out]*/ unsigned long * pdwTypeIds ) = 0;
+      virtual HRESULT __stdcall get_objectPointerType (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_udtKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_undecoratedNameEx (
+        /*[in]*/ unsigned long undecorateOptions,
+        /*[out]*/ BSTR * name ) = 0;
+      virtual HRESULT __stdcall get_noReturn (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_customCallingConvention (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_noInline (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_optimizedCodeDebugInfo (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_notReached (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_interruptReturn (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_farReturn (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isStatic (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasDebugInfo (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isLTCG (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isDataAligned (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasSecurityChecks (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_compilerName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasAlloca (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasSetJump (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasLongJump (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasInlAsm (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasEH (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasSEH (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasEHa (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isNaked (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isAggregated (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isSplitted (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_container (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_inlSpec (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_noStackOrdering (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualBaseTableType (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasManagedCode (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isHotpatchable (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isCVTCIL (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isMSILNetmodule (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isCTypes (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isStripped (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_frontEndQFE (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_backEndQFE (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_wasInlined (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_strictGSCheck (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isCxxReturnUdt (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isConstructorVirtualBase (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_RValueReference (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_unmodifiedType (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_framePointerPresent (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isSafeBuffers (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_intrinsic (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sealed (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hfaFloat (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hfaDouble (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_liveRangeStartAddressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_liveRangeStartAddressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_liveRangeStartRelativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_countLiveRanges (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_liveRangeLength (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_offsetInUdt (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_paramBasePointerRegisterId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_localBasePointerRegisterId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isLocationControlFlowDependent (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_stride (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numberOfRows (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numberOfColumns (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isMatrixRowMajor (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numericProperties (
+        /*[in]*/ unsigned long cnt,
+        /*[out]*/ unsigned long * pcnt,
+        /*[out]*/ unsigned long * pProperties ) = 0;
+      virtual HRESULT __stdcall get_modifierValues (
+        /*[in]*/ unsigned long cnt,
+        /*[out]*/ unsigned long * pcnt,
+        /*[out]*/ unsigned short * pModifiers ) = 0;
+      virtual HRESULT __stdcall get_isReturnValue (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isOptimizedAway (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_builtInKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_registerType (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_baseDataSlot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_baseDataOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_textureSlot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_samplerSlot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_uavSlot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sizeInUdt (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_memorySpaceKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_unmodifiedTypeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_subTypeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_subType (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numberOfModifiers (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numberOfRegisterIndices (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isHLSLData (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isPointerToDataMember (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isPointerToMemberFunction (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isSingleInheritance (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isMultipleInheritance (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isVirtualInheritance (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_restrictedType (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isPointerBasedOnSymbolValue (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_baseSymbol (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_baseSymbolId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_objectFileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isAcceleratorGroupSharedLocal (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isAcceleratorPointerTagLiveRange (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isAcceleratorStubFunction (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_numberOfAcceleratorPointerTags (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isSdl (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isWinRTPointer (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isRefUdt (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isValueUdt (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isInterfaceUdt (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByAddr (
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByRVA (
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineFramesByVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLines (
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByAddr (
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByRVA (
+        /*[in]*/ unsigned long rva,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findInlineeLinesByVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long length,
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppResult ) = 0;
+      virtual HRESULT __stdcall findSymbolsForAcceleratorPointerTag (
+        /*[in]*/ unsigned long tagValue,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall findSymbolsByRVAForAcceleratorPointerTag (
+        /*[in]*/ unsigned long tagValue,
+        /*[in]*/ unsigned long rva,
+        /*[out]*/ struct IDiaEnumSymbols * * ppResult ) = 0;
+      virtual HRESULT __stdcall get_acceleratorPointerTags (
+        /*[in]*/ unsigned long cnt,
+        /*[out]*/ unsigned long * pcnt,
+        /*[out]*/ unsigned long * pPointerTags ) = 0;
+      virtual HRESULT __stdcall getSrcLineOnTypeDefn (
+        /*[out]*/ struct IDiaLineNumber * * ppResult ) = 0;
+      virtual HRESULT __stdcall get_isPGO (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasValidPGOCounts (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isOptimizedForSpeed (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_PGOEntryCount (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_PGOEdgeCount (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_PGODynamicInstructionCount (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_staticSize (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_finalLiveStaticSize (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_phaseName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_hasControlFlowCheck (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_constantExport (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_dataExport (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_privateExport (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_noNameExport (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exportHasExplicitlyAssignedOrdinal (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exportIsForwarder (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_ordinal (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_frameSize (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exceptionHandlerAddressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exceptionHandlerAddressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exceptionHandlerRelativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_exceptionHandlerVirtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall findInputAssemblyFile (
+        /*[out]*/ struct IDiaInputAssemblyFile * * ppResult ) = 0;
+      virtual HRESULT __stdcall get_characteristics (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_coffGroup (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_bindID (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_bindSpace (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_bindSlot (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("cab72c48-443b-48f5-9b0b-42f0820ab29a"))
+IDiaEnumSymbols : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaSymbol * * symbol ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSymbol * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumSymbols * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("a2ef5353-f5a8-4eb3-90d2-cb526acb3cdd"))
+IDiaSourceFile : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_uniqueId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_fileName (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_checksumType (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_compilands (
+        /*[out,retval]*/ struct IDiaEnumSymbols * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_checksum (
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+};
+
+struct __declspec(uuid("b388eb14-be4d-421d-a8a1-6cf7ab057086"))
+IDiaLineNumber : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_compiland (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sourceFile (
+        /*[out,retval]*/ struct IDiaSourceFile * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lineNumber (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lineNumberEnd (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_columnNumber (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_columnNumberEnd (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_relativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_length (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_sourceFileId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_statement (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_compilandId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("fe30e878-54ac-44f1-81ba-39de940f6052"))
+IDiaEnumLineNumbers : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaLineNumber * * lineNumber ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaLineNumber * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumLineNumbers * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("624b7d9c-24ea-4421-9d06-3b577471c1fa"))
+IDiaEnumSymbolsByAddr : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall symbolByAddr (
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall symbolByRVA (
+        /*[in]*/ unsigned long relativeVirtualAddress,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall symbolByVA (
+        /*[in]*/ unsigned __int64 virtualAddress,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSymbol * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Prev (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSymbol * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumSymbolsByAddr * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("10f3dbd9-664f-4469-b808-9471c7a50538"))
+IDiaEnumSourceFiles : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaSourceFile * * sourceFile ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSourceFile * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumSourceFiles * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("0cf4b60e-35b1-4c6c-bdd8-854b9c8e3857"))
+IDiaSectionContrib : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_compiland (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_relativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_length (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_notPaged (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_code (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_initializedData (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_uninitializedData (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_remove (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_comdat (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_discardable (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_notCached (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_share (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_execute (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_read (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_write (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_dataCrc (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_relocationsCrc (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_compilandId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_code16bit (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("1994deb2-2c82-4b1d-a57f-aff424d54a68"))
+IDiaEnumSectionContribs : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_count (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall Item (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ struct IDiaSectionContrib * * section ) = 0;
+      virtual HRESULT __stdcall Next (
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSectionContrib * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall Skip (
+        /*[in]*/ unsigned long celt ) = 0;
+      virtual HRESULT __stdcall Reset ( ) = 0;
+      virtual HRESULT __stdcall Clone (
+        /*[out]*/ struct IDiaEnumSectionContribs * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("611e86cd-b7d1-4546-8a15-070e2b07a427"))
+IDiaSymbol2 : IDiaSymbol
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_isObjCClass (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isObjCCategory (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isObjCProtocol (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("99b665f7-c1b2-49d3-89b2-a384361acab5"))
+IDiaSymbol3 : IDiaSymbol2
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_inlinee (
+        /*[out,retval]*/ struct IDiaSymbol * * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_inlineeId (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("bf6c88a7-e9d6-4346-99a1-d053de5a7808"))
+IDiaSymbol4 : IDiaSymbol3
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_noexcept (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("abe2de00-dc2d-4793-af9a-ef1d90832644"))
+IDiaSymbol5 : IDiaSymbol4
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_hasAbsoluteAddress (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("8133dad3-75fe-4234-ac7e-f8e7a1d3cbb3"))
+IDiaSymbol6 : IDiaSymbol5
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_isStaticMemberFunc (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("64ce6cd5-7315-4328-86d6-10e303e010b4"))
+IDiaSymbol7 : IDiaSymbol6
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_isSignRet (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("7f2e041f-1294-41bd-b83a-e715972d2ce3"))
+IDiaSymbol8 : IDiaSymbol7
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_coroutineKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_associatedSymbolKind (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_associatedSymbolSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_associatedSymbolOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_associatedSymbolRva (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_associatedSymbolAddr (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("a89e5969-92a1-4f8a-b704-00121c37abbb"))
+IDiaSymbol9 : IDiaSymbol8
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_framePadSize (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_framePadOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_isRTCs (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+};
+
+struct __declspec(uuid("9034a70b-b0b7-4605-8a97-33772f3a7b8c"))
+IDiaSymbol10 : IDiaSymbol9
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_sourceLink (
+        /*[in]*/ unsigned long cb,
+        /*[out]*/ unsigned long * pcb,
+        /*[out]*/ unsigned char * pb ) = 0;
+};
+
+struct __declspec(uuid("b6f54fcd-05e3-433d-b305-b0c1437d2d16"))
+IDiaSymbol11 : IDiaSymbol10
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_discriminatedUnionTag (
+        /*[out]*/ struct IDiaSymbol * * ppTagType,
+        /*[out]*/ unsigned long * pTagOffset,
+        /*[out]*/ struct DiaTagValue * pTagMask ) = 0;
+      virtual HRESULT __stdcall get_tagRanges (
+        /*[in]*/ unsigned long count,
+        /*[out]*/ unsigned long * pcRangeValues,
+        /*[out]*/ struct DiaTagValue * rangeValues ) = 0;
+};
+
+struct __declspec(uuid("1e45bd02-be45-4d71-ba32-0e576cfcd59f"))
+IDiaEnumSymbolsByAddr2 : IDiaEnumSymbolsByAddr
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall symbolByAddrEx (
+        /*[in]*/ long fPromoteBlockSym,
+        /*[in]*/ unsigned long isect,
+        /*[in]*/ unsigned long offset,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall symbolByRVAEx (
+        /*[in]*/ long fPromoteBlockSym,
+        /*[in]*/ unsigned long relativeVirtualAddress,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall symbolByVAEx (
+        /*[in]*/ long fPromoteBlockSym,
+        /*[in]*/ unsigned __int64 virtualAddress,
+        /*[out,retval]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall NextEx (
+        /*[in]*/ long fPromoteBlockSym,
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSymbol * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+      virtual HRESULT __stdcall PrevEx (
+        /*[in]*/ long fPromoteBlockSym,
+        /*[in]*/ unsigned long celt,
+        /*[out]*/ struct IDiaSymbol * * rgelt,
+        /*[out]*/ unsigned long * pceltFetched ) = 0;
+};
+
+struct __declspec(uuid("5485216b-a54c-469f-9670-52b24d5229bb"))
+IDiaStackWalker : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall getEnumFrames (
+        /*[in]*/ struct IDiaStackWalkHelper * pHelper,
+        /*[out]*/ struct IDiaEnumStackFrames * * ppenum ) = 0;
+      virtual HRESULT __stdcall getEnumFrames2 (
+        /*[in]*/ enum CV_CPU_TYPE_e cpuid,
+        /*[in]*/ struct IDiaStackWalkHelper * pHelper,
+        /*[out]*/ struct IDiaEnumStackFrames * * ppenum ) = 0;
+};
+
+struct __declspec(uuid("21f81b1b-c5bb-42a3-bc4f-ccbaa75b9f19"))
+IDiaStackWalkHelper : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_registerValue (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall put_registerValue (
+        /*[in]*/ unsigned long index,
+        /*[in]*/ unsigned __int64 pRetVal ) = 0;
+      virtual HRESULT __stdcall readMemory (
+        /*[in]*/ enum MemoryTypeEnum type,
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __stdcall searchForReturnAddress (
+        /*[in]*/ struct IDiaFrameData * frame,
+        /*[out]*/ unsigned __int64 * returnAddress ) = 0;
+      virtual HRESULT __stdcall searchForReturnAddressStart (
+        /*[in]*/ struct IDiaFrameData * frame,
+        /*[in]*/ unsigned __int64 startAddress,
+        /*[out]*/ unsigned __int64 * returnAddress ) = 0;
+      virtual HRESULT __stdcall frameForVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaFrameData * * ppFrame ) = 0;
+      virtual HRESULT __stdcall symbolForVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ struct IDiaSymbol * * ppSymbol ) = 0;
+      virtual HRESULT __stdcall pdataForVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __stdcall imageForVA (
+        /*[in]*/ unsigned __int64 vaContext,
+        /*[out]*/ unsigned __int64 * pvaImageStart ) = 0;
+      virtual HRESULT __stdcall addressForVA (
+        /*[in]*/ unsigned __int64 va,
+        /*[out]*/ unsigned long * pISect,
+        /*[out]*/ unsigned long * pOffset ) = 0;
+      virtual HRESULT __stdcall numberOfFunctionFragmentsForVA (
+        /*[in]*/ unsigned __int64 vaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[out]*/ unsigned long * pNumFragments ) = 0;
+      virtual HRESULT __stdcall functionFragmentsForVA (
+        /*[in]*/ unsigned __int64 vaFunc,
+        /*[in]*/ unsigned long cbFunc,
+        /*[in]*/ unsigned long cFragments,
+        /*[out]*/ unsigned __int64 * pVaFragment,
+        /*[out]*/ unsigned long * pLenFragment ) = 0;
+};
+
+struct __declspec(uuid("a39184b7-6a36-42de-8eec-7df9f3f59f33"))
+IDiaFrameData : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_addressSection (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_addressOffset (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_relativeVirtualAddress (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_virtualAddress (
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthBlock (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthLocals (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthParams (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_maxStack (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthProlog (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_lengthSavedRegisters (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_program (
+        /*[out,retval]*/ BSTR * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_systemExceptionHandling (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_cplusplusExceptionHandling (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_functionStart (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_allocatesBasePointer (
+        /*[out,retval]*/ long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_type (
+        /*[out,retval]*/ unsigned long * pRetVal ) = 0;
+      virtual HRESULT __stdcall get_functionParent (
+        /*[out,retval]*/ struct IDiaFrameData * * pRetVal ) = 0;
+      virtual HRESULT __stdcall execute (
+        struct IDiaStackWalkFrame * frame ) = 0;
+};
+
+struct __declspec(uuid("07c590c1-438d-4f47-bdcd-4397bc81ad75"))
+IDiaStackWalkFrame : IUnknown
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_registerValue (
+        /*[in]*/ unsigned long index,
+        /*[out,retval]*/ unsigned __int64 * pRetVal ) = 0;
+      virtual HRESULT __stdcall put_registerValue (
+        /*[in]*/ unsigned long index,
+        /*[in]*/ unsigned __int64 pRetVal ) = 0;
+      virtual HRESULT __stdcall readMemory (
+        /*[in]*/ enum MemoryTypeEnum type,
+        /*[in]*/ unsigned __int64 va,
+        /*[in]*/ unsigned long cbData,
+        /*[out]*/ unsigned long * pcbData,
+        /*[out]*/ unsigned char * pbData ) = 0;
+      virtual HRESULT __stdcall searchForReturnAddress (
+        /*[in]*/ struct IDiaFrameData * frame,
+        /*[out]*/ unsigned __int64 * returnAddress ) = 0;
+      virtual HRESULT __stdcall searchForReturnAddressStart (
+        /*[in]*/ struct IDiaFrameData * frame,
+        /*[in]*/ unsigned __int64 startAddress,
+        /*[out]*/ unsigned __int64 * returnAddress ) = 0;
+};
+
+#pragma pack(pop)
