@@ -33,7 +33,7 @@ namespace ms
 
 		icon = src["info"]["icon"];
 
-		name = strsrc["bookName"];
+		name = strsrc["bookName"].get_string();
 
 		for (nl::node sub : src["skill"])
 		{

@@ -49,7 +49,7 @@ namespace ms
 			usesounds[true] = soundsrc["Attack"];
 		}
 
-		afterimage = src["afterImage"];
+		afterimage = src["afterImage"].get_string();
 	}
 
 	bool WeaponData::is_valid() const

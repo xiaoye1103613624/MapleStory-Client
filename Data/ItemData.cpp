@@ -78,8 +78,8 @@ namespace ms
 			cashitem = src["cash"].get_bool();
 			gender = get_item_gender(itemid);
 
-			name = strsrc["name"];
-			desc = strsrc["desc"];
+			name = strsrc["name"].get_string();
+			desc = strsrc["desc"].get_string();
 
 			valid = true;
 		}
