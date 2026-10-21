@@ -33,6 +33,9 @@ namespace ms
 		public:
 			Constants()
 			{
+				// 默认分辨率 1280x720：与 BeiDou 登录 UI 素材的原生尺寸一致
+				// （UI/Login.img/Common/frame 即 1280x720），书框可 1:1 绘制，
+				// 书页开口约占窗口 85%x81%，即参考客户端的观感。
 				VIEWWIDTH = 1280;
 				VIEWHEIGHT = 720;
 			};

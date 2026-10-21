@@ -61,6 +61,13 @@ namespace ms
 			return code == Code::CONNECTION || code == Code::MISSING_FILE || code == Code::WRONG_UI_FILE || code == Code::MISSING_ICON || code == Code::FONT_PATH || code == Code::DATA_FORMAT;
 		}
 
+		// Machine readable counterpart of get_message(), needed by diagnostics
+		// code that reports the failure into a log file.
+		constexpr Code get_code() const
+		{
+			return code;
+		}
+
 		constexpr const char* get_message() const
 		{
 			return messages[code];

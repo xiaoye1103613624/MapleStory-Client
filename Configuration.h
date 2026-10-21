@@ -21,8 +21,28 @@
 #include "Template/TypeMap.h"
 #include "Util/Misc.h"
 
+// 前向声明：避免本头全局引入 Keyring.h（防止其 <unordered_map> 等包含顺序干扰 nlnx 头）。
+namespace ms { namespace res { enum class KeyMode; } }
+
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <ctime>
+
 namespace ms
 {
+	// 客户端配置中心：统一管理两个**同格式**的配置文件。
+	//
+	//   1. "Settings"（用户级）
+	//      - 键名采用小写点分的层级命名，按下文 SAVE_ORDER 折叠成缩进结构写出
+	//      - 构造时读取；析构时（非 Debug 构建）自动写回，因此人工改动会被覆盖
+	//   2. "xy-config.yaml"（部署级，位于可执行文件同目录）
+	//      - 与 Settings 同格式，**优先级更高**，用于固定服务器地址/数据后端等
+	//      - 内容手工维护；运行时按 mtime 变化自动热重载（见 reload_if_changed）
+	//
+	// 取值优先级：xy-config.yaml > Settings > Entry 构造参数中的内置默认值。
+	// 两个文件均以 UTF-8（无 BOM）保存，换行使用 LF。
+	//
 	// Manages the 'Settings' file which contains configurations set by user behavior
 	class Configuration : public Singleton<Configuration>
 	{
@@ -36,6 +56,8 @@ namespace ms
 		// If something is missing, set the default value.
 		// Can be used for reloading
 		void load();
+		// Reload the deployment config (xy-config.yaml) if it changed on disk.
+		void reload_if_changed();
 		// Save the current settings 
 		void save() const;
 		// Get private member SHOW_FPS
@@ -60,10 +82,22 @@ namespace ms
 		std::string get_title() const;
 		// Get private member VERSION
 		std::string get_version() const;
+		// 数据源后端，对应层级键 data.format，取值 "nx" / "wz" / "img"。
+		// 部署环境可在 xy-config.yaml 中用同名键覆盖（优先级更高）。
 		// Get the data backend format ("nx", "wz" or "img")
 		std::string get_data_format() const;
+		// 经典 .img 数据根目录，对应层级键 data.dir，
+		// 仅在 data.format = "img" 时被 ImgFiles 使用。
 		// Get the IMG data directory (used only when the format is "img")
 		std::string get_data_dir() const;
+		// 密钥来源模式（data.keymode）：auto / builtin / external。
+		ms::res::KeyMode get_keymode() const;
+		// 外部密钥文件路径（data.keyfile），空字符串表示关闭。
+		std::string get_keyfile() const;
+		// HTTP 补丁：是否启用（patch.enabled）。
+		bool get_patch_enabled() const;
+		// HTTP 补丁：manifest URL（patch.url）。
+		std::string get_patch_url() const;
 		// Get private member LoginMusic
 		std::string get_login_music() const;
 		// Get private member LoginMusicSEA
@@ -129,7 +163,10 @@ namespace ms
 		// Set if the Caps Lock key is enabled
 		void set_caps_lock_enabled(int value);
 
-		// Base class for an entry in the settings file
+		// Base class for an entry in the settings file.
+		//
+		// name 为「小写点分」的层级键（如 "server.ip"），写盘时会被展开为缩进结构；
+		// 同一个名字同时用于 Settings 与 xy-config.yaml，保证两个文件语义一致。
 		class Entry
 		{
 		protected:
@@ -140,11 +177,6 @@ namespace ms
 
 		private:
 			friend class Configuration;
-
-			std::string to_string() const
-			{
-				return name + " = " + value;
-			}
 		};
 
 		// Setting which converts to a boolean
@@ -237,7 +269,9 @@ namespace ms
 		// over FILENAME, so a deployment can pin the server address and the
 		// data backend without touching the user's saved settings.
 		const char* XYCONFIG_FILENAME = "xy-config.yaml";
-		const char* TITLE = "MapleStory";
+		// 窗口标题的基础部分，运行时由 IO/Window 追加角色/职业/破功值/时间等段落
+		// （见 Window::build_title()）。
+		const char* TITLE = "XiaoYE MS v0.0.1";
 		const char* VERSION = "228.3";
 		const char* LoginMusic = "BgmUI.img/Title";
 		const char* LoginMusicSEA = "BgmGL.img/OldMaple";
@@ -270,262 +304,424 @@ namespace ms
 		bool admin;
 		bool caps_lock_enabled;
 		TypeMap<Entry> settings;
+
+		// 部署配置（xy-config.yaml）的嵌套键值（如 "login.urls.joinlink"）。
+		// 运行时按文件修改时间自动重载，供登录面板跳转网址等热更新。
+		std::unordered_map<std::string, std::string> xysettings;
+		std::time_t xy_last_write = 0;
+
+		// 读取 xy-config.yaml 的修改时间（mtime）；文件不存在返回 false。
+		bool get_xy_mtime(std::time_t& out) const;
+		//
+		// 配置文件解析器（Settings 与 xy-config.yaml 共用，两者格式完全一致）：
+		//   - 缩进式键用 '.' 拼接成层级名字（如 server -> server.ip）
+		//   - 顶层扁平键（如 "width: 1280"）同样接受，但**不建议**，新写法一律分组
+		//   - 注释以 '#' 开头；值为空时，只有当该键属于 leaf_keys 才当作"空值设置项"，
+		//     否则视为分组节点（这样 "server:" 与 "login.account:" 才不会混淆）
+		//   - key/value 分隔符取"后跟空白或位于行尾的冒号"，避免把 URL 的 "://"
+		//     误判为分隔符
+		//
+		// leaf_keys：所有已知配置项的名字集合，由调用方从 settings 收集后传入。
+		std::unordered_map<std::string, std::string> parse_config_file(
+			const char* filename, const std::unordered_set<std::string>& leaf_keys) const;
+		// 重新解析 xy-config.yaml 并更新记录的文件修改时间。
+		void reload_xy_config();
+		// 按层级键名取当前取值；不存在时返回 nullptr。
+		const std::string* find_value(const std::string& key) const;
+		// 读取嵌套/扁平 URL 配置，缺失时回退到硬编码默认值。
+		std::string get_url(const std::string& nested, const std::string& flat, const std::string& fallback) const;
 	};
 
+	// 客户端配置项总览
+	// -------------------------------------------------------------------------
+	// 键名采用「小写点分」层级命名（如 server.ip），写盘时按点分层展开为缩进结构：
+	//
+	//   server:
+	//     ip: 127.0.0.1
+	//     port: 8484
+	//
+	// 同一个键名既用于 Settings（用户级，客户端退出时自动写回），
+	// 也用于同目录下的 xy-config.yaml（部署级，优先级更高，手写维护）。
+	// 改名或新增配置项时，请同步维护 Configuration.cpp 中的 SAVE_ORDER，
+	// 否则该项不会被写出到 Settings。
+
 	// IP Address which the client will connect to
+	// 登录服 IP 地址。部署环境通常通过 xy-config.yaml 覆盖此值。
 	struct ServerIP : public Configuration::StringEntry
 	{
-		ServerIP() : StringEntry("ServerIP", "127.0.0.1") {}
+		ServerIP() : StringEntry("server.ip", "127.0.0.1") {}
 	};
 
 	// Port which the client will connect to
+	// 登录服端口，需与服务端 gms.service.login-port 一致。
 	struct ServerPort : public Configuration::StringEntry
 	{
-		ServerPort() : StringEntry("ServerPort", "8484") {}
+		ServerPort() : StringEntry("server.port", "8484") {}
 	};
 
-	// Data backend selection: "nx", "wz" or "img".
-	// Defaults to "wz" to preserve the current direct-WZ loading behavior.
+	// Data backend selection.
+	// 数据源后端选择，对应层级键 data.format：
+	//   "img"  = 独立 .img 目录（生产默认）
+	//   "auto" = 自动识别：按候选路径链自省，挑选命中分数最高者
+	//   "wz"   = 官方 .wz 归档（运行时直读，不落盘）
+	//   "nx"   = NoLifeNx 归档（文件映射，惰性读取）
+	// 三者共用同一套 nl::node 读取接口，切换不需要重新编译。
+	// 显式指定某一格式时，定位器仍会在候选路径链中寻找它的位置。
+	// 生产默认 img（萧曳 083 平台化决策）；开发可用 auto / wz / nx。
 	struct DataFormat : public Configuration::StringEntry
 	{
-		DataFormat() : StringEntry("DataFormat", "wz") {}
+		DataFormat() : StringEntry("data.format", "img") {}
 	};
 
 	// Directory containing the classic standalone .img data (one subdirectory
-	// per standard root). Used only when DataFormat is "img".
+	// per standard root). Used only when data.format is "img".
+	// 经典 .img 数据根目录（其下按标准根分子目录），仅 data.format=img 时生效。
 	struct DataDir : public Configuration::StringEntry
 	{
-		DataDir() : StringEntry("DataDir", "Data") {}
+		DataDir() : StringEntry("data.dir", "Data") {}
+	};
+
+	// Key source mode (data.keymode): "auto" / "builtin" / "external", default "auto".
+	// 密钥来源模式：auto = 内置三表 + 归档自带 key + 外部文件；builtin = 仅内置 + 自带；
+	// external = 仅外部密钥文件。详见 Util/Resource/Keyring.h。
+	struct KeyMode : public Configuration::StringEntry
+	{
+		KeyMode() : StringEntry("data.keymode", "auto") {}
+	};
+
+	// External key file path (data.keyfile). Empty string means disabled (default).
+	// 外部密钥文件路径；空字符串表示关闭（默认）。明文不入库，仅驻留内存。
+	struct KeyFile : public Configuration::StringEntry
+	{
+		KeyFile() : StringEntry("data.keyfile", "") {}
+	};
+
+	// HTTP 补丁总开关（patch.enabled）。url 为空时仍会跳过实际同步。
+	struct PatchEnabled : public Configuration::BoolEntry
+	{
+		PatchEnabled() : BoolEntry("patch.enabled", "true") {}
+	};
+
+	// manifest 完整 URL（patch.url）；空字符串表示不拉补丁。
+	struct PatchUrl : public Configuration::StringEntry
+	{
+		PatchUrl() : StringEntry("patch.url", "") {}
+	};
+
+	// 补丁频道（patch.channel），与 manifest.channel 比对。
+	struct PatchChannel : public Configuration::StringEntry
+	{
+		PatchChannel() : StringEntry("patch.channel", "stable") {}
+	};
+
+	// 单次 HTTP 超时毫秒（patch.timeout_ms）。
+	struct PatchTimeoutMs : public Configuration::IntEntry
+	{
+		PatchTimeoutMs() : IntEntry("patch.timeout_ms", "15000") {}
+	};
+
+	// 失败重试次数（patch.retries）。
+	struct PatchRetries : public Configuration::IntEntry
+	{
+		PatchRetries() : IntEntry("patch.retries", "2") {}
+	};
+
+	// 补丁失败是否允许继续进游戏（patch.allow_skip）。
+	struct PatchAllowSkip : public Configuration::BoolEntry
+	{
+		PatchAllowSkip() : BoolEntry("patch.allow_skip", "true") {}
 	};
 
 	// Whether to start in full screen mode
+	// 是否以全屏启动。false 时使用下文的 window.width / window.height。
 	struct Fullscreen : public Configuration::BoolEntry
 	{
-		Fullscreen() : BoolEntry("Fullscreen", "false") {}
+		Fullscreen() : BoolEntry("window.fullscreen", "false") {}
 	};
 
 	// The width of the screen
+	// 窗口/视口宽度。读取后会同步到运行时常量 Constants，影响 UI 布局基准。
 	struct Width : public Configuration::ShortEntry
 	{
-		Width() : ShortEntry("Width", "1280") {}
+		Width() : ShortEntry("window.width", "1280") {}
 	};
 
 	// The height of the screen
+	// 窗口/视口高度。与 window.width 一同同步到 Constants。
 	struct Height : public Configuration::ShortEntry
 	{
-		Height() : ShortEntry("Height", "720") {}
+		Height() : ShortEntry("window.height", "720") {}
 	};
 
 	// Whether to use VSync
+	// 是否开启垂直同步，关闭后可能出现画面撕裂。
 	struct VSync : public Configuration::BoolEntry
 	{
-		VSync() : BoolEntry("VSync", "true") {}
+		VSync() : BoolEntry("window.vsync", "true") {}
 	};
 
 	// The normal font which will be used
+	// 常规字体文件路径（相对客户端工作目录，UTF-8 路径可直接填写）。
 	struct FontPathNormal : public Configuration::StringEntry
 	{
-		FontPathNormal() : StringEntry("FontPathNormal", "fonts/Arial/Arial.ttf") {}
+		FontPathNormal() : StringEntry("font.path.normal", "fonts/Arial/Arial.ttf") {}
 	};
 
 	// The bold font which will be used
+	// 粗体字体文件路径，缺失时回退到常规字体渲染。
 	struct FontPathBold : public Configuration::StringEntry
 	{
-		FontPathBold() : StringEntry("FontPathBold", "fonts/Arial/Arial-Bold.ttf") {}
+		FontPathBold() : StringEntry("font.path.bold", "fonts/Arial/Arial-Bold.ttf") {}
 	};
 
 	// Music Volume
 	// Number from 0 to 100
+	// 背景音乐音量 0-100。
 	struct BGMVolume : public Configuration::ByteEntry
 	{
-		BGMVolume() : ByteEntry("BGMVolume", "50") {}
+		BGMVolume() : ByteEntry("audio.bgm.volume", "50") {}
 	};
 
 	// Sound Volume
 	// Number from 0 to 100
+	// 音效音量 0-100。
 	struct SFXVolume : public Configuration::ByteEntry
 	{
-		SFXVolume() : ByteEntry("SFXVolume", "50") {}
+		SFXVolume() : ByteEntry("audio.sfx.volume", "50") {}
 	};
 
 	// Whether to save the last used account name
+	// 是否记住上次登录的账号名（写入 login.account）。
 	struct SaveLogin : public Configuration::BoolEntry
 	{
-		SaveLogin() : BoolEntry("SaveLogin", "false") {}
+		SaveLogin() : BoolEntry("login.save", "false") {}
 	};
 
 	// The last used account name
+	// 上次使用的账号名，允许为空（空值同样会被正确读回）。
 	struct DefaultAccount : public Configuration::StringEntry
 	{
-		DefaultAccount() : StringEntry("Account", "") {}
+		DefaultAccount() : StringEntry("login.account", "") {}
 	};
 
 	// The last used world
+	// 上次选择的区服序号（世界）。
 	struct DefaultWorld : public Configuration::ByteEntry
 	{
-		DefaultWorld() : ByteEntry("World", "0") {}
+		DefaultWorld() : ByteEntry("login.world", "0") {}
 	};
 
 	// The last used channel
+	// 上次选择的频道序号。
 	struct DefaultChannel : public Configuration::ByteEntry
 	{
-		DefaultChannel() : ByteEntry("Channel", "0") {}
+		DefaultChannel() : ByteEntry("login.channel", "0") {}
 	};
 
 	// The last used region
+	// 上次选择的地区序号。
 	struct DefaultRegion : public Configuration::ByteEntry
 	{
-		DefaultRegion() : ByteEntry("Region", "5") {}
+		DefaultRegion() : ByteEntry("login.region", "5") {}
 	};
 
 	// The last used character
+	// 上次选择的角色槽位序号。
 	struct DefaultCharacter : public Configuration::ByteEntry
 	{
-		DefaultCharacter() : ByteEntry("Character", "0") {}
+		DefaultCharacter() : ByteEntry("login.character", "0") {}
+	};
+
+	// 是否启用启动自动登录（opt-in，读取 login.auto）。
+	// 供自动化/调试直连：开启后客户端启动即用保存的账号+login.pass 自动发包登录，
+	// 跳过手动输入。默认 false；Release 构建同样生效（取代原先 NDEBUG 强制关闭的行为）。
+	struct AutoLogin : public Configuration::BoolEntry
+	{
+		AutoLogin() : BoolEntry("login.auto", "false") {}
+	};
+
+	// 自动登录使用的密码（login.pass，opt-in 才生效）。
+	// 明文仅驻留配置文件与内存；不使用自动登录时留空即可。
+	struct AutoPass : public Configuration::StringEntry
+	{
+		AutoPass() : StringEntry("login.pass", "") {}
 	};
 
 	// Whether the UIChatBar is expanded or not
+	// 聊天栏是否处于展开状态。
 	struct ChatViewMax : public Configuration::BoolEntry
 	{
-		ChatViewMax() : BoolEntry("ChatViewMax", "false") {}
+		ChatViewMax() : BoolEntry("chat.max", "false") {}
 	};
 
 	// The user defined width for UIChatBar
+	// 聊天栏用户自定义宽度。
 	struct ChatViewX : public Configuration::ShortEntry
 	{
-		ChatViewX() : ShortEntry("ChatViewX", "0") {}
+		ChatViewX() : ShortEntry("chat.x", "0") {}
 	};
 
 	// The user defined height for UIChatBar
+	// 聊天栏用户自定义高度。
 	struct ChatViewY : public Configuration::ShortEntry
 	{
-		ChatViewY() : ShortEntry("ChatViewY", "0") {}
+		ChatViewY() : ShortEntry("chat.y", "0") {}
 	};
 
 	// The default position of UIStatsInfo
+	// 角色属性面板默认位置。
 	struct PosSTATS : public Configuration::PointEntry
 	{
-		PosSTATS() : PointEntry("PosSTATS", "(72,72)") {}
+		PosSTATS() : PointEntry("ui.position.stats", "(72,72)") {}
 	};
 
 	// The default position of UIEquipInventory
+	// 装备栏默认位置。
 	struct PosEQINV : public Configuration::PointEntry
 	{
-		PosEQINV() : PointEntry("PosEQINV", "(250,160)") {}
+		PosEQINV() : PointEntry("ui.position.eqinv", "(250,160)") {}
 	};
 
 	// The default position of UIItemInventory
+	// 消耗/其他栏默认位置。
 	struct PosINV : public Configuration::PointEntry
 	{
-		PosINV() : PointEntry("PosINV", "(24,24)") {}
+		PosINV() : PointEntry("ui.position.inv", "(24,24)") {}
 	};
 
 	// The default position of UISkillBook
+	// 技能面板默认位置。
 	struct PosSKILL : public Configuration::PointEntry
 	{
-		PosSKILL() : PointEntry("PosSKILL", "(96,96)") {}
+		PosSKILL() : PointEntry("ui.position.skill", "(96,96)") {}
 	};
 
 	// The default position of UIQuestLog
+	// 任务面板默认位置。
 	struct PosQUEST : public Configuration::PointEntry
 	{
-		PosQUEST() : PointEntry("PosQUEST", "(300,160)") {}
+		PosQUEST() : PointEntry("ui.position.quest", "(300,160)") {}
 	};
 
 	// The default position of UIWorldMap
+	// 世界地图默认位置。
 	struct PosMAP : public Configuration::PointEntry
 	{
-		PosMAP() : PointEntry("PosMAP", "(100,35)") {}
+		PosMAP() : PointEntry("ui.position.map", "(100,35)") {}
 	};
 
 	// The default position of UIUserList
+	// 用户列表默认位置。
 	struct PosUSERLIST : public Configuration::PointEntry
 	{
-		PosUSERLIST() : PointEntry("PosUSERLIST", "(104, 104)") {}
+		PosUSERLIST() : PointEntry("ui.position.userlist", "(104, 104)") {}
 	};
 
 	// The default position of UIChatBar
+	// 聊天栏默认位置。
 	struct PosCHAT : public Configuration::PointEntry
 	{
-		PosCHAT() : PointEntry("PosCHAT", "(0, 572)") {}
+		PosCHAT() : PointEntry("ui.position.chat", "(0, 572)") {}
 	};
 
 	// The default position of UIMiniMap
+	// 小地图默认位置。
 	struct PosMINIMAP : public Configuration::PointEntry
 	{
-		PosMINIMAP() : PointEntry("PosMINIMAP", "(0, 0)") {}
+		PosMINIMAP() : PointEntry("ui.position.minimap", "(0, 0)") {}
 	};
 
 	// The default position of UIShop
+	// NPC 商店默认位置。
 	struct PosSHOP : public Configuration::PointEntry
 	{
-		PosSHOP() : PointEntry("PosSHOP", "(146, 48)") {}
+		PosSHOP() : PointEntry("ui.position.shop", "(146, 48)") {}
 	};
 
 	// The default position of UINotice
+	// 公告面板默认位置。
 	struct PosNOTICE : public Configuration::PointEntry
 	{
-		PosNOTICE() : PointEntry("PosNOTICE", "(400, 285)") {}
+		PosNOTICE() : PointEntry("ui.position.notice", "(400, 285)") {}
 	};
 
 	// The default position of UIChat and UIRank
+	// 枫叶聊天/排行榜默认位置。
 	struct PosMAPLECHAT : public Configuration::PointEntry
 	{
-		PosMAPLECHAT() : PointEntry("PosMAPLECHAT", "(50, 46)") {}
+		PosMAPLECHAT() : PointEntry("ui.position.maplechat", "(50, 46)") {}
 	};
 
 	// The default position of UIChannel
+	// 频道选择面板默认位置。
 	struct PosCHANNEL : public Configuration::PointEntry
 	{
-		PosCHANNEL() : PointEntry("PosCHANNEL", "(215, 100)") {}
+		PosCHANNEL() : PointEntry("ui.position.channel", "(215, 100)") {}
 	};
 
 	// The default position of UIJoypad
+	// 手柄面板默认位置。
 	struct PosJOYPAD : public Configuration::PointEntry
 	{
-		PosJOYPAD() : PointEntry("PosJOYPAD", "(312, 134)") {}
+		PosJOYPAD() : PointEntry("ui.position.joypad", "(312, 134)") {}
 	};
 
 	// The default position of UIEvent
+	// 活动面板默认位置。
 	struct PosEVENT : public Configuration::PointEntry
 	{
-		PosEVENT() : PointEntry("PosEVENT", "(99, 100)") {}
+		PosEVENT() : PointEntry("ui.position.event", "(99, 100)") {}
+	};
+
+	// The default position of UIDailyGift
+	// 每日礼物面板默认位置。
+	struct PosDAILYGIFT : public Configuration::PointEntry
+	{
+		PosDAILYGIFT() : PointEntry("ui.position.dailygift", "(99, 80)") {}
 	};
 
 	// The default position of UIKeyConfig
+	// 按键设置面板默认位置。
 	struct PosKEYCONFIG : public Configuration::PointEntry
 	{
-		PosKEYCONFIG() : PointEntry("PosKEYCONFIG", "(144, 144)") {}
+		PosKEYCONFIG() : PointEntry("ui.position.keyconfig", "(144, 144)") {}
 	};
 
 	// The default position of UIOptionMenu
+	// 系统选项面板默认位置。
+	// 历史 bug 说明：该项此前误用 "PosUSERLIST" 作为键名，与用户列表位置撞名，
+	// 导致生成的 Settings 中 ui.position.userlist 出现两次并互相覆盖。
 	struct PosOPTIONMENU : public Configuration::PointEntry
 	{
-		PosOPTIONMENU() : PointEntry("PosUSERLIST", "(170, -1)") {}
+		PosOPTIONMENU() : PointEntry("ui.position.optionmenu", "(170, -1)") {}
 	};
 
 	// The default position of UICharInfo
+	// 角色信息面板默认位置。
 	struct PosCHARINFO : public Configuration::PointEntry
 	{
-		PosCHARINFO() : PointEntry("PosCHARINFO", "(264, 264)") {}
+		PosCHARINFO() : PointEntry("ui.position.charinfo", "(264, 264)") {}
 	};
 
 	// The default type of UIMiniMap
+	// 小地图默认类型（2 = 常规样式）。
 	struct MiniMapType : public Configuration::ByteEntry
 	{
-		MiniMapType() : ByteEntry("MiniMapType", "2") {}
+		MiniMapType() : ByteEntry("minimap.type", "2") {}
 	};
 
 	// Whether to use a simple version of UIMiniMap
+	// 是否使用小地图简约模式。
 	struct MiniMapSimpleMode : public Configuration::BoolEntry
 	{
-		MiniMapSimpleMode() : BoolEntry("MiniMapSimpleMode", "false") {}
+		MiniMapSimpleMode() : BoolEntry("minimap.simple", "false") {}
 	};
 
 	// Whether to use default helpers for UIMiniMap
+	// 小地图是否绘制默认的标志物（NPC/传送点等）。
 	struct MiniMapDefaultHelpers : public Configuration::BoolEntry
 	{
-		MiniMapDefaultHelpers() : BoolEntry("MiniMapDefaultHelpers", "false") {}
+		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
 	};
 
 	template <typename T>
