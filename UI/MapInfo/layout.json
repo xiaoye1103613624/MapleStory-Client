@@ -1,0 +1,257 @@
+{
+  "panel_w": 240,
+  "panel_h": 537,
+  "well": [
+    13,
+    37,
+    226,
+    512
+  ],
+  "content_x": 18,
+  "content_right": 221,
+  "row_h": 78,
+  "visible_mob_rows": 3,
+  "icon_box": 40,
+  "slot_size": 32,
+  "slot_gap": 2,
+  "scroll_w": 10,
+  "grid_cols": 5,
+  "grid_rows": 5,
+  "inventory_slot_note": "SLOT_SIZE=32 matches UIItemInventory disabled icon default (icon_width/height)",
+  "upper": {
+    "x": 18,
+    "y": 42,
+    "w": 203,
+    "h": 237,
+    "list_w": 189,
+    "row_h": 78,
+    "visible_rows": 3,
+    "fields": [
+      "name",
+      "level",
+      "type",
+      "hp",
+      "exp",
+      "attrs",
+      "resists"
+    ],
+    "scroll": {
+      "x": 210,
+      "y": 44,
+      "w": 9,
+      "h": 233
+    }
+  },
+  "tab": {
+    "x": 18,
+    "y": 285,
+    "h": 18,
+    "widths": [
+      50,
+      50,
+      50,
+      53
+    ],
+    "xs": [
+      18,
+      68,
+      118,
+      168
+    ],
+    "shelf_y": 284,
+    "sprite_w": [
+      50,
+      50,
+      50,
+      53
+    ],
+    "sprite_h": 18
+  },
+  "lower": {
+    "x": 18,
+    "y": 309,
+    "w": 203,
+    "h": 174,
+    "cols": 5,
+    "rows_visible": 5,
+    "slot_size": 32,
+    "slot_gap": 2,
+    "grid_x": 30,
+    "grid_y": 312,
+    "slots": [
+      {
+        "x": 30,
+        "y": 312,
+        "col": 0,
+        "row": 0
+      },
+      {
+        "x": 64,
+        "y": 312,
+        "col": 1,
+        "row": 0
+      },
+      {
+        "x": 98,
+        "y": 312,
+        "col": 2,
+        "row": 0
+      },
+      {
+        "x": 132,
+        "y": 312,
+        "col": 3,
+        "row": 0
+      },
+      {
+        "x": 166,
+        "y": 312,
+        "col": 4,
+        "row": 0
+      },
+      {
+        "x": 30,
+        "y": 346,
+        "col": 0,
+        "row": 1
+      },
+      {
+        "x": 64,
+        "y": 346,
+        "col": 1,
+        "row": 1
+      },
+      {
+        "x": 98,
+        "y": 346,
+        "col": 2,
+        "row": 1
+      },
+      {
+        "x": 132,
+        "y": 346,
+        "col": 3,
+        "row": 1
+      },
+      {
+        "x": 166,
+        "y": 346,
+        "col": 4,
+        "row": 1
+      },
+      {
+        "x": 30,
+        "y": 380,
+        "col": 0,
+        "row": 2
+      },
+      {
+        "x": 64,
+        "y": 380,
+        "col": 1,
+        "row": 2
+      },
+      {
+        "x": 98,
+        "y": 380,
+        "col": 2,
+        "row": 2
+      },
+      {
+        "x": 132,
+        "y": 380,
+        "col": 3,
+        "row": 2
+      },
+      {
+        "x": 166,
+        "y": 380,
+        "col": 4,
+        "row": 2
+      },
+      {
+        "x": 30,
+        "y": 414,
+        "col": 0,
+        "row": 3
+      },
+      {
+        "x": 64,
+        "y": 414,
+        "col": 1,
+        "row": 3
+      },
+      {
+        "x": 98,
+        "y": 414,
+        "col": 2,
+        "row": 3
+      },
+      {
+        "x": 132,
+        "y": 414,
+        "col": 3,
+        "row": 3
+      },
+      {
+        "x": 166,
+        "y": 414,
+        "col": 4,
+        "row": 3
+      },
+      {
+        "x": 30,
+        "y": 448,
+        "col": 0,
+        "row": 4
+      },
+      {
+        "x": 64,
+        "y": 448,
+        "col": 1,
+        "row": 4
+      },
+      {
+        "x": 98,
+        "y": 448,
+        "col": 2,
+        "row": 4
+      },
+      {
+        "x": 132,
+        "y": 448,
+        "col": 3,
+        "row": 4
+      },
+      {
+        "x": 166,
+        "y": 448,
+        "col": 4,
+        "row": 4
+      }
+    ],
+    "rate_overlay": {
+      "style": "quantity_corner",
+      "anchor": "bottom_right",
+      "data": "MobDropEntry.chance → percent text at runtime (preview uses placeholders)",
+      "note": "wire to real drop rate later; do not bake rates into chrome PNG"
+    },
+    "scroll": {
+      "x": 210,
+      "y": 311,
+      "w": 9,
+      "h": 170
+    }
+  },
+  "meso": {
+    "x": 18,
+    "y": 489,
+    "w": 159,
+    "h": 16,
+    "label_x": 181,
+    "label": "mesos",
+    "text_align": "right",
+    "note": "runtime draws meso amount; do not bake digits into chrome",
+    "drop_interval_note": "MobDropEntry has min_qty/max_qty (range-capable) but no dedicated meso_min/meso_max; stub loader empty — gold drop interval not populated in this client build"
+  }
+}
