@@ -17,8 +17,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#ifndef USE_OPENGL_ES
 #define GLEW_STATIC
 #include <glew.h>
+#else
+#include <GLES3/gl3.h>
+#endif
 
 #include <array>
 
@@ -89,6 +93,7 @@ namespace ms
 			CREAM,
 			PERSIANGREEN,
 			SILVER,
+			LIGHTBLUE,
 			NUM_COLORS
 		};
 
@@ -135,7 +140,8 @@ namespace ms
 			{ 0.94f, 0.00f, 0.20f }, // Torch Red
 			{ 1.00f, 1.00f, 0.80f }, // Cream
 			{ 0.00f, 0.67f, 0.67f }, // Persian Green
-			{ 0.80f, 0.80f, 0.80f }  // Silver
+			{ 0.80f, 0.80f, 0.80f }, // Silver
+			{ 0.40f, 0.80f, 1.00f }  // Light Blue (NPC simple choices)
 		};
 
 		// Create a color by an array of real numbers [0.0f, 1.0f]

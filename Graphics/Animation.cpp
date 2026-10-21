@@ -25,11 +25,9 @@
 
 namespace ms
 {
-	Frame::Frame(nl::node src)
+	static void read_frame_timing(nl::node src, uint16_t& delay,
+		std::pair<uint8_t, uint8_t>& opacities, std::pair<int16_t, int16_t>& scales)
 	{
-		texture = src;
-		bounds = src;
-		head = src["head"];
 		delay = src["delay"];
 
 		if (delay == 0)
@@ -68,6 +66,30 @@ namespace ms
 			scales = { 100, src["z1"] };
 		else
 			scales = { 100, 100 };
+	}
+
+	Frame::Frame(nl::node src)
+	{
+		texture = src;
+		bounds = src;
+		head = src["head"];
+		read_frame_timing(src, delay, opacities, scales);
+	}
+
+	Frame::Frame(nl::node meta, nl::node bitmap_src)
+	{
+		texture = bitmap_src;
+		bounds = meta;
+		head = meta["head"];
+		read_frame_timing(meta, delay, opacities, scales);
+
+		// Keep map-object anchor from the original frame, not the override bitmap.
+		if (meta["origin"].data_type() == nl::node::type::vector)
+		{
+			Point<int16_t> desired = meta["origin"];
+			Point<int16_t> current = texture.get_origin();
+			texture.shift(current - desired);
+		}
 	}
 
 	Frame::Frame()
@@ -154,6 +176,53 @@ namespace ms
 			{
 				auto sub = src[std::to_string(fid)];
 				frames.push_back(sub);
+			}
+
+			if (frames.empty())
+				frames.push_back(Frame());
+		}
+
+		animated = frames.size() > 1;
+		zigzag = src["zigzag"].get_bool();
+
+		reset();
+	}
+
+	Animation::Animation(nl::node src, nl::node texture_override)
+	{
+		bool istexture = src.data_type() == nl::node::type::bitmap;
+		bool has_override = texture_override.data_type() == nl::node::type::bitmap;
+
+		if (istexture)
+		{
+			if (has_override)
+				frames.push_back(Frame(src, texture_override));
+			else
+				frames.push_back(src);
+		}
+		else
+		{
+			std::set<int16_t> frameids;
+
+			for (auto sub : src)
+			{
+				if (sub.data_type() == nl::node::type::bitmap)
+				{
+					int16_t fid = string_conversion::or_default<int16_t>(sub.name(), -1);
+
+					if (fid >= 0)
+						frameids.insert(fid);
+				}
+			}
+
+			for (auto& fid : frameids)
+			{
+				auto sub = src[std::to_string(fid)];
+
+				if (has_override)
+					frames.push_back(Frame(sub, texture_override));
+				else
+					frames.push_back(sub);
 			}
 
 			if (frames.empty())

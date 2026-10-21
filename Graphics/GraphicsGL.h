@@ -24,8 +24,16 @@
 
 #include "../Util/QuadTree.h"
 
+#include <cstdint>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#ifndef USE_OPENGL_ES
+#include <glew.h>
+#else
+#include <GLES3/gl3.h>
+#endif
 
 #ifdef USE_NX
 #include <nlnx/bitmap.hpp>
@@ -44,13 +52,20 @@ namespace ms
 		// Re-initialize after changing screen modes
 		void reinit();
 
-		// Clear all bitmaps if most of the space is used up
+		// Clear all bitmaps if most of the space is used up (threshold clear).
 		void clear();
+		// Force-unload the GPU atlas (map transfer / memory pressure).
+		// Bitmaps re-upload lazily on next draw via getoffset().
+		void unload_atlas();
 
 		// Add a bitmap to the available resources
 		void addbitmap(const nl::bitmap& bmp);
 		// Draw the bitmap with the given parameters
 		void draw(const nl::bitmap& bmp, const Rectangle<int16_t>& rect, const Range<int16_t>& vertical, const Range<int16_t>& horizontal, const Color& color, float angle);
+
+		// Local PNG / raw BGRA upload into the shared atlas (ids should avoid nlnx collisions).
+		void ensure_raw(size_t id, int16_t width, int16_t height, const uint8_t* bgra);
+		void draw_raw(size_t id, int16_t x, int16_t y, int16_t width, int16_t height, float alpha = 1.0f);
 
 		// Create a layout for the text with the parameters specified
 		Text::Layout createlayout(const std::string& text, Text::Font font, Text::Alignment alignment, Color::Name color, int16_t maxwidth, bool formatted, int16_t line_adj);
@@ -66,6 +81,7 @@ namespace ms
 		void lock();
 		// Unlock the scene
 		void unlock();
+		bool is_locked() const;
 
 		// Draw the buffer contents with the specified scene opacity
 		void flush(float opacity);
@@ -82,6 +98,8 @@ namespace ms
 			GLshort right;
 			GLshort top;
 			GLshort bottom;
+			// 最近绘制代数；atlas 满时整表 clearinternal（打包 atlas 无法局部回收）。
+			uint32_t last_use;
 
 			Offset(GLshort x, GLshort y, GLshort width, GLshort height)
 			{
@@ -89,6 +107,7 @@ namespace ms
 				right = x + width;
 				top = y;
 				bottom = y + height;
+				last_use = 0;
 			}
 
 			Offset()
@@ -97,6 +116,7 @@ namespace ms
 				right = 0;
 				top = 0;
 				bottom = 0;
+				last_use = 0;
 			}
 		};
 
@@ -257,9 +277,13 @@ namespace ms
 		static const GLshort MINLOSIZE = 32;
 
 		bool locked;
+		// 帧内 quads 非空且未锁定时禁止 clearinternal，延到 clearscene；
+		// 锁定装图时立刻回收，避免黑屏。
+		bool atlas_clear_pending;
 
 		std::vector<Quad> quads;
 		GLuint VBO;
+		GLuint EBO;
 		GLuint atlas;
 
 		GLint shaderProgram;

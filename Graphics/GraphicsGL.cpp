@@ -18,12 +18,21 @@
 #include "GraphicsGL.h"
 
 #include "../Configuration.h"
+#include "../MapleStory.h"
+#include "../IO/Window.h"
+
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
+#include <fstream>
+#include <vector>
 
 namespace ms
 {
 	GraphicsGL::GraphicsGL()
 	{
 		locked = false;
+		atlas_clear_pending = false;
 
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
@@ -83,11 +92,15 @@ namespace ms
 
 		// Initialize and configure
 		// ------------------------
+		LOG(LOG_INFO, "Using OpenGL " << glGetString(GL_VERSION));
+#ifdef USE_OPENGL_ES
+		// GLES has no GLEW loader: the driver exports every core function we use.
+#else
 		if (GLenum error = glewInit())
 			return Error(Error::Code::GLEW, (const char*)glewGetErrorString(error));
 
-		LOG(LOG_INFO, "Using OpenGL " << glGetString(GL_VERSION));
 		LOG(LOG_INFO, "Using GLEW " << glewGetString(GLEW_VERSION));
+#endif
 
 		if (FT_Init_FreeType(&ftlibrary))
 			return Error::Code::FREETYPE;
@@ -178,6 +191,7 @@ namespace ms
 
 		// Vertex Buffer Object
 		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
 
 		glGenTextures(1, &atlas);
 		glBindTexture(GL_TEXTURE_2D, atlas);
@@ -211,6 +225,13 @@ namespace ms
 		addfont(FONT_BOLD_STR, Text::Font::A18B, 0, 18);
 
 		fontymax += fontborder.y();
+
+		// 位图打包必须从字体区下方开始。若 border 仍为 (0,0)，后续 UI 贴图会
+		// 覆盖 FreeType 字形，且被 shader 当成字体（只用 .r）→ 登录输入乱码、
+		// charInfo 等底板「看不见」。clearinternal/unload_atlas 才会设 border，
+		// 冷启动若不触发它们就会踩坑。
+		border = Point<GLshort>(0, fontymax);
+		yrange = Range<GLshort>();
 
 		leftovers = QuadTree<size_t, Leftover>(
 			[](const Leftover& first, const Leftover& second)
@@ -293,7 +314,29 @@ namespace ms
 			GLshort w = static_cast<GLshort>(g->bitmap.width);
 			GLshort h = static_cast<GLshort>(g->bitmap.rows);
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, w, h, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			// FreeType pitch 常大于 width（行对齐）；窄字形（*、i、l）不按 pitch
+			// 上传会串行成白勾/短横。pitch 以字节计，GL_RED 下 1px=1B。
+			const int pitch = g->bitmap.pitch;
+			const unsigned char* pixels = g->bitmap.buffer;
+			std::vector<unsigned char> tight;
+
+			if (pixels && w > 0 && h > 0 && pitch != 0 && std::abs(pitch) != w)
+			{
+				tight.resize(static_cast<size_t>(w) * static_cast<size_t>(h));
+
+				for (GLshort row = 0; row < h; ++row)
+				{
+					const unsigned char* src = (pitch > 0)
+						? (pixels + row * pitch)
+						: (pixels + (h - 1 - row) * (-pitch));
+					std::memcpy(tight.data() + static_cast<size_t>(row) * static_cast<size_t>(w), src, static_cast<size_t>(w));
+				}
+
+				pixels = tight.data();
+			}
+
+			if (pixels && w > 0 && h > 0)
+				glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, w, h, GL_RED, GL_UNSIGNED_BYTE, pixels);
 
 			Offset offset = Offset(ox, oy, w, h);
 			fonts[id].chars[c] = { ax, ay, w, h, l, t, offset };
@@ -309,7 +352,14 @@ namespace ms
 		int32_t new_width = Constants::Constants::get().get_viewwidth();
 		int32_t new_height = Constants::Constants::get().get_viewheight();
 
-		if (VWIDTH != new_width || VHEIGHT != new_height)
+		// Only wipe the atlas when the logical view size changes. Calling
+		// clearinternal() on every reinit (e.g. initwindow from check_events
+		// during SetField) discarded map tiles uploaded in Stage::load while
+		// GL was still locked — BGM already playing, screen black, then the
+		// first unlocked frames re-uploaded the whole map and starved the pump.
+		const bool size_changed = (VWIDTH != new_width || VHEIGHT != new_height);
+
+		if (size_changed)
 		{
 			VWIDTH = new_width;
 			VHEIGHT = new_height;
@@ -334,11 +384,22 @@ namespace ms
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-		clearinternal();
+		if (size_changed)
+			clearinternal();
 	}
 
 	void GraphicsGL::clearinternal()
 	{
+		// 未锁定且本帧已有待绘 quad：延到 clearscene，避免已入队 UV 失效。
+		// 锁定装图（SetField/Stage::load）时必须立刻回收——否则 atlas 满后
+		// 持续返回 nulloffset，表现为黑屏+BGM、主线程像未响应。
+		if (!quads.empty() && !locked)
+		{
+			atlas_clear_pending = true;
+			return;
+		}
+
+		quads.clear();
 		border = Point<GLshort>(0, fontymax);
 		yrange = Range<GLshort>();
 
@@ -346,6 +407,7 @@ namespace ms
 		leftovers.clear();
 		rlid = 1;
 		wasted = 0;
+		atlas_clear_pending = false;
 	}
 
 	void GraphicsGL::clear()
@@ -353,8 +415,24 @@ namespace ms
 		size_t used = ATLASW * border.y() + border.x() * yrange.second();
 		double usedpercent = static_cast<double>(used) / (ATLASW * ATLASH);
 
-		if (usedpercent > 80.0)
+		// Soft threshold: reclaim atlas when packing pressure is high.
+		// Coarse eviction (full reset) doubles as LRU under atlas packing constraints.
+		if (usedpercent > 60.0)
 			clearinternal();
+	}
+
+	void GraphicsGL::unload_atlas()
+	{
+		LOG(LOG_INFO, "[PERF] unload_atlas");
+		// 换图路径：允许强制清空（此时不应仍持有跨图的 draw 队列）。
+		quads.clear();
+		atlas_clear_pending = false;
+		border = Point<GLshort>(0, fontymax);
+		yrange = Range<GLshort>();
+		offsets.clear();
+		leftovers.clear();
+		rlid = 1;
+		wasted = 0;
 	}
 
 	void GraphicsGL::addbitmap(const nl::bitmap& bmp)
@@ -364,21 +442,52 @@ namespace ms
 
 	const GraphicsGL::Offset& GraphicsGL::getoffset(const nl::bitmap& bmp)
 	{
+		// [DBG-GO] 联调诊断桩：闭环后不再落文件（no-op），保留以便将来联调。
+		auto dbggo = [](const std::string&) {};
+
+		static uint32_t atlas_use_tick = 0;
+		++atlas_use_tick;
+
 		size_t id = bmp.id();
 		auto offiter = offsets.find(id);
 
 		if (offiter != offsets.end())
+		{
+			offiter->second.last_use = atlas_use_tick;
 			return offiter->second;
+		}
 
 		GLshort x = 0;
 		GLshort y = 0;
 		GLshort width = bmp.width();
 		GLshort height = bmp.height();
 
+		dbggo(std::string("go:size w=") + std::to_string(width) +
+			" h=" + std::to_string(height));
+
 		if (width <= 0 || height <= 0)
 			return nulloffset;
 
+		if (!bmp.data())
+			return nulloffset;
+
+		// Atlas is 8192². Reject only what physically cannot pack — do NOT use
+		// the miniMap 2048 soft-cap here: map backdrops (e.g. 1280x2540) must
+		// upload or Stage draws nothing while BGM still plays (black screen).
+		// Oversized miniMap canvases are gated in UIMiniMap before Texture().
+		if (width > ATLASW || height > ATLASH)
+		{
+			LOG(LOG_WARN, "[GL] bitmap exceeds atlas " << width << "x" << height);
+			return nulloffset;
+		}
+
+		// 未锁定且上一帧请求了回收：本帧仍有 quad 时跳过上传，等 clearscene。
+		if (atlas_clear_pending && !quads.empty() && !locked)
+			return nulloffset;
+
 		Leftover value = Leftover(x, y, width, height);
+
+		dbggo("go:pre-findnode");
 
 		size_t lid = leftovers.findnode(
 			value,
@@ -387,6 +496,8 @@ namespace ms
 				return val.width() <= leaf.width() && val.height() <= leaf.height();
 			}
 		);
+
+		dbggo(std::string("go:findnode-done lid=") + std::to_string(lid));
 
 		if (lid > 0)
 		{
@@ -438,7 +549,13 @@ namespace ms
 				border.shift_y(yrange.second());
 
 				if (border.y() + height > ATLASH)
+				{
 					clearinternal();
+
+					// 帧内无法立刻回收：本图本帧跳过，下一帧 clearscene 后重传。
+					if (atlas_clear_pending)
+						return nulloffset;
+				}
 				else
 					yrange = Range<GLshort>();
 			}
@@ -481,13 +598,46 @@ namespace ms
 		LOG(LOG_TRACE, "Used: [" << usedpercent << "] Wasted: [" << wastedpercent << "]");
 #endif
 
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_BGRA, GL_UNSIGNED_BYTE, bmp.data());
+		dbggo("go:pre-data");
 
-		return offsets.emplace(
+#ifdef USE_OPENGL_ES
+		// GLES core has no GL_BGRA; convert BGRA -> RGBA on the fly.
+		{
+			const uint8_t* src = reinterpret_cast<const uint8_t*>(bmp.data());
+			std::vector<uint8_t> rgba(static_cast<size_t>(width) * static_cast<size_t>(height) * 4);
+			for (size_t p = 0; p < rgba.size(); p += 4)
+			{
+				rgba[p + 0] = src[p + 2];
+				rgba[p + 1] = src[p + 1];
+				rgba[p + 2] = src[p + 0];
+				rgba[p + 3] = src[p + 3];
+			}
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+		}
+#else
+		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_BGRA, GL_UNSIGNED_BYTE, bmp.data());
+#endif
+
+		auto& inserted = offsets.emplace(
 			std::piecewise_construct,
 			std::forward_as_tuple(id),
 			std::forward_as_tuple(x, y, width, height)
 		).first->second;
+		inserted.last_use = atlas_use_tick;
+
+		// Keep the window responsive while a burst of bitmaps fills the atlas
+		// (Stage::load tile upload / enter-game). Pump every 2 inserts, or on
+		// any wide/tall upload.
+		static uint32_t atlas_insert_since_pump = 0;
+		++atlas_insert_since_pump;
+
+		if (atlas_insert_since_pump >= 2 || width > 256 || height > 256)
+		{
+			atlas_insert_since_pump = 0;
+			Window::get().poll_events();
+		}
+
+		return inserted;
 	}
 
 	void GraphicsGL::draw(const nl::bitmap& bmp, const Rectangle<int16_t>& rect, const Range<int16_t>& vertical, const Range<int16_t>& horizontal, const Color& color, float angle)
@@ -850,12 +1000,12 @@ namespace ms
 		{
 			for (size_t i = first; i < last; i++)
 			{
-				char c = text[i];
+				const unsigned char uc = static_cast<unsigned char>(text[i]);
 
-				if (c == '\t')
+				if (uc == '\t')
 					wordwidth += ax;
-				else
-					wordwidth += font.chars[c].ax;
+				else if (uc >= 32 && uc < 128)
+					wordwidth += font.chars[uc].ax;
 
 				if (wordwidth > maxwidth)
 				{
@@ -892,12 +1042,12 @@ namespace ms
 
 		for (size_t pos = first; pos < last; pos++)
 		{
-			char c = text[pos];
-			const Font::Char& ch = font.chars[c];
+			const unsigned char uc = static_cast<unsigned char>(text[pos]);
+			const Font::Char& ch = (uc >= 32 && uc < 128) ? font.chars[uc] : font.chars[' '];
 
 			advances.push_back(ax);
 
-			if (pos < first + skip || newline && c == ' ')
+			if (pos < first + skip || newline && uc == ' ')
 				continue;
 
 			ax += ch.ax;
@@ -1007,9 +1157,12 @@ namespace ms
 
 				for (size_t pos = word.first; pos < word.last; ++pos)
 				{
-					const char c = text[pos];
+					const unsigned char uc = static_cast<unsigned char>(text[pos]);
+					if (uc < 32 || uc >= 128)
+						continue;
+
 					const Font& word_font = fonts[word.font];
-					const Font::Char& ch = word_font.chars[c];
+					const Font::Char& ch = word_font.chars[uc];
 
 					GLshort char_x = x + ax + ch.bl;
 					GLshort char_y = y + ay - ch.bt;
@@ -1037,7 +1190,7 @@ namespace ms
 					if (char_y < minheight)
 						continue;
 
-					if (ax == 0 && c == ' ')
+					if (ax == 0 && uc == ' ')
 						continue;
 
 					ax += ch.ax;
@@ -1074,6 +1227,11 @@ namespace ms
 		locked = false;
 	}
 
+	bool GraphicsGL::is_locked() const
+	{
+		return locked;
+	}
+
 	void GraphicsGL::flush(float opacity)
 	{
 		bool coverscene = opacity != 1.0f;
@@ -1097,7 +1255,30 @@ namespace ms
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, csize, quads.data(), GL_STREAM_DRAW);
 
+#ifdef USE_OPENGL_ES
+		// GLES has no GL_QUADS: draw the same 4 vertices per quad as two
+		// triangles via a reused index buffer (0,1,2, 0,2,3).
+		{
+			const size_t icount = quads.size() * 6;
+			std::vector<GLushort> indices(icount);
+			for (size_t i = 0; i < quads.size(); ++i)
+			{
+				GLushort b = static_cast<GLushort>(i * 4);
+				indices[i * 6 + 0] = b;
+				indices[i * 6 + 1] = b + 1;
+				indices[i * 6 + 2] = b + 2;
+				indices[i * 6 + 3] = b;
+				indices[i * 6 + 4] = b + 2;
+				indices[i * 6 + 5] = b + 3;
+			}
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(), GL_STREAM_DRAW);
+			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(icount), GL_UNSIGNED_SHORT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
+#else
 		glDrawArrays(GL_QUADS, 0, fsize);
+#endif
 
 		glDisableVertexAttribArray(attribute_coord);
 		glDisableVertexAttribArray(attribute_color);
@@ -1109,7 +1290,163 @@ namespace ms
 
 	void GraphicsGL::clearscene()
 	{
+		if (atlas_clear_pending)
+		{
+			atlas_clear_pending = false;
+			border = Point<GLshort>(0, fontymax);
+			yrange = Range<GLshort>();
+			offsets.clear();
+			leftovers.clear();
+			rlid = 1;
+			wasted = 0;
+		}
+
 		if (!locked)
 			quads.clear();
+	}
+
+	void GraphicsGL::ensure_raw(size_t id, int16_t width, int16_t height, const uint8_t* bgra)
+	{
+		if (!bgra || width <= 0 || height <= 0)
+			return;
+
+		if (offsets.find(id) != offsets.end())
+			return;
+
+		GLshort x = 0;
+		GLshort y = 0;
+		Leftover value = Leftover(0, 0, width, height);
+
+		size_t lid = leftovers.findnode(
+			value,
+			[](const Leftover& val, const Leftover& leaf)
+			{
+				return val.width() <= leaf.width() && val.height() <= leaf.height();
+			}
+		);
+
+		if (lid > 0)
+		{
+			const Leftover& leftover = leftovers[lid];
+
+			x = leftover.left;
+			y = leftover.top;
+
+			GLshort width_delta = leftover.width() - width;
+			GLshort height_delta = leftover.height() - height;
+
+			leftovers.erase(lid);
+			wasted -= width * height;
+
+			if (width_delta >= MINLOSIZE && height_delta >= MINLOSIZE)
+			{
+				leftovers.add(rlid, Leftover(x + width, y + height, width_delta, height_delta));
+				rlid++;
+
+				if (width >= MINLOSIZE)
+				{
+					leftovers.add(rlid, Leftover(x, y + height, width, height_delta));
+					rlid++;
+				}
+
+				if (height >= MINLOSIZE)
+				{
+					leftovers.add(rlid, Leftover(x + width, y, width_delta, height));
+					rlid++;
+				}
+			}
+			else if (width_delta >= MINLOSIZE)
+			{
+				leftovers.add(rlid, Leftover(x + width, y, width_delta, height + height_delta));
+				rlid++;
+			}
+			else if (height_delta >= MINLOSIZE)
+			{
+				leftovers.add(rlid, Leftover(x, y + height, width + width_delta, height_delta));
+				rlid++;
+			}
+		}
+		else
+		{
+			if (border.x() + width > ATLASW)
+			{
+				border.set_x(0);
+				border.shift_y(yrange.second());
+
+				if (border.y() + height > ATLASH)
+				{
+					clearinternal();
+
+					// 帧内无法立刻回收：本图本帧跳过，下一帧 clearscene 后重传。
+					if (atlas_clear_pending)
+						return;
+				}
+				else
+					yrange = Range<GLshort>();
+			}
+
+			x = border.x();
+			y = border.y();
+			border.shift_x(width);
+
+			if (height > yrange.second())
+			{
+				if (x >= MINLOSIZE && height - yrange.second() >= MINLOSIZE)
+				{
+					leftovers.add(rlid, Leftover(0, yrange.first(), x, height - yrange.second()));
+					rlid++;
+				}
+
+				wasted += x * (height - yrange.second());
+				yrange = Range<int16_t>(y + height, height);
+			}
+			else if (height < yrange.first() - y)
+			{
+				if (width >= MINLOSIZE && yrange.first() - y - height >= MINLOSIZE)
+				{
+					leftovers.add(rlid, Leftover(x, y + height, width, yrange.first() - y - height));
+					rlid++;
+				}
+
+				wasted += width * (yrange.first() - y - height);
+			}
+		}
+
+#ifdef USE_OPENGL_ES
+		{
+			std::vector<uint8_t> rgba(static_cast<size_t>(width) * static_cast<size_t>(height) * 4);
+			for (size_t p = 0; p < rgba.size(); p += 4)
+			{
+				rgba[p + 0] = bgra[p + 2];
+				rgba[p + 1] = bgra[p + 1];
+				rgba[p + 2] = bgra[p + 0];
+				rgba[p + 3] = bgra[p + 3];
+			}
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+		}
+#else
+		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_BGRA, GL_UNSIGNED_BYTE, bgra);
+#endif
+
+		offsets.emplace(id, Offset(x, y, width, height));
+	}
+
+	void GraphicsGL::draw_raw(size_t id, int16_t x, int16_t y, int16_t width, int16_t height, float alpha)
+	{
+		if (locked || alpha <= 0.0f)
+			return;
+
+		auto it = offsets.find(id);
+
+		if (it == offsets.end())
+			return;
+
+		Rectangle<int16_t> rect(x, x + width, y, y + height);
+
+		if (!rect.overlaps(SCREEN))
+			return;
+
+		Color color(1.0f, 1.0f, 1.0f, alpha);
+		quads.emplace_back(rect.left(), rect.right(), rect.top(), rect.bottom(), it->second, color, 0.0f);
 	}
 }

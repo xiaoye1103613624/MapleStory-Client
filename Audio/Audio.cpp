@@ -18,8 +18,23 @@
 #include "Audio.h"
 
 #include "../Configuration.h"
+#include "../IO/Window.h"
 
+#include <fstream>
+#include <iostream>
+
+// BASS is only used when the backend is enabled (Windows by default, or when
+// USE_BASS=1 is provided on other platforms). Otherwise a silent fallback is
+// compiled in so the client still builds and runs without audio.
+#ifdef USE_BASS
 #include <bass.h>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+#endif
 
 #ifdef USE_NX
 #include <nlnx/audio.hpp>
@@ -28,6 +43,83 @@
 
 namespace ms
 {
+	/// Append one line to _audio.log next to the executable (Release has no console).
+	static void audio_log(const std::string& line)
+	{
+		std::ofstream out("_audio.log", std::ios::app);
+
+		if (out)
+			out << line << std::endl;
+
+		std::cerr << line << std::endl;
+	}
+
+#ifdef USE_NX
+	/// Resolve BGM across Sound*.nx roots (BeiDou/v83 keeps classic tracks in Sound.nx;
+	/// newer packs may put Newtro tracks in Sound002 / Sound001 / Sound2).
+	static nl::audio resolve_bgm_audio(const std::string& path)
+	{
+		nl::audio ad = nl::nx::Sound002.resolve(path);
+
+		if (ad.data())
+			return ad;
+
+		ad = nl::nx::Sound.resolve(path);
+
+		if (ad.data())
+			return ad;
+
+		ad = nl::nx::Sound001.resolve(path);
+
+		if (ad.data())
+			return ad;
+
+		return nl::nx::Sound2.resolve(path);
+	}
+#endif
+
+#ifdef USE_BASS
+	/// WZ/NX audio blobs start with an 82-byte UOL/GUID header; BASS needs the
+	/// payload after that. length must be bytes available after the offset.
+	static QWORD bass_audio_payload_length(uint32_t total)
+	{
+		return total > 82 ? static_cast<QWORD>(total - 82) : 0;
+	}
+
+	static void* bass_window_handle()
+	{
+#ifdef _WIN32
+		SDL_Window* wnd = Window::get().get_handle();
+
+		if (!wnd)
+			return nullptr;
+
+		return SDL_GetPointerProperty(
+			SDL_GetWindowProperties(wnd),
+			SDL_PROP_WINDOW_WIN32_HWND_POINTER,
+			nullptr);
+#else
+		return nullptr;
+#endif
+	}
+
+	static HSTREAM create_bgm_stream(const void* data, uint32_t total_length, bool loop)
+	{
+		const QWORD payload = bass_audio_payload_length(total_length);
+
+		if (!data || payload == 0)
+			return 0;
+
+		DWORD flags = loop ? BASS_SAMPLE_LOOP : 0;
+		HSTREAM stream = BASS_StreamCreateFile(true, data, 82, payload, flags | BASS_SAMPLE_FLOAT);
+
+		if (!stream)
+			stream = BASS_StreamCreateFile(true, data, 82, payload, flags);
+
+		return stream;
+	}
+#endif
+
 	Sound::Sound(Name name)
 	{
 		id = soundids[name];
@@ -71,8 +163,19 @@ namespace ms
 
 	Error Sound::init()
 	{
-		if (!BASS_Init(-1, 44100, 0, nullptr, 0))
+#ifdef USE_BASS
+		void* hwnd = bass_window_handle();
+
+		if (!BASS_Init(-1, 44100, 0, static_cast<HWND>(hwnd), nullptr))
+		{
+			audio_log(std::string("[Sound][ERROR] BASS_Init failed err=") + std::to_string(BASS_ErrorGetCode()));
 			return Error::Code::AUDIO;
+		}
+
+		audio_log(std::string("[Sound] BASS_Init ok hwnd=") + (hwnd ? "set" : "null"));
+#else
+		// No audio backend: preload the sound table (so ids resolve) but play nothing.
+#endif
 
 		nl::node uisrc = nl::nx::Sound["UI.img"];
 
@@ -117,12 +220,19 @@ namespace ms
 
 	void Sound::close()
 	{
+#ifdef USE_BASS
 		BASS_Free();
+#endif
 	}
 
 	bool Sound::set_sfxvolume(uint8_t vol)
 	{
+#ifdef USE_BASS
 		return BASS_SetConfig(BASS_CONFIG_GVOL_SAMPLE, vol * 100) == TRUE;
+#else
+		(void)vol;
+		return true;
+#endif
 	}
 
 	void Sound::play(size_t id)
@@ -130,8 +240,14 @@ namespace ms
 		if (!samples.count(id))
 			return;
 
+#ifdef USE_BASS
 		HCHANNEL channel = BASS_SampleGetChannel((HSAMPLE)samples.at(id), false);
-		BASS_ChannelPlay(channel, true);
+
+		if (channel)
+			BASS_ChannelPlay(channel, true);
+#else
+		(void)id;
+#endif
 	}
 
 	size_t Sound::add_sound(nl::node src)
@@ -145,9 +261,28 @@ namespace ms
 			size_t id = ad.id();
 
 			if (samples.find(id) != samples.end())
+				return id;
+
+#ifdef USE_BASS
+			DWORD payload = static_cast<DWORD>(bass_audio_payload_length(ad.length()));
+
+			if (payload == 0)
 				return 0;
 
-			samples[id] = BASS_SampleLoad(true, data, 82, (DWORD)ad.length(), 4, BASS_SAMPLE_OVER_POS);
+			HSAMPLE sample = BASS_SampleLoad(true, data, 82, payload, 4, BASS_SAMPLE_OVER_POS);
+
+			if (!sample)
+			{
+				audio_log(std::string("[Sound][WARN] SampleLoad failed id=") + std::to_string(id)
+					+ " len=" + std::to_string(ad.length())
+					+ " err=" + std::to_string(BASS_ErrorGetCode()));
+				return 0;
+			}
+
+			samples[id] = sample;
+#else
+			samples[id] = id; // placeholder so play() sees the id
+#endif
 
 			return id;
 		}
@@ -192,54 +327,121 @@ namespace ms
 
 	void Music::play() const
 	{
-		static HSTREAM stream = 0;
 		static std::string bgmpath = "";
 
 		if (path == bgmpath)
 			return;
 
-		nl::audio ad = nl::nx::Sound002.resolve(path);
+#ifdef USE_BASS
+		static HSTREAM stream = 0;
+
+		nl::audio ad = resolve_bgm_audio(path);
 		auto data = reinterpret_cast<const void*>(ad.data());
 
-		if (data)
+		if (!data)
 		{
-			if (stream)
-			{
-				BASS_ChannelStop(stream);
-				BASS_StreamFree(stream);
-			}
-
-			stream = BASS_StreamCreateFile(true, data, 82, ad.length(), BASS_SAMPLE_FLOAT | BASS_SAMPLE_LOOP);
-			BASS_ChannelPlay(stream, true);
-
-			bgmpath = path;
+			audio_log(std::string("[Music][WARN] BGM not found: ") + path
+				+ " (tried Sound002/Sound/Sound001/Sound2)");
+			return;
 		}
+
+		if (stream)
+		{
+			BASS_ChannelStop(stream);
+			BASS_StreamFree(stream);
+			stream = 0;
+		}
+
+		stream = create_bgm_stream(data, ad.length(), true);
+
+		if (!stream)
+		{
+			audio_log(std::string("[Music][ERROR] StreamCreate failed path=") + path
+				+ " len=" + std::to_string(ad.length())
+				+ " err=" + std::to_string(BASS_ErrorGetCode()));
+			return;
+		}
+
+		// Re-apply volume in case a FOCUS_LOST muted streams before play, or
+		// SDL omitted the matching FOCUS_GAINED after startup.
+		uint8_t volume = Setting<BGMVolume>::get().load();
+		set_bgmvolume(volume);
+		BASS_Start();
+
+		if (!BASS_ChannelPlay(stream, true))
+		{
+			audio_log(std::string("[Music][ERROR] ChannelPlay failed path=") + path
+				+ " err=" + std::to_string(BASS_ErrorGetCode()));
+			BASS_StreamFree(stream);
+			stream = 0;
+			return;
+		}
+
+		bgmpath = path;
+		audio_log(std::string("[Music] playing ") + path
+			+ " len=" + std::to_string(ad.length())
+			+ " vol=" + std::to_string(static_cast<int>(volume))
+			+ " handle=" + std::to_string(stream));
+#else
+		bgmpath = path;
+#endif
 	}
 
 	void Music::play_once() const
 	{
-		static HSTREAM stream = 0;
 		static std::string bgmpath = "";
 
 		if (path == bgmpath)
 			return;
 
-		nl::audio ad = nl::nx::Sound002.resolve(path);
+#ifdef USE_BASS
+		static HSTREAM stream = 0;
+
+		nl::audio ad = resolve_bgm_audio(path);
 		auto data = reinterpret_cast<const void*>(ad.data());
 
-		if (data)
+		if (!data)
 		{
-			if (stream)
-			{
-				BASS_ChannelStop(stream);
-				BASS_StreamFree(stream);
-			}
-
-			stream = BASS_StreamCreateFile(true, data, 82, ad.length(), BASS_SAMPLE_FLOAT);
-			BASS_ChannelPlay(stream, true);
-
-			bgmpath = path;
+			audio_log(std::string("[Music][WARN] BGM not found: ") + path
+				+ " (tried Sound002/Sound/Sound001/Sound2)");
+			return;
 		}
+
+		if (stream)
+		{
+			BASS_ChannelStop(stream);
+			BASS_StreamFree(stream);
+			stream = 0;
+		}
+
+		stream = create_bgm_stream(data, ad.length(), false);
+
+		if (!stream)
+		{
+			audio_log(std::string("[Music][ERROR] StreamCreate(once) failed path=") + path
+				+ " err=" + std::to_string(BASS_ErrorGetCode()));
+			return;
+		}
+
+		uint8_t volume = Setting<BGMVolume>::get().load();
+		set_bgmvolume(volume);
+		BASS_Start();
+
+		if (!BASS_ChannelPlay(stream, true))
+		{
+			audio_log(std::string("[Music][ERROR] ChannelPlay(once) failed path=") + path
+				+ " err=" + std::to_string(BASS_ErrorGetCode()));
+			BASS_StreamFree(stream);
+			stream = 0;
+			return;
+		}
+
+		bgmpath = path;
+		audio_log(std::string("[Music] playing once ") + path
+			+ " vol=" + std::to_string(static_cast<int>(volume)));
+#else
+		bgmpath = path;
+#endif
 	}
 
 	Error Music::init()
@@ -249,11 +451,17 @@ namespace ms
 		if (!set_bgmvolume(volume))
 			return Error::Code::AUDIO;
 
+		audio_log(std::string("[Music] init vol=") + std::to_string(static_cast<int>(volume)));
 		return Error::Code::NONE;
 	}
 
 	bool Music::set_bgmvolume(uint8_t vol)
 	{
+#ifdef USE_BASS
 		return BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, vol * 100) == TRUE;
+#else
+		(void)vol;
+		return true;
+#endif
 	}
 }

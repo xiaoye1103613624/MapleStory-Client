@@ -31,6 +31,8 @@ namespace ms
 	{
 	public:
 		Frame(nl::node src);
+		// Timing / opacity from meta; bitmap from bitmap_src; origin kept from meta.
+		Frame(nl::node meta, nl::node bitmap_src);
 		Frame();
 
 		void draw(const DrawArgument& args) const;
@@ -59,6 +61,8 @@ namespace ms
 	{
 	public:
 		Animation(nl::node source);
+		// Same frame timing as source, but every frame draws texture_override.
+		Animation(nl::node source, nl::node texture_override);
 		Animation();
 
 		bool update();

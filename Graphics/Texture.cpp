@@ -19,18 +19,35 @@
 
 #include "GraphicsGL.h"
 
+#include <algorithm>
+#include <cstdlib>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
 
 namespace ms
 {
+	static Point<int16_t> sanitize_origin(Point<int16_t> origin, Point<int16_t> dimensions)
+	{
+		// BeiDou .nxcache / 个别 img 向量会给出远超画布的 origin（如 1156,8531），
+		// 导致整页 UI 飘走、像「没背景 / 双框 / 卷轴错位」。超出合理范围则归零。
+		const int32_t lim_x = std::max<int32_t>(64, std::abs(dimensions.x()) * 2 + 64);
+		const int32_t lim_y = std::max<int32_t>(64, std::abs(dimensions.y()) * 2 + 64);
+
+		if (std::abs(static_cast<int32_t>(origin.x())) > lim_x
+			|| std::abs(static_cast<int32_t>(origin.y())) > lim_y)
+		{
+			return Point<int16_t>(0, 0);
+		}
+
+		return origin;
+	}
+
 	Texture::Texture(nl::node src)
 	{
 		if (src.data_type() == nl::node::type::bitmap)
 		{
-			origin = src["origin"];
-
 			if (src.root() == nl::nx::Map001)
 			{
 				const std::string& _outlink = src["_outlink"];
@@ -57,7 +74,7 @@ namespace ms
 
 			bitmap = src;
 			dimensions = Point<int16_t>(bitmap.width(), bitmap.height());
-
+			origin = sanitize_origin(src["origin"], dimensions);
 			GraphicsGL::get().addbitmap(bitmap);
 		}
 	}

@@ -39,6 +39,8 @@ namespace ms
 		void shift(Point<int16_t> amount);
 
 		bool is_valid() const;
+		// 允许在布尔上下文（if (tex) / && / !）中判空，语义等同 is_valid()。
+		explicit operator bool() const { return is_valid(); }
 		int16_t width() const;
 		int16_t height() const;
 		Point<int16_t> get_origin() const;
