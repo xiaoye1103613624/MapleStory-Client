@@ -844,6 +844,11 @@ namespace ms
 
 	Button::State UIWorldSelect::button_pressed(uint16_t id)
 	{
+		// 参考端 CUIWorldSelect::IsRequestValid：step 1 且 CLogin+368 门闩为空。
+		// 当前端以 UILoginWait 作为“请求进行中”的等价标记。
+		if (UI::get().get_element<UILoginWait>())
+			return Button::State::NORMAL;
+
 		if (id == Buttons::BtGoWorld)
 		{
 			enter_world();
@@ -971,7 +976,7 @@ namespace ms
 
 	void UIWorldSelect::enter_world()
 	{
-		if (channelid == 0xFF)
+		if (channelid == 0xFF || UI::get().get_element<UILoginWait>())
 			return;
 
 		Configuration::get().set_worldid(worldid);
