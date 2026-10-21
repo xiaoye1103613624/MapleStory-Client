@@ -109,8 +109,24 @@ namespace ms
 		version_pos = Common["version"]["pos"];
 
 		selected_character = Setting<DefaultCharacter>::get().load();
+		page_count = static_cast<uint8_t>((slots + PAGESIZE - 1) / PAGESIZE);
+
+		// 默认角色可能已被删除或超出当前角色数：先夹到实际存在的槽位，
+		// 否则 BtSelect/BtDelete 会以 selected_character 直接索引 characters 越界。
+		if (characters_count > 0)
+		{
+			if (selected_character >= static_cast<uint8_t>(characters_count))
+				selected_character = static_cast<uint8_t>(characters_count - 1);
+		}
+		else
+		{
+			selected_character = 0;
+		}
+
 		selected_page = selected_character / PAGESIZE;
-		page_count = std::ceil((double)slots / (double)PAGESIZE);
+
+		if (page_count > 0 && selected_page >= page_count)
+			selected_page = page_count - 1;
 
 		tab_move_pos = 0;
 
@@ -128,12 +144,17 @@ namespace ms
 		nl::node selectedWorld = CharSelect["selectedWorld"];
 		nl::node pageNew = CharSelect["pageNew"];
 
-		uint16_t world;
+		uint16_t world = 0;
 		uint8_t world_id = Configuration::get().get_worldid();
 		uint8_t channel_id = Configuration::get().get_channelid();
 
 		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
 			world = worldselect->get_worldbyid(world_id);
+
+		// 直接进入选角（自动登录/世界选择已销毁）时没有 worldselect 可映射；
+		// 仍未初始化的 world 会以未定义索引访问 selectedWorld["icon"]。
+		if (!selectedWorld["icon"][world])
+			world = 0;
 
 		world_sprites.emplace_back(Common["selectWorld"]);
 		world_sprites.emplace_back(selectedWorld["icon"][world]);
@@ -841,7 +862,8 @@ namespace ms
 		{
 			case Buttons::BtSelect:
 			{
-				if (characters.size() > 0)
+				if (selected_character < static_cast<uint8_t>(characters_count)
+					&& static_cast<size_t>(selected_character) < characters.size())
 				{
 					Setting<DefaultCharacter>::get().save(selected_character);
 					int32_t id = characters[selected_character].id;
@@ -894,6 +916,10 @@ namespace ms
 			}
 			case Buttons::BtDelete:
 			{
+				if (selected_character >= static_cast<uint8_t>(characters_count)
+					|| static_cast<size_t>(selected_character) >= characters.size())
+					break;
+
 				int32_t id = characters[selected_character].id;
 
 				switch (require_pic)
