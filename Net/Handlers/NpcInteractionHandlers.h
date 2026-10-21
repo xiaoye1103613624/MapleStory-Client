@@ -32,4 +32,12 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// NPC shop buy/sell/recharge result (v83 CONFIRM_SHOP_TRANSACTION).
+	// Consumes the result so the client stays in sync; inventory changes still
+	// arrive via MODIFY_INVENTORY.
+	class ConfirmShopTransactionHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

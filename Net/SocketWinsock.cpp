@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "SocketWinsock.h"
 
-#ifndef USE_ASIO
+#if defined(_WIN32) && !defined(USE_ASIO)
 #include <ws2tcpip.h>
 
 // TODO: Can this be moved?

@@ -25,8 +25,12 @@
 
 #include "../Template/Singleton.h"
 
-#ifdef USE_ASIO
+#if defined(_WIN32)
+#include "SocketWinsock.h"
+#elif defined(USE_ASIO)
 #include "SocketAsio.h"
+#elif defined(USE_POSIX_SOCKET)
+#include "SocketPosix.h"
 #else
 #include "SocketWinsock.h"
 #endif
@@ -64,8 +68,12 @@ namespace ms
 		size_t pos;
 		bool connected;
 
-#ifdef USE_ASIO
+#if defined(_WIN32)
+		SocketWinsock socket;
+#elif defined(USE_ASIO)
 		SocketAsio socket;
+#elif defined(USE_POSIX_SOCKET)
+		SocketPosix socket;
 #else
 		SocketWinsock socket;
 #endif

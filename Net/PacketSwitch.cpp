@@ -27,6 +27,7 @@
 #include "Handlers/NpcInteractionHandlers.h"
 #include "Handlers/PlayerHandlers.h"
 #include "Handlers/PlayerInteractionHandlers.h"
+#include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
 
@@ -65,6 +66,9 @@ namespace ms
 
 		/// Messaging 1
 		SHOW_STATUS_INFO = 39,
+
+		/// Quest
+		UPDATE_QUEST_INFO = 211,
 
 		/// Inventory 2
 		GATHER_RESULT = 52,
@@ -128,7 +132,10 @@ namespace ms
 		CHAR_INFO = 61,
 
 		/// Cash Shop
-		SET_CASH_SHOP = 127
+		SET_CASH_SHOP = 127,
+
+		/// 北斗自定义 opcode（0x37xx，走 PacketSwitch 的扩展表）
+		LIMIT_BREAK_SYNC = 0x3730
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -194,6 +201,9 @@ namespace ms
 		emplace<WEEK_EVENT_MESSAGE, WeekEventMessageHandler>();
 		emplace<SHOW_ITEM_GAIN_INCHAT, ShowItemGainInChatHandler>();
 
+		// Quest handlers
+		emplace<UPDATE_QUEST_INFO, UpdateQuestInfoHandler>();
+
 		// Inventory Handlers
 		emplace<MODIFY_INVENTORY, ModifyInventoryHandler>();
 		emplace<GATHER_RESULT, GatherResultHandler>();
@@ -202,6 +212,7 @@ namespace ms
 		// NPC Interaction Handlers
 		emplace<NPC_DIALOGUE, NpcDialogueHandler>();
 		emplace<OPEN_NPC_SHOP, OpenNpcShopHandler>();
+		emplace<CONFIRM_SHOP_TRANSACTION, ConfirmShopTransactionHandler>();
 
 		// Player Interaction
 		emplace<CHAR_INFO, CharInfoHandler>();
@@ -212,6 +223,9 @@ namespace ms
 		// TODO: New handlers, they need coded and moved to a proper file.
 		emplace<CHECK_SPW_RESULT, CheckSpwResultHandler>();
 		emplace<FIELD_EFFECT, FieldEffectHandler>();
+
+		// 北斗自定义包：破功值（伤害上限）同步
+		emplace<LIMIT_BREAK_SYNC, LimitBreakSyncHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -224,29 +238,41 @@ namespace ms
 
 		bool opcode_error = false;
 
+		// 先找到对应的 handler：常规 opcode 查数组，北斗自定义 opcode 查扩展表。
+		const PacketHandler* handler = nullptr;
+
 		if (opcode < NUM_HANDLERS)
 		{
-			if (auto& handler = handlers[opcode])
-			{
-				// Handler is good, packet is passed on
+			handler = handlers[opcode].get();
+		}
+		else
+		{
+			auto iter = extended_handlers.find(opcode);
 
-				try
-				{
-					handler->handle(recv);
-				}
-				catch (const PacketError& err)
-				{
-					// Notice about an error
-					warn(err.what(), opcode);
-					opcode_error = true;
-				}
-			}
-			else
+			if (iter != extended_handlers.end())
+				handler = iter->second.get();
+		}
+
+		if (handler)
+		{
+			// Handler is good, packet is passed on
+
+			try
 			{
-				// Warn about an unhandled packet
-				warn(MSG_UNHANDLED, opcode);
+				handler->handle(recv);
+			}
+			catch (const PacketError& err)
+			{
+				// Notice about an error
+				warn(err.what(), opcode);
 				opcode_error = true;
 			}
+		}
+		else if (opcode < NUM_HANDLERS)
+		{
+			// Warn about an unhandled packet
+			warn(MSG_UNHANDLED, opcode);
+			opcode_error = true;
 		}
 		else
 		{
@@ -577,6 +603,7 @@ namespace ms
 			case 350: opcode_msg = "MAPLELIFE_ERROR"; break;
 			case 354: opcode_msg = "VICIOUS_HAMMER"; break;
 			case 358: opcode_msg = "VEGA_SCROLL"; break;
+			case 0x3730: opcode_msg = "LIMIT_BREAK_SYNC"; break;
 			default: break;
 		}
 

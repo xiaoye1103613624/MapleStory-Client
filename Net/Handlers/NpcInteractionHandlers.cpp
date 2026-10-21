@@ -22,6 +22,11 @@
 #include "../../IO/UITypes/UINpcTalk.h"
 #include "../../IO/UITypes/UIShop.h"
 
+#include "../../Net/Packets/NpcInteractionPackets.h"
+#include "../../Util/UiAssetResolve.h"
+
+#include "../../MapleStory.h"
+
 namespace ms
 {
 	void NpcDialogueHandler::handle(InPacket& recv) const
@@ -29,7 +34,7 @@ namespace ms
 		recv.skip(1);
 
 		int32_t npcid = recv.read_int();
-		int8_t msgtype = recv.read_byte(); // 0 - textonly, 1 - yes/no, 4 - selection, 12 - accept/decline
+		int8_t msgtype = recv.read_byte(); // 0 Say, 1 YesNo, 4 Simple, 12 AcceptDecline
 		int8_t speaker = recv.read_byte();
 		std::string text = recv.read_string();
 
@@ -37,6 +42,14 @@ namespace ms
 
 		if (msgtype == 0 && recv.length() > 0)
 			style = recv.read_short();
+
+		// 缺 UtilDlgEx 时不要 emplace 隐形窗口，否则脚本会一直等客户端回复。
+		if (!UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx")))
+		{
+			LOG(LOG_WARN, "[NPC] UtilDlgEx missing; end talk msgtype=" << static_cast<int>(msgtype));
+			NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			return;
+		}
 
 		UI::get().emplace<UINpcTalk>();
 		UI::get().enable();
@@ -86,5 +99,20 @@ namespace ms
 				shop.add_rechargable(itemid, price, pitch, time, rechargeprice, slotmax);
 			}
 		}
+	}
+
+	void ConfirmShopTransactionHandler::handle(InPacket& recv) const
+	{
+		// v83 / BeiDou: first byte is the result mode (0 = ok for common paths).
+		if (recv.length() <= 0)
+			return;
+
+		const int8_t mode = recv.read_byte();
+		if (mode != 0)
+			LOG(LOG_INFO, "[SHOP] transaction result mode=" << static_cast<int>(mode));
+
+		// Remaining bytes (if any) are version-specific; skip safely.
+		if (recv.length() > 0)
+			recv.skip(recv.length());
 	}
 }

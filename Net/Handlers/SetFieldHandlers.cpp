@@ -22,6 +22,7 @@
 
 #include "../Packets/GameplayPackets.h"
 
+#include "../../Audio/Audio.h"
 #include "../../Configuration.h"
 
 #include "../../Gameplay/Stage.h"
@@ -30,25 +31,112 @@
 
 #include "../../IO/UITypes/UICharSelect.h"
 
+#include "../../Util/Misc.h"
+#include "../../Util/Resource/ResourceService.h"
+
+#include <fstream>
+
 namespace ms
 {
-	void SetFieldHandler::transition(int32_t mapid, uint8_t portalid) const
+	static void enter_game_log(const std::string& line)
+	{
+		std::ofstream out("_enter_game.log", std::ios::app);
+
+		if (out)
+			out << line << std::endl;
+
+		LOG(LOG_DEBUG, line);
+	}
+
+	void SetFieldHandler::transition(int32_t mapid, uint8_t portalid, bool enter_game) const
 	{
 		float fadestep = 0.025f;
 
 		Window::get().fadeout(
 			fadestep,
-			[mapid, portalid]()
+			[mapid, portalid, enter_game]()
 			{
-				GraphicsGL::get().clear();
+				// Always unlock after the fade even if map/HUD load throws —
+				// otherwise GraphicsGL stays locked (black screen) while BGM
+				// already started in Stage::respawn, and the main thread can
+				// appear "Not Responding".
+				enter_game_log(std::string("[SetField] fade done map=") + std::to_string(mapid)
+					+ " portal=" + std::to_string(portalid)
+					+ " enter_game=" + (enter_game ? "1" : "0"));
 
-				Stage::get().load(mapid, portalid);
+				// 首次进游戏也清空 atlas：登录期 MapLogin 大背景已占满 atlas，
+				// 装图中途 clearinternal 会打乱已上传图块 → 黑屏+BGM。
+				GraphicsGL::get().unload_atlas();
+				enter_game_log(enter_game
+					? "[SetField] unload_atlas (enter_game)"
+					: "[SetField] unload_atlas (map transfer)");
+
+				// img：补齐 Mob/Npc 等进图根；单张地图在 Stage::load → ensure_map。
+				try
+				{
+					ms::res::ResourceService::get().ensure_map_roots();
+					enter_game_log("[SetField] ensure_map_roots ok");
+					Window::get().poll_events();
+				}
+				catch (const std::exception& ex)
+				{
+					enter_game_log(std::string("[SetField] ensure_map_roots FAILED: ") + ex.what());
+				}
+
+				try
+				{
+					Stage::get().load(mapid, portalid);
+					enter_game_log("[SetField] Stage::load ok");
+					Window::get().poll_events();
+				}
+				catch (const std::exception& ex)
+				{
+					enter_game_log(std::string("[SetField] Stage::load FAILED: ") + ex.what());
+				}
+
+				// Pump messages only — do NOT call check_events() here.
+				// check_events may call initwindow → GraphicsGL::reinit, and the
+				// old reinit wiped the atlas after Stage::load had already
+				// uploaded tiles (BGM on, still locked → black + Not Responding).
+				Window::get().poll_events();
 
 				UI::get().enable();
 				Timer::get().start();
 				GraphicsGL::get().unlock();
+				enter_game_log("[SetField] GraphicsGL unlocked");
 
-				Stage::get().transfer_player();
+				// Switch to GAME UI after the map is loaded (and GL unlocked).
+				// Constructing StatusBar3/UIWindow2 HUD while locked used to
+				// freeze the client on v83 packs that only ship StatusBar /
+				// UIWindow.
+				if (enter_game)
+				{
+					try
+					{
+						UI::get().change_state(UI::State::GAME);
+						enter_game_log("[SetField] UI State::GAME ok");
+					}
+					catch (const std::exception& ex)
+					{
+						enter_game_log(std::string("[SetField] UI State::GAME FAILED: ") + ex.what());
+					}
+
+					Window::get().poll_events();
+				}
+
+				try
+				{
+					Stage::get().transfer_player();
+					enter_game_log("[SetField] transfer_player ok");
+				}
+				catch (const std::exception& ex)
+				{
+					enter_game_log(std::string("[SetField] transfer_player FAILED: ") + ex.what());
+				}
+
+				Window::get().poll_events();
+				enter_game_log(std::string("[SetField] fadeprocedure done locked=")
+					+ (GraphicsGL::get().is_locked() ? "1" : "0"));
 			});
 
 		GraphicsGL::get().lock();
@@ -78,7 +166,7 @@ namespace ms
 		int32_t mapid = recv.read_int();
 		int8_t portalid = recv.read_byte();
 
-		transition(mapid, portalid);
+		transition(mapid, portalid, false);
 	}
 
 	void SetFieldHandler::set_field(InPacket& recv) const
@@ -89,12 +177,21 @@ namespace ms
 		auto charselect = UI::get().get_element<UICharSelect>();
 
 		if (!charselect)
+		{
+			enter_game_log("[SetField] set_field aborted: UICharSelect missing");
+			LOG(LOG_ERROR, "[SetField] enter-game without UICharSelect; reconnect required");
 			return;
+		}
 
 		const CharEntry& playerentry = charselect->get_character(cid);
 
 		if (playerentry.id != cid)
+		{
+			enter_game_log(std::string("[SetField] set_field aborted: cid mismatch want=")
+				+ std::to_string(cid) + " got=" + std::to_string(playerentry.id));
+			LOG(LOG_ERROR, "[SetField] character id mismatch cid=" << cid);
 			return;
+		}
 
 		Stage::get().loadplayer(playerentry);
 
@@ -127,10 +224,8 @@ namespace ms
 		uint8_t portalid = player.get_stats().get_portal();
 		int32_t mapid = player.get_stats().get_mapid();
 
-		transition(mapid, portalid);
+		transition(mapid, portalid, true);
 
 		Sound(Sound::Name::GAMESTART).play();
-
-		UI::get().change_state(UI::State::GAME);
 	}
 }

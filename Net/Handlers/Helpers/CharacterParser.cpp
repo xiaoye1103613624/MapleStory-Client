@@ -94,26 +94,17 @@ namespace ms
 
 	void CharacterParser::parse_questlog(InPacket& recv, QuestLog& quests)
 	{
+		// First list: started quests (+ optional infoNumber twin entries as their own qid/qdata).
 		int16_t size = recv.read_short();
 
 		for (int16_t i = 0; i < size; i++)
 		{
 			int16_t qid = recv.read_short();
 			std::string qdata = recv.read_string();
-
-			if (quests.is_started(qid))
-			{
-				int16_t qidl = quests.get_last_started();
-				quests.add_in_progress(qidl, qid, qdata);
-				//i--; // This was causing issues
-			}
-			else
-			{
-				quests.add_started(qid, qdata);
-			}
+			quests.add_started(qid, qdata);
 		}
 
-		std::map<int16_t, int64_t> completed;
+		// Second list: completed quests with completion time.
 		size = recv.read_short();
 
 		for (int16_t i = 0; i < size; i++)

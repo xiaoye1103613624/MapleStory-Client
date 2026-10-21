@@ -19,10 +19,17 @@
 
 #include "../Packets/CommonPackets.h"
 
+#include "../../IO/Window.h"
+
 namespace ms
 {
 	void PingHandler::handle(InPacket&) const
 	{
 		PongPacket().dispatch();
+	}
+
+	void LimitBreakSyncHandler::handle(InPacket& recv) const
+	{
+		Window::get().set_limit_break(recv.read_long());
 	}
 }

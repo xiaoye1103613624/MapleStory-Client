@@ -25,4 +25,12 @@ namespace ms
 	{
 		void handle(InPacket&) const override;
 	};
+
+	// 破功值（伤害上限）同步。
+	// 对应服务端 SendOpcode.LIMIT_BREAK_SYNC(0x3730)，负载只有一个 int64。
+	// 数值只用于窗口标题显示，收到后交给 Window 保存。
+	class LimitBreakSyncHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

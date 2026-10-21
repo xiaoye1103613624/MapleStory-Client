@@ -90,6 +90,9 @@ namespace ms
 			/// Skill
 			USE_SKILL = 91,
 
+			/// Quest (BeiDou RecvOpcode.QUEST_ACTION)
+			QUEST_ACTION = 107,
+
 			/// Gameplay 2
 			PARTY_OPERATION = 124,
 			ADMIN_COMMAND = 128,

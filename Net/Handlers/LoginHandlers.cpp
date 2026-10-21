@@ -31,6 +31,10 @@
 #include "../../IO/UITypes/UITermsOfService.h"
 #include "../../IO/UITypes/UIWorldSelect.h"
 
+#include "../../Configuration.h"
+#include "../../IO/Window.h"
+#include "../../Util/Resource/ResourceService.h"
+
 namespace ms
 {
 	void LoginResultHandler::handle(InPacket& recv) const
@@ -39,9 +43,9 @@ namespace ms
 
 		if (loginwait && loginwait->is_active())
 		{
-			// Remove previous UIs
+			// 失败路径才立刻拆掉 Wait；成功路径要等 ensure_game_roots 结束再拆，
+			// 否则装 Character 时无加载框，像“登录卡死半分钟”。
 			UI::get().remove(UIElement::Type::LOGINNOTICE);
-			UI::get().remove(UIElement::Type::LOGINWAIT);
 			UI::get().remove(UIElement::Type::TOS);
 			UI::get().remove(UIElement::Type::GENDER);
 
@@ -50,6 +54,8 @@ namespace ms
 			// The packet should contain a 'reason' integer which can signify various things
 			if (int32_t reason = recv.read_int())
 			{
+				UI::get().remove(UIElement::Type::LOGINWAIT);
+
 				// Login unsuccessful
 				// The LoginNotice displayed will contain the specific information
 				switch (reason)
@@ -101,15 +107,25 @@ namespace ms
 
 				Configuration::get().set_admin(account.admin);
 
+				// img：先装选角根并重建 BodyDrawInfo；期间保留 Wait 并泵消息。
+				ms::res::ResourceService::get().ensure_game_roots();
+				Window::get().poll_events();
+
+				UI::get().remove(UIElement::Type::LOGINWAIT);
+
 				if (account.female == 10)
 				{
 					UI::get().emplace<UIGender>(okhandler);
 				}
 				else
 				{
-					// Save the "Login ID" if the box for it on the login screen is checked
-					if (Setting<SaveLogin>::get().load())
+					// Prefer a non-empty server account name; never wipe a typed ID
+					// that UILogin already persisted when "save account" is on.
+					if (Setting<SaveLogin>::get().load() && !account.name.empty())
+					{
 						Setting<DefaultAccount>::get().save(account.name);
+						Configuration::get().save();
+					}
 
 					// Request the list of worlds and channels online
 					ServerRequestPacket().dispatch();
@@ -228,6 +244,12 @@ namespace ms
 
 			int8_t pic = recv.read_byte();
 			int32_t slots = recv.read_int();
+
+			// 选角 CharLook 构造依赖 BodyDrawInfo；登录成功虽已 ensure，
+			// 频道包到达前若 Character 未绑全会得到空锚点 → 头身脚叠成白影。
+			// 在拆 Wait / 建 UICharSelect 前再保一次（已绑则几乎无开销）。
+			ms::res::ResourceService::get().ensure_game_roots();
+			Window::get().poll_events();
 
 			// Remove previous UIs
 			UI::get().remove(UIElement::Type::LOGINNOTICE);

@@ -18,16 +18,19 @@
 #include "MessagingHandlers.h"
 
 #include "../../Data/ItemData.h"
+#include "../../Data/QuestData.h"
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 
 #include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIQuestLog.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 
 namespace ms
 {
 	// Modes:
-	// 0 - Item(0) or Meso(1) 
+	// 0 - Item(0) or Meso(1)
+	// 1 - Quest progress (short questId, byte status, …)
 	// 3 - Exp gain
 	// 4 - Fame
 	// 5 - Mesos
@@ -110,6 +113,40 @@ namespace ms
 			{
 				show_status(Color::Name::RED, "Mode: 0, Mode 2: " + std::to_string(mode2) + " is not handled.");
 			}
+		}
+		else if (mode == 1)
+		{
+			// Quest progress: short questId, byte status
+			// status 0 = forfeit, 1 = started/update (+string +5 pad), 2 = complete (+long time)
+			int16_t qid = recv.read_short();
+			int8_t status = recv.read_byte();
+			QuestLog& quests = Stage::get().get_player().get_quests();
+			const QuestData& qdata = QuestData::get(qid);
+
+			if (status == 0)
+			{
+				quests.remove_started(qid);
+				show_status(Color::Name::WHITE, "Quest forfeited: " + qdata.get_name());
+			}
+			else if (status == 2)
+			{
+				int64_t time = recv.read_long();
+				quests.set_completed(qid, time);
+				show_status(Color::Name::YELLOW, "Quest completed: " + qdata.get_name());
+			}
+			else
+			{
+				std::string progress = recv.read_string();
+
+				if (recv.length() >= 5)
+					recv.skip(5);
+
+				quests.set_started(qid, progress);
+				show_status(Color::Name::WHITE, "Quest updated: " + qdata.get_name());
+			}
+
+			if (auto questlog = UI::get().get_element<UIQuestLog>())
+				questlog->refresh();
 		}
 		else if (mode == 3)
 		{
