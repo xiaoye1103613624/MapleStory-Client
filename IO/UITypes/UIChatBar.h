@@ -71,6 +71,7 @@ namespace ms
 		bool has_input() const;
 		void toggle_view();
 		void show_message(const char* message, MessageType type);
+		void focus_whisper();
 
 		// TODO: Change these?
 		void change_target(int32_t action) {}
@@ -165,6 +166,10 @@ namespace ms
 		std::vector<Message> message_history;
 		std::vector<std::string> user_message_history;
 		size_t user_message_history_index;
+
+		bool classic_mode;
+		Texture classic_input_bg;
+		Texture classic_chat_target;
 
 #if LOG_LEVEL >= LOG_UI
 		ColorBox dimension_box;

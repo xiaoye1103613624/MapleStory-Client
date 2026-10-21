@@ -23,6 +23,7 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Character/ExpTable.h"
+#include "../../Configuration.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Session.h"
 
@@ -182,8 +183,10 @@ namespace ms
 			break;
 		case Buttons::YES:
 		{
-			Constants::Constants::get().set_viewwidth(1024);
-			Constants::Constants::get().set_viewheight(768);
+			// 回登录界面时恢复"配置里的分辨率"（默认 1280x720），
+			// 避免把登录界面固定回 1024x768 导致书框被拉伸/裁切。
+			Constants::Constants::get().set_viewwidth(Setting<Width>::get().load());
+			Constants::Constants::get().set_viewheight(Setting<Height>::get().load());
 
 			float fadestep = 0.025f;
 

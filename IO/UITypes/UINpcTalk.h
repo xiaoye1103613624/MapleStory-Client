@@ -23,25 +23,31 @@
 
 #include "../../Graphics/Text.h"
 
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace ms
 {
 	class UINpcTalk : public UIElement
 	{
 	public:
+		// Wire msgtype values (BeiDou / v83):
+		// 0=Say(OK/Next/Prev via style), 1=YesNo, 2=GetText, 3=GetNumber,
+		// 4=Simple, 12=AcceptDecline
 		enum TalkType : int8_t
 		{
 			NONE = -1,
-			SENDOK,
-			SENDYESNO,
-
-			// TODO: Unconfirmed
-			SENDNEXT,
-			SENDNEXTPREV,
-			SENDACCEPTDECLINE,
-			SENDGETTEXT,
-			SENDGETNUMBER,
-			SENDSIMPLE,
-			LENGTH
+			SENDOK = 0,
+			SENDYESNO = 1,
+			SENDGETTEXT = 2,
+			SENDGETNUMBER = 3,
+			SENDSIMPLE = 4,
+			SENDACCEPTDECLINE = 12,
+			// Style-derived variants of SENDOK (not wire values)
+			SENDNEXT = 100,
+			SENDNEXTPREV = 101,
+			SENDPREV = 102
 		};
 
 		static constexpr Type TYPE = UIElement::Type::NPCTALK;
@@ -65,7 +71,9 @@ namespace ms
 
 	private:
 		TalkType get_by_value(int8_t value);
+		TalkType resolve_say_style(int16_t style) const;
 		std::string format_text(const std::string& tx, const int32_t& npcid);
+		int8_t wire_msgtype() const;
 
 		static constexpr int16_t MAX_HEIGHT = 248;
 
@@ -107,10 +115,22 @@ namespace ms
 		bool draw_text;
 		Slider slider;
 		TalkType type;
+		int8_t msgtype_wire;
 		std::string formatted_text;
 		size_t formatted_text_pos;
 		uint16_t timestep;
 
+		// SENDSIMPLE：#Lindex#label# 解析后的可点选项
+		struct SimpleChoice
+		{
+			int32_t selection = 0;
+			Text label;
+			Point<int16_t> pos;
+		};
+		std::vector<SimpleChoice> simple_choices;
+
 		std::function<void(bool)> onmoved;
+
+		void parse_simple_choices(const std::string& tx);
 	};
 }

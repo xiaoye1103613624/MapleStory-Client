@@ -50,6 +50,8 @@ namespace ms
 		void change_text(const std::string& text);
 		void set_cryptchar(int8_t character);
 		void set_limit(size_t limit);
+		/// 文字相对 bounds 左上角的绘制偏移（FreeType 基线在 y，木牌矮槽需下移）。
+		void set_text_shift(Point<int16_t> shift) { text_shift = shift; }
 
 		void set_enter_callback(std::function<void(std::string)> onreturn);
 		void set_key_callback(KeyAction::Id key, std::function<void(void)> action);
@@ -76,6 +78,7 @@ namespace ms
 		size_t limit;
 		int8_t crypt;
 		State state;
+		Point<int16_t> text_shift;
 
 		std::function<void(std::string)> onreturn;
 		std::map<int32_t, std::function<void(void)>> callbacks;

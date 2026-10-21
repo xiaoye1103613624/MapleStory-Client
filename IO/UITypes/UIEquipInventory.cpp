@@ -20,12 +20,14 @@
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
+#include "../Components/TwoSpriteButton.h"
 #include "../UITypes/UIItemInventory.h"
 
 #include "../../Audio/Audio.h"
 #include "../../Data/ItemData.h"
 
 #include "../../Net/Packets/InventoryPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -33,59 +35,139 @@
 
 namespace ms
 {
+	namespace
+	{
+		nl::node basic_close_btn()
+		{
+			nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
+
+			if (close)
+				return close;
+
+			return nl::nx::UI["Basic.img"]["BtClose2"];
+		}
+
+		void try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src, Point<int16_t> pos = {})
+		{
+			if (src)
+				buttons[id] = std::make_unique<MapleButton>(src, pos);
+		}
+
+		Button* find_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id)
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end()) ? it->second.get() : nullptr;
+		}
+	}
+
 	UIEquipInventory::UIEquipInventory(const Inventory& invent) : UIDragElement<PosEQINV>(), inventory(invent), tab(Buttons::BT_TAB1), hasPendantSlot(false), hasPocketSlot(false)
 	{
-		// Column 1
-		iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(14, 50);
-		iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(14, 91);
-		iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(14, 132);
-		iconpositions[EquipSlot::Id::RING4] = Point<int16_t>(14, 173);
-		iconpositions[EquipSlot::Id::POCKET] = Point<int16_t>(14, 214);
-		iconpositions[EquipSlot::Id::BOOK] = Point<int16_t>(14, 255);
+		const bool classic_layout = UiAssetResolve::is_classic_hud();
 
-		// Column 2
-		//iconpositions[EquipSlot::Id::NONE] = Point<int16_t>(55, 50);
-		iconpositions[EquipSlot::Id::PENDANT2] = Point<int16_t>(55, 91);
-		iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(55, 132);
-		iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(55, 173);
-		iconpositions[EquipSlot::Id::BELT] = Point<int16_t>(55, 214);
-		//iconpositions[EquipSlot::Id::NONE] = Point<int16_t>(55, 255);
+		if (classic_layout)
+		{
+			// IDA CUIEquip 槽位表 dword_BE2260（32x32）；仅 v83 身体部位。
+			iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(38, 35);
+			iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(38, 68);
+			iconpositions[EquipSlot::Id::EYEACC] = Point<int16_t>(71, 101);
+			iconpositions[EquipSlot::Id::EARACC] = Point<int16_t>(104, 101);
+			iconpositions[EquipSlot::Id::TOP] = Point<int16_t>(38, 134);
+			iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(38, 167);
+			iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(71, 200);
+			iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(5, 167);
+			iconpositions[EquipSlot::Id::CAPE] = Point<int16_t>(5, 134);
+			iconpositions[EquipSlot::Id::SHIELD] = Point<int16_t>(137, 134);
+			iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(137, 134);
+			iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(104, 134);
+			iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(104, 167);
+			iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(137, 167);
+			iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(104, 68);
+			iconpositions[EquipSlot::Id::RING4] = Point<int16_t>(137, 68);
+			iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(71, 134);
+		}
+		else
+		{
+			// Column 1
+			iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(14, 50);
+			iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(14, 91);
+			iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(14, 132);
+			iconpositions[EquipSlot::Id::RING4] = Point<int16_t>(14, 173);
+			iconpositions[EquipSlot::Id::POCKET] = Point<int16_t>(14, 214);
+			iconpositions[EquipSlot::Id::BOOK] = Point<int16_t>(14, 255);
 
-		// Column 3
-		iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(96, 50);
-		iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(96, 91);
-		iconpositions[EquipSlot::Id::EYEACC] = Point<int16_t>(96, 132);
-		iconpositions[EquipSlot::Id::TOP] = Point<int16_t>(96, 173);
-		iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(96, 214);
-		iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(96, 255);
+			// Column 2
+			iconpositions[EquipSlot::Id::PENDANT2] = Point<int16_t>(55, 91);
+			iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(55, 132);
+			iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(55, 173);
+			iconpositions[EquipSlot::Id::BELT] = Point<int16_t>(55, 214);
 
-		// Column 4
-		//iconpositions[EquipSlot::Id::NONE] = Point<int16_t>(137, 50);
-		//iconpositions[EquipSlot::Id::NONE] = Point<int16_t>(137, 91);
-		iconpositions[EquipSlot::Id::EARACC] = Point<int16_t>(137, 132);
-		iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(137, 173);
-		iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(137, 214);
-		iconpositions[EquipSlot::Id::ANDROID] = Point<int16_t>(137, 255);
+			// Column 3
+			iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(96, 50);
+			iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(96, 91);
+			iconpositions[EquipSlot::Id::EYEACC] = Point<int16_t>(96, 132);
+			iconpositions[EquipSlot::Id::TOP] = Point<int16_t>(96, 173);
+			iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(96, 214);
+			iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(96, 255);
 
-		// Column 5
-		iconpositions[EquipSlot::Id::EMBLEM] = Point<int16_t>(178, 50);
-		iconpositions[EquipSlot::Id::BADGE] = Point<int16_t>(178, 91);
-		iconpositions[EquipSlot::Id::MEDAL] = Point<int16_t>(178, 132);
-		iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(178, 173);
-		iconpositions[EquipSlot::Id::CAPE] = Point<int16_t>(178, 214);
-		iconpositions[EquipSlot::Id::HEART] = Point<int16_t>(178, 255);
+			// Column 4
+			iconpositions[EquipSlot::Id::EARACC] = Point<int16_t>(137, 132);
+			iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(137, 173);
+			iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(137, 214);
+			iconpositions[EquipSlot::Id::ANDROID_SLOT] = Point<int16_t>(137, 255);
 
-		//iconpositions[EquipSlot::Id::SHIELD] = Point<int16_t>(142, 124);
-		//iconpositions[EquipSlot::Id::TAMEDMOB] = Point<int16_t>(142, 91);
-		//iconpositions[EquipSlot::Id::SADDLE] = Point<int16_t>(76, 124);
+			// Column 5
+			iconpositions[EquipSlot::Id::EMBLEM] = Point<int16_t>(178, 50);
+			iconpositions[EquipSlot::Id::BADGE] = Point<int16_t>(178, 91);
+			iconpositions[EquipSlot::Id::MEDAL] = Point<int16_t>(178, 132);
+			iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(178, 173);
+			iconpositions[EquipSlot::Id::CAPE] = Point<int16_t>(178, 214);
+			iconpositions[EquipSlot::Id::HEART] = Point<int16_t>(178, 255);
+		}
 
 		tab_source[Buttons::BT_TAB0] = "Equip";
 		tab_source[Buttons::BT_TAB1] = "Cash";
 		tab_source[Buttons::BT_TAB2] = "Pet";
 		tab_source[Buttons::BT_TAB3] = "Android";
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		nl::node Equip = nl::nx::UI["UIWindow4.img"]["Equip"];
+		nl::node close = basic_close_btn();
+		nl::node Equip = UiAssetResolve::window4("Equip");
+
+		if (!UiAssetResolve::usable(Equip))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
+		bool classic_flat = !UiAssetResolve::usable(Equip[tab_source[Buttons::BT_TAB0]]);
+
+		nl::node backgrnd = Equip["backgrnd"];
+		Point<int16_t> bg_dimensions = Texture(backgrnd).get_dimensions();
+
+		if (classic_flat)
+		{
+			if (backgrnd)
+				sprites.emplace_back(backgrnd);
+			if (Equip["backgrnd2"])
+				sprites.emplace_back(Equip["backgrnd2"]);
+
+			background[Buttons::BT_TAB0] = Texture();
+			totem_dimensions = Point<int16_t>(0, 0);
+			totem_adj = Point<int16_t>(0, 0);
+
+			if (close)
+				buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 19, 5));
+
+			try_maple_btn(buttons, Buttons::BT_SLOT, Equip["BtDetail"]);
+			try_maple_btn(buttons, Buttons::BT_SHOP, Equip["BtCashshop"]);
+
+			dimension = bg_dimensions;
+			dragarea = Point<int16_t>(bg_dimensions.x(), 20);
+
+			tab = Buttons::BT_TAB0;
+			load_icons();
+			return;
+		}
 
 		background[Buttons::BT_TAB0] = Equip[tab_source[Buttons::BT_TAB0]]["backgrnd"];
 		background[Buttons::BT_TAB1] = Equip[tab_source[Buttons::BT_TAB1]]["backgrnd"];
@@ -98,37 +180,46 @@ namespace ms
 					Slots[i].emplace_back(slot);
 
 		nl::node EquipGL = nl::nx::UI["UIWindowGL.img"]["Equip"];
-		nl::node backgrnd = Equip["backgrnd"];
 		nl::node totem_backgrnd = EquipGL["Totem"]["backgrnd"];
 
-		Point<int16_t> bg_dimensions = Texture(backgrnd).get_dimensions();
 		totem_dimensions = Texture(totem_backgrnd).get_dimensions();
 		totem_adj = Point<int16_t>(-totem_dimensions.x() + 4, 0);
 
-		sprites.emplace_back(totem_backgrnd, totem_adj);
-		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(Equip["backgrnd2"]);
+		if (totem_backgrnd)
+			sprites.emplace_back(totem_backgrnd, totem_adj);
+		if (backgrnd)
+			sprites.emplace_back(backgrnd);
+		if (Equip["backgrnd2"])
+			sprites.emplace_back(Equip["backgrnd2"]);
 
 		tabbar = Equip["tabbar"];
 		disabled = Equip[tab_source[Buttons::BT_TAB0]]["disabled"];
 		disabled2 = Equip[tab_source[Buttons::BT_TAB0]]["disabled2"];
 
-		buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 19, 5));
-		buttons[Buttons::BT_SLOT] = std::make_unique<MapleButton>(Equip[tab_source[Buttons::BT_TAB0]]["BtSlot"]);
-		buttons[Buttons::BT_EFFECT] = std::make_unique<MapleButton>(EquipGL["Equip"]["btEffect"]);
-		buttons[Buttons::BT_SALON] = std::make_unique<MapleButton>(EquipGL["Equip"]["btSalon"]);
-		buttons[Buttons::BT_CONSUMESETTING] = std::make_unique<MapleButton>(Equip[tab_source[Buttons::BT_TAB2]]["BtConsumeSetting"]);
-		buttons[Buttons::BT_EXCEPTION] = std::make_unique<MapleButton>(Equip[tab_source[Buttons::BT_TAB2]]["BtException"]);
-		buttons[Buttons::BT_SHOP] = std::make_unique<MapleButton>(Equip[tab_source[Buttons::BT_TAB3]]["BtShop"]);
+		if (close)
+			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 19, 5));
 
-		buttons[Buttons::BT_CONSUMESETTING]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_EXCEPTION]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_SHOP]->set_state(Button::State::DISABLED);
+		try_maple_btn(buttons, Buttons::BT_SLOT, Equip[tab_source[Buttons::BT_TAB0]]["BtSlot"]);
+		try_maple_btn(buttons, Buttons::BT_EFFECT, EquipGL["Equip"]["btEffect"]);
+		try_maple_btn(buttons, Buttons::BT_SALON, EquipGL["Equip"]["btSalon"]);
+		try_maple_btn(buttons, Buttons::BT_CONSUMESETTING, Equip[tab_source[Buttons::BT_TAB2]]["BtConsumeSetting"]);
+		try_maple_btn(buttons, Buttons::BT_EXCEPTION, Equip[tab_source[Buttons::BT_TAB2]]["BtException"]);
+		try_maple_btn(buttons, Buttons::BT_SHOP, Equip[tab_source[Buttons::BT_TAB3]]["BtShop"]);
+
+		if (auto* b = find_btn(buttons, Buttons::BT_CONSUMESETTING))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, Buttons::BT_EXCEPTION))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, Buttons::BT_SHOP))
+			b->set_state(Button::State::DISABLED);
 
 		nl::node Tab = Equip["Tab"];
 
 		for (uint16_t i = Buttons::BT_TAB0; i < Buttons::BT_TABE; i++)
-			buttons[Buttons::BT_TAB0 + i] = std::make_unique<TwoSpriteButton>(Tab["disabled"][i], Tab["enabled"][i], Point<int16_t>(0, 3));
+		{
+			if (Tab["disabled"][i] && Tab["enabled"][i])
+				buttons[Buttons::BT_TAB0 + i] = std::make_unique<TwoSpriteButton>(Tab["disabled"][i], Tab["enabled"][i], Point<int16_t>(0, 3));
+		}
 
 		dimension = bg_dimensions;
 		dragarea = Point<int16_t>(bg_dimensions.x(), 20);
@@ -149,21 +240,33 @@ namespace ms
 
 		if (tab == Buttons::BT_TAB0)
 		{
-			if (!hasPendantSlot)
+			if (!hasPendantSlot && disabled.is_valid() && (iconpositions[EquipSlot::Id::PENDANT2].x() || iconpositions[EquipSlot::Id::PENDANT2].y()))
 				disabled.draw(position + iconpositions[EquipSlot::Id::PENDANT2]);
 
-			if (!hasPocketSlot)
+			if (!hasPocketSlot && disabled.is_valid() && (iconpositions[EquipSlot::Id::POCKET].x() || iconpositions[EquipSlot::Id::POCKET].y()))
 				disabled.draw(position + iconpositions[EquipSlot::Id::POCKET]);
 
 			for (auto iter : icons)
-				if (iter.second)
-					iter.second->draw(position + iconpositions[iter.first] + Point<int16_t>(4, 4));
+			{
+				if (!iter.second)
+					continue;
+
+				Point<int16_t> ip = iconpositions[iter.first];
+
+				if (ip.x() == 0 && ip.y() == 0)
+					continue;
+
+				iter.second->draw(position + ip + Point<int16_t>(4, 4));
+			}
 		}
 		else if (tab == Buttons::BT_TAB2)
 		{
-			disabled2.draw(position + Point<int16_t>(113, 57));
-			disabled2.draw(position + Point<int16_t>(113, 106));
-			disabled2.draw(position + Point<int16_t>(113, 155));
+			if (disabled2.is_valid())
+			{
+				disabled2.draw(position + Point<int16_t>(113, 57));
+				disabled2.draw(position + Point<int16_t>(113, 106));
+				disabled2.draw(position + Point<int16_t>(113, 155));
+			}
 		}
 	}
 
@@ -350,6 +453,9 @@ namespace ms
 
 		for (auto iter : iconpositions)
 		{
+			if (iter.second.x() == 0 && iter.second.y() == 0)
+				continue;
+
 			Rectangle<int16_t> iconrect = Rectangle<int16_t>(
 				position + iter.second,
 				position + iter.second + Point<int16_t>(32, 32)
@@ -371,29 +477,21 @@ namespace ms
 		{
 			clear_tooltip();
 
-			buttons[oldtab]->set_state(Button::State::NORMAL);
-			buttons[tab]->set_state(Button::State::PRESSED);
+			if (auto* b = find_btn(buttons, oldtab))
+				b->set_state(Button::State::NORMAL);
+			if (auto* b = find_btn(buttons, tab))
+				b->set_state(Button::State::PRESSED);
 
-			if (tab == Buttons::BT_TAB0)
-				buttons[Buttons::BT_SLOT]->set_active(true);
-			else
-				buttons[Buttons::BT_SLOT]->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_SLOT))
+				b->set_active(tab == Buttons::BT_TAB0);
 
-			if (tab == Buttons::BT_TAB2)
-			{
-				buttons[Buttons::BT_CONSUMESETTING]->set_active(true);
-				buttons[Buttons::BT_EXCEPTION]->set_active(true);
-			}
-			else
-			{
-				buttons[Buttons::BT_CONSUMESETTING]->set_active(false);
-				buttons[Buttons::BT_EXCEPTION]->set_active(false);
-			}
+			if (auto* b = find_btn(buttons, Buttons::BT_CONSUMESETTING))
+				b->set_active(tab == Buttons::BT_TAB2);
+			if (auto* b = find_btn(buttons, Buttons::BT_EXCEPTION))
+				b->set_active(tab == Buttons::BT_TAB2);
 
-			if (tab == Buttons::BT_TAB3)
-				buttons[Buttons::BT_SHOP]->set_active(true);
-			else
-				buttons[Buttons::BT_SHOP]->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_SHOP))
+				b->set_active(tab == Buttons::BT_TAB3);
 		}
 	}
 

@@ -21,6 +21,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 namespace ms
 {
@@ -29,7 +30,7 @@ namespace ms
 		text = "";
 	}
 
-	Textfield::Textfield(Text::Font font, Text::Alignment alignment, Color::Name text_color, Rectangle<int16_t> b, size_t limit, int16_t marker_height) : bounds(b), limit(limit)
+	Textfield::Textfield(Text::Font font, Text::Alignment alignment, Color::Name text_color, Rectangle<int16_t> b, size_t limit, int16_t marker_height) : bounds(b), limit(limit), text_shift(0, 0)
 	{
 		textlabel = Text(font, alignment, text_color, "", 0, false);
 		marker = ColorLine(marker_height, text_color, 1.0f, true);
@@ -62,15 +63,22 @@ namespace ms
 
 		absp.shift(position);
 
+		// FreeType 以 y 为基线：矮输入槽若不下移，字形大半画在槽外，槽内只剩竖线/白线伪影。
+		Point<int16_t> text_pos = absp + text_shift;
+
 		if (text.size() > 0)
-			textlabel.draw(absp);
+			textlabel.draw(text_pos);
 
 		if (state == State::FOCUSED && showmarker)
 		{
-			Point<int16_t> mpos = absp + Point<int16_t>(textlabel.advance(markerpos) - 1, 8) + marker_adjust;
+			// FreeType：draw 原点之上 linespace 处是基线，字形升部在基线上方。
+			// 旧逻辑用 height-4 把竖杠顶到基线附近再往下画 → 整条偏到槽底。
+			// 竖杠从槽内偏上起笔，高度由构造时的 marker_height 决定。
+			constexpr int16_t marker_y = 2;
+			Point<int16_t> mpos = text_pos + Point<int16_t>(textlabel.advance(markerpos) - 1, marker_y) + marker_adjust;
 
 			if (crypt > 0)
-				mpos.shift(1, -3);
+				mpos.shift(1, 0);
 
 			marker.draw(mpos);
 		}
@@ -115,6 +123,7 @@ namespace ms
 	{
 		if (state != st)
 		{
+			const State previous = state;
 			state = st;
 
 			if (state != State::DISABLED)
@@ -128,7 +137,14 @@ namespace ms
 			}
 
 			if (state == State::FOCUSED)
+			{
 				UI::get().focus_textfield(this);
+			}
+			else if (previous == State::FOCUSED && state == State::NORMAL)
+			{
+				// Click-away / explicit blur: drop SDL text input as well.
+				UI::get().remove_textfield();
+			}
 		}
 	}
 
@@ -235,23 +251,29 @@ namespace ms
 					}
 				}
 
-				std::stringstream ss;
-				char c = static_cast<int8_t>(action);
-
-				ss << c;
-
-				add_string(ss.str());
+				// Printable ASCII only — signed int8_t cast used to corrupt
+				// high bytes into negative chars (mojibake / OOB font index).
+				if (action >= 32 && action < 128)
+				{
+					char c = static_cast<char>(static_cast<unsigned char>(action));
+					add_string(std::string(1, c));
+				}
 			}
 		}
 	}
 
 	void Textfield::add_string(const std::string& str)
 	{
-		for (char c : str)
+		for (unsigned char c : str)
 		{
+			// FreeType atlas is ASCII 32–127 only; reject anything else so
+			// IME / clipboard UTF-8 cannot produce mojibake in the slot.
+			if (c < 32 || c >= 128)
+				continue;
+
 			if (belowlimit())
 			{
-				text.insert(markerpos, 1, c);
+				text.insert(markerpos, 1, static_cast<char>(c));
 
 				markerpos++;
 
@@ -262,19 +284,29 @@ namespace ms
 
 	void Textfield::modifytext(const std::string& t)
 	{
+		// 与 add_string 一致：FreeType atlas 仅 ASCII 32–127。
+		// 从 Settings 回填账号时若含 UTF-8/GBK，不经过 add_string 会画出竖线/白线伪影。
+		std::string filtered;
+		filtered.reserve(t.size());
+
+		for (unsigned char c : t)
+		{
+			if (c >= 32 && c < 128)
+				filtered.push_back(static_cast<char>(c));
+		}
+
 		if (crypt > 0)
 		{
 			std::string crypted;
-			crypted.insert(0, t.size(), crypt);
-
+			crypted.insert(0, filtered.size(), static_cast<char>(crypt));
 			textlabel.change_text(crypted);
 		}
 		else
 		{
-			textlabel.change_text(t);
+			textlabel.change_text(filtered);
 		}
 
-		text = t;
+		text = filtered;
 	}
 
 	Cursor::State Textfield::send_cursor(Point<int16_t> cursorpos, bool clicked)
@@ -329,7 +361,10 @@ namespace ms
 	{
 		modifytext(t);
 
-		markerpos = text.size();
+		if (markerpos > text.size())
+			markerpos = text.size();
+		else
+			markerpos = text.size();
 	}
 
 	void Textfield::set_cryptchar(int8_t character)

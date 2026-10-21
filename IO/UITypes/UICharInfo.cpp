@@ -22,6 +22,7 @@
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/PlayerInteractionPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -32,30 +33,48 @@ namespace ms
 	UICharInfo::UICharInfo(int32_t cid) : UIDragElement<PosCHARINFO>(), is_loading(true), timestep(Constants::TIMESTEP), personality_enabled(false), collect_enabled(false), damage_enabled(false), item_enabled(false)
 	{
 		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		nl::node UserInfo = nl::nx::UI["UIWindow2.img"]["UserInfo"];
-		nl::node character = UserInfo["character"];
-		nl::node backgrnd = character["backgrnd"];
+		if (!close)
+			close = nl::nx::UI["Basic.img"]["BtClose2"];
+
+		nl::node UserInfo = UiAssetResolve::window("UserInfo");
+		nl::node character = UserInfo["character"] ? UserInfo["character"] : UserInfo;
+		nl::node backgrnd = character["backgrnd"] ? character["backgrnd"] : UserInfo["backgrnd"];
+
+		if (!UiAssetResolve::usable(UserInfo) || !backgrnd)
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		/// Main Window
 		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(character["backgrnd2"]);
-		sprites.emplace_back(character["name"]);
+		if (character["backgrnd2"])
+			sprites.emplace_back(character["backgrnd2"]);
+		if (character["name"])
+			sprites.emplace_back(character["name"]);
 
 		Point<int16_t> backgrnd_dim = Texture(backgrnd).get_dimensions();
 		Point<int16_t> close_dimensions = Point<int16_t>(backgrnd_dim.x() - 21, 6);
 
-		buttons[Buttons::BtClose] = std::make_unique<MapleButton>(close, close_dimensions);
-		buttons[Buttons::BtCollect] = std::make_unique<MapleButton>(character["BtCollect"]);
-		buttons[Buttons::BtDamage] = std::make_unique<MapleButton>(character["BtDamage"]);
-		buttons[Buttons::BtFamily] = std::make_unique<MapleButton>(character["BtFamily"]);
-		buttons[Buttons::BtItem] = std::make_unique<MapleButton>(character["BtItem"]);
-		buttons[Buttons::BtParty] = std::make_unique<MapleButton>(character["BtParty"]);
-		buttons[Buttons::BtPersonality] = std::make_unique<MapleButton>(character["BtPersonality"]);
-		buttons[Buttons::BtPet] = std::make_unique<MapleButton>(character["BtPet"]);
-		buttons[Buttons::BtPopDown] = std::make_unique<MapleButton>(character["BtPopDown"]);
-		buttons[Buttons::BtPopUp] = std::make_unique<MapleButton>(character["BtPopUp"]);
-		buttons[Buttons::BtRide] = std::make_unique<MapleButton>(character["BtRide"]);
-		buttons[Buttons::BtTrad] = std::make_unique<MapleButton>(character["BtTrad"]);
+		auto try_btn = [&](uint16_t id, nl::node src, Point<int16_t> pos = {})
+		{
+			if (src)
+				buttons[id] = std::make_unique<MapleButton>(src, pos);
+		};
+
+		try_btn(Buttons::BtClose, close, close_dimensions);
+		try_btn(Buttons::BtCollect, character["BtCollect"]);
+		try_btn(Buttons::BtDamage, character["BtDamage"]);
+		try_btn(Buttons::BtFamily, character["BtFamily"]);
+		try_btn(Buttons::BtItem, character["BtItem"]);
+		try_btn(Buttons::BtParty, character["BtParty"]);
+		try_btn(Buttons::BtPersonality, character["BtPersonality"]);
+		try_btn(Buttons::BtPet, character["BtPet"]);
+		try_btn(Buttons::BtPopDown, character["BtPopDown"]);
+		try_btn(Buttons::BtPopUp, character["BtPopUp"]);
+		try_btn(Buttons::BtRide, character["BtRide"]);
+		try_btn(Buttons::BtTrad, character["BtTrad"]);
 
 		name = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE);
 		job = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
@@ -65,8 +84,10 @@ namespace ms
 		alliance = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
 
 		// TODO: Check if player has a mount or pet, disable if they don't
-		buttons[Buttons::BtPet]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BtRide]->set_state(Button::State::DISABLED);
+		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::DISABLED);
+		if (auto it = buttons.find(Buttons::BtRide); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::DISABLED);
 
 		/// Farm
 		nl::node farm = UserInfo["farm"];
@@ -77,13 +98,17 @@ namespace ms
 		farm_dim = Texture(farm_backgrnd).get_dimensions();
 		farm_adj = Point<int16_t>(-farm_dim.x(), 0);
 
-		sprites.emplace_back(farm_backgrnd, farm_adj);
-		sprites.emplace_back(farm["backgrnd2"], farm_adj);
-		sprites.emplace_back(farm["default"], farm_adj);
-		sprites.emplace_back(farm["cover"], farm_adj);
+		if (farm_backgrnd)
+			sprites.emplace_back(farm_backgrnd, farm_adj);
+		if (farm["backgrnd2"])
+			sprites.emplace_back(farm["backgrnd2"], farm_adj);
+		if (farm["default"])
+			sprites.emplace_back(farm["default"], farm_adj);
+		if (farm["cover"])
+			sprites.emplace_back(farm["cover"], farm_adj);
 
-		buttons[Buttons::BtFriend] = std::make_unique<MapleButton>(farm["btFriend"], farm_adj);
-		buttons[Buttons::BtVisit] = std::make_unique<MapleButton>(farm["btVisit"], farm_adj);
+		try_btn(Buttons::BtFriend, farm["btFriend"], farm_adj);
+		try_btn(Buttons::BtVisit, farm["btVisit"], farm_adj);
 
 		farm_name = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::SUPERNOVA);
 		farm_level = Charset(farm["number"], Charset::Alignment::LEFT);
@@ -95,13 +120,19 @@ namespace ms
 		nl::node personality = UserInfo["personality"];
 		nl::node personality_backgrnd = personality["backgrnd"];
 
-		personality_sprites.emplace_back(personality_backgrnd, bottom_window_adj);
-		personality_sprites.emplace_back(personality["backgrnd2"], bottom_window_adj);
+		if (personality_backgrnd)
+			personality_sprites.emplace_back(personality_backgrnd, bottom_window_adj);
+		if (personality["backgrnd2"])
+			personality_sprites.emplace_back(personality["backgrnd2"], bottom_window_adj);
 
-		personality_sprites_enabled[true].emplace_back(personality["backgrnd3"], bottom_window_adj);
-		personality_sprites_enabled[true].emplace_back(personality["backgrnd4"], bottom_window_adj);
-		personality_sprites_enabled[true].emplace_back(personality["center"], bottom_window_adj);
-		personality_sprites_enabled[false].emplace_back(personality["before30level"], bottom_window_adj);
+		if (personality["backgrnd3"])
+			personality_sprites_enabled[true].emplace_back(personality["backgrnd3"], bottom_window_adj);
+		if (personality["backgrnd4"])
+			personality_sprites_enabled[true].emplace_back(personality["backgrnd4"], bottom_window_adj);
+		if (personality["center"])
+			personality_sprites_enabled[true].emplace_back(personality["center"], bottom_window_adj);
+		if (personality["before30level"])
+			personality_sprites_enabled[false].emplace_back(personality["before30level"], bottom_window_adj);
 
 		personality_dimensions = Texture(personality_backgrnd).get_dimensions();
 
@@ -109,13 +140,15 @@ namespace ms
 		nl::node collect = UserInfo["collect"];
 		nl::node collect_backgrnd = collect["backgrnd"];
 
-		collect_sprites.emplace_back(collect_backgrnd, bottom_window_adj);
-		collect_sprites.emplace_back(collect["backgrnd2"], bottom_window_adj);
+		if (collect_backgrnd)
+			collect_sprites.emplace_back(collect_backgrnd, bottom_window_adj);
+		if (collect["backgrnd2"])
+			collect_sprites.emplace_back(collect["backgrnd2"], bottom_window_adj);
 
 		default_medal = collect["icon1"];
 
-		buttons[Buttons::BtArrayGet] = std::make_unique<MapleButton>(collect["BtArrayGet"], bottom_window_adj);
-		buttons[Buttons::BtArrayName] = std::make_unique<MapleButton>(collect["BtArrayName"], bottom_window_adj);
+		try_btn(Buttons::BtArrayGet, collect["BtArrayGet"], bottom_window_adj);
+		try_btn(Buttons::BtArrayName, collect["BtArrayName"], bottom_window_adj);
 
 		medal_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "Junior Adventurer");
 		medal_total = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "2");
@@ -126,12 +159,15 @@ namespace ms
 		nl::node damage = UserInfo["damage"];
 		nl::node damage_backgrnd = damage["backgrnd"];
 
-		damage_sprites.emplace_back(damage_backgrnd, bottom_window_adj);
-		damage_sprites.emplace_back(damage["backgrnd2"], bottom_window_adj);
-		damage_sprites.emplace_back(damage["backgrnd3"], bottom_window_adj);
+		if (damage_backgrnd)
+			damage_sprites.emplace_back(damage_backgrnd, bottom_window_adj);
+		if (damage["backgrnd2"])
+			damage_sprites.emplace_back(damage["backgrnd2"], bottom_window_adj);
+		if (damage["backgrnd3"])
+			damage_sprites.emplace_back(damage["backgrnd3"], bottom_window_adj);
 
-		buttons[Buttons::BtFAQ] = std::make_unique<MapleButton>(damage["BtFAQ"], bottom_window_adj);
-		buttons[Buttons::BtRegist] = std::make_unique<MapleButton>(damage["BtRegist"], bottom_window_adj);
+		try_btn(Buttons::BtFAQ, damage["BtFAQ"], bottom_window_adj);
+		try_btn(Buttons::BtRegist, damage["BtRegist"], bottom_window_adj);
 
 		damage_dimensions = Texture(damage_backgrnd).get_dimensions();
 #pragma endregion
@@ -143,8 +179,10 @@ namespace ms
 		nl::node item = UserInfo["item"];
 		nl::node item_backgrnd = item["backgrnd"];
 
-		item_sprites.emplace_back(item_backgrnd, right_window_adj);
-		item_sprites.emplace_back(item["backgrnd2"], right_window_adj);
+		if (item_backgrnd)
+			item_sprites.emplace_back(item_backgrnd, right_window_adj);
+		if (item["backgrnd2"])
+			item_sprites.emplace_back(item["backgrnd2"], right_window_adj);
 
 		item_dimensions = Texture(item_backgrnd).get_dimensions();
 #pragma endregion
@@ -163,8 +201,11 @@ namespace ms
 		UIElement::draw_sprites(inter);
 
 		for (size_t i = 0; i < Buttons::BtArrayGet; i++)
-			if (const auto button = buttons.at(i).get())
-				button->draw(position);
+		{
+			auto it = buttons.find(static_cast<uint16_t>(i));
+			if (it != buttons.end() && it->second)
+				it->second->draw(position);
+		}
 
 		/// Main Window
 		int16_t row_height = 18;
@@ -354,10 +395,16 @@ namespace ms
 
 		if (character_id == player_id)
 		{
-			buttons[Buttons::BtParty]->set_state(Button::State::DISABLED);
-			buttons[Buttons::BtPopDown]->set_state(Button::State::DISABLED);
-			buttons[Buttons::BtPopUp]->set_state(Button::State::DISABLED);
-			buttons[Buttons::BtFriend]->set_state(Button::State::DISABLED);
+			auto disable = [&](uint16_t id)
+			{
+				auto it = buttons.find(id);
+				if (it != buttons.end() && it->second)
+					it->second->set_state(Button::State::DISABLED);
+			};
+			disable(Buttons::BtParty);
+			disable(Buttons::BtPopDown);
+			disable(Buttons::BtPopUp);
+			disable(Buttons::BtFriend);
 		}
 
 		Job character_job = Job(job_id);

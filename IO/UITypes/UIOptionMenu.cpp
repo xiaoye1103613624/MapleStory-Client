@@ -22,6 +22,8 @@
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
 
+#include "../../Util/UiAssetResolve.h"
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -31,6 +33,26 @@ namespace ms
 	UIOptionMenu::UIOptionMenu() : UIDragElement<PosOPTIONMENU>(), selected_tab(0)
 	{
 		nl::node OptionMenu = nl::nx::UI["StatusBar3.img"]["OptionMenu"];
+
+		if (!UiAssetResolve::usable(OptionMenu))
+		{
+			nl::node GameOpt = UiAssetResolve::window("GameOpt");
+			nl::node SysOpt = UiAssetResolve::window("SysOpt");
+			nl::node fallback = UiAssetResolve::usable(GameOpt) ? GameOpt : SysOpt;
+
+			if (!UiAssetResolve::usable(fallback) || !fallback["backgrnd"])
+			{
+				active = false;
+				dimension = Point<int16_t>(0, 0);
+				return;
+			}
+
+			sprites.emplace_back(fallback["backgrnd"]);
+			dimension = Texture(fallback["backgrnd"]).get_dimensions();
+			dragarea = Point<int16_t>(dimension.x(), 20);
+			return;
+		}
+
 		nl::node backgrnd = OptionMenu["backgrnd"];
 
 		sprites.emplace_back(backgrnd);
@@ -123,7 +145,8 @@ namespace ms
 	{
 		UIElement::draw_sprites(inter);
 
-		tab_background[selected_tab].draw(position);
+		if (tab_background[selected_tab].is_valid())
+			tab_background[selected_tab].draw(position);
 
 		UIElement::draw_buttons(inter);
 	}
@@ -147,7 +170,11 @@ namespace ms
 			{
 			case Buttons::TAB0:
 			{
-				uint16_t selected_value = buttons[Buttons::SELECT_RES]->get_selected();
+				auto it = buttons.find(Buttons::SELECT_RES);
+				if (it == buttons.end() || !it->second)
+					break;
+
+				uint16_t selected_value = it->second->get_selected();
 
 				int16_t width = Constants::Constants::get().get_viewwidth();
 				int16_t height = Constants::Constants::get().get_viewheight();
@@ -200,7 +227,8 @@ namespace ms
 		case Buttons::UIRESET:
 			return Button::State::DISABLED;
 		case Buttons::SELECT_RES:
-			buttons[Buttons::SELECT_RES]->toggle_pressed();
+			if (auto it = buttons.find(Buttons::SELECT_RES); it != buttons.end() && it->second)
+				it->second->toggle_pressed();
 			return Button::State::NORMAL;
 		default:
 			return Button::State::DISABLED;
@@ -216,7 +244,7 @@ namespace ms
 
 		auto& button = buttons[Buttons::SELECT_RES];
 
-		if (button->is_pressed())
+		if (button && button->is_pressed())
 		{
 			if (button->in_combobox(cursorpos))
 			{
@@ -250,21 +278,31 @@ namespace ms
 
 	void UIOptionMenu::change_tab(uint16_t tabid)
 	{
-		buttons[selected_tab]->set_state(Button::State::NORMAL);
-		buttons[tabid]->set_state(Button::State::PRESSED);
+		auto it_old = buttons.find(selected_tab);
+		auto it_new = buttons.find(tabid);
+
+		if (it_old != buttons.end() && it_old->second)
+			it_old->second->set_state(Button::State::NORMAL);
+		if (it_new != buttons.end() && it_new->second)
+			it_new->second->set_state(Button::State::PRESSED);
 
 		selected_tab = tabid;
+
+		auto it_res = buttons.find(Buttons::SELECT_RES);
+
+		if (it_res == buttons.end() || !it_res->second)
+			return;
 
 		switch (tabid)
 		{
 		case Buttons::TAB0:
-			buttons[Buttons::SELECT_RES]->set_active(true);
+			it_res->second->set_active(true);
 			break;
 		case Buttons::TAB1:
 		case Buttons::TAB2:
 		case Buttons::TAB3:
 		case Buttons::TAB4:
-			buttons[Buttons::SELECT_RES]->set_active(false);
+			it_res->second->set_active(false);
 			break;
 		default:
 			break;

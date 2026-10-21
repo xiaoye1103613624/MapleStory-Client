@@ -27,7 +27,7 @@
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/LoginPackets.h"
 
-#include <windows.h>
+#include <SDL3/SDL.h>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -323,7 +323,7 @@ namespace ms
 		{
 			std::string url = Configuration::get().get_chargenx();
 
-			ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+			SDL_OpenURL(url.c_str());
 
 			return Button::State::NORMAL;
 		}

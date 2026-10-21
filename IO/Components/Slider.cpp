@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Slider.h"
 
+#include "../../Util/UiAssetResolve.h"
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -33,8 +35,18 @@ namespace ms
 
 		if (type == Type::CHATBAR)
 		{
-			src = nl::nx::UI["StatusBar3.img"]["chat"]["common"]["scroll"];
-			base_str += "_c";
+			nl::node status_root = UiAssetResolve::status_bar_root();
+			src = status_root["chat"]["common"]["scroll"];
+
+			// v83: chat scroll lives under Basic.img VScr (StatusBar.img has no chat/common).
+			if (!src)
+				src = nl::nx::UI["Basic.img"]["VScr5"];
+
+			if (!src)
+				src = nl::nx::UI["Basic.img"]["VScr"];
+
+			if (status_root["chat"]["common"]["scroll"])
+				base_str += "_c";
 		}
 		else
 		{
@@ -125,13 +137,20 @@ namespace ms
 		DrawArgument base_arg = DrawArgument(Point<int16_t>(base_pos.x(), base_pos.y() + 1), fill);
 
 		int16_t height = dbase.height();
-		int16_t maxheight = vertical.first() + height;
 
-		while (maxheight < vertical.second())
+		// 防呆：资源缺失时 dbase 高度可能为 0，原先的 while 会永不前进
+		// 形成死循环（技能书 Slider 的 VScr 缺 disabled/base 时即触发），
+		// 表现为进图/开技能书后主线程 100% CPU、窗口未响应。高度非正直接跳过。
+		if (height > 0)
 		{
-			dbase.draw(position + Point<int16_t>(start.x(), maxheight));
+			int16_t maxheight = vertical.first() + height;
 
-			maxheight += height;
+			while (maxheight < vertical.second())
+			{
+				dbase.draw(position + Point<int16_t>(start.x(), maxheight));
+
+				maxheight += height;
+			}
 		}
 
 		if (enabled)

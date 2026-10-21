@@ -22,6 +22,8 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Net/Packets/MessagingPackets.h"
+#include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,9 +31,73 @@
 
 namespace ms
 {
-	UIChatBar::UIChatBar() : temp_view_x(0), temp_view_y(0), drag_direction(DragDirection::NONE), view_input(false), view_adjusted(false), position_adjusted(false)
+	UIChatBar::UIChatBar() : temp_view_x(0), temp_view_y(0), drag_direction(DragDirection::NONE), view_input(false), view_adjusted(false), position_adjusted(false), classic_mode(false)
 	{
-		nl::node ingame = nl::nx::UI["StatusBar3.img"]["chat"]["ingame"];
+		classic_mode = UiAssetResolve::is_classic_hud();
+
+		if (classic_mode)
+		{
+			LOG(LOG_DEBUG, "UIChatBar: classic StatusBar.img chat input");
+
+			nl::node base = UiAssetResolve::status_bar_root()["base"];
+			classic_input_bg = Texture(base["chat"]);
+
+			if (base["chatTarget"])
+				classic_chat_target = Texture(base["chatTarget"]);
+
+			int16_t vh = Constants::Constants::get().get_viewheight();
+			int16_t vw = Constants::Constants::get().get_viewwidth();
+
+			user_view_x = 560;
+			user_view_y = 80;
+			min_x = 560;
+			max_x = 560;
+			top_y = 8;
+			center_y = 12;
+			bottom_y = 8;
+			btMin_x = 0;
+			input_bg_x = classic_input_bg.is_valid() ? classic_input_bg.width() : 560;
+			input_bg_y = classic_input_bg.is_valid() ? classic_input_bg.height() : 16;
+			input_max_x = input_bg_x;
+			input_origin_x = 0;
+			input_origin_y = 0;
+			input_btns_x = 0;
+			min_view_y = vh - 71 - input_bg_y - user_view_y;
+			view_max = true;
+			view_input = true;
+			position = Point<int16_t>(8, static_cast<int16_t>(vh - 71 - 20));
+			dimension = Point<int16_t>(std::min(vw - 16, 560), user_view_y + input_bg_y);
+			dragarea = Point<int16_t>(dimension.x(), 12);
+
+			input_text = Textfield(
+				Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+				Rectangle<int16_t>(
+					Point<int16_t>(position.x() + 4, position.y() + 2),
+					Point<int16_t>(position.x() + dimension.x() - 4, position.y() + INPUT_TEXT_HEIGHT)
+				),
+				70, 11
+			);
+
+			input_text.set_enter_callback(
+				[&](std::string message)
+				{
+					input_text_enter_callback(message);
+				}
+			);
+
+			input_text.set_key_callback(
+				KeyAction::Id::ESCAPE,
+				[&]()
+				{
+					input_text_escape_callback();
+				}
+			);
+
+			show_message("[Welcome] Welcome to MapleStory!!", MessageType::YELLOW);
+			return;
+		}
+
+		nl::node ingame = UiAssetResolve::status_bar_root()["chat"]["ingame"];
 		nl::node input = ingame["input"];
 
 		nl::node view = ingame["view"];
@@ -156,6 +222,32 @@ namespace ms
 
 	void UIChatBar::draw(float inter) const
 	{
+		if (classic_mode)
+		{
+			Point<int16_t> input_pos = position;
+
+			if (classic_chat_target)
+				classic_chat_target.draw(input_pos + Point<int16_t>(0, -22));
+
+			if (classic_input_bg)
+				classic_input_bg.draw(DrawArgument(input_pos, Point<int16_t>(dimension.x(), 0)));
+
+			int16_t message_y = 18;
+
+			for (int i = static_cast<int>(message_history.size()) - 1; i >= 0; i--)
+			{
+				if (message_y > user_view_y)
+					break;
+
+				message_history[i].text.draw(input_pos - Point<int16_t>(0, message_y));
+				message_y += 13;
+			}
+
+			input_text.draw(Point<int16_t>(1, -2), Point<int16_t>(1, -3));
+			UIElement::draw(inter);
+			return;
+		}
+
 		if (view_max)
 		{
 			Range<int16_t> vertical = Range<int16_t>(0, 0);
@@ -284,6 +376,15 @@ namespace ms
 
 	void UIChatBar::update()
 	{
+		if (classic_mode)
+		{
+			input_text.update(
+				Point<int16_t>(position.x() + 4, position.y() + 2),
+				Point<int16_t>(std::max<int16_t>(40, dimension.x() - 8), INPUT_TEXT_HEIGHT)
+			);
+			return;
+		}
+
 		input_text.update(get_input_text_position(), Point<int16_t>(input_max_x - (input_bg_x - user_view_x) - 22, INPUT_TEXT_HEIGHT));
 	}
 
@@ -878,6 +979,23 @@ namespace ms
 			LOG(LOG_DEBUG, "[UIChatBar::show_message]: " << type << " not supported.");
 
 		message_history.push_back(Message(MessageGroup::ALL, type, Text(Text::Font::A11M, Text::Alignment::LEFT, color, message)));
+	}
+
+	void UIChatBar::focus_whisper()
+	{
+		if (classic_mode)
+		{
+			view_input = true;
+			input_text.change_text("/w ");
+			input_text.set_state(Textfield::State::FOCUSED);
+			return;
+		}
+
+		if (!view_input)
+			toggle_input(true);
+
+		input_text.change_text("/w ");
+		input_text.set_state(Textfield::State::FOCUSED);
 	}
 
 	bool UIChatBar::indragrange(Point<int16_t> cursor_position) const

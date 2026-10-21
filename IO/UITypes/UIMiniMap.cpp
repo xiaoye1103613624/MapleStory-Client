@@ -26,6 +26,7 @@
 #include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Constants.h"
 
 #include <cmath>
 
@@ -705,6 +706,15 @@ namespace ms
 		max_sprites.emplace_back(MapHelper["mark"][Map["info"]["mapMark"]], DrawArgument(Point<int16_t>(7, 17)));
 
 		max_dimensions = normal_dimensions + Point<int16_t>(0, MAX_ADJ);
+
+		// 经典 v83 小地图默认贴右上角；配置未显式设定（默认 0,0）时锚定到右上。
+		// 参考端 BeiDou v83 同为右上，故以 VWIDTH - 宽度 对齐，而非默认左上 (0,0)。
+		if (position.x() == 0 && position.y() == 0)
+		{
+			position = Point<int16_t>(
+				static_cast<int16_t>(Constants::Constants::get().get_viewwidth() - normal_dimensions.x()),
+				0);
+		}
 	}
 
 	void UIMiniMap::draw_movable_markers(Point<int16_t> init_pos, float alpha) const

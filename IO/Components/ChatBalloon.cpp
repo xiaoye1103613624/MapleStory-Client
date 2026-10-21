@@ -19,6 +19,8 @@
 
 #include "../../Constants.h"
 
+#include <algorithm>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -110,6 +112,10 @@ namespace ms
 
 	void ChatBalloonHorizontal::draw(Point<int16_t> position) const
 	{
+		// 空文案不画边框，避免与 BalloonForLoginProcess 公告叠成「两个弹窗」。
+		if (textlabel.get_text().empty())
+			return;
+
 		int16_t width = textlabel.width() + 9;
 		int16_t height = textlabel.height() - 1;
 
@@ -144,5 +150,114 @@ namespace ms
 	void ChatBalloonHorizontal::change_text(const std::string& text)
 	{
 		textlabel.change_text(text);
+	}
+
+	LoginProcessNotice::LoginProcessNotice() : box_w(0), box_h(0)
+	{
+		// 优先整板用 BalloonForLoginProcess 九宫（决策 9.7）；缺件时回退 Balloon 小九宫 + Title。
+		nl::node loginproc = nl::nx::UI["Login.img"]["WorldNotice"]["BalloonForLoginProcess"];
+		nl::node balloon = nl::nx::UI["Login.img"]["WorldNotice"]["Balloon"];
+		nl::node frame = loginproc;
+
+		if (!loginproc["nw"] && !loginproc["c"])
+			frame = balloon;
+
+		title = loginproc["Title"] ? loginproc["Title"] : Texture();
+		center = frame["c"] ? frame["c"] : balloon["c"];
+		northeast = frame["ne"] ? frame["ne"] : balloon["ne"];
+		north = frame["n"] ? frame["n"] : balloon["n"];
+		northwest = frame["nw"] ? frame["nw"] : balloon["nw"];
+		west = frame["w"] ? frame["w"] : balloon["w"];
+		east = frame["e"] ? frame["e"] : balloon["e"];
+		southwest = frame["sw"] ? frame["sw"] : balloon["sw"];
+		south = frame["s"] ? frame["s"] : balloon["s"];
+		southeast = frame["se"] ? frame["se"] : balloon["se"];
+
+		xtile = std::max<int16_t>(north.width(), 1);
+		ytile = std::max<int16_t>(west.height(), 1);
+
+		textlabel = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::BLACK);
+	}
+
+	void LoginProcessNotice::change_text(const std::string& text)
+	{
+		textlabel.change_text(text);
+		relayout();
+	}
+
+	void LoginProcessNotice::relayout()
+	{
+		if (textlabel.get_text().empty())
+		{
+			box_w = 0;
+			box_h = 0;
+			return;
+		}
+
+		constexpr int16_t pad_x = 18;
+		constexpr int16_t pad_y = 8;
+		constexpr int16_t gap = 4;
+
+		const int16_t inner_w = std::max(title.width(), static_cast<int16_t>(textlabel.width() + pad_x));
+		const int16_t inner_h = static_cast<int16_t>(title.height() + gap + textlabel.height() + pad_y);
+
+		// 与 ChatBalloonHorizontal 一致：按 tile 对齐，避免边框与填充错缝。
+		const int16_t numhor = inner_w / xtile + 2;
+		const int16_t numver = std::max<int16_t>(inner_h / ytile, 1) + 1;
+
+		box_w = static_cast<int16_t>(numhor * xtile);
+		box_h = static_cast<int16_t>(numver * ytile);
+	}
+
+	bool LoginProcessNotice::empty() const
+	{
+		return textlabel.get_text().empty();
+	}
+
+	int16_t LoginProcessNotice::width() const
+	{
+		return box_w;
+	}
+
+	int16_t LoginProcessNotice::height() const
+	{
+		return box_h;
+	}
+
+	void LoginProcessNotice::draw(Point<int16_t> topleft) const
+	{
+		if (empty() || box_w <= 0 || box_h <= 0)
+			return;
+
+		const int16_t left = topleft.x();
+		const int16_t top = topleft.y();
+		const int16_t right = static_cast<int16_t>(left + box_w);
+		const int16_t bottom = static_cast<int16_t>(top + box_h);
+
+		northwest.draw(DrawArgument(left, top));
+		northeast.draw(DrawArgument(right, top));
+		southwest.draw(DrawArgument(left, bottom));
+		southeast.draw(DrawArgument(right, bottom));
+
+		for (int16_t y = top; y < bottom; y += ytile)
+		{
+			west.draw(DrawArgument(left, y));
+			east.draw(DrawArgument(right, y));
+		}
+
+		center.draw(DrawArgument(Point<int16_t>(left, top), Point<int16_t>(box_w + 1, box_h)));
+
+		for (int16_t x = left; x < right; x += xtile)
+		{
+			north.draw(DrawArgument(x, top));
+			south.draw(DrawArgument(x, bottom));
+		}
+
+		const int16_t title_x = static_cast<int16_t>(left + (box_w - title.width()) / 2);
+		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 4)));
+
+		const int16_t text_x = static_cast<int16_t>(left + box_w / 2);
+		const int16_t text_y = static_cast<int16_t>(top + title.height() + 10);
+		textlabel.draw(Point<int16_t>(text_x, text_y));
 	}
 }

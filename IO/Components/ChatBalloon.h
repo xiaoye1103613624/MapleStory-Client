@@ -68,4 +68,38 @@ namespace ms
 		int16_t xtile;
 		int16_t ytile;
 	};
+
+	/// 选服频道面板左侧公告：Login.img/WorldNotice/BalloonForLoginProcess + Title「公告」。
+	/// 锚点为左上角，便于相对 chBackgrn 左侧摆放。
+	class LoginProcessNotice
+	{
+	public:
+		LoginProcessNotice();
+
+		void change_text(const std::string& text);
+		void draw(Point<int16_t> topleft) const;
+
+		bool empty() const;
+		int16_t width() const;
+		int16_t height() const;
+
+	private:
+		void relayout();
+
+		Texture title;
+		Texture center;
+		Texture northeast;
+		Texture north;
+		Texture northwest;
+		Texture west;
+		Texture southwest;
+		Texture south;
+		Texture southeast;
+		Texture east;
+		Text textlabel;
+		int16_t xtile;
+		int16_t ytile;
+		int16_t box_w;
+		int16_t box_h;
+	};
 }

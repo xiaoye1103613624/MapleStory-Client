@@ -26,6 +26,7 @@
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/PlayerPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -33,68 +34,152 @@
 
 namespace ms
 {
+	namespace
+	{
+		nl::node basic_close_btn()
+		{
+			nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
+
+			if (close)
+				return close;
+
+			return nl::nx::UI["Basic.img"]["BtClose2"];
+		}
+
+		void try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src, Point<int16_t> pos = {})
+		{
+			if (src)
+				buttons[id] = std::make_unique<MapleButton>(src, pos);
+		}
+
+		Button* find_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id)
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end()) ? it->second.get() : nullptr;
+		}
+	}
+
 	UIStatsInfo::UIStatsInfo(const CharStats& st) : UIDragElement<PosSTATS>(Point<int16_t>(212, 20)), stats(st)
 	{
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		nl::node Stat = nl::nx::UI["UIWindow4.img"]["Stat"];
+		nl::node close = basic_close_btn();
+		nl::node Stat = UiAssetResolve::window4("Stat");
+
+		if (!UiAssetResolve::usable(Stat))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
 		nl::node main = Stat["main"];
+		bool classic = !UiAssetResolve::usable(main);
+
+		if (classic)
+			main = Stat;
+
 		nl::node detail = Stat["detail"];
 		nl::node abilityTitle = detail["abilityTitle"];
 		nl::node metierLine = detail["metierLine"];
 
-		sprites.emplace_back(main["backgrnd"]);
-		sprites.emplace_back(main["backgrnd2"]);
-		sprites.emplace_back(main["backgrnd3"]);
+		if (classic)
+		{
+			if (Stat["backgrnd"])
+				sprites.emplace_back(Stat["backgrnd"]);
+			if (Stat["backgrnd2"])
+				sprites.emplace_back(Stat["backgrnd2"]);
+			if (Stat["basicStat"])
+				sprites.emplace_back(Stat["basicStat"]);
+		}
+		else
+		{
+			sprites.emplace_back(main["backgrnd"]);
+			sprites.emplace_back(main["backgrnd2"]);
+			sprites.emplace_back(main["backgrnd3"]);
+		}
 
 		cover0 = Sprite(main["cover0"]);
 		cover1 = Sprite(main["cover1"]);
 
-		textures_detail.emplace_back(detail["backgrnd"]);
-		textures_detail.emplace_back(detail["backgrnd2"]);
-		textures_detail.emplace_back(detail["backgrnd3"]);
-		textures_detail.emplace_back(detail["backgrnd4"]);
+		if (detail)
+		{
+			textures_detail.emplace_back(detail["backgrnd"]);
+			textures_detail.emplace_back(detail["backgrnd2"]);
+			textures_detail.emplace_back(detail["backgrnd3"]);
+			textures_detail.emplace_back(detail["backgrnd4"]);
 
-		abilities[Ability::RARE] = abilityTitle["rare"]["0"];
-		abilities[Ability::EPIC] = abilityTitle["epic"]["0"];
-		abilities[Ability::UNIQUE] = abilityTitle["unique"]["0"];
-		abilities[Ability::LEGENDARY] = abilityTitle["legendary"]["0"];
-		abilities[Ability::NONE] = abilityTitle["normal"]["0"];
+			abilities[Ability::RARE] = abilityTitle["rare"]["0"];
+			abilities[Ability::EPIC] = abilityTitle["epic"]["0"];
+			abilities[Ability::UNIQUE] = abilityTitle["unique"]["0"];
+			abilities[Ability::LEGENDARY] = abilityTitle["legendary"]["0"];
+			abilities[Ability::NONE] = abilityTitle["normal"]["0"];
 
-		inner_ability[true] = metierLine["activated"]["0"];
-		inner_ability[false] = metierLine["disabled"]["0"];
+			inner_ability[true] = metierLine["activated"]["0"];
+			inner_ability[false] = metierLine["disabled"]["0"];
+		}
 
-		buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(190, 6));
-		buttons[Buttons::BT_HP] = std::make_unique<MapleButton>(main["BtHpUp"]);
-		buttons[Buttons::BT_MP] = std::make_unique<MapleButton>(main["BtMpUp"]);
-		buttons[Buttons::BT_STR] = std::make_unique<MapleButton>(main["BtStrUp"]);
-		buttons[Buttons::BT_DEX] = std::make_unique<MapleButton>(main["BtDexUp"]);
-		buttons[Buttons::BT_INT] = std::make_unique<MapleButton>(main["BtIntUp"]);
-		buttons[Buttons::BT_LUK] = std::make_unique<MapleButton>(main["BtLukUp"]);
-		buttons[Buttons::BT_AUTO] = std::make_unique<MapleButton>(main["BtAuto"]);
-		buttons[Buttons::BT_HYPERSTATOPEN] = std::make_unique<MapleButton>(main["BtHyperStatOpen"]);
-		buttons[Buttons::BT_HYPERSTATCLOSE] = std::make_unique<MapleButton>(main["BtHyperStatClose"]);
-		buttons[Buttons::BT_DETAILOPEN] = std::make_unique<MapleButton>(main["BtDetailOpen"]);
-		buttons[Buttons::BT_DETAILCLOSE] = std::make_unique<MapleButton>(main["BtDetailClose"]);
-		buttons[Buttons::BT_ABILITY] = std::make_unique<MapleButton>(detail["BtAbility"], Point<int16_t>(212, 0));
-		buttons[Buttons::BT_DETAIL_DETAILCLOSE] = std::make_unique<MapleButton>(detail["BtHpUp"], Point<int16_t>(212, 0));
+		if (close)
+			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(190, 6));
 
-		buttons[Buttons::BT_HYPERSTATOPEN]->set_active(false);
-		buttons[Buttons::BT_DETAILCLOSE]->set_active(false);
-		buttons[Buttons::BT_ABILITY]->set_active(false);
-		buttons[Buttons::BT_ABILITY]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_DETAIL_DETAILCLOSE]->set_active(false);
+		nl::node ap_up = main["BtApUp"] ? main["BtApUp"] : Stat["BtApUp"];
+		nl::node hp_up = main["BtHpUp"] ? main["BtHpUp"] : ap_up;
+		nl::node mp_up = main["BtMpUp"] ? main["BtMpUp"] : ap_up;
+		nl::node str_up = main["BtStrUp"] ? main["BtStrUp"] : ap_up;
+		nl::node dex_up = main["BtDexUp"] ? main["BtDexUp"] : ap_up;
+		nl::node int_up = main["BtIntUp"] ? main["BtIntUp"] : ap_up;
+		nl::node luk_up = main["BtLukUp"] ? main["BtLukUp"] : ap_up;
+
+		try_maple_btn(buttons, Buttons::BT_HP, hp_up);
+		try_maple_btn(buttons, Buttons::BT_MP, mp_up);
+		try_maple_btn(buttons, Buttons::BT_STR, str_up);
+		try_maple_btn(buttons, Buttons::BT_DEX, dex_up);
+		try_maple_btn(buttons, Buttons::BT_INT, int_up);
+		try_maple_btn(buttons, Buttons::BT_LUK, luk_up);
+
+		nl::node bt_auto = main["BtAuto"] ? main["BtAuto"] : (Stat["BtAuto"] ? Stat["BtAuto"] : Stat["BtAutoAP"]);
+		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto);
+		try_maple_btn(buttons, Buttons::BT_HYPERSTATOPEN, main["BtHyperStatOpen"]);
+		try_maple_btn(buttons, Buttons::BT_HYPERSTATCLOSE, main["BtHyperStatClose"]);
+
+		nl::node detail_open = main["BtDetailOpen"] ? main["BtDetailOpen"] : (Stat["BtDetail"] ? Stat["BtDetail"] : main["BtDetail"]);
+		try_maple_btn(buttons, Buttons::BT_DETAILOPEN, detail_open);
+		try_maple_btn(buttons, Buttons::BT_DETAILCLOSE, main["BtDetailClose"]);
+
+		if (detail)
+		{
+			try_maple_btn(buttons, Buttons::BT_ABILITY, detail["BtAbility"], Point<int16_t>(212, 0));
+			try_maple_btn(buttons, Buttons::BT_DETAIL_DETAILCLOSE, detail["BtHpUp"], Point<int16_t>(212, 0));
+		}
+
+		if (auto* b = find_btn(buttons, Buttons::BT_HYPERSTATOPEN))
+			b->set_active(false);
+		if (auto* b = find_btn(buttons, Buttons::BT_DETAILCLOSE))
+			b->set_active(false);
+		if (auto* b = find_btn(buttons, Buttons::BT_ABILITY))
+		{
+			b->set_active(false);
+			b->set_state(Button::State::DISABLED);
+		}
+		if (auto* b = find_btn(buttons, Buttons::BT_DETAIL_DETAILCLOSE))
+			b->set_active(false);
+
+		// No detail panel on v83 — keep detail toggle inactive
+		if (!detail)
+		{
+			if (auto* b = find_btn(buttons, Buttons::BT_DETAILOPEN))
+				b->set_active(false);
+		}
 
 		jobId = stats.get_stat(MapleStat::Id::JOB);
 
 		if (jobId == Job::Level::BEGINNER)
 		{
-			buttons[Buttons::BT_HP]->set_active(false);
-			buttons[Buttons::BT_MP]->set_active(false);
-			buttons[Buttons::BT_STR]->set_active(false);
-			buttons[Buttons::BT_DEX]->set_active(false);
-			buttons[Buttons::BT_INT]->set_active(false);
-			buttons[Buttons::BT_LUK]->set_active(false);
-			buttons[Buttons::BT_AUTO]->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_HP)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_MP)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_STR)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_DEX)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_INT)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_LUK)) b->set_active(false);
+			if (auto* b = find_btn(buttons, Buttons::BT_AUTO)) b->set_active(false);
 		}
 
 		update_ap();
@@ -177,6 +262,8 @@ namespace ms
 		update_stat(MapleStat::Id::FAME);
 
 		dimension = Point<int16_t>(212, 318);
+		if (classic && Texture(Stat["backgrnd"]).is_valid())
+			dimension = Texture(Stat["backgrnd"]).get_dimensions();
 		showdetail = false;
 	}
 
@@ -190,7 +277,7 @@ namespace ms
 			cover1.draw(position, alpha);
 		}
 
-		if (showdetail)
+		if (showdetail && textures_detail.size() >= 4)
 		{
 			Point<int16_t> detail_pos(position + Point<int16_t>(212, 0));
 
@@ -315,13 +402,14 @@ namespace ms
 
 				statlabels[StatLabel::JOB].change_text(stats.get_jobname());
 
-				buttons[Buttons::BT_HP]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_MP]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_STR]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_DEX]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_INT]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_LUK]->set_active(jobId != Job::Level::BEGINNER);
-				buttons[Buttons::BT_AUTO]->set_active(jobId != Job::Level::BEGINNER);
+				bool show_ap = jobId != Job::Level::BEGINNER;
+				if (auto* b = find_btn(buttons, Buttons::BT_HP)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_MP)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_STR)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_DEX)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_INT)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_LUK)) b->set_active(show_ap);
+				if (auto* b = find_btn(buttons, Buttons::BT_AUTO)) b->set_active(show_ap);
 
 				break;
 			}
@@ -472,12 +560,19 @@ namespace ms
 
 	void UIStatsInfo::set_detail(bool enabled)
 	{
+		if (textures_detail.empty())
+			return;
+
 		showdetail = enabled;
 
-		buttons[Buttons::BT_DETAILOPEN]->set_active(!enabled);
-		buttons[Buttons::BT_DETAILCLOSE]->set_active(enabled);
-		buttons[Buttons::BT_ABILITY]->set_active(enabled);
-		buttons[Buttons::BT_DETAIL_DETAILCLOSE]->set_active(enabled);
+		if (auto* b = find_btn(buttons, Buttons::BT_DETAILOPEN))
+			b->set_active(!enabled);
+		if (auto* b = find_btn(buttons, Buttons::BT_DETAILCLOSE))
+			b->set_active(enabled);
+		if (auto* b = find_btn(buttons, Buttons::BT_ABILITY))
+			b->set_active(enabled);
+		if (auto* b = find_btn(buttons, Buttons::BT_DETAIL_DETAILCLOSE))
+			b->set_active(enabled);
 	}
 
 	void UIStatsInfo::update_ap()
@@ -486,7 +581,8 @@ namespace ms
 		Button::State newstate = nowap ? Button::State::NORMAL : Button::State::DISABLED;
 
 		for (int i = Buttons::BT_HP; i <= Buttons::BT_AUTO; i++)
-			buttons[i]->set_state(newstate);
+			if (auto* b = find_btn(buttons, i))
+				b->set_state(newstate);
 
 		hasap = nowap;
 	}

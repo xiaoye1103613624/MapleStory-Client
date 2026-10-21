@@ -21,6 +21,8 @@
 
 #include "../Components/MapleButton.h"
 
+#include "../../Util/UiAssetResolve.h"
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -31,7 +33,14 @@ namespace ms
 	{
 		show_weekly = Configuration::get().get_show_weekly();
 
-		nl::node socialChatEnter = nl::nx::UI["UIWindow2.img"]["socialChatEnter"];
+		nl::node socialChatEnter = UiAssetResolve::window("socialChatEnter");
+
+		if (!UiAssetResolve::usable(socialChatEnter))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		nl::node backgrnd = socialChatEnter["backgrnd"];
 		nl::node backgrnd4 = socialChatEnter["backgrnd4"];
@@ -53,10 +62,14 @@ namespace ms
 		sprites.emplace_back(backgrnd4);
 		sprites.emplace_back(backgrnd5);
 
-		buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(socialChatEnter["btX"]);
-		buttons[Buttons::CHAT_DUO] = std::make_unique<MapleButton>(socialChatEnter["duoChat"]);
-		buttons[Buttons::CHAT_FRIEND] = std::make_unique<MapleButton>(socialChatEnter["groupChatFrd"]);
-		buttons[Buttons::CHAT_RANDOM] = std::make_unique<MapleButton>(socialChatEnter["groupChatRnd"]);
+		if (socialChatEnter["btX"])
+			buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(socialChatEnter["btX"]);
+		if (socialChatEnter["duoChat"])
+			buttons[Buttons::CHAT_DUO] = std::make_unique<MapleButton>(socialChatEnter["duoChat"]);
+		if (socialChatEnter["groupChatFrd"])
+			buttons[Buttons::CHAT_FRIEND] = std::make_unique<MapleButton>(socialChatEnter["groupChatFrd"]);
+		if (socialChatEnter["groupChatRnd"])
+			buttons[Buttons::CHAT_RANDOM] = std::make_unique<MapleButton>(socialChatEnter["groupChatRnd"]);
 
 		charset = Charset(socialChatEnter["number"], Charset::Alignment::RIGHT);
 
@@ -120,7 +133,14 @@ namespace ms
 	{
 		Configuration::get().set_show_weekly(false);
 
-		nl::node socialRank = nl::nx::UI["UIWindow2.img"]["socialRank"];
+		nl::node socialRank = UiAssetResolve::window("socialRank");
+
+		if (!UiAssetResolve::usable(socialRank))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		nl::node backgrnd = socialRank["backgrnd"];
 		nl::node backgrnd4 = socialRank["backgrnd4"];
@@ -142,7 +162,8 @@ namespace ms
 		sprites.emplace_back(backgrnd4);
 		sprites.emplace_back(backgrnd5);
 
-		buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(socialRank["btX"]);
+		if (socialRank["btX"])
+			buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(socialRank["btX"]);
 
 		charset = Charset(socialRank["number"], Charset::Alignment::RIGHT);
 

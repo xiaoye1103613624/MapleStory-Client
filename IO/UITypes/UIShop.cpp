@@ -29,6 +29,7 @@
 #include "../../Data/ItemData.h"
 
 #include "../../Net/Packets/NpcInteractionPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -38,7 +39,14 @@ namespace ms
 {
 	UIShop::UIShop(const CharLook& in_charlook, const Inventory& in_inventory) : UIDragElement<PosSHOP>(), charlook(in_charlook), inventory(in_inventory)
 	{
-		nl::node src = nl::nx::UI["UIWindow2.img"]["Shop2"];
+		nl::node src = UiAssetResolve::shop_root();
+
+		if (!UiAssetResolve::usable(src))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		nl::node background = src["backgrnd"];
 		Texture bg = background;

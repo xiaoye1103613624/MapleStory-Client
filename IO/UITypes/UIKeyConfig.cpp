@@ -27,6 +27,7 @@
 #include "../../Data/SkillData.h"
 
 #include "../../Net/Packets/PlayerPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -34,12 +35,46 @@
 
 namespace ms
 {
+	namespace
+	{
+		nl::node basic_close_btn()
+		{
+			nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
+
+			if (close)
+				return close;
+
+			return nl::nx::UI["Basic.img"]["BtClose2"];
+		}
+
+		void try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src, Point<int16_t> pos = {})
+		{
+			if (src)
+				buttons[id] = std::make_unique<MapleButton>(src, pos);
+		}
+
+		nl::node first_node(nl::node a, nl::node b)
+		{
+			return a ? a : b;
+		}
+	}
+
 	UIKeyConfig::UIKeyConfig(const Inventory& in_inventory, const SkillBook& in_skillbook) : UIDragElement<PosKEYCONFIG>(), inventory(in_inventory), skillbook(in_skillbook), dirty(false)
 	{
 		keyboard = &UI::get().get_keyboard();
 		staged_mappings = keyboard->get_maplekeys();
 
-		nl::node KeyConfig = nl::nx::UI["StatusBar3.img"]["KeyConfig"];
+		nl::node KeyConfig = UiAssetResolve::status_bar_root()["KeyConfig"];
+
+		if (!UiAssetResolve::usable(KeyConfig))
+			KeyConfig = UiAssetResolve::window("KeyConfig");
+
+		if (!UiAssetResolve::usable(KeyConfig))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		icon = KeyConfig["icon"];
 		key = KeyConfig["key"];
@@ -47,18 +82,46 @@ namespace ms
 		nl::node backgrnd = KeyConfig["backgrnd"];
 		Texture bg = backgrnd;
 		Point<int16_t> bg_dimensions = bg.get_dimensions();
+		const bool classic = UiAssetResolve::is_classic_hud();
 
-		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(KeyConfig["backgrnd2"]);
-		sprites.emplace_back(KeyConfig["backgrnd3"]);
+		// v83 KeyConfig/backgrnd origin 为画布中心 (314,186)。Sprite 按 origin 回减，
+		// 必须用 origin 作绘制偏移，底图 TL 才与 IDA keys_pos 对齐。
+		if (backgrnd)
+			sprites.emplace_back(backgrnd, classic ? DrawArgument(bg.get_origin()) : DrawArgument());
+		if (KeyConfig["backgrnd2"])
+		{
+			Texture bg2 = KeyConfig["backgrnd2"];
+			sprites.emplace_back(KeyConfig["backgrnd2"], classic ? DrawArgument(bg2.get_origin()) : DrawArgument());
+		}
+		if (KeyConfig["backgrnd3"])
+		{
+			Texture bg3 = KeyConfig["backgrnd3"];
+			sprites.emplace_back(KeyConfig["backgrnd3"], classic ? DrawArgument(bg3.get_origin()) : DrawArgument());
+		}
 
-		nl::node BtClose3 = nl::nx::UI["Basic.img"]["BtClose3"];
-		buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(BtClose3, Point<int16_t>(bg_dimensions.x() - 18, 3));
-		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(KeyConfig["button:Cancel"]);
-		buttons[Buttons::DEFAULT] = std::make_unique<MapleButton>(KeyConfig["button:Default"]);
-		buttons[Buttons::DELETE] = std::make_unique<MapleButton>(KeyConfig["button:Delete"]);
-		buttons[Buttons::KEYSETTING] = std::make_unique<MapleButton>(KeyConfig["button:keySetting"]);
-		buttons[Buttons::OK] = std::make_unique<MapleButton>(KeyConfig["button:OK"]);
+		nl::node BtClose = basic_close_btn();
+		if (!BtClose)
+			BtClose = KeyConfig["BtClose"];
+
+		try_maple_btn(buttons, Buttons::CLOSE, BtClose, Point<int16_t>(bg_dimensions.x() - 18, 3));
+
+		if (classic)
+		{
+			// v83 底栏按钮（origin 均为 0,0）；相对 629×374 底图底边排布。
+			try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]), Point<int16_t>(90, 343));
+			try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]), Point<int16_t>(155, 343));
+			try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]), Point<int16_t>(490, 343));
+			try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]), Point<int16_t>(540, 343));
+			try_maple_btn(buttons, Buttons::KEYSETTING, KeyConfig["button:keySetting"], Point<int16_t>(250, 343));
+		}
+		else
+		{
+			try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]));
+			try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]));
+			try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]));
+			try_maple_btn(buttons, Buttons::KEYSETTING, KeyConfig["button:keySetting"]);
+			try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]));
+		}
 
 		dimension = bg_dimensions;
 		dragarea = Point<int16_t>(bg_dimensions.x(), 20);
@@ -75,6 +138,92 @@ namespace ms
 	/// Load
 	void UIKeyConfig::load_keys_pos()
 	{
+		// BeiDou v83：IDA CUIKeyConfig 快捷键位表（dword_BE27E0，32x32 槽）。
+		// HeavenClient Key 枚举与官方位号在 F11/F12/Scroll 上不完全一致，见下方注释。
+		if (UiAssetResolve::is_classic_hud())
+		{
+			keys_pos[KeyConfig::Key::NUM1] = Point<int16_t>(48, 66);
+			keys_pos[KeyConfig::Key::NUM2] = Point<int16_t>(82, 66);
+			keys_pos[KeyConfig::Key::NUM3] = Point<int16_t>(116, 66);
+			keys_pos[KeyConfig::Key::NUM4] = Point<int16_t>(150, 66);
+			keys_pos[KeyConfig::Key::NUM5] = Point<int16_t>(184, 66);
+			keys_pos[KeyConfig::Key::NUM6] = Point<int16_t>(218, 66);
+			keys_pos[KeyConfig::Key::NUM7] = Point<int16_t>(252, 66);
+			keys_pos[KeyConfig::Key::NUM8] = Point<int16_t>(286, 66);
+			keys_pos[KeyConfig::Key::NUM9] = Point<int16_t>(320, 66);
+			keys_pos[KeyConfig::Key::NUM0] = Point<int16_t>(354, 66);
+			keys_pos[KeyConfig::Key::MINUS] = Point<int16_t>(388, 66);
+			keys_pos[KeyConfig::Key::EQUAL] = Point<int16_t>(422, 66);
+
+			keys_pos[KeyConfig::Key::Q] = Point<int16_t>(64, 99);
+			keys_pos[KeyConfig::Key::W] = Point<int16_t>(98, 99);
+			keys_pos[KeyConfig::Key::E] = Point<int16_t>(132, 99);
+			keys_pos[KeyConfig::Key::R] = Point<int16_t>(166, 99);
+			keys_pos[KeyConfig::Key::T] = Point<int16_t>(200, 99);
+			keys_pos[KeyConfig::Key::Y] = Point<int16_t>(234, 99);
+			keys_pos[KeyConfig::Key::U] = Point<int16_t>(268, 99);
+			keys_pos[KeyConfig::Key::I] = Point<int16_t>(302, 99);
+			keys_pos[KeyConfig::Key::O] = Point<int16_t>(336, 99);
+			keys_pos[KeyConfig::Key::P] = Point<int16_t>(370, 99);
+			keys_pos[KeyConfig::Key::LEFT_BRACKET] = Point<int16_t>(404, 99);
+			keys_pos[KeyConfig::Key::RIGHT_BRACKET] = Point<int16_t>(438, 99);
+			keys_pos[KeyConfig::Key::BACKSLASH] = Point<int16_t>(472, 99);
+
+			keys_pos[KeyConfig::Key::LEFT_CONTROL] = Point<int16_t>(22, 198);
+			keys_pos[KeyConfig::Key::RIGHT_CONTROL] = Point<int16_t>(461, 198);
+			keys_pos[KeyConfig::Key::A] = Point<int16_t>(81, 132);
+			keys_pos[KeyConfig::Key::S] = Point<int16_t>(115, 132);
+			keys_pos[KeyConfig::Key::D] = Point<int16_t>(149, 132);
+			keys_pos[KeyConfig::Key::F] = Point<int16_t>(183, 132);
+			keys_pos[KeyConfig::Key::G] = Point<int16_t>(217, 132);
+			keys_pos[KeyConfig::Key::H] = Point<int16_t>(251, 132);
+			keys_pos[KeyConfig::Key::J] = Point<int16_t>(285, 132);
+			keys_pos[KeyConfig::Key::K] = Point<int16_t>(319, 132);
+			keys_pos[KeyConfig::Key::L] = Point<int16_t>(353, 132);
+			keys_pos[KeyConfig::Key::SEMICOLON] = Point<int16_t>(387, 132);
+			keys_pos[KeyConfig::Key::APOSTROPHE] = Point<int16_t>(421, 132);
+			keys_pos[KeyConfig::Key::GRAVE_ACCENT] = Point<int16_t>(14, 66);
+
+			keys_pos[KeyConfig::Key::LEFT_SHIFT] = Point<int16_t>(38, 165);
+			keys_pos[KeyConfig::Key::RIGHT_SHIFT] = Point<int16_t>(457, 165);
+			keys_pos[KeyConfig::Key::Z] = Point<int16_t>(98, 165);
+			keys_pos[KeyConfig::Key::X] = Point<int16_t>(132, 165);
+			keys_pos[KeyConfig::Key::C] = Point<int16_t>(166, 165);
+			keys_pos[KeyConfig::Key::V] = Point<int16_t>(200, 165);
+			keys_pos[KeyConfig::Key::B] = Point<int16_t>(234, 165);
+			keys_pos[KeyConfig::Key::N] = Point<int16_t>(268, 165);
+			keys_pos[KeyConfig::Key::M] = Point<int16_t>(302, 165);
+			keys_pos[KeyConfig::Key::COMMA] = Point<int16_t>(336, 165);
+			keys_pos[KeyConfig::Key::PERIOD] = Point<int16_t>(370, 165);
+
+			keys_pos[KeyConfig::Key::LEFT_ALT] = Point<int16_t>(122, 198);
+			keys_pos[KeyConfig::Key::RIGHT_ALT] = Point<int16_t>(348, 198);
+			keys_pos[KeyConfig::Key::SPACE] = Point<int16_t>(233, 198);
+
+			keys_pos[KeyConfig::Key::F1] = Point<int16_t>(82, 27);
+			keys_pos[KeyConfig::Key::F2] = Point<int16_t>(116, 27);
+			keys_pos[KeyConfig::Key::F3] = Point<int16_t>(150, 27);
+			keys_pos[KeyConfig::Key::F4] = Point<int16_t>(184, 27);
+			keys_pos[KeyConfig::Key::F5] = Point<int16_t>(226, 27);
+			keys_pos[KeyConfig::Key::F6] = Point<int16_t>(260, 27);
+			keys_pos[KeyConfig::Key::F7] = Point<int16_t>(294, 27);
+			keys_pos[KeyConfig::Key::F8] = Point<int16_t>(328, 27);
+			keys_pos[KeyConfig::Key::F9] = Point<int16_t>(370, 27);
+			keys_pos[KeyConfig::Key::F10] = Point<int16_t>(404, 27);
+			// 官方位号 87/88 为 F11/F12；本枚举 F11=69/F12=70，纹理仍读 key[87]/[88]。
+			keys_pos[KeyConfig::Key::F11] = Point<int16_t>(438, 27);
+			keys_pos[KeyConfig::Key::F12] = Point<int16_t>(472, 27);
+
+			keys_pos[KeyConfig::Key::INSERT] = Point<int16_t>(514, 66);
+			keys_pos[KeyConfig::Key::HOME] = Point<int16_t>(548, 66);
+			keys_pos[KeyConfig::Key::PAGE_UP] = Point<int16_t>(582, 66);
+			keys_pos[KeyConfig::Key::DELETE] = Point<int16_t>(514, 99);
+			keys_pos[KeyConfig::Key::END] = Point<int16_t>(548, 99);
+			keys_pos[KeyConfig::Key::PAGE_DOWN] = Point<int16_t>(582, 99);
+			// ESC / SCROLL 在本包键盘画布上无独立槽，保持 (0,0) 跳过绘制。
+			return;
+		}
+
 		int16_t slot_width = 33;
 		int16_t slot_width_lg = 98;
 		int16_t slot_height = 33;
@@ -182,6 +331,40 @@ namespace ms
 
 	void UIKeyConfig::load_unbound_actions_pos()
 	{
+		// v83：IDA 未绑定动作条 (9,267) 起，34px 步进、约 17 列。
+		if (UiAssetResolve::is_classic_hud())
+		{
+			constexpr int16_t row_x = 9;
+			constexpr int16_t row_y0 = 267;
+			constexpr int16_t slot = 34;
+			constexpr int16_t cols = 17;
+
+			static const KeyAction::Id kClassicActions[] = {
+				KeyAction::Id::EQUIPMENT, KeyAction::Id::ITEMS, KeyAction::Id::STATS, KeyAction::Id::SKILLS,
+				KeyAction::Id::FRIENDS, KeyAction::Id::WORLDMAP, KeyAction::Id::MAPLECHAT, KeyAction::Id::MINIMAP,
+				KeyAction::Id::QUESTLOG, KeyAction::Id::KEYBINDINGS, KeyAction::Id::SAY, KeyAction::Id::WHISPER,
+				KeyAction::Id::PARTYCHAT, KeyAction::Id::FRIENDSCHAT, KeyAction::Id::MENU, KeyAction::Id::QUICKSLOTS,
+				KeyAction::Id::TOGGLECHAT, KeyAction::Id::GUILD, KeyAction::Id::GUILDCHAT, KeyAction::Id::PARTY,
+				KeyAction::Id::NOTIFIER, KeyAction::Id::MAPLENEWS, KeyAction::Id::CASHSHOP, KeyAction::Id::ALLIANCECHAT,
+				KeyAction::Id::MANAGELEGION, KeyAction::Id::MEDALS, KeyAction::Id::BOSSPARTY,
+				KeyAction::Id::PICKUP, KeyAction::Id::SIT, KeyAction::Id::ATTACK, KeyAction::Id::JUMP,
+				KeyAction::Id::INTERACT_HARVEST, KeyAction::Id::CHARINFO, KeyAction::Id::CHANGECHANNEL,
+				KeyAction::Id::SCREENSHOT
+			};
+
+			for (size_t i = 0; i < sizeof(kClassicActions) / sizeof(kClassicActions[0]); i++)
+			{
+				int16_t col = static_cast<int16_t>(i % cols);
+				int16_t row = static_cast<int16_t>(i / cols);
+				unbound_actions_pos[kClassicActions[i]] = Point<int16_t>(
+					static_cast<int16_t>(row_x + col * slot),
+					static_cast<int16_t>(row_y0 + row * slot)
+				);
+			}
+
+			return;
+		}
+
 		int16_t row_x = 26;
 		int16_t row_y = 307;
 
@@ -478,17 +661,32 @@ namespace ms
 
 		// Unbound Keys
 		for (const auto& icon : action_icons)
-			if (icon.second)
-				if (std::find(bound_actions.begin(), bound_actions.end(), icon.first) == bound_actions.end())
-					icon.second->draw(position + unbound_actions_pos[icon.first]);
+		{
+			if (!icon.second)
+				continue;
 
-		// Keys
+			if (std::find(bound_actions.begin(), bound_actions.end(), icon.first) != bound_actions.end())
+				continue;
+
+			Point<int16_t> up = unbound_actions_pos[icon.first];
+
+			if (up.x() == 0 && up.y() == 0)
+				continue;
+
+			icon.second->draw(position + up);
+		}
+
+		// Keys（(0,0) 表示 classic 下无槽，跳过避免堆到窗口原点）
 		for (const auto& key_texture : key_textures)
 		{
 			KeyConfig::Key key = key_texture.first;
 			Texture texture = key_texture.second;
+			Point<int16_t> kp = keys_pos[key];
 
-			texture.draw(position + keys_pos[key]);
+			if (kp.x() == 0 && kp.y() == 0)
+				continue;
+
+			texture.draw(position + kp);
 		}
 	}
 
@@ -581,11 +779,16 @@ namespace ms
 			{
 				if (auto icon = action_icons[action].get())
 				{
-					icon->start_drag(cursorpos - position - unbound_actions_pos[action]);
+					Point<int16_t> up = unbound_actions_pos[action];
 
-					UI::get().drag_icon(icon);
+					if (up.x() || up.y())
+					{
+						icon->start_drag(cursorpos - position - up);
 
-					return Cursor::State::GRABBING;
+						UI::get().drag_icon(icon);
+
+						return Cursor::State::GRABBING;
+					}
 				}
 			}
 
@@ -1006,6 +1209,9 @@ namespace ms
 	{
 		for (auto iter : keys_pos)
 		{
+			if (iter.second.x() == 0 && iter.second.y() == 0)
+				continue;
+
 			Rectangle<int16_t> icon_rect = Rectangle<int16_t>(
 				position + iter.second,
 				position + iter.second + Point<int16_t>(32, 32)
@@ -1022,6 +1228,9 @@ namespace ms
 	{
 		for (auto iter : unbound_actions_pos)
 		{
+			if (iter.second.x() == 0 && iter.second.y() == 0)
+				continue;
+
 			if (std::find(bound_actions.begin(), bound_actions.end(), iter.first) != bound_actions.end())
 				continue;
 

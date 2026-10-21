@@ -23,6 +23,7 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -37,18 +38,30 @@ namespace ms
 		selected_channel = current_channel;
 		channel_count = 20; // TODO: Need to get total number of channels on world
 
-		nl::node Channel = nl::nx::UI["UIWindow2.img"]["Channel"];
+		nl::node Channel = UiAssetResolve::window("Channel");
+
+		if (!UiAssetResolve::usable(Channel) || !Channel["backgrnd"])
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
 
 		nl::node backgrnd = Channel["backgrnd"];
 		Texture bg = backgrnd;
 
 		sprites.emplace_back(backgrnd, Point<int16_t>(1, 0));
-		sprites.emplace_back(Channel["backgrnd2"]);
-		sprites.emplace_back(Channel["backgrnd3"]);
-		sprites.emplace_back(Channel["world"][selected_world], Point<int16_t>(16, 30));
+		if (Channel["backgrnd2"])
+			sprites.emplace_back(Channel["backgrnd2"]);
+		if (Channel["backgrnd3"])
+			sprites.emplace_back(Channel["backgrnd3"]);
+		if (Channel["world"][selected_world])
+			sprites.emplace_back(Channel["world"][selected_world], Point<int16_t>(16, 30));
 
-		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(Channel["BtCancel"]);
-		buttons[Buttons::CHANGE] = std::make_unique<MapleButton>(Channel["BtChange"], Point<int16_t>(-20, 0));
+		if (Channel["BtCancel"])
+			buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(Channel["BtCancel"]);
+		if (Channel["BtChange"])
+			buttons[Buttons::CHANGE] = std::make_unique<MapleButton>(Channel["BtChange"], Point<int16_t>(-20, 0));
 
 		channel[true] = Channel["channel1"];
 		channel[false] = Channel["channel0"];
@@ -64,8 +77,9 @@ namespace ms
 				y++;
 			}
 
-			ch.emplace_back(Channel["ch"][i], Point<int16_t>(19 + 70 * x, 60 + 20 * y));
-			buttons[Buttons::CH + i] = std::make_unique<AreaButton>(Point<int16_t>(11 + 70 * x, 55 + 20 * y), channel[true].get_dimensions());
+			if (Channel["ch"][i])
+				ch.emplace_back(Channel["ch"][i], Point<int16_t>(19 + 70 * x, 60 + 20 * y));
+			buttons[Buttons::CH + i] = std::make_unique<AreaButton>(Point<int16_t>(11 + 70 * x, 55 + 20 * y), channel[true].is_valid() ? channel[true].get_dimensions() : Point<int16_t>(70, 20));
 
 			if (i == selected_channel)
 			{

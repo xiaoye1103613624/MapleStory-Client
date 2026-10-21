@@ -19,9 +19,12 @@
 
 #include "../UI.h"
 
+#include "../../Constants.h"
 #include "../../Gameplay/Stage.h"
-
 #include "../../IO/Components/MapleButton.h"
+#include "../../Util/UiAssetResolve.h"
+
+#include "../../MapleStory.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,12 +32,29 @@
 
 namespace ms
 {
-	UIWorldMap::UIWorldMap() : UIDragElement<PosMAP>(), search_text_dim(Point<int16_t>(82, 14))
+	UIWorldMap::UIWorldMap() :
+		UIDragElement<PosMAP>(),
+		search_text_dim(Point<int16_t>(82, 14)),
+		selected_map_id(0)
 	{
 		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		nl::node WorldMap = nl::nx::UI["UIWindow2.img"]["WorldMap"];
+		if (!close)
+			close = nl::nx::UI["Basic.img"]["BtClose2"];
+
+		nl::node WorldMap = UiAssetResolve::window("WorldMap");
 		nl::node WorldMapSearch = WorldMap["WorldMapSearch"];
 		nl::node Border = WorldMap["Border"]["0"];
+
+		if (!Border)
+			Border = WorldMap["backgrnd"];
+
+		if (!UiAssetResolve::usable(WorldMap) || !Border)
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
 		nl::node backgrnd = WorldMapSearch["backgrnd"];
 		nl::node MapHelper = nl::nx::Map["MapHelper.img"]["worldMap"];
 
@@ -62,16 +82,30 @@ namespace ms
 
 		Point<int16_t> close_dimensions = Point<int16_t>(bg_dimensions_x - 22, 4);
 
-		buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, close_dimensions);
-		buttons[Buttons::BT_SEARCH] = std::make_unique<MapleButton>(WorldMap["BtSearch"]);
-		buttons[Buttons::BT_AUTOFLY] = std::make_unique<MapleButton>(WorldMap["BtAutoFly_1"]);
-		buttons[Buttons::BT_NAVIREG] = std::make_unique<MapleButton>(WorldMap["BtNaviRegister"]);
-		buttons[Buttons::BT_SEARCH_CLOSE] = std::make_unique<MapleButton>(close, close_dimensions + Point<int16_t>(bg_search_dimensions_x, 0));
-		buttons[Buttons::BT_ALLSEARCH] = std::make_unique<MapleButton>(WorldMapSearch["BtAllsearch"], background_dimensions);
+		if (close)
+			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, close_dimensions);
+		if (WorldMap["BtSearch"])
+			buttons[Buttons::BT_SEARCH] = std::make_unique<MapleButton>(WorldMap["BtSearch"]);
+		if (WorldMap["BtAutoFly_1"])
+			buttons[Buttons::BT_AUTOFLY] = std::make_unique<MapleButton>(WorldMap["BtAutoFly_1"]);
+		if (WorldMap["BtNaviRegister"])
+			buttons[Buttons::BT_NAVIREG] = std::make_unique<MapleButton>(WorldMap["BtNaviRegister"]);
+		if (close)
+			buttons[Buttons::BT_SEARCH_CLOSE] = std::make_unique<MapleButton>(close, close_dimensions + Point<int16_t>(bg_search_dimensions_x, 0));
+		if (WorldMapSearch["BtAllsearch"])
+			buttons[Buttons::BT_ALLSEARCH] = std::make_unique<MapleButton>(WorldMapSearch["BtAllsearch"], background_dimensions);
 
 		int16_t search_limit = 8;
 
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Rectangle<int16_t>(get_search_pos(), get_search_pos() + search_text_dim), search_limit);
+
+		mob_panel.set_select_callback([this](int32_t mob_id)
+		{
+			on_mob_selected(mob_id);
+		});
+		mob_panel.set_content_height(bg_dimensions.y());
+		map_search_panel.set_content_height(bg_dimensions.y());
+		drop_panel.set_content_height(bg_dimensions.y());
 
 		set_search(true);
 
@@ -80,6 +114,15 @@ namespace ms
 
 	void UIWorldMap::draw(float alpha) const
 	{
+		if (mob_panel.is_visible())
+			mob_panel.draw(alpha);
+
+		if (map_search_panel.is_visible())
+			map_search_panel.draw(alpha);
+
+		if (drop_panel.is_visible())
+			drop_panel.draw(alpha);
+
 		UIElement::draw_sprites(alpha);
 
 		if (search)
@@ -113,7 +156,25 @@ namespace ms
 			path_img.draw(position + base_position);
 
 		for (auto spot : map_spots)
-			spot.second.marker.draw(spot.first + position + base_position);
+		{
+			Point<int16_t> spot_pos = spot.first + position + base_position;
+
+			if (selected_map_id != 0)
+			{
+				for (int32_t id : spot.second.map_ids)
+				{
+					if (id == selected_map_id)
+					{
+						Point<int16_t> marker_dim = spot.second.marker.get_dimensions();
+						ColorBox highlight(marker_dim.x() + 8, marker_dim.y() + 8, Color::Name::YELLOW, 0.35f);
+						highlight.draw(spot_pos - Point<int16_t>(4, 4));
+						break;
+					}
+				}
+			}
+
+			spot.second.marker.draw(spot_pos);
+		}
 
 		bool found = false;
 
@@ -149,8 +210,8 @@ namespace ms
 			mapid = mid;
 
 			int32_t prefix = mapid / 10000000;
-			std::string parent_map = "WorldMap0" + std::to_string(prefix);
-			user_map = parent_map;
+			std::string parent = "WorldMap0" + std::to_string(prefix);
+			user_map = parent;
 
 			update_world(user_map);
 		}
@@ -162,6 +223,11 @@ namespace ms
 
 		cur_pos.update();
 
+		sync_side_panels();
+		mob_panel.update();
+		map_search_panel.update();
+		drop_panel.update();
+
 		UIElement::update();
 	}
 
@@ -171,6 +237,7 @@ namespace ms
 
 		if (!active)
 		{
+			clear_side_panels();
 			set_search(true);
 			update_world(user_map);
 		}
@@ -188,6 +255,7 @@ namespace ms
 			{
 				if (parent_map == "")
 				{
+					clear_side_panels();
 					toggle_active();
 
 					update_world(user_map);
@@ -196,6 +264,7 @@ namespace ms
 				{
 					Sound(Sound::Name::SELECTMAP).play();
 
+					clear_side_panels();
 					update_world(parent_map);
 				}
 			}
@@ -207,10 +276,28 @@ namespace ms
 		return TYPE;
 	}
 
+	bool UIWorldMap::is_in_range(Point<int16_t> cursor_position) const
+	{
+		if (UIElement::is_in_range(cursor_position))
+			return true;
+
+		if (mob_panel.is_visible() && mob_panel.get_bounds().contains(cursor_position))
+			return true;
+
+		if (map_search_panel.is_visible() && map_search_panel.get_bounds().contains(cursor_position))
+			return true;
+
+		if (drop_panel.is_visible() && drop_panel.get_bounds().contains(cursor_position))
+			return true;
+
+		return false;
+	}
+
 	Button::State UIWorldMap::button_pressed(uint16_t buttonid)
 	{
 		if (buttonid >= Buttons::BT_LINK0)
 		{
+			clear_side_panels();
 			update_world(link_maps[buttonid]);
 
 			return Button::State::IDENTITY;
@@ -219,6 +306,7 @@ namespace ms
 		switch (buttonid)
 		{
 			case Buttons::BT_CLOSE:
+				clear_side_panels();
 				deactivate();
 				return Button::State::NORMAL;
 			case Buttons::BT_SEARCH:
@@ -239,10 +327,37 @@ namespace ms
 		UI::get().clear_tooltip(Tooltip::Parent::WORLDMAP);
 
 		show_path_img = false;
+		mob_panel.remove_cursor();
+		map_search_panel.remove_cursor();
+		drop_panel.remove_cursor();
 	}
 
 	Cursor::State UIWorldMap::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
+		if (mob_panel.is_visible())
+		{
+			Cursor::State mob_state = mob_panel.send_cursor(clicked, cursorpos);
+
+			if (mob_state != Cursor::State::IDLE || mob_panel.get_bounds().contains(cursorpos))
+				return mob_state == Cursor::State::IDLE ? Cursor::State::IDLE : mob_state;
+		}
+
+		if (map_search_panel.is_visible())
+		{
+			Cursor::State search_state = map_search_panel.send_cursor(clicked, cursorpos);
+
+			if (search_state != Cursor::State::IDLE || map_search_panel.get_bounds().contains(cursorpos))
+				return search_state == Cursor::State::IDLE ? Cursor::State::IDLE : search_state;
+		}
+
+		if (drop_panel.is_visible())
+		{
+			Cursor::State drop_state = drop_panel.send_cursor(clicked, cursorpos);
+
+			if (drop_state != Cursor::State::IDLE || drop_panel.get_bounds().contains(cursorpos))
+				return drop_state == Cursor::State::IDLE ? Cursor::State::IDLE : drop_state;
+		}
+
 		if (Cursor::State new_state = search_text.send_cursor(cursorpos, clicked))
 			return new_state;
 
@@ -254,14 +369,20 @@ namespace ms
 			Point<int16_t> d = p + path.second.marker.get_dimensions();
 			Rectangle<int16_t> abs_bounds = Rectangle<int16_t>(p, d);
 
-			if (!clicked && abs_bounds.contains(cursorpos))
-			{
-				path_img = path.second.path;
-				show_path_img = path_img.is_valid();
+			if (!abs_bounds.contains(cursorpos))
+				continue;
 
-				UI::get().show_map(Tooltip::Parent::WORLDMAP, path.second.title, path.second.description, path.second.map_ids[0], path.second.bolded, false);
-				break;
-			}
+			path_img = path.second.path;
+			show_path_img = path_img.is_valid();
+
+			int32_t spot_map_id = path.second.map_ids.empty() ? 0 : path.second.map_ids[0];
+
+			UI::get().show_map(Tooltip::Parent::WORLDMAP, path.second.title, path.second.description, spot_map_id, path.second.bolded, false);
+
+			if (clicked && spot_map_id != 0)
+				select_map_spot(spot_map_id);
+
+			return clicked ? Cursor::State::CLICKING : Cursor::State::CANCLICK;
 		}
 
 		return UIDragElement::send_cursor(clicked, cursorpos);
@@ -271,8 +392,10 @@ namespace ms
 	{
 		search = enable;
 
-		buttons[Buttons::BT_SEARCH_CLOSE]->set_active(enable);
-		buttons[Buttons::BT_ALLSEARCH]->set_active(enable);
+		if (auto it = buttons.find(Buttons::BT_SEARCH_CLOSE); it != buttons.end() && it->second)
+			it->second->set_active(enable);
+		if (auto it = buttons.find(Buttons::BT_ALLSEARCH); it != buttons.end() && it->second)
+			it->second->set_active(enable);
 
 		if (enable)
 		{
@@ -284,6 +407,8 @@ namespace ms
 			search_text.set_state(Textfield::State::DISABLED);
 			dimension = bg_dimensions;
 		}
+
+		sync_side_panels();
 	}
 
 	void UIWorldMap::update_world(std::string map)
@@ -294,7 +419,7 @@ namespace ms
 			WorldMap = nl::nx::Map["WorldMap"]["WorldMap.img"];
 
 		base_img = WorldMap["BaseImg"][0];
-		parent_map = WorldMap["info"]["parentMap"];
+		parent_map = WorldMap["info"]["parentMap"].get_string();
 
 		link_images.clear();
 		link_maps.clear();
@@ -312,7 +437,7 @@ namespace ms
 			Texture link_image = l["linkImg"];
 
 			link_images[i] = link_image;
-			link_maps[i] = l["linkMap"];
+			link_maps[i] = l["linkMap"].get_string();
 
 			buttons[i] = std::make_unique<AreaButton>(base_position - link_image.get_origin(), link_image.get_dimensions());
 			buttons[i]->set_active(true);
@@ -358,5 +483,115 @@ namespace ms
 	Point<int16_t> UIWorldMap::get_search_pos()
 	{
 		return position + Point<int16_t>(bg_dimensions.x() + 13, 25);
+	}
+
+	int16_t UIWorldMap::search_rail_width() const
+	{
+		return search ? bg_search_dimensions.x() : 0;
+	}
+
+	Point<int16_t> UIWorldMap::get_mob_panel_pos() const
+	{
+		// Left-adsorb: flush against the world-map chrome.
+		return position - Point<int16_t>(UIMapMobPanel::WIDTH, 0);
+	}
+
+	Point<int16_t> UIWorldMap::get_map_search_panel_pos() const
+	{
+		// Outside original WorldMapSearch rail (decision 1B).
+		return position + Point<int16_t>(bg_dimensions.x() + search_rail_width(), 0);
+	}
+
+	Point<int16_t> UIWorldMap::get_drop_panel_pos() const
+	{
+		// Right of the new map-search panel (Border + search rail + MapSearch width).
+		return position + Point<int16_t>(
+			bg_dimensions.x() + search_rail_width() + UIMapSearchPanel::WIDTH, 0);
+	}
+
+	void UIWorldMap::sync_side_panels()
+	{
+		if (mob_panel.is_visible() || map_search_panel.is_visible() || drop_panel.is_visible())
+			ensure_panels_on_screen();
+
+		mob_panel.set_content_height(bg_dimensions.y());
+		map_search_panel.set_content_height(bg_dimensions.y());
+		drop_panel.set_content_height(bg_dimensions.y());
+		mob_panel.set_position(get_mob_panel_pos());
+		map_search_panel.set_position(get_map_search_panel_pos());
+		drop_panel.set_position(get_drop_panel_pos());
+	}
+
+	void UIWorldMap::clear_side_panels()
+	{
+		selected_map_id = 0;
+		mob_panel.clear();
+		drop_panel.clear();
+	}
+
+	void UIWorldMap::ensure_panels_on_screen()
+	{
+		const int16_t margin = 4;
+		const int16_t view_w = Constants::Constants::get().get_viewwidth();
+
+		if (mob_panel.is_visible())
+		{
+			const int16_t need_left = UIMapMobPanel::WIDTH + margin;
+
+			if (position.x() < need_left)
+				position = Point<int16_t>(need_left, position.y());
+		}
+
+		{
+			int16_t right_extra = 0;
+
+			if (map_search_panel.is_visible())
+				right_extra = static_cast<int16_t>(right_extra + UIMapSearchPanel::WIDTH);
+
+			if (drop_panel.is_visible())
+				right_extra = static_cast<int16_t>(right_extra + UIMapDropPanel::WIDTH);
+
+			if (right_extra > 0)
+			{
+				const int16_t right_edge = static_cast<int16_t>(
+					position.x() + bg_dimensions.x() + search_rail_width() + right_extra + margin);
+
+				if (right_edge > view_w)
+				{
+					int16_t shift = static_cast<int16_t>(right_edge - view_w);
+					position = Point<int16_t>(position.x() - shift, position.y());
+
+					if (mob_panel.is_visible())
+					{
+						const int16_t need_left = UIMapMobPanel::WIDTH + margin;
+
+						if (position.x() < need_left)
+							position = Point<int16_t>(need_left, position.y());
+					}
+				}
+			}
+		}
+	}
+
+	void UIWorldMap::select_map_spot(int32_t map_id)
+	{
+		selected_map_id = map_id;
+		mob_panel.set_map(map_id);
+		// Drop panel stays visible with empty/select prompt until a mob row is chosen.
+		drop_panel.set_mob(0);
+		ensure_panels_on_screen();
+		mob_panel.set_position(get_mob_panel_pos());
+		map_search_panel.set_position(get_map_search_panel_pos());
+		drop_panel.set_position(get_drop_panel_pos());
+
+		LOG(LOG_INFO, "[UIWorldMap] selected_map_id=" << selected_map_id);
+	}
+
+	void UIWorldMap::on_mob_selected(int32_t mob_id)
+	{
+		drop_panel.set_mob(mob_id);
+		ensure_panels_on_screen();
+		map_search_panel.set_position(get_map_search_panel_pos());
+		drop_panel.set_position(get_drop_panel_pos());
 	}
 }

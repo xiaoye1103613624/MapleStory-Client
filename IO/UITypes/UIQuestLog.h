@@ -23,6 +23,7 @@
 #include "../Components/Textfield.h"
 
 #include "../../Character/QuestLog.h"
+#include "../../Graphics/Text.h"
 
 namespace ms
 {
@@ -43,14 +44,18 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
+		void refresh();
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
 		void change_tab(uint16_t tabid);
-
+		void rebuild_list();
+		void select_row(size_t index);
 		Point<int16_t> get_search_pos();
 		Point<int16_t> get_search_dim();
+		Rectangle<int16_t> list_area() const;
 
 		enum Buttons : uint16_t
 		{
@@ -60,7 +65,8 @@ namespace ms
 			CLOSE,
 			SEARCH,
 			ALL_LEVEL,
-			MY_LOCATION
+			MY_LOCATION,
+			GIVEUP
 		};
 
 		const QuestLog& questlog;
@@ -71,5 +77,14 @@ namespace ms
 		Text placeholder;
 		Slider slider;
 		Texture search_area;
+
+		bool flat_layout;
+		bool has_search;
+		int16_t list_offset;
+		int16_t selected_index;
+		std::vector<int16_t> listed_ids;
+		std::vector<Text> listed_names;
+		Text detail_title;
+		Text detail_progress;
 	};
 }

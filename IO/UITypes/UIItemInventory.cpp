@@ -22,12 +22,14 @@
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
+#include "../Components/TwoSpriteButton.h"
 #include "../UITypes/UIKeyConfig.h"
 
 #include "../../Data/EquipData.h"
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/InventoryPackets.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -35,16 +37,70 @@
 
 namespace ms
 {
+	namespace
+	{
+		nl::node basic_close_btn()
+		{
+			nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
+
+			if (close)
+				return close;
+
+			return nl::nx::UI["Basic.img"]["BtClose2"];
+		}
+
+		void try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src, Point<int16_t> pos = {})
+		{
+			if (!src)
+				return;
+
+			Point<int16_t> origin;
+			if (src["normal"]["0"])
+				origin = Texture(src["normal"]["0"]).get_origin();
+
+			buttons[id] = std::make_unique<MapleButton>(
+				src,
+				Point<int16_t>(static_cast<int16_t>(pos.x() + origin.x()), static_cast<int16_t>(pos.y() + origin.y()))
+			);
+		}
+
+		Button* find_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id)
+		{
+			auto it = buttons.find(id);
+			return (it != buttons.end()) ? it->second.get() : nullptr;
+		}
+	}
+
 	UIItemInventory::UIItemInventory(const Inventory& invent) : UIDragElement<PosINV>(), inventory(invent), ignore_tooltip(false), tab(InventoryType::Id::EQUIP), sort_enabled(true)
 	{
-		nl::node Item = nl::nx::UI["UIWindow2.img"]["Item"];
+		nl::node Item = UiAssetResolve::window("Item");
+
+		if (!UiAssetResolve::usable(Item))
+		{
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
 		nl::node pos = Item["pos"];
 
-		slot_col = pos["slot_col"];
-		slot_pos = pos["slot_pos"];
-		slot_row = pos["slot_row"];
-		slot_space_x = pos["slot_space_x"];
-		slot_space_y = pos["slot_space_y"];
+		if (pos)
+		{
+			slot_col = pos["slot_col"];
+			slot_pos = pos["slot_pos"];
+			slot_row = pos["slot_row"];
+			slot_space_x = pos["slot_space_x"];
+			slot_space_y = pos["slot_space_y"];
+		}
+		else
+		{
+			// v83 BeiDou Item：无 pos 节点。槽步进 36（与 IDA 滚动条 x=152 / 4 列对齐）。
+			slot_col = 4;
+			slot_row = 6;
+			slot_space_x = 4;
+			slot_space_y = 4;
+			slot_pos = Point<int16_t>(8, 51);
+		}
 
 		max_slots = slot_row * slot_col;
 		max_full_slots = slot_col * max_slots;
@@ -52,16 +108,16 @@ namespace ms
 		nl::node AutoBuild = Item["AutoBuild"];
 		nl::node FullAutoBuild = Item["FullAutoBuild"];
 
-		backgrnd = Item["productionBackgrnd"];
-		backgrnd2 = Item["productionBackgrnd2"];
-		backgrnd3 = Item["productionBackgrnd3"];
+		backgrnd = Item["productionBackgrnd"] ? Item["productionBackgrnd"] : Item["backgrnd"];
+		backgrnd2 = Item["productionBackgrnd2"] ? Item["productionBackgrnd2"] : Item["backgrnd2"];
+		backgrnd3 = Item["productionBackgrnd3"] ? Item["productionBackgrnd3"] : Item["backgrnd3"];
 
 		full_backgrnd = Item["FullBackgrnd"];
 		full_backgrnd2 = Item["FullBackgrnd2"];
 		full_backgrnd3 = Item["FullBackgrnd3"];
 
 		bg_dimensions = backgrnd.get_dimensions();
-		bg_full_dimensions = full_backgrnd.get_dimensions();
+		bg_full_dimensions = full_backgrnd.is_valid() ? full_backgrnd.get_dimensions() : bg_dimensions;
 
 		nl::node New = Item["New"];
 		newitemslot = New["inventory"];
@@ -71,60 +127,104 @@ namespace ms
 		projectile = Item["activeIcon"];
 		disabled = Item["disabled"];
 
-		Point<int16_t> icon_dimensions = disabled.get_dimensions();
-		icon_width = icon_dimensions.x();
-		icon_height = icon_dimensions.y();
+		Point<int16_t> icon_dimensions = disabled.is_valid() ? disabled.get_dimensions() : Point<int16_t>(32, 32);
+		icon_width = icon_dimensions.x() ? icon_dimensions.x() : 32;
+		icon_height = icon_dimensions.y() ? icon_dimensions.y() : 32;
 
 		nl::node Tab = Item["Tab"];
 		nl::node taben = Tab["enabled"];
 		nl::node tabdis = Tab["disabled"];
 
-		Point<int16_t> tab_pos0 = Texture(taben["0"]).get_origin() * -1;
-		Point<int16_t> tab_pos1 = Texture(taben["1"]).get_origin() * -1;
-		Point<int16_t> tab_pos2 = Texture(taben["2"]).get_origin() * -1;
-		Point<int16_t> tab_pos3 = Texture(taben["3"]).get_origin() * -1;
-		Point<int16_t> tab_pos4 = Texture(taben["4"]).get_origin() * -1;
-		Point<int16_t> tab_pos5 = Texture(taben["5"]).get_origin() * -1;
+		const bool classic_item = !static_cast<bool>(pos) && UiAssetResolve::is_classic_hud();
 		Point<int16_t> tab_pos_adj = Point<int16_t>(9, 26);
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close);
+		auto add_tab = [&](uint16_t id, const char* key, int16_t tab_index)
+		{
+			if (!tabdis[key] || !taben[key])
+				return;
 
-		buttons[Buttons::BT_TAB_EQUIP] = std::make_unique<TwoSpriteButton>(tabdis["0"], taben["0"], tab_pos0 - tab_pos_adj, Point<int16_t>(0, 0));
-		buttons[Buttons::BT_TAB_USE] = std::make_unique<TwoSpriteButton>(tabdis["1"], taben["1"], tab_pos1 - tab_pos_adj, Point<int16_t>(0, 0));
-		buttons[Buttons::BT_TAB_ETC] = std::make_unique<TwoSpriteButton>(tabdis["2"], taben["2"], tab_pos2 - tab_pos_adj, Point<int16_t>(0, 0));
-		buttons[Buttons::BT_TAB_SETUP] = std::make_unique<TwoSpriteButton>(tabdis["3"], taben["3"], tab_pos3 - tab_pos_adj, Point<int16_t>(0, 0));
-		buttons[Buttons::BT_TAB_CASH] = std::make_unique<TwoSpriteButton>(tabdis["4"], taben["4"], tab_pos4 - tab_pos_adj, Point<int16_t>(0, 0));
-		buttons[Buttons::BT_TAB_DEC] = std::make_unique<TwoSpriteButton>(tabdis["5"], taben["5"], tab_pos5 - tab_pos_adj, Point<int16_t>(0, 0));
+			if (classic_item)
+			{
+				// v83 Tab 画布 origin (0,0)，按列硬编码（与 get_tabpos 一致）。
+				Point<int16_t> tab_pos(static_cast<int16_t>(10 + tab_index * 31), 26);
+				buttons[id] = std::make_unique<TwoSpriteButton>(tabdis[key], taben[key], tab_pos);
+			}
+			else
+			{
+				Point<int16_t> tab_pos = Texture(taben[key]).get_origin() * -1;
+				buttons[id] = std::make_unique<TwoSpriteButton>(tabdis[key], taben[key], tab_pos - tab_pos_adj, Point<int16_t>(0, 0));
+			}
+		};
 
-		buttons[Buttons::BT_COIN] = std::make_unique<MapleButton>(AutoBuild["button:Coin"]);
-		buttons[Buttons::BT_POINT] = std::make_unique<MapleButton>(AutoBuild["button:Point"]);
-		buttons[Buttons::BT_GATHER] = std::make_unique<MapleButton>(AutoBuild["button:Gather"]);
-		buttons[Buttons::BT_SORT] = std::make_unique<MapleButton>(AutoBuild["button:Sort"]);
-		buttons[Buttons::BT_FULL] = std::make_unique<MapleButton>(AutoBuild["button:Full"]);
-		buttons[Buttons::BT_UPGRADE] = std::make_unique<MapleButton>(AutoBuild["button:Upgrade"]);
-		buttons[Buttons::BT_APPRAISE] = std::make_unique<MapleButton>(AutoBuild["button:Appraise"]);
-		buttons[Buttons::BT_EXTRACT] = std::make_unique<MapleButton>(AutoBuild["button:Extract"]);
-		buttons[Buttons::BT_DISASSEMBLE] = std::make_unique<MapleButton>(AutoBuild["button:Disassemble"]);
-		buttons[Buttons::BT_TOAD] = std::make_unique<MapleButton>(AutoBuild["anibutton:Toad"]);
+		add_tab(Buttons::BT_TAB_EQUIP, "0", 0);
+		add_tab(Buttons::BT_TAB_USE, "1", 1);
+		add_tab(Buttons::BT_TAB_ETC, "2", 2);
+		add_tab(Buttons::BT_TAB_SETUP, "3", 3);
+		add_tab(Buttons::BT_TAB_CASH, "4", 4);
+		add_tab(Buttons::BT_TAB_DEC, "5", 5);
 
-		buttons[Buttons::BT_SMALL] = std::make_unique<MapleButton>(FullAutoBuild["button:Small"]);
-		buttons[Buttons::BT_COIN_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Coin"]);
-		buttons[Buttons::BT_POINT_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Point"]);
-		buttons[Buttons::BT_GATHER_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Gather"]);
-		buttons[Buttons::BT_SORT_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Sort"]);
-		buttons[Buttons::BT_UPGRADE_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Upgrade"]);
-		buttons[Buttons::BT_APPRAISE_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Appraise"]);
-		buttons[Buttons::BT_EXTRACT_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Extract"]);
-		buttons[Buttons::BT_DISASSEMBLE_SM] = std::make_unique<MapleButton>(FullAutoBuild["button:Disassemble"]);
-		buttons[Buttons::BT_TOAD_SM] = std::make_unique<MapleButton>(FullAutoBuild["anibutton:Toad"]);
-		buttons[Buttons::BT_CASHSHOP] = std::make_unique<MapleButton>(FullAutoBuild["button:Cashshop"]);
+		if (nl::node close = basic_close_btn())
+			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 20, 6));
 
-		buttons[Buttons::BT_EXTRACT]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_EXTRACT_SM]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_DISASSEMBLE]->set_state(Button::State::DISABLED);
-		buttons[Buttons::BT_DISASSEMBLE_SM]->set_state(Button::State::DISABLED);
-		buttons[button_by_tab(tab)]->set_state(Button::State::PRESSED);
+		if (AutoBuild)
+		{
+			try_maple_btn(buttons, Buttons::BT_COIN, AutoBuild["button:Coin"]);
+			try_maple_btn(buttons, Buttons::BT_POINT, AutoBuild["button:Point"]);
+			try_maple_btn(buttons, Buttons::BT_GATHER, AutoBuild["button:Gather"]);
+			try_maple_btn(buttons, Buttons::BT_SORT, AutoBuild["button:Sort"]);
+			try_maple_btn(buttons, Buttons::BT_FULL, AutoBuild["button:Full"]);
+			try_maple_btn(buttons, Buttons::BT_UPGRADE, AutoBuild["button:Upgrade"]);
+			try_maple_btn(buttons, Buttons::BT_APPRAISE, AutoBuild["button:Appraise"]);
+			try_maple_btn(buttons, Buttons::BT_EXTRACT, AutoBuild["button:Extract"]);
+			try_maple_btn(buttons, Buttons::BT_DISASSEMBLE, AutoBuild["button:Disassemble"]);
+			try_maple_btn(buttons, Buttons::BT_TOAD, AutoBuild["anibutton:Toad"]);
+		}
+		else if (classic_item)
+		{
+			// IDA CUIItem::OnCreate：BtCoin (7,266)；顶栏工具钮 x≈width-30,y=6。
+			const int16_t tool_x = static_cast<int16_t>(bg_dimensions.x() - 30);
+			try_maple_btn(buttons, Buttons::BT_COIN, Item["BtCoin"], Point<int16_t>(7, 266));
+			try_maple_btn(buttons, Buttons::BT_GATHER, Item["BtGather"], Point<int16_t>(tool_x, 6));
+			try_maple_btn(buttons, Buttons::BT_SORT, Item["BtSort"], Point<int16_t>(static_cast<int16_t>(tool_x - 18), 6));
+			try_maple_btn(buttons, Buttons::BT_FULL, Item["BtFull"], Point<int16_t>(static_cast<int16_t>(tool_x - 36), 6));
+			try_maple_btn(buttons, Buttons::BT_SMALL, Item["BtSmall"], Point<int16_t>(static_cast<int16_t>(tool_x - 36), 6));
+			try_maple_btn(buttons, Buttons::BT_CASHSHOP, Item["BtCashshop"], Point<int16_t>(80, 285));
+		}
+		else
+		{
+			try_maple_btn(buttons, Buttons::BT_COIN, Item["BtCoin"]);
+			try_maple_btn(buttons, Buttons::BT_GATHER, Item["BtGather"]);
+			try_maple_btn(buttons, Buttons::BT_SORT, Item["BtSort"]);
+			try_maple_btn(buttons, Buttons::BT_FULL, Item["BtFull"]);
+			try_maple_btn(buttons, Buttons::BT_SMALL, Item["BtSmall"]);
+			try_maple_btn(buttons, Buttons::BT_CASHSHOP, Item["BtCashshop"]);
+		}
+
+		if (FullAutoBuild)
+		{
+			try_maple_btn(buttons, Buttons::BT_SMALL, FullAutoBuild["button:Small"]);
+			try_maple_btn(buttons, Buttons::BT_COIN_SM, FullAutoBuild["button:Coin"]);
+			try_maple_btn(buttons, Buttons::BT_POINT_SM, FullAutoBuild["button:Point"]);
+			try_maple_btn(buttons, Buttons::BT_GATHER_SM, FullAutoBuild["button:Gather"]);
+			try_maple_btn(buttons, Buttons::BT_SORT_SM, FullAutoBuild["button:Sort"]);
+			try_maple_btn(buttons, Buttons::BT_UPGRADE_SM, FullAutoBuild["button:Upgrade"]);
+			try_maple_btn(buttons, Buttons::BT_APPRAISE_SM, FullAutoBuild["button:Appraise"]);
+			try_maple_btn(buttons, Buttons::BT_EXTRACT_SM, FullAutoBuild["button:Extract"]);
+			try_maple_btn(buttons, Buttons::BT_DISASSEMBLE_SM, FullAutoBuild["button:Disassemble"]);
+			try_maple_btn(buttons, Buttons::BT_TOAD_SM, FullAutoBuild["anibutton:Toad"]);
+			try_maple_btn(buttons, Buttons::BT_CASHSHOP, FullAutoBuild["button:Cashshop"]);
+		}
+
+		if (auto* b = find_btn(buttons, Buttons::BT_EXTRACT))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, Buttons::BT_EXTRACT_SM))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, Buttons::BT_DISASSEMBLE))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, Buttons::BT_DISASSEMBLE_SM))
+			b->set_state(Button::State::DISABLED);
+		if (auto* b = find_btn(buttons, button_by_tab(tab)))
+			b->set_state(Button::State::PRESSED);
 
 		mesolabel = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK);
 		maplepointslabel = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK);
@@ -166,7 +266,10 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		Point<int16_t> mesolabel_pos = position + Point<int16_t>(144, 305);
+		// v83 道具窗高 307；金币文字贴近 BtCoin 行。
+		Point<int16_t> mesolabel_pos = position + (UiAssetResolve::is_classic_hud()
+			? Point<int16_t>(144, 275)
+			: Point<int16_t>(144, 305));
 		Point<int16_t> maplepointslabel_pos = position + Point<int16_t>(179, 323);
 
 		if (full_enabled)
@@ -385,8 +488,10 @@ namespace ms
 			uint16_t row = slotrange.at(tab).first / slot_col;
 			slider.setrows(row, 6, inventory.get_slotmax(tab) / slot_col);
 
-			buttons[button_by_tab(oldtab)]->set_state(Button::State::NORMAL);
-			buttons[button_by_tab(tab)]->set_state(Button::State::PRESSED);
+			if (auto* b = find_btn(buttons, button_by_tab(oldtab)))
+				b->set_state(Button::State::NORMAL);
+			if (auto* b = find_btn(buttons, button_by_tab(tab)))
+				b->set_state(Button::State::PRESSED);
 
 			load_icons();
 			set_sort(false);
@@ -638,38 +743,44 @@ namespace ms
 	{
 		sort_enabled = enabled;
 
+		auto set_act = [&](uint16_t id, bool act)
+		{
+			if (auto* b = find_btn(buttons, id))
+				b->set_active(act);
+		};
+
 		if (full_enabled)
 		{
 			if (sort_enabled)
 			{
-				buttons[Buttons::BT_SORT]->set_active(false);
-				buttons[Buttons::BT_SORT_SM]->set_active(true);
-				buttons[Buttons::BT_GATHER]->set_active(false);
-				buttons[Buttons::BT_GATHER_SM]->set_active(false);
+				set_act(Buttons::BT_SORT, false);
+				set_act(Buttons::BT_SORT_SM, true);
+				set_act(Buttons::BT_GATHER, false);
+				set_act(Buttons::BT_GATHER_SM, false);
 			}
 			else
 			{
-				buttons[Buttons::BT_SORT]->set_active(false);
-				buttons[Buttons::BT_SORT_SM]->set_active(false);
-				buttons[Buttons::BT_GATHER]->set_active(false);
-				buttons[Buttons::BT_GATHER_SM]->set_active(true);
+				set_act(Buttons::BT_SORT, false);
+				set_act(Buttons::BT_SORT_SM, false);
+				set_act(Buttons::BT_GATHER, false);
+				set_act(Buttons::BT_GATHER_SM, true);
 			}
 		}
 		else
 		{
 			if (sort_enabled)
 			{
-				buttons[Buttons::BT_SORT]->set_active(true);
-				buttons[Buttons::BT_SORT_SM]->set_active(false);
-				buttons[Buttons::BT_GATHER]->set_active(false);
-				buttons[Buttons::BT_GATHER_SM]->set_active(false);
+				set_act(Buttons::BT_SORT, true);
+				set_act(Buttons::BT_SORT_SM, false);
+				set_act(Buttons::BT_GATHER, false);
+				set_act(Buttons::BT_GATHER_SM, false);
 			}
 			else
 			{
-				buttons[Buttons::BT_SORT]->set_active(false);
-				buttons[Buttons::BT_SORT_SM]->set_active(false);
-				buttons[Buttons::BT_GATHER]->set_active(true);
-				buttons[Buttons::BT_GATHER_SM]->set_active(false);
+				set_act(Buttons::BT_SORT, false);
+				set_act(Buttons::BT_SORT_SM, false);
+				set_act(Buttons::BT_GATHER, true);
+				set_act(Buttons::BT_GATHER_SM, false);
 			}
 		}
 	}
@@ -938,7 +1049,15 @@ namespace ms
 		int16_t row = div4.quot - (8 * div32.quot);
 		int16_t col = div4.rem + (4 * div32.quot);
 
-		return slot_pos + Point<int16_t>((col * 10) + (col * 32), (row * 10) + (row * 32));
+		int16_t step_x = static_cast<int16_t>(icon_width + slot_space_x);
+		int16_t step_y = static_cast<int16_t>(icon_height + slot_space_y);
+
+		if (step_x <= 0)
+			step_x = 42;
+		if (step_y <= 0)
+			step_y = 42;
+
+		return slot_pos + Point<int16_t>(static_cast<int16_t>(col * step_x), static_cast<int16_t>(row * step_y));
 	}
 
 	Point<int16_t> UIItemInventory::get_tabpos(InventoryType::Id tb) const
@@ -991,42 +1110,49 @@ namespace ms
 	{
 		full_enabled = enabled;
 
+		auto set_act = [&](uint16_t id, bool act)
+		{
+			if (auto* b = find_btn(buttons, id))
+				b->set_active(act);
+		};
+
 		if (full_enabled)
 		{
 			dimension = bg_full_dimensions;
 
-			buttons[Buttons::BT_FULL]->set_active(false);
-			buttons[Buttons::BT_SMALL]->set_active(true);
+			set_act(Buttons::BT_FULL, false);
+			set_act(Buttons::BT_SMALL, true);
 		}
 		else
 		{
 			dimension = bg_dimensions;
 
-			buttons[Buttons::BT_FULL]->set_active(true);
-			buttons[Buttons::BT_SMALL]->set_active(false);
+			set_act(Buttons::BT_FULL, true);
+			set_act(Buttons::BT_SMALL, false);
 		}
 
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
-		buttons[Buttons::BT_CLOSE]->set_position(Point<int16_t>(dimension.x() - 20, 6));
+		if (auto* b = find_btn(buttons, Buttons::BT_CLOSE))
+			b->set_position(Point<int16_t>(dimension.x() - 20, 6));
 
-		buttons[Buttons::BT_COIN]->set_active(!enabled);
-		buttons[Buttons::BT_POINT]->set_active(!enabled);
-		buttons[Buttons::BT_UPGRADE]->set_active(!enabled);
-		buttons[Buttons::BT_APPRAISE]->set_active(!enabled);
-		buttons[Buttons::BT_EXTRACT]->set_active(!enabled);
-		buttons[Buttons::BT_DISASSEMBLE]->set_active(!enabled);
-		buttons[Buttons::BT_TOAD]->set_active(!enabled);
-		buttons[Buttons::BT_CASHSHOP]->set_active(!enabled);
+		set_act(Buttons::BT_COIN, !enabled);
+		set_act(Buttons::BT_POINT, !enabled);
+		set_act(Buttons::BT_UPGRADE, !enabled);
+		set_act(Buttons::BT_APPRAISE, !enabled);
+		set_act(Buttons::BT_EXTRACT, !enabled);
+		set_act(Buttons::BT_DISASSEMBLE, !enabled);
+		set_act(Buttons::BT_TOAD, !enabled);
+		set_act(Buttons::BT_CASHSHOP, !enabled);
 
-		buttons[Buttons::BT_COIN_SM]->set_active(enabled);
-		buttons[Buttons::BT_POINT_SM]->set_active(enabled);
-		buttons[Buttons::BT_UPGRADE_SM]->set_active(enabled);
-		buttons[Buttons::BT_APPRAISE_SM]->set_active(enabled);
-		buttons[Buttons::BT_EXTRACT_SM]->set_active(enabled);
-		buttons[Buttons::BT_DISASSEMBLE_SM]->set_active(enabled);
-		buttons[Buttons::BT_TOAD_SM]->set_active(enabled);
-		buttons[Buttons::BT_CASHSHOP]->set_active(enabled);
+		set_act(Buttons::BT_COIN_SM, enabled);
+		set_act(Buttons::BT_POINT_SM, enabled);
+		set_act(Buttons::BT_UPGRADE_SM, enabled);
+		set_act(Buttons::BT_APPRAISE_SM, enabled);
+		set_act(Buttons::BT_EXTRACT_SM, enabled);
+		set_act(Buttons::BT_DISASSEMBLE_SM, enabled);
+		set_act(Buttons::BT_TOAD_SM, enabled);
+		set_act(Buttons::BT_CASHSHOP, enabled);
 
 		set_sort(sort_enabled);
 		load_icons();

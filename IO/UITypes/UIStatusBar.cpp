@@ -54,6 +54,8 @@
 #include <nlnx/nx.hpp>
 #endif
 
+#include <fstream> // [DBG-CLK] 临时诊断用，定位后删除
+
 // 经典底条的分段裁框使用 Range<int16_t>（Texture::draw 的水平裁剪参数）。
 #include "../../Template/Range.h"
 
@@ -596,6 +598,12 @@ namespace ms
 
 	Button::State UIStatusBar::button_pressed(uint16_t id)
 	{
+		// [DBG-CLK] 临时诊断：确认按钮回调是否被触发（定位后删除）。
+		{
+			std::ofstream bf("E:/MXD/BeiDou-Client-xy/_clk.log", std::ios::app);
+			bf << "button_pressed id=" << id << " pos=(" << position.x() << "," << position.y() << ")\n";
+		}
+
 		switch (id)
 		{
 			case Buttons::BT_CLASSIC_SHOP:
@@ -1425,7 +1433,9 @@ namespace ms
 
 		// 800 设计网格整体居中：left=(VWIDTH-800)/2。底条贴屏幕底部。
 		position = Point<int16_t>(static_cast<int16_t>(std::max(0, VWIDTH - BAR_GRID_W) / 2), static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
-		position_x = 0;
+		// position_x/position_y 是 is_in_range 的命中区左上角：必须随底条一起居中，
+		// 否则命中区停在 x 0..800，居中后的按钮（x 813..1036）全部点不到。
+		position_x = position.x();
 		position_y = position.y();
 		dimension = Point<int16_t>(BAR_GRID_W, CLASSIC_BAR_H);
 

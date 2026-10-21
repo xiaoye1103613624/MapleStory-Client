@@ -17,11 +17,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Gauge.h"
 
+#include <algorithm>
+
 namespace ms
 {
 	Gauge::Gauge(Type type, Texture front, int16_t maximum, float percentage) : Gauge(type, front, {}, maximum, percentage) {}
 	Gauge::Gauge(Type type, Texture front, Texture middle, int16_t maximum, float percentage) : Gauge(type, front, {}, {}, maximum, percentage) {}
-	Gauge::Gauge(Type type, Texture front, Texture middle, Texture end, int16_t maximum, float percentage) : type(type), barfront(front), barmid(middle), barend(end), maximum(maximum), percentage(percentage), target(percentage) {}
+	Gauge::Gauge(Type type, Texture front, Texture middle, Texture end, int16_t maximum, float percentage)
+		: type(type), barfront(front), barmid(middle), barend(end), maximum(maximum), percentage(percentage), target(percentage), step(0), clip_left(0) {}
 
 	void Gauge::draw(const DrawArgument& args) const
 	{
@@ -43,9 +46,17 @@ namespace ms
 				barmid.draw(args + DrawArgument(Point<int16_t>(0, 0), Point<int16_t>(length, 0)));
 				barend.draw(args - pos_adj + Point<int16_t>(length + barfront.width(), 0));
 			}
-			else if (type == Type::WORLDSELECT)
+			else if (type == Type::WORLDSELECT || type == Type::CLIP)
 			{
-				barfront.draw(args, {}, Range<int16_t>(0, barfront.width() - length));
+				// horizontal Range(left_omit, right_omit) 会同时平移屏幕矩形；
+				// CLIP 带 clip_left 时先左移，使可见段仍锚在 args 原点。
+				const int16_t left_omit = clip_left;
+				const int16_t right_omit = static_cast<int16_t>(
+					std::max(0, barfront.width() - left_omit - length));
+				DrawArgument draw_args = (left_omit != 0)
+					? args + Point<int16_t>(static_cast<int16_t>(-left_omit), 0)
+					: args;
+				barfront.draw(draw_args, {}, Range<int16_t>(left_omit, right_omit));
 			}
 		}
 		else

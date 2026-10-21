@@ -18,6 +18,7 @@
 #include "MapTooltip.h"
 
 #include "../../Util/Misc.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,7 +30,7 @@ namespace ms
 	MapTooltip::MapTooltip() : parent(Tooltip::Parent::NONE), title(""), description(""), fillwidth(0), fillheight(0)
 	{
 		nl::node Frame = nl::nx::UI["UIToolTip.img"]["Item"]["Frame2"];
-		nl::node WorldMap = nl::nx::UI["UIWindow2.img"]["ToolTip"]["WorldMap"];
+		nl::node WorldMap = UiAssetResolve::window("ToolTip")["WorldMap"];
 
 		frame = Frame;
 		cover = Frame["cover"];

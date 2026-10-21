@@ -41,6 +41,13 @@
 
 #include "../Net/Packets/GameplayPackets.h"
 
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
+#include "../Util/Misc.h"
+#include "../Util/UiAssetResolve.h"
+
 namespace ms
 {
 	UIStateGame::UIStateGame() : stats(Stage::get().get_player().get_stats()), dragged(nullptr)
@@ -52,11 +59,25 @@ namespace ms
 		const Inventory& inventory = Stage::get().get_player().get_inventory();
 
 		emplace<UIStatusMessenger>();
-		emplace<UIStatusBar>(stats);
-		emplace<UIChatBar>();
+
+		// Prefer StatusBar3; otherwise classic StatusBar.img (BeiDou / v83).
+		if (UiAssetResolve::has_game_hud())
+		{
+			emplace<UIStatusBar>(stats);
+			emplace<UIChatBar>();
+		}
+		else
+		{
+			LOG(LOG_WARN, "UIStateGame: no StatusBar3.img or StatusBar.img/base — skipping status/chat HUD");
+		}
+
 		emplace<UIMiniMap>(stats);
 		emplace<UIBuffList>();
-		emplace<UIShop>(look, inventory);
+
+		// Shop window is inactive until an NPC opens it; still construct only
+		// when shop UI assets exist so missing Shop2 cannot affect enter-game.
+		if (UiAssetResolve::usable(UiAssetResolve::shop_root()))
+			emplace<UIShop>(look, inventory);
 
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
@@ -91,10 +112,13 @@ namespace ms
 			VWIDTH = new_width;
 			VHEIGHT = new_height;
 
-			UI::get().remove(UIElement::Type::STATUSBAR);
+			if (UiAssetResolve::has_game_hud())
+			{
+				UI::get().remove(UIElement::Type::STATUSBAR);
 
-			const CharStats& stats = Stage::get().get_player().get_stats();
-			emplace<UIStatusBar>(stats);
+				const CharStats& stats = Stage::get().get_player().get_stats();
+				emplace<UIStatusBar>(stats);
+			}
 		}
 
 		for (auto& type : elementorder)
@@ -188,34 +212,38 @@ namespace ms
 						{
 							case KeyAction::Id::EQUIPMENT:
 							{
-								emplace<UIEquipInventory>(
-									Stage::get().get_player().get_inventory()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window4("Equip")))
+									emplace<UIEquipInventory>(
+										Stage::get().get_player().get_inventory()
+										);
 
 								break;
 							}
 							case KeyAction::Id::ITEMS:
 							{
-								emplace<UIItemInventory>(
-									Stage::get().get_player().get_inventory()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window("Item")))
+									emplace<UIItemInventory>(
+										Stage::get().get_player().get_inventory()
+										);
 
 								break;
 							}
 							case KeyAction::Id::STATS:
 							{
-								emplace<UIStatsInfo>(
-									Stage::get().get_player().get_stats()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window4("Stat")))
+									emplace<UIStatsInfo>(
+										Stage::get().get_player().get_stats()
+										);
 
 								break;
 							}
 							case KeyAction::Id::SKILLS:
 							{
-								emplace<UISkillBook>(
-									Stage::get().get_player().get_stats(),
-									Stage::get().get_player().get_skills()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window("Skill")))
+									emplace<UISkillBook>(
+										Stage::get().get_player().get_stats(),
+										Stage::get().get_player().get_skills()
+										);
 
 								break;
 							}
@@ -246,7 +274,8 @@ namespace ms
 								}
 								else
 								{
-									emplace<UIUserList>(tab);
+									if (UiAssetResolve::usable(UiAssetResolve::window("UserList")))
+										emplace<UIUserList>(tab);
 
 									if (userlist && userlist->get_tab() != tab && userlist->is_active())
 										userlist->change_tab(tab);
@@ -256,11 +285,15 @@ namespace ms
 							}
 							case KeyAction::Id::WORLDMAP:
 							{
-								emplace<UIWorldMap>();
+								if (UiAssetResolve::usable(UiAssetResolve::window("WorldMap")))
+									emplace<UIWorldMap>();
 								break;
 							}
 							case KeyAction::Id::MAPLECHAT:
 							{
+								if (!UiAssetResolve::usable(UiAssetResolve::window("socialChatEnter")))
+									break;
+
 								auto chat = UI::get().get_element<UIChat>();
 
 								if (!chat || !chat->is_active())
@@ -277,14 +310,23 @@ namespace ms
 							}
 							case KeyAction::Id::QUESTLOG:
 							{
-								emplace<UIQuestLog>(
-									Stage::get().get_player().get_quests()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window("Quest")))
+									emplace<UIQuestLog>(
+										Stage::get().get_player().get_quests()
+										);
 
 								break;
 							}
 							case KeyAction::Id::KEYBINDINGS:
 							{
+								nl::node keycfg = nl::nx::UI["StatusBar3.img"]["KeyConfig"];
+
+								if (!UiAssetResolve::usable(keycfg))
+									keycfg = UiAssetResolve::window("KeyConfig");
+
+								if (!UiAssetResolve::usable(keycfg))
+									break;
+
 								auto keyconfig = UI::get().get_element<UIKeyConfig>();
 
 								if (!keyconfig || !keyconfig->is_active())
@@ -346,20 +388,23 @@ namespace ms
 							}
 							case KeyAction::Id::EVENT:
 							{
-								emplace<UIEvent>();
+								if (UiAssetResolve::usable(UiAssetResolve::window("EventList")))
+									emplace<UIEvent>();
 								break;
 							}
 							case KeyAction::Id::CHARINFO:
 							{
-								emplace<UICharInfo>(
-									Stage::get().get_player().get_oid()
-									);
+								if (UiAssetResolve::usable(UiAssetResolve::window("UserInfo")))
+									emplace<UICharInfo>(
+										Stage::get().get_player().get_oid()
+										);
 
 								break;
 							}
 							case KeyAction::Id::CHANGECHANNEL:
 							{
-								emplace<UIChannel>();
+								if (UiAssetResolve::usable(UiAssetResolve::window("Channel")))
+									emplace<UIChannel>();
 								break;
 							}
 							case KeyAction::Id::MAINMENU:

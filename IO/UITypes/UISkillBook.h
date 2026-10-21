@@ -175,6 +175,7 @@ namespace ms
 		bool grabbing;
 
 		Point<int16_t> bg_dimensions;
+		bool ui_backgrnd_tex_valid = false; // [DBG-SKB] 临时诊断，定位后删除
 
 		bool macro_enabled;
 		Texture macro_backgrnd;

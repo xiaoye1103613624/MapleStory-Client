@@ -22,6 +22,10 @@
 #include "../Components/AreaButton.h"
 #include "../Components/Textfield.h"
 
+#include "UIMapDropPanel.h"
+#include "UIMapMobPanel.h"
+#include "UIMapSearchPanel.h"
+
 namespace ms
 {
 	class UIWorldMap : public UIDragElement<PosMAP>
@@ -44,6 +48,9 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
+		// Include left/right docked panels so clicks outside the map chrome still hit this UI.
+		bool is_in_range(Point<int16_t> cursor_position) const override;
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -52,8 +59,18 @@ namespace ms
 
 		void set_search(bool enable);
 		void update_world(std::string parent_map);
+		void sync_side_panels();
+		void clear_side_panels();
+		void select_map_spot(int32_t map_id);
+		void on_mob_selected(int32_t mob_id);
+		// Keep left/right docked panels inside the viewport (default PosMAP is near the left edge).
+		void ensure_panels_on_screen();
 
 		Point<int16_t> get_search_pos();
+		Point<int16_t> get_mob_panel_pos() const;
+		Point<int16_t> get_map_search_panel_pos() const;
+		Point<int16_t> get_drop_panel_pos() const;
+		int16_t search_rail_width() const;
 
 		enum Buttons
 		{
@@ -90,6 +107,7 @@ namespace ms
 		bool show_path_img;
 
 		int32_t mapid;
+		int32_t selected_map_id;
 
 		std::string parent_map;
 		std::string user_map;
@@ -114,5 +132,9 @@ namespace ms
 		Point<int16_t> background_dimensions;
 		Point<int16_t> base_position;
 		Point<int16_t> search_text_dim;
+
+		UIMapMobPanel mob_panel;
+		UIMapSearchPanel map_search_panel;
+		UIMapDropPanel drop_panel;
 	};
 }

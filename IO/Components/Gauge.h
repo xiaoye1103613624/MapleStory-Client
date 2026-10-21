@@ -28,16 +28,21 @@ namespace ms
 		{
 			DEFAULT,
 			CASHSHOP,
-			WORLDSELECT
+			WORLDSELECT,
+			// 自纹理左侧裁出 percentage*maximum 宽（不拉伸），用于 v83 StatusBar HP/MP。
+			CLIP
 		};
 
-		Gauge() {}
+		Gauge() : type(DEFAULT), maximum(1), percentage(0), target(0), step(0), clip_left(0) {}
 		Gauge(Type type, Texture front, int16_t maximum, float percent);
 		Gauge(Type type, Texture front, Texture middle, int16_t maximum, float percent);
 		Gauge(Type type, Texture front, Texture middle, Texture end, int16_t maximum, float percentage);
 
 		void draw(const DrawArgument& args) const;
 		void update(float target);
+
+		/// CLIP 模式下从纹理的 clip_left 起裁出填充（MP 条用中段）。
+		void set_clip_left(int16_t left) { clip_left = left; }
 
 	private:
 		Texture barfront;
@@ -50,5 +55,6 @@ namespace ms
 		float step;
 
 		Type type;
+		int16_t clip_left;
 	};
 }
