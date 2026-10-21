@@ -64,6 +64,9 @@ namespace ms
 		// Return the item id of the equipped weapon
 		int32_t get_weapon() const;
 
+		// BodyDrawInfo 重建后必须清空，否则旧 Clothing 仍带空锚点偏移。
+		static void clear_cache();
+
 	private:
 		EnumMap<EquipSlot::Id, const Clothing*> clothes;
 

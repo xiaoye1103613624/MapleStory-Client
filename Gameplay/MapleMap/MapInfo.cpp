@@ -36,12 +36,18 @@ namespace ms
 
 		std::string bgmpath = info["bgm"];
 		size_t split = bgmpath.find('/');
-		bgm = bgmpath.substr(0, split) + ".img/" + bgmpath.substr(split + 1);
+
+		if (split != std::string::npos)
+			bgm = bgmpath.substr(0, split) + ".img/" + bgmpath.substr(split + 1);
+		else if (!bgmpath.empty())
+			bgm = bgmpath;
+		else
+			bgm = "Bgm00.img/GoPicnic";
 
 		cloud = info["cloud"].get_bool();
 		fieldlimit = info["fieldLimit"];
 		hideminimap = info["hideMinimap"].get_bool();
-		mapmark = info["mapMark"];
+		mapmark = info["mapMark"].get_string();
 		swim = info["swim"].get_bool();
 		town = info["town"].get_bool();
 

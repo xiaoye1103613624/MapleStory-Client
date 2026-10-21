@@ -19,6 +19,8 @@
 
 #include "../Data/WeaponData.h"
 
+#include <fstream>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -381,12 +383,24 @@ namespace ms
 
 	void Char::init()
 	{
+		// [DBG-CHAR] 联调诊断桩：闭环后不再落文件（no-op），保留以便将来联调。
+		auto dbg = [](const std::string&) {};
+
 		CharLook::init();
+		dbg("char:look-ok");
 
 		nl::node src = nl::nx::Effect["BasicEff.img"];
+		dbg(std::string("char:src=") + (static_cast<bool>(src) ? "y" : "n"));
 
 		for (auto iter : CharEffect::PATHS)
-			chareffects.emplace(iter.first, src.resolve(iter.second));
+		{
+			dbg(std::string("char:path ") + iter.second);
+			auto resolved = src.resolve(iter.second);
+			dbg(std::string("char:size ") + iter.second + " n=" + std::to_string(resolved.size()));
+			chareffects.emplace(iter.first, resolved);
+		}
+
+		dbg("char:effects-done");
 	}
 
 	EnumMap<CharEffect::Id, Animation> Char::chareffects;

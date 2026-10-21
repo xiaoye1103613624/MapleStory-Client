@@ -88,7 +88,7 @@ namespace ms
 			}
 		}
 
-		name = nl::nx::String["Eqp.img"]["Eqp"]["Face"][std::to_string(faceid)]["name"];
+		name = nl::nx::String["Eqp.img"]["Eqp"]["Face"][std::to_string(faceid)]["name"].get_string();
 	}
 
 	void Face::draw(Expression::Id expression, uint8_t frame, const DrawArgument& args) const

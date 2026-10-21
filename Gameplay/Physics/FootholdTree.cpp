@@ -82,8 +82,10 @@ namespace ms
 					int16_t start = foothold.l();
 					int16_t end = foothold.r();
 
-					for (int16_t i = start; i <= end; i++)
-						footholdsbyx.emplace(i, id);
+					// int16_t loop counters wrap past INT16_MAX and never terminate
+					// when end == 32767 (or the span crosses the wrap). Use int32_t.
+					for (int32_t i = start; i <= end; ++i)
+						footholdsbyx.emplace(static_cast<int16_t>(i), id);
 				}
 			}
 		}

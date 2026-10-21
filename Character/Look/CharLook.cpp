@@ -643,6 +643,13 @@ namespace ms
 	void CharLook::init()
 	{
 		drawinfo.init();
+
+		// img 启动时 Character 未绑，Body/Hair/Face/Clothing 可能已按空锚点入缓存；
+		// 不清理则选角头/身/脚叠在同一点。
+		hairstyles.clear();
+		facetypes.clear();
+		bodytypes.clear();
+		CharEquips::clear_cache();
 	}
 
 	BodyDrawInfo CharLook::drawinfo;

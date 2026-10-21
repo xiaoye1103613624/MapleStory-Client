@@ -27,8 +27,9 @@ namespace ms
 	class Clothing
 	{
 	public:
-		// Defaults when no clothes are equipped
-		static constexpr int32_t TOP_DEFAULT_ID = 1042399;
+		// Defaults when no clothes are equipped.
+		// BeiDou gms083 无 1042399；用存在的 1040000（白底衣）避免默认上衣空贴图。
+		static constexpr int32_t TOP_DEFAULT_ID = 1040000;
 		static constexpr int32_t BOTTOM_DEFAULT_ID = 1060026;
 
 		enum Layer

@@ -24,26 +24,78 @@ namespace ms
 		started[qid] = qdata;
 	}
 
-	void QuestLog::add_in_progress(int16_t qid, int16_t qidl, const std::string& qdata)
-	{
-		in_progress[qid] = make_pair(qidl, qdata);
-	}
-
 	void QuestLog::add_completed(int16_t qid, int64_t time)
 	{
 		completed[qid] = time;
 	}
 
-	bool QuestLog::is_started(int16_t qid)
+	void QuestLog::set_started(int16_t qid, const std::string& qdata)
+	{
+		started[qid] = qdata;
+		completed.erase(qid);
+	}
+
+	void QuestLog::set_completed(int16_t qid, int64_t time)
+	{
+		started.erase(qid);
+		completed[qid] = time;
+	}
+
+	void QuestLog::remove_started(int16_t qid)
+	{
+		started.erase(qid);
+	}
+
+	void QuestLog::remove_completed(int16_t qid)
+	{
+		completed.erase(qid);
+	}
+
+	bool QuestLog::is_started(int16_t qid) const
 	{
 		return started.count(qid) > 0;
 	}
 
-	int16_t QuestLog::get_last_started()
+	bool QuestLog::is_completed(int16_t qid) const
 	{
-		auto qend = started.end();
-		qend--;
+		return completed.count(qid) > 0;
+	}
 
-		return qend->first;
+	int16_t QuestLog::get_last_started() const
+	{
+		if (started.empty())
+			return 0;
+
+		return started.rbegin()->first;
+	}
+
+	std::string QuestLog::get_progress(int16_t qid) const
+	{
+		auto iter = started.find(qid);
+
+		if (iter != started.end())
+			return iter->second;
+
+		return {};
+	}
+
+	int64_t QuestLog::get_completion_time(int16_t qid) const
+	{
+		auto iter = completed.find(qid);
+
+		if (iter != completed.end())
+			return iter->second;
+
+		return 0;
+	}
+
+	const std::map<int16_t, std::string>& QuestLog::get_started() const
+	{
+		return started;
+	}
+
+	const std::map<int16_t, int64_t>& QuestLog::get_completed() const
+	{
+		return completed;
 	}
 }

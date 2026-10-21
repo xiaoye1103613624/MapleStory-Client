@@ -51,7 +51,7 @@ namespace ms
 			BOOK,		// TODO: What is the proper value for this?
 			PENDANT2,	// TODO: What is the proper value for this?
 			SHOULDER,	// TODO: What is the proper value for this?
-			ANDROID,	// TODO: What is the proper value for this?
+			ANDROID_SLOT,	// TODO: What is the proper value for this?
 			EMBLEM,		// TODO: What is the proper value for this?
 			BADGE,		// TODO: What is the proper value for this?
 			SUBWEAPON,	// TODO: What is the proper value for this?

@@ -147,5 +147,10 @@ namespace ms
 		return get_equip(EquipSlot::Id::WEAPON);
 	}
 
+	void CharEquips::clear_cache()
+	{
+		cloth_cache.clear();
+	}
+
 	std::unordered_map<int32_t, Clothing> CharEquips::cloth_cache;
 }

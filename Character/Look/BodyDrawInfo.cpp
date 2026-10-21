@@ -21,6 +21,8 @@
 
 #include "../../Util/Misc.h"
 
+#include <fstream>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -29,12 +31,42 @@ namespace ms
 {
 	void BodyDrawInfo::init()
 	{
+		// [DBG-BDI] 联调诊断桩：闭环后不再落文件（no-op），保留以便将来联调。
+		auto dbg = [](const std::string&) {};
+
 		nl::node bodynode = nl::nx::Character["00002000.img"];
 		nl::node headnode = nl::nx::Character["00012000.img"];
+
+		dbg(std::string("bdi:body=") + (static_cast<bool>(bodynode) ? "y" : "n"));
+		dbg(std::string("bdi:head=") + (static_cast<bool>(headnode) ? "y" : "n"));
+
+		// img 启动只绑登录根时 Character 为空；登录成功后再 init 必须先清空，
+		// 否则空表残留 + 叠体（头/身/脚全锚在同一点）。
+		for (size_t i = 0; i < Stance::Id::LENGTH; ++i)
+		{
+			body_positions[i].clear();
+			arm_positions[i].clear();
+			hand_positions[i].clear();
+			head_positions[i].clear();
+			hair_positions[i].clear();
+			face_positions[i].clear();
+			stance_delays[i].clear();
+		}
+		body_actions.clear();
+		attack_delays.clear();
+
+		if (!bodynode || !headnode)
+		{
+			LOG(LOG_WARN, "[BodyDrawInfo] Character skin nodes missing — look offsets empty"
+				" (body=" << static_cast<bool>(bodynode)
+				<< " head=" << static_cast<bool>(headnode) << ")");
+			return;
+		}
 
 		for (nl::node stancenode : bodynode)
 		{
 			std::string ststr = stancenode.name();
+			dbg("bdi:stance " + ststr);
 
 			uint16_t attackdelay = 0;
 
@@ -103,6 +135,9 @@ namespace ms
 				}
 			}
 		}
+		LOG(LOG_INFO, "[BodyDrawInfo] init ok stand1_frames="
+			<< body_positions[Stance::Id::STAND1].size());
+		dbg("bdi:done");
 	}
 
 	Point<int16_t> BodyDrawInfo::get_body_position(Stance::Id stance, uint8_t frame) const

@@ -25,7 +25,18 @@ namespace ms
 {
 	Obj::Obj(nl::node src)
 	{
-		animation = Animation(nl::nx::Map["Obj"][src["oS"] + ".img"][src["l0"]][src["l1"]][src["l2"]]);
+		nl::node obj_src = nl::nx::Map["Obj"][src["oS"] + ".img"][src["l0"]][src["l1"]][src["l2"]];
+		// Login Title logo: keep a0/a1 fade from Map Obj, swap bitmap to UI MSTitle.
+		bool login_logo = src["oS"].get_string() == "login"
+			&& src["l0"].get_string() == "Title"
+			&& src["l1"].get_string() == "logo";
+		nl::node mstitle = login_logo ? nl::nx::UI["Login.img"]["Title"]["MSTitle"] : nl::node();
+
+		if (login_logo && mstitle)
+			animation = Animation(obj_src, mstitle);
+		else
+			animation = Animation(obj_src);
+
 		pos = Point<int16_t>(src["x"], src["y"]);
 		flip = src["f"].get_bool();
 		z = src["z"];

@@ -34,8 +34,18 @@ namespace ms
 
 		nl::node backsrc = nl::nx::Map001["Back"];
 
+		if (!backsrc)
+			backsrc = nl::nx::Map["Back"];
+
 		animated = src["ani"].get_bool();
-		animation = backsrc[src["bS"] + ".img"][animated ? "ani" : "back"][src["no"]];
+		nl::node bS = src["bS"];
+		std::string bs_name = bS.get_string();
+		nl::node sheet = backsrc[bs_name + ".img"];
+
+		if (!sheet)
+			sheet = backsrc[bs_name];
+
+		animation = sheet[animated ? "ani" : "back"][src["no"]];
 		opacity = src["a"];
 		flipped = src["f"].get_bool();
 		cx = src["cx"];
@@ -57,10 +67,12 @@ namespace ms
 		int16_t dim_y = animation.get_dimensions().y();
 
 		// TODO: Double check for zero. Is this a WZ reading issue?
-		if (cx == 0)
+		// Also reject negatives: Background::draw uses while (x > 0) x -= cx;
+		// with cx < 0 that loop never ends (client appears Not Responding).
+		if (cx <= 0)
 			cx = (dim_x > 0) ? dim_x : 1;
 
-		if (cy == 0)
+		if (cy <= 0)
 			cy = (dim_y > 0) ? dim_y : 1;
 
 		htile = 1;

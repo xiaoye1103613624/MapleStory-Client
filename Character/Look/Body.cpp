@@ -118,7 +118,7 @@ namespace ms
 		{
 			LOG(LOG_DEBUG, "Skin [" << skin << "] is using the default value.");
 
-			name = nl::nx::String["Eqp.img"]["Eqp"]["Skin"][skin]["name"];
+			name = nl::nx::String["Eqp.img"]["Eqp"]["Skin"][skin]["name"].get_string();
 		}
 	}
 

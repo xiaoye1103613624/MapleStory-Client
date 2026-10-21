@@ -98,7 +98,7 @@ namespace ms
 			}
 		}
 
-		name = nl::nx::String["Eqp.img"]["Eqp"]["Hair"][std::to_string(hairid)]["name"];
+		name = nl::nx::String["Eqp.img"]["Eqp"]["Hair"][std::to_string(hairid)]["name"].get_string();
 
 		constexpr size_t NUM_COLORS = 8;
 

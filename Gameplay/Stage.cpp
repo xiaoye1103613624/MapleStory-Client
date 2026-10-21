@@ -18,12 +18,16 @@
 #include "Stage.h"
 
 #include "../Configuration.h"
+#include "../MapleStory.h"
 
 #include "../IO/UI.h"
 
 #include "../IO/UITypes/UIStatusBar.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Util/Resource/ResourceService.h"
+
+#include <stdexcept>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -87,7 +91,20 @@ namespace ms
 		std::string strid = string_format::extend_id(mapid, 9);
 		std::string prefix = std::to_string(mapid / 100000000);
 
+		// img：只装当前地图，避免 ensure_map_roots 扫全 Map/ 导致黑屏未响应。
+		if (mapid != -1)
+			ms::res::ResourceService::get().ensure_map(mapid);
+
 		nl::node src = mapid == -1 ? nl::nx::UI["CashShopPreview.img"] : nl::nx::Map002["Map"]["Map" + prefix][strid + ".img"];
+
+		// 空地图节点会造出无 foothold 的物理世界，表现为进图后无法移动；
+		// 抛异常交给 SetFieldHandlers::transition 捕获并解锁 GL，避免黑屏软锁。
+		if (!src || !src["foothold"])
+		{
+			LOG(LOG_ERROR, "[MAP] missing map node mapid=" << mapid
+				<< " path=Map002/Map/Map" << prefix << "/" << strid << ".img");
+			throw std::runtime_error("map data missing");
+		}
 
 		tilesobjs = MapTilesObjs(src);
 		backgrounds = MapBackgrounds(src["back"]);
