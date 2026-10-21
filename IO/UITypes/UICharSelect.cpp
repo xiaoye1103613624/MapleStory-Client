@@ -36,8 +36,7 @@
 
 #include "../../Net/Packets/SelectCharPackets.h"
 
-#define NOMINMAX
-#include <windows.h>
+#include <SDL3/SDL.h>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -45,41 +44,62 @@
 
 namespace ms
 {
-	// 选角色按钮条版式：IDA CUICharSelect::OnCreate @0x60148D 字面量。
-	// 按钮条窗口为 101x131（ctor CreateWnd(200,-1359,101,131)），三按钮贴左沿 x=4。
-	//
-	// 注意：OnCreate 里的 (4,-2)/(4,36)/(4,85) 是**按钮条窗口内**坐标，
-	// 必须叠加按钮条窗口的帧内锚点 (200,-1359) 才能落到与 position 同一坐标系；
-	// 否则会被当成帧内坐标 → 实际落到屏幕外（实测按钮不可见）。
-	static constexpr int16_t CS_BTN_L = 200;
-	static constexpr int16_t CS_BTN_T = -1359;
-	static constexpr int16_t CS_BTN_X = CS_BTN_L + 4;
-	static constexpr int16_t CS_BTN_Y_SELECT = CS_BTN_T + (-2);
-	static constexpr int16_t CS_BTN_Y_NEW = CS_BTN_T + 36;
-	static constexpr int16_t CS_BTN_Y_DELETE = CS_BTN_T + 85;
+	// MapLogin CharSelect/signboard/0：右侧三层木牌，开始/创建/删除应贴在三块横板上。
+	static constexpr Point<int16_t> CS_SIGN_MAP_POS(253, -1258);
+	// 木牌 133x238；按钮约 101x30；横板顶边相对木牌贴图的 Y（顶/中/底）。
+	// 9.8 曾上移致偏高；本轮下移回贴木牌横板（实测 +36）。
+	static constexpr int16_t CS_SIGN_BTN_OFF_X = 16;
+	// 木牌三横板：相对贴图顶边的按钮 Y（略下移使文字落在木条中带）。
+	static constexpr int16_t CS_SIGN_PLANK_Y[3] = { 18, 78, 142 };
 
-	// 角色槽纵向锚点：IDA `CUICharDetail::CUICharDetail`(0x60292F) 把
-	//   v8.y = 占用 ? 1384 : 1348  →  CFadeWnd::SetOption(..., v8, v8, v8, 80, 0, 80)
-	// 该点处于**登录画布坐标系**（`CreateFadeWnd(..., bScreenCoord = 0)`，非屏幕绝对）。
-	// 画布步进带顶面 = |GetStepHeight(2)| = |-(8 + 600*2)| = 1208（`CLogin::GetStepHeight`），
-	// 故带内偏移 = 1384-1208 = 176（占用）/ 1348-1208 = 140（空），两者差 36px。
-	// 槽位窗口尺寸同样来自该 ctor：`CreateFadeWnd(183, 占用151 / 空115, 0, z=20, 0, 0)`。
+	// BeiDou CharSelect 无 pos/detailPos 节点；详情标签相对 charInfo1 面板（183×151）。
+	// 对齐 charInfo1 位图内「职业/等级/人气/四维」空槽（非 Journey 旧版单列）。
+	static constexpr Point<int16_t> CS_DETAIL_LEVEL(52, 28);
+	static constexpr Point<int16_t> CS_DETAIL_NAME(90, 8);
+	static constexpr Point<int16_t> CS_DETAIL_JOB(100, 10);
+	static constexpr Point<int16_t> CS_DETAIL_STR(52, 52);
+	static constexpr Point<int16_t> CS_DETAIL_DEX(52, 74);
+	static constexpr Point<int16_t> CS_DETAIL_INT(140, 52);
+	static constexpr Point<int16_t> CS_DETAIL_LUK(140, 74);
+	// charInfo1 相对脚点：面板在角色左侧（对照正确端截图）。
+	static constexpr Point<int16_t> CS_CHARINFO_OFF(-240, -170);
+
+	// 角色槽：占用与空槽共用同一桥面 Y。
+	// 站位校准（依据桥面贴片像素实测，2026-09-25）：
+	//   桥面视觉来自 MapLogin.img back/25（no=11，1280x2540 巨型底图），
+	//   屏幕偏移 TL=(-98,-652)；桥板不透明带位于贴图 1020~1047 行
+	//   （全覆盖率、木色带），即屏幕 y 368~396（板厚 28px）。
+	//   脚点必须落在板**顶边** 368：position.y = viewpos.y(1508) + CS_FRAME_ORIGIN.y(-54)
+	//   = 1454，故 slot_y = 368 - 1454 = -1086，
+	//   DY = -1086 - (CS_LIST_T + CS_SLOT_INSET_BRIDGE) = -8。
+	//   （旧值 DY=20 时脚点 396 = 桥板底边，角色整体陷进板里、视觉偏下。）
+	static constexpr int16_t CS_SLOT_INSET_BRIDGE = 1348 - 1208;
 	static constexpr int16_t CS_SLOT_INSET_EMPTY = 1348 - 1208;
 	static constexpr int16_t CS_SLOT_INSET_OCCUPIED = 1384 - 1208;
+	static constexpr int16_t CS_SLOT_BRIDGE_DY = -8;
 	static constexpr int16_t CS_SLOT_W = 183;
 	static constexpr int16_t CS_SLOT_H_EMPTY = 115;
 	static constexpr int16_t CS_SLOT_H_OCCUPIED = 151;
 
 	// 帧内坐标 -> 屏幕原点：position = LoginBackground::viewpos + 本常量。
-	// 反推依据（非猜测）：选世界槽位帧内 = CUIWorldSelect 容器 (−140,−804) 的 (0,0)，
-	// 实测屏幕 (235,110) ⇒ step1 偏移 (375,914)；viewpos(step1)=(612,968) ⇒ 差值本常量。
 	static const Point<int16_t> CS_FRAME_ORIGIN(-237, -54);
 
 	// 角色列表容器（IDA sub_603FF0: CreateWnd(-290,-1218,600,80,z:10,0)）
 	static constexpr int16_t CS_LIST_T = -1218;
 
-	UICharSelect::UICharSelect(std::vector<CharEntry> characters, int8_t characters_count, int32_t slots, int8_t require_pic) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
-		characters(characters), characters_count(characters_count), slots(slots), require_pic(require_pic), tab_index(0), tab_active(false), tab_move(false), charslot_y(0), use_timestamp(false), burning_character(true), show_pic_btns(false)
+	// 选中光（相对角色脚点 charpos；锚点依据 CharSelect/effect 贴图逐帧实测）：
+	//   effect/1 光柱：各帧内容顶边均贴贴图第 0~1 行（origin.y=0），内容底边随帧
+	//   下移（179→256→280→299→310）——即"光柱自上方垂落、逐帧下探"的动画。
+	//   最终帧内容高 310，锚点取 charpos.y-310 使光柱底边恰落在脚点，
+	//   顶边高于头顶（310px），符合"从角色上方往一定距离下"的正确观感。
+	//   （旧值 y=0 时整根光柱从脚下向下挂到桥下，方向颠倒。）
+	//   effect/0 身光：49x132，origin.y -205→-132 随帧上移。锚 (-5,-298)（上游标定）
+	//   时首帧内容罩住身体（脚上 72 ~ 脚下 37），随后光环沿身体向上飘升。
+	static constexpr Point<int16_t> CS_FX_FOOT(-5, -310);
+	static constexpr Point<int16_t> CS_FX_BODY(-5, -298);
+
+		UICharSelect::UICharSelect(std::vector<CharEntry> characters, int8_t characters_count, int32_t slots, int8_t require_pic) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
+		characters(characters), characters_count(characters_count), slots(slots), require_pic(require_pic), tab_index(0), tab_active(false), tab_move(false), charslot_y(0), use_timestamp(false), burning_character(false), show_pic_btns(false)
 	{
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
@@ -92,7 +112,6 @@ namespace ms
 		selected_page = selected_character / PAGESIZE;
 		page_count = std::ceil((double)slots / (double)PAGESIZE);
 
-		tab = nl::nx::UI["Basic.img"]["Cursor"]["18"]["0"];
 		tab_move_pos = 0;
 
 		tab_map[0] = Buttons::BtSelect;
@@ -100,6 +119,12 @@ namespace ms
 		tab_map[2] = Buttons::BtDelete;
 
 		nl::node CharSelect = Login["CharSelect"];
+		// v83 无 Cursor/18；勿绑数字字库帧。有独立 tab 图再用，否则不画指示。
+		nl::node tab_node = CharSelect["tab"]["0"];
+		if (!tab_node)
+			tab_node = CharSelect["Tab"]["0"];
+		if (tab_node)
+			tab = tab_node;
 		nl::node selectedWorld = CharSelect["selectedWorld"];
 		nl::node pageNew = CharSelect["pageNew"];
 
@@ -159,6 +184,20 @@ namespace ms
 
 		charinfo = CharSelect["charInfo1"];
 
+		// BeiDou：正确端使用含排行区的 charInfo1；无则退回 charInfo。
+		if (LoginBackground::get().available() && !charinfo && CharSelect["charInfo"])
+			charinfo = CharSelect["charInfo"];
+
+		// nxcache 脏 origin（如 3949）会把底板甩出屏幕；统一清零为左上角锚点。
+		// （Texture 构造已 sanitize，这里再强制一次，避免漏网。）
+		if (charinfo.is_valid())
+		{
+			Point<int16_t> o = charinfo.get_origin();
+
+			if (o.x() != 0 || o.y() != 0)
+				charinfo.shift(o);
+		}
+
 		nl::node charSlot = CharSelect["charSlot"];
 		charslot = charSlot["0"];
 		charslot_pos = charSlot["pos"];
@@ -181,6 +220,7 @@ namespace ms
 		BtNewPos = BtNewTexture.get_origin().abs();
 
 		nl::node BtSelect = CharSelect["BtSelect"];
+		nl::node BtDelete = CharSelect["BtDelete"];
 		Point<int16_t> BtSelectPos = Texture(BtSelect["normal"]["0"]).get_origin().abs();
 
 		Point<int16_t> tab_adj = Point<int16_t>(107, 8);
@@ -189,12 +229,36 @@ namespace ms
 		tab_pos[1] = tab_adj + BtNewPos;
 		tab_pos[2] = tab_adj + BtNewPos + Point<int16_t>(BtNewDim.x() - 1, 0);
 
-		// 按钮位置按 IDA 字面量给（CUICharSelect::OnCreate @0x60148D）：
-		//   BtSelect (4,-2) / BtNew (4,36) / BtDelete (4,85)，位于 101x131 按钮条内且贴左沿。
-		// 北斗节点里没有 pos（实测 BtDelete/pos 等全 <absent>），不能靠节点取值。
-		buttons[Buttons::BtSelect] = std::make_unique<MapleButton>(BtSelect, CS_BTN_X, CS_BTN_Y_SELECT);
-		buttons[Buttons::BtNew] = std::make_unique<MapleButton>(BtNew, CS_BTN_X, CS_BTN_Y_NEW);
-		buttons[Buttons::BtDelete] = std::make_unique<MapleButton>(CharSelect["BtDelete"], CS_BTN_X, CS_BTN_Y_DELETE);
+		// BeiDou：三按钮锚到 MapLogin CharSelect/signboard/0 三块横板（相对 position）。
+		// 非 BeiDou：退回 IDA 按钮条 CreateWnd(200,-1359)+OnCreate(4,-2/36/85)。
+		Point<int16_t> btn_select_local(200 + 4, -1359 - 2);
+		Point<int16_t> btn_new_local(200 + 4, -1359 + 36);
+		Point<int16_t> btn_delete_local(200 + 4, -1359 + 85);
+
+		if (bg_managed)
+		{
+			Point<int16_t> viewpos = LoginBackground::get().get_viewpos();
+			Texture sign_tex(nl::nx::Map["Obj"]["login.img"]["CharSelect"]["signboard"]["0"]["0"]);
+			Point<int16_t> sign_tl = CS_SIGN_MAP_POS + viewpos - sign_tex.get_origin();
+
+			auto plank_btn = [&](nl::node btn_node, int plank) -> Point<int16_t>
+			{
+				Texture tex(btn_node["normal"]["0"]);
+				Point<int16_t> screen = sign_tl
+					+ Point<int16_t>(CS_SIGN_BTN_OFF_X, CS_SIGN_PLANK_Y[plank])
+					+ tex.get_origin();
+				return screen - position;
+			};
+
+			btn_select_local = plank_btn(BtSelect, 0);
+			btn_new_local = plank_btn(BtNew, 1);
+			btn_delete_local = plank_btn(BtDelete, 2);
+			BtNewPos = btn_new_local;
+		}
+
+		buttons[Buttons::BtSelect] = std::make_unique<MapleButton>(BtSelect, btn_select_local);
+		buttons[Buttons::BtNew] = std::make_unique<MapleButton>(BtNew, btn_new_local);
+		buttons[Buttons::BtDelete] = std::make_unique<MapleButton>(BtDelete, btn_delete_local);
 		buttons[Buttons::BtPageL] = std::make_unique<MapleButton>(CharSelect["pageL"]);
 		buttons[Buttons::BtPageR] = std::make_unique<MapleButton>(CharSelect["pageR"]);
 		buttons[Buttons::BtChangePIC] = std::make_unique<MapleButton>(Common["BtChangePIC"]);
@@ -219,19 +283,34 @@ namespace ms
 		statLUKPos = detailPos["statLUKPos"];
 		statSTRPos = detailPos["statSTRPos"];
 
-		jobPos -= screen_adj;
-		namePos -= Point<int16_t>(0, 5);
-		statDEXPos -= screen_adj;
-		statINTPos -= screen_adj;
-		statLUKPos -= screen_adj;
-		statSTRPos -= screen_adj;
+		// BeiDou 无 CharSelect/pos：NX 读到 (0,0) 会叠画；改用原生详情标签表。
+		const bool missing_detail = !detailPos || (!jobPos.x() && !jobPos.y() && !levelPos.x() && !namePos.x());
 
-		// 命中区需同时覆盖「占用槽」与「空槽」两种纵向锚点（两者相差 36px），
-		// 故取较低的占用槽为顶点、高度补足差值，避免空槽/占用槽点击命中不一致。
+		if (missing_detail)
+		{
+			levelPos = CS_DETAIL_LEVEL;
+			namePos = CS_DETAIL_NAME;
+			jobPos = CS_DETAIL_JOB;
+			statSTRPos = CS_DETAIL_STR;
+			statDEXPos = CS_DETAIL_DEX;
+			statINTPos = CS_DETAIL_INT;
+			statLUKPos = CS_DETAIL_LUK;
+		}
+		else
+		{
+			jobPos -= screen_adj;
+			namePos -= Point<int16_t>(0, 5);
+			statDEXPos -= screen_adj;
+			statINTPos -= screen_adj;
+			statLUKPos -= screen_adj;
+			statSTRPos -= screen_adj;
+		}
+
+		// 命中区覆盖整页 3 槽（桥面统一 Y）；高度用占用槽外框。
 		for (size_t i = 0; i < PAGESIZE; i++)
 			buttons[Buttons::CHARACTER_SLOT0 + i] = std::make_unique<AreaButton>(
 				get_character_slot_pos(i, true),
-				avatarRB - avatarLT + Point<int16_t>(0, CS_SLOT_INSET_OCCUPIED - CS_SLOT_INSET_EMPTY));
+				Point<int16_t>(CS_SLOT_W, CS_SLOT_H_OCCUPIED));
 
 		if (require_pic == 0 || !show_pic_btns)
 		{
@@ -272,10 +351,9 @@ namespace ms
 
 		if (Configuration::get().get_auto_login())
 		{
-			SelectCharPicPacket(
-				Configuration::get().get_auto_pic(),
-				Configuration::get().get_auto_cid()
-			).dispatch();
+			// opt-in 自动进游戏：挂起，首帧调 button_pressed(BtSelect)（与手点「开始游戏」同一路径），
+			// 避免构造期 UI 未就绪；require_pic==2 时直接 SelectCharPacket 进图。
+			auto_enter_pending = true;
 		}
 
 	}
@@ -286,8 +364,12 @@ namespace ms
 
 		version.draw(position + version_pos - Point<int16_t>(0, 5));
 
-		charslot.draw(position + charslot_pos - Point<int16_t>(0, charslot_y));
-		charslotlabel.draw(position + charslot_pos + Point<int16_t>(113, 5 - charslot_y));
+		// BeiDou 无 charSlot/pageNew 布局节点时贴图为空，跳过避免左上角堆叠。
+		if (charslot.is_valid())
+		{
+			charslot.draw(position + charslot_pos - Point<int16_t>(0, charslot_y));
+			charslotlabel.draw(position + charslot_pos + Point<int16_t>(113, 5 - charslot_y));
+		}
 
 		for (Sprite sprite : world_sprites)
 			sprite.draw(position, inter);
@@ -309,33 +391,16 @@ namespace ms
 			if (index < characters_count)
 			{
 				// 统一以 position 为唯一参照原点：槽位局部坐标 + position。
-				// （get_character_slot_pos 返回局部坐标；按钮的 bounds() 由 UIElement
-				//   负责叠加 position，故那里不能重复加。）
 				Point<int16_t> charpos = position + get_character_slot_pos(i, true);
 				DrawArgument chararg = DrawArgument(charpos, flip_character);
 
-				nametags[index].draw(charpos + Point<int16_t>(2, 1));
+				nametags[index].draw(charpos + Point<int16_t>(2, 25));
 
 				const StatsEntry& character_stats = characters[index].stats;
 
+				// 选中光：先脚底光柱，再角色，后身光（避免光柱盖住全身 / 从页底升起）。
 				if (selectedslot)
-				{
-					selectedslot_effect[1].draw(charpos + Point<int16_t>(-5, 16), inter);
-					charinfo.draw(position);
-
-					std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-					int8_t lvy = 19;
-					int16_t lvx = levelset.draw("201", position + levelPos + Point<int16_t>(-1, lvy));
-
-					levelset.draw('l', position + levelPos + Point<int16_t>(-lvx - 3, lvy - 1));
-					namelabel.draw(position + namePos);
-
-					for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
-					{
-						Point<int16_t> labelpos = position + get_infolabel_pos(i);
-						infolabels[i].draw(labelpos);
-					}
-				}
+					selectedslot_effect[1].draw(charpos + CS_FX_FOOT, inter);
 
 				uint8_t j = 0;
 				uint16_t job = character_stats.stats[MapleStat::Id::JOB];
@@ -353,10 +418,36 @@ namespace ms
 				charlooks[index].draw(chararg, inter);
 
 				if (selectedslot)
-					selectedslot_effect[0].draw(charpos + Point<int16_t>(-5, -298), inter);
+				{
+					selectedslot_effect[0].draw(charpos + CS_FX_BODY, inter);
+
+					// BeiDou：charInfo1 底板 + 数值；先画底板保证背景可见。
+					if (charinfo.is_valid())
+					{
+						Point<int16_t> detail_pos = charpos + CS_CHARINFO_OFF;
+						charinfo.draw(detail_pos);
+
+						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
+						levelset.draw(levelstr, detail_pos + levelPos);
+
+						namelabel.draw(detail_pos + namePos);
+
+						for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
+						{
+							Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
+							infolabels[li].draw(labelpos);
+						}
+					}
+					else if (LoginBackground::get().available())
+					{
+						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
+						levelset.draw(levelstr, charpos + Point<int16_t>(0, -72));
+					}
+				}
 			}
-			else if (i < slots)
+			else if (i < PAGESIZE)
 			{
+				// 一页固定画满 3 个影/台（即使服务端 slots < 3，也保证桥上三影观感）。
 				Point<int16_t> emptyslotpos = position + get_character_slot_pos(i);
 
 				emptyslot_effect.draw(emptyslotpos, inter);
@@ -366,7 +457,7 @@ namespace ms
 
 		UIElement::draw_buttons(inter);
 
-		if (tab_active)
+		if (tab_active && tab.is_valid())
 			tab.draw(position + tab_pos[tab_index] + Point<int16_t>(0, tab_move_pos));
 
 		if (burning_character)
@@ -375,16 +466,26 @@ namespace ms
 			burning_count.draw(position + BtNewPos + burning_numPos + Point<int16_t>(8, -4));
 		}
 
-		pagebase.draw(position + pagepos);
-		pagenumber.draw(current.substr(0, 1), position + pagepos + Point<int16_t>(pagenumberpos[0]));
-		pagenumber.draw(current.substr(1, 1), position + pagepos + Point<int16_t>(pagenumberpos[1]));
-		pagenumber.draw(total.substr(0, 1), position + pagepos + Point<int16_t>(pagenumberpos[2]));
-		pagenumber.draw(total.substr(1, 1), position + pagepos + Point<int16_t>(pagenumberpos[3]));
+		if (pagebase.is_valid())
+		{
+			pagebase.draw(position + pagepos);
+			pagenumber.draw(current.substr(0, 1), position + pagepos + Point<int16_t>(pagenumberpos[0]));
+			pagenumber.draw(current.substr(1, 1), position + pagepos + Point<int16_t>(pagenumberpos[1]));
+			pagenumber.draw(total.substr(0, 1), position + pagepos + Point<int16_t>(pagenumberpos[2]));
+			pagenumber.draw(total.substr(1, 1), position + pagepos + Point<int16_t>(pagenumberpos[3]));
+		}
 	}
 
 	void UICharSelect::update()
 	{
 		UIElement::update();
+
+		// 首帧触发挂起的自动进游戏（与手点「开始游戏」一致）。
+		if (auto_enter_pending)
+		{
+			auto_enter_pending = false;
+			button_pressed(Buttons::BtSelect);
+		}
 
 		int16_t timestep_max = CHARSLOT_Y_MAX * Constants::TIMESTEP;
 
@@ -435,11 +536,27 @@ namespace ms
 
 	void UICharSelect::doubleclick(Point<int16_t> cursorpos)
 	{
-		uint16_t button_index = selected_character + Buttons::CHARACTER_SLOT0;
+		// Slot buttons are page-local (CHARACTER_SLOT0 .. +PAGESIZE-1).
+		// selected_character is absolute; convert to the on-page slot index.
+		if (selected_character < selected_page * PAGESIZE)
+			return;
+
+		uint16_t slot = static_cast<uint16_t>(selected_character - selected_page * PAGESIZE);
+
+		if (slot >= PAGESIZE)
+			return;
+
+		uint16_t button_index = Buttons::CHARACTER_SLOT0 + slot;
 		auto& btit = buttons[button_index];
 
-		if (btit->is_active() && btit->bounds(position).contains(cursorpos) && btit->get_state() == Button::State::NORMAL && button_index >= Buttons::CHARACTER_SLOT0)
-			button_pressed(Buttons::BtSelect);
+		// 选中后槽位常为 MOUSEOVER，双击第二下若要求 NORMAL 会永远进不了游戏。
+		if (btit && btit->is_active() && btit->bounds(position).contains(cursorpos))
+		{
+			Button::State st = btit->get_state();
+
+			if (st == Button::State::NORMAL || st == Button::State::MOUSEOVER || st == Button::State::PRESSED)
+				button_pressed(Buttons::BtSelect);
+		}
 	}
 
 	Cursor::State UICharSelect::send_cursor(bool clicked, Point<int16_t> cursorpos)
@@ -868,7 +985,7 @@ namespace ms
 			{
 				std::string url = Configuration::get().get_resetpic();
 
-				ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+				SDL_OpenURL(url.c_str());
 				break;
 			}
 			case Buttons::BtCharacter:
@@ -1021,20 +1138,14 @@ namespace ms
 		//   3) 故改用实测反推：i = 0/1/2 三个槽位的「按帧内 -220 系列预测」与实测落点
 		//      差值**恒为 +140**（295/425/555 对 155/285/415），说明两坐标系之间是
 		//      **刚性平移**而非缩放或非线性，因此可安全固化为本常量。
-		static constexpr int16_t CS_CANVAS_TO_FRAME_X = 140;
+		static constexpr int16_t CS_CANVAS_TO_FRAME_X = 330;
 		static constexpr int16_t SLOT_X0 = -220 + CS_CANVAS_TO_FRAME_X;
-		// 无“行距”概念：参考版 CUICharDetail ctor 的 y 只与占用状态有关、**与索引无关**，
-		// 且每页固定 3 个槽（见 PAGESIZE 注释），故槽位只按行内索引 i 排布，不再叠加行偏移。
-		// （此前按 index/3 * 行距 叠加属臆造：参考版并无该行为，且多行时第 3 行起会落到屏幕外。）
-
-		// 节点 avatarSpace/avatarLT 在北斗数据里缺失（实测 <absent>），退化为 (0,0)
-		// 会让所有槽位重叠；故按 IDA 字面量取帧内绝对坐标：
-		// CUICharDetail ctor 0x602960 -> x = 130 * (slot % 3) - 220
-		// 即 3 槽依次位于 -220 / -90 / +40（step 恒为 130）。
-		const int16_t inset = occupied ? CS_SLOT_INSET_OCCUPIED : CS_SLOT_INSET_EMPTY;
+		// 占用/空槽共用桥面 Y：CS_LIST_T + 空槽 inset + DY（正值下移到红框桥面）。
+		(void)occupied;
+		const int16_t slot_y = static_cast<int16_t>(CS_LIST_T + CS_SLOT_INSET_BRIDGE + CS_SLOT_BRIDGE_DY);
 		return Point<int16_t>(
 			static_cast<int16_t>(SLOT_X0 + SLOT_STEP_X * (index % SLOTS_PER_ROW)),
-			static_cast<int16_t>(CS_LIST_T + inset)
+			slot_y
 		);
 	}
 

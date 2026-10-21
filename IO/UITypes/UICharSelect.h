@@ -151,6 +151,10 @@ namespace ms
 		bool burning_character;
 		bool show_pic_btns;
 
+		// opt-in 自动进游戏挂起标志：自动登录到达选角后，首帧调 button_pressed(BtSelect)，
+		// 与手点「开始游戏」同一路径（require_pic==2 时直接 SelectCharPacket 进图）。
+		bool auto_enter_pending = false;
+
 		enum InfoLabel : uint8_t
 		{
 			JOB,

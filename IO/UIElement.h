@@ -66,6 +66,7 @@ namespace ms
 			CHATRANK,
 			JOYPAD,
 			EVENT,
+			DAILYGIFT,
 			KEYCONFIG,
 			OPTIONMENU,
 			QUIT,
@@ -78,6 +79,7 @@ namespace ms
 
 		virtual void draw(float inter) const;
 		virtual void update();
+		// 视口变化时由 UIState 广播；登录模态默认可 override 为 center_on_screen()。
 		virtual void update_screen(int16_t new_width, int16_t new_height) {}
 
 		void makeactive();
@@ -105,6 +107,10 @@ namespace ms
 
 		void draw_sprites(float alpha) const;
 		void draw_buttons(float alpha) const;
+
+		// 用已设置的 dimension，按当前 Constants 视口把 position 置为屏幕居中。
+		// 登录弹窗：子控件用面板局部坐标，禁止再写死屏幕绝对坐标。
+		void center_on_screen();
 
 		std::map<uint16_t, std::unique_ptr<Button>> buttons;
 		std::vector<Sprite> sprites;

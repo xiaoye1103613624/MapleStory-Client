@@ -23,6 +23,7 @@
 
 #include "../Components/MapleButton.h"
 
+#include "../../MapleStory.h"
 #include "../../Net/Packets/LoginPackets.h"
 
 #ifdef USE_NX
@@ -31,25 +32,51 @@
 
 namespace ms
 {
+	namespace
+	{
+		// Login.img/TOS/0 = 431x426，origin (0,0)。下列偏移相对面板左上（局部坐标）。
+		// 烘焙按钮槽约 (268,400)/(342,400)；BtOk/BtCancel 为 75x32，顶边取 388。
+		constexpr int16_t TOS_TEXT_X = 36;
+		constexpr int16_t TOS_TEXT_Y = 50;
+		constexpr int16_t TOS_TEXT_W = 340;
+		constexpr int16_t TOS_CLIP_MIN = 50;
+		constexpr int16_t TOS_CLIP_LEN = 316;
+		constexpr int16_t TOS_SLIDER_X = 384;
+		constexpr int16_t TOS_SLIDER_Y0 = 55;
+		constexpr int16_t TOS_SLIDER_Y1 = 360;
+		constexpr int16_t TOS_BT_OK_X = 268;
+		constexpr int16_t TOS_BT_CANCEL_X = 342;
+		constexpr int16_t TOS_BT_Y = 388;
+	}
+
 	UITermsOfService::UITermsOfService(std::function<void()> oh) : okhandler(oh), offset(0), unit_rows(1)
 	{
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node TOS = Login["TOS"];
 
-		sprites.emplace_back(TOS, Point<int16_t>(399, 250));
+		// 面板锚在局部 (0,0)；屏幕位置由 center_on_screen 按视口计算，适配多分辨率。
+		sprites.emplace_back(TOS);
 
-		buttons[Buttons::OK] = std::make_unique<MapleButton>(Login["BtOk"], Point<int16_t>(483, 425));
-		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(Login["BtCancel"], Point<int16_t>(557, 425));
+		buttons[Buttons::OK] = std::make_unique<MapleButton>(
+			Login["BtOk"],
+			Point<int16_t>(TOS_BT_OK_X, TOS_BT_Y)
+		);
+		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(
+			Login["BtCancel"],
+			Point<int16_t>(TOS_BT_CANCEL_X, TOS_BT_Y)
+		);
 
 		EULA = nl::nx::String["TrialEULA.img"]["EULA"];
 		max_rows = EULA.size();
-		
-		text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "", 340, true, 2);
 
-		int16_t slider_y = 77;
+		text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "", TOS_TEXT_W, true, 2);
 
 		slider = Slider(
-			Slider::Type::LINE_PUNGA, Range<int16_t>(slider_y, slider_y + 305), 574, unit_rows, max_rows,
+			Slider::Type::LINE_PUNGA,
+			Range<int16_t>(TOS_SLIDER_Y0, TOS_SLIDER_Y1),
+			TOS_SLIDER_X,
+			unit_rows,
+			max_rows,
 			[&](bool upwards)
 			{
 				int16_t shift = upwards ? -1 : 1;
@@ -66,17 +93,27 @@ namespace ms
 
 		update_accept(offset);
 
-		position = Point<int16_t>(0, 10);
 		dimension = Texture(TOS).get_dimensions();
+		center_on_screen();
+
+		LOG(LOG_INFO, "UITermsOfService open dim=" << dimension.x() << "x" << dimension.y()
+			<< " pos=(" << position.x() << "," << position.y() << ")");
 	}
 
 	void UITermsOfService::draw(float inter) const
 	{
 		UIElement::draw(inter);
 
-		int16_t range_min = 80;
-		text.draw(position + Point<int16_t>(226, 84), Range<int16_t>(range_min, range_min + 316));
+		text.draw(
+			position + Point<int16_t>(TOS_TEXT_X, TOS_TEXT_Y),
+			Range<int16_t>(TOS_CLIP_MIN, TOS_CLIP_MIN + TOS_CLIP_LEN)
+		);
 		slider.draw(position);
+	}
+
+	void UITermsOfService::update_screen(int16_t, int16_t)
+	{
+		center_on_screen();
 	}
 
 	Cursor::State UITermsOfService::send_cursor(bool clicked, Point<int16_t> cursorpos)
@@ -135,7 +172,7 @@ namespace ms
 			int32_t i = std::stoi(name);
 
 			if (i >= offset && i <= offset + 5)
-				shownText += text;
+				shownText += text.get_string();
 		}
 
 		text.change_text(shownText);

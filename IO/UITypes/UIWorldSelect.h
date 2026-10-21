@@ -22,6 +22,7 @@
 #include "../Components/ChatBalloon.h"
 #include "../Components/Gauge.h"
 
+#include "../../Graphics/Animation.h"
 #include "../../Net/Login.h"
 
 namespace ms
@@ -44,6 +45,7 @@ namespace ms
 		UIWorldSelect();
 
 		void draw(float alpha) const override;
+		void update() override;
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
@@ -69,6 +71,12 @@ namespace ms
 		void enter_world();
 		void clear_selected_world();
 		uint16_t get_next_world(uint16_t id, bool upward);
+
+		/// Final rest position of channel panel center (after slide-in).
+		Point<int16_t> channel_panel_center() const;
+		/// Center used for draw/hit while slide animates (starts above rest).
+		Point<int16_t> channel_panel_visual_center() const;
+		void layout_channel_controls(Point<int16_t> panel_center);
 
 		/// <summary>
 		/// 取第 index 个世界按钮（0 起）；索引越界返回 nullptr，并做**限频告警**。
@@ -109,7 +117,10 @@ namespace ms
 			BtChannel0 = BtWorld0 + WORLD_BUTTON_COUNT,
 			BtGoWorld = BtChannel0 + CHANNEL_BUTTON_COUNT,
 			BtRegion,
-			BtExit
+			BtExit,
+			BtViewChoice,
+			BtViewAll,
+			BtStart
 		};
 
 		/// If ever changing order, check the WZ file.
@@ -157,18 +168,32 @@ namespace ms
 		Point<int16_t> channelsrc_pos;
 		ChatBalloonHorizontal chatballoon;
 
-		uint8_t worldid;
-		uint8_t channelid;
+		// worldid/channelid 必须默认初始化：此前两者均无初始化器，UIWorldSelect 构造后
+		// 为不确定值；draw_world() 又会把"越界值"归零成 channelid=0（预选 CH.0），
+		// 导致用户首点 CH.1(index 0) 即命中 selectedch==channelid → 直接 enter_world
+		// 进游戏（表现为"选中频道就进游戏"，跳过选角色界面）。
+		// 0xFF = 未预选任何频道，与 clear_selected_world() 的语义一致。
+		uint8_t worldid = 0;
+		uint8_t channelid = 0xFF;
 		uint8_t worldcount;
+
+		/// 0 = just selected (panel above); 1 = fully slid to rest. 250ms lerp.
+		float channel_slide;
+		/// 公告气球滑入进度（与 channel_slide 同拍）。
+		float notice_slide;
+
+		/// Login.img/WorldSelect/scroll/0 卷轴打开动画。
+		Animation scroll_open;
+		bool scroll_playing;
+		bool scroll_has_anim;
 
 		std::vector<World> worlds;
 		std::vector<Texture> world_textures;
 		std::map<uint16_t, uint16_t> world_map;
 
 		std::vector<Sprite> flag_sprites;
-		Texture worldNotice;
-		Texture rebootNotice;
-		Text worldNoticeMessage;
+		LoginProcessNotice world_notice;
+		Sprite step_channel;
 		Gauge channel_gauge[Buttons::BtGoWorld - Buttons::BtChannel0];
 
 		bool world_selected;

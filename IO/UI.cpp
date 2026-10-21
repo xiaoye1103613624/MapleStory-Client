@@ -227,7 +227,13 @@ namespace ms
 			{
 				bool shift = is_key_down[keyboard.leftshiftcode()] || is_key_down[keyboard.rightshiftcode()] || caps_lock_enabled;
 				Keyboard::Mapping mapping = keyboard.get_text_mapping(keycode, shift);
-				focusedtextfield->send_key(mapping.type, mapping.action, pressed);
+
+				// Android soft-keyboard: chars arrive via TEXT_INPUT; skip KEY TEXT
+				// to avoid double-insert. Desktop uses KEY_DOWN ASCII (IME disabled).
+				if (mapping.type == KeyType::Id::TEXT && Window::get().text_input_active())
+					;
+				else
+					focusedtextfield->send_key(mapping.type, mapping.action, pressed);
 			}
 		}
 		else
@@ -326,6 +332,7 @@ namespace ms
 					types.emplace_back(UIElement::Type::KEYCONFIG);
 					types.emplace_back(UIElement::Type::CHAT);
 					types.emplace_back(UIElement::Type::EVENT);
+					types.emplace_back(UIElement::Type::DAILYGIFT);
 					types.emplace_back(UIElement::Type::STATSINFO);
 					types.emplace_back(UIElement::Type::ITEMINVENTORY);
 					types.emplace_back(UIElement::Type::EQUIPINVENTORY);
@@ -393,20 +400,43 @@ namespace ms
 		scrollingnotice.setnotice(notice);
 	}
 
+	void UI::send_text(const std::string& text)
+	{
+		if (!focusedtextfield || text.empty())
+			return;
+
+		// FreeType atlas only has ASCII 32–127; drop anything else so IME
+		// commits cannot push out-of-range bytes into Font::chars[].
+		std::string filtered;
+		filtered.reserve(text.size());
+
+		for (unsigned char c : text)
+		{
+			if (c >= 32 && c < 128)
+				filtered.push_back(static_cast<char>(c));
+		}
+
+		if (!filtered.empty())
+			focusedtextfield->add_string(filtered);
+	}
+
 	void UI::focus_textfield(Textfield* tofocus)
 	{
-		if (focusedtextfield)
+		if (focusedtextfield && focusedtextfield.get() != tofocus)
 			focusedtextfield->set_state(Textfield::State::NORMAL);
 
 		focusedtextfield = tofocus;
+
+		if (focusedtextfield)
+			Window::get().begin_ascii_text_input();
 	}
 
 	void UI::remove_textfield()
 	{
-		if (focusedtextfield)
-			focusedtextfield->set_state(Textfield::State::NORMAL);
-
+		// Clear first so set_state(DISABLED) → remove_textfield cannot bounce
+		// the same field back to NORMAL (that used to undo DISABLED).
 		focusedtextfield = {};
+		Window::get().end_ascii_text_input();
 	}
 
 	void UI::drag_icon(Icon* icon)

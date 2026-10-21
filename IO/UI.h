@@ -57,6 +57,8 @@ namespace ms
 		void rightclick();
 		void doubleclick();
 		void send_key(int32_t keycode, bool pressed);
+		/// Insert UTF-8 / ASCII from SDL_EVENT_TEXT_INPUT into the focused field.
+		void send_text(const std::string& text);
 
 		void set_scrollnotice(const std::string& notice);
 		void focus_textfield(Textfield* textfield);

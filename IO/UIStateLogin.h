@@ -62,6 +62,10 @@ namespace ms
 		EnumMap<UIElement::Type, UIElement::UPtr, UIElement::Type::NUM_TYPES> elements;
 		UIElement::Type focused;
 
+		// 用于检测视口变化，向登录弹窗广播 update_screen（与 UIStateGame 对齐）。
+		int16_t VWIDTH;
+		int16_t VHEIGHT;
+
 		TextTooltip tetooltip;
 		Optional<Tooltip> tooltip;
 		Tooltip::Parent tooltipparent;

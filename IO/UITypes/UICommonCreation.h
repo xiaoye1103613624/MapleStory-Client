@@ -53,10 +53,15 @@ namespace ms
 		std::vector<Sprite> sprites_lookboard;
 
 	private:
+		void init_modern(nl::node Login, nl::node Common);
+		void init_classic(nl::node Login, nl::node Common);
 		void randomize_look();
 		void load_char_look();
+		void load_classic_char_look();
+		void load_classic_gender_pool(bool female, nl::node gender_node);
 		void enable_char_look();
 		void disable_char_look();
+		void set_classic_yes_no(uint8_t step);
 		void check_names();
 
 		const std::string& get_equipname(EquipSlot::Id slot) const;
@@ -106,6 +111,7 @@ namespace ms
 			BtWeaponRight,
 			BtGenderMale,
 			BtGenderFemale,
+			BtDice,
 			BtHairSelect0,
 			BtHairSelect1,
 			BtHairSelect2,
@@ -144,6 +150,7 @@ namespace ms
 		size_t hairSelectSize;
 		Randomizer randomizer;
 
+		bool classic_mode;
 		bool female;
 		bool genderSelected;
 		bool charLookSelected;
@@ -152,6 +159,16 @@ namespace ms
 		bool choosableGender;
 		std::string classType;
 		std::string className;
+
+		Point<int16_t> classic_yes_gender;
+		Point<int16_t> classic_no_gender;
+		Point<int16_t> classic_yes_avatar;
+		Point<int16_t> classic_no_avatar;
+		Point<int16_t> classic_yes_name;
+		Point<int16_t> classic_no_name;
+		Texture classic_gender_male;
+		Texture classic_gender_female;
+		Sprite classic_dice;
 
 		Charset createLimitNum;
 		Point<int16_t> createLimitPos;

@@ -20,6 +20,8 @@
 #include "UILoginNotice.h"
 #include "UILoginWait.h"
 
+#include "../../Net/Session.h"
+
 #include "../UI.h"
 
 #include "../LoginBackground.h"
@@ -29,11 +31,12 @@
 
 #include "../../Audio/Audio.h"
 
+#include "../../Configuration.h"
 #include "../../Net/Packets/LoginPackets.h"
 
-#include <windows.h>
 #include <cstring>
 #include <cstdint>
+#include <SDL3/SDL.h>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -49,9 +52,20 @@ namespace ms
 			)
 		), title_pos(Point<int16_t>(344, 246)), nexon(false)
 	{
-		std::string LoginMusicNewtro = Configuration::get().get_login_music_newtro();
+		// 登录 BGM：优先 Newtro（高版本），缺失时回退经典 BgmUI.img/Title（BeiDou/v83）。
+		std::string login_bgm = Configuration::get().get_login_music_newtro();
 
-		Music(LoginMusicNewtro).play();
+#ifdef USE_NX
+		// Newtro 仅在高版本 Sound002；BeiDou/v83 用经典 Title。
+		// 用 data_type() 判断，避免依赖完整 nl::audio 定义，也避开 node::data 嵌套类型歧义。
+		if (nl::nx::Sound002.resolve(login_bgm).data_type() != nl::node::type::audio
+			&& nl::nx::Sound.resolve(login_bgm).data_type() != nl::node::type::audio)
+		{
+			login_bgm = Configuration::get().get_login_music();
+		}
+#endif
+
+		Music(login_bgm).play();
 
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
@@ -113,27 +127,38 @@ namespace ms
 
 		if (bedou)
 		{
-			// 告示牌屏幕左上角作为面板基准（与地图中 signboard 绘制锚点一致：
-			// screen_topleft = map_pos + viewpos - origin），控件相对它摆放即与告示牌对齐。
+			// 告示牌屏幕左上角作为基准（与地图中 signboard 的绘制锚点完全一致：
+			// screen_topleft = map_pos + viewpos - origin）。
 			Texture sign_tex(nl::nx::Map["Obj"]["login.img"]["Title"]["signboard"]["0"]["0"]);
 			Point<int16_t> sign_origin = sign_tex.get_origin();
 			Point<int16_t> signboard_map_pos(137, 21);
 			Point<int16_t> sign_topleft = signboard_map_pos + LoginBackground::get().get_viewpos() - sign_origin;
 
-			// 面板原点 = 告示牌左上角，后续按钮偏移以此为基准。
-			panel_pos = sign_topleft;
+			// CUITitle 窗口原点相对告示牌左上角的偏移。
+			//
+			// IDA（CUITitle::OnCreate）给出的按钮/输入框坐标都是"相对 CUITitle 窗口"的，
+			// 而该窗口自身的屏幕位置在反编译里未确定（见 notes/ida-coords.md §6 未解项），
+			// 故此处用参考客户端 1280x720 截图反推：把木牌位图与 7 个按钮位图都做
+			// 归一化互相关定位后，"按钮 - 木牌左上角"与 IDA 偏移的差值恒为 (58, 16)
+			// （BtLogin/BtLoginIDSave/BtLoginIDLost/BtPasswdLost/BtNew/BtHomePage/BtQuit
+			// 逐个一致，匹配度 ncc≈1.000）；保存账号勾选框（窗口内 12,73）实测同样吻合。
+			const Point<int16_t> TITLE_WINDOW_OFFSET(58, 16);
 
-			// 输入框按原版 CUITitle::OnCreate 偏移（账号 67,12 / 密码 67,40）。
-			account_pos = sign_topleft + Point<int16_t>(67, 12);
-			password_pos = sign_topleft + Point<int16_t>(67, 40);
+			// 面板原点 = CUITitle 窗口原点，后续按钮/输入框偏移以此为基准。
+			// 这样输入框正好落在木牌自带的两个内嵌输入区上（无需另画白底方框位置偏移）。
+			panel_pos = sign_topleft + TITLE_WINDOW_OFFSET;
+
+			// 输入框按原版 CUITitle::OnCreate 偏移（账号 67,12 / 密码 67,40，尺寸 132x15 / 120x15）。
+			account_pos = panel_pos + Point<int16_t>(67, 12);
+			password_pos = panel_pos + Point<int16_t>(67, 40);
 
 			// 记住 ID 勾选框（位于保存按钮左侧）。
-			check_pos = sign_topleft + Point<int16_t>(12, 73);
+			check_pos = panel_pos + Point<int16_t>(12, 73);
 
 			// 按钮按 IDA 真实偏移；叠加贴图 origin 使贴图左上角对齐原窗口坐标。
 			auto button_pos = [&](nl::node btn, int16_t x, int16_t y) -> Point<int16_t> {
 				Texture tex(btn["normal"]["0"]);
-				return sign_topleft + Point<int16_t>(x, y) + tex.get_origin();
+				return panel_pos + Point<int16_t>(x, y) + tex.get_origin();
 			};
 			bpos_login = button_pos(Title_new["BtLogin"], 213, -5);
 			bpos_save = button_pos(Title_new["BtLoginIDSave"], 37, 74);
@@ -199,10 +224,23 @@ namespace ms
 		account_src_dim = account_src.get_dimensions();
 
 		// BeiDou 数据缺少输入框贴图，按原版 CUITitle 输入区尺寸兜底 (132x15)。
+		// 文字略上移，避免在木牌雕刻槽内显得贴底；不另铺白底（木牌自带输入区）。
 		if (bedou)
+		{
 			account_src_dim = Point<int16_t>(132, 15);
+			textfield_pos = account_pos + Point<int16_t>(2, 1);
+		}
 
-		account = Textfield(Text::Font::A13M, Text::Alignment::LEFT, Color::Name::JAMBALAYA, Rectangle<int16_t>(textfield_pos, textfield_pos + account_src_dim), TEXTFIELD_LIMIT);
+		// BeiDou carved wood slots are only 15px tall. A11M (linespace ≈15)
+		// fits the trough; A13M baseline sat below the slot so glyphs vanished.
+		account = Textfield(
+			bedou ? Text::Font::A11M : Text::Font::A13M,
+			Text::Alignment::LEFT,
+			bedou ? Color::Name::WHITE : Color::Name::JAMBALAYA,
+			Rectangle<int16_t>(textfield_pos, textfield_pos + account_src_dim),
+			TEXTFIELD_LIMIT,
+			bedou ? static_cast<int16_t>(10) : static_cast<int16_t>(12)
+		);
 
 		account.set_key_callback
 		(
@@ -235,9 +273,19 @@ namespace ms
 		password_src_dim = password_src.get_dimensions();
 
 		if (bedou)
+		{
 			password_src_dim = Point<int16_t>(120, 15);
+			textfield_pos = password_pos + Point<int16_t>(2, 1);
+		}
 
-		password = Textfield(Text::Font::A13M, Text::Alignment::LEFT, Color::Name::JAMBALAYA, Rectangle<int16_t>(textfield_pos, textfield_pos + password_src_dim), TEXTFIELD_LIMIT);
+		password = Textfield(
+			bedou ? Text::Font::A11M : Text::Font::A13M,
+			Text::Alignment::LEFT,
+			bedou ? Color::Name::WHITE : Color::Name::JAMBALAYA,
+			Rectangle<int16_t>(textfield_pos, textfield_pos + password_src_dim),
+			TEXTFIELD_LIMIT,
+			bedou ? static_cast<int16_t>(10) : static_cast<int16_t>(12)
+		);
 
 		password.set_key_callback
 		(
@@ -258,16 +306,14 @@ namespace ms
 
 		password.set_cryptchar('*');
 		password_bg = password_src;
-#pragma endregion
 
-		// BeiDou 数据缺少输入框贴图：用不透明白底 + 深色边框补齐，保证可见可点。
+		// BeiDou 槽高 15：Text 布局已自带 linespace 基线，勿再 +11，否则字形落在槽外只剩竖线伪影。
 		if (bedou)
 		{
-			account_border = ColorBox(account_src_dim.x() + 2, account_src_dim.y() + 2, Color::Name::DARKGREY, 1.0f);
-			account_field = ColorBox(account_src_dim.x(), account_src_dim.y(), Color::Name::WHITE, 1.0f);
-			password_border = ColorBox(password_src_dim.x() + 2, password_src_dim.y() + 2, Color::Name::DARKGREY, 1.0f);
-			password_field = ColorBox(password_src_dim.x(), password_src_dim.y(), Color::Name::WHITE, 1.0f);
+			account.set_text_shift(Point<int16_t>(2, 0));
+			password.set_text_shift(Point<int16_t>(2, 0));
 		}
+#pragma endregion
 
 		saveid = Setting<SaveLogin>::get().load();
 
@@ -283,15 +329,12 @@ namespace ms
 
 		if (Configuration::get().get_auto_login())
 		{
-			UI::get().emplace<UILoginWait>([]() {});
-
-			auto loginwait = UI::get().get_element<UILoginWait>();
-
-			if (loginwait && loginwait->is_active())
-				LoginPacket(
-					Configuration::get().get_auto_acc(),
-					Configuration::get().get_auto_pass()
-				).dispatch();
+			// opt-in 自动登录：构造期只预填账号密码并挂起，推迟到首个 update 帧再走完整 login()
+			// （与手动点「连接」同一就绪路径）。避免在 UI 构造期 emplace<UILoginWait>/dispatch 因
+			// UI/Session 尚未就绪而丢包、收不到登录响应。
+			account.change_text(Configuration::get().get_auto_acc());
+			password.change_text(Configuration::get().get_auto_pass());
+			auto_login_pending = true;
 		}
 	}
 
@@ -307,11 +350,7 @@ namespace ms
 
 		if (bedou)
 		{
-			account_border.draw(position + account_pos - Point<int16_t>(1, 1));
-			account_field.draw(position + account_pos);
-			password_border.draw(position + password_pos - Point<int16_t>(1, 1));
-			password_field.draw(position + password_pos);
-
+			// 基线已由 set_text_shift 处理；此处只平移整框，勿再负向 nudge 光标。
 			account.draw(position);
 			password.draw(position);
 		}
@@ -344,6 +383,13 @@ namespace ms
 	{
 		UIElement::update();
 
+		// 首个 update 帧（UI 已就绪）触发挂起的自动登录，走与手动点击一致的 login()。
+		if (auto_login_pending)
+		{
+			auto_login_pending = false;
+			login();
+		}
+
 		account.update();
 		password.update();
 	}
@@ -355,6 +401,15 @@ namespace ms
 
 		std::string account_text = account.get_text();
 		std::string password_text = password.get_text();
+
+		// Persist the typed ID when "save account" is checked — do not wait for
+		// a successful login packet (that path used to leave login.account empty
+		// whenever login failed or the server name field was blank).
+		if (saveid && !account_text.empty())
+		{
+			Setting<DefaultAccount>::get().save(account_text);
+			Configuration::get().save();
+		}
 
 		std::function<void()> okhandler = [&, password_text]()
 		{
@@ -376,6 +431,16 @@ namespace ms
 		if (password_text.length() <= 4)
 		{
 			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::WRONG_PASSWORD, okhandler);
+			return;
+		}
+
+		// Cancel / 回首页后可能断线；未连接时发包会被静默丢弃 → 一直 Loading。
+		if (!Session::get().is_connected())
+			Session::get().reconnect();
+
+		if (!Session::get().is_connected())
+		{
+			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNABLE_TO_LOGIN_WITH_IP, okhandler);
 			return;
 		}
 
@@ -415,7 +480,7 @@ namespace ms
 				return;
 		}
 
-		ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+		SDL_OpenURL(url.c_str());
 	}
 
 	Button::State UILogin::button_pressed(uint16_t id)
@@ -442,6 +507,14 @@ namespace ms
 				saveid = !saveid;
 
 				Setting<SaveLogin>::get().save(saveid);
+
+				// Flush checkbox (and clear stored ID when turning save off).
+				if (!saveid)
+					Setting<DefaultAccount>::get().save("");
+				else if (!account.get_text().empty())
+					Setting<DefaultAccount>::get().save(account.get_text());
+
+				Configuration::get().save();
 
 				return Button::State::MOUSEOVER;
 			}

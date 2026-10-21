@@ -23,15 +23,19 @@
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
+#include "../LoginBackground.h"
 
+#include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Configuration.h"
+#include "../../Constants.h"
 
 #include "../../Audio/Audio.h"
 #include "../../Data/ItemData.h"
 
 #include "../../Net/Packets/CharCreationPackets.h"
+#include "../../Util/LoginUiAssets.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -39,15 +43,38 @@
 
 namespace ms
 {
-	UICommonCreation::UICommonCreation(const std::string& c) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)), classType(c), className(class_map[c]), genderSelected(false), charLookSelected(false), charNameSelected(false), newCharNameDisabled(true), female(false)
+	UICommonCreation::UICommonCreation(const std::string& c) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
+		classic_mode(false), classType(c), className(class_map[c]), genderSelected(false), charLookSelected(false),
+		charNameSelected(false), newCharNameDisabled(true), female(false), choosableGender(true),
+		vCanvasCount(0), genderTopHeight(0), boardMidHeight(0), hairSelectSize(0),
+		faceIndex(0), hairStyleIndex(0), hairColorEnabled(false), hairColorIndex(0), skinColorIndex(0),
+		topIndex(0), capeEnabled(false), capeIndex(0), bottomEnabled(false), bottomIndex(0),
+		shoeIndex(0), weaponIndex(0)
 	{
-		load_char_look();
+		nl::node Login = nl::nx::UI["Login.img"];
+		nl::node Common = Login["Common"];
 
+		if (LoginUiAssets::use_classic_creation())
+		{
+			classic_mode = true;
+			load_classic_char_look();
+			init_classic(Login, Common);
+			LoginUiAssets::log_info(std::string("[Creation] mode=classic class=") + classType);
+		}
+		else
+		{
+			classic_mode = false;
+			load_char_look();
+			init_modern(Login, Common);
+			LoginUiAssets::log_info(std::string("[Creation] mode=modern class=") + classType);
+		}
+	}
+
+	void UICommonCreation::init_modern(nl::node Login, nl::node Common)
+	{
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
 
-		nl::node Login = nl::nx::UI["Login.img"];
-		nl::node Common = Login["Common"];
 		version_pos = Common["version"]["pos"];
 
 		nl::node createLimit = Login["NewChar"]["createLimit"];
@@ -313,6 +340,237 @@ namespace ms
 		randomize_look();
 
 		newCharLook.set_direction(true);
+
+		(void)avatarSize;
+		(void)genderFemale;
+		(void)genderMale;
+		(void)genderMarginX;
+		(void)genderMarginY;
+		(void)genderSize;
+		(void)nameEditFontColor;
+		(void)offsetForElemBack;
+	}
+
+	void UICommonCreation::init_classic(nl::node Login, nl::node Common)
+	{
+		std::string version_text = Configuration::get().get_version();
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+
+		const int16_t view_w = Constants::Constants::get().get_viewwidth();
+		const int16_t view_h = Constants::Constants::get().get_viewheight();
+		dimension = Point<int16_t>(800, 600);
+		position = Point<int16_t>(
+			static_cast<int16_t>((view_w - 800) / 2),
+			static_cast<int16_t>((view_h - 600) / 2));
+
+		if (LoginBackground::get().available())
+			LoginBackground::get().set_step(3);
+
+		std::string root_name = LoginUiAssets::classic_newchar_root(classType);
+		nl::node NewChar = Login[root_name];
+		nl::node Gender = Login["Gender"];
+
+		if (!NewChar)
+		{
+			LoginUiAssets::log_error("[Creation] missing " + root_name);
+			return;
+		}
+
+		int sign_idx = LoginUiAssets::classic_signboard_index(classType);
+		nl::node signboard = nl::nx::Map["Obj"]["login.img"]["NewChar"]["signboard"][sign_idx];
+		sprites_background.emplace_back(signboard["0"] ? signboard["0"] : signboard, Point<int16_t>(100, 40));
+
+		genderOrigin = Point<int16_t>(220, 120);
+		avatarOrigin = Point<int16_t>(70, 80);
+		charNameOrigin = Point<int16_t>(280, 160);
+		newAvatarPos = Point<int16_t>(520, 320);
+
+		if (Gender["backgrnd"]["0"])
+			sprites_gender_select.emplace_back(Gender["backgrnd"]["0"], genderOrigin);
+		else
+			sprites_gender_select.emplace_back(NewChar["charSet"], genderOrigin);
+
+		classic_gender_male = Gender["text"]["0"];
+		classic_gender_female = Gender["text"]["1"];
+
+		sprites_lookboard.emplace_back(NewChar["charSet"], avatarOrigin);
+
+		nl::node avatarSel = NewChar["avatarSel"];
+		Point<int16_t> label_base = avatarOrigin + Point<int16_t>(28, 48);
+		size_t row = 0;
+
+		for (nl::node sel : avatarSel)
+		{
+			sprites_char_look.emplace_back(sel["normal"], label_base + Point<int16_t>(0, static_cast<int16_t>(18 * row)));
+			row++;
+			if (row >= 8)
+				break;
+		}
+
+		nameboard = NewChar["charName"];
+
+		classic_yes_gender = genderOrigin + Point<int16_t>(60, 160);
+		classic_no_gender = genderOrigin + Point<int16_t>(160, 160);
+		classic_yes_avatar = avatarOrigin + Point<int16_t>(40, 340);
+		classic_no_avatar = avatarOrigin + Point<int16_t>(130, 340);
+		classic_yes_name = charNameOrigin + Point<int16_t>(30, 180);
+		classic_no_name = charNameOrigin + Point<int16_t>(120, 180);
+
+		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 1));
+
+		buttons[Buttons::BtGenderMale] = std::make_unique<AreaButton>(
+			genderOrigin + Point<int16_t>(40, 50), Point<int16_t>(120, 40));
+		buttons[Buttons::BtGenderFemale] = std::make_unique<AreaButton>(
+			genderOrigin + Point<int16_t>(180, 50), Point<int16_t>(120, 40));
+
+		Point<int16_t> left = avatarOrigin + Point<int16_t>(12, 48);
+		Point<int16_t> right = avatarOrigin + Point<int16_t>(190, 48);
+
+		auto place_lr = [&](uint16_t left_id, uint16_t right_id, int16_t y)
+		{
+			buttons[left_id] = std::make_unique<MapleButton>(NewChar["BtLeft"], Point<int16_t>(left.x(), y));
+			buttons[right_id] = std::make_unique<MapleButton>(NewChar["BtRight"], Point<int16_t>(right.x(), y));
+		};
+
+		place_lr(Buttons::BtSkinLeft, Buttons::BtSkinRight, left.y());
+		place_lr(Buttons::BtFaceLeft, Buttons::BtFaceRight, left.y() + 18);
+		place_lr(Buttons::BtHairLeft, Buttons::BtHairRight, left.y() + 36);
+		place_lr(Buttons::BtTopLeft, Buttons::BtTopRight, left.y() + 54);
+
+		if (bottomEnabled)
+			place_lr(Buttons::BtBottomLeft, Buttons::BtBottomRight, left.y() + 72);
+
+		int16_t shoe_y = left.y() + (bottomEnabled ? 90 : 72);
+		place_lr(Buttons::BtShoesLeft, Buttons::BtShoesRight, shoe_y);
+		place_lr(Buttons::BtWeaponLeft, Buttons::BtWeaponRight, shoe_y + 18);
+
+		buttons[Buttons::BtDice] = std::make_unique<AreaButton>(
+			avatarOrigin + Point<int16_t>(90, 300), Point<int16_t>(37, 26));
+		classic_dice = Sprite(NewChar["dice"]);
+
+		buttons[Buttons::BtYes] = std::make_unique<MapleButton>(NewChar["BtYes"], classic_yes_gender);
+		buttons[Buttons::BtNo] = std::make_unique<MapleButton>(NewChar["BtNo"], classic_no_gender);
+
+		hairSelectSize = 0;
+		disable_char_look();
+		buttons[Buttons::BtDice]->set_active(false);
+
+		newCharNamePos = charNameOrigin + Point<int16_t>(28, 90);
+		Point<int16_t> newCharNameDim(150, 24);
+		newCharName = Textfield(
+			Text::Font::A12M,
+			Text::Alignment::LEFT,
+			Color::Name::BLACK,
+			Rectangle<int16_t>(newCharNamePos, newCharNamePos + newCharNameDim),
+			12);
+
+		newCharName.set_enter_callback([&](std::string) { button_pressed(Buttons::BtYes); });
+		newCharName.set_key_callback(KeyAction::Id::ESCAPE, [&]() { button_pressed(Buttons::BtNo); });
+
+		skinColorName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		faceName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		hairStyleName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		topName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		bottomName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		capeName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		shoeName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+		weaponName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
+
+		if (skinColors.empty() || faces[false].empty() || hairStyles[false].empty()
+			|| tops[false].empty() || shoes[false].empty() || weapons[false].empty())
+		{
+			LoginUiAssets::log_error("[Creation] MakeCharInfo pools empty for " + classType);
+		}
+
+		randomize_look();
+		newCharLook.set_direction(true);
+	}
+
+	void UICommonCreation::load_classic_gender_pool(bool female_flag, nl::node gender_node)
+	{
+		if (!gender_node)
+			return;
+
+		std::vector<int64_t> colors;
+
+		for (nl::node color_node : gender_node[2])
+			colors.push_back(color_node.get_integer());
+
+		if (colors.empty())
+			colors.push_back(0);
+
+		for (nl::node face_node : gender_node[0])
+			faces[female_flag].push_back(face_node.get_integer());
+
+		for (nl::node hair_node : gender_node[1])
+		{
+			int64_t hair = hair_node.get_integer();
+			hairStyles[female_flag].push_back(hair);
+
+			int64_t base = (hair / 10) * 10;
+			for (int64_t color : colors)
+			{
+				hairColors[female_flag][hair].push_back(base + color);
+				hairColorEnabled = true;
+			}
+		}
+
+		if (!female_flag)
+		{
+			for (nl::node skin_node : gender_node[3])
+				skinColors.push_back(skin_node.get_integer());
+		}
+
+		for (nl::node top_node : gender_node[4])
+			tops[female_flag].push_back(top_node.get_integer());
+
+		for (nl::node bottom_node : gender_node[5])
+		{
+			bottoms[female_flag].push_back(bottom_node.get_integer());
+			bottomEnabled = true;
+		}
+
+		for (nl::node shoe_node : gender_node[6])
+			shoes[female_flag].push_back(shoe_node.get_integer());
+
+		for (nl::node weapon_node : gender_node[7])
+			weapons[female_flag].push_back(weapon_node.get_integer());
+	}
+
+	void UICommonCreation::load_classic_char_look()
+	{
+		choosableGender = true;
+		load_classic_gender_pool(false, LoginUiAssets::classic_makechar_male(classType));
+		load_classic_gender_pool(true, LoginUiAssets::classic_makechar_female(classType));
+
+		if (skinColors.empty())
+		{
+			skinColors.push_back(0);
+			skinColors.push_back(1);
+		}
+	}
+
+	void UICommonCreation::set_classic_yes_no(uint8_t step)
+	{
+		if (!classic_mode)
+			return;
+
+		Point<int16_t> yes_pos = classic_yes_gender;
+		Point<int16_t> no_pos = classic_no_gender;
+
+		if (step == 1)
+		{
+			yes_pos = classic_yes_avatar;
+			no_pos = classic_no_avatar;
+		}
+		else if (step == 2)
+		{
+			yes_pos = classic_yes_name;
+			no_pos = classic_no_name;
+		}
+
+		buttons[Buttons::BtYes]->set_position(yes_pos);
+		buttons[Buttons::BtNo]->set_position(no_pos);
 	}
 
 	void UICommonCreation::draw(float inter) const
@@ -333,6 +591,14 @@ namespace ms
 				{
 					sprites_gender_select[i].draw(position, inter);
 				}
+			}
+
+			if (classic_mode)
+			{
+				if (classic_gender_male.is_valid())
+					classic_gender_male.draw(position + genderOrigin + Point<int16_t>(50, 55));
+				if (classic_gender_female.is_valid())
+					classic_gender_female.draw(position + genderOrigin + Point<int16_t>(190, 55));
 			}
 
 			UIElement::draw(inter);
@@ -421,6 +687,9 @@ namespace ms
 				weaponName.draw(label_pos);
 				newCharLook.draw(newAvatarPos, inter);
 
+				if (classic_mode)
+					classic_dice.draw(position + avatarOrigin + Point<int16_t>(90, 300), inter);
+
 				UIElement::draw_buttons(inter);
 			}
 			else
@@ -431,7 +700,9 @@ namespace ms
 
 					nameboard.draw(charNameOrigin);
 
-					if (className == "adventurer")
+					if (classic_mode)
+						newCharName.draw(position, Point<int16_t>(0, 0));
+					else if (className == "adventurer")
 						newCharName.draw(position + Point<int16_t>(2, -2), Point<int16_t>(1, -1));
 					else if (className == "cygnusKnight")
 						newCharName.draw(position + Point<int16_t>(6, -3), Point<int16_t>(1, -1));
@@ -456,9 +727,11 @@ namespace ms
 		}
 
 		// TOOD: Get number of character able to create
-		createLimitNum.draw("10", 5, position - createLimitPos + Point<int16_t>(7, 0));
+		if (!classic_mode)
+			createLimitNum.draw("10", 5, position - createLimitPos + Point<int16_t>(7, 0));
 
-		version.draw(position + version_pos - Point<int16_t>(0, 5));
+		if (version_pos.x() || version_pos.y() || !classic_mode)
+			version.draw(position + version_pos - Point<int16_t>(0, 5));
 	}
 
 	void UICommonCreation::update()
@@ -562,6 +835,11 @@ namespace ms
 
 				if (job >= 0)
 				{
+					LoginUiAssets::log_info(
+						std::string("[Creation] CREATE_CHAR name=") + name
+						+ " job=" + std::to_string(job)
+						+ " female=" + (female ? "1" : "0"));
+
 					CreateCharPacket(name, job, face, hair, skin, top, bottom, shoe, weapon, female).dispatch();
 
 					auto onok = [&](bool alternate)
@@ -630,6 +908,7 @@ namespace ms
 				buttons[Buttons::BtGenderFemale]->set_active(false);
 
 				enable_char_look();
+				set_classic_yes_no(1);
 
 				return Button::State::NORMAL;
 			}
@@ -641,8 +920,13 @@ namespace ms
 
 					disable_char_look();
 
-					buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["name"]));
-					buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["name"]));
+					if (classic_mode)
+						set_classic_yes_no(2);
+					else
+					{
+						buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["name"]));
+						buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["name"]));
+					}
 
 					newCharNameDisabled = false;
 
@@ -737,8 +1021,13 @@ namespace ms
 
 					disable_char_look();
 
-					buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["gender"]));
-					buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["gender"]));
+					if (classic_mode)
+						set_classic_yes_no(0);
+					else
+					{
+						buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["gender"]));
+						buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["gender"]));
+					}
 
 					return Button::State::NORMAL;
 				}
@@ -954,6 +1243,11 @@ namespace ms
 
 			return Button::State::NORMAL;
 		}
+		else if (buttonid == Buttons::BtDice)
+		{
+			randomize_look();
+			return Button::State::NORMAL;
+		}
 		else if (buttonid >= Buttons::BtHairSelect0 && buttonid < Buttons::LENGTH)
 		{
 			hairColorIndex = buttonid - Buttons::BtHairSelect0;
@@ -976,29 +1270,37 @@ namespace ms
 
 	void UICommonCreation::randomize_look()
 	{
-		skinColorIndex = randomizer.next_int(skinColors.size());
-		faceIndex = randomizer.next_int(faces[female].size());
-		hairStyleIndex = randomizer.next_int(hairStyles[female].size());
+		auto next_or_zero = [&](size_t size) -> size_t
+		{
+			return size > 0 ? randomizer.next_int(size) : 0;
+		};
 
-		int64_t hairStyle = hairStyles[female][hairStyleIndex];
+		skinColorIndex = next_or_zero(skinColors.size());
+		faceIndex = next_or_zero(faces[female].size());
+		hairStyleIndex = next_or_zero(hairStyles[female].size());
+
+		int64_t hairStyle = hairStyles[female].empty() ? 0 : hairStyles[female][hairStyleIndex];
 		auto& hairColors_ = hairColors[female][hairStyle];
-		hairColorIndex = randomizer.next_int(hairColors_.size());
+		hairColorIndex = next_or_zero(hairColors_.size());
 
-		topIndex = randomizer.next_int(tops[female].size());
-		bottomIndex = randomizer.next_int(bottoms[female].size());
-		capeIndex = randomizer.next_int(capes[female].size());
-		shoeIndex = randomizer.next_int(shoes[female].size());
-		weaponIndex = randomizer.next_int(weapons[female].size());
+		topIndex = next_or_zero(tops[female].size());
+		bottomIndex = next_or_zero(bottoms[female].size());
+		capeIndex = next_or_zero(capes[female].size());
+		shoeIndex = next_or_zero(shoes[female].size());
+		weaponIndex = next_or_zero(weapons[female].size());
 
-		newCharLook.set_body(skinColors[skinColorIndex]);
-		newCharLook.set_face(faces[female][faceIndex]);
+		if (!skinColors.empty())
+			newCharLook.set_body(skinColors[skinColorIndex]);
+		if (!faces[female].empty())
+			newCharLook.set_face(faces[female][faceIndex]);
 
 		if (hairColors_.size() > 0)
 			newCharLook.set_hair(hairColors_[hairColorIndex]);
-		else
+		else if (hairStyle != 0)
 			newCharLook.set_hair(hairStyle);
 
-		newCharLook.add_equip(tops[female][topIndex]);
+		if (!tops[female].empty())
+			newCharLook.add_equip(tops[female][topIndex]);
 
 		if (bottoms[female].size() > 0)
 			newCharLook.add_equip(bottoms[female][bottomIndex]);
@@ -1006,12 +1308,14 @@ namespace ms
 		if (capes[female].size() > 0)
 			newCharLook.add_equip(capes[female][capeIndex]);
 
-		newCharLook.add_equip(shoes[female][shoeIndex]);
-		newCharLook.add_equip(weapons[female][weaponIndex]);
+		if (!shoes[female].empty())
+			newCharLook.add_equip(shoes[female][shoeIndex]);
+		if (!weapons[female].empty())
+			newCharLook.add_equip(weapons[female][weaponIndex]);
 
-		skinColorName.change_text(newCharLook.get_body()->get_name());
-		faceName.change_text(newCharLook.get_face()->get_name());
-		hairStyleName.change_text(newCharLook.get_hair()->get_name());
+		skinColorName.change_text(newCharLook.get_body() ? newCharLook.get_body()->get_name() : "");
+		faceName.change_text(newCharLook.get_face() ? newCharLook.get_face()->get_name() : "");
+		hairStyleName.change_text(newCharLook.get_hair() ? newCharLook.get_hair()->get_name() : "");
 		topName.change_text(get_equipname(EquipSlot::Id::TOP));
 		bottomName.change_text(get_equipname(EquipSlot::Id::BOTTOM));
 		capeName.change_text(get_equipname(EquipSlot::Id::CAPE));
@@ -1130,8 +1434,13 @@ namespace ms
 
 	void UICommonCreation::enable_char_look()
 	{
-		buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["avatar"]));
-		buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["avatar"]));
+		if (classic_mode)
+			set_classic_yes_no(1);
+		else
+		{
+			buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["avatar"]));
+			buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["avatar"]));
+		}
 
 		if (faces[female].size() > 1)
 		{
@@ -1184,6 +1493,9 @@ namespace ms
 		if (hairColorEnabled)
 			for (size_t i = 0; i < hairSelectSize; i++)
 				buttons[Buttons::BtHairSelect0 + i]->set_active(true);
+
+		if (classic_mode && buttons[Buttons::BtDice])
+			buttons[Buttons::BtDice]->set_active(true);
 	}
 
 	void UICommonCreation::disable_char_look()
@@ -1216,6 +1528,9 @@ namespace ms
 
 		for (size_t i = 0; i < hairSelectSize; i++)
 			buttons[Buttons::BtHairSelect0 + i]->set_active(false);
+
+		if (classic_mode && buttons[Buttons::BtDice])
+			buttons[Buttons::BtDice]->set_active(false);
 	}
 
 	void UICommonCreation::check_names()

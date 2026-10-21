@@ -69,6 +69,8 @@ namespace ms
 		State state;
 		Point<int16_t> position;
 		int32_t hide_counter;
+		// Which Cursor::State indices successfully loaded from Basic.img/Cursor.
+		bool state_loaded[State::LENGTH] = {};
 
 		static constexpr int64_t HIDE_TIME = 15'000;
 	};

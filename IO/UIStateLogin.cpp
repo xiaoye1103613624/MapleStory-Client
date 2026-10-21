@@ -24,6 +24,8 @@
 #include "UITypes/UIRegion.h"
 
 #include "../Configuration.h"
+#include "../Constants.h"
+#include "../MapleStory.h"
 
 #include "LoginBackground.h"
 
@@ -32,6 +34,9 @@ namespace ms
 	UIStateLogin::UIStateLogin()
 	{
 		focused = UIElement::Type::NONE;
+
+		VWIDTH = Constants::Constants::get().get_viewwidth();
+		VHEIGHT = Constants::Constants::get().get_viewheight();
 
 		bool start_shown = Configuration::get().get_start_shown();
 
@@ -69,12 +74,29 @@ namespace ms
 		if (LoginBackground::get().available())
 			LoginBackground::get().update();
 
+		bool screen_changed = false;
+		const int16_t new_width = Constants::Constants::get().get_viewwidth();
+		const int16_t new_height = Constants::Constants::get().get_viewheight();
+
+		if (VWIDTH != new_width || VHEIGHT != new_height)
+		{
+			screen_changed = true;
+			VWIDTH = new_width;
+			VHEIGHT = new_height;
+			LOG(LOG_INFO, "UIStateLogin resize " << new_width << "x" << new_height);
+		}
+
 		for (auto iter : elements)
 		{
 			UIElement* element = iter.second.get();
 
 			if (element && element->is_active())
+			{
 				element->update();
+
+				if (screen_changed)
+					element->update_screen(new_width, new_height);
+			}
 		}
 	}
 
@@ -113,26 +135,20 @@ namespace ms
 
 				return focusedelement->send_cursor(clicked, cursor_position);
 			}
-			else
-			{
-				focused = UIElement::Type::NONE;
 
-				return cursor_state;
-			}
+			// 焦点窗已 deactivate（如 Cancel Loading）时清焦点并回落到前台，
+			// 勿直接 return，否则当次点击被吞、登录按钮像「没了」。
+			focused = UIElement::Type::NONE;
 		}
-		else
+
+		if (auto front = get_front())
 		{
-			if (auto front = get_front())
-			{
-				remove_cursor(front->get_type());
+			remove_cursor(front->get_type());
 
-				return front->send_cursor(clicked, cursor_position);
-			}
-			else
-			{
-				return Cursor::State::IDLE;
-			}
+			return front->send_cursor(clicked, cursor_position);
 		}
+
+		return Cursor::State::IDLE;
 	}
 
 	void UIStateLogin::send_close()

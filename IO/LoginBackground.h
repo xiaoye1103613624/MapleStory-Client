@@ -27,15 +27,16 @@
 
 namespace ms
 {
-	// BeiDou 原生登录背景：远景森林（Map001/Back/login.img）+ 纵向地图
-	// （UI/MapLogin.img）+ 书页外框（UI/Login.img/Common/frame）。
-	// 登录流程（登录/大区选择/角色选择）共用同一套背景，仅通过 step 改变相机。
+	// BeiDou login background: MapLogin map + one book border.
+	// Prefer official UI/Login.img/Common/frame (full-window opening at 1280x720).
+	// Fallback to one MapleEzorsiaV2wzfiles.img/Common/frameNNNN only if missing;
+	// never stack multiple frames (causes double book pages).
 	class LoginBackground : public Singleton<LoginBackground>
 	{
 	public:
 		LoginBackground();
 
-		// 载入地图与外框；仅当数据为 BeiDou 风格时才启用。
+		// Load map + single border; only when BeiDou-style data is present.
 		void init();
 
 		bool available() const
@@ -43,7 +44,7 @@ namespace ms
 			return enabled;
 		}
 
-		// step: 0=登录, 1=大区选择, 2=角色选择（地图相机高度 -8-600*step）
+		// step: 0=login, 1=world select, 2=char select (camera -8-600*step)
 		void set_step(int value)
 		{
 			step = value;
@@ -54,13 +55,11 @@ namespace ms
 			return step;
 		}
 
-		// 外框左上角（供各界面按同一基准摆放控件）
 		Point<int16_t> get_frame_topleft() const
 		{
 			return frame_topleft;
 		}
 
-		// 当前 step 的地图相机偏移。
 		Point<int16_t> get_viewpos() const;
 
 		void draw(float alpha) const;
@@ -70,8 +69,6 @@ namespace ms
 		static int step_height(int step);
 
 		MapTilesObjs map;
-		// 登录地图自己的 back 层（含 rx/ry 视差、tiling、动画）。
-		// 用它取代手搓的森林层，天然与地图同相机、且随分辨率自适应。
 		MapBackgrounds backgrounds;
 		std::vector<Sprite> bg_layers;
 		Sprite frame;

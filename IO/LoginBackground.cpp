@@ -32,15 +32,58 @@ namespace ms
 
 	int LoginBackground::step_height(int step)
 	{
-		// 对齐原客户端 CLogin::GetStepHeight：-8 - 600 * step
-		// （其中 step==4 时另有 *(this+133) 偏移，登录流程用不到）。
+		// Align with CLogin::GetStepHeight: -8 - 600 * step
 		return -8 - 600 * step;
 	}
+
+#ifdef USE_NX
+	// Official book frame: UI/Login.img/Common/frame (1280x720).
+	// Opening ~1091x581 (~85%x81% of window) so the login map fills the aperture 1:1.
+	//
+	// MapleEzorsiaV2wzfiles.img/Common/frameNNNN is resolution-named but its opening
+	// is only ~611x461 (~60%x60%); use it only when the official node is missing,
+	// and only one frame (never stack).
+	static nl::node pick_login_frame(int16_t vieww, int16_t viewh)
+	{
+		nl::node official = nl::nx::UI["Login.img"]["Common"]["frame"];
+
+		if (official)
+			return official;
+
+		nl::node common = nl::nx::UI["MapleEzorsiaV2wzfiles.img"]["Common"];
+
+		if (common)
+		{
+			const char* exact = nullptr;
+
+			if (vieww == 1280 && viewh == 720)
+				exact = "frame1280";
+			else if (vieww == 1024 && viewh == 768)
+				exact = "frame1024";
+			else if (vieww == 1366 && viewh == 768)
+				exact = "frame1366";
+			else if (vieww == 1600 && viewh == 900)
+				exact = "frame1600";
+			else if (vieww == 1920 && viewh == 1080)
+				exact = "frame1920";
+
+			if (exact)
+			{
+				nl::node node = common[exact];
+
+				if (node)
+					return node;
+			}
+		}
+
+		return {};
+	}
+#endif
 
 	void LoginBackground::init()
 	{
 #ifdef USE_NX
-		nl::node frameNode = nl::nx::UI["Login.img"]["Common"]["frame"];
+		nl::node loginFrame = nl::nx::UI["Login.img"]["Common"]["frame"];
 		nl::node mapNode = nl::nx::UI["MapLogin.img"];
 
 		nl::node titleNew = nl::nx::UI["Login.img"]["Title_new"];
@@ -48,8 +91,8 @@ namespace ms
 		if (!titleNew)
 			titleNew = nl::nx::UI["Login.img"]["Title"];
 
-		// BeiDou 判定：Title 无 backgrd 贴图，且同时具备 Common/frame 与 MapLogin 地图。
-		bool bei = !titleNew["backgrd"] && frameNode && mapNode;
+		// BeiDou: Title has no backgrd, and login frame + MapLogin exist.
+		bool bei = !titleNew["backgrd"] && loginFrame && mapNode;
 
 		if (!bei)
 			return;
@@ -57,13 +100,10 @@ namespace ms
 		int16_t vieww = Constants::Constants::get().get_viewwidth();
 		int16_t viewh = Constants::Constants::get().get_viewheight();
 
-		// 北斗登录远景：完整森林背景是 Map001/Back/login.img/back/11（一张很高的纵向
-		// 拼图，登录木牌在底部，登录后选频道/选角色/创建角色依次上移）。back/12、back/13
-		// 为同套背景的额外景深层（若存在）。直接作为纵向滚动背景绘制。
+		// Forest far layers (Map001/Back/login.img/back/11..13) as fallback.
 		nl::node backSet = nl::nx::Map001["Back"]["login.img"]["back"];
 		if (backSet)
 		{
-			// 从 11 开始按序加载景深层（11 最远，13 最近）。
 			for (int16_t no = 11; no <= 13; no++)
 			{
 				nl::node layer = backSet[std::to_string(no)];
@@ -80,10 +120,7 @@ namespace ms
 			map = MapTilesObjs(mapNode);
 			has_map = true;
 
-			// 登录地图自带的 back 层（与主地图同一套 MapBackgrounds 渲染：
-			// 内含 rx/ry 视差、tiling、ani，且视差基准是 VWIDTH/2 / VHEIGHT/2），
-			// 因此各 step 共用同一相机、任意分辨率都自洽。
-			// 优先使用它；缺失时才退回下面手搓的森林层。
+			// Prefer MapLogin.img/back (same camera as map objects).
 			if (mapNode["back"]["0"])
 			{
 				backgrounds = MapBackgrounds(mapNode["back"]);
@@ -91,24 +128,27 @@ namespace ms
 			}
 		}
 
+		// Draw exactly one frame. Sprite rect is always (0,0)-(vieww,viewh)
+		// (Texture::draw get_rectangle); at 1280x720 the bitmap is 1:1.
+		nl::node frameNode = pick_login_frame(vieww, viewh);
+
 		if (frameNode)
 		{
 			Texture frame_tex(frameNode);
 			Point<int16_t> origin = frame_tex.get_origin();
 
-			// frame 为 1280x720，与 1024x768 窗口比例不符：拉伸铺满整屏。
 			frame = Sprite(frameNode, DrawArgument(
 				origin,
 				Point<int16_t>(vieww, viewh)
 			));
-			// 供各界面按同一基准摆放控件：以 800x600 -> 当前分辨率 的居中偏移。
 			frame_topleft = Point<int16_t>(vieww / 2, viewh / 2) - origin;
 			has_frame = true;
 		}
 
 		enabled = true;
 #endif
-	}
+}
+
 
 	Point<int16_t> LoginBackground::get_viewpos() const
 	{
@@ -118,8 +158,7 @@ namespace ms
 		);
 
 		if (step == 0)
-			// 登录页把告示牌居中：告示牌 obj pos = (137, 21)。
-			// 相对原 800x600 上调 +40，避免登录面板整体偏上压住书页标题区。
+			// Center signboard: obj pos = (137, 21), +40 vs original 800x600.
 			return center - Point<int16_t>(137, -20);
 
 		return center - Point<int16_t>(28, step_height(step));
@@ -130,10 +169,8 @@ namespace ms
 		if (!enabled)
 			return;
 
-			Point<int16_t> viewpos = get_viewpos();
+		Point<int16_t> viewpos = get_viewpos();
 
-		// 优先走地图自带的 back 层：与地图物件共用同一相机（viewpos），
-		// 因此换 step 或换分辨率都不会与地图物件产生相对漂移。
 		if (has_backs)
 			backgrounds.drawbackgrounds(viewpos.x(), viewpos.y(), alpha);
 		else if (has_forest)
@@ -141,7 +178,6 @@ namespace ms
 			int16_t vieww = Constants::Constants::get().get_viewwidth();
 			int16_t viewh = Constants::Constants::get().get_viewheight();
 
-			// 背景大图很高：登录场景在底部，逐 step 上移（与地图相机 8+600*step 一致）。
 			int32_t scroll = 8 + 600 * step;
 
 			for (const auto& sprite : bg_layers)
@@ -152,7 +188,6 @@ namespace ms
 				int16_t posx = (vieww - dim.x()) / 2;
 				int16_t posy = (viewh - dim.y()) - static_cast<int16_t>(scroll);
 
-				// Sprite::draw 以 origin 为锚点，故传入 topleft + origin。
 				sprite.draw(Point<int16_t>(posx + origin.x(), posy + origin.y()), alpha);
 			}
 		}
@@ -169,10 +204,10 @@ namespace ms
 				map.draw(layer, viewpos, alpha);
 		}
 
-		// 前景 back 层（front=1）画在地图物件之后。
 		if (has_backs)
 			backgrounds.drawforegrounds(viewpos.x(), viewpos.y(), alpha);
 
+		// Draw the single selected border exactly once.
 		if (has_frame)
 			frame.draw(Point<int16_t>(0, 0), alpha);
 	}

@@ -1,19 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
-//																				//
-//	This program is free software: you can redistribute it and/or modify		//
-//	it under the terms of the GNU Affero General Public License as published by	//
-//	the Free Software Foundation, either version 3 of the License, or			//
-//	(at your option) any later version.											//
-//																				//
-//	This program is distributed in the hope that it will be useful,				//
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
-//	GNU Affero General Public License for more details.							//
-//																				//
-//	You should have received a copy of the GNU Affero General Public License	//
-//	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIRaceSelect.h"
 
@@ -25,13 +12,15 @@
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
+#include "../LoginBackground.h"
 
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Configuration.h"
-
+#include "../../Constants.h"
 #include "../../Audio/Audio.h"
+#include "../../Util/LoginUiAssets.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -39,7 +28,126 @@
 
 namespace ms
 {
-	UIRaceSelect::UIRaceSelect() : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600))
+	namespace
+	{
+		// IDA CUINewCharRaceSelect CreateWnd(-372,-2128,700x460); map → screen via LoginBackground step 3.
+		constexpr int16_t kClassicWndW = 700;
+		constexpr int16_t kClassicWndH = 460;
+		constexpr Point<int16_t> kClassicMapOrigin(-372, -2128);
+	}
+
+	UIRaceSelect::UIRaceSelect() : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
+		classic_mode(false), selected_class(Classes::EXPLORERS), index_shift(0), selected_index(0),
+		class_count(0), buttonIntervalX(0)
+	{
+		for (uint16_t i = 0; i < INDEX_COUNT; i++)
+		{
+			class_index[i] = 0;
+			mouseover[i] = false;
+		}
+
+		// IDA OnCreate: BtKnight@104 / BtNormal@293 / BtAran@511 (left→right).
+		classic_classes[0] = Classes::CYGNUSKNIGHTS;
+		classic_classes[1] = Classes::EXPLORERS;
+		classic_classes[2] = Classes::ARAN;
+
+		if (LoginUiAssets::use_classic_race_select())
+		{
+			classic_mode = true;
+			init_classic();
+			LoginUiAssets::log_info("[RaceSelect] mode=classic");
+		}
+		else
+		{
+			classic_mode = false;
+			init_modern();
+			LoginUiAssets::log_info("[RaceSelect] mode=modern");
+		}
+
+		Sound(Sound::Name::RACESELECT).play();
+	}
+
+	void UIRaceSelect::init_classic()
+	{
+		nl::node Login = nl::nx::UI["Login.img"];
+		nl::node Common = Login["Common"];
+		nl::node RaceSelect = Login["RaceSelect"];
+
+		if (!RaceSelect)
+		{
+			LoginUiAssets::log_error("[RaceSelect] classic RaceSelect node missing");
+			dimension = Point<int16_t>(kClassicWndW, kClassicWndH);
+			position = Point<int16_t>(
+				static_cast<int16_t>((Constants::Constants::get().get_viewwidth() - kClassicWndW) / 2),
+				static_cast<int16_t>((Constants::Constants::get().get_viewheight() - kClassicWndH) / 2));
+			return;
+		}
+
+		if (LoginBackground::get().available())
+		{
+			LoginBackground::get().set_step(3);
+			position = LoginBackground::get().get_viewpos() + kClassicMapOrigin;
+		}
+		else
+		{
+			position = Point<int16_t>(
+				static_cast<int16_t>((Constants::Constants::get().get_viewwidth() - kClassicWndW) / 2),
+				static_cast<int16_t>((Constants::Constants::get().get_viewheight() - kClassicWndH) / 2));
+		}
+
+		dimension = Point<int16_t>(kClassicWndW, kClassicWndH);
+
+		// IDA CUINewCharRaceSelect::OnCreate — left knight, mid explorer, right aran.
+		nl::node nodes[CLASSIC_CLASS_COUNT] = { RaceSelect["knight"], RaceSelect["normal"], RaceSelect["aran"] };
+		const char* btn_names[CLASSIC_CLASS_COUNT] = { "BtKnight", "BtNormal", "BtAran" };
+
+		classic_card_pos[0] = Point<int16_t>(104, 79);
+		classic_card_pos[1] = Point<int16_t>(293, 79);
+		classic_card_pos[2] = Point<int16_t>(511, 80);
+		// Description banner sits under the cards inside the 700x460 wnd.
+		classic_text_pos = Point<int16_t>(60, 270);
+		// IDA: CCtrlButton Create id:1003 BtSelect @ (530, 422).
+		classic_select_pos = Point<int16_t>(530, 422);
+
+		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+		{
+			nl::node card = nodes[i];
+			nl::node btn = card[btn_names[i]];
+
+			classic_card[i] = btn["normal"]["0"];
+			classic_card_over[i] = btn["mouseOver"]["0"] ? Texture(btn["mouseOver"]["0"]) : classic_card[i];
+			classic_on_ani[i] = Sprite(card["OnAnimation"]);
+			classic_text[i] = card["text"];
+
+			// Texture::draw uses (pos - origin); AreaButton must use the same LT
+			// or the colorful OnAnimation sits outside the clickable rect.
+			Point<int16_t> card_size = classic_card[i].get_dimensions();
+			Point<int16_t> card_origin = classic_card[i].get_origin();
+			if (card_size.x() <= 0)
+			{
+				card_size = Point<int16_t>(200, 220);
+				card_origin = Point<int16_t>(0, 0);
+			}
+
+			buttons[Buttons::CLASS0 + i] = std::make_unique<AreaButton>(
+				classic_card_pos[i] - card_origin, card_size);
+			mouseover[i] = false;
+		}
+
+		classic_text_gl = RaceSelect["textGL"]["0"];
+
+		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 1));
+		buttons[Buttons::BtMake] = std::make_unique<MapleButton>(RaceSelect["BtSelect"], classic_select_pos);
+
+		// Default highlight: explorer (middle), matching ctor field init pattern.
+		selected_index = 1;
+		selected_class = classic_classes[selected_index];
+		mouseover[selected_index] = true;
+		class_count = CLASSIC_CLASS_COUNT;
+		class_isdisabled = std::vector<bool>(class_count, false);
+	}
+
+	void UIRaceSelect::init_modern()
 	{
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
@@ -60,6 +168,13 @@ namespace ms
 		for (size_t i = 0; i < tempOrder.size(); i++)
 			if (tempOrder[i].get_integer() != Classes::PINKBEAN)
 				order.push_back(tempOrder[i]);
+
+		if (order.size() < INDEX_COUNT)
+		{
+			LoginUiAssets::log_error("[RaceSelect] modern order too small size=" + std::to_string(order.size()));
+			while (order.size() < INDEX_COUNT)
+				order.push_back(Classes::EXPLORERS);
+		}
 
 		hotlist = RaceSelect["hotList"][SELECTED_LIST];
 		newlist = RaceSelect["newList"][SELECTED_LIST];
@@ -124,6 +239,9 @@ namespace ms
 			if (name == "intervalX" || name == "pos" || name == std::to_string(Classes::PINKBEAN) || name == std::to_string(Classes::YETI))
 				continue;
 
+			if (node_index >= class_count)
+				break;
+
 			class_map[node_index++] = std::stoi(name);
 		}
 
@@ -162,12 +280,35 @@ namespace ms
 		selected_class = class_index[selected_index];
 
 		buttons[Buttons::BtLeftArrow]->set_state(Button::State::DISABLED);
-
-		Sound(Sound::Name::RACESELECT).play();
 	}
 
 	void UIRaceSelect::draw(float inter) const
 	{
+		if (classic_mode)
+		{
+			for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+			{
+				Point<int16_t> card_pos = position + classic_card_pos[i];
+				bool selected = (i == selected_index);
+
+				if (selected)
+					classic_on_ani[i].draw(card_pos, inter);
+				else if (mouseover[i])
+					classic_card_over[i].draw(card_pos);
+				else
+					classic_card[i].draw(card_pos);
+			}
+
+			classic_text[selected_index].draw(position + classic_text_pos);
+
+			// IDA OnCreate canvas blit textGL @ (315, 52).
+			if (classic_text_gl.is_valid())
+				classic_text_gl.draw(position + Point<int16_t>(315, 52));
+
+			UIElement::draw_buttons(inter);
+			return;
+		}
+
 		uint16_t corrected_index = get_corrected_class_index(selected_class);
 
 		if (selected_class == Classes::ZERO)
@@ -246,10 +387,10 @@ namespace ms
 
 		if (dot_pos)
 		{
-			dot.draw(DrawArgument(dot_pos["pos_ctrl"][dot_pos["ctrl"]]));
-			dot.draw(DrawArgument(dot_pos["pos_def"][dot_pos["def"]]));
-			dot.draw(DrawArgument(dot_pos["pos_pow"][dot_pos["pow"]]));
-			dot.draw(DrawArgument(dot_pos["pos_spd"][dot_pos["spd"]]));
+			dot.draw(DrawArgument(Point<int16_t>(dot_pos["pos_ctrl"][dot_pos["ctrl"]])));
+			dot.draw(DrawArgument(Point<int16_t>(dot_pos["pos_def"][dot_pos["def"]])));
+			dot.draw(DrawArgument(Point<int16_t>(dot_pos["pos_pow"][dot_pos["pow"]])));
+			dot.draw(DrawArgument(Point<int16_t>(dot_pos["pos_spd"][dot_pos["spd"]])));
 		}
 
 		UIElement::draw_buttons(inter);
@@ -260,6 +401,13 @@ namespace ms
 	void UIRaceSelect::update()
 	{
 		UIElement::update();
+
+		if (classic_mode)
+		{
+			for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+				classic_on_ani[i].update();
+			return;
+		}
 
 		hotlabel.update();
 		hotlabelZero.update();
@@ -319,26 +467,47 @@ namespace ms
 
 	void UIRaceSelect::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed)
+		if (!pressed)
+			return;
+
+		if (escape)
 		{
-			if (escape)
+			show_charselect();
+			return;
+		}
+
+		if (classic_mode)
+		{
+			if (keycode == KeyAction::Id::LEFT || keycode == KeyAction::Id::UP)
 			{
-				show_charselect();
+				uint16_t next = (selected_index + CLASSIC_CLASS_COUNT - 1) % CLASSIC_CLASS_COUNT;
+				select_classic_class(next);
 			}
-			else if (keycode == KeyAction::Id::LEFT || keycode == KeyAction::Id::DOWN)
+			else if (keycode == KeyAction::Id::RIGHT || keycode == KeyAction::Id::DOWN)
 			{
-				if (buttons[Buttons::BtLeftArrow]->get_state() == Button::State::NORMAL)
-					button_pressed(Buttons::BtLeftArrow);
-			}
-			else if (keycode == KeyAction::Id::RIGHT || keycode == KeyAction::Id::UP)
-			{
-				if (buttons[Buttons::BtRightArrow]->get_state() == Button::State::NORMAL)
-					button_pressed(Buttons::BtRightArrow);
+				uint16_t next = (selected_index + 1) % CLASSIC_CLASS_COUNT;
+				select_classic_class(next);
 			}
 			else if (keycode == KeyAction::Id::RETURN)
 			{
 				button_pressed(Buttons::BtMake);
 			}
+			return;
+		}
+
+		if (keycode == KeyAction::Id::LEFT || keycode == KeyAction::Id::DOWN)
+		{
+			if (buttons[Buttons::BtLeftArrow]->get_state() == Button::State::NORMAL)
+				button_pressed(Buttons::BtLeftArrow);
+		}
+		else if (keycode == KeyAction::Id::RIGHT || keycode == KeyAction::Id::UP)
+		{
+			if (buttons[Buttons::BtRightArrow]->get_state() == Button::State::NORMAL)
+				button_pressed(Buttons::BtRightArrow);
+		}
+		else if (keycode == KeyAction::Id::RETURN)
+		{
+			button_pressed(Buttons::BtMake);
 		}
 	}
 
@@ -382,46 +551,98 @@ namespace ms
 		}
 	}
 
+	void UIRaceSelect::enter_creation()
+	{
+		Sound(Sound::Name::SCROLLUP).play();
+		deactivate();
+
+		LoginUiAssets::log_info(std::string("[RaceSelect] enter creation class=") + std::to_string(selected_class));
+
+		if (selected_class == Classes::EXPLORERS)
+			UI::get().emplace<UIExplorerCreation>();
+		else if (selected_class == Classes::CYGNUSKNIGHTS)
+			UI::get().emplace<UICygnusCreation>();
+		else if (selected_class == Classes::ARAN)
+			UI::get().emplace<UIAranCreation>();
+	}
+
+	void UIRaceSelect::select_classic_class(uint16_t index)
+	{
+		if (index >= CLASSIC_CLASS_COUNT)
+			return;
+
+		if (index != selected_index)
+			Sound(Sound::Name::RACESELECT).play();
+
+		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+			mouseover[i] = (i == index);
+
+		selected_index = index;
+		selected_class = classic_classes[index];
+		LoginUiAssets::log_info(
+			std::string("[RaceSelect] classic select index=") + std::to_string(index)
+			+ " class=" + std::to_string(selected_class));
+	}
+
 	Button::State UIRaceSelect::button_pressed(uint16_t buttonid)
 	{
 		if (buttonid == Buttons::BtStart)
 		{
 			show_worldselect();
-
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtPreview)
+
+		if (classic_mode)
+		{
+			if (buttonid == Buttons::BtMake)
+			{
+				LoginUiAssets::log_info("[RaceSelect] classic BtSelect pressed");
+				enter_creation();
+				return Button::State::NORMAL;
+			}
+
+			if (buttonid >= Buttons::CLASS0 && buttonid < Buttons::CLASS0 + CLASSIC_CLASS_COUNT)
+			{
+				uint16_t index = buttonid - Buttons::CLASS0;
+
+				if (index == selected_index)
+				{
+					LoginUiAssets::log_info(
+						std::string("[RaceSelect] classic re-click index=") + std::to_string(index));
+					enter_creation();
+				}
+				else
+				{
+					select_classic_class(index);
+				}
+
+				return Button::State::IDENTITY;
+			}
+
+			return Button::State::DISABLED;
+		}
+
+		if (buttonid == Buttons::BtPreview)
 		{
 			show_charselect();
-
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtMake)
+
+		if (buttonid == Buttons::BtMake)
 		{
 			uint16_t corrected_index = get_corrected_class_index(selected_class);
 
 			std::function<void()> okhandler = [&, corrected_index]()
 			{
 				if (!class_isdisabled[corrected_index])
-				{
-					Sound(Sound::Name::SCROLLUP).play();
-
-					deactivate();
-
-					if (selected_class == Classes::EXPLORERS)
-						UI::get().emplace<UIExplorerCreation>();
-					else if (selected_class == Classes::CYGNUSKNIGHTS)
-						UI::get().emplace<UICygnusCreation>();
-					else if (selected_class == Classes::ARAN)
-						UI::get().emplace<UIAranCreation>();
-				}
+					enter_creation();
 			};
 
 			UI::get().emplace<UIClassConfirm>(selected_class, class_isdisabled[corrected_index], okhandler);
-
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtLeftArrow)
+
+		if (buttonid == Buttons::BtLeftArrow)
 		{
 			uint16_t new_index = selected_index - 1;
 
@@ -438,10 +659,10 @@ namespace ms
 			}
 
 			select_class(new_index);
-
 			return Button::State::IDENTITY;
 		}
-		else if (buttonid == Buttons::BtRightArrow)
+
+		if (buttonid == Buttons::BtRightArrow)
 		{
 			uint16_t new_index = selected_index + 1;
 			uint16_t selected = class_index[selected_index - index_shift];
@@ -459,21 +680,17 @@ namespace ms
 			}
 
 			select_class(new_index);
-
 			return Button::State::IDENTITY;
 		}
-		else if (buttonid >= Buttons::CLASS0)
+
+		if (buttonid >= Buttons::CLASS0)
 		{
 			uint16_t index = buttonid - Buttons::CLASS0 + index_shift;
-
 			select_class(index);
-
 			return Button::State::IDENTITY;
 		}
-		else
-		{
-			return Button::State::DISABLED;
-		}
+
+		return Button::State::DISABLED;
 	}
 
 	void UIRaceSelect::select_class(uint16_t index)
@@ -508,16 +725,23 @@ namespace ms
 					if (found_slash != std::string::npos)
 					{
 						found_bgm.insert(found_slash, ".img");
-
 						Music(found_bgm).play();
 					}
 				}
 			}
 			else if (class_index[previous] == Classes::KINESIS)
 			{
-				std::string LoginMusicNewtro = Configuration::get().get_login_music_newtro();
+				std::string login_bgm = Configuration::get().get_login_music_newtro();
 
-				Music(LoginMusicNewtro).play();
+#ifdef USE_NX
+				if (nl::nx::Sound002.resolve(login_bgm).data_type() != nl::node::type::audio
+					&& nl::nx::Sound.resolve(login_bgm).data_type() != nl::node::type::audio)
+				{
+					login_bgm = Configuration::get().get_login_music();
+				}
+#endif
+
+				Music(login_bgm).play();
 			}
 		}
 		else
@@ -540,6 +764,9 @@ namespace ms
 	{
 		Sound(Sound::Name::SCROLLUP).play();
 
+		if (LoginBackground::get().available())
+			LoginBackground::get().set_step(2);
+
 		UI::get().remove(UIElement::Type::RACESELECT);
 
 		if (auto charselect = UI::get().get_element<UICharSelect>())
@@ -549,6 +776,9 @@ namespace ms
 	void UIRaceSelect::show_worldselect()
 	{
 		Sound(Sound::Name::SCROLLUP).play();
+
+		if (LoginBackground::get().available())
+			LoginBackground::get().set_step(1);
 
 		UI::get().remove(UIElement::Type::RACESELECT);
 		UI::get().remove(UIElement::Type::CHARSELECT);
@@ -560,14 +790,12 @@ namespace ms
 	Point<int16_t> UIRaceSelect::get_class_pos(size_t index) const
 	{
 		uint16_t x_adj = index * buttonIntervalX;
-
 		return buttonPos + Point<int16_t>(x_adj, 0);
 	}
 
 	std::string UIRaceSelect::to_lower(std::string value) const
 	{
 		std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-
 		return value;
 	}
 
@@ -578,7 +806,6 @@ namespace ms
 				return i;
 
 		LOG(LOG_DEBUG, "Failed to find corrected class index");
-
 		return index;
 	}
 }

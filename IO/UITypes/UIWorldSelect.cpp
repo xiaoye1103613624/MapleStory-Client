@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIWorldSelect.h"
 
+#include "UILogin.h"
 #include "UILoginNotice.h"
 #include "UILoginWait.h"
 #include "UIRegion.h"
@@ -28,10 +29,13 @@
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
 
+#include "../../Graphics/Texture.h"
 #include "../../Audio/Audio.h"
 #include "../../Util/Randomizer.h"
+#include "../../Constants.h"
 
 #include "../../Net/Packets/LoginPackets.h"
+#include "../../Net/Session.h"
 
 #include <iostream>
 
@@ -72,8 +76,7 @@ namespace ms
 			warned[index] = true;
 		}
 
-		// 日志文案保持 ASCII：本仓库未启用 /utf-8，中文宽字节序列在错误的代码页下
-		// 可能被误解析（尾字节 0x5C 会转义引号，导致 C2001），中文说明一律写在注释里。
+		// Log text stays ASCII for console readability; Chinese notes live in comments.
 		std::cerr << "[UIWorldSelect][WARN] " << kind << " index=" << index
 			<< " exceeds client button capacity " << limit << "; operation ignored. "
 			<< "(server data does not match client capacity)" << std::endl;
@@ -102,19 +105,42 @@ namespace ms
 	static constexpr int16_t CH_PANEL_W = 449;
 	static constexpr int16_t CH_PANEL_H = 233;
 
-	// 世界条幅（木质横杆）在**登录地图坐标系**中的 Y 偏移：IDA 中槽位 Y=0 相对条幅，
-	// 因此条幅位置必须跟随地图相机（LoginBackground::get_viewpos()）走，
-	// 而不是写死屏幕绝对像素——否则换分辨率就会错位（与 UILogin 用告示牌锚点同理）。
-	// 取值来源：1280x720 实测条幅顶边屏幕 y=111，而同分辨率下 viewpos.y = 720/2 + 608 = 968，
-	// 故地图系偏移 = 111 - 968 = -857。
-	static constexpr int16_t WS_BANNER_OBJ_Y = -857;
+	// MapLogin WorldSelect/signboard/0 横杆；木牌挂在其底边绳扣下。
+	static constexpr Point<int16_t> WS_POLE_MAP_POS(51, -888);
+	static constexpr int16_t WS_BOARD_HANG_PAD = 4;
+
+	// MapLogin WorldSelect/signboard/2 羊皮卷；频道面板顶边在其底边之下。
+	static constexpr Point<int16_t> WS_SCROLL_MAP_POS(42, -753);
+	static constexpr int16_t CH_BELOW_GAP = 8;
 
 	// LoginBackground 不可用时的兜底（退化路径，按 1280x720 标定值）。
 	static constexpr int16_t WS_BANNER_FALLBACK_Y = 111;
-
-	// 频道面板顶边相对条幅顶边的固定间距（旧版式：面板左上 y=74 - 条幅 y=40 = 34）。
-	// 面板中心 = 条幅顶 + 间距 + 高/2；条幅下移后面板同步下移，保持既有相对版式。
 	static constexpr int16_t CH_PANEL_TOP_GAP = 34;
+
+	// 选中后频道面板滑入。BeiDou 地图已有 signboard 卷轴，滑距过大易错位；缩短。
+	static constexpr int16_t CH_SLIDE_DIST = 24;
+	static constexpr float CH_SLIDE_MS = 180.0f;
+
+	// 选中世界后 world/[id]（图标+名）相对 chBackgrn 中心：再往左上贴表头。
+	static constexpr Point<int16_t> WS_WORLD_NAME_ON_PANEL(-222, -114);
+
+	// BtGoWorld 140x41：相对面板中心，落在羊皮纸内右下（图2）。
+	static constexpr int16_t WS_GOWORLD_W = 140;
+	static constexpr int16_t WS_GOWORLD_H = 41;
+	static constexpr Point<int16_t> WS_GOWORLD_OFF(
+		CH_PANEL_W / 2 - WS_GOWORLD_W - 16,
+		CH_PANEL_H / 2 - WS_GOWORLD_H - 12
+	);
+
+	// 左侧侧栏对照图2：整体下移、间距拉开（结束游戏独立在左上角）。
+	static constexpr int16_t WS_SIDEBAR_X = 42;
+	static constexpr int16_t WS_SIDEBAR_Y0 = 128;      // step「选择频道」
+	static constexpr int16_t WS_SIDEBAR_AFTER_STEP = 20;
+	static constexpr int16_t WS_SIDEBAR_GAP = 16;
+	static constexpr Point<int16_t> WS_EXIT_POS(8, 8);
+
+	// 公告底板相对 chBackgrn 中心：放在面板左侧。
+	static constexpr int16_t WS_NOTICE_GAP = 12;
 
 	// 频道按钮/负载条在频道面板内的网格偏移。
 	static Point<int16_t> channel_cell_offset(uint16_t i)
@@ -134,7 +160,8 @@ namespace ms
 				Constants::Constants::get().get_viewwidth(),
 				Constants::Constants::get().get_viewheight()
 			)
-		), worldcount(0), world_selected(false)
+		), worldcount(0), world_selected(false), channel_slide(1.0f), notice_slide(1.0f),
+		scroll_playing(false), scroll_has_anim(false)
 	{
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
@@ -144,29 +171,62 @@ namespace ms
 		int16_t viewh = Constants::Constants::get().get_viewheight();
 
 		// 背景由 LoginBackground 统一绘制（地图 + 外框），这里走 step=1 的大区选择视角。
-		// 必须先把 step 置好，后面才能用 viewpos 求出条幅的屏幕落点。
 		bool bg_managed = LoginBackground::get().available();
 
 		if (bg_managed)
 			LoginBackground::get().set_step(1);
 
-		// 世界条幅：水平以 vieww 居中；纵向**锚在登录地图上**（地图系偏移 WS_BANNER_OBJ_Y），
-		// 随相机 viewpos 变化，故任意分辨率下都贴在木质横杆上（与 UILogin 用告示牌锚点同理）。
-		int16_t banner_y = WS_BANNER_FALLBACK_Y;
+		Point<int16_t> viewpos = bg_managed
+			? LoginBackground::get().get_viewpos()
+			: Point<int16_t>(vieww / 2, viewh / 2);
+
+		int16_t slotline_w = static_cast<int16_t>(WS_SLOT_STEP_X * WS_MAX_WORLDS);
 
 		if (bg_managed)
-			banner_y = static_cast<int16_t>(LoginBackground::get().get_viewpos().y() + WS_BANNER_OBJ_Y);
+		{
+			auto sane_origin = [](Point<int16_t> o) -> Point<int16_t>
+			{
+				if (o.x() < -2048 || o.x() > 2048 || o.y() < -2048 || o.y() > 2048)
+					return Point<int16_t>(0, 0);
+				return o;
+			};
 
-		// 频道面板水平居中，其顶边比条幅低 CH_PANEL_TOP_GAP，故中心 = 顶 + 高/2。
-		int16_t slotline_w = static_cast<int16_t>(WS_SLOT_STEP_X * WS_SLOT_COUNT);
-		worldsrc_pos = Point<int16_t>(
-			static_cast<int16_t>((vieww - slotline_w) / 2),
-			banner_y
-		);
-		channelsrc_pos = Point<int16_t>(
-			static_cast<int16_t>((vieww - CH_PANEL_W) / 2),
-			static_cast<int16_t>(banner_y + CH_PANEL_TOP_GAP + CH_PANEL_H / 2)
-		);
+			// 木牌对准横杆 signboard/0：水平以横杆中心居中，竖直挂在底边绳扣下。
+			Texture pole_tex(nl::nx::Map["Obj"]["login.img"]["WorldSelect"]["signboard"]["0"]["0"]);
+			Point<int16_t> pole_origin = sane_origin(pole_tex.get_origin());
+			Point<int16_t> pole_dim = pole_tex.get_dimensions();
+			Point<int16_t> pole_topleft = WS_POLE_MAP_POS + viewpos - pole_origin;
+			int16_t pole_center_x = static_cast<int16_t>(pole_topleft.x() + pole_dim.x() / 2);
+			int16_t pole_bottom_y = static_cast<int16_t>(pole_topleft.y() + pole_dim.y());
+			worldsrc_pos = Point<int16_t>(
+				static_cast<int16_t>(pole_center_x - slotline_w / 2),
+				static_cast<int16_t>(pole_bottom_y + WS_BOARD_HANG_PAD)
+			);
+
+			// 频道面板顶边在羊皮卷 signboard/2 底边之下（不再以卷心为面板中心）。
+			Texture scroll_tex(nl::nx::Map["Obj"]["login.img"]["WorldSelect"]["signboard"]["2"]["0"]);
+			Point<int16_t> scroll_origin = sane_origin(scroll_tex.get_origin());
+			Point<int16_t> scroll_dim = scroll_tex.get_dimensions();
+			Point<int16_t> scroll_topleft = WS_SCROLL_MAP_POS + viewpos - scroll_origin;
+			int16_t scroll_center_x = static_cast<int16_t>(scroll_topleft.x() + scroll_dim.x() / 2);
+			int16_t scroll_bottom_y = static_cast<int16_t>(scroll_topleft.y() + scroll_dim.y());
+			int16_t panel_top = static_cast<int16_t>(scroll_bottom_y + CH_BELOW_GAP);
+			channelsrc_pos = Point<int16_t>(
+				scroll_center_x,
+				static_cast<int16_t>(panel_top + CH_PANEL_H / 2)
+			);
+		}
+		else
+		{
+			worldsrc_pos = Point<int16_t>(
+				static_cast<int16_t>((vieww - slotline_w) / 2),
+				WS_BANNER_FALLBACK_Y
+			);
+			channelsrc_pos = Point<int16_t>(
+				static_cast<int16_t>((vieww - CH_PANEL_W) / 2),
+				static_cast<int16_t>(WS_BANNER_FALLBACK_Y + CH_PANEL_TOP_GAP + CH_PANEL_H / 2)
+			);
+		}
 
 		worldid = Setting<DefaultWorld>::get().load();
 		channelid = Setting<DefaultChannel>::get().load();
@@ -175,28 +235,52 @@ namespace ms
 		nl::node Common = Login["Common"];
 		nl::node WorldSelect = Login["WorldSelect"];
 
-		// BeiDou 使用 GMS v83 版式（无 BtWorld/release、无 BtChannel 节点）。
 		worldsrc = WorldSelect["BtWorld"];
 		worldnamesrc = WorldSelect["world"];
 		channelsrc = WorldSelect["channel"];
 
-		// LoginBackground 不可用时（非 BeiDou 数据）退回自绘卷轴背景。
 		if (!bg_managed)
 		{
 			Point<int16_t> background_pos = Point<int16_t>(vieww / 2, viewh / 2);
 			sprites.emplace_back(WorldSelect["scroll"]["0"]["0"], background_pos);
 		}
 
-		buttons[Buttons::BtExit] = std::make_unique<MapleButton>(Common["BtExit"]);
+		buttons[Buttons::BtExit] = std::make_unique<MapleButton>(Common["BtExit"], WS_EXIT_POS);
 		buttons[Buttons::BtGoWorld] = std::make_unique<MapleButton>(
 			WorldSelect["BtGoworld"],
-			channelsrc_pos + Point<int16_t>(150, 250)
+			channelsrc_pos + WS_GOWORLD_OFF
 		);
 		buttons[Buttons::BtGoWorld]->set_active(false);
 
+		// 左侧侧栏：step 装饰 + 地图/全角色 stub + 回到首页。
+		step_channel = Sprite(Common["step"]["1"], Point<int16_t>(WS_SIDEBAR_X, WS_SIDEBAR_Y0));
+
+		const int16_t step_h = Texture(Common["step"]["1"]).get_dimensions().y();
+		int16_t side_y = static_cast<int16_t>(WS_SIDEBAR_Y0 + step_h + WS_SIDEBAR_AFTER_STEP);
+
+		buttons[Buttons::BtViewChoice] = std::make_unique<MapleButton>(
+			WorldSelect["BtViewChoice"],
+			Point<int16_t>(WS_SIDEBAR_X, side_y)
+		);
+		side_y = static_cast<int16_t>(
+			side_y + Texture(WorldSelect["BtViewChoice"]["normal"]["0"]).get_dimensions().y() + WS_SIDEBAR_GAP
+		);
+
+		buttons[Buttons::BtViewAll] = std::make_unique<MapleButton>(
+			WorldSelect["BtViewAll"],
+			Point<int16_t>(WS_SIDEBAR_X, side_y)
+		);
+		side_y = static_cast<int16_t>(
+			side_y + Texture(WorldSelect["BtViewAll"]["normal"]["0"]).get_dimensions().y() + WS_SIDEBAR_GAP
+		);
+
+		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(
+			Common["BtStart"],
+			Point<int16_t>(WS_SIDEBAR_X, side_y)
+		);
+
 		channels_background = WorldSelect["chBackgrn"];
 
-		// 频道按钮按网格排布在频道面板内（chBackgrn 449x233，原点在中心）。
 		for (uint16_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0; i++)
 		{
 			std::string channel = std::to_string(i);
@@ -208,15 +292,16 @@ namespace ms
 			);
 			buttons[Buttons::BtChannel0 + i]->set_active(false);
 
+			// maximum = 条宽；update 传入 0..1 负载比例（见 change_world）。
+			Texture gauge_tex(channelsrc["chgauge"]);
 			channel_gauge[i] = Gauge(
 				Gauge::Type::WORLDSELECT,
-				channelsrc["chgauge"],
-				CHANNEL_LOAD,
+				gauge_tex,
+				std::max<int16_t>(1, gauge_tex.width()),
 				0.0f
 			);
 		}
 
-		// 世界槽先以空槽(BtWorld/e)占位，收到世界列表后在 draw_world 中替换为真实按钮。
 		for (uint8_t i = 0; i < WS_MAX_WORLDS; i++)
 		{
 			buttons[Buttons::BtWorld0 + i] = std::make_unique<TwoSpriteButton>(
@@ -224,17 +309,17 @@ namespace ms
 				worldsrc["e"]["mouseOver"]["0"],
 				worldsrc_pos + Point<int16_t>(static_cast<int16_t>(WS_SLOT_STEP_X * i), 0)
 			);
-			buttons[Buttons::BtWorld0 + i]->set_active(false);
+			buttons[Buttons::BtWorld0 + i]->set_active(true);
 		}
 
 		chatballoon.change_text("Please select the World you would like to play in.");
 
+		// BeiDou：左侧已有「公告」气球，勿再初始化英文气泡（避免双提示框）。
+		if (LoginBackground::get().available())
+			chatballoon.change_text("");
+
 		for (size_t i = 1; i <= FLAG_SIZE; i++)
 			flag_sprites.emplace_back(Login["WorldNotice"][i]);
-
-		worldNotice = WorldSelect["worldNotice"]["0"];
-		rebootNotice = WorldSelect["worldNotice"]["reboot"];
-		worldNoticeMessage = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::MINESHAFT);
 
 		if (Configuration::get().get_auto_login())
 		{
@@ -253,15 +338,71 @@ namespace ms
 		}
 	}
 
+	Point<int16_t> UIWorldSelect::channel_panel_center() const
+	{
+		return channelsrc_pos;
+	}
+
+	Point<int16_t> UIWorldSelect::channel_panel_visual_center() const
+	{
+		// t=0: panel sits CH_SLIDE_DIST above rest; t=1: at rest.
+		int16_t dy = static_cast<int16_t>((1.0f - channel_slide) * (-CH_SLIDE_DIST));
+		return channelsrc_pos + Point<int16_t>(0, dy);
+	}
+
+	void UIWorldSelect::layout_channel_controls(Point<int16_t> panel_center)
+	{
+		Point<int16_t> panel_topleft = panel_center - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
+
+		if (Button* go = buttons[Buttons::BtGoWorld].get())
+			go->set_position(panel_center + WS_GOWORLD_OFF);
+
+		for (uint16_t i = 0; i < CHANNEL_BUTTON_COUNT; i++)
+		{
+			if (Button* ch = get_channel_button(i))
+				ch->set_position(panel_topleft + channel_cell_offset(i));
+		}
+	}
+
+	void UIWorldSelect::update()
+	{
+		UIElement::update();
+
+		if (world_selected && channel_slide < 1.0f)
+		{
+			channel_slide += static_cast<float>(Constants::TIMESTEP) / CH_SLIDE_MS;
+
+			if (channel_slide > 1.0f)
+				channel_slide = 1.0f;
+
+			layout_channel_controls(channel_panel_visual_center());
+		}
+
+		// 公告展开与频道滑入同拍。
+		if (world_selected && notice_slide < 1.0f)
+		{
+			notice_slide += static_cast<float>(Constants::TIMESTEP) / CH_SLIDE_MS;
+
+			if (notice_slide > 1.0f)
+				notice_slide = 1.0f;
+		}
+
+		if (scroll_playing)
+		{
+			if (scroll_open.update())
+			{
+				// 播完一轮后定格为静态频道底板，避免 rewind 闪回首帧。
+				scroll_playing = false;
+			}
+		}
+	}
+
 	void UIWorldSelect::draw(float alpha) const
 	{
 		UIElement::draw_sprites(alpha);
 
-		// 世界名图（world/[worldId]）画在对应条幅槽位上。
-		for (size_t i = 0; i < world_textures.size(); i++)
-			world_textures[i].draw(position + worldsrc_pos + Point<int16_t>(static_cast<int16_t>(WS_SLOT_STEP_X * i), 0));
+		step_channel.draw(position, alpha);
 
-		// 大区提示图标（IDA: 画在槽位 x+5 处）。
 		for (size_t i = 0; i < worlds.size(); i++)
 		{
 			World world = worlds[i];
@@ -273,47 +414,63 @@ namespace ms
 				);
 		}
 
+		Point<int16_t> panel_c = channel_panel_visual_center();
+
 		if (world_selected)
-			channels_background.draw(position + channelsrc_pos);
+		{
+			// 优先播放 Login.img/WorldSelect/scroll/0 卷轴展开；播完后画静态 chBackgrn。
+			if (scroll_playing && scroll_has_anim)
+				scroll_open.draw(position + panel_c, alpha);
+			else
+				channels_background.draw(position + panel_c);
+		}
 
 		UIElement::draw_buttons(alpha);
 
-		if (world_selected)
+		if (world_selected && worldid < worlds.size())
 		{
 			World selectedWorld = worlds[worldid];
 			uint8_t channel_total = selectedWorld.channel_count;
 
-			for (size_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0 && i < channel_total; i++)
-			{
-				// 负载条与频道按钮共用同一格点（channel_cell_offset），保证视觉对齐
-				//（此前硬编码 22+100*col / 88+34*row，与按钮的 56 起始错位 32px 且列数不一致）。
-				channel_gauge->draw(position + channelsrc_pos - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2) + channel_cell_offset(static_cast<uint16_t>(i)));
-			}
+			Texture world_name(worldnamesrc[std::to_string(selectedWorld.id)]);
+			world_name.draw(position + panel_c + WS_WORLD_NAME_ON_PANEL);
 
-			// 世界公告画在面板“表头”空白带（频道网格自面板顶 +56 起），
-			// 旧值 (58,-50) 会落到面板中心下方、压住第一行频道按钮（实测 y 与 CH.1 同行）。
-			if (!worldNoticeMessage.get_text().empty())
-				worldNoticeMessage.draw(position + channelsrc_pos + Point<int16_t>(58, -90));
+			Point<int16_t> panel_topleft = panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
+
+			for (size_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0 && i < channel_total; i++)
+				channel_gauge[i].draw(position + panel_topleft + channel_cell_offset(static_cast<uint16_t>(i)));
+
+			if (!world_notice.empty())
+			{
+				// 公告随 channel_slide 自上方滑入（与卷轴展开同步）。
+				const int16_t notice_dy = static_cast<int16_t>((1.0f - notice_slide) * (-40));
+				const int16_t notice_x = static_cast<int16_t>(
+					panel_c.x() - CH_PANEL_W / 2 - world_notice.width() - WS_NOTICE_GAP
+				);
+				const int16_t notice_y = static_cast<int16_t>(
+					panel_c.y() - CH_PANEL_H / 2 + 8 + notice_dy
+				);
+				world_notice.draw(position + Point<int16_t>(notice_x, notice_y));
+			}
 		}
 
 		version.draw(position + version_pos - Point<int16_t>(0, 5));
-		// 提示气球位于木质横杆上方（不随条幅下移，否则会压住告示牌）。
-		chatballoon.draw(position + Point<int16_t>(747, 105));
+		// BeiDou 用左侧「公告」气球；旧版英文 chatballoon 再画会变成两个提示框。
+		if (!LoginBackground::get().available())
+			chatballoon.draw(position + Point<int16_t>(747, 105));
 	}
 
 	Cursor::State UIWorldSelect::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
-		// channelsrc_pos 是面板中心，判定区域要用面板左上角。
-		Point<int16_t> panel_topleft = channelsrc_pos - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
+		Point<int16_t> panel_c = channel_panel_visual_center();
+		Point<int16_t> panel_topleft = panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
 
 		Rectangle<int16_t> channels_bounds = Rectangle<int16_t>(
 			position + panel_topleft,
 			position + panel_topleft + channels_background.get_dimensions()
 			);
 
-		// 「到选择的世界去」(BtGoWorld) 位于频道面板下方、面板矩形之外；
-		// 若只按面板矩形判定，点它会被当成“点面板外”而先去选世界，
-		// 导致该按钮被 clear_selected_world() 停用、永远点不动。故把它的判定区并入。
+		// 「到选择的世界去」在卷内右下，仍单独并入命中，避免点按钮边缘被当成面板外取消选中。
 		bool inside_goworld = false;
 
 		auto goworld = buttons.find(Buttons::BtGoWorld);
@@ -326,6 +483,7 @@ namespace ms
 			if (clicked)
 			{
 				world_selected = false;
+				channel_slide = 1.0f;
 				clear_selected_world();
 			}
 		}
@@ -391,7 +549,7 @@ namespace ms
 			{
 				World selectedWorld = worlds[worldid];
 
-				uint8_t selected_channel = channelid;
+				uint8_t selected_channel = (channelid == 0xFF) ? 0 : channelid;
 				uint8_t channel_total = selectedWorld.channel_count;
 
 				uint8_t columns = std::min(channel_total, COLUMNS);
@@ -446,7 +604,7 @@ namespace ms
 				else if (escape)
 				{
 					world_selected = false;
-
+					channel_slide = 1.0f;
 					clear_selected_world();
 				}
 				else if (keycode == KeyAction::Id::RETURN)
@@ -548,9 +706,10 @@ namespace ms
 			);
 			buttons[Buttons::BtWorld0 + i]->set_active(true);
 
-			if (channelid >= world.channel_count)
-				channelid = 0;
-		}
+			// 不在 WorldList 到达时预选任何频道：预选会使用户"首点频道即进入世界"，
+			// 跳过「选中→(再点或点到选择的世界去)确认」的两步流程与频道滑入动画。
+			// channelid 维持 clear_selected_world()/头文件默认的 0xFF（未选）。
+			}
 	}
 
 	void UIWorldSelect::add_world(World world)
@@ -601,12 +760,19 @@ namespace ms
 					channel_btn->set_state(Button::State::PRESSED);
 			}
 
-			channel_gauge[i].update(selectedWorld.channel_capacities[i]);
+			// Gauge::draw 用 percentage*maximum；必须传 0..1，不能传绝对人数。
+			float load = static_cast<float>(selectedWorld.channel_capacities[i]) / static_cast<float>(CHANNEL_LOAD);
+			if (load < 0.0f)
+				load = 0.0f;
+			if (load > 1.0f)
+				load = 1.0f;
+			channel_gauge[i].update(load);
 		}
 
 		buttons[Buttons::BtGoWorld]->set_active(true);
 
-		worldNoticeMessage.change_text(selectedWorld.event_message);
+		world_notice.change_text(selectedWorld.event_message);
+		notice_slide = 0.0f;
 	}
 
 	void UIWorldSelect::remove_selected()
@@ -616,6 +782,9 @@ namespace ms
 		Sound(Sound::Name::SCROLLUP).play();
 
 		world_selected = false;
+		channel_slide = 1.0f;
+		notice_slide = 1.0f;
+		scroll_playing = false;
 
 		clear_selected_world();
 	}
@@ -687,6 +856,25 @@ namespace ms
 
 			return Button::State::NORMAL;
 		}
+		else if (id == Buttons::BtStart)
+		{
+			// 回到首页：重置会话后再进登录，否则服仍停在选世界态，
+			// 再点连接会一直卡在 Loading（收不到 LoginResult）。
+			Sound(Sound::Name::SCROLLUP).play();
+			Session::get().reconnect();
+			LoginBackground::get().set_step(0);
+			UI::get().remove(UIElement::Type::WORLDSELECT);
+			UI::get().remove(UIElement::Type::LOGINWAIT);
+			UI::get().remove(UIElement::Type::LOGINNOTICE);
+			UI::get().emplace<UILogin>();
+
+			return Button::State::NORMAL;
+		}
+		else if (id == Buttons::BtViewChoice || id == Buttons::BtViewAll)
+		{
+			// 本版 stub：资源与布局到位，功能后续再接。
+			return Button::State::NORMAL;
+		}
 		else if (id == Buttons::BtRegion)
 		{
 			UI::get().emplace<UIRegion>();
@@ -717,6 +905,31 @@ namespace ms
 			ServerStatusRequestPacket(get_worldbyid(worldid)).dispatch();
 
 			world_selected = true;
+			channel_slide = 0.0f;
+			notice_slide = 0.0f;
+			// BeiDou 地图已有 signboard 卷轴；Login.img/WorldSelect/scroll 是旧版全屏卷（513×401），
+			// 锚在频道面板中心会错位。仅用 CH_SLIDE，不再播该动画。
+			if (!LoginBackground::get().available())
+			{
+				if (nl::node open = nl::nx::UI["Login.img"]["WorldSelect"]["scroll"]["0"])
+				{
+					scroll_open = Animation(open);
+					scroll_open.reset();
+					scroll_has_anim = true;
+					scroll_playing = true;
+				}
+				else
+				{
+					scroll_has_anim = false;
+					scroll_playing = false;
+				}
+			}
+			else
+			{
+				scroll_has_anim = false;
+				scroll_playing = false;
+			}
+			layout_channel_controls(channel_panel_visual_center());
 			clear_selected_world();
 			change_world(worlds[worldid]);
 
@@ -726,10 +939,15 @@ namespace ms
 		{
 			const uint8_t selectedch = static_cast<uint8_t>(id - Buttons::BtChannel0);
 
-			if (selectedch != channelid)
+			// 尚未选中任何频道（clear 后 channelid=0xFF）或点了其它频道 → 仅选中。
+			// 再次点击同一频道 → 进入世界。
+			if (channelid == 0xFF || selectedch != channelid)
 			{
-				if (Button* previous = get_channel_button(channelid))
-					previous->set_state(Button::State::NORMAL);
+				if (channelid != 0xFF)
+				{
+					if (Button* previous = get_channel_button(channelid))
+						previous->set_state(Button::State::NORMAL);
+				}
 
 				channelid = selectedch;
 
@@ -753,6 +971,9 @@ namespace ms
 
 	void UIWorldSelect::enter_world()
 	{
+		if (channelid == 0xFF)
+			return;
+
 		Configuration::get().set_worldid(worldid);
 		Configuration::get().set_channelid(channelid);
 
@@ -765,7 +986,9 @@ namespace ms
 
 	void UIWorldSelect::clear_selected_world()
 	{
-		channelid = 0;
+		// 不预选 CH.0：否则首点 CH.1（index 0）会命中 selectedch==channelid 直接 enter_world，
+		// 频道滑入动画与「再点确认」流程被跳过。
+		channelid = 0xFF;
 
 		// 频道按钮已在构造函数中按 CHANNEL_BUTTON_COUNT 全部创建；
 		// 这里仍统一走带范围校验的访问器，避免日后调整容量时漏改本处。
@@ -774,9 +997,6 @@ namespace ms
 			if (Button* channel_btn = get_channel_button(i))
 				channel_btn->set_state(Button::State::NORMAL);
 		}
-
-		if (Button* first_channel = get_channel_button(0))
-			first_channel->set_state(Button::State::PRESSED);
 
 		for (size_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0; i++)
 		{
@@ -787,7 +1007,7 @@ namespace ms
 
 		buttons[Buttons::BtGoWorld]->set_active(false);
 
-		worldNoticeMessage.change_text("");
+		world_notice.change_text("");
 	}
 
 	uint16_t UIWorldSelect::get_next_world(uint16_t id, bool upward)

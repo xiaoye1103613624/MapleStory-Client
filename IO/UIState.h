@@ -22,6 +22,8 @@
 
 #include "Components/Tooltip.h"
 
+#include <list>
+
 namespace ms
 {
 	class UIState

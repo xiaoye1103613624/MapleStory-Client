@@ -21,11 +21,13 @@
 
 #include "../Components/Textfield.h"
 
+#include "../../Graphics/Sprite.h"
+#include "../../Graphics/Texture.h"
 #include "../../Template/BoolPair.h"
 
 namespace ms
 {
-	// Race selection screen
+	// Race selection screen (modern RaceSelect_new or classic BeiDou RaceSelect).
 	class UIRaceSelect : public UIElement
 	{
 	public:
@@ -50,7 +52,11 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
+		void init_modern();
+		void init_classic();
 		void select_class(uint16_t index);
+		void select_classic_class(uint16_t index);
+		void enter_creation();
 		void show_charselect();
 		void show_worldselect();
 		Point<int16_t> get_class_pos(size_t index) const;
@@ -59,6 +65,7 @@ namespace ms
 
 		static constexpr uint16_t INDEX_COUNT = 6;
 		static constexpr uint16_t SELECTED_LIST = 35;
+		static constexpr uint16_t CLASSIC_CLASS_COUNT = 3;
 
 		enum Buttons : uint16_t
 		{
@@ -110,6 +117,8 @@ namespace ms
 			CHASE
 		};
 
+		bool classic_mode;
+
 		Text version;
 		Point<int16_t> version_pos;
 		Point<int16_t> pos;
@@ -148,5 +157,16 @@ namespace ms
 		Texture dot;
 		int16_t buttonIntervalX;
 		Point<int16_t> buttonPos;
+
+		// Classic BeiDou RaceSelect (IDA: knight / normal / aran left→right).
+		Texture classic_card[CLASSIC_CLASS_COUNT];
+		Texture classic_card_over[CLASSIC_CLASS_COUNT];
+		Sprite classic_on_ani[CLASSIC_CLASS_COUNT];
+		Texture classic_text[CLASSIC_CLASS_COUNT];
+		Texture classic_text_gl;
+		Point<int16_t> classic_card_pos[CLASSIC_CLASS_COUNT];
+		Point<int16_t> classic_text_pos;
+		Point<int16_t> classic_select_pos;
+		uint16_t classic_classes[CLASSIC_CLASS_COUNT];
 	};
 }

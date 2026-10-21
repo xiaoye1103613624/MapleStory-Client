@@ -32,6 +32,7 @@ namespace ms
 		UILoginWait(std::function<void()> okhandler);
 
 		UIElement::Type get_type() const override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		void close();
 		std::function<void()> get_handler();

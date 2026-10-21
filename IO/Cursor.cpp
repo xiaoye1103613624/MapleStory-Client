@@ -18,6 +18,8 @@
 #include "Cursor.h"
 
 #include "../Constants.h"
+#include "../Util/Misc.h"
+#include "../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,27 +31,89 @@ namespace ms
 	{
 		state = Cursor::State::IDLE;
 		hide_counter = 0;
+
+		for (int i = 0; i < State::LENGTH; i++)
+			state_loaded[i] = false;
 	}
 
 	void Cursor::init()
 	{
 		nl::node src = nl::nx::UI["Basic.img"]["Cursor"];
 
-		for (auto iter : animations)
-			iter.second = src[iter.first];
+		// v83 / BeiDou 通常只有 Cursor/0..13。LEAF=18、聊天栏 67+ 在经典包里
+		// 常缺失或指向其它 Basic 子树；误绑会把光标画成数字字形。
+		static const State kClassicStates[] = {
+			IDLE, CANCLICK, GAME, HOUSE, CANCLICK2, CANGRAB, GIFT,
+			VSCROLL, HSCROLL, VSCROLLIDLE, HSCROLLIDLE, GRABBING,
+			CLICKING, RCLICK
+		};
+		static const State kModernExtra[] = {
+			LEAF, CHATBARVDRAG, CHATBARHDRAG, CHATBARBLTRDRAG,
+			CHATBARMOVE, CHATBARBRTLDRAG
+		};
+
+		for (int i = 0; i < State::LENGTH; i++)
+			state_loaded[i] = false;
+
+		if (!src)
+		{
+			LOG(LOG_WARN, "[Cursor] Basic.img/Cursor missing");
+			return;
+		}
+
+		auto try_bind = [&](State s)
+		{
+			const int id = static_cast<int>(s);
+			nl::node node = src[std::to_string(id)];
+
+			if (!node)
+				return;
+
+			// 至少要有一张可绘 bitmap，避免空 imgdir / 字库节点被当成光标。
+			bool has_bitmap = node.data_type() == nl::node::type::bitmap;
+			if (!has_bitmap)
+			{
+				for (auto sub : node)
+				{
+					if (sub.data_type() == nl::node::type::bitmap)
+					{
+						has_bitmap = true;
+						break;
+					}
+				}
+			}
+			if (!has_bitmap)
+				return;
+
+			animations[s] = node;
+			state_loaded[s] = true;
+		};
+
+		for (State s : kClassicStates)
+			try_bind(s);
+
+		if (!UiAssetResolve::is_classic_hud())
+		{
+			for (State s : kModernExtra)
+				try_bind(s);
+		}
+
+		if (!state_loaded[IDLE])
+			LOG(LOG_WARN, "[Cursor] IDLE (0) frame missing — cursor may be invisible");
 	}
 
 	void Cursor::draw(float alpha) const
 	{
 		constexpr int64_t HIDE_AFTER = HIDE_TIME / Constants::TIMESTEP;
 
-		if (hide_counter < HIDE_AFTER)
+		if (hide_counter < HIDE_AFTER && state_loaded[state])
 			animations[state].draw(position, alpha);
 	}
 
 	void Cursor::update()
 	{
-		animations[state].update();
+		if (state_loaded[state])
+			animations[state].update();
 
 		switch (state)
 		{
@@ -68,11 +132,18 @@ namespace ms
 
 	void Cursor::set_state(State s)
 	{
-		if (state != s)
-		{
-			state = s;
+		State next = s;
 
-			animations[state].reset();
+		if (next != State::IDLE && (next < 0 || next >= State::LENGTH || !state_loaded[next]))
+			next = State::IDLE;
+
+		if (state != next)
+		{
+			state = next;
+
+			if (state_loaded[state])
+				animations[state].reset();
+
 			hide_counter = 0;
 		}
 	}

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 // Key codes used by the client input layer.
 //

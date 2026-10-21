@@ -87,13 +87,13 @@ namespace ms
 		Point<int16_t> password_pos;
 		Point<int16_t> check_pos;
 
-		// BeiDou 数据缺少输入框贴图，用色块补齐可见的输入框。
-		ColorBox account_border;
-		ColorBox account_field;
-		ColorBox password_border;
-		ColorBox password_field;
-
+		// BeiDou 数据缺少输入框贴图，木牌自带雕刻槽，不再叠画白底 ColorBox。
+		// account_border / account_field 等成员保留默认构造，draw 中不使用。
 		bool saveid;
 		bool nexon;
-	};
+
+		// opt-in 自动登录挂起标志：构造期仅预填账号密码并置位，首个 update 帧（UI 就绪后）
+		// 再走完整 login()，与手动点「连接」同一路径，避免构造期 UI/Session 未就绪导致丢包。
+		bool auto_login_pending = false;
+		};
 }

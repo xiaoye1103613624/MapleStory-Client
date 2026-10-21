@@ -35,6 +35,7 @@ namespace ms
 		UITermsOfService(std::function<void()> okhandler);
 
 		void draw(float inter) const override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 

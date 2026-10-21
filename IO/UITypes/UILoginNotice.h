@@ -31,6 +31,7 @@ namespace ms
 		UIKeyConfirm(bool alternate, std::function<void()> oh, bool login);
 
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		UIElement::Type get_type() const override;
 
@@ -59,6 +60,7 @@ namespace ms
 		UIKeySelect(std::function<void(bool)> okhandler, bool login);
 
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		UIElement::Type get_type() const override;
 
@@ -88,6 +90,7 @@ namespace ms
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		UIElement::Type get_type() const override;
 
@@ -114,6 +117,7 @@ namespace ms
 		UIQuitConfirm();
 
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		UIElement::Type get_type() const override;
 
@@ -266,6 +270,7 @@ namespace ms
 		UILoginNotice(uint16_t message);
 
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		UIElement::Type get_type() const override;
 
