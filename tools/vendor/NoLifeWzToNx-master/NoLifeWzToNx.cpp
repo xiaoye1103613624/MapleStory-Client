@@ -152,6 +152,7 @@ template <int N> void scale(std::vector<uint8_t> const & input, std::vector<uint
 struct imapfile {
     char const * base = nullptr;
     char const * offset = nullptr;
+    char const * end = nullptr;  // [SAFETY] 缓冲区上界，供越界读取检查（内存缓冲用法时显式设置）。
 #ifdef _WIN32
     void * file_handle = nullptr;
     void * map_handle = nullptr;
@@ -198,6 +199,8 @@ struct imapfile {
     void skip(size_t n) { offset += n; }
     template <typename T>
     T read() {
+        if (end != nullptr && offset + sizeof(T) > end)
+            throw std::runtime_error("img buffer overrun in reader::read");
         auto & v = *reinterpret_cast<T const *>(offset);
         offset += sizeof(T);
         return v;
@@ -390,17 +393,28 @@ struct wztonx {
     id_t read_enc_string() {
         auto len = in.read<int8_t>();
         if (len == 0) return 0;
+        // [SAFETY] 边界检查：畸形 .img 可能给出越界字符串偏移/长度，导致
+        // 越过缓冲区读取相邻堆内存并 resize 出巨型字符串，破坏堆。这里在读取
+        // 之前强制校验长度不超过剩余缓冲区。
+        auto remaining = [&]() -> size_t {
+            return (in.end != nullptr)
+                ? static_cast<size_t>(in.end - in.offset) : static_cast<size_t>(-1);
+        };
         if (plaintext) {
             // Plain-text image strings: no locale key is involved, so the bytes
             // are taken verbatim. len>0 is a UTF-16 run, len<0 an ASCII run.
             if (len > 0) {
                 auto slen = len == 127 ? in.read<uint32_t>() : len;
+                if (slen > remaining() / 2)
+                    throw std::runtime_error("img string overrun (plain utf16)");
                 auto ows = reinterpret_cast<char16_t const *>(in.offset);
                 in.skip(slen * 2u);
                 wstr_buf.assign(ows, ows + slen);
                 return add_string(convert_str(wstr_buf));
             }
             auto slen = len == -128 ? in.read<uint32_t>() : -len;
+            if (slen > remaining())
+                throw std::runtime_error("img string overrun (plain ascii)");
             auto os = reinterpret_cast<char8_t const *>(in.offset);
             in.skip(slen);
             str_buf.assign(os, os + slen);
@@ -408,6 +422,8 @@ struct wztonx {
         }
         if (len > 0) {
             auto slen = len == 127 ? in.read<uint32_t>() : len;
+            if (slen > remaining() / 2)
+                throw std::runtime_error("img string overrun (enc utf16)");
             auto ows = reinterpret_cast<char16_t const *>(in.offset);
             in.skip(slen * 2u);
             auto mask = 0xAAAAu;
@@ -424,6 +440,8 @@ struct wztonx {
         }
         if (len < 0) {
             auto slen = len == -128 ? in.read<uint32_t>() : -len;
+            if (slen > remaining())
+                throw std::runtime_error("img string overrun (enc ascii)");
             auto os = reinterpret_cast<char8_t const *>(in.offset);
             in.skip(slen);
             auto mask = 0xAAu;
@@ -528,25 +546,33 @@ struct wztonx {
     }
     id_t get_child(id_t parent_node, std::string const & str) {
         if (parent_node == 0) return 0;
+        // [SAFETY] 越界节点导航防护：畸形/被损坏的节点可能带非法 children/num。
+        if (parent_node >= nodes.size()) return 0;
         auto & n = nodes[parent_node];
+        if (n.children >= nodes.size()) return 0;
+        if (n.num > nodes.size() - n.children) return 0;
         auto first = nodes.begin() + n.children;
         auto last = first + n.num;
         auto it = std::lower_bound(first, last, str, [this](node const & n, std::string const & s) {
-            return strings[n.name] < s;
+            return n.name < strings.size() && strings[n.name] < s;
         });
         if (it == last) return 0;
-        if (strings[it->name] != str) return 0;
+        if (it->name >= strings.size() || strings[it->name] != str) return 0;
         return static_cast<id_t>(it - nodes.begin());
     }
     id_t get_child_full(id_t parent_node, std::string const & str) {
+        // [SAFETY] 越界节点导航防护：畸形/被损坏的节点可能带非法 children/num/name。
+        if (parent_node >= nodes.size()) return 0;
         auto & n = nodes[parent_node];
+        if (n.children >= nodes.size()) return 0;
+        if (n.num > nodes.size() - n.children) return 0;
         auto first = nodes.begin() + n.children;
         auto last = first + n.num;
         auto it = std::lower_bound(first, last, str, [this](node const & n, std::string const & s) {
-            return strings[n.name] < s;
+            return n.name < strings.size() && strings[n.name] < s;
         });
         if (it == last) return 0;
-        if (strings[it->name] != str) return 0;
+        if (it->name >= strings.size() || strings[it->name] != str) return 0;
         return static_cast<id_t>(it - nodes.begin());
     }
     bool resolve_uol(std::vector<id_t> uol) {
@@ -731,7 +757,7 @@ struct wztonx {
                 auto & nn = nodes[ni + i];
                 auto es = std::to_string(i);
                 nn.name = add_string(std::move(es));
-                extended_property(ni, p_offset);
+                extended_property(ni + i, p_offset);
             }
             nodes_to_sort.emplace_back(ni, count);
         } else if (st == "Sound_DX8") {
@@ -1379,6 +1405,7 @@ struct imgdirtonx : wztonx {
             nn.data_type = node::type::none;
             in.base = imgs[i].second.data();
             in.offset = imgs[i].second.data();
+            in.end = imgs[i].second.data() + imgs[i].second.size();
             img(child, static_cast<int>(imgs[i].second.size()));
         }
         nodes_to_sort.emplace_back(1, n);
@@ -1412,6 +1439,7 @@ struct imgdirtonx : wztonx {
         root.data_type = node::type::none;
         in.base = single_buf.data();
         in.offset = in.base;
+        in.end = single_buf.data() + single_buf.size();
         img(0, static_cast<int>(single_buf.size()));
         finish_parse();
     }
@@ -1471,6 +1499,7 @@ struct imgdirtonx : wztonx {
                 if (!buf.empty()) {
                     in.base = buf.data();
                     in.offset = buf.data();
+                    in.end = buf.data() + buf.size();
                     img(child, static_cast<int>(buf.size()));
                 }
             }
@@ -1480,6 +1509,19 @@ struct imgdirtonx : wztonx {
     }
     std::vector<std::pair<std::string, std::vector<char>>> imgs;
     std::vector<char> single_buf;
+    // P3（img_file 零转换）：持久化目录树，供运行时 bitmap/audio 解码引用其缓冲，
+    // 避免解析后 base 指针悬垂。convert_tree 的一次性写盘路径不使用它（保持原生行为）。
+    tree_node tree;
+    // 只解析不写盘：把目录树 move 进 tree 成员后解析，供 img_file 零转换装载。
+    void parse_only(tree_node && root) {
+        tree = std::move(root);
+        parse_tree(tree);
+    }
+    // [SAFETY] 已把目录树存入 tree 成员后解析（供 SEH 兜底调用，避免在含 C++ 对象的
+    // 函数里使用 __try）。
+    void parse_only_stored() {
+        parse_tree(tree);
+    }
 };
 static std::string imgfs_path_leaf(std::string const & p) {
     auto pos = p.find_last_of("/\\");

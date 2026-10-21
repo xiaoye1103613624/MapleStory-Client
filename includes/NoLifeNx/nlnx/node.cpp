@@ -263,6 +263,10 @@ namespace nl {
             return child ? node{m_file->node_table + child, m_file}
                 : node{nullptr, m_file};
         }
+        // [SAFETY] 内存后端（img/wz）必须经由 m_file->wz 导航；若走到此分支说明
+        // wz 未绑定或 node_table/base 未就绪，避免以 NULL base 做指针运算导致 AV。
+        if (!m_file->base || !m_file->node_table || !m_file->string_table)
+            return {nullptr, m_file};
         auto p = m_file->node_table + m_data->children;
         auto n = m_data->num;
         auto const b = reinterpret_cast<const char *>(m_file->base);

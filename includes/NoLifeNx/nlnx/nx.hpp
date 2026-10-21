@@ -17,6 +17,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "nxfwd.hpp"
+#include "node.hpp"
+
+#include <string>
 
 namespace nl
 {
@@ -30,5 +33,11 @@ namespace nl
 		// Loads the pre-defined nodes from a standard setup of nx files for MapleStory
 		// Only call this function once
 		void load_all();
+
+		// Same as load_all(), but every root file is resolved under @base_dir
+		// instead of the current working directory. An empty base_dir behaves
+		// exactly like load_all(). Added for clients that keep their data
+		// outside of the working directory; the original overload is untouched.
+		void load_all(const std::string& base_dir);
 	}
 }

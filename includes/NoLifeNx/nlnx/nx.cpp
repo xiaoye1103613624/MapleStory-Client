@@ -30,9 +30,32 @@ namespace nl
 	{
 		std::vector<std::unique_ptr<file>> files;
 
+		// 可选的装载根目录前缀：非空时，所有根文件名都在该目录下解析；
+		// 为空时保持既有行为（相对当前工作目录）。
+		// 该前缀只在 load_all(base_dir) 执行期间有效，结束后立即清空。
+		std::string base_prefix;
+
+		// 给文件名加上根目录前缀。
+		std::string with_base(std::string const& name)
+		{
+			if (base_prefix.empty())
+				return name;
+
+			std::string joined = base_prefix;
+
+			const char last = joined.back();
+
+			if (last != '/' && last != '\\')
+				joined += '/';
+
+			joined += name;
+
+			return joined;
+		}
+
 		bool exists(std::string name)
 		{
-			return std::ifstream(name).is_open();
+			return std::ifstream(with_base(name)).is_open();
 		}
 
 		node add_file(std::string name)
@@ -40,7 +63,7 @@ namespace nl
 			if (!exists(name))
 				return {};
 
-			files.emplace_back(new file(name));
+			files.emplace_back(new file(with_base(name)));
 
 			return *files.back();
 		}
@@ -49,6 +72,14 @@ namespace nl
 
 		void load_all()
 		{
+			load_all(std::string());
+		}
+
+		void load_all(const std::string& base_dir)
+		{
+			// 装载期间生效；结束后清空，避免影响后续任何调用。
+			base_prefix = base_dir;
+
 			if (exists("Base.nx"))
 			{
 				Base = add_file("Base.nx");
@@ -146,6 +177,8 @@ namespace nl
 				TamingMob = add_file("TamingMob.nx");
 				UI = add_file("UI.nx");
 			}
+
+			base_prefix.clear();
 		}
 	}
 }
