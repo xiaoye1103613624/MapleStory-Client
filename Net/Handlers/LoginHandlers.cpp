@@ -152,6 +152,10 @@ namespace ms
 		// The packet should contain a 'reason' integer which can signify various things
 		if (int16_t reason = recv.read_short())
 		{
+			// 选角失败：复位请求门闩，允许玩家重新选择
+			if (auto charselect = UI::get().get_element<UICharSelect>())
+				charselect->clear_pending();
+
 			// Select character unsuccessful
 			// The LoginNotice displayed will contain the specific information
 			switch (reason)
@@ -302,6 +306,10 @@ namespace ms
 		// Read the character id and if deletion was successful (PIC was correct)
 		int32_t cid = recv.read_int();
 		uint8_t state = recv.read_byte();
+
+		// 删除回包到达：无论成功/失败都复位请求门闩
+		if (auto charselect = UI::get().get_element<UICharSelect>())
+			charselect->clear_pending();
 
 		// Extract information from the state byte
 		if (state)

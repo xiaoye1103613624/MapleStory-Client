@@ -843,6 +843,11 @@ namespace ms
 		}
 	}
 
+	void UICharSelect::clear_pending()
+	{
+		request_pending = false;
+	}
+
 	const CharEntry& UICharSelect::get_character(int32_t id)
 	{
 		for (CharEntry& character : characters)
@@ -858,6 +863,9 @@ namespace ms
 
 	Button::State UICharSelect::button_pressed(uint16_t buttonid)
 	{
+		if (request_pending)
+			return Button::State::NORMAL;
+
 		switch (buttonid)
 		{
 			case Buttons::BtSelect:
@@ -882,8 +890,9 @@ namespace ms
 						}
 						case 1:
 						{
-							std::function<void(const std::string&)> onok = [id](const std::string& pic)
+							std::function<void(const std::string&)> onok = [this, id](const std::string& pic)
 							{
+								request_pending = true;
 								SelectCharPicPacket(pic, id).dispatch();
 							};
 
@@ -892,6 +901,7 @@ namespace ms
 						}
 						case 2:
 						{
+							request_pending = true;
 							SelectCharPacket(id).dispatch();
 							break;
 						}
@@ -945,6 +955,7 @@ namespace ms
 						{
 							std::function<void(const std::string&)> onok = [&, id](const std::string& pic)
 							{
+								request_pending = true;
 								DeleteCharPicPacket(pic, id).dispatch();
 							};
 
@@ -963,6 +974,7 @@ namespace ms
 					}
 					case 2:
 					{
+						request_pending = true;
 						DeleteCharPacket(id).dispatch();
 						break;
 					}

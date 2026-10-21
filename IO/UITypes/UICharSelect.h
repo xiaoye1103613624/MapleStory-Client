@@ -49,6 +49,10 @@ namespace ms
 		void post_add_character();
 		void remove_character(int32_t id);
 
+		// 参考端 CUICharSelect::IsRequestValid 的 CLogin+368 门闩：
+		// 选角/删除请求发出后、服务器回包前阻止重复点击。
+		void clear_pending();
+
 		const CharEntry& get_character(int32_t id);
 
 	protected:
@@ -106,6 +110,7 @@ namespace ms
 		uint8_t selected_character;
 		uint8_t selected_page;
 		uint8_t page_count;
+		bool request_pending = false;
 		Texture tab;
 		uint8_t tab_index;
 		bool tab_active;
