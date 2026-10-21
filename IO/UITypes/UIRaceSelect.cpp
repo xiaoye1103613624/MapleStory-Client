@@ -86,7 +86,7 @@ namespace ms
 		if (LoginBackground::get().available())
 		{
 			LoginBackground::get().set_step(3);
-			position = LoginBackground::get().get_viewpos() + kClassicMapOrigin;
+			position = LoginBackground::get().get_target_viewpos() + kClassicMapOrigin;
 		}
 		else
 		{
@@ -769,8 +769,7 @@ namespace ms
 
 		UI::get().remove(UIElement::Type::RACESELECT);
 
-		if (auto charselect = UI::get().get_element<UICharSelect>())
-			charselect->makeactive();
+		UI::get().activate_after_transition(UIElement::Type::CHARSELECT);
 	}
 
 	void UIRaceSelect::show_worldselect()
@@ -783,8 +782,7 @@ namespace ms
 		UI::get().remove(UIElement::Type::RACESELECT);
 		UI::get().remove(UIElement::Type::CHARSELECT);
 
-		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
-			worldselect->makeactive();
+		UI::get().activate_after_transition(UIElement::Type::WORLDSELECT);
 	}
 
 	Point<int16_t> UIRaceSelect::get_class_pos(size_t index) const

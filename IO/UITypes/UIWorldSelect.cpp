@@ -177,7 +177,7 @@ namespace ms
 			LoginBackground::get().set_step(1);
 
 		Point<int16_t> viewpos = bg_managed
-			? LoginBackground::get().get_viewpos()
+			? LoginBackground::get().get_target_viewpos()
 			: Point<int16_t>(vieww / 2, viewh / 2);
 
 		int16_t slotline_w = static_cast<int16_t>(WS_SLOT_STEP_X * WS_MAX_WORLDS);

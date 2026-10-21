@@ -52,6 +52,10 @@ namespace ms
 		virtual void show_map(Tooltip::Parent parent, std::string name, std::string description, int32_t mapid, bool bolded, bool portal) = 0;
 
 		virtual Iterator pre_add(UIElement::Type type, bool toggled, bool focused) = 0;
+		// 元素构造完成后的钩子：登录态用它把步进窗口延迟到补间结束再激活。
+		virtual void post_add(UIElement::Type, UIElement*) {}
+		// 已存在的窗口在补间结束后再激活（用于“返回上一页”这类不重建窗口的切换）。
+		virtual void activate_after_transition(UIElement::Type) {}
 		virtual void remove(UIElement::Type type) = 0;
 		virtual UIElement* get(UIElement::Type type) = 0;
 		virtual UIElement* get_front(std::list<UIElement::Type> types) = 0;

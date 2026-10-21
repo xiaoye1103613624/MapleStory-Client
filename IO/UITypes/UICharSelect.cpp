@@ -174,7 +174,7 @@ namespace ms
 			//   实测其屏幕位置 = (235, 110)（wordsrc_pos，见 verified_worldselect.png）
 			//   ⇒ step=1 偏移 = (375, 914)；而 viewpos(step1) = (612, 968)
 			//   ⇒ position = viewpos + (−237, −54)（对任意 step/分辨率自动跟随相机）。
-			position = LoginBackground::get().get_viewpos() + CS_FRAME_ORIGIN;
+			position = LoginBackground::get().get_target_viewpos() + CS_FRAME_ORIGIN;
 		}
 		else
 		{
@@ -258,7 +258,7 @@ namespace ms
 
 		if (bg_managed)
 		{
-			Point<int16_t> viewpos = LoginBackground::get().get_viewpos();
+			Point<int16_t> viewpos = LoginBackground::get().get_target_viewpos();
 			Texture sign_tex(nl::nx::Map["Obj"]["login.img"]["CharSelect"]["signboard"]["0"]["0"]);
 			Point<int16_t> sign_tl = CS_SIGN_MAP_POS + viewpos - sign_tex.get_origin();
 
@@ -1036,8 +1036,11 @@ namespace ms
 
 				Sound(Sound::Name::SCROLLUP).play();
 
-				if (auto worldselect = UI::get().get_element<UIWorldSelect>())
-					worldselect->makeactive();
+				// 参考端回到 step 1：背景先滚回选世界页，窗口在补间结束后再显示。
+				if (LoginBackground::get().available())
+					LoginBackground::get().set_step(1);
+
+				UI::get().activate_after_transition(UIElement::Type::WORLDSELECT);
 
 				break;
 			}

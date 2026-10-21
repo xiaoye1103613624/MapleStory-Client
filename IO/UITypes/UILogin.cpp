@@ -127,12 +127,15 @@ namespace ms
 
 		if (bedou)
 		{
+			// 先确定目标 step，下面的告示牌锚点要用 step 0 的端点视角。
+			LoginBackground::get().set_step(0);
+
 			// 告示牌屏幕左上角作为基准（与地图中 signboard 的绘制锚点完全一致：
 			// screen_topleft = map_pos + viewpos - origin）。
 			Texture sign_tex(nl::nx::Map["Obj"]["login.img"]["Title"]["signboard"]["0"]["0"]);
 			Point<int16_t> sign_origin = sign_tex.get_origin();
 			Point<int16_t> signboard_map_pos(137, 21);
-			Point<int16_t> sign_topleft = signboard_map_pos + LoginBackground::get().get_viewpos() - sign_origin;
+			Point<int16_t> sign_topleft = signboard_map_pos + LoginBackground::get().get_target_viewpos() - sign_origin;
 
 			// CUITitle 窗口原点相对告示牌左上角的偏移。
 			//
@@ -167,9 +170,6 @@ namespace ms
 			bpos_new = button_pos(Title_new["BtNew"], 14, 122);
 			bpos_home = button_pos(Title_new["BtHomePage"], 114, 120);
 			bpos_quit = button_pos(Title_new["BtQuit"], 214, 120);
-
-			// 登录步骤为 0。
-			LoginBackground::get().set_step(0);
 		}
 		else
 		{

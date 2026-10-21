@@ -74,6 +74,15 @@ namespace ms
 		if (LoginBackground::get().available())
 			LoginBackground::get().update();
 
+		// 补间结束：激活被延迟的步进窗口（等价于参考端 OnStepChanged 的窗口切换）。
+		if (pending_activation != UIElement::Type::NONE && !LoginBackground::get().is_transitioning())
+		{
+			if (UIElement* element = get(pending_activation))
+				element->makeactive();
+
+			pending_activation = UIElement::Type::NONE;
+		}
+
 		bool screen_changed = false;
 		const int16_t new_width = Constants::Constants::get().get_viewwidth();
 		const int16_t new_height = Constants::Constants::get().get_viewheight();
@@ -192,6 +201,49 @@ namespace ms
 			(*iter).second = std::make_unique<T>(
 				std::forward<Args>(args)...
 			);
+
+			post_add(T::TYPE, (*iter).second.get());
+		}
+	}
+
+	void UIStateLogin::post_add(UIElement::Type type, UIElement* element)
+	{
+		if (!element || !is_step_window(type))
+			return;
+
+		// 参考端 CLogin::OnStepChanged 在补间结束后才显示新窗口。
+		// 构造期已把世界列表/角色数据装好，这里只推迟可见与输入。
+		if (LoginBackground::get().available() && LoginBackground::get().is_transitioning())
+		{
+			element->deactivate();
+			pending_activation = type;
+		}
+	}
+
+	void UIStateLogin::activate_after_transition(UIElement::Type type)
+	{
+		if (LoginBackground::get().available() && LoginBackground::get().is_transitioning())
+		{
+			pending_activation = type;
+			return;
+		}
+
+		if (UIElement* element = get(type))
+			element->makeactive();
+	}
+
+	bool UIStateLogin::is_step_window(UIElement::Type type)
+	{
+		switch (type)
+		{
+			case UIElement::Type::LOGIN:
+			case UIElement::Type::WORLDSELECT:
+			case UIElement::Type::CHARSELECT:
+			case UIElement::Type::RACESELECT:
+			case UIElement::Type::CLASSCREATION:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -209,6 +261,9 @@ namespace ms
 	{
 		if (focused == type)
 			focused = UIElement::Type::NONE;
+
+		if (pending_activation == type)
+			pending_activation = UIElement::Type::NONE;
 
 		if (auto& element = elements[type])
 		{

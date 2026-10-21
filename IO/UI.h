@@ -84,6 +84,9 @@ namespace ms
 				(*iter).second = std::make_unique<T>(
 					std::forward<Args>(args)...
 					);
+
+				if (UIElement* element = (*iter).second.get())
+					state->post_add(T::TYPE, element);
 			}
 
 			return state->get(T::TYPE);
@@ -99,6 +102,8 @@ namespace ms
 		}
 
 		void remove(UIElement::Type type);
+		// 登录态：若背景仍在补间，等滚到端点再激活目标窗口。
+		void activate_after_transition(UIElement::Type type);
 
 	private:
 		std::unique_ptr<UIState> state;

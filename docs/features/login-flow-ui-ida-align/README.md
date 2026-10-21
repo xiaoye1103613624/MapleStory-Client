@@ -136,6 +136,7 @@
 | 选角索引安全 | [`notes/r05-charselect-index-guards.md`](notes/r05-charselect-index-guards.md) | `world` 初始化 + 默认角色夹取 + `BtSelect`/`BtDelete` 越界校验，消除 C4701 |
 | 选角请求门闩 | [`notes/r06-charselect-request-latch.md`](notes/r06-charselect-request-latch.md) | `request_pending` 阻止重复选角/删除；失败回包复位 |
 | 世界/频道请求门闩 | [`notes/r07-worldselect-request-latch.md`](notes/r07-worldselect-request-latch.md) | 以 `UILoginWait` 作为请求进行中标记，阻止重复发包 |
+| 步进窗口延迟激活 | [`notes/r08-step-window-defer.md`](notes/r08-step-window-defer.md) | 新窗口在补间结束后激活；构造期改用 `get_target_viewpos()`，避免半途坐标 |
 
 ## 未完成 / 已知偏差（未臆改）
 
@@ -149,7 +150,7 @@
 3. **`CUICharDetailVAC` 归属未明**：其 `SetOption` 点为 `(148, -710)`、`CreateFadeWnd(170, 210, 0, z=11)`，
    读 `CLogin+316` 的另一角色数组；已排除「第 2 行槽位」的猜想，具体用途待查。
 4. **按钮与地图挂链图元轻微重叠**：属 NX 版本资源差异，不影响可点击与可读性。
-5. **窗口切换时机**：参考端 `CLogin::OnStepChanged` 在补间结束后才销毁/创建窗口；当前端在 `set_step` 同时已 `emplace` 新 UI，新窗口会随相机滑入。见 `r04` §4.1。
+5. **旧窗口滚动**：参考端 `OnStepChanged` 在补间结束后才销毁/创建窗口，旧窗口会随背景滚出；当前端已在补间结束后才激活新窗口，但旧窗口是直接隐藏，没有 ghost 绘制。见 `r08` §4。
 6. **step 0 相机 X**：参考端 `CLogin::Init` 使用 `(28, GetStepHeight(step))`，当前登录页沿用 `(137, -20)` 锚点对齐书本开口；需实机叠图确认是否为系统性偏移。见 `r04` §4.2。
 7. **View All / View Choice**：`UIWorldSelect` 两个按钮仍是 stub，点击无行为；频道按钮固定 30 个，未实现参考端的 60 频道翻页。
 8. **请求超时**：选角/世界请求门闩依赖服务器回包或 UI 销毁复位，未加超时；断线场景需 `Session` 重连时统一清理。

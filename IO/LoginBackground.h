@@ -19,6 +19,7 @@
 
 #include "../Template/Singleton.h"
 
+#include "../Constants.h"
 #include "../Gameplay/MapleMap/MapBackgrounds.h"
 #include "../Gameplay/MapleMap/MapTilesObjs.h"
 #include "../Graphics/Sprite.h"
@@ -59,6 +60,29 @@ namespace ms
 		}
 
 		Point<int16_t> get_viewpos() const;
+
+		// 目标步进的视角位置。构造登录窗口时补间可能刚开始，
+		// 必须用端点而不是当前插值位置，否则窗口会落在半途。
+		Point<int16_t> get_target_viewpos() const
+		{
+			Point<int16_t> center(
+				Constants::Constants::get().get_viewwidth() / 2,
+				Constants::Constants::get().get_viewheight() / 2
+			);
+			Offset offset = target_offset(step);
+
+			return Point<int16_t>(
+				static_cast<int16_t>(center.x() - offset.x),
+				static_cast<int16_t>(center.y() - offset.y)
+			);
+		}
+
+		// 参考端 CLogin::OnStepChanged 只在补间结束后切换窗口；
+		// 登录态据此延迟激活新窗口，避免新窗口提前悬在终点。
+		bool is_transitioning() const
+		{
+			return tween_active;
+		}
 
 		void draw(float alpha) const;
 		void update();

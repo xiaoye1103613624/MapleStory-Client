@@ -47,6 +47,8 @@ namespace ms
 		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool) {}
 
 		Iterator pre_add(UIElement::Type type, bool toggled, bool focused) override;
+		void post_add(UIElement::Type type, UIElement* element) override;
+		void activate_after_transition(UIElement::Type type) override;
 		void remove(UIElement::Type type) override;
 		UIElement* get(UIElement::Type type) override;
 		UIElement* get_front();
@@ -55,12 +57,15 @@ namespace ms
 
 	private:
 		void remove_cursor(UIElement::Type type);
+		static bool is_step_window(UIElement::Type type);
 
 		template <class T, typename...Args>
 		void emplace(Args&& ...args);
 
 		EnumMap<UIElement::Type, UIElement::UPtr, UIElement::Type::NUM_TYPES> elements;
 		UIElement::Type focused;
+		// 补间结束后需要激活的步进窗口（LOGIN/WORLDSELECT/CHARSELECT/...）。
+		UIElement::Type pending_activation = UIElement::Type::NONE;
 
 		// 用于检测视口变化，向登录弹窗广播 update_screen（与 UIStateGame 对齐）。
 		int16_t VWIDTH;

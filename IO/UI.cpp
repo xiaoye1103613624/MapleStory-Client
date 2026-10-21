@@ -490,4 +490,9 @@ namespace ms
 
 		state->remove(type);
 	}
+
+	void UI::activate_after_transition(UIElement::Type type)
+	{
+		state->activate_after_transition(type);
+	}
 }
