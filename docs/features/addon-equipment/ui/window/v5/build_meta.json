@@ -1,0 +1,29 @@
+{
+  "size": [
+    152,
+    105
+  ],
+  "title": {
+    "x": 58,
+    "y": 12,
+    "w": 36,
+    "h": 9,
+    "gap_top": 3,
+    "gap_bot": 1
+  },
+  "title_dy_vs_v4": 8,
+  "wm_px": 11,
+  "labels": [
+    "图腾",
+    "图腾",
+    "图腾",
+    "图腾",
+    "纹章",
+    "机器人",
+    "心脏",
+    "徽章"
+  ],
+  "grayMid": 0,
+  "slotInk": 754,
+  "ref": "C:\\Users\\11036\\.cursor\\projects\\e-project-MapleStory-Client\\assets\\C__Users_11036_.cursor_projects_e-project-MapleStory-Client_assets_c__Users_11036_AppData_Roaming_Cursor_User_workspaceStorage_empty-window_images______-d4b1605b-68f8-4f5d-8ab1-38d2c9d7e737.png"
+}

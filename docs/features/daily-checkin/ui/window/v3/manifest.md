@@ -1,0 +1,23 @@
+﻿# UI manifest — window / v3
+
+- 样式来源：跟图（follow-ref）
+- scale：1x
+- 目标尺寸：513×346
+- 状态列表：normal（静态窗体）
+- 样板：无 / 跟图
+- 采样：未实测
+- 目标节点路径：待定
+- psd：./daily-checkin.psd
+- 组件列表：
+  - raster/normal（整窗栅格成品；文字已烧录为 1bit 像素）
+- 字体方案：
+  - 源字体：`新宋体`（NSimSun）
+  - 流程：GDI `SingleBitPerPixelGridFit` 以 13px 生成字模表 → 裁切墨水框 → 按字符串 1bit blit 到画布
+  - anti-alias：无（只写纯白/纯黑目标色，无中间灰）
+  - 去糊手段：字模阈值（R≥160 才落墨）+ 仅 `FFFFFF`/`#4488BB`/`#CC4477` 等纯色；禁止雅黑
+- 编号校验：第1天…第28天，构造时 `seen` 字典强制唯一，共 28 个，无重复
+- 相对 v2 修复：
+  - 纠正重复「第2天/第12天」等编号错误
+  - 白字改为字模 1bit blit，导出 PNG 灰边 mid=0
+- 文案：每日签到 / 每天回来领取更多奖励！ / 第1天…第28天
+- 验收：编号通过；白字区域 grayMid=0；文字清晰度见 README

@@ -1,11 +1,13 @@
 # 三格式数据源加载矩阵（img / nx / wz）
 
-> 本文件描述客户端三种数据源后端的**选择方式、数据放置规格、错误语义**，以及
-> **静态核验结论**与**Windows 实测清单**。
+> **已过时指针（2026-09）**：运行时已改为 `Util/Resource/ResourceService`，
+> 生产默认见平台总纲  
+> [`docs/features/client-platform-masterplan/README.md`](features/client-platform-masterplan/README.md)  
+> 与 [`docs/features/resource-runtime-img-first/README.md`](features/resource-runtime-img-first/README.md)。  
+> `Util/DataFiles.cpp` 已删除；IMG **不再**落盘 `.nxcache`（见 `ImgSource`）。  
+> 下文历史描述仅供对照，**以总纲与源码为准**。
 >
-> 运行时分发逻辑见 `Util/DataFiles.cpp`：`DataFiles::init()` 依据
-> `Configuration::get().get_data_format()` 三值匹配 `img` / `nx` / `wz`，
-> 未知值返回 `Error::Code::DATA_FORMAT`（可重试）。
+> 本文件原描述客户端三种数据源后端的选择方式、数据放置规格、错误语义。
 
 ---
 

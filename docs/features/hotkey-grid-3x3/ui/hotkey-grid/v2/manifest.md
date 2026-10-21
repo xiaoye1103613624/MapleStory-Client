@@ -1,0 +1,28 @@
+# UI manifest — hotkey-grid / v2
+
+- 样式来源：跟图（用户截图 `ref-quickslot-4x2.png` + `ref-key-Q.png`）
+- scale：1x
+- 目标尺寸：114×113（逻辑像素）
+- 单格：32×31（自参考图第一格像素裁切）；格间距：横 3 / 纵 4；外框 inset：6
+- 状态列表：静态底板（非可点控件四态）
+- 样板：用户截图；槽体贴图 `_slot_tile.png` 直接取自参考 4×2 快捷栏
+- 采样路径 / 客户端：`E:\MXD\BeiDou-Client-xy\`（见 `notes/client-path.md`）
+- 目标节点路径：待定（本版仅 UI 图产物，不入库 WZ）
+- psd：`./hotkey-grid.psd`
+- 组件列表：
+  - `Final/chrome` — 外框（参考九宫拉伸）+ 深底 + 槽位 bevel
+  - `Final/SlotFills` — 白槽底（可调不透明度）
+  - `Final/Labels` — 键名叠字（左上角，白描边）
+  - `Materials/slot/tile` — 单格样件
+  - `Materials/ref/*` — 用户参考图
+- 键位布局（自上而下三行）：
+  - `1` `2` `3`
+  - `Insert` `Home` `PageUp`
+  - `Delete` `End` `PageDown`
+- 透明度语义（整板原色透明：RGB 不变，只乘 alpha；避免「只淡白槽叠深底→发灰」）：
+  - 空底板：`hotkey-grid-{100,70,50,30,10}.png`
+  - 带键名：`hotkey-grid-keys-{100,70,50,30,10}.png`
+- 键名换行：单行放不下时按大写拆行（`PageUp`→`Page`/`Up`，`PageDown`→`Page`/`Down`）
+- 生成说明：`build_v2.py` 从参考图裁槽 → 拼 3×3 → 分层导出 → Photoshop 组装 PSD
+- 验收：跟图槽形/白底/灰 bevel/深色间隔；五档 fill alpha；键名不溢出槽面；PSD 分层保留
+- 入库：未入库

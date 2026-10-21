@@ -1,0 +1,23 @@
+=== UI.nx probe (BeiDou) ===
+MISS Login.img/RaceSelect_new
+OK   Login.img/RaceSelect
+MISS Login.img/CustomizeChar
+OK   Login.img/NewChar
+OK   Login.img/NewCharKnight
+OK   Login.img/NewCharAran
+OK   Login.img/Gender
+OK   Login.img/Common/BtStart
+MISS Login.img/Common/BtPreview
+OK   Login.img/RaceSelect/BtSelect
+OK   Login.img/RaceSelect/normal
+OK   Login.img/RaceSelect/knight
+OK   Login.img/RaceSelect/aran
+MISS Login.img/NewChar/createLimit
+=== Map.nx ===
+OK   Obj/login.img/NewChar/signboard
+MISS Obj/login.img/CustomizeChar
+=== Etc MakeCharInfo ===
+OK   MakeCharInfo.img/Info/CharMale
+OK   MakeCharInfo.img/PremiumCharMale
+OK   MakeCharInfo.img/OrientCharMale
+MISS MakeCharInfo.img/000

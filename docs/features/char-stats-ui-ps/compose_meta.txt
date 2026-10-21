@@ -1,0 +1,5 @@
+layout=per-panel content height; no tall blue footer
+side_by_side_h=347 main=(300, 335) detail=(420, 347)
+footer=thin bevel only (3px) row_h=18
+values=EMPTY buttons=NOT baked
+chrome=native-like light fill + 2px bottom bevel (no solid blue band)

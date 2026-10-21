@@ -1,0 +1,10 @@
+version=v4 (preview/v4/ — v1/v2/v3 untouched)
+RIGHT_W=352 LABEL_W_V4=80 LABEL_W_L_V4=80
+VW_NORMAL_V4=80 VW_ATK_V4=240 (phys ATK only)
+FONT_LABEL=11 FONT_TITLE=12
+side_by_side=(658, 392) main=(300, 392) detail=(352, 392)
+layout=full-width Phys ATK + 2-col colorful labels; no section bars
+label=80px left-align; value=80px except Phys ATK=240
+height=detail matches main (character data)
+source=ref mockup + UIStatsInfo.h detailed + extras (diligence/stance/split DEF)
+values=EMPTY buttons=NOT baked

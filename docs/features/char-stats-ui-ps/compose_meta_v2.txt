@@ -1,0 +1,9 @@
+version=v2 extended (preview/v2/ — v1 untouched)
+RIGHT_W=380
+VW_RANGE=68 VW_PAREN=66 VW_NUM=40 VW_PCT=34 VW_PCT2=44
+side_by_side=(686, 347) main=(300, 335) detail=(380, 347)
+added=Boss Damage, Dmg Bonus, Final Damage, Ignore DEF, Buff Duration, Item Drop, Meso Drop
+layout=max 3 cols; label left-align; value_w by UIStatsInfo format
+kinds=range(min~max) paren(buffed) num pct(%) pct2(0.00%)
+source=IO/UITypes/UIStatsInfo.cpp + Character/StatCaps.h + BeiDou CombatStatCaps
+values=EMPTY buttons=NOT baked

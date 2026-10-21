@@ -1,0 +1,22 @@
+# UI manifest — window / v1
+
+- 样式来源：跟图（follow-ref）
+- scale：1x
+- 目标尺寸：513×346（逻辑像素 = 资源像素）
+- 状态列表：normal（静态窗体；无可点按钮四态）
+- 样板：无 / 跟图（参考附件 Daily Check In）
+- 采样：未实测采样 / 跟图（无客户端路径）
+- 目标节点路径：待定
+- 文件→节点映射：待定（未入库）
+- psd：./daily-checkin.psd
+- 组件列表：
+  - frame/outer, frame/chrome, panel/bg
+  - titlebar/bg, titlebar/edge
+  - banner/outer, banner/fill, banner/hilite, banner/bubble
+  - day/1…day/28（各含 slot/pink、slot/pink-border、slot/cream、slot/cream-border）
+  - label/day1…label/day28（可编辑文字）
+  - title/每日签到、banner/hint（可编辑文字）
+  - _assets/comp/day-cell（小组件模板）
+- 生成说明：按参考图像素量图 → ExtendScript 小组件拼装 4×7 → 可编辑中文文字层 → preview 验收 → 裁切导出 513×346 PNG
+- 验收：§13 清单已过（跟图布局/配色；中文文案正确；格子留空；硬边无紫靛渐变/玻璃拟态）
+- 文案：标题「每日签到」；提示「每天回来领取更多奖励！」；格子「第1天」…「第28天」

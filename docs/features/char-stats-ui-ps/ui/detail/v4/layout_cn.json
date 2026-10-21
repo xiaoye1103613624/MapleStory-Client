@@ -1,0 +1,2064 @@
+{
+  "canvas": {
+    "w": 1346,
+    "h": 600,
+    "final_w": 658,
+    "final_h": 392
+  },
+  "items": [
+    {
+      "kind": "place",
+      "part": "panel_chrome_main",
+      "x": 0,
+      "y": 0,
+      "group": "Final/Main/chrome",
+      "name": "chrome_main"
+    },
+    {
+      "kind": "text",
+      "text": "角色资料",
+      "x": 150,
+      "y": 14,
+      "size": 12,
+      "align": "CENTER",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "group": "Final/Main/text",
+      "name": "title_main"
+    },
+    {
+      "kind": "place",
+      "part": "panel_chrome_detail",
+      "x": 306,
+      "y": 0,
+      "group": "Final/Detail/chrome",
+      "name": "chrome_detail"
+    },
+    {
+      "kind": "text",
+      "text": "详细资料",
+      "x": 482,
+      "y": 14,
+      "size": 12,
+      "align": "CENTER",
+      "rgb": [
+        40,
+        40,
+        40
+      ],
+      "group": "Final/Detail/text",
+      "name": "title_detail"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 24,
+      "group": "Final/Main/labels",
+      "name": "main_lab_0"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 24,
+      "group": "Final/Main/values",
+      "name": "main_val_0"
+    },
+    {
+      "kind": "text",
+      "text": "名称",
+      "x": 9,
+      "y": 35,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_0"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 43,
+      "group": "Final/Main/labels",
+      "name": "main_lab_1"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 43,
+      "group": "Final/Main/values",
+      "name": "main_val_1"
+    },
+    {
+      "kind": "text",
+      "text": "职业",
+      "x": 9,
+      "y": 54,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_1"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 62,
+      "group": "Final/Main/labels",
+      "name": "main_lab_2"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 62,
+      "group": "Final/Main/values",
+      "name": "main_val_2"
+    },
+    {
+      "kind": "text",
+      "text": "等级",
+      "x": 9,
+      "y": 73,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_2"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 81,
+      "group": "Final/Main/labels",
+      "name": "main_lab_3"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 81,
+      "group": "Final/Main/values",
+      "name": "main_val_3"
+    },
+    {
+      "kind": "text",
+      "text": "公会",
+      "x": 9,
+      "y": 92,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_3"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 100,
+      "group": "Final/Main/labels",
+      "name": "main_lab_4"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 100,
+      "group": "Final/Main/values",
+      "name": "main_val_4"
+    },
+    {
+      "kind": "text",
+      "text": "名声",
+      "x": 9,
+      "y": 111,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_4"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 119,
+      "group": "Final/Main/labels",
+      "name": "main_lab_5"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 119,
+      "group": "Final/Main/values",
+      "name": "main_val_5"
+    },
+    {
+      "kind": "text",
+      "text": "伤害",
+      "x": 9,
+      "y": 130,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_5"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 138,
+      "group": "Final/Main/labels",
+      "name": "main_lab_6"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 138,
+      "group": "Final/Main/values",
+      "name": "main_val_6"
+    },
+    {
+      "kind": "text",
+      "text": "HP",
+      "x": 9,
+      "y": 149,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_6"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 157,
+      "group": "Final/Main/labels",
+      "name": "main_lab_7"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 157,
+      "group": "Final/Main/values",
+      "name": "main_val_7"
+    },
+    {
+      "kind": "text",
+      "text": "MP",
+      "x": 9,
+      "y": 168,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_7"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 176,
+      "group": "Final/Main/labels",
+      "name": "main_lab_8"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 176,
+      "group": "Final/Main/values",
+      "name": "main_val_8"
+    },
+    {
+      "kind": "text",
+      "text": "AP",
+      "x": 9,
+      "y": 187,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_8"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 195,
+      "group": "Final/Main/labels",
+      "name": "main_lab_9"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 195,
+      "group": "Final/Main/values",
+      "name": "main_val_9"
+    },
+    {
+      "kind": "text",
+      "text": "经验值",
+      "x": 9,
+      "y": 206,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_9"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_pink",
+      "x": 6,
+      "y": 214,
+      "group": "Final/Main/labels",
+      "name": "main_lab_10"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 214,
+      "group": "Final/Main/values",
+      "name": "main_val_10"
+    },
+    {
+      "kind": "text",
+      "text": "EP",
+      "x": 9,
+      "y": 225,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "main_txt_10"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_green",
+      "x": 6,
+      "y": 236,
+      "group": "Final/Main/labels",
+      "name": "core_lab_0"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 236,
+      "group": "Final/Main/values",
+      "name": "core_val_0"
+    },
+    {
+      "kind": "text",
+      "text": "力量",
+      "x": 9,
+      "y": 247,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "core_txt_0"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_green",
+      "x": 6,
+      "y": 255,
+      "group": "Final/Main/labels",
+      "name": "core_lab_1"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 255,
+      "group": "Final/Main/values",
+      "name": "core_val_1"
+    },
+    {
+      "kind": "text",
+      "text": "敏捷",
+      "x": 9,
+      "y": 266,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "core_txt_1"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_green",
+      "x": 6,
+      "y": 274,
+      "group": "Final/Main/labels",
+      "name": "core_lab_2"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 274,
+      "group": "Final/Main/values",
+      "name": "core_val_2"
+    },
+    {
+      "kind": "text",
+      "text": "智力",
+      "x": 9,
+      "y": 285,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "core_txt_2"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_green",
+      "x": 6,
+      "y": 293,
+      "group": "Final/Main/labels",
+      "name": "core_lab_3"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_left",
+      "x": 88,
+      "y": 293,
+      "group": "Final/Main/values",
+      "name": "core_val_3"
+    },
+    {
+      "kind": "text",
+      "text": "幸运",
+      "x": 9,
+      "y": 304,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "core_txt_3"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 6,
+      "y": 318,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_0"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 6,
+      "y": 334,
+      "group": "Final/Main/resist",
+      "name": "resist_val_0"
+    },
+    {
+      "kind": "text",
+      "text": "物理减伤",
+      "x": 9,
+      "y": 328,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_0"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 103,
+      "y": 318,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_1"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 103,
+      "y": 334,
+      "group": "Final/Main/resist",
+      "name": "resist_val_1"
+    },
+    {
+      "kind": "text",
+      "text": "火焰抗性",
+      "x": 106,
+      "y": 328,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_1"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 200,
+      "y": 318,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_2"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 200,
+      "y": 334,
+      "group": "Final/Main/resist",
+      "name": "resist_val_2"
+    },
+    {
+      "kind": "text",
+      "text": "冰冷抗性",
+      "x": 203,
+      "y": 328,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_2"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 6,
+      "y": 353,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_3"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 6,
+      "y": 369,
+      "group": "Final/Main/resist",
+      "name": "resist_val_3"
+    },
+    {
+      "kind": "text",
+      "text": "闪电抗性",
+      "x": 9,
+      "y": 363,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_3"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 103,
+      "y": 353,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_4"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 103,
+      "y": 369,
+      "group": "Final/Main/resist",
+      "name": "resist_val_4"
+    },
+    {
+      "kind": "text",
+      "text": "毒素抗性",
+      "x": 106,
+      "y": 363,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_4"
+    },
+    {
+      "kind": "place",
+      "part": "resist_label_blank",
+      "x": 200,
+      "y": 353,
+      "group": "Final/Main/resist",
+      "name": "resist_lab_5"
+    },
+    {
+      "kind": "place",
+      "part": "resist_value_blank",
+      "x": 200,
+      "y": 369,
+      "group": "Final/Main/resist",
+      "name": "resist_val_5"
+    },
+    {
+      "kind": "text",
+      "text": "神圣抗性",
+      "x": 203,
+      "y": 363,
+      "size": 10,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Main/text",
+      "name": "resist_txt_5"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 24,
+      "group": "Final/Detail/labels",
+      "name": "atk_lab"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_240",
+      "x": 394,
+      "y": 24,
+      "group": "Final/Detail/values",
+      "name": "atk_val"
+    },
+    {
+      "kind": "text",
+      "text": "物理攻击力",
+      "x": 315,
+      "y": 35,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "atk_txt"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 42,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_0"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 42,
+      "group": "Final/Detail/values",
+      "name": "dL_val_0"
+    },
+    {
+      "kind": "text",
+      "text": "魔法攻击力",
+      "x": 315,
+      "y": 53,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_0"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_dmg",
+      "x": 478,
+      "y": 42,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_0"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 42,
+      "group": "Final/Detail/values",
+      "name": "dR_val_0"
+    },
+    {
+      "kind": "text",
+      "text": "伤害",
+      "x": 481,
+      "y": 53,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_0"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 60,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_1"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 60,
+      "group": "Final/Detail/values",
+      "name": "dL_val_1"
+    },
+    {
+      "kind": "text",
+      "text": "物理防御力",
+      "x": 315,
+      "y": 71,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_1"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 478,
+      "y": 60,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_1"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 60,
+      "group": "Final/Detail/values",
+      "name": "dR_val_1"
+    },
+    {
+      "kind": "text",
+      "text": "额外伤害",
+      "x": 481,
+      "y": 71,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_1"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 78,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_2"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 78,
+      "group": "Final/Detail/values",
+      "name": "dL_val_2"
+    },
+    {
+      "kind": "text",
+      "text": "魔法防御力",
+      "x": 315,
+      "y": 89,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_2"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_final",
+      "x": 478,
+      "y": 78,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_2"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 78,
+      "group": "Final/Detail/values",
+      "name": "dR_val_2"
+    },
+    {
+      "kind": "text",
+      "text": "最终伤害",
+      "x": 481,
+      "y": 89,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_2"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 96,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_3"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 96,
+      "group": "Final/Detail/values",
+      "name": "dL_val_3"
+    },
+    {
+      "kind": "text",
+      "text": "命中率",
+      "x": 315,
+      "y": 107,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_3"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_boss",
+      "x": 478,
+      "y": 96,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_3"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 96,
+      "group": "Final/Detail/values",
+      "name": "dR_val_3"
+    },
+    {
+      "kind": "text",
+      "text": "首领伤害",
+      "x": 481,
+      "y": 107,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_3"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 114,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_4"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 114,
+      "group": "Final/Detail/values",
+      "name": "dL_val_4"
+    },
+    {
+      "kind": "text",
+      "text": "回避率",
+      "x": 315,
+      "y": 125,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_4"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ignore",
+      "x": 478,
+      "y": 114,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_4"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 114,
+      "group": "Final/Detail/values",
+      "name": "dR_val_4"
+    },
+    {
+      "kind": "text",
+      "text": "无视防御率",
+      "x": 481,
+      "y": 125,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_4"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 132,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_5"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 132,
+      "group": "Final/Detail/values",
+      "name": "dL_val_5"
+    },
+    {
+      "kind": "text",
+      "text": "手技",
+      "x": 315,
+      "y": 143,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_5"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_status",
+      "x": 478,
+      "y": 132,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_5"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 132,
+      "group": "Final/Detail/values",
+      "name": "dR_val_5"
+    },
+    {
+      "kind": "text",
+      "text": "状态异常抗性",
+      "x": 481,
+      "y": 143,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_5"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 150,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_6"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 150,
+      "group": "Final/Detail/values",
+      "name": "dL_val_6"
+    },
+    {
+      "kind": "text",
+      "text": "攻击速度",
+      "x": 315,
+      "y": 161,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_6"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_buff",
+      "x": 478,
+      "y": 150,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_6"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 150,
+      "group": "Final/Detail/values",
+      "name": "dR_val_6"
+    },
+    {
+      "kind": "text",
+      "text": "增益持续时间",
+      "x": 481,
+      "y": 161,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_6"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 168,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_7"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 168,
+      "group": "Final/Detail/values",
+      "name": "dL_val_7"
+    },
+    {
+      "kind": "text",
+      "text": "施法速度",
+      "x": 315,
+      "y": 179,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_7"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_stance",
+      "x": 478,
+      "y": 168,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_7"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 168,
+      "group": "Final/Detail/values",
+      "name": "dR_val_7"
+    },
+    {
+      "kind": "text",
+      "text": "稳如泰山",
+      "x": 481,
+      "y": 179,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_7"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 186,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_8"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 186,
+      "group": "Final/Detail/values",
+      "name": "dL_val_8"
+    },
+    {
+      "kind": "text",
+      "text": "移动速度",
+      "x": 315,
+      "y": 197,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_8"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_drop",
+      "x": 478,
+      "y": 186,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_8"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 186,
+      "group": "Final/Detail/values",
+      "name": "dR_val_8"
+    },
+    {
+      "kind": "text",
+      "text": "道具掉落率",
+      "x": 481,
+      "y": 197,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_8"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 204,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_9"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 204,
+      "group": "Final/Detail/values",
+      "name": "dL_val_9"
+    },
+    {
+      "kind": "text",
+      "text": "跳跃力",
+      "x": 315,
+      "y": 215,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_9"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_meso",
+      "x": 478,
+      "y": 204,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_9"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 204,
+      "group": "Final/Detail/values",
+      "name": "dR_val_9"
+    },
+    {
+      "kind": "text",
+      "text": "金币获得量",
+      "x": 481,
+      "y": 215,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_9"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_crit_rate",
+      "x": 312,
+      "y": 222,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_10"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 222,
+      "group": "Final/Detail/values",
+      "name": "dL_val_10"
+    },
+    {
+      "kind": "text",
+      "text": "暴击几率",
+      "x": 315,
+      "y": 233,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_10"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_honor",
+      "x": 478,
+      "y": 222,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_10"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 222,
+      "group": "Final/Detail/values",
+      "name": "dR_val_10"
+    },
+    {
+      "kind": "text",
+      "text": "荣誉",
+      "x": 481,
+      "y": 233,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_10"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_crit_dmg",
+      "x": 312,
+      "y": 240,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_11"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 240,
+      "group": "Final/Detail/values",
+      "name": "dL_val_11"
+    },
+    {
+      "kind": "text",
+      "text": "暴击伤害",
+      "x": 315,
+      "y": 251,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_11"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 240,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_11"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 240,
+      "group": "Final/Detail/values",
+      "name": "dR_val_11"
+    },
+    {
+      "kind": "text",
+      "text": "避免中毒",
+      "x": 481,
+      "y": 251,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_11"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 258,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_12"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 258,
+      "group": "Final/Detail/values",
+      "name": "dL_val_12"
+    },
+    {
+      "kind": "text",
+      "text": "格挡率",
+      "x": 315,
+      "y": 269,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_12"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 258,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_12"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 258,
+      "group": "Final/Detail/values",
+      "name": "dR_val_12"
+    },
+    {
+      "kind": "text",
+      "text": "避免致盲",
+      "x": 481,
+      "y": 269,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_12"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 276,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_13"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 276,
+      "group": "Final/Detail/values",
+      "name": "dL_val_13"
+    },
+    {
+      "kind": "text",
+      "text": "HP恢复",
+      "x": 315,
+      "y": 287,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_13"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 276,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_13"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 276,
+      "group": "Final/Detail/values",
+      "name": "dR_val_13"
+    },
+    {
+      "kind": "text",
+      "text": "避免晕眩",
+      "x": 481,
+      "y": 287,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_13"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_combat",
+      "x": 312,
+      "y": 294,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_14"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 294,
+      "group": "Final/Detail/values",
+      "name": "dL_val_14"
+    },
+    {
+      "kind": "text",
+      "text": "MP恢复",
+      "x": 315,
+      "y": 305,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_14"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 294,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_14"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 294,
+      "group": "Final/Detail/values",
+      "name": "dR_val_14"
+    },
+    {
+      "kind": "text",
+      "text": "诅咒减免",
+      "x": 481,
+      "y": 305,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_14"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 312,
+      "y": 312,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_15"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 312,
+      "group": "Final/Detail/values",
+      "name": "dL_val_15"
+    },
+    {
+      "kind": "text",
+      "text": "避免流血",
+      "x": 315,
+      "y": 323,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_15"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 312,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_15"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 312,
+      "group": "Final/Detail/values",
+      "name": "dR_val_15"
+    },
+    {
+      "kind": "text",
+      "text": "火焰抗性",
+      "x": 481,
+      "y": 323,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_15"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 312,
+      "y": 330,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_16"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 330,
+      "group": "Final/Detail/values",
+      "name": "dL_val_16"
+    },
+    {
+      "kind": "text",
+      "text": "避免点燃",
+      "x": 315,
+      "y": 341,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_16"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 330,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_16"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 330,
+      "group": "Final/Detail/values",
+      "name": "dR_val_16"
+    },
+    {
+      "kind": "text",
+      "text": "冰冷抗性",
+      "x": 481,
+      "y": 341,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_16"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 312,
+      "y": 348,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_17"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 348,
+      "group": "Final/Detail/values",
+      "name": "dL_val_17"
+    },
+    {
+      "kind": "text",
+      "text": "避免冰缓",
+      "x": 315,
+      "y": 359,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_17"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 348,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_17"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 348,
+      "group": "Final/Detail/values",
+      "name": "dR_val_17"
+    },
+    {
+      "kind": "text",
+      "text": "闪电抗性",
+      "x": 481,
+      "y": 359,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_17"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 312,
+      "y": 366,
+      "group": "Final/Detail/labels",
+      "name": "dL_lab_18"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 394,
+      "y": 366,
+      "group": "Final/Detail/values",
+      "name": "dL_val_18"
+    },
+    {
+      "kind": "text",
+      "text": "避免感电",
+      "x": 315,
+      "y": 377,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dL_txt_18"
+    },
+    {
+      "kind": "place",
+      "part": "label_chip_ailment",
+      "x": 478,
+      "y": 366,
+      "group": "Final/Detail/labels",
+      "name": "dR_lab_18"
+    },
+    {
+      "kind": "place",
+      "part": "value_box_80",
+      "x": 560,
+      "y": 366,
+      "group": "Final/Detail/values",
+      "name": "dR_val_18"
+    },
+    {
+      "kind": "text",
+      "text": "神圣抗性",
+      "x": 481,
+      "y": 377,
+      "size": 11,
+      "align": "LEFT",
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "group": "Final/Detail/text",
+      "name": "dR_txt_18"
+    }
+  ],
+  "materials": [
+    {
+      "part": "panel_chrome_main",
+      "x": 670,
+      "y": 24,
+      "name": "mat_chrome_main"
+    },
+    {
+      "part": "panel_chrome_detail",
+      "x": 978,
+      "y": 24,
+      "name": "mat_chrome_detail"
+    },
+    {
+      "part": "label_chip_combat",
+      "x": 670,
+      "y": 432,
+      "name": "mat_label_chip_combat"
+    },
+    {
+      "part": "label_chip_dmg",
+      "x": 760,
+      "y": 432,
+      "name": "mat_label_chip_dmg"
+    },
+    {
+      "part": "label_chip_crit_rate",
+      "x": 850,
+      "y": 432,
+      "name": "mat_label_chip_crit_rate"
+    },
+    {
+      "part": "label_chip_crit_dmg",
+      "x": 940,
+      "y": 432,
+      "name": "mat_label_chip_crit_dmg"
+    },
+    {
+      "part": "label_chip_final",
+      "x": 670,
+      "y": 456,
+      "name": "mat_label_chip_final"
+    },
+    {
+      "part": "label_chip_boss",
+      "x": 760,
+      "y": 456,
+      "name": "mat_label_chip_boss"
+    },
+    {
+      "part": "label_chip_ignore",
+      "x": 850,
+      "y": 456,
+      "name": "mat_label_chip_ignore"
+    },
+    {
+      "part": "label_chip_status",
+      "x": 940,
+      "y": 456,
+      "name": "mat_label_chip_status"
+    },
+    {
+      "part": "label_chip_buff",
+      "x": 670,
+      "y": 480,
+      "name": "mat_label_chip_buff"
+    },
+    {
+      "part": "label_chip_stance",
+      "x": 760,
+      "y": 480,
+      "name": "mat_label_chip_stance"
+    },
+    {
+      "part": "label_chip_drop",
+      "x": 850,
+      "y": 480,
+      "name": "mat_label_chip_drop"
+    },
+    {
+      "part": "label_chip_meso",
+      "x": 940,
+      "y": 480,
+      "name": "mat_label_chip_meso"
+    },
+    {
+      "part": "label_chip_honor",
+      "x": 670,
+      "y": 504,
+      "name": "mat_label_chip_honor"
+    },
+    {
+      "part": "label_chip_ailment",
+      "x": 760,
+      "y": 504,
+      "name": "mat_label_chip_ailment"
+    },
+    {
+      "part": "label_chip_pink",
+      "x": 850,
+      "y": 504,
+      "name": "mat_label_chip_pink"
+    },
+    {
+      "part": "label_chip_green",
+      "x": 940,
+      "y": 504,
+      "name": "mat_label_chip_green"
+    },
+    {
+      "part": "label_chip_resist",
+      "x": 670,
+      "y": 528,
+      "name": "mat_label_chip_resist"
+    },
+    {
+      "part": "value_box_80",
+      "x": 760,
+      "y": 528,
+      "name": "mat_value_box_80"
+    },
+    {
+      "part": "value_box_240",
+      "x": 850,
+      "y": 528,
+      "name": "mat_value_box_240"
+    },
+    {
+      "part": "value_box_left",
+      "x": 940,
+      "y": 528,
+      "name": "mat_value_box_left"
+    },
+    {
+      "part": "resist_label_blank",
+      "x": 670,
+      "y": 552,
+      "name": "mat_resist_label_blank"
+    },
+    {
+      "part": "resist_value_blank",
+      "x": 760,
+      "y": 552,
+      "name": "mat_resist_value_blank"
+    }
+  ],
+  "step": 18,
+  "font": "Microsoft YaHei"
+}

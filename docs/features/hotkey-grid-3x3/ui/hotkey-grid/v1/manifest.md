@@ -1,0 +1,32 @@
+# UI manifest — hotkey-grid / v1
+
+- 样式来源：原生（v083 经验基线；空槽近白）
+- scale：1x
+- 目标尺寸：102×102（逻辑像素）
+- 单格：32×32；格间距：1px；外边距：2px
+- 状态列表：静态底板（非可点控件，无四态）
+- 样板：无实测节点导出（orange-wz 未接入）；对照 StatusBar `base/quickSlot` 尺寸线索 + 用户确认「原版偏白」
+- 采样路径 / 客户端：`E:\MXD\BeiDou-Client-xy\`（见 `notes/client-path.md`）；本版未从 `.img` 抽像素
+- 目标节点路径：待定（本版仅 UI 图产物，不入库 WZ）
+- psd：`./hotkey-grid.psd`
+- 组件列表：
+  - `Materials/slot/fill` — 单格近白底板样件
+  - `Materials/slot/bevel` — 单格描边/bevel 样件
+  - `Final/SlotFills/slotfills/all` — 3×3 槽底（可调不透明度）
+  - `Final/SlotFills/board/plate` — 浅灰底板衬（随 SlotFills 透明度）
+  - `Final/GridLines/grid/bevels` — 格线/bevel（保持不透明）
+- 色板：
+  - 槽底 fill：RGB(248,248,248)（近白，游戏内观感为白）
+  - 高光：RGB(255,255,255)
+  - 阴影：RGB(140,140,140)
+  - 外框：RGB(90,90,90)
+- 透明度语义（仅 `SlotFills` 组）：
+  - `hotkey-grid-100.png` — 槽底 100%
+  - `hotkey-grid-70.png` — 槽底 70%
+  - `hotkey-grid-50.png` — 槽底 50%
+  - `hotkey-grid-30.png` — 槽底 30%
+  - `hotkey-grid-10.png` — 槽底 10%
+  - `GridLines` 始终约 100% 不透明，便于叠图标时仍见格线
+- 生成说明：ExtendScript 像素绘制（`build_hotkey_grid.jsx`）→ 组件化拼装 → 调 `SlotFills` 不透明度导出五档 PNG
+- 验收：§13 清单已过（硬边像素、透明底、五档 alpha 已用采样复核：100→255 / 70→179 / 50→128 / 30→77 / 10→26；格线 alpha=255）
+- 入库：未入库

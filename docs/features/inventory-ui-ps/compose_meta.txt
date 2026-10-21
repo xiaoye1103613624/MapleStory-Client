@@ -1,0 +1,6 @@
+source=UI.wz/UIWindow.img/Item/FullBackgrnd
+orig=601x289
+slot_y=[45,257) h=212 duplicated => 424
+meso +160px EMPTY, window width UNCHANGED (601)
+final=601x501
+no right-edge stretch; no sample digits; no BtCashshop overlay

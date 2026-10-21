@@ -1,0 +1,31 @@
+# UI manifest — window / v2
+
+- 样式来源：跟图（follow-ref）
+- scale：1x
+- 目标尺寸：513×346（逻辑像素 = 资源像素）
+- 状态列表：normal（静态窗体；无可点按钮四态）
+- 样板：无 / 跟图（参考附件 Daily Check In）
+- 采样：未实测采样 / 跟图
+- 目标节点路径：待定
+- 文件→节点映射：待定（未入库）
+- psd：./daily-checkin.psd
+- 组件列表：
+  - frame/outer, frame/chrome, panel/bg
+  - titlebar/bg, titlebar/edge
+  - banner/outer, banner/fill, banner/hilite, banner/bubble
+  - day/1…day/28（各含 slot/pink、slot/pink-border、slot/cream、slot/cream-border）
+  - label/day1…label/day28（可编辑文字）
+  - title/每日签到、banner/hint（可编辑文字）
+  - _assets/comp/day-cell（小组件模板）
+- 字体：
+  - 名称：`NSimSun`（新宋体；本机无 Zpix / VonwaonBitmap / Fusion Pixel / LanaPixel / 方正像素）
+  - anti-alias：`AntiAlias.NONE`（关闭抗锯齿）
+  - 字号：标题 12pt；蓝条提示 11pt；格子「第N天」9pt
+  - 位置：文字层坐标取整到像素栅格
+- 相对 v1 修复点：
+  - 标题 / 蓝条提示由 `MicrosoftYaHei` 改为 `NSimSun`（v1 雅黑即使 NONE 也显糊）
+  - 全部业务文字统一 `NSimSun` + `AntiAlias.NONE`
+  - 导出 PNG 像素抽检：白字对蓝底/粉底无灰边 fringe（硬边 `FFFFFF` ↔ 底色）
+- 文案：标题「每日签到」；提示「每天回来领取更多奖励！」；格子「第1天」…「第28天」
+- 生成说明：基于 v1 分层 PSD → 批量改字体/抗锯齿 → 裁切 513×346 导出 v2（不覆盖 v1）
+- 验收：白字硬边抽检通过；布局/配色沿用跟图；§13 跟图项已过

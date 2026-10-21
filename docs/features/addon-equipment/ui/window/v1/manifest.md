@@ -1,0 +1,22 @@
+# UI manifest — window / v1
+
+- 样式来源：跟图（follow-ref）
+- scale：1x
+- 目标尺寸：152×105（逻辑像素 = 资源像素）
+- 状态列表：normal（静态窗体；槽位留空，无可点按钮四态）
+- 样板：无 / 跟图（参考附件 Addon-Equipment）
+- 采样：未实测采样 / 跟图（无客户端路径）
+- 目标节点路径：待定
+- 文件→节点映射：待定（未入库）
+- psd：./addon-equipment.psd
+- 组件列表：
+  - frame/outer, frame/chrome, frame/divider
+  - titlebar/bevel, titlebar/bg, titlebar/hilite
+  - panel/bg, panel/inner
+  - slot/0_0…slot/1_3（各含 slot/fill、slot/border）
+  - label/0_0…label/1_3（可编辑文字：图腾×4 / 纹章 / 机器人 / 心脏 / 徽章）
+  - title/辅助装备（可编辑文字）
+  - _assets/comp/equip-slot（小组件模板）
+- 生成说明：按参考图像素量图 → ExtendScript 小组件拼装 2×4 → 可编辑中文文字层 → preview 验收 → 裁切导出 152×105 PNG
+- 验收：§13 清单已过（跟图布局/配色；中文文案正确；槽位留空；硬边无紫靛渐变/玻璃拟态）
+- 文案：标题「辅助装备」；上排四格「图腾」；下排「纹章」「机器人」「心脏」「徽章」

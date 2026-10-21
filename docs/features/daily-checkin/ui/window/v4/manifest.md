@@ -1,0 +1,26 @@
+# UI manifest — window / v4
+
+- 样式来源：跟图（follow-ref；基于 v3 底图修排版）
+- scale：1x
+- 目标尺寸：513×346
+- 状态列表：normal（静态窗体空态）
+- 样板：无 / 跟图
+- 采样：未实测
+- 目标节点路径：待定
+- psd：./daily-checkin.psd
+- 组件列表：
+  - raster/normal（整窗栅格成品；文字 1bit blit）
+- 字体方案：
+  - 源字体：`新宋体`（NSimSun）
+  - 流程：GDI `SingleBitPerPixelGridFit` 13px 字模表 → 裁切墨水框 → 1bit blit
+  - anti-alias：无（grayMid=0）
+- 排版（相对 v3）：
+  - 「第N天」在粉头 67×19 内水平垂直居中（奇偶高差允许 T/B 差 1px）
+  - 蓝条提示整带清蓝后重绘，避免叠影
+  - 标题「每日签到」硬边重绘
+- 编号校验：第1天…第28天，构造时强制唯一，共 28 个
+- 文案：每日签到 / 每天回来领取更多奖励！ / 第1天…第28天
+- 单格几何（供 cell 叠层）：
+  - 单格：67×71；粉头高 19；格间距 X=5；行距 72；原点 (7,59)
+- 生成脚本：`./build_v4.py`、`./assemble_psd.py`
+- 验收：编号通过；粉头 grayMid=0；文字清晰度通过
