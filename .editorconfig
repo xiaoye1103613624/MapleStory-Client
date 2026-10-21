@@ -1,0 +1,71 @@
+# =============================================================================
+# EditorConfig — 全仓库统一的编辑器基础约定
+#
+# 背景：客户端源码（含大量中文注释）与配置文件（Settings / xy-config.yaml）
+# 都必须以 UTF-8 解释，否则 MSVC 的 /utf-8 会把非 UTF-8 字节解析成乱码，
+# 且配置在读回时会出现键名匹配失败。
+#
+# 约定：
+#   * 编码统一 UTF-8 **不带 BOM**（构建端已用 MSVC /utf-8 与 GCC/Clang 的
+#     -finput-charset/-fexec-charset 固定，运行时配置读取也会跳过可能存在的 BOM）
+#   * 换行统一 LF（*.bat 例外，Windows 批处理必须 CRLF）
+#   * 源码沿用既有的 Tab 缩进（宽度 4）；配置/文档/脚本用空格缩进
+#   * 第三方 vendored 源码与外部产物（IDA 导出 json 等）除外，保持原样不动
+# =============================================================================
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# ---- C/C++ 源码：沿用既有 Tab 缩进 ----
+[*.{h,cpp,hpp,c,rc}]
+indent_style = tab
+indent_size = 4
+
+# ---- 配置 / 构建 / 文档：空格缩进 ----
+[*.{yaml,yml,json,md,txt}]
+indent_style = space
+indent_size = 2
+
+[CMakeLists.txt]
+indent_style = space
+indent_size = 4
+
+[*.cmake]
+indent_style = space
+indent_size = 4
+
+# ---- Windows 脚本必须 CRLF ----
+[*.{bat,cmd}]
+end_of_line = crlf
+
+# ---- 第三方 vendored 与外部产物：不做任何改写 ----
+[includes/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+
+[tools/vendor/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
+
+[android/**]
+charset = unset
+end_of_line = unset
+
+[ios/**]
+charset = unset
+end_of_line = unset
+
+# IDA 反编译证据文件由工具导出（自带 BOM），作为外部产物原样保留
+[docs/**/evidence/*]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset

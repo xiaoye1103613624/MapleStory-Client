@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.maple.msclient'
+    compileSdk 34
+
+    // Match the NDK used to cross-compile libmain.so.
+    ndkVersion '27.0.12077973'
+
+    defaultConfig {
+        applicationId 'com.maple.msclient'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+
+        // We only ship the x86_64 emulator image for now.
+        ndk {
+            abiFilters 'x86_64'
+        }
+    }
+
+    buildTypes {
+        // Keep debug symbols and skip stripping so ndk-stack / logcat are useful.
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+        release {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
+    // libmain.so is ~70MB (it statically embeds SDL3/freetype/lz4/squish/nlnx).
+    // Keep it uncompressed so the system can mmap it at launch instead of
+    // decompressing 70MB on every install.
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+}
+
+dependencies {
+    // No external Java dependencies; everything native lives in libmain.so.
+}

@@ -20,6 +20,24 @@
 // If defined use Asio for networking, otherwise use Winsock.
 //#define USE_ASIO
 
+// ---- Cross-platform backend selection (overridable from the build system) ----
+// BASS audio backend. Windows ships the BASS libs in includes/bass24, so it is
+// enabled by default there. On other platforms define USE_BASS=1 only if you
+// provide the BASS libs; otherwise a silent audio fallback is compiled in.
+#if !defined(USE_BASS)
+#ifdef _WIN32
+#define USE_BASS
+#endif
+#endif
+
+// Socket backend for non-Windows platforms. Windows keeps Winsock; the Asio
+// path exists but requires the Asio headers (not bundled). On any other
+// platform a POSIX (BSD) socket implementation is selected automatically.
+#if !defined(_WIN32) && !defined(USE_ASIO) && !defined(USE_POSIX_SOCKET)
+#define USE_POSIX_SOCKET
+#endif
+// -----------------------------------------------------------------------------
+
 // Use cryptography for communication with the server
 #define USE_CRYPTO
 

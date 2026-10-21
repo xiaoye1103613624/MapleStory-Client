@@ -138,6 +138,12 @@
     <ClCompile Include="Data\JobData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Data\QuestData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\MobDropData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Data\SkillData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -270,6 +276,9 @@
     <ClCompile Include="Graphics\GraphicsGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\LocalPngTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Graphics\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -342,6 +351,9 @@
     <ClCompile Include="IO\Components\TextTooltip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\Components\LocalTwoSpriteButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\Components\TwoSpriteButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -372,6 +384,9 @@
     <ClCompile Include="IO\UITypes\UIEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIDailyGift.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIGender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -391,6 +406,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UILoginWait.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UILogo.cpp">
@@ -445,6 +463,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIWorldMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIMapMobPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIMapDropPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIMapSearchPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIWorldSelect.cpp">
@@ -522,6 +549,9 @@
     <ClCompile Include="Net\Handlers\PlayerInteractionHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Net\Handlers\QuestHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\SetFieldHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -552,6 +582,15 @@
     <ClCompile Include="Util\Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util\BootSplash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\LoginUiAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\UiAssetResolve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\Look\BodyDrawInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -562,6 +601,36 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UICommonCreation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\ResourceProbe.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\IDataSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\RootTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\Backends.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\ResourceService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Resource\ResourceLocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Patch\Sha256.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Patch\HttpClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Patch\Manifest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Patch\PatchUpdater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -708,6 +777,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Data\JobData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\QuestData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data\MobDropData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Data\SkillData.h">
@@ -863,6 +938,9 @@
     <ClInclude Include="Graphics\GraphicsGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\LocalPngTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\SpecialText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -938,6 +1016,9 @@
     <ClInclude Include="IO\Components\Tooltip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\Components\LocalTwoSpriteButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\Components\TwoSpriteButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -974,6 +1055,9 @@
     <ClInclude Include="IO\UITypes\UIEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\UITypes\UIDailyGift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\UITypes\UIExplorerCreation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1005,6 +1089,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UINotice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIHelp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UINpcTalk.h">
@@ -1050,6 +1137,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIWorldMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIMapMobPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIMapDropPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIMapSearchPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIWorldSelect.h">
@@ -1142,6 +1238,9 @@
     <ClInclude Include="Net\Handlers\PlayerInteractionHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Net\Handlers\QuestHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Net\Handlers\SetFieldHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1179,6 +1278,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Packets\PlayerPackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\QuestPackets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Packets\SelectCharPackets.h">
@@ -1262,6 +1364,15 @@
     <ClInclude Include="Util\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util\BootSplash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\LoginUiAssets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\UiAssetResolve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Util\QuadTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1281,6 +1392,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UICommonCreation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Resource\ResourceProbe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Resource\IDataSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Resource\RootTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Resource\Backends.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Resource\ResourceService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Patch\Sha256.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Patch\HttpClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Patch\Manifest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Patch\PatchUpdater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Patch\BootTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

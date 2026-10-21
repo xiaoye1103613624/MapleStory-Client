@@ -1,0 +1,22 @@
+# 部署级配置示例（复制为可执行文件同目录 xy-config.yaml）
+# 优先级高于 Settings。详见 docs/features/client-platform-masterplan/README.md
+
+server:
+  ip: 127.0.0.1
+  port: 8484
+
+data:
+  # 生产：显式 img。开发可用 auto / wz / nx。
+  format: img
+  dir: Data
+  keymode: auto
+  keyfile: ""
+
+patch:
+  enabled: true
+  # 独立补丁站 manifest；空则跳过同步
+  url: "http://127.0.0.1:8080/client/patch/manifest.json"
+  channel: stable
+  timeout_ms: 15000
+  retries: 2
+  allow_skip: true
