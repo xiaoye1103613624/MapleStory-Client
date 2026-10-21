@@ -71,5 +71,28 @@ virtual void activate_after_transition(UIElement::Type) {}
 
 ## 5. 验证
 
-- MSBuild Release / x64 / v142 构建通过；
-- 待实机：登录 → 世界 → 频道 → 选角，观察每次切换的新窗口是否只在滚动结束后出现，且与告示牌/木牌对齐。
+### 5.1 构建
+
+- MSBuild Release / x64 / v142 构建通过。
+
+### 5.2 实机（2026-10-21 22:02–22:07，1280x720）
+
+同一份部署目录启动新构建，按完整前置链路操作：
+
+1. 登录面板与木牌输入槽对齐；
+2. 登录后滚动到世界选择，世界吊牌与「蓝蜗牛」条幅对齐；
+3. 选择世界后频道面板滑入，CH.1–CH.3 与「到选择的世界去」可点；
+4. 进入选角页，角色/空槽/开始游戏木牌落在桥面与右侧木牌上；
+5. 点击「开始游戏」成功进入游戏（Orbis，Welcome to Scania）。
+
+截图：
+
+- [`evidence/chain_defer_world_final.png`](evidence/chain_defer_world_final.png)
+- [`evidence/chain_defer_channel_final.png`](evidence/chain_defer_channel_final.png)
+- [`evidence/chain_defer_charselect_final.png`](evidence/chain_defer_charselect_final.png)
+- [`evidence/chain_defer_ingame.png`](evidence/chain_defer_ingame.png)
+
+### 5.3 观察到的遗留项
+
+- 选角页左侧 `charInfo` 面板中蓝色 “Burning” 文本与「等级」行有轻微重叠，属面板内标签布局问题，待单独核对；
+- 选角页角色槽上方的白色竖条与地图瀑布位置重合，暂按背景图元处理，未改动。

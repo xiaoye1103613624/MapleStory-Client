@@ -65,6 +65,7 @@
   `CUITitle::OnCreate`、登录地图内嵌元素尺寸等）
 - IDA MCP 端点：`http://127.0.0.1:13338/mcp`
 - 复验截图：`E:\project\_cap_world3.png`、`_cap_channel4.png`（1280x720 实测）
+- 第三轮实机链路（登录 → 世界 → 频道 → 选角 → 进入游戏）：[`evidence/chain_defer_world_final.png`](evidence/chain_defer_world_final.png) 等 `chain_defer_*.png`
 
 ## 新提取到的关键事实（本轮经 IDA MCP 补出）
 
