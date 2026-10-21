@@ -4,6 +4,8 @@
 
 **MapleStory-Client 与北斗 gms083 的 opcode 本就完全对齐，无需修改任何代码。**
 
+> **范围说明（2026-10-21 补）**：本核对只覆盖客户端**已实现**的包，证明「同值即同包」，**不代表服务端全部能力都已在客户端落地**。服务端 `RecvOpcode` 有 193 项、`SendOpcode` 有 332 项，而客户端当前仅 46 个出站包、59 个入站 handler；覆盖缺口见 [`r00-baseline-parity.md`](r00-baseline-parity.md)。
+
 - 协议版本已为 83：`Net/Cryptography.cpp:55` → `static const uint8_t MAPLEVERSION = 83;`
 - s2c（服务端→客户端）：**57 / 57** 按值精确匹配北斗 `SendOpcode.java`
 - c2s（客户端→服务端）：**44 / 45** 按值精确匹配北斗 `RecvOpcode.java`，唯一例外见下
