@@ -96,6 +96,8 @@ namespace ms
 		std::string get_keyfile() const;
 		// Buff 图标剩余时间文本是否开启（ui.buff_timer）。
 		bool get_buff_timer() const;
+		// 装备悬停时是否显示同部位已装备物品的对比（ui.equip_compare）。
+		bool get_equip_compare() const;
 		// HTTP 补丁：是否启用（patch.enabled）。
 		bool get_patch_enabled() const;
 		// HTTP 补丁：manifest URL（patch.url）。
@@ -468,6 +470,14 @@ namespace ms
 	struct BuffTimer : public Configuration::BoolEntry
 	{
 		BuffTimer() : BoolEntry("ui.buff_timer", "true") {}
+	};
+
+	// Whether to show the equipped item of the same slot next to the hovered one
+	// 装备悬停对比（ui.equip_compare）：在物品栏/商店悬停装备时，右侧显示同部位已装备物品。
+	// 关闭后只显示悬停物品自身的 tooltip。
+	struct EquipCompare : public Configuration::BoolEntry
+	{
+		EquipCompare() : BoolEntry("ui.equip_compare", "true") {}
 	};
 
 	// The normal font which will be used

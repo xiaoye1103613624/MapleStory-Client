@@ -48,6 +48,8 @@ namespace ms
 		bool hasslots_preview;
 		bool is_weapon;
 		bool is_weapon_preview;
+		// 是否构建/绘制「同部位已装备物品」对比（ui.equip_compare）。
+		bool show_compare;
 		EnumMap<MapleStat::Id, std::string> reqstatstrings;
 		EnumMap<MapleStat::Id, std::string> reqstatstrings_preview;
 		Texture itemicon;
@@ -71,6 +73,8 @@ namespace ms
 		Text atkinc_preview;
 		EnumMap<EquipStat::Id, Text> statlabels;
 		EnumMap<EquipStat::Id, Text> statlabels_preview;
+		// 对比侧每条属性的差值文本（悬停值 - 已装备值）：正数绿色、负数红色。
+		EnumMap<EquipStat::Id, Text> statdeltas_preview;
 
 		Texture top;
 		Texture mid;

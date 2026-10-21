@@ -109,6 +109,7 @@ namespace ms
 
 		// 界面开关
 		{ "界面",       "ui.buff_timer",				"是否在 buff 图标上显示剩余时间" },
+		{ "界面",       "ui.equip_compare",				"装备悬停时是否显示同部位已装备物品对比" },
 
 		// 界面位置（关闭客户端时的最后窗口位置）
 		{ "界面位置",   "ui.position.stats",			"角色属性面板" },
@@ -166,6 +167,7 @@ namespace ms
 		settings.emplace<Height>();
 		settings.emplace<VSync>();
 		settings.emplace<BuffTimer>();
+		settings.emplace<EquipCompare>();
 		settings.emplace<FontPathNormal>();
 		settings.emplace<FontPathBold>();
 		settings.emplace<BGMVolume>();
@@ -666,6 +668,11 @@ namespace ms
 	bool Configuration::get_buff_timer() const
 	{
 		return Setting<BuffTimer>::get().load();
+	}
+
+	bool Configuration::get_equip_compare() const
+	{
+		return Setting<EquipCompare>::get().load();
 	}
 
 	bool Configuration::get_patch_enabled() const

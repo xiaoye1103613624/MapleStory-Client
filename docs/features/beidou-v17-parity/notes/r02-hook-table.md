@@ -170,7 +170,46 @@ Encode4((int)(value >> 32));          // 再写高 32 位
 
 ---
 
-## 3. 复现与维护
+## 3. EquipCompare（装备悬停对比）
+
+### 3.1 符号与职责
+
+| EA | 符号 | 大小 | 职责 |
+| --- | --- | --- | --- |
+| `0x100A5BC0` | `?EnsureHooks@EquipCompare@@YAXXZ` | 22 | 安装 `CUIToolTip` 相关 hook |
+| `0x100A6150` | `?AttachEquipCompareMod@@YAXXZ` | 77 | 模块入口，调用 `EnsureHooks` |
+| `0x100A6B30` | `FindEquippedCompareItem` | 432 | 按 bodyPart 找同部位已装备物品 |
+| `0x100A7B90` | `ShowEquippedCompareToolTip` | 585 | 新建/复用对比 tooltip 并定位 |
+| `0x100A6430` | `EmitCompareValueLine` | 1504 | 输出「属性 + 差值」行，正差值染绿 |
+| `0x100A6260` | `ComputeCompareDockLeft` | 327 | 对比 tooltip 停靠在源 tooltip 右侧 |
+| `0x100A7730` | `PlaceCompareTipAt` | 178 | 应用停靠坐标 |
+
+### 3.2 行为证据
+
+- 入口（`ShowEquippedCompareToolTip`）：仅当 `!g_showingCompareTooltip && sourceTooltip && sourceItem`，且 `itemId ∈ [1000000, 2000000)` 时继续；同一时刻只允许一个对比 tooltip。
+- 查找（`FindEquippedCompareItem`）：`TryGetBodyPartsForItem` 取部位列表，现金装备（`IsCashEquipItem`）走 `bodyPart - 100` 的槽位偏移；命中后返回已装备物品。
+- 停靠（`ComputeCompareDockLeft`）：`outLeft = sourceLeft`；若源 tooltip 宽度 > 0，则 `outLeft = sourceLeft + width + 8`，并钳到 ≥ 0。
+- 行格式（`EmitCompareValueLine`，参数 `hoverVal / eqVal / nType / sProperty`）：
+  ```c
+  diff = hoverVal - eqVal;
+  sBase = (nType != 0) ? " %d"
+        : (hoverVal >= 0) ? " +%d" : " %d";
+  // 差值仅在与已装备不同时输出
+  sDelta = (diff > 0) ? " (+%d)" : " (%d)";
+  // diff > 0 时通过 g_greenRemapTip 临时替换字体颜色表为绿色
+  ```
+  行以 `nAlign = 0x3E9`（1001）、`bUseDot = 1` 追加，即带点线引导的右对齐数值列。
+- 清理：`ClearEquippedCompareToolTip` / `ClearPendingCompare` 在 tooltip 关闭或切换物品时释放对比实例。
+
+### 3.3 当前端落地
+
+- 源码：`IO/Components/EquipTooltip.h/.cpp`（`show_compare`、`statdeltas_preview`、`draw_preview`），开关 `ui.equip_compare`。
+- 差异：当前端沿用已有的 `_preview` 缓存而不是新建 `CUIToolTip` 实例；按单槽 `EquipSlot::Id` 查找；差值颜色在 `Text` 构造期指定。
+- 详见 `docs/features/equip-compare/README.md`。
+
+---
+
+## 4. 复现与维护
 
 ```powershell
 # 反编译指定函数（写入 dec_out.txt）
@@ -182,8 +221,9 @@ Set-Content C:\Users\11036\AppData\Local\Temp\opencode\dec_targets.txt -Value '1
 - 该库 `ijl15.dll.i64` 为持久库，重跑脚本不会丢失符号；Hex-Rays 对部分函数返回 `None`，脚本自动回退反汇编。
 - 版本升级后优先复核 §2.3 的 `原目标` 列：参考端自身就靠这 4 个目标值做漂移检测，目标变了说明 exe 结构变了，站点表必须重算。
 
-## 4. 变更记录
+## 5. 变更记录
 
 | 日期 | 内容 |
 | --- | --- |
 | 2026-10-21 | 首版：BuffTimer 证据表 + MesoUncap 32 站点全表（7 解码 / 22 格式化 / 3 编码） |
+| 2026-10-21 | 增补 EquipCompare：动态差值行、停靠与查找逻辑 |

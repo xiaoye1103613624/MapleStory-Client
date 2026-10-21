@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "EquipTooltip.h"
 
+#include "../../Configuration.h"
 #include "../../Data/WeaponData.h"
 #include "../../Gameplay/Stage.h"
 
@@ -102,6 +103,7 @@ namespace ms
 
 		invpos = 0;
 		invpos_preview = 0;
+		show_compare = Configuration::get().get_equip_compare();
 	}
 
 	void EquipTooltip::set_equip(Tooltip::Parent parent, int16_t ivp)
@@ -133,13 +135,13 @@ namespace ms
 		auto oequip = inventory.get_equip(invtype, invpos);
 		const CharStats& stats = player.get_stats();
 
-		if (invtype == InventoryType::Id::EQUIP)
+		if (show_compare && invtype == InventoryType::Id::EQUIP && oequip)
 		{
 			const int32_t item_id = oequip.get()->get_item_id();
 			const EquipData& equipdata = EquipData::get(item_id);
 			EquipSlot::Id eqslot = equipdata.get_eqslot();
 
-			if (inventory.has_equipped(eqslot));
+			if (inventory.has_equipped(eqslot))
 			{
 				auto eequip = inventory.get_equip(InventoryType::Id::EQUIPPED, eqslot);
 
@@ -329,26 +331,51 @@ namespace ms
 					}
 
 					statlabels_preview.clear();
+					statdeltas_preview.clear();
 
 					for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 					{
-						if (equip.get_stat(es) > 0)
-						{
-							int16_t delta = equip.get_stat(es) - equipdata.get_defstat(es);
-							std::string statstr = std::to_string(equip.get_stat(es));
+						const uint16_t equipped_value = equip.get_stat(es);
+						const uint16_t hovered_value = oequip.get()->get_stat(es);
 
-							if (delta != 0)
-							{
-								statstr.append(" (");
-								statstr.append((delta < 0) ? "-" : "+");
-								statstr.append(std::to_string(abs(delta)) + ")");
-							}
-
-							statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, EquipStat::names[es] + std::string(": ") + statstr);
-						}
-						else
+						// 两侧都没有数值就不占行；任一侧存在才输出，才能展示「新装备多出的属性」
+						if (equipped_value == 0 && hovered_value == 0)
 						{
 							height_preview -= 18;
+							continue;
+						}
+
+						// 已装备物品自身的卷轴加成，保持与普通 tooltip 一致
+						int16_t scroll = equipped_value - equipdata.get_defstat(es);
+						std::string statstr = std::to_string(equipped_value);
+
+						if (scroll != 0)
+						{
+							statstr.append(" (");
+							statstr.append((scroll < 0) ? "-" : "+");
+							statstr.append(std::to_string(abs(scroll)) + ")");
+						}
+
+						statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, EquipStat::names[es] + std::string(": ") + statstr);
+
+						// 悬停物品相对已装备物品的差值：正数绿色 (+N)，负数红色 (N)
+						int32_t diff = static_cast<int32_t>(hovered_value) - static_cast<int32_t>(equipped_value);
+
+						if (diff != 0)
+						{
+							std::string diffstr = " (";
+
+							if (diff > 0)
+								diffstr += "+";
+
+							diffstr += std::to_string(diff) + ")";
+
+							statdeltas_preview[es] = Text(
+								Text::Font::A11M,
+								Text::Alignment::LEFT,
+								diff > 0 ? Color::Name::GREEN : Color::Name::RED,
+								diffstr
+							);
 						}
 					}
 
@@ -830,12 +857,21 @@ namespace ms
 			pos.shift_y(stat_y);
 		}
 
-		for (const Text& label : statlabels_preview.values())
+		for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 		{
+			const Text& label = statlabels_preview[es];
+
 			if (label.empty())
 				continue;
 
 			label.draw(pos + Point<int16_t>(stat_x, 0));
+
+			// 差值紧跟属性文本，颜色在构造时已确定（正绿负红）
+			const Text& diff = statdeltas_preview[es];
+
+			if (!diff.empty())
+				diff.draw(pos + Point<int16_t>(stat_x + static_cast<int16_t>(label.width()), 0));
+
 			pos.shift_y(stat_y);
 		}
 
