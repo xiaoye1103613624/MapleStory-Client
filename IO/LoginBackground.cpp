@@ -20,13 +20,15 @@
 #include "../Constants.h"
 #include "../Graphics/Texture.h"
 
+#include <cmath>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
 
 namespace ms
 {
-	LoginBackground::LoginBackground() : enabled(false), has_map(false), has_backs(false), has_forest(false), has_frame(false), step(0), frame_topleft(0, 0)
+	LoginBackground::LoginBackground() : enabled(false), has_map(false), has_backs(false), has_forest(false), has_frame(false), step(0), frame_topleft(0, 0), tween_from{0.0, 0.0}, tween_to{0.0, 0.0}, tween_start(0), tween_duration(0), tween_active(false)
 	{
 	}
 
@@ -34,6 +36,63 @@ namespace ms
 	{
 		// Align with CLogin::GetStepHeight: -8 - 600 * step
 		return -8 - 600 * step;
+	}
+
+	LoginBackground::Offset LoginBackground::target_offset(int step)
+	{
+		// Step 5 (other/exit) uses step 1's height in CLogin::ChangeStep.
+		if (step == 5)
+			step = 1;
+
+		if (step == 0)
+			// 登录页沿用既有锚点：告示牌中心对齐书本开口。
+			return { 137.0, -20.0 };
+
+		return { 28.0, static_cast<double>(step_height(step)) };
+	}
+
+	uint32_t LoginBackground::now_ms()
+	{
+		using namespace std::chrono;
+		return static_cast<uint32_t>(
+			duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count()
+		);
+	}
+
+	LoginBackground::Offset LoginBackground::current_offset() const
+	{
+		if (!tween_active || tween_duration == 0)
+			return target_offset(step);
+
+		uint32_t elapsed = now_ms() - tween_start;
+
+		if (elapsed >= tween_duration)
+			return tween_to;
+
+		double t = static_cast<double>(elapsed) / static_cast<double>(tween_duration);
+		// 平滑 S 曲线（两端速度为 0），与参考端滚动补间的观感一致。
+		t = t * t * (3.0 - 2.0 * t);
+
+		return {
+			tween_from.x + (tween_to.x - tween_from.x) * t,
+			tween_from.y + (tween_to.y - tween_from.y) * t
+		};
+	}
+
+	void LoginBackground::set_step(int value)
+	{
+		if (value == step)
+			return;
+
+		Offset from = current_offset();
+		int previous = step;
+
+		step = value;
+		tween_from = from;
+		tween_to = target_offset(value);
+		tween_start = now_ms();
+		tween_duration = static_cast<uint32_t>(300 * (value > previous ? value - previous : previous - value) + 500);
+		tween_active = true;
 	}
 
 #ifdef USE_NX
@@ -157,11 +216,12 @@ namespace ms
 			Constants::Constants::get().get_viewheight() / 2
 		);
 
-		if (step == 0)
-			// Center signboard: obj pos = (137, 21), +40 vs original 800x600.
-			return center - Point<int16_t>(137, -20);
+		Offset offset = current_offset();
 
-		return center - Point<int16_t>(28, step_height(step));
+		return Point<int16_t>(
+			static_cast<int16_t>(std::lround(center.x() - offset.x)),
+			static_cast<int16_t>(std::lround(center.y() - offset.y))
+		);
 	}
 
 	void LoginBackground::draw(float alpha) const
@@ -214,6 +274,9 @@ namespace ms
 
 	void LoginBackground::update()
 	{
+		if (tween_active && now_ms() - tween_start >= tween_duration)
+			tween_active = false;
+
 		if (has_backs)
 			backgrounds.update();
 

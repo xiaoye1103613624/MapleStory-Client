@@ -23,6 +23,7 @@
 #include "../Gameplay/MapleMap/MapTilesObjs.h"
 #include "../Graphics/Sprite.h"
 
+#include <chrono>
 #include <vector>
 
 namespace ms
@@ -45,10 +46,7 @@ namespace ms
 		}
 
 		// step: 0=login, 1=world select, 2=char select (camera -8-600*step)
-		void set_step(int value)
-		{
-			step = value;
-		}
+		void set_step(int value);
 
 		int get_step() const
 		{
@@ -68,6 +66,19 @@ namespace ms
 	private:
 		static int step_height(int step);
 
+		// 屏幕空间偏移：viewpos = 屏幕中心 - offset。
+		// 参考端 CLogin::ChangeStep 用 IWzGr2D 中心补间在旧/新 step 高度之间滚动，
+		// 时长 300*|new-old|+500 ms；这里沿用同一时长与端点，缓动取平滑 S 曲线。
+		struct Offset
+		{
+			double x;
+			double y;
+		};
+
+		static Offset target_offset(int step);
+		static uint32_t now_ms();
+		Offset current_offset() const;
+
 		MapTilesObjs map;
 		MapBackgrounds backgrounds;
 		std::vector<Sprite> bg_layers;
@@ -79,5 +90,11 @@ namespace ms
 		bool has_forest;
 		bool has_frame;
 		int step;
+
+		Offset tween_from;
+		Offset tween_to;
+		uint32_t tween_start;
+		uint32_t tween_duration;
+		bool tween_active;
 	};
 }
