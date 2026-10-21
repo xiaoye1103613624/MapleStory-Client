@@ -22,3 +22,39 @@ Settings
 # 构建日志与中间产物（tools/build_smoke.bat 的输出）
 /build_log.txt
 /includes/NoLifeNx/nlnx/*/obj-*
+
+# CMake out-of-source build directory
+/build_cmake/
+
+# ===== 本地调试产物（截图 / 探针脚本 / 临时导出，勿提交）=====
+# 根目录临时产物
+/_tmp_*
+/tmp_*
+/_view_*
+/_flow*.png
+/_n*.png
+/android_shot.png
+/*.obj
+/_build_out/
+/_tmp_tab_dump/
+
+# 工具产物与缓存
+/tools/capture/
+/tools/stat_out/
+/tools/__pycache__/
+/tools/*.obj
+/tools/*.exe
+/tools/setup_run.log
+/_tools/**/bin/
+/_tools/**/obj/
+/includes/NoLifeNx/nlnx/obj_rebuild/
+/$null
+/_full_dpi.png
+
+# Android / CMake 构建输出（源码仍提交）
+/android/.gradle/
+/android/local.properties
+/android/app/build/
+/android/app/.cxx/
+/android/app/src/main/jniLibs/
+/build-android/
