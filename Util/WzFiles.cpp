@@ -32,22 +32,39 @@ namespace ms
 {
 	namespace WzFiles
 	{
-		Error init()
+		Error init(const std::string& base_dir)
 		{
+			// 把根目录前缀拼到文件名前；为空时行为与改造前完全一致（相对工作目录）。
+			auto path_of = [&base_dir](const char* filename)
+			{
+				if (base_dir.empty())
+					return std::string(filename);
+
+				std::string joined = base_dir;
+				const char last = joined.back();
+
+				if (last != '/' && last != '\\')
+					joined += '/';
+
+				joined += filename;
+
+				return joined;
+			};
+
 			// 宽松校验：与 NxFiles::init() 一致 —— 容忍缺失根（BeiDou 类数据不保证 28 个根全齐），
 			// 仅当「一个 .wz 根都没有」时才判定为数据缺失，给出明确错误。
 			bool any_present = false;
 
 			for (auto filename : filenames)
-				if (std::ifstream{ filename }.good())
+				if (std::ifstream{ path_of(filename) }.good())
 					any_present = true;
 
 			if (!any_present)
-				return Error(Error::Code::MISSING_FILE, "no WZ root files found; expected the .wz set in the working directory");
+				return Error(Error::Code::MISSING_FILE, "no WZ root files found; expected the .wz set in the data directory");
 
 			try
 			{
-				nl::wz::load_all();
+				nl::wz::load_all(base_dir);
 			}
 			catch (const std::exception& ex)
 			{

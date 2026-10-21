@@ -44,6 +44,9 @@ namespace ms
 		// ".nxcache" subfolder so subsequent launches skip re-parsing.
 		//
 		// The data directory is taken from Configuration::get_data_dir().
-		Error init();
+		//
+		// @base_dir 非空时优先使用该目录；为空时回退到配置中的 data.dir。
+		//          由资源门面在定位到数据目录后传入。
+		Error init(const std::string& base_dir = std::string());
 	}
 }

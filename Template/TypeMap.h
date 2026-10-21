@@ -54,13 +54,23 @@ namespace ms
 		template <typename D>
 		D* get()
 		{
-			return static_cast<D*>(container[typeid(D)].get());
+			auto iter = container.find(typeid(D));
+
+			if (iter == container.end())
+				return nullptr;
+
+			return static_cast<D*>(iter->second.get());
 		}
 
 		template <typename D>
 		const D* get() const
 		{
-			return static_cast<D*>(container[typeid(D)].get());
+			auto iter = container.find(typeid(D));
+
+			if (iter == container.end())
+				return nullptr;
+
+			return static_cast<D*>(iter->second.get());
 		}
 
 		typename underlying_map::iterator begin()

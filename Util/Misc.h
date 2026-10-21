@@ -21,6 +21,9 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <list>
+#include <vector>
+#include <string>
 
 namespace ms
 {
@@ -93,6 +96,19 @@ namespace ms
 
 			// Returns a list of all life on a map (Mobs and NPCs)
 			std::unordered_map<int64_t, std::pair<std::string, std::string>> get_life_on_map(int32_t mapid);
+
+			// Structured mob spawn info for world-map side panels (deduped, sorted).
+			struct MapMobInfo
+			{
+				int32_t id = 0;
+				std::string name;
+				int16_t level = 0;
+				// maxHP from Mob.img/info; 0 when the node is missing.
+				int32_t max_hp = 0;
+			};
+
+			// Unique mobs on a map (life type "m"), sorted by level then id.
+			std::vector<MapMobInfo> get_mobs_on_map(int32_t mapid);
 
 			// Returns the name of the node, under which the argument map id is in
 			nl::node get_map_node_name(int32_t mapid);

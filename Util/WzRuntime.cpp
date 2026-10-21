@@ -6,12 +6,14 @@
 // audio points into the archive, and Canvas payloads are decoded on demand.
 ////////////////////////////////////////////////////////////////////////////////
 
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 #define NOMINMAX
 #define LZ4_DISABLE_DEPRECATE_WARNINGS
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #include <Windows.h>
+#endif
 
 #include <zlib.h>
 #include <lz4.h>
@@ -46,6 +48,9 @@
 #include <nlnx/nx.hpp>
 #include <nlnx/wz.hpp>
 
+#include "../Configuration.h"
+#include "Resource/Keyring.h"  // D4：ms::res::KeyResolver / KeyMode 定义（本 TU 直接用到，须显式包含）。
+
 // The converter's structures intentionally mirror NoLifeNx structures. Rename
 // its three public value types while embedding it in the client translation
 // unit so both APIs can coexist.
@@ -74,7 +79,58 @@ namespace nl {
         std::vector<uint32_t> parents;
         std::vector<redirect> redirects;
         std::vector<uint8_t> resolve_state;
+        std::string archive_name;  // 归档标识（如文件名），用于 per-archive 密钥缓存与诊断。
     };
+
+    namespace {
+        // 密钥解析器（D4）：单例，按配置 data.keymode / data.keyfile 构造。
+        ms::res::KeyResolver * s_keyresolver = nullptr;
+    }
+
+    // 惰性构造并复用全局 KeyResolver 实例（首次解码时触发，读取 Configuration）。
+    ms::res::KeyResolver & get_keyresolver() {
+        if (!s_keyresolver) {
+            ms::res::KeyMode mode = ms::Configuration::get().get_keymode();
+            std::string path = ms::Configuration::get().get_keyfile();
+            s_keyresolver = new ms::res::KeyResolver(mode, path);
+        }
+        return *s_keyresolver;
+    }
+
+    // 密钥诊断（D4）：返回每归档的试探次数，用于验证"每归档 ≤1 次试探"。
+    std::string key_diagnostics() {
+        return get_keyresolver().diagnostics();
+    }
+
+    // [SAFETY] SEH 兜底：畸形 .img 可能触发底层解析器的越界访问（AV）。
+    // 用仅含 POD 参数的函数承载 __try/__except，避免 C2712（含 C++ 对象的
+    // 函数禁用 __try）。返回 false 表示发生了访问违规。
+    static void seh_call_parse_file(void * p) {
+        static_cast<wztonx *>(p)->parse_file();
+    }
+    static void seh_call_parse_single(void * p) {
+        static_cast<imgdirtonx *>(p)->parse_single();
+    }
+    static void seh_call_parse_only(void * p) {
+        static_cast<imgdirtonx *>(p)->parse_only_stored();
+    }
+    // SEH is MSVC/Windows only; other compilers just run the callee directly.
+#ifdef _WIN32
+    static bool seh_try_invoke(void (*fn)(void *), void * ctx) {
+        __try {
+            fn(ctx);
+            return true;
+        }
+        __except (EXCEPTION_EXECUTE_HANDLER) {
+            return false;
+        }
+    }
+#else
+    static bool seh_try_invoke(void (*fn)(void *), void * ctx) {
+        fn(ctx);
+        return true;
+    }
+#endif
 
     namespace {
         std::unordered_map<std::string, wz_file *> archives;
@@ -98,10 +154,11 @@ namespace nl {
 
     wz_file::~wz_file() = default;
 
-    void wz_file::open(std::string const & filename) {
-        auto next = std::make_unique<data>();
-        next->parser = std::make_unique<wztonx>(std::filesystem::u8path(filename), true, false);
-        next->parser->parse_file();
+    void wz_file::close() {
+        m_data.reset();
+    }
+
+    void wz_file::finalize(std::unique_ptr<data> next) {
         next->view.node_table = reinterpret_cast<node::data const *>(
             next->parser->nodes.data());
         next->view.wz = this;
@@ -117,6 +174,101 @@ namespace nl {
             }
         }
         m_data = std::move(next);
+    }
+
+    void wz_file::open(std::string const & filename) {
+        close();
+        auto next = std::make_unique<data>();
+        next->archive_name = std::filesystem::path(filename).filename().generic_string();
+        next->parser = std::make_unique<wztonx>(std::filesystem::u8path(filename), true, false);
+        next->parser->parse_file();
+        finalize(std::move(next));
+    }
+
+    // ---- 直接 IMG 后端（零转换） ----
+    // 复用 wz_file 的 _file_data 布局与全部 bitmap/audio 解码方法：img 本质是一个
+    // img-node 字节流，与 WZ 的 Canvas/Audio 编码同源，解析出的 nodes/strings/
+    // bitmaps/audios 结构二进制兼容（见 WzRuntime.cpp 顶部 static_assert）。
+
+    // 把一组 (相对路径, .img 字节) 按 "/" 拆成嵌套目录树。中间目录标记为
+    // is_dir，叶子携带原始 .img 字节。open_merge / open_tree 共用，保证
+    // "Obj/login.img" 这类带层级路径被正确还原为 Map["Obj"]["login.img"]，
+    // 而非扁平地把整条 relpath 当作顶层节点名（那会导致分级访问全部失效）。
+    static tree_node build_img_tree(
+        std::vector<std::pair<std::string, std::vector<char>>> && bufs)
+    {
+        tree_node root_tree;
+        for (auto & rp : bufs) {
+            std::string rel = rp.first;
+            std::vector<std::string> segs;
+            size_t start = 0;
+            while (true) {
+                size_t pos = rel.find_first_of("/\\", start);
+                if (pos == std::string::npos) {
+                    segs.push_back(rel.substr(start));
+                    break;
+                }
+                segs.push_back(rel.substr(start, pos - start));
+                start = pos + 1;
+            }
+
+            tree_node * cur = &root_tree;
+            for (size_t i = 0; i + 1 < segs.size(); ++i) {
+                cur = &cur->children[segs[i]];
+                cur->is_dir = true;
+            }
+            tree_node & leaf = cur->children[segs.back()];
+            leaf.is_dir = false;
+            leaf.buf = std::move(rp.second);
+        }
+        return root_tree;
+    }
+
+    void img_file::open_merge(std::vector<std::pair<std::string, std::vector<char>>> && bufs) {
+        auto next = std::make_unique<data>();
+        next->archive_name = "img";
+        auto conv = std::make_unique<imgdirtonx>();
+        conv->client = true;
+        conv->hc = false;
+        // [FIX] 改用嵌套 tree 模式（与 open_tree 一致），按 "/" 重建目录层级，
+        // 使 Map["Obj"]["login.img"] 这类分级访问可用；扁平模式会把整条
+        // relpath 当顶层节点名，导致 Map/Obj/*、Map/Tile/*、Map/Back/* 全部失效。
+        conv->tree = build_img_tree(std::move(bufs));
+        // [SAFETY] SEH 兜底：畸形 .img 可能触发解析器越界访问，捕获后抛出，
+        // 由 ImgSource::ensure 捕获并跳过该根，避免整体装载崩溃。
+        if (!seh_try_invoke(&seh_call_parse_only, conv.get()))
+            throw std::runtime_error("img parse access violation");
+        next->parser = std::move(conv);
+        finalize(std::move(next));
+    }
+
+    void img_file::open_single(std::vector<char> && buf) {
+        auto next = std::make_unique<data>();
+        next->archive_name = "img";
+        auto conv = std::make_unique<imgdirtonx>();
+        conv->client = true;
+        conv->hc = false;
+        conv->single_buf = std::move(buf);
+        if (!seh_try_invoke(&seh_call_parse_single, conv.get()))
+            throw std::runtime_error("img parse access violation");
+        next->parser = std::move(conv);
+        finalize(std::move(next));
+    }
+
+    void img_file::open_tree(std::vector<std::pair<std::string, std::vector<char>>> && bufs) {
+        auto next = std::make_unique<data>();
+        next->archive_name = "img";
+        auto conv = std::make_unique<imgdirtonx>();
+        conv->client = true;
+        conv->hc = false;
+
+        // 复用 build_img_tree 重建嵌套目录树（与 open_merge 同逻辑）。
+        // tree_node 由 conv 持久持有，避免解析后 bitmap/audio 解码时 base 指针悬垂。
+        conv->tree = build_img_tree(std::move(bufs));
+        if (!seh_try_invoke(&seh_call_parse_only, conv.get()))
+            throw std::runtime_error("img parse access violation");
+        next->parser = std::move(conv);
+        finalize(std::move(next));
     }
 
     node wz_file::root() const {
@@ -147,7 +299,9 @@ namespace nl {
         if (!m_data || id >= m_data->parser->audios.size())
             return nullptr;
         auto const & entry = m_data->parser->audios[id];
-        return m_data->parser->in.base + entry.data;
+        // [FIX] 与位图同理：音频偏移相对它自己所属 .img 的 entry.base，
+        // 而非解析结束后残留的 parser.in.base。
+        return entry.base + entry.data;
     }
 
     uint32_t wz_file::resolve_path(uint32_t start,
@@ -198,7 +352,12 @@ namespace nl {
                 }
             } else if (std::strcmp(link_name, "_inlink") == 0) {
                 auto base = node_id;
-                while (base != UINT32_MAX) {
+                // [SAFETY] 父链可能因解析异常而成环，或 base 越界读到垃圾，
+                // 原 while 会永不终止并让整个装载卡死。这里加上限与边界检查
+                // （与 resolve_bitmap 的 depth<64 一致），最多沿父链上溯 64 跳。
+                for (size_t hops = 0; base != UINT32_MAX && hops < 64u; ++hops) {
+                    if (base >= m_data->parents.size())
+                        break;
                     target_node = resolve_path(base, parts);
                     if (target_node != 0)
                         break;
@@ -263,6 +422,14 @@ namespace nl {
         auto & parser = *m_data->parser;
         auto const & entry = parser.bitmaps[id];
         auto & input_file = parser.in;
+
+        // [FIX] 位图偏移 entry.data 相对的是它自己所属的 .img 缓冲区
+        // (entry.base)。合并解析多个 .img 时 parser.in.base 会被逐个覆盖，
+        // 解析结束后只保留最后处理的 .img；直接用它 seek 会算出越界地址并
+        // 触发 AV（进程在无交互会话里表现为挂起）。这里先把 reader 基址改绑
+        // 到 entry.base 再 seek，与 vendor write_bitmaps 的用法一致。
+        input_file.base = entry.base;
+        input_file.end = nullptr;
         input_file.seek(static_cast<size_t>(entry.data));
 
         auto const width = input_file.read_cint();
@@ -401,14 +568,20 @@ namespace nl {
         bool decrypted = false;
         int decrypted_key = -1;
         if (!decoded) {
-            // A small number of v085 Item canvases were imported from archives
-            // using a different locale key than the containing WZ. Try every
-            // known MapleStory key, while keeping the chunk table unchanged.
-            std::array<uint8_t const *, 4> candidate_keys = {
-                archive_key, key_bms, key_gms, key_kms
-            };
+            // 密钥治理（D4）：经 KeyResolver 取得候选 key 序列（按 KeyMode 排序），
+            // 并复用 per-archive 缓存的首次命中 key，使同一归档的后续解码直接命中（≤1 次试探）。
+            std::vector<uint8_t const *> candidate_keys;
+            if (const uint8_t * cached = get_keyresolver().cached(m_data->archive_name))
+                candidate_keys.push_back(cached);
+            for (const uint8_t * k : get_keyresolver().candidates(archive_key))
+                candidate_keys.push_back(k);
+
+            const uint8_t * winner_key = nullptr;
+            uint32_t attempts = 0;
             for (size_t key_index = 0; key_index < candidate_keys.size() && !decoded; ++key_index) {
                 auto const * candidate_key = candidate_keys[key_index];
+                if (!candidate_key)
+                    continue;
                 bool duplicate = false;
                 for (size_t earlier = 0; earlier < key_index; ++earlier)
                     if (candidate_keys[earlier] == candidate_key)
@@ -416,14 +589,23 @@ namespace nl {
                 if (duplicate)
                     continue;
 
+                ++attempts;
                 compressed_length = stored_length;
                 if (!decrypt_payload(candidate_key))
                     continue;
                 decrypted = true;
                 decrypted_key = static_cast<int>(key_index);
-                if (has_zlib_header(input.data(), compressed_length))
-                    decoded = inflate_payload(decrypted_result, decrypted_written);
+                if (has_zlib_header(input.data(), compressed_length)) {
+                    if (inflate_payload(decrypted_result, decrypted_written)) {
+                        winner_key = candidate_key;
+                        decoded = true;
+                    }
+                }
             }
+            // 首次成功即缓存命中 key，后续该归档解码直接命中（≤1 次试探）。
+            if (winner_key)
+                get_keyresolver().cache(m_data->archive_name, winner_key);
+            get_keyresolver().note_trial(m_data->archive_name, attempts);
         }
 
         if (!decoded) {
@@ -527,17 +709,45 @@ namespace nl {
         namespace {
             std::vector<std::unique_ptr<wz_file>> files;
 
+            // 可选的装载根目录前缀：非空时所有归档都在该目录下解析，
+            // 为空时保持既有行为（相对当前工作目录）。
+            std::string base_prefix;
+
+            // 给归档名加上根目录前缀。
+            std::string with_base(char const * filename) {
+                if (base_prefix.empty())
+                    return filename;
+
+                std::string joined = base_prefix;
+                auto const last = joined.back();
+
+                if (last != '/' && last != '\\')
+                    joined += '/';
+
+                joined += filename;
+
+                return joined;
+            }
+
             node add_file(char const * filename) {
-                files.emplace_back(std::make_unique<wz_file>(filename));
-                auto name = std::filesystem::path(filename).stem().string();
+                auto const path = with_base(filename);
+                files.emplace_back(std::make_unique<wz_file>(path));
+                auto name = std::filesystem::path(path).stem().string();
                 archives[name] = files.back().get();
                 return files.back()->root();
             }
         }
 
         void load_all() {
+            load_all(std::string());
+        }
+
+        void load_all(std::string const & base_dir) {
             if (!files.empty())
                 return;
+
+            // 装载期间生效，结束后清空，避免影响后续调用。
+            base_prefix = base_dir;
 
             // Single + split volumes, matching the 28-root NX/WZ layout used by
             // this client. Each archive is mapped onto the corresponding nl::nx root.
@@ -581,6 +791,8 @@ namespace nl {
                 files[i]->resolve_links();
                 std::cout << "Done!" << std::endl;
             }
+
+            base_prefix.clear();
         }
     }
 }

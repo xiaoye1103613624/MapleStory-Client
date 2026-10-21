@@ -21,8 +21,10 @@
 #include <nlnx/nx.hpp>
 #endif
 
+#include <algorithm>
 #include <locale>
 #include <sstream>
+#include <unordered_set>
 
 namespace ms
 {
@@ -202,6 +204,52 @@ namespace ms
 				}
 
 				return map_life;
+			}
+
+			std::vector<MapMobInfo> get_mobs_on_map(int32_t mapid)
+			{
+				std::vector<MapMobInfo> result;
+				std::unordered_set<int32_t> seen;
+
+				nl::node portal = get_map_node_name(mapid);
+
+				if (!portal)
+					return result;
+
+				for (nl::node life : portal["life"])
+				{
+					std::string life_type = life["type"];
+					uint8_t hide_life = life["hide"];
+
+					if (hide_life || life_type != "m")
+						continue;
+
+					int32_t life_id = static_cast<int32_t>(static_cast<int64_t>(life["id"]));
+
+					if (!seen.insert(life_id).second)
+						continue;
+
+					std::string life_id_str = string_format::extend_id(life_id, 7);
+					nl::node info = nl::nx::Mob[life_id_str + ".img"]["info"];
+					nl::node life_name = nl::nx::String["Mob.img"][life_id]["name"];
+
+					MapMobInfo entry;
+					entry.id = life_id;
+					entry.name = life_name ? life_name.get_string() : ("Mob " + std::to_string(life_id));
+					entry.level = info["level"] ? static_cast<int16_t>(info["level"].get_integer()) : 0;
+					entry.max_hp = info["maxHP"] ? static_cast<int32_t>(info["maxHP"].get_integer()) : 0;
+					result.push_back(std::move(entry));
+				}
+
+				std::sort(result.begin(), result.end(), [](const MapMobInfo& a, const MapMobInfo& b)
+				{
+					if (a.level != b.level)
+						return a.level < b.level;
+
+					return a.id < b.id;
+				});
+
+				return result;
 			}
 
 			nl::node get_map_node_name(int32_t mapid)

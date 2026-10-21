@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -20,11 +20,19 @@
 #include "../MapleStory.h"
 
 #ifdef USE_NX
+// On Windows this links the prebuilt NoLifeNx import lib. On Android/Linux
+// the nlnx sources are compiled directly into the target (nx.cpp), so no
+// separate library is needed. Clang emits this pragma as a dependent-lib even
+// for ELF targets, which would make the linker search for a non-existent
+// "NoLifeNx" library.
+#ifdef _WIN32
 #pragma comment(lib, "NoLifeNx")
+#endif
 
 #include "../Error.h"
 
 #include <array>
+#include <string>
 
 namespace ms
 {
@@ -68,7 +76,10 @@ namespace ms
 
 		// Initialize NX
 		// When successful test if the UI file is the correct version
-		Error init();
+		//
+		// @base_dir 非空时，所有 .nx 文件都在此目录下解析；为空则保持既有行为
+		//           （相对当前工作目录）。由资源门面在定位到数据目录后传入。
+		Error init(const std::string& base_dir = std::string());
 	};
 }
 #endif

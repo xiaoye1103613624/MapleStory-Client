@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -19,8 +19,25 @@
 
 #include "../Configuration.h"
 
+#if defined(_WIN32)
 #include <Windows.h>
 #include <IPHlpApi.h>
+#elif defined(__APPLE__) || defined(__linux__) || defined(__ANDROID__) || defined(__FreeBSD__)
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <string>
+#if defined(__APPLE__) || defined(__linux__) || defined(__ANDROID__)
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <cstring>
+#endif
+#else
+// Unknown platform: provide a no-op HWID so the build still compiles.
+#endif
 
 namespace ms
 {
@@ -28,6 +45,20 @@ namespace ms
 	{
 	public:
 		HardwareInfo()
+		{
+#if defined(_WIN32)
+			compute_windows();
+#elif defined(__APPLE__) || defined(__linux__) || defined(__ANDROID__) || defined(__FreeBSD__)
+			compute_posix();
+#else
+			// No HWID source on this platform; leave the configuration defaults.
+			(void)0;
+#endif
+		}
+
+	private:
+#if defined(_WIN32)
+		void compute_windows()
 		{
 			size_t size = 18;
 
@@ -123,5 +154,70 @@ namespace ms
 			free(hwid);
 			free(macs);
 		}
+#elif defined(__APPLE__) || defined(__linux__) || defined(__ANDROID__) || defined(__FreeBSD__)
+		void compute_posix()
+		{
+			// Volume / machine id: prefer /etc/machine-id (Linux), fall back to
+			// a hostname-based string. This replaces the Windows volume serial.
+			std::string volumeSerial = "00000000";
+			{
+				std::ifstream f("/etc/machine-id");
+				if (f)
+				{
+					std::string line;
+					if (std::getline(f, line) && !line.empty())
+						volumeSerial = line.substr(0, 8);
+				}
+				else
+				{
+					const char* host = getenv("HOSTNAME");
+					if (host && *host)
+						volumeSerial = std::string(host).substr(0, 8);
+				}
+			}
+
+			// First non-loopback MAC address via a socket ioctl.
+			char hwid[18] = "000000000000";
+			char macs[18] = "00-00-00-00-00-00";
+
+			int fd = socket(AF_INET, SOCK_DGRAM, 0);
+			if (fd >= 0)
+			{
+				struct ifreq ifr;
+				struct ifconf ifc;
+				char buf[4096];
+				std::memset(buf, 0, sizeof(buf));
+				ifc.ifc_len = sizeof(buf);
+				ifc.ifc_buf = buf;
+				if (ioctl(fd, SIOCGIFCONF, &ifc) >= 0)
+				{
+					int n = ifc.ifc_len / sizeof(struct ifreq);
+					for (int i = 0; i < n; ++i)
+					{
+						struct ifreq* cur = &ifc.ifc_req[i];
+						std::memset(&ifr, 0, sizeof(ifr));
+						std::strncpy(ifr.ifr_name, cur->ifr_name, IFNAMSIZ - 1);
+						if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0)
+							continue;
+						unsigned char* mac = (unsigned char*)ifr.ifr_hwaddr.sa_data;
+						if (mac[0] == 0 && mac[1] == 0 && mac[2] == 0 &&
+							mac[3] == 0 && mac[4] == 0 && mac[5] == 0)
+							continue; // skip zero address
+						snprintf(hwid, sizeof(hwid), "%02X%02X%02X%02X%02X%02X",
+							mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+						snprintf(macs, sizeof(macs), "%02X-%02X-%02X-%02X-%02X-%02X",
+							mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+						break;
+					}
+				}
+				close(fd);
+			}
+
+			char volbuf[32];
+			snprintf(volbuf, sizeof(volbuf), "%s", volumeSerial.c_str());
+			Configuration::get().set_hwid(hwid, volbuf);
+			Configuration::get().set_macs(macs);
+		}
+#endif
 	};
 }

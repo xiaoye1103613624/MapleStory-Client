@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -19,14 +19,17 @@
 
 #include "../Configuration.h"
 
+#ifdef _WIN32
 #include <windef.h>
 #include <WinUser.h>
+#endif
 
 namespace ms
 {
 	class ScreenResolution
 	{
 	public:
+#ifdef _WIN32
 		ScreenResolution()
 		{
 			RECT desktop;
@@ -46,5 +49,17 @@ namespace ms
 
 			Configuration::get().set_caps_lock_enabled(nVirtKey);
 		}
+#else
+		// POSIX / Android: there is no desktop window. The SDL window layer
+		// (IO/Window.cpp) overrides max width/height with the real display
+		// mode after initialization, so only a sane placeholder is set here.
+		// Caps Lock state is not available without a keyboard-state API.
+		ScreenResolution()
+		{
+			Configuration::get().set_max_width(1920);
+			Configuration::get().set_max_height(1080);
+			Configuration::get().set_caps_lock_enabled(false);
+		}
+#endif
 	};
 }

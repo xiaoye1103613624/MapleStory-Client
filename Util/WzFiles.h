@@ -1,4 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -75,6 +75,10 @@ namespace ms
 		};
 
 		// Initialize the WZ backend (NoLifeWzToNx) and verify the UI file version.
-		Error init();
+		//
+		// @base_dir 非空时，所有 .wz 归档都在此目录下解析；为空则保持既有行为
+		//           （相对当前工作目录）。由资源门面在定位到数据目录后传入。
+		// Initialize the WZ backend; @base_dir optionally relocates the archives.
+		Error init(const std::string& base_dir = std::string());
 	};
 }

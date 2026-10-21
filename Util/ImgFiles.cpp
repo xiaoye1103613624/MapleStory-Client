@@ -56,10 +56,15 @@ namespace ms
 			return true;
 		}
 
-		Error init()
+		Error init(const std::string& base_dir)
 		{
+			// 数据目录：门面定位到的目录优先，否则回退到用户配置（data.dir）。
 			// The data directory is configured by the user (BeiDou Data folder).
-			std::string data_dir = Configuration::get().get_data_dir();
+			std::string data_dir = base_dir;
+
+			if (data_dir.empty())
+				data_dir = Configuration::get().get_data_dir();
+
 			if (data_dir.empty())
 				data_dir = "Data";
 

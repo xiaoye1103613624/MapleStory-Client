@@ -27,8 +27,25 @@ namespace ms
 {
 	namespace NxFiles
 	{
-		Error init()
+		Error init(const std::string& base_dir)
 		{
+			// 把根目录前缀拼到文件名前；为空时行为与改造前完全一致（相对工作目录）。
+			auto path_of = [&base_dir](const char* filename)
+			{
+				if (base_dir.empty())
+					return std::string(filename);
+
+				std::string joined = base_dir;
+				const char last = joined.back();
+
+				if (last != '/' && last != '\\')
+					joined += '/';
+
+				joined += filename;
+
+				return joined;
+			};
+
 			// 宽松校验：NoLifeNx 在根文件缺失时生成空节点而非致命错误
 			// （见 Util/ImgFiles.cpp 注释：BeiDou 数据不带 Base 目录，缺失根应作为
 			// 空节点而非加载失败）。故不再要求 28 个根全齐，仅当「一个都没有」时
@@ -36,15 +53,15 @@ namespace ms
 			bool any_present = false;
 
 			for (auto filename : filenames)
-				if (std::ifstream{ filename }.good())
+				if (std::ifstream{ path_of(filename) }.good())
 					any_present = true;
 
 			if (!any_present)
-				return Error(Error::Code::MISSING_FILE, "no NX root files found; expected the .nx set in the working directory");
+				return Error(Error::Code::MISSING_FILE, "no NX root files found; expected the .nx set in the data directory");
 
 			try
 			{
-				nl::nx::load_all();
+				nl::nx::load_all(base_dir);
 			}
 			catch (const std::exception& ex)
 			{

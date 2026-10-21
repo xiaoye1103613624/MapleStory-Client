@@ -18,6 +18,8 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 
@@ -67,9 +69,17 @@ namespace ms
 		}
 
 		template <typename T>
-		class base_iterator : public std::iterator<std::forward_iterator_tag, V> {
+		// C++17 起 std::iterator 已弃用（且项目把 C4996 当成错误），
+		// 这里不再继承它，改为直接提供标准要求的 typedefs，语义等价。
+		class base_iterator {
 
 		public:
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = V;
+			using difference_type = std::ptrdiff_t;
+			using pointer = V*;
+			using reference = V&;
+
 			using index_type = typename std::underlying_type<K>::type;
 
 			base_iterator(T* p, index_type i) : value(p), index(i) {}
