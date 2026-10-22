@@ -30,6 +30,7 @@
 #include "Handlers/StorageHandlers.h"
 #include "Handlers/HiredMerchantBoxHandlers.h"
 #include "Handlers/MonsterBookHandlers.h"
+#include "Handlers/AllianceHandlers.h"
 #include "Handlers/PartyHandlers.h"
 #include "Handlers/BuddyHandlers.h"
 #include "Handlers/TradeHandlers.h"
@@ -162,6 +163,9 @@ namespace ms
 		MONSTER_BOOK_SET_CARD = 83,
 		MONSTER_BOOK_SET_COVER = 84,
 
+		/// 联盟：基础系统复刻，对接 s9 ALLIANCE_OPERATION(66 send / 143 recv)
+		ALLIANCE_OPERATION = 66,
+
 		/// Cash Shop
 		SET_CASH_SHOP = 127,
 
@@ -215,6 +219,9 @@ namespace ms
 		// 怪物图鉴：基础系统复刻，对接 s9 MONSTER_BOOK_SET_CARD(83)/MONSTER_BOOK_SET_COVER(84)
 		emplace<MONSTER_BOOK_SET_CARD, MonsterBookCardHandler>();
 		emplace<MONSTER_BOOK_SET_COVER, MonsterBookCoverHandler>();
+
+		// 联盟：基础系统复刻，对接 s9 ALLIANCE_OPERATION(66)
+		emplace<ALLIANCE_OPERATION, AllianceInfoHandler>();
 
 		// 公会/联盟：基础系统复刻，对接 s9 GuildOperationHandler / GuildPackets（联盟留待后续）
 		emplace<GUILD_OPERATION, GuildHandler>();

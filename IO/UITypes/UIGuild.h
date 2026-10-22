@@ -80,7 +80,8 @@ namespace ms
 			BtCreate,
 			BtInvite,
 			BtNotice,
-			BtClose
+			BtClose,
+			BtAlliance
 		};
 
 		static constexpr int16_t ROW_H = 18;

@@ -24,6 +24,7 @@
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
 #include "../../Net/Packets/GuildPackets.h"
+#include "UIAlliance.h"
 
 namespace ms
 {
@@ -39,10 +40,11 @@ namespace ms
 			Point<int16_t>(20, 340),    // BtCreate
 			Point<int16_t>(110, 340),   // BtInvite
 			Point<int16_t>(200, 340),   // BtNotice
-			Point<int16_t>(280, 8)      // BtClose
+			Point<int16_t>(280, 8),     // BtClose
+			Point<int16_t>(290, 340)    // BtAlliance
 		};
-		const char* btnname[] = { "BtCreate", "BtInvite", "BtNotice", "BtClose" };
-		for (uint16_t i = 0; i < 4; i++)
+		const char* btnname[] = { "BtCreate", "BtInvite", "BtNotice", "BtClose", "BtAlliance" };
+		for (uint16_t i = 0; i < 5; i++)
 		{
 			nl::node bn = guild[btnname[i]];
 			buttons[i] = bn
@@ -163,6 +165,9 @@ namespace ms
 				break;
 			case BtNotice:
 				prompt_notice();
+				break;
+			case BtAlliance:
+				UI::get().emplace<UIAlliance>();
 				break;
 			case BtClose:
 				deactivate();

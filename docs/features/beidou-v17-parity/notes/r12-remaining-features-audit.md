@@ -84,3 +84,14 @@ CashGachapon / RemoteGachapon / ViciousHammer / VegaSpell / Auction(无服务端
 - 构建：EXITCODE=0（仅 LNK4098/4099 既有警告）。
 - ⚠️ 阻塞：完整制造需客户端列出配方，依赖 `Maker.img` 挂载（nlnx 数据加载变更 + 数据目录含 `Maker.img.nx`）。当前为"窗口+发包管线"外壳；要真正可制造，需：(a) 客户端扩展 nlnx 挂载 Maker.img 并填充 `load_recipes`，或 (b) 服务端下发配方目录（需改服务端，违背"不改服务端"约束）。待用户决策。
 
+## 八、Alliance 实现记录（已完成）
+- 协议事实源：s9 `AllianceOperationHandler`（recv `ALLIANCE_OPERATION=143`，action 字节：0x01 刷新/0x02 离盟/0x03 邀请/0x0A 公告）+ `GuildPackets`（send `ALLIANCE_OPERATION=66`：`getAllianceInfo=0x0C` / `updateAllianceInfo=0x0F` / `allianceNotice=0x1C`）。
+- `OutPacket.h`(M)：`ALLIANCE_OPERATION = 143`（客户端**发**，=s9 RecvOpcode）。
+- `AlliancePackets.h`(NEW)：`AllianceActionPacket(action)` / `AllianceNoticePacket`(0x0A+string) / `AllianceInvitePacket`(0x03+string)。
+- `AllianceHandlers.{h,cpp}`(NEW)：`AllianceInfoHandler`(recv 66) 解析 0x0C(getAllianceInfo: id/name/5 ranks/guildIds/notice)、0x1C(notice)、0x0F(updateAllianceInfo，跳过 guildInfo 块)，写入 `UIAlliance`。
+- `UIAlliance.{h,cpp}`(NEW)：`Type::ALLIANCE`。打开即发 0x01 请求；展示联盟名/公告/成员公会 id 列表；`BtRefresh`(0x01)/`BtLeave`(0x02)。背景 `UIWindow.img/UserList/GuildUnion/backgrnd`。
+- 触发：`UIGuild` 新增 `BtAlliance` 按钮（节点缺失安全跳过）→ `emplace<UIAlliance>`。
+- 注册：`UIElement.h`(Type::ALLIANCE)、`PacketSwitch.cpp`(recv 66 + include)、`vcxproj`。
+- 构建：EXITCODE=0（仅 LNK4098/4099 既有警告）。
+- 已知简化：①仅展示联盟名/公告/成员公会 id（公会名需 guildInfo 块，0x0F 已跳过）；②创建联盟/邀请/改公告需文本输入（UISoftKey），当前未接按钮（仅刷新/离盟可测）；③0x0F 的 guildInfo 块整体跳过，仅取 guild id 列表。
+

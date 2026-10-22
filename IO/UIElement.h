@@ -81,6 +81,7 @@ namespace ms
 			MERCHANT,
 			MONSTERBOOK,
 			MAKER,
+			ALLIANCE,
 			NUM_TYPES
 		};
 
