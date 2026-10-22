@@ -31,6 +31,7 @@
 #include "Handlers/PartyHandlers.h"
 #include "Handlers/BuddyHandlers.h"
 #include "Handlers/TradeHandlers.h"
+#include "Handlers/GuildHandlers.h"
 #include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
@@ -145,6 +146,7 @@ namespace ms
 		CHAR_INFO = 61,
 		PARTY_OPERATION = 62,
 		BUDDYLIST = 63,
+		GUILD_OPERATION = 65,
 		UPDATE_PARTYMEMBER_HP = 201,
 		PLAYER_INTERACTION = 314,
 		STORAGE = 309,
@@ -193,6 +195,9 @@ namespace ms
 
 		// 玩家交易：基础系统复刻，对接 s9 PlayerInteractionHandler（交易分支）
 		emplace<PLAYER_INTERACTION, TradeHandler>();
+
+		// 公会/联盟：基础系统复刻，对接 s9 GuildOperationHandler / GuildPackets（联盟留待后续）
+		emplace<GUILD_OPERATION, GuildHandler>();
 
 		// SetField handlers
 		emplace<SET_FIELD, SetFieldHandler>();

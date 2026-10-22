@@ -95,3 +95,13 @@
 - 构建：链接成功；自动登录链路无回归。
 - 待用户实机确认：被邀请方自动接受并开交易窗；加物/金币/锁定/成交/取消/聊天闭环。
 - 已知简化：发起交易（主动邀请某玩家）需地图角色右键交互，本端未接右键目标 cid，留待「地图玩家交互」任务；本次交易以被邀请方闭环为主。charLook 未解析（不显示对方外观）。
+
+### ✅ 5. 公会（已完成，联盟留待后续）
+- 协议事实源：s9 `GuildOperationHandler`（操作码 0x02 创建/0x05 邀请/0x06 加入/0x07 退出/0x08 踢人/0x0d 职位名/0x0e 职位/0x0f 徽章/0x10 公告）与 `GuildPackets.getGuildInfo`(mode0x1A)/`guildInvite`(0x05)/`newGuildMember`(0x27)/`memberLeft`(0x2c/0x2f)/`changeRank`(0x40)/`guildNotice`(0x44)/`guildMemberOnline`(0x3d)。
+- `GuildPackets.h`（NEW）：Create(0x02,name)/Invite(0x05,name)/Join(0x06,gid,cid)/Leave(0x07,cid,name)/Expel(0x08,cid,name)/Notice(0x10,notice)，Opcode `GUILD_OPERATION=65`。
+- `GuildHandlers.{h,cpp}`（NEW）：`GuildHandler`（GUILD_OPERATION=65）解析 0x1A 全量（含 5 职位名 + 成员块：id 循环 + 13B名/job/level/rank/online/签名/allianceRank + capacity/logo/notice/gp/allianceId）、0x27 加成员、0x2c/0x2f 移除、0x40 职位、0x44 公告、0x3d 在线、其它状态字节。
+- `UIGuild.{h,cpp}`（NEW）：`Type::GUILD`。渲染公会名/公告/成员行（名/职业/Lv/职位/在线）；按钮 BtCreate/BtInvite/BtNotice/BtClose；双击成员发 `GuildExpelPacket` 踢出。收到 0x1A 且 bInGuild=0 → 清空并关闭。
+- 注册：`UIElement.h`(Type::GUILD)、`OutPacket.h`(GUILD_OPERATION=65)、`PacketSwitch.cpp`(GUILD_OPERATION=65 + emplace)、`vcxproj`。
+- 构建：链接成功；自动登录链路无回归。
+- 待用户实机确认：登录后服务端下发公会信息自动弹出；创建/邀请/踢人/公告闭环。
+- 已知简化：联盟（ALLIANCE_OPERATION=66）未做；收到公会邀请(0x05)不自动接受（需自身 cid，留待后续）；退出/职位名/徽章/转职位未接按钮（服务端权限校验严格）。

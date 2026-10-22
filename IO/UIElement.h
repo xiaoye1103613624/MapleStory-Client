@@ -77,6 +77,7 @@ namespace ms
 			PARTY,
 			BUDDYLIST,
 			TRADE,
+			GUILD,
 			NUM_TYPES
 		};
 

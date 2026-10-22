@@ -329,6 +329,7 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <ClCompile Include="IO\UITypes\UIParty.cpp" />
     <ClCompile Include="IO\UITypes\UIBuddyList.cpp" />
     <ClCompile Include="IO\UITypes\UITrade.cpp" />
+    <ClCompile Include="IO\UITypes\UIGuild.cpp" />
     <ClCompile Include="IO\UITypes\UIChat.cpp" />
     <ClCompile Include="IO\UITypes\UIChatBar.cpp" />
     <ClCompile Include="IO\UITypes\UICommonCreation.cpp" />
@@ -387,6 +388,7 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <ClCompile Include="Net\Handlers\PartyHandlers.cpp" />
     <ClCompile Include="Net\Handlers\BuddyHandlers.cpp" />
     <ClCompile Include="Net\Handlers\TradeHandlers.cpp" />
+    <ClCompile Include="Net\Handlers\GuildHandlers.cpp" />
     <ClCompile Include="Net\Handlers\QuestHandlers.cpp" />
     <ClCompile Include="Net\Handlers\SetFieldHandlers.cpp" />
     <ClCompile Include="Net\Handlers\TestingHandlers.cpp" />
