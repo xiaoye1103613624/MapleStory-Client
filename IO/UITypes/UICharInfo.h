@@ -67,7 +67,8 @@ namespace ms
 			BtArrayGet,
 			BtArrayName,
 			BtFAQ,
-			BtRegist
+			BtRegist,
+			BtBook
 		};
 
 		/// Main Window

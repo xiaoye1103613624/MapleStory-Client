@@ -79,6 +79,7 @@ namespace ms
 			TRADE,
 			GUILD,
 			MERCHANT,
+			MONSTERBOOK,
 			NUM_TYPES
 		};
 

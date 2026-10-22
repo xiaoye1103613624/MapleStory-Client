@@ -29,6 +29,9 @@ namespace ms
 
 		void set_cover(int32_t);
 		void add_card(int16_t, int8_t);
+
+		int32_t get_cover() const { return cover; }
+		const std::map<int16_t, int8_t>& get_cards() const { return cards; }
 	private:
 		int32_t cover;
 		std::map<int16_t, int8_t> cards;

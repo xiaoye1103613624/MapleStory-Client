@@ -38,6 +38,7 @@
 #include "UITypes/UIStatusMessenger.h"
 #include "UITypes/UIUserList.h"
 #include "UITypes/UIWorldMap.h"
+#include "UITypes/UIMonsterBook.h"
 
 #include "../Net/Packets/GameplayPackets.h"
 
@@ -384,6 +385,12 @@ namespace ms
 							case KeyAction::Id::CASHSHOP:
 							{
 								EnterCashShopPacket().dispatch();
+								break;
+							}
+							case KeyAction::Id::MONSTERCOLLECTION:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("MonsterBook")))
+									emplace<UIMonsterBook>();
 								break;
 							}
 							case KeyAction::Id::EVENT:

@@ -23,6 +23,8 @@
 
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../UI.h"
+#include "UIMonsterBook.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -75,6 +77,7 @@ namespace ms
 		try_btn(Buttons::BtPopUp, character["BtPopUp"]);
 		try_btn(Buttons::BtRide, character["BtRide"]);
 		try_btn(Buttons::BtTrad, character["BtTrad"]);
+		try_btn(Buttons::BtBook, character["BtBook"], Point<int16_t>(backgrnd_dim.x() - 40, 40));
 
 		name = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE);
 		job = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
@@ -278,6 +281,10 @@ namespace ms
 		if (item_enabled)
 			for (Sprite sprite : item_sprites)
 				sprite.draw(position, inter);
+
+		/// Monster Book button (always visible)
+		if (auto it = buttons.find(Buttons::BtBook); it != buttons.end() && it->second)
+			it->second->draw(position);
 	}
 
 	void UICharInfo::update()
@@ -311,6 +318,12 @@ namespace ms
 			case Buttons::BtItem:
 			{
 				show_right_window(buttonid);
+
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtBook:
+			{
+				UI::get().emplace<UIMonsterBook>();
 
 				return Button::State::NORMAL;
 			}
