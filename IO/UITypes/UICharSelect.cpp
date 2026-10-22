@@ -54,13 +54,21 @@ namespace ms
 
 	// BeiDou CharSelect 无 pos/detailPos 节点；详情标签相对 charInfo1 面板（183×151）。
 	// 对齐 charInfo1 位图内「职业/等级/人气/四维」空槽（非 Journey 旧版单列）。
-	static constexpr Point<int16_t> CS_DETAIL_LEVEL(52, 28);
-	static constexpr Point<int16_t> CS_DETAIL_NAME(90, 8);
-	static constexpr Point<int16_t> CS_DETAIL_JOB(100, 10);
-	static constexpr Point<int16_t> CS_DETAIL_STR(52, 52);
-	static constexpr Point<int16_t> CS_DETAIL_DEX(52, 74);
-	static constexpr Point<int16_t> CS_DETAIL_INT(140, 52);
-	static constexpr Point<int16_t> CS_DETAIL_LUK(140, 74);
+	//
+	// 偏移直接取自参考端 CUICharDetail::Draw(sub_602ADC) 的文字绘制坐标：
+	//   职业 (46,1)   等级 (46,19)  人气 (136,19)
+	//   力量 (46,37)  智力 (136,37)
+	//   敏捷 (46,55)  运气 (136,55)
+	// 面板空槽行：y 0-16 / 18-34 / 36-52 / 54-70；值槽 x 38-90、127-180。
+	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 1);
+	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 19);
+	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 19);
+	static constexpr Point<int16_t> CS_DETAIL_STR(46, 37);
+	static constexpr Point<int16_t> CS_DETAIL_INT(136, 37);
+	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 55);
+	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 55);
+	// 参考端详情面板不绘制角色名（名字由角色脚下 nametag 显示）；保留默认点仅用于 NX 缺省判定。
+	static constexpr Point<int16_t> CS_DETAIL_NAME(153, 1);
 	// charInfo1 相对脚点：面板在角色左侧（对照正确端截图）。
 	static constexpr Point<int16_t> CS_CHARINFO_OFF(-240, -170);
 
@@ -298,6 +306,7 @@ namespace ms
 		nl::node detailPos = pos["detailPos"];
 		jobPos = detailPos["jobPos"];
 		levelPos = detailPos["levelPos"];
+		famePos = detailPos["famePos"];
 		namePos = detailPos["namePos"];
 		statDEXPos = detailPos["statDEXPos"];
 		statINTPos = detailPos["statINTPos"];
@@ -310,6 +319,7 @@ namespace ms
 		if (missing_detail)
 		{
 			levelPos = CS_DETAIL_LEVEL;
+			famePos = CS_DETAIL_FAME;
 			namePos = CS_DETAIL_NAME;
 			jobPos = CS_DETAIL_JOB;
 			statSTRPos = CS_DETAIL_STR;
@@ -320,6 +330,13 @@ namespace ms
 		else
 		{
 			jobPos -= screen_adj;
+
+			// 旧 NX 可能没有 famePos；缺失时回退到参考端常量，避免绘制在 (0,0)。
+			if (!famePos.x() && !famePos.y())
+				famePos = CS_DETAIL_FAME;
+			else
+				famePos -= screen_adj;
+
 			namePos -= Point<int16_t>(0, 5);
 			statDEXPos -= screen_adj;
 			statINTPos -= screen_adj;
@@ -342,8 +359,10 @@ namespace ms
 		levelset = Charset(CharSelect["lv"], Charset::Alignment::CENTER);
 		namelabel = OutlinedText(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, Color::Name::IRISHCOFFEE);
 
+		// 参考端 sub_602ADC 在 (46/136, 1/19/37/55) 以左对齐绘制文字；
+		// charInfo1 值槽 x38-90、127-180，左对齐后数字落在槽内左侧。
 		for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
-			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::WHITE, Color::Name::TOBACCOBROWN);
+			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::TOBACCOBROWN);
 
 		for (CharEntry& entry : characters)
 		{
@@ -451,8 +470,8 @@ namespace ms
 						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
 						levelset.draw(levelstr, detail_pos + levelPos);
 
-						namelabel.draw(detail_pos + namePos);
-
+						// 参考端 CUICharDetail::Draw 只绘制职业/等级/人气/四维；
+						// 角色名由角色脚下 nametag 显示，详情面板内不再重复绘制。
 						for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
 						{
 							Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
@@ -1017,6 +1036,15 @@ namespace ms
 			}
 			case Buttons::BtChangePIC:
 			{
+				// 修改 PIC：复用 request_pic()（两次软键盘输入新 PIC 比对后发
+				// REGISTER_PIC，含硬件信息）。v83 注册/修改 PIC 共用 REGISTER_PIC(29)，
+				// 故无需新增独立 UpdatePicPacket。
+				// 注意：s9 的 RegisterPicHandler 仅支持首次注册（已设 PIC 时直接断会话），
+				// 客户端在此完成功能闭环（窗口 + 发包）；服务端是否支持「修改」取决于
+				// s9 配置（enable_pic=true 且需扩展 handler）。见 r10 notes task4。
+				if (static_cast<size_t>(selected_character) < characters.size())
+					request_pic();
+
 				break;
 			}
 			case Buttons::BtResetPIC:
@@ -1196,6 +1224,8 @@ namespace ms
 		{
 			case InfoLabel::JOB:
 				return jobPos;
+			case InfoLabel::FAME:
+				return famePos;
 			case InfoLabel::STR:
 				return statSTRPos;
 			case InfoLabel::DEX:
@@ -1218,6 +1248,8 @@ namespace ms
 		{
 			case InfoLabel::JOB:
 				return Job(character_stats.stats[MapleStat::Id::JOB]).get_name();
+			case InfoLabel::FAME:
+				return std::to_string(character_stats.stats[MapleStat::Id::FAME]);
 			case InfoLabel::STR:
 				return std::to_string(character_stats.stats[MapleStat::Id::STR]);
 			case InfoLabel::DEX:

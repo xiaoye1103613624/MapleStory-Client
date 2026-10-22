@@ -115,7 +115,38 @@
 - 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
 - 自动登录回归（admin/admin）：`【1-Admin】` 进图成功，无回归。
 
-## task 4-5 · 计划内待办（未做，本笔记随各 task 推进追加）
+## task 4 · pic-change-window（已完成 BtChangePIC）
 
-- `pic-change-window`：落地 `BtChangePIC` 窗口 + `UpdatePicPacket`（v83 协议；注意 s9 `enable_pic=false`）。
-- `view-all-char`：新增 `UIViewAllChar` UI 消费 `UIStateLogin::viewall_worlds`，落地 `BtCharacter`。
+### 证据
+
+- s9 `RegisterPicHandler`（REGISTER_PIC）**仅支持首次注册 PIC**：读序
+  `readByte() + readInt(charId) + readString(macs) + readString(hostString) + readString(pic)`，
+  且 `c.getPic()` 已设时直接 `closeSession`（不支持「修改」）。服务端无独立 UpdatePinCodeHandler。
+- 现有基础：客户端 `UICharSelect::request_pic()`（UICharSelect.cpp:1261）已完整实现
+  「两次 UISoftKey 输入新 PIC 比对 → 发 `RegisterPicPacket`（含 `write_hardware_info()`）」；
+  `RegisterPicPacket`（SelectCharPackets.h:38）发包结构正确对齐 s9 读序。UISoftKey 软键盘
+  长度限制 6-16（PIC 长度）。
+
+### 改动
+
+- `BtChangePIC`（UICharSelect.cpp:1037 原空 stub）点击后复用 `request_pic()`（先校验
+  `selected_character` 有效）。v83 注册/修改 PIC 共用 `REGISTER_PIC(29)`，无需新增
+  `UpdatePicPacket`（计划原拟的 `UPDATE_PINCODE=7` 是 RecvOpcode 收包，非发包）。
+- `BtResetPIC` 此前已落地（打开 `Configuration::get_resetpic()` 网页），不在本项范围。
+
+### 限制（服务端依赖，已登记）
+
+- s9 默认 `enable_pic=false`，且 `RegisterPicHandler` 不支持「修改」（已设即断会话）。
+  点击 BtChangePIC 发包后服务端行为取决于 s9 配置（`enable_pic=true` 且需扩展 handler）。
+  客户端在此完成功能闭环（窗口 + 发包）。
+
+### 验证
+
+- 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
+- 自动登录回归（admin/admin）：`【1-Admin】` 进图成功（BtChangePIC 仅手动选角页点击，不影响自动链路）。
+
+## task 5 · 计划内待办（未做）
+
+- `view-all-char`：`VIEW_ALL_CHAR` handler 已在 task1 注册并做基础解析（暂存
+  `UIStateLogin::viewall_worlds`）；本项需新增 `UIViewAllChar` 多世界角色列表 UI 消费该缓冲，
+  并落地 `BtCharacter`（UICharSelect.cpp:1048 原空 stub）发送 `VIEW_ALL_CHAR(8)` 请求。
