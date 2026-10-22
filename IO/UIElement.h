@@ -75,6 +75,7 @@ namespace ms
 			CASHSHOP,
 			STORAGE,
 			PARTY,
+			BUDDYLIST,
 			NUM_TYPES
 		};
 

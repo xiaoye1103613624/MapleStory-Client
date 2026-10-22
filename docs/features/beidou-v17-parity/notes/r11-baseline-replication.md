@@ -75,3 +75,13 @@
 - 构建：链接成功；自动登录链路不经过此 UI 无回归。
 - 待用户实机确认：建队/邀请/加入/离开/踢人/换队长闭环，HP 条刷新。
 - 已知简化：成员行职位显示职业 id 数字（未映射职业名表）；门信息跳过。
+
+### ✅ 3. 好友/黑名单（已完成）
+- 协议事实源：s9 `BuddylistModifyHandler`（操作码 1 加/2 接受/3 删，均带 group 串）与 `PacketCreator.updateBuddylist`(mode7)/`requestBuddylistAdd`(mode9)/`updateBuddyChannel`(0x14)/`updateBuddyCapacity`(0x15)。
+- `BuddyPackets.h`（NEW）：`BuddyAddPacket`(1,name,group)/`BuddyAcceptPacket`(2,otherCid)/`BuddyDeletePacket`(3,otherCid)，Opcode `BUDDYLIST=63`。
+- `BuddyHandlers.{h,cpp}`（NEW）：`BuddyHandler`（BUDDYLIST=63）解析 mode 7（count + 6 字段×count + 尾部 count×int mapid 块）/9（收到请求→自动 `BuddyAcceptPacket(chrIdFrom)`）/0x14（更新频道）/0x15（更新容量）；自动弹出并维护 `UIBuddyList`。
+- `UIBuddyList.{h,cpp}`（NEW）：`Type::BUDDYLIST`。渲染好友行（名/分组/频道或离线/计数）；按钮 BtAdd(UISoftKey 输入名，group="All")/BtClose；双击好友行发 `BuddyDeletePacket` 删除。
+- 注册：`UIElement.h`(Type::BUDDYLIST)、`OutPacket.h`(BUDDYLIST=63)、`PacketSwitch.cpp`(BUDDYLIST=63 + emplace)、`vcxproj`。
+- 构建：链接成功；自动登录链路无回归。
+- 待用户实机确认：登录后服务端下发友列表自动弹出；加/删/接受/在线状态闭环。
+- 已知简化：收到好友请求自动接受（v1 最小可用，拒绝逻辑留待后续）；黑名单与分组编辑未做。

@@ -29,6 +29,7 @@
 #include "Handlers/PlayerInteractionHandlers.h"
 #include "Handlers/StorageHandlers.h"
 #include "Handlers/PartyHandlers.h"
+#include "Handlers/BuddyHandlers.h"
 #include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
@@ -142,6 +143,7 @@ namespace ms
 		/// Player Interaction
 		CHAR_INFO = 61,
 		PARTY_OPERATION = 62,
+		BUDDYLIST = 63,
 		UPDATE_PARTYMEMBER_HP = 201,
 		STORAGE = 309,
 
@@ -183,6 +185,9 @@ namespace ms
 		// 组队：基础系统复刻，对接 s9 PartyOperationHandler / updatePartyMemberHP
 		emplace<PARTY_OPERATION, PartyHandler>();
 		emplace<UPDATE_PARTYMEMBER_HP, PartyMemberHPHandler>();
+
+		// 好友/黑名单：基础系统复刻，对接 s9 BuddylistModifyHandler / updateBuddylist
+		emplace<BUDDYLIST, BuddyHandler>();
 
 		// SetField handlers
 		emplace<SET_FIELD, SetFieldHandler>();

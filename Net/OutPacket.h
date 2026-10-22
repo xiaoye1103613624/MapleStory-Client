@@ -102,7 +102,8 @@ namespace ms
 			DAMAGE_REACTOR = 205,
 			PLAYER_MAP_TRANSFER = 207,
 			PLAYER_UPDATE = 223,
-			STORAGE = 309
+			STORAGE = 309,
+			BUDDYLIST = 63
 		};
 
 	protected:
