@@ -61,9 +61,35 @@
 - 注意：本轮新增 handler 在 s9 默认配置下均不触发（GENDER_DONE/EULA 走 LOGIN_RESULT，
   PIN/VIEW_ALL_CHAR 仅在特定条件/用户操作下触发），故不影响既有链路。
 
-## task 2-5 · 计划内待办（未做，本笔记随各 task 推进追加）
+## task 2 · delete-login-error-codes（已完成）
 
-- `delete-login-error-codes`：修正 `DeleteCharResponseHandler` state 码精确映射（s9 state 表）、加固 `LoginResultHandler` reason 回绕。
+### 证据
+
+- `s9` `DeleteCharHandler` 实际下发的 state（`PacketCreator.deleteCharResponse(cid, state)`）：
+  `0x09` 未知错误 / `0x14` PIC 错误 / `0x16` 公会会长 / `0x1A` 待世界转移 / `0x1D` 有家族 / `0` 成功。
+  **删除流程从不下发 `0x0A`/`0x12`**（那属登录/BIRTHDAY 流程）。
+- 旧 `DeleteCharResponseHandler` 把 `case 10 → BIRTHDAY_INCORRECT` 是错配（服务端删除不发 10）。
+- `UILoginNotice` 已有枚举：`INCORRECT_PIC(0x14)`、`CANNOT_DELETE_GUILD_LEADER(0x16)`、
+  `CANNOT_DELETE_FAMILY_LEADER(0x1D)`、`UNKNOWN_ERROR`、`TOO_MANY_REQUESTS`。
+  世界转移 `0x1A` 无专门枚举，复用 `UNKNOWN_ERROR`。
+
+### 改动（`Net/Handlers/LoginHandlers.cpp`）
+
+- `DeleteCharResponseHandler`：state 映射按 s9 实际码修正
+  `0x14→INCORRECT_PIC` / `0x16→CANNOT_DELETE_GUILD_LEADER` / `0x1A→UNKNOWN_ERROR` /
+  `0x1D→CANNOT_DELETE_FAMILY_LEADER` / `0x09 与 default→UNKNOWN_ERROR`；删除原错配的 `case 10`。
+- `LoginResultHandler` 与 `SelectCharacterHandler` 的 default 分支：原
+  `static_cast<int8_t>(reason - 1)` 在 `reason > 128` 时回绕成负，再隐式转 `uint16_t` 当
+  `Message id` → 错乱文案。改为未穷举 reason 统一归一至 `UNKNOWN_ERROR`（v83 reason 是固定小集合，
+  case 2/5/7/13/23 已覆盖，其余不再臆造映射）。
+
+### 验证
+
+- 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
+- 自动登录回归（admin/admin）：`【1-Admin】` 进图成功，无回归。
+
+## task 3-5 · 计划内待办（未做，本笔记随各 task 推进追加）
+
 - `serverlist-dedup-and-rank`：`ServerlistHandler` 重连去重；`UICharSelect` 呈现 rank/jobrank/burning/timestamp。
 - `pic-change-window`：落地 `BtChangePIC` 窗口 + `UpdatePicPacket`（v83 协议；注意 s9 `enable_pic=false`）。
 - `view-all-char`：新增 `UIViewAllChar` UI 消费 `UIStateLogin::viewall_worlds`，落地 `BtCharacter`。

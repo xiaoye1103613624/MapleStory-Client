@@ -88,21 +88,19 @@ namespace ms
 					}
 					default:
 					{
-						// Other reasons
-						if (reason > 0)
-						{
-							auto reasonbyte = static_cast<int8_t>(reason - 1);
-
-							UI::get().emplace<UILoginNotice>(reasonbyte, okhandler);
-						}
+						// 未穷举的 reason：统一展示通用错误，避免 int8 截断回绕。
+						// 原 static_cast<int8_t>(reason - 1) 在 reason > 128 时会回绕成负
+						// 值，再隐式转 uint16_t 当 Message id → 错乱文案。v83 登录失败
+						// reason 是固定小集合（case 2/5/7/13/23 已覆盖），其余归一到通用错误。
+						UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR, okhandler);
 
 						break;
 					}
-				}
-			}
-			else
-			{
-				// Login successful
+					}
+					}
+					else
+					{
+					// Login successful
 				// The packet contains information on the account, so we initialize the account with it.
 				Account account = LoginParser::parse_account(recv);
 
@@ -194,13 +192,9 @@ namespace ms
 				}
 				default:
 				{
-					// Other reasons
-					if (reason > 0)
-					{
-						auto reasonbyte = static_cast<int8_t>(reason - 1);
-
-						UI::get().emplace<UILoginNotice>(reasonbyte, okhandler);
-					}
+					// 与 LoginResultHandler 同构：未穷举 reason 归一至通用错误，
+					// 避免 int8 截断回绕导致选角失败文案错乱。
+					UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR, okhandler);
 
 					break;
 				}
@@ -335,12 +329,24 @@ namespace ms
 
 			switch (state)
 			{
-				case 10:
-					message = UILoginNotice::Message::BIRTHDAY_INCORRECT;
-					break;
-				case 20:
+				// 状态码以 s9 DeleteCharHandler 实际下发为准：
+				//   0x09 未知错误 / 0x14 PIC 错误 / 0x16 公会会长 /
+				//   0x1A 待世界转移 / 0x1D 有家族（0 为成功，走 else 分支）。
+				// 注意：s9 删除流程从不发 0x0A/0x12，旧实现把 case 10
+				// 误映射为 BIRTHDAY_INCORRECT 是错的（那是登录/BIRTHDAY 流程）。
+				case 0x14: // 20: PIC 错误
 					message = UILoginNotice::Message::INCORRECT_PIC;
 					break;
+				case 0x16: // 22: 公会会长
+					message = UILoginNotice::Message::CANNOT_DELETE_GUILD_LEADER;
+					break;
+				case 0x1A: // 26: 待世界转移（无专门枚举，复用通用错误）
+					message = UILoginNotice::Message::UNKNOWN_ERROR;
+					break;
+				case 0x1D: // 29: 有家族
+					message = UILoginNotice::Message::CANNOT_DELETE_FAMILY_LEADER;
+					break;
+				case 0x09: // 9: 未知错误
 				default:
 					message = UILoginNotice::Message::UNKNOWN_ERROR;
 			}
