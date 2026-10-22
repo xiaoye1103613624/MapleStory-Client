@@ -209,6 +209,10 @@ namespace ms
 		if (!worldselect)
 			worldselect = UI::get().emplace<UIWorldSelect>();
 
+		// 重连场景服务端重发完整世界列表：先清空旧条目，避免 add_world 仅追加
+		// 导致世界选择页出现重复世界（首次登录时 worlds 为空，clear 无副作用）。
+		worldselect->clear_worlds();
+
 		// Parse all worlds
 		while (recv.available())
 		{

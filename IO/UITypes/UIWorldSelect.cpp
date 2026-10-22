@@ -734,6 +734,14 @@ namespace ms
 		worldcount++;
 	}
 
+	void UIWorldSelect::clear_worlds()
+	{
+		// 重连场景服务端重发完整世界列表：不清旧条目会与新条目叠加
+		// （add_world 只追加），世界选择页出现重复世界。
+		worlds.clear();
+		worldcount = 0;
+	}
+
 	void UIWorldSelect::change_world(World selectedWorld)
 	{
 		if (Button* world_btn = get_world_button(worldid))

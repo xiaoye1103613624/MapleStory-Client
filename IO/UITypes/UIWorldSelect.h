@@ -54,6 +54,9 @@ namespace ms
 
 		void draw_world();
 		void add_world(World world);
+		/// 重连场景服务端会重新下发完整世界列表；在解析前清空旧条目，
+		/// 避免 add_world 仅追加导致世界选择页出现重复世界。
+		void clear_worlds();
 		void change_world(World selectedWorld);
 		void remove_selected();
 		void set_region(uint8_t value);

@@ -88,8 +88,34 @@
 - 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
 - 自动登录回归（admin/admin）：`【1-Admin】` 进图成功，无回归。
 
-## task 3-5 · 计划内待办（未做，本笔记随各 task 推进追加）
+## task 3 · serverlist-dedup-and-rank（已完成 serverlist 去重；rank/burning/timestamp 不呈现）
 
-- `serverlist-dedup-and-rank`：`ServerlistHandler` 重连去重；`UICharSelect` 呈现 rank/jobrank/burning/timestamp。
+### serverlist 重连去重（已完成）
+
+- 证据：`UIWorldSelect::add_world`（UIWorldSelect.cpp:721）只 `worlds.emplace_back` + `worldcount++`，
+  不清旧；`ServerlistHandler`（LoginHandlers.cpp:211）在 while 中反复 add。重连时服务端重发完整世界列表
+  → 新旧叠加，世界选择页出现重复世界。
+- 改动：新增 `UIWorldSelect::clear_worlds()`（清 `worlds` + `worldcount`），`ServerlistHandler` 解析前调用。
+  首次登录 worlds 为空，clear 无副作用；重连清旧、加新。
+
+### rank / jobrank / burning / timestamp 不呈现（证据判定，非 bug）
+
+- `rank`/`jobrank`：协议**有数据**——`LoginParser::parse_charentry`（LoginParser.cpp:86）已读
+  rankinfo 并写入 `StatsEntry.rank/jobrank`（pair<int32,int8>）。但参考端 `CUICharDetail::Draw`
+  仅绘制**职业/等级/人气/四维**（见 UICharSelect.cpp:473 逆向注释，角色名由脚下 nametag 显示）；
+  本端 `InfoLabel` 枚举也仅 JOB/FAME/STR/DEX/INT/LUK，无 RANK 槽位。参考端 UI 不呈现 rank，
+  故不臆造 RANK/JOBRANK UI（位置无证据）。
+- `burning`/`use_timestamp`：s9 v83 协议**无数据**——`CharlistHandler`（LoginHandlers.cpp:235）下发
+  字段为 `channel_id / characters / pic / slots`；`parse_charentry` / `parse_stats` 均不含 burning/timestamp。
+  （v83 创建角色无"燃烧"概念，burning 是 v95+ 引入。）无数据不呈现。
+- 结论：三项数据/UI 缺口按 r09 §4「未证实不臆造 UI」原则**显式预留**，不改动 UICharSelect。
+
+### 验证
+
+- 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
+- 自动登录回归（admin/admin）：`【1-Admin】` 进图成功，无回归。
+
+## task 4-5 · 计划内待办（未做，本笔记随各 task 推进追加）
+
 - `pic-change-window`：落地 `BtChangePIC` 窗口 + `UpdatePicPacket`（v83 协议；注意 s9 `enable_pic=false`）。
 - `view-all-char`：新增 `UIViewAllChar` UI 消费 `UIStateLogin::viewall_worlds`，落地 `BtCharacter`。
