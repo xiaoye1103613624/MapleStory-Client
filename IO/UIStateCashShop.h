@@ -19,8 +19,22 @@
 
 #include "UIState.h"
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 namespace ms
 {
+	// 现金商城商品（来自服务端 getCSPacket 主商品列表），供 UICashShop 消费。
+	struct CashCommodity
+	{
+		int32_t sn;
+		int32_t itemid;
+		int32_t price;
+		int16_t count;
+		std::string name;
+	};
+
 	class UIStateCashShop : public UIState
 	{
 	public:
@@ -59,5 +73,9 @@ namespace ms
 
 		EnumMap<UIElement::Type, UIElement::UPtr, UIElement::Type::NUM_TYPES> elements;
 		UIElement::Type focused;
+
+	public:
+		// 由 SetCashShopHandler 解析 getCSPacket 后填充，UICashShop 构造时消费。
+		static std::vector<CashCommodity> cashshop_commodities;
 	};
 }

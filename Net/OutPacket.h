@@ -105,7 +105,8 @@ namespace ms
 			STORAGE = 309,
 			BUDDYLIST = 63,
 			PLAYER_INTERACTION = 314,
-			GUILD_OPERATION = 65
+			GUILD_OPERATION = 65,
+			CASHSHOP_OPERATION = 325
 		};
 
 	protected:

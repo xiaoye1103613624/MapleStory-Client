@@ -82,11 +82,12 @@ namespace ms
 				NONE
 			};
 
-			Item(int32_t itemid, Label label, int32_t discount, uint16_t count) : label(label), discount_price(discount), count(count), data(ItemData::get(itemid)) {}
+			Item(int32_t itemid, int32_t sn, Label label, int32_t discount, uint16_t count) : label(label), discount_price(discount), count(count), sn(sn), data(ItemData::get(itemid)) {}
 
 			Label label;
 			int32_t discount_price;
 			uint16_t count;
+			int32_t sn;
 
 			void draw(const DrawArgument& args) const
 			{
@@ -101,6 +102,11 @@ namespace ms
 			const int32_t get_price() const
 			{
 				return data.get_price();
+			}
+
+			const int32_t get_sn() const
+			{
+				return sn;
 			}
 
 		private:

@@ -26,6 +26,9 @@
 
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/LoginPackets.h"
+#include "../../Net/Packets/CashShopPackets.h"
+
+#include "../UIStateCashShop.h"
 
 #include <SDL3/SDL.h>
 
@@ -129,22 +132,13 @@ namespace ms
 		for (nl::node item_label : CSEffect)
 			item_labels.emplace_back(item_label);
 
-		items.push_back({ 5220000, Item::Label::HOT,	34000,	11 });
-		items.push_back({ 5220000, Item::Label::HOT,	34000,	11 });
-		items.push_back({ 5220000, Item::Label::HOT,	0,		0 });
-		items.push_back({ 5220000, Item::Label::HOT,	0,		0 });
-		items.push_back({ 5220000, Item::Label::HOT,	10000,	11 });
-		items.push_back({ 5220000, Item::Label::NEW,	0,		0 });
-		items.push_back({ 5220000, Item::Label::SALE,	7000,	0 });
-		items.push_back({ 5220000, Item::Label::NEW,	13440,	0 });
-		items.push_back({ 5220000, Item::Label::NEW,	7480,	0 });
-		items.push_back({ 5220000, Item::Label::NEW,	7480,	0 });
-		items.push_back({ 5220000, Item::Label::NEW,	7480,	0 });
-		items.push_back({ 5220000, Item::Label::NONE,	12000,	11 });
-		items.push_back({ 5220000, Item::Label::NONE,	22000,	11 });
-		items.push_back({ 5220000, Item::Label::NONE,	0,		0 });
-		items.push_back({ 5220000, Item::Label::NONE,	0,		0 });
-		items.push_back({ 5220000, Item::Label::MASTER,	0,		15 });
+		// 商品列表来自 SetCashShopHandler 解析的主商品目录（UIStateCashShop::cashshop_commodities）。
+		// 若服务端未下发或为空，则保持空列表（绘制 "noItem" 占位）。
+		const std::vector<CashCommodity>& commodities = UIStateCashShop::cashshop_commodities;
+		for (const CashCommodity& c : commodities)
+		{
+			items.emplace_back(c.itemid, c.sn, Item::Label::NONE, 0, static_cast<uint16_t>(c.count));
+		}
 
 		for (size_t i = 0; i < MAX_ITEMS; i++)
 		{
@@ -335,9 +329,13 @@ namespace ms
 		{
 			int16_t index = buttonid - Buttons::BtBuy + list_offset;
 
+			if (index < 0 || index >= static_cast<int16_t>(items.size()))
+				return Button::State::NORMAL;
+
 			Item item = items[index];
 
-			// TODO: Purchase item
+			// 购买：useNX = 1 (NX_CREDIT)，sn 为商品唯一序列号，与 s9 CashOperationHandler action 0x03 对齐。
+			CashShopBuyPacket(1, item.get_sn()).dispatch();
 
 			return Button::State::NORMAL;
 		}

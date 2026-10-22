@@ -21,6 +21,8 @@
 
 namespace ms
 {
+	std::vector<CashCommodity> UIStateCashShop::cashshop_commodities;
+
 	UIStateCashShop::UIStateCashShop()
 	{
 		focused = UIElement::NONE;

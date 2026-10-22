@@ -21,6 +21,7 @@
 
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
+#include "../../IO/UIStateCashShop.h"
 #include "../../IO/Window.h"
 
 namespace ms
@@ -57,10 +58,36 @@ namespace ms
 			}
 		}
 
-		recv.skip_int();
-		recv.skip_short();
-		recv.skip_byte();
-		recv.skip_int();
+		// 主商品列表（getCSPacket: writeShort(count) + 11 字段 commodity）
+		int16_t commodity_count = recv.read_short();
+		UIStateCashShop::cashshop_commodities.clear();
+		if (commodity_count > 0 && commodity_count < 4000)
+		{
+			for (int16_t i = 0; i < commodity_count; i++)
+			{
+				CashCommodity c;
+				int32_t itemid = recv.read_int();
+				int32_t price = recv.read_int();
+				int32_t sn = recv.read_int();
+				recv.read_int();   // period
+				recv.read_short(); // gender
+				recv.read_bool();  // onSale
+				recv.read_int();   // price again
+				recv.read_int();   // period again
+				recv.read_int();   // serial2
+				recv.read_int();   // stock
+				recv.read_int();   // 0
+				c.sn = sn;
+				c.itemid = itemid;
+				c.price = price;
+				c.count = 1;
+				UIStateCashShop::cashshop_commodities.push_back(c);
+			}
+		}
+		else
+		{
+			recv.skip(commodity_count * 44); // 容错：count 异常时尽量跳过
+		}
 
 		transition();
 
