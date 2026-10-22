@@ -74,4 +74,40 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// 标准 v83：设置性别成功后的回包。
+	// 注意：s9 的 SetGenderHandler 成功后回的是 LOGIN_RESULT（auth success），
+	// 性别流程已在该 handler 闭环；此 opcode 在 s9 下不会下发，仅作协议完整性保留。
+	class GenderDoneHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 标准 v83：EULA 确认结果。
+	// 同上，s9 的 AcceptToSHandler 回 LOGIN_RESULT，此 opcode 在 s9 下不会下发。
+	class ConfirmEulaResultHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 服务端 PIN 操作回包（PacketCreator.pinOperation）：
+	// mode 0=接受 / 1=注册新 PIN / 2=无效重输 / 3=系统错误 / 4=请输入 PIN。
+	// s9 默认 enable_pin=false 时不下发；enable_pin=true 时登录后要求 PIN。
+	class CheckPincodeHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 服务端 PIN 注册结果（PacketCreator.pinRegistered）：writeByte(0) = 注册成功。
+	class UpdatePincodeHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 查看全部角色：showAllCharacter(概览) + showAllCharacterInfo(各世界详情)。
+	// 解析结果暂存到 UIStateLogin::viewall_worlds，由 UIViewAllChar（view-all-char 落地）消费。
+	class ViewAllCharHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

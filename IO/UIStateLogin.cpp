@@ -32,6 +32,9 @@
 
 namespace ms
 {
+	std::vector<UIStateLogin::ViewAllCharWorld> UIStateLogin::viewall_worlds;
+	bool UIStateLogin::viewall_ready = false;
+
 	UIStateLogin::UIStateLogin()
 	{
 		focused = UIElement::Type::NONE;

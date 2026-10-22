@@ -30,6 +30,7 @@
 #include "../../IO/UITypes/UIRaceSelect.h"
 #include "../../IO/UITypes/UITermsOfService.h"
 #include "../../IO/UITypes/UIWorldSelect.h"
+#include "../../IO/UIStateLogin.h"
 
 #include "../../Configuration.h"
 #include "../../IO/Window.h"
@@ -350,6 +351,102 @@ namespace ms
 		{
 			if (auto charselect = UI::get().get_element<UICharSelect>())
 				charselect->remove_character(cid);
+		}
+	}
+
+	void GenderDoneHandler::handle(InPacket& recv) const
+	{
+		// 标准 v83：设置性别成功后服务端回 GENDER_DONE，客户端读 gender 后请求世界列表。
+		// 注意：s9 的 SetGenderHandler 成功后回的是 LOGIN_RESULT（auth success），
+		// 性别流程已在该 handler 闭环（LoginResultHandler 读 account.female）；
+		// 此 opcode 在 s9 下不会下发，注册仅作协议完整性保留，连参考端/未来 s9 启用时生效。
+		recv.read_byte(); // gender
+
+		ServerRequestPacket().dispatch();
+	}
+
+	void ConfirmEulaResultHandler::handle(InPacket& recv) const
+	{
+		// 标准 v83：EULA 确认结果（1=成功）。s9 的 AcceptToSHandler 同样回 LOGIN_RESULT，
+		// 此 opcode 在 s9 下不会下发；注册仅作协议完整性保留。
+		if (recv.read_byte() == 1)
+		{
+			UI::get().remove(UIElement::Type::TOS);
+
+			ServerRequestPacket().dispatch();
+		}
+	}
+
+	void CheckPincodeHandler::handle(InPacket& recv) const
+	{
+		// 服务端 PIN 操作（PacketCreator.pinOperation）：
+		// mode 0=接受 / 1=注册新 PIN / 2=无效重输 / 3=系统错误 / 4=请输入 PIN。
+		// s9 默认 enable_pin=false 时不下发；enable_pin=true 时登录后要求输入 PIN。
+		switch (recv.read_byte())
+		{
+			case 0: // accepted：流程继续，无需提示
+				break;
+			case 1: // register a new PIN
+				UI::get().emplace<UILoginNotice>(UILoginNotice::Message::NEW_PIC_REQ);
+				break;
+			case 2: // invalid pin / reenter
+				UI::get().emplace<UILoginNotice>(UILoginNotice::Message::INCORRECT_PIC);
+				break;
+			case 3: // connection failed due to system error
+				UI::get().emplace<UILoginNotice>(UILoginNotice::Message::AN_ERROR_OCCURED);
+				break;
+			case 4: // enter the pin
+				UI::get().emplace<UILoginNotice>(UILoginNotice::Message::PIC_REQ);
+				break;
+			default:
+				UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR);
+				break;
+		}
+	}
+
+	void UpdatePincodeHandler::handle(InPacket& recv) const
+	{
+		// 服务端 PIN 注册结果（PacketCreator.pinRegistered）：writeByte(0) = 注册成功。
+		if (recv.read_byte() == 0)
+			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::PIC_ACTIVATED);
+		else
+			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR);
+	}
+
+	void ViewAllCharHandler::handle(InPacket& recv) const
+	{
+		// s9 PacketCreator（与标准 v83 一致）：
+		//  showAllCharacter      : writeByte(totalChrs>0?1:5) + writeInt(totalWorlds) + writeInt(totalChrs)
+		//  showAllCharacterInfo  : writeByte(0) + writeByte(worldid) + writeByte(count)
+		//                          + 逐项 addCharEntry(p, chr, true) + writeByte(usePic?1:2)
+		// 首字节区分两类包：0 = 某世界详情，其余(1/5) = 概览。
+		const uint8_t header = recv.read_byte();
+
+		if (header == 0)
+		{
+			const uint8_t worldid = recv.read_byte();
+			const uint8_t count = recv.read_byte();
+
+			UIStateLogin::ViewAllCharWorld world;
+			world.worldid = worldid;
+
+			for (uint8_t i = 0; i < count && recv.available(); ++i)
+				world.chars.emplace_back(LoginParser::parse_charentry(recv));
+
+			if (recv.available())
+				world.use_pic = recv.read_byte() == 1;
+
+			UIStateLogin::viewall_worlds.push_back(std::move(world));
+		}
+		else
+		{
+			// 概览包：totalWorlds(int) + totalChrs(int)。header 1/5 仅表示是否有角色，
+			// 详情由后续 info 包给出。新一次查看先重置累积缓冲，待 UIViewAllChar 消费。
+			recv.read_int(); // totalWorlds
+			recv.read_int(); // totalChrs
+
+			UIStateLogin::viewall_worlds.clear();
+			UIStateLogin::viewall_ready = false;
 		}
 	}
 }

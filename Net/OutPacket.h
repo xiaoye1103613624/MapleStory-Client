@@ -52,6 +52,7 @@ namespace ms
 			PONG = 24,
 			REGISTER_PIC = 29,
 			SELECT_CHAR_PIC = 30,
+			VIEW_ALL_CHAR = 13,
 
 			/// Gameplay 1
 			CHANGEMAP = 38,

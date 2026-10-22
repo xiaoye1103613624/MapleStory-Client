@@ -19,6 +19,10 @@
 
 #include "UIState.h"
 
+#include <vector>
+
+#include "../../Net/Login.h"
+
 #include "Components/TextTooltip.h"
 
 namespace ms
@@ -45,6 +49,17 @@ namespace ms
 		void show_skill(Tooltip::Parent, int32_t, int32_t, int32_t, int64_t) override {}
 		void show_text(Tooltip::Parent parent, std::string text) override;
 		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool) {}
+
+		// VIEW_ALL_CHAR 累积缓冲：由 ViewAllCharHandler 填充（按世界收集角色列表），
+		// 由 UIViewAllChar（view-all-char todo 落地）消费后展示。
+		struct ViewAllCharWorld
+		{
+			uint8_t worldid;
+			bool use_pic;
+			std::vector<CharEntry> chars;
+		};
+		static std::vector<ViewAllCharWorld> viewall_worlds;
+		static bool viewall_ready;
 
 		Iterator pre_add(UIElement::Type type, bool toggled, bool focused) override;
 		void post_add(UIElement::Type type, UIElement* element) override;

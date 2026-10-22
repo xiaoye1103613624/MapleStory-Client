@@ -41,6 +41,15 @@ namespace ms
 		/// Login 1
 		LOGIN_RESULT = 0,
 		SERVERSTATUS = 3,
+		// 标准 v83 登录服回包（与服务端 SendOpcode 对齐）：
+		// GENDER_DONE/CONFIRM_EULA_RESULT 在 s9 下不发送（性别/EULA 已由
+		// LOGIN_RESULT(auth success) 闭环，见 LoginResultHandler），仅作协议占位；
+		// CHECK_PINCODE/UPDATE_PINCODE/VIEW_ALL_CHAR 由 s9 实际发送，需 handler 处理。
+		GENDER_DONE = 4,
+		CONFIRM_EULA_RESULT = 5,
+		CHECK_PINCODE = 6,
+		UPDATE_PINCODE = 7,
+		VIEW_ALL_CHAR = 8,
 		SELECT_CHARACTER_BY_VAC = 9,
 		SERVERLIST = 10,
 		CHARLIST = 11,
@@ -153,6 +162,15 @@ namespace ms
 		emplace<CHARNAME_RESPONSE, CharnameResponseHandler>();
 		emplace<ADD_NEWCHAR_ENTRY, AddNewCharEntryHandler>();
 		emplace<DELCHAR_RESPONSE, DeleteCharResponseHandler>();
+
+		// 标准 v83 登录服回包（与服务端 SendOpcode 对齐）：
+		// GENDER_DONE/CONFIRM_EULA_RESULT 在 s9 下不发（已走 LOGIN_RESULT），注册仅作协议完整性；
+		// CHECK_PINCODE/UPDATE_PINCODE/VIEW_ALL_CHAR 由 s9 实际发送，必须处理。
+		emplace<GENDER_DONE, GenderDoneHandler>();
+		emplace<CONFIRM_EULA_RESULT, ConfirmEulaResultHandler>();
+		emplace<CHECK_PINCODE, CheckPincodeHandler>();
+		emplace<UPDATE_PINCODE, UpdatePincodeHandler>();
+		emplace<VIEW_ALL_CHAR, ViewAllCharHandler>();
 
 		// SetField handlers
 		emplace<SET_FIELD, SetFieldHandler>();
