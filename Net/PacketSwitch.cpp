@@ -28,6 +28,7 @@
 #include "Handlers/PlayerHandlers.h"
 #include "Handlers/PlayerInteractionHandlers.h"
 #include "Handlers/StorageHandlers.h"
+#include "Handlers/HiredMerchantBoxHandlers.h"
 #include "Handlers/PartyHandlers.h"
 #include "Handlers/BuddyHandlers.h"
 #include "Handlers/TradeHandlers.h"
@@ -151,6 +152,11 @@ namespace ms
 		PLAYER_INTERACTION = 314,
 		STORAGE = 309,
 
+		/// 雇佣商人 / 个人商店（地图 box 与 store 交互，对接 s9 HiredMerchant）
+		SPAWN_HIRED_MERCHANT = 265,
+		DESTROY_HIRED_MERCHANT = 266,
+		UPDATE_HIRED_MERCHANT = 267,
+
 		/// Cash Shop
 		SET_CASH_SHOP = 127,
 
@@ -195,6 +201,11 @@ namespace ms
 
 		// 玩家交易：基础系统复刻，对接 s9 PlayerInteractionHandler（交易分支）
 		emplace<PLAYER_INTERACTION, TradeHandler>();
+
+		// 雇佣商人 / 个人商店：地图 box 出现/消失/刷新（SPAWN/DESTROY/UPDATE_HIRED_MERCHANT），对接 s9 HiredMerchant
+		emplace<SPAWN_HIRED_MERCHANT, HiredMerchantSpawnHandler>();
+		emplace<DESTROY_HIRED_MERCHANT, HiredMerchantDestroyHandler>();
+		emplace<UPDATE_HIRED_MERCHANT, HiredMerchantUpdateHandler>();
 
 		// 公会/联盟：基础系统复刻，对接 s9 GuildOperationHandler / GuildPackets（联盟留待后续）
 		emplace<GUILD_OPERATION, GuildHandler>();

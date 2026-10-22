@@ -105,3 +105,30 @@
 - 构建：链接成功；自动登录链路无回归。
 - 待用户实机确认：登录后服务端下发公会信息自动弹出；创建/邀请/踢人/公告闭环。
 - 已知简化：联盟（ALLIANCE_OPERATION=66）未做；收到公会邀请(0x05)不自动接受（需自身 cid，留待后续）；退出/职位名/徽章/转职位未接按钮（服务端权限校验严格）。
+
+### 🔶 6. 现金商城购买结算（已完成）
+- 协议事实源：s9 `CashOperationHandler.handlePacket` action `0x03`（购买）：读序 `byte action(0x03) → byte 占位(0) → int useNX(货币类型) → int sn`；`CashShop.getCash(useNX)` 中 `NX_CREDIT=1 / MAPLE_POINT=2 / NX_PREPAID=4`，`gainCash(type,buyItem)` 按 `buyItem.getPrice()` 扣减对应货币。购买成功回 `showBoughtCashItem` + `showCash`。
+- `CashShopPackets.h`（NEW）：`CashShopBuyPacket(useNX, sn)` — Opcode `OutPacket::CASHSHOP_OPERATION=325`，写 `byte(0x03),byte(0),int(useNX),int(sn)`。
+- `OutPacket.h`（M）：新增 `CASHSHOP_OPERATION = 325` 出站 opcode，与 s9 `SendOpcode.CASHSHOP_OPERATION` 对齐。
+- `UIStateCashShop.h/.cpp`（M）：新增 `CashCommodity{ sn,itemid,price,count,name }` 结构体 + 静态 `cashshop_commodities` 容器；由 `SetCashShopHandler` 解析主商品目录（`getCSPacket`：`writeShort(count)` + 每商品 11 字段 ≈44B）后填充。
+- `CashShopHandlers.cpp`（M）：`SetCashShopHandler::handle` 在既有 skip 块（specialcashitem_size、8×2×5 分类网格、skip(121)）之后，按 `int16_t commodity_count = read_short()` 循环读出 `itemid/price/sn/period/gender/onSale/price2/period2/serial2/stock/0` 注入 `UIStateCashShop::cashshop_commodities`；count 异常时 `skip(count*44)` 容错。
+- `UICashShop.{h,cpp}`（M）：`Item` 内类增 `int32_t sn` 字段与 `get_sn()`；构造时从 `UIStateCashShop::cashshop_commodities` 加载真实商品（itemid/sn/count），清空原硬编码 5220000 假数据；`BtBuy` 触发 `CashShopBuyPacket(1 /*NX_CREDIT*/, item.get_sn()).dispatch()`，范围越界保护。
+- 注册：`OutPacket.h`(CASHSHOP_OPERATION=325)；`CashShopPackets.h` 经 `UICashShop.cpp` 引入（header-only，无需 vcxproj 编译项）。
+- 构建：EXITCODE=0，链接成功；自动登录链路不经过此 UI 无回归。
+- 待用户实机确认：进商城后商品列表由服务端真实目录填充；点 BtBuy 购买，`showBoughtCashItem` 入库（购买结果 handler 留联调补充）。
+- 已知简化：useNX 固定 NX_CREDIT=1（常规道具购买）；礼物(0x04)/礼包(0x1E)/购买结果回包 handler 未接；商品折扣/标签(.Label)未从服务端区分，统一 NONE。
+
+### 🔶 7. 个人商店 / 雇佣商人（已完成，最小可用形态）
+- 协议事实源：s9 `PlayerInteractionHandler.Action` 枚举（OPEN_STORE=0x0B / SET_ITEMS=0x0F / MERCHANT_BUY=0x22 / ROOM=5 / UPDATE_MERCHANT=0x19）与 `PacketCreator.spawnHiredMerchantBox`(265)/`removeHiredMerchantBox`(266)/`updateHiredMerchantBox`(267)/`getHiredMerchant`(PLAYER_INTERACTION ROOM=5)/`updateHiredMerchant`(0x19)。
+- 注意：**交易与雇佣商人共用 `PLAYER_INTERACTION=314`，且都使用 action=5**（交易 `getTradeStart` 后续字节为 `3`，雇佣商人 `getHiredMerchant` 后续字节为 `5`），`TradeHandler::handle` 在读到 action 5 后用下个字节区分两条分支。
+- `PlayerInteractionPackets.h`（M）：`HiredMerchantOpenPacket`(0x0B+0x01) / `HiredMerchantSetItemPacket`(0x0F: byte ivType, short pos, short qty, byte targetSlot) / `HiredMerchantBuyPacket`(0x22: byte slot, short qty)。
+- `HiredMerchantBoxHandlers.{h,cpp}`（NEW）：`SPAWN/DESTROY/UPDATE_HIRED_MERCHANT`(265/266/267) 三个 handler，解析 box 字段（ownerId/itemId/坐标/owner/描述）。当前端暂不在地图渲染 box 对象（无地图对象点击交互），仅解析规避未处理告警，字段供后续接地图对象。
+- `TradeHandlers.cpp`（M）：扩展 `case 5`（雇佣商人 ROOM 分支，含 `skip_charlook` 跳过访客外观、`skip_iteminfo` 取 itemId）与 `case 0x19`（updateHiredMerchant，格式干净无 charLook/owner 分支）；解析出的商品喂给 `UIMerchant`。
+- `UIMerchant.{h,cpp}`（NEW）：`Type::MERCHANT`。展示店主名 + 每格道具图标/名称/价格/数量 + 购买按钮；`BtBuy+slot` 触发 `HiredMerchantBuyPacket(slot, 1)`，`BtClose` 关闭。背景复用 `CashShop.img/CSList/Base`（存在性兜底）。
+- 注册：`UIElement.h`(Type::MERCHANT)、`PacketSwitch.cpp`(SPAWN/DESTROY/UPDATE_HIRED_MERCHANT 三 opcode + PLAYER_INTERACTION 扩展 merchant 分支)、`MapleStory.vcxproj`(UIMerchant.cpp/HiredMerchantBoxHandlers.cpp)。
+- 构建：EXITCODE=0，链接成功；自动登录链路不经过此 UI 无回归。
+- 待用户实机确认：点地图雇佣商人 box → 服务端下发 `getHiredMerchant` 弹窗；浏览+BtBuy 购买（`updateHiredMerchant` 刷新）；开店 OPEN_STORE 请求发送至服务端。
+- 已知简化：①仅实现**访客浏览/购买**路径（`getHiredMerchant` 按访客格式解析）；店主自营管理视图（含消息列表/已售记录/owner 块）未区分（owner 块字段会导致访客解析偏移，留待接入"自身雇佣商人状态"后补全）。②SPAWN/DESTROY/UPDATE 仅解析不渲染地图 box（无盒点击进入）。③店主上架 SET_ITEMS 出站包已具备但未接 UI 按钮（需背包拖拽交互，留待后续）。④charLook/itemInfo 跳过按 s9 `addCharLook`/`addItemInfo(true)` 字段序实现，装备/宠物块长度按 v83 固定假设。
+
+## 基线七项总结（2026-10-22 全部落地）
+仓库 / 组队 / 好友 / 交易 / 公会 / 现金商城购买 / 个人商店雇佣商人 —— 七项均已按"服务端已有 handler、客户端对照复刻、单提交"原则落地，构建通过。下一步进入 ijl15.dll 33 项扩展功能开发（解锁扩展 #4/#5 已具备前置）。

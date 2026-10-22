@@ -78,6 +78,7 @@ namespace ms
 			BUDDYLIST,
 			TRADE,
 			GUILD,
+			MERCHANT,
 			NUM_TYPES
 		};
 

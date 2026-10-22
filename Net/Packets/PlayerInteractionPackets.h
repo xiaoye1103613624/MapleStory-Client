@@ -32,4 +32,43 @@ namespace ms
 			write_int(character_id);
 		}
 	};
+
+	// 雇佣商人 / 个人商店出站包：Opcode PLAYER_INTERACTION(314)，与 s9 PlayerInteractionHandler Action 对齐。
+
+	// 开设雇佣商人：action OPEN_STORE(0x0B) -> byte 0x01（服务端 p.readByte()）。
+	class HiredMerchantOpenPacket : public OutPacket
+	{
+	public:
+		HiredMerchantOpenPacket() : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x0B);
+			write_byte(0x01);
+		}
+	};
+
+	// 店主上架物品：action SET_ITEMS(0x0F) -> byte ivType, short pos, short qty, byte targetSlot(1..9)。
+	class HiredMerchantSetItemPacket : public OutPacket
+	{
+	public:
+		HiredMerchantSetItemPacket(int8_t ivType, int16_t pos, int16_t quantity, int8_t targetSlot) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x0F);
+			write_byte(ivType);
+			write_short(pos);
+			write_short(quantity);
+			write_byte(targetSlot);
+		}
+	};
+
+	// 购买雇佣商人物品：action MERCHANT_BUY(0x22) -> byte slot, short quantity。
+	class HiredMerchantBuyPacket : public OutPacket
+	{
+	public:
+		HiredMerchantBuyPacket(int8_t slot, int16_t quantity) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x22);
+			write_byte(slot);
+			write_short(quantity);
+		}
+	};
 }
