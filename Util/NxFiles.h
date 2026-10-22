@@ -39,7 +39,7 @@ namespace ms
 	namespace NxFiles
 	{
 		// Number of needed files
-		constexpr uint8_t NUM_FILES = 28;
+		constexpr uint8_t NUM_FILES = 29;
 
 		// Names of the needed game files
 		constexpr std::array<const char*, NUM_FILES> filenames =
@@ -71,7 +71,8 @@ namespace ms
 			"Sound2.nx",
 			"String.nx",
 			"TamingMob.nx",
-			"UI.nx"
+			"UI.nx",
+			"Maker.nx"
 		};
 
 		// Initialize NX

@@ -19,6 +19,7 @@
 
 #include "../Components/MapleButton.h"
 #include "../../Net/Packets/MakerPackets.h"
+#include "../../Data/MakerRecipes.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -30,7 +31,7 @@ namespace ms
 	UIMaker::UIMaker() :
 		title(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, "Maker"),
 		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR,
-			"Maker recipes require Maker.img (not mounted by nlnx loader).")
+			"No maker recipes available.")
 	{
 		dimension = Point<int16_t>(380, 460);
 
@@ -57,14 +58,57 @@ namespace ms
 
 	void UIMaker::load_recipes()
 	{
-		// 注意：nlnx 仅挂载标准根（UI/String/Mob/Map/Skill/Item…），无 Maker.img 命名空间
-		// 亦无通用 get_root()/load()，故客户端无法列出配方。保留配方结构，待 Maker.img
-		// 挂载（客户端数据加载变更）后可填充；当前窗口仅作制造发包管线外壳。
 		recipes.clear();
 		icons.clear();
 		names.clear();
 		costs.clear();
 		scroll = 0;
+
+		bool loaded = false;
+
+#ifdef USE_NX
+		// 与参考端(BeiDou.exe v83)一致：配方来自本地 Maker.img（nlnx 命名空间 Maker）
+		nl::node recipenode = nl::nx::Maker["recipe"];
+		if (recipenode)
+		{
+			for (nl::node recipe : recipenode)
+			{
+				Recipe r;
+				r.itemId = recipe["targetItem"];
+				r.meso = recipe["cost"];
+				r.reqLevel = recipe["reqLevel"];
+				recipes.push_back(r);
+			}
+			loaded = true;
+		}
+#endif
+
+		// 兜底：内嵌 s9 makercreatedata 静态表（无 Maker.img 时保证可测可用）
+		if (!loaded)
+		{
+			for (size_t i = 0; i < g_maker_s9_recipes_n; i++)
+			{
+				const MakerS9Recipe& s = g_maker_s9_recipes[i];
+				Recipe r;
+				r.itemId = s.itemId;
+				r.meso = s.meso;
+				r.reqLevel = s.reqLevel;
+				recipes.push_back(r);
+			}
+			loaded = true;
+		}
+
+		for (const Recipe& r : recipes)
+		{
+			const ItemData& id = ItemData::get(r.itemId);
+			icons.push_back(id.get_icon(false));
+			names.push_back(Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, id.get_name()));
+
+			std::string coststr = std::to_string(r.meso) + " meso";
+			if (r.reqLevel > 0)
+				coststr += " (Lv" + std::to_string(r.reqLevel) + ")";
+			costs.push_back(Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, coststr));
+		}
 	}
 
 	void UIMaker::draw(float inter) const
@@ -89,7 +133,7 @@ namespace ms
 		for (int16_t i = first; i < first + visible && i < static_cast<int16_t>(recipes.size()); i++)
 		{
 			Point<int16_t> base = position + list_origin + Point<int16_t>(0, i * row_h - scroll);
-			icons[i].draw(base + Point<int16_t>(0, 8), inter);
+			icons[i].draw(DrawArgument(base + Point<int16_t>(0, 8), inter));
 			names[i].draw(base + Point<int16_t>(40, 4));
 			costs[i].draw(base + Point<int16_t>(40, 26));
 		}
@@ -116,7 +160,7 @@ namespace ms
 			{
 				int16_t row = local.y() / row_h;
 				if (row >= 0 && row < static_cast<int16_t>(recipes.size()))
-					MakerCreatePacket(recipes[row].id, recipes[row].itemId).dispatch();
+					MakerCreatePacket(recipes[row].itemId).dispatch();
 			}
 		}
 

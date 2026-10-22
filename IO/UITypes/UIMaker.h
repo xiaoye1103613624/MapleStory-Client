@@ -20,6 +20,7 @@
 #include "../UIElement.h"
 
 #include "../../Data/ItemData.h"
+#include "../../Graphics/Texture.h"
 #include "../../Graphics/Text.h"
 
 #include <string>
@@ -50,9 +51,9 @@ namespace ms
 	private:
 		struct Recipe
 		{
-			int32_t id;
-			int32_t itemId;
-			int32_t meso;
+			int32_t itemId;  // 结果道具；亦作为发给服务端的 toCreate
+			int32_t meso;    // 消耗金币
+			int32_t reqLevel;// 所需角色等级
 		};
 
 		void load_recipes();
@@ -67,7 +68,7 @@ namespace ms
 		Text title;
 		Text status;
 		std::vector<Recipe> recipes;
-		std::vector<Sprite> icons;
+		std::vector<Texture> icons;
 		std::vector<Text> names;
 		std::vector<Text> costs;
 		int16_t scroll = 0;

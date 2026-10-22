@@ -74,15 +74,16 @@ CashGachapon / RemoteGachapon / ViciousHammer / VegaSpell / Auction(无服务端
 - 构建：EXITCODE=0（仅 LNK4098/4099 既有警告）。
 - 已知简化：①仅展示登录包已下发的卡片，服务端仅回 changeCover/addCard 增量，无独立"拉取全量"请求（数据本地完备，无需）；②Special 卡(id 238xxxx)沿用服务端 `id%10000` 方案落低位 id，与服务端一致；③点卡片设封面走 MONSTER_BOOK_COVER 出站，服务端回 changeCover 后 UI 刷新。
 
-## 七、Maker 实现记录（窗口+发包管线已完成，配方列表阻塞）
-- 协议事实源：s9 `MakerSkillHandler`→`MakerProcessor.makerAction`（MAKER_SKILL=0x71）：`type=int + toCreate=int`（装备类再加 stimulant byte + reagent 列表）。配方存于 DB `makerrecipedata`，客户端不持有。
+## 七、Maker 实现记录（已完成）
+- 协议事实源：rea 逆向 BeiDou.exe（参考端 v83）确认 `sub_823A13` 按配方计数循环建 UI、本地 `Maker.img` 为数据源；s9 `MakerProcessor.makerAction`（MAKER_SKILL=0x71）读 `type=int + toCreate=int`，`toCreate` = **结果道具 itemId**（`getItemCreateEntry(toCreate)`；仅装备类读 stimulant/reagent）。s9 仅 `MAKER_RESULT=0xD9` 下发结果，从不下发配方目录。
 - `OutPacket.h`(M)：`MAKER_SKILL = 113`。
-- `MakerPackets.h`(NEW)：`MakerCreatePacket(recipeId, resultId)`（type=1 + recipeId；装备类补 `write_byte(0)+write_int(0)` 占位 stimulant/reagent）。
-- `UIMaker.{h,cpp}`(NEW)：`Type::MAKER`。打开显示 `UIWindow.img/Maker` 外壳；`load_recipes` 保留配方结构，**但 nlnx 仅挂载标准根（UI/String/Mob/Map/Skill/Item…），无 `Maker` 命名空间亦无 `get_root()`/`load()`，`Maker.img` 无法客户端访问 → 配方列表为空**，窗口内提示该阻塞。
+- `MakerPackets.h`：`MakerCreatePacket(int32_t toCreate)`（type=1 + 结果 itemId；装备类补 `write_byte(0)+write_int(0)` 占位）。
+- **nlnx 扩展**：`nx.hpp` extern 列表 + `nx.cpp` 节点定义列表加 `Maker`；`nx.cpp::load_all` 三分支挂载 `Maker` 根（Base/退化分支 `add_file("Maker.nx")`，Data.nx 聚合分支 `Base["Maker"]`）；`NxFiles.h` `NUM_FILES` 28→29 + `filenames` 加 `"Maker.nx"`（缺失不影响启动，空节点安全降级）。与参考端一致：配方来自本地 `Maker.img`。
+- `UIMaker.{h,cpp}`：`Type::MAKER`。`load_recipes` 优先解析 `nl::nx::Maker["recipe"]`（字段 targetItem/cost/reqLevel，待 Maker.nx 提供时生效）；**兜底**：无 `Maker.img` 时加载内嵌 s9 `makercreatedata` 静态表（`Data/MakerRecipes.h`，由 `tools/gen_maker_recipes.ps1` 从 `V1.0.53__maker_insert_data.sql` 生成，834 条）。图标/名/消耗渲染 + 点击行 `MakerCreatePacket(itemId)`。
 - 触发：`UIStateGame` `PROFESSION` 键 → `emplace<UIMaker>`（节点缺失安全跳过）。
 - 注册：`UIElement.h`(Type::MAKER)、`vcxproj`。
 - 构建：EXITCODE=0（仅 LNK4098/4099 既有警告）。
-- ⚠️ 阻塞：完整制造需客户端列出配方，依赖 `Maker.img` 挂载（nlnx 数据加载变更 + 数据目录含 `Maker.img.nx`）。当前为"窗口+发包管线"外壳；要真正可制造，需：(a) 客户端扩展 nlnx 挂载 Maker.img 并填充 `load_recipes`，或 (b) 服务端下发配方目录（需改服务端，违背"不改服务端"约束）。待用户决策。
+- 已知简化：①nx 解析字段名（targetItem/cost/reqLevel）按 v83 标准，待 Maker.nx 提供后建议用 rea 核对参考端实际字段；②s9 兜底表仅含 makercreatedata 主行（itemId/meso/reqLevel/reqItem/reqEquip/catalyst/quantity），未展开 makerrecipedata 附加材料；③制造结果依赖 s9 `MAKER_RESULT` 回显（既有流程）。
 
 ## 八、Alliance 实现记录（已完成）
 - 协议事实源：s9 `AllianceOperationHandler`（recv `ALLIANCE_OPERATION=143`，action 字节：0x01 刷新/0x02 离盟/0x03 邀请/0x0A 公告）+ `GuildPackets`（send `ALLIANCE_OPERATION=66`：`getAllianceInfo=0x0C` / `updateAllianceInfo=0x0F` / `allianceNotice=0x1C`）。

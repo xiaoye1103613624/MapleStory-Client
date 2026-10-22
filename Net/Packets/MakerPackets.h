@@ -27,13 +27,13 @@ namespace ms
 	class MakerCreatePacket : public OutPacket
 	{
 	public:
-		MakerCreatePacket(int32_t recipeId, int32_t resultId) : OutPacket(OutPacket::Opcode::MAKER_SKILL)
+		MakerCreatePacket(int32_t toCreate) : OutPacket(OutPacket::Opcode::MAKER_SKILL)
 		{
 			write_int(1);        // type = create
-			write_int(recipeId); // toCreate
+			write_int(toCreate); // toCreate = 结果道具 itemId（s9 MakerProcessor.getItemCreateEntry(toCreate)）
 
 			// 装备类配方服务端还会读 stimulant + reagents；此处占位(无 stimulant / 无 reagent)
-			if ((resultId / 1000000) == 1)
+			if ((toCreate / 1000000) == 1)
 			{
 				write_byte(0);
 				write_int(0);

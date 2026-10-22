@@ -68,7 +68,7 @@ namespace nl
 			return *files.back();
 		}
 
-		node Base, Character, Effect, Etc, Item, Map, Map001, Map002, Map2, Mob, Mob001, Mob002, Mob2, Morph, Npc, Quest, Reactor, Skill, Skill001, Skill002, Skill003, Sound, Sound001, Sound002, Sound2, String, TamingMob, UI;
+		node Base, Character, Effect, Etc, Item, Map, Map001, Map002, Map2, Mob, Mob001, Mob002, Mob2, Morph, Npc, Quest, Reactor, Skill, Skill001, Skill002, Skill003, Sound, Sound001, Sound002, Sound2, String, TamingMob, UI, Maker;
 
 		void load_all()
 		{
@@ -110,6 +110,7 @@ namespace nl
 				String = add_file("String.nx");
 				TamingMob = add_file("TamingMob.nx");
 				UI = add_file("UI.nx");
+				Maker = add_file("Maker.nx");
 			}
 			else if (exists("Data.nx"))
 			{
@@ -141,6 +142,7 @@ namespace nl
 				String = Base["String"];
 				TamingMob = Base["TamingMob"];
 				UI = Base["UI"];
+				Maker = Base["Maker"];
 			}
 			else
 			{
@@ -176,6 +178,7 @@ namespace nl
 				String = add_file("String.nx");
 				TamingMob = add_file("TamingMob.nx");
 				UI = add_file("UI.nx");
+				Maker = add_file("Maker.nx");
 			}
 
 			base_prefix.clear();
