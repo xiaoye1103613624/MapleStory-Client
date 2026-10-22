@@ -60,6 +60,8 @@ namespace ms
 		};
 		static std::vector<ViewAllCharWorld> viewall_worlds;
 		static bool viewall_ready;
+		/// 概览包下发的世界总数；详情包收齐到该数时触发 UIViewAllChar 展示。
+		static int32_t viewall_expected_worlds;
 
 		Iterator pre_add(UIElement::Type type, bool toggled, bool focused) override;
 		void post_add(UIElement::Type type, UIElement* element) override;

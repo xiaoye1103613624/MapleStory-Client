@@ -33,6 +33,15 @@ namespace ms
 		}
 	};
 
+	// Requests the list of all characters across worlds.
+	// Opcode: VIEW_ALL_CHAR(13) — 服务端 RecvOpcode.VIEW_ALL_CHAR = 0x0D。
+	// s9 ViewAllCharHandler 不读任何字段（p 未使用），空包即可。
+	class ViewAllCharPacket : public OutPacket
+	{
+	public:
+		ViewAllCharPacket() : OutPacket(OutPacket::Opcode::VIEW_ALL_CHAR) {}
+	};
+
 	// Registers a pic and tells the server which character was picked.
 	// Opcode: REGISTER_PIC(29)
 	class RegisterPicPacket : public OutPacket

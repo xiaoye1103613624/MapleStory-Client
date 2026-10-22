@@ -128,6 +128,7 @@ namespace ms
 		Point<int16_t> avatarSpace;
 		Point<int16_t> jobPos;
 		Point<int16_t> levelPos;
+		Point<int16_t> famePos;
 		Point<int16_t> namePos;
 		Point<int16_t> statDEXPos;
 		Point<int16_t> statINTPos;
@@ -163,6 +164,7 @@ namespace ms
 		enum InfoLabel : uint8_t
 		{
 			JOB,
+			FAME,
 			STR,
 			DEX,
 			INT,

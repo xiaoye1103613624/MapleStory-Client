@@ -23,6 +23,7 @@
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
+#include "../../Net/Packets/SelectCharPackets.h"
 
 #include "../LoginBackground.h"
 
@@ -1056,6 +1057,10 @@ namespace ms
 			}
 			case Buttons::BtCharacter:
 			{
+				// 查看全部角色：发 VIEW_ALL_CHAR(13) 请求，服务端回
+				// showAllCharacter/showAllCharacterInfo，由 ViewAllCharHandler
+				// 填充 UIStateLogin::viewall_worlds 并 emplace<UIViewAllChar>。
+				ViewAllCharPacket().dispatch();
 				break;
 			}
 			case Buttons::BtPreview:

@@ -31,6 +31,7 @@
 #include "../../IO/UITypes/UITermsOfService.h"
 #include "../../IO/UITypes/UIWorldSelect.h"
 #include "../../IO/UIStateLogin.h"
+#include "../../IO/UITypes/UIViewAllChar.h"
 
 #include "../../Configuration.h"
 #include "../../IO/Window.h"
@@ -447,12 +448,20 @@ namespace ms
 				world.use_pic = recv.read_byte() == 1;
 
 			UIStateLogin::viewall_worlds.push_back(std::move(world));
+
+			// 无结束标记：以概览包的 totalWorlds 为准，详情收齐后展示 UIViewAllChar。
+			if (UIStateLogin::viewall_expected_worlds > 0 &&
+				static_cast<int32_t>(UIStateLogin::viewall_worlds.size()) >= UIStateLogin::viewall_expected_worlds)
+			{
+				UIStateLogin::viewall_ready = true;
+				UI::get().emplace<UIViewAllChar>();
+			}
 		}
 		else
 		{
 			// 概览包：totalWorlds(int) + totalChrs(int)。header 1/5 仅表示是否有角色，
 			// 详情由后续 info 包给出。新一次查看先重置累积缓冲，待 UIViewAllChar 消费。
-			recv.read_int(); // totalWorlds
+			UIStateLogin::viewall_expected_worlds = recv.read_int();
 			recv.read_int(); // totalChrs
 
 			UIStateLogin::viewall_worlds.clear();

@@ -34,6 +34,7 @@ namespace ms
 {
 	std::vector<UIStateLogin::ViewAllCharWorld> UIStateLogin::viewall_worlds;
 	bool UIStateLogin::viewall_ready = false;
+	int32_t UIStateLogin::viewall_expected_worlds = 0;
 
 	UIStateLogin::UIStateLogin()
 	{

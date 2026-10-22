@@ -145,8 +145,32 @@
 - 构建 EXITCODE=0（仅 LNK4098/LNK4099 链接警告）。
 - 自动登录回归（admin/admin）：`【1-Admin】` 进图成功（BtChangePIC 仅手动选角页点击，不影响自动链路）。
 
-## task 5 · 计划内待办（未做）
+## task 5 · view-all-char（已完成）
 
-- `view-all-char`：`VIEW_ALL_CHAR` handler 已在 task1 注册并做基础解析（暂存
-  `UIStateLogin::viewall_worlds`）；本项需新增 `UIViewAllChar` 多世界角色列表 UI 消费该缓冲，
-  并落地 `BtCharacter`（UICharSelect.cpp:1048 原空 stub）发送 `VIEW_ALL_CHAR(8)` 请求。
+### 实现
+
+- `ViewAllCharPacket`（SelectCharPackets.h）：空包，`OutPacket(Opcode::VIEW_ALL_CHAR=13)`，BtCharacter 点击触发。
+- `ViewAllCharHandler`（LoginHandlers.cpp:427）解析：
+  - 概览包（首字节 ≠ 0）：`viewall_expected_worlds = read_int()` + 跳过 totalChrs；`viewall_worlds.clear()`、`viewall_ready=false`。
+  - 详情包（首字节 == 0）：`worldid + count + 逐项 addCharEntry(p,chr,true) + use_pic`；push 后若
+    `viewall_worlds.size() >= viewall_expected_worlds` 则 `viewall_ready=true; UI::get().emplace<UIViewAllChar>()`。
+- `UIViewAllChar`（NEW `IO/UITypes/UIViewAllChar.{h,cpp}`）：`UIElement::Type::VIEWALLCHAR`（枚举新增于
+  UIElement.h）。资源 `nl::nx::UI["Login.img"]["ViewAllChar"]`：背景 `backgrnd` 注册为 sprite，按钮
+  `BtVAC`/`BtEnter`（节点构造，map key 即 buttonid）。遍历 `UIStateLogin::viewall_worlds` 构建
+  `EntryView`（world 行 + 角色行 `Lv.x name`），用 `OutlinedText` 渲染；BtVAC/BtEnter 均 `deactivate()`
+  关闭窗口回到选角层。北斗单世界时退化为单世界角色列表。
+- `BtCharacter`（UICharSelect.cpp:1058）：原空 stub → `ViewAllCharPacket().dispatch()`。
+- `MapleStory.vcxproj` 登记 `UIViewAllChar.cpp`。
+
+### 风险 / 待办（登记）
+
+- `BtEnter` 仅关闭窗口，未实现「从查看全部角色直接进所选角色」——完整进角色仍走下层 UICharSelect 选角/进游戏。
+- 端到端依赖服务端真实下发 `showAllCharacter`/`showAllCharacterInfo`（s9 支持），需用户实机点击验证。
+
+### 验证
+
+- 构建：链接成功写出 `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（仅 LNK4098/LNK4099 链接警告；
+  `build_smoke.bat` 的 `EXITCODE=1` 为上一失败运行陈旧日志，本回合 stdout 重定向到 $null，
+  真实 `build_log.txt` 显示 link 成功，exe 时间戳刷新）。
+- 自动登录回归（admin/admin）：UIViewAllChar 仅在收到 VIEW_ALL_CHAR 时实例化，正常自动链路（登录→世界→频道→选角→进图）不经过，无回归。
+- 黑屏环境既有问题不修，端到端建角/PIC/查看全部角色需用户实机确认。
