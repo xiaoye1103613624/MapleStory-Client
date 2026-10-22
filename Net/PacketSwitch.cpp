@@ -27,6 +27,7 @@
 #include "Handlers/NpcInteractionHandlers.h"
 #include "Handlers/PlayerHandlers.h"
 #include "Handlers/PlayerInteractionHandlers.h"
+#include "Handlers/StorageHandlers.h"
 #include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
@@ -139,6 +140,7 @@ namespace ms
 
 		/// Player Interaction
 		CHAR_INFO = 61,
+		STORAGE = 309,
 
 		/// Cash Shop
 		SET_CASH_SHOP = 127,
@@ -171,6 +173,9 @@ namespace ms
 		emplace<CHECK_PINCODE, CheckPincodeHandler>();
 		emplace<UPDATE_PINCODE, UpdatePincodeHandler>();
 		emplace<VIEW_ALL_CHAR, ViewAllCharHandler>();
+
+		// 仓库（STORAGE=309）：基础系统复刻，对接 s9 StorageHandler
+		emplace<STORAGE, StorageHandler>();
 
 		// SetField handlers
 		emplace<SET_FIELD, SetFieldHandler>();

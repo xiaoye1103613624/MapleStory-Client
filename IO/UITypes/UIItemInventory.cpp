@@ -20,6 +20,8 @@
 #include "UINotice.h"
 
 #include "../UI.h"
+#include "UIStorage.h"
+#include "../../Net/Packets/StoragePackets.h"
 
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
@@ -534,6 +536,17 @@ namespace ms
 					case InventoryType::Id::USE:
 					{
 						UseItemPacket(slot, item_id).dispatch();
+						break;
+					}
+					default:
+					{
+						// 仓库打开时，双击非装备/消耗类物品 = 存入仓库
+						if (auto uistorage = UI::get().get_element<UIStorage>())
+						{
+							int16_t qty = inventory.get_item_count(tab, slot);
+							if (qty > 0)
+								StorageStorePacket(slot, item_id, qty).dispatch();
+						}
 						break;
 					}
 				}
