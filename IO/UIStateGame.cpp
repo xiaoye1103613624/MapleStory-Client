@@ -39,6 +39,7 @@
 #include "UITypes/UIUserList.h"
 #include "UITypes/UIWorldMap.h"
 #include "UITypes/UIMonsterBook.h"
+#include "UITypes/UIMaker.h"
 
 #include "../Net/Packets/GameplayPackets.h"
 
@@ -391,6 +392,12 @@ namespace ms
 							{
 								if (UiAssetResolve::usable(UiAssetResolve::window("MonsterBook")))
 									emplace<UIMonsterBook>();
+								break;
+							}
+							case KeyAction::Id::PROFESSION:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Maker")))
+									emplace<UIMaker>();
 								break;
 							}
 							case KeyAction::Id::EVENT:

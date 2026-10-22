@@ -80,6 +80,7 @@ namespace ms
 			GUILD,
 			MERCHANT,
 			MONSTERBOOK,
+			MAKER,
 			NUM_TYPES
 		};
 
