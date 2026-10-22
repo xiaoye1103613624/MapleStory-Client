@@ -74,6 +74,7 @@ namespace ms
 			CHARINFO,
 			CASHSHOP,
 			STORAGE,
+			PARTY,
 			NUM_TYPES
 		};
 

@@ -63,3 +63,15 @@
 - 构建：链接成功写出部署 exe（仅 LNK4098/4099 既有警告）；自动登录链路不经过此 UI 无回归。
 - 待用户实机确认：与仓库 NPC 对话触发 `getStorage(0x16)` 弹出窗口；取出/存入/整理/金币/关闭闭环。
 - 已知假设：storage 物品槽位按服务端下发顺序 0 基编号（s9 `getSlot(type,slot)` 据此取物）。
+
+### ✅ 2. 组队（已完成）
+- 协议事实源：s9 `PartyOperationHandler`（client→server 操作码 1~6）与 `PacketCreator.updateParty`/`addPartyStatus`/`partyInvite`/`updatePartyMemberHP`。
+- `PartyPackets.h`（NEW）：Create(1)/Leave(2)/Join(3,int partyid)/Invite(4,string name)/Expel(5,int cid)/ChangeLeader(6,int cid)，Opcode `PARTY_OPERATION=124`（既有）。
+- `PartyHandlers.{h,cpp}`（NEW）：
+  - `PartyHandler`（PARTY_OPERATION=62）解析 mode：`0x07` 静默/上下线、`0x0F` 加入、`0x0C` 离开/踢出/解散（flag 0=解散 deactivate，1=更新）、`0x1B` 换队长；内联 `parse_party_status` 按 6 成员块（6×id / 6×13B名 / 6×job / 6×level / 6×channel(-2=离线) / leader / 6×mapid / 6×门4int）填充 `Party`。
+  - `PartyMemberHPHandler`（UPDATE_PARTYMEMBER_HP=201）：cid/curhp/maxhp → `uiparty->update_member_hp`。
+- `UIParty.{h,cpp}`（NEW）：`Type::PARTY`。渲染队伍标题 + 6 成员行（名/Lv/职业/频道或离线/★队长）；按钮 BtInvite(UISoftKey 输入名)/BtLeave/BtClose。收到组队包自动 `emplace`，解散时 deactivate。
+- 注册：`UIElement.h`(Type::PARTY)、`PacketSwitch.cpp`(PARTY_OPERATION=62 + UPDATE_PARTYMEMBER_HP=201 + emplace 两 handler)、`vcxproj`。
+- 构建：链接成功；自动登录链路不经过此 UI 无回归。
+- 待用户实机确认：建队/邀请/加入/离开/踢人/换队长闭环，HP 条刷新。
+- 已知简化：成员行职位显示职业 id 数字（未映射职业名表）；门信息跳过。
