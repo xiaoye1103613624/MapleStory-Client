@@ -800,12 +800,18 @@ namespace ms
 				int32_t job = -1;
 				int64_t face = faces[female][faceIndex];
 
-				int64_t hair = 0;
+				// 服务端 CreateCharHandler 分别读 hair（基础发型）与 hairColor（颜色增量），
+				// 最终发型 = hair + hairColor；且 hair 必须落在
+				// ItemConstants.isNewCharDefaultHair 的基础发型白名单内。
+				// 因此这里把「发型 + 颜色」拆成两段发送，而不是发合成后的 id。
 				int64_t hairStyle = hairStyles[female][hairStyleIndex];
 				auto hairColors_ = hairColors[female][hairStyle];
 
+				int64_t hair = (hairStyle / 10) * 10;
+				int64_t hairColor = 0;
+
 				if (hairColors_.size() > 0)
-					hair = hairColors_[hairColorIndex];
+					hairColor = hairColors_[hairColorIndex] - hair;
 				else
 					hair = hairStyle;
 
@@ -817,7 +823,8 @@ namespace ms
 				if (bottoms[female].size() > 0)
 					bottom = bottoms[female][bottomIndex];
 
-				// TODO: Need to do something with cape
+				// 北斗 gms083 的 CreateCharHandler 只读到 weapon 为止（不含 cape），
+				// 故 cape 仅用于捏人预览，不进包；v83 创建角色也不发放披风。
 				int64_t cape = 0;
 
 				if (capes[female].size() > 0)
@@ -838,9 +845,13 @@ namespace ms
 					LoginUiAssets::log_info(
 						std::string("[Creation] CREATE_CHAR name=") + name
 						+ " job=" + std::to_string(job)
-						+ " female=" + (female ? "1" : "0"));
+						+ " female=" + (female ? "1" : "0")
+						+ " face=" + std::to_string(face)
+						+ " hair=" + std::to_string(hair)
+						+ " hairColor=" + std::to_string(hairColor)
+						+ " skin=" + std::to_string(skin));
 
-					CreateCharPacket(name, job, face, hair, skin, top, bottom, shoe, weapon, female).dispatch();
+					CreateCharPacket(name, job, face, static_cast<int32_t>(hair), static_cast<int32_t>(hairColor), static_cast<int32_t>(skin), static_cast<int32_t>(top), static_cast<int32_t>(bottom), static_cast<int32_t>(shoe), static_cast<int32_t>(weapon), female).dispatch();
 
 					auto onok = [&](bool alternate)
 					{

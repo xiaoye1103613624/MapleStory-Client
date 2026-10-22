@@ -161,7 +161,7 @@ namespace ms
 				Constants::Constants::get().get_viewheight()
 			)
 		), worldcount(0), world_selected(false), channel_slide(1.0f), notice_slide(1.0f),
-		scroll_playing(false), scroll_has_anim(false)
+		scroll_playing(false), scroll_has_anim(false), world_status(0), status_notified_world(-1)
 	{
 		std::string version_text = Configuration::get().get_version();
 		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
@@ -334,7 +334,13 @@ namespace ms
 			auto loginwait = UI::get().get_element<UILoginWait>();
 
 			if (loginwait && loginwait->is_active())
-				CharlistRequestPacket(world, channel).dispatch();
+			{
+				// 与手工路径（点世界→进频道）一致：下发的是「槽位 → 真实世界 id」
+				// 映射后的 id，而不是配置里的原始槽位值。
+				const uint16_t worldid = get_worldbyid(world);
+
+				CharlistRequestPacket(worldid, channel).dispatch();
+			}
 		}
 	}
 
@@ -845,9 +851,14 @@ namespace ms
 	Button::State UIWorldSelect::button_pressed(uint16_t id)
 	{
 		// 参考端 CUIWorldSelect::IsRequestValid：step 1 且 CLogin+368 门闩为空。
-		// 当前端以 UILoginWait 作为“请求进行中”的等价标记。
-		if (UI::get().get_element<UILoginWait>())
-			return Button::State::NORMAL;
+		// 当前端以「活动中的 UILoginWait」作为“请求进行中”的等价标记；
+		// 取消后的 Wait 只 deactivate（不能在按钮回调里 remove(this)），
+		// 若按“存在”判定会把世界选择永久锁死。
+		if (auto loginwait = UI::get().get_element<UILoginWait>())
+		{
+			if (loginwait->is_active())
+				return Button::State::NORMAL;
+		}
 
 		if (id == Buttons::BtGoWorld)
 		{
@@ -974,10 +985,52 @@ namespace ms
 		}
 	}
 
+	void UIWorldSelect::set_server_status(int16_t status)
+	{
+		world_status = status;
+
+		// 0 正常：清掉提示记录，允许下次拥挤再提示一次。
+		if (status == 0)
+		{
+			status_notified_world = -1;
+			return;
+		}
+
+		// 1 拥挤 / 2 满员：同一世界只提示一次，避免反复点世界刷屏。
+		if (status_notified_world == static_cast<int16_t>(worldid))
+			return;
+
+		status_notified_world = static_cast<int16_t>(worldid);
+
+		UI::get().emplace<UILoginNotice>(UILoginNotice::Message::POPULATION_TOO_HIGH);
+	}
+
+	void UIWorldSelect::reset_request_state()
+	{
+		// 请求中止（Wait 取消/会话重连）后复位：清掉满员拦截与提示记录，
+		// 允许玩家重新点世界触发新的 SERVERSTATUS_REQUEST。
+		world_status = 0;
+		status_notified_world = -1;
+	}
+
 	void UIWorldSelect::enter_world()
 	{
-		if (channelid == 0xFF || UI::get().get_element<UILoginWait>())
+		if (auto loginwait = UI::get().get_element<UILoginWait>())
+		{
+			if (loginwait->is_active())
+				return;
+		}
+
+		if (channelid == 0xFF)
 			return;
+
+		// 满员世界：SERVERSTATUS=2 时拒绝进入（参考端 CUIWorldSelect 行为），
+		// 玩家可重新点世界触发一次新的 SERVERSTATUS_REQUEST 再试。
+		if (world_status == 2)
+		{
+			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::POPULATION_TOO_HIGH);
+			return;
+		}
 
 		Configuration::get().set_worldid(worldid);
 		Configuration::get().set_channelid(channelid);

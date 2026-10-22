@@ -22,6 +22,7 @@
 #include "UITypes/UILoginNotice.h"
 #include "UITypes/UILogo.h"
 #include "UITypes/UIRegion.h"
+#include "UITypes/UIWorldSelect.h"
 
 #include "../Configuration.h"
 #include "../Constants.h"
@@ -73,6 +74,24 @@ namespace ms
 	{
 		if (LoginBackground::get().available())
 			LoginBackground::get().update();
+
+		// 请求门闩看护：UILoginWait 取消时只 deactivate（不能在按钮回调里
+		// remove(this)），残留实例会让 UIWorldSelect / UICharSelect 的
+		// “请求进行中”门闩永久置位（世界点不动、选角点不动）。
+		// 这里在下一帧统一移除失效 Wait 并复位各窗口门闩。
+		if (UIElement* wait = get(UIElement::Type::LOGINWAIT))
+		{
+			if (!wait->is_active())
+			{
+				remove(UIElement::Type::LOGINWAIT);
+
+				if (auto charselect = UI::get().get_element<UICharSelect>())
+					charselect->clear_pending();
+
+				if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+					worldselect->reset_request_state();
+			}
+		}
 
 		// 补间结束：激活被延迟的步进窗口（等价于参考端 OnStepChanged 的窗口切换）。
 		if (pending_activation != UIElement::Type::NONE && !LoginBackground::get().is_transitioning())

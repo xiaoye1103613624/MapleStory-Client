@@ -59,6 +59,12 @@ namespace ms
 		void set_region(uint8_t value);
 		uint16_t get_worldbyid(uint16_t worldid);
 
+		/// 服务端 SERVERSTATUS 回包：0 正常 / 1 拥挤 / 2 满员。
+		/// 拥挤仅提示，满员额外阻止进入该世界（参考端 CUIWorldSelect 语义）。
+		void set_server_status(int16_t status);
+		/// 请求中止（Wait 取消 / 会话重连）后复位满员拦截与提示记录。
+		void reset_request_state();
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -197,6 +203,11 @@ namespace ms
 		Gauge channel_gauge[Buttons::BtGoWorld - Buttons::BtChannel0];
 
 		bool world_selected;
+
+		/// 最近一次 SERVERSTATUS：0 正常 / 1 拥挤 / 2 满员（默认 0，未收到前不拦截）。
+		int16_t world_status;
+		/// 拥挤提示已弹过的世界槽位，-1 表示尚未提示；避免反复点同一世界刷屏。
+		int16_t status_notified_world;
 
 		nl::node worldsrc;
 		nl::node worldnamesrc;

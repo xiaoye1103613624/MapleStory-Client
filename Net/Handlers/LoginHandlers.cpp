@@ -140,9 +140,15 @@ namespace ms
 		// 0 - Normal
 		// 1 - Highly populated
 		// 2 - Full
-		recv.read_short(); // status
+		//
+		// 服务端依据：ServerStatusRequestHandler → World.getWorldCapacityStatus()，
+		// 世界不存在时回 2（PacketCreator.getServerStatus 只写一个 short）。
+		// 客户端语义：1 提示人口过多（UILoginNotice::POPULATION_TOO_HIGH）仍可进入，
+		// 2 额外阻止进入该世界；交由 UIWorldSelect 统一处理。
+		const int16_t status = recv.read_short();
 
-		// TODO: I believe it shows a warning message if it's 1 and blocks enter into the world if it's 2. Need to find those messages.
+		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+			worldselect->set_server_status(status);
 	}
 
 	void SelectCharacterHandler::handle(InPacket& recv) const
@@ -233,9 +239,12 @@ namespace ms
 
 	void CharlistHandler::handle(InPacket& recv) const
 	{
+		// 旧实现要求「存在且活动的 UILoginWait」才处理，否则整包角色列表被静默丢弃。
+		// 但 Wait 取消后 UIStateLogin 会在下一帧把它移除（见门闩看护），
+		// 重连/补发场景回包到达时 Wait 已不在 → 选角页永远出不来。
+		// 这里只保留 Wait 的清理语义，不再把它当必要条件。
 		auto loginwait = UI::get().get_element<UILoginWait>();
 
-		if (loginwait && loginwait->is_active())
 		{
 			uint8_t channel_id = recv.read_byte();
 
@@ -291,7 +300,14 @@ namespace ms
 
 	void AddNewCharEntryHandler::handle(InPacket& recv) const
 	{
-		recv.skip(1);
+		// 首字节为结果码：服务端 PacketCreator.addNewCharEntry 恒写 0 后接角色条目；
+		// 创建失败走的是 DELETE_CHAR_RESPONSE(cid=0, state=9)（CreateCharHandler 的
+		// 非法名/非法外观分支），不会带条目。旧实现无条件解析，失败包会把空条目
+		// 插进选角页（表现为凭空多出一个空白角色）。
+		const uint8_t result = recv.read_byte();
+
+		if (result != 0 || !recv.available())
+			return;
 
 		// Parse info on the new character
 		CharEntry character = LoginParser::parse_charentry(recv);

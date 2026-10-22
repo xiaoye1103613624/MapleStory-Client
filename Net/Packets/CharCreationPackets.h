@@ -34,15 +34,24 @@ namespace ms
 
 	// Requests creation of a character with the specified stats.
 	// Opcode: CREATE_CHAR(22)
+	//
+	// 字段顺序以北斗 gms083 服务端 CreateCharHandler 为准（逐字段对齐）：
+	//   name / job / face / hair / hairColor / skinColor / top / bottom / shoes / weapon / gender
+	// 服务端校验 hair 必须为基础发型（ItemConstants.isNewCharDefaultHair：
+	// 男 30000|30020|30030、女 31000|31040|31050），hairColor 为颜色增量
+	// （isNewCharDefaultHairColor：0|2|3|7），最终发型 = hair + hairColor。
+	// 旧实现漏写 hairColor 且把「已含颜色」的 id 当 hair 发送，服务端逐位错位，
+	// 必然命中 isNewCharDefault* 校验失败（deleteCharResponse(0, 9)）。
 	class CreateCharPacket : public OutPacket
 	{
 	public:
-		CreateCharPacket(const std::string& name, int32_t job, int32_t face, int32_t hair, int32_t skin, int32_t top, int32_t bottom, int32_t shoes, int32_t weapon, bool female) : OutPacket(OutPacket::Opcode::CREATE_CHAR)
+		CreateCharPacket(const std::string& name, int32_t job, int32_t face, int32_t hair, int32_t hair_color, int32_t skin, int32_t top, int32_t bottom, int32_t shoes, int32_t weapon, bool female) : OutPacket(OutPacket::Opcode::CREATE_CHAR)
 		{
 			write_string(name);
 			write_int(job);
 			write_int(face);
 			write_int(hair);
+			write_int(hair_color);
 			write_int(skin);
 			write_int(top);
 			write_int(bottom);

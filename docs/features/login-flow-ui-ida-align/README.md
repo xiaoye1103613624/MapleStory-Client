@@ -139,6 +139,23 @@
 | 世界/频道请求门闩 | [`notes/r07-worldselect-request-latch.md`](notes/r07-worldselect-request-latch.md) | 以 `UILoginWait` 作为请求进行中标记，阻止重复发包 |
 | 步进窗口延迟激活 | [`notes/r08-step-window-defer.md`](notes/r08-step-window-defer.md) | 新窗口在补间结束后激活；构造期改用 `get_target_viewpos()`，避免半途坐标 |
 
+## 第四轮：协议与流程正确性（2026-10-22）
+
+详见 [`notes/r09-login-flow-protocol.md`](notes/r09-login-flow-protocol.md)。本轮以服务端
+gms083 源码（读写字段）为事实基准，修的都是**会导致功能失败/卡死**的协议问题：
+
+| 项 | 结论 |
+|---|---|
+| 创建角色 | 服务端读 11 字段（含 `hairColor`），客户端只写 10 且把含色 id 当 `hair` ⇒ 必然失败。已补 `hairColor` 并按「基础发型 + 颜色增量」发送 |
+| SERVERSTATUS | 由丢弃改为解析 0/1/2；拥挤提示、满员阻止进入 |
+| 请求门闩 | `UILoginWait` 取消后残留实例会把世界/选角永久锁死；`UIStateLogin::update()` 增加门闩看护 |
+| ADD_NEW_CHAR_ENTRY | 失败包不再解析出空角色条目 |
+| CHARLIST | 去掉「必须存在活动 Wait」的必要条件，避免角色列表被静默丢弃 |
+| 自动登录 | `CharlistRequest` 改走 `get_worldbyid()` 槽位→真实世界 id 映射（与手工路径一致） |
+
+验证：构建 EXITCODE=0；自动登录仍可进入游戏（`【1-Admin】`，`_enter_game.log` 走到 `transfer_player ok`）。
+实机截图仍受阻于本机渲染黑屏（基线 exe 同样黑，非本轮改动导致）。
+
 ## 未完成 / 已知偏差（未臆改）
 
 1. **`UIRaceSelect` 未锚定地图相机（潜在缺陷，待实测）**：
@@ -153,8 +170,9 @@
 4. **按钮与地图挂链图元轻微重叠**：属 NX 版本资源差异，不影响可点击与可读性。
 5. **旧窗口滚动**：参考端 `OnStepChanged` 在补间结束后才销毁/创建窗口，旧窗口会随背景滚出；当前端已在补间结束后才激活新窗口，但旧窗口是直接隐藏，没有 ghost 绘制。见 `r08` §4。
 6. **step 0 相机 X**：参考端 `CLogin::Init` 使用 `(28, GetStepHeight(step))`，当前登录页沿用 `(137, -20)` 锚点对齐书本开口；需实机叠图确认是否为系统性偏移。见 `r04` §4.2。
-7. **View All / View Choice**：`UIWorldSelect` 两个按钮仍是 stub，点击无行为；频道按钮固定 30 个，未实现参考端的 60 频道翻页。
-8. **请求超时**：选角/世界请求门闩依赖服务器回包或 UI 销毁复位，未加超时；断线场景需 `Session` 重连时统一清理。
+7. **View All / View Choice**：`UIWorldSelect` 两个按钮仍是 stub，点击无行为（参考端 exe 内搜不到字面量，语义无证据）；频道按钮固定 30 个，未实现参考端的 60 频道翻页。
+8. **请求超时**：选角/世界请求门闩依赖服务器回包或 UI 销毁复位，未加超时；第四轮已补「取消后门闩看护」（`UIStateLogin::update()`），断线场景仍建议由 `Session` 重连统一清理。
+9. **未注册 handler**：opcode 4 `GENDER_DONE` / 5 `CONFIRM_EULA_RESULT` / 6 `CHECK_PINCODE` / 7 `UPDATE_PINCODE` / 8 `VIEW_ALL_CHAR` 只在名称表出现，无 handler；北斗默认 `enable_pic/enable_pin=false`，暂不影响主链路（详见 r09 §4）。
 
 ## 后续建议
 
