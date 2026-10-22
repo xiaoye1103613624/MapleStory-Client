@@ -30,6 +30,7 @@
 #include "Handlers/StorageHandlers.h"
 #include "Handlers/PartyHandlers.h"
 #include "Handlers/BuddyHandlers.h"
+#include "Handlers/TradeHandlers.h"
 #include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
@@ -145,6 +146,7 @@ namespace ms
 		PARTY_OPERATION = 62,
 		BUDDYLIST = 63,
 		UPDATE_PARTYMEMBER_HP = 201,
+		PLAYER_INTERACTION = 314,
 		STORAGE = 309,
 
 		/// Cash Shop
@@ -188,6 +190,9 @@ namespace ms
 
 		// 好友/黑名单：基础系统复刻，对接 s9 BuddylistModifyHandler / updateBuddylist
 		emplace<BUDDYLIST, BuddyHandler>();
+
+		// 玩家交易：基础系统复刻，对接 s9 PlayerInteractionHandler（交易分支）
+		emplace<PLAYER_INTERACTION, TradeHandler>();
 
 		// SetField handlers
 		emplace<SET_FIELD, SetFieldHandler>();

@@ -21,7 +21,9 @@
 
 #include "../UI.h"
 #include "UIStorage.h"
+#include "UITrade.h"
 #include "../../Net/Packets/StoragePackets.h"
+#include "../../Net/Packets/TradePackets.h"
 
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
@@ -540,11 +542,13 @@ namespace ms
 					}
 					default:
 					{
-						// 仓库打开时，双击非装备/消耗类物品 = 存入仓库
-						if (auto uistorage = UI::get().get_element<UIStorage>())
+						// 仓库/交易打开时，双击非装备/消耗类物品 = 存入仓库 / 加入交易
+						int16_t qty = inventory.get_item_count(tab, slot);
+						if (qty > 0)
 						{
-							int16_t qty = inventory.get_item_count(tab, slot);
-							if (qty > 0)
+							if (auto uitrade = UI::get().get_element<UITrade>())
+								TradeAddItemPacket(static_cast<uint8_t>(tab), slot, qty, uitrade->next_slot()).dispatch();
+							else if (auto uistorage = UI::get().get_element<UIStorage>())
 								StorageStorePacket(slot, item_id, qty).dispatch();
 						}
 						break;

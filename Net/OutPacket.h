@@ -103,7 +103,8 @@ namespace ms
 			PLAYER_MAP_TRANSFER = 207,
 			PLAYER_UPDATE = 223,
 			STORAGE = 309,
-			BUDDYLIST = 63
+			BUDDYLIST = 63,
+			PLAYER_INTERACTION = 314
 		};
 
 	protected:

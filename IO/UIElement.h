@@ -76,6 +76,7 @@ namespace ms
 			STORAGE,
 			PARTY,
 			BUDDYLIST,
+			TRADE,
 			NUM_TYPES
 		};
 

@@ -85,3 +85,13 @@
 - 构建：链接成功；自动登录链路无回归。
 - 待用户实机确认：登录后服务端下发友列表自动弹出；加/删/接受/在线状态闭环。
 - 已知简化：收到好友请求自动接受（v1 最小可用，拒绝逻辑留待后续）；黑名单与分组编辑未做。
+
+### ✅ 4. 玩家交易（已完成）
+- 协议事实源：s9 `PlayerInteractionHandler`（Action: INVITE=2/VISIT=4/CHAT=6/EXIT=0xA/SET_MESO=0x10/SET_ITEMS=0xF/CONFIRM=0x11/TRANSACTION=0x14）与 `PacketCreator.getTradeStart`(mode5)/`tradeInvite`(mode2)/`getTradeMesoSet`(0x10)/`getTradeItemAdd`(0xF)/`getTradeConfirmation`(0x11)/`getTradeResult`(0xA)/`getTradeChat`(6)。
+- `TradePackets.h`（NEW）：Invite(2,cid)/Visit(4)/Chat(6,msg)/SetMeso(0x10,meso)/AddItem(0xF,ivType,pos,qty,targetSlot)/Confirm(0x11)/Transaction(0x14)/Exit(0xA)，Opcode `PLAYER_INTERACTION=314`。
+- `TradeHandlers.{h,cpp}`（NEW）：`TradeHandler`（PLAYER_INTERACTION=314）解析各 mode；收到 `tradeInvite`(mode2) 自动 `TradeVisitPacket` 接受并记对方名；`getTradeStart`/`getTradePartnerAdd` 含 charLook 用 `while(available()) skip_byte()` 跳过（v1 不渲染角色外观）。内联 `parse_trade_item` 复用 addItemInfo 格式。
+- `UITrade.{h,cpp}`（NEW）：`Type::TRADE`。双栏渲染（我方/对方 金币+物品图标+数量）、聊天；按钮 BtAddMeso/BtLock/BtTrade/BtCancel/BtChat。物品栏双击（非装备/消耗类）在交易打开时发 `TradeAddItemPacket` 加入交易。
+- 注册：`UIElement.h`(Type::TRADE)、`OutPacket.h`(PLAYER_INTERACTION=314)、`PacketSwitch.cpp`(PLAYER_INTERACTION=314 + emplace)、`UIItemInventory.cpp`(双击加入交易)、`vcxproj`。
+- 构建：链接成功；自动登录链路无回归。
+- 待用户实机确认：被邀请方自动接受并开交易窗；加物/金币/锁定/成交/取消/聊天闭环。
+- 已知简化：发起交易（主动邀请某玩家）需地图角色右键交互，本端未接右键目标 cid，留待「地图玩家交互」任务；本次交易以被邀请方闭环为主。charLook 未解析（不显示对方外观）。
