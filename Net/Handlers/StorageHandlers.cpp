@@ -18,9 +18,14 @@
 #include "StorageHandlers.h"
 
 #include "../../IO/UI.h"
+#include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIStorage.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Graphics/Color.h"
 #include "../../Character/EquipStat.h"
 #include "../../Template/EnumMap.h"
+
+#include <string>
 
 namespace ms
 {
@@ -28,14 +33,31 @@ namespace ms
 	{
 		uint8_t mode = recv.read_byte();
 
-		auto uistorage = UI::get().get_element<UIStorage>();
-		if (!uistorage)
-			uistorage = UI::get().emplace<UIStorage>();
+		auto ensure_sm = [](Color::Name color, const std::string& tip) {
+			auto mt = (color == Color::Name::RED) ? UIChatBar::MessageType::RED
+				: (color == Color::Name::WHITE) ? UIChatBar::MessageType::WHITE
+				: UIChatBar::MessageType::YELLOW;
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+			{
+				chatbar->show_message(tip.c_str(), mt);
+				return;
+			}
+		};
+		auto ensure_open = []() -> Optional<UIStorage> {
+			auto ui = UI::get().get_element<UIStorage>();
+			if (!ui)
+				ui = UI::get().emplace<UIStorage>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			return ui;
+		};
 
 		switch (mode)
 		{
-			case 0x16: // getStorage：全量下发
+			case 0x16: // getStorage：全量下发 — 开窗
 			{
+				auto uistorage = ensure_open();
+				if (!uistorage) return;
 				recv.read_int();        // npcId
 				uint8_t slots = recv.read_byte();
 				recv.read_short();      // 0x7E
@@ -49,6 +71,8 @@ namespace ms
 				recv.read_short();
 				recv.read_byte();
 				uistorage->set_storage(slots, meso, std::move(items));
+				// 仓库 UI 已刷，不 tip
+				(void)count; (void)meso;
 				break;
 			}
 			case 0x0D: // storeStorage
@@ -61,7 +85,9 @@ namespace ms
 				int16_t count = recv.read_byte();
 				std::vector<StoredItem> items;
 				parse_items(recv, count, items);
-				uistorage->update_items(slots, std::move(items));
+				if (auto uistorage = ensure_open())
+					uistorage->update_items(slots, std::move(items));
+				(void)mode;
 				break;
 			}
 			case 0x0F: // arrangeStorage
@@ -73,7 +99,8 @@ namespace ms
 				std::vector<StoredItem> items;
 				parse_items(recv, count, items);
 				recv.read_byte();
-				uistorage->update_items(slots, std::move(items));
+				if (auto uistorage = ensure_open())
+					uistorage->update_items(slots, std::move(items));
 				break;
 			}
 			case 0x13: // mesoStorage
@@ -83,13 +110,27 @@ namespace ms
 				recv.read_short();
 				recv.read_int();
 				int64_t meso = recv.read_int();
-				uistorage->set_meso(slots, meso);
+				if (auto uistorage = ensure_open())
+					uistorage->set_meso(slots, meso);
+				(void)meso;
 				break;
 			}
-			default:   // 错误码（单字节）
-				uistorage->show_error(mode);
+			default:   // 错误码：已开 show_error；未开才 SM
+			{
+				if (auto uistorage = UI::get().get_element<UIStorage>())
+				{
+					if (uistorage->is_active())
+					{
+						uistorage->show_error(mode);
+						break;
+					}
+				}
+				ensure_sm(Color::Name::RED, "Storage err " + std::to_string(mode));
 				break;
+			}
 		}
+		while (recv.available())
+			recv.skip_byte();
 	}
 
 	void StorageHandler::parse_items(InPacket& recv, int16_t count, std::vector<StoredItem>& out) const

@@ -44,6 +44,7 @@ namespace ms
 
 		void draw(float alpha) const override;
 		void update() override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		void start_trade();

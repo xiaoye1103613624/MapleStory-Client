@@ -41,6 +41,8 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override {}
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -75,5 +77,6 @@ namespace ms
 		Text owner_label;
 		Text price_labels[MAX_SLOTS];
 		std::vector<MerchItem> merch_items;
+		int8_t selected_slot = -1;
 	};
 }

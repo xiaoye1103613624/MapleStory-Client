@@ -48,6 +48,8 @@ namespace ms
 		void draw(float alpha) const override;
 		void update() override;
 		void doubleclick(Point<int16_t> cursorpos) override;
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		// 由 StorageHandler 填充
@@ -74,9 +76,11 @@ namespace ms
 		Point<int16_t> slot_pos(int16_t slot) const;
 		int16_t slot_by_position(Point<int16_t> pos) const;
 		void prompt_meso(bool deposit);
+		const StoredItem* selected_item() const;
 
 		uint8_t capacity;
 		int64_t meso;
+		int16_t selected_slot = -1;
 		std::vector<StoredItem> stored;
 		OutlinedText mesolabel;
 	};

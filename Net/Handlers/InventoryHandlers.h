@@ -38,4 +38,16 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// s9 INVENTORY_GROW(30) — PacketCreator.updateInventorySlotLimit
+	class InventoryGrowHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SKILL_LEARN_ITEM_RESULT(51)
+	class SkillLearnItemResultHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

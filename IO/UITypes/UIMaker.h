@@ -43,10 +43,13 @@ namespace ms
 		UIMaker();
 
 		void draw(float inter) const override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		Button::State button_pressed(uint16_t buttonid) override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_scroll(double yoffset) override;
 		UIElement::Type get_type() const override;
+
+		void set_status(const std::string& text);
 
 	private:
 		struct Recipe
@@ -74,5 +77,6 @@ namespace ms
 		int16_t scroll = 0;
 		int16_t row_h = 56;
 		Point<int16_t> list_origin;
+		int32_t selected_item_id = 0;
 	};
 }

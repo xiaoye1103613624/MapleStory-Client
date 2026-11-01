@@ -16,11 +16,18 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.	//
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIMaker.h"
+#include "UISoftKey.h"
+#include "UIItemInventory.h"
 
+#include "../UI.h"
 #include "../Components/MapleButton.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MakerPackets.h"
 #include "../../Data/MakerRecipes.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
+#include "../../Util/Misc.h"
+#include <cstdlib>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -44,9 +51,7 @@ namespace ms
 			dimension = background.get_dimensions();
 		}
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		if (close)
 			buttons[Buttons::BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(dimension.x() - 21, 6));
@@ -54,6 +59,21 @@ namespace ms
 
 		list_origin = Point<int16_t>(24, 86);
 		load_recipes();
+		UI::get().emplace<UISoftKey>([this](const std::string& idstr) {
+			if (idstr.empty()) return;
+			int32_t want = static_cast<int32_t>(std::strtol(idstr.c_str(), nullptr, 10));
+			if (want <= 0) { status.change_text("Bad item id"); return; }
+			for (size_t i = 0; i < recipes.size(); ++i) {
+				if (recipes[i].itemId == want) {
+					scroll = static_cast<int16_t>(i * row_h);
+					MakerCreatePacket(want).dispatch();
+					status.change_text("Craft " + idstr);
+					LOG(LOG_DEBUG, "UIMaker: SoftKey craft id=" << want);
+					return;
+				}
+			}
+			status.change_text("No recipe " + idstr);
+		}, []() {}, "Maker itemId");
 	}
 
 	void UIMaker::load_recipes()
@@ -160,7 +180,10 @@ namespace ms
 			{
 				int16_t row = local.y() / row_h;
 				if (row >= 0 && row < static_cast<int16_t>(recipes.size()))
-					MakerCreatePacket(recipes[row].itemId).dispatch();
+				{
+					selected_item_id = recipes[row].itemId;
+					MakerCreatePacket(selected_item_id).dispatch();
+				}
 			}
 		}
 
@@ -182,8 +205,57 @@ namespace ms
 			scroll = maxscroll;
 	}
 
+	void UIMaker::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (pressed && escape) { deactivate(); return; }
+		if (!pressed) return;
+		if (keycode == 'C' || keycode == 'c') {
+			if (selected_item_id <= 0) {
+				if (auto inv = UI::get().get_element<UIItemInventory>()) {
+					int16_t slot = inv->get_selected_slot();
+					if (slot > 0)
+						selected_item_id = Stage::get().get_player().get_inventory()
+							.get_item_id(inv->get_tab(), slot);
+				}
+			}
+			if (selected_item_id > 0) {
+				MakerCreatePacket(selected_item_id).dispatch();
+				LOG(LOG_DEBUG, "UIMaker: craft selected id=" << selected_item_id);
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& idstr) {
+					try {
+						int32_t want = std::stoi(idstr);
+						if (want > 0) {
+							selected_item_id = want;
+							MakerCreatePacket(want).dispatch();
+							LOG(LOG_DEBUG, "UIMaker: SoftKey craft id=" << want);
+						}
+					} catch (...) {}
+				}, []() {}, "Maker itemId");
+			}
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			load_recipes();
+			set_status("Recipes reloaded");
+			LOG(LOG_DEBUG, "UIMaker: reload recipes");
+		}
+		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (!tip.empty())
+					set_status(tip);
+			}, []() {}, "Maker status");
+		}
+	}
+
 	UIElement::Type UIMaker::get_type() const
 	{
 		return TYPE;
+	}
+
+	void UIMaker::set_status(const std::string& text)
+	{
+		status.change_text(text);
 	}
 }

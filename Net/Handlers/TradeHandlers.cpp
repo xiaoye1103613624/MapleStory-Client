@@ -20,10 +20,17 @@
 #include "../../Character/EquipStat.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UITrade.h"
+#include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UIMerchant.h"
+#include "../../IO/UITypes/UIMinigame.h"
+#include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIMiscShells.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Graphics/Color.h"
 #include "../../Net/Packets/TradePackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Template/EnumMap.h"
+#include "../../Util/Misc.h"
 
 namespace ms
 {
@@ -86,17 +93,87 @@ namespace ms
 
 	void TradeHandler::handle(InPacket& recv) const
 	{
+		auto ensure_sm = [](Color::Name color, const std::string& tip) {
+			auto mt = (color == Color::Name::RED) ? UIChatBar::MessageType::RED
+				: (color == Color::Name::WHITE) ? UIChatBar::MessageType::WHITE
+				: UIChatBar::MessageType::YELLOW;
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+			{
+				chatbar->show_message(tip.c_str(), mt);
+				return;
+			}
+		};
+
 		uint8_t mode = recv.read_byte();
 
 		auto uitrade = UI::get().get_element<UITrade>();
-		if (!uitrade)
-			uitrade = UI::get().emplace<UITrade>();
+		auto ensure_trade = [&]() -> Optional<UITrade> {
+			if (!uitrade)
+				uitrade = UI::get().emplace<UITrade>();
+			else if (!uitrade->is_active())
+				uitrade->makeactive();
+			return uitrade;
+		};
+		auto ensure_merchant = []() -> Optional<UIMerchant> {
+			auto ui = UI::get().get_element<UIMerchant>();
+			if (!ui) ui = UI::get().emplace<UIMerchant>();
+			else if (!ui->is_active()) ui->makeactive();
+			return ui;
+		};
 
 		switch (mode)
 		{
-			case 5: // getTradeStart(交易) / getHiredMerchant(雇佣商人) 共用 action 5，靠后续字节区分
+			case 5: // ROOM：交易 / 雇佣商人 / 小游戏（Omok/MatchCard）共用，靠后续字节区分
 			{
 				uint8_t sub = recv.read_byte();
+				if (sub == 1) // getMiniGame：type=1
+				{
+					// s9 visitMiniGame 大致：slot + charLook + name + gameType(+wins…)
+					std::string tip = "Minigame room";
+					uint8_t game_type = 1;
+					try {
+						if (recv.available())
+							recv.read_byte(); // slot / first
+						if (recv.available() >= 10)
+							skip_charlook(recv);
+						if (recv.available() >= 2) {
+							std::string owner = recv.read_string();
+							if (!owner.empty() && owner.size() < 32)
+								tip = owner;
+						}
+						if (recv.available()) {
+							game_type = static_cast<uint8_t>(recv.read_byte());
+							if (game_type == 1) tip += " · Omok";
+							else if (game_type == 2) tip += " · MatchCard";
+						}
+						// wins/ties/losses/points（各 int）若有则跳过
+						for (int i = 0; i < 4 && recv.available() >= 4; i++)
+							recv.read_int();
+					} catch (...) {
+						// 解析失败则吞剩余
+					}
+					while (recv.available())
+						recv.skip_byte();
+					LOG(LOG_DEBUG, "TradeHandler: ROOM minigame tip=" << tip
+						<< " gtype=" << static_cast<int>(game_type));
+					auto uimg = UI::get().get_element<UIMinigame>();
+					if (!uimg)
+						uimg = UI::get().emplace<UIMinigame>();
+					else if (!uimg->is_active())
+						uimg->makeactive();
+					if (uimg)
+						uimg->set_tip(tip);
+					auto table = UI::get().get_element<UIMinigameTable>();
+					if (!table)
+						table = UI::get().emplace<UIMinigameTable>();
+					else if (!table->is_active())
+						table->makeactive();
+					if (table) {
+						table->set_game_kind(game_type == 2 ? 2 : 1);
+						table->set_tip(tip);
+					}
+					break;
+				}
 				if (sub == 0x05) // 雇佣商人开张：0x05, 0x04, ...
 				{
 					recv.read_byte();  // 0x04
@@ -139,21 +216,26 @@ namespace ms
 						}
 					}
 
-					auto uimerchant = UI::get().get_element<UIMerchant>();
-					if (!uimerchant)
-						uimerchant = UI::get().emplace<UIMerchant>();
-					uimerchant->set_owner(owner);
-					uimerchant->set_items(items);
+					if (auto uimerchant = ensure_merchant())
+					{
+						uimerchant->set_owner(owner);
+						uimerchant->set_items(items);
+					}
+					while (recv.available())
+						recv.skip_byte();
+					// Merchant UI 已显，不 tip
 				}
 				else // 交易开始（sub == 3）
 				{
 					while (recv.available())
 						recv.skip_byte();
-					uitrade->start_trade();
+					if (ensure_trade())
+						uitrade->start_trade();
+					// Trade UI 已开，不 SM
 				}
 				break;
 			}
-			case 0x19: // updateHiredMerchant（刷新商品/金币，无 charLook、无 owner 分支，格式干净）
+			case 0x19: // updateHiredMerchant
 			{
 				recv.skip_int(); // meso
 				uint8_t items_size = recv.read_byte();
@@ -167,33 +249,71 @@ namespace ms
 					skip_iteminfo(recv, itemid);
 					items.push_back({ itemid, qty, price, bundles });
 				}
-				auto uimerchant = UI::get().get_element<UIMerchant>();
-				if (!uimerchant)
-					uimerchant = UI::get().emplace<UIMerchant>();
-				uimerchant->set_items(items);
-				break;
-			}
-			case 4: // getTradePartnerAdd（含 charLook，整体跳过）
-			{
-				recv.read_byte(); // 1
+				if (auto uimerchant = ensure_merchant())
+					uimerchant->set_items(items);
 				while (recv.available())
 					recv.skip_byte();
 				break;
 			}
-			case 2: // tradeInvite（收到交易请求，自动接受）
+			case 4: // getTradePartnerAdd（slot + charLook + name）
+			{
+				if (recv.available())
+					recv.read_byte(); // slot
+				std::string partner;
+				try {
+					if (recv.available() >= 10)
+						skip_charlook(recv);
+					if (recv.available() >= 2)
+						partner = recv.read_string();
+				} catch (...) {
+					partner.clear();
+				}
+				while (recv.available())
+					recv.skip_byte();
+				if (!partner.empty())
+				{
+					if (ensure_trade())
+						uitrade->partner_joined(partner);
+					// 交易窗已显搭档，不 tip
+				}
+				break;
+			}
+			case 2: // tradeInvite
 			{
 				recv.read_byte(); // 3
 				std::string name = recv.read_string();
 				recv.skip(4);
-				uitrade->partner_joined(name);
-				TradeVisitPacket().dispatch();
+				while (recv.available())
+					recv.skip_byte();
+				std::string msg = name + " wants to trade. Accept?";
+				// YesNo 已显，不重复 SM
+				UI::get().emplace<UIYesNo>(msg, [name](bool yes)
+				{
+					if (yes)
+					{
+						auto ui = UI::get().get_element<UITrade>();
+						if (!ui) ui = UI::get().emplace<UITrade>();
+						if (ui) ui->partner_joined(name);
+						TradeVisitPacket().dispatch();
+						LOG(LOG_DEBUG, "TradeHandler: accept trade from=" << name);
+					}
+					else
+					{
+						TradeExitPacket().dispatch();
+						LOG(LOG_DEBUG, "TradeHandler: deny trade from=" << name);
+					}
+				});
 				break;
 			}
 			case 0x10: // getTradeMesoSet
 			{
 				uint8_t number = recv.read_byte();
 				int32_t meso = recv.read_int();
-				uitrade->set_meso(number, meso);
+				while (recv.available())
+					recv.skip_byte();
+				if (ensure_trade())
+					uitrade->set_meso(number, meso);
+				(void)meso;
 				break;
 			}
 			case 0x0F: // getTradeItemAdd
@@ -203,19 +323,117 @@ namespace ms
 				int32_t itemid;
 				int16_t quantity;
 				parse_trade_item(recv, itemid, quantity);
-				uitrade->add_item(number, itemPosition, itemid, quantity);
+				while (recv.available())
+					recv.skip_byte();
+				if (ensure_trade())
+					uitrade->add_item(number, itemPosition, itemid, quantity);
+				(void)itemid; (void)quantity;
 				break;
 			}
 			case 0x11: // getTradeConfirmation（锁定）
 			{
-				uitrade->set_locked();
+				while (recv.available())
+					recv.skip_byte();
+				if (ensure_trade())
+					uitrade->set_locked();
+				break;
+			}
+			case 0x3A: // minigame READY
+			{
+				while (recv.available())
+					recv.skip_byte();
+				auto uimg = UI::get().get_element<UIMinigame>();
+				if (!uimg) uimg = UI::get().emplace<UIMinigame>();
+				else if (!uimg->is_active()) uimg->makeactive();
+				if (uimg) uimg->set_tip("Opponent ready");
+				break;
+			}
+			case 0x3B: // UN_READY
+			{
+				while (recv.available())
+					recv.skip_byte();
+				auto uimg = UI::get().get_element<UIMinigame>();
+				if (!uimg) uimg = UI::get().emplace<UIMinigame>();
+				else if (!uimg->is_active()) uimg->makeactive();
+				if (uimg) uimg->set_tip("Unready");
+				break;
+			}
+			case 0x3D: // START
+			{
+				while (recv.available())
+					recv.skip_byte();
+				auto uimg = UI::get().get_element<UIMinigame>();
+				if (!uimg) uimg = UI::get().emplace<UIMinigame>();
+				else if (!uimg->is_active()) uimg->makeactive();
+				if (uimg) uimg->set_tip("Game start");
+				auto table = UI::get().get_element<UIMinigameTable>();
+				if (!table)
+					table = UI::get().emplace<UIMinigameTable>();
+				else if (!table->is_active())
+					table->makeactive();
+				if (table) {
+					table->clear_board();
+					table->set_tip("Playing");
+				}
+				break;
+			}
+			case 0x3E: // Omok place broadcast
+			{
+				uint8_t x = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+				uint8_t y = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+				uint8_t piece = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+				while (recv.available())
+					recv.skip_byte();
+				auto table = UI::get().get_element<UIMinigameTable>();
+				if (!table) table = UI::get().emplace<UIMinigameTable>();
+				else if (!table->is_active()) table->makeactive();
+				if (table) {
+					table->set_game_kind(1);
+					table->note_place(x, y, piece);
+				}
+				auto uimg = UI::get().get_element<UIMinigame>();
+				if (!uimg) uimg = UI::get().emplace<UIMinigame>();
+				else if (!uimg->is_active()) uimg->makeactive();
+				if (uimg) uimg->set_tip("Omok (" + std::to_string(x) + "," + std::to_string(y) + ")");
+				break;
+			}
+			case 0x3F: // MatchCard select broadcast
+			{
+				uint8_t turn = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+				uint8_t slot = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+				while (recv.available())
+					recv.skip_byte();
+				std::string tip = "Card turn=" + std::to_string(turn) + " #" + std::to_string(slot);
+				auto table = UI::get().get_element<UIMinigameTable>();
+				if (!table) table = UI::get().emplace<UIMinigameTable>();
+				else if (!table->is_active()) table->makeactive();
+				if (table) {
+					table->set_game_kind(2);
+					table->set_tip(tip);
+					break;
+				}
+				auto uimg = UI::get().get_element<UIMinigame>();
+				if (!uimg) uimg = UI::get().emplace<UIMinigame>();
+				else if (!uimg->is_active()) uimg->makeactive();
+				if (uimg)
+				{
+					uimg->set_tip(tip);
+					break;
+				}
+				ensure_sm(Color::Name::WHITE, tip);
 				break;
 			}
 			case 0x0A: // getTradeResult
 			{
 				recv.read_byte(); // number
 				uint8_t op = recv.read_byte();
-				uitrade->result(0, op);
+				while (recv.available())
+					recv.skip_byte();
+				if (ensure_trade())
+					uitrade->result(0, op);
+				else
+					ensure_sm(Color::Name::WHITE,
+						op == 6 ? "Trade success" : ("Trade result " + std::to_string(op)));
 				break;
 			}
 			case 6: // getTradeChat
@@ -223,11 +441,32 @@ namespace ms
 				recv.read_byte(); // 8
 				recv.read_bool();
 				std::string msg = recv.read_string();
-				uitrade->add_chat(msg);
+				while (recv.available())
+					recv.skip_byte();
+				if (ensure_trade())
+					uitrade->add_chat(msg);
 				break;
 			}
 			default:
+			{
+				LOG(LOG_DEBUG, "Room mode=" << static_cast<int>(mode)
+					<< " rem=" << recv.available());
+				while (recv.available())
+					recv.skip_byte();
+				std::string tip = "Room mode " + std::to_string(mode);
+				if (uitrade && uitrade->is_active())
+					break; // 交易窗已开：模式自显，不 tip
+				if (auto uimg = UI::get().get_element<UIMinigame>())
+				{
+					if (uimg->is_active())
+					{
+						uimg->set_tip(tip);
+						break;
+					}
+				}
+				ensure_sm(Color::Name::YELLOW, tip);
 				break;
+			}
 		}
 	}
 

@@ -24,21 +24,48 @@
 
 #include "../../IO/UITypes/UIEquipInventory.h"
 #include "../../IO/UITypes/UIItemInventory.h"
+#include "../../IO/UITypes/UISkillBook.h"
 #include "../../IO/UITypes/UIKeyConfig.h"
 #include "../../IO/UITypes/UIShop.h"
+#include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIMiscShells.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Graphics/Color.h"
+#include "../../Util/Misc.h"
 
 namespace ms
 {
+	namespace {
+		void inv_tip(const std::string& tip, Color::Name color = Color::Name::YELLOW)
+		{
+			// chat 优先；无 ChatBar 才 SM；不强制 FloatNotice
+			auto mt = (color == Color::Name::RED) ? UIChatBar::MessageType::RED
+				: (color == Color::Name::WHITE) ? UIChatBar::MessageType::WHITE
+				: UIChatBar::MessageType::YELLOW;
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+			{
+				chatbar->show_message(tip.c_str(), mt);
+				return;
+			}
+		}
+	}
+
 	void GatherResultHandler::handle(InPacket&) const
 	{
 		if (auto iteminventory = UI::get().get_element<UIItemInventory>())
+		{
+			if (!iteminventory->is_active())
+				iteminventory->makeactive();
 			iteminventory->set_sort(true);
+		}
 	}
 
 	void SortResultHandler::handle(InPacket&) const
 	{
 		if (auto iteminventory = UI::get().get_element<UIItemInventory>())
 		{
+			if (!iteminventory->is_active())
+				iteminventory->makeactive();
 			iteminventory->set_sort(false);
 			iteminventory->clear_new();
 		}
@@ -118,7 +145,7 @@ namespace ms
 			mods.push_back(mod);
 		}
 
-		Inventory::Movement move = (recv.length() > 0) ?
+		Inventory::Movement move = (recv.available() > 0) ?
 			Inventory::movementbyvalue(recv.read_byte()) :
 			Inventory::Movement::MOVE_INTERNAL;
 
@@ -184,7 +211,93 @@ namespace ms
 			}
 		}
 
+		while (recv.available())
+			recv.skip_byte();
 		Stage::get().get_player().recalc_stats(true);
 		UI::get().enable();
+	}
+
+	void InventoryGrowHandler::handle(InPacket& recv) const
+	{
+		int8_t type = recv.available() ? recv.read_byte() : 0;
+		int8_t limit = recv.available() ? recv.read_byte() : 0;
+		InventoryType::Id inv = InventoryType::by_value(type);
+		LOG(LOG_DEBUG, "InventoryGrow type=" << (int)type << " limit=" << (int)limit);
+		while (recv.available())
+			recv.skip_byte();
+		Stage::get().get_player().get_inventory().set_slotmax(inv, static_cast<uint8_t>(limit));
+		auto invui = UI::get().get_element<UIItemInventory>();
+		if (!invui)
+			invui = UI::get().emplace<UIItemInventory>(Stage::get().get_player().get_inventory());
+		else if (!invui->is_active())
+			invui->makeactive();
+		if (invui)
+			return;
+		if (auto eq = UI::get().get_element<UIEquipInventory>())
+		{
+			if (eq->is_active())
+				return;
+		}
+		inv_tip("Inventory slots → " + std::to_string(limit));
+	}
+
+	void SkillLearnItemResultHandler::handle(InPacket& recv) const
+	{
+		int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+		if (recv.available())
+			recv.read_byte();
+		int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+		int32_t maxlevel = recv.available() >= 4 ? recv.read_int() : 0;
+		bool canuse = recv.available() ? recv.read_bool() : false;
+		bool success = recv.available() ? recv.read_bool() : false;
+		LOG(LOG_DEBUG, "SkillLearn cid=" << cid << " skill=" << skill
+			<< " max=" << maxlevel << " can=" << canuse << " ok=" << success);
+		while (recv.available())
+			recv.skip_byte();
+		if (canuse && success && skill > 0)
+		{
+			auto& player = Stage::get().get_player();
+			int32_t cur = player.get_skills().get_level(skill);
+			if (cur < 1) cur = 0;
+			player.change_skill(skill, cur + 1, maxlevel > 0 ? maxlevel : (cur + 1), 0);
+		}
+		bool skillbook_open = false;
+		auto sb = UI::get().get_element<UISkillBook>();
+		if (!sb && canuse && success && skill > 0)
+		{
+			auto& player = Stage::get().get_player();
+			sb = UI::get().emplace<UISkillBook>(player.get_stats(), player.get_skills());
+		}
+		else if (sb && !sb->is_active() && canuse && success && skill > 0)
+			sb->makeactive();
+		if (sb && sb->is_active())
+		{
+			skillbook_open = true;
+			if (canuse && success && skill > 0)
+				sb->update_skills(skill);
+		}
+		// SkillBook 已开：成功/失败自显，不 tip
+		if (skillbook_open)
+			return;
+		if (!canuse)
+			inv_tip("Cannot use skill book", Color::Name::RED);
+		else if (!success)
+			inv_tip("Skill book failed", Color::Name::RED);
+		else if (skill > 0)
+		{
+			// SkillBook 未开：SkillUp 浮层（不叠 SM tip）
+			std::string tip = "Skill " + std::to_string(skill) + " learned";
+			auto ui = UI::get().get_element<UISkillUp>();
+			if (!ui)
+				ui = UI::get().emplace<UISkillUp>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			if (ui)
+				ui->set_tip(tip);
+			else
+				inv_tip("Skill learned #" + std::to_string(skill));
+		}
+		(void)cid;
+		(void)maxlevel;
 	}
 }

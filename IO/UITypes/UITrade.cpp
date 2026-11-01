@@ -23,8 +23,10 @@
 #include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
+#include "UIItemInventory.h"
 #include "../../Data/ItemData.h"
 #include "../../Net/Packets/TradePackets.h"
+#include "../../Util/Misc.h"
 
 namespace ms
 {
@@ -32,6 +34,11 @@ namespace ms
 		started(false), locked(false), my_meso(0), partner_meso(0), add_count(0),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
+		// 本包 UI.nx 根下没有 Trade.img（v83 真身是 UIWindow.img/TradingRoom 565x474，
+		// 只有 BtTrade/BtCancel/BtReset/BtCoin 四钮，件表见 notes/asset-node-inventory.md §1.5）。
+		// 换根须有 TradingRoom 内的原生坐标，目前无参考截图也无 IDA 证据 ⇒ 底衬与五钮显式预留，
+		// 交易流程仍可用菜单/右键与 ESC 退出；旧写法 bn ? MapleButton(bn) : MapleButton(bn, pos)
+		// 两个分支都拿不到贴图（真值分支还会把坐标丢成窗口原点），属凭空逻辑。
 		nl::node trade = nl::nx::UI["Trade.img"];
 		if (trade["backgrnd"])
 			sprites.emplace_back(Sprite(trade["backgrnd"], Point<int16_t>(0, 0)));
@@ -45,12 +52,7 @@ namespace ms
 		};
 		const char* btnname[] = { "BtAddMeso", "BtLock", "BtTrade", "BtCancel", "BtChat" };
 		for (uint16_t i = 0; i < 5; i++)
-		{
-			nl::node bn = trade[btnname[i]];
-			buttons[i] = bn
-				? std::make_unique<MapleButton>(bn)
-				: std::make_unique<MapleButton>(bn, btnpos[i]);
-		}
+			try_maple_btn(buttons, i, trade[btnname[i]], btnpos[i], "UITrade");
 	}
 
 	void UITrade::draw(float alpha) const
@@ -222,5 +224,80 @@ namespace ms
 			if (!s.empty())
 				TradeChatPacket(s).dispatch();
 		});
+	}
+
+	void UITrade::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (pressed && escape)
+		{
+			TradeExitPacket().dispatch();
+			deactivate();
+			return;
+		}
+		if (!pressed) return;
+		if (keycode == 'X' || keycode == 'x')
+		{
+			TradeExitPacket().dispatch();
+			deactivate();
+		}
+		else if (keycode == 'M' || keycode == 'm' || keycode == 'S' || keycode == 's')
+			prompt_meso();
+		else if (keycode == 'C' || keycode == 'c' || keycode == 'T' || keycode == 't')
+			prompt_chat();
+		else if (keycode == 'L' || keycode == 'l')
+			TradeConfirmPacket().dispatch();
+		else if (keycode == 13)
+			TradeTransactionPacket().dispatch();
+		else if (keycode == 'I' || keycode == 'i' || keycode == 'A' || keycode == 'a')
+		{
+			// SoftKey：背包有选中格时只问 qty；否则 iv,pos,qty,slot
+			int16_t inv_slot = 0;
+			uint8_t inv_type = 0;
+			if (auto inv = UI::get().get_element<UIItemInventory>()) {
+				inv_slot = inv->get_selected_slot();
+				if (inv_slot > 0)
+					inv_type = static_cast<uint8_t>(inv->get_tab());
+			}
+			if (inv_slot > 0 && inv_type > 0) {
+				uint8_t iv = inv_type;
+				int16_t pos = inv_slot;
+				UI::get().emplace<UISoftKey>([iv, pos](const std::string& s) {
+					int16_t qty = 1;
+					uint8_t trade_slot = 0;
+					if (!s.empty()) {
+						size_t c = s.find(',');
+						try {
+							qty = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
+							if (c != std::string::npos)
+								trade_slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
+						} catch (...) { return; }
+					}
+					if (qty < 1) return;
+					TradeAddItemPacket(iv, pos, qty, trade_slot).dispatch();
+					LOG(LOG_DEBUG, "UITrade: AddItem from inv iv=" << (int)iv
+						<< " pos=" << pos << " qty=" << qty);
+				}, []() {}, "qty[,tradeSlot]");
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& s) {
+					int vals[4] = { 1, 1, 1, 0 };
+					size_t start = 0; int vi = 0;
+					while (vi < 4 && start <= s.size()) {
+						size_t c = s.find(',', start);
+						std::string part = (c == std::string::npos) ? s.substr(start) : s.substr(start, c - start);
+						try { vals[vi] = std::stoi(part); } catch (...) {}
+						++vi;
+						if (c == std::string::npos) break;
+						start = c + 1;
+					}
+					if (vals[1] > 0 && vals[2] > 0) {
+						TradeAddItemPacket(
+							static_cast<uint8_t>(vals[0]), static_cast<int16_t>(vals[1]),
+							static_cast<int16_t>(vals[2]), static_cast<uint8_t>(vals[3])
+						).dispatch();
+						LOG(LOG_DEBUG, "UITrade: SoftKey AddItem " << s);
+					}
+				}, []() {}, "iv,pos,qty,slot");
+			}
+		}
 	}
 }
