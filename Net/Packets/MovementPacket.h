@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../OutPacket.h"
+#include "../../Gameplay/Movement.h"
 
 namespace ms
 {

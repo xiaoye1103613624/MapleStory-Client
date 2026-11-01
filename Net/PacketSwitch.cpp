@@ -33,6 +33,10 @@
 #include "Handlers/AllianceHandlers.h"
 #include "Handlers/PartyHandlers.h"
 #include "Handlers/BuddyHandlers.h"
+#include "Handlers/MessengerHandlers.h"
+#include "Handlers/WaveAShellHandlers.h"
+#include "Handlers/DueyHandlers.h"
+#include "Handlers/FredrickHandlers.h"
 #include "Handlers/TradeHandlers.h"
 #include "Handlers/GuildHandlers.h"
 #include "Handlers/QuestHandlers.h"
@@ -98,6 +102,7 @@ namespace ms
 		WEEK_EVENT_MESSAGE = 77,
 
 		SKILL_MACROS = 124,
+		SHOW_COMBO = 225,
 		SET_FIELD = 125,
 		FIELD_EFFECT = 138,
 
@@ -144,15 +149,239 @@ namespace ms
 		OPEN_NPC_SHOP = 305,
 		CONFIRM_SHOP_TRANSACTION = 306,
 		KEYMAP = 335,
+		AUTO_HP_POT = 336,
+		AUTO_MP_POT = 337,
 
 		/// Player Interaction
 		CHAR_INFO = 61,
 		PARTY_OPERATION = 62,
 		BUDDYLIST = 63,
 		GUILD_OPERATION = 65,
+		MESSENGER = 313,
 		UPDATE_PARTYMEMBER_HP = 201,
 		PLAYER_INTERACTION = 314,
 		STORAGE = 309,
+		FREDRICK_MESSAGE = 310,
+		FREDRICK = 311,
+		PARCEL = 322,
+		VICIOUS_HAMMER = 354,
+		VEGA_SCROLL = 358,
+		MEMO_RESULT = 41,
+		FAMILY_INFO_RESULT = 95,
+		FAMILY_CHART_RESULT = 94,
+		FAMILY_RESULT = 96,
+		FAMILY_JOIN_REQUEST = 97,
+		FAMILY_JOIN_REQUEST_RESULT = 98,
+		SUCCESS_IN_USE_GACHAPON_BOX = 117,
+		CASHSHOP_CHECK_NAME_CHANGE = 328,
+		CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT = 329,
+		CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT = 331,
+		CASHSHOP_CASH_ITEM_GACHAPON_RESULT = 333,
+		CASHSHOP_CASH_GACHAPON_OPEN_RESULT = 334,
+		WEDDING_GIFT_RESULT = 74,
+		WEDDING_PROGRESS = 320,
+		WEDDING_CEREMONY_END = 321,
+		MONSTER_CARNIVAL_START = 289,
+		MONSTER_CARNIVAL_OBTAINED_CP = 290,
+		MONSTER_CARNIVAL_PARTY_CP = 291,
+		MONSTER_CARNIVAL_MESSAGE = 293,
+		MONSTER_CARNIVAL_LEAVE = 295,
+		RPS_GAME = 312,
+		ARIANT_RESULT = 152,
+		ARIANT_ARENA_SHOW_RESULT = 155,
+		ARIANT_ARENA_USER_SCORE = 297,
+		NEW_YEAR_CARD_RES = 118,
+		ADMIN_RESULT = 144,
+		MAPLE_TV_USE_RES = 109,
+		SEND_TV = 341,
+		REMOVE_TV = 342,
+		ENABLE_TV = 343,
+		MAPLELIFE_RESULT = 349,
+		MAPLELIFE_ERROR = 350,
+		AVATAR_MEGAPHONE_RESULT = 110,
+		SET_AVATAR_MEGAPHONE = 111,
+		CLEAR_AVATAR_MEGAPHONE = 112,
+		CLAIM_RESULT = 45,
+		INCUBATOR_RESULT = 69,
+		OX_QUIZ = 145,
+		CANCEL_CHAIR_RESULT = 205,
+		DOJO_WARP_UP = 207,
+		PLAYER_HINT = 214,
+		LEFT_KNOCK_BACK = 284,
+		SHEEP_RANCH_INFO = 299,
+		SHEEP_RANCH_CLOTHES = 300,
+		PYRAMID_GAUGE = 157,
+		PYRAMID_SCORE = 158,
+		SCRIPT_PROGRESS_MESSAGE = 122,
+		MULTICHAT = 134,
+		WHISPER = 135,
+		SPOUSE_CHAT = 136,
+		FIELD_OBSTACLE_ONOFF = 139,
+		FIELD_OBSTACLE_ONOFF_LIST = 140,
+		FIELD_OBSTACLE_ALL_RESET = 141,
+		BLOW_WEATHER = 142,
+		GMEVENT_INSTRUCTIONS = 146,
+		CLOCK = 147,
+		CONTI_MOVE = 148,
+		CONTI_STATE = 149,
+		STOP_CLOCK = 154,
+		CHALKBOARD = 164,
+		SKILL_EFFECT = 190,
+		CANCEL_SKILL_EFFECT = 191,
+		FACIAL_EXPRESSION = 193,
+		SHOW_CHAIR = 196,
+		THROW_GRENADE = 204,
+		PET_CHAT = 171,
+		PET_NAMECHANGE = 172,
+		PET_COMMAND = 174,
+		SPAWN_SPECIAL_MAPOBJECT = 175,
+		REMOVE_SPECIAL_MAPOBJECT = 176,
+		ENERGY_ATTACK = 189,
+		DAMAGE_PLAYER = 192,
+		GIVE_FOREIGN_BUFF = 199,
+		CANCEL_FOREIGN_BUFF = 200,
+		CATCH_MONSTER = 251,
+		CATCH_MONSTER_WITH_ITEM = 252,
+		REMOVE_NPC = 258,
+		SPAWN_MIST = 273,
+		REMOVE_MIST = 274,
+		SPAWN_DOOR = 275,
+		REMOVE_DOOR = 276,
+		BLOCKED_MAP = 131,
+		BLOCKED_SERVER = 132,
+		FORCED_MAP_EQUIP = 133,
+		UPDATE_CHAR_BOX = 165,
+		SHOW_ITEM_EFFECT = 194,
+		MOVE_SUMMON = 177,
+		SUMMON_ATTACK = 178,
+		DAMAGE_SUMMON = 179,
+		SUMMON_SKILL = 180,
+		SPAWN_DRAGON = 181,
+		MOVE_DRAGON = 182,
+		REMOVE_DRAGON = 183,
+		DAMAGE_MONSTER = 246,
+		FAME_RESPONSE = 38,
+		QUEST_CLEAR = 49,
+		SET_GENDER = 58,
+		SPAWN_PORTAL = 67,
+		CASH_PET_FOOD_RESULT = 76,
+		BRIDLE_MOB_CATCH_FAIL = 79,
+		MAP_TRANSFER_RESULT = 42,
+		FAMILY_JOIN_ACCEPTED = 99,
+		FAMILY_NOTIFY_LOGIN_OR_LOGOUT = 102,
+		FAMILY_SUMMON_REQUEST = 104,
+		NOTIFY_LEVELUP = 105,
+		NOTIFY_MARRIAGE = 106,
+		NOTIFY_JOB_CHANGE = 107,
+		TRADE_MONEY_LIMIT = 57,
+		ENTRUSTED_SHOP_CHECK_RESULT = 50,
+		SHOP_LINK_RESULT = 71,
+		SET_TAMING_MOB_INFO = 48,
+		SET_EXTRA_PENDANT_SLOT = 121,
+		FAKE_GM_NOTICE = 116,
+		CANCEL_TRANSFER_WORLD_RESULT = 114,
+		SET_BACK_EFFECT = 128,
+		MOVE_PET = 170,
+		PET_EXCEPTION_LIST = 173,
+		APPLY_MONSTER_STATUS = 242,
+		CANCEL_MONSTER_STATUS = 243,
+		INVENTORY_GROW = 30,
+		SKILL_LEARN_ITEM_RESULT = 51,
+		CANCEL_NAME_CHANGE_RESULT = 113,
+		CLAIM_STATUS_CHANGED = 47,
+		SUE_CHARACTER_RESULT = 55,
+		SESSION_VALUE = 90,
+		IMITATED_NPC_DATA = 81,
+		RELOG_RESPONSE = 22,
+		LAST_CONNECTED_WORLD = 26,
+		RECOMMENDED_WORLD_MESSAGE = 27,
+		FORCED_STAT_SET = 34,
+		FORCED_STAT_RESET = 35,
+		SHOP_SCANNER_RESULT = 70,
+		FAMILY_PRIVILEGE_LIST = 100,
+		FAMILY_REP_GAIN = 101,
+		FAMILY_SET_PRIVILEGE = 103,
+		DATA_CRC_CHECK_FAILED = 123,
+		QUICKSLOT_INIT = 159,
+		ON_NOTIFY_HP_DEC_BY_FIELD = 212,
+		MAKER_RESULT = 217,
+		MOVE_MONSTER_RESPONSE = 240,
+		SET_NPC_SCRIPTABLE = 263,
+		CANNOT_SPAWN_KITE = 270,
+		SPAWN_KITE = 271,
+		REMOVE_KITE = 272,
+		MONSTER_CARNIVAL_SUMMON = 292,
+		MONSTER_CARNIVAL_DIED = 294,
+		WITCH_TOWER_SCORE_UPDATE = 301,
+		SET_ITC = 126,
+		SUMMON_ITEM_INAVAILABLE = 137,
+		NPC_ACTION = 260,
+		TOURNAMENT = 315,
+		TOURNAMENT_MATCH_TABLE = 316,
+		TOURNAMENT_SET_PRIZE = 317,
+		TOURNAMENT_UEW = 318,
+		MTS_OPERATION2 = 347,
+		MTS_OPERATION = 348,
+		UPDATE_HPMPAALERT = 0x1000,
+		DPT_TRACKER = 0x3714,
+		GUEST_ID_LOGIN = 1,
+		HOUR_CHANGED = 85,
+		MINIMAP_ON_OFF = 86,
+		BONUS_EXP_CHANGED = 93,
+		PLAY_JUKEBOX = 143,
+		MARRIAGE_REQUEST = 72,
+		MARRIAGE_RESULT = 73,
+		NOTIFY_MARRIED_PARTNER_MAP_TRANSFER = 75,
+		WEDDING_PHOTO = 43,
+		SET_POTION_DISCOUNT_RATE = 78,
+		IMITATED_NPC_RESULT = 80,
+		LIMITED_NPC_DISABLE_INFO = 82,
+		PARTY_VALUE = 91,
+		FIELD_SET_VARIABLE = 92,
+		DESTROY_SHOP_RESULT = 115,
+		RANDOM_MORPH_RES = 119,
+		SET_MAP_OBJECT_VISIBLE = 129,
+		CLEAR_BACK_EFFECT = 130,
+		GUILD_BBS_PACKET = 59,
+		SET_QUEST_CLEAR_FIELD = 150,
+		SET_QUEST_TIME = 151,
+		WARN_MESSAGE = 152,
+		SET_OBJECT_STATE = 153,
+		CHATTEXT1 = 163,
+		SHOW_CONSUME_EFFECT = 166,
+		SKILL_USE_RESULT = 37,
+		CANCEL_NAME_CHANGE_BY_OTHER = 120,
+		CONSULT_AUTHKEY_UPDATE = 87,
+		CLASS_COMPETITION_AUTHKEY_UPDATE = 88,
+		WEB_BOARD_AUTHKEY_UPDATE = 89,
+		OPEN_FULL_CLIENT_DOWNLOAD_LINK = 40,
+		CLAIM_AVAILABLE_TIME = 46,
+		SET_BUY_EQUIP_EXT = 108,
+		GUILD_NAME_CHANGED = 202,
+		GUILD_MARK_CHANGED = 203,
+		LUCKSACK_PASS = 208,
+		LUCKSACK_FAIL = 209,
+		MESO_BAG_MESSAGE = 210,
+		KOREAN_EVENT = 219,
+		RESET_MONSTER_ANIMATION = 244,
+		ARIANT_THING = 249,
+		SHOW_MAGNET = 253,
+		ACCOUNT_INFO = 2,
+		CHANNEL_SELECTED = 20,
+		HACKSHIELD_REQUEST = 21,
+		CHECK_CRC_RESULT = 25,
+		KOREAN_INTERNET_CAFE_SHIT = 18,
+		OPEN_UI = 220,
+		LOCK_UI = 221,
+		DISABLE_UI = 222,
+		SPAWN_GUIDE = 223,
+		TALK_GUIDE = 224,
+		SNOWBALL_STATE = 281,
+		HIT_SNOWBALL = 282,
+		SNOWBALL_MESSAGE = 283,
+		COCONUT_HIT = 285,
+		COCONUT_SCORE = 286,
+		HORNTAIL_CAVE = 302,
 
 		/// 雇佣商人 / 个人商店（地图 box 与 store 交互，对接 s9 HiredMerchant）
 		SPAWN_HIRED_MERCHANT = 265,
@@ -168,6 +397,10 @@ namespace ms
 
 		/// Cash Shop
 		SET_CASH_SHOP = 127,
+		/// s9 SendOpcode.QUERY_CASH_RESULT=0x144 — PacketCreator.showCash 三币种
+		QUERY_CASH_RESULT = 324,
+		/// s9 SendOpcode.CASHSHOP_OPERATION=0x145
+		CASHSHOP_OPERATION = 325,
 
 		/// 北斗自定义 opcode（0x37xx，走 PacketSwitch 的扩展表）
 		LIMIT_BREAK_SYNC = 0x3730
@@ -207,6 +440,92 @@ namespace ms
 
 		// 好友/黑名单：基础系统复刻，对接 s9 BuddylistModifyHandler / updateBuddylist
 		emplace<BUDDYLIST, BuddyHandler>();
+
+		// 信使/聊天室：对接 s9 MessengerHandler（出站 122 / 入站 313）
+		emplace<MESSENGER, MessengerHandler>();
+
+		// Wave A 壳开窗（业务字段后续切片）：Duey/Fredrick/Hammer/Vega
+		emplace<PARCEL, ParcelHandler>();
+		emplace<FREDRICK, FredrickHandler>();
+		emplace<FREDRICK_MESSAGE, FredrickMessageHandler>();
+		emplace<VICIOUS_HAMMER, ViciousHammerHandler>();
+		emplace<VEGA_SCROLL, VegaScrollHandler>();
+		emplace<CASHSHOP_CHECK_NAME_CHANGE, CashShopCheckNameChangeHandler>();
+		emplace<CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT, CashShopNameChangePossibleHandler>();
+		emplace<CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT, CashShopTransferWorldPossibleHandler>();
+		emplace<CASHSHOP_CASH_ITEM_GACHAPON_RESULT, CashItemGachaponResultHandler>();
+		emplace<CASHSHOP_CASH_GACHAPON_OPEN_RESULT, CashGachaponOpenHandler>();
+		emplace<SUCCESS_IN_USE_GACHAPON_BOX, GachaponBoxHandler>();
+		emplace<FAMILY_INFO_RESULT, FamilyInfoHandler>();
+		emplace<FAMILY_CHART_RESULT, FamilyChartHandler>();
+		emplace<FAMILY_RESULT, FamilyResultHandler>();
+		emplace<FAMILY_JOIN_REQUEST, FamilyJoinRequestHandler>();
+		emplace<FAMILY_JOIN_REQUEST_RESULT, FamilyJoinResultHandler>();
+		emplace<MEMO_RESULT, MemoResultHandler>();
+		emplace<WEDDING_PROGRESS, WeddingProgressHandler>();
+		emplace<WEDDING_CEREMONY_END, WeddingCeremonyEndHandler>();
+		emplace<WEDDING_GIFT_RESULT, WeddingGiftResultHandler>();
+		emplace<MONSTER_CARNIVAL_START, MonsterCarnivalStartHandler>();
+		emplace<MONSTER_CARNIVAL_OBTAINED_CP, MonsterCarnivalObtainedCPHandler>();
+		emplace<MONSTER_CARNIVAL_PARTY_CP, MonsterCarnivalPartyCPHandler>();
+		emplace<MONSTER_CARNIVAL_MESSAGE, MonsterCarnivalMessageHandler>();
+		emplace<MONSTER_CARNIVAL_LEAVE, MonsterCarnivalLeaveHandler>();
+		emplace<RPS_GAME, RpsGameHandler>();
+		emplace<ARIANT_RESULT, AriantResultHandler>();
+		emplace<ARIANT_ARENA_SHOW_RESULT, AriantResultHandler>();
+		emplace<ARIANT_ARENA_USER_SCORE, AriantScoreHandler>();
+		emplace<NEW_YEAR_CARD_RES, NewYearCardResHandler>();
+		emplace<ADMIN_RESULT, AdminResultHandler>();
+		emplace<MAPLE_TV_USE_RES, MapleTVUseResHandler>();
+		emplace<ENABLE_TV, EnableTVHandler>();
+		emplace<SEND_TV, SendTVHandler>();
+		emplace<REMOVE_TV, RemoveTVHandler>();
+		emplace<MAPLELIFE_RESULT, MapleLifeResultHandler>();
+		emplace<MAPLELIFE_ERROR, MapleLifeErrorHandler>();
+		emplace<AVATAR_MEGAPHONE_RESULT, AvatarMegaphoneHandler>();
+		emplace<SET_AVATAR_MEGAPHONE, AvatarMegaphoneHandler>();
+		emplace<CLEAR_AVATAR_MEGAPHONE, AvatarMegaphoneHandler>();
+		emplace<CLAIM_RESULT, ClaimResultHandler>();
+		emplace<INCUBATOR_RESULT, IncubatorResultHandler>();
+		emplace<OX_QUIZ, OxQuizHandler>();
+		emplace<CANCEL_CHAIR_RESULT, CancelChairResultHandler>();
+		emplace<DOJO_WARP_UP, DojoWarpUpHandler>();
+		emplace<PLAYER_HINT, PlayerHintHandler>();
+		emplace<LEFT_KNOCK_BACK, LeftKnockBackHandler>();
+		emplace<SHEEP_RANCH_INFO, SheepRanchInfoHandler>();
+		emplace<SHEEP_RANCH_CLOTHES, SheepRanchClothesHandler>();
+		emplace<PYRAMID_GAUGE, PyramidGaugeHandler>();
+		emplace<PYRAMID_SCORE, PyramidScoreHandler>();
+		emplace<SCRIPT_PROGRESS_MESSAGE, ScriptProgressMessageHandler>();
+		emplace<MULTICHAT, MultiChatHandler>();
+		emplace<WHISPER, WhisperResultHandler>();
+		emplace<SPOUSE_CHAT, SpouseChatHandler>();
+		emplace<FIELD_OBSTACLE_ONOFF, FieldObstacleOnOffHandler>();
+		emplace<FIELD_OBSTACLE_ONOFF_LIST, FieldObstacleOnOffListHandler>();
+		emplace<FIELD_OBSTACLE_ALL_RESET, FieldObstacleAllResetHandler>();
+		emplace<BLOW_WEATHER, BlowWeatherHandler>();
+		emplace<GMEVENT_INSTRUCTIONS, GmEventInstructionsHandler>();
+		emplace<CLOCK, ClockHandler>();
+		emplace<CONTI_MOVE, ContiMoveHandler>();
+		emplace<CONTI_STATE, ContiStateHandler>();
+		emplace<STOP_CLOCK, StopClockHandler>();
+		emplace<CHALKBOARD, ChalkboardHandler>();
+		emplace<SKILL_EFFECT, SkillEffectHandler>();
+		emplace<CANCEL_SKILL_EFFECT, CancelSkillEffectHandler>();
+		emplace<FACIAL_EXPRESSION, FacialExpressionHandler>();
+		emplace<SHOW_CHAIR, ShowChairHandler>();
+		emplace<THROW_GRENADE, ThrowGrenadeHandler>();
+		emplace<OPEN_UI, OpenUIHandler>();
+		emplace<LOCK_UI, LockUIHandler>();
+		emplace<DISABLE_UI, DisableUIHandler>();
+		emplace<SPAWN_GUIDE, SpawnGuideHandler>();
+		emplace<TALK_GUIDE, TalkGuideHandler>();
+		emplace<SNOWBALL_STATE, SnowballStateHandler>();
+		emplace<HIT_SNOWBALL, HitSnowballHandler>();
+		emplace<SNOWBALL_MESSAGE, SnowballMessageHandler>();
+		emplace<COCONUT_HIT, CoconutHitHandler>();
+		emplace<COCONUT_SCORE, CoconutScoreHandler>();
+		emplace<HORNTAIL_CAVE, HorntailCaveHandler>();
 
 		// 玩家交易：基础系统复刻，对接 s9 PlayerInteractionHandler（交易分支）
 		emplace<PLAYER_INTERACTION, TradeHandler>();
@@ -253,15 +572,163 @@ namespace ms
 		emplace<ATTACKED_CLOSE, CloseAttackHandler>();
 		emplace<ATTACKED_RANGED, RangedAttackHandler>();
 		emplace<ATTACKED_MAGIC, MagicAttackHandler>();
+		emplace<ENERGY_ATTACK, EnergyAttackHandler>();
+		emplace<DAMAGE_PLAYER, DamagePlayerHandler>();
+		emplace<GIVE_FOREIGN_BUFF, GiveForeignBuffHandler>();
+		emplace<CANCEL_FOREIGN_BUFF, CancelForeignBuffHandler>();
+		emplace<CATCH_MONSTER, CatchMonsterHandler>();
+		emplace<CATCH_MONSTER_WITH_ITEM, CatchMonsterWithItemHandler>();
+		emplace<PET_CHAT, PetChatHandler>();
+		emplace<PET_NAMECHANGE, PetNameChangeHandler>();
+		emplace<PET_COMMAND, PetCommandHandler>();
+		emplace<REMOVE_NPC, RemoveNpcHandler>();
+		emplace<SPAWN_MIST, SpawnMistHandler>();
+		emplace<REMOVE_MIST, RemoveMistHandler>();
+		emplace<SPAWN_DOOR, SpawnDoorHandler>();
+		emplace<REMOVE_DOOR, RemoveDoorHandler>();
+		emplace<SPAWN_SPECIAL_MAPOBJECT, SpawnSummonHandler>();
+		emplace<REMOVE_SPECIAL_MAPOBJECT, RemoveSummonHandler>();
+		emplace<BLOCKED_MAP, BlockedMapHandler>();
+		emplace<BLOCKED_SERVER, BlockedServerHandler>();
+		emplace<FORCED_MAP_EQUIP, ForcedMapEquipHandler>();
+		emplace<UPDATE_CHAR_BOX, UpdateCharBoxHandler>();
+		emplace<SHOW_ITEM_EFFECT, ShowItemEffectHandler>();
+		emplace<MOVE_SUMMON, MoveSummonHandler>();
+		emplace<SUMMON_ATTACK, SummonAttackHandler>();
+		emplace<DAMAGE_SUMMON, DamageSummonHandler>();
+		emplace<SUMMON_SKILL, SummonSkillHandler>();
+		emplace<SPAWN_DRAGON, SpawnDragonHandler>();
+		emplace<MOVE_DRAGON, MoveDragonHandler>();
+		emplace<REMOVE_DRAGON, RemoveDragonHandler>();
+		emplace<DAMAGE_MONSTER, DamageMonsterHandler>();
+		emplace<FAME_RESPONSE, FameResponseHandler>();
+		emplace<QUEST_CLEAR, QuestClearHandler>();
+		emplace<SET_GENDER, SetGenderHandler>();
+		emplace<SPAWN_PORTAL, SpawnPortalHandler>();
+		emplace<CASH_PET_FOOD_RESULT, CashPetFoodResultHandler>();
+		emplace<BRIDLE_MOB_CATCH_FAIL, BridleMobCatchFailHandler>();
+		emplace<MAP_TRANSFER_RESULT, MapTransferResultHandler>();
+		emplace<FAMILY_JOIN_ACCEPTED, FamilyJoinAcceptedHandler>();
+		emplace<FAMILY_NOTIFY_LOGIN_OR_LOGOUT, FamilyNotifyLoginHandler>();
+		emplace<FAMILY_SUMMON_REQUEST, FamilySummonRequestHandler>();
+		emplace<NOTIFY_LEVELUP, NotifyLevelUpHandler>();
+		emplace<NOTIFY_MARRIAGE, NotifyMarriageHandler>();
+		emplace<NOTIFY_JOB_CHANGE, NotifyJobChangeHandler>();
+		emplace<TRADE_MONEY_LIMIT, TradeMoneyLimitHandler>();
+		emplace<ENTRUSTED_SHOP_CHECK_RESULT, EntrustedShopCheckHandler>();
+		emplace<SHOP_LINK_RESULT, ShopLinkResultHandler>();
+		emplace<SET_TAMING_MOB_INFO, SetTamingMobInfoHandler>();
+		emplace<SET_EXTRA_PENDANT_SLOT, SetExtraPendantSlotHandler>();
+		emplace<FAKE_GM_NOTICE, FakeGmNoticeHandler>();
+		emplace<CANCEL_TRANSFER_WORLD_RESULT, CancelTransferWorldResultHandler>();
+		emplace<SET_BACK_EFFECT, SetBackEffectHandler>();
+		emplace<MOVE_PET, MovePetHandler>();
+		emplace<PET_EXCEPTION_LIST, PetExceptionListHandler>();
+		emplace<APPLY_MONSTER_STATUS, ApplyMonsterStatusHandler>();
+		emplace<CANCEL_MONSTER_STATUS, CancelMonsterStatusHandler>();
+		emplace<INVENTORY_GROW, InventoryGrowHandler>();
+		emplace<SKILL_LEARN_ITEM_RESULT, SkillLearnItemResultHandler>();
+		emplace<CANCEL_NAME_CHANGE_RESULT, CancelNameChangeResultHandler>();
+		emplace<CLAIM_STATUS_CHANGED, ClaimStatusChangedHandler>();
+		emplace<SUE_CHARACTER_RESULT, SueCharacterResultHandler>();
+		emplace<SESSION_VALUE, SessionValueHandler>();
+		emplace<IMITATED_NPC_DATA, ImitatedNpcDataHandler>();
+		emplace<RELOG_RESPONSE, RelogResponseHandler>();
+		emplace<LAST_CONNECTED_WORLD, LastConnectedWorldHandler>();
+		emplace<RECOMMENDED_WORLD_MESSAGE, RecommendedWorldMessageHandler>();
+		emplace<FORCED_STAT_SET, ForcedStatSetHandler>();
+		emplace<FORCED_STAT_RESET, ForcedStatResetHandler>();
+		emplace<SHOP_SCANNER_RESULT, ShopScannerResultHandler>();
+		emplace<FAMILY_PRIVILEGE_LIST, FamilyPrivilegeListHandler>();
+		emplace<FAMILY_REP_GAIN, FamilyRepGainHandler>();
+		emplace<FAMILY_SET_PRIVILEGE, FamilySetPrivilegeHandler>();
+		emplace<DATA_CRC_CHECK_FAILED, DataCrcCheckFailedHandler>();
+		emplace<QUICKSLOT_INIT, QuickslotInitHandler>();
+		emplace<ON_NOTIFY_HP_DEC_BY_FIELD, NotifyHpDecByFieldHandler>();
+		emplace<MAKER_RESULT, MakerResultHandler>();
+		emplace<MOVE_MONSTER_RESPONSE, MoveMonsterResponseHandler>();
+		emplace<SET_NPC_SCRIPTABLE, SetNpcScriptableHandler>();
+		emplace<CANNOT_SPAWN_KITE, CannotSpawnKiteHandler>();
+		emplace<SPAWN_KITE, SpawnKiteHandler>();
+		emplace<REMOVE_KITE, RemoveKiteHandler>();
+		emplace<MONSTER_CARNIVAL_SUMMON, MonsterCarnivalSummonHandler>();
+		emplace<MONSTER_CARNIVAL_DIED, MonsterCarnivalDiedHandler>();
+		emplace<WITCH_TOWER_SCORE_UPDATE, WitchTowerScoreHandler>();
+		emplace<SET_ITC, SetItcHandler>();
+		emplace<SUMMON_ITEM_INAVAILABLE, SummonItemUnavailableHandler>();
+		emplace<NPC_ACTION, NpcActionHandler>();
+		emplace<TOURNAMENT, TournamentHandler>();
+		emplace<TOURNAMENT_MATCH_TABLE, TournamentMatchTableHandler>();
+		emplace<TOURNAMENT_SET_PRIZE, TournamentSetPrizeHandler>();
+		emplace<TOURNAMENT_UEW, TournamentUewHandler>();
+		emplace<MTS_OPERATION2, MtsOperation2Handler>();
+		emplace<MTS_OPERATION, MtsOperationHandler>();
+		emplace<UPDATE_HPMPAALERT, UpdateHpMpAlertHandler>();
+		emplace<DPT_TRACKER, DptTrackerHandler>();
+		emplace<GUEST_ID_LOGIN, GuestIdLoginHandler>();
+		emplace<HOUR_CHANGED, HourChangedHandler>();
+		emplace<MINIMAP_ON_OFF, MinimapOnOffHandler>();
+		emplace<BONUS_EXP_CHANGED, BonusExpChangedHandler>();
+		emplace<PLAY_JUKEBOX, PlayJukeboxHandler>();
+		emplace<MARRIAGE_REQUEST, MarriageRequestHandler>();
+		emplace<MARRIAGE_RESULT, MarriageResultHandler>();
+		emplace<NOTIFY_MARRIED_PARTNER_MAP_TRANSFER, NotifyMarriedPartnerMapTransferHandler>();
+		emplace<WEDDING_PHOTO, WeddingPhotoHandler>();
+		emplace<SET_POTION_DISCOUNT_RATE, SetPotionDiscountRateHandler>();
+		emplace<IMITATED_NPC_RESULT, ImitatedNpcResultHandler>();
+		emplace<LIMITED_NPC_DISABLE_INFO, LimitedNpcDisableInfoHandler>();
+		emplace<PARTY_VALUE, PartyValueHandler>();
+		emplace<FIELD_SET_VARIABLE, FieldSetVariableHandler>();
+		emplace<DESTROY_SHOP_RESULT, DestroyShopResultHandler>();
+		emplace<RANDOM_MORPH_RES, RandomMorphResHandler>();
+		emplace<SET_MAP_OBJECT_VISIBLE, SetMapObjectVisibleHandler>();
+		emplace<CLEAR_BACK_EFFECT, ClearBackEffectHandler>();
+		emplace<GUILD_BBS_PACKET, GuildBbsHandler>();
+		emplace<SET_QUEST_CLEAR_FIELD, SetQuestClearHandler>();
+		emplace<SET_QUEST_TIME, SetQuestTimeHandler>();
+		emplace<WARN_MESSAGE, WarnMessageHandler>();
+		emplace<SET_OBJECT_STATE, SetObjectStateHandler>();
+		emplace<CHATTEXT1, ChatText1Handler>();
+		emplace<SHOW_CONSUME_EFFECT, ShowConsumeEffectHandler>();
+		emplace<SKILL_USE_RESULT, SkillUseResultHandler>();
+		emplace<CANCEL_NAME_CHANGE_BY_OTHER, CancelNameChangeByOtherHandler>();
+		emplace<CONSULT_AUTHKEY_UPDATE, ConsultAuthkeyUpdateHandler>();
+		emplace<CLASS_COMPETITION_AUTHKEY_UPDATE, ClassCompetitionAuthkeyUpdateHandler>();
+		emplace<WEB_BOARD_AUTHKEY_UPDATE, WebBoardAuthkeyUpdateHandler>();
+		emplace<OPEN_FULL_CLIENT_DOWNLOAD_LINK, OpenFullClientDownloadLinkHandler>();
+		emplace<CLAIM_AVAILABLE_TIME, ClaimAvailableTimeHandler>();
+		emplace<SET_BUY_EQUIP_EXT, SetBuyEquipExtHandler>();
+		emplace<GUILD_NAME_CHANGED, GuildNameChangedHandler>();
+		emplace<GUILD_MARK_CHANGED, GuildMarkChangedHandler>();
+		emplace<LUCKSACK_PASS, LucksackPassHandler>();
+		emplace<LUCKSACK_FAIL, LucksackFailHandler>();
+		emplace<MESO_BAG_MESSAGE, MesoBagMessageHandler>();
+		emplace<KOREAN_EVENT, KoreanEventHandler>();
+		emplace<RESET_MONSTER_ANIMATION, ResetMonsterAnimationHandler>();
+		emplace<ARIANT_THING, AriantThingHandler>();
+		emplace<SHOW_MAGNET, ShowMagnetHandler>();
+		emplace<ACCOUNT_INFO, AccountInfoHandler>();
+		emplace<CHANNEL_SELECTED, ChannelSelectedHandler>();
+		emplace<HACKSHIELD_REQUEST, HackshieldRequestHandler>();
+		emplace<CHECK_CRC_RESULT, CheckCrcResultHandler>();
+		emplace<KOREAN_INTERNET_CAFE_SHIT, KoreanInternetCafeHandler>();
 
 		// Player handlers
 		emplace<CHANGE_CHANNEL, ChangeChannelHandler>();
 		emplace<KEYMAP, KeymapHandler>();
+		emplace<AUTO_HP_POT, AutoHpPotHandler>();
+		emplace<AUTO_MP_POT, AutoMpPotHandler>();
 		emplace<SKILL_MACROS, SkillMacrosHandler>();
+		emplace<SHOW_COMBO, ShowComboHandler>();
 		emplace<CHANGE_STATS, ChangeStatsHandler>();
 		emplace<GIVE_BUFF, ApplyBuffHandler>();
 		emplace<CANCEL_BUFF, CancelBuffHandler>();
-		emplace<RECALCULATE_STATS, RecalculateStatsHandler>();
+		// D1（撞值 35）：RECALCULATE_STATS(:85) 与 FORCED_STAT_RESET(:299) 同值，handlers[] 是覆盖语义，
+		// 后注册的赢 ⇒ 原先这条把 :640 的 ForcedStatResetHandler 顶掉了。s9 在 35 上只发
+		// FORCED_STAT_RESET(0x23)（SendOpcode.java:62），没有 RECALCULATE_STATS 这个 SendOpcode；
+		// 而 ForcedStatResetHandler（WaveAShellHandlers.cpp:2672-2694）负责还原 g_forced_eq/ms 备份，
+		// 被顶掉时强制属性结束后属性不回弹。本行因此注销，枚举项保留作 v83 命名参考。
+		// 参照：本文件 :869 的调试名表本来就把 35 记成 "FORCED_STAT_RESET"。
 		emplace<UPDATE_SKILL, UpdateSkillHandler>();
 		emplace<ADD_COOLDOWN, AddCooldownHandler>();
 
@@ -291,8 +758,9 @@ namespace ms
 
 		// Cash Shop
 		emplace<SET_CASH_SHOP, SetCashShopHandler>();
+		emplace<QUERY_CASH_RESULT, QueryCashResultHandler>();
+		emplace<CASHSHOP_OPERATION, CashShopOperationHandler>();
 
-		// TODO: New handlers, they need coded and moved to a proper file.
 		emplace<CHECK_SPW_RESULT, CheckSpwResultHandler>();
 		emplace<FIELD_EFFECT, FieldEffectHandler>();
 

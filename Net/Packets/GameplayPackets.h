@@ -47,6 +47,16 @@ namespace ms
 		EnterCashShopPacket() : OutPacket(OutPacket::Opcode::ENTER_CASHSHOP) {}
 	};
 
+	// Opcode: CHANGE_CHANNEL(39 / 0x27) — s9 ChangeChannelHandler: byte channel
+	class ChangeChannelPacket : public OutPacket
+	{
+	public:
+		ChangeChannelPacket(uint8_t channel) : OutPacket(OutPacket::Opcode::CHANGE_CHANNEL)
+		{
+			write_byte(channel);
+		}
+	};
+
 	// Opcode: MOVE_PLAYER(41)
 	class MovePlayerPacket : public MovementPacket
 	{
@@ -229,11 +239,15 @@ namespace ms
 		PlayerMapTransferPacket() : OutPacket(OutPacket::Opcode::PLAYER_MAP_TRANSFER) {}
 	};
 
-	// Opcode: PLAYER_UPDATE(223)
-	class PlayerUpdatePacket : public OutPacket
+	// 历史误用：Opcode 223 实为 s9 PARTY_SEARCH_UPDATE（停止匹配）。
+	// 进图后勿再 dispatch；保留空类以免旧 include 断编译。
+	class PlayerUpdatePacket
 	{
 	public:
-		// Finished updating player stats
-		PlayerUpdatePacket() : OutPacket(OutPacket::Opcode::PLAYER_UPDATE) {}
+		PlayerUpdatePacket() = default;
+		void dispatch() const
+		{
+			/* no-op：禁止对 223 发空包，否则会注销 PartySearch */
+		}
 	};
 }

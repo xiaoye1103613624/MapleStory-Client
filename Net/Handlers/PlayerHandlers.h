@@ -91,6 +91,12 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// Opcode: SHOW_COMBO(225)
+	class ShowComboHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
 	// Notifies the client that a skill is on cool-down
 	// Opcode: ADD_COOLDOWN(234)
 	class AddCooldownHandler : public PacketHandler
@@ -101,6 +107,17 @@ namespace ms
 	// Parses key mappings and sends them to the keyboard
 	// Opcode: KEYMAP(335)
 	class KeymapHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 sendAutoHpPot / sendAutoMpPot → AUTO_HP_POT(336) / AUTO_MP_POT(337)：int itemId
+	class AutoHpPotHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class AutoMpPotHandler : public PacketHandler
 	{
 		void handle(InPacket& recv) const override;
 	};
