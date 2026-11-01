@@ -60,6 +60,13 @@ namespace ms
 		// Prefix an id with zeros so that it has the minimum specified length
 		std::string extend_id(int32_t id, size_t length);
 
+		// Skill.nx / Skill.wz 的命名空间目录名 = 技能 id 去掉末 4 位（不足 3 位补零）。
+		// 7 位 id 得到 3 位（冒险家 110.img、211.img），8 位 id 得到 4 位
+		// （骑士团 1000.img、战神 2112.img），4 位的新手 id 得到 000.img。
+		// 证据：BeiDou-Server_s9 client/Skill.java:37 `this.job = id / 10000`
+		//       + wz/Skill.wz 目录清单（100..522 三位、1000..2112 四位、000 新手）。
+		std::string skill_namespace(int32_t skillid);
+
 		// Pad a string with leading zeros to a specified length
 		std::string pad_string(std::string str, size_t length);
 

@@ -64,11 +64,15 @@ namespace ms
 			for (uint8_t j = 0; j < length; j++)
 			{
 				int32_t damage = recv.read_int();
-				bool critical = false; // TODO: ?
-				auto singledamage = std::make_pair(damage, critical);
-				attack.damagelines[oid].push_back(singledamage);
+				// V83+：最高位标记暴击；绝对值写入飘字
+				bool critical = (damage < 0);
+				if (critical)
+					damage &= 0x7FFFFFFF;
+				attack.damagelines[oid].push_back({ damage, critical });
 			}
 		}
+		while (recv.available())
+			recv.skip_byte();
 
 		Stage::get().get_combat().push_attack(attack);
 	}

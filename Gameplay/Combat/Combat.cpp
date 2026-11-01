@@ -21,10 +21,30 @@
 #include "../../IO/Messages.h"
 
 #include "../../Net/Packets/AttackAndSkillPackets.h"
+#include "../../Net/Packets/AranPackets.h"
 #include "../../Net/Packets/GameplayPackets.h"
 
 namespace ms
 {
+	namespace
+	{
+		// 职业门照抄服务端 GameConstants.isAran（GameConstants.java:513-515）。
+		// 本 fork 的战神 id 是 2000 / 2100..2112，技能 id 也是 21xxxxxx 前缀
+		// （Aran.java:29 COMBO_ABILITY = 21000000），不是标准 v83 的 22xx——
+		// 客户端若按 22xx 判定，服务端 AranComboHandler 会整包忽略，连击永远不涨。
+		bool is_arleg(uint16_t job)
+		{
+			return job == 2000 || (job >= 2100 && job <= 2112);
+		}
+
+		// s9 RangedAttackHandler:97-105：Combo Smash / Fenrir / Tempest 命中时服务端
+		// 直接 setCombo(0) 清空连击，这三个技能自己不能再补发计数包。
+		bool is_combo_finisher(int32_t skillid)
+		{
+			return skillid == 21100004 || skillid == 21110004 || skillid == 21120006;
+		}
+	}
+
 	Combat::Combat(Player& in_player, MapChars& in_chars, MapMobs& in_mobs, MapReactors& in_reactors) : player(in_player), chars(in_chars), mobs(in_mobs), reactors(in_reactors),
 		attackresults([&](const AttackResult& attack) { apply_attack(attack); }),
 		bulleteffects([&](const BulletEffect& effect) { apply_bullet_effect(effect); }),
@@ -132,7 +152,11 @@ namespace ms
 			}
 
 			// This approach should also make it easier to implement PvP
-			uint8_t mobcount = attack.mobcount;
+			// 一次攻击能报给服务端的怪物数受封包格式限制：numAttackedAndDamage 的高 4 位
+			// 只能写 0-15（s9 AbstractDealDamageHandler.java:688）。本客户端 Skill.nx 里
+			// mobCount 最大是 30（竹林 0001009 / 10001009 / 20001009），不钳就会把怪物数写成
+			// (30 << 4) & 0xFF = 0，服务端一个伤害块都不读，伤害全丢。
+			uint8_t mobcount = attack.mobcount > 15 ? 15 : attack.mobcount;
 			AttackResult result = attack;
 
 			MapObjects* mob_objs = mobs.get_mobs();
@@ -149,6 +173,18 @@ namespace ms
 			apply_result_movement(move, result);
 
 			AttackPacket(result).dispatch();
+
+			// 战神连击由攻击命中驱动：服务端 AranComboHandler 每收到一个空的
+			// ARAN_COMBO_COUNTER(0xA3) 就把连击 +1（距上次超过 3000ms 先归零，
+			// 每满 10 层按 Combo Ability 等级发 ARAN_COMBO buff），计数再由
+			// SHOW_COMBO(0xE1) 回推给 UIComboCounter——所以这里只发包，本地不猜数。
+			// 一次攻击命中几只怪就发几包（result.damagelines 每个 oid 一条）。
+			if (result.mobcount > 0 && is_arleg(player.get_stats().get_job().get_id())
+				&& !is_combo_finisher(result.skill))
+			{
+				for (uint8_t i = 0; i < result.mobcount; i++)
+					AranComboPacket().dispatch();
+			}
 
 			if (reactor_targets.size())
 				if (Optional<Reactor> reactor = reactor_objs->get(reactor_targets.at(0)))

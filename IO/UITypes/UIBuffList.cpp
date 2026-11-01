@@ -17,8 +17,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIBuffList.h"
 
+#include "UISoftKey.h"
+
+#include "../UI.h"
 #include "../../Configuration.h"
 #include "../../Data/ItemData.h"
+#include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/Misc.h"
 
 #include <cstdio>
@@ -44,7 +48,7 @@ namespace ms
 		if (buffid >= 0)
 		{
 			std::string strid = string_format::extend_id(buffid, 7);
-			nl::node src = nl::nx::Skill[strid.substr(0, 3) + ".img"]["skill"][strid];
+			nl::node src = nl::nx::Skill[string_format::skill_namespace(buffid) + ".img"]["skill"][strid];
 			icon = src["icon"];
 		}
 		else
@@ -197,6 +201,40 @@ namespace ms
 		return TYPE;
 	}
 
+	void UIBuffList::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) return;
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				try {
+					int32_t id = std::stoi(s);
+					if (id != 0)
+						add_buff(id, 60000);
+				} catch (...) {
+					if (!s.empty()) {
+						NpcTalkMorePacket(s).dispatch();
+						LOG(LOG_DEBUG, "UIBuffList: SoftKey NpcTalkMore len=" << s.size());
+					}
+				}
+			}, []() {}, "Buff id");
+		}
+		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				try {
+					int32_t id = std::stoi(s);
+					auto it = icons.find(id);
+					if (it != icons.end()) {
+						icons.erase(it);
+						LOG(LOG_DEBUG, "UIBuffList: SoftKey clear id=" << id);
+					}
+				} catch (...) {}
+			}, []() {}, "Clear buff id");
+		}
+	}
+
 	void UIBuffList::add_buff(int32_t buffid, int32_t duration)
 	{
 		icons.emplace(
@@ -204,5 +242,10 @@ namespace ms
 			std::forward_as_tuple(buffid),
 			std::forward_as_tuple(buffid, duration, show_timer)
 		);
+	}
+
+	void UIBuffList::remove_buff(int32_t buffid)
+	{
+		icons.erase(buffid);
 	}
 }

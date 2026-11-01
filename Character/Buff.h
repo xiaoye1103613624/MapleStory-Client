@@ -94,11 +94,21 @@ namespace ms
 			MONSTER_RIDING,
 			HOMING_BEACON,
 			SPEED_INFUSION,
+			// 服务端 BuffStat.java:105-106 有、客户端表里缺位的两个法师位：
+			// MAGIC_SHIELD(0x400000000) / MAGIC_RESISTANCE(0x800000000)。
+			// 追加在 LENGTH 之前，既有枚举编号不受影响（表按名字键入）。
+			MAGIC_SHIELD,
+			MAGIC_RESISTANCE,
 			LENGTH
 		};
 
 		extern const std::unordered_map<Id, uint64_t> first_codes;
 		extern const std::unordered_map<Id, uint64_t> second_codes;
+
+		// 单个掩码位 → 枚举；查不到返回 NONE（该位仍要按 1 个数据块消费）。
+		// first 决定查哪半张表：两半表在同一位上会各有一个枚举（如 first 的
+		// ARAN_COMBO 与 second 的 ACC 同为 0x1000000000），必须分半解析。
+		Id by_code(uint64_t code, bool first);
 	}
 
 	struct Buff

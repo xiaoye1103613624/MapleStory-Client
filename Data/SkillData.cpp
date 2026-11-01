@@ -30,7 +30,7 @@ namespace ms
 	{
 		/// Locate sources
 		std::string strid = string_format::extend_id(id, 7);
-		std::string jobid = strid.substr(0, 3);
+		std::string jobid = string_format::skill_namespace(id);
 		nl::node src = nl::nx::Skill[jobid + ".img"]["skill"][strid];
 		nl::node strsrc = nl::nx::String["Skill.img"][strid];
 
@@ -82,7 +82,20 @@ namespace ms
 
 		masterlevel = static_cast<int32_t>(stats.size());
 		passive = (id % 10000) / 1000 == 0;
-		flags = flags_of(id);
+
+		// 攻击位优先按节点属性推断：带 hit（受击帧）或 ball（弹道）的技能一定造成伤害，
+		// 这与 s9 client/SkillFactory.java 判定 buff 的取反条件 `effect != null
+		// && hit == null && ball == null` 完全对应。原来的硬编码表只覆盖到冒险家战士/法师
+		// 的一部分，弓箭手（21x/22x/31x/32x）、海盗（51x/52x）、骑士团（1xxx）与战神（2xxx）
+		// 全部落到 NONE —— is_attack() 为假后走 UseSkillPacket 分支，攻击动作与伤害整条
+		// 链路都不执行，表现为这些职业的技能「按了没反应」。
+		// 表仍保留，兜住 Slow/Seal 这类没有 hit/ball 却要靠攻击包下发减益的例外技能。
+		int32_t inferred = NONE;
+
+		if (src["hit"].size() > 0 || src["ball"].size() > 0)
+			inferred = ATTACK;
+
+		flags = inferred | flags_of(id);
 		invisible = src["invisible"].get_bool();
 
 		/// Load required skills
@@ -142,7 +155,7 @@ namespace ms
 			{ SkillId::POISON_BREATH, ATTACK | RANGED },
 			// F/P ArchMage
 			{ SkillId::EXPLOSION, ATTACK },
-			{ SkillId::POISON_BREATH, ATTACK },
+			{ SkillId::POISON_MIST, ATTACK },
 			{ SkillId::SEAL_FP, ATTACK },
 			{ SkillId::ELEMENT_COMPOSITION_FP, ATTACK | RANGED },
 			// TODO: Blank?

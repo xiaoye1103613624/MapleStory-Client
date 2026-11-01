@@ -26,6 +26,8 @@ namespace ms
 			{ Id::DASH2, 0x8000000000000L },
 			{ Id::DASH, 0x10000000000000L },
 			{ Id::ELEMENTAL_RESET, 0x200000000L },
+			{ Id::MAGIC_SHIELD, 0x400000000L },
+			{ Id::MAGIC_RESISTANCE, 0x800000000L },
 			{ Id::ARAN_COMBO, 0x1000000000L },
 			{ Id::COMBO_DRAIN, 0x2000000000L },
 			{ Id::COMBO_BARRIER, 0x4000000000L },
@@ -34,8 +36,8 @@ namespace ms
 			{ Id::PYRAMID_PQ, 0x20000000000L },
 			{ Id::ENERGY_CHARGE, 0x4000000000000L },
 			{ Id::MONSTER_RIDING, 0x20000000000000L },
-			{ Id::HOMING_BEACON, 0x80000000000000L },
-			{ Id::SPEED_INFUSION, 0x100000000000000L }
+			{ Id::SPEED_INFUSION, 0x40000000000000L },
+			{ Id::HOMING_BEACON, 0x80000000000000L }
 		};
 
 		const std::unordered_map<Id, uint64_t> second_codes =
@@ -53,6 +55,7 @@ namespace ms
 			{ Id::HAMSTRING, 0x800 },
 			{ Id::BLIND, 0x1000 },
 			{ Id::CONCENTRATE, 0x2000 },
+			{ Id::PUPPET, 0x4000 },
 			{ Id::ECHO_OF_HERO, 0x8000 },
 			{ Id::GHOST_MORPH, 0x20000 },
 			{ Id::AURA, 0x40000 },
@@ -61,7 +64,6 @@ namespace ms
 			{ Id::DIVINE_BODY, 0x10000000 },
 			{ Id::SPARK, 0x20000000L },
 			{ Id::FINALATTACK, 0x80000000L },
-			{ Id::BATTLESHIP, 0xA00000040L },
 			{ Id::WATK, 0x100000000L },
 			{ Id::WDEF, 0x200000000L },
 			{ Id::MATK, 0x400000000L },
@@ -69,7 +71,6 @@ namespace ms
 			{ Id::ACC, 0x1000000000L },
 			{ Id::AVOID, 0x2000000000L },
 			{ Id::HANDS, 0x4000000000L },
-			{ Id::SHOWDASH, 0x4000000000L },
 			{ Id::SPEED, 0x8000000000L },
 			{ Id::JUMP, 0x10000000000L },
 			{ Id::MAGIC_GUARD, 0x20000000000L },
@@ -85,16 +86,36 @@ namespace ms
 			{ Id::SEAL, 0x8000000000000L },
 			{ Id::DARKNESS, 0x10000000000000L },
 			{ Id::COMBO, 0x20000000000000L },
-			{ Id::SUMMON, 0x20000000000000L },
 			{ Id::WK_CHARGE, 0x40000000000000L },
 			{ Id::DRAGONBLOOD, 0x80000000000000L },
 			{ Id::HOLY_SYMBOL, 0x100000000000000L },
 			{ Id::MESOUP, 0x200000000000000L },
 			{ Id::SHADOWPARTNER, 0x400000000000000L },
 			{ Id::PICKPOCKET, 0x800000000000000L },
-			{ Id::PUPPET, 0x800000000000000L },
 			{ Id::MESOGUARD, 0x1000000000000000L },
 			{ Id::WEAKEN, 0x4000000000000000L }
 		};
+
+		// 表与 s9 client/BuffStat.java 逐位对齐后修的四处置位：
+		//  1) PUPPET 服务端是 0x4000，客户端原挂在 0x800000000000000（那是 PICKPOCKET 位），
+		//     且与 PICKPOCKET 同值——同一位匹配到两个枚举就会把 10 字节数据块读两遍，
+		//     之后所有 buff 全体错位。同理删掉与 HANDS 同值的 SHOWDASH、
+		//     与 COMBO 同值的 SUMMON（服务端 COMBO=SUMMON=0x20000000000000 本就撞位）。
+		//  2) BATTLESHIP 的 0xA00000040 是「多位的合成值」，服务端从不这样写；
+		//     留在表里会让任何带 MANA_REFLECTION/WDEF/MDEF 的包被误判成额外一块。
+		//  3) SPEED_INFUSION 服务端为 0x40000000000000，客户端多左移了两位。
+		//  4) 补上服务端存在而客户端缺位的 MAGIC_SHIELD / MAGIC_RESISTANCE。
+		// 缺位比错位更隐蔽：服务端照样写数据块，客户端不认就会少读 10 字节，
+		// 因此解析改成「按掩码位消费」，表只负责把位翻译成枚举（见 BuffHandler::handle）。
+		Id by_code(uint64_t code, bool first)
+		{
+			const auto& codes = first ? first_codes : second_codes;
+
+			for (const auto& iter : codes)
+				if (iter.second == code)
+					return iter.first;
+
+			return Id::NONE;
+		}
 	}
 }

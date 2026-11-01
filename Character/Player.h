@@ -84,6 +84,10 @@ namespace ms
 		void cancel_buff(Buffstat::Id stat);
 		// Return whether the buff is active
 		bool has_buff(Buffstat::Id stat) const;
+		// Current buff value (0 if inactive)
+		int16_t get_buff_value(Buffstat::Id stat) const;
+		// Skill id attached to active buff (0 if none)
+		int32_t get_buff_skillid(Buffstat::Id stat) const;
 
 		// Change a skill
 		void change_skill(int32_t skill_id, int32_t level, int32_t masterlevel, int64_t expiration);

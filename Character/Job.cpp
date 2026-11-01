@@ -34,7 +34,10 @@ namespace ms
 		id = i;
 		name = get_name(id);
 
-		if (id == 0)
+		if (id == 0 || id == 1000 || id == 2000)
+			// 三个家族的初心者：冒险家 0、骑士团 1000、战神 2000。
+			// 证据：BeiDou-Server_s9 client/Character.java:5920 isBeginnerJob()
+			// 原来只看 id % 100 == 0，把 1000/2000 当成一转，家族共享技能因此判定不可用。
 			level = Level::BEGINNER;
 		else if (id % 100 == 0)
 			level = Level::FIRST;
@@ -77,7 +80,9 @@ namespace ms
 			switch (lv)
 			{
 				case Level::BEGINNER:
-					return 0;
+					// 家族初心者命名空间 = 职业 id 去掉千位以下：冒险家 0、骑士团 1000、
+					// 战神 2000。can_use() 用它放行 000.img / 1000.img / 2000.img 的家族技能。
+					return (id / 1000) * 1000;
 				case Level::FIRST:
 					return (id / 100) * 100;
 				case Level::SECOND:
@@ -115,6 +120,9 @@ namespace ms
 	// 0x2c9a8 无影人 / 0x2c9b0 隐士 / 0x2c9b8 侠客 / 0x2c9c0 独行客 / 0x2c9c8 侠盗 /
 	// 0x2c9d0 拳手 / 0x2c9d8 斗士 / 0x2c9e0 冲锋队长 / 0x2c9ec 火枪手 / 0x2c9f4 大副 /
 	// 0x2c9fc 船长 / 0x2ca04 初心者。
+	// 骑士团（1000..1512）与战神（2000..2112）在这张表里没有对应项（参考端只到冒险家），
+	// 名称取对端服务端的中文 i18n：BeiDou-Server_s9 gms-server/src/main/resources/
+	// i18n/message_zh_CN.properties 的 job.name.<id> 项。
 	std::string Job::get_name(uint16_t jid) const
 	{
 		switch (jid)
@@ -206,26 +214,58 @@ namespace ms
 			case 1000:
 				return "初心者";
 			case 1100:
+				return "魂骑士(1转)";
 			case 1110:
+				return "魂骑士(2转)";
 			case 1111:
+				return "魂骑士(3转)";
 			case 1112:
+				return "魂骑士(4转)";
 			case 1200:
+				return "炎术士(1转)";
 			case 1210:
+				return "炎术士(2转)";
 			case 1211:
+				return "炎术士(3转)";
 			case 1212:
+				return "炎术士(4转)";
 			case 1300:
+				return "风灵使者(1转)";
 			case 1310:
+				return "风灵使者(2转)";
 			case 1311:
+				return "风灵使者(3转)";
 			case 1312:
+				return "风灵使者(4转)";
 			case 1400:
+				return "夜行者(1转)";
 			case 1410:
+				return "夜行者(2转)";
 			case 1411:
+				return "夜行者(3转)";
 			case 1412:
+				return "夜行者(4转)";
 			case 1500:
+				return "奇袭者(1转)";
 			case 1510:
+				return "奇袭者(2转)";
 			case 1511:
+				return "奇袭者(3转)";
 			case 1512:
-				return "骑士团";
+				return "奇袭者(4转)";
+			case 2000:
+				return "战童";
+			case 2001:
+				return "龙初心";
+			case 2100:
+				return "战神(1转)";
+			case 2110:
+				return "战神(2转)";
+			case 2111:
+				return "战神(3转)";
+			case 2112:
+				return "战神(4转)";
+			case 800:
 			case 900:
 			case 910:
 				return "管理员";

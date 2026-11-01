@@ -52,4 +52,11 @@ namespace ms
 	public:
 		MagicAttackHandler() : AttackHandler(Attack::Type::MAGIC) {}
 	};
+
+	// s9 ENERGY_ATTACK(189) — 同 close-range 布局，走 CLOSE 解析
+	class EnergyAttackHandler : public AttackHandler
+	{
+	public:
+		EnergyAttackHandler() : AttackHandler(Attack::Type::CLOSE) {}
+	};
 }

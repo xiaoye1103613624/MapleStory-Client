@@ -41,6 +41,13 @@ namespace ms
 			return pad_string(std::to_string(id), length);
 		}
 
+		std::string skill_namespace(int32_t skillid)
+		{
+			// 末尾补 0 到 3 位：新手（Beginner）技能 id 本身就是 4 位（0001000 Three Snails
+			// 按整数存成 1000），除以 10000 得到 0，不补零会去找不存在的 "0.img"。
+			return pad_string(std::to_string(skillid / 10000), 3);
+		}
+
 		std::string pad_string(std::string str, size_t length)
 		{
 			if (str.size() < length)

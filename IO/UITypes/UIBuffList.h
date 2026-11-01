@@ -75,10 +75,12 @@ namespace ms
 		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		Cursor::State send_cursor(bool pressed, Point<int16_t> position) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 
 		UIElement::Type get_type() const override;
 
 		void add_buff(int32_t buffid, int32_t duration);
+		void remove_buff(int32_t buffid);
 
 	private:
 		std::unordered_map<int32_t, BuffIcon> icons;
