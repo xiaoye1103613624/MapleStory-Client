@@ -50,6 +50,9 @@ namespace ms
 		void change_tab(InventoryType::Id type);
 		void clear_new();
 
+		int16_t get_selected_slot() const { return selected_slot; }
+		InventoryType::Id get_tab() const { return tab; }
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -79,6 +82,9 @@ namespace ms
 			void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const override;
 			void set_count(int16_t count) override;
 			Icon::IconType get_type() override;
+			int16_t get_inventory_slot() const override { return source; }
+			int32_t get_item_id() const override { return item_id; }
+			InventoryType::Id get_inventory_tab() const override { return sourcetab; }
 
 		private:
 			InventoryType::Id sourcetab;
@@ -128,6 +134,10 @@ namespace ms
 		Animation newitemslot;
 		Animation newitemtaben;
 		Animation newitemtabdis;
+		// v83 tab 底衬 = New/Tab0(gray)/Tab1(pink) plate (the button); the 装备/消耗/...
+		// labels are separate text-only sprites drawn on top, selected->enabled(white).
+		Texture tabtext_en[5];
+		Texture tabtext_dis[5];
 		Texture projectile;
 		Texture disabled;
 		Text mesolabel;
@@ -140,6 +150,7 @@ namespace ms
 		InventoryType::Id tab;
 		InventoryType::Id newtab;
 		int16_t newslot;
+		int16_t selected_slot = 0;
 		int16_t slot_col;
 		int16_t slot_row;
 		int16_t slot_space_x;

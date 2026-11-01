@@ -44,6 +44,10 @@ namespace ms
 
 		void update_stats(int32_t character_id, int16_t job_id, uint16_t level, int16_t fame, std::string guild, std::string alliance);
 
+		int32_t get_target_cid() const { return target_cid; }
+		std::string get_target_name() const;
+		void update_extras(int pet_count, int wish_count, int32_t book_cards, int32_t medal_id, bool married = false);
+
 	private:
 		void show_bottom_window(uint16_t buttonid);
 		void show_right_window(uint16_t buttonid);
@@ -80,6 +84,7 @@ namespace ms
 		Text alliance;
 
 		Char* target_character;
+		int32_t target_cid;
 
 		/// Sub Windows
 		Point<int16_t> bottom_window_adj;

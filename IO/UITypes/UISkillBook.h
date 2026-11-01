@@ -25,6 +25,9 @@
 
 #include "../../Character/CharStats.h"
 #include "../../Character/SkillBook.h"
+#include "../../Graphics/Text.h"
+
+#include <array>
 
 namespace ms
 {
@@ -38,6 +41,7 @@ namespace ms
 		UISkillBook(const CharStats& stats, const SkillBook& skillbook);
 
 		void draw(float alpha) const override;
+		bool send_icon(const Icon& icon, Point<int16_t> cursor_position) override;
 
 		void toggle_active() override;
 		void doubleclick(Point<int16_t> cursorpos) override;
@@ -50,6 +54,8 @@ namespace ms
 		void update_stat(MapleStat::Id stat, int16_t value);
 		void update_skills(int32_t skill_id);
 		bool is_skillpoint_enabled();
+		void refresh_macros();
+		int32_t get_selected_skill_id() const { return selected_skill_id; }
 
 	protected:
 		Button::State button_pressed(uint16_t id) override;
@@ -67,6 +73,7 @@ namespace ms
 			void set_count(int16_t) override {}
 			void set_state(StatefulIcon::State) override {}
 			Icon::IconType get_type() override;
+			int32_t get_skill_id() const override { return skill_id; }
 
 		private:
 			int32_t skill_id;
@@ -75,7 +82,9 @@ namespace ms
 		class SkillDisplayMeta
 		{
 		public:
-			SkillDisplayMeta(int32_t id, int32_t level);
+			// classic：v83 经典窗用纯黑技能名（原生截图逐像素实测），
+			//         现代窗沿用上游的 EMPEROR 灰。
+			SkillDisplayMeta(int32_t id, int32_t level, bool classic);
 
 			void draw(const DrawArgument& args) const;
 
@@ -153,10 +162,34 @@ namespace ms
 		static constexpr int16_t ROW_HEIGHT = 40;
 		static constexpr int16_t ROW_WIDTH = 143;
 		static constexpr Point<int16_t> SKILL_OFFSET = Point<int16_t>(11, 93);
-		// v83 经典窗单列技能行基准（列表区顶 y=87，见 r05-ui-layout.md §3）。
-		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(10, 87);
-		// v83 经典窗列表区实测 y=87..257（170px），行高 40 → 可见 4 行。
+		// v83 经典窗单列技能行基准：行底左上角实测 (7,99)（打开了S-E-I-K页面.png，
+		// 行框 y=99/139/179/219，pitch 40；行右缘 x=148 → 左缘 148-141=7）。
+		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(7, 99);
+		// v83 经典窗列表区实测 y=99..253（154px），行高 40 → 可见 4 行。
 		static constexpr int16_t CLASSIC_ROWS = 4;
+		// 行内 SP 升级「+」钮相对行起点的偏移：实测 + 号框左上角 (132,119)。
+		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(125, 20);
+		// 顶部职业 tab 条：5 个 33px 槽位，槽0中心 x=21、条竖直中心 y=34
+		// （新手圆点图标实测左上角 (16,29)，10x11 → 中心 (21,34)）。
+		static constexpr int16_t TAB_SLOT0_CENTER = 21;
+		static constexpr int16_t TAB_SLOT_PITCH = 33;
+		static constexpr int16_t TAB_CENTER_Y = 34;
+		// 选中页的桃色横幅 = UIWindow.img/Skill/recommend/0（105x35，origin (16,0)）。
+		// 实测（r15，参考截图 打开了S-E-I-K页面.png，窗口原点标定见 evidence/w9-skill/coords-r15.md）：
+		// 橙色描边左缘 x4、右缘 x108（宽 105 ✓），上描边 y22、下描边 y56（高 35 ✓）。
+		static constexpr Point<int16_t> RECOMMEND_TOPLEFT = Point<int16_t>(4, 22);
+		// 书页图标 = Skill/<job>.img/info/icon（26x30，origin (-4,-1)），原生落在横幅左段：
+		// 黑色轮廓左列 x323-309=14、上列 y27-2=25，轮廓在位图内缩 1px → 位图左上 (13,25)。
+		static constexpr Point<int16_t> BOOK_TOPLEFT = Point<int16_t>(13, 25);
+		// 书名（String/Skill.img/<job>/bookName）左对齐贴在书封暗条左缘：
+		// 截图-贴图差分得墨迹 x6..59、y76..85；A11M 字形顶 = 绘制点 + 6 → 绘制点 (5,70)。
+		static constexpr Point<int16_t> BOOK_TEXT_TOPLEFT = Point<int16_t>(5, 70);
+		// 宏指令钮（Basic.img/BtMacro 48x18）：实测左上角 (121,265)。
+		static constexpr Point<int16_t> MACRO_BTN_TOPLEFT = Point<int16_t>(121, 265);
+		// 滚动条：Basic.img/VScr（宽12）prev/next 钮实测左上角 x=156、顶 y=100、底 y=242。
+		static constexpr int16_t CLASSIC_SLIDER_X = 156;
+		static constexpr int16_t CLASSIC_SLIDER_TOP = 100;
+		static constexpr int16_t CLASSIC_SLIDER_BOTTOM = 242;
 		static constexpr Point<int16_t> SKILL_META_OFFSET = Point<int16_t>(2, 2);
 		static constexpr Point<int16_t> LINE_OFFSET = Point<int16_t>(0, 37);
 
@@ -168,6 +201,8 @@ namespace ms
 		Texture skilld;
 		Texture skillb;
 		Texture line;
+		// 经典窗选中页横幅（Skill/recommend/0）；现代窗无此件，保持无效贴图即不画。
+		Texture recommend;
 		Texture bookicon;
 		Text booktext;
 		Text splabel;
@@ -182,6 +217,7 @@ namespace ms
 
 		std::vector<SkillDisplayMeta> skills;
 		bool grabbing;
+		int32_t selected_skill_id = 0;
 
 		Point<int16_t> bg_dimensions;
 
@@ -194,6 +230,7 @@ namespace ms
 		Texture macro_backgrnd;
 		Texture macro_backgrnd2;
 		Texture macro_backgrnd3;
+		std::array<Text, 5> macro_labels;
 
 		bool sp_enabled;
 		Texture sp_backgrnd;

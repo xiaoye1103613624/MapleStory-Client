@@ -16,7 +16,11 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.	//
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIMonsterBook.h"
+#include "UISoftKey.h"
+#include "../UI.h"
+#include "UIMiscShells.h"
 
+#include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MonsterBookPackets.h"
@@ -44,6 +48,10 @@ namespace ms
 		total_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "")
 	{
 		dimension = Point<int16_t>(400, 480);
+		// UIWindow Book 节点（≠ MonsterBook）作为并排参考壳
+		auto book = UI::get().get_element<UIBook>();
+		if (!book) book = UI::get().emplace<UIBook>();
+		else if (!book->is_active()) book->makeactive();
 
 #ifdef USE_NX
 		nl::node panel = nl::nx::UI["UIWindow.img"]["MonsterBook"]["backgrnd"];
@@ -54,9 +62,7 @@ namespace ms
 			dimension = background.get_dimensions();
 		}
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		if (close)
 			buttons[Buttons::BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(dimension.x() - 21, 6));
@@ -129,6 +135,7 @@ namespace ms
 				int16_t row = local.y() / row_h;
 				if (row >= 0 && row < static_cast<int16_t>(cards.size()))
 				{
+					selected_card_id = cards[row].id;
 					MonsterBookSetCoverPacket(cards[row].id).dispatch();
 					cover_label.change_text("Cover: " + monster_name(cards[row].id));
 				}
@@ -136,6 +143,56 @@ namespace ms
 		}
 
 		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UIMonsterBook::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (pressed && escape) { deactivate(); return; }
+		if (!pressed) return;
+		if (keycode == 'C' || keycode == 'c') {
+			if (selected_card_id > 0) {
+				MonsterBookSetCoverPacket(selected_card_id).dispatch();
+				cover_label.change_text("Cover: " + monster_name(selected_card_id));
+				LOG(LOG_DEBUG, "UIMonsterBook: cover selected=" << selected_card_id);
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					try {
+						int32_t id = std::stoi(s);
+						if (id > 0) {
+							selected_card_id = static_cast<int16_t>(id);
+							MonsterBookSetCoverPacket(selected_card_id).dispatch();
+							cover_label.change_text("Cover id=" + s);
+							LOG(LOG_DEBUG, "UIMonsterBook: SoftKey cover=" << id);
+						}
+					} catch (...) {}
+				}, []() {}, "Cover card id");
+			}
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			reload();
+			LOG(LOG_DEBUG, "UIMonsterBook: reload");
+		}
+		else if (keycode == 'S' || keycode == 's')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				if (s.empty()) return;
+				for (const auto& card : cards)
+				{
+					std::string nm = monster_name(card.id);
+					if (std::to_string(card.id) == s ||
+						(!nm.empty() && nm.find(s) != std::string::npos))
+					{
+						cover_label.change_text(nm.empty()
+							? ("#" + std::to_string(card.id))
+							: nm);
+						LOG(LOG_DEBUG, "UIMonsterBook: SoftKey find id=" << card.id);
+						return;
+					}
+				}
+				cover_label.change_text("Not found");
+			}, []() {}, "card id|name");
+		}
 	}
 
 	UIElement::Type UIMonsterBook::get_type() const

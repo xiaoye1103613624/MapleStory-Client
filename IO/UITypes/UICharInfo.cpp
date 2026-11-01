@@ -21,10 +21,25 @@
 
 #include "../../Gameplay/Stage.h"
 
+#include "../../Net/Packets/BuddyPackets.h"
+#include "../../Net/Packets/CashItemPackets.h"
+#include "../../Net/Packets/FamilyPackets.h"
+#include "../../Net/Packets/MessagingPackets.h"
+#include "../../Net/Packets/MessengerPackets.h"
+#include "../../Net/Packets/PartyPackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
+#include "../../Net/Packets/PlayerPackets.h"
+#include "../../Net/Packets/TradePackets.h"
+#include "../../Character/Inventory/InventoryType.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
 #include "../UI.h"
+#include "UIFamily.h"
+#include "UIHelp.h"
+#include "UIItemInventory.h"
+#include "UIMiscShells.h"
 #include "UIMonsterBook.h"
+#include "UISoftKey.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -32,11 +47,9 @@
 
 namespace ms
 {
-	UICharInfo::UICharInfo(int32_t cid) : UIDragElement<PosCHARINFO>(), is_loading(true), timestep(Constants::TIMESTEP), personality_enabled(false), collect_enabled(false), damage_enabled(false), item_enabled(false)
+	UICharInfo::UICharInfo(int32_t cid) : UIDragElement<PosCHARINFO>(), is_loading(true), timestep(Constants::TIMESTEP), personality_enabled(false), collect_enabled(false), damage_enabled(false), item_enabled(false), target_cid(cid)
 	{
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		nl::node UserInfo = UiAssetResolve::window("UserInfo");
 		nl::node character = UserInfo["character"] ? UserInfo["character"] : UserInfo;
@@ -86,7 +99,7 @@ namespace ms
 		guild = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
 		alliance = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
 
-		// TODO: Check if player has a mount or pet, disable if they don't
+		// 坐骑外观未暴露：Ride 保持禁用；Pet 在 load_target 后按 has_pet 切换
 		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
 			it->second->set_state(Button::State::DISABLED);
 		if (auto it = buttons.find(Buttons::BtRide); it != buttons.end() && it->second)
@@ -195,6 +208,10 @@ namespace ms
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		target_character = Stage::get().get_character(cid).get();
+		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
+			it->second->set_state(
+				(target_character && target_character->has_pet())
+					? Button::State::NORMAL : Button::State::DISABLED);
 
 		CharInfoRequestPacket(cid).dispatch();
 	}
@@ -311,9 +328,27 @@ namespace ms
 				return Button::State::NORMAL;
 			}
 			case Buttons::BtFamily:
+			{
+				int32_t self = Stage::get().get_player().get_oid();
+				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (target_cid > 0 && target_cid != self && !n.empty()) {
+					FamilyAddPacket(n).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: FamilyAdd name=" << n);
+				} else {
+					OpenFamilyPacket().dispatch();
+					UI::get().emplace<UIFamily>();
+					LOG(LOG_DEBUG, "UICharInfo: Family open");
+				}
+				return Button::State::NORMAL;
+			}
 			case Buttons::BtParty:
 			{
-				break;
+				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (!n.empty()) {
+					PartyInvitePacket(n).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: PartyInvite name=" << n);
+				}
+				return Button::State::NORMAL;
 			}
 			case Buttons::BtItem:
 			{
@@ -337,11 +372,108 @@ namespace ms
 
 				return Button::State::NORMAL;
 			}
-			case Buttons::BtPopDown:
-			case Buttons::BtPopUp:
-			case Buttons::BtTrad:
 			case Buttons::BtFriend:
+			{
+				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (!n.empty()) {
+					BuddyAddPacket(n, "Default Group").dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: BuddyAdd name=" << n);
+				}
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtTrad:
+			{
+				if (target_cid > 0) {
+					TradeInvitePacket(target_cid).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: TradeInvite cid=" << target_cid);
+				}
+				return Button::State::NORMAL;
+			}
 			case Buttons::BtVisit:
+			{
+				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (!n.empty()) {
+					UI::get().emplace<UISoftKey>([n](const std::string& msg) {
+						if (msg.empty()) return;
+						WhisperPacket(n, msg).dispatch();
+						LOG(LOG_DEBUG, "UICharInfo: Whisper to=" << n << " len=" << msg.size());
+					}, []() {}, "Whisper");
+				}
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtPopUp:
+			{
+				if (target_cid > 0) {
+					GiveFamePacket(target_cid, true).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: Fame up cid=" << target_cid);
+				}
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtPopDown:
+			{
+				if (target_cid > 0) {
+					GiveFamePacket(target_cid, false).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: Fame down cid=" << target_cid);
+				}
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtFAQ:
+			{
+				auto help = UI::get().get_element<UIHelp>();
+				if (!help)
+					help = UI::get().emplace<UIHelp>();
+				else if (!help->is_active())
+					help->makeactive();
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtRegist:
+			{
+				if (auto uii = UI::get().get_element<UIItemInventory>()) {
+					if (uii->get_tab() == InventoryType::Id::CASH) {
+						int16_t slot = uii->get_selected_slot();
+						if (slot > 0) {
+							const Inventory& inv = Stage::get().get_player().get_inventory();
+							int32_t itemid = inv.get_item_id(InventoryType::Id::CASH, slot);
+							if (itemid > 0) {
+								UseCashItemBasicPacket(slot, itemid).dispatch();
+								LOG(LOG_DEBUG, "UICharInfo: BtRegist cash slot=" << slot << " id=" << itemid);
+								return Button::State::NORMAL;
+							}
+						}
+					}
+				}
+				UI::get().emplace<UISoftKey>([](const std::string& tip) {
+					try {
+						int32_t itemid = std::stoi(tip);
+						if (itemid <= 0) return;
+						const Inventory& inv = Stage::get().get_player().get_inventory();
+						int16_t slot = inv.find_item(InventoryType::Id::CASH, itemid);
+						if (slot > 0) {
+							UseCashItemBasicPacket(slot, itemid).dispatch();
+							LOG(LOG_DEBUG, "UICharInfo: BtRegist cash id=" << itemid);
+						}
+					} catch (...) {}
+				}, []() {}, "Damage skin id");
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtArrayGet:
+			case Buttons::BtArrayName:
+			{
+				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (n.empty())
+					n = get_target_name();
+				if (!n.empty()) {
+					FindPlayerPacket(n).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: Array FindPlayer=" << n);
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& tip) {
+						if (tip.empty()) return;
+						FindPlayerPacket(tip).dispatch();
+						LOG(LOG_DEBUG, "UICharInfo: Array SoftKey FindPlayer=" << tip);
+					}, []() {}, "Find name");
+				}
+				return Button::State::NORMAL;
+			}
 			default:
 			{
 				break;
@@ -393,13 +525,129 @@ namespace ms
 
 	void UICharInfo::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && escape)
-			deactivate();
+		if (pressed && escape) { deactivate(); return; }
+		if (!pressed) return;
+		if (keycode == '+' || keycode == '=')
+			button_pressed(Buttons::BtPopUp);
+		else if (keycode == '-' || keycode == '_')
+			button_pressed(Buttons::BtPopDown);
+		else if (keycode == 'W' || keycode == 'w')
+			button_pressed(Buttons::BtVisit);
+		else if (keycode == 'T' || keycode == 't')
+			button_pressed(Buttons::BtTrad);
+		else if (keycode == 'B' || keycode == 'b')
+			button_pressed(Buttons::BtFriend);
+		else if (keycode == 'P' || keycode == 'p')
+			button_pressed(Buttons::BtParty);
+		else if (keycode == 'F' || keycode == 'f')
+		{
+			if (target_cid > 0) {
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					bool up = true;
+					if (!tip.empty() && (tip[0] == 'd' || tip[0] == 'D' || tip[0] == '0' || tip[0] == '-'))
+						up = false;
+					GiveFamePacket(target_cid, up).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: SoftKey fame cid=" << target_cid << " up=" << up);
+				}, []() {}, "Fame up|d (target)");
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& s) {
+					try {
+						size_t comma = s.find(',');
+						int32_t cid = std::stoi(comma == std::string::npos ? s : s.substr(0, comma));
+						bool up = true;
+						if (comma != std::string::npos) {
+							std::string m = s.substr(comma + 1);
+							if (!m.empty() && (m[0] == 'd' || m[0] == 'D' || m[0] == '0' || m[0] == '-'))
+								up = false;
+						}
+						if (cid > 0) {
+							GiveFamePacket(cid, up).dispatch();
+							LOG(LOG_DEBUG, "UICharInfo: SoftKey fame cid=" << cid << " up=" << up);
+						}
+					} catch (...) {}
+				}, []() {}, "Fame cid[,d]");
+			}
+		}
+		else if (keycode == 'S' || keycode == 's')
+		{
+			std::string n = target_character ? target_character->get_name() : name.get_text();
+			if (!n.empty()) {
+				UI::get().emplace<UISoftKey>([n](const std::string& msg) {
+					if (msg.empty()) return;
+					WhisperPacket(n, msg).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: SoftKey whisper to=" << n);
+				}, []() {}, "Whisper msg");
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					UI::get().emplace<UISoftKey>([name](const std::string& msg) {
+						if (msg.empty()) return;
+						WhisperPacket(name, msg).dispatch();
+					}, []() {}, "Whisper msg");
+				}, []() {}, "Whisper to");
+			}
+		}
+		else if (keycode == 'M' || keycode == 'm')
+		{
+			std::string n = target_character ? target_character->get_name() : name.get_text();
+			if (!n.empty()) {
+				MessengerInvitePacket(n).dispatch();
+				LOG(LOG_DEBUG, "UICharInfo: MessengerInvite name=" << n);
+			}
+		}
+		else if (keycode == 'Y' || keycode == 'y')
+		{
+			button_pressed(Buttons::BtFamily);
+		}
+		else if (keycode == 'C' || keycode == 'c')
+		{
+			auto ui = UI::get().get_element<UICharacterClone>();
+			if (!ui) ui = UI::get().emplace<UICharacterClone>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			auto ui = UI::get().get_element<UICancelRequests>();
+			if (!ui) ui = UI::get().emplace<UICancelRequests>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'E' || keycode == 'e')
+		{
+			auto ui = UI::get().get_element<UIMapleEvent>();
+			if (!ui) ui = UI::get().emplace<UIMapleEvent>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'K' || keycode == 'k')
+		{
+			auto ui = UI::get().get_element<UIMonsterKilling>();
+			if (!ui) ui = UI::get().emplace<UIMonsterKilling>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'A' || keycode == 'a')
+		{
+			auto ui = UI::get().get_element<UIUtilDlgExAvatar>();
+			if (!ui) ui = UI::get().emplace<UIUtilDlgExAvatar>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'Z' || keycode == 'z')
+		{
+			button_pressed(Buttons::BtPet);
+			auto pet = UI::get().get_element<UIUtilDlgExPet>();
+			if (!pet) pet = UI::get().emplace<UIUtilDlgExPet>();
+			else if (!pet->is_active()) pet->makeactive();
+		}
 	}
 
 	UIElement::Type UICharInfo::get_type() const
 	{
 		return TYPE;
+	}
+
+	std::string UICharInfo::get_target_name() const
+	{
+		if (target_character)
+			return target_character->get_name();
+		return name.get_text();
 	}
 
 	void UICharInfo::update_stats(int32_t character_id, int16_t job_id, uint16_t lv, int16_t f, std::string g, std::string a)
@@ -434,8 +682,23 @@ namespace ms
 
 		alliance.change_text(a);
 
+		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
+			it->second->set_state(
+				target_character->has_pet() ? Button::State::NORMAL : Button::State::DISABLED);
+
 		farm_name.change_text("");
 		farm_level_text = "1";
+	}
+
+	void UICharInfo::update_extras(int pet_count, int wish_count, int32_t book_cards, int32_t medal_id, bool married)
+	{
+		medal_text.change_text(
+			"Pet " + std::to_string(pet_count)
+			+ " Wish " + std::to_string(wish_count)
+			+ (medal_id ? (" Medal#" + std::to_string(medal_id)) : "")
+			+ (married ? " Married" : "")
+		);
+		medal_total.change_text("Book " + std::to_string(book_cards));
 	}
 
 	void UICharInfo::show_bottom_window(uint16_t buttonid)

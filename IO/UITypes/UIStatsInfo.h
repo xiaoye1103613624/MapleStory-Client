@@ -53,8 +53,8 @@ namespace ms
 			NAME,
 			JOB,
 			// v83 经典「角色能力」窗（Stat/backgrnd）八行专用：
-			// 名字/职业/等级/家族/HP/MP/经验值/人气度（芯片行实测见
-			// docs/features/beidou-v17-parity/notes/r05-ui-layout.md）。
+			// 名字/职业/等级/家族/HP/MP/经验值/人气度（行带实测见
+			// docs/features/ui-v83-window-restore/evidence/w6-stats/coords.md）。
 			LEVEL,
 			EXP,
 			GUILD,
@@ -87,6 +87,13 @@ namespace ms
 			SPEED,
 			JUMP,
 			HONOR,
+			// v83 classic 详情板（Stat/backgrnd2）烘焙标签行专用：
+			// 魔法力/魔法防御/命中率/回避率/手技
+			MAGIC_D,
+			MDEF_D,
+			ACC_D,
+			AVOID_D,
+			HANDS_D,
 			// Total
 			NUM_LABELS
 		};
@@ -136,18 +143,17 @@ namespace ms
 		bool showdetail;
 
 		// v83 经典布局（Stat 无 main 子节点）：backgrnd2 为「详细」属性板，
-		// 仅详细模式绘于窗口右侧；basicStat 为「基本属性点」帮助弹框，
-		// 绘于窗口上方——二者都不再叠绘到主窗上（修复见 r05-ui-layout.md §1）。
+		// 仅详细模式绘于窗口右下侧 (208,144)；basicStat 为窗内「基本属性点」
+		// 蓝头信息板，始终绘于窗内 (8,195)；Disabled{STR..LUK} 48x16 灰标签，
+		// AP=0 不可加点时盖住烘焙绿格。坐标依据见
+		// docs/features/ui-v83-window-restore/evidence/w6-stats/coords.md。
 		bool classic;
 		Texture classic_detail;
 		Texture classic_help;
-		Point<int16_t> classic_help_dim;
+		Texture disabled_labels[4];
 
 		bool hasap;
 		uint16_t jobId;
-
-		Sprite cover0;
-		Sprite cover1;
 
 		Text statlabels[StatLabel::NUM_LABELS];
 		Point<int16_t> statoffsets[StatLabel::NUM_LABELS];

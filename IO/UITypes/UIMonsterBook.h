@@ -45,10 +45,12 @@ namespace ms
 		void draw(float inter) const override;
 		Button::State button_pressed(uint16_t buttonid) override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		// 封面/卡片数据变化后由 handler 调用刷新
 		void reload();
+		int16_t get_selected_card_id() const { return selected_card_id; }
 
 	private:
 		struct CardEntry
@@ -73,5 +75,6 @@ namespace ms
 		std::vector<Text> card_labels;
 		Point<int16_t> list_origin;
 		int16_t row_h = 18;
+		int16_t selected_card_id = 0;
 	};
 }

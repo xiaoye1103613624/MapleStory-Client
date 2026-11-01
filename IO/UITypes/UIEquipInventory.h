@@ -44,6 +44,7 @@ namespace ms
 		UIElement::Type get_type() const override;
 
 		void modify(int16_t pos, int8_t mode, int16_t arg);
+		EquipSlot::Id get_selected_eqslot() const { return selected_eqslot; }
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -55,6 +56,8 @@ namespace ms
 		void update_slot(EquipSlot::Id slot);
 		EquipSlot::Id slot_by_position(Point<int16_t> position) const;
 		void change_tab(uint16_t tabid);
+		void set_pet_panel(bool open);
+		void change_pet_tab(uint16_t tabid);
 
 		class EquipIcon : public Icon::Type
 		{
@@ -85,7 +88,13 @@ namespace ms
 			BT_SALON,
 			BT_CONSUMESETTING,
 			BT_EXCEPTION,
-			BT_SHOP
+			BT_SHOP,
+			BT_PET_SHOW,
+			BT_PET_HIDE,
+			BT_PET_TAB0,
+			BT_PET_TAB1,
+			BT_PET_TAB2,
+			BT_PET_TABE
 		};
 
 		const Inventory& inventory;
@@ -106,5 +115,18 @@ namespace ms
 
 		bool hasPendantSlot;
 		bool hasPocketSlot;
+		EquipSlot::Id selected_eqslot = EquipSlot::Id::NONE;
+
+		// v83（classic flat）装备窗只有一个页面、没有 tab 条
+		bool classic_flat = false;
+		// 宠物装备面板（Equip/pet）显隐 + 溢出后的命中区
+		bool pet_panel_open = false;
+		// 实测（evidence/w7-equip §7）：参考截图里三页签全是 disabled 美术（灰底灰数字，mae 0.0），
+		// 该帧应为「未召唤宠物」态 → 默认不高亮，点击后才把当前页换成 normal 美术（彩底红数字）。
+		uint16_t pet_tab = 0xFFFF;
+		Texture pet_backgrnd;
+		Point<int16_t> pet_panel_pos;
+		Point<int16_t> base_dimension;
+		Point<int16_t> expanded_dimension;
 	};
 }
