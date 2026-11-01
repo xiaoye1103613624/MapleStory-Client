@@ -291,18 +291,28 @@ def dump_spec(path, spec):
         fh.write(text + "\n")
 
 
-def measure_all(spec, frame):
-    """锚定 + 量全部探针。锚定失败返回 (None, None) —— 该帧判不了几何。"""
+def measure_all(spec, frame, force_anchor=None):
+    """锚定 + 量全部探针。锚定失败返回 (None, None) —— 该帧判不了几何。
+
+    force_anchor 只给 selftest 用：注入偏移时可能顺手把锚点图也搬烂（band/lines 要清空
+    整个探针区，面积一大 agree 就掉到阈值下），此时退回 spec 里已记录的锚点继续量探针，
+    否则「门禁能不能抓偏移」这件事本身会被锚定失败掩盖成崩溃。
+    """
     img = load_rgb(resolve(frame))
     a = template_anchor(frame, spec["anchor_tmpl"])
     min_agree = spec.get("anchor_min_agree", 0.7)
     if not a or a[3] < min_agree:
-        print("!! 窗口锚定失败（agree=%s，阈值 %.2f）：这张帧只能看内容、不能量版式"
-              "（抓帧被压暗时先跑 bright.py，见 notes/open-issues.md）"
-              % ("%.3f" % a[3] if a else "None", min_agree))
-        return None, None
-    anchor = (a[0], a[1])
-    print("anchor=(%d,%d) agree=%.3f rmse=%.1f  <- %s" % (anchor[0], anchor[1], a[3], a[2], spec["anchor_tmpl"]))
+        if not force_anchor:
+            print("!! 窗口锚定失败（agree=%s，阈值 %.2f）：这张帧只能看内容、不能量版式"
+                  "（抓帧被压暗时先跑 bright.py，见 notes/open-issues.md）"
+                  % ("%.3f" % a[3] if a else "None", min_agree))
+            return None, None
+        print("!! 窗口锚定失败（agree=%s，阈值 %.2f）→ 改用 spec 记录的锚点 %s 量探针"
+              % ("%.3f" % a[3] if a else "None", min_agree, tuple(force_anchor)))
+        anchor = tuple(force_anchor)
+    else:
+        anchor = (a[0], a[1])
+        print("anchor=(%d,%d) agree=%.3f rmse=%.1f  <- %s" % (anchor[0], anchor[1], a[3], a[2], spec["anchor_tmpl"]))
     res = {}
     for p in spec["probes"]:
         try:
@@ -433,6 +443,22 @@ def cmd_probe(args):
     return 0
 
 
+def fill_far(base, color, tol):
+    """把擦除色推到「不会命中探针色」的那一侧。
+
+    注入偏移要先把原内容擦掉；如果擦出来的实色本身就在探针色的容差里，那这块纯色
+    会被探针当成新内容量一遍，报出来的 Δ 与注入量毫无关系（实测 Equip/grid_top_edge
+    注入 1/14/32 全报 Δ=-12 —— 那 12 就是纯色块顶到探针区上沿的距离）。
+    """
+    base = [int(v) for v in base]
+    if any(abs(base[c] - color[c]) > tol + 8 for c in range(3)):
+        return tuple(base)
+    c = max(range(3), key=lambda i: max(255 - color[i], color[i]))
+    v = color[c] + tol + 9 if color[c] + tol + 9 <= 255 else color[c] - tol - 9
+    base[c] = max(0, min(255, int(v)))
+    return tuple(base)
+
+
 def cmd_selftest(args):
     """把 oracle 帧里的一块内容整体下移 N 像素，验证 check 报出来的 Δ 正好等于 N。
 
@@ -452,6 +478,8 @@ def cmd_selftest(args):
     if not orc:
         print("探针 %s 没有 oracle" % args.probe)
         return 2
+    color = [int(v) for v in probe.get("color", [0, 0, 0])]
+    tol = int(probe.get("tol", 0))
     # 被搬动的内容 = 该探针在 oracle 帧上的 bbox
     bx0, by0 = anchor[0] + orc["x"], anchor[1] + orc["y"]
     bx1, by1 = bx0 + orc["w"], by0 + orc["h"]
@@ -461,11 +489,16 @@ def cmd_selftest(args):
     if args.probe_kind in ("lines", "band"):
         rx0, ry0, rx1, ry1 = probe["region"]
         bx0, by0, bx1, by1 = anchor[0] + rx0, anchor[1] + ry0, anchor[0] + rx1, anchor[1] + ry1
+    # tmpl 的 oracle 只有一个点，w/h=0 ⇒ 搬 0 像素等于没搬（实测注入仍报 Δ=0）。
+    # 这类要搬的是**模板自身那一块**。
+    if args.probe_kind == "tmpl":
+        tw, th = Image.open(resolve(probe["tmpl"])).size
+        bx1, by1 = bx0 + tw, by0 + th
     if args.probe_kind == "blob":
         bg = np.asarray(Image.open(resolve(spec["anchor_tmpl"])).convert("RGB")).astype(np.int16)
-        fill = int(np.median(bg[:, :, 0])), int(np.median(bg[:, :, 1])), int(np.median(bg[:, :, 2]))
+        fill = fill_far(np.median(bg.reshape(-1, 3), axis=0), color, tol)
     else:
-        fill = tuple(int(np.median(src[by0:by1, bx0:bx1, c])) for c in range(3))
+        fill = fill_far(np.median(src[by0:by1, bx0:bx1].reshape(-1, 3), axis=0), color, tol)
     ok = True
     for shift in [int(v) for v in args.shifts.split(",")]:
         arr = src.copy()
@@ -477,7 +510,7 @@ def cmd_selftest(args):
         arr[y0:y1, bx0:bx1] = block[:y1 - y0]
         tmp = os.path.abspath("._selftest_%d.png" % shift)
         Image.fromarray(arr.astype(np.uint8)).save(tmp)
-        _, res = measure_all(spec, tmp)
+        _, res = measure_all(spec, tmp, force_anchor=anchor)
         got = res.get(args.probe)
         os.remove(tmp)
         if got is None:

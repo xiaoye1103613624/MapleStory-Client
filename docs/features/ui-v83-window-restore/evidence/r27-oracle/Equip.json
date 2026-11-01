@@ -1,0 +1,150 @@
+{
+  "window": "Equip 角色装备窗口（含宠物装备面板）",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/角色装备.png (348x305)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_backgrnd.png",
+  "anchor_min_agree": 0.8,
+  "tol": 2,
+  "note": "锚点 UIWindow.img/Equip/backgrnd（175x304）在原生帧上落在 (0,0)，agree=0.884，峰值 rmse=55.0 与次峰 78.7 差得开，是三个窗里最干净的一个锚。Equip 根节点实有子节点：BtCashshop/BtDetail/BtPet1/BtPet2/BtPet3/BtPetEquipHide/BtPetEquipShow/FullBackgrnd(208x291)/backgrnd(175x304)/pet(177x181)；本 spec 只用 backgrnd 与 pet，其余见下「弃用」。锚点 (0,0) 故相对坐标 = 帧坐标。\n\n用户要求「先做直方图再挑格子分隔色」——做了，结论是 Equip **没有**可用的周期性分隔色：装备格网格线是 nx 的抖动（dither）双色交替（帧上纯白 255 与 238 交替出现），band_rows 要的是「连续同色段」，抖动行的最长同色段只有 1~2px，所以任何单一灰色都取不到长条带。逐个颜色扫过：(153,170,204)/(136,153,187)/(153,187,204)/(170,187,204) 在 x=5..170、min_run>=20 下全部 0 行；放宽到 tol 35~50 只捞出标题带 y=20..28 与说明带 y=277..299，网格行一条都没有。Item 窗那种 (204,204,187) 实色分隔线在 Equip 里不存在。\n\n能用的尺只有两条，都是美术自带、与身上穿了什么无关：\n  1) 纯白 (255,255,255)：面板外框与格子外沿。整帧 x=5..170 上「最长连续白段 >= 110」的行 = [1, 5, 18, 32,33,34, 265, 267..271, 302]，其中 32..34 是装备格网格的**顶边**、265/267..271 是**底边**，顶到底 265-32=233 = 7*33+2 —— 行距恒 33、共 7 行，这就是网格的原生标准答案（客户端若按 32 排 7 行，底边会跑到 256，被 grid_bottom_edge 当场抓住）。用 tol 1 是为了吸收美术 254 与帧 255 的 ±1 抖动，实测 (254,254,254) 与 (255,255,255) 只差 1。\n  2) 粉色宠物格：底行两格 (255,187,187) 与 (204,153,170) 都是实色非抖动，bbox 干净：(72,234) 31x31 n=795、(6,234) 64x31 n=940；两者顶边同为 y=234、高 31，正好落在网格最后一行 (232..265) 里再缩进 2px 描边，等于把「底行格子的 x 起点、格宽、格高」各钉了一次。\n  另：面板内部各列的白色竖线在 x=3/4、37、70、103、136、169/170/171 —— 列距同样恒 33、共 5 列；panel_border_bbox 用整张面板的白 bbox 把窗框四边一次框死：实测 (1,1) 173x302（row_min/col_min=40 只让「真有 40 个白点的行列」入算，于是拿到的是窗框实线而不是区域边界），宽 173、高 302 与 backgrnd 的 175x304 只差一像素描边，这就是「装备窗多大、画在哪」的硬尺。\n  pet 面板 UIWindow.img/Equip/pet (177x181)：tmpl 实测左上 (171,123) agree=0.631（面板上还要画宠物/说明文字，agree 天然只有六成）；同一条尺由 pet_panel_bbox 独立复现 —— 白 bbox 顶左 (181,124) 正是 art 内框 (10,1) 加 (171,123)，两条探针互相印证，不是靠一个孤零零的匹配峰值。\n\n弃用（宁可少写，不写骗人的数）：\n  - BtPet1/BtDetail/BtCashshop 的 normal 图（30x27 / 46x19 / 32x11）在原生帧上 agree 只有 0.322 / 0.000 / 0.216 —— 原生这帧根本没画这几个按钮（或画成了别的状态），当探针必 MISSING。\n  - FullBackgrnd（208x291）虽然能贴到 (0,0)，但 agree 只有 0.617 且峰值 109.2 与次峰 117.3 只差 8，位置不唯一；backgrnd 已经锚住了同一个左上角，再挂一条不稳的只会制造假 FAIL。\n  - band 探针不取「格子内部」的白条（如 x=4..38 的 y=32..67/102..133/201..232）：那是空格子才有的白底，一旦这件格子穿了装备就被图标盖住、行号立刻变，量的是「穿了什么」不是「版式」。",
+  "probes": [
+    {
+      "name": "panel_border_bbox",
+      "kind": "blob",
+      "color": [255, 255, 255],
+      "tol": 1,
+      "region": [0, 0, 175, 305],
+      "min_pix": 200,
+      "row_min": 40,
+      "col_min": 40,
+      "size_keys": [
+        "w",
+        "h"
+      ],
+      "oracle": {
+        "x": 1,
+        "y": 1,
+        "w": 173,
+        "h": 302,
+        "n": 19884
+      }
+    },
+    {
+      "name": "grid_top_edge",
+      "kind": "band",
+      "color": [255, 255, 255],
+      "tol": 1,
+      "region": [5, 20, 170, 60],
+      "min_run": 110,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": 5,
+        "y": 32,
+        "w": 0,
+        "h": 3,
+        "n": 3,
+        "rows": [32, 33, 34]
+      }
+    },
+    {
+      "name": "grid_bottom_edge",
+      "kind": "band",
+      "color": [255, 255, 255],
+      "tol": 1,
+      "region": [5, 240, 170, 295],
+      "min_run": 110,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": 5,
+        "y": 265,
+        "w": 0,
+        "h": 6,
+        "n": 6,
+        "rows": [265, 267, 268, 269, 270, 271]
+      }
+    },
+    {
+      "name": "pet_slot_pink_bbox",
+      "kind": "blob",
+      "color": [255, 187, 187],
+      "tol": 0,
+      "region": [40, 225, 175, 275],
+      "min_pix": 50,
+      "row_min": 10,
+      "col_min": 10,
+      "size_keys": [
+        "w",
+        "h"
+      ],
+      "oracle": {
+        "x": 72,
+        "y": 234,
+        "w": 31,
+        "h": 31,
+        "n": 795
+      }
+    },
+    {
+      "name": "pet_slot_wide_bbox",
+      "kind": "blob",
+      "color": [204, 153, 170],
+      "tol": 0,
+      "region": [0, 225, 120, 275],
+      "min_pix": 50,
+      "row_min": 10,
+      "col_min": 10,
+      "size_keys": [
+        "w",
+        "h"
+      ],
+      "oracle": {
+        "x": 6,
+        "y": 234,
+        "w": 64,
+        "h": 31,
+        "n": 940
+      }
+    },
+    {
+      "name": "pet_panel_bbox",
+      "kind": "blob",
+      "color": [255, 255, 255],
+      "tol": 1,
+      "region": [176, 118, 348, 278],
+      "min_pix": 200,
+      "row_min": 30,
+      "col_min": 30,
+      "size_keys": [
+        "h"
+      ],
+      "oracle": {
+        "x": 181,
+        "y": 124,
+        "w": 167,
+        "h": 148,
+        "n": 6797
+      }
+    },
+    {
+      "name": "pet_panel_tmpl",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_pet.png",
+      "region": [140, 90, 348, 305],
+      "min_agree": 0.6,
+      "oracle": {
+        "x": 171,
+        "y": 123,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.631
+      }
+    }
+  ],
+  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\角色装备.png",
+  "oracle_anchor": [0, 0]
+}

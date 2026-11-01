@@ -9,7 +9,7 @@
 | 文件 | 作用 |
 | --- | --- |
 | `../tools/layout.py` | 量具本体：锚定 + 探针 + 对账 + 自测（用法见其 docstring） |
-| `tmpl/<Window>_<node>.png` | 从 `.nxcache/UI.nx` 导出的位图，做锚点和 `tmpl` 探针用（`nx_inspect.py image` 导，禁止手画）。目录里存的是**导出集**，不等于都在用：例如 `KeyConfig_backgrnd`(629x373)、`SkillMacroEx_backgrnd`(181x303) 比对应原生帧还高，`anchor_in` 判「模板比帧大」直接不可用，留着是给后续裁切/复核当原料，别误当已建成的探针 |
+| `tmpl/<Window>_<node>.png` | 从 `.nxcache/UI.nx` 导出的位图，做锚点和 `tmpl` 探针用（`nx_inspect.py image` 导，禁止手画）。目录里存的是**导出集**，不等于都在用：例如 `KeyConfig_backgrnd`(629x373)、`SkillMacroEx_backgrnd`(181x303) 比对应原生帧还高，`anchor_in` 判「模板比帧大」直接不可用；`Equip_BtCashshop/BtDetail/BtPet1_normal` 在原生帧上 agree 只有 .216/.000/.322（那帧根本没画这几个按钮），当探针必 MISSING。留着是给后续裁切/复核当原料，别误当已建成的探针 |
 | `<Window>.json` | 该窗口的探针清单 + 已量出的 oracle 数值 |
 | `Stat_anchor.png` | `layout.py anchor --png` 的输出样本：绿框 = 量出来的 backgrnd 左上角，给人眼复核用 |
 | `origin-rule.md` | **B1a 裁定**：位图 origin/锚点只能有一套语义，含 KeyConfig 的量尺证据；§6 另记一处同根因（底栏快捷格，缺 oracle 故本轮不改） |
@@ -52,12 +52,15 @@ G2 的判据形式就是「行首序列」，`cmp_probe` 对 `rows` 逐元素比
 
 ## 已建
 
+5 张 spec、29 个探针，`check` 对各自的原生帧全部 **不合格 0**（工具判据：Δ>tol 即 FAIL）。
+
 | 窗口 | 原生帧 | 关键 oracle |
 | --- | --- | --- |
 | `Stat.json` 角色能力 | `角色能力.png` 428x349 | anchor=(1,2) agree .734；`basicStat` 面板 (8,195) agree 1.000；数值文字 bbox (13,236) 149x43（框内）；**`value_lines` 行首 236/252/268，行距恒 16、墨高恒 11** |
 | `Item.json` 背包折叠 | `背包栏（折叠）.png` 179x289 | anchor=(3,0)；**网格分隔行 = 49,83,117,151,185,219（行距恒 34）** |
 | `KeyConfig.json` 键盘设置 | `键盘设置.png` 629x369 | anchor=BtClose@(606,5) agree 1.000；**键帽上沿 59/92/125/158/191（行距恒 33、键帽高 32）**；4 颗 `icon` 键帽 + OK 按钮 tmpl 逐格命中现有坐标表 ⇒ 见 [origin-rule.md](origin-rule.md) |
 | `SkillMacro.json` 宏指令栏 | `技能展开宏指令.png` 379x291 | 锚故意钉在**左边技能窗** `Skill/backgrnd`@(0,0)（agree .568），这样「宏面板没贴在技能栏上」才是被检对象；量得面板左边界 x=184 而技能窗宽 175 ⇒ **原生贴合标准答案 = 两窗间隙 9px**；宏格行 y=86,131,176（行距恒 45）、三格 `Macroicon/<i>` tmpl 分别落在 (319,56)/(319,101)/(319,146) 且 agree 均 1.000 |
+| `Equip.json` 角色装备 | `角色装备.png` 348x305 | anchor=`Equip/backgrnd`@(0,0) agree .884；**装备格网格顶边 32 / 底边 265 ⇒ 233 = 7×33+2，行距恒 33、共 7 行**；粉色宠物格 (72,234) 31x31 与 (6,234) 64x31 各钉一次底行的 x 起点/格宽/格高；宠物面板两条尺互证：`pet` tmpl @(171,123) agree .631 与白 bbox @(181,124)（= art 内框 (10,1) + (171,123)）。**Equip 网格线是 255/238 抖动，没有可用的周期分隔色**（四种灰蓝在 min_run≥20 下全部 0 行），尺只能取自面板白外框 |
 
 `value_lines` 就是 B1b 的标尺：[Graphics/GraphicsGL.h:247](../../../../../Graphics/GraphicsGL.h#L247)
 的 `linespace() = int(height * 1.35 + 1)`（A11M maxrows 12 ⇒ **17**），比原生行距多 1px/行，
@@ -68,14 +71,36 @@ G2 的判据形式就是「行首序列」，`cmp_probe` 对 `rows` 逐元素比
 ## 自测：门禁自己也要有证据
 
 ```
-python layout.py selftest ../evidence/r27-oracle/Stat.json --probe panel_text_bbox --probe-kind blob  --shifts 1,14,60
-python layout.py selftest ../evidence/r27-oracle/Stat.json --probe value_lines     --probe-kind lines  --shifts 1,16,40
-python layout.py selftest ../evidence/r27-oracle/Item.json --probe slot_rows       --probe-kind band   --shifts 1,14,34
+python layout.py selftest ../evidence/r27-oracle/Stat.json      --probe panel_text_bbox   --probe-kind blob  --shifts 1,14,60
+python layout.py selftest ../evidence/r27-oracle/Stat.json      --probe value_lines       --probe-kind lines --shifts 1,16,40
+python layout.py selftest ../evidence/r27-oracle/Item.json      --probe slot_rows         --probe-kind band  --shifts 1,14,34
+python layout.py selftest ../evidence/r27-oracle/Item.json      --probe meso_digits       --probe-kind blob  --shifts 1,14,60
+python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_rows_main  --probe-kind band  --shifts 1,14,34
+python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_row2_bbox  --probe-kind blob  --shifts 1,16,32
+python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_icon23     --probe-kind tmpl  --shifts 1,14,32
+python layout.py selftest ../evidence/r27-oracle/SkillMacro.json --probe panel_border_rows --probe-kind band --shifts 1,14,45
+python layout.py selftest ../evidence/r27-oracle/SkillMacro.json --probe macroicon_0       --probe-kind tmpl --shifts 1,14,32
+python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe grid_top_edge     --probe-kind band  --shifts 1,14,32
+python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_slot_pink_bbox --probe-kind blob --shifts 1,14,32
+python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_panel_tmpl    --probe-kind tmpl  --shifts 1,14,32
 ```
 
 把 oracle 帧里的一块内容整体下移 N 像素，再看 `check` 报出的 Δ 是否等于 N。
-三类探针各自的注入档（含按行距取档，如 `lines` 用 16、`band` 用 34）全部逐像素复现 ——
-注入 14px 却报 ok 的话，后面 B2..B7 全部作废，所以这一步不是可选的。
+**四类探针 × 5 张 spec 共 12 条注入全部逐像素复现**（注入档按各自尺子取，如 `lines` 用行距 16、
+`band` 用 34/45、键帽用 32 —— 32 正是要修的那一档缺陷的尺寸）；报 MISSING 也算检出，
+那是内容被推出探针区。注入 14px 却报 ok 的话，后面 B2..B7 全部作废，所以这一步不是可选的。
 
-`lines`/`band` 的自测搬的是**整个探针区**而不是 oracle 的 bbox：这两类 oracle 里 `w=0`、
-`h` 是行数不是像素高度，照 bbox 搬等于没搬（改之前注入 16px 实测报 Δ=0，是个会骗人的假 ok）。
+自测本身修掉过三个「会骗人的假 ok / 直接崩」，都记在这儿免得下次再犯：
+
+1. `lines`/`band` 搬的是**整个探针区**而不是 oracle 的 bbox：这两类 oracle 里 `w=0`、
+   `h` 是行数不是像素高度，照 bbox 搬等于没搬（改之前注入 16px 实测报 Δ=0）。
+2. `tmpl` 同理：oracle 只有一个点，`w=h=0` ⇒ 搬 0 像素，注入 14px 也报 Δ=0；
+   现在搬的是**模板自身那一块**（尺寸从 png 读，不写死）。
+3. 擦除色必须离探针色足够远（`fill_far`）：`Equip/grid_top_edge` 量的是纯白，
+   拿区域中位数（也是白）去擦，擦出来的实色块被当成新内容，注入 1/14/32 三档全报 Δ=-12
+   —— 那 12 是纯色块顶到探针区上沿的距离，跟注入量毫无关系。
+4. 注入可能顺手把**锚点图**也搬烂（band 要清空整片区域，agree 从 .884 掉到 .77 < 阈值 .80），
+   原先 `measure_all` 返回 None、selftest 直接 `AttributeError` 崩掉；
+   现在 selftest 传 `force_anchor`（spec 里已记录的锚点）继续量探针，并明打印一句降级说明。
+   真实帧的锚定失败仍然是硬失败，不受这条影响。
+
