@@ -1,0 +1,45 @@
+===== UIWindow.img/TradingRoom
+TradingRoom [null]
+  BtCancel [null]
+    disabled [null]
+      0 [bitmap] bitmap 60x18
+    mouseOver [null]
+      0 [bitmap] bitmap 60x18
+    normal [null]
+      0 [bitmap] bitmap 60x18
+    pressed [null]
+      0 [bitmap] bitmap 60x18
+  BtCoin [null]
+    disabled [null]
+      0 [bitmap] bitmap 14x14
+    mouseOver [null]
+      0 [bitmap] bitmap 14x14
+      1 [bitmap] bitmap 14x14
+      2 [bitmap] bitmap 14x14
+      3 [bitmap] bitmap 14x14
+    normal [null]
+      0 [bitmap] bitmap 14x14
+    pressed [null]
+      0 [bitmap] bitmap 14x14
+  BtReset [null]
+    disabled [null]
+      0 [bitmap] bitmap 60x19
+    mouseOver [null]
+      0 [bitmap] bitmap 60x19
+    normal [null]
+      0 [bitmap] bitmap 60x19
+    pressed [null]
+      0 [bitmap] bitmap 60x19
+  BtTrade [null]
+    disabled [null]
+      0 [bitmap] bitmap 60x19
+    mouseOver [null]
+      0 [bitmap] bitmap 60x19
+    normal [null]
+      0 [bitmap] bitmap 60x19
+    pressed [null]
+      0 [bitmap] bitmap 60x19
+  backgrnd [bitmap] bitmap 565x474
+    origin [vector] (0, 0)
+  icon1 [bitmap] bitmap 12x10
+    origin [vector] (0, 0)

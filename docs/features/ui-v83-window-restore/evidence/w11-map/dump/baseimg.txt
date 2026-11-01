@@ -1,0 +1,15 @@
+===== WorldMap/WorldMap.img/BaseImg
+BaseImg [null]
+  0 [bitmap] bitmap 640x470
+    origin [vector] (320, 0)
+    z [int] 0
+===== WorldMap/WorldMap010.img/BaseImg
+BaseImg [null]
+  0 [bitmap] bitmap 640x470
+    origin [vector] (320, 0)
+    z [int] 0
+===== WorldMap/WorldMap020.img/BaseImg
+BaseImg [null]
+  0 [bitmap] bitmap 640x470
+    origin [vector] (320, 0)
+    z [int] 0

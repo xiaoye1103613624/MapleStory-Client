@@ -1,0 +1,79 @@
+===== UIWindow.img/Stat
+Stat [null]
+  BtApUp [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  BtAuto [null]
+    disabled [null]
+      0 [bitmap] bitmap 100x35
+    mouseOver [null]
+      0 [bitmap] bitmap 100x35
+    normal [null]
+      0 [bitmap] bitmap 100x35
+    pressed [null]
+      0 [bitmap] bitmap 100x35
+  BtAuto1 [null]
+    disabled [null]
+      0 [bitmap] bitmap 73x17
+    mouseOver [null]
+      0 [bitmap] bitmap 73x17
+    normal [null]
+      0 [bitmap] bitmap 73x17
+    pressed [null]
+      0 [bitmap] bitmap 73x17
+  BtAuto2 [null]
+    disabled [null]
+      0 [bitmap] bitmap 73x17
+    mouseOver [null]
+      0 [bitmap] bitmap 73x17
+    normal [null]
+      0 [bitmap] bitmap 73x17
+    pressed [null]
+      0 [bitmap] bitmap 73x17
+  BtDetail [null]
+    disabled [null]
+      0 [bitmap] bitmap 46x19
+    mouseOver [null]
+      0 [bitmap] bitmap 46x19
+    normal [null]
+      0 [bitmap] bitmap 46x19
+    pressed [null]
+      0 [bitmap] bitmap 46x19
+  Disabled [null]
+    DEX [bitmap] bitmap 48x16
+      origin [vector] (877087568, 43859)
+    INT [bitmap] bitmap 48x16
+      origin [vector] (877087568, 43859)
+    LUK [bitmap] bitmap 48x16
+      origin [vector] (877087568, 43859)
+    STR [bitmap] bitmap 48x16
+      origin [vector] (877087568, 43859)
+  Job [null]
+    main [null]
+      0 [bitmap] bitmap 50x11
+      1 [bitmap] bitmap 46x11
+      2 [bitmap] bitmap 46x11
+      3 [bitmap] bitmap 45x11
+      4 [bitmap] bitmap 28x11
+      5 [bitmap] bitmap 31x11
+      premium [null]
+    sub [null]
+      0 [null]
+      1 [null]
+      2 [null]
+      3 [null]
+      4 [null]
+      5 [null]
+      premium [null]
+  backgrnd [bitmap] bitmap 208x347
+    origin [vector] (877087568, 43859)
+  backgrnd2 [bitmap] bitmap 218x203
+    origin [vector] (877087568, 43859)
+  basicStat [bitmap] bitmap 159x121
+    origin [vector] (0, 131072)

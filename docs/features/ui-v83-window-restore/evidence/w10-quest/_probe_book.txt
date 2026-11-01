@@ -1,0 +1,16 @@
+candidates=59
+  85.5 UIWindow.img/Quest/icon3/0 13x14
+  85.5 UIWindow.img/Quest/icon3/6 13x14
+  85.5 UIWindow.img/Quest/icon4 13x14
+  88.0 UIWindow.img/Quest/icon3/1 13x14
+  88.0 UIWindow.img/Quest/icon3/5 13x14
+  89.8 UIWindow.img/Quest/icon1 13x14
+  92.6 UIWindow.img/Quest/icon3/2 13x14
+  92.6 UIWindow.img/Quest/icon3/4 13x14
+  93.0 UIWindow.img/Quest/icon2/4 16x13
+  93.9 UIWindow.img/Quest/icon2/0 15x13
+  93.9 UIWindow.img/Quest/icon2/7 15x13
+  94.0 UIWindow.img/Quest/icon2/1 16x13
+  94.1 UIWindow.img/Quest/icon2/3 16x13
+  95.6 UIWindow.img/Quest/icon2/6 16x13
+  96.3 UIWindow.img/Quest/icon3/3 13x14

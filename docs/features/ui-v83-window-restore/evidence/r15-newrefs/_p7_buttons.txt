@@ -1,0 +1,249 @@
+====================================================================================================
+SCREENSHOT 勋章框.png  255x372   frame node = UIWindow.img/Title/backgrnd (260x374)
+  frame alignment: dx=+0 dy=+1  ring MAE=5.482 over n=2974 ring px
+  window outer rect (bitmap extent) x[0..259] y[1..374]
+  window OPAQUE rect              x[1..258] y[2..373]  = 258x372
+
+  --- control matches under UIWindow.img/Title ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/Title/Tab/disabled/0                          26x14     29,4..54,17      exact=1.0000 mae=0.000 within4=1.0000 n=49 origin=(0, -1)  bbox x[29..54] y[4..17]
+  UIWindow.img/Title/Tab/disabled/4                          25x14     30,4..54,17      exact=1.0000 mae=0.000 within4=1.0000 n=42 origin=(0, -1)  bbox x[30..54] y[4..17]
+  UIWindow.img/Title/Tab/disabled/1                          26x14     31,4..56,17      exact=1.0000 mae=0.000 within4=1.0000 n=42 origin=(0, -1)  bbox x[31..56] y[4..17]
+  UIWindow.img/Title/Tab/disabled/3                          26x14     31,4..56,17      exact=1.0000 mae=0.000 within4=1.0000 n=59 origin=(0, -1)  bbox x[31..56] y[4..17]
+  UIWindow.img/Title/Tab/enabled/0                           26x14     16,29..41,42     exact=1.0000 mae=0.000 within4=1.0000 n=61 origin=(0, -1)  bbox x[16..41] y[29..42]
+
+====================================================================================================
+SCREENSHOT 好友列表框.png  302x384   frame node = UIWindow.img/UserList/backgrnd3 (312x389)
+  frame alignment: dx=-4 dy=-4  ring MAE=0.000 over n=1889 ring px
+  window outer rect (bitmap extent) x[-4..307] y[-4..384]
+  window OPAQUE rect              x[-3..306] y[-3..383]  = 310x387
+
+  --- control matches under UIWindow.img/UserList ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserList/Tab/disabled/4                       50x14     94,1..143,14     exact=1.0000 mae=0.000 within4=1.0000 n=92 origin=(0, 0)  bbox x[94..143] y[1..14]
+  UIWindow.img/UserList/Tab/enabled/3                        51x14     95,1..145,14     exact=0.9746 mae=0.864 within4=0.9746 n=118 origin=(0, 0)  bbox x[95..145] y[1..14]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0      33x10     95,2..127,11     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[95..127] y[2..11]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1      23x10     95,2..117,11     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[95..117] y[2..11]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0       33x10     95,2..127,11     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[95..127] y[2..11]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1       23x10     95,2..117,11     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[95..117] y[2..11]
+  UIWindow.img/UserList/Tab/disabled/1                       27x16     35,22..61,37     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[35..61] y[22..37]
+  UIWindow.img/UserList/Tab/enabled/1                        27x16     35,22..61,37     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[35..61] y[22..37]
+  UIWindow.img/UserList/Tab/disabled/0                       27x15     4,23..30,37      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[4..30] y[23..37]
+  UIWindow.img/UserList/Tab/enabled/0                        27x15     4,23..30,37      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[4..30] y[23..37]
+  UIWindow.img/UserList/Tab/disabled/2                       26x14     66,23..91,36     exact=1.0000 mae=0.000 within4=1.0000 n=60 origin=(0, 0)  bbox x[66..91] y[23..36]
+  UIWindow.img/UserList/Tab/disabled/3                       50x14     96,23..145,36    exact=1.0000 mae=0.000 within4=1.0000 n=112 origin=(0, 0)  bbox x[96..145] y[23..36]
+  UIWindow.img/UserList/Friend/BtAddFriend/normal/0          65x18     1,77..65,94      exact=1.0000 mae=0.000 within4=1.0000 n=1080 origin=(0, 0)  bbox x[1..65] y[77..94]
+  UIWindow.img/UserList/Friend/BtAddGroup/normal/0           65x18     68,77..132,94    exact=1.0000 mae=0.000 within4=1.0000 n=1080 origin=(0, 0)  bbox x[68..132] y[77..94]
+  UIWindow.img/UserList/Friend/BtShowOnline/normal/0         74x18     228,77..301,94   exact=1.0000 mae=0.000 within4=1.0000 n=1233 origin=(0, 0)  bbox x[228..301] y[77..94]
+  UIWindow.img/UserList/Friend/BtGroupWhisper/normal/0       79x18     4,337..82,354    exact=1.0000 mae=0.000 within4=1.0000 n=1318 origin=(0, 0)  bbox x[4..82] y[337..354]
+  UIWindow.img/UserList/Friend/BtChat/normal/0               47x19     95,337..141,355  exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[95..141] y[337..355]
+  UIWindow.img/UserList/Party/BtChat/normal/0                47x19     95,337..141,355  exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[95..141] y[337..355]
+  UIWindow.img/UserList/Friend/BtWhisper/normal/0            47x19     250,337..296,355 exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[250..296] y[337..355]
+  UIWindow.img/UserList/Party/BtWhisper/normal/0             47x19     250,337..296,355 exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[250..296] y[337..355]
+  UIWindow.img/UserList/Friend/BtMod/normal/0                38x18     4,358..41,375    exact=1.0000 mae=0.000 within4=1.0000 n=621 origin=(0, 0)  bbox x[4..41] y[358..375]
+  UIWindow.img/UserList/Friend/BtDelete/normal/0             47x19     45,358..91,376   exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[45..91] y[358..376]
+  UIWindow.img/UserList/Friend/BtParty/normal/0              71x18     95,358..165,375  exact=1.0000 mae=0.000 within4=1.0000 n=1182 origin=(0, 0)  bbox x[95..165] y[358..375]
+  UIWindow.img/UserList/Friend/BtBlock/normal/0              60x18     178,358..237,375 exact=1.0000 mae=0.000 within4=1.0000 n=995 origin=(0, 0)  bbox x[178..237] y[358..375]
+  UIWindow.img/UserList/Friend/BtMessage/normal/0            48x18     250,358..297,375 exact=1.0000 mae=0.000 within4=1.0000 n=791 origin=(24, 9)  bbox x[250..297] y[358..375]
+
+====================================================================================================
+SCREENSHOT 组员列表框.png  313x386   frame node = UIWindow.img/UserList/backgrnd (312x389)
+  frame alignment: dx=+1 dy=-3  ring MAE=0.000 over n=4880 ring px
+  window outer rect (bitmap extent) x[1..312] y[-3..385]
+  window OPAQUE rect              x[2..311] y[-2..384]  = 310x387
+
+  --- control matches under UIWindow.img/UserList ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserList/Tab/disabled/4                       50x14     101,2..150,15    exact=1.0000 mae=0.000 within4=1.0000 n=92 origin=(0, 0)  bbox x[101..150] y[2..15]
+  UIWindow.img/UserList/Tab/enabled/3                        51x14     101,2..151,15    exact=0.9746 mae=0.864 within4=0.9746 n=118 origin=(0, 0)  bbox x[101..151] y[2..15]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0      33x10     102,3..134,12    exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[102..134] y[3..12]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1      23x10     102,3..124,12    exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[102..124] y[3..12]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0       33x10     102,3..134,12    exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[102..134] y[3..12]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1       23x10     102,3..124,12    exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[102..124] y[3..12]
+  UIWindow.img/UserList/Tab/disabled/1                       27x16     40,23..66,38     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[40..66] y[23..38]
+  UIWindow.img/UserList/Tab/enabled/1                        27x16     40,23..66,38     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[40..66] y[23..38]
+  UIWindow.img/UserList/Tab/disabled/0                       27x15     9,24..35,38      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[9..35] y[24..38]
+  UIWindow.img/UserList/Tab/enabled/0                        27x15     9,24..35,38      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[9..35] y[24..38]
+  UIWindow.img/UserList/Tab/disabled/2                       26x14     71,24..96,37     exact=1.0000 mae=0.000 within4=1.0000 n=60 origin=(0, 0)  bbox x[71..96] y[24..37]
+  UIWindow.img/UserList/Tab/disabled/3                       50x14     101,24..150,37   exact=1.0000 mae=0.000 within4=1.0000 n=112 origin=(0, 0)  bbox x[101..150] y[24..37]
+  UIWindow.img/UserList/Party/party0                         281x27    7,50..287,76     exact=0.9874 mae=2.680 within4=0.9874 n=7074 origin=(0, 0)  bbox x[7..287] y[50..76]
+  UIWindow.img/UserList/Party/party5                         279x18    7,81..285,98     exact=1.0000 mae=0.000 within4=1.0000 n=4952 origin=(0, 0)  bbox x[7..285] y[81..98]
+  UIWindow.img/UserList/Party/party1                         279x18    7,99..285,116    exact=1.0000 mae=0.000 within4=1.0000 n=72 origin=(0, 0)  bbox x[7..285] y[99..116]
+  UIWindow.img/UserList/Party/party2                         279x4     7,117..285,120   exact=1.0000 mae=0.000 within4=1.0000 n=284 origin=(0, 0)  bbox x[7..285] y[117..120]
+  UIWindow.img/UserList/Party/party4                         281x27    7,131..287,157   exact=0.9872 mae=2.717 within4=0.9872 n=6946 origin=(0, 0)  bbox x[7..287] y[131..157]
+  UIWindow.img/UserList/Party/party3                         278x1     6,201..283,201   exact=0.9928 mae=0.489 within4=0.9928 n=278 origin=(0, 0)  bbox x[6..283] y[201..201]
+  UIWindow.img/UserList/Friend/friend6                       306x1     3,333..308,333   exact=1.0000 mae=0.000 within4=1.0000 n=306 origin=(0, 0)  bbox x[3..308] y[333..333]
+  UIWindow.img/UserList/Party/BtKick/disabled/0              47x19     191,341..237,359 exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[191..237] y[341..359]
+  UIWindow.img/UserList/Party/BtSearch/disabled/0            47x18     73,342..119,359  exact=1.0000 mae=0.000 within4=1.0000 n=774 origin=(0, 0)  bbox x[73..119] y[342..359]
+  UIWindow.img/UserList/Party/BtHP/disabled/0                47x18     132,342..178,359 exact=1.0000 mae=0.000 within4=1.0000 n=774 origin=(0, 0)  bbox x[132..178] y[342..359]
+  UIWindow.img/UserList/Friend/BtWhisper/disabled/0          47x19     250,342..296,360 exact=1.0000 mae=0.000 within4=1.0000 n=763 origin=(0, 0)  bbox x[250..296] y[342..360]
+  UIWindow.img/UserList/Party/BtWhisper/disabled/0           47x19     250,342..296,360 exact=1.0000 mae=0.000 within4=1.0000 n=763 origin=(0, 0)  bbox x[250..296] y[342..360]
+  UIWindow.img/UserList/Party/BtCreate/normal/0              47x19     14,352..60,370   exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[14..60] y[352..370]
+  UIWindow.img/UserList/Party/BtWithdraw/disabled/0          47x19     191,361..237,379 exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[191..237] y[361..379]
+  UIWindow.img/UserList/Party/BtInvite/normal/0              47x19     73,362..119,380  exact=1.0000 mae=0.000 within4=1.0000 n=761 origin=(0, 0)  bbox x[73..119] y[362..380]
+  UIWindow.img/UserList/Party/BtChangeBoss/disabled/0        47x18     132,362..178,379 exact=1.0000 mae=0.000 within4=1.0000 n=774 origin=(0, 0)  bbox x[132..178] y[362..379]
+  UIWindow.img/UserList/Friend/BtChat/disabled/0             47x19     250,362..296,380 exact=1.0000 mae=0.000 within4=1.0000 n=763 origin=(0, 0)  bbox x[250..296] y[362..380]
+  UIWindow.img/UserList/Party/BtChat/disabled/0              47x19     250,362..296,380 exact=1.0000 mae=0.000 within4=1.0000 n=763 origin=(0, 0)  bbox x[250..296] y[362..380]
+
+====================================================================================================
+SCREENSHOT 拒绝列表框.png  310x391   frame node = UIWindow.img/UserList/backgrnd (312x389)
+  frame alignment: dx=+0 dy=+2  ring MAE=1.014 over n=5111 ring px
+  window outer rect (bitmap extent) x[0..311] y[2..390]
+  window OPAQUE rect              x[1..310] y[3..389]  = 310x387
+
+  --- control matches under UIWindow.img/UserList ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserList/Tab/disabled/4                       50x14     100,7..149,20    exact=1.0000 mae=0.000 within4=1.0000 n=92 origin=(0, 0)  bbox x[100..149] y[7..20]
+  UIWindow.img/UserList/Tab/enabled/3                        51x14     100,7..150,20    exact=0.9746 mae=0.864 within4=0.9746 n=118 origin=(0, 0)  bbox x[100..150] y[7..20]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0      33x10     101,8..133,17    exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[101..133] y[8..17]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1      23x10     101,8..123,17    exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[101..123] y[8..17]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0       33x10     101,8..133,17    exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[101..133] y[8..17]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1       23x10     101,8..123,17    exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[101..123] y[8..17]
+  UIWindow.img/UserList/Tab/disabled/1                       27x16     39,28..65,43     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[39..65] y[28..43]
+  UIWindow.img/UserList/Tab/enabled/1                        27x16     39,28..65,43     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[39..65] y[28..43]
+  UIWindow.img/UserList/Tab/enabled/4                        52x16     154,28..205,43   exact=1.0000 mae=0.000 within4=1.0000 n=139 origin=(0, 0)  bbox x[154..205] y[28..43]
+  UIWindow.img/UserList/Tab/disabled/0                       27x15     8,29..34,43      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[8..34] y[29..43]
+  UIWindow.img/UserList/Tab/enabled/0                        27x15     8,29..34,43      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[8..34] y[29..43]
+  UIWindow.img/UserList/Tab/disabled/2                       26x14     70,29..95,42     exact=1.0000 mae=0.000 within4=1.0000 n=60 origin=(0, 0)  bbox x[70..95] y[29..42]
+  UIWindow.img/UserList/Tab/disabled/3                       50x14     100,29..149,42   exact=1.0000 mae=0.000 within4=1.0000 n=112 origin=(0, 0)  bbox x[100..149] y[29..42]
+  UIWindow.img/UserList/BlackList/blacklist1                 281x18    6,82..286,99     exact=1.0000 mae=0.000 within4=1.0000 n=54 origin=(0, 0)  bbox x[6..286] y[82..99]
+  UIWindow.img/UserList/BlackList/blacklist2                 281x6     6,100..286,105   exact=1.0000 mae=0.000 within4=1.0000 n=294 origin=(0, 0)  bbox x[6..286] y[100..105]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo4           280x1     7,105..286,105   exact=0.9964 mae=0.121 within4=0.9964 n=280 origin=(0, 0)  bbox x[7..286] y[105..105]
+  UIWindow.img/UserList/Friend/friend6                       306x1     2,338..307,338   exact=1.0000 mae=0.000 within4=1.0000 n=306 origin=(0, 0)  bbox x[2..307] y[338..338]
+  UIWindow.img/UserList/BlackList/BtAdd/normal/0             68x17     60,357..127,373  exact=1.0000 mae=0.000 within4=1.0000 n=1148 origin=(0, 0)  bbox x[60..127] y[357..373]
+  UIWindow.img/UserList/BlackList/BtDelete/disabled/0        68x17     180,357..247,373 exact=1.0000 mae=0.000 within4=1.0000 n=1148 origin=(0, 0)  bbox x[180..247] y[357..373]
+
+====================================================================================================
+SCREENSHOT 家族联盟.png  309x387   frame node = UIWindow.img/UserList/backgrnd2 (312x389)
+  frame alignment: dx=-1 dy=+0  ring MAE=0.081 over n=4807 ring px
+  window outer rect (bitmap extent) x[-1..310] y[0..388]
+  window OPAQUE rect              x[0..309] y[1..387]  = 310x387
+
+  --- control matches under UIWindow.img/UserList ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserList/Tab/disabled/3                       50x14     99,5..148,18     exact=0.9732 mae=1.062 within4=0.9732 n=112 origin=(0, 0)  bbox x[99..148] y[5..18]
+  UIWindow.img/UserList/Tab/disabled/4                       50x14     99,5..148,18     exact=1.0000 mae=0.000 within4=1.0000 n=92 origin=(0, 0)  bbox x[99..148] y[5..18]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0      33x10     99,6..131,15     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[99..131] y[6..15]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1      23x10     99,6..121,15     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[99..121] y[6..15]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0       33x10     99,6..131,15     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[99..131] y[6..15]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1       23x10     99,6..121,15     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[99..121] y[6..15]
+  UIWindow.img/UserList/Tab/disabled/1                       27x16     38,26..64,41     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[38..64] y[26..41]
+  UIWindow.img/UserList/Tab/enabled/1                        27x16     38,26..64,41     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[38..64] y[26..41]
+  UIWindow.img/UserList/Tab/disabled/0                       27x15     7,27..33,41      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[7..33] y[27..41]
+  UIWindow.img/UserList/Tab/enabled/0                        27x15     7,27..33,41      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[7..33] y[27..41]
+  UIWindow.img/UserList/Tab/disabled/2                       26x14     69,27..94,40     exact=1.0000 mae=0.000 within4=1.0000 n=60 origin=(0, 0)  bbox x[69..94] y[27..40]
+  UIWindow.img/UserList/Tab/enabled/3                        51x14     99,27..149,40    exact=1.0000 mae=0.000 within4=1.0000 n=118 origin=(0, 0)  bbox x[99..149] y[27..40]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo6           282x20    4,80..285,99     exact=1.0000 mae=0.000 within4=1.0000 n=5616 origin=(0, 0)  bbox x[4..285] y[80..99]
+  UIWindow.img/UserList/GuildUnion/guildinfo6                282x20    4,80..285,99     exact=1.0000 mae=0.000 within4=1.0000 n=5616 origin=(0, 0)  bbox x[4..285] y[80..99]
+  UIWindow.img/UserList/Guild/GuildInfo/Btnotice/disabled/0  20x20     287,80..306,99   exact=1.0000 mae=0.000 within4=1.0000 n=388 origin=(0, 0)  bbox x[287..306] y[80..99]
+  UIWindow.img/UserList/GuildUnion/Btnotice/disabled/0       20x20     287,80..306,99   exact=1.0000 mae=0.000 within4=1.0000 n=388 origin=(0, 0)  bbox x[287..306] y[80..99]
+  UIWindow.img/UserList/Friend/friend6                       306x1     1,105..306,105   exact=1.0000 mae=0.000 within4=1.0000 n=306 origin=(0, 0)  bbox x[1..306] y[105..105]
+  UIWindow.img/UserList/Guild/GuildInfo/BtInvite/disabled/0  53x18     8,316..60,333    exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[8..60] y[316..333]
+  UIWindow.img/UserList/GuildUnion/BtInvite/disabled/0       53x18     8,316..60,333    exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[8..60] y[316..333]
+  UIWindow.img/UserList/Guild/GuildInfo/BtWithdraw/disabled/0 53x18     79,316..131,333  exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[79..131] y[316..333]
+  UIWindow.img/UserList/GuildUnion/BtWithdraw/disabled/0     53x18     79,316..131,333  exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[79..131] y[316..333]
+  UIWindow.img/UserList/GuildUnion/BtChange/disabled/0       53x18     158,316..210,333 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[316..333]
+  UIWindow.img/UserList/Guild/GuildInfo/BtWhisper/disabled/0 46x17     237,316..282,332 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[316..332]
+  UIWindow.img/UserList/GuildUnion/BtWhisper/disabled/0      46x17     237,316..282,332 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[316..332]
+  UIWindow.img/UserList/Guild/GuildInfo/BtUp/disabled/0      53x18     8,336..60,353    exact=1.0000 mae=0.000 within4=1.0000 n=878 origin=(0, 0)  bbox x[8..60] y[336..353]
+  UIWindow.img/UserList/GuildUnion/BtUp/disabled/0           53x18     8,336..60,353    exact=1.0000 mae=0.000 within4=1.0000 n=878 origin=(0, 0)  bbox x[8..60] y[336..353]
+  UIWindow.img/UserList/Guild/GuildInfo/BtDown/disabled/0    53x18     79,336..131,353  exact=1.0000 mae=0.000 within4=1.0000 n=879 origin=(0, 0)  bbox x[79..131] y[336..353]
+  UIWindow.img/UserList/GuildUnion/BtDown/disabled/0         53x18     79,336..131,353  exact=1.0000 mae=0.000 within4=1.0000 n=879 origin=(0, 0)  bbox x[79..131] y[336..353]
+  UIWindow.img/UserList/Guild/GuildInfo/BtKick/disabled/0    53x18     158,336..210,353 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[336..353]
+  UIWindow.img/UserList/GuildUnion/BtKick/disabled/0         53x18     158,336..210,353 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[336..353]
+  UIWindow.img/UserList/Guild/GuildInfo/BtChat/disabled/0    46x17     237,336..282,352 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[336..352]
+  UIWindow.img/UserList/GuildUnion/BtChat/disabled/0         46x17     237,336..282,352 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[336..352]
+  UIWindow.img/UserList/Guild/GuildInfo/BtPartyInvite/disabled/0 53x18     158,363..210,380 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[363..380]
+  UIWindow.img/UserList/GuildUnion/BtPartyInvite/disabled/0  53x18     158,363..210,380 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[363..380]
+  UIWindow.img/UserList/Guild/GuildInfo/BtInfo/disabled/0    47x18     237,363..283,380 exact=1.0000 mae=0.000 within4=1.0000 n=773 origin=(23, 9)  bbox x[237..283] y[363..380]
+  UIWindow.img/UserList/GuildUnion/BtInfo/disabled/0         47x18     237,363..283,380 exact=1.0000 mae=0.000 within4=1.0000 n=773 origin=(23, 9)  bbox x[237..283] y[363..380]
+
+====================================================================================================
+SCREENSHOT 好友、组员、家族、家族联盟、拒绝列表.png  310x386   frame node = UIWindow.img/UserList/backgrnd2 (312x389)
+  frame alignment: dx=-1 dy=-2  ring MAE=0.000 over n=5188 ring px
+  window outer rect (bitmap extent) x[-1..310] y[-2..386]
+  window OPAQUE rect              x[0..309] y[-1..385]  = 310x387
+
+  --- control matches under UIWindow.img/UserList ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserList/Tab/disabled/2                       26x14     99,3..124,16     exact=0.9833 mae=0.850 within4=0.9833 n=60 origin=(0, 0)  bbox x[99..124] y[3..16]
+  UIWindow.img/UserList/Tab/disabled/4                       50x14     99,3..148,16     exact=1.0000 mae=0.000 within4=1.0000 n=92 origin=(0, 0)  bbox x[99..148] y[3..16]
+  UIWindow.img/UserList/Tab/enabled/3                        51x14     99,3..149,16     exact=0.9746 mae=0.864 within4=0.9746 n=118 origin=(0, 0)  bbox x[99..149] y[3..16]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0      33x10     99,4..131,13     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[99..131] y[4..13]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1      23x10     99,4..121,13     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[99..121] y[4..13]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0       33x10     99,4..131,13     exact=1.0000 mae=0.000 within4=1.0000 n=77 origin=(0, 0)  bbox x[99..131] y[4..13]
+  UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1       23x10     99,4..121,13     exact=1.0000 mae=0.000 within4=1.0000 n=47 origin=(0, 0)  bbox x[99..121] y[4..13]
+  UIWindow.img/UserList/Tab/disabled/1                       27x16     38,24..64,39     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[38..64] y[24..39]
+  UIWindow.img/UserList/Tab/enabled/1                        27x16     38,24..64,39     exact=1.0000 mae=0.000 within4=1.0000 n=86 origin=(0, 0)  bbox x[38..64] y[24..39]
+  UIWindow.img/UserList/Tab/enabled/2                        27x16     69,24..95,39     exact=1.0000 mae=0.000 within4=1.0000 n=79 origin=(0, 0)  bbox x[69..95] y[24..39]
+  UIWindow.img/UserList/Tab/disabled/0                       27x15     7,25..33,39      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[7..33] y[25..39]
+  UIWindow.img/UserList/Tab/enabled/0                        27x15     7,25..33,39      exact=1.0000 mae=0.000 within4=1.0000 n=81 origin=(0, 0)  bbox x[7..33] y[25..39]
+  UIWindow.img/UserList/Tab/disabled/3                       50x14     100,25..149,38   exact=1.0000 mae=0.000 within4=1.0000 n=112 origin=(0, 0)  bbox x[100..149] y[25..38]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo6           282x20    4,78..285,97     exact=1.0000 mae=0.000 within4=1.0000 n=5616 origin=(0, 0)  bbox x[4..285] y[78..97]
+  UIWindow.img/UserList/GuildUnion/guildinfo6                282x20    4,78..285,97     exact=1.0000 mae=0.000 within4=1.0000 n=5616 origin=(0, 0)  bbox x[4..285] y[78..97]
+  UIWindow.img/UserList/Guild/GuildInfo/Btnotice/disabled/0  20x20     286,78..305,97   exact=1.0000 mae=0.000 within4=1.0000 n=388 origin=(0, 0)  bbox x[286..305] y[78..97]
+  UIWindow.img/UserList/GuildUnion/Btnotice/disabled/0       20x20     286,78..305,97   exact=1.0000 mae=0.000 within4=1.0000 n=388 origin=(0, 0)  bbox x[286..305] y[78..97]
+  UIWindow.img/UserList/Friend/friend6                       306x1     1,103..306,103   exact=1.0000 mae=0.000 within4=1.0000 n=306 origin=(0, 0)  bbox x[1..306] y[103..103]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo2           281x18    5,142..285,159   exact=1.0000 mae=0.000 within4=1.0000 n=5052 origin=(0, 0)  bbox x[5..285] y[142..159]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo3           281x18    5,160..285,177   exact=1.0000 mae=0.000 within4=1.0000 n=90 origin=(0, 0)  bbox x[5..285] y[160..177]
+  UIWindow.img/UserList/Guild/GuildInfo/guildinfo4           280x1     5,178..284,178   exact=1.0000 mae=0.000 within4=1.0000 n=280 origin=(0, 0)  bbox x[5..284] y[178..178]
+  UIWindow.img/UserList/BlackList/blacklist2                 281x6     5,251..285,256   exact=0.9796 mae=1.561 within4=0.9796 n=294 origin=(0, 0)  bbox x[5..285] y[251..256]
+  UIWindow.img/UserList/Guild/GuildInfo/BtInvite/disabled/0  53x18     8,314..60,331    exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[8..60] y[314..331]
+  UIWindow.img/UserList/GuildUnion/BtInvite/disabled/0       53x18     8,314..60,331    exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[8..60] y[314..331]
+  UIWindow.img/UserList/Guild/GuildInfo/BtWithdraw/disabled/0 53x18     79,314..131,331  exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[79..131] y[314..331]
+  UIWindow.img/UserList/GuildUnion/BtWithdraw/disabled/0     53x18     79,314..131,331  exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[79..131] y[314..331]
+  UIWindow.img/UserList/Friend/BtWhere/disabled/0            53x18     158,314..210,331 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[314..331]
+  UIWindow.img/UserList/Guild/GuildInfo/BtWhere/disabled/0   53x18     158,314..210,331 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[314..331]
+  UIWindow.img/UserList/GuildUnion/BtWhere/disabled/0        53x18     158,314..210,331 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[314..331]
+  UIWindow.img/UserList/Guild/GuildInfo/BtWhisper/disabled/0 46x17     237,314..282,330 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[314..330]
+  UIWindow.img/UserList/GuildUnion/BtWhisper/disabled/0      46x17     237,314..282,330 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[314..330]
+  UIWindow.img/UserList/Guild/GuildInfo/BtUp/disabled/0      53x18     8,334..60,351    exact=1.0000 mae=0.000 within4=1.0000 n=878 origin=(0, 0)  bbox x[8..60] y[334..351]
+  UIWindow.img/UserList/GuildUnion/BtUp/disabled/0           53x18     8,334..60,351    exact=1.0000 mae=0.000 within4=1.0000 n=878 origin=(0, 0)  bbox x[8..60] y[334..351]
+  UIWindow.img/UserList/Guild/GuildInfo/BtDown/disabled/0    53x18     79,334..131,351  exact=1.0000 mae=0.000 within4=1.0000 n=879 origin=(0, 0)  bbox x[79..131] y[334..351]
+  UIWindow.img/UserList/GuildUnion/BtDown/disabled/0         53x18     79,334..131,351  exact=1.0000 mae=0.000 within4=1.0000 n=879 origin=(0, 0)  bbox x[79..131] y[334..351]
+  UIWindow.img/UserList/Guild/GuildInfo/BtKick/disabled/0    53x18     158,334..210,351 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[334..351]
+  UIWindow.img/UserList/GuildUnion/BtKick/disabled/0         53x18     158,334..210,351 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[334..351]
+  UIWindow.img/UserList/Guild/GuildInfo/BtChat/disabled/0    46x17     237,334..282,350 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[334..350]
+  UIWindow.img/UserList/GuildUnion/BtChat/disabled/0         46x17     237,334..282,350 exact=1.0000 mae=0.000 within4=1.0000 n=776 origin=(0, 2)  bbox x[237..282] y[334..350]
+  UIWindow.img/UserList/Guild/GuildInfo/BtGuildBBS/disabled/0 47x18     79,361..125,378  exact=1.0000 mae=0.000 within4=1.0000 n=774 origin=(23, 9)  bbox x[79..125] y[361..378]
+  UIWindow.img/UserList/Guild/GuildInfo/BtPartyInvite/disabled/0 53x18     158,361..210,378 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[361..378]
+  UIWindow.img/UserList/GuildUnion/BtPartyInvite/disabled/0  53x18     158,361..210,378 exact=1.0000 mae=0.000 within4=1.0000 n=876 origin=(0, 0)  bbox x[158..210] y[361..378]
+  UIWindow.img/UserList/Guild/GuildInfo/BtInfo/disabled/0    47x18     237,361..283,378 exact=1.0000 mae=0.000 within4=1.0000 n=773 origin=(23, 9)  bbox x[237..283] y[361..378]
+  UIWindow.img/UserList/GuildUnion/BtInfo/disabled/0         47x18     237,361..283,378 exact=1.0000 mae=0.000 within4=1.0000 n=773 origin=(23, 9)  bbox x[237..283] y[361..378]
+
+====================================================================================================
+SCREENSHOT 个人请报框.png  511x197   frame node = UIWindow.img/UserInfo/backgrnd (275x199)
+  frame alignment: dx=+0 dy=-1  ring MAE=0.000 over n=3676 ring px
+  window outer rect (bitmap extent) x[0..274] y[-1..197]
+  window OPAQUE rect              x[1..273] y[0..196]  = 273x197
+
+  --- control matches under UIWindow.img/UserInfo ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/UserInfo/BtItem/normal/0                      60x19     208,21..267,39   exact=1.0000 mae=0.000 within4=1.0000 n=982 origin=(0, 0)  bbox x[208..267] y[21..39]
+  UIWindow.img/UserInfo/BtFamily/normal/0                    40x37     105,22..144,58   exact=1.0000 mae=0.000 within4=1.0000 n=1396 origin=(0, 0)  bbox x[105..144] y[22..58]
+  UIWindow.img/UserInfo/BtParty/disabled/0                   59x17     149,22..207,38   exact=1.0000 mae=0.000 within4=1.0000 n=995 origin=(0, 0)  bbox x[149..207] y[22..38]
+  UIWindow.img/UserInfo/Marry/unmarried/0                    20x17     10,29..29,45     exact=1.0000 mae=0.000 within4=1.0000 n=236 origin=(0, 0)  bbox x[10..29] y[29..45]
+  UIWindow.img/UserInfo/BtWish/normal/0                      60x19     208,40..267,58   exact=1.0000 mae=0.000 within4=1.0000 n=982 origin=(0, 0)  bbox x[208..267] y[40..58]
+  UIWindow.img/UserInfo/BtTrade/disabled/0                   59x17     149,41..207,57   exact=1.0000 mae=0.000 within4=1.0000 n=995 origin=(0, 0)  bbox x[149..207] y[41..57]
+  UIWindow.img/UserInfo/ReqLv                                31x10     327,52..357,61   exact=1.0000 mae=0.000 within4=1.0000 n=310 origin=(0, 0)  bbox x[327..357] y[52..61]
+  UIWindow.img/UserInfo/BtTamingShow/disabled/0              47x17     5,176..51,192    exact=1.0000 mae=0.000 within4=1.0000 n=791 origin=(0, 0)  bbox x[5..51] y[176..192]
+  UIWindow.img/UserInfo/BtPetShow/disabled/0                 49x17     93,176..141,192  exact=1.0000 mae=0.000 within4=1.0000 n=825 origin=(0, 0)  bbox x[93..141] y[176..192]
+  UIWindow.img/UserInfo/BtCollectionShow/normal/0            49x17     145,176..193,192 exact=1.0000 mae=0.000 within4=1.0000 n=825 origin=(0, 0)  bbox x[145..193] y[176..192]
+  UIWindow.img/UserInfo/BtExceptionShow/disabled/0           71x17     199,176..269,192 exact=1.0000 mae=0.000 within4=1.0000 n=1199 origin=(0, 0)  bbox x[199..269] y[176..192]
+
+====================================================================================================
+SCREENSHOT 学院.png  227x392   frame node = UIWindow.img/Family/backgrnd (224x392)
+  frame alignment: dx=+1 dy=-1  ring MAE=0.629 over n=4812 ring px
+  window outer rect (bitmap extent) x[1..224] y[-1..390]
+  window OPAQUE rect              x[2..223] y[0..389]  = 222x390
+
+  --- control matches under UIWindow.img/Family ---
+  node                                                       size      bbox x0,y0..x1,y1 exact   MAE            within4
+  UIWindow.img/Family/BtFamilyPrecept/disabled/0             11x20     210,54..220,73   exact=1.0000 mae=0.000 within4=1.0000 n=208 origin=(0, 0)  bbox x[210..220] y[54..73]
+  UIWindow.img/Family/BtJuniorEntry/normal/0                 69x18     96,76..164,93    exact=1.0000 mae=0.000 within4=1.0000 n=1238 origin=(0, 0)  bbox x[96..164] y[76..93]
+  UIWindow.img/Family/BtTree/normal/0                        55x18     165,76..219,93   exact=1.0000 mae=0.000 within4=1.0000 n=986 origin=(0, 0)  bbox x[165..219] y[76..93]
+  UIWindow.img/Family/BtLeft/normal/0                        13x13     16,176..28,188   exact=1.0000 mae=0.000 within4=1.0000 n=157 origin=(0, 0)  bbox x[16..28] y[176..188]
+  UIWindow.img/Family/BtRight/normal/0                       13x13     197,176..209,188 exact=1.0000 mae=0.000 within4=1.0000 n=157 origin=(0, 0)  bbox x[197..209] y[176..188]
+  UIWindow.img/Family/BtSpecial/disabled/0                   57x18     153,321..209,338 exact=1.0000 mae=0.000 within4=1.0000 n=1004 origin=(0, 0)  bbox x[153..209] y[321..338]
+  UIWindow.img/Family/BtOK/normal/0                          40x22     94,367..133,388  exact=1.0000 mae=0.000 within4=1.0000 n=638 origin=(0, 0)  bbox x[94..133] y[367..388]
+

@@ -1,0 +1,7 @@
+MAPNAME HITS:
+  ('maple', '1', "'番茄田'")
+  ('maple', '1020001', "'番茄田'")
+  ('maple', '2', "'番茄田'")
+  ('maple', '3', "'番茄田'")
+
+NPC NAME HITS:

@@ -1,0 +1,50 @@
+===== Basic.img/BtClose
+BtClose [null]
+  disabled [null]
+    0 [bitmap] bitmap 12x12
+  mouseOver [null]
+    0 [bitmap] bitmap 12x12
+  normal [null]
+    0 [bitmap] bitmap 12x12
+  pressed [null]
+    0 [bitmap] bitmap 12x12
+===== Basic.img/BtClose2
+BtClose2 [null]
+  disabled [null]
+    0 [bitmap] bitmap 14x14
+  mouseOver [null]
+    0 [bitmap] bitmap 14x14
+  normal [null]
+    0 [bitmap] bitmap 14x14
+  pressed [null]
+    0 [bitmap] bitmap 14x14
+===== Basic.img/BtHide
+BtHide [null]
+  disabled [null]
+    0 [bitmap] bitmap 13x12
+  mouseOver [null]
+    0 [bitmap] bitmap 13x12
+  normal [null]
+    0 [bitmap] bitmap 13x12
+  pressed [null]
+    0 [bitmap] bitmap 13x12
+===== Basic.img/BtMin
+BtMin [null]
+  disabled [null]
+    0 [bitmap] bitmap 12x12
+  mouseOver [null]
+    0 [bitmap] bitmap 12x12
+  normal [null]
+    0 [bitmap] bitmap 12x12
+  pressed [null]
+    0 [bitmap] bitmap 12x12
+===== UIWindow.img/BtUIClose
+BtUIClose [null]
+  disabled [null]
+    0 [bitmap] bitmap 32x15
+  mouseOver [null]
+    0 [bitmap] bitmap 32x15
+  normal [null]
+    0 [bitmap] bitmap 32x15
+  pressed [null]
+    0 [bitmap] bitmap 32x15

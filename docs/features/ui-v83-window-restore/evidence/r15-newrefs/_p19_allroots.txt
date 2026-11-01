@@ -1,0 +1,12 @@
+nodes=43859  paths built
+backgrnd* bitmaps 190..275 wide and 90..420 tall across ALL roots: 12
+by root: [('UIWindow.img', 6), ('ITC.img', 4), ('CashShop.img', 2)]
+
+ring match anchored on the observable bottom-right corner (509,160), +-6 px:
+   MAE= 0.000 n=2462  dx=+270 dy=-1  UIWindow.img/UserInfo/backgrnd4                          opaque 238x160 outer x[271..508] y[0..159]
+   MAE= 1.986 n=2462  dx=+270 dy=-1  UIWindow.img/UserInfo/backgrnd3                          opaque 238x160 outer x[271..508] y[0..159]
+   MAE=17.055 n=1551  dx=+246 dy=-37  ITC.img/Buy/backgrnd3                                    opaque 260x194 outer x[249..508] y[-34..159]
+   MAE=17.259 n=1551  dx=+246 dy=-105  ITC.img/Buy/backgrnd1                                    opaque 260x262 outer x[249..508] y[-102..159]
+   MAE=18.991 n=1551  dx=+247 dy=-111  CashShop.img/CSItemSearch/PopUp1/backgrnd                opaque 260x268 outer x[249..508] y[-108..159]
+   MAE=20.105 n=1531  dx=+246 dy=-7  ITC.img/Sell/backgrnd1                                   opaque 260x159 outer x[249..508] y[-4..154]
+   MAE=27.666 n=2342  dx=+246 dy=+27  CashShop.img/CSItemSearch/PopUp/backgrnd                 opaque 260x130 outer x[249..508] y[30..159]

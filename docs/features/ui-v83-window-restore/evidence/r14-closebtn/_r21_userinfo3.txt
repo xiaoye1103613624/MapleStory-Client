@@ -1,0 +1,225 @@
+===== UIWindow.img/UserInfo
+UserInfo [null]
+  BtBookHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 48x17
+    mouseOver [null]
+      0 [bitmap] bitmap 48x17
+    normal [null]
+      0 [bitmap] bitmap 48x17
+    pressed [null]
+      0 [bitmap] bitmap 48x17
+  BtBookShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 48x17
+    mouseOver [null]
+      0 [bitmap] bitmap 48x17
+    normal [null]
+      0 [bitmap] bitmap 48x17
+    pressed [null]
+      0 [bitmap] bitmap 48x17
+  BtCollectionHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 49x17
+    mouseOver [null]
+      0 [bitmap] bitmap 49x17
+    normal [null]
+      0 [bitmap] bitmap 49x17
+    pressed [null]
+      0 [bitmap] bitmap 49x17
+  BtCollectionShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 49x17
+    mouseOver [null]
+      0 [bitmap] bitmap 49x17
+    normal [null]
+      0 [bitmap] bitmap 49x17
+    pressed [null]
+      0 [bitmap] bitmap 49x17
+  BtDelete [null]
+    disabled [null]
+      0 [bitmap] bitmap 31x17
+    mouseOver [null]
+      0 [bitmap] bitmap 31x17
+    normal [null]
+      0 [bitmap] bitmap 31x17
+    pressed [null]
+      0 [bitmap] bitmap 31x17
+  BtExceptionHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  BtExceptionShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 71x17
+    mouseOver [null]
+      0 [bitmap] bitmap 71x17
+    normal [null]
+      0 [bitmap] bitmap 71x17
+    pressed [null]
+      0 [bitmap] bitmap 71x17
+  BtFamily [null]
+    disabled [null]
+      0 [bitmap] bitmap 40x37
+    mouseOver [null]
+      0 [bitmap] bitmap 40x37
+    normal [null]
+      0 [bitmap] bitmap 40x37
+    pressed [null]
+      0 [bitmap] bitmap 40x37
+  BtItem [null]
+    disabled [null]
+      0 [bitmap] bitmap 60x19
+    mouseOver [null]
+      0 [bitmap] bitmap 60x19
+    normal [null]
+      0 [bitmap] bitmap 60x19
+    pressed [null]
+      0 [bitmap] bitmap 60x19
+  BtMeso [null]
+    disabled [null]
+      0 [bitmap] bitmap 31x17
+    mouseOver [null]
+      0 [bitmap] bitmap 31x17
+    normal [null]
+      0 [bitmap] bitmap 31x17
+    pressed [null]
+      0 [bitmap] bitmap 31x17
+  BtParty [null]
+    disabled [null]
+      0 [bitmap] bitmap 59x17
+    mouseOver [null]
+      0 [bitmap] bitmap 59x17
+    normal [null]
+      0 [bitmap] bitmap 59x17
+    pressed [null]
+      0 [bitmap] bitmap 59x17
+  BtPet1 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPet2 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPet3 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPetHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 48x17
+    mouseOver [null]
+      0 [bitmap] bitmap 48x17
+    normal [null]
+      0 [bitmap] bitmap 48x17
+    pressed [null]
+      0 [bitmap] bitmap 48x17
+  BtPetShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 49x17
+    mouseOver [null]
+      0 [bitmap] bitmap 49x17
+    normal [null]
+      0 [bitmap] bitmap 49x17
+    pressed [null]
+      0 [bitmap] bitmap 49x17
+  BtPresent [null]
+    disabled [null]
+      0 [bitmap] bitmap 45x13
+    mouseOver [null]
+      0 [bitmap] bitmap 45x13
+    normal [null]
+      0 [bitmap] bitmap 45x13
+    pressed [null]
+      0 [bitmap] bitmap 45x13
+  BtRegister [null]
+    disabled [null]
+      0 [bitmap] bitmap 31x17
+    mouseOver [null]
+      0 [bitmap] bitmap 31x17
+    normal [null]
+      0 [bitmap] bitmap 31x17
+    pressed [null]
+      0 [bitmap] bitmap 31x17
+  BtSearch [null]
+    disabled [null]
+      0 [bitmap] bitmap 38x17
+    mouseOver [null]
+      0 [bitmap] bitmap 38x17
+    normal [null]
+      0 [bitmap] bitmap 38x17
+    pressed [null]
+      0 [bitmap] bitmap 38x17
+  BtTamingHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x17
+    mouseOver [null]
+      0 [bitmap] bitmap 47x17
+    normal [null]
+      0 [bitmap] bitmap 47x17
+    pressed [null]
+      0 [bitmap] bitmap 47x17
+  BtTamingShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x17
+    mouseOver [null]
+      0 [bitmap] bitmap 47x17
+    normal [null]
+      0 [bitmap] bitmap 47x17
+    pressed [null]
+      0 [bitmap] bitmap 47x17
+  BtTrade [null]
+    disabled [null]
+      0 [bitmap] bitmap 59x17
+    mouseOver [null]
+      0 [bitmap] bitmap 59x17
+    normal [null]
+      0 [bitmap] bitmap 59x17
+    pressed [null]
+      0 [bitmap] bitmap 59x17
+  BtWish [null]
+    disabled [null]
+      0 [bitmap] bitmap 60x19
+    mouseOver [null]
+      0 [bitmap] bitmap 60x19
+    normal [null]
+      0 [bitmap] bitmap 60x19
+    pressed [null]
+      0 [bitmap] bitmap 60x19
+  Marry [null]
+    married [null]
+      0 [bitmap] bitmap 20x17
+    unmarried [null]
+      0 [bitmap] bitmap 20x17
+  ReqLv [bitmap] bitmap 31x10
+    origin [vector] (0, 0)
+  backgrnd [bitmap] bitmap 275x199
+  backgrnd2 [bitmap] bitmap 275x399
+  backgrnd3 [bitmap] bitmap 240x162
+  backgrnd4 [bitmap] bitmap 240x162
+  backgrnd5 [bitmap] bitmap 275x361
+  backgrnd6 [bitmap] bitmap 159x147
+  backgrnd7 [bitmap] bitmap 275x404
+  bossPetCrown [bitmap] bitmap 18x12
+    origin [vector] (9, 6)

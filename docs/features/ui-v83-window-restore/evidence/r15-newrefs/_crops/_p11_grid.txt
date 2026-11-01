@@ -1,0 +1,8 @@
+勋章框.png -> medal.grid.png  src 255x372 out 765x1116
+好友列表框.png -> friend.grid.png  src 302x384 out 906x1152
+组员列表框.png -> party.grid.png  src 313x386 out 939x1158
+拒绝列表框.png -> blacklist.grid.png  src 310x391 out 930x1173
+家族联盟.png -> guildunion.grid.png  src 309x387 out 927x1161
+好友、组员、家族、家族联盟、拒绝列表.png -> allfive.grid.png  src 310x386 out 930x1158
+个人请报框.png -> userinfo.grid.png  src 511x197 out 1533x591
+学院.png -> academy.grid.png  src 227x392 out 681x1176

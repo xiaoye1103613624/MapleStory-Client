@@ -1,0 +1,10 @@
+glyph bbox in box: (0, 80, 653, 678, 785)
+dark run y=654: None
+dark run y=656: None
+dark run y=658: (3, 78, 658, 658, 76)
+dark run y=662: (2, 79, 662, 662, 4)
+dark run y=670: (2, 79, 670, 670, 4)
+dark run y=676: None
+dark run y=678: None
+blue btn bbox: (537, 546, 662, 671, 88)
+white field extent y=670: (0, 677, 670, 670, 522)

@@ -1,0 +1,47 @@
+--- window origin y=4 (x=0) ---
+  backgrnd2 rows   0..104  SAD= 27.40
+  backgrnd2 rows 148..239  SAD= 25.42
+  backgrnd  rows 240..363  SAD= 21.65
+  backgrnd  rows   0..104  SAD= 39.48  (should be WORSE: covered)
+--- window origin y=5 (x=0) ---
+  backgrnd2 rows   0..104  SAD= 23.61
+  backgrnd2 rows 148..239  SAD= 23.89
+  backgrnd  rows 240..363  SAD= 20.91
+  backgrnd  rows   0..104  SAD= 36.93  (should be WORSE: covered)
+--- window origin y=6 (x=0) ---
+  backgrnd2 rows   0..104  SAD= 13.15
+  backgrnd2 rows 148..239  SAD=  6.06
+  backgrnd  rows 240..363  SAD=  5.59
+  backgrnd  rows   0..104  SAD= 30.98  (should be WORSE: covered)
+--- window origin y=7 (x=0) ---
+  backgrnd2 rows   0..104  SAD= 24.59
+  backgrnd2 rows 148..239  SAD= 24.42
+  backgrnd  rows 240..363  SAD= 17.54
+  backgrnd  rows   0..104  SAD= 38.84  (should be WORSE: covered)
+=== reference row classes, x in 6..286, y in 240..369 ===
+  y 240..242  TITLE/band
+  y 243..243  TAN
+  y 244..244  WHITE
+  y 245..245  other
+  y 246..307  WHITE
+  y 308..312  other
+  y 313..316  TAN
+  y 317..317  TITLE/band
+  y 318..321  other
+  y 322..322  TITLE/band
+  y 323..323  other
+  y 324..327  TAN
+  y 328..328  WHITE
+  y 329..329  TAN
+  y 330..333  WHITE
+  y 334..334  other
+  y 335..338  WHITE
+  y 339..339  other
+  y 340..340  TAN
+  y 341..345  other
+  y 346..346  WHITE
+  y 347..361  TITLE/band
+  y 362..362  other
+  y 363..366  TITLE/band
+  y 367..367  TAN
+  y 368..368  WHITE

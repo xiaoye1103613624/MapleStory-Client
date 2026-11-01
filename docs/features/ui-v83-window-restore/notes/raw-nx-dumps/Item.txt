@@ -1,0 +1,134 @@
+===== UIWindow.img/Item
+Item [null]
+  BtCashshop [null]
+    disabled [null]
+      0 [bitmap] bitmap 93x18
+    mouseOver [null]
+      0 [bitmap] bitmap 93x18
+    normal [null]
+      0 [bitmap] bitmap 93x18
+    pressed [null]
+      0 [bitmap] bitmap 93x18
+  BtCoin [null]
+    disabled [null]
+      0 [bitmap] bitmap 14x14
+    mouseOver [null]
+      0 [bitmap] bitmap 14x14
+      1 [bitmap] bitmap 14x14
+      2 [bitmap] bitmap 14x14
+      3 [bitmap] bitmap 14x14
+    normal [null]
+      0 [bitmap] bitmap 14x14
+    pressed [null]
+      0 [bitmap] bitmap 14x14
+  BtFull [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  BtGather [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  BtSmall [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  BtSort [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  FullBackgrnd [bitmap] bitmap 603x289
+    origin [vector] (877087568, 43859)
+  New [null]
+    Tab0 [null]
+      0 [bitmap] bitmap 34x18
+      1 [bitmap] bitmap 34x18
+      2 [bitmap] bitmap 34x18
+      3 [bitmap] bitmap 34x18
+      4 [bitmap] bitmap 34x18
+    Tab1 [null]
+      0 [bitmap] bitmap 34x19
+      1 [bitmap] bitmap 34x19
+      2 [bitmap] bitmap 34x19
+      3 [bitmap] bitmap 34x19
+      4 [bitmap] bitmap 34x19
+    inventory [null]
+      0 [bitmap] bitmap 36x36
+      1 [bitmap] bitmap 36x36
+      2 [bitmap] bitmap 36x36
+      3 [bitmap] bitmap 36x36
+  Quality [null]
+    0 [null]
+      0 [bitmap] bitmap 5x5
+    1 [null]
+      0 [bitmap] bitmap 5x5
+    2 [null]
+      0 [bitmap] bitmap 5x5
+    3 [null]
+      0 [bitmap] bitmap 5x5
+  Tab [null]
+    disabled [null]
+      0 [bitmap] bitmap 26x14
+      1 [bitmap] bitmap 26x14
+      2 [bitmap] bitmap 26x14
+      3 [bitmap] bitmap 26x14
+      4 [bitmap] bitmap 27x14
+    enabled [null]
+      0 [bitmap] bitmap 27x16
+      1 [bitmap] bitmap 27x16
+      2 [bitmap] bitmap 27x15
+      3 [bitmap] bitmap 27x15
+      4 [bitmap] bitmap 27x16
+  activeIcon [bitmap] bitmap 36x36
+    origin [vector] (-1420610489, 4194304)
+  backgrnd [bitmap] bitmap 175x289
+    origin [vector] (877087568, 43859)
+  bossPetIcon [bitmap] bitmap 34x38
+    origin [vector] (-1420610489, 4194304)
+  disabled [bitmap] bitmap 32x32
+    origin [vector] (877087568, 43859)
+    z [int] 0
+  shadow [bitmap] bitmap 26x6
+Traceback (most recent call last):
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 264, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 251, in main
+    cmd_list(nx, sys.argv[3:])
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 210, in cmd_list
+    walk(index, 0)
+    ~~~~^^^^^^^^^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 208, in walk
+    walk(child, level + 1)
+    ~~~~^^^^^^^^^^^^^^^^^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 208, in walk
+    walk(child, level + 1)
+    ~~~~^^^^^^^^^^^^^^^^^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 203, in walk
+    nx.value(node)
+    ~~~~~~~~^^^^^^
+  File "E:\project\MapleStory-Client\tools\nx_inspect.py", line 80, in value
+    x, y = struct.unpack_from("<ii", self.data, data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 4294967301 bytes for unpacking 8 bytes at offset 4294967293 (actual buffer size is 86919577)

@@ -1,0 +1,20 @@
+===== UIWindow.img/MiniMap/MaxMap
+MaxMap [null]
+  c [bitmap] bitmap 1x1
+    origin [vector] (0, 0)
+  e [bitmap] bitmap 6x1
+    origin [vector] (0, 0)
+  n [bitmap] bitmap 1x72
+    origin [vector] (0, 0)
+  ne [bitmap] bitmap 6x72
+    origin [vector] (0, 0)
+  nw [bitmap] bitmap 60x72
+    origin [vector] (0, 0)
+  s [bitmap] bitmap 1x15
+    origin [vector] (0, 0)
+  se [bitmap] bitmap 6x15
+    origin [vector] (0, 0)
+  sw [bitmap] bitmap 6x15
+    origin [vector] (0, 0)
+  w [bitmap] bitmap 6x1
+    origin [vector] (0, 0)

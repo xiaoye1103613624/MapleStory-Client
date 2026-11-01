@@ -1,0 +1,8 @@
+===== UIWindow.img/MiniMap/Min
+Min [null]
+  c [bitmap] bitmap 1x20
+    origin [vector] (0, 0)
+  e [bitmap] bitmap 4x20
+    origin [vector] (0, 0)
+  w [bitmap] bitmap 8x20
+    origin [vector] (0, 0)

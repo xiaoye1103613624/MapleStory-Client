@@ -1,0 +1,3819 @@
+===== ChatBalloon.img
+ChatBalloon.img [null]
+  0 [null]
+    arrow [bitmap] bitmap 13x13
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  1 [null]
+    arrow [bitmap] bitmap 13x13
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  10 [null]
+    arrow [bitmap] bitmap 15x16
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 10x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 10x10
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 10x10
+      origin [vector] (10, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 10x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 10x10
+      origin [vector] (10, 0)
+    w [bitmap] bitmap 10x14
+      origin [vector] (10, 0)
+  11 [null]
+    arrow [bitmap] bitmap 16x13
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 16x7
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x7
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x7
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 16x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  116 [null]
+    arrow [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 8x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x18
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x20
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x20
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 14x11
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 8x11
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 8x11
+      origin [vector] (8, 0)
+    w [bitmap] bitmap 8x14
+      origin [vector] (8, 0)
+  117 [null]
+    arrow [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 9x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x19
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 31x19
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 27x31
+      origin [vector] (27, 0)
+    s [bitmap] bitmap 14x8
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 9x8
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 3x8
+      origin [vector] (3, 0)
+    w [bitmap] bitmap 3x14
+      origin [vector] (3, 0)
+  118 [null]
+    arrow [bitmap] bitmap 14x26
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4283513316
+    e [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 38x33
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 36x34
+      origin [vector] (36, 0)
+    s [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x17
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 22x17
+      origin [vector] (22, 0)
+    w [bitmap] bitmap 13x14
+      origin [vector] (13, 0)
+  119 [null]
+    arrow [bitmap] bitmap 14x13
+      _hash [string] '2dada5c0a7bd7555a3b340bf3586f48d894036f88e58ed7f6727bcf55d9664f7'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] '57f496f2fcede5ce6e1097fbe9f1bc36bdf1b25ebee7b6a43d57f6480279f16d'
+      origin [vector] (0, 0)
+    clr [int] 4288757830
+    e [bitmap] bitmap 9x14
+      _hash [string] '846a38678fead8c63808466a853c2acd16e366c09dec19d4669c1001175ff7a2'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x30
+      _hash [string] '2f96157ecb8cd3337f59ed84f5a0c224829d29a067f996adb1ef27c7de2e67e3'
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 22x34
+      _hash [string] '8e322a89b28c798a47e51f856f5dfb52a24617055cf029ca1bfeb39e4f421174'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 20x28
+      _hash [string] '222c105612c9e39e9d54314960c04ae3e42fea79179571d80304b4a19bfde574'
+      origin [vector] (20, 0)
+    s [bitmap] bitmap 14x9
+      _hash [string] '192fc4022bd61fd827afb9f6b34749ec4d95fc7fc9b41e26c0ab72684f48c5b9'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 17x20
+      _hash [string] '548d8f8fe8438e25983865059864b3d8bd15db8b30924c5e96e4677e15926946'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 19x20
+      _hash [string] 'bb50dabdaab1d19789ef73d80fac0d7cc626adb58189de287efb0a4319a59a03'
+      origin [vector] (19, 0)
+    w [bitmap] bitmap 9x14
+      _hash [string] '12f497fff14fe424c6aa8fc26e30756fe6c0cf38f331b5baf64c4c3d862786f9'
+      origin [vector] (9, 0)
+  12 [null]
+    arrow [bitmap] bitmap 15x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    w [bitmap] bitmap 15x14
+      origin [vector] (15, 0)
+  13 [null]
+    arrow [bitmap] bitmap 15x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    w [bitmap] bitmap 15x14
+      origin [vector] (15, 0)
+  14 [null]
+    arrow [bitmap] bitmap 15x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 20x20
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    w [bitmap] bitmap 15x14
+      origin [vector] (15, 0)
+  148 [null]
+    arrow [bitmap] bitmap 28x24
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 28x14
+      origin [vector] (0, 0)
+    clr [int] 4294967259
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 28x24
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 25x35
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 19x27
+      origin [vector] (19, 0)
+    s [bitmap] bitmap 28x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 19x23
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x19
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  15 [null]
+    arrow [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  150 [null]
+    arrow [bitmap] bitmap 14x48
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4280103315
+    e [bitmap] bitmap 33x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x28
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 33x48
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 49x42
+      origin [vector] (49, 0)
+    s [bitmap] bitmap 14x41
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 33x43
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 33x43
+      origin [vector] (33, 0)
+    w [bitmap] bitmap 33x14
+      origin [vector] (33, 0)
+  151 [null]
+    arrow [bitmap] bitmap 14x45
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x26
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x26
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 28x28
+      origin [vector] (28, 0)
+    s [bitmap] bitmap 14x34
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 29x32
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 32x32
+      origin [vector] (32, 0)
+    w [bitmap] bitmap 22x14
+      origin [vector] (22, 0)
+  152 [null]
+    arrow [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 8x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x18
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x19
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x19
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 14x11
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 8x11
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 8x11
+      origin [vector] (8, 0)
+    w [bitmap] bitmap 8x14
+      origin [vector] (8, 0)
+  153 [null]
+    arrow [bitmap] bitmap 14x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4289265617
+    e [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 21x18
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x18
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 21x13
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 21x13
+      origin [vector] (21, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (16, 0)
+  155 [null]
+    arrow [bitmap] bitmap 14x30
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 19x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x23
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 19x23
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 32x35
+      origin [vector] (32, 0)
+    s [bitmap] bitmap 14x20
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 30x27
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 32x24
+      origin [vector] (32, 0)
+    w [bitmap] bitmap 19x14
+      origin [vector] (19, 0)
+  156 [null]
+    arrow [bitmap] bitmap 14x19
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4288757830
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x4
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x17
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x17
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x12
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x12
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  16 [null]
+    arrow [bitmap] bitmap 12x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  166 [null]
+    arrow [bitmap] bitmap 14x33
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4287381248
+    e [bitmap] bitmap 29x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x24
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 38x27
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 37x33
+      origin [vector] (37, 0)
+    s [bitmap] bitmap 14x33
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 36x33
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 36x33
+      origin [vector] (36, 0)
+    w [bitmap] bitmap 28x14
+      origin [vector] (28, 0)
+  169 [null]
+    arrow [bitmap] bitmap 14x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 17x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x26
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x26
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 17x12
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x12
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 17x14
+      origin [vector] (17, 0)
+  17 [null]
+    arrow [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  174 [null]
+    arrow [bitmap] bitmap 14x32
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4292203732
+    e [bitmap] bitmap 23x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x35
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 23x35
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 32x35
+      origin [vector] (32, 0)
+    s [bitmap] bitmap 14x32
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 23x32
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 32x32
+      origin [vector] (32, 0)
+    w [bitmap] bitmap 32x14
+      origin [vector] (32, 0)
+  175 [null]
+    arrow [bitmap] bitmap 15x34
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294963712
+    e [bitmap] bitmap 31x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x35
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 32x35
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 32x35
+      origin [vector] (32, 0)
+    s [bitmap] bitmap 14x34
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 31x34
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 32x34
+      origin [vector] (32, 0)
+    w [bitmap] bitmap 32x14
+      origin [vector] (32, 0)
+  176 [null]
+    arrow [bitmap] bitmap 14x34
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [string] '-6422297'
+    e [bitmap] bitmap 44x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x43
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 42x44
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 42x43
+      origin [vector] (42, 0)
+    s [bitmap] bitmap 14x34
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 33x34
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 34x32
+      origin [vector] (34, 0)
+    w [bitmap] bitmap 45x14
+      origin [vector] (45, 0)
+  177 [null]
+    arrow [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4289659174
+    e [bitmap] bitmap 22x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x18
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 24x27
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 31x37
+      origin [vector] (31, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x10
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 17x14
+      origin [vector] (17, 0)
+  178 [null]
+    arrow [bitmap] bitmap 13x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 13x13
+      origin [vector] (0, 0)
+    clr [string] '-4096'
+    e [bitmap] bitmap 15x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 13x18
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x23
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x24
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 13x9
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 15x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 16x10
+      origin [vector] (16, 0)
+    w [bitmap] bitmap 16x13
+      origin [vector] (16, 0)
+  179 [null]
+    arrow [bitmap] bitmap 14x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4284293632
+    e [bitmap] bitmap 18x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x25
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 31x27
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 40x34
+      origin [vector] (40, 0)
+    s [bitmap] bitmap 14x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 31x20
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 38x20
+      origin [vector] (38, 0)
+    w [bitmap] bitmap 26x14
+      origin [vector] (26, 0)
+  18 [null]
+    arrow [bitmap] bitmap 12x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 15x12
+      origin [vector] (15, 0)
+    s [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x7
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 13x14
+      origin [vector] (13, 0)
+  181 [null]
+    arrow [bitmap] bitmap 12x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 11x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 32x28
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 32x28
+      origin [vector] (32, 0)
+    s [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 24x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 25x14
+      origin [vector] (25, 0)
+    w [bitmap] bitmap 12x13
+      origin [vector] (12, 0)
+  182 [null]
+    arrow [bitmap] bitmap 11x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    clr [int] 4291644852
+    e [bitmap] bitmap 17x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 11x19
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 23x26
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 23x25
+      origin [vector] (23, 0)
+    s [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 19x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 23x16
+      origin [vector] (23, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (16, 0)
+  183 [null]
+    arrow [bitmap] bitmap 10x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 10x14
+      origin [vector] (0, 0)
+    clr [int] 4289856773
+    e [bitmap] bitmap 20x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 10x15
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 32x28
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 32x28
+      origin [vector] (32, 0)
+    s [bitmap] bitmap 10x16
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 24x16
+      origin [vector] (24, 0)
+    w [bitmap] bitmap 22x14
+      origin [vector] (22, 0)
+  186 [null]
+    arrow [bitmap] bitmap 14x25
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4284293632
+    e [bitmap] bitmap 35x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x25
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 34x30
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 22x24
+      origin [vector] (22, 0)
+    s [bitmap] bitmap 14x25
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 34x25
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 25x24
+      origin [vector] (25, 0)
+    w [bitmap] bitmap 23x14
+      origin [vector] (23, 0)
+  187 [null]
+    arrow [bitmap] bitmap 14x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4279061113
+    e [bitmap] bitmap 20x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x12
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 20x18
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 44x24
+      origin [vector] (44, 0)
+    s [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x20
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 38x19
+      origin [vector] (38, 0)
+    w [bitmap] bitmap 37x14
+      origin [vector] (37, 0)
+  188 [null]
+    arrow [bitmap] bitmap 14x27
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4286795264
+    e [bitmap] bitmap 22x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 26x30
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 31x32
+      origin [vector] (31, 0)
+    s [bitmap] bitmap 14x18
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x18
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 25x18
+      origin [vector] (25, 0)
+    w [bitmap] bitmap 24x14
+      origin [vector] (24, 0)
+  19 [null]
+    arrow [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 10x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x17
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x17
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 14x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 10x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 10x6
+      origin [vector] (10, 0)
+    w [bitmap] bitmap 10x14
+      origin [vector] (10, 0)
+  190 [null]
+    arrow [bitmap] bitmap 30x19
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    clr [int] 4278703088
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x13
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 14x13
+      origin [vector] (14, 0)
+    s [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  194 [null]
+    arrow [bitmap] bitmap 14x31
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 28x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x31
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 29x32
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 46x41
+      origin [vector] (46, 0)
+    s [bitmap] bitmap 14x22
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 29x42
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 26x28
+      origin [vector] (26, 0)
+    w [bitmap] bitmap 25x14
+      origin [vector] (25, 0)
+  197 [null]
+    arrow [bitmap] bitmap 28x31
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 18x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x22
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 18x22
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 26x29
+      origin [vector] (26, 0)
+    s [bitmap] bitmap 14x19
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 29x31
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 20x19
+      origin [vector] (20, 0)
+    w [bitmap] bitmap 23x14
+      origin [vector] (23, 0)
+  198 [null]
+    arrow [bitmap] bitmap 30x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278397037
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    head [bitmap] bitmap 30x19
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x11
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 12x11
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x11
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x13
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 12x14
+      origin [vector] (12, 0)
+  199 [null]
+    arrow [bitmap] bitmap 14x19
+      _inlink [string] '199/s'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] 'c1a3069f2cf40b06dc6812e87d1b9bc92a27c87875c513e857f06e230ebba3ad'
+      origin [vector] (0, 0)
+    clr [int] 4294958592
+    e [bitmap] bitmap 18x14
+      _hash [string] '431803d2b8e549c4e84c5ea1bcff611f35ef64f2f292943b05d4cfe02441458a'
+      origin [vector] (0, 0)
+    head [bitmap] bitmap 14x32
+      _hash [string] '99225be5e9d931149d9db47cb110c1aea642b308fbf7fe3ffe87b0639bb9b13e'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x32
+      _hash [string] '5b3ea226c0de0d50c46cfd6c99e1b3839ca271e4a3bbca3eeaafd08f5f468ebc'
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 19x31
+      _hash [string] 'cc380c61e2ac079f9e8eab8082e197f6528641b9bc54c3fa07a8e30e6cb1c6c4'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 19x31
+      _hash [string] '115ca1b6c74225563ad411dccbc94bdd69ea0d99e53efeebb51aae4df3e29a58'
+      origin [vector] (19, 0)
+    s [bitmap] bitmap 14x19
+      _hash [string] '31778b682066ddaefc9758b3a96762e6ecead7c7a07c559e44c17c4b2fc0f40d'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 23x26
+      _hash [string] '5177f55ffcda247f0dc5894dcd28ddc0f1bad2bcd7b05732da1964f47253e353'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 23x26
+      _hash [string] '76c4674a857805212b1d570cd2ca9bfe9354bf65c118266f17399455af6b17ba'
+      origin [vector] (23, 0)
+    w [bitmap] bitmap 18x14
+      _hash [string] 'e28af616290318854b4398bc5213af44d3e83972692c754718d380ac01b19ba9'
+      origin [vector] (18, 0)
+  2 [null]
+    arrow [bitmap] bitmap 13x13
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  20 [null]
+    arrow [bitmap] bitmap 12x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 10x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 10x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 10x12
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 17x15
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x15
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 10x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 10x7
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 10x7
+      origin [vector] (10, 0)
+    w [bitmap] bitmap 10x14
+      origin [vector] (10, 0)
+  200 [null]
+    arrow [bitmap] bitmap 14x14
+      _hash [string] '56707d4d39e9196495764d6f6485ee05c432ae695ecb2c4aa02333ce38beb53f'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] '333dd4f5c84f295ab0f0507b9e5f7a678290a31f25d9f73676aefb08dbacc4d1'
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 11x14
+      _hash [string] '47c5c3483d90335e866c9f924e9ba67fe7a04fe36b0ab1e3566ca6eea6d41e52'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x12
+      _hash [string] '14aaf03db809972e158abd5a0736710c13fcc46ca71c341cfe6d866948f0d5f7'
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 11x12
+      _hash [string] '2aa634e0c64299d7bc86aabdeda02c66581d4edfedbc208e906a4ce4b8ad52b9'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 28x24
+      _hash [string] '3d56851065175443134ff42d1bbdc12476cf660500ed5b039c6fe8e5ef0e0a1b'
+      origin [vector] (28, 0)
+    s [bitmap] bitmap 14x10
+      _hash [string] '652383e43512fcf2204976afd0d078fc4998453666df53cf8e8c8cff4587e80b'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x10
+      _hash [string] 'ce89d059f9bdb3e083f4e8c605d7c6c577200c3e4144fe7843628f247e7271df'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 11x10
+      _hash [string] 'f04fc5d37bb0e17e2ec06f9606378b730754622311efab2e6f393fd10fd9cb6a'
+      origin [vector] (11, 0)
+    w [bitmap] bitmap 11x14
+      _hash [string] 'cea1f3b96b6b7c80f792c3f751ec9e8ccd37a35b7ccfa287e36e2dc6dcf842d5'
+      origin [vector] (11, 0)
+  201 [null]
+    arrow [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4282705827
+    e [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 26x30
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 39x35
+      origin [vector] (39, 0)
+    s [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 15x19
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 24x14
+      origin [vector] (24, 0)
+    w [bitmap] bitmap 17x14
+      origin [vector] (17, 0)
+  203 [null]
+    arrow [bitmap] bitmap 14x19
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 16x15
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 21x20
+      origin [vector] (21, 0)
+    s [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x15
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 13x14
+      origin [vector] (13, 0)
+  204 [null]
+    arrow [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4280492084
+    e [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 13x16
+      origin [vector] (13, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 11x10
+      origin [vector] (11, 0)
+    w [bitmap] bitmap 11x14
+      origin [vector] (11, 0)
+  208 [null]
+    arrow [bitmap] bitmap 14x36
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4286462720
+    e [bitmap] bitmap 20x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 34x31
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 38x32
+      origin [vector] (38, 0)
+    s [bitmap] bitmap 14x22
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 41x33
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 32x28
+      origin [vector] (32, 0)
+    w [bitmap] bitmap 26x14
+      origin [vector] (26, 0)
+  209 [null]
+    arrow [bitmap] bitmap 14x36
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 20x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 34x28
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 30x35
+      origin [vector] (30, 0)
+    s [bitmap] bitmap 14x22
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 41x33
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 24x28
+      origin [vector] (24, 0)
+    w [bitmap] bitmap 18x14
+      origin [vector] (18, 0)
+  21 [null]
+    0 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      delay [int] 150
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 11x11
+      nw [bitmap] bitmap 10x11
+      s [bitmap] bitmap 14x11
+      se [bitmap] bitmap 11x10
+      sw [bitmap] bitmap 10x10
+      w [bitmap] bitmap 11x14
+    1 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      delay [int] 150
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 10x10
+      nw [bitmap] bitmap 11x10
+      s [bitmap] bitmap 14x11
+      se [bitmap] bitmap 10x11
+      sw [bitmap] bitmap 11x11
+      w [bitmap] bitmap 11x14
+    2 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      delay [int] 150
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 11x11
+      nw [bitmap] bitmap 11x11
+      s [bitmap] bitmap 14x11
+      se [bitmap] bitmap 11x11
+      sw [bitmap] bitmap 11x11
+      w [bitmap] bitmap 11x14
+    clr [int] 4294966272
+  210 [null]
+    arrow [bitmap] bitmap 14x22
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4287315711
+    e [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x11
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 8x11
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 39x28
+      origin [vector] (14, 0)
+    s [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x11
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 34x11
+      origin [vector] (9, 0)
+    w [bitmap] bitmap 34x14
+      origin [vector] (9, 0)
+  22 [null]
+    arrow [bitmap] bitmap 14x17
+      origin [vector] (2, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 20x14
+      origin [vector] (20, 0)
+    s [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x10
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  221 [null]
+    arrow [bitmap] bitmap 14x15
+      _hash [string] '0a2b0beb8040ec4bab9f05a08e9e458933240dca06cece486b62919655c31a8d'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4292299106
+    e [bitmap] bitmap 12x14
+      _hash [string] 'd3675d4547f8ed309e535883ffe86094a2c942ff4e6b06400965263aea10d462'
+      origin [vector] (0, 0)
+    head [bitmap] bitmap 14x15
+      _hash [string] '181cd281f2a5e6c2687ff50884e372cd9bd4fafe6e8d7804f6e5e97bb96625d4'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x13
+      _hash [string] '4c3f053fe5dfd0deb69e0cc2fc288a9ab340fe97ba16a69fad68d46f72f4640c'
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 14x13
+      _hash [string] '2d62df39e3fdf751a5347baf40be604dca6c26d52b55a52898c01cc821d9b268'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x13
+      _hash [string] '1e320d64ca2064c7d3538ca0c84af54b53010b5f7a48d62aad3bb1b9761d5424'
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 14x14
+      _hash [string] '87f2bdd2c5a0b3f7c3d70599d64f8408616a32bb1c366962e8cc543065e9f7d7'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x14
+      _hash [string] '24df0c57baaef12c1259db381aa669eb58ec513b36e955322e468938a5d032d7'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x14
+      _hash [string] '894fbde455835f6dd97fcc99c876f6ddc9acaa869b316ec521b18ceb331cc3ed'
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 11x14
+      _hash [string] 'd2fa7af484cc9b164649ab7050a59e232aff9f8d42aa885b9570155e350a1cc9'
+      origin [vector] (11, 0)
+  223 [null]
+    arrow [bitmap] bitmap 14x21
+      _hash [string] '831295eb04d9158d3b76b87391f596f0ae961536ea8a546f62a0113b76445764'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] '68a7ef25423c393cc062b697df876dd98047a3cc08c97c3275415564df5499f8'
+      origin [vector] (0, 0)
+    clr [int] 4288356156
+    e [bitmap] bitmap 11x14
+      _hash [string] '9ff97a375267411bd1b75f41b292e00ec860853400e8cc9bf0fa56f3ef77ff2c'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x12
+      _hash [string] '382e7c2df79b0b5fb7757b06eabe596eee20278e19a9a2fca82930b42e35b351'
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 11x12
+      _hash [string] '5d445f1e62a6c7b6b645150b11a4ba1b2e01e7c2088885395189217a9e3b2f16'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 19x18
+      _hash [string] 'd476a87a97b44661df0d9795327155a00bc1f58ce1071af917e2c54d2d165ded'
+      origin [vector] (19, 0)
+    s [bitmap] bitmap 14x12
+      _hash [string] 'a4c853970727474b570c5d6dadc4d95ff1e1409b01f9969ef8498466f2491c1b'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x12
+      _hash [string] '232ef43f201e7b7781d8d4c8bcf16e13e3e348e5cb6d0a0e851f92cc8dcaea4f'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 11x12
+      _hash [string] '2598fcb72c5d939042eb878a548b6f18ee4070d9fd2d174971f4f0a2672a9517'
+      origin [vector] (11, 0)
+    w [bitmap] bitmap 11x14
+      _hash [string] 'c9ffe18fe059a435561f421abcdce7239c20a1aba2a47a8ad58901a4034c4491'
+      origin [vector] (11, 0)
+  225 [null]
+    arrow [bitmap] bitmap 14x15
+      _hash [string] 'c5a86a49a972cc25ddfaf54585560ed0be556b036e2223768a5a7d5c2521b11a'
+      origin [vector] (0, 0)
+      z [int] 0
+    c [bitmap] bitmap 14x14
+      _hash [string] '57f496f2fcede5ce6e1097fbe9f1bc36bdf1b25ebee7b6a43d57f6480279f16d'
+      origin [vector] (0, 0)
+    clr [int] 4294929160
+    e [bitmap] bitmap 12x14
+      _hash [string] '0b89bdd1be9fea6a3860b53452d0e30b3636b91612243016b250775b4bc5a1dd'
+      origin [vector] (0, 0)
+      z [int] 0
+    head [bitmap] bitmap 14x14
+      _hash [string] 'e2d0a6dd65dcf4115082f2b4be8aaa8088320fc5526dbaedebb5660362d2dfd6'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x14
+      _hash [string] '2cbbadefb5c31aa5fec1e677639689e64566f32f4a10b555400f49bebbc4b403'
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 19x15
+      _hash [string] '6a6079945814ebb8b3a146319daa7002d95e3e4b49813d9ab1658cec0892a7f8'
+      origin [vector] (0, 0)
+      z [int] 0
+    nw [bitmap] bitmap 20x15
+      _hash [string] 'e8747d3d648c9616b654f48ba2f934c517915b5782bb84949ee12c456e07ad97'
+      origin [vector] (20, 0)
+      z [int] 0
+    s [bitmap] bitmap 14x12
+      _hash [string] '28e4f7157ddd993dc50c3fed29ba0f4e122dd5975a9a80bdf910e80ce6801af8'
+      origin [vector] (0, 0)
+      z [int] 0
+    se [bitmap] bitmap 12x12
+      _hash [string] '90b425714c7b2193943867cc99294cbd79bd12d355630ff3f8e83cbb286c4979'
+      origin [vector] (0, 0)
+      z [int] 0
+    sw [bitmap] bitmap 11x12
+      _hash [string] '5b2edc560ec96237f999c81d640c8567f6a974f08bb85275a373e83259367604'
+      origin [vector] (11, 0)
+      z [int] 0
+    w [bitmap] bitmap 11x14
+      _hash [string] '85436e206bfa6324e36edcb6a02b4d6d4ec3218f364ab8f3347a707c5b28efe1'
+      origin [vector] (11, 0)
+      z [int] 0
+  227 [null]
+    arrow [bitmap] bitmap 14x43
+      _hash [string] '5b3c8d00d0c4a9b9a44dc72fc4710b3240c6ab7dd334400e5f18208327ec372f'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] '56df0c32a63dfb3b432cdfb61f0d09c87c679526d8786603dcf587df7706a5b4'
+      origin [vector] (0, 0)
+    clr [int] 4283519313
+    e [bitmap] bitmap 47x14
+      _hash [string] 'cf6b44e8d9712e7984146c96bc14757edc0d5db87ac37e37f64834641df0355c'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x19
+      _hash [string] '23b837bec27180df0c89d909db999b4299bf45fc6625f0a3942657d2a1c5dc6f'
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 45x19
+      _hash [string] '27514b02eda80c2a4bcaa42c36feb85b9de6ad54a818cd2854da8dbf81afcdfc'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x12
+      _hash [string] '2b6db266cd14d47602a9eb2e8f58314e9ef55728cf16d646d315f183dfe713e7'
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 14x38
+      _hash [string] 'd0ef2b2e393cbdf335dcea11623ef9c40c361d4231fa2c071172b6a042d56fe7'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 47x38
+      _hash [string] '25f22c0860a27a34a404a58bdea1aa8ff7be6c040855283a0120740844d22280'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x38
+      _hash [string] 'e5c57a64ccdafedfadba58e4ba315d901353a95360a6217dcaf8da6747c96cab'
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 12x14
+      _hash [string] '8e7c7d7ad9632f99f01629bc6ed105c557b02dbf064b3839efb39b1b95223ec4'
+      origin [vector] (12, 0)
+  229 [null]
+    arrow [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] 'e9c68292c4b636fe21a603abdcf740b7edd0c747fd66a7da81e3489277d6b90b'
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 14x14
+      _hash [string] '2d544d6ca8913fcb6bbf6da1755be1958ee14150585e13d685f9f1bc3f999275'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x23
+      _hash [string] '0986c62eb894233817a50093bc0f526577cdbd2a33501f43eef9433bf02fae16'
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 23x30
+      _hash [string] 'd393153b5c478bcc31a5a9d95cccbf3280a2b6efd14dead59a3acea49e38bb4c'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 33x35
+      _hash [string] '0304b6ae93b7bbf256876c13dc65971b0115f21aaf3f85c176ba265f7685c5b7'
+      origin [vector] (33, 0)
+    s [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 21x19
+      _hash [string] '0be623d678380e58d879a2c6c37d7984a3788df7095c4e72fe20a28b87792e61'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 25x24
+      _hash [string] '92456ed817c7bfc8c01e0a7ed81ac34f4aab4cc386fe669382c7f742a15b4049'
+      origin [vector] (25, 0)
+    w [bitmap] bitmap 24x14
+      _hash [string] '765edb19ff2dd710e3e1656af803817005057d2df9eb9b630000a55d5c20427e'
+      origin [vector] (24, 0)
+  23 [null]
+    arrow [bitmap] bitmap 14x17
+      origin [vector] (2, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 20x14
+      origin [vector] (20, 0)
+    s [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x10
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  230 [null]
+    arrow [bitmap] bitmap 14x17
+      _inlink [string] '230/s'
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      _hash [string] '2bb7136e3c621b4592d24a616880ac6198208a5ec0e1fc070ee232c7ece72ef2'
+      origin [vector] (0, 0)
+    clr [int] 4294901760
+    e [bitmap] bitmap 26x14
+      _hash [string] '3274591e950efbb3ba1be1bf63c16ac229c8ec64384fe6f5030f418c6f18837c'
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x27
+      _hash [string] '01a95181817329edde102c820f5cdf89230ccdf47c8ba7bf3cc0176845e6ea07'
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 34x40
+      _hash [string] '1ac2e843bc92cefbfc7871eb1bb9bde40c5ba0d571a8628ec40fe4703684b288'
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 22x27
+      _hash [string] '39b9d930f039b41f586edaf42488cab53c7fc0586c6d762242d3cd9d68de2563'
+      origin [vector] (22, 0)
+    s [bitmap] bitmap 14x17
+      _hash [string] 'e8a1db6bca5f4e2be87f0e8b3dba8750fb04d4ad79cfe1b838d7ef5a1ac97c1e'
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 28x33
+      _hash [string] 'acce4352e4970a19af8c7af11bea3bc8750f73cecdd200b388ec2cda83b58b58'
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 20x17
+      _hash [string] 'b262ea16ba2595a2f53518ab05dc02c717b3560aecff1836f5e6a1c573bae816'
+      origin [vector] (20, 0)
+    w [bitmap] bitmap 22x14
+      _hash [string] '7a5b2834dda8d832cd7188c7974d5761f987b0731008d2f895055625d840660a'
+      origin [vector] (22, 0)
+  24 [null]
+    arrow [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 16x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x17
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 16x17
+      origin [vector] (16, 0)
+    s [bitmap] bitmap 16x11
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 16x17
+      origin [vector] (16, 0)
+    w [bitmap] bitmap 11x14
+      origin [vector] (11, 0)
+  25 [null]
+    arrow [bitmap] bitmap 13x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 9x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x16
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x16
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 12x11
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 15x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 15x15
+      origin [vector] (15, 0)
+    w [bitmap] bitmap 9x13
+      origin [vector] (9, 0)
+  26 [null]
+    arrow [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 9x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x9
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 13x12
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 13x12
+      origin [vector] (13, 0)
+    s [bitmap] bitmap 14x9
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 9x9
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 9x9
+      origin [vector] (9, 0)
+    w [bitmap] bitmap 9x13
+      origin [vector] (9, 0)
+  27 [null]
+    arrow [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 8x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x9
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x12
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x12
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 14x9
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 8x9
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 8x9
+      origin [vector] (8, 0)
+    w [bitmap] bitmap 8x13
+      origin [vector] (8, 0)
+  28 [null]
+    arrow [bitmap] bitmap 11x23
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 15x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 14x13
+      origin [vector] (14, 0)
+    s [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x12
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x12
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 15x13
+      origin [vector] (15, 0)
+  29 [null]
+    arrow [bitmap] bitmap 16x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 8x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x8
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 11x11
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 11x11
+      origin [vector] (11, 0)
+    s [bitmap] bitmap 14x8
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x11
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 11x11
+      origin [vector] (11, 0)
+    w [bitmap] bitmap 8x13
+      origin [vector] (8, 0)
+  3 [null]
+    arrow [bitmap] bitmap 13x14
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x8
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x11
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x11
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  30 [null]
+    arrow [bitmap] bitmap 15x15
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x9
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 15x20
+      origin [vector] (15, 0)
+    s [bitmap] bitmap 15x9
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x9
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 11x9
+      origin [vector] (11, 0)
+    w [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+  31 [null]
+    arrow [bitmap] bitmap 12x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 8x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 8x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 17x16
+      origin [vector] (17, 0)
+    s [bitmap] bitmap 12x8
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 8x8
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x8
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  32 [null]
+    arrow [bitmap] bitmap 14x20
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    s [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  33 [null]
+    arrow [bitmap] bitmap 14x20
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294901760
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    s [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  34 [null]
+    arrow [bitmap] bitmap 18x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 18x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 18x11
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x19
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 16x19
+      origin [vector] (16, 0)
+    s [bitmap] bitmap 18x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x10
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 12x13
+      origin [vector] (12, 0)
+  35 [null]
+    arrow [bitmap] bitmap 15x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 15x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 9x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 15x11
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 20x16
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 9x11
+      origin [vector] (9, 0)
+    s [bitmap] bitmap 15x11
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 9x11
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 20x15
+      origin [vector] (20, 0)
+    w [bitmap] bitmap 9x13
+      origin [vector] (9, 0)
+  36 [null]
+    arrow [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x10
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+  37 [null]
+    arrow [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 13x10
+      origin [vector] (13, 0)
+    w [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+  38 [null]
+    arrow [bitmap] bitmap 15x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 11x13
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+    s [bitmap] bitmap 14x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 11x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x10
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 11x13
+      origin [vector] (11, 0)
+  39 [null]
+    arrow [bitmap] bitmap 18x17
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 18x13
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 12x13
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 18x11
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 13x17
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 13x17
+      origin [vector] (13, 0)
+    s [bitmap] bitmap 18x10
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 12x10
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 12x10
+      origin [vector] (12, 0)
+    w [bitmap] bitmap 12x13
+      origin [vector] (12, 0)
+  4 [null]
+    arrow [bitmap] bitmap 13x14
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x8
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 12x11
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 12x11
+      origin [vector] (12, 0)
+    s [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  47 [null]
+    arrow [bitmap] bitmap 14x24
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 21x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 31x24
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 27x26
+      origin [vector] (27, 0)
+    s [bitmap] bitmap 14x20
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 28x26
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 26x24
+      origin [vector] (26, 0)
+    w [bitmap] bitmap 18x14
+      origin [vector] (18, 0)
+  48 [null]
+    arrow [bitmap] bitmap 14x28
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 22x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x27
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 22x27
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 27x29
+      origin [vector] (27, 0)
+    s [bitmap] bitmap 14x28
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 46x35
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 21x28
+      origin [vector] (21, 0)
+    w [bitmap] bitmap 21x14
+      origin [vector] (21, 0)
+  5 [null]
+    arrow [bitmap] bitmap 14x15
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 7x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x31
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 7x31
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 30x31
+      origin [vector] (30, 0)
+    s [bitmap] bitmap 12x8
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 7x8
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 30x8
+      origin [vector] (30, 0)
+    w [bitmap] bitmap 30x14
+      origin [vector] (30, 0)
+  50 [null]
+    arrow [bitmap] bitmap 13x18
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    clr [int] 4288893184
+    e [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 19x19
+      origin [vector] (19, 0)
+    s [bitmap] bitmap 13x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  58 [null]
+    arrow [bitmap] bitmap 14x21
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 21x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 33x24
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 40x25
+      origin [vector] (40, 0)
+    s [bitmap] bitmap 14x15
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 23x19
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 39x20
+      origin [vector] (39, 0)
+    w [bitmap] bitmap 27x14
+      origin [vector] (27, 0)
+  59 [null]
+    arrow [bitmap] bitmap 14x20
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    clr [int] 4294967295
+    e [bitmap] bitmap 21x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 14x16
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 23x19
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 18x16
+      origin [vector] (18, 0)
+    s [bitmap] bitmap 14x14
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 24x14
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 17x14
+      origin [vector] (17, 0)
+    w [bitmap] bitmap 14x14
+      origin [vector] (14, 0)
+  6 [null]
+    arrow [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 16x14
+      origin [vector] (9, 0)
+    n [bitmap] bitmap 12x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x17
+      origin [vector] (9, 0)
+    nw [bitmap] bitmap 16x17
+      origin [vector] (7, 0)
+    s [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x7
+      origin [vector] (9, 0)
+    sw [bitmap] bitmap 16x7
+      origin [vector] (7, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (7, 0)
+  7 [null]
+    arrow [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 16x14
+      origin [vector] (9, 0)
+    n [bitmap] bitmap 12x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x17
+      origin [vector] (9, 0)
+    nw [bitmap] bitmap 16x17
+      origin [vector] (7, 0)
+    s [bitmap] bitmap 12x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x7
+      origin [vector] (9, 0)
+    sw [bitmap] bitmap 16x7
+      origin [vector] (7, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (7, 0)
+  8 [null]
+    arrow [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 16x14
+      origin [vector] (9, 0)
+    n [bitmap] bitmap 16x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x17
+      origin [vector] (9, 0)
+    nw [bitmap] bitmap 16x17
+      origin [vector] (7, 0)
+    s [bitmap] bitmap 16x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x7
+      origin [vector] (9, 0)
+    sw [bitmap] bitmap 16x7
+      origin [vector] (7, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (7, 0)
+  9 [null]
+    arrow [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 16x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 16x14
+      origin [vector] (9, 0)
+    n [bitmap] bitmap 16x17
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 16x17
+      origin [vector] (9, 0)
+    nw [bitmap] bitmap 16x17
+      origin [vector] (7, 0)
+    s [bitmap] bitmap 16x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 16x7
+      origin [vector] (9, 0)
+    sw [bitmap] bitmap 16x7
+      origin [vector] (7, 0)
+    w [bitmap] bitmap 16x14
+      origin [vector] (7, 0)
+  adboard [null]
+    0 [null]
+      arrow [bitmap] bitmap 14x23
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x19
+      ne [bitmap] bitmap 18x19
+      nw [bitmap] bitmap 18x19
+      s [bitmap] bitmap 14x19
+      se [bitmap] bitmap 18x19
+      sw [bitmap] bitmap 18x19
+      w [bitmap] bitmap 18x14
+  dead [null]
+    arrow [bitmap] bitmap 14x15
+      origin [vector] (2, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  miniroom [null]
+    Able [bitmap] bitmap 48x15
+      origin [vector] (0, 0)
+    Disable [bitmap] bitmap 48x15
+      origin [vector] (0, 0)
+    Lock [bitmap] bitmap 12x15
+      origin [vector] (0, 0)
+    MemoryGame [null]
+      0 [bitmap] bitmap 17x16
+      1 [bitmap] bitmap 17x16
+      2 [bitmap] bitmap 17x16
+    Omok [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+    PSSkin [null]
+      0 [bitmap] bitmap 112x63
+      1 [bitmap] bitmap 156x159
+      2 [bitmap] bitmap 156x159
+      3 [bitmap] bitmap 156x159
+      4 [bitmap] bitmap 156x159
+      6 [bitmap] bitmap 156x159
+    PersonalShop [bitmap] bitmap 14x13
+      origin [vector] (0, 0)
+    Progress [bitmap] bitmap 48x15
+      origin [vector] (0, 0)
+    Unlock [bitmap] bitmap 12x15
+      origin [vector] (0, 0)
+    backgrnd [bitmap] bitmap 112x63
+      origin [vector] (0, 0)
+    backgrnd2 [bitmap] bitmap 112x63
+      origin [vector] (0, 0)
+    cNum [null]
+      1 [bitmap] bitmap 12x11
+      2 [bitmap] bitmap 12x11
+      3 [bitmap] bitmap 12x11
+      4 [bitmap] bitmap 12x11
+    mNum [null]
+      1 [bitmap] bitmap 12x11
+      2 [bitmap] bitmap 12x11
+      3 [bitmap] bitmap 12x11
+      4 [bitmap] bitmap 12x11
+  mob [null]
+    0 [null]
+      arrow [bitmap] bitmap 13x13
+      c [bitmap] bitmap 12x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 6x14
+      n [bitmap] bitmap 12x6
+      ne [bitmap] bitmap 6x6
+      nw [bitmap] bitmap 6x6
+      s [bitmap] bitmap 12x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 6x6
+      w [bitmap] bitmap 6x14
+    1 [null]
+      c [bitmap] bitmap 36x17
+      clr [int] 4294967295
+      e [bitmap] bitmap 46x17
+      n [bitmap] bitmap 36x25
+      ne [bitmap] bitmap 58x35
+      nw [bitmap] bitmap 58x35
+      s [bitmap] bitmap 36x25
+      screenChat [int] 1
+      se [bitmap] bitmap 58x35
+      sw [bitmap] bitmap 58x35
+      w [bitmap] bitmap 46x17
+  npc [null]
+    arrow [bitmap] bitmap 13x13
+      origin [vector] (1, 0)
+    c [bitmap] bitmap 12x14
+      origin [vector] (0, 0)
+    clr [int] 4286578688
+    e [bitmap] bitmap 6x14
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    s [bitmap] bitmap 12x6
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 6x6
+      origin [vector] (6, 0)
+    w [bitmap] bitmap 6x14
+      origin [vector] (6, 0)
+  pet [null]
+    0 [null]
+      arrow [bitmap] bitmap 13x13
+      c [bitmap] bitmap 12x14
+      clr [int] 4286578688
+      e [bitmap] bitmap 6x14
+      n [bitmap] bitmap 12x6
+      ne [bitmap] bitmap 6x6
+      nw [bitmap] bitmap 6x6
+      s [bitmap] bitmap 12x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 6x6
+      w [bitmap] bitmap 6x14
+    1 [null]
+      arrow [bitmap] bitmap 13x11
+      c [bitmap] bitmap 13x13
+      clr [int] 4294967295
+      e [bitmap] bitmap 7x13
+      n [bitmap] bitmap 13x8
+      ne [bitmap] bitmap 15x11
+      nw [bitmap] bitmap 15x11
+      s [bitmap] bitmap 13x7
+      se [bitmap] bitmap 7x7
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x13
+    100 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x18
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 14x20
+      nw [bitmap] bitmap 14x20
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x14
+    104 [null]
+      arrow [bitmap] bitmap 11x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 11x13
+      ne [bitmap] bitmap 25x21
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 11x9
+      se [bitmap] bitmap 19x9
+      sw [bitmap] bitmap 23x11
+      w [bitmap] bitmap 19x14
+    105 [null]
+      arrow [bitmap] bitmap 11x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 11x13
+      ne [bitmap] bitmap 25x21
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 11x9
+      se [bitmap] bitmap 19x9
+      sw [bitmap] bitmap 23x11
+      w [bitmap] bitmap 19x14
+    106 [null]
+      arrow [bitmap] bitmap 11x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 11x13
+      ne [bitmap] bitmap 25x21
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 11x9
+      se [bitmap] bitmap 19x9
+      sw [bitmap] bitmap 23x11
+      w [bitmap] bitmap 19x14
+    107 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4291005549
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 16x18
+      nw [bitmap] bitmap 10x10
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    108 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 13x15
+      nw [bitmap] bitmap 13x15
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x14
+    109 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 13x15
+      nw [bitmap] bitmap 13x15
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x14
+    11 [null]
+      arrow [bitmap] bitmap 7x10
+      c [bitmap] bitmap 7x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 6x14
+      n [bitmap] bitmap 7x7
+      ne [bitmap] bitmap 13x10
+      nw [bitmap] bitmap 14x10
+      s [bitmap] bitmap 7x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    110 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 13x15
+      nw [bitmap] bitmap 13x15
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x14
+    111 [null]
+      arrow [bitmap] bitmap 14x7
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 15x14
+      n [bitmap] bitmap 14x21
+      ne [bitmap] bitmap 15x21
+      nw [bitmap] bitmap 17x21
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 15x9
+      sw [bitmap] bitmap 13x7
+      w [bitmap] bitmap 13x14
+    112 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 14x14
+      head [bitmap] bitmap 14x10
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 17x17
+      nw [bitmap] bitmap 13x10
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 14x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    114 [null]
+      arrow [bitmap] bitmap 14x16
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 18x20
+      nw [bitmap] bitmap 18x20
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    115 [null]
+      arrow [bitmap] bitmap 14x16
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 18x20
+      nw [bitmap] bitmap 18x20
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    116 [null]
+      arrow [bitmap] bitmap 14x6
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 9x13
+      nw [bitmap] bitmap 17x25
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x14
+    117 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 12x14
+      head [bitmap] bitmap 14x22
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 15x14
+      nw [bitmap] bitmap 15x14
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 12x7
+      sw [bitmap] bitmap 12x7
+      w [bitmap] bitmap 12x14
+    118 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 12x14
+      head [bitmap] bitmap 14x25
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 19x18
+      nw [bitmap] bitmap 19x18
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 12x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    119 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 25x19
+      nw [bitmap] bitmap 25x19
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    12 [null]
+      arrow [bitmap] bitmap 7x11
+      c [bitmap] bitmap 7x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 7x9
+      ne [bitmap] bitmap 10x9
+      nw [bitmap] bitmap 15x15
+      s [bitmap] bitmap 7x7
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 10x7
+      w [bitmap] bitmap 10x14
+    120 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 25x19
+      nw [bitmap] bitmap 25x19
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    121 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 25x19
+      nw [bitmap] bitmap 25x19
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    125 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 27x22
+      nw [bitmap] bitmap 27x22
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    126 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 27x22
+      nw [bitmap] bitmap 27x22
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    127 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 27x22
+      nw [bitmap] bitmap 27x22
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 18x9
+      sw [bitmap] bitmap 18x9
+      w [bitmap] bitmap 18x14
+    128 [null]
+      arrow [bitmap] bitmap 14x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 13x21
+      nw [bitmap] bitmap 13x21
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 12x8
+      sw [bitmap] bitmap 12x8
+      w [bitmap] bitmap 11x14
+    13 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 19x19
+      nw [bitmap] bitmap 19x19
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x14
+    134 [null]
+      arrow [bitmap] bitmap 21x11
+      c [bitmap] bitmap 21x14
+      clr [int] 4290096043
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 21x21
+      n [bitmap] bitmap 21x13
+      ne [bitmap] bitmap 14x21
+      nw [bitmap] bitmap 14x21
+      s [bitmap] bitmap 21x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 11x6
+      w [bitmap] bitmap 11x14
+    135 [null]
+      arrow [bitmap] bitmap 16x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4292386089
+      e [bitmap] bitmap 7x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 14x20
+      nw [bitmap] bitmap 14x19
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 7x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    14 [null]
+      arrow [bitmap] bitmap 15x14
+      c [bitmap] bitmap 15x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      head [bitmap] bitmap 15x19
+      n [bitmap] bitmap 15x15
+      ne [bitmap] bitmap 16x18
+      nw [bitmap] bitmap 16x18
+      s [bitmap] bitmap 15x7
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 10x7
+      w [bitmap] bitmap 10x14
+    145 [null]
+      arrow [bitmap] bitmap 15x12
+      c [bitmap] bitmap 15x14
+      clr [int] 4281277457
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 15x12
+      ne [bitmap] bitmap 13x12
+      nw [bitmap] bitmap 15x25
+      s [bitmap] bitmap 15x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 15x8
+      w [bitmap] bitmap 15x14
+    146 [null]
+      arrow [bitmap] bitmap 15x12
+      c [bitmap] bitmap 15x14
+      clr [int] 4281277457
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 15x12
+      ne [bitmap] bitmap 13x12
+      nw [bitmap] bitmap 15x25
+      s [bitmap] bitmap 15x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 15x8
+      w [bitmap] bitmap 15x14
+    148 [null]
+      arrow [bitmap] bitmap 14x12
+      c [bitmap] bitmap 14x14
+      cc [bitmap] bitmap 23x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 11x10
+      nw [bitmap] bitmap 11x10
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 11x14
+    149 [null]
+      arrow [bitmap] bitmap 7x11
+      c [bitmap] bitmap 7x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 7x9
+      ne [bitmap] bitmap 10x9
+      nw [bitmap] bitmap 15x15
+      s [bitmap] bitmap 7x7
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 10x7
+      w [bitmap] bitmap 10x14
+    150 [null]
+      arrow [bitmap] bitmap 14x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 16x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 13x12
+      nw [bitmap] bitmap 13x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 16x14
+    155 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 16x14
+      head [bitmap] bitmap 14x22
+      n [bitmap] bitmap 13x17
+      ne [bitmap] bitmap 18x19
+      nw [bitmap] bitmap 18x19
+      s [bitmap] bitmap 13x6
+      se [bitmap] bitmap 12x6
+      sw [bitmap] bitmap 12x6
+      w [bitmap] bitmap 16x14
+    156 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      head [bitmap] bitmap 14x15
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 16x20
+      nw [bitmap] bitmap 16x20
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    157 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294946493
+      e [bitmap] bitmap 12x14
+      head [bitmap] bitmap 14x17
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 17x21
+      nw [bitmap] bitmap 17x21
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 12x6
+      sw [bitmap] bitmap 12x6
+      w [bitmap] bitmap 12x14
+    16 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x12
+      head [bitmap] bitmap 12x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 18x15
+      nw [bitmap] bitmap 18x15
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x12
+    160 [null]
+      arrow [bitmap] bitmap 12x12
+      c [bitmap] bitmap 12x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 16x14
+      n [bitmap] bitmap 12x20
+      ne [bitmap] bitmap 16x13
+      nw [bitmap] bitmap 14x13
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 16x8
+      sw [bitmap] bitmap 14x8
+      w [bitmap] bitmap 14x14
+    165 [null]
+      arrow [bitmap] bitmap 15x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4284488465
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 13x18
+      nw [bitmap] bitmap 13x18
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x14
+    168 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4284755463
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 15x20
+      nw [bitmap] bitmap 15x20
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 8x6
+      sw [bitmap] bitmap 8x6
+      w [bitmap] bitmap 8x14
+    169 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4282551428
+      e [bitmap] bitmap 20x14
+      head [bitmap] bitmap 14x13
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 20x13
+      nw [bitmap] bitmap 20x30
+      s [bitmap] bitmap 14x13
+      se [bitmap] bitmap 20x13
+      sw [bitmap] bitmap 20x13
+      w [bitmap] bitmap 20x14
+    17 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x12
+      head [bitmap] bitmap 12x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 21x17
+      nw [bitmap] bitmap 21x17
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x12
+    177 [null]
+      arrow [bitmap] bitmap 19x12
+      c [bitmap] bitmap 19x13
+      clr [int] 4284755463
+      e [bitmap] bitmap 13x13
+      head [bitmap] bitmap 19x24
+      n [bitmap] bitmap 19x12
+      ne [bitmap] bitmap 13x24
+      nw [bitmap] bitmap 13x24
+      s [bitmap] bitmap 19x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x13
+    178 [null]
+      arrow [bitmap] bitmap 19x12
+      c [bitmap] bitmap 19x13
+      clr [int] 4284755463
+      e [bitmap] bitmap 13x13
+      head [bitmap] bitmap 19x22
+      n [bitmap] bitmap 19x12
+      ne [bitmap] bitmap 13x22
+      nw [bitmap] bitmap 13x22
+      s [bitmap] bitmap 19x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x13
+    18 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x12
+      head [bitmap] bitmap 12x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 21x18
+      nw [bitmap] bitmap 21x18
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x12
+    182 [null]
+      arrow [bitmap] bitmap 25x10
+      c [bitmap] bitmap 25x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      head [bitmap] bitmap 25x12
+      n [bitmap] bitmap 25x12
+      ne [bitmap] bitmap 10x12
+      nw [bitmap] bitmap 10x12
+      s [bitmap] bitmap 25x6
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    183 [null]
+      arrow [bitmap] bitmap 19x12
+      c [bitmap] bitmap 19x13
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x13
+      head [bitmap] bitmap 19x18
+      n [bitmap] bitmap 19x12
+      ne [bitmap] bitmap 13x18
+      nw [bitmap] bitmap 13x18
+      s [bitmap] bitmap 19x8
+      se [bitmap] bitmap 13x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x13
+    184 [null]
+      arrow [bitmap] bitmap 19x12
+      c [bitmap] bitmap 19x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 19x16
+      n [bitmap] bitmap 19x12
+      ne [bitmap] bitmap 11x22
+      nw [bitmap] bitmap 11x22
+      s [bitmap] bitmap 19x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 11x14
+    185 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4286117375
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 19x20
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 19x7
+      sw [bitmap] bitmap 19x7
+      w [bitmap] bitmap 19x14
+    186 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4288877331
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 19x19
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 19x7
+      sw [bitmap] bitmap 19x7
+      w [bitmap] bitmap 19x14
+    187 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 14x13
+      ne [bitmap] bitmap 19x20
+      nw [bitmap] bitmap 19x13
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 19x7
+      sw [bitmap] bitmap 19x7
+      w [bitmap] bitmap 19x14
+    188 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 12x24
+      nw [bitmap] bitmap 12x24
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    189 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 12x24
+      nw [bitmap] bitmap 12x24
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    19 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x12
+      head [bitmap] bitmap 12x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 21x17
+      nw [bitmap] bitmap 21x17
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x12
+    190 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 14x18
+      ne [bitmap] bitmap 12x24
+      nw [bitmap] bitmap 12x24
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    198 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 14x14
+      head [bitmap] bitmap 14x17
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 21x20
+      nw [bitmap] bitmap 21x20
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 14x8
+      sw [bitmap] bitmap 14x8
+      w [bitmap] bitmap 14x14
+    199 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 14x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x16
+      ne [bitmap] bitmap 18x22
+      nw [bitmap] bitmap 18x16
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 14x5
+      sw [bitmap] bitmap 14x5
+      w [bitmap] bitmap 14x14
+    2 [null]
+      arrow [bitmap] bitmap 13x11
+      c [bitmap] bitmap 13x13
+      clr [int] 4278190080
+      e [bitmap] bitmap 7x13
+      n [bitmap] bitmap 13x7
+      ne [bitmap] bitmap 11x11
+      nw [bitmap] bitmap 11x11
+      s [bitmap] bitmap 13x7
+      se [bitmap] bitmap 7x7
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x13
+    20 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x12
+      head [bitmap] bitmap 12x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 21x18
+      nw [bitmap] bitmap 21x18
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x12
+    200 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 14x14
+      head [bitmap] bitmap 14x17
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 19x25
+      nw [bitmap] bitmap 14x17
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 14x5
+      sw [bitmap] bitmap 14x5
+      w [bitmap] bitmap 14x14
+    203 [null]
+      arrow [bitmap] bitmap 24x6
+      c [bitmap] bitmap 24x14
+      clr [int] 4282391888
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 24x10
+      ne [bitmap] bitmap 19x10
+      nw [bitmap] bitmap 19x10
+      s [bitmap] bitmap 24x6
+      se [bitmap] bitmap 9x6
+      sw [bitmap] bitmap 9x6
+      w [bitmap] bitmap 9x14
+    204 [null]
+      arrow [bitmap] bitmap 24x6
+      c [bitmap] bitmap 24x14
+      clr [int] 4281608133
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 24x10
+      ne [bitmap] bitmap 19x10
+      nw [bitmap] bitmap 19x10
+      s [bitmap] bitmap 24x6
+      se [bitmap] bitmap 9x6
+      sw [bitmap] bitmap 9x6
+      w [bitmap] bitmap 9x14
+    207 [null]
+      arrow [bitmap] bitmap 28x12
+      c [bitmap] bitmap 28x14
+      clr [int] 4278345580
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 28x19
+      ne [bitmap] bitmap 10x24
+      nw [bitmap] bitmap 13x22
+      s [bitmap] bitmap 28x7
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 9x7
+      w [bitmap] bitmap 9x14
+    208 [null]
+      arrow [bitmap] bitmap 25x10
+      c [bitmap] bitmap 25x14
+      clr [int] 4284507806
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 25x10
+      n [bitmap] bitmap 25x10
+      ne [bitmap] bitmap 8x13
+      nw [bitmap] bitmap 8x13
+      s [bitmap] bitmap 25x6
+      se [bitmap] bitmap 8x6
+      sw [bitmap] bitmap 8x6
+      w [bitmap] bitmap 8x14
+    21 [null]
+      arrow [bitmap] bitmap 20x14
+      c [bitmap] bitmap 20x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 20x20
+      n [bitmap] bitmap 15x15
+      ne [bitmap] bitmap 15x15
+      nw [bitmap] bitmap 15x15
+      s [bitmap] bitmap 15x7
+      se [bitmap] bitmap 9x7
+      sw [bitmap] bitmap 9x7
+      w [bitmap] bitmap 9x14
+    22 [null]
+      arrow [bitmap] bitmap 13x13
+      c [bitmap] bitmap 13x12
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x12
+      head [bitmap] bitmap 13x13
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 19x14
+      nw [bitmap] bitmap 19x14
+      s [bitmap] bitmap 12x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 10x12
+    23 [null]
+      arrow [bitmap] bitmap 17x12
+      c [bitmap] bitmap 17x13
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x13
+      head [bitmap] bitmap 17x21
+      n [bitmap] bitmap 15x15
+      ne [bitmap] bitmap 15x15
+      nw [bitmap] bitmap 15x15
+      s [bitmap] bitmap 15x7
+      se [bitmap] bitmap 9x9
+      sw [bitmap] bitmap 9x9
+      w [bitmap] bitmap 9x13
+    24 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x12
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 16x18
+      nw [bitmap] bitmap 11x12
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 11x14
+    25 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 12x14
+      head [bitmap] bitmap 14x12
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 15x19
+      nw [bitmap] bitmap 11x17
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 12x8
+      sw [bitmap] bitmap 9x8
+      w [bitmap] bitmap 9x14
+    28 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x18
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 15x18
+      nw [bitmap] bitmap 15x18
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x9
+      sw [bitmap] bitmap 10x9
+      w [bitmap] bitmap 11x14
+    29 [null]
+      arrow [bitmap] bitmap 14x18
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      head [bitmap] bitmap 14x10
+      n [bitmap] bitmap 14x7
+      ne [bitmap] bitmap 10x12
+      nw [bitmap] bitmap 10x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 10x7
+      w [bitmap] bitmap 10x14
+    3 [null]
+      arrow [bitmap] bitmap 13x11
+      c [bitmap] bitmap 13x13
+      clr [int] 4278190080
+      e [bitmap] bitmap 7x13
+      n [bitmap] bitmap 13x7
+      ne [bitmap] bitmap 11x11
+      nw [bitmap] bitmap 11x11
+      s [bitmap] bitmap 13x7
+      se [bitmap] bitmap 7x7
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x13
+    30 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 14x11
+      n [bitmap] bitmap 14x8
+      ne [bitmap] bitmap 9x13
+      nw [bitmap] bitmap 10x13
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 8x6
+      sw [bitmap] bitmap 9x6
+      w [bitmap] bitmap 9x14
+    31 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 10x14
+      head [bitmap] bitmap 14x10
+      n [bitmap] bitmap 14x8
+      ne [bitmap] bitmap 11x13
+      nw [bitmap] bitmap 11x13
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 10x14
+    32 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x11
+      n [bitmap] bitmap 14x9
+      ne [bitmap] bitmap 15x12
+      nw [bitmap] bitmap 15x12
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 10x6
+      sw [bitmap] bitmap 10x6
+      w [bitmap] bitmap 9x14
+    33 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x12
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 11x16
+      nw [bitmap] bitmap 11x16
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 10x8
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 9x14
+    34 [null]
+      arrow [bitmap] bitmap 14x16
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 13x17
+      nw [bitmap] bitmap 14x19
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 15x9
+      sw [bitmap] bitmap 16x9
+      w [bitmap] bitmap 10x14
+    35 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x18
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 15x16
+      nw [bitmap] bitmap 15x16
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 11x14
+    36 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 14x18
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 8x10
+      nw [bitmap] bitmap 8x10
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 11x7
+      sw [bitmap] bitmap 11x7
+      w [bitmap] bitmap 8x14
+    37 [null]
+      arrow [bitmap] bitmap 11x16
+      c [bitmap] bitmap 16x16
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x16
+      n [bitmap] bitmap 11x14
+      ne [bitmap] bitmap 9x18
+      nw [bitmap] bitmap 9x18
+      s [bitmap] bitmap 16x9
+      se [bitmap] bitmap 10x11
+      sw [bitmap] bitmap 10x11
+      w [bitmap] bitmap 9x16
+    39 [null]
+      arrow [bitmap] bitmap 15x17
+      c [bitmap] bitmap 15x15
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x15
+      head [bitmap] bitmap 15x11
+      n [bitmap] bitmap 15x11
+      ne [bitmap] bitmap 18x16
+      nw [bitmap] bitmap 19x18
+      s [bitmap] bitmap 15x10
+      se [bitmap] bitmap 19x15
+      sw [bitmap] bitmap 18x15
+      w [bitmap] bitmap 11x15
+    4 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 12x13
+      ne [bitmap] bitmap 15x13
+      nw [bitmap] bitmap 15x13
+      s [bitmap] bitmap 12x6
+      se [bitmap] bitmap 8x6
+      sw [bitmap] bitmap 8x6
+      w [bitmap] bitmap 9x14
+    40 [null]
+      arrow [bitmap] bitmap 14x12
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x18
+      n [bitmap] bitmap 14x15
+      ne [bitmap] bitmap 15x19
+      nw [bitmap] bitmap 15x19
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 14x11
+      sw [bitmap] bitmap 14x11
+      w [bitmap] bitmap 11x14
+    41 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 9x12
+      nw [bitmap] bitmap 9x12
+      s [bitmap] bitmap 14x10
+      se [bitmap] bitmap 16x10
+      sw [bitmap] bitmap 16x10
+      w [bitmap] bitmap 9x14
+    42 [null]
+      arrow [bitmap] bitmap 14x16
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x16
+      ne [bitmap] bitmap 15x16
+      nw [bitmap] bitmap 13x16
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 9x8
+      w [bitmap] bitmap 9x14
+    43 [null]
+      arrow [bitmap] bitmap 14x16
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x16
+      n [bitmap] bitmap 14x16
+      ne [bitmap] bitmap 15x16
+      nw [bitmap] bitmap 13x16
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 9x8
+      w [bitmap] bitmap 9x14
+    5 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 7x14
+      n [bitmap] bitmap 12x8
+      ne [bitmap] bitmap 10x12
+      nw [bitmap] bitmap 10x12
+      s [bitmap] bitmap 12x7
+      se [bitmap] bitmap 7x7
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x14
+    50 [null]
+      arrow [bitmap] bitmap 12x13
+      c [bitmap] bitmap 12x12
+      clr [int] 4278190080
+      e [bitmap] bitmap 7x12
+      n [bitmap] bitmap 12x8
+      ne [bitmap] bitmap 10x12
+      nw [bitmap] bitmap 10x12
+      s [bitmap] bitmap 12x7
+      se [bitmap] bitmap 7x7
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x11
+    51 [null]
+      arrow [bitmap] bitmap 15x18
+      c [bitmap] bitmap 15x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 15x13
+      ne [bitmap] bitmap 12x12
+      nw [bitmap] bitmap 12x12
+      s [bitmap] bitmap 15x6
+      se [bitmap] bitmap 8x6
+      sw [bitmap] bitmap 8x6
+      w [bitmap] bitmap 9x14
+    52 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 13x14
+      nw [bitmap] bitmap 13x15
+      s [bitmap] bitmap 14x10
+      se [bitmap] bitmap 13x10
+      sw [bitmap] bitmap 13x10
+      w [bitmap] bitmap 13x14
+    54 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x8
+      ne [bitmap] bitmap 15x11
+      nw [bitmap] bitmap 13x11
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 11x7
+      sw [bitmap] bitmap 9x7
+      w [bitmap] bitmap 9x14
+    55 [null]
+      arrow [bitmap] bitmap 14x20
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 11x19
+      nw [bitmap] bitmap 11x19
+      s [bitmap] bitmap 14x13
+      se [bitmap] bitmap 14x13
+      sw [bitmap] bitmap 14x13
+      w [bitmap] bitmap 11x14
+    56 [null]
+      arrow [bitmap] bitmap 12x8
+      c [bitmap] bitmap 14x16
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x16
+      head [bitmap] bitmap 14x12
+      n [bitmap] bitmap 12x12
+      ne [bitmap] bitmap 14x19
+      nw [bitmap] bitmap 17x22
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 11x5
+      sw [bitmap] bitmap 10x5
+      w [bitmap] bitmap 10x16
+    57 [null]
+      arrow [bitmap] bitmap 12x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 11x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 12x14
+      ne [bitmap] bitmap 15x23
+      nw [bitmap] bitmap 14x17
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 11x5
+      sw [bitmap] bitmap 11x5
+      w [bitmap] bitmap 11x14
+    6 [null]
+      arrow [bitmap] bitmap 12x11
+      c [bitmap] bitmap 12x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 7x14
+      n [bitmap] bitmap 12x7
+      ne [bitmap] bitmap 7x7
+      nw [bitmap] bitmap 10x10
+      s [bitmap] bitmap 12x7
+      se [bitmap] bitmap 10x10
+      sw [bitmap] bitmap 7x7
+      w [bitmap] bitmap 7x14
+    60 [null]
+      arrow [bitmap] bitmap 18x10
+      c [bitmap] bitmap 18x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 6x14
+      head [bitmap] bitmap 18x21
+      n [bitmap] bitmap 18x12
+      ne [bitmap] bitmap 18x21
+      nw [bitmap] bitmap 18x21
+      s [bitmap] bitmap 18x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    61 [null]
+      arrow [bitmap] bitmap 19x10
+      c [bitmap] bitmap 18x14
+      clr [int] 4285607505
+      e [bitmap] bitmap 6x14
+      head [bitmap] bitmap 22x21
+      n [bitmap] bitmap 18x12
+      ne [bitmap] bitmap 17x21
+      nw [bitmap] bitmap 18x21
+      s [bitmap] bitmap 18x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    62 [null]
+      arrow [bitmap] bitmap 19x10
+      c [bitmap] bitmap 18x14
+      clr [int] 4278803711
+      e [bitmap] bitmap 6x14
+      head [bitmap] bitmap 22x21
+      n [bitmap] bitmap 18x12
+      ne [bitmap] bitmap 17x21
+      nw [bitmap] bitmap 18x21
+      s [bitmap] bitmap 18x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    64 [null]
+      arrow [bitmap] bitmap 7x11
+      c [bitmap] bitmap 7x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 7x10
+      ne [bitmap] bitmap 11x10
+      nw [bitmap] bitmap 16x16
+      s [bitmap] bitmap 7x8
+      se [bitmap] bitmap 11x8
+      sw [bitmap] bitmap 11x8
+      w [bitmap] bitmap 10x14
+    7 [null]
+      arrow [bitmap] bitmap 7x11
+      c [bitmap] bitmap 7x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 10x14
+      n [bitmap] bitmap 7x9
+      ne [bitmap] bitmap 10x9
+      nw [bitmap] bitmap 15x15
+      s [bitmap] bitmap 7x7
+      se [bitmap] bitmap 10x7
+      sw [bitmap] bitmap 10x7
+      w [bitmap] bitmap 10x14
+    70 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 18x20
+      nw [bitmap] bitmap 18x13
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 9x5
+      sw [bitmap] bitmap 9x5
+      w [bitmap] bitmap 9x14
+    71 [null]
+      arrow [bitmap] bitmap 14x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 9x14
+      head [bitmap] bitmap 14x12
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 17x17
+      nw [bitmap] bitmap 12x12
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 9x5
+      sw [bitmap] bitmap 9x5
+      w [bitmap] bitmap 9x14
+    72 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 12x14
+      head [bitmap] bitmap 14x24
+      n [bitmap] bitmap 14x17
+      ne [bitmap] bitmap 17x17
+      nw [bitmap] bitmap 17x17
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 12x6
+      sw [bitmap] bitmap 11x6
+      w [bitmap] bitmap 11x14
+    73 [null]
+      arrow [bitmap] bitmap 19x14
+      c [bitmap] bitmap 18x14
+      clr [int] 4281277457
+      e [bitmap] bitmap 8x14
+      head [bitmap] bitmap 18x23
+      n [bitmap] bitmap 18x15
+      ne [bitmap] bitmap 11x23
+      nw [bitmap] bitmap 11x23
+      s [bitmap] bitmap 18x7
+      se [bitmap] bitmap 8x7
+      sw [bitmap] bitmap 8x7
+      w [bitmap] bitmap 8x14
+    74 [null]
+      arrow [bitmap] bitmap 14x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 10x14
+      head [bitmap] bitmap 14x15
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 13x23
+      nw [bitmap] bitmap 13x23
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 10x5
+      sw [bitmap] bitmap 10x5
+      w [bitmap] bitmap 10x14
+    75 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 13x19
+      nw [bitmap] bitmap 13x19
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    76 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 13x19
+      nw [bitmap] bitmap 13x19
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    77 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      head [bitmap] bitmap 14x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 13x19
+      nw [bitmap] bitmap 13x19
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    78 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294963128
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 10x15
+      nw [bitmap] bitmap 10x15
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 9x6
+      sw [bitmap] bitmap 9x6
+      w [bitmap] bitmap 9x14
+    79 [null]
+      arrow [bitmap] bitmap 14x10
+      c [bitmap] bitmap 14x14
+      clr [int] 4280621840
+      e [bitmap] bitmap 6x14
+      head [bitmap] bitmap 14x17
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 17x17
+      nw [bitmap] bitmap 18x17
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 6x6
+      sw [bitmap] bitmap 7x6
+      w [bitmap] bitmap 7x14
+    8 [null]
+      arrow [bitmap] bitmap 12x10
+      c [bitmap] bitmap 12x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 12x15
+      ne [bitmap] bitmap 21x15
+      nw [bitmap] bitmap 21x15
+      s [bitmap] bitmap 12x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    81 [null]
+      arrow [bitmap] bitmap 14x11
+      c [bitmap] bitmap 14x14
+      clr [int] 4282597183
+      e [bitmap] bitmap 9x14
+      n [bitmap] bitmap 14x7
+      ne [bitmap] bitmap 9x7
+      nw [bitmap] bitmap 25x14
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 9x7
+      sw [bitmap] bitmap 9x7
+      w [bitmap] bitmap 9x14
+    83 [null]
+      arrow [bitmap] bitmap 21x16
+      c [bitmap] bitmap 18x14
+      clr [int] 4283770894
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 17x16
+      ne [bitmap] bitmap 11x14
+      nw [bitmap] bitmap 14x19
+      s [bitmap] bitmap 17x9
+      se [bitmap] bitmap 13x13
+      sw [bitmap] bitmap 12x10
+      w [bitmap] bitmap 11x14
+    84 [null]
+      arrow [bitmap] bitmap 14x19
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 14x14
+      ne [bitmap] bitmap 13x14
+      nw [bitmap] bitmap 11x14
+      s [bitmap] bitmap 14x13
+      se [bitmap] bitmap 13x13
+      sw [bitmap] bitmap 11x13
+      w [bitmap] bitmap 11x14
+    85 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 15x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 20x20
+      nw [bitmap] bitmap 18x20
+      s [bitmap] bitmap 14x5
+      se [bitmap] bitmap 18x5
+      sw [bitmap] bitmap 16x5
+      w [bitmap] bitmap 13x14
+    86 [null]
+      arrow [bitmap] bitmap 14x9
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 14x16
+      ne [bitmap] bitmap 20x22
+      nw [bitmap] bitmap 20x22
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 20x10
+      sw [bitmap] bitmap 20x10
+      w [bitmap] bitmap 19x14
+    87 [null]
+      arrow [bitmap] bitmap 17x8
+      c [bitmap] bitmap 17x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 17x13
+      ne [bitmap] bitmap 11x13
+      nw [bitmap] bitmap 24x22
+      s [bitmap] bitmap 17x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 12x6
+      w [bitmap] bitmap 12x14
+    9 [null]
+      arrow [bitmap] bitmap 14x8
+      c [bitmap] bitmap 14x14
+      clr [int] 4278190080
+      e [bitmap] bitmap 13x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 13x12
+      nw [bitmap] bitmap 13x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 13x6
+      sw [bitmap] bitmap 13x6
+      w [bitmap] bitmap 13x14
+    90 [null]
+      arrow [bitmap] bitmap 14x17
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967142
+      e [bitmap] bitmap 7x14
+      n [bitmap] bitmap 14x12
+      ne [bitmap] bitmap 7x12
+      nw [bitmap] bitmap 16x19
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 7x8
+      sw [bitmap] bitmap 13x8
+      w [bitmap] bitmap 13x14
+    91 [null]
+      arrow [bitmap] bitmap 14x13
+      c [bitmap] bitmap 14x14
+      clr [int] 4294967295
+      e [bitmap] bitmap 8x14
+      n [bitmap] bitmap 14x20
+      ne [bitmap] bitmap 14x20
+      nw [bitmap] bitmap 10x20
+      s [bitmap] bitmap 14x7
+      se [bitmap] bitmap 8x10
+      sw [bitmap] bitmap 10x8
+      w [bitmap] bitmap 10x14
+    93 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4285672276
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 11x13
+      nw [bitmap] bitmap 11x13
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 7x9
+      sw [bitmap] bitmap 7x9
+      w [bitmap] bitmap 18x14
+    94 [null]
+      arrow [bitmap] bitmap 14x14
+      c [bitmap] bitmap 14x14
+      clr [int] 4288222977
+      e [bitmap] bitmap 18x14
+      n [bitmap] bitmap 14x11
+      ne [bitmap] bitmap 14x13
+      nw [bitmap] bitmap 14x13
+      s [bitmap] bitmap 14x8
+      se [bitmap] bitmap 7x8
+      sw [bitmap] bitmap 7x8
+      w [bitmap] bitmap 18x14
+    95 [null]
+      arrow [bitmap] bitmap 14x15
+      c [bitmap] bitmap 14x14
+      clr [int] 4279326304
+      e [bitmap] bitmap 19x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 14x16
+      nw [bitmap] bitmap 14x16
+      s [bitmap] bitmap 14x9
+      se [bitmap] bitmap 8x9
+      sw [bitmap] bitmap 8x9
+      w [bitmap] bitmap 19x14
+    97 [null]
+      arrow [bitmap] bitmap 14x12
+      c [bitmap] bitmap 14x14
+      clr [int] 4294077821
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 15x12
+      nw [bitmap] bitmap 15x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 11x6
+      w [bitmap] bitmap 11x14
+    98 [null]
+      arrow [bitmap] bitmap 14x12
+      c [bitmap] bitmap 14x14
+      clr [int] 4294077821
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 15x12
+      nw [bitmap] bitmap 15x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 11x6
+      w [bitmap] bitmap 11x14
+    99 [null]
+      arrow [bitmap] bitmap 14x12
+      c [bitmap] bitmap 14x14
+      clr [int] 4294077821
+      e [bitmap] bitmap 11x14
+      n [bitmap] bitmap 14x10
+      ne [bitmap] bitmap 15x12
+      nw [bitmap] bitmap 15x12
+      s [bitmap] bitmap 14x6
+      se [bitmap] bitmap 11x6
+      sw [bitmap] bitmap 11x6
+      w [bitmap] bitmap 11x14
+  tutorial [null]
+    arrow [bitmap] bitmap 21x27
+      origin [vector] (0, 0)
+      z [int] 0
+    c [bitmap] bitmap 1x1
+      origin [vector] (0, 0)
+      z [int] 0
+    e [bitmap] bitmap 19x1
+      origin [vector] (0, 0)
+      z [int] 0
+    n [bitmap] bitmap 1x21
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 19x21
+      origin [vector] (0, 0)
+      z [int] 0
+    nw [bitmap] bitmap 19x21
+      origin [vector] (19, 0)
+      z [int] 0
+    s [bitmap] bitmap 1x19
+      origin [vector] (0, 0)
+      z [int] 0
+    se [bitmap] bitmap 19x19
+      origin [vector] (0, 0)
+      z [int] 0
+    sw [bitmap] bitmap 19x19
+      origin [vector] (19, 0)
+      z [int] 0
+    w [bitmap] bitmap 19x1
+      origin [vector] (19, 0)
+      z [int] 0

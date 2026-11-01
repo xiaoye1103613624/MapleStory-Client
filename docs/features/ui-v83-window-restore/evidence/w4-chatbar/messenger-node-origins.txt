@@ -1,0 +1,15 @@
+=== Messenger node origins / sizes ===
+  UIWindow.img/Messenger/backgrnd/0              MISSING
+  UIWindow.img/Messenger/backgrnd2/0             MISSING
+  UIWindow.img/Messenger/backgrnd3/0             MISSING
+  UIWindow.img/Messenger/BtEnter/normal/0        39x17 origin(0,0)
+  UIWindow.img/Messenger/NameBar/0               89x19 origin(0,0)
+  UIWindow.img/Messenger/NameBar/1               89x19 origin(0,0)
+  UIWindow.img/Messenger/NameBar/2               89x19 origin(0,0)
+  UIWindow.img/Messenger/NameBar/3               89x19 origin(0,0)
+  UIWindow.img/BtUIClose/normal/0                32x15 origin(0,0)
+
+BtUIClose dark ink: tex 32x15 x 2..28 y 2..14
+BtUIClose opaque  : x 0..31 y 0..14
+
+reference title-bar dark ink (x>=250): ref x 250..291 y 6..23 -> LOCAL x 250..291 y 0..17

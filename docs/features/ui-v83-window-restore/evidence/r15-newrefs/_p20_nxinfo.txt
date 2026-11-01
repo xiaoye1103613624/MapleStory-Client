@@ -1,0 +1,6 @@
+UIWindow.img_UserInfo_backgrnd3      size=240x162 opaque>=250 x[1..238] y[1..160] n=38070 alpha255=38070
+UIWindow.img_UserInfo_backgrnd4      size=240x162 opaque>=250 x[1..238] y[1..160] n=38070 alpha255=38070
+UIWindow.img_Title_backgrnd          size=260x374 opaque>=250 x[1..258] y[1..372] n=95956 alpha255=95956
+UIWindow.img_Maker_backgrnd          size=312x393 opaque>=250 x[0..311] y[1..392] n=122222 alpha255=122222
+b3 vs b4: maxdiff=153 px>20=720/38880 (1.852%) meanabs=4.0594
+  differing-px bbox x[14..212] y[6..145]

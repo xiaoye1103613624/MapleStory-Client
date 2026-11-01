@@ -1,0 +1,5 @@
+OK UIWindow.img/UserInfo/backgrnd3            240x162 -> UIWindow.img_UserInfo_backgrnd3.png
+OK UIWindow.img/UserInfo/backgrnd4            240x162 -> UIWindow.img_UserInfo_backgrnd4.png
+OK UIWindow.img/Maker/backgrnd                312x393 -> UIWindow.img_Maker_backgrnd.png
+OK UIWindow.img/Title/backgrnd                260x374 -> UIWindow.img_Title_backgrnd.png
+MISS UIWindow/img

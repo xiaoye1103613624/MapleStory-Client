@@ -1,0 +1,644 @@
+======================================================================
+img1 94x278
+per-COLUMN: x, darkCount, whiteCount  (dark>0.5H marks vertical borders)
+  x=  0 dark=  52 white=  10
+  x=  1 dark=  36 white=  21
+  x=  2 dark=  38 white=  10
+  x=  3 dark= 167 white=   6  <== vertical dark border
+  x=  4 dark=   3 white= 244  <== tall white line
+  x=  5 dark=   2 white=   6
+  x=  6 dark=   2 white=   3
+  x=  7 dark= 225 white=   4  <== vertical dark border
+  x=  8 dark=  34 white=  15
+  x=  9 dark=  15 white=  18
+  x= 10 dark=  15 white=  18
+  x= 11 dark=  15 white=  18
+  x= 12 dark=  15 white=  26
+  x= 13 dark=  16 white=  31
+  x= 14 dark=  17 white=  23
+  x= 15 dark=  22 white=  19
+  x= 16 dark=  20 white=  20
+  x= 17 dark=  21 white=   8
+  x= 18 dark=  20 white=  11
+  x= 19 dark=  18 white=  10
+  x= 20 dark=  24 white=   9
+  x= 21 dark=  19 white=  19
+  x= 22 dark=  21 white=  10
+  x= 23 dark=  16 white=  18
+  x= 24 dark=  15 white=  30
+  x= 25 dark=  16 white=  22
+  x= 26 dark=  24 white=  12
+  x= 27 dark=  18 white=  21
+  x= 28 dark=  17 white=  20
+  x= 29 dark=  24 white=  16
+  x= 30 dark=  19 white=  10
+  x= 31 dark=  19 white=   7
+  x= 32 dark=  47 white=  13
+  x= 33 dark=  16 white=  14
+  x= 34 dark=  16 white=  22
+  x= 35 dark=  23 white=  16
+  x= 36 dark=  14 white=  23
+  x= 37 dark=  14 white=  23
+  x= 38 dark=  14 white=  26
+  x= 39 dark=  14 white=  22
+  x= 40 dark=  14 white=  27
+  x= 41 dark=  14 white=  19
+  x= 42 dark=  14 white=  19
+  x= 43 dark=  14 white=  17
+  x= 44 dark=  14 white=  17
+  x= 45 dark=  14 white=  16
+  x= 46 dark=  15 white=  16
+  x= 47 dark=  14 white=  16
+  x= 48 dark=  14 white=  16
+  x= 49 dark=  14 white=  16
+  x= 50 dark=  15 white=  16
+  x= 51 dark=  14 white=  16
+  x= 52 dark=  14 white=  17
+  x= 53 dark=  14 white=  21
+  x= 54 dark=  15 white=  22
+  x= 55 dark=  15 white=  21
+  x= 56 dark=  15 white=  27
+  x= 57 dark=  15 white=  26
+  x= 58 dark=  15 white=  28
+  x= 59 dark=  14 white=  23
+  x= 60 dark=  14 white=  26
+  x= 61 dark=  14 white=  29
+  x= 62 dark=  14 white=  26
+  x= 63 dark=  14 white=  27
+  x= 64 dark=  14 white=  23
+  x= 65 dark=  15 white=  23
+  x= 66 dark=  15 white=  22
+  x= 67 dark=  15 white=  23
+  x= 68 dark=  15 white=  30
+  x= 69 dark=  15 white=  23
+  x= 70 dark=  15 white=  27
+  x= 71 dark=  15 white=  23
+  x= 72 dark=  15 white=  23
+  x= 73 dark=  15 white=  25
+  x= 74 dark=  19 white=  21
+  x= 75 dark=  18 white=  17
+  x= 76 dark=  17 white=  22
+  x= 77 dark=  21 white=  22
+  x= 78 dark=  17 white=  22
+  x= 79 dark=  17 white=  24
+  x= 80 dark=  17 white=  24
+  x= 81 dark=  16 white=  23
+  x= 82 dark=  15 white=  27
+  x= 83 dark=  15 white=  26
+  x= 84 dark=  15 white=  25
+  x= 85 dark=  15 white=  21
+  x= 86 dark=  15 white=  17
+  x= 87 dark=  15 white=  17
+  x= 88 dark=  50 white=  15
+  x= 89 dark= 224 white=   3  <== vertical dark border
+  x= 90 dark=   2 white=   3
+  x= 91 dark=   2 white=   6
+  x= 92 dark=   3 white= 234  <== tall white line
+  x= 93 dark= 143 white=   4  <== vertical dark border
+per-ROW: y, darkCount, whiteCount
+  y=  0 dark=   5 white=  83  <== full-width white row
+  y=  1 dark=   3 white=   4
+  y=  2 dark=  85 white=   2  <== full-width dark row
+  y=  3 dark=   6 white=  81  <== full-width white row
+  y=  4 dark=  23 white=  64
+  y=  5 dark=   8 white=  64
+  y=  6 dark=  13 white=  73  <== full-width white row
+  y=  7 dark=  17 white=  65
+  y=  8 dark=  16 white=  65
+  y=  9 dark=  12 white=  69  <== full-width white row
+  y= 10 dark=  12 white=  71  <== full-width white row
+  y= 11 dark=  16 white=  68  <== full-width white row
+  y= 12 dark=  10 white=  70  <== full-width white row
+  y= 13 dark=   9 white=  76  <== full-width white row
+  y= 14 dark=  16 white=  69  <== full-width white row
+  y= 15 dark=   3 white=  70  <== full-width white row
+  y= 16 dark=   5 white=  81  <== full-width white row
+  y= 17 dark=  82 white=   2  <== full-width dark row
+  y= 18 dark=   2 white=   2
+  y= 19 dark=   1 white=   2
+  y= 20 dark=  85 white=   2  <== full-width dark row
+  y= 21 dark=  88 white=   2  <== full-width dark row
+  y= 22 dark=   8 white=   2
+  y= 23 dark=   4 white=   2
+  y= 24 dark=   4 white=   2
+  y= 25 dark=   4 white=  12
+  y= 26 dark=   4 white=  10
+  y= 27 dark=   4 white=  22
+  y= 28 dark=   4 white=  10
+  y= 29 dark=   4 white=  22
+  y= 30 dark=   4 white=  12
+  y= 31 dark=   4 white=  21
+  y= 32 dark=   4 white=  12
+  y= 33 dark=   4 white=  25
+  y= 34 dark=   4 white=   9
+  y= 35 dark=   4 white=  16
+  y= 36 dark=   4 white=   2
+  y= 37 dark=   3 white=   2
+  y= 38 dark=   4 white=  15
+  y= 39 dark=   3 white=   8
+  y= 40 dark=   3 white=  10
+  y= 41 dark=   2 white=   8
+  y= 42 dark=   3 white=  11
+  y= 43 dark=   3 white=   2
+  y= 44 dark=   4 white=   2
+  y= 45 dark=   4 white=   2
+  y= 46 dark=   5 white=   2
+  y= 47 dark=  84 white=   2  <== full-width dark row
+  y= 48 dark=   6 white=   2
+  y= 49 dark=   4 white=   2
+  y= 50 dark=   4 white=   2
+  y= 51 dark=   4 white=   2
+  y= 52 dark=   3 white=   2
+  y= 53 dark=   3 white=   2
+  y= 54 dark=   3 white=   2
+  y= 55 dark=   3 white=   2
+  y= 56 dark=   3 white=   2
+  y= 57 dark=   4 white=   2
+  y= 58 dark=   4 white=   2
+  y= 59 dark=   5 white=   2
+  y= 60 dark=   5 white=   2
+  y= 61 dark=   5 white=   2
+  y= 62 dark=   5 white=   2
+  y= 63 dark=   5 white=   2
+  y= 64 dark=   5 white=   2
+  y= 65 dark=   5 white=   2
+  y= 66 dark=   5 white=   2
+  y= 67 dark=   4 white=   2
+  y= 68 dark=   5 white=   2
+  y= 69 dark=   5 white=   2
+  y= 70 dark=   5 white=   2
+  y= 71 dark=   4 white=   2
+  y= 72 dark=   6 white=   2
+  y= 73 dark=  84 white=   2  <== full-width dark row
+  y= 74 dark=   5 white=   2
+  y= 75 dark=   3 white=   2
+  y= 76 dark=   4 white=   2
+  y= 77 dark=   3 white=   2
+  y= 78 dark=   4 white=   2
+  y= 79 dark=   4 white=   2
+  y= 80 dark=   4 white=   2
+  y= 81 dark=   4 white=   2
+  y= 82 dark=   4 white=   2
+  y= 83 dark=   4 white=   2
+  y= 84 dark=   4 white=   2
+  y= 85 dark=   4 white=   2
+  y= 86 dark=   4 white=   2
+  y= 87 dark=   4 white=   2
+  y= 88 dark=   4 white=   2
+  y= 89 dark=   5 white=   2
+  y= 90 dark=   6 white=   2
+  y= 91 dark=   7 white=   2
+  y= 92 dark=   7 white=   2
+  y= 93 dark=   6 white=   2
+  y= 94 dark=   4 white=   2
+  y= 95 dark=   4 white=   2
+  y= 96 dark=   4 white=   2
+  y= 97 dark=   3 white=   2
+  y= 98 dark=   5 white=   2
+  y= 99 dark=  84 white=   2  <== full-width dark row
+  y=100 dark=   6 white=   2
+  y=101 dark=   4 white=   2
+  y=102 dark=   5 white=   2
+  y=103 dark=   5 white=   2
+  y=104 dark=   3 white=   2
+  y=105 dark=   4 white=   2
+  y=106 dark=   3 white=   2
+  y=107 dark=   3 white=   2
+  y=108 dark=   3 white=   2
+  y=109 dark=   4 white=   2
+  y=110 dark=   3 white=   2
+  y=111 dark=   4 white=   2
+  y=112 dark=   4 white=   2
+  y=113 dark=   3 white=   2
+  y=114 dark=   3 white=   2
+  y=115 dark=   3 white=   2
+  y=116 dark=   4 white=   2
+  y=117 dark=   4 white=   2
+  y=118 dark=   5 white=   2
+  y=119 dark=   6 white=   2
+  y=120 dark=   5 white=   2
+  y=121 dark=   6 white=   2
+  y=122 dark=   5 white=   2
+  y=123 dark=   4 white=   2
+  y=124 dark=   6 white=   2
+  y=125 dark=  84 white=   2  <== full-width dark row
+  y=126 dark=   5 white=   2
+  y=127 dark=   2 white=   2
+  y=128 dark=   2 white=   2
+  y=129 dark=   2 white=   2
+  y=130 dark=   2 white=   2
+  y=131 dark=   2 white=   2
+  y=132 dark=   2 white=   2
+  y=133 dark=   2 white=   2
+  y=134 dark=   2 white=   2
+  y=135 dark=   2 white=   2
+  y=136 dark=   2 white=   2
+  y=137 dark=   2 white=   2
+  y=138 dark=   2 white=   2
+  y=139 dark=   2 white=   2
+  y=140 dark=   3 white=   2
+  y=141 dark=   2 white=   2
+  y=142 dark=   2 white=   2
+  y=143 dark=   4 white=   2
+  y=144 dark=   4 white=   2
+  y=145 dark=   4 white=   2
+  y=146 dark=   2 white=   2
+  y=147 dark=   2 white=   2
+  y=148 dark=   3 white=   2
+  y=149 dark=   2 white=   2
+  y=150 dark=   5 white=   2
+  y=151 dark=  85 white=   2  <== full-width dark row
+  y=152 dark=   6 white=   2
+  y=153 dark=   4 white=   2
+  y=154 dark=   5 white=   2
+  y=155 dark=   7 white=   2
+  y=156 dark=   5 white=   2
+  y=157 dark=   4 white=   2
+  y=158 dark=   2 white=   2
+  y=159 dark=   3 white=   2
+  y=160 dark=   4 white=   2
+  y=161 dark=   4 white=   2
+  y=162 dark=   5 white=   2
+  y=163 dark=   5 white=   2
+  y=164 dark=   3 white=   2
+  y=165 dark=   4 white=   2
+  y=166 dark=   3 white=   2
+  y=167 dark=   3 white=   2
+  y=168 dark=   3 white=   2
+  y=169 dark=   4 white=   2
+  y=170 dark=   4 white=   2
+  y=171 dark=   4 white=   2
+  y=172 dark=   3 white=   2
+  y=173 dark=   3 white=   2
+  y=174 dark=   3 white=   2
+  y=175 dark=   4 white=   2
+  y=176 dark=   7 white=   2
+  y=177 dark=  86 white=   2  <== full-width dark row
+  y=178 dark=   7 white=   2
+  y=179 dark=   6 white=   2
+  y=180 dark=   6 white=   2
+  y=181 dark=   7 white=   2
+  y=182 dark=   6 white=   2
+  y=183 dark=   4 white=   2
+  y=184 dark=   4 white=   2
+  y=185 dark=   5 white=   2
+  y=186 dark=   5 white=   2
+  y=187 dark=   7 white=   2
+  y=188 dark=   7 white=   2
+  y=189 dark=   7 white=   2
+  y=190 dark=   6 white=   2
+  y=191 dark=   6 white=   2
+  y=192 dark=   7 white=   2
+  y=193 dark=   5 white=   2
+  y=194 dark=   5 white=   2
+  y=195 dark=   4 white=   2
+  y=196 dark=   4 white=   2
+  y=197 dark=   4 white=   2
+  y=198 dark=   6 white=   2
+  y=199 dark=   6 white=   2
+  y=200 dark=   4 white=   2
+  y=201 dark=   6 white=   2
+  y=202 dark=   8 white=   2
+  y=203 dark=  88 white=   2  <== full-width dark row
+  y=204 dark=   9 white=   2
+  y=205 dark=   7 white=   2
+  y=206 dark=   7 white=   2
+  y=207 dark=   7 white=   2
+  y=208 dark=   2 white=   2
+  y=209 dark=   2 white=   2
+  y=210 dark=   2 white=   2
+  y=211 dark=   2 white=   2
+  y=212 dark=   2 white=   4
+  y=213 dark=   2 white=   2
+  y=214 dark=   2 white=   2
+  y=215 dark=   2 white=   2
+  y=216 dark=   2 white=   2
+  y=217 dark=   2 white=   2
+  y=218 dark=   2 white=   2
+  y=219 dark=   2 white=   2
+  y=220 dark=   3 white=   2
+  y=221 dark=   2 white=   2
+  y=222 dark=   2 white=   3
+  y=223 dark=   2 white=   3
+  y=224 dark=   3 white=   3
+  y=225 dark=   2 white=   3
+  y=226 dark=   2 white=   3
+  y=227 dark=   2 white=   3
+  y=228 dark=   5 white=   3
+  y=229 dark=  83 white=   3  <== full-width dark row
+  y=230 dark=  81 white=   3  <== full-width dark row
+  y=231 dark=   0 white=   3
+  y=232 dark=   0 white=   3
+  y=233 dark=   0 white=   5
+  y=234 dark=   0 white=  79  <== full-width white row
+  y=235 dark=  58 white=   7
+  y=236 dark=   0 white=   9
+  y=237 dark=   0 white=   9
+  y=238 dark=   0 white=   2
+  y=239 dark=   2 white=   2
+  y=240 dark=   0 white=  88  <== full-width white row
+  y=241 dark=   0 white=   0
+  y=242 dark=   0 white=   0
+  y=243 dark=   0 white=   0
+  y=244 dark=   0 white=   0
+  y=245 dark=   0 white=   0
+  y=246 dark=   0 white=   0
+  y=247 dark=   0 white=   0
+  y=248 dark=   0 white=   0
+  y=249 dark=   1 white=   0
+  y=250 dark=   2 white=   0
+  y=251 dark=   2 white=   4
+  y=252 dark=   2 white=  17
+  y=253 dark=   2 white=  17
+  y=254 dark=   2 white=   2
+  y=255 dark=   2 white=   2
+  y=256 dark=   2 white=  15
+  y=257 dark=   2 white=   5
+  y=258 dark=   2 white=  21
+  y=259 dark=   5 white=   3
+  y=260 dark=   4 white=   2
+  y=261 dark=   4 white=  11
+  y=262 dark=   4 white=   6
+  y=263 dark=   4 white=  11
+  y=264 dark=   4 white=  20
+  y=265 dark=   4 white=   9
+  y=266 dark=   8 white=  16
+  y=267 dark=   7 white=  11
+  y=268 dark=   2 white=  14
+  y=269 dark=   3 white=  15
+  y=270 dark=   2 white=  21
+  y=271 dark=   3 white=  13
+  y=272 dark=   2 white=  13
+  y=273 dark=   2 white=   7
+  y=274 dark=   2 white=   6
+  y=275 dark=   2 white=   7
+  y=276 dark=  65 white=   7
+  y=277 dark=   1 white=   6
+======================================================================
+img2 82x182
+per-COLUMN: x, darkCount, whiteCount  (dark>0.5H marks vertical borders)
+  x=  0 dark=   4 white=   6
+  x=  1 dark=   5 white=   5
+  x=  2 dark= 108 white=  16  <== vertical dark border
+  x=  3 dark=  18 white=  17
+  x=  4 dark=  10 white=  17
+  x=  5 dark=   9 white=  17
+  x=  6 dark=  10 white=  24
+  x=  7 dark=  12 white=  23
+  x=  8 dark=  11 white=  20
+  x=  9 dark=  11 white=  20
+  x= 10 dark=  12 white=  18
+  x= 11 dark=  14 white=  10
+  x= 12 dark=  44 white=   7
+  x= 13 dark=  12 white=  18
+  x= 14 dark=  11 white=  19
+  x= 15 dark=  11 white=  19
+  x= 16 dark=  13 white=  18
+  x= 17 dark=  11 white=  18
+  x= 18 dark=   9 white=  25
+  x= 19 dark=  12 white=  21
+  x= 20 dark=  16 white=  12
+  x= 21 dark=  16 white=  20
+  x= 22 dark=  18 white=  11
+  x= 23 dark=  15 white=  24
+  x= 24 dark=  21 white=   9
+  x= 25 dark=  17 white=  16
+  x= 26 dark=  16 white=  20
+  x= 27 dark=  18 white=   8
+  x= 28 dark=  16 white=  17
+  x= 29 dark=  14 white=  21
+  x= 30 dark=  12 white=  25
+  x= 31 dark=  13 white=  26
+  x= 32 dark=  13 white=  22
+  x= 33 dark=  17 white=  22
+  x= 34 dark=  16 white=  29
+  x= 35 dark=  15 white=  15
+  x= 36 dark=  19 white=  16
+  x= 37 dark=  15 white=  15
+  x= 38 dark=  13 white=  21
+  x= 39 dark=  12 white=  19
+  x= 40 dark=  14 white=  26
+  x= 41 dark=  13 white=  23
+  x= 42 dark=  13 white=  20
+  x= 43 dark=  11 white=  29
+  x= 44 dark=  17 white=  26
+  x= 45 dark=  14 white=  27
+  x= 46 dark=  12 white=  27
+  x= 47 dark=  13 white=  27
+  x= 48 dark=  12 white=  24
+  x= 49 dark=  13 white=  31
+  x= 50 dark=  13 white=  33
+  x= 51 dark=  12 white=  37
+  x= 52 dark=  11 white=  30
+  x= 53 dark=  11 white=  24
+  x= 54 dark=  11 white=  26
+  x= 55 dark=  11 white=  29
+  x= 56 dark=  10 white=  25
+  x= 57 dark=  10 white=  23
+  x= 58 dark=  10 white=  30
+  x= 59 dark=  10 white=  19
+  x= 60 dark=  10 white=  21
+  x= 61 dark=  10 white=  20
+  x= 62 dark=  11 white=  20
+  x= 63 dark=  17 white=  22
+  x= 64 dark=  12 white=  18
+  x= 65 dark=   8 white=  22
+  x= 66 dark=   7 white=  18
+  x= 67 dark=   8 white=  19
+  x= 68 dark=  32 white=  21
+  x= 69 dark=   7 white=  18
+  x= 70 dark=   8 white=  20
+  x= 71 dark=   9 white=  20
+  x= 72 dark=   9 white=  20
+  x= 73 dark=   9 white=  22
+  x= 74 dark=  10 white=  17
+  x= 75 dark=  11 white=  22
+  x= 76 dark=  11 white=  20
+  x= 77 dark=   9 white=  21
+  x= 78 dark=   9 white=  19
+  x= 79 dark=  10 white=  18
+  x= 80 dark=  12 white=  17
+  x= 81 dark=  12 white=  18
+per-ROW: y, darkCount, whiteCount
+  y=  0 dark=  27 white=   0
+  y=  1 dark=  45 white=   0
+  y=  2 dark=  80 white=   0  <== full-width dark row
+  y=  3 dark=   2 white=  80  <== full-width white row
+  y=  4 dark=   0 white=   2
+  y=  5 dark=   0 white=   1
+  y=  6 dark=   0 white=  79  <== full-width white row
+  y=  7 dark=   5 white=  75  <== full-width white row
+  y=  8 dark=  15 white=  62  <== full-width white row
+  y=  9 dark=  21 white=  50
+  y= 10 dark=  13 white=  52
+  y= 11 dark=  12 white=  62  <== full-width white row
+  y= 12 dark=   7 white=  67  <== full-width white row
+  y= 13 dark=  20 white=  58  <== full-width white row
+  y= 14 dark=  13 white=  52
+  y= 15 dark=  15 white=  57
+  y= 16 dark=   5 white=  61  <== full-width white row
+  y= 17 dark=  17 white=  61  <== full-width white row
+  y= 18 dark=   0 white=  63  <== full-width white row
+  y= 19 dark=   0 white=  79  <== full-width white row
+  y= 20 dark=   0 white=   0
+  y= 21 dark=   0 white=   0
+  y= 22 dark=   0 white=   0
+  y= 23 dark=  79 white=   0  <== full-width dark row
+  y= 24 dark=  80 white=   0  <== full-width dark row
+  y= 25 dark=   2 white=   0
+  y= 26 dark=   1 white=   0
+  y= 27 dark=   1 white=   0
+  y= 28 dark=   1 white=  22
+  y= 29 dark=   1 white=  18
+  y= 30 dark=   1 white=  29
+  y= 31 dark=   1 white=  17
+  y= 32 dark=   1 white=  34
+  y= 33 dark=   1 white=  24
+  y= 34 dark=   1 white=  28
+  y= 35 dark=   1 white=  18
+  y= 36 dark=   1 white=  18
+  y= 37 dark=   1 white=  16
+  y= 38 dark=   1 white=  30
+  y= 39 dark=   1 white=   0
+  y= 40 dark=   1 white=   0
+  y= 41 dark=   1 white=  35
+  y= 42 dark=   1 white=  20
+  y= 43 dark=   1 white=  34
+  y= 44 dark=   1 white=  21
+  y= 45 dark=   1 white=  34
+  y= 46 dark=   1 white=   0
+  y= 47 dark=   1 white=   0
+  y= 48 dark=   1 white=   0
+  y= 49 dark=   2 white=   0
+  y= 50 dark=  80 white=   0  <== full-width dark row
+  y= 51 dark=   2 white=   0
+  y= 52 dark=   1 white=   0
+  y= 53 dark=   1 white=   0
+  y= 54 dark=   1 white=   0
+  y= 55 dark=   1 white=   0
+  y= 56 dark=   1 white=   0
+  y= 57 dark=   1 white=   0
+  y= 58 dark=   1 white=   0
+  y= 59 dark=   1 white=   0
+  y= 60 dark=   1 white=   0
+  y= 61 dark=   1 white=   0
+  y= 62 dark=   1 white=   0
+  y= 63 dark=   1 white=   0
+  y= 64 dark=   1 white=   0
+  y= 65 dark=   1 white=   0
+  y= 66 dark=   1 white=   0
+  y= 67 dark=   1 white=   0
+  y= 68 dark=   1 white=   0
+  y= 69 dark=   1 white=   0
+  y= 70 dark=   1 white=   0
+  y= 71 dark=   1 white=   0
+  y= 72 dark=   1 white=   0
+  y= 73 dark=   1 white=   0
+  y= 74 dark=   1 white=   0
+  y= 75 dark=   2 white=   0
+  y= 76 dark=  80 white=   0  <== full-width dark row
+  y= 77 dark=   2 white=   0
+  y= 78 dark=   1 white=   0
+  y= 79 dark=   1 white=   0
+  y= 80 dark=   1 white=   0
+  y= 81 dark=   1 white=   0
+  y= 82 dark=   1 white=   0
+  y= 83 dark=   1 white=   0
+  y= 84 dark=   1 white=   0
+  y= 85 dark=   1 white=   0
+  y= 86 dark=   1 white=   0
+  y= 87 dark=   1 white=   0
+  y= 88 dark=   1 white=   0
+  y= 89 dark=   1 white=   0
+  y= 90 dark=   1 white=   0
+  y= 91 dark=   1 white=   0
+  y= 92 dark=   1 white=   0
+  y= 93 dark=   1 white=   0
+  y= 94 dark=   1 white=   0
+  y= 95 dark=   1 white=   0
+  y= 96 dark=   1 white=   0
+  y= 97 dark=   1 white=   0
+  y= 98 dark=   1 white=   0
+  y= 99 dark=   1 white=   0
+  y=100 dark=   1 white=   0
+  y=101 dark=   2 white=   0
+  y=102 dark=  80 white=   0  <== full-width dark row
+  y=103 dark=   2 white=   0
+  y=104 dark=   1 white=   0
+  y=105 dark=   1 white=   0
+  y=106 dark=   1 white=   0
+  y=107 dark=   1 white=   0
+  y=108 dark=   1 white=   0
+  y=109 dark=   1 white=   0
+  y=110 dark=   1 white=   0
+  y=111 dark=   1 white=   0
+  y=112 dark=   1 white=   0
+  y=113 dark=   1 white=   0
+  y=114 dark=   1 white=   0
+  y=115 dark=   1 white=   0
+  y=116 dark=   1 white=   0
+  y=117 dark=   1 white=   0
+  y=118 dark=   1 white=   0
+  y=119 dark=   1 white=   0
+  y=120 dark=   1 white=   0
+  y=121 dark=   1 white=   0
+  y=122 dark=   1 white=   0
+  y=123 dark=   1 white=   0
+  y=124 dark=   1 white=   0
+  y=125 dark=   1 white=   0
+  y=126 dark=   1 white=   0
+  y=127 dark=   2 white=   0
+  y=128 dark=  79 white=   0  <== full-width dark row
+  y=129 dark=   0 white=   0
+  y=130 dark=   0 white=   0
+  y=131 dark=   0 white=   1
+  y=132 dark=   0 white=  71  <== full-width white row
+  y=133 dark=  57 white=   2
+  y=134 dark=  46 white=   2
+  y=135 dark=   0 white=   4
+  y=136 dark=   0 white=  37
+  y=137 dark=   0 white=   2
+  y=138 dark=   2 white=   1
+  y=139 dark=   0 white=  77  <== full-width white row
+  y=140 dark=   0 white=   0
+  y=141 dark=   0 white=   0
+  y=142 dark=   0 white=   0
+  y=143 dark=   0 white=   0
+  y=144 dark=   0 white=   0
+  y=145 dark=   0 white=   0
+  y=146 dark=   0 white=   0
+  y=147 dark=   0 white=   0
+  y=148 dark=   1 white=   0
+  y=149 dark=   2 white=   0
+  y=150 dark=   2 white=   0
+  y=151 dark=   2 white=   0
+  y=152 dark=   2 white=   1
+  y=153 dark=   2 white=   3
+  y=154 dark=   5 white=   3
+  y=155 dark=   4 white=   2
+  y=156 dark=   4 white=   7
+  y=157 dark=   4 white=   4
+  y=158 dark=   4 white=   3
+  y=159 dark=   4 white=   3
+  y=160 dark=   4 white=   3
+  y=161 dark=   9 white=   3
+  y=162 dark=   8 white=  10
+  y=163 dark=   4 white=   5
+  y=164 dark=   4 white=   5
+  y=165 dark=   4 white=   8
+  y=166 dark=   5 white=   5
+  y=167 dark=   4 white=   5
+  y=168 dark=   4 white=   5
+  y=169 dark=   4 white=   8
+  y=170 dark=   4 white=   9
+  y=171 dark=   4 white=   9
+  y=172 dark=   4 white=   6
+  y=173 dark=   5 white=   5
+  y=174 dark=   5 white=   3
+  y=175 dark=  39 white=   0
+  y=176 dark=   3 white=   2
+  y=177 dark=   3 white=   2
+  y=178 dark=   0 white=   0
+  y=179 dark=   0 white=   0
+  y=180 dark=   0 white=   0
+  y=181 dark=   0 white=   0

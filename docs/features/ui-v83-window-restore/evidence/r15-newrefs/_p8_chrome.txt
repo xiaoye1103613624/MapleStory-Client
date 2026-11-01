@@ -1,0 +1,266 @@
+generic chrome bitmaps collected: 182
+
+====================================================================================================
+SCREENSHOT 勋章框.png  255x372
+  --- window subtree (UIWindow.img/Title) : 0 accepted, 6 below 120-opaque-px floor ---
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/Title/Tab/disabled/2                              26x14   x[30..55] y[3..16]  exact=1.0000 mae=0.000 n=31
+    UIWindow.img/Title/Tab/disabled/0                              26x14   x[29..54] y[4..17]  exact=1.0000 mae=0.000 n=49
+    UIWindow.img/Title/Tab/disabled/4                              25x14   x[30..54] y[4..17]  exact=1.0000 mae=0.000 n=42
+    UIWindow.img/Title/Tab/disabled/1                              26x14   x[31..56] y[4..17]  exact=1.0000 mae=0.000 n=42
+    UIWindow.img/Title/Tab/disabled/3                              26x14   x[31..56] y[4..17]  exact=1.0000 mae=0.000 n=59
+    UIWindow.img/Title/Tab/enabled/0                               26x14   x[16..41] y[29..42]  exact=1.0000 mae=0.000 n=61
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[242..253] y[7..18]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[239..253] y[94..106]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[239..253] y[107..119]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[239..253] y[107..119]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[239..253] y[326..338]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 好友列表框.png  302x384
+  --- window subtree (UIWindow.img/UserList) : 13 accepted, 14 below 120-opaque-px floor ---
+    UIWindow.img/UserList/Friend/BtAddFriend/normal/0              65x18   x[1..65] y[77..94]  exact=1.0000 mae=0.000 n=1080
+    UIWindow.img/UserList/Friend/BtAddGroup/normal/0               65x18   x[68..132] y[77..94]  exact=1.0000 mae=0.000 n=1080
+    UIWindow.img/UserList/Friend/BtShowOnline/normal/0             74x18   x[228..301] y[77..94]  exact=1.0000 mae=0.000 n=1233
+    UIWindow.img/UserList/Friend/BtGroupWhisper/normal/0           79x18   x[4..82] y[337..354]  exact=1.0000 mae=0.000 n=1318
+    UIWindow.img/UserList/Friend/BtChat/normal/0                   47x19   x[95..141] y[337..355]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtChat/normal/0                    47x19   x[95..141] y[337..355]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Friend/BtWhisper/normal/0                47x19   x[250..296] y[337..355]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtWhisper/normal/0                 47x19   x[250..296] y[337..355]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Friend/BtMod/normal/0                    38x18   x[4..41] y[358..375]  exact=1.0000 mae=0.000 n=621
+    UIWindow.img/UserList/Friend/BtDelete/normal/0                 47x19   x[45..91] y[358..376]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Friend/BtParty/normal/0                  71x18   x[95..165] y[358..375]  exact=1.0000 mae=0.000 n=1182
+    UIWindow.img/UserList/Friend/BtBlock/normal/0                  60x18   x[178..237] y[358..375]  exact=1.0000 mae=0.000 n=995
+    UIWindow.img/UserList/Friend/BtMessage/normal/0                48x18   x[250..297] y[358..375]  exact=1.0000 mae=0.000 n=791
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/UserList/Tab/disabled/4                           50x14   x[94..143] y[1..14]  exact=1.0000 mae=0.000 n=92
+    UIWindow.img/UserList/Tab/enabled/3                            51x14   x[95..145] y[1..14]  exact=0.9746 mae=0.864 n=118
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0          33x10   x[95..127] y[2..11]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1          23x10   x[95..117] y[2..11]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0           33x10   x[95..127] y[2..11]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1           23x10   x[95..117] y[2..11]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Tab/disabled/1                           27x16   x[35..61] y[22..37]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/1                            27x16   x[35..61] y[22..37]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/disabled/0                           27x15   x[4..30] y[23..37]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/enabled/0                            27x15   x[4..30] y[23..37]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/disabled/2                           26x14   x[66..91] y[23..36]  exact=1.0000 mae=0.000 n=60
+    UIWindow.img/UserList/Tab/disabled/3                           50x14   x[96..145] y[23..36]  exact=1.0000 mae=0.000 n=112
+    UIWindow.img/UserList/Guild/GuildRank/IconEff/2                84x75   x[97..180] y[31..105]  exact=1.0000 mae=0.000 n=28
+    UIWindow.img/UserList/Guild/GuildRank/IconEff/3                85x75   x[107..191] y[54..128]  exact=1.0000 mae=0.000 n=23
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[288..299] y[4..15]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[286..300] y[109..121]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[286..300] y[122..134]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[286..300] y[122..134]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[286..300] y[284..296]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 组员列表框.png  313x386
+  --- window subtree (UIWindow.img/UserList) : 17 accepted, 13 below 120-opaque-px floor ---
+    UIWindow.img/UserList/Party/party0                             281x27   x[7..287] y[50..76]  exact=0.9874 mae=2.680 n=7074
+    UIWindow.img/UserList/Party/party5                             279x18   x[7..285] y[81..98]  exact=1.0000 mae=0.000 n=4952
+    UIWindow.img/UserList/Party/party2                             279x4    x[7..285] y[117..120]  exact=1.0000 mae=0.000 n=284
+    UIWindow.img/UserList/Party/party4                             281x27   x[7..287] y[131..157]  exact=0.9872 mae=2.717 n=6946
+    UIWindow.img/UserList/Party/party3                             278x1    x[6..283] y[201..201]  exact=0.9928 mae=0.489 n=278
+    UIWindow.img/UserList/Friend/friend6                           306x1    x[3..308] y[333..333]  exact=1.0000 mae=0.000 n=306
+    UIWindow.img/UserList/Party/BtKick/disabled/0                  47x19   x[191..237] y[341..359]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtSearch/disabled/0                47x18   x[73..119] y[342..359]  exact=1.0000 mae=0.000 n=774
+    UIWindow.img/UserList/Party/BtHP/disabled/0                    47x18   x[132..178] y[342..359]  exact=1.0000 mae=0.000 n=774
+    UIWindow.img/UserList/Friend/BtWhisper/disabled/0              47x19   x[250..296] y[342..360]  exact=1.0000 mae=0.000 n=763
+    UIWindow.img/UserList/Party/BtWhisper/disabled/0               47x19   x[250..296] y[342..360]  exact=1.0000 mae=0.000 n=763
+    UIWindow.img/UserList/Party/BtCreate/normal/0                  47x19   x[14..60] y[352..370]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtWithdraw/disabled/0              47x19   x[191..237] y[361..379]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtInvite/normal/0                  47x19   x[73..119] y[362..380]  exact=1.0000 mae=0.000 n=761
+    UIWindow.img/UserList/Party/BtChangeBoss/disabled/0            47x18   x[132..178] y[362..379]  exact=1.0000 mae=0.000 n=774
+    UIWindow.img/UserList/Friend/BtChat/disabled/0                 47x19   x[250..296] y[362..380]  exact=1.0000 mae=0.000 n=763
+    UIWindow.img/UserList/Party/BtChat/disabled/0                  47x19   x[250..296] y[362..380]  exact=1.0000 mae=0.000 n=763
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/UserList/Tab/disabled/4                           50x14   x[101..150] y[2..15]  exact=1.0000 mae=0.000 n=92
+    UIWindow.img/UserList/Tab/enabled/3                            51x14   x[101..151] y[2..15]  exact=0.9746 mae=0.864 n=118
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0          33x10   x[102..134] y[3..12]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1          23x10   x[102..124] y[3..12]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0           33x10   x[102..134] y[3..12]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1           23x10   x[102..124] y[3..12]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Tab/disabled/1                           27x16   x[40..66] y[23..38]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/1                            27x16   x[40..66] y[23..38]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/disabled/0                           27x15   x[9..35] y[24..38]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/enabled/0                            27x15   x[9..35] y[24..38]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/disabled/2                           26x14   x[71..96] y[24..37]  exact=1.0000 mae=0.000 n=60
+    UIWindow.img/UserList/Tab/disabled/3                           50x14   x[101..150] y[24..37]  exact=1.0000 mae=0.000 n=112
+    UIWindow.img/UserList/Party/party1                             279x18   x[7..285] y[99..116]  exact=1.0000 mae=0.000 n=72
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[293..304] y[5..16]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[291..305] y[50..62]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[291..305] y[63..75]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[291..305] y[63..75]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[291..305] y[315..327]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 拒绝列表框.png  310x391
+  --- window subtree (UIWindow.img/UserList) : 6 accepted, 13 below 120-opaque-px floor ---
+    UIWindow.img/UserList/Tab/enabled/4                            52x16   x[154..205] y[28..43]  exact=1.0000 mae=0.000 n=139
+    UIWindow.img/UserList/BlackList/blacklist2                     281x6    x[6..286] y[100..105]  exact=1.0000 mae=0.000 n=294
+    UIWindow.img/UserList/Guild/GuildInfo/guildinfo4               280x1    x[7..286] y[105..105]  exact=0.9964 mae=0.121 n=280
+    UIWindow.img/UserList/Friend/friend6                           306x1    x[2..307] y[338..338]  exact=1.0000 mae=0.000 n=306
+    UIWindow.img/UserList/BlackList/BtAdd/normal/0                 68x17   x[60..127] y[357..373]  exact=1.0000 mae=0.000 n=1148
+    UIWindow.img/UserList/BlackList/BtDelete/disabled/0            68x17   x[180..247] y[357..373]  exact=1.0000 mae=0.000 n=1148
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/UserList/Tab/disabled/4                           50x14   x[100..149] y[7..20]  exact=1.0000 mae=0.000 n=92
+    UIWindow.img/UserList/Tab/enabled/3                            51x14   x[100..150] y[7..20]  exact=0.9746 mae=0.864 n=118
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0          33x10   x[101..133] y[8..17]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1          23x10   x[101..123] y[8..17]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0           33x10   x[101..133] y[8..17]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1           23x10   x[101..123] y[8..17]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Tab/disabled/1                           27x16   x[39..65] y[28..43]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/1                            27x16   x[39..65] y[28..43]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/disabled/0                           27x15   x[8..34] y[29..43]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/enabled/0                            27x15   x[8..34] y[29..43]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/disabled/2                           26x14   x[70..95] y[29..42]  exact=1.0000 mae=0.000 n=60
+    UIWindow.img/UserList/Tab/disabled/3                           50x14   x[100..149] y[29..42]  exact=1.0000 mae=0.000 n=112
+    UIWindow.img/UserList/BlackList/blacklist1                     281x18   x[6..286] y[82..99]  exact=1.0000 mae=0.000 n=54
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[292..303] y[10..21]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[290..304] y[55..67]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[290..304] y[68..80]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[290..304] y[68..80]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[290..304] y[320..332]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 家族联盟.png  309x387
+  --- window subtree (UIWindow.img/UserList) : 24 accepted, 13 below 120-opaque-px floor ---
+    UIWindow.img/UserList/Guild/GuildInfo/guildinfo6               282x20   x[4..285] y[80..99]  exact=1.0000 mae=0.000 n=5616
+    UIWindow.img/UserList/GuildUnion/guildinfo6                    282x20   x[4..285] y[80..99]  exact=1.0000 mae=0.000 n=5616
+    UIWindow.img/UserList/Guild/GuildInfo/Btnotice/disabled/0      20x20   x[287..306] y[80..99]  exact=1.0000 mae=0.000 n=388
+    UIWindow.img/UserList/GuildUnion/Btnotice/disabled/0           20x20   x[287..306] y[80..99]  exact=1.0000 mae=0.000 n=388
+    UIWindow.img/UserList/Friend/friend6                           306x1    x[1..306] y[105..105]  exact=1.0000 mae=0.000 n=306
+    UIWindow.img/UserList/Guild/GuildInfo/BtInvite/disabled/0      53x18   x[8..60] y[316..333]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtInvite/disabled/0           53x18   x[8..60] y[316..333]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtWithdraw/disabled/0    53x18   x[79..131] y[316..333]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtWithdraw/disabled/0         53x18   x[79..131] y[316..333]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtChange/disabled/0           53x18   x[158..210] y[316..333]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtWhisper/disabled/0     46x17   x[237..282] y[316..332]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/GuildUnion/BtWhisper/disabled/0          46x17   x[237..282] y[316..332]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/Guild/GuildInfo/BtUp/disabled/0          53x18   x[8..60] y[336..353]  exact=1.0000 mae=0.000 n=878
+    UIWindow.img/UserList/GuildUnion/BtUp/disabled/0               53x18   x[8..60] y[336..353]  exact=1.0000 mae=0.000 n=878
+    UIWindow.img/UserList/Guild/GuildInfo/BtDown/disabled/0        53x18   x[79..131] y[336..353]  exact=1.0000 mae=0.000 n=879
+    UIWindow.img/UserList/GuildUnion/BtDown/disabled/0             53x18   x[79..131] y[336..353]  exact=1.0000 mae=0.000 n=879
+    UIWindow.img/UserList/Guild/GuildInfo/BtKick/disabled/0        53x18   x[158..210] y[336..353]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtKick/disabled/0             53x18   x[158..210] y[336..353]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtChat/disabled/0        46x17   x[237..282] y[336..352]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/GuildUnion/BtChat/disabled/0             46x17   x[237..282] y[336..352]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/Guild/GuildInfo/BtPartyInvite/disabled/0 53x18   x[158..210] y[363..380]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtPartyInvite/disabled/0      53x18   x[158..210] y[363..380]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtInfo/disabled/0        47x18   x[237..283] y[363..380]  exact=1.0000 mae=0.000 n=773
+    UIWindow.img/UserList/GuildUnion/BtInfo/disabled/0             47x18   x[237..283] y[363..380]  exact=1.0000 mae=0.000 n=773
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/UserList/Tab/disabled/3                           50x14   x[99..148] y[5..18]  exact=0.9732 mae=1.062 n=112
+    UIWindow.img/UserList/Tab/disabled/4                           50x14   x[99..148] y[5..18]  exact=1.0000 mae=0.000 n=92
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0          33x10   x[99..131] y[6..15]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1          23x10   x[99..121] y[6..15]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0           33x10   x[99..131] y[6..15]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1           23x10   x[99..121] y[6..15]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Tab/disabled/1                           27x16   x[38..64] y[26..41]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/1                            27x16   x[38..64] y[26..41]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/disabled/0                           27x15   x[7..33] y[27..41]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/enabled/0                            27x15   x[7..33] y[27..41]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/disabled/2                           26x14   x[69..94] y[27..40]  exact=1.0000 mae=0.000 n=60
+    UIWindow.img/UserList/Tab/enabled/3                            51x14   x[99..149] y[27..40]  exact=1.0000 mae=0.000 n=118
+    UIWindow.img/UserList/Guild/GuildRank/IconEff/3                85x75   x[0..84] y[60..134]  exact=1.0000 mae=0.000 n=23
+  --- generic chrome : 6 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[291..302] y[8..19]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/enabled/prev0                                  15x13   x[289..303] y[113..125]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/enabled/thumb0                                 15x25   x[289..303] y[126..150]  exact=1.0000 mae=0.000 n=375
+    Basic.img/VScr4/disabled/base                                  15x13   x[289..303] y[151..163]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[289..303] y[151..163]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/next0                                  15x13   x[289..303] y[292..304]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 好友、组员、家族、家族联盟、拒绝列表.png  310x386
+  --- window subtree (UIWindow.img/UserList) : 30 accepted, 15 below 120-opaque-px floor ---
+    UIWindow.img/UserList/Guild/GuildInfo/guildinfo6               282x20   x[4..285] y[78..97]  exact=1.0000 mae=0.000 n=5616
+    UIWindow.img/UserList/GuildUnion/guildinfo6                    282x20   x[4..285] y[78..97]  exact=1.0000 mae=0.000 n=5616
+    UIWindow.img/UserList/Guild/GuildInfo/Btnotice/disabled/0      20x20   x[286..305] y[78..97]  exact=1.0000 mae=0.000 n=388
+    UIWindow.img/UserList/GuildUnion/Btnotice/disabled/0           20x20   x[286..305] y[78..97]  exact=1.0000 mae=0.000 n=388
+    UIWindow.img/UserList/Friend/friend6                           306x1    x[1..306] y[103..103]  exact=1.0000 mae=0.000 n=306
+    UIWindow.img/UserList/Guild/GuildInfo/guildinfo2               281x18   x[5..285] y[142..159]  exact=1.0000 mae=0.000 n=5052
+    UIWindow.img/UserList/Guild/GuildInfo/guildinfo4               280x1    x[5..284] y[178..178]  exact=1.0000 mae=0.000 n=280
+    UIWindow.img/UserList/BlackList/blacklist2                     281x6    x[5..285] y[251..256]  exact=0.9796 mae=1.561 n=294
+    UIWindow.img/UserList/Guild/GuildInfo/BtInvite/disabled/0      53x18   x[8..60] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtInvite/disabled/0           53x18   x[8..60] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtWithdraw/disabled/0    53x18   x[79..131] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtWithdraw/disabled/0         53x18   x[79..131] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Friend/BtWhere/disabled/0                53x18   x[158..210] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtWhere/disabled/0       53x18   x[158..210] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtWhere/disabled/0            53x18   x[158..210] y[314..331]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtWhisper/disabled/0     46x17   x[237..282] y[314..330]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/GuildUnion/BtWhisper/disabled/0          46x17   x[237..282] y[314..330]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/Guild/GuildInfo/BtUp/disabled/0          53x18   x[8..60] y[334..351]  exact=1.0000 mae=0.000 n=878
+    UIWindow.img/UserList/GuildUnion/BtUp/disabled/0               53x18   x[8..60] y[334..351]  exact=1.0000 mae=0.000 n=878
+    UIWindow.img/UserList/Guild/GuildInfo/BtDown/disabled/0        53x18   x[79..131] y[334..351]  exact=1.0000 mae=0.000 n=879
+    UIWindow.img/UserList/GuildUnion/BtDown/disabled/0             53x18   x[79..131] y[334..351]  exact=1.0000 mae=0.000 n=879
+    UIWindow.img/UserList/Guild/GuildInfo/BtKick/disabled/0        53x18   x[158..210] y[334..351]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtKick/disabled/0             53x18   x[158..210] y[334..351]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtChat/disabled/0        46x17   x[237..282] y[334..350]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/GuildUnion/BtChat/disabled/0             46x17   x[237..282] y[334..350]  exact=1.0000 mae=0.000 n=776
+    UIWindow.img/UserList/Guild/GuildInfo/BtGuildBBS/disabled/0    47x18   x[79..125] y[361..378]  exact=1.0000 mae=0.000 n=774
+    UIWindow.img/UserList/Guild/GuildInfo/BtPartyInvite/disabled/0 53x18   x[158..210] y[361..378]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/GuildUnion/BtPartyInvite/disabled/0      53x18   x[158..210] y[361..378]  exact=1.0000 mae=0.000 n=876
+    UIWindow.img/UserList/Guild/GuildInfo/BtInfo/disabled/0        47x18   x[237..283] y[361..378]  exact=1.0000 mae=0.000 n=773
+    UIWindow.img/UserList/GuildUnion/BtInfo/disabled/0             47x18   x[237..283] y[361..378]  exact=1.0000 mae=0.000 n=773
+    (weak, tiny art - not trusted on its own)
+    UIWindow.img/UserList/Tab/disabled/2                           26x14   x[99..124] y[3..16]  exact=0.9833 mae=0.850 n=60
+    UIWindow.img/UserList/Tab/disabled/4                           50x14   x[99..148] y[3..16]  exact=1.0000 mae=0.000 n=92
+    UIWindow.img/UserList/Tab/enabled/3                            51x14   x[99..149] y[3..16]  exact=0.9746 mae=0.864 n=118
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/0          33x10   x[99..131] y[4..13]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/disabled/1          23x10   x[99..121] y[4..13]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/0           33x10   x[99..131] y[4..13]  exact=1.0000 mae=0.000 n=77
+    UIWindow.img/UserList/Guild/GuildBoard/Tab/enabled/1           23x10   x[99..121] y[4..13]  exact=1.0000 mae=0.000 n=47
+    UIWindow.img/UserList/Tab/disabled/1                           27x16   x[38..64] y[24..39]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/1                            27x16   x[38..64] y[24..39]  exact=1.0000 mae=0.000 n=86
+    UIWindow.img/UserList/Tab/enabled/2                            27x16   x[69..95] y[24..39]  exact=1.0000 mae=0.000 n=79
+    UIWindow.img/UserList/Tab/disabled/0                           27x15   x[7..33] y[25..39]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/enabled/0                            27x15   x[7..33] y[25..39]  exact=1.0000 mae=0.000 n=81
+    UIWindow.img/UserList/Tab/disabled/3                           50x14   x[100..149] y[25..38]  exact=1.0000 mae=0.000 n=112
+    UIWindow.img/UserList/Guild/GuildRank/IconEff/3                85x75   x[0..84] y[58..132]  exact=1.0000 mae=0.000 n=23
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[291..302] y[6..17]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[289..303] y[111..123]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[289..303] y[124..136]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[289..303] y[124..136]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[289..303] y[290..302]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 个人请报框.png  511x197
+  --- window subtree (UIWindow.img/UserInfo) : 11 accepted, 0 below 120-opaque-px floor ---
+    UIWindow.img/UserInfo/BtItem/normal/0                          60x19   x[208..267] y[21..39]  exact=1.0000 mae=0.000 n=982
+    UIWindow.img/UserInfo/BtFamily/normal/0                        40x37   x[105..144] y[22..58]  exact=1.0000 mae=0.000 n=1396
+    UIWindow.img/UserInfo/BtParty/disabled/0                       59x17   x[149..207] y[22..38]  exact=1.0000 mae=0.000 n=995
+    UIWindow.img/UserInfo/Marry/unmarried/0                        20x17   x[10..29] y[29..45]  exact=1.0000 mae=0.000 n=236
+    UIWindow.img/UserInfo/BtWish/normal/0                          60x19   x[208..267] y[40..58]  exact=1.0000 mae=0.000 n=982
+    UIWindow.img/UserInfo/BtTrade/disabled/0                       59x17   x[149..207] y[41..57]  exact=1.0000 mae=0.000 n=995
+    UIWindow.img/UserInfo/ReqLv                                    31x10   x[327..357] y[52..61]  exact=1.0000 mae=0.000 n=310
+    UIWindow.img/UserInfo/BtTamingShow/disabled/0                  47x17   x[5..51] y[176..192]  exact=1.0000 mae=0.000 n=791
+    UIWindow.img/UserInfo/BtPetShow/disabled/0                     49x17   x[93..141] y[176..192]  exact=1.0000 mae=0.000 n=825
+    UIWindow.img/UserInfo/BtCollectionShow/normal/0                49x17   x[145..193] y[176..192]  exact=1.0000 mae=0.000 n=825
+    UIWindow.img/UserInfo/BtExceptionShow/disabled/0               71x17   x[199..269] y[176..192]  exact=1.0000 mae=0.000 n=1199
+  --- generic chrome : 5 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[255..266] y[5..16]  exact=1.0000 mae=0.000 n=140
+    Basic.img/VScr4/disabled/prev                                  15x13   x[488..502] y[32..44]  exact=1.0000 mae=0.000 n=193
+    Basic.img/VScr4/disabled/base                                  15x13   x[488..502] y[45..57]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/enabled/base                                   15x13   x[488..502] y[45..57]  exact=1.0000 mae=0.000 n=195
+    Basic.img/VScr4/disabled/next                                  15x13   x[488..502] y[131..143]  exact=1.0000 mae=0.000 n=193
+
+====================================================================================================
+SCREENSHOT 学院.png  227x392
+  --- window subtree (UIWindow.img/Family) : 7 accepted, 0 below 120-opaque-px floor ---
+    UIWindow.img/Family/BtFamilyPrecept/disabled/0                 11x20   x[210..220] y[54..73]  exact=1.0000 mae=0.000 n=208
+    UIWindow.img/Family/BtJuniorEntry/normal/0                     69x18   x[96..164] y[76..93]  exact=1.0000 mae=0.000 n=1238
+    UIWindow.img/Family/BtTree/normal/0                            55x18   x[165..219] y[76..93]  exact=1.0000 mae=0.000 n=986
+    UIWindow.img/Family/BtLeft/normal/0                            13x13   x[16..28] y[176..188]  exact=1.0000 mae=0.000 n=157
+    UIWindow.img/Family/BtRight/normal/0                           13x13   x[197..209] y[176..188]  exact=1.0000 mae=0.000 n=157
+    UIWindow.img/Family/BtSpecial/disabled/0                       57x18   x[153..209] y[321..338]  exact=1.0000 mae=0.000 n=1004
+    UIWindow.img/Family/BtOK/normal/0                              40x22   x[94..133] y[367..388]  exact=1.0000 mae=0.000 n=638
+  --- generic chrome : 1 accepted, 0 below 120-opaque-px floor ---
+    Basic.img/BtClose/normal/0                                     12x12   x[207..218] y[5..16]  exact=1.0000 mae=0.000 n=140
+

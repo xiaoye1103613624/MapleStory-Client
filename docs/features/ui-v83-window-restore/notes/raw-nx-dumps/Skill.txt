@@ -1,0 +1,95 @@
+===== UIWindow.img/Skill
+Skill [null]
+  BtSpUp [null]
+    disabled [null]
+      0 [bitmap] bitmap 12x12
+    mouseOver [null]
+      0 [bitmap] bitmap 12x12
+    normal [null]
+      0 [bitmap] bitmap 12x12
+    pressed [null]
+      0 [bitmap] bitmap 12x12
+  CoolTime [null]
+    0 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    1 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    10 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    11 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    12 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    13 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    14 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    15 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    2 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    3 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    4 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    5 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    6 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    7 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    8 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+    9 [bitmap] bitmap 32x32
+      origin [vector] (4467, 877248)
+      z [int] 0
+  Tab [null]
+    AranButton [null]
+      Bt1 [null]
+      Bt2 [null]
+      Bt3 [null]
+      Bt4 [null]
+    disabled [null]
+      0 [bitmap] bitmap 10x11
+      1 [bitmap] bitmap 7x12
+      2 [bitmap] bitmap 12x12
+      3 [bitmap] bitmap 16x12
+      4 [bitmap] bitmap 15x12
+    enabled [null]
+      0 [bitmap] bitmap 10x11
+      1 [bitmap] bitmap 7x12
+      2 [bitmap] bitmap 12x12
+      3 [bitmap] bitmap 16x12
+      4 [bitmap] bitmap 15x12
+  backgrnd [bitmap] bitmap 175x289
+    origin [vector] (877087568, 43859)
+  line [bitmap] bitmap 141x1
+    origin [vector] (877087568, 43859)
+  recommend [null]
+    0 [bitmap] bitmap 105x35
+      origin [vector] (4467, 877248)
+  skill0 [bitmap] bitmap 141x35
+    origin [vector] (877087568, 43859)
+  skill1 [bitmap] bitmap 141x35
+    origin [vector] (877087568, 43859)
+  tip0 [bitmap] bitmap 193x102
+    origin [vector] (877087568, 43859)
+  tip1 [bitmap] bitmap 193x102
+    origin [vector] (877087568, 43859)
+  tip2 [bitmap] bitmap 193x102
+    origin [vector] (877087568, 43859)

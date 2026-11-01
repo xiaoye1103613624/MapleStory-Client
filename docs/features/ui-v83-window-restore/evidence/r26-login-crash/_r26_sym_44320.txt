@@ -1,0 +1,40 @@
+MAPLESTORY base=0x7ff7fc2f0000 size=0x494000
+SymLoadModuleEx -> True (err=0)
+EXCEPTION tid=22412 code=0xC0000005 (ACCESS_VIOLATION) nparams=2 ctx=1232@0xaa0c
+  rip(ex)    0x00007ff7fc2fe39f  MapleStory.exe+0xe39f  |  ?  |  ?
+  access=READ fault_va=0xfffffffffffffff8
+  rax      0x0000000000000000
+  rcx        0x0000000100000000  (outside known modules)
+  rdx        0x0000000100000001  (outside known modules)
+  rbx        0x00007ff7fc7049e8  MapleStory.exe+0x4149e8  |  ?  |  ?
+  rsp        0x000000b6bdcfd250  (outside known modules)
+  rbp        0x00007ff7fc7042f8  MapleStory.exe+0x4142f8  |  ?  |  ?
+  rsi        0x000000b6bdcfd370  (outside known modules)
+  rdi        0x000000b6bdcfda68  (outside known modules)
+  r8       0x00007ff7fc5c9130
+  r9       0x0000000000000000
+  r10      0x00002318f3dc00bf
+  r11      0x000000b6bdcfcf68
+  r12      0x0000000000000269
+  r13      0x0000000000000000
+  r14      0x0000000000000000
+  r15      0x000000b6bdcfd378
+  rip        0x00007ff7fc2fe39f  MapleStory.exe+0xe39f  |  ?  |  ?
+--- stack scan from rsp (code words in MapleStory.exe) ---
+  sp+0x0010  rva=0x4146b8  |  ?  |  ?
+  sp+0x0020  rva=0x414210  |  ?  |  ?
+  sp+0x0028  rva=0x6ab90  |  ?  |  ?
+  sp+0x0030  rva=0x4142f0  |  ?  |  ?
+  sp+0x0040  rva=0x4142f0  |  ?  |  ?
+  sp+0x0050  rva=0x439d20  |  ?  |  ?
+  sp+0x0058  rva=0x439d28  |  ?  |  ?
+  sp+0x0070  rva=0x414210  |  ?  |  ?
+  sp+0x0088  rva=0x6bfb7  |  ?  |  ?
+  sp+0x00a0  rva=0x4142f0  |  ?  |  ?
+  sp+0x00b0  rva=0x439d20  |  ?  |  ?
+  sp+0x00b8  rva=0x439d28  |  ?  |  ?
+  sp+0x00d0  rva=0x414210  |  ?  |  ?
+  sp+0x00e8  rva=0x6e5a6  |  ?  |  ?
+  sp+0x0100  rva=0x4142f0  |  ?  |  ?
+  sp+0x0120  rva=0x2d92b8  |  ?  |  ?
+  sp+0x0128  rva=0x2d92d0  |  ?  |  ?

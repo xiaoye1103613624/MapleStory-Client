@@ -1,0 +1,14 @@
+===== StatusBar.img/base
+base [null]
+  backgrnd [bitmap] bitmap 817x71
+  backgrnd2 [bitmap] bitmap 570x71
+  box [bitmap] bitmap 42x19
+  chat [bitmap] bitmap 566x5
+  chatTarget [bitmap] bitmap 81x20
+  iconBlue [bitmap] bitmap 12x12
+  iconMemo [bitmap] bitmap 14x11
+  iconRed [bitmap] bitmap 12x12
+  quickSlot [bitmap] bitmap 466x80
+  quickSlot08 [bitmap] bitmap 151x80
+  quickSlot26 [bitmap] bitmap 466x80
+  quickSlot32 [bitmap] bitmap 571x80

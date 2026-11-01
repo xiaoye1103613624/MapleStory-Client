@@ -1,0 +1,131 @@
+content = |img - frame_template| > 40 (max channel) on template px with alpha==255
+matched control rectangles from _p8_chrome.txt are REMOVED before projecting
+
+==============================================================================
+勋章框.png  255x372  tpl _nx/Title_backgrnd.png at dx=0 dy=1  (tpl rect x[0..259] y[1..374])
+  OUTSIDE-template px = 255 (0.27% of image)
+  content px = 7759 ; after removing 5 matched control rects -> text px = 7387
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 25.. 43] h=19  px=3038  x[4..253]  local y[24..42] x[4..253]
+    y[ 48.. 77] h=30  px=2648  x[6..253]  local y[47..76] x[6..253]
+    y[ 82.. 89] h=8   px=1701  x[3..254]  local y[81..88] x[3..254]
+  band-top deltas: [np.int64(23), np.int64(34)]
+  per-band ink column runs (>=3 px wide):
+    y[ 25.. 43]: x[4..253]
+    y[ 48.. 77]: x[6..253]
+    y[ 82.. 89]: x[3..254]
+
+==============================================================================
+好友列表框.png  302x384  tpl _nx/UserList_backgrnd3.png at dx=-4 dy=-4  (tpl rect x[-4..307] y[-4..384])
+  OUTSIDE-template px = 0 (0.00% of image)
+  content px = 14292 ; after removing 18 matched control rects -> text px = 3783
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 19.. 37] h=19  px=2661  x[2..201]  local y[23..41] x[6..205]
+    y[ 61.. 69] h=9   px=97    x[267..289]  local y[65..73] x[271..293]
+    y[115..126] h=12  px=549   x[9..258]  local y[119..130] x[13..262]
+    y[136..142] h=7   px=109   x[18..44]  local y[140..146] x[22..48]
+    y[313..324] h=12  px=367   x[7..98]  local y[317..328] x[11..102]
+  band-top deltas: [np.int64(42), np.int64(54), np.int64(21), np.int64(177)]
+  per-band ink column runs (>=3 px wide):
+    y[ 19.. 37]: x[2..201]
+    y[ 61.. 69]: x[267..289]
+    y[115..126]: x[9..258]
+    y[136..142]: x[18..44]
+    y[313..324]: x[7..52] x[57..59] x[64..98]
+
+==============================================================================
+组员列表框.png  313x386  tpl _nx/UserList_backgrnd.png at dx=1 dy=-3  (tpl rect x[1..312] y[-3..385])
+  OUTSIDE-template px = 386 (0.32% of image)
+  content px = 27685 ; after removing 22 matched control rects -> text px = 5133
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 20.. 38] h=19  px=2543  x[7..206]  local y[23..41] x[6..205]
+    y[100..114] h=15  px=129   x[7..285]  local y[103..117] x[6..284]
+    y[162..200] h=39  px=2461  x[7..285]  local y[165..203] x[6..284]
+  band-top deltas: [np.int64(80), np.int64(62)]
+  per-band ink column runs (>=3 px wide):
+    y[ 20.. 38]: x[7..206]
+    y[100..114]: x[32..58]
+    y[162..200]: x[7..285]
+
+==============================================================================
+拒绝列表框.png  310x391  tpl _nx/UserList_backgrnd.png at dx=0 dy=2  (tpl rect x[0..311] y[2..390])
+  OUTSIDE-template px = 620 (0.51% of image)
+  content px = 12416 ; after removing 11 matched control rects -> text px = 9343
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[  3..  4] h=2   px=13    x[107..114]  local y[1..2] x[107..114]
+    y[ 25.. 43] h=19  px=2031  x[6..207]  local y[23..41] x[6..207]
+    y[ 55.. 99] h=45  px=7299  x[6..286]  local y[53..97] x[6..286]
+  band-top deltas: [np.int64(22), np.int64(30)]
+  per-band ink column runs (>=3 px wide):
+    y[  3..  4]: x[107..114]
+    y[ 25.. 43]: x[6..207]
+    y[ 55.. 99]: x[6..286]
+
+==============================================================================
+家族联盟.png  309x387  tpl _nx/UserList_backgrnd2.png at dx=-1 dy=0  (tpl rect x[-1..310] y[0..388])
+  OUTSIDE-template px = 0 (0.00% of image)
+  content px = 9390 ; after removing 30 matched control rects -> text px = 3090
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 23.. 41] h=19  px=2718  x[5..205]  local y[23..41] x[6..206]
+    y[ 62.. 73] h=12  px=372   x[103..204]  local y[62..73] x[104..205]
+  band-top deltas: [np.int64(39)]
+  per-band ink column runs (>=3 px wide):
+    y[ 23.. 41]: x[5..205]
+    y[ 62.. 73]: x[103..204]
+
+==============================================================================
+好友、组员、家族、家族联盟、拒绝列表.png  310x386  tpl _nx/UserList_backgrnd2.png at dx=-1 dy=-2  (tpl rect x[-1..310] y[-2..386])
+  OUTSIDE-template px = 0 (0.00% of image)
+  content px = 29094 ; after removing 35 matched control rects -> text px = 19976
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 21.. 39] h=19  px=2580  x[5..205]  local y[23..41] x[6..206]
+    y[ 58.. 69] h=12  px=346   x[115..197]  local y[60..71] x[116..198]
+    y[111..137] h=27  px=7230  x[5..285]  local y[113..139] x[6..286]
+    y[160..177] h=18  px=130   x[5..285]  local y[162..179] x[6..286]
+    y[189..215] h=27  px=7218  x[5..285]  local y[191..217] x[6..286]
+    y[220..250] h=31  px=2472  x[5..285]  local y[222..252] x[6..286]
+  band-top deltas: [np.int64(37), np.int64(53), np.int64(49), np.int64(29), np.int64(31)]
+  per-band ink column runs (>=3 px wide):
+    y[ 21.. 39]: x[5..205]
+    y[ 58.. 69]: x[115..197]
+    y[111..137]: x[5..285]
+    y[160..177]: x[15..41]
+    y[189..215]: x[5..285]
+    y[220..250]: x[5..285]
+
+==============================================================================
+个人请报框.png  511x197  tpl _nx/UserInfo_backgrnd.png at dx=0 dy=-1  (tpl rect x[0..274] y[-1..197])
+  OUTSIDE-template px = 46492 (46.18% of image)
+  content px = 9820 ; after removing 16 matched control rects -> text px = 2237
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 61..128] h=68  px=2103  x[26..263]  local y[62..129] x[26..263]
+    y[146..156] h=11  px=134   x[35..67]  local y[147..157] x[35..67]
+  band-top deltas: [np.int64(85)]
+  per-band ink column runs (>=3 px wide):
+    y[ 61..128]: x[26..70] x[160..182] x[237..263]
+    y[146..156]: x[35..67]
+
+==============================================================================
+学院.png  227x392  tpl _nx/Family_backgrnd.png at dx=1 dy=-1  (tpl rect x[1..224] y[-1..390])
+  OUTSIDE-template px = 1400 (1.57% of image)
+  content px = 5664 ; after removing 8 matched control rects -> text px = 2329
+  TEXT ROW BANDS (image y), pitch between band tops:
+    y[ 34.. 45] h=12  px=377   x[66..156]  local y[35..46] x[65..155]
+    y[ 83.. 91] h=9   px=73    x[73..88]  local y[84..92] x[72..87]
+    y[113..121] h=9   px=81    x[191..212]  local y[114..122] x[190..211]
+    y[130..138] h=9   px=48    x[200..212]  local y[131..139] x[199..211]
+    y[160..170] h=11  px=147   x[159..194]  local y[161..171] x[158..193]
+    y[179..190] h=12  px=559   x[47..176]  local y[180..191] x[46..175]
+    y[200..208] h=9   px=162   x[97..205]  local y[201..209] x[96..204]
+    y[215..239] h=25  px=882   x[17..183]  local y[216..240] x[16..182]
+  band-top deltas: [np.int64(49), np.int64(30), np.int64(17), np.int64(30), np.int64(19), np.int64(21), np.int64(15)]
+  per-band ink column runs (>=3 px wide):
+    y[ 34.. 45]: x[66..156]
+    y[ 83.. 91]: x[73..88]
+    y[113..121]: x[191..196] x[201..212]
+    y[130..138]: x[200..212]
+    y[160..170]: x[159..194]
+    y[179..190]: x[47..176]
+    y[200..208]: x[97..116] x[185..190] x[195..197] x[202..205]
+    y[215..239]: x[17..45] x[50..183]
+

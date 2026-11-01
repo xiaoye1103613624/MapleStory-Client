@@ -1,0 +1,16 @@
+reference b81b3b97-3e44-4778-9526-071afa89a45d.png  292x369
+=== backgrnd  295x364  opaque=107360 ===
+  SAD= 35.50  at (0, 5)
+  SAD= 36.45  at (0, 4)
+  SAD= 37.47  at (0, 3)
+  SAD= 38.60  at (0, 2)
+=== backgrnd2  295x240  opaque=70780 ===
+  SAD= 17.75  at (0, 6)
+  SAD= 29.20  at (0, 5)
+  SAD= 29.81  at (0, 7)
+  SAD= 30.83  at (0, 8)
+=== backgrnd3  184x22  opaque=4028 ===
+  SAD= 37.55  at (0, 6)
+  SAD= 39.48  at (2, 6)
+  SAD= 40.64  at (8, 6)
+  SAD= 40.90  at (6, 6)

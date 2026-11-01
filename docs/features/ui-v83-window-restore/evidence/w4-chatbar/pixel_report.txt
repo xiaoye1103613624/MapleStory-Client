@@ -1,0 +1,15 @@
+pngs/balloon_c.png size=(1, 1)
+  RGBA(0, 0, 0, 0) x1
+pngs/balloon_nw.png size=(9, 9)
+  RGBA(203, 221, 255, 204) x44
+  RGBA(152, 187, 221, 204) x13
+  RGBA(0, 0, 0, 0) x12
+  RGBA(221, 237, 255, 204) x12
+pngs/balloon_n.png size=(1, 9)
+  RGBA(203, 221, 255, 204) x7
+  RGBA(152, 187, 221, 204) x1
+  RGBA(221, 237, 255, 204) x1
+pngs/balloon_w.png size=(9, 1)
+  RGBA(203, 221, 255, 204) x7
+  RGBA(152, 187, 221, 204) x1
+  RGBA(221, 237, 255, 204) x1

@@ -1,0 +1,151 @@
+
+=========== MAP 000000001
+footholds=62  with 'force'=15
+  L5 C10 FH30 {'force': -100, 'next': 16, 'prev': 38, 'x1': -1143, 'x2': -855, 'y1': 129, 'y2': 129}
+  L5 C15 FH38 {'force': -100, 'next': 30, 'prev': 50, 'x1': -1429, 'x2': -1143, 'y1': 129, 'y2': 129}
+  L5 C17 FH41 {'force': -100, 'next': 42, 'prev': 48, 'x1': -3597, 'x2': -3268, 'y1': 130, 'y2': 130}
+  L5 C17 FH42 {'force': -100, 'next': 0, 'prev': 41, 'x1': -3268, 'x2': -2985, 'y1': 130, 'y2': 130}
+  L5 C17 FH48 {'force': -100, 'next': 41, 'prev': 0, 'x1': -3884, 'x2': -3597, 'y1': 130, 'y2': 130}
+  L5 C18 FH50 {'force': -100, 'next': 38, 'prev': 0, 'x1': -1758, 'x2': -1429, 'y1': 129, 'y2': 129}
+  L5 C20 FH54 {'force': -100, 'next': 0, 'prev': 0, 'x1': -2230, 'x2': -1901, 'y1': 128, 'y2': 128}
+  L5 C20 FH55 {'force': -100, 'next': 0, 'prev': 56, 'x1': -2521, 'x2': -2192, 'y1': 129, 'y2': 129}
+  L5 C20 FH56 {'force': -100, 'next': 55, 'prev': 0, 'x1': -2809, 'x2': -2521, 'y1': 129, 'y2': 129}
+  L5 C27 FH14 {'force': -100, 'next': 15, 'prev': 16, 'x1': -601, 'x2': -272, 'y1': 129, 'y2': 129}
+  L5 C27 FH15 {'force': -100, 'next': 0, 'prev': 14, 'x1': -272, 'x2': 11, 'y1': 129, 'y2': 129}
+  L5 C27 FH16 {'force': -100, 'next': 14, 'prev': 30, 'x1': -855, 'x2': -601, 'y1': 129, 'y2': 129}
+  L5 C3 FH20 {'force': -100, 'next': 21, 'prev': 0, 'x1': 215, 'x2': 544, 'y1': 128, 'y2': 128}
+  L5 C3 FH21 {'force': -100, 'next': 25, 'prev': 20, 'x1': 544, 'x2': 777, 'y1': 128, 'y2': 128}
+  L5 C6 FH25 {'force': -100, 'next': 0, 'prev': 21, 'x1': 777, 'x2': 1106, 'y1': 128, 'y2': 128}
+
+### Map/Map0/000000001.img/info -> 360
+info [tnull] 
+  VRBottom [tint] 320
+  VRLeft [tint] -4203
+  VRRight [tint] 1600
+  VRTop [tint] -470
+  bgm [tstring] 'BgmJp/FirstStepMaster'
+  cloud [tint] 0
+
+### Map/Map0/000000001.img/ladderRope -> 361
+ladderRope [tnull] 
+  1 [tnull] 
+    l [tint] 1
+    page [tint] 2
+    uf [tint] 1
+    x [tint] 1274
+    y1 [tint] -40
+    y2 [tint] 155
+
+### Map/Map0/000000001.img/reactor -> 365
+reactor [tnull] 
+
+### Map/Map0/000000001.img/miniMap -> 363
+miniMap [tnull] 
+  canvas [tbitmap] bitmap 371x81
+  centerX [tint] 4268
+  centerY [tint] 952
+  height [tint] 1311
+  mag [tint] 4
+  width [tint] 5944
+
+### Map/Map0/000000001.img/life -> 362
+life [tnull] 
+  0 [tnull] 
+    cy [tint] 180
+    f [tint] 0
+    fh [tint] 32
+    hide [tint] 0
+    id [tstring] '0002100'
+    mobTime [tint] 0
+
+=========== MAP 000000002
+footholds=115  with 'force'=13
+  L5 C19 FH100 {'force': 100, 'next': 99, 'prev': 101, 'x1': -2108, 'x2': -1809, 'y1': 129, 'y2': 129}
+  L5 C19 FH101 {'force': 100, 'next': 100, 'prev': 102, 'x1': -2413, 'x2': -2108, 'y1': 129, 'y2': 129}
+  L5 C19 FH102 {'force': 100, 'next': 101, 'prev': 0, 'x1': -2717, 'x2': -2413, 'y1': 129, 'y2': 129}
+  L5 C19 FH98 {'force': 100, 'next': 0, 'prev': 99, 'x1': -1500, 'x2': -1170, 'y1': 129, 'y2': 129}
+  L5 C19 FH99 {'force': 100, 'next': 98, 'prev': 100, 'x1': -1809, 'x2': -1500, 'y1': 129, 'y2': 129}
+  L5 C30 FH72 {'force': 100, 'next': 76, 'prev': 73, 'x1': -395, 'x2': -98, 'y1': 129, 'y2': 129}
+  L5 C30 FH73 {'force': 100, 'next': 72, 'prev': 74, 'x1': -693, 'x2': -395, 'y1': 129, 'y2': 129}
+  L5 C30 FH74 {'force': 100, 'next': 73, 'prev': 0, 'x1': -982, 'x2': -693, 'y1': 129, 'y2': 129}
+  L5 C31 FH76 {'force': 100, 'next': 0, 'prev': 72, 'x1': -98, 'x2': 232, 'y1': 129, 'y2': 129}
+  L5 C7 FH80 {'force': 100, 'next': 83, 'prev': 0, 'x1': 406, 'x2': 705, 'y1': 129, 'y2': 129}
+  L5 C9 FH83 {'force': 100, 'next': 84, 'prev': 80, 'x1': 705, 'x2': 1035, 'y1': 129, 'y2': 129}
+  L5 C9 FH84 {'force': 100, 'next': 85, 'prev': 83, 'x1': 1035, 'x2': 1324, 'y1': 129, 'y2': 129}
+  L5 C9 FH85 {'force': 100, 'next': 0, 'prev': 84, 'x1': 1324, 'x2': 1607, 'y1': 129, 'y2': 129}
+
+### Map/Map0/000000002.img/info -> 2243
+info [tnull] 
+  VRBottom [tint] 307
+  VRLeft [tint] -3252
+  VRRight [tint] 2046
+  VRTop [tint] -470
+  bgm [tstring] 'BgmJp/FirstStepMaster'
+  cloud [tint] 0
+
+### Map/Map0/000000002.img/ladderRope -> 2244
+ladderRope [tnull] 
+  1 [tnull] 
+    l [tint] 1
+    page [tint] 2
+    uf [tint] 1
+    x [tint] 934
+    y1 [tint] -128
+    y2 [tint] 84
+
+### Map/Map0/000000002.img/reactor -> 2248
+reactor [tnull] 
+
+### Map/Map0/000000002.img/miniMap -> 2246
+miniMap [tnull] 
+  canvas [tbitmap] bitmap 337x82
+  centerX [tint] 3300
+  centerY [tint] 947
+  height [tint] 1312
+  mag [tint] 4
+  width [tint] 5401
+
+### Map/Map0/000000002.img/life -> 2245
+life [tnull] 
+  0 [tnull] 
+    cy [tint] -131
+    f [tint] 0
+    fh [tint] 20
+    hide [tint] 0
+    id [tstring] '9409000'
+    mobTime [tint] 1
+  1 [tnull] 
+    cy [tint] 86
+    f [tint] 0
+    fh [tint] 64
+    hide [tint] 0
+    id [tstring] '9409000'
+    mobTime [tint] 1
+  10 [tnull] 
+    cy [tint] 48
+    f [tint] 0
+    fh [tint] 21
+    hide [tint] 0
+    id [tstring] '9101003'
+    mobTime [tint] 0
+  11 [tnull] 
+    cy [tint] 69
+    f [tint] 0
+    fh [tint] 18
+    hide [tint] 0
+    id [tstring] '0002101'
+    mobTime [tint] 0
+  2 [tnull] 
+    cy [tint] -108
+    f [tint] 0
+    fh [tint] 14
+    hide [tint] 0
+    id [tstring] '9409001'
+    mobTime [tint] 1
+  3 [tnull] 
+    cy [tint] 86
+    f [tint] 0
+    fh [tint] 64
+    hide [tint] 0
+    id [tstring] '9409000'
+    mobTime [tint] 1

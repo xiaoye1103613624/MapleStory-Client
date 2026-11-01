@@ -1,0 +1,229 @@
+total parsed nodes: 17740
+
+### nodes named backgrnd* that are bitmaps
+  UIWindow.img/Admin/Block/backgrnd                                        bitmap 209x156
+  UIWindow.img/AdminClaim/backgrnd                                         bitmap 268x345
+  UIWindow.img/ArtMegaphone/backgrnd                                       bitmap 435x182
+  UIWindow.img/AvatarMegaphone/backgrnd                                    bitmap 196x225
+  UIWindow.img/Book/backgrnd                                               bitmap 478x353
+  UIWindow.img/CancelRequests/AskContinueCancel/backgrnd                   bitmap 280x158
+  UIWindow.img/CancelRequests/CancelCharacterTransfer/backgrnd             bitmap 280x141
+  UIWindow.img/CancelRequests/CancelNameChange/backgrnd                    bitmap 280x141
+  UIWindow.img/CashGachapon/backgrnd                                       bitmap 170x172
+  UIWindow.img/CashTradingRoom/backgrnd                                    bitmap 646x382
+  UIWindow.img/Claim/backgrnd                                              bitmap 268x345
+  UIWindow.img/Coupon/backgrnd                                             bitmap 266x125
+  UIWindow.img/Delivery/backgrnd                                           bitmap 290x348
+  UIWindow.img/EnchantSkill/backgrnd                                       bitmap 178x206
+  UIWindow.img/Equip/backgrnd                                              bitmap 175x304
+  UIWindow.img/ExceptionItemSearch/backgrnd                                bitmap 217x123
+  UIWindow.img/FadeYesNo/backgrnd                                          bitmap 195x44
+  UIWindow.img/FadeYesNo/backgrnd2                                         bitmap 154x44
+  UIWindow.img/FadeYesNo/backgrnd3                                         bitmap 154x44
+  UIWindow.img/FadeYesNo/backgrnd4                                         bitmap 154x44
+  UIWindow.img/FadeYesNo/backgrnd5                                         bitmap 155x51
+  UIWindow.img/FadeYesNo/backgrnd6                                         bitmap 160x44
+  UIWindow.img/Family/backgrnd                                             bitmap 224x392
+  UIWindow.img/FamilyTree/backgrnd                                         bitmap 578x386
+  UIWindow.img/GMBoard/backgrnd                                            bitmap 312x389
+  UIWindow.img/GameMenu/backgrnd                                           bitmap 93x140
+  UIWindow.img/GameOpt/backgrnd                                            bitmap 158x284
+  UIWindow.img/Incubator/backgrnd                                          bitmap 178x179
+  UIWindow.img/InitialQuiz/backgrnd                                        bitmap 288x229
+  UIWindow.img/Item/backgrnd                                               bitmap 175x289
+  UIWindow.img/ItemMegaphone/backgrnd                                      bitmap 240x218
+  UIWindow.img/ItemMove/backgrnd                                           bitmap 162x304
+  UIWindow.img/ItemProtector/backgrnd                                      bitmap 178x179
+  UIWindow.img/KarmaScissors/backgrnd                                      bitmap 178x179
+  UIWindow.img/KeyConfig/backgrnd                                          bitmap 629x373
+  UIWindow.img/KeyConfig/quickslotConfig/backgrnd                          bitmap 266x238
+  UIWindow.img/Macro/backgrnd                                              bitmap 289x164
+  UIWindow.img/Macro/backgrnd2                                             bitmap 288x229
+  UIWindow.img/Macro/backgrnd3                                             bitmap 289x152
+  UIWindow.img/Macro/backgrnd4                                             bitmap 321x258
+  UIWindow.img/MacroSkill/backgrnd                                         bitmap 289x164
+  UIWindow.img/MacroSkill/backgrnd2                                        bitmap 321x258
+  UIWindow.img/MacroSkill/backgrnd3                                        bitmap 289x152
+  UIWindow.img/Maker/backgrnd                                              bitmap 312x393
+  UIWindow.img/MapleEvent/backgrnd                                         bitmap 312x389
+  UIWindow.img/MapleTV/backgrnd                                            bitmap 210x264
+  UIWindow.img/MapleTV/backgrnd2                                           bitmap 210x264
+  UIWindow.img/MapleTV/backgrnd3                                           bitmap 210x274
+  UIWindow.img/MapleTV/backgrnd4                                           bitmap 210x274
+  UIWindow.img/Megaphone/backgrnd                                          bitmap 266x156
+  UIWindow.img/Megaphone/backgrnd1                                         bitmap 266x156
+  UIWindow.img/Megaphone/backgrnd2                                         bitmap 266x156
+  UIWindow.img/MemberShop/backgrnd                                         bitmap 266x246
+  UIWindow.img/Memo/backgrnd                                               bitmap 295x240
+  UIWindow.img/Memo/backgrnd2                                              bitmap 295x240
+  UIWindow.img/Memo/backgrnd3                                              bitmap 295x168
+  UIWindow.img/Messenger/backgrnd                                          bitmap 295x364
+  UIWindow.img/Messenger/backgrnd2                                         bitmap 295x240
+  UIWindow.img/Messenger/backgrnd3                                         bitmap 184x22
+  UIWindow.img/Minigame/MemoryGame/backgrnd                                bitmap 734x429
+  UIWindow.img/Minigame/MemoryGame/backgrnd2                               bitmap 266x208
+  UIWindow.img/Minigame/Omok/backgrnd                                      bitmap 734x429
+  UIWindow.img/Minigame/Omok/backgrnd2                                     bitmap 266x181
+  UIWindow.img/MinigameTable/backgrnd                                      bitmap 758x470
+  UIWindow.img/MobGage/backgrnd                                            bitmap 35x37
+  UIWindow.img/MobGage/backgrnd2                                           bitmap 4x19
+  UIWindow.img/MobGage/backgrnd3                                           bitmap 1x20
+  UIWindow.img/MobGage/backgrnd4                                           bitmap 5x20
+  UIWindow.img/MonsterBook/backgrnd                                        bitmap 475x349
+  UIWindow.img/MonsterCarnival/backgrnd                                    bitmap 162x107
+  UIWindow.img/MonsterCarnival/backgrnd2                                   bitmap 127x107
+  UIWindow.img/MultiLine/backgrnd                                          bitmap 413x118
+  UIWindow.img/MultiLine/backgrnd2                                         bitmap 424x222
+  UIWindow.img/NewYearsCard/backgrnd                                       bitmap 357x188
+  UIWindow.img/NewYearsCard/backgrnd2                                      bitmap 165x106
+  UIWindow.img/NewYearsCard/backgrnd3                                      bitmap 227x262
+  UIWindow.img/PartySearch/backgrnd                                        bitmap 305x407
+  UIWindow.img/PersonalShop/backgrnd                                       bitmap 525x553
+  UIWindow.img/PersonalShop/backgrnd2                                      bitmap 233x143
+  UIWindow.img/PersonalShop/backgrnd3                                      bitmap 233x276
+  UIWindow.img/PersonalShop/backgrnd4                                      bitmap 203x270
+  UIWindow.img/PersonalShop/backgrnd5                                      bitmap 267x270
+  UIWindow.img/PersonalShop/backgrnd6                                      bitmap 525x553
+  UIWindow.img/Quest/TimeQuest/TimeBar/backgrnd                            bitmap 52x12
+  UIWindow.img/Quest/backgrnd                                              bitmap 245x396
+  UIWindow.img/Quest/backgrnd2                                             bitmap 305x396
+  UIWindow.img/Quest/backgrnd3                                             bitmap 296x289
+  UIWindow.img/Quest/backgrnd4                                             bitmap 305x396
+  UIWindow.img/Quest/backgrnd5                                             bitmap 266x117
+  UIWindow.img/QuestAlarm/backgrndbottom                                   bitmap 223x5
+  UIWindow.img/QuestAlarm/backgrndcenter                                   bitmap 223x18
+  UIWindow.img/QuestAlarm/backgrndmax                                      bitmap 223x25
+  UIWindow.img/QuestAlarm/backgrndmin                                      bitmap 223x20
+  UIWindow.img/Ranking/backgrnd                                            bitmap 295x335
+  UIWindow.img/RemoteGachapon/backgrnd                                     bitmap 246x235
+  UIWindow.img/Report/backgrnd                                             bitmap 154x166
+  UIWindow.img/Reset/AP/backgrnd                                           bitmap 175x220
+  UIWindow.img/Reset/AP/backgrnd2                                          bitmap 175x220
+  UIWindow.img/Reset/AP/backgrnd3                                          bitmap 175x141
+  UIWindow.img/Reset/SP/backgrnd                                           bitmap 175x289
+  UIWindow.img/Reset/SP/backgrnd1                                          bitmap 175x28
+  UIWindow.img/Reset/SP/backgrnd2                                          bitmap 175x289
+  UIWindow.img/Reset/SP/backgrnd3                                          bitmap 175x230
+  UIWindow.img/RpsGame/backgrnd                                            bitmap 310x358
+  UIWindow.img/Shop/backgrnd                                               bitmap 463x339
+  UIWindow.img/ShortCut/backgrnd                                           bitmap 93x245
+  UIWindow.img/Skill/backgrnd                                              bitmap 175x289
+  UIWindow.img/SkillEx/backgrnd                                            bitmap 274x303
+  UIWindow.img/SkillMacro/backgrnd                                         bitmap 207x289
+  UIWindow.img/SkillMacroEx/backgrnd                                       bitmap 181x303
+  UIWindow.img/SpeedQuiz/backgrnd                                          bitmap 286x410
+  UIWindow.img/Stat/backgrnd                                               bitmap 208x347
+  UIWindow.img/Stat/backgrnd2                                              bitmap 218x203
+  UIWindow.img/StoreBank/backgrnd                                          bitmap 232x318
+  UIWindow.img/SysOpt/backgrnd                                             bitmap 299x365
+  UIWindow.img/Teleport/backgrnd                                           bitmap 175x309
+  UIWindow.img/Title/backgrnd                                              bitmap 260x374
+  UIWindow.img/Title/backgrnd2                                             bitmap 254x46
+  UIWindow.img/Title/backgrnd3                                             bitmap 305x373
+  UIWindow.img/Title/backgrnd4                                             bitmap 227x46
+  UIWindow.img/Title/backgrnd5                                             bitmap 305x373
+  UIWindow.img/TradingRoom/backgrnd                                        bitmap 565x474
+  UIWindow.img/Transform/backgrnd                                          bitmap 267x129
+  UIWindow.img/TreasureBox/0/backgrnd                                      bitmap 170x172
+  UIWindow.img/TreasureBox/0/backgrndClosed                                bitmap 170x172
+  UIWindow.img/TreasureBox/0/backgrndOpened                                bitmap 170x172
+  UIWindow.img/TreasureBox/1/backgrnd                                      bitmap 170x172
+  UIWindow.img/TreasureBox/1/backgrndClosed                                bitmap 170x172
+  UIWindow.img/TreasureBox/1/backgrndOpened                                bitmap 170x172
+  UIWindow.img/Trunk/backgrnd                                              bitmap 463x318
+  UIWindow.img/UserInfo/backgrnd                                           bitmap 275x199
+  UIWindow.img/UserInfo/backgrnd2                                          bitmap 275x399
+  UIWindow.img/UserInfo/backgrnd3                                          bitmap 240x162
+  UIWindow.img/UserInfo/backgrnd4                                          bitmap 240x162
+  UIWindow.img/UserInfo/backgrnd5                                          bitmap 275x361
+  UIWindow.img/UserInfo/backgrnd6                                          bitmap 159x147
+  UIWindow.img/UserInfo/backgrnd7                                          bitmap 275x404
+  UIWindow.img/UserList/Friend/GroupMod/backgrnd                           bitmap 268x364
+  UIWindow.img/UserList/Guild/GuildBoard/backgrnd                          bitmap 312x389
+  UIWindow.img/UserList/Guild/GuildBoard/backgrnd1                         bitmap 313x347
+  UIWindow.img/UserList/Guild/GuildBoard/backgrnd2                         bitmap 313x121
+  UIWindow.img/UserList/Guild/GuildRank/backgrnd                           bitmap 330x350
+  UIWindow.img/UserList/Guild/backgrnd                                     bitmap 233x304
+  UIWindow.img/UserList/GuildUnion/backgrnd                                bitmap 233x304
+  UIWindow.img/UserList/backgrnd                                           bitmap 312x389
+  UIWindow.img/UserList/backgrnd2                                          bitmap 312x389
+  UIWindow.img/UserList/backgrnd3                                          bitmap 312x389
+  UIWindow.img/UtilDlgEx_Avatar/backgrnd                                   bitmap 419x306
+  UIWindow.img/UtilDlgEx_MultiPetEquip/backgrnd                            bitmap 419x219
+  UIWindow.img/UtilDlgEx_Pet/backgrnd                                      bitmap 419x296
+  UIWindow.img/VegaSpell/backgrnd10                                        bitmap 178x235
+  UIWindow.img/VegaSpell/backgrnd60                                        bitmap 178x235
+  UIWindow.img/ViciousHammer/backgrnd                                      bitmap 178x206
+  UIWindow.img/classMatch/backgrnd                                         bitmap 312x389
+  UIWindow.img/counsel/backgrnd                                            bitmap 312x389
+  UIWindow.img/counsel/backgrnd1                                           bitmap 313x347
+  UIWindow.img/createCygnus/backgrnd                                       bitmap 235x382
+  UIWindow.img/itemSearch/backgrnd                                         bitmap 248x271
+  UIWindow.img/itemSearch/backgrnd2                                        bitmap 248x147
+  UIWindow.img/plant/backgrndbottom                                        bitmap 65x44
+  UIWindow.img/plant/backgrndcenter                                        bitmap 65x6
+  UIWindow.img/plant/backgrndtop                                           bitmap 89x20
+
+### ALL bitmaps with 200<=W<=340 and 300<=H<=410 (possible window frames)
+  UIWindow.img/AdminClaim/backgrnd                                         268x345
+  UIWindow.img/AriantMatch/Result/10                                       320x324
+  UIWindow.img/AriantMatch/Result/11                                       320x323
+  UIWindow.img/AriantMatch/Result/12                                       320x322
+  UIWindow.img/AriantMatch/Result/13                                       320x322
+  UIWindow.img/AriantMatch/Result/9                                        320x326
+  UIWindow.img/Claim/backgrnd                                              268x345
+  UIWindow.img/Delivery/backgrnd                                           290x348
+  UIWindow.img/Family/backgrnd                                             224x392
+  UIWindow.img/GMBoard/backgrnd                                            312x389
+  UIWindow.img/Maker/backgrnd                                              312x393
+  UIWindow.img/MapleEvent/backgrnd                                         312x389
+  UIWindow.img/Messenger/backgrnd                                          295x364
+  UIWindow.img/PartySearch/backgrnd                                        305x407
+  UIWindow.img/Quest/backgrnd                                              245x396
+  UIWindow.img/Quest/backgrnd2                                             305x396
+  UIWindow.img/Quest/backgrnd4                                             305x396
+  UIWindow.img/Ranking/backgrnd                                            295x335
+  UIWindow.img/RpsGame/backgrnd                                            310x358
+  UIWindow.img/SkillEx/backgrnd                                            274x303
+  UIWindow.img/SpeedQuiz/backgrnd                                          286x410
+  UIWindow.img/Stat/backgrnd                                               208x347
+  UIWindow.img/StoreBank/backgrnd                                          232x318
+  UIWindow.img/SysOpt/backgrnd                                             299x365
+  UIWindow.img/Title/backgrnd                                              260x374
+  UIWindow.img/Title/backgrnd3                                             305x373
+  UIWindow.img/Title/backgrnd5                                             305x373
+  UIWindow.img/UserInfo/backgrnd2                                          275x399
+  UIWindow.img/UserInfo/backgrnd5                                          275x361
+  UIWindow.img/UserInfo/backgrnd7                                          275x404
+  UIWindow.img/UserList/Friend/GroupMod/backgrnd                           268x364
+  UIWindow.img/UserList/Guild/GuildBoard/backgrnd                          312x389
+  UIWindow.img/UserList/Guild/GuildBoard/backgrnd1                         313x347
+  UIWindow.img/UserList/Guild/GuildRank/backgrnd                           330x350
+  UIWindow.img/UserList/Guild/Make/backgrnd/3                              250x307
+  UIWindow.img/UserList/Guild/Make/backgrnd/4                              250x306
+  UIWindow.img/UserList/Guild/Make/backgrnd/5                              250x305
+  UIWindow.img/UserList/Guild/Make/backgrnd/6                              250x305
+  UIWindow.img/UserList/Guild/Make/backgrnd/7                              250x305
+  UIWindow.img/UserList/Guild/Make/backgrnd/8                              250x305
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/10                         250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/11                         250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/12                         250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/13                         250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/14                         250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/4                          250x346
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/5                          250x348
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/6                          250x346
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/7                          250x344
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/8                          250x343
+  UIWindow.img/UserList/Guild/MakeMark/backgrnd/9                          250x343
+  UIWindow.img/UserList/Guild/backgrnd                                     233x304
+  UIWindow.img/UserList/GuildUnion/backgrnd                                233x304
+  UIWindow.img/UserList/backgrnd                                           312x389
+  UIWindow.img/UserList/backgrnd2                                          312x389
+  UIWindow.img/UserList/backgrnd3                                          312x389
+  UIWindow.img/Wedding/wishList/input/bride                                216x303
+  UIWindow.img/Wedding/wishList/input/groom                                216x303
+  UIWindow.img/classMatch/backgrnd                                         312x389
+  UIWindow.img/counsel/backgrnd                                            312x389
+  UIWindow.img/counsel/backgrnd1                                           313x347
+  UIWindow.img/createCygnus/backgrnd                                       235x382

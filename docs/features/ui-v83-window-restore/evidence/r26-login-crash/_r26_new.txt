@@ -1,0 +1,13 @@
+file=C:/Users/11036/AppData/Local/CrashDumps/MapleStory.exe.44320.dmp bytes=14309219 streams=15
+machine 0x9 (?)
+Traceback (most recent call last):
+  File "E:\project\_r26_dump.py", line 136, in <module>
+    sys.exit(main(sys.argv[1]))
+             ~~~~^^^^^^^^^^^^^
+  File "E:\project\_r26_dump.py", line 64, in main
+    'base': base, 'size': imgsize, 'name': minidump_string(data, name_rva),
+                                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "E:\project\_r26_dump.py", line 40, in minidump_string
+    n, = struct.unpack_from('<I', data, rva)
+         ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+struct.error: unpack_from requires a buffer of at least 1710499315 bytes for unpacking 4 bytes at offset 1710499311 (actual buffer size is 14309219)

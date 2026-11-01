@@ -1,0 +1,16 @@
+ref y58..158: first text col=(170, 179, 10) last=(519, 521, 3)  nruns=14
+    line y58..68  x 171..521
+    line y76..86  x 173..521
+    line y94..104  x 173..521
+    line y112..122  x 170..521
+    line y130..140  x 171..521
+    line y148..158  x 170..521
+npc2 y39..122: first text col=(163, 173, 11) last=(514, 518, 5)  nruns=20
+    line y39..50  x 165..518
+    line y57..68  x 164..518
+    line y75..86  x 163..518
+    line y93..104  x 163..518
+    line y111..122  x 165..518
+npc1 y72..101: first text col=(168, 176, 9) last=(471, 476, 6)  nruns=22
+    line y72..83  x 166..475
+    line y90..101  x 182..429

@@ -1,0 +1,92 @@
+backgrnd bitmaps under UIWindow.img found in the dump: 162
+loaded 162 candidate frames
+
+==============================================================================
+勋章框.png  255x372  -- 6 of 72 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 1.825 n=1020  dx=-12 dy=+1  UIWindow.img/Maker/backgrnd                          bitmap 312x393 opaque 312x392  outer x[-12..299] y[2..393]
+   ACCEPT MAE= 1.827 n=2974  dx=+0 dy=+1  UIWindow.img/Title/backgrnd                          bitmap 260x374 opaque 258x372  outer x[1..258] y[2..373]
+   ACCEPT MAE= 3.504 n=1020  dx=-5 dy=+1  UIWindow.img/Quest/backgrnd2                         bitmap 305x396 opaque 304x394  outer x[-5..298] y[2..395]
+   ACCEPT MAE= 3.504 n=1020  dx=-5 dy=+1  UIWindow.img/Quest/backgrnd4                         bitmap 305x396 opaque 304x394  outer x[-5..298] y[2..395]
+   ACCEPT MAE= 3.653 n=1020  dx=-16 dy=+1  UIWindow.img/MapleEvent/backgrnd                     bitmap 312x389 opaque 310x387  outer x[-15..294] y[2..388]
+   ACCEPT MAE= 4.898 n=1020  dx=-15 dy=+1  UIWindow.img/UserInfo/backgrnd7                      bitmap 275x404 opaque 273x402  outer x[-14..258] y[2..403]
+   reject MAE= 7.625 n=2475  dx=+0 dy=+1  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[1..310] y[2..388]
+   reject MAE= 7.742 n=1020  dx=-14 dy=+1  UIWindow.img/UserInfo/backgrnd2                      bitmap 275x399 opaque 273x397  outer x[-13..259] y[2..398]
+
+==============================================================================
+好友列表框.png  302x384  -- 9 of 71 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.000 n=1889  dx=-4 dy=-4  UIWindow.img/UserList/backgrnd3                      bitmap 312x389 opaque 310x387  outer x[-3..306] y[-3..383]
+   ACCEPT MAE= 0.173 n=1510  dx=-5 dy=-4  UIWindow.img/UserList/Guild/GuildBoard/backgrnd      bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+   ACCEPT MAE= 0.173 n=1510  dx=-5 dy=-4  UIWindow.img/classMatch/backgrnd                     bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+   ACCEPT MAE= 0.173 n=1510  dx=-5 dy=-4  UIWindow.img/counsel/backgrnd                        bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+   ACCEPT MAE= 0.763 n=906   dx=-4 dy=-8  UIWindow.img/Maker/backgrnd                          bitmap 312x393 opaque 312x392  outer x[-4..307] y[-7..384]
+   ACCEPT MAE= 2.338 n=1510  dx=-5 dy=-4  UIWindow.img/UserList/backgrnd2                      bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+   ACCEPT MAE= 2.631 n=1510  dx=-5 dy=-4  UIWindow.img/GMBoard/backgrnd                        bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+   ACCEPT MAE= 2.991 n=1510  dx=-5 dy=-4  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[-4..305] y[-3..383]
+
+==============================================================================
+组员列表框.png  313x386  -- 6 of 71 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.000 n=4880  dx=+1 dy=-3  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   ACCEPT MAE= 3.990 n=4880  dx=+1 dy=-3  UIWindow.img/UserList/Guild/GuildBoard/backgrnd      bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   ACCEPT MAE= 3.990 n=4880  dx=+1 dy=-3  UIWindow.img/classMatch/backgrnd                     bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   ACCEPT MAE= 3.990 n=4880  dx=+1 dy=-3  UIWindow.img/counsel/backgrnd                        bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   ACCEPT MAE= 4.094 n=4880  dx=+1 dy=-3  UIWindow.img/UserList/backgrnd3                      bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   ACCEPT MAE= 5.613 n=4880  dx=+1 dy=-3  UIWindow.img/UserList/backgrnd2                      bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   reject MAE= 7.152 n=4880  dx=+1 dy=-3  UIWindow.img/GMBoard/backgrnd                        bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+   reject MAE= 8.886 n=4880  dx=+1 dy=-3  UIWindow.img/MapleEvent/backgrnd                     bitmap 312x389 opaque 310x387  outer x[2..311] y[-2..384]
+
+==============================================================================
+拒绝列表框.png  310x391  -- 6 of 70 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.338 n=5111  dx=+0 dy=+2  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   ACCEPT MAE= 4.148 n=5111  dx=+0 dy=+2  UIWindow.img/UserList/Guild/GuildBoard/backgrnd      bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   ACCEPT MAE= 4.148 n=5111  dx=+0 dy=+2  UIWindow.img/classMatch/backgrnd                     bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   ACCEPT MAE= 4.148 n=5111  dx=+0 dy=+2  UIWindow.img/counsel/backgrnd                        bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   ACCEPT MAE= 4.248 n=5111  dx=+0 dy=+2  UIWindow.img/UserList/backgrnd3                      bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   ACCEPT MAE= 5.715 n=5111  dx=+0 dy=+2  UIWindow.img/UserList/backgrnd2                      bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   reject MAE= 7.185 n=5111  dx=+0 dy=+2  UIWindow.img/GMBoard/backgrnd                        bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+   reject MAE= 8.822 n=5111  dx=+0 dy=+2  UIWindow.img/MapleEvent/backgrnd                     bitmap 312x389 opaque 310x387  outer x[1..310] y[3..389]
+
+==============================================================================
+家族联盟.png  309x387  -- 6 of 71 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.027 n=4807  dx=-1 dy=+0  UIWindow.img/UserList/backgrnd2                      bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   ACCEPT MAE= 5.155 n=4807  dx=-1 dy=+0  UIWindow.img/UserList/backgrnd3                      bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   ACCEPT MAE= 5.726 n=4807  dx=-1 dy=+0  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   ACCEPT MAE= 5.917 n=4807  dx=-1 dy=+0  UIWindow.img/UserList/Guild/GuildBoard/backgrnd      bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   ACCEPT MAE= 5.917 n=4807  dx=-1 dy=+0  UIWindow.img/classMatch/backgrnd                     bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   ACCEPT MAE= 5.917 n=4807  dx=-1 dy=+0  UIWindow.img/counsel/backgrnd                        bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+   reject MAE= 8.194 n=3139  dx=-1 dy=+0  UIWindow.img/Maker/backgrnd                          bitmap 312x393 opaque 312x392  outer x[-1..310] y[1..392]
+   reject MAE= 8.346 n=4807  dx=-1 dy=+0  UIWindow.img/GMBoard/backgrnd                        bitmap 312x389 opaque 310x387  outer x[0..309] y[1..387]
+
+==============================================================================
+好友、组员、家族、家族联盟、拒绝列表.png  310x386  -- 7 of 71 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.000 n=5188  dx=-1 dy=-2  UIWindow.img/UserList/backgrnd2                      bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   ACCEPT MAE= 4.802 n=5188  dx=-1 dy=-2  UIWindow.img/UserList/backgrnd3                      bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   ACCEPT MAE= 5.297 n=5188  dx=-1 dy=-2  UIWindow.img/UserList/backgrnd                       bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   ACCEPT MAE= 5.334 n=3228  dx=-1 dy=-6  UIWindow.img/Maker/backgrnd                          bitmap 312x393 opaque 312x392  outer x[-1..310] y[-5..386]
+   ACCEPT MAE= 5.507 n=5188  dx=-1 dy=-2  UIWindow.img/UserList/Guild/GuildBoard/backgrnd      bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   ACCEPT MAE= 5.507 n=5188  dx=-1 dy=-2  UIWindow.img/classMatch/backgrnd                     bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   ACCEPT MAE= 5.507 n=5188  dx=-1 dy=-2  UIWindow.img/counsel/backgrnd                        bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+   reject MAE= 7.730 n=5188  dx=-1 dy=-2  UIWindow.img/GMBoard/backgrnd                        bitmap 312x389 opaque 310x387  outer x[0..309] y[-1..385]
+
+==============================================================================
+个人请报框.png  511x197  -- 0 of 14 size-plausible frames within ring-MAE<=6.00
+   reject MAE=25.471 n=3186  dx=-2 dy=-3  UIWindow.img/UtilDlgEx_MultiPetEquip/backgrnd        bitmap 419x219 opaque 413x213  outer x[1..413] y[0..212]
+   reject MAE=26.269 n=1903  dx=-10 dy=-1  UIWindow.img/Messenger/backgrnd2                     bitmap 295x240 opaque 293x238  outer x[-9..283] y[0..237]
+   reject MAE=26.921 n=1903  dx=-10 dy=-1  UIWindow.img/Memo/backgrnd2                          bitmap 295x240 opaque 293x238  outer x[-9..283] y[0..237]
+   reject MAE=26.936 n=1903  dx=-10 dy=-1  UIWindow.img/Memo/backgrnd                           bitmap 295x240 opaque 293x238  outer x[-9..283] y[0..237]
+   reject MAE=32.398 n=2818  dx=+0 dy=+16  UIWindow.img/NewYearsCard/backgrnd                   bitmap 357x188 opaque 355x186  outer x[1..355] y[17..202]
+   reject MAE=33.917 n=2782  dx=-12 dy=+12  UIWindow.img/Macro/backgrnd                          bitmap 289x164 opaque 283x158  outer x[-9..273] y[15..172]
+   reject MAE=34.514 n=2782  dx=-12 dy=+12  UIWindow.img/MacroSkill/backgrnd                     bitmap 289x164 opaque 283x158  outer x[-9..273] y[15..172]
+   reject MAE=35.818 n=3588  dx=+0 dy=-1  UIWindow.img/Memo/backgrnd3                          bitmap 295x168 opaque 293x166  outer x[1..293] y[0..165]
+   NO MATCH among UIWindow.img backgrnd* bitmaps
+
+==============================================================================
+学院.png  227x392  -- 2 of 58 size-plausible frames within ring-MAE<=6.00
+   ACCEPT MAE= 0.210 n=4812  dx=+1 dy=-1  UIWindow.img/Family/backgrnd                         bitmap 224x392 opaque 222x390  outer x[2..223] y[0..389]
+   ACCEPT MAE= 5.896 n=908   dx=-12 dy=-1  UIWindow.img/UserInfo/backgrnd7                      bitmap 275x404 opaque 273x402  outer x[-11..261] y[0..401]
+   reject MAE= 7.245 n=908   dx=-5 dy=-5  UIWindow.img/Quest/backgrnd2                         bitmap 305x396 opaque 304x394  outer x[-5..298] y[-4..389]
+   reject MAE= 7.245 n=908   dx=-5 dy=-5  UIWindow.img/Quest/backgrnd4                         bitmap 305x396 opaque 304x394  outer x[-5..298] y[-4..389]
+   reject MAE= 7.339 n=908   dx=-5 dy=-16  UIWindow.img/PartySearch/backgrnd                    bitmap 305x407 opaque 303x405  outer x[-4..298] y[-15..389]
+   reject MAE= 7.345 n=908   dx=-8 dy=-5  UIWindow.img/Quest/backgrnd                          bitmap 245x396 opaque 243x394  outer x[-7..235] y[-4..389]
+   reject MAE= 9.890 n=908   dx=-15 dy=-1  UIWindow.img/UserInfo/backgrnd2                      bitmap 275x399 opaque 273x397  outer x[-14..258] y[0..396]
+   reject MAE=16.447 n=2343  dx=+1 dy=-7  UIWindow.img/Title/backgrnd                          bitmap 260x374 opaque 258x372  outer x[2..259] y[-6..365]
+

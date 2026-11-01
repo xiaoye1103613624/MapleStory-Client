@@ -1,0 +1,17 @@
+screenshot 348x305, window origin abs=(3,0)
+backgrnd         tpl 175x304 abs=(  0,  0) REL=( -3,  0) mae=8.921
+pet(left120)     tpl 120x181 abs=(172,123) REL=(169,123) mae=15.235
+BtPetEquipShow   tpl 67x18  abs=(102,280) REL=( 99,280) mae=0.070
+BtPetEquipHide   tpl 17x16  abs=(327,282) REL=(324,282) mae=0.741
+BtPet1/normal    tpl 30x27  abs=(182,274) REL=(179,274) mae=33.261
+BtPet1/pressed   tpl 30x27  abs=(299,274) REL=(296,274) mae=70.479
+BtPet1/mouseOver tpl 30x27  abs=(182,274) REL=(179,274) mae=29.481
+BtPet2/normal    tpl 30x27  abs=(216,274) REL=(213,274) mae=32.721
+BtPet2/pressed   tpl 30x27  abs=(299,274) REL=(296,274) mae=70.198
+BtPet2/mouseOver tpl 30x27  abs=(216,274) REL=(213,274) mae=29.788
+BtPet3/normal    tpl 30x27  abs=(216,274) REL=(213,274) mae=36.366
+BtPet3/pressed   tpl 30x27  abs=(299,274) REL=(296,274) mae=69.868
+BtPet3/mouseOver tpl 30x27  abs=(216,274) REL=(213,274) mae=33.341
+BtDetail         tpl 46x19  abs=(116,279) REL=(113,279) mae=55.807
+BtCashshop       tpl 32x11  abs=(136,281) REL=(133,281) mae=61.063
+FullBackgrnd     tpl 170x291 abs=(  0,  0) REL=( -3,  0) mae=20.680

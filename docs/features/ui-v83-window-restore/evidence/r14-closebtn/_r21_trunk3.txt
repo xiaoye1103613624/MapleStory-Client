@@ -1,0 +1,93 @@
+===== UIWindow.img/Trunk
+Trunk [null]
+  BtCoin [null]
+    disabled [null]
+      0 [bitmap] bitmap 36x18
+    mouseOver [null]
+      0 [bitmap] bitmap 36x18
+    normal [null]
+      0 [bitmap] bitmap 36x18
+    pressed [null]
+      0 [bitmap] bitmap 36x18
+  BtExit [null]
+    disabled [null]
+      0 [bitmap] bitmap 70x19
+    mouseOver [null]
+      0 [bitmap] bitmap 70x19
+    normal [null]
+      0 [bitmap] bitmap 70x19
+    pressed [null]
+      0 [bitmap] bitmap 70x19
+  BtGet [null]
+    disabled [null]
+      0 [bitmap] bitmap 70x19
+    mouseOver [null]
+      0 [bitmap] bitmap 70x19
+    normal [null]
+      0 [bitmap] bitmap 70x19
+    pressed [null]
+      0 [bitmap] bitmap 70x19
+  BtGetAll [null]
+    disabled [null]
+      0 [bitmap] bitmap 70x19
+    mouseOver [null]
+      0 [bitmap] bitmap 70x19
+    normal [null]
+      0 [bitmap] bitmap 70x19
+    pressed [null]
+      0 [bitmap] bitmap 70x19
+  BtInCoin [null]
+    disabled [null]
+      0 [bitmap] bitmap 36x18
+    mouseOver [null]
+      0 [bitmap] bitmap 36x18
+    normal [null]
+      0 [bitmap] bitmap 36x18
+    pressed [null]
+      0 [bitmap] bitmap 36x18
+  BtOutCoin [null]
+    disabled [null]
+      0 [bitmap] bitmap 36x18
+    mouseOver [null]
+      0 [bitmap] bitmap 36x18
+    normal [null]
+      0 [bitmap] bitmap 36x18
+    pressed [null]
+      0 [bitmap] bitmap 36x18
+  BtPut [null]
+    disabled [null]
+      0 [bitmap] bitmap 70x19
+    mouseOver [null]
+      0 [bitmap] bitmap 70x19
+    normal [null]
+      0 [bitmap] bitmap 70x19
+    pressed [null]
+      0 [bitmap] bitmap 70x19
+  BtSort [null]
+    disabled [null]
+      0 [bitmap] bitmap 71x18
+    mouseOver [null]
+      0 [bitmap] bitmap 71x18
+    normal [null]
+      0 [bitmap] bitmap 71x18
+    pressed [null]
+      0 [bitmap] bitmap 71x18
+  Tab [null]
+    disabled [null]
+      0 [bitmap] bitmap 26x14
+      1 [bitmap] bitmap 26x14
+      2 [bitmap] bitmap 26x14
+      3 [bitmap] bitmap 26x14
+      4 [bitmap] bitmap 27x14
+    enabled [null]
+      0 [bitmap] bitmap 27x16
+      1 [bitmap] bitmap 27x16
+      2 [bitmap] bitmap 27x15
+      3 [bitmap] bitmap 27x15
+      4 [bitmap] bitmap 27x16
+  backgrnd [bitmap] bitmap 463x318
+    origin [vector] (0, 0)
+  en [bitmap] bitmap 199x35
+    origin [vector] (0, 0)
+  select [bitmap] bitmap 162x35
+    origin [vector] (0, 0)

@@ -1,0 +1,122 @@
+===== UIWindow.img/UserList/Party
+Party [null]
+  BtChangeBoss [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x18
+    mouseOver [null]
+      0 [bitmap] bitmap 47x18
+    normal [null]
+      0 [bitmap] bitmap 47x18
+    pressed [null]
+      0 [bitmap] bitmap 47x18
+  BtChat [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  BtCreate [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  BtHP [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x18
+    mouseOver [null]
+      0 [bitmap] bitmap 47x18
+    normal [null]
+      0 [bitmap] bitmap 47x18
+    pressed [null]
+      0 [bitmap] bitmap 47x18
+  BtInvite [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  BtKick [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  BtSearch [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x18
+    mouseOver [null]
+      0 [bitmap] bitmap 47x18
+    normal [null]
+      0 [bitmap] bitmap 47x18
+    pressed [null]
+      0 [bitmap] bitmap 47x18
+  BtWhisper [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  BtWithdraw [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x19
+    mouseOver [null]
+      0 [bitmap] bitmap 47x19
+    normal [null]
+      0 [bitmap] bitmap 47x19
+    pressed [null]
+      0 [bitmap] bitmap 47x19
+  PartyHP [null]
+    GaugeBar [null]
+      bar [bitmap] bitmap 63x7
+      gauge [bitmap] bitmap 1x7
+      graduation [bitmap] bitmap 69x13
+    c [bitmap] bitmap 1x1
+      origin [vector] (0, 0)
+    e [bitmap] bitmap 144x1
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 1x7
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 144x7
+      origin [vector] (0, 0)
+    nw [bitmap] bitmap 5x7
+      origin [vector] (5, 0)
+    s [bitmap] bitmap 1x7
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 144x7
+      origin [vector] (0, 0)
+    sw [bitmap] bitmap 5x7
+      origin [vector] (5, 0)
+    w [bitmap] bitmap 5x1
+      origin [vector] (5, 0)
+  icon0 [bitmap] bitmap 13x13
+    origin [vector] (0, 0)
+  icon1 [bitmap] bitmap 17x16
+    origin [vector] (0, 0)
+  party0 [bitmap] bitmap 281x27
+    origin [vector] (0, 0)
+  party1 [bitmap] bitmap 279x18
+    origin [vector] (0, 0)
+  party2 [bitmap] bitmap 279x4
+    origin [vector] (0, 0)
+  party3 [bitmap] bitmap 278x1
+    origin [vector] (0, 0)
+  party4 [bitmap] bitmap 281x27
+    origin [vector] (0, 0)
+  party5 [bitmap] bitmap 279x18
+    origin [vector] (0, 0)

@@ -1,0 +1,81 @@
+===== UIWindow.img/Equip
+Equip [null]
+  BtCashshop [null]
+    disabled [null]
+      0 [bitmap] bitmap 32x11
+    mouseOver [null]
+      0 [bitmap] bitmap 32x11
+      1 [bitmap] bitmap 32x11
+      2 [bitmap] bitmap 32x11
+      3 [bitmap] bitmap 32x11
+      4 [bitmap] bitmap 32x11
+      5 [bitmap] bitmap 32x11
+    normal [null]
+      0 [bitmap] bitmap 32x11
+      1 [bitmap] bitmap 32x11
+      2 [bitmap] bitmap 32x11
+      3 [bitmap] bitmap 32x11
+      4 [bitmap] bitmap 32x11
+      5 [bitmap] bitmap 32x11
+    pressed [null]
+      0 [bitmap] bitmap 32x11
+  BtDetail [null]
+    disabled [null]
+      0 [bitmap] bitmap 46x19
+    mouseOver [null]
+      0 [bitmap] bitmap 46x19
+    normal [null]
+      0 [bitmap] bitmap 46x19
+    pressed [null]
+      0 [bitmap] bitmap 46x19
+  BtPet1 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPet2 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPet3 [null]
+    disabled [null]
+      0 [bitmap] bitmap 30x27
+    mouseOver [null]
+      0 [bitmap] bitmap 30x27
+    normal [null]
+      0 [bitmap] bitmap 30x27
+    pressed [null]
+      0 [bitmap] bitmap 30x27
+  BtPetEquipHide [null]
+    disabled [null]
+      0 [bitmap] bitmap 17x16
+    mouseOver [null]
+      0 [bitmap] bitmap 17x16
+    normal [null]
+      0 [bitmap] bitmap 17x16
+    pressed [null]
+      0 [bitmap] bitmap 17x16
+  BtPetEquipShow [null]
+    disabled [null]
+      0 [bitmap] bitmap 67x18
+    mouseOver [null]
+      0 [bitmap] bitmap 67x18
+    normal [null]
+      0 [bitmap] bitmap 67x18
+    pressed [null]
+      0 [bitmap] bitmap 67x18
+  FullBackgrnd [bitmap] bitmap 208x291
+    origin [vector] (877087568, 43859)
+  backgrnd [bitmap] bitmap 175x304
+    origin [vector] (877087568, 43859)
+  pet [bitmap] bitmap 177x181
+    origin [vector] (877087568, 43859)

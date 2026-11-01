@@ -1,0 +1,6 @@
+window 348x304  full mae=12.05
+tabrow y274..301 x182..280 mae=4.81
+panel  y123..304 x172..348 mae=9.16
+showbtn y280..298 x102..169 mae=0.85
+hidebtn y282..298 x327..344 mae=1.61
+leftbg  y0..304 x0..172 mae=7.44

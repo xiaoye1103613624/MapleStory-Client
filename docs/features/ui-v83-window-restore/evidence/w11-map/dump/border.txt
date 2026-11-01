@@ -1,0 +1,18 @@
+===== UIWindow.img/WorldMap/Border
+Border [null]
+  0 [bitmap] bitmap 60x33
+    origin [vector] (0, 0)
+  1 [bitmap] bitmap 1x33
+    origin [vector] (0, 0)
+  2 [bitmap] bitmap 7x32
+    origin [vector] (0, 0)
+  3 [bitmap] bitmap 7x1
+    origin [vector] (0, 0)
+  4 [bitmap] bitmap 7x1
+    origin [vector] (0, 0)
+  5 [bitmap] bitmap 7x18
+    origin [vector] (0, 0)
+  6 [bitmap] bitmap 1x18
+    origin [vector] (0, 0)
+  7 [bitmap] bitmap 7x18
+    origin [vector] (0, 0)

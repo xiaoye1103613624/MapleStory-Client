@@ -1,0 +1,61 @@
+icon-ish bbox (x<95, mean>120): lx 22..77  ly 72..119  w=56 h=48
+icon-ish bbox (x<95, mean>150): lx 22..77  ly 72..119  w=56 h=48
+icon-ish bbox (x<95, mean>180): lx 22..77  ly 72..119  w=56 h=48
+icon-ish bbox (x<95, mean>200): lx 22..77  ly 72..119  w=56 h=48
+
+per-row (thr150):
+  ly= 72  lx 38..61  n=12
+  ly= 73  lx 38..61  n=12
+  ly= 74  lx 34..65  n=22
+  ly= 75  lx 34..65  n=22
+  ly= 76  lx 32..67  n=30
+  ly= 77  lx 32..67  n=30
+  ly= 78  lx 30..69  n=30
+  ly= 79  lx 30..69  n=30
+  ly= 80  lx 30..71  n=42
+  ly= 81  lx 30..71  n=42
+  ly= 82  lx 28..71  n=44
+  ly= 83  lx 28..71  n=44
+  ly= 84  lx 26..73  n=48
+  ly= 85  lx 26..73  n=48
+  ly= 86  lx 24..73  n=50
+  ly= 87  lx 24..73  n=50
+  ly= 88  lx 22..75  n=52
+  ly= 89  lx 22..75  n=52
+  ly= 90  lx 22..77  n=54
+  ly= 91  lx 22..77  n=54
+  ly= 92  lx 24..75  n=50
+  ly= 93  lx 24..75  n=50
+  ly= 94  lx 26..73  n=46
+  ly= 95  lx 26..73  n=46
+  ly= 96  lx 32..69  n=36
+  ly= 97  lx 32..69  n=36
+  ly= 98  lx 32..61  n=30
+  ly= 99  lx 32..61  n=30
+  ly=100  lx 32..61  n=30
+  ly=101  lx 32..61  n=30
+  ly=102  lx 32..63  n=32
+  ly=103  lx 32..63  n=32
+  ly=104  lx 32..63  n=32
+  ly=105  lx 32..63  n=32
+  ly=106  lx 28..63  n=34
+  ly=107  lx 28..63  n=34
+  ly=108  lx 30..63  n=34
+  ly=109  lx 30..63  n=34
+  ly=110  lx 30..65  n=36
+  ly=111  lx 30..65  n=36
+  ly=112  lx 30..65  n=36
+  ly=113  lx 30..65  n=36
+  ly=114  lx 30..65  n=36
+  ly=115  lx 30..65  n=36
+  ly=116  lx 32..65  n=34
+  ly=117  lx 32..65  n=34
+  ly=118  lx 36..59  n=24
+  ly=119  lx 36..59  n=24
+
+icon ink center local = (49.5, 95.5)  size=(56,48)
+
+separator rows (>=200 px with 100<mean<200 and low sat):
+  ly= 44 count=264
+  ly=191 count=264
+  ly=279 count=264

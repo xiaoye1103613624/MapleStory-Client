@@ -1,0 +1,10 @@
+NPC对话.png RGBA 523x203
+NPC对话2.png RGBA 526x349
+NPC对话框二级弹窗.png RGBA 527x351
+npc任务提示1.png RGBA 80x149
+NPC任务提示2.png RGBA 86x146
+任务告知ui.png RGBA 224x27
+任务栏.png RGBA 548x396
+任务栏显示.png RGBA 543x395
+正在进行的任务展示.png RGBA 553x394
+怪物手册.png RGBA 540x357

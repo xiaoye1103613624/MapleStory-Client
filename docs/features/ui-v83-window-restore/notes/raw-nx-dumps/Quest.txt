@@ -1,0 +1,334 @@
+===== UIWindow.img/Quest
+Quest [null]
+  BtAlert [null]
+    disabled [null]
+      0 [bitmap] bitmap 56x16
+    keyFocused [null]
+      0 [bitmap] bitmap 88x19
+    mouseOver [null]
+      0 [bitmap] bitmap 56x16
+    normal [null]
+      0 [bitmap] bitmap 56x16
+    pressed [null]
+      0 [bitmap] bitmap 56x16
+  BtDetail [null]
+    disabled [null]
+      0 [bitmap] bitmap 57x17
+    keyFocused [null]
+      0 [bitmap] bitmap 60x20
+    mouseOver [null]
+      0 [bitmap] bitmap 57x17
+    normal [null]
+      0 [bitmap] bitmap 57x17
+    pressed [null]
+      0 [bitmap] bitmap 57x17
+  BtGiveup [null]
+    disabled [null]
+      0 [bitmap] bitmap 57x17
+    keyFocused [null]
+      0 [bitmap] bitmap 60x20
+    mouseOver [null]
+      0 [bitmap] bitmap 57x17
+    normal [null]
+      0 [bitmap] bitmap 57x17
+    pressed [null]
+      0 [bitmap] bitmap 57x17
+  BtMarkNpc [null]
+    disabled [null]
+      0 [bitmap] bitmap 81x17
+    keyFocused [null]
+      0 [bitmap] bitmap 84x20
+    mouseOver [null]
+      0 [bitmap] bitmap 81x17
+    normal [null]
+      0 [bitmap] bitmap 81x17
+    pressed [null]
+      0 [bitmap] bitmap 81x17
+  BtNo [null]
+    disabled [null]
+      0 [bitmap] bitmap 57x17
+    keyFocused [null]
+      0 [bitmap] bitmap 60x20
+    mouseOver [null]
+      0 [bitmap] bitmap 57x17
+    normal [null]
+      0 [bitmap] bitmap 57x17
+    pressed [null]
+      0 [bitmap] bitmap 57x17
+  BtOK [null]
+    disabled [null]
+      0 [bitmap] bitmap 57x17
+    keyFocused [null]
+      0 [bitmap] bitmap 60x20
+    mouseOver [null]
+      0 [bitmap] bitmap 57x17
+    normal [null]
+      0 [bitmap] bitmap 57x17
+    pressed [null]
+      0 [bitmap] bitmap 57x17
+  Gauge [null]
+    frame [bitmap] bitmap 163x14
+      origin [vector] (33554432, 352321536)
+      z [int] 0
+    gauge [bitmap] bitmap 1x11
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    spot [bitmap] bitmap 1x11
+      origin [vector] (877087568, 43859)
+      z [int] 0
+  Gauge2 [null]
+    frame [bitmap] bitmap 79x8
+      origin [vector] (0, 258863104)
+      z [int] 0
+    gauge [bitmap] bitmap 1x4
+      origin [vector] (877087568, 43859)
+      z [int] 0
+  Tab [null]
+    disabled [null]
+      0 [bitmap] bitmap 50x14
+      1 [bitmap] bitmap 49x14
+      2 [bitmap] bitmap 27x14
+    enabled [null]
+      0 [bitmap] bitmap 50x15
+      1 [bitmap] bitmap 50x15
+      2 [bitmap] bitmap 27x15
+  TimeQuest [null]
+    AlarmClock [null]
+      SelectMob [null]
+      default [null]
+    TimeBar [null]
+      TimeGage [null]
+      backgrnd [bitmap] bitmap 52x12
+  backgrnd [bitmap] bitmap 245x396
+    origin [vector] (877087568, 43859)
+  backgrnd2 [bitmap] bitmap 305x396
+    origin [vector] (877087568, 43859)
+    z [int] 0
+  backgrnd3 [bitmap] bitmap 296x289
+    origin [vector] (877087568, 43859)
+  backgrnd4 [bitmap] bitmap 305x396
+    origin [vector] (877087568, 43859)
+    z [int] 0
+  backgrnd5 [bitmap] bitmap 266x117
+    origin [vector] (877087568, 43859)
+    z [int] 0
+  basic [bitmap] bitmap 71x14
+    origin [vector] (877087568, 43859)
+  icon0 [bitmap] bitmap 13x14
+    origin [vector] (877087568, 43859)
+  icon1 [bitmap] bitmap 13x14
+    origin [vector] (877087568, 43859)
+  icon2 [null]
+    0 [bitmap] bitmap 15x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    5 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    6 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    7 [bitmap] bitmap 15x13
+      delay [int] 4000
+      origin [vector] (877087568, 43859)
+  icon3 [null]
+    0 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    5 [bitmap] bitmap 13x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    6 [bitmap] bitmap 13x14
+      delay [int] 4000
+      origin [vector] (877087568, 43859)
+  icon4 [bitmap] bitmap 13x14
+    origin [vector] (877087568, 43859)
+  icon5 [null]
+    0 [bitmap] bitmap 13x14
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 13x14
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 13x14
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 13x14
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 13x14
+      delay [int] 4000
+      origin [vector] (877087568, 43859)
+  icon6 [null]
+    0 [bitmap] bitmap 15x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    5 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    6 [bitmap] bitmap 16x13
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    7 [bitmap] bitmap 15x13
+      delay [int] 4000
+      origin [vector] (877087568, 43859)
+  icon7 [null]
+    0 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    10 [bitmap] bitmap 15x14
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    11 [bitmap] bitmap 15x17
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    5 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    6 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    7 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    8 [bitmap] bitmap 15x15
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+    9 [bitmap] bitmap 15x17
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+  icon8 [null]
+    0 [bitmap] bitmap 15x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    1 [bitmap] bitmap 17x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    2 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    3 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    4 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    5 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    6 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    7 [bitmap] bitmap 15x12
+      delay [int] 3000
+      origin [vector] (877087568, 43859)
+      z [int] 0
+  icon9 [null]
+    0 [bitmap] bitmap 15x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    1 [bitmap] bitmap 17x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    2 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    3 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    4 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    5 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    6 [bitmap] bitmap 16x12
+      delay [int] 120
+      origin [vector] (877087568, 43859)
+      z [int] 0
+    7 [bitmap] bitmap 15x12
+      delay [int] 3000
+      origin [vector] (877087568, 43859)
+      z [int] 0
+  notice [null]
+    0 [bitmap] bitmap 73x24
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 73x24
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 73x24
+      origin [vector] (877087568, 43859)
+  notice0 [bitmap] bitmap 124x35
+    origin [vector] (877087568, 43859)
+  notice1 [bitmap] bitmap 124x34
+    origin [vector] (877087568, 43859)
+  notice2 [bitmap] bitmap 102x33
+    origin [vector] (877087568, 43859)
+  prob [bitmap] bitmap 60x14
+    origin [vector] (877087568, 43859)
+  reward [bitmap] bitmap 72x20
+    origin [vector] (877087568, 43859)
+  select [bitmap] bitmap 60x14
+    origin [vector] (877087568, 43859)
+  summary [bitmap] bitmap 74x22
+    origin [vector] (877087568, 43859)

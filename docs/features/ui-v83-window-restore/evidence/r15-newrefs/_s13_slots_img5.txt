@@ -1,0 +1,63 @@
+### img4 509x86 : slot cell ink profile
+assumed slot left edges: [52, 87, 122, 157, 192, 227, 262, 297, 332, 367, 402, 437, 472]
+
+-- slot row 1 (y=15..45) --
+  slot 1 x= 52.. 86 : dark-ink y=(15, 45) ; white-ink y=(16, 37)
+  slot 2 x= 87..121 : dark-ink y=(15, 45) ; white-ink y=(16, 40)
+  slot 3 x=122..156 : dark-ink y=(15, 45) ; white-ink y=(16, 40)
+  slot 4 x=157..191 : dark-ink y=(15, 45) ; white-ink y=(16, 40)
+  slot 5 x=192..226 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot 6 x=227..261 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot 7 x=262..296 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot 8 x=297..331 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot 9 x=332..366 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot10 x=367..401 : dark-ink y=(15, 45) ; white-ink y=(16, 40)
+  slot11 x=402..436 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+  slot12 x=437..471 : dark-ink y=(15, 45) ; white-ink y=(16, 40)
+  slot13 x=472..504 : dark-ink y=(15, 45) ; white-ink y=(16, 44)
+
+-- slot row 2 (y=49..78) --
+  slot 1 x= 52.. 86 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot 2 x= 87..121 : dark-ink y=(49, 78) ; white-ink y=(50, 74)
+  slot 3 x=122..156 : dark-ink y=(49, 78) ; white-ink y=(50, 74)
+  slot 4 x=157..191 : dark-ink y=(49, 78) ; white-ink y=(50, 74)
+  slot 5 x=192..226 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot 6 x=227..261 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot 7 x=262..296 : dark-ink y=(49, 78) ; white-ink y=(49, 76)
+  slot 8 x=297..331 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot 9 x=332..366 : dark-ink y=(49, 78) ; white-ink y=(50, 74)
+  slot10 x=367..401 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot11 x=402..436 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot12 x=437..471 : dark-ink y=(49, 78) ; white-ink y=(49, 77)
+  slot13 x=472..504 : dark-ink y=(49, 78) ; white-ink y=(50, 74)
+
+row y=15..45 dark-ink per scanline: [(15, 296), (16, 78), (17, 78), (18, 52), (19, 52), (20, 57), (21, 71), (22, 64), (23, 102), (24, 105), (25, 82), (26, 80), (27, 85), (28, 69), (29, 65), (30, 83), (31, 60), (32, 56), (33, 83), (34, 91), (35, 118), (36, 79), (37, 92), (38, 95), (39, 89), (40, 110), (41, 85), (42, 100), (43, 129), (44, 102), (45, 270)]
+
+row y=49..78 dark-ink per scanline: [(49, 114), (50, 78), (51, 64), (52, 54), (53, 55), (54, 61), (55, 55), (56, 71), (57, 54), (58, 63), (59, 56), (60, 59), (61, 60), (62, 61), (63, 58), (64, 54), (65, 64), (66, 88), (67, 91), (68, 102), (69, 70), (70, 96), (71, 104), (72, 86), (73, 85), (74, 97), (75, 72), (76, 146), (77, 80), (78, 140)]
+
+img4 red-button bbox x<50: (0, 23, 26, 69, 268)
+img4 tooltip bg bbox x<50: (27, 23, 60, 40, 355)
+
+### img5 234x67
+tooltip bg bbox: (25, 6, 45, 23, 296)
+red-button bbox: (0, 6, 24, 52, 246)
+
+tooltip rect = (25,6)-(45,23) size 21x18
+  y= 6 white-ink=0
+  y= 7 white-ink=0
+  y= 8 white-ink=0
+  y= 9 white-ink=1
+  y=10 white-ink=11
+  y=11 white-ink=3
+  y=12 white-ink=7
+  y=13 white-ink=3
+  y=14 white-ink=3
+  y=15 white-ink=9
+  y=16 white-ink=5
+  y=17 white-ink=3
+  y=18 white-ink=3
+  y=19 white-ink=3
+  y=20 white-ink=6
+  y=21 white-ink=0
+  y=22 white-ink=0
+  y=23 white-ink=0

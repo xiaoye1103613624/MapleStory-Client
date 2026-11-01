@@ -1,0 +1,197 @@
+{
+ "img1": {
+  "name": "角色装备栏显示物品信息.png",
+  "md5": "7e736cebeff4d5db35bbfc9ec109ea65",
+  "size": [
+   359,
+   404
+  ],
+  "mode": "RGBA",
+  "bytes": 240124,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img2": {
+  "name": "背包栏鼠标悬浮按钮上显示按钮功能提示信息.png",
+  "md5": "e4d03c62b88c8eef93904e7c663a79b9",
+  "size": [
+   175,
+   290
+  ],
+  "mode": "RGBA",
+  "bytes": 40718,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img3": {
+  "name": "怪物手册.png",
+  "md5": "ca6baeb3ecdf8b0d1ea71eef72455332",
+  "size": [
+   540,
+   357
+  ],
+  "mode": "RGBA",
+  "bytes": 406041,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img4": {
+  "name": "怪物手册2.png",
+  "md5": "44c1ed4c33415e1fae928645b26bbda8",
+  "size": [
+   520,
+   347
+  ],
+  "mode": "RGBA",
+  "bytes": 382231,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img5": {
+  "name": "NPC对话.png",
+  "md5": "6f611be2682cc310d7f59b29ac923e9e",
+  "size": [
+   523,
+   203
+  ],
+  "mode": "RGBA",
+  "bytes": 241590,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img6": {
+  "name": "NPC对话2.png",
+  "md5": "f7dba52544ae90d7929dd56be6b66cdf",
+  "size": [
+   526,
+   349
+  ],
+  "mode": "RGBA",
+  "bytes": 421116,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img7": {
+  "name": "NPC对话框二级弹窗.png",
+  "md5": "1a7090c2cadcb4560f4e716fbdd4e1fc",
+  "size": [
+   527,
+   351
+  ],
+  "mode": "RGBA",
+  "bytes": 426824,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img8": {
+  "name": "npc任务提示1.png",
+  "md5": "f7069a850077905ea355a02b10eec84d",
+  "size": [
+   80,
+   149
+  ],
+  "mode": "RGBA",
+  "bytes": 22331,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img9": {
+  "name": "NPC任务提示2.png",
+  "md5": "3875b92b444caa39b78bad74611e989d",
+  "size": [
+   86,
+   146
+  ],
+  "mode": "RGBA",
+  "bytes": 24539,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img10": {
+  "name": "任务告知ui.png",
+  "md5": "558c7c0d545638d3ef612408bcc64ddd",
+  "size": [
+   224,
+   27
+  ],
+  "mode": "RGBA",
+  "bytes": 15299,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img11": {
+  "name": "正在进行的任务展示.png",
+  "md5": "ae6298dfb5418b929fbfebb93549a0c5",
+  "size": [
+   553,
+   394
+  ],
+  "mode": "RGBA",
+  "bytes": 212270,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img12": {
+  "name": "任务栏显示.png",
+  "md5": "c1cd8eebec12ca60dbc41bdc3476ba3b",
+  "size": [
+   543,
+   395
+  ],
+  "mode": "RGBA",
+  "bytes": 209235,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img13": {
+  "name": "接收任务后触发的任务提示框.png",
+  "md5": "ef8586a5777a2119f7c3c235df491693",
+  "size": [
+   526,
+   505
+  ],
+  "mode": "RGBA",
+  "bytes": 555491,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img14": {
+  "name": "角色头上提示信息.png",
+  "md5": "7d2c9fe479c63a22b789472e374db260",
+  "size": [
+   150,
+   148
+  ],
+  "mode": "RGBA",
+  "bytes": 48401,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ },
+ "img15": {
+  "name": "悄悄话框.png",
+  "md5": "9ac47a7f7e0e7b1a28e1acc1da07c8ab",
+  "size": [
+   261,
+   117
+  ],
+  "mode": "RGBA",
+  "bytes": 18134,
+  "ts": "Sun Nov  1 04:19:23 2026",
+  "snap_ok": true,
+  "size_matches_task": true
+ }
+}

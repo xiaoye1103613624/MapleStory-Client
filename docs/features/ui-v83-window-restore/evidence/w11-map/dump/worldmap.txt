@@ -1,0 +1,13 @@
+===== UIWindow.img/WorldMap
+WorldMap [null]
+  Border [null]
+    0 [bitmap] bitmap 60x33
+    1 [bitmap] bitmap 1x33
+    2 [bitmap] bitmap 7x32
+    3 [bitmap] bitmap 7x1
+    4 [bitmap] bitmap 7x1
+    5 [bitmap] bitmap 7x18
+    6 [bitmap] bitmap 1x18
+    7 [bitmap] bitmap 7x18
+  title [bitmap] bitmap 1x1
+    origin [vector] (0, 0)

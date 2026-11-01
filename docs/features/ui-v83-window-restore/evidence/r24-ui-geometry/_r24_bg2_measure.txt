@@ -1,0 +1,3 @@
+banner rows y:26..118
+full-height cols 16..297
+divider cols: [190]

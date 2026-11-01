@@ -1,0 +1,15 @@
+img1 file=角色装备栏显示物品信息.png bytes=240124 md5=7e736cebeff4d5db35bbfc9ec109ea65 mode=RGBA size=359x404 size_matches_task=True snap_ok=True
+img2 file=背包栏鼠标悬浮按钮上显示按钮功能提示信息.png bytes=40718 md5=e4d03c62b88c8eef93904e7c663a79b9 mode=RGBA size=175x290 size_matches_task=True snap_ok=True
+img3 file=怪物手册.png bytes=406041 md5=ca6baeb3ecdf8b0d1ea71eef72455332 mode=RGBA size=540x357 size_matches_task=True snap_ok=True
+img4 file=怪物手册2.png bytes=382231 md5=44c1ed4c33415e1fae928645b26bbda8 mode=RGBA size=520x347 size_matches_task=True snap_ok=True
+img5 file=NPC对话.png bytes=241590 md5=6f611be2682cc310d7f59b29ac923e9e mode=RGBA size=523x203 size_matches_task=True snap_ok=True
+img6 file=NPC对话2.png bytes=421116 md5=f7dba52544ae90d7929dd56be6b66cdf mode=RGBA size=526x349 size_matches_task=True snap_ok=True
+img7 file=NPC对话框二级弹窗.png bytes=426824 md5=1a7090c2cadcb4560f4e716fbdd4e1fc mode=RGBA size=527x351 size_matches_task=True snap_ok=True
+img8 file=npc任务提示1.png bytes=22331 md5=f7069a850077905ea355a02b10eec84d mode=RGBA size=80x149 size_matches_task=True snap_ok=True
+img9 file=NPC任务提示2.png bytes=24539 md5=3875b92b444caa39b78bad74611e989d mode=RGBA size=86x146 size_matches_task=True snap_ok=True
+img10 file=任务告知ui.png bytes=15299 md5=558c7c0d545638d3ef612408bcc64ddd mode=RGBA size=224x27 size_matches_task=True snap_ok=True
+img11 file=正在进行的任务展示.png bytes=212270 md5=ae6298dfb5418b929fbfebb93549a0c5 mode=RGBA size=553x394 size_matches_task=True snap_ok=True
+img12 file=任务栏显示.png bytes=209235 md5=c1cd8eebec12ca60dbc41bdc3476ba3b mode=RGBA size=543x395 size_matches_task=True snap_ok=True
+img13 file=接收任务后触发的任务提示框.png bytes=555491 md5=ef8586a5777a2119f7c3c235df491693 mode=RGBA size=526x505 size_matches_task=True snap_ok=True
+img14 file=角色头上提示信息.png bytes=48401 md5=7d2c9fe479c63a22b789472e374db260 mode=RGBA size=150x148 size_matches_task=True snap_ok=True
+img15 file=悄悄话框.png bytes=18134 md5=9ac47a7f7e0e7b1a28e1acc1da07c8ab mode=RGBA size=261x117 size_matches_task=True snap_ok=True

@@ -1,0 +1,128 @@
+===== Login.img/WorldNotice
+WorldNotice [null]
+  1 [bitmap] bitmap 19x24
+    origin [vector] (0, 0)
+  2 [bitmap] bitmap 19x24
+    origin [vector] (0, 0)
+  3 [bitmap] bitmap 19x24
+    origin [vector] (0, 0)
+  Balloon [null]
+    arrow [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+      z [int] 0
+    c [bitmap] bitmap 1x1
+      origin [vector] (0, 0)
+      z [int] 0
+    clr [int] 4278190080
+    e [bitmap] bitmap 9x1
+      origin [vector] (0, 0)
+      z [int] 0
+    n [bitmap] bitmap 1x9
+      origin [vector] (0, 0)
+      z [int] 0
+    ne [bitmap] bitmap 9x9
+      origin [vector] (0, 0)
+      z [int] 0
+    neArrow [bitmap] bitmap 32x39
+      origin [vector] (0, 0)
+      z [int] 0
+    nelArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    nw [bitmap] bitmap 9x9
+      origin [vector] (9, 0)
+      z [int] 0
+    nwArrow [bitmap] bitmap 32x39
+      origin [vector] (32, 0)
+      z [int] 0
+    nwlArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    s [bitmap] bitmap 1x9
+      origin [vector] (0, 0)
+      z [int] 0
+    se [bitmap] bitmap 9x9
+      origin [vector] (0, 0)
+      z [int] 0
+    seArrow [bitmap] bitmap 32x39
+      origin [vector] (0, 0)
+      z [int] 0
+    selArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    slArrow [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+      z [int] 0
+    sw [bitmap] bitmap 9x9
+      origin [vector] (9, 0)
+      z [int] 0
+    swArrow [bitmap] bitmap 32x39
+      origin [vector] (32, 0)
+      z [int] 0
+    swlArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    w [bitmap] bitmap 9x1
+      origin [vector] (9, 0)
+      z [int] 0
+  BalloonForLoginProcess [null]
+    Title [bitmap] bitmap 170x18
+      origin [vector] (0, 0)
+    arrow [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+    c [bitmap] bitmap 12x9
+      origin [vector] (0, 0)
+    clr [int] 4278190080
+    e [bitmap] bitmap 22x9
+      origin [vector] (0, 0)
+    n [bitmap] bitmap 12x40
+      origin [vector] (0, 0)
+    ne [bitmap] bitmap 22x40
+      origin [vector] (0, 0)
+    neArrow [bitmap] bitmap 32x39
+      origin [vector] (0, 0)
+      z [int] 0
+    nelArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    nw [bitmap] bitmap 22x40
+      origin [vector] (22, 0)
+    nwArrow [bitmap] bitmap 32x39
+      origin [vector] (32, 0)
+      z [int] 0
+    nwlArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    s [bitmap] bitmap 12x24
+      origin [vector] (0, 0)
+    se [bitmap] bitmap 22x24
+      origin [vector] (0, 0)
+    seArrow [bitmap] bitmap 32x39
+      origin [vector] (0, 0)
+      z [int] 0
+    selArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    slArrow [bitmap] bitmap 16x16
+      origin [vector] (0, 0)
+      z [int] 0
+    sw [bitmap] bitmap 22x24
+      origin [vector] (22, 0)
+    swArrow [bitmap] bitmap 32x39
+      origin [vector] (32, 0)
+      z [int] 0
+    swlArrow [bitmap] bitmap 31x39
+      origin [vector] (15, 0)
+      z [int] 0
+    w [bitmap] bitmap 19x9
+      origin [vector] (19, 0)
+  Events [null]
+    3 [bitmap] bitmap 30x34
+      origin [vector] (0, 0)
+  Populated [null]
+    1 [bitmap] bitmap 157x39
+      origin [vector] (0, 0)
+      z [int] 0
+    2 [bitmap] bitmap 157x39
+      origin [vector] (0, 0)
+      z [int] 0

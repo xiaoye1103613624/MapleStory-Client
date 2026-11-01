@@ -1,0 +1,165 @@
+===== UIWindow.img/KeyConfig
+KeyConfig [null]
+  BtCancel [null]
+    disabled [null]
+    keyFocused [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtClose [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtDefault [null]
+    disabled [null]
+    keyFocused [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtDelete [null]
+    disabled [null]
+    keyFocused [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtHelp [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtOK [null]
+    disabled [null]
+    keyFocused [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtQuickSlot [null]
+    disabled [null]
+    keyFocused [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  backgrnd [bitmap] bitmap 629x373
+    origin [vector] (314, 0)
+    z [int] 0
+  icon [null]
+    0 [bitmap] bitmap 32x31
+    1 [bitmap] bitmap 32x32
+    10 [bitmap] bitmap 32x32
+    100 [bitmap] bitmap 32x32
+    101 [bitmap] bitmap 32x32
+    102 [bitmap] bitmap 32x32
+    103 [bitmap] bitmap 32x32
+    104 [bitmap] bitmap 32x32
+    105 [bitmap] bitmap 32x32
+    106 [bitmap] bitmap 32x32
+    11 [bitmap] bitmap 32x32
+    12 [bitmap] bitmap 32x32
+    13 [bitmap] bitmap 32x32
+    14 [bitmap] bitmap 32x32
+    15 [bitmap] bitmap 32x32
+    16 [bitmap] bitmap 32x32
+    17 [bitmap] bitmap 32x32
+    18 [bitmap] bitmap 32x32
+    19 [bitmap] bitmap 32x32
+    2 [bitmap] bitmap 32x32
+    20 [bitmap] bitmap 32x32
+    21 [bitmap] bitmap 32x32
+    22 [bitmap] bitmap 32x32
+    23 [bitmap] bitmap 32x32
+    24 [bitmap] bitmap 32x32
+    25 [bitmap] bitmap 32x32
+    26 [bitmap] bitmap 32x32
+    27 [bitmap] bitmap 32x32
+    3 [bitmap] bitmap 32x32
+    4 [bitmap] bitmap 32x32
+    5 [bitmap] bitmap 32x32
+    50 [bitmap] bitmap 32x32
+    51 [bitmap] bitmap 32x32
+    52 [bitmap] bitmap 32x32
+    53 [bitmap] bitmap 32x32
+    54 [bitmap] bitmap 32x32
+    6 [bitmap] bitmap 32x32
+    7 [bitmap] bitmap 32x32
+    8 [bitmap] bitmap 32x32
+    9 [bitmap] bitmap 32x32
+  key [null]
+    10 [bitmap] bitmap 10x11
+    11 [bitmap] bitmap 10x11
+    12 [bitmap] bitmap 10x5
+    13 [bitmap] bitmap 10x9
+    16 [bitmap] bitmap 10x12
+    17 [bitmap] bitmap 12x11
+    18 [bitmap] bitmap 9x11
+    19 [bitmap] bitmap 10x11
+    2 [bitmap] bitmap 7x11
+    20 [bitmap] bitmap 10x11
+    21 [bitmap] bitmap 10x11
+    22 [bitmap] bitmap 10x11
+    23 [bitmap] bitmap 6x11
+    24 [bitmap] bitmap 10x11
+    25 [bitmap] bitmap 10x11
+    26 [bitmap] bitmap 7x11
+    27 [bitmap] bitmap 7x11
+    29 [bitmap] bitmap 24x11
+    3 [bitmap] bitmap 10x11
+    30 [bitmap] bitmap 10x11
+    31 [bitmap] bitmap 10x11
+    32 [bitmap] bitmap 10x11
+    33 [bitmap] bitmap 9x11
+    34 [bitmap] bitmap 10x11
+    35 [bitmap] bitmap 10x11
+    36 [bitmap] bitmap 10x11
+    37 [bitmap] bitmap 10x11
+    38 [bitmap] bitmap 9x11
+    39 [bitmap] bitmap 7x11
+    4 [bitmap] bitmap 10x11
+    40 [bitmap] bitmap 7x7
+    41 [bitmap] bitmap 7x6
+    42 [bitmap] bitmap 28x11
+    43 [bitmap] bitmap 9x11
+    44 [bitmap] bitmap 10x11
+    45 [bitmap] bitmap 10x11
+    46 [bitmap] bitmap 10x11
+    47 [bitmap] bitmap 10x11
+    48 [bitmap] bitmap 10x11
+    49 [bitmap] bitmap 10x11
+    5 [bitmap] bitmap 10x11
+    50 [bitmap] bitmap 11x11
+    51 [bitmap] bitmap 7x8
+    52 [bitmap] bitmap 6x6
+    56 [bitmap] bitmap 18x11
+    57 [bitmap] bitmap 33x13
+    59 [bitmap] bitmap 13x11
+    6 [bitmap] bitmap 10x11
+    60 [bitmap] bitmap 16x11
+    61 [bitmap] bitmap 16x11
+    62 [bitmap] bitmap 16x11
+    63 [bitmap] bitmap 16x11
+    64 [bitmap] bitmap 16x11
+    65 [bitmap] bitmap 16x11
+    66 [bitmap] bitmap 16x11
+    67 [bitmap] bitmap 16x11
+    68 [bitmap] bitmap 20x11
+    69 [bitmap] bitmap 17x11
+    7 [bitmap] bitmap 10x11
+    70 [bitmap] bitmap 20x11
+    71 [bitmap] bitmap 19x11
+    73 [bitmap] bitmap 22x13
+    79 [bitmap] bitmap 21x11
+    8 [bitmap] bitmap 10x11
+    81 [bitmap] bitmap 22x11
+    82 [bitmap] bitmap 18x11
+    83 [bitmap] bitmap 19x11
+    87 [bitmap] bitmap 17x11
+    88 [bitmap] bitmap 20x11
+    9 [bitmap] bitmap 10x11
+  notice [null]
+    0 [bitmap] bitmap 266x85
+    1 [bitmap] bitmap 266x85
+    2 [bitmap] bitmap 266x85
+  quickslotConfig [null]
+    BtQuickSetting [null]
+    backgrnd [bitmap] bitmap 266x238
+    key [null]

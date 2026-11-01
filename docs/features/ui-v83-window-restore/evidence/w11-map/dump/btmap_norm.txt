@@ -1,0 +1,4 @@
+===== UIWindow.img/MiniMap/BtMap/normal
+normal [null]
+  0 [bitmap] bitmap 36x12
+    origin [vector] (0, 0)

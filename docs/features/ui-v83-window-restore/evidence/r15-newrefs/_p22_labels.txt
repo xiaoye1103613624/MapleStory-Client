@@ -1,0 +1,72 @@
+======================================================================
+勋章框.png (medal)
+  band y=25..43 x=1..254 px=3038  scale=5x
+  band y=48..77 x=3..254 px=2648  scale=5x
+  band y=82..89 x=0..254 px=1701  scale=5x
+  -> _crops/medal.labels.png (1275, 339) (3 strips)
+  -> _crops/medal.buttons.png (260, 380) (4 rects)
+
+======================================================================
+好友列表框.png (friend)
+  band y=19..37 x=0..204 px=2661  scale=7x
+  band y=61..69 x=264..292 px=97  scale=8x
+  band y=115..126 x=6..261 px=549  scale=5x
+  band y=136..142 x=15..47 px=109  scale=8x
+  band y=313..324 x=4..101 px=367  scale=8x
+  -> _crops/friend.labels.png (1435, 511) (5 strips)
+  -> _crops/friend.buttons.png (474, 1806) (15 rects)
+
+======================================================================
+组员列表框.png (party)
+  band y=20..38 x=4..209 px=2543  scale=7x
+  band y=100..114 x=4..288 px=129  scale=5x
+  band y=162..200 x=4..288 px=2461  scale=5x
+  -> _crops/party.labels.png (1442, 457) (3 strips)
+  -> _crops/party.buttons.png (1405, 2077) (19 rects)
+
+======================================================================
+拒绝列表框.png (blacklist)
+  band y=3..4 x=104..117 px=13  scale=8x
+  band y=25..43 x=3..210 px=2031  scale=7x
+  band y=55..99 x=3..289 px=7299  scale=5x
+  -> _crops/blacklist.labels.png (1456, 428) (3 strips)
+  -> _crops/blacklist.buttons.png (1405, 839) (10 rects)
+
+======================================================================
+家族联盟.png (guildunion)
+  band y=23..41 x=2..208 px=2718  scale=7x
+  band y=62..73 x=100..207 px=372  scale=8x
+  -> _crops/guildunion.labels.png (1449, 263) (2 strips)
+  -> _crops/guildunion.buttons.png (1410, 2102) (18 rects)
+
+======================================================================
+好友、组员、家族、家族联盟、拒绝列表.png (allfive)
+  band y=21..39 x=2..208 px=2580  scale=7x
+  band y=58..69 x=112..200 px=346  scale=8x
+  band y=111..137 x=2..288 px=7230  scale=5x
+  band y=160..177 x=2..288 px=130  scale=5x
+  band y=189..215 x=2..288 px=7218  scale=5x
+  band y=220..250 x=2..288 px=2472  scale=5x
+  -> _crops/allfive.labels.png (1449, 858) (6 strips)
+  -> _crops/allfive.buttons.png (1410, 2245) (21 rects)
+
+======================================================================
+个人请报框.png (userinfo)
+  band y=61..128 x=23..266 px=2103  scale=3x
+  band y=146..156 x=32..70 px=134  scale=8x
+  -> _crops/userinfo.labels.png (732, 326) (2 strips)
+  -> _crops/userinfo.buttons.png (426, 1824) (15 rects)
+
+======================================================================
+学院.png (academy)
+  band y=34..45 x=63..159 px=377  scale=8x
+  band y=83..91 x=70..91 px=73  scale=8x
+  band y=113..121 x=188..215 px=81  scale=8x
+  band y=130..138 x=197..215 px=48  scale=8x
+  band y=160..170 x=156..197 px=147  scale=8x
+  band y=179..190 x=44..179 px=559  scale=8x
+  band y=200..208 x=94..208 px=162  scale=8x
+  band y=215..239 x=14..186 px=882  scale=8x
+  -> _crops/academy.labels.png (1384, 922) (8 strips)
+  -> _crops/academy.buttons.png (414, 958) (8 rects)
+

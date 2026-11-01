@@ -1,0 +1,22 @@
+===== UIWindow.img/SlideMenu
+SlideMenu [null]
+  0 [null]
+    BtArrow [null]
+    BtCancle [null]
+    BtMain [null]
+    BtMove [null]
+    Choice [bitmap] bitmap 40x40
+    Cover [bitmap] bitmap 142x38
+    IsAniBackgrd [int] 1
+    backgrd [null]
+    info [string] '차원의문'
+  1 [null]
+    BtArrow [null]
+    BtCancle [null]
+    BtMain [null]
+    BtMove [null]
+    Choice [bitmap] bitmap 40x40
+    Cover [bitmap] bitmap 142x38
+    IsAniBackgrd [int] 1
+    backgrd [null]
+    info [string] '타임게이트'

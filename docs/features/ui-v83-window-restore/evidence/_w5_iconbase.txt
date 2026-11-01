@@ -1,0 +1,4 @@
+===== UIWindow.img/IconBase
+IconBase [null]
+  0 [bitmap] bitmap 32x32
+    origin [vector] (0, 0)

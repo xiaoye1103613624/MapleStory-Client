@@ -1,0 +1,30 @@
+ref size 548x396
+pink tab fill    bbox x 4..493 y 24..67 n=540
+close cyan       bbox x 13..538 y 6..385 n=256
+hide green       bbox x 529..539 y 6..10 n=28
+marknpc cyan     bbox x 13..538 y 6..385 n=256
+sel band blue    bbox x 27..540 y 1..391 n=3729
+hdr band lblue   bbox x 2..544 y 2..390 n=15639
+banner blue      bbox x 1..545 y 1..391 n=25841
+red line         bbox x 2..240 y 41..43 n=484
+marknpc cyan (bottom) bbox x 461..538 y 372..385 n=284
+banner white text bbox x 251..546 y 20..119 n=2017
+detail black text bbox x 261..547 y 118..365 n=2043
+list black text bbox x 29..159 y 97..350 n=3600
+scrollbar-ish column x=225 darkn=45
+scrollbar-ish column x=228 darkn=43
+scrollbar-ish column x=229 darkn=41
+scrollbar-ish column x=233 darkn=41
+scrollbar-ish column x=234 darkn=44
+scrollbar-ish column x=237 darkn=45
+scrollbar-ish column x=241 darkn=318
+scrollbar-ish column x=243 darkn=318
+backgrnd size 245x396
+bg red line bbox x 3..241 y 42..44 n=717
+bg bottom band lblue bbox x 3..241 y 3..391 n=5881
+bg red line full bbox x 3..241 y 42..44 n=717
+backgrnd2 size 305x396
+bg2 green dot bbox x 23..26 y 45..48 n=15
+bg2 banner bbox x 0..302 y 2..392 n=27262
+bg2 bottom band bbox x 6..301 y 3..391 n=7530
+bg2 banner divider cols: [0, 1, 2, 3, 4, 5, 190]

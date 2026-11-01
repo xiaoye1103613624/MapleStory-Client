@@ -1,0 +1,16 @@
+map imgs=5364  with life=3097  elapsed=1.1s
+
+art roots: Mob.nx=2053  Npc.nx=7198
+
+== MOB
+  distinct ids placed on maps : 827
+  ids with no art in this pack: 0 (0.0%)
+  maps containing >=1 such id : 0
+  top missing by map spread   : 
+
+== NPC
+  distinct ids placed on maps : 1280
+  ids with no art in this pack: 1 (0.1%)
+  maps containing >=1 such id : 1
+  top missing by map spread   : 2104(1)
+
