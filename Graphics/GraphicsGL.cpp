@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "GraphicsGL.h"
+#include "Utf8.h"
 
 #include "../Configuration.h"
 #include "../MapleStory.h"
@@ -29,6 +30,28 @@
 
 namespace ms
 {
+	// [DBG-ATLAS] 临时联调诊断：图集异常事件落文件（限 200 条）。
+	// 排查「登录页竖条纹/错贴」用，闭环后删除。
+	static void dbgatlas(const char* kind, size_t id, int bw, int bh, int ow, int oh)
+	{
+		static std::ofstream log;
+		static int count = 0;
+
+		if (count >= 200)
+			return;
+
+		if (!log.is_open())
+			log.open("atlas_dbg.log", std::ios::app);
+
+		if (log.is_open())
+		{
+			log << kind << " id=" << id << " bmp=" << bw << "x" << bh
+				<< " cached=" << ow << "x" << oh << '\n';
+			log.flush();
+			count++;
+		}
+	}
+
 	GraphicsGL::GraphicsGL()
 	{
 		locked = false;
@@ -224,7 +247,17 @@ namespace ms
 		addfont(FONT_NORMAL_STR, Text::Font::A18M, 0, 18);
 		addfont(FONT_BOLD_STR, Text::Font::A18B, 0, 18);
 
-		fontymax += fontborder.y();
+		// 预留 CJK 字形区（每字体一块 WIDE_BLOCK²，紧跟 ASCII 条带之下），
+		// 并把总字体条带高度计入 fontymax——位图打包从 border=(0,fontymax)
+		// 起，逐出机制不会回收该保留区。
+		const GLshort wide_origin_y = static_cast<GLshort>(fontborder.y() + fontymax);
+		fontymax = static_cast<GLshort>(fontborder.y() + fontymax + WIDE_ROW_SPAN);
+
+		for (uint8_t fid = 0; fid < Text::Font::NUM_FONTS; ++fid)
+		{
+			fonts[fid].wide_x = static_cast<GLshort>((fid % (ATLASW / WIDE_BLOCK)) * WIDE_BLOCK);
+			fonts[fid].wide_y = wide_origin_y;
+		}
 
 		// 位图打包必须从字体区下方开始。若 border 仍为 (0,0)，后续 UI 贴图会
 		// 覆盖 FreeType 字形，且被 shader 当成字体（只用 .r）→ 登录输入乱码、
@@ -259,6 +292,11 @@ namespace ms
 
 		if (FT_New_Face(ftlibrary, name, 0, &face))
 			return false;
+
+		// 必须显式选 Unicode charmap：若 face 默认 charmap 是 Mac Roman/Latin 等，
+		// FT_Load_Char 对 CJK 码点查不到字形 → get_wide_glyph 每个字都渲染成
+		// 同一个 .notdef 方块（实测表现为「新手」→「ÆÆ」乱码）。
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
 		if (FT_Set_Pixel_Sizes(face, pixelw, pixelh))
 			return false;
@@ -344,7 +382,86 @@ namespace ms
 			ox += w;
 		}
 
+		// face 不释放（与旧行为一致——原实现也未 Done），供 CJK 字形按需生成。
+		fonts[id].face = face;
+
 		return true;
+	}
+
+	const GraphicsGL::Font::Char* GraphicsGL::get_wide_glyph(Font& font, uint32_t codepoint)
+	{
+		auto found = font.wide.find(codepoint);
+
+		if (found != font.wide.end())
+			return &found->second;
+
+		if (!font.face || font.wide_full || locked)
+			return nullptr;
+
+		// 缺字保护：字形索引 0 = .notdef（方块）。字体无该码点时直接跳过，
+		// 否则所有缺字都会画成同一个方块（用户看到的「ÆÆ」乱码）。
+		if (FT_Get_Char_Index(font.face, codepoint) == 0)
+			return nullptr;
+
+		FT_GlyphSlot g = font.face->glyph;
+
+		if (FT_Load_Char(font.face, codepoint, FT_LOAD_RENDER))
+			return nullptr;
+
+		GLshort ax = static_cast<GLshort>(g->advance.x >> 6);
+		GLshort ay = static_cast<GLshort>(g->advance.y >> 6);
+		GLshort l = static_cast<GLshort>(g->bitmap_left);
+		GLshort t = static_cast<GLshort>(g->bitmap_top);
+		GLshort w = static_cast<GLshort>(g->bitmap.width);
+		GLshort h = static_cast<GLshort>(g->bitmap.rows);
+
+		if (w > WIDE_CELL || h > WIDE_CELL)
+		{
+			// 超出单元格（字号过大/畸形字形）：只占位不再重试。
+			font.wide_full = true;
+			return nullptr;
+		}
+
+		size_t slot = font.wide.size();
+
+		if (slot >= static_cast<size_t>(WIDE_COLS) * WIDE_ROWS)
+		{
+			font.wide_full = true;
+			return nullptr;
+		}
+
+		GLshort gx = static_cast<GLshort>(font.wide_x + (slot % WIDE_COLS) * WIDE_CELL);
+		GLshort gy = static_cast<GLshort>(font.wide_y + (slot / WIDE_COLS) * WIDE_CELL);
+
+		// pitch 处理与 addfont 相同：FreeType 行对齐字节，窄字形须去 padding。
+		const int pitch = g->bitmap.pitch;
+		const unsigned char* pixels = g->bitmap.buffer;
+		std::vector<unsigned char> tight;
+
+		if (pixels && w > 0 && h > 0 && pitch != 0 && std::abs(pitch) != w)
+		{
+			tight.resize(static_cast<size_t>(w) * static_cast<size_t>(h));
+
+			for (GLshort row = 0; row < h; ++row)
+			{
+				const unsigned char* src = (pitch > 0)
+					? (pixels + row * pitch)
+					: (pixels + (h - 1 - row) * (-pitch));
+				std::memcpy(tight.data() + static_cast<size_t>(row) * static_cast<size_t>(w), src, static_cast<size_t>(w));
+			}
+
+			pixels = tight.data();
+		}
+
+		if (pixels && w > 0 && h > 0)
+			glTexSubImage2D(GL_TEXTURE_2D, 0, gx, gy, w, h, GL_RED, GL_UNSIGNED_BYTE, pixels);
+
+		auto& stored = font.wide.emplace(
+			codepoint,
+			Font::Char{ ax, ay, w, h, l, t, Offset(gx, gy, w, h) }
+		).first->second;
+
+		return &stored;
 	}
 
 	void GraphicsGL::reinit()
@@ -453,8 +570,23 @@ namespace ms
 
 		if (offiter != offsets.end())
 		{
-			offiter->second.last_use = atlas_use_tick;
-			return offiter->second;
+			Offset& cached = offiter->second;
+
+			// 陈旧条目自愈：bitmap id 是数据指针，片头卷轴等大量临时位图释放后
+			// 堆地址会被新位图复用 → 同 id 指到旧图集区域 → 把别人的像素（窄字形列/
+			// 其他贴图）拉伸画出来 = 页面上的竖条纹/错贴「白云」。尺寸对不上即重传。
+			if (cached.right - cached.left != static_cast<GLshort>(bmp.width())
+				|| cached.bottom - cached.top != static_cast<GLshort>(bmp.height()))
+			{
+				dbgatlas("stale-offset", id, bmp.width(), bmp.height(),
+					cached.right - cached.left, cached.bottom - cached.top);
+				offsets.erase(offiter);
+			}
+			else
+			{
+				cached.last_use = atlas_use_tick;
+				return cached;
+			}
 		}
 
 		GLshort x = 0;
@@ -652,6 +784,16 @@ namespace ms
 			return;
 
 		Offset offset = getoffset(bmp);
+
+		// 上传失败（无数据/超大/图集回收挂起）时绝不发 quad：nulloffset 的 UV
+		// 恒为 (0,0)-(0,0)，会把图集左上角（字体区）采样成一块实心/花屏矩形。
+		// 直接跳过，等下一帧重传（实心填充走 drawrectangle/drawscreenfill，
+		// 不经过本函数，不受影响）。
+		if (&offset == &nulloffset)
+		{
+			dbgatlas("null-offset-draw", bmp.id(), bmp.width(), bmp.height(), 0, 0);
+			return;
+		}
 
 		offset.top += vertical.first();
 		offset.bottom -= vertical.second();
@@ -998,18 +1140,24 @@ namespace ms
 
 		if (!linebreak)
 		{
-			for (size_t i = first; i < last; i++)
+			// 逐**字符**（不是逐字节）累加宽度：中文一个字符 3 字节，旧实现只认 32..127，
+			// 于是整段中文对 wordwidth 的贡献恒为 0 —— 长中文文本只溢出不换行。
+			// 拆分点 i 现在必然落在码点边界上，不会再出现"半个汉字被拆到下一行"。
+			for (size_t i = first; i < last; )
 			{
+				size_t consumed = 1;
 				const unsigned char uc = static_cast<unsigned char>(text[i]);
 
 				if (uc == '\t')
 					wordwidth += ax;
-				else if (uc >= 32 && uc < 128)
-					wordwidth += font.chars[uc].ax;
+				else
+					wordwidth += measure(text, i, last, consumed);
 
 				if (wordwidth > maxwidth)
 				{
-					if (last - first == 1)
+					// 单个字符就已经超宽：没有可分的位置，接受溢出。
+					// （旧条件 last - first == 1 只覆盖单字节，多字节会原地无限递归。）
+					if (i == first)
 					{
 						return last;
 					}
@@ -1019,6 +1167,8 @@ namespace ms
 						return add(text, prev, i, last);
 					}
 				}
+
+				i += consumed;
 			}
 		}
 
@@ -1040,26 +1190,72 @@ namespace ms
 				ay -= line_adj;
 		}
 
-		for (size_t pos = first; pos < last; pos++)
+		// advances 按**字节**索引（Textfield 的光标用 advance(byte) 定位），所以一个
+		// 多字节字符要占 consumed 个槽位，且它们都记同一个笔位起点：指针落在半个字上
+		// 也不会跳位。推进量改走 measure()，与 drawtext 画每个字形时累加的 ax 同源。
+		for (size_t pos = first; pos < last; )
 		{
-			const unsigned char uc = static_cast<unsigned char>(text[pos]);
-			const Font::Char& ch = (uc >= 32 && uc < 128) ? font.chars[uc] : font.chars[' '];
+			size_t consumed = 1;
+			const int16_t ch_adv = measure(text, pos, last, consumed);
 
-			advances.push_back(ax);
+			for (size_t k = 0; k < consumed; k++)
+				advances.push_back(ax);
 
-			if (pos < first + skip || newline && uc == ' ')
+			if (pos < first + skip || newline && static_cast<unsigned char>(text[pos]) == ' ')
+			{
+				pos += consumed;
 				continue;
+			}
 
-			ax += ch.ax;
+			ax += ch_adv;
 
 			if (width < ax)
 				width = ax;
+
+			pos += consumed;
 		}
 
 		if (newword || newline)
 			return first + skip;
 		else
 			return prev;
+	}
+
+	int16_t GraphicsGL::LayoutBuilder::measure(const char* text, size_t pos, size_t last, size_t& consumed) const
+	{
+		const uint32_t cp = utf8_next(text, pos, last, consumed);
+
+		if (cp == 0)
+			return 0;
+		if (cp < 128)
+			return font.chars[cp].ax;
+
+		return wide_advance(cp);
+	}
+
+	int16_t GraphicsGL::LayoutBuilder::wide_advance(uint32_t codepoint) const
+	{
+		// 已经生成过字形就直接用它自己的推进量 —— 绘制路径累加的就是这个数。
+		auto cached = font.wide.find(codepoint);
+
+		if (cached != font.wide.end())
+			return cached->second.ax;
+
+		if (!font.face)
+			return font.chars[' '].ax;	// 没有 face（非 Windows 字体）：退回旧的空格宽
+
+		// 只取度量、不渲染位图：布局可能在图集锁定期间跑，那时 get_wide_glyph 会直接拒绝。
+		// 用与 addfont/get_wide_glyph 同一个表达式（advance.x >> 6），FT_LOAD_RENDER 相比
+		// FT_LOAD_DEFAULT 只多生成位图，不改推进量 ⇒ 量出来的和画出来的必然相等。
+		const FT_UInt gindex = FT_Get_Char_Index(font.face, codepoint);
+
+		if (gindex == 0)
+			return 0;	// 字体里没这个字：绘制同样什么都不画，不能凭空留宽
+
+		if (FT_Load_Glyph(font.face, gindex, FT_LOAD_DEFAULT))
+			return 0;
+
+		return static_cast<int16_t>(font.face->glyph->advance.x >> 6);
 	}
 
 	Text::Layout GraphicsGL::LayoutBuilder::finish(size_t first, size_t last)
@@ -1155,14 +1351,36 @@ namespace ms
 
 				Color abscolor = color * Color(wordcolor[0], wordcolor[1], wordcolor[2], 1.0f);
 
-				for (size_t pos = word.first; pos < word.last; ++pos)
+				// 解码走 Graphics/Utf8.h 的 utf8_next —— 与 LayoutBuilder::measure 同一个函数，
+				// 排版量出来的推进量和这里逐字形累加的 ax 必然一致。
+				for (size_t pos = word.first; pos < word.last; )
 				{
-					const unsigned char uc = static_cast<unsigned char>(text[pos]);
-					if (uc < 32 || uc >= 128)
+					size_t consumed = 1;
+					const uint32_t cp = utf8_next(text.c_str(), pos, word.last, consumed);
+
+					pos += consumed;
+
+					if (cp == 0)
 						continue;
 
-					const Font& word_font = fonts[word.font];
-					const Font::Char& ch = word_font.chars[uc];
+					Font& word_font = fonts[word.font];
+					const Font::Char* chp;
+
+					if (cp < 128)
+					{
+						chp = &word_font.chars[cp];
+					}
+					else
+					{
+						// 非 ASCII 码点 → 按需 CJK 字形。（旧逻辑对 uc >= 0x80 直接 continue，
+						// 导致「新手/排行不可用」等中文字符串整体渲染为空白。）
+						chp = get_wide_glyph(word_font, cp);
+
+						if (!chp)
+							continue;
+					}
+
+					const Font::Char& ch = *chp;
 
 					GLshort char_x = x + ax + ch.bl;
 					GLshort char_y = y + ay - ch.bt;
@@ -1190,7 +1408,7 @@ namespace ms
 					if (char_y < minheight)
 						continue;
 
-					if (ax == 0 && uc == ' ')
+					if (ax == 0 && cp == ' ')
 						continue;
 
 					ax += ch.ax;

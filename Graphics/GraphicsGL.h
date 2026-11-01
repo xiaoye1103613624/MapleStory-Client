@@ -25,6 +25,7 @@
 #include "../Util/QuadTree.h"
 
 #include <cstdint>
+#include <unordered_map>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -219,6 +220,16 @@ namespace ms
 			GLshort height;
 			Char chars[128];
 
+			// CJK 按需字形：码点 → 字形。addfont 只烘焙 ASCII(32..127)，
+			// 中文（UTF-8 多字节）在此缓存，首用时从 face 现场生成并上传到
+			// init 预留的 wide 区（与 ASCII 字形同属字体保留条带，
+			// clearinternal 的位图逐出不会回收，无需失效逻辑）。
+			FT_Face face = nullptr;
+			std::unordered_map<uint32_t, Char> wide;
+			GLshort wide_x = 0;
+			GLshort wide_y = 0;
+			bool wide_full = false;
+
 			Font(GLshort w, GLshort h)
 			{
 				width = w;
@@ -248,6 +259,12 @@ namespace ms
 		private:
 			void add_word(size_t first, size_t last, Text::Font font, Color::Name color);
 			void add_line();
+
+			// text[pos] 处这个字符的推进量，consumed 输出它占的字节数。
+			// 与 drawtext 共用 utf8_next，保证"量的"和"画的"不会分叉。
+			int16_t measure(const char* text, size_t pos, size_t last, size_t& consumed) const;
+			// 非 ASCII 码点的推进量：只取度量、不生成位图（图集锁定期间也要能量）。
+			int16_t wide_advance(uint32_t codepoint) const;
 
 			const Font& font;
 
@@ -308,5 +325,16 @@ namespace ms
 		Font fonts[Text::Font::NUM_FONTS];
 		Point<GLshort> fontborder;
 		GLshort fontymax;
+
+		// CJK 按需字形区：每字体一块 WIDE_BLOCK² 的固定子区，紧跟 ASCII
+		// 字形条带之下（仍在字体保留条带 [0, border) 内）。22x22 格 × 22px。
+		static constexpr GLshort WIDE_CELL = 22;
+		static constexpr GLshort WIDE_COLS = 22;
+		static constexpr GLshort WIDE_ROWS = 22;
+		static constexpr GLshort WIDE_BLOCK = WIDE_CELL * WIDE_COLS;
+		static constexpr GLshort WIDE_ROW_SPAN = WIDE_CELL * WIDE_ROWS;
+
+		// 查找/生成一个非 ASCII 码点的字形；区域满或无 face 时返回空。
+		const Font::Char* get_wide_glyph(Font& font, uint32_t codepoint);
 	};
 }

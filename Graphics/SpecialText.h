@@ -67,6 +67,11 @@ namespace ms
 		{
 			return inner.width();
 		}
+
+		int16_t height() const
+		{
+			return inner.height();
+		}
 	};
 
 	struct ShadowText
