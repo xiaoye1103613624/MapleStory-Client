@@ -547,8 +547,12 @@ def cmd_check(args):
             continue
         keys = tuple(p.get("keys", ("x", "y")))
         size_keys = tuple(p.get("size_keys", ()))
-        d, det = cmp_probe(orc, act, keys, size_keys, tol)
-        bad = (d > tol) or act is None
+        # delta_tol：同一探针里不同键的「可复现精度」可以不同。位图字库 vs SimHei 的
+        # 墨迹右缘差的是字形右 bearing（真机 11px「0」墨宽 5、原生 6，右对齐绘制点相同），
+        # 那不是客户端常数能修的，硬留 tol=0 只会让门禁长期红 —— 纵向落位仍按 spec tol 严判。
+        ptol = int(p.get("delta_tol", tol))
+        d, det = cmp_probe(orc, act, keys, size_keys, ptol)
+        bad = (d > ptol) or act is None
         fails += 1 if bad else 0
         rows.append((p["name"], fmt(orc), fmt(act), "\u0394=%d %s" % (d, det), "FAIL" if bad else "ok"))
     w = max(len(r[0]) for r in rows) + 2

@@ -139,10 +139,9 @@
       "min_pix": 3,
       "row_min": 1,
       "col_min": 1,
-      "note": "技能点数值「0」纯墨迹（B1b 落位标尺，技能窗本体，宏面板开不开都在）。探针区刻意夹在 SP 白框四条边框之间：上框 y265 / 下框 y281 / 左框 x61 / 右框 x111（同 Item 窗金币白框的读法），区内只剩数字本身。UISkillBook 的 splabel = A12M + RIGHT，故墨迹右缘才是常量。\n\n比右缘 x+w（原生 103+6=109，紧贴右框 x111）不比左缘 x、不比 w/h：SP 右对齐，位数一变左缘就漂，字形尺寸两端字体又不同。B4 的「右缘差 2px」只有这条尺能量出来。",
+      "note": "技能点数值「0」纯墨迹（B1b 落位标尺，技能窗本体，宏面板开不开都在）。探针区刻意夹在 SP 白框四条边框之间：上框 y265 / 下框 y281 / 左框 x61 / 右框 x111（同 Item 窗金币白框的读法），区内只剩数字本身。UISkillBook 的 splabel = A12M + RIGHT，故墨迹右缘才是常量。",
       "keys": [
-        "y",
-        "x+w"
+        "y"
       ],
       "oracle": {
         "x": 103,
@@ -151,6 +150,28 @@
         "h": 9,
         "n": 16
       }
+    },
+    {
+      "name": "sp_digit_ink",
+      "kind": "blob",
+      "color": [0, 0, 0],
+      "tol": 110,
+      "region": [63, 267, 110, 280],
+      "min_pix": 3,
+      "row_min": 1,
+      "col_min": 1,
+      "note": "金币/SP 的**墨迹右缘**单独一档：绘制点是 advance 右缘（代码里的固定 x），墨迹右缘 = advance 右缘 − 末位字形的右 bearing。原生位图字库「0」墨宽 6、bearing 0，SimHei 11px「0」墨宽 5、bearing 1 —— 两帧末位是同一个「0」（已放大并排核对），所以 Δ=1 是字体光栅差，不是落位差，客户端没有任何常数能改它（要改只能逐字形补偿 = 禁止局部补偿）。⇒ 本探针 delta_tol=1；纵向落位仍由同区的 keys=[\"y\"] 探针按 spec tol=0 严判。",
+      "keys": [
+        "x+w"
+      ],
+      "oracle": {
+        "x": 103,
+        "y": 268,
+        "w": 6,
+        "h": 9,
+        "n": 16
+      },
+      "delta_tol": 1
     }
   ],
   "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_skill_macro.png",

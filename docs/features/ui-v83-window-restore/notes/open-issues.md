@@ -594,8 +594,10 @@ update_static_markers(); toggle_buttons(); update_npclist();`（`:242-247`）。
 **处置**：`mark --anchor 3 -1` 重写 oracle（值仍然是量出来的，只是参照点换成量出来的那一格）
 ⇒ `slot_rows` 50/84/118/152/186/220、`meso_digit` (131,269)，**真机帧三格 Δ=0**。
 ⚠ 更正（同日修 `cmp_probe` 后）：这句对 `slot_rows` / `meso_digit` 的 **y** 成立，但当时 `meso_digit` 的
-`x+w` 是**空转出的假 0**（派生键没走 `keyval()`）。修好后 `x+w` 在原生帧真 Δ=0、两张改前真机帧 −1 ⇒
-金币**水平**落位退回待复验，见 [../evidence/r27-b2-bagfull/README.md](../evidence/r27-b2-bagfull/README.md)。
+`x+w` 是**空转出的假 0**（派生键没走 `keyval()`）。修好后 `x+w` 在原生帧真 Δ=0、真机帧 −1 ⇒
+−1 定案为**字体右 bearing**（两帧末位同为「0」，原生墨宽 6 / SimHei 11px 宽 5，右对齐绘制点同为 x=137），
+已拆 `*_ink` 探针 + `delta_tol=1`；B2 部署后真机复验 9/9 · 4/4 · 8/8 全绿，
+见 [../evidence/r27-b2-bagfull/README.md](../evidence/r27-b2-bagfull/README.md)。
 其余 6 张 spec 全部 `bias` 通过（记录锚点即最优格；KeyConfig / EquipTooltip 记录格 meanSAD=0.00），
 **只有 Item 是紧裁等高的受害者** —— 但这检查必须每轮做，因为下次拿到更紧的裁图就会再中。
 

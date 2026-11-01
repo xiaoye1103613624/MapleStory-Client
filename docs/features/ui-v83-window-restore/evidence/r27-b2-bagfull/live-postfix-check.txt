@@ -1,0 +1,51 @@
+# R27-B2 部署后真机复验（2026-11-01 19:5x，exe md5 6f0a8bc10be012bd…，非改前帧）
+# 驱动：_r27_login.py 登录进世界 → _postkey.py i/s → _r27_expand.py 点 BtFull 展开 → _cap2.py PrintWindow
+
+## ItemFull.json <- live-postfix-expanded.png
+anchor=(461,135) agree=0.843 rmse=32.2  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_FullBackgrnd_left400.png
+
+Item 背包栏（展开态 / FullBackgrnd）  tol=0px  形态=default  锚点=(461,135)  帧=evidence/r27-b2-bagfull/live-postfix-expanded.png
+--------------------------------------------------------------------------------------------------------
+  full_grid_rows        oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 行首Δmax=0     ok
+  meso_digit_full       oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0                  ok
+  meso_digit_full_ink   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 x+w-1                ok
+  disabled_p1_c0        oracle=(157,50) agree=1.000       实测=(157,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_c3        oracle=(265,50) agree=1.000       实测=(265,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p2_c0        oracle=(306,50) agree=1.000       实测=(306,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c0        oracle=(455,50) agree=1.000       实测=(455,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c3        oracle=(563,50) agree=1.000       实测=(563,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_r5        oracle=(157,220) agree=1.000      实测=(157,220) agree=1.000    Δ=0 x+0 y+0              ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 9（不适用跳过 0）
+EXIT=0
+
+## Item.json <- live-postfix-folded.png
+anchor=(461,135) agree=0.932 rmse=50.3  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_backgrnd.png
+
+Item 背包栏（折叠态）  tol=2px  形态=default  锚点=(461,135)  帧=evidence/r27-b2-bagfull/live-postfix-folded.png
+--------------------------------------------------------------------------------------------------------
+  slot_rows        oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 行首Δmax=0     ok
+  meso_digits      oracle=(8,266) 167x14             实测=(8,266) 168x14           Δ=0 x+0 y+0              ok
+  meso_digit       oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0                  ok
+  meso_digit_ink   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 x+w-1                ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 4（不适用跳过 0）
+EXIT=0
+
+## Stat.json <- live-postfix-stat.png
+anchor=(80,103) agree=0.735 rmse=77.9  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Stat_backgrnd.png
+
+Stat 角色能力窗  tol=2px  形态=default  锚点=(80,103)  帧=evidence/r27-b2-bagfull/live-postfix-stat.png
+--------------------------------------------------------------------------------------------------------
+  backgrnd2_detail_panel   oracle=(208,144) agree=0.852      实测=-                        -                        SKIP(不在 default 形态)
+  basicStat_panel          oracle=(8,195) agree=1.000        实测=(8,195) agree=1.000      Δ=0 x+0 y+0              ok
+  panel_text_bbox          oracle=(13,236) 149x43            实测=(13,236) 149x43          Δ=0 x+0 y+0              ok
+  text_anywhere            oracle=(13,236) 149x43            实测=(13,236) 149x43          Δ=0 x+0 y+0              ok
+  value_ink_tops           oracle=n=7 rows=[36, 53, 82, 118, 136, 154, 172] pitch=[17, 29, 36, 18, 18, 18] ink=[9, 11, 9, 9, 9, 11, 9] 实测=n=7 rows=[36, 54, 83, 119, 137, 155, 172] pitch=[18, 29, 36, 18, 18, 17] ink=[8, 10, 6, 8, 8, 9, 8] Δ=1 x+0 y+0 行首Δmax=1     ok
+  value_lines              oracle=n=3 rows=[236, 252, 268] pitch=[16, 16] ink=[11, 11, 11] 实测=n=3 rows=[236, 252, 268] pitch=[16, 16] ink=[11, 11, 11] Δ=0 x+0 y+0 行首Δmax=0     ok
+  value_col_bbox           oracle=(61,36) 36x145             实测=(61,36) 41x144           Δ=0 x+0 y+0              ok
+  chip_grid                oracle=y=32 n=122 rows=[32, 33, 34, 35, 36, 37, 38, 39, 40, 41] 实测=y=32 n=122 rows=[32, 33, 34, 35, 36, 37, 38, 39, 40, 41] Δ=0 x+0 y+0 行首Δmax=0     ok
+  level_ink                oracle=(62,82) 4x9                实测=(62,83) 2x6              Δ=1 x+0 y+1              ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 8（不适用跳过 1）
+EXIT=0
