@@ -44,6 +44,11 @@ namespace ms
 				if (newlayer == -1)
 				{
 					remove_mob = true;
+
+					// 死亡/失效时也要从旧图层摘掉 oid：只 erase objects 的话 layers[oldlayer]
+					// 里会残留，服务端回收同一个 oid 重新 spawn 后，新对象会被旧图层再画一遍
+					// （draw 只按 oid 查对象，不校验它现在到底在哪一层）。
+					layers[oldlayer].erase(iter->first);
 				}
 				else if (newlayer != oldlayer)
 				{

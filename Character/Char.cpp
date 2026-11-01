@@ -326,6 +326,26 @@ namespace ms
 		}
 	}
 
+	void Char::move_pet(uint8_t index, Point<int16_t> pos, uint8_t stance)
+	{
+		if (index > 2)
+			return;
+		if (pets[index].get_itemid() == 0)
+			return;
+
+		pets[index].set_position(pos.x(), pos.y());
+		pets[index].set_stance(stance);
+	}
+
+	void Char::rename_pet(uint8_t index, const std::string& name)
+	{
+		if (index > 2)
+			return;
+		if (pets[index].get_itemid() == 0)
+			return;
+		pets[index].set_name(name);
+	}
+
 	bool Char::is_invincible() const
 	{
 		return invincible == true;
@@ -374,6 +394,14 @@ namespace ms
 	const CharLook& Char::get_look() const
 	{
 		return look;
+	}
+
+	bool Char::has_pet() const
+	{
+		for (const PetLook& pet : pets)
+			if (pet.get_itemid() > 0)
+				return true;
+		return false;
 	}
 
 	PhysicsObject& Char::get_phobj()

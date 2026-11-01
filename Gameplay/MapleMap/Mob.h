@@ -30,6 +30,8 @@
 #include "../../Util/Randomizer.h"
 #include "../../Util/TimedBool.h"
 
+#include <string>
+
 namespace ms
 {
 	class Mob : public MapObject
@@ -37,17 +39,35 @@ namespace ms
 	public:
 		static const size_t NUM_STANCES = 6;
 
+		// 状态字节：2..10 是基础姿态（偶数=朝左，奇数=朝右，见 set_stance）。
+		// 24 起是 v83 的攻击段、42 起是技能段：服务端用 (byte-24)/2、(byte-42)/2 取 0 基下标，
+		// 动画节点名是 attack{下标+1} / skill{下标+1}。
+		// 证据：BeiDou-Server_s9 net/server/channel/handlers/MoveLifeHandler.java:84-110
+		//       + server/life/LifeFactory.java:485-495（"attack" + (i + 1) 循环，i 从 0）。
 		enum Stance : uint8_t
 		{
 			MOVE = 2,
 			STAND = 4,
 			JUMP = 6,
 			HIT = 8,
-			DIE = 10
+			DIE = 10,
+			ATTACK = 24,
+			SKILL = 42
 		};
+
+		// 攻击段服务端只接受下标 0..7（MonsterInformationProvider.getMobAttackInfo 越界返回 null），
+		// 技能段 42..59 可到下标 8。
+		static constexpr int32_t ATTACK_SLOTS = 8;
+		static constexpr int32_t SKILL_SLOTS = 9;
 
 		static std::string nameof(Stance stance)
 		{
+			if (stance >= SKILL)
+				return "skill" + std::to_string((stance - SKILL) / 2 + 1);
+
+			if (stance >= ATTACK)
+				return "attack" + std::to_string((stance - ATTACK) / 2 + 1);
+
 			static const std::string stancenames[NUM_STANCES] =
 			{
 				"move",
@@ -58,7 +78,12 @@ namespace ms
 				"fly"
 			};
 
-			size_t index = (stance - 1) / 2;
+			// 原来的 (stance - 1) / 2 对 2..10 正好得到 0..4，但一旦有越界状态就会读到数组外；
+			// 这里显式钳到已知区间。
+			size_t index = (stance - MOVE) / 2;
+
+			if (index >= NUM_STANCES - 1)
+				index = 0;
 
 			return stancenames[index];
 		}
@@ -79,6 +104,9 @@ namespace ms
 		// Change this mob's control mode:
 		// 0 - no control, 1 - control, 2 - aggro
 		void set_control(int8_t mode);
+		// 同一个 oid 被重新下发（服务端换控制器发的是整包 spawn）时，把新包里的落位、
+		// 姿态、队伍和淡入状态套到已有对象上；只 makeactive() 会把新坐标整包丢掉。
+		void refresh(int8_t mode, int8_t stance, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position);
 		// Send movement to the mob
 		void send_movement(Point<int16_t> start, std::vector<Movement>&& movements);
 		// Kill the mob with the appropriate type:

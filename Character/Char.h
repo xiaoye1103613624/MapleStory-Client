@@ -116,6 +116,10 @@ namespace ms
 		void add_pet(uint8_t index, int32_t iid, const std::string& name, int32_t uniqueid, Point<int16_t> pos, uint8_t stance, int32_t fhid);
 		// Remove a pet with the specified index and reason
 		void remove_pet(uint8_t index, bool hunger);
+		// Update pet position/stance from MOVE_PET
+		void move_pet(uint8_t index, Point<int16_t> pos, uint8_t stance);
+		// Rename pet nametag from PET_NAME_CHANGE
+		void rename_pet(uint8_t index, const std::string& name);
 
 		// Return if the character is facing left
 		bool getflip() const;
@@ -137,6 +141,8 @@ namespace ms
 		const CharLook& get_look() const;
 		// Return a reference to this characters's physics
 		PhysicsObject& get_phobj();
+		// True if any of the 3 pet slots has an item
+		bool has_pet() const;
 
 		// Initialize character effects
 		static void init();

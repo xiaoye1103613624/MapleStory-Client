@@ -32,7 +32,7 @@ namespace ms
 		if (skill_id > 0)
 		{
 			std::string strid = string_format::extend_id(skill_id, 7);
-			src = nl::nx::Skill[strid.substr(0, 3) + ".img"]["skill"][strid]["afterimage"][name][stance_name];
+			src = nl::nx::Skill[string_format::skill_namespace(skill_id) + ".img"]["skill"][strid]["afterimage"][name][stance_name];
 		}
 
 		if (!src)

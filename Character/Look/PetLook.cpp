@@ -173,6 +173,12 @@ namespace ms
 		stance = stancebyvalue(stancebyte);
 	}
 
+	void PetLook::set_name(const std::string& nm)
+	{
+		name = nm;
+		namelabel.change_text(name);
+	}
+
 	int32_t PetLook::get_itemid() const
 	{
 		return itemid;

@@ -35,12 +35,13 @@ namespace ms
 			const NpcSpawn& spawn = spawns.front();
 
 			int32_t oid = spawn.get_oid();
-			Optional<MapObject> npc = npcs.get(oid);
 
-			if (npc)
-				npc->makeactive();
-			else
-				npcs.add(spawn.instantiate(physics));
+			// 同 oid 重新下发（脚本挪位、控制器 mode 0 传送）时必须吃新包的 position/fh：
+			// 原来只 makeactive() 复用旧对象，新坐标被整包丢掉，NPC 就卡在老地方不动。
+			if (npcs.contains(oid))
+				npcs.remove(oid);
+
+			npcs.add(spawn.instantiate(physics));
 		}
 
 		npcs.update(physics);

@@ -28,4 +28,25 @@ namespace ms
 	{
 		viplocations.push_back(mapid);
 	}
+
+	void TeleportRock::clearlocations()
+	{
+		locations.clear();
+	}
+
+	void TeleportRock::clearviplocations()
+	{
+		viplocations.clear();
+	}
+
+	int32_t TeleportRock::first_valid(bool vip) const
+	{
+		const auto& list = vip ? viplocations : locations;
+		for (int32_t id : list)
+		{
+			if (id > 0 && id != 999999999)
+				return id;
+		}
+		return 0;
+	}
 }

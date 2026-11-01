@@ -57,6 +57,7 @@ namespace ms
 		void set_position(int16_t xpos, int16_t ypos);
 		void set_stance(Stance stance);
 		void set_stance(uint8_t stancebyte);
+		void set_name(const std::string& nm);
 
 		int32_t get_itemid() const;
 		Stance get_stance() const;

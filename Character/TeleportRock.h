@@ -18,6 +18,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 namespace ms
 {
@@ -27,6 +28,12 @@ namespace ms
 	public:
 		void addlocation(int32_t);
 		void addviplocation(int32_t);
+		void clearlocations();
+		void clearviplocations();
+		const std::vector<int32_t>& get_locations() const { return locations; }
+		const std::vector<int32_t>& get_viplocations() const { return viplocations; }
+		// 第一个有效地图（非 999999999 / 0）
+		int32_t first_valid(bool vip) const;
 
 	private:
 		std::vector<int32_t> locations;

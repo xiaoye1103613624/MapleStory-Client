@@ -146,4 +146,193 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// s9 CHALKBOARD(164) — PacketCreator.useChalkboard
+	class ChalkboardHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 FACIAL_EXPRESSION(193)
+	class FacialExpressionHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SHOW_CHAIR(196)
+	class ShowChairHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SKILL_EFFECT(190) / CANCEL_SKILL_EFFECT(191)
+	class SkillEffectHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class CancelSkillEffectHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 DAMAGE_PLAYER(192)
+	class DamagePlayerHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 GIVE_FOREIGN_BUFF(199) / CANCEL_FOREIGN_BUFF(200)
+	class GiveForeignBuffHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class CancelForeignBuffHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 CATCH_MONSTER(251) / CATCH_MONSTER_WITH_ITEM(252)
+	class CatchMonsterHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class CatchMonsterWithItemHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 PET_CHAT(171) / PET_NAMECHANGE(172) / PET_COMMAND(174)
+	class PetChatHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class PetNameChangeHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class PetCommandHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 REMOVE_NPC(258)
+	class RemoveNpcHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SPAWN_MIST(273) / REMOVE_MIST(274)
+	class SpawnMistHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class RemoveMistHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SPAWN_DOOR(275) / REMOVE_DOOR(276)
+	class SpawnDoorHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class RemoveDoorHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SPAWN_SPECIAL_MAPOBJECT(175) / REMOVE_SPECIAL_MAPOBJECT(176) — summon
+	class SpawnSummonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class RemoveSummonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 DAMAGE_MONSTER(246)
+	class DamageMonsterHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SHOW_ITEM_EFFECT(194)
+	class ShowItemEffectHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 UPDATE_CHAR_BOX(165)
+	class UpdateCharBoxHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SPAWN_DRAGON(181) / MOVE_DRAGON(182) / REMOVE_DRAGON(183)
+	class SpawnDragonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class MoveDragonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class RemoveDragonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SUMMON_SKILL(180) / MOVE_SUMMON(177) / SUMMON_ATTACK(178) / DAMAGE_SUMMON(179)
+	class SummonSkillHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class MoveSummonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class SummonAttackHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class DamageSummonHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 APPLY_MONSTER_STATUS(242) / CANCEL_MONSTER_STATUS(243)
+	class ApplyMonsterStatusHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class CancelMonsterStatusHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 MOVE_PET(170) / PET_EXCEPTION_LIST(173)
+	class MovePetHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class PetExceptionListHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

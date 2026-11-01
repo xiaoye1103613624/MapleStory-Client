@@ -69,8 +69,51 @@ namespace ms
 		}
 
 		animations[Stance::JUMP] = link["jump"];
-		animations[Stance::HIT] = link["hit1"];
-		animations[Stance::DIE] = link["die1"];
+		// 挨打/死亡帧并不总是叫 hit1/die1：抽样 2053 个 img 里 die1 只有 1608 个，
+		// 另有 die(4)、die2(11)、dieF(9)；hit1 缺 476 个，其中有 hit(7)。
+		// 空节点只会构造出「一张空白帧」的 Animation，update() 当场返回结束，
+		// 表现就是怪物挨打毫无反馈、死亡时瞬间消失。
+		nl::node hit = link["hit1"];
+
+		if (hit.size() == 0)
+			hit = link["hit"];
+
+		animations[Stance::HIT] = hit;
+
+		nl::node die = link["die1"];
+
+		if (die.size() == 0)
+		{
+			for (auto& alt : { "die", "die2", "dieF" })
+			{
+				if (die.size() > 0)
+					break;
+
+				die = link[alt];
+			}
+		}
+
+		animations[Stance::DIE] = die;
+
+		// 攻击/技能动作帧：状态字节按段基址 + 2*下标入表（下标即服务端 castPos）。
+		// 抽样 Mob.nx 2053 个 img：attack1 有 897 个、attack2 375、attack3 183，最深到 attack8；
+		// skill1 460、skill2 137、skill3 53，最深 skill9。修前这些帧一张都没加载，
+		// 怪物从头到尾只会站/走/跳/挨打/死，攻击动作整轮缺失。
+		for (int32_t i = 0; i < ATTACK_SLOTS; i++)
+		{
+			nl::node attack = link["attack" + std::to_string(i + 1)];
+
+			if (attack.size() > 0)
+				animations[static_cast<Stance>(Stance::ATTACK + 2 * i)] = attack;
+		}
+
+		for (int32_t i = 0; i < SKILL_SLOTS; i++)
+		{
+			nl::node skill = link["skill" + std::to_string(i + 1)];
+
+			if (skill.size() > 0)
+				animations[static_cast<Stance>(Stance::SKILL + 2 * i)] = skill;
+		}
 
 		name = nl::nx::String["Mob.img"][std::to_string(mid)]["name"].get_string();
 
@@ -129,6 +172,13 @@ namespace ms
 
 		if (stancebyte < Stance::MOVE)
 			stancebyte = Stance::MOVE;
+
+		// animations 是 map，set_stance/draw/update/get_head_position 全走 .at()：
+		// 状态字节只要没有对应帧（12..23、攻击段越界、60+ 这些本包拿不到的区段），
+		// out_of_range 就逃过 PacketSwitch 的 PacketError 捕获直接把客户端 terminate。
+		// 所以按「有没有加载到这一帧」决定能不能进这个姿态，否则退回移动/站立。
+		if (animations.find(static_cast<Stance>(stancebyte)) == animations.end())
+			stancebyte = animations.find(Stance::MOVE) != animations.end() ? Stance::MOVE : Stance::STAND;
 
 		set_stance(static_cast<Stance>(stancebyte));
 	}
@@ -277,6 +327,15 @@ namespace ms
 	{
 		if (canmove)
 		{
+			// 攻击/技能是临时动作段，不是循环状态：播完必须回基础姿态。
+			// 否则下面的 switch 匹配不到任何 case，控制器会把同一个攻击状态字节
+			// 一遍遍回给服务端（服务端 canUseAttack 冷却不通过时又会把 rawActivity 打成 -1）。
+			if (stance >= Stance::ATTACK)
+			{
+				set_stance(Stance::STAND);
+				return;
+			}
+
 			switch (stance)
 			{
 			case Stance::HIT:
@@ -358,6 +417,29 @@ namespace ms
 	{
 		control = mode > 0;
 		aggro = mode == 2;
+	}
+
+	void Mob::refresh(int8_t mode, int8_t stancebyte, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position)
+	{
+		if (mode > 0)
+			set_control(mode);
+
+		team = tm;
+		set_position(position);
+		phobj.fhid = fh;
+
+		// 重下发意味着服务端把它当新对象，之前的死亡/淡出流程要整体作废
+		dying = false;
+		dead = false;
+		fading = false;
+		fadein = newspawn;
+		opacity.set(newspawn ? 0.0f : 1.0f);
+
+		set_stance(stancebyte);
+		makeactive();
+
+		if (control && stance == Stance::STAND)
+			next_move();
 	}
 
 	void Mob::send_movement(Point<int16_t> start, std::vector<Movement>&& in_movements)

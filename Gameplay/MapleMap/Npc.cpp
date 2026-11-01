@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Npc.h"
 
+#include "../../Util/Misc.h"
+
 #include <codecvt>
 
 #ifdef USE_NX
@@ -27,9 +29,9 @@ namespace ms
 {
 	Npc::Npc(int32_t id, int32_t o, bool fl, uint16_t f, bool cnt, Point<int16_t> position) : MapObject(o)
 	{
-		std::string strid = std::to_string(id);
-		strid.insert(0, 7 - strid.size(), '0');
-		strid.append(".img");
+		// 与 Mob 对齐用 extend_id：原来的 7 - strid.size() 遇到 8 位 id 会无符号下溢，
+		// insert(0, 巨值, '0') 直接抛 length_error，把整个 spawn 打崩。
+		std::string strid = string_format::extend_id(id, 7) + ".img";
 
 		nl::node src = nl::nx::Npc[strid];
 		nl::node strsrc = nl::nx::String["Npc.img"][std::to_string(id)];
