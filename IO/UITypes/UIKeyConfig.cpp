@@ -546,9 +546,17 @@ namespace ms
 
 				action_mappings.push_back(Keyboard::Mapping(get_keytype(action), action));
 
+				// icon/<n> 是 32x32、origin (0,32) 的「底边锚点」键帽美术，而 keys_pos 与
+				// unbound_actions_pos 都按「键帽左上角」书写（r27-oracle/origin-rule.md §3：
+				// 四颗键帽 tmpl 探针与表项逐格相等、误差 0）。Texture::draw 会自动回减 origin，
+				// 不抹平则键帽整层落在表值上方 32px，而字模 key/<n>（origin 0,0）留在原位，
+				// 美术与字模分家 —— 即「键盘设定 内部的按键图片全都偏上」。
+				Texture keycap = icon[i];
+				keycap.shift(keycap.get_origin());
+
 				action_icons[action] = std::make_unique<Icon>(
 					std::make_unique<KeyIcon>(action),
-					icon[i],
+					keycap,
 					-1
 					);
 			}
@@ -626,28 +634,31 @@ namespace ms
 
 					if (key < KeyConfig::Key::LENGTH)
 					{
-						if (key == KeyConfig::Key::SPACE)
+						// 键帽美术的 origin 已在 load_actions 抹平 ⇒ 表值即左上，不再补偿。
+						// 道具/技能图标仍是锚点语义，沿用上游手写的 (2,3)；该残差没有 oracle，
+						// 留到 B8 真机抓帧实测后再定（origin-rule.md §5）。
+						const Point<int16_t> adjust = is_action_mapping(mapping)
+							? Point<int16_t>(0, 0)
+							: (key == KeyConfig::Key::SPACE ? Point<int16_t>(0, 3) : Point<int16_t>(2, 3));
+
+						if (key == KeyConfig::Key::LEFT_CONTROL || key == KeyConfig::Key::RIGHT_CONTROL)
 						{
-							icon->draw(position + keys_pos[key] - Point<int16_t>(0, 3));
-						}
-						else if (key == KeyConfig::Key::LEFT_CONTROL || key == KeyConfig::Key::RIGHT_CONTROL)
-						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_CONTROL] - Point<int16_t>(2, 3));
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_CONTROL] - Point<int16_t>(2, 3));
+							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_CONTROL] - adjust);
+							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_CONTROL] - adjust);
 						}
 						else if (key == KeyConfig::Key::LEFT_ALT || key == KeyConfig::Key::RIGHT_ALT)
 						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_ALT] - Point<int16_t>(2, 3));
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_ALT] - Point<int16_t>(2, 3));
+							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_ALT] - adjust);
+							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_ALT] - adjust);
 						}
 						else if (key == KeyConfig::Key::LEFT_SHIFT || key == KeyConfig::Key::RIGHT_SHIFT)
 						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_SHIFT] - Point<int16_t>(2, 3));
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_SHIFT] - Point<int16_t>(2, 3));
+							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_SHIFT] - adjust);
+							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_SHIFT] - adjust);
 						}
 						else
 						{
-							icon->draw(position + keys_pos[key] - Point<int16_t>(2, 3));
+							icon->draw(position + keys_pos[key] - adjust);
 						}
 					}
 				}

@@ -83,3 +83,32 @@
 ⇒ 本轮只修 32px 那一档语义错误；`keys_pos` 是否需要再补 2px，**等 B8 真机抓帧**
 （抓帧时窗口 `position` 已知，锚点可直接对 `position` 而非对 BtClose）实测后写回 oracle，
 不在这里靠推断定稿。
+
+## 6. 同根因的第二处（已定位，本轮**不改**）：底栏快捷格图标
+
+[IO/UITypes/UIStatusBar.cpp:102](../../../../../IO/UITypes/UIStatusBar.cpp#L102) 有
+`constexpr int16_t QS_ICON_SHIFT_Y = 32;`，绘制点是
+[IO/UITypes/UIStatusBar.cpp:2316](../../../../../IO/UITypes/UIStatusBar.cpp#L2316)
+`classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, QS_ICON_SHIFT_Y))`。
+
+这 32 就是上游 `Icon` 构造里那句 `texture.shift(Point(0,32))` 的搬家版（见
+[IO/Components/Icon.cpp:34](../../../../../IO/Components/Icon.cpp#L34) 的删除说明）。
+它只对**origin 恰为 (0,32) 的那一类**贴图成立，而 `refresh_classic_qs_icons()` 往同一个
+数组里塞了三种来源：
+
+| 绑定类型 | 贴图来源 | 实测 origin | `+32` 抵消后键帽左上 | 结论 |
+| --- | --- | --- | --- | --- |
+| MENU / ACTION / FACE | `UIWindow.img/KeyConfig/icon/<n>` | **(0,32)** | `cell_pos` | 正确 |
+| SKILL | `SkillData::get_icon(NORMAL)` | **(0,0)**（W0 实测「Skill 全部 (0,0)」） | `cell_pos + (0,32)` | 落在格下方 32px |
+| ITEM | `ItemData::get_icon(false)` | **(-3,-1)** 一类小值 | `cell_pos + (3,33)` | 同上 |
+
+即：绑了技能/道具的快捷格，图标会掉到格子外面 —— 与 KeyConfig 是同一个「一格两种语义」。
+
+**为什么本轮不动它**：底栏快捷格还没有 oracle。原生帧
+`底部信息栏、按钮、快捷键窗.png`（1282x142）与
+`关闭快捷键向下时 快捷键处于展开状态.png`（509x86）里，快捷格显示的都是**未绑定**的动作键帽
+（Shift 攻击 / Ins 任务 / Hm 地图 …），画面里没有一颗技能或道具图标，
+所以「图标在格内的正确落位」从这两张帧上量不出来 —— 按 §4 的规矩，量不出就不改。
+待 B8 真机抓一张**已绑定技能**的底栏帧，建 `StatusBar.json` 后再按本表校准。
+跟踪：任务 **R27-B1d**。
+
