@@ -2,6 +2,8 @@
 
 #include "../UIElement.h"
 
+#include <nlnx/nx.hpp>
+
 #include "../../Graphics/Texture.h"
 #include "../../Graphics/SpecialText.h"
 #include "../Components/Button.h"
@@ -27,6 +29,7 @@ namespace ms
 		void draw(float alpha) const override;
 		void update() override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 	protected:
@@ -43,8 +46,16 @@ namespace ms
 		{
 			Point<int16_t> pos;
 			OutlinedText label;
+			OutlinedText highlight;
+			int32_t cid = -1;
+			bool is_char = false;
+			bool is_world = false;
+			bool use_pic = false;
+			nl::node icon; // 世界旗帜 / 职业图标（来自 Login.img/ViewAllChar）
 		};
 		std::vector<EntryView> entry_views;
 		int16_t selected;
+		int32_t sel_cid = -1;
+		bool sel_use_pic = false;
 	};
 }

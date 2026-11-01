@@ -18,14 +18,15 @@
 #include "UITermsOfService.h"
 
 #include "UILoginWait.h"
+#include "UISoftKey.h"
 
 #include "../UI.h"
+#include "../KeyAction.h"
 
 #include "../Components/MapleButton.h"
 
 #include "../../MapleStory.h"
 #include "../../Net/Packets/LoginPackets.h"
-
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -129,6 +130,26 @@ namespace ms
 		}
 
 		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UITermsOfService::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) { button_pressed(Buttons::CANCEL); return; }
+		if (keycode == KeyAction::Id::RETURN) { button_pressed(Buttons::OK); return; }
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+			|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "y" || t == "yes" || t == "ok" || t == "1" || t == "agree")
+					button_pressed(Buttons::OK);
+				else if (t == "n" || t == "no" || t == "0" || t == "cancel")
+					button_pressed(Buttons::CANCEL);
+			}, []() {}, "ok|cancel");
+		}
 	}
 
 	UIElement::Type UITermsOfService::get_type() const

@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIQuit.h"
 
+#include "UISoftKey.h"
+
 #include "../UI.h"
 #include "../Window.h"
 
@@ -166,6 +168,19 @@ namespace ms
 				close();
 			else if (keycode == KeyAction::Id::RETURN)
 				button_pressed(Buttons::YES);
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1")
+						button_pressed(Buttons::YES);
+					else if (t == "n" || t == "no" || t == "0" || t == "cancel")
+						button_pressed(Buttons::NO);
+				}, []() {}, "y|n");
+			}
 		}
 	}
 

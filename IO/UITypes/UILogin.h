@@ -39,6 +39,7 @@ namespace ms
 		void update() override;
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_pos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 
 		UIElement::Type get_type() const override;
 

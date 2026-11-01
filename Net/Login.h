@@ -54,6 +54,8 @@ namespace ms
 		int64_t exp;
 		int32_t mapid;
 		uint8_t portal;
+		/// 对齐参考端 CUICharDetail：this[57]!=0 才绘排行带；否则画「排行不可用」。
+		bool has_rank = false;
 		std::pair<int32_t, int8_t> rank;
 		std::pair<int32_t, int8_t> jobrank;
 	};

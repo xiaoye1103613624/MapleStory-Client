@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UICharSelect.h"
 
+#include <fstream>
+
 #include "UILoginNotice.h"
 #include "UIRaceSelect.h"
 #include "UISoftKey.h"
@@ -34,10 +36,13 @@
 
 #include "../../Audio/Audio.h"
 #include "../../Character/Job.h"
+#include "../../Graphics/Geometry.h"
 
 #include "../../Net/Packets/SelectCharPackets.h"
 
 #include <SDL3/SDL.h>
+
+#include <string>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -46,32 +51,47 @@
 namespace ms
 {
 	// MapLogin CharSelect/signboard/0：右侧三层木牌，开始/创建/删除应贴在三块横板上。
-	static constexpr Point<int16_t> CS_SIGN_MAP_POS(253, -1258);
+	static const Point<int16_t> CS_SIGN_MAP_POS(253, -1258);
 	// 木牌 133x238；按钮约 101x30；横板顶边相对木牌贴图的 Y（顶/中/底）。
-	// 9.8 曾上移致偏高；本轮下移回贴木牌横板（实测 +36）。
+	// 贴图内三板带实测：y 13..47 / 55..90 / 106..144（板3 微倾）。
+	// 按钮为 30/35/43 高，按各板视觉中心取 Y：板1 中心 30 → 15；板2 中心 72 → 55；
+	// 板3 顶边 106（旧值 142 = 板3 底边，导致「删除角色」整块沉到挂牌下方悬空，
+	// 用户实测反馈位置不对；参考端三板顶边间距实测 ≈ 48/98px ⇒ 15/63/113，
+	// 取板3 顶边 106 与板带起点一致）。
 	static constexpr int16_t CS_SIGN_BTN_OFF_X = 16;
 	// 木牌三横板：相对贴图顶边的按钮 Y（略下移使文字落在木条中带）。
-	static constexpr int16_t CS_SIGN_PLANK_Y[3] = { 18, 78, 142 };
+	static constexpr int16_t CS_SIGN_PLANK_Y[3] = { 15, 55, 106 };
 
 	// BeiDou CharSelect 无 pos/detailPos 节点；详情标签相对 charInfo1 面板（183×151）。
 	// 对齐 charInfo1 位图内「职业/等级/人气/四维」空槽（非 Journey 旧版单列）。
 	//
-	// 偏移直接取自参考端 CUICharDetail::Draw(sub_602ADC) 的文字绘制坐标：
-	//   职业 (46,1)   等级 (46,19)  人气 (136,19)
-	//   力量 (46,37)  智力 (136,37)
-	//   敏捷 (46,55)  运气 (136,55)
-	// 面板空槽行：y 0-16 / 18-34 / 36-52 / 54-70；值槽 x 38-90、127-180。
-	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 1);
-	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 19);
-	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 19);
-	static constexpr Point<int16_t> CS_DETAIL_STR(46, 37);
-	static constexpr Point<int16_t> CS_DETAIL_INT(136, 37);
-	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 55);
-	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 55);
+	// 值行坐标 = charInfo1 纹理相对坐标（纹理左上角经 get_origin() 补偿后
+	// 精确落在 detail_pos）。2026-10-29 对本端渲染逐像素实测：
+	// 烘焙标签行顶 texture-y = 3/21/39/57（pitch 18），值行须与标签同行；
+	// 分隔行「服务器排行榜」texture-y=82，底部烘焙「排行榜」texture-y=112，
+	// 排行文本取 93（居于两者之间、与参考端相对布局一致）。
+	//   职业 (46,3)   等级 (46,21)  人气 (136,21)
+	//   力量 (46,39)  智力 (136,39)
+	//   敏捷 (46,57)  运气 (136,57)
+	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 3);
+	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 21);
+	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 21);
+	static constexpr Point<int16_t> CS_DETAIL_STR(46, 39);
+	static constexpr Point<int16_t> CS_DETAIL_INT(136, 39);
+	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 57);
+	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 57);
 	// 参考端详情面板不绘制角色名（名字由角色脚下 nametag 显示）；保留默认点仅用于 NX 缺省判定。
 	static constexpr Point<int16_t> CS_DETAIL_NAME(153, 1);
-	// charInfo1 相对脚点：面板在角色左侧（对照正确端截图）。
-	static constexpr Point<int16_t> CS_CHARINFO_OFF(-240, -170);
+	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 93);
+	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 93);
+	// charInfo1（183×151）相对脚点。2026-10-24 按正确端截图（选择角色页.png）
+	// 重新实测：内容板（职业行）顶边在屏幕 (391,197)，槽 0 脚点 (485,428)
+	// ⇒ 偏移 (-94,-231)。旧值 (-93,-208) 把整板上移 23px（此前误将卷轴顶边
+	// 当作内容板顶边测量），表现为属性板偏高、与角色头部分离。
+	static constexpr Point<int16_t> CS_CHARINFO_OFF(-94, -231);
+	// 内容板在卷轴（CharSelect/scroll/2 末帧 217×193）内的偏移：卷轴顶边在屏幕
+	// ≈158，内容板顶边 197 ⇒ 纵向 39；横向居中 (217-183)/2=17。
+	static constexpr Point<int16_t> CS_SCROLL_CONTENT_OFF(17, 39);
 
 	// 角色槽：占用与空槽共用同一桥面 Y。
 	// 站位校准（依据桥面贴片像素实测，2026-09-25）：
@@ -214,19 +234,28 @@ namespace ms
 
 		charinfo = CharSelect["charInfo1"];
 
+		// 详情卷轴（展开动画）：Login.img/CharSelect/scroll/2 = 30→196→195→193 高。
+		// scroll/2 为循环动画，Animation 无法定格 → 逐帧取 Frame 手动播放。
+		if (nl::node scroll2 = CharSelect["scroll"]["2"])
+		{
+			for (const nl::node& f : scroll2)
+			{
+				Frame frame(f);
+
+				if (frame.get_dimensions().x() > 0)
+					charinfo_scroll_frames.push_back(frame);
+			}
+
+			charinfo_has_scroll = !charinfo_scroll_frames.empty();
+		}
+
 		// BeiDou：正确端使用含排行区的 charInfo1；无则退回 charInfo。
 		if (LoginBackground::get().available() && !charinfo && CharSelect["charInfo"])
 			charinfo = CharSelect["charInfo"];
 
-		// nxcache 脏 origin（如 3949）会把底板甩出屏幕；统一清零为左上角锚点。
-		// （Texture 构造已 sanitize，这里再强制一次，避免漏网。）
-		if (charinfo.is_valid())
-		{
-			Point<int16_t> o = charinfo.get_origin();
-
-			if (o.x() != 0 || o.y() != 0)
-				charinfo.shift(o);
-		}
+		// nxcache 脏 origin：不再 shift 节点（实测 shift 无效，纹理仍偏移 ~7px），
+		// 改为绘制时按 get_origin() 补偿（见 draw()：detail_pos + get_origin()），
+		// 使底板左上角精确落在 detail_pos，值行常量得以用纹理相对坐标。
 
 		nl::node charSlot = CharSelect["charSlot"];
 		charslot = charSlot["0"];
@@ -302,48 +331,17 @@ namespace ms
 		avatarRB = avatarPos["avatarRB"];
 		avatarSpace = avatarPos["avatarSpace"];
 
-		Point<int16_t> screen_adj = Point<int16_t>(0, 3);
-
-		nl::node detailPos = pos["detailPos"];
-		jobPos = detailPos["jobPos"];
-		levelPos = detailPos["levelPos"];
-		famePos = detailPos["famePos"];
-		namePos = detailPos["namePos"];
-		statDEXPos = detailPos["statDEXPos"];
-		statINTPos = detailPos["statINTPos"];
-		statLUKPos = detailPos["statLUKPos"];
-		statSTRPos = detailPos["statSTRPos"];
-
-		// BeiDou 无 CharSelect/pos：NX 读到 (0,0) 会叠画；改用原生详情标签表。
-		const bool missing_detail = !detailPos || (!jobPos.x() && !jobPos.y() && !levelPos.x() && !namePos.x());
-
-		if (missing_detail)
-		{
-			levelPos = CS_DETAIL_LEVEL;
-			famePos = CS_DETAIL_FAME;
-			namePos = CS_DETAIL_NAME;
-			jobPos = CS_DETAIL_JOB;
-			statSTRPos = CS_DETAIL_STR;
-			statDEXPos = CS_DETAIL_DEX;
-			statINTPos = CS_DETAIL_INT;
-			statLUKPos = CS_DETAIL_LUK;
-		}
-		else
-		{
-			jobPos -= screen_adj;
-
-			// 旧 NX 可能没有 famePos；缺失时回退到参考端常量，避免绘制在 (0,0)。
-			if (!famePos.x() && !famePos.y())
-				famePos = CS_DETAIL_FAME;
-			else
-				famePos -= screen_adj;
-
-			namePos -= Point<int16_t>(0, 5);
-			statDEXPos -= screen_adj;
-			statINTPos -= screen_adj;
-			statLUKPos -= screen_adj;
-			statSTRPos -= screen_adj;
-		}
+		// BeiDou 的 CharSelect/pos/detailPos 节点坐标不可靠（实测会错位：职业/等级
+		// 值位置跑偏、人气值串到等级位），一律改用参考端 CUICharDetail::Draw
+		// (sub_602ADC) 实测的标签坐标表，确保与正确端截图一致。
+		levelPos = CS_DETAIL_LEVEL;
+		famePos = CS_DETAIL_FAME;
+		namePos = CS_DETAIL_NAME;
+		jobPos = CS_DETAIL_JOB;
+		statSTRPos = CS_DETAIL_STR;
+		statDEXPos = CS_DETAIL_DEX;
+		statINTPos = CS_DETAIL_INT;
+		statLUKPos = CS_DETAIL_LUK;
 
 		// 命中区覆盖整页 3 槽（桥面统一 Y）；高度用占用槽外框。
 		for (size_t i = 0; i < PAGESIZE; i++)
@@ -357,13 +355,30 @@ namespace ms
 			buttons[Buttons::BtResetPIC]->set_active(false);
 		}
 
-		levelset = Charset(CharSelect["lv"], Charset::Alignment::CENTER);
+		// BeiDou 的 CharSelect 无 lv/pageNew 节点（实测 NX 树：BtDelete/BtNew/
+		// BtSelect/charInfo*/effect/nameTag/pageL/pageR/scroll/adventure/aran/
+		// knight），逐级回退：lv → pageNew/number → StatusBar.img/number。
+		// 无效的 Charset 会导致等级数字完全不绘制。
+		nl::node lvset_node = CharSelect["lv"];
+
+		if (!lvset_node)
+			lvset_node = pageNew["number"];
+
+		if (!lvset_node)
+			lvset_node = nl::nx::UI["StatusBar.img"]["number"];
+
+		levelset = Charset(lvset_node, Charset::Alignment::LEFT);
 		namelabel = OutlinedText(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, Color::Name::IRISHCOFFEE);
 
 		// 参考端 sub_602ADC 在 (46/136, 1/19/37/55) 以左对齐绘制文字；
 		// charInfo1 值槽 x38-90、127-180，左对齐后数字落在槽内左侧。
+		// 参考端属性值为纯深棕无描边；原 WHITE 描边在米色面板把字"洗白/发蓝"，
+		// 改为与填充同色 TOBACCOBROWN 即等效无描边（item 3 颜色修复）。
 		for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
-			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::TOBACCOBROWN);
+			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+
+		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+		ranklabel.change_text("排行不可用");
 
 		for (CharEntry& entry : characters)
 		{
@@ -462,27 +477,61 @@ namespace ms
 				{
 					selectedslot_effect[0].draw(charpos + CS_FX_BODY, inter);
 
-					// BeiDou：charInfo1 底板 + 数值；先画底板保证背景可见。
+					// BeiDou：charInfo1 底板 + 数值；先垫不透明底再画贴图，避免透明缝透出森林。
 					if (charinfo.is_valid())
 					{
 						Point<int16_t> detail_pos = charpos + CS_CHARINFO_OFF;
-						charinfo.draw(detail_pos);
 
-						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-						levelset.draw(levelstr, detail_pos + levelPos);
-
-						// 参考端 CUICharDetail::Draw 只绘制职业/等级/人气/四维；
-						// 角色名由角色脚下 nametag 显示，详情面板内不再重复绘制。
-						for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
+						// 卷轴：仅展开动画期间绘制（2026-10-29 参考图逐像素取证：
+						// 静止状态原生只画 charInfo1 内容板，四周无卷轴外露——
+						// 面板上方是书页底+气泡，左右是蘑菇屋/天空）。旧实现把
+						// scroll_frame 常驻画在内容板后方且上露 39px，即用户所见
+						// 「属性框相对卷轴偏下」。动画播完定格末帧后不再绘制。
+						if (charinfo_has_scroll)
 						{
-							Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
-							infolabels[li].draw(labelpos);
+							const Frame& scroll_frame = charinfo_scroll_frames[
+								static_cast<size_t>(charinfo_scroll_playing ? charinfo_scroll_frame : charinfo_scroll_frames.size() - 1)
+							];
+
+							scroll_frame.draw(DrawArgument(detail_pos - CS_SCROLL_CONTENT_OFF));
+						}
+
+						if (!charinfo_has_scroll || !charinfo_scroll_playing)
+						{
+							Point<int16_t> ci_dim = charinfo.get_dimensions();
+							// nxcache 脏 origin 补偿：纹理实际渲染位 = 参数 - origin，
+							// 加回 origin 使底板左上角精确落在 detail_pos（值行常量
+							// 由此可用纯纹理相对坐标，消除 ~7-11px 系统偏差）。
+							Point<int16_t> ci_pos = detail_pos + charinfo.get_origin();
+							ColorBox(ci_dim.x(), ci_dim.y(), Color::Name::CREAM, 1.0f).draw(ci_pos);
+							charinfo.draw(ci_pos);
+
+							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
+							// 职业/等级原本用 StatusBar.img/number 的 Charset 数字精灵，
+							// 该节点在 BeiDou 部署数据里缺失/无效 → 白字画在米色面板不可见。
+							// 改与同面板其他数值一致用 OutlinedText 文字绘制（参考端深棕文字）。
+							OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+							lvltext.change_text(levelstr);
+							lvltext.draw(detail_pos + levelPos);
+
+							// 参考端 CUICharDetail::Draw 只绘制职业/等级/人气/四维；
+							// 角色名由角色脚下 nametag 显示，详情面板内不再重复绘制。
+							for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
+							{
+								Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
+								infolabels[li].draw(labelpos);
+							}
+
+							// 排行带：有 rank → 名次；否则「排行不可用」（对齐正确端截图 / sub_602ADC）。
+							ranklabel.draw(detail_pos + (character_stats.has_rank ? CS_DETAIL_RANK : CS_DETAIL_RANK_NA));
 						}
 					}
 					else if (LoginBackground::get().available())
 					{
 						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-						levelset.draw(levelstr, charpos + Point<int16_t>(0, -72));
+						OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+						lvltext.change_text(levelstr);
+						lvltext.draw(charpos + Point<int16_t>(0, -72));
 					}
 				}
 			}
@@ -571,32 +620,79 @@ namespace ms
 
 		emptyslot_effect.update();
 
+		// 详情卷轴展开推进（手动帧计时）：播完定格末帧，不再循环
+		// （scroll/2 是循环动画，Animation::update 永不 true → 旧实现闪烁）。
+		if (charinfo_scroll_playing)
+		{
+			charinfo_scroll_elapsed = static_cast<uint16_t>(charinfo_scroll_elapsed + Constants::TIMESTEP);
+
+			while (charinfo_scroll_playing)
+			{
+				uint16_t delay = charinfo_scroll_frames[static_cast<size_t>(charinfo_scroll_frame)].get_delay();
+
+				if (charinfo_scroll_elapsed < delay)
+					break;
+
+				charinfo_scroll_elapsed = static_cast<uint16_t>(charinfo_scroll_elapsed - delay);
+				charinfo_scroll_frame++;
+
+				if (charinfo_scroll_frame >= static_cast<int16_t>(charinfo_scroll_frames.size()))
+				{
+					charinfo_scroll_frame = static_cast<int16_t>(charinfo_scroll_frames.size() - 1);
+					charinfo_scroll_playing = false;
+					break;
+				}
+			}
+		}
+
 		if (burning_character)
 			burning_notice.update();
 	}
 
 	void UICharSelect::doubleclick(Point<int16_t> cursorpos)
 	{
-		// Slot buttons are page-local (CHARACTER_SLOT0 .. +PAGESIZE-1).
-		// selected_character is absolute; convert to the on-page slot index.
-		if (selected_character < selected_page * PAGESIZE)
-			return;
-
-		uint16_t slot = static_cast<uint16_t>(selected_character - selected_page * PAGESIZE);
-
-		if (slot >= PAGESIZE)
-			return;
-
-		uint16_t button_index = Buttons::CHARACTER_SLOT0 + slot;
-		auto& btit = buttons[button_index];
-
-		// 选中后槽位常为 MOUSEOVER，双击第二下若要求 NORMAL 会永远进不了游戏。
-		if (btit && btit->is_active() && btit->bounds(position).contains(cursorpos))
+		// 双击任意角色槽位：先选中该槽位（若尚未选中），再走「开始游戏」路径。
+		// 旧实现只认「当前已选中槽位」的按钮状态，双击另一个角色时无效果
+		// （用户实测反馈「双击角色不能直接进入游戏」）。
+		for (uint16_t slot = 0; slot < PAGESIZE; slot++)
 		{
-			Button::State st = btit->get_state();
+			uint16_t button_index = Buttons::CHARACTER_SLOT0 + slot;
+			auto& btit = buttons[button_index];
 
-			if (st == Button::State::NORMAL || st == Button::State::MOUSEOVER || st == Button::State::PRESSED)
-				button_pressed(Buttons::BtSelect);
+			// 命中判定：优先 AreaButton（与单击一致），兜底用覆盖整身的命中框。
+			// 角色以脚点 charpos 绘制、身体在脚点上方，而 AreaButton 框在脚点下方
+			// 空地 → 点角色身体会漏掉 AreaButton，故用大框覆盖头到脚，确保双击
+			// 「点角色」必命中（无论角色是脚锚点还是顶锚点）。
+			bool hit = btit && btit->is_active()
+				&& btit->bounds(position).contains(cursorpos);
+
+			if (!hit)
+			{
+				Point<int16_t> charpos = position + get_character_slot_pos(slot, true);
+				Rectangle<int16_t> body_rect(
+					charpos.x() - 25, charpos.y() - 220, charpos.x() + 158, charpos.y() + 30);
+
+				hit = body_rect.contains(cursorpos);
+			}
+
+			if (hit)
+			{
+				int16_t abs_slot = static_cast<int16_t>(selected_page * PAGESIZE + slot);
+
+				if (abs_slot < characters_count)
+				{
+					if (selected_character != abs_slot)
+					{
+						selected_character = abs_slot;
+						update_selected_character();
+						update_buttons();
+					}
+
+					button_pressed(Buttons::BtSelect);
+				}
+
+				return;
+			}
 		}
 	}
 
@@ -790,6 +886,27 @@ namespace ms
 							else
 								button_pressed(Buttons::BtPageR);
 						}
+					}
+					else if (keycode == 'S' || keycode == 's' || keycode == 'N' || keycode == 'n')
+					{
+						UI::get().emplace<UISoftKey>([this](const std::string& s) {
+							try {
+								int idx = std::stoi(s);
+								if (idx < 0 || idx >= characters_count) return;
+								button_pressed(static_cast<uint16_t>(idx + Buttons::CHARACTER_SLOT0));
+								LOG(LOG_DEBUG, "UICharSelect: SoftKey slot=" << idx);
+							} catch (...) {}
+						}, []() {}, "Char slot #");
+					}
+					else if (keycode == 'C' || keycode == 'c')
+					{
+						button_pressed(Buttons::BtNew);
+						LOG(LOG_DEBUG, "UICharSelect: SoftKey create");
+					}
+					else if (keycode == 'D' || keycode == 'd')
+					{
+						button_pressed(Buttons::BtDelete);
+						LOG(LOG_DEBUG, "UICharSelect: SoftKey delete");
 					}
 				}
 			}
@@ -1143,6 +1260,18 @@ namespace ms
 	{
 		Sound(Sound::Name::CHARSELECT).play();
 
+		// 详情卷轴展开（参考端选中角色后卷轴自顶部展开）。
+		// 仅在选中项变化时重播：同一角色的重复调用（如 Charlist 重发触发
+		// post_add_character）不再重置动画，否则面板会一直闪烁（用户实测反馈）。
+		const int16_t detail_key = static_cast<int16_t>(selected_page * PAGESIZE + selected_character);
+		if (charinfo_has_scroll && detail_key != last_detail_key)
+		{
+			last_detail_key = detail_key;
+			charinfo_scroll_frame = 0;
+			charinfo_scroll_elapsed = 0;
+			charinfo_scroll_playing = true;
+		}
+
 		if (charlooks.size() > selected_character)
 		{
 			charlooks[selected_character].set_stance(Stance::Id::WALK1);
@@ -1154,6 +1283,20 @@ namespace ms
 
 			for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
 				infolabels[i].change_text(get_infolabel(i, character_stats));
+
+			if (character_stats.has_rank)
+			{
+				std::string rank_txt = std::to_string(character_stats.rank.first);
+				if (character_stats.rank.second == '+')
+					rank_txt += " up";
+				else if (character_stats.rank.second == '-')
+					rank_txt += " down";
+				ranklabel.change_text(rank_txt);
+			}
+			else
+			{
+				ranklabel.change_text("排行不可用");
+			}
 		}
 	}
 

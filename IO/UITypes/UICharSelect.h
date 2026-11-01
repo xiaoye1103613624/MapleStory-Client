@@ -123,6 +123,17 @@ namespace ms
 		Text burning_count;
 		std::vector<Sprite> world_sprites;
 		Texture charinfo;
+	/// 详情卷轴：选中角色后 scroll/2 展开（217x30→193），内容板(charInfo1)绘于卷内。
+	/// scroll/2 是循环动画（Animation::update 永不返回 true），旧实现
+	/// charinfo_scroll_playing 永真 → 卷轴无限循环+内容板永不绘制（闪烁）。
+	/// 改为手动帧播放：播完定格末帧（完全展开的卷轴）。
+	std::vector<Frame> charinfo_scroll_frames;
+	int16_t charinfo_scroll_frame = 0;
+	uint16_t charinfo_scroll_elapsed = 0;
+	bool charinfo_scroll_playing = false;
+	bool charinfo_has_scroll = false;
+	/// 上次播放展开动画的选中项（页*PAGESIZE+槽位），用于去重重播。
+	int16_t last_detail_key = -1;
 		Point<int16_t> avatarLT;
 		Point<int16_t> avatarRB;
 		Point<int16_t> avatarSpace;
@@ -173,5 +184,7 @@ namespace ms
 		};
 
 		OutlinedText infolabels[UICharSelect::InfoLabel::NUM_LABELS];
+		/// 选中角色详情排行带（有排行绘名次，否则「排行不可用」）。
+		OutlinedText ranklabel;
 	};
 }

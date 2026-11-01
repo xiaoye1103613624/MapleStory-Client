@@ -44,8 +44,9 @@ namespace ms
 		if (step == 5)
 			step = 1;
 
+		// step0：登录告示牌锚 X=137；step1+：选频木牌锚 X=28（正确截图构图）。
+		// 二者 X 不同是地图焦点切换所需；时长仍按参考端 300*|Δ|+500。
 		if (step == 0)
-			// 登录页沿用既有锚点：告示牌中心对齐书本开口。
 			return { 137.0, -20.0 };
 
 		return { 28.0, static_cast<double>(step_height(step)) };

@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../UIElement.h"
+#include "../../Graphics/Text.h"
 
 namespace ms
 {
@@ -116,6 +117,7 @@ namespace ms
 
 		UIQuitConfirm();
 
+		void draw(float alpha) const override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		void update_screen(int16_t new_width, int16_t new_height) override;
 
@@ -130,6 +132,10 @@ namespace ms
 			BT_OK,
 			BT_CANCEL
 		};
+
+		/// 退出确认文案（locale：login.quit_confirm）；不再依赖 WZ 英文字图。
+		Text confirm_text;
+		Point<int16_t> text_pos;
 	};
 
 	class UILoginNotice : public UIElement

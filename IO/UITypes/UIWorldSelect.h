@@ -54,8 +54,7 @@ namespace ms
 
 		void draw_world();
 		void add_world(World world);
-		/// 重连场景服务端会重新下发完整世界列表；在解析前清空旧条目，
-		/// 避免 add_world 仅追加导致世界选择页出现重复世界。
+		/// 清空世界列表（重连 / 新一轮 SERVERLIST 开始时由 add_world 自动调用）。
 		void clear_worlds();
 		void change_world(World selectedWorld);
 		void remove_selected();
@@ -86,6 +85,8 @@ namespace ms
 		/// Center used for draw/hit while slide animates (starts above rest).
 		Point<int16_t> channel_panel_visual_center() const;
 		void layout_channel_controls(Point<int16_t> panel_center);
+		/// 卷轴展开完成后激活频道/进入按钮（展开过程中按钮会悬在未展开的板上）。
+		void activate_panel_controls();
 
 		/// <summary>
 		/// 取第 index 个世界按钮（0 起）；索引越界返回 nullptr，并做**限频告警**。
@@ -171,6 +172,8 @@ namespace ms
 
 		Text version;
 		Point<int16_t> version_pos;
+		// BtViewAll：直接用 Login.img/WorldSelect/BtViewAll 真资产
+		// （NCC 0.61 vs 参考端截图；旧的本地假 PNG 覆盖 NCC 仅 0.33，已删）。
 		Texture worlds_background;
 		Texture channels_background;
 		Point<int16_t> worldsrc_pos;
@@ -190,11 +193,22 @@ namespace ms
 		float channel_slide;
 		/// 公告气球滑入进度（与 channel_slide 同拍）。
 		float notice_slide;
+		/// 频道板卷轴展开进度 0..1：0 = 仅顶部一条，1 = 完全展开（参考端展开动画）。
+		float panel_expand = 1.0f;
+		/// change_world 时记录的频道数，展开完成后由 activate_panel_controls 激活按钮。
+		uint16_t pending_channel_limit = 0;
 
 		/// Login.img/WorldSelect/scroll/0 卷轴打开动画。
 		Animation scroll_open;
 		bool scroll_playing;
 		bool scroll_has_anim;
+
+		/// 选中频道后的红圈圈选动画（channel/chSelect 0..3，100/50/50ms，
+		/// 播完定格末帧）；circle 只在 channelid 有效时显示。
+		std::vector<Frame> ch_select_frames;
+		int16_t ch_select_frame = 0;
+		uint16_t ch_select_elapsed = 0;
+		bool ch_select_playing = false;
 
 		std::vector<World> worlds;
 		std::vector<Texture> world_textures;
@@ -211,6 +225,9 @@ namespace ms
 		int16_t world_status;
 		/// 拥挤提示已弹过的世界槽位，-1 表示尚未提示；避免反复点同一世界刷屏。
 		int16_t status_notified_world;
+
+		/// draw_world 已根据当前列表定稿；下一轮 SERVERLIST 的首个世界到达时需先 clear。
+		bool world_list_finalized = false;
 
 		nl::node worldsrc;
 		nl::node worldnamesrc;

@@ -17,14 +17,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UILoginNotice.h"
 
+#include "UISoftKey.h"
+
 #include "../UI.h"
-#include "../LoginBackground.h"
 
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Graphics/Text.h"
+#include "../../Util/Locale.h"
 #include "../../Util/LoginUiAssets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+
+#include <algorithm>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -53,64 +59,28 @@ namespace ms
 		}
 
 		Texture bg_tex(backgrnd);
-		Texture text_tex(Notice["text"][message]);
-		Texture yes_tex(Notice["BtYes"]["normal"]["0"]);
 
-		// BeiDou Notice/text/* 多为不透明整板（羊皮纸+文案），再叠 backgrnd 会像「两个提示框」。
-		// 有不透明文案板时：以外框 backgrnd 定尺寸，文案板居中叠在框内；若文案板几乎铺满则只画文案板。
+		// 参考端渲染 = 羊皮纸 backgrnd(362×219，左上角烘焙蘑菇印章) + 文案板。
+		// 原生布局（上游 continued-journey 权威坐标，写死于原生客户端）：
+		//   文案板 text/N(221×109) 固定贴 (17,13)；
+		//   单按钮 BtYes(75×32) 在 (100,106)，双按钮 BtYes(70,106)/BtNo(130,106)。
+		// 旧改法把文案板水平居中 + y=68、按钮贴底计算（y≈163）——文案板盖住印章、
+		// 按钮坠到卷角上，整体错位（密码错误弹窗 UI 不对的根因）。
 		dimension = bg_tex.get_dimensions();
-		const int16_t bg_w = dimension.x();
-		const int16_t bg_h = dimension.y();
-		const int16_t text_w = text_tex.get_dimensions().x();
-		const int16_t text_h = text_tex.get_dimensions().y();
-		const int16_t btn_w = yes_tex.get_dimensions().x();
-		const int16_t btn_h = yes_tex.get_dimensions().y();
-		constexpr int16_t btn_gap = 12;
-		constexpr int16_t text_top = 16;
-		constexpr int16_t btn_bottom_pad = 24;
 
-		// BeiDou Notice/text/* ≈ 221×109 全不透明羊皮纸+文案；backgrnd/0 ≈ 362×219。
-		// 旧阈值 70%×50% 对 61%×49.8% 判失败 → 叠两层像「两个弹窗」。
-		const bool text_is_full_plate = text_w > 0 && text_h > 0
-			&& (
-				(text_w * 100 >= bg_w * 55 && text_h * 100 >= bg_h * 45)
-				|| (LoginBackground::get().available() && text_w >= 180 && text_h >= 90)
-			);
-
-		if (text_is_full_plate)
-		{
-			// 文案本身已是完整提示板：只画文案，避免双羊皮纸。
-			dimension = text_tex.get_dimensions();
-			sprites.emplace_back(Notice["text"][message]);
-		}
-		else
-		{
-			const int16_t text_x = static_cast<int16_t>((bg_w - text_w) / 2);
-			sprites.emplace_back(backgrnd);
-			sprites.emplace_back(Notice["text"][message], Point<int16_t>(text_x, text_top));
-		}
-
-		const int16_t panel_w = dimension.x();
-		const int16_t panel_h = dimension.y();
-		const int16_t btn_y = static_cast<int16_t>(panel_h - btn_h - btn_bottom_pad);
+		sprites.emplace_back(backgrnd);
+		sprites.emplace_back(Notice["text"][message], Point<int16_t>(17, 13));
 
 		if (message == Message::DELETE_CONFIRMATION || message == Message::CASH_ITEMS_CONFIRM_DELETION)
 		{
 			multiple = true;
 
-			const int16_t pair_w = static_cast<int16_t>(btn_w + btn_gap + btn_w);
-			const int16_t btn_x0 = static_cast<int16_t>((panel_w - pair_w) / 2);
-
-			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(btn_x0, btn_y));
-			buttons[Buttons::NO] = std::make_unique<MapleButton>(
-				Notice["BtNo"],
-				Point<int16_t>(static_cast<int16_t>(btn_x0 + btn_w + btn_gap), btn_y)
-			);
+			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(70, 106));
+			buttons[Buttons::NO] = std::make_unique<MapleButton>(Notice["BtNo"], Point<int16_t>(130, 106));
 		}
 		else
 		{
-			const int16_t btn_x = static_cast<int16_t>((panel_w - btn_w) / 2);
-			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(btn_x, btn_y));
+			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(100, 106));
 		}
 
 		center_on_screen();
@@ -142,6 +112,19 @@ namespace ms
 				okhandler();
 				deactivate();
 			}
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1")
+						button_pressed(Buttons::YES);
+					else if (t == "n" || t == "no" || t == "0")
+						button_pressed(Buttons::NO);
+				}, []() {}, "y|n");
+			}
 		}
 	}
 
@@ -166,41 +149,52 @@ namespace ms
 	{
 		nl::node notice = nl::nx::UI["Login.img"]["Notice"];
 		nl::node backgrnd = notice["backgrnd"]["0"];
-		nl::node text_node = notice["text"][UILoginNotice::Message::CONFIRM_EXIT];
 		nl::node bt_yes = notice["BtYes"];
 		nl::node bt_no = notice["BtNo"];
 
 		Texture bg_tex(backgrnd);
-		Texture text_tex(text_node);
 		Texture yes_tex(bt_yes["normal"]["0"]);
-		Texture no_tex(bt_no["normal"]["0"]);
 
 		dimension = bg_tex.get_dimensions();
 		const int16_t bg_w = dimension.x();
 		const int16_t bg_h = dimension.y();
-		const int16_t text_w = text_tex.get_dimensions().x();
-		const int16_t btn_w = yes_tex.get_dimensions().x();
-		const int16_t btn_h = yes_tex.get_dimensions().y();
-		constexpr int16_t btn_gap = 12;
-		constexpr int16_t text_top = 16;
-		constexpr int16_t btn_bottom_pad = 24;
 
-		// 相对羊皮纸居中：印章已烘焙在底图左侧，文字/按钮按底板宽高排布。
-		const int16_t text_x = static_cast<int16_t>((bg_w - text_w) / 2);
-		const int16_t pair_w = static_cast<int16_t>(btn_w + btn_gap + btn_w);
-		const int16_t btn_x0 = static_cast<int16_t>((bg_w - pair_w) / 2);
-		const int16_t btn_y = static_cast<int16_t>(bg_h - btn_h - btn_bottom_pad);
+		// 居中布局（用户反馈：文字与按钮偏左下）。板 362x219，
+		// BtYes/BtNo 各 75x32——旧坐标 (68,106)/(129,106) 还互相重叠 14px。
+		constexpr int16_t btn_w = 75;
+		constexpr int16_t btn_gap = 13;
+		constexpr int16_t btn_y = 122;
+		const int16_t btn_pair_x = static_cast<int16_t>((bg_w - btn_w * 2 - btn_gap) / 2);
 
-		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(text_node, Point<int16_t>(text_x, text_top));
-
-		buttons[Buttons::BT_OK] = std::make_unique<MapleButton>(bt_yes, Point<int16_t>(btn_x0, btn_y));
-		buttons[Buttons::BT_CANCEL] = std::make_unique<MapleButton>(
-			bt_no,
-			Point<int16_t>(static_cast<int16_t>(btn_x0 + btn_w + btn_gap), btn_y)
+		confirm_text = Text(
+			Text::Font::A12M,
+			Text::Alignment::CENTER,
+			Color::Name::DARKGREY,
+			Locale::text("login.quit_confirm"),
+			300
 		);
 
+		// 文案水平居中于整板、略高于中线，给下方按钮留空间。
+		const int16_t text_h = confirm_text.height();
+		text_pos = Point<int16_t>(
+			static_cast<int16_t>(bg_w / 2),
+			static_cast<int16_t>((bg_h - text_h) / 2 - 22)
+		);
+
+		sprites.emplace_back(backgrnd);
+
+		buttons[Buttons::BT_OK] = std::make_unique<MapleButton>(
+			bt_yes, Point<int16_t>(btn_pair_x, btn_y));
+		buttons[Buttons::BT_CANCEL] = std::make_unique<MapleButton>(
+			bt_no, Point<int16_t>(static_cast<int16_t>(btn_pair_x + btn_w + btn_gap), btn_y));
+
 		center_on_screen();
+	}
+
+	void UIQuitConfirm::draw(float alpha) const
+	{
+		UIElement::draw(alpha);
+		confirm_text.draw(position + text_pos);
 	}
 
 	void UIQuitConfirm::update_screen(int16_t, int16_t)
@@ -220,6 +214,19 @@ namespace ms
 			{
 				UI::get().quit();
 				deactivate();
+			}
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1" || t == "quit")
+						button_pressed(BT_OK);
+					else if (t == "n" || t == "no" || t == "0" || t == "cancel")
+						deactivate();
+				}, []() {}, "quit|cancel");
 			}
 		}
 	}
@@ -331,6 +338,19 @@ namespace ms
 				deactivate();
 			else if (keycode == KeyAction::Id::RETURN)
 				button_pressed(Buttons::OK);
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1")
+						button_pressed(Buttons::OK);
+					else if (t == "n" || t == "no" || t == "0")
+						deactivate();
+				}, []() {}, "y|n");
+			}
 		}
 	}
 
@@ -385,9 +405,25 @@ namespace ms
 
 	void UIKeySelect::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && !login)
-			if (escape || keycode == KeyAction::Id::RETURN)
-				deactivate();
+		if (!pressed) return;
+		if (!login && (escape || keycode == KeyAction::Id::RETURN))
+		{
+			deactivate();
+			return;
+		}
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+			|| keycode == 'A' || keycode == 'a' || keycode == 'B' || keycode == 'b')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "a" || t == "typea" || t == "0" || t == "default")
+					button_pressed(Buttons::TYPEA);
+				else if (t == "b" || t == "typeb" || t == "1" || t == "alternate")
+					button_pressed(Buttons::TYPEB);
+			}, []() {}, "a|b");
+		}
 	}
 
 	UIElement::Type UIKeySelect::get_type() const
@@ -472,6 +508,17 @@ namespace ms
 				deactivate();
 
 				UI::get().remove(UIElement::Type::LOGINNOTICE);
+			}
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1")
+						confirm();
+				}, []() {}, "y|ok");
 			}
 		}
 	}

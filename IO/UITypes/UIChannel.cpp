@@ -16,13 +16,18 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChannel.h"
+#include "UISoftKey.h"
 
+#include "../UI.h"
 #include "../KeyAction.h"
 
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Configuration.h"
+#include "../../Net/Packets/GameplayPackets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -33,10 +38,12 @@ namespace ms
 {
 	UIChannel::UIChannel() : UIDragElement<PosCHANNEL>()
 	{
-		uint8_t selected_world = 1; // TODO: Need to get current world user is on
-		current_channel = 9; // TODO: Need to get current channel user is on
+		uint8_t selected_world = Configuration::get().get_worldid();
+		current_channel = Configuration::get().get_channelid();
 		selected_channel = current_channel;
-		channel_count = 20; // TODO: Need to get total number of channels on world
+		// 频道总数尚无会话字段；至少覆盖当前频道，默认 20
+		channel_count = (current_channel >= 20) ? static_cast<uint8_t>(current_channel + 1) : 20;
+		(void)selected_world;
 
 		nl::node Channel = UiAssetResolve::window("Channel");
 
@@ -222,6 +229,26 @@ namespace ms
 
 				update_selected_channel_position();
 			}
+			else if (keycode == 'C' || keycode == 'c')
+			{
+				// SoftKey 频道号（1-based 显示 → 0-based packet）
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					try {
+						int ch = std::stoi(s);
+						if (ch >= 1 && ch <= static_cast<int>(channel_count)) {
+							selected_channel = ch - 1;
+							update_selected_channel_position();
+							change_channel();
+							LOG(LOG_DEBUG, "UIChannel: SoftKey ch=" << ch);
+						}
+					} catch (...) {}
+				}, []() {}, "Channel 1-N");
+			}
+			else if (keycode == 'G' || keycode == 'g' || keycode == 13)
+			{
+				change_channel();
+				LOG(LOG_DEBUG, "UIChannel: Go ch=" << (selected_channel + 1));
+			}
 		}
 	}
 
@@ -319,7 +346,7 @@ namespace ms
 	{
 		deactivate();
 
-		current_channel = 9; // TODO: Need to get current channel user is on
+		current_channel = Configuration::get().get_channelid();
 		selected_channel = current_channel;
 		selected_channel_x = current_channel_x;
 		selected_channel_y = current_channel_y;
@@ -327,8 +354,14 @@ namespace ms
 
 	void UIChannel::change_channel()
 	{
-		// TODO: Send packet to change channel?
-		cancel();
+		if (selected_channel == current_channel)
+		{
+			cancel();
+			return;
+		}
+		ChangeChannelPacket(static_cast<uint8_t>(selected_channel)).dispatch();
+		LOG(LOG_DEBUG, "UIChannel: ChangeChannel ch=" << static_cast<int>(selected_channel));
+		deactivate();
 	}
 
 	void UIChannel::update_selected_channel_position()

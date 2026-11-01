@@ -12,18 +12,23 @@
 //	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
 //	GNU Affero General Public License for more details.							//
 //																				//
-//	You should have received a copy of the GNU Affero General Public License	//
+//	You should have received a copy of the GNU Affero General Public License		//
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UILoginWait.h"
+
+#include "UISoftKey.h"
 
 #include "../UI.h"
 #include "../LoginBackground.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Net/Session.h"
+#include "../../Graphics/Texture.h"
+#include "../../Constants.h"
 
 #include <algorithm>
+#include <string>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -31,9 +36,41 @@
 
 namespace ms
 {
-	// BeiDou Loading/backgrnd(282×144) 内白色槽实测：LOADING 字形约 (53,98)-(94,105)，
-	// 槽区约 x46 起；bar 帧 109×8，原点脏值由 Texture sanitize 清零。
-	static constexpr Point<int16_t> kBeiDouBarOff(46, 98);
+	namespace
+	{
+		// 选一个真正「多帧」的动效节点：bar / circle / ani / effect。
+		nl::node pick_loading_anim(nl::node Loading)
+		{
+			nl::node bar = Loading["bar"];
+
+			if (bar)
+			{
+				// bar 本身是帧容器，或 bar/0,1,2…
+				if (bar["0"] || bar["1"] || bar.data_type() == nl::node::type::bitmap)
+					return bar;
+			}
+
+			nl::node circle = Loading["circle"];
+
+			if (circle)
+				return circle;
+
+			nl::node ani = Loading["ani"] ? Loading["ani"] : Loading["effect"];
+
+			if (ani)
+				return ani;
+
+			return bar;
+		}
+
+		// 帧延时：WZ 缺省 100ms（与 Animation::read_frame_timing 一致）。
+		uint16_t frame_delay(nl::node src)
+		{
+			uint16_t delay = src["delay"];
+
+			return delay == 0 ? 100 : delay;
+		}
+	}
 
 	UILoginWait::UILoginWait() : UILoginWait([]() {}) {}
 
@@ -46,13 +83,11 @@ namespace ms
 
 		Point<int16_t> content_origin(0, 0);
 		Point<int16_t> load_dim(0, 0);
-		Point<int16_t> progress_pos(0, 0);
-		bool have_progress = false;
 
 		if (bedou && load_bg)
 		{
-			// Loading/backgrnd 已是完整卷轴（文案+LOADING 槽）。再叠 Notice/backgrnd
-			// 会变成「两个重叠弹窗」。
+			// Loading/backgrnd 已是完整卷轴；勿再叠 Notice/backgrnd。
+			// 保持原尺寸居中（参考端即为窗口内居中的卷轴弹窗，非全屏）。
 			sprites.emplace_back(load_bg);
 			load_dim = Texture(load_bg).get_dimensions();
 			dimension = load_dim;
@@ -84,28 +119,64 @@ namespace ms
 			}
 		}
 
-		nl::node progress = Loading["bar"] ? Loading["bar"] : Loading["circle"];
+		// 进度条：bar/0..10 共 11 帧，每帧多点亮一格（0%..100%）。
+		// 位置实测（tools/_wz.py 解码 backgrnd + 像素扫描）：
+		//   白槽区 y=90..113（中心 101），LOADING 字形 x=51..95（基线中心 y≈101）；
+		//   条 109×8 紧随 LOADING 右侧、与文字同基线居中：x=95+4=99，y=101-4=97。
+		static const Point<int16_t> kBeiDouBarOff(99, 97);
+
+		nl::node progress = pick_loading_anim(Loading);
 
 		if (progress)
 		{
-			if (load_dim.x() <= 0)
-				load_dim = load_bg ? Texture(load_bg).get_dimensions() : dimension;
+			std::vector<nl::node> frames;
 
-			if (bedou)
+			if (progress.data_type() == nl::node::type::bitmap)
 			{
-				progress_pos = content_origin + kBeiDouBarOff;
+				frames.push_back(progress);
 			}
 			else
 			{
-				constexpr int16_t bar_w = 109;
-				progress_pos = Point<int16_t>(
-					static_cast<int16_t>(content_origin.x() + std::max(0, (load_dim.x() - bar_w) / 2)),
-					static_cast<int16_t>(content_origin.y() + std::max(0, load_dim.y() - 52))
+				for (int i = 0; i < 64; ++i)
+				{
+					nl::node f = progress[std::to_string(i)];
+
+					if (!f)
+						break;
+
+					frames.push_back(f);
+				}
+			}
+
+			for (nl::node f : frames)
+			{
+				BarFrame bar_frame;
+				bar_frame.texture = Texture(f);
+				bar_frame.delay = frame_delay(f);
+				bar_frames.push_back(std::move(bar_frame));
+			}
+		}
+
+		if (!bar_frames.empty())
+		{
+			const int16_t bar_w = bar_frames.front().texture.width();
+			const int16_t bar_h = bar_frames.front().texture.height();
+
+			if (bedou)
+			{
+				bar_pos = content_origin + kBeiDouBarOff;
+			}
+			else
+			{
+				// 非 BeiDou 素材：白槽底部居中兜底。
+				bar_pos = content_origin + Point<int16_t>(
+					static_cast<int16_t>(std::max(0, (load_dim.x() - bar_w) / 2)),
+					static_cast<int16_t>(std::max(0, load_dim.y() - bar_h - 32))
 				);
 			}
 
-			sprites.emplace_back(progress, progress_pos);
-			have_progress = true;
+			for (const BarFrame& bar_frame : bar_frames)
+				fill_total = static_cast<uint16_t>(fill_total + bar_frame.delay);
 		}
 
 		nl::node bt_cancel = Loading["BtCancel"];
@@ -118,28 +189,14 @@ namespace ms
 			int16_t cancel_y;
 			if (bedou)
 			{
-				// 取消键放在卷轴下方，避免压住 LOADING / bar。
-				cancel_y = static_cast<int16_t>(load_dim.y() + 2);
-				dimension = Point<int16_t>(
-					std::max(dimension.x(), load_dim.x()),
-					static_cast<int16_t>(cancel_y + cancel_dim.y())
+				cancel_y = static_cast<int16_t>(
+					std::max(0, load_dim.y() - cancel_dim.y() - 8)
 				);
-			}
-			else if (have_progress)
-			{
-				cancel_y = static_cast<int16_t>(progress_pos.y() + 14);
-			}
-			else if (Notice["backgrnd"]["0"])
-			{
-				cancel_y = static_cast<int16_t>(content_origin.y() + load_dim.y() + 4);
+				dimension = load_dim;
 			}
 			else
 			{
-				cancel_y = static_cast<int16_t>(70);
-			}
-
-			if (!bedou)
-			{
+				cancel_y = static_cast<int16_t>(bar_pos.y() + 14);
 				const int16_t max_y = static_cast<int16_t>(
 					std::max(0, dimension.y() - cancel_dim.y() - 10));
 				if (cancel_y > max_y)
@@ -156,7 +213,7 @@ namespace ms
 		center_on_screen();
 	}
 
-	void UILoginWait::update_screen(int16_t, int16_t)
+	void UILoginWait::update_screen(int16_t newwidth, int16_t newheight)
 	{
 		center_on_screen();
 	}
@@ -166,11 +223,111 @@ namespace ms
 		return TYPE;
 	}
 
+	void UILoginWait::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) { close(); return; }
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+			|| keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "c" || t == "cancel" || t == "close" || t == "x" || t == "n")
+					close();
+			}, []() {}, "cancel");
+		}
+	}
+
+	void UILoginWait::update()
+	{
+		UIElement::update();
+
+		if (finished || bar_frames.empty())
+			return;
+
+		// 进度条按帧延时往前走；满条后停在 100%，等 begin_finish 收尾。
+		if (finish_pending)
+		{
+			// 收尾阶段：参考端满条后才切页，未满则补满到 100%。
+			if (fill_elapsed < fill_total)
+			{
+				fill_elapsed = static_cast<uint16_t>(
+					std::min<uint16_t>(fill_elapsed + Constants::TIMESTEP, fill_total)
+				);
+			}
+
+			// 服务端已响应且进度条已满 → 收尾跳转（只执行一次）。
+			if (fill_elapsed >= fill_total)
+			{
+				finished = true;
+				deactivate();
+
+				if (oncomplete)
+					oncomplete();
+			}
+		}
+		else
+		{
+			// 等待阶段：参考端 LOADING 为「循环增长」的不确定进度动画，
+			// 满条后回到 0 重新长；旧逻辑只长一次并停在 100%，服务端未响应时
+			// 表现为进度条卡住不动（用户反馈"不是循环增长，会卡一会"）。
+			uint16_t next = static_cast<uint16_t>(fill_elapsed + Constants::TIMESTEP);
+
+			if (next >= fill_total)
+				next = static_cast<uint16_t>(next - fill_total);
+
+			fill_elapsed = next;
+		}
+	}
+
+	void UILoginWait::draw(float inter) const
+	{
+		UIElement::draw(inter);
+
+		if (bar_frames.empty())
+			return;
+
+		// 帧索引 = 已播放时长落在哪一帧的延时区间内。
+		size_t idx = bar_frames.size() - 1;
+		uint16_t acc = 0;
+
+		for (size_t i = 0; i < bar_frames.size(); ++i)
+		{
+			acc = static_cast<uint16_t>(acc + bar_frames[i].delay);
+
+			if (fill_elapsed < acc)
+			{
+				idx = i;
+				break;
+			}
+		}
+
+		bar_frames[idx].texture.draw(position + bar_pos);
+	}
+
+	void UILoginWait::begin_finish(std::function<void()> oncomplete_)
+	{
+		if (finished || bar_frames.empty())
+		{
+			// 已收尾或无进度条素材：立即执行续场逻辑（退化旧行为）。
+			if (oncomplete_)
+				oncomplete_();
+
+			return;
+		}
+
+		oncomplete = std::move(oncomplete_);
+		finish_pending = true;
+	}
+
 	void UILoginWait::close()
 	{
-		// 不可在 button_pressed 栈内 remove(this)：会销毁自身后仍写按钮状态。
-		// deactivate + 恢复输入即可；UIStateLogin::send_cursor 已对失效焦点回落前台。
-		// 下次 emplace<UILoginWait> / 显式 remove 会清掉残留实例。
+		// 取消：放弃续场逻辑，立即关窗，避免满条后仍执行被取消的跳转。
+		finish_pending = false;
+		oncomplete = nullptr;
+
 		deactivate();
 		okhandler();
 	}
@@ -182,11 +339,8 @@ namespace ms
 
 	Button::State UILoginWait::button_pressed(uint16_t id)
 	{
-		// 中止本次登录握手；失败也继续关窗，避免卡在 Wait。
 		Session::get().reconnect();
-
 		close();
-
 		return Button::State::NORMAL;
 	}
 }

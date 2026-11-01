@@ -17,12 +17,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UILogin.h"
 
+#include "UIHelp.h"
 #include "UILoginNotice.h"
 #include "UILoginWait.h"
+#include "UIRegion.h"
+#include "UISoftKey.h"
 
 #include "../../Net/Session.h"
 
 #include "../UI.h"
+#include "../KeyAction.h"
 
 #include "../LoginBackground.h"
 
@@ -450,7 +454,7 @@ namespace ms
 
 		if (loginwait && loginwait->is_active())
 		{
-			// TODO: Implement login with email
+			// nexon 渠道走 LOGIN_EMAIL；北斗账号走 LOGIN
 			if (nexon)
 				LoginEmailPacket(account_text, password_text).dispatch();
 			else
@@ -566,6 +570,42 @@ namespace ms
 			return new_state;
 
 		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UILogin::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) return;
+		if (keycode == 'A' || keycode == 'a')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				account.change_text(s);
+				account.set_state(Textfield::State::NORMAL);
+				password.set_state(Textfield::State::FOCUSED);
+			}, []() {}, "Account");
+		}
+		else if (keycode == 'P' || keycode == 'p')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				password.change_text(s);
+			}, []() {}, "Password");
+		}
+		else if (keycode == 'S' || keycode == 's' || keycode == KeyAction::Id::RETURN)
+		{
+			login();
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			auto ui = UI::get().get_element<UIRegion>();
+			if (!ui) ui = UI::get().emplace<UIRegion>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'H' || keycode == 'h')
+		{
+			auto ui = UI::get().get_element<UIHelp>();
+			if (!ui) ui = UI::get().emplace<UIHelp>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
 	}
 
 	UIElement::Type UILogin::get_type() const

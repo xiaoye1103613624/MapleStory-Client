@@ -34,8 +34,12 @@
 #include "../../IO/UITypes/UIViewAllChar.h"
 
 #include "../../Configuration.h"
+#include "../../Gameplay/Stage.h"
 #include "../../IO/Window.h"
 #include "../../Util/Resource/ResourceService.h"
+
+#include <chrono>
+#include <thread>
 
 namespace ms
 {
@@ -56,6 +60,8 @@ namespace ms
 			// The packet should contain a 'reason' integer which can signify various things
 			if (int32_t reason = recv.read_int())
 			{
+				while (recv.available())
+					recv.skip_byte();
 				UI::get().remove(UIElement::Type::LOGINWAIT);
 
 				// Login unsuccessful
@@ -104,21 +110,43 @@ namespace ms
 					// Login successful
 				// The packet contains information on the account, so we initialize the account with it.
 				Account account = LoginParser::parse_account(recv);
+				while (recv.available())
+					recv.skip_byte();
 
 				Configuration::get().set_admin(account.admin);
 
-				// img：先装选角根并重建 BodyDrawInfo；期间保留 Wait 并泵消息。
-				ms::res::ResourceService::get().ensure_game_roots();
-				Window::get().poll_events();
-
-				UI::get().remove(UIElement::Type::LOGINWAIT);
-
-				if (account.female == 10)
+				// img：选角根已在启动时后台预热（prewarm_game_roots）。
+				// 这里等待其就绪；若尚未完成（预热比登录响应慢），期间持续
+				// 泵 update/draw，让 Wait 弹窗动画继续而不是冻屏。
+				// （旧行为：同步 ensure_game_roots() 冻结主循环半分钟级，
+				// 表现为「连接加载条卡住不动，过一会才动」。）
+				if (!ms::res::ResourceService::get().game_roots_ready())
 				{
-					UI::get().emplace<UIGender>(okhandler);
+					while (!ms::res::ResourceService::get().game_roots_ready())
+					{
+						Window::get().poll_events();
+						UI::get().update();
+						Window::get().begin();
+						Stage::get().draw(0.0f);
+						// UI::draw 的形参在 UI 侧是不透明度（见 MapleStory::draw 注释），
+						// 传 0 会把 Wait 弹窗整个画成透明，泵帧等于黑屏。
+						UI::get().draw(1.0f);
+						Window::get().end();
+						std::this_thread::sleep_for(std::chrono::milliseconds(15));
+					}
 				}
-				else
+
+				// 参考端 Loading 进度条走满 0→100% 后才切页；未满就拆 Wait 会
+				// 「没到 100% 就跳频道页」。这里把续场逻辑交给 Wait，由它在
+				// update() 里满条后执行（Wait 自身 deactivate，门闩看护下一帧回收）。
+				std::function<void()> oncomplete = [okhandler, account]()
 				{
+					if (account.female == 10)
+					{
+						UI::get().emplace<UIGender>(okhandler);
+						return;
+					}
+
 					// Prefer a non-empty server account name; never wipe a typed ID
 					// that UILogin already persisted when "save account" is on.
 					if (Setting<SaveLogin>::get().load() && !account.name.empty())
@@ -129,7 +157,12 @@ namespace ms
 
 					// Request the list of worlds and channels online
 					ServerRequestPacket().dispatch();
-				}
+				};
+
+				if (loginwait && loginwait->is_active())
+					loginwait->begin_finish(std::move(oncomplete));
+				else
+					oncomplete();
 			}
 		}
 	}
@@ -146,6 +179,8 @@ namespace ms
 		// 客户端语义：1 提示人口过多（UILoginNotice::POPULATION_TOO_HIGH）仍可进入，
 		// 2 额外阻止进入该世界；交由 UIWorldSelect 统一处理。
 		const int16_t status = recv.read_short();
+		while (recv.available())
+			recv.skip_byte();
 
 		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
 			worldselect->set_server_status(status);
@@ -158,6 +193,8 @@ namespace ms
 		// The packet should contain a 'reason' integer which can signify various things
 		if (int16_t reason = recv.read_short())
 		{
+			while (recv.available())
+				recv.skip_byte();
 			// 选角失败：复位请求门闩，允许玩家重新选择
 			if (auto charselect = UI::get().get_element<UICharSelect>())
 				charselect->clear_pending();
@@ -201,6 +238,11 @@ namespace ms
 				}
 			}
 		}
+		else
+		{
+			while (recv.available())
+				recv.skip_byte();
+		}
 	}
 
 	void ServerlistHandler::handle(InPacket& recv) const
@@ -210,28 +252,25 @@ namespace ms
 		if (!worldselect)
 			worldselect = UI::get().emplace<UIWorldSelect>();
 
-		// 重连场景服务端重发完整世界列表：先清空旧条目，避免 add_world 仅追加
-		// 导致世界选择页出现重复世界（首次登录时 worlds 为空，clear 无副作用）。
-		worldselect->clear_worlds();
-
-		// Parse all worlds
+		// BeiDou/s9：每个世界单独一个 SERVERLIST 包，最后另发 0xFF 结束包。
+		// 旧逻辑在每个包开头 clear_worlds()，结束包会把刚加的世界清光 → 木牌全是空 e。
+		// 清列表改由 add_world：若上一轮已 draw_world 定稿，再来新世界时自动清空。
 		while (recv.available())
 		{
 			World world = LoginParser::parse_world(recv);
 
 			if (world.id != -1)
 			{
+				LOG(LOG_INFO, "[Serverlist] world id=" << static_cast<int>(world.id)
+					<< " name=" << world.name
+					<< " channels=" << static_cast<int>(world.channel_count)
+					<< " loads=" << world.channel_capacities.size());
 				worldselect->add_world(world);
 			}
 			else
 			{
-				// Remove previous UIs
 				UI::get().remove(UIElement::Type::LOGIN);
-
-				// Add the world selection screen to the UI
 				worldselect->draw_world();
-
-				// End of packet
 				return;
 			}
 		}
@@ -257,6 +296,8 @@ namespace ms
 
 			int8_t pic = recv.read_byte();
 			int32_t slots = recv.read_int();
+			while (recv.available())
+				recv.skip_byte();
 
 			// 选角 CharLook 构造依赖 BodyDrawInfo；登录成功虽已 ensure，
 			// 频道包到达前若 Character 未绑全会得到空锚点 → 头身脚叠成白影。
@@ -266,14 +307,26 @@ namespace ms
 
 			// Remove previous UIs
 			UI::get().remove(UIElement::Type::LOGINNOTICE);
-			UI::get().remove(UIElement::Type::LOGINWAIT);
 
-			// Remove the world selection screen
-			if (auto worldselect = UI::get().get_element<UIWorldSelect>())
-				worldselect->remove_selected();
+			// 与登录成功同 rule：进度条满 0→100% 后再拆 Wait、建选角页。
+			// 续场逻辑由 Wait 在 update() 里满条后执行（含 remove LOGINWAIT，
+			// 经门闩看护回收），避免「没到 100% 就跳页」。
+			std::function<void()> oncomplete = [characters, charcount, slots, pic]() mutable
+			{
+				UI::get().remove(UIElement::Type::LOGINWAIT);
 
-			// Add the character selection screen
-			UI::get().emplace<UICharSelect>(characters, charcount, slots, pic);
+				// Remove the world selection screen
+				if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+					worldselect->remove_selected();
+
+				// Add the character selection screen
+				UI::get().emplace<UICharSelect>(characters, charcount, slots, pic);
+			};
+
+			if (loginwait && loginwait->is_active())
+				loginwait->begin_finish(std::move(oncomplete));
+			else
+				oncomplete();
 		}
 	}
 
@@ -284,6 +337,8 @@ namespace ms
 		LoginParser::parse_login(recv);
 
 		int32_t cid = recv.read_int();
+		while (recv.available())
+			recv.skip_byte();
 		PlayerLoginPacket(cid).dispatch();
 	}
 
@@ -293,9 +348,13 @@ namespace ms
 		std::string name = recv.read_string();
 		bool used = recv.read_bool();
 
+		while (recv.available())
+			recv.skip_byte();
 		// Notify the character creation screen
 		if (auto raceselect = UI::get().get_element<UIRaceSelect>())
 			raceselect->send_naming_result(used);
+		LOG(LOG_DEBUG, "CharnameResponse name=" << name << " used=" << used);
+		(void)name;
 	}
 
 	void AddNewCharEntryHandler::handle(InPacket& recv) const
@@ -307,10 +366,16 @@ namespace ms
 		const uint8_t result = recv.read_byte();
 
 		if (result != 0 || !recv.available())
+		{
+			while (recv.available())
+				recv.skip_byte();
 			return;
+		}
 
 		// Parse info on the new character
 		CharEntry character = LoginParser::parse_charentry(recv);
+		while (recv.available())
+			recv.skip_byte();
 
 		// Read the updated character selection
 		if (auto charselect = UI::get().get_element<UICharSelect>())
@@ -322,6 +387,8 @@ namespace ms
 		// Read the character id and if deletion was successful (PIC was correct)
 		int32_t cid = recv.read_int();
 		uint8_t state = recv.read_byte();
+		while (recv.available())
+			recv.skip_byte();
 
 		// 删除回包到达：无论成功/失败都复位请求门闩
 		if (auto charselect = UI::get().get_element<UICharSelect>())
@@ -372,6 +439,8 @@ namespace ms
 		// 性别流程已在该 handler 闭环（LoginResultHandler 读 account.female）；
 		// 此 opcode 在 s9 下不会下发，注册仅作协议完整性保留，连参考端/未来 s9 启用时生效。
 		recv.read_byte(); // gender
+		while (recv.available())
+			recv.skip_byte();
 
 		ServerRequestPacket().dispatch();
 	}
@@ -380,7 +449,10 @@ namespace ms
 	{
 		// 标准 v83：EULA 确认结果（1=成功）。s9 的 AcceptToSHandler 同样回 LOGIN_RESULT，
 		// 此 opcode 在 s9 下不会下发；注册仅作协议完整性保留。
-		if (recv.read_byte() == 1)
+		uint8_t ok = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+		while (recv.available())
+			recv.skip_byte();
+		if (ok == 1)
 		{
 			UI::get().remove(UIElement::Type::TOS);
 
@@ -393,7 +465,10 @@ namespace ms
 		// 服务端 PIN 操作（PacketCreator.pinOperation）：
 		// mode 0=接受 / 1=注册新 PIN / 2=无效重输 / 3=系统错误 / 4=请输入 PIN。
 		// s9 默认 enable_pin=false 时不下发；enable_pin=true 时登录后要求输入 PIN。
-		switch (recv.read_byte())
+		uint8_t mode = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0xFF;
+		while (recv.available())
+			recv.skip_byte();
+		switch (mode)
 		{
 			case 0: // accepted：流程继续，无需提示
 				break;
@@ -418,7 +493,10 @@ namespace ms
 	void UpdatePincodeHandler::handle(InPacket& recv) const
 	{
 		// 服务端 PIN 注册结果（PacketCreator.pinRegistered）：writeByte(0) = 注册成功。
-		if (recv.read_byte() == 0)
+		uint8_t code = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0xFF;
+		while (recv.available())
+			recv.skip_byte();
+		if (code == 0)
 			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::PIC_ACTIVATED);
 		else
 			UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR);
@@ -467,5 +545,7 @@ namespace ms
 			UIStateLogin::viewall_worlds.clear();
 			UIStateLogin::viewall_ready = false;
 		}
+		while (recv.available())
+			recv.skip_byte();
 	}
 }

@@ -89,9 +89,12 @@ namespace ms
 		StatsEntry stats = parse_stats(recv);
 		LookEntry look = parse_look(recv);
 
-		recv.read_bool(); // 'rankinfo' bool
+		// v83 CharEntry：look 后先 viewAll 标志字节，再 ranking 开关。
+		recv.read_bool(); // viewAll / rankinfo 前置
 
-		if (recv.read_bool())
+		stats.has_rank = recv.read_bool();
+
+		if (stats.has_rank)
 		{
 			int32_t currank = recv.read_int();
 			int32_t rankmv = recv.read_int();
