@@ -22,6 +22,15 @@
 namespace ms
 {
 	std::vector<CashCommodity> UIStateCashShop::cashshop_commodities;
+	bool UIStateCashShop::cash_balances_ready = false;
+	int32_t UIStateCashShop::cash_nx_credit = 0;
+	int32_t UIStateCashShop::cash_maple_point = 0;
+	int32_t UIStateCashShop::cash_nx_prepaid = 0;
+	std::vector<CashInvEntry> UIStateCashShop::cash_inventory;
+	std::vector<CashGiftEntry> UIStateCashShop::cash_gifts;
+	std::array<int32_t, 10> UIStateCashShop::cash_wishlist{};
+	int16_t UIStateCashShop::cash_storage_slots = 0;
+	int16_t UIStateCashShop::cash_char_slots = 0;
 
 	UIStateCashShop::UIStateCashShop()
 	{

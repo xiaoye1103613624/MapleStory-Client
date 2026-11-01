@@ -43,10 +43,12 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid);
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 
 		UIElement::Type get_type() const override;
 
 		void exit_cashshop();
+		void refresh_cs_meta();
 
 	private:
 		void update_items();
@@ -147,6 +149,7 @@ namespace ms
 
 		Text job_label;
 		Text name_label;
+		Text cs_meta_label;
 
 		std::vector<Sprite> promotion_sprites;
 		Point<int16_t> promotion_pos;

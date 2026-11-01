@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIDailyGift.h"
 
+#include "UISoftKey.h"
+
 #include "../UI.h"
 
 #include "../Components/AreaButton.h"
@@ -24,6 +26,8 @@
 
 #include "../../Audio/Audio.h"
 #include "../../MapleStory.h"
+#include "../../Util/Misc.h"
+#include "../../Util/UiAssetResolve.h"
 
 #include <cmath>
 #include <cstdio>
@@ -57,9 +61,7 @@ namespace ms
 		init_digit_glyphs();
 		init_fake_data();
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		if (close)
 			buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(kWinW - 22, 3));
@@ -486,9 +488,19 @@ namespace ms
 
 	void UIDailyGift::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		(void)keycode;
-		if (pressed && escape)
-			close();
+		if (pressed && escape) { close(); return; }
+		if (!pressed) return;
+		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				try {
+					int16_t day = static_cast<int16_t>(std::stoi(s));
+					if (day < 0 || day >= kTotalDays) return;
+					fake_claim_slot(day);
+					LOG(LOG_DEBUG, "UIDailyGift: SoftKey claim day=" << day);
+				} catch (...) {}
+			}, []() {}, "Gift day");
+		}
 	}
 
 	UIElement::Type UIDailyGift::get_type() const

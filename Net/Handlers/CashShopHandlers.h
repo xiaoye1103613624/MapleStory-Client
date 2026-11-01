@@ -30,4 +30,49 @@ namespace ms
 	private:
 		void transition() const;
 	};
+
+	// s9 PacketCreator.showCash → SendOpcode.QUERY_CASH_RESULT(324)
+	// 读序：int NX_CREDIT / int MAPLE_POINT / int NX_PREPAID
+	class QueryCashResultHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SendOpcode.CASHSHOP_OPERATION(325) 回包：wishlist / bought / message 等
+	class CashShopOperationHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+		// 供同文件 gachapon 等复用
+		static void skip_cash_item_info(InPacket& recv);
+	};
+
+	// s9 CASHSHOP_CASH_ITEM_GACHAPON_RESULT(333)：0xE4 fail / 0xE5 success
+	class CashItemGachaponResultHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 sendNameTransferCheck → CASHSHOP_CHECK_NAME_CHANGE(328)
+	class CashShopCheckNameChangeHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 sendNameTransferRules → CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT(329)
+	class CashShopNameChangePossibleHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 sendWorldTransferRules → CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT(331)
+	class CashShopTransferWorldPossibleHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
 }

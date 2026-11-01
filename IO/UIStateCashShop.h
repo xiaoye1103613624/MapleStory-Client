@@ -19,6 +19,7 @@
 
 #include "UIState.h"
 
+#include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -33,6 +34,22 @@ namespace ms
 		int32_t price;
 		int16_t count;
 		std::string name;
+	};
+
+	// showCashInventory 条目（精简：cashId / itemId / sn / qty）
+	struct CashInvEntry
+	{
+		int64_t cash_id = 0;
+		int32_t itemid = 0;
+		int32_t sn = 0;
+		int16_t qty = 0;
+	};
+
+	struct CashGiftEntry
+	{
+		int64_t cash_id = 0;
+		int32_t itemid = 0;
+		std::string from;
 	};
 
 	class UIStateCashShop : public UIState
@@ -77,5 +94,19 @@ namespace ms
 	public:
 		// 由 SetCashShopHandler 解析 getCSPacket 后填充，UICashShop 构造时消费。
 		static std::vector<CashCommodity> cashshop_commodities;
+
+		// 由 QueryCashResultHandler 解析 s9 showCash（QUERY_CASH_RESULT=324）：
+		// int NX_CREDIT / int MAPLE_POINT / int NX_PREPAID。
+		static bool cash_balances_ready;
+		static int32_t cash_nx_credit;
+		static int32_t cash_maple_point;
+		static int32_t cash_nx_prepaid;
+
+		// CashShopOperation 0x4B / 0x4D / 0x4F|0x55
+		static std::vector<CashInvEntry> cash_inventory;
+		static std::vector<CashGiftEntry> cash_gifts;
+		static std::array<int32_t, 10> cash_wishlist;
+		static int16_t cash_storage_slots;
+		static int16_t cash_char_slots;
 	};
 }
