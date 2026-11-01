@@ -77,7 +77,13 @@ class Nx:
         if ntype == 3:
             return repr(self.strings[data] if data < len(self.strings) else self._read_string(data))
         if ntype == 4:
-            x, y = struct.unpack_from("<ii", self.data, data)
+            # A PKG4 vector occupies 8 bytes of the node record: x = int32 @ +12
+            # (the "data" slot) and y = int32 @ +16 (the "width"+"height" slot).
+            # Reading only `data` -- as two int16 halves or as a file offset --
+            # makes every origin come out as (x, 0) / (x, -1), which is how the
+            # world-map BaseImg origin (320, 235) once looked like (320, 0).
+            off = 64 + i * 20
+            x, y = struct.unpack_from("<ii", self.data, off + 12)
             return "(%d, %d)" % (x, y)
         if ntype == 5:
             return "bitmap %dx%d" % (width, height)

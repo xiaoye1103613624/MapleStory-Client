@@ -7,6 +7,7 @@
 
 #include "IDataSource.h"
 
+#include <atomic>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -54,6 +55,10 @@ namespace ms
 			// 释放所有 img_file 实例与目录记录，并清空 RootTable。
 			static void close();
 
+			// 后台线程装载开关：SDL 事件只允许主线程泵，后台装载期间
+			// 关闭 gather()/ensure_*() 内部的 poll_events（主循环照常泵）。
+			static void set_pump_enabled(bool enabled);
+
 		private:
 			// 持久持有 img_file 实例，直到 close()，避免 node 引用的缓冲悬垂。
 			static std::vector<std::unique_ptr<nl::img_file>> s_files;
@@ -63,6 +68,8 @@ namespace ms
 			static std::set<std::string> s_loaded;
 			// 当前已绑进 Map002 的 mapid（换图时重绑）。
 			static int32_t s_bound_mapid;
+			// 消息泵开关（见 set_pump_enabled）。
+			static std::atomic<bool> s_pump_enabled;
 
 			// 递归收集目录下所有 .img 字节，relpath 相对 dir。
 			static std::vector<std::pair<std::string, std::vector<char>>> gather(const std::string& dir);

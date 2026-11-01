@@ -28,6 +28,7 @@
 #include "RootTable.h"
 
 #include <sstream>
+#include <thread>
 #include <vector>
 
 namespace ms
@@ -142,6 +143,34 @@ namespace ms
 		// Boot 时 Character 未绑，BodyDrawInfo 会是空表 → 选角头身脚叠在一起。
 		// Character 就绪后重建锚点。
 		CharLook::init();
+	}
+
+	void ResourceService::prewarm_game_roots()
+	{
+		if (prewarm_started_.exchange(true))
+			return;
+
+		if (!backend_ || backend_->format() != Format::Img)
+		{
+			game_roots_ready_.store(true);
+			return;
+		}
+
+		// 与登录界面并行装载选角根。装载全程禁用 ImgSource 内部的
+		// poll_events（SDL 事件只允许主线程泵，主循环照常泵）。
+		std::thread([this]()
+		{
+			ImgSource::set_pump_enabled(false);
+			ensure_game_roots();
+			ImgSource::set_pump_enabled(true);
+			game_roots_ready_.store(true);
+			LOG(LOG_INFO, "[RES] prewarm_game_roots done (background)");
+		}).detach();
+	}
+
+	bool ResourceService::game_roots_ready() const noexcept
+	{
+		return game_roots_ready_.load();
 	}
 
 	void ResourceService::ensure_map_roots()

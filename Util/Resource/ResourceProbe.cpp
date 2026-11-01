@@ -129,6 +129,88 @@ namespace ms
 {
 	namespace ResourceProbe
 	{
+		// [RT-DUMP] 运行时部署数据节点树导出：把 nl::nx::UI["UIWindow.img"] 完整树写成
+		// JSON，格式对齐 MapleLib dump（_dirName/_dirType/_width/_height/children），
+		// 以便既有 summarize 脚本直接复用。这是"按运行时部署数据"的 ground truth 来源。
+		namespace {
+			std::string rt_json_escape(const std::string& s)
+			{
+				std::string o;
+				o.reserve(s.size() + 8);
+				for (char c : s)
+				{
+					switch (c)
+					{
+					case '"': o += "\\\""; break;
+					case '\\': o += "\\\\"; break;
+					case '\n': o += "\\n"; break;
+					case '\r': o += "\\r"; break;
+					case '\t': o += "\\t"; break;
+					default: o += c;
+					}
+				}
+				return o;
+			}
+
+			void rt_emit_node(nl::node n, std::ostream& os, int depth)
+			{
+				if (depth > 24) { os << "{}"; return; }
+				os << "{";
+				bool first = true;
+				auto sep = [&]() { if (!first) os << ","; first = false; };
+				sep(); os << "\"_dirName\":\"" << rt_json_escape(n.name()) << "\"";
+				const char* tn = "none";
+				auto t = n.data_type();
+				switch (t)
+				{
+				case nl::node::type::integer: tn = "integer"; break;
+				case nl::node::type::real: tn = "real"; break;
+				case nl::node::type::string: tn = "string"; break;
+				case nl::node::type::vector: tn = "vector"; break;
+				case nl::node::type::bitmap: tn = "bitmap"; break;
+				case nl::node::type::audio: tn = "audio"; break;
+				default: tn = "none"; break;
+				}
+				sep(); os << "\"_dirType\":\"" << tn << "\"";
+				if (t == nl::node::type::bitmap)
+				{
+					nl::bitmap b = n;
+					sep(); os << "\"_width\":" << b.width();
+					sep(); os << "\"_height\":" << b.height();
+				}
+				else if (t == nl::node::type::vector)
+				{
+					sep(); os << "\"x\":" << n.x() << ",\"y\":" << n.y();
+				}
+				else if (t == nl::node::type::integer)
+				{
+					sep(); os << "\"value\":" << (int64_t)n;
+				}
+				else if (t == nl::node::type::real)
+				{
+					sep(); os << "\"value\":" << (double)n;
+				}
+				else if (t == nl::node::type::string)
+				{
+					sep(); os << "\"value\":\"" << rt_json_escape((std::string)n) << "\"";
+				}
+				if (n.size() > 0)
+				{
+					sep(); os << "\"children\":{";
+					bool f2 = true;
+					for (auto c : n)
+					{
+						if (!f2) os << ",";
+						f2 = false;
+						os << "\"" << rt_json_escape(c.name()) << "\":";
+						rt_emit_node(c, os, depth + 1);
+					}
+					os << "}";
+				}
+				os << "}";
+			}
+		}
+
 		// The client is a Windows subsystem application: there is no console and
 		// LOG() is compiled away in Release, so every finding has to reach disk.
 		class Report
@@ -451,6 +533,142 @@ namespace ms
 				probe_tex("ui_backgrnd (as coded)", ui_backgrnd);
 				probe_tex("Skill/backgrnd (fallback)", Skill["backgrnd"]);
 				probe_tex("Skill/main/backgrnd", Skill["main"]["backgrnd"]);
+			}
+
+
+			}
+
+		// [RT-DUMP] 运行时部署数据：把多个 UI img 完整节点树导出为 JSON（ground truth，
+		// 取代从打包 UI.wz 解析的陈旧版本）。格式对齐 MapleLib dump，便于 summarize 脚本复用。
+		{
+			report.line("-- runtime UI img dump (per img) --");
+			// 动态遍历 UI 命名空间下所有 img（每个顶层子节点即一个 img 文件），全量导出。
+			report.line(std::string("UI namespace imgs : ") + std::to_string(nl::nx::UI.size()));
+			for (auto img : nl::nx::UI)
+			{
+				std::string imn = img.name();
+				nl::node root = img;
+				if (!root) { report.line(std::string("  [") + imn + "] not bound"); continue; }
+				std::string out_name = std::string(imn) + "_runtime.json";
+				std::ofstream out(out_name, std::ios::out | std::ios::trunc);
+				if (out)
+				{
+					out << "{";
+					bool first = true;
+					for (auto c : root)
+					{
+						if (!first) out << ",";
+						first = false;
+						out << "\"" << rt_json_escape(c.name()) << "\":";
+						rt_emit_node(c, out, 0);
+					}
+					out << "}";
+					out.close();
+					report.line(std::string("  [") + imn + "] children=" + std::to_string(root.size()) + " -> " + out_name);
+				}
+				else
+					report.line(std::string("[RT-DUMP] failed to open ") + out_name);
+			}
+
+			// 四窗 backgrnd 真实尺寸（运行时数据，取代打包 wz 解析值）。
+			report.line("-- runtime four-window backgrnd --");
+			for (const char* w : { "Item", "Equip", "Skill", "Stat" })
+			{
+				nl::node win = nl::nx::UI["UIWindow.img"][w];
+				std::ostringstream ws;
+				ws << "  [" << w << "] backgrnd=";
+				if (nl::node bg = win["backgrnd"])
+				{
+					nl::bitmap b = bg;
+					ws << b.width() << "x" << b.height();
+				}
+				else
+					ws << "(missing)";
+				report.line(ws.str());
+			}
+		}
+
+		// [RT-CATALOG] 运行时部署数据：把其它命名空间（非 UI）的 .img 资源做结构型目录，
+		// 用于后期开发业务参考。仅记录 顶层节点名/类型/子节点数 + 位图宽高（不 dump 像素）。
+		{
+			report.line("-- runtime other-namespace catalog --");
+			std::string data_dir = "Data";
+			if (!std::filesystem::exists(data_dir))
+				data_dir = "E:\\MXD\\BeiDou-Client-xy\\Data";
+
+			const char* nss[] = { "Character","Mob","Npc","Item","Skill","Map",
+				"Effect","Etc","Reactor","Sound","String","Morph","TamingMob","Quest" };
+
+			auto split_path = [](const std::string& p, std::vector<std::string>& out) {
+				size_t start = 0;
+				while (true) {
+					size_t pos = p.find_first_of("/\\", start);
+					if (pos == std::string::npos) { out.push_back(p.substr(start)); break; }
+					if (pos > start) out.push_back(p.substr(start, pos - start));
+					start = pos + 1;
+				}
+			};
+			auto jesc = [](const std::string& s) {
+				std::string o; o.reserve(s.size() + 4);
+				for (char c : s) {
+					if (c == '"' || c == '\\') { o += '\\'; o += c; }
+					else o += c;
+				}
+				return o;
+			};
+
+			for (const char* ns : nss)
+			{
+				std::string dir = data_dir + "/" + ns;
+				if (!std::filesystem::exists(dir)) { report.line("  [cat] " + std::string(ns) + " : dir missing"); continue; }
+				std::string out_name = std::string("catalog_") + ns + ".json";
+				std::ofstream os(out_name, std::ios::out | std::ios::trunc);
+				os << "{\"namespace\":\"" << jesc(ns) << "\",\"files\":[";
+				size_t count = 0;
+				bool firstfile = true;
+				std::error_code ec;
+				for (auto it = std::filesystem::recursive_directory_iterator(dir, ec);
+					 it != std::filesystem::recursive_directory_iterator(); it.increment(ec))
+				{
+					if (ec) break;
+					const auto& e = *it;
+					if (!e.is_regular_file(ec) || e.path().extension().string() != ".img") continue;
+					std::string rel = std::string(ns) + "/" + e.path().lexically_relative(dir).generic_string();
+					try {
+						std::ifstream f(e.path(), std::ios::binary);
+						if (!f) continue;
+						std::vector<char> buf((std::istreambuf_iterator<char>(f)), {});
+						nl::img_file img;
+						img.open_merge(std::vector<std::pair<std::string, std::vector<char>>>{ {rel, std::move(buf)} });
+						nl::node root = img.root();
+						std::vector<std::string> segs; split_path(rel, segs);
+						nl::node content = root;
+						for (auto& s : segs) content = content[s];
+						if (!content) continue;
+						if (!firstfile) os << ",";
+						firstfile = false;
+						os << "{\"f\":\"" << jesc(rel) << "\",\"n\":[";
+						bool firstnode = true;
+						for (auto c : content)
+						{
+							if (!firstnode) os << ",";
+							firstnode = false;
+							os << "{\"k\":\"" << jesc(c.name()) << "\",\"t\":" << (int)c.data_type() << ",\"c\":" << c.size();
+							if (c.data_type() == nl::node::type::bitmap)
+							{
+								nl::bitmap b = c;
+								os << ",\"w\":" << b.width() << ",\"h\":" << b.height();
+							}
+							os << "}";
+						}
+						os << "]}";
+						count++;
+					}
+					catch (...) { /* 畸形 .img：跳过 */ }
+				}
+				os << "],\"count\":" << count << "}";
+				os.close();
+				report.line("  [cat] " + std::string(ns) + " files=" + std::to_string(count) + " -> " + out_name);
 			}
 		}
 

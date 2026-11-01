@@ -32,6 +32,12 @@ namespace ms
 		std::map<std::string, std::string> ImgSource::s_dirs;
 		std::set<std::string> ImgSource::s_loaded;
 		int32_t ImgSource::s_bound_mapid = -2;
+		std::atomic<bool> ImgSource::s_pump_enabled{ true };
+
+		void ImgSource::set_pump_enabled(bool enabled)
+		{
+			s_pump_enabled.store(enabled);
+		}
 
 		// 16 个标准根名（与 ImgFiles.cpp 的 ROOTS[16] 一致）。
 		static const char* STANDARD_ROOTS[16] =
@@ -154,7 +160,9 @@ namespace ms
 			for (RootId id : kCharSelectRoots)
 			{
 				ensure(id);
-				Window::get().poll_events();
+
+				if (s_pump_enabled.load())
+					Window::get().poll_events();
 			}
 
 			LOG(LOG_INFO, "[IMG] ensure_char_select bound_roots="
@@ -204,7 +212,8 @@ namespace ms
 				out.emplace_back(std::move(rel), std::move(all));
 
 				// Character/Item 等大目录扫描时泵消息，避免“未响应”。
-				if ((++n % 64) == 0)
+				// （后台线程装载时跳过：SDL 事件只允许主线程泵，主循环照常泵。）
+				if (s_pump_enabled.load() && (++n % 64) == 0)
 					Window::get().poll_events();
 			}
 			return out;

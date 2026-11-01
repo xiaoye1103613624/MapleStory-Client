@@ -30,6 +30,7 @@
 
 #include "IDataSource.h"
 
+#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -49,6 +50,14 @@ namespace ms
 
 		// img：登录成功后装选角根并重建 BodyDrawInfo；wz/nx 为 no-op。
 		void ensure_game_roots();
+
+		// img：启动后台线程预热选角根（与登录界面并行）；wz/nx 立即就绪。
+		// 只启动一次，后续调用是 no-op。用于消除登录响应后同步装载
+		// 冻结 Wait 弹窗半分钟级的问题（"连接加载条卡住不动"）。
+		void prewarm_game_roots();
+
+		// 预热是否完成（未启动过预热且非 img 格式时恒 true）。
+		bool game_roots_ready() const noexcept;
 
 		// img：进图前补齐 Mob 等剩余根（不含全量 Map002）；wz/nx 为 no-op。
 		void ensure_map_roots();
@@ -83,6 +92,9 @@ namespace ms
 
 		std::unique_ptr<IDataSource> backend_;
 		std::string base_;
+
+		std::atomic<bool> prewarm_started_{ false };
+		std::atomic<bool> game_roots_ready_{ false };
 	};
 	}
 }
