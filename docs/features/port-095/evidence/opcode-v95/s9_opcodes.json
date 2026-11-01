@@ -1,0 +1,2754 @@
+{
+ "recv": {
+  "CUSTOM_PACKET": {
+   "value": 14099,
+   "comment": "13 37 lol // 自定义封包",
+   "handler": "CustomPacketHandler"
+  },
+  "LOGIN_PASSWORD": {
+   "value": 1,
+   "comment": "登录密码",
+   "handler": "LoginPasswordHandler"
+  },
+  "GUEST_LOGIN": {
+   "value": 2,
+   "comment": "游客登录",
+   "handler": "GuestLoginHandler"
+  },
+  "SERVERLIST_REREQUEST": {
+   "value": 4,
+   "comment": "重新请求服务器列表",
+   "handler": "ServerlistRequestHandler"
+  },
+  "CHARLIST_REQUEST": {
+   "value": 5,
+   "comment": "请求角色列表",
+   "handler": "CharlistRequestHandler"
+  },
+  "SERVERSTATUS_REQUEST": {
+   "value": 6,
+   "comment": "请求服务器状态",
+   "handler": "ServerStatusRequestHandler"
+  },
+  "ACCEPT_TOS": {
+   "value": 7,
+   "comment": "接受服务条款",
+   "handler": "AcceptToSHandler"
+  },
+  "SET_GENDER": {
+   "value": 8,
+   "comment": "设置性别",
+   "handler": "SetGenderHandler"
+  },
+  "AFTER_LOGIN": {
+   "value": 9,
+   "comment": "登录后操作",
+   "handler": "AfterLoginHandler"
+  },
+  "REGISTER_PIN": {
+   "value": 10,
+   "comment": "注册PIN码",
+   "handler": "RegisterPinHandler"
+  },
+  "SERVERLIST_REQUEST": {
+   "value": 11,
+   "comment": "请求服务器列表",
+   "handler": "ServerlistRequestHandler"
+  },
+  "PLAYER_DC": {
+   "value": 12,
+   "comment": "玩家断开连接"
+  },
+  "VIEW_ALL_CHAR": {
+   "value": 13,
+   "comment": "查看所有角色",
+   "handler": "ViewAllCharHandler"
+  },
+  "PICK_ALL_CHAR": {
+   "value": 14,
+   "comment": "选择所有角色",
+   "handler": "ViewAllCharSelectedHandler"
+  },
+  "NAME_TRANSFER": {
+   "value": 16,
+   "comment": "名称转移",
+   "handler": "TransferNameHandler"
+  },
+  "WORLD_TRANSFER": {
+   "value": 18,
+   "comment": "世界转移",
+   "handler": "TransferWorldHandler"
+  },
+  "CHAR_SELECT": {
+   "value": 19,
+   "comment": "角色选择",
+   "handler": "CharSelectedHandler"
+  },
+  "PLAYER_LOGGEDIN": {
+   "value": 20,
+   "comment": "玩家已登录",
+   "handler": "PlayerLoggedinHandler"
+  },
+  "CHECK_CHAR_NAME": {
+   "value": 21,
+   "comment": "检查角色名称",
+   "handler": "TransferNameResultHandler"
+  },
+  "CREATE_CHAR": {
+   "value": 22,
+   "comment": "创建角色",
+   "handler": "CreateCharHandler"
+  },
+  "DELETE_CHAR": {
+   "value": 23,
+   "comment": "删除角色",
+   "handler": "DeleteCharHandler"
+  },
+  "PONG": {
+   "value": 24,
+   "comment": "心跳响应",
+   "handler": "KeepAliveHandler"
+  },
+  "CLIENT_START_ERROR": {
+   "value": 25,
+   "comment": "客户端启动错误"
+  },
+  "CLIENT_ERROR": {
+   "value": 26,
+   "comment": "客户端错误"
+  },
+  "STRANGE_DATA": {
+   "value": 27,
+   "comment": "奇怪的数据"
+  },
+  "RELOG": {
+   "value": 28,
+   "comment": "重新登录",
+   "handler": "RelogRequestHandler"
+  },
+  "REGISTER_PIC": {
+   "value": 29,
+   "comment": "注册图片",
+   "handler": "RegisterPicHandler"
+  },
+  "CHAR_SELECT_WITH_PIC": {
+   "value": 30,
+   "comment": "带图片的角色选择",
+   "handler": "CharSelectedWithPicHandler"
+  },
+  "VIEW_ALL_PIC_REGISTER": {
+   "value": 31,
+   "comment": "查看所有注册图片",
+   "handler": "ViewAllCharRegisterPicHandler"
+  },
+  "VIEW_ALL_WITH_PIC": {
+   "value": 32,
+   "comment": "查看所有带图片",
+   "handler": "ViewAllCharSelectedWithPicHandler"
+  },
+  "CHANGE_MAP": {
+   "value": 38,
+   "comment": "更改地图",
+   "handler": "ChangeMapHandler"
+  },
+  "CHANGE_CHANNEL": {
+   "value": 39,
+   "comment": "更改频道",
+   "handler": "ChangeChannelHandler"
+  },
+  "ENTER_CASHSHOP": {
+   "value": 40,
+   "comment": "进入现金商店",
+   "handler": "EnterCashShopHandler"
+  },
+  "MOVE_PLAYER": {
+   "value": 41,
+   "comment": "移动玩家",
+   "handler": "MovePlayerHandler"
+  },
+  "CANCEL_CHAIR": {
+   "value": 42,
+   "comment": "取消椅子",
+   "handler": "CancelChairHandler"
+  },
+  "USE_CHAIR": {
+   "value": 43,
+   "comment": "使用椅子",
+   "handler": "UseChairHandler"
+  },
+  "CLOSE_RANGE_ATTACK": {
+   "value": 44,
+   "comment": "近战攻击",
+   "handler": "CloseRangeDamageHandler"
+  },
+  "RANGED_ATTACK": {
+   "value": 45,
+   "comment": "远程攻击",
+   "handler": "RangedAttackHandler"
+  },
+  "MAGIC_ATTACK": {
+   "value": 46,
+   "comment": "魔法攻击",
+   "handler": "MagicDamageHandler"
+  },
+  "TOUCH_MONSTER_ATTACK": {
+   "value": 47,
+   "comment": "触碰怪物攻击",
+   "handler": "TouchMonsterDamageHandler"
+  },
+  "TAKE_DAMAGE": {
+   "value": 48,
+   "comment": "受到伤害",
+   "handler": "TakeDamageHandler"
+  },
+  "GENERAL_CHAT": {
+   "value": 49,
+   "comment": "通用聊天",
+   "handler": "GeneralChatHandler"
+  },
+  "CLOSE_CHALKBOARD": {
+   "value": 50,
+   "comment": "关闭黑板",
+   "handler": "CloseChalkboardHandler"
+  },
+  "FACE_EXPRESSION": {
+   "value": 51,
+   "comment": "表情符号",
+   "handler": "FaceExpressionHandler"
+  },
+  "USE_ITEMEFFECT": {
+   "value": 52,
+   "comment": "使用物品效果",
+   "handler": "UseItemEffectHandler"
+  },
+  "USE_DEATHITEM": {
+   "value": 53,
+   "comment": "使用死亡物品",
+   "handler": "UseDeathItemHandler"
+  },
+  "MOB_BANISH_PLAYER": {
+   "value": 56,
+   "comment": "怪物驱逐玩家",
+   "handler": "MobBanishPlayerHandler"
+  },
+  "MONSTER_BOOK_COVER": {
+   "value": 57,
+   "comment": "怪物图鉴封面",
+   "handler": "MonsterBookCoverHandler"
+  },
+  "NPC_TALK": {
+   "value": 58,
+   "comment": "NPC对话",
+   "handler": "NPCTalkHandler"
+  },
+  "REMOTE_STORE": {
+   "value": 59,
+   "comment": "远程商店",
+   "handler": "RemoteStoreHandler"
+  },
+  "NPC_TALK_MORE": {
+   "value": 60,
+   "comment": "继续NPC对话",
+   "handler": "NPCMoreTalkHandler"
+  },
+  "NPC_SHOP": {
+   "value": 61,
+   "comment": "NPC商店",
+   "handler": "NPCShopHandler"
+  },
+  "STORAGE": {
+   "value": 62,
+   "comment": "仓库",
+   "handler": "StorageHandler"
+  },
+  "HIRED_MERCHANT_REQUEST": {
+   "value": 63,
+   "comment": "请求雇佣商人",
+   "handler": "HiredMerchantRequest"
+  },
+  "FREDRICK_ACTION": {
+   "value": 64,
+   "comment": "Fredrick操作",
+   "handler": "FredrickHandler"
+  },
+  "DUEY_ACTION": {
+   "value": 65,
+   "comment": "Duey操作",
+   "handler": "DueyHandler"
+  },
+  "OWL_ACTION": {
+   "value": 66,
+   "comment": "发送最常用的信息给客户端     sends most searched info to client",
+   "handler": "UseOwlOfMinervaHandler"
+  },
+  "OWL_WARP": {
+   "value": 67,
+   "comment": "处理玩家传送到商店        handles player warp to store",
+   "handler": "OwlWarpHandler"
+  },
+  "ADMIN_SHOP": {
+   "value": 68,
+   "comment": "管理员商店"
+  },
+  "ITEM_SORT": {
+   "value": 69,
+   "comment": "整理物品",
+   "handler": "InventoryMergeHandler"
+  },
+  "ITEM_SORT2": {
+   "value": 70,
+   "comment": "整理物品2",
+   "handler": "InventorySortHandler"
+  },
+  "ITEM_MOVE": {
+   "value": 71,
+   "comment": "移动物品",
+   "handler": "ItemMoveHandler"
+  },
+  "USE_ITEM": {
+   "value": 72,
+   "comment": "使用物品",
+   "handler": "UseItemHandler"
+  },
+  "CANCEL_ITEM_EFFECT": {
+   "value": 73,
+   "comment": "取消物品效果",
+   "handler": "CancelItemEffectHandler"
+  },
+  "USE_SUMMON_BAG": {
+   "value": 75,
+   "comment": "使用召唤袋",
+   "handler": "UseSummonBagHandler"
+  },
+  "PET_FOOD": {
+   "value": 76,
+   "comment": "宠物食物",
+   "handler": "PetFoodHandler"
+  },
+  "USE_MOUNT_FOOD": {
+   "value": 77,
+   "comment": "使用坐骑食物",
+   "handler": "UseMountFoodHandler"
+  },
+  "SCRIPTED_ITEM": {
+   "value": 78,
+   "comment": "脚本物品",
+   "handler": "ScriptedItemHandler"
+  },
+  "USE_CASH_ITEM": {
+   "value": 79,
+   "comment": "使用现金物品",
+   "handler": "UseCashItemHandler"
+  },
+  "USE_CATCH_ITEM": {
+   "value": 81,
+   "comment": "使用捕捉物品",
+   "handler": "UseCatchItemHandler"
+  },
+  "USE_SKILL_BOOK": {
+   "value": 82,
+   "comment": "使用技能书",
+   "handler": "SkillBookHandler"
+  },
+  "USE_TELEPORT_ROCK": {
+   "value": 84,
+   "comment": "使用传送石"
+  },
+  "USE_RETURN_SCROLL": {
+   "value": 85,
+   "comment": "使用返回卷轴",
+   "handler": "UseItemHandler"
+  },
+  "USE_UPGRADE_SCROLL": {
+   "value": 86,
+   "comment": "使用升级卷轴",
+   "handler": "ScrollHandler"
+  },
+  "DISTRIBUTE_AP": {
+   "value": 87,
+   "comment": "分配能力点",
+   "handler": "DistributeAPHandler"
+  },
+  "AUTO_DISTRIBUTE_AP": {
+   "value": 88,
+   "comment": "自动分配能力点",
+   "handler": "AutoAssignHandler"
+  },
+  "HEAL_OVER_TIME": {
+   "value": 89,
+   "comment": "持续治疗",
+   "handler": "HealOvertimeHandler"
+  },
+  "DISTRIBUTE_SP": {
+   "value": 90,
+   "comment": "分配技能点",
+   "handler": "DistributeSPHandler"
+  },
+  "SPECIAL_MOVE": {
+   "value": 91,
+   "comment": "特殊移动",
+   "handler": "SpecialMoveHandler"
+  },
+  "CANCEL_BUFF": {
+   "value": 92,
+   "comment": "取消增益效果",
+   "handler": "CancelBuffHandler"
+  },
+  "SKILL_EFFECT": {
+   "value": 93,
+   "comment": "技能效果",
+   "handler": "SkillEffectHandler"
+  },
+  "MESO_DROP": {
+   "value": 94,
+   "comment": "金币掉落",
+   "handler": "MesoDropHandler"
+  },
+  "GIVE_FAME": {
+   "value": 95,
+   "comment": "赠送声望",
+   "handler": "GiveFameHandler"
+  },
+  "CHAR_INFO_REQUEST": {
+   "value": 97,
+   "comment": "请求角色信息",
+   "handler": "CharInfoRequestHandler"
+  },
+  "SPAWN_PET": {
+   "value": 98,
+   "comment": "生成宠物",
+   "handler": "SpawnPetHandler"
+  },
+  "CANCEL_DEBUFF": {
+   "value": 99,
+   "comment": "取消减益效果",
+   "handler": "CancelDebuffHandler"
+  },
+  "CHANGE_MAP_SPECIAL": {
+   "value": 100,
+   "comment": "特殊更改地图",
+   "handler": "ChangeMapSpecialHandler"
+  },
+  "USE_INNER_PORTAL": {
+   "value": 101,
+   "comment": "使用内部传送门",
+   "handler": "InnerPortalHandler"
+  },
+  "TROCK_ADD_MAP": {
+   "value": 102,
+   "comment": "添加传送岩地图",
+   "handler": "TrockAddMapHandler"
+  },
+  "REPORT": {
+   "value": 106,
+   "comment": "报告",
+   "handler": "ReportHandler"
+  },
+  "QUEST_ACTION": {
+   "value": 107,
+   "comment": "任务操作",
+   "handler": "QuestActionHandler"
+  },
+  "GRENADE_EFFECT": {
+   "value": 109,
+   "comment": "手榴弹效果",
+   "handler": "GrenadeEffectHandler"
+  },
+  "SKILL_MACRO": {
+   "value": 110,
+   "comment": "技能宏",
+   "handler": "SkillMacroHandler"
+  },
+  "USE_ITEM_REWARD": {
+   "value": 112,
+   "comment": "使用物品奖励",
+   "handler": "ItemRewardHandler"
+  },
+  "MAKER_SKILL": {
+   "value": 113,
+   "comment": "制作器技能",
+   "handler": "MakerSkillHandler"
+  },
+  "USE_TREASUER_CHEST": {
+   "value": 115,
+   "comment": "使用宝箱",
+   "handler": "UseTreasureChestHandler"
+  },
+  "USE_REMOTE": {
+   "value": 116,
+   "comment": "使用遥控器",
+   "handler": "RemoteGachaponHandler"
+  },
+  "WATER_OF_LIFE": {
+   "value": 117,
+   "comment": "生命之水",
+   "handler": "UseWaterOfLifeHandler"
+  },
+  "ADMIN_CHAT": {
+   "value": 118,
+   "comment": "管理员聊天",
+   "handler": "AdminChatHandler"
+  },
+  "MULTI_CHAT": {
+   "value": 119,
+   "comment": "多人聊天",
+   "handler": "MultiChatHandler"
+  },
+  "WHISPER": {
+   "value": 120,
+   "comment": "密语",
+   "handler": "WhisperHandler"
+  },
+  "SPOUSE_CHAT": {
+   "value": 121,
+   "comment": "配偶聊天",
+   "handler": "SpouseChatHandler"
+  },
+  "MESSENGER": {
+   "value": 122,
+   "comment": "消息传递",
+   "handler": "MessengerHandler"
+  },
+  "PLAYER_INTERACTION": {
+   "value": 123,
+   "comment": "玩家互动",
+   "handler": "PlayerInteractionHandler"
+  },
+  "PARTY_OPERATION": {
+   "value": 124,
+   "comment": "组队操作",
+   "handler": "PartyOperationHandler"
+  },
+  "DENY_PARTY_REQUEST": {
+   "value": 125,
+   "comment": "拒绝组队请求",
+   "handler": "DenyPartyRequestHandler"
+  },
+  "GUILD_OPERATION": {
+   "value": 126,
+   "comment": "公会操作",
+   "handler": "GuildOperationHandler"
+  },
+  "DENY_GUILD_REQUEST": {
+   "value": 127,
+   "comment": "拒绝公会请求",
+   "handler": "DenyGuildRequestHandler"
+  },
+  "ADMIN_COMMAND": {
+   "value": 128,
+   "comment": "管理员命令",
+   "handler": "AdminCommandHandler"
+  },
+  "ADMIN_LOG": {
+   "value": 129,
+   "comment": "管理员日志",
+   "handler": "AdminLogHandler"
+  },
+  "BUDDYLIST_MODIFY": {
+   "value": 130,
+   "comment": "修改好友列表",
+   "handler": "BuddylistModifyHandler"
+  },
+  "NOTE_ACTION": {
+   "value": 131,
+   "comment": "笔记操作",
+   "handler": "NoteActionHandler"
+  },
+  "USE_DOOR": {
+   "value": 133,
+   "comment": "使用门",
+   "handler": "DoorHandler"
+  },
+  "CHANGE_KEYMAP": {
+   "value": 135,
+   "comment": "更改键盘映射",
+   "handler": "KeymapChangeHandler"
+  },
+  "RPS_ACTION": {
+   "value": 136,
+   "comment": "石头剪刀布操作",
+   "handler": "RPSActionHandler"
+  },
+  "RING_ACTION": {
+   "value": 137,
+   "comment": "戒指操作",
+   "handler": "RingActionHandler"
+  },
+  "WEDDING_ACTION": {
+   "value": 138,
+   "comment": "结婚操作",
+   "handler": "WeddingHandler"
+  },
+  "WEDDING_TALK": {
+   "value": 139,
+   "comment": "结婚对话",
+   "handler": "WeddingTalkHandler"
+  },
+  "WEDDING_TALK_MORE": {
+   "value": 139,
+   "comment": "继续结婚对话",
+   "handler": "WeddingTalkMoreHandler"
+  },
+  "ALLIANCE_OPERATION": {
+   "value": 143,
+   "comment": "联盟操作",
+   "handler": "AllianceOperationHandler"
+  },
+  "DENY_ALLIANCE_REQUEST": {
+   "value": 144,
+   "comment": "拒绝联盟请求",
+   "handler": "DenyAllianceRequestHandler"
+  },
+  "OPEN_FAMILY_PEDIGREE": {
+   "value": 145,
+   "comment": "打开家族谱系",
+   "handler": "OpenFamilyPedigreeHandler"
+  },
+  "OPEN_FAMILY": {
+   "value": 146,
+   "comment": "打开家族",
+   "handler": "OpenFamilyHandler"
+  },
+  "ADD_FAMILY": {
+   "value": 147,
+   "comment": "添加家族",
+   "handler": "FamilyAddHandler"
+  },
+  "SEPARATE_FAMILY_BY_SENIOR": {
+   "value": 148,
+   "comment": "通过长辈分离家族",
+   "handler": "FamilySeparateHandler"
+  },
+  "SEPARATE_FAMILY_BY_JUNIOR": {
+   "value": 149,
+   "comment": "通过晚辈分离家族",
+   "handler": "FamilySeparateHandler"
+  },
+  "ACCEPT_FAMILY": {
+   "value": 150,
+   "comment": "接受家族邀请",
+   "handler": "AcceptFamilyHandler"
+  },
+  "USE_FAMILY": {
+   "value": 151,
+   "comment": "使用家族功能",
+   "handler": "FamilyUseHandler"
+  },
+  "CHANGE_FAMILY_MESSAGE": {
+   "value": 152,
+   "comment": "更改家族消息",
+   "handler": "FamilyPreceptsHandler"
+  },
+  "FAMILY_SUMMON_RESPONSE": {
+   "value": 153,
+   "comment": "家族召唤响应",
+   "handler": "FamilySummonResponseHandler"
+  },
+  "BBS_OPERATION": {
+   "value": 155,
+   "comment": "论坛操作",
+   "handler": "BBSOperationHandler"
+  },
+  "ENTER_MTS": {
+   "value": 156,
+   "comment": "进入MTS",
+   "handler": "EnterMTSHandler"
+  },
+  "USE_SOLOMON_ITEM": {
+   "value": 157,
+   "comment": "使用所罗门物品",
+   "handler": "UseSolomonHandler"
+  },
+  "USE_GACHA_EXP": {
+   "value": 158,
+   "comment": "使用扭蛋经验",
+   "handler": "UseGachaExpHandler"
+  },
+  "NEW_YEAR_CARD_REQUEST": {
+   "value": 159,
+   "comment": "新年贺卡请求",
+   "handler": "NewYearCardHandler"
+  },
+  "CASHSHOP_SURPRISE": {
+   "value": 161,
+   "comment": "现金商店惊喜",
+   "handler": "CashShopSurpriseHandler"
+  },
+  "CLICK_GUIDE": {
+   "value": 162,
+   "comment": "点击引导",
+   "handler": "ClickGuideHandler"
+  },
+  "ARAN_COMBO_COUNTER": {
+   "value": 163,
+   "comment": "Aran连击计数器",
+   "handler": "AranComboHandler"
+  },
+  "MOVE_PET": {
+   "value": 167,
+   "comment": "移动宠物",
+   "handler": "MovePetHandler"
+  },
+  "PET_CHAT": {
+   "value": 168,
+   "comment": "宠物对话",
+   "handler": "PetChatHandler"
+  },
+  "PET_COMMAND": {
+   "value": 169,
+   "comment": "宠物命令",
+   "handler": "PetCommandHandler"
+  },
+  "PET_LOOT": {
+   "value": 170,
+   "comment": "宠物拾取",
+   "handler": "PetLootHandler"
+  },
+  "PET_AUTO_POT": {
+   "value": 171,
+   "comment": "宠物自动使用药水",
+   "handler": "PetAutoPotHandler"
+  },
+  "PET_EXCLUDE_ITEMS": {
+   "value": 172,
+   "comment": "宠物排除物品",
+   "handler": "PetExcludeItemsHandler"
+  },
+  "MOVE_SUMMON": {
+   "value": 175,
+   "comment": "移动召唤兽",
+   "handler": "MoveSummonHandler"
+  },
+  "SUMMON_ATTACK": {
+   "value": 176,
+   "comment": "召唤兽攻击",
+   "handler": "SummonDamageHandler"
+  },
+  "DAMAGE_SUMMON": {
+   "value": 177,
+   "comment": "召唤兽受到伤害",
+   "handler": "DamageSummonHandler"
+  },
+  "BEHOLDER": {
+   "value": 178,
+   "comment": "Beholder（不明用途）",
+   "handler": "BeholderHandler"
+  },
+  "MOVE_DRAGON": {
+   "value": 181,
+   "comment": "移动龙",
+   "handler": "MoveDragonHandler"
+  },
+  "CHANGE_QUICKSLOT": {
+   "value": 183,
+   "comment": "CP_QuickslotKeyMappedModified // 更改快捷栏",
+   "handler": "QuickslotKeyMappedModifiedHandler"
+  },
+  "MOVE_LIFE": {
+   "value": 188,
+   "comment": "移动生命体",
+   "handler": "MoveLifeHandler"
+  },
+  "AUTO_AGGRO": {
+   "value": 189,
+   "comment": "自动仇恨",
+   "handler": "AutoAggroHandler"
+  },
+  "FIELD_DAMAGE_MOB": {
+   "value": 191,
+   "comment": "场景中怪物受到伤害",
+   "handler": "FieldDamageMobHandler"
+  },
+  "MOB_DAMAGE_MOB_FRIENDLY": {
+   "value": 192,
+   "comment": "怪物对友好怪物造成伤害",
+   "handler": "MobDamageMobFriendlyHandler"
+  },
+  "MONSTER_BOMB": {
+   "value": 193,
+   "comment": "怪物炸弹",
+   "handler": "MonsterBombHandler"
+  },
+  "MOB_DAMAGE_MOB": {
+   "value": 194,
+   "comment": "怪物对怪物造成伤害",
+   "handler": "MobDamageMobHandler"
+  },
+  "NPC_ACTION": {
+   "value": 197,
+   "comment": "NPC动作",
+   "handler": "NPCAnimationHandler"
+  },
+  "ITEM_PICKUP": {
+   "value": 202,
+   "comment": "捡起物品",
+   "handler": "ItemPickupHandler"
+  },
+  "DAMAGE_REACTOR": {
+   "value": 205,
+   "comment": "反应堆受到伤害",
+   "handler": "ReactorHitHandler"
+  },
+  "TOUCHING_REACTOR": {
+   "value": 206,
+   "comment": "触碰反应堆",
+   "handler": "TouchReactorHandler"
+  },
+  "PLAYER_MAP_TRANSFER": {
+   "value": 207,
+   "comment": "玩家地图转换",
+   "handler": "PlayerMapTransitionHandler"
+  },
+  "MAPLETV": {
+   "value": 65534,
+   "comment": "Don't know // MapleTV（不知道）"
+  },
+  "SNOWBALL": {
+   "value": 211,
+   "comment": "雪球",
+   "handler": "SnowballHandler"
+  },
+  "LEFT_KNOCKBACK": {
+   "value": 212,
+   "comment": "左侧击退",
+   "handler": "LeftKnockbackHandler"
+  },
+  "COCONUT": {
+   "value": 213,
+   "comment": "椰子",
+   "handler": "CoconutHandler"
+  },
+  "MATCH_TABLE": {
+   "value": 214,
+   "comment": "Would be cool if I ever get it to work :) // 匹配表（如果我能让它工作就好了 :））"
+  },
+  "MONSTER_CARNIVAL": {
+   "value": 218,
+   "comment": "怪物嘉年华",
+   "handler": "MonsterCarnivalHandler"
+  },
+  "PARTY_SEARCH_REGISTER": {
+   "value": 220,
+   "comment": "注册组队搜索",
+   "handler": "PartySearchRegisterHandler"
+  },
+  "PARTY_SEARCH_START": {
+   "value": 222,
+   "comment": "开始组队搜索",
+   "handler": "PartySearchStartHandler"
+  },
+  "PARTY_SEARCH_UPDATE": {
+   "value": 223,
+   "comment": "更新组队搜索",
+   "handler": "PartySearchUpdateHandler"
+  },
+  "CHECK_CASH": {
+   "value": 228,
+   "comment": "检查现金",
+   "handler": "TouchingCashShopHandler"
+  },
+  "CASHSHOP_OPERATION": {
+   "value": 229,
+   "comment": "现金商店操作",
+   "handler": "CashOperationHandler"
+  },
+  "COUPON_CODE": {
+   "value": 230,
+   "comment": "优惠券代码",
+   "handler": "CouponCodeHandler"
+  },
+  "OPEN_ITEMUI": {
+   "value": 236,
+   "comment": "打开物品界面",
+   "handler": "RaiseUIStateHandler"
+  },
+  "CLOSE_ITEMUI": {
+   "value": 237,
+   "comment": "关闭物品界面"
+  },
+  "USE_ITEMUI": {
+   "value": 238,
+   "comment": "使用物品界面",
+   "handler": "RaiseIncExpHandler"
+  },
+  "MTS_OPERATION": {
+   "value": 253,
+   "comment": "MTS操作",
+   "handler": "MTSHandler"
+  },
+  "USE_MAPLELIFE": {
+   "value": 256,
+   "comment": "使用MapleLife",
+   "handler": "UseMapleLifeHandler"
+  },
+  "USE_HAMMER": {
+   "value": 260,
+   "comment": "使用锤子",
+   "handler": "UseHammerHandler"
+  },
+  "WORLD_MAP_PLAYERS": {
+   "value": 277,
+   "comment": "世界地图 tooltip 玩家列表请求",
+   "handler": "WorldMapPlayersHandler"
+  },
+  "SET_HPMPALERT": {
+   "value": 4096,
+   "comment": "设置HP/MP警报",
+   "handler": "SetHpMpAlertHandler"
+  }
+ },
+ "send": {
+  "LOGIN_STATUS": {
+   "value": 0,
+   "comment": "登录状态"
+  },
+  "GUEST_ID_LOGIN": {
+   "value": 1,
+   "comment": "游客ID登录"
+  },
+  "ACCOUNT_INFO": {
+   "value": 2,
+   "comment": "账户信息"
+  },
+  "SERVERSTATUS": {
+   "value": 3,
+   "comment": "服务器状态（CHECK_USER_LIMIT_RESULT）"
+  },
+  "GENDER_DONE": {
+   "value": 4,
+   "comment": "性别设置结果（SET_ACCOUNT_RESULT）"
+  },
+  "CONFIRM_EULA_RESULT": {
+   "value": 5,
+   "comment": "EULA确认结果"
+  },
+  "CHECK_PINCODE": {
+   "value": 6,
+   "comment": "检查PIN码"
+  },
+  "UPDATE_PINCODE": {
+   "value": 7,
+   "comment": "更新PIN码"
+  },
+  "VIEW_ALL_CHAR": {
+   "value": 8,
+   "comment": "查看所有角色"
+  },
+  "SELECT_CHARACTER_BY_VAC": {
+   "value": 9,
+   "comment": "通过VAC选择角色"
+  },
+  "SERVERLIST": {
+   "value": 10,
+   "comment": "服务器列表"
+  },
+  "CHARLIST": {
+   "value": 11,
+   "comment": "角色列表"
+  },
+  "SERVER_IP": {
+   "value": 12,
+   "comment": "服务器IP"
+  },
+  "CHAR_NAME_RESPONSE": {
+   "value": 13,
+   "comment": "角色名称响应"
+  },
+  "ADD_NEW_CHAR_ENTRY": {
+   "value": 14,
+   "comment": "添加新角色条目"
+  },
+  "DELETE_CHAR_RESPONSE": {
+   "value": 15,
+   "comment": "删除角色响应"
+  },
+  "CHANGE_CHANNEL": {
+   "value": 16,
+   "comment": "更改频道"
+  },
+  "PING": {
+   "value": 17,
+   "comment": "心跳检测"
+  },
+  "KOREAN_INTERNET_CAFE_SHIT": {
+   "value": 18,
+   "comment": "韩国互联网咖啡无关紧要的内容，忽略"
+  },
+  "CHANNEL_SELECTED": {
+   "value": 20,
+   "comment": "频道已选择"
+  },
+  "HACKSHIELD_REQUEST": {
+   "value": 21,
+   "comment": "可能是RELOG_RESPONSE，无所谓"
+  },
+  "RELOG_RESPONSE": {
+   "value": 22,
+   "comment": "重新登录响应"
+  },
+  "CHECK_CRC_RESULT": {
+   "value": 25,
+   "comment": "CRC检查结果"
+  },
+  "LAST_CONNECTED_WORLD": {
+   "value": 26,
+   "comment": "上次连接的世界"
+  },
+  "RECOMMENDED_WORLD_MESSAGE": {
+   "value": 27,
+   "comment": "推荐世界消息"
+  },
+  "CHECK_SPW_RESULT": {
+   "value": 28,
+   "comment": "SPW检查结果"
+  },
+  "INVENTORY_OPERATION": {
+   "value": 29,
+   "comment": "物品栏操作"
+  },
+  "INVENTORY_GROW": {
+   "value": 30,
+   "comment": "扩展物品栏"
+  },
+  "STAT_CHANGED": {
+   "value": 31,
+   "comment": "状态改变"
+  },
+  "GIVE_BUFF": {
+   "value": 32,
+   "comment": "施加增益效果"
+  },
+  "CANCEL_BUFF": {
+   "value": 33,
+   "comment": "移除增益效果"
+  },
+  "FORCED_STAT_SET": {
+   "value": 34,
+   "comment": "强制设置状态"
+  },
+  "FORCED_STAT_RESET": {
+   "value": 35,
+   "comment": "强制重置状态"
+  },
+  "UPDATE_SKILLS": {
+   "value": 36,
+   "comment": "更新技能"
+  },
+  "SKILL_USE_RESULT": {
+   "value": 37,
+   "comment": "技能使用结果"
+  },
+  "FAME_RESPONSE": {
+   "value": 38,
+   "comment": "声望响应"
+  },
+  "SHOW_STATUS_INFO": {
+   "value": 39,
+   "comment": "显示状态信息"
+  },
+  "OPEN_FULL_CLIENT_DOWNLOAD_LINK": {
+   "value": 40,
+   "comment": "打开完整客户端下载链接"
+  },
+  "MEMO_RESULT": {
+   "value": 41,
+   "comment": "备忘录结果"
+  },
+  "MAP_TRANSFER_RESULT": {
+   "value": 42,
+   "comment": "地图转移结果"
+  },
+  "WEDDING_PHOTO": {
+   "value": 43,
+   "comment": "结婚照片（ANTI_MACRO_RESULT在某些版本可能是这个）"
+  },
+  "CLAIM_RESULT": {
+   "value": 45,
+   "comment": "领取结果"
+  },
+  "CLAIM_AVAILABLE_TIME": {
+   "value": 46,
+   "comment": "领取可用时间"
+  },
+  "CLAIM_STATUS_CHANGED": {
+   "value": 47,
+   "comment": "领取状态改变"
+  },
+  "SET_TAMING_MOB_INFO": {
+   "value": 48,
+   "comment": "设置驯服怪物信息"
+  },
+  "QUEST_CLEAR": {
+   "value": 49,
+   "comment": "任务完成"
+  },
+  "ENTRUSTED_SHOP_CHECK_RESULT": {
+   "value": 50,
+   "comment": "委托商店检查结果"
+  },
+  "SKILL_LEARN_ITEM_RESULT": {
+   "value": 51,
+   "comment": "学习技能物品结果"
+  },
+  "GATHER_ITEM_RESULT": {
+   "value": 52,
+   "comment": "收集物品结果"
+  },
+  "SORT_ITEM_RESULT": {
+   "value": 53,
+   "comment": "整理物品结果"
+  },
+  "SUE_CHARACTER_RESULT": {
+   "value": 55,
+   "comment": "控诉角色结果"
+  },
+  "TRADE_MONEY_LIMIT": {
+   "value": 57,
+   "comment": "交易金钱限制"
+  },
+  "SET_GENDER": {
+   "value": 58,
+   "comment": "设置性别"
+  },
+  "GUILD_BBS_PACKET": {
+   "value": 59,
+   "comment": "公会公告板数据包"
+  },
+  "CHAR_INFO": {
+   "value": 61,
+   "comment": "角色信息"
+  },
+  "PARTY_OPERATION": {
+   "value": 62,
+   "comment": "组队操作"
+  },
+  "BUDDYLIST": {
+   "value": 63,
+   "comment": "好友列表"
+  },
+  "GUILD_OPERATION": {
+   "value": 65,
+   "comment": "公会操作"
+  },
+  "ALLIANCE_OPERATION": {
+   "value": 66,
+   "comment": "联盟操作"
+  },
+  "SPAWN_PORTAL": {
+   "value": 67,
+   "comment": "生成传送门"
+  },
+  "SERVERMESSAGE": {
+   "value": 68,
+   "comment": "服务器消息"
+  },
+  "INCUBATOR_RESULT": {
+   "value": 69,
+   "comment": "孵化器结果"
+  },
+  "SHOP_SCANNER_RESULT": {
+   "value": 70,
+   "comment": "商店扫描结果"
+  },
+  "SHOP_LINK_RESULT": {
+   "value": 71,
+   "comment": "商店链接结果"
+  },
+  "MARRIAGE_REQUEST": {
+   "value": 72,
+   "comment": "结婚请求"
+  },
+  "MARRIAGE_RESULT": {
+   "value": 73,
+   "comment": "结婚结果"
+  },
+  "WEDDING_GIFT_RESULT": {
+   "value": 74,
+   "comment": "结婚礼物结果"
+  },
+  "NOTIFY_MARRIED_PARTNER_MAP_TRANSFER": {
+   "value": 75,
+   "comment": "通知结婚伴侣地图转移"
+  },
+  "CASH_PET_FOOD_RESULT": {
+   "value": 76,
+   "comment": "宠物食物结果"
+  },
+  "SET_WEEK_EVENT_MESSAGE": {
+   "value": 77,
+   "comment": "设置周活动消息"
+  },
+  "SET_POTION_DISCOUNT_RATE": {
+   "value": 78,
+   "comment": "设置药水折扣率"
+  },
+  "BRIDLE_MOB_CATCH_FAIL": {
+   "value": 79,
+   "comment": "鞍具捕捉怪物失败"
+  },
+  "IMITATED_NPC_RESULT": {
+   "value": 80,
+   "comment": "仿冒NPC结果"
+  },
+  "IMITATED_NPC_DATA": {
+   "value": 81,
+   "comment": "仿冒NPC数据"
+  },
+  "LIMITED_NPC_DISABLE_INFO": {
+   "value": 82,
+   "comment": "限时NPC禁用信息"
+  },
+  "MONSTER_BOOK_SET_CARD": {
+   "value": 83,
+   "comment": "怪物图鉴设置卡片"
+  },
+  "MONSTER_BOOK_SET_COVER": {
+   "value": 84,
+   "comment": "怪物图鉴设置封面"
+  },
+  "HOUR_CHANGED": {
+   "value": 85,
+   "comment": "时间变化"
+  },
+  "MINIMAP_ON_OFF": {
+   "value": 86,
+   "comment": "小地图开关"
+  },
+  "CONSULT_AUTHKEY_UPDATE": {
+   "value": 87,
+   "comment": "咨询认证密钥更新"
+  },
+  "CLASS_COMPETITION_AUTHKEY_UPDATE": {
+   "value": 88,
+   "comment": "竞技场认证密钥更新"
+  },
+  "WEB_BOARD_AUTHKEY_UPDATE": {
+   "value": 89,
+   "comment": "网络论坛认证密钥更新"
+  },
+  "SESSION_VALUE": {
+   "value": 90,
+   "comment": "会话值"
+  },
+  "PARTY_VALUE": {
+   "value": 91,
+   "comment": "组队值"
+  },
+  "FIELD_SET_VARIABLE": {
+   "value": 92,
+   "comment": "字段设置变量"
+  },
+  "BONUS_EXP_CHANGED": {
+   "value": 93,
+   "comment": "奖励经验值变化（猜测，不确定v83中的opcode）"
+  },
+  "FAMILY_CHART_RESULT": {
+   "value": 94,
+   "comment": "家族图表结果"
+  },
+  "FAMILY_INFO_RESULT": {
+   "value": 95,
+   "comment": "家族信息结果"
+  },
+  "FAMILY_RESULT": {
+   "value": 96,
+   "comment": "家族结果"
+  },
+  "FAMILY_JOIN_REQUEST": {
+   "value": 97,
+   "comment": "家族加入请求"
+  },
+  "FAMILY_JOIN_REQUEST_RESULT": {
+   "value": 98,
+   "comment": "家族加入请求结果"
+  },
+  "FAMILY_JOIN_ACCEPTED": {
+   "value": 99,
+   "comment": "家族加入接受"
+  },
+  "FAMILY_PRIVILEGE_LIST": {
+   "value": 100,
+   "comment": "家族权限列表"
+  },
+  "FAMILY_REP_GAIN": {
+   "value": 101,
+   "comment": "家族声望获得"
+  },
+  "FAMILY_NOTIFY_LOGIN_OR_LOGOUT": {
+   "value": 102,
+   "comment": "通知家族成员登录或登出"
+  },
+  "FAMILY_SET_PRIVILEGE": {
+   "value": 103,
+   "comment": "设置家族权限"
+  },
+  "FAMILY_SUMMON_REQUEST": {
+   "value": 104,
+   "comment": "家族召唤请求"
+  },
+  "NOTIFY_LEVELUP": {
+   "value": 105,
+   "comment": "通知等级提升"
+  },
+  "NOTIFY_MARRIAGE": {
+   "value": 106,
+   "comment": "通知结婚"
+  },
+  "NOTIFY_JOB_CHANGE": {
+   "value": 107,
+   "comment": "通知职业变更"
+  },
+  "MAPLE_TV_USE_RES": {
+   "value": 109,
+   "comment": "Maple TV使用结果（不是空白，是一个弹窗）"
+  },
+  "AVATAR_MEGAPHONE_RESULT": {
+   "value": 110,
+   "comment": "头像喇叭结果（机器人无用）"
+  },
+  "SET_AVATAR_MEGAPHONE": {
+   "value": 111,
+   "comment": "设置头像喇叭"
+  },
+  "CLEAR_AVATAR_MEGAPHONE": {
+   "value": 112,
+   "comment": "清除头像喇叭"
+  },
+  "CANCEL_NAME_CHANGE_RESULT": {
+   "value": 113,
+   "comment": "取消更改名字结果"
+  },
+  "CANCEL_TRANSFER_WORLD_RESULT": {
+   "value": 114,
+   "comment": "取消转移世界结果"
+  },
+  "DESTROY_SHOP_RESULT": {
+   "value": 115,
+   "comment": "销毁商店结果"
+  },
+  "FAKE_GM_NOTICE": {
+   "value": 116,
+   "comment": "假GM通知（坏家伙）"
+  },
+  "SUCCESS_IN_USE_GACHAPON_BOX": {
+   "value": 117,
+   "comment": "成功使用扭蛋机箱"
+  },
+  "NEW_YEAR_CARD_RES": {
+   "value": 118,
+   "comment": "新年贺卡结果"
+  },
+  "RANDOM_MORPH_RES": {
+   "value": 119,
+   "comment": "随机变身结果"
+  },
+  "CANCEL_NAME_CHANGE_BY_OTHER": {
+   "value": 120,
+   "comment": "由他人取消更改名字"
+  },
+  "SET_EXTRA_PENDANT_SLOT": {
+   "value": 121,
+   "comment": "设置额外饰品插槽"
+  },
+  "SCRIPT_PROGRESS_MESSAGE": {
+   "value": 122,
+   "comment": "脚本进度消息"
+  },
+  "DATA_CRC_CHECK_FAILED": {
+   "value": 123,
+   "comment": "数据CRC检查失败"
+  },
+  "MACRO_SYS_DATA_INIT": {
+   "value": 124,
+   "comment": "宏系统数据初始化"
+  },
+  "SET_FIELD": {
+   "value": 125,
+   "comment": "设置字段"
+  },
+  "SET_ITC": {
+   "value": 126,
+   "comment": "设置ITC"
+  },
+  "SET_CASH_SHOP": {
+   "value": 127,
+   "comment": "设置现金商店"
+  },
+  "SET_BACK_EFFECT": {
+   "value": 128,
+   "comment": "设置背景特效"
+  },
+  "SET_MAP_OBJECT_VISIBLE": {
+   "value": 129,
+   "comment": "设置地图对象可见性"
+  },
+  "CLEAR_BACK_EFFECT": {
+   "value": 130,
+   "comment": "清除背景特效"
+  },
+  "BLOCKED_MAP": {
+   "value": 131,
+   "comment": "被阻止的地图"
+  },
+  "BLOCKED_SERVER": {
+   "value": 132,
+   "comment": "被阻止的服务器"
+  },
+  "FORCED_MAP_EQUIP": {
+   "value": 133,
+   "comment": "强制地图装备"
+  },
+  "MULTICHAT": {
+   "value": 134,
+   "comment": "多人聊天"
+  },
+  "WHISPER": {
+   "value": 135,
+   "comment": "密语"
+  },
+  "SPOUSE_CHAT": {
+   "value": 136,
+   "comment": "配偶聊天"
+  },
+  "SUMMON_ITEM_INAVAILABLE": {
+   "value": 137,
+   "comment": "在此地图无法使用召唤物品"
+  },
+  "FIELD_EFFECT": {
+   "value": 138,
+   "comment": "场景效果"
+  },
+  "FIELD_OBSTACLE_ONOFF": {
+   "value": 139,
+   "comment": "场景障碍物开关"
+  },
+  "FIELD_OBSTACLE_ONOFF_LIST": {
+   "value": 140,
+   "comment": "场景障碍物开关列表"
+  },
+  "FIELD_OBSTACLE_ALL_RESET": {
+   "value": 141,
+   "comment": "重置所有场景障碍物"
+  },
+  "BLOW_WEATHER": {
+   "value": 142,
+   "comment": "吹风天气效果"
+  },
+  "PLAY_JUKEBOX": {
+   "value": 143,
+   "comment": "播放点唱机"
+  },
+  "ADMIN_RESULT": {
+   "value": 144,
+   "comment": "管理员结果"
+  },
+  "OX_QUIZ": {
+   "value": 145,
+   "comment": "QUIZ（OX问答）"
+  },
+  "GMEVENT_INSTRUCTIONS": {
+   "value": 146,
+   "comment": "DESC（游戏事件说明）"
+  },
+  "CLOCK": {
+   "value": 147,
+   "comment": "时钟"
+  },
+  "CONTI_MOVE": {
+   "value": 148,
+   "comment": "连续移动"
+  },
+  "CONTI_STATE": {
+   "value": 149,
+   "comment": "连续状态"
+  },
+  "SET_QUEST_CLEAR": {
+   "value": 150,
+   "comment": "设置任务完成"
+  },
+  "SET_QUEST_TIME": {
+   "value": 151,
+   "comment": "设置任务时间"
+  },
+  "ARIANT_RESULT": {
+   "value": 152,
+   "comment": "thanks lrenex // ARIANT结果"
+  },
+  "SET_OBJECT_STATE": {
+   "value": 153,
+   "comment": "设置物体状态"
+  },
+  "STOP_CLOCK": {
+   "value": 154,
+   "comment": "停止时钟"
+  },
+  "ARIANT_ARENA_SHOW_RESULT": {
+   "value": 155,
+   "comment": "ARIANT竞技场显示结果"
+  },
+  "PYRAMID_GAUGE": {
+   "value": 157,
+   "comment": "金字塔计数器"
+  },
+  "PYRAMID_SCORE": {
+   "value": 158,
+   "comment": "金字塔分数"
+  },
+  "QUICKSLOT_INIT": {
+   "value": 159,
+   "comment": "LP_QuickslotMappedInit // 快捷栏初始化"
+  },
+  "SPAWN_PLAYER": {
+   "value": 160,
+   "comment": "生成玩家"
+  },
+  "REMOVE_PLAYER_FROM_MAP": {
+   "value": 161,
+   "comment": "从地图移除玩家"
+  },
+  "CHATTEXT": {
+   "value": 162,
+   "comment": "聊天文本（类型0）"
+  },
+  "CHATTEXT1": {
+   "value": 163,
+   "comment": "聊天文本（类型1）"
+  },
+  "CHALKBOARD": {
+   "value": 164,
+   "comment": "黑板"
+  },
+  "UPDATE_CHAR_BOX": {
+   "value": 165,
+   "comment": "更新角色盒子"
+  },
+  "SHOW_CONSUME_EFFECT": {
+   "value": 166,
+   "comment": "显示消耗效果"
+  },
+  "SHOW_SCROLL_EFFECT": {
+   "value": 167,
+   "comment": "显示卷轴效果"
+  },
+  "SPAWN_PET": {
+   "value": 168,
+   "comment": "生成宠物"
+  },
+  "MOVE_PET": {
+   "value": 170,
+   "comment": "移动宠物"
+  },
+  "PET_CHAT": {
+   "value": 171,
+   "comment": "宠物对话"
+  },
+  "PET_NAMECHANGE": {
+   "value": 172,
+   "comment": "更改宠物名字"
+  },
+  "PET_EXCEPTION_LIST": {
+   "value": 173,
+   "comment": "宠物异常列表"
+  },
+  "PET_COMMAND": {
+   "value": 174,
+   "comment": "宠物命令"
+  },
+  "SPAWN_SPECIAL_MAPOBJECT": {
+   "value": 175,
+   "comment": "生成特殊地图对象"
+  },
+  "REMOVE_SPECIAL_MAPOBJECT": {
+   "value": 176,
+   "comment": "移除特殊地图对象"
+  },
+  "MOVE_SUMMON": {
+   "value": 177,
+   "comment": "移动召唤兽"
+  },
+  "SUMMON_ATTACK": {
+   "value": 178,
+   "comment": "召唤兽攻击"
+  },
+  "DAMAGE_SUMMON": {
+   "value": 179,
+   "comment": "召唤兽受到伤害"
+  },
+  "SUMMON_SKILL": {
+   "value": 180,
+   "comment": "召唤兽技能"
+  },
+  "SPAWN_DRAGON": {
+   "value": 181,
+   "comment": "生成龙"
+  },
+  "MOVE_DRAGON": {
+   "value": 182,
+   "comment": "移动龙"
+  },
+  "REMOVE_DRAGON": {
+   "value": 183,
+   "comment": "移除龙"
+  },
+  "MOVE_PLAYER": {
+   "value": 185,
+   "comment": "移动玩家"
+  },
+  "CLOSE_RANGE_ATTACK": {
+   "value": 186,
+   "comment": "近战攻击"
+  },
+  "RANGED_ATTACK": {
+   "value": 187,
+   "comment": "远程攻击"
+  },
+  "MAGIC_ATTACK": {
+   "value": 188,
+   "comment": "魔法攻击"
+  },
+  "ENERGY_ATTACK": {
+   "value": 189,
+   "comment": "能量攻击"
+  },
+  "SKILL_EFFECT": {
+   "value": 190,
+   "comment": "技能效果"
+  },
+  "CANCEL_SKILL_EFFECT": {
+   "value": 191,
+   "comment": "取消技能效果"
+  },
+  "DAMAGE_PLAYER": {
+   "value": 192,
+   "comment": "玩家受到伤害"
+  },
+  "FACIAL_EXPRESSION": {
+   "value": 193,
+   "comment": "表情符号"
+  },
+  "SHOW_ITEM_EFFECT": {
+   "value": 194,
+   "comment": "显示物品效果"
+  },
+  "SHOW_CHAIR": {
+   "value": 196,
+   "comment": "显示椅子"
+  },
+  "UPDATE_CHAR_LOOK": {
+   "value": 197,
+   "comment": "更新角色外观"
+  },
+  "SHOW_FOREIGN_EFFECT": {
+   "value": 198,
+   "comment": "显示远程效果"
+  },
+  "GIVE_FOREIGN_BUFF": {
+   "value": 199,
+   "comment": "给予远程增益效果"
+  },
+  "CANCEL_FOREIGN_BUFF": {
+   "value": 200,
+   "comment": "取消远程增益效果"
+  },
+  "UPDATE_PARTYMEMBER_HP": {
+   "value": 201,
+   "comment": "更新组队成员HP"
+  },
+  "GUILD_NAME_CHANGED": {
+   "value": 202,
+   "comment": "公会名称改变"
+  },
+  "GUILD_MARK_CHANGED": {
+   "value": 203,
+   "comment": "公会标志改变"
+  },
+  "THROW_GRENADE": {
+   "value": 204,
+   "comment": "抛掷手榴弹"
+  },
+  "CANCEL_CHAIR": {
+   "value": 205,
+   "comment": "取消椅子"
+  },
+  "SHOW_ITEM_GAIN_INCHAT": {
+   "value": 206,
+   "comment": "在聊天中显示获得物品"
+  },
+  "DOJO_WARP_UP": {
+   "value": 207,
+   "comment": "武道馆传送准备"
+  },
+  "LUCKSACK_PASS": {
+   "value": 208,
+   "comment": "幸运袋成功"
+  },
+  "LUCKSACK_FAIL": {
+   "value": 209,
+   "comment": "幸运袋失败"
+  },
+  "MESO_BAG_MESSAGE": {
+   "value": 210,
+   "comment": "金币背包消息"
+  },
+  "UPDATE_QUEST_INFO": {
+   "value": 211,
+   "comment": "更新任务信息"
+  },
+  "ON_NOTIFY_HP_DEC_BY_FIELD": {
+   "value": 212,
+   "comment": "通知字段减少HP"
+  },
+  "PLAYER_HINT": {
+   "value": 214,
+   "comment": "玩家提示"
+  },
+  "MAKER_RESULT": {
+   "value": 217,
+   "comment": "制作器结果"
+  },
+  "KOREAN_EVENT": {
+   "value": 219,
+   "comment": "韩国活动"
+  },
+  "OPEN_UI": {
+   "value": 220,
+   "comment": "打开UI"
+  },
+  "LOCK_UI": {
+   "value": 221,
+   "comment": "锁定UI"
+  },
+  "DISABLE_UI": {
+   "value": 222,
+   "comment": "禁用UI"
+  },
+  "SPAWN_GUIDE": {
+   "value": 223,
+   "comment": "生成引导者"
+  },
+  "TALK_GUIDE": {
+   "value": 224,
+   "comment": "引导者对话"
+  },
+  "SHOW_COMBO": {
+   "value": 225,
+   "comment": "显示连击"
+  },
+  "COOLDOWN": {
+   "value": 234,
+   "comment": "冷却时间"
+  },
+  "SPAWN_MONSTER": {
+   "value": 236,
+   "comment": "生成怪物"
+  },
+  "KILL_MONSTER": {
+   "value": 237,
+   "comment": "击杀怪物"
+  },
+  "SPAWN_MONSTER_CONTROL": {
+   "value": 238,
+   "comment": "控制生成怪物"
+  },
+  "MOVE_MONSTER": {
+   "value": 239,
+   "comment": "移动怪物"
+  },
+  "MOVE_MONSTER_RESPONSE": {
+   "value": 240,
+   "comment": "移动怪物响应"
+  },
+  "APPLY_MONSTER_STATUS": {
+   "value": 242,
+   "comment": "应用怪物状态"
+  },
+  "CANCEL_MONSTER_STATUS": {
+   "value": 243,
+   "comment": "取消怪物状态"
+  },
+  "RESET_MONSTER_ANIMATION": {
+   "value": 244,
+   "comment": "LOL? o.o // 重置怪物动画"
+  },
+  "DAMAGE_MONSTER": {
+   "value": 246,
+   "comment": "怪物受到伤害"
+  },
+  "ARIANT_THING": {
+   "value": 249,
+   "comment": "ARIANT相关操作"
+  },
+  "SHOW_MONSTER_HP": {
+   "value": 250,
+   "comment": "显示怪物HP"
+  },
+  "CATCH_MONSTER": {
+   "value": 251,
+   "comment": "捕捉怪物"
+  },
+  "CATCH_MONSTER_WITH_ITEM": {
+   "value": 252,
+   "comment": "使用物品捕捉怪物"
+  },
+  "SHOW_MAGNET": {
+   "value": 253,
+   "comment": "显示磁铁效果"
+  },
+  "SPAWN_NPC": {
+   "value": 257,
+   "comment": "生成NPC"
+  },
+  "REMOVE_NPC": {
+   "value": 258,
+   "comment": "移除NPC"
+  },
+  "SPAWN_NPC_REQUEST_CONTROLLER": {
+   "value": 259,
+   "comment": "请求控制NPC生成"
+  },
+  "NPC_ACTION": {
+   "value": 260,
+   "comment": "NPC动作"
+  },
+  "SET_NPC_SCRIPTABLE": {
+   "value": 263,
+   "comment": "设置NPC可脚本化"
+  },
+  "SPAWN_HIRED_MERCHANT": {
+   "value": 265,
+   "comment": "生成雇佣商人"
+  },
+  "DESTROY_HIRED_MERCHANT": {
+   "value": 266,
+   "comment": "销毁雇佣商人"
+  },
+  "UPDATE_HIRED_MERCHANT": {
+   "value": 267,
+   "comment": "更新雇佣商人"
+  },
+  "DROP_ITEM_FROM_MAPOBJECT": {
+   "value": 268,
+   "comment": "从地图对象掉落物品"
+  },
+  "REMOVE_ITEM_FROM_MAP": {
+   "value": 269,
+   "comment": "从地图移除物品"
+  },
+  "CANNOT_SPAWN_KITE": {
+   "value": 270,
+   "comment": "无法生成风筝"
+  },
+  "SPAWN_KITE": {
+   "value": 271,
+   "comment": "生成风筝"
+  },
+  "REMOVE_KITE": {
+   "value": 272,
+   "comment": "移除风筝"
+  },
+  "SPAWN_MIST": {
+   "value": 273,
+   "comment": "生成迷雾"
+  },
+  "REMOVE_MIST": {
+   "value": 274,
+   "comment": "移除迷雾"
+  },
+  "SPAWN_DOOR": {
+   "value": 275,
+   "comment": "生成门"
+  },
+  "REMOVE_DOOR": {
+   "value": 276,
+   "comment": "移除门"
+  },
+  "REACTOR_HIT": {
+   "value": 277,
+   "comment": "反应堆被击中"
+  },
+  "REACTOR_SPAWN": {
+   "value": 279,
+   "comment": "生成反应堆"
+  },
+  "REACTOR_DESTROY": {
+   "value": 280,
+   "comment": "销毁反应堆"
+  },
+  "SNOWBALL_STATE": {
+   "value": 281,
+   "comment": "雪球状态"
+  },
+  "HIT_SNOWBALL": {
+   "value": 282,
+   "comment": "击中雪球"
+  },
+  "SNOWBALL_MESSAGE": {
+   "value": 283,
+   "comment": "雪球消息"
+  },
+  "LEFT_KNOCK_BACK": {
+   "value": 284,
+   "comment": "左侧击退"
+  },
+  "COCONUT_HIT": {
+   "value": 285,
+   "comment": "击中椰子"
+  },
+  "COCONUT_SCORE": {
+   "value": 286,
+   "comment": "椰子得分"
+  },
+  "GUILD_BOSS_HEALER_MOVE": {
+   "value": 287,
+   "comment": "公会长老移动"
+  },
+  "GUILD_BOSS_PULLEY_STATE_CHANGE": {
+   "value": 288,
+   "comment": "公会长老滑轮状态改变"
+  },
+  "MONSTER_CARNIVAL_START": {
+   "value": 289,
+   "comment": "怪物嘉年华开始"
+  },
+  "MONSTER_CARNIVAL_OBTAINED_CP": {
+   "value": 290,
+   "comment": "获得怪物嘉年华CP"
+  },
+  "MONSTER_CARNIVAL_PARTY_CP": {
+   "value": 291,
+   "comment": "怪物嘉年华队伍CP"
+  },
+  "MONSTER_CARNIVAL_SUMMON": {
+   "value": 292,
+   "comment": "怪物嘉年华召唤"
+  },
+  "MONSTER_CARNIVAL_MESSAGE": {
+   "value": 293,
+   "comment": "怪物嘉年华消息"
+  },
+  "MONSTER_CARNIVAL_DIED": {
+   "value": 294,
+   "comment": "怪物嘉年华死亡"
+  },
+  "MONSTER_CARNIVAL_LEAVE": {
+   "value": 295,
+   "comment": "离开怪物嘉年华"
+  },
+  "ARIANT_ARENA_USER_SCORE": {
+   "value": 297,
+   "comment": "ARIANT竞技场用户得分"
+  },
+  "SHEEP_RANCH_INFO": {
+   "value": 299,
+   "comment": "羊牧场信息"
+  },
+  "SHEEP_RANCH_CLOTHES": {
+   "value": 300,
+   "comment": "羊牧场服装"
+  },
+  "WITCH_TOWER_SCORE_UPDATE": {
+   "value": 301,
+   "comment": "thanks lrenex // 巫师塔得分更新"
+  },
+  "HORNTAIL_CAVE": {
+   "value": 302,
+   "comment": "角龙头洞"
+  },
+  "ZAKUM_SHRINE": {
+   "value": 303,
+   "comment": "泽库姆神殿"
+  },
+  "NPC_TALK": {
+   "value": 304,
+   "comment": "NPC对话"
+  },
+  "OPEN_NPC_SHOP": {
+   "value": 305,
+   "comment": "打开NPC商店"
+  },
+  "CONFIRM_SHOP_TRANSACTION": {
+   "value": 306,
+   "comment": "确认商店交易"
+  },
+  "ADMIN_SHOP_MESSAGE": {
+   "value": 307,
+   "comment": "lame :P // 管理员商店消息"
+  },
+  "ADMIN_SHOP": {
+   "value": 308,
+   "comment": "管理员商店"
+  },
+  "STORAGE": {
+   "value": 309,
+   "comment": "仓库"
+  },
+  "FREDRICK_MESSAGE": {
+   "value": 310,
+   "comment": "Fredrick消息"
+  },
+  "FREDRICK": {
+   "value": 311,
+   "comment": "Fredrick操作"
+  },
+  "RPS_GAME": {
+   "value": 312,
+   "comment": "石头剪刀布游戏"
+  },
+  "MESSENGER": {
+   "value": 313,
+   "comment": "消息传递"
+  },
+  "PLAYER_INTERACTION": {
+   "value": 314,
+   "comment": "玩家互动"
+  },
+  "TOURNAMENT": {
+   "value": 315,
+   "comment": "锦标赛"
+  },
+  "TOURNAMENT_MATCH_TABLE": {
+   "value": 316,
+   "comment": "锦标赛匹配表"
+  },
+  "TOURNAMENT_SET_PRIZE": {
+   "value": 317,
+   "comment": "设置锦标赛奖品"
+  },
+  "TOURNAMENT_UEW": {
+   "value": 318,
+   "comment": "锦标赛未知功能"
+  },
+  "TOURNAMENT_CHARACTERS": {
+   "value": 319,
+   "comment": "they never coded this :| // 锦标赛角色（他们从未实现这个功能）"
+  },
+  "WEDDING_PROGRESS": {
+   "value": 320,
+   "comment": "byte step, int groomid, int brideid // 结婚进度"
+  },
+  "WEDDING_CEREMONY_END": {
+   "value": 321,
+   "comment": "结婚仪式结束"
+  },
+  "PARCEL": {
+   "value": 322,
+   "comment": "礼包"
+  },
+  "CHARGE_PARAM_RESULT": {
+   "value": 323,
+   "comment": "充值参数结果"
+  },
+  "QUERY_CASH_RESULT": {
+   "value": 324,
+   "comment": "查询现金结果"
+  },
+  "CASHSHOP_OPERATION": {
+   "value": 325,
+   "comment": "现金商店操作"
+  },
+  "CASHSHOP_PURCHASE_EXP_CHANGED": {
+   "value": 326,
+   "comment": "found thanks to Arnah (Vertisy) // 现金商店购买经验变化"
+  },
+  "CASHSHOP_GIFT_INFO_RESULT": {
+   "value": 327,
+   "comment": "现金商店礼物信息结果"
+  },
+  "CASHSHOP_CHECK_NAME_CHANGE": {
+   "value": 328,
+   "comment": "检查现金商店姓名更改"
+  },
+  "CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT": {
+   "value": 329,
+   "comment": "检查现金商店姓名更改可能性结果"
+  },
+  "CASHSHOP_REGISTER_NEW_CHARACTER_RESULT": {
+   "value": 330,
+   "comment": "注册新角色结果"
+  },
+  "CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT": {
+   "value": 331,
+   "comment": "检查转移世界可能性结果"
+  },
+  "CASHSHOP_GACHAPON_STAMP_RESULT": {
+   "value": 332,
+   "comment": "现金商店扭蛋印章结果"
+  },
+  "CASHSHOP_CASH_ITEM_GACHAPON_RESULT": {
+   "value": 333,
+   "comment": "现金商店现金物品扭蛋结果"
+  },
+  "CASHSHOP_CASH_GACHAPON_OPEN_RESULT": {
+   "value": 334,
+   "comment": "现金商店现金扭蛋打开结果"
+  },
+  "KEYMAP": {
+   "value": 335,
+   "comment": "键盘映射"
+  },
+  "AUTO_HP_POT": {
+   "value": 336,
+   "comment": "自动使用HP药水"
+  },
+  "AUTO_MP_POT": {
+   "value": 337,
+   "comment": "自动使用MP药水"
+  },
+  "SEND_TV": {
+   "value": 341,
+   "comment": "发送电视"
+  },
+  "REMOVE_TV": {
+   "value": 342,
+   "comment": "移除电视"
+  },
+  "ENABLE_TV": {
+   "value": 343,
+   "comment": "启用电视"
+  },
+  "MTS_OPERATION2": {
+   "value": 347,
+   "comment": "MTS操作2"
+  },
+  "MTS_OPERATION": {
+   "value": 348,
+   "comment": "MTS操作"
+  },
+  "MAPLELIFE_RESULT": {
+   "value": 349,
+   "comment": "MapleLife结果"
+  },
+  "MAPLELIFE_ERROR": {
+   "value": 350,
+   "comment": "MapleLife错误"
+  },
+  "VICIOUS_HAMMER": {
+   "value": 354,
+   "comment": "恶毒锤子"
+  },
+  "VEGA_SCROLL": {
+   "value": 358,
+   "comment": "VEGA卷轴"
+  },
+  "DPT_TRACKER": {
+   "value": 14100,
+   "comment": "个人伤害统计"
+  },
+  "WORLD_MAP_PLAYERS": {
+   "value": 376,
+   "comment": "世界地图 tooltip 玩家列表回复"
+  },
+  "UPDATE_HPMPAALERT": {
+   "value": 4096,
+   "comment": "更新HP/MP/EXP警报"
+  }
+ },
+ "client": {
+  "LOGIN_RESULT": 0,
+  "SERVERSTATUS": 3,
+  "GENDER_DONE": 4,
+  "CONFIRM_EULA_RESULT": 5,
+  "CHECK_PINCODE": 6,
+  "UPDATE_PINCODE": 7,
+  "VIEW_ALL_CHAR": 8,
+  "SELECT_CHARACTER_BY_VAC": 9,
+  "SERVERLIST": 10,
+  "CHARLIST": 11,
+  "SERVER_IP": 12,
+  "CHARNAME_RESPONSE": 13,
+  "ADD_NEWCHAR_ENTRY": 14,
+  "DELCHAR_RESPONSE": 15,
+  "PING": 17,
+  "CHECK_SPW_RESULT": 28,
+  "MODIFY_INVENTORY": 29,
+  "CHANGE_CHANNEL": 16,
+  "CHANGE_STATS": 31,
+  "GIVE_BUFF": 32,
+  "CANCEL_BUFF": 33,
+  "RECALCULATE_STATS": 35,
+  "UPDATE_SKILL": 36,
+  "SHOW_STATUS_INFO": 39,
+  "UPDATE_QUEST_INFO": 211,
+  "GATHER_RESULT": 52,
+  "SORT_RESULT": 53,
+  "SERVER_MESSAGE": 68,
+  "WEEK_EVENT_MESSAGE": 77,
+  "SKILL_MACROS": 124,
+  "SHOW_COMBO": 225,
+  "SET_FIELD": 125,
+  "FIELD_EFFECT": 138,
+  "SPAWN_CHAR": 160,
+  "REMOVE_CHAR": 161,
+  "CHAT_RECEIVED": 162,
+  "SCROLL_RESULT": 167,
+  "SPAWN_PET": 168,
+  "CHAR_MOVED": 185,
+  "ATTACKED_CLOSE": 186,
+  "ATTACKED_RANGED": 187,
+  "ATTACKED_MAGIC": 188,
+  "UPDATE_CHARLOOK": 197,
+  "SHOW_FOREIGN_EFFECT": 198,
+  "SHOW_ITEM_GAIN_INCHAT": 206,
+  "ADD_COOLDOWN": 234,
+  "SPAWN_MOB": 236,
+  "KILL_MOB": 237,
+  "SPAWN_MOB_C": 238,
+  "MOB_MOVED": 239,
+  "SHOW_MOB_HP": 250,
+  "SPAWN_NPC": 257,
+  "SPAWN_NPC_C": 259,
+  "DROP_LOOT": 268,
+  "REMOVE_LOOT": 269,
+  "HIT_REACTOR": 277,
+  "SPAWN_REACTOR": 279,
+  "REMOVE_REACTOR": 280,
+  "NPC_DIALOGUE": 304,
+  "OPEN_NPC_SHOP": 305,
+  "CONFIRM_SHOP_TRANSACTION": 306,
+  "KEYMAP": 335,
+  "AUTO_HP_POT": 336,
+  "AUTO_MP_POT": 337,
+  "CHAR_INFO": 61,
+  "PARTY_OPERATION": 62,
+  "BUDDYLIST": 63,
+  "GUILD_OPERATION": 65,
+  "MESSENGER": 313,
+  "UPDATE_PARTYMEMBER_HP": 201,
+  "PLAYER_INTERACTION": 314,
+  "STORAGE": 309,
+  "FREDRICK_MESSAGE": 310,
+  "FREDRICK": 311,
+  "PARCEL": 322,
+  "VICIOUS_HAMMER": 354,
+  "VEGA_SCROLL": 358,
+  "MEMO_RESULT": 41,
+  "FAMILY_INFO_RESULT": 95,
+  "FAMILY_CHART_RESULT": 94,
+  "FAMILY_RESULT": 96,
+  "FAMILY_JOIN_REQUEST": 97,
+  "FAMILY_JOIN_REQUEST_RESULT": 98,
+  "SUCCESS_IN_USE_GACHAPON_BOX": 117,
+  "CASHSHOP_CHECK_NAME_CHANGE": 328,
+  "CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT": 329,
+  "CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT": 331,
+  "CASHSHOP_CASH_ITEM_GACHAPON_RESULT": 333,
+  "CASHSHOP_CASH_GACHAPON_OPEN_RESULT": 334,
+  "WEDDING_GIFT_RESULT": 74,
+  "WEDDING_PROGRESS": 320,
+  "WEDDING_CEREMONY_END": 321,
+  "MONSTER_CARNIVAL_START": 289,
+  "MONSTER_CARNIVAL_OBTAINED_CP": 290,
+  "MONSTER_CARNIVAL_PARTY_CP": 291,
+  "MONSTER_CARNIVAL_MESSAGE": 293,
+  "MONSTER_CARNIVAL_LEAVE": 295,
+  "RPS_GAME": 312,
+  "ARIANT_RESULT": 152,
+  "ARIANT_ARENA_SHOW_RESULT": 155,
+  "ARIANT_ARENA_USER_SCORE": 297,
+  "NEW_YEAR_CARD_RES": 118,
+  "ADMIN_RESULT": 144,
+  "MAPLE_TV_USE_RES": 109,
+  "SEND_TV": 341,
+  "REMOVE_TV": 342,
+  "ENABLE_TV": 343,
+  "MAPLELIFE_RESULT": 349,
+  "MAPLELIFE_ERROR": 350,
+  "AVATAR_MEGAPHONE_RESULT": 110,
+  "SET_AVATAR_MEGAPHONE": 111,
+  "CLEAR_AVATAR_MEGAPHONE": 112,
+  "CLAIM_RESULT": 45,
+  "INCUBATOR_RESULT": 69,
+  "OX_QUIZ": 145,
+  "CANCEL_CHAIR_RESULT": 205,
+  "DOJO_WARP_UP": 207,
+  "PLAYER_HINT": 214,
+  "LEFT_KNOCK_BACK": 284,
+  "SHEEP_RANCH_INFO": 299,
+  "SHEEP_RANCH_CLOTHES": 300,
+  "PYRAMID_GAUGE": 157,
+  "PYRAMID_SCORE": 158,
+  "SCRIPT_PROGRESS_MESSAGE": 122,
+  "MULTICHAT": 134,
+  "WHISPER": 135,
+  "SPOUSE_CHAT": 136,
+  "FIELD_OBSTACLE_ONOFF": 139,
+  "FIELD_OBSTACLE_ONOFF_LIST": 140,
+  "FIELD_OBSTACLE_ALL_RESET": 141,
+  "BLOW_WEATHER": 142,
+  "GMEVENT_INSTRUCTIONS": 146,
+  "CLOCK": 147,
+  "CONTI_MOVE": 148,
+  "CONTI_STATE": 149,
+  "STOP_CLOCK": 154,
+  "CHALKBOARD": 164,
+  "SKILL_EFFECT": 190,
+  "CANCEL_SKILL_EFFECT": 191,
+  "FACIAL_EXPRESSION": 193,
+  "SHOW_CHAIR": 196,
+  "THROW_GRENADE": 204,
+  "PET_CHAT": 171,
+  "PET_NAMECHANGE": 172,
+  "PET_COMMAND": 174,
+  "SPAWN_SPECIAL_MAPOBJECT": 175,
+  "REMOVE_SPECIAL_MAPOBJECT": 176,
+  "ENERGY_ATTACK": 189,
+  "DAMAGE_PLAYER": 192,
+  "GIVE_FOREIGN_BUFF": 199,
+  "CANCEL_FOREIGN_BUFF": 200,
+  "CATCH_MONSTER": 251,
+  "CATCH_MONSTER_WITH_ITEM": 252,
+  "REMOVE_NPC": 258,
+  "SPAWN_MIST": 273,
+  "REMOVE_MIST": 274,
+  "SPAWN_DOOR": 275,
+  "REMOVE_DOOR": 276,
+  "BLOCKED_MAP": 131,
+  "BLOCKED_SERVER": 132,
+  "FORCED_MAP_EQUIP": 133,
+  "UPDATE_CHAR_BOX": 165,
+  "SHOW_ITEM_EFFECT": 194,
+  "MOVE_SUMMON": 177,
+  "SUMMON_ATTACK": 178,
+  "DAMAGE_SUMMON": 179,
+  "SUMMON_SKILL": 180,
+  "SPAWN_DRAGON": 181,
+  "MOVE_DRAGON": 182,
+  "REMOVE_DRAGON": 183,
+  "DAMAGE_MONSTER": 246,
+  "FAME_RESPONSE": 38,
+  "QUEST_CLEAR": 49,
+  "SET_GENDER": 58,
+  "SPAWN_PORTAL": 67,
+  "CASH_PET_FOOD_RESULT": 76,
+  "BRIDLE_MOB_CATCH_FAIL": 79,
+  "MAP_TRANSFER_RESULT": 42,
+  "FAMILY_JOIN_ACCEPTED": 99,
+  "FAMILY_NOTIFY_LOGIN_OR_LOGOUT": 102,
+  "FAMILY_SUMMON_REQUEST": 104,
+  "NOTIFY_LEVELUP": 105,
+  "NOTIFY_MARRIAGE": 106,
+  "NOTIFY_JOB_CHANGE": 107,
+  "TRADE_MONEY_LIMIT": 57,
+  "ENTRUSTED_SHOP_CHECK_RESULT": 50,
+  "SHOP_LINK_RESULT": 71,
+  "SET_TAMING_MOB_INFO": 48,
+  "SET_EXTRA_PENDANT_SLOT": 121,
+  "FAKE_GM_NOTICE": 116,
+  "CANCEL_TRANSFER_WORLD_RESULT": 114,
+  "SET_BACK_EFFECT": 128,
+  "MOVE_PET": 170,
+  "PET_EXCEPTION_LIST": 173,
+  "APPLY_MONSTER_STATUS": 242,
+  "CANCEL_MONSTER_STATUS": 243,
+  "INVENTORY_GROW": 30,
+  "SKILL_LEARN_ITEM_RESULT": 51,
+  "CANCEL_NAME_CHANGE_RESULT": 113,
+  "CLAIM_STATUS_CHANGED": 47,
+  "SUE_CHARACTER_RESULT": 55,
+  "SESSION_VALUE": 90,
+  "IMITATED_NPC_DATA": 81,
+  "RELOG_RESPONSE": 22,
+  "LAST_CONNECTED_WORLD": 26,
+  "RECOMMENDED_WORLD_MESSAGE": 27,
+  "FORCED_STAT_SET": 34,
+  "FORCED_STAT_RESET": 35,
+  "SHOP_SCANNER_RESULT": 70,
+  "FAMILY_PRIVILEGE_LIST": 100,
+  "FAMILY_REP_GAIN": 101,
+  "FAMILY_SET_PRIVILEGE": 103,
+  "DATA_CRC_CHECK_FAILED": 123,
+  "QUICKSLOT_INIT": 159,
+  "ON_NOTIFY_HP_DEC_BY_FIELD": 212,
+  "MAKER_RESULT": 217,
+  "MOVE_MONSTER_RESPONSE": 240,
+  "SET_NPC_SCRIPTABLE": 263,
+  "CANNOT_SPAWN_KITE": 270,
+  "SPAWN_KITE": 271,
+  "REMOVE_KITE": 272,
+  "MONSTER_CARNIVAL_SUMMON": 292,
+  "MONSTER_CARNIVAL_DIED": 294,
+  "WITCH_TOWER_SCORE_UPDATE": 301,
+  "SET_ITC": 126,
+  "SUMMON_ITEM_INAVAILABLE": 137,
+  "NPC_ACTION": 260,
+  "TOURNAMENT": 315,
+  "TOURNAMENT_MATCH_TABLE": 316,
+  "TOURNAMENT_SET_PRIZE": 317,
+  "TOURNAMENT_UEW": 318,
+  "MTS_OPERATION2": 347,
+  "MTS_OPERATION": 348,
+  "UPDATE_HPMPAALERT": 4096,
+  "DPT_TRACKER": 14100,
+  "GUEST_ID_LOGIN": 1,
+  "HOUR_CHANGED": 85,
+  "MINIMAP_ON_OFF": 86,
+  "BONUS_EXP_CHANGED": 93,
+  "PLAY_JUKEBOX": 143,
+  "MARRIAGE_REQUEST": 72,
+  "MARRIAGE_RESULT": 73,
+  "NOTIFY_MARRIED_PARTNER_MAP_TRANSFER": 75,
+  "WEDDING_PHOTO": 43,
+  "SET_POTION_DISCOUNT_RATE": 78,
+  "IMITATED_NPC_RESULT": 80,
+  "LIMITED_NPC_DISABLE_INFO": 82,
+  "PARTY_VALUE": 91,
+  "FIELD_SET_VARIABLE": 92,
+  "DESTROY_SHOP_RESULT": 115,
+  "RANDOM_MORPH_RES": 119,
+  "SET_MAP_OBJECT_VISIBLE": 129,
+  "CLEAR_BACK_EFFECT": 130,
+  "GUILD_BBS_PACKET": 59,
+  "SET_QUEST_CLEAR_FIELD": 150,
+  "SET_QUEST_TIME": 151,
+  "WARN_MESSAGE": 152,
+  "SET_OBJECT_STATE": 153,
+  "CHATTEXT1": 163,
+  "SHOW_CONSUME_EFFECT": 166,
+  "SKILL_USE_RESULT": 37,
+  "CANCEL_NAME_CHANGE_BY_OTHER": 120,
+  "CONSULT_AUTHKEY_UPDATE": 87,
+  "CLASS_COMPETITION_AUTHKEY_UPDATE": 88,
+  "WEB_BOARD_AUTHKEY_UPDATE": 89,
+  "OPEN_FULL_CLIENT_DOWNLOAD_LINK": 40,
+  "CLAIM_AVAILABLE_TIME": 46,
+  "SET_BUY_EQUIP_EXT": 108,
+  "GUILD_NAME_CHANGED": 202,
+  "GUILD_MARK_CHANGED": 203,
+  "LUCKSACK_PASS": 208,
+  "LUCKSACK_FAIL": 209,
+  "MESO_BAG_MESSAGE": 210,
+  "KOREAN_EVENT": 219,
+  "RESET_MONSTER_ANIMATION": 244,
+  "ARIANT_THING": 249,
+  "SHOW_MAGNET": 253,
+  "ACCOUNT_INFO": 2,
+  "CHANNEL_SELECTED": 20,
+  "HACKSHIELD_REQUEST": 21,
+  "CHECK_CRC_RESULT": 25,
+  "KOREAN_INTERNET_CAFE_SHIT": 18,
+  "OPEN_UI": 220,
+  "LOCK_UI": 221,
+  "DISABLE_UI": 222,
+  "SPAWN_GUIDE": 223,
+  "TALK_GUIDE": 224,
+  "SNOWBALL_STATE": 281,
+  "HIT_SNOWBALL": 282,
+  "SNOWBALL_MESSAGE": 283,
+  "COCONUT_HIT": 285,
+  "COCONUT_SCORE": 286,
+  "HORNTAIL_CAVE": 302,
+  "SPAWN_HIRED_MERCHANT": 265,
+  "DESTROY_HIRED_MERCHANT": 266,
+  "UPDATE_HIRED_MERCHANT": 267,
+  "MONSTER_BOOK_SET_CARD": 83,
+  "MONSTER_BOOK_SET_COVER": 84,
+  "ALLIANCE_OPERATION": 66,
+  "SET_CASH_SHOP": 127,
+  "QUERY_CASH_RESULT": 324,
+  "CASHSHOP_OPERATION": 325
+ },
+ "client_handler": {
+  "PING": "PingHandler",
+  "LOGIN_RESULT": "LoginResultHandler",
+  "SERVERSTATUS": "ServerStatusHandler",
+  "SELECT_CHARACTER_BY_VAC": "SelectCharacterHandler",
+  "SERVERLIST": "ServerlistHandler",
+  "CHARLIST": "CharlistHandler",
+  "SERVER_IP": "ServerIPHandler",
+  "CHARNAME_RESPONSE": "CharnameResponseHandler",
+  "ADD_NEWCHAR_ENTRY": "AddNewCharEntryHandler",
+  "DELCHAR_RESPONSE": "DeleteCharResponseHandler",
+  "GENDER_DONE": "GenderDoneHandler",
+  "CONFIRM_EULA_RESULT": "ConfirmEulaResultHandler",
+  "CHECK_PINCODE": "CheckPincodeHandler",
+  "UPDATE_PINCODE": "UpdatePincodeHandler",
+  "VIEW_ALL_CHAR": "ViewAllCharHandler",
+  "STORAGE": "StorageHandler",
+  "PARTY_OPERATION": "PartyHandler",
+  "UPDATE_PARTYMEMBER_HP": "PartyMemberHPHandler",
+  "BUDDYLIST": "BuddyHandler",
+  "MESSENGER": "MessengerHandler",
+  "PARCEL": "ParcelHandler",
+  "FREDRICK": "FredrickHandler",
+  "FREDRICK_MESSAGE": "FredrickMessageHandler",
+  "VICIOUS_HAMMER": "ViciousHammerHandler",
+  "VEGA_SCROLL": "VegaScrollHandler",
+  "CASHSHOP_CHECK_NAME_CHANGE": "CashShopCheckNameChangeHandler",
+  "CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT": "CashShopNameChangePossibleHandler",
+  "CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT": "CashShopTransferWorldPossibleHandler",
+  "CASHSHOP_CASH_ITEM_GACHAPON_RESULT": "CashItemGachaponResultHandler",
+  "CASHSHOP_CASH_GACHAPON_OPEN_RESULT": "CashGachaponOpenHandler",
+  "SUCCESS_IN_USE_GACHAPON_BOX": "GachaponBoxHandler",
+  "FAMILY_INFO_RESULT": "FamilyInfoHandler",
+  "FAMILY_CHART_RESULT": "FamilyChartHandler",
+  "FAMILY_RESULT": "FamilyResultHandler",
+  "FAMILY_JOIN_REQUEST": "FamilyJoinRequestHandler",
+  "FAMILY_JOIN_REQUEST_RESULT": "FamilyJoinResultHandler",
+  "MEMO_RESULT": "MemoResultHandler",
+  "WEDDING_PROGRESS": "WeddingProgressHandler",
+  "WEDDING_CEREMONY_END": "WeddingCeremonyEndHandler",
+  "WEDDING_GIFT_RESULT": "WeddingGiftResultHandler",
+  "MONSTER_CARNIVAL_START": "MonsterCarnivalStartHandler",
+  "MONSTER_CARNIVAL_OBTAINED_CP": "MonsterCarnivalObtainedCPHandler",
+  "MONSTER_CARNIVAL_PARTY_CP": "MonsterCarnivalPartyCPHandler",
+  "MONSTER_CARNIVAL_MESSAGE": "MonsterCarnivalMessageHandler",
+  "MONSTER_CARNIVAL_LEAVE": "MonsterCarnivalLeaveHandler",
+  "RPS_GAME": "RpsGameHandler",
+  "ARIANT_RESULT": "AriantResultHandler",
+  "ARIANT_ARENA_SHOW_RESULT": "AriantResultHandler",
+  "ARIANT_ARENA_USER_SCORE": "AriantScoreHandler",
+  "NEW_YEAR_CARD_RES": "NewYearCardResHandler",
+  "ADMIN_RESULT": "AdminResultHandler",
+  "MAPLE_TV_USE_RES": "MapleTVUseResHandler",
+  "ENABLE_TV": "EnableTVHandler",
+  "SEND_TV": "SendTVHandler",
+  "REMOVE_TV": "RemoveTVHandler",
+  "MAPLELIFE_RESULT": "MapleLifeResultHandler",
+  "MAPLELIFE_ERROR": "MapleLifeErrorHandler",
+  "AVATAR_MEGAPHONE_RESULT": "AvatarMegaphoneHandler",
+  "SET_AVATAR_MEGAPHONE": "AvatarMegaphoneHandler",
+  "CLEAR_AVATAR_MEGAPHONE": "AvatarMegaphoneHandler",
+  "CLAIM_RESULT": "ClaimResultHandler",
+  "INCUBATOR_RESULT": "IncubatorResultHandler",
+  "OX_QUIZ": "OxQuizHandler",
+  "CANCEL_CHAIR_RESULT": "CancelChairResultHandler",
+  "DOJO_WARP_UP": "DojoWarpUpHandler",
+  "PLAYER_HINT": "PlayerHintHandler",
+  "LEFT_KNOCK_BACK": "LeftKnockBackHandler",
+  "SHEEP_RANCH_INFO": "SheepRanchInfoHandler",
+  "SHEEP_RANCH_CLOTHES": "SheepRanchClothesHandler",
+  "PYRAMID_GAUGE": "PyramidGaugeHandler",
+  "PYRAMID_SCORE": "PyramidScoreHandler",
+  "SCRIPT_PROGRESS_MESSAGE": "ScriptProgressMessageHandler",
+  "MULTICHAT": "MultiChatHandler",
+  "WHISPER": "WhisperResultHandler",
+  "SPOUSE_CHAT": "SpouseChatHandler",
+  "FIELD_OBSTACLE_ONOFF": "FieldObstacleOnOffHandler",
+  "FIELD_OBSTACLE_ONOFF_LIST": "FieldObstacleOnOffListHandler",
+  "FIELD_OBSTACLE_ALL_RESET": "FieldObstacleAllResetHandler",
+  "BLOW_WEATHER": "BlowWeatherHandler",
+  "GMEVENT_INSTRUCTIONS": "GmEventInstructionsHandler",
+  "CLOCK": "ClockHandler",
+  "CONTI_MOVE": "ContiMoveHandler",
+  "CONTI_STATE": "ContiStateHandler",
+  "STOP_CLOCK": "StopClockHandler",
+  "CHALKBOARD": "ChalkboardHandler",
+  "SKILL_EFFECT": "SkillEffectHandler",
+  "CANCEL_SKILL_EFFECT": "CancelSkillEffectHandler",
+  "FACIAL_EXPRESSION": "FacialExpressionHandler",
+  "SHOW_CHAIR": "ShowChairHandler",
+  "THROW_GRENADE": "ThrowGrenadeHandler",
+  "OPEN_UI": "OpenUIHandler",
+  "LOCK_UI": "LockUIHandler",
+  "DISABLE_UI": "DisableUIHandler",
+  "SPAWN_GUIDE": "SpawnGuideHandler",
+  "TALK_GUIDE": "TalkGuideHandler",
+  "SNOWBALL_STATE": "SnowballStateHandler",
+  "HIT_SNOWBALL": "HitSnowballHandler",
+  "SNOWBALL_MESSAGE": "SnowballMessageHandler",
+  "COCONUT_HIT": "CoconutHitHandler",
+  "COCONUT_SCORE": "CoconutScoreHandler",
+  "HORNTAIL_CAVE": "HorntailCaveHandler",
+  "PLAYER_INTERACTION": "TradeHandler",
+  "SPAWN_HIRED_MERCHANT": "HiredMerchantSpawnHandler",
+  "DESTROY_HIRED_MERCHANT": "HiredMerchantDestroyHandler",
+  "UPDATE_HIRED_MERCHANT": "HiredMerchantUpdateHandler",
+  "MONSTER_BOOK_SET_CARD": "MonsterBookCardHandler",
+  "MONSTER_BOOK_SET_COVER": "MonsterBookCoverHandler",
+  "ALLIANCE_OPERATION": "AllianceInfoHandler",
+  "GUILD_OPERATION": "GuildHandler",
+  "SET_FIELD": "SetFieldHandler",
+  "SPAWN_CHAR": "SpawnCharHandler",
+  "CHAR_MOVED": "CharMovedHandler",
+  "UPDATE_CHARLOOK": "UpdateCharLookHandler",
+  "SHOW_FOREIGN_EFFECT": "ShowForeignEffectHandler",
+  "REMOVE_CHAR": "RemoveCharHandler",
+  "SPAWN_PET": "SpawnPetHandler",
+  "SPAWN_NPC": "SpawnNpcHandler",
+  "SPAWN_NPC_C": "SpawnNpcControllerHandler",
+  "SPAWN_MOB": "SpawnMobHandler",
+  "SPAWN_MOB_C": "SpawnMobControllerHandler",
+  "MOB_MOVED": "MobMovedHandler",
+  "SHOW_MOB_HP": "ShowMobHpHandler",
+  "KILL_MOB": "KillMobHandler",
+  "DROP_LOOT": "DropLootHandler",
+  "REMOVE_LOOT": "RemoveLootHandler",
+  "HIT_REACTOR": "HitReactorHandler",
+  "SPAWN_REACTOR": "SpawnReactorHandler",
+  "REMOVE_REACTOR": "RemoveReactorHandler",
+  "ATTACKED_CLOSE": "CloseAttackHandler",
+  "ATTACKED_RANGED": "RangedAttackHandler",
+  "ATTACKED_MAGIC": "MagicAttackHandler",
+  "ENERGY_ATTACK": "EnergyAttackHandler",
+  "DAMAGE_PLAYER": "DamagePlayerHandler",
+  "GIVE_FOREIGN_BUFF": "GiveForeignBuffHandler",
+  "CANCEL_FOREIGN_BUFF": "CancelForeignBuffHandler",
+  "CATCH_MONSTER": "CatchMonsterHandler",
+  "CATCH_MONSTER_WITH_ITEM": "CatchMonsterWithItemHandler",
+  "PET_CHAT": "PetChatHandler",
+  "PET_NAMECHANGE": "PetNameChangeHandler",
+  "PET_COMMAND": "PetCommandHandler",
+  "REMOVE_NPC": "RemoveNpcHandler",
+  "SPAWN_MIST": "SpawnMistHandler",
+  "REMOVE_MIST": "RemoveMistHandler",
+  "SPAWN_DOOR": "SpawnDoorHandler",
+  "REMOVE_DOOR": "RemoveDoorHandler",
+  "SPAWN_SPECIAL_MAPOBJECT": "SpawnSummonHandler",
+  "REMOVE_SPECIAL_MAPOBJECT": "RemoveSummonHandler",
+  "BLOCKED_MAP": "BlockedMapHandler",
+  "BLOCKED_SERVER": "BlockedServerHandler",
+  "FORCED_MAP_EQUIP": "ForcedMapEquipHandler",
+  "UPDATE_CHAR_BOX": "UpdateCharBoxHandler",
+  "SHOW_ITEM_EFFECT": "ShowItemEffectHandler",
+  "MOVE_SUMMON": "MoveSummonHandler",
+  "SUMMON_ATTACK": "SummonAttackHandler",
+  "DAMAGE_SUMMON": "DamageSummonHandler",
+  "SUMMON_SKILL": "SummonSkillHandler",
+  "SPAWN_DRAGON": "SpawnDragonHandler",
+  "MOVE_DRAGON": "MoveDragonHandler",
+  "REMOVE_DRAGON": "RemoveDragonHandler",
+  "DAMAGE_MONSTER": "DamageMonsterHandler",
+  "FAME_RESPONSE": "FameResponseHandler",
+  "QUEST_CLEAR": "QuestClearHandler",
+  "SET_GENDER": "SetGenderHandler",
+  "SPAWN_PORTAL": "SpawnPortalHandler",
+  "CASH_PET_FOOD_RESULT": "CashPetFoodResultHandler",
+  "BRIDLE_MOB_CATCH_FAIL": "BridleMobCatchFailHandler",
+  "MAP_TRANSFER_RESULT": "MapTransferResultHandler",
+  "FAMILY_JOIN_ACCEPTED": "FamilyJoinAcceptedHandler",
+  "FAMILY_NOTIFY_LOGIN_OR_LOGOUT": "FamilyNotifyLoginHandler",
+  "FAMILY_SUMMON_REQUEST": "FamilySummonRequestHandler",
+  "NOTIFY_LEVELUP": "NotifyLevelUpHandler",
+  "NOTIFY_MARRIAGE": "NotifyMarriageHandler",
+  "NOTIFY_JOB_CHANGE": "NotifyJobChangeHandler",
+  "TRADE_MONEY_LIMIT": "TradeMoneyLimitHandler",
+  "ENTRUSTED_SHOP_CHECK_RESULT": "EntrustedShopCheckHandler",
+  "SHOP_LINK_RESULT": "ShopLinkResultHandler",
+  "SET_TAMING_MOB_INFO": "SetTamingMobInfoHandler",
+  "SET_EXTRA_PENDANT_SLOT": "SetExtraPendantSlotHandler",
+  "FAKE_GM_NOTICE": "FakeGmNoticeHandler",
+  "CANCEL_TRANSFER_WORLD_RESULT": "CancelTransferWorldResultHandler",
+  "SET_BACK_EFFECT": "SetBackEffectHandler",
+  "MOVE_PET": "MovePetHandler",
+  "PET_EXCEPTION_LIST": "PetExceptionListHandler",
+  "APPLY_MONSTER_STATUS": "ApplyMonsterStatusHandler",
+  "CANCEL_MONSTER_STATUS": "CancelMonsterStatusHandler",
+  "INVENTORY_GROW": "InventoryGrowHandler",
+  "SKILL_LEARN_ITEM_RESULT": "SkillLearnItemResultHandler",
+  "CANCEL_NAME_CHANGE_RESULT": "CancelNameChangeResultHandler",
+  "CLAIM_STATUS_CHANGED": "ClaimStatusChangedHandler",
+  "SUE_CHARACTER_RESULT": "SueCharacterResultHandler",
+  "SESSION_VALUE": "SessionValueHandler",
+  "IMITATED_NPC_DATA": "ImitatedNpcDataHandler",
+  "RELOG_RESPONSE": "RelogResponseHandler",
+  "LAST_CONNECTED_WORLD": "LastConnectedWorldHandler",
+  "RECOMMENDED_WORLD_MESSAGE": "RecommendedWorldMessageHandler",
+  "FORCED_STAT_SET": "ForcedStatSetHandler",
+  "FORCED_STAT_RESET": "ForcedStatResetHandler",
+  "SHOP_SCANNER_RESULT": "ShopScannerResultHandler",
+  "FAMILY_PRIVILEGE_LIST": "FamilyPrivilegeListHandler",
+  "FAMILY_REP_GAIN": "FamilyRepGainHandler",
+  "FAMILY_SET_PRIVILEGE": "FamilySetPrivilegeHandler",
+  "DATA_CRC_CHECK_FAILED": "DataCrcCheckFailedHandler",
+  "QUICKSLOT_INIT": "QuickslotInitHandler",
+  "ON_NOTIFY_HP_DEC_BY_FIELD": "NotifyHpDecByFieldHandler",
+  "MAKER_RESULT": "MakerResultHandler",
+  "MOVE_MONSTER_RESPONSE": "MoveMonsterResponseHandler",
+  "SET_NPC_SCRIPTABLE": "SetNpcScriptableHandler",
+  "CANNOT_SPAWN_KITE": "CannotSpawnKiteHandler",
+  "SPAWN_KITE": "SpawnKiteHandler",
+  "REMOVE_KITE": "RemoveKiteHandler",
+  "MONSTER_CARNIVAL_SUMMON": "MonsterCarnivalSummonHandler",
+  "MONSTER_CARNIVAL_DIED": "MonsterCarnivalDiedHandler",
+  "WITCH_TOWER_SCORE_UPDATE": "WitchTowerScoreHandler",
+  "SET_ITC": "SetItcHandler",
+  "SUMMON_ITEM_INAVAILABLE": "SummonItemUnavailableHandler",
+  "NPC_ACTION": "NpcActionHandler",
+  "TOURNAMENT": "TournamentHandler",
+  "TOURNAMENT_MATCH_TABLE": "TournamentMatchTableHandler",
+  "TOURNAMENT_SET_PRIZE": "TournamentSetPrizeHandler",
+  "TOURNAMENT_UEW": "TournamentUewHandler",
+  "MTS_OPERATION2": "MtsOperation2Handler",
+  "MTS_OPERATION": "MtsOperationHandler",
+  "UPDATE_HPMPAALERT": "UpdateHpMpAlertHandler",
+  "DPT_TRACKER": "DptTrackerHandler",
+  "GUEST_ID_LOGIN": "GuestIdLoginHandler",
+  "HOUR_CHANGED": "HourChangedHandler",
+  "MINIMAP_ON_OFF": "MinimapOnOffHandler",
+  "BONUS_EXP_CHANGED": "BonusExpChangedHandler",
+  "PLAY_JUKEBOX": "PlayJukeboxHandler",
+  "MARRIAGE_REQUEST": "MarriageRequestHandler",
+  "MARRIAGE_RESULT": "MarriageResultHandler",
+  "NOTIFY_MARRIED_PARTNER_MAP_TRANSFER": "NotifyMarriedPartnerMapTransferHandler",
+  "WEDDING_PHOTO": "WeddingPhotoHandler",
+  "SET_POTION_DISCOUNT_RATE": "SetPotionDiscountRateHandler",
+  "IMITATED_NPC_RESULT": "ImitatedNpcResultHandler",
+  "LIMITED_NPC_DISABLE_INFO": "LimitedNpcDisableInfoHandler",
+  "PARTY_VALUE": "PartyValueHandler",
+  "FIELD_SET_VARIABLE": "FieldSetVariableHandler",
+  "DESTROY_SHOP_RESULT": "DestroyShopResultHandler",
+  "RANDOM_MORPH_RES": "RandomMorphResHandler",
+  "SET_MAP_OBJECT_VISIBLE": "SetMapObjectVisibleHandler",
+  "CLEAR_BACK_EFFECT": "ClearBackEffectHandler",
+  "GUILD_BBS_PACKET": "GuildBbsHandler",
+  "SET_QUEST_CLEAR_FIELD": "SetQuestClearHandler",
+  "SET_QUEST_TIME": "SetQuestTimeHandler",
+  "WARN_MESSAGE": "WarnMessageHandler",
+  "SET_OBJECT_STATE": "SetObjectStateHandler",
+  "CHATTEXT1": "ChatText1Handler",
+  "SHOW_CONSUME_EFFECT": "ShowConsumeEffectHandler",
+  "SKILL_USE_RESULT": "SkillUseResultHandler",
+  "CANCEL_NAME_CHANGE_BY_OTHER": "CancelNameChangeByOtherHandler",
+  "CONSULT_AUTHKEY_UPDATE": "ConsultAuthkeyUpdateHandler",
+  "CLASS_COMPETITION_AUTHKEY_UPDATE": "ClassCompetitionAuthkeyUpdateHandler",
+  "WEB_BOARD_AUTHKEY_UPDATE": "WebBoardAuthkeyUpdateHandler",
+  "OPEN_FULL_CLIENT_DOWNLOAD_LINK": "OpenFullClientDownloadLinkHandler",
+  "CLAIM_AVAILABLE_TIME": "ClaimAvailableTimeHandler",
+  "SET_BUY_EQUIP_EXT": "SetBuyEquipExtHandler",
+  "GUILD_NAME_CHANGED": "GuildNameChangedHandler",
+  "GUILD_MARK_CHANGED": "GuildMarkChangedHandler",
+  "LUCKSACK_PASS": "LucksackPassHandler",
+  "LUCKSACK_FAIL": "LucksackFailHandler",
+  "MESO_BAG_MESSAGE": "MesoBagMessageHandler",
+  "KOREAN_EVENT": "KoreanEventHandler",
+  "RESET_MONSTER_ANIMATION": "ResetMonsterAnimationHandler",
+  "ARIANT_THING": "AriantThingHandler",
+  "SHOW_MAGNET": "ShowMagnetHandler",
+  "ACCOUNT_INFO": "AccountInfoHandler",
+  "CHANNEL_SELECTED": "ChannelSelectedHandler",
+  "HACKSHIELD_REQUEST": "HackshieldRequestHandler",
+  "CHECK_CRC_RESULT": "CheckCrcResultHandler",
+  "KOREAN_INTERNET_CAFE_SHIT": "KoreanInternetCafeHandler",
+  "CHANGE_CHANNEL": "ChangeChannelHandler",
+  "KEYMAP": "KeymapHandler",
+  "AUTO_HP_POT": "AutoHpPotHandler",
+  "AUTO_MP_POT": "AutoMpPotHandler",
+  "SKILL_MACROS": "SkillMacrosHandler",
+  "SHOW_COMBO": "ShowComboHandler",
+  "CHANGE_STATS": "ChangeStatsHandler",
+  "GIVE_BUFF": "ApplyBuffHandler",
+  "CANCEL_BUFF": "CancelBuffHandler",
+  "UPDATE_SKILL": "UpdateSkillHandler",
+  "ADD_COOLDOWN": "AddCooldownHandler",
+  "SHOW_STATUS_INFO": "ShowStatusInfoHandler",
+  "CHAT_RECEIVED": "ChatReceivedHandler",
+  "SCROLL_RESULT": "ScrollResultHandler",
+  "SERVER_MESSAGE": "ServerMessageHandler",
+  "WEEK_EVENT_MESSAGE": "WeekEventMessageHandler",
+  "SHOW_ITEM_GAIN_INCHAT": "ShowItemGainInChatHandler",
+  "UPDATE_QUEST_INFO": "UpdateQuestInfoHandler",
+  "MODIFY_INVENTORY": "ModifyInventoryHandler",
+  "GATHER_RESULT": "GatherResultHandler",
+  "SORT_RESULT": "SortResultHandler",
+  "NPC_DIALOGUE": "NpcDialogueHandler",
+  "OPEN_NPC_SHOP": "OpenNpcShopHandler",
+  "CONFIRM_SHOP_TRANSACTION": "ConfirmShopTransactionHandler",
+  "CHAR_INFO": "CharInfoHandler",
+  "SET_CASH_SHOP": "SetCashShopHandler",
+  "QUERY_CASH_RESULT": "QueryCashResultHandler",
+  "CASHSHOP_OPERATION": "CashShopOperationHandler",
+  "CHECK_SPW_RESULT": "CheckSpwResultHandler",
+  "FIELD_EFFECT": "FieldEffectHandler",
+  "LIMIT_BREAK_SYNC": "LimitBreakSyncHandler"
+ }
+}

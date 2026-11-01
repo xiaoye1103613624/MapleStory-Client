@@ -1,0 +1,420 @@
+{
+ "metadata": {
+  "path": "E:\\MXD\\Maplestory95.i64",
+  "module": "Maplestory95.exe",
+  "arch": "32",
+  "base_address": "0x400000",
+  "image_size": "0xcee000",
+  "md5": "unavailable",
+  "sha256": "unavailable"
+ },
+ "statistics": {
+  "total_functions": 22428,
+  "named_functions": 21255,
+  "library_functions": 647,
+  "unnamed_functions": 526,
+  "total_strings": 2583,
+  "total_segments": 8
+ },
+ "segments": [
+  {
+   "name": "___",
+   "start": "0x401000",
+   "end": "0xc77000",
+   "size": "0x876000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".idata__",
+   "start": "0xc97000",
+   "end": "0xc9702a",
+   "size": "0x2a",
+   "permissions": "rw"
+  },
+  {
+   "name": ".idata",
+   "start": "0xc9702a",
+   "end": "0xc9702e",
+   "size": "0x4",
+   "permissions": "rw"
+  },
+  {
+   "name": ".idata__",
+   "start": "0xc9702e",
+   "end": "0xc98000",
+   "size": "0xfd2",
+   "permissions": "rw"
+  },
+  {
+   "name": "________",
+   "start": "0xc98000",
+   "end": "0xef4000",
+   "size": "0x25c000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "etmeqwcy",
+   "start": "0xef4000",
+   "end": "0x10ec000",
+   "size": "0x1f8000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "ugmsdzov",
+   "start": "0x10ec000",
+   "end": "0x10ed000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "ignkwegw",
+   "start": "0x10ed000",
+   "end": "0x10ee000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  }
+ ],
+ "entrypoints": [
+  {
+   "addr": "0x9bf450",
+   "name": "ZtlTaskMemAllocImp",
+   "ordinal": 1
+  },
+  {
+   "addr": "0x9bf460",
+   "name": "ZtlTaskMemFreeImp",
+   "ordinal": 2
+  },
+  {
+   "addr": "0x9bf470",
+   "name": "ZtlTaskMemReallocImp",
+   "ordinal": 3
+  },
+  {
+   "addr": "0xa34b88",
+   "name": "start",
+   "ordinal": 10701704
+  }
+ ],
+ "interesting_strings": [
+  {
+   "addr": "0xb46ee4",
+   "string": "Delete",
+   "xref_count": 21
+  },
+  {
+   "addr": "0xb46eec",
+   "string": "NoRemove",
+   "xref_count": 21
+  },
+  {
+   "addr": "0xb46ef8",
+   "string": "ForceRemove",
+   "xref_count": 21
+  },
+  {
+   "addr": "0xc62264",
+   "string": "client.exe",
+   "xref_count": 10
+  },
+  {
+   "addr": "0xb5473c",
+   "string": "UI/UIWindow2.img/Skill/macro/Macroicon/%d/icon",
+   "xref_count": 9
+  },
+  {
+   "addr": "0xb9c068",
+   "string": "(%d/%d)",
+   "xref_count": 9
+  },
+  {
+   "addr": "0xb9a4d8",
+   "string": "UI/UIWindow2.img/Macro/num1/%d",
+   "xref_count": 8
+  },
+  {
+   "addr": "0xb9bfa0",
+   "string": "%d / %d",
+   "xref_count": 7
+  },
+  {
+   "addr": "0xb55e7c",
+   "string": "bad allocation",
+   "xref_count": 5
+  },
+  {
+   "addr": "0xb49eec",
+   "string": "siFieldID",
+   "xref_count": 4
+  },
+  {
+   "addr": "0xb4ae94",
+   "string": "level",
+   "xref_count": 4
+  },
+  {
+   "addr": "0xb4d90c",
+   "string": "maple",
+   "xref_count": 4
+  },
+  {
+   "addr": "0xb4d914",
+   "string": "story",
+   "xref_count": 4
+  },
+  {
+   "addr": "0xb9c550",
+   "string": "%d/%d",
+   "xref_count": 4
+  },
+  {
+   "addr": "0xb9d7d0",
+   "string": "UI/UIWindow2.img/Maker/randomRecipe",
+   "xref_count": 4
+  }
+ ],
+ "interesting_functions": [
+  {
+   "addr": "0x401b90",
+   "name": "??1Ztl_variant_t@@QAE@XZ",
+   "size": 37,
+   "xref_count": 15240,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x403900",
+   "name": "??1?$ZXString@D@@QAE@XZ",
+   "size": 17,
+   "xref_count": 7649,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x401730",
+   "name": "?ZComVariantCopy@ZComAPI@@YAJPAUtagVARIANT@@0@Z",
+   "size": 158,
+   "xref_count": 6811,
+   "callee_count": 4,
+   "type": "complex"
+  },
+  {
+   "addr": "0x403460",
+   "name": "?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z",
+   "size": 27,
+   "xref_count": 6708,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x4048d0",
+   "name": "??1Ztl_bstr_t@@QAE@XZ",
+   "size": 22,
+   "xref_count": 6558,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x403b30",
+   "name": "?GetString@StringPool@@QAE?AV?$ZXString@D@@I@Z",
+   "size": 34,
+   "xref_count": 3772,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x404bb0",
+   "name": "?GetBSTR@StringPool@@QAE?AVZtl_bstr_t@@I@Z",
+   "size": 133,
+   "xref_count": 3317,
+   "callee_count": 4,
+   "type": "complex"
+  },
+  {
+   "addr": "0x403920",
+   "name": "??1?$ZXString@G@@QAE@XZ",
+   "size": 17,
+   "xref_count": 2933,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x404930",
+   "name": "?Getitem@IWzProperty@@QAE?AVZtl_variant_t@@VZtl_bstr_t@@@Z",
+   "size": 172,
+   "xref_count": 2894,
+   "callee_count": 4,
+   "type": "complex"
+  },
+  {
+   "addr": "0x402150",
+   "name": "?Free@?$ZAllocEx@VZAllocAnonSelector@@@@QAEXPAX@Z",
+   "size": 139,
+   "xref_count": 2681,
+   "callee_count": 1,
+   "type": "complex"
+  },
+  {
+   "addr": "0x4034b0",
+   "name": "?_Release@?$ZXString@G@@KAXPAU_ZXStringData@1@@Z",
+   "size": 27,
+   "xref_count": 2677,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x42d1c0",
+   "name": "??4?$ZXString@D@@QAEAAV0@ABV0@@Z",
+   "size": 111,
+   "xref_count": 2677,
+   "callee_count": 3,
+   "type": "complex"
+  },
+  {
+   "addr": "0x402040",
+   "name": "?Alloc@?$ZAllocEx@VZAllocAnonSelector@@@@QAEPAXI@Z",
+   "size": 261,
+   "xref_count": 2561,
+   "callee_count": 4,
+   "type": "complex"
+  },
+  {
+   "addr": "0x401a60",
+   "name": "?GetUnknown@Ztl_variant_t@@QBEPAUIUnknown@@_N0@Z",
+   "size": 300,
+   "xref_count": 2101,
+   "callee_count": 3,
+   "type": "complex"
+  },
+  {
+   "addr": "0x403b60",
+   "name": "?GetStringW@StringPool@@QAE?AV?$ZXString@G@@I@Z",
+   "size": 34,
+   "xref_count": 2062,
+   "callee_count": 1,
+   "type": "wrapper"
+  }
+ ],
+ "imports_by_category": {
+  "crypto": [],
+  "network": [],
+  "file_io": [
+   {
+    "addr": "0xc9702a",
+    "name": "CreateFileA",
+    "module": "kernel32"
+   }
+  ],
+  "process": [],
+  "registry": [],
+  "other": []
+ },
+ "call_graph_summary": {
+  "total_edges": 71646,
+  "max_depth_estimate": null,
+  "root_functions": [
+   "??0?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@QAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZList@UMAPINFO@CActionFrame@@@@@@$0BA@V?$ZList@UMAPINFO@CActionFrame@@@@@@MAE@XZ",
+   "??0ZAllocHelper@@QAE@J@Z",
+   "??1ZRefCounted@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@VCSpriteInstance@@@@@@$0BA@V?$ZRef@VCSpriteInstance@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@$0BA@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@MAE@XZ",
+   "??1?$ZSynchronizedHelper@VZFatalSection@@@@QAE@XZ",
+   "??0?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@QAE@XZ",
+   "??1?$_com_ptr_t@V?$_com_IIID@UIWzShape2D@@$1?_GUID_4cfb57c7_eae3_40b3_ac98_4b2750e3642a@@3U__s_GUID@@B@@@@QAE@XZ",
+   "??_V@YAXPAX@Z",
+   "??_ECallBack@ZRecyclableStatic@@UAEPAXI@Z",
+   "??_EZRefCounted@@MAEPAXI@Z",
+   "??_G?$ZRecyclableAvBuffer@U_PAIR@?$ZMap@KPAVCSpriteInstance@@K@@$0BA@U12@@@UAEPAXI@Z",
+   "??_G?$ZRecyclableAvBuffer@V?$ZRefCountedDummy@V?$ZList@UMAPINFO@CActionFrame@@@@@@$0BA@V?$ZList@UMAPINFO@CActionFrame@@@@@@UAEPAXI@Z",
+   "??_E?$ZRecyclableAvBuffer@V?$ZRefCountedDummy@V?$ZRef@VCSpriteInstance@@@@@@$0BA@V?$ZRef@VCSpriteInstance@@@@@@UAEPAXI@Z",
+   "??_E?$ZRecyclableAvBuffer@V?$ZRefCountedDummy@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@$0BA@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@UAEPAXI@Z",
+   "??_G?$ZRecyclableAvBuffer@V?$ZRefCountedDummy@UMAPINFO@CActionFrame@@@@$0BA@UMAPINFO@CActionFrame@@@@UAEPAXI@Z",
+   "??_G_com_error@@UAEPAXI@Z",
+   "??1?$ZList@UMAPINFO@CActionFrame@@@@UAE@XZ",
+   "??1?$ZMap@KPAVCSpriteInstance@@K@@UAE@XZ",
+   "??_E?$ZList@UMAPINFO@CActionFrame@@@@UAEPAXI@Z",
+   "??_E?$ZMap@KPAVCSpriteInstance@@K@@UAEPAXI@Z",
+   "??0_com_error@@QAE@ABV0@@Z",
+   "??_E?$ZRefCountedDummy@V?$ZList@UMAPINFO@CActionFrame@@@@@@WM@AEPAXI@Z",
+   "??_E_PAIR@?$ZMap@KPAVCSpriteInstance@@K@@UAEPAXI@Z",
+   "??1?$ZRef@VCSpriteInstance@@@@QAE@XZ",
+   "??_E?$ZRecyclable@U_PAIR@?$ZMap@KPAVCSpriteInstance@@K@@$0BA@U12@@@MAEPAXI@Z",
+   "??_E?$ZRecyclable@V?$ZRefCountedDummy@V?$ZList@UMAPINFO@CActionFrame@@@@@@$0BA@V?$ZList@UMAPINFO@CActionFrame@@@@@@MAEPAXI@Z",
+   "??_E?$ZRefCountedDummy@V?$ZList@UMAPINFO@CActionFrame@@@@@@UAEPAXI@Z",
+   "??_G?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@VCSpriteInstance@@@@@@$0BA@V?$ZRef@VCSpriteInstance@@@@@@MAEPAXI@Z",
+   "??_G?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@$0BA@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@MAEPAXI@Z",
+   "??_E?$ZRecyclable@V?$ZRefCountedDummy@UMAPINFO@CActionFrame@@@@$0BA@UMAPINFO@CActionFrame@@@@MAEPAXI@Z",
+   "??_E?$ZRefCountedDummy@V?$ZRef@VCSpriteInstance@@@@@@WM@AEPAXI@Z",
+   "??_E?$ZRefCountedDummy@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@WM@AEPAXI@Z",
+   "??_G?$ZRefCountedDummy@V?$ZRef@VCSpriteInstance@@@@@@UAEPAXI@Z",
+   "??_E?$ZRefCountedDummy@V?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@@@UAEPAXI@Z",
+   "??_GCSpriteInstance@@UAEPAXI@Z",
+   "??_GCSpriteSource@@UAEPAXI@Z",
+   "??_E?$ZRefCountedDummy@UMAPINFO@CActionFrame@@@@WM@AEPAXI@Z",
+   "??_E?$ZRefCountedDummy@UMAPINFO@CActionFrame@@@@UAEPAXI@Z",
+   "??1?$TSingleton@VCActionMan@@@@QAE@XZ",
+   "??0?$ZArray@V?$ZRef@UMORPHACTIONFRAMEENTRY@CActionMan@@@@@@QAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UCHARACTERIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UMOBIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@KV?$ZRef@UMOBACTIONENTRY@CActionMan@@@@K@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UNPCIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@_JV?$ZRef@UNPCACTIONENTRY@CActionMan@@@@_J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UPETIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@KV?$ZRef@UPETACTIONENTRY@CActionMan@@@@K@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UEMPLOYEEIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@KV?$ZRef@UEMPLOYEEACTIONENTRY@CActionMan@@@@K@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@UActionKey@@V?$ZRef@USUMMONEDACTIONENTRY@CActionMan@@@@U1@@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@KV?$ZRef@USHADOWPARTNERACTIONENTRY@CActionMan@@@@K@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@PBGV?$ZRef@UMELEEATTACKAFTERIMAGE@CActionMan@@@@V?$ZXString@G@@@@$0BA@U12@@@MAE@XZ",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UCHARACTERIMGENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UMOBIMGENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?RemoveKey@?$ZMap@KV?$ZRef@UMOBACTIONENTRY@CActionMan@@@@K@@QAEHABK@Z",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UNPCIMGENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?RemoveKey@?$ZMap@_JV?$ZRef@UNPCACTIONENTRY@CActionMan@@@@_J@@QAEHAB_J@Z",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UPETIMGENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?RemoveKey@?$ZMap@KV?$ZRef@UPETACTIONENTRY@CActionMan@@@@K@@QAEHABK@Z",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UEMPLOYEEIMGENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?RemoveKey@?$ZMap@KV?$ZRef@UEMPLOYEEACTIONENTRY@CActionMan@@@@K@@QAEHABK@Z",
+   "?RemoveKey@?$ZMap@UActionKey@@V?$ZRef@USUMMONEDACTIONENTRY@CActionMan@@@@U1@@@QAEHABUActionKey@@@Z",
+   "?RemoveKey@?$ZMap@KV?$ZRef@USHADOWPARTNERACTIONENTRY@CActionMan@@@@K@@QAEHABK@Z",
+   "?RemoveKey@?$ZMap@JV?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@J@@QAEHABJ@Z",
+   "?GetHeadPosition@?$ZMap@JV?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@J@@QBEPAU__POSITION@@XZ",
+   "?RemoveKey@?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@QAEHABJ@Z",
+   "?GetHeadPosition@?$ZMap@JV?$ZRef@UDRAGONACTIONENTRY@CActionMan@@@@J@@QBEPAU__POSITION@@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@UFACELOOKCODES@@V?$ZRef@UFACELOOKENTRY@CActionMan@@@@U1@@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@JV?$ZRef@UMORPHIMGENTRY@CActionMan@@@@J@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@U_PAIR@?$ZMap@KV?$ZRef@UMORPHACTIONENTRY@CActionMan@@@@K@@$0BA@U12@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@@$0BA@V?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UMOBACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UMOBACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UNPCACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UNPCACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UPETACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UPETACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UEMPLOYEEACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UEMPLOYEEACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@USUMMONEDACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@USUMMONEDACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@USHADOWPARTNERACTIONFRAMEENTRY@CActionMan@@@@@@$0BA@V?$ZRef@USHADOWPARTNERACTIONFRAMEENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UCHARACTERIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UCHARACTERIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UFACELOOKENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UFACELOOKENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UMORPHIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UMORPHIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UMORPHACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UMORPHACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UMOBIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UMOBIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UMOBACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UMOBACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UNPCIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UNPCIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UNPCACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UNPCACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UPETIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UPETIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UPETACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UPETACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UEMPLOYEEIMGENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UEMPLOYEEIMGENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@UEMPLOYEEACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@UEMPLOYEEACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@USUMMONEDACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@USUMMONEDACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "??1?$ZRecyclable@V?$ZRefCountedDummy@V?$ZRef@USHADOWPARTNERACTIONENTRY@CActionMan@@@@@@$0BA@V?$ZRef@USHADOWPARTNERACTIONENTRY@CActionMan@@@@@@MAE@XZ",
+   "?Decode1@CIOBufferManipulator@@SAIAAEPBEI@Z",
+   "?Decode4@CIOBufferManipulator@@SAIAAKPBEI@Z",
+   "??1?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@QAE@XZ",
+   "??1?$_com_ptr_t@V?$_com_IIID@UIWzUOL@@$1?_GUID_f945bf59_d1ec_45e8_8bd9_3dd11ac1a48a@@3U__s_GUID@@B@@@@QAE@XZ",
+   "??_E?$ZRefCountedDummy@V?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@@WM@AEPAXI@Z"
+  ],
+  "leaf_functions_count": 2854
+ },
+ "_note": "Binary has 22428 functions; xref analysis was limited to the first 10000 for performance."
+}

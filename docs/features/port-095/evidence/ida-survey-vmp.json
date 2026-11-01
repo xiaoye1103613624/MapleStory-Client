@@ -1,0 +1,2361 @@
+{
+ "metadata": {
+  "path": "E:\\MXD\\【2023.8.8江浩生日福利】怀旧岛192整合版\\浩浩岛095(9.1测试端)\\开启游戏.vmp.exe.i64",
+  "module": "开启游戏.vmp.exe",
+  "arch": "32",
+  "base_address": "0x400000",
+  "image_size": "0x2051000",
+  "md5": "1e1004876949a592c9849d9a9ec2b5cb",
+  "sha256": "6d8016f3d37c83987378aef2aa740e679109dc409dd048df892f7f78ba14dd4b"
+ },
+ "statistics": {
+  "total_functions": 230,
+  "named_functions": 192,
+  "library_functions": 0,
+  "unnamed_functions": 38,
+  "total_strings": 406,
+  "total_segments": 12
+ },
+ "segments": [
+  {
+   "name": "___",
+   "start": "0x401000",
+   "end": "0x101e000",
+   "size": "0xc1d000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".vmps0",
+   "start": "0x101e000",
+   "end": "0x103e000",
+   "size": "0x20000",
+   "permissions": "r"
+  },
+  {
+   "name": ".pdata__",
+   "start": "0x103e000",
+   "end": "0x1357000",
+   "size": "0x319000",
+   "permissions": "rw"
+  },
+  {
+   "name": "vsqwcbse",
+   "start": "0x1357000",
+   "end": "0x15f9000",
+   "size": "0x2a2000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "pwyuzxvp",
+   "start": "0x15f9000",
+   "end": "0x15fa000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "ednhbazl",
+   "start": "0x15fa000",
+   "end": "0x15fb000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".mackt",
+   "start": "0x15fb000",
+   "end": "0x15fd000",
+   "size": "0x2000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".mackt",
+   "start": "0x15fd000",
+   "end": "0x15ff000",
+   "size": "0x2000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".vmps1",
+   "start": "0x15ff000",
+   "end": "0x191d000",
+   "size": "0x31e000",
+   "permissions": "rx"
+  },
+  {
+   "name": ".vmps2",
+   "start": "0x191d000",
+   "end": "0x19b0000",
+   "size": "0x93000",
+   "permissions": "rx"
+  },
+  {
+   "name": ".idata",
+   "start": "0x19b0000",
+   "end": "0x19b0658",
+   "size": "0x658",
+   "permissions": "rx"
+  },
+  {
+   "name": ".vmps2",
+   "start": "0x19b0658",
+   "end": "0x244f000",
+   "size": "0xa9e9a8",
+   "permissions": "rx"
+  }
+ ],
+ "entrypoints": [
+  {
+   "addr": "0xc03010",
+   "name": "ZtlTaskMemAllocImp",
+   "ordinal": 1
+  },
+  {
+   "addr": "0xc03020",
+   "name": "ZtlTaskMemFreeImp",
+   "ordinal": 2
+  },
+  {
+   "addr": "0xc03030",
+   "name": "ZtlTaskMemReallocImp",
+   "ordinal": 3
+  },
+  {
+   "addr": "0x20421ac",
+   "name": "start",
+   "ordinal": 33825196
+  }
+ ],
+ "interesting_strings": [
+  {
+   "addr": "0x206c934",
+   "string": "user32.dll",
+   "xref_count": 3
+  },
+  {
+   "addr": "0x2446f5c",
+   "string": "kernel32.dll",
+   "xref_count": 3
+  },
+  {
+   "addr": "0x192d68c",
+   "string": "mss32.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x1931e8e",
+   "string": "dinput8.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19577f8",
+   "string": "WTSAPI32.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19581da",
+   "string": "ole32.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x196d5b0",
+   "string": "nmcogame.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19ba470",
+   "string": "nexonguard.aes",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19c67f2",
+   "string": "iphlpapi.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19ce346",
+   "string": "wininet.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19da5ee",
+   "string": "advapi32.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19e92a1",
+   "string": "ZtlTaskMemAllocImp",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19e92b4",
+   "string": "ZtlTaskMemFreeImp",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19e92c6",
+   "string": "ZtlTaskMemReallocImp",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x19e92db",
+   "string": "MapleStory.exe",
+   "xref_count": 1
+  }
+ ],
+ "interesting_functions": [
+  {
+   "addr": "0x208bf82",
+   "name": "sub_208BF82",
+   "size": 164,
+   "xref_count": 21,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x205cfbf",
+   "name": "sub_205CFBF",
+   "size": 165,
+   "xref_count": 18,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x1ce6aa1",
+   "name": "sub_1CE6AA1",
+   "size": 11,
+   "xref_count": 13,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x204213b",
+   "name": "sub_204213B",
+   "size": 6,
+   "xref_count": 10,
+   "callee_count": 0,
+   "type": "thunk"
+  },
+  {
+   "addr": "0x2068368",
+   "name": "sub_2068368",
+   "size": 144,
+   "xref_count": 10,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x192836a",
+   "name": "sub_192836A",
+   "size": 6,
+   "xref_count": 9,
+   "callee_count": 0,
+   "type": "thunk"
+  },
+  {
+   "addr": "0x1cdddb2",
+   "name": "sub_1CDDDB2",
+   "size": 200,
+   "xref_count": 8,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x195a7f5",
+   "name": "sub_195A7F5",
+   "size": 71,
+   "xref_count": 4,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x204d4a2",
+   "name": "sub_204D4A2",
+   "size": 203,
+   "xref_count": 4,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x24243f7",
+   "name": "sub_24243F7",
+   "size": 9,
+   "xref_count": 3,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x19703e1",
+   "name": "sub_19703E1",
+   "size": 187,
+   "xref_count": 2,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x191f2d3",
+   "name": "sub_191F2D3",
+   "size": 11,
+   "xref_count": 1,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x191f334",
+   "name": "sub_191F334",
+   "size": 16,
+   "xref_count": 1,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x19216a7",
+   "name": "nullsub_2",
+   "size": 1,
+   "xref_count": 1,
+   "callee_count": 0,
+   "type": "thunk"
+  },
+  {
+   "addr": "0x1923d4f",
+   "name": "nullsub_3",
+   "size": 1,
+   "xref_count": 1,
+   "callee_count": 0,
+   "type": "thunk"
+  }
+ ],
+ "imports_by_category": {
+  "crypto": [],
+  "network": [
+   {
+    "addr": "0x19b02f8",
+    "name": "SendMessageA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0384",
+    "name": "InternetOpenA",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b0388",
+    "name": "HttpOpenRequestA",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b038c",
+    "name": "InternetSetStatusCallback",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b0390",
+    "name": "InternetCloseHandle",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b0394",
+    "name": "InternetConnectA",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b0398",
+    "name": "HttpSendRequestA",
+    "module": "wininet"
+   },
+   {
+    "addr": "0x19b03ac",
+    "name": "closesocket",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03b4",
+    "name": "socket",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03c4",
+    "name": "send",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03c8",
+    "name": "recv",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b044c",
+    "name": "WTSSendMessageW",
+    "module": "WTSAPI32"
+   }
+  ],
+  "file_io": [
+   {
+    "addr": "0x19b00a0",
+    "name": "WriteFile",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00a4",
+    "name": "SetFilePointer",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00a8",
+    "name": "ReadFile",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00ac",
+    "name": "CreateFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00b0",
+    "name": "CopyFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00b4",
+    "name": "GetTempFileNameA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00b8",
+    "name": "GetTempPathA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00bc",
+    "name": "GetSystemDirectoryA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00c4",
+    "name": "FindNextFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00c8",
+    "name": "DeleteFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00cc",
+    "name": "FindFirstFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00e0",
+    "name": "CompareFileTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00f4",
+    "name": "SystemTimeToFileTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00fc",
+    "name": "FileTimeToSystemTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0114",
+    "name": "GetWindowsDirectoryA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0130",
+    "name": "SetFileAttributesA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0134",
+    "name": "GetFileSize",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0140",
+    "name": "OpenFileMappingA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0168",
+    "name": "GetModuleFileNameA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0178",
+    "name": "UnmapViewOfFile",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b017c",
+    "name": "MapViewOfFile",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0180",
+    "name": "CreateFileMappingA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01a0",
+    "name": "FlushFileBuffers",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01b4",
+    "name": "GetSystemTimeAsFileTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01b8",
+    "name": "GetFileType",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0374",
+    "name": "GetFileVersionInfoA",
+    "module": "version"
+   },
+   {
+    "addr": "0x19b0378",
+    "name": "GetFileVersionInfoSizeA",
+    "module": "version"
+   },
+   {
+    "addr": "0x19b0414",
+    "name": "_AIL_set_redist_directory@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0458",
+    "name": "GetSystemTimeAsFileTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0464",
+    "name": "GetModuleFileNameW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04c8",
+    "name": "SystemTimeToFileTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04cc",
+    "name": "FileTimeToSystemTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0530",
+    "name": "CreateFileW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b053c",
+    "name": "FlushFileBuffers",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0540",
+    "name": "CreateFileA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05ac",
+    "name": "GetFileType",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05b4",
+    "name": "GetModuleFileNameA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05e8",
+    "name": "WriteFile",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05ec",
+    "name": "SetFilePointer",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0620",
+    "name": "GetModuleFileNameW",
+    "module": "kernel32"
+   }
+  ],
+  "process": [
+   {
+    "addr": "0x19b0034",
+    "name": "OpenProcessToken",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0078",
+    "name": "GetProcessHeap",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0094",
+    "name": "GetCurrentProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00d4",
+    "name": "CreateProcessA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0150",
+    "name": "GetCurrentThreadId",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b015c",
+    "name": "OpenProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0160",
+    "name": "GetCurrentProcessId",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0174",
+    "name": "VirtualQuery",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0184",
+    "name": "Thread32Next",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0188",
+    "name": "Thread32First",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b018c",
+    "name": "Process32Next",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0190",
+    "name": "Process32First",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0204",
+    "name": "VirtualProtectEx",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0208",
+    "name": "ReadProcessMemory",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b020c",
+    "name": "WriteProcessMemory",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0210",
+    "name": "ResumeThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0214",
+    "name": "OpenThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0218",
+    "name": "VirtualAllocEx",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0228",
+    "name": "GetExitCodeProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b022c",
+    "name": "VirtualAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0230",
+    "name": "VirtualFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0234",
+    "name": "TerminateProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0240",
+    "name": "VirtualProtect",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0260",
+    "name": "ExitThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0264",
+    "name": "CreateThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0288",
+    "name": "ExitProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b02d4",
+    "name": "GetProcessMemoryInfo",
+    "module": "psapi"
+   },
+   {
+    "addr": "0x19b02dc",
+    "name": "MapVirtualKeyA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0308",
+    "name": "AttachThreadInput",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0328",
+    "name": "GetWindowThreadProcessId",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0348",
+    "name": "EnumThreadWindows",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0454",
+    "name": "VirtualQuery",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b046c",
+    "name": "TerminateProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0470",
+    "name": "GetCurrentProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0478",
+    "name": "Thread32First",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b047c",
+    "name": "GetCurrentProcessId",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0480",
+    "name": "GetCurrentThreadId",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0484",
+    "name": "OpenThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0488",
+    "name": "Thread32Next",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0490",
+    "name": "SuspendThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0494",
+    "name": "ResumeThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0498",
+    "name": "WriteProcessMemory",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04a0",
+    "name": "VirtualAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04a4",
+    "name": "VirtualProtect",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04a8",
+    "name": "VirtualFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04ac",
+    "name": "GetProcessAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04b0",
+    "name": "SetProcessAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04b4",
+    "name": "GetCurrentThread",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04b8",
+    "name": "SetThreadAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04e0",
+    "name": "ExitProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b050c",
+    "name": "GetThreadLocale",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0604",
+    "name": "GetProcessWindowStation",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0624",
+    "name": "GetProcessAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0628",
+    "name": "SetProcessAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b062c",
+    "name": "SetThreadAffinityMask",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0634",
+    "name": "ExitProcess",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b064c",
+    "name": "GetProcessWindowStation",
+    "module": "user32"
+   }
+  ],
+  "registry": [
+   {
+    "addr": "0x19b0000",
+    "name": "RegOpenKeyExA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0008",
+    "name": "RegDeleteValueA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b000c",
+    "name": "RegFlushKey",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0014",
+    "name": "RegEnumValueA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0018",
+    "name": "RegDeleteKeyA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b001c",
+    "name": "RegSetValueExA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0020",
+    "name": "RegQueryInfoKeyA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0024",
+    "name": "RegEnumKeyExA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0028",
+    "name": "RegCreateKeyExA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b002c",
+    "name": "RegQueryValueExA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0030",
+    "name": "RegCloseKey",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0428",
+    "name": "NMCO_SetLocaleAndRegion",
+    "module": "nmcogame"
+   }
+  ],
+  "other": [
+   {
+    "addr": "0x19b0004",
+    "name": "LookupPrivilegeValueA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0010",
+    "name": "GetUserNameA",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0038",
+    "name": "AdjustTokenPrivileges",
+    "module": "advapi32"
+   },
+   {
+    "addr": "0x19b0040",
+    "name": "DirectInput8Create",
+    "module": "dinput8"
+   },
+   {
+    "addr": "0x19b0048",
+    "name": "DeleteObject",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b004c",
+    "name": "CreateDIBSection",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b0050",
+    "name": "DeleteDC",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b0054",
+    "name": "GetObjectA",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b0058",
+    "name": "CreateCompatibleDC",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b005c",
+    "name": "SelectObject",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b0060",
+    "name": "BitBlt",
+    "module": "gdi32"
+   },
+   {
+    "addr": "0x19b0068",
+    "name": "GetAdaptersInfo",
+    "module": "iphlpapi"
+   },
+   {
+    "addr": "0x19b0070",
+    "name": "InterlockedDecrement",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0074",
+    "name": "HeapFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b007c",
+    "name": "WideCharToMultiByte",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0080",
+    "name": "MultiByteToWideChar",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0084",
+    "name": "InterlockedExchange",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0088",
+    "name": "InitializeCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b008c",
+    "name": "DeleteCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0090",
+    "name": "CloseHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0098",
+    "name": "IsBadReadPtr",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b009c",
+    "name": "LoadLibraryExA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00c0",
+    "name": "FindClose",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00d0",
+    "name": "WaitForSingleObject",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00d8",
+    "name": "IsDBCSLeadByte",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00dc",
+    "name": "lstrlenW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00e4",
+    "name": "HeapAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00e8",
+    "name": "LoadLibraryA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00ec",
+    "name": "GetTickCount",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00f0",
+    "name": "FreeLibrary",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b00f8",
+    "name": "GetLocalTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0100",
+    "name": "lstrcmp",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0104",
+    "name": "lstrcpyn",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0108",
+    "name": "lstrcpy",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b010c",
+    "name": "lstrlen",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0110",
+    "name": "GetVolumeInformationA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0118",
+    "name": "GetSystemTime",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b011c",
+    "name": "GetLastError",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0120",
+    "name": "OutputDebugStringA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0124",
+    "name": "GetProcAddress",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0128",
+    "name": "EnterCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b012c",
+    "name": "LeaveCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0138",
+    "name": "GetVersionExA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b013c",
+    "name": "IsBadWritePtr",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0144",
+    "name": "InterlockedIncrement",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0148",
+    "name": "QueryPerformanceCounter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b014c",
+    "name": "QueryPerformanceFrequency",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0154",
+    "name": "FormatMessageA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0158",
+    "name": "GetModuleHandleA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0164",
+    "name": "GlobalMemoryStatus",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b016c",
+    "name": "CreateEventA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0170",
+    "name": "HeapSetInformation",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0194",
+    "name": "CreateToolhelp32Snapshot",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0198",
+    "name": "GetConsoleOutputCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b019c",
+    "name": "WriteConsoleA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01a4",
+    "name": "SetStdHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01a8",
+    "name": "GetLocaleInfoA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01ac",
+    "name": "GetConsoleMode",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01b0",
+    "name": "GetConsoleCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01bc",
+    "name": "LockResource",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01c0",
+    "name": "GetEnvironmentStringsW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01c4",
+    "name": "FreeEnvironmentStringsW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01c8",
+    "name": "GetEnvironmentStrings",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01cc",
+    "name": "FreeEnvironmentStringsA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01d0",
+    "name": "InitializeCriticalSectionAndSpinCount",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01d4",
+    "name": "GetStringTypeW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01d8",
+    "name": "GetStringTypeA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01dc",
+    "name": "LCMapStringW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01e0",
+    "name": "LCMapStringA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01e4",
+    "name": "IsValidCodePage",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01e8",
+    "name": "GetOEMCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01ec",
+    "name": "GetACP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01f0",
+    "name": "GetCPInfo",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01f4",
+    "name": "GetStdHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01f8",
+    "name": "HeapReAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b01fc",
+    "name": "Sleep",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0200",
+    "name": "WriteConsoleW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b021c",
+    "name": "Module32Next",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0220",
+    "name": "Module32First",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0224",
+    "name": "lstrcmpi",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0238",
+    "name": "CreateMutexA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b023c",
+    "name": "SetEvent",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0244",
+    "name": "LocalFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0248",
+    "name": "RtlUnwind",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b024c",
+    "name": "RaiseException",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0250",
+    "name": "UnhandledExceptionFilter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0254",
+    "name": "IsDebuggerPresent",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0258",
+    "name": "ReleaseMutex",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b025c",
+    "name": "SetUnhandledExceptionFilter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0268",
+    "name": "HeapCreate",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b026c",
+    "name": "HeapSize",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0270",
+    "name": "TlsFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0274",
+    "name": "TlsSetValue",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0278",
+    "name": "TlsAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b027c",
+    "name": "TlsGetValue",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0280",
+    "name": "GetStartupInfoA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0284",
+    "name": "GetCommandLineA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b028c",
+    "name": "GetModuleHandleW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0290",
+    "name": "SetLastError",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0298",
+    "name": "Netbios",
+    "module": "netapi32"
+   },
+   {
+    "addr": "0x19b02a0",
+    "name": "nexonguard_1",
+    "module": "nexonguard"
+   },
+   {
+    "addr": "0x19b02a4",
+    "name": "nexonguard_2",
+    "module": "nexonguard"
+   },
+   {
+    "addr": "0x19b02ac",
+    "name": "SafeArrayCreate",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02b0",
+    "name": "SafeArrayDestroy",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02b4",
+    "name": "SetErrorInfo",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02b8",
+    "name": "SysFreeString",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02bc",
+    "name": "VariantChangeType",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02c0",
+    "name": "VariantClear",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02c4",
+    "name": "VariantInit",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02c8",
+    "name": "GetErrorInfo",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02cc",
+    "name": "VariantCopy",
+    "module": "oleaut32"
+   },
+   {
+    "addr": "0x19b02e0",
+    "name": "DestroyCursor",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02e4",
+    "name": "IntersectRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02e8",
+    "name": "IsRectEmpty",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02ec",
+    "name": "DialogBoxParamA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02f0",
+    "name": "GetDlgItem",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02f4",
+    "name": "CharNextA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b02fc",
+    "name": "EnableWindow",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0300",
+    "name": "wvsprintfA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0304",
+    "name": "BringWindowToTop",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b030c",
+    "name": "EnumWindows",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0310",
+    "name": "GetWindowRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0314",
+    "name": "LoadStringA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0318",
+    "name": "CharUpperBuffA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b031c",
+    "name": "PeekMessageA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0320",
+    "name": "TranslateMessage",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0324",
+    "name": "DispatchMessageA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b032c",
+    "name": "wsprintfW",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0330",
+    "name": "SetRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0334",
+    "name": "SetRectEmpty",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0338",
+    "name": "CreateWindowExA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b033c",
+    "name": "LoadBitmapA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0340",
+    "name": "MessageBoxA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0344",
+    "name": "OffsetRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b034c",
+    "name": "GetWindowTextA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0350",
+    "name": "AdjustWindowRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0354",
+    "name": "SystemParametersInfoA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0358",
+    "name": "MoveWindow",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b035c",
+    "name": "GetWindow",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0360",
+    "name": "wsprintfA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0364",
+    "name": "FindWindowA",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0368",
+    "name": "IsWindowEnabled",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b036c",
+    "name": "PtInRect",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b037c",
+    "name": "VerQueryValueA",
+    "module": "version"
+   },
+   {
+    "addr": "0x19b03a0",
+    "name": "timeGetTime",
+    "module": "winmm"
+   },
+   {
+    "addr": "0x19b03a8",
+    "name": "WSACleanup",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03b0",
+    "name": "WSAGetLastError",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03b8",
+    "name": "getpeername",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03bc",
+    "name": "WSAStartup",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03c0",
+    "name": "getsockname",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03cc",
+    "name": "inet_addr",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03d0",
+    "name": "gethostbyname",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03d4",
+    "name": "htonl",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03d8",
+    "name": "htons",
+    "module": "ws2_32"
+   },
+   {
+    "addr": "0x19b03e0",
+    "name": "ijlFree",
+    "module": "ijl15"
+   },
+   {
+    "addr": "0x19b03e4",
+    "name": "ijlRead",
+    "module": "ijl15"
+   },
+   {
+    "addr": "0x19b03e8",
+    "name": "ijlWrite",
+    "module": "ijl15"
+   },
+   {
+    "addr": "0x19b03ec",
+    "name": "ijlInit",
+    "module": "ijl15"
+   },
+   {
+    "addr": "0x19b03f4",
+    "name": "_AIL_quick_halt@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b03f8",
+    "name": "_AIL_quick_play@8",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b03fc",
+    "name": "_AIL_quick_ms_position@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0400",
+    "name": "_AIL_quick_set_ms_position@8",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0404",
+    "name": "_AIL_quick_ms_length@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0408",
+    "name": "_AIL_quick_load_mem@8",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b040c",
+    "name": "_AIL_quick_status@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0410",
+    "name": "_AIL_quick_startup@20",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0418",
+    "name": "_AIL_quick_set_volume@12",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b041c",
+    "name": "_AIL_quick_unload@4",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b0420",
+    "name": "_AIL_quick_shutdown@0",
+    "module": "mss32"
+   },
+   {
+    "addr": "0x19b042c",
+    "name": "NMCO_CallNMFunc",
+    "module": "nmcogame"
+   },
+   {
+    "addr": "0x19b0430",
+    "name": "NMCO_MemoryFree",
+    "module": "nmcogame"
+   },
+   {
+    "addr": "0x19b0434",
+    "name": "NMCO_SetPatchOption",
+    "module": "nmcogame"
+   },
+   {
+    "addr": "0x19b043c",
+    "name": "CoInitializeEx",
+    "module": "ole32"
+   },
+   {
+    "addr": "0x19b0440",
+    "name": "CoUninitialize",
+    "module": "ole32"
+   },
+   {
+    "addr": "0x19b0444",
+    "name": "CoCreateGuid",
+    "module": "ole32"
+   },
+   {
+    "addr": "0x19b045c",
+    "name": "GetModuleHandleA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0460",
+    "name": "CreateEventA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0468",
+    "name": "LoadLibraryA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0474",
+    "name": "CreateToolhelp32Snapshot",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b048c",
+    "name": "CloseHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b049c",
+    "name": "GetSystemInfo",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04bc",
+    "name": "Sleep",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04c0",
+    "name": "FreeLibrary",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04c4",
+    "name": "GetTickCount",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04d0",
+    "name": "GlobalFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04d4",
+    "name": "LocalAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04d8",
+    "name": "LocalFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04dc",
+    "name": "GetProcAddress",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04e4",
+    "name": "EnterCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04e8",
+    "name": "LeaveCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04ec",
+    "name": "InitializeCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04f0",
+    "name": "DeleteCriticalSection",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04f4",
+    "name": "GetModuleHandleW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04f8",
+    "name": "LoadResource",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b04fc",
+    "name": "MultiByteToWideChar",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0500",
+    "name": "FindResourceExW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0504",
+    "name": "FindResourceExA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0508",
+    "name": "WideCharToMultiByte",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0510",
+    "name": "GetUserDefaultLCID",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0514",
+    "name": "GetSystemDefaultLCID",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0518",
+    "name": "EnumResourceNamesA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b051c",
+    "name": "EnumResourceNamesW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0520",
+    "name": "EnumResourceLanguagesA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0524",
+    "name": "EnumResourceLanguagesW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0528",
+    "name": "EnumResourceTypesA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b052c",
+    "name": "EnumResourceTypesW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0534",
+    "name": "LoadLibraryW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0538",
+    "name": "GetLastError",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0544",
+    "name": "WriteConsoleW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0548",
+    "name": "GetConsoleOutputCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b054c",
+    "name": "WriteConsoleA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0550",
+    "name": "GetCommandLineA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0554",
+    "name": "RaiseException",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0558",
+    "name": "RtlUnwind",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b055c",
+    "name": "HeapFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0560",
+    "name": "GetCPInfo",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0564",
+    "name": "InterlockedIncrement",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0568",
+    "name": "InterlockedDecrement",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b056c",
+    "name": "GetACP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0570",
+    "name": "GetOEMCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0574",
+    "name": "IsValidCodePage",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0578",
+    "name": "TlsGetValue",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b057c",
+    "name": "TlsAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0580",
+    "name": "TlsSetValue",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0584",
+    "name": "TlsFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0588",
+    "name": "SetLastError",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b058c",
+    "name": "UnhandledExceptionFilter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0590",
+    "name": "SetUnhandledExceptionFilter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0594",
+    "name": "IsDebuggerPresent",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0598",
+    "name": "HeapAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b059c",
+    "name": "LCMapStringA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05a0",
+    "name": "LCMapStringW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05a4",
+    "name": "SetHandleCount",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05a8",
+    "name": "GetStdHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05b0",
+    "name": "GetStartupInfoA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05b8",
+    "name": "FreeEnvironmentStringsA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05bc",
+    "name": "GetEnvironmentStrings",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05c0",
+    "name": "FreeEnvironmentStringsW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05c4",
+    "name": "GetEnvironmentStringsW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05c8",
+    "name": "HeapCreate",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05cc",
+    "name": "HeapDestroy",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05d0",
+    "name": "QueryPerformanceCounter",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05d4",
+    "name": "HeapReAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05d8",
+    "name": "GetStringTypeA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05dc",
+    "name": "GetStringTypeW",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05e0",
+    "name": "GetLocaleInfoA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05e4",
+    "name": "HeapSize",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05f0",
+    "name": "GetConsoleCP",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05f4",
+    "name": "GetConsoleMode",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05f8",
+    "name": "InitializeCriticalSectionAndSpinCount",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b05fc",
+    "name": "SetStdHandle",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0608",
+    "name": "GetUserObjectInformationW",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b060c",
+    "name": "CharUpperBuffW",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0610",
+    "name": "MessageBoxW",
+    "module": "user32"
+   },
+   {
+    "addr": "0x19b0618",
+    "name": "LocalAlloc",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b061c",
+    "name": "LocalFree",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0630",
+    "name": "Sleep",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0638",
+    "name": "FreeLibrary",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b063c",
+    "name": "LoadLibraryA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0640",
+    "name": "GetModuleHandleA",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0644",
+    "name": "GetProcAddress",
+    "module": "kernel32"
+   },
+   {
+    "addr": "0x19b0650",
+    "name": "GetUserObjectInformationW",
+    "module": "user32"
+   }
+  ]
+ },
+ "call_graph_summary": {
+  "total_edges": 1,
+  "max_depth_estimate": null,
+  "root_functions": [
+   "sub_191F2D3",
+   "sub_191F334",
+   "nullsub_1",
+   "nullsub_2",
+   "nullsub_3",
+   "nullsub_71",
+   "nullsub_72",
+   "nullsub_4",
+   "nullsub_13",
+   "nullsub_29",
+   "nullsub_107",
+   "nullsub_14",
+   "nullsub_15",
+   "nullsub_16",
+   "nullsub_6",
+   "nullsub_20",
+   "nullsub_11",
+   "nullsub_8",
+   "nullsub_9",
+   "nullsub_10",
+   "sub_1938A05",
+   "nullsub_12",
+   "nullsub_56",
+   "nullsub_19",
+   "sub_19449C8",
+   "sub_1945BCE",
+   "nullsub_17",
+   "nullsub_18",
+   "sub_194B0D0",
+   "nullsub_41",
+   "nullsub_42",
+   "nullsub_48",
+   "nullsub_27",
+   "nullsub_21",
+   "nullsub_34",
+   "nullsub_22",
+   "nullsub_23",
+   "nullsub_24",
+   "nullsub_25",
+   "sub_1959D32",
+   "nullsub_53",
+   "nullsub_26",
+   "nullsub_28",
+   "sub_195E2E9",
+   "nullsub_50",
+   "nullsub_61",
+   "nullsub_120",
+   "nullsub_86",
+   "nullsub_31",
+   "nullsub_32",
+   "sub_19703E1",
+   "nullsub_166",
+   "sub_1971780",
+   "nullsub_35",
+   "nullsub_36",
+   "nullsub_37",
+   "nullsub_39",
+   "nullsub_40",
+   "nullsub_43",
+   "nullsub_44",
+   "nullsub_45",
+   "nullsub_46",
+   "nullsub_47",
+   "nullsub_60",
+   "nullsub_49",
+   "nullsub_51",
+   "nullsub_52",
+   "nullsub_54",
+   "nullsub_55",
+   "nullsub_57",
+   "nullsub_58",
+   "nullsub_88",
+   "nullsub_78",
+   "nullsub_83",
+   "nullsub_62",
+   "nullsub_104",
+   "nullsub_63",
+   "nullsub_64",
+   "nullsub_101",
+   "nullsub_65",
+   "nullsub_70",
+   "nullsub_67",
+   "nullsub_5",
+   "nullsub_139",
+   "nullsub_68",
+   "nullsub_152",
+   "nullsub_69",
+   "nullsub_73",
+   "nullsub_74",
+   "sub_19BC225",
+   "nullsub_134",
+   "nullsub_75",
+   "nullsub_76",
+   "nullsub_77",
+   "nullsub_79",
+   "nullsub_80",
+   "nullsub_81",
+   "nullsub_85",
+   "nullsub_98",
+   "nullsub_82"
+  ],
+  "leaf_functions_count": 229
+ }
+}

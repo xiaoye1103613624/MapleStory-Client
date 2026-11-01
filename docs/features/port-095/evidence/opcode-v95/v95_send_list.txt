@@ -1,0 +1,238 @@
+1	CLogin::SendCheckPasswordPacket
+4	CLogin::ChangeStepImmediate; CLogin::Init
+6	CLogin::SendCheckUserLimitPacket
+7	CLogin::OnAcceptLicense; CLogin::OnDenyLicense
+8	CLogin::SendCancelGenderPacket; CLogin::SendSetGenderPacket
+9	CLogin::OnCheckPasswordResult; CLogin::OnCheckPinCodeResult; CLogin::OnSelectWorldResult; CLogin::OnSetAccountResult
+10	CLogin::OnCheckPinCodeResult
+11	CLicenseDlg::OnButtonClicked; CLogin::OnCheckPasswordResult; CLogin::OnCheckPinCodeResult
+12	CLogin::GotoWorldSelect; CLogin::SendViewAllCharPacket
+13	CLogin::SendViewAllCharPacket
+14	CLogin::SendSelectCharPacketByVAC
+15	CLogin::MakeVACDlg; CLogin::ResetVAC
+16	CCashShop::SendCheckNameChangePossiblePacket
+18	CCashShop::SendCheckTransferWorldPossiblePacket
+19	CLogin::SendSelectCharPacket
+20	CClientSocket::OnConnect
+21	CCashShop::SendCheckDuplicateIDPacket; CLogin::SendCheckDuplicateIDPacket
+22	CLogin::SendNewCharPacket
+23	CLogin::SendNewCharPacket
+24	CLogin::SendDeleteCharPacket
+25	CClientSocket::OnAliveReq
+27	CSecurityClient::OnCheckClientIntegrityRequest
+28	CLogin::SendSelectCharPacket
+29	CLogin::SendSelectCharPacket
+30	CLogin::SendSelectCharPacketByVAC
+31	CLogin::SendSelectCharPacketByVAC
+32	CClientSocket::OnConnect
+34	CLogin::Init
+35	CLogin::SendCheckPasswordPacket; CLogin::SendLoginPacket; CLogin::SendViewAllCharPacket
+36	CWvsApp::SendBackupPacket; CWvsApp::SendClearStackLog
+41	CCashShop::SendTransferFieldPacket; CField::SendTransferFieldRequest; CITC::SendTransferFieldPacket
+42	CField::SendTransferChannelRequest
+43	CWvsContext::SendMigrateToShopRequest
+44	CUserLocal::OnKey
+45	CUserLocal::HandleXKeyDown; CWvsContext::SendGetUpFromChairRequest
+46	CWvsContext::SendSitOnPortableChairRequest
+51	CUserLocal::TryDoingSmoothingMovingShootAttackPrepare
+52	CUserLocal::SetDamaged; CUserLocal::Update
+54	CField::SendChatMsg; CField::SendChatMsgSlash
+55	CUserLocal::HandleLButtonClk
+56	CUserLocal::Update; CWvsContext::SendEmotionChange
+57	CWvsContext::SendActiveEffectItemChange
+58	CUserLocal::RequestUpgradeTombEffect
+61	CUserLocal::SendBanMapByMobRequest
+63	CNpc::ShowQuestList; CUserLocal::TalkToNpc
+64	CWvsContext::SendRemoteShopOpenRequest
+65	CScriptMan::OnAskAvatar; CScriptMan::OnAskBoxText; CScriptMan::OnAskMembershopAvatar; CScriptMan::OnAskMenu; CScriptMan::OnAskNumber; CScriptMan::OnAskPet; CScriptMan::OnAskPetAll; CScriptMan::OnAskSlideMenu; CScriptMan::OnAskText; CScriptMan::OnAskYesNo; CScriptMan::OnSay; CScriptMan::OnSayImage; CUIInitialQuiz::SendResult; CUISpeedQuiz::SendResult
+66	CShopDlg::SendBuyRequest; CShopDlg::SendRechargeRequest; CShopDlg::SendSellRequest; CShopDlg::SetRet
+67	CTrunkDlg::SendGetItemRequest; CTrunkDlg::SendGetMoneyRequest; CTrunkDlg::SendPutItemRequest; CTrunkDlg::SendPutMoneyRequest; CTrunkDlg::SendSortItemRequest; CTrunkDlg::SetRet
+68	CWvsContext::SendEntrustedShopCheckRequest
+69	CStoreBankDlg::SendCalculateFeeRequest; CStoreBankDlg::SendGetAllRequest; CStoreBankDlg::SetRet
+70	CParcelDlg::CloseParcelDlg; CTabQuickSend::SendQuickDelivery; CTabReceive::DiscardParcel; CTabReceive::ReceiveParcel; CTabSend::SendParcel; CUIFadeYesNo::OnButtonClicked
+71	CUserLocal::SendSkillEffectRequest
+72	CUIShopScanner::OnCreate
+73	CUIShopScanResult::OnButtonClicked
+74	CAdminShopDlg::OnPacket; CAdminShopDlg::SendTradeRequest; CAdminShopDlg::SetRet; CUIAdminShopWishList::SendRegisterPacket
+75	CWvsContext::SendGatherItemRequest
+76	CWvsContext::SendSortItemRequest
+77	CWvsContext::SendChangeSlotPositionRequest
+78	CWvsContext::SendStatChangeItemUseRequest
+79	CWvsContext::SendStatChangeItemCancelRequest
+80	CWvsContext::TryRecovery
+81	CWvsContext::SendMobSummonItemUseRequest
+82	CWvsContext::SendPetFoodItemUseRequest
+83	CWvsContext::SendTamingMobFoodItemUseRequest
+84	CWvsContext::SendScriptRunItemRequest
+85	CItemSpeakerDlg::_SendConsumeCashItemUseRequest; CUICharacterSaleDlg::SendCreateNewCharacter; CUIIncubator::OnButtonClicked; CUIKarmaDlg::_SendConsumeCashItemUseRequest; CUIUnreleaseDlg::UnreleaseEquipItem; CWvsContext::SendConsumeCashItemUseRequest
+86	CWvsContext::SendActivatePetRequest
+87	CWvsContext::SendBridleItemUseRequest
+88	CWvsContext::SendSkillLearnItemUseRequest
+89	CWvsContext::SendSkillResetItemUseRequest
+90	CWvsContext::SendShopScannerItemUseRequest
+91	CWvsContext::SendMapTransferItemUseRequest
+92	CWvsContext::SendPortalScrollUseRequest
+93	CWvsContext::SendUpgradeItemUseRequest
+94	CWvsContext::SendHyperUpgradeItemUseRequest
+95	CWvsContext::SendItemOptionUpgradeItemUseRequest
+96	CWvsContext::SendUIOpenItemRequest
+97	CWvsContext::SendItemReleaseRequest
+98	CWvsContext::SendAbilityUpRequest
+99	CWvsContext::SendAbilityUpRequest
+100	CWvsContext::SendStatChangeRequest
+101	CWvsContext::SendStatChangeRequestByItemOption
+102	CWvsContext::SendSkillUpRequest
+103	CGrenade::SendTimeBombInfo; CUserLocal::DoActiveSkill_DamageMeter; CUserLocal::DoActiveSkill_Flying; CUserLocal::DoActiveSkill_Heal; CUserLocal::DoActiveSkill_MobCapture; CUserLocal::DoActiveSkill_OpenGate; CUserLocal::DoActiveSkill_RecoveryAura; CUserLocal::DoActiveSkill_SmokeShell; CUserLocal::DoActiveSkill_StatChangeAdmin; CUserLocal::DoActiveSkill_Summon; CUserLocal::DoActiveSkill_SummonMonster; CUserLocal::DoActiveSkill_TownPortal; CUserLocal::SendSkillUseRequest; CUserLocal::TryDoingMonsterMagnet; CUserLocal::TryDoingSwallowAbsorb
+104	CUserLocal::SendSkillCancelRequest
+105	CUserLocal::DoActiveSkill_Prepare
+106	CWvsContext::SendDropMoneyRequest
+107	CWvsContext::SendGivePopularityRequest
+109	CWvsContext::SendCharacterInfoRequest
+110	CWvsContext::SendActivatePetRequest
+111	CWvsContext::CheckTemporaryStatDuration
+112	CUserLocal::CheckPortal_Collision; CUserLocal::HandleUpKeyDown
+113	CUserLocal::TryRegisterTeleport
+114	CWvsContext::SendMapTransferRequest
+115	CWvsContext::SendAntiMacroItemUseRequest
+116	CUserLocal::DoAntiMacroSkill
+117	CUIAdminAntiMacro::SetRet; CUIAntiMacro::SetRet
+118	CWvsContext::SendClaimRequest
+119	CQuest::OnCompleteQuestFailed; CQuest::StartQuest; CWvsContext::ResignQuest
+120	CWvsContext::CheckDarkForce; CWvsContext::CheckDragonFury; CWvsContext::OnTemporaryStatReset; CWvsContext::OnTemporaryStatSet
+121	CUserLocal::ThrowGrenade
+122	CMacroSysMan::FlushToSvr
+123	CWvsContext::SendSelectNpcItemUseRequest
+124	CWvsContext::SendLotteryItemUseRequest
+125	CUIItemMaker::RequestItemMake
+126	CField::SendChatMsgSlash
+127	CWvsContext::SendUseBoxGachaponItemRequest
+128	CWvsContext::SendUseGachaponRemoteRequest
+129	CWvsContext::SendWaterOfLife
+130	CRepairDurabilityDlg::SendRepairDurabilityAll
+131	CRepairDurabilityDlg::SendRepairDurability
+132	CDamageMeter::SaveDamageInfo
+133	CUserLocal::UpdateClientTimer
+134	CWvsContext::SendFollowCharacterRequest
+136	CUIPQReward::SelectReward
+137	CUIPQReward::RequestReward
+138	CWvsContext::OnSetPassenserRequest; CWvsContext::SendFollowRequestApply
+139	CField::SendChatMsgSlash
+140	CUIStatusBar::SendGroupMessage
+141	CField::OnWhisper; CField::SendChatMsgWhisper; CField::SendLocationWhisper
+142	CUIStatusBar::SendCoupleMessage
+143	CFadeWnd::SendCloseMessage; CUIMessenger::OnCreate; CUIMessenger::OnDestroy; CUIMessenger::OnInvite; CUIMessenger::ProcessChat; CUIMessenger::SendInviteMsg; CUIMessenger::Update
+144	??_ECMemoryGameDlg@@W7AEPAXI@Z; CCashTradingRoomDlg::OnTrade; CCashTradingRoomDlg::PutItem; CCashTradingRoomDlg::PutMoney; CCashTradingRoomDlg::SetRet; CCashTradingRoomDlg::Trade; CEntrustedShopDlg::AddBlackList; CEntrustedShopDlg::DeleteBlackList; CEntrustedShopDlg::OnArrange; CEntrustedShopDlg::OnBlackList; CEntrustedShopDlg::OnCorrectSSN2; CEntrustedShopDlg::OnGoOut; CEntrustedShopDlg::OnVisitList; CEntrustedShopDlg::OnWithdrawMoney; CEntrustedShopDlg::SetRet; CField::AddBlackList; CField::DeleteBlackList; CField::SendInviteTradingRoomMsg; CMemoryGameDlg::OnClickStartButton; CMemoryGameDlg::OnEnterResult; CMemoryGameDlg::SendTurnUpCard; CMemoryGameDlg::Update; CMiniRoomBaseDlg::CheckAndSendChat; CMiniRoomBaseDlg::OnCheckSSN2Static; CMiniRoomBaseDlg::SendCashInviteResult; CMiniRoomBaseDlg::SendInviteResult; COmokDlg::OnClickBanButton; COmokDlg::OnClickEndButton; COmokDlg::OnClickReadyButton; COmokDlg::OnClickStartButton; COmokDlg::OnEnterResult; COmokDlg::OnRetreatRequest; COmokDlg::OnTieRequest; COmokDlg::PutStoneChecker; COmokDlg::SendClaimGiveUp; COmokDlg::SendRetreatRequest; COmokDlg::SendTieRequest; COmokDlg::Update; CPersonalShopDlg::BuyItem; CPersonalShopDlg::CheckCashItemInList; CPersonalShopDlg::DeliverBlackList; CPersonalShopDlg::MoveItemToInventory; CPersonalShopDlg::OnClickBanButton; CPersonalShopDlg::OnCorrectSSN2; CPersonalShopDlg::PutItem; CPersonalShopDlg::SetRet; CPersonalShopDlg::Update; CTradingRoomDlg::OnTrade; CTradingRoomDlg::PutItem; CTradingRoomDlg::PutMoney; CTradingRoomDlg::SetRet; CTradingRoomDlg::Trade; CUserLocal::HandleLButtonDblClk; CUserLocal::HandleRButtonClk; CWvsContext::OnEntrustedShopCheckResult; CWvsContext::SendCreateMiniGameRequest; CWvsContext::SendOpenShopRequest
+145	CField::SendChangePartyBossMsg; CField::SendCreateNewPartyMsg; CField::SendJoinPartyMsg; CField::SendKickPartyMsg; CField::SendWithdrawPartyMsg; CWvsContext::OnPartyResult
+146	CFadeWnd::SendCloseMessage; CUIFadeYesNo::OnButtonClicked; CWvsContext::OnPartyResult
+147	ExpeditionIntermediary::OnPacketExpNoti_Invite; ExpeditionIntermediary::SendExpChangeBossPacket; ExpeditionIntermediary::SendExpChangeMasterPacket; ExpeditionIntermediary::SendExpCreatePacket; ExpeditionIntermediary::SendExpInvitePacket; ExpeditionIntermediary::SendExpKickPacket; ExpeditionIntermediary::SendExpRelocatePartyPacket; ExpeditionIntermediary::SendResponseInvitePacket; ExpeditionIntermediary::SendWithdrawPacket
+148	CUIFadeYesNo::OnButtonClicked; CUIFadeYesNo::SendCloseMessage; CWvsContext::OnPartyResult; TabPartyAdver::RequestAdverRemoveFromNotiList; TabPartyAdver::SendAdverDeletePacket; TabPartyAdver::SendPartyAdverRequestPacket; TabPartyAdver::SendPartyApplyPacketTo; TabPartyAdver::SendPartyRegistCommitPacket
+149	CField::InputGuildName; CField::SendCreateGuildAgreeMsg; CField::SendInviteGuildMsg; CField::SendKickGuildMsg; CField::SendSetGradeNameMsg; CField::SendSetGuildMarkMsg; CField::SendSetGuildNoticeMsg; CField::SendSetMemberGradeMsg; CField::SendWithdrawGuildMsg; CUIFadeYesNo::OnButtonClicked; CWvsContext::OnGuildResult
+150	CFadeWnd::SendCloseMessage; CWvsContext::OnGuildResult
+151	CField::SendChatMsgSlash; CStage::OnSetField; CUserLocal::OnKey
+152	CField::SendChatMsgSlash
+153	CField::SendAcceptFriendMsg; CField::SendDeleteFriendMsg; CField::SendSetFriendMsg; CWvsContext::LoadFriend
+154	CCashShop::OnCashItemResLoadGiftDone; CMemoListDlg::SetRet; CWvsContext::OnMemoNotify_Receive
+156	CField::TryEnterTownPortal; CTownPortalPool::TryEnterTownPortal
+157	COpenGatePool::TryEnterOpenGate
+158	CField::SendChatMsgSlash
+159	CFuncKeyMappedMan::ChangePetConsumeItemID; CFuncKeyMappedMan::ChangePetConsumeMPItemID; CFuncKeyMappedMan::SaveFuncKeyMap
+160	CRPSGameDlg::OnBtContinue; CRPSGameDlg::OnBtExit; CRPSGameDlg::OnBtRetry; CRPSGameDlg::OnBtStart; CRPSGameDlg::SendSelection; CRPSGameDlg::Update
+161	CEngageDlg::SetRet; CWvsContext::OnMarriageRequest; CWvsContext::SendEngagementRequest; CWvsContext::SendInvitationQuery; CWvsContext::SendRingDropRequest; CWvsContext::SendSendInvitaionRequest; CWvsContext::SendWishListInput
+162	??_ECWishListInputDlg@@W7AEPAXI@Z; CWishListGiveDlg::SendPutItemRequest; CWishListRecvDlg::SendGetItemRequest
+163	CField_Wedding::OnWeddingProgress
+164	CField_Wedding::OnWeddingProgress
+165	CWvsContext::SendBoobyTrapAlert
+166	CUIMiniMap::OnMouseButton
+167	CTabGuildAlliance::OnChangeMaster; CTabGuildAlliance::OnGradeChange; CTabGuildAlliance::OnInvite; CTabGuildAlliance::OnKick; CTabGuildAlliance::OnSetNotice; CTabGuildAlliance::OnWithdraw; CUIFadeYesNo::OnButtonClicked; CWndAllianceGrade::OnSaveGradeName; CWvsContext::OnAllianceResult; CWvsContext::OnGuildResult
+168	CFadeWnd::SendCloseMessage; CWvsContext::OnAllianceResult
+169	CWvsContext::SendFamilyChartRequest
+170	CWvsContext::SendFamilyInfoRequest
+171	CWvsContext::SendRegisterJunior
+172	CWvsContext::SendUnregisterJunior
+173	CWvsContext::SendUnregisterParent
+174	CWvsContext::SendFamilyInviteResult
+175	CWvsContext::SendUseFamilyPrivilege
+176	CWvsContext::SendSetFamilyPrecept
+177	CWvsContext::OnFamilySummonRequest
+179	CUIGuildBBS::OnComment; CUIGuildBBS::OnCommentDelete; CUIGuildBBS::OnDelete; CUIGuildBBS::OnRegister; CUIGuildBBS::SendLoadListRequest; CUIGuildBBS::SendViewEntryRequest
+180	CWvsContext::SendMigrateToITCRequest
+181	CWvsContext::SendExpUpItemUseRequest
+182	CWvsContext::SendTempExpUseRequest
+183	CUIFadeYesNo::OnButtonClicked; CUINewYearCardSenderDlg::_SendNewYearCard
+184	CUIRandomMorphDlg::_SendMorphRequest
+185	CUICashItemGachapon::OnButtonClicked
+186	CUICashGachapon::OnButtonClicked
+187	CCashShop::SendChangeMaplePoint
+188	CUserLocal::HandleLButtonDblClk
+189	CUserLocal::RequestIncCombo
+190	CMobPool::OnMobCrcKeyChanged
+191	CWvsContext::SendRequestSessionValue
+192	CWvsContext::CheckOpBoardHasNew
+193	CUIAccountMoreInfo::SendLoadAccountMoreInfoRequest; CUIAccountMoreInfo::SendSaveAccountMoreInfoRequest
+194	CUIFindFriend::SendMyInfoRequest; CUIFindFriend::SendSearchRequest; CUIFindFriendDetail::SetDetailInfo
+195	CUserLocal::OnAskAPSPEvent
+196	CWvsContext::SendDragonBallBoxRequest
+197	CWvsContext::SendDragonBallSummonRequest
+199	CVecCtrlPet::EndUpdateActive
+200	CPet::DoAction
+201	CPet::ParseCommand
+202	CPet::SendDropPickUpRequest
+203	CWvsContext::SendStatChangeItemUseRequestByPetQ
+204	CPet::SendUpdateExceptionListRequest
+207	CVecCtrlSummoned::EndUpdateActive
+209	CSummoned::SetDamaged
+210	CSummoned::TryDoingGiveBuff; CSummoned::TryDoingHeal; CSummoned::TryDoingHealingRobot; CSummoned::TryDoingSummon
+211	CSummoned::SendRemove
+214	CVecCtrlDragon::EndUpdateActive
+216	CQuickslotKeyMappedMan::SaveQuickslotKeyMap
+217	CUserLocal::UpdatePassiveSkillData
+218	CWvsContext::UI_Menu
+219	CUserLocal::TryDoingMagicAttack
+220	CWvsContext::AskWhetherUsePamsSong
+221	CUIQuestInfoDetail::OnButtonClicked
+222	CUserLocal::SendRepeatEffectRemoveRequest
+227	CMob::GenerateMovePath
+228	CMob::ApplyControl
+229	CMob::SendDropPickUpRequest
+230	CMob::Update
+231	CMob::Update
+232	CMob::TryFirstSelfDestruction
+233	CMob::SetDamagedByMob
+234	CMob::Update
+235	CMob::UpdateTimeBomb
+236	CMob::SendCollisionEscort
+237	CMob::SendRequestEscortPath
+238	CMob::SendEscortStopEndRequest
+241	CNpc::GenerateMovePath
+242	CNpc::RequestSpecialAction
+246	CWvsContext::SendDropPickUpRequest
+249	CReactorPool::FindHitReactor; CReactorPool::FindSkillReactor
+250	CReactorPool::FindTouchReactorAroundLocalUser
+251	CUserLocal::ResetNLCPQ
+255	CField_SnowBall::BasicActionAttack
+256	CField_SnowBall::Update
+257	CField_Coconut::BasicActionAttack
+258	CField::SendChatMsgSlash
+259	CField_GuildBoss::BasicActionAttack
+262	CUIMonsterCarnival::RequestSend
+264	CField_ContiMove::Init
+266	CWvsContext::SendPartyWanted
+267	CWvsContext::SendCancelPartyWanted
+269	CStage::OnSetField
+270	CField::OnRequestFootHoldInfo
+274	CCashShop::TrySendQueryCashRequest
+275	CCashShop::ApplyWishListEvent; CCashShop::GiftWishItem; CCashShop::OnBuy; CCashShop::OnBuyCouple; CCashShop::OnBuyFriendship; CCashShop::OnBuyNormal; CCashShop::OnBuyPackage; CCashShop::OnBuySlotInc; CCashShop::OnCashGachaponCopy; CCashShop::OnEnableEquipSlotExt; CCashShop::OnExItemSlot; CCashShop::OnGiftMateInfoResult; CCashShop::OnGiftPackage; CCashShop::OnIncCharacterSlotCount; CCashShop::OnIncTrunkCount; CCashShop::OnMoveCashItemLtoS; CCashShop::OnMoveCashItemStoL; CCashShop::OnRebateLockerItem; CCashShop::OnRemoveWish; CCashShop::OnSetWish; CCashShop::RequestCashPurchaseRecord; CCashShop::SendBuyAvatarPacket; CCashShop::SendBuyNameChangeItemPacket; CCashShop::SendBuyTransferWorldItemPacket; CCashShop::SendGiftsPacket
+276	CCashShop::OnStatusCoupon
+283	CUIRaiseWndBase::OnCreate
+284	COutPacket::COutPacket; CUIRaiseWndBase::CUIRaiseWndBase
+285	CUIRaiseWnd::SendPutItem
+286	CUIRaisePieceWnd::SendPutItem
+291	CClassCompetition::SendRequestAuthKey
+292	CUIWebEvent::SendRequestAuthKey
+296	CUIItemUpgrade::Update
+299	CBattleRecordMan::RequestOnCalc
+306	CITC::OnStatusCharge
+307	CITC::TrySendQueryCashRequest
+308	CITC::OnBuy; CITC::OnBuyAuctionImm; CITC::OnBuyWish; CITC::OnBuyZzim; CITC::OnCancelSaleItem; CITC::OnCancelWish; CITC::OnChangedCategory; CITC::OnChangedCategorySub; CITC::OnChangedPage; CITC::OnDeleteZzim; CITC::OnMoveITCPurchaseItemLtoS; CITC::OnRegisterSaleEntry; CITC::OnRegisterWishEntry; CITC::OnSaleCurrentItem; CITC::OnSetZzim; CITC::OnViewWish; CITCBidAuctionDlg::OnButtonClicked; CITCWnd_Tab::OnButtonClicked
+311	CUICharacterSaleDlg::SendCheckDuplicateIDPacket
+313	CUILogoutGift::OnButtonClicked

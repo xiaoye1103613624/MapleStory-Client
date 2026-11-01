@@ -1,0 +1,16 @@
+[
+ {
+  "fn": "0x4aef10",
+  "name": "?OnConnect@CClientSocket@@QAEHH@Z",
+  "op": 32,
+  "how": "push 20h; nType @0x4af3e3",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x4aef10",
+  "name": "?OnConnect@CClientSocket@@QAEHH@Z",
+  "op": 20,
+  "how": "push 14h; nType @0x4af458",
+  "src": "insn_query"
+ }
+]

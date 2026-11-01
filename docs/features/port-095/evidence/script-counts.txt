@@ -1,0 +1,7 @@
+npc          1023
+quest        520
+event        113
+special      83
+portal       748
+reactor      271
+liedetector  50

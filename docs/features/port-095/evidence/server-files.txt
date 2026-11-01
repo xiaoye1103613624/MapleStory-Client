@@ -1,0 +1,45 @@
+total 234
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:26 .
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:27 ..
+-rw-r--r-- 1 11036 197609      0 Sep 14 17:21 LogIPs.txt
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:29 Mysql
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:22 ZeroMS
+-rw-r--r-- 1 11036 197609   1002 Sep 14 17:21 beans.properties
+-rw-r--r-- 1 11036 197609   1001 Sep 14 17:21 channel.properties
+-rw-r--r-- 1 11036 197609     99 Sep 14 17:21 dump-items.bat
+-rw-r--r-- 1 11036 197609    103 Sep 14 17:21 dump-mobskills.bat
+-rw-r--r-- 1 11036 197609    100 Sep 14 17:21 dump-quests.bat
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:23 jrex64
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:22 lib
+-rw-r--r-- 1 11036 197609   2610 Sep 14 17:21 logging.properties
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:23 logs
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:26 scripts
+-rw-r--r-- 1 11036 197609     32 Sep 14 17:21 test.txt
+-rw-r--r-- 1 11036 197609   2556 Sep 14 17:21 world.properties
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:28 wz
+-rw-r--r-- 1 11036 197609     11 Sep 14 17:21 【必看说明1-游戏启动教程】.txt
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:22 充值卡后台库存
+-rw-r--r-- 1 11036 197609     93 Sep 14 17:22 启动密码.txt
+-rwxr-xr-x 1 11036 197609 192512 Sep 14 17:21 启动服务端.exe
+drwxr-xr-x 1 11036 197609      0 Sep 14 17:22 数据库备份
+ZeroMS:
+total 3224
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:22 .
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:26 ..
+-rw-r--r-- 1 11036 197609 3295270 Sep 14 17:22 095.jar
+
+lib:
+total 7392
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:22 .
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:26 ..
+-rw-r--r-- 1 11036 197609 2715961 Sep 14 17:22 druid-1.1.9.jar
+-rw-r--r-- 1 11036 197609  732695 Sep 14 17:22 mysql-connector-java-bin.jar
+-rw-r--r-- 1 11036 197609 4062498 Sep 14 17:22 netty-all-4.1.39.Final.jar
+-rw-r--r-- 1 11036 197609   29257 Sep 14 17:22 slf4j-api-1.7.7.jar
+-rw-r--r-- 1 11036 197609   10683 Sep 14 17:22 slf4j-simple-1.7.7.jar
+
+数据库备份:
+total 1488
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:22 .
+drwxr-xr-x 1 11036 197609       0 Sep 14 17:26 ..
+-rw-r--r-- 1 11036 197609 1518434 Sep 14 17:22 210522214619.psc

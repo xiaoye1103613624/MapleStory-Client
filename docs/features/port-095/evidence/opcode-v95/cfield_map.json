@@ -1,0 +1,347 @@
+[
+ {
+  "lo": 141,
+  "hi": 143,
+  "handler": "CStage::OnPacket"
+ },
+ {
+  "lo": 144,
+  "hi": 146,
+  "handler": "CMapLoadable::OnPacket"
+ },
+ {
+  "lo": 147,
+  "hi": 147,
+  "handler": "[case]CField::OnTransferFieldReqIgnored"
+ },
+ {
+  "lo": 148,
+  "hi": 148,
+  "handler": "[case]CField::OnTransferChannelReqIgnored"
+ },
+ {
+  "lo": 149,
+  "hi": 149,
+  "handler": "[case]CField::OnFieldSpecificData"
+ },
+ {
+  "lo": 150,
+  "hi": 150,
+  "handler": "[case]CField::OnGroupMessage"
+ },
+ {
+  "lo": 151,
+  "hi": 151,
+  "handler": "[case]CField::OnWhisper"
+ },
+ {
+  "lo": 152,
+  "hi": 152,
+  "handler": "[case]CField::OnCoupleMessage"
+ },
+ {
+  "lo": 153,
+  "hi": 153,
+  "handler": "[case]CField::OnSummonItemInavailable"
+ },
+ {
+  "lo": 154,
+  "hi": 154,
+  "handler": "[case]CField::OnFieldEffect"
+ },
+ {
+  "lo": 155,
+  "hi": 155,
+  "handler": "[case]CField::OnFieldObstacleOnOff"
+ },
+ {
+  "lo": 156,
+  "hi": 156,
+  "handler": "[case]CField::OnFieldObstacleOnOffStatus"
+ },
+ {
+  "lo": 157,
+  "hi": 157,
+  "handler": "[case]CField::OnFieldObstacleAllReset"
+ },
+ {
+  "lo": 158,
+  "hi": 158,
+  "handler": "[case]CField::OnBlowWeather"
+ },
+ {
+  "lo": 159,
+  "hi": 159,
+  "handler": "[case]CField::OnPlayJukeBox"
+ },
+ {
+  "lo": 160,
+  "hi": 160,
+  "handler": "[case]CField::OnAdminResult"
+ },
+ {
+  "lo": 161,
+  "hi": 161,
+  "handler": "[case]CField::OnQuiz"
+ },
+ {
+  "lo": 162,
+  "hi": 162,
+  "handler": "[case]CField::OnDesc"
+ },
+ {
+  "lo": 163,
+  "hi": 163,
+  "handler": "[case]?"
+ },
+ {
+  "lo": 166,
+  "hi": 166,
+  "handler": "[case]CField::OnSetQuestClear"
+ },
+ {
+  "lo": 167,
+  "hi": 167,
+  "handler": "[case]CField::OnSetQuestTime"
+ },
+ {
+  "lo": 168,
+  "hi": 168,
+  "handler": "[case]CField::OnWarnMessage"
+ },
+ {
+  "lo": 169,
+  "hi": 169,
+  "handler": "[case]CField::OnSetObjectState"
+ },
+ {
+  "lo": 170,
+  "hi": 170,
+  "handler": "[case]CField::OnDestroyClock"
+ },
+ {
+  "lo": 172,
+  "hi": 172,
+  "handler": "[case]CField::OnStalkResult"
+ },
+ {
+  "lo": 175,
+  "hi": 175,
+  "handler": "[case]CQuickslotKeyMappedMan::OnInit"
+ },
+ {
+  "lo": 176,
+  "hi": 176,
+  "handler": "[case]CField::OnFootHoldInfo"
+ },
+ {
+  "lo": 177,
+  "hi": 177,
+  "handler": "[case]CField::OnRequestFootHoldInfo"
+ },
+ {
+  "lo": 179,
+  "hi": 195,
+  "handler": "CUserPool::OnPacket"
+ },
+ {
+  "lo": 196,
+  "hi": 196,
+  "handler": "[case]?"
+ },
+ {
+  "lo": 197,
+  "hi": 277,
+  "handler": "CUserPool::OnPacket"
+ },
+ {
+  "lo": 278,
+  "hi": 283,
+  "handler": "CSummonedPool::OnPacket"
+ },
+ {
+  "lo": 284,
+  "hi": 310,
+  "handler": "CMobPool::OnPacket"
+ },
+ {
+  "lo": 311,
+  "hi": 318,
+  "handler": "CNpcPool::OnPacket"
+ },
+ {
+  "lo": 319,
+  "hi": 321,
+  "handler": "CEmployeePool::OnPacket"
+ },
+ {
+  "lo": 322,
+  "hi": 324,
+  "handler": "CDropPool::OnPacket"
+ },
+ {
+  "lo": 325,
+  "hi": 327,
+  "handler": "CMessageBoxPool::OnPacket"
+ },
+ {
+  "lo": 328,
+  "hi": 329,
+  "handler": "CAffectedAreaPool::OnPacket"
+ },
+ {
+  "lo": 330,
+  "hi": 331,
+  "handler": "CTownPortalPool::OnPacket"
+ },
+ {
+  "lo": 332,
+  "hi": 333,
+  "handler": "COpenGatePool::OnPacket"
+ },
+ {
+  "lo": 334,
+  "hi": 337,
+  "handler": "CReactorPool::OnPacket"
+ },
+ {
+  "lo": 359,
+  "hi": 359,
+  "handler": "[case]CField::OnHontaleTimer"
+ },
+ {
+  "lo": 360,
+  "hi": 360,
+  "handler": "[case]CField::OnChaosZakumTimer"
+ },
+ {
+  "lo": 361,
+  "hi": 361,
+  "handler": "[case]CField::OnHontailTimer"
+ },
+ {
+  "lo": 362,
+  "hi": 362,
+  "handler": "[case]CField::OnZakumTimer"
+ },
+ {
+  "lo": 363,
+  "hi": 363,
+  "handler": "CScriptMan::OnPacket"
+ },
+ {
+  "lo": 364,
+  "hi": 365,
+  "handler": "CShopDlg::OnPacket"
+ },
+ {
+  "lo": 364,
+  "hi": 365,
+  "handler": "CShopDlg::OnPacket"
+ },
+ {
+  "lo": 366,
+  "hi": 367,
+  "handler": "CAdminShopDlg::OnPacket"
+ },
+ {
+  "lo": 366,
+  "hi": 367,
+  "handler": "CAdminShopDlg::OnPacket"
+ },
+ {
+  "lo": 368,
+  "hi": 368,
+  "handler": "[case]CTrunkDlg::OnPacket"
+ },
+ {
+  "lo": 369,
+  "hi": 370,
+  "handler": "CStoreBankDlg::OnPacket"
+ },
+ {
+  "lo": 369,
+  "hi": 370,
+  "handler": "CStoreBankDlg::OnPacket"
+ },
+ {
+  "lo": 371,
+  "hi": 371,
+  "handler": "[case]CRPSGameDlg::OnPacket"
+ },
+ {
+  "lo": 372,
+  "hi": 372,
+  "handler": "[case]CUIMessenger::OnPacket"
+ },
+ {
+  "lo": 373,
+  "hi": 373,
+  "handler": "[case]CMiniRoomBaseDlg::OnPacketBase"
+ },
+ {
+  "lo": 381,
+  "hi": 381,
+  "handler": "[case]CParcelDlg::OnPacket"
+ },
+ {
+  "lo": 398,
+  "hi": 400,
+  "handler": "CFuncKeyMappedMan::OnPacket"
+ },
+ {
+  "lo": 398,
+  "hi": 400,
+  "handler": "CFuncKeyMappedMan::OnPacket"
+ },
+ {
+  "lo": 404,
+  "hi": 409,
+  "handler": "CMapleTVMan::OnPacket"
+ },
+ {
+  "lo": 404,
+  "hi": 409,
+  "handler": "CMapleTVMan::OnPacket"
+ },
+ {
+  "lo": 413,
+  "hi": 416,
+  "handler": "CField::OnCharacterSale"
+ },
+ {
+  "lo": 413,
+  "hi": 416,
+  "handler": "CField::OnCharacterSale"
+ },
+ {
+  "lo": 420,
+  "hi": 423,
+  "handler": "CBattleRecordMan::OnPacket"
+ },
+ {
+  "lo": 420,
+  "hi": 423,
+  "handler": "CBattleRecordMan::OnPacket"
+ },
+ {
+  "lo": 424,
+  "hi": 427,
+  "handler": "CField::OnItemUpgrade"
+ },
+ {
+  "lo": 424,
+  "hi": 427,
+  "handler": "CField::OnItemUpgrade"
+ },
+ {
+  "lo": 428,
+  "hi": 431,
+  "handler": "CField::OnVega"
+ },
+ {
+  "lo": 428,
+  "hi": 431,
+  "handler": "CField::OnVega"
+ }
+]

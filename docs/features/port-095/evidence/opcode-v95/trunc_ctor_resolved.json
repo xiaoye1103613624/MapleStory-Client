@@ -1,0 +1,890 @@
+[
+ {
+  "fn": "0x5408e0",
+  "addr": "0x540fbe",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_540FF1",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54104c",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_541068",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5410ed",
+  "prev": [
+   "cmp edx, eax",
+   "jle loc_540DA3",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5411b5",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_541205",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541261",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54129A",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5413e5",
+  "prev": [
+   "mov edi, eax",
+   "dec edi",
+   "add esp, 4",
+   "cmp edi, 5",
+   "ja short loc_541440",
+   "push 7Eh ; '~'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 126,
+  "push_line": "push 7Eh ; '~'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541567",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "cmp edi, ebx",
+   "jz short loc_54158C",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5416ea",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "cmp edi, ebx",
+   "jz short loc_54174B",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5417a4",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "cmp edi, ebx",
+   "jz short loc_5417D7",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541ad9",
+  "prev": [
+   "mov byte ptr [ebp+68h+var_6C], 3Fh ; '?'",
+   "call ?GetResult@CUIBlockUser@@QAEXAAK0AAV?$ZXString@D@@@Z; CUIBlockUser::GetResult(ulong &,ulong &,ZXString<char> &)",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541bde",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "cmp edi, ebx",
+   "jz short loc_541C04",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541d57",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_541D9A",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541e7c",
+  "prev": [
+   "add esp, 4",
+   "cmp [ebp+68h+var_3D], 0",
+   "jz short loc_541EB9",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541f12",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_541F37",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x541f90",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_541FAA",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542003",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542028",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542107",
+  "prev": [
+   "add esp, 4",
+   "cmp [ebp+68h+var_3D], 0",
+   "jz short loc_54212C",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542185",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_54219F",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5421f4",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_542234",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54228d",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_5422A7",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5422fc",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_54230C",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542365",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_54237F",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5423d4",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test ebx, ebx",
+   "jz short loc_5423E4",
+   "push 8Bh ; '‹'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 139,
+  "push_line": "push 8Bh ; '‹'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542439",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542449",
+   "push 9Eh ; 'ž'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 158,
+  "push_line": "push 9Eh ; 'ž'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5424ba",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_5424FF",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54255e",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_5425A3",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542602",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542647",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5426b2",
+  "prev": [
+   "test edi, edi",
+   "jz loc_542731",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542794",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_5427D0",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54282f",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54287C",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5428db",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54291D",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54298b",
+  "prev": [
+   "mov this, ?ms_pInstance@?$TSingleton@VCUserLocal@@@@1PAVCUserLocal@@A.m_Data; this",
+   "push edx; sPortalName",
+   "call ?MoveToPortal@CUserLocal@@QAEXPBD@Z; CUserLocal::MoveToPortal(char const *)",
+   "push 98h ; '˜'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 152,
+  "push_line": "push 98h ; '˜'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542a31",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542A7F",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542ade",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542B0B",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542b6e",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542BBC",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542c1b",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542C4C",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542cab",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542CDC",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542d37",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542D53",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542db2",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542DE3",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542e42",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542E67",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542ec6",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542EF7",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542f56",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_542F87",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x542fe6",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54300B",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x54306a",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54309B",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5430fe",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_54314C",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5431af",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_5431FD",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x543258",
+  "prev": [
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "test edi, edi",
+   "jz short loc_543299",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x543336",
+  "prev": [
+   "mov this, ?ms_pInstance@?$TSingleton@VCUserLocal@@@@1PAVCUserLocal@@A.m_Data; this",
+   "call ?SetPassiveSkillDataForced@CUserLocal@@QAEXV?$ZXString@D@@J@Z; CUserLocal::SetPassiveSkillDataForced(ZXString<char>,long)",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5433ea",
+  "prev": [
+   "jz loc_5434A7",
+   "push 1; bDontSend",
+   "call ?UpdatePassiveSkillData@CUserLocal@@QAEXH@Z; CUserLocal::UpdatePassiveSkillData(int)",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x543473",
+  "prev": [
+   "call _atoi",
+   "add esp, 4",
+   "push 97h ; '—'; nType",
+   "lea this, [ebp+68h+oPacket]; this",
+   "mov edi, eax"
+  ],
+  "op": 151,
+  "push_line": "push 97h ; '—'; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5445eb",
+  "prev": [
+   "test eax, eax",
+   "jz loc_544848",
+   "push 102h; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 258,
+  "push_line": "push 102h; nType"
+ },
+ {
+  "fn": "0x5408e0",
+  "addr": "0x5447fb",
+  "prev": [
+   "mov this, [ebp+68h+nDuration]; this",
+   "call ?IsAdminAccount@CWvsContext@@QBEHXZ; CWvsContext::IsAdminAccount(void)",
+   "test eax, eax",
+   "jz short loc_544848",
+   "push 36h ; '6'; nType",
+   "lea this, [ebp+68h+var_28]; this"
+  ],
+  "op": 54,
+  "push_line": "push 36h ; '6'; nType"
+ },
+ {
+  "fn": "0x654300",
+  "addr": "0x6543df",
+  "prev": [
+   "push 0EAh ; 'ê'; nType",
+   "lea this, [ebp+oPacket]; this",
+   "mov [esi+578h], edi"
+  ],
+  "op": 234,
+  "push_line": "push 0EAh ; 'ê'; nType"
+ },
+ {
+  "fn": "0x654300",
+  "addr": "0x654fd1",
+  "prev": [
+   "cmp [ebp+nDamage], 0",
+   "jle loc_6550CD",
+   "push 0E6h ; 'æ'; nType",
+   "lea this, [ebp+pvarg]; this"
+  ],
+  "op": 230,
+  "push_line": "push 0E6h ; 'æ'; nType"
+ },
+ {
+  "fn": "0x654300",
+  "addr": "0x65528a",
+  "prev": [
+   "mov [ebp+tTime], this",
+   "jz loc_655355",
+   "push 0E7h ; 'ç'; nType",
+   "lea this, [ebp+oPacket]; this"
+  ],
+  "op": 231,
+  "push_line": "push 0E7h ; 'ç'; nType"
+ },
+ {
+  "fn": "0x6b1fc0",
+  "addr": "0x6b2be3",
+  "prev": [
+   "mov byte ptr [ebp+68h+var_6C], 2",
+   "call edx",
+   "jmp loc_6B354A",
+   "push 77h ; 'w'; nType",
+   "lea this, [ebp+68h+oPacket]; this"
+  ],
+  "op": 119,
+  "push_line": "push 77h ; 'w'; nType"
+ },
+ {
+  "fn": "0x92a240",
+  "addr": "0x92dc5d",
+  "prev": [
+   "mov [ebp+var_159C], edx",
+   "push 0DBh ; 'Û'; nType",
+   "lea ecx, [ebp+oPacket]; this"
+  ],
+  "op": 219,
+  "push_line": "push 0DBh ; 'Û'; nType"
+ },
+ {
+  "fn": "0x9343c0",
+  "addr": "0x936250",
+  "prev": [
+   "jz loc_936470",
+   "push 34h ; '4'; nType",
+   "lea this, [esp+0D4h+oPacket]; this"
+  ],
+  "op": 52,
+  "push_line": "push 34h ; '4'; nType"
+ },
+ {
+  "fn": "0x937330",
+  "addr": "0x9388be",
+  "prev": [
+   "call ?Random@CRand32@@QAEIXZ; CRand32::Random(void)",
+   "mov [ebp+edi*4+74h+aDamageRandom], eax",
+   "inc edi",
+   "cmp edi, 6",
+   "jl short loc_9388A7",
+   "push 34h ; '4'; nType",
+   "lea this, [ebp+74h+rcLocalUser]; this"
+  ],
+  "op": 52,
+  "push_line": "push 34h ; '4'; nType"
+ },
+ {
+  "fn": "0x937330",
+  "addr": "0x938a30",
+  "prev": [
+   "add eax, 0FFFFFFF4h",
+   "push eax; pData",
+   "call ?_Release@?$ZXString@D@@KAXPAU_ZXStringData@1@@Z; ZXString<char>::_Release(ZXString<char>::_ZXStringData *)",
+   "add esp, 4",
+   "push 34h ; '4'; nType",
+   "lea this, [ebp+74h+rcLocalUser]; this"
+  ],
+  "op": 52,
+  "push_line": "push 34h ; '4'; nType"
+ },
+ {
+  "fn": "0x937330",
+  "addr": "0x939459",
+  "prev": [
+   "call ?Random@CRand32@@QAEIXZ; CRand32::Random(void)",
+   "inc edi",
+   "cmp edi, 6",
+   "jl short loc_939446",
+   "push 34h ; '4'; nType",
+   "lea this, [ebp+74h+oPacket]; this"
+  ],
+  "op": 52,
+  "push_line": "push 34h ; '4'; nType"
+ },
+ {
+  "fn": "0x937330",
+  "addr": "0x939ab6",
+  "prev": [
+   "jz loc_939BCF",
+   "push 38h ; '8'; nType",
+   "lea this, [ebp+74h+rcBody]; this",
+   "mov [esi+5CCh], ebx"
+  ],
+  "op": 56,
+  "push_line": "push 38h ; '8'; nType"
+ },
+ {
+  "fn": "0x9eb3e0",
+  "addr": "0x9eb4aa",
+  "prev": [
+   "call ?Notice@CUtilDlg@@SAHV?$ZXString@D@@PBGPAV?$ZRef@VCDialog@@@@HH@Z; CUtilDlg::Notice(ZXString<char>,ushort const *,ZRef<CDialog> *,int,int)",
+   "add esp, 14h",
+   "jmp loc_9EB66C",
+   "push 55h ; 'U'; nType",
+   "lea this, [esp+248h+oPacket]; this"
+  ],
+  "op": 85,
+  "push_line": "push 55h ; 'U'; nType"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "addr": "0xa0d739",
+  "prev": [
+   "mov eax, [ebp+74h+sMsg._m_pStr]",
+   "jmp loc_A0ED77",
+   "push 96h ; '–'; nType",
+   "lea this, [ebp+74h+oPacket]; this"
+  ],
+  "op": 150,
+  "push_line": "push 96h ; '–'; nType"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "addr": "0xa0d928",
+  "prev": [
+   "cmp dword ptr [edi+37EEh], 0",
+   "jz short loc_A0D956",
+   "push 0A7h ; '§'; nType",
+   "lea this, [ebp+74h+oPacket]; this"
+  ],
+  "op": 167,
+  "push_line": "push 0A7h ; '§'; nType"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "addr": "0xa0dc25",
+  "prev": [
+   "call ?CHATLOG_ADD@@YAXAAV?$ZXString@D@@G@Z; CHATLOG_ADD(ZXString<char> &,ushort)",
+   "add esp, 8",
+   "push 95h ; '•'; nType",
+   "lea this, [ebp+74h+oPacket]; this"
+  ],
+  "op": 149,
+  "push_line": "push 95h ; '•'; nType"
+ }
+]

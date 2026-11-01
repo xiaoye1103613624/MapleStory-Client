@@ -1,0 +1,17 @@
+Base.wz          4
+Character.wz     25672
+Effect.wz        38
+Etc.wz           39
+Item.wz          421
+Map.wz           7778
+Mob.wz           2157
+Morph.wz         98
+Npc.wz           2081
+Quest.wz         2886
+Reactor.wz       574
+Skill.wz         127
+Sound.wz         59
+String.wz        14
+TamingMob.wz     12
+UI.wz            31
+Character.wz2    25672

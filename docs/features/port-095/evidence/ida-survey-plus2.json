@@ -1,0 +1,174 @@
+{
+ "metadata": {
+  "path": "E:\\MXD\\【2021最新】095PLUS2_10.1国庆版\\V095冒险岛PLUS2客户端\\MapleStory.exe.i64",
+  "module": "MapleStory.exe",
+  "arch": "32",
+  "base_address": "0x400000",
+  "image_size": "0xd3c000",
+  "md5": "54b835fdc9770b4c84f68110191b8bf8",
+  "sha256": "36c9b98e717f1ba74663f3f1bd3279b0517d333b54e6b6d0273f2f9b1fec7a7c"
+ },
+ "statistics": {
+  "total_functions": 3,
+  "named_functions": 1,
+  "library_functions": 0,
+  "unnamed_functions": 2,
+  "total_strings": 14,
+  "total_segments": 8
+ },
+ "segments": [
+  {
+   "name": "___",
+   "start": "0x401000",
+   "end": "0xe39000",
+   "size": "0xa38000",
+   "permissions": "rwx"
+  },
+  {
+   "name": ".idata__",
+   "start": "0xe67000",
+   "end": "0xe6702f",
+   "size": "0x2f",
+   "permissions": "rw"
+  },
+  {
+   "name": ".idata",
+   "start": "0xe6702f",
+   "end": "0xe67033",
+   "size": "0x4",
+   "permissions": "rw"
+  },
+  {
+   "name": ".idata__",
+   "start": "0xe67033",
+   "end": "0xe68000",
+   "size": "0xfcd",
+   "permissions": "rw"
+  },
+  {
+   "name": "________",
+   "start": "0xe68000",
+   "end": "0xffb000",
+   "size": "0x193000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "zlgmmwkb",
+   "start": "0xffb000",
+   "end": "0x113a000",
+   "size": "0x13f000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "kjnnsnqi",
+   "start": "0x113a000",
+   "end": "0x113b000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  },
+  {
+   "name": "ntlpglpj",
+   "start": "0x113b000",
+   "end": "0x113c000",
+   "size": "0x1000",
+   "permissions": "rwx"
+  }
+ ],
+ "entrypoints": [
+  {
+   "addr": "0xb01720",
+   "name": "ZtlTaskMemAllocImp",
+   "ordinal": 1
+  },
+  {
+   "addr": "0xb01730",
+   "name": "ZtlTaskMemFreeImp",
+   "ordinal": 2
+  },
+  {
+   "addr": "0xb01740",
+   "name": "ZtlTaskMemReallocImp",
+   "ordinal": 3
+  },
+  {
+   "addr": "0x113a000",
+   "name": "start",
+   "ordinal": 18063360
+  }
+ ],
+ "interesting_strings": [
+  {
+   "addr": "0xe67037",
+   "string": "kernel32.dll",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x1137e76",
+   "string": "MapleStory.exe",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x1137e85",
+   "string": "ZtlTaskMemAllocImp",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x1137e98",
+   "string": "ZtlTaskMemFreeImp",
+   "xref_count": 1
+  },
+  {
+   "addr": "0x1137eaa",
+   "string": "ZtlTaskMemReallocImp",
+   "xref_count": 1
+  }
+ ],
+ "interesting_functions": [
+  {
+   "addr": "0x113a00b",
+   "name": "sub_113A00B",
+   "size": 59,
+   "xref_count": 1,
+   "callee_count": 1,
+   "type": "wrapper"
+  },
+  {
+   "addr": "0x113a046",
+   "name": "sub_113A046",
+   "size": 44,
+   "xref_count": 1,
+   "callee_count": 0,
+   "type": "leaf"
+  },
+  {
+   "addr": "0x113a000",
+   "name": "start",
+   "size": 11,
+   "xref_count": 0,
+   "callee_count": 1,
+   "type": "wrapper"
+  }
+ ],
+ "imports_by_category": {
+  "crypto": [],
+  "network": [],
+  "file_io": [
+   {
+    "addr": "0xe6702f",
+    "name": "CreateDirectoryA",
+    "module": "kernel32"
+   }
+  ],
+  "process": [],
+  "registry": [],
+  "other": []
+ },
+ "call_graph_summary": {
+  "total_edges": 2,
+  "max_depth_estimate": null,
+  "root_functions": [
+   "start"
+  ],
+  "leaf_functions_count": 1
+ }
+}

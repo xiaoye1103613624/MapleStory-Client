@@ -1,0 +1,77 @@
+#经验倍率 【1=1】
+net.sf.odinms.world.exp=1
+#金币倍率 【100=10倍 10=1倍】
+net.sf.odinms.world.meso=50
+#物品倍率 【1=1  代表小怪爆率+BOSS爆率】
+net.sf.odinms.world.drop=1
+
+#泡点抵用
+net.sf.odinms.world.pddy=0
+#泡点金币
+net.sf.odinms.world.pdjb=10000
+#泡点经验
+net.sf.odinms.world.pdjy=0
+
+
+
+net.sf.odinms.world.lxdy=2
+net.sf.odinms.world.lxjb=10
+net.sf.odinms.world.lxjy=10
+
+# Admin Only or not
+net.sf.odinms.world.admin=false
+
+# Packet Logging
+net.sf.odinms.world.logpackets=false
+
+# 1 = Disable PQ 0 = Enable PQ
+net.sf.odinms.world.flags=0
+
+# Name of the Server
+net.sf.odinms.login.serverName=v.95
+
+net.sf.odinms.login.loginMessage=欢迎来到冒险岛，长久耐玩，用心体验。
+
+# Event Message at Channel Selection
+net.sf.odinms.login.eventMessage=#bv.95
+
+# Flag at Channel Selection  0: Nothing 1: Event 2: New 3: Hot
+net.sf.odinms.login.flag=3
+
+# 最大角色创建数量
+net.sf.odinms.login.maxCharacters=30
+
+# Server Scrolling Message
+net.sf.odinms.world.serverMessage=v.95
+
+# total user limit of the server
+net.sf.odinms.login.userlimit=10000
+
+# defaults for channelservers
+net.sf.odinms.channel.net.port1=7575
+net.sf.odinms.channel.net.port2=7576
+net.sf.odinms.channel.net.port3=7577
+net.sf.odinms.channel.net.port4=7578
+net.sf.odinms.channel.net.interface=127.0.0.1
+
+#潜能改变几率
+net.sf.odinms.world.renewPotentiaA=100
+net.sf.odinms.world.renewPotentiaS=100
+net.sf.odinms.world.renewPotentialsuperA=100
+net.sf.odinms.world.renewPotentialsuperS=100
+net.sf.odinms.world.renewPotentialsuper3=100
+
+
+#等级限制
+net.sf.odinms.world.maxlevel=255
+net.sf.odinms.world.kocmaxlevel=255
+
+#数据库名
+net.sf.odinms.database.name=v095
+#数据库账号
+net.sf.odinms.database.user=<REDACTED-DB-USER>
+#数据库密码
+net.sf.odinms.database.password=<REDACTED-DB-PASSWORD>  # 已脱敏
+
+# active event scripts
+net.sf.odinms.channel.events=Christmas,Olivia,CygnusBattle,ScarTarBattle,VonLeonBattle,Ghost,MV,cpq,cpq2,OrbisPQ,HenesysPQ,Romeo,Juliet,Pirate,Amoria,Ellin,CWKPQ,Rex,DollHouse,BossBalrog_EASY,BossBalrog_NORMAL,HorntailBattle,Nibergen,PinkBeanBattle,ZakumBattle,NamelessMagicMonster,Dunas,Dunas2,2095_tokyo,ZakumPQ,LudiPQ,ServerMessage,KerningPQ,ProtectTylus,WitchTower_EASY,WitchTower_Med,WitchTower_Hard,Vergamot,ChaosHorntail,ChaosZakum,CoreBlaze,BossQuestEASY,BossQuestMed,BossQuestHARD,BossQuestHELL,Ravana_EASY,Ravana_HARD,Ravana_MED,GuildQuest,Aufhaven,English,PVP,ArkariumBattle,Subway,ProtectPig,shaoling,Dragonica,Ghostbaby,MonsterPark,MesoPQ,HillaBattle,BossBloody_CHAOS,BossPierre_CHAOS,BossBanban_CHAOS,BossBelen_CHAOS,BossMagnus_HARD

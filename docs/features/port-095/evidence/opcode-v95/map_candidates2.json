@@ -1,0 +1,8061 @@
+{
+ "recv": [
+  {
+   "v95": 0,
+   "handler": "CUIMessenger::OnEnter",
+   "cand": []
+  },
+  {
+   "v95": 1,
+   "handler": "CUIMessenger::OnSelfEnterResult",
+   "cand": []
+  },
+  {
+   "v95": 2,
+   "handler": "CMiniRoomBaseDlg::OnInviteStatic",
+   "cand": []
+  },
+  {
+   "v95": 3,
+   "handler": "CMiniRoomBaseDlg::OnInviteResultStatic",
+   "cand": []
+  },
+  {
+   "v95": 4,
+   "handler": "CMiniRoomBaseDlg::OnEnterBase",
+   "cand": []
+  },
+  {
+   "v95": 5,
+   "handler": "CMiniRoomBaseDlg::OnEnterResultStatic",
+   "cand": []
+  },
+  {
+   "v95": 6,
+   "handler": "CUIMessenger::OnChat",
+   "cand": [
+    {
+     "s9": "SPOUSE_CHAT",
+     "v": 136,
+     "score": 0.67
+    },
+    {
+     "s9": "PET_CHAT",
+     "v": 171,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 7,
+   "handler": "CUIMessenger::OnAvatar",
+   "cand": [
+    {
+     "s9": "SET_AVATAR_MEGAPHONE",
+     "v": 111,
+     "score": 0.67
+    },
+    {
+     "s9": "AVATAR_MEGAPHONE_RESULT",
+     "v": 110,
+     "score": 0.67
+    },
+    {
+     "s9": "CLEAR_AVATAR_MEGAPHONE",
+     "v": 112,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 8,
+   "handler": "SetParcelDlg`（打开包裹对话框，Decode1 决定 nMode=2/0）",
+   "cand": []
+  },
+  {
+   "v95": 9,
+   "handler": "CmpPutItem` 刷新“放入”列表并定位滚动条",
+   "cand": []
+  },
+  {
+   "v95": 10,
+   "handler": "提示：背包已满",
+   "cand": []
+  },
+  {
+   "v95": 11,
+   "handler": "CLogin::OnSelectWorldResult",
+   "cand": []
+  },
+  {
+   "v95": 12,
+   "handler": "提示：该物品无法取回",
+   "cand": []
+  },
+  {
+   "v95": 13,
+   "handler": "CWnd::Destroy",
+   "cand": [
+    {
+     "s9": "REACTOR_DESTROY",
+     "v": 280,
+     "score": 0.67
+    },
+    {
+     "s9": "DESTROY_SHOP_RESULT",
+     "v": 115,
+     "score": 0.67
+    },
+    {
+     "s9": "DESTROY_HIRED_MERCHANT",
+     "v": 266,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 14,
+   "handler": "CMiniRoomBaseDlg::OnCheckSSN2Static",
+   "cand": []
+  },
+  {
+   "v95": 15,
+   "handler": "CLogin::OnDeleteCharacterResult",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 16,
+   "handler": "CClientSocket::OnMigrateCommand` | 连接层特例",
+   "cand": [
+    {
+     "s9": "PET_COMMAND",
+     "v": 174,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 17,
+   "handler": "提示：仓库已满",
+   "cand": []
+  },
+  {
+   "v95": 18,
+   "handler": "CClientSocket::OnAuthenCodeChanged` | 连接层特例",
+   "cand": []
+  },
+  {
+   "v95": 19,
+   "handler": "CClientSocket::OnAuthenMessage` | 连接层特例",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 20,
+   "handler": "CSecurityClient::OnPacket` | 连接层特例",
+   "cand": []
+  },
+  {
+   "v95": 21,
+   "handler": "CLogin::OnEnableSPWResult",
+   "cand": [
+    {
+     "s9": "CHECK_SPW_RESULT",
+     "v": 28,
+     "score": 0.67
+    },
+    {
+     "s9": "ENABLE_TV",
+     "v": 343,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 22,
+   "handler": "打开仓库对话框 `SetTrunkDlg",
+   "cand": []
+  },
+  {
+   "v95": 23,
+   "handler": "提示：物品/金币无法移动，请联系客服",
+   "cand": []
+  },
+  {
+   "v95": 24,
+   "handler": "Decode1`；非 0 则 `DecodeStr` 后提示，否则“交易失败”",
+   "cand": []
+  },
+  {
+   "v95": 25,
+   "handler": "快速投递提醒：`DecodeStr(sender)` + `Decode1` + `CUIFadeYesNo::CreateParcelAlarm",
+   "cand": []
+  },
+  {
+   "v95": 26,
+   "handler": "新建空白对话框 `CParcelDlg(nMode=1)",
+   "cand": []
+  },
+  {
+   "v95": 27,
+   "handler": "Decode1` + `CUIFadeYesNo::CreateParcelAlarm",
+   "cand": []
+  },
+  {
+   "v95": 28,
+   "handler": "CWvsContext::OnInventoryOperation",
+   "cand": [
+    {
+     "s9": "INVENTORY_OPERATION",
+     "v": 29,
+     "score": 1.0
+    },
+    {
+     "s9": "PARTY_OPERATION",
+     "v": 62,
+     "score": 0.5
+    },
+    {
+     "s9": "MTS_OPERATION",
+     "v": 348,
+     "score": 0.5
+    },
+    {
+     "s9": "INVENTORY_GROW",
+     "v": 30,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 29,
+   "handler": "CWvsContext::OnInventoryGrow",
+   "cand": [
+    {
+     "s9": "INVENTORY_GROW",
+     "v": 30,
+     "score": 1.0
+    },
+    {
+     "s9": "INVENTORY_OPERATION",
+     "v": 29,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 30,
+   "handler": "CWvsContext::OnStatChanged",
+   "cand": [
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 1.0
+    },
+    {
+     "s9": "HOUR_CHANGED",
+     "v": 85,
+     "score": 0.5
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 31,
+   "handler": "CWvsContext::OnTemporaryStatSet",
+   "cand": [
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.5
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 32,
+   "handler": "CWvsContext::OnTemporaryStatReset",
+   "cand": [
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 33,
+   "handler": "CWvsContext::OnForcedStatSet",
+   "cand": [
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 1.0
+    },
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 0.8
+    },
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 34,
+   "handler": "CWvsContext::OnForcedStatReset",
+   "cand": [
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 1.0
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.8
+    }
+   ]
+  },
+  {
+   "v95": 35,
+   "handler": "CWvsContext::OnChangeSkillRecordResult",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 36,
+   "handler": "CWvsContext::OnSkillUseResult",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 1.0
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 37,
+   "handler": "CWvsContext::OnGivePopularityResult",
+   "cand": [
+    {
+     "s9": "GIVE_BUFF",
+     "v": 32,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 38,
+   "handler": "CWvsContext::OnMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.67
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_WEEK_EVENT_MESSAGE",
+     "v": 77,
+     "score": 0.5
+    },
+    {
+     "s9": "SCRIPT_PROGRESS_MESSAGE",
+     "v": 122,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 39,
+   "handler": "CWvsContext::OnOpenFullClientDownloadLink",
+   "cand": [
+    {
+     "s9": "OPEN_FULL_CLIENT_DOWNLOAD_LINK",
+     "v": 40,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 40,
+   "handler": "CWvsContext::OnMemoResult",
+   "cand": [
+    {
+     "s9": "MEMO_RESULT",
+     "v": 41,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 41,
+   "handler": "CWvsContext::OnMapTransferResult",
+   "cand": [
+    {
+     "s9": "MAP_TRANSFER_RESULT",
+     "v": 42,
+     "score": 1.0
+    },
+    {
+     "s9": "NOTIFY_MARRIED_PARTNER_MAP_TRANSFER",
+     "v": 75,
+     "score": 0.57
+    },
+    {
+     "s9": "BLOCKED_MAP",
+     "v": 131,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 42,
+   "handler": "CWvsContext::OnAntiMacroResult",
+   "cand": []
+  },
+  {
+   "v95": 44,
+   "handler": "CWvsContext::OnClaimResult",
+   "cand": [
+    {
+     "s9": "CLAIM_RESULT",
+     "v": 45,
+     "score": 1.0
+    },
+    {
+     "s9": "CLAIM_STATUS_CHANGED",
+     "v": 47,
+     "score": 0.5
+    },
+    {
+     "s9": "CLAIM_AVAILABLE_TIME",
+     "v": 46,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 45,
+   "handler": "CWvsContext::OnSetClaimSvrAvailableTime",
+   "cand": [
+    {
+     "s9": "CLAIM_AVAILABLE_TIME",
+     "v": 46,
+     "score": 0.86
+    }
+   ]
+  },
+  {
+   "v95": 46,
+   "handler": "CWvsContext::OnClaimSvrStatusChanged",
+   "cand": [
+    {
+     "s9": "CLAIM_STATUS_CHANGED",
+     "v": 47,
+     "score": 0.86
+    }
+   ]
+  },
+  {
+   "v95": 47,
+   "handler": "CWvsContext::OnSetTamingMobInfo",
+   "cand": [
+    {
+     "s9": "SET_TAMING_MOB_INFO",
+     "v": 48,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 48,
+   "handler": "CWvsContext::OnQuestClear",
+   "cand": [
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 1.0
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 1.0
+    },
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 49,
+   "handler": "CWvsContext::OnEntrustedShopCheckResult",
+   "cand": [
+    {
+     "s9": "ENTRUSTED_SHOP_CHECK_RESULT",
+     "v": 50,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOP_SCANNER_RESULT",
+     "v": 70,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOP_LINK_RESULT",
+     "v": 71,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 50,
+   "handler": "CWvsContext::OnSkillLearnItemResult",
+   "cand": [
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 1.0
+    },
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 51,
+   "handler": "CWvsContext::OnSkillResetItemResult",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 52,
+   "handler": "CWvsContext::OnGatherItemResult",
+   "cand": [
+    {
+     "s9": "GATHER_ITEM_RESULT",
+     "v": 52,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 53,
+   "handler": "CWvsContext::OnSortItemResult",
+   "cand": [
+    {
+     "s9": "SORT_ITEM_RESULT",
+     "v": 53,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 55,
+   "handler": "CWvsContext::OnSueCharacterResult",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 57,
+   "handler": "CWvsContext::OnTradeMoneyLimit",
+   "cand": [
+    {
+     "s9": "TRADE_MONEY_LIMIT",
+     "v": 57,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 58,
+   "handler": "CWvsContext::OnSetGender",
+   "cand": [
+    {
+     "s9": "SET_GENDER",
+     "v": 58,
+     "score": 1.0
+    },
+    {
+     "s9": "GENDER_DONE",
+     "v": 4,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 59,
+   "handler": "CWvsContext::OnGuildBBSPacket",
+   "cand": [
+    {
+     "s9": "GUILD_BBS_PACKET",
+     "v": 59,
+     "score": 1.0
+    },
+    {
+     "s9": "GUILD_OPERATION",
+     "v": 65,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 61,
+   "handler": "CWvsContext::OnCharacterInfo",
+   "cand": [
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_STATUS_INFO",
+     "v": 39,
+     "score": 0.5
+    },
+    {
+     "s9": "FAMILY_INFO_RESULT",
+     "v": 95,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 62,
+   "handler": "CWvsContext::OnPartyResult",
+   "cand": [
+    {
+     "s9": "PARTY_VALUE",
+     "v": 91,
+     "score": 0.67
+    },
+    {
+     "s9": "PARTY_OPERATION",
+     "v": 62,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 64,
+   "handler": "CWvsContext::OnExpedtionResult",
+   "cand": []
+  },
+  {
+   "v95": 65,
+   "handler": "CWvsContext::OnFriendResult",
+   "cand": []
+  },
+  {
+   "v95": 67,
+   "handler": "CWvsContext::OnGuildResult",
+   "cand": [
+    {
+     "s9": "GUILD_OPERATION",
+     "v": 65,
+     "score": 0.67
+    },
+    {
+     "s9": "GUILD_BBS_PACKET",
+     "v": 59,
+     "score": 0.67
+    },
+    {
+     "s9": "GUILD_NAME_CHANGED",
+     "v": 202,
+     "score": 0.5
+    },
+    {
+     "s9": "GUILD_MARK_CHANGED",
+     "v": 203,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 68,
+   "handler": "CWvsContext::OnAllianceResult",
+   "cand": [
+    {
+     "s9": "ALLIANCE_OPERATION",
+     "v": 66,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 69,
+   "handler": "CWvsContext::OnTownPortal",
+   "cand": [
+    {
+     "s9": "SPAWN_PORTAL",
+     "v": 67,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 70,
+   "handler": "CWvsContext::OnOpenGate",
+   "cand": [
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 71,
+   "handler": "CWvsContext::OnBroadcastMsg",
+   "cand": []
+  },
+  {
+   "v95": 72,
+   "handler": "CWvsContext::OnIncubatorResult",
+   "cand": [
+    {
+     "s9": "INCUBATOR_RESULT",
+     "v": 69,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 73,
+   "handler": "CWvsContext::OnShopScannerResult",
+   "cand": [
+    {
+     "s9": "SHOP_SCANNER_RESULT",
+     "v": 70,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOP_LINK_RESULT",
+     "v": 71,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    },
+    {
+     "s9": "ENTRUSTED_SHOP_CHECK_RESULT",
+     "v": 50,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 74,
+   "handler": "CWvsContext::OnShopLinkResult",
+   "cand": [
+    {
+     "s9": "SHOP_LINK_RESULT",
+     "v": 71,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOP_SCANNER_RESULT",
+     "v": 70,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    },
+    {
+     "s9": "ENTRUSTED_SHOP_CHECK_RESULT",
+     "v": 50,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 75,
+   "handler": "CWvsContext::OnMarriageRequest",
+   "cand": [
+    {
+     "s9": "MARRIAGE_RESULT",
+     "v": 73,
+     "score": 1.0
+    },
+    {
+     "s9": "MARRIAGE_REQUEST",
+     "v": 72,
+     "score": 1.0
+    },
+    {
+     "s9": "NOTIFY_MARRIAGE",
+     "v": 106,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 76,
+   "handler": "CWvsContext::OnMarriageResult",
+   "cand": [
+    {
+     "s9": "MARRIAGE_RESULT",
+     "v": 73,
+     "score": 1.0
+    },
+    {
+     "s9": "MARRIAGE_REQUEST",
+     "v": 72,
+     "score": 1.0
+    },
+    {
+     "s9": "NOTIFY_MARRIAGE",
+     "v": 106,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 77,
+   "handler": "CWvsContext::OnWeddingGiftResult",
+   "cand": [
+    {
+     "s9": "WEDDING_GIFT_RESULT",
+     "v": 74,
+     "score": 1.0
+    },
+    {
+     "s9": "WEDDING_PROGRESS",
+     "v": 320,
+     "score": 0.5
+    },
+    {
+     "s9": "WEDDING_PHOTO",
+     "v": 43,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 78,
+   "handler": "CWvsContext::OnNotifyMarriedPartnerMapTransfer",
+   "cand": [
+    {
+     "s9": "NOTIFY_MARRIED_PARTNER_MAP_TRANSFER",
+     "v": 75,
+     "score": 1.0
+    },
+    {
+     "s9": "MAP_TRANSFER_RESULT",
+     "v": 42,
+     "score": 0.57
+    }
+   ]
+  },
+  {
+   "v95": 79,
+   "handler": "CWvsContext::OnCashPetFoodResult",
+   "cand": [
+    {
+     "s9": "CASH_PET_FOOD_RESULT",
+     "v": 76,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 80,
+   "handler": "CWvsContext::OnSetWeekEventMessage",
+   "cand": [
+    {
+     "s9": "SET_WEEK_EVENT_MESSAGE",
+     "v": 77,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 81,
+   "handler": "CWvsContext::OnSetPotionDiscountRate",
+   "cand": [
+    {
+     "s9": "SET_POTION_DISCOUNT_RATE",
+     "v": 78,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 82,
+   "handler": "CWvsContext::OnBridleMobCatchFail",
+   "cand": [
+    {
+     "s9": "BRIDLE_MOB_CATCH_FAIL",
+     "v": 79,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 83,
+   "handler": "CWvsContext::OnImitatedNPCResult",
+   "cand": [
+    {
+     "s9": "IMITATED_NPC_RESULT",
+     "v": 80,
+     "score": 1.0
+    },
+    {
+     "s9": "IMITATED_NPC_DATA",
+     "v": 81,
+     "score": 0.8
+    },
+    {
+     "s9": "SPAWN_NPC",
+     "v": 257,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_NPC_SCRIPTABLE",
+     "v": 263,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 84,
+   "handler": "CNpcPool::OnNpcImitateData",
+   "cand": [
+    {
+     "s9": "IMITATED_NPC_DATA",
+     "v": 81,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 85,
+   "handler": "CNpcPool::OnUpdateLimitedDisableInfo",
+   "cand": [
+    {
+     "s9": "LIMITED_NPC_DISABLE_INFO",
+     "v": 82,
+     "score": 0.86
+    },
+    {
+     "s9": "DISABLE_UI",
+     "v": 222,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 86,
+   "handler": "CWvsContext::OnMonsterBookSetCard",
+   "cand": [
+    {
+     "s9": "MONSTER_BOOK_SET_CARD",
+     "v": 83,
+     "score": 1.0
+    },
+    {
+     "s9": "MONSTER_BOOK_SET_COVER",
+     "v": 84,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 87,
+   "handler": "CWvsContext::OnMonsterBookSetCover",
+   "cand": [
+    {
+     "s9": "MONSTER_BOOK_SET_COVER",
+     "v": 84,
+     "score": 1.0
+    },
+    {
+     "s9": "MONSTER_BOOK_SET_CARD",
+     "v": 83,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 88,
+   "handler": "CWvsContext::OnHourChanged",
+   "cand": [
+    {
+     "s9": "HOUR_CHANGED",
+     "v": 85,
+     "score": 1.0
+    },
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 89,
+   "handler": "CWvsContext::OnMiniMapOnOff",
+   "cand": []
+  },
+  {
+   "v95": 90,
+   "handler": "CWvsContext::OnConsultAuthkeyUpdate",
+   "cand": [
+    {
+     "s9": "CONSULT_AUTHKEY_UPDATE",
+     "v": 87,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 91,
+   "handler": "CWvsContext::OnClassCompetitionAuthkeyUpdate",
+   "cand": [
+    {
+     "s9": "CLASS_COMPETITION_AUTHKEY_UPDATE",
+     "v": 88,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 92,
+   "handler": "CWvsContext::OnWebBoardAuthkeyUpdate",
+   "cand": [
+    {
+     "s9": "WEB_BOARD_AUTHKEY_UPDATE",
+     "v": 89,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 93,
+   "handler": "CWvsContext::OnSessionValue",
+   "cand": [
+    {
+     "s9": "SESSION_VALUE",
+     "v": 90,
+     "score": 1.0
+    },
+    {
+     "s9": "PARTY_VALUE",
+     "v": 91,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 94,
+   "handler": "CWvsContext::OnPartyValue",
+   "cand": [
+    {
+     "s9": "PARTY_VALUE",
+     "v": 91,
+     "score": 1.0
+    },
+    {
+     "s9": "SESSION_VALUE",
+     "v": 90,
+     "score": 0.5
+    },
+    {
+     "s9": "PARTY_OPERATION",
+     "v": 62,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 95,
+   "handler": "CWvsContext::OnFieldSetVariable",
+   "cand": [
+    {
+     "s9": "FIELD_SET_VARIABLE",
+     "v": 92,
+     "score": 1.0
+    },
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.67
+    },
+    {
+     "s9": "FIELD_EFFECT",
+     "v": 138,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 96,
+   "handler": "CWvsContext::OnBonusExpRateChanged",
+   "cand": [
+    {
+     "s9": "BONUS_EXP_CHANGED",
+     "v": 93,
+     "score": 0.86
+    },
+    {
+     "s9": "CASHSHOP_PURCHASE_EXP_CHANGED",
+     "v": 326,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 97,
+   "handler": "CWvsContext::OnPotionDiscountRateChanged",
+   "cand": [
+    {
+     "s9": "SET_POTION_DISCOUNT_RATE",
+     "v": 78,
+     "score": 0.86
+    }
+   ]
+  },
+  {
+   "v95": 98,
+   "handler": "CWvsContext::OnFamilyChartResult",
+   "cand": [
+    {
+     "s9": "FAMILY_CHART_RESULT",
+     "v": 94,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    },
+    {
+     "s9": "FAMILY_SUMMON_REQUEST",
+     "v": 104,
+     "score": 0.5
+    },
+    {
+     "s9": "FAMILY_SET_PRIVILEGE",
+     "v": 103,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 99,
+   "handler": "CWvsContext::OnFamilyInfoResult",
+   "cand": [
+    {
+     "s9": "FAMILY_INFO_RESULT",
+     "v": 95,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    },
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_STATUS_INFO",
+     "v": 39,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 100,
+   "handler": "CWvsContext::OnFamilyResult",
+   "cand": [
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_SUMMON_REQUEST",
+     "v": 104,
+     "score": 0.67
+    },
+    {
+     "s9": "FAMILY_SET_PRIVILEGE",
+     "v": 103,
+     "score": 0.67
+    },
+    {
+     "s9": "FAMILY_JOIN_REQUEST_RESULT",
+     "v": 98,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 101,
+   "handler": "CWvsContext::OnFamilyJoinRequest",
+   "cand": [
+    {
+     "s9": "FAMILY_JOIN_REQUEST_RESULT",
+     "v": 98,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_JOIN_REQUEST",
+     "v": 97,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_JOIN_ACCEPTED",
+     "v": 99,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 102,
+   "handler": "CWvsContext::OnFamilyJoinRequestResult",
+   "cand": [
+    {
+     "s9": "FAMILY_JOIN_REQUEST_RESULT",
+     "v": 98,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_JOIN_REQUEST",
+     "v": 97,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_JOIN_ACCEPTED",
+     "v": 99,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 103,
+   "handler": "CWvsContext::OnFamilyJoinAccepted",
+   "cand": [
+    {
+     "s9": "FAMILY_JOIN_ACCEPTED",
+     "v": 99,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_JOIN_REQUEST_RESULT",
+     "v": 98,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_JOIN_REQUEST",
+     "v": 97,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 104,
+   "handler": "CWvsContext::OnFamilyPrivilegeList",
+   "cand": [
+    {
+     "s9": "FAMILY_PRIVILEGE_LIST",
+     "v": 100,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_SET_PRIVILEGE",
+     "v": 103,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 105,
+   "handler": "CWvsContext::OnFamilyFamousPointIncResult",
+   "cand": []
+  },
+  {
+   "v95": 106,
+   "handler": "CWvsContext::OnFamilyNotifyLoginOrLogout",
+   "cand": [
+    {
+     "s9": "FAMILY_NOTIFY_LOGIN_OR_LOGOUT",
+     "v": 102,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 107,
+   "handler": "CWvsContext::OnFamilySetPrivilege",
+   "cand": [
+    {
+     "s9": "FAMILY_SET_PRIVILEGE",
+     "v": 103,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_PRIVILEGE_LIST",
+     "v": 100,
+     "score": 0.8
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    },
+    {
+     "s9": "FAMILY_SUMMON_REQUEST",
+     "v": 104,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 108,
+   "handler": "CWvsContext::OnFamilySummonRequest",
+   "cand": [
+    {
+     "s9": "FAMILY_SUMMON_REQUEST",
+     "v": 104,
+     "score": 1.0
+    },
+    {
+     "s9": "FAMILY_RESULT",
+     "v": 96,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SUMMON_ITEM_INAVAILABLE",
+     "v": 137,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 109,
+   "handler": "CWvsContext::OnNotifyLevelUp",
+   "cand": []
+  },
+  {
+   "v95": 110,
+   "handler": "CWvsContext::OnNotifyWedding",
+   "cand": [
+    {
+     "s9": "WEDDING_PROGRESS",
+     "v": 320,
+     "score": 0.5
+    },
+    {
+     "s9": "WEDDING_PHOTO",
+     "v": 43,
+     "score": 0.5
+    },
+    {
+     "s9": "WEDDING_GIFT_RESULT",
+     "v": 74,
+     "score": 0.5
+    },
+    {
+     "s9": "NOTIFY_MARRIAGE",
+     "v": 106,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 111,
+   "handler": "CWvsContext::OnNotifyJobChange",
+   "cand": [
+    {
+     "s9": "NOTIFY_JOB_CHANGE",
+     "v": 107,
+     "score": 1.0
+    },
+    {
+     "s9": "NOTIFY_MARRIAGE",
+     "v": 106,
+     "score": 0.5
+    },
+    {
+     "s9": "NOTIFY_LEVELUP",
+     "v": 105,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 113,
+   "handler": "CWvsContext::OnMapleTVUseRes",
+   "cand": [
+    {
+     "s9": "MAPLE_TV_USE_RES",
+     "v": 109,
+     "score": 1.0
+    },
+    {
+     "s9": "SEND_TV",
+     "v": 341,
+     "score": 0.67
+    },
+    {
+     "s9": "REMOVE_TV",
+     "v": 342,
+     "score": 0.5
+    },
+    {
+     "s9": "ENABLE_TV",
+     "v": 343,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 114,
+   "handler": "CWvsContext::OnAvatarMegaphoneRes",
+   "cand": [
+    {
+     "s9": "SET_AVATAR_MEGAPHONE",
+     "v": 111,
+     "score": 1.0
+    },
+    {
+     "s9": "AVATAR_MEGAPHONE_RESULT",
+     "v": 110,
+     "score": 1.0
+    },
+    {
+     "s9": "CLEAR_AVATAR_MEGAPHONE",
+     "v": 112,
+     "score": 0.8
+    }
+   ]
+  },
+  {
+   "v95": 115,
+   "handler": "CWvsContext::OnSetAvatarMegaphone",
+   "cand": [
+    {
+     "s9": "SET_AVATAR_MEGAPHONE",
+     "v": 111,
+     "score": 1.0
+    },
+    {
+     "s9": "AVATAR_MEGAPHONE_RESULT",
+     "v": 110,
+     "score": 1.0
+    },
+    {
+     "s9": "CLEAR_AVATAR_MEGAPHONE",
+     "v": 112,
+     "score": 0.8
+    }
+   ]
+  },
+  {
+   "v95": 116,
+   "handler": "CWvsContext::OnClearAvatarMegaphone",
+   "cand": [
+    {
+     "s9": "CLEAR_AVATAR_MEGAPHONE",
+     "v": 112,
+     "score": 1.0
+    },
+    {
+     "s9": "SET_AVATAR_MEGAPHONE",
+     "v": 111,
+     "score": 0.8
+    },
+    {
+     "s9": "AVATAR_MEGAPHONE_RESULT",
+     "v": 110,
+     "score": 0.8
+    }
+   ]
+  },
+  {
+   "v95": 117,
+   "handler": "CWvsContext::OnCancelNameChangeResult",
+   "cand": [
+    {
+     "s9": "CANCEL_NAME_CHANGE_RESULT",
+     "v": 113,
+     "score": 1.0
+    },
+    {
+     "s9": "CANCEL_NAME_CHANGE_BY_OTHER",
+     "v": 120,
+     "score": 0.8
+    },
+    {
+     "s9": "CASHSHOP_CHECK_NAME_CHANGE",
+     "v": 328,
+     "score": 0.5
+    },
+    {
+     "s9": "CANCEL_CHAIR",
+     "v": 205,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 118,
+   "handler": "CWvsContext::OnCancelTransferWorldResult",
+   "cand": [
+    {
+     "s9": "CANCEL_TRANSFER_WORLD_RESULT",
+     "v": 114,
+     "score": 1.0
+    },
+    {
+     "s9": "CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT",
+     "v": 331,
+     "score": 0.57
+    }
+   ]
+  },
+  {
+   "v95": 119,
+   "handler": "CWvsContext::OnDestroyShopResult",
+   "cand": [
+    {
+     "s9": "DESTROY_SHOP_RESULT",
+     "v": 115,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOP_SCANNER_RESULT",
+     "v": 70,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOP_LINK_RESULT",
+     "v": 71,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 120,
+   "handler": "CWvsContext::OnFakeGMNotice",
+   "cand": [
+    {
+     "s9": "FAKE_GM_NOTICE",
+     "v": 116,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 121,
+   "handler": "CWvsContext::OnSuccessInUsegachaponBox",
+   "cand": [
+    {
+     "s9": "SUCCESS_IN_USE_GACHAPON_BOX",
+     "v": 117,
+     "score": 0.75
+    }
+   ]
+  },
+  {
+   "v95": 122,
+   "handler": "CWvsContext::OnNewYearCardRes",
+   "cand": [
+    {
+     "s9": "NEW_YEAR_CARD_RES",
+     "v": 118,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 123,
+   "handler": "CWvsContext::OnRandomMorphRes",
+   "cand": [
+    {
+     "s9": "RANDOM_MORPH_RES",
+     "v": 119,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 124,
+   "handler": "CWvsContext::OnCancelNameChangebyOther",
+   "cand": [
+    {
+     "s9": "CANCEL_NAME_CHANGE_BY_OTHER",
+     "v": 120,
+     "score": 0.86
+    },
+    {
+     "s9": "CANCEL_NAME_CHANGE_RESULT",
+     "v": 113,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 125,
+   "handler": "CWvsContext::OnSetBuyEquipExt",
+   "cand": []
+  },
+  {
+   "v95": 126,
+   "handler": "CWvsContext::OnSetPassenserRequest",
+   "cand": []
+  },
+  {
+   "v95": 127,
+   "handler": "CWvsContext::OnScriptProgressMessage",
+   "cand": [
+    {
+     "s9": "SCRIPT_PROGRESS_MESSAGE",
+     "v": 122,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 128,
+   "handler": "CWvsContext::OnDataCRCCheckFailed",
+   "cand": [
+    {
+     "s9": "DATA_CRC_CHECK_FAILED",
+     "v": 123,
+     "score": 1.0
+    },
+    {
+     "s9": "CHECK_CRC_RESULT",
+     "v": 25,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 129,
+   "handler": "CWvsContext::OnCakePieEventResult",
+   "cand": []
+  },
+  {
+   "v95": 130,
+   "handler": "CWvsContext::OnUpdateGMBoard",
+   "cand": []
+  },
+  {
+   "v95": 131,
+   "handler": "CWvsContext::OnShowSlotMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 132,
+   "handler": "CWvsContext::OnWildHunterInfo",
+   "cand": []
+  },
+  {
+   "v95": 133,
+   "handler": "CWvsContext::OnAccountMoreInfo",
+   "cand": [
+    {
+     "s9": "ACCOUNT_INFO",
+     "v": 2,
+     "score": 0.8
+    }
+   ]
+  },
+  {
+   "v95": 134,
+   "handler": "CWvsContext::OnFindFirend",
+   "cand": []
+  },
+  {
+   "v95": 135,
+   "handler": "CWvsContext::OnStageChange",
+   "cand": []
+  },
+  {
+   "v95": 136,
+   "handler": "CWvsContext::OnDragonBallBox",
+   "cand": []
+  },
+  {
+   "v95": 137,
+   "handler": "CWvsContext::OnAskWhetherUsePamsSong",
+   "cand": []
+  },
+  {
+   "v95": 138,
+   "handler": "CWvsContext::OnTransferChannel",
+   "cand": [
+    {
+     "s9": "CHANGE_CHANNEL",
+     "v": 16,
+     "score": 0.67
+    },
+    {
+     "s9": "MAP_TRANSFER_RESULT",
+     "v": 42,
+     "score": 0.5
+    },
+    {
+     "s9": "CHANNEL_SELECTED",
+     "v": 20,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 139,
+   "handler": "CWvsContext::OnDisallowedDeliveryQuestList",
+   "cand": []
+  },
+  {
+   "v95": 140,
+   "handler": "CWvsContext::OnMacroSysDataInit",
+   "cand": [
+    {
+     "s9": "MACRO_SYS_DATA_INIT",
+     "v": 124,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 141,
+   "handler": "CStage::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 142,
+   "handler": "CStage::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 143,
+   "handler": "CStage::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 144,
+   "handler": "CMapLoadable::OnSetBackEffect",
+   "cand": [
+    {
+     "s9": "SET_BACK_EFFECT",
+     "v": 128,
+     "score": 1.0
+    },
+    {
+     "s9": "CLEAR_BACK_EFFECT",
+     "v": 130,
+     "score": 0.8
+    },
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 145,
+   "handler": "CMapLoadable::OnSetMapObjectVisible",
+   "cand": [
+    {
+     "s9": "SET_MAP_OBJECT_VISIBLE",
+     "v": 129,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 146,
+   "handler": "CMapLoadable::OnClearBackEffect",
+   "cand": [
+    {
+     "s9": "CLEAR_BACK_EFFECT",
+     "v": 130,
+     "score": 1.0
+    },
+    {
+     "s9": "SET_BACK_EFFECT",
+     "v": 128,
+     "score": 0.8
+    },
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 147,
+   "handler": "CField::OnTransferFieldReqIgnored",
+   "cand": []
+  },
+  {
+   "v95": 148,
+   "handler": "CField::OnTransferChannelReqIgnored",
+   "cand": []
+  },
+  {
+   "v95": 149,
+   "handler": "CField::OnFieldSpecificData",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 150,
+   "handler": "CField::OnGroupMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 151,
+   "handler": "CField::OnWhisper",
+   "cand": [
+    {
+     "s9": "WHISPER",
+     "v": 135,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 152,
+   "handler": "CField::OnCoupleMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 153,
+   "handler": "CField::OnSummonItemInavailable",
+   "cand": [
+    {
+     "s9": "SUMMON_ITEM_INAVAILABLE",
+     "v": 137,
+     "score": 1.0
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SUMMON_ATTACK",
+     "v": 178,
+     "score": 0.5
+    },
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 154,
+   "handler": "CField::OnFieldEffect",
+   "cand": [
+    {
+     "s9": "FIELD_EFFECT",
+     "v": 138,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 155,
+   "handler": "CField::OnFieldObstacleOnOff",
+   "cand": [
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF",
+     "v": 139,
+     "score": 0.67
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF_LIST",
+     "v": 140,
+     "score": 0.57
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ALL_RESET",
+     "v": 141,
+     "score": 0.57
+    },
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 156,
+   "handler": "CField::OnFieldObstacleOnOffStatus",
+   "cand": [
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF",
+     "v": 139,
+     "score": 0.57
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF_LIST",
+     "v": 140,
+     "score": 0.5
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ALL_RESET",
+     "v": 141,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 157,
+   "handler": "CField::OnFieldObstacleAllReset",
+   "cand": [
+    {
+     "s9": "FIELD_OBSTACLE_ALL_RESET",
+     "v": 141,
+     "score": 1.0
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF",
+     "v": 139,
+     "score": 0.57
+    },
+    {
+     "s9": "FIELD_OBSTACLE_ONOFF_LIST",
+     "v": 140,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 158,
+   "handler": "CField::OnBlowWeather",
+   "cand": [
+    {
+     "s9": "BLOW_WEATHER",
+     "v": 142,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 159,
+   "handler": "CField::OnPlayJukeBox",
+   "cand": []
+  },
+  {
+   "v95": 160,
+   "handler": "CField::OnAdminResult",
+   "cand": [
+    {
+     "s9": "ADMIN_RESULT",
+     "v": 144,
+     "score": 1.0
+    },
+    {
+     "s9": "ADMIN_SHOP",
+     "v": 308,
+     "score": 0.67
+    },
+    {
+     "s9": "ADMIN_SHOP_MESSAGE",
+     "v": 307,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 161,
+   "handler": "CField::OnQuiz",
+   "cand": [
+    {
+     "s9": "OX_QUIZ",
+     "v": 145,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 162,
+   "handler": "CField::OnDesc",
+   "cand": []
+  },
+  {
+   "v95": 163,
+   "handler": "→ vtable 虚调用（本次确认为 CField::OnClock）",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    },
+    {
+     "s9": "CLOCK",
+     "v": 147,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 166,
+   "handler": "CField::OnSetQuestClear",
+   "cand": [
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 1.0
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 1.0
+    },
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 167,
+   "handler": "CField::OnSetQuestTime",
+   "cand": [
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 1.0
+    },
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 0.5
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 168,
+   "handler": "CField::OnWarnMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 169,
+   "handler": "CField::OnSetObjectState",
+   "cand": [
+    {
+     "s9": "SET_OBJECT_STATE",
+     "v": 153,
+     "score": 1.0
+    },
+    {
+     "s9": "SNOWBALL_STATE",
+     "v": 281,
+     "score": 0.5
+    },
+    {
+     "s9": "CONTI_STATE",
+     "v": 149,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 170,
+   "handler": "CField::OnDestroyClock",
+   "cand": [
+    {
+     "s9": "CLOCK",
+     "v": 147,
+     "score": 0.67
+    },
+    {
+     "s9": "STOP_CLOCK",
+     "v": 154,
+     "score": 0.5
+    },
+    {
+     "s9": "REACTOR_DESTROY",
+     "v": 280,
+     "score": 0.5
+    },
+    {
+     "s9": "DESTROY_SHOP_RESULT",
+     "v": 115,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 172,
+   "handler": "CField::OnStalkResult",
+   "cand": []
+  },
+  {
+   "v95": 175,
+   "handler": "CQuickslotKeyMappedMan::OnInit",
+   "cand": []
+  },
+  {
+   "v95": 176,
+   "handler": "CField::OnFootHoldInfo",
+   "cand": []
+  },
+  {
+   "v95": 177,
+   "handler": "CField::OnRequestFootHoldInfo",
+   "cand": []
+  },
+  {
+   "v95": 179,
+   "handler": "CUserPool::OnUserEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.67
+    },
+    {
+     "s9": "FIELD_SET_VARIABLE",
+     "v": 92,
+     "score": 0.5
+    },
+    {
+     "s9": "FIELD_EFFECT",
+     "v": 138,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 180,
+   "handler": "CUserPool::OnUserLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.67
+    },
+    {
+     "s9": "FIELD_SET_VARIABLE",
+     "v": 92,
+     "score": 0.5
+    },
+    {
+     "s9": "FIELD_EFFECT",
+     "v": 138,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 181,
+   "handler": "CUser::OnChat(bIsFromOutsideOfMap=0)",
+   "cand": []
+  },
+  {
+   "v95": 182,
+   "handler": "CUser::OnChat(bIsFromOutsideOfMap=1)",
+   "cand": []
+  },
+  {
+   "v95": 183,
+   "handler": "CUser::OnADBoard",
+   "cand": []
+  },
+  {
+   "v95": 184,
+   "handler": "CUser::OnMiniRoomBalloon",
+   "cand": []
+  },
+  {
+   "v95": 185,
+   "handler": "CUser::SetConsumeItemEffect",
+   "cand": [
+    {
+     "s9": "SHOW_CONSUME_EFFECT",
+     "v": 166,
+     "score": 1.0
+    },
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 186,
+   "handler": "CUser::ShowItemUpgradeEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 187,
+   "handler": "CUser::ShowItemHyperUpgradeEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 188,
+   "handler": "CUser::ShowItemOptionUpgradeEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 189,
+   "handler": "CUser::ShowItemReleaseEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 190,
+   "handler": "CUser::ShowItemUnreleaseEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 191,
+   "handler": "CUser::OnHitByUser",
+   "cand": [
+    {
+     "s9": "REACTOR_HIT",
+     "v": 277,
+     "score": 0.67
+    },
+    {
+     "s9": "HIT_SNOWBALL",
+     "v": 282,
+     "score": 0.67
+    },
+    {
+     "s9": "COCONUT_HIT",
+     "v": 285,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 192,
+   "handler": "CUser::OnTeslaTriangle",
+   "cand": []
+  },
+  {
+   "v95": 193,
+   "handler": "CUser::OnFollowCharacter",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 194,
+   "handler": "CUser::OnShowPQReward",
+   "cand": []
+  },
+  {
+   "v95": 195,
+   "handler": "CUser::OnSetPhase",
+   "cand": []
+  },
+  {
+   "v95": 196,
+   "handler": "无处理",
+   "cand": []
+  },
+  {
+   "v95": 197,
+   "handler": "CUser::ShowRecoverUpgradeCountEffect",
+   "cand": []
+  },
+  {
+   "v95": 198,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 199,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 200,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 201,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 202,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 203,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 204,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 205,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 206,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 207,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 208,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 209,
+   "handler": "CUserPool::OnUserCommonPacket",
+   "cand": []
+  },
+  {
+   "v95": 210,
+   "handler": "CUserRemote::OnMove",
+   "cand": [
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PLAYER",
+     "v": 185,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PET",
+     "v": 170,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_MONSTER",
+     "v": 239,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 211,
+   "handler": "CUserPool::OnUserRemotePacket",
+   "cand": []
+  },
+  {
+   "v95": 212,
+   "handler": "CUserPool::OnUserRemotePacket",
+   "cand": []
+  },
+  {
+   "v95": 213,
+   "handler": "CUserPool::OnUserRemotePacket",
+   "cand": []
+  },
+  {
+   "v95": 214,
+   "handler": "CUserRemote::OnAttack",
+   "cand": [
+    {
+     "s9": "SUMMON_ATTACK",
+     "v": 178,
+     "score": 0.67
+    },
+    {
+     "s9": "RANGED_ATTACK",
+     "v": 187,
+     "score": 0.67
+    },
+    {
+     "s9": "MAGIC_ATTACK",
+     "v": 188,
+     "score": 0.67
+    },
+    {
+     "s9": "ENERGY_ATTACK",
+     "v": 189,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 215,
+   "handler": "CUserRemote::OnSkillPrepare",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 216,
+   "handler": "CUserRemote::OnMovingShootAttackPrepare",
+   "cand": []
+  },
+  {
+   "v95": 217,
+   "handler": "CUserRemote::OnSkillCancel",
+   "cand": [
+    {
+     "s9": "CANCEL_SKILL_EFFECT",
+     "v": 191,
+     "score": 0.8
+    },
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 218,
+   "handler": "CUserRemote::OnHit",
+   "cand": [
+    {
+     "s9": "REACTOR_HIT",
+     "v": 277,
+     "score": 0.67
+    },
+    {
+     "s9": "HIT_SNOWBALL",
+     "v": 282,
+     "score": 0.67
+    },
+    {
+     "s9": "COCONUT_HIT",
+     "v": 285,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 219,
+   "handler": "CUser::OnEmotion",
+   "cand": []
+  },
+  {
+   "v95": 220,
+   "handler": "CUserRemote::OnSetActiveEffectItem",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 221,
+   "handler": "CUserRemote::OnShowUpgradeTombEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 222,
+   "handler": "CUserRemote::OnSetActivePortableChair",
+   "cand": [
+    {
+     "s9": "SHOW_CHAIR",
+     "v": 196,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 223,
+   "handler": "CUserRemote::OnAvatarModified",
+   "cand": [
+    {
+     "s9": "SET_AVATAR_MEGAPHONE",
+     "v": 111,
+     "score": 0.5
+    },
+    {
+     "s9": "AVATAR_MEGAPHONE_RESULT",
+     "v": 110,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 224,
+   "handler": "CUser::OnEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 1.0
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 225,
+   "handler": "CUserRemote::OnSetTemporaryStat",
+   "cand": [
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.5
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 226,
+   "handler": "CUserRemote::OnResetTemporaryStat",
+   "cand": [
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 227,
+   "handler": "CUserRemote::OnReceiveHP",
+   "cand": [
+    {
+     "s9": "UPDATE_PARTYMEMBER_HP",
+     "v": 201,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_MONSTER_HP",
+     "v": 250,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 228,
+   "handler": "CUserRemote::OnGuildNameChanged",
+   "cand": [
+    {
+     "s9": "GUILD_NAME_CHANGED",
+     "v": 202,
+     "score": 1.0
+    },
+    {
+     "s9": "GUILD_MARK_CHANGED",
+     "v": 203,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 229,
+   "handler": "CUserRemote::OnGuildMarkChanged",
+   "cand": [
+    {
+     "s9": "GUILD_MARK_CHANGED",
+     "v": 203,
+     "score": 1.0
+    },
+    {
+     "s9": "GUILD_NAME_CHANGED",
+     "v": 202,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 230,
+   "handler": "CUserRemote::OnThrowGrenade",
+   "cand": [
+    {
+     "s9": "THROW_GRENADE",
+     "v": 204,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 231,
+   "handler": "CUserLocal::OnSitResult",
+   "cand": []
+  },
+  {
+   "v95": 232,
+   "handler": "CUser::OnEmotion",
+   "cand": []
+  },
+  {
+   "v95": 233,
+   "handler": "CUser::OnEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 1.0
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 234,
+   "handler": "CUserLocal::OnTeleport",
+   "cand": []
+  },
+  {
+   "v95": 236,
+   "handler": "CUserLocal::OnMesoGive_Succeeded",
+   "cand": []
+  },
+  {
+   "v95": 237,
+   "handler": "CUserLocal::OnMesoGive_Failed",
+   "cand": []
+  },
+  {
+   "v95": 238,
+   "handler": "CUserLocal::OnRandomMesobag_Succeeded",
+   "cand": []
+  },
+  {
+   "v95": 239,
+   "handler": "CUserLocal::OnRandomMesobag_Failed",
+   "cand": []
+  },
+  {
+   "v95": 240,
+   "handler": "CUserLocal::OnFieldFadeInOut",
+   "cand": []
+  },
+  {
+   "v95": 241,
+   "handler": "CUserLocal::OnFieldFadeOutForce",
+   "cand": []
+  },
+  {
+   "v95": 242,
+   "handler": "CUserLocal::OnQuestResult",
+   "cand": [
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 0.67
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 243,
+   "handler": "CUserLocal::OnNotifyHPDecByField",
+   "cand": [
+    {
+     "s9": "ON_NOTIFY_HP_DEC_BY_FIELD",
+     "v": 212,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 245,
+   "handler": "CUserLocal::OnBalloonMsg",
+   "cand": []
+  },
+  {
+   "v95": 246,
+   "handler": "CUserLocal::OnPlayEventSound",
+   "cand": []
+  },
+  {
+   "v95": 247,
+   "handler": "CUserLocal::OnPlayMinigameSound",
+   "cand": []
+  },
+  {
+   "v95": 248,
+   "handler": "CUserLocal::OnMakerResult",
+   "cand": [
+    {
+     "s9": "MAKER_RESULT",
+     "v": 217,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 250,
+   "handler": "CUserLocal::OnOpenClassCompetitionPage",
+   "cand": [
+    {
+     "s9": "CLASS_COMPETITION_AUTHKEY_UPDATE",
+     "v": 88,
+     "score": 0.57
+    }
+   ]
+  },
+  {
+   "v95": 251,
+   "handler": "CUserLocal::OnOpenUI",
+   "cand": [
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 1.0
+    },
+    {
+     "s9": "OPEN_NPC_SHOP",
+     "v": 305,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 252,
+   "handler": "CUserLocal::OnOpenUIWithOption",
+   "cand": [
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 253,
+   "handler": "CUserLocal::OnSetDirectionMode",
+   "cand": []
+  },
+  {
+   "v95": 254,
+   "handler": "CUserLocal::OnSetStandAloneMode",
+   "cand": []
+  },
+  {
+   "v95": 255,
+   "handler": "CUserLocal::OnHireTutor",
+   "cand": []
+  },
+  {
+   "v95": 256,
+   "handler": "CUserLocal::OnTutorMsg",
+   "cand": []
+  },
+  {
+   "v95": 257,
+   "handler": "CUserLocal::OnIncComboResponse",
+   "cand": [
+    {
+     "s9": "SHOW_COMBO",
+     "v": 225,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 258,
+   "handler": "CUser::OnRandomEmotion",
+   "cand": [
+    {
+     "s9": "RANDOM_MORPH_RES",
+     "v": 119,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 259,
+   "handler": "CUserLocal::OnResignQuestReturn",
+   "cand": []
+  },
+  {
+   "v95": 260,
+   "handler": "CUserLocal::OnPassMateName",
+   "cand": []
+  },
+  {
+   "v95": 261,
+   "handler": "CUserLocal::OnRadioSchedule",
+   "cand": []
+  },
+  {
+   "v95": 262,
+   "handler": "CUserLocal::OnOpenSkillGuide",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.5
+    },
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 263,
+   "handler": "CUserLocal::OnNoticeMsg",
+   "cand": []
+  },
+  {
+   "v95": 264,
+   "handler": "CUserLocal::OnChatMsg",
+   "cand": [
+    {
+     "s9": "SPOUSE_CHAT",
+     "v": 136,
+     "score": 0.5
+    },
+    {
+     "s9": "PET_CHAT",
+     "v": 171,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 265,
+   "handler": "CUserLocal::OnBuffzoneEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 266,
+   "handler": "CUserLocal::OnGoToCommoditySN",
+   "cand": []
+  },
+  {
+   "v95": 267,
+   "handler": "CUserLocal::OnDamageMeter",
+   "cand": [
+    {
+     "s9": "DAMAGE_SUMMON",
+     "v": 179,
+     "score": 0.5
+    },
+    {
+     "s9": "DAMAGE_PLAYER",
+     "v": 192,
+     "score": 0.5
+    },
+    {
+     "s9": "DAMAGE_MONSTER",
+     "v": 246,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 268,
+   "handler": "CUserLocal::OnTimeBombAttack",
+   "cand": []
+  },
+  {
+   "v95": 269,
+   "handler": "CUser::OnPassiveMove",
+   "cand": [
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.5
+    },
+    {
+     "s9": "MOVE_PLAYER",
+     "v": 185,
+     "score": 0.5
+    },
+    {
+     "s9": "MOVE_PET",
+     "v": 170,
+     "score": 0.5
+    },
+    {
+     "s9": "MOVE_MONSTER",
+     "v": 239,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 270,
+   "handler": "CUserLocal::OnFollowCharacterFailed",
+   "cand": []
+  },
+  {
+   "v95": 271,
+   "handler": "CUserLocal::OnVengeanceSkillApply",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 272,
+   "handler": "CUserLocal::OnExJablinApply",
+   "cand": []
+  },
+  {
+   "v95": 273,
+   "handler": "CUserLocal::OnAskAPSPEvent",
+   "cand": [
+    {
+     "s9": "KOREAN_EVENT",
+     "v": 219,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 274,
+   "handler": "CUserLocal::OnQuestGuideResult",
+   "cand": [
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "TALK_GUIDE",
+     "v": 224,
+     "score": 0.5
+    },
+    {
+     "s9": "SPAWN_GUIDE",
+     "v": 223,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 275,
+   "handler": "CUserLocal::OnDeliveryQuest",
+   "cand": [
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_TIME",
+     "v": 151,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 0.5
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 276,
+   "handler": "CUserLocal::OnSkillCooltimeSet",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.67
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.5
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 278,
+   "handler": "CSummonedPool::OnCreated",
+   "cand": []
+  },
+  {
+   "v95": 279,
+   "handler": "CSummonedPool::OnRemoved",
+   "cand": []
+  },
+  {
+   "v95": 280,
+   "handler": "CSummonedPool::OnMove",
+   "cand": [
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PLAYER",
+     "v": 185,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PET",
+     "v": 170,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_MONSTER",
+     "v": 239,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 281,
+   "handler": "CSummonedPool::OnAttack",
+   "cand": [
+    {
+     "s9": "SUMMON_ATTACK",
+     "v": 178,
+     "score": 0.67
+    },
+    {
+     "s9": "RANGED_ATTACK",
+     "v": 187,
+     "score": 0.67
+    },
+    {
+     "s9": "MAGIC_ATTACK",
+     "v": 188,
+     "score": 0.67
+    },
+    {
+     "s9": "ENERGY_ATTACK",
+     "v": 189,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 282,
+   "handler": "CSummonedPool::OnSkill",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 1.0
+    },
+    {
+     "s9": "SUMMON_SKILL",
+     "v": 180,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_LEARN_ITEM_RESULT",
+     "v": 51,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 283,
+   "handler": "CSummonedPool::OnHit",
+   "cand": [
+    {
+     "s9": "REACTOR_HIT",
+     "v": 277,
+     "score": 0.67
+    },
+    {
+     "s9": "HIT_SNOWBALL",
+     "v": 282,
+     "score": 0.67
+    },
+    {
+     "s9": "COCONUT_HIT",
+     "v": 285,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 284,
+   "handler": "CMobPool::OnMobEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 285,
+   "handler": "CMobPool::OnMobLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 286,
+   "handler": "CMobPool::OnMobChangeController",
+   "cand": []
+  },
+  {
+   "v95": 287,
+   "handler": "CMob::OnMove",
+   "cand": [
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PLAYER",
+     "v": 185,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PET",
+     "v": 170,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_MONSTER",
+     "v": 239,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 288,
+   "handler": "CMob::OnCtrlAck",
+   "cand": []
+  },
+  {
+   "v95": 289,
+   "handler": "CMobPool::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 290,
+   "handler": "CMob::OnStatSet",
+   "cand": [
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.67
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.67
+    },
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 291,
+   "handler": "CMob::OnStatReset",
+   "cand": [
+    {
+     "s9": "FORCED_STAT_RESET",
+     "v": 35,
+     "score": 0.8
+    },
+    {
+     "s9": "STAT_CHANGED",
+     "v": 31,
+     "score": 0.5
+    },
+    {
+     "s9": "FORCED_STAT_SET",
+     "v": 34,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 292,
+   "handler": "CMob::OnSuspendReset",
+   "cand": []
+  },
+  {
+   "v95": 293,
+   "handler": "CMob::OnAffected",
+   "cand": []
+  },
+  {
+   "v95": 294,
+   "handler": "CMob::OnDamaged",
+   "cand": []
+  },
+  {
+   "v95": 295,
+   "handler": "CMob::OnSpecialEffectBySkill",
+   "cand": [
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.8
+    },
+    {
+     "s9": "CANCEL_SKILL_EFFECT",
+     "v": 191,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 296,
+   "handler": "CMobPool::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 297,
+   "handler": "CMobPool::OnMobCrcKeyChanged",
+   "cand": []
+  },
+  {
+   "v95": 298,
+   "handler": "CMob::OnHPIndicator",
+   "cand": [
+    {
+     "s9": "UPDATE_PARTYMEMBER_HP",
+     "v": 201,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_MONSTER_HP",
+     "v": 250,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 299,
+   "handler": "CMob::OnCatchEffect",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 0.67
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 300,
+   "handler": "CMob::OnEffectByItem",
+   "cand": [
+    {
+     "s9": "SHOW_ITEM_EFFECT",
+     "v": 194,
+     "score": 1.0
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 190,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_SCROLL_EFFECT",
+     "v": 167,
+     "score": 0.67
+    },
+    {
+     "s9": "SHOW_FOREIGN_EFFECT",
+     "v": 198,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 301,
+   "handler": "CMob::OnMobSpeaking",
+   "cand": []
+  },
+  {
+   "v95": 302,
+   "handler": "CMob::OnIncMobChargeCount",
+   "cand": []
+  },
+  {
+   "v95": 303,
+   "handler": "CMob::OnMobSkillDelay",
+   "cand": [
+    {
+     "s9": "SKILL_USE_RESULT",
+     "v": 37,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 304,
+   "handler": "CMob::OnEscortFullPath",
+   "cand": []
+  },
+  {
+   "v95": 305,
+   "handler": "CMob::OnEscortStopEndPermmision",
+   "cand": []
+  },
+  {
+   "v95": 306,
+   "handler": "CMob::OnEscortStopSay",
+   "cand": []
+  },
+  {
+   "v95": 307,
+   "handler": "CMob::OnEscortReturnBefore",
+   "cand": []
+  },
+  {
+   "v95": 308,
+   "handler": "CMob::OnNextAttack",
+   "cand": [
+    {
+     "s9": "SUMMON_ATTACK",
+     "v": 178,
+     "score": 0.5
+    },
+    {
+     "s9": "RANGED_ATTACK",
+     "v": 187,
+     "score": 0.5
+    },
+    {
+     "s9": "MAGIC_ATTACK",
+     "v": 188,
+     "score": 0.5
+    },
+    {
+     "s9": "ENERGY_ATTACK",
+     "v": 189,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 309,
+   "handler": "CMob::OnMobAttackedByMob",
+   "cand": []
+  },
+  {
+   "v95": 310,
+   "handler": "CMobPool::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 311,
+   "handler": "CNpcPool::OnNpcEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 312,
+   "handler": "CNpcPool::OnNpcLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 313,
+   "handler": "CNpcPool::OnNpcChangeController",
+   "cand": [
+    {
+     "s9": "SPAWN_NPC_REQUEST_CONTROLLER",
+     "v": 259,
+     "score": 0.8
+    },
+    {
+     "s9": "SPAWN_NPC",
+     "v": 257,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_NPC_SCRIPTABLE",
+     "v": 263,
+     "score": 0.5
+    },
+    {
+     "s9": "REMOVE_NPC",
+     "v": 258,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 314,
+   "handler": "CNpc::OnMove",
+   "cand": [
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PLAYER",
+     "v": 185,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_PET",
+     "v": 170,
+     "score": 0.67
+    },
+    {
+     "s9": "MOVE_MONSTER",
+     "v": 239,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 315,
+   "handler": "CNpc::OnUpdateLimitedInfo",
+   "cand": [
+    {
+     "s9": "LIMITED_NPC_DISABLE_INFO",
+     "v": 82,
+     "score": 0.67
+    },
+    {
+     "s9": "UPDATE_QUEST_INFO",
+     "v": 211,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_STATUS_INFO",
+     "v": 39,
+     "score": 0.5
+    },
+    {
+     "s9": "FAMILY_INFO_RESULT",
+     "v": 95,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 316,
+   "handler": "CNpc::OnSetSpecialAction",
+   "cand": [
+    {
+     "s9": "NPC_ACTION",
+     "v": 260,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 317,
+   "handler": "CNpcTemplate::OnSetNpcScript",
+   "cand": [
+    {
+     "s9": "SPAWN_NPC",
+     "v": 257,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_NPC_SCRIPTABLE",
+     "v": 263,
+     "score": 0.5
+    },
+    {
+     "s9": "REMOVE_NPC",
+     "v": 258,
+     "score": 0.5
+    },
+    {
+     "s9": "NPC_TALK",
+     "v": 304,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 318,
+   "handler": "CNpcPool::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 319,
+   "handler": "CEmployeePool::OnEmployeeEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 320,
+   "handler": "CEmployeePool::OnEmployeeLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 321,
+   "handler": "CEmployeePool::OnEmployeeMiniRoomBalloon",
+   "cand": []
+  },
+  {
+   "v95": 322,
+   "handler": "CDropPool::OnDropEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 323,
+   "handler": "CDropPool::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 324,
+   "handler": "CDropPool::OnDropLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 325,
+   "handler": "CMessageBoxPool::OnCreateFailed",
+   "cand": []
+  },
+  {
+   "v95": 326,
+   "handler": "CMessageBoxPool::OnMessageBoxEnterField",
+   "cand": []
+  },
+  {
+   "v95": 327,
+   "handler": "CMessageBoxPool::OnMessageBoxLeaveField",
+   "cand": []
+  },
+  {
+   "v95": 328,
+   "handler": "CAffectedAreaPool::OnAffectedAreaCreated",
+   "cand": []
+  },
+  {
+   "v95": 329,
+   "handler": "CAffectedAreaPool::OnAffectedAreaRemoved",
+   "cand": []
+  },
+  {
+   "v95": 330,
+   "handler": "CTownPortalPool::OnTownPortalCreated",
+   "cand": []
+  },
+  {
+   "v95": 331,
+   "handler": "CTownPortalPool::OnTownPortalRemoved",
+   "cand": []
+  },
+  {
+   "v95": 332,
+   "handler": "COpenGatePool::OnOpenGateCreated",
+   "cand": [
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 333,
+   "handler": "COpenGatePool::OnOpenGateRemoved",
+   "cand": [
+    {
+     "s9": "OPEN_UI",
+     "v": 220,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 334,
+   "handler": "CReactorPool::OnReactorChangeState",
+   "cand": [
+    {
+     "s9": "SNOWBALL_STATE",
+     "v": 281,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_OBJECT_STATE",
+     "v": 153,
+     "score": 0.5
+    },
+    {
+     "s9": "REACTOR_SPAWN",
+     "v": 279,
+     "score": 0.5
+    },
+    {
+     "s9": "REACTOR_HIT",
+     "v": 277,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 335,
+   "handler": "CReactorPool::OnReactorMove",
+   "cand": [
+    {
+     "s9": "REACTOR_SPAWN",
+     "v": 279,
+     "score": 0.5
+    },
+    {
+     "s9": "REACTOR_HIT",
+     "v": 277,
+     "score": 0.5
+    },
+    {
+     "s9": "REACTOR_DESTROY",
+     "v": 280,
+     "score": 0.5
+    },
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 177,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 336,
+   "handler": "CReactorPool::OnReactorEnterField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 337,
+   "handler": "CReactorPool::OnReactorLeaveField",
+   "cand": [
+    {
+     "s9": "SET_FIELD",
+     "v": 125,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 359,
+   "handler": "CField::OnHontaleTimer",
+   "cand": []
+  },
+  {
+   "v95": 360,
+   "handler": "CField::OnChaosZakumTimer",
+   "cand": []
+  },
+  {
+   "v95": 361,
+   "handler": "CField::OnHontailTimer",
+   "cand": []
+  },
+  {
+   "v95": 362,
+   "handler": "CField::OnZakumTimer",
+   "cand": [
+    {
+     "s9": "ZAKUM_SHRINE",
+     "v": 303,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 363,
+   "handler": "CScriptMan::OnScriptMessage",
+   "cand": [
+    {
+     "s9": "SCRIPT_PROGRESS_MESSAGE",
+     "v": 122,
+     "score": 0.8
+    },
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 364,
+   "handler": "CShopDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 365,
+   "handler": "CShopDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 366,
+   "handler": "CAdminShopDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 367,
+   "handler": "CAdminShopDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 368,
+   "handler": "CTrunkDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 369,
+   "handler": "CStoreBankDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 370,
+   "handler": "CStoreBankDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 371,
+   "handler": "CRPSGameDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 372,
+   "handler": "CUIMessenger::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 373,
+   "handler": "CMiniRoomBaseDlg::OnPacketBase",
+   "cand": []
+  },
+  {
+   "v95": 381,
+   "handler": "CParcelDlg::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 382,
+   "handler": "CCashShop::OnChargeParamResult",
+   "cand": [
+    {
+     "s9": "CHARGE_PARAM_RESULT",
+     "v": 323,
+     "score": 1.0
+    }
+   ]
+  },
+  {
+   "v95": 383,
+   "handler": "CCashShop::OnQueryCashResult",
+   "cand": [
+    {
+     "s9": "QUERY_CASH_RESULT",
+     "v": 324,
+     "score": 1.0
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 384,
+   "handler": "CCashShop::OnCashItemResult",
+   "cand": [
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.67
+    },
+    {
+     "s9": "QUERY_CASH_RESULT",
+     "v": 324,
+     "score": 0.67
+    },
+    {
+     "s9": "CASH_PET_FOOD_RESULT",
+     "v": 76,
+     "score": 0.5
+    },
+    {
+     "s9": "CASHSHOP_CASH_ITEM_GACHAPON_RESULT",
+     "v": 333,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 385,
+   "handler": "CCashShop::OnPurchaseExpChanged",
+   "cand": [
+    {
+     "s9": "CASHSHOP_PURCHASE_EXP_CHANGED",
+     "v": 326,
+     "score": 0.86
+    },
+    {
+     "s9": "BONUS_EXP_CHANGED",
+     "v": 93,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 386,
+   "handler": "CCashShop::OnGiftMateInfoResult",
+   "cand": [
+    {
+     "s9": "CASHSHOP_GIFT_INFO_RESULT",
+     "v": 327,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 387,
+   "handler": "CCashShop::OnCheckDuplicatedIDResult",
+   "cand": []
+  },
+  {
+   "v95": 388,
+   "handler": "CCashShop::OnCheckNameChangePossibleResult",
+   "cand": [
+    {
+     "s9": "CASHSHOP_CHECK_NAME_CHANGE_POSSIBLE_RESULT",
+     "v": 329,
+     "score": 0.8
+    },
+    {
+     "s9": "CASHSHOP_CHECK_NAME_CHANGE",
+     "v": 328,
+     "score": 0.5
+    },
+    {
+     "s9": "CANCEL_NAME_CHANGE_RESULT",
+     "v": 113,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 390,
+   "handler": "CCashShop::OnCheckTransferWorldPossibleResult",
+   "cand": [
+    {
+     "s9": "CASHSHOP_CHECK_TRANSFER_WORLD_POSSIBLE_RESULT",
+     "v": 331,
+     "score": 0.86
+    },
+    {
+     "s9": "CANCEL_TRANSFER_WORLD_RESULT",
+     "v": 114,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 391,
+   "handler": "CCashShop::OnCashShopGachaponStampResult",
+   "cand": [
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.67
+    },
+    {
+     "s9": "CASHSHOP_GACHAPON_STAMP_RESULT",
+     "v": 332,
+     "score": 0.57
+    },
+    {
+     "s9": "CASHSHOP_CASH_ITEM_GACHAPON_RESULT",
+     "v": 333,
+     "score": 0.57
+    },
+    {
+     "s9": "CASHSHOP_CASH_GACHAPON_OPEN_RESULT",
+     "v": 334,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 393,
+   "handler": "CCashShop::OnCashItemGachaponResult",
+   "cand": [
+    {
+     "s9": "CASHSHOP_CASH_ITEM_GACHAPON_RESULT",
+     "v": 333,
+     "score": 0.8
+    },
+    {
+     "s9": "CASHSHOP_CASH_GACHAPON_OPEN_RESULT",
+     "v": 334,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_CASH_SHOP",
+     "v": 127,
+     "score": 0.5
+    },
+    {
+     "s9": "QUERY_CASH_RESULT",
+     "v": 324,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 395,
+   "handler": "CCashShop::OnOneADay",
+   "cand": []
+  },
+  {
+   "v95": 396,
+   "handler": "CCashShop::OnNoticeFreeCashItem",
+   "cand": []
+  },
+  {
+   "v95": 398,
+   "handler": "CFuncKeyMappedMan::OnInit",
+   "cand": []
+  },
+  {
+   "v95": 399,
+   "handler": "CFuncKeyMappedMan::OnPetConsumeItemInit",
+   "cand": [
+    {
+     "s9": "SPAWN_PET",
+     "v": 168,
+     "score": 0.5
+    },
+    {
+     "s9": "SHOW_CONSUME_EFFECT",
+     "v": 166,
+     "score": 0.5
+    },
+    {
+     "s9": "PET_NAMECHANGE",
+     "v": 172,
+     "score": 0.5
+    },
+    {
+     "s9": "PET_COMMAND",
+     "v": 174,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 400,
+   "handler": "CFuncKeyMappedMan::OnPetConsumeMPItemInit",
+   "cand": []
+  },
+  {
+   "v95": 404,
+   "handler": "CMapleTVMan::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 405,
+   "handler": "CMapleTVMan::OnSetMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.67
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_WEEK_EVENT_MESSAGE",
+     "v": 77,
+     "score": 0.5
+    },
+    {
+     "s9": "SCRIPT_PROGRESS_MESSAGE",
+     "v": 122,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 406,
+   "handler": "CMapleTVMan::OnClearMessage",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.5
+    },
+    {
+     "s9": "SET_QUEST_CLEAR",
+     "v": 150,
+     "score": 0.5
+    },
+    {
+     "s9": "QUEST_CLEAR",
+     "v": 49,
+     "score": 0.5
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 407,
+   "handler": "CMapleTVMan::OnSendMessageResult",
+   "cand": [
+    {
+     "s9": "SNOWBALL_MESSAGE",
+     "v": 283,
+     "score": 0.67
+    },
+    {
+     "s9": "FREDRICK_MESSAGE",
+     "v": 310,
+     "score": 0.67
+    },
+    {
+     "s9": "SET_WEEK_EVENT_MESSAGE",
+     "v": 77,
+     "score": 0.5
+    },
+    {
+     "s9": "SCRIPT_PROGRESS_MESSAGE",
+     "v": 122,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 408,
+   "handler": "CMapleTVMan::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 409,
+   "handler": "CMapleTVMan::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 413,
+   "handler": "CField::OnCharacterSale",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 414,
+   "handler": "CField::OnCharacterSale",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 415,
+   "handler": "CField::OnCharacterSale",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 416,
+   "handler": "CField::OnCharacterSale",
+   "cand": [
+    {
+     "s9": "SUE_CHARACTER_RESULT",
+     "v": 55,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 420,
+   "handler": "CBattleRecordMan::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 421,
+   "handler": "CBattleRecordMan::OnDotDamageInfo",
+   "cand": []
+  },
+  {
+   "v95": 422,
+   "handler": "CBattleRecordMan::OnServerOnCalcRequestResult",
+   "cand": [
+    {
+     "s9": "SERVER_IP",
+     "v": 12,
+     "score": 0.5
+    },
+    {
+     "s9": "BLOCKED_SERVER",
+     "v": 132,
+     "score": 0.5
+    }
+   ]
+  },
+  {
+   "v95": 423,
+   "handler": "CBattleRecordMan::OnPacket",
+   "cand": []
+  },
+  {
+   "v95": 424,
+   "handler": "CField::OnItemUpgrade",
+   "cand": []
+  },
+  {
+   "v95": 425,
+   "handler": "CField::OnItemUpgrade",
+   "cand": []
+  },
+  {
+   "v95": 426,
+   "handler": "CField::OnItemUpgrade",
+   "cand": []
+  },
+  {
+   "v95": 427,
+   "handler": "CField::OnItemUpgrade",
+   "cand": []
+  },
+  {
+   "v95": 428,
+   "handler": "CField::OnVega",
+   "cand": [
+    {
+     "s9": "VEGA_SCROLL",
+     "v": 358,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 429,
+   "handler": "CField::OnVega",
+   "cand": [
+    {
+     "s9": "VEGA_SCROLL",
+     "v": 358,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 430,
+   "handler": "CField::OnVega",
+   "cand": [
+    {
+     "s9": "VEGA_SCROLL",
+     "v": 358,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 431,
+   "handler": "CField::OnVega",
+   "cand": [
+    {
+     "s9": "VEGA_SCROLL",
+     "v": 358,
+     "score": 0.67
+    }
+   ]
+  },
+  {
+   "v95": 432,
+   "handler": "CWvsContext::OnLogoutGift",
+   "cand": [
+    {
+     "s9": "WEDDING_GIFT_RESULT",
+     "v": 74,
+     "score": 0.5
+    }
+   ]
+  }
+ ],
+ "send": [
+  {
+   "v95": 1,
+   "fns": [
+    "CLogin::SendCheckPasswordPacket"
+   ],
+   "cand": [
+    {
+     "s9": "LOGIN_PASSWORD",
+     "v": 1,
+     "score": 0.67,
+     "handler": "LoginPasswordHandler"
+    }
+   ]
+  },
+  {
+   "v95": 4,
+   "fns": [
+    "CLogin::ChangeStepImmediate",
+    "CLogin::Init"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 6,
+   "fns": [
+    "CLogin::SendCheckUserLimitPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 7,
+   "fns": [
+    "CLogin::OnAcceptLicense",
+    "CLogin::OnDenyLicense"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 8,
+   "fns": [
+    "CLogin::SendCancelGenderPacket",
+    "CLogin::SendSetGenderPacket"
+   ],
+   "cand": [
+    {
+     "s9": "SET_GENDER",
+     "v": 8,
+     "score": 0.67,
+     "handler": "SetGenderHandler"
+    },
+    {
+     "s9": "CANCEL_ITEM_EFFECT",
+     "v": 73,
+     "score": 0.5,
+     "handler": "CancelItemEffectHandler"
+    },
+    {
+     "s9": "CANCEL_DEBUFF",
+     "v": 99,
+     "score": 0.5,
+     "handler": "CancelDebuffHandler"
+    },
+    {
+     "s9": "CANCEL_CHAIR",
+     "v": 42,
+     "score": 0.5,
+     "handler": "CancelChairHandler"
+    }
+   ]
+  },
+  {
+   "v95": 9,
+   "fns": [
+    "CLogin::OnCheckPasswordResult",
+    "CLogin::OnCheckPinCodeResult",
+    "CLogin::OnSelectWorldResult",
+    "CLogin::OnSetAccountResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 10,
+   "fns": [
+    "CLogin::OnCheckPinCodeResult"
+   ],
+   "cand": [
+    {
+     "s9": "REGISTER_PIN",
+     "v": 10,
+     "score": 0.5,
+     "handler": "RegisterPinHandler"
+    },
+    {
+     "s9": "COUPON_CODE",
+     "v": 230,
+     "score": 0.5,
+     "handler": "CouponCodeHandler"
+    }
+   ]
+  },
+  {
+   "v95": 11,
+   "fns": [
+    "CLicenseDlg::OnButtonClicked",
+    "CLogin::OnCheckPasswordResult",
+    "CLogin::OnCheckPinCodeResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 12,
+   "fns": [
+    "CLogin::GotoWorldSelect",
+    "CLogin::SendViewAllCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "VIEW_ALL_CHAR",
+     "v": 13,
+     "score": 0.67,
+     "handler": "ViewAllCharHandler"
+    },
+    {
+     "s9": "VIEW_ALL_PIC_REGISTER",
+     "v": 31,
+     "score": 0.55,
+     "handler": "ViewAllCharRegisterPicHandler"
+    },
+    {
+     "s9": "PICK_ALL_CHAR",
+     "v": 14,
+     "score": 0.55,
+     "handler": "ViewAllCharSelectedHandler"
+    },
+    {
+     "s9": "VIEW_ALL_WITH_PIC",
+     "v": 32,
+     "score": 0.5,
+     "handler": "ViewAllCharSelectedWithPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 13,
+   "fns": [
+    "CLogin::SendViewAllCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "VIEW_ALL_CHAR",
+     "v": 13,
+     "score": 1.0,
+     "handler": "ViewAllCharHandler"
+    },
+    {
+     "s9": "VIEW_ALL_PIC_REGISTER",
+     "v": 31,
+     "score": 0.75,
+     "handler": "ViewAllCharRegisterPicHandler"
+    },
+    {
+     "s9": "PICK_ALL_CHAR",
+     "v": 14,
+     "score": 0.75,
+     "handler": "ViewAllCharSelectedHandler"
+    },
+    {
+     "s9": "VIEW_ALL_WITH_PIC",
+     "v": 32,
+     "score": 0.67,
+     "handler": "ViewAllCharSelectedWithPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 14,
+   "fns": [
+    "CLogin::SendSelectCharPacketByVAC"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.67,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.5,
+     "handler": "CharSelectedWithPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 15,
+   "fns": [
+    "CLogin::MakeVACDlg",
+    "CLogin::ResetVAC"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 16,
+   "fns": [
+    "CCashShop::SendCheckNameChangePossiblePacket"
+   ],
+   "cand": [
+    {
+     "s9": "NAME_TRANSFER",
+     "v": 16,
+     "score": 0.5,
+     "handler": "TransferNameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 18,
+   "fns": [
+    "CCashShop::SendCheckTransferWorldPossiblePacket"
+   ],
+   "cand": [
+    {
+     "s9": "WORLD_TRANSFER",
+     "v": 18,
+     "score": 0.8,
+     "handler": "TransferWorldHandler"
+    }
+   ]
+  },
+  {
+   "v95": 19,
+   "fns": [
+    "CLogin::SendSelectCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.8,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.57,
+     "handler": "CharSelectedWithPicHandler"
+    },
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 0.5,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.5,
+     "handler": "CreateCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 20,
+   "fns": [
+    "CClientSocket::OnConnect"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 21,
+   "fns": [
+    "CCashShop::SendCheckDuplicateIDPacket",
+    "CLogin::SendCheckDuplicateIDPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 22,
+   "fns": [
+    "CLogin::SendNewCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 0.67,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.67,
+     "handler": "CreateCharHandler"
+    },
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.67,
+     "handler": "CharInfoRequestHandler"
+    },
+    {
+     "s9": "VIEW_ALL_CHAR",
+     "v": 13,
+     "score": 0.5,
+     "handler": "ViewAllCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 23,
+   "fns": [
+    "CLogin::SendNewCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 0.67,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.67,
+     "handler": "CreateCharHandler"
+    },
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.67,
+     "handler": "CharInfoRequestHandler"
+    },
+    {
+     "s9": "VIEW_ALL_CHAR",
+     "v": 13,
+     "score": 0.5,
+     "handler": "ViewAllCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 24,
+   "fns": [
+    "CLogin::SendDeleteCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 1.0,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.5,
+     "handler": "CreateCharHandler"
+    },
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.5,
+     "handler": "CharInfoRequestHandler"
+    }
+   ]
+  },
+  {
+   "v95": 25,
+   "fns": [
+    "CClientSocket::OnAliveReq"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 27,
+   "fns": [
+    "CSecurityClient::OnCheckClientIntegrityRequest"
+   ],
+   "cand": [
+    {
+     "s9": "CLIENT_ERROR",
+     "v": 26,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 28,
+   "fns": [
+    "CLogin::SendSelectCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.8,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.57,
+     "handler": "CharSelectedWithPicHandler"
+    },
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 0.5,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.5,
+     "handler": "CreateCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 29,
+   "fns": [
+    "CLogin::SendSelectCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.8,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.57,
+     "handler": "CharSelectedWithPicHandler"
+    },
+    {
+     "s9": "DELETE_CHAR",
+     "v": 23,
+     "score": 0.5,
+     "handler": "DeleteCharHandler"
+    },
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.5,
+     "handler": "CreateCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 30,
+   "fns": [
+    "CLogin::SendSelectCharPacketByVAC"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.67,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.5,
+     "handler": "CharSelectedWithPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 31,
+   "fns": [
+    "CLogin::SendSelectCharPacketByVAC"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_SELECT",
+     "v": 19,
+     "score": 0.67,
+     "handler": "CharSelectedHandler"
+    },
+    {
+     "s9": "CHAR_SELECT_WITH_PIC",
+     "v": 30,
+     "score": 0.5,
+     "handler": "CharSelectedWithPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 32,
+   "fns": [
+    "CClientSocket::OnConnect"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 34,
+   "fns": [
+    "CLogin::Init"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 35,
+   "fns": [
+    "CLogin::SendCheckPasswordPacket",
+    "CLogin::SendLoginPacket",
+    "CLogin::SendViewAllCharPacket"
+   ],
+   "cand": [
+    {
+     "s9": "VIEW_ALL_CHAR",
+     "v": 13,
+     "score": 0.75,
+     "handler": "ViewAllCharHandler"
+    },
+    {
+     "s9": "VIEW_ALL_PIC_REGISTER",
+     "v": 31,
+     "score": 0.6,
+     "handler": "ViewAllCharRegisterPicHandler"
+    },
+    {
+     "s9": "PICK_ALL_CHAR",
+     "v": 14,
+     "score": 0.6,
+     "handler": "ViewAllCharSelectedHandler"
+    },
+    {
+     "s9": "LOGIN_PASSWORD",
+     "v": 1,
+     "score": 0.57,
+     "handler": "LoginPasswordHandler"
+    }
+   ]
+  },
+  {
+   "v95": 36,
+   "fns": [
+    "CWvsApp::SendBackupPacket",
+    "CWvsApp::SendClearStackLog"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 41,
+   "fns": [
+    "CCashShop::SendTransferFieldPacket",
+    "CField::SendTransferFieldRequest",
+    "CITC::SendTransferFieldPacket"
+   ],
+   "cand": [
+    {
+     "s9": "WORLD_TRANSFER",
+     "v": 18,
+     "score": 0.5,
+     "handler": "TransferWorldHandler"
+    },
+    {
+     "s9": "NAME_TRANSFER",
+     "v": 16,
+     "score": 0.5,
+     "handler": "TransferNameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 42,
+   "fns": [
+    "CField::SendTransferChannelRequest"
+   ],
+   "cand": [
+    {
+     "s9": "CHANGE_CHANNEL",
+     "v": 39,
+     "score": 0.67,
+     "handler": "ChangeChannelHandler"
+    },
+    {
+     "s9": "WORLD_TRANSFER",
+     "v": 18,
+     "score": 0.5,
+     "handler": "TransferWorldHandler"
+    },
+    {
+     "s9": "NAME_TRANSFER",
+     "v": 16,
+     "score": 0.5,
+     "handler": "TransferNameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 43,
+   "fns": [
+    "CWvsContext::SendMigrateToShopRequest"
+   ],
+   "cand": [
+    {
+     "s9": "NPC_SHOP",
+     "v": 61,
+     "score": 0.5,
+     "handler": "NPCShopHandler"
+    },
+    {
+     "s9": "ADMIN_SHOP",
+     "v": 68,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 44,
+   "fns": [
+    "CUserLocal::OnKey"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 45,
+   "fns": [
+    "CUserLocal::HandleXKeyDown",
+    "CWvsContext::SendGetUpFromChairRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 46,
+   "fns": [
+    "CWvsContext::SendSitOnPortableChairRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_CHAIR",
+     "v": 43,
+     "score": 0.5,
+     "handler": "UseChairHandler"
+    }
+   ]
+  },
+  {
+   "v95": 51,
+   "fns": [
+    "CUserLocal::TryDoingSmoothingMovingShootAttackPrepare"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 52,
+   "fns": [
+    "CUserLocal::SetDamaged",
+    "CUserLocal::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 54,
+   "fns": [
+    "CField::SendChatMsg",
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 55,
+   "fns": [
+    "CUserLocal::HandleLButtonClk"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 56,
+   "fns": [
+    "CUserLocal::Update",
+    "CWvsContext::SendEmotionChange"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 57,
+   "fns": [
+    "CWvsContext::SendActiveEffectItemChange"
+   ],
+   "cand": [
+    {
+     "s9": "USE_ITEMEFFECT",
+     "v": 52,
+     "score": 0.5,
+     "handler": "UseItemEffectHandler"
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 0.5,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "GRENADE_EFFECT",
+     "v": 109,
+     "score": 0.5,
+     "handler": "GrenadeEffectHandler"
+    },
+    {
+     "s9": "CANCEL_ITEM_EFFECT",
+     "v": 73,
+     "score": 0.5,
+     "handler": "CancelItemEffectHandler"
+    }
+   ]
+  },
+  {
+   "v95": 58,
+   "fns": [
+    "CUserLocal::RequestUpgradeTombEffect"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 61,
+   "fns": [
+    "CUserLocal::SendBanMapByMobRequest"
+   ],
+   "cand": [
+    {
+     "s9": "CHANGE_MAP",
+     "v": 38,
+     "score": 0.5,
+     "handler": "ChangeMapHandler"
+    }
+   ]
+  },
+  {
+   "v95": 63,
+   "fns": [
+    "CNpc::ShowQuestList",
+    "CUserLocal::TalkToNpc"
+   ],
+   "cand": [
+    {
+     "s9": "NPC_TALK",
+     "v": 58,
+     "score": 0.67,
+     "handler": "NPCTalkHandler"
+    },
+    {
+     "s9": "NPC_TALK_MORE",
+     "v": 60,
+     "score": 0.57,
+     "handler": "NPCMoreTalkHandler"
+    }
+   ]
+  },
+  {
+   "v95": 64,
+   "fns": [
+    "CWvsContext::SendRemoteShopOpenRequest"
+   ],
+   "cand": [
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "NPC_SHOP",
+     "v": 61,
+     "score": 0.5,
+     "handler": "NPCShopHandler"
+    },
+    {
+     "s9": "ADMIN_SHOP",
+     "v": 68,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 65,
+   "fns": [
+    "CScriptMan::OnAskAvatar",
+    "CScriptMan::OnAskBoxText",
+    "CScriptMan::OnAskMembershopAvatar",
+    "CScriptMan::OnAskMenu",
+    "CScriptMan::OnAskNumber",
+    "CScriptMan::OnAskPet",
+    "CScriptMan::OnAskPetAll",
+    "CScriptMan::OnAskSlideMenu",
+    "CScriptMan::OnAskText",
+    "CScriptMan::OnAskYesNo",
+    "CScriptMan::OnSay",
+    "CScriptMan::OnSayImage",
+    "CUIInitialQuiz::SendResult",
+    "CUISpeedQuiz::SendResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 66,
+   "fns": [
+    "CShopDlg::SendBuyRequest",
+    "CShopDlg::SendRechargeRequest",
+    "CShopDlg::SendSellRequest",
+    "CShopDlg::SetRet"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 67,
+   "fns": [
+    "CTrunkDlg::SendGetItemRequest",
+    "CTrunkDlg::SendGetMoneyRequest",
+    "CTrunkDlg::SendPutItemRequest",
+    "CTrunkDlg::SendPutMoneyRequest",
+    "CTrunkDlg::SendSortItemRequest",
+    "CTrunkDlg::SetRet"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 68,
+   "fns": [
+    "CWvsContext::SendEntrustedShopCheckRequest"
+   ],
+   "cand": [
+    {
+     "s9": "NPC_SHOP",
+     "v": 61,
+     "score": 0.5,
+     "handler": "NPCShopHandler"
+    },
+    {
+     "s9": "ADMIN_SHOP",
+     "v": 68,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 69,
+   "fns": [
+    "CStoreBankDlg::SendCalculateFeeRequest",
+    "CStoreBankDlg::SendGetAllRequest",
+    "CStoreBankDlg::SetRet"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 70,
+   "fns": [
+    "CParcelDlg::CloseParcelDlg",
+    "CTabQuickSend::SendQuickDelivery",
+    "CTabReceive::DiscardParcel",
+    "CTabReceive::ReceiveParcel",
+    "CTabSend::SendParcel",
+    "CUIFadeYesNo::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 71,
+   "fns": [
+    "CUserLocal::SendSkillEffectRequest"
+   ],
+   "cand": [
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 1.0,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "USE_SKILL_BOOK",
+     "v": 82,
+     "score": 0.5,
+     "handler": "SkillBookHandler"
+    },
+    {
+     "s9": "USE_ITEMEFFECT",
+     "v": 52,
+     "score": 0.5,
+     "handler": "UseItemEffectHandler"
+    },
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    }
+   ]
+  },
+  {
+   "v95": 72,
+   "fns": [
+    "CUIShopScanner::OnCreate"
+   ],
+   "cand": [
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.67,
+     "handler": "CreateCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 73,
+   "fns": [
+    "CUIShopScanResult::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 74,
+   "fns": [
+    "CAdminShopDlg::OnPacket",
+    "CAdminShopDlg::SendTradeRequest",
+    "CAdminShopDlg::SetRet",
+    "CUIAdminShopWishList::SendRegisterPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 75,
+   "fns": [
+    "CWvsContext::SendGatherItemRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 76,
+   "fns": [
+    "CWvsContext::SendSortItemRequest"
+   ],
+   "cand": [
+    {
+     "s9": "ITEM_SORT2",
+     "v": 70,
+     "score": 0.5,
+     "handler": "InventorySortHandler"
+    },
+    {
+     "s9": "ITEM_SORT",
+     "v": 69,
+     "score": 0.5,
+     "handler": "InventoryMergeHandler"
+    }
+   ]
+  },
+  {
+   "v95": 77,
+   "fns": [
+    "CWvsContext::SendChangeSlotPositionRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 78,
+   "fns": [
+    "CWvsContext::SendStatChangeItemUseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 79,
+   "fns": [
+    "CWvsContext::SendStatChangeItemCancelRequest"
+   ],
+   "cand": [
+    {
+     "s9": "CANCEL_ITEM_EFFECT",
+     "v": 73,
+     "score": 0.5,
+     "handler": "CancelItemEffectHandler"
+    },
+    {
+     "s9": "CANCEL_DEBUFF",
+     "v": 99,
+     "score": 0.5,
+     "handler": "CancelDebuffHandler"
+    },
+    {
+     "s9": "CANCEL_CHAIR",
+     "v": 42,
+     "score": 0.5,
+     "handler": "CancelChairHandler"
+    },
+    {
+     "s9": "CANCEL_BUFF",
+     "v": 92,
+     "score": 0.5,
+     "handler": "CancelBuffHandler"
+    }
+   ]
+  },
+  {
+   "v95": 80,
+   "fns": [
+    "CWvsContext::TryRecovery"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 81,
+   "fns": [
+    "CWvsContext::SendMobSummonItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_SUMMON_BAG",
+     "v": 75,
+     "score": 0.5,
+     "handler": "UseSummonBagHandler"
+    },
+    {
+     "s9": "MOVE_SUMMON",
+     "v": 175,
+     "score": 0.5,
+     "handler": "MoveSummonHandler"
+    },
+    {
+     "s9": "MOB_DAMAGE_MOB",
+     "v": 194,
+     "score": 0.5,
+     "handler": "MobDamageMobHandler"
+    },
+    {
+     "s9": "DAMAGE_SUMMON",
+     "v": 177,
+     "score": 0.5,
+     "handler": "DamageSummonHandler"
+    }
+   ]
+  },
+  {
+   "v95": 82,
+   "fns": [
+    "CWvsContext::SendPetFoodItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "PET_FOOD",
+     "v": 76,
+     "score": 1.0,
+     "handler": "PetFoodHandler"
+    },
+    {
+     "s9": "USE_MOUNT_FOOD",
+     "v": 77,
+     "score": 0.5,
+     "handler": "UseMountFoodHandler"
+    },
+    {
+     "s9": "SPAWN_PET",
+     "v": 98,
+     "score": 0.5,
+     "handler": "SpawnPetHandler"
+    },
+    {
+     "s9": "PET_LOOT",
+     "v": 170,
+     "score": 0.5,
+     "handler": "PetLootHandler"
+    }
+   ]
+  },
+  {
+   "v95": 83,
+   "fns": [
+    "CWvsContext::SendTamingMobFoodItemUseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 84,
+   "fns": [
+    "CWvsContext::SendScriptRunItemRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 85,
+   "fns": [
+    "CItemSpeakerDlg::_SendConsumeCashItemUseRequest",
+    "CUICharacterSaleDlg::SendCreateNewCharacter",
+    "CUIIncubator::OnButtonClicked",
+    "CUIKarmaDlg::_SendConsumeCashItemUseRequest",
+    "CUIUnreleaseDlg::UnreleaseEquipItem",
+    "CWvsContext::SendConsumeCashItemUseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 86,
+   "fns": [
+    "CWvsContext::SendActivatePetRequest"
+   ],
+   "cand": [
+    {
+     "s9": "SPAWN_PET",
+     "v": 98,
+     "score": 0.5,
+     "handler": "SpawnPetHandler"
+    },
+    {
+     "s9": "PET_LOOT",
+     "v": 170,
+     "score": 0.5,
+     "handler": "PetLootHandler"
+    },
+    {
+     "s9": "PET_FOOD",
+     "v": 76,
+     "score": 0.5,
+     "handler": "PetFoodHandler"
+    },
+    {
+     "s9": "PET_EXCLUDE_ITEMS",
+     "v": 172,
+     "score": 0.5,
+     "handler": "PetExcludeItemsHandler"
+    }
+   ]
+  },
+  {
+   "v95": 87,
+   "fns": [
+    "CWvsContext::SendBridleItemUseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 88,
+   "fns": [
+    "CWvsContext::SendSkillLearnItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_SKILL_BOOK",
+     "v": 82,
+     "score": 0.5,
+     "handler": "SkillBookHandler"
+    },
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 0.5,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "MAKER_SKILL",
+     "v": 113,
+     "score": 0.5,
+     "handler": "MakerSkillHandler"
+    }
+   ]
+  },
+  {
+   "v95": 89,
+   "fns": [
+    "CWvsContext::SendSkillResetItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_SKILL_BOOK",
+     "v": 82,
+     "score": 0.5,
+     "handler": "SkillBookHandler"
+    },
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 0.5,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "MAKER_SKILL",
+     "v": 113,
+     "score": 0.5,
+     "handler": "MakerSkillHandler"
+    }
+   ]
+  },
+  {
+   "v95": 90,
+   "fns": [
+    "CWvsContext::SendShopScannerItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "NPC_SHOP",
+     "v": 61,
+     "score": 0.5,
+     "handler": "NPCShopHandler"
+    },
+    {
+     "s9": "ADMIN_SHOP",
+     "v": 68,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 91,
+   "fns": [
+    "CWvsContext::SendMapTransferItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "PLAYER_MAP_TRANSFER",
+     "v": 207,
+     "score": 0.67,
+     "handler": "PlayerMapTransitionHandler"
+    },
+    {
+     "s9": "CHANGE_MAP",
+     "v": 38,
+     "score": 0.67,
+     "handler": "ChangeMapHandler"
+    },
+    {
+     "s9": "WORLD_TRANSFER",
+     "v": 18,
+     "score": 0.5,
+     "handler": "TransferWorldHandler"
+    },
+    {
+     "s9": "NAME_TRANSFER",
+     "v": 16,
+     "score": 0.5,
+     "handler": "TransferNameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 92,
+   "fns": [
+    "CWvsContext::SendPortalScrollUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_UPGRADE_SCROLL",
+     "v": 86,
+     "score": 0.5,
+     "handler": "ScrollHandler"
+    },
+    {
+     "s9": "USE_RETURN_SCROLL",
+     "v": 85,
+     "score": 0.5,
+     "handler": "UseItemHandler"
+    },
+    {
+     "s9": "USE_INNER_PORTAL",
+     "v": 101,
+     "score": 0.5,
+     "handler": "InnerPortalHandler"
+    }
+   ]
+  },
+  {
+   "v95": 93,
+   "fns": [
+    "CWvsContext::SendUpgradeItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_UPGRADE_SCROLL",
+     "v": 86,
+     "score": 0.67,
+     "handler": "ScrollHandler"
+    }
+   ]
+  },
+  {
+   "v95": 94,
+   "fns": [
+    "CWvsContext::SendHyperUpgradeItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_UPGRADE_SCROLL",
+     "v": 86,
+     "score": 0.5,
+     "handler": "ScrollHandler"
+    }
+   ]
+  },
+  {
+   "v95": 95,
+   "fns": [
+    "CWvsContext::SendItemOptionUpgradeItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_UPGRADE_SCROLL",
+     "v": 86,
+     "score": 0.5,
+     "handler": "ScrollHandler"
+    }
+   ]
+  },
+  {
+   "v95": 96,
+   "fns": [
+    "CWvsContext::SendUIOpenItemRequest"
+   ],
+   "cand": [
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.67,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY_PEDIGREE",
+     "v": 145,
+     "score": 0.5,
+     "handler": "OpenFamilyPedigreeHandler"
+    }
+   ]
+  },
+  {
+   "v95": 97,
+   "fns": [
+    "CWvsContext::SendItemReleaseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 98,
+   "fns": [
+    "CWvsContext::SendAbilityUpRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 99,
+   "fns": [
+    "CWvsContext::SendAbilityUpRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 100,
+   "fns": [
+    "CWvsContext::SendStatChangeRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 101,
+   "fns": [
+    "CWvsContext::SendStatChangeRequestByItemOption"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 102,
+   "fns": [
+    "CWvsContext::SendSkillUpRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_SKILL_BOOK",
+     "v": 82,
+     "score": 0.5,
+     "handler": "SkillBookHandler"
+    },
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 0.5,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "MAKER_SKILL",
+     "v": 113,
+     "score": 0.5,
+     "handler": "MakerSkillHandler"
+    }
+   ]
+  },
+  {
+   "v95": 103,
+   "fns": [
+    "CGrenade::SendTimeBombInfo",
+    "CUserLocal::DoActiveSkill_DamageMeter",
+    "CUserLocal::DoActiveSkill_Flying",
+    "CUserLocal::DoActiveSkill_Heal",
+    "CUserLocal::DoActiveSkill_MobCapture",
+    "CUserLocal::DoActiveSkill_OpenGate",
+    "CUserLocal::DoActiveSkill_RecoveryAura",
+    "CUserLocal::DoActiveSkill_SmokeShell",
+    "CUserLocal::DoActiveSkill_StatChangeAdmin",
+    "CUserLocal::DoActiveSkill_Summon",
+    "CUserLocal::DoActiveSkill_SummonMonster",
+    "CUserLocal::DoActiveSkill_TownPortal",
+    "CUserLocal::SendSkillUseRequest",
+    "CUserLocal::TryDoingMonsterMagnet",
+    "CUserLocal::TryDoingSwallowAbsorb"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 104,
+   "fns": [
+    "CUserLocal::SendSkillCancelRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_SKILL_BOOK",
+     "v": 82,
+     "score": 0.5,
+     "handler": "SkillBookHandler"
+    },
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    },
+    {
+     "s9": "SKILL_EFFECT",
+     "v": 93,
+     "score": 0.5,
+     "handler": "SkillEffectHandler"
+    },
+    {
+     "s9": "MAKER_SKILL",
+     "v": 113,
+     "score": 0.5,
+     "handler": "MakerSkillHandler"
+    }
+   ]
+  },
+  {
+   "v95": 105,
+   "fns": [
+    "CUserLocal::DoActiveSkill_Prepare"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 106,
+   "fns": [
+    "CWvsContext::SendDropMoneyRequest"
+   ],
+   "cand": [
+    {
+     "s9": "MESO_DROP",
+     "v": 94,
+     "score": 0.5,
+     "handler": "MesoDropHandler"
+    }
+   ]
+  },
+  {
+   "v95": 107,
+   "fns": [
+    "CWvsContext::SendGivePopularityRequest"
+   ],
+   "cand": [
+    {
+     "s9": "GIVE_FAME",
+     "v": 95,
+     "score": 0.5,
+     "handler": "GiveFameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 109,
+   "fns": [
+    "CWvsContext::SendCharacterInfoRequest"
+   ],
+   "cand": [
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.5,
+     "handler": "CharInfoRequestHandler"
+    }
+   ]
+  },
+  {
+   "v95": 110,
+   "fns": [
+    "CWvsContext::SendActivatePetRequest"
+   ],
+   "cand": [
+    {
+     "s9": "SPAWN_PET",
+     "v": 98,
+     "score": 0.5,
+     "handler": "SpawnPetHandler"
+    },
+    {
+     "s9": "PET_LOOT",
+     "v": 170,
+     "score": 0.5,
+     "handler": "PetLootHandler"
+    },
+    {
+     "s9": "PET_FOOD",
+     "v": 76,
+     "score": 0.5,
+     "handler": "PetFoodHandler"
+    },
+    {
+     "s9": "PET_EXCLUDE_ITEMS",
+     "v": 172,
+     "score": 0.5,
+     "handler": "PetExcludeItemsHandler"
+    }
+   ]
+  },
+  {
+   "v95": 111,
+   "fns": [
+    "CWvsContext::CheckTemporaryStatDuration"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 112,
+   "fns": [
+    "CUserLocal::CheckPortal_Collision",
+    "CUserLocal::HandleUpKeyDown"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 113,
+   "fns": [
+    "CUserLocal::TryRegisterTeleport"
+   ],
+   "cand": [
+    {
+     "s9": "USE_TELEPORT_ROCK",
+     "v": 84,
+     "score": 0.5,
+     "handler": ""
+    },
+    {
+     "s9": "REGISTER_PIN",
+     "v": 10,
+     "score": 0.5,
+     "handler": "RegisterPinHandler"
+    },
+    {
+     "s9": "REGISTER_PIC",
+     "v": 29,
+     "score": 0.5,
+     "handler": "RegisterPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 114,
+   "fns": [
+    "CWvsContext::SendMapTransferRequest"
+   ],
+   "cand": [
+    {
+     "s9": "PLAYER_MAP_TRANSFER",
+     "v": 207,
+     "score": 0.67,
+     "handler": "PlayerMapTransitionHandler"
+    },
+    {
+     "s9": "CHANGE_MAP",
+     "v": 38,
+     "score": 0.67,
+     "handler": "ChangeMapHandler"
+    },
+    {
+     "s9": "WORLD_TRANSFER",
+     "v": 18,
+     "score": 0.5,
+     "handler": "TransferWorldHandler"
+    },
+    {
+     "s9": "NAME_TRANSFER",
+     "v": 16,
+     "score": 0.5,
+     "handler": "TransferNameHandler"
+    }
+   ]
+  },
+  {
+   "v95": 115,
+   "fns": [
+    "CWvsContext::SendAntiMacroItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.5,
+     "handler": "SkillMacroHandler"
+    }
+   ]
+  },
+  {
+   "v95": 116,
+   "fns": [
+    "CUserLocal::DoAntiMacroSkill"
+   ],
+   "cand": [
+    {
+     "s9": "SKILL_MACRO",
+     "v": 110,
+     "score": 0.8,
+     "handler": "SkillMacroHandler"
+    }
+   ]
+  },
+  {
+   "v95": 117,
+   "fns": [
+    "CUIAdminAntiMacro::SetRet",
+    "CUIAntiMacro::SetRet"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 118,
+   "fns": [
+    "CWvsContext::SendClaimRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 119,
+   "fns": [
+    "CQuest::OnCompleteQuestFailed",
+    "CQuest::StartQuest",
+    "CWvsContext::ResignQuest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 120,
+   "fns": [
+    "CWvsContext::CheckDarkForce",
+    "CWvsContext::CheckDragonFury",
+    "CWvsContext::OnTemporaryStatReset",
+    "CWvsContext::OnTemporaryStatSet"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 121,
+   "fns": [
+    "CUserLocal::ThrowGrenade"
+   ],
+   "cand": [
+    {
+     "s9": "GRENADE_EFFECT",
+     "v": 109,
+     "score": 0.5,
+     "handler": "GrenadeEffectHandler"
+    }
+   ]
+  },
+  {
+   "v95": 122,
+   "fns": [
+    "CMacroSysMan::FlushToSvr"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 123,
+   "fns": [
+    "CWvsContext::SendSelectNpcItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "NPC_TALK",
+     "v": 58,
+     "score": 0.5,
+     "handler": "NPCTalkHandler"
+    },
+    {
+     "s9": "NPC_SHOP",
+     "v": 61,
+     "score": 0.5,
+     "handler": "NPCShopHandler"
+    }
+   ]
+  },
+  {
+   "v95": 124,
+   "fns": [
+    "CWvsContext::SendLotteryItemUseRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 125,
+   "fns": [
+    "CUIItemMaker::RequestItemMake"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 126,
+   "fns": [
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 127,
+   "fns": [
+    "CWvsContext::SendUseBoxGachaponItemRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_REMOTE",
+     "v": 116,
+     "score": 0.67,
+     "handler": "RemoteGachaponHandler"
+    }
+   ]
+  },
+  {
+   "v95": 128,
+   "fns": [
+    "CWvsContext::SendUseGachaponRemoteRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_REMOTE",
+     "v": 116,
+     "score": 1.0,
+     "handler": "RemoteGachaponHandler"
+    }
+   ]
+  },
+  {
+   "v95": 129,
+   "fns": [
+    "CWvsContext::SendWaterOfLife"
+   ],
+   "cand": [
+    {
+     "s9": "WATER_OF_LIFE",
+     "v": 117,
+     "score": 1.0,
+     "handler": "UseWaterOfLifeHandler"
+    },
+    {
+     "s9": "MOVE_LIFE",
+     "v": 188,
+     "score": 0.5,
+     "handler": "MoveLifeHandler"
+    }
+   ]
+  },
+  {
+   "v95": 130,
+   "fns": [
+    "CRepairDurabilityDlg::SendRepairDurabilityAll"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 131,
+   "fns": [
+    "CRepairDurabilityDlg::SendRepairDurability"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 132,
+   "fns": [
+    "CDamageMeter::SaveDamageInfo"
+   ],
+   "cand": [
+    {
+     "s9": "TAKE_DAMAGE",
+     "v": 48,
+     "score": 0.67,
+     "handler": "TakeDamageHandler"
+    },
+    {
+     "s9": "MOB_DAMAGE_MOB",
+     "v": 194,
+     "score": 0.5,
+     "handler": "MobDamageMobHandler"
+    },
+    {
+     "s9": "DAMAGE_SUMMON",
+     "v": 177,
+     "score": 0.5,
+     "handler": "DamageSummonHandler"
+    },
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.5,
+     "handler": "CharInfoRequestHandler"
+    }
+   ]
+  },
+  {
+   "v95": 133,
+   "fns": [
+    "CUserLocal::UpdateClientTimer"
+   ],
+   "cand": [
+    {
+     "s9": "CLIENT_ERROR",
+     "v": 26,
+     "score": 0.5,
+     "handler": ""
+    }
+   ]
+  },
+  {
+   "v95": 134,
+   "fns": [
+    "CWvsContext::SendFollowCharacterRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 136,
+   "fns": [
+    "CUIPQReward::SelectReward"
+   ],
+   "cand": [
+    {
+     "s9": "USE_ITEM_REWARD",
+     "v": 112,
+     "score": 0.67,
+     "handler": "ItemRewardHandler"
+    }
+   ]
+  },
+  {
+   "v95": 137,
+   "fns": [
+    "CUIPQReward::RequestReward"
+   ],
+   "cand": [
+    {
+     "s9": "USE_ITEM_REWARD",
+     "v": 112,
+     "score": 1.0,
+     "handler": "ItemRewardHandler"
+    }
+   ]
+  },
+  {
+   "v95": 138,
+   "fns": [
+    "CWvsContext::OnSetPassenserRequest",
+    "CWvsContext::SendFollowRequestApply"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 139,
+   "fns": [
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 140,
+   "fns": [
+    "CUIStatusBar::SendGroupMessage"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 141,
+   "fns": [
+    "CField::OnWhisper",
+    "CField::SendChatMsgWhisper",
+    "CField::SendLocationWhisper"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 142,
+   "fns": [
+    "CUIStatusBar::SendCoupleMessage"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 143,
+   "fns": [
+    "CFadeWnd::SendCloseMessage",
+    "CUIMessenger::OnCreate",
+    "CUIMessenger::OnDestroy",
+    "CUIMessenger::OnInvite",
+    "CUIMessenger::ProcessChat",
+    "CUIMessenger::SendInviteMsg",
+    "CUIMessenger::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 144,
+   "fns": [
+    "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+    "CCashTradingRoomDlg::OnTrade",
+    "CCashTradingRoomDlg::PutItem",
+    "CCashTradingRoomDlg::PutMoney",
+    "CCashTradingRoomDlg::SetRet",
+    "CCashTradingRoomDlg::Trade",
+    "CEntrustedShopDlg::AddBlackList",
+    "CEntrustedShopDlg::DeleteBlackList",
+    "CEntrustedShopDlg::OnArrange",
+    "CEntrustedShopDlg::OnBlackList",
+    "CEntrustedShopDlg::OnCorrectSSN2",
+    "CEntrustedShopDlg::OnGoOut",
+    "CEntrustedShopDlg::OnVisitList",
+    "CEntrustedShopDlg::OnWithdrawMoney",
+    "CEntrustedShopDlg::SetRet",
+    "CField::AddBlackList",
+    "CField::DeleteBlackList",
+    "CField::SendInviteTradingRoomMsg",
+    "CMemoryGameDlg::OnClickStartButton",
+    "CMemoryGameDlg::OnEnterResult",
+    "CMemoryGameDlg::SendTurnUpCard",
+    "CMemoryGameDlg::Update",
+    "CMiniRoomBaseDlg::CheckAndSendChat",
+    "CMiniRoomBaseDlg::OnCheckSSN2Static",
+    "CMiniRoomBaseDlg::SendCashInviteResult",
+    "CMiniRoomBaseDlg::SendInviteResult",
+    "COmokDlg::OnClickBanButton",
+    "COmokDlg::OnClickEndButton",
+    "COmokDlg::OnClickReadyButton",
+    "COmokDlg::OnClickStartButton",
+    "COmokDlg::OnEnterResult",
+    "COmokDlg::OnRetreatRequest",
+    "COmokDlg::OnTieRequest",
+    "COmokDlg::PutStoneChecker",
+    "COmokDlg::SendClaimGiveUp",
+    "COmokDlg::SendRetreatRequest",
+    "COmokDlg::SendTieRequest",
+    "COmokDlg::Update",
+    "CPersonalShopDlg::BuyItem",
+    "CPersonalShopDlg::CheckCashItemInList",
+    "CPersonalShopDlg::DeliverBlackList",
+    "CPersonalShopDlg::MoveItemToInventory",
+    "CPersonalShopDlg::OnClickBanButton",
+    "CPersonalShopDlg::OnCorrectSSN2",
+    "CPersonalShopDlg::PutItem",
+    "CPersonalShopDlg::SetRet",
+    "CPersonalShopDlg::Update",
+    "CTradingRoomDlg::OnTrade",
+    "CTradingRoomDlg::PutItem",
+    "CTradingRoomDlg::PutMoney",
+    "CTradingRoomDlg::SetRet",
+    "CTradingRoomDlg::Trade",
+    "CUserLocal::HandleLButtonDblClk",
+    "CUserLocal::HandleRButtonClk",
+    "CWvsContext::OnEntrustedShopCheckResult",
+    "CWvsContext::SendCreateMiniGameRequest",
+    "CWvsContext::SendOpenShopRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 145,
+   "fns": [
+    "CField::SendChangePartyBossMsg",
+    "CField::SendCreateNewPartyMsg",
+    "CField::SendJoinPartyMsg",
+    "CField::SendKickPartyMsg",
+    "CField::SendWithdrawPartyMsg",
+    "CWvsContext::OnPartyResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 146,
+   "fns": [
+    "CFadeWnd::SendCloseMessage",
+    "CUIFadeYesNo::OnButtonClicked",
+    "CWvsContext::OnPartyResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 147,
+   "fns": [
+    "ExpeditionIntermediary::OnPacketExpNoti_Invite",
+    "ExpeditionIntermediary::SendExpChangeBossPacket",
+    "ExpeditionIntermediary::SendExpChangeMasterPacket",
+    "ExpeditionIntermediary::SendExpCreatePacket",
+    "ExpeditionIntermediary::SendExpInvitePacket",
+    "ExpeditionIntermediary::SendExpKickPacket",
+    "ExpeditionIntermediary::SendExpRelocatePartyPacket",
+    "ExpeditionIntermediary::SendResponseInvitePacket",
+    "ExpeditionIntermediary::SendWithdrawPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 148,
+   "fns": [
+    "CUIFadeYesNo::OnButtonClicked",
+    "CUIFadeYesNo::SendCloseMessage",
+    "CWvsContext::OnPartyResult",
+    "TabPartyAdver::RequestAdverRemoveFromNotiList",
+    "TabPartyAdver::SendAdverDeletePacket",
+    "TabPartyAdver::SendPartyAdverRequestPacket",
+    "TabPartyAdver::SendPartyApplyPacketTo",
+    "TabPartyAdver::SendPartyRegistCommitPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 149,
+   "fns": [
+    "CField::InputGuildName",
+    "CField::SendCreateGuildAgreeMsg",
+    "CField::SendInviteGuildMsg",
+    "CField::SendKickGuildMsg",
+    "CField::SendSetGradeNameMsg",
+    "CField::SendSetGuildMarkMsg",
+    "CField::SendSetGuildNoticeMsg",
+    "CField::SendSetMemberGradeMsg",
+    "CField::SendWithdrawGuildMsg",
+    "CUIFadeYesNo::OnButtonClicked",
+    "CWvsContext::OnGuildResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 150,
+   "fns": [
+    "CFadeWnd::SendCloseMessage",
+    "CWvsContext::OnGuildResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 151,
+   "fns": [
+    "CField::SendChatMsgSlash",
+    "CStage::OnSetField",
+    "CUserLocal::OnKey"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 152,
+   "fns": [
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 153,
+   "fns": [
+    "CField::SendAcceptFriendMsg",
+    "CField::SendDeleteFriendMsg",
+    "CField::SendSetFriendMsg",
+    "CWvsContext::LoadFriend"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 154,
+   "fns": [
+    "CCashShop::OnCashItemResLoadGiftDone",
+    "CMemoListDlg::SetRet",
+    "CWvsContext::OnMemoNotify_Receive"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 156,
+   "fns": [
+    "CField::TryEnterTownPortal",
+    "CTownPortalPool::TryEnterTownPortal"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 157,
+   "fns": [
+    "COpenGatePool::TryEnterOpenGate"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 158,
+   "fns": [
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 159,
+   "fns": [
+    "CFuncKeyMappedMan::ChangePetConsumeItemID",
+    "CFuncKeyMappedMan::ChangePetConsumeMPItemID",
+    "CFuncKeyMappedMan::SaveFuncKeyMap"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 160,
+   "fns": [
+    "CRPSGameDlg::OnBtContinue",
+    "CRPSGameDlg::OnBtExit",
+    "CRPSGameDlg::OnBtRetry",
+    "CRPSGameDlg::OnBtStart",
+    "CRPSGameDlg::SendSelection",
+    "CRPSGameDlg::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 161,
+   "fns": [
+    "CEngageDlg::SetRet",
+    "CWvsContext::OnMarriageRequest",
+    "CWvsContext::SendEngagementRequest",
+    "CWvsContext::SendInvitationQuery",
+    "CWvsContext::SendRingDropRequest",
+    "CWvsContext::SendSendInvitaionRequest",
+    "CWvsContext::SendWishListInput"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 162,
+   "fns": [
+    "??_ECWishListInputDlg@@W7AEPAXI@Z",
+    "CWishListGiveDlg::SendPutItemRequest",
+    "CWishListRecvDlg::SendGetItemRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 163,
+   "fns": [
+    "CField_Wedding::OnWeddingProgress"
+   ],
+   "cand": [
+    {
+     "s9": "WEDDING_TALK",
+     "v": 139,
+     "score": 0.5,
+     "handler": "WeddingTalkHandler"
+    },
+    {
+     "s9": "WEDDING_ACTION",
+     "v": 138,
+     "score": 0.5,
+     "handler": "WeddingHandler"
+    }
+   ]
+  },
+  {
+   "v95": 164,
+   "fns": [
+    "CField_Wedding::OnWeddingProgress"
+   ],
+   "cand": [
+    {
+     "s9": "WEDDING_TALK",
+     "v": 139,
+     "score": 0.5,
+     "handler": "WeddingTalkHandler"
+    },
+    {
+     "s9": "WEDDING_ACTION",
+     "v": 138,
+     "score": 0.5,
+     "handler": "WeddingHandler"
+    }
+   ]
+  },
+  {
+   "v95": 165,
+   "fns": [
+    "CWvsContext::SendBoobyTrapAlert"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 166,
+   "fns": [
+    "CUIMiniMap::OnMouseButton"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 167,
+   "fns": [
+    "CTabGuildAlliance::OnChangeMaster",
+    "CTabGuildAlliance::OnGradeChange",
+    "CTabGuildAlliance::OnInvite",
+    "CTabGuildAlliance::OnKick",
+    "CTabGuildAlliance::OnSetNotice",
+    "CTabGuildAlliance::OnWithdraw",
+    "CUIFadeYesNo::OnButtonClicked",
+    "CWndAllianceGrade::OnSaveGradeName",
+    "CWvsContext::OnAllianceResult",
+    "CWvsContext::OnGuildResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 168,
+   "fns": [
+    "CFadeWnd::SendCloseMessage",
+    "CWvsContext::OnAllianceResult"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 169,
+   "fns": [
+    "CWvsContext::SendFamilyChartRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "ADD_FAMILY",
+     "v": 147,
+     "score": 0.5,
+     "handler": "FamilyAddHandler"
+    },
+    {
+     "s9": "ACCEPT_FAMILY",
+     "v": 150,
+     "score": 0.5,
+     "handler": "AcceptFamilyHandler"
+    }
+   ]
+  },
+  {
+   "v95": 170,
+   "fns": [
+    "CWvsContext::SendFamilyInfoRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "CHAR_INFO_REQUEST",
+     "v": 97,
+     "score": 0.5,
+     "handler": "CharInfoRequestHandler"
+    },
+    {
+     "s9": "ADD_FAMILY",
+     "v": 147,
+     "score": 0.5,
+     "handler": "FamilyAddHandler"
+    }
+   ]
+  },
+  {
+   "v95": 171,
+   "fns": [
+    "CWvsContext::SendRegisterJunior"
+   ],
+   "cand": [
+    {
+     "s9": "REGISTER_PIN",
+     "v": 10,
+     "score": 0.5,
+     "handler": "RegisterPinHandler"
+    },
+    {
+     "s9": "REGISTER_PIC",
+     "v": 29,
+     "score": 0.5,
+     "handler": "RegisterPicHandler"
+    }
+   ]
+  },
+  {
+   "v95": 172,
+   "fns": [
+    "CWvsContext::SendUnregisterJunior"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 173,
+   "fns": [
+    "CWvsContext::SendUnregisterParent"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 174,
+   "fns": [
+    "CWvsContext::SendFamilyInviteResult"
+   ],
+   "cand": [
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "ADD_FAMILY",
+     "v": 147,
+     "score": 0.5,
+     "handler": "FamilyAddHandler"
+    },
+    {
+     "s9": "ACCEPT_FAMILY",
+     "v": 150,
+     "score": 0.5,
+     "handler": "AcceptFamilyHandler"
+    }
+   ]
+  },
+  {
+   "v95": 175,
+   "fns": [
+    "CWvsContext::SendUseFamilyPrivilege"
+   ],
+   "cand": [
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "ADD_FAMILY",
+     "v": 147,
+     "score": 0.5,
+     "handler": "FamilyAddHandler"
+    },
+    {
+     "s9": "ACCEPT_FAMILY",
+     "v": 150,
+     "score": 0.5,
+     "handler": "AcceptFamilyHandler"
+    }
+   ]
+  },
+  {
+   "v95": 176,
+   "fns": [
+    "CWvsContext::SendSetFamilyPrecept"
+   ],
+   "cand": [
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    },
+    {
+     "s9": "ADD_FAMILY",
+     "v": 147,
+     "score": 0.5,
+     "handler": "FamilyAddHandler"
+    },
+    {
+     "s9": "ACCEPT_FAMILY",
+     "v": 150,
+     "score": 0.5,
+     "handler": "AcceptFamilyHandler"
+    }
+   ]
+  },
+  {
+   "v95": 177,
+   "fns": [
+    "CWvsContext::OnFamilySummonRequest"
+   ],
+   "cand": [
+    {
+     "s9": "FAMILY_SUMMON_RESPONSE",
+     "v": 153,
+     "score": 0.8,
+     "handler": "FamilySummonResponseHandler"
+    },
+    {
+     "s9": "USE_FAMILY",
+     "v": 151,
+     "score": 0.67,
+     "handler": "FamilyUseHandler"
+    },
+    {
+     "s9": "USE_SUMMON_BAG",
+     "v": 75,
+     "score": 0.5,
+     "handler": "UseSummonBagHandler"
+    },
+    {
+     "s9": "OPEN_FAMILY",
+     "v": 146,
+     "score": 0.5,
+     "handler": "OpenFamilyHandler"
+    }
+   ]
+  },
+  {
+   "v95": 179,
+   "fns": [
+    "CUIGuildBBS::OnComment",
+    "CUIGuildBBS::OnCommentDelete",
+    "CUIGuildBBS::OnDelete",
+    "CUIGuildBBS::OnRegister",
+    "CUIGuildBBS::SendLoadListRequest",
+    "CUIGuildBBS::SendViewEntryRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 180,
+   "fns": [
+    "CWvsContext::SendMigrateToITCRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 181,
+   "fns": [
+    "CWvsContext::SendExpUpItemUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_GACHA_EXP",
+     "v": 158,
+     "score": 0.5,
+     "handler": "UseGachaExpHandler"
+    }
+   ]
+  },
+  {
+   "v95": 182,
+   "fns": [
+    "CWvsContext::SendTempExpUseRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_GACHA_EXP",
+     "v": 158,
+     "score": 0.5,
+     "handler": "UseGachaExpHandler"
+    }
+   ]
+  },
+  {
+   "v95": 183,
+   "fns": [
+    "CUIFadeYesNo::OnButtonClicked",
+    "CUINewYearCardSenderDlg::_SendNewYearCard"
+   ],
+   "cand": [
+    {
+     "s9": "NEW_YEAR_CARD_REQUEST",
+     "v": 159,
+     "score": 0.67,
+     "handler": "NewYearCardHandler"
+    }
+   ]
+  },
+  {
+   "v95": 184,
+   "fns": [
+    "CUIRandomMorphDlg::_SendMorphRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 185,
+   "fns": [
+    "CUICashItemGachapon::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 186,
+   "fns": [
+    "CUICashGachapon::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 187,
+   "fns": [
+    "CCashShop::SendChangeMaplePoint"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 188,
+   "fns": [
+    "CUserLocal::HandleLButtonDblClk"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 189,
+   "fns": [
+    "CUserLocal::RequestIncCombo"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 190,
+   "fns": [
+    "CMobPool::OnMobCrcKeyChanged"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 191,
+   "fns": [
+    "CWvsContext::SendRequestSessionValue"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 192,
+   "fns": [
+    "CWvsContext::CheckOpBoardHasNew"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 193,
+   "fns": [
+    "CUIAccountMoreInfo::SendLoadAccountMoreInfoRequest",
+    "CUIAccountMoreInfo::SendSaveAccountMoreInfoRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 194,
+   "fns": [
+    "CUIFindFriend::SendMyInfoRequest",
+    "CUIFindFriend::SendSearchRequest",
+    "CUIFindFriendDetail::SetDetailInfo"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 195,
+   "fns": [
+    "CUserLocal::OnAskAPSPEvent"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 196,
+   "fns": [
+    "CWvsContext::SendDragonBallBoxRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 197,
+   "fns": [
+    "CWvsContext::SendDragonBallSummonRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 199,
+   "fns": [
+    "CVecCtrlPet::EndUpdateActive"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 200,
+   "fns": [
+    "CPet::DoAction"
+   ],
+   "cand": [
+    {
+     "s9": "WEDDING_ACTION",
+     "v": 138,
+     "score": 0.67,
+     "handler": "WeddingHandler"
+    },
+    {
+     "s9": "RPS_ACTION",
+     "v": 136,
+     "score": 0.67,
+     "handler": "RPSActionHandler"
+    },
+    {
+     "s9": "RING_ACTION",
+     "v": 137,
+     "score": 0.67,
+     "handler": "RingActionHandler"
+    },
+    {
+     "s9": "QUEST_ACTION",
+     "v": 107,
+     "score": 0.67,
+     "handler": "QuestActionHandler"
+    }
+   ]
+  },
+  {
+   "v95": 201,
+   "fns": [
+    "CPet::ParseCommand"
+   ],
+   "cand": [
+    {
+     "s9": "PET_COMMAND",
+     "v": 169,
+     "score": 0.5,
+     "handler": "PetCommandHandler"
+    },
+    {
+     "s9": "ADMIN_COMMAND",
+     "v": 128,
+     "score": 0.5,
+     "handler": "AdminCommandHandler"
+    }
+   ]
+  },
+  {
+   "v95": 202,
+   "fns": [
+    "CPet::SendDropPickUpRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 203,
+   "fns": [
+    "CWvsContext::SendStatChangeItemUseRequestByPetQ"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 204,
+   "fns": [
+    "CPet::SendUpdateExceptionListRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 207,
+   "fns": [
+    "CVecCtrlSummoned::EndUpdateActive"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 209,
+   "fns": [
+    "CSummoned::SetDamaged"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 210,
+   "fns": [
+    "CSummoned::TryDoingGiveBuff",
+    "CSummoned::TryDoingHeal",
+    "CSummoned::TryDoingHealingRobot",
+    "CSummoned::TryDoingSummon"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 211,
+   "fns": [
+    "CSummoned::SendRemove"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 214,
+   "fns": [
+    "CVecCtrlDragon::EndUpdateActive"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 216,
+   "fns": [
+    "CQuickslotKeyMappedMan::SaveQuickslotKeyMap"
+   ],
+   "cand": [
+    {
+     "s9": "CHANGE_QUICKSLOT",
+     "v": 183,
+     "score": 0.57,
+     "handler": "QuickslotKeyMappedModifiedHandler"
+    },
+    {
+     "s9": "CHANGE_MAP",
+     "v": 38,
+     "score": 0.5,
+     "handler": "ChangeMapHandler"
+    }
+   ]
+  },
+  {
+   "v95": 217,
+   "fns": [
+    "CUserLocal::UpdatePassiveSkillData"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 218,
+   "fns": [
+    "CWvsContext::UI_Menu"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 219,
+   "fns": [
+    "CUserLocal::TryDoingMagicAttack"
+   ],
+   "cand": [
+    {
+     "s9": "MAGIC_ATTACK",
+     "v": 46,
+     "score": 0.8,
+     "handler": "MagicDamageHandler"
+    },
+    {
+     "s9": "RANGED_ATTACK",
+     "v": 45,
+     "score": 0.5,
+     "handler": "RangedAttackHandler"
+    }
+   ]
+  },
+  {
+   "v95": 220,
+   "fns": [
+    "CWvsContext::AskWhetherUsePamsSong"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 221,
+   "fns": [
+    "CUIQuestInfoDetail::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 222,
+   "fns": [
+    "CUserLocal::SendRepeatEffectRemoveRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 227,
+   "fns": [
+    "CMob::GenerateMovePath"
+   ],
+   "cand": [
+    {
+     "s9": "ITEM_MOVE",
+     "v": 71,
+     "score": 0.5,
+     "handler": "ItemMoveHandler"
+    }
+   ]
+  },
+  {
+   "v95": 228,
+   "fns": [
+    "CMob::ApplyControl"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 229,
+   "fns": [
+    "CMob::SendDropPickUpRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 230,
+   "fns": [
+    "CMob::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 231,
+   "fns": [
+    "CMob::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 232,
+   "fns": [
+    "CMob::TryFirstSelfDestruction"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 233,
+   "fns": [
+    "CMob::SetDamagedByMob"
+   ],
+   "cand": [
+    {
+     "s9": "MOB_DAMAGE_MOB",
+     "v": 194,
+     "score": 0.5,
+     "handler": "MobDamageMobHandler"
+    }
+   ]
+  },
+  {
+   "v95": 234,
+   "fns": [
+    "CMob::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 235,
+   "fns": [
+    "CMob::UpdateTimeBomb"
+   ],
+   "cand": [
+    {
+     "s9": "MONSTER_BOMB",
+     "v": 193,
+     "score": 0.5,
+     "handler": "MonsterBombHandler"
+    }
+   ]
+  },
+  {
+   "v95": 236,
+   "fns": [
+    "CMob::SendCollisionEscort"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 237,
+   "fns": [
+    "CMob::SendRequestEscortPath"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 238,
+   "fns": [
+    "CMob::SendEscortStopEndRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 241,
+   "fns": [
+    "CNpc::GenerateMovePath"
+   ],
+   "cand": [
+    {
+     "s9": "ITEM_MOVE",
+     "v": 71,
+     "score": 0.5,
+     "handler": "ItemMoveHandler"
+    }
+   ]
+  },
+  {
+   "v95": 242,
+   "fns": [
+    "CNpc::RequestSpecialAction"
+   ],
+   "cand": [
+    {
+     "s9": "WEDDING_ACTION",
+     "v": 138,
+     "score": 0.5,
+     "handler": "WeddingHandler"
+    },
+    {
+     "s9": "SPECIAL_MOVE",
+     "v": 91,
+     "score": 0.5,
+     "handler": "SpecialMoveHandler"
+    },
+    {
+     "s9": "RPS_ACTION",
+     "v": 136,
+     "score": 0.5,
+     "handler": "RPSActionHandler"
+    },
+    {
+     "s9": "RING_ACTION",
+     "v": 137,
+     "score": 0.5,
+     "handler": "RingActionHandler"
+    }
+   ]
+  },
+  {
+   "v95": 246,
+   "fns": [
+    "CWvsContext::SendDropPickUpRequest"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 249,
+   "fns": [
+    "CReactorPool::FindHitReactor",
+    "CReactorPool::FindSkillReactor"
+   ],
+   "cand": [
+    {
+     "s9": "DAMAGE_REACTOR",
+     "v": 205,
+     "score": 0.57,
+     "handler": "ReactorHitHandler"
+    }
+   ]
+  },
+  {
+   "v95": 250,
+   "fns": [
+    "CReactorPool::FindTouchReactorAroundLocalUser"
+   ],
+   "cand": [
+    {
+     "s9": "TOUCHING_REACTOR",
+     "v": 206,
+     "score": 0.57,
+     "handler": "TouchReactorHandler"
+    }
+   ]
+  },
+  {
+   "v95": 251,
+   "fns": [
+    "CUserLocal::ResetNLCPQ"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 255,
+   "fns": [
+    "CField_SnowBall::BasicActionAttack"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 256,
+   "fns": [
+    "CField_SnowBall::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 257,
+   "fns": [
+    "CField_Coconut::BasicActionAttack"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 258,
+   "fns": [
+    "CField::SendChatMsgSlash"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 259,
+   "fns": [
+    "CField_GuildBoss::BasicActionAttack"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 262,
+   "fns": [
+    "CUIMonsterCarnival::RequestSend"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 264,
+   "fns": [
+    "CField_ContiMove::Init"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 266,
+   "fns": [
+    "CWvsContext::SendPartyWanted"
+   ],
+   "cand": [
+    {
+     "s9": "PARTY_SEARCH_UPDATE",
+     "v": 223,
+     "score": 0.5,
+     "handler": "PartySearchUpdateHandler"
+    },
+    {
+     "s9": "PARTY_OPERATION",
+     "v": 124,
+     "score": 0.5,
+     "handler": "PartyOperationHandler"
+    },
+    {
+     "s9": "DENY_PARTY_REQUEST",
+     "v": 125,
+     "score": 0.5,
+     "handler": "DenyPartyRequestHandler"
+    }
+   ]
+  },
+  {
+   "v95": 267,
+   "fns": [
+    "CWvsContext::SendCancelPartyWanted"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 269,
+   "fns": [
+    "CStage::OnSetField"
+   ],
+   "cand": [
+    {
+     "s9": "FIELD_DAMAGE_MOB",
+     "v": 191,
+     "score": 0.5,
+     "handler": "FieldDamageMobHandler"
+    }
+   ]
+  },
+  {
+   "v95": 270,
+   "fns": [
+    "CField::OnRequestFootHoldInfo"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 274,
+   "fns": [
+    "CCashShop::TrySendQueryCashRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_CASH_ITEM",
+     "v": 79,
+     "score": 0.67,
+     "handler": "UseCashItemHandler"
+    }
+   ]
+  },
+  {
+   "v95": 275,
+   "fns": [
+    "CCashShop::ApplyWishListEvent",
+    "CCashShop::GiftWishItem",
+    "CCashShop::OnBuy",
+    "CCashShop::OnBuyCouple",
+    "CCashShop::OnBuyFriendship",
+    "CCashShop::OnBuyNormal",
+    "CCashShop::OnBuyPackage",
+    "CCashShop::OnBuySlotInc",
+    "CCashShop::OnCashGachaponCopy",
+    "CCashShop::OnEnableEquipSlotExt",
+    "CCashShop::OnExItemSlot",
+    "CCashShop::OnGiftMateInfoResult",
+    "CCashShop::OnGiftPackage",
+    "CCashShop::OnIncCharacterSlotCount",
+    "CCashShop::OnIncTrunkCount",
+    "CCashShop::OnMoveCashItemLtoS",
+    "CCashShop::OnMoveCashItemStoL",
+    "CCashShop::OnRebateLockerItem",
+    "CCashShop::OnRemoveWish",
+    "CCashShop::OnSetWish",
+    "CCashShop::RequestCashPurchaseRecord",
+    "CCashShop::SendBuyAvatarPacket",
+    "CCashShop::SendBuyNameChangeItemPacket",
+    "CCashShop::SendBuyTransferWorldItemPacket",
+    "CCashShop::SendGiftsPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 276,
+   "fns": [
+    "CCashShop::OnStatusCoupon"
+   ],
+   "cand": [
+    {
+     "s9": "COUPON_CODE",
+     "v": 230,
+     "score": 0.5,
+     "handler": "CouponCodeHandler"
+    }
+   ]
+  },
+  {
+   "v95": 283,
+   "fns": [
+    "CUIRaiseWndBase::OnCreate"
+   ],
+   "cand": [
+    {
+     "s9": "CREATE_CHAR",
+     "v": 22,
+     "score": 0.67,
+     "handler": "CreateCharHandler"
+    }
+   ]
+  },
+  {
+   "v95": 284,
+   "fns": [
+    "COutPacket::COutPacket",
+    "CUIRaiseWndBase::CUIRaiseWndBase"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 285,
+   "fns": [
+    "CUIRaiseWnd::SendPutItem"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 286,
+   "fns": [
+    "CUIRaisePieceWnd::SendPutItem"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 291,
+   "fns": [
+    "CClassCompetition::SendRequestAuthKey"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 292,
+   "fns": [
+    "CUIWebEvent::SendRequestAuthKey"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 296,
+   "fns": [
+    "CUIItemUpgrade::Update"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 299,
+   "fns": [
+    "CBattleRecordMan::RequestOnCalc"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 306,
+   "fns": [
+    "CITC::OnStatusCharge"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 307,
+   "fns": [
+    "CITC::TrySendQueryCashRequest"
+   ],
+   "cand": [
+    {
+     "s9": "USE_CASH_ITEM",
+     "v": 79,
+     "score": 0.67,
+     "handler": "UseCashItemHandler"
+    }
+   ]
+  },
+  {
+   "v95": 308,
+   "fns": [
+    "CITC::OnBuy",
+    "CITC::OnBuyAuctionImm",
+    "CITC::OnBuyWish",
+    "CITC::OnBuyZzim",
+    "CITC::OnCancelSaleItem",
+    "CITC::OnCancelWish",
+    "CITC::OnChangedCategory",
+    "CITC::OnChangedCategorySub",
+    "CITC::OnChangedPage",
+    "CITC::OnDeleteZzim",
+    "CITC::OnMoveITCPurchaseItemLtoS",
+    "CITC::OnRegisterSaleEntry",
+    "CITC::OnRegisterWishEntry",
+    "CITC::OnSaleCurrentItem",
+    "CITC::OnSetZzim",
+    "CITC::OnViewWish",
+    "CITCBidAuctionDlg::OnButtonClicked",
+    "CITCWnd_Tab::OnButtonClicked"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 311,
+   "fns": [
+    "CUICharacterSaleDlg::SendCheckDuplicateIDPacket"
+   ],
+   "cand": []
+  },
+  {
+   "v95": 313,
+   "fns": [
+    "CUILogoutGift::OnButtonClicked"
+   ],
+   "cand": []
+  }
+ ]
+}

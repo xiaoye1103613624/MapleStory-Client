@@ -1,0 +1,3356 @@
+[
+ {
+  "fn": "0x42ca60",
+  "name": "?SetRet@CAdminShopDlg@@UAEXJ@Z",
+  "sites": [
+   "0x42ca8c"
+  ]
+ },
+ {
+  "fn": "0x430220",
+  "name": "?SendTradeRequest@CAdminShopDlg@@IAEXXZ",
+  "sites": [
+   "0x43071c"
+  ]
+ },
+ {
+  "fn": "0x4310f0",
+  "name": "?OnPacket@CAdminShopDlg@@SAXJAAVCInPacket@@@Z",
+  "sites": [
+   "0x4311ee",
+   "0x431518"
+  ]
+ },
+ {
+  "fn": "0x470bd0",
+  "name": "?RequestOnCalc@CBattleRecordMan@@QAEXH@Z",
+  "sites": [
+   "0x470c04"
+  ]
+ },
+ {
+  "fn": "0x481bc0",
+  "name": "?TrySendQueryCashRequest@CCashShop@@QAEHXZ",
+  "sites": [
+   "0x481c08"
+  ]
+ },
+ {
+  "fn": "0x4823c0",
+  "name": "?RequestCashPurchaseRecord@CCashShop@@QBEXJ@Z",
+  "sites": [
+   "0x4823ec"
+  ]
+ },
+ {
+  "fn": "0x4828e0",
+  "name": "?OnMoveCashItemLtoS@CCashShop@@QAEHT_LARGE_INTEGER@@JJ@Z",
+  "sites": [
+   "0x482a93"
+  ]
+ },
+ {
+  "fn": "0x482b50",
+  "name": "?OnMoveCashItemStoL@CCashShop@@QAEHT_LARGE_INTEGER@@J@Z",
+  "sites": [
+   "0x482c61"
+  ]
+ },
+ {
+  "fn": "0x482ea0",
+  "name": "?ApplyWishListEvent@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x482ed5"
+  ]
+ },
+ {
+  "fn": "0x482f30",
+  "name": "?SendBuyTransferWorldItemPacket@CCashShop@@QAEXJJ@Z",
+  "sites": [
+   "0x482f5f"
+  ]
+ },
+ {
+  "fn": "0x4837d0",
+  "name": "?OnSetWish@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x4838d9"
+  ]
+ },
+ {
+  "fn": "0x483960",
+  "name": "?OnRemoveWish@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x483b93"
+  ]
+ },
+ {
+  "fn": "0x4854f0",
+  "name": "?SendBuyAvatarPacket@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x48579f"
+  ]
+ },
+ {
+  "fn": "0x485840",
+  "name": "?OnRebateLockerItem@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x485aa3"
+  ]
+ },
+ {
+  "fn": "0x487b60",
+  "name": "?SendGiftsPacket@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x487de6"
+  ]
+ },
+ {
+  "fn": "0x487ee0",
+  "name": "?OnStatusCoupon@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x487fc2"
+  ]
+ },
+ {
+  "fn": "0x488070",
+  "name": "?SendCheckDuplicateIDPacket@CCashShop@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x48810c"
+  ]
+ },
+ {
+  "fn": "0x488190",
+  "name": "?SendCheckNameChangePossiblePacket@CCashShop@@QAEXKV?$ZXString@D@@@Z",
+  "sites": [
+   "0x4881c4"
+  ]
+ },
+ {
+  "fn": "0x488250",
+  "name": "?SendBuyNameChangeItemPacket@CCashShop@@QAEXJV?$ZXString@D@@0@Z",
+  "sites": [
+   "0x488287"
+  ]
+ },
+ {
+  "fn": "0x4884c0",
+  "name": "?SendCheckTransferWorldPossiblePacket@CCashShop@@QAEXKV?$ZXString@D@@@Z",
+  "sites": [
+   "0x4884f4"
+  ]
+ },
+ {
+  "fn": "0x488580",
+  "name": "?SendChangeMaplePoint@CCashShop@@QAEXT_LARGE_INTEGER@@J@Z",
+  "sites": [
+   "0x48863e"
+  ]
+ },
+ {
+  "fn": "0x48d890",
+  "name": "?OnExItemSlot@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48dbc1"
+  ]
+ },
+ {
+  "fn": "0x48dc70",
+  "name": "?OnIncTrunkCount@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x48de26"
+  ]
+ },
+ {
+  "fn": "0x48dec0",
+  "name": "?OnIncCharacterSlotCount@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48e087"
+  ]
+ },
+ {
+  "fn": "0x48e130",
+  "name": "?OnEnableEquipSlotExt@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48e464"
+  ]
+ },
+ {
+  "fn": "0x48e530",
+  "name": "?OnBuy@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48ec51"
+  ]
+ },
+ {
+  "fn": "0x48ed40",
+  "name": "?OnBuyPackage@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48f481"
+  ]
+ },
+ {
+  "fn": "0x48f580",
+  "name": "?OnBuyNormal@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x48f75c"
+  ]
+ },
+ {
+  "fn": "0x48ffa0",
+  "name": "?OnGiftMateInfoResult@CCashShop@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x4901b7"
+  ]
+ },
+ {
+  "fn": "0x4907b0",
+  "name": "?OnGiftPackage@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x490ae1"
+  ]
+ },
+ {
+  "fn": "0x490d80",
+  "name": "?OnBuyCouple@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x4910ba"
+  ]
+ },
+ {
+  "fn": "0x491710",
+  "name": "?OnBuySlotInc@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x491a50"
+  ]
+ },
+ {
+  "fn": "0x491b30",
+  "name": "?OnBuyFriendship@CCashShop@@QAEXJ@Z",
+  "sites": [
+   "0x491e59"
+  ]
+ },
+ {
+  "fn": "0x491fa0",
+  "name": "?GiftWishItem@CCashShop@@QAEXXZ",
+  "sites": [
+   "0x492495"
+  ]
+ },
+ {
+  "fn": "0x492690",
+  "name": "?OnCashGachaponCopy@CCashShop@@QAEHJJ@Z",
+  "sites": [
+   "0x492852"
+  ]
+ },
+ {
+  "fn": "0x494a20",
+  "name": "?SendTransferFieldPacket@CCashShop@@IAEXXZ",
+  "sites": [
+   "0x494a49"
+  ]
+ },
+ {
+  "fn": "0x496520",
+  "name": "?OnCashItemResLoadGiftDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x4966c9"
+  ]
+ },
+ {
+  "fn": "0x49cd10",
+  "name": "?SetRet@CCashTradingRoomDlg@@UAEXJ@Z",
+  "sites": [
+   "0x49cd49"
+  ]
+ },
+ {
+  "fn": "0x49cfd0",
+  "name": "?OnTrade@CCashTradingRoomDlg@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x49d051"
+  ]
+ },
+ {
+  "fn": "0x49d210",
+  "name": "?PutItem@CCashTradingRoomDlg@@QAEHV?$ZRef@UGW_ItemSlotBase@@@@JJJJ@Z",
+  "sites": [
+   "0x49d37f"
+  ]
+ },
+ {
+  "fn": "0x49d480",
+  "name": "?PutMoney@CCashTradingRoomDlg@@IAEXXZ",
+  "sites": [
+   "0x49d5f7"
+  ]
+ },
+ {
+  "fn": "0x49e180",
+  "name": "?Trade@CCashTradingRoomDlg@@IAEXXZ",
+  "sites": [
+   "0x49e5ee"
+  ]
+ },
+ {
+  "fn": "0x4abf50",
+  "name": "?SendRequestAuthKey@CClassCompetition@@IAEXXZ",
+  "sites": [
+   "0x4abf7f"
+  ]
+ },
+ {
+  "fn": "0x4aef10",
+  "name": "?OnConnect@CClientSocket@@QAEHH@Z",
+  "sites": [
+   "0x4af3e3",
+   "0x4af458"
+  ]
+ },
+ {
+  "fn": "0x4afc90",
+  "name": "?OnAliveReq@CClientSocket@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x4afcc3"
+  ]
+ },
+ {
+  "fn": "0x4f10d0",
+  "name": "?SaveDamageInfo@CDamageMeter@@IAEXXZ",
+  "sites": [
+   "0x4f1100"
+  ]
+ },
+ {
+  "fn": "0x51a680",
+  "name": "?SetRet@CEngageDlg@@UAEXJ@Z",
+  "sites": [
+   "0x51a6b9"
+  ]
+ },
+ {
+  "fn": "0x51db30",
+  "name": "?OnCorrectSSN2@CEntrustedShopDlg@@MAEXJ@Z",
+  "sites": [
+   "0x51db71",
+   "0x51dbb3"
+  ]
+ },
+ {
+  "fn": "0x51dd40",
+  "name": "?OnGoOut@CEntrustedShopDlg@@IAEXXZ",
+  "sites": [
+   "0x51dd6f"
+  ]
+ },
+ {
+  "fn": "0x51ddd0",
+  "name": "?OnArrange@CEntrustedShopDlg@@IAEXXZ",
+  "sites": [
+   "0x51de2e"
+  ]
+ },
+ {
+  "fn": "0x51de80",
+  "name": "?OnWithdrawMoney@CEntrustedShopDlg@@IAEXXZ",
+  "sites": [
+   "0x51deb8"
+  ]
+ },
+ {
+  "fn": "0x51df10",
+  "name": "?OnBlackList@CEntrustedShopDlg@@IAEXXZ",
+  "sites": [
+   "0x51df46"
+  ]
+ },
+ {
+  "fn": "0x51df90",
+  "name": "?OnVisitList@CEntrustedShopDlg@@IAEXXZ",
+  "sites": [
+   "0x51dfc6"
+  ]
+ },
+ {
+  "fn": "0x51e480",
+  "name": "?SetRet@CEntrustedShopDlg@@UAEXJ@Z",
+  "sites": [
+   "0x51e52c"
+  ]
+ },
+ {
+  "fn": "0x51ed50",
+  "name": "?AddBlackList@CEntrustedShopDlg@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x51ed91"
+  ]
+ },
+ {
+  "fn": "0x51ee20",
+  "name": "?DeleteBlackList@CEntrustedShopDlg@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x51ee61"
+  ]
+ },
+ {
+  "fn": "0x5214a0",
+  "name": "?SendExpChangeMasterPacket@ExpeditionIntermediary@@QAEXK@Z",
+  "sites": [
+   "0x5214d5"
+  ]
+ },
+ {
+  "fn": "0x521530",
+  "name": "?SendExpChangeBossPacket@ExpeditionIntermediary@@QAEXJK@Z",
+  "sites": [
+   "0x521565"
+  ]
+ },
+ {
+  "fn": "0x5215c0",
+  "name": "?SendExpRelocatePartyPacket@ExpeditionIntermediary@@QAEXKJ@Z",
+  "sites": [
+   "0x5215f5"
+  ]
+ },
+ {
+  "fn": "0x521660",
+  "name": "?SendExpKickPacket@ExpeditionIntermediary@@QAEXK@Z",
+  "sites": [
+   "0x521695"
+  ]
+ },
+ {
+  "fn": "0x5216f0",
+  "name": "?SendExpCreatePacket@ExpeditionIntermediary@@QAEXJ@Z",
+  "sites": [
+   "0x521725"
+  ]
+ },
+ {
+  "fn": "0x521780",
+  "name": "?SendWithdrawPacket@ExpeditionIntermediary@@QAEXXZ",
+  "sites": [
+   "0x521804"
+  ]
+ },
+ {
+  "fn": "0x521cf0",
+  "name": "?SendResponseInvitePacket@ExpeditionIntermediary@@QAEXV?$ZXString@D@@H@Z",
+  "sites": [
+   "0x521d24"
+  ]
+ },
+ {
+  "fn": "0x521dc0",
+  "name": "?SendExpInvitePacket@ExpeditionIntermediary@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x521f22"
+  ]
+ },
+ {
+  "fn": "0x522220",
+  "name": "?OnPacketExpNoti_Invite@ExpeditionIntermediary@@QAEXJUPacketExpNoti_Invite@@@Z",
+  "sites": [
+   "0x5222f2",
+   "0x5223b1"
+  ]
+ },
+ {
+  "fn": "0x524180",
+  "name": "?SendCloseMessage@CFadeWnd@@UAEXXZ",
+  "sites": [
+   "0x5241cd",
+   "0x5242f4",
+   "0x524332",
+   "0x5243e4"
+  ]
+ },
+ {
+  "fn": "0x526b30",
+  "name": "?SendCloseMessage@CUIFadeYesNo@@UAEXXZ",
+  "sites": [
+   "0x526b8e"
+  ]
+ },
+ {
+  "fn": "0x529c60",
+  "name": "?OnButtonClicked@CUIFadeYesNo@@UAEXI@Z",
+  "sites": [
+   "0x529d79",
+   "0x529dd3",
+   "0x529e58",
+   "0x529ea9",
+   "0x529f0a",
+   "0x529f4b"
+  ]
+ },
+ {
+  "fn": "0x52d630",
+  "name": "?ResetNLCPQ@CUserLocal@@QAEXXZ",
+  "sites": [
+   "0x52d65c"
+  ]
+ },
+ {
+  "fn": "0x52d780",
+  "name": "?SendCreateGuildAgreeMsg@CField@@QAEXH@Z",
+  "sites": [
+   "0x52d7b3"
+  ]
+ },
+ {
+  "fn": "0x52d820",
+  "name": "?SendSetMemberGradeMsg@CField@@QAEXKJ@Z",
+  "sites": [
+   "0x52d84c"
+  ]
+ },
+ {
+  "fn": "0x52d8c0",
+  "name": "?SendSetGuildMarkMsg@CField@@QAEXGEGE@Z",
+  "sites": [
+   "0x52d8ec"
+  ]
+ },
+ {
+  "fn": "0x52ddd0",
+  "name": "?OnRequestFootHoldInfo@CField@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x52de01"
+  ]
+ },
+ {
+  "fn": "0x52e9e0",
+  "name": "?SendInviteTradingRoomMsg@CField@@QAEXABV?$ZXString@D@@H@Z",
+  "sites": [
+   "0x52eb06"
+  ]
+ },
+ {
+  "fn": "0x52ebc0",
+  "name": "?SendCreateNewPartyMsg@CField@@QAEXXZ",
+  "sites": [
+   "0x52ed62"
+  ]
+ },
+ {
+  "fn": "0x52edb0",
+  "name": "?SendWithdrawPartyMsg@CField@@QAEXXZ",
+  "sites": [
+   "0x52ef44"
+  ]
+ },
+ {
+  "fn": "0x52efa0",
+  "name": "?SendTransferChannelRequest@CField@@QAEXJ@Z",
+  "sites": [
+   "0x52f0f2"
+  ]
+ },
+ {
+  "fn": "0x52f170",
+  "name": "?SendDeleteFriendMsg@CField@@QAEXK@Z",
+  "sites": [
+   "0x52f222"
+  ]
+ },
+ {
+  "fn": "0x52f290",
+  "name": "?SendAcceptFriendMsg@CField@@QAEXK@Z",
+  "sites": [
+   "0x52f349"
+  ]
+ },
+ {
+  "fn": "0x52f970",
+  "name": "?TryEnterTownPortal@CField@@QAEXUtagPOINT@@@Z",
+  "sites": [
+   "0x52fa56",
+   "0x52fb6b"
+  ]
+ },
+ {
+  "fn": "0x530140",
+  "name": "?SendKickPartyMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x530290"
+  ]
+ },
+ {
+  "fn": "0x530370",
+  "name": "?SendChangePartyBossMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x5304a1"
+  ]
+ },
+ {
+  "fn": "0x534000",
+  "name": "?SendChatMsg@CField@@QAEXABV?$ZXString@D@@H@Z",
+  "sites": [
+   "0x5340c8"
+  ]
+ },
+ {
+  "fn": "0x534150",
+  "name": "?SendLocationWhisper@CField@@QAEXABV?$ZXString@D@@H@Z",
+  "sites": [
+   "0x53425d"
+  ]
+ },
+ {
+  "fn": "0x534310",
+  "name": "?SendJoinPartyMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x534552"
+  ]
+ },
+ {
+  "fn": "0x5345c0",
+  "name": "?SendTransferFieldRequest@CField@@QAEHKPBDHJJ@Z",
+  "sites": [
+   "0x534615"
+  ]
+ },
+ {
+  "fn": "0x5347d0",
+  "name": "?InputGuildName@CField@@QAEXXZ",
+  "sites": [
+   "0x53486f"
+  ]
+ },
+ {
+  "fn": "0x5348e0",
+  "name": "?SendInviteGuildMsg@CField@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x534a4f"
+  ]
+ },
+ {
+  "fn": "0x534ad0",
+  "name": "?SendWithdrawGuildMsg@CField@@QAEXXZ",
+  "sites": [
+   "0x534bf0"
+  ]
+ },
+ {
+  "fn": "0x534cb0",
+  "name": "?SendKickGuildMsg@CField@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x534f2f"
+  ]
+ },
+ {
+  "fn": "0x534fe0",
+  "name": "?SendSetGradeNameMsg@CField@@QAEXV?$ZXString@D@@0000@Z",
+  "sites": [
+   "0x535014"
+  ]
+ },
+ {
+  "fn": "0x535180",
+  "name": "?SendSetGuildNoticeMsg@CField@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x5351b4"
+  ]
+ },
+ {
+  "fn": "0x535240",
+  "name": "?SendSetFriendMsg@CField@@QAEXV?$ZXString@D@@V2@H@Z",
+  "sites": [
+   "0x5353cb"
+  ]
+ },
+ {
+  "fn": "0x539710",
+  "name": "?AddBlackList@CField@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x539744"
+  ]
+ },
+ {
+  "fn": "0x5397d0",
+  "name": "?DeleteBlackList@CField@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x539804"
+  ]
+ },
+ {
+  "fn": "0x53d3b0",
+  "name": "?SendChatMsgWhisper@CField@@QAEXABV?$ZXString@D@@0@Z",
+  "sites": [
+   "0x53db26",
+   "0x53db56"
+  ]
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x540fbe",
+   "0x54104c",
+   "0x5410ed",
+   "0x5411b5",
+   "0x541261",
+   "0x5413e5",
+   "0x541567",
+   "0x5416ea",
+   "0x5417a4",
+   "0x541ad9",
+   "0x541bde",
+   "0x541d57",
+   "0x541e7c",
+   "0x541f12",
+   "0x541f90",
+   "0x542003",
+   "0x542107",
+   "0x542185",
+   "0x5421f4",
+   "0x54228d",
+   "0x5422fc",
+   "0x542365",
+   "0x5423d4",
+   "0x542439",
+   "0x5424ba",
+   "0x54255e",
+   "0x542602",
+   "0x5426b2",
+   "0x542794",
+   "0x54282f",
+   "0x5428db",
+   "0x54298b",
+   "0x542a31",
+   "0x542ade",
+   "0x542b6e",
+   "0x542c1b",
+   "0x542cab",
+   "0x542d37",
+   "0x542db2",
+   "0x542e42",
+   "0x542ec6",
+   "0x542f56",
+   "0x542fe6",
+   "0x54306a",
+   "0x5430fe",
+   "0x5431af",
+   "0x543258",
+   "0x543336",
+   "0x5433ea",
+   "0x543473",
+   "0x5445eb",
+   "0x5447fb"
+  ]
+ },
+ {
+  "fn": "0x5448a0",
+  "name": "?OnWhisper@CField@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x544a6e"
+  ]
+ },
+ {
+  "fn": "0x54a5e0",
+  "name": "?BasicActionAttack@CField_Coconut@@UAEHXZ",
+  "sites": [
+   "0x54a6da"
+  ]
+ },
+ {
+  "fn": "0x54d4c0",
+  "name": "?Init@CField_ContiMove@@UAEXPAX@Z",
+  "sites": [
+   "0x54d535"
+  ]
+ },
+ {
+  "fn": "0x5517d0",
+  "name": "?BasicActionAttack@CField_GuildBoss@@UAEHXZ",
+  "sites": [
+   "0x5518ac"
+  ]
+ },
+ {
+  "fn": "0x5612d0",
+  "name": "?Update@CField_SnowBall@@UAEXXZ",
+  "sites": [
+   "0x561377"
+  ]
+ },
+ {
+  "fn": "0x5617b0",
+  "name": "?BasicActionAttack@CField_SnowBall@@UAEHXZ",
+  "sites": [
+   "0x56192b"
+  ]
+ },
+ {
+  "fn": "0x5640f0",
+  "name": "?OnWeddingProgress@CField_Wedding@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x5643b1",
+   "0x564886"
+  ]
+ },
+ {
+  "fn": "0x568920",
+  "name": "?ChangePetConsumeItemID@CFuncKeyMappedMan@@QAEXJ@Z",
+  "sites": [
+   "0x568959"
+  ]
+ },
+ {
+  "fn": "0x5689c0",
+  "name": "?ChangePetConsumeMPItemID@CFuncKeyMappedMan@@QAEXJ@Z",
+  "sites": [
+   "0x5689f9"
+  ]
+ },
+ {
+  "fn": "0x568a60",
+  "name": "?SaveFuncKeyMap@CFuncKeyMappedMan@@QAEXXZ",
+  "sites": [
+   "0x568a96"
+  ]
+ },
+ {
+  "fn": "0x568f20",
+  "name": "?SendTimeBombInfo@CGrenade@@AAEHK@Z",
+  "sites": [
+   "0x569022"
+  ]
+ },
+ {
+  "fn": "0x572a50",
+  "name": "?OnStatusCharge@CITC@@QAEXXZ",
+  "sites": [
+   "0x572a89"
+  ]
+ },
+ {
+  "fn": "0x572ad0",
+  "name": "?TrySendQueryCashRequest@CITC@@QAEHXZ",
+  "sites": [
+   "0x572b18"
+  ]
+ },
+ {
+  "fn": "0x572b70",
+  "name": "?SendTransferFieldPacket@CITC@@IAEXXZ",
+  "sites": [
+   "0x572b99"
+  ]
+ },
+ {
+  "fn": "0x572e90",
+  "name": "?OnRegisterSaleEntry@CITC@@QAEHJJJPAUGW_ItemSlotBase@@@Z",
+  "sites": [
+   "0x572f5c"
+  ]
+ },
+ {
+  "fn": "0x5731a0",
+  "name": "?OnSaleCurrentItem@CITC@@QAEXJJPAUGW_ItemSlotBase@@J@Z",
+  "sites": [
+   "0x5731d9"
+  ]
+ },
+ {
+  "fn": "0x573270",
+  "name": "?OnBuy@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x5732a5"
+  ]
+ },
+ {
+  "fn": "0x573310",
+  "name": "?OnBuyAuctionImm@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x573345"
+  ]
+ },
+ {
+  "fn": "0x5733b0",
+  "name": "?OnSetZzim@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x5733e5"
+  ]
+ },
+ {
+  "fn": "0x573450",
+  "name": "?OnBuyZzim@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x5734b7"
+  ]
+ },
+ {
+  "fn": "0x573520",
+  "name": "?OnDeleteZzim@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x573555"
+  ]
+ },
+ {
+  "fn": "0x5735c0",
+  "name": "?OnViewWish@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x5735f5"
+  ]
+ },
+ {
+  "fn": "0x573660",
+  "name": "?OnBuyWish@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x573695"
+  ]
+ },
+ {
+  "fn": "0x573700",
+  "name": "?OnCancelWish@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x573735"
+  ]
+ },
+ {
+  "fn": "0x5737a0",
+  "name": "?OnCancelSaleItem@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@@Z",
+  "sites": [
+   "0x57381a"
+  ]
+ },
+ {
+  "fn": "0x573880",
+  "name": "?OnMoveITCPurchaseItemLtoS@CITC@@QAEXAAV?$ZRef@UITCITEM@@@@JJ@Z",
+  "sites": [
+   "0x5738b5"
+  ]
+ },
+ {
+  "fn": "0x5739a0",
+  "name": "?OnChangedCategorySub@CITC@@QAEXHHH@Z",
+  "sites": [
+   "0x5739da"
+  ]
+ },
+ {
+  "fn": "0x573af0",
+  "name": "?OnChangedPage@CITC@@QAEXH@Z",
+  "sites": [
+   "0x573b29"
+  ]
+ },
+ {
+  "fn": "0x573c10",
+  "name": "?OnRegisterWishEntry@CITC@@QAEHJJJEEV?$ZXString@D@@@Z",
+  "sites": [
+   "0x573ca5"
+  ]
+ },
+ {
+  "fn": "0x5744a0",
+  "name": "?OnChangedCategory@CITC@@QAEXH@Z",
+  "sites": [
+   "0x57451a"
+  ]
+ },
+ {
+  "fn": "0x584b10",
+  "name": "?OnButtonClicked@CITCWnd_Tab@@UAEXI@Z",
+  "sites": [
+   "0x584bc7",
+   "0x584cc9"
+  ]
+ },
+ {
+  "fn": "0x58eb50",
+  "name": "?OnButtonClicked@CITCBidAuctionDlg@@UAEXI@Z",
+  "sites": [
+   "0x58eda1"
+  ]
+ },
+ {
+  "fn": "0x5c9e70",
+  "name": "?_SendConsumeCashItemUseRequest@CItemSpeakerDlg@@AAEHXZ",
+  "sites": [
+   "0x5c9fa6"
+  ]
+ },
+ {
+  "fn": "0x5d43d0",
+  "name": "?SendCheckUserLimitPacket@CLogin@@QAEXJ@Z",
+  "sites": [
+   "0x5d441b"
+  ]
+ },
+ {
+  "fn": "0x5d44a0",
+  "name": "?MakeVACDlg@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d44ec"
+  ]
+ },
+ {
+  "fn": "0x5d4540",
+  "name": "?OnAcceptLicense@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d4580"
+  ]
+ },
+ {
+  "fn": "0x5d45d0",
+  "name": "?OnDenyLicense@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d45f9"
+  ]
+ },
+ {
+  "fn": "0x5d4650",
+  "name": "?SendSetGenderPacket@CLogin@@QAEXE@Z",
+  "sites": [
+   "0x5d4679"
+  ]
+ },
+ {
+  "fn": "0x5d46e0",
+  "name": "?SendCancelGenderPacket@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d4709"
+  ]
+ },
+ {
+  "fn": "0x5d53a0",
+  "name": "?SendDeleteCharPacket@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d55a6"
+  ]
+ },
+ {
+  "fn": "0x5d5690",
+  "name": "?SendCheckDuplicateIDPacket@CLogin@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x5d572a"
+  ]
+ },
+ {
+  "fn": "0x5d5e80",
+  "name": "?OnSetAccountResult@CLogin@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x5d5efa"
+  ]
+ },
+ {
+  "fn": "0x5d7550",
+  "name": "?SendSelectCharPacketByVAC@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d776a",
+   "0x5d7945",
+   "0x5d7a8d"
+  ]
+ },
+ {
+  "fn": "0x5d7bd0",
+  "name": "?SendNewCharPacket@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d7c96",
+   "0x5d7d13"
+  ]
+ },
+ {
+  "fn": "0x5d7dc0",
+  "name": "?ResetVAC@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5d7e81"
+  ]
+ },
+ {
+  "fn": "0x5d8010",
+  "name": "?Init@CLogin@@UAEXPAX@Z",
+  "sites": [
+   "0x5d8cd3",
+   "0x5d8ee2"
+  ]
+ },
+ {
+  "fn": "0x5d9730",
+  "name": "?ChangeStepImmediate@CLogin@@QAEXJ@Z",
+  "sites": [
+   "0x5d99bf"
+  ]
+ },
+ {
+  "fn": "0x5da2a0",
+  "name": "?SendSelectCharPacket@CLogin@@QAEXXZ",
+  "sites": [
+   "0x5da3bb",
+   "0x5da598",
+   "0x5da6ca"
+  ]
+ },
+ {
+  "fn": "0x5daf20",
+  "name": "?GotoWorldSelect@CLogin@@QAEXH@Z",
+  "sites": [
+   "0x5daf9b"
+  ]
+ },
+ {
+  "fn": "0x5db000",
+  "name": "?OnCheckPinCodeResult@CLogin@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x5db059",
+   "0x5db0c3",
+   "0x5db1d3",
+   "0x5db2f1"
+  ]
+ },
+ {
+  "fn": "0x5db9d0",
+  "name": "?SendCheckPasswordPacket@CLogin@@QAEHPBD0@Z",
+  "sites": [
+   "0x5dbb01",
+   "0x5dbcb7"
+  ]
+ },
+ {
+  "fn": "0x5dbef0",
+  "name": "?SendLoginPacket@CLogin@@QAEHJJ@Z",
+  "sites": [
+   "0x5dc34c"
+  ]
+ },
+ {
+  "fn": "0x5dc600",
+  "name": "?OnCheckPasswordResult@CLogin@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x5dcfc9",
+   "0x5dd019"
+  ]
+ },
+ {
+  "fn": "0x5dda00",
+  "name": "?OnSelectWorldResult@CLogin@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x5ddeef"
+  ]
+ },
+ {
+  "fn": "0x5dfb40",
+  "name": "?SendViewAllCharPacket@CLogin@@QAEHXZ",
+  "sites": [
+   "0x5dfb8f",
+   "0x5dfbc9",
+   "0x5dfe0a"
+  ]
+ },
+ {
+  "fn": "0x5ff870",
+  "name": "?OnButtonClicked@CLicenseDlg@@UAEXI@Z",
+  "sites": [
+   "0x5ff8c4"
+  ]
+ },
+ {
+  "fn": "0x60ea20",
+  "name": "?FlushToSvr@CMacroSysMan@@QAEXXZ",
+  "sites": [
+   "0x60ea4c"
+  ]
+ },
+ {
+  "fn": "0x624280",
+  "name": "?SetRet@CMemoListDlg@@UAEXJ@Z",
+  "sites": [
+   "0x624358"
+  ]
+ },
+ {
+  "fn": "0x6279b0",
+  "name": "?SendTurnUpCard@CMemoryGameDlg@@IAEXJH@Z",
+  "sites": [
+   "0x6279dc"
+  ]
+ },
+ {
+  "fn": "0x627a50",
+  "name": "?OnClickStartButton@CMemoryGameDlg@@IAEXXZ",
+  "sites": [
+   "0x627a85"
+  ]
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "sites": [
+   "0x627e8f",
+   "0x62817b",
+   "0x62824c",
+   "0x6282e5",
+   "0x628304",
+   "0x6283ff",
+   "0x6284cc",
+   "0x628533",
+   "0x628593"
+  ]
+ },
+ {
+  "fn": "0x628610",
+  "name": "?OnEnterResult@CMemoryGameDlg@@MAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x628689"
+  ]
+ },
+ {
+  "fn": "0x631880",
+  "name": "?Update@CMemoryGameDlg@@MAEXXZ",
+  "sites": [
+   "0x6319ed"
+  ]
+ },
+ {
+  "fn": "0x6376d0",
+  "name": "?SendInviteResult@CMiniRoomBaseDlg@@SAXKJ@Z",
+  "sites": [
+   "0x637705",
+   "0x637755"
+  ]
+ },
+ {
+  "fn": "0x637bc0",
+  "name": "?SendCashInviteResult@CMiniRoomBaseDlg@@SAXKJ@Z",
+  "sites": [
+   "0x637c26",
+   "0x637ce9"
+  ]
+ },
+ {
+  "fn": "0x637f70",
+  "name": "?OnCheckSSN2Static@CMiniRoomBaseDlg@@KAXAAVCInPacket@@@Z",
+  "sites": [
+   "0x637fff",
+   "0x63816e",
+   "0x638206"
+  ]
+ },
+ {
+  "fn": "0x6382a0",
+  "name": "?CheckAndSendChat@CMiniRoomBaseDlg@@IAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x6382e8"
+  ]
+ },
+ {
+  "fn": "0x640d20",
+  "name": "?ApplyControl@CMob@@IAEXJ@Z",
+  "sites": [
+   "0x640e62"
+  ]
+ },
+ {
+  "fn": "0x640ee0",
+  "name": "?TryFirstSelfDestruction@CMob@@IAEXXZ",
+  "sites": [
+   "0x64103f"
+  ]
+ },
+ {
+  "fn": "0x641150",
+  "name": "?SendCollisionEscort@CMob@@QAEXJ@Z",
+  "sites": [
+   "0x64117f"
+  ]
+ },
+ {
+  "fn": "0x6411f0",
+  "name": "?SendRequestEscortPath@CMob@@QAEXXZ",
+  "sites": [
+   "0x64122d"
+  ]
+ },
+ {
+  "fn": "0x641290",
+  "name": "?SendEscortStopEndRequest@CMob@@QAEXXZ",
+  "sites": [
+   "0x6412c8"
+  ]
+ },
+ {
+  "fn": "0x643c30",
+  "name": "?UpdateTimeBomb@CMob@@AAEXXZ",
+  "sites": [
+   "0x643c85"
+  ]
+ },
+ {
+  "fn": "0x644450",
+  "name": "?SendDropPickUpRequest@CMob@@QAEHK@Z",
+  "sites": [
+   "0x6444f1"
+  ]
+ },
+ {
+  "fn": "0x64b260",
+  "name": "?SetDamagedByMob@CMob@@QAEXJJJPAV1@JJ@Z",
+  "sites": [
+   "0x64b608"
+  ]
+ },
+ {
+  "fn": "0x651100",
+  "name": "?GenerateMovePath@CMob@@IAEXJHUTARGETINFO@1@HJJJHH@Z",
+  "sites": [
+   "0x651909"
+  ]
+ },
+ {
+  "fn": "0x654300",
+  "name": "?Update@CMob@@UAEXXZ",
+  "sites": [
+   "0x6543df",
+   "0x654fd1",
+   "0x65528a"
+  ]
+ },
+ {
+  "fn": "0x657230",
+  "name": "?OnMobCrcKeyChanged@CMobPool@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x657298"
+  ]
+ },
+ {
+  "fn": "0x671590",
+  "name": "?GenerateMovePath@CNpc@@IAEXJJ@Z",
+  "sites": [
+   "0x67165b"
+  ]
+ },
+ {
+  "fn": "0x672b50",
+  "name": "?ShowQuestList@CNpc@@QAEXXZ",
+  "sites": [
+   "0x672c11",
+   "0x6737a9",
+   "0x673a6d"
+  ]
+ },
+ {
+  "fn": "0x673bc0",
+  "name": "?RequestSpecialAction@CNpc@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x673bf7"
+  ]
+ },
+ {
+  "fn": "0x6801e0",
+  "name": "?PutStoneChecker@COmokDlg@@QAEXUtagPOINT@@@Z",
+  "sites": [
+   "0x68020f"
+  ]
+ },
+ {
+  "fn": "0x680280",
+  "name": "?OnClickStartButton@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x6802b5"
+  ]
+ },
+ {
+  "fn": "0x6803b0",
+  "name": "?OnTieRequest@COmokDlg@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x6803df"
+  ]
+ },
+ {
+  "fn": "0x6804b0",
+  "name": "?OnRetreatRequest@COmokDlg@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x6804df"
+  ]
+ },
+ {
+  "fn": "0x680860",
+  "name": "?SendClaimGiveUp@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x6808d8"
+  ]
+ },
+ {
+  "fn": "0x680930",
+  "name": "?SendTieRequest@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x6809ac"
+  ]
+ },
+ {
+  "fn": "0x680a10",
+  "name": "?SendRetreatRequest@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x680aab"
+  ]
+ },
+ {
+  "fn": "0x680b30",
+  "name": "?OnClickReadyButton@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x680b65",
+   "0x680b84"
+  ]
+ },
+ {
+  "fn": "0x680c20",
+  "name": "?OnClickBanButton@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x680c7f"
+  ]
+ },
+ {
+  "fn": "0x680cd0",
+  "name": "?OnClickEndButton@COmokDlg@@IAEXXZ",
+  "sites": [
+   "0x680d4c",
+   "0x680db3",
+   "0x680e13"
+  ]
+ },
+ {
+  "fn": "0x680e70",
+  "name": "?OnEnterResult@COmokDlg@@MAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x680ee8"
+  ]
+ },
+ {
+  "fn": "0x684ab0",
+  "name": "?Update@COmokDlg@@MAEXXZ",
+  "sites": [
+   "0x684c06"
+  ]
+ },
+ {
+  "fn": "0x689860",
+  "name": "?TryEnterOpenGate@COpenGatePool@@QAEHUtagPOINT@@AAU2@@Z",
+  "sites": [
+   "0x689b07",
+   "0x689d1b"
+  ]
+ },
+ {
+  "fn": "0x68ef40",
+  "name": "?CloseParcelDlg@CParcelDlg@@IAEXXZ",
+  "sites": [
+   "0x68ef6c"
+  ]
+ },
+ {
+  "fn": "0x68f470",
+  "name": "?ReceiveParcel@CTabReceive@@QAEXXZ",
+  "sites": [
+   "0x68f535"
+  ]
+ },
+ {
+  "fn": "0x68f5e0",
+  "name": "?DiscardParcel@CTabReceive@@QAEXXZ",
+  "sites": [
+   "0x68f65f"
+  ]
+ },
+ {
+  "fn": "0x68f7d0",
+  "name": "?SendQuickDelivery@CTabQuickSend@@QAEXXZ",
+  "sites": [
+   "0x68fa06"
+  ]
+ },
+ {
+  "fn": "0x690140",
+  "name": "?SendParcel@CTabSend@@QAEXXZ",
+  "sites": [
+   "0x6902b8"
+  ]
+ },
+ {
+  "fn": "0x6984c0",
+  "name": "?SetRet@CPersonalShopDlg@@UAEXJ@Z",
+  "sites": [
+   "0x6984f6"
+  ]
+ },
+ {
+  "fn": "0x698580",
+  "name": "?OnCorrectSSN2@CPersonalShopDlg@@MAEXJ@Z",
+  "sites": [
+   "0x6985ba"
+  ]
+ },
+ {
+  "fn": "0x6987a0",
+  "name": "?MoveItemToInventory@CPersonalShopDlg@@QAEHJ@Z",
+  "sites": [
+   "0x6988b8"
+  ]
+ },
+ {
+  "fn": "0x69a110",
+  "name": "?CheckCashItemInList@CPersonalShopDlg@@IAEHAAHJ@Z",
+  "sites": [
+   "0x69a1da"
+  ]
+ },
+ {
+  "fn": "0x69a7f0",
+  "name": "?BuyItem@CPersonalShopDlg@@IAEXJ@Z",
+  "sites": [
+   "0x69afed"
+  ]
+ },
+ {
+  "fn": "0x69b0d0",
+  "name": "?DeliverBlackList@CPersonalShopDlg@@IAEXXZ",
+  "sites": [
+   "0x69b10b"
+  ]
+ },
+ {
+  "fn": "0x69b1c0",
+  "name": "?OnClickBanButton@CPersonalShopDlg@@IAEXJ@Z",
+  "sites": [
+   "0x69b2a0"
+  ]
+ },
+ {
+  "fn": "0x69b340",
+  "name": "?Update@CPersonalShopDlg@@UAEXXZ",
+  "sites": [
+   "0x69b3ab"
+  ]
+ },
+ {
+  "fn": "0x69c880",
+  "name": "?PutItem@CPersonalShopDlg@@QAEHV?$ZRef@UGW_ItemSlotBase@@@@JJ@Z",
+  "sites": [
+   "0x69cb6c"
+  ]
+ },
+ {
+  "fn": "0x6a0820",
+  "name": "?SendDropPickUpRequest@CPet@@QAEHABUtagPOINT@@KKK@Z",
+  "sites": [
+   "0x6a0881"
+  ]
+ },
+ {
+  "fn": "0x6a0dd0",
+  "name": "?SendUpdateExceptionListRequest@CPet@@QAEXAAV?$ZArray@J@@@Z",
+  "sites": [
+   "0x6a0e01"
+  ]
+ },
+ {
+  "fn": "0x6a2340",
+  "name": "?DoAction@CPet@@AAEXJJVZtl_bstr_t@@HHH@Z",
+  "sites": [
+   "0x6a2607"
+  ]
+ },
+ {
+  "fn": "0x6a3cc0",
+  "name": "?ParseCommand@CPet@@QAEHV?$ZXString@D@@@Z",
+  "sites": [
+   "0x6a3f64"
+  ]
+ },
+ {
+  "fn": "0x6b1fc0",
+  "name": "?OnCompleteQuestFailed@CQuest@@IAEXJ@Z",
+  "sites": [
+   "0x6b2be3"
+  ]
+ },
+ {
+  "fn": "0x6b40a0",
+  "name": "?StartQuest@CQuest@@QAEXH@Z",
+  "sites": [
+   "0x6b4196",
+   "0x6b421e",
+   "0x6b4629",
+   "0x6b4846"
+  ]
+ },
+ {
+  "fn": "0x6c60a0",
+  "name": "?SaveQuickslotKeyMap@CQuickslotKeyMappedMan@@QAEXXZ",
+  "sites": [
+   "0x6c60d0"
+  ]
+ },
+ {
+  "fn": "0x6cd4e0",
+  "name": "?FindHitReactor@CReactorPool@@QAEHXZ",
+  "sites": [
+   "0x6cda10"
+  ]
+ },
+ {
+  "fn": "0x6cdab0",
+  "name": "?FindSkillReactor@CReactorPool@@QAEXJ@Z",
+  "sites": [
+   "0x6cdc84"
+  ]
+ },
+ {
+  "fn": "0x6cded0",
+  "name": "?FindTouchReactorAroundLocalUser@CReactorPool@@QAEXAAV?$ZMap@JJJ@@@Z",
+  "sites": [
+   "0x6ce1f9",
+   "0x6ce257"
+  ]
+ },
+ {
+  "fn": "0x6d37b0",
+  "name": "?SendRepairDurabilityAll@CRepairDurabilityDlg@@AAEXXZ",
+  "sites": [
+   "0x6d37dc"
+  ]
+ },
+ {
+  "fn": "0x6d3980",
+  "name": "?SendRepairDurability@CRepairDurabilityDlg@@AAEXXZ",
+  "sites": [
+   "0x6d39b8"
+  ]
+ },
+ {
+  "fn": "0x6d6860",
+  "name": "?OnBtStart@CRPSGameDlg@@IAEXXZ",
+  "sites": [
+   "0x6d688f"
+  ]
+ },
+ {
+  "fn": "0x6d6900",
+  "name": "?OnBtContinue@CRPSGameDlg@@IAEXXZ",
+  "sites": [
+   "0x6d692f"
+  ]
+ },
+ {
+  "fn": "0x6d69a0",
+  "name": "?OnBtRetry@CRPSGameDlg@@IAEXXZ",
+  "sites": [
+   "0x6d69cf"
+  ]
+ },
+ {
+  "fn": "0x6d6a40",
+  "name": "?OnBtExit@CRPSGameDlg@@IAEXXZ",
+  "sites": [
+   "0x6d6a6f"
+  ]
+ },
+ {
+  "fn": "0x6d6ae0",
+  "name": "?SendSelection@CRPSGameDlg@@IAEXJ@Z",
+  "sites": [
+   "0x6d6b10"
+  ]
+ },
+ {
+  "fn": "0x6d8e80",
+  "name": "?Update@CRPSGameDlg@@UAEXXZ",
+  "sites": [
+   "0x6d8fc0"
+  ]
+ },
+ {
+  "fn": "0x6dbe50",
+  "name": "?OnAskSlideMenu@CScriptMan@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x6dbfef"
+  ]
+ },
+ {
+  "fn": "0x6dc110",
+  "name": "?OnSay@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dc267"
+  ]
+ },
+ {
+  "fn": "0x6dc310",
+  "name": "?OnSayImage@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dc47c"
+  ]
+ },
+ {
+  "fn": "0x6dc5a0",
+  "name": "?OnAskYesNo@CScriptMan@@IAEXJJAAVCInPacket@@EHH@Z",
+  "sites": [
+   "0x6dc6cf"
+  ]
+ },
+ {
+  "fn": "0x6dc790",
+  "name": "?OnAskText@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dc8ed"
+  ]
+ },
+ {
+  "fn": "0x6dc9c0",
+  "name": "?OnAskBoxText@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dcb21"
+  ]
+ },
+ {
+  "fn": "0x6dcc00",
+  "name": "?OnAskNumber@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dcd54"
+  ]
+ },
+ {
+  "fn": "0x6dce00",
+  "name": "?OnAskMenu@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+  "sites": [
+   "0x6dcf21"
+  ]
+ },
+ {
+  "fn": "0x6dcff0",
+  "name": "?OnAskAvatar@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+  "sites": [
+   "0x6dd16c"
+  ]
+ },
+ {
+  "fn": "0x6dd340",
+  "name": "?OnAskMembershopAvatar@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+  "sites": [
+   "0x6dd4b0"
+  ]
+ },
+ {
+  "fn": "0x6dd6e0",
+  "name": "?OnAskPet@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+  "sites": [
+   "0x6dd737"
+  ]
+ },
+ {
+  "fn": "0x6ddbe0",
+  "name": "?OnAskPetAll@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+  "sites": [
+   "0x6ddc45"
+  ]
+ },
+ {
+  "fn": "0x6e4b80",
+  "name": "?SetRet@CShopDlg@@UAEXJ@Z",
+  "sites": [
+   "0x6e4bac"
+  ]
+ },
+ {
+  "fn": "0x6e4e90",
+  "name": "?SendRechargeRequest@CShopDlg@@IAEXXZ",
+  "sites": [
+   "0x6e4fd3"
+  ]
+ },
+ {
+  "fn": "0x6e7260",
+  "name": "?SendSellRequest@CShopDlg@@IAEXXZ",
+  "sites": [
+   "0x6e7455"
+  ]
+ },
+ {
+  "fn": "0x6e9bb0",
+  "name": "?SendBuyRequest@CShopDlg@@IAEXXZ",
+  "sites": [
+   "0x6ea5b1"
+  ]
+ },
+ {
+  "fn": "0x71a0a0",
+  "name": "?OnSetField@CStage@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x71a53d",
+   "0x71ad0b"
+  ]
+ },
+ {
+  "fn": "0x743eb0",
+  "name": "?SetRet@CStoreBankDlg@@UAEXJ@Z",
+  "sites": [
+   "0x743edc"
+  ]
+ },
+ {
+  "fn": "0x743f70",
+  "name": "?SendCalculateFeeRequest@CStoreBankDlg@@IAEXXZ",
+  "sites": [
+   "0x743fa5"
+  ]
+ },
+ {
+  "fn": "0x7449f0",
+  "name": "?SendGetAllRequest@CStoreBankDlg@@IAEXJJ@Z",
+  "sites": [
+   "0x744ae0"
+  ]
+ },
+ {
+  "fn": "0x74ad90",
+  "name": "?TryDoingHeal@CSummoned@@QAEHJ@Z",
+  "sites": [
+   "0x74ae78"
+  ]
+ },
+ {
+  "fn": "0x74af50",
+  "name": "?TryDoingGiveBuff@CSummoned@@QAEXJ@Z",
+  "sites": [
+   "0x74b2fd"
+  ]
+ },
+ {
+  "fn": "0x74b3e0",
+  "name": "?TryDoingHealingRobot@CSummoned@@QAEHKAAUtagRECT@@@Z",
+  "sites": [
+   "0x74b589"
+  ]
+ },
+ {
+  "fn": "0x74b640",
+  "name": "?TryDoingSummon@CSummoned@@QAEXJ@Z",
+  "sites": [
+   "0x74b67c"
+  ]
+ },
+ {
+  "fn": "0x74b730",
+  "name": "?SetDamaged@CSummoned@@QAEXJJJPAVCMob@@JJ@Z",
+  "sites": [
+   "0x74bb6a"
+  ]
+ },
+ {
+  "fn": "0x74c170",
+  "name": "?SendRemove@CSummoned@@QAEXXZ",
+  "sites": [
+   "0x74c19f"
+  ]
+ },
+ {
+  "fn": "0x7624b0",
+  "name": "?TryEnterTownPortal@CTownPortalPool@@QAEXUtagPOINT@@@Z",
+  "sites": [
+   "0x762575"
+  ]
+ },
+ {
+  "fn": "0x7639a0",
+  "name": "?SetRet@CTradingRoomDlg@@UAEXJ@Z",
+  "sites": [
+   "0x7639d9"
+  ]
+ },
+ {
+  "fn": "0x763f20",
+  "name": "?OnTrade@CTradingRoomDlg@@IAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x763fa4"
+  ]
+ },
+ {
+  "fn": "0x7641d0",
+  "name": "?PutItem@CTradingRoomDlg@@QAEHV?$ZRef@UGW_ItemSlotBase@@@@JJJJ@Z",
+  "sites": [
+   "0x764377"
+  ]
+ },
+ {
+  "fn": "0x764450",
+  "name": "?PutMoney@CTradingRoomDlg@@IAEXXZ",
+  "sites": [
+   "0x76463d"
+  ]
+ },
+ {
+  "fn": "0x7646b0",
+  "name": "?Trade@CTradingRoomDlg@@IAEXXZ",
+  "sites": [
+   "0x7647f8"
+  ]
+ },
+ {
+  "fn": "0x767250",
+  "name": "?SetRet@CTrunkDlg@@UAEXJ@Z",
+  "sites": [
+   "0x76727c"
+  ]
+ },
+ {
+  "fn": "0x767310",
+  "name": "?SendSortItemRequest@CTrunkDlg@@IAEXXZ",
+  "sites": [
+   "0x767345"
+  ]
+ },
+ {
+  "fn": "0x768570",
+  "name": "?SendPutItemRequest@CTrunkDlg@@IAEXXZ",
+  "sites": [
+   "0x768837"
+  ]
+ },
+ {
+  "fn": "0x7688e0",
+  "name": "?SendGetMoneyRequest@CTrunkDlg@@IAEXXZ",
+  "sites": [
+   "0x768974"
+  ]
+ },
+ {
+  "fn": "0x7689e0",
+  "name": "?SendPutMoneyRequest@CTrunkDlg@@IAEXXZ",
+  "sites": [
+   "0x768aeb"
+  ]
+ },
+ {
+  "fn": "0x769e00",
+  "name": "?SendGetItemRequest@CTrunkDlg@@IAEXXZ",
+  "sites": [
+   "0x769f96"
+  ]
+ },
+ {
+  "fn": "0x76b190",
+  "name": "?SendLoadAccountMoreInfoRequest@CUIAccountMoreInfo@@QAEXXZ",
+  "sites": [
+   "0x76b1bc"
+  ]
+ },
+ {
+  "fn": "0x76b210",
+  "name": "?SendSaveAccountMoreInfoRequest@CUIAccountMoreInfo@@QAEXXZ",
+  "sites": [
+   "0x76b387"
+  ]
+ },
+ {
+  "fn": "0x76e200",
+  "name": "?SendRegisterPacket@CUIAdminShopWishList@@QAEXJ@Z",
+  "sites": [
+   "0x76e229"
+  ]
+ },
+ {
+  "fn": "0x777d20",
+  "name": "?SendCheckDuplicateIDPacket@CUICharacterSaleDlg@@QAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x777de5"
+  ]
+ },
+ {
+  "fn": "0x77a240",
+  "name": "?SendCreateNewCharacter@CUICharacterSaleDlg@@AAEXXZ",
+  "sites": [
+   "0x77a2d4"
+  ]
+ },
+ {
+  "fn": "0x78c940",
+  "name": "?SetRet@CUIAntiMacro@@UAEXJ@Z",
+  "sites": [
+   "0x78ca3d"
+  ]
+ },
+ {
+  "fn": "0x78dd80",
+  "name": "?SetRet@CUIAdminAntiMacro@@UAEXJ@Z",
+  "sites": [
+   "0x78de7d"
+  ]
+ },
+ {
+  "fn": "0x7900d0",
+  "name": "?SendResult@CUIInitialQuiz@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x790114"
+  ]
+ },
+ {
+  "fn": "0x791cf0",
+  "name": "?SendResult@CUISpeedQuiz@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x791d34"
+  ]
+ },
+ {
+  "fn": "0x7b8000",
+  "name": "?SendMyInfoRequest@CUIFindFriend@@QAEXXZ",
+  "sites": [
+   "0x7b802c"
+  ]
+ },
+ {
+  "fn": "0x7b8a80",
+  "name": "?SetDetailInfo@CUIFindFriendDetail@@QAEXV?$ZRef@USearchInfo@@@@@Z",
+  "sites": [
+   "0x7b8b77"
+  ]
+ },
+ {
+  "fn": "0x7bb4c0",
+  "name": "?SendSearchRequest@CUIFindFriend@@QAEXXZ",
+  "sites": [
+   "0x7bb584"
+  ]
+ },
+ {
+  "fn": "0x7bef50",
+  "name": "?Update@CUIItemUpgrade@@UAEXXZ",
+  "sites": [
+   "0x7befb6"
+  ]
+ },
+ {
+  "fn": "0x7c3680",
+  "name": "?SendLoadListRequest@CUIGuildBBS@@QAEXXZ",
+  "sites": [
+   "0x7c36af"
+  ]
+ },
+ {
+  "fn": "0x7c3710",
+  "name": "?SendViewEntryRequest@CUIGuildBBS@@QAEXXZ",
+  "sites": [
+   "0x7c373f"
+  ]
+ },
+ {
+  "fn": "0x7c3b70",
+  "name": "?OnCommentDelete@CUIGuildBBS@@QAEXH@Z",
+  "sites": [
+   "0x7c3bd1"
+  ]
+ },
+ {
+  "fn": "0x7c4250",
+  "name": "?OnRegister@CUIGuildBBS@@QAEXHH@Z",
+  "sites": [
+   "0x7c442b"
+  ]
+ },
+ {
+  "fn": "0x7c4530",
+  "name": "?OnComment@CUIGuildBBS@@QAEXXZ",
+  "sites": [
+   "0x7c461c"
+  ]
+ },
+ {
+  "fn": "0x7c6520",
+  "name": "?OnDelete@CUIGuildBBS@@QAEXXZ",
+  "sites": [
+   "0x7c6581"
+  ]
+ },
+ {
+  "fn": "0x7ca660",
+  "name": "?OnButtonClicked@CUIIncubator@@UAEXI@Z",
+  "sites": [
+   "0x7ca760"
+  ]
+ },
+ {
+  "fn": "0x7d58d0",
+  "name": "?RequestItemMake@CUIItemMaker@@IAEHXZ",
+  "sites": [
+   "0x7d5986"
+  ]
+ },
+ {
+  "fn": "0x7d7ef0",
+  "name": "?_SendConsumeCashItemUseRequest@CUIKarmaDlg@@AAEHXZ",
+  "sites": [
+   "0x7d7fa0"
+  ]
+ },
+ {
+  "fn": "0x7de690",
+  "name": "?OnButtonClicked@CUILogoutGift@@UAEXI@Z",
+  "sites": [
+   "0x7de6dc"
+  ]
+ },
+ {
+  "fn": "0x7f03f0",
+  "name": "?OnDestroy@CUIMessenger@@UAEXXZ",
+  "sites": [
+   "0x7f042a"
+  ]
+ },
+ {
+  "fn": "0x7f2cb0",
+  "name": "?OnInvite@CUIMessenger@@SAXAAVCInPacket@@@Z",
+  "sites": [
+   "0x7f2d54"
+  ]
+ },
+ {
+  "fn": "0x7f2ff0",
+  "name": "?Update@CUIMessenger@@UAEXXZ",
+  "sites": [
+   "0x7f30be",
+   "0x7f31d9"
+  ]
+ },
+ {
+  "fn": "0x7f5820",
+  "name": "?SendInviteMsg@CUIMessenger@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0x7f5911"
+  ]
+ },
+ {
+  "fn": "0x7f59d0",
+  "name": "?OnCreate@CUIMessenger@@UAEXPAX@Z",
+  "sites": [
+   "0x7f5c14"
+  ]
+ },
+ {
+  "fn": "0x7f6140",
+  "name": "?ProcessChat@CUIMessenger@@IAEXXZ",
+  "sites": [
+   "0x7f62ab"
+  ]
+ },
+ {
+  "fn": "0x7f8410",
+  "name": "?OnMouseButton@CUIMiniMap@@UAEXIIJJ@Z",
+  "sites": [
+   "0x7f84e8"
+  ]
+ },
+ {
+  "fn": "0x80b4a0",
+  "name": "?RequestSend@CUIMonsterCarnival@@QAEXXZ",
+  "sites": [
+   "0x80b514"
+  ]
+ },
+ {
+  "fn": "0x812b60",
+  "name": "?SendPartyAdverRequestPacket@TabPartyAdver@@AAEXXZ",
+  "sites": [
+   "0x812b98"
+  ]
+ },
+ {
+  "fn": "0x812ca0",
+  "name": "?RequestAdverRemoveFromNotiList@TabPartyAdver@@AAEXXZ",
+  "sites": [
+   "0x812ccc"
+  ]
+ },
+ {
+  "fn": "0x812e90",
+  "name": "?SendAdverDeletePacket@TabPartyAdver@@AAEXXZ",
+  "sites": [
+   "0x812ebc"
+  ]
+ },
+ {
+  "fn": "0x813c90",
+  "name": "?SendPartyRegistCommitPacket@TabPartyAdver@@AAEXXZ",
+  "sites": [
+   "0x813cc0"
+  ]
+ },
+ {
+  "fn": "0x814460",
+  "name": "?SendPartyApplyPacketTo@TabPartyAdver@@AAEXJ@Z",
+  "sites": [
+   "0x8147ae"
+  ]
+ },
+ {
+  "fn": "0x81cad0",
+  "name": "?RequestReward@CUIPQReward@@QAEXXZ",
+  "sites": [
+   "0x81caff"
+  ]
+ },
+ {
+  "fn": "0x81cbb0",
+  "name": "?SelectReward@CUIPQReward@@QAEHJ@Z",
+  "sites": [
+   "0x81cbfe"
+  ]
+ },
+ {
+  "fn": "0x834c90",
+  "name": "?OnButtonClicked@CUIQuestInfoDetail@@UAEXI@Z",
+  "sites": [
+   "0x834eea"
+  ]
+ },
+ {
+  "fn": "0x838cf0",
+  "name": "?SendPutItem@CUIRaiseWnd@@EAEHJJJ@Z",
+  "sites": [
+   "0x838d1c"
+  ]
+ },
+ {
+  "fn": "0x838d90",
+  "name": "?SendPutItem@CUIRaisePieceWnd@@EAEHJJJ@Z",
+  "sites": [
+   "0x838dbc"
+  ]
+ },
+ {
+  "fn": "0x839740",
+  "name": "??1CUIRaiseWndBase@@UAE@XZ",
+  "sites": [
+   "0x839790"
+  ]
+ },
+ {
+  "fn": "0x83acc0",
+  "name": "?OnCreate@CUIRaiseWndBase@@UAEXPAX@Z",
+  "sites": [
+   "0x83afce"
+  ]
+ },
+ {
+  "fn": "0x83b7c0",
+  "name": "??0CUIRaiseWndBase@@QAE@JJJAAV?$ZXString@G@@AAV?$ZXString@D@@AAV?$ZArray@V?$ZXString@D@@@@AAV?$ZArray@J@@@Z",
+  "sites": [
+   "0x83ba72"
+  ]
+ },
+ {
+  "fn": "0x848b90",
+  "name": "?OnCreate@CUIShopScanner@@UAEXPAX@Z",
+  "sites": [
+   "0x848bdf"
+  ]
+ },
+ {
+  "fn": "0x848e80",
+  "name": "?OnButtonClicked@CUIShopScanResult@@UAEXI@Z",
+  "sites": [
+   "0x848ee6"
+  ]
+ },
+ {
+  "fn": "0x87b3e0",
+  "name": "?SendCoupleMessage@CUIStatusBar@@IAEXABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x87b4ef"
+  ]
+ },
+ {
+  "fn": "0x87f7f0",
+  "name": "?SendGroupMessage@CUIStatusBar@@IAEXJABV?$ZXString@D@@@Z",
+  "sites": [
+   "0x87fbff"
+  ]
+ },
+ {
+  "fn": "0x8aa1a0",
+  "name": "?UnreleaseEquipItem@CUIUnreleaseDlg@@QAEHXZ",
+  "sites": [
+   "0x8aa3d1"
+  ]
+ },
+ {
+  "fn": "0x8ba5b0",
+  "name": "?OnGradeChange@CTabGuildAlliance@@QAEXH@Z",
+  "sites": [
+   "0x8ba5fd"
+  ]
+ },
+ {
+  "fn": "0x8ba670",
+  "name": "?OnChangeMaster@CTabGuildAlliance@@QAEXXZ",
+  "sites": [
+   "0x8ba6bd"
+  ]
+ },
+ {
+  "fn": "0x8bbcc0",
+  "name": "?OnWithdraw@CTabGuildAlliance@@QAEXXZ",
+  "sites": [
+   "0x8bbd1a"
+  ]
+ },
+ {
+  "fn": "0x8bf710",
+  "name": "?OnKick@CTabGuildAlliance@@QAEXXZ",
+  "sites": [
+   "0x8bf8b0"
+  ]
+ },
+ {
+  "fn": "0x8cc9c0",
+  "name": "?OnInvite@CTabGuildAlliance@@QAEXXZ",
+  "sites": [
+   "0x8ccaa9"
+  ]
+ },
+ {
+  "fn": "0x8cccf0",
+  "name": "?OnSetNotice@CTabGuildAlliance@@QAEXXZ",
+  "sites": [
+   "0x8cce76"
+  ]
+ },
+ {
+  "fn": "0x8cf4f0",
+  "name": "?OnSaveGradeName@CWndAllianceGrade@@QAEXXZ",
+  "sites": [
+   "0x8cf61b"
+  ]
+ },
+ {
+  "fn": "0x8dcb10",
+  "name": "?SendRequestAuthKey@CUIWebEvent@@IAEXXZ",
+  "sites": [
+   "0x8dcb3f"
+  ]
+ },
+ {
+  "fn": "0x908320",
+  "name": "?RequestUpgradeTombEffect@CUserLocal@@QAEXXZ",
+  "sites": [
+   "0x90835a"
+  ]
+ },
+ {
+  "fn": "0x908d50",
+  "name": "?SendBanMapByMobRequest@CUserLocal@@IAEXK@Z",
+  "sites": [
+   "0x908d79"
+  ]
+ },
+ {
+  "fn": "0x909070",
+  "name": "?RequestIncCombo@CUserLocal@@QAEXXZ",
+  "sites": [
+   "0x9090a6"
+  ]
+ },
+ {
+  "fn": "0x909d70",
+  "name": "?SendRepeatEffectRemoveRequest@CUserLocal@@QAEXXZ",
+  "sites": [
+   "0x909d9c"
+  ]
+ },
+ {
+  "fn": "0x90df50",
+  "name": "?ThrowGrenade@CUserLocal@@MAEXJJJ@Z",
+  "sites": [
+   "0x90e054"
+  ]
+ },
+ {
+  "fn": "0x90e6d0",
+  "name": "?UpdateClientTimer@CUserLocal@@AAEXJ@Z",
+  "sites": [
+   "0x90e790"
+  ]
+ },
+ {
+  "fn": "0x90f0e0",
+  "name": "?OnAskAPSPEvent@CUserLocal@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x90f175"
+  ]
+ },
+ {
+  "fn": "0x90f6d0",
+  "name": "?HandleXKeyDown@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x90f8d5"
+  ]
+ },
+ {
+  "fn": "0x911a60",
+  "name": "?HandleRButtonClk@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x911c12"
+  ]
+ },
+ {
+  "fn": "0x912f90",
+  "name": "?TryDoingSmoothingMovingShootAttackPrepare@CUserLocal@@IAEHPBUSKILLENTRY@@JJ@Z",
+  "sites": [
+   "0x913605"
+  ]
+ },
+ {
+  "fn": "0x913690",
+  "name": "?TryRegisterTeleport@CUserLocal@@IAEHPBUSKILLENTRY@@JPBD1H@Z",
+  "sites": [
+   "0x91387e"
+  ]
+ },
+ {
+  "fn": "0x918c20",
+  "name": "?UpdatePassiveSkillData@CUserLocal@@QAEXH@Z",
+  "sites": [
+   "0x919009"
+  ]
+ },
+ {
+  "fn": "0x919a10",
+  "name": "?CheckPortal_Collision@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x919b07"
+  ]
+ },
+ {
+  "fn": "0x919e50",
+  "name": "?HandleUpKeyDown@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x91a04b"
+  ]
+ },
+ {
+  "fn": "0x92a240",
+  "name": "?TryDoingMagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJJ@Z",
+  "sites": [
+   "0x92dc5d"
+  ]
+ },
+ {
+  "fn": "0x9321f0",
+  "name": "?TalkToNpc@CUserLocal@@QAEXV?$ZRef@VCNpc@@@@@Z",
+  "sites": [
+   "0x93224d"
+  ]
+ },
+ {
+  "fn": "0x933920",
+  "name": "?HandleLButtonClk@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x933979"
+  ]
+ },
+ {
+  "fn": "0x933b90",
+  "name": "?HandleLButtonDblClk@CUserLocal@@IAEXXZ",
+  "sites": [
+   "0x933d80",
+   "0x933ea3",
+   "0x93407b"
+  ]
+ },
+ {
+  "fn": "0x9343c0",
+  "name": "?SetDamaged@CUserLocal@@UAEXJJJKPAVCMob@@JJJHH@Z",
+  "sites": [
+   "0x936250"
+  ]
+ },
+ {
+  "fn": "0x9369f0",
+  "name": "?OnKey@CUserLocal@@QAEXII@Z",
+  "sites": [
+   "0x936c37",
+   "0x936e31"
+  ]
+ },
+ {
+  "fn": "0x937330",
+  "name": "?Update@CUserLocal@@UAEXXZ",
+  "sites": [
+   "0x9388be",
+   "0x938a30",
+   "0x939459",
+   "0x939ab6"
+  ]
+ },
+ {
+  "fn": "0x93a830",
+  "name": "?DoActiveSkill_Heal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93a99d"
+  ]
+ },
+ {
+  "fn": "0x93aeb0",
+  "name": "?SendSkillEffectRequest@CUserLocal@@QAEXJJH@Z",
+  "sites": [
+   "0x93aed9"
+  ]
+ },
+ {
+  "fn": "0x93af50",
+  "name": "?TryDoingSwallowAbsorb@CUserLocal@@QAEHPBUSKILLENTRY@@JJ@Z",
+  "sites": [
+   "0x93b08b"
+  ]
+ },
+ {
+  "fn": "0x93bb90",
+  "name": "?DoActiveSkill_OpenGate@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93bd33"
+  ]
+ },
+ {
+  "fn": "0x93be00",
+  "name": "?DoActiveSkill_TownPortal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93c034"
+  ]
+ },
+ {
+  "fn": "0x93c0f0",
+  "name": "?DoActiveSkill_Summon@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93c853"
+  ]
+ },
+ {
+  "fn": "0x93cc30",
+  "name": "?DoActiveSkill_SmokeShell@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93cdc1"
+  ]
+ },
+ {
+  "fn": "0x93cec0",
+  "name": "?DoActiveSkill_Flying@CUserLocal@@IAEHJ@Z",
+  "sites": [
+   "0x93cfb5"
+  ]
+ },
+ {
+  "fn": "0x93d0d0",
+  "name": "?DoActiveSkill_DamageMeter@CUserLocal@@IAEHJ@Z",
+  "sites": [
+   "0x93d223"
+  ]
+ },
+ {
+  "fn": "0x93d730",
+  "name": "?SendSkillCancelRequest@CUserLocal@@QAEXJ@Z",
+  "sites": [
+   "0x93d7bb"
+  ]
+ },
+ {
+  "fn": "0x93db00",
+  "name": "?DoActiveSkill_MobCapture@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93dfed"
+  ]
+ },
+ {
+  "fn": "0x93e0e0",
+  "name": "?DoActiveSkill_StatChangeAdmin@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93e419"
+  ]
+ },
+ {
+  "fn": "0x93e5c0",
+  "name": "?DoActiveSkill_RecoveryAura@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93e7dc"
+  ]
+ },
+ {
+  "fn": "0x93e930",
+  "name": "?SendSkillUseRequest@CUserLocal@@QAEHPBUSKILLENTRY@@JKJQAKJJ@Z",
+  "sites": [
+   "0x93ec9a"
+  ]
+ },
+ {
+  "fn": "0x93eff0",
+  "name": "?DoActiveSkill_SummonMonster@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x93f44e"
+  ]
+ },
+ {
+  "fn": "0x940570",
+  "name": "?TryDoingMonsterMagnet@CUserLocal@@IAEHPBUSKILLENTRY@@JJ@Z",
+  "sites": [
+   "0x940d0e"
+  ]
+ },
+ {
+  "fn": "0x940f20",
+  "name": "?DoAntiMacroSkill@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+  "sites": [
+   "0x941091"
+  ]
+ },
+ {
+  "fn": "0x941710",
+  "name": "?DoActiveSkill_Prepare@CUserLocal@@IAEHPBUSKILLENTRY@@JI@Z",
+  "sites": [
+   "0x94215e"
+  ]
+ },
+ {
+  "fn": "0x96aa40",
+  "name": "?OnButtonClicked@CUICashItemGachapon@@UAEXI@Z",
+  "sites": [
+   "0x96ab2a"
+  ]
+ },
+ {
+  "fn": "0x97a330",
+  "name": "?OnButtonClicked@CUICashGachapon@@UAEXI@Z",
+  "sites": [
+   "0x97a454"
+  ]
+ },
+ {
+  "fn": "0x996570",
+  "name": "?EndUpdateActive@CVecCtrlDragon@@MAEXXZ",
+  "sites": [
+   "0x9965b2"
+  ]
+ },
+ {
+  "fn": "0x99f5a0",
+  "name": "?EndUpdateActive@CVecCtrlPet@@MAEXXZ",
+  "sites": [
+   "0x99f5e5"
+  ]
+ },
+ {
+  "fn": "0x9a0700",
+  "name": "?EndUpdateActive@CVecCtrlSummoned@@MAEXXZ",
+  "sites": [
+   "0x9a075d"
+  ]
+ },
+ {
+  "fn": "0x9a6dd0",
+  "name": "??_ECWishListInputDlg@@W7AEPAXI@Z",
+  "sites": [
+   "0x9a6e0f",
+   "0x9a6ecf"
+  ]
+ },
+ {
+  "fn": "0x9a7140",
+  "name": "?SendPutItemRequest@CWishListGiveDlg@@IAEXXZ",
+  "sites": [
+   "0x9a7338"
+  ]
+ },
+ {
+  "fn": "0x9aba50",
+  "name": "?SendGetItemRequest@CWishListRecvDlg@@IAEXXZ",
+  "sites": [
+   "0x9abb0e"
+  ]
+ },
+ {
+  "fn": "0x9c7a80",
+  "name": "?SendBackupPacket@CWvsApp@@QAEXJK@Z",
+  "sites": [
+   "0x9c7ad0"
+  ]
+ },
+ {
+  "fn": "0x9c7b60",
+  "name": "?SendClearStackLog@CWvsApp@@QAEXJK@Z",
+  "sites": [
+   "0x9c7b9d"
+  ]
+ },
+ {
+  "fn": "0x9d4020",
+  "name": "?TryRecovery@CWvsContext@@IAEXXZ",
+  "sites": [
+   "0x9d45aa"
+  ]
+ },
+ {
+  "fn": "0x9d4870",
+  "name": "?CheckOpBoardHasNew@CWvsContext@@AAEXXZ",
+  "sites": [
+   "0x9d498a"
+  ]
+ },
+ {
+  "fn": "0x9d5b70",
+  "name": "?SendGatherItemRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9d5be6"
+  ]
+ },
+ {
+  "fn": "0x9d5c60",
+  "name": "?SendSortItemRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9d5cd6"
+  ]
+ },
+ {
+  "fn": "0x9d5d50",
+  "name": "?SendDropPickUpRequest@CWvsContext@@QAEXABUtagPOINT@@KK@Z",
+  "sites": [
+   "0x9d5e4e"
+  ]
+ },
+ {
+  "fn": "0x9d5f10",
+  "name": "?SendItemReleaseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d5f79"
+  ]
+ },
+ {
+  "fn": "0x9d6000",
+  "name": "?SendItemOptionUpgradeItemUseRequest@CWvsContext@@QAEXJJH@Z",
+  "sites": [
+   "0x9d606e"
+  ]
+ },
+ {
+  "fn": "0x9d6130",
+  "name": "?SendHyperUpgradeItemUseRequest@CWvsContext@@QAEXJJH@Z",
+  "sites": [
+   "0x9d619e"
+  ]
+ },
+ {
+  "fn": "0x9d6260",
+  "name": "?SendUpgradeItemUseRequest@CWvsContext@@QAEXJJHH@Z",
+  "sites": [
+   "0x9d62ce"
+  ]
+ },
+ {
+  "fn": "0x9d63a0",
+  "name": "?SendTamingMobFoodItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d6452"
+  ]
+ },
+ {
+  "fn": "0x9d64d0",
+  "name": "?SendUIOpenItemRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d655a"
+  ]
+ },
+ {
+  "fn": "0x9d65e0",
+  "name": "?SendSkillLearnItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d6677"
+  ]
+ },
+ {
+  "fn": "0x9d6740",
+  "name": "?SendGetUpFromChairRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9d67a4"
+  ]
+ },
+ {
+  "fn": "0x9d6810",
+  "name": "?SendRingDropRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9d683c"
+  ]
+ },
+ {
+  "fn": "0x9d6bc0",
+  "name": "?SendUseBoxGachaponItemRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d6be9"
+  ]
+ },
+ {
+  "fn": "0x9d6c50",
+  "name": "?SendLotteryItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d6cb5"
+  ]
+ },
+ {
+  "fn": "0x9d7340",
+  "name": "?SendUseGachaponRemoteRequest@CWvsContext@@QAEXJK@Z",
+  "sites": [
+   "0x9d736c"
+  ]
+ },
+ {
+  "fn": "0x9d73d0",
+  "name": "?SendDragonBallBoxRequest@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9d73fc"
+  ]
+ },
+ {
+  "fn": "0x9d7440",
+  "name": "?SendDragonBallSummonRequest@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9d74a4"
+  ]
+ },
+ {
+  "fn": "0x9d74f0",
+  "name": "?AskWhetherUsePamsSong@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9d754d"
+  ]
+ },
+ {
+  "fn": "0x9d9c10",
+  "name": "?SendChangeSlotPositionRequest@CWvsContext@@QAEXJJJJ@Z",
+  "sites": [
+   "0x9d9d2a"
+  ]
+ },
+ {
+  "fn": "0x9d9dd0",
+  "name": "?SendStatChangeItemCancelRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9d9ed4"
+  ]
+ },
+ {
+  "fn": "0x9d9f20",
+  "name": "?SendPetFoodItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9d9f91"
+  ]
+ },
+ {
+  "fn": "0x9da100",
+  "name": "?SendSitOnPortableChairRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9da269"
+  ]
+ },
+ {
+  "fn": "0x9da430",
+  "name": "?SendSelectNpcItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9da5b7"
+  ]
+ },
+ {
+  "fn": "0x9da630",
+  "name": "?SendInvitationQuery@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9da703"
+  ]
+ },
+ {
+  "fn": "0x9db1c0",
+  "name": "?SendExpUpItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9db3a8"
+  ]
+ },
+ {
+  "fn": "0x9db430",
+  "name": "?SendTempExpUseRequest@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9db5cf"
+  ]
+ },
+ {
+  "fn": "0x9dc280",
+  "name": "?SendMigrateToShopRequest@CWvsContext@@QAEXH@Z",
+  "sites": [
+   "0x9dc4aa"
+  ]
+ },
+ {
+  "fn": "0x9ddfe0",
+  "name": "?SendStatChangeItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9de379"
+  ]
+ },
+ {
+  "fn": "0x9de400",
+  "name": "?SendStatChangeItemUseRequestByPetQ@CWvsContext@@QAEXT_LARGE_INTEGER@@JJHEH@Z",
+  "sites": [
+   "0x9de4bd"
+  ]
+ },
+ {
+  "fn": "0x9de580",
+  "name": "?SendMobSummonItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9de714"
+  ]
+ },
+ {
+  "fn": "0x9de7a0",
+  "name": "?SendScriptRunItemRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9de840"
+  ]
+ },
+ {
+  "fn": "0x9de8c0",
+  "name": "?SendSkillResetItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9deaab"
+  ]
+ },
+ {
+  "fn": "0x9def50",
+  "name": "?SendMigrateToITCRequest@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9df125"
+  ]
+ },
+ {
+  "fn": "0x9e08c0",
+  "name": "?SendBridleItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9e0fd7"
+  ]
+ },
+ {
+  "fn": "0x9e10e0",
+  "name": "?SendShopScannerItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9e115e"
+  ]
+ },
+ {
+  "fn": "0x9e1410",
+  "name": "?SendEngagementRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9e15ea"
+  ]
+ },
+ {
+  "fn": "0x9e16e0",
+  "name": "?SendSendInvitaionRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9e189b"
+  ]
+ },
+ {
+  "fn": "0x9e19d0",
+  "name": "?SendWishListInput@CWvsContext@@QAEXPAV?$ZXString@D@@J@Z",
+  "sites": [
+   "0x9e19fe"
+  ]
+ },
+ {
+  "fn": "0x9e1a90",
+  "name": "?SendRequestSessionValue@CWvsContext@@QAEXV?$ZXString@D@@H@Z",
+  "sites": [
+   "0x9e1ac4"
+  ]
+ },
+ {
+  "fn": "0x9e6020",
+  "name": "?SendMapTransferItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9e60ae"
+  ]
+ },
+ {
+  "fn": "0x9e8120",
+  "name": "?UI_Menu@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9e8337"
+  ]
+ },
+ {
+  "fn": "0x9eb3e0",
+  "name": "?SendConsumeCashItemUseRequest@CWvsContext@@QAEXJJJV?$ZXString@D@@@Z",
+  "sites": [
+   "0x9eb4aa"
+  ]
+ },
+ {
+  "fn": "0x9f28e0",
+  "name": "?SendWaterOfLife@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9f290c"
+  ]
+ },
+ {
+  "fn": "0x9f2950",
+  "name": "?SendStatChangeRequestByItemOption@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9f2979"
+  ]
+ },
+ {
+  "fn": "0x9f2a00",
+  "name": "?SendStatChangeRequest@CWvsContext@@QAEXJJJ@Z",
+  "sites": [
+   "0x9f2a29"
+  ]
+ },
+ {
+  "fn": "0x9f2ab0",
+  "name": "?OnTemporaryStatReset@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x9f2ce6"
+  ]
+ },
+ {
+  "fn": "0x9f2d30",
+  "name": "?CheckTemporaryStatDuration@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9f2dae"
+  ]
+ },
+ {
+  "fn": "0x9f2e90",
+  "name": "?SendSkillUpRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9f2ef5"
+  ]
+ },
+ {
+  "fn": "0x9f2f70",
+  "name": "?SendCharacterInfoRequest@CWvsContext@@QAEXKHH@Z",
+  "sites": [
+   "0x9f3049"
+  ]
+ },
+ {
+  "fn": "0x9f30d0",
+  "name": "?SendRemoteShopOpenRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9f3102"
+  ]
+ },
+ {
+  "fn": "0x9f3830",
+  "name": "?OnMemoNotify_Receive@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0x9f3883"
+  ]
+ },
+ {
+  "fn": "0x9f3b90",
+  "name": "?SendMapTransferRequest@CWvsContext@@QAEXJKH@Z",
+  "sites": [
+   "0x9f3bba"
+  ]
+ },
+ {
+  "fn": "0x9f3cf0",
+  "name": "?ResignQuest@CWvsContext@@QAEXG@Z",
+  "sites": [
+   "0x9f3db4"
+  ]
+ },
+ {
+  "fn": "0x9f4070",
+  "name": "?CheckDarkForce@CWvsContext@@QAEXH@Z",
+  "sites": [
+   "0x9f426e"
+  ]
+ },
+ {
+  "fn": "0x9f42c0",
+  "name": "?CheckDragonFury@CWvsContext@@QAEXH@Z",
+  "sites": [
+   "0x9f44bd"
+  ]
+ },
+ {
+  "fn": "0x9f4690",
+  "name": "?SendFollowRequestApply@CWvsContext@@QAEXH@Z",
+  "sites": [
+   "0x9f46c8"
+  ]
+ },
+ {
+  "fn": "0x9f61c0",
+  "name": "?SendAbilityUpRequest@CWvsContext@@QAEXK@Z",
+  "sites": [
+   "0x9f6330"
+  ]
+ },
+ {
+  "fn": "0x9f63b0",
+  "name": "?SendAbilityUpRequest@CWvsContext@@QAEXABV?$ZArray@UStatPair@@@@@Z",
+  "sites": [
+   "0x9f6535"
+  ]
+ },
+ {
+  "fn": "0x9f6650",
+  "name": "?SendDropMoneyRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9f6769"
+  ]
+ },
+ {
+  "fn": "0x9f67e0",
+  "name": "?SendGivePopularityRequest@CWvsContext@@QAEXPBDH@Z",
+  "sites": [
+   "0x9f691f"
+  ]
+ },
+ {
+  "fn": "0x9f6980",
+  "name": "?SendActivatePetRequest@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9f6b1d",
+   "0x9f6e4c"
+  ]
+ },
+ {
+  "fn": "0x9f9320",
+  "name": "?SendEmotionChange@CWvsContext@@QAEXJHJ@Z",
+  "sites": [
+   "0x9f93a7"
+  ]
+ },
+ {
+  "fn": "0x9f9420",
+  "name": "?SendActiveEffectItemChange@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0x9f94d4"
+  ]
+ },
+ {
+  "fn": "0x9f9530",
+  "name": "?SendFollowCharacterRequest@CWvsContext@@QAEXKHH@Z",
+  "sites": [
+   "0x9f961a"
+  ]
+ },
+ {
+  "fn": "0x9fab90",
+  "name": "?SendEntrustedShopCheckRequest@CWvsContext@@QAEXJJT_LARGE_INTEGER@@@Z",
+  "sites": [
+   "0x9fada7"
+  ]
+ },
+ {
+  "fn": "0x9fb090",
+  "name": "?OnSetPassenserRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0x9fb0ef"
+  ]
+ },
+ {
+  "fn": "0x9fbff0",
+  "name": "?SendCreateMiniGameRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9fc3f6"
+  ]
+ },
+ {
+  "fn": "0x9fc570",
+  "name": "?SendOpenShopRequest@CWvsContext@@QAEXJJH@Z",
+  "sites": [
+   "0x9fc94f"
+  ]
+ },
+ {
+  "fn": "0x9fca70",
+  "name": "?SendPortalScrollUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9fcda2"
+  ]
+ },
+ {
+  "fn": "0x9ff270",
+  "name": "?SendAntiMacroItemUseRequest@CWvsContext@@QAEXJJ@Z",
+  "sites": [
+   "0x9ff4e5"
+  ]
+ },
+ {
+  "fn": "0x9ffcb0",
+  "name": "?OnEntrustedShopCheckResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa000f2"
+  ]
+ },
+ {
+  "fn": "0xa00bb0",
+  "name": "?OnMarriageRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa00cb5"
+  ]
+ },
+ {
+  "fn": "0xa02fc0",
+  "name": "?OnTemporaryStatSet@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa0389d"
+  ]
+ },
+ {
+  "fn": "0xa05fb0",
+  "name": "?SendClaimRequest@CWvsContext@@QAEXAAV?$ZArray@V?$ZXString@D@@@@V?$ZXString@D@@@Z",
+  "sites": [
+   "0xa065dc"
+  ]
+ },
+ {
+  "fn": "0xa09680",
+  "name": "?SendBoobyTrapAlert@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0xa096ac"
+  ]
+ },
+ {
+  "fn": "0xa09860",
+  "name": "?SendFamilyInfoRequest@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0xa0988c"
+  ]
+ },
+ {
+  "fn": "0xa098d0",
+  "name": "?SendUnregisterParent@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0xa09905"
+  ]
+ },
+ {
+  "fn": "0xa099e0",
+  "name": "?SendUnregisterJunior@CWvsContext@@QAEXK@Z",
+  "sites": [
+   "0xa09a15"
+  ]
+ },
+ {
+  "fn": "0xa09c50",
+  "name": "?SendFamilyInviteResult@CWvsContext@@QAEXV?$ZXString@D@@KH@Z",
+  "sites": [
+   "0xa09c8d"
+  ]
+ },
+ {
+  "fn": "0xa09d20",
+  "name": "?SendFamilyChartRequest@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0xa09d54"
+  ]
+ },
+ {
+  "fn": "0xa09dd0",
+  "name": "?SendRegisterJunior@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0xa09e5c"
+  ]
+ },
+ {
+  "fn": "0xa09ee0",
+  "name": "?SendUseFamilyPrivilege@CWvsContext@@QAEXJ@Z",
+  "sites": [
+   "0xa09f1e"
+  ]
+ },
+ {
+  "fn": "0xa0a0d0",
+  "name": "?SendSetFamilyPrecept@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+  "sites": [
+   "0xa0a10d"
+  ]
+ },
+ {
+  "fn": "0xa0b0a0",
+  "name": "?OnFamilySummonRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa0b14c"
+  ]
+ },
+ {
+  "fn": "0xa0d3b0",
+  "name": "?OnGuildResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa0d739",
+   "0xa0d928",
+   "0xa0dc25"
+  ]
+ },
+ {
+  "fn": "0xa0ef60",
+  "name": "?OnAllianceResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa0f3f1",
+   "0xa0f606"
+  ]
+ },
+ {
+  "fn": "0xa0ffd0",
+  "name": "?SendCancelPartyWanted@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0xa0fffc"
+  ]
+ },
+ {
+  "fn": "0xa10100",
+  "name": "?SendPartyWanted@CWvsContext@@QAEXKKKK@Z",
+  "sites": [
+   "0xa1012c"
+  ]
+ },
+ {
+  "fn": "0xa10240",
+  "name": "?LoadFriend@CWvsContext@@QAEXXZ",
+  "sites": [
+   "0xa1026c"
+  ]
+ },
+ {
+  "fn": "0xa10ab0",
+  "name": "?OnPartyResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa10c3e",
+   "0xa10cfa",
+   "0xa10d39",
+   "0xa11901"
+  ]
+ },
+ {
+  "fn": "0xa1ac10",
+  "name": "?OnCheckClientIntegrityRequest@CSecurityClient@@AAEXAAVCInPacket@@@Z",
+  "sites": [
+   "0xa1acd9"
+  ]
+ },
+ {
+  "fn": "0xa1d2a0",
+  "name": "?_SendNewYearCard@CUINewYearCardSenderDlg@@IAEHXZ",
+  "sites": [
+   "0xa1d3ad"
+  ]
+ },
+ {
+  "fn": "0xa1ec70",
+  "name": "?_SendMorphRequest@CUIRandomMorphDlg@@IAEHXZ",
+  "sites": [
+   "0xa1ed6c"
+  ]
+ }
+]

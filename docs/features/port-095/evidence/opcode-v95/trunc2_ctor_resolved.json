@@ -1,0 +1,149 @@
+[
+ {
+  "fn": "0x5dbef0",
+  "addr": "0x5dc34c",
+  "prev": [
+   "jmp short loc_5DC346",
+   "mov edi, 9; jumptable 005DC2F4 default case, cases 20001,20004,20005,20011-20014,20016-20020,20022-20024,20029,20032-20035",
+   "push 23h ; '#'; nType",
+   "lea this, [esp+4A8h+var_454]; this"
+  ],
+  "op": 35,
+  "push_line": "push 23h ; '#'; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x627e8f",
+  "prev": [
+   "mov large fs:0, eax",
+   "mov esi, this",
+   "push 90h; nType",
+   "lea this, [esp+2Ch+oPacket]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x62817b",
+  "prev": [
+   "add esp, 14h",
+   "cmp eax, 6",
+   "jnz short loc_6281BE",
+   "push 90h; nType",
+   "lea this, [esp+2Ch+oPacket]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x62824c",
+  "prev": [
+   "add esp, 14h",
+   "cmp eax, 6",
+   "jnz short loc_628296",
+   "push 90h; nType",
+   "lea this, [esp+2Ch+oPacket]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x6282e5",
+  "prev": [
+   "cmp dword ptr [this+0CA4h], 0",
+   "push 90h; nType",
+   "lea this, [esp+28h+oPacket]; this",
+   "jnz short loc_628304"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x628304",
+  "prev": [
+   "call ?Encode1@COutPacket@@QAEXE@Z; COutPacket::Encode1(uchar)",
+   "lea eax, [esp+24h+oPacket]",
+   "push eax",
+   "jmp short loc_628321"
+  ],
+  "op": null
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x6283ff",
+  "prev": [
+   "add esp, 14h",
+   "cmp eax, 6",
+   "jnz short loc_628438",
+   "push 90h; nType",
+   "lea this, [esp+28h+oPacket]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x6284cc",
+  "prev": [
+   "cmp eax, 6",
+   "jnz loc_6285D7",
+   "push 90h; nType",
+   "lea this, [esp+3Ch+var_2C]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x628533",
+  "prev": [
+   "cmp eax, 6",
+   "jnz loc_6285D7",
+   "push 90h; nType",
+   "lea this, [esp+3Ch+var_2C]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x627e20",
+  "addr": "0x628593",
+  "prev": [
+   "add esp, 14h",
+   "cmp eax, 6",
+   "jnz short loc_6285D7",
+   "push 90h; nType",
+   "lea this, [esp+3Ch+oPacket]; this"
+  ],
+  "op": 144,
+  "push_line": "push 90h; nType"
+ },
+ {
+  "fn": "0x9a6dd0",
+  "addr": "0x9a6e0f",
+  "prev": [
+   "mov large fs:0, eax",
+   "mov esi, this",
+   "push 0A2h ; '¢'; nType",
+   "lea this, [esp+28h+oPacket]; this"
+  ],
+  "op": 162,
+  "push_line": "push 0A2h ; '¢'; nType"
+ },
+ {
+  "fn": "0x9a6dd0",
+  "addr": "0x9a6ecf",
+  "prev": [
+   "mov large fs:0, eax",
+   "mov esi, this",
+   "push 0A2h ; '¢'; nType",
+   "lea this, [esp+28h+oPacket]; this"
+  ],
+  "op": 162,
+  "push_line": "push 0A2h ; '¢'; nType"
+ }
+]

@@ -1,0 +1,4076 @@
+[
+ {
+  "fn": "0x42ca60",
+  "name": "CAdminShopDlg::SetRet",
+  "op": 74,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x430220",
+  "name": "CAdminShopDlg::SendTradeRequest",
+  "op": 74,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4310f0",
+  "name": "CAdminShopDlg::OnPacket",
+  "op": 74,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4310f0",
+  "name": "CAdminShopDlg::OnPacket",
+  "op": 74,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x470bd0",
+  "name": "CBattleRecordMan::RequestOnCalc",
+  "op": 299,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x481bc0",
+  "name": "CCashShop::TrySendQueryCashRequest",
+  "op": 274,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4823c0",
+  "name": "CCashShop::RequestCashPurchaseRecord",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4828e0",
+  "name": "CCashShop::OnMoveCashItemLtoS",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x482b50",
+  "name": "CCashShop::OnMoveCashItemStoL",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x482ea0",
+  "name": "CCashShop::ApplyWishListEvent",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x482f30",
+  "name": "CCashShop::SendBuyTransferWorldItemPacket",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4837d0",
+  "name": "CCashShop::OnSetWish",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x483960",
+  "name": "CCashShop::OnRemoveWish",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4854f0",
+  "name": "CCashShop::SendBuyAvatarPacket",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x485840",
+  "name": "CCashShop::OnRebateLockerItem",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x487b60",
+  "name": "CCashShop::SendGiftsPacket",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x487ee0",
+  "name": "CCashShop::OnStatusCoupon",
+  "op": 276,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x488070",
+  "name": "CCashShop::SendCheckDuplicateIDPacket",
+  "op": 21,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x488190",
+  "name": "CCashShop::SendCheckNameChangePossiblePacket",
+  "op": 16,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x488250",
+  "name": "CCashShop::SendBuyNameChangeItemPacket",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4884c0",
+  "name": "CCashShop::SendCheckTransferWorldPossiblePacket",
+  "op": 18,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x488580",
+  "name": "CCashShop::SendChangeMaplePoint",
+  "op": 187,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48d890",
+  "name": "CCashShop::OnExItemSlot",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48dc70",
+  "name": "CCashShop::OnIncTrunkCount",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48dec0",
+  "name": "CCashShop::OnIncCharacterSlotCount",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48e130",
+  "name": "CCashShop::OnEnableEquipSlotExt",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48e530",
+  "name": "CCashShop::OnBuy",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48ed40",
+  "name": "CCashShop::OnBuyPackage",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48f580",
+  "name": "CCashShop::OnBuyNormal",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x48ffa0",
+  "name": "CCashShop::OnGiftMateInfoResult",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4907b0",
+  "name": "CCashShop::OnGiftPackage",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x490d80",
+  "name": "CCashShop::OnBuyCouple",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x491710",
+  "name": "CCashShop::OnBuySlotInc",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x491b30",
+  "name": "CCashShop::OnBuyFriendship",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x491fa0",
+  "name": "CCashShop::GiftWishItem",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x492690",
+  "name": "CCashShop::OnCashGachaponCopy",
+  "op": 275,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x494a20",
+  "name": "CCashShop::SendTransferFieldPacket",
+  "op": 41,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x496520",
+  "name": "CCashShop::OnCashItemResLoadGiftDone",
+  "op": 154,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x49cd10",
+  "name": "CCashTradingRoomDlg::SetRet",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x49cfd0",
+  "name": "CCashTradingRoomDlg::OnTrade",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x49d210",
+  "name": "CCashTradingRoomDlg::PutItem",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x49d480",
+  "name": "CCashTradingRoomDlg::PutMoney",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x49e180",
+  "name": "CCashTradingRoomDlg::Trade",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4abf50",
+  "name": "CClassCompetition::SendRequestAuthKey",
+  "op": 291,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4afc90",
+  "name": "CClientSocket::OnAliveReq",
+  "op": 25,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x4f10d0",
+  "name": "CDamageMeter::SaveDamageInfo",
+  "op": 132,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51a680",
+  "name": "CEngageDlg::SetRet",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51db30",
+  "name": "CEntrustedShopDlg::OnCorrectSSN2",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51db30",
+  "name": "CEntrustedShopDlg::OnCorrectSSN2",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51dd40",
+  "name": "CEntrustedShopDlg::OnGoOut",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51ddd0",
+  "name": "CEntrustedShopDlg::OnArrange",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51de80",
+  "name": "CEntrustedShopDlg::OnWithdrawMoney",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51df10",
+  "name": "CEntrustedShopDlg::OnBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51df90",
+  "name": "CEntrustedShopDlg::OnVisitList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51e480",
+  "name": "CEntrustedShopDlg::SetRet",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51ed50",
+  "name": "CEntrustedShopDlg::AddBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x51ee20",
+  "name": "CEntrustedShopDlg::DeleteBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5214a0",
+  "name": "ExpeditionIntermediary::SendExpChangeMasterPacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x521530",
+  "name": "ExpeditionIntermediary::SendExpChangeBossPacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5215c0",
+  "name": "ExpeditionIntermediary::SendExpRelocatePartyPacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x521660",
+  "name": "ExpeditionIntermediary::SendExpKickPacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5216f0",
+  "name": "ExpeditionIntermediary::SendExpCreatePacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x521780",
+  "name": "ExpeditionIntermediary::SendWithdrawPacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x521cf0",
+  "name": "ExpeditionIntermediary::SendResponseInvitePacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x521dc0",
+  "name": "ExpeditionIntermediary::SendExpInvitePacket",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x522220",
+  "name": "ExpeditionIntermediary::OnPacketExpNoti_Invite",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x522220",
+  "name": "ExpeditionIntermediary::OnPacketExpNoti_Invite",
+  "op": 147,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x524180",
+  "name": "CFadeWnd::SendCloseMessage",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x524180",
+  "name": "CFadeWnd::SendCloseMessage",
+  "op": 146,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x524180",
+  "name": "CFadeWnd::SendCloseMessage",
+  "op": 168,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x524180",
+  "name": "CFadeWnd::SendCloseMessage",
+  "op": 150,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x526b30",
+  "name": "CUIFadeYesNo::SendCloseMessage",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 146,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x529c60",
+  "name": "CUIFadeYesNo::OnButtonClicked",
+  "op": 183,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52d630",
+  "name": "CUserLocal::ResetNLCPQ",
+  "op": 251,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52d780",
+  "name": "CField::SendCreateGuildAgreeMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52d820",
+  "name": "CField::SendSetMemberGradeMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52d8c0",
+  "name": "CField::SendSetGuildMarkMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52ddd0",
+  "name": "CField::OnRequestFootHoldInfo",
+  "op": 270,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52e9e0",
+  "name": "CField::SendInviteTradingRoomMsg",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52ebc0",
+  "name": "CField::SendCreateNewPartyMsg",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52edb0",
+  "name": "CField::SendWithdrawPartyMsg",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52efa0",
+  "name": "CField::SendTransferChannelRequest",
+  "op": 42,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52f170",
+  "name": "CField::SendDeleteFriendMsg",
+  "op": 153,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52f290",
+  "name": "CField::SendAcceptFriendMsg",
+  "op": 153,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52f970",
+  "name": "CField::TryEnterTownPortal",
+  "op": 156,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x52f970",
+  "name": "CField::TryEnterTownPortal",
+  "op": 156,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x530140",
+  "name": "CField::SendKickPartyMsg",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x530370",
+  "name": "CField::SendChangePartyBossMsg",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534000",
+  "name": "CField::SendChatMsg",
+  "op": 54,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534150",
+  "name": "CField::SendLocationWhisper",
+  "op": 141,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534310",
+  "name": "CField::SendJoinPartyMsg",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5345c0",
+  "name": "CField::SendTransferFieldRequest",
+  "op": 41,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5347d0",
+  "name": "CField::InputGuildName",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5348e0",
+  "name": "CField::SendInviteGuildMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534ad0",
+  "name": "CField::SendWithdrawGuildMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534cb0",
+  "name": "CField::SendKickGuildMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x534fe0",
+  "name": "CField::SendSetGradeNameMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x535180",
+  "name": "CField::SendSetGuildNoticeMsg",
+  "op": 149,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x535240",
+  "name": "CField::SendSetFriendMsg",
+  "op": 153,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x539710",
+  "name": "CField::AddBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5397d0",
+  "name": "CField::DeleteBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x53d3b0",
+  "name": "CField::SendChatMsgWhisper",
+  "op": 141,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x53d3b0",
+  "name": "CField::SendChatMsgWhisper",
+  "op": 141,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5448a0",
+  "name": "CField::OnWhisper",
+  "op": 141,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x54a5e0",
+  "name": "CField_Coconut::BasicActionAttack",
+  "op": 257,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x54d4c0",
+  "name": "CField_ContiMove::Init",
+  "op": 264,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5517d0",
+  "name": "CField_GuildBoss::BasicActionAttack",
+  "op": 259,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5612d0",
+  "name": "CField_SnowBall::Update",
+  "op": 256,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5617b0",
+  "name": "CField_SnowBall::BasicActionAttack",
+  "op": 255,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5640f0",
+  "name": "CField_Wedding::OnWeddingProgress",
+  "op": 164,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5640f0",
+  "name": "CField_Wedding::OnWeddingProgress",
+  "op": 163,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x568920",
+  "name": "CFuncKeyMappedMan::ChangePetConsumeItemID",
+  "op": 159,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5689c0",
+  "name": "CFuncKeyMappedMan::ChangePetConsumeMPItemID",
+  "op": 159,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x568a60",
+  "name": "CFuncKeyMappedMan::SaveFuncKeyMap",
+  "op": 159,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x568f20",
+  "name": "CGrenade::SendTimeBombInfo",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x572a50",
+  "name": "CITC::OnStatusCharge",
+  "op": 306,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x572ad0",
+  "name": "CITC::TrySendQueryCashRequest",
+  "op": 307,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x572b70",
+  "name": "CITC::SendTransferFieldPacket",
+  "op": 41,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x572e90",
+  "name": "CITC::OnRegisterSaleEntry",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5731a0",
+  "name": "CITC::OnSaleCurrentItem",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573270",
+  "name": "CITC::OnBuy",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573310",
+  "name": "CITC::OnBuyAuctionImm",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5733b0",
+  "name": "CITC::OnSetZzim",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573450",
+  "name": "CITC::OnBuyZzim",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573520",
+  "name": "CITC::OnDeleteZzim",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5735c0",
+  "name": "CITC::OnViewWish",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573660",
+  "name": "CITC::OnBuyWish",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573700",
+  "name": "CITC::OnCancelWish",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5737a0",
+  "name": "CITC::OnCancelSaleItem",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573880",
+  "name": "CITC::OnMoveITCPurchaseItemLtoS",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5739a0",
+  "name": "CITC::OnChangedCategorySub",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573af0",
+  "name": "CITC::OnChangedPage",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x573c10",
+  "name": "CITC::OnRegisterWishEntry",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5744a0",
+  "name": "CITC::OnChangedCategory",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x584b10",
+  "name": "CITCWnd_Tab::OnButtonClicked",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x584b10",
+  "name": "CITCWnd_Tab::OnButtonClicked",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x58eb50",
+  "name": "CITCBidAuctionDlg::OnButtonClicked",
+  "op": 308,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5c9e70",
+  "name": "CItemSpeakerDlg::_SendConsumeCashItemUseRequest",
+  "op": 85,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d43d0",
+  "name": "CLogin::SendCheckUserLimitPacket",
+  "op": 6,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d44a0",
+  "name": "CLogin::MakeVACDlg",
+  "op": 15,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d4540",
+  "name": "CLogin::OnAcceptLicense",
+  "op": 7,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d45d0",
+  "name": "CLogin::OnDenyLicense",
+  "op": 7,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d4650",
+  "name": "CLogin::SendSetGenderPacket",
+  "op": 8,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d46e0",
+  "name": "CLogin::SendCancelGenderPacket",
+  "op": 8,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d53a0",
+  "name": "CLogin::SendDeleteCharPacket",
+  "op": 24,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d5690",
+  "name": "CLogin::SendCheckDuplicateIDPacket",
+  "op": 21,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d5e80",
+  "name": "CLogin::OnSetAccountResult",
+  "op": 9,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7550",
+  "name": "CLogin::SendSelectCharPacketByVAC",
+  "op": 30,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7550",
+  "name": "CLogin::SendSelectCharPacketByVAC",
+  "op": 31,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7550",
+  "name": "CLogin::SendSelectCharPacketByVAC",
+  "op": 14,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7bd0",
+  "name": "CLogin::SendNewCharPacket",
+  "op": 23,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7bd0",
+  "name": "CLogin::SendNewCharPacket",
+  "op": 22,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d7dc0",
+  "name": "CLogin::ResetVAC",
+  "op": 15,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d8010",
+  "name": "CLogin::Init",
+  "op": 4,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d8010",
+  "name": "CLogin::Init",
+  "op": 34,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5d9730",
+  "name": "CLogin::ChangeStepImmediate",
+  "op": 4,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5da2a0",
+  "name": "CLogin::SendSelectCharPacket",
+  "op": 28,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5da2a0",
+  "name": "CLogin::SendSelectCharPacket",
+  "op": 29,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5da2a0",
+  "name": "CLogin::SendSelectCharPacket",
+  "op": 19,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5daf20",
+  "name": "CLogin::GotoWorldSelect",
+  "op": 12,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db000",
+  "name": "CLogin::OnCheckPinCodeResult",
+  "op": 11,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db000",
+  "name": "CLogin::OnCheckPinCodeResult",
+  "op": 10,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db000",
+  "name": "CLogin::OnCheckPinCodeResult",
+  "op": 9,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db000",
+  "name": "CLogin::OnCheckPinCodeResult",
+  "op": 9,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db9d0",
+  "name": "CLogin::SendCheckPasswordPacket",
+  "op": 35,
+  "how": "assign:v21[0]._m_pStr = (char *)35;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5db9d0",
+  "name": "CLogin::SendCheckPasswordPacket",
+  "op": 1,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dc600",
+  "name": "CLogin::OnCheckPasswordResult",
+  "op": 11,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dc600",
+  "name": "CLogin::OnCheckPasswordResult",
+  "op": 9,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dda00",
+  "name": "CLogin::OnSelectWorldResult",
+  "op": 9,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dfb40",
+  "name": "CLogin::SendViewAllCharPacket",
+  "op": 12,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dfb40",
+  "name": "CLogin::SendViewAllCharPacket",
+  "op": 13,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5dfb40",
+  "name": "CLogin::SendViewAllCharPacket",
+  "op": 35,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5ff870",
+  "name": "CLicenseDlg::OnButtonClicked",
+  "op": 11,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x60ea20",
+  "name": "CMacroSysMan::FlushToSvr",
+  "op": 122,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x624280",
+  "name": "CMemoListDlg::SetRet",
+  "op": 154,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6279b0",
+  "name": "CMemoryGameDlg::SendTurnUpCard",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x627a50",
+  "name": "CMemoryGameDlg::OnClickStartButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x628610",
+  "name": "CMemoryGameDlg::OnEnterResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x631880",
+  "name": "CMemoryGameDlg::Update",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6376d0",
+  "name": "CMiniRoomBaseDlg::SendInviteResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6376d0",
+  "name": "CMiniRoomBaseDlg::SendInviteResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x637bc0",
+  "name": "CMiniRoomBaseDlg::SendCashInviteResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x637bc0",
+  "name": "CMiniRoomBaseDlg::SendCashInviteResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x637f70",
+  "name": "CMiniRoomBaseDlg::OnCheckSSN2Static",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x637f70",
+  "name": "CMiniRoomBaseDlg::OnCheckSSN2Static",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x637f70",
+  "name": "CMiniRoomBaseDlg::OnCheckSSN2Static",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6382a0",
+  "name": "CMiniRoomBaseDlg::CheckAndSendChat",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x640d20",
+  "name": "CMob::ApplyControl",
+  "op": 228,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x640ee0",
+  "name": "CMob::TryFirstSelfDestruction",
+  "op": 232,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x641150",
+  "name": "CMob::SendCollisionEscort",
+  "op": 236,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6411f0",
+  "name": "CMob::SendRequestEscortPath",
+  "op": 237,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x641290",
+  "name": "CMob::SendEscortStopEndRequest",
+  "op": 238,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x643c30",
+  "name": "CMob::UpdateTimeBomb",
+  "op": 235,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x644450",
+  "name": "CMob::SendDropPickUpRequest",
+  "op": 229,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x64b260",
+  "name": "CMob::SetDamagedByMob",
+  "op": 233,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x651100",
+  "name": "CMob::GenerateMovePath",
+  "op": 227,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x657230",
+  "name": "CMobPool::OnMobCrcKeyChanged",
+  "op": 190,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x671590",
+  "name": "CNpc::GenerateMovePath",
+  "op": 241,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x672b50",
+  "name": "CNpc::ShowQuestList",
+  "op": 63,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x672b50",
+  "name": "CNpc::ShowQuestList",
+  "op": 63,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x672b50",
+  "name": "CNpc::ShowQuestList",
+  "op": 63,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x673bc0",
+  "name": "CNpc::RequestSpecialAction",
+  "op": 242,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6801e0",
+  "name": "COmokDlg::PutStoneChecker",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680280",
+  "name": "COmokDlg::OnClickStartButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6803b0",
+  "name": "COmokDlg::OnTieRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6804b0",
+  "name": "COmokDlg::OnRetreatRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680860",
+  "name": "COmokDlg::SendClaimGiveUp",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680930",
+  "name": "COmokDlg::SendTieRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680a10",
+  "name": "COmokDlg::SendRetreatRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680b30",
+  "name": "COmokDlg::OnClickReadyButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680b30",
+  "name": "COmokDlg::OnClickReadyButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680c20",
+  "name": "COmokDlg::OnClickBanButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680cd0",
+  "name": "COmokDlg::OnClickEndButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680cd0",
+  "name": "COmokDlg::OnClickEndButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680cd0",
+  "name": "COmokDlg::OnClickEndButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x680e70",
+  "name": "COmokDlg::OnEnterResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x684ab0",
+  "name": "COmokDlg::Update",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x689860",
+  "name": "COpenGatePool::TryEnterOpenGate",
+  "op": 157,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x689860",
+  "name": "COpenGatePool::TryEnterOpenGate",
+  "op": 157,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x68ef40",
+  "name": "CParcelDlg::CloseParcelDlg",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x68f470",
+  "name": "CTabReceive::ReceiveParcel",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x68f5e0",
+  "name": "CTabReceive::DiscardParcel",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x68f7d0",
+  "name": "CTabQuickSend::SendQuickDelivery",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x690140",
+  "name": "CTabSend::SendParcel",
+  "op": 70,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6984c0",
+  "name": "CPersonalShopDlg::SetRet",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x698580",
+  "name": "CPersonalShopDlg::OnCorrectSSN2",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6987a0",
+  "name": "CPersonalShopDlg::MoveItemToInventory",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69a110",
+  "name": "CPersonalShopDlg::CheckCashItemInList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69a7f0",
+  "name": "CPersonalShopDlg::BuyItem",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69b0d0",
+  "name": "CPersonalShopDlg::DeliverBlackList",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69b1c0",
+  "name": "CPersonalShopDlg::OnClickBanButton",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69b340",
+  "name": "CPersonalShopDlg::Update",
+  "op": 144,
+  "how": "assign:v7[0]._m_pStr = (char *)144;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x69c880",
+  "name": "CPersonalShopDlg::PutItem",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6a0820",
+  "name": "CPet::SendDropPickUpRequest",
+  "op": 202,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6a0dd0",
+  "name": "CPet::SendUpdateExceptionListRequest",
+  "op": 204,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6a2340",
+  "name": "CPet::DoAction",
+  "op": 200,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6a3cc0",
+  "name": "CPet::ParseCommand",
+  "op": 201,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6b40a0",
+  "name": "CQuest::StartQuest",
+  "op": 119,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6b40a0",
+  "name": "CQuest::StartQuest",
+  "op": 119,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6b40a0",
+  "name": "CQuest::StartQuest",
+  "op": 119,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6b40a0",
+  "name": "CQuest::StartQuest",
+  "op": 119,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6c60a0",
+  "name": "CQuickslotKeyMappedMan::SaveQuickslotKeyMap",
+  "op": 216,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6cd4e0",
+  "name": "CReactorPool::FindHitReactor",
+  "op": 249,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6cdab0",
+  "name": "CReactorPool::FindSkillReactor",
+  "op": 249,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6cded0",
+  "name": "CReactorPool::FindTouchReactorAroundLocalUser",
+  "op": 250,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6cded0",
+  "name": "CReactorPool::FindTouchReactorAroundLocalUser",
+  "op": 250,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d37b0",
+  "name": "CRepairDurabilityDlg::SendRepairDurabilityAll",
+  "op": 130,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d3980",
+  "name": "CRepairDurabilityDlg::SendRepairDurability",
+  "op": 131,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d6860",
+  "name": "CRPSGameDlg::OnBtStart",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d6900",
+  "name": "CRPSGameDlg::OnBtContinue",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d69a0",
+  "name": "CRPSGameDlg::OnBtRetry",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d6a40",
+  "name": "CRPSGameDlg::OnBtExit",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d6ae0",
+  "name": "CRPSGameDlg::SendSelection",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6d8e80",
+  "name": "CRPSGameDlg::Update",
+  "op": 160,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dbe50",
+  "name": "CScriptMan::OnAskSlideMenu",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dc110",
+  "name": "CScriptMan::OnSay",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dc310",
+  "name": "CScriptMan::OnSayImage",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dc5a0",
+  "name": "CScriptMan::OnAskYesNo",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dc790",
+  "name": "CScriptMan::OnAskText",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dc9c0",
+  "name": "CScriptMan::OnAskBoxText",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dcc00",
+  "name": "CScriptMan::OnAskNumber",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dce00",
+  "name": "CScriptMan::OnAskMenu",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dcff0",
+  "name": "CScriptMan::OnAskAvatar",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dd340",
+  "name": "CScriptMan::OnAskMembershopAvatar",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6dd6e0",
+  "name": "CScriptMan::OnAskPet",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6ddbe0",
+  "name": "CScriptMan::OnAskPetAll",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6e4b80",
+  "name": "CShopDlg::SetRet",
+  "op": 66,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6e4e90",
+  "name": "CShopDlg::SendRechargeRequest",
+  "op": 66,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6e7260",
+  "name": "CShopDlg::SendSellRequest",
+  "op": 66,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x6e9bb0",
+  "name": "CShopDlg::SendBuyRequest",
+  "op": 66,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x71a0a0",
+  "name": "CStage::OnSetField",
+  "op": 151,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x71a0a0",
+  "name": "CStage::OnSetField",
+  "op": 269,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x743eb0",
+  "name": "CStoreBankDlg::SetRet",
+  "op": 69,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x743f70",
+  "name": "CStoreBankDlg::SendCalculateFeeRequest",
+  "op": 69,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7449f0",
+  "name": "CStoreBankDlg::SendGetAllRequest",
+  "op": 69,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74ad90",
+  "name": "CSummoned::TryDoingHeal",
+  "op": 210,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74af50",
+  "name": "CSummoned::TryDoingGiveBuff",
+  "op": 210,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74b3e0",
+  "name": "CSummoned::TryDoingHealingRobot",
+  "op": 210,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74b640",
+  "name": "CSummoned::TryDoingSummon",
+  "op": 210,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74b730",
+  "name": "CSummoned::SetDamaged",
+  "op": 209,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x74c170",
+  "name": "CSummoned::SendRemove",
+  "op": 211,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7624b0",
+  "name": "CTownPortalPool::TryEnterTownPortal",
+  "op": 156,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7639a0",
+  "name": "CTradingRoomDlg::SetRet",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x763f20",
+  "name": "CTradingRoomDlg::OnTrade",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7641d0",
+  "name": "CTradingRoomDlg::PutItem",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x764450",
+  "name": "CTradingRoomDlg::PutMoney",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7646b0",
+  "name": "CTradingRoomDlg::Trade",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x767250",
+  "name": "CTrunkDlg::SetRet",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x767310",
+  "name": "CTrunkDlg::SendSortItemRequest",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x768570",
+  "name": "CTrunkDlg::SendPutItemRequest",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7688e0",
+  "name": "CTrunkDlg::SendGetMoneyRequest",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7689e0",
+  "name": "CTrunkDlg::SendPutMoneyRequest",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x769e00",
+  "name": "CTrunkDlg::SendGetItemRequest",
+  "op": 67,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x76b190",
+  "name": "CUIAccountMoreInfo::SendLoadAccountMoreInfoRequest",
+  "op": 193,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x76b210",
+  "name": "CUIAccountMoreInfo::SendSaveAccountMoreInfoRequest",
+  "op": 193,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x76e200",
+  "name": "CUIAdminShopWishList::SendRegisterPacket",
+  "op": 74,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x777d20",
+  "name": "CUICharacterSaleDlg::SendCheckDuplicateIDPacket",
+  "op": 311,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x77a240",
+  "name": "CUICharacterSaleDlg::SendCreateNewCharacter",
+  "op": 85,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x78c940",
+  "name": "CUIAntiMacro::SetRet",
+  "op": 117,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x78dd80",
+  "name": "CUIAdminAntiMacro::SetRet",
+  "op": 117,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7900d0",
+  "name": "CUIInitialQuiz::SendResult",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x791cf0",
+  "name": "CUISpeedQuiz::SendResult",
+  "op": 65,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7b8000",
+  "name": "CUIFindFriend::SendMyInfoRequest",
+  "op": 194,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7b8a80",
+  "name": "CUIFindFriendDetail::SetDetailInfo",
+  "op": 194,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7bb4c0",
+  "name": "CUIFindFriend::SendSearchRequest",
+  "op": 194,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7bef50",
+  "name": "CUIItemUpgrade::Update",
+  "op": 296,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c3680",
+  "name": "CUIGuildBBS::SendLoadListRequest",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c3710",
+  "name": "CUIGuildBBS::SendViewEntryRequest",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c3b70",
+  "name": "CUIGuildBBS::OnCommentDelete",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c4250",
+  "name": "CUIGuildBBS::OnRegister",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c4530",
+  "name": "CUIGuildBBS::OnComment",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7c6520",
+  "name": "CUIGuildBBS::OnDelete",
+  "op": 179,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7ca660",
+  "name": "CUIIncubator::OnButtonClicked",
+  "op": 85,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7d58d0",
+  "name": "CUIItemMaker::RequestItemMake",
+  "op": 125,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7d7ef0",
+  "name": "CUIKarmaDlg::_SendConsumeCashItemUseRequest",
+  "op": 85,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7de690",
+  "name": "CUILogoutGift::OnButtonClicked",
+  "op": 313,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f03f0",
+  "name": "CUIMessenger::OnDestroy",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f2cb0",
+  "name": "CUIMessenger::OnInvite",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f2ff0",
+  "name": "CUIMessenger::Update",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f2ff0",
+  "name": "CUIMessenger::Update",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f5820",
+  "name": "CUIMessenger::SendInviteMsg",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f59d0",
+  "name": "CUIMessenger::OnCreate",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f6140",
+  "name": "CUIMessenger::ProcessChat",
+  "op": 143,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x7f8410",
+  "name": "CUIMiniMap::OnMouseButton",
+  "op": 166,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x80b4a0",
+  "name": "CUIMonsterCarnival::RequestSend",
+  "op": 262,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x812b60",
+  "name": "TabPartyAdver::SendPartyAdverRequestPacket",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x812ca0",
+  "name": "TabPartyAdver::RequestAdverRemoveFromNotiList",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x812e90",
+  "name": "TabPartyAdver::SendAdverDeletePacket",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x813c90",
+  "name": "TabPartyAdver::SendPartyRegistCommitPacket",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x814460",
+  "name": "TabPartyAdver::SendPartyApplyPacketTo",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x81cad0",
+  "name": "CUIPQReward::RequestReward",
+  "op": 137,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x81cbb0",
+  "name": "CUIPQReward::SelectReward",
+  "op": 136,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x834c90",
+  "name": "CUIQuestInfoDetail::OnButtonClicked",
+  "op": 221,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x838cf0",
+  "name": "CUIRaiseWnd::SendPutItem",
+  "op": 285,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x838d90",
+  "name": "CUIRaisePieceWnd::SendPutItem",
+  "op": 286,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x839740",
+  "name": "COutPacket::COutPacket",
+  "op": 284,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x83acc0",
+  "name": "CUIRaiseWndBase::OnCreate",
+  "op": 283,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x83b7c0",
+  "name": "CUIRaiseWndBase::CUIRaiseWndBase",
+  "op": 284,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x848b90",
+  "name": "CUIShopScanner::OnCreate",
+  "op": 72,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x848e80",
+  "name": "CUIShopScanResult::OnButtonClicked",
+  "op": 73,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x87b3e0",
+  "name": "CUIStatusBar::SendCoupleMessage",
+  "op": 142,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x87f7f0",
+  "name": "CUIStatusBar::SendGroupMessage",
+  "op": 140,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8aa1a0",
+  "name": "CUIUnreleaseDlg::UnreleaseEquipItem",
+  "op": 85,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8ba5b0",
+  "name": "CTabGuildAlliance::OnGradeChange",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8ba670",
+  "name": "CTabGuildAlliance::OnChangeMaster",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8bbcc0",
+  "name": "CTabGuildAlliance::OnWithdraw",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8bf710",
+  "name": "CTabGuildAlliance::OnKick",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8cc9c0",
+  "name": "CTabGuildAlliance::OnInvite",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8cccf0",
+  "name": "CTabGuildAlliance::OnSetNotice",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8cf4f0",
+  "name": "CWndAllianceGrade::OnSaveGradeName",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x8dcb10",
+  "name": "CUIWebEvent::SendRequestAuthKey",
+  "op": 292,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x908320",
+  "name": "CUserLocal::RequestUpgradeTombEffect",
+  "op": 58,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x908d50",
+  "name": "CUserLocal::SendBanMapByMobRequest",
+  "op": 61,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x909070",
+  "name": "CUserLocal::RequestIncCombo",
+  "op": 189,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x909d70",
+  "name": "CUserLocal::SendRepeatEffectRemoveRequest",
+  "op": 222,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x90df50",
+  "name": "CUserLocal::ThrowGrenade",
+  "op": 121,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x90e6d0",
+  "name": "CUserLocal::UpdateClientTimer",
+  "op": 133,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x90f0e0",
+  "name": "CUserLocal::OnAskAPSPEvent",
+  "op": 195,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x90f6d0",
+  "name": "CUserLocal::HandleXKeyDown",
+  "op": 45,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x911a60",
+  "name": "CUserLocal::HandleRButtonClk",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x912f90",
+  "name": "CUserLocal::TryDoingSmoothingMovingShootAttackPrepare",
+  "op": 51,
+  "how": "assign:ZtlSecureTear_m_pLadderOrRope_CS = 51;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x913690",
+  "name": "CUserLocal::TryRegisterTeleport",
+  "op": 113,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x918c20",
+  "name": "CUserLocal::UpdatePassiveSkillData",
+  "op": 217,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x919a10",
+  "name": "CUserLocal::CheckPortal_Collision",
+  "op": 112,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x919e50",
+  "name": "CUserLocal::HandleUpKeyDown",
+  "op": 112,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9321f0",
+  "name": "CUserLocal::TalkToNpc",
+  "op": 63,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x933920",
+  "name": "CUserLocal::HandleLButtonClk",
+  "op": 55,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x933b90",
+  "name": "CUserLocal::HandleLButtonDblClk",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x933b90",
+  "name": "CUserLocal::HandleLButtonDblClk",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x933b90",
+  "name": "CUserLocal::HandleLButtonDblClk",
+  "op": 188,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9369f0",
+  "name": "CUserLocal::OnKey",
+  "op": 151,
+  "how": "assign:v59 = 151;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9369f0",
+  "name": "CUserLocal::OnKey",
+  "op": 44,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93a830",
+  "name": "CUserLocal::DoActiveSkill_Heal",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93aeb0",
+  "name": "CUserLocal::SendSkillEffectRequest",
+  "op": 71,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93af50",
+  "name": "CUserLocal::TryDoingSwallowAbsorb",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93bb90",
+  "name": "CUserLocal::DoActiveSkill_OpenGate",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93be00",
+  "name": "CUserLocal::DoActiveSkill_TownPortal",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93c0f0",
+  "name": "CUserLocal::DoActiveSkill_Summon",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93cc30",
+  "name": "CUserLocal::DoActiveSkill_SmokeShell",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93cec0",
+  "name": "CUserLocal::DoActiveSkill_Flying",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93d0d0",
+  "name": "CUserLocal::DoActiveSkill_DamageMeter",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93d730",
+  "name": "CUserLocal::SendSkillCancelRequest",
+  "op": 104,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93db00",
+  "name": "CUserLocal::DoActiveSkill_MobCapture",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93e0e0",
+  "name": "CUserLocal::DoActiveSkill_StatChangeAdmin",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93e5c0",
+  "name": "CUserLocal::DoActiveSkill_RecoveryAura",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93e930",
+  "name": "CUserLocal::SendSkillUseRequest",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x93eff0",
+  "name": "CUserLocal::DoActiveSkill_SummonMonster",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x940570",
+  "name": "CUserLocal::TryDoingMonsterMagnet",
+  "op": 103,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x940f20",
+  "name": "CUserLocal::DoAntiMacroSkill",
+  "op": 116,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x941710",
+  "name": "CUserLocal::DoActiveSkill_Prepare",
+  "op": 105,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x96aa40",
+  "name": "CUICashItemGachapon::OnButtonClicked",
+  "op": 185,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x97a330",
+  "name": "CUICashGachapon::OnButtonClicked",
+  "op": 186,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x996570",
+  "name": "CVecCtrlDragon::EndUpdateActive",
+  "op": 214,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x99f5a0",
+  "name": "CVecCtrlPet::EndUpdateActive",
+  "op": 199,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9a0700",
+  "name": "CVecCtrlSummoned::EndUpdateActive",
+  "op": 207,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9a7140",
+  "name": "CWishListGiveDlg::SendPutItemRequest",
+  "op": 162,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9aba50",
+  "name": "CWishListRecvDlg::SendGetItemRequest",
+  "op": 162,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9c7a80",
+  "name": "CWvsApp::SendBackupPacket",
+  "op": 36,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9c7b60",
+  "name": "CWvsApp::SendClearStackLog",
+  "op": 36,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d4020",
+  "name": "CWvsContext::TryRecovery",
+  "op": 80,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d4870",
+  "name": "CWvsContext::CheckOpBoardHasNew",
+  "op": 192,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d5b70",
+  "name": "CWvsContext::SendGatherItemRequest",
+  "op": 75,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d5c60",
+  "name": "CWvsContext::SendSortItemRequest",
+  "op": 76,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d5d50",
+  "name": "CWvsContext::SendDropPickUpRequest",
+  "op": 246,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d5f10",
+  "name": "CWvsContext::SendItemReleaseRequest",
+  "op": 97,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6000",
+  "name": "CWvsContext::SendItemOptionUpgradeItemUseRequest",
+  "op": 95,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6130",
+  "name": "CWvsContext::SendHyperUpgradeItemUseRequest",
+  "op": 94,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6260",
+  "name": "CWvsContext::SendUpgradeItemUseRequest",
+  "op": 93,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d63a0",
+  "name": "CWvsContext::SendTamingMobFoodItemUseRequest",
+  "op": 83,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d64d0",
+  "name": "CWvsContext::SendUIOpenItemRequest",
+  "op": 96,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d65e0",
+  "name": "CWvsContext::SendSkillLearnItemUseRequest",
+  "op": 88,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6740",
+  "name": "CWvsContext::SendGetUpFromChairRequest",
+  "op": 45,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6810",
+  "name": "CWvsContext::SendRingDropRequest",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6bc0",
+  "name": "CWvsContext::SendUseBoxGachaponItemRequest",
+  "op": 127,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d6c50",
+  "name": "CWvsContext::SendLotteryItemUseRequest",
+  "op": 124,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d7340",
+  "name": "CWvsContext::SendUseGachaponRemoteRequest",
+  "op": 128,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d73d0",
+  "name": "CWvsContext::SendDragonBallBoxRequest",
+  "op": 196,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d7440",
+  "name": "CWvsContext::SendDragonBallSummonRequest",
+  "op": 197,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d74f0",
+  "name": "CWvsContext::AskWhetherUsePamsSong",
+  "op": 220,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d9c10",
+  "name": "CWvsContext::SendChangeSlotPositionRequest",
+  "op": 77,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d9dd0",
+  "name": "CWvsContext::SendStatChangeItemCancelRequest",
+  "op": 79,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9d9f20",
+  "name": "CWvsContext::SendPetFoodItemUseRequest",
+  "op": 82,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9da100",
+  "name": "CWvsContext::SendSitOnPortableChairRequest",
+  "op": 46,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9da430",
+  "name": "CWvsContext::SendSelectNpcItemUseRequest",
+  "op": 123,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9da630",
+  "name": "CWvsContext::SendInvitationQuery",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9db1c0",
+  "name": "CWvsContext::SendExpUpItemUseRequest",
+  "op": 181,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9db430",
+  "name": "CWvsContext::SendTempExpUseRequest",
+  "op": 182,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9dc280",
+  "name": "CWvsContext::SendMigrateToShopRequest",
+  "op": 43,
+  "how": "assign:v17 = 43;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9ddfe0",
+  "name": "CWvsContext::SendStatChangeItemUseRequest",
+  "op": 78,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9de400",
+  "name": "CWvsContext::SendStatChangeItemUseRequestByPetQ",
+  "op": 203,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9de580",
+  "name": "CWvsContext::SendMobSummonItemUseRequest",
+  "op": 81,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9de7a0",
+  "name": "CWvsContext::SendScriptRunItemRequest",
+  "op": 84,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9de8c0",
+  "name": "CWvsContext::SendSkillResetItemUseRequest",
+  "op": 89,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9def50",
+  "name": "CWvsContext::SendMigrateToITCRequest",
+  "op": 180,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e08c0",
+  "name": "CWvsContext::SendBridleItemUseRequest",
+  "op": 87,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e10e0",
+  "name": "CWvsContext::SendShopScannerItemUseRequest",
+  "op": 90,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e1410",
+  "name": "CWvsContext::SendEngagementRequest",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e16e0",
+  "name": "CWvsContext::SendSendInvitaionRequest",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e19d0",
+  "name": "CWvsContext::SendWishListInput",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e1a90",
+  "name": "CWvsContext::SendRequestSessionValue",
+  "op": 191,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e6020",
+  "name": "CWvsContext::SendMapTransferItemUseRequest",
+  "op": 91,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9e8120",
+  "name": "CWvsContext::UI_Menu",
+  "op": 218,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f28e0",
+  "name": "CWvsContext::SendWaterOfLife",
+  "op": 129,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2950",
+  "name": "CWvsContext::SendStatChangeRequestByItemOption",
+  "op": 101,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2a00",
+  "name": "CWvsContext::SendStatChangeRequest",
+  "op": 100,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2ab0",
+  "name": "CWvsContext::OnTemporaryStatReset",
+  "op": 120,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2d30",
+  "name": "CWvsContext::CheckTemporaryStatDuration",
+  "op": 111,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2e90",
+  "name": "CWvsContext::SendSkillUpRequest",
+  "op": 102,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f2f70",
+  "name": "CWvsContext::SendCharacterInfoRequest",
+  "op": 109,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f30d0",
+  "name": "CWvsContext::SendRemoteShopOpenRequest",
+  "op": 64,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f3830",
+  "name": "CWvsContext::OnMemoNotify_Receive",
+  "op": 154,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f3b90",
+  "name": "CWvsContext::SendMapTransferRequest",
+  "op": 114,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f3cf0",
+  "name": "CWvsContext::ResignQuest",
+  "op": 119,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f4070",
+  "name": "CWvsContext::CheckDarkForce",
+  "op": 120,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f42c0",
+  "name": "CWvsContext::CheckDragonFury",
+  "op": 120,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f4690",
+  "name": "CWvsContext::SendFollowRequestApply",
+  "op": 138,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f61c0",
+  "name": "CWvsContext::SendAbilityUpRequest",
+  "op": 98,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f63b0",
+  "name": "CWvsContext::SendAbilityUpRequest",
+  "op": 99,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f6650",
+  "name": "CWvsContext::SendDropMoneyRequest",
+  "op": 106,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f67e0",
+  "name": "CWvsContext::SendGivePopularityRequest",
+  "op": 107,
+  "how": "assign:v10.p = (GW_ItemSlotBase *)107;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f6980",
+  "name": "CWvsContext::SendActivatePetRequest",
+  "op": 86,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f6980",
+  "name": "CWvsContext::SendActivatePetRequest",
+  "op": 110,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f9320",
+  "name": "CWvsContext::SendEmotionChange",
+  "op": 56,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f9420",
+  "name": "CWvsContext::SendActiveEffectItemChange",
+  "op": 57,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9f9530",
+  "name": "CWvsContext::SendFollowCharacterRequest",
+  "op": 134,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9fab90",
+  "name": "CWvsContext::SendEntrustedShopCheckRequest",
+  "op": 68,
+  "how": "assign:p_result = 68;",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9fb090",
+  "name": "CWvsContext::OnSetPassenserRequest",
+  "op": 138,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9fbff0",
+  "name": "CWvsContext::SendCreateMiniGameRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9fc570",
+  "name": "CWvsContext::SendOpenShopRequest",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9fca70",
+  "name": "CWvsContext::SendPortalScrollUseRequest",
+  "op": 92,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9ff270",
+  "name": "CWvsContext::SendAntiMacroItemUseRequest",
+  "op": 115,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x9ffcb0",
+  "name": "CWvsContext::OnEntrustedShopCheckResult",
+  "op": 144,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa00bb0",
+  "name": "CWvsContext::OnMarriageRequest",
+  "op": 161,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa02fc0",
+  "name": "CWvsContext::OnTemporaryStatSet",
+  "op": 120,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa05fb0",
+  "name": "CWvsContext::SendClaimRequest",
+  "op": 118,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09680",
+  "name": "CWvsContext::SendBoobyTrapAlert",
+  "op": 165,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09860",
+  "name": "CWvsContext::SendFamilyInfoRequest",
+  "op": 170,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa098d0",
+  "name": "CWvsContext::SendUnregisterParent",
+  "op": 173,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa099e0",
+  "name": "CWvsContext::SendUnregisterJunior",
+  "op": 172,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09c50",
+  "name": "CWvsContext::SendFamilyInviteResult",
+  "op": 174,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09d20",
+  "name": "CWvsContext::SendFamilyChartRequest",
+  "op": 169,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09dd0",
+  "name": "CWvsContext::SendRegisterJunior",
+  "op": 171,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa09ee0",
+  "name": "CWvsContext::SendUseFamilyPrivilege",
+  "op": 175,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa0a0d0",
+  "name": "CWvsContext::SendSetFamilyPrecept",
+  "op": 176,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa0b0a0",
+  "name": "CWvsContext::OnFamilySummonRequest",
+  "op": 177,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa0ef60",
+  "name": "CWvsContext::OnAllianceResult",
+  "op": 168,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa0ef60",
+  "name": "CWvsContext::OnAllianceResult",
+  "op": 167,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa0ffd0",
+  "name": "CWvsContext::SendCancelPartyWanted",
+  "op": 267,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10100",
+  "name": "CWvsContext::SendPartyWanted",
+  "op": 266,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10240",
+  "name": "CWvsContext::LoadFriend",
+  "op": 153,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10ab0",
+  "name": "CWvsContext::OnPartyResult",
+  "op": 145,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10ab0",
+  "name": "CWvsContext::OnPartyResult",
+  "op": 146,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10ab0",
+  "name": "CWvsContext::OnPartyResult",
+  "op": 146,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa10ab0",
+  "name": "CWvsContext::OnPartyResult",
+  "op": 148,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa1ac10",
+  "name": "CSecurityClient::OnCheckClientIntegrityRequest",
+  "op": 27,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa1d2a0",
+  "name": "CUINewYearCardSenderDlg::_SendNewYearCard",
+  "op": 183,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0xa1ec70",
+  "name": "CUIRandomMorphDlg::_SendMorphRequest",
+  "op": 184,
+  "how": "literal",
+  "src": "decompile"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 126,
+  "how": "push 7Eh ; '~'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 139,
+  "how": "push 8Bh ; '‹'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 158,
+  "how": "push 9Eh ; 'ž'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 152,
+  "how": "push 98h ; '˜'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 151,
+  "how": "push 97h ; '—'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 258,
+  "how": "push 102h; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5408e0",
+  "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+  "op": 54,
+  "how": "push 36h ; '6'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x654300",
+  "name": "?Update@CMob@@UAEXXZ",
+  "op": 234,
+  "how": "push 0EAh ; 'ê'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x654300",
+  "name": "?Update@CMob@@UAEXXZ",
+  "op": 230,
+  "how": "push 0E6h ; 'æ'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x654300",
+  "name": "?Update@CMob@@UAEXXZ",
+  "op": 231,
+  "how": "push 0E7h ; 'ç'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x6b1fc0",
+  "name": "?OnCompleteQuestFailed@CQuest@@IAEXJ@Z",
+  "op": 119,
+  "how": "push 77h ; 'w'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x92a240",
+  "name": "?TryDoingMagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJJ@Z",
+  "op": 219,
+  "how": "push 0DBh ; 'Û'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x9343c0",
+  "name": "?SetDamaged@CUserLocal@@UAEXJJJKPAVCMob@@JJJHH@Z",
+  "op": 52,
+  "how": "push 34h ; '4'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x937330",
+  "name": "?Update@CUserLocal@@UAEXXZ",
+  "op": 52,
+  "how": "push 34h ; '4'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x937330",
+  "name": "?Update@CUserLocal@@UAEXXZ",
+  "op": 52,
+  "how": "push 34h ; '4'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x937330",
+  "name": "?Update@CUserLocal@@UAEXXZ",
+  "op": 52,
+  "how": "push 34h ; '4'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x937330",
+  "name": "?Update@CUserLocal@@UAEXXZ",
+  "op": 56,
+  "how": "push 38h ; '8'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x9eb3e0",
+  "name": "?SendConsumeCashItemUseRequest@CWvsContext@@QAEXJJJV?$ZXString@D@@@Z",
+  "op": 85,
+  "how": "push 55h ; 'U'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "name": "?OnGuildResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "op": 150,
+  "how": "push 96h ; '–'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "name": "?OnGuildResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "op": 167,
+  "how": "push 0A7h ; '§'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0xa0d3b0",
+  "name": "?OnGuildResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+  "op": 149,
+  "how": "push 95h ; '•'; nType",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x5dbef0",
+  "name": "?SendLoginPacket@CLogin@@QAEHJJ@Z",
+  "op": 35,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "shared with 0x6282e5",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x627e20",
+  "name": "??_ECMemoryGameDlg@@W7AEPAXI@Z",
+  "op": 144,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x9a6dd0",
+  "name": "??_ECWishListInputDlg@@W7AEPAXI@Z",
+  "op": 162,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x9a6dd0",
+  "name": "??_ECWishListInputDlg@@W7AEPAXI@Z",
+  "op": 162,
+  "how": "resolved",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x4aef10",
+  "name": "?OnConnect@CClientSocket@@QAEHH@Z",
+  "op": 32,
+  "how": "push 20h; nType @0x4af3e3",
+  "src": "insn_query"
+ },
+ {
+  "fn": "0x4aef10",
+  "name": "?OnConnect@CClientSocket@@QAEHH@Z",
+  "op": 20,
+  "how": "push 14h; nType @0x4af458",
+  "src": "insn_query"
+ }
+]
