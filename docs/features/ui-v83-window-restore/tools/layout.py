@@ -279,6 +279,18 @@ def fmt(v):
     return "(%d,%d) %dx%d" % (v["x"], v["y"], v["w"], v["h"])
 
 
+def keyval(v, k):
+    """键名允许写成派生量 "a+b"。
+
+    右对齐的数字串（金币 / SP）用 **右缘 = x + w** 当尺子，不用左缘 x：位数一变左缘就跟着
+    漂，两端金币数额不同会打出假的 Δx；右缘才等于代码里的绘制点，位数、字形宽都不影响。
+    """
+    if "+" in k:
+        a, b = k.split("+", 1)
+        return int(v.get(a, 0)) + int(v.get(b, 0))
+    return int(v.get(k, 0))
+
+
 def cmp_probe(oracle, actual, keys=("x", "y"), size_keys=(), tol=2):
     """逐键求差 -> (worst_abs_delta, detail)。任一侧 MISSING 记 999。
 

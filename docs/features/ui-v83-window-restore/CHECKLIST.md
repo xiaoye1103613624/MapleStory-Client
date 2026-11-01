@@ -182,11 +182,14 @@
 | 顺带记一笔（**未改**） | `UIStateGame.cpp:296` 编译告警 C4701「`tab` 可能未初始化」：外层 `switch` 已保证 `action ∈ {FRIENDS,PARTY,BOSSPARTY}`，三个 `case` 全覆盖 ⇒ 实际不会未初始化，属告警噪声。要不要加个初值消警告，等你点头再动 | `IO/UIStateGame.cpp:277` |
 | I-4 小地图地图名「不刷新」 | ❌ **撤回**：见上表 I-4 行 —— 换图重算的代码路径本来是通的（`UIMiniMap.cpp:161-165` + `:242-247`），我误把出生图美术当成了别的图 | §B10 |
 
-**部署状态**：`build_check\MapleStory.exe` = `14A40006` / md5 `13eba5ac7782ece2`（00:17:41，构建 EXITCODE=0，
-只剩既有告警）。**还没覆盖到客户端**：目标 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 正被运行中的客户端占用
-（`Device or resource busy`），备份 `MapleStory.exe.bak_r13-20261031` 已先落好。
+**部署状态**：`build_check\MapleStory.exe` = md5 `6f0a8bc10be012bd…` / 4,422,144 B（2026-11-01 18:53:30，构建 EXITCODE=0，
+协议门禁 GATE OK，只剩既有 C4701/LNK4098/LNK4099 告警）。**还没覆盖到客户端**：目标 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 正被运行中的客户端占用
+（PID 17416，18:00:13 启动，`MainWindowHandle=9897922` —— 就是我这一轮一直在驱动的那个测试实例）。
 本会话第一次撞同步冲突 ⇒ 按门禁先问你怎么处理（A 你关掉客户端 / B 我用 `_quit.py` 走 `WM_CLOSE`+确定**优雅退出**
 （绝不杀进程）/ C 先中止，产物留在 `build_check`）。你选完之后，上面所有「已修待复测」的项才能一次验掉。
+**我没有替你选**：`_quit.py` 会把你正在看的游戏状态关掉，属于「影响别人可见的东西」，等你一句话。
+R27-B2 这一轮的复验判据已经写死：部署后 `layout.py check ItemFull.json <真机展开态帧>` 要 **8/8 Δ=0**
+且 `full_grid_rows` 从 12 条双行回到 6 行（改前读数和两条尺子见 [evidence/r27-b2-bagfull/](evidence/r27-b2-bagfull/README.md)）。
 
 ### I.3 仍然只剩你能做的（追加轮已合并成一张单子）
 **要你拍板的（4 条，都是决策不是体力活）**

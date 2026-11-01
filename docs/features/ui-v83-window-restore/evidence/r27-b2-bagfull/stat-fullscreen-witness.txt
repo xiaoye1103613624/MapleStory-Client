@@ -1,0 +1,16 @@
+anchor=(175,191) agree=0.734 rmse=80.5  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Stat_backgrnd.png
+
+Stat 角色能力窗  tol=2px  形态=detail  锚点=(175,191)  帧=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_stat_fullscreen.png
+--------------------------------------------------------------------------------------------------------
+  backgrnd2_detail_panel   oracle=(208,144) agree=0.852      实测=(208,144) agree=0.852    Δ=0 x+0 y+0              ok
+  basicStat_panel          oracle=(8,195) agree=1.000        实测=(8,195) agree=1.000      Δ=0 x+0 y+0              ok
+  panel_text_bbox          oracle=(13,236) 149x43            实测=(13,236) 149x43          Δ=0 x+0 y+0              ok
+  text_anywhere            oracle=(13,236) 149x43            实测=(13,236) 149x43          Δ=0 x+0 y+0              ok
+  value_ink_tops           oracle=n=7 rows=[36, 53, 82, 118, 136, 154, 172] pitch=[17, 29, 36, 18, 18, 18] ink=[9, 11, 9, 9, 9, 11, 9] 实测=n=7 rows=[36, 53, 82, 118, 136, 154, 172] pitch=[17, 29, 36, 18, 18, 18] ink=[9, 11, 9, 9, 9, 11, 9] Δ=0 x+0 y+0 行首Δmax=0     ok
+  value_lines              oracle=n=3 rows=[236, 252, 268] pitch=[16, 16] ink=[11, 11, 11] 实测=n=3 rows=[236, 252, 268] pitch=[16, 16] ink=[11, 11, 11] Δ=0 x+0 y+0 行首Δmax=0     ok
+  value_col_bbox           oracle=(61,36) 36x145             实测=(61,36) 36x145           Δ=0 x+0 y+0              ok
+  chip_grid                oracle=y=32 n=122 rows=[32, 33, 34, 35, 36, 37, 38, 39, 40, 41] 实测=y=32 n=122 rows=[32, 33, 34, 35, 36, 37, 38, 39, 40, 41] Δ=0 x+0 y+0 行首Δmax=0     ok
+  level_ink                oracle=(62,82) 4x9                实测=(62,82) 4x9              Δ=0 x+0 y+0              ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 9（不适用跳过 0）
+对照图 E:/project/_r27_stat_fs.png

@@ -1,0 +1,15 @@
+anchor=(461,135) agree=0.825 rmse=31.2  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_FullBackgrnd_left400.png
+
+Item 背包栏（展开态 / FullBackgrnd）  tol=0px  形态=default  锚点=(461,135)  帧=E:/project/_r27_live_after.png
+--------------------------------------------------------------------------------------------------------
+  full_grid_rows    oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=12 rows=[50, 51, 84, 85, 118, 119, 152, 153, 186, 187] Δ=99 y+0 n+6 行数 12!=6(行距=[1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1]/[34, 34, 34, 34, 34]) FAIL
+  meso_digit_full   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0 x+w+0            ok
+  disabled_p1_c0    oracle=(157,50) agree=1.000       实测=(158,51) agree=1.000     Δ=1 x+1 y+1              FAIL
+  disabled_p1_c3    oracle=(265,50) agree=1.000       实测=(266,51) agree=1.000     Δ=1 x+1 y+1              FAIL
+  disabled_p2_c0    oracle=(306,50) agree=1.000       实测=(307,51) agree=1.000     Δ=1 x+1 y+1              FAIL
+  disabled_p3_c0    oracle=(455,50) agree=1.000       实测=(456,51) agree=1.000     Δ=1 x+1 y+1              FAIL
+  disabled_p3_c3    oracle=(563,50) agree=1.000       实测=(564,51) agree=1.000     Δ=1 x+1 y+1              FAIL
+  disabled_p1_r5    oracle=(157,220) agree=1.000      实测=(158,221) agree=1.000    Δ=1 x+1 y+1              FAIL
+--------------------------------------------------------------------------------------------------------
+不合格 7 / 8（不适用跳过 0）
+对照图 E:/project/_r27_itemfull_live_pre.png

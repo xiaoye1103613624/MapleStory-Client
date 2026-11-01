@@ -38,7 +38,8 @@ namespace ms
 		// 依据（参考截图 现有道具+tooltip.png e75687e9 逐像素实测，见
 		// docs/features/ui-v83-window-restore/evidence/w0-icon/coords.md）：
 		// 背包格线 x=32/68/104/140（距 36）、y=46/80/114（距 34），
-		// 与 UIItemInventory 回退 slot_pos=(8,51)+步进 36/34 完全对齐；
+		// 与 UIItemInventory 回退 slot_pos=(8,50)+步进 36/34 完全对齐（格顶 50 由
+		// R27-B2 按展开态 72 颗 Item/disabled 逐像素定案，尺子 = r27-oracle/ItemFull.json）；
 		// 白棉T恤图标墨迹左上 = 格左上 + (4,1)，而 -origin = (2,1) ⇒ 原生没有 32px 下移。
 		// 所以此处不再 shift，图标左上 = 绘制点 - origin。
 		showcount = count > -1;

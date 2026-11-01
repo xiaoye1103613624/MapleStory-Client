@@ -135,16 +135,18 @@ namespace ms
 		}
 		else
 		{
-			// v83 BeiDou Item：无 pos 节点，按 backgrnd（175x289）槽位格实测
-			// （r05-ui-layout.md §4）：列 x=8/45/81/117（步进 36）、
-			// 行 y=51/85/119/153/187/221（步进 34）、4 列 6 行、格 32px。
-			// 旧回退值行步进取 36（space_y=4），与背景格错位累计最多 10px，
-			// 导致道具图标越靠下越偏离格线。
+			// v83 BeiDou Item：无 pos 节点，槽位格按位图实测。尺子来自**展开态**原生帧：
+			// 把 32x32 的 Item/disabled 在整帧上逐像素求差，命中 72 格（12 列 x 6 行）且
+			// 逐格 SAD=0.000，列=窗口相对 8/44/80/116 | 157/193/229/265 | …（页距 149）、
+			// 行=50/84/118/152/186/220（行距 34）⇒ 4 列 6 行、格 32px、space_x=4 / space_y=2。
+			// 格顶与 (204,204,187) 那条格线**同一行**（覆盖层顶边正压在格线上），所以 y 是 50
+			// 不是 51：旧值 (8,51) 是当年从紧裁原生帧的**帧坐标**抄来的，没减锚点 dy=1。
+			// 见 evidence/r27-oracle/ItemFull.json 的 note 与 notes/open-issues.md B15。
 			slot_col = 4;
 			slot_row = 6;
 			slot_space_x = 4;
 			slot_space_y = 2;
-			slot_pos = Point<int16_t>(8, 51);
+			slot_pos = Point<int16_t>(8, 50);
 		}
 
 		max_slots = slot_row * slot_col;
@@ -1553,14 +1555,17 @@ namespace ms
 
 		if (full_enabled)
 		{
-			// 展开态（对照正确端截图 背包栏展开.png 602x291 逐像素实测）：
-			// 4 页 × 4 列 × 6 行 = 96 槽；页内列距 36，行距 34，首行 y=52。
-			// 页 0 列 0 槽位 x=8、页 1 x=158、页 2 x=307、页 3 x=456
-			// → 相对 slot_pos.x=8 的页偏移 {0,150,299,448}。
-			// 旧实现按 3 页 × 8 行（absslot/32）布局，第 7/8 行溢出面板底边=花屏。
+			// 展开态尺子（原生帧 602x291，锚点 (0,1) 换算成窗口相对）：把 Item/disabled
+			// 整张 32x32 在帧上逐像素求差，命中 72 格 = 12 列 x 6 行、逐格 SAD=0.000：
+			//   列 x = 157/193/229/265 | 306/342/378/414 | 455/491/527/563
+			//   行 y = 50/84/118/152/186/220
+			// ⇒ 页内列距 36、行距 34、**页距 149**（跨页首列差 41 = 36+5，页边界是双线）。
+			// 旧值 {0,150,299,448} 是把帧坐标（158/307/456）直接减 slot_pos.x 得来的，
+			// 少减了锚点 dy/dx —— 于是第 2/3/4 页整体右移 1px。见 ItemFull.json note。
+			// 旧实现按 3 页 x 8 行（absslot/32）布局，第 7/8 行溢出面板底边=花屏。
 			constexpr int16_t PAGE_COLS = 4;
 			constexpr int16_t PAGE_ROWS = 6;
-			static const int16_t page_dx[4] = { 0, 150, 299, 448 };
+			static const int16_t page_dx[4] = { 0, 149, 298, 447 };
 
 			int16_t page = static_cast<int16_t>(absslot / (PAGE_COLS * PAGE_ROWS));
 			int16_t rem = static_cast<int16_t>(absslot % (PAGE_COLS * PAGE_ROWS));

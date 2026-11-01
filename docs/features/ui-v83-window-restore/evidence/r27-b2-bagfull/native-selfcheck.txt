@@ -1,0 +1,15 @@
+anchor=(0,1) <- 指定的锚点，未做自动模板匹配（紧裁帧的 dy 会被尺寸约束强制，见 bias）
+
+Item 背包栏（展开态 / FullBackgrnd）  tol=0px  形态=default  锚点=(0,1)  帧=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_open.png
+--------------------------------------------------------------------------------------------------------
+  full_grid_rows    oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 行首Δmax=0     ok
+  meso_digit_full   oracle=(131,269) 6x9              实测=(131,269) 6x9            Δ=0 y+0 x+w+0            ok
+  disabled_p1_c0    oracle=(157,50) agree=1.000       实测=(157,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_c3    oracle=(265,50) agree=1.000       实测=(265,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p2_c0    oracle=(306,50) agree=1.000       实测=(306,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c0    oracle=(455,50) agree=1.000       实测=(455,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c3    oracle=(563,50) agree=1.000       实测=(563,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_r5    oracle=(157,220) agree=1.000      实测=(157,220) agree=1.000    Δ=0 x+0 y+0              ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 8（不适用跳过 0）
+对照图 E:/project/_r27_itemfull_oraclechk.png

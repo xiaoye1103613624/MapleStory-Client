@@ -1,0 +1,145 @@
+{
+  "window": "Item 背包栏（展开态 / FullBackgrnd）",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/背包栏展开.png (602x291)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_FullBackgrnd_left400.png",
+  "anchor_min_agree": 0.6,
+  "tol": 0,
+  "note": "锚点模板为什么是「左 400 列裁片」而不是整张 Item_FullBackgrnd：整张 603 宽 > 帧 602 宽，anchor_in 不许出界直接返回 None；改用折叠态 Item_backgrnd 又拿到假匹配（agree 0.686，top5 rmse 57.3~58.2 无峰值分离——右边 43 列被裁掉的正是有内容的那部分）。裁片保留美术左上角对齐、400 列里有 115594 个实心像素，agree 0.841 且 33.6 vs 43.2 分离清楚。\n\ntol=0（比折叠态的 2 更严）：这张 spec 每一格都是**位图落位**（分隔线来自 backgrnd 位图、锁定格是 Item/disabled 整张 32x32 贴合，原生帧上实测 rmse=0.00 / agree=1.000），不涉及文字抗锯齿，所以 1px 就是 1 格不合格。disabled 探针 min_agree=0.75 的来处：把模板挪 1px 错位在原生帧上仍有 0.778（X 斜纹是周期图案），所以不能用 agree 判对错，只能信「最低分那一格的位置」并要求峰值分离。\n\n页距尺子（本轮新量，两条独立证据）：先做一次**暴力逐像素**扫描（不用 FFT，口径无歧义）：把 32x32 的 disabled 在整张帧上逐 (x,y) 求平均绝对差，阈值 0.5 以内共命中 **72 格 = 12 列 × 6 行**，行=窗口相对 50,84,118,152,186,220（行距恒 34），列=157,193,229,265 | 306,342,378,414 | 455,491,527,563（页内列距恒 36、跨页首列差 41 ⇒ 页距 3×36+41=149）。固定 x=157 的竖直剖面里 SAD 只有 y=51(帧) 这一格是 0.000，相邻 y=50/52 分别 7.775/7.083 —— 峰值分离干净。竖向再量一次独立尺：backgrnd 自己画的格线在窗口相对 x=7,43,79,115（页内）与 151+156（**双线**=页边界），页 0 格起点 8/44/80/116 —— 与 157-149 相合。\n\n⇒ 客户端要改两处常数：① page_dx {0,150,299,448} → {0,149,298,447}（第 2/3/4 页整体右移 1px）；② slot_pos 兜底 (8,51) → (8,50)，**格顶与格线同在一行**（disabled 覆盖层顶边就压在 (204,204,187) 那条线上），旧常数把整幅格子下移 1px。两处 +1 都是 B15 那个「紧裁帧锚点被尺寸约束强制」的伪影：常数当初是从**帧坐标**抄来的，没减锚点。折叠态帧上没有 disabled（该角色装备栏 24 格全开），所以这条尺子只有展开态量得到。",
+  "probes": [
+    {
+      "name": "full_grid_rows",
+      "kind": "band",
+      "color": [204, 204, 187],
+      "tol": 0,
+      "region": [0, 0, 200, 289],
+      "min_run": 20,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "note": "只扫 x<200：页 0 的格线是 backgrnd 位图自己画的，不受 disabled 覆盖，行尺与折叠态同一把（50/84/118/152/186/220，行距 34）。",
+      "oracle": {
+        "x": 0,
+        "y": 50,
+        "w": 0,
+        "h": 6,
+        "n": 6,
+        "rows": [50, 84, 118, 152, 186, 220]
+      }
+    },
+    {
+      "name": "meso_digit_full",
+      "kind": "blob",
+      "color": [0, 0, 0],
+      "tol": 110,
+      "region": [125, 267, 141, 280],
+      "min_pix": 3,
+      "row_min": 1,
+      "col_min": 1,
+      "keys": [
+        "y",
+        "x+w"
+      ],
+      "note": "展开态金币框内的数字落位。探针区与折叠态 meso_digit 同一块 —— 原生两态的金币框在窗口相对同一处，所以这是「两态底衬对齐」的尺，不是「金币数值」的尺。\n\n比 **右缘 x+w** 而不是左缘 x：金币串是 `Text::Alignment::RIGHT` 画在固定 x（UIItemInventory.cpp:332 的 137），位数一变左缘就跟着漂；两端金币数额本来就不同，比左缘（更别提比 w/h 字形尺寸，两端字体不同）只会打出假的 Δ。原生 131+6=137 正好压在绘制点上，所以右缘是唯一能同时量两端的那条尺。",
+      "oracle": {
+        "x": 131,
+        "y": 269,
+        "w": 6,
+        "h": 9,
+        "n": 16
+      }
+    },
+    {
+      "name": "disabled_p1_c0",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [150, 48, 190, 84],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 157,
+        "y": 50,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "disabled_p1_c3",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [258, 48, 298, 84],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 265,
+        "y": 50,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "disabled_p2_c0",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [299, 48, 339, 84],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 306,
+        "y": 50,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "disabled_p3_c0",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [448, 48, 488, 84],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 455,
+        "y": 50,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "disabled_p3_c3",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [556, 48, 596, 84],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 563,
+        "y": 50,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "disabled_p1_r5",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_disabled.png",
+      "region": [150, 218, 190, 254],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": 157,
+        "y": 220,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    }
+  ],
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_open.png",
+  "oracle_anchor": [0, 1]
+}

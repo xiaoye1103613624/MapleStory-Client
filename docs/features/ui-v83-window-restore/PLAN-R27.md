@@ -60,7 +60,13 @@
 `bias` 的重叠区 meanSAD 网格给出 dy=-1（9.77/0.913）完胜 dy=0（23.37/0.792），金币白框边框行在「美术 PNG 252 / 真机窗口相对 252 / 原生帧 251」三处互证 ⇒
 `mark --anchor 3 -1` 重写 oracle 后 **`slot_rows` 50/84/118/152/186/220 与 `meso_digit` (131,269) 对真机帧逐格 Δ=0**（格子行距、金币常量本来就对）。
 其余 6 张 spec 的 `bias` 全过（记录锚点即最优格），详见 [evidence/r27-oracle/README.md](evidence/r27-oracle/README.md) 锚点一节与 [notes/open-issues.md](notes/open-issues.md) B15。
-**本批剩余**：① 背包**展开态**（`Item_FullBackgrnd` 603x289，与折叠态共用同一把金币尺，已互证）；② 能力窗「基本属性点」浮层客户端无条件常显、原生只在悬浮时显示。
+**本批两条剩余都已定案（2026-11-01 18:5x，详见 [evidence/r27-b2-bagfull/README.md](evidence/r27-b2-bagfull/README.md)）**：
+① 展开态 oracle 建成 ⇒ 抓到**真缺陷**：72 颗 `Item/disabled` 全片暴力 SAD 定出「12 列 × 6 行、页距 149、格顶窗口相对 50」，
+而改前真机帧上 6 颗 disabled 探针齐刷 **Δ=(+1,+1)**、`full_grid_rows` 报 12 条双行 ⇒ 常数 `slot_pos (8,51)→(8,50)`、
+`page_dx {0,150,299,448}→{0,149,298,447}`（两处 +1 都是当年把紧裁帧**帧坐标**当窗口相对坐标抄进来的）。构建 EXITCODE=0，
+**真机复验卡在部署**（§I.3 第 1 条未拍板）。② 「基本属性点」浮层**不是悬浮件**：第二张原生帧
+`frames/native_stat_fullscreen.png`（鼠标在右侧地图上）打在 `Stat.json` 上 **9/9 Δ=0、basicStat agree=1.000** ⇒ 撤回该判断，
+客户端现状与原生一致；是否随职业/等级门控只剩「原生端拍一张 1 转后角色的能力窗」这一条取证路。
 
 ### B3 装备窗（用户报的 2）
 - 槽位绘制/命中同源（含 `WEAPON`/`SUBWEAPON` 共用 `(137,131)` 串 tooltip）；
