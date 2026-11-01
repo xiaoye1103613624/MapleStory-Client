@@ -10,9 +10,15 @@
 用法
   python layout.py geom   <file.nx> <root/path> [more...]        # 资产侧几何：origin / 尺寸（格子的真源）
   python layout.py anchor <frame.png> <backgrnd.png> [--png OUT] # 只定锚点（调试用）
-  python layout.py mark   <spec.json> <frame.png>                # 在原生帧量探针 -> 写回 oracle
+  python layout.py bias   <spec.json> [frame]                    # 审锚点：允许模板出界重算 ±2 meanSAD 网格
+  python layout.py mark   <spec.json> <frame.png> [--anchor X Y] # 在原生帧量探针 -> 写回 oracle
   python layout.py check  <spec.json> <frame.png> [--png OUT] [--mode M]  # 实测 vs oracle（非 0 = 有格不合格）
   python layout.py probe  <frame.png> x0 y0 x1 y1 --color r,g,b  # 裸量一块区域，用来新写探针
+
+**建 spec 后先跑 bias**：oracle 全是相对锚点的坐标，锚点偏 1px 就整张齐偏 1px。
+自动锚点要求模板整张落在帧内，遇到紧裁的原生帧（帧高 == 图高）时 dy 被尺寸约束强制成 0，
+这时用 bias 量出的那一格 `mark --anchor X Y` 校正；check/selftest 对 oracle 帧会直接采用
+记录锚点（别的帧照旧自动锚定，真机帧的窗口位置本来就该量出来）。
 
 spec = ../evidence/r27-oracle/<window>.json；字段说明见 README.md。
 只在某形态下存在的格子（如 Stat 详情板）给探针写 "active_in": ["detail"]，
@@ -181,6 +187,33 @@ def template_anchor(frame, tmpl, alpha_min=250, verbose=False):
     return anchor_in(load_rgb(resolve(frame)), tmpl, alpha_min, verbose)
 
 
+def overlap_sad(f, tmpl_path, x, y, alpha_min=250):
+    """把模板贴在帧的 (x,y)，**允许出界**，只比重叠的实心像素：返回 (meanSAD, agree, n)。
+
+    anchor_in 硬性要求模板整张落在帧内。紧裁的原生帧（帧高 == 图高，实测
+    native_bag_fold 179x289 vs Item/backgrnd 175x289）于是只能取 dy=0 —— 竖直锚点
+    是被「装得下」这个约束强制出来的，不是内容对上的结果。Δ=1 的系统性伪影就来自这里，
+    量它必须换成这个允许出界的口径。
+    """
+    t = np.asarray(Image.open(resolve(tmpl_path)).convert("RGBA"), dtype=np.float64)
+    if t.ndim == 2:
+        t = np.dstack([t, t, t, np.full_like(t, 255.0)])
+    a = (t[:, :, 3] >= alpha_min)
+    h, w = a.shape
+    y0t, y1t = max(0, -y), min(h, f.shape[0] - y)
+    x0t, x1t = max(0, -x), min(w, f.shape[1] - x)
+    if y1t <= y0t or x1t <= x0t:
+        return None
+    m = a[y0t:y1t, x0t:x1t]
+    n = int(m.sum())
+    if n < 16:
+        return None
+    art = t[:, :, :3][y0t:y1t, x0t:x1t] * m[:, :, None]
+    sub = f[y0t + y:y1t + y, x0t + x:x1t + x].astype(np.float64)
+    d = np.abs(sub - art).max(axis=2)
+    return (float(d[m].mean()), float((d[m] <= 24.0).mean()), n)
+
+
 def _agreement(f, t, a, x, y, tol=24):
     """锚点处「与模板逐通道差 <= tol」的实心像素占比（0..1）。"""
     h, w = a.shape
@@ -313,7 +346,7 @@ def probe_active(p, mode):
     return not ins or mode in ins
 
 
-def measure_all(spec, frame, force_anchor=None, mode=None):
+def measure_all(spec, frame, force_anchor=None, mode=None, anchor_override=None):
     """锚定 + 量全部探针。锚定失败返回 (None, None) —— 该帧判不了几何。
 
     mode=None（mark / selftest 用）表示「全部照量」，因为 oracle 是从内容齐全的那张
@@ -322,8 +355,15 @@ def measure_all(spec, frame, force_anchor=None, mode=None):
     force_anchor 只给 selftest 用：注入偏移时可能顺手把锚点图也搬烂（band/lines 要清空
     整个探针区，面积一大 agree 就掉到阈值下），此时退回 spec 里已记录的锚点继续量探针，
     否则「门禁能不能抓偏移」这件事本身会被锚定失败掩盖成崩溃。
+
+    anchor_override 是 mark 的 --anchor：紧裁帧的自动锚点不可信（见 overlap_sad / bias），
+    用 bias 量出来的那一格显式供进来，探针值仍然是从帧上量出来的。
     """
     img = load_rgb(resolve(frame))
+    if anchor_override:
+        anchor = tuple(anchor_override)
+        print("anchor=(%d,%d) <- 指定的锚点，未做自动模板匹配（紧裁帧的 dy 会被尺寸约束强制，见 bias）" % anchor)
+        return anchor, _measure(img, spec, anchor, mode)
     a = template_anchor(frame, spec["anchor_tmpl"])
     min_agree = spec.get("anchor_min_agree", 0.7)
     if not a or a[3] < min_agree:
@@ -338,6 +378,10 @@ def measure_all(spec, frame, force_anchor=None, mode=None):
     else:
         anchor = (a[0], a[1])
         print("anchor=(%d,%d) agree=%.3f rmse=%.1f  <- %s" % (anchor[0], anchor[1], a[3], a[2], spec["anchor_tmpl"]))
+    return anchor, _measure(img, spec, anchor, mode)
+
+
+def _measure(img, spec, anchor, mode):
     res = {}
     for p in spec["probes"]:
         if mode and not probe_active(p, mode):
@@ -347,7 +391,7 @@ def measure_all(spec, frame, force_anchor=None, mode=None):
         except Exception as exc:  # 单格异常不拖垮整轮
             print("   probe %s 出错: %s" % (p["name"], exc))
             res[p["name"]] = None
-    return anchor, res
+    return res
 
 
 # ----------------------------------------------------------------- 子命令
@@ -385,9 +429,54 @@ def cmd_anchor(args):
     return 0
 
 
+def cmd_bias(args):
+    """审计 spec 记录的锚点：允许模板出界，重算 ±span 网格的 meanSAD。
+
+    为什么要这条：oracle 只能被「量」出来，但**锚点本身也是量出来的**，而紧裁的原生帧
+    上自动锚点的 dy 是被尺寸约束强制成 0 的。锚点偏 1px，整张 spec 的每一格就齐刷刷
+    偏 1px —— 三个不同窗口同时报 Δ=1 时，追的是门禁，不是客户端常量。
+    """
+    spec = load_spec(args.spec)
+    frame = args.frame or spec.get("oracle_frame")
+    if not frame or not os.path.exists(resolve(frame)):
+        print("需要 --frame 或 spec 里的 oracle_frame")
+        return 2
+    f = load_rgb(resolve(frame))
+    rec = tuple(spec["oracle_anchor"])
+    span = args.span
+    grid = {}
+    for dy in range(-span, span + 1):
+        row = []
+        for dx in range(-span, span + 1):
+            r = overlap_sad(f, spec["anchor_tmpl"], rec[0] + dx, rec[1] + dy)
+            row.append(r)
+        grid[dy] = row
+    best = min(((r[0], dx, dy) for dy in grid for (dx, r) in
+                zip(range(-span, span + 1), grid[dy]) if r), key=lambda t: t[0], default=None)
+    print("spec=%s  frame=%s  记录锚点=(%d,%d)" % (args.spec, frame, rec[0], rec[1]))
+    print("   meanSAD（允许出界，越小越对）：")
+    print("        dy\\dx " + "".join("%8d" % dx for dx in range(-span, span + 1)))
+    for dy in range(-span, span + 1):
+        cells = []
+        for r in grid[dy]:
+            cells.append("%8.2f" % r[0] if r else "     ---")
+        tag = "  <= 记录" if dy == 0 else ""
+        print("   %+5d%s%s" % (dy, "  ".join(cells), tag))
+    rec_cell = grid[0][span]
+    print("   记录格 meanSAD=%.2f agree=%.3f n=%d" % (rec_cell or (float("nan"),) * 3))
+    if best and (best[1], best[2]) != (0, 0):
+        print("!! 最优偏移 (dx=%+d, dy=%+d) meanSAD=%.2f -> 锚点应为 (%d,%d)"
+              % (best[1], best[2], best[0], rec[0] + best[1], rec[1] + best[2]))
+        print("   校正：mark --anchor %d %d（探针值仍从帧上量，只是参照点换成量出来的那一格）"
+              % (rec[0] + best[1], rec[1] + best[2]))
+        return 1
+    print("   OK：记录锚点就是最优格，Δ=1 不是锚点伪影")
+    return 0
+
+
 def cmd_mark(args):
     spec = load_spec(args.spec)
-    anchor, res = measure_all(spec, args.frame)
+    anchor, res = measure_all(spec, args.frame, anchor_override=args.anchor)
     if res is None:
         return 2
     for p in spec["probes"]:
@@ -404,9 +493,29 @@ def cmd_mark(args):
     return 0
 
 
+def recorded_anchor_if_oracle(spec, frame):
+    """量的是 spec 自己那张 oracle 帧时，直接用记录好的锚点；别的帧返回 None（照常自动锚定）。
+
+    锚点本身也是量出来的，而紧裁的原生帧上自动锚点不可信：anchor_in 不许模板出界，
+    帧高 == 图高时 dy 被尺寸约束强制成 0（bias 子命令专治这个）。mark 已经用校正过的
+    锚点写下 oracle，对同一张帧再自动重锚等于把校正抹掉 —— 实测 Δ 凭空多出 1px，
+    三条探针整列齐偏，追的不是客户端常数而是门禁自己。真机帧的窗口位置未知，必须自动锚。
+    """
+    of = spec.get("oracle_frame")
+    if not of or "oracle_anchor" not in spec:
+        return None
+    try:
+        if os.path.samefile(resolve(frame), resolve(of)):
+            return tuple(spec["oracle_anchor"])
+    except OSError:
+        return None
+    return None
+
+
 def cmd_check(args):
     spec = load_spec(args.spec)
-    anchor, res = measure_all(spec, args.frame, mode=args.mode)
+    anchor, res = measure_all(spec, args.frame, mode=args.mode,
+                              anchor_override=recorded_anchor_if_oracle(spec, args.frame))
     if res is None:
         return 2
     tol = spec.get("tol", 2)
@@ -529,6 +638,14 @@ def cmd_selftest(args):
     if args.probe_kind == "tmpl":
         tw, th = Image.open(resolve(probe["tmpl"])).size
         bx1, by1 = bx0 + tw, by0 + th
+    # 锚点可以带负分量（bias 校正过的紧裁帧，实测 Item = (3,-1)），这时探针区映射到帧上是
+    # 负行号，而 numpy 的 src[-1:288] 是**空切片** —— median 出 NaN、fill_far 直接崩。
+    # 量具的坐标一律先夹进帧内（run_probe 本来也这么钳）。
+    bx0, by0 = max(0, bx0), max(0, by0)
+    bx1, by1 = min(src.shape[1], bx1), min(src.shape[0], by1)
+    if bx1 <= bx0 or by1 <= by0:
+        print("注入区被钳空：这条探针的内容不落在这张帧里，换探针或换帧")
+        return 2
     if args.probe_kind == "blob":
         bg = np.asarray(Image.open(resolve(spec["anchor_tmpl"])).convert("RGB")).astype(np.int16)
         fill = fill_far(np.median(bg.reshape(-1, 3), axis=0), color, tol)
@@ -545,7 +662,7 @@ def cmd_selftest(args):
         arr[y0:y1, bx0:bx1] = block[:y1 - y0]
         tmp = os.path.abspath("._selftest_%d.png" % shift)
         Image.fromarray(arr.astype(np.uint8)).save(tmp)
-        _, res = measure_all(spec, tmp, force_anchor=anchor)
+        _, res = measure_all(spec, tmp, anchor_override=anchor)
         got = res.get(args.probe)
         os.remove(tmp)
         if got is None:
@@ -575,6 +692,13 @@ def main():
     m = sub.add_parser("mark")
     m.add_argument("spec")
     m.add_argument("frame")
+    m.add_argument("--anchor", nargs=2, type=int, metavar=("X", "Y"),
+                   help="用 bias 量出来的锚点覆盖自动锚点（紧裁帧的 dy 会被自动锚点强制成 0）")
+
+    b = sub.add_parser("bias")
+    b.add_argument("spec")
+    b.add_argument("frame", nargs="?", default=None)
+    b.add_argument("--span", type=int, default=2)
 
     c = sub.add_parser("check")
     c.add_argument("spec")
@@ -603,6 +727,8 @@ def main():
         return cmd_anchor(ns)
     if ns.cmd == "mark":
         return cmd_mark(ns)
+    if ns.cmd == "bias":
+        return cmd_bias(ns)
     if ns.cmd == "check":
         return cmd_check(ns)
     if ns.cmd == "selftest":

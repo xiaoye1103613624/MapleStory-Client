@@ -54,7 +54,13 @@
 
 ### B2 能力窗 / 背包 / 金币（用户报的 1、5）
 `UIStatsInfo.cpp:225-237`（数值 Y 表）、`UIItemInventory.cpp:330`（金币）、格位回退表。依赖 B1a+B1b。
-**B1b 已顺带掉两处**：金币数值常量（269/137，`Item.json/meso_digit` 真机 Δ=1）、能力窗上半区 7 行墨顶（`Stat.json/value_ink_tops` 真机 Δ≤1）。本批只剩**格子本身**：`slot_rows` 真机实测行首 50/84/… 比原生 49/83/… 恒低 1px（tol 内，但 B2 要查是不是格高取整），以及背包展开态（`Item_FullBackgrnd` 603x289 与折叠态共用同一把金币尺，已互证）。
+**B1b 已顺带掉两处，且本批第一件事（锚点审计）已做完**：金币数值常量（269/137）、能力窗上半区 7 行墨顶（`Stat.json/value_ink_tops` 真机 Δ≤1）。
+那两处当时都残留一个「三窗同时 Δ=1」的疑点，2026-11-01 用新子命令 `layout.py bias` 定案：**是门禁自己的尺子偏 1px，不是客户端常数** ——
+`背包栏（折叠）.png` 高 289 == `Item/backgrnd` 图高 289，`anchor_in` 不许模板出界，dy 被尺寸约束强制成 0；
+`bias` 的重叠区 meanSAD 网格给出 dy=-1（9.77/0.913）完胜 dy=0（23.37/0.792），金币白框边框行在「美术 PNG 252 / 真机窗口相对 252 / 原生帧 251」三处互证 ⇒
+`mark --anchor 3 -1` 重写 oracle 后 **`slot_rows` 50/84/118/152/186/220 与 `meso_digit` (131,269) 对真机帧逐格 Δ=0**（格子行距、金币常量本来就对）。
+其余 6 张 spec 的 `bias` 全过（记录锚点即最优格），详见 [evidence/r27-oracle/README.md](evidence/r27-oracle/README.md) 锚点一节与 [notes/open-issues.md](notes/open-issues.md) B15。
+**本批剩余**：① 背包**展开态**（`Item_FullBackgrnd` 603x289，与折叠态共用同一把金币尺，已互证）；② 能力窗「基本属性点」浮层客户端无条件常显、原生只在悬浮时显示。
 
 ### B3 装备窗（用户报的 2）
 - 槽位绘制/命中同源（含 `WEAPON`/`SUBWEAPON` 共用 `(137,131)` 串 tooltip）；

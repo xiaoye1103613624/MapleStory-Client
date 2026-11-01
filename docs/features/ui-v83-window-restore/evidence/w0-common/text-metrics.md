@@ -76,8 +76,8 @@ int16_t Text::y_for_ink_top(int16_t ink_top) const;   // 墨迹顶 → Text::dra
 | 〃 下部 AP 三行 | A11M | 行墨迹顶 236 / 252 / 268 | `value_lines` 同上，ink=11 | 完全一致 | Δ=0 | — |
 | `UIStatusBar` 职业名 | A12M | 墨迹顶 40 | `frames/native_bottom_bar.png` 逐行核对 | — | — | **未改**：40 经原生帧确认正确，r15 的怀疑不成立 |
 | 〃 角色名 | A12M | 墨迹顶 56 | 同上 | — | — | **未改**：同上 |
-| `UIItemInventory` 金币 | A11M RIGHT | 墨迹顶 **269**、右缘 **x137** | `Item.json/meso_digit` (131,268) 6x9 | (131,269) 5x8 | Δ=1 | 旧 (141, **284**) ⇒ 低 16px，数字整条掉到白框外，就是用户报的「金币值位置偏下了，没有在框内」 |
-| `UISkillBook` SP | A12M RIGHT | 墨迹顶 **268**、右缘 **x109** | `SkillMacro.json/sp_digit` (103,268) 6x9 | (102,269) 5x8 | Δ=1 | 旧 (92, **274**) ⇒ 低 6px、左 17px |
+| `UIItemInventory` 金币 | A11M RIGHT | 墨迹顶 **269**、右缘 **x137** | `Item.json/meso_digit` (131,269) 6x9（锚点经 `bias` 校正为 (3,-1) 后与真机逐格 Δ=0；旧 oracle (131,268) 是紧裁帧锚点伪影，见 [../r27-oracle/README.md](../r27-oracle/README.md) 锚点一节） | (131,269) 5x8 | Δ=0 | 旧 (141, **284**) ⇒ 低 16px，数字整条掉到白框外，就是用户报的「金币值位置偏下了，没有在框内」 |
+| `UISkillBook` SP | A12M RIGHT | 墨迹顶 **268**、右缘 **x109** | `SkillMacro.json/sp_digit` (103,268) 6x9 ⇒ 右缘 109 | (102,269) 5x8 ⇒ 右缘 107 | Δ=1（墨宽/墨高各差 1，非锚点：该 spec 锚点 (0,0) 已过 `bias`） | 旧 (92, **274**) ⇒ 低 6px、左 17px。**残留 2px 右缘缺口**（109 vs 107）归 B4/#84：A12M 的 RIGHT 里 x 到底是墨迹右缘还是 advance 右缘，见 [../../notes/open-issues.md](../../notes/open-issues.md) B15 的复测配方 |
 | `UIChatBar` 目标文字 | A11M LEFT | 墨迹顶 8 | `frames/native_chatbar_fold.png` 逐行核对 | — | — | **未改**：8 经原生帧确认正确 |
 
 **跨窗互证的「白框尺子」**（这两个常量不是各调一次凑出来的，是同一把尺）：
