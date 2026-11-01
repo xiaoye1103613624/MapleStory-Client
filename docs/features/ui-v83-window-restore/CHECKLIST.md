@@ -336,3 +336,14 @@
 5. **J2-③ 主动收窄**：技能暴击/攻击位那一组里，`critiDamage` 一类节点在本包 `Skill.nx` 中实测不存在，
    已按证据删掉对应读取，不是漏做。
 
+### K.4 收尾：提交拆分与推送台账
+
+- 见 [r810-commit-split-ledger.md](../beidou-v17-parity/notes/r810-commit-split-ledger.md)：
+  **27** 个提交，`169ea09..358193d`，已推 `origin/feature/dev_0.0.1`；推送前屏蔽了约 120 MB 联调副产物，
+  并把 `port-095/evidence/world_props.txt` 里的数据库账号+口令脱敏后才入库。
+- 三条限制记在这儿备查：拆分粒度是**文件**而非 hunk（一个文件叠了多条轮次就无法再分）；
+  `UIElement` / `PacketSwitch` / `vcxproj` 这类共享注册件只落一次；
+  **中间提交不保证各自可构建**，只有 tip 等于本轮真机验过的那份 `9636f77b4030ab4d9a85379cb0694911`。
+- 一条新查出的收尾欠账：`Graphics/GraphicsGL.cpp:33` 的 `dbgatlas()` 仍会在 Windows Release 落 `atlas_dbg.log`
+  （无开关、限 200 条），属登录页竖条纹轮遗留，随 #44 关闭时删除。
+
