@@ -58,7 +58,11 @@
 那两处当时都残留一个「三窗同时 Δ=1」的疑点，2026-11-01 用新子命令 `layout.py bias` 定案：**是门禁自己的尺子偏 1px，不是客户端常数** ——
 `背包栏（折叠）.png` 高 289 == `Item/backgrnd` 图高 289，`anchor_in` 不许模板出界，dy 被尺寸约束强制成 0；
 `bias` 的重叠区 meanSAD 网格给出 dy=-1（9.77/0.913）完胜 dy=0（23.37/0.792），金币白框边框行在「美术 PNG 252 / 真机窗口相对 252 / 原生帧 251」三处互证 ⇒
-`mark --anchor 3 -1` 重写 oracle 后 **`slot_rows` 50/84/118/152/186/220 与 `meso_digit` (131,269) 对真机帧逐格 Δ=0**（格子行距、金币常量本来就对）。
+`mark --anchor 3 -1` 重写 oracle 后 **`slot_rows` 50/84/118/152/186/220 与 `meso_digit` (131,269) 对真机帧逐格 Δ=0**（格子行距本来就对）。
+⚠ 2026-11-01 修正：这句里的 `meso_digit` 右缘当时是**假 Δ=0** —— `cmp_probe` 没走 `keyval()`，派生键 `x+w` 两侧都取 0、
+差恒为 0；工具修好后重测，`y` 侧 Δ=0 成立（金币上下落位确实修好了），**`x+w` 侧两张改前真机帧都是 −1**，
+与「真机数字位数/字形和原生不同」的右 bearing 残差无法区分 ⇒ 金币**水平**落位改记为待复验（需一帧与原生同数额的真机帧），
+详见 [evidence/r27-b2-bagfull/README.md](evidence/r27-b2-bagfull/README.md) 顺带定案第 1 条。
 其余 6 张 spec 的 `bias` 全过（记录锚点即最优格），详见 [evidence/r27-oracle/README.md](evidence/r27-oracle/README.md) 锚点一节与 [notes/open-issues.md](notes/open-issues.md) B15。
 **本批两条剩余都已定案（2026-11-01 18:5x，详见 [evidence/r27-b2-bagfull/README.md](evidence/r27-b2-bagfull/README.md)）**：
 ① 展开态 oracle 建成 ⇒ 抓到**真缺陷**：72 颗 `Item/disabled` 全片暴力 SAD 定出「12 列 × 6 行、页距 149、格顶窗口相对 50」，

@@ -1,0 +1,16 @@
+# 2026-11-01 修 cmp_probe(走 keyval) 后重测 x+w —— 此前 live-pre-fix-check.txt 里的 x+w+0 是空转假值
+
+## 原生帧（尺子本身成立性）
+  slot_rows     oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 行首Δmax=0     ok
+  meso_digit    oracle=(131,269) 6x9              实测=(131,269) 6x9            Δ=0 y+0 x+w+0            ok
+  meso_digit_full   oracle=(131,269) 6x9              实测=(131,269) 6x9            Δ=0 y+0 x+w+0            ok
+  sp_digit            oracle=(103,268) 6x9              实测=(103,268) 6x9            Δ=0 y+0 x+w+0            ok
+
+## 改前真机帧（金币水平落位退回待复验）
+  meso_digit_full   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 y+0 x+w-1            FAIL
+  meso_digit_full   oracle=(131,269) 6x9              实测=(132,270) 4x7            Δ=1 y+1 x+w-1            FAIL
+  meso_digit    oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 y+0 x+w-1            ok
+
+## 技能窗真机帧（x+w -2 由工具复现，归 #84 B4）
+anchor=(569,130) agree=0.543 rmse=98.4  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Skill_backgrnd.png
+  sp_digit            oracle=(103,268) 6x9              实测=(102,269) 5x8            Δ=2 y+1 x+w-2            ok

@@ -304,11 +304,15 @@ def cmp_probe(oracle, actual, keys=("x", "y"), size_keys=(), tol=2):
         return (999, "oracle=%s actual=%s" % (fmt(oracle), fmt(actual)))
     worst, det = 0, []
     for k in keys:
-        d = int(actual.get(k, 0) - oracle.get(k, 0))
+        miss = [t for t in k.split("+") if t not in oracle or t not in actual]
+        if miss:
+            det.append("%s MISSING(%s)" % (k, ",".join(miss)))
+            return (999, " ".join(det))
+        d = keyval(actual, k) - keyval(oracle, k)
         det.append("%s%+d" % (k, d))
         worst = max(worst, abs(d))
     for k in size_keys:
-        worst = max(worst, abs(int(actual.get(k, 0) - oracle.get(k, 0))))
+        worst = max(worst, abs(keyval(actual, k) - keyval(oracle, k)))
     if "rows" in oracle:
         o, a = oracle["rows"], actual.get("rows", [])
         if len(o) != len(a):
