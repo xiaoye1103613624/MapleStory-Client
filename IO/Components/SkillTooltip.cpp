@@ -27,11 +27,6 @@ namespace ms
 {
 	SkillTooltip::SkillTooltip()
 	{
-		nl::node Frame = nl::nx::UI["UIToolTip.img"]["Item"]["Frame2"];
-
-		frame = Frame;
-		cover = Frame["cover"];
-
 		skill_id = 0;
 	}
 
@@ -156,9 +151,9 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		frame.draw(pos + Point<int16_t>(176, height + 11), width, height - 1);
+		// 框体 = 内容包围盒外扩（Q1：程序描边，见 TextTooltip.h TooltipBackdrop）
+		backdrop.draw(pos + Point<int16_t>(-6, -6), width + 30, height + 20);
 		name.draw(pos + Point<int16_t>(33, 3));
-		cover.draw(pos + Point<int16_t>(16, -1));
 
 		pos.shift_y(icon_offset);
 

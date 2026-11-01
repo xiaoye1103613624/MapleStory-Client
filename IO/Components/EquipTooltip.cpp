@@ -29,29 +29,11 @@ namespace ms
 {
 	EquipTooltip::EquipTooltip()
 	{
-		nl::node Item = nl::nx::UI["UIToolTip.img"]["Item"];
-		nl::node Frame = Item["Frame"];
-		nl::node ItemIcon = Item["ItemIcon"];
-		nl::node Equip = Item["Equip"];
+		nl::node Equip = nl::nx::UI["UIWindow.img"]["ToolTip"]["Equip"];
 		nl::node EquipCan = Equip["Can"];
 		nl::node EquipCannot = Equip["Cannot"];
 
-		top = Frame["top"];
-		mid = Frame["line"];
-		line = Frame["dotline"];
-		bot = Frame["bottom"];
-		base = ItemIcon["base"];
-		cover = Frame["cover"];
-		itemcover = ItemIcon["cover"];
-		type[true] = ItemIcon["new"];
-		type[false] = ItemIcon["old"];
-
-		potential[Equip::Potential::POT_NONE] = Texture();
-		potential[Equip::Potential::POT_HIDDEN] = ItemIcon["0"];
-		potential[Equip::Potential::POT_RARE] = ItemIcon["1"];
-		potential[Equip::Potential::POT_EPIC] = ItemIcon["2"];
-		potential[Equip::Potential::POT_UNIQUE] = ItemIcon["3"];
-		potential[Equip::Potential::POT_LEGENDARY] = ItemIcon["4"];
+		separator = ColorLine(FRAME_WIDTH, Color::Name::WHITE, 0.4f, false);
 
 		requirements.push_back(MapleStat::Id::LEVEL);
 		requirements.push_back(MapleStat::Id::STR);
@@ -72,34 +54,30 @@ namespace ms
 		reqstattextures[MapleStat::Id::LUK][false] = EquipCannot["reqLUK"];
 		reqstattextures[MapleStat::Id::LUK][true] = EquipCan["reqLUK"];
 
+		// 三行需求位的行距必须一致（15px）。DEX/INT 原先是 y=71，与上一行 STR/LUK(y=62)
+		// 只差 9px，而 A11M 行高约 15px ⇒ 线上实测第 2、3 行文字直接叠成糊块
+		// （见 docs/features/ui-v83-window-restore/notes/open-issues.md §B8.2）。
 		reqstatpositions[MapleStat::Id::LEVEL] = Point<int16_t>(97, 47);
 		reqstatpositions[MapleStat::Id::STR] = Point<int16_t>(97, 62);
 		reqstatpositions[MapleStat::Id::LUK] = Point<int16_t>(177, 62);
-		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(97, 71);
-		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(177, 71);
+		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(97, 77);
+		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(177, 77);
 
 		reqset[false] = Charset(EquipCannot, Charset::Alignment::LEFT);
 		reqset[true] = Charset(EquipCan, Charset::Alignment::LEFT);
 
+		// 包内无 YellowNumber，可装备态改用 Can 数字字模（绿）
 		lvset[false] = Charset(EquipCannot, Charset::Alignment::LEFT);
-		lvset[true] = Charset(Equip["YellowNumber"], Charset::Alignment::LEFT);
+		lvset[true] = Charset(EquipCan, Charset::Alignment::LEFT);
 
-		atkincset[false] = Charset(Equip["Summary"]["decline"], Charset::Alignment::RIGHT);
-		atkincset[true] = Charset(Equip["Summary"]["incline"], Charset::Alignment::RIGHT);
+		// 包内无 Job enable/disable 四态节点；Can/Cannot 下的职业名位图即原生职业名图标
+		static const char* const jobnames[6] = {"beginner", "warrior", "magician", "bowman", "thief", "pirate"};
 
-		jobsback = Equip["Job"]["normal"];
-		jobs[false][0] = Equip["Job"]["disable"]["0"];
-		jobs[false][1] = Equip["Job"]["disable"]["1"];
-		jobs[false][2] = Equip["Job"]["disable"]["2"];
-		jobs[false][3] = Equip["Job"]["disable"]["3"];
-		jobs[false][4] = Equip["Job"]["disable"]["4"];
-		jobs[false][5] = Equip["Job"]["disable"]["5"];
-		jobs[true][0] = Equip["Job"]["enable"]["0"];
-		jobs[true][1] = Equip["Job"]["enable"]["1"];
-		jobs[true][2] = Equip["Job"]["enable"]["2"];
-		jobs[true][3] = Equip["Job"]["enable"]["3"];
-		jobs[true][4] = Equip["Job"]["enable"]["4"];
-		jobs[true][5] = Equip["Job"]["enable"]["5"];
+		for (uint8_t i = 0; i < 6; ++i)
+		{
+			jobs[false][i] = EquipCannot[jobnames[i]];
+			jobs[true][i] = EquipCan[jobnames[i]];
+		}
 
 		invpos = 0;
 		invpos_preview = 0;
@@ -403,7 +381,7 @@ namespace ms
 			canequip[ms] = stats.get_stat(ms) >= equipdata.get_reqstat(ms);
 			std::string reqstr = std::to_string(equipdata.get_reqstat(ms));
 
-			if (ms != MapleStat::Id::LEVEL)
+			if (ms != MapleStat::Id::LEVEL && reqstr.size() < 3)
 				reqstr.insert(0, 3 - reqstr.size(), '0');
 
 			reqstatstrings[ms] = reqstr;
@@ -607,11 +585,11 @@ namespace ms
 
 		int16_t max_width = Constants::Constants::get().get_viewwidth();
 		int16_t max_height = Constants::Constants::get().get_viewheight();
-		int16_t cur_width = pos.x() + top.width();
+		int16_t cur_width = pos.x() + FRAME_WIDTH;
 		int16_t cur_height = pos.y() + 36;
 
 		if (invpos_preview == 1)
-			cur_width += top.width();
+			cur_width += FRAME_WIDTH;
 
 		if (invpos_preview == 1)
 			cur_height += (height > height_preview) ? height : height_preview;
@@ -627,10 +605,8 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		top.draw(pos);
-		mid.draw(DrawArgument(pos + Point<int16_t>(0, 13), Point<int16_t>(0, height)));
-		bot.draw(pos + Point<int16_t>(0, height + 13));
-		cover.draw(pos);
+		// Q1 定案：框体程序描边（半透明黑底 + 1px 灰边），替代缺失的 UIToolTip Frame 三段
+		backdrop.draw(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height + 32);
 
 		name.draw(pos + Point<int16_t>(17, 7));
 
@@ -642,43 +618,10 @@ namespace ms
 
 		pos.shift_y(44);
 
-		line.draw(pos);
+		separator.draw(pos);
 
 		atkinc.draw(pos + Point<int16_t>(248, 4));
-		base.draw(pos + Point<int16_t>(12, 10));
-		type[false].draw(pos + Point<int16_t>(12, 10));
 		itemicon.draw(DrawArgument(pos + Point<int16_t>(18, 82), 2.0f, 2.0f));
-		potential[prank].draw(pos + Point<int16_t>(12, 10));
-		itemcover.draw(pos + Point<int16_t>(12, 10));
-
-		int16_t atkincnum = 0;
-		std::string atkincstr = std::to_string(atkincnum);
-		bool atkinc_pos = true;
-
-		if (canequip[MapleStat::Id::JOB])
-		{
-			if (atkincnum < 0)
-			{
-				atkincstr = "m" + atkincstr;
-				atkinc_pos = false;
-			}
-			else if (atkincnum > 0)
-			{
-				atkincstr = "p" + atkincstr;
-				atkinc_pos = true;
-			}
-			else
-			{
-				atkinc_pos = true;
-			}
-		}
-		else
-		{
-			atkincstr = "m";
-			atkinc_pos = false;
-		}
-
-		atkincset[atkinc_pos].draw(atkincstr, 11, pos + Point<int16_t>(239, 26));
 
 		pos.shift_y(12);
 
@@ -697,12 +640,16 @@ namespace ms
 		pos.shift_y(88);
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
-		jobsback.draw(job_position);
 
+		// 原生就是「6 张职业名叠在同一坐标」——全职业装备（reqjob=0）时糊成一团白块。
+		// 真机对照（正确客户端 e75687e9，白棉T恤 tooltip）：把 Can 下 6 张职业名按同原点
+		// 合成后与原生截图逐像素比对，SAD=0.12、仅取原生墨点时 SAD=0.00；改用单张职业名
+		// 则 SAD 95~148。⇒ 横排可读版是偏离原生，此处按原生保真（证据见
+		// docs/features/ui-v83-window-restore/evidence/w5-tooltip/equip-native-compare.md §4）。
 		for (auto& jbit : okjobs)
 			jobs[canequip[MapleStat::Id::JOB]].at(jbit).draw(job_position);
 
-		line.draw(pos + Point<int16_t>(0, 47));
+		separator.draw(pos + Point<int16_t>(0, 47));
 
 		pos.shift_y(49);
 
@@ -739,7 +686,7 @@ namespace ms
 		if (hasdesc)
 		{
 			pos.shift_y(13);
-			line.draw(pos);
+			separator.draw(pos);
 			desc.draw(pos + Point<int16_t>(9, 3));
 		}
 	}
@@ -749,11 +696,11 @@ namespace ms
 		if (invpos_preview == 0)
 			return;
 
-		pos.shift_x(top.width());
+		pos.shift_x(FRAME_WIDTH);
 
 		int16_t max_width = Constants::Constants::get().get_viewwidth();
 		int16_t max_height = Constants::Constants::get().get_viewheight();
-		int16_t cur_width = pos.x() + top.width();
+		int16_t cur_width = pos.x() + FRAME_WIDTH;
 		int16_t cur_height = pos.y() + height_preview + 36;
 
 		int16_t adj_x = cur_width - max_width;
@@ -765,10 +712,8 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		top.draw(pos);
-		mid.draw(DrawArgument(pos + Point<int16_t>(0, 13), Point<int16_t>(0, height_preview)));
-		bot.draw(pos + Point<int16_t>(0, height_preview + 13));
-		cover.draw(pos);
+		// Q1 定案：对比窗框体同为程序描边，间距 = FRAME_WIDTH
+		backdrop.draw(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height_preview + 32);
 
 		name_preview.draw(pos + Point<int16_t>(17, 7));
 
@@ -780,43 +725,10 @@ namespace ms
 
 		pos.shift_y(44);
 
-		line.draw(pos);
+		separator.draw(pos);
 
 		atkinc_preview.draw(pos + Point<int16_t>(248, 4));
-		base.draw(pos + Point<int16_t>(12, 10));
-		type[false].draw(pos + Point<int16_t>(12, 10));
 		itemicon_preview.draw(DrawArgument(pos + Point<int16_t>(18, 82), 2.0f, 2.0f));
-		potential[prank_preview].draw(pos + Point<int16_t>(12, 10));
-		itemcover.draw(pos + Point<int16_t>(12, 10));
-
-		int16_t atkincnum = 0;
-		std::string atkincstr = std::to_string(atkincnum);
-		bool atkinc_pos = true;
-
-		if (canequip_preview[MapleStat::Id::JOB])
-		{
-			if (atkincnum < 0)
-			{
-				atkincstr = "m" + atkincstr;
-				atkinc_pos = false;
-			}
-			else if (atkincnum > 0)
-			{
-				atkincstr = "p" + atkincstr;
-				atkinc_pos = true;
-			}
-			else
-			{
-				atkinc_pos = true;
-			}
-		}
-		else
-		{
-			atkincstr = "m";
-			atkinc_pos = false;
-		}
-
-		atkincset[atkinc_pos].draw(atkincstr, 11, pos + Point<int16_t>(239, 26));
 
 		pos.shift_y(12);
 
@@ -835,12 +747,12 @@ namespace ms
 		pos.shift_y(88);
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
-		jobsback.draw(job_position);
 
+		// 与主窗体同一处：原生按同原点叠绘（见上面原生保真注释）。
 		for (auto& jbit : okjobs_preview)
 			jobs[canequip_preview[MapleStat::Id::JOB]].at(jbit).draw(job_position);
 
-		line.draw(pos + Point<int16_t>(0, 47));
+		separator.draw(pos + Point<int16_t>(0, 47));
 
 		pos.shift_y(49);
 
@@ -886,7 +798,7 @@ namespace ms
 		if (hasdesc_preview)
 		{
 			pos.shift_y(-4);
-			line.draw(pos);
+			separator.draw(pos);
 			desc_preview.draw(pos + Point<int16_t>(9, 8));
 		}
 	}

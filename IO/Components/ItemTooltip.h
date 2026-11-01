@@ -17,12 +17,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "Tooltip.h"
-
-#include "../Components/MapleFrame.h"
+#include "TextTooltip.h"
 
 #include "../../Graphics/Text.h"
-#include "../../Template/BoolPair.h"
+#include "../../Graphics/Texture.h"
 
 namespace ms
 {
@@ -45,11 +43,7 @@ namespace ms
 		Text name;
 		Text desc;
 		Text qual;
-		MapleFrame frame;
-		Texture cover;
-		Texture base;
-		Texture itemcover;
-		BoolPair<Texture> type;
+		TooltipBackdrop backdrop;
 		bool untradable;
 		bool unique;
 	};

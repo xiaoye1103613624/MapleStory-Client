@@ -29,12 +29,14 @@ namespace ms
 
 	protected:
 		void draw(int16_t x, int16_t y, int16_t w, int16_t h, Color::Name color, float opacity) const;
+		void draw(int16_t x, int16_t y, int16_t w, int16_t h, const Color& color, float opacity) const;
 	};
 
 	class ColorBox : public Geometry
 	{
 	public:
 		ColorBox(int16_t width, int16_t height, Color::Name color, float opacity);
+		ColorBox(int16_t width, int16_t height, Color color, float opacity);
 		ColorBox();
 
 		void setwidth(int16_t width);
@@ -49,6 +51,8 @@ namespace ms
 		int16_t height;
 		Color::Name color;
 		float opacity;
+		bool use_custom = false;
+		Color custom_color;
 	};
 
 	class ColorLine : public Geometry

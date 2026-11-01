@@ -94,6 +94,8 @@ namespace ms
 			PERSIANGREEN,
 			SILVER,
 			LIGHTBLUE,
+			GAUGEGREEN,	// 原生底栏量规数值 (153,204,51)
+			KEYCAPBLUE,	// 原生底栏快捷格键帽字 (170,187,204)：参考截图逐像素取样
 			NUM_COLORS
 		};
 
@@ -141,7 +143,9 @@ namespace ms
 			{ 1.00f, 1.00f, 0.80f }, // Cream
 			{ 0.00f, 0.67f, 0.67f }, // Persian Green
 			{ 0.80f, 0.80f, 0.80f }, // Silver
-			{ 0.40f, 0.80f, 1.00f }  // Light Blue (NPC simple choices)
+			{ 0.40f, 0.80f, 1.00f }, // Light Blue (NPC simple choices)
+			{ 0.60f, 0.80f, 0.20f }, // GAUGEGREEN (native status bar values)
+			{ 0.667f, 0.733f, 0.800f } // KEYCAPBLUE (native quickslot key captions)
 		};
 
 		// Create a color by an array of real numbers [0.0f, 1.0f]

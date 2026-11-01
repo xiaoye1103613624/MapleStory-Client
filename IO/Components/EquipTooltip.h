@@ -18,9 +18,11 @@
 #pragma once
 
 #include "Charset.h"
+#include "TextTooltip.h"
 #include "Tooltip.h"
 
 #include "../../Character/MapleStat.h"
+#include "../../Graphics/Geometry.h"
 #include "../../Graphics/Text.h"
 #include "../../Template/BoolPair.h"
 
@@ -38,6 +40,9 @@ namespace ms
 		void draw_preview(Point<int16_t> position) const;
 
 	private:
+		// 内容右界 ≈261（reqset 177+54+数字位宽），框宽取 264，兼作对比窗横向间距。
+		static constexpr int16_t FRAME_WIDTH = 264;
+
 		int16_t invpos;
 		int16_t invpos_preview;
 		int16_t height;
@@ -76,19 +81,11 @@ namespace ms
 		// 对比侧每条属性的差值文本（悬停值 - 已装备值）：正数绿色、负数红色。
 		EnumMap<EquipStat::Id, Text> statdeltas_preview;
 
-		Texture top;
-		Texture mid;
-		Texture line;
-		Texture bot;
-		Texture base;
+		TooltipBackdrop backdrop;
+		ColorLine separator;
 
-		EnumMap<Equip::Potential, Texture> potential;
 		Equip::Potential prank;
 		Equip::Potential prank_preview;
-
-		Texture cover;
-		Texture itemcover;
-		BoolPair<Texture> type;
 
 		std::vector<MapleStat::Id> requirements;
 		EnumMap<MapleStat::Id, BoolPair<Texture>> reqstattextures;
@@ -97,9 +94,7 @@ namespace ms
 		EnumMap<MapleStat::Id, Point<int16_t>> reqstatpositions;
 		BoolPair<Charset> reqset;
 		BoolPair<Charset> lvset;
-		BoolPair<Charset> atkincset;
 
-		Texture jobsback;
 		BoolPair<std::map<uint8_t, Texture>> jobs;
 		std::vector<uint8_t> okjobs;
 		std::vector<uint8_t> okjobs_preview;

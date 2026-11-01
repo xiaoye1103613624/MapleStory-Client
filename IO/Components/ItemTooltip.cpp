@@ -30,17 +30,6 @@ namespace ms
 	// TODO: Add blue dot next to name
 	ItemTooltip::ItemTooltip()
 	{
-		nl::node Item = nl::nx::UI["UIToolTip.img"]["Item"];
-		nl::node Frame = Item["Frame2"];
-		nl::node ItemIcon = Item["ItemIcon"];
-
-		frame = Frame;
-		cover = Frame["cover"];
-		base = ItemIcon["base"];
-		itemcover = ItemIcon["cover"];
-		type[true] = ItemIcon["new"];
-		type[false] = ItemIcon["old"];
-
 		itemid = 0;
 	}
 
@@ -107,8 +96,8 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		frame.draw(pos + Point<int16_t>(150, 118 + adj_d + adj_t), fillwidth, fillheight + adj_t);
-		cover.draw(pos + Point<int16_t>(4, 4));
+		// 框体 = 内容包围盒外扩 6px（Q1：程序描边，见 TextTooltip.h TooltipBackdrop）
+		backdrop.draw(pos + Point<int16_t>(-6, -6), fillwidth + 28, fillheight + adj_t + adj_d + 18);
 		name.draw(pos + Point<int16_t>(22, 8));
 
 		if (untradable || unique)
@@ -116,10 +105,7 @@ namespace ms
 
 		pos.shift(14, 18 + name.height() + adj_t);
 
-		base.draw(pos);
-		type[true].draw(pos);
 		itemicon.draw(DrawArgument(pos + Point<int16_t>(8, 72), 2.0f, 2.0f));
-		itemcover.draw(pos);
 		desc.draw(pos + Point<int16_t>(90, -6));
 	}
 }

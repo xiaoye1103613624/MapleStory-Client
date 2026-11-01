@@ -17,8 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include "TextTooltip.h"
 #include "Tooltip.h"
-#include "MapleFrame.h"
 
 #include "../../Graphics/Geometry.h"
 
@@ -45,9 +45,8 @@ namespace ms
 		Text name;
 		Text desc;
 		Text leveldesc;
-		MapleFrame frame;
+		TooltipBackdrop backdrop;
 		ColorLine line;
 		ColorBox box;
-		Texture cover;
 	};
 }

@@ -29,11 +29,9 @@ namespace ms
 	// TODO: Get number of available quests
 	MapTooltip::MapTooltip() : parent(Tooltip::Parent::NONE), title(""), description(""), fillwidth(0), fillheight(0)
 	{
-		nl::node Frame = nl::nx::UI["UIToolTip.img"]["Item"]["Frame2"];
+		// Mob/Npc 图标在包内 UIWindow.img/ToolTip 下不存在（仅 Equip/cash/mesos），取到空纹理即不绘。
 		nl::node WorldMap = UiAssetResolve::window("ToolTip")["WorldMap"];
 
-		frame = Frame;
-		cover = Frame["cover"];
 		Mob = WorldMap["Mob"];
 		Npc = WorldMap["Npc"];
 
@@ -164,8 +162,8 @@ namespace ms
 		int16_t width = fillwidth - 8;
 		int16_t halfwidth = width / 2;
 
-		frame.draw(position + Point<int16_t>(halfwidth, fillheight) + Point<int16_t>(14, 14), width, fillheight);
-		cover.draw(position + Point<int16_t>(0, 1));
+		// 框体中心对齐标题中心 (fillwidth/2 + 10)；Q1：程序描边，见 TextTooltip.h TooltipBackdrop
+		backdrop.draw(position + Point<int16_t>(0, -2), fillwidth + 20, fillheight + 24);
 
 		position.shift(Point<int16_t>(9, 4));
 
@@ -232,9 +230,8 @@ namespace ms
 			int16_t width = fillwidth - 12;
 			int16_t halfwidth = width / 2;
 
-			int16_t height = fillheight - title_label.height();
-
-			frame.draw(position + Point<int16_t>(halfwidth, height) + Point<int16_t>(14, 14), width, height);
+			// 标题居中于 fillwidth/2 + 8；Q1：程序描边
+			backdrop.draw(position + Point<int16_t>(0, -4), fillwidth + 16, title_label.height() + 12);
 
 			position.shift(Point<int16_t>(9, 2));
 
@@ -247,8 +244,7 @@ namespace ms
 
 			int16_t height = fillheight - 2;
 
-			frame.draw(position + Point<int16_t>(halfwidth, height) + Point<int16_t>(14, 14), width, height);
-			cover.draw(position + Point<int16_t>(0, 1));
+			backdrop.draw(position + Point<int16_t>(-2, -4), fillwidth + 20, height + 20);
 
 			if (!desc_empty)
 				position.shift(Point<int16_t>(7, 2));

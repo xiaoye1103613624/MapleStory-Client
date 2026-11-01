@@ -29,7 +29,18 @@ namespace ms
 		GraphicsGL::get().drawrectangle(x, y, w, h, color[0], color[1], color[2], opacity);
 	}
 
-	ColorBox::ColorBox(int16_t w, int16_t h, Color::Name c, float o) : width(w), height(h), color(c), opacity(o) {}
+	void Geometry::draw(int16_t x, int16_t y, int16_t w, int16_t h, const Color& color, float opacity) const
+	{
+		if (w == 0 || h == 0 || opacity <= 0.0f)
+			return;
+
+		const float* c = color.data();
+
+		GraphicsGL::get().drawrectangle(x, y, w, h, c[0], c[1], c[2], opacity * color.a());
+	}
+
+	ColorBox::ColorBox(int16_t w, int16_t h, Color::Name c, float o) : width(w), height(h), color(c), opacity(o), use_custom(false), custom_color() {}
+	ColorBox::ColorBox(int16_t w, int16_t h, Color c, float o) : width(w), height(h), color(Color::Name::BLACK), opacity(o), use_custom(true), custom_color(c) {}
 	ColorBox::ColorBox() : ColorBox(0, 0, Color::Name::BLACK, 0.0f) {}
 
 	void ColorBox::setwidth(int16_t w)
@@ -70,7 +81,10 @@ namespace ms
 
 		float absopc = opacity * args.get_color().a();
 
-		Geometry::draw(absp.x(), absp.y(), absw, absh, color, absopc);
+		if (use_custom)
+			Geometry::draw(absp.x(), absp.y(), absw, absh, custom_color, absopc);
+		else
+			Geometry::draw(absp.x(), absp.y(), absw, absh, color, absopc);
 	}
 
 	ColorLine::ColorLine(int16_t size, Color::Name color, float opacity, bool vertical) : size(size), color(color), opacity(opacity), vertical(vertical) {}

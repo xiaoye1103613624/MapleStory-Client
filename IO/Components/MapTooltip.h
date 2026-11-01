@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "MapleFrame.h"
+#include "TextTooltip.h"
 #include "Tooltip.h"
 
 #include "../../Graphics/Geometry.h"
@@ -53,9 +53,8 @@ namespace ms
 		void set_worldmap_mapid(std::unordered_map<int64_t, std::pair<std::string, std::string>> life, bool portal);
 		void set_minimap_mapid(std::unordered_map<int64_t, std::pair<std::string, std::string>> life, bool portal);
 
-		MapleFrame frame;
+		TooltipBackdrop backdrop;
 
-		Texture cover;
 		Texture Mob;
 		Texture Npc;
 		//Texture Party;
