@@ -1,30 +1,18 @@
-//////////////////////////////////////////////////////////////////////////////////
-//	This file is part of the continued Journey MMORPG client					//
-//	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
-//																				//
-//	This program is free software: you can redistribute it and/or modify		//
-//	it under the terms of the GNU Affero General Public License as published by	//
-//	the Free Software Foundation, either version 3 of the License, or			//
-//	(at your option) any later version.											//
-//																				//
-//	You should have received a copy of the GNU Affero General Public License	//
-//	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//	UIQuestLog
+////////////////////////////////////////////////////////////////////////////////
 #include "UIQuestLog.h"
 
-#include "../Components/MapleButton.h"
-#include "../Components/TwoSpriteButton.h"
-#include "../UI.h"
-#include "../KeyAction.h"
-
-#include "../../Character/MapleStat.h"
-#include "../../Data/QuestData.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Data/QuestData.h"
 #include "../../Net/Packets/QuestPackets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
-#include <ctime>
-#include <sstream>
+#include <cctype>
+#include <cstdlib>
+#include <functional>
+#include <map>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -32,277 +20,344 @@
 
 namespace ms
 {
-	namespace
+	// 底带：backgrnd 实测两条深蓝线在 y367 / y391（带内 23px），17 高按钮居中 → 左上角 y=370。
+	static constexpr int16_t BAND_TOP = 367;
+	static constexpr int16_t BAND_Y = 370;
+	// 角锚内缩（conventions §3.2）：标题条 k=7（关闭钮实测左上 226、展开钮 528），底带 k=9（寻找NPC位置右缘 538）。
+	static constexpr int16_t TITLE_INSET = 7;
+	static constexpr int16_t BAND_INSET = 9;
+	static constexpr int16_t BTN_GAP = 6;
+	static constexpr int16_t TITLE_Y = 5;
+	// 分类条：黑描边 x2/66/131/196、y22..40，内衬粉底 x4..64 y24..39（参考截图 1:1 实测）。
+	static constexpr int16_t TAB_FILL_INSET = 2;
+	static constexpr int16_t TAB_FILL_H = 16;
+	static constexpr int16_t DETAIL_ROW_H = 19;
+
+	UIQuestLog::UIQuestLog(const QuestLog& questlog) :
+		UIDragElement<PosQUEST>(Point<int16_t>(245, 45)),
+		questlog(questlog),
+		tab(0),
+		selected_id(-1),
+		scroll(0),
+		detail_scroll(0),
+		collapsed(false),
+		detail_mode(false),
+		left_width(245),
+		right_width(305),
+		row_height(23),
+		tab_x{ 2, 66, 131 },
+		tab_w{ 64, 65, 65 },
+		tab_y(22),
+		tab_height(18)
 	{
-		std::string format_completion_time(int64_t raw)
+		nl::node quest = nl::nx::UI["UIWindow.img"]["Quest"];
+		nl::node root = quest;
+
+		if (quest["list"])
+			root = quest["list"];
+
+		if (UiAssetResolve::usable(root["backgrnd"]))
+			bg_left = Texture(root["backgrnd"]);
+
+		if (UiAssetResolve::usable(root["backgrnd2"]))
+			bg_right = Texture(root["backgrnd2"]);
+
+		left_width = bg_left.width();
+		right_width = bg_right.width();
+
+		// 右板左缘压在左板右边框上：参考截图接缝实测（左板右边框 x=241，右板左边框 x=243）。
+		bg_right_pos = Point<int16_t>(left_width > 2 ? left_width - 2 : left_width, 0);
+		update_dimension();
+
+		auto load_tex = [](nl::node src) -> std::unique_ptr<Texture>
 		{
-			if (raw <= 0)
-				return {};
+			return UiAssetResolve::usable(src) ? std::make_unique<Texture>(src) : nullptr;
+		};
 
-			// Server may send FileTime or Unix seconds; try Unix first.
-			std::time_t t = static_cast<std::time_t>(raw);
+		// 行首项目符（原生动画序列取首帧）：可接=金"!"、进行中=蓝箭头、完成=灰"!"。
+		icon_avail = load_tex(quest["icon0"]);
+		icon_progress = load_tex(quest["icon2"]["0"]);
+		icon_complete = load_tex(quest["icon1"]);
+		// 分组行标记 = Quest/icon4（参考截图里那本蓝书，不是箭头）。
+		icon_header = load_tex(quest["icon4"]);
 
-			if (raw > 1000000000000LL)
-				t = static_cast<std::time_t>(raw / 1000);
+		// 行底色没有对应位图（backgrnd 里只有空白列表区），按参考截图实测自绘。
+		// 右缘必须收在 list_area.right()=226 之内，否则会从滚动条底下透出来：
+		// 选中行 x25 起、宽 199（到 224）；分组行占满列表宽 x7 起、宽 219（到 226）。
+		row_highlight = ColorBox(199, 19, Color(0x336699FF), 1.0f);
+		header_highlight = ColorBox(219, 19, Color(0x99BBCCFF), 1.0f);
 
-			std::tm tm_buf{};
-#ifdef _WIN32
-			if (localtime_s(&tm_buf, &t) != 0)
-				return {};
-#else
-			if (!localtime_r(&t, &tm_buf))
-				return {};
-#endif
-			char buf[32];
-			if (std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M", &tm_buf) == 0)
-				return {};
-
-			return buf;
-		}
-	}
-
-	UIQuestLog::UIQuestLog(const QuestLog& ql) :
-		UIDragElement<PosQUEST>(),
-		questlog(ql),
-		flat_layout(false),
-		has_search(false),
-		list_offset(0),
-		selected_index(-1)
-	{
-		tab = Buttons::TAB0;
-
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
-
-		nl::node quest = UiAssetResolve::window("Quest");
-
-		if (!UiAssetResolve::usable(quest))
+		for (uint16_t i = 0; i < 3; i++)
 		{
-			active = false;
-			dimension = Point<int16_t>(0, 0);
-			return;
+			tab_border[i] = ColorBox(tab_w[i] + 1, tab_height + 1, Color(0x000000FF), 1.0f);
+			tab_fill_active[i] = ColorBox(tab_w[i] - 3, TAB_FILL_H, Color(0xEE6688FF), 1.0f);
+			tab_fill_idle[i] = ColorBox(tab_w[i] - 3, TAB_FILL_H, Color(0xBBBBBBFF), 1.0f);
 		}
 
-		nl::node list = quest["list"];
-
-		flat_layout = !static_cast<bool>(list);
-		nl::node root = flat_layout ? quest : list;
-
-		nl::node backgrnd = root["backgrnd"];
-
-		if (backgrnd)
-			sprites.emplace_back(backgrnd);
-
-		if (root["backgrnd2"])
-			sprites.emplace_back(root["backgrnd2"]);
-
-		if (root["notice0"])
-			notice_sprites.emplace_back(root["notice0"]);
-
-		if (root["notice1"])
-			notice_sprites.emplace_back(root["notice1"]);
-
-		if (root["notice2"])
-			notice_sprites.emplace_back(root["notice2"]);
-
-		nl::node taben = root["Tab"]["enabled"];
-		nl::node tabdis = root["Tab"]["disabled"];
-
-		if (!taben)
-			taben = root["Tab"]["tabEnabled"];
-
-		if (!tabdis)
-			tabdis = root["Tab"]["tabDisabled"];
-
-		if (tabdis["0"] && taben["0"])
-			buttons[Buttons::TAB0] = std::make_unique<TwoSpriteButton>(tabdis["0"], taben["0"]);
-
-		if (tabdis["1"] && taben["1"])
-			buttons[Buttons::TAB1] = std::make_unique<TwoSpriteButton>(tabdis["1"], taben["1"]);
-
-		if (tabdis["2"] && taben["2"])
-			buttons[Buttons::TAB2] = std::make_unique<TwoSpriteButton>(tabdis["2"], taben["2"]);
-
-		if (close)
-			buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(275, 6));
-
-		if (root["BtSearch"])
+		if (UiAssetResolve::usable(quest["Gauge"]["frame"]))
 		{
-			buttons[Buttons::SEARCH] = std::make_unique<MapleButton>(root["BtSearch"]);
-			has_search = true;
+			gauge_frame = Texture(quest["Gauge"]["frame"]);
+			gauge_frame_origin = gauge_frame.get_origin();
+		}
+		if (UiAssetResolve::usable(quest["Gauge"]["gauge"]))
+			gauge_bar = Texture(quest["Gauge"]["gauge"]);
+		if (UiAssetResolve::usable(quest["Gauge"]["spot"]))
+			gauge_spot = Texture(quest["Gauge"]["spot"]);
+
+		detail_title = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE);
+
+		for (uint16_t i = 0; i < 3; i++)
+		{
+			nl::node tabdis = quest["Tab"]["disabled"][i];
+			nl::node taben = quest["Tab"]["enabled"][i];
+
+			if (!UiAssetResolve::usable(taben))
+				taben = tabdis;
+			if (!UiAssetResolve::usable(tabdis))
+				tabdis = taben;
+
+			Texture glyph(taben);
+			int16_t w = glyph.width();
+			int16_t sh = glyph.height();
+
+			if (w <= 0)
+			{
+				Texture alt(tabdis);
+				w = alt.width();
+				sh = alt.height();
+				glyph = alt;
+			}
+
+			// 字图水平居中在分类格里，垂直落在内衬里（实测字图 y24 起）；原点加回去才是左上角。
+			Point<int16_t> tl(tab_x[i] + (tab_w[i] - w) / 2, tab_y + TAB_FILL_INSET);
+			tl = tl + glyph.get_origin();
+
+			// 原生"选中=白字(disabled)、未选=粉字(enabled)"，TwoSpriteButton 的选中态取第二参。
+			buttons[Buttons::TAB0 + i] = std::make_unique<TwoSpriteButton>(taben, tabdis, tl, tl);
 		}
 
-		if (root["BtAllLevel"])
-			buttons[Buttons::ALL_LEVEL] = std::make_unique<MapleButton>(root["BtAllLevel"]);
+		buttons[Buttons::TAB0]->set_state(Button::State::PRESSED);
 
-		if (root["BtMyLocation"])
-			buttons[Buttons::MY_LOCATION] = std::make_unique<MapleButton>(root["BtMyLocation"]);
+		nl::node uiroot = nl::nx::UI;
 
-		if (root["BtGiveup"])
-			buttons[Buttons::GIVEUP] = std::make_unique<MapleButton>(root["BtGiveup"]);
-		else if (quest["BtGiveup"])
-			buttons[Buttons::GIVEUP] = std::make_unique<MapleButton>(quest["BtGiveup"]);
+		// 关闭钮走 UiAssetResolve::close_btn()：本包 Basic.img/BtClose 是**实心**方块，
+		// 原生标题栏那颗描边 X 其实是 BtClose2；BtUIClose(32x15 "X CLOSE") 只作最后兜底。
+		nl::node close = UiAssetResolve::close_btn();
 
-		if (root["searchArea"])
+		if (!UiAssetResolve::usable(close))
+			close = uiroot["UIWindow.img"]["BtUIClose"];
+
+		// 参考截图右板右上角那颗绿色左箭头钮 = Basic.img/BtHide，用作展开/收缩开关。
+		nl::node hide = uiroot["Basic.img"]["BtHide"];
+
+		// RC12 根因 1：坐标必须在构造之前算好，故先量宽高再 relayout_slots()。
+		auto measure = [&](uint16_t id, nl::node src)
 		{
-			search_area = root["searchArea"];
-			has_search = true;
-		}
+			nl::node n0 = src["normal"]["0"];
 
-		int16_t search_limit = 19;
-
-		if (has_search && search_area.is_valid())
-		{
-			search = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BOULDER, Rectangle<int16_t>(get_search_pos(), get_search_pos() + get_search_dim()), search_limit);
-			placeholder = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BOULDER, "Enter the quest name.");
-		}
-
-		slider = Slider(Slider::Type::DEFAULT_SILVER, Range<int16_t>(0, 279), 150, 20, 5, [this](bool upwards)
-		{
-			int16_t shift = upwards ? -1 : 1;
-			int16_t new_offset = list_offset + shift;
-			int16_t max_off = static_cast<int16_t>(listed_ids.size()) - 5;
-
-			if (max_off < 0)
-				max_off = 0;
-
-			if (new_offset < 0)
-				new_offset = 0;
-			else if (new_offset > max_off)
-				new_offset = max_off;
-
-			list_offset = new_offset;
-		});
-
-		detail_title = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "");
-		detail_progress = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "", 200);
-
-		change_tab(tab);
-		rebuild_list();
-
-		if (backgrnd)
-			dimension = Texture(backgrnd).get_dimensions();
-		else
-			dimension = Point<int16_t>(300, 350);
-
-		dragarea = Point<int16_t>(dimension.x(), 20);
-	}
-
-	void UIQuestLog::draw(float alpha) const
-	{
-		UIElement::draw_sprites(alpha);
-
-		Point<int16_t> notice_position = Point<int16_t>(0, 26);
-
-		if (!notice_sprites.empty() && tab < notice_sprites.size())
-		{
-			if (tab == Buttons::TAB0)
-				notice_sprites[tab].draw(position + notice_position + Point<int16_t>(9, 0), alpha);
-			else if (tab == Buttons::TAB1)
-				notice_sprites[tab].draw(position + notice_position + Point<int16_t>(0, 0), alpha);
+			if (UiAssetResolve::usable(n0))
+				slot_dim[id] = Texture(n0).get_dimensions();
 			else
-				notice_sprites[tab].draw(position + notice_position + Point<int16_t>(-10, 0), alpha);
-		}
+				slot_dim[id] = Point<int16_t>(0, 0);
+		};
 
-		if (has_search && tab != Buttons::TAB2 && search_area.is_valid())
+		measure(Buttons::CLOSE, close);
+		measure(Buttons::COLLAPSE, hide);
+		measure(Buttons::MARKNPC, quest["BtMarkNpc"]);
+		measure(Buttons::DETAIL, quest["BtDetail"]);
+		measure(Buttons::GIVEUP, quest["BtGiveup"]);
+		measure(Buttons::OK, quest["BtOK"]);
+		measure(Buttons::NO, quest["BtNo"]);
+		measure(Buttons::ALERT, quest["BtAlert"]);
+
+		relayout_slots();
+
+		try_maple_btn(buttons, Buttons::CLOSE, close, slot_tl[Buttons::CLOSE], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::COLLAPSE, hide, slot_tl[Buttons::COLLAPSE], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::MARKNPC, quest["BtMarkNpc"], slot_tl[Buttons::MARKNPC], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::DETAIL, quest["BtDetail"], slot_tl[Buttons::DETAIL], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::GIVEUP, quest["BtGiveup"], slot_tl[Buttons::GIVEUP], "UIQuestLog");
+		// 接受/拒绝/任务讯息：底带实测只证到 寻找NPC位置，其余三颗无位可放且不发包 → 预留（见 coords.md）。
+		try_maple_btn(buttons, Buttons::OK, quest["BtOK"], slot_tl[Buttons::OK], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::NO, quest["BtNo"], slot_tl[Buttons::NO], "UIQuestLog");
+		try_maple_btn(buttons, Buttons::ALERT, quest["BtAlert"], slot_tl[Buttons::ALERT], "UIQuestLog");
+
+		for (uint16_t i = 0; i < 3; i++)
 		{
-			search_area.draw(position);
-			search.draw(Point<int16_t>(4, -4), Point<int16_t>(2, -2));
+			nl::node n = quest["notice" + std::to_string(i)];
 
-			if (search.get_state() == Textfield::State::NORMAL && search.empty())
-				placeholder.draw(position + Point<int16_t>(39, 51));
+			if (UiAssetResolve::usable(n))
+			{
+				notices[i] = Texture(n);
+				has_notice[i] = true;
+			}
 		}
 
-		Rectangle<int16_t> area = list_area();
-		Point<int16_t> rowpos = position + Point<int16_t>(area.left(), area.top());
-		constexpr int16_t ROW_HEIGHT = 18;
-		int16_t visible = 8;
+		// Rectangle(left, right, top, bottom)；列表区实测 x9..226 y48..366（13 行 x23）。
+		list_area = Rectangle<int16_t>(9, 226, 48, BAND_TOP - 1);
+		// 正文区：蓝横幅（烤在 backgrnd2 里，实测到 y117）之下、进度条之上。
+		detail_area = Rectangle<int16_t>(bg_right_pos.x() + 18, bg_right_pos.x() + right_width - 24, 124, 340);
+		detail_title_pos = Point<int16_t>(bg_right_pos.x() + 34, 40);
+		detail_desc_pos = detail_area.get_left_top();
+		notice_pos = Point<int16_t>(list_area.left(), list_area.top() + 48);
 
-		for (int16_t i = 0; i < visible; i++)
+		slider = Slider(Slider::Type::DEFAULT_SILVER,
+			list_area.get_vertical(),
+			list_area.right(),
+			visible_rows(),
+			visible_rows(),
+			std::bind(&UIQuestLog::on_list_scroll, this, std::placeholders::_1));
+
+		detail_slider = Slider(Slider::Type::DEFAULT_SILVER,
+			detail_area.get_vertical(),
+			detail_area.right() + 6,
+			detail_visible_rows(),
+			detail_visible_rows(),
+			std::bind(&UIQuestLog::on_detail_scroll, this, std::placeholders::_1));
+
+		layout();
+		activate_buttons();
+		rebuild_list();
+	}
+
+	void UIQuestLog::draw(float inter) const
+	{
+		bg_left.draw(position);
+
+		if (!collapsed)
+			bg_right.draw(position + bg_right_pos);
+
+		for (uint16_t i = 0; i < 3; i++)
 		{
-			size_t idx = static_cast<size_t>(list_offset + i);
-
-			if (idx >= listed_names.size())
-				break;
-
-			listed_names[idx].draw(rowpos + Point<int16_t>(0, i * ROW_HEIGHT));
+			tab_border[i].draw(position + Point<int16_t>(tab_x[i], tab_y));
+			(i == tab ? tab_fill_active[i] : tab_fill_idle[i])
+				.draw(position + Point<int16_t>(tab_x[i] + TAB_FILL_INSET, tab_y + TAB_FILL_INSET));
 		}
 
-		if (selected_index >= 0)
+		const Texture* icon = current_icon();
+		int16_t n = static_cast<int16_t>(rows.size());
+		int16_t visible = visible_rows();
+
+		for (int16_t i = 0; i < visible && (scroll + i) < n; i++)
 		{
-			Point<int16_t> detail_pos = position + Point<int16_t>(area.left(), area.bottom() + 8);
-			detail_title.draw(detail_pos);
-			detail_progress.draw(detail_pos + Point<int16_t>(0, 18));
+			int16_t di = scroll + i;
+			int16_t row_top = list_area.top() + i * row_height;
+			const Row& r = rows[di];
+
+			if (r.header)
+			{
+				header_highlight.draw(position + Point<int16_t>(7, row_top));
+
+				if (icon_header)
+					icon_header->draw(position + Point<int16_t>(9, row_top + 2));
+
+				Text header(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE, r.label);
+				header.draw(position + Point<int16_t>(29, row_top + 4));
+			}
+			else
+			{
+				if (r.id == selected_id)
+					row_highlight.draw(position + Point<int16_t>(25, row_top));
+
+				if (icon)
+					icon->draw(position + Point<int16_t>(12, row_top + 3));
+
+				Text name(Text::Font::A11M, Text::Alignment::LEFT,
+					r.id == selected_id ? Color::Name::WHITE : Color::Name::BLACK, r.label);
+				name.draw(position + Point<int16_t>(29, row_top + 3));
+			}
 		}
 
-		if (listed_ids.size() > 5)
-			slider.draw(position + Point<int16_t>(area.right() + 2, area.top()));
+		if (n == 0 && has_notice[tab])
+		{
+			// 空列表提示图（"没有可以开始的任务"…）在列表区水平居中。
+			int16_t x = list_area.left() + (list_area.width() - notices[tab].width()) / 2;
+			notices[tab].draw(position + Point<int16_t>(x, notice_pos.y()));
+		}
 
-		UIElement::draw_buttons(alpha);
+		if (!collapsed && npc_portrait.width() > 0)
+		{
+			// 蓝横幅右半格放任务 NPC 立绘：backgrnd2 实测横幅 y26..118、内部分隔线在本地 x190，
+			// 右格即 bg2 x190..297（窗口 x433..540）。stand 帧原点是脚底中心，按格底落位。
+			const int16_t slot_left = bg_right_pos.x() + 190;
+			const int16_t slot_right = bg_right_pos.x() + right_width - 8;
+
+			npc_portrait.draw(position + Point<int16_t>((slot_left + slot_right) / 2, 112));
+		}
+
+		if (!collapsed && selected_id >= 0)
+		{
+			// 标题前的小圆点已烤在 backgrnd2 的蓝条里，不再自绘项目符。
+			detail_title.draw(position + detail_title_pos);
+
+			// 每段 detail_lines[i] 内部已按正文区宽度自动折行，行高不再相等，
+			// 所以只能逐段累加高度定位；原来固定 i * DETAIL_ROW_H 会让长文本整段互相压字。
+			const Range<int16_t> clip(position.y() + detail_area.top(), position.y() + detail_area.bottom());
+			int16_t yoff = static_cast<int16_t>(-detail_scroll * DETAIL_ROW_H);
+
+			for (const Text& line : detail_lines)
+			{
+				// clip 是屏幕坐标：超出正文区上下缘的字形会被裁掉，不再铺到窗口外。
+				line.draw(position + detail_desc_pos + Point<int16_t>(0, yoff), clip);
+				yoff = static_cast<int16_t>(yoff + line.height());
+			}
+
+			draw_gauge();
+		}
+
+		if (bg_left.width() > 0 && bg_left.height() > 0)
+		{
+			slider.draw(position);
+
+			if (!collapsed)
+				detail_slider.draw(position);
+		}
+
+		UIElement::draw_buttons(inter);
+	}
+
+	// 进度条：Gauge/frame(163x14，原点 (81,0)) 作底，1x11 的 gauge 横向拉伸成进度，spot 收尾。
+	void UIQuestLog::draw_gauge() const
+	{
+		int16_t ratio = gauge_ratio();
+
+		if (ratio < 0 || gauge_frame.width() <= 0)
+			return;
+
+		const int16_t frame_w = gauge_frame.width();
+		const int16_t frame_h = gauge_frame.height();
+		// gauge_pos 是底板左上角；贴图按 anchor 绘制，故加回自身 origin。
+		const Point<int16_t> frame_tl = position + gauge_pos + gauge_frame_origin;
+
+		gauge_frame.draw(frame_tl);
+
+		const int16_t bar_x = position.x() + gauge_pos.x() + 2;
+		const int16_t bar_y = position.y() + gauge_pos.y() + (frame_h - gauge_bar.height()) / 2;
+		int16_t inner = static_cast<int16_t>((frame_w - 4) * ratio / 100);
+
+		if (gauge_bar.width() > 0 && inner > 0)
+		{
+			// DrawArgument 的 stretch 是绝对宽高（0 才回落到原尺寸）。
+			gauge_bar.draw(DrawArgument(Point<int16_t>(bar_x, bar_y), Point<int16_t>(inner, gauge_bar.height())));
+		}
+
+		if (gauge_spot.width() > 0 && inner < frame_w - 4)
+		{
+			gauge_spot.draw(DrawArgument(Point<int16_t>(bar_x + inner, bar_y)
+				+ Point<int16_t>(0, (gauge_bar.height() - gauge_spot.height()) / 2)));
+		}
+
+		Text progress(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			questlog.get_progress(selected_id));
+		progress.draw(position + Point<int16_t>(gauge_pos.x() + frame_w + 6, gauge_pos.y() + 1));
 	}
 
 	void UIQuestLog::update()
 	{
-		if (has_search && search_area.is_valid())
-			search.update(get_search_pos(), get_search_dim());
 	}
 
 	void UIQuestLog::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed)
-		{
-			if (escape)
-			{
-				deactivate();
-			}
-			else if (keycode == KeyAction::Id::TAB)
-			{
-				uint16_t new_tab = tab;
-
-				if (new_tab < Buttons::TAB2)
-					new_tab++;
-				else
-					new_tab = Buttons::TAB0;
-
-				change_tab(new_tab);
-			}
-		}
-	}
-
-	Cursor::State UIQuestLog::send_cursor(bool clicking, Point<int16_t> cursorpos)
-	{
-		if (has_search && search_area.is_valid())
-		{
-			if (Cursor::State new_state = search.send_cursor(cursorpos, clicking))
-				return new_state;
-		}
-
-		Rectangle<int16_t> area = list_area();
-		Point<int16_t> abs_lt = position + Point<int16_t>(area.left(), area.top());
-		Point<int16_t> abs_rb = position + Point<int16_t>(area.right(), area.bottom());
-		Rectangle<int16_t> abs_area(abs_lt, abs_rb);
-
-		if (clicking && abs_area.contains(cursorpos))
-		{
-			int16_t rel_y = cursorpos.y() - abs_lt.y();
-			int16_t row = rel_y / 18;
-
-			if (row >= 0)
-				select_row(static_cast<size_t>(list_offset + row));
-		}
-
-		Rectangle<int16_t> area_slider = list_area();
-
-		if (listed_ids.size() > 5)
-		{
-			Point<int16_t> slider_pos = position + Point<int16_t>(area_slider.right() + 2, area_slider.top());
-
-			if (Cursor::State sstate = slider.send_cursor(cursorpos - slider_pos, clicking))
-				return sstate;
-		}
-
-		return UIDragElement::send_cursor(clicking, cursorpos);
 	}
 
 	UIElement::Type UIQuestLog::get_type() const
@@ -315,6 +370,466 @@ namespace ms
 		rebuild_list();
 	}
 
+	const Texture* UIQuestLog::current_icon() const
+	{
+		switch (tab)
+		{
+			case 0: return icon_avail.get();
+			case 1: return icon_progress.get();
+			case 2: return icon_complete.get();
+			default: return nullptr;
+		}
+	}
+
+	std::string UIQuestLog::area_name(int32_t area) const
+	{
+		switch (area)
+		{
+			case 20: return u8"彩虹岛";
+			case 30: return u8"金银岛";
+			default: return u8"金银岛";
+		}
+	}
+
+	// 三个分类页统一按区域分组：分组标题行可点，点一次收起该区域、再点展开。
+	// 原来只有"可开始"分组，且 select_row 直接吞掉标题行点击 → 用户看到的"不能展开收缩"。
+	void UIQuestLog::append_grouped(const std::vector<int16_t>& ids)
+	{
+		std::vector<int32_t> order;
+		std::map<int32_t, std::vector<int16_t>> grouped;
+
+		for (int16_t id : ids)
+		{
+			const int32_t a = QuestData::get(id).get_area();
+
+			if (grouped.find(a) == grouped.end())
+				order.push_back(a);
+
+			grouped[a].push_back(id);
+		}
+
+		for (int32_t a : order)
+		{
+			const std::vector<int16_t>& group = grouped[a];
+
+			Row hdr;
+			hdr.header = true;
+			hdr.label = area_name(a) + " (" + std::to_string(group.size()) + ")";
+			hdr.id = -1;
+			hdr.area = a;
+			rows.push_back(hdr);
+
+			// 收起的区域只保留标题行（标题上已带数量，收起后仍能看见有几条）。
+			if (collapsed_areas.count(a))
+				continue;
+
+			for (int16_t id : group)
+			{
+				Row r;
+				r.header = false;
+				r.label = QuestData::get(id).get_name();
+				r.id = id;
+				r.area = a;
+				rows.push_back(r);
+			}
+		}
+	}
+
+	void UIQuestLog::toggle_area(int32_t area)
+	{
+		if (!collapsed_areas.erase(area))
+			collapsed_areas.insert(area);
+
+		// 收起可能把当前选中行整组抹掉，重算选中并同步滚动位置。
+		rebuild_list();
+	}
+
+	void UIQuestLog::rebuild_list()
+	{
+		rows.clear();
+		detail_lines.clear();
+
+		switch (tab)
+		{
+			case 0:
+			{
+				int16_t level = Stage::get().get_player().get_level();
+				uint16_t job = Stage::get().get_player().get_stats().get_job().get_id();
+
+				append_grouped(QuestData::list_available(level, job, questlog));
+				break;
+			}
+			case 1:
+			{
+				std::vector<int16_t> ids;
+				for (const auto& kv : questlog.get_started())
+					ids.push_back(kv.first);
+
+				append_grouped(ids);
+				break;
+			}
+			case 2:
+			{
+				std::vector<int16_t> ids;
+				for (const auto& kv : questlog.get_completed())
+					ids.push_back(kv.first);
+
+				append_grouped(ids);
+				break;
+			}
+		}
+
+		scroll = 0;
+		detail_scroll = 0;
+
+		// 重算选中：旧选中行如果还在列表里就保持，否则退回第一条可见任务。
+		bool keep = false;
+
+		for (const Row& r : rows)
+		{
+			if (!r.header && r.id == selected_id)
+			{
+				keep = true;
+				break;
+			}
+		}
+
+		if (!keep)
+		{
+			selected_id = -1;
+
+			for (const Row& r : rows)
+			{
+				if (!r.header)
+				{
+					selected_id = r.id;
+					break;
+				}
+			}
+		}
+
+		update_detail();
+		update_sliders();
+	}
+
+	void UIQuestLog::select_row(size_t index)
+	{
+		if (index >= rows.size())
+			return;
+
+		if (rows[index].header)
+		{
+			toggle_area(rows[index].area);
+			return;
+		}
+
+		selected_id = rows[index].id;
+
+		update_detail();
+		detail_scroll = 0;
+		update_sliders();
+	}
+
+	void UIQuestLog::update_detail()
+	{
+		detail_lines.clear();
+		load_npc_portrait(selected_id);
+
+		if (selected_id < 0)
+		{
+			detail_title.change_text("");
+			return;
+		}
+
+		const QuestData& qd = QuestData::get(selected_id);
+		detail_title.change_text(qd.get_name());
+
+		// 折行宽度 = 正文区宽度：原来不给 maxwidth，长句一路横铺，
+		// 越过右板边框画到窗口外面（用户看到的"任务信息超出了界面显示"）。
+		const uint16_t wrap = static_cast<uint16_t>(detail_area.width() > 0 ? detail_area.width() : 1);
+
+		if (detail_mode)
+		{
+			// 详细态：只读 QuestData 已缓存的字段，不涉及任何封包。
+			std::vector<std::string> lines;
+			lines.push_back(u8"任务编号: " + std::to_string(qd.get_id()));
+
+			if (qd.get_max_level() > 0)
+				lines.push_back(u8"等级范围: " + std::to_string(qd.get_min_level())
+					+ u8" ~ " + std::to_string(qd.get_max_level()));
+			else if (qd.get_min_level() > 0)
+				lines.push_back(u8"需要等级: " + std::to_string(qd.get_min_level()));
+
+			lines.push_back(u8"所属区域: " + area_name(qd.get_area()));
+
+			if (qd.get_npc() > 0)
+				lines.push_back(u8"相关NPC编号: " + std::to_string(qd.get_npc()));
+
+			if (qd.get_prequests().empty())
+				lines.push_back(u8"前置任务: 无");
+			else
+			{
+				std::string pre = u8"前置任务: ";
+				for (int16_t p : qd.get_prequests())
+					pre += std::to_string(p) + " ";
+				lines.push_back(pre);
+			}
+
+			for (const std::string& line : lines)
+				detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line, wrap);
+
+			return;
+		}
+
+		const std::string& sum = qd.get_summary();
+		size_t start = 0;
+
+		while (start <= sum.size())
+		{
+			size_t nl = sum.find('\n', start);
+
+			std::string line = (nl == std::string::npos)
+				? sum.substr(start)
+				: sum.substr(start, nl - start);
+
+			detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line, wrap);
+
+			if (nl == std::string::npos)
+				break;
+
+			start = nl + 1;
+		}
+	}
+
+	void UIQuestLog::change_tab(uint16_t tabid)
+	{
+		if (tabid > 2)
+			return;
+
+		tab = tabid;
+
+		for (uint16_t i = 0; i < 3; i++)
+			buttons[Buttons::TAB0 + i]->set_state(i == tabid ? Button::State::PRESSED : Button::State::NORMAL);
+
+		activate_buttons();
+		rebuild_list();
+	}
+
+	void UIQuestLog::on_list_scroll(bool upwards)
+	{
+		int16_t n = static_cast<int16_t>(rows.size());
+		int16_t maxscroll = std::max<int16_t>(0, n - visible_rows());
+
+		scroll = std::max<int16_t>(0, std::min<int16_t>(maxscroll, scroll + (upwards ? -1 : 1)));
+	}
+
+	void UIQuestLog::on_detail_scroll(bool upwards)
+	{
+		const int16_t total = detail_total_notches();
+		const int16_t maxscroll = std::max<int16_t>(0, total - detail_visible_rows());
+
+		detail_scroll = std::max<int16_t>(0, std::min<int16_t>(maxscroll, detail_scroll + (upwards ? -1 : 1)));
+	}
+
+	int16_t UIQuestLog::visible_rows() const
+	{
+		return row_height > 0 ? list_area.height() / row_height : 0;
+	}
+
+	int16_t UIQuestLog::gauge_ratio() const
+	{
+		if (tab != 1 || selected_id < 0)
+			return -1;
+
+		const std::string progress = questlog.get_progress(selected_id);
+		size_t i = 0;
+
+		while (i < progress.size() && !std::isdigit(static_cast<unsigned char>(progress[i])))
+			i++;
+
+		size_t head = i;
+
+		while (i < progress.size() && std::isdigit(static_cast<unsigned char>(progress[i])))
+			i++;
+
+		if (i == head || i >= progress.size() || progress[i] != '/')
+			return -1;
+
+		i++;
+
+		size_t tail = i;
+
+		while (i < progress.size() && std::isdigit(static_cast<unsigned char>(progress[i])))
+			i++;
+
+		if (i == tail)
+			return -1;
+
+		int32_t current = atoi(progress.substr(head, i - tail).c_str());
+		int32_t total = atoi(progress.substr(tail).c_str());
+
+		if (total <= 0)
+			return -1;
+
+		return static_cast<int16_t>(std::max(0, std::min(100, current * 100 / total)));
+	}
+
+	int16_t UIQuestLog::detail_visible_rows() const
+	{
+		return DETAIL_ROW_H > 0 ? detail_area.height() / DETAIL_ROW_H : 0;
+	}
+
+	int16_t UIQuestLog::detail_content_height() const
+	{
+		int16_t h = 0;
+
+		for (const Text& line : detail_lines)
+			h = static_cast<int16_t>(h + line.height());
+
+		return h;
+	}
+
+	int16_t UIQuestLog::detail_total_notches() const
+	{
+		if (DETAIL_ROW_H <= 0)
+			return 0;
+
+		return static_cast<int16_t>((detail_content_height() + DETAIL_ROW_H - 1) / DETAIL_ROW_H);
+	}
+
+	// 任务 NPC 立绘：QuestData 只存 npc id，图按 UINpcTalk 同一取法从 Npc.nx 拿 stand 首帧。
+	void UIQuestLog::load_npc_portrait(int16_t quest_id)
+	{
+		npc_portrait = Texture();
+
+		if (quest_id < 0)
+			return;
+
+		const int32_t npcid = QuestData::get(quest_id).get_npc();
+
+		if (npcid <= 0)
+			return;
+
+		nl::node src = nl::nx::Npc[string_format::extend_id(npcid, 7) + ".img"]["stand"]["0"];
+
+		if (UiAssetResolve::usable(src))
+			npc_portrait = Texture(src);
+	}
+
+	// 命中区必须等于绘制区。展开态原来写的是 left_width + right_width - bg_right_pos.x() = 307，
+	// 那是把右板宽度往左投影的笔误；真实绘制宽度是 bg_right_pos.x() + right_width = 548。
+	// 于是 x307 以右的 241px —— 正好盖着底带的「详细」「寻找NPC位置」和右板滚动条 ——
+	// 被 UIElement::is_in_range 判在窗口外，点击根本传不进来，表现为"按了没反应"。
+	void UIQuestLog::update_dimension()
+	{
+		dimension = Point<int16_t>(collapsed ? left_width : bg_right_pos.x() + right_width,
+			bg_left.height());
+	}
+
+	// 收缩态面板 245 宽、展开态右板内缘 548：所有角锚都按当前宽度反算，不写死绝对值。
+	void UIQuestLog::relayout_slots()
+	{
+		const int16_t panel_x = collapsed ? 0 : bg_right_pos.x();
+		const int16_t panel_right = panel_x + (collapsed ? left_width : right_width);
+
+		slot_tl[Buttons::CLOSE] = Point<int16_t>(
+			left_width - slot_dim[Buttons::CLOSE].x() - TITLE_INSET, TITLE_Y);
+
+		// 展开态收缩钮挂在右板右上角（实测 528,5）；收缩态挪到关闭钮左侧。
+		if (collapsed)
+			slot_tl[Buttons::COLLAPSE] = Point<int16_t>(
+				slot_tl[Buttons::CLOSE].x() - BTN_GAP - slot_dim[Buttons::COLLAPSE].x(), TITLE_Y);
+		else
+			slot_tl[Buttons::COLLAPSE] = Point<int16_t>(
+				panel_right - slot_dim[Buttons::COLLAPSE].x() - TITLE_INSET, TITLE_Y);
+
+		// 底带按钮行：寻找NPC位置贴实测右锚，其余依次左移（内容区下方的同一行）。
+		int16_t x = panel_right - BAND_INSET;
+
+		for (uint16_t id : { Buttons::MARKNPC, Buttons::DETAIL, Buttons::GIVEUP, Buttons::OK, Buttons::NO, Buttons::ALERT })
+		{
+			const int16_t w = slot_dim[id].x();
+
+			if (w <= 0)
+				continue;
+
+			x -= w;
+			slot_tl[id] = Point<int16_t>(x, BAND_Y);
+			x -= BTN_GAP;
+		}
+
+		// 进度条：右板水平居中，贴在底带之上。
+		gauge_pos = Point<int16_t>(panel_x + (right_width - gauge_frame.width()) / 2,
+			BAND_TOP - gauge_frame.height() - 8);
+	}
+
+	void UIQuestLog::layout()
+	{
+		relayout_slots();
+
+		auto place = [&](uint16_t id)
+		{
+			auto iter = buttons.find(id);
+
+			if (iter == buttons.end() || !iter->second)
+				return;
+
+			// Button 存的是 anchor，故左上角要加回 origin。
+			iter->second->set_position(slot_tl[id] + iter->second->origin());
+		};
+
+		place(CLOSE);
+		place(COLLAPSE);
+		place(MARKNPC);
+		place(DETAIL);
+		place(GIVEUP);
+		place(OK);
+		place(NO);
+		place(ALERT);
+
+		slider.setvertical(list_area.get_vertical());
+		detail_slider.setvertical(detail_area.get_vertical());
+	}
+
+	void UIQuestLog::activate_buttons()
+	{
+		auto act = [&](uint16_t id, bool on)
+		{
+			auto iter = buttons.find(id);
+
+			if (iter != buttons.end() && iter->second)
+				iter->second->set_active(on);
+		};
+
+		act(CLOSE, true);
+		act(COLLAPSE, true);
+		act(MARKNPC, true);
+		act(DETAIL, true);
+		// 放弃只对"正在进行"有意义（发已有的 QuestActionPacket(3)）。
+		act(GIVEUP, tab == 1);
+		// 接受/拒绝/任务讯息：参考截图底带里没有这三颗，且无对应窗口可开 → 预留不显示。
+		act(OK, false);
+		act(NO, false);
+		act(ALERT, false);
+	}
+
+	void UIQuestLog::set_collapsed(bool is_collapsed)
+	{
+		collapsed = is_collapsed;
+		update_dimension();
+		layout();
+		activate_buttons();
+		update_sliders();
+	}
+
+	void UIQuestLog::update_sliders()
+	{
+		slider.setenabled(true);
+		slider.setrows(visible_rows(), static_cast<int16_t>(rows.size()));
+		detail_slider.setenabled(!collapsed);
+		detail_slider.setrows(detail_visible_rows(), detail_total_notches());
+	}
+
 	Button::State UIQuestLog::button_pressed(uint16_t buttonid)
 	{
 		switch (buttonid)
@@ -322,207 +837,102 @@ namespace ms
 			case Buttons::TAB0:
 			case Buttons::TAB1:
 			case Buttons::TAB2:
-				change_tab(buttonid);
-				return Button::State::IDENTITY;
+				change_tab(buttonid - Buttons::TAB0);
+				return Button::State::NORMAL;
 			case Buttons::CLOSE:
 				deactivate();
 				return Button::State::NORMAL;
-			case Buttons::GIVEUP:
-			{
-				if (selected_index >= 0
-					&& static_cast<size_t>(selected_index) < listed_ids.size()
-					&& tab == Buttons::TAB1)
-				{
-					int16_t qid = listed_ids[static_cast<size_t>(selected_index)];
-					QuestActionPacket(3, qid).dispatch();
-					refresh();
-				}
-
+			case Buttons::COLLAPSE:
+				set_collapsed(!collapsed);
 				return Button::State::NORMAL;
-			}
+			case Buttons::DETAIL:
+				detail_mode = !detail_mode;
+				update_detail();
+				update_sliders();
+				return Button::State::NORMAL;
+			case Buttons::GIVEUP:
+				// 复用 UIMiscShells 里既有的放弃协议（action 3 = forfeit），不发明新包。
+				if (selected_id > 0)
+					QuestActionPacket(3, selected_id).dispatch();
+				return Button::State::NORMAL;
+			case Buttons::MARKNPC:
+			case Buttons::OK:
+			case Buttons::NO:
+			case Buttons::ALERT:
+				// 显式预留（不是漏实现）：
+				//  MARKNPC「寻找NPC位置」原生是"把该任务 NPC 所在地图在世界地图上高亮点出"，
+				//    需要 npc→map 反查表（服务端数据）+ UIWorldMap 的标记入口，本包两者都没有，
+				//    且没有任何可对照的封包证据 —— 不发明协议，见 notes/open-issues.md。
+				//  OK/NO/ALERT 只在"接受/完成确认"弹层里出现，本窗口底带不显示（activate_buttons 已置 false）。
+				return Button::State::NORMAL;
 			default:
-				return Button::State::DISABLED;
+				return Button::State::NORMAL;
 		}
 	}
 
-	void UIQuestLog::change_tab(uint16_t tabid)
+	int16_t UIQuestLog::row_index_at(Point<int16_t> local) const
 	{
-		uint16_t oldtab = tab;
-		tab = tabid;
+		if (!list_area.contains(local))
+			return -1;
 
-		if (oldtab != tab)
-		{
-			if (buttons.count(Buttons::TAB0 + oldtab))
-				buttons[Buttons::TAB0 + oldtab]->set_state(Button::State::NORMAL);
+		int16_t rel = local.y() - list_area.top();
 
-			if (buttons.count(Buttons::MY_LOCATION))
-				buttons[Buttons::MY_LOCATION]->set_active(tab == Buttons::TAB0);
+		if (rel < 0)
+			return -1;
 
-			if (buttons.count(Buttons::ALL_LEVEL))
-				buttons[Buttons::ALL_LEVEL]->set_active(tab == Buttons::TAB0);
+		int16_t di = scroll + rel / row_height;
 
-			if (buttons.count(Buttons::SEARCH))
-				buttons[Buttons::SEARCH]->set_active(tab != Buttons::TAB2);
+		if (di < 0 || di >= static_cast<int16_t>(rows.size()))
+			return -1;
 
-			if (buttons.count(Buttons::GIVEUP))
-			{
-				buttons[Buttons::GIVEUP]->set_active(tab == Buttons::TAB1);
-				buttons[Buttons::GIVEUP]->set_state(
-					(tab == Buttons::TAB1 && selected_index >= 0)
-						? Button::State::NORMAL
-						: Button::State::DISABLED
-				);
-			}
-
-			if (has_search && search_area.is_valid())
-			{
-				if (tab == Buttons::TAB2)
-					search.set_state(Textfield::State::DISABLED);
-				else
-					search.set_state(Textfield::State::NORMAL);
-			}
-		}
-
-		if (buttons.count(Buttons::TAB0 + tab))
-			buttons[Buttons::TAB0 + tab]->set_state(Button::State::PRESSED);
-
-		list_offset = 0;
-		selected_index = -1;
-		rebuild_list();
+		return di;
 	}
 
-	void UIQuestLog::rebuild_list()
+	Cursor::State UIQuestLog::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
-		listed_ids.clear();
-		listed_names.clear();
+		Cursor::State dstate = UIDragElement::send_cursor(clicked, cursorpos);
 
-		std::string filter;
+		if (dragged)
+			return dstate;
 
-		if (has_search && search_area.is_valid() && !search.empty())
-			filter = search.get_text();
+		Point<int16_t> cursor_relative = cursorpos - position;
 
-		auto add_row = [&](int16_t qid, const std::string& progress)
+		if (!collapsed && detail_slider.isenabled())
 		{
-			const QuestData& qdata = QuestData::get(qid);
-			std::string label = qdata.get_name();
-
-			if (!filter.empty() && label.find(filter) == std::string::npos)
-				return;
-
-			if (!progress.empty() && tab == Buttons::TAB1)
-				label += "  [" + progress + "]";
-
-			listed_ids.push_back(qid);
-			listed_names.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, label);
-		};
-
-		if (tab == Buttons::TAB0)
-		{
-			const CharStats& stats = Stage::get().get_player().get_stats();
-			int16_t level = static_cast<int16_t>(stats.get_stat(MapleStat::Id::LEVEL));
-			uint16_t job = stats.get_stat(MapleStat::Id::JOB);
-
-			for (int16_t qid : QuestData::list_available(level, job, questlog))
-				add_row(qid, "");
-		}
-		else if (tab == Buttons::TAB1)
-		{
-			for (const auto& entry : questlog.get_started())
-				add_row(entry.first, entry.second);
-		}
-		else
-		{
-			for (const auto& entry : questlog.get_completed())
-				add_row(entry.first, "");
+			if (Cursor::State sstate = detail_slider.send_cursor(cursor_relative, clicked))
+				return sstate;
 		}
 
-		if (selected_index >= static_cast<int16_t>(listed_ids.size()))
-			selected_index = listed_ids.empty() ? -1 : 0;
-
-		if (selected_index >= 0)
-			select_row(static_cast<size_t>(selected_index));
-		else
+		if (slider.isenabled())
 		{
-			detail_title.change_text("");
-			detail_progress.change_text("");
+			if (Cursor::State sstate = slider.send_cursor(cursor_relative, clicked))
+				return sstate;
 		}
 
-		if (buttons.count(Buttons::GIVEUP))
+		// 单击即选中并刷新详情（原生行为）；双击语义保留在 doubleclick()。
+		if (clicked)
 		{
-			bool can_giveup = tab == Buttons::TAB1 && selected_index >= 0;
-			buttons[Buttons::GIVEUP]->set_active(tab == Buttons::TAB1);
-			buttons[Buttons::GIVEUP]->set_state(can_giveup ? Button::State::NORMAL : Button::State::DISABLED);
+			int16_t index = row_index_at(cursor_relative);
+
+			if (index >= 0)
+				select_row(static_cast<size_t>(index));
 		}
 
-		int16_t rowmax = static_cast<int16_t>(listed_ids.size());
-		int16_t visible = 8;
-		slider.setrows(visible, rowmax > visible ? rowmax : visible);
+		return UIElement::send_cursor(clicked, cursorpos);
 	}
 
-	void UIQuestLog::select_row(size_t index)
+	void UIQuestLog::remove_cursor()
 	{
-		if (index >= listed_ids.size())
-			return;
-
-		selected_index = static_cast<int16_t>(index);
-		int16_t qid = listed_ids[index];
-		const QuestData& qdata = QuestData::get(qid);
-
-		detail_title.change_text(qdata.get_name());
-
-		if (tab == Buttons::TAB2)
-		{
-			std::string when = format_completion_time(questlog.get_completion_time(qid));
-			detail_progress.change_text(when.empty() ? "Completed" : ("Completed  " + when));
-		}
-		else if (tab == Buttons::TAB0)
-		{
-			std::string summary = qdata.get_summary();
-			detail_progress.change_text(summary.empty() ? "Available" : summary);
-		}
-		else
-		{
-			std::string progress = questlog.get_progress(qid);
-
-			if (progress.empty())
-				progress = qdata.get_summary();
-
-			detail_progress.change_text(progress.empty() ? "In progress" : progress);
-		}
-
-		if (buttons.count(Buttons::GIVEUP))
-		{
-			bool can_giveup = tab == Buttons::TAB1 && selected_index >= 0;
-			buttons[Buttons::GIVEUP]->set_state(can_giveup ? Button::State::NORMAL : Button::State::DISABLED);
-		}
+		UIDragElement::remove_cursor();
+		slider.remove_cursor();
+		detail_slider.remove_cursor();
 	}
 
-	Rectangle<int16_t> UIQuestLog::list_area() const
+	void UIQuestLog::doubleclick(Point<int16_t> cursorpos)
 	{
-		if (flat_layout)
-			return Rectangle<int16_t>(Point<int16_t>(12, 70), Point<int16_t>(260, 220));
+		int16_t index = row_index_at(cursorpos - position);
 
-		return Rectangle<int16_t>(Point<int16_t>(12, 75), Point<int16_t>(250, 230));
-	}
-
-	Point<int16_t> UIQuestLog::get_search_pos()
-	{
-		if (!search_area.is_valid())
-			return position;
-
-		Point<int16_t> search_area_origin = search_area.get_origin().abs();
-		Point<int16_t> search_pos_adj = Point<int16_t>(25, 4);
-
-		return position + search_area_origin + search_pos_adj;
-	}
-
-	Point<int16_t> UIQuestLog::get_search_dim()
-	{
-		if (!search_area.is_valid())
-			return Point<int16_t>();
-
-		Point<int16_t> adjust = Point<int16_t>(-75, -8);
-
-		return search_area.get_dimensions() + adjust;
+		if (index >= 0)
+			select_row(static_cast<size_t>(index));
 	}
 }

@@ -26,6 +26,7 @@ namespace ms
 		int16_t get_min_level() const;
 		int16_t get_max_level() const;
 		int32_t get_npc() const;
+		int32_t get_area() const;
 		const std::vector<int16_t>& get_jobs() const;
 		const std::vector<int16_t>& get_prequests() const;
 
@@ -45,6 +46,7 @@ namespace ms
 		int16_t min_level;
 		int16_t max_level;
 		int32_t npc;
+		int32_t area;
 		std::vector<int16_t> jobs;
 		std::vector<int16_t> prequests;
 		bool valid;

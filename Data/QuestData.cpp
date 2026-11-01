@@ -81,32 +81,54 @@ namespace ms
 	}
 
 	QuestData::QuestData(int32_t id) :
-		questid(static_cast<int16_t>(id)),
-		min_level(0),
-		max_level(0),
-		npc(0),
-		valid(false)
+	questid(static_cast<int16_t>(id)),
+	min_level(0),
+	max_level(0),
+	npc(0),
+	area(0),
+	valid(false)
 	{
 		std::string sid = std::to_string(id);
 
-		nl::node strsrc = nl::nx::String["Quest.img"][sid];
+		// Quest name + description live in Quest/QuestInfo.img/<id>. The deployed
+		// data does not expose a String/Quest.img, so read from QuestInfo first.
+		nl::node info = nl::nx::Quest["QuestInfo.img"][sid];
 
-		if (!strsrc)
-			strsrc = nl::nx::String["Quest.img"]["quest"][sid];
-
-		if (strsrc)
+		if (info)
 		{
-			name = strsrc["name"].get_string();
+			name = info["name"].get_string();
 
 			if (name.empty())
-				name = strsrc.get_string();
+				name = info.get_string();
 
-			valid = !name.empty() || static_cast<bool>(strsrc);
+			for (const char* key : { "0", "1", "2", "3", "4" })
+			{
+				nl::node line = info[key];
+
+				if (line)
+				{
+					std::string s = line.get_string();
+
+					if (!s.empty())
+					{
+						if (!summary.empty())
+							summary += "\n";
+
+						summary += s;
+					}
+				}
+			}
+
+			valid = !name.empty() || !summary.empty();
+
+			if (info["area"])
+				area = static_cast<int32_t>(info["area"].get_integer());
 		}
 
 		if (name.empty())
 			name = "Quest " + sid;
 
+		// Start requirements / NPC / level gating come from Quest/Check.img.
 		nl::node qsrc = nl::nx::Quest["Check.img"][sid];
 
 		if (!qsrc)
@@ -114,14 +136,6 @@ namespace ms
 
 		if (qsrc)
 		{
-			summary = qsrc["0"]["info"].get_string();
-
-			if (summary.empty())
-				summary = qsrc["info"].get_string();
-
-			if (summary.empty())
-				summary = qsrc["summary"].get_string();
-
 			load_check0(qsrc["0"], min_level, max_level, npc, jobs, prequests);
 
 			// Some packs store start checks at root
@@ -129,12 +143,7 @@ namespace ms
 				load_check0(qsrc, min_level, max_level, npc, jobs, prequests);
 		}
 
-		nl::node act = nl::nx::Quest["Act.img"][sid];
-
-		if (act && summary.empty())
-			summary = act["0"]["info"].get_string();
-
-		if (!valid && (qsrc || act))
+		if (!valid && (info || qsrc))
 			valid = true;
 	}
 
@@ -176,6 +185,11 @@ namespace ms
 	int32_t QuestData::get_npc() const
 	{
 		return npc;
+	}
+
+	int32_t QuestData::get_area() const
+	{
+		return area;
 	}
 
 	const std::vector<int16_t>& QuestData::get_jobs() const
