@@ -1,0 +1,49 @@
+{
+  "window": "Item 背包栏（折叠态）",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/背包栏（折叠）.png (179x289)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_backgrnd.png",
+  "anchor_min_agree": 0.6,
+  "tol": 2,
+  "note": "原生锚点=(3,0)。slot_rows 用分隔线色 (204,204,187) 量整张网格尺：原生实测行 y=49,83,117,151,185,219（行距恒 34），这就是我们客户端 slot_pos 必须对上的尺子 —— 之前那个兜底 (8,51) 与实测格线差 5px 就是「物品整体偏上」的来源。meso_digits 当前 bbox 167 宽 = 金币框内「墨迹」总量（含框体描边），不是纯数字；B2 拿到真机客户帧后再按数字起点收紧。",
+  "probes": [
+    {
+      "name": "slot_rows",
+      "kind": "band",
+      "color": [204, 204, 187],
+      "tol": 0,
+      "region": [0, 0, 176, 289],
+      "min_run": 20,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": 0,
+        "y": 49,
+        "w": 0,
+        "h": 6,
+        "n": 6,
+        "rows": [49, 83, 117, 151, 185, 219]
+      }
+    },
+    {
+      "name": "meso_digits",
+      "kind": "blob",
+      "color": [0, 0, 0],
+      "tol": 120,
+      "region": [4, 266, 176, 280],
+      "min_pix": 20,
+      "row_min": 3,
+      "col_min": 2,
+      "oracle": {
+        "x": 8,
+        "y": 266,
+        "w": 167,
+        "h": 14,
+        "n": 189
+      }
+    }
+  ],
+  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\背包栏（折叠）.png",
+  "oracle_anchor": [3, 0]
+}

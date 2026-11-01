@@ -1,0 +1,95 @@
+{
+  "window": "Stat 角色能力窗",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/角色能力.png (428x349)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Stat_backgrnd.png",
+  "anchor_min_agree": 0.55,
+  "tol": 2,
+  "note": "区域相对 backgrnd 左上角。panel_text_bbox 只许 basicStat 框内出字（用户报的「数值偏下、不在框内」就该它 FAIL）；text_anywhere 区域放宽，用来看「沉下去多少」。深色文字取 (34,51,68)、tol 20、行至少 6 个匹配像素：tol 45 + row_min 1 时窗口描边冒充文字，bbox 实测虚涨成 185x220。value_lines 是 B1b 的行距标尺：原生三行属性值行首 236/252/268，行距恒 16、墨高恒 11 ⇒ 而 GraphicsGL.h:245 linespace()=int(12*1.35+1)=17，每行虚高 1px 且首行墨顶=draw_y+6，这正是「数值不在框内」的来源。detail_lines 已删：详情面板的描边与文字同为深色，逐行墨量分块在该区不稳定（min_pix 4 出 6 块墨高 3~6、min_pix 6+gap 2 把相邻两行并成 pitch 36），量不出可复现的行距就不要写成 oracle。",
+  "probes": [
+    {
+      "name": "backgrnd2_detail_panel",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Stat_backgrnd2.png",
+      "region": [120, 0, 427, 347],
+      "min_agree": 0.5,
+      "oracle": {
+        "x": 208,
+        "y": 144,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.852
+      }
+    },
+    {
+      "name": "basicStat_panel",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Stat_basicStat.png",
+      "region": [0, 120, 220, 347],
+      "min_agree": 0.9,
+      "oracle": {
+        "x": 8,
+        "y": 195,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "panel_text_bbox",
+      "kind": "blob",
+      "color": [34, 51, 68],
+      "tol": 20,
+      "region": [9, 196, 167, 315],
+      "min_pix": 30,
+      "row_min": 3,
+      "col_min": 2,
+      "oracle": {
+        "x": 13,
+        "y": 236,
+        "w": 149,
+        "h": 43,
+        "n": 1505
+      }
+    },
+    {
+      "name": "text_anywhere",
+      "kind": "blob",
+      "color": [34, 51, 68],
+      "tol": 20,
+      "region": [0, 120, 208, 347],
+      "min_pix": 30,
+      "row_min": 6,
+      "col_min": 3,
+      "oracle": {
+        "x": 13,
+        "y": 236,
+        "w": 149,
+        "h": 43,
+        "n": 1505
+      }
+    },
+    {
+      "name": "value_lines",
+      "kind": "lines",
+      "color": [34, 51, 68],
+      "tol": 28,
+      "region": [9, 196, 167, 315],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": 9,
+        "y": 236,
+        "w": 0,
+        "h": 3,
+        "n": 213,
+        "rows": [236, 252, 268],
+        "heights": [11, 11, 11]
+      }
+    }
+  ],
+  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\角色能力.png",
+  "oracle_anchor": [1, 2]
+}

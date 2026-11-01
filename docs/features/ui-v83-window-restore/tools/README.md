@@ -8,6 +8,10 @@
 | `runs.py` | 逐行找某色的最长水平段 → **定位条带几何**（比目测靠谱） | `python runs.py _now2.png 103 103 103 0 200` |
 | `bright.py` | 目录下所有 PNG 的逐通道 max 与 >200 像素数 → **抓帧可信度自检** | `python bright.py` |
 | `cmp.py` | `crop(src,box,out,scale)` 裁切放大、`stack([(src,box)…],out,gap,scale)` 上下对照拼装；内置 `REF`/`CUR` 指向桌面两组对照图 | `from cmp import stack, REF, CUR` |
+| `layout.py` | **R27 版式门禁**：把「原生帧量到的坐标」定成 oracle，客户帧逐格对账，Δ>tol 判未修复（非 0 退出，可挂构建） | `python layout.py mark <spec> <原生帧>`<br>`python layout.py check <spec> <客户帧> --png OUT`<br>`python layout.py selftest <spec>` |
+
+`layout.py` 的 spec / 模板 / oracle 都在 [../evidence/r27-oracle/](../evidence/r27-oracle/README.md)，
+其中一条规矩单列：**oracle 只能由 `mark` 量出来，手写 oracle = 把现有错误常数供认为标准，整轮对账作废**。
 
 ## 两条硬规矩（都是踩出来的）
 

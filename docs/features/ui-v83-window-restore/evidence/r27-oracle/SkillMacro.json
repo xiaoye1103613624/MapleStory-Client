@@ -1,0 +1,118 @@
+{
+  "window": "SkillMacro 技能组合栏（宏指令面板）",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/技能展开宏指令.png (379x291)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Skill_backgrnd.png",
+  "anchor_min_agree": 0.5,
+  "tol": 2,
+  "note": "锚点故意用左边技能窗的 UIWindow.img/Skill/backgrnd（175x289，原生帧上落在 (0,0)，agree=0.568：技能窗上要叠列表文字/图标/选中条，agree 天然上不去，但峰值 rmse=105.6 与次峰 111.0 分得开）。用户报的第一条缺陷是「宏面板没有贴在技能窗上」——若拿面板自己的美术当锚，这条永远量不出来；锚在技能窗上，面板的相对位置才是被检对象。锚点=(0,0) 故本 spec 的相对坐标 = 帧坐标。\n\n面板美术 UIWindow.img/SkillMacroEx/backgrnd 是 181x303，比这张 291 高的帧还大 12px，anchor_in 判「模板比帧大」直接 None，不能当锚也不能当探针；且实测把它裁到 291 行去贴帧右侧，标题带 agree 0.851、往下只有 0.44~0.55（原生只画 3 行、pack 美术是 5 行），所以面板位置只能用边框条带来量。\n\n量到的尺：\n  - 面板外框/标题分隔线色 (85,119,153)：行 y=2,38,261,285（顶框/标题下分隔/底部分隔/底框），面板高 283。\n  - 标题带描边 (136,153,187) bbox = (184,4) 192x16 -> 面板左边界 x=184，而技能窗宽 175，两窗间隙 9px，这就是「贴在一起」的原生标准答案。\n  - 宏格行尺：行格底边色 (153,187,204) 在图标列 x=319..351 内实测行 y=86,131,176，行距恒 45；Macroicon/<i>/icon（32x32、origin (0,32)）实测顶边 y=56,101,146，即格顶 56/101/146、格高 31、行距 45。pack 里 Macroicon 有 0..4 五格，原生帧只画了 0/1/2 三格 —— 用户报的「只显示一行」正好由 macroicon_1/macroicon_2 两个探针兜住：少画就 MISSING，MISSING 即 FAIL。\n  - macroslot2（162x36，个性技能名那一行）已弃用：它整张只有 19 个 alpha>=250 的实心像素（其余 5781 个是半透明），anchor_in 按 alpha_min=250 只数实心像素，于是 agree=1.000 是「19 个点对上了」的假象，同一张帧上 (193,201)/(209,203)/(182,208)… 多处都能拿到 agree=1.000，位置没有意义，写进 oracle 只会骗人。要量这一行请改用面板外框 band 行 261/285。",
+  "probes": [
+    {
+      "name": "panel_border_rows",
+      "kind": "band",
+      "color": [85, 119, 153],
+      "tol": 0,
+      "region": [180, 0, 379, 291],
+      "min_run": 20,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": 180,
+        "y": 2,
+        "w": 0,
+        "h": 4,
+        "n": 4,
+        "rows": [2, 38, 261, 285]
+      }
+    },
+    {
+      "name": "panel_header_bbox",
+      "kind": "blob",
+      "color": [136, 153, 187],
+      "tol": 0,
+      "region": [180, 0, 379, 45],
+      "min_pix": 30,
+      "row_min": 5,
+      "col_min": 1,
+      "size_keys": [
+        "w",
+        "h"
+      ],
+      "oracle": {
+        "x": 184,
+        "y": 4,
+        "w": 192,
+        "h": 16,
+        "n": 394
+      }
+    },
+    {
+      "name": "macro_slot_rows",
+      "kind": "band",
+      "color": [153, 187, 204],
+      "tol": 0,
+      "region": [280, 40, 379, 265],
+      "min_run": 10,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": 280,
+        "y": 86,
+        "w": 0,
+        "h": 3,
+        "n": 3,
+        "rows": [86, 131, 176]
+      }
+    },
+    {
+      "name": "macroicon_0",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/SkillMacroEx_Macroicon0_icon.png",
+      "region": [270, 10, 379, 105],
+      "min_agree": 0.8,
+      "oracle": {
+        "x": 319,
+        "y": 56,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "macroicon_1",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/SkillMacroEx_Macroicon1_icon.png",
+      "region": [270, 55, 379, 150],
+      "min_agree": 0.8,
+      "oracle": {
+        "x": 319,
+        "y": 101,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "macroicon_2",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/SkillMacroEx_Macroicon2_icon.png",
+      "region": [270, 100, 379, 195],
+      "min_agree": 0.8,
+      "oracle": {
+        "x": 319,
+        "y": 146,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    }
+  ],
+  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\技能展开宏指令.png",
+  "oracle_anchor": [0, 0]
+}

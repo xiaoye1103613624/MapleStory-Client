@@ -1,0 +1,161 @@
+{
+  "window": "KeyConfig 键盘设置窗",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/键盘设置.png (629x369)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_BtClose_normal.png",
+  "anchor_min_agree": 0.9,
+  "tol": 2,
+  "note": "锚点用 KeyConfig/BtClose/normal/0（12x12，原生帧上 rmse=0.0 agree=1.000，落在帧 (606,5)）。为什么不用 backgrnd：KeyConfig/backgrnd 是 629x373，比这张 629x369 的原生帧高 4px，anchor_in 直接判「模板比帧大」返回 None；实测把 backgrnd 逐行平移比对，dy=+2（即 backgrnd 左上角落在帧 (0,-2)）时 agree 只有 0.815，裁不掉就不能当锚。故本 spec 的「窗口相对坐标」= 帧坐标 - (606,5)，负 x 属正常（run_probe 会 clamp 到帧边）。\n\n用户报的缺陷是「键帽图整体偏上」。键帽是 UIWindow.img/KeyConfig/icon/<n> 32x32、origin (0,32) 的位图，画在 629x373 的 backgrnd 键盘底图之上。量尺来自键帽自身的深色描边：\n  - 主键盘区键帽描边色 (51,17,34)（tol 0、min_run 20）在帧上只出现在每格键帽的上沿/下沿，原生实测行 y=64,95,97,128,130,161,163,194,196 —— 上沿 64/97/130/163/196 行距恒 33，键帽高 32（64..95）。\n  - 功能键行（F1..F12）描边是纯黑 (0,0,0)，实测 y=25,56。\ncmp_probe 对 band 探针会逐行比对 rows 列表，所以「整排上移」和「行距漂」都跑不掉。另外 4 个 tmpl 探针直接拿 pack 里的 icon 位图去匹配，位置是机器量出来的：icon/<n> 是静态键帽美术（导出后亲眼见 icon/23 = 粉底「商城」键帽、icon/100 = 白底笑脸键帽），不随玩家绑定变化，所以可以当尺子用。两个 blob 探针量同色 (51,17,34) 键帽描边的 bbox，供 selftest 搬动整块内容复现偏移。",
+  "probes": [
+    {
+      "name": "keycap_rows_main",
+      "kind": "band",
+      "color": [51, 17, 34],
+      "tol": 0,
+      "region": [-596, 15, -76, 210],
+      "min_run": 20,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": -596,
+        "y": 59,
+        "w": 0,
+        "h": 9,
+        "n": 9,
+        "rows": [59, 90, 92, 123, 125, 156, 158, 189, 191]
+      }
+    },
+    {
+      "name": "keycap_rows_function",
+      "kind": "band",
+      "color": [0, 0, 0],
+      "tol": 0,
+      "region": [-596, 15, -76, 210],
+      "min_run": 20,
+      "keys": [
+        "y",
+        "n"
+      ],
+      "oracle": {
+        "x": -596,
+        "y": 20,
+        "w": 0,
+        "h": 2,
+        "n": 2,
+        "rows": [20, 51]
+      }
+    },
+    {
+      "name": "keycap_row2_bbox",
+      "kind": "blob",
+      "color": [51, 17, 34],
+      "tol": 0,
+      "region": [-596, 55, -76, 92],
+      "min_pix": 50,
+      "row_min": 20,
+      "col_min": 1,
+      "oracle": {
+        "x": -592,
+        "y": 59,
+        "w": 236,
+        "h": 32,
+        "n": 686
+      }
+    },
+    {
+      "name": "keycap_grid_bbox",
+      "kind": "blob",
+      "color": [51, 17, 34],
+      "tol": 0,
+      "region": [-596, 15, -76, 210],
+      "min_pix": 50,
+      "row_min": 20,
+      "col_min": 1,
+      "oracle": {
+        "x": -592,
+        "y": 59,
+        "w": 490,
+        "h": 133,
+        "n": 3058
+      }
+    },
+    {
+      "name": "keycap_icon23",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_icon23.png",
+      "region": [-606, 35, -466, 135],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": -592,
+        "y": 59,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.96
+      }
+    },
+    {
+      "name": "keycap_icon100",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_icon100.png",
+      "region": [-546, 0, -406, 85],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": -524,
+        "y": 20,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.896
+      }
+    },
+    {
+      "name": "keycap_icon16",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_icon16.png",
+      "region": [-216, 100, -96, 195],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": -185,
+        "y": 125,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.954
+      }
+    },
+    {
+      "name": "keycap_icon9",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_icon9.png",
+      "region": [-166, 65, -46, 165],
+      "min_agree": 0.75,
+      "oracle": {
+        "x": -134,
+        "y": 92,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.948
+      }
+    },
+    {
+      "name": "btn_ok_normal",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/KeyConfig_BtOK_normal.png",
+      "region": [-606, 205, -466, 265],
+      "min_agree": 0.9,
+      "oracle": {
+        "x": -598,
+        "y": 229,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    }
+  ],
+  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\键盘设置.png",
+  "oracle_anchor": [606, 5]
+}
