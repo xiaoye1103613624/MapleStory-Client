@@ -1,0 +1,12 @@
+== quickSlot 466 x 80
+  row runs: [(0, 79)]
+  col runs: [(0, 465)]
+== quickSlot26 466 x 80
+  row runs: [(0, 79)]
+  col runs: [(0, 465)]
+== quickSlot32 571 x 80
+  row runs: [(0, 78)]
+  col runs: [(0, 570)]
+== quickSlot08 151 x 80
+  row runs: [(0, 79)]
+  col runs: [(0, 150)]
