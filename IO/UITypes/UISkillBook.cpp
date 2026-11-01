@@ -337,13 +337,15 @@ namespace ms
 			if (recommend.is_valid())
 				recommend.draw(position + RECOMMEND_TOPLEFT);
 
-			// 技能点数值：SP 白框（UIWindow.img/Skill 烘焙）边框实测窗口相对
-			// x 61..111、y 265..281（内区 62..110 / 266..280）。原生数字「0」墨迹
-			// = x 86..91、y 274..282（截图绝对 394..399 / 276..284，窗口原点 (308,2)）。
-			// splabel 是 A12M + RIGHT：SimHei 12px 的 linespace=18、数字 bitmap_top=9、
-			// 推进 6 ⇒ 墨迹顶 = draw_y + 9、墨迹左 = draw_x - 6。解出 draw = (92, 265)。
-			// 旧值 (111, 258) 把数字甩到框右上角外（偏右上 19/7px）。
-			splabel.draw(position + Point<int16_t>(92, 265));
+			// 技能点数值：SP 白框（UIWindow.img/Skill/backgrnd 烘焙）边框窗口相对
+			// x 61..112、y 265..281（由 tmpl/Skill_backgrnd.png 直接读出，非截图反推）。
+			// R27-B1b 按原生帧重量：skill_macro.png 里数字「0」墨迹 = x 103..107、
+			// y 268..276，与该帧的白框上边框（y265）只差 +3 —— 和背包金币框
+			// （边框 266 / 数字 269）同一把尺，互相印证。
+			// 旧值 (92, 274) 出自另一张全屏截图的「窗口原点 (308,2)」推算法，那套
+			// 读法把数字放到框中间（x86..91）且低 6px；本帧逐像素图直接否掉了它。
+			// splabel = A12M + RIGHT，沿用「墨迹左 = draw_x - 推进量 6」⇒ draw_x = 109。
+			splabel.draw(position + Point<int16_t>(109, splabel.y_for_ink_top(268)));
 		}
 		else
 		{

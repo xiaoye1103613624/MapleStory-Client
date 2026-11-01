@@ -288,15 +288,18 @@ namespace ms
 			if (classic_chat_target)
 				classic_chat_target.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
 
-			// 目标文字：A11M 墨迹顶 = draw_y + 6（定版模型见
-			// evidence/w0-common/text-metrics.md），TARGET_TEXT_Y 已按「框内垂直居中」
-			// 反推。参考端是左对齐紧跟箭头右侧（框内 x≈6），不居中。
+			// 目标文字：行内墨迹顶 TARGET_TEXT_INK_TOP，绘制点按 classic_target_text
+			// 当前内容（密语对象名，可能是中文也可能是拉丁）自己的度量反解
+			// （R27-B1b 唯一真源，定版模型见 evidence/w0-common/text-metrics.md）。
+			// 参考端是左对齐紧跟箭头右侧（框内 x≈6），不居中。
 			int16_t target_x = TARGET_TEXT_X;
 			// 密语对象名可能长过框宽：整体左移贴框左沿，不溢出到输入区。
 			if (const int16_t target_w = classic_target_text.width(); target_w > CHAT_TARGET_W - TARGET_TEXT_X)
 				target_x = std::max<int16_t>(0, CHAT_TARGET_W - target_w);
 
-			classic_target_text.draw(input_pos + Point<int16_t>(target_x, TARGET_TEXT_Y));
+			classic_target_text.draw(
+				DrawArgument(input_pos + Point<int16_t>(target_x, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP)))
+			);
 
 			if (classic_input_bg)
 				classic_input_bg.draw(

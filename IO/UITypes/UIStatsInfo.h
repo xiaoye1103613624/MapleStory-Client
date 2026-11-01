@@ -47,6 +47,10 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
+		// 参考截图上量不到墨迹的行（底纹混色 / 被浮层盖住）用这个哨兵标记，
+		// 绘制时退回 statoffsets 里的原始 y。见 statinktops。
+		static constexpr int16_t INK_TOP_NONE = -1;
+
 		enum StatLabel
 		{
 			// Normal
@@ -157,5 +161,9 @@ namespace ms
 
 		Text statlabels[StatLabel::NUM_LABELS];
 		Point<int16_t> statoffsets[StatLabel::NUM_LABELS];
+		// 经典「角色能力」窗：每行在参考截图上量到的**墨迹顶** y（不是绘制点）。
+		// 绘制点 = 墨迹顶 - Text::ink_offset()，由渲染器按该行文字自己的
+		// bitmap_top 现算（R27-B1b 唯一真源；INK_TOP_NONE 行沿用 statoffsets 的 y）。
+		int16_t statinktops[StatLabel::NUM_LABELS];
 	};
 }

@@ -40,8 +40,12 @@
 
 ### B1 公共件三族（改完再动各窗，否则各窗还会返工）
 - **B1a origin 规则**：裸 `Texture::draw` 一律显式声明是否减 origin；修 `UIKeyConfig` icon、装备图标/命中同源、`UIUserList` 双 backgrnd 叠绘、`Item` 回退格位 `(8,51)`→按实测格线 `y=46` 重定。
-- **B1b 基线唯一真源**：`linespace` 不再由降部最大行撑大；按原生帧量出 A12M/A11M 的真实行距与「数字/中文/带括号」三类墨迹顶，统一成一处常量，各窗反解公式改为引用它。
-  **代价**：所有已按旧 linespace 手调过的窗口常量需同批重量（这是本批最重的部分，也是 D3 选宽档的必然结果）。
+- **B1b 基线唯一真源**（✅ 已落地，原计划表述按实测更正）：计划里写的「按原生帧量出 A12M/A11M 的真实行距，统一成一处常量」**量不出来也不成立** —— 4 张原生帧实测基线推进是**每窗自己的常量**（聊天气泡叠行 13 / 装备 tooltip 属性块 15 / 能力窗下部属性带 16 / NPC 对话与任务段落的真换行 18），不存在一个全局行距。`linespace()`（`= int(maxrows*1.35+1)`）只管**换行推进**，A12M 的 18 有原生帧背书，A11M 无背书 ⇒ 不动它（动它就是编数据）。逐窗密度是 `line_adj` 的活，落在 B2–B7。
+  真正能做成唯一真源的是**「墨迹顶 ↔ 绘制点」的换算**：SimHei 的 `bitmap_top` 由 FreeType 现场给出（11px 数字 8、`/` `(` 9、CJK 分 9/10 两档），而各处注释手抄的是 PIL 口径（`/` 11、CJK 11）⇒ 所有含中文/斜杠的行统一低 2~3px，正是用户报的「基础信息数值偏下、金币值偏下、底栏职业名偏下」。
+  落地：`Text::ink_offset()` / `Text::y_for_ink_top()`（按**当前字符串**逐字形取最大 `bitmap_top`，CJK 两档不能靠选类别，选错就错 1px）+ `GraphicsGL::glyph_bt()` 只读度量缓存 + `OutlinedText` 转发；名牌底框改**逐行**取最大 `bitmap_top`。已迁站点：能力窗数值 13 行表、底栏职业/角色名、背包金币、聊天目标文字、技能窗 SP —— 详见 `evidence/w0-common/text-metrics.md` 的 r27-B1b 定版一节。
+  **B1b 收尾（2026-11-01 真机自证）**：常量全部改由 `evidence/r27-oracle/frames/` 里的原生帧量出，再用真机客户帧 `layout.py check` 复量 —— Stat 8/8、Item 3/3、SkillMacro `sp_digit` 1/1 全绿，逐格 Δ ≤ 1px。这一轮把两处「r15 拿自己截图反推」的假常数钉回原生：**背包金币 284→269 / x141→137**（旧值低 16px，整条数字掉到白框外 = 用户报的「金币值位置偏下了，没有在框内」）、**技能窗 SP 274→268 / x92→109**（低 6、左 17）。同时**用原生帧否掉三处可疑**：底栏职业名 40 / 角色名 56、聊天目标文字 8 —— 它们本来就是对的，不改（避免又一轮无证据手调）。
+  门禁侧配套两件事：① 探针可按窗口形态声明 `active_in`，`check --mode` 只判该形态存在的格子（能力窗详情浮层、宏面板那 6 格），`mark`/`selftest` 仍全量照量；② `mark` 把仓库内的 oracle 帧存成**仓库相对路径**，7 张 spec 现在都能从干净 clone 复现（旧 spec 写的是桌面绝对路径，换机器即断）。
+  **代价**：所有已按旧口径手调过的窗口常量要同批重量（B2–B7 按此排期）。
 - **B1c i18n 接入**：`Util/Locale` + `locale/zh-CN.ini`/`en-US.ini` 已具备配置键 `ui.language`（默认 `zh-CN`）与 `reload()`（`Configuration.cpp:491` 已调），**但全仓只有 3 个文件在用**。本批：
   1. 把已点名站点搬进 ini：`EquipTooltip.cpp:268/279/286/297/304/438-455/511/522/529/540/547`、`Data/EquipData.cpp:68-136`（`TOP` 等）、`Character/EquipStat.cpp:34-52`（`Defense`）、`UIMonsterBook.cpp:46/84/85/89`、`UIUserList.cpp:86/157/243/799`、`UIFamily.cpp:53/54`、`UIFamilyTree.cpp:53/73`、`UIAlliance.cpp:35`、`UIDelivery.cpp:78`、`UIMapMobPanel.cpp:64`、`UIMapDropPanel.cpp:36`、`UIMiscShells.cpp:202/491/681/895/919/1068…`；
   2. 加**运行时刷新通道**：语言变更后广播，使 ctor 里初始化的 `Text` 成员重取文案（切换 UI 留下一期）；
@@ -50,6 +54,7 @@
 
 ### B2 能力窗 / 背包 / 金币（用户报的 1、5）
 `UIStatsInfo.cpp:225-237`（数值 Y 表）、`UIItemInventory.cpp:330`（金币）、格位回退表。依赖 B1a+B1b。
+**B1b 已顺带掉两处**：金币数值常量（269/137，`Item.json/meso_digit` 真机 Δ=1）、能力窗上半区 7 行墨顶（`Stat.json/value_ink_tops` 真机 Δ≤1）。本批只剩**格子本身**：`slot_rows` 真机实测行首 50/84/… 比原生 49/83/… 恒低 1px（tol 内，但 B2 要查是不是格高取整），以及背包展开态（`Item_FullBackgrnd` 603x289 与折叠态共用同一把金币尺，已互证）。
 
 ### B3 装备窗（用户报的 2）
 - 槽位绘制/命中同源（含 `WEAPON`/`SUBWEAPON` 共用 `(137,131)` 串 tooltip）；
@@ -59,7 +64,7 @@
 ### B4 技能窗 + 技能组合栏（用户报的 3）
 - **先取证再定方案**：用 `tools/nx_inspect.py` 实测那 4 个技能（精灵的祝福/蜗牛投掷术/团队治疗/疾风步）在 `.nxcache/Skill.nx` 里的真实路径，判定图标缺失是「命名空间换算错」还是「分卷未回退」还是「包里真没有」——`Data/Skill/` 是按 namespace 分文件的散 `.img`（000/100/111/1000…），而 `SkillData.cpp:32-38` 只查 `nl::nx::Skill` 单根，`Skill001/002/003` 已在 nlnx 挂载（`nx.cpp:71,103-105`）却无人回退。
 - 组合栏 `UISkillMacroEx`（`UIMiscShells.cpp:3400-3674`）：吸附改**跟随技能窗移动**（现在只在点「宏指令」瞬间 `anchor_right_of` 一次，构造兜底 `center_on_screen`）；行数 `rows = total?:1` 导致只出一行 + `VISIBLE_ROWS=3` < 原生 5 行；`Macroicon` 循环按 5 颗但本包只有 0..2；**收起失效**：`set_macro(false)` 从不 `mex->deactivate()`。
-- SP 数值硬编码 `(92,265)`/`(304,23)` 依 B1b 重量。
+- SP 数值硬编码 `(92,265)`/`(304,23)` 依 B1b 重量 —— **classic 分支已按 oracle 改完**：`(109, y_for_ink_top(268))`，`SkillMacro.json/sp_digit` 真机 Δ=1。非 classic 分支的 `(304,23)` 没有原生帧背书，留 B4。
 
 ### B5 聊天栏 + 聊天窗（用户报的 6、7）
 - `UIChatBar` classic 分支常量（`ctor:78` 收起位、`user_view_y=80` 展开高、消息循环 `:309-321` 按 13px 无裁剪堆叠、原生上限 `MAX_HEIGHT=467` 未用）；

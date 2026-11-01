@@ -11,6 +11,7 @@
 | `../tools/layout.py` | 量具本体：锚定 + 探针 + 对账 + 自测（用法见其 docstring） |
 | `tmpl/<Window>_<node>.png` | 从 `.nxcache/UI.nx` 导出的位图，做锚点和 `tmpl` 探针用（`nx_inspect.py image` 导，禁止手画）。目录里存的是**导出集**，不等于都在用：例如 `KeyConfig_backgrnd`(629x373)、`SkillMacroEx_backgrnd`(181x303) 比对应原生帧还高，`anchor_in` 判「模板比帧大」直接不可用；`Equip_BtCashshop/BtDetail/BtPet1_normal` 在原生帧上 agree 只有 .216/.000/.322（那帧根本没画这几个按钮），当探针必 MISSING。留着是给后续裁切/复核当原料，别误当已建成的探针 |
 | `<Window>.json` | 该窗口的探针清单 + 已量出的 oracle 数值 |
+| `frames/native_<窗体>.png` | **oracle 帧本体**：原生客户端截图的 ASCII 命名副本，`mark` / `check` 都从这里读。桌面截图换机器/改名就断，spec 里的 `oracle_frame` 一律是仓库相对路径（旧 spec 曾写 `C:\Users\...\正确客户端截图\角色能力.png`，换机器即失效） |
 | `Stat_anchor.png` | `layout.py anchor --png` 的输出样本：绿框 = 量出来的 backgrnd 左上角，给人眼复核用 |
 | `origin-rule.md` | **B1a 裁定**：位图 origin/锚点只能有一套语义，含 KeyConfig 的量尺证据；§6 另记一处同根因（底栏快捷格，缺 oracle 故本轮不改） |
 
@@ -18,6 +19,22 @@
 
 `oracle` 字段一律由 `layout.py mark <spec> <原生帧>` 写回，**任何人不得手写或照代码抄**。
 手写的 oracle 等于把客户端现有的错误常数供认为「正确」，整轮对账就失去意义。
+
+配套一条：**原生帧先拷进 `frames/` 再 `mark`**（文件名 ASCII，中文名在 Git Bash 里会被转码，
+`cp` 之后 md5 对一次原图）。`mark` 现在把落在仓库内的帧存成仓库相对路径，
+所以「从干净 clone 复现 oracle」是跑得通的 —— 7 张 spec 各自 `check` 自己的 oracle 帧
+全部 **不合格 0**（2026-11-01 复跑，见下表）。
+
+## 形态（mode）：同一扇窗的多种开法不能互相判死
+
+有的探针只在某一种窗口形态下存在：能力窗的「基本属性点」浮层只在**详情态**画，
+宏面板只在**技能窗 + 宏指令同开**时画。这类探针给 `"active_in": ["<形态>"]`，
+`check ... --mode <形态>` 只判该形态下应当存在的格子，其余打 `SKIP(不在 X 形态)`
+且**不计入不合格**；`mark` / `selftest` 不看 mode（`mode=None` 一律全量照量，
+因为 oracle 取自内容齐全的那张原生帧）。
+
+判据是「这一格在这一形态下有没有东西可量」，不是「像不像」—— 少一个 `--mode`
+就会把「本轮没开那个面板」误报成版式缺陷，反之全塞进 default 就永远量不到宏面板。
 
 ## 坐标系
 
@@ -52,19 +69,33 @@ G2 的判据形式就是「行首序列」，`cmp_probe` 对 `rows` 逐元素比
 
 ## 已建
 
-5 张 spec、29 个探针，`check` 对各自的原生帧全部 **不合格 0**（工具判据：Δ>tol 即 FAIL）。
+7 张 spec、44 个探针，`check` 对各自入库的 oracle 帧全部 **不合格 0**（工具判据：Δ>tol 即 FAIL）。
+其中 **Stat / Item / SkillMacro 三张已经用真机客户帧跑过 `check`**（B1b，2026-11-01）：
+逐格 Δ ≤ 1px，明细见 [../w0-common/text-metrics.md](../w0-common/text-metrics.md) §4。
 
 | 窗口 | 原生帧 | 关键 oracle |
 | --- | --- | --- |
-| `Stat.json` 角色能力 | `角色能力.png` 428x349 | anchor=(1,2) agree .734；`basicStat` 面板 (8,195) agree 1.000；数值文字 bbox (13,236) 149x43（框内）；**`value_lines` 行首 236/252/268，行距恒 16、墨高恒 11** |
-| `Item.json` 背包折叠 | `背包栏（折叠）.png` 179x289 | anchor=(3,0)；**网格分隔行 = 49,83,117,151,185,219（行距恒 34）** |
-| `KeyConfig.json` 键盘设置 | `键盘设置.png` 629x369 | anchor=BtClose@(606,5) agree 1.000；**键帽上沿 59/92/125/158/191（行距恒 33、键帽高 32）**；4 颗 `icon` 键帽 + OK 按钮 tmpl 逐格命中现有坐标表 ⇒ 见 [origin-rule.md](origin-rule.md) |
-| `SkillMacro.json` 宏指令栏 | `技能展开宏指令.png` 379x291 | 锚故意钉在**左边技能窗** `Skill/backgrnd`@(0,0)（agree .568），这样「宏面板没贴在技能栏上」才是被检对象；量得面板左边界 x=184 而技能窗宽 175 ⇒ **原生贴合标准答案 = 两窗间隙 9px**；宏格行 y=86,131,176（行距恒 45）、三格 `Macroicon/<i>` tmpl 分别落在 (319,56)/(319,101)/(319,146) 且 agree 均 1.000 |
-| `Equip.json` 角色装备 | `角色装备.png` 348x305 | anchor=`Equip/backgrnd`@(0,0) agree .884；**装备格网格顶边 32 / 底边 265 ⇒ 233 = 7×33+2，行距恒 33、共 7 行**；粉色宠物格 (72,234) 31x31 与 (6,234) 64x31 各钉一次底行的 x 起点/格宽/格高；宠物面板两条尺互证：`pet` tmpl @(171,123) agree .631 与白 bbox @(181,124)（= art 内框 (10,1) + (171,123)）。**Equip 网格线是 255/238 抖动，没有可用的周期分隔色**（四种灰蓝在 min_run≥20 下全部 0 行），尺只能取自面板白外框 |
+| `Stat.json` 角色能力 | `frames/native_stat.png` 428x349 | anchor=(1,2) agree .734；`basicStat` 面板 (8,195) agree 1.000；数值文字 bbox (13,236) 149x43（框内）；**`value_lines` 行首 236/252/268，行距恒 16、墨高恒 11**；`value_ink_tops` 上半区 7 行墨顶 36/53/82/118/136/154/172（B1b 定版尺，真机 Δ≤1）；`backgrnd2_detail_panel` 带 `active_in: ["detail"]` |
+| `Item.json` 背包折叠 | `frames/native_bag_fold.png` 179x289 | anchor=(3,0)；**网格分隔行 = 49,83,117,151,185,219（行距恒 34）**；`meso_digits` 金币带 (8,266) 167x14；**`meso_digit` 单个「0」纯墨迹 (131,268) 6x9 —— 夹在白框上下边框（y266/281）之间，金币常量 269/137 就是它定的** |
+| `KeyConfig.json` 键盘设置 | `frames/native_keyconfig.png` 629x369 | anchor=BtClose@(606,5) agree 1.000；**键帽上沿 59/92/125/158/191（行距恒 33、键帽高 32）**；4 颗 `icon` 键帽 + OK 按钮 tmpl 逐格命中现有坐标表 ⇒ 见 [origin-rule.md](origin-rule.md) |
+| `SkillMacro.json` 宏指令栏 | `frames/native_skill_macro.png` 379x291 | 锚故意钉在**左边技能窗** `Skill/backgrnd`@(0,0)（agree .568），这样「宏面板没贴在技能栏上」才是被检对象；量得面板左边界 x=184 而技能窗宽 175 ⇒ **原生贴合标准答案 = 两窗间隙 9px**；宏格行 y=86,131,176（行距恒 45）、三格 `Macroicon/<i>` tmpl 分别落在 (319,56)/(319,101)/(319,146) 且 agree 均 1.000。**面板那 6 格全带 `active_in: ["macro"]`**（技能窗单开时它们不存在）；`sp_digit` 不带 = 技能窗本体，量到 SP 白框里的「0」纯墨迹 (103,268) 6x9 —— 技能点常量 268/109 由它定 |
+| `Equip.json` 角色装备 | `frames/native_equip.png` 348x305 | anchor=`Equip/backgrnd`@(0,0) agree .884；**装备格网格顶边 32 / 底边 265 ⇒ 233 = 7×33+2，行距恒 33、共 7 行**；粉色宠物格 (72,234) 31x31 与 (6,234) 64x31 各钉一次底行的 x 起点/格宽/格高；宠物面板两条尺互证：`pet` tmpl @(171,123) agree .631 与白 bbox @(181,124)（= art 内框 (10,1) + (171,123)）。**Equip 网格线是 255/238 抖动，没有可用的周期分隔色**（四种灰蓝在 min_run≥20 下全部 0 行），尺只能取自面板白外框 |
+| `ChatBar.json` 聊天栏展开 | `frames/native_chatbar_open.png` 569x103 | 底图 `base/backgrnd`(817x71) 与 `backgrnd2`(570x71) 都比这张裁图宽 ⇒ `anchor_in` 判模板过大，按降级规则改锚 `base/chatTarget`(81x20) @(1,79) agree .897，**参照点是那颗蓝框左上角，消息区在它上方 ⇒ 相对 y 为负是合法的**。`msg_stack_lines` 量到两条消息墨块 47..58 / 60..71 ⇒ **消息堆叠行距 13、墨高恒 12**；同一对行在 `打开了S-E-I-K页面.png`(1280x720) 的绝对 y=625/638 复量还是 13。聊天日志区没有底衬，字压在地图上，这条尺天生比带面板的窗不稳，复核先看 `_debug` 图 |
+| `EquipTooltip.json` 装备悬浮提示 | `背包中鼠标悬浮物品上显示的物品信息内容.png` 268x310（裁 y≥90 → `frames/EquipTooltip_native_crop.png`） | tooltip 各位图全是纯白 ⇒ 全帧模板匹配 SSD=0 命中 90 处（背包标题白条），**必须先无损裁掉上方无关区域**才能锚；锚 `ToolTip/Equip/Can/reqLEV` @(124,27) agree 1.000。`body_stat_lines` 四行 128/143/158/173 ⇒ **属性块行距恒 15**；`req_band_str`/`req_band_pop` 两条 tmpl 互证需求块**位图原点行距恒 12**（零抖动），而 `req_label_lines` 墨顶 11/12/13 抖 ⇒ 那是底图块不是文字行 |
 
-`value_lines` 就是 B1b 的标尺：[Graphics/GraphicsGL.h:247](../../../../../Graphics/GraphicsGL.h#L247)
-的 `linespace() = int(height * 1.35 + 1)`（A11M maxrows 12 ⇒ **17**），比原生行距多 1px/行，
-且首行墨顶 = `draw_y + linespace − bitmap_top` = `draw_y + 6` —— 「数值偏下、不在框内」两项合成一个根因。
+`value_lines` 那 16 **不是**引擎行距，是能力窗下半区（力量/敏捷/智力/运气）自己的行带；
+上半区基础信息四行（HP/MP/EXP/人气度）实测墨顶 122/140/158/176 ⇒ 行距 18，
+聊天消息堆叠 13、tooltip 属性块 15、NPC 对话与任务描述折行 18 —— **原生根本没有一套
+按字号统一的行距**，行距是每窗自己的常量。所以 `linespace()` 只当「折行步进」用
+（A12M 实测 18 与现公式吻合），窗口要更密的行就用 `Text` 构造函数的 `line_adj` 收窄。
+真正被统一到一处的是**墨迹顶换算**：[Graphics/Text.h](../../../../../Graphics/Text.h) 的
+`Text::y_for_ink_top(ink_top)`（`OutlinedText` 转发），它按**当前字符串**逐字形取最大
+`bitmap_top`（`GraphicsGL::glyph_bt`，与绘制路径同一个 `FT_LOAD_RENDER` 口径）。
+中途做过 `InkKind{SHORT,TALL}` 两档常量的方案，实测挡不住：SimHei 11px 的 CJK 本身分
+9/10 两档（170 字抽样 126:42），「新手」顶 10 而「50 / 50」顶 9 ⇒ 选类别必错 1px，
+所以定版是按串精算。r15 手抄的「CJK 11」是 PIL 口径，FreeType 实测 9~10，
+能力窗/底栏名条/金币/聊天目标字因此一致偏低 2~3px
+（定版模型与逐站点差值见 [../w0-common/text-metrics.md](../w0-common/text-metrics.md)）。
 `KeyConfig` 那四格 0 误差则把「按键图片全都偏上」钉死成子层没抹 origin（`KeyConfig/icon/<n>` origin (0,32)）
 导致的整层 32px 平移，不是坐标表写错。
 
@@ -75,6 +106,8 @@ python layout.py selftest ../evidence/r27-oracle/Stat.json      --probe panel_te
 python layout.py selftest ../evidence/r27-oracle/Stat.json      --probe value_lines       --probe-kind lines --shifts 1,16,40
 python layout.py selftest ../evidence/r27-oracle/Item.json      --probe slot_rows         --probe-kind band  --shifts 1,14,34
 python layout.py selftest ../evidence/r27-oracle/Item.json      --probe meso_digits       --probe-kind blob  --shifts 1,14,60
+python layout.py selftest ../evidence/r27-oracle/Item.json      --probe meso_digit        --probe-kind blob  --shifts 1,14,60
+python layout.py selftest ../evidence/r27-oracle/SkillMacro.json --probe sp_digit         --probe-kind blob  --shifts 1,14,60
 python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_rows_main  --probe-kind band  --shifts 1,14,34
 python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_row2_bbox  --probe-kind blob  --shifts 1,16,32
 python layout.py selftest ../evidence/r27-oracle/KeyConfig.json --probe keycap_icon23     --probe-kind tmpl  --shifts 1,14,32
@@ -83,12 +116,20 @@ python layout.py selftest ../evidence/r27-oracle/SkillMacro.json --probe macroic
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe grid_top_edge     --probe-kind band  --shifts 1,14,32
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_slot_pink_bbox --probe-kind blob --shifts 1,14,32
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_panel_tmpl    --probe-kind tmpl  --shifts 1,14,32
+python layout.py selftest ../evidence/r27-oracle/ChatBar.json   --probe msg_stack_lines   --probe-kind lines --shifts 1,13,32
+python layout.py selftest ../evidence/r27-oracle/EquipTooltip.json --probe body_stat_lines   --probe-kind lines --shifts 1,15,32
+python layout.py selftest ../evidence/r27-oracle/EquipTooltip.json --probe req_label_lines   --probe-kind lines --shifts 1,12,32
 ```
 
 把 oracle 帧里的一块内容整体下移 N 像素，再看 `check` 报出的 Δ 是否等于 N。
-**四类探针 × 5 张 spec 共 12 条注入全部逐像素复现**（注入档按各自尺子取，如 `lines` 用行距 16、
-`band` 用 34/45、键帽用 32 —— 32 正是要修的那一档缺陷的尺寸）；报 MISSING 也算检出，
-那是内容被推出探针区。注入 14px 却报 ok 的话，后面 B2..B7 全部作废，所以这一步不是可选的。
+**四类探针 × 7 张 spec 共 17 条注入全部逐像素复现**（注入档按各自尺子取，如 `lines` 用该窗
+自己量到的行距 12/13/15/16、`band` 用 34/45、键帽用 32 —— 32 正是要修的那一档缺陷的尺寸）；
+报 MISSING 也算检出，那是内容被推出探针区。注入 14px 却报 ok 的话，后面 B2..B7 全部作废，
+所以这一步不是可选的。
+
+唯一不能自测的探针：`EquipTooltip/name_line` —— 把它下移 15px 等于把**纯白**文字复制进锚点搜索区，
+那颗同样纯白的 `reqLEV` 模板会抢走锚点（agree .969），量到的 Δ 是锚点漂移不是注入量。
+这条尺只能靠 `check` 对帧，改客户帧时先看锚点 agree 再信它的 Δ。
 
 自测本身修掉过三个「会骗人的假 ok / 直接崩」，都记在这儿免得下次再犯：
 

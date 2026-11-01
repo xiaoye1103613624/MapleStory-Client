@@ -73,6 +73,14 @@ namespace ms
 		// Draw a text with the given parameters
 		void drawtext(const DrawArgument& args, const Range<int16_t>& vertical, const std::string& text, const Text::Layout& layout, Text::Font font, Color::Name color, Text::Background back);
 
+		// 文本垂直度量（R27-B1b 唯一真源，Text 的实例方法转发到这里）：
+		// 基线到基线的行距，以及「绘制点 y → 该行墨迹顶」的偏移
+		// = linespace - max(bitmap_top over 这段文字的字形)。一行的墨迹顶由本行
+		// 最高的那个字决定，所以必须按字符串精算：SimHei 11px 下 CJK 分两档
+		// （bt 9 与 bt 10），「新手」的顶是「新」= 10，纯数字行是 8。
+		int16_t get_linespace(Text::Font id) const;
+		int16_t get_ink_offset(Text::Font id, const std::string& text);
+
 		// Draw a rectangle filled with the specified color
 		void drawrectangle(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue, float alpha);
 		// Fill the screen with the specified color
@@ -207,12 +215,14 @@ namespace ms
 		{
 			struct Char
 			{
-				GLshort ax;
-				GLshort ay;
-				GLshort bw;
-				GLshort bh;
-				GLshort bl;
-				GLshort bt;
+				// 必须零初始化：addfont 只填 FT_Load_Char 成功的字形，
+				// bt_* 探测直接读 chars['0']/['/']/['(']，未加载时得是 0 而不是脏值。
+				GLshort ax = 0;
+				GLshort ay = 0;
+				GLshort bw = 0;
+				GLshort bh = 0;
+				GLshort bl = 0;
+				GLshort bt = 0;
 				Offset offset;
 			};
 
@@ -220,12 +230,19 @@ namespace ms
 			GLshort height;
 			Char chars[128];
 
+			// 空字符串时的墨迹兜底（= 数字 '0' 的 bitmap_top，addfont 现场探测，非手抄表）。
+			// 一行的真实墨迹顶由本行最高字形决定，见 glyph_bt/max_bt。
+			GLshort bt_short = 0;
+
 			// CJK 按需字形：码点 → 字形。addfont 只烘焙 ASCII(32..127)，
 			// 中文（UTF-8 多字节）在此缓存，首用时从 face 现场生成并上传到
 			// init 预留的 wide 区（与 ASCII 字形同属字体保留条带，
 			// clearinternal 的位图逐出不会回收，无需失效逻辑）。
 			FT_Face face = nullptr;
 			std::unordered_map<uint32_t, Char> wide;
+			// 码点 → bitmap_top 的只读度量缓存：绘制点反解要在字形尚未上传到
+			// 图集时就能问出墨迹顶（图集锁定期也要能问），故与 wide 分开。
+			std::unordered_map<uint32_t, GLshort> bt_probe;
 			GLshort wide_x = 0;
 			GLshort wide_y = 0;
 			bool wide_full = false;
@@ -336,5 +353,9 @@ namespace ms
 
 		// 查找/生成一个非 ASCII 码点的字形；区域满或无 face 时返回空。
 		const Font::Char* get_wide_glyph(Font& font, uint32_t codepoint);
+		// 只问 bitmap_top（不写图集）：ASCII 直接读 chars[]，CJK 走 bt_probe 缓存，
+		// 未命中时 FT_LOAD_RENDER 现场量一次 —— 与 get_wide_glyph 用的是同一个
+		// 载入方式，所以量到的和最终画出来的必然相等。图集锁定期同样可用。
+		GLshort glyph_bt(Font& font, uint32_t codepoint);
 	};
 }

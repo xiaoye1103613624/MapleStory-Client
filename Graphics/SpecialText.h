@@ -72,6 +72,12 @@ namespace ms
 		{
 			return inner.height();
 		}
+
+		// 墨迹顶 → 自己的绘制点 y（转发 inner，R27-B1b：窗口只记量到的墨迹顶）。
+		int16_t y_for_ink_top(int16_t ink_top) const
+		{
+			return inner.y_for_ink_top(ink_top);
+		}
 	};
 
 	struct ShadowText

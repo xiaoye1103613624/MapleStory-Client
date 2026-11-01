@@ -201,9 +201,11 @@ namespace ms
 		static constexpr int16_t TARGET_BT_W = 12;
 		// chatTarget 与 BtWhisper(12x19) 同顶（行内 y=4 → 屏幕 657）
 		static constexpr int16_t TARGET_BOX_Y = 4;
-		// 目标文字：A11M 墨迹顶 = draw_y + linespace(17) - SimHei bitmap_top(11) = +6。
-		// 框内区 657..676、字形高 11 → 居中墨迹顶 661 ⇒ draw_y 655 ⇒ 行内 2。
-		static constexpr int16_t TARGET_TEXT_Y = 2;
+		// 目标文字「对所有人」的行内**墨迹顶** = 8（框内区 4..24、字高 11 ⇒ 居中），
+		// 绘制点由 Text::y_for_ink_top 按当前对象名反解（R27-B1b）。
+		// 上一版把 bitmap_top 手抄成 11（PIL 口径，SimHei 11px 的 CJK 实测 9~10）
+		// ⇒ 常量写成 draw_y=2，字实际低 2~3px。
+		static constexpr int16_t TARGET_TEXT_INK_TOP = 8;
 		// 展开/缩放钮(12x12)：参考端实测屏幕 (536, 661)，行内即 (536, 8)。底栏是定宽
 		// 817 的贴图，所以原生用的是固定左偏移，这里跟着用固定值而不是右锚。
 		static constexpr int16_t LOG_BT_X = 536;

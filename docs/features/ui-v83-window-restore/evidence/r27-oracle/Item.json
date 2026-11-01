@@ -42,8 +42,34 @@
         "h": 14,
         "n": 189
       }
+    },
+    {
+      "name": "meso_digit",
+      "kind": "blob",
+      "color": [0, 0, 0],
+      "tol": 110,
+      "region": [125, 267, 141, 280],
+      "min_pix": 3,
+      "row_min": 1,
+      "col_min": 1,
+      "note": "金币数字「0」纯墨迹（B1b 落位标尺）。探针区刻意夹在白框上下边框（窗口 y266/281）之间、且右界停在竖边框 x143 之前，否则 bbox 会被框线接管。原生 = 窗口 (131,268) 6x9 ⇒ UIItemInventory 的 y_for_ink_top(269)/x=137（269 = 边框 266 + 数字相对边框 +3，与 Skill/SP 同一把尺）。",
+      "keys": [
+        "x",
+        "y"
+      ],
+      "size_keys": [
+        "w",
+        "h"
+      ],
+      "oracle": {
+        "x": 131,
+        "y": 268,
+        "w": 6,
+        "h": 9,
+        "n": 16
+      }
     }
   ],
-  "oracle_frame": "C:\\Users\\11036\\Desktop\\正确客户端截图\\背包栏（折叠）.png",
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_fold.png",
   "oracle_anchor": [3, 0]
 }

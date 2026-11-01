@@ -11,10 +11,12 @@
   python layout.py geom   <file.nx> <root/path> [more...]        # 资产侧几何：origin / 尺寸（格子的真源）
   python layout.py anchor <frame.png> <backgrnd.png> [--png OUT] # 只定锚点（调试用）
   python layout.py mark   <spec.json> <frame.png>                # 在原生帧量探针 -> 写回 oracle
-  python layout.py check  <spec.json> <frame.png> [--png OUT]    # 实测 vs oracle（非 0 = 有格不合格）
+  python layout.py check  <spec.json> <frame.png> [--png OUT] [--mode M]  # 实测 vs oracle（非 0 = 有格不合格）
   python layout.py probe  <frame.png> x0 y0 x1 y1 --color r,g,b  # 裸量一块区域，用来新写探针
 
 spec = ../evidence/r27-oracle/<window>.json；字段说明见 README.md。
+只在某形态下存在的格子（如 Stat 详情板）给探针写 "active_in": ["detail"]，
+check 用 --mode 选形态，不适用的探针报 SKIP，不计入不合格。
 """
 import argparse
 import json
@@ -244,11 +246,14 @@ def fmt(v):
     return "(%d,%d) %dx%d" % (v["x"], v["y"], v["w"], v["h"])
 
 
-def cmp_probe(oracle, actual, keys=("x", "y"), size_keys=()):
+def cmp_probe(oracle, actual, keys=("x", "y"), size_keys=(), tol=2):
     """逐键求差 -> (worst_abs_delta, detail)。任一侧 MISSING 记 999。
 
-    band 探针额外比 rows 列表本身：网格「行距对不对」和「行数齐不齐」是两个独立缺陷
-    （少一行 = 面板矮了；行距漂 = 每格累加偏移），只看首行会漏。
+    band/lines 探针额外比 rows 列表本身：网格「行距对不对」和「行数齐不齐」是两个独立
+    缺陷（少一行 = 面板矮了；行距漂 = 每格累加偏移），只看首行会漏。
+    行首按**逐行差 ≤ tol** 判，不要求逐字节相等：文字行的「墨迹顶」受抗锯齿影响，
+    两端字体锐度不同会让探测器落在相邻一行上（r27 实测：原生 9 行墨、客户同名行 7 行，
+    中心同为 y=40，但墨迹顶探测器读数差 1px）——那是探测器口径，不是版式缺陷。
     """
     if oracle is None or actual is None:
         return (999, "oracle=%s actual=%s" % (fmt(oracle), fmt(actual)))
@@ -261,11 +266,17 @@ def cmp_probe(oracle, actual, keys=("x", "y"), size_keys=()):
         worst = max(worst, abs(int(actual.get(k, 0) - oracle.get(k, 0))))
     if "rows" in oracle:
         o, a = oracle["rows"], actual.get("rows", [])
-        if o != a:
+        if len(o) != len(a):
             pitch = lambda r: [b - c for b, c in zip(r[1:], r[:-1])]  # noqa: E731
-            det.append("rows!=oracle(首差=%s 行距=%s/%s)"
-                       % (next((b - c for c, b in zip(o, a) if b != c), 0), pitch(o), pitch(a)))
+            det.append("行数 %d!=%d(行距=%s/%s)" % (len(a), len(o), pitch(a), pitch(o)))
             worst = max(worst, 99)
+        else:
+            dmax = max(abs(int(x) - int(y)) for x, y in zip(a, o))
+            det.append("行首Δmax=%d" % dmax)
+            if dmax > tol:
+                det.append("超差行=%s" % [(i, int(x) - int(y))
+                                        for i, (x, y) in enumerate(zip(a, o)) if abs(x - y) > tol])
+            worst = max(worst, dmax)
     return (worst, " ".join(det))
 
 
@@ -291,8 +302,22 @@ def dump_spec(path, spec):
         fh.write(text + "\n")
 
 
-def measure_all(spec, frame, force_anchor=None):
+def probe_active(p, mode):
+    """该探针在「mode 形态的窗口」里是否应当存在。
+
+    同一张窗有些格子只在某个开关状态下画出来（Stat 的详情板 = 「详细信息」模式）。
+    这类探针在别的形态下必然 MISSING，按缺失判 FAIL 等于让门禁永远红着，
+    于是「真缺陷」和「这轮不适用」再也分不开 —— 所以缺 active_in 之外一律报 SKIP。
+    """
+    ins = p.get("active_in")
+    return not ins or mode in ins
+
+
+def measure_all(spec, frame, force_anchor=None, mode=None):
     """锚定 + 量全部探针。锚定失败返回 (None, None) —— 该帧判不了几何。
+
+    mode=None（mark / selftest 用）表示「全部照量」，因为 oracle 是从内容齐全的那张
+    原生帧上取的；只有 check 才按形态跳过不适用探针。
 
     force_anchor 只给 selftest 用：注入偏移时可能顺手把锚点图也搬烂（band/lines 要清空
     整个探针区，面积一大 agree 就掉到阈值下），此时退回 spec 里已记录的锚点继续量探针，
@@ -315,6 +340,8 @@ def measure_all(spec, frame, force_anchor=None):
         print("anchor=(%d,%d) agree=%.3f rmse=%.1f  <- %s" % (anchor[0], anchor[1], a[3], a[2], spec["anchor_tmpl"]))
     res = {}
     for p in spec["probes"]:
+        if mode and not probe_active(p, mode):
+            continue
         try:
             res[p["name"]] = run_probe(img, p, anchor)
         except Exception as exc:  # 单格异常不拖垮整轮
@@ -365,7 +392,10 @@ def cmd_mark(args):
         return 2
     for p in spec["probes"]:
         p["oracle"] = res[p["name"]]
-    spec["oracle_frame"] = os.path.abspath(resolve(args.frame))
+    # oracle 帧要随 spec 一起入库，绝对路径换机器就失效；落在仓库内时存仓库相对路径。
+    rf = resolve(args.frame)
+    rel = os.path.relpath(rf, REPO).replace("\\", "/")
+    spec["oracle_frame"] = rf if rel.startswith("..") else rel
     spec["oracle_anchor"] = list(anchor)
     dump_spec(resolve(args.spec), spec)
     print("已写入 oracle：%d 个探针 -> %s" % (len(spec["probes"]), args.spec))
@@ -376,29 +406,34 @@ def cmd_mark(args):
 
 def cmd_check(args):
     spec = load_spec(args.spec)
-    anchor, res = measure_all(spec, args.frame)
+    anchor, res = measure_all(spec, args.frame, mode=args.mode)
     if res is None:
         return 2
     tol = spec.get("tol", 2)
-    fails, rows = 0, []
+    fails, skipped, rows = 0, 0, []
     for p in spec["probes"]:
-        orc, act = p.get("oracle"), res[p["name"]]
+        if not probe_active(p, args.mode):
+            skipped += 1
+            rows.append((p["name"], fmt(p.get("oracle")), "-", "-", "SKIP(不在 %s 形态)" % args.mode))
+            continue
+        orc, act = p.get("oracle"), res.get(p["name"])
         if orc is None:
             rows.append((p["name"], "-", fmt(act), "-", "NO-ORACLE"))
             continue
         keys = tuple(p.get("keys", ("x", "y")))
         size_keys = tuple(p.get("size_keys", ()))
-        d, det = cmp_probe(orc, act, keys, size_keys)
+        d, det = cmp_probe(orc, act, keys, size_keys, tol)
         bad = (d > tol) or act is None
         fails += 1 if bad else 0
         rows.append((p["name"], fmt(orc), fmt(act), "\u0394=%d %s" % (d, det), "FAIL" if bad else "ok"))
     w = max(len(r[0]) for r in rows) + 2
-    print("\n%s  tol=%dpx  锚点=(%d,%d)  帧=%s" % (spec["window"], tol, anchor[0], anchor[1], args.frame))
+    print("\n%s  tol=%dpx  形态=%s  锚点=(%d,%d)  帧=%s"
+          % (spec["window"], tol, args.mode, anchor[0], anchor[1], args.frame))
     print("-" * 104)
     for name, o, a, delta, verdict in rows:
         print("  %-*s oracle=%-26s 实测=%-24s %-24s %s" % (w, name, o, a, delta, verdict))
     print("-" * 104)
-    print("不合格 %d / %d" % (fails, len(rows)))
+    print("不合格 %d / %d（不适用跳过 %d）" % (fails, len(rows) - skipped, skipped))
     if args.png:
         annotate(spec, args.frame, args.png, anchor, res, rows)
         print("对照图 %s" % args.png)
@@ -466,7 +501,7 @@ def cmd_selftest(args):
     后面 B2..B7 全部建立在它上面。默认注入三种（1=亚像素容差内应判 ok，14/60=应 FAIL）。
     """
     spec = load_spec(args.spec)
-    frame = spec.get("oracle_frame") or getattr(args, "frame", None)
+    frame = resolve(spec.get("oracle_frame")) if spec.get("oracle_frame") else getattr(args, "frame", None)
     if not frame or not os.path.exists(frame):
         print("需要 spec 里已有 oracle_frame（先跑一次 mark）")
         return 2
@@ -545,6 +580,8 @@ def main():
     c.add_argument("spec")
     c.add_argument("frame")
     c.add_argument("--png")
+    c.add_argument("--mode", default="default",
+                   help="窗口形态（对照探针的 active_in；抓的是详细模式帧就传 detail）")
 
     p = sub.add_parser("probe")
     p.add_argument("frame")

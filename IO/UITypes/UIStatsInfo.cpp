@@ -196,45 +196,75 @@ namespace ms
 
 		statlabels[StatLabel::AP] = Text(Text::Font::A11M, Text::Alignment::RIGHT, value_color);
 
+		for (size_t i = 0; i < StatLabel::NUM_LABELS; i++)
+			statinktops[i] = INK_TOP_NONE;
+
 		Point<int16_t> statoffset = Point<int16_t>(73, 29);
 		int16_t statoffset_y = 18;
 
 		if (classic)
 		{
-			// r15 三次校准（推翻上面两版）：先把 Stat/backgrnd（origin 实测 (0,0)，
-			// 故贴图像素坐标 == 窗口坐标）整块对 9f1b69f5 做 SAD 对位，
-			// (0,0) 处 1.13/像素、次优 (0,1) 3.14 ⇒ **截图坐标 == 窗口坐标**，
-			// 前两版按「角色能力」标题做的 +6/-1 配准是错的，x=61 也来自那次错配准。
+			// 配准：Stat/backgrnd 的 origin 实测 (0,0)（nx_inspect UI.nx
+			// UIWindow.img/Stat），整块对 9f1b69f5 做 SAD ⇒ (0,0) 处 1.13/像素、
+			// 次优 (0,1) 3.14 ⇒ **截图坐标 == 窗口坐标**，不需要再加标题行偏移。
 			//
-			// 再用逐字形度量反解绘制点。渲染器 = SimHei（Configuration.h:518），
-			// linespace = int(maxrows*1.35+1)（GraphicsGL.h:247），A11M maxrows=12⇒17、
-			// A12M maxrows=13⇒18；字形墨迹顶 = draw_y + linespace - bitmap_top
-			// （GraphicsGL.cpp:1386 char_y = y + ay - ch.bt，ay = linespace）。
-			// SimHei 实测 bitmap_top：数字 8、'/' 11、CJK 11 ⇒ 数字行 +9、含 '/' 或 CJK 行 +6。
-			// 逐行实测墨迹顶 → 解出 draw_y：
-			//   名字「Admin」40 ⇒ 34 ✓   职业「新手」58 ⇒ 52 ✓
-			//   等级「1」    87 ⇒ 78     家族「-」  未测（与虚线底纹混在一起）
-			//   HP「50 / 50」122 ⇒ 116 ✓  MP「5 / 4357」140 ⇒ 134 ✓
-			//   经验值「0 (0%)」158 ⇒ 152 ✓  人气度「0」176 ⇒ 167
-			// 「✓」= 与上一版常量相同；只有等级/人气度是纯数字行，上一版按 +6 统一 +3
-			// 把它们画低了 2/3px（R14-1 的过冲）。
-			// x：所有数值行墨迹左缘都在 67（Admin 67..95、50/50 67..103、1 67..72，
-			// 与 SimHei 11px 推进量逐项吻合）⇒ 左对齐常量 61 一律改 67。
-			// AP/力量/敏捷/智力/运气仍不可测：这两张参考截图里它们都被「基本属性点」
-			// 浮层盖住（浮层占 x8..170 y172..330），无墨可解，保持原值不猜。
-			statoffsets[StatLabel::NAME] = Point<int16_t>(67, 34);
-			statoffsets[StatLabel::JOB] = Point<int16_t>(67, 52);
-			statoffsets[StatLabel::LEVEL] = Point<int16_t>(67, 78);
-			statoffsets[StatLabel::GUILD] = Point<int16_t>(67, 98);
-			statoffsets[StatLabel::HP] = Point<int16_t>(67, 116);
-			statoffsets[StatLabel::MP] = Point<int16_t>(67, 134);
-			statoffsets[StatLabel::EXP] = Point<int16_t>(67, 152);
-			statoffsets[StatLabel::FAME] = Point<int16_t>(67, 167);
-			statoffsets[StatLabel::AP] = Point<int16_t>(84, 212);
-			statoffsets[StatLabel::STR] = Point<int16_t>(67, 243);
-			statoffsets[StatLabel::DEX] = Point<int16_t>(67, 261);
-			statoffsets[StatLabel::INT] = Point<int16_t>(67, 279);
-			statoffsets[StatLabel::LUK] = Point<int16_t>(67, 297);
+			// 落位：下表只记「参考截图上逐行量到的墨迹顶 y」，绘制点在 draw 里交给
+			// 该行 Text 自己的度量反解（R27-B1b 唯一真源）。墨迹顶 = 基线 - 本行最高
+			// 字形的 bitmap_top，而 SimHei 11px 的 CJK 分 9/10 两档（170 字抽样：
+			// 126 字 9、42 字 10）——「新手」的顶是「新」= 10，「50 / 50」的顶是
+			// '/' = 9。按「行类别」挑常量必然错 1px，只有按串精算才对。
+			//
+			// r27 更正 r15：r15 手抄的 bitmap_top「数字 8、'/' 11、CJK 11」里后两个
+			// 是 PIL 口径，FreeType 的 glyph.bitmap_top 实测 9~10 ⇒ 那几行一直画低
+			// 2px，正是用户看到的「基础信息数值偏下、不在框内」。
+			struct ClassicRow
+			{
+				StatLabel label;
+				int16_t x;
+				int16_t ink_top;	// 量到的墨迹顶；INK_TOP_NONE = 该行无墨可解
+				int16_t raw_y;		// 仅 INK_TOP_NONE 行使用（r15 遗留绘制点）
+			};
+
+			static const ClassicRow classic_ink_rows[] {
+				{ StatLabel::NAME,  61,  36, 0 },	// 「Admin」
+				{ StatLabel::JOB,   61,  53, 0 },	// 「新手」
+				{ StatLabel::LEVEL, 61,  82, 0 },	// 「1」
+				{ StatLabel::HP,    61, 118, 0 },	// 「50 / 50」
+				{ StatLabel::MP,    61, 136, 0 },	// 「5 / 5」
+				{ StatLabel::EXP,   61, 154, 0 },	// 「0 (0%)」
+				{ StatLabel::FAME,  61, 172, 0 },	// 「0」
+				{ StatLabel::GUILD, 61, 104, 0 },	// 「-」：整行只有 3 个墨点（rel x61..63 y104）
+			};
+			// 上表 7 行 = `layout.py mark Stat.json 角色能力.png` 的 value_ink_tops /
+			// value_col_bbox 两个探针直接吐出来的数（锚点 = Stat/backgrnd 左上）：
+			// 墨迹顶 36/53/82/118/136/154/172、值列左缘 x=61。r27 复核时同一套探针
+			// 在客户帧上量到 41/59/123/141/159/176 与 x=67 ⇒ r15 那批「40/58/87/…/176、
+			// x=67」不是原生值，而是**照着我们自己的渲染结果抄的**（一致偏低 4~6px、
+			// 偏右 6px），这正是用户报「数值偏下、不在框内」还没修掉的原因。
+			// 同一帧的 chip_grid（粉色标签块行网格，烘焙位图）两端 Δ=0 ⇒ 底板对齐，
+			// 偏差全部在文字侧，可以安全地按原生值重定。
+			// AP/力量/敏捷/智力/运气在两张参考截图里都被「基本属性点」浮层盖住
+			// （浮层占 x8..170 y172..330）⇒ 无墨可解，保持 r15 的绘制点不猜，
+			// 只跟着值列左缘把 x 一起改到 61；y 等 B8 关掉浮层后真机抓帧再量。
+			static const ClassicRow classic_raw_rows[] {
+				{ StatLabel::AP,  84, INK_TOP_NONE, 212 },	// 右对齐到数值框右缘，另算
+				{ StatLabel::STR, 61, INK_TOP_NONE, 243 },
+				{ StatLabel::DEX, 61, INK_TOP_NONE, 261 },
+				{ StatLabel::INT, 61, INK_TOP_NONE, 279 },
+				{ StatLabel::LUK, 61, INK_TOP_NONE, 297 },
+			};
+
+			for (const ClassicRow& row : classic_ink_rows)
+			{
+				statoffsets[row.label] = Point<int16_t>(row.x, row.raw_y);
+				statinktops[row.label] = row.ink_top;
+			}
+
+			for (const ClassicRow& row : classic_raw_rows)
+			{
+				statoffsets[row.label] = Point<int16_t>(row.x, row.raw_y);
+				statinktops[row.label] = INK_TOP_NONE;
+			}
 		}
 		else
 		{
@@ -338,7 +368,16 @@ namespace ms
 			};
 
 			for (StatLabel label : classic_rows)
-				statlabels[label].draw(position + statoffsets[label]);
+			{
+				// 量到墨迹顶的行：绘制点 = 墨迹顶 - 本行文字自己的 (linespace -
+				// max bitmap_top)（R27-B1b）。量不到的行：沿用 r15 原始 y。
+				const int16_t ink_top = statinktops[label];
+				const int16_t y = ink_top == INK_TOP_NONE
+					? statoffsets[label].y()
+					: statlabels[label].y_for_ink_top(ink_top);
+
+				statlabels[label].draw(position + Point<int16_t>(statoffsets[label].x(), y));
+			}
 
 			// 不可加点（AP=0）：灰标签条 Stat/Disabled{STR,DEX,INT,LUK}（48x16）
 			// 盖住烘焙绿格（绿格 x7..54，行带顶 y=243/261/279/297）。

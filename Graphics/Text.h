@@ -114,6 +114,24 @@ namespace ms
 		Point<int16_t> endoffset() const;
 		const std::string& get_text() const;
 
+		// 文本垂直落位的唯一真源（R27-B1b）。
+		//
+		// 渲染器画字是 char_y = draw_y + 基线偏移 - bitmap_top，一行的墨迹顶 =
+		// 基线 - 本行最高字形的 bitmap_top，所以「把字画到原生帧上量到的那个位置」
+		// 必须减掉这段文字自己的度量。以前每个窗口把 linespace / bitmap_top 手抄
+		// 进注释再算一遍，抄错一次就整列偏低 —— 实测 SimHei 的 CJK bitmap_top 是
+		// 9/10 而不是各处注释写的 11/12，能力窗、底栏职业名、金币值、聊天目标文字
+		// 因此统一低了 2~3px。
+		// 现在窗口侧只记「量到的墨迹顶」，换算一律走下面的实例方法（它按当前
+		// text 逐字形取最大 bitmap_top，SimHei 11px 下 CJK 分 9/10 两档，
+		// 「新手」的顶是「新」= 10，选类别会错 1px）。
+		static int16_t linespace(Font font);
+		// 本 Text 当前文字的「绘制点 y → 墨迹顶」偏移 = linespace - max(bitmap_top)。
+		int16_t ink_offset() const;
+		// 墨迹顶（截图/贴图坐标系）→ 本 Text::draw 的 y。多行文字取所有行的最大
+		// bitmap_top，量单行时最准。
+		int16_t y_for_ink_top(int16_t ink_top) const;
+
 	private:
 		void reset_layout();
 

@@ -1,0 +1,118 @@
+{
+  "window": "EquipTooltip 装备悬浮提示（背包内悬停「白色背心 (男)」）",
+  "native_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/EquipTooltip_native_crop.png (268x220，= 正确客户端截图/背包中鼠标悬浮物品上显示的物品信息内容.png (268x310) 无损裁掉的 y=0..89 那截)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/ToolTip_Can_reqLEV.png",
+  "anchor_min_agree": 0.95,
+  "tol": 2,
+  "note": "G2 标尺：tooltip 正文行的原生行距。\n\n【锚点为什么只能这么钉】tooltip 的框体是程序描边（半透黑底 + 1px 灰边），包内 UIWindow.img/ToolTip 下没有任何 backgrnd/九切片（定案见 ../w5-tooltip/coords.md §1 与 ../w5-tooltip/equip-native-compare.md §2），所以「优先用窗口自己的 backgrnd」这条路在本窗根本不存在。能用的只有 tooltip 内部那批 nx 位图 —— 而它们**全是纯白**（Can/reqLEV 47x11 的 192 个实心像素全为 (255,255,255)）。SSD 对纯白模板的代价是 Σa(f-255)²，于是帧里任何一块实心白矩形都能给它凑出 rmse=0：暴力扫全帧，reqLEV 有 90 个零分位置，全落在背包标题栏那块实心白底（y=6..9）里，argmin 取行优先第一个 ⇒ 锚到 (57,6) 是**错的**。\n修法：把参考截图无损裁掉上面 y=0..89（那块实心白底连同页签一起出去），只留 tooltip 本体，存成 frames/EquipTooltip_native_crop.png。裁后逐张暴力复扫：reqLEV/reqSTR/reqDEX/reqINT/reqLUK/reqPOP **各自只剩唯一一个**零分位置。取 reqLEV 当锚（agree=1.000，阈值提到 0.95）⇒ **本 spec 的相对坐标参照点是「要求等级」这张需求标签位图的左上角**，name_line 在它上面所以是负 y；裁图绝对 y = 相对 y + 27。\n\n【量到的数】\n  - body_stat_lines（装备分类:上衣 / 防御力:3 / 可升级次数:7 / 金锤子已提高的强化次数:0）行首 rel 128/143/158/173（裁图 155/170/185/200），**行距 15/15/15 —— 三个独立行距对，完全一致**，墨高恒 12。⇒ 这就是 tooltip 正文（我们代码里 A11M 那批 stat 行 + 无描述时的 A12M 位）的原生行距。\n  - req_band_str / req_band_pop（Can/reqSTR、Can/reqPOP 两张位图的左上角）rel y=12 与 60 ⇒ 需求块 6 张标签位图的原点 0/12/24/36/48/60（裁图 27/39/51/63/75/87），**恒 12、零抖动**。\n  - req_label_lines 同一批行用 `lines` 从**墨顶**取，得 rel 13/25/37/49/61/72/85 ⇒ Δ=12/12/12/12/11/13，**不恒定**：每行标签字不同、字身内最高墨行差 ±1px。两条尺合起来读：需求块的真行带是 12，`lines` 的 ±1 是墨顶抖动，不是布局抖动。⇒ 这条 12 是**美术位图的固定行带**（每行一张 47x11 贴图按 y+=12 摆），不是文字行距；Stat.json value_lines 那个 16 同属这一类。\n    该探针的 region 上沿特意压到 rel 12（不含第一张标签、也就不含锚点图本身）：否则 selftest 搬整区等于把锚一起搬走，注入 12/32 全报 Δ=0（第一版就是这样，已改）。\n  - name_line（◦白色背心 (男)，我们代码用 A12B）只有一行 ⇒ **A12B 的行距在本帧不可测**（没有第二行 12B 可比），能定的只有它的墨顶 rel -20 与墨高 12。\n  - job_line（新手 战士 魔法师 弓箭手 飞侠 海盗）行首 rel 102（裁图 129）墨高 11 —— 这行是 6 张 Can/职业名位图（40x13）并排，属位图行带不属文字。\n\n【调参留痕】正文块取色 (255,255,255)：tol 40 时整块只剩一个 8 行块（原生这身白字最暗的抗锯齿行到不了 215），tol 55~80 × min_pix 4 结果恒为 155/170/185/200 墨高 12；min_pix 提到 6 会把第二行的行首推到 171（Δ 少 1）、提到 10 四行全偏 ⇒ **min_pix 必须 =4**，取 tol 68 居中。正文区 x 左界取 36：x<33 是背包窗自己的实心白面板，压进探针区会立刻造出一整块假行。\n\n【selftest 结论】body_stat_lines / req_label_lines / job_line 三条 lines 注入 1/12~15/32 全部逐像素复现；req_band_pop（tmpl）注入 14/32 报 MISSING 亦算检出。**name_line 不可注入**：它离锚点只有 20px，注入 15 会把那行白字复制进锚点搜索区，纯白模板在复制品上拿到 agree=0.969 的假锚 (52,58) ⇒ Δ 报 -7。这是「纯白模板当锚」的固有软肋，真实客户帧不会凭空多出一份同形白字，但复核时锚点 y 若不是 27 就要先怀疑锚错了而不是内容错了。\n\n【弃用】(1) Can/beginner 当锚或当探针：裁后仍有 244 个零分位置（道具图标那件白背心本体就是一大块实心白），必假。(2) 整帧（不裁）做任何 tmpl 探针：纯白模板在背包标题栏的实心白底上到处零分。(3) 分隔线（裁图 y=147）是一根干净的白横条，但它量的是「框体描边第几行」，与行距无关，且客户帧分隔线宽随框宽变 ⇒ 不写。(4) A12M 描述段：本帧这件装备 hasdesc=false，tooltip 里根本没有第二行正文可量，所以「A12M 折行行距」在本帧**不存在**，只能由 NPC对话.png（我们代码里同样是 A12M 正文）代答，见下。\n\n【和别的尺对不上的事实，必须写出来】同样是墨高 12 的原生正文：本帧属性块 15、聊天消息堆叠 13（ChatBar.json）、NPC对话.png 折行 18、任务描述折行 18。后两条是同一套 line_blocks 裸量（未写进 oracle，参数可复算）：任务描述 正在进行的任务展示.png 取色 (0,0,0) tol 100、region x244..500 y120..182、min_pix 4 min_h 3 gap 1 ⇒ 行首 128/146/164 **行距 18/18 两个独立对**、墨高恒 12，tol 80~120 × min_pix 4~6 全不变；NPC对话.png 同色 tol 80、region x92..470 y60..118、min_pix 6 ⇒ 行首 72/90 行距 18、墨高 12（min_pix 4 会把带下伸的两行并成 20 行高，故必须 >=6）。⇒ 原生压根没有一套「按字号统一的行距」，把 linespace() 换成 per-font 单值只能对上其中一张尺。",
+  "probes": [
+    {
+      "name": "body_stat_lines",
+      "kind": "lines",
+      "color": [255, 255, 255],
+      "tol": 68,
+      "region": [-88, 124, 76, 185],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -88,
+        "y": 128,
+        "w": 0,
+        "h": 4,
+        "n": 149,
+        "rows": [128, 143, 158, 173],
+        "heights": [12, 12, 12, 12]
+      }
+    },
+    {
+      "name": "req_label_lines",
+      "kind": "lines",
+      "color": [255, 255, 255],
+      "tol": 68,
+      "region": [-6, 12, 48, 98],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -6,
+        "y": 13,
+        "w": 0,
+        "h": 7,
+        "n": 173,
+        "rows": [13, 25, 37, 49, 61, 72, 85],
+        "heights": [10, 10, 10, 10, 10, 11, 10]
+      }
+    },
+    {
+      "name": "req_band_str",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/ToolTip_Can_reqSTR.png",
+      "region": [-6, 6, 54, 25],
+      "min_agree": 0.95,
+      "oracle": {
+        "x": 0,
+        "y": 12,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "req_band_pop",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/ToolTip_Can_reqPOP.png",
+      "region": [-6, 54, 54, 73],
+      "min_agree": 0.95,
+      "oracle": {
+        "x": 0,
+        "y": 60,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "name_line",
+      "kind": "lines",
+      "color": [255, 255, 255],
+      "tol": 68,
+      "region": [-88, -27, 76, -8],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -88,
+        "y": -20,
+        "w": 0,
+        "h": 1,
+        "n": 40,
+        "rows": [-20],
+        "heights": [12]
+      }
+    },
+    {
+      "name": "job_line",
+      "kind": "lines",
+      "color": [255, 255, 255],
+      "tol": 68,
+      "region": [-88, 97, 144, 119],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -88,
+        "y": 102,
+        "w": 0,
+        "h": 1,
+        "n": 84,
+        "rows": [102],
+        "heights": [11]
+      }
+    }
+  ],
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/EquipTooltip_native_crop.png",
+  "oracle_anchor": [124, 27]
+}

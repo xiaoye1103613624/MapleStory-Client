@@ -1897,16 +1897,14 @@ namespace ms
 		// 「LV.」前缀与右侧方括号：参考底板上没有可画的 Bracket（x61..84 全暗），
 		// ShowLevel 仅作为 LevelNo 缺失时的回退字库。
 		lvbadge_pos = Point<int16_t>(50, 47);
-		// 芯片内两行（参考实测）：职业名首行像素 y689 → rel 40；
-		// 角色名首行像素 y705 → rel 56。（旧值 21/39 落在聊天输入行 →
-		// 白字白底「职业没有显示」。）
-		//
-		// r15 更正（用户「底栏职业/名称偏下」）：上面量到的是**墨迹首行**，而
-		// joblabel/namelabel 是 A12M Text ⇒ ink_top = draw_y + linespace(18) −
-		// SimHei bitmap_top(12) = draw_y + 6。直接把 rel 当 draw 用会整体低 6px。
-		// 规则与逐字复核见 evidence/w0-common/text-metrics.md。
-		joblabel_pos = Point<int16_t>(87, 34);
-		namelabel_pos = Point<int16_t>(87, 50);
+		// 芯片内两行（参考实测**墨迹顶** rel y：职业名 40、角色名 56；旧值 21/39
+		// 落在聊天输入行 → 白字白底「职业没有显示」）。
+		// 这里 y 槽存的是量到的墨迹顶，不是绘制点：绘制点在 draw_classic 里按
+		// 本行文字自己的度量反解（R27-B1b Text::y_for_ink_top，SimHei 12px 的
+		// CJK bitmap_top 实测 10 而非 r15 手抄的 12 ⇒ 此前两行各低 2/3px，
+		// 就是用户说的「底栏职业/名称偏下」）。
+		joblabel_pos = Point<int16_t>(87, 40);
+		namelabel_pos = Point<int16_t>(87, 56);
 
 		// 三联填充：同一图集按分段裁剪，HP/MP/EXP 各绘在各自分段起点。
 		hpbar = Gauge(Gauge::Type::CLIP, classic_gauge_bar, SEG_W_HP, 0.0f);
@@ -2272,10 +2270,12 @@ namespace ms
 					DrawArgument(sl_at + Point<int16_t>(static_cast<int16_t>(slw + 1), 0)));
 		}
 
-		// 芯片内两行：职业名（上）+ 角色名（下）。
+		// 芯片内两行：职业名（上）+ 角色名（下）。*_pos.y() 是参考实测的墨迹顶，
+		// 绘制点按各自当前文字反解 —— 中文名含「新/等级」这类 bt=10 的字，
+		// 纯拉丁名只有 bt=9，同一档常量必然错 1px，只有按串精算才对（R27-B1b）。
 		joblabel.change_text(stats.get_jobname());
-		joblabel.draw(position + joblabel_pos);
-		namelabel.draw(position + namelabel_pos);
+		joblabel.draw(position + Point<int16_t>(joblabel_pos.x(), joblabel.y_for_ink_top(joblabel_pos.y())));
+		namelabel.draw(position + Point<int16_t>(namelabel_pos.x(), namelabel.y_for_ink_top(namelabel_pos.y())));
 
 		// 量规数值改画 StatusBar.img/number 位图字库（W1/RC6）：
 		// 5x7 白数字 + 2x9 黄绿括号 + 7x7 slash/percent，不再走 Text(A11B, YELLOW)。

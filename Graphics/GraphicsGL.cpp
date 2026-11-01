@@ -385,7 +385,77 @@ namespace ms
 		// face 不释放（与旧行为一致——原实现也未 Done），供 CJK 字形按需生成。
 		fonts[id].face = face;
 
+		// R27-B1b：空文字的墨迹兜底用数字 '0' 的 bitmap_top（现场探测，非手抄表）。
+		// 真实一行的墨迹顶由本行最高字形决定，见 glyph_bt / get_ink_offset。
+		fonts[id].bt_short = fonts[id].chars['0'].bt;
+
 		return true;
+	}
+
+	int16_t GraphicsGL::get_linespace(Text::Font id) const
+	{
+		return fonts[id].linespace();
+	}
+
+	GLshort GraphicsGL::glyph_bt(Font& font, uint32_t codepoint)
+	{
+		if (codepoint < 128)
+			return font.chars[codepoint].bt;
+
+		// 已经上传过就直接用绘制路径认的那份度量，保证「量到的 == 画出来的」。
+		auto cached = font.wide.find(codepoint);
+
+		if (cached != font.wide.end())
+			return cached->second.bt;
+
+		auto probed = font.bt_probe.find(codepoint);
+
+		if (probed != font.bt_probe.end())
+			return probed->second;
+
+		GLshort bt = 0;
+
+		// 没有 face（addfont 走的是非 Windows 位图字体）时只能什么都不量，
+		// 交给 bt_short 兜底；直接 FT_Get_Char_Index(nullptr) 会崩。
+		// 缺字（索引 0 = .notdef）同理：绘制路径整字不画，这里必须按「无墨」
+		// 参与最大值，不能把方块的高度算进来。两种情况都照旧写进缓存，
+		// 免得每帧重探。
+		if (font.face && FT_Get_Char_Index(font.face, codepoint) != 0)
+		{
+			// 只取度量、不写图集（图集可能正处于 lock 状态）；与 get_wide_glyph
+			// 同一个 FT_Load_Char(..., FT_LOAD_RENDER)，bitmap_top 必然一致。
+			if (!FT_Load_Char(font.face, codepoint, FT_LOAD_RENDER))
+				bt = static_cast<GLshort>(font.face->glyph->bitmap_top);
+		}
+
+		font.bt_probe.emplace(codepoint, bt);
+
+		return bt;
+	}
+
+	int16_t GraphicsGL::get_ink_offset(Text::Font id, const std::string& text)
+	{
+		Font& font = fonts[id];
+		GLshort maxbt = font.bt_short;
+		size_t pos = 0;
+
+		while (pos < text.size())
+		{
+			size_t consumed = 1;
+			const uint32_t cp = utf8_next(text.c_str(), pos, text.size(), consumed);
+
+			pos += consumed;
+
+			if (cp == 0)
+				continue;
+
+			const GLshort bt = glyph_bt(font, cp);
+
+			if (bt > maxbt)
+				maxbt = bt;
+		}
+
+		return static_cast<int16_t>(font.linespace() - maxbt);
 	}
 
 	const GraphicsGL::Font::Char* GraphicsGL::get_wide_glyph(Font& font, uint32_t codepoint)
@@ -1302,8 +1372,6 @@ namespace ms
 		if (text.empty() || color.invisible())
 			return;
 
-		const Font& font = fonts[id];
-
 		GLshort x = args.getpos().x();
 		GLshort y = args.getpos().y();
 		GLshort w = layout.width();
@@ -1320,7 +1388,34 @@ namespace ms
 				{
 					GLshort left = x + line.position.x() - 1;
 					GLshort right = left + w + 3;
-					GLshort top = y + line.position.y() - font.linespace() + 6;
+					// 盒顶贴「这一行最高的墨」：line.position.y() 就是基线，减 bitmap_top
+					// 即墨迹顶。原来写死的 +6 等于假定 bt = linespace-6 = 11（PIL 口径），
+					// SimHei 实测 CJK bt 只有 9/10 ⇒ 盒比字高出 2~5px。逐行取本行最大 bt，
+					// 中文名（如「新」= 10）不会被裁，纯英文名也不会白留一截。
+					GLshort maxbt = fonts[id].bt_short;
+
+					for (const Text::Layout::Word& word : line.words)
+					{
+						Font& word_font = fonts[word.font];
+
+						for (size_t pos = word.first; pos < word.last; )
+						{
+							size_t consumed = 1;
+							const uint32_t cp = utf8_next(text.c_str(), pos, word.last, consumed);
+
+							pos += consumed;
+
+							if (cp == 0)
+								continue;
+
+							const GLshort bt = glyph_bt(word_font, cp);
+
+							if (bt > maxbt)
+								maxbt = bt;
+						}
+					}
+
+					GLshort top = y + line.position.y() - maxbt;
 					GLshort bottom = top + h - 2;
 					Color ntcolor = Color(0.0f, 0.0f, 0.0f, 0.6f);
 

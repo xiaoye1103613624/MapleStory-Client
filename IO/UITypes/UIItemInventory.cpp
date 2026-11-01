@@ -319,15 +319,15 @@ namespace ms
 		UIElement::draw_sprites(alpha);
 
 		// 金币数值锚点（RIGHT 对齐，两张底图共用同一常量）。
-		// 取证方式：把 UIWindow.img/Item/FullBackgrnd(603x289) 与参考截图
-		// 背包展开(603x293) 逐行做暗度差分，先用「金币」标签行对齐确认两者
-		// 纵向偏移为 0（截图未裁顶），于是截图坐标即窗口坐标。
-		// 差分出来的数字墨迹：y 284..288、x 77..141（右边缘 141）。
-		// A11M 的字形顶 = draw_y + 6（GraphicsGL.cpp 的 ay = linespace），
-		// 所以 draw_y = 284 - 6 = 278，右边界取 141。
-		// 上一轮误判成"掉出下边框"把常量从 275 抬到 260，数字整体上浮约 15px
-		// —— 就是用户看到的"金币值位置偏了"。
-		Point<int16_t> mesolabel_pos = position + Point<int16_t>(141, 278);
+		// R27-B1b 按原生帧重量（evidence/r27-oracle/Item.json 的 meso_* 探针）：
+		// 以白框上边框为公共基准 —— Item/backgrnd 边框 y266 / FullBackgrnd y266，
+		// 折叠帧量到数字「0」墨迹 y268、展开帧 y270，各自扣掉本帧窗口偏移后
+		// **都等于窗口 y269**（右缘同理均为窗口 x137）。⇒ 墨迹顶 269、右缘 137。
+		// 上一版 (141, 284) 的 284 是拿 603x293 截图按「暗度差分」读的，差分的其实是
+		// 白框下边框（y281）以下那一条，数字被甩到框外 16px —— 就是用户报的
+		// 「金币值位置偏下了，没有在框内」。
+		const int16_t meso_y = mesolabel.y_for_ink_top(269);
+		Point<int16_t> mesolabel_pos = position + Point<int16_t>(137, meso_y);
 
 		if (full_enabled)
 		{

@@ -1,0 +1,69 @@
+{
+  "window": "ChatBar 聊天栏（classic 底栏输入行 + 消息堆叠区）",
+  "native_frame": "原生客户端截图「聊天框展开时候.png」(569x103)，已拷进仓库 frames/native_chatbar_open.png（oracle 一律指仓库内副本，见 README）",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/StatusBar_base_chatTarget.png",
+  "anchor_min_agree": 0.8,
+  "tol": 2,
+  "note": "G2 标尺：A11M 消息堆叠的原生行距。锚点：本窗口的底图是 StatusBar.img/base/backgrnd(817x71) 与 backgrnd2(570x71)，两张都比这张 569x103 的裁图宽，anchor_in 判「模板比帧大」直接 None（实测报「无法匹配」），故按 README 的降级规则改拿同节点的 base/chatTarget(81x20) 当锚 —— 实测左上 (1,79) agree=0.897，峰值 rmse 94.1 与次峰 111.0 分得开，位置唯一。**于是全部相对坐标的参照点是那颗「对所有人」蓝框的左上角，消息区在它上方 ⇒ 探针 region / rows 出现负 y 是合法的。**\n\n量到的数（帧绝对 y = 相对 y + 79）：第一条消息（黄）墨块 47..58、第二条（白）墨块 60..71，**行距 13、墨高恒 12**。三条独立取法互相印证同一个 13：① msg_stack_lines 一把抓两行（rows 相对 -32/-19）；② msg_line1_yellow + msg_line2_white 各抓一行（-32 与 -19，差 13）；③ 换一张帧复量 —— 同一对消息在 1280x720 全截图 打开了S-E-I-K页面.png 的绝对 y=625/638，差还是 13（该数用同一套 line_blocks 参数裸量得到，未写进 oracle）。\n\n**本帧只有两条消息 ⇒ 只有一个行距样本**，这是这张参考图的硬限制（收起帧 聊天框收起的时候.png 只有一行；其余截图里没有第三张聊天帧），所以第二个样本只能来自另一张帧（③）。\n\n探针调参留痕（都是踩过的坑）：\n  - 合并探针取色 (255,255,128)：**tol 必须 >=128** 才容得下纯黄 (255,255,0) 的 b=0，又必须 <=160 才不让地图底色混进来（tol 180 时第二条墨高虚涨成 13、tol 200 两行并成一块 33 行）。tol 128~160、min_pix 4~10 这整片区域结果恒为 rows=[-32, -19] heights=[12, 12]，取 136 居中。\n  - **gap 必须 =1**：gap=2 会把中间只空一行（y=59）的两条消息并成一个 25 行的块，行距直接消失。\n  - 聊天日志区**没有底衬面板**，字是直接压在地图上的，所以 x 只能收到 250（原生这带地图底色 r,g 都 <127，实测 250x33 区域内除两行字外零命中）。换客户帧时若同区域地图更亮，会多出假行块 —— 这条尺的稳定性天生不如带面板的窗口，复核时先肉眼看 _debug 图。\n  - 分色探针更钝也更稳：黄 (255,255,0) tol 40、白 (255,255,255) tol 68（容到 187 才捞得着第二条那身 (187,187,187) 的浅灰），min_pix 4/6/10 结果不变。\n\n弃用：收起帧 聊天框收起的时候.png 里 chatTarget 全帧暴力扫的最大 agree 只有 0.050 —— 那帧根本没画这颗蓝框（或画成了别的东西），拿它当锚必 MISSING，故本 spec 只用展开帧。【selftest 结论】msg_stack_lines 注入 1/13/32 与 1/14/32 两档全部逐像素复现（13 正是要修的那一档：行距差一行）；注入 13/32 时锚点 agree 掉到 .570/.000，工具按 README 的降级规则改用 spec 记录的锚点继续量，属预期。\n\n另：本帧的 13 是**聊天日志逐条消息的堆叠步进**，不是原生引擎折行时的行距 —— 同为 12 行墨高的正文，NPC对话.png 折行量到 18、任务描述量到 18、装备 tooltip 属性块量到 15（见 EquipTooltip.json）。原生压根没有一套「按字号统一的行距」，G2 想换成 per-font 单值仍然对不上这三张尺。",
+  "probes": [
+    {
+      "name": "msg_stack_lines",
+      "kind": "lines",
+      "color": [255, 255, 128],
+      "tol": 136,
+      "region": [-1, -39, 249, -6],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -1,
+        "y": -32,
+        "w": 0,
+        "h": 2,
+        "n": 158,
+        "rows": [-32, -19],
+        "heights": [12, 12]
+      }
+    },
+    {
+      "name": "msg_line1_yellow",
+      "kind": "lines",
+      "color": [255, 255, 0],
+      "tol": 40,
+      "region": [-1, -39, 249, -6],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -1,
+        "y": -32,
+        "w": 0,
+        "h": 1,
+        "n": 65,
+        "rows": [-32],
+        "heights": [12]
+      }
+    },
+    {
+      "name": "msg_line2_white",
+      "kind": "lines",
+      "color": [255, 255, 255],
+      "tol": 68,
+      "region": [-1, -39, 249, -6],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 1,
+      "oracle": {
+        "x": -1,
+        "y": -19,
+        "w": 0,
+        "h": 1,
+        "n": 78,
+        "rows": [-19],
+        "heights": [12]
+      }
+    }
+  ],
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_chatbar_open.png",
+  "oracle_anchor": [1, 79]
+}

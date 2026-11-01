@@ -112,6 +112,21 @@ namespace ms
 		return text;
 	}
 
+	int16_t Text::linespace(Font f)
+	{
+		return GraphicsGL::get().get_linespace(f);
+	}
+
+	int16_t Text::ink_offset() const
+	{
+		return GraphicsGL::get().get_ink_offset(font, text);
+	}
+
+	int16_t Text::y_for_ink_top(int16_t ink_top) const
+	{
+		return static_cast<int16_t>(ink_top - ink_offset());
+	}
+
 	Text::Layout::Layout(const std::vector<Layout::Line>& l, const std::vector<int16_t>& a, int16_t w, int16_t h, int16_t ex, int16_t ey) : lines(l), advances(a), dimensions(w, h), endoffset(ex, ey) {}
 	Text::Layout::Layout() : Layout(std::vector<Layout::Line>(), std::vector<int16_t>(), 0, 0, 0, 0) {}
 
