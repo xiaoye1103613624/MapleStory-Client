@@ -11,7 +11,7 @@
 | 项 | 数量 |
 | --- | --- |
 | 拆分前 `git status --porcelain` 条目 | 1272（目录折叠后） |
-| 真实未跟踪文件（`--exclude-standard`） | 2806 → 屏蔽副产物后 2651 |
+| 真实未跟踪文件（`--exclude-standard`） | 2806 → 屏蔽副产物后 2731（挡掉 75 个） |
 | 已跟踪且被修改 | 224 |
 | 进入源码类提交的path | 430 |
 | 进入文档类提交的文件 | 2427（含 2 篇 README 更新） |
@@ -27,14 +27,16 @@
 约 **120 MB** 草稿从未跟踪状态直接入库的风险：`.codegraph/` 66 M、`build_check/` 52 M
 （内含 `MapleStory.exe` 4.3 M + `.pdb` 47.8 M）、`build/` 1.7 M，以及根目录散落的
 `$log`、`build_log_t12b.txt`、`_pw_hits.txt`、`_w8_*.png`。先补 `.gitignore` 再拆，
-未跟踪文件从 2806 降到 2651，全部 >2 MB 的非字体文件都被挡在门外。
+未跟踪文件从 2806 降到 2731（挡掉 75 个），全部 >2 MB 的非字体文件都被挡在门外。
+> 更正：本段先前写的是「降到 2651」，与实测 2731 不符；`c986a5d` 的提交信息里沿用了同一个错数，
+> 提交已推送故不回改历史，以本节为准。
 
-### 2.2 凭据扫描发现明文口令（已脱敏，未入库）
+### 2.2 凭据扫描发现明文口令（evidence 已脱敏）
 
-扫描命令命中：
+扫描命令命中（口令字面量此处已作掩码，只保留「长度 9、含特殊符号」这一形态信息）：
 
 ```
-docs/features/port-095/evidence/world_props.txt:74:net.sf.odinms.database.password=sa!@#456
+docs/features/port-095/evidence/world_props.txt:74:net.sf.odinms.database.password=<MASKED len=8>
 ```
 
 这是 095 参考端 `world.properties` 的取证快照，含**数据库账号 + 口令成对明文**。
@@ -44,7 +46,13 @@ docs/features/port-095/evidence/world_props.txt:74:net.sf.odinms.database.passwo
 2. 用 `git reset --mixed HEAD~2` 撤回**这两个本地未推送提交**（不动工作树，文件全部留在原处）；
 3. 字节级替换为 `<REDACTED-DB-USER>` / `<REDACTED-DB-PASSWORD>`，保留键名与「存在该项」这一取证事实；
 4. 按原范围重新提交为 `13a54a0` / `22d5e16`，提交信息内声明已脱敏；
-5. 复扫：对 `origin..HEAD` 全部 27 个提交树逐个 `git grep 'sa!@#456'`，命中 **0**。
+5. 复扫：对 `origin..HEAD` 全部提交树逐个 `git grep` 该口令字面量，命中 **0**。
+
+> **2026-11-01 复盘更正（本台账自曝一次真实泄露）**：上面第 5 步的「命中 0」当时只对
+> **已存在**的文件成立——复扫是在写本台账之前跑的，而本台账把命中行**原样抄进了 §2.2**，
+> 于是口令明文随 `97954a2` 一起推到了公开仓库。教训：脱敏之后必须**对最终提交树重扫一遍**，
+> 且扫描范围要包含「本次新写的说明文档」，否则文档会变成新的泄露面。
+> 处置见 §6；该明文已在公开历史中存在过，**默认按已泄露对待**（本机 v095 参考库口令建议更换）。
 
 ## 3. 提交清单
 
@@ -92,7 +100,8 @@ docs/features/port-095/evidence/world_props.txt:74:net.sf.odinms.database.passwo
    同时含 W4、R14-9 与 R15。因此每个提交的边界是「这个文件属于哪条功能线」，不是「这一个 hunk 属于哪条」。
 2. **共享注册件只能落一次**：`IO/UIElement.{h,cpp}`（Type 枚举）、`Net/PacketSwitch.cpp`（dispatch 表）、
    `MapleStory.vcxproj{,.filters}`（工程文件）横跨多条功能线，统一归入 `3071de6`（register）与 `cf62050`（widgets）。
-3. **中间提交不保证各自可构建**。只有 `358193d`（tip）的树等于本轮真机验证过的那份构建：
+3. **中间提交不保证各自可构建**。最后一次源码提交 `358193d` 的树才等于本轮真机验证过的那份构建
+   （其后仅 `97954a2` / `ef3b353` 两笔文档提交，源码树未变）：
    md5 `9636f77b4030ab4d9a85379cb0694911`、size `4,419,584 B`、mtime `2026-11-01 14:16:01`
    （见 r807）。拆分过程只用 `git add`/`git commit`，未改动任何源文件；唯一被改动的内容是 §2.2 那个 evidence 文本。
 
@@ -101,11 +110,35 @@ docs/features/port-095/evidence/world_props.txt:74:net.sf.odinms.database.passwo
 - `fonts/SimHei/simhei.ttf`（9,745,792 B）随 `502c682` 入库：它是 `Configuration.h` 里
   `font.path.normal` / `font.path.bold` 的默认值，缺它中文即空白，且仓库已有 `fonts/Arial/*.ttf` 先例。
   但 **SimHei 是微软随系统分发的字体，公开再分发存在许可争议**，若本仓库要对外，建议改为「首次运行自动定位系统字体」或换成可自由再分发的 CJK 字体（如思源黑体）。
-- `[DBG-*]` 标记共 **7 个文件、25 处**，逐个查过落地方式，只有 1 处真的会在 Windows Release 落文件：
+- `[DBG-*]` 标记共 **7 个文件、26 处**（`git grep -c` 复核：Char 1 / BodyDrawInfo 1 / Configuration 1 / GraphicsGL 2 / MapleStory 2 / SocketPosix 1 / ResourceProbe 18），逐个查过落地方式，只有 1 处真的会在 Windows Release 落文件：
   - **仍在写文件**：`Graphics/GraphicsGL.cpp:33 dbgatlas()` → `atlas_dbg.log`（限 200 条），调用点 `:581`（stale-offset）与 `:794`（null-offset-draw）。
     `GraphicsGL.cpp` 确在 `MapleStory.vcxproj:289` 的编译清单内，无开关拦截。属登录页竖条纹轮遗留，待 #44 关闭后整段删除。
   - **已中和为 no-op**（保留桩便于复现）：`Char.cpp` `DBG-CHAR`、`BodyDrawInfo.cpp` `DBG-BDI`、`GraphicsGL.cpp:562` `DBG-GO`、`MapleStory.cpp` `DBG-INIT`（均为空 lambda / 注释）。
   - **非本平台或需显式触发**：`Configuration.cpp:281` `DBG-CFG` 在 `#ifdef __ANDROID__` 内；`Net/SocketPosix.cpp` `DBG-SOCK` 不在 vcxproj 清单（Windows 不编译）；
-    `Util/Resource/ResourceProbe.cpp` 的 17 处只在 `MapleStory.cpp:376/379` 经命令行 `--probe` / selftest 进入，正常游玩不触发。
+    `Util/Resource/ResourceProbe.cpp` 的 18 处（其中约 11 处真会 `report.line` 落探针报告）只在 `MapleStory.cpp:376/379` 经命令行 `--probe` / selftest 进入，正常游玩不触发。
   - 结论：本轮不删（最小改动，且 #44 真机验证轮仍未闭环），但 `atlas_dbg.log` 这条要在验证轮结束时随调试日志清理一并移除。
 - `docs/features/*/evidence/` 内还有若干 `127.0.0.1:<port>` 的本机 MCP 端点，属本地调试地址、不含凭据，按现状保留。
+
+## 6. 复盘：本台账自曝的凭据泄露（2026-11-01，写完后才发现）
+
+**事实**（逐条实测，非推测）：
+
+| 项 | 结论 |
+| --- | --- |
+| 泄露内容 | 095 参考端 `world.properties` 的数据库口令明文（长度 8、含特殊符号） |
+| 载体 | **不是** evidence 文件（那个已正确脱敏），而是本台账 §2.2 抄录的扫描命中行 |
+| 涉及提交 | `97954a2` 与其后代 `ef3b353`（= 当时 tip）；`git rev-list 169ea09..HEAD` 逐树 `git grep` 命中 2/29 |
+| 是否已公开 | 是，已随 `feature/dev_0.0.1` 推到公开 GitHub 仓库 |
+| 账号名 | **未**泄露：`zeroms` 在任何提交树中都不存在（`git log -S'zeroms' --all` 空），脱敏发生在推送之前 |
+
+**已做**：工作树内该行改为 `<MASKED len=8>`，只保留「有这个键、长度 8」的取证信息。
+
+**未做（需你拍板，因为都是不可逆或对外的动作）**：
+
+1. **只认泄露、换口令**（推荐，成本最低且真正有效）：改本机 v095 参考库的 `zeroms` 口令，
+   历史不动。GitHub 对已推送 blob 有缓存与 fork/网络图残留，重写历史也不保证彻底消失，所以换口令是唯一能收敛的动作。
+2. **重写历史 + `--force-with-lease`**：把 `97954a2`/`ef3b353` 两笔文档提交改成掩码版本后强推。
+   风险：分支被别人（含你自己另一台机器）拉过就要重新对齐；GitHub 侧旧对象仍可能短时可达，且**不能替代**第 1 项。
+3. **两步都做**：先按 1 换口令，再按需做 2 让公开页面不再显示。
+
+本轮按门禁「不擅自强推、不擅自改库」停在只改工作树；等你选。
