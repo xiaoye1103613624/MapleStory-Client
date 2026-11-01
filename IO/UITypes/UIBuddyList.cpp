@@ -23,7 +23,11 @@
 #include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
+#include "UICharInfo.h"
 #include "../../Net/Packets/BuddyPackets.h"
+#include "../../Net/Packets/MessagingPackets.h"
+#include "../../Util/Misc.h"
+#include "../../Util/UiAssetResolve.h"
 
 namespace ms
 {
@@ -34,18 +38,14 @@ namespace ms
 		if (buddy["backgrnd"])
 			sprites.emplace_back(Sprite(buddy["backgrnd"], Point<int16_t>(0, 0)));
 
-		const Point<int16_t> btnpos[] = {
-			Point<int16_t>(20, 280),   // BtAdd
-			Point<int16_t>(180, 8)     // BtClose
-		};
-		const char* btnname[] = { "BtAdd", "BtClose" };
-		for (uint16_t i = 0; i < 2; i++)
-		{
-			nl::node bn = buddy[btnname[i]];
-			buttons[i] = bn
-				? std::make_unique<MapleButton>(bn)
-				: std::make_unique<MapleButton>(bn, btnpos[i]);
-		}
+		// 本包 UI.nx 根下没有 BuddyList.img（nx_inspect 实测），也没有 Basic.img/BtAdd
+		// ⇒ 只有关闭钮能落地，且必须与其它功能窗共用同一颗描边 X
+		// （UiAssetResolve::close_btn() → Basic.img/BtClose2）。
+		// 旧写法 `bn ? MapleButton(bn) : MapleButton(bn, pos)` 两个分支都拿不到贴图，
+		// 真值分支还会把坐标丢成窗口原点，属于凭空写出来的逻辑。
+		nl::node close = UiAssetResolve::close_btn();
+		if (close)
+			buttons[BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(180, 8));
 	}
 
 	void UIBuddyList::draw(float alpha) const
@@ -81,7 +81,32 @@ namespace ms
 	{
 		int16_t row = row_by_position(cursorpos - position);
 		if (row >= 0 && row < static_cast<int16_t>(list.buddies.size()))
-			BuddyDeletePacket(list.buddies[row].cid).dispatch();
+		{
+			selected_cid = list.buddies[row].cid;
+			BuddyDeletePacket(selected_cid).dispatch();
+		}
+	}
+
+	Cursor::State UIBuddyList::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
+		if (!clicked || !active)
+			return st;
+		int16_t row = row_by_position(cursorpos - position);
+		if (row >= 0 && row < static_cast<int16_t>(list.buddies.size()))
+		{
+			selected_cid = list.buddies[row].cid;
+			LOG(LOG_DEBUG, "UIBuddyList: select cid=" << selected_cid);
+		}
+		return st;
+	}
+
+	const Buddy* UIBuddyList::selected_buddy() const
+	{
+		for (const auto& b : list.buddies)
+			if (b.cid == selected_cid)
+				return &b;
+		return nullptr;
 	}
 
 	UIElement::Type UIBuddyList::get_type() const
@@ -92,6 +117,11 @@ namespace ms
 	void UIBuddyList::update_buddies(const BuddyListData& data)
 	{
 		list = data;
+		bool still = false;
+		for (const auto& b : list.buddies)
+			if (b.cid == selected_cid) { still = true; break; }
+		if (!still)
+			selected_cid = 0;
 	}
 
 	void UIBuddyList::set_capacity(int32_t cap)
@@ -141,10 +171,136 @@ namespace ms
 
 	void UIBuddyList::prompt_add()
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
+		std::string pre;
+		if (auto ci = UI::get().get_element<UICharInfo>())
+			pre = ci->get_target_name();
+		if (!pre.empty()) {
+			std::string name = pre;
+			UI::get().emplace<UISoftKey>([name](const std::string& group)
+			{
+				BuddyAddPacket(name, group.empty() ? "All" : group).dispatch();
+			}, []() {}, "Group (All)");
+			return;
+		}
+		UI::get().emplace<UISoftKey>([](const std::string& name)
 		{
-			if (!s.empty())
-				BuddyAddPacket(s, "All").dispatch();
-		});
+			if (name.empty()) return;
+			UI::get().emplace<UISoftKey>([name](const std::string& group)
+			{
+				BuddyAddPacket(name, group.empty() ? "All" : group).dispatch();
+			}, []() {}, "Group (All)");
+		}, []() {}, "Buddy name");
+	}
+
+	void UIBuddyList::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (pressed && escape) { deactivate(); return; }
+		if (!pressed) return;
+		if (keycode == 'A' || keycode == 'a')
+			prompt_add();
+		else if (keycode == 'G' || keycode == 'g') {
+			const Buddy* sel = selected_buddy();
+			std::string name;
+			if (sel)
+				name = sel->name;
+			else if (auto ci = UI::get().get_element<UICharInfo>())
+				name = ci->get_target_name();
+			if (!name.empty()) {
+				UI::get().emplace<UISoftKey>([name](const std::string& group) {
+					if (group.empty()) return;
+					BuddyAddPacket(name, group).dispatch();
+					LOG(LOG_DEBUG, "UIBuddyList: ChangeGroup name=" << name << " g=" << group);
+				}, []() {}, "Group");
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					UI::get().emplace<UISoftKey>([name](const std::string& group) {
+						if (group.empty()) return;
+						BuddyAddPacket(name, group).dispatch();
+						LOG(LOG_DEBUG, "UIBuddyList: ChangeGroup name=" << name << " g=" << group);
+					}, []() {}, "Group");
+				}, []() {}, "Buddy name");
+			}
+		} else if (keycode == 'Y' || keycode == 'y') {
+			if (selected_cid <= 0)
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					selected_cid = ci->get_target_cid();
+			if (selected_cid > 0) {
+				BuddyAcceptPacket(selected_cid).dispatch();
+				LOG(LOG_DEBUG, "UIBuddyList: Accept cid=" << selected_cid);
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					try {
+						int32_t cid = std::stoi(s);
+						if (cid > 0) {
+							selected_cid = cid;
+							BuddyAcceptPacket(cid).dispatch();
+							LOG(LOG_DEBUG, "UIBuddyList: Accept cid=" << cid);
+						}
+					} catch (...) {}
+				}, []() {}, "Accept cid");
+			}
+		} else if (keycode == 'D' || keycode == 'd') {
+			if (selected_cid <= 0)
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					selected_cid = ci->get_target_cid();
+			if (selected_cid > 0) {
+				BuddyDeletePacket(selected_cid).dispatch();
+				LOG(LOG_DEBUG, "UIBuddyList: Delete cid=" << selected_cid);
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					try {
+						int32_t cid = std::stoi(s);
+						if (cid > 0) {
+							selected_cid = cid;
+							BuddyDeletePacket(cid).dispatch();
+							LOG(LOG_DEBUG, "UIBuddyList: Delete cid=" << cid);
+						}
+					} catch (...) {}
+				}, []() {}, "Delete cid");
+			}
+		} else if (keycode == 'R' || keycode == 'r') {
+			if (selected_cid <= 0)
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					selected_cid = ci->get_target_cid();
+			if (selected_cid > 0) {
+				BuddyDeletePacket(selected_cid).dispatch();
+				LOG(LOG_DEBUG, "UIBuddyList: Reject cid=" << selected_cid);
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					try {
+						int32_t cid = std::stoi(s);
+						if (cid > 0) {
+							selected_cid = cid;
+							BuddyDeletePacket(cid).dispatch();
+							LOG(LOG_DEBUG, "UIBuddyList: Reject cid=" << cid);
+						}
+					} catch (...) {}
+				}, []() {}, "Reject cid");
+			}
+		} else if (keycode == 'W' || keycode == 'w') {
+			const Buddy* sel = selected_buddy();
+			std::string to;
+			if (sel)
+				to = sel->name;
+			else if (auto ci = UI::get().get_element<UICharInfo>())
+				to = ci->get_target_name();
+			if (!to.empty()) {
+				UI::get().emplace<UISoftKey>([to](const std::string& msg) {
+					if (msg.empty()) return;
+					WhisperPacket(to, msg).dispatch();
+					LOG(LOG_DEBUG, "UIBuddyList: SoftKey whisper to=" << to);
+				}, []() {}, "Whisper msg");
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& to) {
+					if (to.empty()) return;
+					UI::get().emplace<UISoftKey>([to](const std::string& msg) {
+						if (msg.empty()) return;
+						WhisperPacket(to, msg).dispatch();
+						LOG(LOG_DEBUG, "UIBuddyList: SoftKey whisper to=" << to);
+					}, []() {}, "Whisper msg");
+				}, []() {}, "Whisper to");
+			}
+		}
 	}
 }

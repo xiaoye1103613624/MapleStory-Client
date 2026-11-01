@@ -67,4 +67,50 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// s9 MULTICHAT(134) — PacketCreator.multiChat(mode, name, text)
+	class MultiChatHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 WHISPER(135) — receive / result / find
+	class WhisperResultHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SPOUSE_CHAT(136) — PacketCreator.OnCoupleMessage
+	class SpouseChatHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 SCRIPT_PROGRESS_MESSAGE(122) — PacketCreator.earnTitleMessage
+	class ScriptProgressMessageHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 FAME_RESPONSE(38)
+	class FameResponseHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// s9 NOTIFY_LEVELUP(105) / NOTIFY_MARRIAGE(106) / NOTIFY_JOB_CHANGE(107)
+	class NotifyLevelUpHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class NotifyMarriageHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	class NotifyJobChangeHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

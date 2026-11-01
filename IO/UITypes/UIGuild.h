@@ -61,6 +61,7 @@ namespace ms
 		void draw(float alpha) const override;
 		void update() override;
 		void doubleclick(Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		void set_guild(const GuildData& g);
@@ -70,6 +71,8 @@ namespace ms
 		void set_member_rank(int32_t id, int32_t rank);
 		void set_member_online(int32_t id, bool online);
 		void set_notice(const std::string& notice);
+
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -90,8 +93,11 @@ namespace ms
 		void prompt_create();
 		void prompt_invite();
 		void prompt_notice();
+		void prompt_deny();
+		const GuildMember* selected_member() const;
 
 		GuildData guild;
+		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 		mutable OutlinedText notice_label;
 	};

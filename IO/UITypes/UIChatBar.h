@@ -20,6 +20,8 @@
 #include "../UIDragElement.h"
 
 #include "../Components/Textfield.h"
+// Q1 定案的共享框体件（半透明黑底 + 1px 灰边），聊天历史框与 tooltip 同判据。
+#include "../Components/TextTooltip.h"
 
 // TODO: Change these?
 #include "../Messages.h"
@@ -69,9 +71,14 @@ namespace ms
 		};
 
 		bool has_input() const;
+		bool is_classic() const;
 		void toggle_view();
+		// UIStateGame 的 TOGGLECHAT 分支要在输入行收起时把它打开（classic 的 Enter 是
+		// 唯一入口，展开/缩放钮只管历史框），故必须公开。
+		void toggle_input(bool enabled);
 		void show_message(const char* message, MessageType type);
 		void focus_whisper();
+		void focus_whisper(const std::string& target);
 
 		// TODO: Change these?
 		void change_target(int32_t action) {}
@@ -95,11 +102,11 @@ namespace ms
 		Point<int16_t> get_dragarea_position() const;
 		Point<int16_t> get_input_position() const;
 		Point<int16_t> get_input_text_position();
-		void toggle_input(bool enabled);
 		void toggle_view(bool max, bool pressed);
 		void update_view(bool pressed);
 		void input_text_enter_callback(std::string message);
 		void input_text_escape_callback();
+		void close_input();
 		void change_message(bool up);
 
 		enum Buttons
@@ -110,7 +117,8 @@ namespace ms
 			BtHelp,
 			BtItemLink,
 			BtChatEmoticon,
-			BtOutChat
+			BtOutChat,
+			BtWhisper
 		};
 
 		enum DragDirection
@@ -170,6 +178,50 @@ namespace ms
 		bool classic_mode;
 		Texture classic_input_bg;
 		Texture classic_chat_target;
+
+		// classic 聊天区布局。参考端底栏截帧（1282x142）与 StatusBar.img 逐件 SAD
+		// 配准（SAD≤5，见 evidence/w4-chatbar/coords.md §1'）给出的**相对**几何：
+		//   base/backgrnd(817x71) 顶 = 底栏顶，白输入带是它自身烘焙的一条，
+		//     带顶 = 底栏顶 + 4、带内高 26（带下沿再往下 2px 深色分隔线）；
+		//   base/chatTarget(81x20) 压在带内左上 (底栏左沿, 底栏顶 + 8)；
+		//   base/chat(566x5) 在底栏顶 + 32（带下方那条半透明细条）；
+		//   Basic.img/BtMin|BtMax(12x12) 在屏幕 (536, 661) = 行内 (536, 8)。
+		// UIStatusBar 把 backgrnd 画在 (0, vh-71)，所以本行必须落在带内。旧公式
+		// `vh-71-INPUT_ROW_H` 把整行抬到底栏上方 28px，正是用户看到的
+		// 「对所有人显示在白色输入框上面、展开按钮也在上面」。
+		//   输入行内含 chatTarget 目标框(81x20) + BtWhisper 切换箭头(12x19，压在框左沿)
+		//   + 带下细条(base/chat 566x5) + 输入文本 + BtMax/BtMin(12x12)；
+		//   历史框位于输入行上方（user_view_y 高）。
+		static constexpr int16_t CLASSIC_BAR_H = 71;
+		static constexpr int16_t INPUT_BAND_TOP = 4;
+		static constexpr int16_t INPUT_ROW_H = 26;
+		static constexpr int16_t MAX_ROW_W = 560;
+		static constexpr int16_t CHAT_TARGET_W = 81;
+		static constexpr int16_t CHAT_TARGET_H = 20;
+		static constexpr int16_t TARGET_BT_W = 12;
+		// chatTarget 与 BtWhisper(12x19) 同顶（行内 y=4 → 屏幕 657）
+		static constexpr int16_t TARGET_BOX_Y = 4;
+		// 目标文字：A11M 墨迹顶 = draw_y + linespace(17) - SimHei bitmap_top(11) = +6。
+		// 框内区 657..676、字形高 11 → 居中墨迹顶 661 ⇒ draw_y 655 ⇒ 行内 2。
+		static constexpr int16_t TARGET_TEXT_Y = 2;
+		// 展开/缩放钮(12x12)：参考端实测屏幕 (536, 661)，行内即 (536, 8)。底栏是定宽
+		// 817 的贴图，所以原生用的是固定左偏移，这里跟着用固定值而不是右锚。
+		static constexpr int16_t LOG_BT_X = 536;
+		static constexpr int16_t LOG_BT_Y = 8;
+		// base/chat 带下细条：底栏顶 +32 = 行内 28 = INPUT_ROW_H + 2
+		static constexpr int16_t UNDERLINE_Y = INPUT_ROW_H + 2;
+		// 参考端目标文字左对齐、紧跟箭头右侧（框内 x≈6，箭头占 0..12）
+		static constexpr int16_t TARGET_TEXT_X = 14;
+
+		// 聊天目标：BtWhisper 箭头钮 + chatTarget 框体本身都可点，循环切换
+		// （对所有人→密语→组队→工会）；历史框展开/收起用 Basic.img 的
+		// BtMax(+) / BtMin(-) 真按钮同位互斥显示。
+		bool classic_log_open = false;
+		TooltipBackdrop classic_log_backdrop;
+		Text classic_target_text;
+		uint8_t classic_chat_target_id = 0;
+		void cycle_chat_target();
+		void set_classic_log(bool open);
 
 #if LOG_LEVEL >= LOG_UI
 		ColorBox dimension_box;

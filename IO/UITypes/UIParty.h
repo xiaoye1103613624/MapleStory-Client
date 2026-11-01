@@ -56,11 +56,14 @@ namespace ms
 
 		void draw(float alpha) const override;
 		void update() override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		void update_party(const Party& p);
 		void set_leader(int32_t cid);
 		void update_member_hp(int32_t cid, int32_t curhp, int32_t maxhp);
+
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -70,13 +73,19 @@ namespace ms
 		{
 			BtInvite,
 			BtLeave,
-			BtClose
+			BtClose,
+			BtLeader,
+			BtExpel
 		};
 
 		void prompt_invite();
+		void prompt_leader();
+		void prompt_expel();
+		int32_t member_at_row(int16_t row) const;
 
 		Party party;
 		std::map<int32_t, std::pair<int32_t, int32_t>> memberhp;
+		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 	};
 }

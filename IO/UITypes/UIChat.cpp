@@ -16,12 +16,20 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChat.h"
+#include "UIBuddyList.h"
+#include "UICharInfo.h"
+#include "UIMessenger.h"
+#include "UISoftKey.h"
 
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
 
+#include "../../Net/Packets/MessagingPackets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+
+#include <list>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -95,8 +103,77 @@ namespace ms
 
 	void UIChat::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && escape)
-			close();
+		if (pressed && escape) { close(); return; }
+		if (!pressed) return;
+		if (keycode == 'F' || keycode == 'f' || keycode == 'B' || keycode == 'b')
+		{
+			int32_t cid = 0;
+			if (auto bl = UI::get().get_element<UIBuddyList>())
+				cid = bl->get_selected_cid();
+			if (cid <= 0)
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					cid = ci->get_target_cid();
+			auto ask_msg = [](int32_t buddy_cid) {
+				UI::get().emplace<UISoftKey>([buddy_cid](const std::string& text) {
+					if (text.empty()) return;
+					std::list<int32_t> recips;
+					if (buddy_cid > 0) recips.push_back(buddy_cid);
+					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
+				}, []() {}, "Buddy msg");
+			};
+			if (cid > 0)
+				ask_msg(cid);
+			else
+				UI::get().emplace<UISoftKey>([ask_msg](const std::string& cid_s) {
+					int32_t id = 0;
+					try { if (!cid_s.empty()) id = std::stoi(cid_s); } catch (...) {}
+					ask_msg(id);
+				}, []() {}, "Buddy cid");
+		}
+		else if (keycode == 'R' || keycode == 'r' || keycode == 'S' || keycode == 's')
+		{
+			std::string pre;
+			if (auto ci = UI::get().get_element<UICharInfo>())
+				pre = ci->get_target_name();
+			if (!pre.empty()) {
+				FindPlayerPacket(pre).dispatch();
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					FindPlayerPacket(name).dispatch();
+				}, []() {}, "Find player");
+			}
+		}
+		else if (keycode == 'D' || keycode == 'd')
+		{
+			UI::get().emplace<UIMessenger>();
+			if (auto m = UI::get().get_element<UIMessenger>())
+				m->try_create_room();
+		}
+		else if (keycode == 'P' || keycode == 'p')
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& text) {
+				if (text.empty()) return;
+				std::list<int32_t> empty;
+				MultiChatPacket(MultiChatPacket::Type::PARTY, empty, text).dispatch();
+			}, []() {}, "Party msg");
+		}
+		else if (keycode == 'G' || keycode == 'g')
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& text) {
+				if (text.empty()) return;
+				std::list<int32_t> empty;
+				MultiChatPacket(MultiChatPacket::Type::GUILD, empty, text).dispatch();
+			}, []() {}, "Guild msg");
+		}
+		else if (keycode == 'A' || keycode == 'a')
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& text) {
+				if (text.empty()) return;
+				std::list<int32_t> empty;
+				MultiChatPacket(MultiChatPacket::Type::ALLIANCE, empty, text).dispatch();
+			}, []() {}, "Alliance msg");
+		}
 	}
 
 	UIElement::Type UIChat::get_type() const
@@ -112,11 +189,58 @@ namespace ms
 			close();
 			break;
 		case Buttons::CHAT_DUO:
+		{
+			// Duo → 打开 Messenger 并发起建房
+			UI::get().emplace<UIMessenger>();
+			if (auto m = UI::get().get_element<UIMessenger>())
+				m->try_create_room();
+			LOG(LOG_DEBUG, "UIChat: Duo → UIMessenger");
 			break;
+		}
 		case Buttons::CHAT_FRIEND:
+		{
+			int32_t cid = 0;
+			if (auto bl = UI::get().get_element<UIBuddyList>())
+				cid = bl->get_selected_cid();
+			if (cid <= 0)
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					cid = ci->get_target_cid();
+			auto ask_msg = [](int32_t buddy_cid) {
+				UI::get().emplace<UISoftKey>([buddy_cid](const std::string& text) {
+					if (text.empty()) return;
+					std::list<int32_t> recips;
+					if (buddy_cid > 0) recips.push_back(buddy_cid);
+					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
+					LOG(LOG_DEBUG, "UIChat: Friend MultiChat cid=" << buddy_cid << " len=" << text.size());
+				}, []() {}, "Buddy msg");
+			};
+			if (cid > 0)
+				ask_msg(cid);
+			else
+				UI::get().emplace<UISoftKey>([ask_msg](const std::string& cid_s) {
+					int32_t id = 0;
+					try { if (!cid_s.empty()) id = std::stoi(cid_s); } catch (...) {}
+					ask_msg(id);
+				}, []() {}, "Buddy cid");
 			break;
+		}
 		case Buttons::CHAT_RANDOM:
+		{
+			std::string pre;
+			if (auto ci = UI::get().get_element<UICharInfo>())
+				pre = ci->get_target_name();
+			if (!pre.empty()) {
+				FindPlayerPacket(pre).dispatch();
+				LOG(LOG_DEBUG, "UIChat: Random → FindPlayer name=" << pre);
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					FindPlayerPacket(name).dispatch();
+					LOG(LOG_DEBUG, "UIChat: Random → FindPlayer name=" << name);
+				}, []() {}, "Find player");
+			}
 			break;
+		}
 		default:
 			break;
 		}
@@ -187,8 +311,22 @@ namespace ms
 
 	void UIRank::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && escape)
-			close();
+		if (pressed && escape) { close(); return; }
+		if (!pressed) return;
+		if (keycode == 'S' || keycode == 's' || keycode == 'F' || keycode == 'f')
+		{
+			std::string pre;
+			if (auto ci = UI::get().get_element<UICharInfo>())
+				pre = ci->get_target_name();
+			if (!pre.empty()) {
+				FindPlayerPacket(pre).dispatch();
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					FindPlayerPacket(name).dispatch();
+				}, []() {}, "Rank find");
+			}
+		}
 	}
 
 	UIElement::Type UIRank::get_type() const

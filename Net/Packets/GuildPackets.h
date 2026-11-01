@@ -86,4 +86,14 @@ namespace ms
 			write_string(notice);
 		}
 	};
+
+	// Opcode: DENY_GUILD_REQUEST(127 / 0x7F) — string inviter/guild name
+	class DenyGuildRequestPacket : public OutPacket
+	{
+	public:
+		DenyGuildRequestPacket(const std::string& from) : OutPacket(OutPacket::Opcode::DENY_GUILD_REQUEST)
+		{
+			write_string(from);
+		}
+	};
 }

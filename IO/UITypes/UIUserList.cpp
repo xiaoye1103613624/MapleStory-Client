@@ -16,10 +16,21 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIUserList.h"
+#include "UICharInfo.h"
+#include "UIMessenger.h"
+#include "UIPartySearch.h"
+#include "UISoftKey.h"
 
+#include "../UI.h"
 #include "../../IO/Components/MapleButton.h"
 #include "../../IO/Components/TwoSpriteButton.h"
+#include "../../Net/Packets/BuddyPackets.h"
+#include "../../Net/Packets/PartyPackets.h"
+#include "../../Net/Packets/PartySearchPackets.h"
+#include "../../Net/Packets/GuildPackets.h"
+#include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,9 +40,7 @@ namespace ms
 {
 	UIUserList::UIUserList(uint16_t t) : UIDragElement<PosUSERLIST>(Point<int16_t>(260, 20)), tab(t)
 	{
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		UserList = UiAssetResolve::window("UserList");
 		nl::node Main = UserList["Main"];
@@ -151,9 +160,28 @@ namespace ms
 		try_btn(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"]);
 		try_btn(Buttons::BT_FRIEND_ADD_GROUP, Friend["BtAddGroup"]);
 		try_btn(Buttons::BT_FRIEND_EXPAND, Friend["BtPlusFriend"]);
+		// Friend 页无专用 Messenger 钮时：复用 UIWindow.img/Messenger/BtEnter 作开窗入口。
+		{
+			nl::node msg_btn = Friend["BtMessenger"];
+
+			if (!msg_btn)
+				msg_btn = Friend["BtChat"];
+
+			if (!msg_btn)
+				msg_btn = UiAssetResolve::window("Messenger")["BtEnter"];
+
+			if (msg_btn)
+			{
+				buttons[Buttons::BT_FRIEND_MESSENGER] = std::make_unique<MapleButton>(
+					msg_btn,
+					Point<int16_t>(208, 85)
+				);
+			}
+		}
 		deactivate(Buttons::BT_FRIEND_ADD);
 		deactivate(Buttons::BT_FRIEND_ADD_GROUP);
 		deactivate(Buttons::BT_FRIEND_EXPAND);
+		deactivate(Buttons::BT_FRIEND_MESSENGER);
 
 		try_btn(Buttons::BT_TAB_FRIEND_ALL, Friend["TapShowAll"]);
 		try_btn(Buttons::BT_TAB_FRIEND_ONLINE, Friend["TapShowOnline"]);
@@ -318,6 +346,61 @@ namespace ms
 
 				change_tab(new_tab);
 			}
+			else if (keycode == 'A' || keycode == 'a')
+			{
+				button_pressed(Buttons::BT_FRIEND_ADD);
+			}
+			else if (keycode == 'G' || keycode == 'g')
+			{
+				button_pressed(Buttons::BT_FRIEND_ADD_GROUP);
+			}
+			else if (keycode == 'C' || keycode == 'c')
+			{
+				button_pressed(Buttons::BT_PARTY_CREATE);
+			}
+			else if (keycode == 'I' || keycode == 'i')
+			{
+				button_pressed(Buttons::BT_PARTY_INVITE);
+			}
+			else if (keycode == 'L' || keycode == 'l')
+			{
+				button_pressed(Buttons::BT_PARTY_LEAVE);
+			}
+			else if (keycode == 'E' || keycode == 'e')
+			{
+				button_pressed(Buttons::BT_PARTY_SETTINGS);
+			}
+			else if (keycode == 'M' || keycode == 'm')
+			{
+				button_pressed(Buttons::BT_FRIEND_MESSENGER);
+			}
+			else if (keycode == 'P' || keycode == 'p')
+			{
+				button_pressed(Buttons::BT_TAB_PARTY_SEARCH);
+			}
+			else if (keycode == 'W' || keycode == 'w')
+			{
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					std::string name = pre;
+					UI::get().emplace<UISoftKey>([name](const std::string& msg) {
+						if (msg.empty()) return;
+						WhisperPacket(name, msg).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: Whisper to=" << name);
+					}, []() {}, "Whisper msg");
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& name) {
+						if (name.empty()) return;
+						UI::get().emplace<UISoftKey>([name](const std::string& msg) {
+							if (msg.empty()) return;
+							WhisperPacket(name, msg).dispatch();
+							LOG(LOG_DEBUG, "UIUserList: Whisper to=" << name);
+						}, []() {}, "Whisper msg");
+					}, []() {}, "Whisper to");
+				}
+			}
 		}
 	}
 
@@ -340,9 +423,20 @@ namespace ms
 				change_tab(buttonid);
 				return Button::State::PRESSED;
 			case Buttons::BT_TAB_PARTY_MINE:
-			case Buttons::BT_TAB_PARTY_SEARCH:
 				change_party_tab(buttonid);
 				return Button::State::PRESSED;
+			case Buttons::BT_TAB_PARTY_SEARCH:
+				change_party_tab(buttonid);
+				// 顶层 UIWindow.img/PartySearch 独立壳（与页内嵌网格并存）
+				if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+					UI::get().emplace<UIPartySearch>();
+				return Button::State::PRESSED;
+			case Buttons::BT_PARTY_SEARCH_LEVEL:
+			case Buttons::BT_PARTY_SEARCH_INVITE:
+				LOG(LOG_DEBUG, "UIUserList: PartySearch entry → toggle UIPartySearch");
+				if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+					UI::get().emplace<UIPartySearch>();
+				break;
 			case Buttons::BT_TAB_FRIEND_ALL:
 			case Buttons::BT_TAB_FRIEND_ONLINE:
 				change_friend_tab(buttonid);
@@ -351,9 +445,169 @@ namespace ms
 			case Buttons::BT_TAB_BLACKLIST_GUILD:
 				change_blacklist_tab(buttonid);
 				return Button::State::PRESSED;
+			case Buttons::BT_FRIEND_MESSENGER:
+			{
+				LOG(LOG_DEBUG, "UIUserList: Friend → toggle UIMessenger");
+				UI::get().emplace<UIMessenger>();
+
+				if (auto m = UI::get().get_element<UIMessenger>())
+					m->try_create_room();
+
+				break;
+			}
+			case Buttons::BT_FRIEND_ADD:
+			{
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					BuddyAddPacket(pre, "Default Group").dispatch();
+					LOG(LOG_DEBUG, "UIUserList: BuddyAdd target=" << pre);
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& name) {
+						if (name.empty()) return;
+						BuddyAddPacket(name, "Default Group").dispatch();
+						LOG(LOG_DEBUG, "UIUserList: BuddyAdd name=" << name);
+					}, []() {}, "Add friend");
+				}
+				break;
+			}
+			case Buttons::BT_FRIEND_ADD_GROUP:
+			{
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					std::string name = pre;
+					UI::get().emplace<UISoftKey>([name](const std::string& group) {
+						if (group.empty()) return;
+						BuddyAddPacket(name, group).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: BuddyChangeGroup name=" << name << " group=" << group);
+					}, []() {}, "Friend group");
+					break;
+				}
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					UI::get().emplace<UISoftKey>([name](const std::string& group) {
+						if (group.empty()) return;
+						BuddyAddPacket(name, group).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: BuddyChangeGroup name=" << name << " group=" << group);
+					}, []() {}, "Friend group");
+				}, []() {}, "Friend name");
+				break;
+			}
+			case Buttons::BT_PARTY_CREATE:
+				PartyCreatePacket().dispatch();
+				LOG(LOG_DEBUG, "UIUserList: PartyCreate");
+				break;
+			case Buttons::BT_PARTY_INVITE:
+			{
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					PartyInvitePacket(pre).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: PartyInvite target=" << pre);
+					break;
+				}
+				// SoftKey：纯数字 → PartyJoin(partyid)；否则 → PartyInvite(name)
+				UI::get().emplace<UISoftKey>([](const std::string& s) {
+					if (s.empty()) return;
+					bool all_digit = true;
+					for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
+					if (all_digit) {
+						try {
+							int32_t pid = std::stoi(s);
+							if (pid > 0) {
+								PartyJoinPacket(pid).dispatch();
+								LOG(LOG_DEBUG, "UIUserList: PartyJoin id=" << pid);
+							}
+						} catch (...) {}
+					} else {
+						PartyInvitePacket(s).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: PartyInvite name=" << s);
+					}
+				}, []() {}, "Invite name|Join id");
+				break;
+			}
+			case Buttons::BT_PARTY_LEAVE:
+				PartyLeavePacket().dispatch();
+				LOG(LOG_DEBUG, "UIUserList: PartyLeave");
+				break;
+			case Buttons::BT_PARTY_SETTINGS:
+			{
+				// CharInfo 有 cid → Expel；有名无 cid → Deny；否则 SoftKey
+				int32_t from_cid = 0;
+				std::string from_name;
+				if (auto ci = UI::get().get_element<UICharInfo>()) {
+					from_cid = ci->get_target_cid();
+					from_name = ci->get_target_name();
+				}
+				if (from_cid > 0) {
+					PartyExpelPacket(from_cid).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: PartyExpel cid=" << from_cid);
+				} else if (!from_name.empty()) {
+					DenyPartyRequestPacket(from_name).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << from_name);
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& s) {
+						if (s.empty()) return;
+						bool all_digit = true;
+						for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
+						if (all_digit) {
+							try {
+								int32_t cid = std::stoi(s);
+								if (cid > 0) {
+									PartyExpelPacket(cid).dispatch();
+									LOG(LOG_DEBUG, "UIUserList: PartyExpel cid=" << cid);
+								}
+							} catch (...) {}
+						} else {
+							DenyPartyRequestPacket(s).dispatch();
+							LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << s);
+						}
+					}, []() {}, "Expel cid|Deny name");
+				}
+				break;
+			}
+			case Buttons::BT_BLACKLIST_ADD:
+			{
+				// 无 Ignore opcode：FindPlayer 作检索代理
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					FindPlayerPacket(pre).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: Blacklist FindPlayer=" << pre);
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& name) {
+						if (name.empty()) return;
+						FindPlayerPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: Blacklist FindPlayer=" << name);
+					}, []() {}, "Find name");
+				}
+				break;
+			}
+			case Buttons::BT_BLACKLIST_DELETE:
+			{
+				std::string pre;
+				if (auto ci = UI::get().get_element<UICharInfo>())
+					pre = ci->get_target_name();
+				if (!pre.empty()) {
+					FindPlayerPacket(pre).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: Blacklist delete FindPlayer=" << pre);
+				} else {
+					UI::get().emplace<UISoftKey>([](const std::string& name) {
+						if (name.empty()) return;
+						FindPlayerPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: Blacklist delete FindPlayer=" << name);
+					}, []() {}, "Find name");
+				}
+				break;
+			}
 			default:
 				return Button::State::NORMAL;
-		}
+			}
 
 		return Button::State::NORMAL;
 	}
@@ -407,6 +661,7 @@ namespace ms
 			set_act(Buttons::BT_FRIEND_ADD, true);
 			set_act(Buttons::BT_FRIEND_ADD_GROUP, true);
 			set_act(Buttons::BT_FRIEND_EXPAND, true);
+			set_act(Buttons::BT_FRIEND_MESSENGER, true);
 			set_act(Buttons::BT_TAB_FRIEND_ALL, true);
 			set_act(Buttons::BT_TAB_FRIEND_ONLINE, true);
 			set_act(Buttons::BT_FRIEND_GROUP_0, true);
@@ -418,6 +673,7 @@ namespace ms
 			set_act(Buttons::BT_FRIEND_ADD, false);
 			set_act(Buttons::BT_FRIEND_ADD_GROUP, false);
 			set_act(Buttons::BT_FRIEND_EXPAND, false);
+			set_act(Buttons::BT_FRIEND_MESSENGER, false);
 			set_act(Buttons::BT_TAB_FRIEND_ALL, false);
 			set_act(Buttons::BT_TAB_FRIEND_ONLINE, false);
 			set_act(Buttons::BT_FRIEND_GROUP_0, false);

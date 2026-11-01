@@ -68,4 +68,27 @@ namespace ms
 			write_string(message);
 		}
 	};
+
+	// Opcode: WHISPER(120 / 0x78) — s9 WhisperHandler：mode6=密语 / mode5=/find
+	class WhisperPacket : public OutPacket
+	{
+	public:
+		WhisperPacket(const std::string& recipient, const std::string& text)
+			: OutPacket(OutPacket::Opcode::WHISPER)
+		{
+			write_byte(6);
+			write_string(recipient);
+			write_string(text);
+		}
+	};
+
+	class FindPlayerPacket : public OutPacket
+	{
+	public:
+		FindPlayerPacket(const std::string& name) : OutPacket(OutPacket::Opcode::WHISPER)
+		{
+			write_byte(5);
+			write_string(name);
+		}
+	};
 }

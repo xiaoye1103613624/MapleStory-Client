@@ -54,4 +54,17 @@ namespace ms
 			write_string(guildName);
 		}
 	};
+
+	// Opcode: DENY_ALLIANCE_REQUEST(144 / 0x90) — byte(0) + inviter + guild
+	class DenyAllianceRequestPacket : public OutPacket
+	{
+	public:
+		DenyAllianceRequestPacket(const std::string& inviter, const std::string& guild)
+			: OutPacket(OutPacket::Opcode::DENY_ALLIANCE_REQUEST)
+		{
+			write_byte(0);
+			write_string(inviter);
+			write_string(guild);
+		}
+	};
 }

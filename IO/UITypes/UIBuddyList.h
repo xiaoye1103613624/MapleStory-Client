@@ -53,12 +53,16 @@ namespace ms
 		void draw(float alpha) const override;
 		void update() override;
 		void doubleclick(Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
 		void update_buddies(const BuddyListData& data);
 		void set_capacity(int32_t cap);
 		int32_t get_capacity() const;
 		void update_buddy_channel(int32_t cid, int32_t channel);
+		int32_t get_selected_cid() const { return selected_cid; }
+
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -74,8 +78,10 @@ namespace ms
 
 		int16_t row_by_position(Point<int16_t> pos) const;
 		void prompt_add();
+		const Buddy* selected_buddy() const;
 
 		BuddyListData list;
+		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 	};
 }

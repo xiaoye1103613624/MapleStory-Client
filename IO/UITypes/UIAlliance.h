@@ -42,11 +42,15 @@ namespace ms
 		UIAlliance();
 
 		void draw(float inter) const override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		Button::State button_pressed(uint16_t buttonid) override;
 		UIElement::Type get_type() const override;
 
 		void set_alliance(int32_t id, const std::string& name, const std::vector<std::string>& ranks,
 			const std::vector<int32_t>& guilds, const std::string& notice);
+		void set_alliance(int32_t id, const std::string& name, const std::vector<std::string>& ranks,
+			const std::vector<int32_t>& guilds, const std::vector<std::string>& guild_names,
+			const std::string& notice);
 		void set_notice(const std::string& notice);
 		const std::string& get_notice() const { return alliance_notice; }
 
@@ -57,7 +61,9 @@ namespace ms
 		{
 			BtClose,
 			BtRefresh,
-			BtLeave
+			BtLeave,
+			BtInvite,
+			BtNotice
 		};
 
 		Sprite background;
@@ -70,5 +76,6 @@ namespace ms
 		std::string alliance_name;
 		std::string alliance_notice;
 		std::vector<int32_t> guilds;
+		std::vector<std::string> guild_names;
 	};
 }
