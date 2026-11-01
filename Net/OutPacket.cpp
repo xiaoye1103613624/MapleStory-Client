@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "OutPacket.h"
 
+#include "PacketCharset.h"
 #include "Session.h"
 
 #include "../Configuration.h"
@@ -76,7 +77,10 @@ namespace ms
 
 	void OutPacket::write_long(int64_t lg)
 	{
-		for (size_t i = 0; i < sizeof(long); i++)
+		// D2：原来是 sizeof(long)。MSVC 下 long 是 4 字节（LP64/LLP64 陷阱），
+		// 会把 64 位值只写出低 4 字节，与 s9 的 ByteBufOutPacket.writeLong（8 字节）差 4 字节，
+		// 后续字段全部错位。当前全仓还没有调用点，属于**潜伏缺陷**：等第一个 long 字段出现才会炸。
+		for (size_t i = 0; i < sizeof(int64_t); i++)
 		{
 			write_byte(static_cast<int8_t>(lg));
 			lg >>= 8;
@@ -100,12 +104,16 @@ namespace ms
 
 	void OutPacket::write_string(const std::string& str)
 	{
-		int16_t length = static_cast<int16_t>(str.length());
+		// 前缀是**字节**数，线上编码是 GBK ⇒ 必须先转码再量长度。
+		// 一个汉字 UTF-8 占 3 字节、GBK 占 2 字节，按内部长度写前缀会让服务端多读/少读字节
+		// （notes/charset.md §5.3 的长度陷阱）。
+		const std::string wire = packet_from_internal(str);
+		const size_t length = wire.length();
 
-		write_short(length);
+		write_short(static_cast<int16_t>(length));
 
-		for (int16_t i = 0; i < length; i++)
-			write_byte(str[i]);
+		for (size_t i = 0; i < length; i++)
+			write_byte(wire[i]);
 	}
 
 	void OutPacket::write_random()

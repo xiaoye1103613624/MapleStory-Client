@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "InPacket.h"
+#include "PacketCharset.h"
 
 namespace ms
 {
@@ -86,17 +87,22 @@ namespace ms
 
 	std::string InPacket::read_padded_string(uint16_t count)
 	{
-		std::string ret;
+		std::string raw;
 
-		for (int16_t i = 0; i < count; i++)
+		raw.reserve(count);
+
+		// 计数器必须与 count 同宽：原实现用 int16_t 遍历 uint16_t 长度，count > 32767 时符号溢出。
+		// 现有定长调用点（13 字节角色名、200 字节 Duey 正文）都够不着，属潜伏缺陷，
+		// 与 D8（入站长度符号扩展）同族，改这个函数体时顺手对齐。
+		for (uint16_t i = 0; i < count; i++)
 		{
 			char letter = read_byte();
 
 			if (letter != '\0')
-				ret.push_back(letter);
+				raw.push_back(letter);
 		}
 
-		return ret;
+		return packet_to_internal(raw);
 	}
 
 	void InPacket::skip_bool()

@@ -56,16 +56,29 @@ namespace ms
 
 			/// Gameplay 1
 			CHANGEMAP = 38,
+			/// s9 RecvOpcode.CHANGE_CHANNEL = 0x27
+			CHANGE_CHANNEL = 39,
 			ENTER_CASHSHOP = 40,
 			MOVE_PLAYER = 41,
 			CLOSE_ATTACK = 44,
 			RANGED_ATTACK = 45,
 			MAGIC_ATTACK = 46,
 			TAKE_DAMAGE = 48,
+			/// s9 RecvOpcode.CANCEL_CHAIR = 0x2A / USE_CHAIR = 0x2B
+			CANCEL_CHAIR = 42,
+			USE_CHAIR = 43,
+			/// s9 RecvOpcode.CLOSE_CHALKBOARD = 0x32
+			CLOSE_CHALKBOARD = 50,
+			/// s9 RecvOpcode.FACE_EXPRESSION = 0x33
+			FACE_EXPRESSION = 51,
+			/// s9 RecvOpcode.USE_ITEMEFFECT = 0x34
+			USE_ITEMEFFECT = 52,
 
 			/// Messaging
 			GENERAL_CHAT = 49,
 			MULTI_CHAT = 119,
+			/// s9 RecvOpcode.WHISPER = 0x78
+			WHISPER = 120,
 			SPOUSE_CHAT = 121,
 
 			/// NPC Interaction
@@ -81,35 +94,114 @@ namespace ms
 			SORT_ITEMS = 70,
 			MOVE_ITEM = 71,
 			USE_ITEM = 72,
+			USE_CASH_ITEM = 79,
 			SCROLL_EQUIP = 86,
 
 			/// Player
 			SPEND_AP = 87,
 			SPEND_SP = 90,
+			/// s9 RecvOpcode.MESO_DROP = 0x5E
+			MESO_DROP = 94,
+			/// s9 RecvOpcode.GIVE_FAME = 0x5F
+			GIVE_FAME = 95,
 			CHANGE_KEYMAP = 135,
+			/// s9 RecvOpcode.USE_DOOR = 0x85
+			USE_DOOR = 133,
 
 			/// Skill
 			USE_SKILL = 91,
+			SKILL_MACRO = 110,
+			RPS_ACTION = 136,
 
 			/// Quest (BeiDou RecvOpcode.QUEST_ACTION)
 			QUEST_ACTION = 107,
 
 			/// Gameplay 2
+			/// Messenger 出站（s9 RecvOpcode.MESSENGER = 0x7A）；入站为 PacketSwitch 313
+			MESSENGER = 122,
 			PARTY_OPERATION = 124,
 			ADMIN_COMMAND = 128,
 			MOVE_MONSTER = 188,
 			PICKUP_ITEM = 202,
 			DAMAGE_REACTOR = 205,
 			PLAYER_MAP_TRANSFER = 207,
-			PLAYER_UPDATE = 223,
-			STORAGE = 309,
+			/// s9 RecvOpcode.PARTY_SEARCH_START / UPDATE（自动匹配，非列表板）
+			PARTY_SEARCH_START = 222,
+			PARTY_SEARCH_UPDATE = 223,
+			/// @deprecated 误名；实际为 PARTY_SEARCH_UPDATE(223)。保留别名以免旧引用崩编。
+			PLAYER_UPDATE = PARTY_SEARCH_UPDATE,
+			DENY_PARTY_REQUEST = 125,
+			/// s9 RecvOpcode.DENY_GUILD_REQUEST = 0x7F
+			DENY_GUILD_REQUEST = 127,
+			/// F5-1：出站必须用 s9 RecvOpcode.STORAGE=0x3E=62（RecvOpcode.java:78 → StorageHandler）。
+			/// 309 是 s9 **Send**Opcode.STORAGE 的值（服务端→客户端），抄错了方向，s9 侧收不到任何 handler。
+			STORAGE = 62,
 			BUDDYLIST = 63,
-			PLAYER_INTERACTION = 314,
-			GUILD_OPERATION = 65,
-			CASHSHOP_OPERATION = 325,
+			/// s9 RecvOpcode：FREDRICK_ACTION=0x40 / DUEY_ACTION=0x41；GUILD 出站为 0x7E=126
+			FREDRICK_ACTION = 64,
+			/// s9 RecvOpcode.OWL_ACTION = 0x42 → UseOwlOfMinerva（空包）
+			OWL_ACTION = 66,
+			/// s9 RecvOpcode.OWL_WARP = 0x43 → OwlWarpHandler（ownerid + mapid）
+			OWL_WARP = 67,
+			/// s9 RecvOpcode.USE_HAMMER = 0x104 → ViciousHammer
+			USE_HAMMER = 260,
+			/// Family / Memo
+			NOTE_ACTION = 131,
+			OPEN_FAMILY_PEDIGREE = 145, // 0x91
+			OPEN_FAMILY = 146,          // 0x92
+			ADD_FAMILY = 147,           // 0x93
+			/// s9 SEPARATE_FAMILY_BY_SENIOR = 0x94（带 junior cid）
+			SEPARATE_FAMILY_BY_SENIOR = 148,
+			/// s9 SEPARATE_FAMILY_BY_JUNIOR = 0x95（无 payload）
+			SEPARATE_FAMILY_BY_JUNIOR = 149,
+			ACCEPT_FAMILY = 150,        // 0x96
+			USE_FAMILY = 151,           // 0x97
+			CHANGE_FAMILY_MESSAGE = 152,// 0x98
+			/// s9 RecvOpcode.FAMILY_SUMMON_RESPONSE = 0x99
+			FAMILY_SUMMON_RESPONSE = 153,
+			DUEY_ACTION = 65,
+			GUILD_OPERATION = 126,
+			/// F5-2：出站必须用 s9 RecvOpcode.PLAYER_INTERACTION=0x7B=123（RecvOpcode.java:131）。
+			/// 314 同样是抄了 Send 侧值；本枚举里 6 个构造点（交易/雇佣商人/迷你游戏）此前全部进不了服务端。
+			PLAYER_INTERACTION = 123,
+			/// s9 RecvOpcode.USE_MAPLELIFE=0x100
+			USE_MAPLELIFE = 256,
+			/// s9 RecvOpcode.CHECK_CASH=0xE4 → TouchingCashShopHandler → showCash
+			CHECK_CASH = 228,
+			/// F5-3：出站必须用 s9 RecvOpcode.CASHSHOP_OPERATION=0xE5=229（RecvOpcode.java:199）。
+			/// 325 是 Send 侧值（服务端→客户端），历史客户端误用；修正后商城请求才会进 CashShopOperationHandler。
+			CASHSHOP_OPERATION = 229,
+			/// s9 RecvOpcode.COUPON_CODE = 0xE6
+			COUPON_CODE = 230,
+			/// s9 RecvOpcode.TROCK_ADD_MAP = 0x66（缩地石收藏）
+			TROCK_ADD_MAP = 102,
+			/// s9 RecvOpcode.REPORT = 0x6A
+			REPORT = 106,
+			/// s9 RecvOpcode.NEW_YEAR_CARD_REQUEST = 0x9F
+			NEW_YEAR_CARD_REQUEST = 159,
 			MONSTER_BOOK_COVER = 57,
+			/// s9 RecvOpcode.REMOTE_STORE = 0x3B → 远程仓库/雇佣店
+			REMOTE_STORE = 59,
 			MAKER_SKILL = 113,
-			ALLIANCE_OPERATION = 143
+			/// s9 RecvOpcode.WATER_OF_LIFE = 0x75
+			WATER_OF_LIFE = 117,
+			ALLIANCE_OPERATION = 143,
+			/// s9 RecvOpcode.DENY_ALLIANCE_REQUEST = 0x90
+			DENY_ALLIANCE_REQUEST = 144,
+			/// s9 RecvOpcode.BBS_OPERATION = 0x9B → BBSOperationHandler
+			BBS_OPERATION = 155,
+			/// s9 RecvOpcode.ENTER_MTS = 0x9C
+			ENTER_MTS = 156,
+			/// s9 RecvOpcode.USE_SOLOMON_ITEM = 0x9D
+			USE_SOLOMON_ITEM = 157,
+			/// s9 RecvOpcode.USE_GACHA_EXP = 0x9E
+			USE_GACHA_EXP = 158,
+			/// s9 RecvOpcode.ARAN_COMBO_COUNTER = 0xA3（空包）
+			ARAN_COMBO_COUNTER = 163,
+			/// s9 RecvOpcode.OPEN_ITEMUI = 0xEC（Raise/Plant infoNumber）
+			OPEN_ITEMUI = 236,
+			/// s9 RecvOpcode.WORLD_MAP_PLAYERS = 0x115
+			WORLD_MAP_PLAYERS = 277
 		};
 
 	protected:

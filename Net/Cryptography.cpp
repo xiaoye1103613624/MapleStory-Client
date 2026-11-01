@@ -80,7 +80,13 @@ namespace ms
 		for (size_t i = 0; i < 4; i++)
 			headermask |= static_cast<uint8_t>(bytes[i]) << (8 * i);
 
-		return static_cast<int16_t>((headermask >> 16) ^ (headermask & 0xFFFF));
+		// D8：这里必须是 uint16_t。s9 的 decodePacketLength
+		// (GMSV83PacketProtocol.java:53-57) 产出的是**无符号** 16 位长度（值域 0..65535），
+		// 而 int16_t 会把 >=32768 的长度变成负数，返回 size_t 时符号扩展成天文数字，
+		// 于是 Session::process 的 pos 永远追不上 length，一边越界写 buffer 一边静默卡死。
+		// T4 对拍（notes/transport-vectors.md）与 T8 探针（包长 2..40000 实测）都确认
+		// 服务端 16 位全域可用，缺陷纯在客户端这一侧。
+		return static_cast<uint16_t>((headermask >> 16) ^ (headermask & 0xFFFF));
 #else
 		size_t length = 0;
 

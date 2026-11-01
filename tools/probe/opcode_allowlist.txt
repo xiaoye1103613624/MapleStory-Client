@@ -1,0 +1,10 @@
+# T8 探针 opcode 白名单（唯一允许「有 handler」的发送目标）
+#
+# 白名单里的 opcode 即使 s9 注册了 handler 也允许发送；其余一律要求 s9 无 handler。
+# 每条都必须人工读源码确认「零副作用」，并把证据写在行尾。
+#
+# 值  名字                     证据
+0x0018  PONG                  # PacketProcessor.java:139 -> KeepAliveHandler.handlePacket() 只调
+                              # c.pongReceived()（Client.java:1179-1181 写一个 volatile long），
+                              # validateState() 恒为 true（KeepAliveHandler.java:35-37）。
+                              # 不碰 DB、不改角色、不广播 —— 探针用它验证「服务端真的解开了我们的包」。

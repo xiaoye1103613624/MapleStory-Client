@@ -1,15 +1,19 @@
 @echo off
 rem ============================================================================
-rem  编译 MapleStory.sln（Release / x64）
+rem  Build MapleStory.sln (Release / x64) + protocol gate
 rem
-rem  用法：tools\build_smoke.bat
-rem  说明：
-rem    - 脚本以**自身所在目录**推导仓库根，因此可从任意工作目录调用，
-rem      不再依赖硬编码的绝对路径。
-rem    - 构建日志固定写到仓库根 build_log.txt（已在 .gitignore 中忽略）。
-rem    - PlatformToolset 显式固定为 v142，与本仓库既有可用构建保持一致；
-rem      如需改用项目默认工具集，删掉该参数即可。
-rem  退出：打印 EXITCODE=<MSBuild 退出码>，0 表示成功。
+rem  Usage: tools\build_smoke.bat
+rem  Notes:
+rem    - The repo root is derived from this script's own location, so it can be
+rem      called from any working directory (no hardcoded absolute path).
+rem    - Build log always goes to <repo root>\build_log.txt (git-ignored).
+rem    - PlatformToolset is pinned to v142, matching the toolchain verified to
+rem      work in this repo; drop the parameter to use the project default.
+rem    - Comments are ASCII on purpose: cmd.exe reads .bat with the OEM code
+rem      page (cp936 here), and UTF-8 Chinese in a rem line gets decoded into
+rem      byte soup that cmd then tries to *execute*. Keep this file ASCII.
+rem  Exit: prints EXITCODE=<MSBuild exit code>; 0 means success.
+rem        EXITCODE=2 means the protocol gate blocked the build.
 rem ============================================================================
 setlocal
 
@@ -17,8 +21,8 @@ pushd "%~dp0.."
 set "ROOT=%CD%"
 set "LOG=%ROOT%\build_log.txt"
 
-rem 优先使用本机已验证可用的 MSBuild；缺失时再用 vswhere 兜底查找
-rem （vswhere 随 VS2017+ 安装器提供，覆盖常规安装与 BuildTools）。
+rem Prefer the MSBuild verified on this machine, then fall back to vswhere
+rem (ships with the VS2017+ installer, covers regular installs and BuildTools).
 set "MSBUILD=C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
 if not exist "%MSBUILD%" (
     set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -33,6 +37,35 @@ if not exist "%MSBUILD%" (
     exit /b 1
 )
 
+rem ---------------------------------------------------------------------------
+rem Protocol gate: docs/features/s9-protocol-align/protocol/opcode-matrix.json
+rem must still agree with both sources.  gen_opcode_matrix.py --check exit code:
+rem   1 = protocol facts contradict the sources  -> block the build
+rem   2 = matrix not generated yet               -> notify only, do not block
+rem   0 = consistent (or only line citations moved)
+rem A missing python is treated the same way as rc=2: the gate must never be
+rem the reason a machine with a different setup cannot build.
+rem ---------------------------------------------------------------------------
+where python >nul 2>nul
+if errorlevel 1 goto :gate_skip
+python "%ROOT%\tools\gen_opcode_matrix.py" --check
+set "RC=%ERRORLEVEL%"
+if "%RC%"=="1" goto :gate_fail
+if not "%RC%"=="0" goto :gate_skip
+echo GATE OK
+goto :build
+
+:gate_skip
+echo GATE SKIP: python or matrix unavailable - protocol gate not enforced this run
+goto :build
+
+:gate_fail
+echo GATE FAIL: opcode matrix contradicts s9 / client sources
+echo EXITCODE=2
+popd
+exit /b 2
+
+:build
 "%MSBUILD%" "%ROOT%\MapleStory.sln" /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v142 /m /nologo /v:minimal > "%LOG%" 2>&1
 echo EXITCODE=%ERRORLEVEL%
 

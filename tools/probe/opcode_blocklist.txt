@@ -1,0 +1,113 @@
+# T8 探针 opcode 拉黑名单
+#
+# 规则（硬门禁，写在 tools/probe/s9_probe.py 里，不由命令行绕过）：
+#   1) 只有「s9 侧没有注册 handler」或「出现在 opcode_allowlist.txt」的 opcode 才可能被发出。
+#      —— 「没有 handler」= Client.channelRead() 走 null 分支，只 updateLastPacket()，
+#         对账号/角色/世界/数据库零影响（Client.java:207-236）。
+#   2) 本文件是第二道否决：名字或值出现在这里的 opcode，即便满足 (1) 也一律不发。
+#      要放行必须由用户逐条点名，并把放行理由写进 notes/probe.md。
+#   3) 值一律 0x 前缀；名字取 s9 RecvOpcode 常量名。
+#
+# 取值依据：E:\project\BeiDou-Server_s9\gms-server\src\main\java\org\gms\net\opcodes\RecvOpcode.java
+# handler 依据：同目录 ..\net\PacketProcessor.java（数组覆盖写，后注册者生效）
+# 由 tools/gen_opcode_matrix.py 的 parse_java_enum()/parse_registrations() 现场解析校验，
+# 本文件里的值若与源码不符，探针直接 ABORT（防止手抄错值导致误放/误拦）。
+
+# ---- 登录/建号/删号/转档：会写库或改账号状态 ----
+0x0001  LOGIN_PASSWORD          # LoginPasswordHandler：账号查询，且受 automatic_register 影响可 INSERT
+0x0002  GUEST_LOGIN             # GuestLoginHandler
+0x0003  *                       # 客户端 OutPacket::LOGIN_EMAIL(3)。s9 RecvOpcode 里并无该常量，
+0x0005  CHARLIST_REQUEST        # CharlistRequestHandler：读账号下角色并下发全量角色数据
+0x0009  AFTER_LOGIN             # AfterLoginHandler：进入登录态机
+0x000D  VIEW_ALL_CHAR           # ViewAllCharHandler
+0x000E  PICK_ALL_CHAR           # ViewAllCharSelectedHandler
+0x0010  NAME_TRANSFER           # TransferNameHandler：改名（写库）
+0x0012  WORLD_TRANSFER          # TransferWorldHandler：跨世界转移（写库）
+0x0013  CHAR_SELECT             # CharSelectedHandler：进图，建 session
+0x0015  CHECK_CHAR_NAME         # TransferNameResultHandler（注意 s9 此处有重复注册覆盖）
+0x0016  CREATE_CHAR             # CreateCharHandler：建号（INSERT）
+0x0017  DELETE_CHAR             # DeleteCharHandler：删号（DELETE/标记删除，绝对禁止）
+0x001E  CHAR_SELECT_WITH_PIC    # CharSelectedWithPicHandler
+
+# ---- 商城/货币/仓库/交易：扣款与物品移动 ----
+0x0028  ENTER_CASHSHOP          # EnterCashShopHandler：开商城并发 20+ 条 cash 包
+0x003B  REMOTE_STORE            # RemoteStoreHandler：远程商店（雇佣商人读写）
+0x003E  STORAGE                 # StorageHandler：仓库存取（物品移动）
+0x0044  ADMIN_SHOP              # 无 handler，但名字属管理商店，默认不发
+0x0047  ITEM_MOVE               # ItemMoveHandler：背包/装备栏移动（服务端会校验并回滚）
+0x0048  USE_ITEM                # UseItemHandler：消耗品（扣库存、写冷却）
+0x004F  USE_CASH_ITEM           # UseCashItemHandler：现金道具（扣款）
+0x0051  USE_CATCH_ITEM          # UseCatchItemHandler
+0x0054  USE_TELEPORT_ROCK       # 无 handler，但名字是传送石（改地图），默认不发
+0x0055  USE_RETURN_SCROLL       # UseItemHandler（回城卷，改地图）
+0x0056  USE_UPGRADE_SCROLL      # ScrollHandler：强化卷（可销毁装备）
+0x005E  MESO_DROP               # MesoDropHandler：丢金币（货币变更）
+0x0070  USE_ITEM_REWARD         # ItemRewardHandler：掉落奖励发放
+0x0073  USE_TREASUER_CHEST      # UseTreasureChestHandler：宝箱开启（发物品）
+0x0074  USE_REMOTE              # RemoteGachaponHandler：远程扭蛋（扣款）
+0x009D  USE_SOLOMON_ITEM        # UseSolomonHandler（扣点卷）
+0x009E  USE_GACHA_EXP           # UseGachaExpHandler
+0x00E4  CHECK_CASH              # TouchingCashShopHandler
+0x00E5  CASHSHOP_OPERATION      # CashOperationHandler：购买/退款（写库）
+0x00E6  COUPON_CODE             # CouponCodeHandler：兑换码
+0x0100  USE_MAPLELIFE           # UseMapleLifeHandler
+0x0104  USE_HAMMER              # UseHammerHandler：敲锤（改装备潜在属性）
+
+# ---- 公会/家族/队伍/好友/婚礼：他人可见的共享状态 ----
+0x007C  PARTY_OPERATION         # PartyOperationHandler：建队/踢人（他人收到包）
+0x007D  DENY_PARTY_REQUEST      # DenyPartyRequestHandler
+0x007E  GUILD_OPERATION         # GuildOperationHandler：建会/解散/任命（共享状态 + 写库）
+0x007F  DENY_GUILD_REQUEST      # DenyGuildRequestHandler
+0x0082  BUDDYLIST_MODIFY        # BuddylistModifyHandler：加好友（写库）
+0x008A  WEDDING_ACTION          # WeddingHandler
+0x008B  WEDDING_TALK            # 撞值：0x8B 后注册的 WeddingTalkMoreHandler 生效
+0x0091  OPEN_FAMILY_PEDIGREE    # OpenFamilyPedigreeHandler
+0x0092  OPEN_FAMILY             # OpenFamilyHandler
+0x0093  ADD_FAMILY              # FamilyAddHandler：发邀请给他人
+0x0094  SEPARATE_FAMILY_BY_SENIOR   # FamilySeparateHandler：拆家族
+0x0095  SEPARATE_FAMILY_BY_JUNIOR   # FamilySeparateHandler
+0x0096  ACCEPT_FAMILY           # AcceptFamilyHandler
+0x0097  USE_FAMILY              # FamilyUseHandler：家族召唤（改他人地图）
+0x0098  CHANGE_FAMILY_MESSAGE   # FamilyPreceptsHandler：写家训文本
+0x0099  FAMILY_SUMMON_RESPONSE  # FamilySummonResponseHandler
+0x00DC  PARTY_SEARCH_REGISTER   # PartySearchRegisterHandler：写广播
+0x00DE  PARTY_SEARCH_START      # PartySearchStartHandler
+0x00DF  PARTY_SEARCH_UPDATE     # PartySearchUpdateHandler
+
+# ---- 管理员：可直接改服务器状态 ----
+0x0076  ADMIN_CHAT              # AdminChatHandler
+0x0080  ADMIN_COMMAND           # AdminCommandHandler：执行命令（最危险）
+0x0081  ADMIN_LOG               # AdminLogHandler
+
+# ---- 战斗/技能：会改世界状态并广播给他人 ----
+0x002F  TOUCH_MONSTER_ATTACK    # TouchMonsterDamageHandler
+0x005D  SKILL_EFFECT            # SkillEffectHandler
+0x006E  SKILL_MACRO             # SkillMacroHandler（写库保存宏）
+0x00AF  MOVE_SUMMON             # MoveSummonHandler
+0x00B0  SUMMON_ATTACK           # SummonDamageHandler
+0x00B1  DAMAGE_SUMMON           # DamageSummonHandler
+0x00C1  MONSTER_BOMB            # MonsterBombHandler
+0x00CF  PLAYER_MAP_TRANSFER     # PlayerMapTransitionHandler：改地图
+0x00DA  MONSTER_CARNIVAL        # MonsterCarnivalHandler
+0x00EE  USE_ITEMUI              # RaiseIncExpHandler
+0x0061  CHAR_INFO_REQUEST       # CharInfoRequestHandler
+0x0062  SPAWN_PET               # SpawnPetHandler
+0x00A7  MOVE_PET                # MovePetHandler
+0x00A8  PET_CHAT                # PetChatHandler
+0x00A9  PET_COMMAND             # PetCommandHandler
+0x00AA  PET_LOOT                # PetLootHandler
+0x00AB  PET_AUTO_POT            # PetAutoPotHandler
+0x00AC  PET_EXCLUDE_ITEMS       # PetExcludeItemsHandler（写库）
+0x0033  FACE_EXPRESSION         # FaceExpressionHandler
+0x0034  USE_ITEMEFFECT          # UseItemEffectHandler
+0x0035  USE_DEATHITEM           # UseDeathItemHandler
+0x0039  MONSTER_BOOK_COVER      # MonsterBookCoverHandler：写图鉴封面（写库）
+0x002B  USE_CHAIR               # UseChairHandler
+0x0065  USE_INNER_PORTAL        # InnerPortalHandler：改地图
+0x0085  USE_DOOR                # DoorHandler：改地图
+0x004B  USE_SUMMON_BAG          # UseSummonBagHandler
+0x004C  PET_FOOD                # PetFoodHandler
+0x004D  USE_MOUNT_FOOD          # UseMountFoodHandler
+0x0071  MAKER_SKILL             # MakerSkillHandler：制造（扣材料/发成品）
+0x00A1  CASHSHOP_SURPRISE       # CashShopSurpriseHandler
+0x0079  SPOUSE_CHAT             # SpouseChatHandler
