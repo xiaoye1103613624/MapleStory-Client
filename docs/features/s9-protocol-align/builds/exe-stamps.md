@@ -11,7 +11,9 @@
 | 2026-10-30 23:23:01 | `0x6ae4b655` | `9de6ba1b7182b0e5` | `2c3ee42a9acf6fd6` | `GATE OK` / EXITCODE=0 | UIEvent 越界修复 + 0x004D 改按 yellow tip 路由的第一版 | ❌ 被 23:34 覆盖（**仅注释差异**，代码相同；见下一行） |
 | 2026-10-30 23:34:09 | `0x6ae4b8f0` | `db0570832a0cec04` | `709204e48f3759fd` | `GATE OK` / EXITCODE=0 | 同上 + 注释订正（`notes/crash-chatbar.md` §8）⇒ 会话 #5 所用构建 | ✅ 已快照 `E:\MXD\_build_snapshots\20261030-2334_uievent-oob-fix-final\`（exe+pdb，仓库外） |
 | 2026-10-31 00:09:25 | `0x6ae4c134` | `1ef806775e8c4639` | `714309b476a42736` | `GATE OK` / EXITCODE=0 | 聊天栏回车收框 + classic 行文字错位修复（`notes/crash-chatbar.md` §9）⇒ **仅编译链接验证，未部署**：客户端在线，`OutDir` 就是运行目录，覆盖不了 exe | ❌ 同一份源码 3 分钟后正式部署为 `0x6ae4c1fd`，暂存目录 `build_validate/` 已删 |
-| 2026-10-31 00:12:45 | `0x6ae4c1fd` | `8d3f221c83658b46` | `15c96673fb5b3cd7` | `GATE OK` / EXITCODE=0 | 同上（退出客户端后正式部署）⇒ **当前部署中的构建**；真机验证见 `notes/crash-chatbar.md` §9.5 | ✅ 已快照 `E:\MXD\_build_snapshots\20261031-0012_chatbar-classic-layout\`（exe+pdb，仓库外） |
+| 2026-10-31 00:12:45 | `0x6ae4c1fd` | `8d3f221c83658b46` | `15c96673fb5b3cd7` | `GATE OK` / EXITCODE=0 | 同上（退出客户端后正式部署）⇒（当时）当前部署中的构建；已被 2026-11-01 14:16 的全量 `-t:Rebuild` 取代；真机验证见 `notes/crash-chatbar.md` §9.5 | ✅ 已快照 `E:\MXD\_build_snapshots\20261031-0012_chatbar-classic-layout\`（exe+pdb，仓库外） |
+| 2026-11-01 06:04 | 未解出（exe 已被 14:16 覆盖） | md5 `942cd202ff87af200fb47b28e2863870`（4,340,224 B） | 未登记 | `GATE OK` / EXITCODE=0 | J 段中途构建（增量），CHECKLIST §J.5 曾以此登记 | ❌ 已覆盖，PDB 亦不可解偏移 |
+| 2026-11-01 14:16:01 | `0x6ae6d920` | `d109e1ef979281a1` | `053fcf044d537ae1` | `GATE OK` / EXITCODE=0，0 error | **全量 `-t:Rebuild`**（md5 `9636f77b4030ab4d9a85379cb0694911`，4,419,584 B）⇒ R26 脏 obj 修复后的当前部署构建；J1–J8 全部玩法改动都在这一份里，门禁与脏 obj 复核见 `../../beidou-v17-parity/notes/r807-j8-rebuild-gate.md` | ❌ 未快照；如需保留 PDB，按下方规则复制到 `E:\MXD\_build_snapshots\` |
 
 - `TimeDateStamp` 读法：`e_lfanew = u32@0x3C`，然后 `u32@(e_lfanew + 8)`（COFF FileHeader 字段）。
   ⚠ 别从 OptionalHeader 里找它——`tools/symbolize_offset.py` 早期版本就是这么错的。
