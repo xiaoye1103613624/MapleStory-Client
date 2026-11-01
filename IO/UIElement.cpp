@@ -37,6 +37,27 @@ namespace ms
 		);
 	}
 
+	void UIElement::anchor_right_of(const UIElement& host, int16_t gap)
+	{
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		int16_t x = static_cast<int16_t>(host.position.x() + host.dimension.x() + gap);
+		int16_t y = host.position.y();
+
+		if (static_cast<int32_t>(x) + dimension.x() > vieww)
+			x = static_cast<int16_t>(host.position.x() - dimension.x() - gap);
+
+		if (x < 0)
+			x = 0;
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(viewh - dimension.y());
+		if (y < 0)
+			y = 0;
+
+		position = Point<int16_t>(x, y);
+	}
+
 	void UIElement::draw(float alpha) const
 	{
 		draw_sprites(alpha);

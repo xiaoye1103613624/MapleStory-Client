@@ -19,6 +19,10 @@
 
 #include "Button.h"
 
+#include <map>
+#include <memory>
+#include <string>
+
 namespace ms
 {
 	// A standard MapleStory button with 4 states and a texture for each state
@@ -40,4 +44,20 @@ namespace ms
 		Texture textures[Button::State::NUM_STATES];
 		Animation animations[Button::State::NUM_STATES];
 	};
+
+	// Sentinel meaning "the caller never said where this button goes".
+	// Historically every such button fell back to (0,0) and stacked on top of the
+	// window title, which reads as "button missing / button in the wrong corner".
+	// Skipping + logging makes the missing layout data visible instead.
+	Point<int16_t> maple_btn_nopos();
+
+	/// Returns true when the button was created. Missing asset or missing
+	/// position => not created, plus one diagnostic line per distinct site.
+	///
+	/// `position` is the sprite's **top-left**, not its anchor: MapleButton treats
+	/// its own position as the anchor (draw = pos - origin), so the normal-state
+	/// origin is added back here. Layout tables can then be read straight off
+	/// screenshots and asset extents.
+	bool try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src,
+		Point<int16_t> position = maple_btn_nopos(), const std::string& site = std::string());
 }

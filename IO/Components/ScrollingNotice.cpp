@@ -65,8 +65,13 @@ namespace ms
 
 			auto xmin = static_cast<double>(-notice.width());
 
+			// 原生行为：公告文字完整滚出左边界后，连同 23px 全宽黑底一起消失。
+			// 旧实现把 xpos 绕回右边界、active 永远为真，于是登录后一条
+			// 「Welcome to Scania!」就让屏幕顶部 0..22 变成永久半透明黑条
+			// （参考端同一位置是天空 (255,238,221)，本端被压成 (119,111,103)），
+			// 并把落进该区间的一切 UI 一起压暗——小地图标题栏只是最先被发现的那个。
 			if (xpos.last() < xmin)
-				xpos.set(static_cast<double>(width));
+				active = false;
 		}
 	}
 }

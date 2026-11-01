@@ -21,10 +21,8 @@ namespace ms
 {
 	StatefulIcon::StatefulIcon(std::unique_ptr<Type> type, Texture ntx, Texture dtx, Texture motx) : Icon(std::move(type), ntx, -1)
 	{
-		ntx.shift(Point<int16_t>(0, 32));
-		dtx.shift(Point<int16_t>(0, 32));
-		motx.shift(Point<int16_t>(0, 32));
-
+		// 与 Icon 基类一致：本包图标 origin 都是小值，不做 (0,32) 下移，
+		// 否则三态贴图与基类 texture 的锚点会互相错开（详见 Icon.cpp 构造注释）。
 		textures[State::NORMAL] = ntx;
 		textures[State::DISABLED] = dtx;
 		textures[State::MOUSEOVER] = motx;

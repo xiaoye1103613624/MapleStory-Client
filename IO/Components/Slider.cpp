@@ -39,13 +39,13 @@ namespace ms
 			src = status_root["chat"]["common"]["scroll"];
 
 			// v83: chat scroll lives under Basic.img VScr (StatusBar.img has no chat/common).
-			if (!src)
+			if (!UiAssetResolve::usable(src))
 				src = nl::nx::UI["Basic.img"]["VScr5"];
 
-			if (!src)
+			if (!UiAssetResolve::usable(src))
 				src = nl::nx::UI["Basic.img"]["VScr"];
 
-			if (status_root["chat"]["common"]["scroll"])
+			if (UiAssetResolve::usable(status_root["chat"]["common"]["scroll"]))
 				base_str += "_c";
 		}
 		else
@@ -56,6 +56,18 @@ namespace ms
 				VScr += std::to_string(type);
 
 			src = nl::nx::UI["Basic.img"][VScr];
+
+			// The enum was copied from a newer asset generation: DEFAULT_SILVER is 9,
+			// but this pack only ships VScr..VScr8, so every scrollbar used to resolve
+			// to an empty node and disappear.
+			// 兜底根由 VScr 改成 VScr5：背包栏（折叠）.png / 任务窗 截图里，原生滚动条是
+			// 「白框灰底圆角箭头钮 + 实心浅灰轨道」（VScr5 的 prev0/base 逐块比对一致），
+			// 而 VScr 的 base 是一条虚线轨道，属于另一代资产。聊天栏早已单独用 VScr5。
+			if (!UiAssetResolve::usable(src))
+			{
+				UiAssetResolve::diag_once("slider " + VScr, "not in Basic.img, clamped to VScr5");
+				src = nl::nx::UI["Basic.img"]["VScr5"];
+			}
 		}
 
 		nl::node dsrc = src["disabled"];
@@ -73,6 +85,13 @@ namespace ms
 		next = TwoSpriteButton(esrc["next0"], esrc["next1"], end);
 
 		thumb = TwoSpriteButton(esrc["thumb0"], esrc["thumb1"]);
+
+		// 命中宽度取滑块位图的真实宽度：VScr5 的 thumb 是 15x25，原先写死 8，
+		// 于是右半块按不住（表现为"滑块点不动"）。缺资源时退回 8 保持旧行为。
+		// 注意 nl::node 没有 get_dimensions()（那是 Texture 的接口），位图尺寸走 get_bitmap()。
+		thumbwidth = static_cast<int16_t>(esrc["thumb0"].get_bitmap().width());
+		if (thumbwidth <= 0)
+			thumbwidth = 8;
 
 		buttonheight = dnext.get_dimensions().y();
 
@@ -97,13 +116,23 @@ namespace ms
 	void Slider::setrows(int16_t nr, int16_t ur, int16_t rm)
 	{
 		rowmax = rm - ur;
+		recalc_rowheight();
+		row = nr;
+	}
 
+	void Slider::recalc_rowheight()
+	{
 		if (rowmax > 0)
 			rowheight = (vertical.length() - buttonheight * 2) / rowmax;
 		else
 			rowheight = 0;
 
-		row = nr;
+		// 可滚但步长被整除成 0 时，原先 rowheight==0 会被 draw() 当成"没得滚"，
+		// 于是长列表（行数 > 轨道像素）滑块直接消失，只剩两个灰箭头，而且
+		// send_cursor 里 yoffset / rowheight 会除零。列表越长越要看得见滑块，
+		// 所以这里保底 1px：滑块贴边逐行挪，不再整块不见。
+		if (rowmax > 0 && rowheight < 1)
+			rowheight = 1;
 	}
 
 	void Slider::setrows(int16_t ur, int16_t rm)
@@ -119,10 +148,7 @@ namespace ms
 		prev.set_position(start);
 		next.set_position(end);
 
-		if (rowmax > 0)
-			rowheight = (vertical.length() - buttonheight * 2) / rowmax;
-		else
-			rowheight = 0;
+		recalc_rowheight();
 	}
 
 	Range<int16_t> Slider::getvertical() const
@@ -222,7 +248,7 @@ namespace ms
 				scrolling = false;
 			}
 		}
-		else if (relative.x() < 0 || relative.y() < 0 || relative.x() > 8 || relative.y() > vertical.second())
+		else if (relative.x() < 0 || relative.y() < 0 || relative.x() > thumbwidth || relative.y() > vertical.second())
 		{
 			thumb.set_state(Button::State::NORMAL);
 			next.set_state(Button::State::NORMAL);

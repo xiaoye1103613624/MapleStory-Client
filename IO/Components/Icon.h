@@ -49,6 +49,11 @@ namespace ms
 			virtual void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const = 0;
 			virtual void set_count(int16_t) = 0;
 			virtual IconType get_type() = 0;
+			// Optional inventory identity for drop targets (Hammer / Vega / etc.)
+			virtual int16_t get_inventory_slot() const { return 0; }
+			virtual int32_t get_item_id() const { return 0; }
+			virtual InventoryType::Id get_inventory_tab() const { return InventoryType::Id::NONE; }
+			virtual int32_t get_skill_id() const { return 0; }
 		};
 
 		class NullType : public Type
@@ -70,6 +75,10 @@ namespace ms
 		void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const;
 		void set_count(int16_t count);
 		IconType get_type();
+		int16_t get_inventory_slot() const;
+		int32_t get_item_id() const;
+		InventoryType::Id get_inventory_tab() const;
+		int32_t get_skill_id() const;
 
 		void draw(Point<int16_t> position) const;
 		void dragdraw(Point<int16_t> cursorpos) const;

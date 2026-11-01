@@ -44,6 +44,9 @@ namespace ms
 		/// CLIP 模式下从纹理的 clip_left 起裁出填充（MP 条用中段）。
 		void set_clip_left(int16_t left) { clip_left = left; }
 
+		/// 平滑后的百分比（classic 量规自行分段绘制时需要知道已填充宽度）。
+		float get_percentage() const { return percentage; }
+
 	private:
 		Texture barfront;
 		Texture barmid;

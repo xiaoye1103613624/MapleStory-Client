@@ -17,8 +17,41 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "MapleButton.h"
 
+#include "../../Graphics/Texture.h"
+#include "../../Util/UiAssetResolve.h"
+
 namespace ms
 {
+	Point<int16_t> maple_btn_nopos()
+	{
+		return Point<int16_t>(-32768, -32768);
+	}
+
+	bool try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src,
+		Point<int16_t> position, const std::string& site)
+	{
+		if (!UiAssetResolve::usable(src))
+			return false;
+
+		if (position.x() == -32768 && position.y() == -32768)
+		{
+			UiAssetResolve::diag_once("maplebtn no-position " + site + " id=" + std::to_string(id),
+				"node=" + src.name() + " -> skipped instead of stacking at (0,0)");
+			return false;
+		}
+
+		Point<int16_t> origin;
+
+		if (UiAssetResolve::usable(src["normal"]["0"]))
+			origin = Texture(src["normal"]["0"]).get_origin();
+
+		buttons[id] = std::make_unique<MapleButton>(
+			src,
+			Point<int16_t>(static_cast<int16_t>(position.x() + origin.x()), static_cast<int16_t>(position.y() + origin.y()))
+		);
+		return true;
+	}
+
 	MapleButton::MapleButton(nl::node src, Point<int16_t> pos)
 	{
 		nl::node normal = src["normal"];

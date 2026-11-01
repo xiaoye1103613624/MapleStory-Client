@@ -76,6 +76,7 @@ namespace ms
 
 	private:
 		Point<int16_t> getthumbpos() const;
+		void recalc_rowheight();
 
 		std::function<void(bool upwards)> onmoved;
 
@@ -85,6 +86,7 @@ namespace ms
 		int16_t type;
 		int16_t buttonheight;
 		int16_t rowheight;
+		int16_t thumbwidth;
 		int16_t x;
 		int16_t row;
 		int16_t rowmax;
