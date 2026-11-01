@@ -36,7 +36,10 @@ namespace ms
 
 	std::unique_ptr<MapObject> NpcSpawn::instantiate(const Physics& physics) const
 	{
-		auto spawnposition = physics.get_y_below(position);
+		// 走服务端声明的 fh，而不是按坐标反查：NPC 包 y 槽是 wz 的 cy（实测比平台线低 5~17px），
+		// get_y_below 会挑到下面一层平台，NPC 就"站到路下面"去了；反查不到时被丢到地图边界外，
+		// 表现为 NPC 不见了。怪物包传的是真 y，所以一直是好的——这里跟怪物对齐。
+		auto spawnposition = physics.get_spawn_point(position, fh);
 		return std::make_unique<Npc>(id, oid, flip, fh, false, spawnposition);
 	}
 
@@ -55,6 +58,31 @@ namespace ms
 	std::unique_ptr<MapObject> MobSpawn::instantiate() const
 	{
 		return std::make_unique<Mob>(oid, id, mode, stance, fh, newspawn, team, position);
+	}
+
+	int8_t MobSpawn::get_stance() const
+	{
+		return stance;
+	}
+
+	uint16_t MobSpawn::get_fh() const
+	{
+		return fh;
+	}
+
+	int8_t MobSpawn::get_team() const
+	{
+		return team;
+	}
+
+	bool MobSpawn::is_newspawn() const
+	{
+		return newspawn;
+	}
+
+	Point<int16_t> MobSpawn::get_position() const
+	{
+		return position;
 	}
 
 	ReactorSpawn::ReactorSpawn(int32_t o, int32_t r, int8_t s, Point<int16_t> p) : oid(o), rid(r), state(s), position(p) {}

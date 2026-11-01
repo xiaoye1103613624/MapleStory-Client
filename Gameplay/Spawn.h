@@ -49,6 +49,12 @@ namespace ms
 
 		int8_t get_mode() const;
 		int32_t get_oid() const;
+		// 同 oid 重新下发时这些字段要覆盖到已有对象上（服务端换控制器发的是整包 spawn）
+		int8_t get_stance() const;
+		uint16_t get_fh() const;
+		int8_t get_team() const;
+		bool is_newspawn() const;
+		Point<int16_t> get_position() const;
 		std::unique_ptr<MapObject> instantiate() const;
 
 	private:

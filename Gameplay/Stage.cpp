@@ -82,6 +82,7 @@ namespace ms
 		mobs.clear();
 		drops.clear();
 		reactors.clear();
+		field_markers.clear();
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -145,6 +146,7 @@ namespace ms
 			chars.draw(id, viewx, viewy, alpha);
 			player.draw(id, viewx, viewy, alpha);
 			drops.draw(id, viewx, viewy, alpha);
+			field_markers.draw(id, viewx, viewy, alpha);
 		}
 
 		combat.draw(viewx, viewy, alpha);
@@ -168,6 +170,7 @@ namespace ms
 		mobs.update(physics);
 		chars.update(physics);
 		drops.update(physics);
+		field_markers.update(physics);
 		player.update(physics);
 
 		portals.update(player.get_position());
@@ -335,6 +338,11 @@ namespace ms
 		return drops;
 	}
 
+	MapFieldMarkers& Stage::get_field_markers()
+	{
+		return field_markers;
+	}
+
 	Player& Stage::get_player()
 	{
 		return player;
@@ -361,6 +369,16 @@ namespace ms
 	void Stage::add_effect(std::string path)
 	{
 		effect = MapEffect(path);
+	}
+
+	void Stage::clear_effect()
+	{
+		effect = MapEffect();
+	}
+
+	Camera& Stage::get_camera()
+	{
+		return camera;
 	}
 
 	int64_t Stage::get_uptime()

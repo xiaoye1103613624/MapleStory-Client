@@ -39,6 +39,9 @@ namespace ms
 		// Determine which platform the object is currently on
 		fht.update_fh(phobj);
 
+		// 履带位移每 tick 重算：先清零，避免离地/换类型后残留上一 tick 的推送量。
+		phobj.hbelt = 0.0;
+
 		// Use the appropriate physics for the terrain the object is on
 		switch (phobj.type)
 		{
@@ -72,6 +75,11 @@ namespace ms
 		{
 			phobj.vacc += phobj.vforce;
 			phobj.hacc += phobj.hforce;
+
+			// 履带：foothold 的 force 单位取 px/s，按本客户端 Constants::TIMESTEP(8ms) 折算成
+			// 每 tick 位移。只走 hbelt，不进 hspeed，否则会被 GROUNDSLIP 摩擦项一路吃掉。
+			if (phobj.fhforce != 0)
+				phobj.hbelt = phobj.fhforce * Constants::TIMESTEP / 1000.0;
 
 			if (phobj.hacc == 0.0 && phobj.hspeed < 0.1 && phobj.hspeed > -0.1)
 			{
@@ -150,6 +158,11 @@ namespace ms
 		int16_t ground = fht.get_y_below(position);
 
 		return Point<int16_t>(position.x(), ground - 1);
+	}
+
+	Point<int16_t> Physics::get_spawn_point(Point<int16_t> position, uint16_t fhid) const
+	{
+		return fht.get_spawn_point(position, fhid);
 	}
 
 	const FootholdTree& Physics::get_fht() const

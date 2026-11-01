@@ -181,6 +181,7 @@ namespace ms
 
 		const Foothold& nextfh = get_fh(phobj.fhid);
 		phobj.fhslope = nextfh.slope();
+		phobj.fhforce = nextfh.force();
 
 		double ground = nextfh.ground_below(x);
 
@@ -351,11 +352,21 @@ namespace ms
 		}
 	}
 
+	Point<int16_t> FootholdTree::get_spawn_point(Point<int16_t> position, uint16_t fhid) const
+	{
+		auto iter = footholds.find(fhid);
+
+		// fh 在本图不存在、或者指的是竖墙（ground_below 会对 0 宽做除法）时退回按坐标反查。
+		if (iter == footholds.end() || iter->second.is_wall())
+			return Point<int16_t>(position.x(), get_y_below(position));
+
+		return Point<int16_t>(position.x(), static_cast<int16_t>(iter->second.ground_below(position.x())));
+	}
+
 	Range<int16_t> FootholdTree::get_walls() const
 	{
 		return walls;
 	}
-
 	Range<int16_t> FootholdTree::get_borders() const
 	{
 		return borders;

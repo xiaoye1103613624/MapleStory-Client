@@ -38,6 +38,11 @@ namespace ms
 		void update_fh(PhysicsObject& touse) const;
 		// Determine the point on the ground below the specified position
 		int16_t get_y_below(Point<int16_t> position) const;
+		// 把 life 放到它自己声明的那块 foothold 上（fh 来自服务端 spawn 包）。
+		// 不能复用 get_y_below：包里 y 槽传的是 wz 的 cy，实测比平台线低 5~17px，
+		// 按坐标反查要求 ground >= y，会把正下方那块平台判成"不够低"而选到下一层，
+		// NPC 于是"跑到路下面"；再找不到就退到 borders 之外，表现为 NPC 不见了。
+		Point<int16_t> get_spawn_point(Point<int16_t> position, uint16_t fhid) const;
 		// Returns the leftmost and rightmost platform positions of the map
 		Range<int16_t> get_walls() const;
 		// Returns the topmost and bottommost platform positions of the map

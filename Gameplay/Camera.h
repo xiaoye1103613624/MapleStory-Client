@@ -38,6 +38,8 @@ namespace ms
 		void set_position(Point<int16_t> position);
 		// Updates the view's boundaries. Determined by mapinfo or footholds.
 		void set_view(Range<int16_t> hborders, Range<int16_t> vborders);
+		// Start a short screen tremble (FieldEffect mode 1). duration_ms≈delay from packet.
+		void tremble(int8_t type, int32_t duration_ms);
 		// Return the current position.
 		Point<int16_t> position() const;
 		// Return the interpolated position.
@@ -56,5 +58,8 @@ namespace ms
 
 		int16_t VWIDTH;
 		int16_t VHEIGHT;
+
+		int32_t tremble_remain = 0;
+		int8_t tremble_type = 0;
 	};
 }

@@ -19,6 +19,8 @@
 
 #include "../Constants.h"
 
+#include <cstdlib>
+
 namespace ms
 {
 	Camera::Camera()
@@ -28,6 +30,20 @@ namespace ms
 
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
+	}
+
+	void Camera::tremble(int8_t type, int32_t duration_ms)
+	{
+		tremble_type = type;
+		// Packet delay is often seconds; clamp to a short visible shake window.
+		int32_t ms = duration_ms;
+		if (ms > 0 && ms < 50)
+			ms *= 1000;
+		if (ms <= 0)
+			ms = 400;
+		if (ms > 2000)
+			ms = 2000;
+		tremble_remain = ms;
 	}
 
 	void Camera::update(Point<int16_t> position)
@@ -62,6 +78,17 @@ namespace ms
 			next_y = vbounds.first();
 		else if (next_y < vbounds.second() + VHEIGHT)
 			next_y = vbounds.second() + VHEIGHT;
+
+		if (tremble_remain > 0)
+		{
+			int amp = tremble_type != 0 ? 8 : 4;
+			next_x += static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
+			next_y += static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
+			// ~16ms/frame
+			tremble_remain -= 16;
+			if (tremble_remain < 0)
+				tremble_remain = 0;
+		}
 
 		x = next_x;
 		y = next_y;

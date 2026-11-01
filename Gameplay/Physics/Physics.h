@@ -32,6 +32,8 @@ namespace ms
 		void move_object(PhysicsObject& tomove) const;
 		// Determine the point on the ground below the specified position
 		Point<int16_t> get_y_below(Point<int16_t> position) const;
+		// Place a life object on the foothold the server declared for it
+		Point<int16_t> get_spawn_point(Point<int16_t> position, uint16_t fhid) const;
 		// Return a reference to the collection of platforms
 		const FootholdTree& get_fht() const;
 

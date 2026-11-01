@@ -33,6 +33,8 @@ namespace ms
 		Linear<double> y;
 		double hspeed = 0.0;
 		double vspeed = 0.0;
+		// 履带位移：每 tick 直接叠加在 x 上，不进入 hspeed/摩擦，避免被 GROUNDSLIP 吃掉。
+		double hbelt = 0.0;
 
 		void normalize()
 		{
@@ -42,7 +44,7 @@ namespace ms
 
 		void move()
 		{
-			x += hspeed;
+			x += hspeed + hbelt;
 			y += vspeed;
 		}
 
@@ -198,6 +200,8 @@ namespace ms
 		int32_t flags = 0;
 		uint16_t fhid = 0;
 		double fhslope = 0.0;
+		// 当前落脚点的履带速度（px/s，带符号），由 FootholdTree::update_fh 缓存，同 fhslope。
+		int16_t fhforce = 0;
 		int8_t fhlayer = 0;
 		double groundbelow = 0.0;
 		bool onground = true;

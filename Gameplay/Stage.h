@@ -21,6 +21,7 @@
 #include "MapleMap/MapBackgrounds.h"
 #include "MapleMap/MapDrops.h"
 #include "MapleMap/MapEffect.h"
+#include "MapleMap/MapFieldMarkers.h"
 #include "MapleMap/MapNpcs.h"
 #include "MapleMap/MapPortals.h"
 #include "MapleMap/MapTilesObjs.h"
@@ -72,6 +73,8 @@ namespace ms
 		MapReactors& get_reactors();
 		// Returns a reference to the drops on the current map
 		MapDrops& get_drops();
+		// Field placeholders (summon/mist/door/kite/dragon) until full sprites
+		MapFieldMarkers& get_field_markers();
 		// Returns a reference to the Player
 		Player& get_player();
 		// Return a reference to the attack and buff component
@@ -84,6 +87,10 @@ namespace ms
 
 		// Set a map effect
 		void add_effect(std::string path);
+		// Clear screen map effect
+		void clear_effect();
+		// Camera (tremble / view)
+		Camera& get_camera();
 
 		// Get the total up time of the client
 		int64_t get_uptime();
@@ -127,6 +134,7 @@ namespace ms
 		MapChars chars;
 		MapMobs mobs;
 		MapDrops drops;
+		MapFieldMarkers field_markers;
 		MapEffect effect;
 
 		Combat combat;

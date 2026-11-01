@@ -87,12 +87,15 @@ namespace ms
 		double slope() const;
 		// Returns a y-coordinate right below the given x-coordinate
 		double ground_below(double x) const;
+		// 履带速度（foothold 的 force 属性，单位 px/s，符号即滚动方向）。非履带为 0。
+		int16_t force() const;
 
 	private:
 		uint16_t m_id;
 		uint16_t m_prev;
 		uint16_t m_next;
 		uint8_t m_layer;
+		int16_t m_force;
 		Range<int16_t> m_horizontal;
 		Range<int16_t> m_vertical;
 	};
