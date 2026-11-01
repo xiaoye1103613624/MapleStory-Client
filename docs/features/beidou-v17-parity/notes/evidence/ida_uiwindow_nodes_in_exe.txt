@@ -1,0 +1,9 @@
+PartyRace	8
+Maker	5
+DualMobGauge	4
+Quest	3
+CashGachapon	3
+ViciousHammer	2
+VegaSpell	2
+ToolTip	2
+UserList	1

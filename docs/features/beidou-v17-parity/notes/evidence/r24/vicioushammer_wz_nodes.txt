@@ -1,0 +1,36 @@
+﻿===== UIWindow.img/ViciousHammer
+ViciousHammer [null]
+  BtCancel [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtStart [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  EffectE [null]
+    0 [bitmap] bitmap 172x86
+    1 [bitmap] bitmap 172x86
+    10 [bitmap] bitmap 172x86
+    11 [bitmap] bitmap 172x86
+    12 [bitmap] bitmap 172x86
+    13 [bitmap] bitmap 172x86
+    2 [bitmap] bitmap 172x86
+    3 [bitmap] bitmap 172x86
+    4 [bitmap] bitmap 172x86
+    5 [bitmap] bitmap 172x86
+    6 [bitmap] bitmap 172x86
+    7 [bitmap] bitmap 172x86
+    8 [bitmap] bitmap 172x86
+    9 [bitmap] bitmap 172x86
+  EffectP [null]
+    0 [bitmap] bitmap 51x51
+    1 [bitmap] bitmap 51x51
+    2 [bitmap] bitmap 51x51
+  GaugeBar [null]
+    bar [bitmap] bitmap 164x17
+    gauge [bitmap] bitmap 1x9
+  backgrnd [bitmap] bitmap 178x206
+    origin [vector] (877087568, 43859)

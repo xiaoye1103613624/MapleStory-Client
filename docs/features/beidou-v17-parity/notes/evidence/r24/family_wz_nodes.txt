@@ -1,0 +1,52 @@
+﻿===== UIWindow.img/Family
+Family [null]
+  BtClose [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtFamilyPrecept [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtJuniorEntry [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtLeft [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtOK [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtRight [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtSpecial [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtTree [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  RightIcon [null]
+    0 [bitmap] bitmap 32x31
+    1 [bitmap] bitmap 32x31
+    2 [bitmap] bitmap 32x31
+    3 [bitmap] bitmap 32x31
+    4 [bitmap] bitmap 32x32
+    type [null]
+  backgrnd [bitmap] bitmap 224x392
+    origin [vector] (877087568, 43859)
+    z [int] 0

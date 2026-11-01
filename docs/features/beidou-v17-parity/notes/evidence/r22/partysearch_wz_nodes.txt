@@ -1,0 +1,101 @@
+﻿===== UIWindow.img/PartySearch
+PartySearch [null]
+  BtCancel [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x18
+    mouseOver [null]
+      0 [bitmap] bitmap 47x18
+    normal [null]
+      0 [bitmap] bitmap 47x18
+    pressed [null]
+      0 [bitmap] bitmap 47x18
+  BtPause [null]
+    disabled [null]
+      0 [bitmap] bitmap 63x18
+    mouseOver [null]
+      0 [bitmap] bitmap 63x18
+    normal [null]
+      0 [bitmap] bitmap 63x18
+    pressed [null]
+      0 [bitmap] bitmap 63x18
+  BtReg [null]
+    disabled [null]
+      0 [bitmap] bitmap 47x18
+    mouseOver [null]
+      0 [bitmap] bitmap 47x18
+    normal [null]
+      0 [bitmap] bitmap 47x18
+    pressed [null]
+      0 [bitmap] bitmap 47x18
+  BtStart [null]
+    disabled [null]
+      0 [bitmap] bitmap 63x18
+    mouseOver [null]
+      0 [bitmap] bitmap 63x18
+    normal [null]
+      0 [bitmap] bitmap 63x18
+    pressed [null]
+      0 [bitmap] bitmap 63x18
+  BtStop [null]
+    disabled [null]
+      0 [bitmap] bitmap 63x18
+    mouseOver [null]
+      0 [bitmap] bitmap 63x18
+    normal [null]
+      0 [bitmap] bitmap 63x18
+    pressed [null]
+      0 [bitmap] bitmap 63x18
+  Party [null]
+    party0 [bitmap] bitmap 281x27
+      origin [vector] (877087568, 43859)
+    party1 [bitmap] bitmap 283x41
+      origin [vector] (877087568, 43859)
+    party2 [bitmap] bitmap 156x18
+      origin [vector] (877087568, 43859)
+    party3 [bitmap] bitmap 48x11
+      origin [vector] (877087568, 43859)
+  PartyMember [null]
+    party0 [bitmap] bitmap 281x27
+      origin [vector] (877087568, 43859)
+    party1 [bitmap] bitmap 283x41
+      origin [vector] (877087568, 43859)
+    party2 [bitmap] bitmap 269x18
+      origin [vector] (877087568, 43859)
+    party3 [bitmap] bitmap 276x16
+      origin [vector] (877087568, 43859)
+    party4 [bitmap] bitmap 287x187
+      origin [vector] (877087568, 43859)
+  Tab [null]
+    disabled [null]
+      0 [bitmap] bitmap 26x14
+      1 [bitmap] bitmap 45x14
+    enabled [null]
+      0 [bitmap] bitmap 28x15
+      1 [bitmap] bitmap 47x15
+  backgrnd [bitmap] bitmap 305x407
+    origin [vector] (877087568, 43859)
+  check0 [bitmap] bitmap 12x12
+    origin [vector] (877087568, 43859)
+  check1 [bitmap] bitmap 12x12
+    origin [vector] (877087568, 43859)
+  icon0 [null]
+    0 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    1 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    2 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    3 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    4 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+    5 [bitmap] bitmap 32x32
+      delay [int] 90
+      origin [vector] (877087568, 43859)
+  icon1 [bitmap] bitmap 32x32
+    origin [vector] (877087568, 43859)

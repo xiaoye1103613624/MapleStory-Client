@@ -1,0 +1,44 @@
+int __thiscall sub_8DE7DA(_DWORD *this, int a2, int a3, int a4)
+{
+  int v5; // eax
+  int v6; // ecx
+  int v7; // edx
+  int v8; // ecx
+  int v10; // [esp+18h] [ebp+10h]
+
+  if ( *(_DWORD *)(dword_BEC20C + 116) != 0 ) /*0x8de7ea*/
+    v5 = **(_DWORD **)(dword_BEC20C + 124); /*0x8de7ef*/
+  else
+    v5 = 0; /*0x8de7f3*/
+  v10 = sub_9E01E7(a1: a2, a2: a3, a3: (this != nullptr ? (unsigned int)(this + 1) : 0) != v5 ? a4 : 0);
+  if ( v10 != 2 ) /*0x8de81d*/
+    return v10; /*0x8de81d*/
+  v6 = *(this + 712); /*0x8de823*/
+  v7 = 507; /*0x8de830*/
+  if ( v6 != 0 && *(_DWORD *)(v6 + 76) != 0 ) /*0x8de838*/
+    v7 = -16 * *(_DWORD *)(v6 + 60); /*0x8de83f*/
+  v8 = 507 - *(this + 831); /*0x8de844*/
+  if ( v7 >= v8 ) /*0x8de84c*/
+    v7 = 507 - *(this + 831); /*0x8de84e*/
+  if ( a2 < 580 && *(this + 832) == 1 && a3 < 507 /*0x8de894*/
+    || a2 < 80 && a3 < v7 && *(this + 749) == 0
+    || a2 > 80 && a2 < 580 && a3 < v8 && *(this + 749) == 0 )
+  {
+    return 0; /*0x8de894*/
+  }
+  if ( a2 > 647 ) /*0x8de89d*/
+  {
+    if ( *(this + 836) != 0 ) /*0x8de8a7*/
+    {
+      if ( a3 >= 427 ) /*0x8de8b0*/
+        goto LABEL_25; /*0x8de8b0*/
+      return 0; /*0x8de8c8*/
+    }
+    if ( a3 < 507 ) /*0x8de8b9*/
+      return 0; /*0x8de8b9*/
+  }
+LABEL_25:
+  if ( a2 > 580 && a2 < 647 && a3 < 507 ) /*0x8de8c6*/
+    return 0; /*0x8de8c6*/
+  return v10; /*0x8de8cf*/
+}

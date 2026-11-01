@@ -1,0 +1,10 @@
+# r300 — CLOCK / WEATHER / CONTI / OBSTACLE / GRENADE
+
+- CLOCK(147) type1 时分秒 / type2 倒计时；STOP_CLOCK(154)
+- BLOW_WEATHER(142) map effect tip
+- GMEVENT_INSTRUCTIONS(146)
+- CONTI_MOVE(148) / CONTI_STATE(149) 船状态 tip
+- FIELD_OBSTACLE_ONOFF(139) / LIST(140) / ALL_RESET(141)
+- THROW_GRENADE(204) 解析 6×int（视觉后续）
+
+产物：`E:\MXD\BeiDou-Client-xy\MapleStory.exe`

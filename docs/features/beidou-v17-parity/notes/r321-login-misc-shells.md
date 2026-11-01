@@ -1,0 +1,6 @@
+# r321 — Login misc shells
+
+- ACCOUNT_INFO(2)、CHANNEL_SELECTED(20)、HACKSHIELD_REQUEST(21)
+- CHECK_CRC_RESULT(25)、KOREAN_INTERNET_CAFE(18) 落日志
+
+产物：`E:\MXD\BeiDou-Client-xy\MapleStory.exe`

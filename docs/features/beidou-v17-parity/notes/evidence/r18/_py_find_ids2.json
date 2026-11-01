@@ -1,0 +1,12 @@
+﻿{
+    "jsonrpc":  "2.0",
+    "id":  42,
+    "method":  "tools/call",
+    "params":  {
+                   "name":  "py_eval",
+                   "arguments":  {
+                                     "code":  "import idaapi, idautils, ida_funcs, idc, ida_search\nfrom collections import defaultdict\nids = [1000,1001,1002,1007,1005,1006,1009]\nhits = defaultdict(set)\nfor imm in ids:\n    ea = 0\n    while True:\n        ea = ida_search.find_imm(ea, ida_search.SEARCH_DOWN, imm)\n        if ea == idaapi.BADADDR:\n            break\n        f = ida_funcs.get_func(ea)\n        if f:\n            hits[f.start_ea].add(imm)\n        ea = idc.next_head(ea)\n        if ea == idaapi.BADADDR:\n            break\nranked = sorted(((len(v), k, sorted(v)) for k,v in hits.items()), reverse=True)\nout = []\nfor score, addr, found in ranked:\n    if score \u003e= 3:\n        name = idc.get_func_name(addr)\n        size = ida_funcs.get_func(addr).size()\n        out.append(\"%d %s %s size=%s ids=%s\" % (score, hex(addr), name, hex(size), found))\nprint(\"\\n\".join(out[:50]))",
+                                     "new_locals":  true
+                                 }
+               }
+}

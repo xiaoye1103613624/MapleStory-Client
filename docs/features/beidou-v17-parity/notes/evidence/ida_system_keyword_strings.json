@@ -1,0 +1,20 @@
+{
+  "Item": [
+    "/CashShop.img/CSItemSearch/Price"
+  ],
+  "Messenger": [
+    "CNMMessengerReplyEvent",
+    "CNMLoginMessengerFunc",
+    "CNMLogoutMessengerFunc"
+  ],
+  "PartySearch": [
+    "goPartySearch",
+    "indow.img/PartySearch/BtStop",
+    "indow.img/PartySearch/BtPause",
+    "indow.img/PartySearch/BtStart",
+    "indow.img/PartySearch/PartyMember",
+    "indow.img/PartySearch/icon1",
+    "indow.img/PartySearch/icon0/4",
+    "indow.img/PartySearch/icon0/3"
+  ]
+}

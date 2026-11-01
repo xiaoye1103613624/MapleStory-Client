@@ -1,0 +1,85 @@
+{
+  "result": [
+    {
+      "query": "0x84a4a0",
+      "fn": {
+        "addr": "0x84a49c",
+        "name": "sub_84A49C",
+        "size": "0x39"
+      },
+      "error": null
+    },
+    {
+      "query": "0x84aea4",
+      "fn": {
+        "addr": "0x84aea0",
+        "name": "sub_84AEA0",
+        "size": "0x39"
+      },
+      "error": null
+    },
+    {
+      "query": "0x88002c",
+      "fn": {
+        "addr": "0x87fdc9",
+        "name": "sub_87FDC9",
+        "size": "0x1498"
+      },
+      "error": null
+    },
+    {
+      "query": "0x89d84b",
+      "fn": {
+        "addr": "0x89d82f",
+        "name": "sub_89D82F",
+        "size": "0x482"
+      },
+      "error": null
+    },
+    {
+      "query": "0x8c540b",
+      "fn": {
+        "addr": "0x8c52d7",
+        "name": "sub_8C52D7",
+        "size": "0x186"
+      },
+      "error": null
+    },
+    {
+      "query": "0x8c6180",
+      "fn": {
+        "addr": "0x8c59ff",
+        "name": "sub_8C59FF",
+        "size": "0x11f2"
+      },
+      "error": null
+    },
+    {
+      "query": "0x8c7a4b",
+      "fn": {
+        "addr": "0x8c79f5",
+        "name": "sub_8C79F5",
+        "size": "0x547"
+      },
+      "error": null
+    },
+    {
+      "query": "0x8d3494",
+      "fn": {
+        "addr": "0x8d01b2",
+        "name": "sub_8D01B2",
+        "size": "0x392d"
+      },
+      "error": null
+    },
+    {
+      "query": "0x8dea5a",
+      "fn": {
+        "addr": "0x8de964",
+        "name": "sub_8DE964",
+        "size": "0x112"
+      },
+      "error": null
+    }
+  ]
+}

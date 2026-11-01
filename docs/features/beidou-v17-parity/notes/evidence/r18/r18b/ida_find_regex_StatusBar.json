@@ -1,0 +1,16 @@
+{
+  "n": 2,
+  "matches": [
+    {
+      "addr": "0xaf72e0",
+      "string": "UI/StatusBar.img/base/chatTarget"
+    },
+    {
+      "addr": "0xb3bab4",
+      "string": "UI/StatusBar.img/BtNPT"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

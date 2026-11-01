@@ -1,0 +1,12 @@
+{
+  "result": [
+    {
+      "pattern": "B5 BD D1 A1 D4 F1 B5 C4 CA C0 BD E7",
+      "matches": [],
+      "n": 0,
+      "cursor": {
+        "done": true
+      }
+    }
+  ]
+}

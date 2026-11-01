@@ -1,0 +1,50 @@
+{
+  "Maker": {
+    "addr": "0xb39260",
+    "string": "UI/UIWindow.img/Maker/GaugeBar/gauge",
+    "xref_n": 0,
+    "sample": []
+  },
+  "ViciousHammer": {
+    "addr": "0xb394e8",
+    "string": "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge",
+    "xref_n": 0,
+    "sample": []
+  },
+  "VegaSpell": {
+    "addr": "0xb395d4",
+    "string": "UI/UIWindow.img/VegaSpell/EffectArrow/0",
+    "xref_n": 0,
+    "sample": []
+  },
+  "CashGachapon": {
+    "addr": "0xb3de68",
+    "string": "UI/UIWindow.img/CashGachapon/EffectJackpot/16",
+    "xref_n": 0,
+    "sample": []
+  },
+  "GuildUnion": {
+    "addr": "0xb3c2dc",
+    "string": "UI/UIWindow.img/UserList/GuildUnion/backgrnd",
+    "xref_n": 0,
+    "sample": []
+  },
+  "UserList": {
+    "addr": "0xb3c2dc",
+    "string": "UI/UIWindow.img/UserList/GuildUnion/backgrnd",
+    "xref_n": 0,
+    "sample": []
+  },
+  "DualMobGauge": {
+    "addr": "0xaf4fbc",
+    "string": "UI/UIWindow.img/DualMobGauge/Mob/9700036",
+    "xref_n": 0,
+    "sample": []
+  },
+  "PartyRace": {
+    "addr": "0xaf4dd8",
+    "string": "UI/UIWindow.img/PartyRace/Stage/backgrd",
+    "xref_n": 0,
+    "sample": []
+  }
+}

@@ -1,0 +1,43 @@
+﻿===== UIWindow.img/Delivery
+Delivery [null]
+  Tab [null]
+    disabled [null]
+    enabled [null]
+  backgrnd [bitmap] bitmap 290x348
+    origin [vector] (877087568, 43859)
+  empty [bitmap] bitmap 143x18
+    origin [vector] (877087568, 43859)
+  icon0 [bitmap] bitmap 93x16
+    origin [vector] (877087568, 43859)
+  icon1 [bitmap] bitmap 65x16
+    origin [vector] (877087568, 43859)
+  icon2 [bitmap] bitmap 126x13
+    origin [vector] (877087568, 43859)
+  icon3 [bitmap] bitmap 80x16
+    origin [vector] (877087568, 43859)
+  icon4 [bitmap] bitmap 17x14
+    origin [vector] (877087568, 43859)
+  line0 [bitmap] bitmap 256x21
+    origin [vector] (877087568, 43859)
+  line1 [bitmap] bitmap 256x18
+    origin [vector] (877087568, 43859)
+  line2 [bitmap] bitmap 256x3
+    origin [vector] (877087568, 43859)
+  npc0 [bitmap] bitmap 48x76
+    origin [vector] (1656750080, 13)
+  npc1 [bitmap] bitmap 59x76
+    origin [vector] (56, 3950)
+  npc2 [bitmap] bitmap 59x76
+    origin [vector] (56, 3950)
+  receiveTB [bitmap] bitmap 290x108
+    origin [vector] (877087568, 43859)
+  say0 [bitmap] bitmap 160x71
+    origin [vector] (877087568, 43859)
+  say1 [bitmap] bitmap 115x59
+    origin [vector] (877087568, 43859)
+  sendTB [bitmap] bitmap 275x77
+    origin [vector] (877087568, 43859)
+  tax [bitmap] bitmap 290x200
+    origin [vector] (877087568, 43859)
+  tax1 [bitmap] bitmap 290x200
+    origin [vector] (877087568, 43859)

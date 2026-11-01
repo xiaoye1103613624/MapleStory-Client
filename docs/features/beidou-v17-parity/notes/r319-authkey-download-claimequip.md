@@ -1,0 +1,6 @@
+# r319 — Authkey / Download / Claim / EquipExt
+
+- CONSULT/CLASS_COMPETITION/WEB_BOARD_AUTHKEY(87–89) 落日志
+- OPEN_FULL_CLIENT_DOWNLOAD_LINK(40)、CLAIM_AVAILABLE_TIME(46)、SET_BUY_EQUIP_EXT(108)
+
+产物：`E:\MXD\BeiDou-Client-xy\MapleStory.exe`

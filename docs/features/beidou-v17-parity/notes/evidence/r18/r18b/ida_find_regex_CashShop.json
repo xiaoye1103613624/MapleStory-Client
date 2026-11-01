@@ -1,0 +1,20 @@
+{
+  "n": 3,
+  "matches": [
+    {
+      "addr": "0xaf285c",
+      "string": "/CashShop.img/CSItemSearch/Price"
+    },
+    {
+      "addr": "0xaf29ec",
+      "string": "/CashShop.img/CS3thEvent/0"
+    },
+    {
+      "addr": "0xaf46d4",
+      "string": "CashShop"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

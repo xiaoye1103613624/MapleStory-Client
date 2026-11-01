@@ -1,0 +1,139 @@
+void __thiscall sub_624831(_DWORD *this, int *a2)
+{
+  _DWORD *v3; // eax
+  int **v4; // ebx
+  int v5; // eax
+  int v6; // eax
+  int v7; // eax
+  bool v8; // zf
+  int v9; // ecx
+  int v10; // eax
+  int v11; // eax
+  int v12; // ecx
+  int v13; // eax
+  int v14; // eax
+  int v15; // eax
+  int v16; // eax
+  int v17; // ecx
+  int v18; // eax
+  int v19; // eax
+  int *v20; // ebx
+  int v21; // eax
+  _DWORD *v22; // esi
+  VARIANTARG v23; // [esp+Ch] [ebp-48h] BYREF
+  VARIANTARG pvargDest; // [esp+1Ch] [ebp-38h] BYREF
+  VARIANTARG pvarg; // [esp+2Ch] [ebp-28h] BYREF
+  _BYTE v26[4]; // [esp+3Ch] [ebp-18h] BYREF
+  _BYTE v27[4]; // [esp+40h] [ebp-14h] BYREF
+  _DWORD *v28; // [esp+44h] [ebp-10h]
+  int v29; // [esp+50h] [ebp-4h]
+
+  v28 = this; /*0x62484f*/
+  *(this + 32) = a2; /*0x624852*/
+  sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x624858*/
+  v29 = 0; /*0x624863*/
+  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x624866*/
+  LOBYTE(v29) = 1; /*0x624871*/
+  if ( dword_BF14EC == 0 ) /*0x624875*/
+    sub_A5FDE4(a1: -2147467261); /*0x62487c*/
+  v3 = (_DWORD *)sub_426C7E(a1: &a2, a2: 0, a3: 0, a4: 3150, a5: 189, a6: 11, a7: &pvarg, a8: &pvargDest); /*0x6248a1*/
+  v4 = (int **)(this + 95); /*0x6248a8*/
+  sub_428712(a1: *v3); /*0x6248b0*/
+  sub_4156C5(a1: &a2); /*0x6248b8*/
+  LOBYTE(v29) = 0; /*0x6248bd*/
+  v5 = sub_40291D(&pvarg); /*0x6248c5*/
+  if ( v5 < 0 ) /*0x6248cd*/
+    sub_A5FDE4(a1: v5); /*0x6248d0*/
+  v29 = -1; /*0x6248d5*/
+  v6 = sub_40291D(pvarg: &pvargDest); /*0x6248dd*/
+  if ( v6 < 0 ) /*0x6248e5*/
+    sub_A5FDE4(a1: v6); /*0x6248e8*/
+  v7 = *(_DWORD *)sub_426604(a1: v27); /*0x6248f8*/
+  v29 = 2; /*0x624900*/
+  sub_410FDF(a1: v7, a2: 1); /*0x624907*/
+  v8 = *v4 == nullptr; /*0x62490c*/
+  LOBYTE(v29) = 3; /*0x62490e*/
+  if ( v8 ) /*0x624912*/
+    sub_A5FDE4(a1: -2147467261); /*0x624919*/
+  v9 = **v4; /*0x624920*/
+  a2 = *v4; /*0x62492e*/
+  v10 = (*(int (__stdcall **)(int *, _DWORD, ULONG, LONG, LONG))(v9 + 100))( /*0x624932*/
+          a1: a2,
+          a2: *(_DWORD *)&pvargDest.vt,
+          a3: pvargDest.decVal.Hi32,
+          a4: pvargDest.lVal,
+          a5: pvargDest.cyVal.Hi);
+  if ( v10 < 0 ) /*0x624937*/
+    sub_A5FDF2(a1: v10, a2, a3: &unk_BD8348); /*0x624942*/
+  LOBYTE(v29) = 2; /*0x62494b*/
+  v11 = sub_40291D(pvarg: &pvargDest); /*0x62494f*/
+  if ( v11 < 0 ) /*0x624957*/
+    sub_A5FDE4(a1: v11); /*0x62495a*/
+  v29 = -1; /*0x62495f*/
+  sub_4156C5(a1: v27); /*0x624966*/
+  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x624974*/
+  v29 = 4; /*0x62497d*/
+  sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x624984*/
+  v8 = *v4 == nullptr; /*0x624989*/
+  LOBYTE(v29) = 5; /*0x62498c*/
+  if ( v8 ) /*0x624990*/
+    sub_A5FDE4(a1: -2147467261); /*0x624997*/
+  v12 = **v4; /*0x6249a8*/
+  a2 = *v4; /*0x6249bc*/
+  v13 = (*(int (__stdcall **)(int *, int, int, _DWORD, ULONG, LONG, LONG, _DWORD, ULONG, LONG, LONG))(v12 + 144))( /*0x6249c0*/
+          a1: a2,
+          a2: -10,
+          a3: -10,
+          a4: *(_DWORD *)&pvargDest.vt,
+          a5: pvargDest.decVal.Hi32,
+          a6: pvargDest.lVal,
+          a7: pvargDest.cyVal.Hi,
+          a8: *(_DWORD *)&pvarg.vt,
+          a9: pvarg.decVal.Hi32,
+          a10: pvarg.lVal,
+          a11: pvarg.cyVal.Hi);
+  if ( v13 < 0 ) /*0x6249c8*/
+    sub_A5FDF2(a1: v13, a2, a3: &unk_BD8348); /*0x6249d3*/
+  LOBYTE(v29) = 4; /*0x6249dc*/
+  v14 = sub_40291D(pvarg: &pvargDest); /*0x6249e0*/
+  if ( v14 < 0 ) /*0x6249e8*/
+    sub_A5FDE4(a1: v14); /*0x6249eb*/
+  v29 = -1; /*0x6249f0*/
+  v15 = sub_40291D(&pvarg); /*0x6249f8*/
+  if ( v15 < 0 ) /*0x624a00*/
+    sub_A5FDE4(a1: v15); /*0x624a03*/
+  v16 = *(_DWORD *)sub_426604(a1: v26); /*0x624a14*/
+  v29 = 6; /*0x624a1c*/
+  sub_410FDF(a1: v16, a2: 1); /*0x624a23*/
+  v8 = *v4 == nullptr; /*0x624a28*/
+  LOBYTE(v29) = 7; /*0x624a2b*/
+  if ( v8 ) /*0x624a2f*/
+    sub_A5FDE4(a1: -2147467261); /*0x624a36*/
+  v17 = **v4; /*0x624a3d*/
+  a2 = *v4; /*0x624a4b*/
+  v18 = (*(int (__stdcall **)(int *, _DWORD, ULONG, LONG, LONG))(v17 + 252))( /*0x624a4f*/
+          a1: a2,
+          a2: *(_DWORD *)&v23.vt,
+          a3: v23.decVal.Hi32,
+          a4: v23.lVal,
+          a5: v23.cyVal.Hi);
+  if ( v18 < 0 ) /*0x624a5c*/
+    sub_A5FDF2(a1: v18, a2, a3: &unk_BD8358); /*0x624a63*/
+  LOBYTE(v29) = 6; /*0x624a6c*/
+  v19 = sub_40291D(pvarg: &v23); /*0x624a70*/
+  if ( v19 < 0 ) /*0x624a78*/
+    sub_A5FDE4(a1: v19); /*0x624a7b*/
+  v29 = -1; /*0x624a80*/
+  sub_4156C5(a1: v26); /*0x624a87*/
+  if ( *v4 == nullptr ) /*0x624a8f*/
+    sub_A5FDE4(a1: -2147467261); /*0x624a96*/
+  v20 = *v4; /*0x624a9b*/
+  v21 = (*(int (__stdcall **)(int *, int))(*v20 + 224))(a1: v20, a2: -1); /*0x624aa2*/
+  if ( v21 < 0 ) /*0x624aaa*/
+    sub_A5FDF2(a1: v21, a2: v20, a3: &unk_BD8358); /*0x624aaf*/
+  v22 = v28; /*0x624ab4*/
+  v28[97] = 0; /*0x624ab7*/
+  v22[34] = -1; /*0x624abe*/
+  sub_43443C(a1: v22 + 96); /*0x624acb*/
+  sub_624E13(this: v22); /*0x624ad2*/
+}

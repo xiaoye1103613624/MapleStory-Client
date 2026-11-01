@@ -1,0 +1,24 @@
+﻿; StatusBar Wave0 REA summary
+; extracted 2026-10-22T16:50:24.2856070+08:00
+CreateCtrl sub_8D01B2 size=0x392d — REA decompile truncates; recover via MCP /output curl (ida_mcp_output_StatusBar_8D01B2.json)
+Coords (confirmed r18):
+id=1000 x=573 y=543
+id=1001 x=629 y=543
+id=1002 x=685 y=543
+id=1007 x=741 y=543
+id=2000 x=618 y=515
+id=2001 x=648 y=515
+id=2002 x=678 y=515
+id=2003 x=708 y=515
+id=1005 x=738 y=515
+id=1006 x=768 y=515
+id=1009 x=573 y=515
+ID map (from current UIStatusBar.cpp comments + BtNPT string xref @0x8d3005):
+  1000 BtShop (573,543) type/a6=6
+  1001 BtNPT  (629,543) type/a6=6  path UI/StatusBar.img/BtNPT
+  1002 BtMenu (685,543)
+  1007 BtShort(741,543)
+  2000-2003 Equip/Inven/Stat/Skill key icons @ y=515
+  1005 KeyConfig 1006 QsKey 1009 chat-related @ y=515
+Nearby funcs probed: sub_8D3B2F (chat/UI refresh, NOT OnButton switch); sub_8DF4B1 (touches 1006); sub_8D76D7 (string 2003)
+OnButton/QS click dispatch: STILL OPEN — no case 1000..1007 switch found in probed neighbors; 待重试 (vtable OnChildNotify / larger 8D6409/8D850B)

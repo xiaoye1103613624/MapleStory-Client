@@ -1,0 +1,217 @@
+﻿{
+    "date":  "2026-10-22",
+    "note":  "Keyword REA search only; full UIWindow path often runtime-concatenated (0 hits expected).",
+    "hits":  {
+                 "Delivery":  {
+                                  "count":  0,
+                                  "samples":  {
+
+                                              }
+                              },
+                 "Family_kw":  {
+                                   "count":  0,
+                                   "samples":  {
+
+                                               }
+                               },
+                 "Wedding_kw":  {
+                                    "count":  1,
+                                    "samples":  {
+                                                    "value":  "wedding%d",
+                                                    "address":  "0xaf54cc"
+                                                }
+                                },
+                 "StoreBank_kw":  {
+                                      "count":  0,
+                                      "samples":  {
+
+                                                  }
+                                  },
+                 "ViciousHammer":  {
+                                       "count":  4,
+                                       "samples":  [
+                                                       {
+                                                           "value":  "indow.img/ViciousHammer/EffectE",
+                                                           "address":  "0xaf0f3c"
+                                                       },
+                                                       {
+                                                           "value":  "indow.img/ViciousHammer/EffectP",
+                                                           "address":  "0xaf0f88"
+                                                       },
+                                                       {
+                                                           "value":  "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge",
+                                                           "address":  "0xb394e8"
+                                                       },
+                                                       {
+                                                           "value":  "UI/UIWindow.img/ViciousHammer/GaugeBar/bar",
+                                                           "address":  "0xb39518"
+                                                       }
+                                                   ]
+                                   },
+                 "Minigame_kw":  {
+                                     "count":  0,
+                                     "samples":  {
+
+                                                 }
+                                 },
+                 "Memo":  {
+                              "count":  0,
+                              "samples":  {
+
+                                          }
+                          },
+                 "Messenger_kw":  {
+                                      "count":  3,
+                                      "samples":  [
+                                                      {
+                                                          "value":  "CNMMessengerReplyEvent",
+                                                          "address":  "0xafa468"
+                                                      },
+                                                      {
+                                                          "value":  "CNMLoginMessengerFunc",
+                                                          "address":  "0xafc380"
+                                                      },
+                                                      {
+                                                          "value":  "CNMLogoutMessengerFunc",
+                                                          "address":  "0xafc3bc"
+                                                      }
+                                                  ]
+                                  },
+                 "Messenger":  {
+                                   "count":  0,
+                                   "samples":  {
+
+                                               }
+                               },
+                 "StoreBank":  {
+                                   "count":  0,
+                                   "samples":  {
+
+                                               }
+                               },
+                 "RemoteGachapon":  {
+                                        "count":  0,
+                                        "samples":  {
+
+                                                    }
+                                    },
+                 "charInfo_kw":  {
+                                     "count":  2,
+                                     "samples":  [
+                                                     {
+                                                         "value":  "Etc/MakeCharInfo.img/OrientCharFemale",
+                                                         "address":  "0xaf6c28"
+                                                     },
+                                                     {
+                                                         "value":  "Etc/MakeCharInfo.img/OrientCharMale",
+                                                         "address":  "0xaf6c74"
+                                                     }
+                                                 ]
+                                 },
+                 "NoticeLoading":  {
+                                       "count":  0,
+                                       "samples":  {
+
+                                                   }
+                                   },
+                 "BtShop_kw":  {
+                                   "count":  0,
+                                   "samples":  {
+
+                                               }
+                               },
+                 "PartySearch_kw":  {
+                                        "count":  11,
+                                        "samples":  [
+                                                        {
+                                                            "value":  "goPartySearch",
+                                                            "address":  "0xaf2748"
+                                                        },
+                                                        {
+                                                            "value":  "indow.img/PartySearch/BtStop",
+                                                            "address":  "0xb3a714"
+                                                        },
+                                                        {
+                                                            "value":  "indow.img/PartySearch/BtPause",
+                                                            "address":  "0xb3a75c"
+                                                        },
+                                                        {
+                                                            "value":  "indow.img/PartySearch/BtStart",
+                                                            "address":  "0xb3a7a4"
+                                                        },
+                                                        {
+                                                            "value":  "indow.img/PartySearch/PartyMember",
+                                                            "address":  "0xb3a83c"
+                                                        },
+                                                        {
+                                                            "value":  "indow.img/PartySearch/icon1",
+                                                            "address":  "0xb3fc00"
+                                                        }
+                                                    ]
+                                    },
+                 "charInfo1":  {
+                                   "count":  0,
+                                   "samples":  {
+
+                                               }
+                               },
+                 "Duey_kw":  {
+                                 "count":  0,
+                                 "samples":  {
+
+                                             }
+                             },
+                 "Delivery_kw":  {
+                                     "count":  18,
+                                     "samples":  [
+                                                     {
+                                                         "value":  "indow.img/Delivery/empty",
+                                                         "address":  "0xafcc7c"
+                                                     },
+                                                     {
+                                                         "value":  "indow.img/Delivery/receiveTB",
+                                                         "address":  "0xafccbc"
+                                                     },
+                                                     {
+                                                         "value":  "indow.img/Delivery/line",
+                                                         "address":  "0xafcd04"
+                                                     },
+                                                     {
+                                                         "value":  "indow.img/Delivery/icon0",
+                                                         "address":  "0xafcd40"
+                                                     },
+                                                     {
+                                                         "value":  "indow.img/Delivery/npc1",
+                                                         "address":  "0xafcd80"
+                                                     },
+                                                     {
+                                                         "value":  "indow.img/Delivery/say1",
+                                                         "address":  "0xafcdc4"
+                                                     }
+                                                 ]
+                                 },
+                 "FamilyTree":  {
+                                    "count":  0,
+                                    "samples":  {
+
+                                                }
+                                },
+                 "Memo_kw":  {
+                                 "count":  3,
+                                 "samples":  [
+                                                 {
+                                                     "value":  "CNMChangeFriendMemoFunc",
+                                                     "address":  "0xafa330"
+                                                 },
+                                                 {
+                                                     "value":  "CNMChangeFriendMemoExFunc",
+                                                     "address":  "0xafa36c"
+                                                 },
+                                                 {
+                                                     "value":  "NMCO_MemoryFree",
+                                                     "address":  "0xe9317b"
+                                                 }
+                                             ]
+                             }
+             }
+}

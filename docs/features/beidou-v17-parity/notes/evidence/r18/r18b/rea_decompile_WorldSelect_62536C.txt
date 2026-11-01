@@ -1,0 +1,25 @@
+int __thiscall sub_62536C(_DWORD *this, int a2)
+{
+  int v3; // ebx
+  _DWORD *v4; // edi
+  int result; // eax
+
+  v3 = 0; /*0x625370*/
+  if ( (int)*(this + 33) > 0 ) /*0x625378*/
+  {
+    v4 = this + 36; /*0x62537b*/
+    do /*0x625397*/
+    {
+      (*(void (__thiscall **)(int, int))(*(_DWORD *)(*v4 + 4) + 28))(a1: *v4 + 4, a2: 1); /*0x62538a*/
+      ++v3; /*0x62538d*/
+      v4 += 2; /*0x62538e*/
+    }
+    while ( v3 < *(this + 33) ); /*0x625397*/
+  }
+  result = a2; /*0x62539a*/
+  if ( a2 >= 0 ) /*0x6253a0*/
+    return (*(int (__thiscall **)(int, _DWORD))(*(_DWORD *)(*(this + 2 * a2 + 36) + 4) + 28))( /*0x6253b1*/
+             a1: *(this + 2 * a2 + 36) + 4,
+             a2: 0);
+  return result; /*0x6253b4*/
+}

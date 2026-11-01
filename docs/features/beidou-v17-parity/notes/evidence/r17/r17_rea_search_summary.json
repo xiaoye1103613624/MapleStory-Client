@@ -1,0 +1,1497 @@
+﻿{
+    "GameOpt":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_GameOpt.json",
+                    "count":  0
+                },
+    "Report":  {
+                   "samples":  [
+                                   {
+                                       "value":  "CNMLogReportSyncEvent",
+                                       "address":  "0xafab4c"
+                                   },
+                                   {
+                                       "value":  "CNMLogReportSyncFunc",
+                                       "address":  "0xafb1b8"
+                                   },
+                                   {
+                                       "value":  "CNMSendReportMsgFunc",
+                                       "address":  "0xafb780"
+                                   },
+                                   {
+                                       "value":  "report25.mod",
+                                       "address":  "0xbe34e8"
+                                   }
+                               ],
+                   "file":  "rea_search_Report.json",
+                   "count":  4
+               },
+    "GMBoard":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_GMBoard.json",
+                    "count":  0
+                },
+    "SkillUp":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_SkillUp.json",
+                    "count":  0
+                },
+    "BtUIClose":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_BtUIClose.json",
+                      "count":  0
+                  },
+    "QuestIcon":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_QuestIcon.json",
+                      "count":  0
+                  },
+    "MapleEvent":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_MapleEvent.json",
+                       "count":  0
+                   },
+    "CashGachapon":  {
+                         "samples":  [
+                                         {
+                                             "value":  "indow.img/CashGachapon/EffectNormal",
+                                             "address":  "0xaf1164"
+                                         },
+                                         {
+                                             "value":  "indow.img/CashGachapon/EffectJackpot",
+                                             "address":  "0xaf11b8"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/CashGachapon/EffectJackpot/16",
+                                             "address":  "0xb3de68"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/CashGachapon/EffectNormal/16",
+                                             "address":  "0xb3de98"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/CashGachapon/EffectNormal/0",
+                                             "address":  "0xb3dec8"
+                                         }
+                                     ],
+                         "file":  "rea_search_CashGachapon.json",
+                         "count":  5
+                     },
+    "GameMenu":  {
+                     "samples":  [
+
+                                 ],
+                     "file":  "rea_search_GameMenu.json",
+                     "count":  0
+                 },
+    "UserList":  {
+                     "samples":  [
+                                     {
+                                         "value":  "CNMGetMyVirtualUserListFunc",
+                                         "address":  "0xafa054"
+                                     },
+                                     {
+                                         "value":  "CNMRejectedUserListChangedEvent",
+                                         "address":  "0xafa5cc"
+                                     },
+                                     {
+                                         "value":  "CNMGetRejectedUserListFunc",
+                                         "address":  "0xafadcc"
+                                     },
+                                     {
+                                         "value":  "indow.img/UserList/Guild/GuildBoard/Loading",
+                                         "address":  "0xb3b0cc"
+                                     },
+                                     {
+                                         "value":  "UI/UIWindow.img/UserList/GuildUnion/backgrnd",
+                                         "address":  "0xb3c2dc"
+                                     }
+                                 ],
+                     "file":  "rea_search_UserList.json",
+                     "count":  21
+                 },
+    "goAlliance":  {
+                       "samples":  [
+                                       {
+                                           "value":  "goAllianceTALK",
+                                           "address":  "0xaf2724"
+                                       },
+                                       {
+                                           "value":  "goAllianceINVITE",
+                                           "address":  "0xaf2734"
+                                       }
+                                   ],
+                       "file":  "rea_search_goAlliance.json",
+                       "count":  2
+                   },
+    "AranSkillGuide":  {
+                           "samples":  [
+                                           {
+                                               "value":  "indow.img/AranSkillGuide/%d",
+                                               "address":  "0xb3b4bc"
+                                           }
+                                       ],
+                           "file":  "rea_search_AranSkillGuide.json",
+                           "count":  1
+                       },
+    "ExceptionItemSearch":  {
+                                "samples":  [
+
+                                            ],
+                                "file":  "rea_search_ExceptionItemSearch.json",
+                                "count":  0
+                            },
+    "CancelRequests":  {
+                           "samples":  [
+
+                                       ],
+                           "file":  "rea_search_CancelRequests.json",
+                           "count":  0
+                       },
+    "UILogin":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_UILogin.json",
+                    "count":  0
+                },
+    "itemSearch":  {
+                       "samples":  [
+                                       {
+                                           "value":  "/CashShop.img/CSItemSearch/Price",
+                                           "address":  "0xaf285c"
+                                       }
+                                   ],
+                       "file":  "rea_search_itemSearch.json",
+                       "count":  1
+                   },
+    "createCygnus":  {
+                         "samples":  [
+
+                                     ],
+                         "file":  "rea_search_createCygnus.json",
+                         "count":  0
+                     },
+    "Maker":  {
+                  "samples":  [
+                                  {
+                                      "value":  "UI/UIWindow.img/Maker/GaugeBar/gauge",
+                                      "address":  "0xb39260"
+                                  },
+                                  {
+                                      "value":  "UI/UIWindow.img/Maker/GaugeBar/bar",
+                                      "address":  "0xb39288"
+                                  },
+                                  {
+                                      "value":  "UI/UIWindow.img/Maker/notUse",
+                                      "address":  "0xb392ac"
+                                  },
+                                  {
+                                      "value":  "indow.img/Maker/BtCancel",
+                                      "address":  "0xb392d8"
+                                  },
+                                  {
+                                      "value":  "indow.img/Maker/BtStart",
+                                      "address":  "0xb39318"
+                                  }
+                              ],
+                  "file":  "rea_search_Maker.json",
+                  "count":  7
+              },
+    "FloatNotice":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_FloatNotice.json",
+                        "count":  0
+                    },
+    "EnergyBar":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_EnergyBar.json",
+                      "count":  0
+                  },
+    "ItemMegaphone":  {
+                          "samples":  [
+
+                                      ],
+                          "file":  "rea_search_ItemMegaphone.json",
+                          "count":  0
+                      },
+    "SkillEx":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_SkillEx.json",
+                    "count":  0
+                },
+    "KeyConfig":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_KeyConfig.json",
+                      "count":  0
+                  },
+    "MiniMap":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_MiniMap.json",
+                    "count":  0
+                },
+    "WorldMap":  {
+                     "samples":  [
+                                     {
+                                         "value":  "p/WorldMap/WorldMap%d.img",
+                                         "address":  "0xb3f224"
+                                     },
+                                     {
+                                         "value":  "Map/WorldMap/",
+                                         "address":  "0xb3f268"
+                                     },
+                                     {
+                                         "value":  "Map/MapHelper.img/worldMap/npcPos",
+                                         "address":  "0xb3f288"
+                                     }
+                                 ],
+                     "file":  "rea_search_WorldMap.json",
+                     "count":  3
+                 },
+    "raise":  {
+                  "samples":  [
+                                  {
+                                      "value":  "RaiseException",
+                                      "address":  "0xe9266c"
+                                  }
+                              ],
+                  "file":  "rea_search_raise.json",
+                  "count":  1
+              },
+    "FadeYesNo":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_FadeYesNo.json",
+                      "count":  0
+                  },
+    "FamilyTree":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_FamilyTree.json",
+                       "count":  0
+                   },
+    "classMatch":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_classMatch.json",
+                       "count":  0
+                   },
+    "NewYearsCard":  {
+                         "samples":  [
+                                         {
+                                             "value":  "indow.img/NewYearsCard/backgrnd3",
+                                             "address":  "0xb40448"
+                                         },
+                                         {
+                                             "value":  "indow.img/NewYearsCard/BtClose",
+                                             "address":  "0xb40534"
+                                         },
+                                         {
+                                             "value":  "indow.img/NewYearsCard/backgrnd2",
+                                             "address":  "0xb4058c"
+                                         },
+                                         {
+                                             "value":  "indow.img/NewYearsCard/backgrnd",
+                                             "address":  "0xb40668"
+                                         },
+                                         {
+                                             "value":  "indow.img/NewYearsCard/BtCancel",
+                                             "address":  "0xb406b4"
+                                         }
+                                     ],
+                         "file":  "rea_search_NewYearsCard.json",
+                         "count":  7
+                     },
+    "CharSelect":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_CharSelect.json",
+                       "count":  0
+                   },
+    "Radio":  {
+                  "samples":  [
+                                  {
+                                      "value":  "indow.img/Radio/Off/0",
+                                      "address":  "0xafdbd4"
+                                  },
+                                  {
+                                      "value":  "indow.img/Radio/On/4",
+                                      "address":  "0xafdc0c"
+                                  },
+                                  {
+                                      "value":  "indow.img/Radio/On/3",
+                                      "address":  "0xafdc44"
+                                  },
+                                  {
+                                      "value":  "indow.img/Radio/On/2",
+                                      "address":  "0xafdc7c"
+                                  },
+                                  {
+                                      "value":  "indow.img/Radio/On/1",
+                                      "address":  "0xafdcb4"
+                                  }
+                              ],
+                  "file":  "rea_search_Radio.json",
+                  "count":  6
+              },
+    "Megaphone":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_Megaphone.json",
+                      "count":  0
+                  },
+    "EnchantSkill":  {
+                         "samples":  [
+                                         {
+                                             "value":  "indow.img/EnchantSkill/backgrnd",
+                                             "address":  "0xb38768"
+                                         },
+                                         {
+                                             "value":  "indow.img/EnchantSkill/say2",
+                                             "address":  "0xb387b4"
+                                         },
+                                         {
+                                             "value":  "indow.img/EnchantSkill/say1",
+                                             "address":  "0xb387f8"
+                                         },
+                                         {
+                                             "value":  "indow.img/EnchantSkill/say0",
+                                             "address":  "0xb3883c"
+                                         },
+                                         {
+                                             "value":  "indow.img/EnchantSkill/Effect",
+                                             "address":  "0xb38890"
+                                         }
+                                     ],
+                         "file":  "rea_search_EnchantSkill.json",
+                         "count":  5
+                     },
+    "ITC":  {
+                "samples":  [
+                                {
+                                    "value":  "UI/ITC.img/Auction/backgrnd",
+                                    "address":  "0xaf5fb0"
+                                },
+                                {
+                                    "value":  "UI/ITC.img/BtAuction",
+                                    "address":  "0xaf605c"
+                                },
+                                {
+                                    "value":  "UI/ITC.img/BtSell",
+                                    "address":  "0xaf6074"
+                                },
+                                {
+                                    "value":  "UI/ITC.img/Auction/BtBid",
+                                    "address":  "0xaf6098"
+                                },
+                                {
+                                    "value":  "UI/ITC.img/Auction/backgrnd1",
+                                    "address":  "0xaf61d0"
+                                }
+                            ],
+                "file":  "rea_search_ITC.json",
+                "count":  6
+            },
+    "LoginNotice":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_LoginNotice.json",
+                        "count":  0
+                    },
+    "SkillMacro":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_SkillMacro.json",
+                       "count":  0
+                   },
+    "Loading":  {
+                    "samples":  [
+                                    {
+                                        "value":  "indow.img/UserList/Guild/GuildBoard/Loading",
+                                        "address":  "0xb3b0cc"
+                                    }
+                                ],
+                    "file":  "rea_search_Loading.json",
+                    "count":  1
+                },
+    "goPartySearch":  {
+                          "samples":  [
+                                          {
+                                              "value":  "goPartySearch",
+                                              "address":  "0xaf2748"
+                                          }
+                                      ],
+                          "file":  "rea_search_goPartySearch.json",
+                          "count":  1
+                      },
+    "Skill":  {
+                  "samples":  [
+                                  {
+                                      "value":  "noSkill",
+                                      "address":  "0xaf4608"
+                                  },
+                                  {
+                                      "value":  "sableSkill",
+                                      "address":  "0xaf4b3c"
+                                  },
+                                  {
+                                      "value":  "skill",
+                                      "address":  "0xaf5574"
+                                  },
+                                  {
+                                      "value":  "ill/520.img/skill/5201002/ball",
+                                      "address":  "0xaf5664"
+                                  },
+                                  {
+                                      "value":  "ItemSkill",
+                                      "address":  "0xaf64d0"
+                                  }
+                              ],
+                  "file":  "rea_search_Skill.json",
+                  "count":  23
+              },
+    "ContextMenu":  {
+                        "samples":  [
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/BtRelease",
+                                            "address":  "0xb39e0c"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/BtRegister",
+                                            "address":  "0xb39e70"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/s",
+                                            "address":  "0xb39ed8"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/c",
+                                            "address":  "0xb39f2c"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/t",
+                                            "address":  "0xb39f80"
+                                        }
+                                    ],
+                        "file":  "rea_search_ContextMenu.json",
+                        "count":  5
+                    },
+    "PersonalShop":  {
+                         "samples":  [
+
+                                     ],
+                         "file":  "rea_search_PersonalShop.json",
+                         "count":  0
+                     },
+    "CashShop":  {
+                     "samples":  [
+                                     {
+                                         "value":  "/CashShop.img/CSItemSearch/Price",
+                                         "address":  "0xaf285c"
+                                     },
+                                     {
+                                         "value":  "/CashShop.img/CS3thEvent/0",
+                                         "address":  "0xaf29ec"
+                                     },
+                                     {
+                                         "value":  "CashShop",
+                                         "address":  "0xaf46d4"
+                                     }
+                                 ],
+                     "file":  "rea_search_CashShop.json",
+                     "count":  3
+                 },
+    "signboard":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_signboard.json",
+                      "count":  0
+                  },
+    "Messenger":  {
+                      "samples":  [
+                                      {
+                                          "value":  "CNMMessengerReplyEvent",
+                                          "address":  "0xafa468"
+                                      },
+                                      {
+                                          "value":  "CNMLoginMessengerFunc",
+                                          "address":  "0xafc380"
+                                      },
+                                      {
+                                          "value":  "CNMLogoutMessengerFunc",
+                                          "address":  "0xafc3bc"
+                                      }
+                                  ],
+                      "file":  "rea_search_Messenger.json",
+                      "count":  3
+                  },
+    "KarmaScissors":  {
+                          "samples":  [
+
+                                      ],
+                          "file":  "rea_search_KarmaScissors.json",
+                          "count":  0
+                      },
+    "MonsterKilling":  {
+                           "samples":  [
+
+                                       ],
+                           "file":  "rea_search_MonsterKilling.json",
+                           "count":  0
+                       },
+    "Transform":  {
+                      "samples":  [
+                                      {
+                                          "value":  "/BasicEff.img/TransformOnLadder",
+                                          "address":  "0xb3cf90"
+                                      },
+                                      {
+                                          "value":  "/BasicEff.img/Transform",
+                                          "address":  "0xb3cfdc"
+                                      },
+                                      {
+                                          "value":  "indow.img/Transform/backgrnd",
+                                          "address":  "0xb40828"
+                                      },
+                                      {
+                                          "value":  "indow.img/Transform/BtCancel",
+                                          "address":  "0xb40870"
+                                      },
+                                      {
+                                          "value":  "indow.img/Transform/BtOk",
+                                          "address":  "0xb408b8"
+                                      }
+                                  ],
+                      "file":  "rea_search_Transform.json",
+                      "count":  5
+                  },
+    "Macro":  {
+                  "samples":  [
+                                  {
+                                      "value":  "5Macromedia Fontographer 4.1.4 standard 07_55",
+                                      "address":  "0xbfa846"
+                                  },
+                                  {
+                                      "value":  "Macromedia Fontographer 4.1.4 standard 07_5",
+                                      "address":  "0xbfa874"
+                                  },
+                                  {
+                                      "value":  "5Macromedia Fontographer 4.1.4 8/9/01",
+                                      "address":  "0xbfa8ca"
+                                  },
+                                  {
+                                      "value":  "Macromedia Fontographer 4.1.4 8/9/0",
+                                      "address":  "0xbfa8f0"
+                                  }
+                              ],
+                  "file":  "rea_search_Macro.json",
+                  "count":  4
+              },
+    "Minigame":  {
+                     "samples":  [
+
+                                 ],
+                     "file":  "rea_search_Minigame.json",
+                     "count":  0
+                 },
+    "CharacterClone":  {
+                           "samples":  [
+
+                                       ],
+                           "file":  "rea_search_CharacterClone.json",
+                           "count":  0
+                       },
+    "SysOpt":  {
+                   "samples":  [
+
+                               ],
+                   "file":  "rea_search_SysOpt.json",
+                   "count":  0
+               },
+    "chatTarget":  {
+                       "samples":  [
+                                       {
+                                           "value":  "UI/StatusBar.img/base/chatTarget",
+                                           "address":  "0xaf72e0"
+                                       }
+                                   ],
+                       "file":  "rea_search_chatTarget.json",
+                       "count":  1
+                   },
+    "RemoteGachapon":  {
+                           "samples":  [
+
+                                       ],
+                           "file":  "rea_search_RemoteGachapon.json",
+                           "count":  0
+                       },
+    "QuestAlarm":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_QuestAlarm.json",
+                       "count":  0
+                   },
+    "BtNPT":  {
+                  "samples":  [
+                                  {
+                                      "value":  "UI/StatusBar.img/BtNPT",
+                                      "address":  "0xb3bab4"
+                                  }
+                              ],
+                  "file":  "rea_search_BtNPT.json",
+                  "count":  1
+              },
+    "plant":  {
+                  "samples":  [
+
+                              ],
+                  "file":  "rea_search_plant.json",
+                  "count":  0
+              },
+    "Ranking":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_Ranking.json",
+                    "count":  0
+                },
+    "Book":  {
+                 "samples":  [
+                                 {
+                                     "value":  "indow.img/Book/backgrnd",
+                                     "address":  "0xaf16d0"
+                                 },
+                                 {
+                                     "value":  "indow.img/MonsterBook/ContextMenu/BtRelease",
+                                     "address":  "0xb39e0c"
+                                 },
+                                 {
+                                     "value":  "indow.img/MonsterBook/ContextMenu/BtRegister",
+                                     "address":  "0xb39e70"
+                                 },
+                                 {
+                                     "value":  "indow.img/MonsterBook/ContextMenu/s",
+                                     "address":  "0xb39ed8"
+                                 },
+                                 {
+                                     "value":  "indow.img/MonsterBook/ContextMenu/c",
+                                     "address":  "0xb39f2c"
+                                 }
+                             ],
+                 "file":  "rea_search_Book.json",
+                 "count":  9
+             },
+    "StoreBank":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_StoreBank.json",
+                      "count":  0
+                  },
+    "ArtMegaphone":  {
+                         "samples":  [
+
+                                     ],
+                         "file":  "rea_search_ArtMegaphone.json",
+                         "count":  0
+                     },
+    "MateMessage":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_MateMessage.json",
+                        "count":  0
+                    },
+    "MonsterBook":  {
+                        "samples":  [
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/BtRelease",
+                                            "address":  "0xb39e0c"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/BtRegister",
+                                            "address":  "0xb39e70"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/s",
+                                            "address":  "0xb39ed8"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/c",
+                                            "address":  "0xb39f2c"
+                                        },
+                                        {
+                                            "value":  "indow.img/MonsterBook/ContextMenu/t",
+                                            "address":  "0xb39f80"
+                                        }
+                                    ],
+                        "file":  "rea_search_MonsterBook.json",
+                        "count":  8
+                    },
+    "Quest":  {
+                  "samples":  [
+                                  {
+                                      "value":  "reqQuest",
+                                      "address":  "0xaf6858"
+                                  },
+                                  {
+                                      "value":  "CNMRequestNewsFunc",
+                                      "address":  "0xafa190"
+                                  },
+                                  {
+                                      "value":  "CNMRequestNewFriendFunc",
+                                      "address":  "0xafa2a4"
+                                  },
+                                  {
+                                      "value":  "CNMRequestNewFriendEvent",
+                                      "address":  "0xafa4bc"
+                                  },
+                                  {
+                                      "value":  "CNMRequestChatSessionFunc",
+                                      "address":  "0xafb7bc"
+                                  }
+                              ],
+                  "file":  "rea_search_Quest.json",
+                  "count":  26
+              },
+    "ViciousHammer":  {
+                          "samples":  [
+                                          {
+                                              "value":  "indow.img/ViciousHammer/EffectE",
+                                              "address":  "0xaf0f3c"
+                                          },
+                                          {
+                                              "value":  "indow.img/ViciousHammer/EffectP",
+                                              "address":  "0xaf0f88"
+                                          },
+                                          {
+                                              "value":  "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge",
+                                              "address":  "0xb394e8"
+                                          },
+                                          {
+                                              "value":  "UI/UIWindow.img/ViciousHammer/GaugeBar/bar",
+                                              "address":  "0xb39518"
+                                          }
+                                      ],
+                          "file":  "rea_search_ViciousHammer.json",
+                          "count":  4
+                      },
+    "Title":  {
+                  "samples":  [
+                                  {
+                                      "value":  "CNMGetGameFriendTitleFunc",
+                                      "address":  "0xafb4bc"
+                                  }
+                              ],
+                  "file":  "rea_search_Title.json",
+                  "count":  1
+              },
+    "Wedding":  {
+                    "samples":  [
+                                    {
+                                        "value":  "wedding%d",
+                                        "address":  "0xaf54cc"
+                                    }
+                                ],
+                    "file":  "rea_search_Wedding.json",
+                    "count":  1
+                },
+    "Fredrick":  {
+                     "samples":  [
+
+                                 ],
+                     "file":  "rea_search_Fredrick.json",
+                     "count":  0
+                 },
+    "Delivery":  {
+                     "samples":  [
+                                     {
+                                         "value":  "indow.img/Delivery/empty",
+                                         "address":  "0xafcc7c"
+                                     },
+                                     {
+                                         "value":  "indow.img/Delivery/receiveTB",
+                                         "address":  "0xafccbc"
+                                     },
+                                     {
+                                         "value":  "indow.img/Delivery/line",
+                                         "address":  "0xafcd04"
+                                     },
+                                     {
+                                         "value":  "indow.img/Delivery/icon0",
+                                         "address":  "0xafcd40"
+                                     },
+                                     {
+                                         "value":  "indow.img/Delivery/npc1",
+                                         "address":  "0xafcd80"
+                                     }
+                                 ],
+                     "file":  "rea_search_Delivery.json",
+                     "count":  18
+                 },
+    "SoftKeyboard":  {
+                         "samples":  [
+
+                                     ],
+                         "file":  "rea_search_SoftKeyboard.json",
+                         "count":  0
+                     },
+    "Admin":  {
+                  "samples":  [
+                                  {
+                                      "value":  "incMADMin",
+                                      "address":  "0xaf62cc"
+                                  },
+                                  {
+                                      "value":  "incPADMin",
+                                      "address":  "0xaf62fc"
+                                  },
+                                  {
+                                      "value":  "\u003c?xml version=\\",
+                                      "address":  "0xc08290"
+                                  }
+                              ],
+                  "file":  "rea_search_Admin.json",
+                  "count":  3
+              },
+    "Memo":  {
+                 "samples":  [
+                                 {
+                                     "value":  "CNMChangeFriendMemoFunc",
+                                     "address":  "0xafa330"
+                                 },
+                                 {
+                                     "value":  "CNMChangeFriendMemoExFunc",
+                                     "address":  "0xafa36c"
+                                 },
+                                 {
+                                     "value":  "NMCO_MemoryFree",
+                                     "address":  "0xe9317b"
+                                 }
+                             ],
+                 "file":  "rea_search_Memo.json",
+                 "count":  3
+             },
+    "Notice":  {
+                   "samples":  [
+                                   {
+                                       "value":  "_NOTICE_",
+                                       "address":  "0xaf85d4"
+                                   },
+                                   {
+                                       "value":  "menotice.maplestory",
+                                       "address":  "0xb3a5ac"
+                                   },
+                                   {
+                                       "value":  "indow.img/UserList/GuildUnion/Btnotice",
+                                       "address":  "0xb3c410"
+                                   }
+                               ],
+                   "file":  "rea_search_Notice.json",
+                   "count":  3
+               },
+    "Item":  {
+                 "samples":  [
+                                 {
+                                     "value":  "/BasicEff.img/ItemMake/Failure",
+                                     "address":  "0xaf0ea4"
+                                 },
+                                 {
+                                     "value":  "/BasicEff.img/ItemMake/Success",
+                                     "address":  "0xaf0ef0"
+                                 },
+                                 {
+                                     "value":  "PackedCatalogItem",
+                                     "address":  "0xaf1428"
+                                 },
+                                 {
+                                     "value":  "/ItemEff.img/2022269",
+                                     "address":  "0xaf1504"
+                                 },
+                                 {
+                                     "value":  "One or more of your pets cannot equip\\r\\nthis item.\\r\\nContinue with purchase?",
+                                     "address":  "0xaf1e2c"
+                                 }
+                             ],
+                 "file":  "rea_search_Item.json",
+                 "count":  33
+             },
+    "UserInfo":  {
+                     "samples":  [
+                                     {
+                                         "value":  "CNMUserInfoEvent",
+                                         "address":  "0xafa56c"
+                                     },
+                                     {
+                                         "value":  "CNMGetUserInfoFunc",
+                                         "address":  "0xafb698"
+                                     }
+                                 ],
+                     "file":  "rea_search_UserInfo.json",
+                     "count":  2
+                 },
+    "UtilDlgEx":  {
+                      "samples":  [
+                                      {
+                                          "value":  "indow.img/UtilDlgEx/is",
+                                          "address":  "0xb3e144"
+                                      },
+                                      {
+                                          "value":  "indow.img/UtilDlgEx/ic",
+                                          "address":  "0xb3e180"
+                                      },
+                                      {
+                                          "value":  "indow.img/UtilDlgEx/it",
+                                          "address":  "0xb3e1bc"
+                                      }
+                                  ],
+                      "file":  "rea_search_UtilDlgEx.json",
+                      "count":  3
+                  },
+    "WorldSelect":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_WorldSelect.json",
+                        "count":  0
+                    },
+    "MonsterCarnival":  {
+                            "samples":  [
+
+                                        ],
+                            "file":  "rea_search_MonsterCarnival.json",
+                            "count":  0
+                        },
+    "AdminClaim":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_AdminClaim.json",
+                       "count":  0
+                   },
+    "ToolTip":  {
+                    "samples":  [
+                                    {
+                                        "value":  "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled",
+                                        "address":  "0xb3bc5c"
+                                    },
+                                    {
+                                        "value":  "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled",
+                                        "address":  "0xb3bc8c"
+                                    }
+                                ],
+                    "file":  "rea_search_ToolTip.json",
+                    "count":  2
+                },
+    "RpsGame":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_RpsGame.json",
+                    "count":  0
+                },
+    "MinigameTable":  {
+                          "samples":  [
+
+                                      ],
+                          "file":  "rea_search_MinigameTable.json",
+                          "count":  0
+                      },
+    "Equip":  {
+                  "samples":  [
+                                  {
+                                      "value":  "One or more of your pets cannot equip\\r\\nthis item.\\r\\nContinue with purchase?",
+                                      "address":  "0xaf1e2c"
+                                  },
+                                  {
+                                      "value":  "mobequip",
+                                      "address":  "0xaf4530"
+                                  },
+                                  {
+                                      "value":  "equipTradeBlock",
+                                      "address":  "0xaf63e8"
+                                  },
+                                  {
+                                      "value":  "reqEquip",
+                                      "address":  "0xaf687c"
+                                  },
+                                  {
+                                      "value":  "Equip",
+                                      "address":  "0xb377e8"
+                                  }
+                              ],
+                  "file":  "rea_search_Equip.json",
+                  "count":  7
+              },
+    "EventWindow":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_EventWindow.json",
+                        "count":  0
+                    },
+    "BetaEdition":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_BetaEdition.json",
+                        "count":  0
+                    },
+    "Incubator":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_Incubator.json",
+                      "count":  0
+                  },
+    "ItemProtector":  {
+                          "samples":  [
+
+                                      ],
+                          "file":  "rea_search_ItemProtector.json",
+                          "count":  0
+                      },
+    "Channel":  {
+                    "samples":  [
+                                    {
+                                        "value":  "CNMChannelErrorEvent",
+                                        "address":  "0xafaa5c"
+                                    },
+                                    {
+                                        "value":  "CNMChannelCreatedEvent",
+                                        "address":  "0xafaa74"
+                                    },
+                                    {
+                                        "value":  "CNMChannelEstablishedEvent",
+                                        "address":  "0xafaac8"
+                                    },
+                                    {
+                                        "value":  "CNMChannelInfoEvent",
+                                        "address":  "0xafaae4"
+                                    },
+                                    {
+                                        "value":  "CNMChannelMemberInfoEvent",
+                                        "address":  "0xafaaf8"
+                                    }
+                                ],
+                    "file":  "rea_search_Channel.json",
+                    "count":  13
+                },
+    "CashTradingRoom":  {
+                            "samples":  [
+
+                                        ],
+                            "file":  "rea_search_CashTradingRoom.json",
+                            "count":  0
+                        },
+    "MacroSkill":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_MacroSkill.json",
+                       "count":  0
+                   },
+    "MemberShop":  {
+                       "samples":  [
+
+                                   ],
+                       "file":  "rea_search_MemberShop.json",
+                       "count":  0
+                   },
+    "MultiLine":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_MultiLine.json",
+                      "count":  0
+                  },
+    "SlideMenu":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_SlideMenu.json",
+                      "count":  0
+                  },
+    "ShortCut":  {
+                     "samples":  [
+
+                                 ],
+                     "file":  "rea_search_ShortCut.json",
+                     "count":  0
+                 },
+    "muruengRaid":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_muruengRaid.json",
+                        "count":  0
+                    },
+    "Duey":  {
+                 "samples":  [
+
+                             ],
+                 "file":  "rea_search_Duey.json",
+                 "count":  0
+             },
+    "Trunk":  {
+                  "samples":  [
+
+                              ],
+                  "file":  "rea_search_Trunk.json",
+                  "count":  0
+              },
+    "EntrustedShop":  {
+                          "samples":  [
+
+                                      ],
+                          "file":  "rea_search_EntrustedShop.json",
+                          "count":  0
+                      },
+    "PartySearch":  {
+                        "samples":  [
+                                        {
+                                            "value":  "goPartySearch",
+                                            "address":  "0xaf2748"
+                                        },
+                                        {
+                                            "value":  "indow.img/PartySearch/BtStop",
+                                            "address":  "0xb3a714"
+                                        },
+                                        {
+                                            "value":  "indow.img/PartySearch/BtPause",
+                                            "address":  "0xb3a75c"
+                                        },
+                                        {
+                                            "value":  "indow.img/PartySearch/BtStart",
+                                            "address":  "0xb3a7a4"
+                                        },
+                                        {
+                                            "value":  "indow.img/PartySearch/PartyMember",
+                                            "address":  "0xb3a83c"
+                                        }
+                                    ],
+                        "file":  "rea_search_PartySearch.json",
+                        "count":  11
+                    },
+    "counsel":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_counsel.json",
+                    "count":  0
+                },
+    "DualMobGauge":  {
+                         "samples":  [
+                                         {
+                                             "value":  "UI/UIWindow.img/DualMobGauge/Mob/9700036",
+                                             "address":  "0xaf4fbc"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/DualMobGauge/gauge",
+                                             "address":  "0xaf4fe8"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/DualMobGauge/text",
+                                             "address":  "0xaf500c"
+                                         },
+                                         {
+                                             "value":  "UI/UIWindow.img/DualMobGauge/backgrd",
+                                             "address":  "0xaf5030"
+                                         }
+                                     ],
+                         "file":  "rea_search_DualMobGauge.json",
+                         "count":  4
+                     },
+    "Claim":  {
+                  "samples":  [
+
+                              ],
+                  "file":  "rea_search_Claim.json",
+                  "count":  0
+              },
+    "Reset":  {
+                  "samples":  [
+                                  {
+                                      "value":  "CNMResetCallbackFunc",
+                                      "address":  "0xaf9f3c"
+                                  }
+                              ],
+                  "file":  "rea_search_Reset.json",
+                  "count":  1
+              },
+    "MapleTV":  {
+                    "samples":  [
+                                    {
+                                        "value":  "Nexon\\\\MapleStory\\\\MapleTV",
+                                        "address":  "0xaf7cc4"
+                                    },
+                                    {
+                                        "value":  "MapleTVDownloader",
+                                        "address":  "0xaf7d00"
+                                    },
+                                    {
+                                        "value":  "\\\\Nexon\\\\MapleStory\\\\MapleTV",
+                                        "address":  "0xaf7d30"
+                                    }
+                                ],
+                    "file":  "rea_search_MapleTV.json",
+                    "count":  3
+                },
+    "TreasureBox":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_TreasureBox.json",
+                        "count":  0
+                    },
+    "Teleport":  {
+                     "samples":  [
+                                     {
+                                         "value":  "ssByTeleport",
+                                         "address":  "0xaf83d8"
+                                     }
+                                 ],
+                     "file":  "rea_search_Teleport.json",
+                     "count":  1
+                 },
+    "AvatarMegaphone":  {
+                            "samples":  [
+
+                                        ],
+                            "file":  "rea_search_AvatarMegaphone.json",
+                            "count":  0
+                        },
+    "TemporaryStatView":  {
+                              "samples":  [
+
+                                          ],
+                              "file":  "rea_search_TemporaryStatView.json",
+                              "count":  0
+                          },
+    "charInfo":  {
+                     "samples":  [
+                                     {
+                                         "value":  "Etc/MakeCharInfo.img/OrientCharFemale",
+                                         "address":  "0xaf6c28"
+                                     },
+                                     {
+                                         "value":  "Etc/MakeCharInfo.img/OrientCharMale",
+                                         "address":  "0xaf6c74"
+                                     }
+                                 ],
+                     "file":  "rea_search_charInfo.json",
+                     "count":  2
+                 },
+    "Coupon":  {
+                   "samples":  [
+                                   {
+                                       "value":  "Please enter the coupon code.",
+                                       "address":  "0xaf2138"
+                                   },
+                                   {
+                                       "value":  "The coupon system will be available soon.",
+                                       "address":  "0xaf2328"
+                                   }
+                               ],
+                   "file":  "rea_search_Coupon.json",
+                   "count":  2
+               },
+    "VegaSpell":  {
+                      "samples":  [
+                                      {
+                                          "value":  "indow.img/VegaSpell/EffectSpelling",
+                                          "address":  "0xaf0fd4"
+                                      },
+                                      {
+                                          "value":  "indow.img/VegaSpell/EffectSuccess",
+                                          "address":  "0xaf1028"
+                                      },
+                                      {
+                                          "value":  "indow.img/VegaSpell/EffectFail",
+                                          "address":  "0xaf1078"
+                                      },
+                                      {
+                                          "value":  "indow.img/VegaSpell/EffectArrow",
+                                          "address":  "0xaf10c4"
+                                      },
+                                      {
+                                          "value":  "indow.img/VegaSpell/EffectTwinkling",
+                                          "address":  "0xaf1110"
+                                      }
+                                  ],
+                      "file":  "rea_search_VegaSpell.json",
+                      "count":  7
+                  },
+    "Family":  {
+                   "samples":  [
+
+                               ],
+                   "file":  "rea_search_Family.json",
+                   "count":  0
+               },
+    "SpeedQuiz":  {
+                      "samples":  [
+
+                                  ],
+                      "file":  "rea_search_SpeedQuiz.json",
+                      "count":  0
+                  },
+    "PartyRace":  {
+                      "samples":  [
+                                      {
+                                          "value":  "UI/UIWindow.img/PartyRace/Stage/backgrd",
+                                          "address":  "0xaf4dd8"
+                                      },
+                                      {
+                                          "value":  "indow.img/PartyRace/State/Blue/",
+                                          "address":  "0xaf4e0c"
+                                      },
+                                      {
+                                          "value":  "indow.img/PartyRace/State/Red/",
+                                          "address":  "0xaf4e58"
+                                      },
+                                      {
+                                          "value":  "UI/UIWindow.img/PartyRace/Stage/number2",
+                                          "address":  "0xaf4e98"
+                                      },
+                                      {
+                                          "value":  "UI/UIWindow.img/PartyRace/Stage/number",
+                                          "address":  "0xaf4ec0"
+                                      }
+                                  ],
+                      "file":  "rea_search_PartyRace.json",
+                      "count":  10
+                  },
+    "TradingRoom":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_TradingRoom.json",
+                        "count":  0
+                    },
+    "InitialQuiz":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_InitialQuiz.json",
+                        "count":  0
+                    },
+    "IconBase":  {
+                     "samples":  [
+
+                                 ],
+                     "file":  "rea_search_IconBase.json",
+                     "count":  0
+                 },
+    "MobGage":  {
+                    "samples":  [
+
+                                ],
+                    "file":  "rea_search_MobGage.json",
+                    "count":  0
+                },
+    "AriantMatch":  {
+                        "samples":  [
+
+                                    ],
+                        "file":  "rea_search_AriantMatch.json",
+                        "count":  0
+                    },
+    "StatusBar":  {
+                      "samples":  [
+                                      {
+                                          "value":  "UI/StatusBar.img/base/chatTarget",
+                                          "address":  "0xaf72e0"
+                                      },
+                                      {
+                                          "value":  "UI/StatusBar.img/BtNPT",
+                                          "address":  "0xb3bab4"
+                                      }
+                                  ],
+                      "file":  "rea_search_StatusBar.json",
+                      "count":  2
+                  },
+    "Shop":  {
+                 "samples":  [
+                                 {
+                                     "value":  "/CashShop.img/CSItemSearch/Price",
+                                     "address":  "0xaf285c"
+                                 },
+                                 {
+                                     "value":  "/CashShop.img/CS3thEvent/0",
+                                     "address":  "0xaf29ec"
+                                 },
+                                 {
+                                     "value":  "CashShop",
+                                     "address":  "0xaf46d4"
+                                 },
+                                 {
+                                     "value":  "Please make sure that the Saddle Cover (Cash Shop) matches the Mount Cover (Cash Shop). If these two do not match, you will not be able to ride your new mount.",
+                                     "address":  "0xb3d648"
+                                 },
+                                 {
+                                     "value":  "The Cash Shop is not available for the Guest ID Users.",
+                                     "address":  "0xb3f5a4"
+                                 }
+                             ],
+                 "file":  "rea_search_Shop.json",
+                 "count":  5
+             },
+    "Stat":  {
+                 "samples":  [
+                                 {
+                                     "value":  "indow.img/PartyRace/State/Blue/",
+                                     "address":  "0xaf4e0c"
+                                 },
+                                 {
+                                     "value":  "indow.img/PartyRace/State/Red/",
+                                     "address":  "0xaf4e58"
+                                 },
+                                 {
+                                     "value":  "randStat",
+                                     "address":  "0xaf68bc"
+                                 },
+                                 {
+                                     "value":  "UI/StatusBar.img/base/chatTarget",
+                                     "address":  "0xaf72e0"
+                                 },
+                                 {
+                                     "value":  "CNMSetStatInfoFunc",
+                                     "address":  "0xafa204"
+                                 }
+                             ],
+                 "file":  "rea_search_Stat.json",
+                 "count":  10
+             }
+}

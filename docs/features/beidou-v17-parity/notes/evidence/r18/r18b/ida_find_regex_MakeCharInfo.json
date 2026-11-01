@@ -1,0 +1,16 @@
+{
+  "n": 2,
+  "matches": [
+    {
+      "addr": "0xaf6c28",
+      "string": "Etc/MakeCharInfo.img/OrientCharFemale"
+    },
+    {
+      "addr": "0xaf6c74",
+      "string": "Etc/MakeCharInfo.img/OrientCharMale"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

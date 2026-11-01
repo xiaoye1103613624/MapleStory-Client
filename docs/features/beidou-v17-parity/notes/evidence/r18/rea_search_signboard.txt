@@ -1,0 +1,4 @@
+﻿; REA search signboard
+; file=rea_search_signboard.json n_matches_field=0
+; extracted 2026-10-22T16:50:24.3203134+08:00
+; note: REA uses find_regex char-class; n=0 means no IDA ascii match for that pattern

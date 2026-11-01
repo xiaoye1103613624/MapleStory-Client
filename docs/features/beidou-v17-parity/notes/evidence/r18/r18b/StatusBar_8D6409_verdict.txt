@@ -1,0 +1,7 @@
+﻿sub_8D6409 size=0x10f6 — NOT OnButton
+Signature: sub_8D6409(this, a2, a3, a4) — a4 is typed payload (*byte):
+  type==1: item icon tooltip path (itemId/1000%10 filter 0/9)
+  type 4..6: string-table 2413 format + hover tip
+  type==8: string-table 4161 format
+  else: inventory slot match via itemId/1000000
+No switch on ctrl id 1000..1009 / 2000..2003. Exclude as StatusBar OnButton.

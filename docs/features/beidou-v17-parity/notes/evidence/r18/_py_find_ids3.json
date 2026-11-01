@@ -1,0 +1,12 @@
+﻿{
+    "jsonrpc":  "2.0",
+    "id":  43,
+    "method":  "tools/call",
+    "params":  {
+                   "name":  "py_eval",
+                   "arguments":  {
+                                     "code":  "import idaapi, ida_funcs, idc, ida_search\nfrom collections import defaultdict\nids = [1000,1001,1002,1007,1005,1006,1009]\nhits = defaultdict(set)\nfor imm in ids:\n    ea = 0\n    n = 0\n    while n \u003c 5000:\n        r = ida_search.find_imm(ea, ida_search.SEARCH_DOWN, imm)\n        # IDA 9 may return (ea, opnum) or ea\n        if isinstance(r, tuple):\n            ea2 = r[0]\n        else:\n            ea2 = r\n        if ea2 == idaapi.BADADDR or ea2 is None:\n            break\n        f = ida_funcs.get_func(int(ea2))\n        if f:\n            hits[int(f.start_ea)].add(imm)\n        ea = int(ea2) + 1\n        n += 1\nranked = sorted(((len(v), k, sorted(v)) for k,v in hits.items()), reverse=True)\nout = []\nfor score, addr, found in ranked[:60]:\n    if score \u003e= 3:\n        name = idc.get_func_name(addr)\n        size = ida_funcs.get_func(addr).size()\n        out.append(\"%d %s %s size=%s ids=%s\" % (score, hex(addr), name, hex(size), found))\nprint(\"COUNT_FUNCS\", len(out))\nprint(\"\\n\".join(out[:50]))",
+                                     "new_locals":  true
+                                 }
+               }
+}

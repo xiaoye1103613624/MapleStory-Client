@@ -1,0 +1,460 @@
+{
+  "Maker": {
+    "addr": "0xb39260",
+    "xrefs_to": [
+      {
+        "addr": "0xb39260",
+        "xrefs": [
+          {
+            "addr": "0x822739",
+            "type": "data",
+            "fn": {
+              "addr": "0x822350",
+              "name": "sub_822350",
+              "size": "0x668"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb39260",
+        "matches": [
+          "0x822739"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "ViciousHammer": {
+    "addr": "0xb394e8",
+    "xrefs_to": [
+      {
+        "addr": "0xb394e8",
+        "xrefs": [
+          {
+            "addr": "0x82abea",
+            "type": "data",
+            "fn": {
+              "addr": "0x82a9bc",
+              "name": "sub_82A9BC",
+              "size": "0x3bc"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb394e8",
+        "matches": [
+          "0x82abea"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "VegaSpell": {
+    "addr": "0xb395d4",
+    "xrefs_to": [
+      {
+        "addr": "0xb395d4",
+        "xrefs": [
+          {
+            "addr": "0x82c037",
+            "type": "data",
+            "fn": {
+              "addr": "0x82bb83",
+              "name": "sub_82BB83",
+              "size": "0x708"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb395d4",
+        "matches": [
+          "0x82c037"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "CashGachapon": {
+    "addr": "0xb3de68",
+    "xrefs_to": [
+      {
+        "addr": "0xb3de68",
+        "xrefs": [
+          {
+            "addr": "0x99a137",
+            "type": "data",
+            "fn": {
+              "addr": "0x999e4d",
+              "name": "sub_999E4D",
+              "size": "0x43c"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb3de68",
+        "matches": [
+          "0x99a137"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "goPartySearch": {
+    "addr": "0xaf2748",
+    "xrefs_to": [
+      {
+        "addr": "0xaf2748",
+        "xrefs": [
+          {
+            "addr": "0x49d4b4",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d0b6",
+              "name": "sub_49D0B6",
+              "size": "0x833"
+            }
+          },
+          {
+            "addr": "0x49dca9",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d90d",
+              "name": "sub_49D90D",
+              "size": "0x66c"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 2
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xaf2748",
+        "matches": [
+          "0x49d4b4",
+          "0x49dca9"
+        ],
+        "count": 2,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "goAllianceINVITE": {
+    "addr": "0xaf2734",
+    "xrefs_to": [
+      {
+        "addr": "0xaf2734",
+        "xrefs": [
+          {
+            "addr": "0x49d562",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d0b6",
+              "name": "sub_49D0B6",
+              "size": "0x833"
+            }
+          },
+          {
+            "addr": "0x49dd52",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d90d",
+              "name": "sub_49D90D",
+              "size": "0x66c"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 2
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xaf2734",
+        "matches": [
+          "0x49d562",
+          "0x49dd52"
+        ],
+        "count": 2,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "goAllianceTALK": {
+    "addr": "0xaf2724",
+    "xrefs_to": [
+      {
+        "addr": "0xaf2724",
+        "xrefs": [
+          {
+            "addr": "0x49d571",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d0b6",
+              "name": "sub_49D0B6",
+              "size": "0x833"
+            }
+          },
+          {
+            "addr": "0x49dd62",
+            "type": "data",
+            "fn": {
+              "addr": "0x49d90d",
+              "name": "sub_49D90D",
+              "size": "0x66c"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 2
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xaf2724",
+        "matches": [
+          "0x49d571",
+          "0x49dd62"
+        ],
+        "count": 2,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "ToolTip": {
+    "addr": "0xb3bc5c",
+    "xrefs_to": [
+      {
+        "addr": "0xb3bc5c",
+        "xrefs": [
+          {
+            "addr": "0x8e67a7",
+            "type": "data",
+            "fn": {
+              "addr": "0x8e49b5",
+              "name": "sub_8E49B5",
+              "size": "0x215f"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb3bc5c",
+        "matches": [
+          "0x8e67a7"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "Quest": {
+    "addr": "0xb399d0",
+    "xrefs_to": [
+      {
+        "addr": "0xb399d0",
+        "xrefs": [
+          {
+            "addr": "0x83ef0d",
+            "type": "data",
+            "fn": {
+              "addr": "0x83ea05",
+              "name": "sub_83EA05",
+              "size": "0xaa0"
+            }
+          },
+          {
+            "addr": "0x87d32d",
+            "type": "data",
+            "fn": {
+              "addr": "0x87ce25",
+              "name": "sub_87CE25",
+              "size": "0xaa0"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 2
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb399d0",
+        "matches": [
+          "0x83ef0d",
+          "0x87d32d"
+        ],
+        "count": 2,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "UserList": {
+    "addr": "0xb3c2dc",
+    "xrefs_to": [
+      {
+        "addr": "0xb3c2dc",
+        "xrefs": [
+          {
+            "addr": "0x917562",
+            "type": "data",
+            "fn": {
+              "addr": "0x917546",
+              "name": "sub_917546",
+              "size": "0x60a"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xb3c2dc",
+        "matches": [
+          "0x917562"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "PartyRace": {
+    "addr": "0xaf4dd8",
+    "xrefs_to": [
+      {
+        "addr": "0xaf4dd8",
+        "xrefs": [
+          {
+            "addr": "0x56c010",
+            "type": "data",
+            "fn": {
+              "addr": "0x56bd3c",
+              "name": "sub_56BD3C",
+              "size": "0x860"
+            }
+          },
+          {
+            "addr": "0x56cfc7",
+            "type": "data",
+            "fn": {
+              "addr": "0x56c9b7",
+              "name": "sub_56C9B7",
+              "size": "0x866"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 2
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xaf4dd8",
+        "matches": [
+          "0x56c010",
+          "0x56cfc7"
+        ],
+        "count": 2,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  },
+  "DualMobGauge": {
+    "addr": "0xaf4fbc",
+    "xrefs_to": [
+      {
+        "addr": "0xaf4fbc",
+        "xrefs": [
+          {
+            "addr": "0x56cc5b",
+            "type": "data",
+            "fn": {
+              "addr": "0x56c9b7",
+              "name": "sub_56C9B7",
+              "size": "0x866"
+            }
+          }
+        ],
+        "more": false,
+        "xref_count": 1
+      }
+    ],
+    "data_ref": [
+      {
+        "query": "0xaf4fbc",
+        "matches": [
+          "0x56cc5b"
+        ],
+        "count": 1,
+        "cursor": {
+          "done": true
+        },
+        "error": null
+      }
+    ]
+  }
+}

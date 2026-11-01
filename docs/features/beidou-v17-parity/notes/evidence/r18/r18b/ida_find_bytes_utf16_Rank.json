@@ -1,0 +1,12 @@
+{
+  "result": [
+    {
+      "pattern": "52 00 61 00 6e 00 6b 00",
+      "matches": [],
+      "n": 0,
+      "cursor": {
+        "done": true
+      }
+    }
+  ]
+}

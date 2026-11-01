@@ -1,0 +1,154 @@
+[
+  {
+    "addr": "0xaf4dd8",
+    "string": "UI/UIWindow.img/PartyRace/Stage/backgrd"
+  },
+  {
+    "addr": "0xaf4e98",
+    "string": "UI/UIWindow.img/PartyRace/Stage/number2"
+  },
+  {
+    "addr": "0xaf4ec0",
+    "string": "UI/UIWindow.img/PartyRace/Stage/number"
+  },
+  {
+    "addr": "0xaf4fbc",
+    "string": "UI/UIWindow.img/DualMobGauge/Mob/9700036"
+  },
+  {
+    "addr": "0xaf4fe8",
+    "string": "UI/UIWindow.img/DualMobGauge/gauge"
+  },
+  {
+    "addr": "0xaf500c",
+    "string": "UI/UIWindow.img/DualMobGauge/text"
+  },
+  {
+    "addr": "0xaf5030",
+    "string": "UI/UIWindow.img/DualMobGauge/backgrd"
+  },
+  {
+    "addr": "0xaf50e4",
+    "string": "UI/UIWindow.img/PartyRace/Result/number2"
+  },
+  {
+    "addr": "0xaf5110",
+    "string": "UI/UIWindow.img/PartyRace/Result/number"
+  },
+  {
+    "addr": "0xaf5138",
+    "string": "UI/UIWindow.img/PartyRace/Result/lose"
+  },
+  {
+    "addr": "0xaf5160",
+    "string": "UI/UIWindow.img/PartyRace/Result/win"
+  },
+  {
+    "addr": "0xaf5188",
+    "string": "UI/UIWindow.img/PartyRace/Result/backgrd"
+  },
+  {
+    "addr": "0xaf5fb0",
+    "string": "UI/ITC.img/Auction/backgrnd"
+  },
+  {
+    "addr": "0xaf605c",
+    "string": "UI/ITC.img/BtAuction"
+  },
+  {
+    "addr": "0xaf6074",
+    "string": "UI/ITC.img/BtSell"
+  },
+  {
+    "addr": "0xaf6098",
+    "string": "UI/ITC.img/Auction/BtBid"
+  },
+  {
+    "addr": "0xaf61d0",
+    "string": "UI/ITC.img/Auction/backgrnd1"
+  },
+  {
+    "addr": "0xaf6fd0",
+    "string": "UI/Login.img/ViewAllChar/Job/0"
+  },
+  {
+    "addr": "0xaf72e0",
+    "string": "UI/StatusBar.img/base/chatTarget"
+  },
+  {
+    "addr": "0xb39260",
+    "string": "UI/UIWindow.img/Maker/GaugeBar/gauge"
+  },
+  {
+    "addr": "0xb39288",
+    "string": "UI/UIWindow.img/Maker/GaugeBar/bar"
+  },
+  {
+    "addr": "0xb392ac",
+    "string": "UI/UIWindow.img/Maker/notUse"
+  },
+  {
+    "addr": "0xb39348",
+    "string": "UI/UIWindow.img/Maker/randomMake"
+  },
+  {
+    "addr": "0xb3936c",
+    "string": "UI/UIWindow.img/Maker/randomRecipe"
+  },
+  {
+    "addr": "0xb394e8",
+    "string": "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge"
+  },
+  {
+    "addr": "0xb39518",
+    "string": "UI/UIWindow.img/ViciousHammer/GaugeBar/bar"
+  },
+  {
+    "addr": "0xb395d4",
+    "string": "UI/UIWindow.img/VegaSpell/EffectArrow/0"
+  },
+  {
+    "addr": "0xb395fc",
+    "string": "UI/UIWindow.img/VegaSpell/GaugeBar/gauge"
+  },
+  {
+    "addr": "0xb399d0",
+    "string": "UI/UIWindow.img/Quest/Gauge/spot"
+  },
+  {
+    "addr": "0xb399f4",
+    "string": "UI/UIWindow.img/Quest/Gauge/gauge"
+  },
+  {
+    "addr": "0xb39a18",
+    "string": "UI/UIWindow.img/Quest/Gauge/frame"
+  },
+  {
+    "addr": "0xb3bab4",
+    "string": "UI/StatusBar.img/BtNPT"
+  },
+  {
+    "addr": "0xb3bc5c",
+    "string": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled"
+  },
+  {
+    "addr": "0xb3bc8c",
+    "string": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled"
+  },
+  {
+    "addr": "0xb3c2dc",
+    "string": "UI/UIWindow.img/UserList/GuildUnion/backgrnd"
+  },
+  {
+    "addr": "0xb3de68",
+    "string": "UI/UIWindow.img/CashGachapon/EffectJackpot/16"
+  },
+  {
+    "addr": "0xb3de98",
+    "string": "UI/UIWindow.img/CashGachapon/EffectNormal/16"
+  },
+  {
+    "addr": "0xb3dec8",
+    "string": "UI/UIWindow.img/CashGachapon/EffectNormal/0"
+  }
+]

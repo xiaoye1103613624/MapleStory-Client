@@ -1,0 +1,4 @@
+﻿; REA search frame
+; file=rea_search_frame.json n_matches_field=4
+; extracted 2026-10-22T16:50:24.3128036+08:00
+; note: REA uses find_regex char-class; n=0 means no IDA ascii match for that pattern

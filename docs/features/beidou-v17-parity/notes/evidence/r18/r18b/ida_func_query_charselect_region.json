@@ -1,0 +1,309 @@
+{
+  "result": [
+    {
+      "data": [
+        {
+          "addr": "0x401000",
+          "name": "sub_401000",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x40100a",
+          "name": "sub_40100A",
+          "size": "0x8",
+          "has_type": false
+        },
+        {
+          "addr": "0x40101e",
+          "name": "sub_40101E",
+          "size": "0x20",
+          "has_type": true
+        },
+        {
+          "addr": "0x40103e",
+          "name": "sub_40103E",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x401048",
+          "name": "sub_401048",
+          "size": "0x8",
+          "has_type": false
+        },
+        {
+          "addr": "0x40105c",
+          "name": "sub_40105C",
+          "size": "0x20",
+          "has_type": true
+        },
+        {
+          "addr": "0x40107c",
+          "name": "sub_40107C",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x401086",
+          "name": "sub_401086",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x4010a9",
+          "name": "sub_4010A9",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x4010b3",
+          "name": "sub_4010B3",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x4010bd",
+          "name": "sub_4010BD",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x4010e0",
+          "name": "sub_4010E0",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x4010ea",
+          "name": "sub_4010EA",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x4010f4",
+          "name": "sub_4010F4",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x401117",
+          "name": "sub_401117",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x401121",
+          "name": "sub_401121",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x40112b",
+          "name": "sub_40112B",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x40114e",
+          "name": "sub_40114E",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x401158",
+          "name": "sub_401158",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x401162",
+          "name": "sub_401162",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x401185",
+          "name": "sub_401185",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x40118f",
+          "name": "sub_40118F",
+          "size": "0xa",
+          "has_type": false
+        },
+        {
+          "addr": "0x401199",
+          "name": "sub_401199",
+          "size": "0x17",
+          "has_type": false
+        },
+        {
+          "addr": "0x4011bc",
+          "name": "sub_4011BC",
+          "size": "0xa",
+          "has_type": true
+        },
+        {
+          "addr": "0x4011c6",
+          "name": "sub_4011C6",
+          "size": "0x4df",
+          "has_type": false
+        },
+        {
+          "addr": "0x4016a5",
+          "name": "sub_4016A5",
+          "size": "0x2d8",
+          "has_type": false
+        },
+        {
+          "addr": "0x40197d",
+          "name": "sub_40197D",
+          "size": "0x9a",
+          "has_type": false
+        },
+        {
+          "addr": "0x401a17",
+          "name": "sub_401A17",
+          "size": "0x1bd",
+          "has_type": false
+        },
+        {
+          "addr": "0x401bd4",
+          "name": "sub_401BD4",
+          "size": "0x21",
+          "has_type": false
+        },
+        {
+          "addr": "0x401bf5",
+          "name": "sub_401BF5",
+          "size": "0x7f",
+          "has_type": false
+        },
+        {
+          "addr": "0x401c74",
+          "name": "sub_401C74",
+          "size": "0x175",
+          "has_type": false
+        },
+        {
+          "addr": "0x401de9",
+          "name": "sub_401DE9",
+          "size": "0x659",
+          "has_type": false
+        },
+        {
+          "addr": "0x402442",
+          "name": "sub_402442",
+          "size": "0x1c1",
+          "has_type": false
+        },
+        {
+          "addr": "0x402603",
+          "name": "sub_402603",
+          "size": "0xf",
+          "has_type": false
+        },
+        {
+          "addr": "0x402612",
+          "name": "sub_402612",
+          "size": "0xf",
+          "has_type": false
+        },
+        {
+          "addr": "0x402621",
+          "name": "sub_402621",
+          "size": "0xd",
+          "has_type": false
+        },
+        {
+          "addr": "0x40262e",
+          "name": "sub_40262E",
+          "size": "0xd",
+          "has_type": true
+        },
+        {
+          "addr": "0x40263b",
+          "name": "sub_40263B",
+          "size": "0x16",
+          "has_type": true
+        },
+        {
+          "addr": "0x402651",
+          "name": "sub_402651",
+          "size": "0xd",
+          "has_type": false
+        },
+        {
+          "addr": "0x40265e",
+          "name": "sub_40265E",
+          "size": "0x22",
+          "has_type": true
+        },
+        {
+          "addr": "0x402680",
+          "name": "sub_402680",
+          "size": "0x16",
+          "has_type": true
+        },
+        {
+          "addr": "0x402696",
+          "name": "sub_402696",
+          "size": "0x19",
+          "has_type": false
+        },
+        {
+          "addr": "0x4026c5",
+          "name": "sub_4026C5",
+          "size": "0x39",
+          "has_type": false
+        },
+        {
+          "addr": "0x402714",
+          "name": "sub_402714",
+          "size": "0x18",
+          "has_type": false
+        },
+        {
+          "addr": "0x402739",
+          "name": "sub_402739",
+          "size": "0x16",
+          "has_type": false
+        },
+        {
+          "addr": "0x40278b",
+          "name": "sub_40278B",
+          "size": "0x26",
+          "has_type": false
+        },
+        {
+          "addr": "0x4027b1",
+          "name": "sub_4027B1",
+          "size": "0xd",
+          "has_type": false
+        },
+        {
+          "addr": "0x4027be",
+          "name": "sub_4027BE",
+          "size": "0x2b",
+          "has_type": false
+        },
+        {
+          "addr": "0x4027e9",
+          "name": "sub_4027E9",
+          "size": "0xd",
+          "has_type": true
+        },
+        {
+          "addr": "0x4027f6",
+          "name": "sub_4027F6",
+          "size": "0xd",
+          "has_type": false
+        }
+      ],
+      "next_offset": 50
+    }
+  ]
+}

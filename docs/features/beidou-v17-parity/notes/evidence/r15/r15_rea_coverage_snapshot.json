@@ -1,0 +1,14 @@
+﻿{
+  "survey_total_functions": 55654,
+  "named_functions": 510,
+  "unnamed_functions": 54615,
+  "total_strings": 3889,
+  "r14_note": "feature catalog via UIWindow 112 + string anchors, NOT full decompile",
+  "forbid": "rea analyze full BeiDou.exe (idalib timeout)",
+  "r15_targeted": [
+    "sub_8D01B2 StatusBar CreateCtrl size 0x392d — decompile via MCP output fetch; CreateCtrl coords extracted to statusbar_createctrl_coords.txt",
+    "StatusBar strings: UI/StatusBar.img/BtNPT @0xb3bab4, chatTarget @0xaf72e0",
+    "sub_624E13 DrawWorldItems size 0x535 — lookup ok; REA schema unreadable_output (retry via MCP /output curl)"
+  ],
+  "conclusion": "Baseline UI bugs are primarily implementation/wiring gaps, not missing full-binary decompilation"
+}

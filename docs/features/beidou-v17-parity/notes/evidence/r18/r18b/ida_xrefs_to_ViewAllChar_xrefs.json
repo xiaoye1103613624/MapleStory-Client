@@ -1,0 +1,20 @@
+{
+  "result": [
+    {
+      "addr": "0xaf6fd0",
+      "xrefs": [
+        {
+          "addr": "0x607d0d",
+          "type": "data",
+          "fn": {
+            "addr": "0x6075dd",
+            "name": "sub_6075DD",
+            "size": "0x13d6"
+          }
+        }
+      ],
+      "more": false,
+      "xref_count": 1
+    }
+  ]
+}

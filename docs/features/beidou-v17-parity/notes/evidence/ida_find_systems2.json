@@ -1,0 +1,36 @@
+{
+  "n": 7,
+  "matches": [
+    {
+      "addr": "0xb394e8",
+      "string": "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge"
+    },
+    {
+      "addr": "0xb39518",
+      "string": "UI/UIWindow.img/ViciousHammer/GaugeBar/bar"
+    },
+    {
+      "addr": "0xb395d4",
+      "string": "UI/UIWindow.img/VegaSpell/EffectArrow/0"
+    },
+    {
+      "addr": "0xb395fc",
+      "string": "UI/UIWindow.img/VegaSpell/GaugeBar/gauge"
+    },
+    {
+      "addr": "0xb3de68",
+      "string": "UI/UIWindow.img/CashGachapon/EffectJackpot/16"
+    },
+    {
+      "addr": "0xb3de98",
+      "string": "UI/UIWindow.img/CashGachapon/EffectNormal/16"
+    },
+    {
+      "addr": "0xb3dec8",
+      "string": "UI/UIWindow.img/CashGachapon/EffectNormal/0"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

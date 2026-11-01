@@ -1,0 +1,8 @@
+﻿; DrawWorldItems sub_624E13 behavior summary
+; extracted 2026-10-22T16:50:24.2766068+08:00
+1) world_count = *(*(this+32)+512); loop i in [0,world_count) build world nameplates via sub_625429
+2) channel_count = length of list at *(this+32)+396 → stored *(this+33)
+3) for slot v54=0..N: CreateCtrl id = v54+1000 (channel buttons start at 1000)
+4) if v54 >= channel_count: empty slot path (string table 1357), CreateCtrl still, then disable via vtable+28
+5) else: format channel label (string table 1355 + channel id *v17); if v17[2]!=0 draw user-count/load gauge
+6) NO channel_count<2 early-out in this function — filtering is elsewhere (caller / world list fill)

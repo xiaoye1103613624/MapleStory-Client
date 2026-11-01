@@ -1,0 +1,98 @@
+﻿; IDA MCP decompile StatusBar_8D76D7 @ 0x8D76D7
+; extracted 2026-10-22T16:47:09.8490555+08:00
+
+void __thiscall sub_8D76D7(_DWORD *this, int a2, int a3)
+{
+  int v4; // eax
+  int v5; // eax
+  _DWORD *v6; // edi
+  int v7; // esi
+  unsigned __int8 v8; // al
+  bool v9; // zf
+  int v10; // ebx
+  int v11; // edi
+  int v12; // edi
+  int v13; // eax
+  int v14; // esi
+  _DWORD *v15; // esi
+  int v16; // eax
+  const char *v17; // [esp-14h] [ebp-40h]
+  const char *v18; // [esp-10h] [ebp-3Ch]
+  void *v19; // [esp-Ch] [ebp-38h]
+  _BYTE *v20; // [esp-8h] [ebp-34h]
+  _BYTE v21[8]; // [esp+8h] [ebp-24h] BYREF
+  BOOL v22; // [esp+10h] [ebp-1Ch] BYREF
+  _DWORD *v23; // [esp+14h] [ebp-18h]
+  int v24; // [esp+18h] [ebp-14h]
+  _BYTE *v25; // [esp+1Ch] [ebp-10h] BYREF
+  int v26; // [esp+28h] [ebp-4h]
+
+  v23 = this; /*0x8d76f3*/
+  v4 = sub_4281FB(a1: dword_BEC33C + 2424); /*0x8d76f6*/
+  v5 = sub_432CC2(a1: v4); /*0x8d76fd*/
+  v22 = v5 == -1; /*0x8d7708*/
+  if ( v5 == -1 && *(this + 28) <= 1u )
+  {
+    v6 = (_DWORD *)dword_BE7918; /*0x8d7724*/
+    v7 = *(_DWORD *)(sub_425D0B(a1: v21) + 4); /*0x8d7735*/
+    sub_4289B7(a1: v21); /*0x8d773b*/
+    v8 = sub_47465D(pExceptionObject: v7 + 51, a2: *(_DWORD *)(v7 + 53)); /*0x8d7747*/
+    v24 = sub_78D166(a1: v8); /*0x8d7758*/
+    v25 = nullptr; /*0x8d775b*/
+    v26 = 0; /*0x8d7762*/
+    if ( a2 > 87 && a2 < 171 && a3 > 558 && a3 < 574 ) /*0x8d778c*/
+    {
+      v9 = v6[2071] == 0; /*0x8d779e*/
+      v10 = *(_DWORD *)(v6[3509] + 4 * v6[2070]); /*0x8d77a4*/
+      v11 = v6[2066]; /*0x8d77a7*/
+      if ( v9 ) /*0x8d77ad*/
+      {
+        sub_79E805(); /*0x8d77ef*/
+        v17 = *(const char **)sub_406455(a1: &v22, a2: 2003); /*0x8d7803*/
+        LOBYTE(v26) = 2; /*0x8d7808*/
+      }
+      else
+      {
+        sub_79E805(); /*0x8d77b8*/
+        v17 = *(const char **)sub_406455(a1: &v22, a2: 680); /*0x8d77cc*/
+        LOBYTE(v26) = 1; /*0x8d77d1*/
+      }
+      sub_445B4B(a1: &v25, Format: v17, v11, v10, v7 + 4); /*0x8d77d5*/
+      LOBYTE(v26) = 0; /*0x8d77dd*/
+      sub_4062DF(a1: &v22); /*0x8d781b*/
+    }
+    if ( a2 > 441 && a2 < 556 && a3 > 559 && a3 < 574 )
+    {
+      if ( sub_416563(pExceptionObject: v7 + 177, a2: *(_DWORD *)(v7 + 185)) <= 0 )
+      {
+        v14 = sub_416563(pExceptionObject: v7 + 145, a2: *(_DWORD *)(v7 + 153)); /*0x8d78bd*/
+        sub_79E805(); /*0x8d78c8*/
+        v18 = *(const char **)sub_406455(a1: &v22, a2: 5537); /*0x8d78da*/
+        LOBYTE(v26) = 3; /*0x8d78df*/
+        sub_445B4B(a1: &v25, Format: v18, v14, v24); /*0x8d78e3*/
+        LOBYTE(v26) = 0; /*0x8d78e8*/
+        sub_4062DF(a1: &v22); /*0x8d78f2*/
+      }
+      else
+      {
+        v12 = sub_416563(pExceptionObject: v7 + 177, a2: *(_DWORD *)(v7 + 185)); /*0x8d7887*/
+        v13 = sub_416563(pExceptionObject: v7 + 145, a2: *(_DWORD *)(v7 + 153)); /*0x8d7889*/
+        sub_445B4B(a1: &v25, Format: "EXP : %d / %d  GachaponEXP : %d", v13, v24, v12);
+      }
+    }
+    if ( v25 != nullptr && *v25 != 0 ) /*0x8d7901*/
+    {
+      v15 = v23 + 1; /*0x8d7906*/
+      v20 = v25; /*0x8d7909*/
+      v19 = (void *)((*(int (__thiscall **)(_DWORD *))(v23[1] + 48))(a1: v23 + 1) + a3 + 20); /*0x8d7918*/
+      v16 = (*(int (__thiscall **)(_DWORD *))(*v15 + 44))(a1: v15); /*0x8d791d*/
+      sub_8E6E7D(a1: v16 + a2 + 20, a2: v19, a3: v20); /*0x8d792b*/
+    }
+    else
+    {
+      sub_8E6E23(a1: v23 + 27); /*0x8d7938*/
+    }
+    v26 = -1; /*0x8d793d*/
+    sub_4062DF(a1: &v25); /*0x8d7944*/
+  }
+}

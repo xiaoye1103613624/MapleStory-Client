@@ -1,0 +1,4 @@
+﻿; REA search Channel
+; file=rea_search_Channel.json n_matches_field=13
+; extracted 2026-10-22T16:50:24.3067307+08:00
+; note: REA uses find_regex char-class; n=0 means no IDA ascii match for that pattern

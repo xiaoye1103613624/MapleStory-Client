@@ -1,0 +1,11 @@
+_DWORD *__thiscall sub_6EC9CE(_DWORD *this, int a2)
+{
+  char v4; // [esp+Bh] [ebp-Dh] BYREF
+  int v5; // [esp+14h] [ebp-4h]
+
+  *(this + 1) = 0; /*0x6ec9dd*/
+  sub_496CA9(a1: 256, a2: &v4); /*0x6ec9f0*/
+  v5 = 0; /*0x6ec9f8*/
+  sub_6ECAA9(a1: a2); /*0x6ec9fe*/
+  return this; /*0x6eca03*/
+}

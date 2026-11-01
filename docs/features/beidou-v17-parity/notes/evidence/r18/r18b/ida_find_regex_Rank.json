@@ -1,0 +1,12 @@
+{
+  "n": 1,
+  "matches": [
+    {
+      "addr": "0xb3b128",
+      "string": "merank.maplestory"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

@@ -1,0 +1,9 @@
+UIWindow.img/CashGachapon
+UIWindow.img/DualMobGauge
+UIWindow.img/Maker
+UIWindow.img/PartyRace
+UIWindow.img/Quest
+UIWindow.img/ToolTip
+UIWindow.img/UserList
+UIWindow.img/VegaSpell
+UIWindow.img/ViciousHammer

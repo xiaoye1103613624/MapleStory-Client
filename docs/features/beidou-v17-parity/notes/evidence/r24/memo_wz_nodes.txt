@@ -1,0 +1,49 @@
+﻿===== UIWindow.img/Memo
+Memo [null]
+  BtDelete [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtOpen [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtSave [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  FontTime [null]
+    . [bitmap] bitmap 1x7
+    0 [bitmap] bitmap 5x7
+    1 [bitmap] bitmap 2x7
+    2 [bitmap] bitmap 5x7
+    3 [bitmap] bitmap 5x7
+    4 [bitmap] bitmap 5x7
+    5 [bitmap] bitmap 5x7
+    6 [bitmap] bitmap 5x7
+    7 [bitmap] bitmap 5x7
+    8 [bitmap] bitmap 5x7
+    9 [bitmap] bitmap 5x7
+    : [bitmap] bitmap 1x7
+    space [int] 5
+  backgrnd [bitmap] bitmap 295x240
+    origin [vector] (877087568, 43859)
+  backgrnd2 [bitmap] bitmap 295x240
+    origin [vector] (877087568, 43859)
+  backgrnd3 [bitmap] bitmap 295x168
+    origin [vector] (877087568, 43859)
+  check0 [bitmap] bitmap 12x12
+    origin [vector] (877087568, 43859)
+  check1 [bitmap] bitmap 12x12
+    origin [vector] (877087568, 43859)
+  innerBottom [bitmap] bitmap 260x8
+    origin [vector] (877087568, 43859)
+  innerCenter [bitmap] bitmap 260x18
+    origin [vector] (877087568, 43859)
+  innerTop [bitmap] bitmap 260x24
+    origin [vector] (877087568, 43859)
+  line [bitmap] bitmap 260x1
+    origin [vector] (877087568, 43859)

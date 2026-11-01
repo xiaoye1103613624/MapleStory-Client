@@ -1,0 +1,88 @@
+﻿error: Analysis failed
+code: unreadable_output
+category: execution_failure
+message: Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.
+retryable: false
+remediation:
+  action: Analysis returned an unreadable result. Run `rea doctor` and review the reported details; repeating the unchanged request is not expected to succeed.
+details:
+  partial_observation:
+    evidence_id: ev_645e7827642e563603a368c87af9ae99a13aaf65fff3ec433196b808cc074626
+    subject:
+      name: BeiDou.exe
+      digest:
+        sha256: 1198fa57ca5a7c489bae43ec13c69681d9cabe0f96762f3dc0357facf2e7d4df
+      local_path: "E:\\MXD\\BeiDou-ClientV17.7\\BeiDou.exe"
+      format: pe
+      architecture: x86
+    provider:
+      id: ida
+      name: IDA MCP adapter
+      version: "1"
+    analysis_profile: null
+    predicate_type: analysis-observation
+    operation: procedure_pseudo_code
+    parameters:
+      procedure: 0x8D01B2
+    raw_result:
+      upstream:
+        name: ida-pro-mcp
+        version: 1.0.0
+      observations[1]:
+        - tool: lookup_funcs
+          arguments:
+            queries[1]: 0x8D01B2
+          result[1]:
+            - query: 0x8D01B2
+              fn:
+                addr: 0x8d01b2
+                name: sub_8D01B2
+                size: 0x392d
+              error: null
+      metadata_before:
+        path: "E:\\MXD\\BeiDou-ClientV17.7\\BeiDou.exe.i64"
+        module: BeiDou.exe
+        base: 0x400000
+        size: 0xa94000
+        md5: 44c1030ecd8484e849c83892eb8fa025
+        sha256: 1198fa57ca5a7c489bae43ec13c69681d9cabe0f96762f3dc0357facf2e7d4df
+        crc32: 0xd458ef06
+        filesize: 0x81c000
+      post_operation_identity_check: not_attempted
+    normalized_result:
+      status: partial
+      failed_operation: procedure_pseudo_code
+      observations[1]:
+        - tool: lookup_funcs
+          arguments:
+            queries[1]: 0x8D01B2
+          result[1]:
+            - query: 0x8D01B2
+              fn:
+                addr: 0x8d01b2
+                name: sub_8D01B2
+                size: 0x392d
+              error: null
+      metadata_before:
+        path: "E:\\MXD\\BeiDou-ClientV17.7\\BeiDou.exe.i64"
+        module: BeiDou.exe
+        base: 0x400000
+        size: 0xa94000
+        md5: 44c1030ecd8484e849c83892eb8fa025
+        sha256: 1198fa57ca5a7c489bae43ec13c69681d9cabe0f96762f3dc0357facf2e7d4df
+        crc32: 0xd458ef06
+        filesize: 0x81c000
+      target_binding:
+        status: not_verified
+        reason: "IDA MCP truncated its output; the preview cannot establish a complete observation. \nOutput truncated. Run: curl -o .ida-mcp/d1c13afa-ae30-4b98-8a94-cecf26b08377.json http://127.0.0.1:13338/output/d1c13afa-ae30-4b98-8a94-cecf26b08377.json"
+    confidence: observed
+    authority: external-service
+    environment: null
+    limitations[8]: Provider version identifies the REA IDA adapter. IDA engine and upstream distribution versions are unknown unless separately observed; MCP serverInfo is reported independently.,"Results describe the current IDA analysis database. Input identity does not prove an unmodified database; patches, annotations, analysis completeness, and database revision remain unknown.",Live results are never replayed from analysis snapshots. Target checks before and after a request do not provide an atomic lock against external GUI changes.,Caller cancellation drains the in-flight MCP request before cleanup; it does not prove that IDA engine work was interrupted.,"Headless workers are released through the upstream database lifecycle. Abrupt termination of REA, its proxy, or the supervisor cannot prove worker cleanup; inspect upstream inventory after an interrupted process.","Complete function body ranges, typed references, unresolved indirect calls, referenced data, and basic blocks are unavailable in this adapter. Empty unsupported dossier facets are unknown, not observed absence.",The requested IDA operation failed after these completed upstream replies; the partial Evidence does not establish a complete result.,Replies are bound to the selected target only by the pre-operation identity check unless post_operation_identity_check is verified.
+    relationship_coverage: null
+    locations[2]:
+      - kind: artifact-path
+        path: "E:\\MXD\\BeiDou-ClientV17.7\\BeiDou.exe"
+      - kind: address
+        address: 0x8d01b2
+    evidence_links: []

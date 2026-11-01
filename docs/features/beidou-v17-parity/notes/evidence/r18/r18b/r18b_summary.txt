@@ -1,0 +1,22 @@
+r18b Wave0 retry summary — 2026-10-22
+Evidence dir: docs/features/beidou-v17-parity/notes/evidence/r18/r18b/
+Doc: docs/features/beidou-v17-parity/notes/r18-wave0-rea-incremental.md §7
+
+1) StatusBar OnButton/QS → C
+   - OnChildNotify sub_8D419C @0x8D419C
+   - OnButton     sub_8D423D @0x8D423D (vtable 0xb3baa0)
+   - 2000→A04F7A(1) Equip; 2001→(0) Inven; 2002→(2) Stat; 2003→(3) Skill
+   - 1005 KeyConfig; 1006 QS fold; 1000 Shop; 1001 NPT; 1002 Menu; 1007 Short
+
+2) BtGoWorld → C− (no separate button)
+   - WorldSelect OnButton sub_624AE8: channel id 1000+i
+   - enter: sub_5F8078 → 6EC9CE(6) + channel WORD + send
+   - GAP: client CHARLIST_REQUEST opcode 5 vs exe 6
+
+3) charInfo panel → C
+   - sub_602ADC: 183 x (148 if rank else 112)
+   - coords: Lv(46,19) Fame(136,19) STR(46,37) INT(136,37) DEX(46,55) LUK(136,55)
+
+4) Ranking unavailable → C
+   - if this[57]==0: string table 2976 at (36,99)
+   - else: 2977/2979 rank draw at y=99

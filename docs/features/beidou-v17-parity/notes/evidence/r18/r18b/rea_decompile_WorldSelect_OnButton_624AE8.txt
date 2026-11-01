@@ -1,0 +1,30 @@
+int __thiscall sub_624AE8(_DWORD *this, int a2)
+{
+  int result; // eax
+  int v4; // esi
+
+  result = sub_62540A(); /*0x624aec*/
+  if ( result != 0 )
+  {
+    result = a2; /*0x624af5*/
+    v4 = a2 - 1000; /*0x624af9*/
+    if ( a2 - 1000 >= 0 && v4 < *(this + 33) )
+    {
+      *(this + 34) = v4; /*0x624b0e*/
+      sub_62536C(a1: a2 - 1000); /*0x624b14*/
+      sub_6253BC(a1: -1); /*0x624b1d*/
+      *(this + 99) = v4; /*0x624b29*/
+      result = sub_5F8078(a1: v4); /*0x624b2f*/
+      if ( dword_BEC20C != 0 )
+      {
+        result = dword_BEDA68; /*0x624b3e*/
+        if ( dword_BEDA68 != 0 )
+          return sub_9E3264(a1: result != 0 ? result + 4 : 0);
+        result = dword_BEDA58; /*0x624b47*/
+        if ( dword_BEDA58 != 0 )
+          return sub_9E3264(a1: result != 0 ? result + 4 : 0);
+      }
+    }
+  }
+  return result; /*0x624b61*/
+}

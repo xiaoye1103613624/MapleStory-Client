@@ -1,0 +1,2760 @@
+                level="requireAdministrator"
+                uiAccess="false"
+            />
+            <requestedExecutionLevel
+        </requestedPrivileges>
+        <requestedPrivileges>
+    </security>
+    <security>
+    name="MapleStory"
+    processorArchitecture="x86"
+    type="win32"
+   & 0 9 D!"!&"
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`a
+ !"#$%&'(00)*0000000+,00-0./U
+ !666666666"#$%&'6666((((()*)*)*)*)*6666666666666666666666666666666666666666666666666666666+,666666666666666666666666666666666666666666666666-./012345
+ " & 0 : D!"!&"
+ %dhrs %dmin
+ +!"#+$%&'(+++)+++*
+ NOTE(S).
+ SSSSQ
+ SVj 3
+ VVVVQ
+ t$WWj
+ with TID(%lX)
+!%3535#
+!'#5#53
+!5!5#535!
+!5#535#535!
+!5#535353
+!5'35+
+!53535
+!53535!5!
+!5353535#5#5#5!
+!535353535!5!
+!53}}}}
+!5}}}}}}}}}}
+!D#8Eq
+!D=oDC
+!SjqZ+
+!This program cannot be run in DOS mode.
+!j<^j=
+!t(It!It
+""""""
+"""""qWqq""q"W
+""WW=""=WW
+""WWq""qW"
+""WWqW"qW"q"W
+""WWqWW"WWqWW
+""WWqWWqW"qWW
+""WWqWWqWWqWW
+""qq"q"q
+"+"H"`"d"
+"+"H"`"e"
+"QjIhq
+"VVShh
+"WWShh
+"t6It/It(It!It
+#######################eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#e###
+#15353
+#3535!
+#5!535
+#5#5!5!5#535353
+#5#5!53
+#5#5"23235#5"32323453
+#5#5#5#
+#5#5#5353
+#5#5#53535
+#5#53'535!
+#5#535#535#53
+#5#535#5353
+#5#5353
+#5#53535#53
+#5#53535#5353
+#5#535353
+#5#535}
+#5#53}
+#5#5}}
+#5#5}}}}}}
+#5#5}}}}}}}
+#5#5}}}}}}}}}}
+#5#}}||}}
+#535#5#5353
+#535#5#5353'353
+#535#53
+#535#535#53
+#535#53}}}}}}}
+#53535
+#53535!5!
+#53535#5#5
+#53535#5#53
+#53535#5#5}}}}}}}}}}
+#53535#5#}}}}}}}}}}}}}}}}}}
+#535353
+#53535353
+#53}}}}}
+#5}}}}}}}}}}
+#<./redist
+#Wreward#
+#Wsummary#
+#_T/`m
+#t@-Lc
+#}}}}}
+#}}}}}}
+#}}}}}}}
+#}}}}}}}}
+#~>SSSSQ
+$#)('&%$
+$PPPPQ
+$SSSSQ
+$VVVVQ
+$WWWWQ
+%%%%%%
+%%%02x
+%%4%4z
+%02X%02X%02X%02X%02X%02X_%02X%02X%02X%02X
+%02X-%02X-%02X-%02X-%02X-%02X
+%02d/%02d
+%04X:%08X [%s]
+%08X  %08X  
+%08X  %08X  %04X:%08X %s
+%08x%s
+%10d/%d/%d
+%4%44z
+%9sXu 
+%d / %d
+%d NX Prepaid 
+%d [ %s ]
+%d [ %s ] 
+%d ~ %d
+%d%02d%02d%02d%02d%02d.dmp
+%d%02d%02d.LOG
+%d.%d.%d.%d
+%d.%d.%d.%s%d(Build %d)
+%d/%02d/%02d %02d:%02d
+%d/%d/%d %d:%d:%d
+%d/???
+%d:%02d
+%hs() %hs(%lu) [%s]
+%hs()+%X [%s]
+%s %d / %d
+%s ( %d / %d )
+%s (%d)
+%s / %s
+%s : %s%s%s%s
+%s cannot be changed or deleted.
+%s%s%s%s
+%s(%s)
+%s;%s=%s
+%s\%s_%04d%02d%02d_%02d%02d%02d.jpg
+%s\EHSvc.dll
+%s\HShield
+%s\Nexon\NGM
+%s\Temp\%s
+%s\Temp\%s.mp
+%s\Temp\*.mp
+%t7Ht%Ht
+%tIHt:HtC
+&&&&&&
+&&&&&&&&&&
+&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&A&&&AAAAAAAAAAAAAAAAA&&&&&
+&&&&&&&&&&&&&&&A&AAAA##ssssssssssss###AA&&&
+&&&&&&&&&&&&&AA##s
+&&&&&&&&&A&AAA#s
+&&&&AAAs
+&A&A#s
+&SSSSQ
+&WWWWQ
+'$5(&%#
+'%s' can receive whisper.
+'%s' group will be deleted.
+''''''
+'''''''
+''''''''
+'''''''''
+''''''''''
+''''''''''''
+'''''''''''''''''''''''
+''''''''''''''''''''''''
+'''''''''''''''''''''''''
+'9X(t"
+'SSSSQ
+'WWWWQ
+'t==\x/
+'tD=\x/
+(%d/%d)
+((((((((((((((((((((((((((((((((((( ((((((((((((((((((((((((((((((((s
+(VWj X
+(empty)
+(j;^j<
+(null)
+)('&#"
+))))))
+))))))F)FF
+))))))FFF
+)))))FFFF
+))))FFFFF
+))))FFFx
+)))FFFF
+)C )K$)C()K,
+)F@WWW
+)FFFFFF
+)FHWWW
+)SSSSQ
+)lllllllllllllllllllllllllllllllllll)
+)uGhtp
+******
+*******
+********
+*D%+Ep
+*Df8Bw
+*HFG=g
+*KCz7z
+*dF X|
++*'&#"
++?!tttttttttt!tt!!!!!!!?!??
++D/$C{
++D2/Vs
++FD+F@
++FD;F@v
++NHx2;
++PPPPP
++WWWWQ
++t:Ht3HHt+Ht$
++ttHHtd
+,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,K!?^r
+,\G!0O
+,m\G!Y!\
+,tH=n\O
+,{hmcn
+- floating point not loaded
+- not enough space for _onexit/atexit table
+- not enough space for arguments
+- not enough space for environment
+- not enough space for lowio initialization
+- not enough space for stdio initialization
+- not enough space for thread data
+- pure virtual function call
+- unable to initialize heap
+- unable to open console device
+- unexpected heap error
+- unexpected multithread lock error
+-,%$#"
+-0!!G0G!YYG
+-0!!\5
+-0!Y!G000G!!,
+-G!!G0G!YY0
+-G!!\-
+-G!!\5
+-G!Gm5
+-G,YY!0
+-GTG!!Gm
+-GY!!\m--5
+-GYY!G0\\-
+-GYY!G\\m5
+-GYYG\m----
+-GYYY!,
+-GYYYG,
+-RRRRRRRR--
+-VVVVQ
+-\!!0-
+-\0000\00
+-m0!Y!
+-m\\\\\\m-
+-m\\mmmmm-5[
+-m\\mmmmmm-5
+-mm\\m-
+-mm\\m-5
+........
+............10
+..........10
+........10
+......10
+....10
+..@/(-,+*)('&%$#"!
+.?AVCDisconnectException@@
+.?AVCMSException@@
+.?AVCPatchException@@
+.?AVCSecurityClearFailed@@
+.?AVCSecurityException@@
+.?AVCSecurityInitFailed@@
+.?AVCSecurityThreatDetected@@
+.?AVCSecurityUpdateFailed@@
+.?AVCTerminateException@@
+.?AVZException@@
+.?AV_com_error@@
+.?AVexception@@
+.?AVlength_error@std@@
+.?AVlogic_error@std@@
+.?AVout_of_range@std@@
+.?AVtype_info@@
+.@You cannot use pet here.
+.A______
+///////////
+/0204.img
+/</</<
+/Pj?WQ
+/ec:%08x /gc:%08x /id:%s /se:%d
+/j6^j;
+/speak
+0-z=$L
+0000000000000000000000
+09~ht+
+0SVWh"WO
+0TTT'T''''''
+0YFuwrj
+0x%x %s
+0~)SSSSQ
+1#QNAN
+1#SNAN
+11111111111111d
+11111111111111dd
+11111111111111dd)FF
+111ddd
+111ddd)
+127.0.0.1
+1L$(3\$(
+1SSSSQ
+1SSSSj
+1Standard0755
+1VQj1P
+1VVVVQ
+1WWWWQ
+1dddddddddddddd
+1u"WWWjAP
+2001 | www.miniml.com | design by craig kroeger
+222222*2***********
+22222222222222222222222222222222
+2WWWWQ
+2]<:O;
+2t8Ht+
+3210/,+*)(
+333333
+3333333333
+3535#5
+3535#53
+3535#5}
+353535
+3535353
+35}}}}}
+3633333333333636666bz
+3WVVVVj
+3}}}}}
+3}}}}}}}}
+4DC<;! 
+4QQQQQ
+4`n[a)7
+4naa)K
+5#5#535353
+5-0!!G
+5-0G!!!!!0m
+5-\0\-
+5-\\-c
+50!Y!!GG!YYO
+50,YY!Gc
+50G0mm\G!!\
+50Y!Gm---m0!!O
+50YYY!\
+535#5#
+535#5#535#5353
+535#53
+535353
+53535353535353
+55555LLBBBBBccc}}
+5F5/5LLBBcccc}0WWv
+5F5555
+5G!YG\-5
+5K%+Dv
+5Macromedia Fontographer 4.1.4 8/9/01
+5Macromedia Fontographer 4.1.4 standard 07_55
+5Regular
+5UI)Xs
+5VVVVQ
+5WWWWQ
+5\!G0\\0G!Y!\[
+5\G!!!!G0\-
+5\G!G00\\\m5[
+5\GGG\\\0!Y!\
+5\GG\m-m\0G0
+5\GG\mm0!!0
+5m0G!!!!G0m
+5m0G00000m5
+5m0G00\\I,0m
+5mG!!0
+5mG!G0\\\0G0\-
+5m\\\\\\m-
+5z555LLPoBBBBccc}}}*vv
+66666666
+666666666
+666666666666bbbbz
+66666666b
+6666666b
+66666U
+666U66
+6D1+El
+6Df+^r
+6SSSSQ
+6U6666
+6dF#Yz
+6dF9Rl
+6dFhZq
+6dJjVm
+6dUeCq
+6j4^j6
+6u&SSSSQ
+7632! 
+7777777
+77777777
+7DDoD<
+7Ka[``44
+7VVVVQ
+8 t_NHH
+8 tbOHH
+8Y!#5#
+8Y%#5#5#53
+8Y%535#5#
+8Y35#5#
+8Y3535#535#
+8Y535#5353
+8Y735#
+8Y735+
+8Y7353535!
+9810#"
+9;u<9}
+9< tY<
+9@@AAf;
+9E YYux
+9E YY|f
+9E$YY|D
+9F YYr6
+9F$YYw
+9F4YYv!
+9H$uI8X
+9H$u[;
+9H$ue8X
+9HDu}j
+9PTu#9PPu
+9X t%Q
+9X(t$Q
+9X(tn9
+9X,t-SSSSQ
+9X,txQ
+9X0YYu4
+9X0t3QR
+9X<uMj 
+9XLtZj
+9]$t6f;
+9]$u,f
+9]$|@f;
+9](tnj
+9^Tu(9^Pu#3
+9_ u,SSSSQ
+9p0}W9
+9pDtf9p4
+9q\^|=;
+9sHu29u
+9x<uGj 
+9x<uJj
+9yLt#9}
+9~Tuz9~Pt
+9~lt j
+:965-,*)
+:AogOeC
+:E(uXf
+:K#cU.
+:}}===~~~~{
+:}}}}}~~
+;430/.('
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;O;OOOOOO>>>
+;;~~~~
+;A@t:;
+;F,w"r
+;G YY|
+;GxuV9u
+;N,w$r
+;N,w9r
+;Q<u+P
+<#u%F9U
+<......
+<........
+<.........
+<..........
+<............
+<..............
+<....................
+</</</
+</assembly>
+</trustInfo>
+<2YYv7
+<2YYwL
+<9~59^4
+<?</</
+<?</</<
+<?<?</
+<?<?</<
+<?<?</</<
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<@uiWndZ0
+<K5?Zs
+<KC~S>
+<Kf%Yj
+<Ktz<ktv<Lt
+<MHo(^7XD
+<[H8@_A8@_`+c:L{t:%{z(L8c`:{@lHaA2^vd2D~D_5$D^Lad<E[@<A84[S$1#:.
+<]t_G<-uA
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<assemblyIdentity version="1.0.0.0"
+<description>MapleStory Program</description>
+<program name unknown>
+<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+<ttSSSSQ
+<~BSSSSQ
+<~GSSSSQ
+==== %d/%d/%d %02d:%02d:%02d.%03d ==============================
+========
+=========
+===MMM
+===MMMM
+=Df%E|
+=HF#Cm
+=dF#C{
+=dF$Vs
+=dF%E>
+=dH@bm
+=dk@Cv
+=j3^j4
+=lfCBt
+=pdCBt
+=t4Ht'Ht
+>:u#FV
+>:uNFV
+>@] = 
+>Cu28V
+>Df+Z{
+>L%%%%%z
+?!tttU
+?!ttttU
+?$MMMMMMn
+?%d/%d/%d
+?333333
+?</</<
+?<?</<
+?<?</</
+?<?</</<
+?<?</</</
+?<?</</</<
+?<?<?<
+?<?<?</
+?<?<?</<
+?>;:7630-,*)
+??????
+???????
+?????????
+???UUUU
+?@ffffff
+?Df#O{
+?EFG=]
+?K$>d{
+?K(%Cw
+?K(/@W
+?K++C{
+?K+/Dm
+?K+/Zq
+?K39Rl
+?K5!^r
+?K5%Qj
+?R6025 %d %d %d %d
+?UI/UIWindow.img/ViciousHammer/GaugeBar/gauge
+?UUUUUU
+?ffffff
+@(SSSSSP
+@,;F,t
+@.data
+@.export
+@.import
+@2H{d:..
+@333333
+@;F }iP
+@LSSSSSP
+@Vj _WW
+@WVVVV
+@ffffff
+@j [SS
+@j j PQV
+@j j PQW
+@jd^9u
+@t&SSSSQ
+@t8Ht/Ht&Ht
+A0SSSSS
+A4H9A0~
+ACCESS_VIOLATION
+ADVAPI32.dll
+ARRAY_BOUNDS_EXCEEDED
+AdSpace
+Address   Frame
+Address   Frame     Logical addr  Module
+AdjustTokenPrivileges
+Argentina
+AttachThreadInput
+August
+Australia
+Austria
+B0C.D E
+B7621D704ED72C489EE54605
+BA>=#"
+BB;;;;;
+BB;B;BBBBB
+BBB;;;
+BBBBBB
+BBBBBBB
+BBBBBBBB
+BBBBBBBBBBB;;;
+BBBBBBBBBBBB
+BBBBBBBBBBBB;
+BBBBBBBBBBBB;;
+BBBBBBBBcccc}0T
+BBBBBBBccccc}}0TT
+BREAKPOINT
+BVVVVQ
+Basque
+Belgium
+BitBlt
+BoBBBBBBcc}}0
+BoBBBBBBcc}}0TTT
+BringWindowToTop
+Bt"HHt
+BtkHtRHt9
+C0VW@j!
+C@H9CD
+CLManager
+CNMAddCategoryFunc
+CNMAddFriendToCategoryFunc
+CNMAppendRejectedUserFunc
+CNMAttachToNMCOServerFunc
+CNMAttendanceEventEvent
+CNMAuthConnectionClosedEvent
+CNMAuthSecondaryConnectionClosedEvent
+CNMBlockFriendFunc
+CNMBringForwardStandAloneMsgFunc
+CNMCHBanUserFunc
+CNMCHChangeChannelInfoFunc
+CNMCHChangeMyInfoFunc
+CNMCHCloseFunc
+CNMCHGetChannelInfoFunc
+CNMCHGetMemberInfoListFunc
+CNMCHInviteUserFunc
+CNMCHSendChannelMessageFunc
+CNMCRBanUserFunc
+CNMCRChangeMyInfoFunc
+CNMCRChangeRoomInfoFunc
+CNMCRChatRoomCreatedEvent
+CNMCRChatRoomCreatedExEvent
+CNMCRChatRoomErrorEvent
+CNMCRChatRoomEstablishedEvent
+CNMCRChatRoomEstablishedExEvent
+CNMCRChatRoomInfoEvent
+CNMCRChatRoomInfoExEvent
+CNMCRChatRoomMemberEvent
+CNMCRChatRoomMessageReceivedEvent
+CNMCRCloseFunc
+CNMCRGetMemberInfoFunc
+CNMCRGetMemberListFunc
+CNMCRGetRoomInfoExFunc
+CNMCRGetRoomInfoFunc
+CNMCRInviteUserFunc
+CNMCRRegisterCallbackFunc
+CNMCRSendChatMessageFunc
+CNMCSChatMessageReceivedEvent
+CNMCSMultiChatCreatedEvent
+CNMCSSendChatMessageFunc
+CNMChangeCategoryAllowTypeFunc
+CNMChangeCategoryNameFunc
+CNMChangeCategoryPropertyFunc
+CNMChangeConfigFunc
+CNMChangeFriendMemoExFunc
+CNMChangeFriendMemoFunc
+CNMChangeLocalConfigFunc
+CNMChangeMetaDataFunc
+CNMChangeMyInfoFunc
+CNMChangeMyLevelFunc
+CNMChangeMyPositionFunc
+CNMChangeNicknameFunc
+CNMChannelCreatedEvent
+CNMChannelErrorEvent
+CNMChannelEstablishedEvent
+CNMChannelInfoEvent
+CNMChannelMemberInfoEvent
+CNMChannelMemberInfoListEvent
+CNMChannelMessageEvent
+CNMCharacterChangeNameFunc
+CNMCharacterLoginFunc
+CNMCharacterLogoutFunc
+CNMCharacterRemoveFunc
+CNMCheckNewsFunc
+CNMConfirmNewFriendFunc
+CNMCreateChannelFunc
+CNMCreateChatRoomExFunc
+CNMCreateChatRoomFunc
+CNMCustomMessageEvent
+CNMCustomNotifyEvent
+CNMCustomNotifyFunc
+CNMDeleteCategoryFunc
+CNMDeleteFriendFromCategoryFunc
+CNMDetachFromNMCOServerFunc
+CNMDownloadFileFunc
+CNMDownloadGuildMarkFileFunc
+CNMEvent
+CNMExecuteCommonFunc
+CNMExecuteLauncherFunc
+CNMExecuteNGMInstallerFunc
+CNMExecuteNGMLauncherFunc
+CNMExecuteNGMPatcherFunc
+CNMExecutePatcherFunc
+CNMFDSControlFunc
+CNMFDSFileDownloadEventReceivedEvent
+CNMFDSGetDownloadDirFunc
+CNMFDSSetDownloadDirFunc
+CNMFUDSGetFileEventFunc
+CNMFUSControlFunc
+CNMFUSFileUploadEventReceivedEvent
+CNMFUSSendFileFunc
+CNMFindUserFunc
+CNMFindUserReplyEvent
+CNMFriendInfoChangedEvent
+CNMFunc
+CNMGSGetInviteCandidateListFunc
+CNMGSGetMemberListFunc
+CNMGSGetSessionInfoFunc
+CNMGSInviteRejectedEvent
+CNMGSInviteUserExFunc
+CNMGSInviteUserFunc
+CNMGSMemberInfoChangedEvent
+CNMGSMemberLeavedEvent
+CNMGSNewMemberJoinedEvent
+CNMGSRegisterCallbackFunc
+CNMGSSessionClosedEvent
+CNMGSSessionCreatedEvent
+CNMGSSessionEstablishedEvent
+CNMGSSessionFailedEvent
+CNMGSSessionInfoChangedEvent
+CNMGSSessionInfoEvent
+CNMGSSetServingProcessIDFunc
+CNMGSWantCloseFunc
+CNMGameLogFinalizeFunc
+CNMGameLogGetSessionIDFunc
+CNMGameLogInitializeFunc
+CNMGameLogWriteErrorLogFunc
+CNMGameLogWriteStageLogFunc
+CNMGetConfigFunc
+CNMGetConnConfigFunc
+CNMGetCountFunc
+CNMGetDomainFunc
+CNMGetFindUserResultFunc
+CNMGetFriendInfoFunc
+CNMGetFriendListFunc
+CNMGetGameFriendTitleFunc
+CNMGetGameFullNameFunc
+CNMGetGameListFunc
+CNMGetGameServerListFunc
+CNMGetGameServerNameFunc
+CNMGetGameShortNameFunc
+CNMGetLocalConfigFunc
+CNMGetMatrixInfoFunc
+CNMGetMyGuildListExFunc
+CNMGetMyInfoFunc
+CNMGetMyVirtualUserListFunc
+CNMGetNexonPassportFunc
+CNMGetNoteBox2Func
+CNMGetNoteBoxFunc
+CNMGetPathFunc
+CNMGetRejectedUserListFunc
+CNMGetServerInfoFunc
+CNMGetSessionValueFunc
+CNMGetSupportGameListFunc
+CNMGetUrlExFunc
+CNMGetUrlFunc
+CNMGetUserDataListFunc
+CNMGetUserInfoFunc
+CNMGetVersionFunc
+CNMGuildChatMessageEvent
+CNMGuildOnlineInfoEvent
+CNMGuildOnlineInfoExEvent
+CNMInitClientObjectFunc
+CNMInitFunc
+CNMInitializeFunc
+CNMInviteVirtualUserEvent
+CNMIsGuestIDPassportFunc
+CNMIsNGMInstalledFunc
+CNMJoinChannelFunc
+CNMJoinToChatRoomExFunc
+CNMJoinToChatRoomFunc
+CNMLogReportSyncEvent
+CNMLogReportSyncFunc
+CNMLoginAuthFunc
+CNMLoginAuthMatrixFunc
+CNMLoginFunc
+CNMLoginMessengerFunc
+CNMLoginNexonPassportFunc
+CNMLoginPassportFunc
+CNMLoginVirtualFunc
+CNMLogoutAuthFunc
+CNMLogoutFunc
+CNMLogoutMessengerFunc
+CNMLogoutVirtualFunc
+CNMMessengerReplyEvent
+CNMMinimizeAllFunc
+CNMMonitorGuildOnlineInfoExFunc
+CNMMonitorGuildOnlineInfoFunc
+CNMMoveFriendCategoryFunc
+CNMMsgConnectionClosedEvent
+CNMNoteInfoEvent
+CNMNoteInstantMsgEvent
+CNMNotifyEvent
+CNMP2PConnectionClosedEvent
+CNMP2PLoginFunc
+CNMP2PLoginReplyEvent
+CNMP2PLogoutFunc
+CNMP2PMessageEvent
+CNMP2PMultiSendDataFunc
+CNMP2PSendDataFunc
+CNMP2PSendDataReplyEvent
+CNMProcessNoteFunc
+CNMRealFriendInfoChangedEvent
+CNMRefreshEvent
+CNMRefreshMessageEvent
+CNMRegisterCallbackFunc
+CNMRejectedUserListChangedEvent
+CNMRemoveMyVirtualUserFunc
+CNMRemoveRejectedUserFunc
+CNMReplySessionRequestFunc
+CNMRequestChatSessionExFunc
+CNMRequestChatSessionFunc
+CNMRequestFileUploadSessionExFunc
+CNMRequestFileUploadSessionFunc
+CNMRequestMultiChatSessionExFunc
+CNMRequestMultiChatSessionFunc
+CNMRequestNewFriendEvent
+CNMRequestNewFriendFunc
+CNMRequestNewsFunc
+CNMRequestSessionToOtherFunc
+CNMRequestWBSessionExFunc
+CNMRequestWBSessionFunc
+CNMResetCallbackFunc
+CNMRestrictedWordsFunc
+CNMSendGuildChatMessageFunc
+CNMSendNoteExMsgFunc
+CNMSendNoteInfoFunc
+CNMSendNoteMsgFunc
+CNMSendRefreshMessageFunc
+CNMSendReportMsgFunc
+CNMServerMessageEvent
+CNMSetConnConfigFunc
+CNMSetCountFunc
+CNMSetLocaleFunc
+CNMSetServerInfoFunc
+CNMSetSessionValueFunc
+CNMSetStatInfoFunc
+CNMSpecialEvent
+CNMStartStandAloneMsgFunc
+CNMUploadFileFunc
+CNMUserInfoEvent
+CNMVirtualFriendInfoChangedEvent
+CNMWSAssocSerialKeyEvent
+CNMWSGetAssocSerialKeyFunc
+CNMWSSendWBMessageFunc
+CNMWSWhiteBoardAckReceivedEvent
+CNMWSWhiteBoardMsgReceivedEvent
+CNMWriteToWiselogFunc
+CS:EIP:%04X:%08X
+Call stack:
+Canada
+Cannot find Character Information.
+CashShop
+Ch;Clt69s<v1P
+Change has been made so
+CharUpperBuffA
+Character
+Client
+ClientManager
+CloseHandle
+CoCreateGuid
+Colombia
+Commander
+CompareFileTime
+CompareStringA
+CompareStringW
+Continue with purchase?
+CopyFileA
+Costa Rica
+CreateCompatibleDC
+CreateDIBSection
+CreateDirectoryA
+CreateErrorInfo
+CreateEventA
+CreateFileA
+CreateFileMappingA
+CreateMutexA
+CreateProcessA
+CreateThread
+CreateToolhelp32Snapshot
+CreateWindowExA
+CxSupportId
+Cyberria
+D$0h(0
+D0,jaP
+D7)[n4
+D7a[n``444444
+D8tPh"
+D;E-LS9-?&h8@%..
+DATATYPE_MISALIGNMENT
+DBGHELP.DLL
+DBGHELP.DLL or its exported functions not found
+DD7K)a[
+DKan`444
+DOMAIN error
+DS:%04X  ES:%04X  FS:%04X  GS:%04X
+DSSSSQ
+DSVWj-
+DT2000
+December
+Default Group
+DeleteCriticalSection
+DeleteDC
+DeleteFileA
+DeleteObject
+Delivered
+DialogBoxParamA
+DialogVisible_%d
+DirectInput8Create
+Dominican Republic
+Double-click on a character to login.
+Double-click to make changes to the group.
+Double-click to send a note.
+Double-click to send a whisper.
+Double-click to send a whisper. (same channel)
+Dtz=MQ/
+E 9E$j7^}
+E H9E$j;^}
+E VVVV
+EAX:%08X
+EBX:%08X
+ECX:%08X
+EDA@5421/.('
+EDI:%08X
+EDX:%08X
+EEEEEEEE
+EEEEEEEEEEEEEEEE
+ESI:%08X
+EXP : %d / %d  GachaponEXP : %d
+Ecuador
+Effect
+EhDEhDEhDEhDEhDEhDEhDEhD
+EnableWindow
+English
+EnterCriticalSection
+EnumSystemLocalesA
+EnumThreadWindows
+Erroe Type
+Error Message
+EtRNt8Nt
+Etc/ItemMake.img
+Etc/NpcLocation.img/
+Event Map
+Exception code: %08X %s
+ExitProcess
+ExitThread
+E~2SSSSQ
+F ;Fht
+F PjPWj
+F!G"H#I
+F$PjQWj
+F))))F
+F)))FF
+F*PjTWj
+F+PjUWj
+F,PjVWj
+F-PjWWj
+F.PjRWj
+F09~0}
+F4H9F0~
+F@Map/MapHelper.img/weather/squib/squib%d
+F@j@Ph
+FB444444444444444444444444444444444444444444444444444444444444444444
+FF)))r
+FF))FF
+FF))dd111111
+FF)ddd1111
+FFFFFFFFF
+FFFFFFFFFFFFFFFF)
+FHSSSS
+FLT_DENORMAL_OPERAND
+FLT_DIVIDE_BY_ZERO
+FLT_INEXACT_RESULT
+FLT_INVALID_OPERATION
+FLT_OVERFLOW
+FLT_STACK_CHECK
+FLT_UNDERFLOW
+FPhiEA
+FX+F`P
+F`+F`Qj
+F`;N`}
+FatalAppExitA
+Fault Address:  %08X %02X:%08X
+February
+Female
+FileTimeToLocalFileTime
+FileTimeToSystemTime
+FindClose
+FindFirstFileA
+FindNextFileA
+FindWindowA
+Finland
+Finnish
+Flags:%08X
+FlushFileBuffers
+FormTime
+FormatMessageA
+Fqq//////////////////////////////////////////////////////////////////////////////////////
+France
+FreeEnvironmentStringsA
+FreeEnvironmentStringsW
+FreeLibrary
+French
+Friday
+From. 
+FtpGetFileA
+FtpGetFileSize
+FtpOpenFileA
+FxhiEA
+F|WjmQQ
+G ;F u
+G$;F$u#
+G4;F4u
+G<tl9]
+GAIsProcessorFeaturePresent
+GCSS Client
+GClient
+GDI32.dll
+GFCB&%
+GGLogin
+GM can not transfer worlds.
+GMMapleStory
+GUARD_PAGE
+Gb2001sp
+German
+GetACP
+GetActiveWindow
+GetAdaptersInfo
+GetCPInfo
+GetCommandLineA
+GetCurrentProcess
+GetCurrentThread
+GetCurrentThreadId
+GetDlgItem
+GetEnvironmentStrings
+GetEnvironmentStringsW
+GetEnvironmentVariableA
+GetErrorInfo
+GetFileSize
+GetFileType
+GetFileVersionInfoA
+GetFileVersionInfoSizeA
+GetLastActivePopup
+GetLastError
+GetLocalTime
+GetLocaleInfoA
+GetLocaleInfoW
+GetModuleFileNameA
+GetModuleHandleA
+GetOEMCP
+GetObjectA
+GetProcAddress
+GetProcessHeap
+GetStartupInfoA
+GetStdHandle
+GetStringTypeExA
+GetStringTypeW
+GetSystemDirectoryA
+GetTempFileNameA
+GetTempPathA
+GetTickCount
+GetTimeZoneInformation
+GetUserDefaultLCID
+GetVersion
+GetVersionExA
+GetVolumeInformationA
+GetWindow
+GetWindowRect
+GetWindowTextA
+GetWindowThreadProcessId
+GetWindowsDirectoryA
+GfvjS3
+Global\770D6DE9-7645-4cab-B490-28EE40F538CE
+Global\C886B01D-2DDD-466e-B6D7-43E0DC18F895
+Global\F121C66D-CF82-4c4c-88B4-04C28DB40548
+Global\FDED97A6-94E8-4b79-B426-1AA03D559CBB
+Guatemala
+Guild Alliance Invitation.
+Guild Master can not transfer worlds.
+H Qj'Pj
+H:mm:ss
+HH@I5"!
+HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+HHtQHt8
+HHtiHtGH
+HHtpHHtl
+HP : %s
+HP : ???
+HPrecovery
+HSUpdate.env
+HSUpdate.exe
+HSUpdateResult
+HSVHWtgHHtF
+HWWWWQ
+HYYt<Ht4Ht"Ht#HHt
+HYt!Ht
+H_^][YY
+HeapAlloc
+HeapCreate
+HeapDestroy
+HeapFree
+HeapReAlloc
+HeapSize
+Ht-Hu7
+Ht1HHt
+Ht1Ht!Ht
+Ht1Huf
+Ht2Hua
+Ht8Ht*Ht
+Ht<Ht2Ht(Ht
+Ht<Huu
+Ht?Ht5Ht.Ht$Ht
+HtDHt)H
+HtDHt/H
+HtDHt<Ht5j
+HtEHt:Ht
+HtFHt8Ht*Ht
+HtFHt<Ht2Ht(Ht
+HtHHt(
+HtOHt"
+HtOHt)H
+HtUHt:Ht
+HtVHt+H
+Ht\Ht0H
+Ht^Ht1H
+HtaHt4H
+HtcHt5H
+HtdHt4H
+HteHt1
+HteHt7
+HteHt[
+HtfHt5H
+HtfHt9H
+HtfHtZH
+HthHtOHt6Ht
+HtiHt8H
+HtkHt9H
+HtlHtMHt'H
+HtmHtJHt'H
+HtnHt4H
+HtoHt,Ht!Ht
+HtpHt-Ht
+HtqHtNHt+-
+HtqHtbHtS
+HtsHt>H
+HtsHtMHt'H
+HttHt0Ht
+HttHtN-
+HttpOpenRequestA
+HttpSendRequestA
+HtuHt>H
+HtvHtPHt*H
+HtwHtT-
+HtxHt1H
+HtxHtAH
+HtxHtU-
+HtxHt]HtHHHt!H
+HtzHtBH
+Ht{HtBH
+Ht|HtCH
+Ht~HtS
+Hu(h$+
+Hu;Sj@
+HudWWQ
+HufjdX
+H~ISSSSQ
+H~cSSSSQ
+I(;H(u9
+IDispatch error #%d
+ILLEGAL_INSTRUCTION
+IMM32.dll
+INT_DIVIDE_BY_ZERO
+INT_OVERFLOW
+INVALID_DISPOSITION
+INVALID_HANDLE
+IN_PAGE_ERROR
+Iceland
+Icelandic
+If you exit without creating a Nexon Passport account all your progress will be lost. Are you sure you want to exit?
+Im0!Y!
+Info_f
+InitializeCriticalSection
+InterlockedDecrement
+InterlockedExchange
+InterlockedIncrement
+InternetCloseHandle
+InternetConnectA
+InternetOpenA
+InternetSetStatusCallbackA
+Invalid Decoding
+Ipoclient
+IsBadCodePtr
+IsBadReadPtr
+IsBadWritePtr
+IsDBCSLeadByte
+IsValidCodePage
+IsValidLocale
+IsWindowEnabled
+IsWow64Process
+It5It)It
+ItEIt(It
+It[IItM
+ItdIt4I
+Item/Etc/0400.img
+Item/Etc/0425.img
+Item/Etc/0426.img
+Item/Etc/0429.img/%08d/effect
+Item/Etc/0429.img/%08d/effect/
+ItemSkill
+It|Ht9
+J$K%L&M2N1O
+JJJJJJJ<CCCCVCVVVVVVVVfffSpw
+JJJJJJJCCCCCCCVVVVVVVVVVVVf
+JanFebMarAprMayJunJulAugSepOctNovDec
+January
+Jc-m\mO
+Jffffffffff<<<<<
+Jt_Jt4J
+JtqJt<J
+KDEEDn
+KERNEL32
+KKthKt6K
+Kernel32.dll
+KtQKt+K
+KtkKt9K
+KtuKt@K
+KuFVVVVQ
+L$(RQj
+L+/+10L/d-D0L+KsD&h{dL=$?};#dLt~?!6_h_?[dLt~?+o[b~K[d:&vd-D0}l?[c+S/d-I.
+LCMapStringA
+LCMapStringW
+LC_ALL
+LC_COLLATE
+LC_CTYPE
+LC_MONETARY
+LC_NUMERIC
+LC_TIME
+LL%%%%%z
+LLL5L5555555;>
+LLLEEEEEiiii
+LLLEEEEiiii
+LeaveCriticalSection
+Lev:%d Job:%d STR:%d DEX:%d INT:%d LUK:%d MHP:%d MMP:%d AP:%d SP:%d EXP:%d Money:%d
+LoadBitmapA
+LoadLibraryA
+LoadLibraryExA
+LocalAlloc
+LocalFree
+LoginGAME
+LookupPrivilegeValueA
+Luxembourg
+Lv.%d %s
+M/d/yy
+M=MMMMwMwwwwwwwwww
+MD CLIENT
+MDCLIENT
+MDClient
+MMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MP : %s
+MP : ???
+MPrecovery
+MSSSSQ
+MVVVVQ
+MZukVV
+Main_f
+Map/MapHelper.img/worldMap/npcPos
+Map/Obj/etc.img/killing/backgrnd
+Map/Obj/etc.img/killing/fontTime
+Map/WorldMap/
+MapLink
+MapViewOfFile
+MapVirtualKeyA
+Maple/MediaList
+MapleStory
+MapleStory.exe
+MapleStoryGlobal :: MapleStory - Microsoft Internet Explorer
+MapleStory_Global:%s
+MapleTVDownloader
+Mb@?UUUUUU
+MediaList.LST
+Member
+MessageBoxA
+Mexico
+Microsoft Visual C++ Runtime Library
+MiniDumpWriteDump
+Module: %s
+Monday
+MoveWindow
+MultiByteToWideChar
+N09~0}
+N@9V@|iJ
+NMCO_CallNMFunc
+NMCO_MemoryFree
+NMCO_SetLocale
+NMCO_SetLocaleAndRegion
+NMCO_SetPatchOption
+NMCO_SetUseFriendModuleOption
+NMCO_SetUseNGMOption
+NMCO_SetVersionFileUrlA
+NNNNNNN
+NNNNNNNN
+NNpppppppppppNNNNuNuuu
+NONCONTINUABLE_EXCEPTION
+NTDLL.DLL
+N`;F`}
+Netbios
+New year card arrived
+NewTime
+Nexon.MapleStory.WebBrowserUI
+Nexon\MapleStory\MapleTV
+Not ready to gift items? 
+November
+NtwNtQNt+N
+Nt}NNt
+N{?333333
+N|+F<h
+OOO>>>
+OOOO>>>
+OOOO>>>>
+O\!!!\
+October
+OffsetRect
+Ole32.dll
+One or more of your pets cannot equip
+OpenMutexA
+OpenProcess
+OpenProcessToken
+OtVHHt?Ht)Ht
+OtaOt4O
+OtoOt=OO
+P 9^lu
+P 9^|u{
+P PSQQ
+P PWQQ
+P Sj]h
+P0;Q0uWf
+P4SSSSQ
+PESHELLF
+PID(%X), TID(%X)
+PPPPPP
+PPPPPPB
+PPPPPPP
+PPPPPPPP
+PPPPPPPPP
+PPPPPPh
+PPPPPh
+PPPPPj
+PPPPQQ
+PPjPQj
+PQPQPSh
+PQPQPWh
+PRIV_INSTRUCTION
+PRPRPRWh
+PSSSSS
+PSSSSSS
+PSSSSWSj
+PSSSSh
+PSSj SS
+PSSj SSSS
+PSSj j
+PVVVVV
+PVVVVh
+PVVVjAji
+PWWWWW
+PWWWWWW
+PWWWjej)
+PackedCatalogItem
+PacketDump : 
+PageDown
+PageUp
+Panama
+Paraguay
+PcAgent
+PcCreateObject
+PcFreeUnusedLibraries
+PcInitModule
+PcRootNameSpace
+PcSerializeObject
+PcSerializeString
+PcTermModule
+Pet Quote Ring
+Pj%jQj4Q
+PjHj)j
+PjUjPQ
+PjnWWWW
+Please come back later.
+Please enter the coupon code.
+Please enter the group name.
+Please make sure that the Saddle Cover (Cash Shop) matches the Mount Cover (Cash Shop). If these two do not match, you will not be able to ride your new mount.
+Please select the World you would like to play in.
+Please visit the website to charge your account.
+Process32First
+Process32Next
+Program: 
+ProgramFilesDir
+PtInRect
+Q ;Qh|
+Q RPQW
+Q$;P$uA
+Q,;P,u
+QFE/c{
+QHPWWS
+QPSSh(
+QPj%j{
+QQQQQP
+QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+QQSUVWj
+QQSVW3
+QQSVWd
+QQSVWh
+QQSVWj
+QQSVWj`j
+QRQRQ3
+QRQRQWh
+QSUVWj[jCj'
+QSVWhiEA
+QSWjVh
+Qf9=0f
+QxVVVVj
+R&]]]Rv*
+RPRPRSh
+RPRPRj
+RRRNNN
+RRRRRRRRR
+RR]]&]]&&]]RRvv
+RSVjoh
+RSVjuh
+RSWj*h
+RSWj<j
+RSWjnj
+RSj#ht
+RSj:j-h
+RSj:jah
+RSjFj-h
+RSjMjkh
+RSjgjnh
+RSjhj:j
+RSjrjqh
+RSjsj\j
+RSjsj|WV
+RSjujFj
+RSjujwj
+RWVj8h
+RWVjnh
+RWjOh%
+RWjOjhh
+RWjhj<h
+RWjhjeh
+RaiseException
+Reactor
+ReadFile
+Recommended Items
+RegCloseKey
+RegDeleteValueA
+RegOpenKeyExA
+RegQueryValueExA
+RegSetValueExA
+Register
+Registers:
+ReleaseMutex
+Rj<jkjQj0SV
+Rj^j<h
+RjijFjch
+Rjijdjch
+Rjyj=h
+RtlUnwind
+Runtime Error!
+SHELL32.dll
+SHGetSpecialFolderPathA
+SING error
+SINGLE_STEP
+SOFTWARE\AHNLAB\IOU\HackShield
+SOFTWARE\Microsoft\Windows\CurrentVersion
+SS:ESP:%04X:%08X  EBP:%08X
+SS@SSPVSS
+SSPWQQ
+SSSSPh
+SSSSQ;
+SSSSSP
+SSSSSS
+SSSSSS+
+SSSSSSS
+SSSSSSSSSSS
+SSSSSSSSSSSS
+SSSSSSSSSSSSSS111111
+SSSSSSSSSSSSSSS
+SSSSSSSj
+SSSSSSh
+SSSSSW
+SSSSSh
+SSSSSj
+SSj#SS
+SSj(SS
+SSj2SS
+SSj<SS
+SSjdSh4
+SSlSll
+STACK_OVERFLOW
+SVSSSS
+SVSWhm
+SVSWj0h
+SVSWj8h!
+SVSWjlh
+SVSWjnh
+SVVVVQ
+SVWj X
+SVWjD3
+SVWjch
+SYSTEM
+SYSTEM\CurrentControlSet\Services\WinSock2\Parameters\Protocol_Catalog9\Catalog_Entries\000000000001
+S\u^9U
+SafeArrayCreate
+SafeArrayDestroy
+Saturday
+SeDebugPrivilege
+SelectObject
+SendMessageA
+September
+SetConsoleCtrlHandler
+SetEndOfFile
+SetEnvironmentVariableA
+SetErrorInfo
+SetEvent
+SetFileAttributesA
+SetFilePointer
+SetHandleCount
+SetLastError
+SetRect
+SetRectEmpty
+SetStdHandle
+SetUnhandledExceptionFilter
+SetWindowPos
+Sharky
+ShowCursor
+SjCj#h
+SjUj:h
+SjZ_Wj<h
+SjbjPh
+SjdSSSQ
+SjdjKh 
+SjdjLh
+Sj}j7h
+Skill/ItemSkill.img
+SmartNet
+Something went wrong !!!!!
+South Africa
+Spanish
+Spanish - Modern Sort
+Spanish - Traditional Sort
+StEHHt;Ht3Ht!HuO
+StackWalk
+StartUpDlgClass
+StcHtL
+String
+SunMonTueWedThuFriSat
+Sunday
+Sweden
+Swedish
+Switzerland
+SymCleanup
+SymFunctionTableAccess
+SymGetLineFromAddr
+SymGetModuleBase
+SymGetSymFromAddr
+SymInitialize
+SymSetOptions
+Synaps
+SysAllocString
+SysFreeString
+SystemTimeToFileTime
+T-\GGm
+TLOSS error
+TMS Client
+TOG!YYG
+T_EZ*3x
+TamingMob
+TerminateProcess
+Thanks for playing!
+The Cash Shop is not available for the Guest ID Users.
+The MapleStory Trading System is not available for the Guest ID Users.
+The coupon system will be available soon.
+There are no guild alliance you joined OR no one online in your guild alliance.
+This name already exists.
+This user has been blocked.
+Thread32First
+Thread32Next
+Thursday
+Ticclient
+TimeCheck
+TlsAlloc
+TlsFree
+TlsGetValue
+TlsSetValue
+To Alliance
+Try Again!
+Tuesday
+UI/ITC.img/Auction/BtBid
+UI/ITC.img/Auction/backgrnd
+UI/ITC.img/Auction/backgrnd1
+UI/ITC.img/BtAuction
+UI/ITC.img/BtSell
+UI/Login.img/ViewAllChar/Job/0
+UI/StatusBar.img/BtNPT
+UI/StatusBar.img/base/chatTarget
+UI/UIWindow.img/CashGachapon/EffectJackpot/16
+UI/UIWindow.img/CashGachapon/EffectNormal/0
+UI/UIWindow.img/CashGachapon/EffectNormal/16
+UI/UIWindow.img/DualMobGauge/Mob/9700036
+UI/UIWindow.img/DualMobGauge/backgrd
+UI/UIWindow.img/DualMobGauge/gauge
+UI/UIWindow.img/DualMobGauge/text
+UI/UIWindow.img/Maker/GaugeBar/bar
+UI/UIWindow.img/Maker/GaugeBar/gauge
+UI/UIWindow.img/Maker/notUse
+UI/UIWindow.img/Maker/randomMake
+UI/UIWindow.img/Maker/randomRecipe
+UI/UIWindow.img/PartyRace/Result/backgrd
+UI/UIWindow.img/PartyRace/Result/lose
+UI/UIWindow.img/PartyRace/Result/number
+UI/UIWindow.img/PartyRace/Result/number2
+UI/UIWindow.img/PartyRace/Result/win
+UI/UIWindow.img/PartyRace/Stage/backgrd
+UI/UIWindow.img/PartyRace/Stage/number
+UI/UIWindow.img/PartyRace/Stage/number2
+UI/UIWindow.img/Quest/Gauge/frame
+UI/UIWindow.img/Quest/Gauge/gauge
+UI/UIWindow.img/ToolTip/Equip/GrowthDisabled
+UI/UIWindow.img/ToolTip/Equip/GrowthEnabled
+UI/UIWindow.img/UserList/GuildUnion/backgrnd
+UI/UIWindow.img/VegaSpell/EffectArrow/0
+UI/UIWindow.img/VegaSpell/GaugeBar/gauge
+UI/UIWindow.img/ViciousHammer/GaugeBar/bar
+UU666666U
+UUU+++++++++6&
+UUUU!!!!?!?????????
+UUUU+++++E
+UUUU?????
+UUUU???????????????
+UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+UUUUg4`n
+UU^^UUUUUUUUU++
+UjjjjjU
+Un'8R>
+UnhandledExceptionFilter
+Unk@~x
+Unknown Error (type1)
+Unknown error 0x%0lX
+Unknown exception
+UnmapViewOfFile
+Uruguay
+User32.dll
+Users under level 15 users
+Ut!t!!!
+UtHHt-H
+Utttttttt!t!!!!!!!?!????
+V@9F@|
+VC20XC00U
+VVVVPj
+VVVVVV
+VVVVVVV
+VVVVVVVVVVV
+VVVVVVVj
+VVVVVVj V
+VVVVVh
+VVVVVj
+VVVVVuu
+VWWHPIQ
+VWWHPj
+VWWISQP
+VWWWWP
+VariantChangeType
+VariantClear
+VariantCopy
+VariantInit
+Venezuela
+VerQueryValueA
+VirtualAlloc
+VirtualFree
+VirtualProtect
+VirtualQuery
+Vj}j6h
+Vt2Ht)Ht
+Vtvj0j
+W"""WqWqqW"q"W
+WINMM.dll
+WQj1Pj
+WS2_32.DLL
+WSACleanup
+WSAGetLastError
+WSAStartup
+WSSSSSSSj
+WVWSh<
+WVWShf
+WVWSj8h!
+WVWSjNh
+WVWSjhh
+WVWWQQ
+WWRPWW
+WWWWQQ
+WWWWWP
+WWWWWS
+WWWWWW
+WWWWWWW
+WWWWWWWP
+WWWWWWWWWWW
+WWWWWWWWj
+WWWWWWh
+WWWWWj
+WWWW}%Q
+WaitForSingleObject
+WebStart
+Wednesday
+WideCharToMultiByte
+Wj(jch
+WjCj!h
+WjdWWWQ
+Wjfj6h
+Wjfj=h
+Wjpj!h
+WjsX+E
+Would you like to gift this item to someone?
+Would you like to proceed?
+Would you like to register 
+Would you like to unblock?
+WriteFile
+Wt@Ht4Ht(Ht
+X+F$9E
+X+F(9E
+XWPWWQ
+X]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+Y9~LtF
+Y9~TtF
+Y9~XtF
+Y9~\tF
+Y9~`tF
+Y9~dtF
+Y9~|uT
+YHYtLHt9
+YOU HAVE RECEIVED 
+YSSSSQ
+YWWWWQ
+YWWWWWh
+YY954{
+YYSSSSj
+YYYYYddd
+YY_^[t
+YYj(Y3
+YYjdY+
+YYjd[;
+YYjsj/
+YYs'Wj
+YYt6VQ
+YYt99]
+YYtO9]
+YYtQVQ
+YYt[SSSj
+YYtlVQ
+YYtrSVj
+YYtuSVj
+YYtySUVj
+YYt|Ht7Ht)H
+YYu&SSSSQ
+YYu&WWWWQ
+YYu(SSSSQ
+YYu/9]
+YYu2WWWWQ
+YYu4SSSSQ
+YYu;j X
+YYuBSSSSQ
+YYuFVVVW
+YYuGQQ
+YYuLQQ
+YYu\VQ
+YYux9u
+YY}&SSSSQ
+YY})SSSSQ
+YY},SSSSQ
+YY~4WWWWQ
+Yj/hm\O
+You are dismissed from the guild alliance.
+You can use it after unblocking.
+You cannot use a Scroll with this item.
+You have been blocked for typing in an invalid password or pincode 5 times.
+You have not selected any friends.
+You joined [%s] guild alliance.
+You leaved the guild alliance.
+You must have at least one character
+You should choose only one
+You will spend %d NX Prepaid
+You will spend %d NX Prepaid 
+You will spend %d NX Prepaid.
+Your friends in the group
+Yt+SSSSQ
+Yt.HuY
+Yt.SSSSQ
+Yt;j X
+YtDSSSSQ
+Y|DSSj
+Z%;CYq
+ZException (%s) source(%s)
+ZTL_DEADLOCK
+ZtlTaskMemAllocImp
+ZtlTaskMemFreeImp
+ZtlTaskMemReallocImp
+[ %s ] 
+[%02d/%02d]
+[%d:%s] %s:%s -> %s:%s  [%s]
+[%d]%d-%d-%d-0x%x %s 
+[%s] guild joined in your guild alliance.
+[5m0\5[
+[W:%2d]
+[[OG!YG
+[[[[[[[[[[[[[
+[l8Ja%
+[tEHHtAHHt=j 
+[uhSWSh
+\!,YYGc
+\!Y!G0\m-
+\!YY!0
+\!YY!m
+\!YYY\
+\Banner
+\EG]]J
+\G!!0c
+\GameButton
+\HShield
+\HShield\EHSvc.dll
+\HsLogMgr.exe
+\Nexon
+\Nexon\MapleStory
+\Nexon\MapleStory\MapleTV
+\YYYY0
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\dnsapi.DLL
+\npkgameuninstnomsg.exe
+]&&]]]&]]R-
+]4]44444%
+]IeN?F
+^.,*/;!\'"`+
+^89^Tu5j
+^9YPu-
+^@9],t
+^G{k$,I
+^U+++++
+^UUUUU+++
+^VVVVQ
+^^U+++++++
+^^U+++++++UUU
+^^U+++UUU
+^^U6666666U
+^^U66666UU
+^e;U5'
+^t7Ht,Ht!Ht
+^tIHHtEHHtAj
+_9~<~z
+_ADDRESS     =
+_AHNPRODUCTID=
+_AIL_quick_halt@4
+_AIL_quick_load_mem@8
+_AIL_quick_ms_length@4
+_AIL_quick_ms_position@4
+_AIL_quick_play@8
+_AIL_quick_set_ms_position@8
+_AIL_quick_set_volume@12
+_AIL_quick_shutdown@0
+_AIL_quick_startup@20
+_AIL_quick_status@4
+_AIL_quick_unload@4
+_AIL_set_redist_directory@4
+_FTPUSERID   =
+_FTPUSERPASS =
+_NOTICE_
+_OPEN_
+_PORT        =
+_PROTOCOL    =
+_SERVER      =
+_SYSTEM_
+_^][YY
+__GIVEUP__
+__GLOBAL_HEAP_SELECTED
+__MSVCRT_HEAP_SELECT
+______
+_______
+_____________________________
+______________________________
+_hypot
+_lopen
+`.rdata
+`RaObPcQdKeLfMgGhHiIj7kNmJnSo
+`````````444444
+``````hhh
+`h````
+`~&SSSSQ
+`~HSSSSQ
+aaa[[[[H
+abnormal program termination
+addDay
+addTime
+advapi32.dll
+agent30.mod
+agent32.mod
+agent33.mod
+agent34.mod
+agent38.bin
+agent39.bin
+agent391.bin
+agent392.bin
+agent40.bin
+allowedItem
+america
+american
+american english
+american-english
+and continue the adventure?
+australian
+autoComplete
+bAVxS0
+bD2"Vj
+bDFoD>
+b^ #[j
+battleFieldTeam
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+belgian
+bluenetterm.exe
+bonusExp
+britain
+btHHt.
+button
+c!!YYY,,,I
+c*S{@~{{@#?[
+c-0!Y!
+c-m\\mOI
+c:\Program Files
+canadian
+cannot use the meso bags.
+catalyst
+chinese
+chinese-hongkong
+chinese-simplified
+chinese-singapore
+chinese-traditional
+client.exe
+clmanager.exe
+closesocket
+clothes
+codeBoard=
+com_error(%s) source(%s)
+compare
+d-Lcl:Ha4sE~
+d-LclI?[c*L{b;LclLh[4#~cz2K~@;I.
+d111111
+dQjdjdVW
+dVVVVQ
+dailyPlayTime
+daylimit
+ddd111
+dddd, MMMM dd, yyyy
+dddddYdYYYYYYYYY
+ddddddddd
+dinput8.dll
+dreamto2000.exe
+dttcli.exe
+dutch-belgian
+ePocket
+e_^tOHt7Ht
+earAcc
+easyclient.exe
+emotion
+england
+english-american
+english-aus
+english-belize
+english-can
+english-caribbean
+english-ire
+english-jamaica
+english-nz
+english-south africa
+english-trinidad y tobago
+english-uk
+english-us
+english-usa
+epclient.exe
+epicItem
+equipTradeBlock
+et.Ht(Ht!Ht
+ex.exe
+expl.exe
+eyeAcc
+f3Frf=
+f;CFu7f
+f;CHu-f
+f;CJu#f
+faceAcc
+ffff<f<f<<<<
+ffffPPr
+for a free Nexon Passport 
+french-belgian
+french-canadian
+french-luxembourg
+french-swiss
+ft-Hu`
+gD/m[r
+game98c.exe
+gamec.exe
+gamstar.exe
+gb2001sp.exe
+gclient.exe
+gcsc.exe
+gdi32.dll
+german-austrian
+german-lichtenstein
+german-luxembourg
+german-swiss
+gethostbyname
+getoman.exe
+getpeername
+getsockname
+gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gloves
+glyf3hs
+goAllianceINVITE
+goAllianceTALK
+goPartySearch
+great britain
+grms.exe
+h666rj [SS
+h666rj j 
+hTH#Zy
+hdmx=8-
+healer
+hh:::::h:hX
+hhhh`h````````
+holland
+hong-kong
+hourlimit
+hqVZ'e)
+http://Ingameweb.nexon.net/maplestory/client/launcher.html
+http://ingameweb.nexon.net/maplestory/ad/maple_window_mode_ad.html
+http://ingameweb.nexon.net/maplestory/client/image/banner.html
+http://maplestory.nexon.net
+http://maplestory.nexon.net/WZ.ASPX?PART=/Downloads/GamePatches
+hv____
+h|Y'}kC
+i1OFZd
+iGGGGGGG
+iSSSSQ
+iUTd^s
+icon00
+icon01
+icon02
+icon03
+icon04
+igc_gglc.exe
+igc_gglm.exe
+ijl15.dll
+ijlFree
+ijlInit
+ijlRead
+ijlWrite
+imgsaver.exe
+in this process.
+incACC
+incACCMax
+incACCMin
+incCraftMax
+incCraftMin
+incDEX
+incDEXMax
+incDEXMin
+incEVA
+incEVAMax
+incEVAMin
+incExpR
+incINT
+incINTMax
+incINTMin
+incJump
+incJumpMax
+incJumpMin
+incLUK
+incLUKMax
+incLUKMin
+incMAD
+incMADMax
+incMADMin
+incMDDMax
+incMDDMin
+incMHPMax
+incMHPMin
+incMMPMax
+incMMPMin
+incMaxHP
+incMaxMP
+incPAD
+incPADMax
+incPADMin
+incPDDMax
+incPDDMin
+incReqLevel
+incSTR
+incSTRMax
+incSTRMin
+incSpeed
+incSpeedMax
+incSpeedMin
+inet_addr
+invalid string position
+iphlpapi.dll
+ipoclient.exe
+irish-english
+ismak32
+ismak32.exe
+italian-swiss
+itemEXP
+itemLEV
+itemNum
+itemid
+j#_Vtt
+j$jsj\hV
+j'jPPQ
+j1h>A@
+j2j6hP
+j7Y9ZLu
+j@j'_W
+jAWj7j
+jBBBBB
+jBBBBB;;;
+jEY@@;
+jI+P#ucU
+jI^jK_
+jKj7jRj
+jNjGjMj
+jSYf9M
+jS_WPS
+jUWjKj
+jUj:Vh
+jVj;Wh
+jVj_Wh
+jVjrWh
+j_j3jih
+j`j+jdP
+javascript:window.close()
+jbj6h@
+jbjrhA
+jcjsX+
+jdX+F3jd
+jdXPPPP
+jdX_^[
+jdX_^[]
+jdY_^[
+jdj2jgSh
+jdj<SV
+jdjDj0Sh
+jdjDjgSh
+jdjUjRj
+jdjdVW
+jikmln
+jjj;B;;~
+jjjBB;;
+jjjjBjBj
+jkj jvh
+jkj(jxP
+jkj4jvh
+jkjHjvh
+jmjqVh
+jmjqVj
+jobCategory
+jxj(jCh
+jxjbj$h
+jxjlj$h
+jxjnj$h
+jzj4jTh
+k`(v7b
+kernel32.dll
+k}}}}}
+k}}}}}}
+k}}}}}}}
+k}}}}}}}}}
+k}}}}}}}}}}
+l$K~+_L{blu1+!..
+l$K~=_?{D^L$l=K~@{o[1+:.
+l$K~c!Ia?&h8@%..
+linkMap
+lstrcmpA
+lstrcmpiA
+lstrcpyA
+lstrlenA
+lstrlenW
+m!TOGG0Icm\I
+m!YY!\
+m0!!\I
+m0000000m5
+m0GG!Y!!0-
+m0TI\0GOG0\
+mG!!0-
+mG!!GGG!YY!m
+mGTG!!G
+mGY!GGG!YYG
+mH{6h8
+mOYYY!,
+m\G!!G0
+main_f
+maskPageType=
+maxDays
+minlimit
+mmmmmmmmmmmmmmmmm
+mnetc.exe
+mobequip
+mss32.dll
+multipet
+n```4444444
+n`````````4`444
+ncclient.exe
+netapi32.dll
+netmon.exe
+new-zealand
+nmcogame.dll
+nnn44ggggggggggggggggggggggggggggggggg`n
+noSkill
+norwegian
+norwegian-bokmal
+norwegian-nynorsk
+nst*.tmp
+ntmcli
+ntmcli.exe
+nvz}}}}}}}}}}
+o-G!!\
+o5\!!G
+o5\!!\
+o5\GGG\mm\GG!0
+o8 }U/
+o@ffffff
+oBBBBBBcc}}00
+oBBBBBcc}}0TTTT'''
+of the three options.
+oidArticle=
+ole32.dll
+oleaut32.dll
+ooBBBBBcc}0
+ooBBBBBcc}}0
+ooooBBcc0}TTT
+ooooBBcc}0TTT''''
+ooooBcc}0000TTTT'''
+oooocc
+oooooBc}000TTTTT'''
+oooooc}00TTT'''
+oqprsutvw
+over level 30 to purchase Gachapon
+o}}}}}}}
+p;q<r=s>t?u@vAwBxCyDzW{X
+p@jHRP
+pAUI/UIWindow.img/Quest/Gauge/spot
+patch.mapleglobal.com
+pbclient.exe
+pcagent.exe
+pcbangclient.ex
+pcbangclient.exe
+pcmanager.exe
+pendant
+percent
+peshell.exe
+petwear
+pgb_client_mngr.exe
+pkcnt.exe
+portuguese-brazilian
+ppxxxx
+pr china
+pr-china
+protectTime
+puerto-rico
+pulley
+q"WWq""qW"q"W
+qq""qq"qq""q"W
+qqq"qqqq
+qqqq"qqq
+q}}}}}
+q}}}}}}}
+q}}}}}}}}}
+q}}}}}}}}}}
+q}}}}}}}}}}}}}
+q}}}}}}}}}}}}}}
+q}}}}}}}}}}}}}}}
+q}}}}}}}}}}}}}}}}}
+q~}s}|
+randOption
+randStat
+randomReward
+randomTarget
+recipe
+recoveryInterval
+recoveryRate
+replace
+report25.mod
+reqEquip
+reqItem
+reqLevel
+reqQuest
+reqSkillLevel
+rrrrrrrrrr
+rstandard 07_55
+rtEMSFJ
+run.exe
+runtime error 
+rxxx}}}
+s##A&A
+s094;t
+sO;>|C;~
+saddle
+seclimit
+server.exe
+shell32.dll
+shield
+shutdown
+siFieldID
+slotIndex
+slovak
+socket
+south africa
+south korea
+south-africa
+south-korea
+spanish-argentina
+spanish-bolivia
+spanish-chile
+spanish-colombia
+spanish-costa rica
+spanish-dominican republic
+spanish-ecuador
+spanish-el salvador
+spanish-guatemala
+spanish-honduras
+spanish-mexican
+spanish-modern
+spanish-nicaragua
+spanish-panama
+spanish-paraguay
+spanish-peru
+spanish-puerto rico
+spanish-uruguay
+spanish-venezuela
+specialID
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+string too long
+svchost.exe
+swedish-finland
+swimArea
+systemcn.exe
+t 9Xpt
+t ;E$t
+t =\x/
+t VVVVQ
+t WWW3
+t!f98t
+t"WWWWj
+t#SSSSQ
+t#SSUP
+t$$VSS
+t$HtfHHt
+t$SSSSQ
+t&9~Pt+
+t&=Ph@
+t&=j\O
+t&SSSS
+t&SSSSQ
+t&VVVVQ
+t&WWWWQ
+t'9Xlt"9
+t'=[x/
+t(SSSSQ
+t)=[x/
+t)Ht5Ht
+t)PPPPQ
+t)SSSSQ
+t)VVVVQ
+t)WWWWQ
+t*=^C#
+t+Ht!Ht
+t+Ht$Ht
+t,Ht!Ht
+t,Ht%Ht
+t,SSSSQ
+t-=Kh@
+t-Jt#Jt
+t-SSSSQ
+t.;t$$t(
+t/=i\O
+t/SSSSQ
+t/WWUPj
+t0;M t+
+t0HHt,-mo
+t0Ht Ht
+t0SSSSQ
+t1SSSSQ
+t2={MR
+t2It&It
+t2SSSSQ
+t2SSSSSP
+t3f98t.
+t4=ij#
+t5HHt'HHt
+t5Ht'Ht
+t5SSSQ
+t5SSSSQ
+t69^ u1P
+t6=i\O
+t6HHt"HHt
+t6Ht!Ht
+t6SSSSj
+t8Ht-HHt!
+t8SSSS
+t9=^x/
+t9Ht*HHt
+t9SSSS
+t9SSSSQ
+t:;x$t
+t:=[x/
+t:Ht*Ht
+t:SSSSQ
+t;=qj#
+t=SSSSSSj~jJ
+t>It+It
+t>QQQQQQjvjJ
+t>SSSSSSjaj<
+t>VVVV
+t>VVVVVVWj
+t>VVVVVVj~jJ
+t?=Bo@
+t?Ht5Ht+Ht!Ht
+t?SSSSQ
+t?SSSSSSj
+t@Ht HuiWWQ
+t@WWWW
+tAHt*H
+tAHt4Ht'Ht
+tAHt:Ht3Ht,
+tB=)] 
+tBHt3Ht+Ht
+tBSSSSSh
+tBUVWj
+tBVVVVVh
+tCHt8Ht HuG
+tD;F|t?3
+tD;^0t?
+tD=n\O
+tDHt7Ht*
+tEj@Vh
+tFHt8Ht*Ht
+tG9} t
+tGHt.Ht
+tHHt&H
+tHHt7Ht&Ht
+tI=0] 
+tISVSSSS
+tJHt'H
+tJHt:Ht*Ht
+tK9_lt*;
+tKHt>Ht;Ht-Q
+tKHtAHt7Ht-
+tKVVVVQ
+tL9M t
+tLHt"Hu
+tLHt<Ht,HuCj
+tLHtAHtF
+tMHtAHt)
+tNHt+-
+tNHtBHt'Ht
+tNItCIt4IIt-Iu
+tNf9:tI
+tOHHt@Ht2Ht$Ht
+tOHt:Ht4Ht"H
+tOHt@Ht1
+tP=)] 
+tPHt(HumQ
+tQHt-Ht&Ht
+tR=+] 
+tSVWjxQ
+tT9X uOj
+tTHt8Ht
+tUHt0Ht
+tUHtKHtAHt7
+tV=Ih@
+tV=j\O
+tVVVVVQ
+tX={MR
+tXJtK=
+tZHt-Hu|
+tZHtMHt9HuQ
+t[=j\O
+t[JtKJ
+t\=pj#
+t]=Hh@
+t]=[x/
+t]SSSSSSjzj(
+t]VVVVVVWju
+t^Ht1H
+t^HtPHtAHt2
+t^KtJKt6KVVVVQ
+t`=pj#
+t`Ht>Huz;
+t`HtJHt4HHt
+ta9~D|\9~H|W
+taSSSSSSj+j.WQ
+tamingmob
+tb=i\O
+tb=n\O
+tbKtKKt4
+tcHt>Ht'Ht
+tcHtPHtAHt2
+tcSSSSSSj+jp
+tdHtEHt&H
+te=<A@
+teHHt2Hu^
+teHtFHt'-
+termEnd
+termStart
+tgHtHHt&H
+tgHtTHtAHt2
+thHt-Ht
+this item.
+ti=Kh@
+ti=ij#
+ticclient.exe
+timeGetTime
+timeLimit2
+timechk.exe
+tj=/] 
+tkHt[Ht
+tmHHt?
+tmHtJHt'H
+tmsclient.exe
+tn<%t2
+tnHtLHt*-
+tnSSSSQ
+to9]$uj
+toJt:Jt'Juq
+tp=Kh@
+tpHtJHt'H
+tpHtMHt'H
+tpHtMHt*H
+tq=ij#
+tqHtNHt+-
+tqHtb-
+tr9_$umj
+trinidad & tobago
+tsHtMHt*H
+tsHtPHt*H
+tsHt_H
+tsItfItYItLIt;
+tt=MQ/
+tu={MR
+tw=)] 
+twHtQ-
+twSSSS
+txHt>H
+tyHtMHt'H
+t|Ht@H
+t}HHty-
+t}HtmHt<Ht
+u"9^|t
+u#SSSSQ
+u$QQQQQ
+u$SSSSQ
+u$WWWWQ
+u%9] t f9^
+u%F9U,
+u%QQQQQ
+u%SSSSQ
+u&PPPPQ
+u&SSSSQ
+u&WWWWQ
+u(SSSSQ
+u(VVVVQ
+u)PPPPQ
+u)SSSSQ
+u)WWWWQ
+u+SSSSQ
+u,SSSSQ
+u-SSSSQ
+u1WWWj
+u2SSSSQ
+u2WWWWQ
+u49u t/
+u4SSSSQ
+u59X(t0
+u5PPPPQ
+u5SSSSQ
+u5WWWWQ
+u7SSSSQ
+u8SSSSQ
+u:PPPPQ
+u=jdX+
+u@Kt6Kt,Kt"Kt
+uASSSSQ
+uBSSSSQ
+uBWWWWQ
+uDSSQQ
+uE9} t
+uM9p(|H
+uM9u t
+uMSSSSQ
+uMWSWh
+uRFGHt
+uVVVVQ
+uW9=he
+uWSSSSQ
+uXSSSSQ
+u_9}$u
+ubSSSSQ
+ueSSSSQ
+uiBin%d
+ujh"WO
+ukSSSSQ
+ulSSSSQ
+unKKtRKtEKt8Kt
+united-kingdom
+united-states
+usWWWWQ
+user32.dll
+uuWWWWQ
+uuuuuuNNNNNNSNSpSSSppwr
+uuuuuuu
+uvWWWWQ
+uw9s uF
+uxSSSSQ
+u|SSSS
+v$SSSSj
+v%]G:7R"
+v)SSSSQ
+vKSSSSQ
+vcvt j>
+ver(%d), CharacterName(%s), WorldID(%d), ChID(%d), FieldID(%d), %s
+ver.%d
+ver.%d CharacterName(%s), WorldID(%d), ChID(%d), FieldID(%d)
+version.dll
+viewMedalItem
+vvvv-v-v--v-
+was sent to %s. 
+weapon
+wedding%d
+were spent in the process.
+will be moved to %s.
+wininet.dll
+winmm.dll
+with PayPal/PayByCash.
+wpclsp.dll
+ws2_32.dll
+wsprintfA
+wvsprintfA
+w}}|||
+w}}}}}
+w}}}}}}
+w}}}}}}}
+w}}}}}}}}
+w}}}}}}}}}
+w}}}}}}}}}}
+w}}}}}}}}}}t
+w}}}}}}}}}}}
+w}}}}}}}}}}}}
+w}}}}}}}}}}}}}}}
+x tSQSW
+x+ jcV
+xxP||||||
+xxxx}}}
+xzy{}|
+yecamanagerc.exe
+you have gained an item
+you have gained items
+z%5j~M
+z_FbT7
+z`La4~`8D2A64lA[1#HaD$y84(I.
+zu^SSS
+zz5zLLP
+zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+{{{{{{
+{{{{{{{
+{{{{{{{{{
+{{{{{{{~~~
+{{~{{{{{
+| ;FH}
+|&WWWWQ
+|)VVVVQ
+|,SSSSQ
+|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+|J;Y }E
+|MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+|sx}}}}}}}}
+|vvvvvvvvvvvvvvvvvvvvvvvvvv
+||}}}}
+|~}}}}}}
+}&WWWWQ
+},9X(t'
+}DSSSSQ
+}WjdjP
+}X;N\u
+}dJjsl
+}tFHHtBHHt>j
+}||||}}
+}}||}}}}}}|}}|}}}
+}}|}}}}|
+}}}}}}
+}}}}}}||}
+}}}}}}}
+}}}}}}}}
+}}}}}}}}}
+}}}}}}}}}}
+}}}}}}}}}}}
+}}}}}}}}}}}}
+}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}~~
+}}}~|}
+}~6_l(..
+~$;F@t
+~$={MR
+~%=Bo@
+~&;FHt!3
+~&WWWWQ
+~)SSSSQ
+~5SSSSQ
+~=SSSSQ
+~D'8Zq
+~P=Bo@
+~`;F`}
+~hh.&@
+~phiEA
+~tIHHtEHHtAj 
+~ySSSS
+~{{{{{{{{{{
+~||}}|}
+~|}||}|

@@ -1,0 +1,93 @@
+﻿===== UIWindow.img/VegaSpell
+VegaSpell [null]
+  BtCancel [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtOK [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtStart [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  Count [null]
+    0 [bitmap] bitmap 9x10
+    1 [bitmap] bitmap 6x10
+    2 [bitmap] bitmap 9x10
+    3 [bitmap] bitmap 9x10
+    4 [bitmap] bitmap 9x10
+    5 [bitmap] bitmap 9x10
+    6 [bitmap] bitmap 9x10
+    7 [bitmap] bitmap 9x10
+    8 [bitmap] bitmap 9x10
+    9 [bitmap] bitmap 9x10
+  EffectArrow [null]
+    0 [bitmap] bitmap 23x11
+    1 [bitmap] bitmap 23x11
+    2 [bitmap] bitmap 23x11
+    3 [bitmap] bitmap 23x11
+    4 [bitmap] bitmap 23x11
+    5 [bitmap] bitmap 23x11
+  EffectFail [null]
+    0 [bitmap] bitmap 57x60
+    1 [bitmap] bitmap 93x86
+    2 [bitmap] bitmap 128x86
+    3 [bitmap] bitmap 144x86
+    4 [bitmap] bitmap 142x86
+    5 [bitmap] bitmap 138x86
+  EffectSpelling [null]
+    0 [bitmap] bitmap 110x94
+    1 [bitmap] bitmap 110x94
+    2 [bitmap] bitmap 110x94
+    3 [bitmap] bitmap 110x94
+    4 [bitmap] bitmap 110x94
+  EffectSuccess [null]
+    0 [bitmap] bitmap 64x60
+    1 [bitmap] bitmap 75x66
+    10 [bitmap] bitmap 144x86
+    11 [bitmap] bitmap 125x81
+    12 [bitmap] bitmap 121x78
+    13 [bitmap] bitmap 97x67
+    14 [bitmap] bitmap 92x67
+    15 [bitmap] bitmap 87x66
+    16 [bitmap] bitmap 86x66
+    17 [bitmap] bitmap 86x62
+    2 [bitmap] bitmap 89x66
+    3 [bitmap] bitmap 102x67
+    4 [bitmap] bitmap 123x67
+    5 [bitmap] bitmap 137x86
+    6 [bitmap] bitmap 146x86
+    7 [bitmap] bitmap 141x86
+    8 [bitmap] bitmap 146x86
+    9 [bitmap] bitmap 146x86
+  EffectTwinkling [null]
+    0 [bitmap] bitmap 104x143
+    1 [bitmap] bitmap 118x127
+    10 [bitmap] bitmap 142x119
+    11 [bitmap] bitmap 148x111
+    12 [bitmap] bitmap 142x105
+    13 [bitmap] bitmap 116x143
+    14 [bitmap] bitmap 110x151
+    2 [bitmap] bitmap 140x117
+    3 [bitmap] bitmap 148x111
+    4 [bitmap] bitmap 140x103
+    5 [bitmap] bitmap 124x123
+    6 [bitmap] bitmap 114x145
+    7 [bitmap] bitmap 110x151
+    8 [bitmap] bitmap 102x145
+    9 [bitmap] bitmap 118x129
+  FailWnd [bitmap] bitmap 152x159
+    origin [vector] (877087568, 43859)
+  GaugeBar [null]
+    gauge [bitmap] bitmap 1x9
+  SuccessWnd [bitmap] bitmap 152x159
+    origin [vector] (877087568, 43859)
+  backgrnd10 [bitmap] bitmap 178x235
+    origin [vector] (877087568, 43859)
+  backgrnd60 [bitmap] bitmap 178x235
+    origin [vector] (877087568, 43859)

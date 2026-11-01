@@ -1,0 +1,15 @@
+===== PartySearch protocol (BeiDou s9) — r23
+C→S RecvOpcode:
+  PARTY_SEARCH_REGISTER = 220 (0xDC)  stub empty
+  PARTY_SEARCH_START    = 222 (0xDE)  int min, int max, int members(ignored), int jobs(bitmask)
+  PARTY_SEARCH_UPDATE   = 223 (0xDF)  empty body → unregister (Stop)
+
+S→C: no dedicated list opcode.
+  Invite via SendOpcode.PARTY_OPERATION(62) mode 4:
+    byte 4, int partyId, string "PS: "+name, byte 0
+
+Accept: PARTY_OPERATION C→S mode 3 + partyId (PartyJoinPacket)
+Deny:   DENY_PARTY_REQUEST(125) = byte + string (server splits "PS: ")
+
+NOTE: client OutPacket PLAYER_UPDATE was 223 — same as PARTY_SEARCH_UPDATE;
+      SetFieldHandlers must NOT dispatch empty 223 on map enter (would stop search).

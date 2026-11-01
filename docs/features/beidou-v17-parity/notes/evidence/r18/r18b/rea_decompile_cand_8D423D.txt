@@ -1,0 +1,71 @@
+int __thiscall sub_8D423D(_DWORD *this, unsigned int a2)
+{
+  int result; // eax
+
+  if ( dword_BEBF98 != 0 && *(_DWORD *)(dword_BEBF98 + 12596) != 0 ) /*0x8d4253*/
+    sub_95BEDF(); /*0x8d4255*/
+  if ( a2 > 0x7D0 ) /*0x8d426b*/
+  {
+    if ( a2 == 2001 ) /*0x8d42e5*/
+    {
+      sub_A04F7A(a1: 0, a2: -1); /*0x8d430c*/
+      return sub_8DFE21(a1: 1, a2: 0); /*0x8d4316*/
+    }
+    else if ( a2 == 2002 ) /*0x8d42e8*/
+    {
+      sub_A04F7A(a1: 2, a2: -1); /*0x8d42ff*/
+      return sub_8DFE21(a1: 2, a2: 0); /*0x8d4307*/
+    }
+    else
+    {
+      result = a2 - 2003; /*0x8d42ea*/
+      if ( a2 == 2003 ) /*0x8d42eb*/
+      {
+        sub_A04F7A(a1: 3, a2: -1); /*0x8d42f1*/
+        return sub_8DFE21(a1: 3, a2: 0); /*0x8d42f9*/
+      }
+    }
+  }
+  else if ( a2 == 2000 ) /*0x8d426d*/
+  {
+    sub_A04F7A(a1: 1, a2: -1); /*0x8d42d7*/
+    return sub_8DFE21(a1: 0, a2: 0); /*0x8d42de*/
+  }
+  else
+  {
+    result = a2 - 1000; /*0x8d426f*/
+    switch ( a2 ) /*0x8d427d*/
+    {
+      case 0x3E8u: /*0x8d427d*/
+        result = sub_A04DCA(a1: 0); /*0x8d4285*/
+        break; /*0x8d428a*/
+      case 0x3E9u: /*0x8d427d*/
+        result = sub_A12522(a1: dword_BE7918); /*0x8d428f*/
+        break; /*0x8d4294*/
+      case 0x3EAu: /*0x8d427d*/
+        result = sub_A06735(a1: dword_BE7918); /*0x8d42ab*/
+        break; /*0x8d42b0*/
+      case 0x3EBu: /*0x8d427d*/
+        result = sub_8D4A6D(a1: 1); /*0x8d42bd*/
+        break; /*0x8d42bd*/
+      case 0x3ECu: /*0x8d427d*/
+        result = sub_8D4A6D(a1: 3); /*0x8d42c3*/
+        break; /*0x8d42c3*/
+      case 0x3EDu: /*0x8d427d*/
+        result = sub_A04F7A(a1: 5, a2: -1); /*0x8d429d*/
+        break; /*0x8d42a2*/
+      case 0x3EEu: /*0x8d427d*/
+        result = sub_8DF4B1(this); /*0x8d42b4*/
+        break; /*0x8d42b9*/
+      case 0x3EFu: /*0x8d427d*/
+        result = sub_A06CBC(a1: dword_BE7918); /*0x8d42a4*/
+        break; /*0x8d42a9*/
+      case 0x3F1u: /*0x8d427d*/
+        result = sub_8D4A22(a1: this); /*0x8d42cc*/
+        break; /*0x8d42d1*/
+      default:
+        return result;
+    }
+  }
+  return result; /*0x8d431b*/
+}

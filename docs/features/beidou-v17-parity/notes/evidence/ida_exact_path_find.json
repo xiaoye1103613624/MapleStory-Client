@@ -1,0 +1,122 @@
+{
+  "UIWindow.img/ToolTip": [
+    "0xb3bc5f",
+    "0xb3bc8f"
+  ],
+  "UI/UIWindow.img/ToolTip": [
+    "0xb3bc5c",
+    "0xb3bc8c"
+  ],
+  "UIWindow.img/ToolTip/": [
+    "0xb3bc5f",
+    "0xb3bc8f"
+  ],
+  "UIWindow.img/Quest": [
+    "0xb399d3",
+    "0xb399f7",
+    "0xb39a1b"
+  ],
+  "UI/UIWindow.img/Quest": [
+    "0xb399d0",
+    "0xb399f4",
+    "0xb39a18"
+  ],
+  "UIWindow.img/Quest/": [
+    "0xb399d3",
+    "0xb399f7",
+    "0xb39a1b"
+  ],
+  "UIWindow.img/UserList": [
+    "0xb3c2df"
+  ],
+  "UI/UIWindow.img/UserList": [
+    "0xb3c2dc"
+  ],
+  "UIWindow.img/UserList/": [
+    "0xb3c2df"
+  ],
+  "UIWindow.img/Maker": [
+    "0xb39263",
+    "0xb3928b",
+    "0xb392af"
+  ],
+  "UI/UIWindow.img/Maker": [
+    "0xb39260",
+    "0xb39288",
+    "0xb392ac"
+  ],
+  "UIWindow.img/Maker/": [
+    "0xb39263",
+    "0xb3928b",
+    "0xb392af"
+  ],
+  "UIWindow.img/ViciousHammer": [
+    "0xb394eb",
+    "0xb3951b"
+  ],
+  "UI/UIWindow.img/ViciousHammer": [
+    "0xb394e8",
+    "0xb39518"
+  ],
+  "UIWindow.img/ViciousHammer/": [
+    "0xb394eb",
+    "0xb3951b"
+  ],
+  "UIWindow.img/CashGachapon": [
+    "0xb3de6b",
+    "0xb3de9b",
+    "0xb3decb"
+  ],
+  "UI/UIWindow.img/CashGachapon": [
+    "0xb3de68",
+    "0xb3de98",
+    "0xb3dec8"
+  ],
+  "UIWindow.img/CashGachapon/": [
+    "0xb3de6b",
+    "0xb3de9b",
+    "0xb3decb"
+  ],
+  "UIWindow.img/VegaSpell": [
+    "0xb395d7",
+    "0xb395ff"
+  ],
+  "UI/UIWindow.img/VegaSpell": [
+    "0xb395d4",
+    "0xb395fc"
+  ],
+  "UIWindow.img/VegaSpell/": [
+    "0xb395d7",
+    "0xb395ff"
+  ],
+  "UIWindow.img/PartyRace": [
+    "0xaf4ddb",
+    "0xaf4e9b",
+    "0xaf4ec3"
+  ],
+  "UI/UIWindow.img/PartyRace": [
+    "0xaf4dd8",
+    "0xaf4e98",
+    "0xaf4ec0"
+  ],
+  "UIWindow.img/PartyRace/": [
+    "0xaf4ddb",
+    "0xaf4e9b",
+    "0xaf4ec3"
+  ],
+  "UIWindow.img/DualMobGauge": [
+    "0xaf4fbf",
+    "0xaf4feb",
+    "0xaf500f"
+  ],
+  "UI/UIWindow.img/DualMobGauge": [
+    "0xaf4fbc",
+    "0xaf4fe8",
+    "0xaf500c"
+  ],
+  "UIWindow.img/DualMobGauge/": [
+    "0xaf4fbf",
+    "0xaf4feb",
+    "0xaf500f"
+  ]
+}

@@ -1,0 +1,821 @@
+{
+  "BtUIClose": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "BtUIClose2": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Item": {
+    "hit": true,
+    "samples": [
+      "/BasicEff.img/ItemMake/Failure",
+      "/BasicEff.img/ItemMake/Success",
+      "PackedCatalogItem"
+    ],
+    "kept": [
+      "/BasicEff.img/ItemMake/Failure",
+      "/BasicEff.img/ItemMake/Success",
+      "/ItemEff.img/2022269"
+    ]
+  },
+  "Equip": {
+    "hit": true,
+    "samples": [
+      "One or more of your pets cannot equip\r\nthis item.\r\nContinue with purchase?",
+      "mobequip",
+      "equipTradeBlock"
+    ],
+    "kept": [
+      "Equip"
+    ]
+  },
+  "Stat": {
+    "hit": true,
+    "samples": [
+      "indow.img/PartyRace/State/Blue/",
+      "indow.img/PartyRace/State/Red/",
+      "randStat"
+    ],
+    "kept": [
+      "indow.img/PartyRace/State/Blue/",
+      "indow.img/PartyRace/State/Red/",
+      "UI/StatusBar.img/base/chatTarget"
+    ]
+  },
+  "Skill": {
+    "hit": true,
+    "samples": [
+      "noSkill",
+      "sableSkill",
+      "skill"
+    ],
+    "kept": []
+  },
+  "ToolTip": {
+    "hit": true,
+    "samples": [
+      "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled",
+      "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled"
+    ],
+    "kept": [
+      "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled",
+      "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled"
+    ]
+  },
+  "Shop": {
+    "hit": true,
+    "samples": [
+      "/CashShop.img/CSItemSearch/Price",
+      "/CashShop.img/CS3thEvent/0",
+      "CashShop"
+    ],
+    "kept": []
+  },
+  "Messenger": {
+    "hit": true,
+    "samples": [
+      "CNMMessengerReplyEvent",
+      "CNMLoginMessengerFunc",
+      "CNMLogoutMessengerFunc"
+    ],
+    "kept": []
+  },
+  "UtilDlgEx": {
+    "hit": true,
+    "samples": [
+      "indow.img/UtilDlgEx/is",
+      "indow.img/UtilDlgEx/ic",
+      "indow.img/UtilDlgEx/it"
+    ],
+    "kept": [
+      "indow.img/UtilDlgEx/is",
+      "indow.img/UtilDlgEx/ic",
+      "indow.img/UtilDlgEx/it"
+    ]
+  },
+  "UtilDlgEx_Avatar": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "UtilDlgEx_Pet": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "GameOpt": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SysOpt": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ContextMenu": {
+    "hit": true,
+    "samples": [
+      "indow.img/MonsterBook/ContextMenu/BtRelease",
+      "indow.img/MonsterBook/ContextMenu/BtRegister",
+      "indow.img/MonsterBook/ContextMenu/s"
+    ],
+    "kept": [
+      "indow.img/MonsterBook/ContextMenu/BtRelease",
+      "indow.img/MonsterBook/ContextMenu/BtRegister",
+      "indow.img/MonsterBook/ContextMenu/s",
+      "indow.img/MonsterBook/ContextMenu/c",
+      "indow.img/MonsterBook/ContextMenu/t"
+    ]
+  },
+  "FloatNotice": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "UserInfo": {
+    "hit": true,
+    "samples": [
+      "CNMUserInfoEvent",
+      "CNMGetUserInfoFunc"
+    ],
+    "kept": []
+  },
+  "WorldMap": {
+    "hit": true,
+    "samples": [
+      "p/WorldMap/WorldMap%d.img",
+      "Map/WorldMap/",
+      "Map/MapHelper.img/worldMap/npcPos"
+    ],
+    "kept": [
+      "p/WorldMap/WorldMap%d.img",
+      "Map/WorldMap/"
+    ]
+  },
+  "TradingRoom": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "PersonalShop": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Channel": {
+    "hit": true,
+    "samples": [
+      "CNMChannelErrorEvent",
+      "CNMChannelCreatedEvent",
+      "CNMChannelEstablishedEvent"
+    ],
+    "kept": []
+  },
+  "Quest": {
+    "hit": true,
+    "samples": [
+      "reqQuest",
+      "CNMRequestNewsFunc",
+      "CNMRequestNewFriendFunc"
+    ],
+    "kept": []
+  },
+  "QuestAlarm": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ItemMove": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Coupon": {
+    "hit": false,
+    "samples": [
+      "Please enter the coupon code.",
+      "The coupon system will be available soon."
+    ],
+    "kept": []
+  },
+  "Minigame": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MultiLine": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "RpsGame": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Trunk": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MinigameTable": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "KeyConfig": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MiniMap": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "GameMenu": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ShortCut": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SoftKeyboard": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "FadeYesNo": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Memo": {
+    "hit": true,
+    "samples": [
+      "CNMChangeFriendMemoFunc",
+      "CNMChangeFriendMemoExFunc",
+      "NMCO_MemoryFree"
+    ],
+    "kept": []
+  },
+  "Notice": {
+    "hit": false,
+    "samples": [
+      "_NOTICE_",
+      "menotice.maplestory",
+      "indow.img/UserList/GuildUnion/Btnotice"
+    ],
+    "kept": []
+  },
+  "IconBase": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Megaphone": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Teleport": {
+    "hit": true,
+    "samples": [
+      "ssByTeleport"
+    ],
+    "kept": []
+  },
+  "Reset": {
+    "hit": true,
+    "samples": [
+      "CNMResetCallbackFunc"
+    ],
+    "kept": []
+  },
+  "BetaEdition": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Report": {
+    "hit": true,
+    "samples": [
+      "CNMLogReportSyncEvent",
+      "CNMLogReportSyncFunc",
+      "CNMSendReportMsgFunc"
+    ],
+    "kept": []
+  },
+  "Admin": {
+    "hit": true,
+    "samples": [
+      "incMADMin",
+      "incPADMin",
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\">\r\n<assemblyIdentity version=\"1.0.0.0\"\r\n    processorArchitecture=\"x86\"\r\n    name=\"MapleStory\"\r\n    type=\"win32\"\r\n/>\r\n<description>MapleStory Program</description>\r\n\r\n<trustInfo xmlns=\"urn:schemas-microsoft-com:asm.v3\">\r\n    <security>\r\n        <requestedPrivileges>\r\n            <requestedExecutionLevel\r\n                level=\"requireAdministrator\"\r\n                uiAccess=\"false\"\r\n            />\r\n        </requestedPrivileges>\r\n    </security>\r\n</trustInfo>\r\n</assembly>\r\n"
+    ],
+    "kept": []
+  },
+  "Macro": {
+    "hit": true,
+    "samples": [
+      "5Macromedia Fontographer 4.1.4 standard 07_55",
+      "Macromedia Fontographer 4.1.4 standard 07_5",
+      "5Macromedia Fontographer 4.1.4 8/9/01"
+    ],
+    "kept": []
+  },
+  "QuestIcon": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MobGage": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "UserList": {
+    "hit": true,
+    "samples": [
+      "CNMGetMyVirtualUserListFunc",
+      "CNMRejectedUserListChangedEvent",
+      "CNMGetRejectedUserListFunc"
+    ],
+    "kept": [
+      "indow.img/UserList/Guild/GuildBoard/Loading",
+      "UI/UIWindow.img/UserList/GuildUnion/backgrnd"
+    ]
+  },
+  "EntrustedShop": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Claim": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ItemProtector": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Book": {
+    "hit": true,
+    "samples": [
+      "indow.img/Book/backgrnd",
+      "indow.img/MonsterBook/ContextMenu/BtRelease",
+      "indow.img/MonsterBook/ContextMenu/BtRegister"
+    ],
+    "kept": [
+      "indow.img/Book/backgrnd"
+    ]
+  },
+  "StoreBank": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MemberShop": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Incubator": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "TemporaryStatView": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "itemSearch": {
+    "hit": false,
+    "samples": [
+      "/CashShop.img/CSItemSearch/Price"
+    ],
+    "kept": []
+  },
+  "Wedding": {
+    "hit": false,
+    "samples": [
+      "wedding%d"
+    ],
+    "kept": []
+  },
+  "Delivery": {
+    "hit": true,
+    "samples": [
+      "indow.img/Delivery/empty",
+      "indow.img/Delivery/receiveTB",
+      "indow.img/Delivery/line"
+    ],
+    "kept": [
+      "indow.img/Delivery/empty",
+      "indow.img/Delivery/receiveTB",
+      "indow.img/Delivery/line",
+      "indow.img/Delivery/icon0",
+      "indow.img/Delivery/npc1"
+    ]
+  },
+  "MapleTV": {
+    "hit": true,
+    "samples": [
+      "Nexon\\MapleStory\\MapleTV",
+      "MapleTVDownloader",
+      "\\Nexon\\MapleStory\\MapleTV"
+    ],
+    "kept": []
+  },
+  "EnchantSkill": {
+    "hit": true,
+    "samples": [
+      "indow.img/EnchantSkill/backgrnd",
+      "indow.img/EnchantSkill/say2",
+      "indow.img/EnchantSkill/say1"
+    ],
+    "kept": [
+      "indow.img/EnchantSkill/backgrnd",
+      "indow.img/EnchantSkill/say2",
+      "indow.img/EnchantSkill/say1",
+      "indow.img/EnchantSkill/say0",
+      "indow.img/EnchantSkill/Effect"
+    ]
+  },
+  "AvatarMegaphone": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MonsterCarnival": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "plant": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ExceptionItemSearch": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MateMessage": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "InitialQuiz": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "UtilDlgEx_MultiPetEquip": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "CancelRequests": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ItemMegaphone": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SpeedQuiz": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "EnergyBar": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SkillMacro": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "raise": {
+    "hit": false,
+    "samples": [
+      "RaiseException"
+    ],
+    "kept": []
+  },
+  "MonsterBook": {
+    "hit": true,
+    "samples": [
+      "indow.img/MonsterBook/ContextMenu/BtRelease",
+      "indow.img/MonsterBook/ContextMenu/BtRegister",
+      "indow.img/MonsterBook/ContextMenu/s"
+    ],
+    "kept": [
+      "indow.img/MonsterBook/ContextMenu/BtRelease",
+      "indow.img/MonsterBook/ContextMenu/BtRegister",
+      "indow.img/MonsterBook/ContextMenu/s",
+      "indow.img/MonsterBook/ContextMenu/c",
+      "indow.img/MonsterBook/ContextMenu/t"
+    ]
+  },
+  "EventWindow": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "PartySearch": {
+    "hit": true,
+    "samples": [
+      "goPartySearch",
+      "indow.img/PartySearch/BtStop",
+      "indow.img/PartySearch/BtPause"
+    ],
+    "kept": [
+      "indow.img/PartySearch/BtStop",
+      "indow.img/PartySearch/BtPause",
+      "indow.img/PartySearch/BtStart",
+      "indow.img/PartySearch/PartyMember"
+    ]
+  },
+  "AriantMatch": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "TreasureBox": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "NewYearsCard": {
+    "hit": true,
+    "samples": [
+      "indow.img/NewYearsCard/backgrnd3",
+      "indow.img/NewYearsCard/BtClose",
+      "indow.img/NewYearsCard/backgrnd2"
+    ],
+    "kept": [
+      "indow.img/NewYearsCard/backgrnd3",
+      "indow.img/NewYearsCard/BtClose",
+      "indow.img/NewYearsCard/backgrnd2",
+      "indow.img/NewYearsCard/backgrnd",
+      "indow.img/NewYearsCard/BtCancel"
+    ]
+  },
+  "Transform": {
+    "hit": true,
+    "samples": [
+      "/BasicEff.img/TransformOnLadder",
+      "/BasicEff.img/Transform",
+      "indow.img/Transform/backgrnd"
+    ],
+    "kept": [
+      "/BasicEff.img/TransformOnLadder",
+      "/BasicEff.img/Transform",
+      "indow.img/Transform/backgrnd",
+      "indow.img/Transform/BtCancel",
+      "indow.img/Transform/BtOk"
+    ]
+  },
+  "ArtMegaphone": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Maker": {
+    "hit": true,
+    "samples": [
+      "UI/UIWindow.img/Maker/GaugeBar/gauge",
+      "UI/UIWindow.img/Maker/GaugeBar/bar",
+      "UI/UIWindow.img/Maker/notUse"
+    ],
+    "kept": [
+      "UI/UIWindow.img/Maker/GaugeBar/gauge",
+      "UI/UIWindow.img/Maker/GaugeBar/bar",
+      "UI/UIWindow.img/Maker/notUse",
+      "indow.img/Maker/BtCancel",
+      "indow.img/Maker/BtStart"
+    ]
+  },
+  "muruengRaid": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "classMatch": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "AdminClaim": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MacroSkill": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Ranking": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Family": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "FamilyTree": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "KarmaScissors": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "createCygnus": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "RemoteGachapon": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "CharacterClone": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "ViciousHammer": {
+    "hit": true,
+    "samples": [
+      "indow.img/ViciousHammer/EffectE",
+      "indow.img/ViciousHammer/EffectP",
+      "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge"
+    ],
+    "kept": [
+      "indow.img/ViciousHammer/EffectE",
+      "indow.img/ViciousHammer/EffectP",
+      "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge",
+      "UI/UIWindow.img/ViciousHammer/GaugeBar/bar"
+    ]
+  },
+  "CashGachapon": {
+    "hit": true,
+    "samples": [
+      "indow.img/CashGachapon/EffectNormal",
+      "indow.img/CashGachapon/EffectJackpot",
+      "UI/UIWindow.img/CashGachapon/EffectJackpot/16"
+    ],
+    "kept": [
+      "indow.img/CashGachapon/EffectNormal",
+      "indow.img/CashGachapon/EffectJackpot",
+      "UI/UIWindow.img/CashGachapon/EffectJackpot/16",
+      "UI/UIWindow.img/CashGachapon/EffectNormal/16",
+      "UI/UIWindow.img/CashGachapon/EffectNormal/0"
+    ]
+  },
+  "counsel": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "GMBoard": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "Radio": {
+    "hit": true,
+    "samples": [
+      "indow.img/Radio/Off/0",
+      "indow.img/Radio/On/4",
+      "indow.img/Radio/On/3"
+    ],
+    "kept": [
+      "indow.img/Radio/Off/0",
+      "indow.img/Radio/On/4",
+      "indow.img/Radio/On/3",
+      "indow.img/Radio/On/2",
+      "indow.img/Radio/On/1"
+    ]
+  },
+  "Title": {
+    "hit": true,
+    "samples": [
+      "CNMGetGameFriendTitleFunc"
+    ],
+    "kept": []
+  },
+  "CashTradingRoom": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "AranSkillGuide": {
+    "hit": true,
+    "samples": [
+      "indow.img/AranSkillGuide/%d"
+    ],
+    "kept": [
+      "indow.img/AranSkillGuide/%d"
+    ]
+  },
+  "MonsterKilling": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "MapleEvent": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SkillUp": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "VegaSpell": {
+    "hit": true,
+    "samples": [
+      "indow.img/VegaSpell/EffectSpelling",
+      "indow.img/VegaSpell/EffectSuccess",
+      "indow.img/VegaSpell/EffectFail"
+    ],
+    "kept": [
+      "indow.img/VegaSpell/EffectSpelling",
+      "indow.img/VegaSpell/EffectSuccess",
+      "indow.img/VegaSpell/EffectFail",
+      "indow.img/VegaSpell/EffectArrow",
+      "indow.img/VegaSpell/EffectTwinkling"
+    ]
+  },
+  "PartyRace": {
+    "hit": true,
+    "samples": [
+      "UI/UIWindow.img/PartyRace/Stage/backgrd",
+      "indow.img/PartyRace/State/Blue/",
+      "indow.img/PartyRace/State/Red/"
+    ],
+    "kept": [
+      "UI/UIWindow.img/PartyRace/Stage/backgrd",
+      "indow.img/PartyRace/State/Blue/",
+      "indow.img/PartyRace/State/Red/",
+      "UI/UIWindow.img/PartyRace/Stage/number2",
+      "UI/UIWindow.img/PartyRace/Stage/number"
+    ]
+  },
+  "DualMobGauge": {
+    "hit": true,
+    "samples": [
+      "UI/UIWindow.img/DualMobGauge/Mob/9700036",
+      "UI/UIWindow.img/DualMobGauge/gauge",
+      "UI/UIWindow.img/DualMobGauge/text"
+    ],
+    "kept": [
+      "UI/UIWindow.img/DualMobGauge/Mob/9700036",
+      "UI/UIWindow.img/DualMobGauge/gauge",
+      "UI/UIWindow.img/DualMobGauge/text",
+      "UI/UIWindow.img/DualMobGauge/backgrd"
+    ]
+  },
+  "SlideMenu": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SkillMacroEx": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  },
+  "SkillEx": {
+    "hit": false,
+    "samples": [],
+    "kept": []
+  }
+}

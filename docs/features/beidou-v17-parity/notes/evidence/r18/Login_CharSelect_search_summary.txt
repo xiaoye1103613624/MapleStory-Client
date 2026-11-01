@@ -1,0 +1,9 @@
+﻿; Login/Loading/CharSelect string survey
+; extracted 2026-10-22T16:50:24.2891211+08:00
+REA search Notice/signboard/charInfo/Ranking/CharSelect/BtGoWorld/frame: completed (json in r18); many normalized empty due to find_regex char-class pattern
+IDA find_regex hits:
+  UI/Login.img/ViewAllChar/Job/0 @0xaf6fd0 → xref sub_6075DD (decompiled)
+  Etc/MakeCharInfo.img/OrientCharFemale|Male → xref sub_5FBA85 (decompiled)
+  Notice/Loading, signboard, Common/frame, Ranking, CUICharSelect, BtGoWorld: NO ascii hits
+  Channel*: messenger events only (not world-select channel UI)
+结论: 登录木牌/Loading/排行等路径多半不在 exe 明文 ASCII；续跑需 UTF-16 / 动态拼接 / 更大 CUI* 构造函数定位

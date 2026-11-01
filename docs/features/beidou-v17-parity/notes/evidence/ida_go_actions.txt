@@ -1,0 +1,3 @@
+goAllianceINVITE
+goAllianceTALK
+goPartySearch

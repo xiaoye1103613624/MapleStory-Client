@@ -1,0 +1,3216 @@
+{
+  "batch_0": [
+    {
+      "query": "BtUIClose",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/BtUIClose",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/BtUIClose",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "BtUIClose2",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/BtUIClose2",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/BtUIClose2",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Item",
+      "matches": [
+        "0xaf1435",
+        "0xaf293c",
+        "0xaf452b",
+        "0xaf63d4",
+        "0xaf64d0"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Item",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Item",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Equip",
+      "matches": [
+        "0xaf687f",
+        "0xb3bc74",
+        "0xb3bca4"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Equip",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Equip",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Stat",
+      "matches": [
+        "0xaf68c0",
+        "0xaf72e3",
+        "0xafa20a",
+        "0xb3bab7",
+        "0xe92ee2"
+      ],
+      "count": 5,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Stat",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Stat",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Skill",
+      "matches": [
+        "0xaf460a",
+        "0xaf64d4",
+        "0xaf64dc",
+        "0xaf6893",
+        "0xafe190"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Skill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Skill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ToolTip",
+      "matches": [
+        "0xb3bc6c",
+        "0xb3bc9c"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ToolTip",
+      "matches": [
+        "0xb3bc5f",
+        "0xb3bc8f"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ToolTip",
+      "matches": [
+        "0xb3bc5c",
+        "0xb3bc8c"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Shop",
+      "matches": [
+        "0xaf46d8",
+        "0xb3d675",
+        "0xb3d699",
+        "0xb3f5ad"
+      ],
+      "count": 4,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Shop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Shop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Messenger",
+      "matches": [
+        "0xafa46b",
+        "0xafc388",
+        "0xafc3c5"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Messenger",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Messenger",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UtilDlgEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UtilDlgEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UtilDlgEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UtilDlgEx_Avatar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UtilDlgEx_Avatar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UtilDlgEx_Avatar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UtilDlgEx_Pet",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UtilDlgEx_Pet",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UtilDlgEx_Pet",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "GameOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/GameOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/GameOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SysOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SysOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SysOpt",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ContextMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ContextMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ContextMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "FloatNotice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/FloatNotice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/FloatNotice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UserInfo",
+      "matches": [
+        "0xafa56f",
+        "0xafb69e"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UserInfo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UserInfo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "WorldMap",
+      "matches": [
+        "0xb3f26c"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/WorldMap",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/WorldMap",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "TradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/TradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/TradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "PersonalShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/PersonalShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/PersonalShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ],
+  "batch_20": [
+    {
+      "query": "Channel",
+      "matches": [
+        "0xafaa5f",
+        "0xafaa77",
+        "0xafaacb",
+        "0xafaae7",
+        "0xafaafb"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Channel",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Channel",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Quest",
+      "matches": [
+        "0xaf685b",
+        "0xb399e0",
+        "0xb39a04",
+        "0xb39a28",
+        "0xb3f464"
+      ],
+      "count": 5,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Quest",
+      "matches": [
+        "0xb399d3",
+        "0xb399f7",
+        "0xb39a1b"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Quest",
+      "matches": [
+        "0xb399d0",
+        "0xb399f4",
+        "0xb39a18"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "QuestAlarm",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/QuestAlarm",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/QuestAlarm",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ItemMove",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ItemMove",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ItemMove",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Coupon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Coupon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Coupon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Minigame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Minigame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Minigame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MultiLine",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MultiLine",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MultiLine",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "RpsGame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/RpsGame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/RpsGame",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Trunk",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Trunk",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Trunk",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MinigameTable",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MinigameTable",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MinigameTable",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "KeyConfig",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/KeyConfig",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/KeyConfig",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MiniMap",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MiniMap",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MiniMap",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "GameMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/GameMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/GameMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ShortCut",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ShortCut",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ShortCut",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SoftKeyboard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SoftKeyboard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SoftKeyboard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "FadeYesNo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/FadeYesNo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/FadeYesNo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Memo",
+      "matches": [
+        "0xafa33f",
+        "0xafa37b",
+        "0xe93180"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Memo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Memo",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Notice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Notice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Notice",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "IconBase",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/IconBase",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/IconBase",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Megaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Megaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Megaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ],
+  "batch_40": [
+    {
+      "query": "Teleport",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Teleport",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Teleport",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Reset",
+      "matches": [
+        "0xaf9f3f"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Reset",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Reset",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "BetaEdition",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/BetaEdition",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/BetaEdition",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Report",
+      "matches": [
+        "0xafab52",
+        "0xafb1be",
+        "0xafb787"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Report",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Report",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Admin",
+      "matches": [
+        "0xc08461"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Admin",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Admin",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Macro",
+      "matches": [
+        "0xbfa847",
+        "0xbfa8cb"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Macro",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Macro",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "QuestIcon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/QuestIcon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/QuestIcon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MobGage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MobGage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MobGage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UserList",
+      "matches": [
+        "0xafa063",
+        "0xafa5d7",
+        "0xafadda",
+        "0xb3c2ec"
+      ],
+      "count": 4,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UserList",
+      "matches": [
+        "0xb3c2df"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UserList",
+      "matches": [
+        "0xb3c2dc"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "EntrustedShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/EntrustedShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/EntrustedShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Claim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Claim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Claim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ItemProtector",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ItemProtector",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ItemProtector",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Book",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Book",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Book",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "StoreBank",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/StoreBank",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/StoreBank",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MemberShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MemberShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MemberShop",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Incubator",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Incubator",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Incubator",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "TemporaryStatView",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/TemporaryStatView",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/TemporaryStatView",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "itemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/itemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/itemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Wedding",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Wedding",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Wedding",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Delivery",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Delivery",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Delivery",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ],
+  "batch_60": [
+    {
+      "query": "MapleTV",
+      "matches": [
+        "0xaf7cd5",
+        "0xaf7d00",
+        "0xaf7d42"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MapleTV",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MapleTV",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "EnchantSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/EnchantSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/EnchantSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "AvatarMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/AvatarMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/AvatarMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MonsterCarnival",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MonsterCarnival",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MonsterCarnival",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "plant",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/plant",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/plant",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ExceptionItemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ExceptionItemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ExceptionItemSearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MateMessage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MateMessage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MateMessage",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "InitialQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/InitialQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/InitialQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UtilDlgEx_MultiPetEquip",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/UtilDlgEx_MultiPetEquip",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/UtilDlgEx_MultiPetEquip",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "CancelRequests",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/CancelRequests",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/CancelRequests",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ItemMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ItemMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ItemMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SpeedQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SpeedQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SpeedQuiz",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "EnergyBar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/EnergyBar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/EnergyBar",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SkillMacro",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SkillMacro",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SkillMacro",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "raise",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/raise",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/raise",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MonsterBook",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MonsterBook",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MonsterBook",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "EventWindow",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/EventWindow",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/EventWindow",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "PartySearch",
+      "matches": [
+        "0xaf274a"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/PartySearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/PartySearch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "AriantMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/AriantMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/AriantMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "TreasureBox",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/TreasureBox",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/TreasureBox",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ],
+  "batch_80": [
+    {
+      "query": "NewYearsCard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/NewYearsCard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/NewYearsCard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Transform",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Transform",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Transform",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ArtMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ArtMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ArtMegaphone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Maker",
+      "matches": [
+        "0xb39270",
+        "0xb39298",
+        "0xb392bc",
+        "0xb39358",
+        "0xb3937c"
+      ],
+      "count": 5,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Maker",
+      "matches": [
+        "0xb39263",
+        "0xb3928b",
+        "0xb392af",
+        "0xb3934b",
+        "0xb3936f"
+      ],
+      "count": 5,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Maker",
+      "matches": [
+        "0xb39260",
+        "0xb39288",
+        "0xb392ac",
+        "0xb39348",
+        "0xb3936c"
+      ],
+      "count": 5,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "muruengRaid",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/muruengRaid",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/muruengRaid",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "classMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/classMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/classMatch",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "AdminClaim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/AdminClaim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/AdminClaim",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MacroSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MacroSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MacroSkill",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Ranking",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Ranking",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Ranking",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Family",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Family",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Family",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "FamilyTree",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/FamilyTree",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/FamilyTree",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "KarmaScissors",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/KarmaScissors",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/KarmaScissors",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "createCygnus",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/createCygnus",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/createCygnus",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "RemoteGachapon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/RemoteGachapon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/RemoteGachapon",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "CharacterClone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/CharacterClone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/CharacterClone",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "ViciousHammer",
+      "matches": [
+        "0xb394f8",
+        "0xb39528"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/ViciousHammer",
+      "matches": [
+        "0xb394eb",
+        "0xb3951b"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/ViciousHammer",
+      "matches": [
+        "0xb394e8",
+        "0xb39518"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "CashGachapon",
+      "matches": [
+        "0xb3de78",
+        "0xb3dea8",
+        "0xb3ded8"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/CashGachapon",
+      "matches": [
+        "0xb3de6b",
+        "0xb3de9b",
+        "0xb3decb"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/CashGachapon",
+      "matches": [
+        "0xb3de68",
+        "0xb3de98",
+        "0xb3dec8"
+      ],
+      "count": 3,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "counsel",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/counsel",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/counsel",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "GMBoard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/GMBoard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/GMBoard",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "Radio",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Radio",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Radio",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ],
+  "batch_100": [
+    {
+      "query": "Title",
+      "matches": [
+        "0xafb4cc"
+      ],
+      "count": 1,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/Title",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/Title",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "CashTradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/CashTradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/CashTradingRoom",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "AranSkillGuide",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/AranSkillGuide",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/AranSkillGuide",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MonsterKilling",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MonsterKilling",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MonsterKilling",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "MapleEvent",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/MapleEvent",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/MapleEvent",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SkillUp",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SkillUp",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SkillUp",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "VegaSpell",
+      "matches": [
+        "0xb395e4",
+        "0xb3960c"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/VegaSpell",
+      "matches": [
+        "0xb395d7",
+        "0xb395ff"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/VegaSpell",
+      "matches": [
+        "0xb395d4",
+        "0xb395fc"
+      ],
+      "count": 2,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "PartyRace",
+      "matches": [
+        "0xaf4de8",
+        "0xaf4ea8",
+        "0xaf4ed0",
+        "0xaf50f4",
+        "0xaf5120"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/PartyRace",
+      "matches": [
+        "0xaf4ddb",
+        "0xaf4e9b",
+        "0xaf4ec3",
+        "0xaf50e7",
+        "0xaf5113"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/PartyRace",
+      "matches": [
+        "0xaf4dd8",
+        "0xaf4e98",
+        "0xaf4ec0",
+        "0xaf50e4",
+        "0xaf5110"
+      ],
+      "count": 5,
+      "cursor": {
+        "next": 5
+      },
+      "error": null
+    },
+    {
+      "query": "DualMobGauge",
+      "matches": [
+        "0xaf4fcc",
+        "0xaf4ff8",
+        "0xaf501c",
+        "0xaf5040"
+      ],
+      "count": 4,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/DualMobGauge",
+      "matches": [
+        "0xaf4fbf",
+        "0xaf4feb",
+        "0xaf500f",
+        "0xaf5033"
+      ],
+      "count": 4,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/DualMobGauge",
+      "matches": [
+        "0xaf4fbc",
+        "0xaf4fe8",
+        "0xaf500c",
+        "0xaf5030"
+      ],
+      "count": 4,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SlideMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SlideMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SlideMenu",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SkillMacroEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SkillMacroEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SkillMacroEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "SkillEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UIWindow.img/SkillEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    },
+    {
+      "query": "UI/UIWindow.img/SkillEx",
+      "matches": [],
+      "count": 0,
+      "cursor": {
+        "done": true
+      },
+      "error": null
+    }
+  ]
+}

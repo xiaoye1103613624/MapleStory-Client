@@ -1,0 +1,16 @@
+﻿===== UIWindow.img/StoreBank
+StoreBank [null]
+  BtExit [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  BtGetAll [null]
+    disabled [null]
+    mouseOver [null]
+    normal [null]
+    pressed [null]
+  backgrnd [bitmap] bitmap 232x318
+    origin [vector] (877087568, 43859)
+  en [bitmap] bitmap 199x35
+    origin [vector] (877087568, 43859)

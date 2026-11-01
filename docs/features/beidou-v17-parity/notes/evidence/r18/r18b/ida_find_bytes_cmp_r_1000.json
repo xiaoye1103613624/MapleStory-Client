@@ -1,0 +1,12 @@
+{
+  "result": [
+    {
+      "pattern": "81 F8 E8 03 00 00",
+      "matches": [],
+      "n": 0,
+      "cursor": {
+        "done": true
+      }
+    }
+  ]
+}

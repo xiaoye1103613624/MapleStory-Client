@@ -1,0 +1,28 @@
+{
+  "n": 5,
+  "matches": [
+    {
+      "addr": "0xb39260",
+      "string": "UI/UIWindow.img/Maker/GaugeBar/gauge"
+    },
+    {
+      "addr": "0xb39288",
+      "string": "UI/UIWindow.img/Maker/GaugeBar/bar"
+    },
+    {
+      "addr": "0xb392ac",
+      "string": "UI/UIWindow.img/Maker/notUse"
+    },
+    {
+      "addr": "0xb39348",
+      "string": "UI/UIWindow.img/Maker/randomMake"
+    },
+    {
+      "addr": "0xb3936c",
+      "string": "UI/UIWindow.img/Maker/randomRecipe"
+    }
+  ],
+  "cursor": {
+    "done": true
+  }
+}

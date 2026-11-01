@@ -1,0 +1,11 @@
+﻿{
+    "jsonrpc":  "2.0",
+    "id":  41,
+    "method":  "tools/call",
+    "params":  {
+                   "name":  "py_eval",
+                   "arguments":  {
+                                     "code":  "import idautils, ida_bytes, ida_funcs, idc\nids = [1000,1001,1002,1007,1005,1006,1009]\n# map ea -\u003e set of ids found\nfrom collections import defaultdict\nhits = defaultdict(set)\nfor imm in ids:\n    for ea in idautils.Heads():\n        pass\n# better: use ida find_imm\nimport ida_search\nfor imm in ids:\n    ea = 0\n    while True:\n        ea = ida_search.find_imm(ea, ida_search.SEARCH_DOWN, imm)\n        if ea == ida_search.BADADDR or ea == -1:\n            break\n        f = ida_funcs.get_func(ea)\n        if f:\n            hits[f.start_ea].add(imm)\n        ea += 1\n        if ea \u003e 0xA00000:\n            break\n# score by how many of our ids appear\nranked = sorted(((len(v), hex(k), sorted(v)) for k,v in hits.items()), reverse=True)\n# focus near StatusBar region or high score\nout = []\nfor score, addr, found in ranked:\n    if score \u003e= 3:\n        name = idc.get_func_name(int(addr,16))\n        size = ida_funcs.get_func(int(addr,16)).size()\n        out.append(f\"{score} {addr} {name} size={hex(size)} ids={found}\")\nprint(\"\\n\".join(out[:40]))"
+                                 }
+               }
+}

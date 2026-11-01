@@ -1,0 +1,15 @@
+{
+  "result": [
+    {
+      "pattern": "3D ED 03 00 00",
+      "matches": [
+        "0x5f0e48",
+        "0x7c6c43"
+      ],
+      "n": 2,
+      "cursor": {
+        "done": true
+      }
+    }
+  ]
+}

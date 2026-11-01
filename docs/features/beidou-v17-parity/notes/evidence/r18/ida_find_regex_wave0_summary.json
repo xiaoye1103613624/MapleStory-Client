@@ -1,0 +1,42 @@
+﻿[
+    {
+        "pattern":  "UI/Login",
+        "preview":  "{\"n\":1,\"matches\":[{\"addr\":\"0xaf6fd0\",\"string\":\"UI/Login.img/ViewAllChar/Job/0\"}],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "WorldSelect",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "CharSelect",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "charInfo",
+        "preview":  "{\"n\":2,\"matches\":[{\"addr\":\"0xaf6c28\",\"string\":\"Etc/MakeCharInfo.img/OrientCharFemale\"},{\"addr\":\"0xaf6c74\",\"string\":\"Etc/MakeCharInfo.img/OrientCharMale\"}],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "Notice",
+        "preview":  "{\"n\":3,\"matches\":[{\"addr\":\"0xaf85d4\",\"string\":\"_NOTICE_\"},{\"addr\":\"0xb3a5ac\",\"string\":\"menotice.maplestory\"},{\"addr\":\"0xb3c410\",\"string\":\"indow.img/UserList/GuildUnion/Btnotice\"}],\"cursor\":{\"done\":tru"
+    },
+    {
+        "pattern":  "signboard",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "Ranking",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "BtGo",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "Common/frame",
+        "preview":  "{\"n\":0,\"matches\":[],\"cursor\":{\"done\":true}}"
+    },
+    {
+        "pattern":  "Title",
+        "preview":  "{\"n\":1,\"matches\":[{\"addr\":\"0xafb4bc\",\"string\":\"CNMGetGameFriendTitleFunc\"}],\"cursor\":{\"done\":true}}"
+    }
+]

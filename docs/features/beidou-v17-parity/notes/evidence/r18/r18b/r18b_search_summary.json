@@ -1,0 +1,275 @@
+{
+  "BtCashShop": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_BtCashShop.json"
+  },
+  "CashShop": {
+    "n": 3,
+    "sample": [
+      {
+        "addr": "0xaf285c",
+        "string": "/CashShop.img/CSItemSearch/Price"
+      },
+      {
+        "addr": "0xaf29ec",
+        "string": "/CashShop.img/CS3thEvent/0"
+      },
+      {
+        "addr": "0xaf46d4",
+        "string": "CashShop"
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_CashShop.json"
+  },
+  "BtNPT": {
+    "n": 1,
+    "sample": [
+      {
+        "addr": "0xb3bab4",
+        "string": "UI/StatusBar.img/BtNPT"
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_BtNPT.json"
+  },
+  "BtShort": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_BtShort.json"
+  },
+  "BtMenu": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_BtMenu.json"
+  },
+  "KeyConfig": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_KeyConfig.json"
+  },
+  "QuickSlot2": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_QuickSlot2.json"
+  },
+  "WorldSelect": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_WorldSelect.json"
+  },
+  "ChannelSelect": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_ChannelSelect.json"
+  },
+  "SelectWorld": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_SelectWorld.json"
+  },
+  "CharSelect2": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_CharSelect2.json"
+  },
+  "CUICharSelect": {
+    "n": 0,
+    "sample": [],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_CUICharSelect.json"
+  },
+  "Rank": {
+    "n": 1,
+    "sample": [
+      {
+        "addr": "0xb3b128",
+        "string": "merank.maplestory"
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_Rank.json"
+  },
+  "MakeCharInfo": {
+    "n": 2,
+    "sample": [
+      {
+        "addr": "0xaf6c28",
+        "string": "Etc/MakeCharInfo.img/OrientCharFemale"
+      },
+      {
+        "addr": "0xaf6c74",
+        "string": "Etc/MakeCharInfo.img/OrientCharMale"
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_MakeCharInfo.json"
+  },
+  "Login_img": {
+    "n": 1,
+    "sample": [
+      {
+        "addr": "0xaf6fd0",
+        "string": "UI/Login.img/ViewAllChar/Job/0"
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_regex_Login_img.json"
+  },
+  "gbk_paihang_bukeyong": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "BF C5 D0 D0 B2 BB BF C9 D3 C3",
+        "matches": [],
+        "n": 0,
+        "cursor": {
+          "done": true
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_gbk_paihang_bukeyong.json"
+  },
+  "gbk_dao_xuanze_shijie": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "B5 BD D1 A1 D4 F1 B5 C4 CA C0 BD E7",
+        "matches": [],
+        "n": 0,
+        "cursor": {
+          "done": true
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_gbk_dao_xuanze_shijie.json"
+  },
+  "utf16_charInfo": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "63 00 68 00 61 00 72 00 49 00 6e 00 66 00 6f 00",
+        "matches": [],
+        "n": 0,
+        "cursor": {
+          "done": true
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_utf16_charInfo.json"
+  },
+  "utf16_Rank": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "52 00 61 00 6e 00 6b 00",
+        "matches": [],
+        "n": 0,
+        "cursor": {
+          "done": true
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_utf16_Rank.json"
+  },
+  "push_1000": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "68 E8 03 00 00",
+        "matches": [
+          "0x424e78",
+          "0x4324b7",
+          "0x45ec42",
+          "0x462599",
+          "0x46959d",
+          "0x46a05f",
+          "0x483b94",
+          "0x4ab88c",
+          "0x4b09e5",
+          "0x4b5a3d",
+          "0x4b61d0",
+          "0x4b641d",
+          "0x4b6d1d",
+          "0x4bc48e",
+          "0x4bcd04",
+          "0x4f053c",
+          "0x5069bd",
+          "0x50d7af",
+          "0x536765",
+          "0x536d4e",
+          "0x593ef6",
+          "0x595b3a",
+          "0x59eb44",
+          "0x5aa75f",
+          "0x5ab593",
+          "0x5acec4",
+          "0x5b1c29",
+          "0x5b2416",
+          "0x5b2d01",
+          "0x5b6c92",
+          "0x5b82cf",
+          "0x5b84fd",
+          "0x5bba13",
+          "0x5c19d2",
+          "0x5c6f05",
+          "0x5eb7f3",
+          "0x5fa63a",
+          "0x601531",
+          "0x60e69f",
+          "0x60fa40",
+          "0x60fb65",
+          "0x60fc88",
+          "0x60fdab",
+          "0x60fece",
+          "0x60ff74",
+          "0x61002c",
+          "0x6101f6",
+          "0x6159bd",
+          "0x617967",
+          "0x617c25"
+        ],
+        "n": 50,
+        "cursor": {
+          "next": 50
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_push_1000.json"
+  },
+  "push_1005": {
+    "n": 1,
+    "sample": [
+      {
+        "pattern": "68 ED 03 00 00",
+        "matches": [
+          "0x425720",
+          "0x45ed41",
+          "0x4839c1",
+          "0x48b8d9",
+          "0x4b0f26",
+          "0x5940a1",
+          "0x5acde1",
+          "0x6208a2",
+          "0x64e874",
+          "0x6e4841",
+          "0x6fa95b",
+          "0x753e29",
+          "0x7c25b3",
+          "0x7c668a",
+          "0x7d4883",
+          "0x7e0aa8",
+          "0x7e2a40",
+          "0x84a9f7",
+          "0x8509c6",
+          "0x850bcf",
+          "0x8d3494",
+          "0x942e75",
+          "0x993bbe",
+          "0x9943a8",
+          "0x99847f"
+        ],
+        "n": 25,
+        "cursor": {
+          "done": true
+        }
+      }
+    ],
+    "file": "E:\\project\\MapleStory-Client\\docs\\features\\beidou-v17-parity\\notes\\evidence\\r18\\r18b/ida_find_bytes_push_1005.json"
+  }
+}

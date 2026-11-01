@@ -1,0 +1,11 @@
+id=1000 x=573 y=543 type=6 paths=
+id=1001 x=629 y=543 type=6 paths=UI/StatusBar.img/BtNPT
+id=1002 x=685 y=543 type=2 paths=
+id=1007 x=741 y=543 type=2 paths=
+id=2000 x=618 y=515 type=2 paths=
+id=2001 x=648 y=515 type=2 paths=
+id=2002 x=678 y=515 type=2 paths=
+id=2003 x=708 y=515 type=2 paths=
+id=1005 x=738 y=515 type=2 paths=
+id=1006 x=768 y=515 type=2 paths=
+id=1009 x=573 y=515 type=2 paths=

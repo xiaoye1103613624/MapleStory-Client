@@ -1,0 +1,7 @@
+# r314 — Guild BBS / Quest field / Warn
+
+- GUILD_BBS_PACKET(59) list/thread tip
+- SET_QUEST_CLEAR_FIELD(150)、SET_QUEST_TIME(151)、WARN_MESSAGE(152)、SET_OBJECT_STATE(153)
+- CHATTEXT1(163)、SHOW_CONSUME_EFFECT(166)
+
+产物：`E:\MXD\BeiDou-Client-xy\MapleStory.exe`
