@@ -18,14 +18,21 @@
 #include "NpcInteractionHandlers.h"
 
 #include "../../IO/UI.h"
+#include "../../Gameplay/Stage.h"
 
 #include "../../IO/UITypes/UINpcTalk.h"
 #include "../../IO/UITypes/UIShop.h"
+#include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../IO/UITypes/UIMiscShells.h"
+#include "../../Graphics/Color.h"
 
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 
 #include "../../MapleStory.h"
+
+#include <string>
 
 namespace ms
 {
@@ -40,8 +47,10 @@ namespace ms
 
 		int16_t style = 0;
 
-		if (msgtype == 0 && recv.length() > 0)
+		if (msgtype == 0 && recv.available() > 0)
 			style = recv.read_short();
+		while (recv.available())
+			recv.skip_byte();
 
 		// 缺 UtilDlgEx 时不要 emplace 隐形窗口，否则脚本会一直等客户端回复。
 		if (!UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx")))
@@ -56,6 +65,7 @@ namespace ms
 
 		if (auto npctalk = UI::get().get_element<UINpcTalk>())
 			npctalk->change_text(npcid, msgtype, style, speaker, text);
+		// NpcTalk 已显，不重复 tip
 	}
 
 	void OpenNpcShopHandler::handle(InPacket& recv) const
@@ -64,7 +74,18 @@ namespace ms
 		auto oshop = UI::get().get_element<UIShop>();
 
 		if (!oshop)
+		{
+			Player& player = Stage::get().get_player();
+			oshop = UI::get().emplace<UIShop>(player.get_look(), player.get_inventory());
+		}
+		if (!oshop)
+		{
+			while (recv.available())
+				recv.skip_byte();
 			return;
+		}
+		else if (!oshop->is_active())
+			oshop->makeactive();
 
 		UIShop& shop = *oshop;
 
@@ -99,20 +120,38 @@ namespace ms
 				shop.add_rechargable(itemid, price, pitch, time, rechargeprice, slotmax);
 			}
 		}
+		while (recv.available())
+			recv.skip_byte();
+		// Shop UI 已刷，不 tip
+		(void)size;
 	}
 
 	void ConfirmShopTransactionHandler::handle(InPacket& recv) const
 	{
 		// v83 / BeiDou: first byte is the result mode (0 = ok for common paths).
-		if (recv.length() <= 0)
+		if (recv.available() <= 0)
 			return;
 
 		const int8_t mode = recv.read_byte();
 		if (mode != 0)
 			LOG(LOG_INFO, "[SHOP] transaction result mode=" << static_cast<int>(mode));
+		while (recv.available())
+			recv.skip_byte();
 
-		// Remaining bytes (if any) are version-specific; skip safely.
-		if (recv.length() > 0)
-			recv.skip(recv.length());
+		// Shop ensure：结果自显，不 tip
+		auto shop = UI::get().get_element<UIShop>();
+		if (!shop)
+		{
+			auto& player = Stage::get().get_player();
+			shop = UI::get().emplace<UIShop>(player.get_look(), player.get_inventory());
+		}
+		else if (!shop->is_active())
+			shop->makeactive();
+		if (shop)
+			return;
+		std::string tip = mode == 0 ? "Shop ok" : ("Shop err " + std::to_string(mode));
+		auto mt = mode == 0 ? UIChatBar::MessageType::YELLOW : UIChatBar::MessageType::RED;
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), mt);
 	}
 }

@@ -19,12 +19,15 @@
 
 #include "../UI.h"
 
+#include "UISoftKey.h"
+
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Misc.h"
 
 #include "../../MapleStory.h"
 
@@ -123,20 +126,25 @@ namespace ms
 		Point<int16_t> speaker_pos = position + Point<int16_t>(22, 11 + speaker_y);
 		Point<int16_t> center_pos = speaker_pos + Point<int16_t>(nametag.width() / 2, 0);
 
-		speaker.draw(DrawArgument(center_pos, true));
+		// 立绘不镜像：原生参考帧里 希娜(Npc/0002101/stand/0) 原图就是朝右、面向正文的，
+		// 之前恒传 flip=true 会把她翻成背对正文。DrawArgument 的 bool 位就是 flip。
+		speaker.draw(DrawArgument(center_pos));
 		nametag.draw(speaker_pos);
 		name.draw(center_pos + Point<int16_t>(0, -4));
 
 		if (show_slider)
 		{
 			int16_t text_min_height = position.y() + top.height() - 1;
-			text.draw(position + Point<int16_t>(162, 19 - offset * 400), Range<int16_t>(text_min_height, text_min_height + height - 18));
+			// 每翻一页恰好滚动一屏（可见高 = height - TEXT_SLACK）。原来是固定 400px，
+			// 而可见区最多 248-18=230px，翻页会把中间约 170px 的正文直接跳过去。
+			text.draw(position + Point<int16_t>(TEXT_X, TEXT_Y - offset * (height - TEXT_SLACK)), Range<int16_t>(text_min_height, text_min_height + height - TEXT_SLACK));
 			slider.draw(position);
 		}
 		else
 		{
-			int16_t y_adj = height - min_height;
-			text.draw(position + Point<int16_t>(166, 48 - y_adj));
+			// 正文顶对齐（原生即如此）：原来用 48 - (height - min_height) 让窗口一拉长就整体上移，
+			// 结果是长文本反而往上贴到窗框、往下压住「确定」。
+			text.draw(position + Point<int16_t>(TEXT_X, TEXT_Y));
 		}
 
 		for (const SimpleChoice& c : simple_choices)
@@ -285,6 +293,20 @@ namespace ms
 			}
 			case TalkType::SENDGETTEXT:
 			{
+				switch (buttonid)
+				{
+					case Buttons::CLOSE:
+						NpcTalkMorePacket(lastmsg, 0).dispatch();
+						break;
+					case Buttons::OK:
+						UI::get().emplace<UISoftKey>([this](const std::string& s) {
+							if (s.empty()) return;
+							deactivate();
+							NpcTalkMorePacket(s).dispatch();
+							LOG(LOG_DEBUG, "UINpcTalk: SoftKey GetText len=" << s.size());
+						}, []() {}, "Npc text");
+						break;
+				}
 				break;
 			}
 			case TalkType::SENDGETNUMBER:
@@ -295,7 +317,14 @@ namespace ms
 						NpcTalkMorePacket(lastmsg, 0).dispatch();
 						break;
 					case Buttons::OK:
-						NpcTalkMorePacket(lastmsg, 1).dispatch();
+						UI::get().emplace<UISoftKey>([this](const std::string& s) {
+							try {
+								int32_t n = std::stoi(s);
+								deactivate();
+								NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
+								LOG(LOG_DEBUG, "UINpcTalk: SoftKey GetNumber=" << n);
+							} catch (...) {}
+						}, []() {}, "Npc number");
 						break;
 				}
 
@@ -370,6 +399,36 @@ namespace ms
 			deactivate();
 
 			NpcTalkMorePacket(wire_msgtype(), 0).dispatch();
+			return;
+		}
+		if (!pressed) return;
+		if (type == TalkType::SENDGETTEXT && (keycode == 'T' || keycode == 't' || keycode == 'S' || keycode == 's'))
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				if (s.empty()) return;
+				deactivate();
+				NpcTalkMorePacket(s).dispatch();
+			}, []() {}, "Npc text");
+		}
+		else if (type == TalkType::SENDGETNUMBER && (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's'))
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				try {
+					int32_t n = std::stoi(s);
+					deactivate();
+					NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
+				} catch (...) {}
+			}, []() {}, "Npc number");
+		}
+		else if (type == TalkType::SENDSIMPLE && (keycode == 'S' || keycode == 's'))
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				try {
+					int32_t sel = std::stoi(s);
+					deactivate();
+					NpcTalkMorePacket(sel).dispatch();
+				} catch (...) {}
+			}, []() {}, "Npc select");
 		}
 	}
 
@@ -494,15 +553,39 @@ namespace ms
 			SimpleChoice c;
 			c.selection = sel;
 			c.label = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::LIGHTBLUE, label);
-			c.pos = Point<int16_t>(166, 70 + row * 18);
+			c.pos = Point<int16_t>(TEXT_X, 70 + row * 18);
 			simple_choices.push_back(std::move(c));
 			++row;
 			pos = label_end == std::string::npos ? tx.size() : label_end;
 		}
 	}
 
+	void UINpcTalk::apply_dlg_skin(int8_t speaker)
+	{
+		const char* node = "UtilDlgEx";
+		if (speaker == 1)
+			node = "UtilDlgEx_Avatar";
+		else if (speaker == 2)
+			node = "UtilDlgEx_Pet";
+
+		nl::node root = UiAssetResolve::window(node);
+		if (!UiAssetResolve::usable(root))
+			root = UiAssetResolve::window("UtilDlgEx");
+		if (!UiAssetResolve::usable(root))
+			return;
+
+		if (root["t"]) top = root["t"];
+		if (root["c"]) fill = root["c"];
+		if (root["s"]) bottom = root["s"];
+		if (root["bar"]) nametag = root["bar"];
+		min_height = 8 * fill.height() + 14;
+		LOG(LOG_DEBUG, "UINpcTalk: skin=" << node << " speaker=" << static_cast<int>(speaker));
+	}
+
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx)
 	{
+		apply_dlg_skin(speakerbyte);
+
 		msgtype_wire = msgtype;
 		type = get_by_value(msgtype);
 
@@ -514,7 +597,9 @@ namespace ms
 		formatted_text_pos = 0;
 		formatted_text = format_text(tx, npcid);
 
-		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, 320);
+		// 折行宽度 = 原生三帧量出来的正文块右缘(474..476) - TEXT_X(166)。
+		// 原来 maxwidth=320 起笔在 x162，正文右缘铺到 x482，和右下角「确定」(474..520) 叠住。
+		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, TEXT_WIDTH);
 
 		int16_t text_height = text.height();
 
@@ -522,11 +607,9 @@ namespace ms
 
 		if (speakerbyte == 0)
 		{
-			std::string strid = std::to_string(npcid);
-			strid.insert(0, 7 - strid.size(), '0');
-			strid.append(".img");
-
-			speaker = nl::nx::Npc[strid]["stand"]["0"];
+			// 与 Npc.cpp 对齐用 extend_id：原来的 7 - strid.size() 遇到 8 位 npcid 会无符号下溢，
+			// insert(0, 巨值, '0') 抛 length_error，整条对话直接打不开。
+			speaker = nl::nx::Npc[string_format::extend_id(npcid, 7) + ".img"]["stand"]["0"];
 
 			std::string namestr = nl::nx::String["Npc.img"][std::to_string(npcid)]["name"];
 			name.change_text(namestr);
@@ -546,7 +629,7 @@ namespace ms
 			{
 				height = MAX_HEIGHT;
 				show_slider = true;
-				rowmax = text_height / 400 + 1;
+				rowmax = text_height / (MAX_HEIGHT - TEXT_SLACK) + 1;
 				unitrows = 1;
 
 				int16_t slider_y = top.height() - 7;
@@ -564,11 +647,11 @@ namespace ms
 			button.second->set_state(Button::State::NORMAL);
 		}
 
-		int16_t y_cord = height + 48;
+		int16_t y_cord = height + BTN_DY;
 
 		if (buttons.count(Buttons::CLOSE))
 		{
-			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(9, y_cord));
+			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(BTN_X_CLOSE, y_cord));
 			buttons[Buttons::CLOSE]->set_active(true);
 		}
 
@@ -581,59 +664,64 @@ namespace ms
 			buttons[id]->set_active(true);
 		};
 
+		const int16_t x_right = BTN_X_RIGHT;
+		const int16_t x_pair = static_cast<int16_t>(BTN_X_RIGHT - BTN_PAIR_PITCH);
+		const int16_t x_pair_wide = static_cast<int16_t>(BTN_X_RIGHT_WIDE - BTN_PAIR_PITCH);
+
 		switch (type)
 		{
 			case TalkType::SENDOK:
 			{
-				activate(Buttons::OK, Point<int16_t>(471, y_cord));
+				activate(Buttons::OK, Point<int16_t>(x_right, y_cord));
 				break;
 			}
 			case TalkType::SENDNEXT:
 			{
-				activate(Buttons::NEXT, Point<int16_t>(471, y_cord));
+				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
 				break;
 			}
 			case TalkType::SENDPREV:
 			{
-				activate(Buttons::PREV, Point<int16_t>(406, y_cord));
+				activate(Buttons::PREV, Point<int16_t>(x_pair, y_cord));
 				break;
 			}
 			case TalkType::SENDNEXTPREV:
 			{
-				activate(Buttons::PREV, Point<int16_t>(406, y_cord));
-				activate(Buttons::NEXT, Point<int16_t>(471, y_cord));
+				activate(Buttons::PREV, Point<int16_t>(x_pair, y_cord));
+				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
 				break;
 			}
 			case TalkType::SENDYESNO:
 			{
-				Point<int16_t> yes_position = Point<int16_t>(389, y_cord);
+				// 原生顺序：主操作在左、次操作在右（莎丽的 接受/拒绝 实测 401 / 466，间距 65）。
+				Point<int16_t> yes_position = Point<int16_t>(x_pair, y_cord);
 				activate(Buttons::YES, yes_position);
-				activate(Buttons::NO, yes_position + Point<int16_t>(65, 0));
+				activate(Buttons::NO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
 
 				// Fall back to quest-styled yes/no if normal buttons are missing.
 				if (!buttons.count(Buttons::YES))
-					activate(Buttons::QYES, yes_position);
+					activate(Buttons::QYES, Point<int16_t>(x_pair_wide, y_cord));
 				if (!buttons.count(Buttons::NO))
-					activate(Buttons::QNO, yes_position + Point<int16_t>(65, 0));
+					activate(Buttons::QNO, Point<int16_t>(BTN_X_RIGHT_WIDE, y_cord));
 				break;
 			}
 			case TalkType::SENDACCEPTDECLINE:
 			{
-				Point<int16_t> yes_position = Point<int16_t>(389, y_cord);
+				Point<int16_t> yes_position = Point<int16_t>(x_pair_wide, y_cord);
 				activate(Buttons::QYES, yes_position);
-				activate(Buttons::QNO, yes_position + Point<int16_t>(65, 0));
+				activate(Buttons::QNO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
 
 				if (!buttons.count(Buttons::QYES))
 					activate(Buttons::QSTART, yes_position);
 				if (!buttons.count(Buttons::QYES) && !buttons.count(Buttons::QSTART))
 					activate(Buttons::QCYES, yes_position);
 				if (!buttons.count(Buttons::QNO))
-					activate(Buttons::QCNO, yes_position + Point<int16_t>(65, 0));
+					activate(Buttons::QCNO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
 				break;
 			}
 			case TalkType::SENDGETNUMBER:
 			{
-				activate(Buttons::OK, Point<int16_t>(471, y_cord));
+				activate(Buttons::OK, Point<int16_t>(x_right, y_cord));
 				break;
 			}
 			case TalkType::SENDSIMPLE:
@@ -645,6 +733,8 @@ namespace ms
 		}
 
 		position = Point<int16_t>(400 - top.width() / 2, 240 - height / 2);
-		dimension = Point<int16_t>(top.width(), height + 120);
+		// 命中区 = 壳体重绘高度（t + 正文 + s）。原来写死 height + 120，比实际绘制高出 30 余px，
+		// 那段空白会白白吞掉点击（点不到下层的窗口/世界）。
+		dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
 	}
 }

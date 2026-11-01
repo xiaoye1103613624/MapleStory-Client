@@ -46,6 +46,24 @@ namespace ms
 		}
 	};
 
+	// 创建个人店/雇佣商人：action CREATE(0) + createType(4|5) + maple-string title + skip3 + int cashItemId
+	// 对照 s9 PlayerInteractionHandler：title 在 CREATE，不在 OPEN_STORE。
+	class HiredMerchantCreatePacket : public OutPacket
+	{
+	public:
+		HiredMerchantCreatePacket(const std::string& title, int32_t cash_itemid, int8_t create_type = 4)
+			: OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x00); // CREATE
+			write_byte(create_type);
+			write_string(title);
+			write_byte(0);
+			write_byte(0);
+			write_byte(0);
+			write_int(cash_itemid);
+		}
+	};
+
 	// 店主上架物品：action SET_ITEMS(0x0F) -> byte ivType, short pos, short qty, byte targetSlot(1..9)。
 	class HiredMerchantSetItemPacket : public OutPacket
 	{
@@ -69,6 +87,59 @@ namespace ms
 			write_byte(0x22);
 			write_byte(slot);
 			write_short(quantity);
+		}
+	};
+
+	// 小游戏：READY(0x3A) / START(0x3D) / EXIT(0x0A)
+	class MinigameReadyPacket : public OutPacket
+	{
+	public:
+		MinigameReadyPacket() : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x3A);
+		}
+	};
+
+	class MinigameStartPacket : public OutPacket
+	{
+	public:
+		MinigameStartPacket() : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x3D);
+		}
+	};
+
+	class MinigameExitPacket : public OutPacket
+	{
+	public:
+		MinigameExitPacket() : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x0A);
+		}
+	};
+
+	// 五子棋落子：action 0x3E → byte x, byte y, byte pieceType
+	class MinigameOmokPlacePacket : public OutPacket
+	{
+	public:
+		MinigameOmokPlacePacket(uint8_t x, uint8_t y, uint8_t piece) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x3E);
+			write_byte(x);
+			write_byte(y);
+			write_byte(piece);
+		}
+	};
+
+	// 翻牌：action 0x3F → byte turn, byte slot
+	class MinigameMatchCardSelectPacket : public OutPacket
+	{
+	public:
+		MinigameMatchCardSelectPacket(uint8_t turn, uint8_t slot) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		{
+			write_byte(0x3F);
+			write_byte(turn);
+			write_byte(slot);
 		}
 	};
 }

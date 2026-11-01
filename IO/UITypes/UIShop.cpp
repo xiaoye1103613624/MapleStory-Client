@@ -17,7 +17,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIShop.h"
 
+#include "UIItemInventory.h"
 #include "UINotice.h"
+#include "UISoftKey.h"
 
 #include "../UI.h"
 
@@ -29,6 +31,7 @@
 #include "../../Data/ItemData.h"
 
 #include "../../Net/Packets/NpcInteractionPackets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -418,7 +421,110 @@ namespace ms
 	void UIShop::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		if (pressed && escape)
+		{
 			exit_shop();
+			return;
+		}
+		if (!pressed) return;
+		if (keycode == 'X' || keycode == 'x')
+		{
+			exit_shop();
+			return;
+		}
+		if (keycode == 'B' || keycode == 'b')
+		{
+			if (buystate.selection >= 0 && buystate.selection < buystate.lastslot) {
+				int16_t slot = buystate.selection;
+				UI::get().emplace<UISoftKey>([this, slot](const std::string& s) {
+					int16_t qty = 1;
+					if (!s.empty()) {
+						try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
+					}
+					if (qty < 1 || slot < 0 || slot >= buystate.lastslot) return;
+					const BuyItem& item = buystate.items[slot];
+					NpcShopActionPacket(slot, item.get_id(), qty, true).dispatch();
+					LOG(LOG_DEBUG, "UIShop: SoftKey buy slot=" << slot << " qty=" << qty);
+				}, []() {}, "Buy qty (selected)");
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					if (s.empty()) return;
+					try {
+						size_t comma = s.find(',');
+						int16_t slot = static_cast<int16_t>(std::stoi(comma == std::string::npos ? s : s.substr(0, comma)));
+						int16_t qty = 1;
+						if (comma != std::string::npos)
+							qty = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
+						if (slot < 0 || slot >= buystate.lastslot || qty < 1) return;
+						const BuyItem& item = buystate.items[slot];
+						NpcShopActionPacket(slot, item.get_id(), qty, true).dispatch();
+						LOG(LOG_DEBUG, "UIShop: SoftKey buy slot=" << slot << " qty=" << qty);
+					} catch (...) {}
+				}, []() {}, "Buy slot,qty");
+			}
+		}
+		else if (keycode == 'S' || keycode == 's')
+		{
+			if (sellstate.selection >= 0 && sellstate.selection < sellstate.lastslot) {
+				int16_t idx = sellstate.selection;
+				UI::get().emplace<UISoftKey>([this, idx](const std::string& s) {
+					int16_t qty = 1;
+					if (!s.empty()) {
+						try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
+					}
+					if (qty < 1 || idx < 0 || idx >= sellstate.lastslot) return;
+					const SellItem& item = sellstate.items[idx];
+					NpcShopActionPacket(item.get_slot(), item.get_id(), qty, false).dispatch();
+					LOG(LOG_DEBUG, "UIShop: SoftKey sell idx=" << idx << " qty=" << qty);
+				}, []() {}, "Sell qty (selected)");
+			} else {
+				UI::get().emplace<UISoftKey>([this](const std::string& s) {
+					if (s.empty()) return;
+					try {
+						size_t comma = s.find(',');
+						int16_t idx = static_cast<int16_t>(std::stoi(comma == std::string::npos ? s : s.substr(0, comma)));
+						int16_t qty = 1;
+						if (comma != std::string::npos)
+							qty = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
+						if (idx < 0 || idx >= sellstate.lastslot || qty < 1) return;
+						const SellItem& item = sellstate.items[idx];
+						NpcShopActionPacket(item.get_slot(), item.get_id(), qty, false).dispatch();
+						LOG(LOG_DEBUG, "UIShop: SoftKey sell idx=" << idx << " qty=" << qty);
+					} catch (...) {}
+				}, []() {}, "Sell idx,qty");
+			}
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			if (auto uii = UI::get().get_element<UIItemInventory>()) {
+				int16_t slot = uii->get_selected_slot();
+				if (slot > 0) {
+					NpcShopActionPacket(slot).dispatch();
+					LOG(LOG_DEBUG, "UIShop: SoftKey recharge slot=" << slot);
+					return;
+				}
+			}
+			UI::get().emplace<UISoftKey>([](const std::string& s) {
+				try {
+					int16_t slot = static_cast<int16_t>(std::stoi(s));
+					if (slot < 0) return;
+					NpcShopActionPacket(slot).dispatch();
+					LOG(LOG_DEBUG, "UIShop: SoftKey recharge slot=" << slot);
+				} catch (...) {}
+			}, []() {}, "Recharge slot");
+		}
+		else if (keycode == 'T' || keycode == 't')
+		{
+			InventoryType::Id newtab = InventoryType::Id::EQUIP;
+			switch (sellstate.tab)
+			{
+				case InventoryType::Id::EQUIP: newtab = InventoryType::Id::USE; break;
+				case InventoryType::Id::USE: newtab = InventoryType::Id::SETUP; break;
+				case InventoryType::Id::SETUP: newtab = InventoryType::Id::ETC; break;
+				case InventoryType::Id::ETC: newtab = InventoryType::Id::CASH; break;
+				default: newtab = InventoryType::Id::EQUIP; break;
+			}
+			changeselltab(newtab);
+		}
 	}
 
 	UIElement::Type UIShop::get_type() const

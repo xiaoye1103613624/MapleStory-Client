@@ -17,11 +17,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIEvent.h"
 
+#include "UIDailyGift.h"
+#include "UIMiscShells.h"
+#include "UIPlant.h"
+#include "UISoftKey.h"
+
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
 
 #include "../../Data/ItemData.h"
+#include "../../Net/Packets/NpcInteractionPackets.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -42,12 +49,13 @@ namespace ms
 		{
 			active = false;
 			dimension = Point<int16_t>(0, 0);
+			// events 的填充在下面这段早退之后才发生；event_count 留着 16 的话，
+			// makeactive() 再点亮这个半成品元素时 draw() 会按下标越界读空 vector。
+			event_count = 0;
 			return;
 		}
 
-		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-		if (!close)
-			close = nl::nx::UI["Basic.img"]["BtClose2"];
+		nl::node close = UiAssetResolve::close_btn();
 
 		nl::node backgrnd = main["backgrnd"];
 		Point<int16_t> bg_dimensions = Texture(backgrnd).get_dimensions();
@@ -210,8 +218,40 @@ namespace ms
 
 	void UIEvent::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && escape)
-			close();
+		if (pressed && escape) { close(); return; }
+		if (!pressed) return;
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				if (tip.empty()) return;
+				NpcTalkMorePacket(tip).dispatch();
+				LOG(LOG_DEBUG, "UIEvent: SoftKey NpcTalkMore len=" << tip.size());
+			}, []() {}, "Event reply");
+		}
+		else if (keycode == 'W' || keycode == 'w')
+		{
+			auto ui = UI::get().get_element<UIEventWindow>();
+			if (!ui) ui = UI::get().emplace<UIEventWindow>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'D' || keycode == 'd')
+		{
+			auto ui = UI::get().get_element<UIDailyGift>();
+			if (!ui) ui = UI::get().emplace<UIDailyGift>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'M' || keycode == 'm')
+		{
+			auto ui = UI::get().get_element<UIMapleEvent>();
+			if (!ui) ui = UI::get().emplace<UIMapleEvent>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			auto ui = UI::get().get_element<UIRaise>();
+			if (!ui) ui = UI::get().emplace<UIRaise>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
 	}
 
 	UIElement::Type UIEvent::get_type() const

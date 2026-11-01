@@ -52,6 +52,16 @@ namespace ms
 		{
 			write_int(selection);
 		}
+
+		// SENDGETNUMBER OK: msgtype=3, response=1, then int amount
+		// (tag avoids ambiguous/recursive delegate with NpcTalkMorePacket(int8_t,int8_t))
+		struct GetNumber {};
+		NpcTalkMorePacket(GetNumber, int32_t amount) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(3);
+			write_byte(1);
+			write_int(amount);
+		}
 	};
 
 	// Packet which tells the server of an interaction with an NPC shop

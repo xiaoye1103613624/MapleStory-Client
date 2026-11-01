@@ -20,6 +20,10 @@
 #include "../../IO/UI.h"
 
 #include "../../IO/UITypes/UICharInfo.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Graphics/Color.h"
+
+#include <string>
 
 namespace ms
 {
@@ -29,7 +33,7 @@ namespace ms
 		uint16_t character_level = recv.read_short();
 		int16_t character_job_id = recv.read_short();
 		int16_t character_fame = recv.read_short();
-		recv.skip_byte(); // character_marriage_ring
+		bool married = recv.read_byte() != 0;
 
 		std::string guild_name = recv.read_string();
 		std::string alliance_name = recv.read_string();
@@ -37,9 +41,11 @@ namespace ms
 		recv.skip_byte();
 
 		int8_t pet_unique_id = recv.read_byte();
+		int32_t pet_n = 0;
 
 		while (pet_unique_id != 0)
 		{
+			++pet_n;
 			recv.skip_int();	// pet_id
 			recv.skip_string();	// pet_name
 			recv.skip_byte();	// pet_level
@@ -70,18 +76,28 @@ namespace ms
 		recv.skip_int(); // monster_book_level
 		recv.skip_int(); // monster_book_card_normal
 		recv.skip_int(); // monster_book_card_special
-		recv.skip_int(); // monster_book_cards_total
+		int32_t book_cards = recv.read_int(); // monster_book_cards_total
 		recv.skip_int(); // monster_book_cover
 
-		recv.skip_int(); // medal
+		int32_t medal_id = recv.read_int(); // medal
 
 		int16_t medal_quests_size = recv.read_short();
 
 		for (int16_t s = 0; s < medal_quests_size; s++)
 			recv.skip_short(); // medal_quest
+		while (recv.available())
+			recv.skip_byte();
 
-		// Update the character information window
-		if (auto charinfo = UI::get().get_element<UICharInfo>())
+		// Update / ensure the character information window
+		auto charinfo = UI::get().get_element<UICharInfo>();
+		if (!charinfo)
+			charinfo = UI::get().emplace<UICharInfo>(character_id);
+		else if (!charinfo->is_active())
+			charinfo->makeactive();
+		if (charinfo)
+		{
 			charinfo->update_stats(character_id, character_job_id, character_level, character_fame, guild_name, alliance_name);
+			charinfo->update_extras(pet_n, wishlist_size, book_cards, medal_id, married);
+		}
 	}
 }

@@ -74,8 +74,34 @@ namespace ms
 		TalkType resolve_say_style(int16_t style) const;
 		std::string format_text(const std::string& tx, const int32_t& npcid);
 		int8_t wire_msgtype() const;
+		// speaker 0=NPC→UtilDlgEx；1=玩家→UtilDlgEx_Avatar；2=宠物→UtilDlgEx_Pet
+		void apply_dlg_skin(int8_t speaker);
 
 		static constexpr int16_t MAX_HEIGHT = 248;
+
+		// 正文块位置：三张原生对话帧（528x261 / 526x349 / 523x203）逐列量的暗字像素边界，
+		// 左缘 163..170、右缘 474..476，取中位 166 + 折行宽 310（= 右缘 476）。
+		// 原来写死 x=162/166 + maxwidth=320 会把正文铺到 x482，和右下角「确定」(474..520) 叠住。
+		// TEXT_Y 是绘制点（不是字面墨迹顶）：三张帧量到的墨迹顶是 39 / 58 / 72，原生似乎按
+		// 正文高度在正文区里居中；这里保持 cj 原来的 48（落在区间中间），留待真机对帧再定。
+		static constexpr int16_t TEXT_X = 166;
+		static constexpr int16_t TEXT_Y = 48;
+		static constexpr int16_t TEXT_WIDTH = 310;
+		// 正文可视区上下各留的余量（沿用原实现的 18px），翻页步长 = 壳高 - 该余量。
+		static constexpr int16_t TEXT_SLACK = 18;
+
+		// 底带按钮槽位（窗口左上为原点）。UtilDlgEx 里每个按钮的 origin 都是 (0,0)，
+		// 所以位置只能由这里给；不给就会全部叠在窗口左上角。
+		// 尺寸取自 .nxcache/UI.nx：BtClose 85x19 / BtOK,BtYes,BtNo,BtNext,BtPrev 46x18 / BtQ* 57x17。
+		// 纵向 49 由两张独立原生帧互证：壳高 = t(28)+正文+s(58)，
+		// 528x261 帧反解正文 175、按钮顶 224 ⇒ 差 49；526x349 帧反解正文 263、按钮顶 312 ⇒ 差 49。
+		// 也即底片 s 内分隔条 +15..+20、按钮压 +21，21 + t.height(28) = 49。
+		static constexpr int16_t BTN_DY = 49;
+		// 横向：右对齐留边 9（46 宽 → 474..520），成对时左那颗退 65（原生 接受/拒绝 实测间距 65）。
+		static constexpr int16_t BTN_X_RIGHT = 474;
+		static constexpr int16_t BTN_X_RIGHT_WIDE = 466;
+		static constexpr int16_t BTN_PAIR_PITCH = 65;
+		static constexpr int16_t BTN_X_CLOSE = 12;
 
 		enum Buttons
 		{
