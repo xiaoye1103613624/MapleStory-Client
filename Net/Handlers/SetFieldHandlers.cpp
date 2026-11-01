@@ -30,21 +30,18 @@
 #include "../../IO/Window.h"
 
 #include "../../IO/UITypes/UICharSelect.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Graphics/Color.h"
 
 #include "../../Util/Misc.h"
 #include "../../Util/Resource/ResourceService.h"
 
-#include <fstream>
+#include <string>
 
 namespace ms
 {
 	static void enter_game_log(const std::string& line)
 	{
-		std::ofstream out("_enter_game.log", std::ios::app);
-
-		if (out)
-			out << line << std::endl;
-
 		LOG(LOG_DEBUG, line);
 	}
 
@@ -165,7 +162,9 @@ namespace ms
 
 		int32_t mapid = recv.read_int();
 		int8_t portalid = recv.read_byte();
-
+		while (recv.available())
+			recv.skip_byte();
+		// 换图过密，不 tip
 		transition(mapid, portalid, false);
 	}
 
@@ -216,6 +215,8 @@ namespace ms
 		CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
 		CharacterParser::parse_nyinfo(recv);
 		CharacterParser::parse_areainfo(recv);
+		while (recv.available())
+			recv.skip_byte();
 
 		player.recalc_stats(true);
 
@@ -223,6 +224,9 @@ namespace ms
 
 		uint8_t portalid = player.get_stats().get_portal();
 		int32_t mapid = player.get_stats().get_mapid();
+
+		// 进图淡入已显，不 tip
+		(void)mapid;
 
 		transition(mapid, portalid, true);
 

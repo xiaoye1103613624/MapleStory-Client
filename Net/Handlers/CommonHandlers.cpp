@@ -19,7 +19,14 @@
 
 #include "../Packets/CommonPackets.h"
 
+#include "../../IO/UI.h"
+#include "../../IO/UITypes/UIAdmin.h"
+#include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/Window.h"
+#include "../../Graphics/Color.h"
+
+#include <string>
 
 namespace ms
 {
@@ -30,6 +37,20 @@ namespace ms
 
 	void LimitBreakSyncHandler::handle(InPacket& recv) const
 	{
-		Window::get().set_limit_break(recv.read_long());
+		int64_t lb = recv.read_long();
+		while (recv.available())
+			recv.skip_byte();
+		Window::get().set_limit_break(lb);
+		std::string tip = "LimitBreak " + std::to_string(lb);
+		if (auto ui = UI::get().get_element<UIAdmin>())
+		{
+			if (ui->is_active())
+			{
+				ui->set_message(tip);
+				return;
+			}
+		}
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), UIChatBar::MessageType::WHITE);
 	}
 }
