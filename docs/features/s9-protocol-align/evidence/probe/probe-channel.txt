@@ -1,0 +1,42 @@
+# T8 s9 protocol probe  (UTC 2026-10-30T11:23:40+00:00)
+# oracle module: tools/transport_oracle.py  (同一份实现，无本地重写)
+# version=83  send_cypher_ver=0xACFF  recv_cypher_ver=0x5300
+# 门禁清单校验通过：blocklist=89 allowlist=1
+# s9 RecvOpcode 常量=181  有效 handler=172
+# 计划发送 7 个 opcode：
+#   0x000C PLAYER_DC                    no-handler
+#   0x0019 CLIENT_START_ERROR           no-handler
+#   0x001A CLIENT_ERROR                 no-handler
+#   0x00D6 MATCH_TABLE                  no-handler
+#   0x00ED CLOSE_ITEMUI                 no-handler
+#   0xFFFE MAPLETV                      no-handler
+#   0x0018 PONG                         allowlist:KeepAliveHandler
+# 被拦下 2 个：
+#   0x0044 ADMIN_SHOP                   SKIP(blocklist)
+#   0x0054 USE_TELEPORT_ROCK            SKIP(blocklist)
+# connected 127.0.0.1:7575
+# hello: 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  F1 hello opcode == 0x000E (LE, 正文内)
+[OK  ]  F1 hello version == 83  got 53 00
+[OK  ]  F1 hello flag == 0x0001
+[OK  ]  F1 hello byte6 == 49 (0x31)
+[OK  ]  F1 recvIv 前缀 == 'Frz' (70 114 122)  got 46 72 7a
+[OK  ]  F1 sendIv 前缀 == 'R0x' (82 48 120)  got 52 30 78
+[OK  ]  F1 hello byte15 == 8
+[OK  ]  hello 与 oracle s9_get_hello() 逐字节一致  expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+# 连发 7 个探测包后连接仍存活（sent=7 iv_out=72 ad 9b **）
+#   注意：这只是「没被 TCP 层打断」，弱证据；真凭据在阶段 3 的 PONG oracle
+# [主连接 PONG#1] 等服务端 PING（最长 40s）...
+# [主连接 PONG#1]   hdr=d4 ce d6 ce  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  [主连接 PONG#1] PING 头部通过 sendCypher isValidHeader  iv_in=5e 92 24 **
+[OK  ]  [主连接 PONG#1] 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  [主连接 PONG#1] 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+# [主连接 PONG#1]   已回 PONG，观察 20s 内是否被空闲踢掉
+[OK  ]  [主连接 PONG#1] 回 PONG 后活过 20s => PONG 被解密并派发到 KeepAliveHandler  c2s 真被处理的硬证据；未被踢不等于被处理
+# [主连接 PONG#2] 等服务端 PING（最长 40s）...
+# [主连接 PONG#2]   hdr=88 b7 8a b7  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  [主连接 PONG#2] PING 头部通过 sendCypher isValidHeader  iv_in=ec 24 62 **
+[OK  ]  [主连接 PONG#2] 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  [主连接 PONG#2] 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+# [主连接 PONG#2]   已回 PONG，观察 20s 内是否被空闲踢掉
+[OK  ]  [主连接 PONG#2] 回 PONG 后活过 20s => PONG 被解密并派发到 KeepAliveHandler  c2s 真被处理的硬证据；未被踢不等于被处理

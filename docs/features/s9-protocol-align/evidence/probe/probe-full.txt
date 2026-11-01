@@ -1,0 +1,55 @@
+# T8 s9 protocol probe  (UTC 2026-10-30T09:39:41+00:00)
+# oracle module: tools/transport_oracle.py  (同一份实现，无本地重写)
+# version=83  send_cypher_ver=0xACFF  recv_cypher_ver=0x5300
+# 门禁清单校验通过：blocklist=89 allowlist=1
+# s9 RecvOpcode 常量=181  有效 handler=172
+# 计划发送 7 个 opcode：
+#   0x000C PLAYER_DC                    no-handler
+#   0x0019 CLIENT_START_ERROR           no-handler
+#   0x001A CLIENT_ERROR                 no-handler
+#   0x00D6 MATCH_TABLE                  no-handler
+#   0x00ED CLOSE_ITEMUI                 no-handler
+#   0xFFFE MAPLETV                      no-handler
+#   0x0018 PONG                         allowlist:KeepAliveHandler
+# 被拦下 2 个：
+#   0x0044 ADMIN_SHOP                   SKIP(blocklist)
+#   0x0054 USE_TELEPORT_ROCK            SKIP(blocklist)
+# connected 127.0.0.1:8484
+# hello: 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  F1 hello opcode == 0x000E (LE, 正文内)
+[OK  ]  F1 hello version == 83  got 53 00
+[OK  ]  F1 hello flag == 0x0001
+[OK  ]  F1 hello byte6 == 49 (0x31)
+[OK  ]  F1 recvIv 前缀 == 'Frz' (70 114 122)  got 46 72 7a
+[OK  ]  F1 sendIv 前缀 == 'R0x' (82 48 120)  got 52 30 78
+[OK  ]  F1 hello byte15 == 8
+[OK  ]  hello 与 oracle s9_get_hello() 逐字节一致  expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  连发 7 个探测包后连接仍存活（每个头部都被接受）  sent=7 iv_out=f6 c6 e4 **
+# 等第 1 个服务端 PING（最长 40s）...
+#   hdr=d4 30 d6 30  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  PING 1 头部通过 sendCypher isValidHeader  iv_in=68 8d 11 **
+[OK  ]  PING 1 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  PING 1 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+#   已回 PONG（第 1 次）
+# 等第 2 个服务端 PING（最长 40s）...
+#   hdr=bd b8 bf b8  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  PING 2 头部通过 sendCypher isValidHeader  iv_in=57 77 66 **
+[OK  ]  PING 2 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  PING 2 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+#   已回 PONG（第 2 次）
+# 包长扫描：证明服务端能解 len>=32768 的头（客户端侧 D8 是收方向缺陷）
+#   len=2      头部=a4 39 a6 39  OK
+#   len=3      头部=38 c5 3b c5  OK
+#   len=255    头部=50 4d af 4d  OK
+#   len=256    头部=53 83 53 82  OK
+#   len=4095   头部=9d 3f 62 30  OK
+#   len=4096   头部=a9 dc a9 cc  OK
+#   len=8192   头部=de 12 de 32  OK
+#   len=32767  头部=34 41 cb 3e  OK
+#   len=32768  头部=81 0a 81 8a  OK
+#   len=40000  头部=96 5e d6 c2  OK
+[OK  ]  包长扫描全部被接受（含 32768/40000）：服务端侧长度公式覆盖 16 位全域
+# ---- 阶段 5：negative control（坏头必须被拒）----
+[OK  ]  对照基线：正确的头 -> 连接保持（服务端没在无理由地提前杀会话）
+# 已发出坏头 89 aa 74 aa（同一 IV 下的正确头是 76 aa 74 aa）
+[FAIL]  negative control：坏头被服务端当场拒绝并断线 => 前面的「连接存活」是真证据

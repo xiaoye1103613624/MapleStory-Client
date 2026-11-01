@@ -1,0 +1,41 @@
+T10 · dbx 只读快照（2026-10-30）
+================================
+通道：dbx MCP（serverId 88b1adfa-6c4a-4ad3-ab78-bcc339709e95）
+连接：75c9875d-d7ff-4bfa-955c-6e09077530c6  name=localhost  mysql 127.0.0.1:3306  database=beidou
+语句：全部 SELECT / describe，**无 DDL、无 DML**。授权口径：档 B 那一行 UPDATE 已获用户点头但本轮未执行。
+
+[1] 表结构（describe_table accounts，仅列出本协议相关的列）
+    id(PK) int | name varchar(13) | language int NOT NULL DEFAULT 3 | gm: 不在 accounts 表（在 characters.gm）
+
+[2] SELECT language, COUNT(*) AS n FROM accounts GROUP BY language ORDER BY language
+    => language=3, n=3
+    结论：库内账号全部 language=3 ⇒ LANGUAGE_CN / GBK（CharsetConstants.java:55）。
+          没有 language=2（US-ASCII，:54）的号 ⇒ "先查，不合适就换号"的分叉判定为**不需要换号**。
+
+[3] SELECT a.id AS account_id, CHAR_LENGTH(a.name) AS name_len, a.language,
+           c.id AS char_id, c.name AS char_name, c.gm
+      FROM accounts a JOIN characters c ON c.accountid = a.id WHERE c.gm >= 4 ORDER BY c.gm DESC
+    => account_id=1, name_len=5, language=3, char_id=1, char_name=Admin, gm=6
+    脱敏：账号名只记长度（5），不落原文；角色名 Admin 为北斗默认内置名，非隐私。
+    用途：档 A 的 /showpackets 需要该 GM 角色进游戏后输入命令（gm=6 满足）。
+    更订（同日 T7 会话 #1 后）：前缀写错——s9 命令头是 '@' / '!'（CommandsExecutor.java:53-54），
+          正确输入 '!showpackets'（gm5）或 '!monitor'（gm3，档 F，字段级对账首选）；
+          '/' 开头的文本被 GeneralChatHandler.java:53-55 静默丢弃。原行按快照留痕不改写。
+
+[4] SELECT id, config_type, config_sub_type, config_clazz, config_code, config_value, update_time
+      FROM game_config WHERE config_code LIKE 'use_debug%' ORDER BY id
+    => 220 server/Debug java.lang.Boolean use_debug                 false  update_time=NULL
+       221 server/Debug java.lang.Boolean use_debug_show_eqp_exp     false  update_time=NULL
+       222 server/Debug java.lang.Boolean use_debug_show_rcvd_packet false  update_time=NULL
+       223 server/Debug java.lang.Boolean use_debug_show_life_move   false  update_time=NULL
+       224 server/Debug java.lang.Boolean use_debug_show_packet      false  update_time=NULL
+    这是"改前基线"。若将来按授权翻 224，须以此行为对照，用完改回 false 并再存一次同样的查询。
+    update_time 全为 NULL ⇒ 该行从未被后台 REST updateConfig 写过
+    （ConfigService.java:117-134 那条路径会带时间戳）⇒ 运行期若看到 true，只可能是内存翻转（GM 命令），重启即回退。
+
+[5] 失败记录（防下次重犯）
+    首查写作 SELECT id, tag, name, value FROM game_config ...
+    => ERROR 1054 (42S22): Unknown column 'tag' in 'field list'
+    原因：按 GameConfig.java 内存 JSON 树（server → Debug → {code:{clazz,value}}）猜了库表列名，
+          实际列是 config_type / config_sub_type / config_code / config_value。
+    教训：跨层（内存树 ↔ 库表）取数一律先 describe_table，不靠结构相似性猜列名。

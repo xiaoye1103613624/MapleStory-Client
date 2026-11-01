@@ -1,0 +1,458 @@
+{
+  "generated_by": "tools/transport_oracle.py",
+  "sources": {
+    "client/Net/Cryptography.cpp": "d26fff5604a90b4ac182101f1d827ea9ba67b79b3737c3df3bdf4c094de0fcfb",
+    "s9/MapleAESOFB.java": "1bcb4bac110da29b68ab22a75e7c49df638e3a49655cdcc44276ad03769cb04c",
+    "s9/MapleCustomEncryption.java": "389d3907bc80b565638d279b78b0069b46a9fa363b461e46a34074d7d2a80f6a"
+  },
+  "constants": {
+    "version": 83,
+    "s9_send_swapped": "0xACFF",
+    "s9_recv_swapped": "0x5300",
+    "aes_key": "130000000800000006000000b40000001b0000000f0000003300000052000000"
+  },
+  "checks": [
+    {
+      "check": "source-tables",
+      "ok": true,
+      "detail": "funny=256 subbox=256 maplekey=256"
+    },
+    {
+      "check": "aes-key-schedule(s9 key -> client maplekey)",
+      "ok": true,
+      "detail": "240 字节全等（round0..14）"
+    },
+    {
+      "check": "client-aes == JCE AES-256/ECB",
+      "ok": true,
+      "detail": "200 随机块全等"
+    },
+    {
+      "check": "custom-encrypt 6 遍 (s9 vs client)",
+      "ok": true,
+      "detail": "62 个长度全等"
+    },
+    {
+      "check": "custom-decrypt 6 遍 (s9 vs client)",
+      "ok": true,
+      "detail": "62 个长度全等"
+    },
+    {
+      "check": "cross round-trip (s9enc -> clientdec)",
+      "ok": true,
+      "detail": "全部还原成功"
+    },
+    {
+      "check": "updateIv / funnyShit 链 20000 步",
+      "ok": true,
+      "detail": "20000 次迭代逐步全等"
+    },
+    {
+      "check": "aes-ofb keystream (s9 vs client)",
+      "ok": true,
+      "detail": "62 个长度全等"
+    },
+    {
+      "check": "aes-ofb 后置 iv",
+      "ok": true,
+      "detail": "全部一致"
+    },
+    {
+      "check": "c2s 头部长度可被服务端解出",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "c2s 头部通过 isValidHeader",
+      "ok": true,
+      "detail": "version 0x5300 校验全部通过"
+    },
+    {
+      "check": "s2c 头部长度客户端解为无符号 0..65535（D8 已修）",
+      "ok": true,
+      "detail": "62 个长度全等"
+    },
+    {
+      "check": "D8 断言覆盖 32768..65535（legacy 模型确有偏离）",
+      "ok": true,
+      "detail": "14 个长度只有修复前的 int16_t 模型会解错（最小 len=32768 -> -32768），断言非空跑"
+    },
+    {
+      "check": "端到端 c2s（客户端 encrypt -> 服务端 decode）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "端到端 c2s 后置 IV 同步",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "端到端 s2c（服务端 encode -> 客户端 decrypt）",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "handshake 16 字节布局（Cryptography.cpp:22-31 vs PacketCreator:619-629）",
+      "ok": true,
+      "detail": "client.sendiv = 服务端 recvIv('Frz')，client.recviv = 服务端 sendIv('R0x')"
+    },
+    {
+      "check": "版本常量换算（ClientCyphers.java:15-16 + MapleAESOFB.java:97）",
+      "ok": true,
+      "detail": "send=0xACFF recv=0x5300；客户端 Cryptography.cpp:55 只用 83，且只作用于低字节 ⇒ 与 receive 校验等价"
+    },
+    {
+      "check": "整场会话 300 包连续 keystream + IV 链",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "双向会话 60 包（客户端 encrypt → 服务端 decode）还原",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "vectors": [
+    {
+      "check": "updateIv / funnyShit 链 20000 步",
+      "ok": true,
+      "detail": "20000 次迭代逐步全等",
+      "cases": [
+        {
+          "step": 1,
+          "s9": "ffe2c547",
+          "client": "ffe2c547"
+        },
+        {
+          "step": 2,
+          "s9": "7d76ca8e",
+          "client": "7d76ca8e"
+        },
+        {
+          "step": 3,
+          "s9": "d138556d",
+          "client": "d138556d"
+        },
+        {
+          "step": 100,
+          "s9": "fde9c584",
+          "client": "fde9c584"
+        },
+        {
+          "step": 1000,
+          "s9": "900702fc",
+          "client": "900702fc"
+        },
+        {
+          "step": 20000,
+          "s9": "da335fc5",
+          "client": "da335fc5"
+        }
+      ]
+    },
+    {
+      "check": "aes-ofb keystream (s9 vs client)",
+      "ok": true,
+      "detail": "62 个长度全等",
+      "cases": [
+        {
+          "len": 0,
+          "iv": "46727a00",
+          "s9_ct": "",
+          "client_ct": "",
+          "s9_iv_next": "ffe2c547",
+          "client_iv_next": "ffe2c547"
+        },
+        {
+          "len": 1,
+          "iv": "46727a01",
+          "s9_ct": "da",
+          "client_ct": "da",
+          "s9_iv_next": "f15ad8e7",
+          "client_iv_next": "f15ad8e7"
+        },
+        {
+          "len": 16,
+          "iv": "46727a10",
+          "s9_ct": "ae037eb04c193cf21a4935ce",
+          "client_ct": "ae037eb04c193cf21a4935ce",
+          "s9_iv_next": "7b624347",
+          "client_iv_next": "7b624347"
+        },
+        {
+          "len": 1456,
+          "iv": "46727ab0",
+          "s9_ct": "6cab8b3fb8c969e70b976525",
+          "client_ct": "6cab8b3fb8c969e70b976525",
+          "s9_iv_next": "7a9d4398",
+          "client_iv_next": "7a9d4398"
+        },
+        {
+          "len": 1457,
+          "iv": "46727ab1",
+          "s9_ct": "9bbbc9f081279123310099f3",
+          "client_ct": "9bbbc9f081279123310099f3",
+          "s9_iv_next": "707d5b40",
+          "client_iv_next": "707d5b40"
+        },
+        {
+          "len": 2912,
+          "iv": "46727a60",
+          "s9_ct": "abe7a50a7d82394122db2b37",
+          "client_ct": "abe7a50a7d82394122db2b37",
+          "s9_iv_next": "ff9fc41a",
+          "client_iv_next": "ff9fc41a"
+        },
+        {
+          "len": 2913,
+          "iv": "46727a61",
+          "s9_ct": "c274392814323e1cbeedc7bf",
+          "client_ct": "c274392814323e1cbeedc7bf",
+          "s9_iv_next": "f2d7dd5a",
+          "client_iv_next": "f2d7dd5a"
+        },
+        {
+          "len": 32768,
+          "iv": "46727a00",
+          "s9_ct": "52848440b9fd967b591aa06c",
+          "client_ct": "52848440b9fd967b591aa06c",
+          "s9_iv_next": "ffe2c547",
+          "client_iv_next": "ffe2c547"
+        }
+      ]
+    },
+    {
+      "check": "c2s 头部长度可被服务端解出",
+      "ok": true,
+      "detail": "",
+      "cases": [
+        {
+          "len": 0,
+          "client_header": "295a295a",
+          "s9_decode_len": 0,
+          "s9_valid": true
+        },
+        {
+          "len": 1,
+          "client_header": "295a285a",
+          "s9_decode_len": 1,
+          "s9_valid": true
+        },
+        {
+          "len": 2,
+          "client_header": "295a2b5a",
+          "s9_decode_len": 2,
+          "s9_valid": true
+        },
+        {
+          "len": 255,
+          "client_header": "295ad65a",
+          "s9_decode_len": 255,
+          "s9_valid": true
+        },
+        {
+          "len": 256,
+          "client_header": "295a295b",
+          "s9_decode_len": 256,
+          "s9_valid": true
+        },
+        {
+          "len": 1456,
+          "client_header": "295a995f",
+          "s9_decode_len": 1456,
+          "s9_valid": true
+        },
+        {
+          "len": 32767,
+          "client_header": "295ad625",
+          "s9_decode_len": 32767,
+          "s9_valid": true
+        },
+        {
+          "len": 32768,
+          "client_header": "295a29da",
+          "s9_decode_len": 32768,
+          "s9_valid": true
+        },
+        {
+          "len": 65535,
+          "client_header": "295ad6a5",
+          "s9_decode_len": 65535,
+          "s9_valid": true
+        }
+      ]
+    },
+    {
+      "check": "s2c 头部长度客户端解为无符号 0..65535（D8 已修）",
+      "ok": true,
+      "detail": "62 个长度全等",
+      "cases": [
+        {
+          "len": 1,
+          "server_header": "d4ced5ce",
+          "client_check_length": 1,
+          "legacy_int16": 1
+        },
+        {
+          "len": 255,
+          "server_header": "d4ce2bce",
+          "client_check_length": 255,
+          "legacy_int16": 255
+        },
+        {
+          "len": 256,
+          "server_header": "d4ced4cf",
+          "client_check_length": 256,
+          "legacy_int16": 256
+        },
+        {
+          "len": 1456,
+          "server_header": "d4ce64cb",
+          "client_check_length": 1456,
+          "legacy_int16": 1456
+        },
+        {
+          "len": 32767,
+          "server_header": "d4ce2bb1",
+          "client_check_length": 32767,
+          "legacy_int16": 32767
+        },
+        {
+          "len": 32768,
+          "server_header": "d4ced44e",
+          "client_check_length": 32768,
+          "legacy_int16": -32768
+        },
+        {
+          "len": 40000,
+          "server_header": "d4ce9452",
+          "client_check_length": 40000,
+          "legacy_int16": -25536
+        },
+        {
+          "len": 65535,
+          "server_header": "d4ce2b31",
+          "client_check_length": 65535,
+          "legacy_int16": -1
+        }
+      ]
+    },
+    {
+      "check": "端到端 c2s（客户端 encrypt -> 服务端 decode）",
+      "ok": true,
+      "detail": "",
+      "cases": [
+        {
+          "len": 1,
+          "plain": "5d",
+          "wire": "a2",
+          "iv_client_after": "2eb014c5",
+          "iv_server_after": "2eb014c5"
+        },
+        {
+          "len": 2,
+          "plain": "3f81",
+          "wire": "a7b5",
+          "iv_client_after": "2eb014c5",
+          "iv_server_after": "2eb014c5"
+        },
+        {
+          "len": 16,
+          "plain": "050643e4af534203c04a1f80",
+          "wire": "5d890abfc9d018154f933d3e",
+          "iv_client_after": "2eb014c5",
+          "iv_server_after": "2eb014c5"
+        },
+        {
+          "len": 1456,
+          "plain": "ada0f8ff14e19cab13a89eca",
+          "wire": "78dbae43f6b9208594dab269",
+          "iv_client_after": "2eb014c5",
+          "iv_server_after": "2eb014c5"
+        },
+        {
+          "len": 32767,
+          "plain": "037d5a4ba5b1371657f30e26",
+          "wire": "3812dcc1476c74c85bed95f2",
+          "iv_client_after": "2eb014c5",
+          "iv_server_after": "2eb014c5"
+        }
+      ]
+    },
+    {
+      "check": "端到端 s2c（服务端 encode -> 客户端 decrypt）",
+      "ok": true,
+      "detail": "",
+      "cases": [
+        {
+          "len": 1,
+          "plain": "f7",
+          "wire": "a6",
+          "iv_server_after": "5e922448",
+          "iv_client_after": "5e922448"
+        },
+        {
+          "len": 16,
+          "plain": "c6ee0bdd50a76d9bf9aa7aab",
+          "wire": "573def6edb30da29b2e36730",
+          "iv_server_after": "5e922448",
+          "iv_client_after": "5e922448"
+        },
+        {
+          "len": 1456,
+          "plain": "aed4ba5fe5410c485d6634b0",
+          "wire": "31f61554d3498eadac357521",
+          "iv_server_after": "5e922448",
+          "iv_client_after": "5e922448"
+        },
+        {
+          "len": 32767,
+          "plain": "5be87649a679a15b11581d0a",
+          "wire": "c8955c175ba95498b8d06ad3",
+          "iv_server_after": "5e922448",
+          "iv_client_after": "5e922448"
+        }
+      ]
+    },
+    {
+      "check": "整场会话 300 包连续 keystream + IV 链",
+      "ok": true,
+      "detail": "",
+      "cases": [
+        {
+          "packet": 0,
+          "len": 2912,
+          "plain": "d6d0734c16715d281ca62a58",
+          "s9_ct": "c88ae770fbae9d5a7fa77795",
+          "client_ct": "c88ae770fbae9d5a7fa77795",
+          "iv_after": "2eb014c5"
+        },
+        {
+          "packet": 1,
+          "len": 3,
+          "plain": "ffc8ec",
+          "s9_ct": "6d896d",
+          "client_ct": "6d896d",
+          "iv_after": "873d9a95"
+        },
+        {
+          "packet": 42,
+          "len": 16,
+          "plain": "73be11ac0c5eabc5335f65e8",
+          "s9_ct": "79ddc85bc5750d423525de7c",
+          "client_ct": "79ddc85bc5750d423525de7c",
+          "iv_after": "afd8966e"
+        },
+        {
+          "packet": 299,
+          "len": 17,
+          "plain": "2baa881913eee542c06b1007",
+          "s9_ct": "1512e969e5f71acb926ea1f1",
+          "client_ct": "1512e969e5f71acb926ea1f1",
+          "iv_after": "19372300"
+        }
+      ]
+    }
+  ]
+}

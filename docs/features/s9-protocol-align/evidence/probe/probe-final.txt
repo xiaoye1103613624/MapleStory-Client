@@ -1,0 +1,67 @@
+# T8 s9 protocol probe  (UTC 2026-10-30T10:00:36+00:00)
+# oracle module: tools/transport_oracle.py  (同一份实现，无本地重写)
+# version=83  send_cypher_ver=0xACFF  recv_cypher_ver=0x5300
+# 门禁清单校验通过：blocklist=89 allowlist=1
+# s9 RecvOpcode 常量=181  有效 handler=172
+# 计划发送 7 个 opcode：
+#   0x000C PLAYER_DC                    no-handler
+#   0x0019 CLIENT_START_ERROR           no-handler
+#   0x001A CLIENT_ERROR                 no-handler
+#   0x00D6 MATCH_TABLE                  no-handler
+#   0x00ED CLOSE_ITEMUI                 no-handler
+#   0xFFFE MAPLETV                      no-handler
+#   0x0018 PONG                         allowlist:KeepAliveHandler
+# 被拦下 2 个：
+#   0x0044 ADMIN_SHOP                   SKIP(blocklist)
+#   0x0054 USE_TELEPORT_ROCK            SKIP(blocklist)
+# connected 127.0.0.1:8484
+# hello: 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  F1 hello opcode == 0x000E (LE, 正文内)
+[OK  ]  F1 hello version == 83  got 53 00
+[OK  ]  F1 hello flag == 0x0001
+[OK  ]  F1 hello byte6 == 49 (0x31)
+[OK  ]  F1 recvIv 前缀 == 'Frz' (70 114 122)  got 46 72 7a
+[OK  ]  F1 sendIv 前缀 == 'R0x' (82 48 120)  got 52 30 78
+[OK  ]  F1 hello byte15 == 8
+[OK  ]  hello 与 oracle s9_get_hello() 逐字节一致  expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+# 连发 7 个探测包后连接仍存活（sent=7 iv_out=b7 62 71 **）
+#   注意：这只是「没被 TCP 层打断」，弱证据；真凭据在阶段 3 的 PONG oracle
+# [主连接 PONG#1] 等服务端 PING（最长 40s）...
+# [主连接 PONG#1]   hdr=d4 d1 d6 d1  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  [主连接 PONG#1] PING 头部通过 sendCypher isValidHeader  iv_in=72 ca 08 **
+[OK  ]  [主连接 PONG#1] 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  [主连接 PONG#1] 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+# [主连接 PONG#1]   已回 PONG，观察 20s 内是否被空闲踢掉
+[OK  ]  [主连接 PONG#1] 回 PONG 后活过 20s => PONG 被解密并派发到 KeepAliveHandler  c2s 真被处理的硬证据；未被踢不等于被处理
+# 包长扫描：证明服务端能解 len>=32768 的头（客户端侧 D8 是收方向缺陷）
+#   len=2      头部=6e 6b 6c 6b  未断连
+#   len=3      头部=91 c0 92 c0  未断连
+#   len=255    头部=71 42 8e 42  未断连
+#   len=256    头部=1b db 1b da  未断连
+#   len=4095   头部=58 af a7 a0  未断连
+#   len=4096   头部=65 7b 65 6b  未断连
+#   len=8192   头部=4a e2 4a c2  未断连
+#   len=32767  头部=82 bc 7d c3  未断连
+#   len=32768  头部=ec d9 ec 59  未断连
+#   len=40000  头部=8c 07 cc 9b  未断连
+# 未断连不代表被吃下：用 PONG oracle 复查这条流的入站派发是否还完好
+# [包长扫描之后] 等服务端 PING（最长 40s）...
+# [包长扫描之后]   hdr=a4 07 a6 07  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  [包长扫描之后] PING 头部通过 sendCypher isValidHeader  iv_in=7f 91 49 **
+[OK  ]  [包长扫描之后] 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  [包长扫描之后] 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+# [包长扫描之后]   已回 PONG，观察 20s 内是否被空闲踢掉
+[OK  ]  [包长扫描之后] 回 PONG 后活过 20s => PONG 被解密并派发到 KeepAliveHandler  c2s 真被处理的硬证据；未被踢不等于被处理
+[OK  ]  含 32768/40000 的包长扫描之后派发仍正常：服务端长度公式覆盖 16 位全域，大包头不破坏帧同步
+# ---- 阶段 5：negative control（坏头必须被拒）----
+# 已发坏头 d6 b3 2b b3（同一 IV 下的正确头是 29 b3 2b b3）；故意没推进本地 out IV
+[MEAS]  坏头后 5s 内服务端没有断线  => s9 的 InvalidPacketHeaderException 分支（Client.java:253）没走到，「连接存活」不能当接受证据
+# [坏头之后] 等服务端 PING（最长 40s）...
+#   （坏头后收到的包 hdr=d4 7b d6 7b opcode=0x0011）
+# [坏头之后]   hdr=d4 7b d6 7b  len(正确)=2  len(客户端现状int16_t)=2  opcode=0x0011  plain=11 00
+[OK  ]  [坏头之后] PING 头部通过 sendCypher isValidHeader  iv_in=c2 ff bd **
+[OK  ]  [坏头之后] 长度：服务端公式 == 客户端公式（版本抵消）
+[OK  ]  [坏头之后] 解密后 opcode == 0x0011（s2c 端到端打通）  got 0x11
+# [坏头之后]   已回 PONG，观察 20s 内是否被空闲踢掉
+[MEAS]  [坏头之后] 回 PONG 后活过 20s => PONG 被解密并派发到 KeepAliveHandler  c2s 真被处理的硬证据；未被踢不等于被处理
+# 判定：stream-jam —— 一个错误头部永久废掉这条连接的入站派发

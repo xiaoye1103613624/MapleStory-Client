@@ -1,0 +1,48 @@
+﻿==== 2026-10-30 22:52:42
+出错应用程序名称： MapleStory.exe，版本： 0.0.0.0，时间戳： 0x6ae497c6
+出错模块名称： MapleStory.exe， 版本： 0.0.0.0，时间戳： 0x6ae497c6
+异常代码： 0xc0000005
+错误偏移： 0x0000000000191880
+出错进程 ID： 0xAB1C
+出错应用程序开始时间： 0x1DD687E3ED96D46
+Faulting 应用程序路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Faulting 模块路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Report ID： 69d9174a-b8e5-4384-96c7-df76f64359b0
+Faulting 包全名： 
+Faulting 程序包相对应用程序 ID：  个
+==== 2026-10-30 22:32:49
+出错应用程序名称： MapleStory.exe，版本： 0.0.0.0，时间戳： 0x6ae497c6
+出错模块名称： ntdll.dll， 版本： 10.0.26100.9711，时间戳： 0x5fd39a05
+异常代码： 0xc0000374
+错误偏移： 0x0000000000118095
+出错进程 ID： 0xA410
+出错应用程序开始时间： 0x1DD687B3F2693DC
+Faulting 应用程序路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Faulting 模块路径： C:\Windows\SYSTEM32\ntdll.dll
+Report ID： 81e3f2d1-f5ac-4c69-bc77-c2cd4fd82d7f
+Faulting 包全名： 
+Faulting 程序包相对应用程序 ID：  个
+==== 2026-10-30 20:59:27
+出错应用程序名称： MapleStory.exe，版本： 0.0.0.0，时间戳： 0x6ae488a0
+出错模块名称： MapleStory.exe， 版本： 0.0.0.0，时间戳： 0x6ae488a0
+异常代码： 0xc0000005
+错误偏移： 0x000000000007fb70
+出错进程 ID： 0xAC64
+出错应用程序开始时间： 0x1DD686E55A1CBAD
+Faulting 应用程序路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Faulting 模块路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Report ID： 5eb37011-e269-44fb-aac2-5377751e8020
+Faulting 包全名： 
+Faulting 程序包相对应用程序 ID：  个
+==== 2026-10-30 20:29:40
+出错应用程序名称： MapleStory.exe，版本： 0.0.0.0，时间戳： 0x6ae488a0
+出错模块名称： ntdll.dll， 版本： 10.0.26100.9711，时间戳： 0x5fd39a05
+异常代码： 0xc0000374
+错误偏移： 0x0000000000118095
+出错进程 ID： 0x4CD0
+出错应用程序开始时间： 0x1DD686A0DD8ABDB
+Faulting 应用程序路径： E:\MXD\BeiDou-Client-xy\MapleStory.exe
+Faulting 模块路径： C:\Windows\SYSTEM32\ntdll.dll
+Report ID： f4fc51f1-717b-4cc7-b58e-6a9f02966395
+Faulting 包全名： 
+Faulting 程序包相对应用程序 ID：  个

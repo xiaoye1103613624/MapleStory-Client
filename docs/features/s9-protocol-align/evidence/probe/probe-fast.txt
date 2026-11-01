@@ -1,0 +1,39 @@
+# T8 s9 protocol probe  (UTC 2026-10-30T09:36:53+00:00)
+# oracle module: tools/transport_oracle.py  (同一份实现，无本地重写)
+# version=83  send_cypher_ver=0xACFF  recv_cypher_ver=0x5300
+# 门禁清单校验通过：blocklist=89 allowlist=1
+# s9 RecvOpcode 常量=181  有效 handler=172
+# 计划发送 7 个 opcode：
+#   0x000C PLAYER_DC                    no-handler
+#   0x0019 CLIENT_START_ERROR           no-handler
+#   0x001A CLIENT_ERROR                 no-handler
+#   0x00D6 MATCH_TABLE                  no-handler
+#   0x00ED CLOSE_ITEMUI                 no-handler
+#   0xFFFE MAPLETV                      no-handler
+#   0x0018 PONG                         allowlist:KeepAliveHandler
+# 被拦下 2 个：
+#   0x0044 ADMIN_SHOP                   SKIP(blocklist)
+#   0x0054 USE_TELEPORT_ROCK            SKIP(blocklist)
+# connected 127.0.0.1:8484
+# hello: 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  F1 hello opcode == 0x000E (LE, 正文内)
+[OK  ]  F1 hello version == 83  got 53 00
+[OK  ]  F1 hello flag == 0x0001
+[OK  ]  F1 hello byte6 == 49 (0x31)
+[OK  ]  F1 recvIv 前缀 == 'Frz' (70 114 122)  got 46 72 7a
+[OK  ]  F1 sendIv 前缀 == 'R0x' (82 48 120)  got 52 30 78
+[OK  ]  F1 hello byte15 == 8
+[OK  ]  hello 与 oracle s9_get_hello() 逐字节一致  expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  连发 7 个探测包后连接仍存活（每个头部都被接受）  sent=7 iv_out=f7 1c 8a **
+# 包长扫描：证明服务端能解 len>=32768 的头（客户端侧 D8 是收方向缺陷）
+#   len=2      头部=d9 4b db 4b  OK
+#   len=3      头部=39 13 3a 13  OK
+#   len=255    头部=dc 28 23 28  OK
+#   len=256    头部=c7 4e c7 4f  OK
+#   len=4095   头部=62 6d 9d 62  OK
+#   len=4096   头部=81 d3 81 c3  OK
+#   len=8192   头部=26 cf 26 ef  OK
+#   len=32767  头部=d1 c9 2e b6  OK
+#   len=32768  头部=d4 d2 d4 52  OK
+#   len=40000  头部=dc f5 9c 69  OK
+[OK  ]  包长扫描全部被接受（含 32768/40000）：服务端侧长度公式覆盖 16 位全域

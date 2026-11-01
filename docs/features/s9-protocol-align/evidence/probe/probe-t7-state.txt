@@ -1,0 +1,20 @@
+# T8 s9 protocol probe  (UTC 2026-10-30T12:33:29+00:00)
+# oracle module: tools/transport_oracle.py  (同一份实现，无本地重写)
+# version=83  send_cypher_ver=0xACFF  recv_cypher_ver=0x5300
+# 门禁清单校验通过：blocklist=89 allowlist=1
+# s9 RecvOpcode 常量=181  有效 handler=172
+# 计划发送 0 个 opcode：
+# 被拦下 1 个：
+#   0x0003 <s9 未定义>                     SKIP(blocklist)
+# connected 127.0.0.1:8484
+# hello: 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+[OK  ]  F1 hello opcode == 0x000E (LE, 正文内)
+[OK  ]  F1 hello version == 83  got 53 00
+[OK  ]  F1 hello flag == 0x0001
+[OK  ]  F1 hello byte6 == 49 (0x31)
+[OK  ]  F1 recvIv 前缀 == 'Frz' (70 114 122)  got 46 72 7a
+[OK  ]  F1 sendIv 前缀 == 'R0x' (82 48 120)  got 52 30 78
+[OK  ]  F1 hello byte15 == 8
+[OK  ]  hello 与 oracle s9_get_hello() 逐字节一致  expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08
+# 连发 0 个探测包后连接仍存活（sent=0 iv_out=46 72 7a **）
+#   注意：这只是「没被 TCP 层打断」，弱证据；真凭据在阶段 3 的 PONG oracle

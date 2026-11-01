@@ -1,0 +1,59 @@
+{
+  "utc": "2026-10-30T12:33:29+00:00",
+  "target": "127.0.0.1:8484",
+  "version": 83,
+  "sent_packets": 0,
+  "recvd_packets": 0,
+  "s2c_lengths_observed": [],
+  "targets": [],
+  "skipped": [
+    {
+      "opcode": "0x0003",
+      "name": "<s9 未定义>",
+      "why": "blocklist"
+    }
+  ],
+  "checks": [
+    {
+      "ok": true,
+      "name": "F1 hello opcode == 0x000E (LE, 正文内)",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 hello version == 83",
+      "detail": "got 53 00"
+    },
+    {
+      "ok": true,
+      "name": "F1 hello flag == 0x0001",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 hello byte6 == 49 (0x31)",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 recvIv 前缀 == 'Frz' (70 114 122)",
+      "detail": "got 46 72 7a"
+    },
+    {
+      "ok": true,
+      "name": "F1 sendIv 前缀 == 'R0x' (82 48 120)",
+      "detail": "got 52 30 78"
+    },
+    {
+      "ok": true,
+      "name": "F1 hello byte15 == 8",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "hello 与 oracle s9_get_hello() 逐字节一致",
+      "detail": "expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08"
+    }
+  ],
+  "measurements": []
+}

@@ -1,0 +1,12 @@
+# T8 probe evidence  UTC 2026-10-30T11:23:40+00:00  target 127.0.0.1:7575
+# IV 随机字节（recvIv[3] / sendIv[3]）以 ** 脱敏；其余为原始字节。
+hello s->c (unencrypted):          0e 00 53 00 01 00 31 46 72 7a b0 52 30 78 31 08
+sent 0x000C len=2:                 29 b0 2b b0 4c cc
+sent 0x0019 len=9:                 10 98 19 98 9a 96 ae 35 02 ee d6 b9 fc
+sent 0x001A len=3:                 b4 8e b7 8e 37 41 71
+sent 0x00D6 len=10:                78 f4 72 f4 31 6e e2 74 43 77 12 6b 4c b7
+sent 0x00ED len=4:                 02 06 06 06 cc 04 bb 72
+sent 0xFFFE len=11:                9e 78 95 78 86 07 0f ab 2f f0 4b 0c e1 4f 58
+sent 0x0018 len=5:                 f5 de f0 de 49 11 4f ae 6a
+s->c:                              d4 ce d6 ce 1c 27
+s->c:                              88 b7 8a b7 4f b5

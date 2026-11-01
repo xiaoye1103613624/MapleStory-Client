@@ -1,0 +1,267 @@
+# javap -p -c io.netty.handler.codec.ByteToMessageDecoder (netty-codec 4.1.109.Final, jar from C:/Users/11036/.m2/repository)
+# 取证时间: 2026-10-30T09:54:50Z
+# 结论: channelRead 里对 callDecode 抛出的 Exception（range 16..82）先 catch DecoderException(→232)、
+#       再 catch java.lang.Exception(→237)，在 239/245 处 new DecoderException(Throwable) 重新包装后 fireExceptionCaught。
+#       因此 GMSV83PacketProtocol.decode 抛的 InvalidPacketHeaderException 到 Client.exceptionCaught 时
+#       已经是 DecoderException，Client.java:253 的 instanceof 判定恒 false ⇒ 既不杀会话也不记日志。
+
+  public void channelRead(io.netty.channel.ChannelHandlerContext, java.lang.Object) throws java.lang.Exception;
+    Code:
+       0: aload_2
+       1: instanceof    #24                 // class io/netty/buffer/ByteBuf
+       4: ifeq          404
+       7: aload_0
+       8: iconst_1
+       9: putfield      #25                 // Field selfFiredChannelRead:Z
+      12: invokestatic  #26                 // Method io/netty/handler/codec/CodecOutputList.newInstance:()Lio/netty/handler/codec/CodecOutputList;
+      15: astore_3
+      16: aload_0
+      17: aload_0
+      18: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      21: ifnonnull     28
+      24: iconst_1
+      25: goto          29
+      28: iconst_0
+      29: putfield      #27                 // Field first:Z
+      32: aload_0
+      33: aload_0
+      34: getfield      #4                  // Field cumulator:Lio/netty/handler/codec/ByteToMessageDecoder$Cumulator;
+      37: aload_1
+      38: invokeinterface #28,  1           // InterfaceMethod io/netty/channel/ChannelHandlerContext.alloc:()Lio/netty/buffer/ByteBufAllocator;
+      43: aload_0
+      44: getfield      #27                 // Field first:Z
+      47: ifeq          56
+      50: getstatic     #18                 // Field io/netty/buffer/Unpooled.EMPTY_BUFFER:Lio/netty/buffer/ByteBuf;
+      53: goto          60
+      56: aload_0
+      57: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      60: aload_2
+      61: checkcast     #24                 // class io/netty/buffer/ByteBuf
+      64: invokeinterface #29,  4           // InterfaceMethod io/netty/handler/codec/ByteToMessageDecoder$Cumulator.cumulate:(Lio/netty/buffer/ByteBufAllocator;Lio/netty/buffer/ByteBuf;Lio/netty/buffer/ByteBuf;)Lio/netty/buffer/ByteBuf;
+      69: putfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      72: aload_0
+      73: aload_1
+      74: aload_0
+      75: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      78: aload_3
+      79: invokevirtual #30                 // Method callDecode:(Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V
+      82: aload_0
+      83: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      86: ifnull        160
+      89: aload_0
+      90: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+      93: invokevirtual #31                 // Method io/netty/buffer/ByteBuf.isReadable:()Z
+      96: ifne          160
+      99: aload_0
+     100: iconst_0
+     101: putfield      #19                 // Field numReads:I
+     104: aload_0
+     105: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     108: invokevirtual #22                 // Method io/netty/buffer/ByteBuf.release:()Z
+     111: pop
+     112: goto          152
+     115: astore        4
+     117: new           #32                 // class io/netty/util/IllegalReferenceCountException
+     120: dup
+     121: new           #33                 // class java/lang/StringBuilder
+     124: dup
+     125: invokespecial #34                 // Method java/lang/StringBuilder."<init>":()V
+     128: aload_0
+     129: invokevirtual #35                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+     132: invokevirtual #36                 // Method java/lang/Class.getSimpleName:()Ljava/lang/String;
+     135: invokevirtual #37                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     138: ldc           #38                 // String #decode() might have released its input buffer, or passed it down the pipeline without a retain() call, which is not allowed.
+     140: invokevirtual #37                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     143: invokevirtual #39                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     146: aload         4
+     148: invokespecial #40                 // Method io/netty/util/IllegalReferenceCountException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+     151: athrow
+     152: aload_0
+     153: aconst_null
+     154: putfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     157: goto          187
+     160: aload_0
+     161: dup
+     162: getfield      #19                 // Field numReads:I
+     165: iconst_1
+     166: iadd
+     167: dup_x1
+     168: putfield      #19                 // Field numReads:I
+     171: aload_0
+     172: getfield      #7                  // Field discardAfterReads:I
+     175: if_icmplt     187
+     178: aload_0
+     179: iconst_0
+     180: putfield      #19                 // Field numReads:I
+     183: aload_0
+     184: invokevirtual #41                 // Method discardSomeReadBytes:()V
+     187: aload_3
+     188: invokevirtual #42                 // Method io/netty/handler/codec/CodecOutputList.size:()I
+     191: istore        4
+     193: aload_0
+     194: dup
+     195: getfield      #43                 // Field firedChannelRead:Z
+     198: aload_3
+     199: invokevirtual #44                 // Method io/netty/handler/codec/CodecOutputList.insertSinceRecycled:()Z
+     202: ior
+     203: putfield      #43                 // Field firedChannelRead:Z
+     206: aload_1
+     207: aload_3
+     208: iload         4
+     210: invokestatic  #45                 // Method fireChannelRead:(Lio/netty/channel/ChannelHandlerContext;Lio/netty/handler/codec/CodecOutputList;I)V
+     213: aload_3
+     214: invokevirtual #46                 // Method io/netty/handler/codec/CodecOutputList.recycle:()V
+     217: goto          229
+     220: astore        5
+     222: aload_3
+     223: invokevirtual #46                 // Method io/netty/handler/codec/CodecOutputList.recycle:()V
+     226: aload         5
+     228: athrow
+     229: goto          401
+     232: astore        4
+     234: aload         4
+     236: athrow
+     237: astore        4
+     239: new           #47                 // class io/netty/handler/codec/DecoderException
+     242: dup
+     243: aload         4
+     245: invokespecial #49                 // Method io/netty/handler/codec/DecoderException."<init>":(Ljava/lang/Throwable;)V
+     248: athrow
+     249: astore        6
+     251: aload_0
+     252: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     255: ifnull        329
+     258: aload_0
+     259: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     262: invokevirtual #31                 // Method io/netty/buffer/ByteBuf.isReadable:()Z
+     265: ifne          329
+     268: aload_0
+     269: iconst_0
+     270: putfield      #19                 // Field numReads:I
+     273: aload_0
+     274: getfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     277: invokevirtual #22                 // Method io/netty/buffer/ByteBuf.release:()Z
+     280: pop
+     281: goto          321
+     284: astore        7
+     286: new           #32                 // class io/netty/util/IllegalReferenceCountException
+     289: dup
+     290: new           #33                 // class java/lang/StringBuilder
+     293: dup
+     294: invokespecial #34                 // Method java/lang/StringBuilder."<init>":()V
+     297: aload_0
+     298: invokevirtual #35                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+     301: invokevirtual #36                 // Method java/lang/Class.getSimpleName:()Ljava/lang/String;
+     304: invokevirtual #37                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     307: ldc           #38                 // String #decode() might have released its input buffer, or passed it down the pipeline without a retain() call, which is not allowed.
+     309: invokevirtual #37                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     312: invokevirtual #39                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     315: aload         7
+     317: invokespecial #40                 // Method io/netty/util/IllegalReferenceCountException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+     320: athrow
+     321: aload_0
+     322: aconst_null
+     323: putfield      #17                 // Field cumulation:Lio/netty/buffer/ByteBuf;
+     326: goto          356
+     329: aload_0
+     330: dup
+     331: getfield      #19                 // Field numReads:I
+     334: iconst_1
+     335: iadd
+     336: dup_x1
+     337: putfield      #19                 // Field numReads:I
+     340: aload_0
+     341: getfield      #7                  // Field discardAfterReads:I
+     344: if_icmplt     356
+     347: aload_0
+     348: iconst_0
+     349: putfield      #19                 // Field numReads:I
+     352: aload_0
+     353: invokevirtual #41                 // Method discardSomeReadBytes:()V
+     356: aload_3
+     357: invokevirtual #42                 // Method io/netty/handler/codec/CodecOutputList.size:()I
+     360: istore        7
+     362: aload_0
+     363: dup
+     364: getfield      #43                 // Field firedChannelRead:Z
+     367: aload_3
+     368: invokevirtual #44                 // Method io/netty/handler/codec/CodecOutputList.insertSinceRecycled:()Z
+     371: ior
+     372: putfield      #43                 // Field firedChannelRead:Z
+     375: aload_1
+     376: aload_3
+     377: iload         7
+     379: invokestatic  #45                 // Method fireChannelRead:(Lio/netty/channel/ChannelHandlerContext;Lio/netty/handler/codec/CodecOutputList;I)V
+     382: aload_3
+     383: invokevirtual #46                 // Method io/netty/handler/codec/CodecOutputList.recycle:()V
+     386: goto          398
+     389: astore        8
+     391: aload_3
+     392: invokevirtual #46                 // Method io/netty/handler/codec/CodecOutputList.recycle:()V
+     395: aload         8
+     397: athrow
+     398: aload         6
+     400: athrow
+     401: goto          412
+     404: aload_1
+     405: aload_2
+     406: invokeinterface #20,  2           // InterfaceMethod io/netty/channel/ChannelHandlerContext.fireChannelRead:(Ljava/lang/Object;)Lio/netty/channel/ChannelHandlerContext;
+     411: pop
+     412: return
+    Exception table:
+       from    to  target type
+         104   112   115   Class io/netty/util/IllegalReferenceCountException
+          82   213   220   any
+         220   222   220   any
+          16    82   232   Class io/netty/handler/codec/DecoderException
+          16    82   237   Class java/lang/Exception
+          16    82   249   any
+         273   281   284   Class io/netty/util/IllegalReferenceCountException
+         251   382   389   any
+         389   391   389   any
+         232   251   249   any
+
+  static void fireChannelRead(io.netty.channel.ChannelHandlerContext, java.util.List<java.lang.Object>, int);
+    Code:
+       0: aload_1
+       1: instanceof    #50                 // class io/netty/handler/codec/CodecOutputList
+       4: ifeq          19
+       7: aload_0
+       8: aload_1
+       9: checkcast     #50                 // class io/netty/handler/codec/CodecOutputList
+      12: iload_2
+      13: invokestatic  #45                 // Method fireChannelRead:(Lio/netty/channel/ChannelHandlerContext;Lio/netty/handler/codec/CodecOutputList;I)V
+      16: goto          46
+      19: iconst_0
+      20: istore_3
+      21: iload_3
+      22: iload_2
+      23: if_icmpge     46
+      26: aload_0
+      27: aload_1
+      28: iload_3
+      29: invokeinterface #51,  2           // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+      34: invokeinterface #20,  2           // InterfaceMethod io/netty/channel/ChannelHandlerContext.fireChannelRead:(Ljava/lang/Object;)Lio/netty/channel/ChannelHandlerContext;
+      39: pop
+      40: iinc          3, 1
+      43: goto          21
+      46: return
+
+  static void fireChannelRead(io.netty.channel.ChannelHandlerContext, io.netty.handler.codec.CodecOutputList, int);
+    Code:
+       0: iconst_0
+       1: istore_3
+       2: iload_3
+       3: iload_2
+       4: if_icmpge     25
+       7: aload_0
+       8: aload_1
+       9: iload_3
+      10: invokevirtual #52                 // Method io/netty/handler/codec/CodecOutputList.getUnsafe:(I)Ljava/lang/Object;
+      13: invokeinterface #20,  2           // InterfaceMethod io/netty/channel/ChannelHandlerContext.fireChannelRead:(Ljava/lang/Object;)Lio/netty/channel/ChannelHandlerContext;
+      18: pop
+      19: iinc          3, 1
+      22: goto          2
+      25: return
+
+  public void channelReadComplete(io.netty.channel.ChannelHandlerContext) throws java.lang.Exception;

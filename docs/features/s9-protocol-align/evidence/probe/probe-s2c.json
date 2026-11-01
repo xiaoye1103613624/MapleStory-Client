@@ -1,0 +1,137 @@
+{
+  "utc": "2026-10-30T09:37:17+00:00",
+  "target": "127.0.0.1:8484",
+  "version": 83,
+  "sent_packets": 9,
+  "recvd_packets": 2,
+  "s2c_lengths_observed": [
+    2,
+    2
+  ],
+  "targets": [
+    {
+      "opcode": "0x000C",
+      "name": "PLAYER_DC",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0x0019",
+      "name": "CLIENT_START_ERROR",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0x001A",
+      "name": "CLIENT_ERROR",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0x00D6",
+      "name": "MATCH_TABLE",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0x00ED",
+      "name": "CLOSE_ITEMUI",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0xFFFE",
+      "name": "MAPLETV",
+      "why": "no-handler"
+    },
+    {
+      "opcode": "0x0018",
+      "name": "PONG",
+      "why": "allowlist:KeepAliveHandler"
+    }
+  ],
+  "skipped": [
+    {
+      "opcode": "0x0044",
+      "name": "ADMIN_SHOP",
+      "why": "blocklist"
+    },
+    {
+      "opcode": "0x0054",
+      "name": "USE_TELEPORT_ROCK",
+      "why": "blocklist"
+    }
+  ],
+  "checks": [
+    {
+      "ok": true,
+      "name": "F1 hello opcode == 0x000E (LE, 正文内)",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 hello version == 83",
+      "detail": "got 53 00"
+    },
+    {
+      "ok": true,
+      "name": "F1 hello flag == 0x0001",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 hello byte6 == 49 (0x31)",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "F1 recvIv 前缀 == 'Frz' (70 114 122)",
+      "detail": "got 46 72 7a"
+    },
+    {
+      "ok": true,
+      "name": "F1 sendIv 前缀 == 'R0x' (82 48 120)",
+      "detail": "got 52 30 78"
+    },
+    {
+      "ok": true,
+      "name": "F1 hello byte15 == 8",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "hello 与 oracle s9_get_hello() 逐字节一致",
+      "detail": "expect 0e 00 53 00 01 00 31 46 72 7a ** 52 30 78 ** 08"
+    },
+    {
+      "ok": true,
+      "name": "连发 7 个探测包后连接仍存活（每个头部都被接受）",
+      "detail": "sent=7 iv_out=71 5a 7d **"
+    },
+    {
+      "ok": true,
+      "name": "PING 1 头部通过 sendCypher isValidHeader",
+      "detail": "iv_in=0c 25 75 **"
+    },
+    {
+      "ok": true,
+      "name": "PING 1 长度：服务端公式 == 客户端公式（版本抵消）",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "PING 1 解密后 opcode == 0x0011（s2c 端到端打通）",
+      "detail": "got 0x11"
+    },
+    {
+      "ok": true,
+      "name": "PING 2 头部通过 sendCypher isValidHeader",
+      "detail": "iv_in=1c 2e be **"
+    },
+    {
+      "ok": true,
+      "name": "PING 2 长度：服务端公式 == 客户端公式（版本抵消）",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "name": "PING 2 解密后 opcode == 0x0011（s2c 端到端打通）",
+      "detail": "got 0x11"
+    }
+  ]
+}
