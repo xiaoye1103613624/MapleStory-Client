@@ -21,6 +21,9 @@ Settings
 
 # 构建日志与中间产物（tools/build_smoke.bat 的输出）
 /build_log.txt
+# 客户端在线时不能覆盖 OutDir，另指一处只做编译链接验证（见 builds/exe-stamps.md）
+/build_log_validate.txt
+/build_validate/
 /includes/NoLifeNx/nlnx/*/obj-*
 
 # CMake out-of-source build directory
@@ -59,3 +62,16 @@ __pycache__/
 /android/app/.cxx/
 /android/app/src/main/jniLibs/
 /build-android/
+
+# ===== 会话内联调/副产物目录（2026-11-01 拆分提交时补，约 120 MB，勿入库）=====
+# 代码索引库与守护进程日志（IDE 助手自建）
+/.codegraph/
+# 只用于链接验证的第二处构建输出（exe/pdb/dll）
+/build_check/
+# 版式测量脚本的一次性输出目录
+/build/
+# 根目录散落的重建日志 / 凭据扫描残留 / 窗体对照拼图
+/$log
+/build_log_t12b.txt
+/_pw_hits.txt
+/_w8_*.png
