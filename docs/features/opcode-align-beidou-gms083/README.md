@@ -1,5 +1,22 @@
 # opcode 对齐核对：MapleStory-Client (v83) ↔ 北斗 gms083
 
+> **⚠️ 本文已被取代（2026-10-30）**：现行事实源是
+> [`docs/features/s9-protocol-align/`](../s9-protocol-align/PLAN.md)
+> —— 矩阵由 `tools/gen_opcode_matrix.py` 从两侧源码自动重算，并由 `tools/build_smoke.bat`
+> 接成构建门禁；归因见 [`notes/opcode-diff.md`](../s9-protocol-align/notes/opcode-diff.md)。
+>
+> 本文当年那句「**opcode 本就完全对齐，无需修改任何代码**」**不成立**，留存仅为历史记录。
+> 现已核实（数据源换成 s9，且客户端规模从 46 出 / 59 入 长到 103 / 303）：
+>
+> - c2s 有 **4 条 CLIENT_ONLY**，其中 `STORAGE=309`、`PLAYER_INTERACTION=314`、
+>   `CASHSHOP_OPERATION=325` 是**把 s2c（`SendOpcode`）的值抄进了发侧枚举**，
+>   服务端对应 handler 其实都在（62 / 123 / 229）—— 不是"服务端缺功能"，是客户端发错格子。
+>   仓库、商城、雇佣商人/交易/迷你游戏三类出站包因此**一条都到不了服务端**。
+> - 入站表有 **2 处撞值**（35、152），客户端 `handlers[O] = make_unique<T>()` 是覆盖写，
+>   `ForcedStatResetHandler`、`AriantResultHandler` 被后面的注册盖掉，永不执行。
+> - 本文的规模数字已过期：s9 实测 `RecvOpcode` 181 常量 / 180 值、`SendOpcode` 311 常量 /
+>   250 个真正下发、173 个生效 handler（本文写的是 193 / 332，对齐对象也是 gms083 而非 s9）。
+
 ## 结论
 
 **MapleStory-Client 与北斗 gms083 的 opcode 本就完全对齐，无需修改任何代码。**
