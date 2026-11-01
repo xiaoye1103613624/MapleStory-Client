@@ -2,7 +2,7 @@
 
 > 取证方式（只读）：`python tools/nx_inspect.py list "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx" <depth> <path>`
 > 尺寸/origin/clr 全部来自部署包 `UI.nx` 本体，非截图量边。日期：2026-10-31。
-> 代码：[IO/Components/NameTag.cpp](../../../../IO/Components/NameTag.cpp)、[IO/Components/NameTag.h](../../../../IO/Components/NameTag.h)
+> 代码：[IO/Components/NameTag.cpp](../../../../../IO/Components/NameTag.cpp)、[IO/Components/NameTag.h](../../../../../IO/Components/NameTag.h)
 
 ## 1. 资产事实
 
@@ -67,7 +67,7 @@ right 盒 = [text_left + text_w , + c.width]
 ## 4. `clr` 取值方式
 
 - `clr` 是 **ARGB**（`0xFFFFFFFF` 白 / `0xFF000000` 黑 / `0xFFFFF000` 淡黄 / `0xFFA14046` 砖红 …）。
-- 读取按 `nl::node::data_type()` 分派（[IO/Components/NameTag.cpp](../../../../IO/Components/NameTag.cpp) `read_argb`）：
+- 读取按 `nl::node::data_type()` 分派（[IO/Components/NameTag.cpp](../../../../../IO/Components/NameTag.cpp) `read_argb`）：
   - `integer` / `real` → `get_integer()`（`node::get_integer` 对这两类不抛）。
   - `string` → `std::strtoll(base 10)`，**不走** `get_integer()`：`node::get_integer` 对 string 走 `std::stoll` 会抛 `std::invalid_argument`（[includes/NoLifeNx/nlnx/node.cpp:169-170](../../../../includes/NoLifeNx/nlnx/node.cpp#L169)）。
   - `none/vector/bitmap/audio` → 判为无 `clr`。

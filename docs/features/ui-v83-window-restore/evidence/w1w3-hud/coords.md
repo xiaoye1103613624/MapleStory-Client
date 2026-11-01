@@ -2,7 +2,7 @@
 
 > 窗口原点约定：`UIStatusBar` classic 底条 = 屏幕 `(0, 649)`（1280×720），下文 rel 均为相对 `position`。
 > 取证三源：**IDA `CreateCtrl` 常量表**（脚本化建控件，坐标权威）、**`nx_inspect` 节点实测**（WxH + origin）、**`正确客户端截图/进入游戏页.png` 逐像素对拍**。
-> 日期：2026-10-31。代码位置：[UIStatusBar.cpp](../../../../IO/UITypes/UIStatusBar.cpp)。
+> 日期：2026-10-31。代码位置：[UIStatusBar.cpp](../../../../../IO/UITypes/UIStatusBar.cpp)。
 
 ## 0. 三条全局判据（先记）
 
@@ -41,7 +41,7 @@
 垂直     → 以 9px 括号行为基准，7px 字形下移 1px 居中
 ```
 
-实现：`hud_advance()` + `draw_hud_number()`（[UIStatusBar.cpp:136-175](../../../../IO/UITypes/UIStatusBar.cpp#L136)）。文本格式 `"[hp/max]"`、`"[mp/max]"`、`"[xx.xx%]"`（EXP 截两位小数）。
+实现：`hud_advance()` + `draw_hud_number()`（[UIStatusBar.cpp:136-175](../../../../../IO/UITypes/UIStatusBar.cpp#L136)）。文本格式 `"[hp/max]"`、`"[mp/max]"`、`"[xx.xx%]"`（EXP 截两位小数）。
 
 > **为什么这一处不算「位图字库替换」的完全达成**：原生底栏数值确实是 `number` 位图字库；旧代码用的是 `Text(A11B, YELLOW)`（这正是用户报的「数值颜色不对、字体不对」）。职业名/角色名原生是比例字体，仍走 `Text`/`OutlinedText`，**没有对应 Charset**，已在此说明而非静默跳过。
 

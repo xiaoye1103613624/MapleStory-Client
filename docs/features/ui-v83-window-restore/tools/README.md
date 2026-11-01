@@ -9,6 +9,9 @@
 | `bright.py` | 目录下所有 PNG 的逐通道 max 与 >200 像素数 → **抓帧可信度自检** | `python bright.py` |
 | `cmp.py` | `crop(src,box,out,scale)` 裁切放大、`stack([(src,box)…],out,gap,scale)` 上下对照拼装；内置 `REF`/`CUR` 指向桌面两组对照图 | `from cmp import stack, REF, CUR` |
 | `layout.py` | **R27 版式门禁**：把「原生帧量到的坐标」定成 oracle，客户帧逐格对账，Δ>tol 判未修复（非 0 退出，可挂构建） | `python layout.py bias <spec>`（**建 spec 后第一件事**：审锚点，紧裁帧的 dy 会被「模板必须装得下」强制成 0）<br>`python layout.py mark <spec> <原生帧> [--anchor X Y]`<br>`python layout.py check <spec> <客户帧> --png OUT [--mode M]`<br>`python layout.py selftest <spec>` |
+| `scratch_sweep.py` | 清本机 `E:/project` 根目录的 `_` 临时件：按「是否仍被引用」三档分类，删后再反查有无引用断链 | `python tools/scratch_sweep.py classify`<br>`python tools/scratch_sweep.py verify <dropped.txt>` |
+| `live/` | 真机自证驱动：启动→登录→进世界→开窗→展开→抓帧 | 见 [live/README.md](live/README.md)；口令走 `R27_USER`/`R27_PASS`，不入库 |
+| `measure/` | 字体/墨迹量具：字模宽高、单词宽、探针落位实色 | `python measure/font_probe.py` 等，原始读数在 [../evidence/w0-common/](../evidence/w0-common/) |
 
 `layout.py` 的 spec / 模板 / oracle 都在 [../evidence/r27-oracle/](../evidence/r27-oracle/README.md)，
 其中一条规矩单列：**oracle 只能由 `mark` 量出来，手写 oracle = 把现有错误常数供认为标准，整轮对账作废**。

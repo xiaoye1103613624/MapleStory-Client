@@ -2,7 +2,7 @@
 """R27-B1b 真机自证：在已进世界的客户端上开背包(I)/技能(K)窗并 PrintWindow 抓帧。
 
 打键前断言前台（见项目记忆 live-client-verification-gotchas 第 6/8 条），抢不到就中止。
-用法：python _r27_open.py i k
+用法：python open_window.py i k
 """
 import importlib.util
 import subprocess

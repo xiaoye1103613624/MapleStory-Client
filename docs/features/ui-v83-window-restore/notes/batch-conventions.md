@@ -15,13 +15,13 @@
 
 | 件 | 位置 | 契约 |
 | --- | --- | --- |
-| `UiAssetResolve::window(name)` | [Util/UiAssetResolve.cpp](../../../Util/UiAssetResolve.cpp) | `UIWindow2.img[name]` 优先，回退 `UIWindow.img[name]`；缺失时写一条 `diag_once` |
+| `UiAssetResolve::window(name)` | [Util/UiAssetResolve.cpp](../../../../Util/UiAssetResolve.cpp) | `UIWindow2.img[name]` 优先，回退 `UIWindow.img[name]`；缺失时写一条 `diag_once` |
 | `UiAssetResolve::window4(name)` | 同上 | 再多试 `UIWindow4.img` |
 | `UiAssetResolve::usable(node)` | 同上 | **真判定**：有子件 或 自身是 bitmap；present-but-empty 空壳判 false |
 | `UiAssetResolve::diag_once(tag,msg)` | 同上 | 追加一行到运行目录 `_ui_asset_diag.log`，同 tag 只写一次（构造期探针安全） |
-| `ms::try_maple_btn(buttons, id, src, position, site)` | [IO/Components/MapleButton.h](../../../IO/Components/MapleButton.h) | **`position` = 贴图左上角（不是 anchor）**：内部把 `normal/0` 的 origin 加回去。资源缺失 或 未传坐标 → **不创建** + 一行 diag。首参哨兵 `maple_btn_nopos()` |
+| `ms::try_maple_btn(buttons, id, src, position, site)` | [IO/Components/MapleButton.h](../../../../IO/Components/MapleButton.h) | **`position` = 贴图左上角（不是 anchor）**：内部把 `normal/0` 的 origin 加回去。资源缺失 或 未传坐标 → **不创建** + 一行 diag。首参哨兵 `maple_btn_nopos()` |
 | `ms::MapleButton(src, point)` | 原生构造 | `point` 是 **anchor**，绘制时 `draw = pos - origin`（见 `DrawArgument::get_rectangle` 的 `rlt = pos - center - origin`） |
-| `ms::Slider(...)` | [IO/Components/Slider.cpp](../../../IO/Components/Slider.cpp) | 非 CHATBAR 时 `Basic.img/VScr<type>` 不存在 → 钳到 `Basic.img/VScr` |
+| `ms::Slider(...)` | [IO/Components/Slider.cpp](../../../../IO/Components/Slider.cpp) | 非 CHATBAR 时 `Basic.img/VScr<type>` 不存在 → 钳到 `Basic.img/VScr` |
 
 ⚠ 因为 `try_maple_btn` 现在**按左上角**解释坐标，凡是它已有的调用点（UIKeyConfig、UISkillBook、UIStatsInfo、UIItemInventory）都在 W6–W10 里复核重算，不许留旧数。
 

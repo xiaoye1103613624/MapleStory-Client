@@ -2,11 +2,11 @@
 
 取证口径：
 - 节点与 `WxH`/`origin`：`python tools/nx_inspect.py list "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx" <depth> UIWindow.img/Quest`
-  → 原始转储 [../_nx_quest_list.txt](../_nx_quest_list.txt)
+  → 原始转储 `_nx_quest_list.txt`（原始读数未归档）
 - 位图识字（含 Q4 判据）：本目录导出的 PNG，拼合图 `w10-buttons.png`（6 颗 `Bt*`）、`w10-strips.png`（`basic/prob/reward/select/summary/notice*/notice{0-2}`）、
   `w10-icons2.png`（`icon0..icon9` 首帧 + `BtHide/BtHide2` + `notice/0`）、`w10-close-candidates.png`（4 颗候选关闭钮）
 - 参考截图 1:1 裁切：`pngs/ref-quest-full.png`（**548x396 = 整窗**，左板 x0..244、右板 x243..547）；
-  度量转储 [../_measure_ref.txt](../_measure_ref.txt)、[_measure_geom.txt](_measure_geom.txt)、[_measure_geom2.txt](_measure_geom2.txt)
+  度量转储 `_measure_ref.txt`（原始读数未归档）、[_measure_geom.txt](_measure_geom.txt)、[_measure_geom2.txt](_measure_geom2.txt)
 - 依据列编号 = batch-conventions §3：①烤进底板不重画 ②角锚算术 ③截图实测
 
 ## 1. 窗体骨架

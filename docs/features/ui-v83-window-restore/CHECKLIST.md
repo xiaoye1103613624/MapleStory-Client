@@ -218,14 +218,14 @@
 > **构建身份已换，别再看 `6AE65CF2`**：`MapleStory.pdb`/`.exe` 的 COFF `TimeDateStamp` 恒为 `0x0`
 > （确定性构建），所以身份只能用 **md5 + size + mtime**。
 > - `05:48` 那份（md5 `0688b7c146e2eccb9fbd0df198acf2bc`，4,340,736 B）**已部署但 100% 登录崩溃**，作废。
-> - 根因与取证：[../evidence/r26-login-crash/README.md](../evidence/r26-login-crash/README.md)
+> - 根因与取证：[evidence/r26-login-crash/README.md](evidence/r26-login-crash/README.md)
 >   —— 给 `Foothold`/`PhysicsObject` 加成员改了类布局，增量构建留下 178 个旧 `.obj` ⇒ ODR 错乱。
 > - 全量重建后的新 md5 见本文件末尾 §J.5（部署前回填）。
 
 这一轮对应你最新点的三组现象。代码全部落地、`error C`/`error LNK` 计数 0。
-取证与机制说明：[../evidence/r23-map-motion/README.md](../evidence/r23-map-motion/README.md)、
-[../evidence/r24-ui-geometry/README.md](../evidence/r24-ui-geometry/README.md)、
-[../evidence/r25-npctalk-geometry/README.md](../evidence/r25-npctalk-geometry/README.md)。
+取证与机制说明：[evidence/r23-map-motion/README.md](evidence/r23-map-motion/README.md)、
+[evidence/r24-ui-geometry/README.md](evidence/r24-ui-geometry/README.md)、
+[evidence/r25-npctalk-geometry/README.md](evidence/r25-npctalk-geometry/README.md)。
 
 ### J.1 履带：站上去要跟着走（R23-A）
 
@@ -350,4 +350,9 @@
   **中间提交不保证各自可构建**，只有最后一次源码提交 `358193d`（其后仅两笔文档提交）等于本轮真机验过的那份 `9636f77b4030ab4d9a85379cb0694911`。
 - 一条新查出的收尾欠账：`Graphics/GraphicsGL.cpp:33` 的 `dbgatlas()` 仍会在 Windows Release 落 `atlas_dbg.log`
   （无开关、限 200 条），属登录页竖条纹轮遗留，随 #44 关闭时删除。
+- 本机临时件已按「是否仍被引用」清过一遍（**1529 个 / 168.9 MB 删除，删后反查引用断链 0**）：
+  判据脚本 [`tools/scratch_sweep.py`](tools/scratch_sweep.py)，清单与副作用见
+  [`evidence/scratch-sweep-20261101/README.md`](evidence/scratch-sweep-20261101/README.md)。
+  **未动的 12 个 `_` 目录约 290 MB 等你拍板**，其中 `_ida_beidou`（174 MB）是 IDA 数据库、删了要重跑整轮分析，
+  `_ms_probe`（30 MB，11-01 还在写）与 `_sdl3dl`（73 MB，9 月残留）性质不同，没随批删。
 

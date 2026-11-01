@@ -21,7 +21,7 @@
 
 错位来自**三个公共件级根因族**：
 
-- **G1 位图 origin/锚点处理不统一。** `Texture` 落位是 `pos − origin`（[Graphics/DrawArgument.h:134](../../IO)）。`UIKeyConfig` 给 `backgrnd` 补了 origin（`:91-100`）却没给 `icon` 补（`:631-684`），而 `KeyConfig/icon/0` 实测 **32x31 / origin (0,32)** ⇒ 整块键帽上抬 32px。同类：装备图标绘制加 `(4,4)`、命中区不加（`UIEquipInventory.cpp:338-343` vs `:711-731`）；含标题的 `backgrnd` 与 `backgrnd2` 被同点各画一次 ⇒ 3px 错缝重影（`UIUserList.cpp:59` + `:269`）。
+- **G1 位图 origin/锚点处理不统一。** `Texture` 落位是 `pos − origin`（[Graphics/DrawArgument.h:134](../../../IO)）。`UIKeyConfig` 给 `backgrnd` 补了 origin（`:91-100`）却没给 `icon` 补（`:631-684`），而 `KeyConfig/icon/0` 实测 **32x31 / origin (0,32)** ⇒ 整块键帽上抬 32px。同类：装备图标绘制加 `(4,4)`、命中区不加（`UIEquipInventory.cpp:338-343` vs `:711-731`）；含标题的 `backgrnd` 与 `backgrnd2` 被同点各画一次 ⇒ 3px 错缝重影（`UIUserList.cpp:59` + `:269`）。
 - **G2 文本基线/行距没有唯一真源。** `linespace() = height * 1.35 + 1`（[Graphics/GraphicsGL.h:245](file:///E:/project/MapleStory-Client/Graphics/GraphicsGL.h#L245)），而 `height` 取 ASCII 32..127 的 `bitmap.rows` **最大值**（含 `g/j/p/q/y` 降部，`GraphicsGL.cpp:309-320`）⇒ 行距虚高；各窗又用「墨迹顶 = draw_y + linespace − bitmap_top」反解 Y，且**混用 +6 与 +9** 两种假设。本仓 r15 定版文档 `evidence/w0-common/text-metrics.md` 已确立**纯数字 = +9**，而 R14-3 把金币从 275 改成 278 用的是 +6 ⇒ 上一轮把对的数改错了。
 - **G3 两套互不相关的开关决定同一个窗。** 装备窗的坐标表用 `is_classic_hud()`，美术分支用 `classic_flat`（看 `Equip["Equip"]`）⇒ 一旦判据不同步，标签版式与坐标表整体错位，而命中区仍按表命中——正是用户看到的「图标画在别处、悬浮原位却出 tooltip」。
 
