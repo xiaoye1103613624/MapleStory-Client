@@ -8,7 +8,9 @@
 #include "UICharSelect.h"
 #include "UICygnusCreation.h"
 #include "UIExplorerCreation.h"
+#include "UIMiscShells.h"
 #include "UILoginNotice.h"
+#include "UISoftKey.h"
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
@@ -508,6 +510,37 @@ namespace ms
 		else if (keycode == KeyAction::Id::RETURN)
 		{
 			button_pressed(Buttons::BtMake);
+		}
+		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "make" || t == "ok" || t == "select" || t == "y") {
+					button_pressed(Buttons::BtMake);
+					return;
+				}
+				try {
+					int idx = std::stoi(tip);
+					if (idx < 0) return;
+					if (classic_mode) {
+						if (idx < CLASSIC_CLASS_COUNT)
+							select_classic_class(static_cast<uint16_t>(idx));
+					} else if (idx < static_cast<int>(order.size())) {
+						button_pressed(static_cast<uint16_t>(Buttons::CLASS0 + idx - index_shift));
+					}
+				} catch (...) {}
+			}, []() {}, "idx|make");
+		}
+		else if (keycode == 'M' || keycode == 'm')
+		{
+			button_pressed(Buttons::BtMake);
+		}
+		else if (keycode == 'C' || keycode == 'c')
+		{
+			classic_mode = !classic_mode;
+			LOG(LOG_DEBUG, "UIRaceSelect: SoftKey classic=" << classic_mode);
 		}
 	}
 

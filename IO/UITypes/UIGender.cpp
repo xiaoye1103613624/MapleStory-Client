@@ -17,14 +17,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIGender.h"
 
+#include "UISoftKey.h"
+
 #include "../UI.h"
+#include "../KeyAction.h"
 
 #include "../Components/MapleButton.h"
 #include "../Components/MapleComboBox.h"
 #include "../UITypes/UILoginWait.h"
 
 #include "../../Net/Packets/LoginPackets.h"
-
+#include "../../Util/Misc.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -92,6 +95,45 @@ namespace ms
 				return new_state;
 
 		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UIGender::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) { button_pressed(Buttons::NO); return; }
+		if (keycode == KeyAction::Id::RETURN) { button_pressed(Buttons::YES); return; }
+		if (keycode == 'M' || keycode == 'm' || keycode == '0')
+		{
+			UI::get().emplace<UILoginWait>();
+			GenderPacket(false).dispatch();
+			LOG(LOG_DEBUG, "UIGender: male");
+			return;
+		}
+		if (keycode == 'F' || keycode == 'f' || keycode == '1')
+		{
+			UI::get().emplace<UILoginWait>();
+			GenderPacket(true).dispatch();
+			LOG(LOG_DEBUG, "UIGender: female");
+			return;
+		}
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				bool female = false;
+				if (t == "f" || t == "female" || t == "1" || t == "女")
+					female = true;
+				else if (t == "m" || t == "male" || t == "0" || t == "男")
+					female = false;
+				else
+					return;
+				UI::get().emplace<UILoginWait>();
+				GenderPacket(female).dispatch();
+				LOG(LOG_DEBUG, "UIGender: SoftKey female=" << female);
+			}, []() {}, "m|f");
+		}
 	}
 
 	UIElement::Type UIGender::get_type() const

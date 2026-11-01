@@ -17,12 +17,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIRegion.h"
 
+#include "UISoftKey.h"
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
-
+#include "../../Configuration.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -65,6 +66,26 @@ namespace ms
 		return UIElement::send_cursor(clicked, cursorpos);
 	}
 
+	void UIRegion::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) { button_pressed(Buttons::EXIT); return; }
+		if (keycode == 'N' || keycode == 'n') { button_pressed(Buttons::NA); return; }
+		if (keycode == 'E' || keycode == 'e') { button_pressed(Buttons::EU); return; }
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "na" || t == "5")
+					button_pressed(Buttons::NA);
+				else if (t == "eu" || t == "6")
+					button_pressed(Buttons::EU);
+			}, []() {}, "na|eu");
+		}
+	}
+
 	UIElement::Type UIRegion::get_type() const
 	{
 		return TYPE;
@@ -79,14 +100,13 @@ namespace ms
 			case Buttons::NA:
 			case Buttons::EU:
 			{
-				// TODO: Update UIWorldSelect after selecting new region
-				//uint8_t region = (buttonid == Buttons::NA) ? 5 : 6;
+				uint8_t region = (buttonid == Buttons::NA) ? 5 : 6;
+				Setting<DefaultRegion>::get().save(region);
 
 				if (auto worldselect = UI::get().get_element<UIWorldSelect>())
 				{
 					UI::get().remove(UIElement::Type::REGION);
-
-					//worldselect->set_region(region);
+					worldselect->set_region(region);
 					worldselect->makeactive();
 				}
 

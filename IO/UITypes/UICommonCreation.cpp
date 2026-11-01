@@ -20,6 +20,7 @@
 #include "UICharSelect.h"
 #include "UILoginNotice.h"
 #include "UIRaceSelect.h"
+#include "UISoftKey.h"
 #include "UIWorldSelect.h"
 
 #include "../UI.h"
@@ -780,6 +781,24 @@ namespace ms
 				button_pressed(Buttons::BtNo);
 			else if (keycode == KeyAction::Id::RETURN)
 				button_pressed(Buttons::BtYes);
+			else if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& name) {
+					if (name.empty()) return;
+					newCharName.change_text(name);
+					newCharNameDisabled = false;
+					LOG(LOG_DEBUG, "UICommonCreation: SoftKey name=" << name);
+				}, []() {}, "Char name");
+			}
+			else if (keycode == 'Y' || keycode == 'y')
+			{
+				button_pressed(Buttons::BtYes);
+			}
+			else if (keycode == 'G' || keycode == 'g')
+			{
+				female = !female;
+				LOG(LOG_DEBUG, "UICommonCreation: SoftKey gender female=" << female);
+			}
 		}
 	}
 
