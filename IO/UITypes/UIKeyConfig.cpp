@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -17,6 +17,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIKeyConfig.h"
 
+#include "UICharInfo.h"
+#include "UIJoypad.h"
+#include "UIItemInventory.h"
+#include "UIMiscShells.h"
+#include "UISoftKey.h"
+
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
@@ -25,8 +31,12 @@
 
 #include "../../Data/ItemData.h"
 #include "../../Data/SkillData.h"
+#include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/PlayerPackets.h"
+#include "../../Net/Packets/CashItemPackets.h"
+#include "../../Configuration.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -39,18 +49,9 @@ namespace ms
 	{
 		nl::node basic_close_btn()
 		{
-			nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
-
-			if (close)
-				return close;
-
-			return nl::nx::UI["Basic.img"]["BtClose2"];
-		}
-
-		void try_maple_btn(std::map<uint16_t, std::unique_ptr<Button>>& buttons, uint16_t id, nl::node src, Point<int16_t> pos = {})
-		{
-			if (src)
-				buttons[id] = std::make_unique<MapleButton>(src, pos);
+			// 见 UiAssetResolve::close_btn() —— 本包 BtClose 是实心方块，
+			// 原生标题栏用的是描边 X（BtClose2）。
+			return UiAssetResolve::close_btn();
 		}
 
 		nl::node first_node(nl::node a, nl::node b)
@@ -105,23 +106,17 @@ namespace ms
 
 		try_maple_btn(buttons, Buttons::CLOSE, BtClose, Point<int16_t>(bg_dimensions.x() - 18, 3));
 
-		if (classic)
-		{
-			// v83 底栏按钮（origin 均为 0,0）；相对 629×374 底图底边排布。
-			try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]), Point<int16_t>(90, 343));
-			try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]), Point<int16_t>(155, 343));
-			try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]), Point<int16_t>(490, 343));
-			try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]), Point<int16_t>(540, 343));
-			try_maple_btn(buttons, Buttons::KEYSETTING, KeyConfig["button:keySetting"], Point<int16_t>(250, 343));
-		}
-		else
-		{
-			try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]));
-			try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]));
-			try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]));
-			try_maple_btn(buttons, Buttons::KEYSETTING, KeyConfig["button:keySetting"]);
-			try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]));
-		}
+		// classic / modern 两支取的是同一个 KeyConfig 根（见构造函数开头），故合并成一套坐标。
+		// 本包只有 UIWindow.img/KeyConfig 一张底板（629x373），没有新版 button:XXX 命名，
+		// 全部落到 Bt* 回退；坐标按 正确客户端截图/键盘设置.png 逐像素实测
+		// （五个钮同处底图 y234 一行，从左到右 确定/取消/取消修改/全部消除/变更快捷键）。
+		// modern 支此前五颗都没传 position，被 W0 的 maple_btn_nopos 哨兵整批跳过 →
+		// 表现为「键盘设定窗没有按钮」。推导过程见 evidence/w2-hud-buttons/coords.md（T-4）。
+		try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]), Point<int16_t>(8, 234), "keyconfig ok");
+		try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]), Point<int16_t>(58, 234), "keyconfig cancel");
+		try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]), Point<int16_t>(112, 234), "keyconfig default");
+		try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]), Point<int16_t>(177, 234), "keyconfig delete");
+		try_maple_btn(buttons, Buttons::KEYSETTING, first_node(KeyConfig["button:keySetting"], KeyConfig["BtQuickSlot"]), Point<int16_t>(260, 234), "keyconfig keysetting");
 
 		dimension = bg_dimensions;
 		dragarea = Point<int16_t>(bg_dimensions.x(), 20);
@@ -882,8 +877,88 @@ namespace ms
 
 	void UIKeyConfig::send_key(int32_t keycode, bool pressed, bool escape)
 	{
-		if (pressed && escape)
-			safe_close();
+		if (pressed && escape) { safe_close(); return; }
+		if (!pressed) return;
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "save" || t == "ok" || t == "y" || t == "1") {
+					save_staged_mappings();
+					close();
+					LOG(LOG_DEBUG, "UIKeyConfig: SoftKey save");
+				} else if (t == "close" || t == "n" || t == "0" || t == "cancel") {
+					close();
+				}
+			}, []() {}, "save|close");
+		}
+		else if (keycode == 'H' || keycode == 'h' || keycode == 'M' || keycode == 'm')
+		{
+			// 宠物自动药：键位 91=HP / 92=MP；背包有选中道具则直接绑定
+			const bool hp = (keycode == 'H' || keycode == 'h');
+			int32_t from_inv = 0;
+			if (auto inv = UI::get().get_element<UIItemInventory>()) {
+				int16_t slot = inv->get_selected_slot();
+				if (slot > 0)
+					from_inv = Stage::get().get_player().get_inventory().get_item_id(inv->get_tab(), slot);
+			}
+			auto apply = [hp](int32_t itemid) {
+				if (itemid < 0) return;
+				if (hp) Setting<AutoHpPotItem>::get().save(itemid);
+				else Setting<AutoMpPotItem>::get().save(itemid);
+				std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> upd;
+				upd.emplace_back(
+					static_cast<KeyConfig::Key>(hp ? 91 : 92),
+					KeyType::Id::ITEM,
+					itemid
+				);
+				ChangeKeyMapPacket(upd).dispatch();
+				LOG(LOG_DEBUG, "UIKeyConfig: Auto" << (hp ? "Hp" : "Mp") << " item=" << itemid);
+			};
+			if (from_inv > 0) {
+				apply(from_inv);
+			} else {
+				UI::get().emplace<UISoftKey>([hp, apply](const std::string& tip) {
+					try {
+						int32_t itemid = tip.empty()
+							? (hp ? Setting<AutoHpPotItem>::get().load() : Setting<AutoMpPotItem>::get().load())
+							: std::stoi(tip);
+						apply(itemid);
+					} catch (...) {}
+				}, []() {}, hp ? "AutoHP itemId|empty=show" : "AutoMP itemId|empty=show");
+			}
+		}
+		else if (keycode == 'L' || keycode == 'l')
+		{
+			// MapleLife 试名：CharInfo 有名则直接发
+			std::string pre;
+			if (auto ci = UI::get().get_element<UICharInfo>())
+				pre = ci->get_target_name();
+			if (!pre.empty()) {
+				UseMapleLifePacket(pre).dispatch();
+				LOG(LOG_DEBUG, "UIKeyConfig: UseMapleLife name=" << pre);
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& name) {
+					if (name.empty()) return;
+					UseMapleLifePacket(name).dispatch();
+					LOG(LOG_DEBUG, "UIKeyConfig: UseMapleLife name=" << name);
+				}, []() {}, "MapleLife name");
+			}
+		}
+		else if (keycode == 'K' || keycode == 'k')
+		{
+			auto ui = UI::get().get_element<UIMacroSkill>();
+			if (!ui) ui = UI::get().emplace<UIMacroSkill>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
+		else if (keycode == 'J' || keycode == 'j')
+		{
+			auto ui = UI::get().get_element<UIJoypad>();
+			if (!ui) ui = UI::get().emplace<UIJoypad>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
 	}
 
 	UIElement::Type UIKeyConfig::get_type() const

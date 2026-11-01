@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIMiniMap.h"
 
+#include "UISoftKey.h"
 #include "UIWorldMap.h"
 
 #include "../UI.h"
@@ -24,6 +25,8 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/MapleMap/Npc.h"
+#include "../../Gameplay/Stage.h"
+#include "../../Net/Packets/GameplayPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Constants.h"
@@ -72,24 +75,19 @@ namespace ms
 
 		if (MiniMap)
 		{
-			// BeiDou UIWindow.img/MiniMap 仅有 BtMap；Min/MaxMap 是窗体底板不是按钮。
-			auto add_mm_btn = [&](Buttons id, nl::node node, Point<int16_t> pos)
-			{
-				if (node && (node["normal"] || node["0"]))
-					buttons[id] = std::make_unique<MapleButton>(node, pos);
-			};
+			// 本包 UIWindow.img/MiniMap 只有 BtMap（36x12，origin 0）；BtMin/BtMax/
+			// BtSmall/BtBig/BtNpc 是越代件，包内不存在，请求它们只会得到透明空壳。
+			nl::node btmap = MiniMap["BtMap"];
 
-			add_mm_btn(Buttons::BT_MIN, MiniMap["BtMin"], Point<int16_t>(195, -6));
-			add_mm_btn(Buttons::BT_MAX, MiniMap["BtMax"], Point<int16_t>(209, -6));
-			add_mm_btn(Buttons::BT_SMALL, MiniMap["BtSmall"], Point<int16_t>(223, -6));
-			add_mm_btn(Buttons::BT_BIG, MiniMap["BtBig"], Point<int16_t>(223, -6));
-			add_mm_btn(Buttons::BT_MAP, MiniMap["BtMap"], Point<int16_t>(237, -6));
-			add_mm_btn(Buttons::BT_NPC, MiniMap["BtNpc"], Point<int16_t>(276, -6));
+			if (UiAssetResolve::usable(btmap))
+				buttons[Buttons::BT_MAP] = std::make_unique<MapleButton>(btmap, Point<int16_t>(0, 0));
+			else
+				UiAssetResolve::diag_once("minimap btmap", "UIWindow.img/MiniMap/BtMap missing");
 		}
 
-		region_text = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
-		town_text = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
-		combined_text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE);
+		region_text = OutlinedText(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
+		town_text = OutlinedText(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
+		combined_text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK);
 
 		if (Setting<MiniMapDefaultHelpers>::get().load() && UIWindow2["MiniMapSimpleMode"]["DefaultHelper"])
 			marker = UIWindow2["MiniMapSimpleMode"]["DefaultHelper"];
@@ -100,56 +98,69 @@ namespace ms
 		selected_marker = Animation(MiniMap["iconNpc"]);
 	}
 
-	void UIMiniMap::draw(float alpha) const
+	void UIMiniMap::draw(float inter) const
 	{
 		if (type == Type::MIN)
 		{
 			for (Sprite sprite : min_sprites)
-				sprite.draw(position, alpha);
+				sprite.draw(position, inter);
 
 			combined_text.draw(position + Point<int16_t>(7, -3));
 		}
 		else if (type == Type::NORMAL)
 		{
 			for (Sprite sprite : normal_sprites)
-				sprite.draw(position, alpha);
+				sprite.draw(position, inter);
+
+			// 29px 顶带里「小地图」是 MinMap/nw 烤死的艺术字（60x29 装饰帽），只占到 local y≈20；
+			// 参考帧 native-refs-r14/d15f70a2 显示它下面还有一行街道名「彩虹岛」，
+			// 墨迹在 local x14..47 / y25..32，画布从 y28 起 —— 两行不重叠。
+			// 用的是描边字（白字黑廓），压到浅色底带上依然可读。
+			town_text.draw(position + Point<int16_t>(8, 18));
 
 			if (has_map)
 			{
 				Animation portal_marker = Animation(marker["portal"]);
 
 				for (auto& sprite : static_marker_info)
-					portal_marker.draw(position + sprite.second, alpha);
+					portal_marker.draw(position + sprite.second, inter);
 
-				draw_movable_markers(position, alpha);
+				draw_movable_markers(position, inter);
 
 				if (listNpc_enabled)
-					draw_npclist(normal_dimensions, alpha);
+					draw_npclist(normal_dimensions, inter);
 			}
 		}
 		else
 		{
 			for (Sprite sprite : max_sprites)
-				sprite.draw(position, alpha);
+				sprite.draw(position, inter);
 
-			region_text.draw(position + Point<int16_t>(48, 14));
-			town_text.draw(position + Point<int16_t>(48, 28));
+			// 72px 顶带（MaxMap/nw 逐行实测）：y0..4 黑框、**y5..18 白色标题条**、
+			// y19 分隔、**y20..65 浅蓝信息带 (153,187,204)**、y66..69 深蓝、y70..71 亮边。
+			// 「小地图」三个烤死在 nw 里，占 x6..50 / y5..18。
+			// 所以地图标记必须落在浅蓝带内：38x38 居中 -> y = 20 + (46-38)/2 = 24；
+			// 旧值 (8,8) 会把标记压在白色标题条和「小地图」艺术字上。
+			// 两行文字同理：A12B 汉字墨迹 = draw_y+6 起，参考帧墨迹在 y28..38 / 45..54
+			// -> draw_y = 22 / 39（旧值 28 / 44 整体低 6px，第二行墨迹会顶到 y66 深蓝边）。
+			region_text.draw(position + Point<int16_t>(46, 22));
+			town_text.draw(position + Point<int16_t>(46, 39));
 
 			if (has_map)
 			{
 				Animation portal_marker(marker["portal"]);
 
 				for (auto& sprite : static_marker_info)
-					portal_marker.draw(position + sprite.second + Point<int16_t>(0, MAX_ADJ), alpha);
+					portal_marker.draw(position + sprite.second + Point<int16_t>(0, MAX_ADJ), inter);
 
-				draw_movable_markers(position + Point<int16_t>(0, MAX_ADJ), alpha);
+				draw_movable_markers(position + Point<int16_t>(0, MAX_ADJ), inter);
 
 				if (listNpc_enabled)
-					draw_npclist(max_dimensions, alpha);
+					draw_npclist(max_dimensions, inter);
 			}
 		}
 
-		UIElement::draw(alpha);
+		UIElement::draw(inter);
 	}
 
 	void UIMiniMap::update()
@@ -371,6 +382,30 @@ namespace ms
 
 	void UIMiniMap::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		if (pressed && (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'))
+		{
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				int32_t mid = 0;
+				if (tip.empty()) {
+					if (auto wm = UI::get().get_element<UIWorldMap>())
+						mid = wm->get_selected_map_id();
+				} else {
+					try { mid = std::stoi(tip); } catch (...) { return; }
+				}
+				if (mid > 0) {
+					ChangeMapPacket(false, mid, "", false).dispatch();
+					LOG(LOG_DEBUG, "UIMiniMap: SoftKey ChangeMap id=" << mid);
+				}
+			}, []() {}, "Map id|empty=WMap sel");
+			return;
+		}
+		if (pressed && (keycode == 'W' || keycode == 'w'))
+		{
+			auto wm = UI::get().get_element<UIWorldMap>();
+			if (!wm) wm = UI::get().emplace<UIWorldMap>();
+			else if (!wm->is_active()) wm->makeactive();
+			return;
+		}
 		if (has_map)
 		{
 			if (type < Type::MAX)
@@ -412,8 +447,20 @@ namespace ms
 			}
 			case BT_MAP:
 			{
-				if (UiAssetResolve::usable(UiAssetResolve::window("WorldMap")))
+				// 这颗钮的贴图就是「大地图」三个字（UIWindow.img/MiniMap/BtMap/normal/0，
+				// 36x12 橙底白字，见 evidence/w11-map/minimap-band.md §4），本包 MiniMap
+				// 节点下也只有 BtMap 一颗钮（无 BtMin/BtMax/BtSmall/BtBig/BtNpc）。
+				// 所以它的语义是「打开大地图」，不是缩放小地图；小地图的
+				// MIN/NORMAL/MAX 由 Map/info/town 自动决定（城镇 -> MAX）。
+				// 缩放切换仍保留在 send_key 的调试分支里，便于验证三种态。
+				if (auto wm = UI::get().get_element<UIWorldMap>())
+				{
+					if (!wm->is_active())
+						wm->makeactive();
+				}
+				else
 					UI::get().emplace<UIWorldMap>();
+
 				break;
 			}
 			case BT_NPC:
@@ -588,20 +635,38 @@ namespace ms
 			return;
 		}
 
-		nl::node Min, Normal, Max;
-
+		// simpleMode 走的是本包不存在的 MiniMapSimpleMode/Window 结构；本包只有
+		// MinMap/MaxMap 九切片，故无论 simpleMode 与否都用 MinMap/MaxMap。
 		if (simpleMode)
+			UiAssetResolve::diag_once("minimap simplemode", "MiniMap/Window absent, using MinMap/MaxMap");
+
+		nl::node Min = MiniMap["Min"];
+		nl::node Normal = MiniMap["MinMap"];
+		nl::node Max = MiniMap["MaxMap"];
+
+		// origin 补偿：让某件的可见框左上角落在 (x,y)，与 NameTag::draw_slice 同法
+		// （本包 MinMap/MaxMap/Min 各件 origin 实测均为 (0,0)，补偿为恒等）。
+		auto slice = [](nl::node piece, int16_t x, int16_t y, int16_t sx, int16_t sy) -> Sprite
 		{
-			Min = MiniMap["Window"]["Min"];
-			Normal = MiniMap["Window"]["Normal"];
-			Max = MiniMap["Window"]["Max"];
-		}
-		else
+			const Point<int16_t> org = Texture(piece).get_origin();
+			return Sprite(piece, DrawArgument(Point<int16_t>(x + org.x(), y + org.y()), Point<int16_t>(sx, sy)));
+		};
+
+		// 展开框九切片拼法（左上角件宽60仅装饰压在顶带；真实边框：左/右=6，顶=29，底=14）。
+		auto build_frame = [&](std::vector<Sprite>& out, nl::node f,
+			int16_t W, int16_t H, int16_t top, int16_t bot, int16_t tlcap)
 		{
-			Min = MiniMap["Min"];
-			Normal = MiniMap["MinMap"];
-			Max = MiniMap["MaxMap"];
-		}
+			const int16_t side = 6;
+			out.emplace_back(slice(f["nw"], 0, 0, 0, 0));
+			out.emplace_back(slice(f["n"], tlcap, 0, W - tlcap - side, 0));
+			out.emplace_back(slice(f["ne"], W - side, 0, 0, 0));
+			out.emplace_back(slice(f["w"], 0, top, 0, H - top - bot));
+			out.emplace_back(slice(f["c"], side, top, W - side * 2, H - top - bot));
+			out.emplace_back(slice(f["e"], W - side, top, 0, H - top - bot));
+			out.emplace_back(slice(f["sw"], 0, H - bot, 0, 0));
+			out.emplace_back(slice(f["s"], side, H - bot, W - side * 2, 0));
+			out.emplace_back(slice(f["se"], W - side, H - bot, 0, 0));
+		};
 
 		Point<int16_t> map_dimensions(0, 0);
 
@@ -618,103 +683,53 @@ namespace ms
 			map_sprite = Texture();
 		}
 
-		// 48 (offset for text) + longer text's width + 10 (space for right side border)
 		int16_t mark_text_width = 48 + std::max(region_text.width(), town_text.width()) + 10;
-		int16_t c_stretch, ur_x_offset, m_stretch, down_y_offset;
-		int16_t window_width = std::max(178, std::max((int)mark_text_width, map_dimensions.x() + 20));
 
-		c_stretch = std::max(0, window_width - 128);
-		ur_x_offset = CENTER_START_X + c_stretch;
-		map_draw_origin_x = std::max(10, window_width / 2 - map_dimensions.x() / 2);
+		// 内容区尺寸：宽度取地图与文字二者较大，高度至少容纳地图。
+		int16_t body_w = std::max(std::max<int16_t>(106, mark_text_width - 12), map_dimensions.x());
+		int16_t body_h = std::max<int16_t>(40, map_dimensions.y());
 
-		if (map_dimensions.y() <= 20)
-		{
-			m_stretch = 5;
-			down_y_offset = 17 + m_stretch;
-			map_draw_origin_y = 10 + m_stretch - map_dimensions.y();
-		}
-		else
-		{
-			m_stretch = map_dimensions.y() - 17;
-			down_y_offset = 17 + m_stretch;
-			map_draw_origin_y = 20;
-		}
+		const int16_t n_top = 29, n_bot = 14, n_cap = 60;
+		const int16_t m_top = 72, m_bot = 15;
+		const int16_t side = 6;
 
-		middle_right_x = ur_x_offset + 55;
+		int16_t W = body_w + side * 2;
+		int16_t H_normal = body_h + n_top + n_bot;
+		int16_t H_max = body_h + m_top + m_bot;
 
-		std::string Left = simpleMode ? "Left" : "w";
-		std::string Center = simpleMode ? "Center" : "c";
-		std::string Right = simpleMode ? "Right" : "e";
+		// 地图画布居中于内容区；MAX 由 draw 端叠加 MAX_ADJ 使画布落到 72 顶带下。
+		map_draw_origin_x = static_cast<int16_t>(side + std::max<int16_t>(0, (body_w - map_dimensions.x()) / 2));
+		map_draw_origin_y = n_top;
+		middle_right_x = W;
 
-		std::string DownCenter = simpleMode ? "DownCenter" : "s";
-		std::string DownLeft = simpleMode ? "DownLeft" : "sw";
-		std::string DownRight = simpleMode ? "DownRight" : "se";
-		std::string MiddleLeft = simpleMode ? "MiddleLeft" : "w";
-		std::string MiddleRight = simpleMode ? "MiddleRight" : "e";
-		std::string UpCenter = simpleMode ? "UpCenter" : "n";
-		std::string UpLeft = simpleMode ? "UpLeft" : "nw";
-		std::string UpRight = simpleMode ? "UpRight" : "ne";
+		// Min 三切片收缩条（左8 / 中平铺 / 右4，高20）。
+		int16_t W_min = combined_text_width + bt_map_width + 18;
+		int16_t body_w_min = W_min - 8 - 4;
 
-		// SimpleMode's backdrop is opaque, the other is transparent but lightly colored
-		// UI.wz v208 has normal center sprite in-linked to bottom right window frame, not sure why.
-		nl::node MiddleCenter = simpleMode ? MiniMap["Window"]["Max"]["MiddleCenter"] : MiniMap["MaxMap"]["c"];
+		min_sprites.emplace_back(slice(Min["w"], 0, 0, 0, 0));
+		min_sprites.emplace_back(slice(Min["c"], 8, 0, body_w_min, 0));
+		min_sprites.emplace_back(slice(Min["e"], 8 + body_w_min, 0, 0, 0));
+		min_dimensions = Point<int16_t>(W_min, 20);
 
-		int16_t dl_dr_y = std::max(map_dimensions.y(), (int16_t)10);
-
-		// combined_text_width + 14 (7px buffer on both sides) + 4 (buffer between name and buttons) + 3 buttons' widths - 128 (length of left and right window borders)
-		int16_t min_c_stretch = combined_text_width + 18 + bt_min_width + bt_max_width + bt_map_width - 128;
-
-		// Min sprites queue
-		min_sprites.emplace_back(Min[Center], DrawArgument(WINDOW_UL_POS + Point<int16_t>(CENTER_START_X, 0), Point<int16_t>(min_c_stretch, 0)));
-		min_sprites.emplace_back(Min[Left], DrawArgument(WINDOW_UL_POS));
-		min_sprites.emplace_back(Min[Right], DrawArgument(WINDOW_UL_POS + Point<int16_t>(min_c_stretch + CENTER_START_X, 0)));
-
-		// Normal sprites queue
-		// (7, 10) is the top left corner of the inner window
-		// 114 = 128 (width of left and right borders) - 14 (width of middle borders * 2).
-		// 27 = height of inner frame drawn on up and down borders
-		normal_sprites.emplace_back(MiddleCenter, DrawArgument(Point<int16_t>(7, 10), Point<int16_t>(c_stretch + 114, m_stretch + 27)));
+		// Normal 展开框（MinMap 九切片）+ 地图画布。
+		build_frame(normal_sprites, Normal, W, H_normal, n_top, n_bot, n_cap);
 
 		if (has_map)
-			normal_sprites.emplace_back(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y)));
+			normal_sprites.emplace_back(Sprite(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y))));
 
-		normal_sprites.emplace_back(Normal[MiddleLeft], DrawArgument(Point<int16_t>(0, ML_MR_Y), Point<int16_t>(0, m_stretch)));
-		normal_sprites.emplace_back(Normal[MiddleRight], DrawArgument(Point<int16_t>(middle_right_x, ML_MR_Y), Point<int16_t>(0, m_stretch)));
-		normal_sprites.emplace_back(Normal[UpCenter], DrawArgument(Point<int16_t>(CENTER_START_X, 0) + WINDOW_UL_POS, Point<int16_t>(c_stretch, 0)));
-		normal_sprites.emplace_back(Normal[UpLeft], WINDOW_UL_POS);
-		normal_sprites.emplace_back(Normal[UpRight], DrawArgument(Point<int16_t>(ur_x_offset, 0) + WINDOW_UL_POS));
-		normal_sprites.emplace_back(Normal[DownCenter], DrawArgument(Point<int16_t>(CENTER_START_X, down_y_offset + 18), Point<int16_t>(c_stretch, 0)));
-		normal_sprites.emplace_back(Normal[DownLeft], Point<int16_t>(0, down_y_offset));
-		normal_sprites.emplace_back(Normal[DownRight], Point<int16_t>(ur_x_offset, down_y_offset));
+		normal_dimensions = Point<int16_t>(W, H_normal);
 
-		normal_dimensions = Point<int16_t>(ur_x_offset + 64, down_y_offset + 27);
-
-		// Max sprites queue
-		max_sprites.emplace_back(MiddleCenter, DrawArgument(Point<int16_t>(7, 50), Point<int16_t>(c_stretch + 114, m_stretch + 27)));
+		// Max 城镇框（MaxMap 九切片）+ 地图画布 + 地图标记。
+		build_frame(max_sprites, Max, W, H_max, m_top, m_bot, n_cap);
 
 		if (has_map)
-			max_sprites.emplace_back(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y + MAX_ADJ)));
+			max_sprites.emplace_back(Sprite(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y + MAX_ADJ))));
 
-		max_sprites.emplace_back(Max[MiddleLeft], DrawArgument(Point<int16_t>(0, ML_MR_Y + MAX_ADJ), Point<int16_t>(0, m_stretch)));
-		max_sprites.emplace_back(Max[MiddleRight], DrawArgument(Point<int16_t>(middle_right_x, ML_MR_Y + MAX_ADJ), Point<int16_t>(0, m_stretch)));
-		max_sprites.emplace_back(Max[UpCenter], DrawArgument(Point<int16_t>(CENTER_START_X, 0) + WINDOW_UL_POS, Point<int16_t>(c_stretch, 0)));
-		max_sprites.emplace_back(Max[UpLeft], WINDOW_UL_POS);
-		max_sprites.emplace_back(Max[UpRight], DrawArgument(Point<int16_t>(ur_x_offset, 0) + WINDOW_UL_POS));
-		max_sprites.emplace_back(Max[DownCenter], DrawArgument(Point<int16_t>(CENTER_START_X, down_y_offset + MAX_ADJ + 18), Point<int16_t>(c_stretch, 0)));
-		max_sprites.emplace_back(Max[DownLeft], Point<int16_t>(0, down_y_offset + MAX_ADJ));
-		max_sprites.emplace_back(Max[DownRight], Point<int16_t>(ur_x_offset, down_y_offset + MAX_ADJ));
-		max_sprites.emplace_back(MapHelper["mark"][Map["info"]["mapMark"]], DrawArgument(Point<int16_t>(7, 17)));
+		// 地图标记（MapHelper.img/mark/*，全量 38x38）落在 72 顶带的浅蓝信息带内：
+		// 带 = y20..65（MaxMap/nw 逐行实测），38 高垂直居中 -> y=24；左内缩 8。
+		max_sprites.emplace_back(Sprite(MapHelper["mark"][Map["info"]["mapMark"]], DrawArgument(Point<int16_t>(MARK_X, MARK_Y))));
 
-		max_dimensions = normal_dimensions + Point<int16_t>(0, MAX_ADJ);
-
-		// 经典 v83 小地图默认贴右上角；配置未显式设定（默认 0,0）时锚定到右上。
-		// 参考端 BeiDou v83 同为右上，故以 VWIDTH - 宽度 对齐，而非默认左上 (0,0)。
-		if (position.x() == 0 && position.y() == 0)
-		{
-			position = Point<int16_t>(
-				static_cast<int16_t>(Constants::Constants::get().get_viewwidth() - normal_dimensions.x()),
-				0);
-		}
+		max_dimensions = Point<int16_t>(W, H_max);
 	}
 
 	void UIMiniMap::draw_movable_markers(Point<int16_t> init_pos, float alpha) const

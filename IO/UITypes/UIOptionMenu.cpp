@@ -17,11 +17,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIOptionMenu.h"
 
+#include "UIMiscShells.h"
+#include "UISoftKey.h"
+
+#include "../UI.h"
 #include "../KeyAction.h"
 
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
 
+#include "../../Configuration.h"
+#include "../../Constants.h"
+#include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -225,7 +232,15 @@ namespace ms
 			deactivate();
 			return Button::State::NORMAL;
 		case Buttons::UIRESET:
-			return Button::State::DISABLED;
+		{
+			// 打开 AP/SP SoftKey 壳（UIReset）
+			auto reset = UI::get().get_element<UIReset>();
+			if (!reset)
+				reset = UI::get().emplace<UIReset>();
+			else if (!reset->is_active())
+				reset->makeactive();
+			return Button::State::NORMAL;
+		}
 		case Buttons::SELECT_RES:
 			if (auto it = buttons.find(Buttons::SELECT_RES); it != buttons.end() && it->second)
 				it->second->toggle_pressed();
@@ -268,6 +283,60 @@ namespace ms
 				deactivate();
 			else if (keycode == KeyAction::Id::RETURN)
 				button_pressed(Buttons::OK);
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'O' || keycode == 'o')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "ok" || t == "save" || t == "y" || t == "1")
+						button_pressed(Buttons::OK);
+					else if (t == "cancel" || t == "n" || t == "0")
+						button_pressed(Buttons::CANCEL);
+					else if (t.rfind("buff ", 0) == 0 || t == "buffon" || t == "buffoff") {
+						bool on = (t.find("off") == std::string::npos);
+						if (t.rfind("buff ", 0) == 0) {
+							std::string v = t.substr(5);
+							on = (v == "on" || v == "1" || v == "true");
+						}
+						Setting<BuffTimer>::get().save(on);
+						LOG(LOG_DEBUG, "UIOptionMenu: BuffTimer=" << on);
+					} else if (t.rfind("equip ", 0) == 0 || t == "equipon" || t == "equipoff") {
+						bool on = (t.find("off") == std::string::npos);
+						if (t.rfind("equip ", 0) == 0) {
+							std::string v = t.substr(6);
+							on = (v == "on" || v == "1" || v == "true");
+						}
+						Setting<EquipCompare>::get().save(on);
+						LOG(LOG_DEBUG, "UIOptionMenu: EquipCompare=" << on);
+					} else if (t.rfind("mpoints ", 0) == 0 || t.rfind("mp ", 0) == 0) {
+						size_t sp = t.find(' ');
+						try {
+							int64_t pts = std::stoll(t.substr(sp + 1));
+							if (pts >= 0) {
+								Setting<MaplePointsLocal>::get().save(static_cast<uint64_t>(pts));
+								LOG(LOG_DEBUG, "UIOptionMenu: MaplePointsLocal=" << pts);
+							}
+						} catch (...) {}
+					} else if (t.find('x') != std::string::npos) {
+						// WxH → 写分辨率并 OK
+						size_t x = t.find('x');
+						try {
+							int16_t w = static_cast<int16_t>(std::stoi(t.substr(0, x)));
+							int16_t h = static_cast<int16_t>(std::stoi(t.substr(x + 1)));
+							if (w >= 640 && h >= 480) {
+								Setting<Width>::get().save(w);
+								Setting<Height>::get().save(h);
+								Constants::Constants::get().set_viewwidth(w);
+								Constants::Constants::get().set_viewheight(h);
+								deactivate();
+								LOG(LOG_DEBUG, "UIOptionMenu: SoftKey res " << w << "x" << h);
+							}
+						} catch (...) {}
+					}
+				}, []() {}, "ok|WxH|buff on|equip on|mp N");
+			}
 		}
 	}
 

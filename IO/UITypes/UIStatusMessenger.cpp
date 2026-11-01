@@ -17,8 +17,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStatusMessenger.h"
 
-#include "../../Constants.h"
+#include "UISoftKey.h"
 
+#include "../UI.h"
+#include "../../Constants.h"
 namespace ms
 {
 	StatusInfo::StatusInfo(const std::string& str, Color::Name color)
@@ -80,6 +82,38 @@ namespace ms
 	UIElement::Type UIStatusMessenger::get_type() const
 	{
 		return TYPE;
+	}
+
+	void UIStatusMessenger::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (escape) { statusinfos.clear(); return; }
+		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				show_status(Color::Name::YELLOW, tip);
+			}, []() {}, "Status tip");
+		}
+		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
+		{
+			statusinfos.clear();
+			LOG(LOG_DEBUG, "UIStatusMessenger: clear");
+		}
+		else if (keycode == 'R' || keycode == 'r')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (!tip.empty())
+					show_status(Color::Name::RED, tip);
+			}, []() {}, "Red tip");
+		}
+		else if (keycode == 'W' || keycode == 'w')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (!tip.empty())
+					show_status(Color::Name::WHITE, tip);
+			}, []() {}, "White tip");
+		}
 	}
 
 	void UIStatusMessenger::show_status(Color::Name color, const std::string& message)

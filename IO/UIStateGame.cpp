@@ -20,10 +20,15 @@
 #include "UI.h"
 
 #include "UITypes/UIBuffList.h"
+#include "UITypes/UIEnergyBar.h"
+#include "UITypes/UIComboCounter.h"
+#include "UITypes/UIBossHP.h"
+#include "UITypes/UIClock.h"
 #include "UITypes/UIChannel.h"
 #include "UITypes/UICharInfo.h"
 #include "UITypes/UIChat.h"
 #include "UITypes/UIChatBar.h"
+#include "UITypes/UIMessenger.h"
 #include "UITypes/UIEquipInventory.h"
 #include "UITypes/UIEvent.h"
 #include "UITypes/UIItemInventory.h"
@@ -40,8 +45,11 @@
 #include "UITypes/UIWorldMap.h"
 #include "UITypes/UIMonsterBook.h"
 #include "UITypes/UIMaker.h"
+#include "UITypes/UIMiscShells.h"
+#include "UITypes/UILoginNotice.h"
 
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Gameplay/Stage.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -75,6 +83,10 @@ namespace ms
 
 		emplace<UIMiniMap>(stats);
 		emplace<UIBuffList>();
+		emplace<UIEnergyBar>();
+		emplace<UIComboCounter>();
+		emplace<UIBossHP>();
+		emplace<UIClock>();
 
 		// Shop window is inactive until an NPC opens it; still construct only
 		// when shop UI assets exist so missing Shop2 cannot affect enter-game.
@@ -184,7 +196,16 @@ namespace ms
 	void UIStateGame::rightclick(Point<int16_t> pos)
 	{
 		if (UIElement* front = get_front(pos))
+		{
 			front->rightclick(pos);
+			return;
+		}
+		// 地图空白右键：打开 ContextMenu（Info / Whisper / Close）
+		auto cm = UI::get().get_element<UIContextMenu>();
+		if (!cm)
+			cm = UI::get().emplace<UIContextMenu>();
+		if (cm)
+			cm->open_at(pos, 0, Stage::get().get_player().get_name());
 	}
 
 	void UIStateGame::send_key(KeyType::Id type, int32_t action, bool pressed, bool escape)
@@ -195,12 +216,12 @@ namespace ms
 			{
 				return focusedelement->send_key(action, pressed, escape);
 			}
-			else
-			{
-				focused = UIElement::NONE;
-
-				return;
-			}
+			// 焦点指向的窗体已经 inactive（最常见：鼠标停在窗体上点了 ✕，窗口关闭但
+			// `focused` 还留着那个 Type）。旧实现在这里 `focused = NONE; return;`
+			// —— 这一次按键既没交给窗体也没交给全局开关，被**静默吞掉**：
+			// 关掉背包后按第一下 `i` 打不开、要按第二下，就是这条。
+			// 正确做法是清掉脏焦点后**继续**往下走全局 dispatch，而不是丢弃按键。
+			focused = UIElement::NONE;
 		}
 		else
 		{
@@ -293,6 +314,17 @@ namespace ms
 							}
 							case KeyAction::Id::MAPLECHAT:
 							{
+								// Wave A：优先 Messenger；无资源时回退 socialChatEnter/UIChat
+								if (UiAssetResolve::usable(UiAssetResolve::window("Messenger")))
+								{
+									emplace<UIMessenger>();
+
+									if (auto m = UI::get().get_element<UIMessenger>())
+										m->try_create_room();
+
+									break;
+								}
+
 								if (!UiAssetResolve::usable(UiAssetResolve::window("socialChatEnter")))
 									break;
 
@@ -377,6 +409,10 @@ namespace ms
 								{
 									if (chatbar->has_input())
 										chatbar->send_key(action, pressed, escape);
+									else if (chatbar->is_classic())
+										// classic HUD 没有 BtMax/BtMin，Enter 就是"开输入行"；
+										// 原来这里调 toggle_view() 只翻历史框，收框后再也开不回来。
+										chatbar->toggle_input(true);
 									else
 										chatbar->toggle_view();
 								}
@@ -555,7 +591,16 @@ namespace ms
 
 	void UIStateGame::send_close()
 	{
-		UI::get().emplace<UIQuit>(stats);
+		// UIQuit 依赖 UIWindow6.img/askReward（BeiDou 素材缺失）：
+		// 缺失时只画黑色遮罩、没有退出提示（用户实测反馈）。退回退出确认弹窗。
+		if (UiAssetResolve::usable(UiAssetResolve::window("UIWindow6")["askReward"]))
+		{
+			UI::get().emplace<UIQuit>(stats);
+		}
+		else
+		{
+			UI::get().emplace<UIQuitConfirm>();
+		}
 	}
 
 	void UIStateGame::drag_icon(Icon* drgic)
@@ -648,6 +693,10 @@ namespace ms
 				UIElement::Type::CHATBAR,
 				UIElement::Type::MINIMAP,
 				UIElement::Type::BUFFLIST,
+				UIElement::Type::ENERGYBAR,
+				UIElement::Type::COMBOCOUNTER,
+				UIElement::Type::BOSSHP,
+				UIElement::Type::CLOCK,
 				UIElement::Type::NPCTALK,
 				UIElement::Type::SHOP
 			};

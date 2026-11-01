@@ -21,6 +21,7 @@
 
 #include "../Components/Slider.h"
 
+#include "../../Graphics/SpecialText.h"
 #include "../../Gameplay/Stage.h"
 
 namespace ms
@@ -51,7 +52,11 @@ namespace ms
 		static constexpr int16_t CENTER_START_X = 64;
 		static constexpr int16_t BTN_MIN_Y = 4;
 		static constexpr int16_t ML_MR_Y = 17;
-		static constexpr int16_t MAX_ADJ = 40;
+		static constexpr int16_t MAX_ADJ = 43;
+		/// MaxMap 顶带 72px 里，白色标题条占 y5..18，浅蓝信息带占 y20..65
+		/// （MaxMap/nw 逐行取色）；38x38 的地图标记垂直居中于信息带 -> 20+(46-38)/2。
+		static constexpr int16_t MARK_X = 8;
+		static constexpr int16_t MARK_Y = 24;
 		static constexpr int16_t M_START = 36;
 		static constexpr int16_t LISTNPC_ITEM_HEIGHT = 17;
 		static constexpr int16_t LISTNPC_ITEM_WIDTH = 140;
@@ -115,8 +120,10 @@ namespace ms
 		Point<int16_t> normal_dimensions;
 		Point<int16_t> max_dimensions;
 		Text combined_text;
-		Text region_text;
-		Text town_text;
+		// 原生 MAX 顶带（72px，底色 (153,187,204) 浅蓝）的地图名是**白字黑描边**，
+		// 参考帧 evidence/refcrops/minimap.png 实测字身 min(rgb)>240、外圈为暗边。
+		OutlinedText region_text;
+		OutlinedText town_text;
 
 		bool listNpc_enabled;
 		nl::node listNpc;

@@ -42,7 +42,8 @@ namespace ms
 		buttons[Buttons::BtCancel] = std::make_unique<MapleButton>(SoftKey["BtCancel"], button_adj);
 		buttons[Buttons::BtDel] = std::make_unique<MapleButton>(SoftKey["BtDel"], button_adj);
 		buttons[Buttons::BtOK] = std::make_unique<MapleButton>(SoftKey["BtOK"], button_adj);
-		buttons[Buttons::BtShift] = std::make_unique<MapleButton>(SoftKey["BtShift"], button_adj);
+		if (SoftKey["BtShift"])
+			buttons[Buttons::BtShift] = std::make_unique<MapleButton>(SoftKey["BtShift"], button_adj);
 
 #pragma region BtNum
 #pragma region Row 1
@@ -84,7 +85,10 @@ namespace ms
 			const std::string& key = row1keys[i];
 
 			if (key == "Blank")
-				buttons[Buttons::BtNum0 + i] = std::make_unique<MapleButton>(SoftKey["BtblankNum"], keypos(i, 0));
+			{
+				if (SoftKey["BtblankNum"])
+					buttons[Buttons::BtNum0 + i] = std::make_unique<MapleButton>(SoftKey["BtblankNum"], keypos(i, 0));
+			}
 			else
 				buttons[Buttons::BtNum0 + i] = std::make_unique<MapleButton>(SoftKey["BtNum"][key], keypos(i, 0));
 		}
@@ -134,8 +138,11 @@ namespace ms
 
 			if (key == "Blank")
 			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
+				if (SoftKey["BtblankCase"])
+				{
+					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
+					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
+				}
 			}
 			else
 			{
@@ -190,8 +197,11 @@ namespace ms
 
 			if (key == "Blank")
 			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
+				if (SoftKey["BtblankCase"])
+				{
+					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
+					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
+				}
 			}
 			else
 			{
@@ -233,8 +243,11 @@ namespace ms
 
 			if (key == "Blank")
 			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
+				if (SoftKey["BtblankCase"])
+				{
+					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
+					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
+				}
 			}
 			else
 			{
@@ -288,6 +301,13 @@ namespace ms
 		for (uint16_t i = 0; i < CASE_KEYS; i++)
 		{
 			const Button* btn = BtCaseKeys[i][highCase].get();
+
+			// BeiDou 的 SoftKey.img 缺 BtblankCase：Blank 槽位不会创建按钮，
+			// 此处保持为空 unique_ptr，必须跳过（0xC0000005 @ UISoftKey::draw+0x42，
+			// mov rax,[rcx] 虚调用 rcx=NULL，2026-10-29 事件日志实证）。
+			if (!btn)
+				continue;
+
 			btn->draw(position);
 		}
 
@@ -326,6 +346,10 @@ namespace ms
 		for (uint16_t i = 0; i < CASE_KEYS; i++)
 		{
 			auto& btn = BtCaseKeys[i][highCase];
+
+			// 同 draw：BtblankCase 缺失的 Blank 槽位为空，跳过防崩。
+			if (!btn)
+				continue;
 
 			if (btn->is_active() && btn->bounds(position).contains(cursorpos))
 			{

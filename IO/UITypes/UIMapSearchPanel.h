@@ -11,6 +11,7 @@
 #include "../../Template/Rectangle.h"
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -58,6 +59,10 @@ namespace ms
 		void remove_cursor();
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos);
 
+		void set_teleport_enabled(bool enable);
+		void set_teleport_handler(std::function<void()> handler);
+		void set_back_handler(std::function<void()> handler);
+
 	private:
 		struct PngButton
 		{
@@ -86,6 +91,8 @@ namespace ms
 
 		PngButton bt_back;
 		PngButton bt_teleport;
+		std::function<void()> teleport_handler;
+		std::function<void()> back_handler;
 
 		Textfield search_text;
 		Point<int16_t> search_text_dim;

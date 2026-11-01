@@ -51,6 +51,8 @@ namespace ms
 		// Include left/right docked panels so clicks outside the map chrome still hit this UI.
 		bool is_in_range(Point<int16_t> cursor_position) const override;
 
+		int32_t get_selected_map_id() const { return selected_map_id; }
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -131,6 +133,10 @@ namespace ms
 		Point<int16_t> bg_search_dimensions;
 		Point<int16_t> background_dimensions;
 		Point<int16_t> base_position;
+		// WorldMap/*.img 的 spot / path / linkImg 全部以 BaseImg 的 origin（底图中心）
+		// 为原点，而不是画布左上角；base_anchor = base_position + base_img.origin。
+		// 详见 evidence/w11-map/worldmap-anchor.md。
+		Point<int16_t> base_anchor;
 		Point<int16_t> search_text_dim;
 
 		UIMapMobPanel mob_panel;

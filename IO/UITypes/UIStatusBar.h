@@ -22,6 +22,8 @@
 #include "../Components/Charset.h"
 #include "../Components/Gauge.h"
 
+#include "../../Graphics/Geometry.h"
+
 #include "../../Character/CharStats.h"
 #include "../../Graphics/SpecialText.h"
 
@@ -49,6 +51,7 @@ namespace ms
 		void update() override;
 
 		bool is_in_range(Point<int16_t> cursor_position) const override;
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 
 		UIElement::Type get_type() const override;
@@ -75,8 +78,20 @@ namespace ms
 		void draw_classic(float alpha) const;
 		void update_classic();
 		void refresh_classic_qs_icons();
+		/// classic 快捷格左上角（屏幕坐标）；几何全部来自 base/quickSlot* 图集本身。
+		Point<int16_t> classic_qs_cell_at(size_t slot, int16_t cols) const;
+		/// 经典 quickSlot 槽格命中：返回槽下标，未命中为 -1。
+		int16_t classic_qs_slot_at(Point<int16_t> cursor_position) const;
+		/// 点击快捷格：按 KeyConfig 映射释放技能/使用道具（对齐参考端 OnButton 快捷栏）。
+		void activate_classic_qs_slot(size_t slot);
 
 		void toggle_qs(bool quick_slot_active);
+		/// classic：按 quickslot_active 同步 QS(上箭头)/QSD(下箭头) 按钮可见性。
+		void sync_classic_qs_buttons();
+		/// `buttons` 是 map，用 operator[] 只读访问会插入空 unique_ptr 再解引用；
+		/// classic HUD 只建 BT_CLASSIC_* 那一组，modern 的 27 个 submenu 按钮根本不存在。
+		Button* button_at(uint16_t id) const;
+		void set_buttons_active(std::initializer_list<uint16_t> ids, bool active);
 		void toggle_setting();
 		void toggle_community();
 		void toggle_character();
@@ -150,9 +165,24 @@ namespace ms
 		Texture menutitle[5];
 		Texture menubackground[3];
 		OutlinedText namelabel;
+		mutable OutlinedText joblabel;	// 原生底栏：LV 芯片内「职业名」一行（draw 内刷新）
 		std::vector<Sprite> hpmp_sprites;
 
-		static constexpr size_t CLASSIC_QS_SLOTS = 8;
+		// W1：量规数值改画 StatusBar.img/number 位图字库（5x7 白数字 + 2x9 黄绿括号），
+		// 不再走 Text(A11B, YELLOW)；LV 徽章改画 Basic.img/LevelNo 橙盒数字。
+		Charset classic_levelno;			// Basic.img/LevelNo{0-9,blank} 11x13
+		Charset classic_showlevel;			// Basic.img/ShowLevel/0 白数字 5x12（LevelNo 缺失时回退）
+		Texture classic_showlevel_bracket;	// ShowLevel/Bracket/right 2x12
+		ColorBox classic_exp_dot;			// number 无 '.' 字模：EXP 小数点用 1x1 白点
+		Texture classic_key_label[7];		// key/0..6：Shift/Ins/Hm/Pup/Ctrl/Del/End 键名贴纸（key/7 本包为红箭头，非 Pdn）
+		mutable OutlinedText classic_qs_keytext;	// 数字/字母/Pdn 键帽：#AABBCC 字身 + 白描边（原生位图字母缺失，描边文字统一回退）
+		mutable Text classic_qs_label;		// 快捷格中文名称：Text maxwidth（T12b 度量换行路径）
+		Point<int16_t> lvbadge_pos;
+
+		static constexpr size_t CLASSIC_QS_SLOTS = 26;
+		std::string classic_qs_names[CLASSIC_QS_SLOTS];	// SKILL/ITEM 绑定名（随图标刷新）
+		int16_t classic_qs_cols = 13;		// 面板列数：32 格=16 / 26 格=13 / 8 格=4
+		size_t classic_qs_count = CLASSIC_QS_SLOTS;
 
 		// Classic StatusBar.img chrome
 		Texture classic_backgrnd;
@@ -160,6 +190,15 @@ namespace ms
 		Texture classic_quickslot;
 		Texture classic_graduation;
 		Texture classic_gauge_bar;
+		Texture classic_gauge_gray;			// gauge/gray 1x16 (204,204,204)：量规未填充段底色
+		// 掉血/掉蓝闪光：原生是 5 帧瞬态动画（delay 130ms），不是常驻覆盖层。
+		// 计数 -1 = 本包无该素材，0 = 空闲，>0 = 剩余播放帧。
+		Sprite classic_hp_flash_sprite;
+		Sprite classic_mp_flash_sprite;
+		int8_t classic_hp_flash = -1;
+		int8_t classic_mp_flash = -1;
+		float classic_last_hp = -1.0f;
+		float classic_last_mp = -1.0f;
 		Texture classic_qs_icons[CLASSIC_QS_SLOTS];
 
 		Point<int16_t> exp_pos;
@@ -169,6 +208,7 @@ namespace ms
 		Point<int16_t> statset_pos;
 		Point<int16_t> levelset_pos;
 		Point<int16_t> namelabel_pos;
+		Point<int16_t> joblabel_pos;	// 原生 LV 芯片内「职业名」一行
 		Point<int16_t> quickslot_pos;
 		Point<int16_t> quickslot_adj;
 		Point<int16_t> quickslot_qs_adj;
@@ -191,5 +231,6 @@ namespace ms
 		bool character_active;
 		bool event_active;
 		bool classic_mode;
+		bool classic_qs_wide = false;	// true=26 格(13x2) quickSlot；false=8 格(4x2) quickSlot08
 	};
 }

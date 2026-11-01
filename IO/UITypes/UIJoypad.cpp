@@ -17,8 +17,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIJoypad.h"
 
-#include "../Components/MapleButton.h"
+#include "UISoftKey.h"
 
+#include "../UI.h"
+#include "../Components/MapleButton.h"
+#include "../../Util/Misc.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -28,7 +31,8 @@ namespace ms
 	// TODO: Add combo boxes nl::nx::ui["Basic.img"]["ComboBox"] / ["ComboBox5"];
 	UIJoypad::UIJoypad() : UIDragElement<PosJOYPAD>()
 	{
-		alternative_settings = false; // TODO: Get user's key settings type
+		// ComboBox 未接；SoftKey A 切换 classic/alternative 背景
+		alternative_settings = false;
 
 		nl::node JoyPad = nl::nx::UI["UIWindow.img"]["JoyPad"];
 		nl::node Basic = nl::nx::UI["Basic.img"];
@@ -43,7 +47,7 @@ namespace ms
 		for (Text& text : key_text)
 			text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "None");
 
-		dimension = backgrnd[true].get_dimensions();
+		dimension = backgrnd[alternative_settings].get_dimensions();
 	}
 
 	void UIJoypad::draw(float inter) const
@@ -75,6 +79,34 @@ namespace ms
 				cancel();
 			else if (keycode == KeyAction::Id::RETURN)
 				save();
+			else if (keycode == 'A' || keycode == 'a')
+			{
+				alternative_settings = !alternative_settings;
+				if (backgrnd[alternative_settings])
+					dimension = backgrnd[alternative_settings].get_dimensions();
+				LOG(LOG_DEBUG, "UIJoypad: layout="
+					<< (alternative_settings ? "alternative" : "classic"));
+			}
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "save" || t == "1")
+						save();
+					else if (t == "n" || t == "no" || t == "0" || t == "cancel")
+						cancel();
+					else if (t == "alt" || t == "alternative") {
+						alternative_settings = true;
+						if (backgrnd[true]) dimension = backgrnd[true].get_dimensions();
+					} else if (t == "classic" || t == "c") {
+						alternative_settings = false;
+						if (backgrnd[false]) dimension = backgrnd[false].get_dimensions();
+					}
+				}, []() {}, "save|cancel|alt|classic");
+			}
 		}
 	}
 
@@ -88,6 +120,9 @@ namespace ms
 		switch (buttonid)
 		{
 			case Buttons::DEFAULT:
+				for (Text& text : key_text)
+					text.change_text("None");
+				LOG(LOG_DEBUG, "UIJoypad: DEFAULT reset bindings label");
 				break;
 			case Buttons::CANCEL:
 				cancel();

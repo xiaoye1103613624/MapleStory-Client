@@ -98,6 +98,7 @@ namespace ms
 
 		bt_teleport.enabled = false;
 		bt_teleport.visual = BtnVisual::DISABLED;
+		teleport_handler = nullptr;
 
 		Rectangle<int16_t> field(search_offset, search_offset + search_text_dim);
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, field, 24);
@@ -281,7 +282,12 @@ namespace ms
 		if (back_st != Cursor::State::IDLE)
 		{
 			if (clicked && bt_back.visual == BtnVisual::PRESSED)
-				LOG(LOG_DEBUG, "[UIMapSearchPanel] BtBack (shell, no-op)");
+			{
+				Sound(Sound::Name::BUTTONCLICK).play();
+				if (back_handler)
+					back_handler();
+				LOG(LOG_DEBUG, "[UIMapSearchPanel] BtBack");
+			}
 
 			return back_st;
 		}
@@ -289,8 +295,33 @@ namespace ms
 		Cursor::State tele_st = bt_teleport.send_cursor(clicked, cursorpos, position);
 
 		if (tele_st != Cursor::State::IDLE)
+		{
+			if (clicked && bt_teleport.enabled && bt_teleport.visual == BtnVisual::PRESSED)
+			{
+				Sound(Sound::Name::BUTTONCLICK).play();
+				if (teleport_handler)
+					teleport_handler();
+				LOG(LOG_DEBUG, "[UIMapSearchPanel] BtTeleport");
+			}
 			return tele_st;
+		}
 
 		return Cursor::State::IDLE;
+	}
+
+	void UIMapSearchPanel::set_teleport_enabled(bool enable)
+	{
+		bt_teleport.enabled = enable;
+		bt_teleport.visual = enable ? BtnVisual::NORMAL : BtnVisual::DISABLED;
+	}
+
+	void UIMapSearchPanel::set_teleport_handler(std::function<void()> handler)
+	{
+		teleport_handler = std::move(handler);
+	}
+
+	void UIMapSearchPanel::set_back_handler(std::function<void()> handler)
+	{
+		back_handler = std::move(handler);
 	}
 }

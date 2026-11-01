@@ -17,11 +17,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UINotice.h"
 
+#include "UISoftKey.h"
+
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Util/Misc.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -143,6 +146,7 @@ namespace ms
 
 	void UIYesNo::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		if (!pressed) return;
 		if (keycode == KeyAction::Id::RETURN)
 		{
 			yesnohandler(true);
@@ -152,6 +156,19 @@ namespace ms
 		{
 			yesnohandler(false);
 			deactivate();
+		}
+		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+			|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+				if (tip.empty()) return;
+				std::string t = tip;
+				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				if (t == "y" || t == "yes" || t == "ok" || t == "1")
+					button_pressed(Buttons::YES);
+				else if (t == "n" || t == "no" || t == "0")
+					button_pressed(Buttons::NO);
+			}, []() {}, "y|n");
 		}
 	}
 
@@ -246,6 +263,7 @@ namespace ms
 
 	void UIEnterNumber::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		if (!pressed) return;
 		if (keycode == KeyAction::Id::RETURN)
 		{
 			handlestring(numfield.get_text());
@@ -254,6 +272,16 @@ namespace ms
 		else if (escape)
 		{
 			deactivate();
+		}
+		else if (keycode == 'S' || keycode == 's' || keycode == 'N' || keycode == 'n')
+		{
+			UI::get().emplace<UISoftKey>([this](const std::string& s) {
+				if (s.empty()) return;
+				numfield.change_text(s);
+				handlestring(s);
+				deactivate();
+				LOG(LOG_DEBUG, "UIEnterNumber: SoftKey number=" << s);
+			}, []() {}, "Enter number");
 		}
 	}
 
@@ -348,6 +376,21 @@ namespace ms
 			{
 				okhandler(false);
 				deactivate();
+			}
+			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
+				|| keycode == 'Y' || keycode == 'y' || keycode == 'O' || keycode == 'o')
+			{
+				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
+					if (tip.empty()) return;
+					std::string t = tip;
+					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+					if (t == "y" || t == "yes" || t == "ok" || t == "1")
+						button_pressed(Buttons::OK);
+					else if (t == "n" || t == "no" || t == "0" || t == "cancel") {
+						okhandler(false);
+						deactivate();
+					}
+				}, []() {}, "ok|cancel");
 			}
 		}
 	}
