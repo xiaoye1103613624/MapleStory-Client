@@ -1,16 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////////
-//	Boot splash: procedural spinner until WZ/IMG ready, then Logo.img/Nexon.
+//	Boot splash: procedural spinner until WZ/IMG ready, then Logo.img/Nexon reel.
+//
+//	原生行为对齐（BeiDou V17.7 客户端：ijl15.dll 的 RemoveLogos 开关说明该片头
+//	确实存在于客户端启动流程里，只是默认被跳过；本实现把它做成 boot.logo 开关、
+//	默认开启）：
+//	  - 资源：UI/Logo.img/Nexon，共 137 帧（第 0 帧 800x600，其余 720x480）
+//	  - 画面：纯黑背景 + Logo 按屏幕居中（origin 由 Frame 自己处理）
+//	  - 帧长：wz 节点不带 delay，经典客户端节奏写死在代码里；这里用
+//	    boot.logo.frame_ms（默认 40ms，整段约 5.5s）
+//	  - 跳过：任意按键 / 鼠标按下（Window::get_input_events）
 //////////////////////////////////////////////////////////////////////////////////
 #include "BootSplash.h"
 
 #include "../Configuration.h"
 #include "../Constants.h"
 #include "../IO/Window.h"
+#include "../Graphics/Animation.h"
 #include "../Graphics/GraphicsGL.h"
 #include "../Util/Misc.h"
 
 #include <algorithm>
 #include <cmath>
+
+#include <SDL3/SDL.h>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -18,6 +30,16 @@
 
 namespace ms
 {
+	// Logo.img/Nexon 节点；资源未就绪或缺失时返回空节点。
+	static nl::node logo_source()
+	{
+#ifdef USE_NX
+		return nl::nx::UI["Logo.img"]["Nexon"];
+#else
+		return nl::node();
+#endif
+	}
+
 	BootSplash& BootSplash::get()
 	{
 		static BootSplash instance;
@@ -25,8 +47,9 @@ namespace ms
 	}
 
 	BootSplash::BootSplash()
-		: nexon_ready(false)
-		, nexon_attempted(false)
+		: logo_frames(0)
+		, logo_attempted(false)
+		, logo_played(false)
 		, clock_started(false)
 		, pending_ms(0)
 		, spin_phase(0.0f)
@@ -35,9 +58,9 @@ namespace ms
 
 	void BootSplash::clear()
 	{
-		nexon = Animation();
-		nexon_ready = false;
-		nexon_attempted = false;
+		// 帧纹理按需构建（见 draw_logo），这里只需复位状态标记。
+		logo_frames = 0;
+		logo_attempted = false;
 	}
 
 	void BootSplash::advance_clock()
@@ -55,51 +78,110 @@ namespace ms
 		const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_tick).count();
 		last_tick = now;
 
-		// Cap so a stalled hitch does not skip the whole Nexon reel.
-		pending_ms = static_cast<uint16_t>(std::clamp<int64_t>(elapsed, 1, 80));
+		// Cap so a stalled hitch does not skip the whole reel.
+		// 不用 std::clamp：部分配置未开 /std:c++17。
+		int64_t capped = elapsed;
+		if (capped < 1)
+			capped = 1;
+		else if (capped > 80)
+			capped = 80;
+		pending_ms = static_cast<uint16_t>(capped);
 	}
 
-	void BootSplash::try_load_nexon()
+	bool BootSplash::try_load_nexon()
 	{
-		if (nexon_attempted)
-			return;
+		if (logo_attempted)
+			return logo_frames > 0;
 
-		nexon_attempted = true;
+		logo_attempted = true;
 
-#ifdef USE_NX
-		nl::node Logo = nl::nx::UI["Logo.img"];
-		nl::node Nexon = Logo["Nexon"];
+		nl::node Nexon = logo_source();
 
-		if (Nexon.data_type() == nl::node::type::none)
+		// Nexon 是"容器"节点（其子节点 0..136 才是 Canvas），数据层对容器一律报
+		// type::none，所以存在性必须用 operator bool 判断，不能看 data_type。
+		if (!Nexon)
 		{
 			LOG(LOG_WARN, "[BOOT] Logo.img/Nexon missing; keep procedural splash");
-			return;
+			return false;
 		}
 
-		nexon = Animation(Nexon);
+		// 帧名是 "0".."136"；与 Animation 的收集规则一致，按序号顺序取位图帧。
+		std::vector<int16_t> ids;
 
-		Point<int16_t> dim = nexon.get_dimensions();
-		Point<int16_t> origin = nexon.get_origin();
-
-		if (dim.x() <= 0 || dim.y() <= 0)
+		for (auto sub : Nexon)
 		{
-			LOG(LOG_WARN, "[BOOT] Logo.img/Nexon has empty frames; keep procedural splash");
-			nexon = Animation();
-			return;
+			if (sub.data_type() != nl::node::type::bitmap)
+				continue;
+
+			int16_t fid = string_conversion::or_default<int16_t>(sub.name(), -1);
+
+			if (fid >= 0)
+				ids.push_back(fid);
 		}
 
-		Point<int16_t> screen_center(
-			Constants::Constants::get().get_viewwidth() / 2,
-			Constants::Constants::get().get_viewheight() / 2
-		);
+		std::sort(ids.begin(), ids.end());
+		logo_frames = ids.size();
 
-		nexon_pos = screen_center - Point<int16_t>(dim.x() / 2, dim.y() / 2) + origin;
-		nexon_ready = true;
+		if (logo_frames == 0)
+		{
+			LOG(LOG_WARN, "[BOOT] Logo.img/Nexon has no bitmap frames; keep procedural splash");
+			return false;
+		}
 
-		LOG(LOG_INFO, "[BOOT] Logo.img/Nexon loaded dim=" << dim.x() << "x" << dim.y());
-#else
-		LOG(LOG_WARN, "[BOOT] USE_NX off; keep procedural splash");
-#endif
+		LOG(LOG_INFO, "[BOOT] Logo.img/Nexon ready frames=" << logo_frames);
+		return true;
+	}
+
+	void BootSplash::draw_logo(std::size_t index, const char* message)
+	{
+		GraphicsGL& gl = GraphicsGL::get();
+		const int16_t vw = Constants::Constants::get().get_viewwidth();
+		const int16_t vh = Constants::Constants::get().get_viewheight();
+
+		// 纯黑底：非全屏窗口下 720x480 的帧不会留出桌面配色。
+		gl.drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
+
+		nl::node Nexon = logo_source();
+		nl::node frame_src = Nexon[std::to_string(index)];
+
+		if (frame_src.data_type() == nl::node::type::bitmap)
+		{
+			// 逐帧构建：137 帧全量常驻约 190MB 显存，这里一次只留当前帧。
+			Frame frame(frame_src);
+
+			Point<int16_t> dim = frame.get_dimensions();
+
+			if (dim.x() > 0 && dim.y() > 0)
+			{
+				// 原生片头为满屏动画：帧直接拉伸铺满视口（800x600 帧=视口本身，
+				// 720x480 帧非等比拉到满屏，同旧客户端把 720x480 拉到 800x600）。
+				// 注意 DrawArgument(pos, Point) 的第二参数是"平铺延伸"不是缩放，
+				// 必须用 (pos, xscale, yscale) 重载（用户实测反馈"动画不是全屏"）。
+				const float xscale = (vw > 0) ? static_cast<float>(vw) / dim.x() : 1.0f;
+				const float yscale = (vh > 0) ? static_cast<float>(vh) / dim.y() : 1.0f;
+
+				// 帧带 WZ origin（片头帧多为中心锚点且在 sanitize_origin 的合法
+				// 范围内、不会被清零）：get_rectangle 以 center 为缩放轴且先减
+				// origin，pos=center 时矩形左上 = pos - xscale*origin。取
+				// pos = (xscale*origin.x, yscale*origin.y) 恰好把矩形推回
+				// (0,0)-(vw,vh)，与 origin 取值无关。
+				// 用 Frame::get_origin()（Texture 净化后的值），保证与实际绘制
+				// 所用的 origin 完全一致。
+				Point<int16_t> forigin = frame.get_origin();
+				Point<int16_t> pos(
+					static_cast<int16_t>(xscale * forigin.x()),
+					static_cast<int16_t>(yscale * forigin.y())
+				);
+
+				frame.draw(DrawArgument(pos, xscale, yscale));
+			}
+		}
+
+		if (message && message[0])
+		{
+			Text label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, message);
+			label.draw(DrawArgument(vw / 2, static_cast<int16_t>(vh - 36)));
+		}
 	}
 
 	void BootSplash::draw_procedural(const char* message)
@@ -155,29 +237,67 @@ namespace ms
 		}
 	}
 
-	void BootSplash::draw_nexon(const char* message)
+	bool BootSplash::play_logo()
 	{
-		GraphicsGL& gl = GraphicsGL::get();
-		const int16_t vw = Constants::Constants::get().get_viewwidth();
-		const int16_t vh = Constants::Constants::get().get_viewheight();
+		if (logo_played)
+			return false;
 
-		// Letterbox behind non-fullscreen frames (720x480 on 1280x720 etc.).
-		gl.drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
+		logo_played = true;
 
-		nexon.update(pending_ms);
-
-		Point<int16_t> dim = nexon.get_dimensions();
-		Point<int16_t> origin = nexon.get_origin();
-		Point<int16_t> screen_center(vw / 2, vh / 2);
-		nexon_pos = screen_center - Point<int16_t>(dim.x() / 2, dim.y() / 2) + origin;
-
-		nexon.draw(nexon_pos, 1.0f);
-
-		if (message && message[0])
+		if (!Configuration::get().get_boot_logo())
 		{
-			Text label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, message);
-			label.draw(DrawArgument(vw / 2, static_cast<int16_t>(vh - 36)));
+			LOG(LOG_INFO, "[BOOT] logo reel disabled (boot.logo=false)");
+			return false;
 		}
+
+		if (!try_load_nexon())
+			return false;
+
+		const uint16_t frame_ms = Configuration::get().get_boot_logo_frame_ms();
+		const uint32_t baseline = Window::get().get_input_events();
+		const auto started = std::chrono::steady_clock::now();
+
+		bool skipped = false;
+		std::size_t shown = 0;
+
+		for (std::size_t i = 0; i < logo_frames; ++i)
+		{
+			Window::get().check_events();
+
+			if (!Window::get().not_closed())
+				break;
+
+			// 任意按键 / 点击 = 跳过（经典客户端同样是"按一下就过"）。
+			if (Window::get().get_input_events() != baseline)
+			{
+				skipped = true;
+				break;
+			}
+
+			const auto frame_start = std::chrono::steady_clock::now();
+
+			Window::get().begin();
+			draw_logo(i, nullptr);
+			Window::get().end();
+
+			shown++;
+
+			// 解码/上传本身耗时已占用预算时不再等，避免整段越播越慢。
+			const auto spent = std::chrono::duration_cast<std::chrono::milliseconds>(
+				std::chrono::steady_clock::now() - frame_start).count();
+			const int64_t remain = static_cast<int64_t>(frame_ms) - spent;
+
+			if (remain > 0)
+				SDL_Delay(static_cast<uint32_t>(remain));
+		}
+
+		const auto total = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now() - started).count();
+
+		LOG(LOG_INFO, "[BOOT] logo reel played frames=" << shown << "/" << logo_frames
+			<< " total=" << total << "ms" << (skipped ? " (skipped)" : ""));
+
+		return shown > 0;
 	}
 
 	void BootSplash::pump(const char* message)
@@ -190,8 +310,8 @@ namespace ms
 		Window::get().check_events();
 		Window::get().begin();
 
-		if (nexon_ready)
-			draw_nexon(last_message.c_str());
+		if (logo_frames > 0)
+			draw_logo(0, last_message.c_str());
 		else
 			draw_procedural(last_message.c_str());
 

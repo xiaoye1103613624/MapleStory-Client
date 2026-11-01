@@ -96,8 +96,14 @@ namespace ms
 		std::string get_keyfile() const;
 		// Buff 图标剩余时间文本是否开启（ui.buff_timer）。
 		bool get_buff_timer() const;
+		// 启动原生启动动画是否开启（boot.logo）。
+		bool get_boot_logo() const;
+		// 启动动画单帧时长，毫秒（boot.logo.frame_ms，取值已限幅到 10~1000）。
+		uint16_t get_boot_logo_frame_ms() const;
 		// 装备悬停时是否显示同部位已装备物品的对比（ui.equip_compare）。
 		bool get_equip_compare() const;
+		// UI 语言码（ui.language），默认 zh-CN；可被 xy-config 覆盖，支持热重载。
+		std::string get_ui_language() const;
 		// HTTP 补丁：是否启用（patch.enabled）。
 		bool get_patch_enabled() const;
 		// HTTP 补丁：manifest URL（patch.url）。
@@ -464,6 +470,22 @@ namespace ms
 		VSync() : BoolEntry("window.vsync", "true") {}
 	};
 
+	// 启动原生启动动画（Logo.img/Nexon 片头）开关，对应 boot.logo，默认开。
+	// 行为对齐经典客户端开头动画：黑底 + 居中 Logo 逐帧播放，任意按键/点击可跳过。
+	// 关闭后退回加载动画（spinner），不影响启动流程。
+	struct BootLogo : public Configuration::BoolEntry
+	{
+		BootLogo() : BoolEntry("boot.logo", "true") {}
+	};
+
+	// 启动动画单帧时长（毫秒），对应 boot.logo.frame_ms。
+	// Logo.img/Nexon 的帧不带 delay 元数据（137 帧），经典客户端的节奏由代码写死；
+	// 这里用可配置的固定步长近似：默认 40ms（整段约 5.5s）。
+	struct BootLogoFrameMs : public Configuration::IntEntry
+	{
+		BootLogoFrameMs() : IntEntry("boot.logo.frame_ms", "40") {}
+	};
+
 	// Whether to overlay the remaining time on buff icons
 	// buff 图标上的剩余时间文本（1 秒粒度，对齐 BeiDou V17.7 的 BuffTimer）。
 	// 关闭后仅保留图标与冷却遮罩，不再绘制数字。
@@ -480,18 +502,27 @@ namespace ms
 		EquipCompare() : BoolEntry("ui.equip_compare", "true") {}
 	};
 
+	// UI language code (ui.language): zh-CN / en-US …
+	// 界面语言；有中英双套 WZ 时按此切换，否则用中文 UI + locale 文案。默认中文。
+	struct UiLanguage : public Configuration::StringEntry
+	{
+		UiLanguage() : StringEntry("ui.language", "zh-CN") {}
+	};
+
 	// The normal font which will be used
 	// 常规字体文件路径（相对客户端工作目录，UTF-8 路径可直接填写）。
 	struct FontPathNormal : public Configuration::StringEntry
 	{
-		FontPathNormal() : StringEntry("font.path.normal", "fonts/Arial/Arial.ttf") {}
+		// 中文客户端：默认字体须含 CJK 字形，否则运行时中文（职业名/对话/聊天）
+		// 经 FreeType 渲染为空（纯拉丁 Arial 无中文字形）。SimHei 为系统中文黑体。
+		FontPathNormal() : StringEntry("font.path.normal", "fonts/SimHei/simhei.ttf") {}
 	};
 
 	// The bold font which will be used
 	// 粗体字体文件路径，缺失时回退到常规字体渲染。
 	struct FontPathBold : public Configuration::StringEntry
 	{
-		FontPathBold() : StringEntry("font.path.bold", "fonts/Arial/Arial-Bold.ttf") {}
+		FontPathBold() : StringEntry("font.path.bold", "fonts/SimHei/simhei.ttf") {}
 	};
 
 	// Music Volume
@@ -627,7 +658,8 @@ namespace ms
 	// 世界地图默认位置。
 	struct PosMAP : public Configuration::PointEntry
 	{
-		PosMAP() : PointEntry("ui.position.map", "(100,35)") {}
+		// 大地图窗拼框固定 654x521（见 evidence/w11-map）；1280x720 下水平居中、垂直偏上。
+		PosMAP() : PointEntry("ui.position.map", "(313,64)") {}
 	};
 
 	// The default position of UIUserList
@@ -648,7 +680,12 @@ namespace ms
 	// 小地图默认位置。
 	struct PosMINIMAP : public Configuration::PointEntry
 	{
-		PosMINIMAP() : PointEntry("ui.position.minimap", "(0, 0)") {}
+		// 参考端（正确客户端截图/进入游戏页.png）小地图九切片顶边实测落在 y=24：
+		// y≤23 是天空，y=24 起为整幅白边。顶部 0..22 是 ScrollingNotice 的全宽
+		// 黑底公告条（ColorBox(viewwidth, 23, BLACK, 0.535f)，UI::draw 里画在
+		// state->draw 之后，压在任何 UI 上面）。旧值 (5, 5) 会让收缩条整条落进
+		// 公告条，实测其 221 灰被压成 103（×0.465）。x 仍留 5px 安全边距。
+		PosMINIMAP() : PointEntry("ui.position.minimap", "(5, 24)") {}
 	};
 
 	// The default position of UIShop
@@ -723,6 +760,68 @@ namespace ms
 		PosCHARINFO() : PointEntry("ui.position.charinfo", "(264, 264)") {}
 	};
 
+	// Messenger（聊天室/信使）窗默认位置。
+	struct PosMESSENGER : public Configuration::PointEntry
+	{
+		PosMESSENGER() : PointEntry("ui.position.messenger", "(500, 80)") {}
+	};
+
+	// PartySearch（组队搜索）窗默认位置。
+	struct PosPARTYSEARCH : public Configuration::PointEntry
+	{
+		PosPARTYSEARCH() : PointEntry("ui.position.partysearch", "(260, 60)") {}
+	};
+
+	struct PosDELIVERY : public Configuration::PointEntry
+	{
+		PosDELIVERY() : PointEntry("ui.position.delivery", "(280, 80)") {}
+	};
+
+	struct PosSTOREBANK : public Configuration::PointEntry
+	{
+		PosSTOREBANK() : PointEntry("ui.position.storebank", "(300, 100)") {}
+	};
+
+	struct PosVICIOUSHAMMER : public Configuration::PointEntry
+	{
+		PosVICIOUSHAMMER() : PointEntry("ui.position.vicioushammer", "(320, 140)") {}
+	};
+
+	struct PosVEGASPELL : public Configuration::PointEntry
+	{
+		PosVEGASPELL() : PointEntry("ui.position.vegaspell", "(320, 120)") {}
+	};
+
+	struct PosCASHGACHAPON : public Configuration::PointEntry
+	{
+		PosCASHGACHAPON() : PointEntry("ui.position.cashgachapon", "(340, 160)") {}
+	};
+
+	struct PosREMOTEGACHAPON : public Configuration::PointEntry
+	{
+		PosREMOTEGACHAPON() : PointEntry("ui.position.remotegachapon", "(300, 120)") {}
+	};
+
+	struct PosFAMILY : public Configuration::PointEntry
+	{
+		PosFAMILY() : PointEntry("ui.position.family", "(280, 60)") {}
+	};
+
+	struct PosFAMILYTREE : public Configuration::PointEntry
+	{
+		PosFAMILYTREE() : PointEntry("ui.position.familytree", "(120, 80)") {}
+	};
+
+	struct PosMEMO : public Configuration::PointEntry
+	{
+		PosMEMO() : PointEntry("ui.position.memo", "(280, 100)") {}
+	};
+
+	struct PosPARTYRACE : public Configuration::PointEntry
+	{
+		PosPARTYRACE() : PointEntry("ui.position.partyrace", "(20, 80)") {}
+	};
+
 	// The default type of UIMiniMap
 	// 小地图默认类型（2 = 常规样式）。
 	struct MiniMapType : public Configuration::ByteEntry
@@ -742,6 +841,33 @@ namespace ms
 	struct MiniMapDefaultHelpers : public Configuration::BoolEntry
 	{
 		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
+	};
+
+	// 封包调试转储（debug.packet_dump，默认 false）。
+	// 开启后把收/发的每个明文封包按参考端 PacketDump 格式（前缀 "PacketDump : "
+	// + 每字节 "%02x " 小写十六进制；格式重建自 BeiDou.exe 0x6EC7C0：
+	// push "PacketDump : "@0xAFCC14 + 循环 "%02x "@0xAFCC0C）
+	// 追加写入 exe 同目录 packet_dump.log，供联调时与服务端日志逐字节核对。
+	struct PacketDumpLog : public Configuration::BoolEntry
+	{
+		PacketDumpLog() : BoolEntry("debug.packet_dump", "false") {}
+	};
+
+	// 本地点券标签缓存（服务端字段就绪前 SoftKey/Point 按钮写入）
+	struct MaplePointsLocal : public Configuration::LongEntry
+	{
+		MaplePointsLocal() : LongEntry("ui.maplepoints.local", "0") {}
+	};
+
+	// 宠物自动药：s9 AUTO_HP_POT(336) / AUTO_MP_POT(337) 下发的 itemId
+	struct AutoHpPotItem : public Configuration::IntEntry
+	{
+		AutoHpPotItem() : IntEntry("ui.autopot.hp_item", "0") {}
+	};
+
+	struct AutoMpPotItem : public Configuration::IntEntry
+	{
+		AutoMpPotItem() : IntEntry("ui.autopot.mp_item", "0") {}
 	};
 
 	template <typename T>

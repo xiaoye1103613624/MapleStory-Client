@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Configuration.h"
+#include "Util/Locale.h"
 
 #include "Util/Resource/Keyring.h"
 
@@ -110,6 +111,7 @@ namespace ms
 		// 界面开关
 		{ "界面",       "ui.buff_timer",				"是否在 buff 图标上显示剩余时间" },
 		{ "界面",       "ui.equip_compare",				"装备悬停时是否显示同部位已装备物品对比" },
+		{ "界面",       "ui.language",					"界面语言：zh-CN（默认）/ en-US；改后热重载" },
 
 		// 界面位置（关闭客户端时的最后窗口位置）
 		{ "界面位置",   "ui.position.stats",			"角色属性面板" },
@@ -129,7 +131,17 @@ namespace ms
 		{ "界面位置",   "ui.position.event",			"活动面板" },
 		{ "界面位置",   "ui.position.keyconfig",		"按键设置" },
 		{ "界面位置",   "ui.position.optionmenu",		"系统选项" },
-		{ "界面位置",   "ui.position.charinfo",			"角色信息" }
+		{ "界面位置",   "ui.position.charinfo",			"角色信息" },
+		{ "界面位置",   "ui.position.messenger",		"信使聊天室" },
+		{ "界面位置",   "ui.position.partysearch",		"组队搜索" },
+		{ "界面位置",   "ui.position.delivery",			"快递Duey" },
+		{ "界面位置",   "ui.position.storebank",		"寄存StoreBank" },
+		{ "界面位置",   "ui.position.vicioushammer",	"金锤子" },
+		{ "界面位置",   "ui.position.vegaspell",		"星卷Vega" },
+		{ "界面位置",   "ui.position.cashgachapon",		"现金扭蛋" },
+		{ "界面位置",   "ui.position.remotegachapon",	"远程扭蛋" },
+		{ "界面位置",   "ui.position.family",			"家族" },
+		{ "界面位置",   "ui.position.memo",				"便签Memo" }
 	};
 
 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
@@ -166,8 +178,11 @@ namespace ms
 		settings.emplace<Width>();
 		settings.emplace<Height>();
 		settings.emplace<VSync>();
+		settings.emplace<BootLogo>();
+		settings.emplace<BootLogoFrameMs>();
 		settings.emplace<BuffTimer>();
 		settings.emplace<EquipCompare>();
+		settings.emplace<UiLanguage>();
 		settings.emplace<FontPathNormal>();
 		settings.emplace<FontPathBold>();
 		settings.emplace<BGMVolume>();
@@ -178,6 +193,9 @@ namespace ms
 		settings.emplace<DefaultChannel>();
 		settings.emplace<DefaultRegion>();
 		settings.emplace<DefaultCharacter>();
+		settings.emplace<MaplePointsLocal>();
+		settings.emplace<AutoHpPotItem>();
+		settings.emplace<AutoMpPotItem>();
 		settings.emplace<AutoLogin>();
 		settings.emplace<AutoPass>();
 		settings.emplace<ChatViewMax>();
@@ -202,9 +220,21 @@ namespace ms
 		settings.emplace<PosKEYCONFIG>();
 		settings.emplace<PosOPTIONMENU>();
 		settings.emplace<PosCHARINFO>();
+		settings.emplace<PosMESSENGER>();
+		settings.emplace<PosPARTYSEARCH>();
+		settings.emplace<PosDELIVERY>();
+		settings.emplace<PosSTOREBANK>();
+		settings.emplace<PosVICIOUSHAMMER>();
+		settings.emplace<PosVEGASPELL>();
+		settings.emplace<PosCASHGACHAPON>();
+		settings.emplace<PosREMOTEGACHAPON>();
+		settings.emplace<PosFAMILY>();
+		settings.emplace<PosFAMILYTREE>();
+		settings.emplace<PosMEMO>();
 		settings.emplace<MiniMapType>();
 		settings.emplace<MiniMapSimpleMode>();
 		settings.emplace<MiniMapDefaultHelpers>();
+		settings.emplace<PacketDumpLog>();
 
 		load();
 	}
@@ -368,9 +398,18 @@ namespace ms
 			while (!stack.empty() && indent <= stack.back().first)
 				stack.pop_back();
 
-			std::string composite = key;
+			// 层级键 = 父节点栈自外向内 + 本行键名。栈里存的是由外向内的顺序，
+			// 所以必须正向拼接；早期版本反着 prepend（"a.b.c" 会变成 "c.a.b"），
+			// 于是所有三级键都对不上 Entry::name —— 31 个 ui.position.* 窗口坐标、
+			// audio.*.volume、font.path.*、ui.autopot.* 等 39 项在 Settings 里改了也不生效，
+			// 每次启动都退回代码默认值（拖动过的位置也会被"重置"，其实是被忽略）。
+			std::string composite;
 			for (const auto& p : stack)
-				composite = p.second + "." + composite;
+			{
+				composite += p.second;
+				composite += '.';
+			}
+			composite += key;
 
 			if (value.empty() && leaf_keys.find(composite) == leaf_keys.end())
 			{
@@ -419,6 +458,17 @@ namespace ms
 
 		xysettings = parse_config_file(XYCONFIG_FILENAME, leaf_keys);
 
+		// 部署级覆盖写回 Entry，使 Setting<>::load / get_ui_language 立即生效。
+		for (auto& setting : settings)
+		{
+			if (!setting.second)
+				continue;
+
+			auto it = xysettings.find(setting.second->name);
+			if (it != xysettings.end())
+				setting.second->value = it->second;
+		}
+
 		std::time_t wt = 0;
 		if (get_xy_mtime(wt))
 			xy_last_write = wt;
@@ -433,7 +483,12 @@ namespace ms
 		if (wt == xy_last_write)
 			return;
 
+		const std::string lang_before = Setting<UiLanguage>::get().load();
 		reload_xy_config();
+
+		// 语言变更（或任意 xy 热重载）时刷新 locale，保证文案实时切换。
+		if (Setting<UiLanguage>::get().load() != lang_before)
+			Locale::get().reload();
 	}
 
 	// 外链取值：三级回退。
@@ -670,9 +725,34 @@ namespace ms
 		return Setting<BuffTimer>::get().load();
 	}
 
+	bool Configuration::get_boot_logo() const
+	{
+		return Setting<BootLogo>::get().load();
+	}
+
+	uint16_t Configuration::get_boot_logo_frame_ms() const
+	{
+		// 非法/缺省值（0）回落到 100ms 的数据默认帧长；再限幅到 10~1000ms，
+		// 避免配置成 0 时困在"每帧 0ms"或写成超大值导致长时间黑屏。
+		uint32_t ms = Setting<BootLogoFrameMs>::get().load();
+
+		if (ms < 10)
+			ms = 40;
+		else if (ms > 1000)
+			ms = 1000;
+
+		return static_cast<uint16_t>(ms);
+	}
+
 	bool Configuration::get_equip_compare() const
 	{
 		return Setting<EquipCompare>::get().load();
+	}
+
+	std::string Configuration::get_ui_language() const
+	{
+		std::string lang = Setting<UiLanguage>::get().load();
+		return lang.empty() ? std::string("zh-CN") : lang;
 	}
 
 	bool Configuration::get_patch_enabled() const

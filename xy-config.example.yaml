@@ -20,3 +20,10 @@ patch:
   timeout_ms: 15000
   retries: 2
   allow_skip: true
+
+boot:
+  # 原生启动动画（经典客户端 Logo.img/Nexon 片头）总开关
+  # 对应 ijl15.dll 的 RemoveLogos 语义（原版默认跳过），这里反过来默认开启。
+  logo: true
+  # 单帧时长（毫秒）；Nexon 共 137 帧，40ms ≈ 5.5s。任意按键/点击可跳过。
+  frame_ms: 40

@@ -117,6 +117,11 @@ namespace ms
 				<< ms::res::ResourceService::get().diagnostics(true));
 		}
 		dbginit("resource:ok");
+		// img：登录根就绪后立即在后台预热选角根（Character/Item/… +
+		// BodyDrawInfo）。它与片头/登录界面并行，等用户点完连接时通常
+		// 已装载完——此前这一步在登录响应后同步执行，会冻结 Wait 弹窗
+		// 半分钟级（表现=「连接加载条卡住不动，过一会才动」）。
+		ms::res::ResourceService::get().prewarm_game_roots();
 		BootSplash::get().try_load_nexon();
 		BootSplash::get().pump("Connecting...");
 
@@ -165,6 +170,10 @@ namespace ms
 			LoginBackground::get().init();
 			dbginit("loginbg:ok");
 			BootSplash::get().pump("Preparing...");
+			// 原生启动动画：资源就绪后、进登录页前播放 Logo.img/Nexon 片头。
+			// 放在最后一步是为了"片头 → 登录页"直接衔接，中间不再插回 spinner。
+			// 开关 boot.logo（默认开），任意按键/点击可跳过。
+			BootSplash::get().play_logo();
 			BootSplash::get().clear();
 			UI::get().init();
 			dbginit("ui:ok");
@@ -196,7 +205,11 @@ namespace ms
 	{
 		Window::get().begin();
 		Stage::get().draw(alpha);
-		UI::get().draw(alpha);
+		// alpha 是 accumulator/timestep，即「本帧还差多少时间才走到下一逻辑帧」的插值
+		// 系数（每帧在 0..1 之间抖动）。Stage 拿它插值描画位置是对的；UI 侧不接受插值语义，
+		// 但此前有 14 个文件里的 59 处（外加基类 UIElement::draw_sprites）把它当不透明度传给
+		// sprite.draw(pos, inter)，于是界面层每帧按一个抖动的半透明度描画。这里一次性按不透明绘制。
+		UI::get().draw(1.0f);
 		Window::get().end();
 	}
 

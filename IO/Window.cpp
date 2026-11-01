@@ -621,6 +621,9 @@ namespace ms
 				{
 					int32_t keycode = glfw_key_from_scancode(event.key.scancode);
 
+					if (event.type == SDL_EVENT_KEY_DOWN)
+						input_events++;
+
 					if (keycode != 0)
 						UI::get().send_key(keycode, event.type == SDL_EVENT_KEY_DOWN);
 
@@ -628,6 +631,9 @@ namespace ms
 				}
 				case SDL_EVENT_MOUSE_BUTTON_DOWN:
 				case SDL_EVENT_MOUSE_BUTTON_UP:
+					if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+						input_events++;
+
 					send_mouse_button(event.button);
 					break;
 				case SDL_EVENT_MOUSE_MOTION:
@@ -639,6 +645,8 @@ namespace ms
 #ifdef __ANDROID__
 				case SDL_EVENT_FINGER_DOWN:
 				{
+					input_events++;
+
 					// Finger coordinates are normalised [0,1]; map to window pixels.
 					float fx = event.tfinger.x * static_cast<float>(width);
 					float fy = event.tfinger.y * static_cast<float>(height);
