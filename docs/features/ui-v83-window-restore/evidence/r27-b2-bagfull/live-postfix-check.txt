@@ -1,5 +1,5 @@
 # R27-B2 部署后真机复验（2026-11-01 19:5x，exe md5 6f0a8bc10be012bd…，非改前帧）
-# 驱动：_r27_login.py 登录进世界 → _postkey.py i/s → _r27_expand.py 点 BtFull 展开 → _cap2.py PrintWindow
+# 驱动：docs/features/ui-v83-window-restore/tools/live/login.py 登录进世界 → E:/project/_postkey.py i/s → docs/features/ui-v83-window-restore/tools/live/expand.py 点 BtFull 展开 → E:/project/_cap2.py PrintWindow
 
 ## ItemFull.json <- live-postfix-expanded.png
 anchor=(461,135) agree=0.843 rmse=32.2  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_FullBackgrnd_left400.png

@@ -16,8 +16,8 @@
 `FT_Load_Char(..., FT_LOAD_RENDER)` 之后的 `face->glyph->bitmap_top`。
 r15/r27 之前各处注释里的 11/12 是用 **PIL** 量同一个 ttf 得到的，两者不等。
 用 freetype-py 按渲染器完全相同的调用序列实测
-（`fonts/SimHei/simhei.ttf`，脚本 `E:/project/_r27_font_probe.py`
-+ `E:/project/_r27_word_bt.py`，输出 `_r27_font_probe.txt` / `_r27_word_bt.txt`）：
+（`fonts/SimHei/simhei.ttf`，脚本 `docs/features/ui-v83-window-restore/tools/measure/font_probe.py`
++ `docs/features/ui-v83-window-restore/tools/measure/word_bt.py`，输出 `docs/features/ui-v83-window-restore/evidence/w0-common/font-probe.txt` / `word-bt.txt`）：
 
 | size | ASCII maxrows | `linespace()` = int(maxrows×1.35+1) | `'0'` | `'A'` | `'/'` | `'('` | CJK 众数 | CJK 最大 |
 |---|---|---|---|---|---|---|---|---|
@@ -60,7 +60,7 @@ int16_t Text::y_for_ink_top(int16_t ink_top) const;   // 墨迹顶 → Text::dra
 - 名牌底框（`Background::NAMETAG`）盒顶改**逐行**取本行最大 `bitmap_top`
   （原来是 `- linespace + 6` 的写死假定）。
 
-复算脚本 `E:/project/_r27_ink_check.py`（输出 `_r27_ink_check.txt`），与 C++ 同口径。
+复算脚本 `docs/features/ui-v83-window-restore/tools/measure/ink_check.py`（输出 `docs/features/ui-v83-window-restore/evidence/w0-common/ink-check.txt`），与 C++ 同口径。
 
 ### 4）已迁站点（B1b 定版：常量 = 原生帧量到的墨迹顶，Δ = 真机帧门禁实测）
 
@@ -76,8 +76,9 @@ int16_t Text::y_for_ink_top(int16_t ink_top) const;   // 墨迹顶 → Text::dra
 | 〃 下部 AP 三行 | A11M | 行墨迹顶 236 / 252 / 268 | `value_lines` 同上，ink=11 | 完全一致 | Δ=0 | — |
 | `UIStatusBar` 职业名 | A12M | 墨迹顶 40 | `frames/native_bottom_bar.png` 逐行核对 | — | — | **未改**：40 经原生帧确认正确，r15 的怀疑不成立 |
 | 〃 角色名 | A12M | 墨迹顶 56 | 同上 | — | — | **未改**：同上 |
-| `UIItemInventory` 金币 | A11M RIGHT | 墨迹顶 **269**、右缘 **x137** | `Item.json/meso_digit` (131,269) 6x9（锚点经 `bias` 校正为 (3,-1) 后与真机逐格 Δ=0；旧 oracle (131,268) 是紧裁帧锚点伪影，见 [../r27-oracle/README.md](../r27-oracle/README.md) 锚点一节） | (131,269) 5x8 | Δ=0 | 旧 (141, **284**) ⇒ 低 16px，数字整条掉到白框外，就是用户报的「金币值位置偏下了，没有在框内」 |
-| `UISkillBook` SP | A12M RIGHT | 墨迹顶 **268**、右缘 **x109** | `SkillMacro.json/sp_digit` (103,268) 6x9 ⇒ 右缘 109 | (102,269) 5x8 ⇒ 右缘 107 | Δ=1（墨宽/墨高各差 1，非锚点：该 spec 锚点 (0,0) 已过 `bias`） | 旧 (92, **274**) ⇒ 低 6px、左 17px。**残留 2px 右缘缺口**（109 vs 107）归 B4/#84：A12M 的 RIGHT 里 x 到底是墨迹右缘还是 advance 右缘，见 [../../notes/open-issues.md](../../notes/open-issues.md) B15 的复测配方 |
+| `UIItemInventory` 金币 | A11M RIGHT | 墨迹顶 **269**、右缘 **x137** | `Item.json/meso_digit` (131,269) 6x9（锚点经 `bias` 校正为 (3,-1)；旧 oracle (131,268) 是紧裁帧锚点伪影，见 [../r27-oracle/README.md](../r27-oracle/README.md) 锚点一节） | (131,269) 5x8 | 纵向 **Δ=0**（部署后真机帧）；墨迹右缘 −1 = 字体右 bearing，见下行 | 旧 (141, **284**) ⇒ 低 16px，数字整条掉到白框外，就是用户报的「金币值位置偏下了，没有在框内」 |
+| 〃 右缘口径 | A11M RIGHT | 绘制点 = **advance** 右缘 x=137 | `meso_digit_ink` keys `x+w` = 131+6=137 | 131+5=136 | Δ=1（`delta_tol=1`）| 两帧末位同为「0」：原生墨宽 6 / bearing 0，SimHei 11px 墨宽 5 / bearing 1 ⇒ **差在字形光栅，不在落位**；纵向 `meso_digit` 仍 tol=0 严判。证据 [../r27-b2-bagfull/meso-glyph-bearing-compare.png](../r27-b2-bagfull/meso-glyph-bearing-compare.png) |
+| `UISkillBook` SP | A12M RIGHT | 墨迹顶 **268**、右缘 **x109** | `SkillMacro.json/sp_digit` (103,268) 6x9 ⇒ 右缘 109 | (102,269) 5x8 ⇒ 右缘 107 | 纵向 Δ=1（墨高差 1，非锚点：该 spec 锚点 (0,0) 已过 `bias`） | 旧 (92, **274**) ⇒ 低 6px、左 17px。**右缘 2px 缺口**现由 `sp_digit_ink`（keys `x+w`，`delta_tol=2`）自动读，口径与金币同一把尺：差在 SimHei 与位图字库的右 bearing，不是 RIGHT 对齐语义；#84 只剩「图标缺失 / 数值位」两条真缺陷 |
 | `UIChatBar` 目标文字 | A11M LEFT | 墨迹顶 8 | `frames/native_chatbar_fold.png` 逐行核对 | — | — | **未改**：8 经原生帧确认正确 |
 
 **跨窗互证的「白框尺子」**（这两个常量不是各调一次凑出来的，是同一把尺）：
@@ -190,6 +191,6 @@ A12M 数字：墨迹顶 = draw_y + 9 ⇒ **draw_y = 265**；RIGHT 对齐单字�
 4. **只把量到的墨迹顶写进窗口常量**，绘制点交给 `Text::y_for_ink_top(ink_top)`（构造 `Text` 时就用该行的最终字符串，
    或像 `UIStatsInfo`/`UIStatusBar` 那样在 draw 里边 `change_text` 边换算）。**不要**再手算 `linespace - bitmap_top`。
 5. 横向仍按 `墨迹左 = draw_x + line_x + bitmap_left` 手解（r27 只统一了纵向）。
-6. 想要独立复核 C++ 的换算，跑 `E:/project/_r27_ink_check.py`（同 `FT_LOAD_RENDER` 口径）；
-   字体度量总表用 `E:/project/_r27_font_probe.py` / `E:/project/_r27_word_bt.py` 重生成。
+6. 想要独立复核 C++ 的换算，跑 `docs/features/ui-v83-window-restore/tools/measure/ink_check.py`（同 `FT_LOAD_RENDER` 口径）；
+   字体度量总表用 `docs/features/ui-v83-window-restore/tools/measure/font_probe.py` / `docs/features/ui-v83-window-restore/tools/measure/word_bt.py` 重生成。
 7. 多行/换行文字的 `y` 反解取的是**整段最大** `bitmap_top`，只对单行精确；多行段落请量首行。

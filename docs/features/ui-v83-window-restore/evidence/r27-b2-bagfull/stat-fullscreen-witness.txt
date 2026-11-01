@@ -13,4 +13,4 @@ Stat 角色能力窗  tol=2px  形态=detail  锚点=(175,191)  帧=docs/feature
   level_ink                oracle=(62,82) 4x9                实测=(62,82) 4x9              Δ=0 x+0 y+0              ok
 --------------------------------------------------------------------------------------------------------
 不合格 0 / 9（不适用跳过 0）
-对照图 E:/project/_r27_stat_fs.png
+对照图 本目录 live-stat-fullscreen.png（原 E:/project/_r27_stat_fs.png，已随本证据入库）

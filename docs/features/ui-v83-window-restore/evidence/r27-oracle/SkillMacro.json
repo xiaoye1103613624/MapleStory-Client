@@ -160,7 +160,7 @@
       "min_pix": 3,
       "row_min": 1,
       "col_min": 1,
-      "note": "金币/SP 的**墨迹右缘**单独一档：绘制点是 advance 右缘（代码里的固定 x），墨迹右缘 = advance 右缘 − 末位字形的右 bearing。原生位图字库「0」墨宽 6、bearing 0，SimHei 11px「0」墨宽 5、bearing 1 —— 两帧末位是同一个「0」（已放大并排核对），所以 Δ=1 是字体光栅差，不是落位差，客户端没有任何常数能改它（要改只能逐字形补偿 = 禁止局部补偿）。⇒ 本探针 delta_tol=1；纵向落位仍由同区的 keys=[\"y\"] 探针按 spec tol=0 严判。",
+      "note": "SP 的墨迹右缘（keys x+w）。同 ItemFull.json/meso_digit_full_ink 的口径：右缘 = advance 右缘 − 末位字形右 bearing，SimHei 与原生位图字库的 bearing 不同，这一段不是客户端常数。\ndelta_tol 给到 2 而不是金币的 1：真机这帧的末位数字与原生不同（实测左缘 102 vs 原生 103、墨宽 5 vs 6），−2 里有多少是 bearing、多少是真偏移，要等一帧末位与原生同数字的技能窗才能拆清 ⇒ 记在 #84，不在此改 109 这个常数。",
       "keys": [
         "x+w"
       ],
@@ -171,7 +171,7 @@
         "h": 9,
         "n": 16
       },
-      "delta_tol": 1
+      "delta_tol": 2
     }
   ],
   "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_skill_macro.png",

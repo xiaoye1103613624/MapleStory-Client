@@ -64,7 +64,9 @@
 
 部署：`build_check\MapleStory.exe` → `E:\MXD\BeiDou-Client-xy\MapleStory.exe`，两边 md5 同为 `6f0a8bc10be012bd…`
 （部署前目标目录里是旧的 `1d43ea66661f…`；锁已自然释放，没有结束任何进程）。
-驱动链：`_r27_login.py`（启动+登录+进世界）→ `_postkey.py i` / `_postkey.py s` → `_r27_expand.py`（模板匹配反推窗口左上，点 BtFull 展开）→ `_cap2.py` PrintWindow。
+驱动链：[`tools/live/login.py`](../tools/live/login.py)（启动+登录+进世界，口令走 `R27_USER`/`R27_PASS` 环境变量，不入库）
+→ `E:/project/_postkey.py i` / `_postkey.py s` → [`tools/live/expand.py`](../tools/live/expand.py)（模板匹配反推窗口左上，点 BtFull 展开）→ `E:/project/_cap2.py` PrintWindow。
+（`_drive.py`/`_postkey.py`/`_cap2.py`/`_rclick.py` 这四个通用驱动器留在本机 `E:/project`，不在仓库里。）
 
 | 帧 | 门禁 | 结果 |
 | --- | --- | --- |

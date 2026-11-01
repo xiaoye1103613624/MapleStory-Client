@@ -12,4 +12,4 @@ Item 背包栏（展开态 / FullBackgrnd）  tol=0px  形态=default  锚点=(0
   disabled_p1_r5    oracle=(157,220) agree=1.000      实测=(157,220) agree=1.000    Δ=0 x+0 y+0              ok
 --------------------------------------------------------------------------------------------------------
 不合格 0 / 8（不适用跳过 0）
-对照图 E:/project/_r27_itemfull_oraclechk.png
+对照图 本目录 native-oraclechk-crop.png（原 E:/project/_r27_itemfull_oraclechk.png，已随本证据入库）
