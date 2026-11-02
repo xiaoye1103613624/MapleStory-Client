@@ -1,0 +1,92 @@
+{
+  "window": "UserList 玩家列表 & 家族（好友/组员/家族/家族联盟/拒绝列表 共用壳）",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/好友列表框.png (302x384) -> frames/native_friend_list.png",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab0_enabled.png",
+  "anchor_min_agree": 0.9,
+  "tol": 2,
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_friend_list.png",
+  "oracle_anchor": [4, 23],
+  "note": "锚 = UserList/Tab/enabled/0（「好友」页签，27x15 含烘焙中文）在帧上的左上角，agree 1.000 / rmse 0.00 —— 这是本窗唯一锐的尺。为什么不用 backgrnd 定锚：backgrnd / backgrnd2 / backgrnd3 三张都是 312x389、不透明占比各 0.988、无整行全透明，而四张原生帧只有 302x384 / 310x386 / 313x386 / 310x391，全部装不下 389 高 ⇒ anchor_in 判模板过大。三张同尺寸 + 98.8% 不透明这一条本身就是结论：它们是**互斥的三套底**（按页签族切换），不是可叠加的层；同点各画一次的话后画的会整张盖掉先画的，UIUserList.cpp:86/157/243/799 的叠底必须改成「按当前页签只画一张」。区域相对锚点（页签 0 左上），x 可负。 补：五格页签实测相对锚点 x = 0 / 31 / 62 / 92 / 145（宽 27,27,27,51,50），Tab3 只有 disabled 态命中；BtAddFriend 四个状态（normal/disabled/mouseOver/pressed）在本帧 agree 仅 .231~.650，量不出落位，按「宁可少写」不建探针。",
+  "probes": [
+    {
+      "name": "Tab1_party",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab1_enabled.png",
+      "region": [20, -5, 300, 25],
+      "min_agree": 0.9,
+      "note": "「组员」页签 —— 与 Tab0 一起定页签条起点与第一格宽",
+      "oracle": {
+        "x": 31,
+        "y": -1,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "Tab2_guild",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab2_enabled.png",
+      "region": [45, -5, 300, 25],
+      "min_agree": 0.9,
+      "note": "「家族」页签",
+      "oracle": {
+        "x": 62,
+        "y": -1,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.987
+      }
+    },
+    {
+      "name": "Tab3_union",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab3_disabled.png",
+      "region": [70, -5, 300, 25],
+      "min_agree": 0.9,
+      "note": "「家族联盟」页签：原生这帧用的是 **disabled** 态（agree 1.000 / rmse 0.00），enabled 态在本帧 MISSING —— 说明无联盟时该页签置灰，客户端若一律画 enabled 就是错。",
+      "oracle": {
+        "x": 92,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "Tab4_blacklist",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab4_enabled.png",
+      "region": [115, -5, 300, 25],
+      "min_agree": 0.9,
+      "note": "「拒绝列表」页签 —— 五格横排的右端点由它定",
+      "oracle": {
+        "x": 145,
+        "y": -1,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.986
+      }
+    },
+    {
+      "name": "BtAddGroup",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_BtAddGroup_normal.png",
+      "region": [0, 40, 300, 110],
+      "min_agree": 0.9,
+      "note": "「增加群」按钮 —— 与 BtAddFriend 定同一条横排基线",
+      "oracle": {
+        "x": 64,
+        "y": 54,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    }
+  ]
+}
