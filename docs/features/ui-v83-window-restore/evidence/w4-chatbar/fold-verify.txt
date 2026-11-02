@@ -1,0 +1,25 @@
+native: anchor(white top) y=8, grey (11, 33) h=23
+  rel: grey top +3, bottom +25
+  ink top y=17 x=6 -> rel +9, ink x=6
+  blue + left x=537
+
+ours: anchor capture y=684 -> view y=653
+  grey capture (47, 69) -> view 656..678 h=23
+  rel to anchor: top +3, bottom +25
+  ink top view y=662 x=6 -> rel +9
+  blue + left view x=537
+
+rows @x300, anchor..anchor+4 (native | ours view)
+  +0  (255, 255, 255) | (245, 254, 255)
+  +1  (204, 221, 221) | (201, 212, 216)
+  +2  (87, 87, 95) | (87, 87, 95)
+  +3  (111, 112, 115) | (119, 119, 119)
+  +4  (114, 114, 116) | (119, 119, 119)
+
+  PASS  grey top rel == +3
+  PASS  grey h == 23
+  PASS  ink top rel == +9
+  PASS  ink x == 6
+  PASS  blue left == 537
+  PASS  edge @+2 dark (native 87,87,95) got (87, 87, 95)
+  PASS  typed text visible in white band (ink px=22)

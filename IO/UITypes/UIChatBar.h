@@ -22,6 +22,8 @@
 #include "../Components/Textfield.h"
 // Q1 定案的共享框体件（半透明黑底 + 1px 灰边），聊天历史框与 tooltip 同判据。
 #include "../Components/TextTooltip.h"
+// 收起态灰带用纯色矩形（本包没有对应位图，见 classic_fold_panel 注释）。
+#include "../../Graphics/Geometry.h"
 
 // TODO: Change these?
 #include "../Messages.h"
@@ -215,15 +217,42 @@ namespace ms
 		// 参考端目标文字左对齐、紧跟箭头右侧（框内 x≈6，箭头占 0..12）
 		static constexpr int16_t TARGET_TEXT_X = 14;
 
+		// 收起态（历史框关 + 输入未激活）：原生把整条输入带的**内区**涂成不透明
+		// 灰 (119,119,119)，只在里面显示最近一条消息 —— 白色输入带、chatTarget
+		// 目标框、目标文字这时都不画。这就是用户报的「聊天收起不是应该在白色框
+		// 区域嘛」。定版依据见 evidence/w4-chatbar/coords-fold.md：两张原生截帧
+		// （聊天框展开时候.png / 聊天框收起的时候.png）按白带顶缘那条
+		// (255,255,255) 对齐后，收起态灰带顶 = 对齐点 +3、高 23，文字墨迹顶 = +9。
+		// 墨迹左沿原生是 6；我们实测 Text(A11M) 在 draw_x=2 时墨迹落在 4（左 bearing
+		// +2），所以绘制点取 4 让墨迹正好落在 6，而不是把 6 直接抄成绘制点。
+		static constexpr int16_t FOLD_PANEL_TOP = 3;
+		static constexpr int16_t FOLD_PANEL_H = 23;
+		static constexpr int16_t FOLD_TEXT_INK_TOP = 9;
+		static constexpr int16_t FOLD_TEXT_X = 4;
+		// 灰带上方那条 1px 内沿暗线：原生实测 (87,87,95)（x=20/200/300 三列同值，
+		// 只有 ±8 的抖动），是灰带面板自带的内阴影，不是 backgrnd 的像素（我们
+		// 这行透出来的是 (182,195,201) 亮带）。所以贴着灰带顶再画一条。
+		static constexpr int16_t FOLD_EDGE_TOP = FOLD_PANEL_TOP - 1;
+
 		// 聊天目标：BtWhisper 箭头钮 + chatTarget 框体本身都可点，循环切换
 		// （对所有人→密语→组队→工会）；历史框展开/收起用 Basic.img 的
 		// BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
 		TooltipBackdrop classic_log_backdrop;
+		// 本包没有任何位图能拼出收起态那条灰带（base/chat 是 5px 黑白条纹细条、
+		// base/backgrnd2 是半透明白渐变，逐行取样都不等于实测的 (119,119,119) 平
+		// 涂），所以按原生实测色自己铺一块不透明矩形。宽度取输入带宽（定值）。
+		ColorBox classic_fold_panel;
+		// 灰带顶的 1px 内沿暗线，见 FOLD_EDGE_TOP 的实测依据。
+		ColorBox classic_fold_edge;
 		Text classic_target_text;
 		uint8_t classic_chat_target_id = 0;
 		void cycle_chat_target();
 		void set_classic_log(bool open);
+		// 三个贴图按钮（▶ 箭头 / + / −）的可见性只有一个判据：folded = 历史框关
+		// 且输入未激活。toggle_input 与 set_classic_log 两条状态迁移都要重算，
+		// 所以抽成一处，别在两个调用点各写一遍。
+		void sync_classic_buttons();
 
 #if LOG_LEVEL >= LOG_UI
 		ColorBox dimension_box;

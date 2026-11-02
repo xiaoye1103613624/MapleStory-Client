@@ -1,0 +1,11 @@
+native fold size=566x40
+  grey span @x300: (11, 33) (h=23)
+  white rows @x300: [8, 36]
+  text ink top: y=17 x=6  (rel to grey top: 6)
+
+ours sent: 取 capture y 640..758 区段
+  grey span @x300: (46, 69) -> 绝对 y (686, 709) (h=24)
+  white rows @x300 绝对 y: [733, 748]
+  text ink top: 绝对 y=693 x=12 (rel to grey top: 7)
+
+结论判据：灰带顶相对白带顶缘高光 = +2、高 24、文字墨迹顶相对灰带顶 = +7..+9

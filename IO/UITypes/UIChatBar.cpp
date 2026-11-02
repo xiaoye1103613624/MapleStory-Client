@@ -77,13 +77,26 @@ namespace ms
 			// 带内高 26），不是底栏上方另起的一行。定版依据见 UIChatBar.h 常量注释。
 			position = Point<int16_t>(0, static_cast<int16_t>(vh - CLASSIC_BAR_H + INPUT_BAND_TOP));
 			dimension = Point<int16_t>(std::min(vw, MAX_ROW_W), INPUT_ROW_H);
+			// 收起态灰带：宽度跟输入带同宽（position/dimension 定完才能算），
+			// 颜色取原生截帧内区实测平涂值 (119,119,119)，不透明；再补一条原生
+			// 实测 (87,87,95) 的 1px 内沿暗线（evidence/w4-chatbar/coords-fold.md）。
+			classic_fold_panel = ColorBox(dimension.x(), FOLD_PANEL_H, Color(0x777777FF), 1.0f);
+			classic_fold_edge = ColorBox(dimension.x(), 1, Color(0x57575FFF), 1.0f);
 			min_view_y = static_cast<int16_t>(position.y() - user_view_y);
 			view_max = true;
-			view_input = true;
+			// 原生进图时聊天栏就是「收起态」：灰带 + 最近一条消息，白色输入带要
+			// 按 Enter 才出现（UIStateGame 的 TOGGLECHAT 分支已负责开框）。这里
+			// 若留 true，进图永远顶着一条白色输入带 —— 就是用户报的「聊天收起
+			// 不是应该在白色框区域嘛」。
+			view_input = false;
 			dragarea = Point<int16_t>(dimension.x(), 12);
 
+			// 输入正文颜色：白带上必须是深色，原先跟着历史消息用 WHITE，打出来的
+			// 字直接隐进白带（真机抓帧实测：带内除那条 1px 暗线外零墨迹，但发送
+			// 是成功的）。本包所有浅底 Textfield（UIMessenger / UISoftKey /
+			// UIMapSearchPanel）一律用 BLACK，这里对齐。
 			input_text = Textfield(
-				Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+				Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
 				Rectangle<int16_t>(
 					Point<int16_t>(position.x() + CHAT_TARGET_W + 2, position.y() + 6),
 					Point<int16_t>(position.x() + dimension.x() - 34, position.y() + INPUT_TEXT_HEIGHT)
@@ -259,6 +272,11 @@ namespace ms
 
 		toggle_view(Setting<ChatViewMax>::get().load(), false);
 
+		// 进图默认就是收起态，箭头按钮必须跟着收 —— 构造函数里 try_maple_btn 建的
+		// 按钮默认 active，不重算会压在灰带正文左沿上。
+		if (classic_mode)
+			sync_classic_buttons();
+
 #if LOG_LEVEL >= LOG_UI
 		dragarea_box = ColorBox(dragarea.x(), dragarea.y(), Color::Name::BLUE, 0.5f);
 		input_box = ColorBox(input_bg_x, input_bg_y, Color::Name::RED, 0.5f);
@@ -272,6 +290,33 @@ namespace ms
 		if (classic_mode)
 		{
 			Point<int16_t> input_pos = position;
+
+			// 收起态 = 历史框关 且 输入未激活（发完消息 / 按 ESC 之后）。原生这时
+			// 不显示白色输入带，而是把带内区铺成一条不透明灰带（顶 = position+3、
+			// 高 23，上方再压一条 (87,87,95) 的 1px 内沿暗线），只放最近一条消息。
+			const bool folded = !classic_log_open && !view_input;
+
+			if (folded)
+			{
+				classic_fold_panel.draw(DrawArgument(input_pos + Point<int16_t>(0, FOLD_PANEL_TOP)));
+				classic_fold_edge.draw(DrawArgument(input_pos + Point<int16_t>(0, FOLD_EDGE_TOP)));
+
+				if (!message_history.empty())
+				{
+					const Text& latest = message_history.back().text;
+
+					latest.draw(DrawArgument(input_pos
+						+ Point<int16_t>(FOLD_TEXT_X, latest.y_for_ink_top(FOLD_TEXT_INK_TOP))));
+				}
+
+				if (classic_input_bg)
+					classic_input_bg.draw(
+						DrawArgument(input_pos + Point<int16_t>(0, UNDERLINE_Y), Point<int16_t>(dimension.x(), 0))
+					);
+
+				UIElement::draw(inter);
+				return;
+			}
 
 			// 聊天历史框（展开时，输入行上方）：与 tooltip 同一 Q1 判据 ——
 			// 半透明黑底 + 1px 灰边（共享件 TooltipBackdrop），不再裸画 ColorBox。
@@ -1275,17 +1320,30 @@ namespace ms
 		classic_target_text.change_text(TARGET_NAMES[classic_chat_target_id]);
 	}
 
+	void UIChatBar::sync_classic_buttons()
+	{
+		// 收起态（历史框关 + 输入未激活）原生不画左端的 ▶ 密语箭头 —— 灰带里只有
+		// 正文和右端按钮（见 evidence/w4-chatbar/coords-fold.md 的截帧对齐）。箭头
+		// 是 MapleButton，由 UIElement::draw 画，只能显式 deactivate。
+		// 一律用 find 而不是 operator[] —— 后者会往 map 里塞空 unique_ptr 再被解引用。
+		const bool folded = !classic_log_open && !view_input;
+
+		if (const auto it = buttons.find(Buttons::BtWhisper); it != buttons.end() && it->second)
+			it->second->set_active(!folded);
+
+		// 同位互斥：收起态显示 BtMax(+)，展开态显示 BtMin(-)。
+		if (const auto it = buttons.find(Buttons::BtMax); it != buttons.end() && it->second)
+			it->second->set_active(!classic_log_open);
+
+		if (const auto it = buttons.find(Buttons::BtMin); it != buttons.end() && it->second)
+			it->second->set_active(classic_log_open);
+	}
+
 	void UIChatBar::set_classic_log(bool open)
 	{
 		classic_log_open = open;
 
-		// 同位互斥：收起态显示 BtMax(+)，展开态显示 BtMin(-)。
-		// 用 find 而不是 operator[] —— 后者会往 map 里塞空 unique_ptr 再被解引用。
-		if (const auto it = buttons.find(Buttons::BtMax); it != buttons.end() && it->second)
-			it->second->set_active(!open);
-
-		if (const auto it = buttons.find(Buttons::BtMin); it != buttons.end() && it->second)
-			it->second->set_active(open);
+		sync_classic_buttons();
 	}
 
 	void UIChatBar::show_message(const char* message, MessageType type)
@@ -1477,7 +1535,10 @@ namespace ms
 		}
 
 		if (classic_mode)
+		{
+			sync_classic_buttons();
 			return;
+		}
 
 		buttons[Buttons::BtChat]->set_active(view_input);
 		buttons[Buttons::BtItemLink]->set_active(view_input);
