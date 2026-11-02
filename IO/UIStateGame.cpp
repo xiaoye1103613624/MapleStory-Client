@@ -285,7 +285,7 @@ namespace ms
 										tab = UIUserList::Tab::PARTY;
 										break;
 									case KeyAction::Id::BOSSPARTY:
-										tab = UIUserList::Tab::BOSS;
+										tab = UIUserList::Tab::GUILD;
 										break;
 								}
 

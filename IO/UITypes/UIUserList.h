@@ -44,7 +44,7 @@ namespace ms
 		{
 			FRIEND,
 			PARTY,
-			BOSS,
+			GUILD,
 			BLACKLIST,
 			PARTY_MINE,
 			PARTY_SEARCH,
@@ -68,7 +68,7 @@ namespace ms
 		{
 			BT_TAB_FRIEND,
 			BT_TAB_PARTY,
-			BT_TAB_BOSS,
+			BT_TAB_GUILD,
 			BT_TAB_BLACKLIST,
 			BT_TAB_PARTY_MINE,
 			BT_TAB_PARTY_SEARCH,
@@ -88,18 +88,11 @@ namespace ms
 			BT_FRIEND_EXPAND,
 			BT_FRIEND_MESSENGER,
 			BT_FRIEND_GROUP_0,
-			BT_BOSS_0,
-			BT_BOSS_1,
-			BT_BOSS_2,
-			BT_BOSS_3,
-			BT_BOSS_4,
-			BT_BOSS_L,
-			BT_BOSS_R,
-			BT_BOSS_DIFF_L,
-			BT_BOSS_DIFF_R,
-			BT_BOSS_GO,
 			BT_BLACKLIST_ADD,
-			BT_BLACKLIST_DELETE
+			BT_BLACKLIST_DELETE,
+			// 原生页签条第五格「家族联盟」：本包有美术、无页面内容（GuildUnion 未实现），
+			// 只画不切页。排在末尾，不参与 BT_TAB_FRIEND + tab 的页签序号换算。
+			BT_TAB_UNION
 		};
 
 		uint16_t tab;
@@ -125,9 +118,6 @@ namespace ms
 		Text friends_name;
 		Text friends_group_name;
 		Slider friends_slider;
-
-		// Boss tab
-		std::vector<Sprite> boss_sprites;
 
 		// Blacklist tab
 		uint16_t blacklist_tab;

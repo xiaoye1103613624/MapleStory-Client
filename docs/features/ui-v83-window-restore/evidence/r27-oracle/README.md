@@ -217,3 +217,35 @@ agree .767，`BtClose` 与 `RightTab0_selected` 两把尺 agree **1.000 / rmse 0
 的资产取证来自 nx，不是截图）。B7 的「二合一 + 无勾选框」可以照资产与 `Basic.img/CheckBox` 修，
 但**版式对不对没有 oracle**，属「只能用户取证」。
 
+
+## 第十张 spec：UserList（2026-11-02 建）—— 三张底互斥，五格页签
+
+`UserList.json` 6 探针、`check` 对自己的 oracle 帧不合格 0。锚用
+`Tab/enabled/0`（「好友」页签，27x15，**含烘焙中文**）在帧上的左上角 (4,23)，
+agree **1.000 / rmse 0.00** —— 不用 `backgrnd` 定锚的原因写在 spec 的 note 里
+（三张底都 312x389，四张原生帧 302x384 / 310x386 / 313x386 / 310x391 全装不下）。
+
+### 由这张 spec 直接读出的结论
+
+1. **`backgrnd` / `backgrnd2` / `backgrnd3` 是三套互斥的底，不是可叠加的层。**
+   三张同为 312x389、不透明占比各 .988、无整行全透明 ⇒ 同点各画一次时，后画的那张
+   会**整张盖掉**先画的。逐页签判归属用「允许出界的 origin 暴力搜 + 重叠实心像素 meanSAD」
+   （不是把页签美术往底图里找位置 —— 页签是另画的精灵，那样量出来的是负数乱值）：
+   好友 = **backgrnd3** SAD 11.6（backgrnd 26.8 / backgrnd2 29.2）；
+   家族联盟 = **backgrnd2** SAD 7.6（backgrnd 20.1 / backgrnd3 25.4）；
+   组员 = backgrnd 23.5（对 26.5 分离度弱，但三张里它最低）；拒绝列表 = backgrnd 11.1。
+   肉眼复核一致：backgrnd3 带「管理朋友」蓝条 + 分组行，backgrnd2 带输入行 + 底部两格，
+   backgrnd 是净列表。
+2. **页签条五格，代码只接了四格。** 实测相对锚 x = 0 / 31 / 62 / 92 / 145、
+   dy = 0 / -1 / -1 / 0 / -1（宽 27,27,27,51,50）。原生次序 好友 组员 家族 家族联盟 拒绝列表，
+   而 `UIUserList` 把 2 号（家族）当成 BossParty 页、把 3 号（家族联盟）美术接到了
+   「拒绝列表」钮上。本包 `UserList` 根下只有 `BlackList/Friend/Guild/GuildUnion` 四个子树，
+   **没有 `Boss`、也没有 `Party`** ⇒ 第三页与第二页的内容都只有壳；「家族联盟」按原生画灰态格，
+   不接页面。
+3. `Tab3_union` 在本帧只有 **disabled** 态命中（agree 1.000，enabled 态 MISSING）
+   —— 无联盟时原生把这一格置灰，客户端一律画 enabled 就是错。
+4. `BtClose`（`Basic.img/BtClose/normal` 12x12）实测帧上 (288,4)，agree **1.000**；
+   代码原先放在 (244,7)（按 276 宽的旧 dimension 估的），而本包底图宽 312。
+5. `BtAddGroup` 实测 (68,77) agree 1.000。两张钮美术同为 65x18、α=255 实心从 art x=1 起，
+   帧上两钮之间空 65..67 三列 ⇒ `BtAddFriend` 落 (0,77) 是**由实测推导**，不是独立 oracle；
+   `BtAddFriend` 自己的位图在这帧 agree 仅 .231~.650，按「宁可少写」不建探针。

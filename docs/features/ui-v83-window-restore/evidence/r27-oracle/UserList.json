@@ -73,6 +73,22 @@
       }
     },
     {
+      "name": "BtClose",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_BtClose_normal.png",
+      "region": [270, -25, 300, 20],
+      "min_agree": 0.9,
+      "note": "标题栏关闭钮（Basic.img/BtClose/normal，12x12）—— 定 dimension 右边界",
+      "oracle": {
+        "x": 284,
+        "y": -19,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
       "name": "BtAddGroup",
       "kind": "tmpl",
       "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_BtAddGroup_normal.png",

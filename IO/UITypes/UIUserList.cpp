@@ -55,23 +55,42 @@ namespace ms
 		if (!Main)
 			Main = UserList;
 
-		if (Main["backgrnd"])
-			sprites.emplace_back(Main["backgrnd"]);
+		// backgrnd / backgrnd2 / backgrnd3 是三张**互斥**的底：同为 312x389、不透明占比各
+		// .988、无整行全透明，原生按页签族只画其中一张。以前在这里 emplace 进 sprites，
+		// 就和 change_tab() 里按页签选的 background 同点叠了两张全不透明底 —— 后画的整张
+		// 盖掉先画的，页签一换看到的永远是 background 那张。逐页签实测（meanSAD，越低越像，
+		// 见 evidence/r27-oracle/README.md）：好友=backgrnd3 11.6、家族联盟=backgrnd2 7.6、
+		// 组员/拒绝=backgrnd。底改由 change_tab() 单张选画。
 
 		if (close)
-			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(244, 7));
+			buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(288, 4));
 
 		nl::node taben = Main["Tab"]["enabled"];
 		nl::node tabdis = Main["Tab"]["disabled"];
 
-		if (tabdis["0"] && taben["0"])
-			buttons[Buttons::BT_TAB_FRIEND] = std::make_unique<TwoSpriteButton>(tabdis["0"], taben["0"]);
-		if (tabdis["1"] && taben["1"])
-			buttons[Buttons::BT_TAB_PARTY] = std::make_unique<TwoSpriteButton>(tabdis["1"], taben["1"]);
-		if (tabdis["2"] && taben["2"])
-			buttons[Buttons::BT_TAB_BOSS] = std::make_unique<TwoSpriteButton>(tabdis["2"], taben["2"]);
-		if (tabdis["3"] && taben["3"])
-			buttons[Buttons::BT_TAB_BLACKLIST] = std::make_unique<TwoSpriteButton>(tabdis["3"], taben["3"]);
+		// 页签条落位：oracle 锚 = Tab/enabled/0 在原生帧上的 (4,23)，五格相对锚
+		// x = 0 / 31 / 62 / 92 / 145，y = 0 / -1 / -1 / 0 / -1。原生五格依次是
+		// 好友 组员 家族 家族联盟 拒绝列表 —— 原先只接了前四格，「拒绝列表」错拿了
+		// 3 号（家族联盟）的美术，第三格（家族）被当成 BossParty 页用。
+		static const Point<int16_t> TAB_POS[5] = {
+			Point<int16_t>(4, 23),
+			Point<int16_t>(35, 22),
+			Point<int16_t>(66, 22),
+			Point<int16_t>(96, 23),
+			Point<int16_t>(149, 22)
+		};
+
+		auto make_tab = [&](uint16_t id, uint8_t index)
+		{
+			if (tabdis[index] && taben[index])
+				buttons[id] = std::make_unique<TwoSpriteButton>(tabdis[index], taben[index], TAB_POS[index]);
+		};
+
+		make_tab(Buttons::BT_TAB_FRIEND, 0);
+		make_tab(Buttons::BT_TAB_PARTY, 1);
+		make_tab(Buttons::BT_TAB_GUILD, 2);
+		make_tab(Buttons::BT_TAB_UNION, 3);
+		make_tab(Buttons::BT_TAB_BLACKLIST, 4);
 
 		// Party Tab
 		nl::node Party = Main["Party"];
@@ -157,8 +176,16 @@ namespace ms
 		friends_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "none", 0);
 		friends_group_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Default Group (0/0)", 0);
 
-		try_btn(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"]);
-		try_btn(Buttons::BT_FRIEND_ADD_GROUP, Friend["BtAddGroup"]);
+		// 「增加朋友 / 增加群」横排：BtAddGroup 在原生帧上实测 (68,77) agree=1.000；
+		// 两张钮同为 65x18，帧上两者之间空 65..67 三列 ⇒ BtAddFriend 落 (0,77)。
+		auto try_btn_at = [&](uint16_t id, nl::node src, Point<int16_t> pos)
+		{
+			if (src)
+				buttons[id] = std::make_unique<MapleButton>(src, pos);
+		};
+
+		try_btn_at(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"], Point<int16_t>(0, 77));
+		try_btn_at(Buttons::BT_FRIEND_ADD_GROUP, Friend["BtAddGroup"], Point<int16_t>(68, 77));
 		try_btn(Buttons::BT_FRIEND_EXPAND, Friend["BtPlusFriend"]);
 		// Friend 页无专用 Messenger 钮时：复用 UIWindow.img/Messenger/BtEnter 作开窗入口。
 		{
@@ -194,43 +221,6 @@ namespace ms
 		int16_t friends_unitrows = 6;
 		int16_t friends_rowmax = 6;
 		friends_slider = Slider(Slider::Type::DEFAULT_SILVER, Range<int16_t>(friends_y, friends_height), friends_x, friends_unitrows, friends_rowmax, [](bool) {});
-
-		// Boss tab
-		nl::node Boss = Main["Boss"];
-
-		if (Boss["base"])
-			boss_sprites.emplace_back(Boss["base"]);
-		if (Boss["base3"])
-			boss_sprites.emplace_back(Boss["base3"]);
-		if (Boss["base2"])
-			boss_sprites.emplace_back(Boss["base2"]);
-
-		auto try_two = [&](uint16_t id, nl::node dis, nl::node en)
-		{
-			if (dis && en)
-				buttons[id] = std::make_unique<TwoSpriteButton>(dis, en);
-		};
-
-		try_two(Buttons::BT_BOSS_0, Boss["BossList"]["0"]["icon"]["disabled"]["0"], Boss["BossList"]["0"]["icon"]["normal"]["0"]);
-		try_two(Buttons::BT_BOSS_1, Boss["BossList"]["1"]["icon"]["disabled"]["0"], Boss["BossList"]["1"]["icon"]["normal"]["0"]);
-		try_two(Buttons::BT_BOSS_2, Boss["BossList"]["2"]["icon"]["disabled"]["0"], Boss["BossList"]["2"]["icon"]["normal"]["0"]);
-		try_two(Buttons::BT_BOSS_3, Boss["BossList"]["3"]["icon"]["disabled"]["0"], Boss["BossList"]["3"]["icon"]["normal"]["0"]);
-		try_two(Buttons::BT_BOSS_4, Boss["BossList"]["4"]["icon"]["disabled"]["0"], Boss["BossList"]["4"]["icon"]["normal"]["0"]);
-		try_btn(Buttons::BT_BOSS_L, Boss["BtArrow"]["Left"]);
-		try_btn(Buttons::BT_BOSS_R, Boss["BtArrow"]["Right"]);
-		try_btn(Buttons::BT_BOSS_DIFF_L, Boss["BtArrow2"]["Left"]);
-		try_btn(Buttons::BT_BOSS_DIFF_R, Boss["BtArrow2"]["Right"]);
-		try_btn(Buttons::BT_BOSS_GO, Boss["BtEntry"]);
-		deactivate(Buttons::BT_BOSS_0);
-		deactivate(Buttons::BT_BOSS_1);
-		deactivate(Buttons::BT_BOSS_2);
-		deactivate(Buttons::BT_BOSS_3);
-		deactivate(Buttons::BT_BOSS_4);
-		deactivate(Buttons::BT_BOSS_L);
-		deactivate(Buttons::BT_BOSS_R);
-		deactivate(Buttons::BT_BOSS_DIFF_L);
-		deactivate(Buttons::BT_BOSS_DIFF_R);
-		deactivate(Buttons::BT_BOSS_GO);
 
 		// Blacklist tab
 		nl::node BlackList = Main["BlackList"];
@@ -299,11 +289,6 @@ namespace ms
 			friends_group_name.draw(position + Point<int16_t>(29, 114));
 			friends_slider.draw(position);
 		}
-		else if (tab == Buttons::BT_TAB_BOSS)
-		{
-			for (Sprite sprite : boss_sprites)
-				sprite.draw(position, alpha);
-		}
 		else if (tab == Buttons::BT_TAB_BLACKLIST)
 		{
 			blacklist_title.draw(position + Point<int16_t>(24, 104));
@@ -320,10 +305,6 @@ namespace ms
 
 		if (tab == Buttons::BT_TAB_FRIEND)
 			for (Sprite sprite : friend_sprites)
-				sprite.update();
-
-		if (tab == Buttons::BT_TAB_BOSS)
-			for (Sprite sprite : boss_sprites)
 				sprite.update();
 	}
 
@@ -418,7 +399,7 @@ namespace ms
 				break;
 			case Buttons::BT_TAB_FRIEND:
 			case Buttons::BT_TAB_PARTY:
-			case Buttons::BT_TAB_BOSS:
+			case Buttons::BT_TAB_GUILD:
 			case Buttons::BT_TAB_BLACKLIST:
 				change_tab(buttonid);
 				return Button::State::PRESSED;
@@ -631,7 +612,11 @@ namespace ms
 		};
 
 		nl::node Main = UserList["Main"] ? UserList["Main"] : UserList;
-		background = tabid == Buttons::BT_TAB_BOSS ? Main["Boss"]["backgrnd3"] : Main["backgrnd2"];
+
+		// 三张底互斥，按当前页签只选一张（实测见构造函数注释）。本包没有 Main/Boss 子树，
+		// 原先写的 Main["Boss"]["backgrnd3"] 恒为空 Texture；backgrnd2 属于「家族联盟」页，
+		// 该页在本包只有美术、没有内容，故暂不被选中。
+		background = tabid == Buttons::BT_TAB_FRIEND ? Main["backgrnd3"] : Main["backgrnd"];
 
 		if (oldtab != tab)
 			set_st(Buttons::BT_TAB_FRIEND + oldtab, Button::State::NORMAL);
@@ -677,38 +662,6 @@ namespace ms
 			set_act(Buttons::BT_TAB_FRIEND_ALL, false);
 			set_act(Buttons::BT_TAB_FRIEND_ONLINE, false);
 			set_act(Buttons::BT_FRIEND_GROUP_0, false);
-		}
-
-		if (tab == Buttons::BT_TAB_BOSS)
-		{
-			set_act(Buttons::BT_BOSS_0, true);
-			set_act(Buttons::BT_BOSS_1, true);
-			set_act(Buttons::BT_BOSS_2, true);
-			set_act(Buttons::BT_BOSS_3, true);
-			set_act(Buttons::BT_BOSS_4, true);
-			set_act(Buttons::BT_BOSS_L, true);
-			set_act(Buttons::BT_BOSS_R, true);
-			set_act(Buttons::BT_BOSS_DIFF_L, true);
-			set_act(Buttons::BT_BOSS_DIFF_R, true);
-			set_act(Buttons::BT_BOSS_GO, true);
-			set_st(Buttons::BT_BOSS_L, Button::State::DISABLED);
-			set_st(Buttons::BT_BOSS_R, Button::State::DISABLED);
-			set_st(Buttons::BT_BOSS_GO, Button::State::DISABLED);
-			set_st(Buttons::BT_BOSS_DIFF_L, Button::State::DISABLED);
-			set_st(Buttons::BT_BOSS_DIFF_R, Button::State::DISABLED);
-		}
-		else
-		{
-			set_act(Buttons::BT_BOSS_0, false);
-			set_act(Buttons::BT_BOSS_1, false);
-			set_act(Buttons::BT_BOSS_2, false);
-			set_act(Buttons::BT_BOSS_3, false);
-			set_act(Buttons::BT_BOSS_4, false);
-			set_act(Buttons::BT_BOSS_L, false);
-			set_act(Buttons::BT_BOSS_R, false);
-			set_act(Buttons::BT_BOSS_DIFF_L, false);
-			set_act(Buttons::BT_BOSS_DIFF_R, false);
-			set_act(Buttons::BT_BOSS_GO, false);
 		}
 
 		if (tab == Buttons::BT_TAB_BLACKLIST)
