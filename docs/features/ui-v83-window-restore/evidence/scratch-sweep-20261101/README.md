@@ -74,3 +74,37 @@ _t11          空
 ```
 
 合计约 290 MB，其中 `_ida_beidou` 删了要重跑整轮反编译分析，绝不随批删。
+
+## 追加（同日第二轮）：目录处置结果与判据补查
+
+上一段是**待拍板快照**。补查发现两个必须先修的漏洞：
+
+1. `classify` 的语料白名单里没有 `.vcxproj/.props/.targets`，所以「构建是否引用」根本没被查到 ⇒ 本轮改为
+   对全仓（含构建配置、排除 `build*`/`.vs`）做词边界 grep 复核；
+2. 早先的子串 grep 会把 `_native-samples` 误算成 `_nat` 的引用 ⇒ 改用 `[/\"'\` (=（(]$d([/\"'\`)])` 词边界，
+   `_nat` 的 40 条「引用」实际全是 `_native-samples` 撞名，真引用为 0。
+
+处置（`_nat` 里 9 张原生帧先按 md5 与 `r27-oracle/frames/` 比对，8 张是已归档帧的副本，
+唯一不重复的 `bottom_btns.png` 先入库为
+[`../r27-oracle/frames/native_bottom_btns.png`](../r27-oracle/frames/native_bottom_btns.png) 再删）：
+
+```text
+rmdir _nat           freed=   2.7 MB   （8/9 与归档帧同 md5，第 9 张已入库）
+rmdir _sdl3dl        freed=  73.4 MB   （构建实际取 includes/SDL3，仓库自带；这里是下载缓存）
+rmdir _rea_work      freed=   8.1 MB   （BeiDou_copy.exe + 探针脚本，无引用）
+rmdir _t11           freed=   0.0 MB   （空目录）
+rmdir _uiinv         freed=   0.0 MB
+rmdir _audit_out     freed=   0.3 MB
+rmdir _audit_tmp     freed=   0.2 MB
+rmdir _ida_ui_out    freed=   0.5 MB
+rmdir __pycache__    freed=   0.1 MB
+freed_total_MB=85.3
+kept  _ida_beidou   174.3 MB   BeiDou.exe.i64：IDA 数据库，删了要重跑整轮自动分析
+kept  _ms_probe      30.6 MB   port-095 opcode 文档生成脚本的工作目录（README 明写「须在 E:/project/_ms_probe/ 运行」）
+kept  _w6_pngs        0.1 MB   evidence/w6-stats/coords.md:11 仍指向它
+```
+
+**并发现场**：清理时 `E:/project/_audit/` 正在被写（21:16–21:25，`equip/inventory/minimap/skill/stats/henesys.png`），
+仓库同时有一处不属于本会话的 `IO/UITypes/UIMapSearchPanel.cpp` +255 行未提交改动 ⇒ 另一个会话正在并行做
+UI 取证与实现。本轮只提交文档，未 stage 那个源文件，也没碰 `_audit/`。
+

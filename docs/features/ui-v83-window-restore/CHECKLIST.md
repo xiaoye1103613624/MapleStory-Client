@@ -353,6 +353,9 @@
 - 本机临时件已按「是否仍被引用」清过一遍（**1529 个 / 168.9 MB 删除，删后反查引用断链 0**）：
   判据脚本 [`tools/scratch_sweep.py`](tools/scratch_sweep.py)，清单与副作用见
   [`evidence/scratch-sweep-20261101/README.md`](evidence/scratch-sweep-20261101/README.md)。
-  **未动的 12 个 `_` 目录约 290 MB 等你拍板**，其中 `_ida_beidou`（174 MB）是 IDA 数据库、删了要重跑整轮分析，
-  `_ms_probe`（30 MB，11-01 还在写）与 `_sdl3dl`（73 MB，9 月残留）性质不同，没随批删。
+  12 个 `_` 目录也已按同一判据清完：**删 9 个（85.3 MB），留 3 个 + 1 个活跃目录**——
+  `_ida_beidou` 174 MB 是 IDA 数据库（删则要重跑整轮自动分析）、`_ms_probe` 30 MB 是 opcode 文档生成脚本的工作目录、
+  `_w6_pngs` 仍被 `evidence/w6-stats/coords.md` 指向、`_audit` 是清理当时另一个会话正在写的取证目录（未碰）。
+  删前补查了两次判据漏洞：语料白名单原本没有 `.vcxproj/.props/.targets`（SDL3 的实际取处在 `includes/SDL3`，
+  `_sdl3dl` 只是下载缓存，确认可删），以及 `_nat` 的「40 条引用」其实是 `_native-samples` 子串撞名。
 

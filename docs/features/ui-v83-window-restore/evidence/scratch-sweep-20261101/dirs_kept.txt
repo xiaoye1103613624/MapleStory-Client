@@ -1,0 +1,8 @@
+保留的 _ 目录（第二轮处置后，2026-11-01）
+# 判据补查：classify 的语料原本不含 .vcxproj/.props/.targets，本轮另做全仓词边界 grep 复核构建引用；
+# _ida_beidou=IDA 数据库(删则要重跑整轮自动分析)；_ms_probe=port-095 opcode 文档生成脚本的工作目录；
+# _w6_pngs=evidence/w6-stats/coords.md:11 仍指向；_audit=清理时另一个会话正在写，未碰。
+_ida_beidou   174.3 MB  live IDA database (BeiDou.exe.i64)
+_ms_probe      30.6 MB  referenced working dir for opcode-doc generation
+_w6_pngs        0.1 MB  referenced by evidence/w6-stats/coords.md
+_audit          (活跃)  另一会话 21:16-21:25 正在写，本轮不处置
