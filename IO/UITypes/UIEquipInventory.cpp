@@ -88,18 +88,35 @@ namespace ms
 
 	UIEquipInventory::UIEquipInventory(const Inventory& invent) : UIDragElement<PosEQINV>(), inventory(invent), tab(Buttons::BT_TAB1), hasPendantSlot(false), hasPocketSlot(false)
 	{
-		const bool classic_layout = UiAssetResolve::is_classic_hud();
+		tab_source[Buttons::BT_TAB0] = "Equip";
+		tab_source[Buttons::BT_TAB1] = "Cash";
+		tab_source[Buttons::BT_TAB2] = "Pet";
+		tab_source[Buttons::BT_TAB3] = "Android";
 
-		if (classic_layout)
+		nl::node close = basic_close_btn();
+		nl::node Equip = UiAssetResolve::window4("Equip");
+
+		if (!UiAssetResolve::usable(Equip))
 		{
-			// v83 Equip/backgrnd（175x304）槽位格逐格实测（r05-ui-layout.md §2）：
+			active = false;
+			dimension = Point<int16_t>(0, 0);
+			return;
+		}
+
+		classic_flat = !UiAssetResolve::usable(Equip[tab_source[Buttons::BT_TAB0]]);
+
+		// 槽位坐标表必须和**美术分支**用同一个开关。以前这张表按
+		// UiAssetResolve::is_classic_hud()（StatusBar.img 在不在）选，底图按
+		// classic_flat（Equip/Equip 子壳在不在）选 —— 两个谓词不同源，一旦某包里
+		// 一个成立一个不成立，就是「底图是 v83 单张、坐标是另一套 6 列」的整窗错位。
+		if (classic_flat)
+		{
+			// v83 Equip/backgrnd（175x304）槽位格逐格实测（evidence/r27-b3-equip/）：
 			// 列 x=5/38/71/104/137（步进 33），行 y=32/65/98/131/164/197/230（步进 33）。
 			// 每格标签烘焙在精灵里，实际版式：
 			//   行1 帽子(3列)；行2 勋章/额饰/戒指/戒指；
 			//   行3 眼饰/耳饰；行4 披风/上衣/项链/武器/盾牌；
 			//   行5 手套/裤·裙/腰带/指环/指环；行6 鞋子(3列)；行7 骑兽/鞍子。
-			// 旧表 HAT 落在第 2 列 (38,35)——帽子标签实际在第 3 列，
-			// 导致帽子图标压到额饰格、帽子格空置。
 			iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(71, 32);
 			iconpositions[EquipSlot::Id::MEDAL] = Point<int16_t>(5, 65);
 			iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(38, 65);
@@ -161,25 +178,6 @@ namespace ms
 			iconpositions[EquipSlot::Id::HEART] = Point<int16_t>(178, 255);
 		}
 
-		tab_source[Buttons::BT_TAB0] = "Equip";
-		tab_source[Buttons::BT_TAB1] = "Cash";
-		tab_source[Buttons::BT_TAB2] = "Pet";
-		tab_source[Buttons::BT_TAB3] = "Android";
-
-		nl::node close = basic_close_btn();
-		nl::node Equip = UiAssetResolve::window4("Equip");
-
-		if (!UiAssetResolve::usable(Equip))
-		{
-			active = false;
-			dimension = Point<int16_t>(0, 0);
-			return;
-		}
-
-		bool classic_flat = !UiAssetResolve::usable(Equip[tab_source[Buttons::BT_TAB0]]);
-
-		this->classic_flat = classic_flat;
-
 		nl::node backgrnd = Equip["backgrnd"];
 		Point<int16_t> bg_dimensions = Texture(backgrnd).get_dimensions();
 
@@ -224,7 +222,11 @@ namespace ms
 				try_maple_btn(buttons, Buttons::BT_PET_SHOW, Equip["BtPetEquipShow"],
 					Point<int16_t>(static_cast<int16_t>(right - 73), static_cast<int16_t>(bottom - 24)), "equip BtPetEquipShow");
 
-				// 页签 origin=(15,0)（四态同 origin），间距 34，贴图左上角 (right+7, bottom-30) = (182/216/250, 274)
+				// 实测 BtPet1/2/3 四态 origin 都是 (15,13)（不是旧注释写的 (15,0)，见
+				// evidence/r27-b3-equip/README.md §1）。这三格在现有原生帧上 agree 仅 .322
+				// —— 那张帧没画宠物页签，落位没有尺，故本轮**只记不改**：按 (15,0) 推出来的
+				// 现有 y 可能整体高 13px，等一张展开宠物面板的原生帧再定（列入用户取证）。
+				// 间距 34 沿用 evidence/w7-equip/coords.md 的模板匹配结果。
 				static const char* const pet_tabs[3] = { "BtPet1", "BtPet2", "BtPet3" };
 
 				for (uint16_t i = 0; i < 3; i++)
@@ -340,7 +342,11 @@ namespace ms
 				if (ip.x() == 0 && ip.y() == 0)
 					continue;
 
-				iter.second->draw(position + ip + Point<int16_t>(4, 4));
+				// 与 slot_by_position() 同源：绘制点就是槽位格左上角，图标自身的
+				// texture origin 由 DrawArgument 负责补偿。原先这里额外 +（4,4），
+				// 而底图凹槽相位实测已经是 (5,32) 起、格 32x32 —— 那 4px 会把每件装备
+				// 压向右下、盖住下一格的标签（用户报的「装备 ui 位置偏移」）。
+				iter.second->draw(position + ip);
 			}
 		}
 		else if (tab == Buttons::BT_TAB2)
@@ -713,21 +719,32 @@ namespace ms
 		if (tab != Buttons::BT_TAB0)
 			return EquipSlot::Id::NONE;
 
+		EquipSlot::Id unoccupied = EquipSlot::Id::NONE;
+
 		for (auto iter : iconpositions)
 		{
 			if (iter.second.x() == 0 && iter.second.y() == 0)
 				continue;
 
+			// 命中区与绘制同源：格左上角 = iconpositions，格大小 = 底图凹槽 32x33 里的 32。
 			Rectangle<int16_t> iconrect = Rectangle<int16_t>(
 				position + iter.second,
 				position + iter.second + Point<int16_t>(32, 32)
 				);
 
-			if (iconrect.contains(cursorpos))
+			if (!iconrect.contains(cursorpos))
+				continue;
+
+			// 双手武器同时占 WEAPON 与 SUBWEAPON 两格（(137,131) 是共用格，原生语义），
+			// 取槽时必须先给「这一格真有装备」的那个 id，否则 tooltip 会串到空的另一 id 上。
+			if (icons[iter.first])
 				return iter.first;
+
+			if (unoccupied == EquipSlot::Id::NONE)
+				unoccupied = iter.first;
 		}
 
-		return EquipSlot::Id::NONE;
+		return unoccupied;
 	}
 
 	void UIEquipInventory::change_tab(uint16_t tabid)
