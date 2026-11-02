@@ -2,7 +2,9 @@
 """R27-B1b 真机自证：在已进世界的客户端上开背包(I)/技能(K)窗并 PrintWindow 抓帧。
 
 打键前断言前台（见项目记忆 live-client-verification-gotchas 第 6/8 条），抢不到就中止。
+进世界后要先点一下窗口（拿激活）再打键，否则热键不生效（2026-11-03 真机）。
 用法：python open_window.py i k
+每步输出名带序号：同一个键打两次（开->关）不会把开态帧覆盖掉。
 """
 import importlib.util
 import subprocess
@@ -23,13 +25,13 @@ if not hwnd:
 if not d.foreground(hwnd):
     raise SystemExit('ABORT: 抢不到前台，未发送任何输入')
 
-for name in argv[1:]:
+for step, name in enumerate(argv[1:], 1):
     scan, ext = d.KEYS[name]
     d.send_key(scan, ext, False)
     time.sleep(0.05)
     d.send_key(scan, ext, True)
     time.sleep(1.2)
-    out = 'E:/project/_r27_win_%s.png' % name
+    out = 'E:/project/_r27_win_%02d_%s.png' % (step, name)
     subprocess.run([sys.executable, 'E:/project/_cap2.py', out, str(hwnd)],
                    check=True, capture_output=True)
     print('key %s -> %s' % (name, out), flush=True)

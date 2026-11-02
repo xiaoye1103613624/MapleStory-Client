@@ -1,0 +1,398 @@
+{
+ "window_view": [
+  560,
+  99
+ ],
+ "border": [
+  8,
+  31
+ ],
+ "cells": [
+  {
+   "row": 0,
+   "cell": [
+    577,
+    231
+   ]
+  },
+  {
+   "row": 1,
+   "cell": [
+    577,
+    271
+   ]
+  },
+  {
+   "row": 2,
+   "cell": [
+    577,
+    311
+   ]
+  },
+  {
+   "row": 3,
+   "cell": [
+    577,
+    351
+   ]
+  }
+ ],
+ "probes": [
+  {
+   "row": 0,
+   "probe": "in-TL",
+   "frame": [
+    581,
+    235
+   ],
+   "area": 44386,
+   "present": true,
+   "bbox": [
+    575,
+    232,
+    840,
+    427
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 0,
+   "probe": "in-C",
+   "frame": [
+    593,
+    247
+   ],
+   "area": 44944,
+   "present": true,
+   "bbox": [
+    587,
+    244,
+    852,
+    439
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 0,
+   "probe": "in-BR",
+   "frame": [
+    605,
+    259
+   ],
+   "area": 45418,
+   "present": true,
+   "bbox": [
+    599,
+    256,
+    864,
+    451
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 0,
+   "probe": "gap-Y",
+   "frame": [
+    593,
+    267
+   ],
+   "area": 288,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 0,
+   "probe": "gap-X",
+   "frame": [
+    613,
+    247
+   ],
+   "area": 303,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 1,
+   "probe": "in-TL",
+   "frame": [
+    581,
+    275
+   ],
+   "area": 41082,
+   "present": true,
+   "bbox": [
+    575,
+    272,
+    840,
+    465
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 1,
+   "probe": "in-C",
+   "frame": [
+    593,
+    287
+   ],
+   "area": 41459,
+   "present": true,
+   "bbox": [
+    587,
+    284,
+    852,
+    477
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 1,
+   "probe": "in-BR",
+   "frame": [
+    605,
+    299
+   ],
+   "area": 41741,
+   "present": true,
+   "bbox": [
+    599,
+    296,
+    864,
+    489
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 1,
+   "probe": "gap-Y",
+   "frame": [
+    593,
+    307
+   ],
+   "area": 292,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 1,
+   "probe": "gap-X",
+   "frame": [
+    613,
+    287
+   ],
+   "area": 307,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 2,
+   "probe": "in-TL",
+   "frame": [
+    581,
+    315
+   ],
+   "area": 41268,
+   "present": true,
+   "bbox": [
+    575,
+    312,
+    840,
+    505
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 2,
+   "probe": "in-C",
+   "frame": [
+    593,
+    327
+   ],
+   "area": 41801,
+   "present": true,
+   "bbox": [
+    587,
+    324,
+    852,
+    517
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 2,
+   "probe": "in-BR",
+   "frame": [
+    605,
+    339
+   ],
+   "area": 41858,
+   "present": true,
+   "bbox": [
+    599,
+    336,
+    864,
+    529
+   ],
+   "tipsize": [
+    266,
+    194
+   ]
+  },
+  {
+   "row": 2,
+   "probe": "gap-Y",
+   "frame": [
+    593,
+    347
+   ],
+   "area": 272,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 2,
+   "probe": "gap-X",
+   "frame": [
+    613,
+    327
+   ],
+   "area": 304,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 3,
+   "probe": "in-TL",
+   "frame": [
+    581,
+    355
+   ],
+   "area": 44903,
+   "present": true,
+   "bbox": [
+    575,
+    352,
+    840,
+    547
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 3,
+   "probe": "in-C",
+   "frame": [
+    593,
+    367
+   ],
+   "area": 44584,
+   "present": true,
+   "bbox": [
+    587,
+    364,
+    852,
+    559
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 3,
+   "probe": "in-BR",
+   "frame": [
+    605,
+    379
+   ],
+   "area": 43421,
+   "present": true,
+   "bbox": [
+    599,
+    376,
+    864,
+    571
+   ],
+   "tipsize": [
+    266,
+    196
+   ]
+  },
+  {
+   "row": 3,
+   "probe": "gap-Y",
+   "frame": [
+    593,
+    387
+   ],
+   "area": 322,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  },
+  {
+   "row": 3,
+   "probe": "gap-X",
+   "frame": [
+    613,
+    367
+   ],
+   "area": 299,
+   "present": false,
+   "bbox": null,
+   "tipsize": null
+  }
+ ],
+ "j3": {
+  "same": [
+   0.0854,
+   0.0747,
+   0.088,
+   0.0778,
+   0.0804,
+   0.0707,
+   0.0847,
+   0.0967
+  ],
+  "cross": [
+   0.153,
+   0.1548,
+   0.102
+  ],
+  "tol_same": 0.05,
+  "tol_diff": 0.1
+ },
+ "verdict": "FAIL"
+}

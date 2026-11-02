@@ -108,11 +108,20 @@ namespace ms
 		}
 	}
 
-	void UISkillBook::SkillDisplayMeta::draw(const DrawArgument& args) const
+	void UISkillBook::SkillDisplayMeta::draw(Point<int16_t> parent, Point<int16_t> cell) const
 	{
-		icon->draw(args.getpos());
-		name_text.draw(args + Point<int16_t>(38, -5));
-		level_text.draw(args + Point<int16_t>(38, 13));
+		// 图标本格 = 格底 + META（实测图标相对行底 (2,2)），几何写进 Icon 之后，
+		// send_cursor / skill_by_position / 抓取偏移全部从它推；书名与等级沿用
+		// 相对图标同一点的旧排版。
+		const Point<int16_t> meta = cell + SKILL_META_OFFSET;
+
+		icon->set_cell(meta);
+		icon->draw_at(parent);
+
+		Point<int16_t> base = parent + meta;
+
+		name_text.draw(base + Point<int16_t>(38, -5));
+		level_text.draw(base + Point<int16_t>(38, 13));
 	}
 
 	int32_t UISkillBook::SkillDisplayMeta::get_id() const
@@ -376,7 +385,8 @@ namespace ms
 			// 现代双列布局（第二列 x=153 已越出 175 宽窗口）仅现代窗使用。
 			for (int16_t i = 0; i < rows; i++)
 			{
-				Point<int16_t> pos = position + CLASSIC_SKILL_OFFSET + Point<int16_t>(0, static_cast<int16_t>(ROW_HEIGHT * i));
+				const Point<int16_t> cell = skill_cell(i);
+				Point<int16_t> pos = position + cell;
 				size_t index = skill_index(i);
 
 				if (index < skills.size())
@@ -391,7 +401,7 @@ namespace ms
 						skills[index].get_icon()->set_state(StatefulIcon::State::DISABLED);
 					}
 
-					skills[index].draw(pos + SKILL_META_OFFSET);
+					skills[index].draw(position, cell);
 
 					if (i < rows - 1)
 						line.draw(pos + LINE_OFFSET);
@@ -400,16 +410,11 @@ namespace ms
 		}
 		else
 		{
-			Point<int16_t> skill_position_l = position + SKILL_OFFSET + Point<int16_t>(-1, 0);
-			Point<int16_t> skill_position_r = position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
-
 			for (int16_t i = 0; i < rows; i++)
 			{
-				Point<int16_t> pos = skill_position_l;
+				const Point<int16_t> cell = skill_cell(i);
+				Point<int16_t> pos = position + cell;
 				size_t index = skill_index(i);
-
-				if (i % 2)
-					pos = skill_position_r;
 
 				if (index < skills.size())
 				{
@@ -423,7 +428,7 @@ namespace ms
 						skills[index].get_icon()->set_state(StatefulIcon::State::DISABLED);
 					}
 
-					skills[index].draw(pos + SKILL_META_OFFSET);
+					skills[index].draw(position, cell);
 				}
 				else
 				{
@@ -432,12 +437,6 @@ namespace ms
 
 				if (i < rows - 2)
 					line.draw(pos + LINE_OFFSET);
-
-				if (i % 2)
-				{
-					skill_position_l.shift_y(ROW_HEIGHT);
-					skill_position_r.shift_y(ROW_HEIGHT);
-				}
 			}
 		}
 
@@ -672,7 +671,7 @@ namespace ms
 
 	void UISkillBook::doubleclick(Point<int16_t> cursorpos)
 	{
-		const SkillDisplayMeta* skill = skill_by_position(cursorpos - position);
+		const SkillDisplayMeta* skill = skill_by_position(cursorpos);
 
 		if (skill)
 		{
@@ -710,14 +709,6 @@ namespace ms
 			}
 		}
 
-		// v83 经典单列：左右列同点、每行推进；现代双列：奇偶分列、两行推进。
-		Point<int16_t> skill_position_l = classic
-			? position + CLASSIC_SKILL_OFFSET
-			: position + SKILL_OFFSET + Point<int16_t>(-1, 0);
-		Point<int16_t> skill_position_r = classic
-			? position + CLASSIC_SKILL_OFFSET
-			: position + SKILL_OFFSET + Point<int16_t>(-1 + ROW_WIDTH, 0);
-
 		if (!grabbing)
 		{
 			// v83 经典单列：一行一个技能、每行推进；现代双列：奇偶分列、每两行推进。
@@ -730,50 +721,42 @@ namespace ms
 				if (i >= skills.size())
 					break;
 
-				Point<int16_t> skill_position = skill_position_l;
+				// 命中 = draw 刚写进 Icon 的本格（格底 + SKILL_META_OFFSET）。
+				// 旧实现在这里另算一个 Rectangle(0,32,0,32) 贴到**格底**上，而图标画在
+				// 格底 +（2,2），抓取偏移又按格底算 —— 三处三个点，鼠标看着压在图标上
+				// 却不算这格。现在都从 Icon 的几何回推，画哪点哪。
+				StatefulIcon* icon = skills[i].get_icon();
 
-				if (!classic && r % 2)
-					skill_position = skill_position_r;
+				if (!icon->contains(position, cursorpos))
+					continue;
 
-				constexpr Rectangle<int16_t> bounds = Rectangle<int16_t>(0, 32, 0, 32);
-				bool inrange = bounds.contains(cursorpos - skill_position);
-
-				if (inrange)
+				selected_skill_id = skills[i].get_id();
+				if (clicked)
 				{
-					selected_skill_id = skills[i].get_id();
-					if (clicked)
+					clear_tooltip();
+					grabbing = true;
+
+					int32_t skill_id = skills[i].get_id();
+					int32_t skill_level = skillbook.get_level(skill_id);
+
+					if (skill_level > 0 && !SkillData::get(skill_id).is_passive())
 					{
-						clear_tooltip();
-						grabbing = true;
+						icon->start_drag_at(position, cursorpos);
+						UI::get().drag_icon(icon);
 
-						int32_t skill_id = skills[i].get_id();
-						int32_t skill_level = skillbook.get_level(skill_id);
-
-						if (skill_level > 0 && !SkillData::get(skill_id).is_passive())
-						{
-							skills[i].get_icon()->start_drag(cursorpos - skill_position);
-							UI::get().drag_icon(skills[i].get_icon());
-
-							return Cursor::State::GRABBING;
-						}
-						else
-						{
-							return Cursor::State::IDLE;
-						}
+						return Cursor::State::GRABBING;
 					}
 					else
 					{
-						skills[i].get_icon()->set_state(StatefulIcon::State::MOUSEOVER);
-						show_skill(skills[i].get_id());
-
 						return Cursor::State::IDLE;
 					}
 				}
-
-				if (classic || r % 2)
+				else
 				{
-					skill_position_l.shift_y(ROW_HEIGHT);
-					skill_position_r.shift_y(ROW_HEIGHT);
+					icon->set_state(StatefulIcon::State::MOUSEOVER);
+					show_skill(skills[i].get_id());
+
+					return Cursor::State::IDLE;
 				}
 			}
 
@@ -1008,6 +991,22 @@ namespace ms
 			: static_cast<size_t>(2 * offset + row);
 	}
 
+	Point<int16_t> UISkillBook::skill_cell(int16_t row) const
+	{
+		// 行底（窗口相对）。经典单列每行推进 ROW_HEIGHT；现代双列先填满一行两列
+		// 再往下走 ⇒ 第 row 个槽落在 (row%2, row/2)。这是版式的唯一定义处：
+		// draw 拿它画格底/图标/书名，命中和抓取从 Icon 的本格回推，不再各算一套。
+		if (classic)
+			return CLASSIC_SKILL_OFFSET + Point<int16_t>(0, static_cast<int16_t>(ROW_HEIGHT * row));
+
+		const int16_t col = static_cast<int16_t>(row % 2);
+		const int16_t line = static_cast<int16_t>(row / 2);
+
+		return SKILL_OFFSET + Point<int16_t>(
+			static_cast<int16_t>(-1 + ROW_WIDTH * col),
+			static_cast<int16_t>(ROW_HEIGHT * line));
+	}
+
 	void UISkillBook::change_offset(uint16_t new_offset)
 	{
 		offset = new_offset;
@@ -1147,35 +1146,24 @@ namespace ms
 
 	const UISkillBook::SkillDisplayMeta* UISkillBook::skill_by_position(Point<int16_t> cursorpos) const
 	{
-		int16_t x = cursorpos.x();
+		// cursorpos = 绝对（屏幕）坐标。命中 = draw 的逆：逐行问 Icon 自己的本格，
+		// 不再另算一套 (y-base)/ROW_HEIGHT 除法 —— 那套把 40 的行距整段都算成一行
+		// （格高只有 32），和 send_cursor 用的 32 格不同源，双击会多认 8px 的空档。
+		const int16_t rows = visible_rows();
 
-		// v83 经典单列：行起点 y=87；现代双列见下。
-		const int16_t base_x = classic ? CLASSIC_SKILL_OFFSET.x() : SKILL_OFFSET.x();
-		const int16_t base_y = classic ? CLASSIC_SKILL_OFFSET.y() : SKILL_OFFSET.y();
+		for (int16_t row = 0; row < rows; row++)
+		{
+			size_t index = skill_index(row);
 
-		if (x < base_x || x > base_x + (classic ? ROW_WIDTH : 2 * ROW_WIDTH))
-			return nullptr;
+			if (index >= skills.size())
+				break;
 
-		int16_t y = cursorpos.y();
+			if (StatefulIcon* icon = skills[index].get_icon())
+				if (icon->contains(position, cursorpos))
+					return &skills[index];
+		}
 
-		if (y < base_y)
-			return nullptr;
-
-		uint16_t row = (y - base_y) / ROW_HEIGHT;
-
-		if (row >= visible_rows())
-			return nullptr;
-
-		uint16_t col = classic ? 0 : (x - base_x) / ROW_WIDTH;
-
-		size_t skill_idx = skill_index(static_cast<int16_t>(row)) + col;
-
-		if (skill_idx >= skills.size())
-			return nullptr;
-
-		auto iter = skills.data() + skill_idx;
-
-		return iter;
+		return nullptr;
 	}
 
 	void UISkillBook::close()

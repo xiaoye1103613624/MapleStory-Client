@@ -86,7 +86,9 @@ namespace ms
 			//         现代窗沿用上游的 EMPEROR 灰。
 			SkillDisplayMeta(int32_t id, int32_t level, bool classic);
 
-			void draw(const DrawArgument& args) const;
+			// parent = 窗口 position；cell = 本格格底（窗口相对，来自 skill_cell()）。
+			// 图标本格、书名、等级都由这一格推出来 ⇒ 画在哪和点哪算是同一份数。
+			void draw(Point<int16_t> parent, Point<int16_t> cell) const;
 
 			int32_t get_id() const;
 			int32_t get_level() const;
@@ -109,6 +111,9 @@ namespace ms
 		int16_t visible_rows() const;
 		// 可见第 row 行对应的 skills 下标（现代双列 offset 以「行对」为单位）。
 		size_t skill_index(int16_t row) const;
+		// 可见第 row 行的格底（窗口相对）。经典单列每行推进 ROW_HEIGHT；
+		// 现代双列按 (row%2, row/2) 排布。绘制、命中、拖拽三处都只认这一把尺。
+		Point<int16_t> skill_cell(int16_t row) const;
 
 		void show_skill(int32_t skill_id);
 		void clear_tooltip();

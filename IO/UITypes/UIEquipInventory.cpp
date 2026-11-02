@@ -247,11 +247,12 @@ namespace ms
 			if (ip.x() == 0 && ip.y() == 0)
 				continue;
 
-			// 与 slot_by_position() 同源：绘制点就是槽位格左上角，图标自身的
-			// texture origin 由 DrawArgument 负责补偿。原先这里额外 +（4,4），
+			// 与 slot_by_position() 同源：格左上角 = iconpositions，格大小 = Icon 本格。
+			// 图标自身的 texture origin 由 DrawArgument 负责补偿。原先这里额外 +（4,4），
 			// 而底图凹槽相位实测已经是 (5,32) 起、格 32x32 —— 那 4px 会把每件装备
 			// 压向右下、盖住下一格的标签（用户报的「装备 ui 位置偏移」）。
-			iter.second->draw(position + ip);
+			iter.second->set_cell(ip);
+			iter.second->draw_at(position);
 		}
 	}
 
@@ -361,7 +362,7 @@ namespace ms
 			selected_eqslot = slot;
 			if (pressed)
 			{
-				icon->start_drag(cursorpos - position - iconpositions[slot]);
+				icon->start_drag_at(position, cursorpos);
 
 				UI::get().drag_icon(icon);
 
@@ -511,11 +512,14 @@ namespace ms
 			if (iter.second.x() == 0 && iter.second.y() == 0)
 				continue;
 
-			// 命中区与绘制同源：格左上角 = iconpositions，格大小 = 底图凹槽 32x33 里的 32。
-			Rectangle<int16_t> iconrect = Rectangle<int16_t>(
-				position + iter.second,
-				position + iter.second + Point<int16_t>(32, 32)
-				);
+			// 命中区与绘制同源：有图标的格直接问 Icon 自己刚被画出去的那格；
+			// 空格也要能被认出（拖放目标、双手武器共用格），所以回退到同一把尺
+			// ——格左上角 = iconpositions，格大小 = Icon 本格（底图凹槽 32x33 里的 32）。
+			const Icon* occupied = icons[iter.first].get();
+			Rectangle<int16_t> iconrect = occupied
+				? occupied->rect(position)
+				: Rectangle<int16_t>(position + iter.second,
+					position + iter.second + Point<int16_t>(Icon::cell_width, Icon::cell_height));
 
 			if (!iconrect.contains(cursorpos))
 				continue;

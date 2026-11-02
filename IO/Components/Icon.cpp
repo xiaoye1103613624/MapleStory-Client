@@ -97,6 +97,39 @@ namespace ms
 		Sound(Sound::Name::DRAGSTART).play();
 	}
 
+	void Icon::set_cell(Point<int16_t> cell_position)
+	{
+		cell = cell_position;
+	}
+
+	Rectangle<int16_t> Icon::rect(Point<int16_t> parent) const
+	{
+		Point<int16_t> left_top = parent + cell;
+
+		return Rectangle<int16_t>(left_top, left_top + Point<int16_t>(cell_width, cell_height));
+	}
+
+	bool Icon::contains(Point<int16_t> parent, Point<int16_t> cursor) const
+	{
+		return rect(parent).contains(cursor);
+	}
+
+	void Icon::draw_at(Point<int16_t> parent) const
+	{
+		draw(parent + cell);
+	}
+
+	void Icon::start_drag_at(Point<int16_t> parent, Point<int16_t> cursor)
+	{
+		start_drag_at(parent, cell, cursor);
+	}
+
+	void Icon::start_drag_at(Point<int16_t> parent, Point<int16_t> cell_position, Point<int16_t> cursor)
+	{
+		// 抓取偏移 = 光标与「本格左上角」的差 ⇒ 拖起来之后图标跟手，不会在按下瞬间跳一格。
+		start_drag(cursor - parent - cell_position);
+	}
+
 	void Icon::reset()
 	{
 		dragged = false;

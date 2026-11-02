@@ -347,3 +347,176 @@ snap17 = 吸附到 ×17 网格（即素材自身的 4bit 色阶），tie 向下
    需要能凑出这两态的号或 GM 命令，属交互取证。
 2. 行 7 第 3 格在原生帧里是粉的、我们这里不是 —— 槽位归属仍未定（§6.5-1 遗留）。
 3. 宠物面板 4 格的改色（§8 预留，等展开态原生帧）。
+
+## 10. R27-B3-4a：Icon 拿回几何所有权（绘制 / 命中 / 抓取三处同源）
+
+§9 那 6 格逐像素全等只证明了**装备窗**一处「绘制 = 命中 = 调色」。用户报的第二轮缺陷里
+「键盘设定按键图偏上」「背包点了是别格」「技能窗鼠标压在图标上却不出 tooltip」是同一个
+结构病的不同症状，所以这一批把病根一次治掉，而不是逐窗再量一遍。
+
+### 10.1 契约
+
+上游的 `ms::Icon` **不带任何几何**：只有一个 `draw(Point)` 和一个 `start_drag(Point)`，
+「这一格在哪、多大、点哪里算这格」全部由持有者各自现场算。改完后的唯一真源在
+[IO/Components/Icon.h:91-112](../../../../IO/Components/Icon.h#L91-L112)：
+
+| API | 语义 |
+| --- | --- |
+| `cell_width / cell_height = 32` | 格大小。四窗共用一个常数，不再各写各的 `Point(32, 32)` |
+| `set_cell(格左上角，窗口相对)` | **单一写入者 = 该窗口的绘制循环**，画之前写一次 |
+| `draw_at(parent)` | 绘制点 = `parent + slot` |
+| `rect(parent)` / `contains(parent, cursor)` | 命中矩形 = 本格，与 `draw_at` 同一个 `slot` |
+| `start_drag_at(parent, cursor)` | 抓取偏移 = `cursor − parent − slot`（拖起来跟手，按下瞬间不跳格） |
+| `start_drag_at(parent, slot, cursor)` | 一个图标画在两格时用（键盘设定的 Ctrl/Alt/Shift），显式指定「命中的那一格」 |
+
+`draw(Point)` / `start_drag(Point)` **保留为原语**（`set_cell` 之后持有者仍可直接调），
+这样这次改造只碰「几何从哪来」，不改「图标怎么画」。
+
+**命名为什么是 `cell` 而不是 `slot`**（第一版写的 `set_slot` 已同日改名，不是风格问题）：
+持有者侧的 `slot` 一律指**槽号**（`int16_t slot`、`EquipSlot::Id slot`、`slot_by_position`），
+而这里存的是**格左上角**（`Point`）。`Icon::drop_on_items(..., int16_t slot, ...)` 里两者同名不同义，
+实测触发 C4458「声明隐藏了类成员」；`UIKeyConfig.cpp:222` 更早就有个局部 `slot_width = 33`
+（键帽步进），与 `Icon::slot_width = 32`（格子大小）在同一文件里并排会读错。⇒ 几何叫 `cell`，槽号留给 `slot`。
+
+一处需要留档的几何细节：`Rectangle<int16_t>::contains` 两端闭区间
+（[Template/Rectangle.h:66-72](../../../../Template/Rectangle.h#L66-L72)，`v.x() >= left() && v.x() <= right()` 两端都闭），所以 32×32 的格实际
+覆盖 33px；背包列距 36、行距 34 ⇒ 相邻格不重叠，格间只剩 **3px（列）/ 1px（行）** 的死区。这不是缺陷，
+但它意味着「命中范围」不能拿除法边界去近似 —— §10.2 那条背包旧式子犯的正是这个。
+
+### 10.2 四个持有者的旧分叉（读码 + diff，非推测）
+
+`ms::Icon` 的持有者全集只有 4 个（grep `std::unique_ptr<Icon>` / `Icon>` 在 IO/ 下枚举）：
+
+| 窗口 | 旧绘制点 | 旧命中 | 旧抓取偏移 | 表观后果 |
+| --- | --- | --- | --- | --- |
+| 装备 `UIEquipInventory` | `position + ip + (4,4)`（§2 的 `:338-343` 死偏移） | `position + ip`，`Point(32,32)` | `cursorpos − position − iconpositions[slot]` | 每件装备压向右下 4px，盖住下一格中文标签（用户报「装备 ui 位置偏移」，§2 已量过底图凹槽相位本就是 (5,32)） |
+| 背包 `UIItemInventory` | `position + get_slotpos(i)` | **另一套除法**：`col = x/(32+4)`、`row = y/(32+2) − 1`、`+ div.quot*28` 页补偿 | `cursor_relative − get_slotpos(slot)`（重算一次） | 除法边界与格子边界不同相（[hit_formula_probe.py](hit_formula_probe.py) → [hit_formula_probe.txt](hit_formula_probe.txt)，逐像素数出来的，不是推的）：**收起态画在一格上的 32×32 里有 50.8% 的像素解成别的槽**（右侧 4px 串到邻列、下侧 14px 串到下行）；**展开态 87.7%** —— 页距 149 根本不在这套除法里，第 1/2/3 页的格心分别落到 +8 / +16 / +25 槽。空格是拖放目标却被 `xmax/ymax` 粗筛直接排除 |
+| 键盘设定 `UIKeyConfig` | `position + keys_pos[key] − adjust`（`adjust` = 道具/技能图标减 (2,3)、SPACE 减 (0,3)、键帽减 (0,0)） | `position + iter.second` + `Point(32,32)`，**没有 adjust** | `cursorpos − position − keys_pos[key]`，**没有 adjust** | 画在上、点在下，差整整 2×3px；用户报的「键盘设定按键图片全都偏上」（R27-B7 / 任务 #87）就是这个方向 |
+| 技能 `UISkillBook` | 行底 + `SKILL_META_OFFSET (2,2)` | `Rectangle(0,32,0,32)` 贴**行底**（少 (2,2)）；`skill_by_position` 又是 `(y−base)/ROW_HEIGHT` 除法 | `cursorpos − skill_position`（行底，非图标格） | 三处三个点。双击/悬浮判定把 40px 行距整段认成一格（格高只有 32）⇒ 行下方 8px 空档也会命中；现代双列还用 `skill_index(row) + col`，与 (row%2, row/2) 的实际排布不符 ⇒ 取错技能 |
+
+改造后四处只剩两个来源：**版式表**（`iconpositions` / `get_slotpos` / `keys_pos` / `skill_cell()`）
+决定格左上角，**Icon** 决定格大小与三处读法。`UISkillBook` 顺带把 draw / `send_cursor` /
+`doubleclick` 里重复了四遍的行推进式子收成一处
+[`UISkillBook::skill_cell()`](../../../../IO/UITypes/UISkillBook.cpp#L994-L1008)，
+并把 `skill_by_position()` 改成 `skill_cell()` 的逆（逐行问 `Icon::contains`，参数也从
+「窗口相对」改成和调用点一致的绝对坐标，消除 `doubleclick` 里那个 `cursorpos − position`）。
+
+### 10.3 删掉 `adjust` 的证据（这条不是「顺手清理」）
+
+删除绘制侧的 `-(2,3)` 会让道具/技能图标整体上移 2×3px，属视觉改动，必须先有判据。
+判据在同批读到的 [r27-oracle/origin-rule.md §4](../r27-oracle/origin-rule.md)：
+
+> **窗口出了 oracle → 该窗口按规则对齐，子层补 `shift(get_origin())`，并把手写的 `-(2,3)`
+> 这类「补偿型 nudge」删掉；nudge 只有在表与语义对上之后才允许作为实测残差存在。**
+
+KeyConfig 有 oracle（[r27-oracle/KeyConfig.json](../r27-oracle/KeyConfig.json)），
+且 §3 的机器量尺已证「键帽位图左上角 == `keys_pos` 表项，误差 0」⇒ `keys_pos` 与绘制语义
+已经对上，`adjust` 属于「表对上了但只有绘制侧还看得见」的遗留补偿，按裁定必须删。
+该篇 §5 留下的残差是**另外 2px**（截图比 `backgrnd` 矮 4px 造成的锚点歧义），明确写了
+「等 B8 真机抓帧」——那是表本身的相位问题，改的话应改 `keys_pos` 一次，
+而不是再叠一个三处读法只有一处看得到的补偿。
+
+### 10.4 同根因但本轮**不改**：底栏快捷格
+
+`origin-rule.md §6` 记录了同一处「一格两种语义」在
+[IO/UITypes/UIStatusBar.cpp:102](../../../../IO/UITypes/UIStatusBar.cpp#L102)
+的 `QS_ICON_SHIFT_Y = 32`：只对键帽 origin (0,32) 成立，绑技能 (0,0) / 道具 (-3,-1) 时
+图标整个掉到格外。本轮**没动**，理由与 §6 一致 —— 两张原生底栏帧里快捷格全是**未绑定**
+动作键帽，画面中没有一颗技能/道具图标，「图标在格内的正确落位」量不出来；按 §4「量不出就不改」。
+跟踪任务 **#89 / R27-B1d**，等 B8 真机抓一张已绑定技能（或道具）的底栏帧建 `StatusBar.json`。
+
+（注：这一处恰好是 §10.1 契约要解决的形态——若那时底栏已有 oracle，`set_cell` 之后
+`QS_ICON_SHIFT_Y` 这类按贴图 origin 手工分档的常数就没有存在的位置。）
+
+### 10.5 本批改动清单
+
+- [IO/Components/Icon.h](../../../../IO/Components/Icon.h) / [Icon.cpp](../../../../IO/Components/Icon.cpp)：新几何 API + `cell` 成员。
+  ⇒ **公共类成员变化（布局变化），必须 `-t:Rebuild`**（增量会复用旧 obj，登录阶段 AV）。
+- `UIEquipInventory.cpp`：draw `:254`、抓取 `:365`、命中 `:518-522`（空格回退到同一把尺）。
+- `UIItemInventory.cpp`：draw `:372`、抓取 `:921`、`slot_by_position()` 整段重写为 `get_slotpos` 的逆 `:1508`。
+- `UIKeyConfig.cpp`：删 `adjust`、三组双格逐格 `set_cell + draw_at` `:648-665`、未绑定托盘 `:691`、两处抓取 `:802/:846`、两处命中 `Point(32,32)` → `Icon::cell_width/cell_height`。
+- `UISkillBook.h/.cpp`：`SkillDisplayMeta::draw(parent, cell)`、新增 `skill_cell(row)`、`send_cursor` 用 `Icon::contains` + `start_drag_at`、`skill_by_position` 改逆运算并改为绝对坐标。
+
+`CHECKLIST.md` 的 **D7c** 行即本节。
+
+### 10.6 未证事项（别当已完成验收）
+
+> 2026-11-03 更新：本批 4 项里第 1 项的技能窗部分已在真机验证（见 §11），其余仍待补，
+> 逐条最新状态在 **§11.4**。
+
+1. **真机逐格**：背包 hover/拖放、键盘设定拖拽不跳格、技能窗 tooltip 与双击、装备窗回归，
+   都要重跑 `tools/layout.py check`（可跑的 oracle：`Item.json` / `ItemFull.json` / `KeyConfig.json` / `Equip.json`）
+   并部署抓帧。**技能窗没有 oracle**（`r27-oracle/` 里无 `Skill.json`）⇒ 那扇窗本轮只能做「hover/双击落在压住的那一格」的手感验收，量不出逐格 Δ。
+2. **`skill_cell()` 现代双列等价性**：由「draw 循环 `i%2` 分列 + `skill_index()` 取号」的旧写法
+   等价改写推来。`ROW_WIDTH=143 / ROW_HEIGHT=40` 是**上游现代窗常数**
+   （[IO/UITypes/UISkillBook.h:167-168](../../../../IO/UITypes/UISkillBook.h#L167-L168)，出处见
+   `docs/features/beidou-v17-parity/notes/r05-ui-layout.md`），本包**没有对它建过 oracle**；
+   有实测尺的只有经典单列那档（CHECKLIST D11，`CLASSIC_SKILL_OFFSET` 由 `ikse.png` 新手圆点反推）。
+   ⇒ 双列逐格落位没抓帧，现代窗若偏，改 `skill_cell()` 一处即可。
+3. `keys_pos` 那 2px 残差（§10.3 末）仍在，等 B8。
+4. `Rectangle::contains` 闭区间带来的 33px 覆盖（§10.1）在**列距=32** 的窗口会变成相邻格重叠。
+   四窗实测列距 33/34/36 都 >32 故无重叠；日后加窄距窗口时要改用 `rect` 的显式右开语义，
+   不要再叠 per-window 补偿。
+
+## 11. B3-4a 真机逐格验收结论（2026-11-03，技能窗）
+
+验收档用的是用户定的那一档：**「悬停：tooltip 弹出的就是鼠标压住的那颗图标」**，
+加**「拖起瞬间：图标中心跟住光标、不跳一格」**。不是「元素在位」。
+
+实例 hwnd=12256942、帧 1296×759、落位取自运行目录 `Settings` 的 `ui.position.skill=(560,99)`
+（⇒ 帧上本格行起点 x=577、y=231/271/311/351）；全部坐标换算按 `live/README.md`
+「帧 = 客户区 + 边框 (8,31)」这条实测，不猜。
+
+### 11.1 已证（PASS）
+
+| 判据 | 内容 | 实测 |
+| --- | --- | --- |
+| **J1 / J2** | 格内 3 点必出 tooltip、行距缝与列距缝必不出 | 格内面积 **41082~45418** px，空隙 **272~322** px，面积闸 1200 落在中间，**余量 >100×** |
+| **J3a** | 同格 3 点是同一个框，只是跟着光标走 | 4 行 tooltip 尺寸 266×196 / 194 / 194 / 196，同格 3 点**逐像素相等**；框位移 == 光标位移（±12,±12 精确） |
+| **J3c** | 弹出的就是压住的那颗（内容级） | 4 行标题 = 精灵的祝福 / 蜗牛投掷术 / 团队治疗 / 疾风步，框内图标与 `[Master Level]` 20/3/3/3 **逐行对上**，无一行报成邻格 |
+
+J1/J2 那条 >100× 的分离度就是 #94 的命题本身：**命中区收敛到 `ms::Icon` 自己的 32×32 本格**，
+旧版「40px 整段行距都算一格」的误认在真机帧上消失了。
+
+### 11.2 J3b 定案为「度量本身的极限」，降级成诊断
+
+一开始把「同格像素签名比跨行更近」（1-NN）当内容闸，八项读数**全部不过**：
+同格 0.0707~0.0949、跨行最近 0.0775~0.1252，leave-one-out 最差余量 **−0.0003**。
+排查后确认这**不是代码缺陷**，三条独立尝试都没能救回来：
+
+| 尝试 | 结果 |
+| --- | --- |
+| 调高差集强度阈值（120/200/250/300/380） | 更糟——先把真 tooltip 的边缘切掉 |
+| 投影/行直方图度量 | rows 1↔2 直接失败（两行同为三行式、长度相近） |
+| 「volatile 像素标定」（停放帧自差 + dilate 掩掉底噪） | 标定掉 23391 px，读数几乎不变 |
+
+根因：**tooltip 是半透明的**，差集里混进了「底下压的是什么」，所以同格/跨行读数天然搭界。
+⇒ 像素级判据在这扇窗**不能当内容闸**；内容判据改走 J3c 读图（证件两张裁片
+[live-20261103-skill-tips.png](live-20261103-skill-tips.png) /
+[live-20261103-skill-rownames.png](live-20261103-skill-rownames.png)）。
+这条写死在探针的 docstring 里，J3b 只报数、不过闸。
+
+### 11.3 本批归档件
+
+| 件 | 作用 |
+| --- | --- |
+| [live_verify_b34a.py](live_verify_b34a.py) | 探针本体（真机打键 + PrintWindow 抓帧 + J1/J2/J3a/J3b/J3c 判定） |
+| [live_verify_b34a_offline.py](live_verify_b34a_offline.py) | 对**同一批已落盘帧**复算 J3b/J3c。`importlib` 载入上面的模块，用的是**同一套** `largest_blob / mask_disagree / sheet` —— 存在理由是客户端已退回登录界面且本 shell 无口令，但判据公式必须与归档件同源，不能另写一份 |
+| [live_verify_b34a.json](live_verify_b34a.json) / [live_verify_b34a_j3b.json](live_verify_b34a_j3b.json) | 逐探针原始读数（bbox / 面积 / tipsize / 余量），全部 `int()` 化，可机器复核 |
+| [live_verify_b34a.txt](live_verify_b34a.txt) | 人读表：J1/J2 分离度、J3a 八项、J3b 八项、J3c 四行，末尾列「本轮未跑」4 条与「已知非缺陷」1 条 |
+
+**已知非缺陷**（省下轮重复排查）：技能窗行底位图的 origin 使「可见白框」比命中格偏 `(-6,-7)`——
+图标美术本体落在命中格内，6px 装饰边不进命中区，原生同样如此，**不改**。
+
+### 11.4 仍未证（§10.6 的那四条，状态更新）
+
+1. `Item.json / ItemFull.json / KeyConfig.json / Equip.json` 的 `tools/layout.py check` 逐格对账 —— **待用户给一次 `R27_USER`/`R27_PASS`**（口令不入库，本 shell 未带；095 那套参考库另有处置待拍板）。
+2. **拖起瞬间不跳格** —— 同上。新手号背包三页全空，判据改在**键盘设定窗 / 技能窗**上做，已写进 `live/README.md`。
+3. **装备窗 6 格调色等值回归**（§9 过一次，本批改了抓取与命中，须复跑）—— 同上。
+4. 本探针**整脚本 live 一次跑通**的读数落盘 —— J3b/J3c 已用同一批帧离线复算，J1/J2 是 live 原始读数。
+5. §10.6-2「`skill_cell()` 现代双列等价性」**本轮没碰**：真机跑的是经典单列，双列仍无 oracle。
+
+### 11.5 同批修正的两件工具（都不是可选清理）
+
+- [`tools/live/login.py`](../../tools/live/login.py)：密码点击 `(582,330)` → `(642,354)`（旧值压在账号行）、连接 `(715,300)` → `(774,317)`（旧值在钮外）。2026-11-03 真机量出，docstring 已写「别再改回去」。
+- [`tools/live/open_window.py`](../../tools/live/open_window.py)：输出帧名带序号（`_r27_win_01_i.png`），同一个键打两次（开→关）不再把开态帧覆盖掉；并记录「进世界后要先点一下窗口拿激活，否则热键不生效」。

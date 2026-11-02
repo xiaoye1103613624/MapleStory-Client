@@ -365,7 +365,13 @@ namespace ms
 				auto& icon = icons.at(i);
 
 				if (icon && i >= firstslot && i <= lastslot)
-					icon->draw(position + slotpos);
+				{
+					// 本格几何交给 Icon：绘制点、抓取偏移、命中区由同一份 slotpos 推导
+					// （见 Icon::set_cell）。格大小 = Icon::cell_width/height，和
+					// slot_by_position() 用的是同一把尺。
+					icon->set_cell(slotpos);
+					icon->draw_at(position);
+				}
 			}
 			else
 			{
@@ -911,8 +917,8 @@ namespace ms
 			selected_slot = slot;
 			if (pressed)
 			{
-				Point<int16_t> slotpos = get_slotpos(slot);
-				icon->start_drag(cursor_relative - slotpos);
+				// 本格几何是 draw() 里刚写进 Icon 的那一份 ⇒ 抓取偏移和绘制点必然同格。
+				icon->start_drag_at(position, cursorpos);
 
 				UI::get().drag_icon(icon);
 
@@ -1501,42 +1507,35 @@ namespace ms
 
 	int16_t UIItemInventory::slot_by_position(Point<int16_t> cursorpos) const
 	{
-		Point<int16_t> cursor_offset = cursorpos - slot_pos;
+		// 命中 = get_slotpos 的逆，逐格问版式。
+		// 旧实现是另一套除法：col = x / (32+4)、row = y / (32+2) - 1，再加
+		// div.quot * 28 的页补偿，和展开态版式（每页 4 列 + page_dx 149 跳列）根本不同源
+		// ——格宽 32、列距 36，格子正好跨在除法边界上，每格右侧 4px 会算到邻格，
+		// 页边界附近偏得更多（收起态的行距也不同源）。既然绘制走 get_slotpos，
+		// 命中就必须也只认 get_slotpos，否则「看着能点、点了是别格」。
+		const auto& range = slotrange.at(tab);
 
-		int16_t xoff = cursor_offset.x();
-		int16_t yoff = cursor_offset.y();
+		int16_t firstslot = full_enabled ? 1 : range.first;
+		int16_t lastslot = full_enabled ? max_full_slots : range.second;
 
-		int16_t cur_x = cursorpos.x();
-		int16_t slot_x = slot_pos.x();
-		int16_t xmin = slot_x;
-		int16_t xmax = (icon_width + slot_space_x) * (full_enabled ? slot_col * 4 : slot_col) - (full_enabled ? slot_space_x : 0);
+		for (int16_t i = firstslot; i <= lastslot; i++)
+		{
+			// 空格也要能命中（它是拖放目标），所以按「可见格」遍历而不是「有图标的格」。
+			if (!is_visible(i))
+				continue;
 
-		int16_t cur_y = cursorpos.y();
-		int16_t slot_y = slot_pos.y();
-		int16_t ymin = slot_y;
-		int16_t ymax = (icon_height + slot_space_y) * (full_enabled ? slot_row + 1 : slot_row - 1) - (full_enabled ? slot_space_y : 0);
+			Point<int16_t> slotpos = get_slotpos(i);
+			Rectangle<int16_t> cell = Rectangle<int16_t>(slotpos,
+				slotpos + Point<int16_t>(Icon::cell_width, Icon::cell_height));
 
-		int16_t slot = 0;
-		int16_t absslot = full_enabled ? 1 : slotrange.at(tab).first;
+			if (cell.contains(cursorpos))
+			{
+				LOG(LOG_UI, "Slot: " << i << " Cell: (" << slotpos.x() << "," << slotpos.y()
+					<< ") Cursor: (" << cursorpos.x() << "," << cursorpos.y() << ")");
 
-		int16_t col = cur_x / (icon_width + slot_space_x);
-		int16_t row = cur_y / (icon_height + slot_space_y) - 1;
-
-		div_t div = std::div(col, 4);
-		slot = col + absslot + (4 * row) + (div.quot * 28);
-
-		if (cur_x < xmin || cur_x > xmax || cur_y < ymin || cur_y > ymax)
-			slot = 0;
-
-		LOG(LOG_UI,
-			"Slot: " << slot << " Col: " << col << " Row: " << row << " "
-			<< cur_x << " < (" << xmin << ") || "
-			<< cur_x << " > (" << xmax << ") || "
-			<< cur_y << " < (" << ymin << ") && "
-			<< cur_y << " > (" << ymax << ")");
-
-		if (is_visible(slot))
-			return slot;
+				return i;
+			}
+		}
 
 		return 0;
 	}

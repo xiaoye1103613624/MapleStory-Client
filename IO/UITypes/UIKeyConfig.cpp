@@ -634,31 +634,40 @@ namespace ms
 
 					if (key < KeyConfig::Key::LENGTH)
 					{
-						// 键帽美术的 origin 已在 load_actions 抹平 ⇒ 表值即左上，不再补偿。
-						// 道具/技能图标仍是锚点语义，沿用上游手写的 (2,3)；该残差没有 oracle，
-						// 留到 B8 真机抓帧实测后再定（origin-rule.md §5）。
-						const Point<int16_t> adjust = is_action_mapping(mapping)
-							? Point<int16_t>(0, 0)
-							: (key == KeyConfig::Key::SPACE ? Point<int16_t>(0, 3) : Point<int16_t>(2, 3));
-
+						// 键帽美术的 origin 已在 load_actions 抹平 ⇒ 表值即左上。
+						// 原先道具/技能图标还要再减一个手写的 adjust（SPACE 减 (0,3)，
+						// 其余减 (2,3)），而命中区 key_by_position() 用的是**没减**的表值
+						// —— 画在上、点在下，差整整 2x3；那个残差从来没有 oracle，
+						// 且用户报的「键盘设定按键图偏上」（CHECKLIST #87）正是它偏上的方向。
+						// 现在绘制/命中/抓取三处都只认 keys_pos，版式若仍有系统性偏差，
+						// 应该改这张表一次，而不是再叠一个只有绘制侧看得到的补偿。
 						if (key == KeyConfig::Key::LEFT_CONTROL || key == KeyConfig::Key::RIGHT_CONTROL)
 						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_CONTROL] - adjust);
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_CONTROL] - adjust);
+							// 一个图标两格（左右 Ctrl/Alt/Shift）：逐格写本格再画，
+							// 抓取时按「命中的那一格」显式算偏移，不依赖这里最后留下的那格。
+							icon->set_cell(keys_pos[KeyConfig::Key::LEFT_CONTROL]);
+							icon->draw_at(position);
+							icon->set_cell(keys_pos[KeyConfig::Key::RIGHT_CONTROL]);
+							icon->draw_at(position);
 						}
 						else if (key == KeyConfig::Key::LEFT_ALT || key == KeyConfig::Key::RIGHT_ALT)
 						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_ALT] - adjust);
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_ALT] - adjust);
+							icon->set_cell(keys_pos[KeyConfig::Key::LEFT_ALT]);
+							icon->draw_at(position);
+							icon->set_cell(keys_pos[KeyConfig::Key::RIGHT_ALT]);
+							icon->draw_at(position);
 						}
 						else if (key == KeyConfig::Key::LEFT_SHIFT || key == KeyConfig::Key::RIGHT_SHIFT)
 						{
-							icon->draw(position + keys_pos[KeyConfig::Key::LEFT_SHIFT] - adjust);
-							icon->draw(position + keys_pos[KeyConfig::Key::RIGHT_SHIFT] - adjust);
+							icon->set_cell(keys_pos[KeyConfig::Key::LEFT_SHIFT]);
+							icon->draw_at(position);
+							icon->set_cell(keys_pos[KeyConfig::Key::RIGHT_SHIFT]);
+							icon->draw_at(position);
 						}
 						else
 						{
-							icon->draw(position + keys_pos[key] - adjust);
+							icon->set_cell(keys_pos[key]);
+							icon->draw_at(position);
 						}
 					}
 				}
@@ -679,7 +688,8 @@ namespace ms
 			if (up.x() == 0 && up.y() == 0)
 				continue;
 
-			icon.second->draw(position + up);
+			icon.second->set_cell(up);
+			icon.second->draw_at(position);
 		}
 
 		// Keys（(0,0) 表示 classic 下无槽，跳过避免堆到窗口原点）
@@ -789,7 +799,7 @@ namespace ms
 
 					if (up.x() || up.y())
 					{
-						icon->start_drag(cursorpos - position - up);
+						icon->start_drag_at(position, up, cursorpos);
 
 						UI::get().drag_icon(icon);
 
@@ -833,7 +843,7 @@ namespace ms
 					{
 						clear_tooltip();
 
-						icon->start_drag(cursorpos - position - keys_pos[key]);
+						icon->start_drag_at(position, keys_pos[key], cursorpos);
 
 						UI::get().drag_icon(icon);
 
@@ -1298,9 +1308,11 @@ namespace ms
 			if (iter.second.x() == 0 && iter.second.y() == 0)
 				continue;
 
+			// 命中区 = 绘制用的同一格（keys_pos + Icon 本格大小），不再有只有绘制侧
+			// 看得见的补偿量。
 			Rectangle<int16_t> icon_rect = Rectangle<int16_t>(
 				position + iter.second,
-				position + iter.second + Point<int16_t>(32, 32)
+				position + iter.second + Point<int16_t>(Icon::cell_width, Icon::cell_height)
 				);
 
 			if (icon_rect.contains(cursorpos))
@@ -1322,7 +1334,7 @@ namespace ms
 
 			Rectangle<int16_t> icon_rect = Rectangle<int16_t>(
 				position + iter.second,
-				position + iter.second + Point<int16_t>(32, 32)
+				position + iter.second + Point<int16_t>(Icon::cell_width, Icon::cell_height)
 				);
 
 			if (icon_rect.contains(cursorpos))
