@@ -136,7 +136,11 @@ namespace ms
 			/// F5-1：出站必须用 s9 RecvOpcode.STORAGE=0x3E=62（RecvOpcode.java:78 → StorageHandler）。
 			/// 309 是 s9 **Send**Opcode.STORAGE 的值（服务端→客户端），抄错了方向，s9 侧收不到任何 handler。
 			STORAGE = 62,
-			BUDDYLIST = 63,
+			/// 好友列表操作：必须用 s9 RecvOpcode.BUDDYLIST_MODIFY=0x82=130（RecvOpcode.java → BuddylistModifyHandler）。
+			/// 63 是 continued-journey 模板的经典 v83 值，但 s9 把 63 号让给了 HIRED_MERCHANT_REQUEST（玩家商店），
+			/// 好友 handler 已重映射到 130。原生 BeiDou.exe 连 s9 也必须用 130，故 63 是 opcode 赋值漂移（与同文件
+			/// STORAGE/PLAYER_INTERACTION/CASHSHOP_OPERATION 三处同类修正一致）。字段结构已与 BuddylistModifyHandler 逐项对齐。
+			BUDDYLIST = 130,
 			/// s9 RecvOpcode：FREDRICK_ACTION=0x40 / DUEY_ACTION=0x41；GUILD 出站为 0x7E=126
 			FREDRICK_ACTION = 64,
 			/// s9 RecvOpcode.OWL_ACTION = 0x42 → UseOwlOfMinerva（空包）

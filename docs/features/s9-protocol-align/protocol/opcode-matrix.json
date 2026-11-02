@@ -4,7 +4,7 @@
    "RECALCULATE_STATS"
   ],
   "client_source_hashes": {
-   "Net/OutPacket.h": "16b59ed7f082e5f92559f30f5eec9466c6fd1feef5b617491312e382e604319d",
+   "Net/OutPacket.h": "43b15c658e21db47d3bc454cec86cd54e1bd2e1175fdf18b5574545bf3398b47",
    "Net/PacketSwitch.cpp": "e66601907e4bc056d7d7759a4e8532ceb65417ea2db89aee8f1355f79f63a75b"
   },
   "collisions": {
@@ -40,7 +40,7 @@
    "s9_send_distinct_values": 311,
    "s9_send_emitted": 250
   },
-  "generated_at": "2026-11-01T14:10:25",
+  "generated_at": "2026-11-02T10:34:22",
   "generated_by": "tools/gen_opcode_matrix.py",
   "s9_git_head": "44d0d5d9caa861ca844054a24c9fb7a0d6a300d3",
   "s9_shadowed_registrations": {
@@ -1761,41 +1761,46 @@
    "status": "MATCHED"
   },
   {
-   "annotation_consistent": null,
-   "client_annotations": [],
-   "client_line": 139,
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "BUDDYLIST_MODIFY",
+     "value": 130
+    }
+   ],
+   "client_line": 143,
    "client_name": "BUDDYLIST",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/BuddyPackets.h",
-     "line": 30
+     "line": 32
     },
     {
      "file": "Net/Packets/BuddyPackets.h",
-     "line": 41
+     "line": 43
     },
     {
      "file": "Net/Packets/BuddyPackets.h",
-     "line": 51
+     "line": 53
     }
    ],
    "client_sent_count": 3,
-   "client_value": 63,
+   "client_value": 130,
    "s9_group": "registerChannelHandlers",
-   "s9_handler": "HiredMerchantRequest",
-   "s9_line": 79,
-   "s9_name": "HIRED_MERCHANT_REQUEST",
+   "s9_handler": "BuddylistModifyHandler",
+   "s9_line": 138,
+   "s9_name": "BUDDYLIST_MODIFY",
    "s9_names_at_value": [],
-   "s9_reg_line": 258,
+   "s9_reg_line": 221,
    "s9_shadowed_by": null,
-   "s9_value": 63,
+   "s9_value": 130,
    "status": "MATCHED"
   },
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 141,
+   "client_line": 145,
    "client_name": "FREDRICK_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1828,7 +1833,7 @@
      "value": 66
     }
    ],
-   "client_line": 143,
+   "client_line": 147,
    "client_name": "OWL_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1857,7 +1862,7 @@
      "value": 67
     }
    ],
-   "client_line": 145,
+   "client_line": 149,
    "client_name": "OWL_WARP",
    "client_sent": true,
    "client_sent_at": [
@@ -1886,7 +1891,7 @@
      "value": 260
     }
    ],
-   "client_line": 147,
+   "client_line": 151,
    "client_name": "USE_HAMMER",
    "client_sent": true,
    "client_sent_at": [
@@ -1910,7 +1915,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 149,
+   "client_line": 153,
    "client_name": "NOTE_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1938,7 +1943,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 150,
+   "client_line": 154,
    "client_name": "OPEN_FAMILY_PEDIGREE",
    "client_sent": true,
    "client_sent_at": [
@@ -1962,7 +1967,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 151,
+   "client_line": 155,
    "client_name": "OPEN_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -1986,7 +1991,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 152,
+   "client_line": 156,
    "client_name": "ADD_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2010,7 +2015,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 154,
+   "client_line": 158,
    "client_name": "SEPARATE_FAMILY_BY_SENIOR",
    "client_sent": true,
    "client_sent_at": [
@@ -2034,7 +2039,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 156,
+   "client_line": 160,
    "client_name": "SEPARATE_FAMILY_BY_JUNIOR",
    "client_sent": true,
    "client_sent_at": [
@@ -2058,7 +2063,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 157,
+   "client_line": 161,
    "client_name": "ACCEPT_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2082,7 +2087,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 158,
+   "client_line": 162,
    "client_name": "USE_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2106,7 +2111,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 159,
+   "client_line": 163,
    "client_name": "CHANGE_FAMILY_MESSAGE",
    "client_sent": true,
    "client_sent_at": [
@@ -2135,7 +2140,7 @@
      "value": 153
     }
    ],
-   "client_line": 161,
+   "client_line": 165,
    "client_name": "FAMILY_SUMMON_RESPONSE",
    "client_sent": true,
    "client_sent_at": [
@@ -2159,7 +2164,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 162,
+   "client_line": 166,
    "client_name": "DUEY_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -2199,7 +2204,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 163,
+   "client_line": 167,
    "client_name": "GUILD_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2248,7 +2253,7 @@
      "value": 123
     }
    ],
-   "client_line": 166,
+   "client_line": 170,
    "client_name": "PLAYER_INTERACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -2297,7 +2302,7 @@
      "value": 256
     }
    ],
-   "client_line": 168,
+   "client_line": 172,
    "client_name": "USE_MAPLELIFE",
    "client_sent": true,
    "client_sent_at": [
@@ -2326,7 +2331,7 @@
      "value": 228
     }
    ],
-   "client_line": 170,
+   "client_line": 174,
    "client_name": "CHECK_CASH",
    "client_sent": true,
    "client_sent_at": [
@@ -2355,7 +2360,7 @@
      "value": 229
     }
    ],
-   "client_line": 173,
+   "client_line": 177,
    "client_name": "CASHSHOP_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2404,7 +2409,7 @@
      "value": 230
     }
    ],
-   "client_line": 175,
+   "client_line": 179,
    "client_name": "COUPON_CODE",
    "client_sent": true,
    "client_sent_at": [
@@ -2433,7 +2438,7 @@
      "value": 102
     }
    ],
-   "client_line": 177,
+   "client_line": 181,
    "client_name": "TROCK_ADD_MAP",
    "client_sent": true,
    "client_sent_at": [
@@ -2462,7 +2467,7 @@
      "value": 106
     }
    ],
-   "client_line": 179,
+   "client_line": 183,
    "client_name": "REPORT",
    "client_sent": true,
    "client_sent_at": [
@@ -2491,7 +2496,7 @@
      "value": 159
     }
    ],
-   "client_line": 181,
+   "client_line": 185,
    "client_name": "NEW_YEAR_CARD_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -2515,7 +2520,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 182,
+   "client_line": 186,
    "client_name": "MONSTER_BOOK_COVER",
    "client_sent": true,
    "client_sent_at": [
@@ -2544,7 +2549,7 @@
      "value": 59
     }
    ],
-   "client_line": 184,
+   "client_line": 188,
    "client_name": "REMOTE_STORE",
    "client_sent": true,
    "client_sent_at": [
@@ -2568,7 +2573,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 185,
+   "client_line": 189,
    "client_name": "MAKER_SKILL",
    "client_sent": true,
    "client_sent_at": [
@@ -2597,7 +2602,7 @@
      "value": 117
     }
    ],
-   "client_line": 187,
+   "client_line": 191,
    "client_name": "WATER_OF_LIFE",
    "client_sent": true,
    "client_sent_at": [
@@ -2621,7 +2626,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 188,
+   "client_line": 192,
    "client_name": "ALLIANCE_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2658,7 +2663,7 @@
      "value": 144
     }
    ],
-   "client_line": 190,
+   "client_line": 194,
    "client_name": "DENY_ALLIANCE_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -2687,7 +2692,7 @@
      "value": 155
     }
    ],
-   "client_line": 192,
+   "client_line": 196,
    "client_name": "BBS_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2732,7 +2737,7 @@
      "value": 156
     }
    ],
-   "client_line": 194,
+   "client_line": 198,
    "client_name": "ENTER_MTS",
    "client_sent": true,
    "client_sent_at": [
@@ -2761,7 +2766,7 @@
      "value": 157
     }
    ],
-   "client_line": 196,
+   "client_line": 200,
    "client_name": "USE_SOLOMON_ITEM",
    "client_sent": true,
    "client_sent_at": [
@@ -2790,7 +2795,7 @@
      "value": 158
     }
    ],
-   "client_line": 198,
+   "client_line": 202,
    "client_name": "USE_GACHA_EXP",
    "client_sent": true,
    "client_sent_at": [
@@ -2819,7 +2824,7 @@
      "value": 163
     }
    ],
-   "client_line": 200,
+   "client_line": 204,
    "client_name": "ARAN_COMBO_COUNTER",
    "client_sent": true,
    "client_sent_at": [
@@ -2848,7 +2853,7 @@
      "value": 236
     }
    ],
-   "client_line": 202,
+   "client_line": 206,
    "client_name": "OPEN_ITEMUI",
    "client_sent": true,
    "client_sent_at": [
@@ -2877,7 +2882,7 @@
      "value": 277
     }
    ],
-   "client_line": 204,
+   "client_line": 208,
    "client_name": "WORLD_MAP_PLAYERS",
    "client_sent": true,
    "client_sent_at": [
