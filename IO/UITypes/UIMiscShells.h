@@ -597,6 +597,8 @@ public:
 	UIGameMenu();
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	// 气球挂在底栏「目录」钮正上方（下摆尖端对准钮中心），替掉屏幕居中。
+	void update_screen(int16_t new_width, int16_t new_height) override;
 	UIElement::Type get_type() const override;
 protected:
 	// UIWindow.img/GameMenu 的 4 颗真按钮（频道变更/游戏设置/系统设置/游戏结束）。

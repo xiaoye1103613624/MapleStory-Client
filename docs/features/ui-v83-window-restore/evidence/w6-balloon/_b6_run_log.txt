@@ -1,0 +1,35 @@
+launching instance from E:\MXD\ms-alt-b53
+pid=28892
+hwnd=6425096
+title: XiaoYE MS v0.0.1
+title: XiaoYE MS v0.0.1【当前时间：2026-11-03 06:15:12】
+title: XiaoYE MS v0.0.1【当前时间：2026-11-03 06:15:14】
+title: XiaoYE MS v0.0.1【当前时间：2026-11-03 06:15:15】
+title: XiaoYE MS v0.0.1【2-<账号名已脱敏>】【当前时间：2026-11-03 06:15:24】【在线时长：00 00:00:00】
+client_origin=(640,416)
+BtMenu center view=(712,702)
+cap 01_baseline
+click 02_menu try0 view=(712,702)
+cap 02_menu_try0
+02_menu try 0 -> not open
+click 02_menu try1 view=(712,702)
+cap 02_menu_try1
+02_menu try 1 -> OPEN 帧=E:\project\_ms_probe\alt/_b6alt_02_menu_try1.png
+click BtMenu click#3 (toggle probe) view=(712,702)
+cap 03_after_third_click
+after click#3 balloon_open=True
+post ESC -> hwnd=6425096
+cap 04_after_esc
+after ESC balloon_open=False（应为 False，两个气球都关）
+click 05_shortcut try0 view=(768,702)
+cap 05_shortcut_try0
+05_shortcut try 0 -> not open
+click 05_shortcut try1 view=(768,702)
+cap 05_shortcut_try1
+05_shortcut try 1 -> not open
+click 05_shortcut try2 view=(768,702)
+cap 05_shortcut_try2
+05_shortcut try 2 -> not open
+ABORT: 05_shortcut 三次点击后仍未见气球
+closing instance pid=28892
+exit-confirm window=XiaoYE MS v0.0.1【2-<账号名已脱敏>】【当前时间：2026-11-03 06:15:42】【在线时长：00 00:00:18】 -> post ENTER

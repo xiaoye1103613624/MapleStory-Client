@@ -72,5 +72,13 @@ SAD 21~25 **按定版规则属不可信量级**（气球在截帧里被半透明
 ## 6. 未改 / 待验
 
 - **BtGameOpt / BtSysOpt 仍同开 `UIOptionMenu`**：本包无 `StatusBar3.img/OptionMenu`，两页塌成同一底板（见 `notes/open-issues.md`）。要真分「游戏/系统」子页需补素材或 IDA 校准，本会话无 ida-pro-mcp。
-- **气球锚定位置**（相对「目录」按钮）未改：本轮只修内部栅格。截帧显示气球下摆尖端指向「目录」钮上方，若实测偏移再按 `UIStatusBar` 的 classic 钮位反推。
-- 验证需**实测点击「目录」**（`has_assets` 路径才画真按钮）。
+- **气球锚定位置**（相对「目录」按钮）：~~未改~~ **R27-B6 已改并真机验收**，尺与判据见
+  [../w6-balloon/anchor-rule.md](../w6-balloon/anchor-rule.md)。结论一句话：原生把下摆尖角的
+  最后一条实像素行贴在钮的上沿（间隙 1 行），此前沿用的「屏高 − 底条高 − 气球高」把尖角停在
+  **底条**上沿，比原生高 36px（钮画在底条 rel y=36）；`UIShortCut` 同根因，两条一起改。
+- 验证需**实测点击「目录」**（`has_assets` 路径才画真按钮）。-> R27-B6 已跑通：
+  [../w6-balloon/b6-menu-anchor-alt.py](../w6-balloon/b6-menu-anchor-alt.py) 起第二账号实例点击并抓帧，
+  4 颗蓝钮 25 高 / 步距 26 与入库帧 `../w6-balloon/frame_02_menu_open.png` 一并验收；
+  同一轮把 `UIShortCut`（点「界面」）也照双尺验了（入库帧 `frame_03_shortcut_open.png`，
+  落位 `(723,440)` vs 期望 `(722,440)`、尖角间隙 1），两把尺 × 8 例的复算见
+  [../w6-balloon/b6-recheck-offline.py](../w6-balloon/b6-recheck-offline.py) 与 `_b6_recheck.txt`。

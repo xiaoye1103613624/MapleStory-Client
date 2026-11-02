@@ -3367,6 +3367,33 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			break;
 	}
 }
+namespace
+{
+	// 底栏（classic HUD）气球锚定的公共几何。group_x 与 UIStatusBar 的按钮簇同源
+	// （quickslot 面板左缘 - group_gap，UIStatusBar.cpp:1993）。
+	// button_top = 触发钮上沿的绝对 y：底条顶 = 屏高 - 71（CLASSIC_BAR_H），4 颗功能钮
+	// 画在底条 rel y=36（IDA CreateCtrl y=543，底条顶 507）⇒ 屏高 - 35。
+	struct ClassicBarAnchor
+	{
+		int16_t group_x;
+		int16_t button_top;
+	};
+
+	ClassicBarAnchor classic_bar(int16_t new_width, int16_t new_height)
+	{
+		constexpr int16_t BAR_H = 71;
+		constexpr int16_t BTN_Y = 36;
+		const bool wide = new_width >= 1024;
+		const int16_t qs_w = wide ? 466 : 151;		// StatusBar.img/base/quickSlot26 / 08
+		const int16_t group_gap = wide ? 241 : 75;
+
+		return ClassicBarAnchor{
+			static_cast<int16_t>(new_width - qs_w - group_gap),
+			static_cast<int16_t>(new_height - BAR_H + BTN_Y)
+		};
+	}
+}
+
 void UIShortCut::update_screen(int16_t new_width, int16_t new_height) {
 	if (!has_assets)
 	{
@@ -3375,19 +3402,15 @@ void UIShortCut::update_screen(int16_t new_width, int16_t new_height) {
 		return;
 	}
 
-	// 气球底板自带向下的尖角（尖角中心 x=46）→ 挂到底栏「界面」钮正上方，
-	// 尖角对准按钮中心。group_x / 底栏高度与 UIStatusBar classic 分支同一套算式。
-	constexpr int16_t BAR_H = 71;
+	// 气球底板自带向下的尖角（尖角中心 x=46）→ 挂到底栏「界面」钮正上方，尖角对准钮中心。
+	// y 用「尖角末行贴钮上沿」而不是贴底条上沿，证据见 UIGameMenu::update_screen 注释。
 	constexpr int16_t TAIL_CX = 46;
-	const bool wide = new_width >= 1024;
-	const int16_t qs_w = wide ? 466 : 151;		// StatusBar.img/base/quickSlot26 / 08
-	const int16_t group_gap = wide ? 241 : 75;	// group_x = quickslot 面板左缘 - group_gap
-	const int16_t group_x = static_cast<int16_t>(new_width - qs_w - group_gap);
-	const int16_t bt_short_cx = static_cast<int16_t>(group_x + 168 + 27);	// BtShort 54x34
+	const ClassicBarAnchor bar = classic_bar(new_width, new_height);
+	const int16_t bt_short_cx = static_cast<int16_t>(bar.group_x + 168 + 27);	// BtShort 54x34
 
 	position = Point<int16_t>(
 		static_cast<int16_t>(bt_short_cx - TAIL_CX),
-		static_cast<int16_t>(new_height - BAR_H - dimension.y()));
+		static_cast<int16_t>(bar.button_top - dimension.y()));
 }
 UIElement::Type UIShortCut::get_type() const { return TYPE; }
 
@@ -4464,7 +4487,13 @@ UIGameMenu::UIGameMenu()
 #endif
 	}
 	else LOG(LOG_WARN, "UIGameMenu: missing");
-	center_on_screen();
+
+	// 锚定交给 update_screen（气球要挂在底栏「目录」钮正上方，不是屏幕居中）。
+	// 缺素材的回退壳没有下摆尖端可对，保持原来的居中。
+	if (has_assets)
+		update_screen(Constants::Constants::get().get_viewwidth(), Constants::Constants::get().get_viewheight());
+	else
+		center_on_screen();
 }
 void UIGameMenu::draw(float inter) const
 {
@@ -5312,6 +5341,28 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 }
 UIElement::Type UIGameMenu::get_type() const { return TYPE; }
+
+// 目录气球的落位：底板 93x140 的下摆收束到 x45..47（尖端中心 x=46，见
+// evidence/w2-hud-buttons/coords.md T-2b），原生把这一尖端贴在底栏「目录」钮的正上方。
+// 两张截帧互证「尖角末行 == 钮上沿」：
+//   目录按钮点击后的列表.png（82x182）：气球画布末行 = crop 142，BtMenu(54x34) 掩膜配准
+//     命中 crop (16,143)；
+//   ”界面“按钮点击后的列表.png（94x278）：气球末行 crop 243，BtShort 命中 crop 244。
+// 此前沿用 UIShortCut 的「屏高 - 底条高 - 气球高」，等于把尖角停到底条上沿，比原生高
+// 36px（钮画在底条 rel y=36）—— 两条一起改。
+void UIGameMenu::update_screen(int16_t new_width, int16_t new_height)
+{
+	if (!has_assets)
+		return;	// 缺素材的回退壳没有尖角可对，保持构造里的居中
+
+	constexpr int16_t TAIL_CX = 46;
+	const ClassicBarAnchor bar = classic_bar(new_width, new_height);
+	const int16_t bt_menu_cx = static_cast<int16_t>(bar.group_x + 112 + 27);	// BtMenu 54x34
+
+	position = Point<int16_t>(
+		static_cast<int16_t>(bt_menu_cx - TAIL_CX),
+		static_cast<int16_t>(bar.button_top - dimension.y()));
+}
 
 UIMacro::UIMacro()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Macro — SoftKey name")
