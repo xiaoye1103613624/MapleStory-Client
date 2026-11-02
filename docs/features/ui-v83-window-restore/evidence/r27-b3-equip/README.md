@@ -241,3 +241,32 @@ snap17 = 吸附到 ×17 网格（即素材自身的 4bit 色阶），tie 向下
    已存在的原始像素通道只有 `Graphics/LocalPngTexture`（从磁盘 PNG 进 GL atlas，走 `ensure_raw`）。
    ⇒ 实现路线是**决策点**，见 PLAN-R27 §B3。
 
+
+## 7. 谓词取证（B3-2，2026-11-02，全部只读 `nx_inspect`）
+
+「不可用槽由逻辑推导」要能落地，得先确认**判定输入在本包/本仓取得到**。实测：
+
+| 判定输入 | 取证结果 | 依据 |
+| --- | --- | --- |
+| 骑兽技能 id | **`1004`「骑兽技能」**，满级 1、`invisible = 1`（通用技能块 `000.img/skill/0001004`） | `String.nx/Skill.img/0001004/name` + `Skill.nx/000.img/skill/0001004/{level,invisible}` |
+| 特定坐骑的专属技能 | `1017`/`1018`「白雪人骑宠」带 **`disable = 1`、`timeLimited = 1`**，同样是满级 1 的隐形技能 | `Skill.nx/000.img/skill/0001017` |
+| 装备槽类别是否有「骑兽 / 宠物装备」 | **有**：`String.nx/Eqp.img/Eqp` 16 类中含 `Taming{1902002}`、`PetEquip{1802002}`、`Dragon{1942002}` ⇒ 原生把它们当独立装备类别，不是装饰 | `nx_inspect` 实测（[../notes/asset-node-inventory.md](../../notes/asset-node-inventory.md) 同源） |
+| 坐骑→技能 的绑定是否写在 `TamingMob.nx` | **没有**：本包每个坐骑只有 `info{fatigue, fs, jump, speed, swim}`，无 `skill`/`saddle` 字段 | `TamingMob.nx/000X.img/info` |
+| 装备类物品数据 | `Item.nx` 只有 `Cash/Consume/Etc/Install/Pet/Special` 六个根，**19xxxxx 装备类不在此包**（散在 `Data/Item/`） ⇒ 「这匹坐骑要求哪个技能」本包拿不到 | `nx_inspect list Item.nx` |
+
+本仓可用的判定入口（都不需要改公共 API）：
+
+| 用途 | 位置 |
+| --- | --- |
+| 取本地角色 | `Stage::get().get_player()`（[Gameplay/Stage.h:79](../../../../Gameplay/Stage.h#L79)），装备窗构造点已在用它（`UIStateGame.cpp:257`） |
+| 技能等级 | `Player::get_skilllevel(int32_t)`（[Character/Player.h:107](../../../../Character/Player.h#L107)） |
+| 已装备项 | `Inventory::get_equip(InventoryType::Id, int16_t slot)`（[Character/Inventory/Inventory.h:110](../../../../Character/Inventory/Inventory.h#L110)） |
+| 双手武器 | `Weapon::Type` 含 `SWORD_2H/AXE_2H/MACE_2H/SPEAR/POLEARM/BOW/CROSSBOW/CLAW`（[Character/Inventory/Weapon.h:26-46](../../../../Character/Inventory/Weapon.h#L26-L46)） |
+
+**结论（能闭环的 / 必须预留的）**：
+
+- 可闭环：`TAMEDMOB` ← `get_skilllevel(1004) > 0`；`SADDLE` ← `TAMEDMOB` 槽已装备；
+  `SHIELD` ← 已装备武器为双手类。
+- **必须显式预留**：宠物面板 4 格与 `POCKET` —— 本仓**没有宠物模型**（无 `Pet`/`PetEquip` 类，
+  `EquipSlot::Id` 里也没有任何 `PET_*` 槽位），`TamingMob.nx` 又不编码坐骑↔技能绑定，
+  所以这两类只能按「默认不可用」画（与参考帧一致），并在代码里写明是缺子系统而不是缺证据。
