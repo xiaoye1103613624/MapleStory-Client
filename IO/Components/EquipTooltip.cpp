@@ -20,6 +20,7 @@
 #include "../../Configuration.h"
 #include "../../Data/WeaponData.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -247,10 +248,10 @@ namespace ms
 					switch (reqGender)
 					{
 					case 0: // Male
-						namestr += " (M)";
+						namestr += " " + Locale::text("equip.gender.male");
 						break;
 					case 1: // Female
-						namestr += " (F)";
+						namestr += " " + Locale::text("equip.gender.female");
 						break;
 					case 2: // Unisex
 					default:
@@ -265,7 +266,7 @@ namespace ms
 					}
 
 					name_preview = Text(Text::Font::A12B, Text::Alignment::LEFT, namecolor, namestr, 400);
-					atkinc_preview = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::DUSTYGRAY, "ATT INCREASE");
+					atkinc_preview = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::DUSTYGRAY, Locale::text("equip.label_atkinc"));
 
 					std::string desctext = itemdata.get_desc();
 					hasdesc_preview = desctext.size() > 0;
@@ -276,14 +277,14 @@ namespace ms
 						height_preview += desc_preview.height() + 10;
 					}
 
-					category_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Type: " + equipdata.get_type());
+					category_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
 
 					is_weapon_preview = equipdata.is_weapon();
 
 					if (is_weapon_preview)
 					{
 						const WeaponData& weapon = WeaponData::get(item_id);
-						wepspeed_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Attack Speed: " + weapon.getspeedstring());
+						wepspeed_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
 					}
 					else
 					{
@@ -294,14 +295,14 @@ namespace ms
 
 					if (hasslots_preview)
 					{
-						slots_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Remaining Enhancements: " + std::to_string(equip.get_slots()));
+						slots_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
 
 						std::string vicious = std::to_string(equip.get_vicious());
 
 						if (equip.get_vicious() > 1)
-							vicious.append(" (MAX) ");
+							vicious.append(" " + Locale::text("equip.label_max") + " ");
 
-						hammers_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Hammers Applied: " + vicious);
+						hammers_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_hammers", vicious));
 					}
 					else
 					{
@@ -334,7 +335,7 @@ namespace ms
 							statstr.append(std::to_string(abs(scroll)) + ")");
 						}
 
-						statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, EquipStat::names[es] + std::string(": ") + statstr);
+						statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
 
 						// 悬停物品相对已装备物品的差值：正数绿色 (+N)，负数红色 (N)
 						int32_t diff = static_cast<int32_t>(hovered_value) - static_cast<int32_t>(equipped_value);
@@ -436,23 +437,23 @@ namespace ms
 		{
 		case Equip::Potential::POT_HIDDEN:
 			potflag = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::RED);
-			potflag.change_text("(Hidden Potential)");
+			potflag.change_text(Locale::text("equip.pot.hidden"));
 			break;
 		case Equip::Potential::POT_RARE:
 			potflag = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-			potflag.change_text("(Rare Item)");
+			potflag.change_text(Locale::text("equip.pot.rare"));
 			break;
 		case Equip::Potential::POT_EPIC:
 			potflag = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-			potflag.change_text("(Epic Item)");
+			potflag.change_text(Locale::text("equip.pot.epic"));
 			break;
 		case Equip::Potential::POT_UNIQUE:
 			potflag = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-			potflag.change_text("(Unique Item)");
+			potflag.change_text(Locale::text("equip.pot.unique"));
 			break;
 		case Equip::Potential::POT_LEGENDARY:
 			potflag = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-			potflag.change_text("(Legendary Item)");
+			potflag.change_text(Locale::text("equip.pot.legendary"));
 			break;
 		default:
 			height -= 16;
@@ -490,10 +491,10 @@ namespace ms
 		switch (reqGender)
 		{
 		case 0: // Male
-			namestr += " (M)";
+			namestr += " " + Locale::text("equip.gender.male");
 			break;
 		case 1: // Female
-			namestr += " (F)";
+			namestr += " " + Locale::text("equip.gender.female");
 			break;
 		case 2: // Unisex
 		default:
@@ -508,7 +509,7 @@ namespace ms
 		}
 
 		name = Text(Text::Font::A12B, Text::Alignment::LEFT, namecolor, namestr, 400);
-		atkinc = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::DUSTYGRAY, "ATT INCREASE");
+		atkinc = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::DUSTYGRAY, Locale::text("equip.label_atkinc"));
 
 		std::string desctext = itemdata.get_desc();
 		hasdesc = desctext.size() > 0;
@@ -519,14 +520,14 @@ namespace ms
 			height += desc.height() + 10;
 		}
 
-		category = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Type: " + equipdata.get_type());
+		category = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
 
 		is_weapon = equipdata.is_weapon();
 
 		if (is_weapon)
 		{
 			const WeaponData& weapon = WeaponData::get(item_id);
-			wepspeed = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Attack Speed: " + weapon.getspeedstring());
+			wepspeed = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
 		}
 		else
 		{
@@ -537,14 +538,14 @@ namespace ms
 
 		if (hasslots)
 		{
-			slots = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Remaining Enhancements: " + std::to_string(equip.get_slots()));
+			slots = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
 
 			std::string vicious = std::to_string(equip.get_vicious());
 
 			if (equip.get_vicious() > 1)
-				vicious.append(" (MAX) ");
+				vicious.append(" " + Locale::text("equip.label_max") + " ");
 
-			hammers = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Hammers Applied: " + vicious);
+			hammers = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_hammers", vicious));
 		}
 		else
 		{
@@ -567,7 +568,7 @@ namespace ms
 					statstr.append(std::to_string(abs(delta)) + ")");
 				}
 
-				statlabels[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, EquipStat::names[es] + std::string(": ") + statstr);
+				statlabels[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
 			}
 			else
 			{

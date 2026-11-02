@@ -24,6 +24,7 @@
 #include "../Components/MapleButton.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MonsterBookPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -39,11 +40,11 @@ namespace ms
 		if (n)
 			return n.get_string();
 #endif
-		return "Mob #" + std::to_string(id);
+		return Locale::format("monsterbook.stub_mob", std::to_string(id));
 	}
 
 	UIMonsterBook::UIMonsterBook() :
-		title(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, "Monster Book"),
+		title(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, Locale::text("monsterbook.title")),
 		cover_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, ""),
 		total_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "")
 	{
@@ -77,12 +78,12 @@ namespace ms
 		for (const auto& kv : mb.get_cards())
 			cards.push_back({ kv.first, kv.second });
 
-		cover_label.change_text("Cover: " + (mb.get_cover() > 0 ? monster_name(mb.get_cover()) : "-"));
-		total_label.change_text("Cards: " + std::to_string(cards.size()));
+		cover_label.change_text(Locale::format("monsterbook.label_cover", mb.get_cover() > 0 ? monster_name(mb.get_cover()) : std::string("-")));
+		total_label.change_text(Locale::format("monsterbook.label_cards", std::to_string(cards.size())));
 
 		for (size_t i = 0; i < cards.size(); i++)
 		{
-			std::string txt = "Lv." + std::to_string(static_cast<int>(cards[i].level)) + "  " + monster_name(cards[i].id);
+			std::string txt = Locale::format("monsterbook.label_level", std::to_string(static_cast<int>(cards[i].level))) + "  " + monster_name(cards[i].id);
 			card_labels.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, txt);
 		}
 	}

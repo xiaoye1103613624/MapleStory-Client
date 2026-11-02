@@ -1,0 +1,8 @@
+zh-CN keys = 79
+en-US keys = 79
+equip.speed.     枚举  9 条  zh 缺 0  en 缺 0
+equip.stat.      枚举 15 条  zh 缺 0  en 缺 0
+equip.type.      枚举 32 条  zh 缺 0  en 缺 0
+
+GATE OK: 语言文件键集对齐，且所有数据表枚举均能折成已建档的键
+gate exit=0

@@ -1,0 +1,25 @@
+变异自证：把 fold 退回修复前「只折空格」，门禁必须失败
+
+zh-CN keys = 79
+en-US keys = 79
+equip.speed.     枚举  9 条  zh 缺 0  en 缺 0
+equip.stat.      枚举 15 条  zh 缺 0  en 缺 0
+equip.type.      枚举 32 条  zh 缺 6  en 缺 6
+
+=== FAIL ===
+- zh-CN 缺动态键 equip.type.:
+  equip.type.ONE-HANDED_AXE
+  equip.type.ONE-HANDED_MACE
+  equip.type.ONE-HANDED_SWORD
+  equip.type.TWO-HANDED_AXE
+  equip.type.TWO-HANDED_MACE
+  equip.type.TWO-HANDED_SWORD
+- en-US 缺动态键 equip.type.:
+  equip.type.ONE-HANDED_AXE
+  equip.type.ONE-HANDED_MACE
+  equip.type.ONE-HANDED_SWORD
+  equip.type.TWO-HANDED_AXE
+  equip.type.TWO-HANDED_MACE
+  equip.type.TWO-HANDED_SWORD
+
+MUTATED EXITCODE=1 (期望非 0)

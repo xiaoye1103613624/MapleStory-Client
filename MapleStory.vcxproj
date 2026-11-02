@@ -111,7 +111,9 @@
     <PostBuildEvent>
       <Command>copy /y /d "$(ProjectDir)includes\freetype\win$(PlatformArchitecture)\freetype.dll" "$(OutDir)"
 copy /y /d "$(ProjectDir)includes\bass24\$(PlatformTarget)\bass.dll" "$(OutDir)"
-copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"</Command>
+copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"
+if not exist "$(OutDir)locale" mkdir "$(OutDir)locale"
+xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -135,7 +137,9 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <PostBuildEvent>
       <Command>copy /y /d "$(ProjectDir)includes\freetype\win$(PlatformArchitecture)\freetype.dll" "$(OutDir)"
 copy /y /d "$(ProjectDir)includes\bass24\$(PlatformTarget)\bass.dll" "$(OutDir)"
-copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"</Command>
+copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"
+if not exist "$(OutDir)locale" mkdir "$(OutDir)locale"
+xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -163,7 +167,9 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <PostBuildEvent>
       <Command>copy /y /d "$(ProjectDir)includes\freetype\win$(PlatformArchitecture)\freetype.dll" "$(OutDir)"
 copy /y /d "$(ProjectDir)includes\bass24\$(PlatformTarget)\bass.dll" "$(OutDir)"
-copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"</Command>
+copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"
+if not exist "$(OutDir)locale" mkdir "$(OutDir)locale"
+xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -192,7 +198,9 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <PostBuildEvent>
       <Command>copy /y /d "$(ProjectDir)includes\freetype\win$(PlatformArchitecture)\freetype.dll" "$(OutDir)"
 copy /y /d "$(ProjectDir)includes\bass24\$(PlatformTarget)\bass.dll" "$(OutDir)"
-copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"</Command>
+copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(PlatformArchitecture)\dll\liblz4.so.1.8.2.dll" "$(OutDir)liblz4.dll"
+if not exist "$(OutDir)locale" mkdir "$(OutDir)locale"
+xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
