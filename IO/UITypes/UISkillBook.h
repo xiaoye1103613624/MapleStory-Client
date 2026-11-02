@@ -169,21 +169,37 @@ namespace ms
 		static constexpr int16_t CLASSIC_ROWS = 4;
 		// 行内 SP 升级「+」钮相对行起点的偏移：实测 + 号框左上角 (132,119)。
 		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(125, 20);
-		// 顶部职业 tab 条：5 个 33px 槽位，槽0中心 x=21、条竖直中心 y=34
-		// （新手圆点图标实测左上角 (16,29)，10x11 → 中心 (21,34)）。
+		// ---- 坐标口径（本轮实测钉死）------------------------------------------
+		// oracle = 技能展开宏指令.png；它与 UIWindow.img/Skill/backgrnd 逐像素对齐
+		// 后 xoff/yoff 均为 0（真机同口径复测：烘焙红下划线 ours 帧 x3..171 ==
+		// backgrnd 帧 x3..171）。backgrnd 以 Sprite 偏移 (1,0) 绘制，故
+		//     position == 帧原点 - (1,0)  ⇒  绘制点 Q = 帧坐标 + (1,0)。
+		// 这条换算不是推演：Q=(2,23) 的底板真机落在帧 (1,23)、Q=(9,57) 的书页落在
+		// 帧 (8,57)，两处都恰好比帧目标左 1px，与上式一致。
+		// ----------------------------------------------------------------------
+		// 底板 = UIWindow.img/Item/New/Tab0|Tab1/<页号>（34x19，灰=未选、粉=选中）：
+		// 原生黑色轮廓外框落在帧 x3..36 / y23..41，与底板位图不透明外框 (0..33,0..18)
+		// 同尺寸 ⇒ 底板左上 = 帧 (3,23) ⇒ Q (4,23)。页距 34（与背包窗同款底板的
+		// UIItemInventory::tab_plate_pos 同一把尺）。
+		static constexpr Point<int16_t> TAB_PLATE_TOPLEFT = Point<int16_t>(4, 23);
+		static constexpr int16_t TAB_PLATE_PITCH = 34;
+		// 页码点图标 Skill/Tab/enabled|disabled{0-4}（10x11 … 15x12）叠在底板中央：
+		// 新手页的白色圆点墨迹 = 帧 x16..23 / y30..37，位图内白心 = 位图 x1..8 / y1..8
+		// ⇒ 位图左上 = 帧 (15,29) ⇒ Q (16,29)。底板中心 x = 3+17 = 20 ⇒ 槽0中心 Q=21。
+		// （10x11 的圆点：21 - 10/2 = 16 ✓）
 		static constexpr int16_t TAB_SLOT0_CENTER = 21;
-		static constexpr int16_t TAB_SLOT_PITCH = 33;
 		static constexpr int16_t TAB_CENTER_Y = 34;
-		// 选中页的桃色横幅 = UIWindow.img/Skill/recommend/0（105x35，origin (16,0)）。
-		// 实测（r15，参考截图 打开了S-E-I-K页面.png，窗口原点标定见 evidence/w9-skill/coords-r15.md）：
-		// 橙色描边左缘 x4、右缘 x108（宽 105 ✓），上描边 y22、下描边 y56（高 35 ✓）。
-		static constexpr Point<int16_t> RECOMMEND_TOPLEFT = Point<int16_t>(4, 22);
-		// 书页图标 = Skill/<job>.img/info/icon（26x30，origin (-4,-1)），原生落在横幅左段：
-		// 黑色轮廓左列 x323-309=14、上列 y27-2=25，轮廓在位图内缩 1px → 位图左上 (13,25)。
-		static constexpr Point<int16_t> BOOK_TOPLEFT = Point<int16_t>(13, 25);
-		// 书名（String/Skill.img/<job>/bookName）左对齐贴在书封暗条左缘：
-		// 截图-贴图差分得墨迹 x6..59、y76..85；A11M 字形顶 = 绘制点 + 6 → 绘制点 (5,70)。
-		static constexpr Point<int16_t> BOOK_TEXT_TOPLEFT = Point<int16_t>(5, 70);
+		// 书页图标 = Skill/<job>.img/info/icon（26x30，origin (-4,30)）。原生黑色
+		// 轮廓落在帧 x10..35 / y57..84，位图内轮廓起点 (0,0) ⇒ 位图左上 = 帧 (10,57)
+		// ⇒ Q (11,57) —— 也就是书名那条暗栏的左端，不是顶部 tab 条。
+		static constexpr Point<int16_t> BOOK_TOPLEFT = Point<int16_t>(11, 57);
+		// 书名在暗栏内水平居中：原生墨迹 = 帧 x76..133 / y67..78 ⇒ 中心 帧 104.5。
+		// GraphicsGL::LayoutBuilder::add_line 里 CENTER 是「绘制点即文字中心」
+		// （line_x -= ax/2，与 maxwidth 无关），故 Q.x = 104.5 + 1 ≈ 105。
+		// 旧值 28 是按「150px 盒内居中」算的，那个语义在本引擎里不存在，于是整串
+		// 文字压到书页图标上（真机实测 ours 墨迹中心 帧 17）。y 由 y_for_ink_top 反解。
+		static constexpr int16_t BOOK_TEXT_CENTER_X = 105;
+		static constexpr int16_t BOOK_TEXT_INK_TOP = 67;
 		// 宏指令钮（Basic.img/BtMacro 48x18）：实测左上角 (121,265)。
 		static constexpr Point<int16_t> MACRO_BTN_TOPLEFT = Point<int16_t>(121, 265);
 		// 滚动条：Basic.img/VScr（宽12）prev/next 钮实测左上角 x=156、顶 y=100、底 y=242。
@@ -201,8 +217,13 @@ namespace ms
 		Texture skilld;
 		Texture skillb;
 		Texture line;
-		// 经典窗选中页横幅（Skill/recommend/0）；现代窗无此件，保持无效贴图即不画。
-		Texture recommend;
+		// 经典窗顶部 tab 底板由 TwoSpriteButton 自带（Tab1=粉=选中、Tab0=灰=未选），
+		// 页码点图标 Skill/Tab/enabled|disabled{0-4} 只是叠在底板上的贴图，故这里
+		// 存成两套 Texture，在 draw_buttons 之后按当前页选 en/dis 绘制。
+		// 现代窗不画底板（无此件），页码点仍是可点按钮。
+		std::array<Texture, 5> tab_glyph_en;
+		std::array<Texture, 5> tab_glyph_dis;
+		bool classic_tab_plate = false;
 		Texture bookicon;
 		Text booktext;
 		Text splabel;

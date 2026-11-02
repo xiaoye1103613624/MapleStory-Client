@@ -33,6 +33,7 @@
 #include "../../Net/Packets/AttackAndSkillPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Net/Packets/SkillMacroPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
@@ -157,13 +158,6 @@ namespace ms
 		skillb = main["skillBlank"] ? main["skillBlank"] : Skill["skillBlank"];
 		line = main["line"] ? main["line"] : Skill["line"];
 
-		// v83 经典窗顶部 tab 条：选中页用本包自带的 Skill/recommend/0（105x35 桃色横幅），
-		// 页码点图标 Tab/enabled|disabled{0-4} 作为可点按钮叠在其上（见下方 buttons）。
-		// 早期实现借用了 Item/New/Tab1|Tab0（背包分类页签，34x19 粉底白点），
-		// 与原生完全不同 —— 就是用户报「新手阶段的书籍和标题位置偏了」的一半根因。
-		if (classic)
-			recommend = Texture(Skill["recommend"][0]);
-
 		try_maple_btn(buttons, Buttons::BT_HYPER, main["BtHyper"]);
 		try_maple_btn(buttons, Buttons::BT_GUILDSKILL, main["BtGuildSkill"]);
 		try_maple_btn(buttons, Buttons::BT_RIDE, main["BtRide"]);
@@ -235,20 +229,42 @@ namespace ms
 		nl::node enabled = Tab["enabled"];
 		nl::node disabled = Tab["disabled"];
 
+		// v83 经典窗：整块 34x19 底板才是可点区（原生如此），页码点退化为
+		// 叠在上面的贴图。底板与背包窗分类页签共用同一套件
+		// （UIWindow.img/Item/New/Tab1=粉底=选中、Tab0=灰底=未选，下标=页号）。
+		// r15 曾误判成「借错件」，换成 Skill/recommend/0（105x35 桃色横幅）——
+		// 那块横幅在原生 379x291 对照帧里根本不存在，画出来正好盖掉
+		// backgrnd 已烘焙的「技能」标题。判据：原生帧上粉色页签的黑色外框
+		// = 帧 x3..36 / y23..41，与 Tab1/0 位图不透明外框 (0..33, 0..18) 同形。
+		nl::node tab_plate = classic ? UiAssetResolve::window("Item")["New"] : nl::node();
+
 		for (uint16_t i = Buttons::BT_TAB0; i <= Buttons::BT_TAB4; ++i)
 		{
 			uint16_t tabid = i - Buttons::BT_TAB0;
 
 			if (disabled[tabid] && enabled[tabid])
 			{
-				// tab 图标是各职业段的小符号（圆/竖条…），居中放进 33px 槽位。
-				// TwoSpriteButton 的 position 是 anchor，但 Tab 件 origin=(0,0)，
-				// 故 anchor == 贴图左上角，直接给左上角即可。
+				// 页码点（圆/I/II/III/IV）居中叠在底板中央；Tab 件 origin=(0,0)，
+				// 故 anchor == 贴图左上角。
 				Point<int16_t> dim = Texture(enabled[tabid]).get_dimensions();
-				int16_t slot_center = TAB_SLOT0_CENTER + TAB_SLOT_PITCH * static_cast<int16_t>(tabid);
-				Point<int16_t> pos(slot_center - dim.x() / 2, TAB_CENTER_Y - dim.y() / 2);
+				int16_t slot_center = TAB_SLOT0_CENTER + TAB_PLATE_PITCH * static_cast<int16_t>(tabid);
+				Point<int16_t> glyph_pos(slot_center - dim.x() / 2, TAB_CENTER_Y - dim.y() / 2);
 
-				buttons[i] = std::make_unique<TwoSpriteButton>(disabled[tabid], enabled[tabid], pos);
+				nl::node plate_dis = tab_plate["Tab0"][tabid];
+				nl::node plate_en = tab_plate["Tab1"][tabid];
+
+				if (plate_dis && plate_en)
+				{
+					classic_tab_plate = true;
+					tab_glyph_en[tabid] = Texture(enabled[tabid]);
+					tab_glyph_dis[tabid] = Texture(disabled[tabid]);
+					buttons[i] = std::make_unique<TwoSpriteButton>(
+						plate_dis, plate_en, TAB_PLATE_TOPLEFT + Point<int16_t>(static_cast<int16_t>(TAB_PLATE_PITCH * tabid), 0));
+				}
+				else
+				{
+					buttons[i] = std::make_unique<TwoSpriteButton>(disabled[tabid], enabled[tabid], glyph_pos);
+				}
 			}
 		}
 
@@ -280,11 +296,11 @@ namespace ms
 				y_adj += ROW_HEIGHT;
 		}
 
-		// 经典窗书名是左对齐贴在书封暗条左缘（原生实测墨迹 x6..59），
-		// 现代窗才是 150px 盒内水平居中；两者共用一个 Text，故按分支定对齐。
-		booktext = Text(Text::Font::A11M,
-			classic ? Text::Alignment::LEFT : Text::Alignment::CENTER,
-			Color::Name::WHITE, "", classic ? 0 : 150);
+		// 书名：A11M + CENTER。本引擎的 CENTER 语义是「绘制点 = 文字中心」
+		// （LayoutBuilder::add_line 里 line_x -= ax/2），maxwidth 只用于换行，
+		// 不会把文字摆到盒子中间 —— 别按「150px 盒内居中」去推绘制点。
+		booktext = Text(Text::Font::A11M, Text::Alignment::CENTER,
+			Color::Name::WHITE, "", 150);
 		splabel = Text(Text::Font::A12M, Text::Alignment::RIGHT, Color::Name::BLACK);
 
 		slider = classic
@@ -328,18 +344,16 @@ namespace ms
 
 		if (classic)
 		{
-			// v83 经典窗（175x289）分区实测（w9-skill/coords.md + r15 复测）：
-			// 标题 0-20、tab 条 20-56、书封条 55-86、列表区 99-253、技能点行 253-289。
-			// tab 条选中页 = Skill/recommend/0 桃色横幅（105x35 @ (4,22)），
-			// 书页图标叠在横幅左段（26x30 @ (13,25)），书名左对齐落在暗条左缘 (5,70)。
-			// 原生叠放次序是 横幅 → 页码点 → 书页 → 书名，所以书页/书名要等
-			// UIElement::draw_buttons 之后再画（见本函数末尾），否则 tab0 的圆点会盖住书。
-			if (recommend.is_valid())
-				recommend.draw(position + RECOMMEND_TOPLEFT);
-
-			// 技能点数值：SP 白框（UIWindow.img/Skill/backgrnd 烘焙）边框窗口相对
-			// x 61..112、y 265..281（由 tmpl/Skill_backgrnd.png 直接读出，非截图反推）。
-			// R27-B1b 按原生帧重量：skill_macro.png 里数字「0」墨迹 = x 103..107、
+			// v83 经典窗（175x289）分区实测（对照帧 = 技能展开宏指令.png，与
+			// UIWindow.img/Skill/backgrnd 逐像素对齐后 xoff/yoff 均为 0）：
+			// 标题 0..20（已烘焙）· tab 条 23..41 · 红下划线 42..44（已烘焙）·
+			// 书封暗栏 55..86（暗底 62..80）· 列表区 99..253 · 技能点行 253..289。
+			// 「技能」标题、tab 条白底、红下划线、暗栏都在 backgrnd 里烤好了，
+			// 客户端只补三件：tab 底板（按钮）+ 页码点 + 书页图标/书名。
+			// 页码点必须等 UIElement::draw_buttons 之后再画（见本函数末尾），
+			// 否则会被底板盖掉。
+			// 技能点数值：SP 白框（backgrnd 烘焙）边框 = 帧 x62..111 / y265..281
+			// ⇒ 窗口相对 x61..110。R27-B1b 按原生帧重量：数字「0」墨迹 = x 103..107、
 			// y 268..276，与该帧的白框上边框（y265）只差 +3 —— 和背包金币框
 			// （边框 266 / 数字 269）同一把尺，互相印证。
 			// 旧值 (92, 274) 出自另一张全屏截图的「窗口原点 (308,2)」推算法，那套
@@ -463,11 +477,35 @@ namespace ms
 
 		if (classic)
 		{
-			// 必须在按钮之后：tab 页码点是可点按钮，原生让书页图标压在它上面。
+			// 必须在按钮之后：原生叠放次序是 底板（按钮）→ 页码点 → 书页 → 书名，
+			// 页码点只是叠在粉/灰底板上的贴图，先画会被底板盖掉。
 			// Texture 以 origin 为锚点（top-left = 绘制点 - origin），故加回 get_origin()
 			// 才能按「左上角」落位。
+			if (classic_tab_plate)
+			{
+				for (size_t t = 0; t < tab_glyph_en.size(); ++t)
+				{
+					const Texture& glyph = (t == tab) ? tab_glyph_en[t] : tab_glyph_dis[t];
+
+					if (!glyph.is_valid())
+						continue;
+
+					// 未到该转职层数时按钮是 inactive，原生连底板带点一起不画。
+					// （draw 是 const，find_btn 要非 const 引用，故这里直接查表。）
+					auto bit = buttons.find(static_cast<uint16_t>(Buttons::BT_TAB0 + t));
+
+					if (bit == buttons.end() || !bit->second->is_active())
+						continue;
+
+					Point<int16_t> dim = glyph.get_dimensions();
+					int16_t slot_center = TAB_SLOT0_CENTER + TAB_PLATE_PITCH * static_cast<int16_t>(t);
+
+					glyph.draw(position + Point<int16_t>(slot_center - dim.x() / 2, TAB_CENTER_Y - dim.y() / 2) + glyph.get_origin());
+				}
+			}
+
 			bookicon.draw(position + BOOK_TOPLEFT + bookicon.get_origin());
-			booktext.draw(position + BOOK_TEXT_TOPLEFT);
+			booktext.draw(position + Point<int16_t>(BOOK_TEXT_CENTER_X, booktext.y_for_ink_top(BOOK_TEXT_INK_TOP)));
 		}
 	}
 
@@ -927,7 +965,15 @@ namespace ms
 		const JobData& data = JobData::get(subid);
 
 		bookicon = data.get_icon();
-		booktext.change_text(data.get_name());
+		// 书名：默认沿用 String/Skill.img/<ns>/bookName，只有登记了证据的键才覆盖。
+		// 覆盖原因是实测：本机 String 包 000/bookName = 「冒险家的技术」（6 字），
+		// 而原生客户端同一帧烘焙/渲染的是「冒险家技能」（5 字，见技能展开宏指令.png
+		// 的书封暗栏）。两边都是 String 包文本，只是版本措辞不同 —— 属于「有证据
+		// 的那几个才改」，其余职业没核对过，继续走数据，不凭空编职业名。
+		booktext.change_text(Locale::text_or(
+			"skill.bookname." + string_format::extend_id(subid, 3),
+			data.get_name()
+		));
 
 		for (int32_t skill_id : data.get_skills())
 		{
@@ -1193,6 +1239,18 @@ namespace ms
 
 		if (auto* b = find_btn(buttons, Buttons::BT_MACRO_OK))
 			b->set_active(macro_enabled);
+
+		// 组合栏是独立窗（UISkillMacroEx），只靠 macro_enabled 收不掉：以前「宏指令」
+		// 再点一次 / 按「确定」后技能窗缩回原宽，组合栏却留在原地 —— 就是用户报的
+		// 「展开后收缩不了」。收起必须显式 deactivate，两条关闭路径（toggle-off 与
+		// BT_MACRO_OK）都经过这里，所以放在 set_macro 里而不是调用点。
+		if (!macro_enabled)
+		{
+			auto mex = UI::get().get_element<UISkillMacroEx>();
+
+			if (mex)
+				mex->deactivate();
+		}
 
 		if (macro_enabled && sp_enabled)
 			set_skillpoint(false);

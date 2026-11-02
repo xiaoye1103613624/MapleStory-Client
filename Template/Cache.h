@@ -43,7 +43,9 @@ namespace ms
 			return iter->second;
 		}
 
-	private:
+	protected:
+		// 原为 private：派生类（SkillData）覆写 get 的「根未装载不缓存」策略时
+		// 需要复用同一张表。基类行为未变。
 		static std::unordered_map<std::int32_t, T> cache;
 	};
 

@@ -20,6 +20,8 @@
 #include "../Character/SkillId.h"
 #include "../Util/Misc.h"
 
+#include <utility>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -31,11 +33,28 @@ namespace ms
 		/// Locate sources
 		std::string strid = string_format::extend_id(id, 7);
 		std::string jobid = string_format::skill_namespace(id);
+		// rooted：此刻 nl::nx::Skill 根有没有绑上。选角阶段与登录界面是并行
+		// 预载的（ResourceService::prewarm_game_roots → ImgSource::ensure_char_select
+		// 只装外观相关根），Skill 要到进图后的 ensure_map_roots / ensure_remaining
+		// 才绑。登录封包里的 SkillBook::collect_passives 早于这一刻，构造出来的
+		// 就是空壳。
+		rooted = nl::nx::Skill.size() > 0;
 		nl::node src = nl::nx::Skill[jobid + ".img"]["skill"][strid];
 		nl::node strsrc = nl::nx::String["Skill.img"][strid];
 
 		/// Load icons
 		icons = { src["icon"], src["iconDisabled"], src["iconMouseOver"] };
+
+		// 本包技能图标的 origin 恒为 (0,32)（WZ 的「底边锚点」写法），真机抓帧实测
+		// 过：行内绘制点的 origin=0,32。而 UISkillBook 的行内
+		// 偏移是按原生像素量出来的「图标左上 = 绘制点」写的
+		// （CLASSIC_SKILL_OFFSET(7,99) + SKILL_META_OFFSET(2,2)，原生图标左上 =
+		// 行背景左上 + (2,2)，pitch 40）。不补偿就把每行图标整体上抬 32px ——
+		// 真机表现为「第 i 行的图标落在第 i-1 行的格子里、最后一行空着」。
+		// 上游是在 Icon 构造里统一 shift(0,32)，但那会把 origin 只有几像素的
+		// 道具图标整体下推（见 Icon.cpp 注释），所以补偿收在技能这一族。
+		for (Texture& icon : icons)
+			icon.shift(icon.get_origin());
 
 		/// Load strings
 		name = strsrc["name"].get_string();
@@ -108,6 +127,31 @@ namespace ms
 
 			reqskills.emplace(skillid, reqlv);
 		}
+	}
+
+	const SkillData& SkillData::get(int32_t id)
+	{
+		auto iter = cache.find(id);
+
+		if (iter == cache.end())
+		{
+			SkillData built(id);
+
+			// 根还没装载 → 这次构造的是空壳。空壳进缓存就永久锁死：真机上
+			// 新手 0000012「精灵的祝福」由登录封包的 collect_passives 首次触发，
+			// 那一刻 Skill 根未绑，于是技能窗里它永远没有图标、没有等级表。
+			// 这里不写缓存，返回同一个「未装载」实例，等根就绪后的访问重新构造。
+			if (!built.rooted)
+			{
+				static const SkillData unloaded(0);
+
+				return unloaded;
+			}
+
+			iter = cache.emplace(id, std::move(built)).first;
+		}
+
+		return iter->second;
 	}
 
 	int32_t SkillData::flags_of(int32_t id) const

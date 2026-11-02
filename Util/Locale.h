@@ -29,10 +29,21 @@ namespace ms
 		/// 取文案；缺失时回退。
 		std::string tr(const std::string& key) const;
 
+		/// 键是否存在（当前语言或 zh-CN 兜底表里任一命中）。
+		bool has(const std::string& key) const;
+
 		/// 静态便捷入口（避免与 Singleton::get 混淆）。
 		static std::string text(const std::string& key)
 		{
 			return Locale::get().tr(key);
+		}
+
+		/// 有键用文案，没有则回退到外部原文。用于「WZ/String 里已有文案，但原生
+		/// 客户端用另一套措辞」这类覆盖场景：只登记有证据的那几个键，其余仍走数据，
+		/// 避免把没核对过的职业名一并编出来。
+		static std::string text_or(const std::string& key, const std::string& fallback)
+		{
+			return Locale::get().has(key) ? Locale::get().tr(key) : fallback;
 		}
 
 		/// 枚举原文折成键后缀再取文案：`enum_key("equip.type.", "ONE-HANDED SWORD")`

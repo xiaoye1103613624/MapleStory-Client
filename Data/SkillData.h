@@ -96,6 +96,10 @@ namespace ms
 		// Return id and level of all required skills
 		const std::unordered_map<int32_t, int32_t>& get_reqskills() const;
 
+		// 覆写 Cache<SkillData>::get：见 SkillData.cpp 中 rooted 的说明。
+		// Skill 根尚未装载时构造出的是空壳，空壳进缓存会被永久锁死。
+		static const SkillData& get(std::int32_t id);
+
 	private:
 		// Allow the cache to use the constructor
 		friend Cache<SkillData>;
@@ -119,5 +123,7 @@ namespace ms
 		std::unordered_map<int32_t, int32_t> reqskills;
 
 		std::array<Texture, Icon::NUM_ICONS> icons;
+		// 构造时 nl::nx::Skill 根是否已装载（只用于决定能否进缓存）
+		bool rooted;
 	};
 }

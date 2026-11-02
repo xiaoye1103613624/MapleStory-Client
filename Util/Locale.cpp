@@ -103,4 +103,9 @@ namespace ms
 
 		return key;
 	}
+
+	bool Locale::has(const std::string& key) const
+	{
+		return primary.find(key) != primary.end() || fallback_zh.find(key) != fallback_zh.end();
+	}
 }
