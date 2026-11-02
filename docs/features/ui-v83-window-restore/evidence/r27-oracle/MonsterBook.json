@@ -1,0 +1,96 @@
+{
+  "window": "MonsterBook 怪物手册",
+  "native_frame": "C:/Users/11036/Desktop/正确客户端截图/怪物手册.png (540x357) -> frames/native_monsterbook.png (md5 ca6baeb3ecdf8b0d1ea71eef72455332)",
+  "anchor_tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/MonsterBook_backgrnd.png",
+  "anchor_min_agree": 0.55,
+  "tol": 2,
+  "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_monsterbook.png",
+  "oracle_anchor": [34, 8],
+  "note": "区域相对 MonsterBook/backgrnd(475x349, origin 0,0) 左上角。锚点如实记一条歧义：anchor 主匹配给 (34,8) agree .767（top5 rmse 62.6 / 次峰 64.8），bias 网格在 ±2 内单调降到 (34,10) meanSAD 23.29 但无内峰 —— 因该帧下缘是紧裁的（34+? 左 34 / 右 31 留边，底 0 留边：8+349=357 正好等于帧高），dy=+2 等于把位图末两行推出帧外少比两行，故 SAD 变好是尺寸效应不是内容对齐。取「位图末行 == 帧末行」这一格 (34,8)，与 Stat 帧 backgrnd 左上角 2px 歧义同一处置：落在 tol 内，留待 B8 真机帧实测，不在此推断。宁可少写：cover(31x42 origin(2,40)) 在本帧 agree 0.000（那格红卡预览不是 cover 节点）、RightTab1..3 的 normal 位图 agree 仅 .343~.371（原生这帧只有 tab0 是 selected 且标签含烘焙中文），三者一律不写 oracle，png 留在 tmpl/ 当后续复核原料。",
+  "probes": [
+    {
+      "name": "BtClose",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/MonsterBook_BtClose_normal.png",
+      "region": [400, 0, 506, 60],
+      "min_agree": 0.95,
+      "note": "右上关闭钮 18x16，帧上 agree 1.000 / rmse 0.00 —— 本 spec 最锐的一把尺，锚点若整体偏移它第一个抓到",
+      "oracle": {
+        "x": 429,
+        "y": 12,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "RightTab0_info",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/MonsterBook_RightTab0_selected.png",
+      "region": [380, 0, 506, 349],
+      "min_agree": 0.95,
+      "note": "右缘第一标签「基本情报」selected 态，帧上 agree 1.000 / rmse 0.00；标签竖排起点由它定",
+      "oracle": {
+        "x": 439,
+        "y": 29,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 1.0
+      }
+    },
+    {
+      "name": "infoPage",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/MonsterBook_infoPage.png",
+      "region": [0, 0, 475, 349],
+      "min_agree": 0.85,
+      "note": "左页「基本情报」信息板 170x231，帧上 agree .916",
+      "oracle": {
+        "x": 40,
+        "y": 34,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.916
+      }
+    },
+    {
+      "name": "cardSlot",
+      "kind": "tmpl",
+      "tmpl": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/MonsterBook_cardSlot.png",
+      "region": [150, 0, 475, 349],
+      "min_agree": 0.65,
+      "note": "右页卡槽区 174x256，帧上 agree .724（右页被星形底纹与卡片压住，agree 天生低于左页，故阈值放宽到 .65）",
+      "oracle": {
+        "x": 269,
+        "y": 52,
+        "w": 0,
+        "h": 0,
+        "n": 0,
+        "agree": 0.724
+      }
+    },
+    {
+      "name": "label_lines",
+      "kind": "lines",
+      "color": [85, 51, 34],
+      "tol": 40,
+      "region": [30, 100, 160, 290],
+      "min_pix": 4,
+      "min_h": 3,
+      "gap": 2,
+      "note": "左页五行标签（怪物手册等级/总登记卡片数量/特殊卡片数量/一般卡片数量/手册书签）墨顶与行距；文字色取该区域像素众数 (85,51,34)（97 px，次色 (119,85,85) 是抗锯齿）",
+      "oracle": {
+        "x": 30,
+        "y": 112,
+        "w": 0,
+        "h": 5,
+        "n": 202,
+        "rows": [112, 165, 196, 217, 253],
+        "heights": [12, 10, 10, 10, 10]
+      }
+    }
+  ]
+}

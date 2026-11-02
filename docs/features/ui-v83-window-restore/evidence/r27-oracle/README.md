@@ -191,3 +191,29 @@ python layout.py selftest ../evidence/r27-oracle/EquipTooltip.json --probe req_l
    现在 selftest 传 `force_anchor`（spec 里已记录的锚点）继续量探针，并明打印一句降级说明。
    真实帧的锚定失败仍然是硬失败，不受这条影响。
 
+## 第九张 spec：MonsterBook（2026-11-02 建）与两张卡住的窗
+
+`MonsterBook.json` 5 探针、`check` 对自己的 oracle 帧不合格 0：锚 `backgrnd`(475x349)@(34,8)
+agree .767，`BtClose` 与 `RightTab0_selected` 两把尺 agree **1.000 / rmse 0.00**，
+`infoPage` .916、`cardSlot` .724，`label_lines` 五行墨顶 `[112,165,196,217,253]`。
+`cover`(31x42 origin(2,40)) 在本帧 agree **0.000**（那格红卡预览不是 cover 节点）、
+`RightTab1..3` 的 normal 位图 agree 仅 .343~.371（原生这帧只有 tab0 是 selected，且标签含烘焙中文）
+—— 三者一律**不写 oracle**，png 留在 `tmpl/` 当后续复核原料。
+
+### 目录（GameMenu）：现有帧量不出尺，等留边截图
+
+`目录按钮点击后的列表.png` 只有 **82x182**，比 `GameMenu/backgrnd`(93x140) 还窄 ⇒
+`anchor_in` 判「模板过大」直接拒。更关键的一条是**美术对不上**：`GameMenu/backgrnd` 的
+不透明像素众数色是深灰 `(17,17,17)` + 白，而帧上面板实测是蓝 `(0,153,238)/(0,102,170)`
+—— 原生这帧的底色来自 81x25 的按钮位图本身，不是 backgrnd。可按钮位图**不含烘焙的中/英文文字**
+（帧上每颗都是「频道变更 / CHANNEL CHANGE」两行），拿它当模板匹到帧上 agree 只有 **.712**，
+低于任何可用阈值。裁 backgrnd 左侧 60 列再试 agree .065~.195、rmse ~253，同样废。
+结论：**不换帧就没有尺**，已请用户补一张四周留边的完整目录截图；在那之前 B6 的「目录列表位置不对」
+只能按代码语义推，不进门禁。
+
+### 游戏设置 / 系统设置：原生帧缺失
+
+桌面 57 张原生帧里没有这两张窗（`GameOpt` 只有 `backgrnd 158x284`、`SysOpt` 只有 `backgrnd 299x365`
+的资产取证来自 nx，不是截图）。B7 的「二合一 + 无勾选框」可以照资产与 `Basic.img/CheckBox` 修，
+但**版式对不对没有 oracle**，属「只能用户取证」。
+
