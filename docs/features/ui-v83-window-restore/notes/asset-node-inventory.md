@@ -43,6 +43,11 @@
 ### `UIWindow.img/Equip`
 `backgrnd[175x304]`、`FullBackgrnd[208x291]`、`pet[177x181]`、`BtPet1[30x27]`、`BtPet2[30x27]`、`BtPet3[30x27]`、`BtPetEquipShow[67x18]`、`BtPetEquipHide[17x16]`、`BtCashshop[32x11]{4态; mo/n 有 0-5}`、`BtDetail[46x19]`
 - ✗ `backgrnd2`（代码取了它）、✗ 绳索、✗ 关闭钮
+- ✗ **`Disabled` / 槽位灰底**（2026-11-02 实测复核：Equip 直接子节点只有上面这 10 个；
+  每个 `Bt*` 下的 `disabled{0}` 是**按钮**灰态，不是槽位底衬。对照 `Item/disabled[32x32]` 才有空格衬底）
+- 实测 origin：`backgrnd`/`FullBackgrnd`/`pet` 均 **(0,0)**；`BtPet1/2/3` 四态均 **(15,13)**；`BtDetail` **(0,0)**
+- 实测槽位相位：底图凹槽左上角列 `x∈{5,38,71,104,137}`、行 `y=32+33k`，7 行逐格亮度对上
+  ⇒ 见 [evidence/r27-b3-equip/README.md](../evidence/r27-b3-equip/README.md)
 
 ### `UIWindow.img/Quest`
 `backgrnd[245x396]`、`backgrnd2[305x396]`、`backgrnd3[296x289]`、`backgrnd4[305x396]`、`backgrnd5[266x117]`、`Tab{disabled,enabled}`、`icon0[13x14]`、`icon1`、`icon2{0-7}`、`icon3{0-6}`、`icon4`、`icon5{0-4}`、`icon6{0-7}`、`icon7{0-11}`、`icon8{0-7}`、`icon9{0-7}`（＝8 组分类图）、`BtAlert/BtDetail/BtGiveup/BtMarkNpc/BtNo/BtOK`（各 5 态）、`Gauge{frame[163x14],gauge[1x11],spot[1x11]}`、`Gauge2{frame[79x8],gauge[1x4]}`、`notice{0-2}[73x24]`、`notice0[124x35]`、`notice1[124x34]`、`notice2[102x33]`、`basic[71x14]`、`prob[60x14]`、`reward[72x20]`、`select[60x14]`、`summary[74x22]`、`TimeQuest{AlarmClock,TimeBar}`
