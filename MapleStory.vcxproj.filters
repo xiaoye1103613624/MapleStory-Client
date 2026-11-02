@@ -519,9 +519,6 @@
     <ClCompile Include="IO\UITypes\UILoginWait.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IO\UITypes\UIHelp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IO\UITypes\UILogo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1317,9 +1314,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UINotice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\UITypes\UIHelp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UINpcTalk.h">

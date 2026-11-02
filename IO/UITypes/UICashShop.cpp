@@ -19,7 +19,6 @@
 
 #include "UICashGachapon.h"
 #include "UICharInfo.h"
-#include "UIHelp.h"
 #include "UIItemInventory.h"
 #include "UIMiscShells.h"
 #include "UIRemoteGachapon.h"
@@ -35,6 +34,7 @@
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/LoginPackets.h"
 #include "../../Net/Packets/CashShopPackets.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Configuration.h"
 #include "../../Util/Misc.h"
 
@@ -416,11 +416,9 @@ namespace ms
 		}
 		case Buttons::BtHelp:
 		{
-			auto help = UI::get().get_element<UIHelp>();
-			if (!help)
-				help = UI::get().emplace<UIHelp>();
-			else if (!help->is_active())
-				help->makeactive();
+			// 全客户端「帮助/问号」统一走 ENTER_MTS，落点由服务端 use_mts 决定。
+			EnterMtsPacket().dispatch();
+			LOG(LOG_INFO, "UICashShop: Help -> ENTER_MTS");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtInventory:

@@ -393,7 +393,6 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UILoginNotice.cpp" />
     <ClCompile Include="IO\UITypes\UILoginWait.cpp" />
     <ClCompile Include="IO\UITypes\UILogo.cpp" />
-    <ClCompile Include="IO\UITypes\UIHelp.cpp" />
     <ClCompile Include="IO\UITypes\UIMiniMap.cpp" />
     <ClCompile Include="IO\UITypes\UINotice.cpp" />
     <ClCompile Include="IO\UITypes\UINpcTalk.cpp" />
@@ -735,7 +734,6 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UILogo.h" />
     <ClInclude Include="IO\UITypes\UIMiniMap.h" />
     <ClInclude Include="IO\UITypes\UINotice.h" />
-    <ClInclude Include="IO\UITypes\UIHelp.h" />
     <ClInclude Include="IO\UITypes\UINpcTalk.h" />
     <ClInclude Include="IO\UITypes\UIOptionMenu.h" />
     <ClInclude Include="IO\UITypes\UIQuestLog.h" />

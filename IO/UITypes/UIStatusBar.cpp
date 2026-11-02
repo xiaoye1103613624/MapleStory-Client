@@ -28,7 +28,6 @@
 #include "UIEvent.h"
 #include "UIFamily.h"
 #include "UIGuild.h"
-#include "UIHelp.h"
 #include "UIItemInventory.h"
 #include "UIJoypad.h"
 #include "UIKeyConfig.h"
@@ -57,6 +56,7 @@
 #include "../../Data/SkillData.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Util/UiAssetResolve.h"
@@ -795,8 +795,10 @@ namespace ms
 			}
 			case Buttons::BT_CLASSIC_NPT:
 			{
-				// BtNPT 位图为「帮助」；旧逻辑误开 QuestLog，缺资源时易卡死。
-				UI::get().emplace<UIHelp>();
+				// BtNPT 位图为「帮助」，但帮助内容不在客户端：原生发 ENTER_MTS(0x9C)，
+				// 由服务端 use_mts 决定进拍卖行 UI 还是 npc/9900001.js 脚本中心对话。
+				EnterMtsPacket().dispatch();
+				LOG(LOG_INFO, "UIStatusBar: Help(BtNPT) -> ENTER_MTS");
 				break;
 			}
 			case Buttons::BT_CLASSIC_SHORT:
@@ -915,20 +917,10 @@ namespace ms
 			}
 			case Buttons::BT_MENU_AUCTION:
 			{
-				// 无拍卖 opcode：FindPlayer 作检索代理；CharInfo 有名则直发
-				std::string pre;
-				if (auto ci = UI::get().get_element<UICharInfo>())
-					pre = ci->get_target_name();
-				if (!pre.empty()) {
-					FindPlayerPacket(pre).dispatch();
-					LOG(LOG_DEBUG, "UIStatusBar: Auction FindPlayer=" << pre);
-				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& tip) {
-						if (tip.empty()) return;
-						FindPlayerPacket(tip).dispatch();
-						LOG(LOG_DEBUG, "UIStatusBar: Auction FindPlayer=" << tip);
-					}, []() {}, "Find name");
-				}
+				// 拍卖行入口同样只有 ENTER_MTS 一条通道（此前用 FindPlayer 冒充检索，
+				// 属自创代理）；服务端 use_mts=false 时该包回脚本中心对话。
+				EnterMtsPacket().dispatch();
+				LOG(LOG_INFO, "UIStatusBar: Auction -> ENTER_MTS");
 				remove_menus();
 				break;
 			}
@@ -960,7 +952,8 @@ namespace ms
 			}
 			case Buttons::BT_MENU_HELP:
 			{
-				UI::get().emplace<UIHelp>();
+				EnterMtsPacket().dispatch();
+				LOG(LOG_INFO, "UIStatusBar: Help(menu) -> ENTER_MTS");
 				remove_menus();
 				break;
 			}

@@ -17,11 +17,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChatBar.h"
 #include "UIChat.h"
-#include "UIHelp.h"
 #include "UIBuddyList.h"
 #include "UICharInfo.h"
 #include "UIItemInventory.h"
 #include "UISoftKey.h"
+// 悄悄话目标弹层 UIWhisperTargetDlg（它落在已编译的 UIMiscShells TU 里 —— 本工程
+// 的 vcxproj 逐文件列源，新增 .cpp 必须改工程文件）。
+#include "UIMiscShells.h"
 
 #include "../UI.h"
 
@@ -30,8 +32,10 @@
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/InventoryPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 #include <list>
@@ -604,17 +608,15 @@ namespace ms
 			}
 			case ms::UIChatBar::BtHelp:
 			{
-				auto help = UI::get().get_element<UIHelp>();
-				if (!help)
-					help = UI::get().emplace<UIHelp>();
-				else if (!help->is_active())
-					help->makeactive();
+				// 全客户端「帮助/问号」统一走 ENTER_MTS，落点由服务端 use_mts 决定。
+				EnterMtsPacket().dispatch();
+				LOG(LOG_INFO, "UIChatBar: Help -> ENTER_MTS");
 				return Button::State::NORMAL;
 			}
 			case ms::UIChatBar::BtWhisper:
 			{
-				// 聊天目标循环切换（对所有人→密语→组队→工会）。
-				cycle_chat_target();
+				// 原生是「点开列表、从列表选择」，不是点击循环（用户 2026-11-02 定调）。
+				toggle_classic_target_list(!classic_target_list_open);
 				return Button::State::NORMAL;
 			}
 			case ms::UIChatBar::BtOutChat:

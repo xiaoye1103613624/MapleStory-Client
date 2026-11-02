@@ -64,7 +64,6 @@
 #include "UIRpsGame.h"
 #include "../../Character/SkillMacros.h"
 #include "../../Data/SkillData.h"
-#include "UIHelp.h"
 #include "UIJoypad.h"
 #include "UIKeyConfig.h"
 #include "UIMessenger.h"
@@ -2788,14 +2787,6 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			else if (!ui->is_active()) ui->makeactive();
 			break;
 		}
-		case 'H':
-		case 'h':
-		{
-			auto ui = UI::get().get_element<UIHelp>();
-			if (!ui) ui = UI::get().emplace<UIHelp>();
-			else if (!ui->is_active()) ui->makeactive();
-			break;
-		}
 		case 'G':
 		case 'g':
 		{
@@ -4664,11 +4655,6 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'Y' || keycode == 'y') {
 		CancelChairPacket().dispatch();
 		LOG(LOG_DEBUG, "UIGameMenu: CancelChair");
-		deactivate();
-	} else if (keycode == 'H' || keycode == 'h') {
-		auto ui = UI::get().get_element<UIHelp>();
-		if (!ui) ui = UI::get().emplace<UIHelp>();
-		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == 'J' || keycode == 'j') {
 		auto ui = UI::get().get_element<UIJoypad>();

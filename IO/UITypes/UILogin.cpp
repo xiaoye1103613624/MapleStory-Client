@@ -17,7 +17,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UILogin.h"
 
-#include "UIHelp.h"
 #include "UILoginNotice.h"
 #include "UILoginWait.h"
 #include "UIRegion.h"
@@ -598,12 +597,6 @@ namespace ms
 		{
 			auto ui = UI::get().get_element<UIRegion>();
 			if (!ui) ui = UI::get().emplace<UIRegion>();
-			else if (!ui->is_active()) ui->makeactive();
-		}
-		else if (keycode == 'H' || keycode == 'h')
-		{
-			auto ui = UI::get().get_element<UIHelp>();
-			if (!ui) ui = UI::get().emplace<UIHelp>();
 			else if (!ui->is_active()) ui->makeactive();
 		}
 	}

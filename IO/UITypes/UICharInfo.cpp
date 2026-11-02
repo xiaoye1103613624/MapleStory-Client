@@ -26,6 +26,7 @@
 #include "../../Net/Packets/FamilyPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Net/Packets/MessengerPackets.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Net/Packets/PartyPackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
@@ -35,7 +36,6 @@
 #include "../../Util/Misc.h"
 #include "../UI.h"
 #include "UIFamily.h"
-#include "UIHelp.h"
 #include "UIItemInventory.h"
 #include "UIMiscShells.h"
 #include "UIMonsterBook.h"
@@ -419,11 +419,9 @@ namespace ms
 			}
 			case Buttons::BtFAQ:
 			{
-				auto help = UI::get().get_element<UIHelp>();
-				if (!help)
-					help = UI::get().emplace<UIHelp>();
-				else if (!help->is_active())
-					help->makeactive();
+				// 全客户端「帮助/问号」统一走 ENTER_MTS，落点由服务端 use_mts 决定。
+				EnterMtsPacket().dispatch();
+				LOG(LOG_INFO, "UICharInfo: FAQ -> ENTER_MTS");
 				return Button::State::NORMAL;
 			}
 			case Buttons::BtRegist:
