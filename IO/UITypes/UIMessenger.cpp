@@ -10,6 +10,7 @@
 #include "../Components/MapleButton.h"
 #include "../../Net/Packets/MessengerPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Constants.h"
 
@@ -53,6 +54,14 @@ namespace ms
 		);
 		chat_input.set_text_shift(Point<int16_t>(0, CHAT_INPUT_TEXT_SHIFT_Y));
 		chat_input.set_enter_callback([this](std::string s) { send_chat(s); });
+		// 焦点在输入框时，按键由 UI::send_key 整条交给 Textfield（IO/UI.cpp:202），
+		// 本窗的 send_key 根本走不到 —— 真机实测「打完字按 ESC 窗还开着」就是这条。
+		// ESC 两级：聚焦时先收窗（与标题 X / 再按一次 V 同一条 toggle_active 路径）。
+		chat_input.set_key_callback(KeyAction::Id::ESCAPE, [this]()
+		{
+			if (active)
+				toggle_active();
+		});
 
 #ifdef USE_NX
 		nl::node root = UiAssetResolve::window("Messenger");
@@ -264,7 +273,10 @@ namespace ms
 
 		std::string payload = self + " : " + text;
 		MessengerChatPacket(payload).dispatch();
-		append_chat(payload); // 本地回显，不等服务端回推
+		// 回显行单独走 i18n：占位名 "Me" 是协议侧字段（出站包内容不随语言变），
+		// 只把「给人看的那一行」里的名字换成当前语言（默认中文「我」）。
+		std::string shown = (self == "Me" ? Locale::text("messenger.self") : self) + " : " + text;
+		append_chat(shown); // 本地回显，不等服务端回推
 		chat_input.change_text("");
 	}
 
@@ -272,7 +284,7 @@ namespace ms
 	{
 		if (!in_room_)
 		{
-			append_chat("Not in a Maple Messenger room yet.");
+			append_chat(Locale::text("messenger.no_room"));
 			return;
 		}
 
@@ -282,7 +294,7 @@ namespace ms
 		if (!pre.empty()) {
 			LOG(LOG_DEBUG, "UIMessenger: invite " << pre);
 			MessengerInvitePacket(pre).dispatch();
-			append_chat("Invited " + pre);
+			append_chat(Locale::format("messenger.invited", pre));
 			return;
 		}
 
@@ -420,16 +432,16 @@ namespace ms
 					selected_name = ci->get_target_name();
 			if (!selected_name.empty()) {
 				MessengerDeclinePacket(selected_name).dispatch();
-				append_chat("Declined " + selected_name);
+				append_chat(Locale::format("messenger.declined", selected_name));
 				LOG(LOG_DEBUG, "UIMessenger: Decline " << selected_name);
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& s) {
 					if (s.empty()) return;
 					selected_name = s;
 					MessengerDeclinePacket(s).dispatch();
-					append_chat("Declined " + s);
+					append_chat(Locale::format("messenger.declined", s));
 					LOG(LOG_DEBUG, "UIMessenger: Decline " << s);
-				}, []() {}, "Decline from");
+				}, []() {}, Locale::text("messenger.prompt_decline"));
 			}
 			return;
 		}
@@ -440,7 +452,7 @@ namespace ms
 			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
 				if (msg.empty()) return;
 				send_chat(msg);
-			}, []() {}, "Messenger chat");
+			}, []() {}, Locale::text("messenger.prompt_chat"));
 			return;
 		}
 

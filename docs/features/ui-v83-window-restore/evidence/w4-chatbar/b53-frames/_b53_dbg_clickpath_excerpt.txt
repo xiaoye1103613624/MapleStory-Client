@@ -1,0 +1,43 @@
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+draw labels=0 pos=(500,80) active=1 has_assets=1
+send_cursor clicked=1 active=1 in_room=0 pos=(500,80) cur=(558,197) slot0=0 nb0=(14,108)
+  HIT slot=0 rel=(58,117) occupied=0
+append_chat before n=0 line='Not in a Maple Messenger room yet.'
+send_cursor clicked=1 active=1 in_room=0 pos=(500,80) cur=(647,197) slot0=0 nb0=(14,108)
+  HIT slot=1 rel=(147,117) occupied=0
+append_chat before n=1 line='Not in a Maple Messenger room yet.'
+send_cursor clicked=1 active=1 in_room=0 pos=(500,80) cur=(735,197) slot0=0 nb0=(14,108)
+  HIT slot=2 rel=(235,117) occupied=0
+append_chat before n=2 line='Not in a Maple Messenger room yet.'
+send_cursor clicked=1 active=1 in_room=0 pos=(500,80) cur=(647,197) slot0=0 nb0=(14,108)
+  HIT slot=1 rel=(147,117) occupied=0
+append_chat before n=3 line='Not in a Maple Messenger room yet.'
+send_cursor clicked=1 active=1 in_room=0 pos=(500,80) cur=(560,405) slot0=0 nb0=(14,108)

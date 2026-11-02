@@ -1,0 +1,16 @@
+pid=6972 hwnd=17897276 title=XiaoYE MS v0.0.1【2-xiaoye】【当前时间：2026-11-03 05:45:31】【在线时长：00 00:00:22】
+client_origin=(640,416)
+cap 01_baseline
+open key = c
+cap 02_open_try0
+open try 0 -> white=77671
+click namebar@58 window=(58,117)
+click namebar@147 window=(147,117)
+click namebar@235 window=(235,117)
+click namebar@147 window=(147,117)
+cap 03_four_lines
+click input window=(60,325)
+cap 04_typed
+post ESC -> hwnd=17897276
+cap 05_after_esc
+done

@@ -63,8 +63,11 @@ namespace ms
 			std::unique_ptr<CharLook> charlook;
 		};
 
+		// 底板画了 4 枚名牌（NameBar/0..3，灰/蓝/红/绿，三上一中），模型却只留 3 格
+		// ⇒ 服务端发到 pos=3 时 set_member 直接 return，第 4 枚名牌永远是空的。
+		// 按绘制面收敛成 4（UIWhisperTargetDlg 同族教训：绘制与命中/取数必须同源）。
 		static constexpr size_t NAMEBAR_COUNT = 4;
-		static constexpr size_t SLOT_COUNT = 3;
+		static constexpr size_t SLOT_COUNT = 4;
 		static constexpr size_t CHAT_LINES = 8;
 
 		// —— 版式常量：全部是窗口内坐标（Messenger 一族切片 origin 都是 (0,0)，
@@ -86,9 +89,14 @@ namespace ms
 		static constexpr int16_t CHAT_INPUT_H = 15;
 		// 与 UIChatBar 同一套（那边真机验过）：把字形从 bounds 顶 +10 抬回槽内。
 		static constexpr int16_t CHAT_INPUT_TEXT_SHIFT_Y = -9;
-		// BtEnter 39x17，贴图里橙色 ENTER 徽标占 x5..32 / y6..10；
-		// 参考端徽标落在窗口 (250,328) → 钮左上 = (245,322)。
-		static constexpr int16_t BT_ENTER_X = 245;
+		// BtEnter 39x17。真机逐格（evidence/w4-chatbar/messenger-layers.md §7）：
+		// 原生帧里橙色 ENTER 徽标在窗口坐标 x252..279，本贴图徽标在钮内 x5..32
+		// ⇒ 钮左上 x = 252-5 = 247。
+		// （R14-10 曾按「参考图 local x250」把它从 247 改成 245，那是漏算了参考帧
+		//   左边被裁掉的 2px：同一帧里输入槽读成 x7..243，而切片 backgrnd 自己是
+		//   x9..245，四枚名牌、backgrnd3 页签条也都差这 2px。补回 2px 后三处烘焙层
+		//   与徽标同时归零，245 才是把钮挪偏的那一步。）
+		static constexpr int16_t BT_ENTER_X = 247;
 		static constexpr int16_t BT_ENTER_Y = 322;
 
 		void leave_room();

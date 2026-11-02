@@ -1,0 +1,5 @@
+BtClose 蓝底  native ref  x 250..290 y 8..29 (41x22)
+BtClose 蓝底  ours crop   x 250..292 y 2..23 (43x22)
+  native 折算到窗口坐标(+2/-6): x 252..292  y 2..23
+
+结论口径：本端 BtClose 用 close_btn() 的 43x22，画在 (dimension.x()-21, 5) = (274, 5)

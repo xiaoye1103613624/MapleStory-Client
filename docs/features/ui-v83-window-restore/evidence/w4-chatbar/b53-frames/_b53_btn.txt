@@ -1,0 +1,9 @@
+ENTER 橙徽标  native ref  x 250..277  y 334..338  (28x5)
+ENTER 橙徽标  ours crop   x 250..277  y 328..332  (28x5)
+  native 折算到窗口 x/y（+2 / -6）: x 252..279  y 328..332
+标题条右 X  native ref  x 250..291  y 6..23  (42x18)
+标题条右 X  ours crop   x 250..294  y 0..23  (45x24)
+  native 折算到窗口 x/y（+2 / -6）: x 252..293  y 0..17
+
+页签条上沿(blue) native ref  x 0..290  y 20..49  (291x30)
+页签条上沿(blue) ours crop   x 2..292  y 14..43  (291x30)
