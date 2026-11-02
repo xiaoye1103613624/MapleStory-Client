@@ -1,0 +1,43 @@
+# 部署件 md5 a53de1c830864bad00934aa2a2d993e7  4452352B  2026-11-02 11:20  （全量 -t:Rebuild，EXITCODE=0，: error 0 条）
+# 前置门禁：GATE OK: opcode matrix matches both sources (s9 44d0d5d9ca)
+
+$ layout.py check UserList.json live-a53de1c8-userlist.png
+anchor=(116,158) agree=1.000 rmse=0.0  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/UserList_Tab0_enabled.png
+
+UserList 玩家列表 & 家族（好友/组员/家族/家族联盟/拒绝列表 共用壳）  tol=2px  形态=default  锚点=(116,158)  帧=docs/features/ui-v83-window-restore/evidence/r27-b4-userlist-equip-live/live-a53de1c8-userlist.png
+--------------------------------------------------------------------------------------------------------
+  Tab1_party       oracle=(31,-1) agree=1.000        实测=(31,-1) agree=1.000      Δ=0 x+0 y+0              ok
+  Tab2_guild       oracle=(62,-1) agree=0.987        实测=(62,-2) agree=0.987      Δ=1 x+0 y-1              ok
+  Tab3_union       oracle=(92,0) agree=1.000         实测=(92,0) agree=1.000       Δ=0 x+0 y+0              ok
+  Tab4_blacklist   oracle=(145,-1) agree=0.986       实测=(144,-2) agree=0.986     Δ=1 x-1 y-1              ok
+  BtClose          oracle=(284,-19) agree=1.000      实测=(284,-19) agree=1.000    Δ=0 x+0 y+0              ok
+  BtAddGroup       oracle=(64,54) agree=1.000        实测=(64,54) agree=1.000      Δ=0 x+0 y+0              ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 6（不适用跳过 0）
+
+$ layout.py check Equip.json live-a53de1c8-equip-pet.png
+anchor=(258,191) agree=0.968 rmse=42.4  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_backgrnd.png
+
+Equip 角色装备窗口（含宠物装备面板）  tol=2px  形态=default  锚点=(258,191)  帧=docs/features/ui-v83-window-restore/evidence/r27-b4-userlist-equip-live/live-a53de1c8-equip-pet.png
+--------------------------------------------------------------------------------------------------------
+  panel_border_bbox    oracle=(1,1) 173x302              实测=(1,1) 173x302            Δ=0 x+0 y+0              ok
+  grid_top_edge        oracle=y=32 n=3 rows=[32, 33, 34] 实测=y=32 n=3 rows=[32, 33, 34] Δ=0 y+0 n+0 行首Δmax=0     ok
+  grid_bottom_edge     oracle=y=265 n=6 rows=[265, 267, 268, 269, 270, 271] 实测=y=265 n=6 rows=[265, 267, 268, 269, 270, 271] Δ=0 y+0 n+0 行首Δmax=0     ok
+  pet_slot_pink_bbox   oracle=(72,234) 31x31             实测=MISSING                  Δ=999 oracle=(72,234) 31x31 actual=MISSING FAIL
+  pet_slot_wide_bbox   oracle=(6,234) 64x31              实测=MISSING                  Δ=999 oracle=(6,234) 64x31 actual=MISSING FAIL
+  pet_panel_bbox       oracle=(181,124) 167x148          实测=(181,124) 167x148        Δ=0 x+0 y+0              ok
+  pet_panel_tmpl       oracle=(171,123) agree=0.631      实测=(171,123) agree=0.766    Δ=0 x+0 y+0              ok
+--------------------------------------------------------------------------------------------------------
+不合格 2 / 7（不适用跳过 0）
+
+$ layout.py check Item.json live-a53de1c8-item-folded.png
+anchor=(461,135) agree=0.932 rmse=50.3  <- docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Item_backgrnd.png
+
+Item 背包栏（折叠态）  tol=2px  形态=default  锚点=(461,135)  帧=docs/features/ui-v83-window-restore/evidence/r27-b4-userlist-equip-live/live-a53de1c8-item-folded.png
+--------------------------------------------------------------------------------------------------------
+  slot_rows        oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 行首Δmax=0     ok
+  meso_digits      oracle=(8,266) 167x14             实测=(8,266) 167x14           Δ=0 x+0 y+0              ok
+  meso_digit       oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0                  ok
+  meso_digit_ink   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 x+w-1                ok
+--------------------------------------------------------------------------------------------------------
+不合格 0 / 4（不适用跳过 0）
