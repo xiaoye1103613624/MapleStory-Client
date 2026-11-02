@@ -14,6 +14,9 @@
 | 2026-10-31 00:12:45 | `0x6ae4c1fd` | `8d3f221c83658b46` | `15c96673fb5b3cd7` | `GATE OK` / EXITCODE=0 | 同上（退出客户端后正式部署）⇒（当时）当前部署中的构建；已被 2026-11-01 14:16 的全量 `-t:Rebuild` 取代；真机验证见 `notes/crash-chatbar.md` §9.5 | ✅ 已快照 `E:\MXD\_build_snapshots\20261031-0012_chatbar-classic-layout\`（exe+pdb，仓库外） |
 | 2026-11-01 06:04 | 未解出（exe 已被 14:16 覆盖） | md5 `942cd202ff87af200fb47b28e2863870`（4,340,224 B） | 未登记 | `GATE OK` / EXITCODE=0 | J 段中途构建（增量），CHECKLIST §J.5 曾以此登记 | ❌ 已覆盖，PDB 亦不可解偏移 |
 | 2026-11-01 14:16:01 | `0x6ae6d920` | `d109e1ef979281a1` | `053fcf044d537ae1` | `GATE OK` / EXITCODE=0，0 error | **全量 `-t:Rebuild`**（md5 `9636f77b4030ab4d9a85379cb0694911`，4,419,584 B）⇒ R26 脏 obj 修复后的当前部署构建；J1–J8 全部玩法改动都在这一份里，门禁与脏 obj 复核见 `../../beidou-v17-parity/notes/r807-j8-rebuild-gate.md` | ❌ 未快照；如需保留 PDB，按下方规则复制到 `E:\MXD\_build_snapshots\` |
+| 2026-11-01 18:53:30 | 未解出 | `cfa90de97913b871` | `64d833056ad87d12` | `GATE OK` / EXITCODE=0 | R27-B1a/B1b/B2（md5 `6f0a8bc10be012bdb0297350b06be128`，4,422,144 B）⇒ **R27-B2 首轮真机复验就是这一版**（`ItemFull` 9/9、`Item` 4/4、`Stat` 8/8） | ❌ 已被 11-02 的构建覆盖（`build_check/` 里仍是这一版，线上目录已换） |
+| 2026-11-02 07:46:19 | 未登记 | 未登记 | 未登记 | 未知（**非本会话构建**） | md5 `d728fc99dddfde4feeaaffcff3ec0518`，4,462,080 B ⇒ 并行会话的地图搜索线，源码当时未提交 | ❌ 本会话未取证，不替它背书 |
+| 2026-11-02 10:36:27 | 未登记 | 未登记 | 未登记 | 未知（**非本会话构建**） | md5 `d780ce771b055b7b6d981ff4862f585c`，4,462,592 B ⇒ 同上，本会话只在它上面复跑过 R27-B2 三张 spec（全绿，见 `../../ui-v83-window-restore/evidence/r27-b2-bagfull/rerun-d780ce77.txt`） | ❌ 同上 |
 
 - `TimeDateStamp` 读法：`e_lfanew = u32@0x3C`，然后 `u32@(e_lfanew + 8)`（COFF FileHeader 字段）。
   ⚠ 别从 OptionalHeader 里找它——`tools/symbolize_offset.py` 早期版本就是这么错的。

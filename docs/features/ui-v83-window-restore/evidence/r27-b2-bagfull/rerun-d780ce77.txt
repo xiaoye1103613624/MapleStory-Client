@@ -1,0 +1,89 @@
+# R27-B2 重跑：对**当前部署件** `d780ce77…` 复量三张 spec（2026-11-02）
+
+## 为什么要重跑
+
+上一轮 9/9、4/4、8/8 全绿是对 exe `6f0a8bc10be012bd…`（4,422,144 B，11-01 18:53:30，`build_check/`）量的。
+而线上目录 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 已被另一条会话连换两版（含未提交的
+`UIMapSearchPanel` / `UIWorldMap` / `UIMapInfoPanel` 改动）：
+
+```text
+d728fc99dddfde4feeaaffcff3ec0518   4,462,080 B   2026-11-02 07:46:19
+d780ce771b055b7b6d981ff4862f585c   4,462,592 B   2026-11-02 10:36:27   <- 本轮抓帧时在线的这一版
+```
+
+⇒ 「已落地未验证」：全绿结论对当前件不作数，必须在新 exe 上重跑同一套 oracle。
+⚠ **本轮实测到的坑**：部署件在我启动客户端（10:39:52）前 3 分钟刚被换过，
+所以「我验的是哪一版」只能靠**进程启动时刻 vs exe mtime** 对齐，不能靠「我上一次登记的那版」。
+（项目记忆 `client-build-deploy-and-observability`：身份 = md5 + size + mtime，三者一起看。）
+
+## 环境
+
+- 真机启动 → 登录 → 进图（彩虹岛·番茄田，角色 Admin），窗口标题含 `XiaoYE`，hwnd 动态取（本次 1185886）。
+- 抓帧 = `PrintWindow`（`_cap2.py`），帧尺寸 1296x759，客户区原点（抓帧坐标）= (8, 31)。
+- 判据 = `tools/layout.py check <spec> <帧>`，`tol` 按各 spec（折叠/展开 `Item*` 严判、`Stat` tol=2）。
+
+## 读数（原样贴，含失败那条）
+
+### 1) 第一次按 `i` —— 窗口没开，锚点匹配失败（**记为工具/时序坑，不是版式失败**）
+
+```text
+!! 锚定失败：agree=0.062（闸值 0.60）——判「帧里没这窗」，别拿这帧读版式。（抓帧被压暗时先跑 bright.py，见 notes/open-issues.md）
+```
+
+`live/open_window.py` 的按键后 settle 是 **1.2 s**；这一轮 `i` 之后 1.2 s 抓的帧里背包窗根本不在
+（同批 `s` 却开出来了，见下）。补一次按键、settle 拉到 **3.0 s** 即正常。
+⇒ 遗留：`open_window.py` 的 1.2 s 对「首次开窗要加载素材」偏短，容易把「没开出来」误读成「没修好」。
+    这与 §I.4「驱动没抢到前台」是**不同**的坑（那次 `fg` 断言直接 ABORT，这次 `fg` 是过的）。
+
+### 2) 折叠态 `Item.json`（帧 `rerun-d780ce77-folded.png`）
+
+```text
+anchor=(461,135) agree=0.932 rmse=50.3  <- tmpl/Item_backgrnd.png
+  full_grid_rows  ——（本 spec 不含）
+  slot_rows        oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 墨行距max=0     ok
+  meso_digits      oracle=(8,266) 167x14            实测=(8,266) 168x14           Δ=0 x+0 y+0              ok
+  meso_digit       oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0                  ok
+  meso_digit_ink   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 x+w-1                ok
+不合格 0 / 4（不适用跳过 0）
+```
+
+### 3) 展开态 `ItemFull.json`（帧 `rerun-d780ce77-expanded.png`，`live/expand.py` 点 `BtFull`）
+
+```text
+anchor=(461,135) agree=0.843 rmse=32.2  <- tmpl/Item_FullBackgrnd_left400.png
+  full_grid_rows        oracle=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] 实测=y=50 n=6 rows=[50, 84, 118, 152, 186, 220] Δ=0 y+0 n+0 墨行距max=0   ok
+  meso_digit_full       oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=0 y+0                  ok
+  meso_digit_full_ink   oracle=(131,269) 6x9              实测=(131,269) 5x8            Δ=1 x+w-1                ok
+  disabled_p1_c0        oracle=(157,50) agree=1.000       实测=(157,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_c3        oracle=(265,50) agree=1.000       实测=(265,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p2_c0        oracle=(306,50) agree=1.000       实测=(306,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c0        oracle=(455,50) agree=1.000       实测=(455,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p3_c3        oracle=(563,50) agree=1.000       实测=(563,50) agree=1.000     Δ=0 x+0 y+0              ok
+  disabled_p1_r5        oracle=(157,220) agree=1.000      实测=(157,220) agree=1.000    Δ=0 x+0 y+0              ok
+不合格 0 / 9（不适用跳过 0）
+```
+
+### 4) 能力窗 `Stat.json`（帧 `rerun-d780ce77-stat.png`）
+
+```text
+anchor=(80,103) agree=0.735 rmse=77.9  <- tmpl/Stat_backgrnd.png
+  backgrnd2_detail_panel   SKIP(不在 default 形态)
+  basicStat_panel          oracle=(8,195) agree=1.000   实测=(8,195) agree=1.000   Δ=0 x+0 y+0        ok
+  panel_text_bbox          oracle=(13,236) 149x43       实测=(13,236) 149x43       Δ=0 x+0 y+0        ok
+  text_anywhere            oracle=(13,236) 149x43       实测=(13,236) 149x43       Δ=0 x+0 y+0        ok
+  value_ink_tops           oracle=rows=[36,53,82,118,136,154,172] ink=[9,11,9,9,9,11,9]
+              实测=rows=[36,54,83,119,137,155,172] ink=[8,10,6,8,8,9,8]  Δ=1 墨行距max=1   ok（spec tol=2）
+  value_lines              oracle=rows=[236,252,268] ink=[11,11,11]  实测同  Δ=0 墨行距max=0        ok
+  value_col_bbox           oracle=(61,36) 36x145        实测=(61,36) 41x144       Δ=0 x+0 y+0        ok
+  chip_grid                oracle=y=32 n=122            实测=y=32 n=122           Δ=0 墨行距max=0    ok
+  level_ink                oracle=(62,82) 4x9           实测=(62,83) 2x6          Δ=1 x+0 y+1        ok
+不合格 0 / 8（不适用跳过 1）
+```
+
+## 结论
+
+- **B2 的三条常数（格顶 50、页距 149、金币 269/137）在新部署件 `d780ce77` 上仍然逐格 Δ=0**，
+  台账里「已落地未验证」那一行可以销。
+- 唯一非零项仍是 `*_ink` 的 `x+w −1`（SimHei 右 bearing，已定案并给 `delta_tol=1`）与 `Stat` 的 Δ≤1（tol=2 内）。
+- 新记一条工具坑：**首次开背包 1.2 s settle 不够**，会产出「agree≈0.06 的没开窗帧」；
+  这类帧必须先过 agree≥0.60 闸再谈版式。
