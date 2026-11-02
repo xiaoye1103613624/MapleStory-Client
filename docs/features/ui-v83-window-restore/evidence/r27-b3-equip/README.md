@@ -92,3 +92,28 @@ FullBackgrnd[208x291] origin(0,0)   backgrnd[175x304] origin(0,0)   pet[177x181]
 
 ⇒ 「还原逻辑」能吃掉**大部分**截图依赖，但吃不掉**窗口级绝对定位**；
 而窗口级定位在关闭源码的原生引擎里是**代码里的常数**，不是素材字段。
+
+## 5. 装备窗的 `disabled` / `disabled2` 为什么永远不画（实测路径链）
+
+代码 `UIEquipInventory.cpp:281-282` 取的是：
+
+```cpp
+disabled  = Equip[tab_source[BT_TAB0]]["disabled"];   //  = UIWindow.img/Equip["Equip"]["disabled"]
+disabled2 = Equip[tab_source[BT_TAB0]]["disabled2"];
+```
+
+而 `tab_source[BT_TAB0] == "Equip"`（`:106` 附近赋值）。逐环实测：
+
+| 环节 | 实测 | 依据 |
+| --- | --- | --- |
+| `window4("Equip")` 落到哪 | `UIWindow.img/Equip` | 本包 `.nxcache/UI.nx` 里 **没有** `UIWindow4.img`、**没有** `UIWindow2.img`（`nx_inspect list … 0 <root>` 两者 NOT FOUND），回退链只剩第三档 |
+| `UIWindow.img/Equip` 有没有 `Equip` 子节点 | **没有** | §1 的直接子节点清单只有 7 个 `Bt*` + `backgrnd`/`FullBackgrnd`/`pet` |
+| ⇒ `classic_flat` | **恒为 true** | `:112` `classic_flat = !usable(Equip["Equip"])`，参数是空节点 |
+| ⇒ `disabled` / `disabled2` | **恒为无效** | `:329/:332/:356-358` 三处绘制全被 `.is_valid()` 短路 |
+
+**⇒ 修正 PLAN-R27 的原表述**：那两处读取不是「在 flat 分支 `return` 之后不可达」，
+而是**路径本身在本包不存在** —— 它假设的是另一套包结构（`Equip/Equip/{disabled,disabled2}` 的六列页签壳）。
+后果比"不可达"更严重：**整条非 flat 分支（`:145-178` 六列坐标表 + `:300-301` 页签钮）在本包是死代码**，
+且 `classic_flat` 这个开关**永远只有一个取值**，等于没有开关。
+
+灰显因此**不可能靠补 `disabled` 美术实现**（§3 已证素材里也没有粉）。
