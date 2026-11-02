@@ -45,6 +45,9 @@
 - ✗ `backgrnd2`（代码取了它）、✗ 绳索、✗ 关闭钮
 - ✗ **`Disabled` / 槽位灰底**（2026-11-02 实测复核：Equip 直接子节点只有上面这 10 个；
   每个 `Bt*` 下的 `disabled{0}` 是**按钮**灰态，不是槽位底衬。对照 `Item/disabled[32x32]` 才有空格衬底）
+  ⇒ **2026-11-02 裁决：这不是素材缺口**。原生「槽位不可用」= 对同一张 `backgrnd` 在槽位矩形上
+  **逐像素调色**（`R'=snap17(0.75R+68.25)`、`G'=B'=snap17(0.75V)`），全 15,134 张位图精确色扫描
+  在 `UIWindow.img/Equip` 下找不到任何粉色，两端 `UIWindow.img` md5 一致。详见 evidence §6
 - 实测 origin：`backgrnd`/`FullBackgrnd`/`pet` 均 **(0,0)**；`BtPet1/2/3` 四态均 **(15,13)**；`BtDetail` **(0,0)**
 - 实测槽位相位：底图凹槽左上角列 `x∈{5,38,71,104,137}`、行 `y=32+33k`，7 行逐格亮度对上
   ⇒ 见 [evidence/r27-b3-equip/README.md](../evidence/r27-b3-equip/README.md)

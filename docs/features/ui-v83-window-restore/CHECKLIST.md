@@ -20,7 +20,8 @@
 | 0.3 | 空壳资源探针 | 运行目录会生成 `_ui_asset_diag.log`（同一条只写一次）。**先清掉旧文件**，进游戏走一遍后看它：里面每一条 = 代码引用了本包不存在的根/件。它是判「该不该有图」的第一手依据 |
 | 0.4 | 参考图 | `C:\Users\11036\Desktop\正确客户端截图\`（**58 张**，2026-11-02 复核；早前记的「16 张」是数错，见 §I.3）；问题端 `当前客户端截图\`（8 张） |
 | 0.5 | 角色态前置 | ①背包需**持有道具**（空背包拍不出道具 tooltip / 排序 / 金币行）②需**有未加点与已学技能**（技能窗行底、+SP 钮）③需**已接至少 1 个任务**（任务窗分类与进度条）。当前 Admin 号背包是空的 → 到 B12/B13 时问你是否用游戏内 GM 命令自然发放（不手写 SQL） |
-| 0.6 | **参考端二进制的边界**（2026-11-02 定案） | `E:\MXD\BeiDou-ClientV17.7\BeiDou.exe` 目录里是 `Gr2D_DX8.dll / Canvas.dll / NameSpace.dll / ResMan.dll / Shape2D.dll / WzFlashRenderer.dll / Sound_DX8.dll / CIL.dll / PCOM.dll / ZLZ.dll / List.wz / TempPackage.wz` ⇒ **它是关闭源码的原版 MapleStory 引擎，不是我们这套（cJ 血统）代码的编译产物**。所以 IDA 里**找不到与我们源文件 1:1 对应的函数**，「反编译参考端来还原逻辑」只对**数据/常量**成立（槽位表、opcode、字符串），对**函数级重构**不成立。素材侧（`.nxcache/*.nx`）不受此限，仍是第一手依据。<br>另记：该 exe 的字面量是 **UTF-16LE**，`find_bytes` 要按 UTF-16 传字节才有命中（`backgrnd2` → `0xb405ba`）；`find_regex` 只搜 IDA 已识别的字符串表，两者结论不一致时**以 `find_bytes` 为准**，别把它当成「搜索范围不全」。 |
+| 0.6 | **参考端二进制的边界**（2026-11-02 定案） | `E:\MXD\BeiDou-ClientV17.7\BeiDou.exe` 目录里是 `Gr2D_DX8.dll / Canvas.dll / NameSpace.dll / ResMan.dll / Shape2D.dll / WzFlashRenderer.dll / Sound_DX8.dll / CIL.dll / PCOM.dll / ZLZ.dll / List.wz / TempPackage.wz` ⇒ **它是关闭源码的原版 MapleStory 引擎，不是我们这套（cJ 血统）代码的编译产物**。所以 IDA 里**找不到与我们源文件 1:1 对应的函数**，「反编译参考端来还原逻辑」只对**数据/常量**成立（槽位表、opcode、字符串），对**函数级重构**不成立。素材侧（`.nxcache/*.nx`）不受此限，仍是第一手依据。<br>另记：该 exe 的字面量是 **UTF-16LE**，`find_bytes` 要按 UTF-16 传字节才有命中（`backgrnd2` → `0xb405ba`）；`find_regex` 只搜 IDA 已识别的字符串表，两者结论不一致时**以 `find_bytes` 为准**，别把它当成「搜索范围不全」。
+<br>**2026-11-02 B3 裁决补充**：① `0xb405ba` 那个 `backgrnd2` 解码后是 `UI/UIWindow.img/NewYearsCard/backgrnd2`，**与装备窗无关**，此前把它当装备窗证据是错的（已在 evidence §6.2 撤回）。② 全镜像 `find_bytes` 只有两处 `disabled` 字面量（`Delivery/Tab/disabled`、`ToolTip/Equip/GrowthDisabled`），都不指向装备网格 —— **但这条不能当证据用**：该 exe 对装备窗**连 `backgrnd` 字面量都没有**，且不导入 D3D、绘制住在 `Gr2D_DX8.dll`/`Canvas.dll`，所以「搜不到」推不出「原生不走这条路」（evidence §6.2 已据此自我改写）。③ 参考端与本机 `UIWindow.img` **md5 相同（`c19d34996a71f2be8cfce81de01d70a8`）** ⇒ 「参考端有粉素材而我们缺」这种解释不成立；缺的从来不是素材，是运行期调色逻辑。 |
 
 ---
 
@@ -53,7 +54,7 @@
 | B11 | **聊天栏点击无反应（功能级根因）** | classic 模式 `is_in_range` 曾把命中区整体上移 100px → 光标事件从不派发给聊天栏。本轮修在聊天栏内部，**预期是能点输入框了** | 点击白区能聚焦输入；回车开关输入框不退化 | 同上（W4「额外根因」） |
 | B12 | 「帮助」钮 | 打开**脚本窗**：`Npt_GuideLine.img/NptGuide/Text00..Text48` 49 条中文，滚动条 `Basic.img/VScr`，关闭 `BtUIClose`/`BtClose2`；不再用 `Login.img/Notice` | 中文不乱码、能滚到底、能关 | [coords.md](evidence/w2-hud-buttons/coords.md) T-1 |
 | B13 | 「界面」钮 | **只**打开快捷面板；面板用 `UIWindow.img/ShortCut` 的 11 颗真 `Bt*`（`x=6, y=20+i*20`，底板 93×245），位置改为锚底栏 `BtShort`（1280×720 → (722,404)）；**不再一同弹键盘设定** | 单窗、11 图标齐全、点每颗开对应窗口 | 同上 T-2 |
-| B14 | 「商城」钮 | 聊天区给出明确提示「商城暂未支持。」（YELLOW），**没有**换 opcode（40 vs 229 属 s9 线，另案） | 不再是「点了没反应」 | 同上 T-3 |
+| B14 | 「商城」钮 | ✅ **2026-11-02 更新**：`ENTER_CASHSHOP(40)` 已核实 == s9 `ENTER_CASHSHOP(0x28)`，`EnterCashShopHandler` 完整可用 ⇒ 商城钮直接 `EnterCashShopPacket().dispatch()` 进商城（原「商城暂未支持。」黄字提示基于过时结论，作废；见 [notes/f-keymap-action-translate.md](notes/f-keymap-action-translate.md)） | 点钮进商城；`` ` `` 键（KEYMAP 翻译后同路径）同样进商城 | 同上 T-3 |
 | B15 | 「键盘设定」钮（`KeySet`）与窗内 5 颗钮 | 5 颗（确定/取消/取消修改/全部消除/变更快捷键）此前没坐标被 W0 哨兵**整批跳过** → 现在按 `键盘设置.png` 实测落在同一行 y=234：`8/58/112/177/260` | 5 颗都出现且行对齐；关闭钮在 `(W−18,3)` | 同上 T-4 |
 | B16 | 「目录」钮（`BtMenu`） | ✅ **本轮已实装**（原记「未实装」作废）：底板 `UIWindow.img/GameMenu/backgrnd` 93×140 + 5 颗 81×25 真钮 `x=6, y=23+i*20`。落点：频道变更→`UIChannel`、游戏设置/系统设置→`UIOptionMenu`、游戏结束→`UIQuit(stats)`、**场景变更→黄字「场景变更暂未支持。」（显式预留）**。英文调试提示只在缺素材回退壳上出现 | 5 颗都可见可点；除「场景变更」外各开对窗；Esc 能关；**注意 `UIOptionMenu` 因本包 `GameOpt/SysOpt` 只有 `backgrnd` 而仍是空壳（§C3 of open-issues），不算本条失败** | [notes/open-issues.md §A2](notes/open-issues.md) |
 
