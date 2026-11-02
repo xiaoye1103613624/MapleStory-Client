@@ -130,6 +130,58 @@ namespace ms
 				};
 			}
 
+			std::vector<MapSearchEntry> get_map_search_index()
+			{
+				static std::vector<MapSearchEntry> cache;
+				static bool built = false;
+
+				if (built)
+					return cache;
+
+				nl::node mapimg = nl::nx::String["Map.img"];
+
+				if (mapimg)
+				{
+					for (nl::node cat : mapimg)
+					{
+						for (nl::node m : cat)
+						{
+							int32_t id = 0;
+
+							try
+							{
+								id = static_cast<int32_t>(std::stoi(m.name()));
+							}
+							catch (...)
+							{
+								id = 0;
+							}
+
+							if (id <= 0)
+								continue;
+
+							std::string name = m["mapName"].get_string();
+							std::string street = m["streetName"].get_string();
+
+							if (name.empty())
+								name = street;
+
+							cache.push_back({ id, name, street });
+						}
+					}
+				}
+
+				std::sort(cache.begin(), cache.end(),
+					[](const MapSearchEntry& a, const MapSearchEntry& b)
+					{
+						return a.id < b.id;
+					});
+
+				built = true;
+
+				return cache;
+			}
+
 			std::string get_map_category(int32_t mapid)
 			{
 				if (mapid < 100000000)
@@ -245,6 +297,8 @@ namespace ms
 					entry.name = life_name ? life_name.get_string() : ("Mob " + std::to_string(life_id));
 					entry.level = info["level"] ? static_cast<int16_t>(info["level"].get_integer()) : 0;
 					entry.max_hp = info["maxHP"] ? static_cast<int32_t>(info["maxHP"].get_integer()) : 0;
+					entry.exp = info["exp"] ? static_cast<int32_t>(info["exp"].get_integer()) : 0;
+					entry.boss = info["boss"] ? (info["boss"].get_integer() != 0) : false;
 					result.push_back(std::move(entry));
 				}
 

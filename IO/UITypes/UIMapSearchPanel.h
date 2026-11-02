@@ -4,10 +4,14 @@
 #pragma once
 
 #include "../Components/LocalTwoSpriteButton.h"
+#include "../Components/Slider.h"
 #include "../Components/Textfield.h"
 #include "../Cursor.h"
 
+#include "../../Util/Misc.h"
 #include "../../Graphics/LocalPngTexture.h"
+#include "../../Graphics/Text.h"
+#include "../../Graphics/Texture.h"
 #include "../../Template/Rectangle.h"
 
 #include <cstdint>
@@ -63,6 +67,11 @@ namespace ms
 		void set_teleport_handler(std::function<void()> handler);
 		void set_back_handler(std::function<void()> handler);
 
+		// Phase 1: selecting a result drives UIWorldMap::select_map_spot.
+		void set_select_callback(std::function<void(int32_t)> callback);
+		// Reflect an externally-selected map (e.g. spot click) in the list highlight.
+		void set_selected_map(int32_t id);
+
 	private:
 		struct PngButton
 		{
@@ -81,6 +90,11 @@ namespace ms
 		void set_tab(Tab tab);
 		void layout_for_height(int16_t worldmap_height);
 
+		// Phase 1: search index + results list
+		void rebuild_index();
+		void apply_filter();
+		void select_result(size_t pos);
+
 		bool visible;
 		int16_t panel_height;
 		Point<int16_t> position;
@@ -97,6 +111,23 @@ namespace ms
 		Textfield search_text;
 		Point<int16_t> search_text_dim;
 		Point<int16_t> search_offset;
+
+		// Phase 1 search state
+		Slider result_slider;
+		std::vector<NxHelper::Map::MapSearchEntry> index_store;
+		std::vector<size_t> filtered;
+		int16_t result_offset;
+		int32_t selected_map_id;
+		bool index_loaded;
+		std::string last_query;
+		LocalPngTexture detail_frame;
+		LocalPngTexture list_row_sel;
+		mutable Text detail_name;
+		mutable Text detail_street;
+		Text list_header;
+		Text no_data;
+		Text cost_label;
+		std::function<void(int32_t)> on_select;
 
 		// layout.json — Tab shelf under search field
 		static constexpr int16_t TAB_COUNT = static_cast<int16_t>(Tab::LENGTH);

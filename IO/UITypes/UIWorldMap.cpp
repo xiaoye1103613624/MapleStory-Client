@@ -140,9 +140,24 @@ namespace ms
 		});
 		mob_panel.set_content_height(bg_dimensions.y());
 		map_search_panel.set_content_height(bg_dimensions.y());
+		map_search_panel.set_select_callback([this](int32_t id)
+		{
+			select_map_spot(id);
+		});
 		drop_panel.set_content_height(bg_dimensions.y());
 
-		set_search(true);
+		if (kUseMapInfoPanel)
+		{
+			info_panel.set_select_callback([this](int32_t mob_id)
+			{
+				on_mob_selected(mob_id);
+			});
+			info_panel.set_content_height(bg_dimensions.y());
+		}
+
+		// 旧 WorldMapSearch 轨在本 v83 包缺素材（backgrnd 为空）→ 默认隐藏，避免右侧漂浮无框搜索文字；
+		// 搜索改由新 UIMapSearchPanel 接管。素材齐备时仍按原生启用旧轨。
+		set_search(search_background.is_valid());
 
 		dragarea = Point<int16_t>(bg_dimensions_x, 20);
 	}
@@ -151,6 +166,9 @@ namespace ms
 	{
 		if (mob_panel.is_visible())
 			mob_panel.draw(alpha);
+
+		if (kUseMapInfoPanel && info_panel.is_visible())
+			info_panel.draw(alpha);
 
 		if (map_search_panel.is_visible())
 			map_search_panel.draw(alpha);
@@ -265,6 +283,7 @@ namespace ms
 		mob_panel.update();
 		map_search_panel.update();
 		drop_panel.update();
+		info_panel.update();
 
 		UIElement::update();
 	}
@@ -387,6 +406,9 @@ namespace ms
 		if (mob_panel.is_visible() && mob_panel.get_bounds().contains(cursor_position))
 			return true;
 
+		if (kUseMapInfoPanel && info_panel.is_visible() && info_panel.get_bounds().contains(cursor_position))
+			return true;
+
 		if (map_search_panel.is_visible() && map_search_panel.get_bounds().contains(cursor_position))
 			return true;
 
@@ -433,6 +455,9 @@ namespace ms
 		mob_panel.remove_cursor();
 		map_search_panel.remove_cursor();
 		drop_panel.remove_cursor();
+
+		if (kUseMapInfoPanel)
+			info_panel.remove_cursor();
 	}
 
 	Cursor::State UIWorldMap::send_cursor(bool clicked, Point<int16_t> cursorpos)
@@ -443,6 +468,14 @@ namespace ms
 
 			if (mob_state != Cursor::State::IDLE || mob_panel.get_bounds().contains(cursorpos))
 				return mob_state == Cursor::State::IDLE ? Cursor::State::IDLE : mob_state;
+		}
+
+		if (kUseMapInfoPanel && info_panel.is_visible())
+		{
+			Cursor::State info_state = info_panel.send_cursor(clicked, cursorpos);
+
+			if (info_state != Cursor::State::IDLE || info_panel.get_bounds().contains(cursorpos))
+				return info_state == Cursor::State::IDLE ? Cursor::State::IDLE : info_state;
 		}
 
 		if (map_search_panel.is_visible())
@@ -606,6 +639,12 @@ namespace ms
 		return position - Point<int16_t>(UIMapMobPanel::WIDTH, 0);
 	}
 
+	Point<int16_t> UIWorldMap::get_map_info_panel_pos() const
+	{
+		// Left-adsorb: flush against the world-map chrome (wider than mob panel).
+		return position - Point<int16_t>(UIMapInfoPanel::WIDTH, 0);
+	}
+
 	Point<int16_t> UIWorldMap::get_map_search_panel_pos() const
 	{
 		// Outside original WorldMapSearch rail (decision 1B).
@@ -621,12 +660,20 @@ namespace ms
 
 	void UIWorldMap::sync_side_panels()
 	{
-		if (mob_panel.is_visible() || map_search_panel.is_visible() || drop_panel.is_visible())
+		if (mob_panel.is_visible() || map_search_panel.is_visible() || drop_panel.is_visible()
+			|| (kUseMapInfoPanel && info_panel.is_visible()))
 			ensure_panels_on_screen();
 
 		mob_panel.set_content_height(bg_dimensions.y());
 		map_search_panel.set_content_height(bg_dimensions.y());
 		drop_panel.set_content_height(bg_dimensions.y());
+
+		if (kUseMapInfoPanel)
+		{
+			info_panel.set_content_height(bg_dimensions.y());
+			info_panel.set_position(get_map_info_panel_pos());
+		}
+
 		mob_panel.set_position(get_mob_panel_pos());
 		map_search_panel.set_position(get_map_search_panel_pos());
 		drop_panel.set_position(get_drop_panel_pos());
@@ -642,6 +689,10 @@ namespace ms
 		selected_map_id = 0;
 		mob_panel.clear();
 		drop_panel.clear();
+
+		if (kUseMapInfoPanel)
+			info_panel.clear();
+
 		map_search_panel.set_teleport_enabled(false);
 		map_search_panel.set_teleport_handler(nullptr);
 	}
@@ -651,9 +702,12 @@ namespace ms
 		const int16_t margin = 4;
 		const int16_t view_w = Constants::Constants::get().get_viewwidth();
 
-		if (mob_panel.is_visible())
+		const bool left_visible = mob_panel.is_visible() || (kUseMapInfoPanel && info_panel.is_visible());
+		const int16_t left_width = mob_panel.is_visible() ? UIMapMobPanel::WIDTH : UIMapInfoPanel::WIDTH;
+
+		if (left_visible)
 		{
-			const int16_t need_left = UIMapMobPanel::WIDTH + margin;
+			const int16_t need_left = left_width + margin;
 
 			if (position.x() < need_left)
 				position = Point<int16_t>(need_left, position.y());
@@ -678,9 +732,9 @@ namespace ms
 					int16_t shift = static_cast<int16_t>(right_edge - view_w);
 					position = Point<int16_t>(position.x() - shift, position.y());
 
-					if (mob_panel.is_visible())
+					if (left_visible)
 					{
-						const int16_t need_left = UIMapMobPanel::WIDTH + margin;
+						const int16_t need_left = left_width + margin;
 
 						if (position.x() < need_left)
 							position = Point<int16_t>(need_left, position.y());
@@ -693,11 +747,26 @@ namespace ms
 	void UIWorldMap::select_map_spot(int32_t map_id)
 	{
 		selected_map_id = map_id;
-		mob_panel.set_map(map_id);
+
+		if (kUseMapInfoPanel)
+		{
+			// 信息面板接管左侧：旧 mob_panel 仅保留代码，不显示（D2 并存）。
+			mob_panel.clear();
+			info_panel.set_map(map_id);
+		}
+		else
+		{
+			mob_panel.set_map(map_id);
+		}
+
 		// Drop panel stays visible with empty/select prompt until a mob row is chosen.
 		drop_panel.set_mob(0);
 		ensure_panels_on_screen();
 		mob_panel.set_position(get_mob_panel_pos());
+
+		if (kUseMapInfoPanel)
+			info_panel.set_position(get_map_info_panel_pos());
+
 		map_search_panel.set_position(get_map_search_panel_pos());
 		drop_panel.set_position(get_drop_panel_pos());
 		map_search_panel.set_teleport_enabled(map_id != 0);
@@ -706,6 +775,7 @@ namespace ms
 			ChangeMapPacket(false, selected_map_id, "", false).dispatch();
 			LOG(LOG_DEBUG, "UIWorldMap: BtTeleport map=" << selected_map_id);
 		});
+		map_search_panel.set_selected_map(map_id);
 
 		LOG(LOG_INFO, "[UIWorldMap] selected_map_id=" << selected_map_id);
 	}
@@ -713,8 +783,15 @@ namespace ms
 	void UIWorldMap::on_mob_selected(int32_t mob_id)
 	{
 		drop_panel.set_mob(mob_id);
+
+		if (kUseMapInfoPanel)
+			info_panel.set_mob(mob_id);
+
 		ensure_panels_on_screen();
 		map_search_panel.set_position(get_map_search_panel_pos());
 		drop_panel.set_position(get_drop_panel_pos());
+
+		if (kUseMapInfoPanel)
+			info_panel.set_position(get_map_info_panel_pos());
 	}
 }

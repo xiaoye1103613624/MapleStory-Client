@@ -4,6 +4,7 @@
 #include "UIMapSearchPanel.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Graphics/Geometry.h"
 #include "../../MapleStory.h"
 #include "../../Util/Misc.h"
 
@@ -20,6 +21,31 @@ namespace ms
 		const char* BTN_STATE_NAMES[static_cast<size_t>(UIMapSearchPanel::BtnVisual::LENGTH)] = {
 			"normal", "mouseOver", "pressed", "disabled"
 		};
+
+		// layout.json — detail card / results list / cost (panel-local coords).
+		const int16_t DETAIL_X = 18;
+		const int16_t DETAIL_Y = 112;
+		const int16_t DETAIL_W = 223;
+		const int16_t DETAIL_H = 116;
+		const int16_t DETAIL_ICON = 48;
+
+		const int16_t LIST_HDR_X = 18;
+		const int16_t LIST_HDR_Y = 232;
+
+		const int16_t LIST_X = 18;
+		const int16_t LIST_Y = 250;
+		const int16_t LIST_W = 223;
+		const int16_t LIST_H = 227;
+		const int16_t RROW_H = 22;
+		const int16_t RVISIBLE = LIST_H / RROW_H; // ~10 rows
+
+		const int16_t LIST_SCROLL_X = 246;
+		const int16_t LIST_SCROLL_Y = 250;
+		const int16_t LIST_SCROLL_W = 9;
+		const int16_t LIST_SCROLL_H = 227;
+
+		const int16_t COST_X = 18;
+		const int16_t COST_Y = 484;
 	}
 
 	Rectangle<int16_t> UIMapSearchPanel::PngButton::bounds(Point<int16_t> panel_pos) const
@@ -61,6 +87,9 @@ namespace ms
 		visible(true),
 		panel_height(HEIGHT),
 		active_tab(Tab::ALL),
+		result_offset(0),
+		selected_map_id(0),
+		index_loaded(false),
 		search_text_dim(Point<int16_t>(SEARCH_W - 8, 12)),
 		search_offset(Point<int16_t>(SEARCH_X + 4, SEARCH_Y + 3))
 	{
@@ -103,6 +132,41 @@ namespace ms
 		Rectangle<int16_t> field(search_offset, search_offset + search_text_dim);
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, field, 24);
 		search_text.set_state(Textfield::State::NORMAL);
+
+		load_png(detail_frame, atlas++, "detail_icon_frame.png");
+		load_png(list_row_sel, atlas++, "list_row_selected.png");
+
+		result_slider = Slider(
+			Slider::Type::DEFAULT_SILVER,
+			Range<int16_t>(LIST_SCROLL_Y, LIST_SCROLL_Y + LIST_SCROLL_H),
+			LIST_SCROLL_X,
+			RVISIBLE,
+			1,
+			[this](bool upwards)
+			{
+				int16_t next = result_offset + (upwards ? -1 : 1);
+				int16_t maxoff = static_cast<int16_t>(filtered.size()) - RVISIBLE;
+
+				if (maxoff < 0)
+					maxoff = 0;
+
+				if (next < 0)
+					next = 0;
+				else if (next > maxoff)
+					next = maxoff;
+
+				result_offset = next;
+			}
+		);
+		result_slider.setenabled(false);
+
+		detail_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::EMPEROR, "");
+		detail_street = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "");
+		list_header = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "地图列表");
+		no_data = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "未选择地图");
+		cost_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "费用: 0");
+
+		apply_filter();
 
 		LOG(LOG_INFO, "[UIMapSearchPanel] ready chrome=" << (chrome.is_valid() ? 1 : 0)
 			<< " tabs=LocalTwoSpriteButton w=" << WIDTH);
@@ -172,6 +236,7 @@ namespace ms
 			tab_buttons[new_i]->set_state(Button::State::PRESSED);
 
 		active_tab = tab;
+		apply_filter();
 		LOG(LOG_DEBUG, "[UIMapSearchPanel] tab=" << static_cast<int>(tab));
 	}
 
@@ -192,6 +257,71 @@ namespace ms
 		bt_back.draw(position);
 		bt_teleport.draw(position);
 		search_text.draw(Point<int16_t>(0, 0));
+
+		// ---- Detail card ----
+		if (detail_frame.is_valid())
+			detail_frame.draw(position + Point<int16_t>(DETAIL_X, DETAIL_Y), DETAIL_W, DETAIL_H);
+
+		if (selected_map_id != 0)
+		{
+			std::string nm;
+			std::string st;
+
+			for (const auto& e : index_store)
+			{
+				if (e.id == selected_map_id)
+				{
+					nm = e.name;
+					st = e.street;
+					break;
+				}
+			}
+
+			detail_name.change_text(nm);
+			detail_street.change_text(st.empty() ? "" : ("街: " + st));
+			detail_name.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 8));
+			detail_street.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 30));
+		}
+		else
+		{
+			no_data.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 8));
+		}
+
+		// ---- Results list ----
+		list_header.draw(position + Point<int16_t>(LIST_HDR_X, LIST_HDR_Y));
+
+		const bool is_map = (active_tab == Tab::ALL || active_tab == Tab::MAP);
+
+		if (is_map)
+		{
+			for (int16_t r = 0; r < RVISIBLE; r++)
+			{
+				size_t idx = static_cast<size_t>(result_offset) + static_cast<size_t>(r);
+
+				if (idx >= filtered.size())
+					break;
+
+				const auto& e = index_store[filtered[idx]];
+				Point<int16_t> rowpos = position + Point<int16_t>(LIST_X, LIST_Y + r * RROW_H);
+
+				if (static_cast<int32_t>(e.id) == selected_map_id && list_row_sel.is_valid())
+					list_row_sel.draw(rowpos, LIST_W, RROW_H);
+
+				Text row(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, e.name);
+				row.draw(rowpos + Point<int16_t>(4, 3));
+			}
+
+			if (result_slider.isenabled())
+				result_slider.draw(position);
+		}
+		else
+		{
+			Text nodata2(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "（该分类数据未加载）");
+			nodata2.draw(position + Point<int16_t>(LIST_X, LIST_Y + 4));
+		}
+
+		// ---- Cost ----
+		cost_label.draw(position + Point<int16_t>(COST_X, COST_Y));
 	}
 
 	void UIMapSearchPanel::update()
@@ -201,6 +331,14 @@ namespace ms
 
 		Point<int16_t> field_pos = position + search_offset;
 		search_text.update(field_pos, search_text_dim);
+
+		std::string cur = search_text.get_text();
+
+		if (cur != last_query)
+		{
+			last_query = cur;
+			apply_filter();
+		}
 	}
 
 	void UIMapSearchPanel::remove_cursor()
@@ -306,6 +444,35 @@ namespace ms
 			return tele_st;
 		}
 
+		// ---- Results slider + list ----
+		if (result_slider.isenabled())
+			if (Cursor::State s = result_slider.send_cursor(cursorpos - position, clicked))
+				return s;
+
+		const bool is_map = (active_tab == Tab::ALL || active_tab == Tab::MAP);
+
+		if (is_map && !filtered.empty())
+		{
+			Rectangle<int16_t> larea(
+				position + Point<int16_t>(LIST_X, LIST_Y),
+				position + Point<int16_t>(LIST_X + LIST_W, LIST_Y + LIST_H));
+
+			if (larea.contains(cursorpos))
+			{
+				int16_t ly = cursorpos.y() - larea.top();
+				int16_t row = ly / RROW_H;
+				size_t idx = static_cast<size_t>(result_offset) + static_cast<size_t>(row);
+
+				if (idx < filtered.size())
+				{
+					if (clicked)
+						select_result(idx);
+
+					return Cursor::State::CANCLICK;
+				}
+			}
+		}
+
 		return Cursor::State::IDLE;
 	}
 
@@ -323,5 +490,93 @@ namespace ms
 	void UIMapSearchPanel::set_back_handler(std::function<void()> handler)
 	{
 		back_handler = std::move(handler);
+	}
+
+	void UIMapSearchPanel::set_select_callback(std::function<void(int32_t)> callback)
+	{
+		on_select = std::move(callback);
+	}
+
+	void UIMapSearchPanel::set_selected_map(int32_t id)
+	{
+		selected_map_id = id;
+
+		for (size_t i = 0; i < filtered.size(); i++)
+		{
+			if (index_store[filtered[i]].id == id)
+			{
+				result_offset = static_cast<int16_t>(i);
+				break;
+			}
+		}
+	}
+
+	void UIMapSearchPanel::rebuild_index()
+	{
+		if (index_loaded)
+			return;
+
+		index_store = NxHelper::Map::get_map_search_index();
+		index_loaded = true;
+	}
+
+	void UIMapSearchPanel::apply_filter()
+	{
+		rebuild_index();
+		filtered.clear();
+
+		const bool is_map = (active_tab == Tab::ALL || active_tab == Tab::MAP);
+
+		if (!is_map)
+		{
+			// Mob / Drop / NPC indexes are not yet populated client-side (see feature README).
+			result_slider.setenabled(false);
+			result_offset = 0;
+			return;
+		}
+
+		std::string q = string_format::tolower(last_query);
+
+		for (size_t i = 0; i < index_store.size(); i++)
+		{
+			if (q.empty())
+			{
+				filtered.push_back(i);
+			}
+			else
+			{
+				std::string nm = string_format::tolower(index_store[i].name);
+				std::string st = string_format::tolower(index_store[i].street);
+
+				if (nm.find(q) != std::string::npos || st.find(q) != std::string::npos)
+					filtered.push_back(i);
+			}
+		}
+
+		int16_t maxoff = static_cast<int16_t>(filtered.size()) - RVISIBLE;
+
+		if (maxoff < 0)
+			maxoff = 0;
+
+		if (result_offset > maxoff)
+			result_offset = maxoff;
+
+		result_slider.setrows(RVISIBLE, filtered.size() > static_cast<size_t>(RVISIBLE)
+			? static_cast<int16_t>(filtered.size()) : RVISIBLE);
+		result_slider.setenabled(filtered.size() > static_cast<size_t>(RVISIBLE));
+	}
+
+	void UIMapSearchPanel::select_result(size_t pos)
+	{
+		if (pos >= filtered.size())
+			return;
+
+		int32_t id = index_store[filtered[pos]].id;
+		selected_map_id = id;
+
+		LOG(LOG_INFO, "[UIMapSearchPanel] select map_id=" << id);
+
+		if (on_select)
+			on_select(id);
 	}
 }

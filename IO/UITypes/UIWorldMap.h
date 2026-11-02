@@ -23,6 +23,7 @@
 #include "../Components/Textfield.h"
 
 #include "UIMapDropPanel.h"
+#include "UIMapInfoPanel.h"
 #include "UIMapMobPanel.h"
 #include "UIMapSearchPanel.h"
 
@@ -70,6 +71,7 @@ namespace ms
 
 		Point<int16_t> get_search_pos();
 		Point<int16_t> get_mob_panel_pos() const;
+		Point<int16_t> get_map_info_panel_pos() const;
 		Point<int16_t> get_map_search_panel_pos() const;
 		Point<int16_t> get_drop_panel_pos() const;
 		int16_t search_rail_width() const;
@@ -142,5 +144,9 @@ namespace ms
 		UIMapMobPanel mob_panel;
 		UIMapSearchPanel map_search_panel;
 		UIMapDropPanel drop_panel;
+		// 左侧信息面板（地图信息：怪物列表 + 掉落网格 + 金币条 + 四档标签）。
+		// 启用时替代 UIMapMobPanel 的占位（D2 并存：mob_panel 代码保留，仅不显示）。
+		static constexpr bool kUseMapInfoPanel = true;
+		UIMapInfoPanel info_panel;
 	};
 }

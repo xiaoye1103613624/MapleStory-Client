@@ -405,6 +405,7 @@ copy /y /d "$(ProjectDir)includes\NoLifeNx\nlnx\includes\lz4_v1_8_2_win$(Platfor
     <ClCompile Include="IO\UITypes\UIMapMobPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIMapDropPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIMapSearchPanel.cpp" />
+    <ClCompile Include="IO\UITypes\UIMapInfoPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIWorldSelect.cpp" />
     <ClCompile Include="IO\Window.cpp" />
     <ClCompile Include="MapleStory.cpp" />

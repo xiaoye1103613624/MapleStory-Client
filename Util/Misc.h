@@ -112,10 +112,25 @@ namespace ms
 				int16_t level = 0;
 				// maxHP from Mob.img/info; 0 when the node is missing.
 				int32_t max_hp = 0;
+				// exp from Mob.img/info/exp; 0 when the node is missing.
+				int32_t exp = 0;
+				// boss flag from Mob.img/info/boss; false when the node is missing.
+				bool boss = false;
 			};
 
 			// Unique mobs on a map (life type "m"), sorted by level then id.
 			std::vector<MapMobInfo> get_mobs_on_map(int32_t mapid);
+
+			// One searchable entry for the map-search panel.
+			struct MapSearchEntry
+			{
+				int32_t id = 0;
+				std::string name;
+				std::string street;
+			};
+
+			// All maps with name/street, built once and cached. Used by UIMapSearchPanel.
+			std::vector<MapSearchEntry> get_map_search_index();
 
 			// Returns the name of the node, under which the argument map id is in
 			nl::node get_map_node_name(int32_t mapid);
