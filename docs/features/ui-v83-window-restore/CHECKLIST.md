@@ -81,7 +81,8 @@
 | D4 | 能力值 | ⚠ 预留：`BtAuto` 仍未给坐标（本包无对应原生位）；`Disabled{STR,DEX,INT,LUK}` 用于不可加点态 | 不可加点时显示禁用贴片 | 同上 |
 | D5 | 装备（对照 `角色装备.png`） | 「左上两钮弹二级密码」定案为**误读**：那是烤图的 `Equip/BtDetail`「详细信息」46×19 与 `Equip/BtCashshop`「Shop」32×11（全仓/全客户端/exe 内「二级密码」0 字节命中）。两颗**默认隐藏**（原生匹配 mae 55.8/61.1） | 不再莫名弹窗 | [coords.md](evidence/w7-equip/coords.md) |
 | D6 | 装备 | 宠物区：`pet[177x181]` 面板 + `BtPet1/2/3` 三页签 + `BtPetEquipShow[67x18]`/`BtPetEquipHide[17x16]`，按右下锚算位；展开改 `dimension` | 可展开/收起 | 同上 |
-| D7 | 装备 ⚠ | 预留：宠物槽**穿戴逻辑**未接（仅版式与开关）；modern 分支 6 颗（`btEffect/btSalon/BtConsumeSetting/BtException/BtShop/BtSlot`，节点在 UIEquipInventory.cpp:288-293）仍无坐标 → 被 W0 哨兵跳过并记日志，需确认是否属非 classic 代次 | 不算回归失败 | 同上 |
+| D7 | 装备 ⚠ | 预留：宠物槽**穿戴逻辑**未接（仅版式与开关）；宠物面板 4 格的**改色**未接（`Equip/pet` 改色带预测命中仅 34.7~77.2%，偏移没尺，等展开态原生帧）。原「modern 分支 6 颗钮无坐标」一行**作废**：该分支（`btEffect/btSalon/BtConsumeSetting/BtException` + 页签/totem/六列坐标表）经 §5 实测路径链属永不可达，R27-B3 已连按钮带处理器一并删除 | 不算回归失败 | [r27-b3-equip/README.md §5/§8](evidence/r27-b3-equip/README.md) |
+| D7b | 装备（对照 `角色装备.png` 骑兽/鞍子/盾牌格） | 不可用槽 = **运行期对同一张 `Equip/backgrnd` 按格逐像素改色**（`R'=snap17(0.75R+68.25)`、`G'=B'=snap17(0.75V)`），改色集合由 `slot_available()` 谓词算出（骑兽技能 1004 / 鞍子挂骑兽 / 双手武器占盾位），**不是格子常数表** | 无骑兽技能的号：骑兽+鞍子两格转粉；装双手武器：盾牌格转粉 | [r27-b3-equip/README.md §6/§8](evidence/r27-b3-equip/README.md) |
 | D8 | 背包（对照 `背包栏（折叠）.png`、`背包栏展开.png`） | 分类 tab 底衬 = `Item/New/Tab0`(灰) + `New/Tab1`(粉=选中)，文字叠 `Item/Tab/enabled\|disabled`；`x=5+i*34, y=24`，**只有 0–4**（旧代码取到 5 → SETUP/ETC 错位的成因） | 5 个分类都有底 | [coords.md](evidence/w8-item/coords.md) |
 | D9 | 背包 | `BtFull`/`BtSmall` 合并到同一个槽 `(W−51,4)`（此前两颗叠在 (109,6)），`BtGather`/`BtSort` 在 `(W−31,4)`，都在框内；`set_full` 按 `dimension.x()` 重排 CLOSE/GATHER/SORT/FULL/SMALL/CASHSHOP | 展开态按钮在窗内、金币标签不溢出（(141,275) < 289） | 同上 |
 | D10 | 背包 | 滚动条复活（W0 根名钳制 `VScr9`→`VScr`）：x=157、Range(46,250)，行高按 slotmax | 可拖、行数随展开变化 | 同上 + W0 |

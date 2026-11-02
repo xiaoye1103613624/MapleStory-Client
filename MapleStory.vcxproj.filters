@@ -285,6 +285,9 @@
     <ClCompile Include="Graphics\LocalPngTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\MemoryTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Graphics\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1059,6 +1062,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\LocalPngTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\MemoryTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\SpecialText.h">

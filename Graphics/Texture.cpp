@@ -133,4 +133,34 @@ namespace ms
 	{
 		return dimensions;
 	}
+
+	bool Texture::copy_pixels(std::vector<uint8_t>& bgra) const
+	{
+		bgra.clear();
+
+		if (!is_valid())
+			return false;
+
+		const void* src = bitmap.data();
+
+		if (!src)
+			return false;
+
+		// bitmap::length() is 4 * width * height; the atlas upload path uses the
+		// same buffer as GL_BGRA, so this is the format contract of the render layer.
+		const size_t bytes = static_cast<size_t>(bitmap.length());
+
+		if (bytes == 0)
+			return false;
+
+		const uint8_t* first = static_cast<const uint8_t*>(src);
+
+		bgra.assign(first, first + bytes);
+		return true;
+	}
+
+	size_t Texture::get_bitmap_id() const
+	{
+		return bitmap.id();
+	}
 }

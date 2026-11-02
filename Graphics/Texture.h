@@ -19,9 +19,15 @@
 
 #include "DrawArgument.h"
 
+#include "../Template/Point.h"
+
 #ifdef USE_NX
 #include <nlnx/bitmap.hpp>
 #endif
+
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 
 namespace ms
 {
@@ -45,6 +51,14 @@ namespace ms
 		int16_t height() const;
 		Point<int16_t> get_origin() const;
 		Point<int16_t> get_dimensions() const;
+
+		// 读出原始 BGRA 像素。唯一能用原始像素的通道（运行期调色/逐格采样），
+		// 因此 Texture 之外不需要再碰 nl::bitmap。
+		// 为什么是拷贝而不是返回指针：nl::bitmap::data() 复用一块全局静态缓冲，
+		// 任何一次调用都会让先前拿到的指针失效，跨帧持有必脏。
+		bool copy_pixels(std::vector<uint8_t>& bgra) const;
+		// 源位图身份，用于给派生像素（如调色裁片）做稳定的缓存键。
+		size_t get_bitmap_id() const;
 
 	private:
 		nl::bitmap bitmap;

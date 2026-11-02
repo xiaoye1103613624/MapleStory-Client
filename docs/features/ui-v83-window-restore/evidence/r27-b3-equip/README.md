@@ -270,3 +270,47 @@ snap17 = 吸附到 ×17 网格（即素材自身的 4bit 色阶），tie 向下
 - **必须显式预留**：宠物面板 4 格与 `POCKET` —— 本仓**没有宠物模型**（无 `Pet`/`PetEquip` 类，
   `EquipSlot::Id` 里也没有任何 `PET_*` 槽位），`TamingMob.nx` 又不编码坐骑↔技能绑定，
   所以这两类只能按「默认不可用」画（与参考帧一致），并在代码里写明是缺子系统而不是缺证据。
+
+
+## 8. 实装记录（B3-1 + B3-3，2026-11-02）
+
+用户裁决：**甲（改渲染层做真调色）**，并限定「不可用槽位应该是根据角色、角色装备等逻辑判断而来的，**不是写死的**」。落地分三层：
+
+| 层 | 位置 | 做了什么 |
+| --- | --- | --- |
+| 调色核 | [Graphics/MemoryTexture.cpp](../../../../Graphics/MemoryTexture.cpp) | §6.3 的浮点模型改写成**精确整数**式：`G'/B' = 17·((3C+33)/68)`、`R' = 17·((3R+306)/68)`，`k≤15` 故 255 截断天然成立；平手向下由 `ceil` 形式固定 |
+| 像素通道 | [Graphics/Texture.h](../../../../Graphics/Texture.h) `copy_pixels()/get_bitmap_id()` | 只读取。`nl::bitmap::data()` 是 **BGRA、每次调用都解压、且共用一块全局缓冲** ⇒ 必须当场拷走，不能存指针 |
+| 纹理 | `MemoryTexture` + `GraphicsGL::ensure_raw/draw_raw` | 绕开 §6.5-3 说的「不能从内存自建纹理」：走 `LocalPngTexture` 已有的 raw 通道，但像素来自内存。atlas id = FNV-1a(`源位图 id`, 裁剪矩形) 打上 `0x54494E…` 标记，与 nlnx 堆指针 id、fourcc id 都不撞 |
+
+**按格裁剪，不整窗改色**：原生改色本来就是限定矩形的（§6.4），所以在同一位置叠一块改过色的 32×32 裁剪图，与画一整张改色底图像素一致，而 atlas 只为这几格付代价；id 由几何决定 ⇒ 穿脱装备不会长出新纹理，谓词只决定「这一格画哪个版本」。
+
+**几何唯一真源**（§2 + §6.4）：调色矩形 = `iconpositions[槽] + (0, 3)`、32×32（底图凹槽相对格顶实测下移 3px：行 7 格顶 y=230，改色带实测 y=233..264）。
+绘制落点 = `position − bg_origin + 矩形.xy`（backgrnd 的 origin 实测 (0,0)，此项为恒等，保留是为了换美术不失效）。
+`bg_origin` 来自 `backgrnd_tex.get_origin()`，与 `draw_sprites` 那条同源，不再另抄常数。
+
+**谓词**（`UIEquipInventory::slot_available()`，只有拿得出判据的三格参与改色）：
+
+| 槽 | 判据 | 取证 |
+| --- | --- | --- |
+| `TAMEDMOB` | `Stage::get().get_player().get_skilllevel(1004) > 0` | §7「骑兽技能」 |
+| `SADDLE` | `TAMEDMOB` 槽当前已装备 | §7 鞍子挂骑兽 |
+| `SHIELD` | `!Stage::get().get_player().is_twohanded()`（`Char::is_twohanded()`，[Character/Char.h:134](../../../../Character/Char.h#L134)） | 双手武器占手 |
+| 其余 | 恒 `true`（不改色） | 无判据 ⇒ 宁可不画，不抄格子表 |
+
+**调色核门禁**（[verify_tint_kernel.py](verify_tint_kernel.py) → `E:/project/_b3/tint_kernel_verify.txt`）两道，任一不过即失败：
+① 0..255 × 3 通道穷举，整数式与浮点式**逐值相等**（实测 768/768，不一致 0 组）；
+② 逐矩形回算原生帧命中率不得劣于浮点式：三格 98.83% / 99.90% / **100.00%**，合计 6569/8924 = 73.61%，与浮点式**完全相等**。
+> 第一版整数核用「先四舍五入再吸附」写成 `(3C+2)/4`，合计命中率 61.47%，比浮点式低 12 个点——是这道穷举门禁把它抓出来的，不是人眼看出来的。
+
+**同批删除的死分支**（§5 的结论付诸实施：开关恒真 ⇒ 等于没有开关）：
+`classic_flat`、六列 `iconpositions`、`tab_source`/`tab`/`tabbar`/`background[]`/`Slots[]`/`disabled`/`disabled2`、
+`EquipGL` 的 `Totem/btEffect/btSalon`、`BT_TAB0..3` 钮与 TAB 键循环、`BT_EFFECT/BT_SALON/BT_CONSUMESETTING/BT_EXCEPTION` 处理器、
+`hasPendantSlot/hasPocketSlot`、`is_in_range()` 里的 totem 命中区。
+⇒ 底图、坐标、命中、调色现在共用同一张 `iconpositions`，「底图 v83 单张 + 坐标另一套六列」这类整窗错位从结构上不可能再发生。
+（`CHECKLIST.md` D7 那行「modern 分支 6 颗钮无坐标」随之作废。）
+
+**未随本批实现（诚实标注）**：
+1. **宠物面板 4 格**：`Equip/pet` 上改色带的预测命中率只有 **71.27 / 77.19 / 34.67 / 71.08%**（对照装备三格的 98.8~100%），
+   且本仓无 `PET_*` 槽位、无宠物子系统 ⇒ 拿这套几何去铺粉色就是瞎猜偏移。**待用户提供「宠物面板展开」的原生帧**再定，见 §3b。
+2. **行 7 第 3 格 (71,233)**：`iconpositions` 里根本没有这个相位的槽 ⇒ 归属未定，需交互取证（装上骑兽后哪几格转正常）。
+3. 真机逐格验收（`tools/layout.py check Equip`）：需要部署，等客户端退出。

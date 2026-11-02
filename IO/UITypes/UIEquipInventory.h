@@ -17,7 +17,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include "../../Graphics/MemoryTexture.h"
 #include "../UIDragElement.h"
+
+#include <array>
 
 namespace ms
 {
@@ -55,9 +58,12 @@ namespace ms
 		void load_icons();
 		void update_slot(EquipSlot::Id slot);
 		EquipSlot::Id slot_by_position(Point<int16_t> position) const;
-		void change_tab(uint16_t tabid);
 		void set_pet_panel(bool open);
 		void change_pet_tab(uint16_t tabid);
+		// 本格对当前角色是否存在（不可用 = 原生对该格逐像素改色，见 evidence §6）。
+		bool slot_available(EquipSlot::Id slot) const;
+		// 从底图裁出可判定槽位的改色版本，与 TINTABLE_SLOTS 一一对应。
+		void build_disabled_cells();
 
 		class EquipIcon : public Icon::Type
 		{
@@ -77,17 +83,8 @@ namespace ms
 
 		enum Buttons : uint16_t
 		{
-			BT_TAB0,
-			BT_TAB1,
-			BT_TAB2,
-			BT_TAB3,
-			BT_TABE,
-			BT_CLOSE,
+			BT_CLOSE = 0,
 			BT_SLOT,
-			BT_EFFECT,
-			BT_SALON,
-			BT_CONSUMESETTING,
-			BT_EXCEPTION,
 			BT_SHOP,
 			BT_PET_SHOW,
 			BT_PET_HIDE,
@@ -102,23 +99,21 @@ namespace ms
 		EnumMap<EquipSlot::Id, Point<int16_t>> iconpositions;
 		EnumMap<EquipSlot::Id, std::unique_ptr<Icon>> icons;
 
-		uint16_t tab;
-		std::string tab_source[Buttons::BT_TABE];
-		Texture tabbar;
-		Texture background[Buttons::BT_TABE];
-		Texture disabled;
-		Texture disabled2;
-		std::vector<Texture> Slots[Buttons::BT_TABE];
+		// 骑兽技能：String.nx/Skill.img/0001004 = 「骑兽技能」（evidence §7）。
+		static constexpr int32_t TAMING_SKILL = 1004;
+		// 本包拿得出运行期判据的槽位；其余（宠物面板 4 格、POCKET 等）无判据 → 不改色，
+		// 判据缺口记在 evidence/r27-b3-equip/README.md §7。
+		static constexpr std::array<EquipSlot::Id, 3> TINTABLE_SLOTS = {
+			EquipSlot::Id::TAMEDMOB, EquipSlot::Id::SADDLE, EquipSlot::Id::SHIELD };
 
-		Point<int16_t> totem_dimensions;
-		Point<int16_t> totem_adj;
+		// 底图 + 由它裁出的「不可用」改色格（与 TINTABLE_SLOTS 平行）。
+		// 原生没有第二张 disabled 美术：不可用槽是同一张 backgrnd 的按格改色。
+		Texture backgrnd_tex;
+		Point<int16_t> bg_origin;
+		std::vector<MemoryTexture> disabled_cells;
 
-		bool hasPendantSlot;
-		bool hasPocketSlot;
 		EquipSlot::Id selected_eqslot = EquipSlot::Id::NONE;
 
-		// v83（classic flat）装备窗只有一个页面、没有 tab 条
-		bool classic_flat = false;
 		// 宠物装备面板（Equip/pet）显隐 + 溢出后的命中区
 		bool pet_panel_open = false;
 		// 实测（evidence/w7-equip §7）：参考截图里三页签全是 disabled 美术（灰底灰数字，mae 0.0），

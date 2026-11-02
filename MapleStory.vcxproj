@@ -296,6 +296,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Graphics\Geometry.cpp" />
     <ClCompile Include="Graphics\GraphicsGL.cpp" />
     <ClCompile Include="Graphics\LocalPngTexture.cpp" />
+    <ClCompile Include="Graphics\MemoryTexture.cpp" />
     <ClCompile Include="Graphics\Sprite.cpp" />
     <ClCompile Include="Graphics\Text.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
@@ -632,6 +633,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Graphics\Geometry.h" />
     <ClInclude Include="Graphics\GraphicsGL.h" />
     <ClInclude Include="Graphics\LocalPngTexture.h" />
+    <ClInclude Include="Graphics\MemoryTexture.h" />
     <ClInclude Include="Graphics\SpecialText.h" />
     <ClInclude Include="Graphics\Sprite.h" />
     <ClInclude Include="Graphics\Text.h" />
