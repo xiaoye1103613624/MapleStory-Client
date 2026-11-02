@@ -37,7 +37,7 @@
 | RC6 | 等级字体不对、数值颜色不对、名字/血蓝经验偏下 | 底栏数值用 `Text(A11B, YELLOW)` 绘制；`StatusBar.img/number`（5×7 位图字库）**建了 Charset 却没画**；`Basic.img/LevelNo`/`ShowLevel` 全仓 0 引用；LV 徽章是程序画的 `ColorBox` | [UIStatusBar.cpp:1830-1834](../../../IO/UITypes/UIStatusBar.cpp#L1830),[:1894-1900](../../../IO/UITypes/UIStatusBar.cpp#L1894),[:2107-2126](../../../IO/UITypes/UIStatusBar.cpp#L2107) | B | 改画位图字库；行 y 按 `backgrnd[817x71]` 重算 | 底栏/能力值数字 |
 | RC7 | **商城点了没反应** | 只发 `EnterCashShopPacket`（出站 opcode **40**，空 body）；可用的商城请求走 `CASHSHOP_OPERATION=229`，HUD 换态靠 recv `SET_CASH_SHOP=127` → `UI::change_state(CASHSHOP)` | [UIStatusBar.cpp:625-629](../../../IO/UITypes/UIStatusBar.cpp#L625)；[GameplayPackets.h:47](../../../Net/Packets/GameplayPackets.h#L47)；[OutPacket.h:61](../../../Net/OutPacket.h#L61),[:172](../../../Net/OutPacket.h#L172)；[CashShopHandlers.cpp:642](../../../Net/Handlers/CashShopHandlers.cpp#L642) | B | 换包（**跨到 s9 协议线**，需先对服务端 opcode 表取证） | 底栏 |
 | RC8 | "界面"跑到左下角，且**一同打开键盘设定** | 同一 handler 里连开两窗；`UIShortCut` 位置写死 `(8, vh-120)`；其 draw 只画 `backgrnd` + 一行黄字，`UIWindow.img/ShortCut` 的 11 个 `Bt*` **一个都没实例化** | [UIStatusBar.cpp:714-727](../../../IO/UITypes/UIStatusBar.cpp#L714)；[UIMiscShells.cpp:3301-3304](../../../IO/UITypes/UIMiscShells.cpp#L3301),[:2571-2575](../../../IO/UITypes/UIMiscShells.cpp#L2571) | B | 拆派发；用真素材重建快捷面板 | 底栏 |
-| RC9 | "帮助"原生是打开脚本 | `UIHelp` 用 `Login.img/Notice`；`Npt_GuideLine.img`（纯中文文本 `NptGuide/Text00..48`）**全仓 0 引用** | [UIStatusBar.cpp:708-713](../../../IO/UITypes/UIStatusBar.cpp#L708)；[UIHelp.cpp:24](../../../IO/UITypes/UIHelp.cpp#L24)；原生 exe 有字符串 `UI/StatusBar.img/BtNPT` | B | 接 `Npt_GuideLine` 文本 + `BtNPT` | 底栏 |
+| RC9 | "帮助"原生是打开脚本 | ✅ **2026-11-03 结案（改判）**：原生「帮助」不是本地窗，发 `ENTER_MTS(0x9C)`，服务端 `use_mts=false` 时改派 `npc/9900001.js`。本仓已按此实现并删除 `UIHelp` 整窗（原方案「接 `Npt_GuideLine` 文本 + `BtNPT`」作废；`Npt_GuideLine` 中文文本确实存在，但属拍卖行流程的说明书素材，随真 MTS UI 预留） | 取证：[help-enter-mts.md](evidence/w2-hud-buttons/help-enter-mts.md)；原生 exe 字符串 `UI/StatusBar.img/BtNPT` | B | 发 0x9C（已落地） | 底栏 |
 | RC10 | 能力详情展开后**收不回**；详细钮不在右下角 | 收缩钮读不存在的 `main/BtDetailClose`、`detail/BtHpUp` → 永不构造 → `set_detail(false)` 不可达；`BtApDown` 包内也没有；`BtDetail` 建了但无坐标 | [UIStatsInfo.cpp:155-162](../../../IO/UITypes/UIStatsInfo.cpp#L155),[:345](../../../IO/UITypes/UIStatsInfo.cpp#L345),[:478](../../../IO/UITypes/UIStatsInfo.cpp#L478) | A（缺件）/C（原生用哪个节点） | IDA 补证后接 | 能力值 |
 | RC11 | "扩展道具栏"在窗外包着、展开后内容外溢 | `set_full` 只改尺寸不重排；展开态金币标签 y=**359** > 框高 289；`BtFull` 与 `BtSmall` 同坐标 `(109,6)` | [UIItemInventory.cpp:1588-1620](../../../IO/UITypes/UIItemInventory.cpp#L1588),[:210-218](../../../IO/UITypes/UIItemInventory.cpp#L210),[:300-309](../../../IO/UITypes/UIItemInventory.cpp#L300) | B | 展开态重排表 | 背包 |
 | RC12 | 任务窗无关闭钮、"寻找NPC位置"错位、点击不切换、分类无背景 | `close_pos=(514,4)`、`marknpc_pos=(460,371)` 在 **:100-101** 赋值，而按钮在 **:80/:84** 已构造 → 双双落 `(0,0)`；无 `send_cursor`，只有双击选中；分类只取 `Tab[0..2]`，`icon2..icon9`（8 组分类图）未用；还拿 `ColorBox` 冒充高亮/书页/项目符 | [UIQuestLog.cpp:72-105](../../../IO/UITypes/UIQuestLog.cpp#L72),[:413-425](../../../IO/UITypes/UIQuestLog.cpp#L413),[:317-327](../../../IO/UITypes/UIQuestLog.cpp#L317),[:59-66](../../../IO/UITypes/UIQuestLog.cpp#L59) | B | 调赋值顺序 + 补单击 + 用 `icon*`/`backgrnd2..5` 重建 | 任务 |
@@ -69,7 +69,10 @@ LV 徽章/等级数字改画 `Basic.img/LevelNo`+`ShowLevel`；HP/MP/EXP 数值�
 验收判据：`HP [50/50]` 数字基线与正确截图偏差 ≤2px；字模宽高 = 5×7。
 
 ### W2 底栏四按钮行为（RC7/RC8/RC9）
-- 帮助 → `Npt_GuideLine.img/NptGuide/Text00..48`（中文文本窗，不再用 `Login.img/Notice`）；
+- 帮助 → ~~`Npt_GuideLine.img/NptGuide/Text00..48`（中文文本窗，不再用 `Login.img/Notice`）~~
+  **2026-11-03 改判**：发 `ENTER_MTS(0x9C)`，由服务端 `use_mts` 决定落点（关 ⇒ `npc/9900001.js` 脚本中心对话）。
+  `UIHelp` 整窗已删；`Npt_GuideLine` 属 `use_mts=true` 那侧拍卖行流程的说明书素材，随真拍卖行 UI 一并预留。
+  取证见 [help-enter-mts.md](evidence/w2-hud-buttons/help-enter-mts.md)；
 - 界面 → 只开 `UIShortCut`，用 `UIWindow.img/ShortCut` 的 11 个 `Bt*` 真素材重建，位置改窗口锚定而非 `(8,vh-120)`；
 - 商城 → **先对服务端 opcode 表取证**（40 vs 229），属跨线改动，单独评估后再动（默认：本批只把"点了没反应"变成"给出明确未支持提示"，不擅自换协议）。
 验收：四钮各自行为与正确截图一致；不再同帧开两窗。

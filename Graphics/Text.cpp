@@ -112,6 +112,11 @@ namespace ms
 		return text;
 	}
 
+	Point<int16_t> Text::position_of(size_t pos) const
+	{
+		return layout.position_of(pos);
+	}
+
 	int16_t Text::linespace(Font f)
 	{
 		return GraphicsGL::get().get_linespace(f);
@@ -153,6 +158,27 @@ namespace ms
 	Point<int16_t> Text::Layout::get_endoffset() const
 	{
 		return endoffset;
+	}
+
+	Point<int16_t> Text::Layout::position_of(size_t pos) const
+	{
+		for (const Line& line : lines)
+		{
+			if (line.words.empty())
+				continue;
+
+			const size_t first = line.words.front().first;
+			const size_t last = line.words.back().last;
+
+			// 严格小于：上一行的末边界和下一行的首边界是同一个字节，取「起点」时
+			// 正确答案属于下一行，先撞上上一行会拿到行末的 x。
+			if (pos < first || pos >= last)
+				continue;
+
+			return Point<int16_t>(line.position.x() + advance(pos), line.position.y());
+		}
+
+		return Point<int16_t>();
 	}
 
 	Text::Layout::iterator Text::Layout::begin() const

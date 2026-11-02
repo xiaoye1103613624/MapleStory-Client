@@ -83,6 +83,11 @@ namespace ms
 			Point<int16_t> get_dimensions() const;
 			Point<int16_t> get_endoffset() const;
 
+			// 字节 pos 布局后相对绘制原点的位置。advances 本来就是按字节索引的，
+			// 缺的只是「这个字节落在哪一行」，所以按行的词区间来定位。
+			// 只保证 pos 落在某行 [首词起点, 末词终点) 内时准确（取起点用）。
+			Point<int16_t> position_of(size_t pos) const;
+
 			using iterator = std::vector<Line>::const_iterator;
 			iterator begin() const;
 			iterator end() const;
@@ -113,6 +118,10 @@ namespace ms
 		Point<int16_t> dimensions() const;
 		Point<int16_t> endoffset() const;
 		const std::string& get_text() const;
+
+		// 正文里某段行内可点文本（NPC 对话的 #L..#l 选项）只能从最终布局反取坐标：
+		// 它不是独立控件，位置由整段正文的折行结果决定。返回相对本 Text 绘制原点。
+		Point<int16_t> position_of(size_t pos) const;
 
 		// 文本垂直落位的唯一真源（R27-B1b）。
 		//

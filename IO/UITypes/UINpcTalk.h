@@ -146,17 +146,26 @@ namespace ms
 		size_t formatted_text_pos;
 		uint16_t timestep;
 
-		// SENDSIMPLE：#Lindex#label# 解析后的可点选项
+		// SENDSIMPLE：#Lindex#label#l 解析后的可点选项。
+		// 原生链接是**行内**排版（脚本用 \t 把三项排成一行、\r\n 分行），所以选项
+		// 不是独立控件：正文照原样画，这里只记它在布局结果里的落点。
 		struct SimpleChoice
 		{
 			int32_t selection = 0;
-			Text label;
+			// 标签在剥掉令牌后的正文里的字节区间
+			size_t first = 0;
+			size_t last = 0;
+			// 由 layout_simple_choices() 从正文布局反取（相对正文绘制原点）
 			Point<int16_t> pos;
+			Point<int16_t> size;
 		};
 		std::vector<SimpleChoice> simple_choices;
 
 		std::function<void(bool)> onmoved;
 
-		void parse_simple_choices(const std::string& tx);
+		// 把 #L<n>#label#l 就地拆成正文里的 label + 可点区间，返回剥掉令牌后的文本
+		std::string strip_simple_choices(const std::string& tx);
+		// 正文 Text 建好布局后，把字节区间换算成命中框
+		void layout_simple_choices(const Text& body);
 	};
 }

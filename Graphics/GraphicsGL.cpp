@@ -895,7 +895,11 @@ namespace ms
 
 		while (offset < length)
 		{
-			size_t last = text.find_first_of(" \\#\t", offset + 1);
+			// \r \n 必须进分词集合：网络送来的 NPC 正文里断行是真 0x0D/0x0A 字节
+			// （WZ 串才是字面量 "\r\n"，由 case '\\' 处理）。旧集合里没有它们，
+			// 整段正文被当成一个词连着画过去，控制字符本身宽度为 0 又什么都不画，
+			// 于是多行脚本挤成一行。
+			size_t last = text.find_first_of(" \\#\t\r\n", offset + 1);
 
 			if (last == std::string::npos)
 				last = length;
@@ -1201,6 +1205,31 @@ namespace ms
 				{
 					ax = font.chars[' '].ax * 4;
 					skip++;
+					break;
+				}
+				// 真 0x0D - 回车断行
+				case '\r':
+				{
+					// \r\n 只算一处断行：这里把紧随其后的 \n 一并吃掉（text 取自
+					// c_str()，first+1 至多是终止符，一定可读），否则同一处会断两次、
+					// 正文之间凭空多出一行空高。
+					const bool crlf = text[first + 1] == '\n';
+
+					linebreak = crlf || ax > 0;
+					skip = crlf ? 2 : 1;
+					break;
+				}
+				// 真 0x0A - 换行断行
+				case '\n':
+				{
+					// 词起点已经越过本字节 ⇒ 前一个 \r 已在这处断过，不能再断第二次。
+					// 这里保持 skip=0：控制字符没生成过字形（addfont 只填 32..127），
+					// 推进量为 0，不会额外顶开笔位，但 advances 仍按字节补齐。
+					if (prev <= first)
+					{
+						linebreak = true;
+						skip = 1;
+					}
 					break;
 				}
 			}

@@ -8,6 +8,16 @@
 
 ## T-1 帮助 → `Npt_GuideLine.img`（`IO/UITypes/UIHelp.{h,cpp}`）
 
+> **⚠ 2026-11-03 本节方案作废，保留为取证档案。** 「帮助」按钮的真实落点是
+> `ENTER_MTS(0x9C)`（服务端 `use_mts=false` ⇒ `npc/9900001.js` 脚本中心对话），`UIHelp` 整窗已删除，
+> 上表的控件坐标随之失效 —— 判定与链路见 [help-enter-mts.md](help-enter-mts.md) §1/§2/§6。
+>
+> **但本节「文本处理事实」三条仍然有效，且是新方案的直接地基**：
+> ① `NptGuide/TextNN` 是 UTF-8；② WZ/IMG 串的换行是**字面量** `\r\n`（反斜杠+字母），
+> 而**网络脚本送来的换行是真 0x0D/0x0A 字节** —— 这条区分正是本轮把布局器改成认真 CR/LF 的依据
+> （见 help-enter-mts.md §7.3）；③ `Text::draw(..., Range<int16_t>)` 的 vertical 是屏幕绝对 y 裁剪。
+> 将来做真拍卖行 UI 时，`UtilDlgEx` 版式与 `Npt_GuideLine` 中文文本按本表取用。
+
 | 控件 | 节点路径 | WxH + origin | 窗口相对左上角 | 依据 |
 | --- | --- | --- | --- | --- |
 | 窗框上片 | `UIWindow.img/UtilDlgEx/t` | 529×28，origin (0,0) | (0, 0) | 1（`t` 是整幅顶条，含圆角与标题区） |

@@ -146,9 +146,6 @@ namespace ms
 			// 结果是长文本反而往上贴到窗框、往下压住「确定」。
 			text.draw(position + Point<int16_t>(TEXT_X, TEXT_Y));
 		}
-
-		for (const SimpleChoice& c : simple_choices)
-			c.label.draw(position + c.pos);
 	}
 
 	void UINpcTalk::update()
@@ -358,13 +355,25 @@ namespace ms
 
 		if (type == TalkType::SENDSIMPLE && !simple_choices.empty())
 		{
+			// 选项随正文一起滚动，命中框必须跟着同一套偏移；否则翻页后点的是
+			// 屏幕上的空位，真正被选中的是另一行。
+			const int16_t scroll = show_slider ? offset * (height - TEXT_SLACK) : 0;
+			const int16_t band_top = top.height() - 1;
+			const int16_t band_bottom = band_top + height - TEXT_SLACK;
+
 			for (const SimpleChoice& c : simple_choices)
 			{
+				const int16_t y = TEXT_Y + c.pos.y() - scroll;
+
+				// 滚出可视带的选项不可点（绘制也被裁掉了）。
+				if (show_slider && (y < band_top || y + c.size.y() > band_bottom))
+					continue;
+
 				Rectangle<int16_t> box(
-					c.pos.x(),
-					c.pos.x() + c.label.width(),
-					c.pos.y(),
-					c.pos.y() + c.label.height());
+					TEXT_X + c.pos.x(),
+					TEXT_X + c.pos.x() + c.size.x(),
+					y,
+					y + c.size.y());
 				if (box.contains(cursor_relative))
 				{
 					if (clicked)
@@ -520,43 +529,111 @@ namespace ms
 			}
 		}
 
-		return formatted_text;
+		// 令牌剥除放在这里，而不是交给布局器：打字机逐字符喂的就是这份文本，
+		// 布局器只负责排版，中途出现半截 #L 会画成乱码。
+		return strip_simple_choices(formatted_text);
 	}
 
-	void UINpcTalk::parse_simple_choices(const std::string& tx)
+	std::string UINpcTalk::strip_simple_choices(const std::string& tx)
 	{
 		simple_choices.clear();
-		// 形如 #L0#选项A# 或 #L0#选项A#L1#选项B#
+
+		std::string out;
+		out.reserve(tx.size());
+
 		size_t pos = 0;
-		int16_t row = 0;
-		while ((pos = tx.find("#L", pos)) != std::string::npos)
+
+		while (true)
 		{
-			size_t num_begin = pos + 2;
-			size_t num_end = tx.find('#', num_begin);
-			if (num_end == std::string::npos)
+			size_t l = tx.find("#L", pos);
+
+			if (l == std::string::npos)
+			{
+				out.append(tx, pos, std::string::npos);
 				break;
-			size_t label_end = tx.find('#', num_end + 1);
-			std::string num = tx.substr(num_begin, num_end - num_begin);
-			std::string label = label_end == std::string::npos
-				? tx.substr(num_end + 1)
-				: tx.substr(num_end + 1, label_end - num_end - 1);
-			int32_t sel = 0;
+			}
+
+			size_t num_end = tx.find('#', l + 2);
+
+			if (num_end == std::string::npos)
+			{
+				out.append(tx, pos, std::string::npos);
+				break;
+			}
+
+			int32_t sel;
+
 			try
 			{
-				sel = std::stoi(num);
+				sel = std::stoi(tx.substr(l + 2, num_end - l - 2));
 			}
 			catch (const std::exception&)
 			{
+				// 非法 #L 令牌：原样保留，不吞掉正文，也不留半个令牌。
+				out.append(tx, pos, num_end + 1 - pos);
 				pos = num_end + 1;
 				continue;
 			}
-			SimpleChoice c;
-			c.selection = sel;
-			c.label = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::LIGHTBLUE, label);
-			c.pos = Point<int16_t>(TEXT_X, 70 + row * 18);
-			simple_choices.push_back(std::move(c));
-			++row;
-			pos = label_end == std::string::npos ? tx.size() : label_end;
+
+			size_t label_begin = num_end + 1;
+			size_t label_end = tx.find("#l", label_begin);
+			const size_t next_l = tx.find("#L", label_begin);
+
+			// 规范写法是 #L<n>#label#l，但移植过来的原生脚本大量写成
+			// "#L0#选项\r\n#L1#选项"——**没有闭合 #l**（全服 779 段含 #L 的字面量里
+			// 残留令牌几乎都来自这一类）。这类标签的右界取「下一个 #L / 断行 / 文本末尾」
+			// 里最早的那个；否则要么整段正文被当成一个标签吞掉（命中框横跨全文），
+			// 要么 #L 令牌原样漏进布局器画成乱码。
+			const bool terminated = label_end != std::string::npos
+				&& (next_l == std::string::npos || label_end < next_l);
+
+			if (!terminated)
+			{
+				label_end = tx.size();
+
+				if (next_l != std::string::npos && next_l < label_end)
+					label_end = next_l;
+
+				const size_t brk = tx.find_first_of("\r\n", label_begin);
+
+				if (brk != std::string::npos && brk < label_end)
+					label_end = brk;
+			}
+
+			out.append(tx, pos, l - pos);
+
+			if (label_end > label_begin)
+			{
+				SimpleChoice c;
+				c.selection = sel;
+				c.first = out.size();
+				out.append(tx, label_begin, label_end - label_begin);
+				c.last = out.size();
+				simple_choices.push_back(c);
+			}
+
+			pos = terminated ? label_end + 2 : label_end;
+		}
+
+		return out;
+	}
+
+	void UINpcTalk::layout_simple_choices(const Text& body)
+	{
+		for (SimpleChoice& c : simple_choices)
+		{
+			c.pos = body.position_of(c.first);
+
+			// 宽高都另用量：正文是整段折行的结果，拿不到「只有这一段」的边界。
+			// maxwidth=0 ⇒ 不折行，量出的就是标签的自然宽；色标由同一段 Text
+			// 自己解释，所以 #e 加粗之类的宽度也对得上。
+			Text label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY,
+				formatted_text.substr(c.first, c.last - c.first));
+
+			// 高度取布局自身而不是单行行距：带闭合 #l 的标签可以合法跨行
+			// （npc/2040030.js 的「我的宠物变成了玩偶\r\n请帮我让它再次活动起来！」），
+			// 写死一行高会让下半截点不到。
+			c.size = Point<int16_t>(label.width(), label.height());
 		}
 	}
 
@@ -602,6 +679,10 @@ namespace ms
 		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, TEXT_WIDTH);
 
 		int16_t text_height = text.height();
+
+		// 命中框必须在正文被清空前反取：下面 change_text("") 会把布局丢掉，
+		// 而选项的落点只存在于整段文本的折行结果里。
+		layout_simple_choices(text);
 
 		text.change_text("");
 

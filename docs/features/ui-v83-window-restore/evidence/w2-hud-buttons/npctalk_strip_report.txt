@@ -1,0 +1,40 @@
+=== 真实形态终判 ===
+canonical 行内三列 (9900001)     [clean] choices=4   PASS
+    sel=3    [  0,  4) '传送自由'
+    sel=69   [  7, 11) '快速转职'
+    sel=70   [ 14, 18) '学习技能'
+    sel=5    [ 20, 28) '野外BOSS刷新'
+无闭合 #l，逐行一项 (1012100)        [clean] choices=3   PASS
+    sel=0    [ 14, 27) '请解释一下成为猎人的意义。'
+    sel=1    [ 29, 43) '请解释一下成为弩弓手的意义。'
+    sel=3    [ 45, 54) '我会选择我的职业！'
+变量拼装 (1002007 实际形态)          [clean] choices=2   PASS
+    sel=0    [  6, 26) '#m100000000# (10 金币)'
+    sel=1    [ 28, 48) '#m103000000# (25 金币)'
+标签内嵌色标 (当前地图掉落)              [clean] choices=3   PASS
+    sel=1    [  0,  8) '#r战士武器#k'
+    sel=2    [ 10, 18) '#r法师武器#k'
+    sel=12   [ 20, 26) '#r关闭#k'
+#b 铺在令牌前 (1022000)           [clean] choices=3   PASS
+    sel=0    [ 13, 15) '剑客'
+    sel=1    [ 17, 20) '准骑士'
+    sel=2    [ 22, 25) '枪战士'
+标签内嵌道具名 #t/#i (1012103)      [clean] choices=2   PASS
+    sel=1    [  0, 23) '理发：#i5150001##t5150001#'
+    sel=2    [ 25, 48) '染发：#i5151001##t5151001#'
+畸形：#L 后无数字                   [verbatim] choices=0   PASS
+畸形：#L 悬在末尾                   [verbatim] choices=0   PASS
+畸形：只有 #L0# 无标签               [clean] choices=1   PASS
+    sel=1    [  0,  2) '正常'
+单 #l 缺失且整段一行                 [clean] choices=3   PASS
+    sel=0    [  0,  4) '第一项 '
+    sel=1    [  4,  8) '第二项 '
+    sel=2    [  8, 11) '第三项'
+
+=== 全服语料 ===
+js files=2052  literals with #L=779  choices parsed=1012
+leftover-literals=211 (绝大多数是 "#L" + i + "#…" 变量拼接把令牌切碎，属扫描器切分口径)
+malformed tokens=2  labels swallowing a line break=1
+  2040030.js sel=0 '#b我的宠物变成了玩偶\r\n请帮我让它再次活动起来！#k'
+
+FAILING CASES: 0
