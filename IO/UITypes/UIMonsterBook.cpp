@@ -48,10 +48,6 @@ namespace ms
 		total_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "")
 	{
 		dimension = Point<int16_t>(400, 480);
-		// UIWindow Book 节点（≠ MonsterBook）作为并排参考壳
-		auto book = UI::get().get_element<UIBook>();
-		if (!book) book = UI::get().emplace<UIBook>();
-		else if (!book->is_active()) book->makeactive();
 
 #ifdef USE_NX
 		nl::node panel = nl::nx::UI["UIWindow.img"]["MonsterBook"]["backgrnd"];
