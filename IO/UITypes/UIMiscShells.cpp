@@ -40,6 +40,11 @@
 #include "UISoftKey.h"
 #include "UIStatsInfo.h"
 #include "UIUserList.h"
+#include "UIBuddyList.h"
+#include "UIParty.h"
+#include "../Components/Textfield.h"
+#include "../../Audio/Audio.h"
+#include "../../Util/Locale.h"
 #include "../../Constants.h"
 #include "../../Character/Inventory/InventoryType.h"
 #include "../../Gameplay/Stage.h"
@@ -6066,4 +6071,359 @@ void UIFloatNotice::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 }
 UIElement::Type UIFloatNotice::get_type() const { return TYPE; }
+
+// ---------------------------------------------------------------------------
+// UIWhisperTargetDlg —— 悄悄话目标弹层
+//
+// 版式唯一的真源是原生截帧 `whisper-dlg-native.png`（261x117）与
+// `Basic.img/Notice4` 的逐行左带反查（工具 `utildlg-lookup.py`，读数
+// `_utildlg_lookup.txt`）：截帧每一行都能在 Notice4 的 t/c/s 里报到出处，
+// 折算关系 = 截帧坐标 + (3, 1)（件自带左 3 列、上 1 行半透明投影，截帧没切进去）。
+// 中间那段 Notice4/c 在原生里被纵向拉到 22（t 止于 21、s 起于 43），所以
+// MID_H 不是件高 20 而是量出来的 22。
+// ---------------------------------------------------------------------------
+
+int16_t UIWhisperTargetDlg::frame_height()
+{
+	return TOP_H + MID_H + BOT_H;
+}
+
+UIWhisperTargetDlg::UIWhisperTargetDlg()
+	: hint_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+		Locale::text("whisper.hint_target"))
+	, name_field(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Rectangle<int16_t>(Point<int16_t>(0, 0), Point<int16_t>(0, 0)), 12)
+{
+	dimension = Point<int16_t>(FRAME_W, frame_height());
+	center_on_screen();
+
+	nl::node notice = nl::nx::UI["Basic.img"]["Notice4"];
+	// 局部量不能再叫 combo —— 会和成员 `Texture combo[3][3]` 同名，
+	// 于是 `combo[s][p] = Texture(combo[states[s]][p])` 变成往 nl::node 上找 width()。
+	nl::node combo_src = nl::nx::UI["Basic.img"]["ComboBox"];
+
+	frame_top = Texture(notice["t"]);
+	frame_mid = Texture(notice["c"]);
+	frame_bottom = Texture(notice["s"]);
+
+	const char* states[3] = { "normal", "mouseOver", "pressed" };
+
+	for (uint8_t s = 0; s < 3; ++s)
+		for (uint8_t p = 0; p < 3; ++p)
+		{
+			combo[s][p] = Texture(combo_src[states[s]][p]);
+
+			if (p == 0) combo_left_w = combo[s][p].width();
+			else if (p == 1) combo_mid_w = std::max<int16_t>(combo[s][p].width(), 1);
+			else combo_right_w = combo[s][p].width();
+		}
+
+	has_assets = frame_top && frame_mid && frame_bottom && combo[0][0] && combo[0][2];
+
+	if (!has_assets)
+		UiAssetResolve::diag_once("whisperdlg.frame",
+			"Basic.img/Notice4(t,c,s) 或 ComboBox 三件缺失 —— 弹层只剩文字与按钮");
+
+	// 确定 / 取消：原生截帧里两枚实测 46x18，只有 UIWindow.img/UtilDlgEx 的
+	// BtOK / BtNo 是这一档（Basic.img/BtOK 是 65x24，按截帧量会溢出右沿）。
+	nl::node udex = UiAssetResolve::window("UtilDlgEx");
+
+	try_maple_btn(buttons, Buttons::BtOk, udex["BtOK"],
+		Point<int16_t>(OK_X, BTN_Y), "whisperdlg.BtOK");
+	try_maple_btn(buttons, Buttons::BtNo, udex["BtNo"],
+		Point<int16_t>(NO_X, BTN_Y), "whisperdlg.BtNo");
+
+	list_back = ColorBox(FIELD_W, ROW_H, Color::Name::DUSTYGRAY, 1.0f);
+	list_inner = ColorBox(FIELD_W - 2, ROW_H - 2, Color::Name::GALLERY, 1.0f);
+	list_mark = ColorBox(FIELD_W - 2, ROW_H - 2, Color::Name::GRAYOLIVE, 1.0f);
+
+	name_field.set_enter_callback([this](std::string) { confirm(); });
+	// ESC 一次只退一级：列表开着先收列表，已收才关窗。焦点在输入框时按键由
+	// UI::send_key 直接交给 Textfield（IO/UI.cpp:202），走不到本窗的 send_key，
+	// 所以这条两级逻辑必须挂在字段的回调上。
+	name_field.set_key_callback(KeyAction::Id::ESCAPE, [this]() {
+		if (list_open)
+			list_open = false;
+		else
+			deactivate();
+		});
+	// 与 UIChatBar 的 classic 输入行同一套基线补偿（那边真机验过）。
+	name_field.set_text_shift(Point<int16_t>(0, -9));
+
+	LOG(LOG_DEBUG, "UIWhisperTargetDlg: open assets=" << has_assets
+		<< " frame=" << FRAME_W << "x" << frame_height());
+}
+
+int16_t UIWhisperTargetDlg::arrow_x() const
+{
+	return FIELD_X + FIELD_W - combo_right_w;
+}
+
+bool UIWhisperTargetDlg::in_arrow(Point<int16_t> cursorpos) const
+{
+	const Point<int16_t> lt = position + Point<int16_t>(arrow_x(), FIELD_Y);
+	const Point<int16_t> rb = lt + Point<int16_t>(combo_right_w, FIELD_H);
+
+	return Rectangle<int16_t>(lt, rb).contains(cursorpos);
+}
+
+bool UIWhisperTargetDlg::in_row(Point<int16_t> cursorpos, size_t row) const
+{
+	const int16_t top = FIELD_Y + FIELD_H + static_cast<int16_t>(row * ROW_H);
+	const Point<int16_t> lt = position + Point<int16_t>(FIELD_X, top);
+	const Point<int16_t> rb = lt + Point<int16_t>(FIELD_W, ROW_H);
+
+	return Rectangle<int16_t>(lt, rb).contains(cursorpos);
+}
+
+std::vector<std::string> UIWhisperTargetDlg::collect_candidates() const
+{
+	// 候选名单 = 队友 + 好友。原生截帧是收起态，列表数据源没有取证到
+	// （见 whisper-dlg-prep.md §2.3），这里只用本客户端已确定存在的两份名单，
+	// 不去编造「最近密语对象」这类没核对过的来源。
+	std::vector<std::string> names;
+
+	auto push = [&names](const std::string& n) {
+		if (n.empty())
+			return;
+
+		for (const auto& seen : names)
+			if (seen == n)
+				return;
+
+		names.push_back(n);
+	};
+
+	if (auto party = UI::get().get_element<UIParty>())
+		for (const auto& m : party->get_party().members)
+			if (m.id)
+				push(m.name);
+
+	if (auto buddy = UI::get().get_element<UIBuddyList>())
+		for (const auto& b : buddy->get_buddies())
+			if (b.online)
+				push(b.name);
+
+	return names;
+}
+
+void UIWhisperTargetDlg::open()
+{
+	candidates = collect_candidates();
+	candidate_text.clear();
+
+	for (const auto& n : candidates)
+		candidate_text.emplace_back(Text::Font::A12M, Text::Alignment::LEFT,
+			Color::Name::BLACK, n);
+
+	hint_label.change_text(Locale::text("whisper.hint_target"));
+	list_open = false;
+	refocus_field();
+}
+
+void UIWhisperTargetDlg::refocus_field()
+{
+	name_field.set_state(Textfield::State::NORMAL);
+	name_field.set_state(Textfield::State::FOCUSED);
+}
+
+void UIWhisperTargetDlg::pick_candidate(size_t row)
+{
+	if (row >= candidates.size())
+		return;
+
+	name_field.change_text(candidates[row]);
+	list_open = false;
+	// 点列表会把键盘焦点交给 AreaButton 那条路径，重新按回输入框。
+	refocus_field();
+}
+
+void UIWhisperTargetDlg::confirm()
+{
+	std::string name = name_field.get_text();
+
+	while (!name.empty() && name.front() == ' ')
+		name.erase(name.begin());
+	while (!name.empty() && name.back() == ' ')
+		name.pop_back();
+
+	if (auto chat = UI::get().get_element<UIChatBar>())
+	{
+		chat->set_whisper_target(name);
+		LOG(LOG_DEBUG, "UIWhisperTargetDlg: confirm len=" << name.size());
+	}
+	else
+	{
+		if (!name.empty())
+			WhisperPacket(name, "").dispatch();
+	}
+
+	deactivate();
+}
+
+void UIWhisperTargetDlg::update()
+{
+	UIElement::draw_buttons(1.0f);
+
+	// 命中区给的是「整条 ComboBox」，不是「箭头左侧的文字区」：UI::send_cursor
+	// (IO/UI.cpp:155) 只要这一点落在 bounds 外就把焦点丢掉，于是点右侧箭头会先把
+	// 输入框脱焦，随后回车（确定）就再也回不到字段 —— 真机实测「点了箭头之后
+	// 回车没反应」正是这条。文字起点仍按截帧的 NAME_X，箭头那 18px 的绘制与
+	// 命中在 draw()/send_cursor 里各自照旧。
+	const Point<int16_t> lt = position + Point<int16_t>(FIELD_X, FIELD_Y);
+	Point<int16_t> rb = position + Point<int16_t>(FIELD_X + FIELD_W, FIELD_Y + FIELD_H);
+
+	// 下拉展开时，命中区要一路盖到最后一行 —— 否则点候选行会在第 2 步被判定
+	// 「落在框外」而把焦点丢掉，pick_candidate 里的 refocus_field 也白做。
+	if (list_open)
+		rb = Point<int16_t>(rb.x(), rb.y() + static_cast<int16_t>(candidates.size() * ROW_H));
+
+	name_field.update(lt, rb - lt);
+}
+
+void UIWhisperTargetDlg::remove_cursor()
+{
+	name_field.set_state(Textfield::State::DISABLED);
+	UIElement::remove_cursor();
+}
+
+void UIWhisperTargetDlg::draw(float) const
+{
+	frame_top.draw(position);
+	frame_mid.draw(DrawArgument(position + Point<int16_t>(0, TOP_H),
+		Point<int16_t>(0, MID_H)));
+	frame_bottom.draw(position + Point<int16_t>(0, TOP_H + MID_H));
+
+	// 提示文字：截帧量到的是「墨迹顶」，绘制 y 由 Text::y_for_ink_top 反解（R27-B1b）。
+	hint_label.draw(position + Point<int16_t>(HINT_X, hint_label.y_for_ink_top(HINT_INK_TOP)));
+
+	const uint8_t st = list_open ? 2 : (arrow_hover ? 1 : 0);
+	const Point<int16_t> fl = position + Point<int16_t>(FIELD_X, FIELD_Y);
+
+	combo[st][0].draw(fl);
+
+	int16_t x = fl.x() + combo_left_w;
+
+	while (x + combo_mid_w <= fl.x() + FIELD_W - combo_right_w)
+	{
+		combo[st][1].draw(Point<int16_t>(x, fl.y()));
+		x += combo_mid_w;
+	}
+
+	combo[st][2].draw(Point<int16_t>(fl.x() + FIELD_W - combo_right_w, fl.y()));
+
+	name_field.draw(Point<int16_t>(0, 0));
+
+	if (list_open && !candidates.empty())
+	{
+		const Point<int16_t> lt = position + Point<int16_t>(FIELD_X, FIELD_Y + FIELD_H);
+
+		list_back.setheight(static_cast<int16_t>(candidates.size() * ROW_H));
+		list_inner.setheight(static_cast<int16_t>(candidates.size() * ROW_H) - 2);
+
+		list_back.draw(lt);
+		list_inner.draw(lt + Point<int16_t>(1, 1));
+
+		if (hovered < candidates.size())
+			list_mark.draw(lt + Point<int16_t>(1, 1 + static_cast<int16_t>(hovered * ROW_H)));
+
+		for (size_t i = 0; i < candidate_text.size(); ++i)
+			candidate_text[i].draw(lt + Point<int16_t>(6, static_cast<int16_t>(i * ROW_H) + 2));
+	}
+
+	UIElement::draw_buttons(1.0f);
+}
+
+Cursor::State UIWhisperTargetDlg::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	if (list_open)
+	{
+		for (size_t i = 0; i < candidates.size(); ++i)
+		{
+			if (!in_row(cursorpos, i))
+				continue;
+
+			hovered = i;
+
+			if (clicked)
+			{
+				pick_candidate(i);
+
+				return Cursor::State::CLICKING;
+			}
+
+			return Cursor::State::CANCLICK;
+		}
+	}
+
+	arrow_hover = in_arrow(cursorpos);
+
+	if (arrow_hover)
+	{
+		if (clicked)
+		{
+			list_open = !list_open;
+			hovered = 0;
+			Sound(Sound::Name::BUTTONCLICK).play();
+
+			return Cursor::State::CLICKING;
+		}
+
+		return Cursor::State::CANCLICK;
+	}
+
+	if (clicked && list_open && !in_arrow(cursorpos))
+	{
+		// 列表外、非箭头的点击：点空白只收列表，点按钮仍要先让基类命中，
+		// 所以这里只在框外的空白处收列表。
+		const Rectangle<int16_t> box(position, position + dimension);
+
+		if (!box.contains(cursorpos))
+			list_open = false;
+	}
+
+	if (Cursor::State tf = name_field.send_cursor(cursorpos, clicked))
+		return tf;
+
+	return UIElement::send_cursor(clicked, cursorpos);
+}
+
+void UIWhisperTargetDlg::send_key(int32_t keycode, bool pressed, bool escape)
+{
+	if (!pressed)
+		return;
+
+	// ESC 只收列表，列表已收才关窗 —— 原生那层就是一次只退一级。
+	if (escape)
+	{
+		if (list_open)
+			list_open = false;
+		else
+			deactivate();
+
+		return;
+	}
+
+	if (keycode == 'Y' || keycode == 'y')
+		confirm();
+	else if (keycode == 'N' || keycode == 'n')
+		deactivate();
+}
+
+Button::State UIWhisperTargetDlg::button_pressed(uint16_t buttonid)
+{
+	switch (buttonid)
+	{
+		case Buttons::BtOk:
+			confirm();
+			break;
+		case Buttons::BtNo:
+			deactivate();
+			break;
+	}
+
+	return Button::State::NORMAL;
+}
+
+UIElement::Type UIWhisperTargetDlg::get_type() const { return TYPE; }
 }

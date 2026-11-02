@@ -63,6 +63,9 @@ namespace ms
 		void set_leader(int32_t cid);
 		void update_member_hp(int32_t cid, int32_t curhp, int32_t maxhp);
 
+		// 悄悄话弹层的候选名单要读队友名；只读，不改 UIParty 的任何行为。
+		const Party& get_party() const { return party; }
+
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
 	protected:

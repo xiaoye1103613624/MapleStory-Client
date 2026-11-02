@@ -137,6 +137,8 @@ namespace ms
 			QUESTICON,
 			MINIGAMETABLE,
 			FLOATNOTICE,
+			// 悄悄话目标弹层（原生「请输入悄悄话的对象。」那一层）。
+			WHISPERTARGET,
 			STATUSBAR,
 			CHATBAR,
 			BUFFLIST,

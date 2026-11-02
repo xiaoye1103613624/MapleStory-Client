@@ -61,6 +61,8 @@ namespace ms
 		int32_t get_capacity() const;
 		void update_buddy_channel(int32_t cid, int32_t channel);
 		int32_t get_selected_cid() const { return selected_cid; }
+		// 悄悄话弹层的候选名单要读好友名；只读，不改 UIBuddyList 的任何行为。
+		const std::vector<Buddy>& get_buddies() const { return list.buddies; }
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 

@@ -181,8 +181,18 @@ namespace ms
 			try_maple_btn(buttons, Buttons::BtMin, basic["BtMin"], log_btn_pos, "chatbar.classic.BtMin");
 
 			classic_target_text = Text(
-				Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "对所有人"
+				Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+				Locale::text("chat.target.all")
 			);
+
+			// 目标列表：四项文案都走 Locale（非位图文案一律 i18n，用户 2026-11-01 定调）。
+			for (uint8_t i = 0; i < ChatTargetIndex::TARGET_COUNT; ++i)
+				classic_target_list_texts.emplace_back(Text::Font::A11M,
+					Text::Alignment::LEFT, Color::Name::BLACK, chat_target_name(i));
+
+			classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color::Name::DUSTYGRAY, 1.0f);
+			classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color::Name::GALLERY, 1.0f);
+			classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color::Name::GRAYOLIVE, 1.0f);
 
 			set_classic_log(classic_log_open);
 
@@ -387,6 +397,27 @@ namespace ms
 			classic_target_text.draw(
 				DrawArgument(input_pos + Point<int16_t>(target_x, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP)))
 			);
+
+			// 目标列表（点开框/箭头后向上展开）：后画，压在历史框底板之上。
+			if (classic_target_list_open)
+			{
+				const Point<int16_t> list_pos = classic_target_list_position();
+				const int16_t list_h = static_cast<int16_t>(classic_target_list_texts.size() * TARGET_LIST_ROW_H);
+
+				classic_target_list_back.setheight(list_h);
+				classic_target_list_inner.setheight(list_h - 2);
+
+				classic_target_list_back.draw(list_pos);
+				classic_target_list_inner.draw(list_pos + Point<int16_t>(1, 1));
+
+				if (classic_target_hover < classic_target_list_texts.size())
+					classic_target_list_mark.draw(list_pos + Point<int16_t>(1, 1
+						+ static_cast<int16_t>(classic_target_hover * TARGET_LIST_ROW_H)));
+
+				for (size_t i = 0; i < classic_target_list_texts.size(); ++i)
+					classic_target_list_texts[i].draw(list_pos
+						+ Point<int16_t>(4, static_cast<int16_t>(i * TARGET_LIST_ROW_H) + 2));
+			}
 
 			if (classic_input_bg)
 				classic_input_bg.draw(
@@ -682,6 +713,19 @@ namespace ms
 			if (Rectangle<int16_t>(position, position + dimension).contains(cursor_position))
 				return true;
 
+			// 目标列表是画在历史框「上方」的，天然落在聊天栏矩形之外。UIStateGame
+			// 无论 hover 还是按下都用 is_in_range 选元素（IO/UIStateGame.cpp:564），
+			// 不在区内就根本不会调 UIChatBar::send_cursor —— 真机实测「点了列表行
+			// 没反应、列表不关也不选」就是这个门把点击漏给了场景。
+			if (classic_target_list_open)
+			{
+				const Point<int16_t> list_lt = classic_target_list_position();
+				const Point<int16_t> list_rb = list_lt + Point<int16_t>(TARGET_LIST_W, TARGET_COUNT * TARGET_LIST_ROW_H);
+
+				if (Rectangle<int16_t>(list_lt, list_rb).contains(cursor_position))
+					return true;
+			}
+
 			if (classic_log_open
 				&& Rectangle<int16_t>(position - Point<int16_t>(0, user_view_y),
 					position + Point<int16_t>(dimension.x(), 0)).contains(cursor_position))
@@ -754,6 +798,39 @@ namespace ms
 				return Cursor::State::IDLE;
 			}
 
+			// 目标列表打开时优先判列表：它在历史框上方，不先判会被滚动条/拖拽带抢掉。
+			if (classic_target_list_open)
+			{
+				for (size_t i = 0; i < classic_target_list_texts.size(); ++i)
+				{
+					if (!in_classic_target_row(cursor_position, i))
+						continue;
+
+					classic_target_hover = i;
+
+					if (clicked)
+					{
+						pick_classic_target(i);
+						classic_target_list_open = false;
+
+						return Cursor::State::CLICKING;
+					}
+
+					return Cursor::State::CANCLICK;
+				}
+
+				// 点在列表外：关列表并吃掉这一帧的点击，否则同一次点击会接着落到
+				// 下面的 chatTarget 命中区，把列表又开回去。
+				if (clicked)
+				{
+					classic_target_list_open = false;
+
+					return Cursor::State::CLICKING;
+				}
+
+				return Cursor::State::IDLE;
+			}
+
 			// 右端竖滚动条命中：Slider 的坐标是「相对历史框左上角」，所以先把光标
 			// 换算到局部。列范围自己先卡一次 —— 它在轨道外也会返回非 IDLE（函数末尾
 			// 那支无条件 VSCROLL），不卡就会把整块历史区的指针都变成滚动箭头。
@@ -780,7 +857,7 @@ namespace ms
 
 			// 展开/缩放已改真按钮（Basic.img/BtMax|BtMin），手搓 12x12 命中区撤掉，
 			// 否则它会抢在 UIElement::send_cursor 之前吞掉点击。
-			// chatTarget 框体本身（箭头右侧）仍是贴图不是按钮，点击 = 切换目标。
+			// chatTarget 框体本身（箭头右侧）仍是贴图不是按钮，点击 = 展开目标列表。
 			// 命中矩形与 draw() 用的 TARGET_BOX_Y 保持一致。
 			Point<int16_t> target_pos = position + Point<int16_t>(TARGET_BT_W, TARGET_BOX_Y);
 
@@ -788,7 +865,7 @@ namespace ms
 			{
 				if (clicked)
 				{
-					cycle_chat_target();
+					toggle_classic_target_list(!classic_target_list_open);
 					return Cursor::State::CLICKING;
 				}
 
@@ -1298,6 +1375,14 @@ namespace ms
 
 	void UIChatBar::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		// ESC 优先关目标列表：列表开着时按 ESC 应该只是收回列表，而不是把整个
+		// 输入行收掉（原生下拉就是这个次序）。
+		if (pressed && escape && classic_target_list_open)
+		{
+			classic_target_list_open = false;
+			return;
+		}
+
 		if (pressed)
 		{
 			if (keycode == 'W' || keycode == 'w')
@@ -1431,13 +1516,78 @@ namespace ms
 		toggle_view(!view_max, true);
 	}
 
-	void UIChatBar::cycle_chat_target()
+	std::string UIChatBar::chat_target_name(uint8_t target_id) const
 	{
-		static const char* TARGET_NAMES[] = { "对所有人", "密语", "组队", "工会" };
-		static constexpr uint8_t TARGET_COUNT = 4;
+		static constexpr const char* KEYS[] =
+		{
+			"chat.target.all",
+			"chat.target.whisper",
+			"chat.target.party",
+			"chat.target.guild"
+		};
 
-		classic_chat_target_id = static_cast<uint8_t>((classic_chat_target_id + 1) % TARGET_COUNT);
-		classic_target_text.change_text(TARGET_NAMES[classic_chat_target_id]);
+		return target_id < TARGET_COUNT ? Locale::text(KEYS[target_id]) : std::string();
+	}
+
+	void UIChatBar::set_classic_target(uint8_t target_id)
+	{
+		if (target_id >= TARGET_COUNT)
+			return;
+
+		classic_chat_target_id = target_id;
+		classic_target_text.change_text(chat_target_name(target_id));
+	}
+
+	void UIChatBar::toggle_classic_target_list(bool open)
+	{
+		// 收起态（灰带）没有 chatTarget 框，箭头钮也被 sync_classic_buttons 关了，
+		// 列表无处贴附，原生此时也不给选。
+		if (open && !classic_log_open && !view_input)
+			return;
+
+		classic_target_list_open = open;
+		classic_target_hover = 0;
+	}
+
+	void UIChatBar::pick_classic_target(size_t index)
+	{
+		if (index >= TARGET_COUNT)
+			return;
+
+		set_classic_target(static_cast<uint8_t>(index));
+
+		// 原生选了「悄悄话」之后要输对象名，走「请输入悄悄话的对象。」那一层
+		// （UIWhisperTargetDlg）；其余三项选中即生效，不需要再问名字。
+		if (index == TARGET_WHISPER)
+		{
+			if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
+			{
+				dlg->makeactive();
+				dlg->open();
+			}
+			else if (auto new_dlg = UI::get().emplace<UIWhisperTargetDlg>())
+			{
+				new_dlg->open();
+			}
+		}
+	}
+
+	Point<int16_t> UIChatBar::classic_target_list_position() const
+	{
+		// 向上展开：列表底边贴在 chatTarget 框顶（行内 TARGET_BOX_Y）。底栏贴屏幕
+		// 下沿，向下没有空间。input_pos 与 draw() 同源，就是 position。
+		const int16_t list_h = static_cast<int16_t>(TARGET_COUNT * TARGET_LIST_ROW_H);
+
+		return Point<int16_t>(position.x(), position.y() + TARGET_BOX_Y - list_h);
+	}
+
+	bool UIChatBar::in_classic_target_row(Point<int16_t> cursor_position, size_t row) const
+	{
+		const Point<int16_t> lt = classic_target_list_position()
+			+ Point<int16_t>(1, static_cast<int16_t>(row * TARGET_LIST_ROW_H) + 1);
+		const Point<int16_t> rb = lt + Point<int16_t>(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2);
+
+		return Rectangle<int16_t>(lt, rb).contains(cursor_position);
 	}
 
 	void UIChatBar::sync_classic_buttons()
@@ -1584,7 +1734,8 @@ namespace ms
 
 	void UIChatBar::focus_whisper(const std::string& target)
 	{
-		// SoftKey：有目标则直接输入正文；否则 CharInfo / SoftKey 名再填 /w
+		// SoftKey：有目标则直接输入正文；否则走原生那一层「请输入悄悄话的对象。」
+		// （UIWhisperTargetDlg：Notice4 框 + 输入行 + ComboBox 下拉候选 + BtOK/BtNo）。
 		std::string t = target;
 		if (t.empty()) {
 			if (auto ci = UI::get().get_element<UICharInfo>())
@@ -1600,17 +1751,37 @@ namespace ms
 			return;
 		}
 
-		UI::get().emplace<UISoftKey>([this](const std::string& name)
+		if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
 		{
-			if (name.empty()) return;
-			if (classic_mode)
-				view_input = true;
-			else if (!view_input)
-				toggle_input(true);
+			dlg->makeactive();
+			dlg->open();
+			return;
+		}
 
-			input_text.change_text("/w " + name + " ");
-			input_text.set_state(Textfield::State::FOCUSED);
-		}, []() {}, "Whisper target");
+		if (auto dlg = UI::get().emplace<UIWhisperTargetDlg>())
+			dlg->open();
+	}
+
+	void UIChatBar::set_whisper_target(const std::string& target)
+	{
+		if (target.empty())
+			return;
+
+		if (classic_mode)
+		{
+			// 目标标签切到「悄悄话」，与原生的观感一致：选完对象后左框显示的是频道名，
+			// 具体对象只在输入行的 "/w 名字 " 前缀里。
+			set_classic_target(TARGET_WHISPER);
+			toggle_classic_target_list(false);
+		}
+
+		if (!view_input)
+			toggle_input(true);
+
+		input_text.change_text("/w " + target + " ");
+		input_text.set_state(Textfield::State::FOCUSED);
+
+		LOG(LOG_DEBUG, "UIChatBar: whisper target prefilled len=" << target.size());
 	}
 
 	bool UIChatBar::indragrange(Point<int16_t> cursor_position) const

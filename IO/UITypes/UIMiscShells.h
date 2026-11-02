@@ -1,8 +1,11 @@
 #pragma once
 #include "../UIDragElement.h"
 #include "../Components/Slider.h"
+#include "../Components/Textfield.h"
+#include "../../Graphics/Geometry.h"
 #include "../../Graphics/Texture.h"
 #include "../../Graphics/Text.h"
+#include <vector>
 namespace ms {
 class UIReport : public UIDragElement<PosNOTICE> {
 public:
@@ -744,5 +747,80 @@ public:
 private:
 	bool has_assets = false; Texture backgrnd;
 	Text tip_label;
+};
+
+/// 悄悄话目标弹层（原生「请输入悄悄话的对象。」那一层）。
+/// 框体不是整张底图，而是 Basic.img/Notice4 的 t/c/s 竖拼：原生截帧 261x117
+/// 逐行反查（evidence/w4-chatbar/whisper-dlg-prep.md §5'）里，截帧每一行的左带
+/// 指纹都能在 Notice4 的件里报到出处 —— 顶片 t(266x21) 占截帧行 -1..19，底片
+/// s(266x78) 占行 43..120，中间夹一段被纵向拉到位的 c(266x20)。截帧裁掉了件
+/// 自带的左 3 / 上 1 投影，所以本窗用 FRAME_H = 21+22+78，内部坐标一律相对
+/// 框左上角（= 截帧坐标 + (3, 1)），实测值见下表注释。
+class UIWhisperTargetDlg : public UIElement {
+public:
+	static constexpr Type TYPE = UIElement::Type::WHISPERTARGET;
+	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
+	UIWhisperTargetDlg();
+
+	void draw(float inter) const override;
+	void update() override;
+	void remove_cursor() override;
+	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+	UIElement::Type get_type() const override;
+
+	/// 打开即刷新候选名单（队友 + 好友在线），并把输入框聚焦。
+	void open();
+
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
+
+private:
+	enum Buttons : uint16_t { BtOk, BtNo };
+
+	// —— 以下全部来自截帧实测（+3/+1 折算到框坐标），不是排版审美 ——
+	static constexpr int16_t FRAME_W = 266;
+	static constexpr int16_t TOP_H = 21;
+	static constexpr int16_t MID_H = 22;	// Notice4/c 被纵向拉到 43-21
+	static constexpr int16_t BOT_H = 78;
+	static constexpr int16_t HINT_INK_TOP = 30;	// 提示墨迹顶
+	static constexpr int16_t HINT_X = 25;		// 提示墨迹左沿
+	static constexpr int16_t FIELD_X = 22;		// ComboBox 左件起点
+	static constexpr int16_t FIELD_Y = 47;		// 黑上沿那一行
+	static constexpr int16_t FIELD_W = 238;		// 右件（含箭头）止于 x=259
+	static constexpr int16_t FIELD_H = 17;		// ComboBox 件高
+	static constexpr int16_t NAME_X = 27;		// 光标实测列
+	static constexpr int16_t OK_X = 162;
+	static constexpr int16_t NO_X = 212;
+	static constexpr int16_t BTN_Y = 91;
+	static constexpr int16_t ROW_H = 15;		// 本客户端 ComboBox 弹表行高
+
+	static int16_t frame_height();
+	int16_t arrow_x() const;	// 右件（箭头）左沿
+	bool in_arrow(Point<int16_t> cursorpos) const;
+	bool in_row(Point<int16_t> cursorpos, size_t row) const;
+	void pick_candidate(size_t row);
+	void confirm();
+	// UI::send_cursor (IO/UI.cpp:155) 在「点击落在输入框外」时会把 focusedtextfield
+	// 置空，而 Textfield 自己的 state 仍是 FOCUSED —— 于是 set_state(FOCUSED) 是空操作，
+	// 焦点回不来。必须先 NORMAL（触发 remove_textfield）再 FOCUSED（重新登记）。
+	void refocus_field();
+	std::vector<std::string> collect_candidates() const;
+
+	bool has_assets = false;
+	bool arrow_hover = false;
+	// Notice4 三段 + ComboBox 三件（normal/pressed/mouseOver 各一套）。
+	Texture frame_top, frame_mid, frame_bottom;
+	Texture combo[3][3];	// [state][part]
+	int16_t combo_left_w = 5, combo_mid_w = 5, combo_right_w = 18;
+	Text hint_label;
+	Textfield name_field;
+	std::vector<std::string> candidates;
+	std::vector<Text> candidate_text;
+	bool list_open = false;
+	size_t hovered = 0;
+	// 行高随候选数变，draw() 是 const，所以高度在这里 mutable（只有 setheight 会被调）。
+	mutable ColorBox list_back, list_inner;
+	ColorBox list_mark;
 };
 }

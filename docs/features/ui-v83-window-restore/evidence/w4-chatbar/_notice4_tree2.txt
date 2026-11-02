@@ -1,0 +1,73 @@
+=== Basic.img/Notice4 ===
+Notice4 ntype=0
+  c ntype=5 266x20
+    origin ntype=4 origin=(0, 0)
+  s ntype=5 266x78
+    origin ntype=4 origin=(0, 0)
+  s_line ntype=5 266x84
+    origin ntype=4 origin=(0, 0)
+  t ntype=5 266x21
+    origin ntype=4 origin=(0, 0)
+
+=== Basic.img/Notice3 ===
+Notice3 ntype=0
+  c ntype=5 266x20
+    origin ntype=4 origin=(0, 0)
+  s ntype=5 266x55
+    origin ntype=4 origin=(0, 0)
+  t ntype=5 266x21
+    origin ntype=4 origin=(0, 0)
+
+=== Basic.img/ComboBox ===
+ComboBox ntype=0
+  disabled ntype=0
+    0 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    1 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    2 ntype=5 18x17
+      origin ntype=4 origin=(0, 0)
+  mouseOver ntype=0
+    0 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    1 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    2 ntype=5 18x17
+      origin ntype=4 origin=(0, 0)
+  normal ntype=0
+    0 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    1 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    2 ntype=5 18x17
+      origin ntype=4 origin=(0, 0)
+  pressed ntype=0
+    0 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    1 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    2 ntype=5 18x17
+      origin ntype=4 origin=(0, 0)
+  selected ntype=0
+    0 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    1 ntype=5 5x17
+      origin ntype=4 origin=(0, 0)
+    2 ntype=5 18x17
+      origin ntype=4 origin=(0, 0)
+
+=== Basic.img/BtComboBox ===
+BtComboBox ntype=0
+  disabled ntype=0
+    0 ntype=5 17x16
+      origin ntype=4 origin=(0, 0)
+  mouseOver ntype=0
+    0 ntype=5 17x16
+      origin ntype=4 origin=(0, 0)
+  normal ntype=0
+    0 ntype=5 17x16
+      origin ntype=4 origin=(0, 0)
+  pressed ntype=0
+    0 ntype=5 17x16
+      origin ntype=4 origin=(0, 0)
+

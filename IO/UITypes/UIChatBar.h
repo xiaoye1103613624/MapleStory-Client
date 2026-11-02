@@ -86,6 +86,9 @@ namespace ms
 		void show_message(const char* message, MessageType type);
 		void focus_whisper();
 		void focus_whisper(const std::string& target);
+		// 悄悄话目标弹层（UIWhisperTargetDlg）确认后的回填入口：目标切到「密语」、
+		// 展开输入行并预置 "/w <名字> "，键盘焦点留给玩家补正文。
+		void set_whisper_target(const std::string& target);
 
 		// TODO: Change these?
 		void change_target(int32_t action) {}
@@ -269,9 +272,9 @@ namespace ms
 		// 顶边拖拽命中带（原生那条 1px 上沿只有 1px，手指按不到，给 6px）。
 		static constexpr int16_t GRIP_H = 6;
 
-		// 聊天目标：BtWhisper 箭头钮 + chatTarget 框体本身都可点，循环切换
-		// （对所有人→密语→组队→工会）；历史框展开/收起用 Basic.img 的
-		// BtMax(+) / BtMin(-) 真按钮同位互斥显示。
+		// 聊天目标：BtWhisper 箭头钮 + chatTarget 框体本身都可点，点击 = 展开目标列表，
+		// 从列表里选（原生没有点击循环，用户 2026-11-02 定调）；历史框展开/收起用
+		// Basic.img 的 BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
 		TooltipBackdrop classic_log_backdrop;
 		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
@@ -294,7 +297,39 @@ namespace ms
 		ColorBox classic_fold_edge;
 		Text classic_target_text;
 		uint8_t classic_chat_target_id = 0;
-		void cycle_chat_target();
+
+		// 目标列表（点开 chatTarget 框 / ▶ 箭头后向上展开）。
+		// 原生 v83 的展开态截图本包没有，所以框体沿用本客户端已定版的下拉观感
+		// （1px 黑沿 + 白内区 + 悬浮橄榄色，与 UIWhisperTargetDlg 同一套）；
+		// 位置只能向上 —— 底栏贴屏幕下沿，向下没有空间。
+		enum ChatTargetIndex : uint8_t
+		{
+			TARGET_ALL,
+			TARGET_WHISPER,
+			TARGET_PARTY,
+			TARGET_GUILD,
+			TARGET_COUNT
+		};
+
+		static constexpr int16_t TARGET_LIST_ROW_H = 15;
+		static constexpr int16_t TARGET_LIST_W = CHAT_TARGET_W;
+
+		bool classic_target_list_open = false;
+		size_t classic_target_hover = 0;
+		std::vector<Text> classic_target_list_texts;
+		// 列表高度随项数变，而 draw() 是 const ⇒ 只有 setheight 的那两块 mutable。
+		mutable ColorBox classic_target_list_back;
+		mutable ColorBox classic_target_list_inner;
+		ColorBox classic_target_list_mark;
+
+		void set_classic_target(uint8_t target_id);
+		// 目标项文案（chat.target.* 四键）；列表与当前标签共用同一处取值。
+		std::string chat_target_name(uint8_t target_id) const;
+		void toggle_classic_target_list(bool open);
+		void pick_classic_target(size_t index);
+		bool in_classic_target_row(Point<int16_t> cursor_position, size_t row) const;
+		// 列表左上角（屏幕坐标）：贴在 chatTarget 框顶上方。
+		Point<int16_t> classic_target_list_position() const;
 		void set_classic_log(bool open);
 		// 三个贴图按钮（▶ 箭头 / + / −）的可见性只有一个判据：folded = 历史框关
 		// 且输入未激活。toggle_input 与 set_classic_log 两条状态迁移都要重算，
