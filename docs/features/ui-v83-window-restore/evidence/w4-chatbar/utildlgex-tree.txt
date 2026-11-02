@@ -1,0 +1,320 @@
+== UIWindow.img roots ==
+  Admin
+  AdminClaim
+  AranSkillGuide
+  AriantMatch
+  ArtMegaphone
+  AvatarMegaphone
+  BetaEdition
+  Book
+  BtUIClose
+  BtUIClose2
+  CancelRequests
+  CashGachapon
+  CashTradingRoom
+  Channel
+  CharacterClone
+  Claim
+  ContextMenu
+  Coupon
+  Delivery
+  DualMobGauge
+  EnchantSkill
+  EnergyBar
+  EntrustedShop
+  Equip
+  EventWindow
+  ExceptionItemSearch
+  FadeYesNo
+  Family
+  FamilyTree
+  FloatNotice
+  GMBoard
+  GameMenu
+  GameOpt
+  IconBase
+  Incubator
+  InitialQuiz
+  Item
+  ItemMegaphone
+  ItemMove
+  ItemProtector
+  KarmaScissors
+  KeyConfig
+  Macro
+  MacroSkill
+  Maker
+  MapleEvent
+  MapleTV
+  MateMessage
+  Megaphone
+  MemberShop
+  Memo
+  Messenger
+  MiniMap
+  Minigame
+  MinigameTable
+  MobGage
+  MonsterBook
+  MonsterCarnival
+  MonsterKilling
+  MultiLine
+  NewYearsCard
+  Notice
+  PartyRace
+  PartySearch
+  PersonalShop
+  Quest
+  QuestAlarm
+  QuestIcon
+  Radio
+  Ranking
+  RemoteGachapon
+  Report
+  Reset
+  RpsGame
+  Shop
+  ShortCut
+  Skill
+  SkillEx
+  SkillMacro
+  SkillMacroEx
+  SkillUp
+  SlideMenu
+  SoftKeyboard
+  SpeedQuiz
+  Stat
+  StoreBank
+  SysOpt
+  Teleport
+  TemporaryStatView
+  Title
+  ToolTip
+  TradingRoom
+  Transform
+  TreasureBox
+  Trunk
+  UserInfo
+  UserList
+  UtilDlgEx
+  UtilDlgEx_Avatar
+  UtilDlgEx_MultiPetEquip
+  UtilDlgEx_Pet
+  VegaSpell
+  ViciousHammer
+  Wedding
+  WorldMap
+  classMatch
+  counsel
+  createCygnus
+  itemSearch
+  muruengRaid
+  plant
+  raise
+
+== UtilDlgEx (type=0 0x0 origin=None) ==
+BtClose        type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 85x19 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 87x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 85x19 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 85x19 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 85x19 origin=(0, 0)
+BtNext         type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 48x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+BtNo           type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 48x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+BtOK           type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 48x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+BtPrev         type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 48x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+BtQGiveup      type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 60x20 origin=(2, 2)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+BtQNo          type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 60x20 origin=(2, 2)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+BtQYes         type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 60x20 origin=(2, 2)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 57x17 origin=(0, 0)
+BtYes          type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   keyFocused   type=0 0x0 origin=None
+      0          type=5 48x20 origin=(1, 1)
+   mouseOver    type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   normal       type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+   pressed      type=0 0x0 origin=None
+      0          type=5 46x18 origin=(0, 0)
+bar            type=5 121x19 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+c              type=5 529x20 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+dot0           type=5 6x7 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+dot1           type=5 6x7 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+ic             type=5 529x20 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+is             type=5 529x58 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+it             type=5 529x28 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+line           type=5 332x2 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+list0          type=5 119x14 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+list1          type=5 102x18 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+list2          type=5 26x14 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+list3          type=5 106x14 origin=(-1, 0)
+   origin       type=4 0x0 origin=None
+notice         type=5 311x134 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+s              type=5 529x58 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+t              type=5 529x28 origin=(0, 0)
+   origin       type=4 0x0 origin=None
+
+== 其它 UtilDlg* 家族 ==
+UtilDlgEx
+   BtClose    type=0 0x0 origin=None
+   BtNext     type=0 0x0 origin=None
+   BtNo       type=0 0x0 origin=None
+   BtOK       type=0 0x0 origin=None
+   BtPrev     type=0 0x0 origin=None
+   BtQGiveup  type=0 0x0 origin=None
+   BtQNo      type=0 0x0 origin=None
+   BtQYes     type=0 0x0 origin=None
+   BtYes      type=0 0x0 origin=None
+   bar        type=5 121x19 origin=(0, 0)
+   c          type=5 529x20 origin=(0, 0)
+   dot0       type=5 6x7 origin=(0, 0)
+   dot1       type=5 6x7 origin=(0, 0)
+   ic         type=5 529x20 origin=(0, 0)
+   is         type=5 529x58 origin=(0, 0)
+   it         type=5 529x28 origin=(0, 0)
+   line       type=5 332x2 origin=(0, 0)
+   list0      type=5 119x14 origin=(0, 0)
+   list1      type=5 102x18 origin=(0, 0)
+   list2      type=5 26x14 origin=(0, 0)
+   list3      type=5 106x14 origin=(-1, 0)
+   notice     type=5 311x134 origin=(0, 0)
+   s          type=5 529x58 origin=(0, 0)
+   t          type=5 529x28 origin=(0, 0)
+UtilDlgEx_Avatar
+   BtExit     type=0 0x0 origin=None
+   BtNext     type=0 0x0 origin=None
+   BtOff      type=0 0x0 origin=None
+   BtOn       type=0 0x0 origin=None
+   BtPrev     type=0 0x0 origin=None
+   backgrnd   type=5 419x306 origin=None
+   nameTag    type=5 173x19 origin=None
+   shadow     type=5 50x9 origin=None
+UtilDlgEx_MultiPetEquip
+   backgrnd   type=5 419x219 origin=None
+UtilDlgEx_Pet
+   backgrnd   type=5 419x296 origin=None
+
+== Basic.img 里 Combo / combo 相关根 ==
+BtComboBox     type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+ComboBox       type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+   selected     type=0 0x0 origin=None
+ComboBox2      type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+ComboBox3      type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+   selected     type=0 0x0 origin=None
+ComboBox4      type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+   selected     type=0 0x0 origin=None
+ComboBox5      type=0 0x0 origin=None
+   disabled     type=0 0x0 origin=None
+   mouseOver    type=0 0x0 origin=None
+   normal       type=0 0x0 origin=None
+   pressed      type=0 0x0 origin=None
+   selected     type=0 0x0 origin=None

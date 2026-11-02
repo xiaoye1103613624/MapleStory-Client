@@ -1,0 +1,56 @@
+row 26: first=- last=- n=0
+row 27: first=- last=- n=0
+row 28: first=- last=- n=0
+row 29: first=22 last=121 n=18
+row 30: first=23 last=125 n=35
+row 31: first=28 last=125 n=34
+row 32: first=26 last=127 n=42
+row 33: first=22 last=127 n=44
+row 34: first=23 last=134 n=47
+row 35: first=23 last=135 n=46
+row 36: first=23 last=135 n=44
+row 37: first=23 last=134 n=44
+row 38: first=23 last=126 n=36
+row 39: first=23 last=128 n=38
+row 40: first=23 last=124 n=35
+row 41: first=- last=- n=0
+row 42: first=- last=- n=0
+row 43: first=- last=- n=0
+-- input interior ink rows 47..63, x 20..245 --
+row 47: first=- last=- n=0
+row 48: first=- last=- n=0
+row 49: first=24 last=24 n=1
+row 50: first=24 last=24 n=1
+row 51: first=24 last=24 n=1
+row 52: first=24 last=24 n=1
+row 53: first=24 last=24 n=1
+row 54: first=24 last=24 n=1
+row 55: first=24 last=24 n=1
+row 56: first=24 last=24 n=1
+row 57: first=24 last=24 n=1
+row 58: first=24 last=24 n=1
+row 59: first=24 last=24 n=1
+row 60: first=24 last=24 n=1
+row 61: first=- last=- n=0
+row 62: first=- last=- n=0
+row 63: first=- last=- n=0
+-- combo arrow col x246..257 rows 46..64 --
+row 46: n=11 xs=[246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 47: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 48: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 49: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 50: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 51: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 52: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 53: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 54: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 55: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 56: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 57: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 58: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 59: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 60: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 61: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 62: n=10 xs=[247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 63: n=11 xs=[246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256]
+row 64: n=11 xs=[246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256]

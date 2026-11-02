@@ -1,0 +1,2 @@
+roots: Basic.img, BuffIcon.img, CashShop.img, CashShopPreview.img, ChatBalloon.img, DialogImage.img, GuildBBS.img, GuildMark.img, ITC.img, ITCPreview.img, Login.img, Logo.img, MapLogin.img, MapleEzorsiaV2wzfiles.img, MapleTV.img, NameTag.img, Npt_GuideLine.img, StatusBar.img, UIWindow.img, tutorial.img
+
