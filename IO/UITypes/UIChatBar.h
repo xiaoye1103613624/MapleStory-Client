@@ -20,6 +20,8 @@
 #include "../UIDragElement.h"
 
 #include "../Components/Textfield.h"
+// 展开态右端竖滚动条（B5-1），与背包/帮助窗同一件 Basic.img/VScr 组件。
+#include "../Components/Slider.h"
 // Q1 定案的共享框体件（半透明黑底 + 1px 灰边），聊天历史框与 tooltip 同判据。
 #include "../Components/TextTooltip.h"
 // 收起态灰带用纯色矩形（本包没有对应位图，见 classic_fold_panel 注释）。
@@ -41,6 +43,9 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override;
+		// 指针离开聊天栏时框架会调这里：必须把滚动条的按压态清掉，否则滑块拖出
+		// 命中区后一直停在 PRESSED，下次进区直接接着滚。
+		void remove_cursor() override;
 
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -197,7 +202,10 @@ namespace ms
 		static constexpr int16_t CLASSIC_BAR_H = 71;
 		static constexpr int16_t INPUT_BAND_TOP = 4;
 		static constexpr int16_t INPUT_ROW_H = 26;
-		static constexpr int16_t MAX_ROW_W = 560;
+		// 原生底栏输入带右沿 = 566：展开态截帧里滚动条灰轨落在 x 551..564、白带一直
+		// 铺到 568（截帧切在 569），而本包 base/chat 正是 566x5。旧值 560 是从
+		// chat/ingame 的 modern 宽度抄的，比原生窄 6px（滚动条就没地方放了）。
+		static constexpr int16_t MAX_ROW_W = 566;
 		static constexpr int16_t CHAT_TARGET_W = 81;
 		static constexpr int16_t CHAT_TARGET_H = 20;
 		static constexpr int16_t TARGET_BT_W = 12;
@@ -223,22 +231,61 @@ namespace ms
 		// 区域嘛」。定版依据见 evidence/w4-chatbar/coords-fold.md：两张原生截帧
 		// （聊天框展开时候.png / 聊天框收起的时候.png）按白带顶缘那条
 		// (255,255,255) 对齐后，收起态灰带顶 = 对齐点 +3、高 23，文字墨迹顶 = +9。
-		// 墨迹左沿原生是 6；我们实测 Text(A11M) 在 draw_x=2 时墨迹落在 4（左 bearing
-		// +2），所以绘制点取 4 让墨迹正好落在 6，而不是把 6 直接抄成绘制点。
+		// 墨迹左沿原生是 6（收起态截帧行 17，与我们的行偏移同源可比）。本轮用同一把
+		// 尺子（sum>447 且 >=2 像素）量两端同一串「[Welcome]」：原生首墨 x=6、我们在
+		// 绘制点 4 时墨迹落在 7 ⇒ A11M 的 '[' 左 bearing 是 +3 而不是先前估的 +2，
+		// 所以绘制点取 3。
 		static constexpr int16_t FOLD_PANEL_TOP = 3;
 		static constexpr int16_t FOLD_PANEL_H = 23;
 		static constexpr int16_t FOLD_TEXT_INK_TOP = 9;
-		static constexpr int16_t FOLD_TEXT_X = 4;
+		static constexpr int16_t FOLD_TEXT_X = 3;
 		// 灰带上方那条 1px 内沿暗线：原生实测 (87,87,95)（x=20/200/300 三列同值，
 		// 只有 ±8 的抖动），是灰带面板自带的内阴影，不是 backgrnd 的像素（我们
 		// 这行透出来的是 (182,195,201) 亮带）。所以贴着灰带顶再画一条。
 		static constexpr int16_t FOLD_EDGE_TOP = FOLD_PANEL_TOP - 1;
+
+		// 展开态（B5-1）：历史框高度可拖、右侧可滚。逐格读数见
+		// evidence/w4-chatbar/coords-expand.md（原生「聊天框展开时候.png」569x103，
+		// 白输入带顶缘 = 截帧 y75 = 本端 position.y()，x0 与视图 x0 对齐）。
+		//   历史框：顶 y3、底 y71（白带顶 -4）⇒ 高 72（本次截帧的用户值）；
+		//   滚动条：灰轨 x 551..564（宽 14，VScr5 滑块实测 15）、行 4..70，
+		//            上箭头高光 y15、下箭头高光 y60 ⇒ 两端各内缩约 11~12；
+		//   半透明底板覆盖 0..565（x549 已被压暗、x565 之外是亮场景）。
+		static constexpr int16_t CLASSIC_LOG_H_DEFAULT = 80;
+		// 下限按「3 行正文 + 上下呼吸」定，再小滚动条上下内缩会重叠；
+		// 上限 = 视图 720 - 底栏 71 - 顶部 229（留出场景可视区）。
+		static constexpr int16_t CLASSIC_LOG_H_MIN = 40;
+		static constexpr int16_t CLASSIC_LOG_H_MAX = 420;
+		// 滚动条列宽与上下内缩（内缩取自原生：轨道两端到框沿各 11~12px）。
+		static constexpr int16_t SCROLL_W = 15;
+		static constexpr int16_t SCROLL_INSET = 11;
+		// 历史正文：首行离白带顶 23、行距 13、顶边允许溢出 10（原生就是半行裁切）。
+		static constexpr int16_t LOG_FIRST_Y = 23;
+		static constexpr int16_t LOG_LINE_H = 13;
+		static constexpr int16_t LOG_LINE_SLACK = 10;
+		// 历史正文左沿的**绘制点**：与收起态同判据 —— 原生收起态实测墨迹左沿 6，
+		// A11M 左 bearing +2 ⇒ 绘制点 4。展开/收起同一列，消息折回灰带时不跳位。
+		static constexpr int16_t LOG_TEXT_X = 4;
+		// 顶边拖拽命中带（原生那条 1px 上沿只有 1px，手指按不到，给 6px）。
+		static constexpr int16_t GRIP_H = 6;
 
 		// 聊天目标：BtWhisper 箭头钮 + chatTarget 框体本身都可点，循环切换
 		// （对所有人→密语→组队→工会）；历史框展开/收起用 Basic.img 的
 		// BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
 		TooltipBackdrop classic_log_backdrop;
+		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
+		// 坐标约定与 UIItemInventory 一致：vertical/x 是「相对历史框左上角」的局部量，
+		// draw(log_pos) 时才加窗口偏移，所以拖拽改高度必须同步 setvertical。
+		Slider classic_scrollbar;
+		// 历史框向上翻了几行（0 = 贴最新一条）。与 Slider 内部 row 反相：正文最新在
+		// 最下，所以滑块贴轨道底部才是 offset 0。
+		int16_t classic_scroll_offset = 0;
+		// 顶边拖拽中：起点高度 + 起点光标 y，避免每帧用「光标到白带顶」直接当高度
+		// 时按命中带上下沿起跳各差 6px。
+		bool classic_resizing = false;
+		int16_t classic_resize_h0 = 0;
+		int16_t classic_resize_y0 = 0;
 		// 本包没有任何位图能拼出收起态那条灰带（base/chat 是 5px 黑白条纹细条、
 		// base/backgrnd2 是半透明白渐变，逐行取样都不等于实测的 (119,119,119) 平
 		// 涂），所以按原生实测色自己铺一块不透明矩形。宽度取输入带宽（定值）。
@@ -253,6 +300,19 @@ namespace ms
 		// 且输入未激活。toggle_input 与 set_classic_log 两条状态迁移都要重算，
 		// 所以抽成一处，别在两个调用点各写一遍。
 		void sync_classic_buttons();
+		// 展开态历史框的几何唯一真源：底边贴白带顶，高 = user_view_y。
+		Point<int16_t> classic_log_position() const;
+		// 滚动条列的窗口 x（原生 551..564，即贴历史框右沿往内一列）。
+		int16_t classic_scroll_x() const;
+		// 当前高度下能整行显示几行正文（与 draw() 的循环判据同一套算式）。
+		int16_t classic_visible_lines() const;
+		// 高度/行数变了都要重算：Slider 的轨道范围、行数和可见性都存在构造时的
+		// 局部量里，不重算就会出现「框拖高了但滚动条还按旧高度命中」。
+		void sync_classic_scrollbar();
+		// 拖顶边改高度（夹到 [MIN, MAX]）并同步滚动条。
+		void set_classic_log_height(int16_t height);
+		// 顶边拖拽命中区：整条上沿，但不含滚动条列（那一列优先给滑块）。
+		bool classic_in_grip(Point<int16_t> cursor_position) const;
 
 #if LOG_LEVEL >= LOG_UI
 		ColorBox dimension_box;

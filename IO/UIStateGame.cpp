@@ -132,6 +132,13 @@ namespace ms
 
 				const CharStats& stats = Stage::get().get_player().get_stats();
 				emplace<UIStatusBar>(stats);
+
+				// activate() 里先 STATUSBAR 后 CHATBAR，get_front 从 elementorder 尾部
+				// 反向扫，所以聊天栏本应压住状态栏。视图尺寸一变就把 STATUSBAR 重新
+				// emplace（push_back 到队尾），它反过来吞掉整条底栏 y>=649 的点击 ——
+				// 真机实测「+」展开按钮点了没反应。重排回原生优先级。
+				elementorder.remove(UIElement::Type::CHATBAR);
+				elementorder.push_back(UIElement::Type::CHATBAR);
 			}
 		}
 

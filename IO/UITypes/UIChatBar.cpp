@@ -60,7 +60,17 @@ namespace ms
 			int16_t vw = Constants::Constants::get().get_viewwidth();
 
 			user_view_x = 560;
-			user_view_y = 80;
+			// 历史框高度跟 modern 一样落在 chat.y 里（原生就是「拖完记住」）；
+			// 老存档没写过这一项，默认串是 "0"，越界一律回落到默认 80。
+			if (const int16_t saved_h = Setting<ChatViewY>::get().load();
+				saved_h >= CLASSIC_LOG_H_MIN && saved_h <= CLASSIC_LOG_H_MAX)
+			{
+				user_view_y = saved_h;
+			}
+			else
+			{
+				user_view_y = CLASSIC_LOG_H_DEFAULT;
+			}
 			min_x = 560;
 			max_x = 560;
 			top_y = 8;
@@ -77,11 +87,15 @@ namespace ms
 			// 带内高 26），不是底栏上方另起的一行。定版依据见 UIChatBar.h 常量注释。
 			position = Point<int16_t>(0, static_cast<int16_t>(vh - CLASSIC_BAR_H + INPUT_BAND_TOP));
 			dimension = Point<int16_t>(std::min(vw, MAX_ROW_W), INPUT_ROW_H);
-			// 收起态灰带：宽度跟输入带同宽（position/dimension 定完才能算），
-			// 颜色取原生截帧内区实测平涂值 (119,119,119)，不透明；再补一条原生
-			// 实测 (87,87,95) 的 1px 内沿暗线（evidence/w4-chatbar/coords-fold.md）。
-			classic_fold_panel = ColorBox(dimension.x(), FOLD_PANEL_H, Color(0x777777FF), 1.0f);
-			classic_fold_edge = ColorBox(dimension.x(), 1, Color(0x57575FFF), 1.0f);
+			// 收起态灰带：颜色取原生截帧内区实测平涂值 (119,119,119)，不透明；再补一条
+			// 原生实测 (87,87,95) 的 1px 内沿暗线（evidence/w4-chatbar/coords-fold.md）。
+			// 宽度不是整行：原生收起态截帧（566 宽）里灰带只铺到 x=550，x 551..565 是
+			// 那一列滚动条（实测 x551=173 灰轨 + 552..564 蓝色箭头）。所以灰带 =
+			// 行宽 - 滚动条列宽，右侧那一列留给滚动条，不能一起涂灰。
+			const int16_t fold_w = static_cast<int16_t>(dimension.x() - SCROLL_W);
+
+			classic_fold_panel = ColorBox(fold_w, FOLD_PANEL_H, Color(0x777777FF), 1.0f);
+			classic_fold_edge = ColorBox(fold_w, 1, Color(0x57575FFF), 1.0f);
 			min_view_y = static_cast<int16_t>(position.y() - user_view_y);
 			view_max = true;
 			// 原生进图时聊天栏就是「收起态」：灰带 + 最近一条消息，白色输入带要
@@ -90,6 +104,26 @@ namespace ms
 			// 不是应该在白色框区域嘛」。
 			view_input = false;
 			dragarea = Point<int16_t>(dimension.x(), 12);
+
+			// 展开态右端竖滚动条（B5-1）。坐标约定跟 UIItemInventory 一样：vertical 和
+			// x 都是「相对历史框左上角」的局部量，draw(log_pos) / send_cursor(c - log_pos)
+			// 时才加窗口偏移；上下各内缩 SCROLL_INSET 是原生实测（轨道两端到框沿 11~12px，
+			// 证据 evidence/w4-chatbar/coords-expand.md），不留就会盖住白带上沿。
+			classic_scrollbar = Slider(
+				Slider::Type::CHATBAR,
+				Range<int16_t>(SCROLL_INSET, user_view_y - SCROLL_INSET),
+				classic_scroll_x(),
+				classic_visible_lines(),
+				static_cast<int16_t>(message_history.size()),
+				[&](bool upwards)
+				{
+					// Slider 的 row 是「滑块在轨道上的行位」，顶部=0；聊天正文是倒着排的
+					// （最新在最下），所以 offset 与 row 反相：往上翻一格 = 多看一条旧的。
+					classic_scroll_offset = static_cast<int16_t>(
+						std::max<int16_t>(0, classic_scroll_offset + (upwards ? 1 : -1)));
+				}
+			);
+			classic_scrollbar.setenabled(false);
 
 			// 输入正文颜色：白带上必须是深色，原先跟着历史消息用 WHITE，打出来的
 			// 字直接隐进白带（真机抓帧实测：带内除那条 1px 暗线外零墨迹，但发送
@@ -324,9 +358,13 @@ namespace ms
 			{
 				// 底边与白带顶齐平：min_view_y == position.y - user_view_y，
 				// 框就是 input_pos - (0, user_view_y) 起、高 user_view_y。
-				Point<int16_t> log_pos = input_pos - Point<int16_t>(0, user_view_y);
+				Point<int16_t> log_pos = classic_log_position();
 
 				classic_log_backdrop.draw(log_pos, dimension.x(), user_view_y);
+
+				// 右端竖滚动条：原生那列灰轨 x 551..564、行 4..70（历史框内），
+				// 拖拽改高度后由 sync_classic_scrollbar 同步轨道长度与可见性。
+				classic_scrollbar.draw(log_pos);
 			}
 
 			// 输入行（26px 白带）：聊天目标对话框（对谁聊天）+ 带下细条 + 输入文本。
@@ -357,15 +395,19 @@ namespace ms
 			// 历史消息：自输入行上方自下而上排布（最新在最下）。首行留 23px =
 			// 字形带（请求 y 之下约 10px）贴住输入行顶；上限按历史框顶算，
 			// 框现在是 input_pos.y - user_view_y 起、高 user_view_y。
-			int16_t message_y = 23;
+			// 滚动条向上翻时从 classic_scroll_offset 起算（0 = 贴最新一条）。
+			int16_t message_y = LOG_FIRST_Y;
 
-			for (int i = static_cast<int>(message_history.size()) - 1; i >= 0; i--)
+			const int first_visible = static_cast<int>(message_history.size()) - 1 - classic_scroll_offset;
+
+			for (int i = first_visible; i >= 0; i--)
 			{
-				if (message_y > user_view_y + 10)
+				if (message_y > user_view_y + LOG_LINE_SLACK)
 					break;
 
-				message_history[i].text.draw(input_pos - Point<int16_t>(0, message_y));
-				message_y += 13;
+				message_history[i].text.draw(
+					input_pos + Point<int16_t>(LOG_TEXT_X, -message_y));
+				message_y += LOG_LINE_H;
 			}
 
 			// marker_adjust 与 ctor 的 set_text_shift(0,-9) 配套：文字带落在
@@ -631,13 +673,16 @@ namespace ms
 		// 矩形整体上移 100px，于是输入行（position..position+dimension）根本不在命中
 		// 区内 —— UIStateGame::get_front 用 is_in_range 派发，聊天栏收不到光标，
 		// 展开/缩放「点了没反应」的根因在此。classic 的 position 就是输入行左上角。
-		if (classic_mode && temp_view_y == 0 && temp_view_x == 0)
+		// classic_resizing：拖顶边时光标会跑到框上方（甚至屏幕顶），必须继续归聊天栏，
+		// 否则框架改派给场景、send_cursor 不再进来，拖到一半就断。
+		if (classic_mode && (classic_resizing || (temp_view_y == 0 && temp_view_x == 0)))
 		{
 			if (Rectangle<int16_t>(position, position + dimension).contains(cursor_position))
 				return true;
 
 			if (classic_log_open
-				&& Rectangle<int16_t>(position - Point<int16_t>(0, user_view_y), position).contains(cursor_position))
+				&& Rectangle<int16_t>(position - Point<int16_t>(0, user_view_y),
+					position + Point<int16_t>(dimension.x(), 0)).contains(cursor_position))
 				return true;
 		}
 
@@ -669,6 +714,68 @@ namespace ms
 	{
 		if (classic_mode)
 		{
+			// B5-1：拖历史框顶边改高度（原生「按住上沿上下拖」），松手把高度写进
+			// chat.y。拖拽中优先处理 —— 一旦进拖拽态，光标跑出台阶也得继续跟。
+			//
+			// 返回值不能是 CHATBARVDRAG：Cursor::set_state (IO/Cursor.cpp:137) 会把
+			// 「没绑定素材的状态」一律降级成 IDLE，而 Cursor::init 在 classic 包里
+			// 刻意不绑 kModernExtra（误绑会把数字字形画成光标）。状态一旦变 IDLE，
+			// UIStateGame 的 clicked 判据（CLICKING / VSCROLLIDLE / dragged+拖动态）
+			// 全落空，按住后的每个 motion 帧都被当成松手。真机追踪是铁证：
+			//   grip start y=576 h0=80 → sc pt=300,570 clicked=0 → resize end h=80
+			// 所以按住期间返回 CLICKING（kClassicStates 里必定加载），松手帧交回
+			// IDLE —— 交回 CHATBARVDRAG 会被降成 IDLE，等于白说，但更重要的是
+			// 松手帧绝不能留 CLICKING：那会让下一个 hover 帧被认成按住，贴着
+			// 顶边再次触发 grip start。
+			if (classic_resizing)
+			{
+				if (clicked)
+				{
+					const int16_t nh = static_cast<int16_t>(
+						classic_resize_h0 + (classic_resize_y0 - cursor_position.y()));
+
+					set_classic_log_height(nh);
+
+					return Cursor::State::CLICKING;
+				}
+
+				classic_resizing = false;
+
+				Setting<ChatViewY>::get().save(user_view_y);
+
+				// 原生是「拖完立刻记住」，所以这里就落盘，不等退出。
+				// 常规持久化路径是 ~Configuration → save()（Configuration.cpp:242），
+				// 而真机取证发现退出那一次并没有把 chat.y 写出去（拖到 140、Settings
+				// 里仍是 0），所以手势结束这一处显式存一次，保证「拖完记住」成立。
+				Configuration::get().save();
+
+				return Cursor::State::IDLE;
+			}
+
+			// 右端竖滚动条命中：Slider 的坐标是「相对历史框左上角」，所以先把光标
+			// 换算到局部。列范围自己先卡一次 —— 它在轨道外也会返回非 IDLE（函数末尾
+			// 那支无条件 VSCROLL），不卡就会把整块历史区的指针都变成滚动箭头。
+			if (classic_log_open && classic_scrollbar.isenabled())
+			{
+				const Point<int16_t> log_pos = classic_log_position();
+				const int16_t relx = cursor_position.x() - (log_pos.x() + classic_scroll_x());
+
+				if (relx >= 0 && relx <= SCROLL_W)
+					if (const Cursor::State sstate = classic_scrollbar.send_cursor(cursor_position - log_pos, clicked))
+						return sstate;
+			}
+
+			// 顶边拖拽起手：整条上沿 GRIP_H 命中带（不含滚动条列，那列已经先判过）。
+			// 同上方说明：按住期间只能交回 CLICKING 这种已加载状态，拖拽才不断。
+			if (classic_log_open && clicked && classic_in_grip(cursor_position))
+			{
+				classic_resizing = true;
+				classic_resize_h0 = user_view_y;
+				classic_resize_y0 = cursor_position.y();
+
+				return Cursor::State::CLICKING;
+			}
+
 			// 展开/缩放已改真按钮（Basic.img/BtMax|BtMin），手搓 12x12 命中区撤掉，
 			// 否则它会抢在 UIElement::send_cursor 之前吞掉点击。
 			// chatTarget 框体本身（箭头右侧）仍是贴图不是按钮，点击 = 切换目标。
@@ -685,6 +792,17 @@ namespace ms
 
 				return Cursor::State::CANCLICK;
 			}
+
+			// classic 分支必须在这里收尾。下面的 modern 机器（八向拖拽缩放、intoprange/
+			// inbottomrange 那组命中区）建立在 get_position() 上，而 classic 构造把
+			// view_max 置了 true，get_position() 会再加 top_y+center_y+user_view_y 的
+			// 偏移 —— 真机实测「拖历史框顶边」落进 inbottomrange，被当成整窗移动，底栏
+			// 被拖高 80px（帧 05..07 灰带从 y656 跳到 y576）。
+			if (view_input)
+				if (Cursor::State new_state = input_text.send_cursor(cursor_position, clicked))
+					return new_state;
+
+			return UIElement::send_cursor(clicked, cursor_position);
 		}
 
 		if (view_input && temp_view_y == 0 && temp_view_x == 0)
@@ -1343,7 +1461,99 @@ namespace ms
 	{
 		classic_log_open = open;
 
+		// 关框即回到最新一条：偏移留着的话，下次只开输入行（不展框）也会从
+		// 半路的旧消息开始画，看起来像「消息记录停在奇怪的地方」。
+		if (!open)
+			classic_scroll_offset = 0;
+
 		sync_classic_buttons();
+		sync_classic_scrollbar();
+	}
+
+	Point<int16_t> UIChatBar::classic_log_position() const
+	{
+		return Point<int16_t>(position.x(), static_cast<int16_t>(position.y() - user_view_y));
+	}
+
+	int16_t UIChatBar::classic_scroll_x() const
+	{
+		// 滚动条贴历史框右沿往内一列：原生灰轨 551..564，本框宽 566 ⇒ 566-15=551。
+		return static_cast<int16_t>(dimension.x() - SCROLL_W);
+	}
+
+	int16_t UIChatBar::classic_visible_lines() const
+	{
+		// 与 draw() 的循环判据严格同源：第 k 行（0 起）的 message_y =
+		// LOG_FIRST_Y + k * LOG_LINE_H，可画条件是它 <= user_view_y + LOG_LINE_SLACK。
+		const int16_t k = static_cast<int16_t>(
+			(user_view_y + LOG_LINE_SLACK - LOG_FIRST_Y) / LOG_LINE_H);
+
+		return static_cast<int16_t>(std::max<int16_t>(1, k + 1));
+	}
+
+	void UIChatBar::sync_classic_scrollbar()
+	{
+		const int16_t visible = classic_visible_lines();
+		const int16_t total = static_cast<int16_t>(message_history.size());
+		const int16_t scrollmax = static_cast<int16_t>(std::max<int16_t>(0, total - visible));
+
+		if (classic_scroll_offset > scrollmax)
+			classic_scroll_offset = scrollmax;
+
+		// 轨道上下各内缩 SCROLL_INSET（原生实测 11~12），高度已被夹到 >= 40，
+		// 不会出现 first > second。
+		classic_scrollbar.setvertical(Range<int16_t>(SCROLL_INSET, static_cast<int16_t>(user_view_y - SCROLL_INSET)));
+
+		// setrows 的第一参会覆写 Slider 内部的 row，必须按「row 与 offset 反相」换算：
+		// 滑块贴轨道底部 = 看最新一条 = offset 0（正文是倒着排的，最新在最下）。
+		// 第三参是「总行数」，Slider 内部算 rowmax = 总行数 - 每页行数，所以总行数
+		// 不足一页时先抬到 visible，避免 rowmax 变负。
+		classic_scrollbar.setrows(static_cast<int16_t>(scrollmax - classic_scroll_offset),
+			visible, static_cast<int16_t>(std::max<int16_t>(visible, total)));
+
+		classic_scrollbar.setenabled(classic_log_open && scrollmax > 0);
+	}
+
+	void UIChatBar::set_classic_log_height(int16_t height)
+	{
+		int16_t h = height;
+
+		if (h < CLASSIC_LOG_H_MIN)
+			h = CLASSIC_LOG_H_MIN;
+		else if (h > CLASSIC_LOG_H_MAX)
+			h = CLASSIC_LOG_H_MAX;
+
+		if (h == user_view_y)
+			return;
+
+		user_view_y = h;
+
+		// 这个不变式在 modern 分支才读得到，但构造函数就是按它写的，改高度后不更新
+		// 会留下「同一名词两种值」的坑。
+		min_view_y = static_cast<int16_t>(position.y() - user_view_y);
+
+		// 高度变了，原来的偏移可能已经超出新的可滚范围，也可能整框都是正文
+		// （offset 归 0 才看得到最新一条）。交给 sync 统一夹。
+		sync_classic_scrollbar();
+	}
+
+	bool UIChatBar::classic_in_grip(Point<int16_t> cursor_position) const
+	{
+		const Point<int16_t> log_pos = classic_log_position();
+
+		return Rectangle<int16_t>(
+			log_pos,
+			log_pos + Point<int16_t>(classic_scroll_x(), GRIP_H)
+		).contains(cursor_position);
+	}
+
+	void UIChatBar::remove_cursor()
+	{
+		UIDragElement<PosCHAT>::remove_cursor();
+
+		// 指针离开聊天栏（框架只对「非前台」元素调这里）：滑块的 scrolling /
+		// PRESSED 态必须清，否则拖出命中区后下次进区接着滚、箭头还停在按下态。
+		classic_scrollbar.remove_cursor();
 	}
 
 	void UIChatBar::show_message(const char* message, MessageType type)
@@ -1358,6 +1568,11 @@ namespace ms
 			LOG(LOG_DEBUG, "[UIChatBar::show_message]: " << type << " not supported.");
 
 		message_history.push_back(Message(MessageGroup::ALL, type, Text(Text::Font::A11M, Text::Alignment::LEFT, color, message)));
+
+		// 行数变了要重算可滚范围；贴在最新一条（offset==0）时保持贴底，
+		// 不然新消息会被顶出可视区、看起来像「来消息了但滚动条不动」。
+		if (classic_mode)
+			sync_classic_scrollbar();
 	}
 
 	void UIChatBar::focus_whisper()

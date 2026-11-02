@@ -35,7 +35,9 @@ namespace ms
 	//
 	//   1. "Settings"（用户级）
 	//      - 键名采用小写点分的层级命名，按下文 SAVE_ORDER 折叠成缩进结构写出
-	//      - 构造时读取；析构时（非 Debug 构建）自动写回，因此人工改动会被覆盖
+	//      - 构造时读取；**退出时并不会自动写回**（析构在优雅退出路径上跑不到，
+	//        见 Configuration.cpp 的 ~Configuration 注释），需要即时生效的设置项
+	//        必须显式调用 Configuration::get().save()
 	//   2. "xy-config.yaml"（部署级，位于可执行文件同目录）
 	//      - 与 Settings 同格式，**优先级更高**，用于固定服务器地址/数据后端等
 	//      - 内容手工维护；运行时按 mtime 变化自动热重载（见 reload_if_changed）

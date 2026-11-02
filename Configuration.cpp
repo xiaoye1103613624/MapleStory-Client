@@ -241,6 +241,10 @@ namespace ms
 
 	Configuration::~Configuration()
 	{
+		// 真机取证：优雅退出路径（关窗 → 退出确认「确定」→ 进程消失）**跑不到这个析构**，
+		// 所以凡是「指望退出时自动落盘」的设置其实都没落盘。要立刻生效的项必须自己显式
+		// 调 Configuration::get().save()（UIChatBar 老 HUD 拖框高即如此）。
+		// 证据：evidence/w4-chatbar/coords-expand.md §6.1。
 #ifndef _DEBUG
 		save();
 #endif

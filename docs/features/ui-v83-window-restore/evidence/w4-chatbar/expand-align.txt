@@ -1,0 +1,18 @@
+===== EXPANDED 569x103 anchor(white top)=75
+  band row y=88 bright segs: [(0, 1), (7, 7), (11, 11), (16, 16), (20, 20), (23, 23), (25, 25), (28, 28), (32, 33), (40, 40), (47, 47), (49, 49), (80, 535), (548, 568)]
+  band row y=88 grey segs: []
+  log row y=45 x=0..20: [(np.int64(32), np.int64(24), np.int64(16)), (np.int64(24), np.int64(16), np.int64(8)), (np.int64(24), np.int64(24), np.int64(8)), (np.int64(48), np.int64(40), np.int64(16)), (np.int64(48), np.int64(40), np.int64(16)), (np.int64(40), np.int64(32), np.int64(16)), (np.int64(24), np.int64(24), np.int64(8)), (np.int64(32), np.int64(32), np.int64(8)), (np.int64(24), np.int64(16), np.int64(8)), (np.int64(24), np.int64(24), np.int64(8))]
+  log row y=45 x=545..569: [(545, (np.int64(32), np.int64(32), np.int64(16))), (547, (np.int64(48), np.int64(40), np.int64(16))), (549, (np.int64(40), np.int64(40), np.int64(16))), (551, (np.int64(133), np.int64(133), np.int64(122))), (553, (np.int64(129), np.int64(125), np.int64(122))), (555, (np.int64(146), np.int64(142), np.int64(134))), (557, (np.int64(138), np.int64(138), np.int64(131))), (559, (np.int64(142), np.int64(142), np.int64(134))), (561, (np.int64(156), np.int64(153), np.int64(138))), (563, (np.int64(137), np.int64(137), np.int64(125))), (565, (np.int64(158), np.int64(158), np.int64(134))), (567, (np.int64(68), np.int64(51), np.int64(17)))]
+  y=15  rel=-60  sb segs: [(551, 554), (556, 557), (562, 564)]
+  y=35  rel=-40  sb segs: [(551, 559), (561, 564)]
+  y=55  rel=-20  sb segs: [(551, 551), (553, 562)]
+  y=67  rel=-8   sb segs: [(552, 564)]
+===== FOLDED 566x40 anchor(white top)=36
+  band row y=39 bright segs: [(24, 24), (88, 88), (117, 117), (313, 313), (316, 316), (319, 319)]
+  band row y=39 grey segs: []
+  log row y=6 x=0..20: [(np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136)), (np.int64(136), np.int64(136), np.int64(136))]
+  log row y=6 x=542..566: [(542, (np.int64(136), np.int64(136), np.int64(136))), (544, (np.int64(136), np.int64(136), np.int64(136))), (546, (np.int64(136), np.int64(136), np.int64(136))), (548, (np.int64(136), np.int64(136), np.int64(136))), (550, (np.int64(136), np.int64(136), np.int64(136))), (552, (np.int64(136), np.int64(136), np.int64(136))), (554, (np.int64(136), np.int64(136), np.int64(136))), (556, (np.int64(136), np.int64(136), np.int64(136))), (558, (np.int64(136), np.int64(136), np.int64(136))), (560, (np.int64(136), np.int64(136), np.int64(136))), (562, (np.int64(136), np.int64(136), np.int64(136))), (564, (np.int64(136), np.int64(136), np.int64(136)))]
+  y=-24 rel=-60  sb segs: [(536, 536), (547, 551)]
+  y=-4  rel=-40  sb segs: []
+  y=16  rel=-20  sb segs: [(536, 536), (547, 551)]
+  y=28  rel=-8   sb segs: [(536, 551)]
