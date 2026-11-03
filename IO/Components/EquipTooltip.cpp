@@ -194,23 +194,23 @@ namespace ms
 					{
 					case Equip::Potential::POT_HIDDEN:
 						potflag_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::RED);
-						potflag_preview.change_text("(Hidden Potential)");
+						potflag_preview.change_text(Locale::text("equip.pot.hidden"));
 						break;
 					case Equip::Potential::POT_RARE:
 						potflag_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-						potflag_preview.change_text("(Rare Item)");
+						potflag_preview.change_text(Locale::text("equip.pot.rare"));
 						break;
 					case Equip::Potential::POT_EPIC:
 						potflag_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-						potflag_preview.change_text("(Epic Item)");
+						potflag_preview.change_text(Locale::text("equip.pot.epic"));
 						break;
 					case Equip::Potential::POT_UNIQUE:
 						potflag_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-						potflag_preview.change_text("(Unique Item)");
+						potflag_preview.change_text(Locale::text("equip.pot.unique"));
 						break;
 					case Equip::Potential::POT_LEGENDARY:
 						potflag_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
-						potflag_preview.change_text("(Legendary Item)");
+						potflag_preview.change_text(Locale::text("equip.pot.legendary"));
 						break;
 					default:
 						height_preview -= 16;

@@ -234,6 +234,11 @@ namespace ms
 
 		while (running())
 		{
+			// xy-config 热重载通道（含 ui.language -> Locale::reload）。此前
+			// Configuration::reload_if_changed() 全仓零调用点，「改配置即生效」只写在注释里；
+			// 未命中 mtime 变化时它只做一次 stat，所以每帧调用不引入可测开销。
+			Configuration::get().reload_if_changed();
+
 			int64_t elapsed = Timer::get().stop();
 
 			// 上限保护：单帧慢（装图/atlas 冷上传/卡顿）时，无界的补帧
