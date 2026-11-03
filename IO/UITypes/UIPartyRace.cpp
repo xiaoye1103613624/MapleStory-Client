@@ -10,6 +10,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -45,8 +46,8 @@ namespace ms
 		if (root["Result"]["lose"])
 			lose_tex = Texture(root["Result"]["lose"]);
 
-		stage_label.change_text("Stage 0");
-		score_label.change_text("R 0 : 0 B");
+		stage_label.change_text(Locale::text("partyrace.stage_initial"));
+		score_label.change_text(Locale::text("partyrace.score_initial"));
 		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 			if (tip.empty()) return;
 			std::string t = tip;
@@ -76,14 +77,14 @@ namespace ms
 	void UIPartyRace::set_stage(int32_t s)
 	{
 		stage = s;
-		stage_label.change_text("Stage " + std::to_string(stage));
+		stage_label.change_text(Locale::format("partyrace.stage", std::to_string(stage)));
 	}
 
 	void UIPartyRace::set_score(int32_t r, int32_t b)
 	{
 		red = r;
 		blue = b;
-		score_label.change_text("R " + std::to_string(red) + " : " + std::to_string(blue) + " B");
+		score_label.change_text(Locale::format_all("partyrace.score", { std::to_string(red), std::to_string(blue) }));
 	}
 
 	void UIPartyRace::show_result(bool win)

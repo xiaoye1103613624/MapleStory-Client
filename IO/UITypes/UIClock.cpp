@@ -11,6 +11,7 @@
 #include "../../Util/Misc.h"
 
 #include <string>
+#include "../../Util/Locale.h"
 
 namespace ms
 {
@@ -30,12 +31,12 @@ namespace ms
 		if (mode == 2 && seconds > 0)
 		{
 			remain_ms = seconds * 1000;
-			label.change_text(std::to_string(seconds) + "s");
+			label.change_text(Locale::format("clock.seconds_left", std::to_string(seconds)));
 		}
 		else
 		{
 			remain_ms = 0;
-			label.change_text(text.empty() ? "Clock" : text);
+			label.change_text(text.empty() ? Locale::text("clock.title") : text);
 		}
 		LOG(LOG_DEBUG, "UIClock: mode=" << (int)mode << " secs=" << seconds
 			<< " text=" << label.get_text());
@@ -68,10 +69,10 @@ namespace ms
 		{
 			seconds = left;
 			if (seconds > 0)
-				label.change_text(std::to_string(seconds) + "s");
+				label.change_text(Locale::format("clock.seconds_left", std::to_string(seconds)));
 			else
 			{
-				label.change_text("0s");
+				label.change_text(Locale::text("clock.zero"));
 				visible = false;
 			}
 		}

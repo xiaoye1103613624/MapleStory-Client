@@ -14,6 +14,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -69,13 +70,15 @@ namespace ms
 		selected = packages.empty() ? -1 : 0;
 		row_labels.clear();
 		for (const auto& p : packages) {
-			std::string line = p.sender + "  " + std::to_string(p.mesos) + "m";
+			std::string line = Locale::format_all("delivery.row_meso",
+				{ p.sender, std::to_string(p.mesos) });
 			if (p.itemid)
-				line += "  item:" + std::to_string(p.itemid);
+				line += "  " + Locale::format("delivery.row_item", std::to_string(p.itemid));
 			row_labels.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line);
 		}
 		tab = RECV;
-		notice.change_text(packages.empty() ? "No packages." : (std::to_string(packages.size()) + " package(s)"));
+		notice.change_text(packages.empty() ? Locale::text("delivery.no_packages")
+			: Locale::format("delivery.count", std::to_string(packages.size())));
 	}
 
 	void UIDelivery::remove_package(int32_t package_id)
@@ -90,7 +93,7 @@ namespace ms
 		}
 		if (selected >= static_cast<int16_t>(packages.size()))
 			selected = static_cast<int16_t>(packages.size()) - 1;
-		notice.change_text("Package updated.");
+		notice.change_text(Locale::text("delivery.updated"));
 	}
 
 	void UIDelivery::show_notice(const std::string& msg)
@@ -145,7 +148,7 @@ namespace ms
 				try { mesos = std::stoi(meso_s); } catch (...) { mesos = 0; }
 				int16_t amount = (invent > 0 && slot > 0) ? qty : 0;
 				DueySendPacket(invent, slot, amount, mesos, name, false, "").dispatch();
-				show_notice("Sending to " + name + "…");
+				show_notice(Locale::format("delivery.sending_to", name));
 				LOG(LOG_DEBUG, "UIDelivery: Send name=" << name << " inv=" << (int)invent
 					<< " slot=" << slot << " meso=" << mesos);
 			}, []() {}, "Mesos");
@@ -238,7 +241,7 @@ namespace ms
 						}
 					} catch (...) {}
 					DueySendPacket(invent, slot, qty, mesos, name, false, "").dispatch();
-					show_notice("Send " + name + " m=" + std::to_string(mesos));
+					show_notice(Locale::format_all("delivery.sent", { name, std::to_string(mesos) }));
 					LOG(LOG_DEBUG, "UIDelivery: SoftKey DueySend from inv name=" << name
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
@@ -288,7 +291,7 @@ namespace ms
 						}
 					} catch (...) {}
 					DueySendPacket(invent, slot, qty, mesos, name, false, "").dispatch();
-					show_notice("Send " + name + " m=" + std::to_string(mesos));
+					show_notice(Locale::format_all("delivery.sent", { name, std::to_string(mesos) }));
 					LOG(LOG_DEBUG, "UIDelivery: SoftKey DueySend name=" << name
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
@@ -317,7 +320,7 @@ namespace ms
 						int32_t id = std::stoi(id_s);
 						if (id > 0) {
 							DueyDiscardPacket(id).dispatch();
-							show_notice("Discard id=" + id_s);
+							show_notice(Locale::format("delivery.discard_id", id_s));
 							LOG(LOG_DEBUG, "UIDelivery: SoftKey Discard id=" << id);
 						}
 					} catch (...) {}
@@ -332,7 +335,7 @@ namespace ms
 						int32_t id = std::stoi(id_s);
 						if (id > 0) {
 							DueyClaimPacket(id).dispatch();
-							show_notice("Claim id=" + id_s);
+							show_notice(Locale::format("delivery.claim_id", id_s));
 							LOG(LOG_DEBUG, "UIDelivery: SoftKey Claim id=" << id);
 						}
 					} catch (...) {}
@@ -366,17 +369,17 @@ namespace ms
 				tab = TAX;
 				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 					if (tip.empty()) {
-						show_notice("Fee = TradeFee(mesos) + 5000 (normal)");
+						show_notice(Locale::text("delivery.fee_help"));
 						return;
 					}
 					try {
 						int64_t m = std::stoll(tip);
 						if (m < 0) m = 0;
 						int64_t fee = m + 5000;
-						show_notice("TradeFee(" + tip + ")+5000 = " + std::to_string(fee));
+						show_notice(Locale::format_all("delivery.fee_calc", { tip, std::to_string(fee) }));
 						LOG(LOG_DEBUG, "UIDelivery: TabTax SoftKey fee=" << fee);
 					} catch (...) {
-						show_notice("Fee = TradeFee(mesos) + 5000 (normal)");
+						show_notice(Locale::text("delivery.fee_help"));
 					}
 				}, []() {}, "mesos|empty=help");
 				break;

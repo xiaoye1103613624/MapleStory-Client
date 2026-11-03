@@ -9,6 +9,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -30,14 +31,14 @@ namespace ms
 		}
 		has_assets = true;
 		show_result_frame(0);
-		score_label.change_text("Ariant");
+		score_label.change_text(Locale::text("ariants.title"));
 		center_on_screen();
 		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 			if (tip.empty()) return;
 			try {
 				int idx = std::stoi(tip);
 				show_result_frame(idx);
-				score_label.change_text("Result " + tip);
+				score_label.change_text(Locale::format("ariants.result", tip));
 				LOG(LOG_DEBUG, "UIAriantMatch: SoftKey result=" << idx);
 				return;
 			} catch (...) {}
@@ -92,7 +93,7 @@ namespace ms
 				try {
 					int idx = std::stoi(tip);
 					show_result_frame(idx);
-					score_label.change_text("Result " + tip);
+					score_label.change_text(Locale::format("ariants.result", tip));
 					return;
 				} catch (...) {}
 				NpcTalkMorePacket(tip).dispatch();
@@ -102,12 +103,12 @@ namespace ms
 		else if (keycode == 'R' || keycode == 'r')
 		{
 			show_result_frame(0);
-			score_label.change_text("Result 0");
+			score_label.change_text(Locale::format("ariants.result", "0"));
 		}
 		else if (keycode == 'N' || keycode == 'n')
 		{
 			show_result_frame(1);
-			score_label.change_text("Result 1");
+			score_label.change_text(Locale::format("ariants.result", "1"));
 		}
 	}
 

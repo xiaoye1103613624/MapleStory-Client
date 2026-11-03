@@ -1,0 +1,37 @@
+arity 尺读数与负对照（R27-B1c-5b，2026-11-03）
+
+尺本身已提进仓库：tools/check_placeholder_arity.py（键值 `{}` 数 ⇔ 调用点实参数；`format` 须恰好 1 个；
+`Locale::enum_key` 动态前缀整族查）。
+
+## 正测（真树）
+
+- 临时目录首版（仅 zh、尚无动态前缀档）：`arity 校验调用点 = 128 | 不合格 = 0`
+- 提进 tools/ 后 `--both`（zh + en，含动态前缀族，逐键逐语言计）：**318 调用点 / 不合格 0**
+  → 全量读数见 [gate-r27-b1c5b-arity-promoted.txt](gate-r27-b1c5b-arity-promoted.txt)
+  （128 与 318 不是矛盾：前者单份 ini、且 `equip.stat.` 家族未纳入。）
+
+## 负对照（证明尺有牙，两轮）
+
+第 2 轮（tools/ 版，破坏脚本已自证三条落地；改坏 `locale/zh-CN.ini` 三条值后 `--both`）：
+
+    arity 校验调用点 = 318 | 不合格 = 4
+    IO/Components/EquipTooltip.cpp:338 format(equip.stat.STR)      实参 1 个 / 占位符 2 个｜值='力量：{}{}'
+    IO/Components/EquipTooltip.cpp:571 format(equip.stat.STR)      实参 1 个 / 占位符 2 个｜值='力量：{}{}'
+    IO/UITypes/UIDelivery.cpp:73       format_all(delivery.row_meso) 实参 2 个 / 占位符 3 个｜值='{}  {}m  {}'
+    IO/UITypes/UIDelivery.cpp:379      format_all(delivery.fee_calc) 实参 2 个 / 占位符 1 个｜值='TradeFee({})+5000'
+
+三条破坏**全部命中**（4 行 = 3 件事，`equip.stat.STR` 有两个调用点），且多/少两个方向都拦得到：
+占位符多于实参（裸 `{}` 留在界面）与少于实参（值拼到句尾）各一条。
+跑完 ini 按备份原样还回，md5 前后一致 `17e7c7223a4a831803fafaf320ddd51d`。
+
+第 1 轮（同一破坏脚本的首版）只抓到 2 条，其中一条是当时动态前缀分支多 yield 一次造成的重复
+（**读数虚高**，已修，修完才是上面这份 318 的正测）。
+
+第 1 轮的教训：脚本第 2 条破坏用 `str.replace` 打英文原文，而 zh 值另有措辞 ⇒ **静默 no-op**，
+报告只显示抓到 2 条 —— 若不去追「为什么少一条」，就会把「尺子没牙」读成「值没问题」。
+第 2 轮起破坏脚本**自证三条都落地**（缺一条 `rc=3`）。
+
+## 工具自己差点假绿（同 §9.2 一类）
+
+提进 `tools/` 时 `ROOT` 少上了一层，落到 `docs/` ⇒ 扫不到源码，输出 `调用点 = 0 | 不合格 = 0`、**rc=0**。
+现在：判据/源码目录缺失 → `rc=2` 拒出报告；`checked == 0` → 报告追加 `FALSE-GREEN` 行。

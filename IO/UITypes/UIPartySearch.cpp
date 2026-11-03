@@ -12,6 +12,7 @@
 #include "../../Util/Misc.h"
 #include <cstdlib>
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -111,7 +112,7 @@ namespace ms
 			if (b - a > 30) a = b - 30;
 			min_level = a;
 			max_level = b;
-			status_label.change_text("Range " + std::to_string(a) + "-" + std::to_string(b));
+			status_label.change_text(Locale::format("partysearch.range", std::to_string(a) + "-" + std::to_string(b)));
 			LOG(LOG_DEBUG, "UIPartySearch: SoftKey range=" << a << "-" << b);
 		}, []() {}, "Lv min-max");
 #endif
@@ -121,8 +122,8 @@ namespace ms
 	{
 		searching = on;
 		status_label.change_text(on
-			? ("Searching Lv." + std::to_string(min_level) + "-" + std::to_string(max_level) + " …")
-			: "Idle — press Start to search");
+			? Locale::format("partysearch.searching", std::to_string(min_level) + "-" + std::to_string(max_level))
+			: Locale::text("partysearch.idle"));
 	}
 
 	void UIPartySearch::start_search()
@@ -201,7 +202,7 @@ namespace ms
 				if (b - a > 30) a = b - 30;
 				min_level = a;
 				max_level = b;
-				status_label.change_text("Range " + std::to_string(a) + "-" + std::to_string(b));
+				status_label.change_text(Locale::format("partysearch.range", std::to_string(a) + "-" + std::to_string(b)));
 				LOG(LOG_DEBUG, "UIPartySearch: SoftKey range=" << a << "-" << b);
 			}, []() {}, "Lv min-max");
 		} else if (keycode == 'J' || keycode == 'j') {
@@ -213,7 +214,7 @@ namespace ms
 				jobs_mask = static_cast<int32_t>(v);
 				if (jobs_mask == 0)
 					jobs_mask = 0x7FFFFFFF;
-				status_label.change_text("Jobs mask=" + std::to_string(jobs_mask));
+				status_label.change_text(Locale::format("partysearch.jobs_mask", std::to_string(jobs_mask)));
 				LOG(LOG_DEBUG, "UIPartySearch: SoftKey jobs_mask=" << jobs_mask);
 			}, []() {}, "Jobs mask");
 		}

@@ -9,6 +9,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -38,9 +39,9 @@ namespace ms
 			dimension = backgrnd.get_dimensions();
 			dragarea = Point<int16_t>(dimension.x(), 20);
 		}
-		cp_label.change_text("CP 0/0");
-		enemy_label.change_text("EN 0/0");
-		msg_label.change_text("Carnival");
+		cp_label.change_text(Locale::text("carnival.cp_initial"));
+		enemy_label.change_text(Locale::text("carnival.enemy_initial"));
+		msg_label.change_text(Locale::text("carnival.title"));
 		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 			if (tip.empty()) return;
 			size_t slash = tip.find('/');
@@ -66,14 +67,14 @@ namespace ms
 		if (team == 0 || team == 1)
 			local_team = team;
 		cp_label.change_text(
-			"CP " + std::to_string(available) + "/" + std::to_string(total)
+			Locale::format_all("carnival.cp", { std::to_string(available), std::to_string(total) })
 		);
 	}
 
 	void UIMonsterCarnival::set_enemy_cp(int16_t total, int16_t available)
 	{
 		enemy_label.change_text(
-			"EN " + std::to_string(available) + "/" + std::to_string(total)
+			Locale::format_all("carnival.enemy", { std::to_string(available), std::to_string(total) })
 		);
 	}
 

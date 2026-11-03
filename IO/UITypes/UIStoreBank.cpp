@@ -12,6 +12,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -55,13 +56,13 @@ namespace ms
 		if (root["BtGetAll"])
 			buttons[Buttons::BtGetAll] = std::make_unique<MapleButton>(root["BtGetAll"], Point<int16_t>(70, static_cast<int16_t>(dimension.y() - 40)));
 
-		mesolabel.change_text("Mesos: 0");
+		mesolabel.change_text(Locale::format("storebank.mesos", "0"));
 		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 			std::string t = tip;
 			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 			if (t == "all" || t == "get" || t == "getall") {
 				FredrickGetAllPacket().dispatch();
-				show_notice("GetAll sent");
+				show_notice(Locale::text("storebank.getall_sent"));
 				LOG(LOG_DEBUG, "UIStoreBank: SoftKey FredrickGetAll");
 				return;
 			}
@@ -82,7 +83,7 @@ namespace ms
 	{
 		mesos = m;
 		items = std::move(list);
-		mesolabel.change_text("Mesos: " + std::to_string(mesos));
+		mesolabel.change_text(Locale::format("storebank.mesos", std::to_string(mesos)));
 		notice.change_text("");
 		LOG(LOG_DEBUG, "UIStoreBank: load mesos=" << mesos << " items=" << items.size());
 	}
@@ -96,7 +97,7 @@ namespace ms
 	{
 		items.clear();
 		mesos = 0;
-		mesolabel.change_text("Mesos: 0");
+		mesolabel.change_text(Locale::format("storebank.mesos", "0"));
 		send_exit();
 	}
 
@@ -151,7 +152,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'G' || keycode == 'g' || keycode == 'A' || keycode == 'a') {
 			FredrickGetAllPacket().dispatch();
-			show_notice("GetAll sent");
+			show_notice(Locale::text("storebank.getall_sent"));
 			LOG(LOG_DEBUG, "UIStoreBank: GetAll");
 		} else if (keycode == 'S' || keycode == 's') {
 			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
@@ -159,7 +160,7 @@ namespace ms
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 				if (t == "all" || t == "get" || t == "getall") {
 					FredrickGetAllPacket().dispatch();
-					show_notice("GetAll sent");
+					show_notice(Locale::text("storebank.getall_sent"));
 					return;
 				}
 				if (t == "exit" || t == "x" || t == "close") {

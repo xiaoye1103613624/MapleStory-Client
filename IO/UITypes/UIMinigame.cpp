@@ -14,6 +14,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -79,10 +80,10 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'R' || keycode == 'r') {
 			MinigameReadyPacket().dispatch();
-			tip_label.change_text("Ready");
+			tip_label.change_text(Locale::text("minigame.ready"));
 		} else if (keycode == 'S' || keycode == 's') {
 			MinigameStartPacket().dispatch();
-			tip_label.change_text("Start");
+			tip_label.change_text(Locale::text("minigame.start"));
 		} else if (keycode == 'X' || keycode == 'x') {
 			MinigameExitPacket().dispatch();
 			deactivate();
@@ -111,7 +112,7 @@ namespace ms
 					static_cast<uint8_t>(vals[1]),
 					static_cast<uint8_t>(vals[2])
 				).dispatch();
-				tip_label.change_text("Omok " + s);
+				tip_label.change_text(Locale::format("minigame.omok", s));
 				LOG(LOG_DEBUG, "UIMinigame: OmokPlace " << s);
 			}, []() {}, "x,y[,piece]");
 		} else if (keycode == 'M' || keycode == 'm') {
@@ -123,7 +124,7 @@ namespace ms
 					uint8_t turn = static_cast<uint8_t>(std::stoi(s.substr(0, c)));
 					uint8_t slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
 					MinigameMatchCardSelectPacket(turn, slot).dispatch();
-					tip_label.change_text("Card " + s);
+					tip_label.change_text(Locale::format("minigame.card", s));
 					LOG(LOG_DEBUG, "UIMinigame: MatchCard " << s);
 				} catch (...) {}
 			}, []() {}, "turn,slot");
@@ -145,11 +146,11 @@ namespace ms
 		switch (id) {
 			case BtReady:
 				MinigameReadyPacket().dispatch();
-				tip_label.change_text("Ready");
+				tip_label.change_text(Locale::text("minigame.ready"));
 				break;
 			case BtStart:
 				MinigameStartPacket().dispatch();
-				tip_label.change_text("Start");
+				tip_label.change_text(Locale::text("minigame.start"));
 				break;
 			case BtExit:
 				MinigameExitPacket().dispatch();

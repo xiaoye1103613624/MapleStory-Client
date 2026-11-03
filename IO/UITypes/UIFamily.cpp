@@ -13,6 +13,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -50,8 +51,8 @@ namespace ms
 		put(BtJunior, "BtJuniorEntry", 20, 360);
 		put(BtPrecept, "BtFamilyPrecept", 100, 360);
 		put(BtSpecial, "BtSpecial", 160, 360);
-		name_label.change_text("(no family)");
-		rep_label.change_text("Rep: 0 / 0");
+		name_label.change_text(Locale::text("family.none"));
+		rep_label.change_text(Locale::text("family.rep_initial"));
 		LOG(LOG_DEBUG, "UIFamily: open");
 #endif
 	}
@@ -59,19 +60,19 @@ namespace ms
 	void UIFamily::set_info(const FamilyInfoData& data)
 	{
 		info = data;
-		name_label.change_text(info.name.empty() ? "(no family)" : info.name);
+		name_label.change_text(info.name.empty() ? Locale::text("family.none") : info.name);
 		msg_label.change_text(info.message);
 		rep_label.change_text(
-			"Rep " + std::to_string(info.cur_rep) + "/" + std::to_string(info.tot_rep)
-			+ " today " + std::to_string(info.today_rep)
-			+ " jr " + std::to_string(info.juniors) + "/" + std::to_string(info.juniors_max)
+			Locale::format_all("family.rep_line",
+			{ std::to_string(info.cur_rep), std::to_string(info.tot_rep), std::to_string(info.today_rep),
+			std::to_string(info.juniors), std::to_string(info.juniors_max) })
 		);
 		LOG(LOG_DEBUG, "UIFamily: info name=" << info.name);
 	}
 
 	void UIFamily::set_privileges(const std::vector<std::string>& names)
 	{
-		std::string tip = "Priv x" + std::to_string(names.size());
+		std::string tip = Locale::format("family.priv_count", std::to_string(names.size()));
 		for (size_t i = 0; i < names.size() && i < 3; ++i)
 		{
 			if (!names[i].empty())
@@ -204,7 +205,7 @@ namespace ms
 			if (from_tree > 0) {
 				std::string label = from_name.empty()
 					? ("cid " + std::to_string(from_tree)) : from_name;
-				UI::get().emplace<UIYesNo>("Separate junior " + label + "?", [from_tree](bool yes) {
+				UI::get().emplace<UIYesNo>(Locale::format("family.ask_separate", label), [from_tree](bool yes) {
 					if (!yes) return;
 					FamilySeparateSeniorPacket(from_tree).dispatch();
 					LOG(LOG_DEBUG, "UIFamily: Separate junior cid=" << from_tree);
@@ -212,7 +213,7 @@ namespace ms
 			} else {
 				UI::get().emplace<UISoftKey>([](const std::string& id_s) {
 					if (id_s.empty()) {
-						UI::get().emplace<UIYesNo>("Leave your senior and fork the family?", [](bool yes) {
+						UI::get().emplace<UIYesNo>(Locale::text("family.ask_leave"), [](bool yes) {
 							if (!yes) return;
 							FamilySeparateJuniorPacket().dispatch();
 							LOG(LOG_DEBUG, "UIFamily: Separate as junior");
@@ -222,7 +223,7 @@ namespace ms
 					int32_t id = 0;
 					try { id = std::stoi(id_s); } catch (...) { return; }
 					if (id <= 0) return;
-					UI::get().emplace<UIYesNo>("Separate junior cid " + std::to_string(id) + "?", [id](bool yes) {
+					UI::get().emplace<UIYesNo>(Locale::format("family.ask_separate_cid", std::to_string(id)), [id](bool yes) {
 						if (!yes) return;
 						FamilySeparateSeniorPacket(id).dispatch();
 						LOG(LOG_DEBUG, "UIFamily: Separate junior cid=" << id);

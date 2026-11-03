@@ -15,6 +15,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "../../Util/Locale.h"
 
 namespace ms
 {
@@ -25,7 +26,7 @@ namespace ms
 		  items_line(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE),
 		  status_line(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::ORANGE)
 	{
-		title.change_text("MTS / ITC");
+		title.change_text(Locale::text("mts.title"));
 		int16_t w = Constants::Constants::get().get_viewwidth();
 		int16_t h = Constants::Constants::get().get_viewheight();
 		update_screen(w, h);
@@ -40,11 +41,10 @@ namespace ms
 		slots = s;
 		visible = true;
 		list_line.change_text(
-			"tab" + std::to_string(tab)
-			+ " type" + std::to_string(type)
-			+ " p" + std::to_string(page)
-			+ " n=" + std::to_string(count)
-			+ " slots=" + std::to_string(slots));
+			Locale::format_all("mts.list_line",
+				{ std::to_string(tab), std::to_string(type), std::to_string(page),
+					std::to_string(count), std::to_string(slots) })
+		);
 		makeactive();
 		LOG(LOG_DEBUG, "UIMTS list " << list_line.get_text());
 	}
@@ -54,7 +54,7 @@ namespace ms
 		nx = n;
 		maple = m;
 		visible = true;
-		cash_line.change_text("NX=" + std::to_string(nx) + " MP=" + std::to_string(maple));
+		cash_line.change_text(Locale::format_all("mts.cash_line", { std::to_string(nx), std::to_string(maple) }));
 		makeactive();
 		LOG(LOG_DEBUG, "UIMTS cash " << cash_line.get_text());
 	}
@@ -62,7 +62,7 @@ namespace ms
 	void UIMTS::set_status(const std::string& tip)
 	{
 		visible = true;
-		status_line.change_text(tip.empty() ? "MTS" : tip);
+		status_line.change_text(tip.empty() ? Locale::text("mts.status_default") : tip);
 		makeactive();
 	}
 
@@ -74,11 +74,11 @@ namespace ms
 		{
 			if (!line.empty())
 				line += " | ";
-			line += "#" + std::to_string(items[i].first) + "@" + std::to_string(items[i].second);
+			line += Locale::format_all("mts.item_slot", { std::to_string(items[i].first), std::to_string(items[i].second) });
 		}
 		if (items.size() > 4)
-			line += " …+" + std::to_string(items.size() - 4);
-		items_line.change_text(line.empty() ? "(no items)" : line);
+			line += " " + Locale::format("mts.more", std::to_string(items.size() - 4));
+		items_line.change_text(line.empty() ? Locale::text("mts.no_items") : line);
 		makeactive();
 		LOG(LOG_DEBUG, "UIMTS items " << items_line.get_text());
 	}

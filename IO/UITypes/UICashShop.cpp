@@ -37,6 +37,7 @@
 #include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Configuration.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #include "../UIStateCashShop.h"
 
@@ -95,8 +96,10 @@ namespace ms
 
 		Charset tab;
 
-		job_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::SUPERNOVA, "Illium");
-		name_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE, "ShomeiZekkou");
+		job_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::SUPERNOVA);
+		bind_text(job_label, "cashshop.stub_job");
+		name_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(name_label, "cashshop.stub_name");
 		cs_meta_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, "");
 		refresh_cs_meta();
 
@@ -869,12 +872,11 @@ namespace ms
 		for (int32_t sn : UIStateCashShop::cash_wishlist)
 			if (sn != 0)
 				++wish_n;
-		std::string tip = "CS inv "
-			+ std::to_string(UIStateCashShop::cash_inventory.size())
-			+ " gift " + std::to_string(UIStateCashShop::cash_gifts.size())
-			+ " wish " + std::to_string(wish_n);
+		std::string tip = Locale::format_all("cashshop.meta",
+			{ std::to_string(UIStateCashShop::cash_inventory.size()),
+			std::to_string(UIStateCashShop::cash_gifts.size()), std::to_string(wish_n) });
 		if (UIStateCashShop::cash_storage_slots > 0)
-			tip += " stor" + std::to_string(UIStateCashShop::cash_storage_slots);
+			tip += " " + Locale::format("cashshop.meta_stor", std::to_string(UIStateCashShop::cash_storage_slots));
 		cs_meta_label.change_text(tip);
 	}
 

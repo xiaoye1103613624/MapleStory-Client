@@ -86,6 +86,122 @@
 的「禁译」档处理。
 
 
+### B1c-5b（壳窗第二批 · 98 键 / 24 个 .cpp，值 = 站点原英文字面量）
+
+与 5a 的差别只在**广度**：剩余 24 个壳窗（admin / alliance / ariants / …）里的
+`change_text`、`Text` 构造、SoftKey 提示一次建完，站点侧零措辞改动（决策 B）。
+
+「建议取证来源」这一列本批**统一填「本包自造，无原生依据」** —— 这些文案在原生 v83 里
+既没有对应的 `String.img` 节点，本包也没有那条流程的原生截图可对；逐条编一个看起来合理的
+节点名会污染这张表（它的价值恰恰在于「表里的都值得去取证」）。要中文化：给措辞，或在真机
+里指出原生确有该文案，再把该行状态从「待用户定措辞」改回「待取证」。
+
+| 键 | 现值（zh / en） | 站点 | 建议取证来源 | 状态 |
+| --- | --- | --- | --- | --- |
+| `admin.title` | `Admin — SoftKey announce` | UIAdmin.cpp:22 | 本包自造，无原生依据 | 待用户定措辞 |
+| `admin.show_users` | `ShowUsers` | UIAdmin.cpp:50、UIAdmin.cpp:93、UIAdmin.cpp:108 | 本包自造，无原生依据 | 待用户定措辞 |
+| `admin.alert_admins` | `AlertAdmins` | UIAdmin.cpp:56、UIAdmin.cpp:98、UIAdmin.cpp:113 | 本包自造，无原生依据 | 待用户定措辞 |
+| `alliance.name_line` | `Alliance: {}` | UIAlliance.cpp:93 | 本包自造，无原生依据 | 待用户定措辞 |
+| `alliance.notice_line` | `Notice: {}` | UIAlliance.cpp:94、UIAlliance.cpp:101 | 本包自造，无原生依据 | 待用户定措辞 |
+| `alliance.guilds_header` | `Guilds ({}):` | UIAlliance.cpp:106 | 本包自造，无原生依据 | 待用户定措辞 |
+| `ariants.title` | `Ariant` | UIAriantMatch.cpp:34 | 本包自造，无原生依据 | 待用户定措辞 |
+| `ariants.result` | `Result {}` | UIAriantMatch.cpp:41、UIAriantMatch.cpp:96、UIAriantMatch.cpp:106…+1 处 | 本包自造，无原生依据 | 待用户定措辞 |
+| `gachapon.jackpot` | `JACKPOT #{} x{} left={}` | UICashGachapon.cpp:47 | 本包自造，无原生依据 | 待用户定措辞 |
+| `gachapon.reward` | `Gacha #{} x{} left={}` | UICashGachapon.cpp:47 | 本包自造，无原生依据 | 待用户定措辞 |
+| `gachapon.failed` | `Gacha failed` | UICashGachapon.cpp:52 | 本包自造，无原生依据 | 待用户定措辞 |
+| `cashshop.stub_job` | `Illium` | UICashShop.cpp:100 | 本包自造，无原生依据 | 待用户定措辞 |
+| `cashshop.stub_name` | `ShomeiZekkou` | UICashShop.cpp:102 | 本包自造，无原生依据 | 待用户定措辞 |
+| `cashshop.meta` | `CS inv {} gift {} wish {}` | UICashShop.cpp:875 | 本包自造，无原生依据 | 待用户定措辞 |
+| `cashshop.meta_stor` | `stor{}` | UICashShop.cpp:879 | 本包自造，无原生依据 | 待用户定措辞 |
+| `charinfo.medal_stub` | `Junior Adventurer` | UICharInfo.cpp:170 | 本包自造，无原生依据 | 待用户定措辞 |
+| `charinfo.pet_wish` | `Pet {} Wish {}` | UICharInfo.cpp:695 | 本包自造，无原生依据 | 待用户定措辞 |
+| `charinfo.medal_id` | `Medal#{}` | UICharInfo.cpp:696 | 本包自造，无原生依据 | 待用户定措辞 |
+| `charinfo.married` | `Married` | UICharInfo.cpp:697 | 本包自造，无原生依据 | 待用户定措辞 |
+| `charinfo.book_count` | `Book {}` | UICharInfo.cpp:699 | 本包自造，无原生依据 | 待用户定措辞 |
+| `clock.seconds_left` | `{}s` | UIClock.cpp:34、UIClock.cpp:72 | 本包自造，无原生依据 | 待用户定措辞 |
+| `clock.title` | `Clock` | UIClock.cpp:39 | 本包自造，无原生依据 | 待用户定措辞 |
+| `clock.zero` | `0s` | UIClock.cpp:75 | 本包自造，无原生依据 | 待用户定措辞 |
+| `dailygift.title` | `DAILY GIFT` | UIDailyGift.cpp:125 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.row_meso` | `{}  {}m` | UIDelivery.cpp:73 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.row_item` | `item:{}` | UIDelivery.cpp:76 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.no_packages` | `No packages.` | UIDelivery.cpp:80 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.count` | `{} package(s)` | UIDelivery.cpp:81 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.updated` | `Package updated.` | UIDelivery.cpp:96 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.sending_to` | `Sending to {}…` | UIDelivery.cpp:151 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.sent` | `Send {} m={}` | UIDelivery.cpp:244、UIDelivery.cpp:294 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.discard_id` | `Discard id={}` | UIDelivery.cpp:323 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.claim_id` | `Claim id={}` | UIDelivery.cpp:338 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.fee_help` | `Fee = TradeFee(mesos) + 5000 (normal)` | UIDelivery.cpp:372、UIDelivery.cpp:382 | 本包自造，无原生依据 | 待用户定措辞 |
+| `delivery.fee_calc` | `TradeFee({})+5000 = {}` | UIDelivery.cpp:379 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.none` | `(no family)` | UIFamily.cpp:54、UIFamily.cpp:63 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.rep_initial` | `Rep: 0 / 0` | UIFamily.cpp:55 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.rep_line` | `Rep {}/{} today {} jr {}/{}` | UIFamily.cpp:66 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.priv_count` | `Priv x{}` | UIFamily.cpp:75 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.ask_separate` | `Separate junior {}?` | UIFamily.cpp:208、UIFamilyTree.cpp:143 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.ask_separate_cid` | `Separate junior cid {}?` | UIFamily.cpp:226、UIFamilyTree.cpp:153 | 本包自造，无原生依据 | 待用户定措辞 |
+| `family.ask_leave` | `Leave your senior and fork the family?` | UIFamily.cpp:216、UIFamilyTree.cpp:162 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.header` | `Family Tree` | UIFamilyTree.cpp:54 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.level` | `Lv.{}` | UIFamilyTree.cpp:69 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.online` | `[ON]` | UIFamilyTree.cpp:70 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.offline` | `[OFF]` | UIFamilyTree.cpp:70 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.rep` | `rep {}` | UIFamilyTree.cpp:71 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.pedigree` | `Pedigree ({} members)` | UIFamilyTree.cpp:75 | 本包自造，无原生依据 | 待用户定措辞 |
+| `familytree.can_add` | `— can add junior` | UIFamilyTree.cpp:76 | 本包自造，无原生依据 | 待用户定措辞 |
+| `maker.bad_item_id` | `Bad item id` | UIMaker.cpp:66 | 本包自造，无原生依据 | 待用户定措辞 |
+| `maker.craft` | `Craft {}` | UIMaker.cpp:71 | 本包自造，无原生依据 | 待用户定措辞 |
+| `maker.no_recipe` | `No recipe {}` | UIMaker.cpp:76 | 本包自造，无原生依据 | 待用户定措辞 |
+| `maker.cost_meso` | `{} meso` | UIMaker.cpp:128 | 本包自造，无原生依据 | 待用户定措辞 |
+| `maker.cost_req` | `(Lv{})` | UIMaker.cpp:130 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mapletv.no_512` | `No 512* map effect` | UIMapleTV.cpp:76 | 本包自造，无原生依据 | 待用户定措辞 |
+| `megaphone.empty` | `Empty` | UIMegaphone.cpp:123 | 本包自造，无原生依据 | 待用户定措辞 |
+| `megaphone.no_539` | `No 539*` | UIMegaphone.cpp:126 | 本包自造，无原生依据 | 待用户定措辞 |
+| `megaphone.sent` | `Sent…` | UIMegaphone.cpp:130 | 本包自造，无原生依据 | 待用户定措辞 |
+| `minigame.ready` | `Ready` | UIMinigame.cpp:83、UIMinigame.cpp:149 | 本包自造，无原生依据 | 待用户定措辞 |
+| `minigame.start` | `Start` | UIMinigame.cpp:86、UIMinigame.cpp:153 | 本包自造，无原生依据 | 待用户定措辞 |
+| `minigame.omok` | `Omok {}` | UIMinigame.cpp:115 | 本包自造，无原生依据 | 待用户定措辞 |
+| `minigame.card` | `Card {}` | UIMinigame.cpp:127 | 本包自造，无原生依据 | 待用户定措辞 |
+| `monsterbook.cover_id` | `Cover id={}` | UIMonsterBook.cpp:161 | 本包自造，无原生依据 | 待用户定措辞 |
+| `monsterbook.not_found` | `Not found` | UIMonsterBook.cpp:190 | 本包自造，无原生依据 | 待用户定措辞 |
+| `carnival.cp_initial` | `CP 0/0` | UIMonsterCarnival.cpp:42 | 本包自造，无原生依据 | 待用户定措辞 |
+| `carnival.enemy_initial` | `EN 0/0` | UIMonsterCarnival.cpp:43 | 本包自造，无原生依据 | 待用户定措辞 |
+| `carnival.title` | `Carnival` | UIMonsterCarnival.cpp:44 | 本包自造，无原生依据 | 待用户定措辞 |
+| `carnival.cp` | `CP {}/{}` | UIMonsterCarnival.cpp:70 | 本包自造，无原生依据 | 待用户定措辞 |
+| `carnival.enemy` | `EN {}/{}` | UIMonsterCarnival.cpp:77 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.title` | `MTS / ITC` | UIMTS.cpp:29 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.list_line` | `tab{} type{} p{} n={} slots={}` | UIMTS.cpp:44 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.cash_line` | `NX={} MP={}` | UIMTS.cpp:57 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.status_default` | `MTS` | UIMTS.cpp:65 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.item_slot` | `#{}@{}` | UIMTS.cpp:77 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.more` | `…+{}` | UIMTS.cpp:80 | 本包自造，无原生依据 | 待用户定措辞 |
+| `mts.no_items` | `(no items)` | UIMTS.cpp:81 | 本包自造，无原生依据 | 待用户定措辞 |
+| `nycard.need_receiver` | `Need receiver` | UINewYearsCard.cpp:74 | 本包自造，无原生依据 | 待用户定措辞 |
+| `nycard.to` | `To {} — msg SoftKey` | UINewYearsCard.cpp:76 | 本包自造，无原生依据 | 待用户定措辞 |
+| `nycard.no_card` | `No New Year card` | UINewYearsCard.cpp:80 | 本包自造，无原生依据 | 待用户定措辞 |
+| `nycard.sent_to` | `Sent to {}` | UINewYearsCard.cpp:84 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partyrace.stage_initial` | `Stage 0` | UIPartyRace.cpp:49 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partyrace.score_initial` | `R 0 : 0 B` | UIPartyRace.cpp:50 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partyrace.stage` | `Stage {}` | UIPartyRace.cpp:80 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partyrace.score` | `R {} : {} B` | UIPartyRace.cpp:87 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partysearch.range` | `Range {}` | UIPartySearch.cpp:115、UIPartySearch.cpp:205 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partysearch.jobs_mask` | `Jobs mask={}` | UIPartySearch.cpp:217 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partysearch.searching` | `Searching Lv.{} …` | UIPartySearch.cpp:125 | 本包自造，无原生依据 | 待用户定措辞 |
+| `partysearch.idle` | `Idle — press Start to search` | UIPartySearch.cpp:126 | 本包自造，无原生依据 | 待用户定措辞 |
+| `remotegacha.box_mode` | `Gacha box mode={}` | UIRemoteGachapon.cpp:53 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.count` | `{} note(s)` | UIMemo.cpp:54 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.sel_from` | `Sel {}` | UIMemo.cpp:99 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.sent_to` | `Sent→{}` | UIMemo.cpp:124、UIMemo.cpp:132 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.discard_id` | `Discard id={}` | UIMemo.cpp:140、UIMemo.cpp:149 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.notes_count` | `Notes: {}` | UIMemo.cpp:156 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.none_selected` | `No note selected` | UIMemo.cpp:177 | 本包自造，无原生依据 | 待用户定措辞 |
+| `memo.no_note` | `No note` | UIMemo.cpp:183 | 本包自造，无原生依据 | 待用户定措辞 |
+| `storebank.mesos` | `Mesos: {}` | UIStoreBank.cpp:59、UIStoreBank.cpp:86、UIStoreBank.cpp:100 | 本包自造，无原生依据 | 待用户定措辞 |
+| `storebank.getall_sent` | `GetAll sent` | UIStoreBank.cpp:65、UIStoreBank.cpp:155、UIStoreBank.cpp:163 | 本包自造，无原生依据 | 待用户定措辞 |
+
+**本批的门禁**（不是自查，是可重跑的尺）：`tools/check_placeholder_arity.py --both` 把
+`format`/`format_all` 调用点实参数与 ini 值里的 `{}` 数对齐（318 个调用点，含 `enum_key`
+动态前缀家族），键值忠实度尺 98/98 要求每条非占位符片段在原站点逐字出现。两份输出与
+负对照记录见同目录 `gate-r27-b1c5b*.txt`。
+
 ## 为什么模板里带占位符而不是「数字 + 独立后缀」
 
 `Util/Locale.cpp` 的加载器会 `trim` 掉值两端空白，所以单独存 `" up"` 只会得到 `"up"`；

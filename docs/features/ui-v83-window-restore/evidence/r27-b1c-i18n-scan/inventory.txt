@@ -4,8 +4,8 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 713 处 | 英文 713（壳窗 642 / 在用窗 71）| 中文 0
-按形状分档（全站，中英合并）：change_text=272 / Text ctor=15 / SoftKey hint=426
+总计 644 处 | 英文 644（壳窗 583 / 在用窗 61）| 中文 0
+按形状分档（全站，中英合并）：change_text=207 / Text ctor=11 / SoftKey hint=426
 
 
 == 英文原文 · 在用窗 ==
@@ -37,9 +37,8 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UICommonCreation.cpp] 1 处
   L793   [SoftKey hint] Char name
 
-[IO/UITypes/UIDailyGift.cpp] 2 处
-  L123   [Text ctor   ] DAILY GIFT
-  L508   [SoftKey hint] Gift day
+[IO/UITypes/UIDailyGift.cpp] 1 处
+  L510   [SoftKey hint] Gift day
 
 [IO/UITypes/UIGender.cpp] 1 处
   L135   [SoftKey hint] m|f
@@ -61,23 +60,14 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UILoginWait.cpp] 1 处
   L239   [SoftKey hint] cancel
 
-[IO/UITypes/UIMegaphone.cpp] 5 处
-  L79    [SoftKey hint] Art Megaphone
-  L122   [change_text ] Empty
-  L125   [change_text ] No 539*
-  L129   [change_text ] Sent…
-  L131   [SoftKey hint] Avatar Mega
+[IO/UITypes/UIMegaphone.cpp] 2 处
+  L80    [SoftKey hint] Art Megaphone
+  L132   [SoftKey hint] Avatar Mega
 
-[IO/UITypes/UIMinigame.cpp] 9 处
-  L82    [change_text ] Ready
-  L85    [change_text ] Start
-  L95    [SoftKey hint] Minigame chat
-  L114   [change_text ] Omok 
-  L116   [SoftKey hint] x,y[,piece]
-  L126   [change_text ] Card 
-  L129   [SoftKey hint] turn,slot
-  L148   [change_text ] Ready
-  L152   [change_text ] Start
+[IO/UITypes/UIMinigame.cpp] 3 处
+  L96    [SoftKey hint] Minigame chat
+  L117   [SoftKey hint] x,y[,piece]
+  L130   [SoftKey hint] turn,slot
 
 [IO/UITypes/UINotice.cpp] 3 处
   L171   [SoftKey hint] y|n
@@ -85,7 +75,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L393   [SoftKey hint] ok|cancel
 
 [IO/UITypes/UIOptionMenu.cpp] 1 处
-  L342   [SoftKey hint] ok|WxH|buff on|equip on|mp N
+  L343   [SoftKey hint] ok|WxH|buff on|equip on|mp N
 
 [IO/UITypes/UIQuit.cpp] 1 处
   L182   [SoftKey hint] y|n
@@ -130,34 +120,20 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 == 英文原文 · 壳窗 ==
 
-[IO/UITypes/UIAdmin.cpp] 8 处
-  L49    [change_text ] ShowUsers
-  L55    [change_text ] AlertAdmins
-  L62    [SoftKey hint] users|alert|msg
-  L92    [change_text ] ShowUsers
-  L97    [change_text ] AlertAdmins
-  L102   [SoftKey hint] users|alert|msg
-  L107   [change_text ] ShowUsers
-  L112   [change_text ] AlertAdmins
+[IO/UITypes/UIAdmin.cpp] 2 处
+  L63    [SoftKey hint] users|alert|msg
+  L103   [SoftKey hint] users|alert|msg
 
-[IO/UITypes/UIAlliance.cpp] 8 处
-  L92    [change_text ] Alliance: 
-  L93    [change_text ] Notice: 
-  L100   [change_text ] Notice: 
-  L151   [SoftKey hint] Invite guild
-  L159   [SoftKey hint] Alliance notice
-  L183   [SoftKey hint] Invite guild
-  L195   [SoftKey hint] Alliance deny guild
-  L206   [SoftKey hint] inviter,guild
+[IO/UITypes/UIAlliance.cpp] 5 处
+  L152   [SoftKey hint] Invite guild
+  L160   [SoftKey hint] Alliance notice
+  L184   [SoftKey hint] Invite guild
+  L196   [SoftKey hint] Alliance deny guild
+  L207   [SoftKey hint] inviter,guild
 
-[IO/UITypes/UIAriantMatch.cpp] 7 处
-  L33    [change_text ] Ariant
-  L40    [change_text ] Result 
-  L47    [SoftKey hint] result idx|tip
-  L95    [change_text ] Result 
-  L100   [SoftKey hint] result idx|tip
-  L105   [change_text ] Result 0
-  L110   [change_text ] Result 1
+[IO/UITypes/UIAriantMatch.cpp] 2 处
+  L48    [SoftKey hint] result idx|tip
+  L101   [SoftKey hint] result idx|tip
 
 [IO/UITypes/UIBuddyList.cpp] 12 处
   L190   [SoftKey hint] Group (All)
@@ -173,46 +149,41 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L309   [SoftKey hint] Whisper msg
   L310   [SoftKey hint] Whisper to
 
-[IO/UITypes/UICashGachapon.cpp] 2 处
-  L52    [change_text ] Gacha failed
+[IO/UITypes/UICashGachapon.cpp] 1 处
   L85    [SoftKey hint] Gacha OK
 
-[IO/UITypes/UICashShop.cpp] 20 处
-  L98    [Text ctor   ] Illium
-  L99    [Text ctor   ] ShomeiZekkou
-  L390   [SoftKey hint] bday,sn[,msg]|empty=Coupon
-  L413   [SoftKey hint] Gift bday,sn,name,msg|empty=Coupon
-  L465   [SoftKey hint] t,cash|p,cash[,inv]|empty=Inv
-  L499   [SoftKey hint] Wish SN[,SN…]
-  L513   [SoftKey hint] Mileage SN
-  L534   [SoftKey hint] Pkg useNX,sn
-  L565   [SoftKey hint] Buy useNX,sn
-  L593   [SoftKey hint] Preview 0-2
-  L629   [SoftKey hint] Buy useNX[,sn]
-  L674   [SoftKey hint] Buy useNX,sn
-  L703   [SoftKey hint] bday,sn[,msg]
-  L721   [SoftKey hint] bday,sn,name,msg
-  L734   [SoftKey hint] Take cashId
-  L754   [SoftKey hint] Put cashId[,inv]
-  L783   [SoftKey hint] Pkg useNX,sn
-  L807   [SoftKey hint] cash,type|cash,sSN
-  L824   [SoftKey hint] cash[,sn]
-  L840   [SoftKey hint] cash,sn
+[IO/UITypes/UICashShop.cpp] 18 处
+  L393   [SoftKey hint] bday,sn[,msg]|empty=Coupon
+  L416   [SoftKey hint] Gift bday,sn,name,msg|empty=Coupon
+  L468   [SoftKey hint] t,cash|p,cash[,inv]|empty=Inv
+  L502   [SoftKey hint] Wish SN[,SN…]
+  L516   [SoftKey hint] Mileage SN
+  L537   [SoftKey hint] Pkg useNX,sn
+  L568   [SoftKey hint] Buy useNX,sn
+  L596   [SoftKey hint] Preview 0-2
+  L632   [SoftKey hint] Buy useNX[,sn]
+  L677   [SoftKey hint] Buy useNX,sn
+  L706   [SoftKey hint] bday,sn[,msg]
+  L724   [SoftKey hint] bday,sn,name,msg
+  L737   [SoftKey hint] Take cashId
+  L757   [SoftKey hint] Put cashId[,inv]
+  L786   [SoftKey hint] Pkg useNX,sn
+  L810   [SoftKey hint] cash,type|cash,sSN
+  L827   [SoftKey hint] cash[,sn]
+  L843   [SoftKey hint] cash,sn
 
 [IO/UITypes/UIChannel.cpp] 1 处
   L248   [SoftKey hint] Channel 1-N
 
-[IO/UITypes/UICharInfo.cpp] 10 处
-  L169   [Text ctor   ] Junior Adventurer
-  L400   [SoftKey hint] Whisper
-  L454   [SoftKey hint] Damage skin id
-  L471   [SoftKey hint] Find name
-  L549   [SoftKey hint] Fame up|d (target)
-  L566   [SoftKey hint] Fame cid[,d]
-  L577   [SoftKey hint] Whisper msg
-  L584   [SoftKey hint] Whisper msg
-  L585   [SoftKey hint] Whisper to
-  L699   [change_text ] Book 
+[IO/UITypes/UICharInfo.cpp] 8 处
+  L401   [SoftKey hint] Whisper
+  L455   [SoftKey hint] Damage skin id
+  L472   [SoftKey hint] Find name
+  L550   [SoftKey hint] Fame up|d (target)
+  L567   [SoftKey hint] Fame cid[,d]
+  L578   [SoftKey hint] Whisper msg
+  L585   [SoftKey hint] Whisper msg
+  L586   [SoftKey hint] Whisper to
 
 [IO/UITypes/UIChatBar.cpp] 12 处
   L628   [SoftKey hint] Emote id
@@ -228,22 +199,20 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L1750  [SoftKey hint] Whisper msg
   L1781  [change_text ] /w 
 
-[IO/UITypes/UIClock.cpp] 3 处
-  L74    [change_text ] 0s
-  L104   [SoftKey hint] Clock|sec|tip
-  L115   [SoftKey hint] Clock text
+[IO/UITypes/UIClock.cpp] 2 处
+  L105   [SoftKey hint] Clock|sec|tip
+  L116   [SoftKey hint] Clock text
 
-[IO/UITypes/UIDelivery.cpp] 10 处
-  L93    [change_text ] Package updated.
-  L151   [SoftKey hint] Mesos
-  L156   [SoftKey hint] Recipient
-  L248   [SoftKey hint] meso[,qty]
-  L257   [SoftKey hint] name,meso[,qty]
-  L298   [SoftKey hint] meso[,iv,slot,qty]
-  L307   [SoftKey hint] name,meso[,iv,slot,qty]
-  L324   [SoftKey hint] Package id
-  L339   [SoftKey hint] Claim pkg id
-  L381   [SoftKey hint] mesos|empty=help
+[IO/UITypes/UIDelivery.cpp] 9 处
+  L154   [SoftKey hint] Mesos
+  L159   [SoftKey hint] Recipient
+  L251   [SoftKey hint] meso[,qty]
+  L260   [SoftKey hint] name,meso[,qty]
+  L301   [SoftKey hint] meso[,iv,slot,qty]
+  L310   [SoftKey hint] name,meso[,iv,slot,qty]
+  L327   [SoftKey hint] Package id
+  L342   [SoftKey hint] Claim pkg id
+  L384   [SoftKey hint] mesos|empty=help
 
 [IO/UITypes/UIEnergyBar.cpp] 1 处
   L108   [SoftKey hint] Energy skillid
@@ -255,27 +224,24 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UIEvent.cpp] 1 处
   L229   [SoftKey hint] Event reply
 
-[IO/UITypes/UIFamily.cpp] 13 处
-  L53    [change_text ] (no family)
-  L54    [change_text ] Rep: 0 / 0
-  L111   [SoftKey hint] y/n
-  L119   [SoftKey hint] Inviter name
-  L131   [SoftKey hint] Inviter name
-  L133   [SoftKey hint] Inviter cid
-  L148   [SoftKey hint] Junior name
-  L156   [SoftKey hint] Precept
-  L187   [SoftKey hint] type[,name] 0=reunite 1=summon
-  L230   [SoftKey hint] junior cid (empty=leave)
-  L254   [SoftKey hint] Junior name
-  L260   [SoftKey hint] Precept
-  L283   [SoftKey hint] type[,name] 0=reunite 1=summon
+[IO/UITypes/UIFamily.cpp] 11 处
+  L112   [SoftKey hint] y/n
+  L120   [SoftKey hint] Inviter name
+  L132   [SoftKey hint] Inviter name
+  L134   [SoftKey hint] Inviter cid
+  L149   [SoftKey hint] Junior name
+  L157   [SoftKey hint] Precept
+  L188   [SoftKey hint] type[,name] 0=reunite 1=summon
+  L231   [SoftKey hint] junior cid (empty=leave)
+  L255   [SoftKey hint] Junior name
+  L261   [SoftKey hint] Precept
+  L284   [SoftKey hint] type[,name] 0=reunite 1=summon
 
-[IO/UITypes/UIFamilyTree.cpp] 5 处
-  L53    [change_text ] Family Tree
-  L139   [SoftKey hint] Junior name
-  L177   [SoftKey hint] junior cid (empty=leave)
-  L196   [SoftKey hint] Summon name
-  L226   [SoftKey hint] Junior name
+[IO/UITypes/UIFamilyTree.cpp] 4 处
+  L138   [SoftKey hint] Junior name
+  L176   [SoftKey hint] junior cid (empty=leave)
+  L195   [SoftKey hint] Summon name
+  L225   [SoftKey hint] Junior name
 
 [IO/UITypes/UIGuild.cpp] 6 处
   L236   [SoftKey hint] cid,name|name (self)
@@ -310,44 +276,31 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L916   [SoftKey hint] save|close
   L968   [SoftKey hint] MapleLife name
 
-[IO/UITypes/UIMTS.cpp] 5 处
-  L28    [change_text ] MTS / ITC
-  L57    [change_text ] NX=
+[IO/UITypes/UIMTS.cpp] 3 处
   L121   [SoftKey hint] MTS|tip
   L145   [SoftKey hint] itemid[,price]
   L172   [SoftKey hint] ownerid,mapid
 
-[IO/UITypes/UIMaker.cpp] 6 处
-  L65    [change_text ] Bad item id
-  L70    [change_text ] Craft 
-  L75    [change_text ] No recipe 
-  L76    [SoftKey hint] Maker itemId
-  L234   [SoftKey hint] Maker itemId
-  L248   [SoftKey hint] Maker status
+[IO/UITypes/UIMaker.cpp] 3 处
+  L77    [SoftKey hint] Maker itemId
+  L235   [SoftKey hint] Maker itemId
+  L249   [SoftKey hint] Maker status
 
-[IO/UITypes/UIMapleTV.cpp] 6 处
-  L75    [change_text ] No 512* map effect
-  L77    [SoftKey hint] MapleTV msg
-  L128   [SoftKey hint] Claim desc
-  L136   [SoftKey hint] Claim victim
-  L164   [SoftKey hint] ClassMatch
-  L180   [SoftKey hint] ClassMatch
+[IO/UITypes/UIMapleTV.cpp] 5 处
+  L78    [SoftKey hint] MapleTV msg
+  L129   [SoftKey hint] Claim desc
+  L137   [SoftKey hint] Claim victim
+  L165   [SoftKey hint] ClassMatch
+  L181   [SoftKey hint] ClassMatch
 
-[IO/UITypes/UIMemo.cpp] 14 处
-  L98    [change_text ] Sel 
-  L123   [change_text ] Sent→
-  L124   [SoftKey hint] Memo message
-  L131   [change_text ] Sent→
-  L132   [SoftKey hint] Memo message
-  L133   [SoftKey hint] Memo to
-  L139   [change_text ] Discard id=
-  L148   [change_text ] Discard id=
-  L152   [SoftKey hint] Note id
-  L155   [change_text ] Notes: 
-  L176   [change_text ] No note selected
-  L196   [SoftKey hint] Memo message
-  L204   [SoftKey hint] Memo message
-  L205   [SoftKey hint] Memo to
+[IO/UITypes/UIMemo.cpp] 7 处
+  L125   [SoftKey hint] Memo message
+  L133   [SoftKey hint] Memo message
+  L134   [SoftKey hint] Memo to
+  L153   [SoftKey hint] Note id
+  L197   [SoftKey hint] Memo message
+  L205   [SoftKey hint] Memo message
+  L206   [SoftKey hint] Memo to
 
 [IO/UITypes/UIMerchant.cpp] 5 处
   L145   [SoftKey hint] Buy qty (selected)
@@ -749,30 +702,19 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L6084  [change_text ] Card #
   L6124  [SoftKey hint] FloatNotice tip
 
-[IO/UITypes/UIMonsterBook.cpp] 6 处
-  L137   [change_text ] Cover: 
-  L152   [change_text ] Cover: 
-  L161   [change_text ] Cover id=
+[IO/UITypes/UIMonsterBook.cpp] 2 处
   L165   [SoftKey hint] Cover card id
-  L190   [change_text ] Not found
   L191   [SoftKey hint] card id|name
 
-[IO/UITypes/UIMonsterCarnival.cpp] 7 处
-  L41    [change_text ] CP 0/0
-  L42    [change_text ] EN 0/0
-  L43    [change_text ] Carnival
-  L59    [SoftKey hint] avail/total|tip
-  L114   [SoftKey hint] avail/total|tip
-  L127   [SoftKey hint] enemy avail/total
-  L134   [SoftKey hint] CPQ msg
+[IO/UITypes/UIMonsterCarnival.cpp] 4 处
+  L60    [SoftKey hint] avail/total|tip
+  L115   [SoftKey hint] avail/total|tip
+  L128   [SoftKey hint] enemy avail/total
+  L135   [SoftKey hint] CPQ msg
 
-[IO/UITypes/UINewYearsCard.cpp] 6 处
-  L73    [change_text ] Need receiver
-  L75    [change_text ] To 
-  L79    [change_text ] No New Year card
-  L83    [change_text ] Sent to 
-  L84    [SoftKey hint] NY message
-  L92    [SoftKey hint] NY receiver
+[IO/UITypes/UINewYearsCard.cpp] 2 处
+  L85    [SoftKey hint] NY message
+  L93    [SoftKey hint] NY receiver
 
 [IO/UITypes/UINpcTalk.cpp] 5 处
   L304   [SoftKey hint] Npc text
@@ -786,25 +728,17 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L260   [SoftKey hint] Leader cid
   L284   [SoftKey hint] Expel cid
 
-[IO/UITypes/UIPartyRace.cpp] 6 处
-  L48    [change_text ] Stage 0
-  L49    [change_text ] R 0 : 0 B
-  L71    [SoftKey hint] r:b|win|stage|tip
-  L79    [change_text ] Stage 
-  L86    [change_text ] R 
-  L137   [SoftKey hint] r:b|win|stage|tip
+[IO/UITypes/UIPartyRace.cpp] 2 处
+  L72    [SoftKey hint] r:b|win|stage|tip
+  L138   [SoftKey hint] r:b|win|stage|tip
 
-[IO/UITypes/UIPartySearch.cpp] 6 处
-  L114   [change_text ] Range 
-  L116   [SoftKey hint] Lv min-max
-  L204   [change_text ] Range 
-  L206   [SoftKey hint] Lv min-max
-  L216   [change_text ] Jobs mask=
-  L218   [SoftKey hint] Jobs mask
+[IO/UITypes/UIPartySearch.cpp] 3 处
+  L117   [SoftKey hint] Lv min-max
+  L207   [SoftKey hint] Lv min-max
+  L219   [SoftKey hint] Jobs mask
 
-[IO/UITypes/UIRemoteGachapon.cpp] 2 处
-  L52    [change_text ] Gacha box mode=
-  L79    [SoftKey hint] Town 0-9
+[IO/UITypes/UIRemoteGachapon.cpp] 1 处
+  L80    [SoftKey hint] Town 0-9
 
 [IO/UITypes/UIShop.cpp] 5 处
   L447   [SoftKey hint] Buy qty (selected)
@@ -838,12 +772,9 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L267   [SoftKey hint] Store qty (selected)
   L287   [SoftKey hint] slot,itemid,qty
 
-[IO/UITypes/UIStoreBank.cpp] 5 处
-  L58    [change_text ] Mesos: 0
-  L76    [SoftKey hint] all|exit|tip
-  L85    [change_text ] Mesos: 
-  L99    [change_text ] Mesos: 0
-  L171   [SoftKey hint] all|exit|tip
+[IO/UITypes/UIStoreBank.cpp] 2 处
+  L77    [SoftKey hint] all|exit|tip
+  L172   [SoftKey hint] all|exit|tip
 
 [IO/UITypes/UITermsOfService.cpp] 1 处
   L151   [SoftKey hint] ok|cancel
@@ -873,12 +804,12 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L574   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 ' ~ '  3 处 —— 区间分隔符；原生侧是格式串 "%d ~ %d"(0x6F2928)，分隔符不随语言变
-  L162   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+  L164   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
   L549   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L563   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '-'  2 处 —— 空值占位符；原生无该字面量，locale 中性标点
-  L677   [change_text ] IO/UITypes/UICharInfo.cpp
+  L678   [change_text ] IO/UITypes/UICharInfo.cpp
   L539   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '0.00%'  2 处 —— 比率数值格式；原生 EXP 行为 "EXP : %d / %d"(0x73BB5C)，无此字面量
@@ -886,16 +817,16 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L572   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '!'  1 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
-  L163   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+  L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
 
 '0'  1 处 —— 数值初值，首个数据包即被改写
-  L191   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
+  L195   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
 
 '1'  1 处 —— 数值初值，首个数据包即被改写
   L235   [Text ctor   ] IO/UITypes/UICharSelect.cpp
 
 '2'  1 处 —— 数值初值，首个数据包即被改写
-  L170   [Text ctor   ] IO/UITypes/UICharInfo.cpp
+  L171   [Text ctor   ] IO/UITypes/UICharInfo.cpp
 
 'V'  1 处 —— UIDailyGift 已领标记（字母 V 当对勾）；原生走位图，无字面量
-  L139   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+  L141   [Text ctor   ] IO/UITypes/UIDailyGift.cpp

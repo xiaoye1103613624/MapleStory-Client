@@ -11,6 +11,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -18,7 +19,7 @@
 namespace ms
 {
 	UIAdmin::UIAdmin()
-		: msg_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Admin — SoftKey announce")
+		: msg_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("admin.title"))
 	{
 		position = Point<int16_t>(300, 200);
 		dimension = Point<int16_t>(209, 156);
@@ -46,13 +47,13 @@ namespace ms
 			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 			if (t == "users" || t == "show") {
 				AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-				msg_label.change_text("ShowUsers");
+				msg_label.change_text(Locale::text("admin.show_users"));
 				LOG(LOG_DEBUG, "UIAdmin: AdminEnterMap SHOW_USERS");
 				return;
 			}
 			if (t == "alert") {
 				AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-				msg_label.change_text("AlertAdmins");
+				msg_label.change_text(Locale::text("admin.alert_admins"));
 				LOG(LOG_DEBUG, "UIAdmin: AdminEnterMap ALERT_ADMINS");
 				return;
 			}
@@ -89,12 +90,12 @@ namespace ms
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 				if (t == "users" || t == "show") {
 					AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-					msg_label.change_text("ShowUsers");
+					msg_label.change_text(Locale::text("admin.show_users"));
 					return;
 				}
 				if (t == "alert") {
 					AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-					msg_label.change_text("AlertAdmins");
+					msg_label.change_text(Locale::text("admin.alert_admins"));
 					return;
 				}
 				msg_label.change_text(msg);
@@ -104,12 +105,12 @@ namespace ms
 		else if (keycode == 'U' || keycode == 'u')
 		{
 			AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-			msg_label.change_text("ShowUsers");
+			msg_label.change_text(Locale::text("admin.show_users"));
 		}
 		else if (keycode == 'L' || keycode == 'l')
 		{
 			AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-			msg_label.change_text("AlertAdmins");
+			msg_label.change_text(Locale::text("admin.alert_admins"));
 		}
 		else if (keycode == 'G' || keycode == 'g')
 		{

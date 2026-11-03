@@ -1,0 +1,845 @@
+第五把尺：四条形状看不见的展示文案（盲区候选，须人读确认）
+判据：字面量含空格+字母、行内有展示汇点、剔除 LOG/资源路径/已 Locale/软键盘提示位
+总计 387 处候选 / 34 文件
+
+[IO/UITypes/UIMiscShells.cpp] 171 处
+  L200   'Open store…'
+        tip.change_text("Open store…");
+  L213   'Create: '
+        tip.change_text("Create: " + title);
+  L237   'Reported '
+        tip_label.change_text("Reported " + pre);
+  L242   'Empty name'
+        if (name.empty()) { tip_label.change_text("Empty name"); return; }
+  L244   'Reported '
+        tip_label.change_text("Reported " + name);
+  L254   'Target: '
+        tip_label.change_text("Target: " + name + " — SoftKey/Enter");
+  L267   'Reported '
+        tip_label.change_text("Reported " + preset_target);
+  L278   'Reported '
+        tip_label.change_text("Reported " + pre);
+  L282   'Empty name'
+        if (name.empty()) { tip_label.change_text("Empty name"); return; }
+  L284   'Reported '
+        tip_label.change_text("Reported " + name);
+  L302   'Empty code'
+        tip_label.change_text("Empty code");
+  L341   'Need name'
+        if (to.empty()) { tip_label.change_text("Need name"); return; }
+  L344   'Note → '
+        tip_label.change_text("Note → " + to);
+  L374   'Note → '
+        tip_label.change_text("Note → " + to);
+  L381   'Note → '
+        tip_label.change_text("Note → " + to);
+  L408   'Egg #'
+        tip_label.change_text("Egg #" + std::to_string(from_inv) + " — Enter");
+  L408   ' — Enter'
+        tip_label.change_text("Egg #" + std::to_string(from_inv) + " — Enter");
+  L417   'Egg #'
+        tip_label.change_text("Egg #" + s + " — Enter");
+  L417   ' — Enter'
+        tip_label.change_text("Egg #" + s + " — Enter");
+  L445   'Egg #'
+        tip_label.change_text("Egg #" + std::to_string(egg_slot) + " — Enter");
+  L445   ' — Enter'
+        tip_label.change_text("Egg #" + std::to_string(egg_slot) + " — Enter");
+  L469   'Egg #'
+        tip_label.change_text("Egg #" + std::to_string(from_inv) + " — Enter");
+  L469   ' — Enter'
+        tip_label.change_text("Egg #" + std::to_string(from_inv) + " — Enter");
+  L477   'Egg #'
+        tip_label.change_text("Egg #" + s + " — Enter");
+  L477   ' — Enter'
+        tip_label.change_text("Egg #" + s + " — Enter");
+  L490   'Drop an egg first'
+        tip_label.change_text("Drop an egg first");
+  L495   'No Incubator'
+        tip_label.change_text("No Incubator");
+  L609   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L609   ' — Enter'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L616   'Equip #'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L616   ' — Enter'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L628   'Need equip'
+        tip_label.change_text("Need equip");
+  L632   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(equip_slot) + " — Enter to use");
+  L632   ' — Enter to use'
+        tip_label.change_text("Equip #" + std::to_string(equip_slot) + " — Enter to use");
+  L653   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L653   ' — Enter'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L660   'Equip #'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L660   ' — Enter'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L674   'Drop an equip first'
+        tip_label.change_text("Drop an equip first");
+  L685   'No Karma Scissors'
+        tip_label.change_text("No Karma Scissors");
+  L714   'Need equip'
+        tip_label.change_text("Need equip");
+  L718   'Enchant slot #'
+        tip_label.change_text("Enchant slot #" + std::to_string(equip_slot));
+  L733   'Scroll '
+        tip_label.change_text("Scroll " + std::to_string(scroll_slot) + "→" + std::to_string(equip_slot));
+  L736   'Need scroll+equip'
+        tip_label.change_text("Need scroll+equip");
+  L748   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(from_inv));
+  L755   'Equip #'
+        tip_label.change_text("Equip #" + s);
+  L768   'Scroll #'
+        tip_label.change_text("Scroll #" + std::to_string(from_inv));
+  L775   'Scroll #'
+        tip_label.change_text("Scroll #" + s);
+  L783   'Scroll '
+        tip_label.change_text("Scroll " + std::to_string(scroll_slot) + "→" + std::to_string(equip_slot));
+  L795   'Scroll '
+        tip_label.change_text("Scroll " + spec);
+  L823   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L823   ' — Enter'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L830   'Equip #'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L830   ' — Enter'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L842   'Need equip'
+        tip_label.change_text("Need equip");
+  L846   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(equip_slot) + " — Enter to use");
+  L846   ' — Enter to use'
+        tip_label.change_text("Equip #" + std::to_string(equip_slot) + " — Enter to use");
+  L867   'Equip #'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L867   ' — Enter'
+        tip_label.change_text("Equip #" + std::to_string(from_inv) + " — Enter");
+  L874   'Equip #'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L874   ' — Enter'
+        tip_label.change_text("Equip #" + s + " — Enter");
+  L888   'Drop an equip first'
+        tip_label.change_text("Drop an equip first");
+  L899   'No Item Protector'
+        tip_label.change_text("No Item Protector");
+  L923   'No Teleport Rock'
+        tip_label.change_text("No Teleport Rock");
+  L936   'Warp map…'
+        tip_label.change_text("Warp map…");
+  L939   'Warp to '
+        tip_label.change_text("Warp to " + input);
+  L941   'Need VIP rock for name'
+        tip_label.change_text("Need VIP rock for name");
+  L955   'Enter=1st map'
+        std::string tip = "Enter=1st map";
+  L957   ' VIP#'
+        else if (vipmap) tip += " VIP#" + std::to_string(vipmap);
+  L958   ' (empty)'
+        else tip += " (empty)";
+  L999   'No Teleport Rock'
+        tip_label.change_text("No Teleport Rock");
+  L1007  'Warp map…'
+        tip_label.change_text("Warp map…");
+  L1020  'Warp map…'
+        tip_label.change_text("Warp map…");
+  L1023  'Warp to '
+        tip_label.change_text("Warp to " + input);
+  L1025  'Need VIP rock for name'
+        tip_label.change_text("Need VIP rock for name");
+  L1042  'No Teleport Rock'
+        tip_label.change_text("No Teleport Rock");
+  L1047  'Saved map…'
+        tip_label.change_text("Saved map…");
+  L1054  'Warp map…'
+        tip_label.change_text("Warp map…");
+  L1064  'Warp to '
+        tip_label.change_text("Warp to " + pre);
+  L1072  'No saved map — SoftKey'
+        tip_label.change_text("No saved map — SoftKey");
+  L1076  'Warp #'
+        tip_label.change_text("Warp #" + std::to_string(map));
+  L1089  'Empty answer'
+        if (ans.empty()) { tip_label.change_text("Empty answer"); return; }
+  L1090  'Ans: '
+        tip_label.change_text("Ans: " + ans);
+  L1108  'Ans: '
+        tip_label.change_text("Ans: " + ans);
+  L1165  'Find: '
+        tip_label.change_text("Find: " + pre);
+  L1169  'Empty name'
+        if (name.empty()) { tip_label.change_text("Empty name"); return; }
+  L1171  'Find: '
+        tip_label.change_text("Find: " + name);
+  L1192  'Find: '
+        tip_label.change_text("Find: " + pre);
+  L1197  'Find: '
+        tip_label.change_text("Find: " + name);
+  L1221  'Item tab='
+        tip_label.change_text("Item tab=" + std::to_string(attach_inv) + " #" + std::to_string(attach_slot));
+  L1254  'Empty msg'
+        if (msg.empty()) { tip_label.change_text("Empty msg"); return; }
+  L1257  'No Item Megaphone'
+        tip_label.change_text("No Item Megaphone");
+  L1298  'Whisper → '
+        tip_label.change_text("Whisper → " + to);
+  L1329  'Whisper → '
+        tip_label.change_text("Whisper → " + to);
+  L1348  'Note → '
+        tip_label.change_text("Note → " + to);
+  L1377  'Note: '
+        tip_label.change_text("Note: " + note);
+  L1394  'Note: '
+        tip_label.change_text("Note: " + note);
+  L1413  'Empty name'
+        if (name.empty()) { tip_label.change_text("Empty name"); return; }
+  L1414  'Name: '
+        tip_label.change_text("Name: " + name);
+  L1435  'Name: '
+        tip_label.change_text("Name: " + name);
+  L1484  'Empty msg'
+        tip_label.change_text("Empty msg");
+  L1489  'No Megaphone'
+        tip_label.change_text("No Megaphone");
+  L1556  'Open store…'
+        tip_label.change_text("Open store…");
+  L1573  'Buy '
+        tip_label.change_text("Buy " + spec);
+  L1626  'Open store…'
+        tip_label.change_text("Open store…");
+  L1642  'Buy '
+        tip_label.change_text("Buy " + spec);
+  L1667  'Meso '
+        tip_label.change_text("Meso " + msg);
+  L1674  'Chat sent…'
+        tip_label.change_text("Chat sent…");
+  L1727  'AddItem #'
+        tip_label.change_text("AddItem #" + std::to_string(pos));
+  L1746  'AddItem '
+        tip_label.change_text("AddItem " + spec);
+  L1760  'Meso '
+        tip_label.change_text("Meso " + msg);
+  L1766  'Chat sent…'
+        tip_label.change_text("Chat sent…");
+  L1817  'Open store…'
+        tip_label.change_text("Open store…");
+  L1833  'Buy '
+        tip_label.change_text("Buy " + spec);
+  L1862  'Meso '
+        tip_label.change_text("Meso " + msg);
+  L1869  'Chat sent…'
+        tip_label.change_text("Chat sent…");
+  L1922  'AddItem #'
+        tip_label.change_text("AddItem #" + std::to_string(pos));
+  L1940  'AddItem '
+        tip_label.change_text("AddItem " + spec);
+  L1954  'Meso '
+        tip_label.change_text("Meso " + msg);
+  L1960  'Chat sent…'
+        tip_label.change_text("Chat sent…");
+  L1993  'Empty query'
+        if (q.empty()) { tip_label.change_text("Empty query"); return; }
+  L2051  'Skill '
+        tip_label.change_text("Skill " + std::to_string(id));
+  L2090  'Skill '
+        tip_label.change_text("Skill " + std::to_string(from_sb));
+  L2103  'Skill '
+        tip_label.change_text("Skill " + tip);
+  L2252  'Bad id'
+        if (id <= 0) { tip_label.change_text("Bad id"); return; }
+  L2259  'Use '
+        tip_label.change_text("Use " + std::to_string(id) + " lv" + std::to_string(lv));
+  L2287  'Use '
+        tip_label.change_text("Use " + std::to_string(from_sb));
+  L2299  'Use '
+        tip_label.change_text("Use " + s);
+  L2332  'Cover: '
+        tip_label.change_text("Cover: " + std::to_string(cover));
+  L2341  'Cover: '
+        tip_label.change_text("Cover: " + page);
+  L2346  'Page: '
+        tip_label.change_text("Page: " + page);
+  L2375  'Cover: '
+        tip_label.change_text("Cover: " + std::to_string(cover));
+  L2382  'Cover: '
+        tip_label.change_text("Cover: " + page);
+  L2418  'Start '
+        tip_label.change_text("Start " + std::to_string(from_ql));
+  L2427  'Start '
+        tip_label.change_text("Start " + tip);
+  L3867  'Marked tab='
+        tip_label.change_text("Marked tab=" + std::to_string(src_inv) + " #" + std::to_string(src_slot) + " — SoftKey dst");
+  L3867  ' — SoftKey dst'
+        tip_label.change_text("Marked tab=" + std::to_string(src_inv) + " #" + std::to_string(src_slot) + " — SoftKey dst");
+  L3873  'Moved #'
+        tip_label.change_text("Moved #" + std::to_string(src_slot) + "→" + dst_s);
+  L3895  'Src #'
+        tip_label.change_text("Src #" + std::to_string(sel) + " — SoftKey dst");
+  L3895  ' — SoftKey dst'
+        tip_label.change_text("Src #" + std::to_string(sel) + " — SoftKey dst");
+  L3904  'Moved →'
+        tip_label.change_text("Moved →" + dst_s);
+  L3929  'Move '
+        tip_label.change_text("Move " + spec);
+  L5401  'Saved: '
+        tip_label.change_text("Saved: " + name);
+  L5410  'Assigned '
+        tip_label.change_text("Assigned " + std::to_string(sid));
+  L5413  'Macro full'
+        tip_label.change_text("Macro full");
+  L5422  'Assigned '
+        tip_label.change_text("Assigned " + s);
+  L5424  'Macro full'
+        tip_label.change_text("Macro full");
+  L5458  'Emote '
+        tip_label.change_text("Emote " + tip);
+  L5484  'Emote '
+        tip_label.change_text("Emote " + tip);
+  L5569  'No 517* tag'
+        tip_label.change_text("No 517* tag");
+  L5573  'Rename: '
+        tip_label.change_text("Rename: " + name);
+  L5595  'No 517* tag'
+        if (slot <= 0) { tip_label.change_text("No 517* tag"); return; }
+  L5597  'Rename: '
+        tip_label.change_text("Rename: " + name);
+  L5624  'Empty query'
+        if (q.empty()) { tip_label.change_text("Empty query"); return; }
+  L5791  'Saved: '
+        tip_label.change_text("Saved: " + name);
+  L5812  'Saved: '
+        tip_label.change_text("Saved: " + name);
+  L5821  'Assigned '
+        tip_label.change_text("Assigned " + std::to_string(sid));
+  L5823  'Macro full'
+        tip_label.change_text("Macro full");
+  L5832  'Assigned '
+        tip_label.change_text("Assigned " + s);
+  L5834  'Macro full'
+        tip_label.change_text("Macro full");
+  L5917  'Done '
+        tip_label.change_text("Done " + std::to_string(from_ql));
+  L5928  'Done '
+        tip_label.change_text("Done " + tip);
+  L5939  'Forfeit '
+        tip_label.change_text("Forfeit " + std::to_string(from_ql));
+  L5946  'Forfeit '
+        tip_label.change_text("Forfeit " + tip);
+  L5996  'Place ('
+        tip_label.change_text("Place (" + std::to_string(x) + "," + std::to_string(y) + ") p=" + std::to_string(piece));
+  L5996  ') p='
+        tip_label.change_text("Place (" + std::to_string(x) + "," + std::to_string(y) + ") p=" + std::to_string(piece));
+  L6047  'Card #'
+        tip_label.change_text("Card #" + s);
+  L6061  'Omok '
+        tip_label.change_text("Omok " + s);
+  L6064  'Card slot'
+        }, []() {}, game_kind == 2 ? "Card slot" : "Omok x,y");
+  L6064  'Omok x,y'
+        }, []() {}, game_kind == 2 ? "Card slot" : "Omok x,y");
+  L6084  'Card #'
+        tip_label.change_text("Card #" + std::to_string(slot));
+
+[Net/Handlers/WaveAShellHandlers.cpp] 108 处
+  L390   'Someone wants you to join their family. Accept?'
+        ? "Someone wants you to join their family. Accept?"
+  L391   ' wants you to join their family. Accept?'
+        : (inviter + " wants you to join their family. Accept?");
+  L406   'Family invite accepted.'
+        ? (name.empty() ? "Family invite accepted." : (name + " joined your family."))
+  L406   ' joined your family.'
+        ? (name.empty() ? "Family invite accepted." : (name + " joined your family."))
+  L407   'Family invite declined.'
+        : (name.empty() ? "Family invite declined." : (name + " declined the invite."));
+  L407   ' declined the invite.'
+        : (name.empty() ? "Family invite declined." : (name + " declined the invite."));
+  L633   'RPS mode='
+        std::string tip = "RPS mode=" + std::to_string(mode);
+  L661   'Ariant result'
+        ui->set_score(line.empty() ? "Ariant result" : line);
+  L681   'Score update'
+        std::string tip = line.empty() ? "Score update" : line;
+  L693   'New Year card mode='
+        std::string tip = "New Year card mode=" + std::to_string(mode);
+  L696   ' id='
+        tip += " id=" + std::to_string(cardid);
+  L700   ' from='
+        if (!from.empty()) tip += " from=" + from;
+  L747   'MapleTV ok'
+        std::string tip = ok ? "MapleTV ok" : "MapleTV failed";
+  L747   'MapleTV failed'
+        std::string tip = ok ? "MapleTV ok" : "MapleTV failed";
+  L857   'MapleLife name error '
+        std::string tip = "MapleLife name error " + std::to_string(sub);
+  L869   'MapleLife code='
+        std::string tip = "MapleLife code=" + std::to_string(code);
+  L884   'MapleLife error '
+        std::string tip = "MapleLife error " + std::to_string(code);
+  L895   'Avatar Megaphone'
+        std::string tip = name.empty() ? "Avatar Megaphone" : (name + ": " + line1);
+  L910   'Claim fail '
+        std::string tip = result ? ("Claim fail " + std::to_string(result)) : "Claim ok";
+  L910   'Claim ok'
+        std::string tip = result ? ("Claim fail " + std::to_string(result)) : "Claim ok";
+  L931   'Incubator 鈫?#'
+        std::string tip = item ? ("Incubator 鈫?#" + std::to_string(item)) : "Incubator result";
+  L931   'Incubator result'
+        std::string tip = item ? ("Incubator 鈫?#" + std::to_string(item)) : "Incubator result";
+  L983   'Note error '
+        std::string tip = "Note error " + std::to_string(err);
+  L1042  'Coconut #'
+        std::string tip = "Coconut #" + std::to_string(id) + " t" + std::to_string(type);
+  L1334  'OpenUI id='
+        ad->set_message("OpenUI id=" + std::to_string(static_cast<int>(ui)));
+  L1531  'Pyramid '
+        std::string tip = "Pyramid " + std::to_string(gauge);
+  L1713  'Boat docked'
+        std::string tip = state == 1 ? "Boat docked" : "Boat left";
+  L1713  'Boat left'
+        std::string tip = state == 1 ? "Boat docked" : "Boat left";
+  L1930  ' logged in'
+        std::string tip = name + (online ? " logged in" : " logged out");
+  L1930  ' logged out'
+        std::string tip = name + (online ? " logged in" : " logged out");
+  L1960  'A family member is summoning you. Accept?'
+        ? "A family member is summoning you. Accept?"
+  L1961  ' is summoning you to their map. Accept?'
+        : (from + " is summoning you to their map. Accept?");
+  L1976  'Family senior: '
+        std::string tip = "Family senior: " + name;
+  L2012  'Quest clear #'
+        const std::string tip = "Quest clear #" + std::to_string(qid);
+  L2040  'Monster too strong'
+        std::string tip = message == 1 ? "Monster too strong" : "Catch failed";
+  L2040  'Catch failed'
+        std::string tip = message == 1 ? "Monster too strong" : "Catch failed";
+  L2067  'Pet food fail'
+        const std::string label = "Pet food fail";
+  L2187  'Retrieve first message'
+        box->show_notice("Retrieve first message");
+  L2199  'Store channel change?'
+        box->show_notice("Store channel change?");
+  L2203  'Store channel change?'
+        UI::get().emplace<UIYesNo>("Store channel change?", [](bool) {});
+  L2209  'Store check 0x'
+        std::string tip = "Store check 0x"
+  L2315  'Extra pendant on'
+        const char* tip = enable ? "Extra pendant on" : "Extra pendant off";
+  L2315  'Extra pendant off'
+        const char* tip = enable ? "Extra pendant on" : "Extra pendant off";
+  L2338  'GM notice'
+        std::string tip = msg.empty() ? "GM notice" : msg;
+  L2397  'Name change cancelled'
+        std::string tip = ok ? "Name change cancelled" : "Cancel name change failed";
+  L2397  'Cancel name change failed'
+        std::string tip = ok ? "Name change cancelled" : "Cancel name change failed";
+  L2428  'Report failed'
+        ui->set_message("Report failed");
+  L2569  'Relog type='
+        std::string tip = "Relog type=" + std::to_string(type);
+  L2747  'Family REP +'
+        std::string tip = "Family REP +" + std::to_string(gain)
+  L2748  ' + from + '
+        + (from.empty() ? "" : (" (" + from + ")"));
+  L2800  'Family priv'
+        std::string tip = "Family priv";
+  L2820  'Summon '
+        std::string tip = "Summon " + name + " t" + std::to_string(tab)
+  L2853  ' died (-'
+        std::string tip = name + " died (-" + std::to_string(lost) + " CP)";
+  L2853  ' CP)'
+        std::string tip = name + " died (-" + std::to_string(lost) + " CP)";
+  L2903  'Kite '
+        std::string label = name.empty() ? ("Kite " + std::to_string(item)) : name;
+  L2938  'No kite'
+        const std::string label = "No kite";
+  L2954  'Quickslot custom:'
+        std::string tip = custom ? "Quickslot custom:" : "Quickslot default";
+  L2954  'Quickslot default'
+        std::string tip = custom ? "Quickslot custom:" : "Quickslot default";
+  L2984  'Data CRC check failed'
+        ui->set_message("Data CRC check failed");
+  L3135  'Tournament '
+        std::string tip = "Tournament " + std::to_string(state) + "/" + std::to_string(sub);
+  L3158  'Tournament prize set'
+        std::string tip = ok ? "Tournament prize set" : "Tournament prize failed";
+  L3158  'Tournament prize failed'
+        std::string tip = ok ? "Tournament prize set" : "Tournament prize failed";
+  L3172  'Tournament advance '
+        std::string tip = "Tournament advance " + std::to_string(state);
+  L3233  ' first=#'
+        tip += " first=#" + std::to_string(items[0].first)
+  L3341  'MTS cash NX='
+        std::string tip = "MTS cash NX=" + std::to_string(nx) + " MP=" + std::to_string(mp);
+  L3341  ' MP='
+        std::string tip = "MTS cash NX=" + std::to_string(nx) + " MP=" + std::to_string(mp);
+  L3385  'No summon'
+        const std::string label = "No summon";
+  L3448  'Bonus EXP '
+        std::string tip = exp ? ("Bonus EXP " + std::to_string(exp)) : "Bonus EXP changed";
+  L3448  'Bonus EXP changed'
+        std::string tip = exp ? ("Bonus EXP " + std::to_string(exp)) : "Bonus EXP changed";
+  L3482  'Jukebox: '
+        std::string tip = name.empty() ? "Jukebox" : ("Jukebox: " + name);
+  L3520  'Wishlist n='
+        std::string tip = "Wishlist n=" + std::to_string(n);
+  L3532  'Marriage request '
+        std::string tip = "Marriage request " + std::to_string(mode);
+  L3567  'You are now engaged.'
+        std::string text = recv.available() ? recv.read_string() : "You are now engaged.";
+  L3585  'Partner -> map '
+        std::string tip = "Partner -> map " + std::to_string(mapid);
+  L3634  'Shop closed'
+        const std::string tip = "Shop closed";
+  L3658  'Shop destroy failed'
+        const std::string tip = "Shop destroy failed";
+  L3695  'Potion discount '
+        std::string tip = "Potion discount " + std::to_string(rate) + "%";
+  L3751  'Party '
+        std::string tip = "Party " + key + "=" + val;
+  L3840  'Guild BBS'
+        std::string tip = (mode == 0x06) ? "Guild BBS"
+  L3841  'Guild BBS thread'
+        : (mode == 0x07) ? "Guild BBS thread"
+  L3898  'Quest clear #'
+        const std::string tip = qid ? ("Quest clear #" + std::to_string(qid)) : std::string("Quest map clear");
+  L3898  'Quest map clear'
+        const std::string tip = qid ? ("Quest clear #" + std::to_string(qid)) : std::string("Quest map clear");
+  L3918  'Quest timer '
+        std::string tip = "Quest timer " + std::to_string(span) + "s";
+  L4031  'Skill use fail '
+        std::string tip = "Skill use fail " + std::to_string(result);
+  L4074  'Consult authkey'
+        ui->set_message(key.empty() ? "Consult authkey" : ("Consult: " + key.substr(0, 24)));
+  L4074  'Consult: '
+        ui->set_message(key.empty() ? "Consult authkey" : ("Consult: " + key.substr(0, 24)));
+  L4088  'ClassComp authkey'
+        ui->set_message(key.empty() ? "ClassComp authkey" : ("ClassComp: " + key.substr(0, 24)));
+  L4088  'ClassComp: '
+        ui->set_message(key.empty() ? "ClassComp authkey" : ("ClassComp: " + key.substr(0, 24)));
+  L4101  'WebBoard authkey'
+        ui->set_message(key.empty() ? "WebBoard authkey" : ("WebBoard: " + key.substr(0, 24)));
+  L4101  'WebBoard: '
+        ui->set_message(key.empty() ? "WebBoard authkey" : ("WebBoard: " + key.substr(0, 24)));
+  L4111  'Full client download available.'
+        std::string tip = url.empty() ? "Full client download available." : ("Download: " + url);
+  L4111  'Download: '
+        std::string tip = url.empty() ? "Full client download available." : ("Download: " + url);
+  L4122  'Report in '
+        std::string tip = minutes ? ("Report in " + std::to_string(minutes) + "m") : "Report available";
+  L4122  'Report available'
+        std::string tip = minutes ? ("Report in " + std::to_string(minutes) + "m") : "Report available";
+  L4137  'Extra equip slot on'
+        const char* tip = enable ? "Extra equip slot on" : "Extra equip slot off";
+  L4137  'Extra equip slot off'
+        const char* tip = enable ? "Extra equip slot on" : "Extra equip slot off";
+  L4162  'Guild name cleared'
+        std::string tip = name.empty() ? "Guild name cleared" : ("Guild: " + name);
+  L4162  'Guild: '
+        std::string tip = name.empty() ? "Guild name cleared" : ("Guild: " + name);
+  L4194  'Guild mark updated'
+        std::string tip = "Guild mark updated";
+  L4242  'Lucksack success'
+        const std::string tip = "Lucksack success";
+  L4265  'Lucksack fail '
+        std::string tip = "Lucksack fail " + std::to_string(reason);
+  L4295  'Meso bag +'
+        std::string tip = meso != 0 ? ("Meso bag +" + std::to_string(meso)) : "Meso bag";
+  L4295  'Meso bag'
+        std::string tip = meso != 0 ? ("Meso bag +" + std::to_string(meso)) : "Meso bag";
+  L4309  'Korean event m'
+        std::string tip = "Korean event m" + std::to_string(mode);
+  L4344  'Magnet fail'
+        const std::string label = "Magnet fail";
+  L4370  'Ariant item #'
+        std::string tip = item != 0 ? ("Ariant item #" + std::to_string(item)) : std::string("Ariant");
+  L4435  'CRC check failed'
+        ui->set_message("CRC check failed");
+  L4450  'PC Cafe type='
+        std::string tip = "PC Cafe type=" + std::to_string(type);
+
+[Util/Resource/ResourceProbe.cpp] 21 处
+  L73    ' access='
+        f << " access=" << (er.ExceptionInformation[0] ? "write" : "read")
+  L144   "': o += "
+        case '"': o += "\\\""; break;
+  L362   'img directory      : '
+        report.line("img directory      : " + img_base.string() + (img_dir ? " (present)" : " (absent)"));
+  L362   ' (present)'
+        report.line("img directory      : " + img_base.string() + (img_dir ? " (present)" : " (absent)"));
+  L362   ' (absent)'
+        report.line("img directory      : " + img_base.string() + (img_dir ? " (present)" : " (absent)"));
+  L382   '[x] '
+        report.line(std::string("  ") + (fs::exists(fs::path(cwd) / filename, ec) ? "[x] " : "[ ] ") + filename);
+  L387   '[x] '
+        report.line(std::string("  ") + (fs::exists(fs::path(cwd) / filename, ec) ? "[x] " : "[ ] ") + filename);
+  L435   'result             : '
+        std::string result_line = std::string("result             : ") + code_name(error.get_code());
+  L438   ' (retryable)'
+        result_line += error.can_retry() ? " (retryable)" : " (fatal)";
+  L438   ' (fatal)'
+        result_line += error.can_retry() ? " (retryable)" : " (fatal)";
+  L468   'keyfile            : '
+        report.line(std::string("keyfile            : ") + (kfile.empty() ? "(disabled)" : kfile));
+  L483   ' UIWindow='
+        << " UIWindow=" << (classic ? "yes" : "no");
+  L517   'Skill           : exists='
+        report.line(std::string("Skill           : exists=") + (Skill ? "yes" : "no") + " children=" + std::to_string(Skill ? static_cast<int>(Skill.size()) :
+  L517   ' children='
+        report.line(std::string("Skill           : exists=") + (Skill ? "yes" : "no") + " children=" + std::to_string(Skill ? static_cast<int>(Skill.size()) :
+  L518   ' children='
+        report.line(std::string("Skill/main      : exists=") + (main ? "yes" : "no") + " children=" + std::to_string(main ? static_cast<int>(main.size()) : 0)
+  L528   'resolved main usable : '
+        report.line(std::string("resolved main usable : ") + (resolved_main ? "yes" : "no"));
+  L729   'probe result       : FAILED'
+        report.line(error ? "probe result       : FAILED" : "probe result       : OK");
+  L729   'probe result       : OK'
+        report.line(error ? "probe result       : FAILED" : "probe result       : OK");
+  L749   '[PASS] '
+        entry << (ok ? "[PASS] " : "[FAIL] ") << expression << " (line " << line << ")";
+  L749   '[FAIL] '
+        entry << (ok ? "[PASS] " : "[FAIL] ") << expression << " (line " << line << ")";
+  L749   ' (line '
+        entry << (ok ? "[PASS] " : "[FAIL] ") << expression << " (line " << line << ")";
+
+[Net/Handlers/MessagingHandlers.cpp] 13 处
+  L252   'You have gained experience (+'
+        std::string message = "You have gained experience (+" + std::to_string(gain) + ")";
+  L278   '+ Bonus EXP (+'
+        std::string bonus = "+ Bonus EXP (+" + std::to_string(bonus1) + ")";
+  L318   'You have gained SP (+'
+        std::string tip = "You have gained SP (+" + std::to_string(sp) + ")";
+  L463   '[NPC '
+        std::string line = "[NPC " + std::to_string(npc) + "] " + message;
+  L722   ' (ch'
+        std::string line = sender + " (ch" + std::to_string(channel + 1) + ") : " + message;
+  L753   'Find '
+        std::string line = "Find " + target + " type=" + std::to_string(type)
+  L753   ' type='
+        std::string line = "Find " + target + " type=" + std::to_string(type)
+  L834   ' fame of '
+        line = std::string(mode ? "Raised" : "Dropped") + " fame of " + name
+  L841   ' raised'
+        line = from + (mode ? " raised" : " dropped") + " your fame";
+  L841   ' dropped'
+        line = from + (mode ? " raised" : " dropped") + " your fame";
+  L841   ' your fame'
+        line = from + (mode ? " raised" : " dropped") + " your fame";
+  L877   ' reached Lv.'
+        std::string line = std::string("<") + tag + "> " + name + " reached Lv." + std::to_string(level);
+  L908   ' is now married'
+        std::string line = std::string("<") + tag + "> " + name + " is now married";
+
+[Net/Handlers/TradeHandlers.cpp] 8 处
+  L132   'Minigame room'
+        std::string tip = "Minigame room";
+  L146   ' · Omok'
+        if (game_type == 1) tip += " · Omok";
+  L147   ' · MatchCard'
+        else if (game_type == 2) tip += " · MatchCard";
+  L288   ' wants to trade. Accept?'
+        std::string msg = name + " wants to trade. Accept?";
+  L406   'Card turn='
+        std::string tip = "Card turn=" + std::to_string(turn) + " #" + std::to_string(slot);
+  L436   'Trade success'
+        op == 6 ? "Trade success" : ("Trade result " + std::to_string(op)));
+  L436   'Trade result '
+        op == 6 ? "Trade success" : ("Trade result " + std::to_string(op)));
+  L456   'Room mode '
+        std::string tip = "Room mode " + std::to_string(mode);
+
+[Net/Handlers/DueyHandlers.cpp] 6 处
+  L114   'Quick delivery — use Send tab'
+        ui->show_notice("Quick delivery — use Send tab");
+  L128   'Duey notice'
+        std::string tip = (mode < 0x17) ? msgs[mode] : "Duey notice";
+  L160   ' sent you a quick package.'
+        std::string tip = from + (quick ? " sent you a quick package." : " sent you a package.");
+  L160   ' sent you a package.'
+        std::string tip = from + (quick ? " sent you a quick package." : " sent you a package.");
+  L178   'You have unchecked Duey packages.'
+        ui->show_notice("You have unchecked Duey packages.");
+  L190   'Duey mode '
+        std::string tip = "Duey mode " + std::to_string(mode);
+
+[IO/UITypes/UIKeyConfig.cpp] 5 处
+  L729   'Would you like to revert to default settings?'
+        static const std::string& message = "Would you like to revert to default settings?";
+  L757   'Would you like to clear all key bindings?'
+        static const std::string& message = "Would you like to clear all key bindings?";
+  L951   'AutoHP itemId|empty=show'
+        }, []() {}, hp ? "AutoHP itemId|empty=show" : "AutoMP itemId|empty=show");
+  L951   'AutoMP itemId|empty=show'
+        }, []() {}, hp ? "AutoHP itemId|empty=show" : "AutoMP itemId|empty=show");
+  L994   'Do you want to save your changes?'
+        static const std::string& message = "Do you want to save your changes?";
+
+[IO/UITypes/UIWedding.cpp] 5 处
+  L59    'Wedding invite'
+        std::string body = msg.empty() ? "Wedding invite" : msg;
+  L68    'Wedding invite'
+        std::string body = msg.empty() ? "Wedding invite" : msg;
+  L125   'Wedding invite'
+        std::string body = msg.empty() ? "Wedding invite" : msg;
+  L135   'Wedding invite'
+        std::string body = msg.empty() ? "Wedding invite" : msg;
+  L174   'Wedding invite'
+        std::string body = msg.empty() ? "Wedding invite" : msg;
+
+[IO/Components/SkillTooltip.cpp] 4 处
+  L56    'Master Level'
+        const std::string mltag = "Master Level";
+  L86    '#cAvailable until'
+        const std::string exptag = "#cAvailable until";
+  L109   '[Current Level: '
+        levelstr += "[Current Level: " + std::to_string(level) + "]\\n" + data.get_level_desc(level);
+  L115   '[Next Level: '
+        levelstr += "[Next Level: " + std::to_string(level + 1) + "]\\n" + data.get_level_desc(level + 1);
+
+[IO/UITypes/UIShop.cpp] 4 处
+  L813   'How many are you willing to buy?'
+        constexpr const char* question = "How many are you willing to buy?";
+  L826   'Are you sure you want to buy it?'
+        constexpr const char* question = "Are you sure you want to buy it?";
+  L929   'How many are you willing to sell?'
+        constexpr const char* question = "How many are you willing to sell?";
+  L948   'Are you sure you want to sell it?'
+        constexpr const char* question = "Are you sure you want to sell it?";
+
+[Net/Handlers/CashShopHandlers.cpp] 4 处
+  L450   'Name change ok'
+        cs_tip(mode == static_cast<int8_t>(0x9E) ? "Name change ok" : "World transfer ok");
+  L450   'World transfer ok'
+        cs_tip(mode == static_cast<int8_t>(0x9E) ? "Name change ok" : "World transfer ok");
+  L564   'JACKPOT #'
+        cs_tip((jackpot ? "JACKPOT #" : "Gacha #") + std::to_string(reward_id)
+  L564   'Gacha #'
+        cs_tip((jackpot ? "JACKPOT #" : "Gacha #") + std::to_string(reward_id)
+
+[Net/Handlers/GuildHandlers.cpp] 3 处
+  L161   ' expelled'
+        name + (mode == 0x2f ? " expelled" : " left guild"));
+  L161   ' left guild'
+        name + (mode == 0x2f ? " expelled" : " left guild"));
+  L187   'Guild notice'
+        ensure_sm(Color::Name::YELLOW, notice.empty() ? "Guild notice" : notice);
+
+[Net/Handlers/TestingHandlers.cpp] 3 处
+  L62    'PIC check reason='
+        std::string tip = "PIC check reason=" + std::to_string(reason);
+  L121   'SFX '
+        ad->set_message("SFX " + path);
+  L179   'FieldFX '
+        ad->set_message("FieldFX " + std::to_string(mode) + " " + path);
+
+[Util/Resource/ResourceService.cpp] 3 处
+  L237   'lazy-nodes '
+        << (caps.lazy_nodes ? "lazy-nodes " : "")
+  L238   'lazy-bitmap '
+        << (caps.lazy_bitmap ? "lazy-bitmap " : "")
+  L239   'audio-stream '
+        << (caps.audio_stream ? "audio-stream " : "")
+
+[IO/UITypes/UIAlliance.cpp] 2 处
+  L178   'Alliance notice'
+        }, []() {}, cur.empty() ? "Alliance notice" : ("Notice (cur=" + cur.substr(0, 24) + ")"));
+  L178   'Notice (cur='
+        }, []() {}, cur.empty() ? "Alliance notice" : ("Notice (cur=" + cur.substr(0, 24) + ")"));
+
+[Net/Handlers/BuddyHandlers.cpp] 2 处
+  L98    ' wants to be your buddy. Accept?'
+        std::string msg = nameFrom + " wants to be your buddy. Accept?";
+  L162   'Buddy mode '
+        std::string tip = msg ? msg : ("Buddy mode " + std::to_string(mode));
+
+[Net/Handlers/FredrickHandlers.cpp] 2 处
+  L112   'Fredrick updated'
+        ui->show_notice("Fredrick updated");
+  L124   'Fredrick mode 0x'
+        std::string tip = "Fredrick mode 0x" + std::to_string(mode);
+
+[Net/Handlers/InventoryHandlers.cpp] 2 处
+  L289   'Skill '
+        std::string tip = "Skill " + std::to_string(skill) + " learned";
+  L289   ' learned'
+        std::string tip = "Skill " + std::to_string(skill) + " learned";
+
+[Net/Handlers/NpcInteractionHandlers.cpp] 2 处
+  L152   'Shop ok'
+        std::string tip = mode == 0 ? "Shop ok" : ("Shop err " + std::to_string(mode));
+  L152   'Shop err '
+        std::string tip = mode == 0 ? "Shop ok" : ("Shop err " + std::to_string(mode));
+
+[Net/Handlers/PartyHandlers.cpp] 2 处
+  L70    ' found you via Party Search. Join their party?'
+        ? (display + " found you via Party Search. Join their party?")
+  L180   'Party mode '
+        std::string tip = msg ? msg : ("Party mode " + std::to_string(mode));
+
+[Net/Handlers/SetFieldHandlers.cpp] 2 处
+  L62    ' enter_game='
+        + " enter_game=" + (enter_game ? "1" : "0"));
+  L68    '[SetField] unload_atlas (enter_game)'
+        ? "[SetField] unload_atlas (enter_game)"
+
+[Net/Session.cpp] 2 处
+  L41    '[SEND] PacketDump : '
+        std::string line = outbound ? "[SEND] PacketDump : " : "[RECV] PacketDump : ";
+  L41    '[RECV] PacketDump : '
+        std::string line = outbound ? "[SEND] PacketDump : " : "[RECV] PacketDump : ";
+
+[Util/BootSplash.cpp] 2 处
+  L298   ' total='
+        << " total=" << total << "ms" << (skipped ? " (skipped)" : ""));
+  L298   ' (skipped)'
+        << " total=" << total << "ms" << (skipped ? " (skipped)" : ""));
+
+[Data/SkillData.cpp] 1 处
+  L274   'Missing level description.'
+        static const std::string null_level = "Missing level description.";
+
+[IO/UITypes/UIComboCounter.cpp] 1 处
+  L49    ' Combo'
+        label.change_text(std::to_string(combo) + " Combo");
+
+[IO/UITypes/UICommonCreation.cpp] 1 处
+  L869   ' female='
+        + " female=" + (female ? "1" : "0")
+
+[IO/UITypes/UIItemInventory.cpp] 1 处
+  L1716  'How many will you drop?'
+        constexpr const char* dropmessage = "How many will you drop?";
+
+[IO/UITypes/UIMessenger.cpp] 1 处
+  L236   ' Ch.'
+        label += " Ch." + std::to_string(channel + 1);
+
+[IO/UITypes/UIParty.cpp] 1 处
+  L80    ' (Lv.'
+        std::string info = m.name + " (Lv." + std::to_string(m.level) + " J" + std::to_string(m.job) + ")";
+
+[IO/UITypes/UIWorldSelect.cpp] 1 处
+  L216   'Ver. '
+        version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+
+[Net/Handlers/AllianceHandlers.cpp] 1 处
+  L110   'Alliance notice'
+        ensure_sm(Color::Name::YELLOW, notice.empty() ? "Alliance notice" : notice);
+
+[Net/Handlers/CommonHandlers.cpp] 1 处
+  L44    'LimitBreak '
+        std::string tip = "LimitBreak " + std::to_string(lb);
+
+[Net/Handlers/HiredMerchantBoxHandlers.cpp] 1 处
+  L48    'Shop #'
+        const std::string label = owner.empty() ? ("Shop #" + std::to_string(itemId)) : owner;
+
+[Net/Handlers/MessengerHandlers.cpp] 1 处
+  L101   ' has invited you to Maple Messenger.'
+        std::string msg = from + " has invited you to Maple Messenger.";

@@ -1,0 +1,108 @@
+# R27-B1c-5b 门禁读数（2026-11-03）
+
+批次范围：Wave-A 壳窗 + 少量在用窗的**非软键盘**展示文案站点，24 个 TU / 98 个新键。
+键名与值的台账：[keys-5b.txt](keys-5b.txt)；待取证登记：[pending-copy.md](pending-copy.md) §「B1c-5b」。
+
+## 1. 编译（`cl /c`，24 TU 一次过）
+
+```
+build_5b.bat  →  CL_EXIT=0   error 行 0   warning 行 43
+```
+
+**本批最后一次改动（§5.2 的两条保真修复动了 `UIDelivery.cpp`）之后整批 24 TU 重编一次**，读数同上：
+`CL_EXIT=0`、error 0 行、warning 43（`C4005` 24 / `C4101` 1 / `C4244` 1 / `C4267` 17）。
+
+warning 全是存量四档（`C4005` USE_NX 宏重定义 / `C4101` 未用局部 / `C4244` `C4267` 窄化），
+与本批无关；日志 `E:\project\_b1c_check\cl_5b_final.txt`（临时件，不入库）。
+
+## 2. 键门禁（`tools/check_locale_keys.py`）
+
+```
+zh-CN keys = 288
+en-US keys = 288
+动态前缀 equip.speed.(9) equip.stat.(15) equip.type.(32) …  zh 缺 0 / en 缺 0
+代码引用键 215 个 / 动态前缀 5 个
+GATE OK
+```
+
+190（B1c-5a 收口时）→ **288**：本批 +98，两份同键同值（决策 B）。反向门禁同步通过 ⇒
+「代码引用 ⇒ ini 有档」这条对本批成立。
+
+## 3. 站点门禁（`tools/scan_display_text.py`，四形状）
+
+```
+sites=644  latin=644  shell=583  live=61  cjk=0  wl=17  shells=56
+shapes = change_text=207 / Text ctor=11 / SoftKey hint=426
+```
+
+713（§10.1 基线）→ **644**，减 69 = 本批 24 文件的全部非软键盘站点。
+逐文件复核（`E:\project\_b1c_check\check_residual.py`）：**24 文件余「非软键盘」站点 = 0**，
+剩下的全是 `SoftKey hint` 档（合计 110 处），按台账 §11 第 6 条等用户裁决，本批不动。
+
+## 4. 第五把尺复测（`tools/scan_copy_blindspots.py`）
+
+```
+candidates=387  files=34        （建尺时 469 / 54）
+```
+
+24 文件里该尺现在还报的候选只剩一处、两条：`IO/UITypes/UIAlliance.cpp:178`
+
+```cpp
+}, []() {}, cur.empty() ? "Alliance notice" : ("Notice (cur=" + cur.substr(0, 24) + ")"));
+```
+
+是软键盘第三实参的**三元形态**（第四形状的 `\}\s*,\s*"…"` 收不到它），归软键盘档，本批不接。
+其余候选已随本批清零 ⇒ 这条尺对本批的增量贡献 = 26 处（469−387−软键盘/他窗的自然减少，见 §6.2）。
+
+## 5. 新增两把自证尺（本批立，负对照验过，**收尾时已并进 `tools/`**）
+
+### 5.1 占位符 arity（`tools/check_placeholder_arity.py`，读数详单 [gate-r27-b1c5b-arity.txt](gate-r27-b1c5b-arity.txt)）
+
+`Locale::format` 只认第一个 `{}`、`format_all` 按序填；ini 值占位符与实参个数不匹配**不报错**，
+只在界面上留裸 `{}` 或把值拼到句尾。新尺对全站调用点配平实参列表与 ini 占位符数，
+`Locale::enum_key("equip.stat.", …)` 这种运行时拼键的整族查：
+
+```
+python tools/check_placeholder_arity.py --both
+arity 校验调用点 = 318 | 不合格 = 0 | 判据 = locale/zh-CN.ini + locale/en-US.ini
+```
+
+负对照两轮（改坏 `locale/zh-CN.ini` 三条值：`equip.stat.STR` 加占位、`delivery.row_meso` 加占位、
+`delivery.fee_calc` 减占位）⇒ 三条全部按 `文件:行 + 现值` 指出，跑完 ini 按备份原样还回（md5 一致）。
+第一轮**因破坏脚本静默 no-op 只验到两条**，第二轮起脚本自证三条落地 —— 详见详单。
+
+### 5.2 值保真（`tools/check_value_fidelity.py`，读数详单 [gate-r27-b1c5b-fidelity.txt](gate-r27-b1c5b-fidelity.txt)）
+
+决策 B 的口径是「值 = 改动前那条英文字面量」，但把 `"… " + var + "m"` 接成 `Locale::format` 时，
+挂在变量后面的标点容易被吃掉 —— 编译和键门禁都不响。新尺把每条 ini 值按 `{}` 切成片段，
+逐段回查该 TU 在 **HEAD** 的原文（`--ini` 让真源 ini 参与，防「表与 ini 漂了没人查」；**必须在提交前跑**）：
+
+```
+值保真：ini 真源 98 键 | 片段全部命中 HEAD = 98 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
+```
+
+这条尺在本批**先抓出两个真缺陷**（都是 `apply_5b.py` 生成时丢的），已修：
+
+| 站点 | 改动前 | 首版接入 | 现在 |
+| --- | --- | --- | --- |
+| `UIDelivery.cpp:73` | `p.sender + "  " + mesos + "m"` | 值 `{}`（**尾缀 `m` 丢了**，且两个数据位挤一个占位符） | 值 `{}  {}m` + `format_all` 两参 |
+| `UIDelivery.cpp:75` | `"  item:" + id`（两空格） | 值 `item:{}` + 代码 `" " +` ⇒ 少一格 | 代码补回 `"  "` |
+
+## 6. 版式回归（`tools/layout.py check` × 10 spec）
+
+```
+specs=10 非零返回=0（逐张 rc=0、61 项断言全过，明细见 [layout-b1c5b.txt](layout-b1c5b.txt)）
+```
+
+本批只加 i18n 调用点，未动任何渲染常数 ⇒ 十张 spec 对自己的 oracle 帧应全 Δ=0，实读一致。
+**这不等于真机逐格验收**（那要客户帧），运行时负对照仍欠，理由见 §9.6 / §8.5 同条：
+`MapleStory.exe` 占着 OutDir，须用户自行关闭客户端后整包 `-t:Rebuild`。
+
+## 7. 一个流程教训（记下来）
+
+`apply_5b.py` 的 97 条规则是**按形状**替换的，替换本身全命中，但两处把标点交给「人记得写进值里」——
+于是标点丢了，而当时四把尺全绿。判据应当是**机器可判的等式**（arity、保真回查），不是「看起来对」。
+这两把尺**本批收尾时已并进 `tools/`**（`check_placeholder_arity.py` / `check_value_fidelity.py`），
+并在 PLAN §4 门禁表登记为第 7 条（此后每个 i18n 批次必跑）。并进仓库当轮就复踩了一次 §9.2 那类事故：
+`ROOT` 少上一层 ⇒ 扫不到源码 ⇒ `调用点 = 0 | 不合格 = 0`、**rc=0 假绿**；现在工具自己拒出这种报告
+（判据/源码目录缺失 `rc=2`，`checked == 0` 追加 `FALSE-GREEN` 行）。临时件仍在 `E:\project\_b1c_check\`。

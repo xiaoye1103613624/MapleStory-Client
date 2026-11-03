@@ -33,6 +33,7 @@
 #include <cstdio>
 #include <vector>
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -120,7 +121,8 @@ namespace ms
 		// 这一片文案只在 init_texts() 写、之后只 draw（已逐个全文核过没有第二个写入点）
 		// => 全部进绑定表，切语言时已经开着的窗立刻换字。title_text 的 "DAILY GIFT" 是
 		// 英文原值，按批次归 B1c-5 的英文档，本批只动中文。
-		title_text = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::YELLOW, "DAILY GIFT");
+		title_text = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::YELLOW);
+		bind_text(title_text, "dailygift.title");
 		banner_sub = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
 		bind_text(banner_sub, "dailygift.banner_sub");
 		banner_main = Text(Text::Font::A18M, Text::Alignment::LEFT, Color::Name::WHITE);

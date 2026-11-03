@@ -1,0 +1,29 @@
+值保真尺读数与负对照（R27-B1c-5b，2026-11-03）
+
+尺已提进仓库：tools/check_value_fidelity.py（**提交前**跑：判据取自 `HEAD`，commit 后 `HEAD`
+就变成改后源码 ⇒ 假阳性；复查历史批要把它 `head()` 里的 rev 换成该批父提交）。
+
+## 正测（本批 98 键，ini 当真源）
+
+    值保真：ini 真源 98 键 | 片段全部命中 HEAD = 98 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
+
+zh-CN 与 en-US **各跑一遍**，读数相同（决策 B：两份同值）。zh 那份归档在
+[gate-r27-b1c5b-fidelity-promoted.txt](gate-r27-b1c5b-fidelity-promoted.txt)。
+
+## 这条尺在本批抓到的两条**自伤**（建键时写坏值）
+
+- `delivery.row_meso`：丢金币行尾缀 `m`，且把「发送者 + 金额」两个插值塌成一个占位
+  ⇒ 改回 `{}  {}m` + `format_all({p.sender, std::to_string(p.mesos)})`。
+- `delivery.row_item`：原文两个空格只剩一个。
+
+两条都不报错、不崩、键门禁与 arity 尺也不响 —— 只有拿旧文件逐段对才看得见。
+
+## 负对照
+
+改坏 ini 一条值（`delivery.row_meso` 尾缀塞进「 元」）后：
+
+    值保真：ini 真源 98 键 | 片段全部命中 HEAD = 97 | 片段查无 = 1 | …
+      delivery.row_meso  值='{}  {}m  {}'  片段在 HEAD 查无=['m  ']  代码在=UIDelivery.cpp
+
+另用改坏的键表（键名改成 `memo.COUNT_TYPO`）验「源码无引用」档：正确落该类报警。
+跑完 ini 按备份原样还回，md5 前后一致 `17e7c7223a4a831803fafaf320ddd51d`。

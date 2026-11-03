@@ -7,6 +7,7 @@
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -43,13 +44,12 @@ UICashGachapon::UICashGachapon() : has_assets(false),
 }
 void UICashGachapon::set_result(int32_t reward_id, int8_t qty, int32_t remaining, bool jackpot)
 {
-	std::string tip = (jackpot ? "JACKPOT #" : "Gacha #") + std::to_string(reward_id)
-		+ " x" + std::to_string(qty) + " left=" + std::to_string(remaining);
-	status.change_text(tip);
+	status.change_text(Locale::format_all(jackpot ? "gachapon.jackpot" : "gachapon.reward",
+		{ std::to_string(reward_id), std::to_string(qty), std::to_string(remaining) }));
 }
 void UICashGachapon::set_failed()
 {
-	status.change_text("Gacha failed");
+	status.change_text(Locale::text("gachapon.failed"));
 }
 void UICashGachapon::draw(float inter) const {
 	if (!has_assets) return;

@@ -7,6 +7,7 @@
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -49,7 +50,7 @@ UIRemoteGachapon::UIRemoteGachapon() : has_assets(false),
 }
 void UIRemoteGachapon::set_result(int8_t mode)
 {
-	status.change_text("Gacha box mode=" + std::to_string(mode));
+	status.change_text(Locale::format("remotegacha.box_mode", std::to_string(mode)));
 }
 void UIRemoteGachapon::draw(float inter) const {
 	if (!has_assets) return;

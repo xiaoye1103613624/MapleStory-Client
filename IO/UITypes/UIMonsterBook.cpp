@@ -134,7 +134,7 @@ namespace ms
 				{
 					selected_card_id = cards[row].id;
 					MonsterBookSetCoverPacket(cards[row].id).dispatch();
-					cover_label.change_text("Cover: " + monster_name(cards[row].id));
+					cover_label.change_text(Locale::format("monsterbook.label_cover", monster_name(cards[row].id)));
 				}
 			}
 		}
@@ -149,7 +149,7 @@ namespace ms
 		if (keycode == 'C' || keycode == 'c') {
 			if (selected_card_id > 0) {
 				MonsterBookSetCoverPacket(selected_card_id).dispatch();
-				cover_label.change_text("Cover: " + monster_name(selected_card_id));
+				cover_label.change_text(Locale::format("monsterbook.label_cover", monster_name(selected_card_id)));
 				LOG(LOG_DEBUG, "UIMonsterBook: cover selected=" << selected_card_id);
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& s) {
@@ -158,7 +158,7 @@ namespace ms
 						if (id > 0) {
 							selected_card_id = static_cast<int16_t>(id);
 							MonsterBookSetCoverPacket(selected_card_id).dispatch();
-							cover_label.change_text("Cover id=" + s);
+							cover_label.change_text(Locale::format("monsterbook.cover_id", s));
 							LOG(LOG_DEBUG, "UIMonsterBook: SoftKey cover=" << id);
 						}
 					} catch (...) {}
@@ -187,7 +187,7 @@ namespace ms
 						return;
 					}
 				}
-				cover_label.change_text("Not found");
+				cover_label.change_text(Locale::text("monsterbook.not_found"));
 			}, []() {}, "card id|name");
 		}
 	}

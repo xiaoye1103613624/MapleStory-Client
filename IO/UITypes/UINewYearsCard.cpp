@@ -15,6 +15,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -70,17 +71,17 @@ namespace ms
 	void UINewYearsCard::begin_compose()
 	{
 		auto ask_msg = [this](const std::string& to) {
-			if (to.empty()) { tip_label.change_text("Need receiver"); return; }
+			if (to.empty()) { tip_label.change_text(Locale::text("nycard.need_receiver")); return; }
 			pending_receiver = to;
-			tip_label.change_text("To " + to + " — msg SoftKey");
+			tip_label.change_text(Locale::format("nycard.to", to));
 			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
 				int16_t slot = 0; int32_t itemid = 0;
 				if (!find_card(slot, itemid)) {
-					tip_label.change_text("No New Year card");
+					tip_label.change_text(Locale::text("nycard.no_card"));
 					return;
 				}
 				NewYearCardSendPacket(slot, itemid, pending_receiver, msg).dispatch();
-				tip_label.change_text("Sent to " + pending_receiver);
+				tip_label.change_text(Locale::format("nycard.sent_to", pending_receiver));
 			}, []() {}, "NY message");
 		};
 		std::string pre;

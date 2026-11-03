@@ -25,6 +25,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -89,20 +90,20 @@ namespace ms
 		this->guild_names = gnames;
 		(void)ranks;
 
-		name_label.change_text("Alliance: " + name);
-		notice_label.change_text("Notice: " + notice);
+		name_label.change_text(Locale::format("alliance.name_line", name));
+		notice_label.change_text(Locale::format("alliance.notice_line", notice));
 		refresh_guild_label();
 	}
 
 	void UIAlliance::set_notice(const std::string& notice)
 	{
 		alliance_notice = notice;
-		notice_label.change_text("Notice: " + notice);
+		notice_label.change_text(Locale::format("alliance.notice_line", notice));
 	}
 
 	void UIAlliance::refresh_guild_label()
 	{
-		std::string txt = "Guilds (" + std::to_string(guilds.size()) + "):";
+		std::string txt = Locale::format("alliance.guilds_header", std::to_string(guilds.size()));
 		for (size_t i = 0; i < guilds.size(); i++)
 		{
 			txt += " ";

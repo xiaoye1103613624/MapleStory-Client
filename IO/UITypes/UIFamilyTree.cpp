@@ -13,6 +13,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -50,7 +51,7 @@ namespace ms
 		put(BtLeft, "BtLeft", 40, 180);
 		put(BtRight, "BtRight", 500, 180);
 		put(BtJunior, "BtJuniorEntry", 200, static_cast<int16_t>(dimension.y() - 36));
-		header.change_text("Family Tree");
+		header.change_text(Locale::text("familytree.header"));
 		LOG(LOG_DEBUG, "UIFamilyTree: shell open");
 #endif
 	}
@@ -65,16 +66,14 @@ namespace ms
 		for (const auto& e : entries) {
 			Text t(Text::Font::A11M, Text::Alignment::LEFT,
 				e.online ? Color::Name::GREEN : Color::Name::BLACK);
-			std::string line = e.name + " Lv." + std::to_string(e.level)
-				+ (e.online ? " [ON]" : " [OFF]")
-				+ " rep " + std::to_string(e.rep);
+			std::string line = e.name + " " + Locale::format("familytree.level", std::to_string(e.level))
+				+ " " + Locale::text(e.online ? "familytree.online" : "familytree.offline")
+				+ " " + Locale::format("familytree.rep", std::to_string(e.rep));
 			t.change_text(line);
 			name_labels.push_back(std::move(t));
 		}
-		header.change_text(
-			"Pedigree (" + std::to_string(entries.size()) + " members)"
-			+ (add_enabled ? " — can add junior" : "")
-		);
+		header.change_text(Locale::format("familytree.pedigree", std::to_string(entries.size()))
+			+ (add_enabled ? (" " + Locale::text("familytree.can_add")) : ""));
 		LOG(LOG_DEBUG, "UIFamilyTree: chart viewed=" << viewed_id << " n=" << entries.size());
 	}
 
@@ -141,7 +140,7 @@ namespace ms
 		} else if (keycode == 'X' || keycode == 'x') {
 			if (const FamilyTreeEntry* e = selected_entry()) {
 				int32_t id = e->chr_id;
-				UI::get().emplace<UIYesNo>("Separate junior " + e->name + "?", [id](bool yes) {
+				UI::get().emplace<UIYesNo>(Locale::format("family.ask_separate", e->name), [id](bool yes) {
 					if (!yes) return;
 					FamilySeparateSeniorPacket(id).dispatch();
 					LOG(LOG_DEBUG, "UIFamilyTree: Separate cid=" << id);
@@ -151,7 +150,7 @@ namespace ms
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					from_ci = ci->get_target_cid();
 				if (from_ci > 0) {
-					UI::get().emplace<UIYesNo>("Separate junior cid " + std::to_string(from_ci) + "?", [this, from_ci](bool yes) {
+					UI::get().emplace<UIYesNo>(Locale::format("family.ask_separate_cid", std::to_string(from_ci)), [this, from_ci](bool yes) {
 						if (!yes) return;
 						selected_cid = from_ci;
 						FamilySeparateSeniorPacket(from_ci).dispatch();
@@ -160,7 +159,7 @@ namespace ms
 				} else {
 					UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
 						if (id_s.empty()) {
-							UI::get().emplace<UIYesNo>("Leave your senior and fork the family?", [](bool yes) {
+							UI::get().emplace<UIYesNo>(Locale::text("family.ask_leave"), [](bool yes) {
 								if (!yes) return;
 								FamilySeparateJuniorPacket().dispatch();
 							});

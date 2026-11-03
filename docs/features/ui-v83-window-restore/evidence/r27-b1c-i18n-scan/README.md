@@ -407,5 +407,72 @@ UIAriantMatch 5 / UICharInfo 4 / UIMonsterBook 4 / UINewYearsCard 4 / UIPartyRac
 > 口径提醒：本台账只记「原生能裁的」。存档迁移、是否加配置开关、部署方式这类**我方内部工程选择**
 > 原生不会回答，仍按原样挂着，不冒充「已按原生定案」。
 
+## 12. B1c-5b（壳窗第二批 · 24 文件 98 键）落地（2026-11-03）
+
+范围（24 个 `.cpp`，与 `cl /c` 编译单元一一对应）：`UIAdmin` 7、`UIAlliance` 4、`UIAriantMatch` 5、
+`UICashGachapon` 2、`UICashShop` 2（+2 个 `bind_text`）、`UICharInfo` 5、`UIClock` 4、
+`UIDailyGift`（10 个 `bind_text`）、`UIDelivery` 13、`UIFamily` 8、`UIFamilyTree` 9、`UIMTS` 7、
+`UIMaker` 5、`UIMapleTV` 1、`UIMegaphone`（含 `UIAvatarMegaphone`）3、`UIMemo` 9、`UIMinigame` 6、
+`UIMonsterBook` 9、`UIMonsterCarnival` 5、`UINewYearsCard` 4、`UIPartyRace` 4、`UIPartySearch` 5、
+`UIRemoteGachapon` 1、`UIStoreBank` 6 —— 数字是**直接 `Locale::` 调用点数**。键 98 个，
+zh / en 同值（决策 B，键表 [keys-5b.txt](keys-5b.txt)，台账见 §B1c-5b 段），站点零措辞改动。
+
+### 12.1 本批立的两个新洞与补上的两把尺
+
+**洞一：反向门禁形同虚设之外，「建完键」本身也没有尺。** `Locale::format` 只填第一个 `{}`、
+`format_all` 按序填 —— 占位符比实参多，界面上留裸 `{}`；比实参少，值直接拼在句尾。**两种都不报错、
+不崩**，肉眼之外无人知晓。98 条值一旦写进 ini，这个风险就从「一条」变成「全站」。
+
+⇒ 新增 [../../tools/check_placeholder_arity.py](../../tools/check_placeholder_arity.py)：拿 ini 当判据，
+逐个调用点对齐「实参数 / `{}` 数」；`format` 额外要求**恰好 1 个**（多了会留裸 `{}`，少了根本没法填）；
+`Locale::enum_key("equip.stat.", …)` 这种运行时拼键的，改查**该前缀下全部键**是否符合契约。
+`--both` 让 zh / en 各按各的值查。
+
+**洞二：忠实度无人复核。** 建键是把字面量从代码搬进 ini，搬的时候**改动值**（丢单位、丢空格、
+把两个插值合成一个占位）不会有任何编译或运行期信号。本批人工比对 `git diff` 抓到两条真缺陷：
+- `delivery.row_meso`：丢了金币行的尾缀 `m`，还把「发送者 + 金额」两个插值塌成一个占位
+  ⇒ 改回 `{}  {}m` + `format_all({p.sender, std::to_string(p.mesos)})`；
+- `delivery.row_item`：原文两个空格只剩一个。
+
+⇒ 新增 [../../tools/check_value_fidelity.py](../../tools/check_value_fidelity.py)（判据：ini 值里每一段
+**非占位符**片段必须在**该键引用处的 HEAD 旧文件**里逐字出现；`--ini` 让真源 ini 参与校验，键表只当
+本批键清单，防「表与 ini 漂了没人查」）：98/98 通过，见 [gate-r27-b1c5b-fidelity.txt](gate-r27-b1c5b-fidelity.txt)。
+**这条尺必须在提交前跑** —— 它拿 `HEAD` 当原文，commit 之后 `HEAD` 就是改后代码，会变假阳性。
+教训记一句：**「搬过去」不等于「搬对了」**，凡是机械搬运，验收判据必须回到原文逐字对。
+
+### 12.2 负对照差点自己骗了自己（两次）
+
+新尺必须先证明**有牙**再拿去放行，本批这里踩了两层：
+
+1. 工具从临时目录提进 `tools/` 时 `ROOT` 少上了一层，落到 `docs/`，扫不到任何源码 ——
+   输出 `调用点 = 0 | 不合格 = 0`、**rc=0**。这就是 §9.2 同一类事故的复发：**空跑看着像全过**。
+   ⇒ 现在两道闸都在工具里：判据/源码目录缺失直接 `rc=2` 拒出报告；`checked == 0` 时报告追加
+   `FALSE-GREEN` 行。
+2. 第一次负对照**没验到 arity**：脚本用 `str.replace` 改坏 3 条值，其中一条目标写成了英文原文，
+   而 zh 值当时另有措辞 ⇒ replace 静默 no-op，报告显示只抓到 2 条。若不去查为什么少一条，
+   就会把「尺子没牙」读成「值没问题」。⇒ 破坏脚本现在**自证三条都落地**（缺一条 `rc=3`）。
+   重跑后 3/3 命中、zh 备份原样还回（md5 一致）。
+
+### 12.3 门禁读数（本批）
+
+| 尺 | 读数 |
+| --- | --- |
+| `check_locale_keys.py` | 288/288 键齐（zh + en），代码引用 215、动态前缀 5 ⇒ GATE OK |
+| `check_placeholder_arity.py --both` | 调用点 **318**，不合格 **0**；负对照 3/3 命中 [gate-r27-b1c5b-arity.txt](gate-r27-b1c5b-arity.txt) |
+| 忠实度尺 | 98/98 片段逐字命中 [gate-r27-b1c5b-fidelity.txt](gate-r27-b1c5b-fidelity.txt) |
+| `scan_display_text.py` | 站点 713 ⇒ **644**（壳窗 583 / 在用 61；形状 change_text 207 / `Text` 构造 11 / SoftKey 提示 426） |
+| `scan_copy_blindspots.py` | 候选 469 ⇒ **387 / 34 文件**；24 个本批文件内残留 = 0（`UIAlliance.cpp:178` 是 SoftKey 三元提示，属 §9.3 第四形状，不在本批范围） |
+| `cl /c`（24 TU） | `CL_EXIT=0`，**0 error** / 43 warning，全是既有类 C4005 C4101 C4244 C4267 |
+| 版式自回归 `layout.py` | 10 条 spec 全 rc=0，未因加 `#include "../../Util/Locale.h"` 影响任何几何 |
+
+### 12.4 欠账（本批明确不闭环）
+
+- **文案还是英文**：决策 B 通的是**机制与键位**。98 条值照抄原英文，界面看不出变化，这是预期而不是漏做；
+  中文措辞的输入就是 [pending-copy.md](pending-copy.md) 的 §B1c-5b 段（98 行，「建议取证来源」统一记
+  「本包自造，无原生依据」—— 逐条编一个节点名会让这张表失去可信度）。
+- **SoftKey 提示 426 处**：按 §11 第 6 条，原生 v83 不启用软键盘，本批**未建键**，等用户裁决。
+- **zh / en 当前同值**：两份 ini 内容一致，运行时切换看不出差别；真正差异化翻译属文案批次。
+
+
 
 

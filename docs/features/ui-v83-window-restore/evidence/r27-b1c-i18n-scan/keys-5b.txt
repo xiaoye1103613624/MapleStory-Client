@@ -1,0 +1,102 @@
+# R27-B1c-5b 建键表：key=英文原值（决策 B：保持英文原值，只建键）
+# 值 = 改动前代码里的那条字面量原样；`{}` 是被替换掉的变量插点位。
+# zh-CN.ini / en-US.ini 都从这张表写，两边同值；`# 禁译` 组注释跟着 ini 走。
+# 变量插点位两侧需要空格的，空格写在 ini 值里（加载器只 trim 两端，中间保留）。
+admin.title=Admin — SoftKey announce
+admin.show_users=ShowUsers
+admin.alert_admins=AlertAdmins
+alliance.name_line=Alliance: {}
+alliance.notice_line=Notice: {}
+alliance.guilds_header=Guilds ({}):
+ariants.title=Ariant
+ariants.result=Result {}
+gachapon.jackpot=JACKPOT #{} x{} left={}
+gachapon.reward=Gacha #{} x{} left={}
+gachapon.failed=Gacha failed
+cashshop.stub_job=Illium
+cashshop.stub_name=ShomeiZekkou
+cashshop.meta=CS inv {} gift {} wish {}
+cashshop.meta_stor=stor{}
+charinfo.medal_stub=Junior Adventurer
+charinfo.pet_wish=Pet {} Wish {}
+charinfo.medal_id=Medal#{}
+charinfo.married=Married
+charinfo.book_count=Book {}
+clock.seconds_left={}s
+clock.title=Clock
+clock.zero=0s
+dailygift.title=DAILY GIFT
+delivery.row_meso={}  {}m
+delivery.row_item=item:{}
+delivery.no_packages=No packages.
+delivery.count={} package(s)
+delivery.updated=Package updated.
+delivery.sending_to=Sending to {}…
+delivery.sent=Send {} m={}
+delivery.discard_id=Discard id={}
+delivery.claim_id=Claim id={}
+delivery.fee_help=Fee = TradeFee(mesos) + 5000 (normal)
+delivery.fee_calc=TradeFee({})+5000 = {}
+family.none=(no family)
+family.rep_initial=Rep: 0 / 0
+family.rep_line=Rep {}/{} today {} jr {}/{}
+family.priv_count=Priv x{}
+family.ask_separate=Separate junior {}?
+family.ask_separate_cid=Separate junior cid {}?
+family.ask_leave=Leave your senior and fork the family?
+familytree.header=Family Tree
+familytree.level=Lv.{}
+familytree.online=[ON]
+familytree.offline=[OFF]
+familytree.rep=rep {}
+familytree.pedigree=Pedigree ({} members)
+familytree.can_add=— can add junior
+maker.bad_item_id=Bad item id
+maker.craft=Craft {}
+maker.no_recipe=No recipe {}
+maker.cost_meso={} meso
+maker.cost_req=(Lv{})
+mapletv.no_512=No 512* map effect
+megaphone.empty=Empty
+megaphone.no_539=No 539*
+megaphone.sent=Sent…
+minigame.ready=Ready
+minigame.start=Start
+minigame.omok=Omok {}
+minigame.card=Card {}
+monsterbook.cover_id=Cover id={}
+monsterbook.not_found=Not found
+carnival.cp_initial=CP 0/0
+carnival.enemy_initial=EN 0/0
+carnival.title=Carnival
+carnival.cp=CP {}/{}
+carnival.enemy=EN {}/{}
+mts.title=MTS / ITC
+mts.list_line=tab{} type{} p{} n={} slots={}
+mts.cash_line=NX={} MP={}
+mts.status_default=MTS
+mts.item_slot=#{}@{}
+mts.more=…+{}
+mts.no_items=(no items)
+nycard.need_receiver=Need receiver
+nycard.to=To {} — msg SoftKey
+nycard.no_card=No New Year card
+nycard.sent_to=Sent to {}
+partyrace.stage_initial=Stage 0
+partyrace.score_initial=R 0 : 0 B
+partyrace.stage=Stage {}
+partyrace.score=R {} : {} B
+partysearch.range=Range {}
+partysearch.jobs_mask=Jobs mask={}
+partysearch.searching=Searching Lv.{} …
+partysearch.idle=Idle — press Start to search
+remotegacha.box_mode=Gacha box mode={}
+memo.count={} note(s)
+memo.sel_from=Sel {}
+memo.sent_to=Sent→{}
+memo.discard_id=Discard id={}
+memo.notes_count=Notes: {}
+memo.none_selected=No note selected
+memo.no_note=No note
+storebank.mesos=Mesos: {}
+storebank.getall_sent=GetAll sent

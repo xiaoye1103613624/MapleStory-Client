@@ -7,6 +7,7 @@
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -119,14 +120,14 @@ UIElement::Type UIAvatarMegaphone::get_type() const { return TYPE; }
 Button::State UIAvatarMegaphone::button_pressed(uint16_t id) {
 	if (id == BtCancel) { deactivate(); return Button::State::NORMAL; }
 	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) { tip_label.change_text("Empty"); return; }
+		if (msg.empty()) { tip_label.change_text(Locale::text("megaphone.empty")); return; }
 		int16_t slot = 0; int32_t itemid = 0;
 		if (!find_cash_prefix(539, slot, itemid)) {
-			tip_label.change_text("No 539*");
+			tip_label.change_text(Locale::text("megaphone.no_539"));
 			return;
 		}
 		UseAvatarMegaphonePacket(slot, itemid, msg, false).dispatch();
-		tip_label.change_text("Sent…");
+		tip_label.change_text(Locale::text("megaphone.sent"));
 		LOG(LOG_DEBUG, "UIAvatarMegaphone: USE_CASH id=" << itemid);
 	}, []() {}, "Avatar Mega");
 	return Button::State::NORMAL;

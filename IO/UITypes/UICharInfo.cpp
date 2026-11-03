@@ -38,6 +38,7 @@
 #include "UIFamily.h"
 #include "UIItemInventory.h"
 #include "UIMiscShells.h"
+#include "../../Util/Locale.h"
 #include "UIMonsterBook.h"
 #include "UISoftKey.h"
 
@@ -166,7 +167,7 @@ namespace ms
 		try_btn(Buttons::BtArrayGet, collect["BtArrayGet"], bottom_window_adj);
 		try_btn(Buttons::BtArrayName, collect["BtArrayName"], bottom_window_adj);
 
-		medal_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "Junior Adventurer");
+		medal_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, Locale::text("charinfo.medal_stub"));
 		medal_total = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "2");
 
 		collect_dimensions = Texture(collect_backgrnd).get_dimensions();
@@ -691,12 +692,11 @@ namespace ms
 	void UICharInfo::update_extras(int pet_count, int wish_count, int32_t book_cards, int32_t medal_id, bool married)
 	{
 		medal_text.change_text(
-			"Pet " + std::to_string(pet_count)
-			+ " Wish " + std::to_string(wish_count)
-			+ (medal_id ? (" Medal#" + std::to_string(medal_id)) : "")
-			+ (married ? " Married" : "")
+			Locale::format_all("charinfo.pet_wish", { std::to_string(pet_count), std::to_string(wish_count) })
+			+ (medal_id ? (" " + Locale::format("charinfo.medal_id", std::to_string(medal_id))) : "")
+			+ (married ? (" " + Locale::text("charinfo.married")) : "")
 		);
-		medal_total.change_text("Book " + std::to_string(book_cards));
+		medal_total.change_text(Locale::format("charinfo.book_count", std::to_string(book_cards)));
 	}
 
 	void UICharInfo::show_bottom_window(uint16_t buttonid)

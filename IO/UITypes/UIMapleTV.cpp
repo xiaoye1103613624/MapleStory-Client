@@ -9,6 +9,7 @@
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -72,7 +73,7 @@ Button::State UIMapleTV::button_pressed(uint16_t id)
 				UseMapEffectPacket(cash_slot, cash_id, msg).dispatch();
 				LOG(LOG_DEBUG, "UIMapleTV: UseMapEffect id=" << cash_id);
 			} else {
-				tip_label.change_text("No 512* map effect");
+				tip_label.change_text(Locale::text("mapletv.no_512"));
 			}
 		}, []() {}, "MapleTV msg");
 		return Button::State::NORMAL;

@@ -11,6 +11,7 @@
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -50,7 +51,7 @@ namespace ms
 	{
 		notes = std::move(list);
 		selected = notes.empty() ? -1 : 0;
-		tip_label.change_text(std::to_string(notes.size()) + " note(s)");
+		tip_label.change_text(Locale::format("memo.count", std::to_string(notes.size())));
 		LOG(LOG_DEBUG, "UIMemo: notes=" << notes.size());
 	}
 
@@ -95,7 +96,7 @@ namespace ms
 		if (row >= 0 && row < static_cast<int16_t>(notes.size()) && row < 6)
 		{
 			selected = row;
-			tip_label.change_text("Sel " + notes[static_cast<size_t>(row)].from);
+			tip_label.change_text(Locale::format("memo.sel_from", notes[static_cast<size_t>(row)].from));
 			LOG(LOG_DEBUG, "UIMemo: select id=" << notes[static_cast<size_t>(row)].id);
 		}
 		return st;
@@ -120,7 +121,7 @@ namespace ms
 				UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
 					if (msg.empty()) return;
 					NoteSendPacket(to, msg).dispatch();
-					tip_label.change_text("Sent→" + to);
+					tip_label.change_text(Locale::format("memo.sent_to", to));
 				}, []() {}, "Memo message");
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& to) {
@@ -128,7 +129,7 @@ namespace ms
 					UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
 						if (msg.empty()) return;
 						NoteSendPacket(to, msg).dispatch();
-						tip_label.change_text("Sent→" + to);
+						tip_label.change_text(Locale::format("memo.sent_to", to));
 					}, []() {}, "Memo message");
 				}, []() {}, "Memo to");
 			}
@@ -136,7 +137,7 @@ namespace ms
 			if (selected >= 0 && selected < static_cast<int>(notes.size())) {
 				std::vector<int32_t> ids{ notes[static_cast<size_t>(selected)].id };
 				NoteDiscardPacket(ids).dispatch();
-				tip_label.change_text("Discard id=" + std::to_string(ids[0]));
+				tip_label.change_text(Locale::format("memo.discard_id", std::to_string(ids[0])));
 				LOG(LOG_DEBUG, "UIMemo: SoftKey Discard id=" << ids[0]);
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
@@ -145,14 +146,14 @@ namespace ms
 						if (id > 0) {
 							std::vector<int32_t> ids{ id };
 							NoteDiscardPacket(ids).dispatch();
-							tip_label.change_text("Discard id=" + id_s);
+							tip_label.change_text(Locale::format("memo.discard_id", id_s));
 							LOG(LOG_DEBUG, "UIMemo: SoftKey Discard id=" << id);
 						}
 					} catch (...) {}
 				}, []() {}, "Note id");
 			}
 		} else if (keycode == 'R' || keycode == 'r') {
-			tip_label.change_text("Notes: " + std::to_string(notes.size()));
+			tip_label.change_text(Locale::format("memo.notes_count", std::to_string(notes.size())));
 			LOG(LOG_DEBUG, "UIMemo: refresh count=" << notes.size());
 		} else if (keycode == 'L' || keycode == 'l') {
 			show_tip("List " + std::to_string(notes.size()));
@@ -173,13 +174,13 @@ namespace ms
 					LOG(LOG_DEBUG, "UIMemo: discard id=" << ids[0]);
 					NoteDiscardPacket(ids).dispatch();
 				} else {
-					tip_label.change_text("No note selected");
+					tip_label.change_text(Locale::text("memo.none_selected"));
 				}
 				break;
 			case BtOpen:
 				tip_label.change_text(selected >= 0 && selected < static_cast<int>(notes.size())
 					? notes[static_cast<size_t>(selected)].message
-					: "No note");
+					: Locale::text("memo.no_note"));
 				break;
 			case BtSave:
 			{

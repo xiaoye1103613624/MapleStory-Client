@@ -73,7 +73,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
 | **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
-| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
+| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin（**已完**：24 文件 / 98 键，见「落地情况」）；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
 | **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高） | ~~216~~ **388** | 同上 |
 | **B1c-5d 在用窗软键盘档** | 新基线浮出来的在用窗余站 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 / `UIMegaphone` 5 / `UILoginNotice` 5 …），多数是软键盘提示位 | **76** | 同上；这批在 B1c-3 之后才算得清，因为当时那条尺看不见该形状 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
@@ -176,6 +176,21 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 `layout.py check` 十张 spec 61 项断言不合格 0。余下 B1c-5b（其余壳窗 latin）/ 5c（`UIQuestLog` 10、
 `UIGuild` 5、`UIGender` 2、`UIMerchant` 1 的中文盲区）。
 
+**B1c-5b 落地情况（2026-11-03）**：其余壳窗 24 个 `.cpp` / **124 个直接 `Locale::` 调用点 + 12 个
+`bind_text`** ⇒ **98 新键**（键表与逐行台账见 evidence README §12、[pending-copy.md](evidence/r27-b1c-i18n-scan/pending-copy.md)
+§B1c-5b）。`5a` 那批刻意没碰的 `0s`（`UIClock.cpp`）本批按 §4.1 的决定建了键。
+本批相对 5a **新增两把尺**，都是「搬运类改动自己不会报错」逼出来的：
+`tools/check_placeholder_arity.py`（调用点实参数 ⇔ ini 值 `{}` 数，含 `enum_key` 动态前缀；318 点 0 不合格）
+与忠实度尺（ini 值的每段非占位符片段须在 HEAD 源码逐字出现；98/98）。忠实度尺抓到 2 条**本批自己写坏的**
+（`delivery.row_meso` 丢 `m` 单位并把两个插值塌成一个、`delivery.row_item` 丢一个空格），已修 ——
+结论进方法论：**机械搬运的验收判据必须回到原文逐字对，不能只看「键建完了」**。
+门禁：24 TU `cl /c` CL_EXIT=0 / error 0 行（43 warning 全为既有类 C4005 C4101 C4244 C4267）；
+`check_locale_keys.py` **288/288**；`scan_display_text.py` 站点 **713 ⇒ 644**；`scan_copy_blindspots.py`
+候选 **469 ⇒ 387**（本批 24 文件内残留 0，`UIAlliance.cpp:178` 属 SoftKey 三元形状，见 5a 第 3 条）；
+`layout.py check` 十张 spec rc=0。负对照两轮教训（`ROOT` 少上一层导致 0 点空跑却 rc=0；`str.replace`
+目标写错导致破坏静默 no-op）已固化进工具：**判据/源码目录缺失 rc=2、`checked==0` 报告打 `FALSE-GREEN`、
+破坏脚本自证三条落地**。余下 5c（中文盲区 4 文件）。
+
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 
 1. **站点归零**：`tools/scan_display_text.py` 读数英文 0 / 中文 0，
@@ -203,6 +218,14 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 5. **编码**：ini 一律 UTF-8（加载器已有 BOM 剥离，`Util/Locale.cpp:26-33`）；
    渲染走已修的矢量路径；**禁止**把中文塞进 GBK 封包路径。
 6. 每批 `cl /c /utf-8 /bigobj` 范围编译受影响 TU；B1c-7 做一次整包 MSBuild。
+7. **占位符忠实度**（B1c-5b 立，此后每批必跑）：
+   ① `tools/check_placeholder_arity.py --both` —— 调用点实参数与 ini 值的 `{}` 数对齐，
+   `format` 另要求**恰好 1 个**，`enum_key` 前缀族整族查；rc≠0 不放行。
+   ② `tools/check_value_fidelity.py --table <本批键表> --ini locale/zh-CN.ini`（**提交前**跑，判据取 `HEAD`）
+   —— 建键是把字面量从代码搬进 ini，**搬错不会有任何信号**（本批实测丢单位、塌插值、丢空格各一次），
+   所以每条新值都要能回到改动前源码逐字对上。
+   这条尺自身的负对照**必须自证破坏真的落地**（`str.replace` 静默 no-op 会让负对照假装通过），
+   且工具必须拒绝空跑（`checked == 0` / 判据缺失 ⇒ 非 0 退出），否则「0 不合格」是自欺。
 
 ## 5. 风险与阻塞（先说清，不许假装能闭环）
 

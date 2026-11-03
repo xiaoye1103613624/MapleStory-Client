@@ -29,6 +29,7 @@
 #include "../../Util/Misc.h"
 #include <cstdlib>
 
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -62,17 +63,17 @@ namespace ms
 		UI::get().emplace<UISoftKey>([this](const std::string& idstr) {
 			if (idstr.empty()) return;
 			int32_t want = static_cast<int32_t>(std::strtol(idstr.c_str(), nullptr, 10));
-			if (want <= 0) { status.change_text("Bad item id"); return; }
+			if (want <= 0) { status.change_text(Locale::text("maker.bad_item_id")); return; }
 			for (size_t i = 0; i < recipes.size(); ++i) {
 				if (recipes[i].itemId == want) {
 					scroll = static_cast<int16_t>(i * row_h);
 					MakerCreatePacket(want).dispatch();
-					status.change_text("Craft " + idstr);
+					status.change_text(Locale::format("maker.craft", idstr));
 					LOG(LOG_DEBUG, "UIMaker: SoftKey craft id=" << want);
 					return;
 				}
 			}
-			status.change_text("No recipe " + idstr);
+			status.change_text(Locale::format("maker.no_recipe", idstr));
 		}, []() {}, "Maker itemId");
 	}
 
@@ -124,9 +125,9 @@ namespace ms
 			icons.push_back(id.get_icon(false));
 			names.push_back(Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, id.get_name()));
 
-			std::string coststr = std::to_string(r.meso) + " meso";
+			std::string coststr = Locale::format("maker.cost_meso", std::to_string(r.meso));
 			if (r.reqLevel > 0)
-				coststr += " (Lv" + std::to_string(r.reqLevel) + ")";
+				coststr += " " + Locale::format("maker.cost_req", std::to_string(r.reqLevel));
 			costs.push_back(Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, coststr));
 		}
 	}
