@@ -380,8 +380,11 @@ namespace ms
 			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
 
 		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
-		// 开局先亮「取不到排行」，等有排行数据再由 update 路径改写（那条路是活文案）。
-		bind_text(ranklabel, "charselect.rank_unavailable");
+		// 开局先亮「取不到排行」。这一行**不进绑定表**：它会被 update_selected_character()
+		// 按数据改写，而那个函数是事件驱动的（选中变化 / Charlist 到达），不是每帧。
+		// 绑上来的后果是「切语言那一刻，已经显示真排行的行被刷回『排行不可用』，
+		// 且要等用户重新选中才恢复」—— 绑定只给**值在会话内恒定**的标签用。
+		ranklabel.change_text(Locale::text("charselect.rank_unavailable"));
 
 		for (CharEntry& entry : characters)
 		{

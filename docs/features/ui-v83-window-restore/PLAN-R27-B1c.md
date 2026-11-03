@@ -39,10 +39,16 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 ```
 
 规则写进头文件注释：
-- **只给静态文案上表**（标签、初值、固定提示语）；
+- **只给「值在会话内恒定」的标签上表**。判据不是「这行看起来是常量」，而是
+  **全文搜该对象有没有别的写入点**：有 ⇒ 它就不恒定，绑上来会在语言重载时把数据刷回初值。
 - **随数据变的**（金币数额、`Default Group (0/0)`、tooltip 行）继续用
   `Locale::text(key)` / `Locale::format(key, value)` **就地现算** —— 那条路本来就是活文案，
   上表反而会把旧值钉住。这一条是本批最容易做错的地方，所以要在门禁里管（§3.3）。
+- **坑的形状（B1c-2 真踩过，2026-11-03 自纠）**：`UICharSelect` 的 `ranklabel` 初值是
+  「排行不可用」，看起来是静态占位 ⇒ 绑了表。但改写它的 `update_selected_character()`
+  是**事件驱动**的（选中变化 / Charlist 到达），不是每帧。后果：已显示真排行时切语言，
+  `refresh_localized()` 把它刷回「排行不可用」，且**没有下一次改写**，界面就停在那儿。
+  ⇒ 占位初值一律用 `Locale::text()` 就地取，不进表。
 
 **(c) 3 个派发点**：`element->update()` 前加一行 `element->refresh_localized();`。
 
@@ -75,9 +81,12 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 
 **B1c-2 落地情况（2026-11-03）**：机制层已按 §2 实现（`Locale::generation` 代次、
 `UIElement::bind_text` 四重载含 `OutlinedText` 一档、`refresh_localized`、3 个 `UIState` 派发点各一行）。
-上表的「站点」一栏**写错了对象**，这里改正：本批实际上的表是 `Ver. ` 前缀 5 处
-（`UILogin.cpp:76`、`UICharSelect.cpp:136`、`UIRaceSelect.cpp:156`、`UICommonCreation.cpp:78 / :360`）
-与角色选择「排行」行 3 处（`UICharSelect.cpp:384` 绑定 + `:1297/:1299/:1305` 活文案），
+上表的「站点」一栏**写错了对象**，这里改正：本批实际进绑定表的是 `Ver. ` 前缀 5 处
+（`UILogin.cpp:76`、`UICharSelect.cpp:136`、`UIRaceSelect.cpp:156`、`UICommonCreation.cpp:78 / :360`，
+已核这 5 处的 `version` 对象除 ctor 外无其它写入点）。角色选择「排行」行 3 处
+（`UICharSelect.cpp:384` 初值 + `:1297/:1299/:1305` 改写）**不进表**，走 `Locale::text` 就地取
+—— 它被事件驱动的 `update_selected_character()` 改写，绑上会在切语言时把真排行刷回初值且无人写回
+（见 §1.2b「坑的形状」；这一处是 B1c-2 提交后自纠的，不是原样）。
 **不是** `EquipTooltip`/`UIMonsterBook` —— 那两处上一批（B1c-1 / B3b）已经在就地调 `Locale::text`，
 是活文案，按 §1.2b 的规则**不该**进绑定表（进了反而把登记那一刻的值钉死）。
 门禁：`cl /c /utf-8` 9 TU 全过；`check_locale_keys.py` GATE OK（97/97）；
