@@ -17,8 +17,41 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "EffectLayer.h"
 
+#include "../Configuration.h"
+
 namespace ms
 {
+	namespace
+	{
+		////////////////////////////////////////////////////////////////////////////////
+		// 「系统设置 · 画质调整」→ 特效密度（B4-2）
+		//
+		// 原生滑条两端文案是「普通(快) / 好(慢)」：低档换帧数、高档换观感。这里把滑条
+		// 值（ui.sysopt.quality，0..100）折成同一个 EffectLayer 内同屏特效的条数上限，
+		// 区间 8..100；超限的新特效不入队，已在放的照常放完 —— 只挡新增，不会出现
+		// 整屏特效突然消失。默认 98 档上限 98，正常打怪够不到，等于不设限。
+		//
+		// 阈值与区间没有原生依据（原生具体怎么降档没取证），是按用户决策「画质接
+		// VSync + 特效密度」落的第一版；改数值只动这一个函数。
+		////////////////////////////////////////////////////////////////////////////////
+		size_t effect_cap()
+		{
+			const uint8_t quality = Setting<SysOptQuality>::get().load();
+
+			return static_cast<size_t>(8 + (static_cast<uint32_t>(quality) * 92 / 100));
+		}
+	}
+
+	size_t EffectLayer::count() const
+	{
+		size_t total = 0;
+
+		for (const auto& layer : effects)
+			total += layer.second.size();
+
+		return total;
+	}
+
 	void EffectLayer::drawbelow(Point<int16_t> position, float alpha) const
 	{
 		for (auto iter = effects.begin(); iter != effects.upper_bound(-1); ++iter)
@@ -48,6 +81,9 @@ namespace ms
 
 	void EffectLayer::add(const Animation& animation, const DrawArgument& args, int8_t z, float speed)
 	{
+		if (count() >= effect_cap())
+			return;
+
 		effects[z].emplace_back(animation, args, speed);
 	}
 

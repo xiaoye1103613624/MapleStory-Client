@@ -62,5 +62,8 @@ namespace ms
 		};
 
 		std::map<int8_t, std::list<Effect>> effects;
+
+		// 同屏已排队特效的总条数（各 z 层相加），供「画质调整」的密度上限判断。
+		size_t count() const;
 	};
 }

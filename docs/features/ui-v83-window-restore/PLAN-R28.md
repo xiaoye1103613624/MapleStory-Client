@@ -117,6 +117,21 @@
   - ⚠ 需改 `MapleStory.vcxproj` 加源文件 —— 与并发会话可能同文件冲突，我会**只追加一行、提交前 `git status` 复核**。
 - **B4-8 两个下拉可展开**：把 `draw_combo` 的 `ComboBox/normal[0..2]` 接成真列表（点合→展、选项高亮、选中即收起并写值），命中区按展开态实际矩形（现在只有按钮条热区）。这是通用控件缺失，本轮**只为这两个下拉实现**，抽象留到下轮。
 
+#### B4 落地状态（2026-11-03，取证与逐条偏差见 [evidence/w8-sysopt-behavior/README.md](evidence/w8-sysopt-behavior/README.md)）
+
+| 项 | 状态 | 一句话 |
+| --- | --- | --- |
+| B4-1 鼠标速度 | ✅ 已实现，未真机 | `Window::handle_mouse_motion` 客户区内增益 `(n+5)/10`，不碰 OS |
+| B4-2 画质 | ⚠ 按用户口径改道 | 接的是 **VSync + 特效密度上限 8..100**；LOD 远层裁剪**未做**（要给 `Background` 加成员，踩类布局坑） |
+| B4-3 画面效果 | ✅ | 施放侧 `Char::show_attack_effect` + 受击侧 `Mob::show_effect`；状态类特效不吞 |
+| B4-4 窗口化 / ALT+回车 | ✅ | 只在用户动过勾时 `set_fullscreen`；ALT+回车加门禁并单向镜像回 `window_mode` |
+| B4-5 HP/MP 警报 | ⛔ 阻塞 | 消费端 `UIStatusBar.cpp` 属并发会话在途改动 ⇒ 不动、不提交（PLAN §4） |
+| B4-6 怪物情报 | ✅ **四档** | 档位/顺序取自 `ijl15.dll@0x293ec`，与截帧 + `soMobInfo=3` 交叉验证；PLAN 原写三档作废 |
+| B4-7 截图 | ✅ 改道 | 未新增 TU、**未动 vcxproj**；序号 0=客户端目录 / 1=**桌面**（`ijl15.dll@0x2177c`），PLAN 原写"文档文件夹"作废 |
+| B4-8 下拉展开 | ✅ | 自绘列表（不复用 `MapleComboBox`：它缓存 `parentpos`，拖动窗会错位） |
+
+⇒ 本批**零公共头类布局改动**，增量 Build 即可（0 error，`MapleStory.exe` 4,547,072 B / 14:10）。
+
 ### B5 —— 思源宋体全替 + 删 SimHei
 1. 取字：Source Han Serif SC（思源宋体）Regular + Bold 官方发行件（SIL OFL，随包 LICENSE/OFL 文本入库）；实现前用搜索确认官方发布页，不猜 URL。
 2. 落 `fonts/SourceHanSerifSC/`，改 `Configuration.h:527/:534` 默认路径；删 `fonts/SimHei/simhei.ttf`（9.3 MB，微软系统字体，公开仓库授权风险 = 遗留项 #11）。

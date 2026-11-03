@@ -18,6 +18,7 @@
 #include "Char.h"
 
 #include "../Data/WeaponData.h"
+#include "../Configuration.h"
 
 #include <fstream>
 
@@ -176,6 +177,13 @@ namespace ms
 
 	void Char::show_attack_effect(Animation toshow, int8_t z)
 	{
+		// 「系统设置 · 画面效果 · 技能使用时允许画面效果」（B4-3）。
+		// 只吞技能施放/命中的装饰性特效；Char::show_effect_id 那条路径
+		//（中毒/流血/无敌/被击/升级等状态可视化）**不受此开关影响**，
+		// 否则关掉特效就等于关掉游戏信息，原生也不是这个语义。
+		if (!Setting<SysOptSkillEffects>::get().load())
+			return;
+
 		float attackspeed = get_real_attackspeed();
 
 		effects.add(toshow, DrawArgument(facing_right), z, attackspeed);

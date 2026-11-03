@@ -21,6 +21,7 @@
 #include "UISoftKey.h"
 
 #include "../UI.h"
+#include "../Window.h"
 #include "../KeyAction.h"
 
 #include "../Components/AreaButton.h"
@@ -654,11 +655,33 @@ namespace ms
 	//
 	// 消费方现状（B7-4）：
 	//   背景音乐 / 效果音响 两滑条 + 两个静音勾 —— 接 Audio（真生效）。
-	//   画质 / 鼠标速度 / HP·MP 警报 / 画面效果 / 画面模式两勾 / 两个下拉 ——
-	//   本包无对应管线，仅按 ui.sysopt.* 落盘，窗体可开可关、值可改可存。
-	//   下拉的**展开列表**未做：MapleComboBox 的命中区按绝对屏幕坐标算，父窗一拖
-	//   就错位（open-issues 已记），且原生展开态截帧尚未取证，故只画收起态。
+	//   画质 / 鼠标速度 / HP·MP 警报 / 画面效果 / 画面模式两勾 —— 见 PLAN-R28 §B4。
+	//   两个下拉（截图保存位置 / 怪物情报）：收起态画当前项，点盒体在正下方展开
+	//   条目列表，点条目即改序号（原生即「只有选择框列表选择」，不是点击循环切换）。
 	////////////////////////////////////////////////////////////////////////////////
+
+	namespace
+	{
+		// 两个下拉的条目文案键前缀 + 序号 = 原生注册表里存的那个值。
+		//
+		// 条目顺序取自原生汉化表 ijl15.dll（BeiDou-ClientV17.7）：
+		//   @0x293ec 起四条以 \0 紧邻分隔 —— 不显示 / 只显示名字 / 只显示HP / 名字和HP都显示；
+		//   @0x2177c 起两条紧邻 —— MapleStory文件夹 / 桌面。
+		// 交叉验证：原生截帧「系统设置.png」当前显示「名字和HP都显示」且注册表
+		// soMobInfo=3、「MapleStory文件夹」且 soScreenShot=0 ⇒ 序号自 0 起、顺序一致。
+		constexpr const char* MOB_INFO_KEY = "sysopt.combo.mobinfo.";
+		constexpr const char* SCREENSHOT_PATH_KEY = "sysopt.combo.screenshot.";
+
+		std::string combo_item(const char* prefix, uint8_t ordinal)
+		{
+			return Locale::text(std::string(prefix) + std::to_string(ordinal));
+		}
+
+		// 展开的是哪一个下拉（0 = 都收起）。放在文件作用域而不是类里：
+		// UIOptionMenu.h 被 4 个 TU 包含，给它加数据成员要走全量 Rebuild。
+		// 窗体每次打开都由 UI::emplace 重建（UIMiscShells.cpp），构造函数里复位。
+		uint16_t sysopt_open = 0;
+	}
 
 	UISysOpt::UISysOpt()
 		: UIDragElement<PosSYSOPT>(), bgm_stash(50), sfx_stash(50)
@@ -704,13 +727,28 @@ namespace ms
 				Point<int16_t>(CHECK_BOX[i][0], CHECK_BOX[i][1]), Point<int16_t>(12, 12));
 		}
 
-		// 两个下拉：只画收起态，整块 83x17（5 + 60 + 18）作为命中区预留。
+		// 两个下拉：盒体整块 83x17（5 + 60 + 18）作为「展开/收起」的命中区。
 		buttons[SCREENSHOT_PATH] = std::make_unique<AreaButton>(
 			Point<int16_t>(COMBO_X, COMBO_Y_PATH),
-			Point<int16_t>(5 + COMBO_W + 18, 17));
+			Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
 		buttons[MOB_INFO] = std::make_unique<AreaButton>(
 			Point<int16_t>(COMBO_X, COMBO_Y_MOB),
-			Point<int16_t>(5 + COMBO_W + 18, 17));
+			Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
+
+		// 展开后的条目命中区，行顶 = 盒体下沿 + 行高*i；收起时整排置灰不激活。
+		sysopt_open = 0;
+
+		for (uint8_t i = 0; i < SCREENSHOT_PATH_COUNT; i++)
+			buttons[PATH_OPT0 + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(COMBO_X, COMBO_Y_PATH + COMBO_H + COMBO_H * i),
+				Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
+
+		for (uint8_t i = 0; i < MOB_INFO_COUNT; i++)
+			buttons[MOB_OPT0 + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(COMBO_X, COMBO_Y_MOB + COMBO_H + COMBO_H * i),
+				Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
+
+		set_combo_rows(false, false);
 
 		// 同 UIGameOpt：传按钮根节点，不是 ["normal"][0] 叶子。
 		nl::node bt_ok = Basic["BtOK2"];
@@ -785,10 +823,16 @@ namespace ms
 			state.draw(Point<int16_t>(position.x() + CHECK_BOX[i][0], position.y() + CHECK_BOX[i][1]));
 		}
 
-		draw_combo(COMBO_Y_PATH, Locale::text("sysopt.combo.screenshot_folder"));
-		draw_combo(COMBO_Y_MOB, Locale::text("sysopt.combo.mob_name_hp"));
+		draw_combo(COMBO_Y_PATH, combo_item(SCREENSHOT_PATH_KEY, screenshot_path));
+		draw_combo(COMBO_Y_MOB, combo_item(MOB_INFO_KEY, mob_info));
 
 		UIElement::draw_buttons(inter);
+
+		// 展开的列表压在窗体（含底部确定/取消钮）之上，故排在 draw_buttons 之后。
+		if (sysopt_open == MOB_INFO)
+			draw_combo_list(COMBO_Y_MOB, MOB_INFO_COUNT, MOB_INFO_KEY, mob_info);
+		else if (sysopt_open == SCREENSHOT_PATH)
+			draw_combo_list(COMBO_Y_PATH, SCREENSHOT_PATH_COUNT, SCREENSHOT_PATH_KEY, screenshot_path);
 	}
 
 	void UISysOpt::draw_combo(int16_t y, const std::string& option) const
@@ -827,6 +871,56 @@ namespace ms
 			.draw(Point<int16_t>(position.x() + COMBO_X + 6, position.y() + y + 1));
 	}
 
+	void UISysOpt::draw_combo_list(int16_t y, uint8_t count, const char* key_prefix, uint8_t selected) const
+	{
+		const Point<int16_t> lt(position.x() + COMBO_X, position.y() + y + COMBO_H);
+
+		// 三层：外框 / 内底 / 当前序号那一行的高亮。配色沿用引擎自带 MapleComboBox
+		// 的那一套（DUSTYGRAY + GALLERY + GRAYOLIVE）—— 原生展开态没有截帧依据，
+		// 不自造观感；行高取盒体贴图的 17，与收起态同一把尺。
+		ColorBox frame(COMBO_TOTAL_W, COMBO_H * count + 2, Color::Name::DUSTYGRAY, 1.0f);
+		ColorBox inner(COMBO_TOTAL_W - 2, COMBO_H * count, Color::Name::GALLERY, 1.0f);
+
+		frame.draw(lt);
+		inner.draw(lt + Point<int16_t>(1, 1));
+
+		if (selected < count)
+		{
+			ColorBox current(COMBO_TOTAL_W - 2, COMBO_H - 2, Color::Name::GRAYOLIVE, 1.0f);
+
+			current.draw(lt + Point<int16_t>(1, 1 + COMBO_H * selected));
+		}
+
+		for (uint8_t i = 0; i < count; i++)
+		{
+			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+				combo_item(key_prefix, i))
+				.draw(lt + Point<int16_t>(6, COMBO_H * i + 1));
+		}
+	}
+
+	void UISysOpt::set_combo_rows(bool show_mob, bool show_path)
+	{
+		for (uint8_t i = 0; i < MOB_INFO_COUNT; i++)
+		{
+			if (const auto& row = buttons.find(MOB_OPT0 + i); row != buttons.end())
+			{
+				row->second->set_active(show_mob);
+				// 收起时复位，否则 MOUSEOVER 残留会让下次展开的第一下点击落空。
+				row->second->set_state(Button::State::NORMAL);
+			}
+		}
+
+		for (uint8_t i = 0; i < SCREENSHOT_PATH_COUNT; i++)
+		{
+			if (const auto& row = buttons.find(PATH_OPT0 + i); row != buttons.end())
+			{
+				row->second->set_active(show_path);
+				row->second->set_state(Button::State::NORMAL);
+			}
+		}
+	}
+
 	void UISysOpt::update()
 	{
 		UIElement::update();
@@ -853,8 +947,38 @@ namespace ms
 			return Button::State::IDENTITY;
 		case Buttons::MOB_INFO:
 		case Buttons::SCREENSHOT_PATH:
-			// 展开列表预留：见类顶注释。点一下不改值，只给一条可观测日志。
-			LOG(LOG_INFO, "UISysOpt: combo " << buttonid << " expanded list not implemented");
+		{
+			// 点盒体只切展开态，不改值；展开另一个时先收起这一个。
+			const bool reopen = (sysopt_open != buttonid);
+
+			sysopt_open = reopen ? buttonid : 0;
+			set_combo_rows(sysopt_open == Buttons::MOB_INFO, sysopt_open == Buttons::SCREENSHOT_PATH);
+
+			LOG(LOG_INFO, "UISysOpt: combo " << buttonid << " " << (sysopt_open ? "expanded" : "collapsed"));
+
+			return Button::State::IDENTITY;
+		}
+		case Buttons::MOB_OPT0:
+		case Buttons::MOB_OPT1:
+		case Buttons::MOB_OPT2:
+		case Buttons::MOB_OPT3:
+			mob_info = static_cast<uint8_t>(buttonid - Buttons::MOB_OPT0);
+
+			sysopt_open = 0;
+			set_combo_rows(false, false);
+
+			LOG(LOG_INFO, "UISysOpt: mob info ordinal " << unsigned(mob_info));
+
+			return Button::State::IDENTITY;
+		case Buttons::PATH_OPT0:
+		case Buttons::PATH_OPT1:
+			screenshot_path = static_cast<uint8_t>(buttonid - Buttons::PATH_OPT0);
+
+			sysopt_open = 0;
+			set_combo_rows(false, false);
+
+			LOG(LOG_INFO, "UISysOpt: screenshot path ordinal " << unsigned(screenshot_path));
+
 			return Button::State::IDENTITY;
 		case Buttons::OK:
 			commit();
@@ -899,14 +1023,55 @@ namespace ms
 		Setting<SysOptMobInfo>::get().save(mob_info);
 		Setting<SysOptScreenshotPath>::get().save(screenshot_path);
 
+		////////////////////////////////////////////////////////////////////////////////
+		// 画面模式（B4-4）
+		//
+		// 「窗口化模式」与 window.fullscreen 是同一件事的两面。这里**只在用户真的动过
+		// 这一勾时才切**：此刻落盘值还是打开窗时 load_values() 读到的那一份，与当前值
+		// 一比就是"改没改"，不必给类加字段（改公共头类布局会踩增量构建的旧 obj 坑，
+		// 见 memory:msbuild-header-layout-stale-objs）。
+		//
+		// 不这么做的后果是实打实的：原生默认帧里这一项是**未勾**的，而客户端默认以
+		// 窗口化运行，两者本来就不自洽 ⇒ 若把它当"启动真源"回灌，装机后第一次点确定
+		// 就会把客户端强切成全屏，1296x759 的比对基线也随之作废。启动仍读 window.fullscreen。
+		////////////////////////////////////////////////////////////////////////////////
+		const bool saved_window_mode = Setting<SysOptWindowMode>::get().load();
+
+		if (saved_window_mode != window_mode)
+		{
+			Window::get().set_fullscreen(!window_mode);
+
+			LOG(LOG_INFO, "UISysOpt: window mode " << (window_mode ? "windowed" : "fullscreen")
+				<< " -> fullscreen=" << Window::get().is_fullscreen());
+		}
+
 		// 音量立刻生效（与 UI::send_focus 走同一对入口）。
 		Music::set_bgmvolume(sliders[SL_BGM].get_value());
 		Sound::set_sfxvolume(sliders[SL_SFX].get_value());
 
+		////////////////////////////////////////////////////////////////////////////////
+		// 画质调整（B4-2）
+		//
+		// 原生滑条两端是「普通(快) / 好(慢)」，即低档换帧数、高档换观感。这一档接两处：
+		//   特效密度 —— Graphics/EffectLayer.cpp 每次 add 现读 ui.sysopt.quality，无需回灌；
+		//   VSync    —— 过半即开，写进 window.vsync 并立刻落 SDL_GL_SetSwapInterval。
+		// window.vsync 从此是这一档的镜像：它原本只有配置文件一个入口，没有别的写方，
+		// 接上之后仍然只有一处真值来源（画质滑条），不存在双写打架。
+		//
+		// 「过半开 VSync」这条阈值没有原生依据（原生具体在哪一档开没取证），
+		// 是按用户决策「画质接 VSync + 特效密度」落的第一版。
+		////////////////////////////////////////////////////////////////////////////////
+		const bool vsync = sliders[SL_QUALITY].get_value() >= 50;
+
+		Setting<VSync>::get().save(vsync);
+		Window::get().apply_vsync();
+
 		Configuration::get().save();
 
 		LOG(LOG_INFO, "UISysOpt: saved bgm=" << static_cast<int>(sliders[SL_BGM].get_value())
-			<< " sfx=" << static_cast<int>(sliders[SL_SFX].get_value()));
+			<< " sfx=" << static_cast<int>(sliders[SL_SFX].get_value())
+			<< " quality=" << static_cast<int>(sliders[SL_QUALITY].get_value())
+			<< " vsync=" << vsync);
 	}
 
 	void UISysOpt::send_key(int32_t keycode, bool pressed, bool escape)

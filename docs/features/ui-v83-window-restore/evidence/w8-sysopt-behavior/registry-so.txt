@@ -1,0 +1,15 @@
+# HKCU\Software\Wizet\MapleStory —— 只录 so* 行为选项行（reg query 于 2026-11-03）。
+# 身份类行（siCharacterName / LMA / LCWN 等）刻意不录：本仓库是公开远端。
+    soVideo    REG_DWORD    0x3
+    soBGMVol    REG_DWORD    0x2
+    soBGMMute    REG_DWORD    0x0
+    soSEVol    REG_DWORD    0x1
+    soSEMute    REG_DWORD    0x0
+    soScreenShot    REG_DWORD    0x0
+    soMouseSpeed    REG_DWORD    0xa
+    soHPFlash    REG_DWORD    0xa
+    soMPFlash    REG_DWORD    0xa
+    soTremble    REG_DWORD    0x1
+    soMobInfo    REG_DWORD    0x3
+    soFullScreen    REG_DWORD    0x0
+    soScreenResolution    REG_DWORD    0x0

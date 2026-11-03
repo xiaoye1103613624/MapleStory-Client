@@ -18,6 +18,7 @@
 #include "UIStateGame.h"
 
 #include "UI.h"
+#include "Window.h"
 
 #include "UITypes/UIBuffList.h"
 #include "UITypes/UIEnergyBar.h"
@@ -502,6 +503,15 @@ namespace ms
 
 								if (auto statusbar = UI::get().get_element<UIStatusBar>())
 									statusbar->send_key(action, pressed, escape);
+
+								break;
+							}
+							case KeyAction::Id::SCREENSHOT:
+							{
+								// 「截图保存位置」的触发键（B4-7）。真正的回读/落盘在
+								// Window::end() 里做，这里只挂请求 —— 本帧还没提交。
+								if (pressed)
+									Window::get().request_screenshot();
 
 								break;
 							}

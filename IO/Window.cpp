@@ -43,10 +43,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+// stb_image_write 的单例实现：截图落 PNG（B4-7）。全工程只有这一处定义实现宏。
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 #include <string>
 
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -221,6 +226,192 @@ namespace ms
 				UI::get().send_cursor(cursor_position);
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+	// 「鼠标速度调整」真生效（B4-1）
+	//
+	// 原生语义（095 逆向）：滑条 0..19 档 → 客户端内光标倍速 (n + 5) / 10，只放大
+	// **客户区内**的相对位移，虚拟光标钳制在客户区；仅窗口化时把系统光标回写到虚拟
+	// 位置（全屏不回写）。不改 OS 的鼠标灵敏度/加速 ⇒ 与用户判断「只影响游戏内鼠标
+	// 速度」一致。
+	//
+	// 本包 ui.sysopt.mouse_speed 落盘的是 0..100 百分比（滑条管线复用音量那条），故按
+	// 19/100 反推档号。⚠ 默认 52% ⇒ 倍速约 1.5×，手感可能偏快；是否改成「26% 为 1.0×」
+	// 需用户实测后定夺，这里不擅改默认（PLAN-R28 §6.3）。
+	////////////////////////////////////////////////////////////////////////////////
+
+	namespace
+	{
+		// 文件级状态：不给 Window 加数据成员 —— 公共头改类布局会踩增量构建的
+		// 旧 obj 坑（memory:msbuild-header-layout-stale-objs，登录阶段 100% AV）。
+		struct VirtualCursor
+		{
+			/// 上一次收到的**真实**光标位置；< 0 表示还没锚定过。
+			float real_x = -1.0f;
+			float real_y = -1.0f;
+			/// 倍速加工后的虚拟光标（送进 UI 的那一份）。
+			float virt_x = 0.0f;
+			float virt_y = 0.0f;
+		};
+
+		VirtualCursor vcursor;
+
+		/// 0..100 百分比 → 原生 0..19 档。
+		int mouse_speed_index()
+		{
+			const uint8_t percent = Setting<SysOptMouseSpeed>::get().load();
+
+			return percent >= 100 ? 19 : percent * 19 / 100;
+		}
+
+		void handle_mouse_motion(float x, float y)
+		{
+			const float gain = static_cast<float>(mouse_speed_index() + 5) * 0.1f;
+
+			if (gain == 1.0f)
+			{
+				// 第 5 档（1.0×）不加工，并让虚拟光标紧跟真实光标：
+				// 这样中途换档不会因为攒下的旧增益而跳位。
+				vcursor.real_x = x;
+				vcursor.real_y = y;
+				vcursor.virt_x = x;
+				vcursor.virt_y = y;
+
+				send_cursor_position(x, y);
+				return;
+			}
+
+			if (vcursor.real_x < 0.0f || vcursor.real_y < 0.0f)
+			{
+				vcursor.real_x = x;
+				vcursor.real_y = y;
+				vcursor.virt_x = x;
+				vcursor.virt_y = y;
+			}
+
+			const int16_t vieww = Constants::Constants::get().get_viewwidth();
+			const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+			vcursor.virt_x = std::clamp(vcursor.virt_x + (x - vcursor.real_x) * gain, 0.0f, static_cast<float>(vieww - 1));
+			vcursor.virt_y = std::clamp(vcursor.virt_y + (y - vcursor.real_y) * gain, 0.0f, static_cast<float>(viewh - 1));
+
+			vcursor.real_x = x;
+			vcursor.real_y = y;
+
+			send_cursor_position(vcursor.virt_x, vcursor.virt_y);
+
+			if (Window::get().is_fullscreen())
+				return;
+
+			if (vcursor.virt_x == x && vcursor.virt_y == y)
+				return;
+
+			SDL_Window* handle = Window::get().get_handle();
+
+			if (!handle)
+				return;
+
+			// 先把 real 记成 warp 目标：SDL_WarpMouseInWindow 会再抛一个 MOTION 事件，
+			// 届时 dx/dy 恰为 0，不会被二次放大（否则光标会自己往外飘）。
+			vcursor.real_x = vcursor.virt_x;
+			vcursor.real_y = vcursor.virt_y;
+
+			SDL_WarpMouseInWindow(handle, vcursor.virt_x, vcursor.virt_y);
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// 「截图保存位置」真生效（B4-7）
+		//
+		// 触发：SCROLL LOCK（IO/UITypes/UIKeyConfig.h 已把 KeyAction::Id::SCREENSHOT 绑到它，
+		// 原生帧里「截图保存位置」右侧那颗键帽画的也是 SCROLL LOCK）。
+		// 回读点：Window::end() 里 flush 之后、SwapWindow 之前。
+		// 目录：ui.sysopt.screenshot_path 是**下拉序号**。原生汉化表 ijl15.dll@0x2177c 起
+		// 紧邻两项：0 = 「MapleStory文件夹」（可执行文件所在目录）、1 = 「桌面」；
+		// 原生帧「系统设置.png」正显示「MapleStory文件夹」且注册表 soScreenShot=0，互证。
+		// 与 PLAN-R28 §B4-7 的有意偏差：不新增 Graphics/Screenshot.{h,cpp}，因此不改
+		// MapleStory.vcxproj（该文件与并发会话同改，冲突面更大）。
+		////////////////////////////////////////////////////////////////////////////////
+
+		bool screenshot_pending = false;
+
+		// 落盘目录（不存在则创建）。返回空串表示失败。
+		std::string screenshot_directory()
+		{
+			const uint8_t ordinal = Setting<SysOptScreenshotPath>::get().load();
+
+			// SDL3：GetBasePath/GetUserFolder 返回 SDL 内部持有的借用字符串，不可 SDL_free。
+			const char* root = ordinal == 1 ? SDL_GetUserFolder(SDL_FOLDER_DESKTOP) : SDL_GetBasePath();
+
+			if (!root)
+			{
+				LOG(LOG_WARN, "screenshot: cannot resolve folder " << (ordinal == 1 ? "desktop" : "base")
+					<< " (" << SDL_GetError() << ")");
+
+				return "";
+			}
+
+			std::string base(root);
+
+			// 两个 getter 都保证以分隔符结尾；去掉它，便于调用方直接拼 "\\MapleStory-…"。
+			while (!base.empty() && (base.back() == '\\' || base.back() == '/'))
+				base.pop_back();
+
+			if (!SDL_CreateDirectory(base.c_str()))
+			{
+				LOG(LOG_WARN, "screenshot: cannot create " << base << " (" << SDL_GetError() << ")");
+
+				return "";
+			}
+
+			return base;
+		}
+
+		void capture_screenshot()
+		{
+			const int16_t w = Constants::Constants::get().get_viewwidth();
+			const int16_t h = Constants::Constants::get().get_viewheight();
+
+			if (w <= 0 || h <= 0)
+				return;
+
+			const std::string directory = screenshot_directory();
+
+			if (directory.empty())
+				return;
+
+			std::vector<uint8_t> pixels(static_cast<size_t>(w) * h * 4);
+
+			GraphicsGL::get().read_pixels(w, h, pixels.data());
+
+			// glReadPixels 自下而上，PNG 自上而下：整行翻转。
+			std::vector<uint8_t> flipped(pixels.size());
+			const size_t pitch = static_cast<size_t>(w) * 4;
+
+			for (int16_t y = 0; y < h; y++)
+				std::memcpy(flipped.data() + static_cast<size_t>(y) * pitch,
+					pixels.data() + static_cast<size_t>(h - 1 - y) * pitch, pitch);
+
+			std::time_t now = std::time(nullptr);
+			std::tm local{};
+
+#ifdef _WIN32
+			localtime_s(&local, &now);
+#else
+			if (std::tm* ptr = std::localtime(&now))
+				local = *ptr;
+#endif
+
+			char stamp[32];
+			std::strftime(stamp, sizeof(stamp), "%Y%m%d_%H%M%S", &local);
+
+			const std::string path = directory + "\\MapleStory-" + stamp + ".png";
+
+			if (stbi_write_png(path.c_str(), w, h, 4, flipped.data(), static_cast<int>(pitch)))
+				LOG(LOG_INFO, "screenshot: saved " << path);
+			else
+				LOG(LOG_WARN, "screenshot: encode failed for " << path);
+		}
+	}
+
 	std::chrono::time_point<std::chrono::steady_clock> start = ContinuousTimer::get().start();
 
 	void send_mouse_button(const SDL_MouseButtonEvent& event)
@@ -373,6 +564,11 @@ namespace ms
 		return initwindow();
 	}
 
+	void Window::apply_vsync() const
+	{
+		SDL_GL_SetSwapInterval(Setting<VSync>::get().load() ? 1 : 0);
+	}
+
 	Error Window::initwindow()
 	{
 		if (!glwnd)
@@ -386,8 +582,7 @@ namespace ms
 		if (!SDL_GL_MakeCurrent(glwnd, glcontext))
 			return Error::Code::WINDOW;
 
-		bool vsync = Setting<VSync>::get().load();
-		SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+		apply_vsync();
 
 		glViewport(0, 0, width, height);
 
@@ -637,7 +832,7 @@ namespace ms
 					send_mouse_button(event.button);
 					break;
 				case SDL_EVENT_MOUSE_MOTION:
-					send_cursor_position(event.motion.x, event.motion.y);
+					handle_mouse_motion(event.motion.x, event.motion.y);
 					break;
 				case SDL_EVENT_MOUSE_WHEEL:
 					UI::get().send_scroll(event.wheel.y);
@@ -799,7 +994,19 @@ namespace ms
 	{
 		GraphicsGL::get().flush(opacity);
 
+		// 截图必须在 SwapWindow 之前回读：那时后台缓冲就是刚画完的这一帧。
+		if (screenshot_pending)
+		{
+			screenshot_pending = false;
+			capture_screenshot();
+		}
+
 		SDL_GL_SwapWindow(glwnd);
+	}
+
+	void Window::request_screenshot()
+	{
+		screenshot_pending = true;
 	}
 
 	void Window::fadeout(float step, std::function<void()> fadeproc)
@@ -835,9 +1042,27 @@ namespace ms
 		{
 			fullscreen = !fullscreen;
 			Setting<Fullscreen>::get().save(fullscreen);
+			// 「系统设置 · 画面模式 · 窗口化模式」与 window.fullscreen 是同一件事的两面。
+			// 这里单向镜像，保证 ALT+回车切完之后，下次打开系统设置窗看到的勾是对的。
+			Setting<SysOptWindowMode>::get().save(!fullscreen);
+			Configuration::get().save();
 
 			initwindow();
 			poll_events();
 		}
+	}
+
+	bool Window::is_fullscreen() const
+	{
+		return fullscreen;
+	}
+
+	void Window::set_fullscreen(bool target)
+	{
+		if (fullscreen == target)
+			return;
+
+		// 复用 toggle 的尺寸门禁与落盘/镜像逻辑，避免出现第二条切换路径。
+		toggle_fullscreen();
 	}
 }

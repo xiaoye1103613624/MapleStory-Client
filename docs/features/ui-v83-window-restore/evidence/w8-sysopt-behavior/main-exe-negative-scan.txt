@@ -1,0 +1,2 @@
+== E:/MXD/BeiDou-ClientV17.7/BeiDou.exe size=8503296
+== E:/MXD/Maplestory95.i64 size=48967493

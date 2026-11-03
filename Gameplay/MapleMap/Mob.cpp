@@ -18,6 +18,7 @@
 #include "Mob.h"
 
 #include "../../Util/Misc.h"
+#include "../../Configuration.h"
 
 #include "../../Net/Packets/GameplayPackets.h"
 
@@ -388,6 +389,42 @@ namespace ms
 		).dispatch();
 	}
 
+	namespace
+	{
+		////////////////////////////////////////////////////////////////////////////////
+		// 「系统设置 · 怪物情报」四档 → 头顶名字 / HP 条两个独立开关（B4-6）
+		//
+		// 档位与顺序取自原生汉化表 ijl15.dll（BeiDou-ClientV17.7）@0x293ec 起四条以 \0
+		// 紧邻分隔：不显示 / 只显示名字 / 只显示HP / 名字和HP都显示。
+		//
+		// 序号自 0 起：原生截帧（正确客户端截图/系统设置.png）里该下拉收起态文案是
+		// 「名字和HP都显示」，同一台机器注册表 soMobInfo = 3 ⇒ 档 3 = 名字 + HP 条，
+		// 且**一共四档**（0..3），不是先前按"三档"规划的那份。
+		//
+		// 先前「原生 exe 里 UI 文案全是密文、静态逆向已证伪」的结论作废：那查的是
+		// 095 的 MapleStory.exe，而汉化文案根本不在主 exe 里，在汉化壳 ijl15.dll 里。
+		////////////////////////////////////////////////////////////////////////////////
+		struct MobInfoTier
+		{
+			bool name;
+			bool hp;
+		};
+
+		constexpr MobInfoTier MOB_INFO_TIER[4] = {
+			{ false, false },	// 0：不显示
+			{ true,  false },	// 1：只显示名字
+			{ false, true },	// 2：只显示HP
+			{ true,  true }		// 3：名字和HP都显示
+		};
+
+		MobInfoTier mob_info_tier()
+		{
+			const uint8_t ordinal = Setting<SysOptMobInfo>::get().load();
+
+			return MOB_INFO_TIER[ordinal < 4 ? ordinal : 3];
+		}
+	}
+
 	void Mob::draw(double viewx, double viewy, float alpha) const
 	{
 		Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
@@ -401,13 +438,15 @@ namespace ms
 
 			animations.at(stance).draw(DrawArgument(absp, flip && !noflip, interopc), alpha);
 
-			if (showhp)
-			{
+			// 名字与 HP 条是两个独立门禁（旧实现把两者一起塞进 showhp，于是
+			// 「怪物情报」无论选哪档都只在受击后 2 秒里出名字 —— 原生是常显）。
+			const MobInfoTier tier = mob_info_tier();
+
+			if (tier.name)
 				namelabel.draw(absp);
 
-				if (!dying && hppercent > 0)
-					hpbar.draw(headpos, hppercent);
-			}
+			if (tier.hp && showhp && !dying && hppercent > 0)
+				hpbar.draw(headpos, hppercent);
 		}
 
 		effects.drawabove(absp, alpha);
@@ -515,6 +554,11 @@ namespace ms
 	void Mob::show_effect(const Animation& animation, int8_t pos, int8_t z, bool f)
 	{
 		if (!active)
+			return;
+
+		// 「系统设置 · 画面效果 · 技能使用时允许画面效果」（B4-3）的技能命中侧出口；
+		// 施放侧在 Character/Char.cpp 的 show_attack_effect。两处同一开关。
+		if (!Setting<SysOptSkillEffects>::get().load())
 			return;
 
 		Point<int16_t> shift;

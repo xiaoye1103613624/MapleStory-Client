@@ -22,6 +22,8 @@
 #include "UIStateLogin.h"
 #include "Window.h"
 
+#include "../Configuration.h"
+
 #include "UITypes/UIChannel.h"
 #include "UITypes/UIChat.h"
 #include "UITypes/UIChatBar.h"
@@ -186,7 +188,10 @@ namespace ms
 	{
 		if ((is_key_down[GLFW_KEY_LEFT_ALT] || is_key_down[GLFW_KEY_RIGHT_ALT]) && (is_key_down[GLFW_KEY_ENTER] || is_key_down[GLFW_KEY_KP_ENTER]))
 		{
-			Window::get().toggle_fullscreen();
+			// 「系统设置 · 画面模式 · 允许 ALT+回车切换」为假时不响应（原生同义：
+			// 那一项就是这组合键的授权开关）。仍吃掉本次按键，避免落到快捷槽。
+			if (Setting<SysOptAltEnter>::get().load())
+				Window::get().toggle_fullscreen();
 
 			is_key_down[GLFW_KEY_LEFT_ALT] = false;
 			is_key_down[GLFW_KEY_RIGHT_ALT] = false;

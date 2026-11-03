@@ -1,0 +1,34 @@
+== E:/MXD/BeiDou-ClientV17.7/ijl15.dll size=303616
+不显示                      gbk@0x293ec count=1
+只显示名字                    gbk@0x293f4 count=1
+只显示HP                    gbk@0x29400 count=1
+名字和HP都显示                 gbk@0x2940c count=1
+MapleStory文件夹            gbk@0x2177c count=1
+桌面                       gbk@0x21790 count=1
+
+-- run from 0x293ec (mob info table) --
+  @0x293ec  '不显示'
+  @0x293f4  '只显示名字'
+  @0x29400  '只显示HP'
+  @0x2940c  '名字和HP都显示'
+  @0x2941c  '成功参与．'
+  @0x29428  '无法使用卷轴的道具．'
+  @0x29440  '您与 %s结婚了．'
+  @0x29450  '您与 %s订婚了．'
+  @0x29460  '想给这对情侣祝福吗？'
+  @0x29478  '在等对方的回应．'
+
+-- run from 0x2177c (screenshot folder table) --
+  @0x2177c  'MapleStory文件夹'
+  @0x21790  '桌面'
+  @0x21798  '只能输入数字。'
+  @0x217a8  '只有%d以上的数字可以输入'
+  @0x217c4  '只有%d以下的数字可以输入'
+  @0x217e0  '必须输入数字%d位以上。'
+  @0x217f8  '必须输入%d字以上。'
+  @0x2180c  '请输入身份证号。'
+
+== 复跑 ==
+python scan_ijl15.py    # 写到 E:\project\_r28\ijl15_scan.txt；本文件是它的拷贝
+python scan_mobinfo.py  # 写到 E:\project\_r28\mobinfo_scan.txt；见同目录 main-exe-negative-scan.txt
+                        # （BeiDou.exe / Maplestory95.i64 / Data 下全部 .nx 三处都零命中）

@@ -46,6 +46,10 @@ namespace ms
 		Error init();
 		Error initwindow();
 
+		/// 按 window.vsync 落一次 SDL_GL_SetSwapInterval。「系统设置 · 画质调整」
+		/// 改档后立刻生效用的就是它，不必等下一次建窗（B4-2）。
+		void apply_vsync() const;
+
 		bool not_closed() const;
 		void update();
 		void begin() const;
@@ -60,6 +64,15 @@ namespace ms
 		std::string getclipboard() const;
 
 		void toggle_fullscreen();
+
+		/// 真正生效的窗口样式（与 toggle_fullscreen 同步，非落盘值）。
+		bool is_fullscreen() const;
+		/// 只在目标样式与当前不同时切换；切换仍走 toggle_fullscreen 的尺寸门禁。
+		void set_fullscreen(bool target);
+
+		/// 请求截图（B4-7，SCROLL LOCK 走这条）。真正的回读发生在下一次 end()
+		/// 里 flush 之后、SwapWindow 之前 —— 那时帧缓冲就是刚画完的这一帧。
+		void request_screenshot();
 
 		/// 累计的"用户主动输入"事件数（按下任意键 / 鼠标左中右键按下 / 触屏按下）。
 		/// 启动动画等 pre-UI 阶段用它判断"用户想跳过"，不依赖 UI 是否已初始化。

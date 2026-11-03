@@ -218,7 +218,14 @@ namespace ms
 			MOB_INFO,
 			SCREENSHOT_PATH,
 			CANCEL,
-			OK
+			OK,
+			// 两个下拉展开后的条目钮；后缀数字就是原生注册表里存的那个序号。
+			MOB_OPT0,
+			MOB_OPT1,
+			MOB_OPT2,
+			MOB_OPT3,
+			PATH_OPT0,
+			PATH_OPT1
 		};
 
 		enum Sliders : uint8_t
@@ -239,6 +246,10 @@ namespace ms
 		void toggle_mute(uint8_t& stash, SettingsSlider& slider);
 		// 下拉收起态：Basic.img/ComboBox 的 5 + rwidth + 18 三段 + 当前项文字。
 		void draw_combo(int16_t y, const std::string& option) const;
+		// 展开态：条目列表画在盒体正下方，画 count 行并高亮当前序号那一行。
+		void draw_combo_list(int16_t y, uint8_t count, const char* key_prefix, uint8_t selected) const;
+		// 条目命中区随展开态开关；全关时两个下拉都只响应盒体本身。
+		void set_combo_rows(bool show_mob, bool show_path);
 
 		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值。
 		static constexpr int16_t TRACK_X0 = 99;
@@ -258,6 +269,12 @@ namespace ms
 		static constexpr int16_t COMBO_W = 60;
 		static constexpr int16_t COMBO_Y_PATH = 127;
 		static constexpr int16_t COMBO_Y_MOB = 278;
+		// 盒体高 = ComboBox 三段贴图的公共高（5x17 / 5x17 / 18x17）；列表行同宽同高。
+		static constexpr int16_t COMBO_H = 17;
+		static constexpr int16_t COMBO_TOTAL_W = 5 + COMBO_W + 18;
+		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
+		static constexpr uint8_t MOB_INFO_COUNT = 4;
+		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
 		// 底部两颗橙色钮（47x19），与「游戏设置」同一件，只是落位不同。
 		static constexpr int16_t BTN_Y = 342;
 		static constexpr int16_t OK_X = 194;
