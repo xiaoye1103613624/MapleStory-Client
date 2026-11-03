@@ -83,7 +83,27 @@ namespace ms
 		}
 	}
 
-	void MapFieldMarkers::move(int32_t oid, Point<int16_t> pos)
+		void MapFieldMarkers::summon_die(int32_t oid)
+	{
+		if (auto existing = markers.get(oid))
+		{
+			if (auto* sum = dynamic_cast<MapSummon*>(existing.get()))
+				sum->play_die();
+			else
+				markers.remove(oid);
+		}
+	}
+
+	void MapFieldMarkers::summon_spawn(int32_t oid)
+	{
+		if (auto existing = markers.get(oid))
+		{
+			if (auto* sum = dynamic_cast<MapSummon*>(existing.get()))
+				sum->play_spawn();
+		}
+	}
+
+void MapFieldMarkers::move(int32_t oid, Point<int16_t> pos)
 	{
 		if (auto existing = markers.get(oid))
 			existing->set_position(pos);

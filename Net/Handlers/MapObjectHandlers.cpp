@@ -1436,9 +1436,14 @@ namespace ms
 
 		Stage::get().get_field_markers().spawn_summon(oid, cid, skill, pos, skill_level);
 
-		// stance/moveType/puppet 的表现为波 2（召唤兽真对象化）接线；
-		// 此处先保证字节吃满、等级与落位正确。
-		(void)stance; (void)movetype; (void)attacking; (void)animated;
+		// animated（PC:1179 !animated 取反）⇒ 入场闪光 summoned 段；播完由状态机回 stand。
+		if (animated)
+			Stage::get().get_field_markers().summon_spawn(oid);
+
+		// moveType/puppet（PC:1177-1178）：召唤兽跟随/傀儡语义。客户端召唤兽位置由
+		// MOVE_SUMMON 包驱动（原生同样是包驱动而非本地 AI ⇒ 这里无需消费），
+		// puppet 只影响服务端伤害判定；本地留痕日志即可。
+		(void)stance; (void)movetype; (void)attacking;
 
 		while (recv.available())
 			recv.skip_byte();
@@ -1450,7 +1455,12 @@ namespace ms
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		int8_t anim = recv.available() ? recv.read_byte() : 0;
 		LOG(LOG_DEBUG, "RemoveSummon cid=" << cid << " oid=" << oid << " anim=" << (int)anim);
-		Stage::get().get_field_markers().remove(oid);
+		// s9 removeSummon（PC:1190-1196）anim = animated ? 4 : 1：4 表示播死亡动画，
+		// 1 表示直接消失。修前一律 remove ⇒ 召唤兽（含波3真对象化后）从不播 die。
+		if (anim == 4)
+			Stage::get().get_field_markers().summon_die(oid);
+		else
+			Stage::get().get_field_markers().remove(oid);
 		while (recv.available())
 			recv.skip_byte();
 		(void)cid; (void)anim;

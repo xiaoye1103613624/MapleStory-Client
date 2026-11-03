@@ -23,6 +23,10 @@ namespace ms
 		void spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, Point<int16_t> pos,
 			int32_t lifetime_ms = 60000);
 		void set_summon_stance(int32_t oid, int8_t stance);
+		// 真对象化（波3）：召唤兽入场/死亡动画需要拿到 MapSummon 实例，
+		// 只经 FieldMarker 基类接口够不到 play_die/play_spawn。
+		void summon_die(int32_t oid);
+		void summon_spawn(int32_t oid);
 		void move(int32_t oid, Point<int16_t> pos);
 		void set_label(int32_t oid, const std::string& label);
 		bool contains(int32_t oid) const;

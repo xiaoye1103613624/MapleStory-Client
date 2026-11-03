@@ -30,10 +30,11 @@ namespace ms
 		std::string strid = string_format::extend_id(rid, 7);
 		src = nl::nx::Reactor[strid + ".img"];
 
-		// 被击打音效：原生 Sound/Reactor.img/{rid}/Hit（IDA sub_989ADD：
-		// 字符串 3073 "Sound/Reactor.img/%s/%s" + 5543 "Hit"，动作码 51 覆盖
-		// hit/break 两态共用）。修前 TODO 从不播，反应堆打击静音。
-		hitsound = Sound(nl::nx::Sound["Reactor.img"][std::to_string(rid)]["Hit"]);
+		// 被击打音效：路径经 _tools/summon_probe 解析 Sound/Reactor.img 取证（2026-11-03）：
+		// {rid}/{state}/Hit —— audio 在**状态层**下（0..3 各一条，4 为空），
+		// 与 IDA sub_989ADD 的 "Sound/Reactor.img/%s/%s"(3073)+"Hit"(5543) 吻合。
+		// 因此命中哪个状态播该状态的 Hit（见 play_state_sound）。
+		// 修前：TODO 从不播；波2-B 初版按 {rid}/Hit 加载，层级错误 ⇒ 空节点静音。
 
 		normal = src[0];
 		animation_ended = true;
@@ -81,7 +82,7 @@ namespace ms
 		{
 			animations[this->state] = src[this->state]["hit"];
 			animation_ended = false;
-			hitsound.play();
+			play_state_sound(this->state);
 		}
 
 		this->state = state;
@@ -90,10 +91,24 @@ namespace ms
 	void Reactor::destroy(int8_t, Point<int16_t>)
 	{
 		animations[this->state] = src[this->state]["hit"];
-		hitsound.play();
+		play_state_sound(this->state);
 		state++;
 		dead = true;
 		animation_ended = false;
+	}
+
+	void Reactor::play_state_sound(int8_t st)
+	{
+#ifdef USE_NX
+		// Sound/Reactor.img/{rid}/{state}/Hit —— 见 ctor 顶部取证注释。
+		nl::node snd = nl::nx::Sound["Reactor.img"][std::to_string(rid)]
+			[std::to_string(static_cast<int>(st))]["Hit"];
+
+		if (snd)
+			Sound(snd).play();
+#else
+		(void)st;
+#endif
 	}
 
 	bool Reactor::is_hittable() const
