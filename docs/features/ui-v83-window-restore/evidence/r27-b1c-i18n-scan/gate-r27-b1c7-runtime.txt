@@ -1,0 +1,57 @@
+# R27-B1c-7 运行时负对照读数（2026-11-03 23:41，仪器判据版）
+
+**结论：成立。** 这是 B1c-2 立项起就欠、历批台账一直挂「未跑」的那条运行时负对照
+（「切语言后已开着的窗立刻换文案」）。
+
+## 判据（仪器行，非像素）
+
+```
+REFRESH gen=2 rebound=1 type=2 version.prefix=LANGEN {}
+```
+
+| 字段 | 含义 | 证明了链路的哪一段 |
+| --- | --- | --- |
+| `gen=2` | 代次从 1 跳到 2 | 主循环 `reload_if_changed()`（MapleStory.cpp:240）→ 捕获 xy-config mtime → `Locale::reload()`（Configuration.cpp:551）→ `++gen` |
+| `rebound=1 type=2` | 已开着的 UILogin 当场重取 1 条绑定 | UIStateLogin 派发点 → `UIElement::refresh_localized()` → `LocaleBindings::refresh()`（代次门槛放行）→ `Text::change_text()` |
+| `version.prefix=LANGEN {}` | 新代次 primary 已是 en 侧 | 沙箱 en-US.ini 预置标记值（zh 侧保持 `Ver. {}`）⇒ 不是「读了同值的另一份」，语言表真的换了 |
+
+## 测法（可复现）
+
+1. 构建：worktree 检出 `c350685`（本线 tip）+ 三处**构建垫片**（见下「垫片清单」），
+   `build_shim.bat` = MSBuild Release x64 v142 `-t:Build`，OutDir 重定向到
+   `E:\project\_msh_b1c7_out\`（不碰正式端）。`MSBUILD_EXIT=0`，error 0 行。
+2. 沙箱 `E:\project\_b1c_negctl_sandbox\`：新 exe + dll + `xy-config.yaml`（副本，
+   `ui.language: zh-CN`）+ `locale/`（en 侧 version.prefix 改 `LANGEN {}`）+
+   `Settings`（副本）+ `Data`（junction → 正式端，只读复用 .nxcache）+ `Icon.png`。
+3. 分离启动 → **等 `_init_debug.log` 出 `init:done`**（主循环没起来前
+   `reload_if_changed()` 永远不会跑 —— 第一轮就栽在拿 splash 静止帧当「稳定」，
+   在 init 中途切了语言，仪器自然无声，那是时序错误、不是机制失败）→ 再等 6s →
+   改 `ui.language=en-US` → 轮询 `_refresh_debug.log` ≤15s。
+4. 脚本：[_negctl3.py](_negctl3.py)（仪器版负对照）；仪器垫片源码见
+   [_shims_b1c7.py](_shims_b1c7.py)（三件，均只在构建 worktree，未入任何提交）。
+
+## 本轮坐实的两条新事实（影响后续复测）
+
+1. **Release 下 `LOG` 是 no-op**（MapleStory.h:77，`#ifdef _DEBUG` 才有 cout）——
+   历批台账写的判据「看 `Locale refresh gen=` 日志」在正式构建里**根本不存在**。
+   运行时判据只有两条路：Debug 构建，或本读数这种文件仪器垫片。已把这条写进 README §16。
+2. **提交树 tip 单独不可构建**：`aa0d4e2`（R28-B4，并行会话）把 `IO/Window.cpp`
+   对 `GraphicsGL::read_pixels` 的调用点了入库，声明/定义留在其未提交工作树 ⇒
+   从 `c350685`/`582fd31` 直接构建在 `Window.cpp(383)` 报 C2039。
+   本次构建用最小垫片补了该成员声明+定义（`glReadPixels` 整帧读回）才链接成功。
+   **修法归并行会话**（把 GraphicsGL.h/.cpp 的 read_pixels 入库即可），本批不代改。
+   另：WER 事件记录正式端 exe 今天 15:48/15:56/22:28 三次 `0xc0000374`（heap corruption）
+   —— 并行会话部署件的运行问题，与本 i18n 线无关（沙箱里本线 exe 完整跑到 init:done）。
+
+## 垫片清单（全部只活在构建 worktree，未提交）
+
+| 垫片 | 文件 | 用途 |
+| --- | --- | --- |
+| `read_pixels` 声明+定义 | Graphics/GraphicsGL.{h,cpp} | 补 aa0d4e2 漏入库的成员，使 Window.cpp 可链接 |
+| `dbginit` 落文件 | MapleStory.cpp | Win32 也写 `_init_debug.log`，定位启动阶段/等 init:done |
+| `refresh_localized` 落文件 + 值探针 | IO/UIElement.cpp | 写 `_refresh_debug.log`（本读数第一行即其输出） |
+
+## 仍然欠的（不变）
+
+- 正式端整工程部署复验（#44 那条）：等用户关闭正式客户端；
+- 软键盘 426 已按裁决豁免（§15），不在欠账内。

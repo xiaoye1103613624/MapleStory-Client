@@ -232,8 +232,13 @@ BtNPT 邻居节点名档）⇒ 进 WHITELIST 不建键，判据进 native-verdic
 wl=20 / exempt=426 / cjk=0（其中 UIGender 2 = 裁决不接、UIMiscShells 1 = 日志、IO/Window.cpp 11 = 待裁决）。
 ⑤ 调试日志核查：B1c 全批文件无 DBG 残留；`GraphicsGL.cpp:33 dbgatlas` 属登录页轮遗留，随真机复验
 （#44）关闭时删，不在本批动。
-**未跑欠账（不变）**：全量 MSBuild `-t:Rebuild` + 运行时负对照（`MapleStory.exe` 占 OutDir；
-本机 tasklist 实测进程仍在，等用户关闭）；CHECKLIST.md 定版（被并行会话占用）。
+**欠账更新（2026-11-03 深夜）**：① **运行时负对照已成立**（仪器判据，读数与复现见
+gate-r27-b1c7-runtime.txt：`REFRESH gen=2 rebound=1 type=2 version.prefix=LANGEN {}`）；
+② **全量 MSBuild 已通过**（构建 worktree = c350685 + 三件垫片，MSBUILD_EXIT=0 error 0；
+注意提交树 tip 单独不可构建 —— aa0d4e2 把 `Window.cpp→GraphicsGL::read_pixels` 调用点入库了、
+声明没入库，垫片与 WER 三条 heap-corruption 线索都在 gate 文件里，**修法归并行会话**）；
+③ 正式端部署复验（#44）仍欠 —— 正式 exe 今天 WER 崩过三次，部署前须先由并行会话修复，
+不是本批可闭项；④ CHECKLIST.md 定版仍被并行会话占用。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 

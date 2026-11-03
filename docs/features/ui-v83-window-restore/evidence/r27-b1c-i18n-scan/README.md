@@ -654,3 +654,12 @@ layout 十张 spec rc=0。真机整工程 Rebuild / 运行时负对照欠账不�
 2. `UIWorldSelect "Ver. "` 一行接线（文件解占后顺手）；
 3. `/w `、IO/Window.cpp 11 处开发者浮层：功能级裁决，非 i18n；
 4. CHECKLIST.md 定版（文件解占后）。
+
+
+## 16. 运行时负对照成立（2026-11-03 深夜，仪器判据）
+
+B1c-2 立项起欠的「切语言 -> 已开着的窗立刻换文案」终于有读数：
+`REFRESH gen=2 rebound=1 type=2 version.prefix=LANGEN {}` —— 代次跳变、UILogin 当场重取、
+primary 换到预置标记值的 en 侧，三件事同一行成立。完整测法、三件构建垫片、
+两条新坐实的事实（Release 下 LOG 是 no-op ⇒ 台账旧判据不存在；提交树 tip 因
+aa0d4e2 漏入库 read_pixels 单独不可链接）见 [gate-r27-b1c7-runtime.txt](gate-r27-b1c7-runtime.txt)。
