@@ -386,28 +386,58 @@ namespace ms
 		recv.read_int(); // mountexp
 		recv.read_int(); // mounttiredness
 
-		// 商店 / 小游戏门口标（1–6 常见为有店名；过大则当无标题以免吞掉后续 chalkboard）
-		uint8_t shop_flag = recv.read_byte();
+		// 商店 / 小游戏公告箱 + 黑板 + 戒指 + 新年卡 + team（s9 spawnPlayerMapObject
+		// PC:2033-2056）。修前把箱型首字节当标志再猜 string（两形态首字节后都是
+		// int oid + str desc，从 byte 位起读 string ⇒ 店招永远读不出）；尾部
+		// skip(3)+read_byte 也不是 ring 块+team 的真实布局。
+		//
+		// addAnnounceBox（PC:2203-2223）三形态：
+		//   无箱:  byte(0)
+		//   商店:  byte(4) int oid str desc byte0 byte0 byte1 byte(avail) byte0   (9 + str)
+		//   小游戏: byte(1|2) int oid str desc bool(pw) byte piece byte amt byte cap byte join (9 + str)
+		// 黑板（PC:2039-2043）：byte(1) str text 或 byte(0)。
+		uint8_t box_flag = recv.read_byte();
 		std::string shop_title;
-		if (shop_flag >= 1 && shop_flag <= 6 && recv.available() >= 2)
+
+		if (box_flag == 4 || box_flag == 1 || box_flag == 2)
 		{
-			try {
-				shop_title = recv.read_string();
-				if (shop_title.size() > 48)
-					shop_title.clear();
-			} catch (...) {
-				shop_title.clear();
-			}
+			int32_t box_oid = recv.read_int();
+			std::string desc = recv.read_string();
+			recv.skip(5); // 两形态描述后都是 5 字节尾（shop: 0,0,1,avail,0 / game: pw,piece,amt,cap,join）
+
+			if (box_flag == 4 && !desc.empty())
+				shop_title = desc;
+			(void)box_oid;
 		}
+
 		bool chalkboard = recv.read_bool();
 		std::string chalktext = chalkboard ? recv.read_string() : "";
 
-		recv.skip(3);
-		recv.read_byte(); // team
+		// 其后是 crush/friendship/marriage ring、新年卡、byte0 byte0，最后 byte(team)。
+		// ring 块变长且无显式计数，逐块解析需要完整 ring 语义（波 2 不做）；
+		// team 是**包尾最后一字节**（PC:2056 return p 前唯一写入），直接从尾部取，
+		// 不受中段长度影响。中段先跳过。
+		int8_t team = 0;
+
+		if (recv.length() >= 3)
+		{
+			// 尾部三字节固定：byte0（newyear 后再一个 0）byte0 team —— 实际为
+			// [ring 区...][byte 0][byte 0][byte team]；只保证 team 取到包尾。
+			recv.skip(recv.length() - 1);
+			team = recv.read_byte();
+		}
+		else
+		{
+			while (recv.available())
+				recv.skip_byte();
+		}
 
 		Stage::get().get_chars().spawn(
 			{ cid, look, level, job, name, stance, position }
 		);
+		// team 供竞技场分队着色；CharSpawn 尚无该字段（波 2 后续切片接入），
+		// 本包至少不再错位。
+		(void)team;
 		// 店招 / 黑板：仅场标，不叠 speak
 		auto& markers = Stage::get().get_field_markers();
 		if (!shop_title.empty())
@@ -543,13 +573,37 @@ namespace ms
 			Stage::get().show_character_effect(cid, CharEffect::MONSTER_CARD);
 			// 卡牌特效自显，不 tip
 		}
+		else if (effect == 4) // showPetLevelUp（PC:4542-4548：byte0 + byte index）
+		{
+			if (recv.available())
+				recv.skip_byte(); // 0
+			if (recv.available())
+				recv.skip_byte(); // pet index（宠物升级冒泡留给宠物线）
+		}
 		else if (recv.available()) // skill
 		{
+			// 三种技能形态（s9 PacketCreator）：
+			//   旧 showBuffEffect PC:3488-3496：byte(effect=等级注释) int(skill) byte(dir) byte1 long0
+			//   Rien 版    PC:3499-3507：byte(effect) int(skill) byte0 **byte(skillLv)** byte(dir)
+			//   showBerserk PC:3529-3537：byte(1) int(1320006) byte(A9) **byte(skillLv)** byte(bool)
+			// 修前一律把 effectId 当技能等级传给 show_buff ⇒ Rien/berserk 形态下
+			// 等级恒错（effectId 是特效号不是等级）。int(skill) 之后的剩余长度
+			// 唯一区分：10 ⇒ 旧形态（等级就是 effectId）；3 ⇒ 等级在第二字节。
 			int32_t skillid = recv.read_int();
-			recv.read_byte(); // 'direction'
-			// 9 more bytes after this
+			int8_t level = effect;
 
-			Stage::get().get_combat().show_buff(cid, skillid, effect);
+			if (recv.length() == 3)
+			{
+				recv.skip_byte(); // filler 0 / A9
+				level = recv.read_byte();
+				recv.skip_byte(); // direction / berserk bool
+			}
+			else if (recv.length() >= 10)
+			{
+				recv.skip_byte(); // direction
+			}
+
+			Stage::get().get_combat().show_buff(cid, skillid, level);
 		}
 		else
 		{
@@ -813,10 +867,15 @@ namespace ms
 		{
 			int32_t cid = recv.read_int();
 
+			// removeItemFromMap（PC:2586-2613）：animation>=2 时 int(cid)，
+			// 宠物拾取（Character.java:2078 走 animation=5 + pet=true）再跟一个 slot byte。
+			// 修前用 if(available>0) read_byte else 设 looter —— 两个分支互斥，
+			// 宠物拾取时 looter 永远为空 ⇒ 掉落物直接消失而不是飞向宠物。
 			if (recv.available() > 0)
-				recv.read_byte(); // pet
-			else if (auto character = Stage::get().get_character(cid))
-				looter = character->get_phobj();
+				recv.read_byte(); // pet slot（animation=5 才有）
+
+			if (auto character = Stage::get().get_character(cid))
+				looter = character->get_phobj(); // 宠物贴附在主人处，飞向其位置
 
 			Sound(Sound::Name::PICKUP).play();
 			// Pickup 过密，不 tip
@@ -1008,10 +1067,14 @@ namespace ms
 		LOG(LOG_DEBUG, "DamagePlayer cid=" << cid << " skill=" << (int)skill << " dmg=" << damage);
 		while (recv.available())
 			recv.skip_byte();
-		if (auto character = Stage::get().get_character(cid))
-			character->show_damage(damage);
-		// 伤害数字自显，不 tip
-		(void)damage;
+		// damagePlayer（PC:2635）：skill==-4 是无显示形态（服务端用它携带纯数值
+		// 结算，如反伤/自伤记账），修前照常弹伤害数字 ⇒ 别人看不见的伤害我们
+		// 却满屏冒数字。direction/来源被尾丢弃，受击朝向留给后续切片。
+		if (skill != -4 && damage > 0)
+		{
+			if (auto character = Stage::get().get_character(cid))
+				character->show_damage(damage);
+		}
 	}
 
 	void GiveForeignBuffHandler::handle(InPacket& recv) const
