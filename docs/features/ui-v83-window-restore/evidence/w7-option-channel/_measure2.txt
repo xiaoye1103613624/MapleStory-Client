@@ -1,0 +1,17 @@
+native 428 122 t 436 67 s 436 36 c0 (68, 20)
+t align dx -3 dy -1 sad 7.62 n 27386
+t align dx -1 dy -1 sad 23.88 n 27259
+t align dx -5 dy -1 sad 24.67 n 27386
+t align dx 9 dy -1 sad 26.03 n 26619
+t align dx 1 dy -1 sad 26.19 n 27131
+t align dx 0 dy -1 sad 26.64 n 27195
+t align dx -7 dy -1 sad 26.91 n 27259
+t align dx 5 dy -1 sad 27.01 n 26875
+--- c0 candidates (abs x,y in native frame) ---
+(0.0, 216, 66, 1356)
+(0.0, 286, 66, 1356)
+(0.0, 356, 66, 1356)
+--- converted to window-relative using t offset dx=-3 dy=-1 ---
+0.00 219 67 1356
+0.00 289 67 1356
+0.00 359 67 1356

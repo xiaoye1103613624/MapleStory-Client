@@ -1,0 +1,62 @@
+plate band x-runs with SAD>8: [(3, 149, 313.6), (216, 219, 107.1), (286, 286, 40.8), (288, 289, 544.0), (356, 359, 765.0), (426, 430, 765.0)]
+bottom strip x-runs with SAD>8: [(3, 430, 86.2)]
+top (t) x-runs with SAD>8: []
+--- bottom strip per-row SAD, columns 0..285 only (no buttons) ---
+y= 87 sad    0.00
+y= 88 sad    0.00
+y= 89 sad    0.00
+y= 90 sad   50.46
+y= 91 sad    0.18
+y= 92 sad    0.00
+y= 93 sad  337.60
+y= 94 sad  236.32
+y= 95 sad   33.76
+y= 96 sad   33.76
+y= 97 sad   50.64
+y= 98 sad   16.88
+y= 99 sad    0.00
+y=100 sad    0.00
+y=101 sad    0.00
+y=102 sad    0.00
+y=103 sad    0.00
+y=104 sad    0.00
+y=105 sad    0.00
+y=106 sad    0.00
+y=107 sad    0.00
+y=108 sad    0.00
+y=109 sad    0.00
+y=110 sad    0.00
+y=111 sad    0.00
+y=112 sad    0.00
+y=113 sad    0.00
+y=114 sad    0.60
+y=115 sad    0.84
+y=116 sad    1.74
+y=117 sad  171.13
+y=118 sad  236.13
+y=119 sad  156.36
+y=120 sad  513.87
+y=121 sad  177.59
+y=122 sad  282.77
+--- plate band per-row, columns 0..215 (labelled slots) ---
+y= 67 sad  151.32
+y= 68 sad  117.40
+y= 69 sad  169.28
+y= 70 sad  176.31
+y= 71 sad  167.92
+y= 72 sad  162.62
+y= 73 sad  144.82
+y= 74 sad  141.15
+y= 75 sad  144.99
+y= 76 sad  144.33
+y= 77 sad  140.29
+y= 78 sad  131.80
+y= 79 sad  134.68
+y= 80 sad  139.52
+y= 81 sad  152.86
+y= 82 sad  158.91
+y= 83 sad  157.23
+y= 84 sad  154.60
+y= 85 sad  179.02
+y= 86 sad  166.57
+saved _r28_chan_win_cmp2x.png

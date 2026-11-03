@@ -1,0 +1,76 @@
+s size 436 36
+ s y 0 opaque n 430 mean (254, 254, 254) uniqcol 2 firstx 3
+ s y 1 opaque n 430 mean (254, 254, 254) uniqcol 2 firstx 3
+ s y 2 opaque n 430 mean (254, 254, 254) uniqcol 2 firstx 3
+ s y 3 opaque n 430 mean (237, 237, 237) uniqcol 3 firstx 3
+ s y 4 opaque n 430 mean (237, 237, 237) uniqcol 3 firstx 3
+ s y 5 opaque n 430 mean (237, 237, 237) uniqcol 3 firstx 3
+ s y 6 opaque n 430 mean (102, 119, 153) uniqcol 2 firstx 3
+ s y 7 opaque n 430 mean (186, 203, 220) uniqcol 3 firstx 3
+ s y 8 opaque n 430 mean (203, 220, 220) uniqcol 3 firstx 3
+ s y 9 opaque n 430 mean (186, 203, 220) uniqcol 3 firstx 3
+ s y 10 opaque n 430 mean (170, 187, 204) uniqcol 3 firstx 3
+ s y 11 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 12 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 13 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 14 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 15 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 16 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 17 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 18 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 19 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 20 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 21 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 22 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 23 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 24 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 25 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 26 opaque n 430 mean (153, 187, 204) uniqcol 3 firstx 3
+ s y 27 opaque n 430 mean (153, 186, 203) uniqcol 3 firstx 3
+ s y 28 opaque n 430 mean (153, 187, 204) uniqcol 4 firstx 3
+ s y 29 opaque n 430 mean (153, 186, 203) uniqcol 3 firstx 3
+ s y 30 opaque n 428 mean (103, 120, 153) uniqcol 3 firstx 4
+ s y 31 opaque n 428 mean (204, 204, 204) uniqcol 2 firstx 4
+ s y 32 opaque n 424 mean (255, 255, 255) uniqcol 1 firstx 6
+ s y 33 fully transparent
+ s y 34 fully transparent
+ s y 35 fully transparent
+--- col window x=100 (frame x=97 / cap x=323) rows window 85..123 ---
+ wy 85 native (221, 221, 221) mine (51, 153, 204)
+ wy 86 native (238, 238, 238) mine (68, 187, 238)
+ wy 87 native (255, 255, 255) mine (255, 255, 255)
+ wy 88 native (255, 255, 255) mine (255, 255, 255)
+ wy 89 native (255, 255, 255) mine (255, 255, 255)
+ wy 90 native (255, 255, 255) mine (238, 238, 238)
+ wy 91 native (238, 238, 238) mine (238, 238, 238)
+ wy 92 native (238, 238, 238) mine (238, 238, 238)
+ wy 93 native (238, 238, 238) mine (102, 119, 153)
+ wy 94 native (102, 119, 153) mine (187, 204, 221)
+ wy 95 native (187, 204, 221) mine (204, 221, 221)
+ wy 96 native (204, 221, 221) mine (187, 204, 221)
+ wy 97 native (187, 204, 221) mine (170, 187, 204)
+ wy 98 native (170, 187, 204) mine (153, 187, 204)
+ wy 99 native (153, 187, 204) mine (153, 187, 204)
+ wy 100 native (153, 187, 204) mine (153, 187, 204)
+ wy 101 native (153, 187, 204) mine (153, 187, 204)
+ wy 102 native (153, 187, 204) mine (153, 187, 204)
+ wy 103 native (153, 187, 204) mine (153, 187, 204)
+ wy 104 native (153, 187, 204) mine (153, 187, 204)
+ wy 105 native (153, 187, 204) mine (153, 187, 204)
+ wy 106 native (153, 187, 204) mine (153, 187, 204)
+ wy 107 native (153, 187, 204) mine (153, 187, 204)
+ wy 108 native (153, 187, 204) mine (153, 187, 204)
+ wy 109 native (153, 187, 204) mine (153, 187, 204)
+ wy 110 native (153, 187, 204) mine (153, 187, 204)
+ wy 111 native (153, 187, 204) mine (153, 187, 204)
+ wy 112 native (153, 187, 204) mine (153, 187, 204)
+ wy 113 native (153, 187, 204) mine (153, 187, 204)
+ wy 114 native (153, 187, 204) mine (153, 187, 204)
+ wy 115 native (153, 187, 204) mine (153, 187, 204)
+ wy 116 native (153, 187, 204) mine (153, 187, 204)
+ wy 117 native (153, 187, 204) mine (102, 119, 153)
+ wy 118 native (102, 119, 153) mine (204, 204, 204)
+ wy 119 native (204, 204, 204) mine (255, 255, 255)
+ wy 120 native (255, 255, 255) mine (119, 111, 111)
+ wy 121 native (87, 87, 87) mine (143, 143, 143)
+ wy 122 native (112, 112, 102) mine (206, 206, 206)

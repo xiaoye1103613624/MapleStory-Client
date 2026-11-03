@@ -68,6 +68,21 @@ namespace ms
 
 		sprites.emplace_back(t);
 
+		// 槽行（窗坐标 y=67..87）原生是一整片白底。Channel 根没有 backgrnd，白底的来源是
+		// c（436×10 纯白细条），按 10 行平铺到 s 条带顶。不铺的话板与板之间 2px 缝、最右板
+		// 到窗缘的 9px 会把身后的场景透出来——原生帧那 21 行在 x=3..430 上全是 (255,255,255)。
+		nl::node c = Channel["c"];
+
+		if (UiAssetResolve::usable(c))
+		{
+			for (int16_t y = GRID_TOP; y < bottom_strip_y(); y += BAND_TILE_HEIGHT)
+				sprites.emplace_back(c, Point<int16_t>(0, y));
+		}
+		else
+		{
+			UiAssetResolve::diag_once("UIChannel", "Channel/c missing -> plate band stays see-through");
+		}
+
 		plate_empty = Channel["channel0"];
 		plate_selected = Channel["channel1"];
 		plate_current = Channel["channel2"];
@@ -87,15 +102,16 @@ namespace ms
 				Point<int16_t>(slot_x(i), slot_y(i)), Point<int16_t>(68, 20));
 		}
 
-		// 两颗橙钮在 s 条带里，顶边距条带顶 12（帧实测 SAD=0.07）。
+		// 两颗橙钮顶边在原生帧实测 y=99（BtChange/BtCancel 逐像素 SAD=0.20/0.22），
+		// s 条带顶 88 ⇒ 偏移 11。
 		try_maple_btn(buttons, Buttons::CHANGE, Channel["BtChange"],
-			Point<int16_t>(286, bottom_strip_y() + 12), "UIChannel BtChange");
+			Point<int16_t>(286, bottom_strip_y() + STRIP_BUTTON_DY), "UIChannel BtChange");
 		try_maple_btn(buttons, Buttons::CANCEL, Channel["BtCancel"],
-			Point<int16_t>(380, bottom_strip_y() + 12), "UIChannel BtCancel");
+			Point<int16_t>(380, bottom_strip_y() + STRIP_BUTTON_DY), "UIChannel BtCancel");
 
 		sprites.emplace_back(s, Point<int16_t>(0, bottom_strip_y()));
 
-		dimension = Point<int16_t>(436, bottom_strip_y() + 36);
+		dimension = Point<int16_t>(436, bottom_strip_y() + STRIP_HEIGHT);
 		dragarea = Point<int16_t>(dimension.x(), 20);
 	}
 
@@ -117,7 +133,7 @@ namespace ms
 
 	int16_t UIChannel::bottom_strip_y() const
 	{
-		return static_cast<int16_t>(GRID_TOP + SLOT_PITCH_Y * (slot_total() / SLOTS_PER_ROW));
+		return static_cast<int16_t>(GRID_TOP + SLOT_PITCH_Y * (slot_total() / SLOTS_PER_ROW) + STRIP_GAP);
 	}
 
 	void UIChannel::draw(float inter) const
