@@ -1,0 +1,77 @@
+值保真（原文取 HEAD）：ini 真源 98 键 | 片段全部命中 = 23 | 片段查无 = 75 | 源码无引用 = 0 | ini 缺键 = 0
+WRONG-REV：98/98 个键的字面量已存在于 HEAD ⇒ HEAD 含**改动后**源码，上面「片段查无」不成立。判据要用该批的**父提交**：先 `git log --oneline` 数出本批那条，再传 --rev <它前面一条>（批后若追了提交，HEAD~1 不是父提交）
+  admin.show_users  值='ShowUsers'  片段在 HEAD 查无=['ShowUsers']  代码在=UIAdmin.cpp
+  admin.alert_admins  值='AlertAdmins'  片段在 HEAD 查无=['AlertAdmins']  代码在=UIAdmin.cpp
+  alliance.notice_line  值='Notice: {}'  片段在 HEAD 查无=['Notice: ']  代码在=UIAlliance.cpp
+  alliance.guilds_header  值='Guilds ({}):'  片段在 HEAD 查无=['Guilds (', '):']  代码在=UIAlliance.cpp
+  ariants.result  值='Result {}'  片段在 HEAD 查无=['Result ']  代码在=UIAriantMatch.cpp
+  gachapon.jackpot  值='JACKPOT #{} x{} left={}'  片段在 HEAD 查无=['JACKPOT #', ' x', ' left=']  代码在=UICashGachapon.cpp
+  gachapon.reward  值='Gacha #{} x{} left={}'  片段在 HEAD 查无=['Gacha #', ' x', ' left=']  代码在=UICashGachapon.cpp
+  gachapon.failed  值='Gacha failed'  片段在 HEAD 查无=['Gacha failed']  代码在=UICashGachapon.cpp
+  cashshop.stub_job  值='Illium'  片段在 HEAD 查无=['Illium']  代码在=UICashShop.cpp
+  cashshop.stub_name  值='ShomeiZekkou'  片段在 HEAD 查无=['ShomeiZekkou']  代码在=UICashShop.cpp
+  cashshop.meta  值='CS inv {} gift {} wish {}'  片段在 HEAD 查无=['CS inv ', ' gift ', ' wish ']  代码在=UICashShop.cpp
+  charinfo.medal_stub  值='Junior Adventurer'  片段在 HEAD 查无=['Junior Adventurer']  代码在=UICharInfo.cpp
+  charinfo.pet_wish  值='Pet {} Wish {}'  片段在 HEAD 查无=[' Wish ']  代码在=UICharInfo.cpp
+  charinfo.medal_id  值='Medal#{}'  片段在 HEAD 查无=['Medal#']  代码在=UICharInfo.cpp
+  charinfo.married  值='Married'  片段在 HEAD 查无=['Married']  代码在=UICharInfo.cpp
+  clock.zero  值='0s'  片段在 HEAD 查无=['0s']  代码在=UIClock.cpp
+  delivery.row_item  值='item:{}'  片段在 HEAD 查无=['item:']  代码在=UIDelivery.cpp
+  delivery.no_packages  值='No packages.'  片段在 HEAD 查无=['No packages.']  代码在=UIDelivery.cpp
+  delivery.count  值='{} package(s)'  片段在 HEAD 查无=[' package(s)']  代码在=UIDelivery.cpp
+  delivery.updated  值='Package updated.'  片段在 HEAD 查无=['Package updated.']  代码在=UIDelivery.cpp
+  delivery.sending_to  值='Sending to {}…'  片段在 HEAD 查无=['Sending to ']  代码在=UIDelivery.cpp
+  delivery.sent  值='Send {} m={}'  片段在 HEAD 查无=[' m=']  代码在=UIDelivery.cpp
+  delivery.fee_help  值='Fee = TradeFee(mesos) + 5000 (normal)'  片段在 HEAD 查无=['Fee = TradeFee(mesos) + 5000 (normal)']  代码在=UIDelivery.cpp
+  delivery.fee_calc  值='TradeFee({})+5000 = {}'  片段在 HEAD 查无=['TradeFee(', ')+5000 = ']  代码在=UIDelivery.cpp
+  family.none  值='(no family)'  片段在 HEAD 查无=['(no family)']  代码在=UIFamily.cpp
+  family.rep_initial  值='Rep: 0 / 0'  片段在 HEAD 查无=['Rep: 0 / 0']  代码在=UIFamily.cpp
+  family.rep_line  值='Rep {}/{} today {} jr {}/{}'  片段在 HEAD 查无=['Rep ', ' today ', ' jr ']  代码在=UIFamily.cpp
+  family.priv_count  值='Priv x{}'  片段在 HEAD 查无=['Priv x']  代码在=UIFamily.cpp
+  family.ask_separate_cid  值='Separate junior cid {}?'  片段在 HEAD 查无=['Separate junior cid ']  代码在=UIFamily.cpp,UIFamilyTree.cpp
+  family.ask_leave  值='Leave your senior and fork the family?'  片段在 HEAD 查无=['Leave your senior and fork the family?']  代码在=UIFamily.cpp,UIFamilyTree.cpp
+  familytree.header  值='Family Tree'  片段在 HEAD 查无=['Family Tree']  代码在=UIFamilyTree.cpp
+  familytree.level  值='Lv.{}'  片段在 HEAD 查无=['Lv.']  代码在=UIFamilyTree.cpp
+  familytree.online  值='[ON]'  片段在 HEAD 查无=['[ON]']  代码在=UIFamilyTree.cpp
+  familytree.offline  值='[OFF]'  片段在 HEAD 查无=['[OFF]']  代码在=UIFamilyTree.cpp
+  familytree.rep  值='rep {}'  片段在 HEAD 查无=['rep ']  代码在=UIFamilyTree.cpp
+  familytree.pedigree  值='Pedigree ({} members)'  片段在 HEAD 查无=['Pedigree (', ' members)']  代码在=UIFamilyTree.cpp
+  familytree.can_add  值='— can add junior'  片段在 HEAD 查无=['— can add junior']  代码在=UIFamilyTree.cpp
+  maker.bad_item_id  值='Bad item id'  片段在 HEAD 查无=['Bad item id']  代码在=UIMaker.cpp
+  maker.craft  值='Craft {}'  片段在 HEAD 查无=['Craft ']  代码在=UIMaker.cpp
+  maker.no_recipe  值='No recipe {}'  片段在 HEAD 查无=['No recipe ']  代码在=UIMaker.cpp
+  maker.cost_meso  值='{} meso'  片段在 HEAD 查无=[' meso']  代码在=UIMaker.cpp
+  maker.cost_req  值='(Lv{})'  片段在 HEAD 查无=['(Lv']  代码在=UIMaker.cpp
+  mapletv.no_512  值='No 512* map effect'  片段在 HEAD 查无=['No 512* map effect']  代码在=UIMapleTV.cpp
+  megaphone.empty  值='Empty'  片段在 HEAD 查无=['Empty']  代码在=UIMegaphone.cpp
+  megaphone.no_539  值='No 539*'  片段在 HEAD 查无=['No 539*']  代码在=UIMegaphone.cpp
+  megaphone.sent  值='Sent…'  片段在 HEAD 查无=['Sent…']  代码在=UIMegaphone.cpp
+  monsterbook.cover_id  值='Cover id={}'  片段在 HEAD 查无=['Cover id=']  代码在=UIMonsterBook.cpp
+  monsterbook.not_found  值='Not found'  片段在 HEAD 查无=['Not found']  代码在=UIMonsterBook.cpp
+  carnival.cp_initial  值='CP 0/0'  片段在 HEAD 查无=['CP 0/0']  代码在=UIMonsterCarnival.cpp
+  carnival.enemy_initial  值='EN 0/0'  片段在 HEAD 查无=['EN 0/0']  代码在=UIMonsterCarnival.cpp
+  carnival.enemy  值='EN {}/{}'  片段在 HEAD 查无=['EN ']  代码在=UIMonsterCarnival.cpp
+  mts.list_line  值='tab{} type{} p{} n={} slots={}'  片段在 HEAD 查无=[' type', ' n=', ' slots=']  代码在=UIMTS.cpp
+  mts.cash_line  值='NX={} MP={}'  片段在 HEAD 查无=['NX=', ' MP=']  代码在=UIMTS.cpp
+  mts.more  值='…+{}'  片段在 HEAD 查无=['…+']  代码在=UIMTS.cpp
+  mts.no_items  值='(no items)'  片段在 HEAD 查无=['(no items)']  代码在=UIMTS.cpp
+  nycard.need_receiver  值='Need receiver'  片段在 HEAD 查无=['Need receiver']  代码在=UINewYearsCard.cpp
+  nycard.to  值='To {} — msg SoftKey'  片段在 HEAD 查无=['To ', ' — msg SoftKey']  代码在=UINewYearsCard.cpp
+  nycard.no_card  值='No New Year card'  片段在 HEAD 查无=['No New Year card']  代码在=UINewYearsCard.cpp
+  nycard.sent_to  值='Sent to {}'  片段在 HEAD 查无=['Sent to ']  代码在=UINewYearsCard.cpp
+  partyrace.stage_initial  值='Stage 0'  片段在 HEAD 查无=['Stage 0']  代码在=UIPartyRace.cpp
+  partyrace.score_initial  值='R 0 : 0 B'  片段在 HEAD 查无=['R 0 : 0 B']  代码在=UIPartyRace.cpp
+  partyrace.stage  值='Stage {}'  片段在 HEAD 查无=['Stage ']  代码在=UIPartyRace.cpp
+  partyrace.score  值='R {} : {} B'  片段在 HEAD 查无=['R ']  代码在=UIPartyRace.cpp
+  partysearch.range  值='Range {}'  片段在 HEAD 查无=['Range ']  代码在=UIPartySearch.cpp
+  partysearch.jobs_mask  值='Jobs mask={}'  片段在 HEAD 查无=['Jobs mask=']  代码在=UIPartySearch.cpp
+  partysearch.searching  值='Searching Lv.{} …'  片段在 HEAD 查无=['Searching Lv.', ' …']  代码在=UIPartySearch.cpp
+  remotegacha.box_mode  值='Gacha box mode={}'  片段在 HEAD 查无=['Gacha box mode=']  代码在=UIRemoteGachapon.cpp
+  memo.count  值='{} note(s)'  片段在 HEAD 查无=[' note(s)']  代码在=UIMemo.cpp
+  memo.sel_from  值='Sel {}'  片段在 HEAD 查无=['Sel ']  代码在=UIMemo.cpp
+  memo.sent_to  值='Sent→{}'  片段在 HEAD 查无=['Sent→']  代码在=UIMemo.cpp
+  memo.notes_count  值='Notes: {}'  片段在 HEAD 查无=['Notes: ']  代码在=UIMemo.cpp
+  memo.none_selected  值='No note selected'  片段在 HEAD 查无=['No note selected']  代码在=UIMemo.cpp
+  memo.no_note  值='No note'  片段在 HEAD 查无=['No note']  代码在=UIMemo.cpp
+  storebank.mesos  值='Mesos: {}'  片段在 HEAD 查无=['Mesos: ']  代码在=UIStoreBank.cpp
+  storebank.getall_sent  值='GetAll sent'  片段在 HEAD 查无=['GetAll sent']  代码在=UIStoreBank.cpp

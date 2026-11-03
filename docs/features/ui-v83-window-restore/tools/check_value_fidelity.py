@@ -11,7 +11,11 @@
 
 **这是「提交前」的尺**：判据取自 `HEAD`，本批一旦 commit，`HEAD` 就变成改后的源码，
 片段自然查无 ⇒ 假阳性（实测：commit 后同一条命令 98 键里 75 条报查无）。要在原子提交**之前**跑并归档读数；
-提交之后要复查同一批，加 `--rev <该批的父提交>`（如 `--rev HEAD~1`）。
+提交之后要复查同一批，加 `--rev <该批的父提交>`。
+**父提交要自己数，别默认 `HEAD~1`**：批后若还追了工具/文档提交，`HEAD~1` 就落在批自身或批后，
+读数会变成一片假「查无」（R27-B1c-5b 实测踩过：批 = `HEAD~1` 时 `--rev HEAD~1` 报 75 查无，
+`--rev HEAD~2` 才 98/98）。这条现在由 `--rev` 自检兜住 —— 见下。
+
 用法示例：
   python tools/check_value_fidelity.py --table <键表> --ini locale/zh-CN.ini [--rev <rev>] [--out F]
 
@@ -86,8 +90,9 @@ def main():
                     help="真源 ini（如 locale/zh-CN.ini）：给了就按 **ini 里的值** 查保真，"
                          "键表只当「本批键清单」用 —— 否则表与 ini 漂了也查不出来")
     ap.add_argument("--rev", default="HEAD",
-                    help="原文取自哪个版本。默认 HEAD ⇒ 本尺是**提交前**的闸；"
-                         "提交后要复查这批，传该批的父提交（如 --rev HEAD~1）")
+                    help="原文取自哪个版本。默认 HEAD ⇒ 本尺是**提交前**的闸；提交后要复查这批，"
+                         "传该批的父提交（先 git log 数出本批那条，别默认 HEAD~1 —— "
+                         "批后追过提交就会指错，工具会自判 WRONG-REV 并 rc=2）")
     ap.add_argument("--out", default=None)
     ns = ap.parse_args()
 
@@ -110,6 +115,19 @@ def main():
 
     hits = locate(set(k for k, _ in rows))
     cache = {}
+
+    # --rev 自检：这批键是本批**新造**的字面量，所以「该键字面量已出现在 rev 里」= rev 含改动后源码。
+    # 落在这上面时片段必然成片查无（实测 HEAD~1 指错 ⇒ 75/98 假报警），比查无更该先说清楚。
+    stale = []
+    for key, _ in rows:
+        for rel in sorted(hits.get(key, ())):
+            if rel not in cache:
+                cache[rel] = head(rel, ns.rev) or ""
+            if '"%s"' % key in cache[rel]:
+                stale.append(key)
+                break
+    rev_post = len(stale) * 2 > len(rows)
+
     ok, frag_fail, unref, noini = 0, [], [], []
     for key, val in rows:
         audit = ini[key] if ini is not None else val
@@ -140,16 +158,22 @@ def main():
 
     lines = []
     for key, val, bad, home in frag_fail:
-        lines.append("  %s  值=%r  片段在 HEAD 查无=%r  代码在=%s"
-                     % (key, val, bad, ",".join(os.path.basename(h) for h in home)))
+        lines.append("  %s  值=%r  片段在 %s 查无=%r  代码在=%s"
+                     % (key, val, ns.rev, bad, ",".join(os.path.basename(h) for h in home)))
     for key, val in unref:
         lines.append("  %s = %r  —— 有值但源码无引用（本批漏接线或键名写错）" % (key, val))
     for key in noini:
         lines.append("  %s —— 键表列了、ini 里没有" % key)
     head_line = "值保真（原文取 %s）：%s %d 键 | 片段全部命中 = %d | 片段查无 = %d | 源码无引用 = %d | ini 缺键 = %d" % (
         ns.rev, "ini 真源" if ini is not None else "键表", len(rows), ok, len(frag_fail), len(unref), len(noini))
-    report = head_line + "\n" + "\n".join(lines) + "\n"
-    if ok == 0:
+    report = head_line + "\n"
+    if rev_post:
+        report += ("WRONG-REV：%d/%d 个键的字面量已存在于 %s ⇒ %s 含**改动后**源码，"
+                   "上面「片段查无」不成立。判据要用该批的**父提交**：先 `git log --oneline` 数出"
+                   "本批那条，再传 --rev <它前面一条>（批后若追了提交，HEAD~1 不是父提交）\n"
+                   % (len(stale), len(rows), ns.rev, ns.rev))
+    report += "\n".join(lines) + "\n"
+    if ok == 0 and not rev_post:
         report += "FALSE-GREEN：0 条值被校验，工具失效，勿据此放行\n"
 
     if ns.out:
@@ -158,6 +182,8 @@ def main():
     else:
         io.open(sys.stdout.fileno(), "w", encoding="utf-8", closefd=False,
                 errors="replace").write(report)
+    if rev_post:
+        return 2
     return 1 if (frag_fail or unref or noini) else 0
 
 

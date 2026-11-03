@@ -1,0 +1,2 @@
+arity 校验调用点 = 318 | 不合格 = 0 | 判据 = locale/zh-CN.ini + locale/en-US.ini
+
