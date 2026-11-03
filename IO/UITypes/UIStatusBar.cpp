@@ -47,6 +47,9 @@
 
 #include "../UI.h"
 
+// B4-5 HP/MP 警报阈值取自 ui.sysopt.hp_warn/mp_warn（Setting<SysOptHpWarn>）。
+#include "../../Configuration.h"
+
 #include "../Components/MapleButton.h"
 
 #include "../../Character/ExpTable.h"
@@ -2352,19 +2355,43 @@ namespace ms
 		float hp = gethppercent();
 		float mp = getmppercent();
 
-		// 数值一变就重放闪光（-1 表示本包没有该素材，不触发）。
-		if (classic_hp_flash >= 0 && hp != classic_last_hp)
-			classic_hp_flash = 5;
+		// B4-5「HP/MP 警报」消费端（R28-B4b 接线）：低于阈值百分比时周期性重放
+		// gauge/hpFlash·mpFlash 覆盖层，0 = 不报警（原生档 0 就是不闪）。
+		// 量纲：ui.sysopt.hp_warn/mp_warn 存 0..100 百分比；默认 52 ↔ 原生注册表
+		// soHPFlash/soMPFlash = 10（0..20 档 × 5% = 50%），是证据允许的最贴近校准。
+		// 不再「数值一变就闪」—— 那是旧占位行为，与「警报」设置项语义无关，
+		// 且满血受伤也闪（用户裁决 R28-B4b 决策点：低血才闪）。
+		// 素材缺失（-1）时完全不触发，与旧口径一致；classic_*_flash 自身倒计时
+		// 驱动重放（5 帧闪 + 1 帧间隔），**不新增类数据成员** —— 公共头改布局会踩
+		// 增量构建旧 obj 坑（memory:msbuild-header-layout-stale-objs）。
+		// 注：覆盖层素材只有 classic 底版有，现代皮肤（is_classic_hud()==false）
+		// 无 hpFlash/mpFlash 节点，本设置对其无观感 —— 已记入 evidence §4 预留。
+		const uint8_t hp_warn = Setting<SysOptHpWarn>::get().load();
+		const uint8_t mp_warn = Setting<SysOptMpWarn>::get().load();
 
-		if (classic_mp_flash >= 0 && mp != classic_last_mp)
-			classic_mp_flash = 5;
+		const bool hp_low = hp_warn > 0 && hp <= static_cast<float>(hp_warn) / 100.0f;
+		const bool mp_low = mp_warn > 0 && mp <= static_cast<float>(mp_warn) / 100.0f;
 
 		if (classic_hp_flash > 0)
+		{
 			--classic_hp_flash;
+		}
+		else if (classic_hp_flash == 0 && hp_low)
+		{
+			classic_hp_flash = 5;
+		}
 
 		if (classic_mp_flash > 0)
+		{
 			--classic_mp_flash;
+		}
+		else if (classic_mp_flash == 0 && mp_low)
+		{
+			classic_mp_flash = 5;
+		}
 
+		// classic_last_hp/mp 原为「数值一变就闪」的比对基准，现语义已被阈值取代；
+		// 成员保留（公共头布局冻结），仅作最近一次读数的 bookkeeping。
 		classic_last_hp = hp;
 		classic_last_mp = mp;
 

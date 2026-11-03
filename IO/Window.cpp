@@ -227,16 +227,24 @@ namespace ms
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	// 「鼠标速度调整」真生效（B4-1）
+	// 「鼠标速度调整」真生效（B4-1，R28-B4b 重写）
 	//
-	// 原生语义（095 逆向）：滑条 0..19 档 → 客户端内光标倍速 (n + 5) / 10，只放大
-	// **客户区内**的相对位移，虚拟光标钳制在客户区；仅窗口化时把系统光标回写到虚拟
-	// 位置（全屏不回写）。不改 OS 的鼠标灵敏度/加速 ⇒ 与用户判断「只影响游戏内鼠标
-	// 速度」一致。
+	// 原生语义（IDB 取证，evidence/w8-sysopt-behavior/README.md §2.6）：滑条 0..19 档
+	// → 客户端内光标倍速 (n + 5) / 10，**只放大客户区内的相对位移**，虚拟光标钳制在
+	// 客户区，画的是客户端自绘光标（系统光标由 SDL_HideCursor 隐藏）。
+	//
+	// 与上一版的关键差别：**不再把虚拟光标回写成系统光标**。上一版用
+	// SDL_WarpMouseInWindow 回写，构成反馈环 —— warp 目标是小数坐标而系统光标只能落
+	// 在整数像素，回抛的 motion 事件与 warp 目标差 ±0.5px，这个纯噪声残差又被 1.5×
+	// 倍速放大并再次回写 ⇒ 鼠标只要动着（甚至静止不动）游戏光标就逐帧在原位抖约 1px，
+	// 即用户报的「移动鼠标乱闪」。原生从不这么干：BeiDou.exe 连同 Gr2D_DX8 / suipre /
+	// ijl15 / Canvas / Shape2D 六个模块，导入表里只有 ShowCursor 一枚光标 API，
+	// SetCursorPos / GetCursorPos / SendInput / ClipCursor / mouse_event 命中数全为 0。
+	// ⇒ 本包按原生口径只加工相对位移，不回写，环路从结构上消失。
 	//
 	// 本包 ui.sysopt.mouse_speed 落盘的是 0..100 百分比（滑条管线复用音量那条），故按
-	// 19/100 反推档号。⚠ 默认 52% ⇒ 倍速约 1.5×，手感可能偏快；是否改成「26% 为 1.0×」
-	// 需用户实测后定夺，这里不擅改默认（PLAN-R28 §6.3）。
+	// 19/100 反推档号。默认 52% ↔ 原生注册表 soMouseSpeed = 10（0..19 档，滑钮实测落
+	// 在行程 51.0%），倍速 1.5× 就是原生默认手感 —— 上一版把它当成疑点，现已澄清。
 	////////////////////////////////////////////////////////////////////////////////
 
 	namespace
@@ -245,12 +253,10 @@ namespace ms
 		// 旧 obj 坑（memory:msbuild-header-layout-stale-objs，登录阶段 100% AV）。
 		struct VirtualCursor
 		{
-			/// 上一次收到的**真实**光标位置；< 0 表示还没锚定过。
-			float real_x = -1.0f;
-			float real_y = -1.0f;
-			/// 倍速加工后的虚拟光标（送进 UI 的那一份）。
-			float virt_x = 0.0f;
-			float virt_y = 0.0f;
+			/// 倍速加工后的虚拟光标（送进 UI 并绘制的那一份）。
+			/// < 0 表示还没锚定过，下一帧从真实光标起步。
+			float virt_x = -1.0f;
+			float virt_y = -1.0f;
 		};
 
 		VirtualCursor vcursor;
@@ -263,59 +269,35 @@ namespace ms
 			return percent >= 100 ? 19 : percent * 19 / 100;
 		}
 
-		void handle_mouse_motion(float x, float y)
+		/// 丢弃攒下的虚拟位置：换分辨率 / 换全屏态之后坐标系变了，
+		/// 旧的累加值必须作废，否则新坐标系里光标落在上一套尺度的位置上。
+		void reset_virtual_cursor()
 		{
-			const float gain = static_cast<float>(mouse_speed_index() + 5) * 0.1f;
+			vcursor.virt_x = -1.0f;
+			vcursor.virt_y = -1.0f;
+		}
 
-			if (gain == 1.0f)
+		void handle_mouse_motion(float x, float y, float xrel, float yrel)
+		{
+			if (vcursor.virt_x < 0.0f || vcursor.virt_y < 0.0f)
 			{
-				// 第 5 档（1.0×）不加工，并让虚拟光标紧跟真实光标：
-				// 这样中途换档不会因为攒下的旧增益而跳位。
-				vcursor.real_x = x;
-				vcursor.real_y = y;
-				vcursor.virt_x = x;
-				vcursor.virt_y = y;
-
-				send_cursor_position(x, y);
-				return;
-			}
-
-			if (vcursor.real_x < 0.0f || vcursor.real_y < 0.0f)
-			{
-				vcursor.real_x = x;
-				vcursor.real_y = y;
+				// 锚定帧：虚拟光标从真实光标起步，本帧不放大。
 				vcursor.virt_x = x;
 				vcursor.virt_y = y;
 			}
+			else
+			{
+				const float gain = static_cast<float>(mouse_speed_index() + 5) * 0.1f;
 
-			const int16_t vieww = Constants::Constants::get().get_viewwidth();
-			const int16_t viewh = Constants::Constants::get().get_viewheight();
+				const int16_t vieww = Constants::Constants::get().get_viewwidth();
+				const int16_t viewh = Constants::Constants::get().get_viewheight();
 
-			vcursor.virt_x = std::clamp(vcursor.virt_x + (x - vcursor.real_x) * gain, 0.0f, static_cast<float>(vieww - 1));
-			vcursor.virt_y = std::clamp(vcursor.virt_y + (y - vcursor.real_y) * gain, 0.0f, static_cast<float>(viewh - 1));
-
-			vcursor.real_x = x;
-			vcursor.real_y = y;
+				// 钳制在客户区内 —— 与原生一致；到边即停，攒下的位移不外溢。
+				vcursor.virt_x = std::clamp(vcursor.virt_x + xrel * gain, 0.0f, static_cast<float>(vieww - 1));
+				vcursor.virt_y = std::clamp(vcursor.virt_y + yrel * gain, 0.0f, static_cast<float>(viewh - 1));
+			}
 
 			send_cursor_position(vcursor.virt_x, vcursor.virt_y);
-
-			if (Window::get().is_fullscreen())
-				return;
-
-			if (vcursor.virt_x == x && vcursor.virt_y == y)
-				return;
-
-			SDL_Window* handle = Window::get().get_handle();
-
-			if (!handle)
-				return;
-
-			// 先把 real 记成 warp 目标：SDL_WarpMouseInWindow 会再抛一个 MOTION 事件，
-			// 届时 dx/dy 恰为 0，不会被二次放大（否则光标会自己往外飘）。
-			vcursor.real_x = vcursor.virt_x;
-			vcursor.real_y = vcursor.virt_y;
-
-			SDL_WarpMouseInWindow(handle, vcursor.virt_x, vcursor.virt_y);
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -511,6 +493,13 @@ namespace ms
 	{
 		fullscreen = Setting<Fullscreen>::get().load();
 
+		// 「系统设置 · 画面模式 · 窗口化模式」是 window.fullscreen 的镜像面（R28-B4b）。
+		// 启动时按真实窗口样式单向回灌，保证设置窗打开时的勾与实际一致 —— 否则
+		// 装机默认（window_mode=false 显示为未勾）与窗口化运行自相矛盾，
+		// 用户第一次点「确定」就会在毫不知情时切全屏。ALT+回车侧已在
+		// toggle_fullscreen() 里镜像，这里是另一半。
+		Setting<SysOptWindowMode>::get().save(!fullscreen);
+
 		if (!SDL_Init(SDL_INIT_VIDEO))
 			return Error::Code::GLFW;
 
@@ -587,6 +576,10 @@ namespace ms
 		glViewport(0, 0, width, height);
 
 		SDL_HideCursor();
+
+		// 虚拟光标必须重新锚定：换分辨率 / 全屏切换后坐标系变了，
+		// 上一套尺度攒下的累加值在这里作废（R28-B4b，配合无 warp 重写）。
+		reset_virtual_cursor();
 
 		float xpos = 0.0f;
 		float ypos = 0.0f;
@@ -832,7 +825,7 @@ namespace ms
 					send_mouse_button(event.button);
 					break;
 				case SDL_EVENT_MOUSE_MOTION:
-					handle_mouse_motion(event.motion.x, event.motion.y);
+					handle_mouse_motion(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
 					break;
 				case SDL_EVENT_MOUSE_WHEEL:
 					UI::get().send_scroll(event.wheel.y);

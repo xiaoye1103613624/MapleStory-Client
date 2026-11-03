@@ -823,11 +823,14 @@ namespace ms
 	};
 
 	// Windowed mode (ui.sysopt.window_mode)
-	// 「画面模式 · 窗口化模式」，原生截帧为未勾。改窗口样式要动 GLFW 生命周期，
-	// 本版仅落盘，不实际切换（见 docs 里 B7-4 的预留说明）。
+	// 「画面模式 · 窗口化模式」= window.fullscreen 的镜像面：勾上 = 窗口化。
+	// 真源是 window.fullscreen（启动真源在 Window::init，切换在 set_fullscreen/
+	// toggle_fullscreen），本键只在启动时被单向回灌、ALT+回车时被镜像，
+	// 因此默认值与装机窗口化运行保持一致（true）。
+	// 消费方：UIOptionMenu 的 UISysOpt（显示与「动过勾才切」门禁）。
 	struct SysOptWindowMode : public Configuration::BoolEntry
 	{
-		SysOptWindowMode() : BoolEntry("ui.sysopt.window_mode", "false") {}
+		SysOptWindowMode() : BoolEntry("ui.sysopt.window_mode", "true") {}
 	};
 
 	// ALT+ENTER window-mode switching permission (ui.sysopt.alt_enter)
@@ -838,10 +841,12 @@ namespace ms
 	};
 
 	// Mob info display mode (ui.sysopt.mob_info)
-	// 「怪物情报」下拉序号，消费方是 NameTag 的头顶信息（本版未接，仅落盘）。
+	// 「怪物情报」下拉序号 0..3：不显示 / 只显示名字 / 只显示HP / 名字和HP都显示
+	// （ijl15.dll@0x293ec 四条，与原生截帧 + 注册表 soMobInfo=3 互证，B4-6）。
+	// 消费方：Gameplay/MapleMap/Mob.cpp 的 MOB_INFO_TIER。默认 3 = 原生截帧当前项。
 	struct SysOptMobInfo : public Configuration::ByteEntry
 	{
-		SysOptMobInfo() : ByteEntry("ui.sysopt.mob_info", "0") {}
+		SysOptMobInfo() : ByteEntry("ui.sysopt.mob_info", "3") {}
 	};
 
 	// Screenshot save location (ui.sysopt.screenshot_path)

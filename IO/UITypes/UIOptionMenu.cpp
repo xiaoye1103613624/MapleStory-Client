@@ -1011,6 +1011,11 @@ namespace ms
 
 	void UISysOpt::commit()
 	{
+		// 「动过勾才切」的基准必须在覆盖之前取（R28-B4b 修）：下面那排 save() 一执行，
+		// 落盘值就和当前值相等，末尾的 saved_window_mode != window_mode 恒为假，
+		// 画面模式勾选从 B4 落地起就没真正切过窗口样式 —— 用户点「确定」无响应的实锤之一。
+		const bool prev_window_mode = Setting<SysOptWindowMode>::get().load();
+
 		Setting<SysOptQuality>::get().save(sliders[SL_QUALITY].get_value());
 		Setting<BGMVolume>::get().save(sliders[SL_BGM].get_value());
 		Setting<SFXVolume>::get().save(sliders[SL_SFX].get_value());
@@ -1026,18 +1031,13 @@ namespace ms
 		////////////////////////////////////////////////////////////////////////////////
 		// 画面模式（B4-4）
 		//
-		// 「窗口化模式」与 window.fullscreen 是同一件事的两面。这里**只在用户真的动过
-		// 这一勾时才切**：此刻落盘值还是打开窗时 load_values() 读到的那一份，与当前值
-		// 一比就是"改没改"，不必给类加字段（改公共头类布局会踩增量构建的旧 obj 坑，
-		// 见 memory:msbuild-header-layout-stale-objs）。
-		//
-		// 不这么做的后果是实打实的：原生默认帧里这一项是**未勾**的，而客户端默认以
-		// 窗口化运行，两者本来就不自洽 ⇒ 若把它当"启动真源"回灌，装机后第一次点确定
-		// 就会把客户端强切成全屏，1296x759 的比对基线也随之作废。启动仍读 window.fullscreen。
+		// 「窗口化模式」与 window.fullscreen 是同一件事的两面，启动真源是
+		// window.fullscreen（Window::init 启动时把 window_mode 回灌成 !fullscreen，
+		// 保证设置窗打开时的勾与实际一致）。这里只在用户真的动过这一勾时才切：
+		// prev_window_mode（覆盖前取的）与当前值一比就是"改没改"，不必给类加字段
+		// （改公共头类布局会踩增量构建的旧 obj 坑，见 memory:msbuild-header-layout-stale-objs）。
 		////////////////////////////////////////////////////////////////////////////////
-		const bool saved_window_mode = Setting<SysOptWindowMode>::get().load();
-
-		if (saved_window_mode != window_mode)
+		if (prev_window_mode != window_mode)
 		{
 			Window::get().set_fullscreen(!window_mode);
 

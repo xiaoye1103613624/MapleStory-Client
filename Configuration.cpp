@@ -76,6 +76,10 @@ namespace ms
 		{ "补丁",       "patch.retries",				"失败重试次数" },
 		{ "补丁",       "patch.allow_skip",				"失败时是否允许继续进游戏" },
 
+		// 启动
+		{ "启动",       "boot.logo",					"是否播放 Nexon 片头（任意键鼠可跳过）" },
+		{ "启动",       "boot.logo.frame_ms",			"片头每帧毫秒，限幅 10~1000" },
+
 		// 窗口
 		{ "窗口",       "window.width",					"窗口宽度，读取后同步到运行时常量" },
 		{ "窗口",       "window.height",				"窗口高度，读取后同步到运行时常量" },
@@ -97,6 +101,7 @@ namespace ms
 		{ "登录",       "login.channel",				"上次选择的频道序号" },
 		{ "登录",       "login.region",					"上次选择的地区序号" },
 		{ "登录",       "login.character",				"上次选择的角色槽位" },
+		{ "登录",       "login.auto",					"opt-in 自动登录开关（口令 login.pass 有意不落盘，只走 xy-config）" },
 
 		// 聊天栏
 		{ "聊天栏",     "chat.max",						"聊天栏是否展开" },
@@ -108,10 +113,29 @@ namespace ms
 		{ "小地图",     "minimap.simple",				"是否使用简约模式" },
 		{ "小地图",     "minimap.default_helpers",		"是否绘制默认标志物（NPC/传送点等）" },
 
+		// 系统设置（对应原生注册表 so* 行；滑条存 0..100 百分比，下拉存序号）
+		{ "系统设置",   "ui.sysopt.quality",			"画质调整 0-100（特效密度上限；过半同步开 VSync）" },
+		{ "系统设置",   "ui.sysopt.mouse_speed",		"鼠标速度调整 0-100（按 0..19 档反推，默认档 9）" },
+		{ "系统设置",   "ui.sysopt.hp_warn",			"HP 警报阈值 0-100（0 = 不报警）" },
+		{ "系统设置",   "ui.sysopt.mp_warn",			"MP 警报阈值 0-100（0 = 不报警）" },
+		{ "系统设置",   "ui.sysopt.skill_effects",		"技能使用时允许画面效果" },
+		{ "系统设置",   "ui.sysopt.window_mode",		"窗口化模式（window.fullscreen 的镜像，启动时回灌）" },
+		{ "系统设置",   "ui.sysopt.alt_enter",			"允许 ALT+回车切换画面模式" },
+		{ "系统设置",   "ui.sysopt.mob_info",			"怪物情报 0..3（0不显示/1名字/2HP/3名字和HP）" },
+		{ "系统设置",   "ui.sysopt.screenshot_path",	"截图保存位置 0..1（0客户端目录/1桌面）" },
+
+		// 游戏设置（UIGameOpt 十二项勾选的位掩码，bit0..11 = OPTION_*）
+		{ "游戏设置",   "ui.gameopt.mask",				"游戏设置勾选位掩码" },
+
+		// 自动喝药（挂机辅助绑定，0 = 未绑定）
+		{ "自动喝药",   "ui.autopot.hp_item",			"HP 自动喝药绑定的道具 ID" },
+		{ "自动喝药",   "ui.autopot.mp_item",			"MP 自动喝药绑定的道具 ID" },
+
 		// 界面开关
 		{ "界面",       "ui.buff_timer",				"是否在 buff 图标上显示剩余时间" },
 		{ "界面",       "ui.equip_compare",				"装备悬停时是否显示同部位已装备物品对比" },
 		{ "界面",       "ui.language",					"界面语言：zh-CN（默认）/ en-US；改后热重载" },
+		{ "界面",       "ui.maplepoints.local",			"本地点券缓存（登录后以服务端下发的为准）" },
 
 		// 界面位置（关闭客户端时的最后窗口位置）
 		{ "界面位置",   "ui.position.stats",			"角色属性面板" },
@@ -141,7 +165,15 @@ namespace ms
 		{ "界面位置",   "ui.position.cashgachapon",		"现金扭蛋" },
 		{ "界面位置",   "ui.position.remotegachapon",	"远程扭蛋" },
 		{ "界面位置",   "ui.position.family",			"家族" },
-		{ "界面位置",   "ui.position.memo",				"便签Memo" }
+		{ "界面位置",   "ui.position.familytree",		"家族树" },
+		{ "界面位置",   "ui.position.memo",				"便签Memo" },
+		{ "界面位置",   "ui.position.gameopt",			"游戏设置窗" },
+		{ "界面位置",   "ui.position.sysopt",			"系统设置窗" },
+		{ "界面位置",   "ui.position.dailygift",		"每日礼物" },
+		{ "界面位置",   "ui.position.partyrace",		"组队竞赛" },
+
+		// 调试
+		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" }
 	};
 
 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
@@ -243,6 +275,7 @@ namespace ms
 		settings.emplace<PosFAMILY>();
 		settings.emplace<PosFAMILYTREE>();
 		settings.emplace<PosMEMO>();
+		settings.emplace<PosPARTYRACE>();
 		settings.emplace<MiniMapType>();
 		settings.emplace<MiniMapSimpleMode>();
 		settings.emplace<MiniMapDefaultHelpers>();

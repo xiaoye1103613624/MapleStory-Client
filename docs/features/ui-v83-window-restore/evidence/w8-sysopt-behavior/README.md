@@ -64,8 +64,11 @@
 
 本包的 `ui.sysopt.*` 复用音量滑条管线，落盘是 0..100 百分比，所以：
 - 鼠标速度按 `percent * 19 / 100` 反推档号，倍速 `(n + 5) / 10`（公式出处见 PLAN-R28 §D5：095 逆向，只做客户区内相对增益、不改 OS 设置，与用户判断一致）。
-- ⚠ 默认 52% ⇒ 约 1.5×，可能偏快。**没擅自改默认**，等实测（PLAN §6.3）。
-- HP/MP 警报的消费端还没接（§4）。
+- ⚠ ~~默认 52% ⇒ 约 1.5×，可能偏快。**没擅自改默认**，等实测（PLAN §6.3）。~~
+  **R28-B4b 结案**：52% ↔ 原生 `soMouseSpeed=10`，1.5× 即原生默认手感，不改。
+  真机「移动鼠标乱闪」的根因是 B4-1 自加的 warp 回写（原生六模块无任何光标回写 API，
+  见 `README-B4b-cursor-api.md`）⇒ 已重写为只缩放相对位移、不回写系统光标。
+- ~~HP/MP 警报的消费端还没接（§4）。~~ 已接（R28-B4b，`UIStatusBar::update_classic`：低于阈值才闪，0=不报警）。
 
 ### 2.5 行标题是烘焙位图 ⇒ 只有下拉条目进 i18n
 
@@ -83,9 +86,9 @@
 | 2 | 背景音乐 | `audio.bgm_volume` | `Music::set_bgmvolume`（B7-4 已接） | 未跑 |
 | 3 | 效果音响 | `audio.sfx_volume` | `Sound::set_sfxvolume`（B7-4 已接） | 未跑 |
 | 4 | 截图保存位置 | `ui.sysopt.screenshot_path` | `IO/Window.cpp::screenshot_directory()` | 未跑 |
-| 5 | 鼠标速度调整 | `ui.sysopt.mouse_speed` | `IO/Window.cpp::handle_mouse_motion()` | 未跑 |
-| 6 | HP 警报 | `ui.sysopt.hp_warn` | **无消费方** | 阻塞，见 §4 |
-| 7 | MP 警报 | `ui.sysopt.mp_warn` | **无消费方** | 阻塞，见 §4 |
+| 5 | 鼠标速度调整 | `ui.sysopt.mouse_speed` | `IO/Window.cpp::handle_mouse_motion()` —— **R28-B4b 重写**：只缩放 `motion.xrel/yrel`，不回写系统光标（warp 反馈环已删，见 `README-B4b-cursor-api.md`） | 未跑 |
+| 6 | HP 警报 | `ui.sysopt.hp_warn` | **R28-B4b 已接**：`UIStatusBar::update_classic`，`hp% <= 阈值` 才周期重放 `gauge/hpFlash`，0=不报警（仅 classic 皮肤有该素材） | 未跑 |
+| 7 | MP 警报 | `ui.sysopt.mp_warn` | 同上（`mpFlash`） | 未跑 |
 | 8 | 画面效果 | `ui.sysopt.skill_effects` | `Character/Char.cpp::show_attack_effect`（施放侧）+ `Gameplay/MapleMap/Mob.cpp`（受击侧）；状态类特效（中毒/流血/无敌/升级）**不受此开关影响** | 未跑 |
 | 9 | 画面模式 | `ui.sysopt.window_mode` / `ui.sysopt.alt_enter` | `Window::set_fullscreen()`（只在用户动过勾时切）+ ALT+回车门禁在 `IO/UI.cpp`；ALT+回车切换后单向镜像回 `window_mode` | 未跑 |
 
@@ -95,13 +98,19 @@
 
 ## 4. 未闭环 / 预留（不留半成品）
 
-1. **B4-5 HP·MP 警报**：消费端在 `IO/UITypes/UIStatusBar.cpp`（血条/蓝条闪烁），该文件此刻属于**并行会话的在途改动**，
-   按 PLAN §4 的约定不动、不提交。已备好的口径：原生是索引刻度（本包按 0..19 反推，实测钮在行程 51%），本包存 0..100 百分比，
-   接上时比较 `hppercent <= threshold`，并把 0 视为「没有」（原生档 0 就是不闪）。
+1. ~~**B4-5 HP·MP 警报**：消费端在 `IO/UITypes/UIStatusBar.cpp`（血条/蓝条闪烁），该文件此刻属于**并行会话的在途改动**，
+   按 PLAN §4 的约定不动、不提交。~~ **R28-B4b 已闭环**：按 §4 旧口径接进 `update_classic`（低于阈值才闪、0=不报警、
+   不新增类成员）；并发 hunk（:708 商城按钮）与本改动（:50 include、:2355 段）不相交，逐 hunk 暂存。
+   残余：现代皮肤无 hpFlash/mpFlash 素材，该设置对其无观感（素材缺失，非逻辑缺口）。
 2. **画质档数**：原生 `soVideo` 的取值范围/档位总数无证据（只知 =3 时钮在 92.7%），本包按百分比 + 「≥50 开 VSync」实现，
    阈值**没有原生依据**，是用户决策「接 VSync + 特效密度」下的第一版。
-3. **鼠标速度默认值**：52% ⇒ 1.5×，等实测反馈再定是否改映射（不擅改默认）。
+3. ~~**鼠标速度默认值**：52% ⇒ 1.5×，等实测反馈再定是否改映射（不擅改默认）。~~ **R28-B4b 结案**：默认不改；
+   乱闪根因（warp 回写）已按原生取证删除。
 4. **下拉展开态外观**：原生无截帧，列表底色/高亮沿用本包 `MapleComboBox` 配色。
+5. **（R28-B4b 新增）设置项整体不落盘**：`SETTINGS_ORDER` 原本没有任何 `ui.sysopt.*`/`ui.gameopt.mask` 等键 ⇒
+   「点确定→退出→重启全部回默认」。本轮已把 22 个缺失键补进表里（`login.pass` 按用户裁决**有意不落盘**，
+   避免明文口令写进用户级配置）。连带修复：`UISysOpt::commit()` 先 save 后 load 导致「动过勾才切」比较恒假
+   ⇒ 画面模式勾选从 B4 落地起就没切过窗口样式，B4b 把基准取值挪到覆盖前。
 
 ## 5. 与 PLAN 的偏差（逐条，都是"按计划做但计划本身要改"）
 
