@@ -138,7 +138,13 @@ namespace ms
 		nl::node src = nl::nx::Map["MapHelper.img"]["portal"]["game"];
 
 		animations[Portal::HIDDEN] = src["ph"]["default"]["portalContinue"];
-		animations[Portal::REGULAR] = src["pv"]["default"];
+
+		// REGULAR 门动画（探针实测，_tools/summon_probe 第三轮）：本数据 pv 直接
+		// 下挂 0..7 八个 bitmap 帧（无 default 容器）。修前读 pv["default"] 恒空
+		// ⇒ 显式门没有动画。带 default 的其它版本数据仍优先取 default。
+		nl::node pv = src["pv"];
+		nl::node pv_default = pv["default"];
+		animations[Portal::REGULAR] = pv_default ? pv_default : pv;
 	}
 
 	std::unordered_map<Portal::Type, Animation> MapPortals::animations;

@@ -69,3 +69,14 @@ rid 1020000:
 - 迷雾区域渲染：同上；
 - Boss 血条多目标队列 + 名牌（Mob/<id>/info/name）：可做，但当前召唤兽改动已占本波，
   移入波4 收尾切片。
+### 5. 真实 Map 节点 portal 键集（第三轮探针）
+实测 `Map/Map1/100000000.img/portal/*`：键只有 `pn pt tm tn x y`——**没有**
+门样式属性 ⇒ 原生所有显式门统一用 `MapHelper portal/game/pv` 的动画。
+探针实测 `pv` 直接下挂 `0..7` 八个 bitmap 帧（**无 default**，初轮误记已修正）：
+修前 `animations[REGULAR] = src["pv"]["default"]` 取不存在的 default，
+空 Animation ⇒ 显式门其实没有动画；回退取 pv 本体后 Animation 遍历 0..7 八帧成闪烁动画。MapPortals::init 的回退
+（`pv.default ? pv.default : pv`）正是修这个，与探针结构一致，予以独立提交。
+
+### 6. 隐藏门三态（后续切片）
+`ph.default` 下 `portalStart/portalContinue/portalExit` 三态齐全，修前只接了
+portalContinue。波4 接 Portal::update 的 touched 跳变 ⇒ start（进入）/exit（离开）。

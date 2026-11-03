@@ -309,5 +309,46 @@ int main(int argc, char** argv)
 		}
 	}
 
+	std::cout << "\n=== real map portal node keys ===\n";
+	{
+		auto mb = gather(data + "/Map");
+		auto mf = std::make_unique<nl::img_file>();
+		mf->open_merge(std::move(mb));
+		const char* maps[] = {"Map/Map1/100000000.img", "Map/Map0/100000000.img",
+		                      "Map/Map2/990000000.img", "Map/MapS_i/100000000.img"};
+		for (const char* path : maps)
+		{
+			nl::node m;
+			std::string pth(path);
+			size_t pos = 0;
+			m = mf->root();
+			while (true)
+			{
+				size_t slash = pth.find('/');
+				std::string seg = slash == std::string::npos ? pth : pth.substr(0, slash);
+				m = m[seg];
+				if (slash == std::string::npos) break;
+				pth = pth.substr(slash + 1);
+			}
+			if (!m) { std::cout << path << " MISSING\n"; continue; }
+			nl::node ports = m["portal"];
+			if (!ports) { std::cout << path << " no portal\n"; continue; }
+			int cnt = 0;
+			for (auto pn : ports)
+			{
+				std::cout << path << " portal " << pn.name() << " keys: ";
+				for (auto k : pn)
+				{
+					std::cout << k.name() << "=";
+					if (k.data_type() == nl::node::type::string) std::cout << "\"" << k.get_string() << "\" ";
+					else std::cout << (int32_t)k << " ";
+				}
+				std::cout << "\n";
+				if (++cnt >= 3) break;
+			}
+			if (cnt) break;
+		}
+	}
+
 	return 0;
 }
