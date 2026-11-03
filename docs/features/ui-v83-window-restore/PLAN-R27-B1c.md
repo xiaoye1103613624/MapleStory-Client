@@ -1,0 +1,112 @@
+# PLAN-R27-B1c —— 非位图文案全量接入 i18n（一次性完整计划）
+
+> 已拍板的三条（2026-11-03）：
+> **A 范围 = 全量 402 处都接机制**；**B 文案 = 无原生依据的保持英文原值、只建键**；
+> **C 刷新 = reload 广播、窗自取**（不做「重开窗才生效」，也不做逐窗 `change_text`）。
+> 站点台账：[evidence/r27-b1c-i18n-scan/inventory.txt](evidence/r27-b1c-i18n-scan/inventory.txt)。
+
+## 0. 目标 / 非目标
+
+| | |
+| --- | --- |
+| **目标** | ① 402 处展示文案全部经 `Locale` 取值，代码里不再出现英文字面量/中文字面量<br>② 切语言后**已开着的窗**立刻换文案（机制唯一，不动 50 个窗的 update）<br>③ 反向门禁：代码引用的键 ⇒ 两份 ini 必须都有；清点工具站点 ⇒ 必须归零<br>④「等原生取证替换」的键有台账，不会烂尾成永久英文 |
+| **非目标** | ① **不翻译**（决策 B：新键 zh 值 = 英文原值）<br>② 位图烘焙文字不做 i18n（能力窗标签行、装备槽名、UserList 标题、GameOpt 底板粉钮）<br>③ 不做语言切换 UI（`ui.language` 仍靠 xy-config 改；切换 UI 留下一期，PLAN §B1c-2 原文已声明）<br>④ 不动封包编码路径（GBK 那条线跟本批无关） |
+
+## 1. 机制层设计（先做，其他批次都依赖它）
+
+### 1.1 为什么不用 registry，也不用 `Text::draw` 里查代次
+
+取证过的三个事实决定了形状：
+
+| 事实 | 后果 |
+| --- | --- |
+| `Text::draw()` 是 **const**（[Graphics/Text.h:106-107](../../Graphics/Text.h)） | 想在绘制时自取文案，得把 `text` 变 mutable 或 `const_cast` —— 绘制改状态，否决 |
+| `Text` 有隐式拷贝与赋值（现仓真实写法：`potflag_preview = Text(Text::Font::A11M, …)`，[IO/Components/EquipTooltip.cpp:196](../../IO/Components/EquipTooltip.cpp)） | 让 `Text` 自注册进全局表，就得自己写拷贝构造/赋值/析构三件套来摘挂指针，退出时序还有静态对象析构顺序风险 —— 否决 |
+| 每帧遍历活动元素的派发点只有 **3 个**：`IO/UIStateGame.cpp:151`、`IO/UIStateLogin.cpp:127`、`IO/UIStateCashShop.cpp:60`（都是 `element->update()`） | 在这里插一次刷新 = 一处机制、全站生效、零逐窗代码 ⇒ **选定** |
+
+### 1.2 落地形态
+
+**(a) `Util/Locale`**：加代次计数，`reload()` 末尾 `++generation`（`Locale.cpp:78-93`）。
+只加一个 `uint32_t` 和一个 getter，不改现有 `tr/has/text/format/enum_*` 语义。
+
+**(b) `IO/UIElement`**：加一张极小的绑定表
+
+```cpp
+// 静态文案绑定：窗 ctor 里 bind，语言切换时由派发点统一重取
+void bind_text(Text& target, const std::string& key);
+void refresh_localized();          // generation 没变 -> 立即 return；空表 -> O(1)
+std::vector<std::pair<Text*, std::string>> locale_binds;
+```
+
+规则写进头文件注释：
+- **只给静态文案上表**（标签、初值、固定提示语）；
+- **随数据变的**（金币数额、`Default Group (0/0)`、tooltip 行）继续用
+  `Locale::text(key)` / `Locale::format(key, value)` **就地现算** —— 那条路本来就是活文案，
+  上表反而会把旧值钉住。这一条是本批最容易做错的地方，所以要在门禁里管（§3.3）。
+
+**(c) 3 个派发点**：`element->update()` 前加一行 `element->refresh_localized();`。
+
+**(d) 不做 template-method 重构**（把 `update()` 拆成 non-virtual + `do_update()`）：
+那要给 ~50 个窗改名，改动面爆炸，且 `IO/UIElement.h` 正被并行会话占用（§5）。
+
+## 2. 键名与 ini 约定
+
+| 项 | 规定 |
+| --- | --- |
+| 命名 | `<窗/模块>.<语义>`，全小写点分：`userlist.group.none`、`mapinfo.no_monsters`、`charselect.version_prefix` |
+| 占位 | 单占位沿用现有 `{}`（`Locale::format`，见 [Util/Locale.h](../../Util/Locale.h) 的注释：值两端空白会被加载器 trim，所以空格写在占位符两侧） |
+| zh 值 | **英文原值**（决策 B）。原值是中文的（20 处）就写中文原值 |
+| en 值 | 同 zh（保持两份键集严格对齐，门禁会查漂移） |
+| 取证标记 | 键**上方一行** `# NO-NATIVE <窗> <文件:行>` —— 解析器只认**整行** `#`/`;` 注释（`Util/Locale.cpp:62-64`），**行尾追加注释会被算进值里**，这条必须照做否则值带脏尾巴 |
+| 待办台账 | `evidence/r27-b1c-i18n-scan/pending-copy.md`：每个 `NO-NATIVE` 键一行，列「键 / 现值 / 建议取证来源（String.img 节点或 IDA 函数）/ 状态」 |
+
+## 3. 批次分解（每批一个原子提交，批内自证后才进下一批）
+
+| 批 | 内容 | 站点 | 自证判据 |
+| --- | --- | --- | --- |
+| **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
+| **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
+| **B1c-4 中文 20 处** | `UIStorage`(3) `UIMapSearchPanel`(3) `UICharSelect`(2) `UIBuddyList`(1) `UIParty`(1) `UITrade`(1) `UIMapInfoPanel`(1) `UIDailyGift`(8) | 20 | 同上；这批零翻译风险，最先能全绿 |
+| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的 ~117 处，按文件切 2~3 个提交 | ~117 | 同上 |
+| **B1c-6 壳窗·`UIMiscShells`** | 216 处，单文件独占一批（体量最大，且与并行会话冲突最高） | 216 | 同上 |
+| **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
+
+依赖：B1c-2 → 其余全部；B1c-3/4/5/6 之间互不依赖，可并行推进；B1c-7 等前五批。
+
+## 4. 门禁（本批的验收尺，不是「看起来改完了」）
+
+1. **站点归零**：`tools/scan_display_text.py` 读数英文 0 / 中文 0，
+   白名单只有「纯数字与符号初值」（`0` `1` `-` ` ~ ` `0%` `0.00%` `!` `V`）——
+   白名单要写进工具源码并在文档里逐条给理由，**不允许**用白名单偷偷放行真文案。
+2. **反向键门禁**（扩 `tools/check_locale_keys.py`）：扫全仓 `Locale::text/text_or/format/enum_text`
+   与 `bind_text` 的键字面量，要求在 **zh-CN 和 en-US 里都存在**；两份键集必须一致；值不得为空。
+   现有正向门禁（数据表枚举 ⇒ 键必须建档）保留不动。
+3. **绑定误用检查**：`bind_text` 的第二个参数若是拼接出来的非常量（`bind_text(t, key + val)`）⇒ 报警，
+   因为上表的键必须是字面量；随数据变的内容应走 `Locale::format` 就地算。
+4. **版式回归**：每批改完跑 `layout.py check` 十张 spec（69 探针）必须 rc=0。
+   文案换语言会改字宽/行宽，这一条是防「i18n 把 B1b 的墨顶常数顶歪」。
+5. **编码**：ini 一律 UTF-8（加载器已有 BOM 剥离，`Util/Locale.cpp:26-33`）；
+   渲染走已修的矢量路径；**禁止**把中文塞进 GBK 封包路径。
+6. 每批 `cl /c /utf-8 /bigobj` 范围编译受影响 TU；B1c-7 做一次整包 MSBuild。
+
+## 5. 风险与阻塞（先说清，不许假装能闭环）
+
+| 风险 | 处置 |
+| --- | --- |
+| **并行会话正在改本批要动的文件**：`IO/UIElement.h`、`IO/UIStateGame.cpp`、`UIMiscShells.cpp`、`UIMapInfoPanel.cpp`、`Configuration.cpp/.h`、`locale/*.ini`、`CHECKLIST.md` 目前全是脏的 | ① 机制层（B1c-2）动的是**公共件**，必须先确认并行会话在 `UIElement.h` 上改的是什么、有没有收敛；未收敛则**这一批暂停**，先把 B1c-3/4 这些没争议的文件推掉。<br>② `locale/*.ini` 两边都要追加键 ⇒ 用「追加到文件末尾 + 只 stage 我这段」的 blob 级精确暂存（本仓已有先例：CHECKLIST 的 D7b 行）。<br>③ **禁止 `git add -A`**，禁止 `git stash`。 |
+| 换文案导致行宽/高度变，把已定版的版式顶歪（尤其 tooltip 高度按行数算） | §4.4 十张 spec 回归 + 关键窗出图对比；`equip.pot.*` 这类中英等长值风险低，`Ver. `→中文风险高 |
+| 402 处里混着「其实不该 i18n」的（数字初值、单位符号） | 白名单显式化（§4.1），不留隐性豁免 |
+| 决策 B 之后界面仍是英文，用户可能误以为「i18n 做完了 = 看到中文」 | 交付说明里明写：**本批通的是机制与键位，文案替换是另一批活**，`pending-copy.md` 是那一批的输入 |
+| 真机复验要登录（`R27_USER`/`R27_PASS`） | 标记为**只能用户给凭证/亲自动手**的项；不给凭证则 B1c-2 的负对照改用「不登录也能开的窗」（登录窗/角色选择窗本身在 `UIStateLogin` 派发路径上，够用） |
+
+## 6. Definition of Done
+
+- [ ] 机制层三件（generation / bind_text / 3 派发点）落地且有负对照证据
+- [ ] 402 站点：真文案 0 残留，白名单逐条有理由
+- [ ] 反向键门禁接入并跑绿；两份 ini 键集对齐、无空值
+- [ ] `pending-copy.md` 成册（每个 NO-NATIVE 键一行）
+- [ ] 十张 spec 69 探针回归 rc=0；范围编译 + 一次整包 MSBuild
+- [ ] 切语言真机自证：已开着的窗立刻换文案（或按 §5 末行降级到登录窗自证）
+- [ ] 未擅自改并行会话的文件；未 push
+- [ ] 原子提交（每批一提交）+ CHECKLIST/PLAN/evidence 三处文档定版
+- [ ] 临时调试日志已删，上线级节点日志与注释齐全
