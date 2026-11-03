@@ -47,6 +47,44 @@
 | `dailygift.day_prefix` / `day_suffix` | `第` / `天`（同值） | `UIDailyGift.cpp:155`、`:157`（绑定） | 同上；两条是「第 N 天」的左右单位词，英文语序会变（`Day N`），所以必须留在 ini 而不是拼在代码里 | 同上 |
 | `dailygift.date_month` / `date_day` | `月` / `日`（同值） | `UIDailyGift.cpp:159`、`:161`（绑定） | 同上；日期单位词在两种语言里的位置不同，属同一条理由 | 同上 |
 
+### B1c-5a（壳窗第一批 · 49 键，值 = 站点原英文字面量）
+
+取证入口对五行是同一个动作：**先用 orange-wz 只读枚举 `String.img` 的顶层根名**，再按窗体定位整句。
+节点名不在这里预设（预设就是编造），所以下表「建议取证来源」只写方向。这五个窗在本包都是壳窗
+（能开、能发封包、状态行自拟），原生 v83 里 `UIWindow.img` 有同名根 ⇒ 大概率有现成文案可换值。
+
+| 键 | 现值（zh / en） | 站点 | 建议取证来源 | 状态 |
+| --- | --- | --- | --- | --- |
+| `vegaspell.hint_init` / `hint_drop` | `Drop equip + scroll` / `Drop equip / scroll / vega` | `UIVegaSpell.cpp:32`（ctor 初值，不上表）、`:93`（drop 失败分支） | 原生 Vega 窗拖放区的引导语（`String.img` 里 Vega 相关根）；两条语义近乎重复，取证后可能合并成一条 | 待取证 |
+| `vegaspell.status_scrolling` / `status_success` / `status_failed` | `Scrolling…` / `Success!` / `Failed.` | `UIVegaSpell.cpp:68 / :69 / :70`（收包回调现取） | 这三条对应回执 op 码 0x40/0x41/0x43，原生整句多半在 `String.img` 的强化/卷轴类节点下 | 待取证 |
+| `vegaspell.status_result_op` | `Result op=0x{}` | `UIVegaSpell.cpp:71`（default 分支） | **多半没有原生依据**：这是本版调试兜底（未知 op 回显）。要中文化须先决定未知 op 到底该显示什么 | 待用户定策（可考虑改成不显示或走 LOG） |
+| `vegaspell.slot_equip_at` / `slot_scroll_at` / `slot_vega_at` | `Equip @{}` / `Scroll @{}` / `Vega @{}` | `UIVegaSpell.cpp:82 / :87 / :91`（drop 现取） | 三条同源：拖放落位的「哪一格」回显。原生若用图标高亮而不是文字，正确做法是删文案不是换文案 | 待取证 |
+| `vegaspell.slot_equip_num` / `slot_scroll_num` | `Equip #{}` / `Scroll #{}` | `UIVegaSpell.cpp:128, :138` / `:154, :164` | 与上三条同一问（`#N` 是本包自拟的槽位写法） | 待取证 |
+| `vegaspell.prompt_equip_slot` / `prompt_scroll_slot` | `Equip slot` / `Scroll slot` | `UIVegaSpell.cpp:141`、`:167`（**UISoftKey 第三参**，扫描器盲区） | 属软键盘的**输入格式说明**（期望用户输入槽位号）：可译，但译文必须保留「输入槽位号」这层意思 | 待取证（格式说明类） |
+| `vegaspell.need_equip_scroll` / `no_vega_in_cash` / `sent` | `Need equip + scroll` / `No Vega Spell in Cash` / `Vega sent…` | `UIVegaSpell.cpp:187 / :202 / :208` | 前两条是本包自造的失败提示，原生对应行为是**按钮置灰**而非弹文案的可能性大；`sent` 同理 | 待取证 |
+| `rps.title` | `Rock Paper Scissors` | `UIRpsGame.cpp:22`（ctor 初值） | 原生 RPS 窗标题大概率是 `UIWindow.img/RpsGame` 烘焙位图 ⇒ 若是，这行归位图、不留 ini 键 | 待取证 |
+| `rps.round_result` | `You:{} NPC:{}` | `UIRpsGame.cpp:67`（`format_all` 双占位） | 原生结算行是手势图标 + 胜负位图，文字整句需查 `String.img` RPS 根 | 待取证 |
+| `rps.pick_rock` / `pick_paper` / `pick_scissor` | `Rock` / `Paper` / `Scissor`（各 ×2） | `UIRpsGame.cpp:92/:118`、`:95/:121`、`:98/:124`（键路径与软键盘路径各一处） | 同一状态行的两个入口，取证后可合并措辞；原生是图标则整行删文案 | 待取证 |
+| `rps.started` / `continued` / `retry` | `Started` / `Continue` / `Retry` | `UIRpsGame.cpp:101/:127/:143`、`:104`、`:107/:147` | 原生对应 `BtStart/BtContinue/BtRetry` **按钮位图**上的烘焙字（按钮态本身已有文案，状态行重复） | 待取证（可能是冗余文案） |
+| `rps.softkey_choices` | `rock\|paper\|scissor` | `UIRpsGame.cpp:132`（UISoftKey 第三参） | **禁译，无取证需要**：值是软键盘解析器的输入 token，`t == "rock"` 那套比较只认英文；建键只为站点归零，ini 注释已写死理由 | 不翻译（硬契约） |
+| `plant.title` / `raise.title` | `Plant` / `Raise` | `UIPlant.cpp:70, :83` / `:171, :184`（ctor 初值 + 空输入回落） | 种植/收获壳窗的标题行；原生对应 `FruitGarden` 一类节点，整句需在 `String.img` 定位 | 待取证 |
+| `plant.use_slot` / `use_item` | `Use #{}` / `Use {}` | `UIPlant.cpp:33`（两窗共用的静态 helper）、`:92/:130/:193/:231` | 「使用」动词在原生有现成词（`String.img/UIWindow` 类），但这两条本质是**调试回显**（告诉你刚发了哪格） | 待取证（或按调试件处置） |
+| `plant.open_item_ui` / `info_number` | `OpenItemUI {}` / `infoNumber` | `UIPlant.cpp:152/:253`、`:154/:255` | 两条都是封包参数回显，原生界面不会出现 ⇒ 属调试文案，不该走文案取证，该决定是否移出 UI | 待用户定策（调试件） |
+| `plant.water_of_life` | `WaterOfLife` | `UIPlant.cpp:159`、`:260` | 同上：这是封包名，不是给人读的文案 | 待用户定策（调试件） |
+| `plant.softkey_hint` / `raise.softkey_hint` | `Plant itemid\|tip` / `Raise itemid\|tip` | `UIPlant.cpp:101/:137`、`:202/:238`（UISoftKey 第三参） | 输入格式说明，可译但须保留「itemid 或提示串」二选一这层意思；`\|` 是分隔符不是文案 | 待取证（格式说明类） |
+| `hammer.hint_drop` / `drop_first` / `need_equip_tab` | `Drop an equip here` / `Drop an equip first` / `Need an equip from Equip tab` | `UIViciousHammer.cpp:32`（ctor 初值）、`:160`、`:88` | 原生铁锤窗拖放区引导语（`String.img` 的 ViciousHammer 相关根）；`hint_drop` 与 `drop_first` 语义重叠，取证后可能合并 | 待取证 |
+| `hammer.used` / `equip_slot` / `equip_num` | `Hammer used: {}` / `Equip slot {}` / `Equip #{}` | `UIViciousHammer.cpp:78`、`:95`、`:127/:137` | 计数与槽位回显；原生用位图数字还是自绘 `Text` 决定这条留不留 | 待取证 |
+| `hammer.no_hammer_cash` / `sent` | `No Vicious Hammer in Cash` / `Hammer sent…` | `UIViciousHammer.cpp:176`、`:182` | 失败/成功回执；原生多半是**不响应**或弹通用提示（`String.img` 公共失败句） | 待取证 |
+| `hammer.softkey_equip_slot` | `Equip inv slot` | `UIViciousHammer.cpp:141`（UISoftKey 第三参） | 输入格式说明类，同 `vegaspell.prompt_*` | 待取证（格式说明类） |
+| `wedding.hint_softkey` / `softkey_guest` / `softkey_invite_msg` | `Wedding — SoftKey guest` / `Wedding guest` / `Invite msg` | `UIWedding.cpp:49`、`:72/:140/:187`、`:62/:71/:129/:139/:179` | 前两条是本包自造的「该输入什么」说明（原生婚礼窗无此软键盘流程）⇒ 无依据可取，要中文化须用户给措辞 | 待用户定措辞 |
+| `wedding.guest` / `invited` | `Guest: {}` / `Invited {}` | `UIWedding.cpp:57/:66/:123/:133/:172`、`:127/:137/:176` | 「受邀者名字」行的前缀与回执；原生婚礼请柬是烘焙位图 + 名字贴图，需先确认这行在原生是否以文本存在 | 待取证 |
+| `wedding.progress` | `Step {}  G:{} B:{}` | `UIWedding.cpp:96`（`format_all` 三占位） | 婚礼流程步进条：原生是 `Wedding` 根的**位图步骤条**，`G:`/`B:` 这种缩写几乎肯定不是原生写法 | 待取证（低优先） |
+
+**判据补充（本批立）**：`"Wedding invite"`（`UIWedding.cpp` 五处悄悄话默认正文）**没建键** ——
+它是出站封包正文、给对端看的，翻译会改变对方收到的内容，属协议层不属本端展示文案；同理
+`"m|f"` `"y|n"` `"save|close"` 这类被代码按 token 比较的输入语法，一律按 `rps.softkey_choices`
+的「禁译」档处理。
+
 
 ## 为什么模板里带占位符而不是「数字 + 独立后缀」
 

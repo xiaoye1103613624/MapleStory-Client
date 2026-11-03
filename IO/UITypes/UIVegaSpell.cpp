@@ -13,6 +13,7 @@
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -28,7 +29,7 @@ namespace ms
 	UIVegaSpell::UIVegaSpell() : has_assets(false),
 		equip_slot(0), equip_itemid(0), scroll_slot(0), scroll_itemid(0),
 		cash_slot(0), cash_itemid(0),
-		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Drop equip + scroll")
+		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("vegaspell.hint_init"))
 	{
 		position = Point<int16_t>(320, 120);
 		dimension = Point<int16_t>(178, 235);
@@ -64,10 +65,10 @@ namespace ms
 	void UIVegaSpell::set_result(uint8_t op)
 	{
 		switch (op) {
-			case 0x40: status.change_text("Scrolling…"); break;
-			case 0x41: status.change_text("Success!"); break;
-			case 0x43: status.change_text("Failed."); break;
-			default: status.change_text("Result op=0x" + std::to_string(op)); break;
+			case 0x40: status.change_text(Locale::text("vegaspell.status_scrolling")); break;
+			case 0x41: status.change_text(Locale::text("vegaspell.status_success")); break;
+			case 0x43: status.change_text(Locale::text("vegaspell.status_failed")); break;
+			default: status.change_text(Locale::format("vegaspell.status_result_op", std::to_string(op))); break;
 		}
 	}
 
@@ -78,18 +79,18 @@ namespace ms
 			equip_slot = icon.get_inventory_slot();
 			equip_itemid = icon.get_item_id();
 			equip_icon = ItemData::get(equip_itemid).get_icon(false);
-			status.change_text("Equip @" + std::to_string(equip_slot));
+			status.change_text(Locale::format("vegaspell.slot_equip_at", std::to_string(equip_slot)));
 		} else if (tab == InventoryType::Id::USE) {
 			scroll_slot = icon.get_inventory_slot();
 			scroll_itemid = icon.get_item_id();
 			scroll_icon = ItemData::get(scroll_itemid).get_icon(false);
-			status.change_text("Scroll @" + std::to_string(scroll_slot));
+			status.change_text(Locale::format("vegaspell.slot_scroll_at", std::to_string(scroll_slot)));
 		} else if (tab == InventoryType::Id::CASH) {
 			cash_slot = icon.get_inventory_slot();
 			cash_itemid = icon.get_item_id();
-			status.change_text("Vega @" + std::to_string(cash_slot));
+			status.change_text(Locale::format("vegaspell.slot_vega_at", std::to_string(cash_slot)));
 		} else {
-			status.change_text("Drop equip / scroll / vega");
+			status.change_text(Locale::text("vegaspell.hint_drop"));
 		}
 		return true;
 	}
@@ -124,7 +125,7 @@ namespace ms
 				equip_itemid = Stage::get().get_player().get_inventory()
 					.get_item_id(InventoryType::Id::EQUIP, from_inv);
 				equip_icon = ItemData::get(equip_itemid).get_icon(false);
-				status.change_text("Equip #" + std::to_string(from_inv));
+				status.change_text(Locale::format("vegaspell.slot_equip_num", std::to_string(from_inv)));
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& s) {
 					try {
@@ -134,10 +135,10 @@ namespace ms
 							equip_itemid = Stage::get().get_player().get_inventory()
 								.get_item_id(InventoryType::Id::EQUIP, slot);
 							equip_icon = ItemData::get(equip_itemid).get_icon(false);
-							status.change_text("Equip #" + s);
+							status.change_text(Locale::format("vegaspell.slot_equip_num", s));
 						}
 					} catch (...) {}
-				}, []() {}, "Equip slot");
+				}, []() {}, Locale::text("vegaspell.prompt_equip_slot"));
 			}
 		} else if (keycode == 'S' || keycode == 's') {
 			int16_t from_inv = 0;
@@ -150,7 +151,7 @@ namespace ms
 				scroll_itemid = Stage::get().get_player().get_inventory()
 					.get_item_id(InventoryType::Id::USE, from_inv);
 				scroll_icon = ItemData::get(scroll_itemid).get_icon(false);
-				status.change_text("Scroll #" + std::to_string(from_inv));
+				status.change_text(Locale::format("vegaspell.slot_scroll_num", std::to_string(from_inv)));
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& s) {
 					try {
@@ -160,10 +161,10 @@ namespace ms
 							scroll_itemid = Stage::get().get_player().get_inventory()
 								.get_item_id(InventoryType::Id::USE, slot);
 							scroll_icon = ItemData::get(scroll_itemid).get_icon(false);
-							status.change_text("Scroll #" + s);
+							status.change_text(Locale::format("vegaspell.slot_scroll_num", s));
 						}
 					} catch (...) {}
-				}, []() {}, "Scroll slot");
+				}, []() {}, Locale::text("vegaspell.prompt_scroll_slot"));
 			}
 		} else if (keycode == 'G' || keycode == 'g') {
 			button_pressed(Buttons::BtStart);
@@ -183,7 +184,7 @@ namespace ms
 				break;
 			case Buttons::BtStart: {
 				if (equip_slot <= 0 || scroll_slot <= 0) {
-					status.change_text("Need equip + scroll");
+					status.change_text(Locale::text("vegaspell.need_equip_scroll"));
 					break;
 				}
 				if (cash_slot <= 0) {
@@ -198,13 +199,13 @@ namespace ms
 					}
 				}
 				if (cash_slot <= 0) {
-					status.change_text("No Vega Spell in Cash");
+					status.change_text(Locale::text("vegaspell.no_vega_in_cash"));
 					break;
 				}
 				LOG(LOG_DEBUG, "UIVegaSpell: USE_CASH_ITEM eq=" << equip_slot
 					<< " use=" << scroll_slot << " cash=" << cash_itemid);
 				UseVegaSpellPacket(cash_slot, cash_itemid, equip_slot, scroll_slot).dispatch();
-				status.change_text("Vega sent…");
+				status.change_text(Locale::text("vegaspell.sent"));
 				break;
 			}
 			default:

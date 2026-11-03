@@ -6,6 +6,7 @@
 #include "../Template/Singleton.h"
 
 #include <cstdint>
+#include <initializer_list>
 #include <string>
 #include <unordered_map>
 
@@ -89,6 +90,26 @@ namespace ms
 				out += value;
 			else
 				out.replace(ph, 2, value);
+
+			return out;
+		}
+
+		/// 多占位符文案：值按 `{}` 的出现顺序依次填入（`{}` 是位置标记，不是名字）。
+		/// 为什么不拆成几条键在调用侧拼：语序本身是语言属性（「A: 1 B: 2」在别的语言里
+		/// 可能整个反过来），拆开后就把语序钉死在 C++ 里，ini 失去真源地位。
+		/// 占位符多于 / 少于值时按现有 `format` 的脾气退化成「直接拼在末尾」，
+		/// 宁可在界面上看出错位，也不要在取值时抛异常。
+		static std::string format_all(const std::string& key, std::initializer_list<std::string> values)
+		{
+			std::string out = Locale::get().tr(key);
+			for (const std::string& v : values)
+			{
+				size_t ph = out.find("{}");
+				if (ph == std::string::npos)
+					out += v;
+				else
+					out.replace(ph, 2, v);
+			}
 
 			return out;
 		}

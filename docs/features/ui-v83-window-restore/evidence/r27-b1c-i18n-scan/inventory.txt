@@ -4,7 +4,7 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 359 处 | 英文 359（壳窗 333 / 在用窗 26）| 中文 0
+总计 304 处 | 英文 304（壳窗 289 / 在用窗 15）| 中文 0
 
 
 == 英文原文 · 在用窗 ==
@@ -33,19 +33,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L126   Card 
   L148   Ready
   L152   Start
-
-[IO/UITypes/UIPlant.cpp] 11 处
-  L32    Use #
-  L82    Plant
-  L91    Use 
-  L129   Use 
-  L151   OpenItemUI 
-  L158   WaterOfLife
-  L183   Raise
-  L192   Use 
-  L230   Use 
-  L252   OpenItemUI 
-  L259   WaterOfLife
 
 
 == 英文原文 · 壳窗 ==
@@ -369,20 +356,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UIRemoteGachapon.cpp] 1 处
   L52    Gacha box mode=
 
-[IO/UITypes/UIRpsGame.cpp] 12 处
-  L92    Rock
-  L95    Paper
-  L98    Scissor
-  L101   Started
-  L104   Continue
-  L107   Retry
-  L118   Rock
-  L121   Paper
-  L124   Scissor
-  L127   Started
-  L143   Started
-  L147   Retry
-
 [IO/UITypes/UIStatsInfo.cpp] 10 处
   L539   -
   L549    ~ 
@@ -399,44 +372,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L58    Mesos: 0
   L85    Mesos: 
   L99    Mesos: 0
-
-[IO/UITypes/UIVegaSpell.cpp] 15 处
-  L67    Scrolling…
-  L68    Success!
-  L69    Failed.
-  L70    Result op=0x
-  L81    Equip @
-  L86    Scroll @
-  L90    Vega @
-  L92    Drop equip / scroll / vega
-  L127   Equip #
-  L137   Equip #
-  L153   Scroll #
-  L163   Scroll #
-  L186   Need equip + scroll
-  L201   No Vega Spell in Cash
-  L207   Vega sent…
-
-[IO/UITypes/UIViciousHammer.cpp] 8 处
-  L77    Hammer used: 
-  L87    Need an equip from Equip tab
-  L94    Equip slot 
-  L126   Equip #
-  L136   Equip #
-  L159   Drop an equip first
-  L175   No Vicious Hammer in Cash
-  L181   Hammer sent…
-
-[IO/UITypes/UIWedding.cpp] 9 处
-  L48    Wedding — SoftKey guest
-  L56    Guest: 
-  L65    Guest: 
-  L125   Guest: 
-  L129   Invited 
-  L135   Guest: 
-  L139   Invited 
-  L174   Guest: 
-  L178   Invited 
 
 [IO/UITypes/UIWorldSelect.cpp] 1 处
   L216   Ver. 

@@ -1,0 +1,58 @@
+R27-B1c-5a 门禁读数（壳窗批次 · UIVegaSpell / UIRpsGame / UIPlant+UIRaise / UIViciousHammer / UIWedding）
+运行时间 2026-11-03，全部命令在 E:\project\MapleStory-Client 下执行。
+
+== 1. 编译（逐 TU，对齐 MapleStory.vcxproj:102 的宏集） ==
+cl /c /nologo /utf-8 /bigobj /std:c++17 /EHsc /W3 /DNDEBUG /D_CONSOLE /DUSE_NX
+   IO\UITypes\UIVegaSpell.cpp IO\UITypes\UIRpsGame.cpp IO\UITypes\UIPlant.cpp
+   IO\UITypes\UIViciousHammer.cpp IO\UITypes\UIWedding.cpp Util\Locale.cpp
+CL_EXIT=0  error 行数=0
+仅两类既有告警：C4005 USE_NX 宏重定义（MapleStory.h:45，命令行 /D 与头文件重复，非本批引入）、
+MessagingPackets.h(52) C4267 size_t→int8_t（UIWedding 引到，非本批引入）。
+
+== 2. 键集与引用对账（tools/check_locale_keys.py） ==
+zh-CN keys = 190
+en-US keys = 190
+equip.speed.     枚举  9 条  zh 缺 0  en 缺 0
+equip.stat.      枚举 15 条  zh 缺 0  en 缺 0
+equip.type.      枚举 32 条  zh 缺 0  en 缺 0
+代码引用键 121 个 / 动态前缀 5 个
+GATE OK: 语言文件键集对齐，所有数据表枚举均能折成已建档的键，且代码引用的键全部建档
+（本批反向门禁净增 16 个引用键 = hammer 9 + wedding 6 + rps.softkey_choices 1；
+  vegaspell/rps/plant 的 33 个键在批次开始时已被引用但缺档，本轮建档后缺键回到 0。）
+
+**读数口径要讲清**：上面这遍是在**工作树**上跑的，工作树的 `locale/*.ini` 还带着并行会话在途的
+`sysopt.combo.*` 两键 + 两处空行整理。本提交**不含**那部分（locale 两份按 blob 精确入库，
+`git diff --cached -- locale/` 是 110 行纯新增、0 删除）。⇒ 在本提交自己的树上跑反向门禁，
+缺键数不是 0 而是 **2**：`sysopt.combo.screenshot_folder` / `sysopt.combo.mob_name_hp`。
+这两键由 `63080c0`（R27-B7-4 系统设置窗）在 `UIOptionMenu.cpp:788/:789` 引用却没建档，
+是**HEAD 既有缺陷**，修复正躺在另一个会话的在途改动里（本批不代它落，也不动它那份 hunk）。
+换句话说：反向门禁补上后第一次跑就抓到一个存量缺键 —— 只是那两键不归本批补。
+
+== 3. 版式回归（tools/layout.py check × 10 张 oracle spec） ==
+汇总 specs=10 非零返回=0
+逐张（specs 来自 evidence/r27-oracle/）：ChatBar 0/3、Equip 0/9、EquipTooltip 0/6、Item 0/4、
+ItemFull 0/9、KeyConfig 0/9、MonsterBook 0/5、SkillMacro 0/2（跳过 6）、Stat 0/8（跳过 1）、
+UserList 0/6 ⇒ 61 项断言不合格 0。本批只换文案来源，未碰任何坐标 ⇒ Δ=0 是预期。
+
+== 4. 站点计数 ==
+scan_display_text.py：sites=359 -> 304（latin 304 / shell 289 / live 15 / cjk 0，shells=56）
+  本批 5 文件在 inventory.txt 中已无任何余站。
+scan_cjk_literals.py：total=30（与 B1c-4 收尾时同数；本批 5 文件不含中文站）
+  30 = Window.cpp 11（B1c-7）+ UIQuestLog 10 / UIGuild 5 / UIGender 2 / UIMerchant 1（B1c-5b/c）
+  + UIMiscShells 1（B1c-6）
+
+== 5. 扫描器盲区（本批人工补的 16 处） ==
+UISoftKey(Ok, Cancel, "<提示语>") 的第三实参是展示文案，scan_display_text.py 的三种形状
+（change_text / Text(Text::Font..) / show_text）都看不见它。本批按人工清点接入 16 处：
+  UIVegaSpell.cpp:141 :167          （2）
+  UIRpsGame.cpp:132                  （1）
+  UIPlant.cpp:101 :137 :154 :202 :238 :255（6，含 UIRaise）
+  UIViciousHammer.cpp:141            （1）
+  UIWedding.cpp:62 :71 :72 :129 :139 :140 :179 :187（8）
+⇒ 站点总数 402（以及本轮 304）都是**下界**；扩形状与否待用户抉择，见 README §9.3。
+
+== 6. 运行时负对照 ==
+仍未做：MapleStory.exe 占着 OutDir=E:\MXD\BeiDou-Client-xy\ ⇒ 整工程 Rebuild 与
+「改 ui.language 看 Locale refresh gen= 把绑了表的窗逐条报出来」都跑不了。
+本批 5 文件的站点全是**活文案 / ctor 现取**（都各有第二个写入点），按判据一律不进绑定表
+⇒ 即使做了负对照，本批也不该出现在 refresh 日志里；能证的是「切语言后新开窗体取到 ini 值」。

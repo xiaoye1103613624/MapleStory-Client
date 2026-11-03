@@ -12,6 +12,7 @@
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -45,7 +46,7 @@ namespace ms
 		}
 		if (inv["BtOK"])
 			buttons[BtOK] = std::make_unique<MapleButton>(inv["BtOK"], Point<int16_t>(80, static_cast<int16_t>(dimension.y() - 40)));
-		tip_label.change_text("Wedding — SoftKey guest");
+		tip_label.change_text(Locale::text("wedding.hint_softkey"));
 		progress_label.change_text("");
 		center_on_screen();
 		{
@@ -53,22 +54,22 @@ namespace ms
 			if (auto ci = UI::get().get_element<UICharInfo>())
 				guest_pre = ci->get_target_name();
 			if (!guest_pre.empty()) {
-				tip_label.change_text("Guest: " + guest_pre);
+				tip_label.change_text(Locale::format("wedding.guest", guest_pre));
 				UI::get().emplace<UISoftKey>([guest_pre](const std::string& msg) {
 					std::string body = msg.empty() ? "Wedding invite" : msg;
 					WhisperPacket(guest_pre, body).dispatch();
 					LOG(LOG_DEBUG, "UIWedding: Whisper guest=" << guest_pre);
-				}, []() {}, "Invite msg");
+				}, []() {}, Locale::text("wedding.softkey_invite_msg"));
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& guest) {
 					if (guest.empty()) return;
-					tip_label.change_text("Guest: " + guest);
+					tip_label.change_text(Locale::format("wedding.guest", guest));
 					UI::get().emplace<UISoftKey>([guest](const std::string& msg) {
 						std::string body = msg.empty() ? "Wedding invite" : msg;
 						WhisperPacket(guest, body).dispatch();
 						LOG(LOG_DEBUG, "UIWedding: Whisper guest=" << guest);
-					}, []() {}, "Invite msg");
-				}, []() {}, "Wedding guest");
+					}, []() {}, Locale::text("wedding.softkey_invite_msg"));
+				}, []() {}, Locale::text("wedding.softkey_guest"));
 			}
 		}
 		LOG(LOG_DEBUG, "UIWedding: open");
@@ -92,11 +93,8 @@ namespace ms
 
 	void UIWedding::set_progress(uint8_t step, int32_t groom, int32_t bride)
 	{
-		progress_label.change_text(
-			"Step " + std::to_string(step)
-			+ "  G:" + std::to_string(groom)
-			+ " B:" + std::to_string(bride)
-		);
+		progress_label.change_text(Locale::format_all("wedding.progress",
+			{ std::to_string(step), std::to_string(groom), std::to_string(bride) }));
 	}
 
 	void UIWedding::draw(float inter) const
@@ -122,24 +120,24 @@ namespace ms
 			}
 			if (!guest_pre.empty()) {
 				std::string guest = guest_pre;
-				tip_label.change_text("Guest: " + guest);
+				tip_label.change_text(Locale::format("wedding.guest", guest));
 				UI::get().emplace<UISoftKey>([this, guest](const std::string& msg) {
 					std::string body = msg.empty() ? "Wedding invite" : msg;
 					WhisperPacket(guest, body).dispatch();
-					tip_label.change_text("Invited " + guest);
+					tip_label.change_text(Locale::format("wedding.invited", guest));
 					LOG(LOG_DEBUG, "UIWedding: Whisper guest=" << guest);
-				}, []() {}, "Invite msg");
+				}, []() {}, Locale::text("wedding.softkey_invite_msg"));
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& guest) {
 					if (guest.empty()) return;
-					tip_label.change_text("Guest: " + guest);
+					tip_label.change_text(Locale::format("wedding.guest", guest));
 					UI::get().emplace<UISoftKey>([this, guest](const std::string& msg) {
 						std::string body = msg.empty() ? "Wedding invite" : msg;
 						WhisperPacket(guest, body).dispatch();
-						tip_label.change_text("Invited " + guest);
+						tip_label.change_text(Locale::format("wedding.invited", guest));
 						LOG(LOG_DEBUG, "UIWedding: Whisper guest=" << guest);
-					}, []() {}, "Invite msg");
-				}, []() {}, "Wedding guest");
+					}, []() {}, Locale::text("wedding.softkey_invite_msg"));
+				}, []() {}, Locale::text("wedding.softkey_guest"));
 			}
 		}
 		else if (keycode == 'M' || keycode == 'm')
@@ -171,14 +169,14 @@ namespace ms
 			if (auto ci = UI::get().get_element<UICharInfo>())
 				guest_pre = ci->get_target_name();
 			auto ask_msg = [this](const std::string& guest) {
-				tip_label.change_text("Guest: " + guest);
+				tip_label.change_text(Locale::format("wedding.guest", guest));
 				UI::get().emplace<UISoftKey>([this, guest](const std::string& msg) {
 					std::string body = msg.empty() ? "Wedding invite" : msg;
 					WhisperPacket(guest, body).dispatch();
-					tip_label.change_text("Invited " + guest);
+					tip_label.change_text(Locale::format("wedding.invited", guest));
 					LOG(LOG_DEBUG, "UIWedding: BtOK Whisper guest=" << guest);
 					deactivate();
-				}, [this]() { deactivate(); }, "Invite msg");
+				}, [this]() { deactivate(); }, Locale::text("wedding.softkey_invite_msg"));
 			};
 			if (!guest_pre.empty())
 				ask_msg(guest_pre);
@@ -186,7 +184,7 @@ namespace ms
 				UI::get().emplace<UISoftKey>([this, ask_msg](const std::string& guest) {
 					if (guest.empty()) { deactivate(); return; }
 					ask_msg(guest);
-				}, [this]() { deactivate(); }, "Wedding guest");
+				}, [this]() { deactivate(); }, Locale::text("wedding.softkey_guest"));
 		}
 		return Button::State::NORMAL;
 	}

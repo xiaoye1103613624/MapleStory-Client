@@ -73,7 +73,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
 | **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
-| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的 ~117 处，按文件切 2~3 个提交 | ~117 | 同上 |
+| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的 ~117 处，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（~~已完，见「落地情况」~~）；**5b** = 其余壳窗 latin；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b/5c 待清 | 同上 |
 | **B1c-6 壳窗·`UIMiscShells`** | 216 处，单文件独占一批（体量最大，且与并行会话冲突最高） | 216 | 同上 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
 
@@ -137,6 +137,33 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 读数见 [gate-r27-b1c4.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c4.txt)，取舍理由见 evidence README §8。
 **运行时负对照仍欠**：`MapleStory.exe` 占着 `OutDir` ⇒ 整工程 Rebuild 与「改 `xy-config.yaml` 的
 `ui.language` 看 `Locale refresh gen=`」都做不了，按用户既有选择等他自行关闭客户端。
+
+**B1c-5a 落地情况（2026-11-03）**：壳窗第一批 5 文件接完 —— `UIVegaSpell`(18) `UIRpsGame`(15)
+`UIPlant`+`UIRaise`(19) `UIViciousHammer`(10) `UIWedding`(18)，**80 个调用点 / 49 新键**，
+`scan_display_text.py` 359 ⇒ **304**（这 5 文件已无余站），`scan_cjk_literals.py` 仍 30（本批无中文站）。
+本批把三件事摊开了，都算机制级信息，后两批按此走：
+
+1. **`Locale` 补了多占位入口 `format_all(key, {v1, v2, …})`**（按 `{}` 出现顺序填）。触发点是
+   `rps.round_result`=`You:{} NPC:{}` 与 `wedding.progress`=`Step {}  G:{} B:{}`。为什么不拆键在 C++ 里拼：
+   语序是语言属性，拆完就把语序钉死在代码里、ini 失去真源地位；只此一份实现。
+2. **反向门禁（§4.2）之前形同虚设**：`check_locale_keys.py` 首版正则要求键后紧跟 `+`/`,`，全站最常见的
+   单参 `Locale::text("k")` 一条都不匹配 —— 只报 51 键、缺键清单只剩 `format` 族。补 `\s*\)` 档后
+   121 键 / 缺 0。**新门禁必须先用已知缺陷做负对照**，「跑通了」不等于「在拦」。
+3. **站点计数确认是下界**：`UISoftKey(Ok, Cancel, "<提示语>")` 第三实参是展示文案，`scan_display_text.py`
+   的三种形状全看不见；本批人工补了 16 处（清单见 [gate-r27-b1c5a.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c5a.txt) §5），
+   全站余量未清点。该形状混着两类东西 —— 真提示语（`UILogin.cpp:586/:592` `"Account"/"Password"`、
+   `UICharSelect.cpp:1452/:1455` PIC 整句）与被代码按 token 比较的**输入语法**（`rock|paper|scissor`、
+   `UIGender.cpp:135` `"m|f"`、`UIKeyConfig.cpp:916` `"save|close"`、`UIQuit.cpp:182` `"y|n"`）。
+   本批处置：两类都建键，输入语法在 ini 标 `# 禁译`。**是否把该形状扩进扫描器（会重算全站总数）、
+   或改为白名单不建键 ⇒ 待用户抉择，不擅自扩量**（见 evidence README §9.3）。
+
+档位照 §3 尾硬约定：这 5 窗的 `status`/`tip_label` 每处都有第二个写入点 ⇒ **一个绑定点都没加**，
+全部 ctor 现取 + 事件现取；代价（切语言后已开着的窗要等下一次数据事件）已写进 README §9.4。
+`UIWedding` 的 `"Wedding invite"`（5 处悄悄话默认正文）**刻意不建键** —— 出站封包正文给对端看，
+翻译会改变对方收到的内容，属协议层，需用户单独定策。
+门禁：6 TU `cl /c /utf-8 /bigobj` CL_EXIT=0 / error 0 行；`check_locale_keys.py` **190/190** + 反向门禁缺 0；
+`layout.py check` 十张 spec 61 项断言不合格 0。余下 B1c-5b（其余壳窗 latin）/ 5c（`UIQuestLog` 10、
+`UIGuild` 5、`UIGender` 2、`UIMerchant` 1 的中文盲区）。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 

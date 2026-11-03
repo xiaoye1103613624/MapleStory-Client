@@ -10,6 +10,7 @@
 #include "../../Net/Packets/RpsPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -18,7 +19,7 @@
 namespace ms
 {
 	UIRpsGame::UIRpsGame()
-		: status(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK, "Rock Paper Scissors")
+		: status(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK, Locale::text("rps.title"))
 	{
 		position = Point<int16_t>(300, 140);
 		dimension = Point<int16_t>(260, 200);
@@ -63,9 +64,8 @@ namespace ms
 
 	void UIRpsGame::set_round_result(uint8_t selection, uint8_t answer)
 	{
-		status.change_text(
-			"You:" + std::to_string(selection) + " NPC:" + std::to_string(answer)
-		);
+		status.change_text(Locale::format_all("rps.round_result",
+			{ std::to_string(selection), std::to_string(answer) }));
 	}
 
 	void UIRpsGame::draw(float inter) const
@@ -89,22 +89,22 @@ namespace ms
 		// 1/R Rock · 2/P Paper · 3 Scissor · S Start · C Continue · Y Retry · X Exit
 		if (keycode == '1' || keycode == 'R' || keycode == 'r') {
 			RpsActionPacket(1, 0).dispatch();
-			status.change_text("Rock");
+			status.change_text(Locale::text("rps.pick_rock"));
 		} else if (keycode == '2' || keycode == 'P' || keycode == 'p') {
 			RpsActionPacket(1, 1).dispatch();
-			status.change_text("Paper");
+			status.change_text(Locale::text("rps.pick_paper"));
 		} else if (keycode == '3') {
 			RpsActionPacket(1, 2).dispatch();
-			status.change_text("Scissor");
+			status.change_text(Locale::text("rps.pick_scissor"));
 		} else if (keycode == 'S' || keycode == 's') {
 			RpsActionPacket(0).dispatch();
-			status.change_text("Started");
+			status.change_text(Locale::text("rps.started"));
 		} else if (keycode == 'C' || keycode == 'c') {
 			RpsActionPacket(3).dispatch();
-			status.change_text("Continue");
+			status.change_text(Locale::text("rps.continued"));
 		} else if (keycode == 'Y' || keycode == 'y') {
 			RpsActionPacket(5).dispatch();
-			status.change_text("Retry");
+			status.change_text(Locale::text("rps.retry"));
 		} else if (keycode == 'X' || keycode == 'x') {
 			RpsActionPacket(4).dispatch();
 			deactivate();
@@ -115,21 +115,21 @@ namespace ms
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 				if (t == "rock" || t == "r" || t == "0") {
 					RpsActionPacket(1, 0).dispatch();
-					status.change_text("Rock");
+					status.change_text(Locale::text("rps.pick_rock"));
 				} else if (t == "paper" || t == "p" || t == "1") {
 					RpsActionPacket(1, 1).dispatch();
-					status.change_text("Paper");
+					status.change_text(Locale::text("rps.pick_paper"));
 				} else if (t == "scissor" || t == "s" || t == "2") {
 					RpsActionPacket(1, 2).dispatch();
-					status.change_text("Scissor");
+					status.change_text(Locale::text("rps.pick_scissor"));
 				} else if (t == "start") {
 					RpsActionPacket(0).dispatch();
-					status.change_text("Started");
+					status.change_text(Locale::text("rps.started"));
 				} else if (t == "exit" || t == "x") {
 					RpsActionPacket(4).dispatch();
 					deactivate();
 				}
-			}, []() {}, "rock|paper|scissor");
+			}, []() {}, Locale::text("rps.softkey_choices"));
 		}
 	}
 
@@ -140,11 +140,11 @@ namespace ms
 		switch (id) {
 			case BtStart:
 				RpsActionPacket(0).dispatch();
-				status.change_text("Started");
+				status.change_text(Locale::text("rps.started"));
 				break;
 			case BtRetry:
 				RpsActionPacket(5).dispatch();
-				status.change_text("Retry");
+				status.change_text(Locale::text("rps.retry"));
 				break;
 			case BtRock:
 				RpsActionPacket(1, 0).dispatch();

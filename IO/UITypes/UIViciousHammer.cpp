@@ -13,6 +13,7 @@
 #include "../../Net/Packets/HammerPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -28,7 +29,7 @@ namespace ms
 
 	UIViciousHammer::UIViciousHammer() : has_assets(false), hammer_used(0),
 		equip_slot(0), equip_itemid(0),
-		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Drop an equip here")
+		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("hammer.hint_drop"))
 	{
 		position = Point<int16_t>(320, 140);
 		dimension = Point<int16_t>(178, 206);
@@ -74,7 +75,7 @@ namespace ms
 	void UIViciousHammer::set_hammer_used(int32_t used)
 	{
 		hammer_used = used;
-		status.change_text("Hammer used: " + std::to_string(used));
+		status.change_text(Locale::format("hammer.used", std::to_string(used)));
 	}
 
 	bool UIViciousHammer::send_icon(const Icon& icon, Point<int16_t> cursor)
@@ -84,14 +85,14 @@ namespace ms
 			return true;
 
 		if (icon.get_inventory_tab() != InventoryType::Id::EQUIP) {
-			status.change_text("Need an equip from Equip tab");
+			status.change_text(Locale::text("hammer.need_equip_tab"));
 			return true;
 		}
 
 		equip_slot = icon.get_inventory_slot();
 		equip_itemid = icon.get_item_id();
 		equip_icon = ItemData::get(equip_itemid).get_icon(false);
-		status.change_text("Equip slot " + std::to_string(equip_slot));
+		status.change_text(Locale::format("hammer.equip_slot", std::to_string(equip_slot)));
 		LOG(LOG_DEBUG, "UIViciousHammer: equip slot=" << equip_slot << " id=" << equip_itemid);
 		return true;
 	}
@@ -123,7 +124,7 @@ namespace ms
 				equip_slot = from_inv;
 				equip_itemid = Stage::get().get_player().get_inventory()
 					.get_item_id(InventoryType::Id::EQUIP, from_inv);
-				status.change_text("Equip #" + std::to_string(from_inv));
+				status.change_text(Locale::format("hammer.equip_num", std::to_string(from_inv)));
 				LOG(LOG_DEBUG, "UIViciousHammer: SoftKey equip slot=" << from_inv);
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& s) {
@@ -133,11 +134,11 @@ namespace ms
 							equip_slot = slot;
 							equip_itemid = Stage::get().get_player().get_inventory()
 								.get_item_id(InventoryType::Id::EQUIP, slot);
-							status.change_text("Equip #" + s);
+							status.change_text(Locale::format("hammer.equip_num", s));
 							LOG(LOG_DEBUG, "UIViciousHammer: SoftKey equip slot=" << slot);
 						}
 					} catch (...) {}
-				}, []() {}, "Equip inv slot");
+				}, []() {}, Locale::text("hammer.softkey_equip_slot"));
 			}
 		} else if (keycode == 'G' || keycode == 'g' || keycode == 'S' || keycode == 's') {
 			button_pressed(Buttons::BtStart);
@@ -156,7 +157,7 @@ namespace ms
 				break;
 			case Buttons::BtStart: {
 				if (equip_slot <= 0) {
-					status.change_text("Drop an equip first");
+					status.change_text(Locale::text("hammer.drop_first"));
 					UseHammerPacket().dispatch();
 					break;
 				}
@@ -172,13 +173,13 @@ namespace ms
 					}
 				}
 				if (cash_slot <= 0) {
-					status.change_text("No Vicious Hammer in Cash");
+					status.change_text(Locale::text("hammer.no_hammer_cash"));
 					break;
 				}
 				LOG(LOG_DEBUG, "UIViciousHammer: USE_CASH_ITEM hammer=" << cash_id
 					<< " cashSlot=" << cash_slot << " eq=" << equip_slot);
 				UseViciousHammerPacket(cash_slot, cash_id, equip_slot).dispatch();
-				status.change_text("Hammer sent…");
+				status.change_text(Locale::text("hammer.sent"));
 				break;
 			}
 			default:

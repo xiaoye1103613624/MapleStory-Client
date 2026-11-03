@@ -98,6 +98,58 @@ def collect_dynamic_keys() -> dict:
     return dyn
 
 
+def collect_literal_keys() -> tuple:
+    """反向门禁（PLAN §4.2）：代码里引用的键 ⇒ 两份 ini 必须都有。
+
+    为什么必须有这一条：`tr()` 查不到键时**回显键名**，编译期、链接期、运行期都不报错，
+    于是拼错一个字母的键会在真机上显示成 `vegaspell.slot_equp_at`。B1c 之后每批要动
+    上百个键位引用，靠人眼对 ini 不可能。
+
+    两类形状分开处理：
+      · 完整键（`Locale::text("a.b")` / `bind_text(t, "a.b")` / `format("a.b", v)`）⇒ 直接查键。
+      · 动态拼出来的前缀（`"dailygift.rule_" + std::to_string(i)`、`enum_text("equip.type.", raw)`）
+        ⇒ 只要求 ini 里**至少有一个**以该前缀开头的键，逐个值留给数据表穷举去管。
+    """
+    callers = (
+        # 第一个实参是完整键。闭包字符必须一起判：跟 `+` 说明键名是拼出来的（只当前缀查），
+        # 跟 `,` 说明还有值实参，跟 `)` 说明是单参 text() —— 早先只写了 `[+,)` 里的 `+,`，
+        # 于是全站最常见的 `Locale::text("a.b")` 一个都没进门禁，缺键照样静默回显。
+        re.compile(r'Locale::(?:text|text_or|format|format_all)\s*\(\s*"([^"]+)"\s*([,+])'),
+        re.compile(r'Locale::(?:text|text_or|format|format_all)\s*\(\s*"([^"]+)"\s*\)'),
+        re.compile(r'(?:bind_text|\bbind)\s*\(\s*[^,()]+,\s*"([^"]+)"\s*([,+)])'),
+    )
+    prefixes = (
+        # enum_text/enum_key 的第一参恒为前缀（后缀来自数据表，已在动态键段穷举）
+        re.compile(r'Locale::enum_(?:text|key)\s*\(\s*"([^"]+)"'),
+    )
+
+    keys, dyn = {}, {}
+    for root, dirs, files in os.walk(REPO):
+        dirs[:] = [d for d in dirs if d not in ('.git', '3rdparty', 'build', 'x64')]
+        for fn in files:
+            if not fn.endswith(('.cpp', '.h')):
+                continue
+            path = os.path.join(root, fn)
+            try:
+                with io.open(path, encoding='utf-8', errors='replace') as fh:
+                    src = fh.read()
+            except OSError:
+                continue
+            for rx in callers:
+                for m in rx.finditer(src):
+                    key = m.group(1)
+                    nxt = m.group(2) if rx.groups >= 2 else ','
+                    if nxt == '+':
+                        dyn.setdefault(key, []).append(os.path.relpath(path, REPO))
+                    else:
+                        keys.setdefault(key, []).append(os.path.relpath(path, REPO))
+            for rx in prefixes:
+                for key in rx.findall(src):
+                    dyn.setdefault(key, []).append(os.path.relpath(path, REPO))
+
+    return keys, dyn
+
+
 def main() -> int:
     zh_path = os.path.join(LOCALE_DIR, 'zh-CN.ini')
     en_path = os.path.join(LOCALE_DIR, 'en-US.ini')
@@ -150,13 +202,28 @@ def main() -> int:
         if 'if (raw.empty())' not in header:
             problems.append('数据表含空枚举值，但 Locale.h::enum_text 已丢失空值短路')
 
+    # 反向门禁：代码引用的键 ⇒ 两份 ini 必须都有（缺键不报错，只在界面上回显键名）
+    lit, ldyn = collect_literal_keys()
+    print('代码引用键 %d 个 / 动态前缀 %d 个' % (len(lit), len(ldyn)))
+    miss_zh = sorted(k for k in lit if k not in zh)
+    miss_en = sorted(k for k in lit if k not in en)
+    if miss_zh:
+        problems.append('代码引用但 zh-CN 缺键 (%d):\n  %s'
+                        % (len(miss_zh), '\n  '.join('%s <- %s' % (k, ', '.join(lit[k])) for k in miss_zh)))
+    if miss_en:
+        problems.append('代码引用但 en-US 缺键 (%d):\n  %s'
+                        % (len(miss_en), '\n  '.join('%s <- %s' % (k, ', '.join(lit[k])) for k in miss_en)))
+    for pre, where in sorted(ldyn.items()):
+        if not any(k.startswith(pre) for k in zh) or not any(k.startswith(pre) for k in en):
+            problems.append('动态前缀 %s 两份 ini 都无成员（引用点 %s）' % (pre, ', '.join(sorted(set(where)))))
+
     if problems:
         print('\n=== FAIL ===')
         for p in problems:
             print('- %s' % p)
         return 1
 
-    print('\nGATE OK: 语言文件键集对齐，且所有数据表枚举均能折成已建档的键')
+    print('\nGATE OK: 语言文件键集对齐，所有数据表枚举均能折成已建档的键，且代码引用的键全部建档')
     return 0
 
 

@@ -13,6 +13,7 @@
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,7 +30,7 @@ namespace ms
 				int32_t itemid = Stage::get().get_player().get_inventory().get_item_id(tab, slot);
 				if (itemid > 0) {
 					UseItemPacket(slot, itemid).dispatch();
-					tip_label.change_text("Use #" + std::to_string(slot));
+					tip_label.change_text(Locale::format("plant.use_slot", std::to_string(slot)));
 					LOG(LOG_DEBUG, tag << ": UseItem from inv id=" << itemid << " slot=" << slot);
 					return true;
 				}
@@ -66,7 +67,7 @@ namespace ms
 	}
 
 	UIPlant::UIPlant()
-		: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Plant")
+		: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("plant.title"))
 	{
 		position = Point<int16_t>(300, 180);
 		dimension = Point<int16_t>(200, 150);
@@ -79,7 +80,7 @@ namespace ms
 		center_on_screen();
 		if (!try_use_selected_inv(tip_label, "UIPlant")) {
 			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) { tip_label.change_text("Plant"); return; }
+				if (tip.empty()) { tip_label.change_text(Locale::text("plant.title")); return; }
 				try {
 					int32_t itemid = std::stoi(tip);
 					if (itemid > 0) {
@@ -88,7 +89,7 @@ namespace ms
 						if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
 						if (slot > 0) {
 							UseItemPacket(slot, itemid).dispatch();
-							tip_label.change_text("Use " + tip);
+							tip_label.change_text(Locale::format("plant.use_item", tip));
 							LOG(LOG_DEBUG, "UIPlant: UseItem id=" << itemid << " slot=" << slot);
 							return;
 						}
@@ -97,7 +98,7 @@ namespace ms
 				NpcTalkMorePacket(tip).dispatch();
 				tip_label.change_text(tip);
 				LOG(LOG_DEBUG, "UIPlant: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, "Plant itemid|tip");
+			}, []() {}, Locale::text("plant.softkey_hint"));
 		}
 	}
 
@@ -126,14 +127,14 @@ namespace ms
 							if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
 							if (slot > 0) {
 								UseItemPacket(slot, itemid).dispatch();
-								tip_label.change_text("Use " + tip);
+								tip_label.change_text(Locale::format("plant.use_item", tip));
 								return;
 							}
 						}
 					} catch (...) {}
 					NpcTalkMorePacket(tip).dispatch();
 					tip_label.change_text(tip);
-				}, []() {}, "Plant itemid|tip");
+				}, []() {}, Locale::text("plant.softkey_hint"));
 			}
 		}
 		else if (keycode == 'R' || keycode == 'r')
@@ -148,14 +149,14 @@ namespace ms
 				int16_t info = 0;
 				try { if (!s.empty()) info = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
 				OpenItemUiPacket(info).dispatch();
-				tip_label.change_text("OpenItemUI " + std::to_string(info));
+				tip_label.change_text(Locale::format("plant.open_item_ui", std::to_string(info)));
 				LOG(LOG_DEBUG, "UIPlant: OpenItemUI info=" << info);
-			}, []() {}, "infoNumber");
+			}, []() {}, Locale::text("plant.info_number"));
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
 			WaterOfLifePacket().dispatch();
-			tip_label.change_text("WaterOfLife");
+			tip_label.change_text(Locale::text("plant.water_of_life"));
 			LOG(LOG_DEBUG, "UIPlant: WaterOfLife");
 		}
 		else if (keycode == 'X' || keycode == 'x')
@@ -167,7 +168,7 @@ namespace ms
 	UIElement::Type UIPlant::get_type() const { return TYPE; }
 
 	UIRaise::UIRaise()
-		: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Raise")
+		: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("raise.title"))
 	{
 		position = Point<int16_t>(300, 180);
 		dimension = Point<int16_t>(200, 150);
@@ -180,7 +181,7 @@ namespace ms
 		center_on_screen();
 		if (!try_use_selected_inv(tip_label, "UIRaise")) {
 			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) { tip_label.change_text("Raise"); return; }
+				if (tip.empty()) { tip_label.change_text(Locale::text("raise.title")); return; }
 				try {
 					int32_t itemid = std::stoi(tip);
 					if (itemid > 0) {
@@ -189,7 +190,7 @@ namespace ms
 						if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
 						if (slot > 0) {
 							UseItemPacket(slot, itemid).dispatch();
-							tip_label.change_text("Use " + tip);
+							tip_label.change_text(Locale::format("plant.use_item", tip));
 							LOG(LOG_DEBUG, "UIRaise: UseItem id=" << itemid << " slot=" << slot);
 							return;
 						}
@@ -198,7 +199,7 @@ namespace ms
 				NpcTalkMorePacket(tip).dispatch();
 				tip_label.change_text(tip);
 				LOG(LOG_DEBUG, "UIRaise: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, "Raise itemid|tip");
+			}, []() {}, Locale::text("raise.softkey_hint"));
 		}
 	}
 
@@ -227,14 +228,14 @@ namespace ms
 							if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
 							if (slot > 0) {
 								UseItemPacket(slot, itemid).dispatch();
-								tip_label.change_text("Use " + tip);
+								tip_label.change_text(Locale::format("plant.use_item", tip));
 								return;
 							}
 						}
 					} catch (...) {}
 					NpcTalkMorePacket(tip).dispatch();
 					tip_label.change_text(tip);
-				}, []() {}, "Raise itemid|tip");
+				}, []() {}, Locale::text("raise.softkey_hint"));
 			}
 		}
 		else if (keycode == 'P' || keycode == 'p')
@@ -249,14 +250,14 @@ namespace ms
 				int16_t info = 0;
 				try { if (!s.empty()) info = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
 				OpenItemUiPacket(info).dispatch();
-				tip_label.change_text("OpenItemUI " + std::to_string(info));
+				tip_label.change_text(Locale::format("plant.open_item_ui", std::to_string(info)));
 				LOG(LOG_DEBUG, "UIRaise: OpenItemUI info=" << info);
-			}, []() {}, "infoNumber");
+			}, []() {}, Locale::text("plant.info_number"));
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
 			WaterOfLifePacket().dispatch();
-			tip_label.change_text("WaterOfLife");
+			tip_label.change_text(Locale::text("plant.water_of_life"));
 			LOG(LOG_DEBUG, "UIRaise: WaterOfLife");
 		}
 		else if (keycode == 'X' || keycode == 'x')

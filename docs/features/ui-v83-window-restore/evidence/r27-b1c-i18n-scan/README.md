@@ -270,3 +270,70 @@ oracle 帧仍全 rc=0 / Δ=0；`scan_display_text.py` `sites=377→359`、`cjk=1
 （改 `xy-config.yaml` 的 `ui.language`，看 `Locale refresh gen=` 把绑了表的窗逐条报出来）做不了。
 按用户既有选择等他自行关闭客户端，不得代杀进程。本批没改 `UIElement`/`LocaleBindings` 的实例
 尺寸（只加站点），所以 Rebuild 的理由仍是 B1c-2/B1c-3 那两次改形，不是本批。
+
+## 9. B1c-5a（壳窗第一批 · 5 文件 80 处 / 49 键）落地（2026-11-03）
+
+范围：`UIVegaSpell` 18、`UIRpsGame` 15、`UIPlant`（含 `UIRaise`）19、`UIViciousHammer` 10、
+`UIWedding` 18 —— 数字是 **`Locale::` 调用点数**，一个调用点吃掉一处字面量。键 49 个，
+zh / en 同值（决策 B：建键不翻译），值全部逐字来自改动前的英文字面量，没有编造。
+
+### 9.1 机制层被迫补的第二件事：`Locale::format_all`
+
+`rps.round_result`（`You:{} NPC:{}`）和 `wedding.progress`（`Step {}  G:{} B:{}`）都是**一条整句里
+两个以上数据位**。原有 `Locale::format` 只认第一个 `{}`，要接住这类句子只有两条路：
+
+1. 拆成若干条键在 C++ 里拼 —— 等于把**语序**钉进代码，ini 不再是真源（「A: 1 B: 2」在别的语言里
+   可能整体反过来），与用户「机制必须通用」的定调冲突；
+2. 一个按 `{}` 出现顺序依次填值的入口 —— 语序留在 ini，代码只交值。
+
+选了 ②，`Util/Locale.h` 加 `format_all(key, std::initializer_list<std::string>)`，占位符与值数量
+不匹配时沿用 `format` 的脾气（多出来的值拼在末尾）——宁可在界面上看出错位，也不在取值时抛异常。
+只有这一个实现，没建第二套。
+
+### 9.2 门禁层的第二个洞：反向门禁形同虚设（已修）
+
+PLAN §4.2 要求「代码引用的键 ⇒ 两份 ini 都得有」，缺键不报错、只在界面上回显键名，所以它必须
+是门禁。`check_locale_keys.py` 补上后**首版一条都没抓住**：正则要求键后紧跟 `+` / `,`，于是全站
+最常见的单参 `Locale::text("k")` 全部漏网（只报 51 键，缺键清单只剩 `format` 族）。补 `\s*\)` 档
+并按组数取尾字符后，读数回到 `代码引用键 121 个 / 动态前缀 5 个`、缺 0。
+教训：**新门禁要先用已知缺陷做负对照**，只看它「跑通了」等于没跑。
+它补上后第一次跑就抓到一个存量缺键 —— `63080c0`（R27-B7-4 系统设置窗）在
+`UIOptionMenu.cpp:788/:789` 引用 `sysopt.combo.screenshot_folder` / `sysopt.combo.mob_name_hp`
+却没建档；那两键的修复躺在另一个会话的在途 hunk 里，本批不代它落（口径细节见
+[gate-r27-b1c5a.txt](gate-r27-b1c5a.txt) §2 末）。
+
+### 9.3 站点计数是下界：`UISoftKey` 的第三实参扫描器看不见
+
+`UISoftKey(Ok, Cancel, "<提示语>")` 第三参是要显示在软键盘上的文案，`scan_display_text.py` 的三种
+形状（`change_text` / `Text(Text::Font..)` / `show_text`）都不覆盖它 ⇒ 本轮人工清点接入 16 处
+（清单见 [gate-r27-b1c5a.txt](gate-r27-b1c5a.txt) §5）。全站还有多少这类站点**未知**，`402` / `304`
+都是下界。该形状里同时存在两种性质完全不同的串：
+
+| 性质 | 例 | 处理 |
+| --- | --- | --- |
+| 真提示语 | `UIBuddyList.cpp:200` `"Buddy name"`、`UILogin.cpp:586/592` `"Account"/"Password"`、`UICharSelect.cpp:1452/1455` PIC 提示 | 该建键 |
+| 输入语法 | `rps.softkey_choices`=`rock\|paper\|scissor`、`"m\|f"`、`"y\|n"`、`"save\|close"` | 值**不可翻译**：解析侧按英文 token 比较，翻译等于改输入契约 |
+
+本批的处置是「两类都建键、第二类在 ini 里写 `# 禁译` 注释」——机制归零优先，禁译靠注释挡。
+是否改成「输入语法直接进白名单不建键」、以及要不要把该形状扩进扫描器（会重算全站总数），
+**待用户抉择**，不擅自扩量。
+
+### 9.4 活文案为主：本批一个绑定点都没加
+
+这 5 个窗的 `status` / `tip_label` 每处都在事件回调里被改写（有第二个写入点）⇒ 按 §7.2 判据一律
+**不上绑定表**，ctor 初值改成 `Locale::text(...)` 现取。代价说清：切语言后**已开着的窗**要等下一次
+数据事件才换新文案，本批不引入「refresh 时把事件文案重置回默认」这种更糟的行为。
+`UIWedding` 的 `"Wedding invite"` 保持英文字面量未建键：它是**出站悄悄话正文**（进封包给对端看），
+不是本端展示文案，翻译会改变对方收到的内容 —— 属协议层，需用户单独定策。
+
+### 9.5 门禁读数
+
+见 [gate-r27-b1c5a.txt](gate-r27-b1c5a.txt)：6 TU `cl /c /utf-8 /bigobj` CL_EXIT=0、error 0 行；
+`check_locale_keys.py` `190/190` 键 + 反向门禁缺 0；`layout.py check` 十张 spec 61 项断言不合格 0；
+`scan_display_text.py` `sites=359→304`，本批 5 文件余站 0；`scan_cjk_literals.py` 仍 30（本批无中文站）。
+
+### 9.6 欠账
+
+运行时负对照同 §8.5，未变。B1c-5 还剩 `5b`（其余壳窗 latin，UIMemo 7 / UIAdmin 6 / UIMinigame 6 /
+UIAriantMatch 5 / UICharInfo 4 / UIMonsterBook 4 / UINewYearsCard 4 / UIPartyRace 4 / 一批 ≤3 处）与
+`5c`（4 文件 18 处中文盲区：UIQuestLog 10 / UIGuild 5 / UIGender 2 / UIMerchant 1）。
