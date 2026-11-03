@@ -6,6 +6,7 @@
 #include "../../Audio/Audio.h"
 #include "../../Graphics/Geometry.h"
 #include "../../MapleStory.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 #include <utility>
@@ -162,9 +163,16 @@ namespace ms
 
 		detail_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::EMPEROR, "");
 		detail_street = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "");
-		list_header = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "地图列表");
-		no_data = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "未选择地图");
-		cost_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "费用: 0");
+		// 吸附面板不是 UIElement，绑定走自带的 LocaleBindings（与 UIMapMobPanel 等同源）。
+		// 三条都在 ctor 写死、之后只 draw => 满足绑定判据。cost_label 的「0」是本包还没接
+		// 传送费用的假初值（全文只有这一处写入，永远不会被数据改写），所以连值一起进表；
+		// 日后接真费用时，把这一行换成事件驱动的 Locale::format 现取即可。
+		list_header = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(list_header, "mapsearch.list_header");
+		no_data = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY);
+		locale_binds.bind(no_data, "mapsearch.no_data");
+		cost_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(cost_label, "mapsearch.cost", "0");
 
 		apply_filter();
 
@@ -278,7 +286,8 @@ namespace ms
 			}
 
 			detail_name.change_text(nm);
-			detail_street.change_text(st.empty() ? "" : ("街: " + st));
+			// 街名是 Map.img 的数据，「街: 」是文案 => 整行每帧现取，不进绑定表。
+			detail_street.change_text(st.empty() ? "" : Locale::format("mapsearch.street", st));
 			detail_name.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 8));
 			detail_street.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 30));
 		}
@@ -316,7 +325,9 @@ namespace ms
 		}
 		else
 		{
-			Text nodata2(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "（该分类数据未加载）");
+			// 局部 Text 每帧重建 => 只能就地现取，绑定表管不到（对象一帧就没了）。
+			Text nodata2(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY,
+				Locale::text("mapsearch.tab_unloaded"));
 			nodata2.draw(position + Point<int16_t>(LIST_X, LIST_Y + 4));
 		}
 
@@ -326,6 +337,12 @@ namespace ms
 
 	void UIMapSearchPanel::update()
 	{
+		// 刷新点放在 visible 判断之前：隐藏期间语言换了也要把绑定表跟上，否则面板重新
+		// 打开的那一帧会先闪一次旧语言文案。代次没变只有一次整数比较，不构成热点。
+		if (locale_binds.refresh())
+			LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
+				<< locale_binds.count() << " labels (" << locale_binds.hostname() << ")");
+
 		if (!visible)
 			return;
 

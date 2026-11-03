@@ -26,6 +26,7 @@
 #include "UICharInfo.h"
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -52,7 +53,10 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		title.change_text("好友 (" + std::to_string(list.buddies.size()) + "/" + std::to_string(list.capacity) + ")");
+		// 标题每个数都会变（好友数/上限随包更新）=> 按绑定判据不许上表，走活文案：
+		// 数字整段当 `{}` 的值喂进模板，两种语言各自决定括号和空格放哪儿。
+		title.change_text(Locale::format("buddylist.title",
+			std::to_string(list.buddies.size()) + "/" + std::to_string(list.capacity)));
 		title.draw(position + Point<int16_t>(10, 8));
 
 		int16_t y = 40;
@@ -64,7 +68,11 @@ namespace ms
 			std::string info = b.name;
 			if (!b.group.empty() && b.group != "All")
 				info += " [" + b.group + "]";
-			info += b.online ? (" 频道" + std::to_string(b.channel + 1)) : " 离线";
+			// 「频道」「离线」是全客户端共用的状态词（好友窗与队伍窗同一份键），所以放
+			// common.*；空格留在代码里拼，ini 加载器会 trim 值两端空白，写进模板会丢。
+			info += " " + (b.online
+				? Locale::format("common.channel", std::to_string(b.channel + 1))
+				: Locale::text("common.offline"));
 			row.change_text(info);
 			row.draw(position + Point<int16_t>(10, y));
 			y += ROW_H;

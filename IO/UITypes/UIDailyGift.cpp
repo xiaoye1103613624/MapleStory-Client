@@ -117,25 +117,25 @@ namespace ms
 		claim_btn = ColorBox(130, 36, Color::Name::PERSIANGREEN, 1.0f);
 		flash_box = ColorBox(kSlotW, kSlotH, Color::Name::WHITE, 0.6f);
 
+		// 这一片文案只在 init_texts() 写、之后只 draw（已逐个全文核过没有第二个写入点）
+		// => 全部进绑定表，切语言时已经开着的窗立刻换字。title_text 的 "DAILY GIFT" 是
+		// 英文原值，按批次归 B1c-5 的英文档，本批只动中文。
 		title_text = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::YELLOW, "DAILY GIFT");
-		banner_sub = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "丰厚礼物，天天相送！");
-		banner_main = Text(Text::Font::A18M, Text::Alignment::LEFT, Color::Name::WHITE, "冒险岛每日礼物");
+		banner_sub = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(banner_sub, "dailygift.banner_sub");
+		banner_main = Text(Text::Font::A18M, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(banner_main, "dailygift.banner_main");
 
-		footer_rules[0] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 击杀等级范围内怪物达到 300 只可领取当日礼物");
-		footer_rules[1] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 需角色等级 33 级以上");
-		footer_rules[2] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 每个账号每日限领 1 次（本版假数据）");
-		footer_rules[3] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 格子中部道具槽预留，本版不渲染物品");
-		footer_rules[4] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 点击格子即可假领取并显示已领取标识");
-		footer_rules[5] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
-			"· 无协议：不会真实入包 / 不计真实杀怪");
+		for (int i = 0; i < 6; ++i)
+		{
+			footer_rules[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+			bind_text(footer_rules[i], "dailygift.rule_" + std::to_string(i + 1));
+		}
 
-		progress_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "等级范围怪物");
-		claim_label = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE, "领取礼物");
+		progress_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(progress_label, "dailygift.progress");
+		claim_label = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE);
+		bind_text(claim_label, "dailygift.claim");
 		claimed_mark = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE, "V");
 	}
 
@@ -149,10 +149,16 @@ namespace ms
 			digit_glyphs_date[i] = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, ch);
 		}
 
-		day_prefix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "第");
-		day_suffix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "天");
-		date_month_unit = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "月");
-		date_day_unit = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "日");
+		// 「第 N 天」「M 月 D 日」这四个单位词也是常量，而且版式按 width() 排版 —— 换语言
+		// 后宽度自然变，绑定后切语言立刻重排，不需要额外处理。" ~ " 与 "!" 是标点，留英文档。
+		day_prefix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(day_prefix, "dailygift.day_prefix");
+		day_suffix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(day_suffix, "dailygift.day_suffix");
+		date_month_unit = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(date_month_unit, "dailygift.date_month");
+		date_day_unit = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE);
+		bind_text(date_day_unit, "dailygift.date_day");
 		date_range_sep = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, " ~ ");
 		date_bang = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "!");
 	}

@@ -26,6 +26,7 @@
 #include "UIItemInventory.h"
 #include "../../Data/ItemData.h"
 #include "../../Net/Packets/TradePackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 namespace ms
@@ -59,12 +60,17 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		title.change_text(std::string("交易") + (started ? "" : "（等待对方）"));
+		// 三句都是「状态/数据 + 文案」的拼接，且 title/my 每帧在 draw 里重建 => 走活文案。
+		// 「（等待对方）」「[锁定]」各自独立成键：它们是状态后缀，不是句子的一部分，
+		// 拼在代码里比塞进模板少一种语言组合。空格留在代码，ini 加载器会 trim 值两端。
+		title.change_text(Locale::text("trade.title")
+			+ (started ? std::string() : Locale::text("trade.waiting")));
 		title.draw(position + Point<int16_t>(10, 8));
 
 		// 我方（左列）
 		OutlinedText my(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
-		my.change_text("金币: " + std::to_string(my_meso) + (locked ? " [锁定]" : ""));
+		my.change_text(Locale::format("trade.meso", std::to_string(my_meso))
+			+ (locked ? " " + Locale::text("trade.locked") : std::string()));
 		my.draw(position + Point<int16_t>(10, 30));
 
 		int16_t y = 55;
@@ -84,7 +90,8 @@ namespace ms
 
 		// 对方（右列）
 		OutlinedText partner(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
-		partner.change_text(partner_name + " 金币: " + std::to_string(partner_meso));
+		partner.change_text(partner_name + " "
+			+ Locale::format("trade.meso", std::to_string(partner_meso)));
 		partner.draw(position + Point<int16_t>(190, 30));
 
 		y = 55;

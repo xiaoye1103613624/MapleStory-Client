@@ -4,7 +4,7 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 377 处 | 英文 359（壳窗 333 / 在用窗 26）| 中文 18
+总计 359 处 | 英文 359（壳窗 333 / 在用窗 26）| 中文 0
 
 
 == 英文原文 · 在用窗 ==
@@ -13,10 +13,10 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L235   1
 
 [IO/UITypes/UIDailyGift.cpp] 4 处
-  L120   DAILY GIFT
+  L123   DAILY GIFT
   L139   V
-  L156    ~ 
-  L157   !
+  L162    ~ 
+  L163   !
 
 [IO/UITypes/UIMapInfoPanel.cpp] 1 处
   L191   0
@@ -443,35 +443,3 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==
-
-[IO/UITypes/UIBuddyList.cpp] 1 处
-  L55    好友 (
-
-[IO/UITypes/UIDailyGift.cpp] 8 处
-  L121   丰厚礼物，天天相送！
-  L122   冒险岛每日礼物
-  L137   等级范围怪物
-  L138   领取礼物
-  L152   第
-  L153   天
-  L154   月
-  L155   日
-
-[IO/UITypes/UIMapInfoPanel.cpp] 1 处
-  L536   属性: -  抗性: -
-
-[IO/UITypes/UIMapSearchPanel.cpp] 3 处
-  L165   地图列表
-  L166   未选择地图
-  L167   费用: 0
-
-[IO/UITypes/UIParty.cpp] 1 处
-  L66    队伍 #
-
-[IO/UITypes/UIStorage.cpp] 3 处
-  L61    金币: 0
-  L167   金币: 
-  L180   金币: 
-
-[IO/UITypes/UITrade.cpp] 1 处
-  L67    金币: 

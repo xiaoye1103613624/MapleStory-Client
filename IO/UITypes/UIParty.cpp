@@ -27,6 +27,7 @@
 #include "UISoftKey.h"
 #include "UICharInfo.h"
 #include "../../Net/Packets/PartyPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -63,7 +64,8 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		title.change_text("队伍 #" + std::to_string(party.id));
+		// 队伍 id 是包里的数据 => 活文案，不入绑定表。
+		title.change_text(Locale::format("party.title", std::to_string(party.id)));
 		title.draw(position + Point<int16_t>(10, 8));
 
 		int16_t y = 40;
@@ -76,10 +78,12 @@ namespace ms
 				Color::Name::WHITE, Color::Name::BLACK);
 
 			std::string info = m.name + " (Lv." + std::to_string(m.level) + " J" + std::to_string(m.job) + ")";
+			// 与好友窗共用 common.* 这两个状态词：同一句话在两个窗里长得不一样，
+			// 取证时就要改两处，不如一开始只有一个真源。
 			if (m.online)
-				info += " 频道" + std::to_string(m.channel + 1);
+				info += " " + Locale::format("common.channel", std::to_string(m.channel + 1));
 			else
-				info += " 离线";
+				info += " " + Locale::text("common.offline");
 			if (m.id == party.leader)
 				info += " ★";
 

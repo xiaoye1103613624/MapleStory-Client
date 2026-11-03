@@ -72,7 +72,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | --- | --- | --- | --- |
 | **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
-| **B1c-4 中文 20 处** | `UIStorage`(3) `UIMapSearchPanel`(3) `UICharSelect`(2) `UIBuddyList`(1) `UIParty`(1) `UITrade`(1) `UIMapInfoPanel`(1) `UIDailyGift`(8) | 20 | 同上；这批零翻译风险，最先能全绿 |
+| **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
 | **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的 ~117 处，按文件切 2~3 个提交 | ~117 | 同上 |
 | **B1c-6 壳窗·`UIMiscShells`** | 216 处，单文件独占一批（体量最大，且与并行会话冲突最高） | 216 | 同上 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
@@ -109,6 +109,34 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 读数见 [gate-r27-b1c3.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c3.txt)，取舍理由见 evidence README §7。
 **运行时负对照依旧欠着，且欠账变了一次**：`UIElement` 私有段现在是「vector + 代次 + 宿主名」，
 实例尺寸与 B1c-2 又不同 ⇒ 整工程 Rebuild 仍不可省（见 [[msbuild-header-layout-stale-objs]]）。
+
+**B1c-4 落地情况（2026-11-03）**：中文硬编码批次接完，**实际 35 处中文字面量，不是上表原先写的 20 处**
+（原表的 `UICharSelect`(2) 属 B1c-2 的排行行，本批不重复计；真补回来的是下面这批）。差额不是漏搜，是
+`scan_display_text.py` 的**形状盲区**：它按行匹配 `change_text("..")` / `Text(Text::Font::.. , "..")` /
+`show_text(..)` 三种形状，看不见 ① 实参折到下一行（`footer_rules[i] = Text(...,\n    "· 击杀等级范围内怪物…")`）、
+② 三元的另一支（`mob.boss ? "BOSS" : "普通"`）、③ 拼接片段（`s += " 频道" + std::to_string(n)`）。
+为此加了第二把尺 [tools/scan_cjk_literals.py](tools/scan_cjk_literals.py)
+（不问形状，只问「代码行里有没有带汉字的字符串字面量」，注释剔除），产物
+[cjk-scan-full.txt](evidence/r27-b1c-i18n-scan/cjk-scan-full.txt)：开工前 65 ⇒ 本批 35 ⇒ 现余 30。
+**所以 B1c-5/6 开工以这把尺为准**，`scan_display_text.py` 的 `sites=` 继续只当英文（latin）口径用；
+剩余 30 处分布在 `IO/Window.cpp` 11（标题栏拼接与 LOG，B1c-7 单独定档）、`UIQuestLog` 10、`UIGuild` 5、
+`UIGender` 2、`UIMerchant` 1、`UIMiscShells` 1 —— 除最后一处外全落在 B1c-5 的壳窗范围里。
+
+本批按 §3 尾的硬约定分了三档（**没有新增第二套机制**）：UIElement 档 = `UIDailyGift` 14 处经
+`UIDragElement<PosDAILYGIFT>` 继承，走 ctor `bind_text` ⇒ UIState 三个派发点；非 UIElement 档 =
+`UIMapSearchPanel` 3 处自带 `LocaleBindings{ "UIMapSearchPanel" }`，刷新点放在其 `update()` 的
+`if (!visible) return;` **之前**（隐藏期间换语言也要跟上，否则重开的那一帧先闪旧语言）；
+数据驱动档 = 其余 18 处 `Locale::text/format` 现取。新判到的两种形状写进 evidence README §8.2：
+行对象（`mob_rows` 每次 `clear()` + `push_back(std::move(row))`）禁上表 —— 绑定表存 `Text` 裸指针会悬垂；
+`draw()` 内局部 `Text` 只能现取。另有一条**如实记为延迟、不当闭环**：`UIStorage::mesolabel`
+三个写入点全带数据，只能走活文案 ⇒ 切语言到下一次仓库包到达之前仍是旧语言。
+
+门禁：`cl /c /utf-8 /bigobj` 8 TU 全过（含宿主 `UIWorldMap.cpp`）；`check_locale_keys.py` GATE OK
+（141/141，本批净 +32 键）；`layout.py check` 十张 spec 对自身 oracle 帧仍全 rc=0 / Δ=0；
+`scan_display_text.py` 402 ⇒ 377 ⇒ 359；`scan_cjk_literals.py` 35 ⇒ 0（本批范围内）。
+读数见 [gate-r27-b1c4.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c4.txt)，取舍理由见 evidence README §8。
+**运行时负对照仍欠**：`MapleStory.exe` 占着 `OutDir` ⇒ 整工程 Rebuild 与「改 `xy-config.yaml` 的
+`ui.language` 看 `Locale refresh gen=`」都做不了，按用户既有选择等他自行关闭客户端。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 

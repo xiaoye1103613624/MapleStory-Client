@@ -492,9 +492,11 @@ namespace ms
 			name_ss << "Lv." << mob.level << " " << mob.name;
 			row.name_label = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::EMPEROR, name_ss.str());
 
+			// 行对象每重建一次就换一批（mob_rows.clear() + push_back），绑定表存的是裸指针，
+			// 上表等于把悬垂指针留在表里 => 这类文案只能在赋值点现取。
 			row.type_label = Text(Text::Font::A11M, Text::Alignment::LEFT,
 				mob.boss ? Color::Name::RED : Color::Name::BLACK,
-				mob.boss ? "BOSS" : "普通");
+				mob.boss ? Locale::text("mapinfo.type_boss") : Locale::text("mapinfo.type_normal"));
 
 			std::ostringstream stat;
 			stat << "HP ";
@@ -521,7 +523,10 @@ namespace ms
 			}
 			row.stat_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, stat.str());
 
-			row.attr_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "属性: -  抗性: -");
+			// 「属性/抗性」的值本包还没接数据，先填占位符 "-" —— 所以模板留 `{}`、占位符当值
+			// 喂进去，日后接真数据只改这里的实参，不用再动键位。
+			row.attr_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY,
+				Locale::format("mapinfo.attr", "-") + "  " + Locale::format("mapinfo.resist", "-"));
 
 			mob_rows.push_back(std::move(row));
 		}

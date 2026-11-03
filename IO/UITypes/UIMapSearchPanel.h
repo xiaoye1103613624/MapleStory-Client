@@ -7,6 +7,7 @@
 #include "../Components/Slider.h"
 #include "../Components/Textfield.h"
 #include "../Cursor.h"
+#include "../LocaleBindings.h"
 
 #include "../../Util/Misc.h"
 #include "../../Graphics/LocalPngTexture.h"
@@ -128,6 +129,8 @@ namespace ms
 		Text no_data;
 		Text cost_label;
 		std::function<void(int32_t)> on_select;
+		// 语言重载刷新通道。构造时就把宿主名带上，日志里才分得清是哪块面板重取过。
+		LocaleBindings locale_binds{ "UIMapSearchPanel" };
 
 		// layout.json — Tab shelf under search field
 		static constexpr int16_t TAB_COUNT = static_cast<int16_t>(Tab::LENGTH);

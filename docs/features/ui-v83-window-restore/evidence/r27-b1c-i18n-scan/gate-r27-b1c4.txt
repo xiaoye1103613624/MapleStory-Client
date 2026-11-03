@@ -1,0 +1,63 @@
+# R27-B1c-4 门禁读数（2026-11-03）
+# 判据档：本批只把中文字面量搬进 ini（键位 + 刷新通道），未动任何渲染常数与版式；
+#          「十张 spec 对 oracle 帧 Δ=0」证的是门禁与 spec 完好 + 本批没碰版式，
+#          不是真机逐格验收（那要客户帧 + 整工程 Rebuild，见 README §8.5 欠账）。
+
+## 1. cl /c 范围编译（8 TU：7 个改动文件 + 宿主 UIWorldMap.cpp）
+命令：E:/project/_b1c_check/build_b1c4.bat（vcvars64 + cl /c /utf-8 /bigobj /std:c++17 /EHsc /W3
+      /DNDEBUG /D_CONSOLE /DUSE_NX，附加选项与 MapleStory.vcxproj:102 的 AdditionalOptions 对齐）
+      TU 清单：UIBuddyList / UIParty / UIStorage / UITrade / UIDailyGift / UIMapSearchPanel /
+               UIMapInfoPanel / UIWorldMap
+读数：VCVARS_ERRORLEVEL=0 / CL_EXIT=0
+      : error 行数 = 0
+      warning 只有既有三类：C4005 USE_NX 重定义、MessagingPackets.h:52 C4267、UIWorldMap.cpp:582-586 C4267
+      （都不在本批改动路径上）
+
+## 2. check_locale_keys.py
+[rc=0]
+zh-CN keys = 141
+en-US keys = 141
+GATE OK
+
+自查（同一把尺，逐行 `^[a-z]` 计数）：zh=141 en=141，键集相等、各自无重复。
+构成 = HEAD 的 107 + 并行会话在途的 sysopt.combo.* 2 键 + 本批 32 键。
+**sysopt 那 2 键不进本提交**（ini 用 stage_mine.py --append 只打我这段）。
+
+## 3. layout.py check（十张 spec ↔ 各自 oracle_frame）
+=== ChatBar.json rc=0        不合格 0 / 3（跳过 0）
+=== Equip.json rc=0          不合格 0 / 9（跳过 1）
+=== EquipTooltip.json rc=0   不合格 0 / 6（跳过 0）
+=== Item.json rc=0           不合格 0 / 4（跳过 0）
+=== ItemFull.json rc=0       不合格 0 / 9（跳过 0）
+=== KeyConfig.json rc=0      不合格 0 / 9（跳过 0）
+=== MonsterBook.json rc=0    不合格 0 / 5（跳过 0）
+=== SkillMacro.json rc=0     不合格 0 / 2（跳过 6）
+=== Stat.json rc=0           不合格 0 / 8（跳过 1）
+=== UserList.json rc=0       不合格 0 / 6（跳过 0）
+汇总 specs=10 非零返回=0
+
+## 4. 两个扫描器的读数（本批的关键证据）
+scan_display_text.py（行级形状匹配，B1c 立项以来的口径）：
+  sites=359 latin=359 shell=333 live=26 cjk=0 shells=56   （B1c-3 后：377 / cjk=18）
+  ⇒ 中文明细段归零；latin 没动，所以仍是 359。
+
+scan_cjk_literals.py（本批新增，不问形状、只看「代码行里带汉字的字符串字面量」，
+  注释行与块注释剔除）产物 [cjk-scan-full.txt](cjk-scan-full.txt)：
+  开工前 65 → 本批消掉 35 → 现余 30。
+  65 与旧口径 18 之差 47 处里，本批文件占 17（其余在下面列名）：跨行折的实参、三元里的
+  另一支、`s += " 频道" + n` 这种拼接片段，行级形状全都看不见。
+  剩余 30 处的分布，全部属于后续批次：
+    IO/Window.cpp 11（窗口标题栏拼接 + 1 条 LOG —— 标题不是自绘文案，归 B1c-7 单独定档）
+    UIQuestLog 10 / UIGuild 5 / UIGender 2 / UIMiscShells 1 / UIMerchant 1（Wave-A 壳窗 → B1c-5/6）
+  ⇒ B1c-5/6 开工时以 scan_cjk_literals.py 为准，`sites=` 只作 latin 口径。
+
+## 5. 站点分档（本批 35 处中文字面量 + 1 处同表达式的英文 → 32 键）
+进绑定表 17：UIDailyGift 14（UIElement 转发 `bind_text`）+ UIMapSearchPanel 3
+  （非 UIElement，自带 `LocaleBindings{ "UIMapSearchPanel" }`，刷新点在其 `update()` 的
+   visible 判断之前）
+活文案现取 18：UIBuddyList 3 / UIParty 3 / UIStorage 3 / UITrade 5 / UIMapSearchPanel 2 /
+  UIMapInfoPanel 2
+键合并：`storage.meso` 一处键三个写入点、`trade.meso` 一处键两个写入点、
+  `common.channel` / `common.offline` 好友窗与队伍窗共用同一真源。
+顺带清掉的英文：`UIMapInfoPanel.cpp` 的 `"BOSS"`（与「普通」是同一个三元表达式，
+  只把中文半边接上键会让这行一半 i18n 一半硬编码）。

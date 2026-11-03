@@ -201,3 +201,72 @@ IO\UITypes\UIMapDropPanel.cpp(39): error C3861: “bind_text”: 找不到标识
 vector + uint32 + 宿主名的 `LocaleBindings`」，实例尺寸**又变了一次**（多一个 `std::string`），
 所以整工程 Rebuild 依旧不可省。判据不变：改 `xy-config.yaml` 的 `ui.language`，
 看 `Locale refresh gen=` 日志有没有把绑了表的窗逐条报出来（面板那三条现在也在这个口径里）。
+## 8. B1c-4（中文硬编码批次）落地（2026-11-03）
+
+按 §6 的三条拍板接完 `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5)
+`UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) —— **35 处中文字面量，不是清点器
+说的 18 处**。差的那 17 处不是漏搜，是**旧扫描器的形状盲区**：它按行匹配
+`change_text("..")` / `Text(Text::Font::.. , "..")` / `show_text(..)` 三种形状，于是
+① 实参折到了下一行（`UIDailyGift.cpp:131` 的 `footer_rules[i] = Text(字体…, 颜色…,` 后面才是那句中文）、
+② 三元的另一支 `mob.boss ? "BOSS" : "普通"`、③ 拼接片段 `s += " 频道" + std::to_string(n)`
+全都不在它的眼里。这批补了第二把尺 [`scan_cjk_literals.py`](../../tools/scan_cjk_literals.py)
+（不问形状，只问「代码行里有没有带汉字的字符串字面量」，注释剔除），产物
+[cjk-scan-full.txt](cjk-scan-full.txt)：开工前 65 → 本批 35 → 现余 30，剩余 30 处全在后续批次的
+文件里（`IO/Window.cpp` 11 是标题栏拼接与 LOG、壳窗 `UIQuestLog` 10 / `UIGuild` 5 /
+`UIGender` 2 / `UIMerchant` 1 / `UIMiscShells` 1）。**B1c-5/6 开工以这把尺为准**，
+`sites=` 只当英文（latin）口径继续用。
+
+### 8.1 分档：本批把「宿主档位」这条硬约定用实了
+
+PLAN §B1c-3 写下的硬约定是「动手前先分宿主档位」。本批的分布：
+
+| 档 | 站点 | 刷新通道 |
+| --- | --- | --- |
+| UIElement 子类 | `UIDailyGift`(14，经 `UIDragElement<PosDAILYGIFT>` 继承) | ctor `bind_text` → UIState 三个派发点 `refresh_localized()` |
+| 非 UIElement 吸附面板 | `UIMapSearchPanel`(3 进表) | 自带 `LocaleBindings{ "UIMapSearchPanel" }`，在自身 `update()` 里 `refresh()` |
+| 数据驱动活文案 | 其余 18 处 | 赋值点 `Locale::text/format` 现取 |
+
+`UIMapSearchPanel::update()` 的刷新点放在 `if (!visible) return;` **之前**：隐藏期间语言换了也要
+让绑定表跟上，否则面板重新打开的那一帧先闪一次旧语言文案；代次没变只有一次整数比较，不成热点。
+
+### 8.2 绑定 vs 活文案：三条新判到的形状
+
+- **行对象禁上表**（`UIMapInfoPanel` 的 `row.type_label` / `row.attr_label`）：`mob_rows` 每次重建都
+  `clear()` + `push_back(std::move(row))`（`:473`/`:531`），绑定表存的是指向 `Text` 的裸指针 ——
+  上表等于把悬垂指针留在表里。所以只能在赋值点现取。这条是 `LocaleBindings` 禁拷贝之外
+  同一个不变量的另一种破法，值得单独记。
+- **draw 里的局部 `Text`**（`UIMapSearchPanel` 的 `nodata2`）：对象一帧就没了，绑定无从谈起，
+  也只能现取；好处是每帧重建 => 切语言下一帧就换字。
+- **事件驱动活文案的切换延迟**（`UIStorage::mesolabel` 三个写入点全在 ctor 与包回调里）：
+  切语言后到下一次 `set_storage` / `set_meso` 之前，它仍是旧语言。这是「reload 广播、窗自取」
+  在**没进表的标签**上的已知边界；`UIBuddyList` / `UIParty` / `UITrade` 的 title 因为每帧在
+  `draw()` 里重建（成员是 `mutable OutlinedText`），切换是即时的。要消除这层延迟就得把
+  `mesolabel` 改成每帧现取或给窗体加一个「数据版 binding」，本批按最小改动**没有**动它，
+  留在此处明说。
+
+### 8.3 键位形态：模板留 `{}`、空格留在代码
+
+新增 32 键（`buddylist.title` `common.channel` `common.offline` `party.title` `storage.meso`
+`trade.title` `trade.waiting` `trade.meso` `trade.locked` `mapsearch.list_header`
+`mapsearch.no_data` `mapsearch.cost` `mapsearch.street` `mapsearch.tab_unloaded`
+`mapinfo.type_boss` `mapinfo.type_normal` `mapinfo.attr` `mapinfo.resist` `dailygift.*`×14）。
+两条口径：① 「文案 + 数据」整句存成一个带 `{}` 的模板（`好友 ({})`、`金币: {}`、`队伍 #{}`），
+拆成前后两截会让某个语言拿到半句；② **空格一律留在代码里拼** —— `Locale.cpp:70` 的加载器
+`trim` 掉值两端空白，把 `Day ` 这种尾随空格写进 ini 会直接丢。
+`common.channel` / `common.offline` 是好友窗与队伍窗共用的状态词，只有一个真源。
+
+这批原值本来就是中文，zh 侧逐字照抄、零编造风险；en 侧同值占位（决策 B：本批通的是键位与
+机制，不是翻译），32 键全部进 [pending-copy.md](pending-copy.md) 台账等取证。
+
+### 8.4 门禁读数
+
+见 [gate-r27-b1c4.txt](gate-r27-b1c4.txt)：`cl /c /utf-8 /bigobj` 8 TU 全过（CL_EXIT=0，error 0 行）；
+`check_locale_keys.py` GATE OK（两份键集相等、无重复）；`layout.py check` 十张 spec 对自身
+oracle 帧仍全 rc=0 / Δ=0；`scan_display_text.py` `sites=377→359`、`cjk=18→0`。
+
+### 8.5 欠账（与 B1c-3 同一条，未变）
+
+`MapleStory.exe` 仍占着 `OutDir=E:\MXD\BeiDou-Client-xy\` ⇒ 整工程 Rebuild 与**运行时负对照**
+（改 `xy-config.yaml` 的 `ui.language`，看 `Locale refresh gen=` 把绑了表的窗逐条报出来）做不了。
+按用户既有选择等他自行关闭客户端，不得代杀进程。本批没改 `UIElement`/`LocaleBindings` 的实例
+尺寸（只加站点），所以 Rebuild 的理由仍是 B1c-2/B1c-3 那两次改形，不是本批。

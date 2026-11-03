@@ -29,6 +29,7 @@
 #include "../../Data/ItemData.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/StoragePackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -58,7 +59,9 @@ namespace ms
 
 		try_maple_btn(buttons, BtClose, UiAssetResolve::close_btn(), btnpos[3], "UIStorage close");
 
-		mesolabel.change_text("金币: 0");
+		// mesolabel 有三个写入点（ctor 初值 + 两条包回调），全都带数据 => 走活文案，
+		// 不进绑定表；三处用同一个键，切语言时靠下一次包更新或 ctor 重取自然换新。
+		mesolabel.change_text(Locale::format("storage.meso", "0"));
 	}
 
 	void UIStorage::draw(float alpha) const
@@ -164,7 +167,7 @@ namespace ms
 		capacity = slots;
 		meso = m;
 		stored = std::move(items);
-		mesolabel.change_text("金币: " + std::to_string(meso));
+		mesolabel.change_text(Locale::format("storage.meso", std::to_string(meso)));
 	}
 
 	void UIStorage::update_items(uint8_t slots, std::vector<StoredItem> items)
@@ -177,7 +180,7 @@ namespace ms
 	{
 		capacity = slots;
 		meso = m;
-		mesolabel.change_text("金币: " + std::to_string(meso));
+		mesolabel.change_text(Locale::format("storage.meso", std::to_string(meso)));
 	}
 
 	void UIStorage::show_error(uint8_t code)
