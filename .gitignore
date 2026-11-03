@@ -75,3 +75,7 @@ __pycache__/
 /build_log_t12b.txt
 /_pw_hits.txt
 /_w8_*.png
+
+# summon_probe 构建产物（源码/脚本/桩已入库，二进制不入库）
+_tools/summon_probe/*.exe
+_tools/summon_probe/*.dll
