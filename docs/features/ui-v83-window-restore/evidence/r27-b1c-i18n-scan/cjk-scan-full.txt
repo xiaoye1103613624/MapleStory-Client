@@ -18,4 +18,4 @@
   L126   [B1c-5c  ] 女
   L128   [B1c-5c  ] 男
 [IO/UITypes/UIMiscShells.cpp] 1 处（其中待接线 0）
-  L6182  [B1c-6   ] Basic.img/Notice4(t,c,s) 或 ComboBox 三件缺失 —— 弹层只剩文字与按钮
+  L6185  [B1c-6   ] Basic.img/Notice4(t,c,s) 或 ComboBox 三件缺失 —— 弹层只剩文字与按钮

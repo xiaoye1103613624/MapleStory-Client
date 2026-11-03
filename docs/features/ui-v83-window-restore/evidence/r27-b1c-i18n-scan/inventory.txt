@@ -4,8 +4,8 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 644 处 | 英文 644（壳窗 583 / 在用窗 61）| 中文 0
-按形状分档（全站，中英合并）：change_text=207 / Text ctor=11 / SoftKey hint=426
+总计 428 处 | 英文 428（壳窗 367 / 在用窗 61）| 中文 0
+按形状分档（全站，中英合并）：change_text=1 / Text ctor=1 / SoftKey hint=426
 
 
 == 英文原文 · 在用窗 ==
@@ -18,9 +18,9 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L234   [SoftKey hint] Clear buff id
 
 [IO/UITypes/UICharSelect.cpp] 3 处
-  L905   [SoftKey hint] Char slot #
-  L1452  [SoftKey hint] Please re-enter your new PIC.
-  L1455  [SoftKey hint] Your new PIC must at least be 6 characters long.
+  L911   [SoftKey hint] Char slot #
+  L1458  [SoftKey hint] Please re-enter your new PIC.
+  L1461  [SoftKey hint] Your new PIC must at least be 6 characters long.
 
 [IO/UITypes/UIChat.cpp] 10 处
   L122   [SoftKey hint] Buddy msg
@@ -81,7 +81,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L182   [SoftKey hint] y|n
 
 [IO/UITypes/UIRaceSelect.cpp] 1 处
-  L535   [SoftKey hint] idx|make
+  L543   [SoftKey hint] idx|make
 
 [IO/UITypes/UIRegion.cpp] 1 处
   L86    [SoftKey hint] na|eu
@@ -312,395 +312,179 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UIMiniMap.cpp] 1 处
   L399   [SoftKey hint] Map id|empty=WMap sel
 
-[IO/UITypes/UIMiscShells.cpp] 388 处
+[IO/UITypes/UIMiscShells.cpp] 172 处
   L149   [SoftKey hint] iv,pos,qty,slot
-  L200   [change_text ] Open store…
-  L206   [change_text ] No 514/503 permit
-  L213   [change_text ] Create: 
-  L237   [change_text ] Reported 
-  L242   [change_text ] Empty name
-  L244   [change_text ] Reported 
   L246   [SoftKey hint] Report target
-  L254   [change_text ] Target: 
-  L267   [change_text ] Reported 
-  L278   [change_text ] Reported 
-  L282   [change_text ] Empty name
-  L284   [change_text ] Reported 
   L285   [SoftKey hint] Report target
-  L302   [change_text ] Empty code
-  L306   [change_text ] Sent…
   L308   [SoftKey hint] Coupon code
-  L324   [change_text ] Sent…
   L325   [SoftKey hint] Coupon code
-  L341   [change_text ] Need name
-  L344   [change_text ] Note → 
   L345   [SoftKey hint] Claim msg
   L353   [SoftKey hint] Claim to
-  L374   [change_text ] Note → 
   L375   [SoftKey hint] Claim msg
-  L381   [change_text ] Note → 
   L382   [SoftKey hint] Claim msg
   L383   [SoftKey hint] Claim to
-  L408   [change_text ] Egg #
-  L417   [change_text ] Egg #
   L421   [SoftKey hint] Egg USE slot
-  L445   [change_text ] Egg #
-  L469   [change_text ] Egg #
-  L477   [change_text ] Egg #
   L480   [SoftKey hint] Egg USE slot
-  L490   [change_text ] Drop an egg first
-  L495   [change_text ] No Incubator
-  L499   [change_text ] Sent…
   L544   [SoftKey hint] Channel 1-N
   L571   [SoftKey hint] Channel 1-N
   L586   [SoftKey hint] Channel 1-N
-  L609   [change_text ] Equip #
-  L616   [change_text ] Equip #
   L619   [SoftKey hint] Equip slot
-  L628   [change_text ] Need equip
-  L632   [change_text ] Equip #
-  L653   [change_text ] Equip #
-  L660   [change_text ] Equip #
   L663   [SoftKey hint] Equip slot
-  L674   [change_text ] Drop an equip first
-  L685   [change_text ] No Karma Scissors
-  L689   [change_text ] Sent…
-  L714   [change_text ] Need equip
-  L718   [change_text ] Enchant slot #
-  L733   [change_text ] Scroll 
-  L736   [change_text ] Need scroll+equip
-  L748   [change_text ] Equip #
-  L755   [change_text ] Equip #
   L758   [SoftKey hint] Equip slot id
-  L768   [change_text ] Scroll #
-  L775   [change_text ] Scroll #
   L778   [SoftKey hint] Scroll USE slot
-  L783   [change_text ] Scroll 
-  L795   [change_text ] Scroll 
   L798   [SoftKey hint] scroll,equip
-  L823   [change_text ] Equip #
-  L830   [change_text ] Equip #
   L833   [SoftKey hint] Equip slot
-  L842   [change_text ] Need equip
-  L846   [change_text ] Equip #
-  L867   [change_text ] Equip #
-  L874   [change_text ] Equip #
   L877   [SoftKey hint] Equip slot
-  L888   [change_text ] Drop an equip first
-  L899   [change_text ] No Item Protector
-  L903   [change_text ] Sent…
-  L923   [change_text ] No Teleport Rock
-  L927   [change_text ] Need map/name
-  L936   [change_text ] Warp map…
-  L939   [change_text ] Warp to 
-  L941   [change_text ] Need VIP rock for name
   L947   [SoftKey hint] Map ID / player
-  L999   [change_text ] No Teleport Rock
-  L1007  [change_text ] Warp map…
-  L1011  [change_text ] Need map/name
-  L1020  [change_text ] Warp map…
-  L1023  [change_text ] Warp to 
-  L1025  [change_text ] Need VIP rock for name
-  L1031  [SoftKey hint] Map ID / player|empty=WMap
-  L1042  [change_text ] No Teleport Rock
-  L1047  [change_text ] Saved map…
-  L1054  [change_text ] Warp map…
-  L1064  [change_text ] Warp to 
-  L1072  [change_text ] No saved map — SoftKey
-  L1076  [change_text ] Warp #
-  L1089  [change_text ] Empty answer
-  L1090  [change_text ] Ans: 
-  L1093  [SoftKey hint] Quiz answer
-  L1108  [change_text ] Ans: 
-  L1110  [SoftKey hint] Quiz answer
-  L1132  [SoftKey hint] Initial quiz
-  L1143  [SoftKey hint] Quiz answer
-  L1165  [change_text ] Find: 
-  L1169  [change_text ] Empty name
-  L1171  [change_text ] Find: 
-  L1173  [SoftKey hint] Rank name
-  L1192  [change_text ] Find: 
-  L1197  [change_text ] Find: 
-  L1198  [SoftKey hint] Rank name
-  L1221  [change_text ] Item tab=
-  L1254  [change_text ] Empty msg
-  L1257  [change_text ] No Item Megaphone
-  L1261  [change_text ] Sent…
-  L1262  [SoftKey hint] Item Megaphone
-  L1298  [change_text ] Whisper → 
-  L1300  [SoftKey hint] Counsel msg
-  L1308  [SoftKey hint] Counsel to
-  L1329  [change_text ] Whisper → 
-  L1330  [SoftKey hint] Counsel msg
-  L1338  [SoftKey hint] Counsel to
-  L1348  [change_text ] Note → 
-  L1350  [SoftKey hint] Note msg
-  L1358  [SoftKey hint] Note to
-  L1376  [change_text ] Empty
-  L1377  [change_text ] Note: 
-  L1380  [SoftKey hint] Raid note
-  L1394  [change_text ] Note: 
-  L1396  [SoftKey hint] Raid note
-  L1413  [change_text ] Empty name
-  L1414  [change_text ] Name: 
-  L1421  [SoftKey hint] Cygnus name
-  L1435  [change_text ] Name: 
-  L1441  [SoftKey hint] Cygnus name
-  L1484  [change_text ] Empty msg
-  L1489  [change_text ] No Megaphone
-  L1493  [change_text ] Sent…
-  L1495  [SoftKey hint] Megaphone
-  L1526  [SoftKey hint] Shop title
-  L1543  [change_text ] Exit…
-  L1553  [SoftKey hint] Shop title
-  L1556  [change_text ] Open store…
-  L1573  [change_text ] Buy 
-  L1576  [SoftKey hint] slot,qty
-  L1597  [SoftKey hint] Member title
-  L1614  [change_text ] Exit…
-  L1623  [SoftKey hint] Member title
-  L1626  [change_text ] Open store…
-  L1642  [change_text ] Buy 
-  L1644  [SoftKey hint] slot,qty
-  L1659  [change_text ] Empty
-  L1667  [change_text ] Meso 
-  L1674  [change_text ] Chat sent…
-  L1676  [SoftKey hint] Trade meso/chat
-  L1693  [change_text ] Confirm…
-  L1697  [change_text ] Transaction…
-  L1701  [change_text ] Visit…
-  L1727  [change_text ] AddItem #
-  L1729  [SoftKey hint] qty[,tradeSlot]
-  L1746  [change_text ] AddItem 
-  L1748  [SoftKey hint] iv,pos,qty,slot
-  L1752  [change_text ] Empty
-  L1760  [change_text ] Meso 
-  L1766  [change_text ] Chat sent…
-  L1767  [SoftKey hint] Trade meso/chat
-  L1770  [change_text ] Exit…
-  L1793  [SoftKey hint] Entrusted
-  L1810  [change_text ] Exit…
-  L1817  [change_text ] Open store…
-  L1833  [change_text ] Buy 
-  L1836  [SoftKey hint] slot,qty
-  L1840  [SoftKey hint] Entrusted title
-  L1854  [change_text ] Empty
-  L1862  [change_text ] Meso 
-  L1869  [change_text ] Chat sent…
-  L1871  [SoftKey hint] CashTrade meso/chat
-  L1888  [change_text ] Confirm…
-  L1892  [change_text ] Transaction…
-  L1896  [change_text ] Visit…
-  L1922  [change_text ] AddItem #
-  L1923  [SoftKey hint] qty[,tradeSlot]
-  L1940  [change_text ] AddItem 
-  L1942  [SoftKey hint] iv,pos,qty,slot
-  L1946  [change_text ] Empty
-  L1954  [change_text ] Meso 
-  L1960  [change_text ] Chat sent…
-  L1961  [SoftKey hint] CashTrade meso/chat
-  L1964  [change_text ] Exit…
-  L1988  [change_text ] Q: 
-  L1993  [change_text ] Empty query
-  L1994  [change_text ] Q: 
-  L1997  [SoftKey hint] Find name
-  L2015  [change_text ] Q: 
-  L2020  [change_text ] Q: 
-  L2022  [SoftKey hint] Find name
-  L2051  [change_text ] Skill 
-  L2055  [change_text ] Empty
-  L2066  [SoftKey hint] Aran skillid
-  L2090  [change_text ] Skill 
-  L2103  [change_text ] Skill 
-  L2109  [SoftKey hint] Aran skillid|tip
-  L2141  [SoftKey hint] Transform skillid|tip
-  L2164  [SoftKey hint] Transform skillid|tip
-  L2181  [change_text ] Empty
-  L2185  [SoftKey hint] MobKill chat
-  L2201  [SoftKey hint] MobKill chat
-  L2219  [SoftKey hint] MapleEvent
-  L2230  [SoftKey hint] Event chat
-  L2252  [change_text ] Bad id
-  L2259  [change_text ] Use 
-  L2287  [change_text ] Use 
-  L2299  [change_text ] Use 
-  L2301  [SoftKey hint] SkillEx id
-  L2332  [change_text ] Cover: 
-  L2336  [change_text ] Empty
-  L2341  [change_text ] Cover: 
-  L2346  [change_text ] Page: 
-  L2349  [SoftKey hint] Book cover/page
-  L2375  [change_text ] Cover: 
-  L2382  [change_text ] Cover: 
-  L2386  [SoftKey hint] Book cover id
-  L2418  [change_text ] Start 
-  L2427  [change_text ] Start 
-  L2435  [SoftKey hint] Quest id|tip
-  L2457  [SoftKey hint] Mate message
-  L2468  [SoftKey hint] Mate message
-  L2486  [SoftKey hint] Beta code
-  L2497  [SoftKey hint] Beta code
-  L2519  [change_text ] ShowUsers
-  L2524  [change_text ] AlertAdmins
-  L2530  [SoftKey hint] users|alert|msg
-  L2548  [change_text ] ShowUsers
-  L2553  [change_text ] AlertAdmins
-  L2558  [SoftKey hint] users|alert|msg
-  L2717  [SoftKey hint] Skill id
-  L2739  [SoftKey hint] Map id
-  L2958  [SoftKey hint] Trade cid|v
-  L2977  [SoftKey hint] NPC oid
-  L3020  [SoftKey hint] Cash itemid
-  L3063  [SoftKey hint] slot,id,qty|s,…
-  L3076  [SoftKey hint] NPC reply|sel
-  L3091  [SoftKey hint] Char cid
-  L3110  [SoftKey hint] Recharge slot
-  L3131  [SoftKey hint] Skill id SP
-  L3148  [SoftKey hint] CharInfo cid
-  L3167  [SoftKey hint] Map id
-  L3187  [SoftKey hint] Pickup oid
-  L3206  [SoftKey hint] Reactor oid
-  L3223  [SoftKey hint] AP str|dex|int|luk
-  L3239  [SoftKey hint] Gather tab 1-5
-  L3257  [SoftKey hint] Sort tab 1-5
-  L3274  [SoftKey hint] Deny guild from
-  L3293  [SoftKey hint] Forfeit quest id
-  L3319  [SoftKey hint] Equip slot id
-  L3329  [SoftKey hint] Scroll slot
-  L3365  [SoftKey hint] Use itemid
-  L3664  [SoftKey hint] MacroEx
-  L3688  [SoftKey hint] Skill id
-  L3707  [SoftKey hint] Clone note
-  L3719  [SoftKey hint] Clone note
-  L3747  [change_text ] Cancelled…
-  L3757  [change_text ] Cancelled…
-  L3765  [SoftKey hint] y|n|tip
-  L3812  [SoftKey hint] AP str|SP id
-  L3843  [SoftKey hint] AP str|SP id
-  L3867  [change_text ] Marked tab=
-  L3873  [change_text ] Moved #
-  L3876  [SoftKey hint] Dest slot
-  L3895  [change_text ] Src #
-  L3904  [change_text ] Moved →
-  L3906  [SoftKey hint] Dest slot
-  L3929  [change_text ] Move 
-  L3931  [SoftKey hint] iv,src,dst[,qty]
-  L3982  [SoftKey hint] y|n|tip
-  L4026  [SoftKey hint] Whisper msg
-  L4113  [Text ctor   ] Info
-  L4114  [Text ctor   ] Whisper
-  L4115  [Text ctor   ] Party
-  L4116  [Text ctor   ] Report
-  L4117  [Text ctor   ] Trade
-  L4118  [Text ctor   ] Buddy
-  L4119  [Text ctor   ] Messenger
-  L4120  [Text ctor   ] Guild
-  L4121  [Text ctor   ] Family
-  L4122  [Text ctor   ] Fame
-  L4140  [SoftKey hint] Whisper msg
-  L4141  [SoftKey hint] Whisper name
-  L4147  [SoftKey hint] Whisper msg
-  L4163  [SoftKey hint] Char cid
-  L4190  [change_text ] Empty
-  L4194  [SoftKey hint] Event note
-  L4212  [SoftKey hint] Event note
-  L4291  [SoftKey hint] Find name
-  L4308  [SoftKey hint] Channel 1-N
-  L4360  [SoftKey hint] UtilDlg text
-  L4371  [SoftKey hint] UtilDlg text
-  L4388  [change_text ] Empty
-  L4411  [change_text ] No chalk/kite
-  L4413  [SoftKey hint] MultiLine
-  L4448  [change_text ] No chalk/kite
-  L4450  [SoftKey hint] MultiLine
-  L4648  [SoftKey hint] Drop meso
-  L4682  [SoftKey hint] Emote id
-  L4693  [SoftKey hint] Chair itemid
-  L4738  [SoftKey hint] ItemEffect id
-  L4771  [SoftKey hint] Skill id
-  L4785  [SoftKey hint] Book cover id
-  L4803  [SoftKey hint] AP str|dex|int|luk
-  L4821  [SoftKey hint] Gather tab 1-5
-  L4840  [SoftKey hint] Sort tab 1-5
-  L4861  [SoftKey hint] Deny guild from
-  L4880  [SoftKey hint] Forfeit quest id
-  L4906  [SoftKey hint] Equip slot id
-  L4916  [SoftKey hint] Scroll slot
-  L4950  [SoftKey hint] Use itemid
-  L4968  [SoftKey hint] Map id
-  L4987  [SoftKey hint] Pickup oid
-  L5006  [SoftKey hint] Reactor oid
-  L5027  [SoftKey hint] NPC oid
-  L5071  [SoftKey hint] slot,id,qty|s,slot,id,qty
-  L5088  [SoftKey hint] NPC reply|sel
-  L5106  [SoftKey hint] Char cid
-  L5127  [SoftKey hint] Recharge slot
-  L5160  [SoftKey hint] Cash itemid
-  L5178  [SoftKey hint] Skill id SP
-  L5206  [SoftKey hint] Trade cid|v
-  L5225  [SoftKey hint] CharInfo cid
-  L5401  [change_text ] Saved: 
-  L5402  [SoftKey hint] Macro
-  L5410  [change_text ] Assigned 
-  L5413  [change_text ] Macro full
-  L5422  [change_text ] Assigned 
-  L5424  [change_text ] Macro full
-  L5427  [SoftKey hint] Skill id
-  L5453  [change_text ] Empty
-  L5458  [change_text ] Emote 
-  L5466  [SoftKey hint] Emote id|tip
-  L5484  [change_text ] Emote 
-  L5490  [SoftKey hint] Emote id|tip
-  L5522  [SoftKey hint] Pet name
-  L5540  [SoftKey hint] Pet name
-  L5561  [change_text ] Empty
-  L5569  [change_text ] No 517* tag
-  L5573  [change_text ] Rename: 
-  L5575  [SoftKey hint] MultiPet name
-  L5595  [change_text ] No 517* tag
-  L5597  [change_text ] Rename: 
-  L5598  [SoftKey hint] MultiPet name
-  L5619  [change_text ] Q: 
-  L5624  [change_text ] Empty query
-  L5625  [change_text ] Q: 
-  L5628  [SoftKey hint] ExSearch name
-  L5646  [change_text ] Q: 
-  L5651  [change_text ] Q: 
-  L5653  [SoftKey hint] ExSearch name
-  L5705  [SoftKey hint] cur,max|pct|tip
-  L5725  [change_text ] SP 
-  L5733  [change_text ] SP 
-  L5737  [SoftKey hint] SkillUp id
-  L5756  [change_text ] SP 
-  L5763  [change_text ] SP 
-  L5766  [SoftKey hint] SkillUp id
-  L5785  [change_text ] Empty
-  L5791  [change_text ] Saved: 
-  L5793  [SoftKey hint] MacroSkill
-  L5812  [change_text ] Saved: 
-  L5813  [SoftKey hint] MacroSkill
-  L5821  [change_text ] Assigned 
-  L5823  [change_text ] Macro full
-  L5832  [change_text ] Assigned 
-  L5834  [change_text ] Macro full
-  L5837  [SoftKey hint] Skill id
-  L5859  [change_text ] Q
-  L5868  [change_text ] Q
-  L5876  [SoftKey hint] Quest id
-  L5895  [change_text ] Q
-  L5903  [change_text ] Q
-  L5909  [SoftKey hint] Quest id|tip
-  L5917  [change_text ] Done 
-  L5928  [change_text ] Done 
-  L5931  [SoftKey hint] qid or qid,npc
-  L5939  [change_text ] Forfeit 
-  L5946  [change_text ] Forfeit 
-  L5949  [SoftKey hint] Forfeit qid
-  L5996  [change_text ] Place (
-  L6047  [change_text ] Card #
-  L6061  [change_text ] Omok 
-  L6084  [change_text ] Card #
-  L6124  [SoftKey hint] FloatNotice tip
+  L1033  [SoftKey hint] Map ID / player|empty=WMap
+  L1095  [SoftKey hint] Quiz answer
+  L1112  [SoftKey hint] Quiz answer
+  L1134  [SoftKey hint] Initial quiz
+  L1145  [SoftKey hint] Quiz answer
+  L1175  [SoftKey hint] Rank name
+  L1200  [SoftKey hint] Rank name
+  L1265  [SoftKey hint] Item Megaphone
+  L1303  [SoftKey hint] Counsel msg
+  L1311  [SoftKey hint] Counsel to
+  L1333  [SoftKey hint] Counsel msg
+  L1341  [SoftKey hint] Counsel to
+  L1353  [SoftKey hint] Note msg
+  L1361  [SoftKey hint] Note to
+  L1383  [SoftKey hint] Raid note
+  L1399  [SoftKey hint] Raid note
+  L1424  [SoftKey hint] Cygnus name
+  L1444  [SoftKey hint] Cygnus name
+  L1498  [SoftKey hint] Megaphone
+  L1529  [SoftKey hint] Shop title
+  L1556  [SoftKey hint] Shop title
+  L1579  [SoftKey hint] slot,qty
+  L1600  [SoftKey hint] Member title
+  L1626  [SoftKey hint] Member title
+  L1647  [SoftKey hint] slot,qty
+  L1679  [SoftKey hint] Trade meso/chat
+  L1732  [SoftKey hint] qty[,tradeSlot]
+  L1751  [SoftKey hint] iv,pos,qty,slot
+  L1770  [SoftKey hint] Trade meso/chat
+  L1796  [SoftKey hint] Entrusted
+  L1839  [SoftKey hint] slot,qty
+  L1843  [SoftKey hint] Entrusted title
+  L1874  [SoftKey hint] CashTrade meso/chat
+  L1926  [SoftKey hint] qty[,tradeSlot]
+  L1945  [SoftKey hint] iv,pos,qty,slot
+  L1964  [SoftKey hint] CashTrade meso/chat
+  L2000  [SoftKey hint] Find name
+  L2025  [SoftKey hint] Find name
+  L2069  [SoftKey hint] Aran skillid
+  L2112  [SoftKey hint] Aran skillid|tip
+  L2144  [SoftKey hint] Transform skillid|tip
+  L2167  [SoftKey hint] Transform skillid|tip
+  L2188  [SoftKey hint] MobKill chat
+  L2204  [SoftKey hint] MobKill chat
+  L2222  [SoftKey hint] MapleEvent
+  L2233  [SoftKey hint] Event chat
+  L2304  [SoftKey hint] SkillEx id
+  L2352  [SoftKey hint] Book cover/page
+  L2389  [SoftKey hint] Book cover id
+  L2438  [SoftKey hint] Quest id|tip
+  L2460  [SoftKey hint] Mate message
+  L2471  [SoftKey hint] Mate message
+  L2489  [SoftKey hint] Beta code
+  L2500  [SoftKey hint] Beta code
+  L2533  [SoftKey hint] users|alert|msg
+  L2561  [SoftKey hint] users|alert|msg
+  L2720  [SoftKey hint] Skill id
+  L2742  [SoftKey hint] Map id
+  L2961  [SoftKey hint] Trade cid|v
+  L2980  [SoftKey hint] NPC oid
+  L3023  [SoftKey hint] Cash itemid
+  L3066  [SoftKey hint] slot,id,qty|s,…
+  L3079  [SoftKey hint] NPC reply|sel
+  L3094  [SoftKey hint] Char cid
+  L3113  [SoftKey hint] Recharge slot
+  L3134  [SoftKey hint] Skill id SP
+  L3151  [SoftKey hint] CharInfo cid
+  L3170  [SoftKey hint] Map id
+  L3190  [SoftKey hint] Pickup oid
+  L3209  [SoftKey hint] Reactor oid
+  L3226  [SoftKey hint] AP str|dex|int|luk
+  L3242  [SoftKey hint] Gather tab 1-5
+  L3260  [SoftKey hint] Sort tab 1-5
+  L3277  [SoftKey hint] Deny guild from
+  L3296  [SoftKey hint] Forfeit quest id
+  L3322  [SoftKey hint] Equip slot id
+  L3332  [SoftKey hint] Scroll slot
+  L3368  [SoftKey hint] Use itemid
+  L3667  [SoftKey hint] MacroEx
+  L3691  [SoftKey hint] Skill id
+  L3710  [SoftKey hint] Clone note
+  L3722  [SoftKey hint] Clone note
+  L3768  [SoftKey hint] y|n|tip
+  L3815  [SoftKey hint] AP str|SP id
+  L3846  [SoftKey hint] AP str|SP id
+  L3879  [SoftKey hint] Dest slot
+  L3909  [SoftKey hint] Dest slot
+  L3934  [SoftKey hint] iv,src,dst[,qty]
+  L3985  [SoftKey hint] y|n|tip
+  L4029  [SoftKey hint] Whisper msg
+  L4143  [SoftKey hint] Whisper msg
+  L4144  [SoftKey hint] Whisper name
+  L4150  [SoftKey hint] Whisper msg
+  L4166  [SoftKey hint] Char cid
+  L4197  [SoftKey hint] Event note
+  L4215  [SoftKey hint] Event note
+  L4294  [SoftKey hint] Find name
+  L4311  [SoftKey hint] Channel 1-N
+  L4363  [SoftKey hint] UtilDlg text
+  L4374  [SoftKey hint] UtilDlg text
+  L4416  [SoftKey hint] MultiLine
+  L4453  [SoftKey hint] MultiLine
+  L4651  [SoftKey hint] Drop meso
+  L4685  [SoftKey hint] Emote id
+  L4696  [SoftKey hint] Chair itemid
+  L4741  [SoftKey hint] ItemEffect id
+  L4774  [SoftKey hint] Skill id
+  L4788  [SoftKey hint] Book cover id
+  L4806  [SoftKey hint] AP str|dex|int|luk
+  L4824  [SoftKey hint] Gather tab 1-5
+  L4843  [SoftKey hint] Sort tab 1-5
+  L4864  [SoftKey hint] Deny guild from
+  L4883  [SoftKey hint] Forfeit quest id
+  L4909  [SoftKey hint] Equip slot id
+  L4919  [SoftKey hint] Scroll slot
+  L4953  [SoftKey hint] Use itemid
+  L4971  [SoftKey hint] Map id
+  L4990  [SoftKey hint] Pickup oid
+  L5009  [SoftKey hint] Reactor oid
+  L5030  [SoftKey hint] NPC oid
+  L5074  [SoftKey hint] slot,id,qty|s,slot,id,qty
+  L5091  [SoftKey hint] NPC reply|sel
+  L5109  [SoftKey hint] Char cid
+  L5130  [SoftKey hint] Recharge slot
+  L5163  [SoftKey hint] Cash itemid
+  L5181  [SoftKey hint] Skill id SP
+  L5209  [SoftKey hint] Trade cid|v
+  L5228  [SoftKey hint] CharInfo cid
+  L5405  [SoftKey hint] Macro
+  L5430  [SoftKey hint] Skill id
+  L5469  [SoftKey hint] Emote id|tip
+  L5493  [SoftKey hint] Emote id|tip
+  L5525  [SoftKey hint] Pet name
+  L5543  [SoftKey hint] Pet name
+  L5578  [SoftKey hint] MultiPet name
+  L5601  [SoftKey hint] MultiPet name
+  L5631  [SoftKey hint] ExSearch name
+  L5656  [SoftKey hint] ExSearch name
+  L5708  [SoftKey hint] cur,max|pct|tip
+  L5740  [SoftKey hint] SkillUp id
+  L5769  [SoftKey hint] SkillUp id
+  L5796  [SoftKey hint] MacroSkill
+  L5816  [SoftKey hint] MacroSkill
+  L5840  [SoftKey hint] Skill id
+  L5879  [SoftKey hint] Quest id
+  L5912  [SoftKey hint] Quest id|tip
+  L5934  [SoftKey hint] qid or qid,npc
+  L5952  [SoftKey hint] Forfeit qid
+  L6127  [SoftKey hint] FloatNotice tip
 
 [IO/UITypes/UIMonsterBook.cpp] 2 处
   L165   [SoftKey hint] Cover card id
@@ -752,7 +536,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L845   [SoftKey hint] Skill id use
 
 [IO/UITypes/UIStatsInfo.cpp] 1 处
-  L490   [SoftKey hint] AP str|dex|int|luk|1-4
+  L492   [SoftKey hint] AP str|dex|int|luk|1-4
 
 [IO/UITypes/UIStatusBar.cpp] 11 处
   L1237  [SoftKey hint] Whisper msg
@@ -784,10 +568,10 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L306   [SoftKey hint] iv,pos,qty,slot
 
 [IO/UITypes/UIWorldSelect.cpp] 4 处
-  L216   [Text ctor   ] Ver. 
-  L819   [SoftKey hint] Channel #
-  L891   [SoftKey hint] World #
-  L1179  [SoftKey hint] Region tip|empty=Region
+  L229   [Text ctor   ] Ver. 
+  L835   [SoftKey hint] Channel #
+  L907   [SoftKey hint] World #
+  L1195  [SoftKey hint] Region tip|empty=Region
 
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==
@@ -797,30 +581,30 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 命中 17 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
 
 '0%'  5 处 —— 比率数值格式；原生是 " %d%%"(0x73BCC0) 格式串
-  L564   [change_text ] IO/UITypes/UIStatsInfo.cpp
-  L567   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L566   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L569   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L571   [change_text ] IO/UITypes/UIStatsInfo.cpp
-  L574   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L573   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L576   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 ' ~ '  3 处 —— 区间分隔符；原生侧是格式串 "%d ~ %d"(0x6F2928)，分隔符不随语言变
   L164   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
-  L549   [change_text ] IO/UITypes/UIStatsInfo.cpp
-  L563   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L551   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L565   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '-'  2 处 —— 空值占位符；原生无该字面量，locale 中性标点
   L678   [change_text ] IO/UITypes/UICharInfo.cpp
-  L539   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L541   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '0.00%'  2 处 —— 比率数值格式；原生 EXP 行为 "EXP : %d / %d"(0x73BB5C)，无此字面量
-  L566   [change_text ] IO/UITypes/UIStatsInfo.cpp
-  L572   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L568   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L574   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
 '!'  1 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
   L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
 
 '0'  1 处 —— 数值初值，首个数据包即被改写
-  L195   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
+  L196   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
 
 '1'  1 处 —— 数值初值，首个数据包即被改写
   L235   [Text ctor   ] IO/UITypes/UICharSelect.cpp

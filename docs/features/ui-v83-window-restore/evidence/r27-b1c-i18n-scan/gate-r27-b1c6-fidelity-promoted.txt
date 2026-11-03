@@ -1,0 +1,16 @@
+# R27-B1c-6 忠实尺「提交后复查」读数（2026-11-03，--rev 02e9401 = 本批父提交）
+#
+#   ini 真源 138 键 | 片段全部命中 = 135 | 片段查无 = 3 | 源码无引用 = 0 | ini 缺键 = 0
+#
+# 3 条「查无」= teleport.tip_first_map / tip_vip_map / tip_empty —— HEAD 里原文是
+# refresh_tip 的四段 `tip += ".."` 拼装，忠实尺按整串查必然查无（尺语义 = 单字面量搬运，
+# 见 gate-r27-b1c6.txt §4 与 README §14.1）。这 3 条为人工逐字对：
+#   "Enter=1st map" + " #" + map + " | SoftKey map/name | S=save"  → Enter=1st map #{} | SoftKey map/name | S=save ✓
+#   "Enter=1st map" + " VIP#" + vipmap + 同上尾巴                 → Enter=1st map VIP#{} | … ✓
+#   "Enter=1st map" + " (empty)" + 同上尾巴                       → Enter=1st map (empty) | … ✓
+# WRONG-REV 未触发 ⇒ 02e9401 确为本批父提交（尺自判「这批新造的字面量是否已存在于该 rev」）。
+
+值保真（原文取 02e9401）：ini 真源 138 键 | 片段全部命中 = 135 | 片段查无 = 3 | 源码无引用 = 0 | ini 缺键 = 0
+  teleport.tip_first_map  值='Enter=1st map #{} | SoftKey map/name | S=save'  片段在 02e9401 查无=['Enter=1st map #']  代码在=UIMiscShells.cpp
+  teleport.tip_vip_map  值='Enter=1st map VIP#{} | SoftKey map/name | S=save'  片段在 02e9401 查无=['Enter=1st map VIP#']  代码在=UIMiscShells.cpp
+  teleport.tip_empty  值='Enter=1st map (empty) | SoftKey map/name | S=save'  片段在 02e9401 查无=['Enter=1st map (empty) | SoftKey map/name | S=save']  代码在=UIMiscShells.cpp
