@@ -1,11 +1,16 @@
 值保真尺读数与负对照（R27-B1c-5b，2026-11-03）
 
-尺已提进仓库：tools/check_value_fidelity.py（**提交前**跑：判据取自 `HEAD`，commit 后 `HEAD`
-就变成改后源码 ⇒ 假阳性；复查历史批要把它 `head()` 里的 rev 换成该批父提交）。
+尺已提进仓库：tools/check_value_fidelity.py（**提交前**跑：判据取自 `HEAD`）。commit 之后同一条命令
+会大面积假阳性 —— 实测本批 commit 后 98 键里 **75 条报查无**，因为 `HEAD` 已是改后源码；
+复查历史批加 `--rev <该批父提交>` 即可复原，报告头会把用的 rev 打出来，
+不会把「工具过期」读成「值写坏了」：
+
+    --table keys-5b.txt --ini locale/zh-CN.ini              → 提交后 75 条查无（假阳性，符合预期）
+    --table keys-5b.txt --ini locale/zh-CN.ini --rev HEAD~1 → 98/98、rc=0
 
 ## 正测（本批 98 键，ini 当真源）
 
-    值保真：ini 真源 98 键 | 片段全部命中 HEAD = 98 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
+    值保真（原文取 HEAD）：ini 真源 98 键 | 片段全部命中 = 98 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
 
 zh-CN 与 en-US **各跑一遍**，读数相同（决策 B：两份同值）。zh 那份归档在
 [gate-r27-b1c5b-fidelity-promoted.txt](gate-r27-b1c5b-fidelity-promoted.txt)。
@@ -22,7 +27,7 @@ zh-CN 与 en-US **各跑一遍**，读数相同（决策 B：两份同值）。z
 
 改坏 ini 一条值（`delivery.row_meso` 尾缀塞进「 元」）后：
 
-    值保真：ini 真源 98 键 | 片段全部命中 HEAD = 97 | 片段查无 = 1 | …
+    值保真（原文取 HEAD）：ini 真源 98 键 | 片段全部命中 = 97 | 片段查无 = 1 | …
       delivery.row_meso  值='{}  {}m  {}'  片段在 HEAD 查无=['m  ']  代码在=UIDelivery.cpp
 
 另用改坏的键表（键名改成 `memo.COUNT_TYPO`）验「源码无引用」档：正确落该类报警。

@@ -437,7 +437,8 @@ zh / en 同值（决策 B，键表 [keys-5b.txt](keys-5b.txt)，台账见 §B1c-
 ⇒ 新增 [../../tools/check_value_fidelity.py](../../tools/check_value_fidelity.py)（判据：ini 值里每一段
 **非占位符**片段必须在**该键引用处的 HEAD 旧文件**里逐字出现；`--ini` 让真源 ini 参与校验，键表只当
 本批键清单，防「表与 ini 漂了没人查」）：98/98 通过，见 [gate-r27-b1c5b-fidelity.txt](gate-r27-b1c5b-fidelity.txt)。
-**这条尺必须在提交前跑** —— 它拿 `HEAD` 当原文，commit 之后 `HEAD` 就是改后代码，会变假阳性。
+**这条尺必须在提交前跑** —— 它拿 `HEAD` 当原文，commit 之后 `HEAD` 就是改后代码，会变假阳性
+（本批 commit 后实测 98 键里 75 条报查无；复查加 `--rev HEAD~1` 即复原）。
 教训记一句：**「搬过去」不等于「搬对了」**，凡是机械搬运，验收判据必须回到原文逐字对。
 
 ### 12.2 负对照差点自己骗了自己（两次）

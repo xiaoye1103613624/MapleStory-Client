@@ -10,8 +10,10 @@
   --out 写 UTF-8 报告（本机 stdout 是 cp936）。rc：0 全过 / 1 有不合格 / 2 空跑或判据缺失。
 
 **这是「提交前」的尺**：判据取自 `HEAD`，本批一旦 commit，`HEAD` 就变成改后的源码，
-片段自然查无 ⇒ 假阳性。要在原子提交**之前**跑并归档读数；提交之后要复查同一批，
-把 `HEAD` 换成该批的父提交（改 `head()` 的 rev）。
+片段自然查无 ⇒ 假阳性（实测：commit 后同一条命令 98 键里 75 条报查无）。要在原子提交**之前**跑并归档读数；
+提交之后要复查同一批，加 `--rev <该批的父提交>`（如 `--rev HEAD~1`）。
+用法示例：
+  python tools/check_value_fidelity.py --table <键表> --ini locale/zh-CN.ini [--rev <rev>] [--out F]
 
 已知边界：片段横跨引号拼接（源码写 `"Fee = TradeFee"` `+ tip` `") + 5000"`）时按整段查会失败，
 本工具**照实报警交人工**，不做模糊匹配 —— 放宽判据等于取消门禁。
@@ -59,8 +61,8 @@ def locate(keys):
     return hits
 
 
-def head(rel):
-    wr = subprocess.run(["git", "-C", ROOT, "show", "HEAD:" + rel], capture_output=True)
+def head(rel, rev):
+    wr = subprocess.run(["git", "-C", ROOT, "show", "%s:%s" % (rev, rel)], capture_output=True)
     if wr.returncode != 0:
         return None
     return wr.stdout.decode("utf-8", "replace")
@@ -83,6 +85,9 @@ def main():
     ap.add_argument("--ini", default=None,
                     help="真源 ini（如 locale/zh-CN.ini）：给了就按 **ini 里的值** 查保真，"
                          "键表只当「本批键清单」用 —— 否则表与 ini 漂了也查不出来")
+    ap.add_argument("--rev", default="HEAD",
+                    help="原文取自哪个版本。默认 HEAD ⇒ 本尺是**提交前**的闸；"
+                         "提交后要复查这批，传该批的父提交（如 --rev HEAD~1）")
     ap.add_argument("--out", default=None)
     ns = ap.parse_args()
 
@@ -121,7 +126,7 @@ def main():
             found = False
             for rel in home:
                 if rel not in cache:
-                    cache[rel] = head(rel) or ""
+                    cache[rel] = head(rel, ns.rev) or ""
                 old = cache[rel]
                 if fr in old or fr.encode("utf-8").decode("cp1252", "replace") in old:
                     found = True
@@ -141,8 +146,8 @@ def main():
         lines.append("  %s = %r  —— 有值但源码无引用（本批漏接线或键名写错）" % (key, val))
     for key in noini:
         lines.append("  %s —— 键表列了、ini 里没有" % key)
-    head_line = "值保真：%s %d 键 | 片段全部命中 HEAD = %d | 片段查无 = %d | 源码无引用 = %d | ini 缺键 = %d" % (
-        "ini 真源" if ini is not None else "键表", len(rows), ok, len(frag_fail), len(unref), len(noini))
+    head_line = "值保真（原文取 %s）：%s %d 键 | 片段全部命中 = %d | 片段查无 = %d | 源码无引用 = %d | ini 缺键 = %d" % (
+        ns.rev, "ini 真源" if ini is not None else "键表", len(rows), ok, len(frag_fail), len(unref), len(noini))
     report = head_line + "\n" + "\n".join(lines) + "\n"
     if ok == 0:
         report += "FALSE-GREEN：0 条值被校验，工具失效，勿据此放行\n"
