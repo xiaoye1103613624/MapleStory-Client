@@ -399,3 +399,10 @@
 | `teleport.tip_first_map` | `Enter=1st map #{} \| SoftKey map/name \| S=save` | UIMiscShells.cpp:955 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
 | `teleport.tip_vip_map` | `Enter=1st map VIP#{} \| SoftKey map/name \| S=save` | UIMiscShells.cpp:957 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
 | `teleport.tip_empty` | `Enter=1st map (empty) \| SoftKey map/name \| S=save` | UIMiscShells.cpp:958 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+
+### 软键盘档状态定版（2026-11-03，§11.6 裁决「不接」）
+
+本表内所有「（UISoftKey 第三参）」站点与其余 426 处同档：**整形状豁免，不接线、不建键**，
+理由与复开条件见 scan_display_text.py 的 EXEMPT_SHAPES 注释与 README §15。
+其中「禁译」输入语法条（rock|paper|scissor、m|f、save|close 等）此前已建键的保持原样
+（键在 ini 无害，站点已归零），未建的不再补。

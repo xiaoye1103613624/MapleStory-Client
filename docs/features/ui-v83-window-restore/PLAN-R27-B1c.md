@@ -76,7 +76,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin（**已完**：24 文件 / 98 键，见「落地情况」）；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant`（**已完**：3 窗接线 15 键，`UIGender` 按裁决不接，见「落地情况」） | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
 | **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高）。**已完（2026-11-03）**：非软键盘 261 站点 / 138 键（接线器机械档 + 4 处人工档），软键盘 172+2 处不在本批、仍挂 §11 第 6 条裁决；见 evidence README §14 | ~~216~~ **388**（实接非软键盘 **261**，尺盲区见 §14.2） | 同上 |
 | **B1c-5d 在用窗软键盘档** | 新基线浮出来的在用窗余站 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 / `UIMegaphone` 5 / `UILoginNotice` 5 …），多数是软键盘提示位 | **76** | 同上；这批在 B1c-3 之后才算得清，因为当时那条尺看不见该形状 |
-| **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
+| **B1c-7 收尾**（**主体已完 2026-11-03**：软键盘裁决「不接」→ 整形状豁免进尺；4 处尺盲区站点补收；`>>` 白名单取证；站点终态 2+豁免426+白名单20+中文0） | 站点归零（口径改为「非豁免形状归零」）、`pending-copy.md` 成册、evidence README 定版、调试日志核查、CHECKLIST 定版（文件被并行会话占，延后）、全量 MSBuild + 抽窗真机复验（欠，等客户端关闭） | — | 见 §6 与本节落地情况 |
 
 依赖：B1c-2 → 其余全部；B1c-3/4/5/6 之间互不依赖，可并行推进；B1c-7 等前五批。
 
@@ -215,6 +215,25 @@ ctor 成员初始化 +40、sm_tip 第二通道 +3、跨行/四段拼装人工 +2
 arity 572 点 0 不合格；忠实尺 135/135（3 条人工整句键逐字对，见 gate §4）+ 负对照一轮；
 `layout.py check` 十张 spec rc=0；站点尺 644 ⇒ **428 = 软键盘 426（待裁决）+ 批外已知 2**。
 读数：[gate-r27-b1c6.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c6.txt)。
+
+**B1c-7 落地情况（2026-11-03，裁决「不接」后）**：
+① §11.6 软键盘裁决落地 = `scan_display_text.py` 加 `EXEMPT_SHAPES`（**按形状豁免**：
+原生 v83 不启用软键盘 ⇒ 与提示语内容无关；WHITELIST 同款契约，426 条逐行打进「软键盘豁免档」
+不静默丢；负对照 = 清空豁免表 ⇒ sites 429/exempt 0，越界为零）。复开条件写进报告头：
+换用引用 SoftKey 的二进制 ⇒ 按 5a 两档重数。`UIMiscShells.cpp:6067` 的三元软键盘提示
+（旧尺 426 之外的下界证据）自动落进同一豁免档。
+② 对账尺（显示通道配对扫描，允许实参折行）在 UIMiscShells 补收 **4 处单行尺看不见的真显示站点**
+（tip_fn 回调转发 ×2、UIContextMenu 三元 ×1、UIGameMenu 跨行成员初始化 ×1）⇒ 5b85c5e，4 键。
+终检：显示通道裸字面量残留 = 0。
+③ `UIAdmin:160 ">> "` 按「先查原生」新规矩取证（三编码 0 命中；串池 0x73BAD0 的 `">>"` 是
+BtNPT 邻居节点名档）⇒ 进 WHITELIST 不建键，判据进 native-verdicts 追加段。
+④ 站点终态（f7555a0）：**sites=2** —— `UIChatBar:1789 "/w "`（§11.4 功能裁决：要不要这条自造
+打字命令）+ `UIWorldSelect:229 "Ver. "`（键 `version.prefix` 已存在，一行即接，文件被并行会话占）；
+wl=20 / exempt=426 / cjk=0（其中 UIGender 2 = 裁决不接、UIMiscShells 1 = 日志、IO/Window.cpp 11 = 待裁决）。
+⑤ 调试日志核查：B1c 全批文件无 DBG 残留；`GraphicsGL.cpp:33 dbgatlas` 属登录页轮遗留，随真机复验
+（#44）关闭时删，不在本批动。
+**未跑欠账（不变）**：全量 MSBuild `-t:Rebuild` + 运行时负对照（`MapleStory.exe` 占 OutDir；
+本机 tasklist 实测进程仍在，等用户关闭）；CHECKLIST.md 定版（被并行会话占用）。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 
