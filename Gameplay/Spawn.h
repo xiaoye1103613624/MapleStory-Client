@@ -45,7 +45,13 @@ namespace ms
 	class MobSpawn
 	{
 	public:
-		MobSpawn(int32_t oid, int32_t id, int8_t mode, int8_t stance, uint16_t fh, bool newspawn, int8_t team, Point<int16_t> position);
+		// spawn_effect/parent 来自 SPAWN_MOB 尾段（见 MapObjectHandlers 的
+		// read_mob_spawn_tail；s9 PacketCreator:1449-1459/1544-1564）：
+		//   spawn_effect >0 是出生特效（波 2 播 Mob/SpecialEff），
+		//   parent=true 时 parent_oid 是父怪（扎昆之手/分裂怪），-3 表示
+		//   父怪死后才出现。修前这些字节被错位读进 team/newspawn。
+		MobSpawn(int32_t oid, int32_t id, int8_t mode, int8_t stance, uint16_t fh, bool newspawn, int8_t team, Point<int16_t> position,
+			int8_t spawn_effect = 0, bool parent = false, int32_t parent_oid = 0);
 
 		int8_t get_mode() const;
 		int32_t get_oid() const;
@@ -55,6 +61,9 @@ namespace ms
 		int8_t get_team() const;
 		bool is_newspawn() const;
 		Point<int16_t> get_position() const;
+		int8_t get_spawn_effect() const;
+		bool is_parented() const;
+		int32_t get_parent_oid() const;
 		std::unique_ptr<MapObject> instantiate() const;
 
 	private:
@@ -66,6 +75,9 @@ namespace ms
 		bool newspawn;
 		int8_t team;
 		Point<int16_t> position;
+		int8_t spawn_effect;
+		bool parent;
+		int32_t parent_oid;
 	};
 
 	class ReactorSpawn

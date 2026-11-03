@@ -40,7 +40,8 @@ namespace ms
 				// 同 oid 的整包重下发（换控制器 / 脚本重 spawn）要连落位一起吃：
 				// 原来只 makeactive() 复用旧对象，新坐标、姿态、队伍全被丢掉。
 				mob->refresh(spawn.get_mode(), spawn.get_stance(), spawn.get_fh(),
-					spawn.get_team(), spawn.is_newspawn(), spawn.get_position());
+					spawn.get_team(), spawn.is_newspawn(), spawn.get_position(),
+					spawn.get_spawn_effect(), spawn.is_parented(), spawn.get_parent_oid());
 			}
 			else
 			{

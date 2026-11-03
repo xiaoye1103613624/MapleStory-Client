@@ -47,6 +47,268 @@ namespace ms
 				return;
 			}
 		}
+
+		////////////////////////////////////////////////////////////////////////////////
+		// SPAWN_MONSTER / SPAWN_MONSTER_CONTROL 共用可变段解析。
+		// 依据 s9 PacketCreator.java：
+		//   spawnMonsterInternal            :1514-1569
+		//   encodeParentlessMobSpawnEffect  :1449-1459
+		//   encodeTemporary                 :1461-1502
+		//   writeLongEncodeTemporaryMask    :3078-3091
+		//   spawnFakeMonster                :1578-1598（marker 是 short(-2)）
+		//   makeMonsterReal                 :1606-1619（marker 是 short(-1)，无 team 字节）
+		//
+		// 掩码段：4 个 int。Java 的 int 移位按 mod32 折叠，value>>32 == value，
+		// 所以 first 半区的 bit 同时写进 masks[0] 和 masks[1]，second 半区写进
+		// masks[2] 和 masks[3] ⇒ 条数 = popcount(m0)+popcount(m2)，也等于
+		// 四个 popcount 之和除二。普通 SPAWN_MOB 路径服务端整段 p.skip(16)
+		// （零），控制器路径才可能非零（带 debuff 的怪被接管时，修前写死
+		// skip(16) 会把 pos/stance/fh 读进状态数据中间）。
+		bool consume_mob_stati(InPacket& recv)
+		{
+			if (recv.length() < 16)
+				return false;
+
+			const uint32_t m0 = static_cast<uint32_t>(recv.read_int());
+			const uint32_t m1 = static_cast<uint32_t>(recv.read_int());
+			const uint32_t m2 = static_cast<uint32_t>(recv.read_int());
+			const uint32_t m3 = static_cast<uint32_t>(recv.read_int());
+
+			auto popcount = [](uint32_t m)
+			{
+				int n = 0;
+				for (; m; m &= m - 1) ++n;
+				return n;
+			};
+
+			const int count = (popcount(m0) + popcount(m1) + popcount(m2) + popcount(m3)) / 2;
+
+			// 每条状态：short 数值 + int 技能id（mobskill 为 short+short，同宽）+ short(-1)
+			if (recv.length() < static_cast<size_t>(count) * 8)
+				return false;
+
+			recv.skip(static_cast<size_t>(count) * 8);
+
+			// 反射计数器（:1493-1501）：w 0x20000000 / m 0x40000000（都是 first 半区），
+			// 存在者各 +int，任一存在再 +int(100)。
+			const bool reflect_w = (m0 | m1) & 0x20000000u;
+			const bool reflect_m = (m0 | m1) & 0x40000000u;
+
+			const size_t need = (reflect_w ? 4u : 0u) + (reflect_m ? 4u : 0u)
+				+ ((reflect_w || reflect_m) ? 4u : 0u);
+
+			if (recv.length() < need)
+				return false;
+
+			recv.skip(need);
+			return true;
+		}
+
+		// 尾段解析结果。
+		struct MobSpawnTail
+		{
+			int8_t effect = 0;		// >0 出生特效；-3 父怪死后才出；-1/-2 marker
+			bool fadein = false;	// marker == -2（服务端 newSpawn ⇒ 淡入）
+			bool parent = false;	// 带 parentOid 的形态
+			int32_t parent_oid = 0;
+			int8_t team = 0;
+			int32_t item_effect = 0;
+			bool valid = false;
+		};
+
+		// fh 之后的尾段共四种形态，字节宽度（不含前面 oid..fh）：
+		//   6  = parentless 无特效      [byte marker, byte team, int itemEffect]
+		//        或 makeMonsterReal     [short(-1)=FF FF, int]        —— 无 team 字节
+		//   7  = fake 无特效            [short(-2)=FE FF, byte team, int]
+		//  10  = parent 在场            [byte(effect|-3), int oid, byte team, int]
+		//        或 parentless 特效≠15  [byte e, byte 0, short 0, byte marker, byte team, int]
+		//  11  = parentless 特效 15     特效 15 多一个 byte0
+		//        或 fake 特效           [byte e, byte 0, short 0, short(-2), byte team, int]
+		// 判别一律用「相对当前游标的字节值」，不猜：
+		//   inspect_int  给出 index 0..3，inspect_long 给出 0..7，足够看 idx1..5。
+		// parent 的 int oid 为正数（服务端自增 objectId，< 2^31），所以
+		// 「idx1..3 全零 且 idx4∈{FE,FF}」不可能是 parent；反之亦然。
+		// 分派失败 ⇒ 判无效，调用方整包弃用，绝不把错位字节喂给 team/newspawn
+		// （修前的做法：marker 被当 team 读，team 恒 -1/-2、淡入标志失效）。
+		struct MobPeek
+		{
+			InPacket& recv;
+
+			uint32_t i0_3() const { return static_cast<uint32_t>(recv.inspect_int()); }
+			uint64_t i0_7() const { return static_cast<uint64_t>(recv.inspect_long()); }
+
+			uint8_t at(size_t i) const
+			{
+				return static_cast<uint8_t>((i0_7() >> (8 * i)) & 0xFFu);
+			}
+		};
+
+		bool read_mob_spawn_tail(InPacket& recv, MobSpawnTail& t)
+		{
+			const size_t len = recv.length();
+
+			if (len < 6)
+				return false;
+
+			const MobPeek pk{ recv };
+
+			auto plain_marker = [&recv, &t]() -> bool
+			{
+				const int8_t marker = recv.read_byte();
+
+				if (marker != -1 && marker != -2)
+					return false;
+
+				t.fadein = marker == -2;
+				t.team = recv.read_byte();
+				t.item_effect = recv.read_int();
+				return true;
+			};
+
+			auto parentless_effect_prefix = [&pk](uint8_t& marker_at) -> bool
+			{
+				// [byte e][byte 0][short 0] ⇒ idx1..3 == 0，idx4 是 marker
+				if ((pk.i0_3() >> 8) != 0)
+					return false;
+
+				const uint8_t m = pk.at(4);
+
+				if (m != 0xFF && m != 0xFE)
+					return false;
+
+				marker_at = m;
+				return true;
+			};
+
+			switch (len)
+			{
+			case 6:
+			{
+				// makeMonsterReal：short(-1)（idx0..1 = FF FF）+ int，没有 team。
+				if (static_cast<uint16_t>(recv.inspect_short()) == 0xFFFFu)
+				{
+					recv.skip(2);
+					t.effect = -1;
+					t.item_effect = recv.read_int();
+					t.valid = true;
+					return true;
+				}
+
+				if (!plain_marker())
+					return false;
+
+				t.valid = true;
+				return true;
+			}
+			case 7:
+			{
+				// spawnFakeMonster 无特效：short(-2) = FE FF
+				if (static_cast<uint16_t>(recv.inspect_short()) != 0xFFFEu)
+					return false;
+
+				recv.skip(2);
+				t.effect = -2;
+				t.fadein = true;
+				t.team = recv.read_byte();
+				t.item_effect = recv.read_int();
+				t.valid = true;
+				return true;
+			}
+			case 10:
+			{
+				uint8_t marker = 0;
+
+				if (parentless_effect_prefix(marker))
+				{
+					// [e][0][short0][marker][team][int]
+					t.effect = recv.read_byte();
+					recv.skip(3); // byte0 + short0
+
+					const int8_t mk = recv.read_byte();
+
+					if (mk != -1 && mk != -2)
+						return false;
+
+					t.fadein = mk == -2;
+					t.team = recv.read_byte();
+					t.item_effect = recv.read_int();
+					t.valid = true;
+					return true;
+				}
+
+				// parent 形态：byte(effect|-3) + int(parentOid) + byte(team) + int
+				const int8_t e = recv.read_byte();
+
+				if (e == 0)
+					return false;
+
+				t.effect = e;
+				t.parent = true;
+				t.parent_oid = recv.read_int();
+
+				if (t.parent_oid <= 0)
+					return false;
+
+				t.team = recv.read_byte();
+				t.item_effect = recv.read_int();
+				t.valid = true;
+				return true;
+			}
+			case 11:
+			{
+				// 特效 15（parentless，多一个 byte0）或 fake 特效（short(-2) 代替 marker byte）
+				if ((pk.i0_3() >> 8) != 0)
+					return false;
+
+				const uint8_t i4 = pk.at(4);
+				const uint8_t i5 = pk.at(5);
+
+				if (i4 == 0 && (i5 == 0xFF || i5 == 0xFE))
+				{
+					// [15][0][short0][0][marker][team][int]
+					const int8_t e = recv.read_byte();
+
+					if (e != 15)
+						return false;
+
+					recv.skip(4); // byte0 + short0 + byte0
+
+					const int8_t mk = recv.read_byte();
+
+					if (mk != -1 && mk != -2)
+						return false;
+
+					t.effect = e;
+					t.fadein = mk == -2;
+					t.team = recv.read_byte();
+					t.item_effect = recv.read_int();
+					t.valid = true;
+					return true;
+				}
+
+				if (i4 == 0xFE && i5 == 0xFF)
+				{
+					// fake + 特效：[e][0][short0][short(-2)][team][int]
+					t.effect = recv.read_byte();
+
+					if (t.effect <= 0)
+						return false;
+
+					recv.skip(3); // byte0 + short0
+					recv.skip(2); // short(-2)
+					t.fadein = true;
+					t.team = recv.read_byte();
+					t.item_effect = recv.read_int();
+					t.valid = true;
+					return true;
+				}
+
+				return false;
+			}
+			default:
+				return false;
+			}
+		}
 	}
 
 	void SpawnCharHandler::handle(InPacket& recv) const
@@ -209,19 +471,29 @@ namespace ms
 
 		if (mode == 1)
 		{
-			recv.skip(1);
+			// addPetInfo(showpet=true)（s9 PacketCreator:4455-4468 via showPet:4480）：
+			// byte(1) byte(0) int itemId str name **long uniqueId** pos byte stance
+			// **short fh** bool nameTag bool balloon。
+			// 修前 uniqueId 用 int+skip(4) 凑宽度、fh 用 int 吞掉 nameTag：
+			// 总长对齐不漂移，但 pid 高 32 位丢失（宠物 pid 会过 2^31）、
+			// nameTag/balloon 被并进 fhid。按原类型读。
+			recv.skip(1); // byte(1) available
 
 			int32_t itemid = recv.read_int();
 			std::string name = recv.read_string();
-			int32_t uniqueid = recv.read_int();
-
-			recv.skip(4);
+			int64_t uniqueid = recv.read_long();
 
 			Point<int16_t> pos = recv.read_point();
 			uint8_t stance = recv.read_byte();
-			int32_t fhid = recv.read_int();
+			int32_t fhid = recv.read_short();
 
-			character->add_pet(petindex, itemid, name, uniqueid, pos, stance, fhid);
+			// nameTag/balloon：波 2 的宠物名牌接线，这里先吃满。
+			bool nametag = recv.available() ? recv.read_bool() : false;
+			bool balloon = recv.available() ? recv.read_bool() : false;
+			(void)nametag; (void)balloon;
+
+			character->add_pet(petindex, itemid, name,
+				static_cast<int32_t>(uniqueid), pos, stance, fhid);
 		}
 		else if (mode == 0)
 		{
@@ -294,37 +566,37 @@ namespace ms
 		recv.read_byte(); // 5 if controller == null
 		int32_t id = recv.read_int();
 
-		// 状态块长度：本表原样继承 HeavenMS/v83 的 22 字节。s9 的 spawnMonsterInternal 走
-		// writeLongEncodeTemporaryMask（4 个 int = 16 字节）后才写 pos，多跳 6 字节会把
-		// pos/stance/fh 整体挪位，并在读 effect 时越界抛 PacketError —— PacketSwitch 只捕获
-		// PacketError，handler 尾部的 spawn() 就不会执行，表现为「怪物根本不出现」。
-		recv.skip(16);
+		// 状态块：正常 spawn 是服务端 p.skip(16) 的 16 个零字节；
+		// makeMonsterReal（扎昆本体转可选中，MapleMap.java:1483/2086 走 SPAWN_MOB）
+		// 用 encodeTemporary，非空 stati 时变长 ⇒ 统一按掩码解析。
+		if (!consume_mob_stati(recv))
+		{
+			// 掩码都不完整 ⇒ 短包/畸形包，弃用
+			LOG(LOG_WARN, "SpawnMob short packet oid=" << oid);
+			return;
+		}
 
 		Point<int16_t> position = recv.read_point();
 		int8_t stance = recv.read_byte();
 
-		recv.skip(2);
+		recv.skip(2); // origin fh（服务端固定写 0）
 
 		uint16_t fh = recv.read_short();
-		int8_t effect = recv.read_byte();
 
-		if (effect > 0)
+		MobSpawnTail tail;
+
+		if (!read_mob_spawn_tail(recv, tail))
 		{
-			recv.read_byte();
-			recv.read_short();
-
-			if (effect == 15)
-				recv.read_byte();
+			// 形态判别失败 ⇒ 宁可不刷怪，也不要用错位字节污染 team/fadein
+			// （修前正是这里把 marker 当 team、把 team 当 newspawn）。
+			LOG(LOG_WARN, "SpawnMob bad tail oid=" << oid << " id=" << id
+				<< " len=" << recv.length());
+			return;
 		}
 
-		int8_t team = recv.read_byte();
-
-		recv.skip(4);
-
-		while (recv.available())
-			recv.skip_byte();
 		Stage::get().get_mobs().spawn(
-			{ oid, id, 0, stance, fh, effect == -2, team, position }
+			{ oid, id, 0, stance, fh, tail.fadein, tail.team, position,
+				tail.effect, tail.parent, tail.parent_oid }
 		);
 	}
 
@@ -345,52 +617,58 @@ namespace ms
 
 		if (mode == 0)
 		{
+			// stopControlling / removeMonsterInvisibility：byte(0) + oid（PC:1432-1437/1627-1632）。
+			// 修前此处 TODO 把「解除隐身」当作 unused 丢弃；实际服务端 Ariant/PQ 的
+			// makeMonsterInvisible 发的也是本包，mode0=停止控制 ⇒ 交回普通控制流。
 			while (recv.available())
 				recv.skip_byte();
 			Stage::get().get_mobs().set_control(oid, false);
 		}
 		else
 		{
-			if (recv.available())
+			if (recv.length() >= 4)
 			{
-				recv.skip(1);
+				recv.skip(1); // controller marker（5）
 
 				int32_t id = recv.read_int();
 
-				// 同上：SPAWN_MOB_C 的状态块也是 16 字节（s9 requestController 分支走
-				// encodeTemporary，内部同样写 4 个 int 掩码）。
-				recv.skip(16);
+				// 控制器路径走 encodeTemporary（PC:1461-1502）：16 字节掩码 +
+				// 每状态 8 字节 + 反射计数器。修前写死 skip(16)：接管一只带
+				// debuff 的怪 ⇒ pos/stance/fh 全读进状态数据。
+				if (!consume_mob_stati(recv))
+				{
+					LOG(LOG_WARN, "SpawnMobC short stati oid=" << oid);
+					return;
+				}
 
 				Point<int16_t> position = recv.read_point();
 				int8_t stance = recv.read_byte();
 
-				recv.skip(2);
+				recv.skip(2); // origin fh
 
 				uint16_t fh = recv.read_short();
-				int8_t effect = recv.read_byte();
 
-				if (effect > 0)
+				MobSpawnTail tail;
+
+				if (!read_mob_spawn_tail(recv, tail))
 				{
-					recv.read_byte();
-					recv.read_short();
-
-					if (effect == 15)
-						recv.read_byte();
+					LOG(LOG_WARN, "SpawnMobC bad tail oid=" << oid << " id=" << id
+						<< " len=" << recv.length());
+					return;
 				}
 
-				int8_t team = recv.read_byte();
-
-				recv.skip(4);
-
-				while (recv.available())
-					recv.skip_byte();
 				Stage::get().get_mobs().spawn(
-					{ oid, id, mode, stance, fh, effect == -2, team, position }
+					{ oid, id, mode, stance, fh, tail.fadein, tail.team, position,
+						tail.effect, tail.parent, tail.parent_oid }
 				);
 			}
 			else
 			{
-				// TODO: Remove monster invisibility, not used (maybe in an event script?), Check this!
+				// removeMonsterInvisibility（PC:1432-1437：byte(1) + oid，无后续）：
+				// 怪此前被 makeMonsterInvisible 藏起，这里恢复可见 ⇒ 重发控制请求即可，
+				// 本包没有位置信息，无事可做。
+				while (recv.available())
+					recv.skip_byte();
 			}
 		}
 	}
@@ -963,29 +1241,56 @@ namespace ms
 
 	void SpawnMistHandler::handle(InPacket& recv) const
 	{
+		// s9 PacketCreator.spawnMist（PacketCreator.java:4074-4088）：
+		// int oid, int type, int owner, int skill, byte level, short skillDelay,
+		// int x1, int y1, int x2, int y2, int 0 —— 矩形框是 4 个 **int**，
+		// 修前按 4 个 short 读 ⇒ 中心点/尺寸全错，skillDelay 也没消费。
+		// type: 0 mob mist / 1 poison / 2 smokescreen / 4 recovery（PC:4077）。
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t mist_type = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+
 		if (recv.available())
 			recv.read_byte(); // skillLevel
-		Point<int16_t> pos = Stage::get().get_player().get_position();
-		if (recv.available() >= 8)
+
+		if (recv.available() >= 2)
+			recv.read_short(); // skillDelay
+
+		// 雾区矩形（地图坐标，int）。波 3 区域渲染接线，这里先取左上角为锚点。
+		// 读不满 16 字节（短包/旧服务端）时退回主人坐标，绝不猜框。
+		int32_t x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+		bool havebox = recv.available() >= 16;
+
+		if (havebox)
 		{
-			int16_t x1 = recv.read_short();
-			int16_t y1 = recv.read_short();
-			recv.read_short(); // x2
-			recv.read_short(); // y2
-			pos = Point<int16_t>(x1, y1);
+			x1 = recv.read_int();
+			y1 = recv.read_int();
+			x2 = recv.read_int();
+			y2 = recv.read_int();
 		}
-		else if (auto owner_char = Stage::get().get_character(owner))
-			pos = owner_char->get_position();
+
+		Point<int16_t> pos(static_cast<int16_t>(x1), static_cast<int16_t>(y1));
+
+		if (!havebox)
+		{
+			if (auto owner_char = Stage::get().get_character(owner))
+				pos = owner_char->get_position();
+			else
+				pos = Stage::get().get_player().get_position();
+		}
+
 		LOG(LOG_DEBUG, "SpawnMist oid=" << oid << " type=" << mist_type
-			<< " owner=" << owner << " skill=" << skill << " rem=" << recv.available());
+			<< " owner=" << owner << " skill=" << skill
+			<< " box=(" << x1 << "," << y1 << ")-(" << x2 << "," << y2 << ")");
+
+		Stage::get().get_field_markers().spawn_mist(oid, owner, skill, pos, 60000);
+
+		// 类型/尺寸交给波 3 的区域渲染；当前仍按点标记，但锚点与字节已对齐。
+		(void)mist_type; (void)x2; (void)y2;
+
 		while (recv.available())
 			recv.skip_byte();
-		Stage::get().get_field_markers().spawn_mist(oid, owner, skill, pos, 60000);
-		(void)mist_type; (void)skill;
 	}
 
 	void RemoveMistHandler::handle(InPacket& recv) const
@@ -1030,22 +1335,50 @@ namespace ms
 
 	void SpawnSummonHandler::handle(InPacket& recv) const
 	{
+		// s9 PacketCreator.spawnSummon（PacketCreator.java:1167-1181）：
+		// int cid, int oid, int skill, byte 0x0A(v83 填充), byte level,
+		// pos, byte stance, short 0, byte moveType, bool !puppet, bool !animated.
+		// 修前把 0x0A 当 level 读、pos 从错位字节起读 ⇒ 每只召唤兽等级恒 10、
+		// 落位错 1 字节；stance/moveType/puppet/animated 全被当成尾巴丢掉。
 		int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+
+		if (recv.available())
+			recv.skip_byte(); // 0x0A v83 filler
+
 		int8_t skill_level = recv.available() ? recv.read_byte() : 0;
+
 		Point<int16_t> pos = Stage::get().get_player().get_position();
+
 		if (recv.available() >= 4)
 			pos = recv.read_point();
 		else if (auto owner = Stage::get().get_character(cid))
 			pos = owner->get_position();
+
+		int8_t stance = recv.available() ? recv.read_byte() : 0;
+
+		if (recv.available() >= 2)
+			recv.skip_short(); // short 0
+
+		// moveType: 0 不动，1 跟随，2/4 仅传送跟随，3 鸟跟随（PC:1177）
+		int8_t movetype = recv.available() ? recv.read_byte() : 0;
+		bool attacking = recv.available() ? recv.read_bool() : true; // !puppet
+		bool animated = recv.available() ? recv.read_bool() : false;
+
 		LOG(LOG_DEBUG, "SpawnSummon cid=" << cid << " oid=" << oid << " skill=" << skill
-			<< " lv=" << (int)skill_level << " rem=" << recv.available());
+			<< " lv=" << (int)skill_level << " stance=" << (int)stance
+			<< " mt=" << (int)movetype << " atk=" << attacking << " anim=" << animated
+			<< " rem=" << recv.available());
+
+		Stage::get().get_field_markers().spawn_summon(oid, cid, skill, pos, skill_level);
+
+		// stance/moveType/puppet 的表现为波 2（召唤兽真对象化）接线；
+		// 此处先保证字节吃满、等级与落位正确。
+		(void)stance; (void)movetype; (void)attacking; (void)animated;
+
 		while (recv.available())
 			recv.skip_byte();
-		Stage::get().get_field_markers().spawn_summon(oid, cid, skill, pos, skill_level);
-		// 召唤物自显，不 tip
-		(void)skill; (void)skill_level;
 	}
 
 	void RemoveSummonHandler::handle(InPacket& recv) const

@@ -43,7 +43,9 @@ namespace ms
 		return std::make_unique<Npc>(id, oid, flip, fh, false, spawnposition);
 	}
 
-	MobSpawn::MobSpawn(int32_t o, int32_t i, int8_t m, int8_t st, uint16_t f, bool ns, int8_t t, Point<int16_t> p) : oid(o), id(i), mode(m), stance(st), fh(f), newspawn(ns), team(t), position(p) {}
+	MobSpawn::MobSpawn(int32_t o, int32_t i, int8_t m, int8_t st, uint16_t f, bool ns, int8_t t, Point<int16_t> p,
+		int8_t se, bool par, int32_t poid) : oid(o), id(i), mode(m), stance(st), fh(f), newspawn(ns), team(t), position(p),
+		spawn_effect(se), parent(par), parent_oid(poid) {}
 
 	int8_t MobSpawn::get_mode() const
 	{
@@ -57,7 +59,23 @@ namespace ms
 
 	std::unique_ptr<MapObject> MobSpawn::instantiate() const
 	{
-		return std::make_unique<Mob>(oid, id, mode, stance, fh, newspawn, team, position);
+		return std::make_unique<Mob>(oid, id, mode, stance, fh, newspawn, team, position,
+			spawn_effect, parent, parent_oid);
+	}
+
+	int8_t MobSpawn::get_spawn_effect() const
+	{
+		return spawn_effect;
+	}
+
+	bool MobSpawn::is_parented() const
+	{
+		return parent;
+	}
+
+	int32_t MobSpawn::get_parent_oid() const
+	{
+		return parent_oid;
 	}
 
 	int8_t MobSpawn::get_stance() const

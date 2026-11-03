@@ -34,6 +34,8 @@
 
 namespace ms
 {
+	// 分裂怪跟随父怪（effect == -3）：父怪死后服务端不再补发 spawn，原生客户端
+	// 雪藏该怪直至父怪死亡。本类存储 spawn_effect/parent/parent_oid（波 2 接线）。
 	class Mob : public MapObject
 	{
 	public:
@@ -94,7 +96,11 @@ namespace ms
 		}
 
 		// Construct a mob by combining data from game files with data sent by the server
-		Mob(int32_t oid, int32_t mobid, int8_t mode, int8_t stance, uint16_t fhid, bool newspawn, int8_t team, Point<int16_t> position);
+		// spawn_effect/parent 来自 SPAWN_MOB 尾段（s9 PacketCreator:1449-1564）：
+		// >0 是出生特效（Mob/SpecialEff.img），parent_oid 用于扎昆之手一类
+		// 分裂怪跟随父怪死亡（effect == -3 时父怪死后才出现）。
+		Mob(int32_t oid, int32_t mobid, int8_t mode, int8_t stance, uint16_t fhid, bool newspawn, int8_t team, Point<int16_t> position,
+			int8_t spawn_effect = 0, bool parent = false, int32_t parent_oid = 0);
 
 		// Draw the mob
 		void draw(double viewx, double viewy, float alpha) const override;
@@ -106,7 +112,8 @@ namespace ms
 		void set_control(int8_t mode);
 		// 同一个 oid 被重新下发（服务端换控制器发的是整包 spawn）时，把新包里的落位、
 		// 姿态、队伍和淡入状态套到已有对象上；只 makeactive() 会把新坐标整包丢掉。
-		void refresh(int8_t mode, int8_t stance, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position);
+		void refresh(int8_t mode, int8_t stance, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position,
+			int8_t spawn_effect = 0, bool parent = false, int32_t parent_oid = 0);
 		// Send movement to the mob
 		void send_movement(Point<int16_t> start, std::vector<Movement>&& movements);
 		// Kill the mob with the appropriate type:
@@ -167,6 +174,12 @@ namespace ms
 
 		std::map<Stance, Animation> animations;
 		std::string name;
+		// spawn 尾段存储（见 Spawn.h MobSpawn 注释）：
+		// effect：>0 出生特效 id（Mob/SpecialEff），-2 淡入 marker，-3 等父怪死，-1 无；
+		// has_parent/parentoid：父怪关系（扎昆之手、分裂怪）。
+		int8_t effect = 0;
+		bool has_parent = false;
+		int32_t parentoid = 0;
 		Sound hitsound;
 		Sound diesound;
 		uint16_t level;
@@ -198,7 +211,6 @@ namespace ms
 		uint16_t counter;
 
 		int32_t id;
-		int8_t effect;
 		int8_t team;
 		bool dying;
 		bool dead;

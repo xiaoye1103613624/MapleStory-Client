@@ -28,7 +28,8 @@
 
 namespace ms
 {
-	Mob::Mob(int32_t oi, int32_t mid, int8_t mode, int8_t st, uint16_t fh, bool newspawn, int8_t tm, Point<int16_t> position) : MapObject(oi)
+	Mob::Mob(int32_t oi, int32_t mid, int8_t mode, int8_t st, uint16_t fh, bool newspawn, int8_t tm, Point<int16_t> position,
+		int8_t spawn_effect, bool parent, int32_t parent_oid) : MapObject(oi)
 	{
 		std::string strid = string_format::extend_id(mid, 7);
 		nl::node src = nl::nx::Mob[strid + ".img"];
@@ -134,6 +135,12 @@ namespace ms
 
 		id = mid;
 		team = tm;
+		// spawn 尾段（此前这些字节被错位读掉/从没传进来）：
+		// effect>0 出生特效、-3 父怪死后才出、parent 关系。波 2 播特效、
+		// 波 2 接 delayed 雪藏逻辑；此处先正确存储，杜绝未初始化读。
+		effect = spawn_effect;
+		has_parent = parent;
+		parentoid = parent_oid;
 		set_position(position);
 		set_control(mode);
 		phobj.fhid = fh;
@@ -458,12 +465,16 @@ namespace ms
 		aggro = mode == 2;
 	}
 
-	void Mob::refresh(int8_t mode, int8_t stancebyte, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position)
+	void Mob::refresh(int8_t mode, int8_t stancebyte, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position,
+		int8_t spawn_effect, bool parent, int32_t parent_oid)
 	{
 		if (mode > 0)
 			set_control(mode);
 
 		team = tm;
+		effect = spawn_effect;
+		has_parent = parent;
+		parentoid = parent_oid;
 		set_position(position);
 		phobj.fhid = fh;
 
