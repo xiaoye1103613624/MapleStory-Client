@@ -1,380 +1,881 @@
 R27-B1c 展示文案硬编码站点清点
-模式：change_text("..") / Text(Text::Font::.. , "..") / show_text(Tooltip::Parent::.., "..")
+模式：change_text("..") / Text(Text::Font::.. , "..") / show_text(Tooltip::Parent::.., "..") / 软键盘提示位（`}, ".."` 第三实参）
 已 i18n 的行（引号在 Locale::* 之后，或字面量本身是 ini 键名）不计入。
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 304 处 | 英文 304（壳窗 289 / 在用窗 15）| 中文 0
+总计 730 处 | 英文 730（壳窗 654 / 在用窗 76）| 中文 0
+按形状分档（全站，中英合并）：change_text=283 / Text ctor=21 / SoftKey hint=426
 
 
 == 英文原文 · 在用窗 ==
 
-[IO/UITypes/UICharSelect.cpp] 1 处
-  L235   1
+[IO/UITypes/UIBossHP.cpp] 1 处
+  L132   [SoftKey hint] cur,max|pct|tip
 
-[IO/UITypes/UIDailyGift.cpp] 4 处
-  L123   DAILY GIFT
-  L139   V
-  L162    ~ 
-  L163   !
+[IO/UITypes/UIBuffList.cpp] 2 处
+  L221   [SoftKey hint] Buff id
+  L234   [SoftKey hint] Clear buff id
+
+[IO/UITypes/UICharSelect.cpp] 4 处
+  L235   [Text ctor   ] 1
+  L905   [SoftKey hint] Char slot #
+  L1452  [SoftKey hint] Please re-enter your new PIC.
+  L1455  [SoftKey hint] Your new PIC must at least be 6 characters long.
+
+[IO/UITypes/UIChat.cpp] 10 处
+  L122   [SoftKey hint] Buddy msg
+  L131   [SoftKey hint] Buddy cid
+  L144   [SoftKey hint] Find player
+  L159   [SoftKey hint] Party msg
+  L167   [SoftKey hint] Guild msg
+  L175   [SoftKey hint] Alliance msg
+  L215   [SoftKey hint] Buddy msg
+  L224   [SoftKey hint] Buddy cid
+  L240   [SoftKey hint] Find player
+  L327   [SoftKey hint] Rank find
+
+[IO/UITypes/UICommonCreation.cpp] 1 处
+  L793   [SoftKey hint] Char name
+
+[IO/UITypes/UIDailyGift.cpp] 5 处
+  L123   [Text ctor   ] DAILY GIFT
+  L139   [Text ctor   ] V
+  L162   [Text ctor   ]  ~ 
+  L163   [Text ctor   ] !
+  L508   [SoftKey hint] Gift day
+
+[IO/UITypes/UIGender.cpp] 1 处
+  L135   [SoftKey hint] m|f
+
+[IO/UITypes/UIJoypad.cpp] 1 处
+  L112   [SoftKey hint] save|cancel|alt|classic
+
+[IO/UITypes/UILogin.cpp] 2 处
+  L586   [SoftKey hint] Account
+  L592   [SoftKey hint] Password
+
+[IO/UITypes/UILoginNotice.cpp] 5 处
+  L126   [SoftKey hint] y|n
+  L229   [SoftKey hint] quit|cancel
+  L352   [SoftKey hint] y|n
+  L425   [SoftKey hint] a|b
+  L521   [SoftKey hint] y|ok
+
+[IO/UITypes/UILoginWait.cpp] 1 处
+  L239   [SoftKey hint] cancel
 
 [IO/UITypes/UIMapInfoPanel.cpp] 1 处
-  L191   0
+  L191   [Text ctor   ] 0
 
-[IO/UITypes/UIMegaphone.cpp] 3 处
-  L122   Empty
-  L125   No 539*
-  L129   Sent…
+[IO/UITypes/UIMegaphone.cpp] 5 处
+  L79    [SoftKey hint] Art Megaphone
+  L122   [change_text ] Empty
+  L125   [change_text ] No 539*
+  L129   [change_text ] Sent…
+  L131   [SoftKey hint] Avatar Mega
 
-[IO/UITypes/UIMinigame.cpp] 6 处
-  L82    Ready
-  L85    Start
-  L114   Omok 
-  L126   Card 
-  L148   Ready
-  L152   Start
+[IO/UITypes/UIMinigame.cpp] 9 处
+  L82    [change_text ] Ready
+  L85    [change_text ] Start
+  L95    [SoftKey hint] Minigame chat
+  L114   [change_text ] Omok 
+  L116   [SoftKey hint] x,y[,piece]
+  L126   [change_text ] Card 
+  L129   [SoftKey hint] turn,slot
+  L148   [change_text ] Ready
+  L152   [change_text ] Start
+
+[IO/UITypes/UINotice.cpp] 3 处
+  L171   [SoftKey hint] y|n
+  L284   [SoftKey hint] Enter number
+  L393   [SoftKey hint] ok|cancel
+
+[IO/UITypes/UIOptionMenu.cpp] 1 处
+  L342   [SoftKey hint] ok|WxH|buff on|equip on|mp N
+
+[IO/UITypes/UIQuit.cpp] 1 处
+  L182   [SoftKey hint] y|n
+
+[IO/UITypes/UIRaceSelect.cpp] 1 处
+  L535   [SoftKey hint] idx|make
+
+[IO/UITypes/UIRegion.cpp] 1 处
+  L86    [SoftKey hint] na|eu
+
+[IO/UITypes/UIStatusMessenger.cpp] 3 处
+  L96    [SoftKey hint] Status tip
+  L108   [SoftKey hint] Red tip
+  L115   [SoftKey hint] White tip
+
+[IO/UITypes/UITreasureBox.cpp] 2 处
+  L67    [SoftKey hint] Treasure itemid
+  L110   [SoftKey hint] Treasure itemid
+
+[IO/UITypes/UIUserList.cpp] 11 处
+  L380   [SoftKey hint] Whisper msg
+  L388   [SoftKey hint] Whisper msg
+  L389   [SoftKey hint] Whisper to
+  L459   [SoftKey hint] Add friend
+  L474   [SoftKey hint] Friend group
+  L483   [SoftKey hint] Friend group
+  L484   [SoftKey hint] Friend name
+  L518   [SoftKey hint] Invite name|Join id
+  L557   [SoftKey hint] Expel cid|Deny name
+  L575   [SoftKey hint] Find name
+  L592   [SoftKey hint] Find name
+
+[IO/UITypes/UIViewAllChar.cpp] 3 处
+  L165   [SoftKey hint] Char cid
+  L197   [SoftKey hint] PIC
+  L215   [SoftKey hint] Char cid
+
+[IO/UITypes/UIWorldMap.cpp] 2 处
+  L351   [SoftKey hint] mapid|search
+  L391   [SoftKey hint] Players mapid
 
 
 == 英文原文 · 壳窗 ==
 
-[IO/UITypes/UIAdmin.cpp] 6 处
-  L49    ShowUsers
-  L55    AlertAdmins
-  L92    ShowUsers
-  L97    AlertAdmins
-  L107   ShowUsers
-  L112   AlertAdmins
+[IO/UITypes/UIAdmin.cpp] 8 处
+  L49    [change_text ] ShowUsers
+  L55    [change_text ] AlertAdmins
+  L62    [SoftKey hint] users|alert|msg
+  L92    [change_text ] ShowUsers
+  L97    [change_text ] AlertAdmins
+  L102   [SoftKey hint] users|alert|msg
+  L107   [change_text ] ShowUsers
+  L112   [change_text ] AlertAdmins
 
-[IO/UITypes/UIAlliance.cpp] 3 处
-  L92    Alliance: 
-  L93    Notice: 
-  L100   Notice: 
+[IO/UITypes/UIAlliance.cpp] 8 处
+  L92    [change_text ] Alliance: 
+  L93    [change_text ] Notice: 
+  L100   [change_text ] Notice: 
+  L151   [SoftKey hint] Invite guild
+  L159   [SoftKey hint] Alliance notice
+  L183   [SoftKey hint] Invite guild
+  L195   [SoftKey hint] Alliance deny guild
+  L206   [SoftKey hint] inviter,guild
 
-[IO/UITypes/UIAriantMatch.cpp] 5 处
-  L33    Ariant
-  L40    Result 
-  L95    Result 
-  L105   Result 0
-  L110   Result 1
+[IO/UITypes/UIAriantMatch.cpp] 7 处
+  L33    [change_text ] Ariant
+  L40    [change_text ] Result 
+  L47    [SoftKey hint] result idx|tip
+  L95    [change_text ] Result 
+  L100   [SoftKey hint] result idx|tip
+  L105   [change_text ] Result 0
+  L110   [change_text ] Result 1
 
-[IO/UITypes/UICashGachapon.cpp] 1 处
-  L52    Gacha failed
+[IO/UITypes/UIBuddyList.cpp] 12 处
+  L190   [SoftKey hint] Group (All)
+  L199   [SoftKey hint] Group (All)
+  L200   [SoftKey hint] Buddy name
+  L221   [SoftKey hint] Group
+  L229   [SoftKey hint] Group
+  L230   [SoftKey hint] Buddy name
+  L249   [SoftKey hint] Accept cid
+  L268   [SoftKey hint] Delete cid
+  L287   [SoftKey hint] Reject cid
+  L301   [SoftKey hint] Whisper msg
+  L309   [SoftKey hint] Whisper msg
+  L310   [SoftKey hint] Whisper to
 
-[IO/UITypes/UICashShop.cpp] 2 处
-  L98    Illium
-  L99    ShomeiZekkou
+[IO/UITypes/UICashGachapon.cpp] 2 处
+  L52    [change_text ] Gacha failed
+  L85    [SoftKey hint] Gacha OK
 
-[IO/UITypes/UICharInfo.cpp] 4 处
-  L169   Junior Adventurer
-  L170   2
-  L677   -
-  L699   Book 
+[IO/UITypes/UICashShop.cpp] 20 处
+  L98    [Text ctor   ] Illium
+  L99    [Text ctor   ] ShomeiZekkou
+  L390   [SoftKey hint] bday,sn[,msg]|empty=Coupon
+  L413   [SoftKey hint] Gift bday,sn,name,msg|empty=Coupon
+  L465   [SoftKey hint] t,cash|p,cash[,inv]|empty=Inv
+  L499   [SoftKey hint] Wish SN[,SN…]
+  L513   [SoftKey hint] Mileage SN
+  L534   [SoftKey hint] Pkg useNX,sn
+  L565   [SoftKey hint] Buy useNX,sn
+  L593   [SoftKey hint] Preview 0-2
+  L629   [SoftKey hint] Buy useNX[,sn]
+  L674   [SoftKey hint] Buy useNX,sn
+  L703   [SoftKey hint] bday,sn[,msg]
+  L721   [SoftKey hint] bday,sn,name,msg
+  L734   [SoftKey hint] Take cashId
+  L754   [SoftKey hint] Put cashId[,inv]
+  L783   [SoftKey hint] Pkg useNX,sn
+  L807   [SoftKey hint] cash,type|cash,sSN
+  L824   [SoftKey hint] cash[,sn]
+  L840   [SoftKey hint] cash,sn
 
-[IO/UITypes/UIChatBar.cpp] 1 处
-  L1781  /w 
+[IO/UITypes/UIChannel.cpp] 1 处
+  L232   [SoftKey hint] Channel 1-N
 
-[IO/UITypes/UIClock.cpp] 1 处
-  L74    0s
+[IO/UITypes/UICharInfo.cpp] 12 处
+  L169   [Text ctor   ] Junior Adventurer
+  L170   [Text ctor   ] 2
+  L400   [SoftKey hint] Whisper
+  L454   [SoftKey hint] Damage skin id
+  L471   [SoftKey hint] Find name
+  L549   [SoftKey hint] Fame up|d (target)
+  L566   [SoftKey hint] Fame cid[,d]
+  L577   [SoftKey hint] Whisper msg
+  L584   [SoftKey hint] Whisper msg
+  L585   [SoftKey hint] Whisper to
+  L677   [change_text ] -
+  L699   [change_text ] Book 
 
-[IO/UITypes/UIDelivery.cpp] 1 处
-  L93    Package updated.
+[IO/UITypes/UIChatBar.cpp] 12 处
+  L628   [SoftKey hint] Emote id
+  L637   [SoftKey hint] Spouse chat
+  L693   [SoftKey hint] itemid|link
+  L1398  [SoftKey hint] Chat
+  L1406  [SoftKey hint] Spouse chat
+  L1415  [SoftKey hint] Party chat
+  L1424  [SoftKey hint] Guild chat
+  L1433  [SoftKey hint] Alliance chat
+  L1449  [SoftKey hint] Buddy chat
+  L1465  [SoftKey hint] Find name
+  L1750  [SoftKey hint] Whisper msg
+  L1781  [change_text ] /w 
 
-[IO/UITypes/UIFamily.cpp] 2 处
-  L53    (no family)
-  L54    Rep: 0 / 0
+[IO/UITypes/UIClock.cpp] 3 处
+  L74    [change_text ] 0s
+  L104   [SoftKey hint] Clock|sec|tip
+  L115   [SoftKey hint] Clock text
 
-[IO/UITypes/UIFamilyTree.cpp] 1 处
-  L53    Family Tree
+[IO/UITypes/UIDelivery.cpp] 10 处
+  L93    [change_text ] Package updated.
+  L151   [SoftKey hint] Mesos
+  L156   [SoftKey hint] Recipient
+  L248   [SoftKey hint] meso[,qty]
+  L257   [SoftKey hint] name,meso[,qty]
+  L298   [SoftKey hint] meso[,iv,slot,qty]
+  L307   [SoftKey hint] name,meso[,iv,slot,qty]
+  L324   [SoftKey hint] Package id
+  L339   [SoftKey hint] Claim pkg id
+  L381   [SoftKey hint] mesos|empty=help
 
-[IO/UITypes/UIMTS.cpp] 2 处
-  L28    MTS / ITC
-  L57    NX=
+[IO/UITypes/UIEnergyBar.cpp] 1 处
+  L108   [SoftKey hint] Energy skillid
 
-[IO/UITypes/UIMaker.cpp] 3 处
-  L65    Bad item id
-  L70    Craft 
-  L75    No recipe 
+[IO/UITypes/UIEquipInventory.cpp] 2 处
+  L298   [SoftKey hint] cashSlot,itemId
+  L420   [SoftKey hint] Unequip slot
 
-[IO/UITypes/UIMapleTV.cpp] 1 处
-  L75    No 512* map effect
+[IO/UITypes/UIEvent.cpp] 1 处
+  L229   [SoftKey hint] Event reply
 
-[IO/UITypes/UIMemo.cpp] 7 处
-  L98    Sel 
-  L123   Sent→
-  L131   Sent→
-  L139   Discard id=
-  L148   Discard id=
-  L155   Notes: 
-  L176   No note selected
+[IO/UITypes/UIFamily.cpp] 13 处
+  L53    [change_text ] (no family)
+  L54    [change_text ] Rep: 0 / 0
+  L111   [SoftKey hint] y/n
+  L119   [SoftKey hint] Inviter name
+  L131   [SoftKey hint] Inviter name
+  L133   [SoftKey hint] Inviter cid
+  L148   [SoftKey hint] Junior name
+  L156   [SoftKey hint] Precept
+  L187   [SoftKey hint] type[,name] 0=reunite 1=summon
+  L230   [SoftKey hint] junior cid (empty=leave)
+  L254   [SoftKey hint] Junior name
+  L260   [SoftKey hint] Precept
+  L283   [SoftKey hint] type[,name] 0=reunite 1=summon
 
-[IO/UITypes/UIMiscShells.cpp] 216 处
-  L200   Open store…
-  L206   No 514/503 permit
-  L213   Create: 
-  L237   Reported 
-  L242   Empty name
-  L244   Reported 
-  L254   Target: 
-  L267   Reported 
-  L278   Reported 
-  L282   Empty name
-  L284   Reported 
-  L302   Empty code
-  L306   Sent…
-  L324   Sent…
-  L341   Need name
-  L344   Note → 
-  L374   Note → 
-  L381   Note → 
-  L408   Egg #
-  L417   Egg #
-  L445   Egg #
-  L469   Egg #
-  L477   Egg #
-  L490   Drop an egg first
-  L495   No Incubator
-  L499   Sent…
-  L609   Equip #
-  L616   Equip #
-  L628   Need equip
-  L632   Equip #
-  L653   Equip #
-  L660   Equip #
-  L674   Drop an equip first
-  L685   No Karma Scissors
-  L689   Sent…
-  L714   Need equip
-  L718   Enchant slot #
-  L733   Scroll 
-  L736   Need scroll+equip
-  L748   Equip #
-  L755   Equip #
-  L768   Scroll #
-  L775   Scroll #
-  L783   Scroll 
-  L795   Scroll 
-  L823   Equip #
-  L830   Equip #
-  L842   Need equip
-  L846   Equip #
-  L867   Equip #
-  L874   Equip #
-  L888   Drop an equip first
-  L899   No Item Protector
-  L903   Sent…
-  L923   No Teleport Rock
-  L927   Need map/name
-  L936   Warp map…
-  L939   Warp to 
-  L941   Need VIP rock for name
-  L999   No Teleport Rock
-  L1007  Warp map…
-  L1011  Need map/name
-  L1020  Warp map…
-  L1023  Warp to 
-  L1025  Need VIP rock for name
-  L1042  No Teleport Rock
-  L1047  Saved map…
-  L1054  Warp map…
-  L1064  Warp to 
-  L1072  No saved map — SoftKey
-  L1076  Warp #
-  L1089  Empty answer
-  L1090  Ans: 
-  L1108  Ans: 
-  L1165  Find: 
-  L1169  Empty name
-  L1171  Find: 
-  L1192  Find: 
-  L1197  Find: 
-  L1221  Item tab=
-  L1254  Empty msg
-  L1257  No Item Megaphone
-  L1261  Sent…
-  L1298  Whisper → 
-  L1329  Whisper → 
-  L1348  Note → 
-  L1376  Empty
-  L1377  Note: 
-  L1394  Note: 
-  L1413  Empty name
-  L1414  Name: 
-  L1435  Name: 
-  L1484  Empty msg
-  L1489  No Megaphone
-  L1493  Sent…
-  L1543  Exit…
-  L1556  Open store…
-  L1573  Buy 
-  L1614  Exit…
-  L1626  Open store…
-  L1642  Buy 
-  L1659  Empty
-  L1667  Meso 
-  L1674  Chat sent…
-  L1693  Confirm…
-  L1697  Transaction…
-  L1701  Visit…
-  L1727  AddItem #
-  L1746  AddItem 
-  L1752  Empty
-  L1760  Meso 
-  L1766  Chat sent…
-  L1770  Exit…
-  L1810  Exit…
-  L1817  Open store…
-  L1833  Buy 
-  L1854  Empty
-  L1862  Meso 
-  L1869  Chat sent…
-  L1888  Confirm…
-  L1892  Transaction…
-  L1896  Visit…
-  L1922  AddItem #
-  L1940  AddItem 
-  L1946  Empty
-  L1954  Meso 
-  L1960  Chat sent…
-  L1964  Exit…
-  L1988  Q: 
-  L1993  Empty query
-  L1994  Q: 
-  L2015  Q: 
-  L2020  Q: 
-  L2051  Skill 
-  L2055  Empty
-  L2090  Skill 
-  L2103  Skill 
-  L2181  Empty
-  L2252  Bad id
-  L2259  Use 
-  L2287  Use 
-  L2299  Use 
-  L2332  Cover: 
-  L2336  Empty
-  L2341  Cover: 
-  L2346  Page: 
-  L2375  Cover: 
-  L2382  Cover: 
-  L2418  Start 
-  L2427  Start 
-  L2519  ShowUsers
-  L2524  AlertAdmins
-  L2548  ShowUsers
-  L2553  AlertAdmins
-  L3747  Cancelled…
-  L3757  Cancelled…
-  L3867  Marked tab=
-  L3873  Moved #
-  L3895  Src #
-  L3904  Moved →
-  L3929  Move 
-  L4113  Info
-  L4114  Whisper
-  L4115  Party
-  L4116  Report
-  L4117  Trade
-  L4118  Buddy
-  L4119  Messenger
-  L4120  Guild
-  L4121  Family
-  L4122  Fame
-  L4190  Empty
-  L4388  Empty
-  L4411  No chalk/kite
-  L4448  No chalk/kite
-  L5401  Saved: 
-  L5410  Assigned 
-  L5413  Macro full
-  L5422  Assigned 
-  L5424  Macro full
-  L5453  Empty
-  L5458  Emote 
-  L5484  Emote 
-  L5561  Empty
-  L5569  No 517* tag
-  L5573  Rename: 
-  L5595  No 517* tag
-  L5597  Rename: 
-  L5619  Q: 
-  L5624  Empty query
-  L5625  Q: 
-  L5646  Q: 
-  L5651  Q: 
-  L5725  SP 
-  L5733  SP 
-  L5756  SP 
-  L5763  SP 
-  L5785  Empty
-  L5791  Saved: 
-  L5812  Saved: 
-  L5821  Assigned 
-  L5823  Macro full
-  L5832  Assigned 
-  L5834  Macro full
-  L5859  Q
-  L5868  Q
-  L5895  Q
-  L5903  Q
-  L5917  Done 
-  L5928  Done 
-  L5939  Forfeit 
-  L5946  Forfeit 
-  L5996  Place (
-  L6047  Card #
-  L6061  Omok 
-  L6084  Card #
+[IO/UITypes/UIFamilyTree.cpp] 5 处
+  L53    [change_text ] Family Tree
+  L139   [SoftKey hint] Junior name
+  L177   [SoftKey hint] junior cid (empty=leave)
+  L196   [SoftKey hint] Summon name
+  L226   [SoftKey hint] Junior name
 
-[IO/UITypes/UIMonsterBook.cpp] 4 处
-  L137   Cover: 
-  L152   Cover: 
-  L161   Cover id=
-  L190   Not found
+[IO/UITypes/UIGuild.cpp] 6 处
+  L236   [SoftKey hint] cid,name|name (self)
+  L261   [SoftKey hint] Char id
+  L263   [SoftKey hint] Guild id
+  L289   [SoftKey hint] cid,name|name
+  L357   [SoftKey hint] BBS page|o,id|d,id|r,id,text|p,title|text
+  L411   [SoftKey hint] Deny guild from
 
-[IO/UITypes/UIMonsterCarnival.cpp] 3 处
-  L41    CP 0/0
-  L42    EN 0/0
-  L43    Carnival
+[IO/UITypes/UIItemInventory.cpp] 19 处
+  L551   [SoftKey hint] Drop meso
+  L576   [SoftKey hint] Maker itemId
+  L600   [SoftKey hint] MaplePoints|empty=CS
+  L625   [SoftKey hint] Equip slot
+  L639   [SoftKey hint] Scroll slot
+  L764   [SoftKey hint] Cash coupon
+  L806   [SoftKey hint] Avatar Mega
+  L813   [SoftKey hint] Chalkboard
+  L820   [SoftKey hint] Kite
+  L827   [SoftKey hint] Map effect
+  L835   [SoftKey hint] Cash use
+  L1032  [SoftKey hint] Use slot
+  L1052  [SoftKey hint] Drop qty (selected)
+  L1066  [SoftKey hint] Drop slot,qty
+  L1080  [SoftKey hint] Move dst
+  L1092  [SoftKey hint] Move src,dst
+  L1105  [SoftKey hint] Meso amt
+  L1137  [SoftKey hint] Equip slot
+  L1168  [SoftKey hint] chalk|k,|m, slot,id,text
 
-[IO/UITypes/UINewYearsCard.cpp] 4 处
-  L73    Need receiver
-  L75    To 
-  L79    No New Year card
-  L83    Sent to 
+[IO/UITypes/UIKeyConfig.cpp] 2 处
+  L916   [SoftKey hint] save|close
+  L968   [SoftKey hint] MapleLife name
 
-[IO/UITypes/UIPartyRace.cpp] 4 处
-  L48    Stage 0
-  L49    R 0 : 0 B
-  L79    Stage 
-  L86    R 
+[IO/UITypes/UIMTS.cpp] 5 处
+  L28    [change_text ] MTS / ITC
+  L57    [change_text ] NX=
+  L121   [SoftKey hint] MTS|tip
+  L145   [SoftKey hint] itemid[,price]
+  L172   [SoftKey hint] ownerid,mapid
 
-[IO/UITypes/UIPartySearch.cpp] 3 处
-  L114   Range 
-  L204   Range 
-  L216   Jobs mask=
+[IO/UITypes/UIMaker.cpp] 6 处
+  L65    [change_text ] Bad item id
+  L70    [change_text ] Craft 
+  L75    [change_text ] No recipe 
+  L76    [SoftKey hint] Maker itemId
+  L234   [SoftKey hint] Maker itemId
+  L248   [SoftKey hint] Maker status
 
-[IO/UITypes/UIRemoteGachapon.cpp] 1 处
-  L52    Gacha box mode=
+[IO/UITypes/UIMapleTV.cpp] 6 处
+  L75    [change_text ] No 512* map effect
+  L77    [SoftKey hint] MapleTV msg
+  L128   [SoftKey hint] Claim desc
+  L136   [SoftKey hint] Claim victim
+  L164   [SoftKey hint] ClassMatch
+  L180   [SoftKey hint] ClassMatch
 
-[IO/UITypes/UIStatsInfo.cpp] 10 处
-  L539   -
-  L549    ~ 
-  L563    ~ 
-  L564   0%
-  L566   0.00%
-  L567   0%
-  L569   0%
-  L571   0%
-  L572   0.00%
-  L574   0%
+[IO/UITypes/UIMemo.cpp] 14 处
+  L98    [change_text ] Sel 
+  L123   [change_text ] Sent→
+  L124   [SoftKey hint] Memo message
+  L131   [change_text ] Sent→
+  L132   [SoftKey hint] Memo message
+  L133   [SoftKey hint] Memo to
+  L139   [change_text ] Discard id=
+  L148   [change_text ] Discard id=
+  L152   [SoftKey hint] Note id
+  L155   [change_text ] Notes: 
+  L176   [change_text ] No note selected
+  L196   [SoftKey hint] Memo message
+  L204   [SoftKey hint] Memo message
+  L205   [SoftKey hint] Memo to
 
-[IO/UITypes/UIStoreBank.cpp] 3 处
-  L58    Mesos: 0
-  L85    Mesos: 
-  L99    Mesos: 0
+[IO/UITypes/UIMerchant.cpp] 5 处
+  L145   [SoftKey hint] Buy qty (selected)
+  L162   [SoftKey hint] slot[,qty]
+  L191   [SoftKey hint] qty[,merchSlot]
+  L209   [SoftKey hint] iv,pos,qty,slot
+  L223   [SoftKey hint] Owner name
 
-[IO/UITypes/UIWorldSelect.cpp] 1 处
-  L216   Ver. 
+[IO/UITypes/UIMiniMap.cpp] 1 处
+  L399   [SoftKey hint] Map id|empty=WMap sel
+
+[IO/UITypes/UIMiscShells.cpp] 388 处
+  L149   [SoftKey hint] iv,pos,qty,slot
+  L200   [change_text ] Open store…
+  L206   [change_text ] No 514/503 permit
+  L213   [change_text ] Create: 
+  L237   [change_text ] Reported 
+  L242   [change_text ] Empty name
+  L244   [change_text ] Reported 
+  L246   [SoftKey hint] Report target
+  L254   [change_text ] Target: 
+  L267   [change_text ] Reported 
+  L278   [change_text ] Reported 
+  L282   [change_text ] Empty name
+  L284   [change_text ] Reported 
+  L285   [SoftKey hint] Report target
+  L302   [change_text ] Empty code
+  L306   [change_text ] Sent…
+  L308   [SoftKey hint] Coupon code
+  L324   [change_text ] Sent…
+  L325   [SoftKey hint] Coupon code
+  L341   [change_text ] Need name
+  L344   [change_text ] Note → 
+  L345   [SoftKey hint] Claim msg
+  L353   [SoftKey hint] Claim to
+  L374   [change_text ] Note → 
+  L375   [SoftKey hint] Claim msg
+  L381   [change_text ] Note → 
+  L382   [SoftKey hint] Claim msg
+  L383   [SoftKey hint] Claim to
+  L408   [change_text ] Egg #
+  L417   [change_text ] Egg #
+  L421   [SoftKey hint] Egg USE slot
+  L445   [change_text ] Egg #
+  L469   [change_text ] Egg #
+  L477   [change_text ] Egg #
+  L480   [SoftKey hint] Egg USE slot
+  L490   [change_text ] Drop an egg first
+  L495   [change_text ] No Incubator
+  L499   [change_text ] Sent…
+  L544   [SoftKey hint] Channel 1-N
+  L571   [SoftKey hint] Channel 1-N
+  L586   [SoftKey hint] Channel 1-N
+  L609   [change_text ] Equip #
+  L616   [change_text ] Equip #
+  L619   [SoftKey hint] Equip slot
+  L628   [change_text ] Need equip
+  L632   [change_text ] Equip #
+  L653   [change_text ] Equip #
+  L660   [change_text ] Equip #
+  L663   [SoftKey hint] Equip slot
+  L674   [change_text ] Drop an equip first
+  L685   [change_text ] No Karma Scissors
+  L689   [change_text ] Sent…
+  L714   [change_text ] Need equip
+  L718   [change_text ] Enchant slot #
+  L733   [change_text ] Scroll 
+  L736   [change_text ] Need scroll+equip
+  L748   [change_text ] Equip #
+  L755   [change_text ] Equip #
+  L758   [SoftKey hint] Equip slot id
+  L768   [change_text ] Scroll #
+  L775   [change_text ] Scroll #
+  L778   [SoftKey hint] Scroll USE slot
+  L783   [change_text ] Scroll 
+  L795   [change_text ] Scroll 
+  L798   [SoftKey hint] scroll,equip
+  L823   [change_text ] Equip #
+  L830   [change_text ] Equip #
+  L833   [SoftKey hint] Equip slot
+  L842   [change_text ] Need equip
+  L846   [change_text ] Equip #
+  L867   [change_text ] Equip #
+  L874   [change_text ] Equip #
+  L877   [SoftKey hint] Equip slot
+  L888   [change_text ] Drop an equip first
+  L899   [change_text ] No Item Protector
+  L903   [change_text ] Sent…
+  L923   [change_text ] No Teleport Rock
+  L927   [change_text ] Need map/name
+  L936   [change_text ] Warp map…
+  L939   [change_text ] Warp to 
+  L941   [change_text ] Need VIP rock for name
+  L947   [SoftKey hint] Map ID / player
+  L999   [change_text ] No Teleport Rock
+  L1007  [change_text ] Warp map…
+  L1011  [change_text ] Need map/name
+  L1020  [change_text ] Warp map…
+  L1023  [change_text ] Warp to 
+  L1025  [change_text ] Need VIP rock for name
+  L1031  [SoftKey hint] Map ID / player|empty=WMap
+  L1042  [change_text ] No Teleport Rock
+  L1047  [change_text ] Saved map…
+  L1054  [change_text ] Warp map…
+  L1064  [change_text ] Warp to 
+  L1072  [change_text ] No saved map — SoftKey
+  L1076  [change_text ] Warp #
+  L1089  [change_text ] Empty answer
+  L1090  [change_text ] Ans: 
+  L1093  [SoftKey hint] Quiz answer
+  L1108  [change_text ] Ans: 
+  L1110  [SoftKey hint] Quiz answer
+  L1132  [SoftKey hint] Initial quiz
+  L1143  [SoftKey hint] Quiz answer
+  L1165  [change_text ] Find: 
+  L1169  [change_text ] Empty name
+  L1171  [change_text ] Find: 
+  L1173  [SoftKey hint] Rank name
+  L1192  [change_text ] Find: 
+  L1197  [change_text ] Find: 
+  L1198  [SoftKey hint] Rank name
+  L1221  [change_text ] Item tab=
+  L1254  [change_text ] Empty msg
+  L1257  [change_text ] No Item Megaphone
+  L1261  [change_text ] Sent…
+  L1262  [SoftKey hint] Item Megaphone
+  L1298  [change_text ] Whisper → 
+  L1300  [SoftKey hint] Counsel msg
+  L1308  [SoftKey hint] Counsel to
+  L1329  [change_text ] Whisper → 
+  L1330  [SoftKey hint] Counsel msg
+  L1338  [SoftKey hint] Counsel to
+  L1348  [change_text ] Note → 
+  L1350  [SoftKey hint] Note msg
+  L1358  [SoftKey hint] Note to
+  L1376  [change_text ] Empty
+  L1377  [change_text ] Note: 
+  L1380  [SoftKey hint] Raid note
+  L1394  [change_text ] Note: 
+  L1396  [SoftKey hint] Raid note
+  L1413  [change_text ] Empty name
+  L1414  [change_text ] Name: 
+  L1421  [SoftKey hint] Cygnus name
+  L1435  [change_text ] Name: 
+  L1441  [SoftKey hint] Cygnus name
+  L1484  [change_text ] Empty msg
+  L1489  [change_text ] No Megaphone
+  L1493  [change_text ] Sent…
+  L1495  [SoftKey hint] Megaphone
+  L1526  [SoftKey hint] Shop title
+  L1543  [change_text ] Exit…
+  L1553  [SoftKey hint] Shop title
+  L1556  [change_text ] Open store…
+  L1573  [change_text ] Buy 
+  L1576  [SoftKey hint] slot,qty
+  L1597  [SoftKey hint] Member title
+  L1614  [change_text ] Exit…
+  L1623  [SoftKey hint] Member title
+  L1626  [change_text ] Open store…
+  L1642  [change_text ] Buy 
+  L1644  [SoftKey hint] slot,qty
+  L1659  [change_text ] Empty
+  L1667  [change_text ] Meso 
+  L1674  [change_text ] Chat sent…
+  L1676  [SoftKey hint] Trade meso/chat
+  L1693  [change_text ] Confirm…
+  L1697  [change_text ] Transaction…
+  L1701  [change_text ] Visit…
+  L1727  [change_text ] AddItem #
+  L1729  [SoftKey hint] qty[,tradeSlot]
+  L1746  [change_text ] AddItem 
+  L1748  [SoftKey hint] iv,pos,qty,slot
+  L1752  [change_text ] Empty
+  L1760  [change_text ] Meso 
+  L1766  [change_text ] Chat sent…
+  L1767  [SoftKey hint] Trade meso/chat
+  L1770  [change_text ] Exit…
+  L1793  [SoftKey hint] Entrusted
+  L1810  [change_text ] Exit…
+  L1817  [change_text ] Open store…
+  L1833  [change_text ] Buy 
+  L1836  [SoftKey hint] slot,qty
+  L1840  [SoftKey hint] Entrusted title
+  L1854  [change_text ] Empty
+  L1862  [change_text ] Meso 
+  L1869  [change_text ] Chat sent…
+  L1871  [SoftKey hint] CashTrade meso/chat
+  L1888  [change_text ] Confirm…
+  L1892  [change_text ] Transaction…
+  L1896  [change_text ] Visit…
+  L1922  [change_text ] AddItem #
+  L1923  [SoftKey hint] qty[,tradeSlot]
+  L1940  [change_text ] AddItem 
+  L1942  [SoftKey hint] iv,pos,qty,slot
+  L1946  [change_text ] Empty
+  L1954  [change_text ] Meso 
+  L1960  [change_text ] Chat sent…
+  L1961  [SoftKey hint] CashTrade meso/chat
+  L1964  [change_text ] Exit…
+  L1988  [change_text ] Q: 
+  L1993  [change_text ] Empty query
+  L1994  [change_text ] Q: 
+  L1997  [SoftKey hint] Find name
+  L2015  [change_text ] Q: 
+  L2020  [change_text ] Q: 
+  L2022  [SoftKey hint] Find name
+  L2051  [change_text ] Skill 
+  L2055  [change_text ] Empty
+  L2066  [SoftKey hint] Aran skillid
+  L2090  [change_text ] Skill 
+  L2103  [change_text ] Skill 
+  L2109  [SoftKey hint] Aran skillid|tip
+  L2141  [SoftKey hint] Transform skillid|tip
+  L2164  [SoftKey hint] Transform skillid|tip
+  L2181  [change_text ] Empty
+  L2185  [SoftKey hint] MobKill chat
+  L2201  [SoftKey hint] MobKill chat
+  L2219  [SoftKey hint] MapleEvent
+  L2230  [SoftKey hint] Event chat
+  L2252  [change_text ] Bad id
+  L2259  [change_text ] Use 
+  L2287  [change_text ] Use 
+  L2299  [change_text ] Use 
+  L2301  [SoftKey hint] SkillEx id
+  L2332  [change_text ] Cover: 
+  L2336  [change_text ] Empty
+  L2341  [change_text ] Cover: 
+  L2346  [change_text ] Page: 
+  L2349  [SoftKey hint] Book cover/page
+  L2375  [change_text ] Cover: 
+  L2382  [change_text ] Cover: 
+  L2386  [SoftKey hint] Book cover id
+  L2418  [change_text ] Start 
+  L2427  [change_text ] Start 
+  L2435  [SoftKey hint] Quest id|tip
+  L2457  [SoftKey hint] Mate message
+  L2468  [SoftKey hint] Mate message
+  L2486  [SoftKey hint] Beta code
+  L2497  [SoftKey hint] Beta code
+  L2519  [change_text ] ShowUsers
+  L2524  [change_text ] AlertAdmins
+  L2530  [SoftKey hint] users|alert|msg
+  L2548  [change_text ] ShowUsers
+  L2553  [change_text ] AlertAdmins
+  L2558  [SoftKey hint] users|alert|msg
+  L2717  [SoftKey hint] Skill id
+  L2739  [SoftKey hint] Map id
+  L2958  [SoftKey hint] Trade cid|v
+  L2977  [SoftKey hint] NPC oid
+  L3020  [SoftKey hint] Cash itemid
+  L3063  [SoftKey hint] slot,id,qty|s,…
+  L3076  [SoftKey hint] NPC reply|sel
+  L3091  [SoftKey hint] Char cid
+  L3110  [SoftKey hint] Recharge slot
+  L3131  [SoftKey hint] Skill id SP
+  L3148  [SoftKey hint] CharInfo cid
+  L3167  [SoftKey hint] Map id
+  L3187  [SoftKey hint] Pickup oid
+  L3206  [SoftKey hint] Reactor oid
+  L3223  [SoftKey hint] AP str|dex|int|luk
+  L3239  [SoftKey hint] Gather tab 1-5
+  L3257  [SoftKey hint] Sort tab 1-5
+  L3274  [SoftKey hint] Deny guild from
+  L3293  [SoftKey hint] Forfeit quest id
+  L3319  [SoftKey hint] Equip slot id
+  L3329  [SoftKey hint] Scroll slot
+  L3365  [SoftKey hint] Use itemid
+  L3664  [SoftKey hint] MacroEx
+  L3688  [SoftKey hint] Skill id
+  L3707  [SoftKey hint] Clone note
+  L3719  [SoftKey hint] Clone note
+  L3747  [change_text ] Cancelled…
+  L3757  [change_text ] Cancelled…
+  L3765  [SoftKey hint] y|n|tip
+  L3812  [SoftKey hint] AP str|SP id
+  L3843  [SoftKey hint] AP str|SP id
+  L3867  [change_text ] Marked tab=
+  L3873  [change_text ] Moved #
+  L3876  [SoftKey hint] Dest slot
+  L3895  [change_text ] Src #
+  L3904  [change_text ] Moved →
+  L3906  [SoftKey hint] Dest slot
+  L3929  [change_text ] Move 
+  L3931  [SoftKey hint] iv,src,dst[,qty]
+  L3982  [SoftKey hint] y|n|tip
+  L4026  [SoftKey hint] Whisper msg
+  L4113  [Text ctor   ] Info
+  L4114  [Text ctor   ] Whisper
+  L4115  [Text ctor   ] Party
+  L4116  [Text ctor   ] Report
+  L4117  [Text ctor   ] Trade
+  L4118  [Text ctor   ] Buddy
+  L4119  [Text ctor   ] Messenger
+  L4120  [Text ctor   ] Guild
+  L4121  [Text ctor   ] Family
+  L4122  [Text ctor   ] Fame
+  L4140  [SoftKey hint] Whisper msg
+  L4141  [SoftKey hint] Whisper name
+  L4147  [SoftKey hint] Whisper msg
+  L4163  [SoftKey hint] Char cid
+  L4190  [change_text ] Empty
+  L4194  [SoftKey hint] Event note
+  L4212  [SoftKey hint] Event note
+  L4291  [SoftKey hint] Find name
+  L4308  [SoftKey hint] Channel 1-N
+  L4360  [SoftKey hint] UtilDlg text
+  L4371  [SoftKey hint] UtilDlg text
+  L4388  [change_text ] Empty
+  L4411  [change_text ] No chalk/kite
+  L4413  [SoftKey hint] MultiLine
+  L4448  [change_text ] No chalk/kite
+  L4450  [SoftKey hint] MultiLine
+  L4648  [SoftKey hint] Drop meso
+  L4682  [SoftKey hint] Emote id
+  L4693  [SoftKey hint] Chair itemid
+  L4738  [SoftKey hint] ItemEffect id
+  L4771  [SoftKey hint] Skill id
+  L4785  [SoftKey hint] Book cover id
+  L4803  [SoftKey hint] AP str|dex|int|luk
+  L4821  [SoftKey hint] Gather tab 1-5
+  L4840  [SoftKey hint] Sort tab 1-5
+  L4861  [SoftKey hint] Deny guild from
+  L4880  [SoftKey hint] Forfeit quest id
+  L4906  [SoftKey hint] Equip slot id
+  L4916  [SoftKey hint] Scroll slot
+  L4950  [SoftKey hint] Use itemid
+  L4968  [SoftKey hint] Map id
+  L4987  [SoftKey hint] Pickup oid
+  L5006  [SoftKey hint] Reactor oid
+  L5027  [SoftKey hint] NPC oid
+  L5071  [SoftKey hint] slot,id,qty|s,slot,id,qty
+  L5088  [SoftKey hint] NPC reply|sel
+  L5106  [SoftKey hint] Char cid
+  L5127  [SoftKey hint] Recharge slot
+  L5160  [SoftKey hint] Cash itemid
+  L5178  [SoftKey hint] Skill id SP
+  L5206  [SoftKey hint] Trade cid|v
+  L5225  [SoftKey hint] CharInfo cid
+  L5401  [change_text ] Saved: 
+  L5402  [SoftKey hint] Macro
+  L5410  [change_text ] Assigned 
+  L5413  [change_text ] Macro full
+  L5422  [change_text ] Assigned 
+  L5424  [change_text ] Macro full
+  L5427  [SoftKey hint] Skill id
+  L5453  [change_text ] Empty
+  L5458  [change_text ] Emote 
+  L5466  [SoftKey hint] Emote id|tip
+  L5484  [change_text ] Emote 
+  L5490  [SoftKey hint] Emote id|tip
+  L5522  [SoftKey hint] Pet name
+  L5540  [SoftKey hint] Pet name
+  L5561  [change_text ] Empty
+  L5569  [change_text ] No 517* tag
+  L5573  [change_text ] Rename: 
+  L5575  [SoftKey hint] MultiPet name
+  L5595  [change_text ] No 517* tag
+  L5597  [change_text ] Rename: 
+  L5598  [SoftKey hint] MultiPet name
+  L5619  [change_text ] Q: 
+  L5624  [change_text ] Empty query
+  L5625  [change_text ] Q: 
+  L5628  [SoftKey hint] ExSearch name
+  L5646  [change_text ] Q: 
+  L5651  [change_text ] Q: 
+  L5653  [SoftKey hint] ExSearch name
+  L5705  [SoftKey hint] cur,max|pct|tip
+  L5725  [change_text ] SP 
+  L5733  [change_text ] SP 
+  L5737  [SoftKey hint] SkillUp id
+  L5756  [change_text ] SP 
+  L5763  [change_text ] SP 
+  L5766  [SoftKey hint] SkillUp id
+  L5785  [change_text ] Empty
+  L5791  [change_text ] Saved: 
+  L5793  [SoftKey hint] MacroSkill
+  L5812  [change_text ] Saved: 
+  L5813  [SoftKey hint] MacroSkill
+  L5821  [change_text ] Assigned 
+  L5823  [change_text ] Macro full
+  L5832  [change_text ] Assigned 
+  L5834  [change_text ] Macro full
+  L5837  [SoftKey hint] Skill id
+  L5859  [change_text ] Q
+  L5868  [change_text ] Q
+  L5876  [SoftKey hint] Quest id
+  L5895  [change_text ] Q
+  L5903  [change_text ] Q
+  L5909  [SoftKey hint] Quest id|tip
+  L5917  [change_text ] Done 
+  L5928  [change_text ] Done 
+  L5931  [SoftKey hint] qid or qid,npc
+  L5939  [change_text ] Forfeit 
+  L5946  [change_text ] Forfeit 
+  L5949  [SoftKey hint] Forfeit qid
+  L5996  [change_text ] Place (
+  L6047  [change_text ] Card #
+  L6061  [change_text ] Omok 
+  L6084  [change_text ] Card #
+  L6124  [SoftKey hint] FloatNotice tip
+
+[IO/UITypes/UIMonsterBook.cpp] 6 处
+  L137   [change_text ] Cover: 
+  L152   [change_text ] Cover: 
+  L161   [change_text ] Cover id=
+  L165   [SoftKey hint] Cover card id
+  L190   [change_text ] Not found
+  L191   [SoftKey hint] card id|name
+
+[IO/UITypes/UIMonsterCarnival.cpp] 7 处
+  L41    [change_text ] CP 0/0
+  L42    [change_text ] EN 0/0
+  L43    [change_text ] Carnival
+  L59    [SoftKey hint] avail/total|tip
+  L114   [SoftKey hint] avail/total|tip
+  L127   [SoftKey hint] enemy avail/total
+  L134   [SoftKey hint] CPQ msg
+
+[IO/UITypes/UINewYearsCard.cpp] 6 处
+  L73    [change_text ] Need receiver
+  L75    [change_text ] To 
+  L79    [change_text ] No New Year card
+  L83    [change_text ] Sent to 
+  L84    [SoftKey hint] NY message
+  L92    [SoftKey hint] NY receiver
+
+[IO/UITypes/UINpcTalk.cpp] 5 处
+  L304   [SoftKey hint] Npc text
+  L324   [SoftKey hint] Npc number
+  L420   [SoftKey hint] Npc text
+  L430   [SoftKey hint] Npc number
+  L440   [SoftKey hint] Npc select
+
+[IO/UITypes/UIParty.cpp] 3 处
+  L177   [SoftKey hint] Party id
+  L260   [SoftKey hint] Leader cid
+  L284   [SoftKey hint] Expel cid
+
+[IO/UITypes/UIPartyRace.cpp] 6 处
+  L48    [change_text ] Stage 0
+  L49    [change_text ] R 0 : 0 B
+  L71    [SoftKey hint] r:b|win|stage|tip
+  L79    [change_text ] Stage 
+  L86    [change_text ] R 
+  L137   [SoftKey hint] r:b|win|stage|tip
+
+[IO/UITypes/UIPartySearch.cpp] 6 处
+  L114   [change_text ] Range 
+  L116   [SoftKey hint] Lv min-max
+  L204   [change_text ] Range 
+  L206   [SoftKey hint] Lv min-max
+  L216   [change_text ] Jobs mask=
+  L218   [SoftKey hint] Jobs mask
+
+[IO/UITypes/UIRemoteGachapon.cpp] 2 处
+  L52    [change_text ] Gacha box mode=
+  L79    [SoftKey hint] Town 0-9
+
+[IO/UITypes/UIShop.cpp] 5 处
+  L447   [SoftKey hint] Buy qty (selected)
+  L462   [SoftKey hint] Buy slot,qty
+  L478   [SoftKey hint] Sell qty (selected)
+  L493   [SoftKey hint] Sell idx,qty
+  L513   [SoftKey hint] Recharge slot
+
+[IO/UITypes/UISkillBook.cpp] 2 处
+  L817   [SoftKey hint] Skill id SP
+  L845   [SoftKey hint] Skill id use
+
+[IO/UITypes/UIStatsInfo.cpp] 11 处
+  L490   [SoftKey hint] AP str|dex|int|luk|1-4
+  L539   [change_text ] -
+  L549   [change_text ]  ~ 
+  L563   [change_text ]  ~ 
+  L564   [change_text ] 0%
+  L566   [change_text ] 0.00%
+  L567   [change_text ] 0%
+  L569   [change_text ] 0%
+  L571   [change_text ] 0%
+  L572   [change_text ] 0.00%
+  L574   [change_text ] 0%
+
+[IO/UITypes/UIStatusBar.cpp] 11 处
+  L1237  [SoftKey hint] Whisper msg
+  L1245  [SoftKey hint] Whisper msg
+  L1246  [SoftKey hint] Whisper to
+  L1254  [SoftKey hint] Chat
+  L1266  [SoftKey hint] Emote id
+  L1278  [SoftKey hint] Channel #
+  L1301  [SoftKey hint] Chair itemid
+  L1331  [SoftKey hint] Pickup oid
+  L1363  [SoftKey hint] Reactor oid
+  L1386  [SoftKey hint] Effect itemid
+  L1420  [SoftKey hint] NPC oid
+
+[IO/UITypes/UIStorage.cpp] 3 处
+  L244   [SoftKey hint] type,slot
+  L267   [SoftKey hint] Store qty (selected)
+  L287   [SoftKey hint] slot,itemid,qty
+
+[IO/UITypes/UIStoreBank.cpp] 5 处
+  L58    [change_text ] Mesos: 0
+  L76    [SoftKey hint] all|exit|tip
+  L85    [change_text ] Mesos: 
+  L99    [change_text ] Mesos: 0
+  L171   [SoftKey hint] all|exit|tip
+
+[IO/UITypes/UITermsOfService.cpp] 1 处
+  L151   [SoftKey hint] ok|cancel
+
+[IO/UITypes/UITrade.cpp] 2 处
+  L286   [SoftKey hint] qty[,tradeSlot]
+  L306   [SoftKey hint] iv,pos,qty,slot
+
+[IO/UITypes/UIWorldSelect.cpp] 4 处
+  L216   [Text ctor   ] Ver. 
+  L819   [SoftKey hint] Channel #
+  L891   [SoftKey hint] World #
+  L1179  [SoftKey hint] Region tip|empty=Region
 
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==

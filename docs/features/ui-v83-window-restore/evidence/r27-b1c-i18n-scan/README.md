@@ -337,3 +337,39 @@ PLAN §4.2 要求「代码引用的键 ⇒ 两份 ini 都得有」，缺键不�
 运行时负对照同 §8.5，未变。B1c-5 还剩 `5b`（其余壳窗 latin，UIMemo 7 / UIAdmin 6 / UIMinigame 6 /
 UIAriantMatch 5 / UICharInfo 4 / UIMonsterBook 4 / UINewYearsCard 4 / UIPartyRace 4 / 一批 ≤3 处）与
 `5c`（4 文件 18 处中文盲区：UIQuestLog 10 / UIGuild 5 / UIGender 2 / UIMerchant 1）。
+**本段的逐文件数字已被 §10 的新基线顶掉**（那条尺当时还看不见软键盘档）。
+
+## 10. 扫描器补第四形状 + 全站基线重算（2026-11-03，用户拍板「扩扫描器 + 全站扫一遍软键盘位」）
+
+§9.3 留的那个洞按用户抉择补上：`scan_display_text.py` 的 `PATTERNS` 从「三形状」改成「带名字的四形状」，
+新增 `SoftKey hint` 一档，收法 `\}\s*,\s*"…"\s*[,)]`（即 `emplace<UISoftKey>(ok, cancel, "<提示语>")`
+的第三实参；不认调用名，因为闭包体一长，调用头与实参就不在同一行）。报告同时改为**按形状分档计数**，
+并把形状名打进每一行站点，方便下一批直接按档取舍。
+
+| 读数 | 旧（三形状） | 新（四形状） |
+| --- | --- | --- |
+| 全站站点 | 304 | **730** |
+| 分形状 | `change_text` 283 / `Text ctor` 21 / `Tooltip` 0 | 同上 + **`SoftKey hint` 426** |
+| 分桶 | 壳窗 / 在用窗 | **壳窗 654（`UIMiscShells` 独占 388）/ 在用窗 76** |
+| 中文档 | 0 | 0（不变，中文由 `scan_cjk_literals.py` 管，见 §8.4） |
+
+**新档不是泛匹配**（这是本次唯一需要自证的点：`}, ".."` 在 C++ 里到处都有）：对 426 条逐条回查语句头，
+424 条在 40 行内出现 `UISoftKey`；剩下 2 条（`UI/UITypes/UIGuild.cpp:357`、`UI/UITypes/UIOptionMenu.cpp:342`）
+是闭包体超过 40 行的同一形状 ⇒ 全是真软键盘提示，**零污染**。反向也核过：5a 已接的 5 个文件
+（`UIRpsGame`/`UIWedding`/`UIViciousHammer`/`UIPlant`/`UIVegaSpell`）在新档下余站 0，
+说明 `already_localized` 对 `Locale::text("…")` 形态的第三实参照样跳过，没有把已改的站点算成漏网。
+
+**口径变更的后果**（后面几批都按这条走）：
+1. `402` / `304` 从此只是历史读数，**PLAN §3 的批次体量按新基线重写**：5b 余 266、6 是 388、
+   另有一批在用窗软键盘位 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 /
+   `UIMegaphone` 5 / `UILoginNotice` 5 …）——这些在 B1c-3 时代根本数不出来。
+2. 730 **依旧是下界**：实参折到下一行的调用仍看不见（与 `Text` ctor 档同一条已知盲区）。
+3. 软键盘档里两类性质（真提示语 vs 被代码按 token 比较的输入语法）继续按用户拍板②处置：**都建键、
+   后者在 ini 标 `# 禁译`**（§9.3 表），机制归零优先，禁译靠注释 + `pending-copy.md` 台账兜。
+4. 原生侧对软键盘的取证结果见 [../native-verdicts-2026-11-03/copy-literals.txt](../native-verdicts-2026-11-03/copy-literals.txt)：
+   素材存在（`UI.nx` 有 `Login.img/Common/SoftKey`、`UIWindow.img/SoftKeyboard`），但 **v83 北斗 exe 不引用它**
+   （v95 端才加载）⇒ 这批提示语没有原生文案可对齐，键值只能保持现值等取证，**优先级低于在用窗**。
+
+门禁：新尺只改文档与工具，未动业务代码 ⇒ 无需重编译；`check_locale_keys.py` 与 `layout.py check` 的读数
+沿用 §9.5（本批无键位变化）。
+

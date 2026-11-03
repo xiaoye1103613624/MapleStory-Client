@@ -73,8 +73,9 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
 | **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
-| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的 ~117 处，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（~~已完，见「落地情况」~~）；**5b** = 其余壳窗 latin；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b/5c 待清 | 同上 |
-| **B1c-6 壳窗·`UIMiscShells`** | 216 处，单文件独占一批（体量最大，且与并行会话冲突最高） | 216 | 同上 |
+| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
+| **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高） | ~~216~~ **388** | 同上 |
+| **B1c-5d 在用窗软键盘档** | 新基线浮出来的在用窗余站 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 / `UIMegaphone` 5 / `UILoginNotice` 5 …），多数是软键盘提示位 | **76** | 同上；这批在 B1c-3 之后才算得清，因为当时那条尺看不见该形状 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
 
 依赖：B1c-2 → 其余全部；B1c-3/4/5/6 之间互不依赖，可并行推进；B1c-7 等前五批。
@@ -154,8 +155,18 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
    全站余量未清点。该形状混着两类东西 —— 真提示语（`UILogin.cpp:586/:592` `"Account"/"Password"`、
    `UICharSelect.cpp:1452/:1455` PIC 整句）与被代码按 token 比较的**输入语法**（`rock|paper|scissor`、
    `UIGender.cpp:135` `"m|f"`、`UIKeyConfig.cpp:916` `"save|close"`、`UIQuit.cpp:182` `"y|n"`）。
-   本批处置：两类都建键，输入语法在 ini 标 `# 禁译`。**是否把该形状扩进扫描器（会重算全站总数）、
-   或改为白名单不建键 ⇒ 待用户抉择，不擅自扩量**（见 evidence README §9.3）。
+   本批处置：两类都建键，输入语法在 ini 标 `# 禁译`。**用户 2026-11-03 已拍板**：①把该形状扩进扫描器
+   并重算全站基线；②输入语法仍建键 + `# 禁译`（沿用 5a）。扩形状后的基线见下条。
+
+**基线重算（2026-11-03，用户拍板①落地）**：`scan_display_text.py` 加第四档形状
+`SoftKey hint`（按 `}, ".."` 收，即 `emplace<UISoftKey>(ok, cancel, "<提示语>")` 的第三实参），
+全站读数 **304 ⇒ 730**（`change_text` 283 / `Text ctor` 21 / `SoftKey hint` 426；中文档 0，与 §「B1c-4」
+那条一致 —— 剩余中文由 `scan_cjk_literals.py` 那把尺管）。426 条**逐条回查**：424 条在 40 行内出现
+`UISoftKey`，另 2 条（`UIGuild.cpp:357`、`UIOptionMenu.cpp:342`）是闭包体超 40 行的同一形状 ⇒
+**全部是真软键盘提示，不是泛匹配污染**。5a 已改的 5 个文件在新档下余站 0（`already_localized` 照样跳过
+`Locale::text("…")` 形态的第三实参，无假阳性）。**旧口径的 402 / 304 从此作废，只当历史读数看**；
+分桶：壳窗 654（其中 `UIMiscShells` 388）/ 在用窗 76。跨行调用（实参折到下一行）仍是这条尺的已知盲区，
+所以 730 **依旧是下界**。
 
 档位照 §3 尾硬约定：这 5 窗的 `status`/`tip_label` 每处都有第二个写入点 ⇒ **一个绑定点都没加**，
 全部 ctor 现取 + 事件现取；代价（切语言后已开着的窗要等下一次数据事件）已写进 README §9.4。
@@ -168,8 +179,16 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 
 1. **站点归零**：`tools/scan_display_text.py` 读数英文 0 / 中文 0，
-   白名单只有「纯数字与符号初值」（`0` `1` `-` ` ~ ` `0%` `0.00%` `!` `V`）——
+   白名单只有「纯数字与符号初值」（`0` `1` `-` ` ~ ` `0%` `0.00%` `!` `V` `0s`）——
    白名单要写进工具源码并在文档里逐条给理由，**不允许**用白名单偷偷放行真文案。
+   **原生取证已完成（2026-11-03，用户「先查原生」新规矩的第一批结果）**：这些候选在原生 v83 里
+   都是**格式串或初值，不是可翻译文案** —— `"%d ~ %d"`（文件偏移 `0x6F2928`）、`" %d%%"`（`0x73BCC0`）、
+   `"EXP : %d / %d"`（`0x73BB5C`，**原生 EXP 是数值式，没有两位小数百分比**）；而 `-` `!` `V` `0` `1` `0s`
+   独立字面量在 ASCII / UTF-16LE / GBK 三编码下**全 0 命中**，`String.nx` 亦无对应节点 ⇒ 逐条放行有据。
+   `/w ` 另判：原生**根本没有该 token**（`"/w "` ASCII 与 UTF-16LE 均 0 命中，原生悄悄话是
+   `BtWhisper` 按钮 / 双击流 —— `BtWhisper` UTF-16LE `0x73C4A8`、帮助串
+   `"Double-click to send a whisper."` ASCII `0x73C138`）⇒ 它不是文案、**也不该当作原生功能**，
+   要不要保留这条自造的打字命令入口交回用户（见 evidence README「原生裁决台账」）。
 2. **反向键门禁**（扩 `tools/check_locale_keys.py`）：扫全仓 `Locale::text/text_or/format/enum_text`
    与 `bind_text` 的键字面量，要求在 **zh-CN 和 en-US 里都存在**；两份键集必须一致；值不得为空。
    现有正向门禁（数据表枚举 ⇒ 键必须建档）保留不动。

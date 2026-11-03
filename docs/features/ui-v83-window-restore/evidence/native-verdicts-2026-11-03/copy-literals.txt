@@ -1,0 +1,140 @@
+MapleStory v83 原生（BeiDou.exe）展示文案取证 — 只读取证报告
+=====================================================================
+取证对象:
+  A) E:/project/_ida_beidou/BeiDou.exe            (8,503,296 B, MD5 aa2ec6f8…)
+  B) E:/MXD/BeiDou-ClientV17.7/BeiDou.exe         (8,503,296 B, MD5 44c1030e…)
+  * 两 exe 逐 4K 页比对仅 0x7F9000 一页不同（非字符串区），.rdata 字符串池
+    0x6EC000-0x74A000 逐字节一致 => 同构建，以下偏移对 A/B 同时成立。
+  * IDA(VA) = 文件偏移 + 0x400000。IDA 会话: BeiDou.exe.i64 (gui :13337)、
+    Maplestory95.i64 (headless 3c1162a2, v95 参照系交叉验证)。
+  C) E:/MXD/BeiDou-Client-xy/Data/.nxcache/String.nx (node_count=214123,
+     string_count=107963, string_table=0x3959B0; 根下 20 个 .img 模块，
+     无任何通用 UI 文案 .img —— 通用 UI 字面量全部在 exe 内)
+  D) 同目录 UI.nx / Etc.nx。
+
+扫描方法（三种编码全覆盖，防 UTF-16LE/GBK 假阴性）:
+  ASCII 正则 / UTF-16LE 交错字节序列 / GBK 字节序列 全文件 bytes.find，
+  原始扫描产物: native_copy_literals.txt 附段(pass1)、pass2/pass3/pass7/pass8。
+
+---------------------------------------------------------------------
+问题1 §4.1 白名单候选逐条判据
+---------------------------------------------------------------------
+1.1 "-"（UIStatsInfo.cpp:539 空公会占位; :838/:865 负增量前缀）
+  原生查无独立字面量：IDA 字符串表 regex ^-$ 0 命中；三编码全文件扫描无
+  独立 "-" 串（pass1 U16Z 187 处命中全部落在代码段对齐噪声，非串池）。
+  String.nx 无该值节点。=> 排版/负号，非文案，不建键。
+
+1.2 " ~ "（UIStatsInfo.cpp:549/:563；UIDailyGift.cpp:162 日期区间）
+  原生把它做进【printf 格式串】：ASCII "%d ~ %d" 文件@0x6F2928 (IDA 0xAF2928)，
+  相邻串 'Recommended Items'/'Pet Quote Ring'（同池）。另 @0x80B5A1/0x80F599/
+  0x817589 有 "> ~ " 浮点格式表数据（二次证据）。UTF-16 独立 " ~ "（20 00 7E 00
+  20 00 结尾对）0 命中；String.nx 无独立 " ~ " 值节点。
+  => 原生=格式串（%d ~ %d），非可翻译文案，不建键。
+
+1.3 "0%" / "0.00%"（UIStatsInfo.cpp:564-574；底栏 EXP [0.00%]）
+  原生百分比全部是格式串：" %d%%" 文件@0x73BCC0 (IDA 0xB3BCC0，邻串 From./To.)；
+  全文件 "0.00" 0 命中（ASCII/UTF-16/GBK），"0.00%"/"%.2f%%"/"%0.2f" 均 0 命中；
+  String.nx grep "0.00" 0 命中。EXP 位原生格式：
+    'Lev:%d Job:%d STR:%d ... EXP:%d Money:%d'  文件@0x6F30B1（存档/显示格式化）
+    'EXP : %d / %d  GachaponEXP : %d'           文件@0x73BB5C (IDA 0xB3BB5C)
+  => 原生把百分比当 %d%% 数值格式渲染，且原生 EXP 用 "EXP : %d / %d" 数值式、
+     根本无两位小数百分比形态。"0%"/"0.00%" 是数值初值格式，不建键。
+
+1.4 "0" / "1"（UIStatsInfo 初值；UICharSelect.cpp:235 burning_count="1"）
+  原生字符串池无独立 "0"/"1" 串（三编码 0 命中；池内 \x30\x00 等命中均为码流噪声）。
+  => 纯数字初值，非文案，不建键。
+
+1.5 "!" / "V"（UIDailyGift.cpp:139/:163）
+  IDA 字符串表 ^!$ / ^V$ 均 0 命中；String.nx 无独立值节点；exe 内 '!' 371 /
+  'V' 96 处 U16Z 命中全在代码段。原生每日礼品相关串查无（String.nx 根下无
+  DailyGift 模块；exe 池仅 'dailyPlayTime' @0x6FD884 一个弱相关串）。
+  => 标点/勾选符号标记，排版层，不建键；原生对 UIDailyGift 整窗查无先例。
+
+1.6 "/w "（UIChatBar.cpp:1781 悄悄话命令前缀）★关键
+  决定性阴性：全文件扫描
+    ASCII  b"/w "  = 0 命中；ASCII b"/w" = 10 命中，逐一看过：
+      0x6F5180 'PartyRace/Result/win'、0x73D839 'weather/squib'、0x73F299
+      'worldMap/npcPos'、0x740004 URL '.../WZ.ASPX?PART=/Downloads/...' 等均为
+      路径片段；0x74746C/0x76E2CC 两处是数据表字节对（前后 0xA7/0xA9 高字节，
+      非 \x00 终止串）。
+    UTF-16LE 2F 00 77 00（"/w"）= 0 命中（连不带空格都没有）；" /w" 0 命中。
+    GBK/ASCII '/msg'、'/page'、'page'、'whisper ' 命令形态 0 命中。
+  原生悄悄话入口是【按钮/双击选目标】而非文本命令：
+    "Change has been made so\r\n'%s' can receive whisper." 文件@0x73C0D4 (0xB3C0D4)
+    "Double-click to send a whisper. (same channel)"        文件@0x73C108
+    "Double-click to send a whisper."                        文件@0x73C138
+    "You have received a whisper from another channel."      文件@0x760BE0
+    资源路径(UI/UIWindow.img/UserList/GuildUnion/BtWhisper) 文件@0x73C460
+    聊天行前缀格式 " %s > "                                  文件@0x760B20
+    xref: 0xB3C138 -> sub_90B304（UserList 提示装载函数）
+  String.nx 侧仅有按钮帮助文案 ToolTipHelp.img/Game/Button/Whisper/Title='悄悄话'、
+  /Desc='选择发送悄悄话的对象\n再次点击按钮就解除悄悄话状态。'（节点路径实测）。
+  v95 参照系（Maplestory95.i64）同样无 "/w" 字面量，仅 BtWhisper 资产路径
+  （w2.img/UserList/*/BtWhisper）与 "%s can receive your whisper." @0xB9C888。
+  => 原生命令 token 不存在任何字面量形态 ⇒ "/w" 不是数据层文案、不随客户端
+     语言变化（CN 端连该串都没有；若历史上存在必为代码内字符立即数）；保持
+     硬编码、不建 i18n 键与原生语义一致。
+
+1.7 "0s"（UIClock.cpp:74）
+  ASCII "0s" 3 命中全为码流/表数据（0x2EBD31、0x743EE8、0x746F64，非串池）；
+  UTF-16 "0s"+终止 0 命中；"%ds"/"%d s" 0 命中；池内 'sec'/'seclimit'
+  @0x73DFA4/@0x73DFB8 属 MapHelper 域（邻串均为 Map/MapHelper.img/*）。
+  String.nx 无时钟秒数格式节点。=> 原生查无该展示格式；"0s" 是我们自己的
+  数值+单位排版，非文案。
+
+---------------------------------------------------------------------
+问题2 婚礼邀请正文 "Wedding invite"（UIWedding.cpp:59/68/125/135/174）
+---------------------------------------------------------------------
+  * exe 三编码（ASCII/UTF-16LE/GBK）扫 "Wedding invite"/"invite"(小写)/
+    "Wedding"/"Marry"/"marry"/"marriage"：
+      "Wedding invite" 0 命中；"Marry/marriage/marry" 0 命中；
+      'wedding%d' 文件@0x6F54CC (IDA 0xAF54CC)，xrefs_to 唯一引用 sub_58153D
+      （资源名格式化，非展示文案）；'Invite' 命中均为 CNM*( messenger 网络
+      模块函数名表 @0x6FA550-0x6FC701 ) 与 BtPartyInvite/BtInvite 资源路径。
+  * String.nx（本地化数据）实测节点路径 —— 邀请正文文案在【物品名/描述】：
+      Etc.img/Etc/4031377  name='邀请函-教堂'
+                          desc='邀请好友参加你的婚礼，只有被\n邀请的人才能够
+                                参加你的婚礼。\n#c双击#邀请函输入您要邀请的角色\n名。'
+      Etc.img/Etc/4031395  desc 同上；Etc.img/Etc/4031406 name='婚礼邀请函-教堂'
+      Cash.img/5251100 name='婚礼邀请函券' desc='向自己的亲朋好友发送婚礼邀请券。'
+  => 原生没有"客户端拼一条固定邀请正文发封包"的做法：原生流程是双击邀请函
+     物品→输入角色名→（物品/脚本侧）送达；被邀方提示来自 NPC/脚本数据而非
+     客户端字面量。故 "Wedding invite" 属我们自造的封包回退正文：原生既不
+     支持"建键翻译"也不支持"保持英文"的先例。若照"对端收到的内容不应随本机
+     语言变化"原则维持不建键，是与原生"正文非客户端文案"最接近的保守解，
+     但该字符串本身**原生查无，留待用户抉择**。
+
+---------------------------------------------------------------------
+问题3 软键盘 UI（UISoftKey 第三实参提示语，如 rock|paper|scissor）
+---------------------------------------------------------------------
+  * 原生数据【有】软键盘资产（不是查无）：
+      UI.nx: Login.img/Common/SoftKey（9 子节点：backgrnd/BtCancel/BtOK/BtNext/
+             BtDel/Tab/BtNum/BtLowCase/BtHighCase，与 UI.nx 串池 'SoftKey' 实测）
+      UI.nx: UIWindow.img/SoftKeyboard（4 子节点，含 backgrnd/0/keyboard）
+  * v95 参照 exe 实际加载该资产（证明是活 UI 不是摆设）：
+      "n/SoftKey/backgrnd" 0xB5563C、BtCancel 0xB5568C、BtOK 0xB556DC、
+      BtNext 0xB55724、BtDel 0xB5576C、Tab/normal 0xB557B4、Tab/selected
+      0xB55804、BtNum/%d 0xB5585C、BtLowCase/%d 0xB558AC、BtHighCase/%d 0xB55904
+  * 但 BeiDou v83 exe 自身：SoftKey/SoftKeyboard/keyboard 三编码 0 命中
+      => v83 原生未启用软键盘（资产来自更高版本数据）；我们 UISoftKey.cpp:35
+         读的正是同一资产 Login.img/Common/SoftKey（v83 数据里存在但未被 v83
+         原生代码引用）。
+  * 提示语 "rock|paper|scissor"：v83 与 v95 两 exe、String.nx 全查无此字面量。
+    原生 RPS 相关证据只有 NPC 对话文案（String.nx 串池 [74701]'我们来玩石头
+    剪刀布，输的人坐下～…' 等 4 条）⇒ 原生猜拳是 NPC 对话驱动，客户端无输入
+    语法提示概念。第三实参"提示语兼输入语法 token"是我们自造设计，原生无
+    判据，维持现状或建键均由用户拍板。
+
+---------------------------------------------------------------------
+附：原始扫描产物索引（均在 E:/project/_b1c_check/）
+---------------------------------------------------------------------
+  native_copy_literals.txt   本文件（pass1 原始输出已并入结论坐标）
+  native_copy_literals_pass2.txt  exe 窄串池 grep（whisper/wedding/rps/keyboard/%）
+  native_copy_literals_pass3.txt  池区全量窄串 + 全量宽串 + String.nx/UI.nx grep
+  native_copy_literals_pass4.txt  String.nx 串池 21397215 条全表 grep（邀请/婚礼/悄悄话…）
+  string_nx_all_strings.txt       String.nx 全字符串表 dump（带索引）
+  native_copy_literals_pass7.txt  String.nx/exe 原始字节多编码 hunt
+  native_copy_literals_pass8.txt  exe GBK needle + 池偏移上下文还原
+  native_copy_literals_pass10.txt String.nx 婚礼邀请函节点路径
+  ux_probe.txt / ui_paths.txt     UI.nx SoftKey/Marry/Wedding 路径定位
+  scan_native*.py                 全部只读扫描脚本（未写任何 .nx/.img）
