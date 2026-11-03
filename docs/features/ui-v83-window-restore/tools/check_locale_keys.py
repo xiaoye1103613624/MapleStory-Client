@@ -122,6 +122,12 @@ def collect_literal_keys() -> tuple:
         # enum_text/enum_key 的第一参恒为前缀（后缀来自数据表，已在动态键段穷举）
         re.compile(r'Locale::enum_(?:text|key)\s*\(\s*"([^"]+)"'),
     )
+    # 三元选键（`Locale::text(cond ? "a.x" : "a.y")`）：上面两条都要求引号紧跟左括号，看不见它。
+    # 不补的代价是真机上「选中的那支拼错」照样静默回显键名 —— R27-B1c-5c 的
+    # `guild.member_online/offline` 就是这个形状，靠 fidelity 尺才发现门禁漏了 2 个键。
+    ternary = (
+        re.compile(r'Locale::(?:text|text_or)\s*\(\s*[^;"()]{0,120}\?\s*"([^"]+)"\s*:\s*"([^"]+)"'),
+    )
 
     keys, dyn = {}, {}
     for root, dirs, files in os.walk(REPO):
@@ -146,6 +152,13 @@ def collect_literal_keys() -> tuple:
             for rx in prefixes:
                 for key in rx.findall(src):
                     dyn.setdefault(key, []).append(os.path.relpath(path, REPO))
+            for rx in ternary:
+                for m in rx.finditer(src):
+                    for key in m.groups():
+                        # 只认「像键名」的两支：小写点分且含点。否则 `format("k", c ? "Yes" : "No")`
+                        # 这种**值**位置上的三元会被当成键，凭空报缺档。
+                        if re.fullmatch(r'[a-z0-9_.]+', key) and '.' in key:
+                            keys.setdefault(key, []).append(os.path.relpath(path, REPO))
 
     return keys, dyn
 
