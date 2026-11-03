@@ -31,6 +31,7 @@ from __future__ import annotations
 import io
 import os
 import re
+import subprocess
 import sys
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
@@ -42,21 +43,54 @@ def fold(raw: str) -> str:
     return re.sub(r'[ -]', '_', raw)
 
 
+def parse_ini_text(text: str) -> dict:
+    """Locale::load_file 的解析结果（含 trim 与后写覆盖），从**已解码的字符串**入手。"""
+    out = {}
+    for line in text.splitlines():
+        t = line.strip()
+        if not t or t[0] in '#;':
+            continue
+        eq = t.find('=')
+        if eq < 0:
+            continue
+        key = t[:eq].strip()
+        if key:
+            out[key] = t[eq + 1:].strip()
+    return out
+
+
 def load_ini(path: str) -> dict:
     """复刻 Locale::load_file 的解析结果（含 trim 与后写覆盖）。"""
-    out = {}
     with io.open(path, encoding='utf-8-sig') as fh:
-        for line in fh.read().splitlines():
-            t = line.strip()
-            if not t or t[0] in '#;':
-                continue
-            eq = t.find('=')
-            if eq < 0:
-                continue
-            key = t[:eq].strip()
-            if key:
-                out[key] = t[eq + 1:].strip()
-    return out
+        return parse_ini_text(fh.read())
+
+
+def committed_key_counts():
+    """HEAD 提交树里两份 ini 的键数 + 该 HEAD 的短号；拿不到（无 git / 无该文件）返回 None。
+
+    为什么问这个：门禁默认读**工作树**，共享工作树里并行会话的未提交键会被一并算入，
+    归档时容易被读成「本批建了多少键」。5b/5c 两次都把这种虚高数字写进了 evidence，
+    所以把提交树读数一并打出来，让「本批键数」这一档可复核。
+
+    为什么连**短号**一起打：提交树自己在动 —— 记录本档案取于 `e0fbb7b`（提交树 301），
+    几分钟后并行会话提了 `aa0d4e2`，同一句 `git show HEAD:` 就变成 307 了。
+    不写 rev 的读数下次复跑必然「对不上」，那正是本条要避免的第二次事故。
+    """
+    try:
+        rev = subprocess.run(['git', '-C', REPO, 'rev-parse', '--short', 'HEAD'],
+                             capture_output=True)
+        if rev.returncode != 0:
+            return None
+        out = []
+        for name in ('zh-CN.ini', 'en-US.ini'):
+            r = subprocess.run(['git', '-C', REPO, 'show', 'HEAD:locale/' + name],
+                               capture_output=True)
+            if r.returncode != 0:
+                return None
+            out.append(len(parse_ini_text(r.stdout.decode('utf-8', 'replace'))))
+    except OSError:                       # 没装 git / 不在 PATH：这行不打，门禁照常
+        return None
+    return out[0], out[1], rev.stdout.decode().strip()
 
 
 def cpp_string_arrays(path: str, pattern: str) -> list:
@@ -176,6 +210,17 @@ def main() -> int:
 
     print('zh-CN keys = %d' % len(zh))
     print('en-US keys = %d' % len(en))
+    # 工作树 ≠ 提交：并行会话的未提交键会被算进上面这个数，归档时容易被读成「本批的键数」。
+    # 实测两次：5b 报 288（提交树实为 286）、5c 报 303（提交树实为 301），差的就是别人那 2 条。
+    # 所以这条尺顺手打一份 HEAD 版读数，并把可复核的判据命令直接写出来。
+    committed = committed_key_counts()
+    if committed:
+        czh, cen, rev = committed
+        drift = len(zh) - czh
+        tail = ('工作树多 %d 条未提交键（并行会话的件，别当本批键数）' % drift) if drift > 0 else \
+               ('工作树与提交树一致' if drift == 0 else '工作树比提交树**少** %d 条：有人删了键' % -drift)
+        print('HEAD(%s) 提交树 keys = zh %d / en %d（本批键数看这一行）｜%s' % (rev, czh, cen, tail))
+        print('  复核：git show %s:locale/zh-CN.ini | grep -cE \'^[a-z][^=]*=\'' % rev)
 
     # 键集漂移：任何一边缺键，切语言时就静默回显键名
     only_zh = sorted(set(zh) - set(en))
