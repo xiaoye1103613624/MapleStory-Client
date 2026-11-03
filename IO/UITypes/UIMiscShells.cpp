@@ -122,7 +122,7 @@ void softkey_or_inv_set_item(TipFn tip_fn)
 		if (pos > 0) {
 			int8_t iv = static_cast<int8_t>(inv->get_tab());
 			HiredMerchantSetItemPacket(iv, pos, 1, 0).dispatch();
-			tip_fn("SetItem #" + std::to_string(pos));
+			tip_fn(Locale::format("shop.setitem_slot", std::to_string(pos)));
 			LOG(LOG_DEBUG, "Shop: SetItem from inv tab=" << (int)iv << " pos=" << pos);
 			return;
 		}
@@ -144,7 +144,7 @@ void softkey_or_inv_set_item(TipFn tip_fn)
 			static_cast<int16_t>(vals[2]),
 			static_cast<int8_t>(vals[3])
 		).dispatch();
-		tip_fn("SetItem " + spec);
+		tip_fn(Locale::format("shop.setitem", spec));
 		LOG(LOG_DEBUG, "Shop: SoftKey SetItem " << spec);
 	}, []() {}, "iv,pos,qty,slot");
 }
@@ -4002,7 +4002,7 @@ void UIContextMenu::open_at(Point<int16_t> screen_pos, int32_t cid, const std::s
 {
 	target_cid = cid;
 	target_name = name;
-	title_label.change_text(name.empty() ? "Menu" : name);
+	title_label.change_text(name.empty() ? Locale::text("contextmenu.title_fallback") : name);
 	position = screen_pos;
 	dimension = Point<int16_t>(120, 202);
 	makeactive();
@@ -4461,7 +4461,7 @@ void UIMultiLine::set_tip(const std::string& tip) { tip_label.change_text(tip); 
 
 UIGameMenu::UIGameMenu()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
-		"1-9 shells Esc=close X=face SoftKey hub")
+		Locale::text("gamemenu.tip_hints"))
 {
 	position = Point<int16_t>(300, 200); dimension = Point<int16_t>(200, 160); dragarea = Point<int16_t>(200, 20);
 	has_assets = load_window_bg("GameMenu", backgrnd, dimension);
