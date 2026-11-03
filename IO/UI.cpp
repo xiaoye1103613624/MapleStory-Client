@@ -341,6 +341,12 @@ namespace ms
 					types.emplace_back(UIElement::Type::USERLIST);
 					types.emplace_back(UIElement::Type::NPCTALK);
 					types.emplace_back(UIElement::Type::CHARINFO);
+
+					// 游戏设置 / 系统设置（R27-B7-4）。这两个是本轮新拆出来的独立窗，
+					// 原生按 ESC 会先关掉最上层的设置窗再轮到目录；漏加的话 ESC 会直接
+					// 落到 MAINMENU，把目录气球盖在还开着的设置窗上。
+					types.emplace_back(UIElement::Type::GAMEOPT);
+					types.emplace_back(UIElement::Type::SYSOPT);
 				}
 				else if (enter)
 				{

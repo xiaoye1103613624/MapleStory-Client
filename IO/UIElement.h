@@ -180,6 +180,13 @@ namespace ms
 			MONSTERBOOK,
 			MAKER,
 			ALLIANCE,
+			// v83 目录气球的两颗独立设置窗（游戏设置 / 系统设置）。本包无
+			// StatusBar3.img/OptionMenu，UIOptionMenu 只剩空壳，故另立两型。
+			// 注意：这两项让 UIElement::Type::NUM_TYPES 变大，而
+			// EnumMap<Type, UPtr, NUM_TYPES> 是 UIStateGame 的成员 —— 实例尺寸变了，
+			// 必须整工程 Rebuild（增量编译会留下按旧尺寸编译的目标文件）。
+			GAMEOPT,
+			SYSOPT,
 			NUM_TYPES
 		};
 
@@ -203,9 +210,11 @@ namespace ms
 		/// 「50 个窗各自记得刷新」退化成一处机制。带 value 的那一档是给
 		/// 「前缀 + 会话内恒定的值」用的（`Ver. ` + 版本号），按 Locale::format 取。
 		///
-		/// 只给**值不随数据变**的标签用。随数据变的行（金币数额、`Default Group (0/0)`
-		/// 这类）要继续 `Locale::text / Locale::format` 就地现算：那条路本来就是活文案，
-		/// 登记进表反而会把登记那一刻的旧值钉死。
+		/// 只给**值在会话内恒定**的标签用，判据是全文搜这个对象还有没有别的写入点：
+		/// 有就不恒定。随数据变的行（金币数额、`Default Group (0/0)` 这类）要继续
+		/// `Locale::text / Locale::format` 就地现算 —— 那条路本来就是活文案，登记进表
+		/// 反而会把登记那一刻的旧值钉死；而改写若是**事件驱动**的（选中变化、数据到达），
+		/// 切语言时刷回初值之后不会有人再把它写回去，界面就一直停在初值上。
 		void bind_text(Text& target, std::string key);
 		void bind_text(Text& target, std::string key, std::string value);
 		void bind_text(OutlinedText& target, std::string key);

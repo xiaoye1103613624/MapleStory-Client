@@ -2900,8 +2900,10 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 		case 'O':
 		case 'o':
 		{
-			auto ui = UI::get().get_element<UIOptionMenu>();
-			if (!ui) ui = UI::get().emplace<UIOptionMenu>();
+			// 原生 O = 游戏设置页。本包无 StatusBar3.img/OptionMenu，
+			// UIOptionMenu 只剩空壳，所以直接落到 UIGameOpt（见 R27-B7-4）。
+			auto ui = UI::get().get_element<UIGameOpt>();
+			if (!ui) ui = UI::get().emplace<UIGameOpt>();
 			else if (!ui->is_active()) ui->makeactive();
 			break;
 		}
@@ -4511,11 +4513,15 @@ Button::State UIGameMenu::button_pressed(uint16_t id)
 			deactivate();
 			break;
 		case Buttons::BT_GAMEOPT:
+			// 原生 v83 的目录气球里，「游戏设置」「系统设置」是两颗独立按钮、
+			// 两个独立窗（UIWindow.img/GameOpt 与 /SysOpt）。本包无
+			// StatusBar3.img/OptionMenu，UIOptionMenu 只剩画空底板的壳 —— 之前
+			// 两颗都路由到它，就是用户报的「都是打开游戏设置窗口而且勾选框也没有」。
+			UI::get().emplace<UIGameOpt>();
+			deactivate();
+			break;
 		case Buttons::BT_SYSOPT:
-			// v83 里这两颗分别是 UIOptionMenu 的「游戏」「系统」子页；本包无
-			// StatusBar3.img/OptionMenu，UIOptionMenu 退化成只画底板（见 open-issues），
-			// 与底栏设置扇区走同一目标，不另造窗口。
-			UI::get().emplace<UIOptionMenu>();
+			UI::get().emplace<UISysOpt>();
 			deactivate();
 			break;
 		case Buttons::BT_QUIT:

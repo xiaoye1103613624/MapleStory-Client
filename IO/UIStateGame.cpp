@@ -233,8 +233,21 @@ namespace ms
 			// 正确做法是清掉脏焦点后**继续**往下走全局 dispatch，而不是丢弃按键。
 			focused = UIElement::NONE;
 		}
-		else
+
+		// 脏焦点清掉之后，这一键**仍然要**交给下面的全局 dispatch。
+		// 早先这里是 if/else：走进「焦点指向已关闭窗体」这一支就跳出，按键被吞 ——
+		// 表现就是 ESC 要按第二下才开目录（第一下只把脏焦点清掉，相位差一整拍）。
 		{
+			// ESC 兜底：s9 的 KEYMAP 是从库里装载的，该账号没存 ESC 那一格（KeyConfig::Key::ESCAPE = 84）
+			// 时下发的是 type=0/action=0 ⇒ mapping 为 NONE，下面那条 MAINMENU 分支永远进不来，
+			// 这就是用户报的「esc 按键最后不能打开目录」。能走到这里说明没有任何活动窗体接住这一下，
+			// 而原生在这一刻正是开「目录」。只在 classic 底栏下兜，避免改到 StatusBar3 的 ESC 语义。
+			if (escape && pressed && type == KeyType::Id::NONE && UiAssetResolve::is_classic_hud())
+			{
+				type = KeyType::Id::MENU;
+				action = KeyAction::Id::MAINMENU;
+			}
+
 			switch (type)
 			{
 				case KeyType::Id::MENU:
@@ -469,6 +482,24 @@ namespace ms
 							}
 							case KeyAction::Id::MAINMENU:
 							{
+								// ESC → 「目录」。旧实现只把 MAINMENU 转给 UIStatusBar::send_key，
+								// 而那个 send_key 里没有 MAINMENU 分支（它只认 escape/RETURN/上下），
+								// 所以 classic 底栏下 ESC 是条死线：键表绑了、动作发了、什么都没发生。
+								// 底栏「目录」钮走的是 UIGameMenu 开/关，这里复用同一条路。
+								if (UiAssetResolve::is_classic_hud())
+								{
+									auto gm = UI::get().get_element<UIGameMenu>();
+
+									if (!gm)
+										gm = UI::get().emplace<UIGameMenu>();
+									else if (!gm->is_active())
+										gm->makeactive();
+									else
+										gm->deactivate();
+
+									break;
+								}
+
 								if (auto statusbar = UI::get().get_element<UIStatusBar>())
 									statusbar->send_key(action, pressed, escape);
 
