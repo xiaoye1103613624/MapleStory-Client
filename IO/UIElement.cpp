@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIElement.h"
 
+#include "UI.h"
+
 #include "../Audio/Audio.h"
 #include "../Constants.h"
 #include "../Graphics/SpecialText.h"
@@ -125,7 +127,15 @@ namespace ms
 
 	void UIElement::makeactive()
 	{
+		// 激活即置顶。旧实现只翻 active，不重排绘制队列，于是「关过再开」的非 toggled 窗
+		//（目录 / UIGameMenu，TOGGLED=false）会留在它上次的位置上，被其后打开的窗盖住。
+		// pre_add 只对 is_toggled 的元素抬层（IO/UIStateGame.cpp:757），补不到这一类。
+		const bool was_active = active;
+
 		active = true;
+
+		if (!was_active)
+			UI::get().bring_to_front(get_type());
 	}
 
 	void UIElement::deactivate()

@@ -56,6 +56,8 @@ namespace ms
 		virtual void post_add(UIElement::Type, UIElement*) {}
 		// 已存在的窗口在补间结束后再激活（用于“返回上一页”这类不重建窗口的切换）。
 		virtual void activate_after_transition(UIElement::Type) {}
+		// 把窗口移到绘制队列末尾（最上层）。登录态没有层级表，默认空实现。
+		virtual void bring_to_front(UIElement::Type) {}
 		virtual void remove(UIElement::Type type) = 0;
 		virtual UIElement* get(UIElement::Type type) = 0;
 		virtual UIElement* get_front(std::list<UIElement::Type> types) = 0;

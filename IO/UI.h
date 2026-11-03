@@ -104,6 +104,8 @@ namespace ms
 		void remove(UIElement::Type type);
 		// 登录态：若背景仍在补间，等滚到端点再激活目标窗口。
 		void activate_after_transition(UIElement::Type type);
+		// 把窗口移到绘制队列末尾（= 最上层）。由 UIElement::makeactive() 在 false→true 跃迁时调用。
+		void bring_to_front(UIElement::Type type);
 
 	private:
 		std::unique_ptr<UIState> state;

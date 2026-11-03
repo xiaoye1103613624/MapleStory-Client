@@ -826,6 +826,21 @@ namespace ms
 		}
 	}
 
+	void UIStateGame::bring_to_front(UIElement::Type type)
+	{
+		// elementorder 尾 = draw() 最后画 = 最上层。已在队尾时直接返回：既省一次重排，
+		// 也避免在按引用遍历 elementorder 的回调里把“当前节点”摘掉（list::remove 会失效该迭代器）。
+		if (elementorder.empty() || elementorder.back() == type)
+			return;
+
+		// 不在层级表里（尚未 emplace / 已 remove）时不能 push_back，否则会留下指向空元素的幽灵条目。
+		if (std::find(elementorder.begin(), elementorder.end(), type) == elementorder.end())
+			return;
+
+		elementorder.remove(type);
+		elementorder.push_back(type);
+	}
+
 	UIElement* UIStateGame::get(UIElement::Type type)
 	{
 		return elements[type].get();

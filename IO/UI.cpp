@@ -501,4 +501,9 @@ namespace ms
 	{
 		state->activate_after_transition(type);
 	}
+
+	void UI::bring_to_front(UIElement::Type type)
+	{
+		state->bring_to_front(type);
+	}
 }
