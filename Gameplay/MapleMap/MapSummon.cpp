@@ -137,11 +137,12 @@ namespace ms
 
 	void MapSummon::set_stance(int8_t s)
 	{
-		// 召唤兽的 stance 字节是移动包里的动作段；无 attack 动画 ⇒ 仅在受击段
-		// 语义下复用 hit（与原生召唤兽只有 stand/hit/die 的事实一致）。
-		// 旧实现把 st 写进名牌，真对象化后名牌静音。
-		if (s >= 8 && s < 24 && !dying && animations.count("hit") > 0)
-			set_state("hit");
+		// SUMMON_SKILL 的 newStance（s9 Character.java:4217/4232，beholder 系召唤物）：
+		// 固定 5（驻留）与随机 6..8（浮动系）。原生据此切换上下浮动帧；但本数据
+		// 召唤兽帧集只有 stand/hit/die/summoned（探针实测，无游走/浮动帧），
+		// 位置移动由 MOVE_SUMMON 包驱动 ⇒ 无帧可播，保持当前状态，不借用 hit
+		// 冒充动作（会误表现为受击）。旧实现把 st 写进调试名牌，真对象化后移除。
+		(void)s;
 	}
 
 	void MapSummon::set_flip(bool f)
