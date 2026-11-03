@@ -224,6 +224,46 @@ def _agreement(f, t, a, x, y, tol=24):
     return float((np.abs(sub - want).max(axis=1) <= tol).mean())
 
 
+# 调色核（r27-b3-equip/README.md §6.3 + §8）：与 C++ Graphics/MemoryTexture.cpp 同一份，
+# 那道 0..255x3 通道的穷举门禁（768/768 与浮点式逐值相等）已验过两边的等价性。
+def tint_pixel(rgb):
+    r, g, b = (int(v) for v in rgb)
+    return (17 * ((3 * r + 306) // 68), 17 * ((3 * g + 33) // 68), 17 * ((3 * b + 33) // 68))
+
+
+def tint_rate(img, art_path, rect, anchor, tol=2, alpha_min=250):
+    """rect（窗口相对）内两块逐像素命中率：(与 tint(美术) 相等, 与美术原样相等)。
+
+    为什么需要这一条：blob 探针只比 bbox，而「按格改色」与「在格上盖一层纯色」量出来的
+    框**一模一样**（同色、同范围）——旧 Equip.json 因此让平涂通过。rate 比的是逐像素等式：
+    原生粉格保留网点/渐变（主色只占 ~47%），真改色 98~100%，平涂只能拿到主色占比那一档。
+    两个方向都管：忘了改色 -> rate 掉到 0、plain 涨到 100。
+    """
+    t = np.asarray(Image.open(resolve(art_path)).convert("RGBA"), dtype=np.float64)
+    if t.ndim == 2:
+        t = np.dstack([t, t, t, np.full_like(t, 255.0)])
+    x0, y0, x1, y1 = rect
+    ax, ay = anchor
+    # 美术与帧各按自己的边界钳（帧比美术小的那一圈只比重叠部分）
+    ax0, ay0 = max(0, x0), max(0, y0)
+    ax1, ay1 = min(t.shape[1], x1), min(t.shape[0], y1)
+    fx0, fy0 = max(0, ax + ax0), max(0, ay + ay0)
+    fx1, fy1 = min(img.shape[1], ax + ax1), min(img.shape[0], ay + ay1)
+    if ax1 <= ax0 or ay1 <= ay0 or fx1 <= fx0 or fy1 <= fy0:
+        return None
+    art = t[fy0 - ay:fy1 - ay, fx0 - ax:fx1 - ax]
+    a = art[:, :, 3] >= alpha_min
+    n = int(a.sum())
+    if n < 16:
+        return None
+    src = art[:, :, :3][a]
+    pred = np.column_stack([tint_pixel(c) for c in src]).astype(np.float64).T
+    frame = img[fy0:fy1, fx0:fx1][a]
+    hit = lambda q: int(round(100.0 * float((np.abs(frame - q).max(axis=1) <= tol).mean())))  # noqa: E731
+    return {"x": x0, "y": y0, "w": x1 - x0, "h": y1 - y0, "n": n,
+            "rate": hit(pred), "plain": hit(src)}
+
+
 # ----------------------------------------------------------------- 探针执行
 
 def run_probe(img, p, anchor):
@@ -263,6 +303,8 @@ def run_probe(img, p, anchor):
         starts = [b[0] - ay for b in blocks]
         return {"x": reg[0] - ax, "y": starts[0], "w": 0, "h": len(blocks), "n": sum(b[2] for b in blocks),
                 "rows": starts, "heights": [b[1] for b in blocks]}
+    if kind == "tint":
+        return tint_rate(img, p["art"], p["region"], (ax, ay), p.get("tol", 2))
     raise ValueError("unknown probe kind: %s" % kind)
 
 
@@ -276,6 +318,8 @@ def fmt(v):
         return "y=%d n=%d rows=%s" % (v["y"], v["h"], v["rows"][:10])
     if "agree" in v:
         return "(%d,%d) agree=%.3f" % (v["x"], v["y"], v["agree"])
+    if "rate" in v:  # tint：百分比是判据本体，bbox 只是它量在哪
+        return "改色%d%% 原样%d%% %dx%d n=%d" % (v["rate"], v["plain"], v["w"], v["h"], v["n"])
     return "(%d,%d) %dx%d" % (v["x"], v["y"], v["w"], v["h"])
 
 
@@ -630,6 +674,10 @@ def cmd_selftest(args):
     后面 B2..B7 全部建立在它上面。默认注入三种（1=亚像素容差内应判 ok，14/60=应 FAIL）。
     """
     spec = load_spec(args.spec)
+    if args.probe_kind == "tint":
+        print("tint 探针不靠位移注入判（它的 oracle x/y 就是矩形本身，搬多少都 Δ=0 = 假漏检）。\n"
+              "负对照走 ../evidence/r27-b3-equip/flatfill_control.py：拿合成帧看 rate 掉不掉档。")
+        return 2
     frame = resolve(spec.get("oracle_frame")) if spec.get("oracle_frame") else getattr(args, "frame", None)
     if not frame or not os.path.exists(frame):
         print("需要 spec 里已有 oracle_frame（先跑一次 mark）")

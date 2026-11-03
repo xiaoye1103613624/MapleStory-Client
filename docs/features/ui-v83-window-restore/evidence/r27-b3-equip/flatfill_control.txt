@@ -1,0 +1,24 @@
+负对照：合成帧过 layout.py check（期望：每档都有探针当场 FAIL）
+帧源 docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_equip.png  众数色=(204, 153, 170)
+
+flat_target check 退出码=1 抓到=是 由哪把尺抓到=tint
+    pet_slot_pink_bbox   oracle=(72,234) 31x31             实测=(40,233) 63x32           Δ=32 x-32 y-1            FAIL
+    pet_slot_wide_bbox   oracle=(6,234) 64x31              实测=MISSING                  Δ=999 oracle=(6,234) 64x31 actual=MISSING FAIL
+    tamed_slot_tint      oracle=改色99% 原样0% 32x32 n=1024    实测=改色0% 原样0% 32x32 n=1024   Δ=99 rate-99 plain+0     FAIL
+    saddle_slot_tint     oracle=改色100% 原样0% 32x32 n=1024   实测=改色0% 原样0% 32x32 n=1024   Δ=100 rate-100 plain+0   FAIL
+flat_modal  check 退出码=1 抓到=是 由哪把尺抓到=tint
+    tamed_slot_tint      oracle=改色99% 原样0% 32x32 n=1024    实测=改色46% 原样0% 32x32 n=1024  Δ=53 rate-53 plain+0     FAIL
+    saddle_slot_tint     oracle=改色100% 原样0% 32x32 n=1024   实测=改色46% 原样0% 32x32 n=1024  Δ=54 rate-54 plain+0     FAIL
+none        check 退出码=1 抓到=是 由哪把尺抓到=tint
+    pet_slot_wide_bbox   oracle=(6,234) 64x31              实测=MISSING                  Δ=999 oracle=(6,234) 64x31 actual=MISSING FAIL
+    tamed_slot_tint      oracle=改色99% 原样0% 32x32 n=1024    实测=改色0% 原样100% 32x32 n=1024 Δ=100 rate-99 plain+100  FAIL
+    saddle_slot_tint     oracle=改色100% 原样0% 32x32 n=1024   实测=改色0% 原样100% 32x32 n=1024 Δ=100 rate-100 plain+100 FAIL
+phase3      check 退出码=1 抓到=是 由哪把尺抓到=tint
+    pet_slot_wide_bbox   oracle=(6,234) 64x31              实测=(6,237) 64x28            Δ=3 x+0 y+3              FAIL
+    tamed_slot_tint      oracle=改色99% 原样0% 32x32 n=1024    实测=改色34% 原样0% 32x32 n=1024  Δ=65 rate-65 plain+0     FAIL
+    saddle_slot_tint     oracle=改色100% 原样0% 32x32 n=1024   实测=改色29% 原样0% 32x32 n=1024  Δ=71 rate-71 plain+0     FAIL
+over3       check 退出码=1 抓到=是 由哪把尺抓到=bbox
+    pet_slot_pink_bbox   oracle=(72,234) 31x31             实测=(72,231) 31x34           Δ=3 x+0 y-3              FAIL
+
+分工：平涂/漏涂由新加的 tint 尺抓到（逐像素等式），多染 3 行由原有的白框/网格尺抓到。
+结论：四种写法全部被门禁判死，B3-5 成立

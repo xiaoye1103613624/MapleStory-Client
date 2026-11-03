@@ -143,6 +143,74 @@
         "n": 0,
         "agree": 0.631
       }
+    },
+    {
+      "name": "tamed_slot_tint",
+      "kind": "tint",
+      "art": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_backgrnd.png",
+      "region": [5, 233, 37, 265],
+      "tol": 2,
+      "keys": [
+        "rate",
+        "plain"
+      ],
+      "delta_tol": 5,
+      "note": "TAMEDMOB(5,230)+槽位调色矩形 (0,3)、32x32。rate=与 tint(美术) 逐像素相等的占比，plain=与美术原样相等的占比。",
+      "oracle": {
+        "x": 5,
+        "y": 233,
+        "w": 32,
+        "h": 32,
+        "n": 1024,
+        "rate": 99,
+        "plain": 0
+      }
+    },
+    {
+      "name": "saddle_slot_tint",
+      "kind": "tint",
+      "art": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_backgrnd.png",
+      "region": [38, 233, 70, 265],
+      "tol": 2,
+      "keys": [
+        "rate",
+        "plain"
+      ],
+      "delta_tol": 5,
+      "oracle": {
+        "x": 38,
+        "y": 233,
+        "w": 32,
+        "h": 32,
+        "n": 1024,
+        "rate": 100,
+        "plain": 0
+      }
+    },
+    {
+      "name": "row7_col3_tint",
+      "kind": "tint",
+      "art": "docs/features/ui-v83-window-restore/evidence/r27-oracle/tmpl/Equip_backgrnd.png",
+      "region": [71, 233, 103, 265],
+      "tol": 2,
+      "keys": [
+        "rate",
+        "plain"
+      ],
+      "delta_tol": 5,
+      "active_in": [
+        "native"
+      ],
+      "note": "行 7 第 3 格：原生这帧是改色的（rate 与另两格同级），但我们的 iconpositions 表里没有这个相位的槽（README §6.4b-3）⇒ 归属未定，只在 --mode native 下判，客户帧对账报 SKIP，不算回归失败也不算已修。",
+      "oracle": {
+        "x": 71,
+        "y": 233,
+        "w": 32,
+        "h": 32,
+        "n": 1024,
+        "rate": 100,
+        "plain": 0
+      }
     }
   ],
   "oracle_frame": "docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_equip.png",

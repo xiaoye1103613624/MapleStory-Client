@@ -97,10 +97,27 @@ None，改拿该窗口一颗**小按钮位图**当锚（`BtClose/normal/0` 12x12
 | `band` | 某颜色「水平连续段 ≥ min_run」的**整列行号** | 网格尺：行距漂移 / 少一行 / 整体偏上下 |
 | `lines` | 把有墨的行聚成**文本行块**，返回每块行首 + 行距 + 墨高 | G2 基线/行距：行距虚高、首行沉出框外 |
 | `blob` | 某颜色在区域内的 bbox（带 `row_min`/`col_min` 抗杂散点） | 文字落位：数值有没有落在框内 |
+| `tint` | 一块矩形里「帧 == 调色(美术)」与「帧 == 美术原样」两个逐像素命中率 | **盖纯色冒充改色**、忘改色、改色取样相位错 |
 
 `band` 比的是**整张行列表**，不只是首行：行距漂和少一行是两个独立缺陷，只看首行会漏。
 `band` 量不出行距（它返回每一行有墨的行号），所以文本行距必须用 `lines`——
 G2 的判据形式就是「行首序列」，`cmp_probe` 对 `rows` 逐元素比，错一行即 Δ=99。
+
+**`tint` 是为堵一个真实存在的洞加的（B3-5，2026-11-03）**：装备窗的「不可用槽」是运行期
+对同一张 `backgrnd` **按格逐像素调色**（网点/渐变全保留，主色只占 ~47%，见
+[r27-b3-equip/README.md §3/§6.3](../r27-b3-equip/README.md)），而旧 `Equip.json` 只有
+`blob`/`band` 两类探针、比的是 **bbox** —— 在格上盖一块同色纯色能给出**完全相同的框**，
+所以平涂实现可以蒙过门禁。`tint` 比的是逐像素等式：`rate` = 与 `tint(美术)` 相等的实心像素占比，
+`plain` = 与美术原样相等的占比，调色核与 C++ `Graphics/MemoryTexture.cpp` 同一份（那边已过
+0..255×3 通道的穷举等价门禁）。原生 oracle 帧实测 `TAMEDMOB` 99% / `SADDLE` 100%、`plain` 均 0。
+负对照（离线合成帧，脚本
+[../r27-b3-equip/flatfill_control.py](../r27-b3-equip/flatfill_control.py)）：
+铺精确目标色 `rate`→**0%**、铺该格众数色（对作弊最有利的一档）→**46%**、不改色→**0%/plain 100%**、
+调色取样低 3px（没加 §8 那个 `(0,3)` 补偿）→**34% / 29%**，五种合成全部当场 FAIL；
+其中**铺众数色那一档只有新加的 tint 尺报 FAIL，原有 bbox 尺全过** —— 这句就是 B3-5 的验收。
+反过来说明分工：多染 3 行（把白描边也染色）由原有的白框/网格尺抓到，不靠 tint。
+`tint` 探针不参与 `selftest` 的位移注入（它的 `x/y` 就是矩形本身，搬多少都 Δ=0 会假报漏检），
+`selftest` 现在对这一 kind 直接拒跑并指向负对照脚本。
 
 **量不稳就不写 oracle。** 反例：`Stat` 详情面板的描边与文字同为深色，逐行墨量分块
 在 min_pix 4 时碎成 6 块墨高 3~6、在 min_pix 6+gap 2 时把相邻两行并成 pitch 36 ——
@@ -108,7 +125,9 @@ G2 的判据形式就是「行首序列」，`cmp_probe` 对 `rows` 逐元素比
 
 ## 已建
 
-7 张 spec、44 个探针，`check` 对各自入库的 oracle 帧全部 **不合格 0**（工具判据：Δ>tol 即 FAIL），
+10 张 spec、69 个探针（2026-11-03 复算：ChatBar 3 / Equip 10 / EquipTooltip 6 / Item 4 /
+ItemFull 9 / KeyConfig 9 / MonsterBook 5 / SkillMacro 8 / Stat 9 / UserList 6），
+`check` 对各自入库的 oracle 帧全部 **不合格 0**（2026-11-03 加 `tint` 探针后十张全量复跑，退出码均 0），
 且**每张都过了 `bias` 锚点审计**（见上一节 —— Item 那张原本偏 1px，已校正后重写 oracle）。
 其中 **Stat / Item / SkillMacro 三张已经用真机客户帧跑过 `check`**（B1b+B2，2026-11-01）：
 Item 三格 **Δ=0**（锚点校正前恒报 Δ=1，那是尺子的问题），Stat/SkillMacro 逐格 Δ ≤ 1px，
@@ -120,7 +139,7 @@ Item 三格 **Δ=0**（锚点校正前恒报 Δ=1，那是尺子的问题），S
 | `Item.json` 背包折叠 | `frames/native_bag_fold.png` 179x289 | **锚点=(3,-1)，不是自动量出的 (3,0)** —— 见下节；校正后**网格分隔行 = 50,84,118,152,186,220（行距恒 34）**，与真机帧逐格 Δ=0；`meso_digits` 金币带 (8,266) 167x14；**`meso_digit` 单个「0」纯墨迹 (131,269) 6x9 —— 夹在白框上下边框（y266/281）之间，金币常量 269/137 就是它定的** |
 | `KeyConfig.json` 键盘设置 | `frames/native_keyconfig.png` 629x369 | anchor=BtClose@(606,5) agree 1.000；**键帽上沿 59/92/125/158/191（行距恒 33、键帽高 32）**；4 颗 `icon` 键帽 + OK 按钮 tmpl 逐格命中现有坐标表 ⇒ 见 [origin-rule.md](origin-rule.md) |
 | `SkillMacro.json` 宏指令栏 | `frames/native_skill_macro.png` 379x291 | 锚故意钉在**左边技能窗** `Skill/backgrnd`@(0,0)（agree .568），这样「宏面板没贴在技能栏上」才是被检对象；量得面板左边界 x=184 而技能窗宽 175 ⇒ **原生贴合标准答案 = 两窗间隙 9px**；宏格行 y=86,131,176（行距恒 45）、三格 `Macroicon/<i>` tmpl 分别落在 (319,56)/(319,101)/(319,146) 且 agree 均 1.000。**面板那 6 格全带 `active_in: ["macro"]`**（技能窗单开时它们不存在）；`sp_digit` 不带 = 技能窗本体，量到 SP 白框里的「0」纯墨迹 (103,268) 6x9 —— 技能点常量 268/109 由它定 |
-| `Equip.json` 角色装备 | `frames/native_equip.png` 348x305 | anchor=`Equip/backgrnd`@(0,0) agree .884；**装备格网格顶边 32 / 底边 265 ⇒ 233 = 7×33+2，行距恒 33、共 7 行**；粉色宠物格 (72,234) 31x31 与 (6,234) 64x31 各钉一次底行的 x 起点/格宽/格高；宠物面板两条尺互证：`pet` tmpl @(171,123) agree .631 与白 bbox @(181,124)（= art 内框 (10,1) + (171,123)）。**Equip 网格线是 255/238 抖动，没有可用的周期分隔色**（四种灰蓝在 min_run≥20 下全部 0 行），尺只能取自面板白外框 |
+| `Equip.json` 角色装备 | `frames/native_equip.png` 348x305 | anchor=`Equip/backgrnd`@(0,0) agree .884；**装备格网格顶边 32 / 底边 265 ⇒ 233 = 7×33+2，行距恒 33、共 7 行**；粉色宠物格 (72,234) 31x31 与 (6,234) 64x31 各钉一次底行的 x 起点/格宽/格高；宠物面板两条尺互证：`pet` tmpl @(171,123) agree .631 与白 bbox @(181,124)（= art 内框 (10,1) + (171,123)）；**`tamed_slot_tint`/`saddle_slot_tint` 改色 99%/100%、原样 0%（B3-5 新增，专治平涂）**；`row7_col3_tint` 原生 100% 但我们表里无此槽 ⇒ 带 `active_in: ["native"]`，客户帧报 SKIP。**Equip 网格线是 255/238 抖动，没有可用的周期分隔色**（四种灰蓝在 min_run≥20 下全部 0 行），尺只能取自面板白外框 |
 | `ChatBar.json` 聊天栏展开 | `frames/native_chatbar_open.png` 569x103 | 底图 `base/backgrnd`(817x71) 与 `backgrnd2`(570x71) 都比这张裁图宽 ⇒ `anchor_in` 判模板过大，按降级规则改锚 `base/chatTarget`(81x20) @(1,79) agree .897，**参照点是那颗蓝框左上角，消息区在它上方 ⇒ 相对 y 为负是合法的**。`msg_stack_lines` 量到两条消息墨块 47..58 / 60..71 ⇒ **消息堆叠行距 13、墨高恒 12**；同一对行在 `打开了S-E-I-K页面.png`(1280x720) 的绝对 y=625/638 复量还是 13。聊天日志区没有底衬，字压在地图上，这条尺天生比带面板的窗不稳，复核先看 `_debug` 图 |
 | `EquipTooltip.json` 装备悬浮提示 | `背包中鼠标悬浮物品上显示的物品信息内容.png` 268x310（裁 y≥90 → `frames/EquipTooltip_native_crop.png`） | tooltip 各位图全是纯白 ⇒ 全帧模板匹配 SSD=0 命中 90 处（背包标题白条），**必须先无损裁掉上方无关区域**才能锚；锚 `ToolTip/Equip/Can/reqLEV` @(124,27) agree 1.000。`body_stat_lines` 四行 128/143/158/173 ⇒ **属性块行距恒 15**；`req_band_str`/`req_band_pop` 两条 tmpl 互证需求块**位图原点行距恒 12**（零抖动），而 `req_label_lines` 墨顶 11/12/13 抖 ⇒ 那是底图块不是文字行 |
 
@@ -157,6 +176,7 @@ python layout.py selftest ../evidence/r27-oracle/SkillMacro.json --probe macroic
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe grid_top_edge     --probe-kind band  --shifts 1,14,32
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_slot_pink_bbox --probe-kind blob --shifts 1,14,32
 python layout.py selftest ../evidence/r27-oracle/Equip.json     --probe pet_panel_tmpl    --probe-kind tmpl  --shifts 1,14,32
+python ../evidence/r27-b3-equip/flatfill_control.py            # tint 尺的负对照（平涂/漏涂/错相位五种合成都要 FAIL）
 python layout.py selftest ../evidence/r27-oracle/ChatBar.json   --probe msg_stack_lines   --probe-kind lines --shifts 1,13,32
 python layout.py selftest ../evidence/r27-oracle/EquipTooltip.json --probe body_stat_lines   --probe-kind lines --shifts 1,15,32
 python layout.py selftest ../evidence/r27-oracle/EquipTooltip.json --probe req_label_lines   --probe-kind lines --shifts 1,12,32
