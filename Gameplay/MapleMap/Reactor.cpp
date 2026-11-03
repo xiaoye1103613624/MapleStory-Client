@@ -30,6 +30,11 @@ namespace ms
 		std::string strid = string_format::extend_id(rid, 7);
 		src = nl::nx::Reactor[strid + ".img"];
 
+		// 被击打音效：原生 Sound/Reactor.img/{rid}/Hit（IDA sub_989ADD：
+		// 字符串 3073 "Sound/Reactor.img/%s/%s" + 5543 "Hit"，动作码 51 覆盖
+		// hit/break 两态共用）。修前 TODO 从不播，反应堆打击静音。
+		hitsound = Sound(nl::nx::Sound["Reactor.img"][std::to_string(rid)]["Hit"]);
+
 		normal = src[0];
 		animation_ended = true;
 		dead = false;
@@ -72,11 +77,11 @@ namespace ms
 
 	void Reactor::set_state(int8_t state)
 	{
-		// TODO: hit/break sounds
 		if (hittable)
 		{
 			animations[this->state] = src[this->state]["hit"];
 			animation_ended = false;
+			hitsound.play();
 		}
 
 		this->state = state;
@@ -85,6 +90,7 @@ namespace ms
 	void Reactor::destroy(int8_t, Point<int16_t>)
 	{
 		animations[this->state] = src[this->state]["hit"];
+		hitsound.play();
 		state++;
 		dead = true;
 		animation_ended = false;

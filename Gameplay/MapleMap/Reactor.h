@@ -20,6 +20,7 @@
 #include "MapObject.h"
 
 #include "../../Graphics/Animation.h"
+#include "../../Audio/Audio.h"
 
 #include <map>
 
@@ -45,6 +46,9 @@ namespace ms
 		int32_t oid;
 		int32_t rid;
 		int8_t state;
+		// 被击打音效（原生：Sound/Reactor.img/{rid}/Hit，见 IDA sub_989ADD
+		// 反编译 —— 字符串 3073 "Sound/Reactor.img/%s/%s" + 5543 "Hit"）。
+		Sound hitsound;
 		// TODO: Below
 		//int8_t stance; // ??
 		// TODO: These are in the GMS client

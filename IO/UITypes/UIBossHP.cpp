@@ -40,17 +40,37 @@ namespace ms
 					backgrnd.shift(o);
 				has_assets = true;
 			}
+			// 填充条（原生 DualMobGauge 的 gauge 分件，1×9 横向拉伸）：
+			// REA 反编译 sub_56C9B7 依次加载 backgrd/text/gauge 三分件
+			// （docs/features/beidou-v17-parity/notes/evidence/r17/rea_decompile_DualMobGauge_56C9B7.txt）。
+			// 修前 fill_w 算了却被 (void) 丢弃，血条只有背景+百分比文字、无填充。
+			nl::node f = root["gauge"];
+			if (f) {
+				fill = Texture(f);
+				Point<int16_t> fo = fill.get_origin();
+				if (fo.x() || fo.y())
+					fill.shift(fo);
+			}
+			nl::node t = root["text"];
+			if (t) {
+				textlay = Texture(t);
+				Point<int16_t> to = textlay.get_origin();
+				if (to.x() || to.y())
+					textlay.shift(to);
+			}
 		}
 		if (!has_assets)
 			LOG(LOG_WARN, "UIBossHP: no DualMobGauge/MobGage backgrnd");
 #endif
 	}
 
-	void UIBossHP::set_hp(int32_t id, int32_t cur, int32_t max, uint8_t, uint8_t)
+	void UIBossHP::set_hp(int32_t id, int32_t cur, int32_t max, uint8_t tc, uint8_t tbg)
 	{
 		oid = id;
 		cur_hp = cur;
 		max_hp = max > 0 ? max : 1;
+		tag_color = tc;
+		tag_bg = tbg;
 		visible = cur_hp > 0;
 		hide_ms = visible ? 8000 : 0;
 		int pct = static_cast<int>((static_cast<int64_t>(cur_hp) * 100) / max_hp);
@@ -66,18 +86,23 @@ namespace ms
 		if (backgrnd)
 			backgrnd.draw(position);
 
-		// Fill strip inside bar (simple color via repeated 1px — use label only if no fill texture)
-		float ratio = std::clamp(
-			static_cast<float>(cur_hp) / static_cast<float>(max_hp), 0.f, 1.f);
-		int16_t fill_w = static_cast<int16_t>(BAR_INNER_W * ratio);
-		// Soft fill: draw percent text centered on bar
+		// 填充条：gauge 分件从 1px 横向拉伸到 fill_w（对齐原生填充比例）。
+		if (fill)
+		{
+			float ratio = std::clamp(
+				static_cast<float>(cur_hp) / static_cast<float>(max_hp), 0.f, 1.f);
+			int16_t fill_w = static_cast<int16_t>(BAR_INNER_W * ratio);
+			int16_t fh = fill.height() > 0 ? fill.height() : 9;
+			// 填充条锚点：背景内左起，纵向对齐到条带。
+			Point<int16_t> fillpos = position + Point<int16_t>(12, backgrnd ? (backgrnd.height() - fh) / 2 : 17);
+			fill.draw(DrawArgument(fillpos, Point<int16_t>(fill_w, fh)));
+		}
+
 		Point<int16_t> mid = position + Point<int16_t>(
 			backgrnd ? static_cast<int16_t>(backgrnd.width() / 2) : 340,
 			backgrnd ? static_cast<int16_t>(backgrnd.height() / 2 - 6) : 10
 		);
 		label.draw(mid);
-
-		(void)fill_w;
 	}
 
 	void UIBossHP::update()

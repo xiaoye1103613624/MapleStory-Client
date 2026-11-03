@@ -35,7 +35,11 @@ namespace ms
 		int32_t cur_hp = 0;
 		int32_t max_hp = 1;
 		int32_t hide_ms = 0;
+		uint8_t tag_color = 0;
+		uint8_t tag_bg = 0;
 		Texture backgrnd;
+		Texture fill;      // DualMobGauge/gauge：1×9 填充条（横向拉伸）
+		Texture textlay;   // DualMobGauge/text：791×26 名牌底（可选）
 		Text label;
 	};
 }
