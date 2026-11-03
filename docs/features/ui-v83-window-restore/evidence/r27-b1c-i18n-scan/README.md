@@ -580,3 +580,55 @@ rc=1   guild.member_onlie <- IO/UITypes/UIGuild.cpp     （还原后 rc=0）
 数字都没错，错在**用 `HEAD` 当坐标**：它是个会过期的数。⇒ 从此「提交树」读数必须带 rev
 （尺子现在打 `HEAD(aa0d4e2) 提交树 keys = …`），复核档案的 §1 表也逐 rev 写死，链条见
 [gate-recheck-committed-keys.txt](gate-recheck-committed-keys.txt) §5。
+
+
+## 14. B1c-6（壳窗·UIMiscShells 非软键盘 261 站点 ⇒ 138 键）落地（2026-11-03）
+
+批次范围 = §10 新基线里 `UIMiscShells.cpp` 的 change_text / Text ctor 两档（旧口径 388 的 172 处
+软键盘提示**不在本批**，仍挂 §11 第 6 条裁决）。值 = 改动前英文字面量逐字重建，决策 B 不翻译；
+键表 [keys-6.txt](keys-6.txt)，门禁读数 [gate-r27-b1c6.txt](gate-r27-b1c6.txt)，
+版式回归 [layout-b1c6.txt](layout-b1c6.txt)，台账 [pending-copy.md](pending-copy.md) §B1c-6。
+
+### 14.1 本批改用机械接线器，原因和边界
+
+261 个站点、100 种字面量：手工逐个 `edit` 的 token 成本和出错面都不划算。接线器
+（本批临时件，已归档到本目录 [_b1c6_wiring.py](_b1c6_wiring.py)）只做三件事：
+①按 `+` 分段把 change_text / sm_tip 实参拆成「字面量段 + 变量段」，重建 ini 值（变量 ⇒ `{}`）；
+②按花括号深度栈给站点归属 enclosing 窗类（`Button::State` 这种返回类型不再冒充 owner）；
+③同值跨窗共享一条键、前缀 `common.*`（5b 先例是各窗各键，本批同文件内值重复率高——
+`"Sent…"` 7 处、`"Empty"` 13 处——共享更贴近 `common.channel` 的既有做法）。
+
+**机械档与人工档分账**：261 站点里 257 处是尺可见的机械档；4 处人工（跨行三元 1、
+`UITeleport::refresh_tip` 四段拼装 1、另 2 处一行双站点）。忠实度尺按「单字面量搬运」的
+语义跑 135/135，3 条整句键**刻意不进尺**（HEAD 里没有整串可查），改人工逐字对 —— 见 gate §4。
+
+### 14.2 站点数为什么从 216 变 261（尺盲区第三、四次现形）
+
+同 §9.3（5a 人工补 16 处）与 §8（5b 中文盲区）的教训复读一遍：**清点尺按行匹配形状，
+看不见形状变体**。本批新坐实三条：
+
+1. **ctor 成员初始化列表**：`: tip_label(Text::Font::A11M, …, "Report — SoftKey name")` ——
+   尺的 Text ctor 形状要求 `Text(Text::Font::` 紧挨，成员初始化里没有外层 `Text(`，
+   于是尺数 10、实 50（+40）。5a 时这类就改过（UIAdmin ctor），但尺一直没扩 ⇒ 本批直接按实形接。
+2. **自由函数第二显示通道**：`sm_tip(Color::Name::WHITE, "Open store…")` —— 与 `tip.change_text`
+   同一句话打两遍（窗内 tip_label + 全局 UIStatusMessenger）。值同 ⇒ 键同，两处一起接（+3）。
+3. **跨行 / 四段拼装**：`change_text(has_attach ? (…) : "No item")`（实参折行）与
+   `refresh_tip` 的 `tip += " #" + …`（拼接件不进 change_text 括号）。前者整句化，后者按
+   **三分支各建一条整句键** —— 拆段会把紧贴变量的前导空格交给加载器的 trim 吃掉（§13.3 同坑），
+   整句重建逐字 = 改动前拼出来的串。
+
+⇒ `scan_display_text.py` 的 426+2 之外，**软键盘档同样有这三类盲区**（例：L6067 三元软键盘提示
+已进 `scan_copy_blindspots.py` 的 218）。426 仍是下界，裁决后开工时以接线器同款深度栈重数。
+
+### 14.3 trim 坑的第一道闸前置
+
+§13.3 的教训（`前置任务: ` 这类端空白被加载器 trim）在本批做成**接线器自检**：建键时逐条比较
+`value != value.strip()`，命中即打 TRIM-WARN ⇒ 本批 138 键 **0 命中**（端空白全部落在 `{}` 内侧，
+例：`Q: {}` 的空格在冒号后、不在串末尾；`Egg #{} — Enter` 同理）。
+
+### 14.4 门禁与欠账
+
+`cl /c` 4 TU 全绿；`check_locale_keys.py` GATE OK（工作树 +138，提交树口径 307(02e9401) ⇒ 提交后 445）；
+arity 572 点 0 不合格；忠实尺 135/135 + 负对照一轮（破折号改连字符 ⇒ rc=1 点名）+ 尺自身抓到
+接线器漏登记的跨行人工键 1 条（`itemmegaphone.no_item`，补档后才绿 —— 负对照是被动发生的，如实记）；
+layout 十张 spec rc=0。真机整工程 Rebuild / 运行时负对照欠账不变（§12 末条，同一阻塞）。

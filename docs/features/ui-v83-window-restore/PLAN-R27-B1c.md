@@ -74,7 +74,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
 | **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
 | **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin（**已完**：24 文件 / 98 键，见「落地情况」）；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant`（**已完**：3 窗接线 15 键，`UIGender` 按裁决不接，见「落地情况」） | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
-| **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高） | ~~216~~ **388** | 同上 |
+| **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高）。**已完（2026-11-03）**：非软键盘 261 站点 / 138 键（接线器机械档 + 4 处人工档），软键盘 172+2 处不在本批、仍挂 §11 第 6 条裁决；见 evidence README §14 | ~~216~~ **388**（实接非软键盘 **261**，尺盲区见 §14.2） | 同上 |
 | **B1c-5d 在用窗软键盘档** | 新基线浮出来的在用窗余站 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 / `UIMegaphone` 5 / `UILoginNotice` 5 …），多数是软键盘提示位 | **76** | 同上；这批在 B1c-3 之后才算得清，因为当时那条尺看不见该形状 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
 
@@ -204,6 +204,17 @@ arity **336 点 0 不合格**；忠实度尺（提交前，判据 `HEAD`）**15/
 本批另补一条尺的缺口：`check_locale_keys.py` 看不见**三元选键** `Locale::text(c ? "a" : "b")`，
 补上后引用键（工作树快照，非不变量，见 §4.8）228 ⇒ 232 —— 其中 2 个是 **5b 漏掉的** `familytree.online/offline`（当时 ini 恰好有档，
 没炸成键名回显是运气，不是门禁放行）。负对照：把 `guild.member_online` 改错一个字母 ⇒ `rc=1` 并点名文件。
+
+**B1c-6 落地情况（2026-11-03）**：`UIMiscShells.cpp` 非软键盘档接完 —— 尺口径 216 是下界，
+接线器按花括号深度重数 = **261 站点 / 138 键**（差额构成与三条新坐实的尺盲区见 evidence README §14.2：
+ctor 成员初始化 +40、sm_tip 第二通道 +3、跨行/四段拼装人工 +2）。跨窗同值走 `common.*` 共享
+（5b 的先例是各窗各键，同文件内 `"Empty"`×13、`"Sent…"`×7 这类重复，一份键更贴 `common.channel` 的做法）。
+`UITeleport::refresh_tip` 四段拼装按**三分支整句建键**（拆段会把紧贴变量的前导空格交给加载器 trim，§13.3 同坑）。
+`L6185` 的 `diag_once` 中文串是日志不是展示文案，`scan_cjk_literals.py` 标档不接。
+门禁：4 TU `cl /c` CL_EXIT=0；`check_locale_keys.py` GATE OK（提交树 307(`02e9401`) ⇒ 本批后 445）；
+arity 572 点 0 不合格；忠实尺 135/135（3 条人工整句键逐字对，见 gate §4）+ 负对照一轮；
+`layout.py check` 十张 spec rc=0；站点尺 644 ⇒ **428 = 软键盘 426（待裁决）+ 批外已知 2**。
+读数：[gate-r27-b1c6.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c6.txt)。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 

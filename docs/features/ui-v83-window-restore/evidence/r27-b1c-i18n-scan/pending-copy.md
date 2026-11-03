@@ -252,3 +252,150 @@
 `tools/scan_display_text.py` 的清点（`inventory.txt`，402 处）里，**壳窗 333 处**是英文自造提示，
 按决策 B 同样「保持英文原值只建键」。那一批键落地时按同一格式追加到这里：一行一键，
 值照抄现英文，状态写「待取证」。**所以这张表会随 B1c-5/B1c-6 变长，不是收尾时才写的总结。**
+
+
+### B1c-6（壳窗·UIMiscShells 非软键盘 · 138 键，值 = 站点原英文字面量逐字重建）
+
+同 5b 的口径：「建议取证来源」统一「本包自造，无原生依据」（Wave-A 壳窗，原生 v83 无对应流程）。
+`{}` = 变量插点位。`common.*` = 同值跨窗共享。
+
+| 键 | 现值（zh / en） | 站点 | 建议取证来源 | 状态 |
+| --- | --- | --- | --- | --- |
+| `common.open_store` | `Open store…` | UIMiscShells.cpp:200 + UIMiscShells.cpp:201 + UIMiscShells.cpp:1556 …×5 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `shop.no_514_503_permit` | `No 514/503 permit` | UIMiscShells.cpp:206 + UIMiscShells.cpp:207 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `shop.create` | `Create: {}` | UIMiscShells.cpp:213 + UIMiscShells.cpp:214 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `report.report_softkey_name` | `Report — SoftKey name` | UIMiscShells.cpp:222 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `report.reported` | `Reported {}` | UIMiscShells.cpp:237 + UIMiscShells.cpp:244 + UIMiscShells.cpp:267 …×5 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.empty_name` | `Empty name` | UIMiscShells.cpp:242 + UIMiscShells.cpp:282 + UIMiscShells.cpp:1169 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `report.target_softkey_enter` | `Target: {} — SoftKey/Enter` | UIMiscShells.cpp:254 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `coupon.coupon_enter_for_code` | `Coupon — Enter for code` | UIMiscShells.cpp:293 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `coupon.empty_code` | `Empty code` | UIMiscShells.cpp:302 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.sent` | `Sent…` | UIMiscShells.cpp:306 + UIMiscShells.cpp:324 + UIMiscShells.cpp:499 …×7 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `claim.claim_softkey_to_msg` | `Claim — SoftKey to/msg` | UIMiscShells.cpp:332 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `claim.need_name` | `Need name` | UIMiscShells.cpp:341 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.note` | `Note → {}` | UIMiscShells.cpp:344 + UIMiscShells.cpp:374 + UIMiscShells.cpp:381 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `incubator.drop_egg_softkey_slot` | `Drop egg / SoftKey slot` | UIMiscShells.cpp:391 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `incubator.egg_enter` | `Egg #{} — Enter` | UIMiscShells.cpp:408 + UIMiscShells.cpp:417 + UIMiscShells.cpp:445 …×5 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `incubator.drop_an_egg_first` | `Drop an egg first` | UIMiscShells.cpp:490 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `incubator.no_incubator` | `No Incubator` | UIMiscShells.cpp:495 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.drop_equip_softkey_slot` | `Drop equip / SoftKey slot` | UIMiscShells.cpp:594 + UIMiscShells.cpp:808 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.equip_enter` | `Equip #{} — Enter` | UIMiscShells.cpp:609 + UIMiscShells.cpp:616 + UIMiscShells.cpp:653 …×8 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.need_equip` | `Need equip` | UIMiscShells.cpp:628 + UIMiscShells.cpp:714 + UIMiscShells.cpp:842 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.equip_enter_to_use` | `Equip #{} — Enter to use` | UIMiscShells.cpp:632 + UIMiscShells.cpp:846 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.drop_an_equip_first` | `Drop an equip first` | UIMiscShells.cpp:674 + UIMiscShells.cpp:888 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `karmascissors.no_karma_scissors` | `No Karma Scissors` | UIMiscShells.cpp:685 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.e_equip_s_scroll_enter` | `E=equip S=scroll Enter` | UIMiscShells.cpp:694 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.enchant_slot` | `Enchant slot #{}` | UIMiscShells.cpp:718 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.scroll` | `Scroll {}→{}` | UIMiscShells.cpp:733 + UIMiscShells.cpp:783 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.need_scroll_equip` | `Need scroll+equip` | UIMiscShells.cpp:736 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.equip` | `Equip #{}` | UIMiscShells.cpp:748 + UIMiscShells.cpp:755 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.scroll_2` | `Scroll #{}` | UIMiscShells.cpp:768 + UIMiscShells.cpp:775 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `enchantskill.scroll_3` | `Scroll {}` | UIMiscShells.cpp:795 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemprotector.no_item_protector` | `No Item Protector` | UIMiscShells.cpp:899 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.teleport_rock` | `Teleport Rock` | UIMiscShells.cpp:908 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.no_teleport_rock` | `No Teleport Rock` | UIMiscShells.cpp:923 + UIMiscShells.cpp:999 + UIMiscShells.cpp:1042 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.need_map_name` | `Need map/name` | UIMiscShells.cpp:927 + UIMiscShells.cpp:1011 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.warp_map` | `Warp map…` | UIMiscShells.cpp:936 + UIMiscShells.cpp:1007 + UIMiscShells.cpp:1020 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.warp_to` | `Warp to {}` | UIMiscShells.cpp:939 + UIMiscShells.cpp:1023 + UIMiscShells.cpp:1064 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.need_vip_rock_for_name` | `Need VIP rock for name` | UIMiscShells.cpp:941 + UIMiscShells.cpp:1025 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.saved_map` | `Saved map…` | UIMiscShells.cpp:1047 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.no_saved_map_softkey` | `No saved map — SoftKey` | UIMiscShells.cpp:1072 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.warp` | `Warp #{}` | UIMiscShells.cpp:1076 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `speedquiz.quiz_softkey_answer` | `Quiz — SoftKey answer` | UIMiscShells.cpp:1081 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `speedquiz.empty_answer` | `Empty answer` | UIMiscShells.cpp:1089 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `speedquiz.ans` | `Ans: {}` | UIMiscShells.cpp:1090 + UIMiscShells.cpp:1108 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `ranking.ranking_softkey_name` | `Ranking — SoftKey name` | UIMiscShells.cpp:1152 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `ranking.find` | `Find: {}` | UIMiscShells.cpp:1165 + UIMiscShells.cpp:1171 + UIMiscShells.cpp:1192 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmegaphone.drop_item_softkey_msg` | `Drop item + SoftKey msg` | UIMiscShells.cpp:1208 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmegaphone.item_tab` | `Item tab={} #{}` | UIMiscShells.cpp:1221 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmegaphone.no_item` | `No item` | UIMiscShells.cpp:1248 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.empty_msg` | `Empty msg` | UIMiscShells.cpp:1254 + UIMiscShells.cpp:1484 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmegaphone.no_item_megaphone` | `No Item Megaphone` | UIMiscShells.cpp:1257 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `counsel.counsel_softkey_to_msg` | `Counsel — SoftKey to/msg` | UIMiscShells.cpp:1282 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `counsel.whisper` | `Whisper → {}` | UIMiscShells.cpp:1298 + UIMiscShells.cpp:1329 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `muruengraid.raid_softkey_note` | `Raid — SoftKey note` | UIMiscShells.cpp:1368 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.empty` | `Empty` | UIMiscShells.cpp:1376 + UIMiscShells.cpp:1659 + UIMiscShells.cpp:1752 …×13 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `muruengraid.note` | `Note: {}` | UIMiscShells.cpp:1377 + UIMiscShells.cpp:1394 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `createcygnus.cygnus_softkey_name` | `Cygnus — SoftKey name` | UIMiscShells.cpp:1405 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `createcygnus.name` | `Name: {}` | UIMiscShells.cpp:1414 + UIMiscShells.cpp:1435 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `megaphonebasic.megaphone_softkey_msg` | `Megaphone — SoftKey msg` | UIMiscShells.cpp:1456 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `megaphonebasic.no_megaphone` | `No Megaphone` | UIMiscShells.cpp:1489 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `personalshop.shop_softkey_c_title_o_a_b_x` | `Shop — SoftKey/C title \| O A B X` | UIMiscShells.cpp:1515 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.exit` | `Exit…` | UIMiscShells.cpp:1543 + UIMiscShells.cpp:1614 + UIMiscShells.cpp:1770 …×5 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.buy` | `Buy {}` | UIMiscShells.cpp:1573 + UIMiscShells.cpp:1642 + UIMiscShells.cpp:1833 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `membershop.membershop_softkey_title` | `MemberShop — SoftKey title` | UIMiscShells.cpp:1586 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `tradingroom.trade_softkey_meso_chat_c_x` | `Trade — SoftKey meso/chat \| C/X` | UIMiscShells.cpp:1650 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.meso` | `Meso {}` | UIMiscShells.cpp:1667 + UIMiscShells.cpp:1760 + UIMiscShells.cpp:1862 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.chat_sent` | `Chat sent…` | UIMiscShells.cpp:1674 + UIMiscShells.cpp:1766 + UIMiscShells.cpp:1869 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.confirm` | `Confirm…` | UIMiscShells.cpp:1693 + UIMiscShells.cpp:1888 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.transaction` | `Transaction…` | UIMiscShells.cpp:1697 + UIMiscShells.cpp:1892 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.visit` | `Visit…` | UIMiscShells.cpp:1701 + UIMiscShells.cpp:1896 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.additem` | `AddItem #{}` | UIMiscShells.cpp:1727 + UIMiscShells.cpp:1922 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `cashtradingroom.additem` | `AddItem {}` | UIMiscShells.cpp:1746 + UIMiscShells.cpp:1940 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `entrustedshop.entrusted_softkey_o_open` | `Entrusted — SoftKey / O=open` | UIMiscShells.cpp:1782 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `cashtradingroom.cashtrade_softkey_meso_chat_c_x` | `CashTrade — SoftKey meso/chat \| C/X` | UIMiscShells.cpp:1846 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemsearch.search_softkey_query` | `Search — SoftKey query` | UIMiscShells.cpp:1972 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.q` | `Q: {}` | UIMiscShells.cpp:1988 + UIMiscShells.cpp:1994 + UIMiscShells.cpp:2015 …×8 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.empty_query` | `Empty query` | UIMiscShells.cpp:1993 + UIMiscShells.cpp:5624 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `aranskillguide.aran_guide_softkey_tip` | `Aran guide — SoftKey tip` | UIMiscShells.cpp:2032 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `aranskillguide.skill` | `Skill {}` | UIMiscShells.cpp:2051 + UIMiscShells.cpp:2090 + UIMiscShells.cpp:2103 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `monsterkilling.mobkill_softkey_tip` | `MobKill — SoftKey tip` | UIMiscShells.cpp:2173 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillex.skillex_softkey_skillid` | `SkillEx — SoftKey skillid` | UIMiscShells.cpp:2239 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillex.bad_id` | `Bad id` | UIMiscShells.cpp:2252 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillex.use_lv` | `Use {} lv{}` | UIMiscShells.cpp:2259 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillex.use` | `Use {}` | UIMiscShells.cpp:2287 + UIMiscShells.cpp:2299 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `book.book_softkey_page` | `Book — SoftKey page` | UIMiscShells.cpp:2311 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `book.cover` | `Cover: {}` | UIMiscShells.cpp:2332 + UIMiscShells.cpp:2341 + UIMiscShells.cpp:2375 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `book.page` | `Page: {}` | UIMiscShells.cpp:2346 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `questalarm.start` | `Start {}` | UIMiscShells.cpp:2418 + UIMiscShells.cpp:2427 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `gmboard.gmboard_softkey_announce` | `GMBoard — SoftKey announce` | UIMiscShells.cpp:2506 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `gmboard.showusers` | `ShowUsers` | UIMiscShells.cpp:2519 + UIMiscShells.cpp:2548 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `gmboard.alertadmins` | `AlertAdmins` | UIMiscShells.cpp:2524 + UIMiscShells.cpp:2553 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `shortcut.1_0_a_z_symbols_gamemenu` | `1-0 A-Z $+symbols(~GameMenu)` | UIMiscShells.cpp:2567 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `cancelrequests.enter_cancel_esc_close` | `Enter=cancel  Esc=close` | UIMiscShells.cpp:3728 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `cancelrequests.cancelled` | `Cancelled…` | UIMiscShells.cpp:3747 + UIMiscShells.cpp:3757 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.drop_item_softkey_dst` | `Drop item / SoftKey dst` | UIMiscShells.cpp:3853 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.marked_tab_softkey_dst` | `Marked tab={} #{} — SoftKey dst` | UIMiscShells.cpp:3867 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.moved` | `Moved #{}→{}` | UIMiscShells.cpp:3873 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.src_softkey_dst` | `Src #{} — SoftKey dst` | UIMiscShells.cpp:3895 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.moved_2` | `Moved →{}` | UIMiscShells.cpp:3904 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `itemmove.move` | `Move {}` | UIMiscShells.cpp:3929 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `fadeyesno.y_enter_yes_n_esc_no` | `Y/Enter=Yes  N/Esc=No` | UIMiscShells.cpp:3940 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.info` | `Info` | UIMiscShells.cpp:4113 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.whisper` | `Whisper` | UIMiscShells.cpp:4114 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.party` | `Party` | UIMiscShells.cpp:4115 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.report` | `Report` | UIMiscShells.cpp:4116 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.trade` | `Trade` | UIMiscShells.cpp:4117 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.buddy` | `Buddy` | UIMiscShells.cpp:4118 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.messenger` | `Messenger` | UIMiscShells.cpp:4119 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.guild` | `Guild` | UIMiscShells.cpp:4120 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.family` | `Family` | UIMiscShells.cpp:4121 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `contextmenu.fame` | `Fame` | UIMiscShells.cpp:4122 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `eventwindow.event_softkey_note_e_uievent` | `Event — SoftKey note / E=UIEvent` | UIMiscShells.cpp:4182 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `multiline.multiline_softkey_text` | `MultiLine — SoftKey text` | UIMiscShells.cpp:4380 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `multiline.no_chalk_kite` | `No chalk/kite` | UIMiscShells.cpp:4411 + UIMiscShells.cpp:4448 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `macro.macro_softkey_name` | `Macro — SoftKey name` | UIMiscShells.cpp:5374 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.saved` | `Saved: {}` | UIMiscShells.cpp:5401 + UIMiscShells.cpp:5791 + UIMiscShells.cpp:5812 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.assigned` | `Assigned {}` | UIMiscShells.cpp:5410 + UIMiscShells.cpp:5422 + UIMiscShells.cpp:5821 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `common.macro_full` | `Macro full` | UIMiscShells.cpp:5413 + UIMiscShells.cpp:5424 + UIMiscShells.cpp:5823 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `utildlgexavatar.avatar_softkey_emote` | `Avatar — SoftKey emote` | UIMiscShells.cpp:5445 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `utildlgexavatar.emote` | `Emote {}` | UIMiscShells.cpp:5458 + UIMiscShells.cpp:5484 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `utildlgexmultipet.multipet_softkey_name` | `MultiPet — SoftKey name` | UIMiscShells.cpp:5553 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `utildlgexmultipet.no_517_tag` | `No 517* tag` | UIMiscShells.cpp:5569 + UIMiscShells.cpp:5595 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `utildlgexmultipet.rename` | `Rename: {}` | UIMiscShells.cpp:5573 + UIMiscShells.cpp:5597 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `exceptionitemsearch.exsearch_softkey_query` | `ExSearch — SoftKey query` | UIMiscShells.cpp:5607 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `mobgage.mob` | `Mob` | UIMiscShells.cpp:5662 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `mobgage.txt` | `{}%` | UIMiscShells.cpp:5695 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillup.skill_up` | `Skill Up` | UIMiscShells.cpp:5713 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `skillup.sp` | `SP {}` | UIMiscShells.cpp:5725 + UIMiscShells.cpp:5733 + UIMiscShells.cpp:5756 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `macroskill.macroskill_softkey_name` | `MacroSkill — SoftKey name` | UIMiscShells.cpp:5776 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `questicon.q` | `Q{}` | UIMiscShells.cpp:5859 + UIMiscShells.cpp:5868 + UIMiscShells.cpp:5895 …×4 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `questicon.done` | `Done {}` | UIMiscShells.cpp:5917 + UIMiscShells.cpp:5928 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `questicon.forfeit` | `Forfeit {}` | UIMiscShells.cpp:5939 + UIMiscShells.cpp:5946 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `minigametable.table` | `Table` | UIMiscShells.cpp:5959 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `minigametable.place_p` | `Place ({},{}) p={}` | UIMiscShells.cpp:5996 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `minigametable.card` | `Card #{}` | UIMiscShells.cpp:6047 + UIMiscShells.cpp:6084 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `minigametable.omok` | `Omok {}` | UIMiscShells.cpp:6061 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.tip_first_map` | `Enter=1st map #{} \| SoftKey map/name \| S=save` | UIMiscShells.cpp:955 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.tip_vip_map` | `Enter=1st map VIP#{} \| SoftKey map/name \| S=save` | UIMiscShells.cpp:957 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |
+| `teleport.tip_empty` | `Enter=1st map (empty) \| SoftKey map/name \| S=save` | UIMiscShells.cpp:958 | 本包自造，无原生依据（Wave-A 壳窗） | 待用户定措辞 |

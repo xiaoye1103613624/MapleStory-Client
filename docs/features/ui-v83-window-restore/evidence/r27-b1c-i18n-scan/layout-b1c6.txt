@@ -1,0 +1,11 @@
+=== r27-oracle\ChatBar.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_chatbar_open.png | 不合格 0 / 3（不适用跳过 0）
+=== r27-oracle\Equip.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_equip.png | 不合格 0 / 9（不适用跳过 1）
+=== r27-oracle\EquipTooltip.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/EquipTooltip_native_crop.png | 不合格 0 / 6（不适用跳过 0）
+=== r27-oracle\Item.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_fold.png | 不合格 0 / 4（不适用跳过 0）
+=== r27-oracle\ItemFull.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_open.png | 不合格 0 / 9（不适用跳过 0）
+=== r27-oracle\KeyConfig.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_keyconfig.png | 不合格 0 / 9（不适用跳过 0）
+=== r27-oracle\MonsterBook.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_monsterbook.png | 不合格 0 / 5（不适用跳过 0）
+=== r27-oracle\SkillMacro.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_skill_macro.png | 不合格 0 / 2（不适用跳过 6）
+=== r27-oracle\Stat.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_stat.png | 不合格 0 / 8（不适用跳过 1）
+=== r27-oracle\UserList.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_friend_list.png | 不合格 0 / 6（不适用跳过 0）
+汇总 specs=10 非零返回=0

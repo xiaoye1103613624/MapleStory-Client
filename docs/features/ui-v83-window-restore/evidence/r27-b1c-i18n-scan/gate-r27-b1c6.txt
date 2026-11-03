@@ -1,0 +1,68 @@
+# R27-B1c-6 门禁读数（2026-11-03）
+
+批次范围：`UIMiscShells.cpp` 非软键盘展示文案 261 站点 ⇒ 138 键（值=原字面量逐字重建，决策 B）。
+键表：[keys-6.txt](keys-6.txt)；台账见 [README.md](README.md) §14 与 [pending-copy.md](pending-copy.md) §B1c-6。
+
+## 1. 编译（cl /c，build_6.bat = 5c 工装同款，4 TU）
+
+```
+VCVARS_ERRORLEVEL=0   CL_EXIT=0   error 行 0
+TU: IO/UITypes/UIMiscShells.cpp Util/Locale.cpp IO/LocaleBindings.cpp IO/UIElement.cpp
+```
+
+## 2. 键门禁（check_locale_keys.py）
+
+```
+HEAD(02e9401) 提交树 keys = zh 307 / en 307 ｜工作树多 138 条未提交键（= 本批）
+代码引用键 365 个 / 动态前缀 5 个
+GATE OK
+```
+
+提交树口径（PLAN §4.8）：307（含并行会话已入库的 sysopt 6 条）→ 本批提交后应为 **307 + 138 = 445**。
+负对照一轮：错拼 `itemmegaphone.no_item` 未建档时 rc=1 并点名文件（本批跑接线器漏了跨行三元的人工键，被尺抓到，补上后才绿 —— 这条算尺的既成负对照）。
+
+## 3. 占位符 arity（check_placeholder_arity.py --both）
+
+```
+arity 校验调用点 = 572 | 不合格 = 0
+```
+
+## 4. 值保真（check_value_fidelity.py --rev HEAD，提交前）
+
+```
+ini 真源 135 键（= 138 键表 − 3 条人工整句键；含跨行三元补的 `itemmegaphone.no_item`）
+片段全部命中 = 135 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
+```
+
+- 表用 `keys-6.txt` 的 135 机械档子集；**3 条人工整句键**（`teleport.tip_first_map/tip_vip_map/tip_empty`）
+  刻意不入子表：HEAD 里原文是四段 `tip += ".."` 拼装，忠实尺按整串查必然查无（尺语义 = 单字面量搬运）。
+  这 3 条改**人工逐字对**：`"Enter=1st map" + " #" + map + " | SoftKey map/name | S=save"` ⇒
+  `Enter=1st map #{} | SoftKey map/name | S=save`，三分支逐段核对通过（README §14.4）。
+- 负对照一轮：把 `incubator.egg_enter` 的破折号 `—` 改成 `-` ⇒ rc=1、点名「片段查无」，改回即绿。
+
+## 5. 版式回归（layout.py check × 10 spec）
+
+见 [layout-b1c6.txt](layout-b1c6.txt)：`specs=10 非零返回=0`，61 项断言不合格 0。
+
+## 6. 三把尺（站点/中文/盲区）
+
+```
+scan_display_text.py  sites=644 ⇒ 428（= SoftKey 426 + 批外已知 2：UIChatBar:1781「/w 」、UIWorldSelect:229「Ver. 」）
+scan_cjk_literals.py  total=14 ⇒ 14（本批零中文站；UIMiscShells 那 1 处是 diag_once 日志串，非展示文案，档号已标 B1c-6）
+scan_copy_blindspots.py  candidates=387 ⇒ 218（UIMiscShells 残留 5 ⇒ 2：refresh_tip 四段拼装整句化已接；
+  剩 L6067 `game_kind == 2 ? "Card slot" : "Omok x,y"` 的两条字面量 = 软键盘三元形状，归 §11 第 6 条裁决）
+```
+
+**计数口径（如实）**：开工前尺读数 216（change_text 206 + Text ctor 10）是**下界**——
+接线器实收 261 站点（change_text 208 + Text ctor 50 + sm_tip 3），差额构成：
+① **ctor 成员初始化档 +40**：尺的 Text ctor 形状只认 `Text(Text::Font::X, "..")` 两实参紧挨的写法，
+`: tip_label(Text::Font::X, Align, Color, "..")` 看不见（5a 也踩过同一条，当时人工补 16）；
+② sm_tip 第二显示通道 +3（自由函数里把同一句话再打到 UIStatusMessenger）；
+③ change_text +2（一行双站点，尺按行只记一次）；④ 跨行三元 1 处（尺的已知盲区，人工整句化）；
+⑤ `UITeleport::refresh_tip` 四段拼装 1 段（`scan_copy_blindspots.py` 那把尺浮出来的，整句建键避开加载器 trim）。
+另 `UIMiscShells.cpp:6185` 的 `diag_once` 中文串是**日志**不是展示文案，`scan_cjk_literals.py` 已标档不接。
+PLAN §3 表内 388 = 含软键盘 172 的旧口径；本批非软键盘按新实为 261，余 172 + 2 处三元软键盘挂 §11 第 6 条裁决。
+
+## 7. 未跑项（欠账不变）
+
+真机整工程 Rebuild 与运行时负对照：`MapleStory.exe` 占着 OutDir，沿用既有等待策略（用户自行关闭后进行）。
