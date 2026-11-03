@@ -1,0 +1,21 @@
+# check_locale_keys.py 重跑（键门禁双行读数上线后）
+# 取数时 HEAD = aa0d4e2（并行会话的 R28-B4 提交，已把 6 条 sysopt.combo.* 提进提交树）
+# ⇒ 这一份看不到 drift，是因为**提交树追上工作树了**，不是尺子失效。
+# 同一把尺的**第一版**（还没打 rev）在 e0fbb7b 上的原样输出是：
+#   zh-CN keys = 307
+#   en-US keys = 307
+#   HEAD 提交树 keys = zh 301 / en 301（本批键数请看这一行；工作树多出 6 条属未提交件）
+# ⇒ 两档之差正是这条读数存在的理由，也是**为什么第二版补了 rev**：键数不记 rev，下次复跑必然「对不上」。
+#   见本档案 §2 与 gate-recheck-committed-keys.txt、evidence README §13.5、PLAN §4.8。
+
+zh-CN keys = 307
+en-US keys = 307
+HEAD(aa0d4e2) 提交树 keys = zh 307 / en 307（本批键数看这一行）｜工作树与提交树一致
+  复核：git show aa0d4e2:locale/zh-CN.ini | grep -cE '^[a-z][^=]*='
+equip.speed.     枚举  9 条  zh 缺 0  en 缺 0
+equip.stat.      枚举 15 条  zh 缺 0  en 缺 0
+equip.type.      枚举 32 条  zh 缺 0  en 缺 0
+代码引用键 230 个 / 动态前缀 5 个
+
+GATE OK: 语言文件键集对齐，所有数据表枚举均能折成已建档的键，且代码引用的键全部建档
+rc=0

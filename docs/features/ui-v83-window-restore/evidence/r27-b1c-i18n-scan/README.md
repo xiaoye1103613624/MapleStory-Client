@@ -470,7 +470,7 @@ WRONG-REV：98/98 个键的字面量已存在于 HEAD~1 ⇒ HEAD~1 含**改动�
 
 | 尺 | 读数 |
 | --- | --- |
-| `check_locale_keys.py` | 288/288 键齐（zh + en），代码引用 215、动态前缀 5 ⇒ GATE OK |
+| `check_locale_keys.py` | **提交树 286 / 286** 键齐（zh + en）⇒ GATE OK。当时 stdout 报 288/288、引用 215，那是**工作树**快照（混入并行会话未提交的 2 条 `sysopt.combo.*`）；口径更正见 §13.5 |
 | `check_placeholder_arity.py --both` | 调用点 **318**，不合格 **0**；负对照 3/3 命中 [gate-r27-b1c5b-arity.txt](gate-r27-b1c5b-arity.txt) |
 | 忠实度尺 | 98/98 片段逐字命中 [gate-r27-b1c5b-fidelity.txt](gate-r27-b1c5b-fidelity.txt) |
 | `scan_display_text.py` | 站点 713 ⇒ **644**（壳窗 583 / 在用 61；形状 change_text 207 / `Text` 构造 11 / SoftKey 提示 426） |
@@ -536,7 +536,7 @@ rc=1   guild.member_onlie <- IO/UITypes/UIGuild.cpp     （还原后 rc=0）
 
 ### 13.4 门禁与欠账
 
-编译 3 TU `CL_EXIT=0`；键门禁 `303/303 GATE OK`；arity `336 站点 / 0 不合格`；
+编译 3 TU `CL_EXIT=0`；键门禁**提交树 301/301**（工具当时报 303，见 §13.5）`GATE OK`；arity `336 站点 / 0 不合格`；
 值保真（提交前，判据 `HEAD`）`15/15`；版式 `specs=10 非零返回=0`。
 
 - **英文措辞全部本包自造**：15 条 en 值登记在 [pending-copy.md](pending-copy.md) §B1c-5c，等用户定稿。
@@ -545,3 +545,38 @@ rc=1   guild.member_onlie <- IO/UITypes/UIGuild.cpp     （还原后 rc=0）
   该文件此刻被并行会话占着，本批不动（最小改动 + 冲突面）。
 - **真机运行时负对照仍欠**：`MapleStory.exe` 占 OutDir，须用户关闭客户端后整包 `-t:Rebuild`，
   然后切语言看这三窗（任务详细态 / 公会标题与成员行 / 店主名）是否随 ini 变。
+
+### 13.5 归档口径事故：把「工作树读数」当成「本批键数」写进了档案
+
+复核 5c 时顺手对了一遍提交树，发现**本批归档的键数一直偏大 2**：5b 报 288（提交树 286）、
+5c 报 303（提交树 301）。数字**没记错**，是**口径**记错 —— `check_locale_keys.py` 读的是工作树，
+而共享工作树里躺着并行会话未提交的 `sysopt.combo.*`（5b/5c 归档时各 2 条，复核时 6 条）。
+
+**为什么这条值得单记**：档案里的键数不是「当时屏幕上显示过什么」，而是「**这批建了多少键**」——
+后者要和键表行数（98 / 15）逐条对得上，一旦混进别人的键，下批复查时会先怀疑自己的键表漏行，
+白花一轮时间去查一个不存在的缺陷。这跟 §12.1「搬过去不等于搬对了」、§9.2「空跑看着像全过」
+是同一类：**读数必须和它要证明的命题同口径**。
+
+处置（三件，都已落地）：
+
+1. 尺子自己打两行 —— 工作树 + `HEAD` 提交树，且**提交树那一行带 rev**，旁边写出可复核的 `git show` 命令
+   （[tools/check_locale_keys.py](../../tools/check_locale_keys.py) 的 `committed_key_counts()`；
+   拿不到 git 时那一行直接不打，不影响门禁）。
+2. 逐 rev 复核并落盘 [gate-recheck-committed-keys.txt](gate-recheck-committed-keys.txt)：
+   提交树 `188 (5a) → 286 (5b) → 301 (5c)`，净增 `+98 / +15`，与两份键表行数一致 —— 本批**不变量**只有这一条。
+   复核读数 [gate-recheck-5c-run.txt](gate-recheck-5c-run.txt)。
+3. 旧档案**不删原始 stdout**（那是历史事实），只在其后补「口径更正」段：
+   [gate-r27-b1c5b.txt](gate-r27-b1c5b.txt) §2、[gate-r27-b1c5c.txt](gate-r27-b1c5c.txt) §2、
+   [gate-r27-b1c5c-keys.txt](gate-r27-b1c5c-keys.txt) 头部、[pending-copy.md](pending-copy.md) §B1c-5c，
+   以及 §12.3 / §13.4 两张读数表。
+
+顺带一条同源结论：**「代码引用键 N 个」也是工作树源码读数**，会随别人的未提交引用点漂移
+（5b 归档 215 → 5c 归档 232 → 2026-11-03 重跑 230；差的 2 处不属本批）。所以批间比较一律用提交树键数，
+不用引用数 —— 这条已写进 [PLAN-R27-B1c.md](../../PLAN-R27-B1c.md) 的常设门禁。
+
+**复核当场又撞上第二层：`HEAD` 自己会动。** 我写下「工作树 307 / 提交树 301」之后几分钟，
+并行会话提交了 `aa0d4e2`（R28-B4），把当初那 6 条未提交的 `sysopt.combo.*` 提进了提交树 ——
+同一句 `git show HEAD:locale/zh-CN.ini | grep -c …` 从 301 变 307，两份档案读数当场「互相矛盾」。
+数字都没错，错在**用 `HEAD` 当坐标**：它是个会过期的数。⇒ 从此「提交树」读数必须带 rev
+（尺子现在打 `HEAD(aa0d4e2) 提交树 keys = …`），复核档案的 §1 表也逐 rev 写死，链条见
+[gate-recheck-committed-keys.txt](gate-recheck-committed-keys.txt) §5。

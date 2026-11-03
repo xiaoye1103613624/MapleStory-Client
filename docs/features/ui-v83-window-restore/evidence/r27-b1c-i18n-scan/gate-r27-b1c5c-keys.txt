@@ -1,5 +1,8 @@
 # R27-B1c-5c 键门禁读数（stdout cp936，按 GBK 解码后转 UTF-8）
 # rc=0  [三元选键形状已补进门禁]
+# 口径：下面 303 是**工作树**读数（含并行会话未提交的 2 条 sysopt.combo.*）。
+#       本批提交树 = 301 / 301（`git show 6bd638a:locale/zh-CN.ini | grep -cE '^[a-z][^=]*='`）。
+#       复核与更正见 [gate-recheck-committed-keys.txt](gate-recheck-committed-keys.txt)。
 zh-CN keys = 303
 en-US keys = 303
 equip.speed.     枚举  9 条  zh 缺 0  en 缺 0

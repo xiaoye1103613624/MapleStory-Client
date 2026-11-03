@@ -185,7 +185,7 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 （`delivery.row_meso` 丢 `m` 单位并把两个插值塌成一个、`delivery.row_item` 丢一个空格），已修 ——
 结论进方法论：**机械搬运的验收判据必须回到原文逐字对，不能只看「键建完了」**。
 门禁：24 TU `cl /c` CL_EXIT=0 / error 0 行（43 warning 全为既有类 C4005 C4101 C4244 C4267）；
-`check_locale_keys.py` **288/288**；`scan_display_text.py` 站点 **713 ⇒ 644**；`scan_copy_blindspots.py`
+`check_locale_keys.py` **提交树 286/286**（当时 stdout 报 288，是工作树混入并行会话未提交键，见 evidence README §13.5）；`scan_display_text.py` 站点 **713 ⇒ 644**；`scan_copy_blindspots.py`
 候选 **469 ⇒ 387**（本批 24 文件内残留 0，`UIAlliance.cpp:178` 属 SoftKey 三元形状，见 5a 第 3 条）；
 `layout.py check` 十张 spec rc=0。负对照两轮教训（`ROOT` 少上一层导致 0 点空跑却 rc=0；`str.replace`
 目标写错导致破坏静默 no-op）已固化进工具：**判据/源码目录缺失 rc=2、`checked==0` 报告打 `FALSE-GREEN`、
@@ -197,12 +197,12 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 这批的 **zh 值就是改动前界面在显示的那句汉字**（决策 B 不翻译 ⇒ 中文侧零风险），等用户定稿的只有 en 那一份。
 `UIGender.cpp:126/128` 的 `t == "女"/"男"` **刻意不接**：那是软键盘输入的比对串，接了 i18n 会在切语言后失配，
 理由已进 `tools/scan_cjk_literals.py` 的 `EXEMPT`（档号 `B1c-5c`）。
-门禁：3 TU `cl /c` CL_EXIT=0；`check_locale_keys.py` **303/303 GATE OK**；arity **336 点 0 不合格**；
-忠实度尺（提交前，判据 `HEAD`）**15/15**；`layout.py check` 十张 spec rc=0。
+门禁：3 TU `cl /c` CL_EXIT=0；`check_locale_keys.py` **提交树 301/301 GATE OK**（当时 stdout 报 303，口径见 evidence README §13.5）；
+arity **336 点 0 不合格**；忠实度尺（提交前，判据 `HEAD`）**15/15**；`layout.py check` 十张 spec rc=0。
 **中文站点尺读数 30 ⇒ 14，且第一次带档号（`待接线=0`）**：余下 = `UIGender` 2（裁决不接）
 + `UIMiscShells` 1（日志串）+ `IO/Window.cpp` 11（开发者浮层，**待用户裁决**，文件被并行会话占着）。
 本批另补一条尺的缺口：`check_locale_keys.py` 看不见**三元选键** `Locale::text(c ? "a" : "b")`，
-补上后引用键 228 ⇒ 232 —— 其中 2 个是 **5b 漏掉的** `familytree.online/offline`（当时 ini 恰好有档，
+补上后引用键（工作树快照，非不变量，见 §4.8）228 ⇒ 232 —— 其中 2 个是 **5b 漏掉的** `familytree.online/offline`（当时 ini 恰好有档，
 没炸成键名回显是运气，不是门禁放行）。负对照：把 `guild.member_online` 改错一个字母 ⇒ `rc=1` 并点名文件。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
@@ -243,6 +243,15 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
    `WRONG-REV` 并 `rc=2`，不会把假阳性冒充成真缺陷。
    这条尺自身的负对照**必须自证破坏真的落地**（`str.replace` 静默 no-op 会让负对照假装通过），
    且工具必须拒绝空跑（`checked == 0` / 判据缺失 ⇒ 非 0 退出），否则「0 不合格」是自欺。
+8. **归档数字的口径 = 提交树，不是工作树**（B1c-5c 后立，此后每批必守）：
+   `check_locale_keys.py` 的键数与「代码引用键」都读**工作树**，共享工作树里并行会话的未提交件会被算进来
+   （5b 归档 288 / 5c 归档 303，提交树实为 286 / 301；差的就是别人那 2 条 `sysopt.combo.*`）。
+   ⇒ 档案里能当**批间不变量**的只有「提交树键数增量」，且必须与该批键表行数逐条对齐
+   （`188 → 286 → 301`，`+98` / `+15`）；「引用键 N 个」只能记成当时快照。
+   复核判据（可重跑）：`git show <rev>:locale/zh-CN.ini | grep -cE '^[a-z][^=]*='`，
+   尺子现在自己打两行；完整链条见 [gate-recheck-committed-keys.txt](evidence/r27-b1c-i18n-scan/gate-recheck-committed-keys.txt)。
+   **并且「提交树」读数必须带 rev**：写 `HEAD` 等于写一个会过期的数 —— 本次复核当场撞上第二次口径事故，
+   并行会话提交 `aa0d4e2` 后，同一句 `git show HEAD:` 从 301 变 307（档案 §5）。
 
 ## 5. 风险与阻塞（先说清，不许假装能闭环）
 

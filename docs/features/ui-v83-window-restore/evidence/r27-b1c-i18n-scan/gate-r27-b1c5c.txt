@@ -20,11 +20,18 @@ en-US keys = 303
 GATE OK
 ```
 
-288（B1c-5b 收口时）→ **303**：本批 +15，两份同键（决策 B）。
+**口径更正（2026-11-03 复核，见 [gate-recheck-committed-keys.txt](gate-recheck-committed-keys.txt)）**：
+上面这块是**工作树**读数，混着并行会话未提交的 2 条 `sysopt.combo.*`；本批落地后的提交树
+（`6bd638a`）是 **301 / 301**。现在这把尺自己打两行，见 [gate-recheck-5c-run.txt](gate-recheck-5c-run.txt)。
+
+286（B1c-5b 提交树）→ **301**（本批提交树）：**+15**，与键表 [keys-5c.txt](keys-5c.txt) 的 15 行逐条对齐，
+两份同键（决策 B）。
 **引用数 232 而不是 230**：本批补上「三元选键」形状（`Locale::text(c ? "a.x" : "a.y")`），
 一次多收 4 个键 —— 本批 2 个（`guild.member_online/offline`）+ **5b 漏掉的 2 个**
 （`familytree.online/offline`，见 [UIFamilyTree.cpp:70](../../../../../IO/UITypes/UIFamilyTree.cpp#L70)）。
 补尺前的读数 228 就是这个缺口的证据（15 个新键只进账 13）。
+「代码引用键」同样是工作树源码快照：2026-11-03 重跑同一把尺得 **230**（并行会话还在改未提交的引用点）。
+这一档只能当**当时快照**读，不可当不变量 —— 本批的不变量只有上面那条 +15。
 
 负对照（把 `guild.member_online` 拼成 `guild.member_onlie` 再跑）：
 
