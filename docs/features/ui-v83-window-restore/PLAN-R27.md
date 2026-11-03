@@ -46,11 +46,20 @@
   **B1b 收尾（2026-11-01 真机自证）**：常量全部改由 `evidence/r27-oracle/frames/` 里的原生帧量出，再用真机客户帧 `layout.py check` 复量 —— Stat 8/8、Item 3/3、SkillMacro `sp_digit` 1/1 全绿，逐格 Δ ≤ 1px。这一轮把两处「r15 拿自己截图反推」的假常数钉回原生：**背包金币 284→269 / x141→137**（旧值低 16px，整条数字掉到白框外 = 用户报的「金币值位置偏下了，没有在框内」）、**技能窗 SP 274→268 / x92→109**（低 6、左 17）。同时**用原生帧否掉三处可疑**：底栏职业名 40 / 角色名 56、聊天目标文字 8 —— 它们本来就是对的，不改（避免又一轮无证据手调）。
   门禁侧配套两件事：① 探针可按窗口形态声明 `active_in`，`check --mode` 只判该形态存在的格子（能力窗详情浮层、宏面板那 6 格），`mark`/`selftest` 仍全量照量；② `mark` 把仓库内的 oracle 帧存成**仓库相对路径**，7 张 spec 现在都能从干净 clone 复现（旧 spec 写的是桌面绝对路径，换机器即断）。
   **代价**：所有已按旧口径手调过的窗口常量要同批重量（B2–B7 按此排期）。
-- **B1c i18n 接入**：`Util/Locale` + `locale/zh-CN.ini`/`en-US.ini` 已具备配置键 `ui.language`（默认 `zh-CN`）与 `reload()`（`Configuration.cpp:491` 已调），**但全仓只有 3 个文件在用**。本批：
+- **B1c i18n 接入**：`Util/Locale` + `locale/zh-CN.ini`/`en-US.ini` 已具备配置键 `ui.language`（默认 `zh-CN`）与 `reload()`，**但全仓只有 3 个文件在用**。本批：
   1. 把已点名站点搬进 ini：`EquipTooltip.cpp:268/279/286/297/304/438-455/511/522/529/540/547`、`Data/EquipData.cpp:68-136`（`TOP` 等）、`Character/EquipStat.cpp:34-52`（`Defense`）、`UIMonsterBook.cpp:46/84/85/89`、`UIUserList.cpp:86/157/243/799`、`UIFamily.cpp:53/54`、`UIFamilyTree.cpp:53/73`、`UIAlliance.cpp:35`、`UIDelivery.cpp:78`、`UIMapMobPanel.cpp:64`、`UIMapDropPanel.cpp:36`、`UIMiscShells.cpp:202/491/681/895/919/1068…`；
   2. 加**运行时刷新通道**：语言变更后广播，使 ctor 里初始化的 `Text` 成员重取文案（切换 UI 留下一期）；
   3. 边界写死：**烤进位图的中文不做 i18n**（能力窗标签行、装备槽名、UserList 标题、GameOpt 底板 12 行粉钮）。
   4. 编码：ini 走 UTF-8，渲染走已修的矢量路径；禁止把中文塞进 GBK 封包路径。
+  **进度（2026-11-03，B1c-1）**：②的**触发侧**已接通——`Configuration::reload_if_changed()` 此前
+  **全仓零调用点**（原计划写的「`Configuration.cpp:491` 已调」是误记，那是定义处），
+  现挂在主循环首行 `MapleStory.cpp:240`；②的**消费侧**（已开着的窗要不要即时换文案）
+  因 `pre_add` 不重建元素而仍未通，是**待拍板的决策 C**。
+  上面点名的站点里 `EquipTooltip` 两支（预览/真实）现已全走 `equip.pot.*`。
+  其余待办不再靠记忆估：`tools/scan_display_text.py` 出了一份可复现台账
+  ——**402 处硬编码 = 382 英文（333 处在 Wave-A 壳窗）+ 20 处已是中文只差搬 key**，
+  分桶、按文件计数与三个决策点（A 范围 / B 无原生依据文案 / C 刷新语义）见
+  [evidence/r27-b1c-i18n-scan/README.md](evidence/r27-b1c-i18n-scan/README.md)。
 
 ### B2 能力窗 / 背包 / 金币（用户报的 1、5）
 `UIStatsInfo.cpp:225-237`（数值 Y 表）、`UIItemInventory.cpp:330`（金币）、格位回退表。依赖 B1a+B1b。

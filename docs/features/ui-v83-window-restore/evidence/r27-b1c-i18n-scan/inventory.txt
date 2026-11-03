@@ -1,0 +1,522 @@
+R27-B1c 展示文案硬编码站点清点
+模式：change_text("..") / Text(Text::Font::.. , "..") / show_text(Tooltip::Parent::.., "..")
+已 i18n 的行（引号在 Locale::* 之后，或字面量本身是 ini 键名）不计入。
+Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
+  UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
+
+总计 402 处 | 英文 382（壳窗 333 / 在用窗 49）| 中文 20
+
+
+== 英文原文 · 在用窗 ==
+
+[IO/UITypes/UICharSelect.cpp] 2 处
+  L134   Ver. 
+  L233   1
+
+[IO/UITypes/UICommonCreation.cpp] 2 处
+  L77    Ver. 
+  L358   Ver. 
+
+[IO/UITypes/UIDailyGift.cpp] 4 处
+  L120   DAILY GIFT
+  L139   V
+  L156    ~ 
+  L157   !
+
+[IO/UITypes/UIJoypad.cpp] 2 处
+  L48    None
+  L124   None
+
+[IO/UITypes/UILogin.cpp] 1 处
+  L74    Ver. 
+
+[IO/UITypes/UIMapDropPanel.cpp] 3 处
+  L35    Select a monster
+  L36    No drop data
+  L266   Unknown
+
+[IO/UITypes/UIMapInfoPanel.cpp] 4 处
+  L182   No monsters on this map
+  L183   No drop data
+  L184   mesos
+  L185   0
+
+[IO/UITypes/UIMapMobPanel.cpp] 1 处
+  L64    No monsters on this map
+
+[IO/UITypes/UIMegaphone.cpp] 3 处
+  L122   Empty
+  L125   No 539*
+  L129   Sent…
+
+[IO/UITypes/UIMinigame.cpp] 6 处
+  L82    Ready
+  L85    Start
+  L114   Omok 
+  L126   Card 
+  L148   Ready
+  L152   Start
+
+[IO/UITypes/UIPlant.cpp] 11 处
+  L32    Use #
+  L82    Plant
+  L91    Use 
+  L129   Use 
+  L151   OpenItemUI 
+  L158   WaterOfLife
+  L183   Raise
+  L192   Use 
+  L230   Use 
+  L252   OpenItemUI 
+  L259   WaterOfLife
+
+[IO/UITypes/UIRaceSelect.cpp] 1 处
+  L155   Ver. 
+
+[IO/UITypes/UIRegion.cpp] 2 处
+  L61    Warning: You may experience latency and connection issues when connecting to the NA server
+  L64    Warning: You may experience latency and connection issues when connecting to the EU server
+
+[IO/UITypes/UIUserList.cpp] 5 处
+  L105   none
+  L175   My Location - 
+  L176   none
+  L177   Default Group (0/0)
+  L233   none
+
+[IO/UITypes/UIViewAllChar.cpp] 2 处
+  L49    World 
+  L51    World 
+
+
+== 英文原文 · 壳窗 ==
+
+[IO/UITypes/UIAdmin.cpp] 6 处
+  L49    ShowUsers
+  L55    AlertAdmins
+  L92    ShowUsers
+  L97    AlertAdmins
+  L107   ShowUsers
+  L112   AlertAdmins
+
+[IO/UITypes/UIAlliance.cpp] 3 处
+  L92    Alliance: 
+  L93    Notice: 
+  L100   Notice: 
+
+[IO/UITypes/UIAriantMatch.cpp] 5 处
+  L33    Ariant
+  L40    Result 
+  L95    Result 
+  L105   Result 0
+  L110   Result 1
+
+[IO/UITypes/UICashGachapon.cpp] 1 处
+  L52    Gacha failed
+
+[IO/UITypes/UICashShop.cpp] 2 处
+  L98    Illium
+  L99    ShomeiZekkou
+
+[IO/UITypes/UICharInfo.cpp] 4 处
+  L169   Junior Adventurer
+  L170   2
+  L677   -
+  L699   Book 
+
+[IO/UITypes/UIChatBar.cpp] 1 处
+  L1781  /w 
+
+[IO/UITypes/UIClock.cpp] 1 处
+  L74    0s
+
+[IO/UITypes/UIDelivery.cpp] 1 处
+  L93    Package updated.
+
+[IO/UITypes/UIFamily.cpp] 2 处
+  L53    (no family)
+  L54    Rep: 0 / 0
+
+[IO/UITypes/UIFamilyTree.cpp] 1 处
+  L53    Family Tree
+
+[IO/UITypes/UIMTS.cpp] 2 处
+  L28    MTS / ITC
+  L57    NX=
+
+[IO/UITypes/UIMaker.cpp] 3 处
+  L65    Bad item id
+  L70    Craft 
+  L75    No recipe 
+
+[IO/UITypes/UIMapleTV.cpp] 1 处
+  L75    No 512* map effect
+
+[IO/UITypes/UIMemo.cpp] 7 处
+  L98    Sel 
+  L123   Sent→
+  L131   Sent→
+  L139   Discard id=
+  L148   Discard id=
+  L155   Notes: 
+  L176   No note selected
+
+[IO/UITypes/UIMiscShells.cpp] 216 处
+  L200   Open store…
+  L206   No 514/503 permit
+  L213   Create: 
+  L237   Reported 
+  L242   Empty name
+  L244   Reported 
+  L254   Target: 
+  L267   Reported 
+  L278   Reported 
+  L282   Empty name
+  L284   Reported 
+  L302   Empty code
+  L306   Sent…
+  L324   Sent…
+  L341   Need name
+  L344   Note → 
+  L374   Note → 
+  L381   Note → 
+  L408   Egg #
+  L417   Egg #
+  L445   Egg #
+  L469   Egg #
+  L477   Egg #
+  L490   Drop an egg first
+  L495   No Incubator
+  L499   Sent…
+  L609   Equip #
+  L616   Equip #
+  L628   Need equip
+  L632   Equip #
+  L653   Equip #
+  L660   Equip #
+  L674   Drop an equip first
+  L685   No Karma Scissors
+  L689   Sent…
+  L714   Need equip
+  L718   Enchant slot #
+  L733   Scroll 
+  L736   Need scroll+equip
+  L748   Equip #
+  L755   Equip #
+  L768   Scroll #
+  L775   Scroll #
+  L783   Scroll 
+  L795   Scroll 
+  L823   Equip #
+  L830   Equip #
+  L842   Need equip
+  L846   Equip #
+  L867   Equip #
+  L874   Equip #
+  L888   Drop an equip first
+  L899   No Item Protector
+  L903   Sent…
+  L923   No Teleport Rock
+  L927   Need map/name
+  L936   Warp map…
+  L939   Warp to 
+  L941   Need VIP rock for name
+  L999   No Teleport Rock
+  L1007  Warp map…
+  L1011  Need map/name
+  L1020  Warp map…
+  L1023  Warp to 
+  L1025  Need VIP rock for name
+  L1042  No Teleport Rock
+  L1047  Saved map…
+  L1054  Warp map…
+  L1064  Warp to 
+  L1072  No saved map — SoftKey
+  L1076  Warp #
+  L1089  Empty answer
+  L1090  Ans: 
+  L1108  Ans: 
+  L1165  Find: 
+  L1169  Empty name
+  L1171  Find: 
+  L1192  Find: 
+  L1197  Find: 
+  L1221  Item tab=
+  L1254  Empty msg
+  L1257  No Item Megaphone
+  L1261  Sent…
+  L1298  Whisper → 
+  L1329  Whisper → 
+  L1348  Note → 
+  L1376  Empty
+  L1377  Note: 
+  L1394  Note: 
+  L1413  Empty name
+  L1414  Name: 
+  L1435  Name: 
+  L1484  Empty msg
+  L1489  No Megaphone
+  L1493  Sent…
+  L1543  Exit…
+  L1556  Open store…
+  L1573  Buy 
+  L1614  Exit…
+  L1626  Open store…
+  L1642  Buy 
+  L1659  Empty
+  L1667  Meso 
+  L1674  Chat sent…
+  L1693  Confirm…
+  L1697  Transaction…
+  L1701  Visit…
+  L1727  AddItem #
+  L1746  AddItem 
+  L1752  Empty
+  L1760  Meso 
+  L1766  Chat sent…
+  L1770  Exit…
+  L1810  Exit…
+  L1817  Open store…
+  L1833  Buy 
+  L1854  Empty
+  L1862  Meso 
+  L1869  Chat sent…
+  L1888  Confirm…
+  L1892  Transaction…
+  L1896  Visit…
+  L1922  AddItem #
+  L1940  AddItem 
+  L1946  Empty
+  L1954  Meso 
+  L1960  Chat sent…
+  L1964  Exit…
+  L1988  Q: 
+  L1993  Empty query
+  L1994  Q: 
+  L2015  Q: 
+  L2020  Q: 
+  L2051  Skill 
+  L2055  Empty
+  L2090  Skill 
+  L2103  Skill 
+  L2181  Empty
+  L2252  Bad id
+  L2259  Use 
+  L2287  Use 
+  L2299  Use 
+  L2332  Cover: 
+  L2336  Empty
+  L2341  Cover: 
+  L2346  Page: 
+  L2375  Cover: 
+  L2382  Cover: 
+  L2418  Start 
+  L2427  Start 
+  L2519  ShowUsers
+  L2524  AlertAdmins
+  L2548  ShowUsers
+  L2553  AlertAdmins
+  L3747  Cancelled…
+  L3757  Cancelled…
+  L3867  Marked tab=
+  L3873  Moved #
+  L3895  Src #
+  L3904  Moved →
+  L3929  Move 
+  L4113  Info
+  L4114  Whisper
+  L4115  Party
+  L4116  Report
+  L4117  Trade
+  L4118  Buddy
+  L4119  Messenger
+  L4120  Guild
+  L4121  Family
+  L4122  Fame
+  L4190  Empty
+  L4388  Empty
+  L4411  No chalk/kite
+  L4448  No chalk/kite
+  L5401  Saved: 
+  L5410  Assigned 
+  L5413  Macro full
+  L5422  Assigned 
+  L5424  Macro full
+  L5453  Empty
+  L5458  Emote 
+  L5484  Emote 
+  L5561  Empty
+  L5569  No 517* tag
+  L5573  Rename: 
+  L5595  No 517* tag
+  L5597  Rename: 
+  L5619  Q: 
+  L5624  Empty query
+  L5625  Q: 
+  L5646  Q: 
+  L5651  Q: 
+  L5725  SP 
+  L5733  SP 
+  L5756  SP 
+  L5763  SP 
+  L5785  Empty
+  L5791  Saved: 
+  L5812  Saved: 
+  L5821  Assigned 
+  L5823  Macro full
+  L5832  Assigned 
+  L5834  Macro full
+  L5859  Q
+  L5868  Q
+  L5895  Q
+  L5903  Q
+  L5917  Done 
+  L5928  Done 
+  L5939  Forfeit 
+  L5946  Forfeit 
+  L5996  Place (
+  L6047  Card #
+  L6061  Omok 
+  L6084  Card #
+
+[IO/UITypes/UIMonsterBook.cpp] 4 处
+  L137   Cover: 
+  L152   Cover: 
+  L161   Cover id=
+  L190   Not found
+
+[IO/UITypes/UIMonsterCarnival.cpp] 3 处
+  L41    CP 0/0
+  L42    EN 0/0
+  L43    Carnival
+
+[IO/UITypes/UINewYearsCard.cpp] 4 处
+  L73    Need receiver
+  L75    To 
+  L79    No New Year card
+  L83    Sent to 
+
+[IO/UITypes/UIPartyRace.cpp] 4 处
+  L48    Stage 0
+  L49    R 0 : 0 B
+  L79    Stage 
+  L86    R 
+
+[IO/UITypes/UIPartySearch.cpp] 3 处
+  L114   Range 
+  L204   Range 
+  L216   Jobs mask=
+
+[IO/UITypes/UIRemoteGachapon.cpp] 1 处
+  L52    Gacha box mode=
+
+[IO/UITypes/UIRpsGame.cpp] 12 处
+  L92    Rock
+  L95    Paper
+  L98    Scissor
+  L101   Started
+  L104   Continue
+  L107   Retry
+  L118   Rock
+  L121   Paper
+  L124   Scissor
+  L127   Started
+  L143   Started
+  L147   Retry
+
+[IO/UITypes/UIStatsInfo.cpp] 10 处
+  L539   -
+  L549    ~ 
+  L563    ~ 
+  L564   0%
+  L566   0.00%
+  L567   0%
+  L569   0%
+  L571   0%
+  L572   0.00%
+  L574   0%
+
+[IO/UITypes/UIStoreBank.cpp] 3 处
+  L58    Mesos: 0
+  L85    Mesos: 
+  L99    Mesos: 0
+
+[IO/UITypes/UIVegaSpell.cpp] 15 处
+  L67    Scrolling…
+  L68    Success!
+  L69    Failed.
+  L70    Result op=0x
+  L81    Equip @
+  L86    Scroll @
+  L90    Vega @
+  L92    Drop equip / scroll / vega
+  L127   Equip #
+  L137   Equip #
+  L153   Scroll #
+  L163   Scroll #
+  L186   Need equip + scroll
+  L201   No Vega Spell in Cash
+  L207   Vega sent…
+
+[IO/UITypes/UIViciousHammer.cpp] 8 处
+  L77    Hammer used: 
+  L87    Need an equip from Equip tab
+  L94    Equip slot 
+  L126   Equip #
+  L136   Equip #
+  L159   Drop an equip first
+  L175   No Vicious Hammer in Cash
+  L181   Hammer sent…
+
+[IO/UITypes/UIWedding.cpp] 9 处
+  L48    Wedding — SoftKey guest
+  L56    Guest: 
+  L65    Guest: 
+  L125   Guest: 
+  L129   Invited 
+  L135   Guest: 
+  L139   Invited 
+  L174   Guest: 
+  L178   Invited 
+
+[IO/UITypes/UIWorldSelect.cpp] 1 处
+  L216   Ver. 
+
+
+== 中文硬编码（直接搬 key，无「编造原生文案」风险）==
+
+[IO/UITypes/UIBuddyList.cpp] 1 处
+  L55    好友 (
+
+[IO/UITypes/UICharSelect.cpp] 2 处
+  L381   排行不可用
+  L1298  排行不可用
+
+[IO/UITypes/UIDailyGift.cpp] 8 处
+  L121   丰厚礼物，天天相送！
+  L122   冒险岛每日礼物
+  L137   等级范围怪物
+  L138   领取礼物
+  L152   第
+  L153   天
+  L154   月
+  L155   日
+
+[IO/UITypes/UIMapInfoPanel.cpp] 1 处
+  L524   属性: -  抗性: -
+
+[IO/UITypes/UIMapSearchPanel.cpp] 3 处
+  L165   地图列表
+  L166   未选择地图
+  L167   费用: 0
+
+[IO/UITypes/UIParty.cpp] 1 处
+  L66    队伍 #
+
+[IO/UITypes/UIStorage.cpp] 3 处
+  L61    金币: 0
+  L167   金币: 
+  L180   金币: 
+
+[IO/UITypes/UITrade.cpp] 1 处
+  L67    金币: 
