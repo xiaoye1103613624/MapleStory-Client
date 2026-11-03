@@ -4,8 +4,8 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 730 处 | 英文 730（壳窗 654 / 在用窗 76）| 中文 0
-按形状分档（全站，中英合并）：change_text=283 / Text ctor=21 / SoftKey hint=426
+总计 713 处 | 英文 713（壳窗 642 / 在用窗 71）| 中文 0
+按形状分档（全站，中英合并）：change_text=272 / Text ctor=15 / SoftKey hint=426
 
 
 == 英文原文 · 在用窗 ==
@@ -17,8 +17,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L221   [SoftKey hint] Buff id
   L234   [SoftKey hint] Clear buff id
 
-[IO/UITypes/UICharSelect.cpp] 4 处
-  L235   [Text ctor   ] 1
+[IO/UITypes/UICharSelect.cpp] 3 处
   L905   [SoftKey hint] Char slot #
   L1452  [SoftKey hint] Please re-enter your new PIC.
   L1455  [SoftKey hint] Your new PIC must at least be 6 characters long.
@@ -38,11 +37,8 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UICommonCreation.cpp] 1 处
   L793   [SoftKey hint] Char name
 
-[IO/UITypes/UIDailyGift.cpp] 5 处
+[IO/UITypes/UIDailyGift.cpp] 2 处
   L123   [Text ctor   ] DAILY GIFT
-  L139   [Text ctor   ] V
-  L162   [Text ctor   ]  ~ 
-  L163   [Text ctor   ] !
   L508   [SoftKey hint] Gift day
 
 [IO/UITypes/UIGender.cpp] 1 处
@@ -64,9 +60,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 [IO/UITypes/UILoginWait.cpp] 1 处
   L239   [SoftKey hint] cancel
-
-[IO/UITypes/UIMapInfoPanel.cpp] 1 处
-  L191   [Text ctor   ] 0
 
 [IO/UITypes/UIMegaphone.cpp] 5 处
   L79    [SoftKey hint] Art Megaphone
@@ -207,11 +200,10 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L840   [SoftKey hint] cash,sn
 
 [IO/UITypes/UIChannel.cpp] 1 处
-  L232   [SoftKey hint] Channel 1-N
+  L248   [SoftKey hint] Channel 1-N
 
-[IO/UITypes/UICharInfo.cpp] 12 处
+[IO/UITypes/UICharInfo.cpp] 10 处
   L169   [Text ctor   ] Junior Adventurer
-  L170   [Text ctor   ] 2
   L400   [SoftKey hint] Whisper
   L454   [SoftKey hint] Damage skin id
   L471   [SoftKey hint] Find name
@@ -220,7 +212,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L577   [SoftKey hint] Whisper msg
   L584   [SoftKey hint] Whisper msg
   L585   [SoftKey hint] Whisper to
-  L677   [change_text ] -
   L699   [change_text ] Book 
 
 [IO/UITypes/UIChatBar.cpp] 12 处
@@ -826,18 +817,8 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L817   [SoftKey hint] Skill id SP
   L845   [SoftKey hint] Skill id use
 
-[IO/UITypes/UIStatsInfo.cpp] 11 处
+[IO/UITypes/UIStatsInfo.cpp] 1 处
   L490   [SoftKey hint] AP str|dex|int|luk|1-4
-  L539   [change_text ] -
-  L549   [change_text ]  ~ 
-  L563   [change_text ]  ~ 
-  L564   [change_text ] 0%
-  L566   [change_text ] 0.00%
-  L567   [change_text ] 0%
-  L569   [change_text ] 0%
-  L571   [change_text ] 0%
-  L572   [change_text ] 0.00%
-  L574   [change_text ] 0%
 
 [IO/UITypes/UIStatusBar.cpp] 11 处
   L1237  [SoftKey hint] Whisper msg
@@ -879,3 +860,42 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==
+
+
+== 白名单（PLAN §4.1，逐条挂原生判据；**不是删除**，是换一档记账）==
+命中 17 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
+
+'0%'  5 处 —— 比率数值格式；原生是 " %d%%"(0x73BCC0) 格式串
+  L564   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L567   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L569   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L571   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L574   [change_text ] IO/UITypes/UIStatsInfo.cpp
+
+' ~ '  3 处 —— 区间分隔符；原生侧是格式串 "%d ~ %d"(0x6F2928)，分隔符不随语言变
+  L162   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+  L549   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L563   [change_text ] IO/UITypes/UIStatsInfo.cpp
+
+'-'  2 处 —— 空值占位符；原生无该字面量，locale 中性标点
+  L677   [change_text ] IO/UITypes/UICharInfo.cpp
+  L539   [change_text ] IO/UITypes/UIStatsInfo.cpp
+
+'0.00%'  2 处 —— 比率数值格式；原生 EXP 行为 "EXP : %d / %d"(0x73BB5C)，无此字面量
+  L566   [change_text ] IO/UITypes/UIStatsInfo.cpp
+  L572   [change_text ] IO/UITypes/UIStatsInfo.cpp
+
+'!'  1 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
+  L163   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+
+'0'  1 处 —— 数值初值，首个数据包即被改写
+  L191   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
+
+'1'  1 处 —— 数值初值，首个数据包即被改写
+  L235   [Text ctor   ] IO/UITypes/UICharSelect.cpp
+
+'2'  1 处 —— 数值初值，首个数据包即被改写
+  L170   [Text ctor   ] IO/UITypes/UICharInfo.cpp
+
+'V'  1 处 —— UIDailyGift 已领标记（字母 V 当对勾）；原生走位图，无字面量
+  L139   [Text ctor   ] IO/UITypes/UIDailyGift.cpp

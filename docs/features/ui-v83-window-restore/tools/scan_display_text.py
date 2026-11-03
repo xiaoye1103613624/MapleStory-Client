@@ -28,9 +28,30 @@ PATTERNS = [
 SCAN_DIRS = ["IO", "Character", "Data", "Gameplay", "Graphics", "Util", "Net"]
 SKIP_FILE_PARTS = ("GraphicsGL.cpp",)  # dbgatlas 探针，非展示文案
 
-LOCALED = re.compile(r'Locale::(text|text_or|tr|format|enum_text|enum_key)\s*\($')
+LOCALED = re.compile(r'Locale::(text|text_or|tr|format|format_all|enum_text|enum_key)\s*\($')
 KEYLIKE = re.compile(r'^[a-z][a-z0-9_]*\.[a-z0-9_.]*$')
 EMPLACE = re.compile(r'(?:emplace|get_element)<([A-Za-z_][A-Za-z0-9_]*)>')
+
+# PLAN-R27-B1c §4.1 白名单：**不是「放行」，是「换一档记账」** —— 命中的站点仍逐条打进报告末尾，
+# 只是不计进待接入的站点数。每条理由都挂原生 v83 判据（取证见
+# evidence/native-verdicts-2026-11-03/copy-literals.txt，偏移是被扫的那份 exe 的文件偏移）：
+#   * 原生把这些当**格式串或初值**：`"%d ~ %d"`@0x6F2928、`" %d%%"`@0x73BCC0、`"EXP : %d / %d"`@0x73BB5C
+#     —— 原生 EXP 行是数值式，根本没有两位小数百分比，也没有独立的 `0.00%` 字面量。
+#   * `-` `!` `V` 与纯数字初值：在 ASCII / UTF-16LE / GBK 三种编码下**全 0 命中**，String.nx 也无对应
+#     节点 ⇒ 排版件，不是文案。
+# 刻意**不进**白名单的两条：`0s`（带英文单位 `s`，算文案）、`/w `（原生查无该 token，是打字命令，
+# 属「要不要这个功能」而非「要不要翻译」，交回用户）。
+WHITELIST = {
+    "-": "空值占位符；原生无该字面量，locale 中性标点",
+    " ~ ": "区间分隔符；原生侧是格式串 \"%d ~ %d\"(0x6F2928)，分隔符不随语言变",
+    "!": "UIDailyGift 感叹标记；原生同类标记走位图，无字面量",
+    "V": "UIDailyGift 已领标记（字母 V 当对勾）；原生走位图，无字面量",
+    "0": "数值初值，首个数据包即被改写",
+    "1": "数值初值，首个数据包即被改写",
+    "2": "数值初值，首个数据包即被改写",
+    "0%": "比率数值格式；原生是 \" %d%%\"(0x73BCC0) 格式串",
+    "0.00%": "比率数值格式；原生 EXP 行为 \"EXP : %d / %d\"(0x73BB5C)，无此字面量",
+}
 
 
 def cjk(s):
@@ -54,6 +75,7 @@ def wave_a_shells():
 def main():
     shells = wave_a_shells()
     rows = []
+    wl = []
     for d in SCAN_DIRS:
         base = os.path.join(ROOT, d)
         for dirpath, _dirs, files in os.walk(base):
@@ -70,6 +92,9 @@ def main():
                         for m in pat.finditer(line):
                             txt = m.group(1)
                             if not txt.strip() or already_localized(line, m.start(1), txt):
+                                continue
+                            if txt in WHITELIST:
+                                wl.append((rel, i, txt, shape))
                                 continue
                             rows.append((rel, i, txt, "CJK" if cjk(txt) else "LATIN", shape))
 
@@ -118,9 +143,19 @@ def main():
             for ln, txt, shape in by_file2[rel]:
                 f.write("  L%-5d [%-12s] %s\n" % (ln, shape, txt[:90]))
 
+        f.write("\n\n== 白名单（PLAN §4.1，逐条挂原生判据；**不是删除**，是换一档记账）==\n")
+        f.write("命中 %d 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。\n" % len(wl))
+        by_wl = {}
+        for rel, ln, txt, shape in wl:
+            by_wl.setdefault(txt, []).append((rel, ln, shape))
+        for txt in sorted(by_wl, key=lambda t: (-len(by_wl[t]), t)):
+            f.write("\n%r  %d 处 —— %s\n" % (txt, len(by_wl[txt]), WHITELIST[txt]))
+            for rel, ln, shape in by_wl[txt]:
+                f.write("  L%-5d [%-12s] %s\n" % (ln, shape, rel))
+
     print("WROTE", OUT)
-    print("sites=%d latin=%d shell=%d live=%d cjk=%d shells=%d shapes=%s"
-          % (len(rows), len(latin), shell_n, live_n, len(cjk_rows), len(shells),
+    print("sites=%d latin=%d shell=%d live=%d cjk=%d wl=%d shells=%d shapes=%s"
+          % (len(rows), len(latin), shell_n, live_n, len(cjk_rows), len(wl), len(shells),
              ",".join("%s=%d" % (k, by_shape[k]) for k, _ in PATTERNS if k in by_shape)))
 
 

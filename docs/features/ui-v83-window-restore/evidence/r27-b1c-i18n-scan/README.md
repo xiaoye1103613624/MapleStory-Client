@@ -373,3 +373,21 @@ UIAriantMatch 5 / UICharInfo 4 / UIMonsterBook 4 / UINewYearsCard 4 / UIPartyRac
 门禁：新尺只改文档与工具，未动业务代码 ⇒ 无需重编译；`check_locale_keys.py` 与 `layout.py check` 的读数
 沿用 §9.5（本批无键位变化）。
 
+### 10.1 §4.1 白名单落地（原生判据驱动，730 ⇒ **713**）
+
+用户新规矩「待确认方案先查原生」的第一批结果直接决定了这条：白名单候选在原生 v83 全是
+**格式串或初值**，不是可翻译文案 —— `"%d ~ %d"`（`0x6F2928`）、`" %d%%"`（`0x73BCC0`）、
+`"EXP : %d / %d"`（`0x73BB5C`，原生 EXP 连「两位小数百分比」这个形态都没有）；`-` `!` `V` 与纯数字初值
+在 ASCII / UTF-16LE / GBK 三编码下**全 0 命中**、`String.nx` 无对应节点（逐条证据见
+[../native-verdicts-2026-11-03/copy-literals.txt](../native-verdicts-2026-11-03/copy-literals.txt)）。
+
+实现照 §4.1 的「不许偷偷放行」：**命中不删，单列一档** —— 报告末尾「白名单」段把 17 处逐条带
+`文件:行` + 理由打出来，`WHITELIST` 常量里每个键自带一句原生依据，新增键必须同时补依据。
+分档结果：`0%`×5（全在 `UIStatsInfo.cpp:564-574`）/ ` ~ `×3 / `-`×2 / `0.00%`×2 / `!` `V` `0` `1` `2` 各 1。
+
+**两条刻意留在待办里**：`UIClock.cpp:74` `"0s"` 带英文单位 `s`（中文要写「秒」）⇒ 算文案，归 B1c-5b；
+`UIChatBar.cpp:1781` `"/w "` 是**打字命令 token**，原生根本没有该 token（悄悄话在原生是 `BtWhisper`
+按钮 / 双击流，`BtWhisper` UTF-16LE `0x73C4A8`、帮助串 `"Double-click to send a whisper."` ASCII `0x73C138`）
+⇒ 问题不是「要不要翻译」而是「要不要这条自造入口」，**交回用户**（见「原生裁决台账」）。
+
+
