@@ -4,581 +4,459 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 428 处 | 英文 428（壳窗 367 / 在用窗 61）| 中文 0
-按形状分档（全站，中英合并）：change_text=1 / Text ctor=1 / SoftKey hint=426
+总计 2 处 | 英文 2（壳窗 2 / 在用窗 0）| 中文 0 | 软键盘豁免 426
+按形状分档（全站，中英合并）：change_text=1 / Text ctor=1
 
 
 == 英文原文 · 在用窗 ==
 
-[IO/UITypes/UIBossHP.cpp] 1 处
-  L132   [SoftKey hint] cur,max|pct|tip
-
-[IO/UITypes/UIBuffList.cpp] 2 处
-  L221   [SoftKey hint] Buff id
-  L234   [SoftKey hint] Clear buff id
-
-[IO/UITypes/UICharSelect.cpp] 3 处
-  L911   [SoftKey hint] Char slot #
-  L1458  [SoftKey hint] Please re-enter your new PIC.
-  L1461  [SoftKey hint] Your new PIC must at least be 6 characters long.
-
-[IO/UITypes/UIChat.cpp] 10 处
-  L122   [SoftKey hint] Buddy msg
-  L131   [SoftKey hint] Buddy cid
-  L144   [SoftKey hint] Find player
-  L159   [SoftKey hint] Party msg
-  L167   [SoftKey hint] Guild msg
-  L175   [SoftKey hint] Alliance msg
-  L215   [SoftKey hint] Buddy msg
-  L224   [SoftKey hint] Buddy cid
-  L240   [SoftKey hint] Find player
-  L327   [SoftKey hint] Rank find
-
-[IO/UITypes/UICommonCreation.cpp] 1 处
-  L793   [SoftKey hint] Char name
-
-[IO/UITypes/UIDailyGift.cpp] 1 处
-  L510   [SoftKey hint] Gift day
-
-[IO/UITypes/UIGender.cpp] 1 处
-  L135   [SoftKey hint] m|f
-
-[IO/UITypes/UIJoypad.cpp] 1 处
-  L112   [SoftKey hint] save|cancel|alt|classic
-
-[IO/UITypes/UILogin.cpp] 2 处
-  L586   [SoftKey hint] Account
-  L592   [SoftKey hint] Password
-
-[IO/UITypes/UILoginNotice.cpp] 5 处
-  L126   [SoftKey hint] y|n
-  L229   [SoftKey hint] quit|cancel
-  L352   [SoftKey hint] y|n
-  L425   [SoftKey hint] a|b
-  L521   [SoftKey hint] y|ok
-
-[IO/UITypes/UILoginWait.cpp] 1 处
-  L239   [SoftKey hint] cancel
-
-[IO/UITypes/UIMegaphone.cpp] 2 处
-  L80    [SoftKey hint] Art Megaphone
-  L132   [SoftKey hint] Avatar Mega
-
-[IO/UITypes/UIMinigame.cpp] 3 处
-  L96    [SoftKey hint] Minigame chat
-  L117   [SoftKey hint] x,y[,piece]
-  L130   [SoftKey hint] turn,slot
-
-[IO/UITypes/UINotice.cpp] 3 处
-  L171   [SoftKey hint] y|n
-  L284   [SoftKey hint] Enter number
-  L393   [SoftKey hint] ok|cancel
-
-[IO/UITypes/UIOptionMenu.cpp] 1 处
-  L343   [SoftKey hint] ok|WxH|buff on|equip on|mp N
-
-[IO/UITypes/UIQuit.cpp] 1 处
-  L182   [SoftKey hint] y|n
-
-[IO/UITypes/UIRaceSelect.cpp] 1 处
-  L543   [SoftKey hint] idx|make
-
-[IO/UITypes/UIRegion.cpp] 1 处
-  L86    [SoftKey hint] na|eu
-
-[IO/UITypes/UIStatusMessenger.cpp] 3 处
-  L96    [SoftKey hint] Status tip
-  L108   [SoftKey hint] Red tip
-  L115   [SoftKey hint] White tip
-
-[IO/UITypes/UITreasureBox.cpp] 2 处
-  L67    [SoftKey hint] Treasure itemid
-  L110   [SoftKey hint] Treasure itemid
-
-[IO/UITypes/UIUserList.cpp] 11 处
-  L380   [SoftKey hint] Whisper msg
-  L388   [SoftKey hint] Whisper msg
-  L389   [SoftKey hint] Whisper to
-  L459   [SoftKey hint] Add friend
-  L474   [SoftKey hint] Friend group
-  L483   [SoftKey hint] Friend group
-  L484   [SoftKey hint] Friend name
-  L518   [SoftKey hint] Invite name|Join id
-  L557   [SoftKey hint] Expel cid|Deny name
-  L575   [SoftKey hint] Find name
-  L592   [SoftKey hint] Find name
-
-[IO/UITypes/UIViewAllChar.cpp] 3 处
-  L165   [SoftKey hint] Char cid
-  L197   [SoftKey hint] PIC
-  L215   [SoftKey hint] Char cid
-
-[IO/UITypes/UIWorldMap.cpp] 2 处
-  L351   [SoftKey hint] mapid|search
-  L391   [SoftKey hint] Players mapid
-
 
 == 英文原文 · 壳窗 ==
 
-[IO/UITypes/UIAdmin.cpp] 2 处
-  L63    [SoftKey hint] users|alert|msg
-  L103   [SoftKey hint] users|alert|msg
+[IO/UITypes/UIChatBar.cpp] 1 处
+  L1789  [change_text ] /w 
 
-[IO/UITypes/UIAlliance.cpp] 5 处
-  L152   [SoftKey hint] Invite guild
-  L160   [SoftKey hint] Alliance notice
-  L184   [SoftKey hint] Invite guild
-  L196   [SoftKey hint] Alliance deny guild
-  L207   [SoftKey hint] inviter,guild
-
-[IO/UITypes/UIAriantMatch.cpp] 2 处
-  L48    [SoftKey hint] result idx|tip
-  L101   [SoftKey hint] result idx|tip
-
-[IO/UITypes/UIBuddyList.cpp] 12 处
-  L190   [SoftKey hint] Group (All)
-  L199   [SoftKey hint] Group (All)
-  L200   [SoftKey hint] Buddy name
-  L221   [SoftKey hint] Group
-  L229   [SoftKey hint] Group
-  L230   [SoftKey hint] Buddy name
-  L249   [SoftKey hint] Accept cid
-  L268   [SoftKey hint] Delete cid
-  L287   [SoftKey hint] Reject cid
-  L301   [SoftKey hint] Whisper msg
-  L309   [SoftKey hint] Whisper msg
-  L310   [SoftKey hint] Whisper to
-
-[IO/UITypes/UICashGachapon.cpp] 1 处
-  L85    [SoftKey hint] Gacha OK
-
-[IO/UITypes/UICashShop.cpp] 18 处
-  L393   [SoftKey hint] bday,sn[,msg]|empty=Coupon
-  L416   [SoftKey hint] Gift bday,sn,name,msg|empty=Coupon
-  L468   [SoftKey hint] t,cash|p,cash[,inv]|empty=Inv
-  L502   [SoftKey hint] Wish SN[,SN…]
-  L516   [SoftKey hint] Mileage SN
-  L537   [SoftKey hint] Pkg useNX,sn
-  L568   [SoftKey hint] Buy useNX,sn
-  L596   [SoftKey hint] Preview 0-2
-  L632   [SoftKey hint] Buy useNX[,sn]
-  L677   [SoftKey hint] Buy useNX,sn
-  L706   [SoftKey hint] bday,sn[,msg]
-  L724   [SoftKey hint] bday,sn,name,msg
-  L737   [SoftKey hint] Take cashId
-  L757   [SoftKey hint] Put cashId[,inv]
-  L786   [SoftKey hint] Pkg useNX,sn
-  L810   [SoftKey hint] cash,type|cash,sSN
-  L827   [SoftKey hint] cash[,sn]
-  L843   [SoftKey hint] cash,sn
-
-[IO/UITypes/UIChannel.cpp] 1 处
-  L248   [SoftKey hint] Channel 1-N
-
-[IO/UITypes/UICharInfo.cpp] 8 处
-  L401   [SoftKey hint] Whisper
-  L455   [SoftKey hint] Damage skin id
-  L472   [SoftKey hint] Find name
-  L550   [SoftKey hint] Fame up|d (target)
-  L567   [SoftKey hint] Fame cid[,d]
-  L578   [SoftKey hint] Whisper msg
-  L585   [SoftKey hint] Whisper msg
-  L586   [SoftKey hint] Whisper to
-
-[IO/UITypes/UIChatBar.cpp] 12 处
-  L628   [SoftKey hint] Emote id
-  L637   [SoftKey hint] Spouse chat
-  L693   [SoftKey hint] itemid|link
-  L1398  [SoftKey hint] Chat
-  L1406  [SoftKey hint] Spouse chat
-  L1415  [SoftKey hint] Party chat
-  L1424  [SoftKey hint] Guild chat
-  L1433  [SoftKey hint] Alliance chat
-  L1449  [SoftKey hint] Buddy chat
-  L1465  [SoftKey hint] Find name
-  L1750  [SoftKey hint] Whisper msg
-  L1781  [change_text ] /w 
-
-[IO/UITypes/UIClock.cpp] 2 处
-  L105   [SoftKey hint] Clock|sec|tip
-  L116   [SoftKey hint] Clock text
-
-[IO/UITypes/UIDelivery.cpp] 9 处
-  L154   [SoftKey hint] Mesos
-  L159   [SoftKey hint] Recipient
-  L251   [SoftKey hint] meso[,qty]
-  L260   [SoftKey hint] name,meso[,qty]
-  L301   [SoftKey hint] meso[,iv,slot,qty]
-  L310   [SoftKey hint] name,meso[,iv,slot,qty]
-  L327   [SoftKey hint] Package id
-  L342   [SoftKey hint] Claim pkg id
-  L384   [SoftKey hint] mesos|empty=help
-
-[IO/UITypes/UIEnergyBar.cpp] 1 处
-  L108   [SoftKey hint] Energy skillid
-
-[IO/UITypes/UIEquipInventory.cpp] 2 处
-  L298   [SoftKey hint] cashSlot,itemId
-  L420   [SoftKey hint] Unequip slot
-
-[IO/UITypes/UIEvent.cpp] 1 处
-  L229   [SoftKey hint] Event reply
-
-[IO/UITypes/UIFamily.cpp] 11 处
-  L112   [SoftKey hint] y/n
-  L120   [SoftKey hint] Inviter name
-  L132   [SoftKey hint] Inviter name
-  L134   [SoftKey hint] Inviter cid
-  L149   [SoftKey hint] Junior name
-  L157   [SoftKey hint] Precept
-  L188   [SoftKey hint] type[,name] 0=reunite 1=summon
-  L231   [SoftKey hint] junior cid (empty=leave)
-  L255   [SoftKey hint] Junior name
-  L261   [SoftKey hint] Precept
-  L284   [SoftKey hint] type[,name] 0=reunite 1=summon
-
-[IO/UITypes/UIFamilyTree.cpp] 4 处
-  L138   [SoftKey hint] Junior name
-  L176   [SoftKey hint] junior cid (empty=leave)
-  L195   [SoftKey hint] Summon name
-  L225   [SoftKey hint] Junior name
-
-[IO/UITypes/UIGuild.cpp] 6 处
-  L239   [SoftKey hint] cid,name|name (self)
-  L264   [SoftKey hint] Char id
-  L266   [SoftKey hint] Guild id
-  L292   [SoftKey hint] cid,name|name
-  L360   [SoftKey hint] BBS page|o,id|d,id|r,id,text|p,title|text
-  L414   [SoftKey hint] Deny guild from
-
-[IO/UITypes/UIItemInventory.cpp] 19 处
-  L551   [SoftKey hint] Drop meso
-  L576   [SoftKey hint] Maker itemId
-  L600   [SoftKey hint] MaplePoints|empty=CS
-  L625   [SoftKey hint] Equip slot
-  L639   [SoftKey hint] Scroll slot
-  L764   [SoftKey hint] Cash coupon
-  L806   [SoftKey hint] Avatar Mega
-  L813   [SoftKey hint] Chalkboard
-  L820   [SoftKey hint] Kite
-  L827   [SoftKey hint] Map effect
-  L835   [SoftKey hint] Cash use
-  L1032  [SoftKey hint] Use slot
-  L1052  [SoftKey hint] Drop qty (selected)
-  L1066  [SoftKey hint] Drop slot,qty
-  L1080  [SoftKey hint] Move dst
-  L1092  [SoftKey hint] Move src,dst
-  L1105  [SoftKey hint] Meso amt
-  L1137  [SoftKey hint] Equip slot
-  L1168  [SoftKey hint] chalk|k,|m, slot,id,text
-
-[IO/UITypes/UIKeyConfig.cpp] 2 处
-  L916   [SoftKey hint] save|close
-  L968   [SoftKey hint] MapleLife name
-
-[IO/UITypes/UIMTS.cpp] 3 处
-  L121   [SoftKey hint] MTS|tip
-  L145   [SoftKey hint] itemid[,price]
-  L172   [SoftKey hint] ownerid,mapid
-
-[IO/UITypes/UIMaker.cpp] 3 处
-  L77    [SoftKey hint] Maker itemId
-  L235   [SoftKey hint] Maker itemId
-  L249   [SoftKey hint] Maker status
-
-[IO/UITypes/UIMapleTV.cpp] 5 处
-  L78    [SoftKey hint] MapleTV msg
-  L129   [SoftKey hint] Claim desc
-  L137   [SoftKey hint] Claim victim
-  L165   [SoftKey hint] ClassMatch
-  L181   [SoftKey hint] ClassMatch
-
-[IO/UITypes/UIMemo.cpp] 7 处
-  L125   [SoftKey hint] Memo message
-  L133   [SoftKey hint] Memo message
-  L134   [SoftKey hint] Memo to
-  L153   [SoftKey hint] Note id
-  L197   [SoftKey hint] Memo message
-  L205   [SoftKey hint] Memo message
-  L206   [SoftKey hint] Memo to
-
-[IO/UITypes/UIMerchant.cpp] 5 处
-  L146   [SoftKey hint] Buy qty (selected)
-  L163   [SoftKey hint] slot[,qty]
-  L192   [SoftKey hint] qty[,merchSlot]
-  L210   [SoftKey hint] iv,pos,qty,slot
-  L224   [SoftKey hint] Owner name
-
-[IO/UITypes/UIMiniMap.cpp] 1 处
-  L399   [SoftKey hint] Map id|empty=WMap sel
-
-[IO/UITypes/UIMiscShells.cpp] 172 处
-  L149   [SoftKey hint] iv,pos,qty,slot
-  L246   [SoftKey hint] Report target
-  L285   [SoftKey hint] Report target
-  L308   [SoftKey hint] Coupon code
-  L325   [SoftKey hint] Coupon code
-  L345   [SoftKey hint] Claim msg
-  L353   [SoftKey hint] Claim to
-  L375   [SoftKey hint] Claim msg
-  L382   [SoftKey hint] Claim msg
-  L383   [SoftKey hint] Claim to
-  L421   [SoftKey hint] Egg USE slot
-  L480   [SoftKey hint] Egg USE slot
-  L544   [SoftKey hint] Channel 1-N
-  L571   [SoftKey hint] Channel 1-N
-  L586   [SoftKey hint] Channel 1-N
-  L619   [SoftKey hint] Equip slot
-  L663   [SoftKey hint] Equip slot
-  L758   [SoftKey hint] Equip slot id
-  L778   [SoftKey hint] Scroll USE slot
-  L798   [SoftKey hint] scroll,equip
-  L833   [SoftKey hint] Equip slot
-  L877   [SoftKey hint] Equip slot
-  L947   [SoftKey hint] Map ID / player
-  L1033  [SoftKey hint] Map ID / player|empty=WMap
-  L1095  [SoftKey hint] Quiz answer
-  L1112  [SoftKey hint] Quiz answer
-  L1134  [SoftKey hint] Initial quiz
-  L1145  [SoftKey hint] Quiz answer
-  L1175  [SoftKey hint] Rank name
-  L1200  [SoftKey hint] Rank name
-  L1265  [SoftKey hint] Item Megaphone
-  L1303  [SoftKey hint] Counsel msg
-  L1311  [SoftKey hint] Counsel to
-  L1333  [SoftKey hint] Counsel msg
-  L1341  [SoftKey hint] Counsel to
-  L1353  [SoftKey hint] Note msg
-  L1361  [SoftKey hint] Note to
-  L1383  [SoftKey hint] Raid note
-  L1399  [SoftKey hint] Raid note
-  L1424  [SoftKey hint] Cygnus name
-  L1444  [SoftKey hint] Cygnus name
-  L1498  [SoftKey hint] Megaphone
-  L1529  [SoftKey hint] Shop title
-  L1556  [SoftKey hint] Shop title
-  L1579  [SoftKey hint] slot,qty
-  L1600  [SoftKey hint] Member title
-  L1626  [SoftKey hint] Member title
-  L1647  [SoftKey hint] slot,qty
-  L1679  [SoftKey hint] Trade meso/chat
-  L1732  [SoftKey hint] qty[,tradeSlot]
-  L1751  [SoftKey hint] iv,pos,qty,slot
-  L1770  [SoftKey hint] Trade meso/chat
-  L1796  [SoftKey hint] Entrusted
-  L1839  [SoftKey hint] slot,qty
-  L1843  [SoftKey hint] Entrusted title
-  L1874  [SoftKey hint] CashTrade meso/chat
-  L1926  [SoftKey hint] qty[,tradeSlot]
-  L1945  [SoftKey hint] iv,pos,qty,slot
-  L1964  [SoftKey hint] CashTrade meso/chat
-  L2000  [SoftKey hint] Find name
-  L2025  [SoftKey hint] Find name
-  L2069  [SoftKey hint] Aran skillid
-  L2112  [SoftKey hint] Aran skillid|tip
-  L2144  [SoftKey hint] Transform skillid|tip
-  L2167  [SoftKey hint] Transform skillid|tip
-  L2188  [SoftKey hint] MobKill chat
-  L2204  [SoftKey hint] MobKill chat
-  L2222  [SoftKey hint] MapleEvent
-  L2233  [SoftKey hint] Event chat
-  L2304  [SoftKey hint] SkillEx id
-  L2352  [SoftKey hint] Book cover/page
-  L2389  [SoftKey hint] Book cover id
-  L2438  [SoftKey hint] Quest id|tip
-  L2460  [SoftKey hint] Mate message
-  L2471  [SoftKey hint] Mate message
-  L2489  [SoftKey hint] Beta code
-  L2500  [SoftKey hint] Beta code
-  L2533  [SoftKey hint] users|alert|msg
-  L2561  [SoftKey hint] users|alert|msg
-  L2720  [SoftKey hint] Skill id
-  L2742  [SoftKey hint] Map id
-  L2961  [SoftKey hint] Trade cid|v
-  L2980  [SoftKey hint] NPC oid
-  L3023  [SoftKey hint] Cash itemid
-  L3066  [SoftKey hint] slot,id,qty|s,…
-  L3079  [SoftKey hint] NPC reply|sel
-  L3094  [SoftKey hint] Char cid
-  L3113  [SoftKey hint] Recharge slot
-  L3134  [SoftKey hint] Skill id SP
-  L3151  [SoftKey hint] CharInfo cid
-  L3170  [SoftKey hint] Map id
-  L3190  [SoftKey hint] Pickup oid
-  L3209  [SoftKey hint] Reactor oid
-  L3226  [SoftKey hint] AP str|dex|int|luk
-  L3242  [SoftKey hint] Gather tab 1-5
-  L3260  [SoftKey hint] Sort tab 1-5
-  L3277  [SoftKey hint] Deny guild from
-  L3296  [SoftKey hint] Forfeit quest id
-  L3322  [SoftKey hint] Equip slot id
-  L3332  [SoftKey hint] Scroll slot
-  L3368  [SoftKey hint] Use itemid
-  L3667  [SoftKey hint] MacroEx
-  L3691  [SoftKey hint] Skill id
-  L3710  [SoftKey hint] Clone note
-  L3722  [SoftKey hint] Clone note
-  L3768  [SoftKey hint] y|n|tip
-  L3815  [SoftKey hint] AP str|SP id
-  L3846  [SoftKey hint] AP str|SP id
-  L3879  [SoftKey hint] Dest slot
-  L3909  [SoftKey hint] Dest slot
-  L3934  [SoftKey hint] iv,src,dst[,qty]
-  L3985  [SoftKey hint] y|n|tip
-  L4029  [SoftKey hint] Whisper msg
-  L4143  [SoftKey hint] Whisper msg
-  L4144  [SoftKey hint] Whisper name
-  L4150  [SoftKey hint] Whisper msg
-  L4166  [SoftKey hint] Char cid
-  L4197  [SoftKey hint] Event note
-  L4215  [SoftKey hint] Event note
-  L4294  [SoftKey hint] Find name
-  L4311  [SoftKey hint] Channel 1-N
-  L4363  [SoftKey hint] UtilDlg text
-  L4374  [SoftKey hint] UtilDlg text
-  L4416  [SoftKey hint] MultiLine
-  L4453  [SoftKey hint] MultiLine
-  L4651  [SoftKey hint] Drop meso
-  L4685  [SoftKey hint] Emote id
-  L4696  [SoftKey hint] Chair itemid
-  L4741  [SoftKey hint] ItemEffect id
-  L4774  [SoftKey hint] Skill id
-  L4788  [SoftKey hint] Book cover id
-  L4806  [SoftKey hint] AP str|dex|int|luk
-  L4824  [SoftKey hint] Gather tab 1-5
-  L4843  [SoftKey hint] Sort tab 1-5
-  L4864  [SoftKey hint] Deny guild from
-  L4883  [SoftKey hint] Forfeit quest id
-  L4909  [SoftKey hint] Equip slot id
-  L4919  [SoftKey hint] Scroll slot
-  L4953  [SoftKey hint] Use itemid
-  L4971  [SoftKey hint] Map id
-  L4990  [SoftKey hint] Pickup oid
-  L5009  [SoftKey hint] Reactor oid
-  L5030  [SoftKey hint] NPC oid
-  L5074  [SoftKey hint] slot,id,qty|s,slot,id,qty
-  L5091  [SoftKey hint] NPC reply|sel
-  L5109  [SoftKey hint] Char cid
-  L5130  [SoftKey hint] Recharge slot
-  L5163  [SoftKey hint] Cash itemid
-  L5181  [SoftKey hint] Skill id SP
-  L5209  [SoftKey hint] Trade cid|v
-  L5228  [SoftKey hint] CharInfo cid
-  L5405  [SoftKey hint] Macro
-  L5430  [SoftKey hint] Skill id
-  L5469  [SoftKey hint] Emote id|tip
-  L5493  [SoftKey hint] Emote id|tip
-  L5525  [SoftKey hint] Pet name
-  L5543  [SoftKey hint] Pet name
-  L5578  [SoftKey hint] MultiPet name
-  L5601  [SoftKey hint] MultiPet name
-  L5631  [SoftKey hint] ExSearch name
-  L5656  [SoftKey hint] ExSearch name
-  L5708  [SoftKey hint] cur,max|pct|tip
-  L5740  [SoftKey hint] SkillUp id
-  L5769  [SoftKey hint] SkillUp id
-  L5796  [SoftKey hint] MacroSkill
-  L5816  [SoftKey hint] MacroSkill
-  L5840  [SoftKey hint] Skill id
-  L5879  [SoftKey hint] Quest id
-  L5912  [SoftKey hint] Quest id|tip
-  L5934  [SoftKey hint] qid or qid,npc
-  L5952  [SoftKey hint] Forfeit qid
-  L6127  [SoftKey hint] FloatNotice tip
-
-[IO/UITypes/UIMonsterBook.cpp] 2 处
-  L165   [SoftKey hint] Cover card id
-  L191   [SoftKey hint] card id|name
-
-[IO/UITypes/UIMonsterCarnival.cpp] 4 处
-  L60    [SoftKey hint] avail/total|tip
-  L115   [SoftKey hint] avail/total|tip
-  L128   [SoftKey hint] enemy avail/total
-  L135   [SoftKey hint] CPQ msg
-
-[IO/UITypes/UINewYearsCard.cpp] 2 处
-  L85    [SoftKey hint] NY message
-  L93    [SoftKey hint] NY receiver
-
-[IO/UITypes/UINpcTalk.cpp] 5 处
-  L304   [SoftKey hint] Npc text
-  L324   [SoftKey hint] Npc number
-  L420   [SoftKey hint] Npc text
-  L430   [SoftKey hint] Npc number
-  L440   [SoftKey hint] Npc select
-
-[IO/UITypes/UIParty.cpp] 3 处
-  L177   [SoftKey hint] Party id
-  L260   [SoftKey hint] Leader cid
-  L284   [SoftKey hint] Expel cid
-
-[IO/UITypes/UIPartyRace.cpp] 2 处
-  L72    [SoftKey hint] r:b|win|stage|tip
-  L138   [SoftKey hint] r:b|win|stage|tip
-
-[IO/UITypes/UIPartySearch.cpp] 3 处
-  L117   [SoftKey hint] Lv min-max
-  L207   [SoftKey hint] Lv min-max
-  L219   [SoftKey hint] Jobs mask
-
-[IO/UITypes/UIRemoteGachapon.cpp] 1 处
-  L80    [SoftKey hint] Town 0-9
-
-[IO/UITypes/UIShop.cpp] 5 处
-  L447   [SoftKey hint] Buy qty (selected)
-  L462   [SoftKey hint] Buy slot,qty
-  L478   [SoftKey hint] Sell qty (selected)
-  L493   [SoftKey hint] Sell idx,qty
-  L513   [SoftKey hint] Recharge slot
-
-[IO/UITypes/UISkillBook.cpp] 2 处
-  L817   [SoftKey hint] Skill id SP
-  L845   [SoftKey hint] Skill id use
-
-[IO/UITypes/UIStatsInfo.cpp] 1 处
-  L492   [SoftKey hint] AP str|dex|int|luk|1-4
-
-[IO/UITypes/UIStatusBar.cpp] 11 处
-  L1237  [SoftKey hint] Whisper msg
-  L1245  [SoftKey hint] Whisper msg
-  L1246  [SoftKey hint] Whisper to
-  L1254  [SoftKey hint] Chat
-  L1266  [SoftKey hint] Emote id
-  L1278  [SoftKey hint] Channel #
-  L1301  [SoftKey hint] Chair itemid
-  L1331  [SoftKey hint] Pickup oid
-  L1363  [SoftKey hint] Reactor oid
-  L1386  [SoftKey hint] Effect itemid
-  L1420  [SoftKey hint] NPC oid
-
-[IO/UITypes/UIStorage.cpp] 3 处
-  L244   [SoftKey hint] type,slot
-  L267   [SoftKey hint] Store qty (selected)
-  L287   [SoftKey hint] slot,itemid,qty
-
-[IO/UITypes/UIStoreBank.cpp] 2 处
-  L77    [SoftKey hint] all|exit|tip
-  L172   [SoftKey hint] all|exit|tip
-
-[IO/UITypes/UITermsOfService.cpp] 1 处
-  L151   [SoftKey hint] ok|cancel
-
-[IO/UITypes/UITrade.cpp] 2 处
-  L286   [SoftKey hint] qty[,tradeSlot]
-  L306   [SoftKey hint] iv,pos,qty,slot
-
-[IO/UITypes/UIWorldSelect.cpp] 4 处
+[IO/UITypes/UIWorldSelect.cpp] 1 处
   L229   [Text ctor   ] Ver. 
-  L835   [SoftKey hint] Channel #
-  L907   [SoftKey hint] World #
-  L1195  [SoftKey hint] Region tip|empty=Region
 
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==
 
 
+== 软键盘豁免档（§11.6 用户裁决「不接」；**不是删除**，是换一档记账）==
+命中 426 处，不计入待接入站点数。逐条带 文件:行；理由 = 整档一条原生判据（按形状豁免，见下）。软键盘在原生 v83 打不开 ⇒ 若日后启用（升级到引用 SoftKey 的二进制），这些站点要按 5a 的输入语法/提示语两档重新清点。
+
+[SoftKey hint] 426 处 —— §11.6 裁决(用户 2026-11-03「不接」)：原生 v83 不启用软键盘(北斗 exe 零引用,素材 v95 才加载)⇒ 整形状豁免
+  IO/UITypes/UIAdmin.cpp             L83    users|alert|msg
+  IO/UITypes/UIAdmin.cpp             L125   users|alert|msg
+  IO/UITypes/UIAlliance.cpp          L152   Invite guild
+  IO/UITypes/UIAlliance.cpp          L160   Alliance notice
+  IO/UITypes/UIAlliance.cpp          L184   Invite guild
+  IO/UITypes/UIAlliance.cpp          L196   Alliance deny guild
+  IO/UITypes/UIAlliance.cpp          L207   inviter,guild
+  IO/UITypes/UIAriantMatch.cpp       L48    result idx|tip
+  IO/UITypes/UIAriantMatch.cpp       L101   result idx|tip
+  IO/UITypes/UIBossHP.cpp            L132   cur,max|pct|tip
+  IO/UITypes/UIBuddyList.cpp         L190   Group (All)
+  IO/UITypes/UIBuddyList.cpp         L199   Group (All)
+  IO/UITypes/UIBuddyList.cpp         L200   Buddy name
+  IO/UITypes/UIBuddyList.cpp         L221   Group
+  IO/UITypes/UIBuddyList.cpp         L229   Group
+  IO/UITypes/UIBuddyList.cpp         L230   Buddy name
+  IO/UITypes/UIBuddyList.cpp         L249   Accept cid
+  IO/UITypes/UIBuddyList.cpp         L268   Delete cid
+  IO/UITypes/UIBuddyList.cpp         L287   Reject cid
+  IO/UITypes/UIBuddyList.cpp         L301   Whisper msg
+  IO/UITypes/UIBuddyList.cpp         L309   Whisper msg
+  IO/UITypes/UIBuddyList.cpp         L310   Whisper to
+  IO/UITypes/UIBuffList.cpp          L221   Buff id
+  IO/UITypes/UIBuffList.cpp          L234   Clear buff id
+  IO/UITypes/UICashGachapon.cpp      L85    Gacha OK
+  IO/UITypes/UICashShop.cpp          L393   bday,sn[,msg]|empty=Coupon
+  IO/UITypes/UICashShop.cpp          L416   Gift bday,sn,name,msg|empty=Coupon
+  IO/UITypes/UICashShop.cpp          L468   t,cash|p,cash[,inv]|empty=Inv
+  IO/UITypes/UICashShop.cpp          L502   Wish SN[,SN…]
+  IO/UITypes/UICashShop.cpp          L516   Mileage SN
+  IO/UITypes/UICashShop.cpp          L537   Pkg useNX,sn
+  IO/UITypes/UICashShop.cpp          L568   Buy useNX,sn
+  IO/UITypes/UICashShop.cpp          L596   Preview 0-2
+  IO/UITypes/UICashShop.cpp          L632   Buy useNX[,sn]
+  IO/UITypes/UICashShop.cpp          L677   Buy useNX,sn
+  IO/UITypes/UICashShop.cpp          L706   bday,sn[,msg]
+  IO/UITypes/UICashShop.cpp          L724   bday,sn,name,msg
+  IO/UITypes/UICashShop.cpp          L737   Take cashId
+  IO/UITypes/UICashShop.cpp          L757   Put cashId[,inv]
+  IO/UITypes/UICashShop.cpp          L786   Pkg useNX,sn
+  IO/UITypes/UICashShop.cpp          L810   cash,type|cash,sSN
+  IO/UITypes/UICashShop.cpp          L827   cash[,sn]
+  IO/UITypes/UICashShop.cpp          L843   cash,sn
+  IO/UITypes/UIChannel.cpp           L248   Channel 1-N
+  IO/UITypes/UICharInfo.cpp          L401   Whisper
+  IO/UITypes/UICharInfo.cpp          L455   Damage skin id
+  IO/UITypes/UICharInfo.cpp          L472   Find name
+  IO/UITypes/UICharInfo.cpp          L550   Fame up|d (target)
+  IO/UITypes/UICharInfo.cpp          L567   Fame cid[,d]
+  IO/UITypes/UICharInfo.cpp          L578   Whisper msg
+  IO/UITypes/UICharInfo.cpp          L585   Whisper msg
+  IO/UITypes/UICharInfo.cpp          L586   Whisper to
+  IO/UITypes/UICharSelect.cpp        L911   Char slot #
+  IO/UITypes/UICharSelect.cpp        L1458  Please re-enter your new PIC.
+  IO/UITypes/UICharSelect.cpp        L1461  Your new PIC must at least be 6 characters long.
+  IO/UITypes/UIChat.cpp              L122   Buddy msg
+  IO/UITypes/UIChat.cpp              L131   Buddy cid
+  IO/UITypes/UIChat.cpp              L144   Find player
+  IO/UITypes/UIChat.cpp              L159   Party msg
+  IO/UITypes/UIChat.cpp              L167   Guild msg
+  IO/UITypes/UIChat.cpp              L175   Alliance msg
+  IO/UITypes/UIChat.cpp              L215   Buddy msg
+  IO/UITypes/UIChat.cpp              L224   Buddy cid
+  IO/UITypes/UIChat.cpp              L240   Find player
+  IO/UITypes/UIChat.cpp              L327   Rank find
+  IO/UITypes/UIChatBar.cpp           L629   Emote id
+  IO/UITypes/UIChatBar.cpp           L638   Spouse chat
+  IO/UITypes/UIChatBar.cpp           L694   itemid|link
+  IO/UITypes/UIChatBar.cpp           L1399  Chat
+  IO/UITypes/UIChatBar.cpp           L1407  Spouse chat
+  IO/UITypes/UIChatBar.cpp           L1416  Party chat
+  IO/UITypes/UIChatBar.cpp           L1425  Guild chat
+  IO/UITypes/UIChatBar.cpp           L1434  Alliance chat
+  IO/UITypes/UIChatBar.cpp           L1450  Buddy chat
+  IO/UITypes/UIChatBar.cpp           L1466  Find name
+  IO/UITypes/UIChatBar.cpp           L1758  Whisper msg
+  IO/UITypes/UIClock.cpp             L105   Clock|sec|tip
+  IO/UITypes/UIClock.cpp             L116   Clock text
+  IO/UITypes/UICommonCreation.cpp    L793   Char name
+  IO/UITypes/UIDailyGift.cpp         L510   Gift day
+  IO/UITypes/UIDelivery.cpp          L154   Mesos
+  IO/UITypes/UIDelivery.cpp          L159   Recipient
+  IO/UITypes/UIDelivery.cpp          L251   meso[,qty]
+  IO/UITypes/UIDelivery.cpp          L260   name,meso[,qty]
+  IO/UITypes/UIDelivery.cpp          L301   meso[,iv,slot,qty]
+  IO/UITypes/UIDelivery.cpp          L310   name,meso[,iv,slot,qty]
+  IO/UITypes/UIDelivery.cpp          L327   Package id
+  IO/UITypes/UIDelivery.cpp          L342   Claim pkg id
+  IO/UITypes/UIDelivery.cpp          L384   mesos|empty=help
+  IO/UITypes/UIEnergyBar.cpp         L108   Energy skillid
+  IO/UITypes/UIEquipInventory.cpp    L298   cashSlot,itemId
+  IO/UITypes/UIEquipInventory.cpp    L420   Unequip slot
+  IO/UITypes/UIEvent.cpp             L229   Event reply
+  IO/UITypes/UIFamily.cpp            L112   y/n
+  IO/UITypes/UIFamily.cpp            L120   Inviter name
+  IO/UITypes/UIFamily.cpp            L132   Inviter name
+  IO/UITypes/UIFamily.cpp            L134   Inviter cid
+  IO/UITypes/UIFamily.cpp            L149   Junior name
+  IO/UITypes/UIFamily.cpp            L157   Precept
+  IO/UITypes/UIFamily.cpp            L188   type[,name] 0=reunite 1=summon
+  IO/UITypes/UIFamily.cpp            L231   junior cid (empty=leave)
+  IO/UITypes/UIFamily.cpp            L255   Junior name
+  IO/UITypes/UIFamily.cpp            L261   Precept
+  IO/UITypes/UIFamily.cpp            L284   type[,name] 0=reunite 1=summon
+  IO/UITypes/UIFamilyTree.cpp        L138   Junior name
+  IO/UITypes/UIFamilyTree.cpp        L176   junior cid (empty=leave)
+  IO/UITypes/UIFamilyTree.cpp        L195   Summon name
+  IO/UITypes/UIFamilyTree.cpp        L225   Junior name
+  IO/UITypes/UIGender.cpp            L139   m|f
+  IO/UITypes/UIGuild.cpp             L239   cid,name|name (self)
+  IO/UITypes/UIGuild.cpp             L264   Char id
+  IO/UITypes/UIGuild.cpp             L266   Guild id
+  IO/UITypes/UIGuild.cpp             L292   cid,name|name
+  IO/UITypes/UIGuild.cpp             L360   BBS page|o,id|d,id|r,id,text|p,title|text
+  IO/UITypes/UIGuild.cpp             L414   Deny guild from
+  IO/UITypes/UIItemInventory.cpp     L551   Drop meso
+  IO/UITypes/UIItemInventory.cpp     L576   Maker itemId
+  IO/UITypes/UIItemInventory.cpp     L600   MaplePoints|empty=CS
+  IO/UITypes/UIItemInventory.cpp     L625   Equip slot
+  IO/UITypes/UIItemInventory.cpp     L639   Scroll slot
+  IO/UITypes/UIItemInventory.cpp     L764   Cash coupon
+  IO/UITypes/UIItemInventory.cpp     L806   Avatar Mega
+  IO/UITypes/UIItemInventory.cpp     L813   Chalkboard
+  IO/UITypes/UIItemInventory.cpp     L820   Kite
+  IO/UITypes/UIItemInventory.cpp     L827   Map effect
+  IO/UITypes/UIItemInventory.cpp     L835   Cash use
+  IO/UITypes/UIItemInventory.cpp     L1032  Use slot
+  IO/UITypes/UIItemInventory.cpp     L1052  Drop qty (selected)
+  IO/UITypes/UIItemInventory.cpp     L1066  Drop slot,qty
+  IO/UITypes/UIItemInventory.cpp     L1080  Move dst
+  IO/UITypes/UIItemInventory.cpp     L1092  Move src,dst
+  IO/UITypes/UIItemInventory.cpp     L1105  Meso amt
+  IO/UITypes/UIItemInventory.cpp     L1137  Equip slot
+  IO/UITypes/UIItemInventory.cpp     L1168  chalk|k,|m, slot,id,text
+  IO/UITypes/UIJoypad.cpp            L112   save|cancel|alt|classic
+  IO/UITypes/UIKeyConfig.cpp         L916   save|close
+  IO/UITypes/UIKeyConfig.cpp         L968   MapleLife name
+  IO/UITypes/UILogin.cpp             L586   Account
+  IO/UITypes/UILogin.cpp             L592   Password
+  IO/UITypes/UILoginNotice.cpp       L126   y|n
+  IO/UITypes/UILoginNotice.cpp       L229   quit|cancel
+  IO/UITypes/UILoginNotice.cpp       L352   y|n
+  IO/UITypes/UILoginNotice.cpp       L425   a|b
+  IO/UITypes/UILoginNotice.cpp       L521   y|ok
+  IO/UITypes/UILoginWait.cpp         L239   cancel
+  IO/UITypes/UIMTS.cpp               L121   MTS|tip
+  IO/UITypes/UIMTS.cpp               L145   itemid[,price]
+  IO/UITypes/UIMTS.cpp               L172   ownerid,mapid
+  IO/UITypes/UIMaker.cpp             L77    Maker itemId
+  IO/UITypes/UIMaker.cpp             L235   Maker itemId
+  IO/UITypes/UIMaker.cpp             L249   Maker status
+  IO/UITypes/UIMapleTV.cpp           L78    MapleTV msg
+  IO/UITypes/UIMapleTV.cpp           L129   Claim desc
+  IO/UITypes/UIMapleTV.cpp           L137   Claim victim
+  IO/UITypes/UIMapleTV.cpp           L165   ClassMatch
+  IO/UITypes/UIMapleTV.cpp           L181   ClassMatch
+  IO/UITypes/UIMegaphone.cpp         L80    Art Megaphone
+  IO/UITypes/UIMegaphone.cpp         L132   Avatar Mega
+  IO/UITypes/UIMemo.cpp              L125   Memo message
+  IO/UITypes/UIMemo.cpp              L133   Memo message
+  IO/UITypes/UIMemo.cpp              L134   Memo to
+  IO/UITypes/UIMemo.cpp              L153   Note id
+  IO/UITypes/UIMemo.cpp              L197   Memo message
+  IO/UITypes/UIMemo.cpp              L205   Memo message
+  IO/UITypes/UIMemo.cpp              L206   Memo to
+  IO/UITypes/UIMerchant.cpp          L146   Buy qty (selected)
+  IO/UITypes/UIMerchant.cpp          L163   slot[,qty]
+  IO/UITypes/UIMerchant.cpp          L192   qty[,merchSlot]
+  IO/UITypes/UIMerchant.cpp          L210   iv,pos,qty,slot
+  IO/UITypes/UIMerchant.cpp          L224   Owner name
+  IO/UITypes/UIMiniMap.cpp           L399   Map id|empty=WMap sel
+  IO/UITypes/UIMinigame.cpp          L96    Minigame chat
+  IO/UITypes/UIMinigame.cpp          L117   x,y[,piece]
+  IO/UITypes/UIMinigame.cpp          L130   turn,slot
+  IO/UITypes/UIMiscShells.cpp        L149   iv,pos,qty,slot
+  IO/UITypes/UIMiscShells.cpp        L246   Report target
+  IO/UITypes/UIMiscShells.cpp        L285   Report target
+  IO/UITypes/UIMiscShells.cpp        L308   Coupon code
+  IO/UITypes/UIMiscShells.cpp        L325   Coupon code
+  IO/UITypes/UIMiscShells.cpp        L345   Claim msg
+  IO/UITypes/UIMiscShells.cpp        L353   Claim to
+  IO/UITypes/UIMiscShells.cpp        L375   Claim msg
+  IO/UITypes/UIMiscShells.cpp        L382   Claim msg
+  IO/UITypes/UIMiscShells.cpp        L383   Claim to
+  IO/UITypes/UIMiscShells.cpp        L421   Egg USE slot
+  IO/UITypes/UIMiscShells.cpp        L480   Egg USE slot
+  IO/UITypes/UIMiscShells.cpp        L544   Channel 1-N
+  IO/UITypes/UIMiscShells.cpp        L571   Channel 1-N
+  IO/UITypes/UIMiscShells.cpp        L586   Channel 1-N
+  IO/UITypes/UIMiscShells.cpp        L619   Equip slot
+  IO/UITypes/UIMiscShells.cpp        L663   Equip slot
+  IO/UITypes/UIMiscShells.cpp        L758   Equip slot id
+  IO/UITypes/UIMiscShells.cpp        L778   Scroll USE slot
+  IO/UITypes/UIMiscShells.cpp        L798   scroll,equip
+  IO/UITypes/UIMiscShells.cpp        L833   Equip slot
+  IO/UITypes/UIMiscShells.cpp        L877   Equip slot
+  IO/UITypes/UIMiscShells.cpp        L947   Map ID / player
+  IO/UITypes/UIMiscShells.cpp        L1033  Map ID / player|empty=WMap
+  IO/UITypes/UIMiscShells.cpp        L1095  Quiz answer
+  IO/UITypes/UIMiscShells.cpp        L1112  Quiz answer
+  IO/UITypes/UIMiscShells.cpp        L1134  Initial quiz
+  IO/UITypes/UIMiscShells.cpp        L1145  Quiz answer
+  IO/UITypes/UIMiscShells.cpp        L1175  Rank name
+  IO/UITypes/UIMiscShells.cpp        L1200  Rank name
+  IO/UITypes/UIMiscShells.cpp        L1265  Item Megaphone
+  IO/UITypes/UIMiscShells.cpp        L1303  Counsel msg
+  IO/UITypes/UIMiscShells.cpp        L1311  Counsel to
+  IO/UITypes/UIMiscShells.cpp        L1333  Counsel msg
+  IO/UITypes/UIMiscShells.cpp        L1341  Counsel to
+  IO/UITypes/UIMiscShells.cpp        L1353  Note msg
+  IO/UITypes/UIMiscShells.cpp        L1361  Note to
+  IO/UITypes/UIMiscShells.cpp        L1383  Raid note
+  IO/UITypes/UIMiscShells.cpp        L1399  Raid note
+  IO/UITypes/UIMiscShells.cpp        L1424  Cygnus name
+  IO/UITypes/UIMiscShells.cpp        L1444  Cygnus name
+  IO/UITypes/UIMiscShells.cpp        L1498  Megaphone
+  IO/UITypes/UIMiscShells.cpp        L1529  Shop title
+  IO/UITypes/UIMiscShells.cpp        L1556  Shop title
+  IO/UITypes/UIMiscShells.cpp        L1579  slot,qty
+  IO/UITypes/UIMiscShells.cpp        L1600  Member title
+  IO/UITypes/UIMiscShells.cpp        L1626  Member title
+  IO/UITypes/UIMiscShells.cpp        L1647  slot,qty
+  IO/UITypes/UIMiscShells.cpp        L1679  Trade meso/chat
+  IO/UITypes/UIMiscShells.cpp        L1732  qty[,tradeSlot]
+  IO/UITypes/UIMiscShells.cpp        L1751  iv,pos,qty,slot
+  IO/UITypes/UIMiscShells.cpp        L1770  Trade meso/chat
+  IO/UITypes/UIMiscShells.cpp        L1796  Entrusted
+  IO/UITypes/UIMiscShells.cpp        L1839  slot,qty
+  IO/UITypes/UIMiscShells.cpp        L1843  Entrusted title
+  IO/UITypes/UIMiscShells.cpp        L1874  CashTrade meso/chat
+  IO/UITypes/UIMiscShells.cpp        L1926  qty[,tradeSlot]
+  IO/UITypes/UIMiscShells.cpp        L1945  iv,pos,qty,slot
+  IO/UITypes/UIMiscShells.cpp        L1964  CashTrade meso/chat
+  IO/UITypes/UIMiscShells.cpp        L2000  Find name
+  IO/UITypes/UIMiscShells.cpp        L2025  Find name
+  IO/UITypes/UIMiscShells.cpp        L2069  Aran skillid
+  IO/UITypes/UIMiscShells.cpp        L2112  Aran skillid|tip
+  IO/UITypes/UIMiscShells.cpp        L2144  Transform skillid|tip
+  IO/UITypes/UIMiscShells.cpp        L2167  Transform skillid|tip
+  IO/UITypes/UIMiscShells.cpp        L2188  MobKill chat
+  IO/UITypes/UIMiscShells.cpp        L2204  MobKill chat
+  IO/UITypes/UIMiscShells.cpp        L2222  MapleEvent
+  IO/UITypes/UIMiscShells.cpp        L2233  Event chat
+  IO/UITypes/UIMiscShells.cpp        L2304  SkillEx id
+  IO/UITypes/UIMiscShells.cpp        L2352  Book cover/page
+  IO/UITypes/UIMiscShells.cpp        L2389  Book cover id
+  IO/UITypes/UIMiscShells.cpp        L2438  Quest id|tip
+  IO/UITypes/UIMiscShells.cpp        L2460  Mate message
+  IO/UITypes/UIMiscShells.cpp        L2471  Mate message
+  IO/UITypes/UIMiscShells.cpp        L2489  Beta code
+  IO/UITypes/UIMiscShells.cpp        L2500  Beta code
+  IO/UITypes/UIMiscShells.cpp        L2533  users|alert|msg
+  IO/UITypes/UIMiscShells.cpp        L2561  users|alert|msg
+  IO/UITypes/UIMiscShells.cpp        L2720  Skill id
+  IO/UITypes/UIMiscShells.cpp        L2742  Map id
+  IO/UITypes/UIMiscShells.cpp        L2961  Trade cid|v
+  IO/UITypes/UIMiscShells.cpp        L2980  NPC oid
+  IO/UITypes/UIMiscShells.cpp        L3023  Cash itemid
+  IO/UITypes/UIMiscShells.cpp        L3066  slot,id,qty|s,…
+  IO/UITypes/UIMiscShells.cpp        L3079  NPC reply|sel
+  IO/UITypes/UIMiscShells.cpp        L3094  Char cid
+  IO/UITypes/UIMiscShells.cpp        L3113  Recharge slot
+  IO/UITypes/UIMiscShells.cpp        L3134  Skill id SP
+  IO/UITypes/UIMiscShells.cpp        L3151  CharInfo cid
+  IO/UITypes/UIMiscShells.cpp        L3170  Map id
+  IO/UITypes/UIMiscShells.cpp        L3190  Pickup oid
+  IO/UITypes/UIMiscShells.cpp        L3209  Reactor oid
+  IO/UITypes/UIMiscShells.cpp        L3226  AP str|dex|int|luk
+  IO/UITypes/UIMiscShells.cpp        L3242  Gather tab 1-5
+  IO/UITypes/UIMiscShells.cpp        L3260  Sort tab 1-5
+  IO/UITypes/UIMiscShells.cpp        L3277  Deny guild from
+  IO/UITypes/UIMiscShells.cpp        L3296  Forfeit quest id
+  IO/UITypes/UIMiscShells.cpp        L3322  Equip slot id
+  IO/UITypes/UIMiscShells.cpp        L3332  Scroll slot
+  IO/UITypes/UIMiscShells.cpp        L3368  Use itemid
+  IO/UITypes/UIMiscShells.cpp        L3667  MacroEx
+  IO/UITypes/UIMiscShells.cpp        L3691  Skill id
+  IO/UITypes/UIMiscShells.cpp        L3710  Clone note
+  IO/UITypes/UIMiscShells.cpp        L3722  Clone note
+  IO/UITypes/UIMiscShells.cpp        L3768  y|n|tip
+  IO/UITypes/UIMiscShells.cpp        L3815  AP str|SP id
+  IO/UITypes/UIMiscShells.cpp        L3846  AP str|SP id
+  IO/UITypes/UIMiscShells.cpp        L3879  Dest slot
+  IO/UITypes/UIMiscShells.cpp        L3909  Dest slot
+  IO/UITypes/UIMiscShells.cpp        L3934  iv,src,dst[,qty]
+  IO/UITypes/UIMiscShells.cpp        L3985  y|n|tip
+  IO/UITypes/UIMiscShells.cpp        L4029  Whisper msg
+  IO/UITypes/UIMiscShells.cpp        L4143  Whisper msg
+  IO/UITypes/UIMiscShells.cpp        L4144  Whisper name
+  IO/UITypes/UIMiscShells.cpp        L4150  Whisper msg
+  IO/UITypes/UIMiscShells.cpp        L4166  Char cid
+  IO/UITypes/UIMiscShells.cpp        L4197  Event note
+  IO/UITypes/UIMiscShells.cpp        L4215  Event note
+  IO/UITypes/UIMiscShells.cpp        L4294  Find name
+  IO/UITypes/UIMiscShells.cpp        L4311  Channel 1-N
+  IO/UITypes/UIMiscShells.cpp        L4363  UtilDlg text
+  IO/UITypes/UIMiscShells.cpp        L4374  UtilDlg text
+  IO/UITypes/UIMiscShells.cpp        L4416  MultiLine
+  IO/UITypes/UIMiscShells.cpp        L4453  MultiLine
+  IO/UITypes/UIMiscShells.cpp        L4651  Drop meso
+  IO/UITypes/UIMiscShells.cpp        L4685  Emote id
+  IO/UITypes/UIMiscShells.cpp        L4696  Chair itemid
+  IO/UITypes/UIMiscShells.cpp        L4741  ItemEffect id
+  IO/UITypes/UIMiscShells.cpp        L4774  Skill id
+  IO/UITypes/UIMiscShells.cpp        L4788  Book cover id
+  IO/UITypes/UIMiscShells.cpp        L4806  AP str|dex|int|luk
+  IO/UITypes/UIMiscShells.cpp        L4824  Gather tab 1-5
+  IO/UITypes/UIMiscShells.cpp        L4843  Sort tab 1-5
+  IO/UITypes/UIMiscShells.cpp        L4864  Deny guild from
+  IO/UITypes/UIMiscShells.cpp        L4883  Forfeit quest id
+  IO/UITypes/UIMiscShells.cpp        L4909  Equip slot id
+  IO/UITypes/UIMiscShells.cpp        L4919  Scroll slot
+  IO/UITypes/UIMiscShells.cpp        L4953  Use itemid
+  IO/UITypes/UIMiscShells.cpp        L4971  Map id
+  IO/UITypes/UIMiscShells.cpp        L4990  Pickup oid
+  IO/UITypes/UIMiscShells.cpp        L5009  Reactor oid
+  IO/UITypes/UIMiscShells.cpp        L5030  NPC oid
+  IO/UITypes/UIMiscShells.cpp        L5074  slot,id,qty|s,slot,id,qty
+  IO/UITypes/UIMiscShells.cpp        L5091  NPC reply|sel
+  IO/UITypes/UIMiscShells.cpp        L5109  Char cid
+  IO/UITypes/UIMiscShells.cpp        L5130  Recharge slot
+  IO/UITypes/UIMiscShells.cpp        L5163  Cash itemid
+  IO/UITypes/UIMiscShells.cpp        L5181  Skill id SP
+  IO/UITypes/UIMiscShells.cpp        L5209  Trade cid|v
+  IO/UITypes/UIMiscShells.cpp        L5228  CharInfo cid
+  IO/UITypes/UIMiscShells.cpp        L5405  Macro
+  IO/UITypes/UIMiscShells.cpp        L5430  Skill id
+  IO/UITypes/UIMiscShells.cpp        L5469  Emote id|tip
+  IO/UITypes/UIMiscShells.cpp        L5493  Emote id|tip
+  IO/UITypes/UIMiscShells.cpp        L5525  Pet name
+  IO/UITypes/UIMiscShells.cpp        L5543  Pet name
+  IO/UITypes/UIMiscShells.cpp        L5578  MultiPet name
+  IO/UITypes/UIMiscShells.cpp        L5601  MultiPet name
+  IO/UITypes/UIMiscShells.cpp        L5631  ExSearch name
+  IO/UITypes/UIMiscShells.cpp        L5656  ExSearch name
+  IO/UITypes/UIMiscShells.cpp        L5708  cur,max|pct|tip
+  IO/UITypes/UIMiscShells.cpp        L5740  SkillUp id
+  IO/UITypes/UIMiscShells.cpp        L5769  SkillUp id
+  IO/UITypes/UIMiscShells.cpp        L5796  MacroSkill
+  IO/UITypes/UIMiscShells.cpp        L5816  MacroSkill
+  IO/UITypes/UIMiscShells.cpp        L5840  Skill id
+  IO/UITypes/UIMiscShells.cpp        L5879  Quest id
+  IO/UITypes/UIMiscShells.cpp        L5912  Quest id|tip
+  IO/UITypes/UIMiscShells.cpp        L5934  qid or qid,npc
+  IO/UITypes/UIMiscShells.cpp        L5952  Forfeit qid
+  IO/UITypes/UIMiscShells.cpp        L6127  FloatNotice tip
+  IO/UITypes/UIMonsterBook.cpp       L165   Cover card id
+  IO/UITypes/UIMonsterBook.cpp       L191   card id|name
+  IO/UITypes/UIMonsterCarnival.cpp   L60    avail/total|tip
+  IO/UITypes/UIMonsterCarnival.cpp   L115   avail/total|tip
+  IO/UITypes/UIMonsterCarnival.cpp   L128   enemy avail/total
+  IO/UITypes/UIMonsterCarnival.cpp   L135   CPQ msg
+  IO/UITypes/UINewYearsCard.cpp      L85    NY message
+  IO/UITypes/UINewYearsCard.cpp      L93    NY receiver
+  IO/UITypes/UINotice.cpp            L171   y|n
+  IO/UITypes/UINotice.cpp            L284   Enter number
+  IO/UITypes/UINotice.cpp            L393   ok|cancel
+  IO/UITypes/UINpcTalk.cpp           L304   Npc text
+  IO/UITypes/UINpcTalk.cpp           L324   Npc number
+  IO/UITypes/UINpcTalk.cpp           L420   Npc text
+  IO/UITypes/UINpcTalk.cpp           L430   Npc number
+  IO/UITypes/UINpcTalk.cpp           L440   Npc select
+  IO/UITypes/UIOptionMenu.cpp        L343   ok|WxH|buff on|equip on|mp N
+  IO/UITypes/UIParty.cpp             L177   Party id
+  IO/UITypes/UIParty.cpp             L260   Leader cid
+  IO/UITypes/UIParty.cpp             L284   Expel cid
+  IO/UITypes/UIPartyRace.cpp         L72    r:b|win|stage|tip
+  IO/UITypes/UIPartyRace.cpp         L138   r:b|win|stage|tip
+  IO/UITypes/UIPartySearch.cpp       L117   Lv min-max
+  IO/UITypes/UIPartySearch.cpp       L207   Lv min-max
+  IO/UITypes/UIPartySearch.cpp       L219   Jobs mask
+  IO/UITypes/UIQuit.cpp              L182   y|n
+  IO/UITypes/UIRaceSelect.cpp        L543   idx|make
+  IO/UITypes/UIRegion.cpp            L86    na|eu
+  IO/UITypes/UIRemoteGachapon.cpp    L80    Town 0-9
+  IO/UITypes/UIShop.cpp              L447   Buy qty (selected)
+  IO/UITypes/UIShop.cpp              L462   Buy slot,qty
+  IO/UITypes/UIShop.cpp              L478   Sell qty (selected)
+  IO/UITypes/UIShop.cpp              L493   Sell idx,qty
+  IO/UITypes/UIShop.cpp              L513   Recharge slot
+  IO/UITypes/UISkillBook.cpp         L817   Skill id SP
+  IO/UITypes/UISkillBook.cpp         L845   Skill id use
+  IO/UITypes/UIStatsInfo.cpp         L492   AP str|dex|int|luk|1-4
+  IO/UITypes/UIStatusBar.cpp         L1237  Whisper msg
+  IO/UITypes/UIStatusBar.cpp         L1245  Whisper msg
+  IO/UITypes/UIStatusBar.cpp         L1246  Whisper to
+  IO/UITypes/UIStatusBar.cpp         L1254  Chat
+  IO/UITypes/UIStatusBar.cpp         L1266  Emote id
+  IO/UITypes/UIStatusBar.cpp         L1278  Channel #
+  IO/UITypes/UIStatusBar.cpp         L1301  Chair itemid
+  IO/UITypes/UIStatusBar.cpp         L1331  Pickup oid
+  IO/UITypes/UIStatusBar.cpp         L1363  Reactor oid
+  IO/UITypes/UIStatusBar.cpp         L1386  Effect itemid
+  IO/UITypes/UIStatusBar.cpp         L1420  NPC oid
+  IO/UITypes/UIStatusMessenger.cpp   L96    Status tip
+  IO/UITypes/UIStatusMessenger.cpp   L108   Red tip
+  IO/UITypes/UIStatusMessenger.cpp   L115   White tip
+  IO/UITypes/UIStorage.cpp           L244   type,slot
+  IO/UITypes/UIStorage.cpp           L267   Store qty (selected)
+  IO/UITypes/UIStorage.cpp           L287   slot,itemid,qty
+  IO/UITypes/UIStoreBank.cpp         L77    all|exit|tip
+  IO/UITypes/UIStoreBank.cpp         L172   all|exit|tip
+  IO/UITypes/UITermsOfService.cpp    L151   ok|cancel
+  IO/UITypes/UITrade.cpp             L286   qty[,tradeSlot]
+  IO/UITypes/UITrade.cpp             L306   iv,pos,qty,slot
+  IO/UITypes/UITreasureBox.cpp       L67    Treasure itemid
+  IO/UITypes/UITreasureBox.cpp       L110   Treasure itemid
+  IO/UITypes/UIUserList.cpp          L380   Whisper msg
+  IO/UITypes/UIUserList.cpp          L388   Whisper msg
+  IO/UITypes/UIUserList.cpp          L389   Whisper to
+  IO/UITypes/UIUserList.cpp          L459   Add friend
+  IO/UITypes/UIUserList.cpp          L474   Friend group
+  IO/UITypes/UIUserList.cpp          L483   Friend group
+  IO/UITypes/UIUserList.cpp          L484   Friend name
+  IO/UITypes/UIUserList.cpp          L518   Invite name|Join id
+  IO/UITypes/UIUserList.cpp          L557   Expel cid|Deny name
+  IO/UITypes/UIUserList.cpp          L575   Find name
+  IO/UITypes/UIUserList.cpp          L592   Find name
+  IO/UITypes/UIViewAllChar.cpp       L165   Char cid
+  IO/UITypes/UIViewAllChar.cpp       L197   PIC
+  IO/UITypes/UIViewAllChar.cpp       L215   Char cid
+  IO/UITypes/UIWorldMap.cpp          L351   mapid|search
+  IO/UITypes/UIWorldMap.cpp          L391   Players mapid
+  IO/UITypes/UIWorldSelect.cpp       L835   Channel #
+  IO/UITypes/UIWorldSelect.cpp       L907   World #
+  IO/UITypes/UIWorldSelect.cpp       L1195  Region tip|empty=Region
+
+
 == 白名单（PLAN §4.1，逐条挂原生判据；**不是删除**，是换一档记账）==
-命中 17 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
+命中 20 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
 
 '0%'  5 处 —— 比率数值格式；原生是 " %d%%"(0x73BCC0) 格式串
   L566   [change_text ] IO/UITypes/UIStatsInfo.cpp
@@ -592,6 +470,11 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L551   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L565   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
+'!'  3 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
+  L60    [Text ctor   ] IO/UITypes/UIAdmin.cpp
+  L2182  [change_text ] IO/UITypes/UIChatBar.cpp
+  L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+
 '-'  2 处 —— 空值占位符；原生无该字面量，locale 中性标点
   L678   [change_text ] IO/UITypes/UICharInfo.cpp
   L541   [change_text ] IO/UITypes/UIStatsInfo.cpp
@@ -599,9 +482,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 '0.00%'  2 处 —— 比率数值格式；原生 EXP 行为 "EXP : %d / %d"(0x73BB5C)，无此字面量
   L568   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L574   [change_text ] IO/UITypes/UIStatsInfo.cpp
-
-'!'  1 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
-  L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
 
 '0'  1 处 —— 数值初值，首个数据包即被改写
   L196   [Text ctor   ] IO/UITypes/UIMapInfoPanel.cpp
@@ -611,6 +491,9 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 '2'  1 处 —— 数值初值，首个数据包即被改写
   L171   [Text ctor   ] IO/UITypes/UICharInfo.cpp
+
+'>> '  1 处 —— GM 回显符号前缀；">> " 三编码 0 命中，串池 ">>"@0x73BAD0 是 BtNPT 邻居的节点名档、非该语义 ⇒ locale 中性标点
+  L160   [change_text ] IO/UITypes/UIAdmin.cpp
 
 'V'  1 处 —— UIDailyGift 已领标记（字母 V 当对勾）；原生走位图，无字面量
   L141   [Text ctor   ] IO/UITypes/UIDailyGift.cpp

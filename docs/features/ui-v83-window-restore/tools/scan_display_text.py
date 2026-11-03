@@ -51,6 +51,23 @@ WHITELIST = {
     "2": "数值初值，首个数据包即被改写",
     "0%": "比率数值格式；原生是 \" %d%%\"(0x73BCC0) 格式串",
     "0.00%": "比率数值格式；原生 EXP 行为 \"EXP : %d / %d\"(0x73BB5C)，无此字面量",
+    # B1c-7 追加（2026-11-03 取证，native-verdicts copy-literals.txt 追加段 +
+    # 本轮 .rdata 串池抽取 _b1c7_native_grep.py）：UIAdmin:160 的 GM 回显前缀 ">> "。
+    # 三编码（ASCII / UTF-16LE / GBK）整串 ">> " 全档 0 命中；串池确有一个独立 ">>"
+    # @0x73BAD0，但邻居是 ".img/BtNPT" 节点路径、且 "<<"/">>" 成对 ⇒ 那是 WZ 节点名档，
+    # 不是「GM 快捷指令回显」。GM 控制台本身非原生 v83 功能（UIAdmin 本包壳窗）⇒ locale
+    # 中性符号前缀，同 `-` `!` `V` 一档，不建键。
+    ">> ": "GM 回显符号前缀；\">> \" 三编码 0 命中，串池 \">>\"@0x73BAD0 是 BtNPT 邻居的节点名档、非该语义 ⇒ locale 中性标点",
+}
+
+# R27-B1c §11 第 6 条 · 2026-11-03 用户裁决「不接」：**整形状豁免**（不是按字面量放行）。
+# 原生取证（evidence/native-verdicts-2026-11-03/copy-literals.txt）：软键盘素材在 UI.nx
+# （Login.img/Common/SoftKey、UIWindow.img/SoftKeyboard），但北斗 v83 exe 零引用、v95 端才
+# 加载（n/SoftKey/BtNum/%d）⇒ 这批提示语服务的 UI 在 v83 打不开，接 i18n 只给一个永不出现的
+# 键盘配文案。与 WHITELIST 同款契约：**不静默丢** —— 每条仍逐行打进报告末尾「软键盘豁免档」，
+# 带 文件:行 与裁决理由。按 shape 而非 value：豁免的是「这条 UI 原生根本不出现」，与写什么无关。
+EXEMPT_SHAPES = {
+    "SoftKey hint": "§11.6 裁决(用户 2026-11-03「不接」)：原生 v83 不启用软键盘(北斗 exe 零引用,素材 v95 才加载)⇒ 整形状豁免",
 }
 
 
@@ -76,6 +93,7 @@ def main():
     shells = wave_a_shells()
     rows = []
     wl = []
+    exempt = []
     for d in SCAN_DIRS:
         base = os.path.join(ROOT, d)
         for dirpath, _dirs, files in os.walk(base):
@@ -95,6 +113,9 @@ def main():
                                 continue
                             if txt in WHITELIST:
                                 wl.append((rel, i, txt, shape))
+                                continue
+                            if shape in EXEMPT_SHAPES:
+                                exempt.append((rel, i, txt, shape))
                                 continue
                             rows.append((rel, i, txt, "CJK" if cjk(txt) else "LATIN", shape))
 
@@ -122,8 +143,8 @@ def main():
         f.write("已 i18n 的行（引号在 Locale::* 之后，或字面量本身是 ini 键名）不计入。\n")
         f.write("Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：\n  %s\n\n"
                 % " ".join(sorted(shells)))
-        f.write("总计 %d 处 | 英文 %d（壳窗 %d / 在用窗 %d）| 中文 %d\n"
-                % (len(rows), len(latin), shell_n, live_n, len(cjk_rows)))
+        f.write("总计 %d 处 | 英文 %d（壳窗 %d / 在用窗 %d）| 中文 %d | 软键盘豁免 %d\n"
+                % (len(rows), len(latin), shell_n, live_n, len(cjk_rows), len(exempt)))
         f.write("按形状分档（全站，中英合并）：%s\n"
                 % " / ".join("%s=%d" % (k, by_shape[k]) for k, _ in PATTERNS if k in by_shape))
 
@@ -143,6 +164,16 @@ def main():
             for ln, txt, shape in by_file2[rel]:
                 f.write("  L%-5d [%-12s] %s\n" % (ln, shape, txt[:90]))
 
+        f.write("\n\n== 软键盘豁免档（§11.6 用户裁决「不接」；**不是删除**，是换一档记账）==\n")
+        f.write("命中 %d 处，不计入待接入站点数。逐条带 文件:行；理由 = 整档一条原生判据"
+                "（按形状豁免，见下）。软键盘在原生 v83 打不开 ⇒ 若日后启用（升级到引用 SoftKey 的"
+                "二进制），这些站点要按 5a 的输入语法/提示语两档重新清点。\n" % len(exempt))
+        for shape, why in EXEMPT_SHAPES.items():
+            n_sh = sum(1 for e in exempt if e[3] == shape)
+            f.write("\n[%s] %d 处 —— %s\n" % (shape, n_sh, why))
+        for rel, ln, txt, shape in exempt:
+            f.write("  %-34s L%-5d %s\n" % (rel, ln, txt[:80]))
+
         f.write("\n\n== 白名单（PLAN §4.1，逐条挂原生判据；**不是删除**，是换一档记账）==\n")
         f.write("命中 %d 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。\n" % len(wl))
         by_wl = {}
@@ -154,8 +185,8 @@ def main():
                 f.write("  L%-5d [%-12s] %s\n" % (ln, shape, rel))
 
     print("WROTE", OUT)
-    print("sites=%d latin=%d shell=%d live=%d cjk=%d wl=%d shells=%d shapes=%s"
-          % (len(rows), len(latin), shell_n, live_n, len(cjk_rows), len(wl), len(shells),
+    print("sites=%d latin=%d shell=%d live=%d cjk=%d wl=%d exempt=%d shells=%d shapes=%s"
+          % (len(rows), len(latin), shell_n, live_n, len(cjk_rows), len(wl), len(exempt), len(shells),
              ",".join("%s=%d" % (k, by_shape[k]) for k, _ in PATTERNS if k in by_shape)))
 
 
