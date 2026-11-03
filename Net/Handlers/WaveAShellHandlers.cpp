@@ -282,9 +282,7 @@ namespace ms
 			<< " privs=" << privs.size());
 
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_info(data);
 			if (!privs.empty())
@@ -360,16 +358,12 @@ namespace ms
 			<< " privs=" << chart_privs.size());
 
 		auto ui = UI::get().get_element<UIFamilyTree>();
-		if (!ui) ui = UI::get().emplace<UIFamilyTree>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 			ui->set_chart(viewed_id, std::move(entries), add_enabled);
 		if (!chart_privs.empty())
 		{
 			auto fam = UI::get().get_element<UIFamily>();
-			if (!fam) fam = UI::get().emplace<UIFamily>();
-			else if (!fam->is_active()) fam->makeactive();
-			if (fam)
+			if (fam && fam->is_active())
 				fam->set_privileges(chart_privs);
 		}
 		while (recv.available())
@@ -412,9 +406,7 @@ namespace ms
 			? (name.empty() ? "Family invite accepted." : (name + " joined your family."))
 			: (name.empty() ? "Family invite declined." : (name + " declined the invite."));
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges({ tip });
 			return;
@@ -447,9 +439,7 @@ namespace ms
 		std::string tip = (type < 8) ? msgs[type]
 			: ("Family notice (" + std::to_string(type) + ")");
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges({ tip });
 			return;
@@ -1939,9 +1929,7 @@ namespace ms
 			recv.skip_byte();
 		std::string tip = name + (online ? " logged in" : " logged out");
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges({ tip });
 			return;
@@ -1987,9 +1975,7 @@ namespace ms
 			recv.skip_byte();
 		std::string tip = "Family senior: " + name;
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges({ tip });
 			return;
@@ -2747,9 +2733,7 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 			ui->set_privileges(names);
 	}
 
@@ -2763,9 +2747,7 @@ namespace ms
 		std::string tip = "Family REP +" + std::to_string(gain)
 			+ (from.empty() ? "" : (" (" + from + ")"));
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges({ tip });
 			return;
@@ -2805,9 +2787,7 @@ namespace ms
 		if (names.empty())
 			names.emplace_back(priv ? ("priv#" + std::to_string(priv)) : "none");
 		auto ui = UI::get().get_element<UIFamily>();
-		if (!ui) ui = UI::get().emplace<UIFamily>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_privileges(names);
 			return;
@@ -3890,9 +3870,7 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		auto ui = UI::get().get_element<UIGuild>();
-		if (!ui) ui = UI::get().emplace<UIGuild>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 			ui->set_notice(tip);
 		// note
 	}
@@ -4183,9 +4161,7 @@ namespace ms
 			recv.skip_byte();
 		std::string tip = name.empty() ? "Guild name cleared" : ("Guild: " + name);
 		auto ui = UI::get().get_element<UIGuild>();
-		if (!ui) ui = UI::get().emplace<UIGuild>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_notice(tip);
 			return;
@@ -4217,9 +4193,7 @@ namespace ms
 			recv.skip_byte();
 		std::string tip = "Guild mark updated";
 		auto ui = UI::get().get_element<UIGuild>();
-		if (!ui) ui = UI::get().emplace<UIGuild>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_notice(tip);
 			return;

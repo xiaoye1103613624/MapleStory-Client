@@ -356,9 +356,7 @@ namespace ms
 			while (recv.available())
 				recv.skip_byte();
 			auto guild = UI::get().get_element<UIGuild>();
-			if (!guild) guild = UI::get().emplace<UIGuild>();
-			else if (!guild->is_active()) guild->makeactive();
-			if (guild)
+			if (guild && guild->is_active())
 			{
 				guild->set_notice(tip);
 				return;
@@ -685,9 +683,7 @@ namespace ms
 		if (mode == 2)
 		{
 			auto ui = UI::get().get_element<UIGuild>();
-			if (!ui) ui = UI::get().emplace<UIGuild>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_notice(line);
 				return;
@@ -696,9 +692,7 @@ namespace ms
 		else if (mode == 3)
 		{
 			auto ui = UI::get().get_element<UIAlliance>();
-			if (!ui) ui = UI::get().emplace<UIAlliance>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_notice(line);
 				return;
@@ -791,9 +785,7 @@ namespace ms
 		if (line.empty())
 			return;
 		auto ui = UI::get().get_element<UIWedding>();
-		if (!ui) ui = UI::get().emplace<UIWedding>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
+		if (ui && ui->is_active())
 		{
 			ui->set_invitation(false, line);
 			return;
@@ -889,9 +881,7 @@ namespace ms
 		if (type == 2)
 		{
 			auto ui = UI::get().get_element<UIGuild>();
-			if (!ui) ui = UI::get().emplace<UIGuild>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_notice(line);
 				return;
@@ -900,9 +890,7 @@ namespace ms
 		else if (type == 1)
 		{
 			auto ui = UI::get().get_element<UIFamily>();
-			if (!ui) ui = UI::get().emplace<UIFamily>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_privileges({ line });
 				return;
@@ -922,9 +910,7 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		auto wed = UI::get().get_element<UIWedding>();
-		if (!wed) wed = UI::get().emplace<UIWedding>();
-		else if (!wed->is_active()) wed->makeactive();
-		if (wed)
+		if (wed && wed->is_active())
 		{
 			wed->set_invitation(false, line);
 			return;
@@ -932,9 +918,7 @@ namespace ms
 		if (type == 0)
 		{
 			auto ui = UI::get().get_element<UIGuild>();
-			if (!ui) ui = UI::get().emplace<UIGuild>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_notice(line);
 				return;
@@ -943,9 +927,7 @@ namespace ms
 		else
 		{
 			auto ui = UI::get().get_element<UIFamily>();
-			if (!ui) ui = UI::get().emplace<UIFamily>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_privileges({ line });
 				return;
@@ -969,9 +951,7 @@ namespace ms
 		if (type == 0)
 		{
 			auto ui = UI::get().get_element<UIGuild>();
-			if (!ui) ui = UI::get().emplace<UIGuild>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_notice(line);
 				return;
@@ -980,9 +960,7 @@ namespace ms
 		else
 		{
 			auto ui = UI::get().get_element<UIFamily>();
-			if (!ui) ui = UI::get().emplace<UIFamily>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui)
+			if (ui && ui->is_active())
 			{
 				ui->set_privileges({ line });
 				return;
