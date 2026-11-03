@@ -202,6 +202,38 @@
 动态前缀家族），键值忠实度尺 98/98 要求每条非占位符片段在原站点逐字出现。两份输出与
 负对照记录见同目录 `gate-r27-b1c5b*.txt`。
 
+### B1c-5c（中文盲区四窗 · 15 键 / 3 个 .cpp，zh 值 = 改动前原汉字）
+
+**这批与上面两批的差别只在「等谁定」**：5a/5b 的原字面量是英文，zh 现值本身就是要用户改的措辞；
+5c 的原字面量是汉字，**zh 值 = 改动前界面就在显示的那句**（决策 B 不翻译 ⇒ 零风险），
+需要定稿的是 **en 那一份**（下表「英文草稿」列全部本包自造，无原生依据）。
+
+| 键 | zh 值（原字面量） | en 草稿（自造） | 站点 | 状态 |
+| --- | --- | --- | --- | --- |
+| `quest.area.20` | `彩虹岛` | `Rainbow Island` | UIQuestLog.cpp:392 | 待用户定 en 措辞 |
+| `quest.area.30` | `金银岛` | `Kernese` | UIQuestLog.cpp:393、UIQuestLog.cpp:394 | 待用户定 en 措辞 |
+| `quest.detail.id` | `任务编号: {}` | `Quest ID: {}` | UIQuestLog.cpp:559 | 待用户定 en 措辞 |
+| `quest.detail.level_range` | `等级范围: {} ~ {}` | `Level range: {} ~ {}` | UIQuestLog.cpp:562 | 待用户定 en 措辞 |
+| `quest.detail.min_level` | `需要等级: {}` | `Required level: {}` | UIQuestLog.cpp:565 | 待用户定 en 措辞 |
+| `quest.detail.area` | `所属区域: {}` | `Area: {}` | UIQuestLog.cpp:567 | 待用户定 en 措辞 |
+| `quest.detail.npc` | `相关NPC编号: {}` | `Related NPC: {}` | UIQuestLog.cpp:570 | 待用户定 en 措辞 |
+| `quest.detail.pre_none` | `前置任务: 无` | `Prereq: none` | UIQuestLog.cpp:573 | 待用户定 en 措辞 |
+| `quest.detail.pre` | `前置任务: {}` | `Prereq: {}` | UIQuestLog.cpp:581 | 待用户定 en 措辞 |
+| `guild.title_plain` | `公会` | `Guild` | UIGuild.cpp:60 | 待用户定 en 措辞 |
+| `guild.title_named` | `公会: {}` | `Guild: {}` | UIGuild.cpp:61 | 待用户定 en 措辞 |
+| `guild.member_rank` | `职位{}` | `Rank {}` | UIGuild.cpp:75 | 待用户定 en 措辞 |
+| `guild.member_online` | `[在线]` | `[online]` | UIGuild.cpp:76 | 待用户定 en 措辞 |
+| `guild.member_offline` | `[离线]` | `[offline]` | UIGuild.cpp:76 | 待用户定 en 措辞 |
+| `merchant.owner_shop` | `{} 的商店` | `{}'s Shop` | UIMerchant.cpp:267 | 待用户定 en 措辞 |
+
+`quest.area.*` 取「区域号当键名」：这套号来自任务数据，本包没有原生英文地名依据，
+把 `Ellin Forest` 这类名字写进**键名**等于把没核对过的语义钉死；换措辞时只动 ini 值。
+
+**本批门禁读数**：键 303/303 对齐、忠实度 15/15（提交前 `HEAD` 判据）、arity 336 站点 0 不合格、
+中文站点尺 30→14 且**余下 14 处全部带档号**（待接线 0）。见同目录 `gate-r27-b1c5c*.txt`、
+`cjk-scan-full.txt`。中文站点的两处**不接线**（`UIGender.cpp` 的 `t == "女"/"男"`）理由已写进
+`tools/scan_cjk_literals.py` 的 `EXEMPT`，那是软键盘输入的比对串，接了 i18n 会在切语言后失配。
+
 ## 为什么模板里带占位符而不是「数字 + 独立后缀」
 
 `Util/Locale.cpp` 的加载器会 `trim` 掉值两端空白，所以单独存 `" up"` 只会得到 `"up"`；

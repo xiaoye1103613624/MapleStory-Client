@@ -1,0 +1,87 @@
+# R27-B1c-5c 门禁读数（2026-11-03）
+
+批次范围：中文盲区四窗 `UIQuestLog` / `UIGuild` / `UIMerchant` 的展示文案 + `UIGender` 的**不接线裁决**。
+键名与值的台账：[keys-5c.txt](keys-5c.txt)；待取证登记：[pending-copy.md](pending-copy.md) §「B1c-5c」。
+
+## 1. 编译（`cl /c`，3 TU 一次过）
+
+```
+build_5c.bat  →  VCVARS_ERRORLEVEL=0   CL_EXIT=0   error 行 0
+```
+
+日志 `E:\project\_b1c_check\cl_5c_stdout.txt`（临时件，不入库）。
+
+## 2. 键门禁（`tools/check_locale_keys.py`）
+
+```
+zh-CN keys = 303
+en-US keys = 303
+代码引用键 232 个 / 动态前缀 5 个
+GATE OK
+```
+
+288（B1c-5b 收口时）→ **303**：本批 +15，两份同键（决策 B）。
+**引用数 232 而不是 230**：本批补上「三元选键」形状（`Locale::text(c ? "a.x" : "a.y")`），
+一次多收 4 个键 —— 本批 2 个（`guild.member_online/offline`）+ **5b 漏掉的 2 个**
+（`familytree.online/offline`，见 [UIFamilyTree.cpp:70](../../../../../IO/UITypes/UIFamilyTree.cpp#L70)）。
+补尺前的读数 228 就是这个缺口的证据（15 个新键只进账 13）。
+
+负对照（把 `guild.member_online` 拼成 `guild.member_onlie` 再跑）：
+
+```
+rc=1   guild.member_onlie <- IO\UITypes\UIGuild.cpp
+```
+
+改错一个字母能被点名到文件，改回后 `rc=0`；破坏与还原都在脚本里断言过（不是「大概改了」）。
+
+## 3. 值保真（`tools/check_value_fidelity.py`，**提交前**跑，判据 = `HEAD`）
+
+```
+值保真（原文取 HEAD）：ini 真源 15 键 | 片段全部命中 = 15 | 片段查无 = 0 | 源码无引用 = 0 | ini 缺键 = 0
+```
+
+这批的片段是**汉字**（5b 是英文），逐字回查同一条判据成立 —— 说明这条尺不依赖语言，只依赖「值必须来自改动前源码」。
+
+## 4. 占位符 arity（`tools/check_placeholder_arity.py --both`）
+
+```
+arity 校验调用点 = 336 | 不合格 = 0 | 判据 = locale/zh-CN.ini + locale/en-US.ini
+```
+
+318 → 336：本批 +18 个 `format`/`format_all` 调用点，配平。
+
+## 5. 中文站点尺（`tools/scan_cjk_literals.py`）—— 本批立「带档号」的读数
+
+```
+总计 14 处
+分档：B1c-5c=2 | B1c-6=1 | 待裁决=11
+```
+
+30 → **14**，且**「待接线」= 0**（全仓 `IO/` 树下再无「该接而没接」的中文展示站点）。余下 14 处：
+
+| 档 | 处 | 是什么 |
+| --- | --- | --- |
+| `B1c-5c` | 2 | `UIGender.cpp:126/128` 的 `t == "女"/"男"` —— 软键盘输入的**比对串**，不是展示文案；接了 i18n 会在切语言后失配 ⇒ 按裁决不接，理由写进尺的 `EXEMPT` |
+| `B1c-6` | 1 | `UIMiscShells.cpp:6182` 诊断日志串，不上界面 |
+| `待裁决` | 11 | `IO/Window.cpp` 的开发者浮层（破功值 / 当前时间 / 在线时长）—— **是否算展示文案等用户裁决**；且该文件此刻被并行会话占着，本批不动 |
+
+为什么要给档号：只报「还剩 14 处中文」会把该接的、不该接的、等人的混成一个数，下一批无从判断是不是漏了。
+
+## 6. 版式回归（`tools/layout.py check` × 10 spec）
+
+```
+specs=10 非零返回=0
+```
+
+逐张 rc、oracle 帧与不合格数见 [layout-b1c5c.txt](layout-b1c5c.txt)。本批只加 i18n 调用点，未动任何渲染常数。
+**这不等于真机逐格验收**：`MapleStory.exe` 占着 OutDir，整包 `-t:Rebuild` 与运行时负对照仍欠（同 §B1c-5b 第 6 条）。
+
+## 7. 两条「形状」教训
+
+1. **加载器 trim 掉了值两端空白**（[Util/Locale.cpp:15-23](../../../../../Util/Locale.cpp#L15)），所以
+   `前置任务: ` / ` 职位{}` / ` 的商店` 这三类「空格在边缘」的字面量**不能原样进 ini** ——
+   空格要么挪进占位符两侧（`{} 的商店`），要么留在代码拼接里。首版按「值 = 原字面量」直写，
+   会在界面上静默少一格；两条尺都不报（值对得上、arity 也对得上），只有读加载器才看得见。
+2. **中文后置词 ≠ 英文所有格**：`owner + " 的商店"` 若拆成「名字 + 后缀键」，英文会渲染成
+   `Bob 's Shop`。故 `merchant.owner_shop = {} 的商店` / `{}'s Shop` 整句进键 ——
+   这正是 `Locale::format` 存在的原因（语序是语言属性），本批把它当成判据而不是偏好。

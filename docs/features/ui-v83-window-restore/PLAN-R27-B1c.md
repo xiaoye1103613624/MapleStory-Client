@@ -73,7 +73,7 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 | **B1c-2 机制层** | `Locale::generation` + `UIElement::bind_text/refresh_localized` + 3 个派发点 + `EquipTooltip`/`UIMonsterBook` 的静态标签上表 | 6 | `cl /c /utf-8` 过；**负对照**：临时把 `ui.language` 从 zh-CN 改 en-US，已开着的窗的绑定文案必须变，没绑的 `Locale::text` 活文案也必须变（这一步同时验 §1.2b 的两条路都通） |
 | **B1c-3 在用窗** | `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3) `UIViewAllChar`(2) `UIRegion`(2) `Ver. `×4 `UIJoypad`(2) `UICharSelect`(2) | 25 | 门禁 §4 + 版式回归（换文案后宽度会变，必须重跑 `layout.py check` 十张 spec） |
 | **B1c-4 中文硬编码** | `UIBuddyList`(3) `UIParty`(3) `UIStorage`(3) `UITrade`(5) `UIMapSearchPanel`(5) `UIMapInfoPanel`(2) `UIDailyGift`(14) | ~~20~~ **35**（清点器漏的 15 处见「落地情况」） | 同上；这批零翻译风险，最先能全绿 |
-| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin（**已完**：24 文件 / 98 键，见「落地情况」）；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant` | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
+| **B1c-5 壳窗·小** | 壳窗里除 `UIMiscShells` 外的站点，按文件切 2~3 个提交：**5a** = `UIVegaSpell`/`UIRpsGame`/`UIPlant`+`UIRaise`/`UIViciousHammer`/`UIWedding`（已完，见「落地情况」）；**5b** = 其余壳窗 latin（**已完**：24 文件 / 98 键，见「落地情况」）；**5c** = 中文盲区 `UIQuestLog`/`UIGuild`/`UIGender`/`UIMerchant`（**已完**：3 窗接线 15 键，`UIGender` 按裁决不接，见「落地情况」） | ~~117~~ **80**（5a 实测，含 16 处扫描器盲区）+ 5b 余 **266**（旧尺 304 的下界被 §「基线重算」推倒，见下） | 同上 |
 | **B1c-6 壳窗·`UIMiscShells`** | 单文件独占一批（体量最大，且与并行会话冲突最高） | ~~216~~ **388** | 同上 |
 | **B1c-5d 在用窗软键盘档** | 新基线浮出来的在用窗余站 76 处（`UIUserList` 11 / `UIChat` 10 / `UIMinigame` 9 / `UIDailyGift` 5 / `UIMegaphone` 5 / `UILoginNotice` 5 …），多数是软键盘提示位 | **76** | 同上；这批在 B1c-3 之后才算得清，因为当时那条尺看不见该形状 |
 | **B1c-7 收尾** | 站点归零、`pending-copy.md` 成册、CHECKLIST + PLAN §B1c + evidence README 定版、调试日志清理、全量 MSBuild + 抽窗真机复验 | — | 见 §6 Definition of Done |
@@ -189,7 +189,21 @@ UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一�
 候选 **469 ⇒ 387**（本批 24 文件内残留 0，`UIAlliance.cpp:178` 属 SoftKey 三元形状，见 5a 第 3 条）；
 `layout.py check` 十张 spec rc=0。负对照两轮教训（`ROOT` 少上一层导致 0 点空跑却 rc=0；`str.replace`
 目标写错导致破坏静默 no-op）已固化进工具：**判据/源码目录缺失 rc=2、`checked==0` 报告打 `FALSE-GREEN`、
-破坏脚本自证三条落地**。余下 5c（中文盲区 4 文件）。
+破坏脚本自证三条落地**。
+
+**B1c-5c 落地情况（2026-11-03）**：中文盲区三窗接线 + 一站按裁决不接 ⇒ **15 新键**
+（`UIQuestLog` 9 / `UIGuild` 5 / `UIMerchant` 1；键表 [keys-5c.txt](evidence/r27-b1c-i18n-scan/keys-5c.txt)，
+台账见 evidence README §13、[pending-copy.md](evidence/r27-b1c-i18n-scan/pending-copy.md) §B1c-5c）。
+这批的 **zh 值就是改动前界面在显示的那句汉字**（决策 B 不翻译 ⇒ 中文侧零风险），等用户定稿的只有 en 那一份。
+`UIGender.cpp:126/128` 的 `t == "女"/"男"` **刻意不接**：那是软键盘输入的比对串，接了 i18n 会在切语言后失配，
+理由已进 `tools/scan_cjk_literals.py` 的 `EXEMPT`（档号 `B1c-5c`）。
+门禁：3 TU `cl /c` CL_EXIT=0；`check_locale_keys.py` **303/303 GATE OK**；arity **336 点 0 不合格**；
+忠实度尺（提交前，判据 `HEAD`）**15/15**；`layout.py check` 十张 spec rc=0。
+**中文站点尺读数 30 ⇒ 14，且第一次带档号（`待接线=0`）**：余下 = `UIGender` 2（裁决不接）
++ `UIMiscShells` 1（日志串）+ `IO/Window.cpp` 11（开发者浮层，**待用户裁决**，文件被并行会话占着）。
+本批另补一条尺的缺口：`check_locale_keys.py` 看不见**三元选键** `Locale::text(c ? "a" : "b")`，
+补上后引用键 228 ⇒ 232 —— 其中 2 个是 **5b 漏掉的** `familytree.online/offline`（当时 ini 恰好有档，
+没炸成键名回显是运气，不是门禁放行）。负对照：把 `guild.member_online` 改错一个字母 ⇒ `rc=1` 并点名文件。
 
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 

@@ -1,39 +1,21 @@
 中文串字面量全量扫描（含跨行/拼接/三元盲区）
-总计 30 处
+总计 14 处
+分档：B1c-5c=2 | B1c-6=1 | 待裁决=11
 
-[IO/Window.cpp] 11 处
-  L465   破功值同步: 
-  L517   【
-  L521   】
-  L535   【
-  L539   】
-  L545   【破功值：
-  L547   】
-  L551   【当前时间：
-  L553   】
-  L562   【在线时长：
-  L564   】
-[IO/UITypes/UIGender.cpp] 2 处
-  L126   女
-  L128   男
-[IO/UITypes/UIGuild.cpp] 5 处
-  L59    公会
-  L59    公会: 
-  L72     职位
-  L73     [在线]
-  L73     [离线]
-[IO/UITypes/UIMerchant.cpp] 1 处
-  L264    的商店
-[IO/UITypes/UIMiscShells.cpp] 1 处
-  L6182  Basic.img/Notice4(t,c,s) 或 ComboBox 三件缺失 —— 弹层只剩文字与按钮
-[IO/UITypes/UIQuestLog.cpp] 10 处
-  L388   彩虹岛
-  L389   金银岛
-  L390   金银岛
-  L555   任务编号: 
-  L558   等级范围: 
-  L561   需要等级: 
-  L563   所属区域: 
-  L566   相关NPC编号: 
-  L569   前置任务: 无
-  L572   前置任务: 
+[IO/Window.cpp] 11 处（其中待接线 0）
+  L660   [待裁决     ] 破功值同步: 
+  L712   [待裁决     ] 【
+  L716   [待裁决     ] 】
+  L730   [待裁决     ] 【
+  L734   [待裁决     ] 】
+  L740   [待裁决     ] 【破功值：
+  L742   [待裁决     ] 】
+  L746   [待裁决     ] 【当前时间：
+  L748   [待裁决     ] 】
+  L757   [待裁决     ] 【在线时长：
+  L759   [待裁决     ] 】
+[IO/UITypes/UIGender.cpp] 2 处（其中待接线 0）
+  L126   [B1c-5c  ] 女
+  L128   [B1c-5c  ] 男
+[IO/UITypes/UIMiscShells.cpp] 1 处（其中待接线 0）
+  L6182  [B1c-6   ] Basic.img/Notice4(t,c,s) 或 ComboBox 三件缺失 —— 弹层只剩文字与按钮

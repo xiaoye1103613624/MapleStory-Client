@@ -1,0 +1,10 @@
+# R27-B1c-5c 键门禁读数（stdout cp936，按 GBK 解码后转 UTF-8）
+# rc=0  [三元选键形状已补进门禁]
+zh-CN keys = 303
+en-US keys = 303
+equip.speed.     枚举  9 条  zh 缺 0  en 缺 0
+equip.stat.      枚举 15 条  zh 缺 0  en 缺 0
+equip.type.      枚举 32 条  zh 缺 0  en 缺 0
+代码引用键 232 个 / 动态前缀 5 个
+
+GATE OK: 语言文件键集对齐，所有数据表枚举均能折成已建档的键，且代码引用的键全部建档

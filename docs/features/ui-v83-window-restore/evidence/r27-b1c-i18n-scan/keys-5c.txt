@@ -1,0 +1,19 @@
+# R27-B1c-5c 建键表：key=**中文原值**（这批站点来自「中文盲区」，改动前源码里就是汉字）
+# 与 5b 的唯一区别：5b 的原字面量是英文，zh/en 同值；这批 zh 保持原汉字（决策 B 不翻译），
+# en 值是本包自造的英文措辞、**无原生依据** ⇒ 全部登记 pending-copy.md §B1c-5c 等用户定稿。
+# 值 = 改动前代码里那条字面量原样；`{}` = 被替换掉的变量插点位（插点两侧的中间空格留在值里）。
+quest.area.20=彩虹岛
+quest.area.30=金银岛
+quest.detail.id=任务编号: {}
+quest.detail.level_range=等级范围: {} ~ {}
+quest.detail.min_level=需要等级: {}
+quest.detail.area=所属区域: {}
+quest.detail.npc=相关NPC编号: {}
+quest.detail.pre_none=前置任务: 无
+quest.detail.pre=前置任务: {}
+guild.title_plain=公会
+guild.title_named=公会: {}
+guild.member_rank=职位{}
+guild.member_online=[在线]
+guild.member_offline=[离线]
+merchant.owner_shop={} 的商店

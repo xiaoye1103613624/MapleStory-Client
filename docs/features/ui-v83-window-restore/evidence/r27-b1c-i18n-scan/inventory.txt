@@ -244,12 +244,12 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L225   [SoftKey hint] Junior name
 
 [IO/UITypes/UIGuild.cpp] 6 处
-  L236   [SoftKey hint] cid,name|name (self)
-  L261   [SoftKey hint] Char id
-  L263   [SoftKey hint] Guild id
-  L289   [SoftKey hint] cid,name|name
-  L357   [SoftKey hint] BBS page|o,id|d,id|r,id,text|p,title|text
-  L411   [SoftKey hint] Deny guild from
+  L239   [SoftKey hint] cid,name|name (self)
+  L264   [SoftKey hint] Char id
+  L266   [SoftKey hint] Guild id
+  L292   [SoftKey hint] cid,name|name
+  L360   [SoftKey hint] BBS page|o,id|d,id|r,id,text|p,title|text
+  L414   [SoftKey hint] Deny guild from
 
 [IO/UITypes/UIItemInventory.cpp] 19 处
   L551   [SoftKey hint] Drop meso
@@ -303,11 +303,11 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L206   [SoftKey hint] Memo to
 
 [IO/UITypes/UIMerchant.cpp] 5 处
-  L145   [SoftKey hint] Buy qty (selected)
-  L162   [SoftKey hint] slot[,qty]
-  L191   [SoftKey hint] qty[,merchSlot]
-  L209   [SoftKey hint] iv,pos,qty,slot
-  L223   [SoftKey hint] Owner name
+  L146   [SoftKey hint] Buy qty (selected)
+  L163   [SoftKey hint] slot[,qty]
+  L192   [SoftKey hint] qty[,merchSlot]
+  L210   [SoftKey hint] iv,pos,qty,slot
+  L224   [SoftKey hint] Owner name
 
 [IO/UITypes/UIMiniMap.cpp] 1 处
   L399   [SoftKey hint] Map id|empty=WMap sel
