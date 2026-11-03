@@ -150,6 +150,11 @@ namespace ms
 		dying = false;
 		dead = false;
 		fading = false;
+		skill_pending = false;
+		next_skill_id = 0;
+		next_skill_level = 0;
+		// effect == -3（父怪在场但尚未死亡）⇒ 雪藏：不活动、不画，父怪死亡时唤醒。
+		dormant = (parent && spawn_effect == -3);
 		set_stance(st);
 		flydirection = STRAIGHT;
 		counter = 0;
@@ -165,6 +170,14 @@ namespace ms
 		{
 			fadein = false;
 			opacity.set(1.0f);
+		}
+
+		// 雪藏怪从构造起就是非活动（MapObjects::draw 只画 active 对象，
+		// update 只跑 active），父怪死亡 wake() 时才按原生淡入出现。
+		if (dormant)
+		{
+			deactivate();
+			opacity.set(0.0f);
 		}
 
 		if (control && stance == Stance::STAND)
@@ -335,6 +348,45 @@ namespace ms
 	{
 		if (canmove)
 		{
+			// 出招优先级一：服务端 MOVE_MONSTER_RESPONSE 授权过的下一技能
+			// （MoveLifeHandler.java:150 只在 canUseSkill 判定通过后携带 skillId/level）。
+			// 控制器怪下一次动作上报 SKILL 段，动画槽随机取一个已加载的 skill{n}：
+			// 服务端校验的是技能 id（byte 段），animation 槽只是表现。
+			if (control && skill_pending)
+			{
+				std::vector<Stance> slots;
+				for (auto& kv : animations)
+					if (kv.first >= Stance::SKILL)
+						slots.push_back(kv.first);
+
+				if (!slots.empty())
+				{
+					set_stance(slots[randomizer.next_int<size_t>(slots.size())]);
+					return; // skill_pending 在 update_movement 上报后清除
+				}
+
+				skill_pending = false;
+			}
+
+			// 出招优先级二：本地随机 attack（v83 控制器职责；服务端 canUseAttack
+			// 冷却不过时会把 rawActivity 打成 -1 回放，表现为怪只走不打，安全）。
+			// notAttack 怪（info.notAttack）与被动态（HIT/JUMP 中）不出招。
+			// 【2026-11-03 构建修复】above() 是 Randomizer 成员，前序未提交代码
+			// 漏了 randomizer. 前缀 → C3861 找不到标识符，阻塞全工程构建。
+			if (control && !notattack && randomizer.above(0.82f))
+			{
+				std::vector<Stance> slots;
+				for (auto& kv : animations)
+					if (kv.first >= Stance::ATTACK && kv.first < Stance::SKILL)
+						slots.push_back(kv.first);
+
+				if (!slots.empty())
+				{
+					set_stance(slots[randomizer.next_int<size_t>(slots.size())]);
+					return;
+				}
+			}
+
 			// 攻击/技能是临时动作段，不是循环状态：播完必须回基础姿态。
 			// 否则下面的 switch 匹配不到任何 case，控制器会把同一个攻击状态字节
 			// 一遍遍回给服务端（服务端 canUseAttack 冷却不通过时又会把 rawActivity 打成 -1）。
@@ -389,11 +441,75 @@ namespace ms
 
 	void Mob::update_movement()
 	{
+		// 上行 activity（参数名对应经字节仿真核对，s9 MoveLifeHandler.java:69-78：
+		// skillb→pNibbles、skill0→rawActivity、skill1→skillId、skill2→skillLv、
+		// skill3/4→pOption 区）。修前全 0：服务端把 0 当非法动作（canUseAttack
+		// castPos 越界 → rawActivity 打成 -1），受控怪永远只走不打。
+		// 现在出招时上报对应段字节（24..41 attack / 42..59 skill）；技能段同时
+		// 带回服务端 MOVE_MONSTER_RESPONSE 授权过的 skillId/level（:87-95 据此结算）。
+		uint8_t activity = value_of(stance, flip);
+
+		int8_t skillid = 0;
+		int8_t skilllv = 0;
+
+		if (stance >= Stance::SKILL)
+		{
+			skillid = next_skill_id;
+			skilllv = next_skill_level;
+			skill_pending = false;
+		}
+
 		MoveMobPacket(
-			oid, 1, 0, 0, 0, 0, 0, 0,
+			oid, 1, 0, static_cast<int8_t>(activity), skillid, skilllv, 0, 0,
 			get_position(),
-			Movement(phobj, value_of(stance, flip))
+			Movement(phobj, activity)
 		).dispatch();
+	}
+
+	void Mob::set_next_skill(bool use, int8_t id, int8_t level)
+	{
+		// 无技能段的怪（animations 里没有 skill{n} 帧）不做画饼承诺——上报 42 段
+		// 却没有动画会在 set_stance 被钳回 move，白白浪费一次节拍。
+		bool hasskill = false;
+
+		for (auto& kv : animations)
+		{
+			if (kv.first >= Stance::SKILL)
+			{
+				hasskill = true;
+				break;
+			}
+		}
+
+		skill_pending = use && id != 0 && hasskill;
+		next_skill_id = skill_pending ? id : 0;
+		next_skill_level = skill_pending ? level : 0;
+	}
+
+	bool Mob::parented() const
+	{
+		return has_parent;
+	}
+
+	int32_t Mob::get_parent_oid() const
+	{
+		return parentoid;
+	}
+
+	bool Mob::is_dormant() const
+	{
+		return dormant;
+	}
+
+	void Mob::wake()
+	{
+		if (!dormant)
+			return;
+
+		dormant = false;
+		fadein = true;
+		opacity.set(0.0f);
+		makeactive();
 	}
 
 	namespace
@@ -482,11 +598,25 @@ namespace ms
 		dying = false;
 		dead = false;
 		fading = false;
+		skill_pending = false;
+		// 服务端补发整包 spawn ⇒ 不再雪藏（delayed 怪被重新下发的唯一时机
+		// 就是它该出现的时候）；只有新包仍带 -3 才继续雪藏。
+		dormant = (parent && spawn_effect == -3);
 		fadein = newspawn;
 		opacity.set(newspawn ? 0.0f : 1.0f);
 
 		set_stance(stancebyte);
-		makeactive();
+
+		// 仍雪藏的怪不能被 makeactive 误唤醒；父怪死亡走 wake()。
+		if (dormant)
+		{
+			deactivate();
+			opacity.set(0.0f);
+		}
+		else
+		{
+			makeactive();
+		}
 
 		if (control && stance == Stance::STAND)
 			next_move();

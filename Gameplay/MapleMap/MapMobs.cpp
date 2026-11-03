@@ -61,6 +61,17 @@ namespace ms
 	{
 		if (Optional<Mob> mob = mobs.get(oid))
 			mob->kill(animation);
+
+		// 分裂怪跟随父怪（spawn 尾段 effect==-3 雪藏）：父怪在这里被击杀 ⇒ 唤醒子怪。
+		// 服务端对 -3 怪不再补发 SPAWN_MOB（s9 spawnMonsterInternal:1554-1558 只写
+		// -3+parentOid，客户端职责就是本地雪藏/唤醒），不接这一步扎昆之手类怪永不出现。
+		for (auto& mmo : mobs)
+		{
+			Mob* m = static_cast<Mob*>(mmo.second.get());
+
+			if (m && m->is_dormant() && m->get_parent_oid() == oid)
+				m->wake();
+		}
 	}
 
 	void MapMobs::clear()
@@ -74,6 +85,12 @@ namespace ms
 
 		if (Optional<Mob> mob = mobs.get(oid))
 			mob->set_control(mode);
+	}
+
+	void MapMobs::set_next_skill(int32_t oid, bool use, int8_t skill, int8_t level)
+	{
+		if (Optional<Mob> mob = mobs.get(oid))
+			mob->set_next_skill(use, skill, level);
 	}
 
 	void MapMobs::send_mobhp(int32_t oid, int8_t percent, uint16_t playerlevel)

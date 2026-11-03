@@ -3037,19 +3037,12 @@ namespace ms
 			<< " skill=" << (int)skill << " lv=" << (int)level);
 		while (recv.available())
 			recv.skip_byte();
-		if (useSkills && skill != 0)
-		{
-			const int32_t mid = oid ^ 0x74000000;
-			const std::string label = "MobSk" + std::to_string(skill);
-			auto& markers = Stage::get().get_field_markers();
-			if (markers.contains(mid))
-				markers.set_label(mid, label);
-			else
-			{
-				Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
-				markers.spawn(mid, FieldMarker::Kind::SUMMON, pos, label, 0, 2000);
-			}
-		}
+		// 把服务端授权过的下一技能交给控制器怪本体：下一次 update_movement
+		// 以 SKILL 段（42..59）上报该 skillId/level，怪物技能由服务端结算
+		// （s9 MoveLifeHandler.java:150 只在 canUseSkill 通过后携带）。
+		// 修前这里只是弹一个文字场标，怪本身永远不出招。
+		Stage::get().get_mobs().set_next_skill(oid, useSkills && skill != 0, skill, level);
+
 		(void)moveid;
 		(void)mp;
 		(void)level;

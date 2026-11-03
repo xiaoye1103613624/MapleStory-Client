@@ -46,6 +46,8 @@ namespace ms
 
 		// Update who a mob is controlled by.
 		void set_control(int32_t oid, bool control);
+		// 服务端 MOVE_MONSTER_RESPONSE 下发的下一可用技能，转交控制器怪出招。
+		void set_next_skill(int32_t oid, bool use, int8_t skill, int8_t level);
 		// Update a mob's hp display.
 		void send_mobhp(int32_t oid, int8_t percent, uint16_t playerlevel);
 		// Update a mob's movements.

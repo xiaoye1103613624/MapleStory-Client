@@ -107,9 +107,23 @@ namespace ms
 		// Update movement and animations
 		int8_t update(const Physics& physics) override;
 
-		// Change this mob's control mode:
+		// Update who a mob is controlled by:
 		// 0 - no control, 1 - control, 2 - aggro
 		void set_control(int8_t mode);
+
+		// MOVE_MONSTER_RESPONSE 携带的下一可用技能（s9 moveMonsterResponse
+		// PacketCreator.java:1643-1651：bool useSkills + short mp + byte skillId + byte level）。
+		// 控制器怪下一次动作时消费它，上报 SKILL 段状态字节 + skillId/level。
+		void set_next_skill(bool use, int8_t id, int8_t level);
+
+		// 分裂怪跟随父怪（spawn 尾段 -3）：父怪死亡前雪藏。
+		// 【2026-11-03 构建修复】原声明名 has_parent() 与下方同作用域存储字段
+		// `bool has_parent = false;` 重名（C2365 重定义，全工程 18 处 TU 编译失败）。
+		// 字段名不动（Mob.cpp spawn/refresh 两处赋值在用），访问器改名 parented()。
+		bool parented() const;
+		int32_t get_parent_oid() const;
+		bool is_dormant() const;
+		void wake();
 		// 同一个 oid 被重新下发（服务端换控制器发的是整包 spawn）时，把新包里的落位、
 		// 姿态、队伍和淡入状态套到已有对象上；只 makeactive() 会把新坐标整包丢掉。
 		void refresh(int8_t mode, int8_t stance, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position,
@@ -216,6 +230,13 @@ namespace ms
 		bool dead;
 		bool control;
 		bool aggro;
+		// MOVE_MONSTER_RESPONSE 下发的下一可用技能槽（s9 moveMonsterResponse
+		// PC:1643-1651）：下一次 update_movement 上报 SKILL 段时消费。
+		bool skill_pending;
+		int8_t next_skill_id;
+		int8_t next_skill_level;
+		// spawn 尾段 effect==-3 的雪藏态：父怪（parentoid）死亡前不活动。
+		bool dormant;
 		Stance stance;
 		bool flip;
 		FlyDirection flydirection;
