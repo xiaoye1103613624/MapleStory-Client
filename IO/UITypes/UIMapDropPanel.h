@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../Components/Slider.h"
+#include "../LocaleBindings.h"
 
 #include "../../Data/MobDropData.h"
 #include "../../Graphics/Geometry.h"
@@ -72,5 +73,7 @@ namespace ms
 		Text empty_drops_label;
 		Slider slider;
 		std::vector<Row> rows;
+		// 语言重载刷新通道。构造时就把宿主名带上，日志里才分得清是哪块面板重取过。
+		LocaleBindings locale_binds{ "UIMapDropPanel" };
 	};
 }

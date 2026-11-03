@@ -4,18 +4,13 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 402 处 | 英文 382（壳窗 333 / 在用窗 49）| 中文 20
+总计 377 处 | 英文 359（壳窗 333 / 在用窗 26）| 中文 18
 
 
 == 英文原文 · 在用窗 ==
 
-[IO/UITypes/UICharSelect.cpp] 2 处
-  L134   Ver. 
-  L233   1
-
-[IO/UITypes/UICommonCreation.cpp] 2 处
-  L77    Ver. 
-  L358   Ver. 
+[IO/UITypes/UICharSelect.cpp] 1 处
+  L235   1
 
 [IO/UITypes/UIDailyGift.cpp] 4 处
   L120   DAILY GIFT
@@ -23,26 +18,8 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L156    ~ 
   L157   !
 
-[IO/UITypes/UIJoypad.cpp] 2 处
-  L48    None
-  L124   None
-
-[IO/UITypes/UILogin.cpp] 1 处
-  L74    Ver. 
-
-[IO/UITypes/UIMapDropPanel.cpp] 3 处
-  L35    Select a monster
-  L36    No drop data
-  L266   Unknown
-
-[IO/UITypes/UIMapInfoPanel.cpp] 4 处
-  L182   No monsters on this map
-  L183   No drop data
-  L184   mesos
-  L185   0
-
-[IO/UITypes/UIMapMobPanel.cpp] 1 处
-  L64    No monsters on this map
+[IO/UITypes/UIMapInfoPanel.cpp] 1 处
+  L191   0
 
 [IO/UITypes/UIMegaphone.cpp] 3 处
   L122   Empty
@@ -69,24 +46,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L230   Use 
   L252   OpenItemUI 
   L259   WaterOfLife
-
-[IO/UITypes/UIRaceSelect.cpp] 1 处
-  L155   Ver. 
-
-[IO/UITypes/UIRegion.cpp] 2 处
-  L61    Warning: You may experience latency and connection issues when connecting to the NA server
-  L64    Warning: You may experience latency and connection issues when connecting to the EU server
-
-[IO/UITypes/UIUserList.cpp] 5 处
-  L105   none
-  L175   My Location - 
-  L176   none
-  L177   Default Group (0/0)
-  L233   none
-
-[IO/UITypes/UIViewAllChar.cpp] 2 处
-  L49    World 
-  L51    World 
 
 
 == 英文原文 · 壳窗 ==
@@ -488,10 +447,6 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 [IO/UITypes/UIBuddyList.cpp] 1 处
   L55    好友 (
 
-[IO/UITypes/UICharSelect.cpp] 2 处
-  L381   排行不可用
-  L1298  排行不可用
-
 [IO/UITypes/UIDailyGift.cpp] 8 处
   L121   丰厚礼物，天天相送！
   L122   冒险岛每日礼物
@@ -503,7 +458,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L155   日
 
 [IO/UITypes/UIMapInfoPanel.cpp] 1 处
-  L524   属性: -  抗性: -
+  L536   属性: -  抗性: -
 
 [IO/UITypes/UIMapSearchPanel.cpp] 3 处
   L165   地图列表

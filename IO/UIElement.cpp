@@ -64,74 +64,34 @@ namespace ms
 
 	void UIElement::bind_text(Text& target, std::string key)
 	{
-		locale_binds.push_back({ &target, nullptr, std::move(key), {} });
-		commit_bind();
+		locale_binds.bind(target, std::move(key));
 	}
 
 	void UIElement::bind_text(Text& target, std::string key, std::string value)
 	{
-		locale_binds.push_back({ &target, nullptr, std::move(key), std::move(value) });
-		commit_bind();
+		locale_binds.bind(target, std::move(key), std::move(value));
 	}
 
 	void UIElement::bind_text(OutlinedText& target, std::string key)
 	{
-		locale_binds.push_back({ nullptr, &target, std::move(key), {} });
-		commit_bind();
+		locale_binds.bind(target, std::move(key));
 	}
 
 	void UIElement::bind_text(OutlinedText& target, std::string key, std::string value)
 	{
-		locale_binds.push_back({ nullptr, &target, std::move(key), std::move(value) });
-		commit_bind();
-	}
-
-	std::string UIElement::bind_text_of(const LocaleBind& bind)
-	{
-		return bind.value.empty()
-			? Locale::text(bind.key)
-			: Locale::format(bind.key, bind.value);
-	}
-
-	void UIElement::commit_bind()
-	{
-		const LocaleBind& bind = locale_binds.back();
-
-		if (bind.target)
-			bind.target->change_text(bind_text_of(bind));
-		else
-			bind.outlined->change_text(bind_text_of(bind));
-
-		locale_gen = Locale::get().generation();
+		locale_binds.bind(target, std::move(key), std::move(value));
 	}
 
 	void UIElement::refresh_localized()
 	{
-		if (locale_binds.empty())
+		if (!locale_binds.refresh())
 			return;
-
-		const std::uint32_t gen = Locale::get().generation();
-
-		if (gen == locale_gen)
-			return;
-
-		locale_gen = gen;
-
-		for (const LocaleBind& bind : locale_binds)
-		{
-			const std::string text = bind_text_of(bind);
-
-			if (bind.target)
-				bind.target->change_text(text);
-			else
-				bind.outlined->change_text(text);
-		}
 
 		// 语言切换是低频运维事件，这条是上线级可观测点：真机上「改 xy-config 的
 		// ui.language -> 已开着的窗立刻换文案」只有靠它才数得清到底哪些窗重取过，
 		// 不必靠给某个键临时编一条两种语言不同的假文案来验机制。
-		LOG(LOG_INFO, "Locale refresh gen=" << gen << " rebound "
-			<< locale_binds.size() << " labels (UIElement type " << get_type() << ")");
+		LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
+			<< locale_binds.count() << " labels (UIElement type " << get_type() << ")");
 	}
 
 	void UIElement::draw(float alpha) const

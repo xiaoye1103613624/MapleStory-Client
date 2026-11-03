@@ -13,6 +13,7 @@
 #include "../../Net/Login.h"
 #include "../../Net/Packets/SelectCharPackets.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 namespace ms
 {
@@ -46,9 +47,9 @@ namespace ms
 			EntryView we;
 			we.pos = Point<int16_t>(base.x() + 24, y);
 			we.label = labelproto;
-			we.label.change_text("World " + std::to_string(world.worldid));
+			we.label.change_text(Locale::format("viewallchar.world", std::to_string(world.worldid)));
 			we.highlight = hlproto;
-			we.highlight.change_text("World " + std::to_string(world.worldid));
+			we.highlight.change_text(Locale::format("viewallchar.world", std::to_string(world.worldid)));
 			we.is_world = true;
 			nl::node wicon = vac["WorldIcons"][std::to_string(world.worldid)];
 			if (wicon) we.icon = wicon;

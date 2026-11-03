@@ -11,6 +11,7 @@
 | `charselect.rank_up` | `{} up` / `{} up` | `UICharSelect.cpp:1297` | 原生排行升降是**箭头位图**（`Login.img/CharSelect/.../arrow`）而非文字后缀的可能性大 —— 若是，正确做法不是换文案，是改成贴图 | 待取证 |
 | `charselect.rank_down` | `{} down` / `{} down` | `UICharSelect.cpp:1299` | 同上 | 待取证 |
 
+
 ## 为什么模板里带占位符而不是「数字 + 独立后缀」
 
 `Util/Locale.cpp` 的加载器会 `trim` 掉值两端空白，所以单独存 `" up"` 只会得到 `"up"`；
@@ -28,3 +29,14 @@
 `tools/scan_display_text.py` 的清点（`inventory.txt`，402 处）里，**壳窗 333 处**是英文自造提示，
 按决策 B 同样「保持英文原值只建键」。那一批键落地时按同一格式追加到这里：一行一键，
 值照抄现英文，状态写「待取证」。**所以这张表会随 B1c-5/B1c-6 变长，不是收尾时才写的总结。**
+| `mappanel.select_monster` | `Select a monster` / 同值 | `UIMapDropPanel.cpp:39`（ctor 绑定） | 这三块世界地图侧栏是本包自造 UI，原生 v83 无对应窗体 ⇒ 无依据可取，只能算「自拟文案」。要中文化须用户给措辞 | 待用户定措辞（当前值 = 站点原英文字面量） |
+| `mappanel.no_monsters` | `No monsters on this map` / 同值 | `UIMapMobPanel.cpp:67`、`UIMapInfoPanel.cpp:186` | 同上 | 同上 |
+| `mappanel.no_drop_data` | `No drop data` / 同值 | `UIMapDropPanel.cpp:41`、`UIMapInfoPanel.cpp:188` | 同上 | 同上 |
+| `mappanel.mesos` | `mesos` / 同值 | `UIMapInfoPanel.cpp:190` | 「金币」二字在原生是 `String.img/Mobs/...` 还是 UI 自绘？本包侧栏是贴图 + 自绘混排，需先确认这行是不是该整体改成贴图 | 同上 |
+| `mapdrop.unknown_item` | `Unknown` / 同值 | `UIMapDropPanel.cpp:278`（ItemData 无效分支，活文案） | 同上（无原生窗体） | 同上 |
+| `userlist.none` | `none` / 同值 | `UIUserList.cpp:106 / :181 / :240`（三处绑定） | 好友/组员/黑名单窗的空态占位在原生 v83 是 `UIWindow.img/UserList` 烘焙位图还是自绘 `Text` —— 用 orange-wz 只读查该根下有无文字节点 | 待取证 |
+| `userlist.cur_location` | `My Location - {}` / 同值 | `UIUserList.cpp:179`（带值绑定） | 前半截文案在 `String.img/UIWindow` 一类节点里可能有原生对应（如 `UserList/MyLocation`），需查 | 待取证 |
+| `userlist.default_group` | `Default Group (0/0)` / 同值 | `UIUserList.cpp:183` | 同 `userlist.none`。注：这条整串都是文案（计数恒 0/0，无人改写），所以能进绑定表 | 待取证 |
+| `viewallchar.world` | `World {}` / 同值 | `UIViewAllChar.cpp:50 / :52`（活文案） | 查看全部角色窗在原生是 `Login.img/SelectAllChar` + `String.img` 的组合，世界名前缀多半有现成文案 | 待取证 |
+| `joypad.none` | `None` / 同值 | `UIJoypad.cpp:51`（绑定）、`:128`（恢复默认，活文案） | 手柄设置窗本包自造，原生 v83 无该窗 ⇒ 只能自拟 | 待用户定措辞 |
+| `region.warn_na` / `region.warn_eu` | 两句完整警告 / 同值 | `UIRegion.cpp:62 / :65`（hover 现取） | 原生 v83 的区域选择提示是否存在（`String.img/Region`？）；CN 构建根本走不到这条路，接机制只为「站点归零」口径一致 | 待取证（低优先） |

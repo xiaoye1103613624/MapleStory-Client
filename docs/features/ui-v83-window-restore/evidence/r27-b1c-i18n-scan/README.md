@@ -151,3 +151,53 @@ zh 的 4 个新值与站点原英文字面量逐字相同，**不改变渲染串
 + 整工程 Rebuild（`UIElement` 加了两个成员，实例尺寸变了，增量编译会留旧尺寸的目标文件）。
 判据已备好：改 `xy-config.yaml` 的 `ui.language` 后看 `Locale refresh gen=` 日志 ——
 不靠给某个键临时编一条两种语言不同的假文案来验机制。
+
+## 7. B1c-3（在用窗 25 处）落地 + 机制层被迫改形（2026-11-03）
+
+按 §6 的三条拍板接完 `UIUserList`(5) `UIMapInfoPanel`(4) `UIMapMobPanel`(1) `UIMapDropPanel`(3)
+`UIViewAllChar`(2) `UIRegion`(2) `UIJoypad`(2) 共 19 处（另 6 处 `Ver. `/`charselect.rank_*` 属 B1c-2，
+本批不重复），新增 12 键进两份 ini（zh/en 各 109，键集对齐）。清点器读数随之下移：
+`sites=377 latin=359 shell=333 live=26 cjk=18`（原 402）。
+
+### 7.1 机制层改形：绑定表从 UIElement 里搬出来，成了 `IO/LocaleBindings.h`
+
+这不是重构洁癖，是**实现时被证伪的假设**。B1c-2 的判据「静态标签 ⇒ 进 UIElement 绑定表」默认了
+「所有窗体都是 UIElement」。世界地图那三块侧栏（`UIMapMobPanel` / `UIMapDropPanel` /
+`UIMapInfoPanel`）按设计**不是** UIElement —— 头文件里原话「Adsorb to the left of the world map.
+Not a UIElement — owned by UIWorldMap」，它们由 `UIWorldMap` 按值持有、`UIWorldMap::update()`
+逐帧调各自空着的 `update()`（`UIWorldMap.cpp:283-286`）。`cl` 的直接报错就是证据：
+
+```
+IO\UITypes\UIMapDropPanel.cpp(39): error C3861: “bind_text”: 找不到标识符   （Mob/Info 同）
+```
+
+三条出路里选了「搬出来」：① 让面板改继承 UIElement —— 它们是吸附绘制件，不是可焦点/可点击窗体，
+套 `get_type()`/`send_cursor` 契约是假继承；② 在每块面板里再写一份代次比较 —— 机制出现第二套实现，
+日后必然走样；③ **把绑定表抽成 `LocaleBindings`，UIElement 持有一份并转发，面板也持有一份、
+在自己的 `update()` 里 `refresh()`**。C 决策「reload 广播、窗自取」的形态没变，只是「自取」的
+派发点从「UIState 一处」扩成「UIElement 走派发点 + 非 UIElement 走宿主 update」。
+
+顺手把两条不变量写进类型里：`LocaleBindings` **禁拷贝**（表里存的是指向宿主自己按值持有的 `Text`
+的裸指针，宿主被拷贝后指针指到原件，改动落在看不见的地方 —— 让这种拷贝变成编译期错误，而不是
+留给 review）；`refresh()` 返回 bool，日志口径保持与 B1c-2 完全一致（`Locale refresh gen= … rebound N labels (…)`），
+面板那条带宿主名，UIElement 那条带 `get_type()`。
+
+### 7.2 绑定 vs 活文案：本批按「有无第二个写入点」逐条判
+
+- 进表：三块面板的空态标签、`meso_label`、`UIUserList` 五条标签（grep 全文只有 ctor 赋值 + `draw`，
+  没有第三条写入点）、`UIJoypad::key_text` 的 ctor 那一处（另一处「恢复默认」写的也是同一个键）。
+- 不进表：`meso_amount`（`UIMapInfoPanel.cpp:381` 每帧按数据 `change_text`，绑上去会把数额钉成 `"0"`）、
+  `mapdrop.unknown_item` / `viewallchar.world` / `region.warn_*`（都是数据或 hover 现取，本来就是活文案）。
+- `userlist.cur_location` 用**带值**那一档：前半截是文案、后半截是本窗生命周期内恒定的位置名，
+  拆成两条键会让中文拿到半句。
+
+### 7.3 门禁读数（本批）
+
+见 [gate-r27-b1c3.txt](gate-r27-b1c3.txt)：`cl /c /utf-8 /bigobj` 9 TU 全过（含 `UIElement.cpp`
+与 `UIWorldMap.cpp`，因为公共件改了形）；`check_locale_keys.py` GATE OK 109/109；
+`layout.py check` 十张 spec 对自身 oracle 帧仍全 rc=0 / Δ=0。
+
+**运行时负对照的欠账变大了**：`UIElement` 私有段从「vector + uint32」换成「一个持有同样
+vector + uint32 + 宿主名的 `LocaleBindings`」，实例尺寸**又变了一次**（多一个 `std::string`），
+所以整工程 Rebuild 依旧不可省。判据不变：改 `xy-config.yaml` 的 `ui.language`，
+看 `Locale refresh gen=` 日志有没有把绑了表的窗逐条报出来（面板那三条现在也在这个口径里）。

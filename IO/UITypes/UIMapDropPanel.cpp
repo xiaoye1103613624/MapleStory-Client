@@ -9,6 +9,7 @@
 #include "../../Util/Misc.h"
 
 #include "../../MapleStory.h"
+#include "../../Util/Locale.h"
 
 #include <iomanip>
 #include <sstream>
@@ -32,8 +33,12 @@ namespace ms
 			LOG(LOG_WARN, "[UIMapDropPanel] chrome PNG missing — side panel will be empty frame");
 
 		hover_bg = ColorBox(WIDTH - PAD_X * 2 - 14, ROW_HEIGHT - 2, Color::Name::BLACK, 0.06f);
-		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Select a monster");
-		empty_drops_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "No drop data");
+		// 两块面板的空态标签都只在 ctor 写、之后只 draw（已全文核过无第二个写入点）=> 满足绑定
+		// 判据，于是切语言时已经开着的面板也会跟着换文案，不必重开。
+		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(empty_label, "mappanel.select_monster");
+		empty_drops_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(empty_drops_label, "mappanel.no_drop_data");
 
 		slider = Slider(
 			Slider::Type::DEFAULT_SILVER,
@@ -184,6 +189,12 @@ namespace ms
 
 	void UIMapDropPanel::update()
 	{
+		// 吸附面板不是 UIElement，拿不到 UIState 派发点上的那一次 refresh_localized()，
+		// 于是在自己的 update 里重取：同一张 LocaleBindings，绑定判据与日志口径都不变，
+		// 只是刷新点从「一处派发」挪成「宿主自取」—— 这正是「reload 广播、窗自取」的形态。
+		if (locale_binds.refresh())
+			LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
+				<< locale_binds.count() << " labels (" << locale_binds.hostname() << ")");
 	}
 
 	void UIMapDropPanel::remove_cursor()
@@ -263,7 +274,8 @@ namespace ms
 			}
 			else
 			{
-				row.name_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "Unknown");
+				row.name_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+					Locale::text("mapdrop.unknown_item"));
 			}
 
 			row.id_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, std::to_string(drop.item_id));

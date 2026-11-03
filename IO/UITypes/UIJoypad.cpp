@@ -22,6 +22,7 @@
 #include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -45,7 +46,10 @@ namespace ms
 		buttons[Buttons::OK] = std::make_unique<MapleButton>(Basic["BtOK4"], Point<int16_t>(82, 303));
 
 		for (Text& text : key_text)
-			text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "None");
+		{
+			text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK);
+			bind_text(text, "joypad.none");
+		}
 
 		dimension = backgrnd[alternative_settings].get_dimensions();
 	}
@@ -121,7 +125,7 @@ namespace ms
 		{
 			case Buttons::DEFAULT:
 				for (Text& text : key_text)
-					text.change_text("None");
+					text.change_text(Locale::text("joypad.none"));
 				LOG(LOG_DEBUG, "UIJoypad: DEFAULT reset bindings label");
 				break;
 			case Buttons::CANCEL:

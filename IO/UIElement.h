@@ -19,6 +19,7 @@
 
 #include "Components/Button.h"
 #include "Components/Icon.h"
+#include "LocaleBindings.h"
 
 #include "../Graphics/Sprite.h"
 
@@ -256,24 +257,9 @@ namespace ms
 		bool active;
 
 	private:
-		// 文案对象由本窗体按值持有，指针在窗体生命周期内恒有效；不注册到全局表，
+		// 绑定表本体在 LocaleBindings（世界地图那三块非 UIElement 的吸附面板共用同一份
+		// 实现）。文案对象由本窗体按值持有，指针在窗体生命周期内恒有效；不注册到全局表，
 		// 因而不用管 Text 的隐式拷贝赋值与静态析构顺序。
-		struct LocaleBind
-		{
-			Text* target = nullptr;
-			OutlinedText* outlined = nullptr;
-			std::string key;
-			std::string value;
-		};
-
-		std::vector<LocaleBind> locale_binds;
-		std::uint32_t locale_gen = 0;
-
-		// 四个 bind_text 重载的公共尾部：按刚登记的那条取一次文案，并把代次对齐到
-		// 现在 —— 于是不会出现「登记了但当前还是英文字面量」的空窗，也不会让紧接着
-		// 的第一帧白重取一遍。
-		void commit_bind();
-
-		static std::string bind_text_of(const LocaleBind& bind);
+		LocaleBindings locale_binds;
 	};
 }

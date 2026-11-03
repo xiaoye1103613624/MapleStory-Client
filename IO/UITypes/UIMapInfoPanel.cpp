@@ -8,6 +8,7 @@
 #include "../../Character/Inventory/Inventory.h"
 #include "../../Gameplay/Stage.h"
 #include "../../MapleStory.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -167,9 +168,14 @@ namespace ms
 		);
 		drop_slider.setenabled(false);
 
-		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "No monsters on this map");
-		empty_drops_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "No drop data");
-		meso_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "mesos");
+		// 三条标签都只在 ctor 写 => 进绑定表。下一行 meso_amount 的 "0" 不建键：那是数据初值，
+		// draw 前会被 meso_str 改写，按绑定判据（有无第二个写入点）不许上表。
+		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(empty_label, "mappanel.no_monsters");
+		empty_drops_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(empty_drops_label, "mappanel.no_drop_data");
+		meso_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(meso_label, "mappanel.mesos");
 		meso_amount = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "0");
 	}
 
@@ -368,6 +374,12 @@ namespace ms
 
 	void UIMapInfoPanel::update()
 	{
+		// 吸附面板不是 UIElement，拿不到 UIState 派发点上的那一次 refresh_localized()，
+		// 于是在自己的 update 里重取：同一张 LocaleBindings，绑定判据与日志口径都不变，
+		// 只是刷新点从「一处派发」挪成「宿主自取」—— 这正是「reload 广播、窗自取」的形态。
+		if (locale_binds.refresh())
+			LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
+				<< locale_binds.count() << " labels (" << locale_binds.hostname() << ")");
 	}
 
 	void UIMapInfoPanel::remove_cursor()

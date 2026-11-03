@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../Components/Slider.h"
+#include "../LocaleBindings.h"
 
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/LocalPngTexture.h"
@@ -79,5 +80,7 @@ namespace ms
 		Slider slider;
 		std::vector<Row> rows;
 		SelectCallback on_select;
+		// 语言重载刷新通道。构造时就把宿主名带上，日志里才分得清是哪块面板重取过。
+		LocaleBindings locale_binds{ "UIMapMobPanel" };
 	};
 }

@@ -1,0 +1,36 @@
+# R27-B1c-3 门禁读数（2026-11-03）
+# 判据档：本批只接 i18n 站点 + 把绑定表抽成 LocaleBindings，未动任何渲染常数；
+#          所以「十张 spec 对 oracle 帧 Δ=0」证的是门禁与 spec 完好 + 本批没碰版式，
+#          不是真机逐格验收（那要客户帧 + 整工程 Rebuild，见 README §7.3 欠账）。
+
+## 1. cl /c 范围编译（9 TU，含公共件 UIElement.cpp 与宿主 UIWorldMap.cpp）
+命令：E:/project/_b1c_check/build_b1c3b.bat（vcvars64 + cl /c /utf-8 /bigobj /std:c++17 /EHsc /W3 /DNDEBUG /D_CONSOLE /DUSE_NX，
+      附加选项与 MapleStory.vcxproj:102 的 AdditionalOptions 对齐 —— 少了 /utf-8 报的是编码错不是代码错）
+读数：VCVARS_ERRORLEVEL=0 / CL_EXIT=0
+      : error 行数 = 0
+复查（清理 LocaleBindings.h 注释尾随空白后再编 5 TU）：见 cl_b1c3c.bat，CL_EXIT=0。
+
+## 2. check_locale_keys.py
+[rc=0]
+zh-CN keys = 109
+en-US keys = 109
+equip.speed.     ö��  9 ��  zh ȱ 0  en ȱ 0
+equip.stat.      ö�� 15 ��  zh ȱ 0  en ȱ 0
+equip.type.      ö�� 32 ��  zh ȱ 0  en ȱ 0
+
+
+## 3. layout.py check（十张 spec ↔ 各自 oracle_frame）
+=== ChatBar.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_chatbar_open.png
+=== Equip.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_equip.png
+=== EquipTooltip.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/EquipTooltip_native_crop.png
+=== Item.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_fold.png
+=== ItemFull.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_bag_open.png
+=== KeyConfig.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_keyconfig.png
+=== MonsterBook.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_monsterbook.png
+=== SkillMacro.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_skill_macro.png
+=== Stat.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_stat.png
+=== UserList.json rc=0 frame=docs/features/ui-v83-window-restore/evidence/r27-oracle/frames/native_friend_list.png
+汇总 specs=10 非零返回=0
+
+## 4. scan_display_text.py 站点归零进度
+sites=377 latin=359 shell=333 live=26 cjk=18 shells=56   （B1c-3 前：402）

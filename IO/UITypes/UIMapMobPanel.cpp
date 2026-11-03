@@ -6,6 +6,7 @@
 #include "../../Util/Misc.h"
 
 #include "../../MapleStory.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -61,7 +62,9 @@ namespace ms
 			LOG(LOG_WARN, "[UIMapMobPanel] chrome PNG missing — side panel will be empty frame");
 
 		select_bg = ColorBox(WIDTH - PAD_X * 2 - 14, ROW_HEIGHT - 2, Color::Name::BLACK, 0.08f);
-		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "No monsters on this map");
+		// 同上：只有 ctor 一个写入点 => 进绑定表。
+		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		locale_binds.bind(empty_label, "mappanel.no_monsters");
 
 		slider = Slider(
 			Slider::Type::DEFAULT_SILVER,
@@ -203,6 +206,12 @@ namespace ms
 
 	void UIMapMobPanel::update()
 	{
+		// 吸附面板不是 UIElement，拿不到 UIState 派发点上的那一次 refresh_localized()，
+		// 于是在自己的 update 里重取：同一张 LocaleBindings，绑定判据与日志口径都不变，
+		// 只是刷新点从「一处派发」挪成「宿主自取」—— 这正是「reload 广播、窗自取」的形态。
+		if (locale_binds.refresh())
+			LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
+				<< locale_binds.count() << " labels (" << locale_binds.hostname() << ")");
 	}
 
 	void UIMapMobPanel::remove_cursor()

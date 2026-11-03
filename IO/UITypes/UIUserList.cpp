@@ -102,7 +102,8 @@ namespace ms
 		for (size_t i = 0; i <= 4; i++)
 			party_mine_grid[i] = UserList["Sheet2"][i];
 
-		party_mine_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "none", 0);
+		party_mine_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "", 0);
+		bind_text(party_mine_name, "userlist.none");
 
 		nl::node party_taben = Party["Tab"]["enabled"];
 		nl::node party_tabdis = Party["Tab"]["disabled"];
@@ -172,9 +173,14 @@ namespace ms
 		std::string text = "(" + std::to_string(friend_count) + std::string("/") + std::to_string(friend_total) + std::string(")");
 		friends_online_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, text, 0);
 
-		friends_cur_location = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LIGHTGREY, "My Location - " + get_cur_location(), 0);
-		friends_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "none", 0);
-		friends_group_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "Default Group (0/0)", 0);
+		// get_cur_location() 那半截在本窗体生命周期内恒定（换世界是重建窗体，重走 ctor），
+		// 所以走带值的绑定档位，占位符留在模板里，切语言时只换前缀不动位置名。
+		friends_cur_location = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LIGHTGREY, "", 0);
+		bind_text(friends_cur_location, "userlist.cur_location", get_cur_location());
+		friends_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "", 0);
+		bind_text(friends_name, "userlist.none");
+		friends_group_name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "", 0);
+		bind_text(friends_group_name, "userlist.default_group");
 
 		// 「增加朋友 / 增加群」横排：BtAddGroup 在原生帧上实测 (68,77) agree=1.000；
 		// 两张钮同为 65x18，帧上两者之间空 65..67 三列 ⇒ BtAddFriend 落 (0,77)。
@@ -230,7 +236,8 @@ namespace ms
 		for (size_t i = 0; i < 3; i++)
 			blacklist_grid[i] = UserList["Sheet6"][i];
 
-		blacklist_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "none", 0);
+		blacklist_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, "", 0);
+		bind_text(blacklist_name, "userlist.none");
 
 		try_btn(Buttons::BT_BLACKLIST_ADD, BlackList["BtAdd"]);
 		try_btn(Buttons::BT_BLACKLIST_DELETE, BlackList["BtDelete"]);

@@ -94,6 +94,22 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 **唯一欠账 = 运行时负对照**（要能覆盖 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 的窗口 + 整工程 Rebuild，
 `UIElement` 实例尺寸变了不能增量），判据改用 `Locale refresh gen=` 日志，见 evidence README §6。
 
+**B1c-3 落地情况（2026-11-03）**：在用窗 19 处接完（`Ver. `×4 与 `UICharSelect` 的排行行已归 B1c-2，
+本批不重复计），新增 12 键，清点器 402 ⇒ 377。
+**机制层在本批改了形**，因为 B1c-2 的假设「要接的窗都是 UIElement」被世界地图那三块侧栏证伪
+（`UIMapMobPanel` / `UIMapDropPanel` / `UIMapInfoPanel` 头文件原话「Not a UIElement — owned by
+UIWorldMap」，`cl` 直接报 `bind_text 找不到标识符`）。绑定表因此从 `UIElement` 私有段抽成
+[IO/LocaleBindings.h](../../IO/LocaleBindings.h)：`UIElement` 持有一份并转发（对外 API
+`bind_text` / `refresh_localized` 一字未改），非 UIElement 的宿主也持有一份、在自己的 `update()`
+里 `refresh()`。**这条改形对后面三批是硬约定**：B1c-4/5/6 动手前要先分宿主档位 —— UIElement 走
+UIState 派发点，非 UIElement（吸附面板、绘制件）必须自带一份表并在其 update 里刷，
+否则「切语言立刻换文案」只对一半的窗成立。
+门禁：`cl /c /utf-8 /bigobj` 9 TU 全过（含公共件与宿主 `UIWorldMap.cpp`）；
+`check_locale_keys.py` GATE OK（109/109）；`layout.py check` 十张 spec 对自身 oracle 帧仍全 rc=0 / Δ=0。
+读数见 [gate-r27-b1c3.txt](evidence/r27-b1c-i18n-scan/gate-r27-b1c3.txt)，取舍理由见 evidence README §7。
+**运行时负对照依旧欠着，且欠账变了一次**：`UIElement` 私有段现在是「vector + 代次 + 宿主名」，
+实例尺寸与 B1c-2 又不同 ⇒ 整工程 Rebuild 仍不可省（见 [[msbuild-header-layout-stale-objs]]）。
+
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 
 1. **站点归零**：`tools/scan_display_text.py` 读数英文 0 / 中文 0，
