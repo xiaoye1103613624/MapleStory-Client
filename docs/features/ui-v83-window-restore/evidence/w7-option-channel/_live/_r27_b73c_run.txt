@@ -1,0 +1,22 @@
+hwnd=4790440 origin=(640,416)
+cap 00_login
+登录通过（LOGIN 包字段原样命中 + 0x1B 世界列表已收到）
+cap 01_charselect
+cap 02_world
+cap 03_menu
+cap 04_channel
+click CH.2 view=(328,177)
+cap 05_ch2_selected
+click 变更频道 view=(529,208)
+cap 06_after_change
+OUTBOUND 0x27: [SEND] PacketDump : 27 00 01 00 00 00 00
+期望包体（CH.2 -> channel=1）：27 00 01 00 00 00 00 -> MATCH
+INBOUND 0x10: [RECV] PacketDump : 10 00 01 7f 00 00 01 98 1d
+OUTBOUND 0x14 PLAYER_LOGIN 条数=1 [SEND] PacketDump : 14 00 01 00 00 00
+换频后 SET_FIELD 首 int（0 基频道号）=1
+cap 07_later
+换频前 UIChannel 当前槽(0基)=0
+换频后世界帧探针=2
+cap 08_channel_again
+再次打开 UIChannel，当前槽(0基)=1
+DONE

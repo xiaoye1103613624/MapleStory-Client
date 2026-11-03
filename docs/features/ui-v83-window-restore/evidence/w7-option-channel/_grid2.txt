@@ -1,0 +1,12 @@
+native 428x122
+ch_0   native=(49.65 @ x=14 y=71)
+ch_1   native=(59.89 @ x=14 y=71)
+ch_2   native=(61.16 @ x=154 y=71)
+ch_3   native=(68.44 @ x=14 y=71)
+ch_4   native=(68.36 @ x=14 y=71)
+ch_5   native=(62.34 @ x=14 y=71)
+world_0 native=(4.75 @ x=13 y=30)
+world_1 native=(80.17 @ x=13 y=29)
+world_2 native=(85.58 @ x=28 y=30)
+channel1 @ native x=76 y=66 -> SAD=76.60
+channel1 @ native x=146 y=66 -> SAD=76.64

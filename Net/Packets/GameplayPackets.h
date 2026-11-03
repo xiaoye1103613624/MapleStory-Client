@@ -47,13 +47,29 @@ namespace ms
 		EnterCashShopPacket() : OutPacket(OutPacket::Opcode::ENTER_CASHSHOP) {}
 	};
 
-	// Opcode: CHANGE_CHANNEL(39 / 0x27) — s9 ChangeChannelHandler: byte channel
+	// Opcode: CHANGE_CHANNEL(39 / 0x27)
+	//
+	// 字段序取证自服务端本体（不是猜的）：
+	//   E:\project\BeiDou-Server_s9\gms-server\src\main\java\org\gms\net\server\
+	//       channel\handlers\ChangeChannelHandler.java:38-39
+	//         int channel = p.readByte() + 1;   // 客户端发 0 基频道号
+	//         p.readInt();                      // 读走即弃，返回值未被使用
+	// 之前本包只写 1 字节，服务端那条 readInt() 直接抛异常 ⇒ 永无回包，
+	// 就是用户报的「频道更换点击也没有反映」。
+	//
+	// 回包 PacketCreator.getChannelChange()（同库 util/PacketCreator.java:891-897）
+	// 写 byte(1) + 4 字节 IP + short port，正好对上 LoginParser::parse_login 的
+	// skip_byte + 4*read_byte + read_short，客户端侧无需再改。
+	//
+	// 预留：那 4 字节在原生 v83 客户端里的**语义**未取证（IDA 未定位到构造点）。
+	// 服务端把它丢弃，所以填 0 不影响换频；若日后换服务端实现需按原生值校准。
 	class ChangeChannelPacket : public OutPacket
 	{
 	public:
 		ChangeChannelPacket(uint8_t channel) : OutPacket(OutPacket::Opcode::CHANGE_CHANNEL)
 		{
 			write_byte(channel);
+			write_int(0);
 		}
 	};
 

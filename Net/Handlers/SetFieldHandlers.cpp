@@ -147,6 +147,15 @@ namespace ms
 		Constants::Constants::get().set_viewheight(Setting<Height>::get().load());
 
 		int32_t channel = recv.read_int();
+
+		// 服务端每次 SET_FIELD 的首个 int 就是**当前 0 基频道号**
+		// （BeiDou-Server_s9 util/PacketCreator.java:995 getCharInfo / :1076 getWarpToMap
+		//  都写 `getClient().getChannel() - 1`）。换频后客户端是重连到新频道服再收
+		// SET_FIELD，这里不存的话 Configuration::channelid 会一直停在登录时选的那条，
+		// UIChannel 就把「当前频道」画错、同频道保护也随之失效（服务端对同频道换频
+		// 是直接 disconnect 的）。
+		Configuration::get().set_channelid(static_cast<uint8_t>(channel));
+
 		int8_t mode1 = recv.read_byte();
 		int8_t mode2 = recv.read_byte();
 

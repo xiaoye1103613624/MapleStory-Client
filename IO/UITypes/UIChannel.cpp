@@ -26,6 +26,7 @@
 
 #include "../../Audio/Audio.h"
 #include "../../Configuration.h"
+#include "../../Net/Handlers/Helpers/LoginParser.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
@@ -38,85 +39,105 @@ namespace ms
 {
 	UIChannel::UIChannel() : UIDragElement<PosCHANNEL>()
 	{
-		uint8_t selected_world = Configuration::get().get_worldid();
 		current_channel = Configuration::get().get_channelid();
+
+		// 频道数来自登录期 SERVERLIST 的实测值（本服 Scania=3，见 channel-layout.md §6.2），
+		// 不是猜的 20 —— 原生 频道变更.png 只有 6 格 1 行，正是因为那个世界只有 3 个频道。
+		// 兜底：断线重连/换频道回本图时如果这一轮没解过 SERVERLIST，退成「至少盖住当前频道」。
+		channel_count = Configuration::get().get_channel_total(Configuration::get().get_worldid());
+
+		if (channel_count < static_cast<uint8_t>(current_channel + 1))
+			channel_count = static_cast<uint8_t>(current_channel + 1);
+
 		selected_channel = current_channel;
-		// 频道总数尚无会话字段；至少覆盖当前频道，默认 20
-		channel_count = (current_channel >= 20) ? static_cast<uint8_t>(current_channel + 1) : 20;
-		(void)selected_world;
 
 		nl::node Channel = UiAssetResolve::window("Channel");
 
-		if (!UiAssetResolve::usable(Channel) || !Channel["backgrnd"])
+		// UIWindow.img/Channel 根本没有 backgrnd —— 这张脸是 t(标题+世界条) + 槽行 + s(按钮条) 三段拼的。
+		// 旧门槛只认 backgrnd，缺件即 active=false，于是「点频道更换」什么也不出（channel-layout.md §0）。
+		nl::node t = Channel["t"];
+		nl::node s = Channel["s"];
+
+		if (!UiAssetResolve::usable(t) || !UiAssetResolve::usable(s))
 		{
+			UiAssetResolve::diag_once("UIChannel", "Channel/t or Channel/s missing -> window suppressed");
 			active = false;
 			dimension = Point<int16_t>(0, 0);
 			return;
 		}
 
-		nl::node backgrnd = Channel["backgrnd"];
-		Texture bg = backgrnd;
+		sprites.emplace_back(t);
 
-		sprites.emplace_back(backgrnd, Point<int16_t>(1, 0));
-		if (Channel["backgrnd2"])
-			sprites.emplace_back(Channel["backgrnd2"]);
-		if (Channel["backgrnd3"])
-			sprites.emplace_back(Channel["backgrnd3"]);
-		if (Channel["world"][selected_world])
-			sprites.emplace_back(Channel["world"][selected_world], Point<int16_t>(16, 30));
+		plate_empty = Channel["channel0"];
+		plate_selected = Channel["channel1"];
+		plate_current = Channel["channel2"];
 
-		if (Channel["BtCancel"])
-			buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(Channel["BtCancel"]);
-		if (Channel["BtChange"])
-			buttons[Buttons::CHANGE] = std::make_unique<MapleButton>(Channel["BtChange"], Point<int16_t>(-20, 0));
+		uint8_t world = Configuration::get().get_worldid();
 
-		channel[true] = Channel["channel1"];
-		channel[false] = Channel["channel0"];
+		if (Channel["world"][world])
+			sprites.emplace_back(Channel["world"][world], Point<int16_t>(16, 31));
 
-		size_t x = 0;
-		size_t y = 0;
-
-		for (size_t i = 0; i < channel_count; i++)
+		for (uint8_t i = 0; i < slot_total(); i++)
 		{
-			if (x >= 5)
-			{
-				x = 0;
-				y++;
-			}
+			if (i < channel_count && Channel["ch"][i])
+				ch.emplace_back(Channel["ch"][i],
+					Point<int16_t>(slot_x(i) + SLOT_LABEL_DX, slot_y(i) + SLOT_LABEL_DY));
 
-			if (Channel["ch"][i])
-				ch.emplace_back(Channel["ch"][i], Point<int16_t>(19 + 70 * x, 60 + 20 * y));
-			buttons[Buttons::CH + i] = std::make_unique<AreaButton>(Point<int16_t>(11 + 70 * x, 55 + 20 * y), channel[true].is_valid() ? channel[true].get_dimensions() : Point<int16_t>(70, 20));
-
-			if (i == selected_channel)
-			{
-				current_channel_x = 11 + 70 * x;
-				current_channel_y = 55 + 20 * y;
-				selected_channel_x = current_channel_x;
-				selected_channel_y = current_channel_y;
-			}
-
-			x++;
+			buttons[Buttons::CH + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(slot_x(i), slot_y(i)), Point<int16_t>(68, 20));
 		}
 
-		dimension = bg.get_dimensions();
+		// 两颗橙钮在 s 条带里，顶边距条带顶 12（帧实测 SAD=0.07）。
+		try_maple_btn(buttons, Buttons::CHANGE, Channel["BtChange"],
+			Point<int16_t>(286, bottom_strip_y() + 12), "UIChannel BtChange");
+		try_maple_btn(buttons, Buttons::CANCEL, Channel["BtCancel"],
+			Point<int16_t>(380, bottom_strip_y() + 12), "UIChannel BtCancel");
+
+		sprites.emplace_back(s, Point<int16_t>(0, bottom_strip_y()));
+
+		dimension = Point<int16_t>(436, bottom_strip_y() + 36);
 		dragarea = Point<int16_t>(dimension.x(), 20);
+	}
+
+	int16_t UIChannel::slot_x(uint8_t i)
+	{
+		return static_cast<int16_t>(9 + SLOT_PITCH_X * (i % SLOTS_PER_ROW));
+	}
+
+	int16_t UIChannel::slot_y(uint8_t i)
+	{
+		return static_cast<int16_t>(GRID_TOP + SLOT_PITCH_Y * (i / SLOTS_PER_ROW));
+	}
+
+	size_t UIChannel::slot_total() const
+	{
+		// 最后一排补满空格：原生帧 3 个带字槽后面跟着 3 块纯灰板（channel0 SAD=0.00）。
+		return (static_cast<size_t>(channel_count) + SLOTS_PER_ROW - 1) / SLOTS_PER_ROW * SLOTS_PER_ROW;
+	}
+
+	int16_t UIChannel::bottom_strip_y() const
+	{
+		return static_cast<int16_t>(GRID_TOP + SLOT_PITCH_Y * (slot_total() / SLOTS_PER_ROW));
 	}
 
 	void UIChannel::draw(float inter) const
 	{
 		UIElement::draw(inter);
 
-		if (current_channel == selected_channel)
+		for (uint8_t i = 0; i < slot_total(); i++)
 		{
-			channel[true].draw(DrawArgument(position.x() + selected_channel_x, position.y() + selected_channel_y));
-		}
-		else
-		{
-			channel[true].draw(DrawArgument(position.x() + selected_channel_x, position.y() + selected_channel_y));
-			channel[false].draw(DrawArgument(position.x() + current_channel_x, position.y() + current_channel_y));
+			const Texture* plate = &plate_empty;
+
+			if (i == current_channel)
+				plate = &plate_current;
+			else if (i == selected_channel)
+				plate = &plate_selected;
+
+			if (plate->is_valid())
+				plate->draw(DrawArgument(position.x() + slot_x(i), position.y() + slot_y(i)));
 		}
 
+		// Sprite::draw 非 const，所以这里只能按值拷贝（draw() 本身是 const）。
 		for (Sprite sprite : ch)
 			sprite.draw(position, inter);
 	}
@@ -125,8 +146,47 @@ namespace ms
 	{
 		UIElement::update();
 
-		for (Sprite sprite : ch)
+		// 本窗体是常驻单例（get_element / emplace 复用同一个实例），ctor 里抓的
+		// current_channel 会一直停在登录时选的那条。UIStateGame::update 只对
+		// is_active() 的窗体派发，所以这里正好是「每次打开时刷新」的落点。
+		// 换频成功后 SET_FIELD 已把 Configuration::channelid 改成新频道，
+		// 不在这里重取的话当前格永远亮在旧频道上。
+		current_channel = Configuration::get().get_channelid();
+
+		if (selected_channel >= channel_count)
+			selected_channel = current_channel;
+
+		for (Sprite& sprite : ch)
 			sprite.update();
+	}
+
+	void UIChannel::step_channel(uint8_t& target, int delta)
+	{
+		int total = static_cast<int>(channel_count);
+
+		if (total <= 1)
+			return;
+
+		int v = static_cast<int>(target) + delta;
+
+		// 越界绕到另一端
+		if (v < 0)
+			v += total;
+		else if (v >= total)
+			v -= total;
+
+		// 当前所在频道不可选（选中它等于不换）
+		if (v == static_cast<int>(current_channel))
+		{
+			v += (delta > 0) ? 1 : -1;
+
+			if (v < 0)
+				v = total - 1;
+			else if (v >= total)
+				v = 0;
+		}
+
+		target = static_cast<uint8_t>(v);
 	}
 
 	void UIChannel::send_key(int32_t keycode, bool pressed, bool escape)
@@ -143,91 +203,19 @@ namespace ms
 			}
 			else if (keycode == KeyAction::Id::UP)
 			{
-				if (selected_channel > 4)
-				{
-					selected_channel -= 5;
-				}
-				else
-				{
-					for (size_t i = 0; i < 3; i++)
-						selected_channel += 5;
-				}
-
-				if (selected_channel == current_channel)
-				{
-					if (selected_channel > 4)
-					{
-						selected_channel -= 5;
-					}
-					else
-					{
-						for (size_t i = 0; i < 3; i++)
-							selected_channel += 5;
-					}
-				}
-
-				update_selected_channel_position();
+				step_channel(selected_channel, -static_cast<int>(SLOTS_PER_ROW));
 			}
 			else if (keycode == KeyAction::Id::DOWN)
 			{
-				if (selected_channel < 15)
-				{
-					selected_channel += 5;
-				}
-				else
-				{
-					for (size_t i = 0; i < 3; i++)
-						selected_channel -= 5;
-				}
-
-				if (selected_channel == current_channel)
-				{
-					if (selected_channel < 15)
-					{
-						selected_channel += 5;
-					}
-					else
-					{
-						for (size_t i = 0; i < 3; i++)
-							selected_channel -= 5;
-					}
-				}
-
-				update_selected_channel_position();
+				step_channel(selected_channel, static_cast<int>(SLOTS_PER_ROW));
 			}
 			else if (keycode == KeyAction::Id::LEFT)
 			{
-				if (selected_channel != 0)
-					selected_channel--;
-				else
-					selected_channel = channel_count - 1;
-
-				if (selected_channel == current_channel)
-				{
-					if (selected_channel != 0)
-						selected_channel--;
-					else
-						selected_channel = channel_count - 1;
-				}
-
-				update_selected_channel_position();
+				step_channel(selected_channel, -1);
 			}
 			else if (keycode == KeyAction::Id::RIGHT)
 			{
-				if (selected_channel != channel_count - 1)
-					selected_channel++;
-				else
-					selected_channel = 0;
-
-				if (selected_channel == current_channel)
-				{
-					if (selected_channel != channel_count - 1)
-						selected_channel++;
-					else
-						selected_channel = 0;
-				}
-
-				update_selected_channel_position();
+				step_channel(selected_channel, 1);
 			}
 			else if (keycode == 'C' || keycode == 'c')
 			{
@@ -236,8 +224,7 @@ namespace ms
 					try {
 						int ch = std::stoi(s);
 						if (ch >= 1 && ch <= static_cast<int>(channel_count)) {
-							selected_channel = ch - 1;
-							update_selected_channel_position();
+							selected_channel = static_cast<uint8_t>(ch - 1);
 							change_channel();
 							LOG(LOG_DEBUG, "UIChannel: SoftKey ch=" << ch);
 						}
@@ -261,33 +248,40 @@ namespace ms
 
 		Cursor::State ret = clicked ? Cursor::State::CLICKING : Cursor::State::IDLE;
 
-		for (size_t i = 0; i < channel_count + Buttons::CH; i++)
+		for (size_t i = 0; i < Buttons::CH + slot_total(); i++)
 		{
-			if (buttons[i]->is_active() && buttons[i]->bounds(position).contains(cursorpos))
+			auto it = buttons.find(i);
+
+			if (it == buttons.end() || !it->second)
+				continue;
+
+			Button& button = *it->second;
+
+			if (button.is_active() && button.bounds(position).contains(cursorpos))
 			{
-				if (buttons[i]->get_state() == Button::State::NORMAL)
+				if (button.get_state() == Button::State::NORMAL)
 				{
 					if (i < Buttons::CH)
 					{
 						Sound(Sound::Name::BUTTONOVER).play();
 
-						buttons[i]->set_state(Button::State::MOUSEOVER);
+						button.set_state(Button::State::MOUSEOVER);
 						ret = Cursor::State::CANCLICK;
 					}
 					else
 					{
-						buttons[i]->set_state(Button::State::MOUSEOVER);
+						button.set_state(Button::State::MOUSEOVER);
 						ret = Cursor::State::IDLE;
 					}
 				}
-				else if (buttons[i]->get_state() == Button::State::MOUSEOVER)
+				else if (button.get_state() == Button::State::MOUSEOVER)
 				{
 					if (clicked)
 					{
 						if (i < Buttons::CH)
 							Sound(Sound::Name::BUTTONCLICK).play();
 
-						buttons[i]->set_state(button_pressed(i));
+						button.set_state(button_pressed(i));
 
 						ret = Cursor::State::IDLE;
 					}
@@ -300,9 +294,9 @@ namespace ms
 					}
 				}
 			}
-			else if (buttons[i]->get_state() == Button::State::MOUSEOVER)
+			else if (button.get_state() == Button::State::MOUSEOVER)
 			{
-				buttons[i]->set_state(Button::State::NORMAL);
+				button.set_state(Button::State::NORMAL);
 			}
 		}
 
@@ -335,8 +329,7 @@ namespace ms
 			if (buttonid - Buttons::CH == current_channel)
 				return Button::State::NORMAL;
 
-			selected_channel = buttonid - Buttons::CH;
-			update_selected_channel_position();
+			selected_channel = static_cast<uint8_t>(buttonid - Buttons::CH);
 		}
 
 		return Button::State::NORMAL;
@@ -348,8 +341,6 @@ namespace ms
 
 		current_channel = Configuration::get().get_channelid();
 		selected_channel = current_channel;
-		selected_channel_x = current_channel_x;
-		selected_channel_y = current_channel_y;
 	}
 
 	void UIChannel::change_channel()
@@ -359,32 +350,13 @@ namespace ms
 			cancel();
 			return;
 		}
+
+		// CHANGE_CHANNEL 的回包只给新频道服的 IP/port，不带 charId；频道服的
+		// 入场券是 PLAYER_LOGIN(charId)。挂上标记，parse_login 重连成功后补发。
+		LoginParser::expect_channel_reentry();
+
 		ChangeChannelPacket(static_cast<uint8_t>(selected_channel)).dispatch();
 		LOG(LOG_DEBUG, "UIChannel: ChangeChannel ch=" << static_cast<int>(selected_channel));
 		deactivate();
-	}
-
-	void UIChannel::update_selected_channel_position()
-	{
-		size_t x = 0;
-		size_t y = 0;
-
-		for (size_t i = 0; i < channel_count; i++)
-		{
-			if (x >= 5)
-			{
-				x = 0;
-				y++;
-			}
-
-			if (i == selected_channel)
-			{
-				selected_channel_x = 11 + 70 * x;
-				selected_channel_y = 55 + 20 * y;
-				break;
-			}
-
-			x++;
-		}
 	}
 }

@@ -19,8 +19,6 @@
 
 #include "../UIDragElement.h"
 
-#include "../../Template/BoolPair.h"
-
 namespace ms
 {
 	class UIChannel : public UIDragElement<PosCHANNEL>
@@ -44,10 +42,6 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
-		void cancel();
-		void change_channel();
-		void update_selected_channel_position();
-
 		enum Buttons : uint16_t
 		{
 			CANCEL,
@@ -55,14 +49,32 @@ namespace ms
 			CH
 		};
 
+		void cancel();
+		void change_channel();
+		void step_channel(uint8_t& target, int delta);
+
+		// 槽位落位全部由 index 现算，常数来自 evidence/w7-option-channel/channel-layout.md §5
+		// （原生 频道变更.png 逐格量出，channel0 在三个空槽上 SAD=0.00）。
+		static constexpr uint8_t SLOTS_PER_ROW = 6;
+		static constexpr int16_t GRID_TOP = 67;
+		static constexpr int16_t SLOT_PITCH_X = 70;
+		static constexpr int16_t SLOT_PITCH_Y = 20;
+		static constexpr int16_t SLOT_LABEL_DX = 8;
+		static constexpr int16_t SLOT_LABEL_DY = 5;
+
+		static int16_t slot_x(uint8_t i);
+		static int16_t slot_y(uint8_t i);
+		size_t slot_total() const;
+		int16_t bottom_strip_y() const;
+
 		uint8_t current_channel;
 		uint8_t selected_channel;
 		uint8_t channel_count;
-		BoolPair<Texture> channel;
+		// 三块底板：空槽 / 待变更 / 当前所在（蓝色带 ▶）。
+		// 旧实现用 BoolPair 只装得下两块，把当前频道画成了浅灰，`channel2` 一次也没被用上。
+		Texture plate_empty;
+		Texture plate_selected;
+		Texture plate_current;
 		std::vector<Sprite> ch;
-		int16_t current_channel_x;
-		int16_t current_channel_y;
-		int16_t selected_channel_x;
-		int16_t selected_channel_y;
 	};
 }

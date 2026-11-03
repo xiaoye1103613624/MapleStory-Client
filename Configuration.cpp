@@ -219,6 +219,18 @@ namespace ms
 		settings.emplace<PosDAILYGIFT>();
 		settings.emplace<PosKEYCONFIG>();
 		settings.emplace<PosOPTIONMENU>();
+		settings.emplace<PosGAMEOPT>();
+		settings.emplace<PosSYSOPT>();
+		settings.emplace<GameOptMask>();
+		settings.emplace<SysOptQuality>();
+		settings.emplace<SysOptMouseSpeed>();
+		settings.emplace<SysOptHpWarn>();
+		settings.emplace<SysOptMpWarn>();
+		settings.emplace<SysOptSkillEffects>();
+		settings.emplace<SysOptWindowMode>();
+		settings.emplace<SysOptAltEnter>();
+		settings.emplace<SysOptMobInfo>();
+		settings.emplace<SysOptScreenshotPath>();
 		settings.emplace<PosCHARINFO>();
 		settings.emplace<PosMESSENGER>();
 		settings.emplace<PosPARTYSEARCH>();
@@ -928,6 +940,26 @@ namespace ms
 	void Configuration::set_channelid(uint8_t id)
 	{
 		channelid = id;
+	}
+
+	void Configuration::set_channel_total(int8_t wid, uint8_t count)
+	{
+		channel_totals()[wid] = count;
+	}
+
+	uint8_t Configuration::get_channel_total(int8_t wid)
+	{
+		auto it = channel_totals().find(wid);
+
+		return it != channel_totals().end() ? it->second : 0;
+	}
+
+	std::unordered_map<int8_t, uint8_t>& Configuration::channel_totals()
+	{
+		// 函数内静态：避免静态初始化顺序问题，也不改 Configuration 的实例布局。
+		static std::unordered_map<int8_t, uint8_t> totals;
+
+		return totals;
 	}
 
 	bool Configuration::get_admin()

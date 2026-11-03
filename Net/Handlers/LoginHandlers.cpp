@@ -265,6 +265,9 @@ namespace ms
 					<< " name=" << world.name
 					<< " channels=" << static_cast<int>(world.channel_count)
 					<< " loads=" << world.channel_capacities.size());
+				// 顺手把「本世界频道数」登记进 Configuration：登录页用完就拆，
+				// 游戏内的「频道变更」窗还要靠它决定排几行几格（UIChannel）。
+				Configuration::get().set_channel_total(world.id, world.channel_count);
 				worldselect->add_world(world);
 			}
 			else
@@ -334,11 +337,21 @@ namespace ms
 	{
 		recv.skip_byte();
 
+		// 这条路径下面自己会发 PLAYER_LOGIN，所以先把可能残留的「换频道待重入」
+		// 标记清掉（上一次换频道若没收到回包就会留着）——否则 parse_login 会拿
+		// 上一个角色的 charId 抢发一次入场，把角色换错人。
+		LoginParser::clear_channel_reentry();
+
 		LoginParser::parse_login(recv);
 
 		int32_t cid = recv.read_int();
 		while (recv.available())
 			recv.skip_byte();
+
+		// 存一份：换频道时 CHANGE_CHANNEL 的回包不带 charId，
+		// 重连后由 LoginParser::parse_login 用这个值补发 PLAYER_LOGIN。
+		LoginParser::note_channel_entry_cid(cid);
+
 		PlayerLoginPacket(cid).dispatch();
 	}
 

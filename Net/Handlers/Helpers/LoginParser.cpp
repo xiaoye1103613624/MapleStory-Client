@@ -17,10 +17,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "LoginParser.h"
 
+#include "../../Packets/LoginPackets.h"
 #include "../../Session.h"
 
 namespace ms
 {
+	namespace
+	{
+		// 见 LoginParser.h 的说明：登录期 SERVER_IP 给的 charId，换频道重连后复用。
+		int32_t channel_entry_cid = 0;
+		bool channel_reentry_pending = false;
+	}
+
 	Account LoginParser::parse_account(InPacket& recv)
 	{
 		Account account;
@@ -213,5 +221,35 @@ namespace ms
 
 		// Attempt to reconnect to the server
 		Session::get().reconnect(addrstr.c_str(), portstr.c_str());
+
+		// 换频道走的就是这一条：CHANGE_CHANNEL 的回包不带 charId，服务端那句
+		// PLAYER_LOGIN 得由我们自己补（PlayerLoggedinHandler.validateState 要求
+		// !isLoggedIn()，新连接正好满足）。正常登录时 ServerIPHandler 紧接着会发
+		// 同一个包，所以只在 UIChannel 挂过标记时补，避免重复入场。
+		if (channel_reentry_pending)
+		{
+			channel_reentry_pending = false;
+
+			if (channel_entry_cid != 0 && Session::get().is_connected())
+				PlayerLoginPacket(channel_entry_cid).dispatch();
+			else
+				LOG(LOG_NETWORK, "channel reentry skipped: cid=" << channel_entry_cid
+					<< " connected=" << Session::get().is_connected());
+		}
+	}
+
+	void LoginParser::note_channel_entry_cid(int32_t cid)
+	{
+		channel_entry_cid = cid;
+	}
+
+	void LoginParser::expect_channel_reentry()
+	{
+		channel_reentry_pending = true;
+	}
+
+	void LoginParser::clear_channel_reentry()
+	{
+		channel_reentry_pending = false;
 	}
 }

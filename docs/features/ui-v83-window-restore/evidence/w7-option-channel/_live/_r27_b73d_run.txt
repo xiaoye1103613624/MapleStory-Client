@@ -1,0 +1,15 @@
+hwnd=4790440 origin=(640,416)
+cap 00_closed_channel_win
+cap 01_menu
+cap 02_channel
+本轮开局 UIChannel 当前槽(0基)=1（应为 1 = CH.2）
+cap 03_ch3_selected
+cap 04_after_change
+OUTBOUND 0x27: [SEND] PacketDump : 27 00 02 00 00 00 00
+INBOUND 0x10: [RECV] PacketDump : 10 00 01 7f 00 00 01 99 1d
+OUTBOUND 0x14 PLAYER_LOGIN 条数=1 [SEND] PacketDump : 14 00 01 00 00 00
+换频后 SET_FIELD 首 int（0 基频道号）=2（应为 2 = CH.3）
+cap 05_later
+cap 06_channel_again
+再次打开 UIChannel，当前槽(0基)=2
+DONE

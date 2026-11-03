@@ -1,0 +1,12 @@
+native 428x122
+t 436x67  最优 SAD=30.76 @(x=52, y=0)
+   次优 5: y=0 SAD=30.76 x=52, y=1 SAD=33.64 x=-3, y=2 SAD=40.36 x=52, y=3 SAD=41.49 x=52, y=4 SAD=47.44 x=52, y=5 SAD=50.00 x=52
+s 436x36  最优 SAD=25.23 @(x=-150, y=86)
+   次优 5: y=86 SAD=25.23 x=-150, y=85 SAD=32.32 x=-150, y=84 SAD=35.48 x=-150, y=83 SAD=35.91 x=-149, y=82 SAD=37.57 x=-149, y=81 SAD=41.53 x=-149
+c 436x10  最优 SAD=1.82 @(x=52, y=9)
+   次优 5: y=9 SAD=1.82 x=52, y=7 SAD=1.83 x=52, y=8 SAD=1.83 x=52, y=6 SAD=1.85 x=52, y=10 SAD=2.04 x=52, y=54 SAD=4.93 x=-3
+channel0 68x20  最优 SAD=0.00 @(x=216, y=66)
+channel1 68x20  最优 SAD=40.67 @(x=61, y=31)
+channel2 68x20  最优 SAD=6.76 @(x=6, y=66)
+BtCancel_normal_0 47x19  最优 SAD=0.07 @(x=377, y=98)
+BtChange_normal_0 60x19  最优 SAD=0.07 @(x=283, y=98)

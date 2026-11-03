@@ -166,6 +166,11 @@ namespace ms
 		uint8_t get_channelid();
 		// Set the character's selected channel
 		void set_channelid(uint8_t id);
+		// SERVERLIST 解出的「该世界频道数」。登录期 UIWorldSelect 才有这个值，进图后
+		// 那个窗体已被移除，UIChannel 要按它排版，所以由 ServerlistHandler 就地登记。
+		static void set_channel_total(int8_t wid, uint8_t count);
+		// 该世界的频道数；本轮登录没收到过 SERVERLIST 时返回 0（调用方兜底）。
+		static uint8_t get_channel_total(int8_t wid);
 		// Check if the current account is an admin account
 		bool get_admin();
 		// Set whether the current account is an admin account
@@ -313,6 +318,8 @@ namespace ms
 		std::string VolumeSerialNumber;
 		uint8_t worldid;
 		uint8_t channelid;
+		// SERVERLIST 的实测频道数，按世界 id 记；只在内存，不落 Settings。
+		static std::unordered_map<int8_t, uint8_t>& channel_totals();
 		bool admin;
 		bool caps_lock_enabled;
 		TypeMap<Entry> settings;
@@ -753,6 +760,95 @@ namespace ms
 	struct PosOPTIONMENU : public Configuration::PointEntry
 	{
 		PosOPTIONMENU() : PointEntry("ui.position.optionmenu", "(170, -1)") {}
+	};
+
+	// The default position of UIGameOpt
+	// v83「游戏设置」窗默认位置。原生取证件是**窗口裁图**（无屏幕上下文），
+	// 所以这个默认值不是 oracle 读数；窗体可拖拽并按 ui.position.* 落盘。
+	struct PosGAMEOPT : public Configuration::PointEntry
+	{
+		PosGAMEOPT() : PointEntry("ui.position.gameopt", "(170, 24)") {}
+	};
+
+	// The default position of UISysOpt
+	// v83「系统设置」窗默认位置，同上：非 oracle 读数，可拖拽落盘。
+	struct PosSYSOPT : public Configuration::PointEntry
+	{
+		PosSYSOPT() : PointEntry("ui.position.sysopt", "(330, 24)") {}
+	};
+
+	// Game-option accept mask (ui.gameopt.mask)
+	// 「游戏设置」12 行的同意/拒绝位图：bit i = 第 i 行（画布自上而下），
+	// 1 = 同意。默认 0xFFF（全同意）—— 原生截帧里第 7 行未勾是**那位玩家当时的
+	// 状态**，不是出厂默认，故不照抄。消费方见 UIGameOpt.h 顶部说明。
+	struct GameOptMask : public Configuration::ShortEntry
+	{
+		GameOptMask() : ShortEntry("ui.gameopt.mask", "4095") {}
+	};
+
+	// Screen quality (ui.sysopt.quality)
+	// 「画质调整」滑条 0-100。当前无消费方（本包无画质分级管线），仅落盘。
+	// 默认值取原生截帧读数（滑钮 x=221 → 98%），这样首帧能直接与 oracle 逐格比对。
+	struct SysOptQuality : public Configuration::ByteEntry
+	{
+		SysOptQuality() : ByteEntry("ui.sysopt.quality", "98") {}
+	};
+
+	// Mouse cursor speed (ui.sysopt.mouse_speed)
+	// 「鼠标速度调整」滑条 0-100。当前无消费方，仅落盘。默认同上（滑钮 x=164 → 52%）。
+	struct SysOptMouseSpeed : public Configuration::ByteEntry
+	{
+		SysOptMouseSpeed() : ByteEntry("ui.sysopt.mouse_speed", "52") {}
+	};
+
+	// HP warning threshold percent (ui.sysopt.hp_warn)
+	// 「HP 警报」阈值百分比；左端「没有」= 0（不报警）。当前无消费方，仅落盘。
+	struct SysOptHpWarn : public Configuration::ByteEntry
+	{
+		SysOptHpWarn() : ByteEntry("ui.sysopt.hp_warn", "52") {}
+	};
+
+	// MP warning threshold percent (ui.sysopt.mp_warn)
+	// 「MP 警报」阈值百分比，同上。
+	struct SysOptMpWarn : public Configuration::ByteEntry
+	{
+		SysOptMpWarn() : ByteEntry("ui.sysopt.mp_warn", "52") {}
+	};
+
+	// Allow skill effects (ui.sysopt.skill_effects)
+	// 「画面效果 · 技能使用时允许画面效果」。当前无消费方，仅落盘。
+	struct SysOptSkillEffects : public Configuration::BoolEntry
+	{
+		SysOptSkillEffects() : BoolEntry("ui.sysopt.skill_effects", "true") {}
+	};
+
+	// Windowed mode (ui.sysopt.window_mode)
+	// 「画面模式 · 窗口化模式」，原生截帧为未勾。改窗口样式要动 GLFW 生命周期，
+	// 本版仅落盘，不实际切换（见 docs 里 B7-4 的预留说明）。
+	struct SysOptWindowMode : public Configuration::BoolEntry
+	{
+		SysOptWindowMode() : BoolEntry("ui.sysopt.window_mode", "false") {}
+	};
+
+	// ALT+ENTER window-mode switching permission (ui.sysopt.alt_enter)
+	// 「画面模式」第二格：允许用 ALT+回车在窗口化/全屏之间随时切换。
+	struct SysOptAltEnter : public Configuration::BoolEntry
+	{
+		SysOptAltEnter() : BoolEntry("ui.sysopt.alt_enter", "false") {}
+	};
+
+	// Mob info display mode (ui.sysopt.mob_info)
+	// 「怪物情报」下拉序号，消费方是 NameTag 的头顶信息（本版未接，仅落盘）。
+	struct SysOptMobInfo : public Configuration::ByteEntry
+	{
+		SysOptMobInfo() : ByteEntry("ui.sysopt.mob_info", "0") {}
+	};
+
+	// Screenshot save location (ui.sysopt.screenshot_path)
+	// 「截图保存位置」下拉序号。本包只有默认目录，无第二选项，仅落盘。
+	struct SysOptScreenshotPath : public Configuration::ByteEntry
+	{
+		SysOptScreenshotPath() : ByteEntry("ui.sysopt.screenshot_path", "0") {}
 	};
 
 	// The default position of UICharInfo
