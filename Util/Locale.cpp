@@ -89,6 +89,9 @@ namespace ms
 			primary = fallback_zh;
 		else
 			load_file("locale/" + lang + ".ini", primary);
+
+		// 代次必须在两张表都装好之后才递增：绑定表看到的永远是「这一代对应的文案已就位」。
+		++gen;
 	}
 
 	std::string Locale::tr(const std::string& key) const

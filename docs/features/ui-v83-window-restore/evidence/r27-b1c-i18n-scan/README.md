@@ -87,7 +87,7 @@ zh 93 键 / en 93 键（键集严格对齐），`equip.type.` 32 条、`equip.st
 `属性: - 抗性: -`、`第/天/月/日`…）性质不同：**中文已经写好了，只是没进 ini**，
 搬 key 零风险，不存在「编造原生文案」的问题。
 
-## 4. 待用户拍板（本目录停在这里，未继续大面积改写）
+## 4. 当时的三个决策点（已由用户 2026-11-03 拍板，结果见 §6）
 
 门禁「禁止凭记忆编词条（换中文需要 v83 原生文案依据 `String.img`/IDA）」与
 「非位图文字一律走 i18n、默认中文」这两条，在**壳窗**这一大类上是冲突的：
@@ -117,4 +117,37 @@ cl /c /utf-8 /bigobj /std:c++17 /EHsc /W3 /DNDEBUG /D_CONSOLE /DUSE_NX … Maple
 把紧随其后的换行吞进双字节字符，注释就"续"到了下一行的 `class` 上。
 `MapleStory.vcxproj:102` 等 4 处 `AdditionalOptions` 里明确带 `/utf-8`，
 **凡是手工 `cl` 复现构建，必须把项目附加选项一起抄上**，否则报的是编码错，不是代码错。
-</content>
+
+## 6. 三个决策点已定（2026-11-03 用户拍板）与 B1c-2 落地
+
+| 决策 | 拍板结果 | 对本批的含义 |
+| --- | --- | --- |
+| A 范围 | **全量 402 处都接机制** | 壳窗不因「无原生依据」被排除；依据缺失只影响**值**，不影响**键位** |
+| B 文案 | **保持英文原值，只建键** | 不编中文、不编英文；逐条记入 [pending-copy.md](pending-copy.md)，日后取证只改 ini 的值 |
+| C 刷新 | **reload 广播，窗自取** | 已开着的窗切语言立刻换文案，不要求重开 |
+
+B1c-2（机制层）已按 C 落地：`Locale::generation()` 代次 + `UIElement::bind_text()` 绑定表 +
+三个 `UIState` 派发点各一行 `refresh_localized()`，6 个静态标签上表，4 个新键（`version.prefix`、
+`charselect.rank_*`）。两个原决策点问题在实现时这样收：
+
+- **为什么不用全局注册表 / 绘制期自取**：`Text::draw()` 是 const（绘制期取文案要改状态）；
+  `Text` 有隐式拷贝赋值（`EquipTooltip.cpp:196` 就是 `x = Text(...)`），全局表存指针会在赋值后失效。
+- **为什么只给静态标签上表**：绑定等于「把登记那一刻的值钉死」。金币数额、`Default Group (0/0)`
+  这类随数据变的行继续 `Locale::text/format` 就地现算 —— 那条路本来就是活文案。
+
+**门禁读数**：
+`check_locale_keys.py` GATE OK（zh/en 各 97 键，键集对齐）；
+`layout.py check` 十张 spec 对自身 oracle 帧 **全 rc=0 / 逐格 Δ=0**
+（[gate-layout-regression.txt](gate-layout-regression.txt)）—— 本批只加机制与键，
+zh 的 4 个新值与站点原英文字面量逐字相同，**不改变渲染串**，所以版式零风险是可证的而不是假设的。
+
+**又一个假警报（工具姿势，已修）**：第一次跑这十张时循环取的是 spec 的 `native_frame` 字段 ——
+那字段是「这帧从哪截的」人读说明（常带 `(348x305)` 尺寸后缀，甚至是整段中文叙述），
+**不是路径**；能传的是 `oracle_frame`。传错后 `FileNotFoundError` 的 traceback 走 stderr，
+而循环只留 stdout，于是看到「10/10 rc=1 且一个字没输出」，极易误读成版式全崩。
+已在 `layout.py cmd_check` 加帧路径存在性拦截（rc=2，并把该传哪个字段打出来）。
+
+**运行时负对照仍未做**（唯一欠账）：需要一次能覆盖 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 的窗口
++ 整工程 Rebuild（`UIElement` 加了两个成员，实例尺寸变了，增量编译会留旧尺寸的目标文件）。
+判据已备好：改 `xy-config.yaml` 的 `ui.language` 后看 `Locale refresh gen=` 日志 ——
+不靠给某个键临时编一条两种语言不同的假文案来验机制。

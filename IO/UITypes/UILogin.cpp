@@ -71,7 +71,9 @@ namespace ms
 		Music(login_bgm).play();
 
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
+		// 前缀进绑定表：版本号在会话内恒定，「Ver. 」才是会被语言切换换掉的那半截。
+		bind_text(version, "version.prefix", version_text);
 		version_pos = nl::nx::UI["Login.img"]["Common"]["version"]["pos"];
 
 		nl::node Login = nl::nx::UI["Login.img"];

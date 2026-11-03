@@ -5,6 +5,7 @@
 
 #include "../Template/Singleton.h"
 
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 
@@ -19,6 +20,15 @@ namespace ms
 
 		/// 按 Configuration::ui.language 重新加载（热重载 / 启动时调用）。
 		void reload();
+
+		/// 文案代次：每次 reload() 递增。窗口绑定表据此判断「要不要重取」，
+		/// 于是每帧的成本只有一次整数比较，而不是逐条字符串重取。
+		/// 之所以不比较文案本身：`format` 类条目的现值和重取值可能真的相等，
+		/// 比较文案会漏掉「值相同但确实该重取」的情形，代次才是可信信号。
+		std::uint32_t generation() const
+		{
+			return gen;
+		}
 
 		/// 当前语言码（如 zh-CN / en-US）。
 		const std::string& language() const
@@ -87,6 +97,7 @@ namespace ms
 		bool load_file(const std::string& path, std::unordered_map<std::string, std::string>& out) const;
 
 		std::string lang;
+		std::uint32_t gen = 0;
 		std::unordered_map<std::string, std::string> primary;
 		std::unordered_map<std::string, std::string> fallback_zh;
 	};

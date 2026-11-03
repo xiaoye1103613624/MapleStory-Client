@@ -1,0 +1,20 @@
+# R27-B1c-2 版式自回归（oracle 帧 ↔ 自身 spec）
+# 生成：2026-11-03  命令：layout.py check <spec> <spec.oracle_frame>（逐张，帧路径取自 spec 的 oracle_frame 字段）
+# 判据：本批只加 i18n 机制与 4 个 ini 键，未动任何渲染常数 => 十张 spec 对 oracle 帧应全 Δ=0 / rc=0。
+#      这是「门禁与 spec 完好 + 本批没碰版式」的证据，不是真机逐格验收（那要客户帧，见 README §6）。
+# 注：上一轮把 spec 的 native_frame（人读来源注释，带 '(348x305)' 尺寸后缀）当帧路径传，
+#      FileNotFoundError 的 traceback 走 stderr、循环只留 stdout => 误读成「10/10 rc=1 版式全崩」。
+#      已在 layout.py cmd_check 加帧路径存在性拦截（rc=2 并指明该传 oracle_frame），此坑不再复发。
+
+=== ChatBar ===  不合格 0 / 3（不适用跳过 0）
+=== Equip ===  不合格 0 / 9（不适用跳过 1）
+=== EquipTooltip ===  不合格 0 / 6（不适用跳过 0）
+=== Item ===  不合格 0 / 4（不适用跳过 0）
+=== ItemFull ===  不合格 0 / 9（不适用跳过 0）
+=== KeyConfig ===  不合格 0 / 9（不适用跳过 0）
+=== MonsterBook ===  不合格 0 / 5（不适用跳过 0）
+=== SkillMacro ===  不合格 0 / 2（不适用跳过 6）
+=== Stat ===  不合格 0 / 8（不适用跳过 1）
+=== UserList ===  不合格 0 / 6（不适用跳过 0）
+
+汇总：specs=10 非零返回=0

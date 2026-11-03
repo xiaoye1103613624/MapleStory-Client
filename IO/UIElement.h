@@ -22,8 +22,15 @@
 
 #include "../Graphics/Sprite.h"
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 namespace ms
 {
+	class Text;
+	struct OutlinedText;
+
 	// Base class for all types of user interfaces on screen.
 	class UIElement
 	{
@@ -191,6 +198,22 @@ namespace ms
 		// 右侧放不下翻到左侧，最后夹回视口。调用前 dimension 必须已是位图真身尺寸。
 		void anchor_right_of(const UIElement& host, int16_t gap = 8);
 
+		/// 静态文案绑定：窗体 ctor 里登记文案对象与 Locale 键，切语言后由
+		/// UIState 的 update 派发点调 refresh_localized() 统一重取 —— 于是
+		/// 「50 个窗各自记得刷新」退化成一处机制。带 value 的那一档是给
+		/// 「前缀 + 会话内恒定的值」用的（`Ver. ` + 版本号），按 Locale::format 取。
+		///
+		/// 只给**值不随数据变**的标签用。随数据变的行（金币数额、`Default Group (0/0)`
+		/// 这类）要继续 `Locale::text / Locale::format` 就地现算：那条路本来就是活文案，
+		/// 登记进表反而会把登记那一刻的旧值钉死。
+		void bind_text(Text& target, std::string key);
+		void bind_text(Text& target, std::string key, std::string value);
+		void bind_text(OutlinedText& target, std::string key);
+		void bind_text(OutlinedText& target, std::string key, std::string value);
+
+		/// Locale 代次变了才逐条重取；无绑定的窗体是一次空 vector 判断。
+		void refresh_localized();
+
 		virtual void toggle_active();
 		virtual Button::State button_pressed(uint16_t buttonid) { return Button::State::DISABLED; }
 		virtual bool send_icon(const Icon& icon, Point<int16_t> cursor_position) { return true; }
@@ -222,5 +245,26 @@ namespace ms
 		Point<int16_t> position;
 		Point<int16_t> dimension;
 		bool active;
+
+	private:
+		// 文案对象由本窗体按值持有，指针在窗体生命周期内恒有效；不注册到全局表，
+		// 因而不用管 Text 的隐式拷贝赋值与静态析构顺序。
+		struct LocaleBind
+		{
+			Text* target = nullptr;
+			OutlinedText* outlined = nullptr;
+			std::string key;
+			std::string value;
+		};
+
+		std::vector<LocaleBind> locale_binds;
+		std::uint32_t locale_gen = 0;
+
+		// 四个 bind_text 重载的公共尾部：按刚登记的那条取一次文案，并把代次对齐到
+		// 现在 —— 于是不会出现「登记了但当前还是英文字面量」的空窗，也不会让紧接着
+		// 的第一帧白重取一遍。
+		void commit_bind();
+
+		static std::string bind_text_of(const LocaleBind& bind);
 	};
 }

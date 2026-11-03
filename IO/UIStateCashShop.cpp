@@ -57,7 +57,10 @@ namespace ms
 			UIElement* element = iter.second.get();
 
 			if (element && element->is_active())
+			{
+				element->refresh_localized();
 				element->update();
+			}
 		}
 	}
 

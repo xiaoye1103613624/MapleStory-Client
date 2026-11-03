@@ -574,6 +574,16 @@ def recorded_anchor_if_oracle(spec, frame):
 
 def cmd_check(args):
     spec = load_spec(args.spec)
+    # 帧路径不存在要单独拦：spec 里 `native_frame` 是「这帧从哪来的」人读注释（常带
+    # "(348x305)" 这类尺寸后缀），可当路径传的只有 `oracle_frame`。把前者传给 check 会
+    # 在 PIL 里抛 FileNotFoundError，而 traceback 走 stderr —— 用 `| tail` 只留 stdout 的
+    # 调用方会看到「rc=1 且一个字没输出」，误判成版式全崩（本仓 2026-11-03 真踩过一次）。
+    if not os.path.exists(resolve(args.frame)):
+        print("帧文件不存在：%s\n"
+              "  check 的第二个参数只能是 PNG 路径；能传的是 spec['oracle_frame']=%s。\n"
+              "  spec['native_frame']=%s 是来源说明文字，不是路径。"
+              % (args.frame, spec.get("oracle_frame"), spec.get("native_frame")))
+        return 2
     anchor, res = measure_all(spec, args.frame, mode=args.mode,
                               anchor_override=recorded_anchor_if_oracle(spec, args.frame))
     if res is None:

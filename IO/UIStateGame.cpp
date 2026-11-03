@@ -148,6 +148,9 @@ namespace ms
 
 			if (element && element->is_active())
 			{
+				// 切语言时已开着的窗要立刻换文案：文案代次只在 reload 时变，
+				// 无绑定的窗体在这里是一次空 vector 判断，成本可忽略。
+				element->refresh_localized();
 				element->update();
 
 				if (update_screen)

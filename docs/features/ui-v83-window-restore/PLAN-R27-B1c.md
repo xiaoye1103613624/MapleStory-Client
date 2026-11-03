@@ -73,6 +73,18 @@ std::vector<std::pair<Text*, std::string>> locale_binds;
 
 依赖：B1c-2 → 其余全部；B1c-3/4/5/6 之间互不依赖，可并行推进；B1c-7 等前五批。
 
+**B1c-2 落地情况（2026-11-03）**：机制层已按 §2 实现（`Locale::generation` 代次、
+`UIElement::bind_text` 四重载含 `OutlinedText` 一档、`refresh_localized`、3 个 `UIState` 派发点各一行）。
+上表的「站点」一栏**写错了对象**，这里改正：本批实际上的表是 `Ver. ` 前缀 5 处
+（`UILogin.cpp:76`、`UICharSelect.cpp:136`、`UIRaceSelect.cpp:156`、`UICommonCreation.cpp:78 / :360`）
+与角色选择「排行」行 3 处（`UICharSelect.cpp:384` 绑定 + `:1297/:1299/:1305` 活文案），
+**不是** `EquipTooltip`/`UIMonsterBook` —— 那两处上一批（B1c-1 / B3b）已经在就地调 `Locale::text`，
+是活文案，按 §1.2b 的规则**不该**进绑定表（进了反而把登记那一刻的值钉死）。
+门禁：`cl /c /utf-8` 9 TU 全过；`check_locale_keys.py` GATE OK（97/97）；
+`layout.py check` 十张 spec 对自身 oracle 帧全 rc=0 / Δ=0。
+**唯一欠账 = 运行时负对照**（要能覆盖 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` 的窗口 + 整工程 Rebuild，
+`UIElement` 实例尺寸变了不能增量），判据改用 `Locale refresh gen=` 日志，见 evidence README §6。
+
 ## 4. 门禁（本批的验收尺，不是「看起来改完了」）
 
 1. **站点归零**：`tools/scan_display_text.py` 读数英文 0 / 中文 0，

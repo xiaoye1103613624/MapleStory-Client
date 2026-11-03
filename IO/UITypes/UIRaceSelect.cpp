@@ -152,7 +152,8 @@ namespace ms
 	void UIRaceSelect::init_modern()
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
+		bind_text(version, "version.prefix", version_text);
 		version_pos = nl::nx::UI["Login.img"]["Common"]["version"]["pos"];
 
 		nl::node Login = nl::nx::UI["Login.img"];

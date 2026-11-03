@@ -28,6 +28,7 @@
 #include "../../Net/Packets/SelectCharPackets.h"
 
 #include "../LoginBackground.h"
+#include "../../Util/Locale.h"
 
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
@@ -131,7 +132,8 @@ namespace ms
 		characters(characters), characters_count(characters_count), slots(slots), require_pic(require_pic), tab_index(0), tab_active(false), tab_move(false), charslot_y(0), use_timestamp(false), burning_character(false), show_pic_btns(false)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
+		bind_text(version, "version.prefix", version_text);
 
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node Common = Login["Common"];
@@ -378,7 +380,8 @@ namespace ms
 			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
 
 		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
-		ranklabel.change_text("排行不可用");
+		// 开局先亮「取不到排行」，等有排行数据再由 update 路径改写（那条路是活文案）。
+		bind_text(ranklabel, "charselect.rank_unavailable");
 
 		for (CharEntry& entry : characters)
 		{
@@ -1286,16 +1289,20 @@ namespace ms
 
 			if (character_stats.has_rank)
 			{
-				std::string rank_txt = std::to_string(character_stats.rank.first);
+				const std::string rank = std::to_string(character_stats.rank.first);
+
+				// 升降箭头是「数字 + 后缀」，后缀连空格一起进模板：加载器会 trim 掉值的
+				// 两端空白，单独存 " up" 只会得到 "up"，所以占位符必须写在模板里。
 				if (character_stats.rank.second == '+')
-					rank_txt += " up";
+					ranklabel.change_text(Locale::format("charselect.rank_up", rank));
 				else if (character_stats.rank.second == '-')
-					rank_txt += " down";
-				ranklabel.change_text(rank_txt);
+					ranklabel.change_text(Locale::format("charselect.rank_down", rank));
+				else
+					ranklabel.change_text(rank);
 			}
 			else
 			{
-				ranklabel.change_text("排行不可用");
+				ranklabel.change_text(Locale::text("charselect.rank_unavailable"));
 			}
 		}
 	}

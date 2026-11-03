@@ -124,6 +124,7 @@ namespace ms
 
 			if (element && element->is_active())
 			{
+				element->refresh_localized();
 				element->update();
 
 				if (screen_changed)

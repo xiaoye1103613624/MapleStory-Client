@@ -74,7 +74,8 @@ namespace ms
 	void UICommonCreation::init_modern(nl::node Login, nl::node Common)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
+		bind_text(version, "version.prefix", version_text);
 
 		version_pos = Common["version"]["pos"];
 
@@ -355,7 +356,8 @@ namespace ms
 	void UICommonCreation::init_classic(nl::node Login, nl::node Common)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
+		bind_text(version, "version.prefix", version_text);
 
 		const int16_t view_w = Constants::Constants::get().get_viewwidth();
 		const int16_t view_h = Constants::Constants::get().get_viewheight();
