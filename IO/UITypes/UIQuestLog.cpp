@@ -7,6 +7,7 @@
 #include "../../Data/QuestData.h"
 #include "../../Net/Packets/QuestPackets.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 
 #include <cctype>
@@ -383,11 +384,14 @@ namespace ms
 
 	std::string UIQuestLog::area_name(int32_t area) const
 	{
+		// 键名用区域号而不是英文地名：这套区域号来自任务数据，本包没有原生英文地名依据，
+		// 编出 "Ellin Forest" 这种名字会把没核对过的语义写进键名。
+		// default 仍指 30 —— 改动前「除 20 外一律显示金银岛」是既有行为，本批只搬字面量不改语义。
 		switch (area)
 		{
-			case 20: return u8"彩虹岛";
-			case 30: return u8"金银岛";
-			default: return u8"金银岛";
+			case 20: return Locale::text("quest.area.20");
+			case 30: return Locale::text("quest.area.30");
+			default: return Locale::text("quest.area.30");
 		}
 	}
 
@@ -552,27 +556,29 @@ namespace ms
 		{
 			// 详细态：只读 QuestData 已缓存的字段，不涉及任何封包。
 			std::vector<std::string> lines;
-			lines.push_back(u8"任务编号: " + std::to_string(qd.get_id()));
+			lines.push_back(Locale::format("quest.detail.id", std::to_string(qd.get_id())));
 
 			if (qd.get_max_level() > 0)
-				lines.push_back(u8"等级范围: " + std::to_string(qd.get_min_level())
-					+ u8" ~ " + std::to_string(qd.get_max_level()));
+				lines.push_back(Locale::format_all("quest.detail.level_range",
+					{ std::to_string(qd.get_min_level()), std::to_string(qd.get_max_level()) }));
 			else if (qd.get_min_level() > 0)
-				lines.push_back(u8"需要等级: " + std::to_string(qd.get_min_level()));
+				lines.push_back(Locale::format("quest.detail.min_level", std::to_string(qd.get_min_level())));
 
-			lines.push_back(u8"所属区域: " + area_name(qd.get_area()));
+			lines.push_back(Locale::format("quest.detail.area", area_name(qd.get_area())));
 
 			if (qd.get_npc() > 0)
-				lines.push_back(u8"相关NPC编号: " + std::to_string(qd.get_npc()));
+				lines.push_back(Locale::format("quest.detail.npc", std::to_string(qd.get_npc())));
 
 			if (qd.get_prequests().empty())
-				lines.push_back(u8"前置任务: 无");
+				lines.push_back(Locale::text("quest.detail.pre_none"));
 			else
 			{
-				std::string pre = u8"前置任务: ";
+				std::string pre;
 				for (int16_t p : qd.get_prequests())
 					pre += std::to_string(p) + " ";
-				lines.push_back(pre);
+				// 值 `前置任务: {}` 的尾空格会被加载器 trim 掉，故把 id 串当实参填进占位符，
+				// 而不是在代码里拼 `Locale::text(...) + pre`。
+				lines.push_back(Locale::format("quest.detail.pre", pre));
 			}
 
 			for (const std::string& line : lines)

@@ -25,6 +25,7 @@
 
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -261,6 +262,8 @@ namespace ms
 
 	void UIMerchant::set_owner(const std::string& owner)
 	{
-		owner_label.change_text(owner + " 的商店");
+		// 不拆成 `owner + Locale::text(后缀)`：中文是「名字 的商店」，英文是「Name's Shop」
+		// —— 所有格贴名字、无空格。整句进带占位符的键，语序才归 ini 管（Locale.h 同条理由）。
+		owner_label.change_text(Locale::format("merchant.owner_shop", owner));
 	}
 }

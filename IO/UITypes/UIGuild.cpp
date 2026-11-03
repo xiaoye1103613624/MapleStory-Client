@@ -30,6 +30,7 @@
 #include "UIAlliance.h"
 #include "UIFamily.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 
 namespace ms
@@ -56,7 +57,8 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		title.change_text(guild.name.empty() ? "公会" : ("公会: " + guild.name));
+		title.change_text(guild.name.empty() ? Locale::text("guild.title_plain")
+			: Locale::format("guild.title_named", guild.name));
 		title.draw(position + Point<int16_t>(10, 8));
 
 		notice_label.change_text(guild.notice);
@@ -67,10 +69,11 @@ namespace ms
 		{
 			OutlinedText row(Text::Font::A11M, Text::Alignment::LEFT,
 				Color::Name::WHITE, Color::Name::BLACK);
+			// 行首空格留在代码里：加载器会 trim 掉 ini 值两端空白，值写成 ` 职位{}` 也留不住那格。
 			std::string info = m.name + " J" + std::to_string(m.job)
 				+ " Lv" + std::to_string(m.level)
-				+ " 职位" + std::to_string(m.rank)
-				+ (m.online ? " [在线]" : " [离线]");
+				+ " " + Locale::format("guild.member_rank", std::to_string(m.rank))
+				+ " " + Locale::text(m.online ? "guild.member_online" : "guild.member_offline");
 			row.change_text(info);
 			row.draw(position + Point<int16_t>(10, y));
 			y += ROW_H;
