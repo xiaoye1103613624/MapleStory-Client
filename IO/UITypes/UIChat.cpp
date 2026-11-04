@@ -18,6 +18,7 @@
 #include "UIChat.h"
 #include "UIBuddyList.h"
 #include "UICharInfo.h"
+#include "UIChatBar.h"        // Q6: 社交聊天窗各 MultiChat 出口补本地回显（同 Q5 矩阵）
 #include "UIMessenger.h"
 #include "UISoftKey.h"
 
@@ -25,6 +26,7 @@
 
 #include "../Components/MapleButton.h"
 
+#include "../../Gameplay/Stage.h"   // 回显行里的自身角色名
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
@@ -37,6 +39,20 @@
 
 namespace ms
 {
+	// Q6（同 Q5 回显矩阵）：本窗的 Party/Guild/Alliance/Buddy 软键盘出口都是
+	// MultiChatPacket —— s9 对这四类广播显式排除发送者（World.partyChat 的
+	// if(!name.equals(namefrom))、Guild.broadcast(packet,cid) 等），自己的话不会
+	// 发回来。原生把社交聊天文本同样落进主聊天历史，所以这里统一补一行回显；
+	// UIChatBar 不存在（还没进游戏等）就静默跳过，不影响发送。
+	namespace
+	{
+		void echo_to_chatbar(const char* prefix, const std::string& text, UIChatBar::ChatChannel ch)
+		{
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+				chatbar->show_message(prefix, Stage::get().get_player().get_name(), text, ch);
+		}
+	}
+
 	UIChat::UIChat() : UIDragElement<PosMAPLECHAT>()
 	{
 		show_weekly = Configuration::get().get_show_weekly();
@@ -119,6 +135,8 @@ namespace ms
 					std::list<int32_t> recips;
 					if (buddy_cid > 0) recips.push_back(buddy_cid);
 					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
+					// Q6: 同回显矩阵，BUDDY 服务端不回发送者 ⇒ 本地补一行。
+					echo_to_chatbar("[Buddy] ", text, UIChatBar::ChatChannel::BUDDY);
 				}, []() {}, "Buddy msg");
 			};
 			if (cid > 0)
@@ -156,6 +174,7 @@ namespace ms
 				if (text.empty()) return;
 				std::list<int32_t> empty;
 				MultiChatPacket(MultiChatPacket::Type::PARTY, empty, text).dispatch();
+				echo_to_chatbar("[Party] ", text, UIChatBar::ChatChannel::PARTY);
 			}, []() {}, "Party msg");
 		}
 		else if (keycode == 'G' || keycode == 'g')
@@ -164,6 +183,7 @@ namespace ms
 				if (text.empty()) return;
 				std::list<int32_t> empty;
 				MultiChatPacket(MultiChatPacket::Type::GUILD, empty, text).dispatch();
+				echo_to_chatbar("[Guild] ", text, UIChatBar::ChatChannel::GUILD);
 			}, []() {}, "Guild msg");
 		}
 		else if (keycode == 'A' || keycode == 'a')
@@ -172,6 +192,7 @@ namespace ms
 				if (text.empty()) return;
 				std::list<int32_t> empty;
 				MultiChatPacket(MultiChatPacket::Type::ALLIANCE, empty, text).dispatch();
+				echo_to_chatbar("[Alliance] ", text, UIChatBar::ChatChannel::ALLIANCE);
 			}, []() {}, "Alliance msg");
 		}
 	}
@@ -212,6 +233,8 @@ namespace ms
 					if (buddy_cid > 0) recips.push_back(buddy_cid);
 					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
 					LOG(LOG_DEBUG, "UIChat: Friend MultiChat cid=" << buddy_cid << " len=" << text.size());
+					// Q6: 同回显矩阵（按钮路径与 F/B 键路径一致）。
+					echo_to_chatbar("[Buddy] ", text, UIChatBar::ChatChannel::BUDDY);
 				}, []() {}, "Buddy msg");
 			};
 			if (cid > 0)

@@ -424,7 +424,7 @@ namespace ms
 			if (channel >= 0)
 				line = "[Ch." + std::to_string(channel + 1) + "] " + message;
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
+				chatbar->show_message(line.c_str(), UIChatBar::ChatChannel::MEGAPHONE);
 			else
 				push_sm();
 			{
@@ -445,15 +445,15 @@ namespace ms
 		}
 		else if (type == 5)
 		{
-			push_chat(UIChatBar::MessageType::WHITE);
-			// 长文仅 Chat，不强制 MultiLine / FloatNotice
+			// s9 dropMessage type5 = 聊天窗红色消息
+			push_chat(UIChatBar::MessageType::RED);
 		}
 		else if (type == 6)
 		{
-			// 蓝字 / 道具喇叭类：chat 优先，无 ChatBar 才 SM
+			// s9 dropMessage type6 = 聊天窗黄色消息
 			recv.skip_int();
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(message.c_str(), UIChatBar::MessageType::BLUE);
+				chatbar->show_message(message.c_str(), UIChatBar::MessageType::YELLOW);
 			else
 				push_sm();
 		}
@@ -466,12 +466,15 @@ namespace ms
 		}
 		else
 		{
-			// 0 notice / 1 popup / 2 megaphone 等
+			// 0 notice(聊天窗蓝) / 1 popup(红) / 2 megaphone(黄) 等
 			bool has_chat = false;
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
 			{
-				chatbar->show_message(message.c_str(),
-					type == 1 ? UIChatBar::MessageType::RED : UIChatBar::MessageType::YELLOW);
+				// Q1: 服务器通知(type0)走 SYSTEM 频道（黄字）；弹窗提示(type1)保持红字。
+				if (type == 1)
+					chatbar->show_message(message.c_str(), UIChatBar::MessageType::RED);
+				else
+					chatbar->show_message(message.c_str(), UIChatBar::ChatChannel::SYSTEM);
 				has_chat = true;
 			}
 			if (type == 2)
@@ -510,23 +513,33 @@ namespace ms
 	{
 		int32_t charid = recv.read_int();
 
-		recv.read_bool(); // 'gm'
+		bool gm = recv.read_bool(); // 'gm'
 
 		std::string message = recv.read_string();
-		int8_t type = recv.read_byte();
+		recv.read_byte(); // whiteChat：服务端仅下发白/黄背景标记，无频道语义，着色见下方 ch
 
+		std::string speaker;
 		if (auto character = Stage::get().get_character(charid))
 		{
-			message = character->get_name() + " : " + message;
+			speaker = character->get_name();
 			character->speak(message);
 		}
 
-		auto linetype = static_cast<UIChatBar::MessageType>(type);
+		// Q1: 普通聊天走 ALL 频道（白字）；GM 账号发言按 GM 频道（紫字）。
+		// 'type' 字节服务端仅下发 whiteChat(0/1)，无频道语义，故不按 type 着色；
+		// 旧逻辑 static_cast<MessageType>(type) 在 type==0 时误用 UNK0→RED，反而错色。
+		UIChatBar::ChatChannel ch = gm ? UIChatBar::ChatChannel::GM : UIChatBar::ChatChannel::ALL;
 
 		while (recv.available())
 			recv.skip_byte();
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
-			chatbar->show_message(message.c_str(), linetype);
+		{
+			// Q2: 有发言者名字才做成可点击；服务端没给到角色（极少数）则按旧样直接显示。
+			if (speaker.empty())
+				chatbar->show_message(message.c_str(), ch);
+			else
+				chatbar->show_message("", speaker, message, ch);
+		}
 	}
 
 	void ScrollResultHandler::handle(InPacket& recv) const
@@ -698,8 +711,17 @@ namespace ms
 				return;
 			}
 		}
+		UIChatBar::ChatChannel ch = UIChatBar::ChatChannel::ALL;
+		switch (mode)
+		{
+			case 0: ch = UIChatBar::ChatChannel::BUDDY; break;
+			case 1: ch = UIChatBar::ChatChannel::PARTY; break;
+			case 2: ch = UIChatBar::ChatChannel::GUILD; break;
+			case 3: ch = UIChatBar::ChatChannel::ALLIANCE; break;
+			default: ch = UIChatBar::ChatChannel::ALL; break;
+		}
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
-			chatbar->show_message(line.c_str(), UIChatBar::MessageType::BLUE);
+			chatbar->show_message(std::string("[") + tag + "] ", name, text, ch);
 	}
 
 	void WhisperResultHandler::handle(InPacket& recv) const
@@ -719,25 +741,30 @@ namespace ms
 			bool from_admin = recv.available() ? recv.read_bool() : false;
 			std::string message = recv.available() ? recv.read_string() : "";
 			(void)from_admin;
-			std::string line = sender + " (ch" + std::to_string(channel + 1) + ") : " + message;
+			std::string speaker = sender + " (ch" + std::to_string(channel + 1) + ")";
+			std::string line = speaker + " : " + message;
 			LOG(LOG_DEBUG, "Whisper recv from=" << sender);
 			while (recv.available())
 				recv.skip_byte();
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
+				chatbar->show_message("", speaker, message, UIChatBar::ChatChannel::WHISPER);
 			return;
 		}
 		if ((flag & F_WHISPER) && (flag & F_RESULT))
 		{
 			std::string target = recv.read_string();
 			bool ok = recv.available() ? recv.read_bool() : false;
-			std::string line = ok
-				? ("Whisper sent to " + target)
-				: ("Unable to whisper " + target);
 			while (recv.available())
 				recv.skip_byte();
+			// Q5: 成功时由 UIChatBar 把暂存的自说正文回显成 "(To X) 我 : 正文"
+			// （对齐原生）；旧的 "Whisper sent to X" 白字行不再单独出现。
+			// 失败仍出红字 —— s9 对不存在的目标只发这一条结果包。
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(line.c_str(), ok ? UIChatBar::MessageType::WHITE : UIChatBar::MessageType::RED);
+			{
+				chatbar->on_whisper_result(target, ok);
+				if (!ok)
+					chatbar->show_message(("Unable to whisper " + target).c_str(), UIChatBar::MessageType::RED);
+			}
 			return;
 		}
 		if (((flag & F_LOCATION) || (flag & F_LOCATION_FRIEND)) && (flag & F_RESULT))
@@ -791,7 +818,13 @@ namespace ms
 			return;
 		}
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
-			chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
+		{
+			// Q2: 有名字才做成可点击。
+			if (name.empty())
+				chatbar->show_message(text.c_str(), UIChatBar::ChatChannel::SPOUSE);
+			else
+				chatbar->show_message("", name, text, UIChatBar::ChatChannel::SPOUSE);
+		}
 	}
 
 	void ScriptProgressMessageHandler::handle(InPacket& recv) const

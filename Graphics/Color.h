@@ -96,6 +96,7 @@ namespace ms
 			LIGHTBLUE,
 			GAUGEGREEN,	// 原生底栏量规数值 (153,204,51)
 			KEYCAPBLUE,	// 原生底栏快捷格键帽字 (170,187,204)：参考截图逐像素取样
+			PINK,		// 聊天夫妻频道 (255,128,217)
 			NUM_COLORS
 		};
 
@@ -145,8 +146,9 @@ namespace ms
 			{ 0.80f, 0.80f, 0.80f }, // Silver
 			{ 0.40f, 0.80f, 1.00f }, // Light Blue (NPC simple choices)
 			{ 0.60f, 0.80f, 0.20f }, // GAUGEGREEN (native status bar values)
-			{ 0.667f, 0.733f, 0.800f } // KEYCAPBLUE (native quickslot key captions)
-		};
+			{ 0.667f, 0.733f, 0.800f }, // KEYCAPBLUE (native quickslot key captions)
+			{ 1.00f, 0.502f, 0.851f } // PINK (chat spouse channel)
+			};
 
 		// Create a color by an array of real numbers [0.0f, 1.0f]
 		constexpr Color(underlying_t comps) : rgba(comps) {}
