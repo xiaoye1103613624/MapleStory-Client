@@ -33,7 +33,6 @@
 #include "../../Configuration.h"
 #include "../../Constants.h"
 #include "../../Gameplay/Stage.h"
-#include "../../Graphics/LocalPngTexture.h"
 #include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -689,8 +688,6 @@ namespace ms
 
 		// 多分辨率：全部放文件作用域，不给 UIOptionMenu.h 加数据成员
 		// （该类头被多个 TU 包含，加成员会踩增量构建旧 obj 坑、需整工程 Rebuild）。
-		constexpr size_t SYSOPT_BG_ATLAS = 0x5359534Full; // 'SYSO'，避开 UIMapSearchPanel::ATLAS_BASE
-		LocalPngTexture sysopt_bg_png;
 		uint8_t sysopt_res_tier = 5;
 		bool sysopt_res_open = false;
 		// 插件 rs.cpp L2011-2025：OK 时立即落盘，窗口销毁后再切分辨率，
@@ -716,24 +713,7 @@ namespace ms
 		}
 
 		backgrnd = Texture(SysOpt["backgrnd"]);
-
-		// 用户指定 299x396 纯底板（含新增「窗口大小」行）走 LocalPngTexture；
-		// 它是完整窗口截帧剥离控件后的产物，见 ui/uisysopt/v1/manifest.md。
-		sysopt_bg_png = LocalPngTexture();
-		const bool has_new_bg = sysopt_bg_png.load(SYSOPT_BG_ATLAS, {
-			"UI/SysOpt/sysopt_backgrnd.png",
-			"docs/features/multi-resolution/ui/uisysopt/v1/sysopt_backgrnd.png"
-		});
-
-		if (has_new_bg)
-			dimension = Point<int16_t>(sysopt_bg_png.width(), sysopt_bg_png.height());
-		else
-		{
-			// 资源缺失回退：底板只有 365 高，但窗体仍按 396 计算命中/按钮落位，
-			// 保证 OK/Cancel 等控件不跑到窗体之外（R6：节点缺失属预期，须有兜底）。
-			dimension = Point<int16_t>(backgrnd.get_dimensions().x(), 396);
-			LOG(LOG_WARN, "[MR] UISysOpt local PNG missing; fallback to IMG backgrnd 299x365");
-		}
+		dimension = backgrnd.get_dimensions();
 
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
@@ -858,11 +838,7 @@ namespace ms
 
 	void UISysOpt::draw(float inter) const
 	{
-		// 299x396 纯底板（LocalPngTexture）优先；资源缺失时回退 IMG 底板 299x365。
-		if (sysopt_bg_png.is_valid())
-			sysopt_bg_png.draw(position);
-		else
-			backgrnd.draw(position);
+		backgrnd.draw(position);
 
 		for (uint8_t i = 0; i < SL_COUNT; i++)
 			sliders[i].draw(position);

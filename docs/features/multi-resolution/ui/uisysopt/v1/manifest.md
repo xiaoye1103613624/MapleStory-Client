@@ -6,11 +6,9 @@
 | --- | --- |
 | 用户指定参考图 | `E:/MXD/扩展改动/083多分辨率/分辨率.png`，实测 **299×396** |
 | 归档原图 | `reference_分辨率.png`（与上者逐字节一致） |
-| 运行时纯底板 | `UIWindow.img/SysOpt/backgrnd` **299×365 origin(0,0)**，导出件 `docs/features/ui-v83-window-restore/evidence/r15-newrefs/_nx_all/UIWindow.img_SysOpt_backgrnd.png` |
-| 生成底板 | `sysopt_backgrnd.png` **299×396**，1x、无 DPI 缩放 |
-| 运行时接入 | `UI/SysOpt/sysopt_backgrnd.png` → `LocalPngTexture::load(0x5359534Full, {...})`（独立 atlas id，避开 `UIMapSearchPanel::ATLAS_BASE=0x4D535248` 及其后续） |
-| 回退 | PNG 缺失时回退 `Texture(UIWindow.img/SysOpt/backgrnd)`（299×365），并写 WARN 日志；控件坐标仍按原生 |
-| 生成脚本 | `tools/resolution/make_sysopt_bg.py`（**整帧复制**，可复跑），日志 `docs/features/multi-resolution/patches/make_sysopt_bg.log` |
+| 运行时纯底板 | `UIWindow.img/SysOpt/backgrnd` **299×396 origin(0,0)**（用户经 img MCP 把该节点替换为参考图整帧；替换前为 299×365。运行期 `--resource-probe` dump 已核验为 299×396） |
+| 运行时接入 | 恢复 v83 原生 `Texture(SysOpt["backgrnd"])` 直接加载（`UIOptionMenu.cpp` 构造函数取 `dimension = backgrnd.get_dimensions()`、`draw()` 直接 `backgrnd.draw()`），**不再**经 `LocalPngTexture` 读散落 PNG |
+| 已弃用·散落底板 | `UI/SysOpt/sysopt_backgrnd.png`（299×396）及 `docs/.../sysopt_backgrnd.png`、`tools/resolution/make_sysopt_bg.py` 仅留作历史证据，**运行时不再引用** |
 
 ## 决策变更：整帧直接贴（替代初版「剥离控件」方案）
 
@@ -19,22 +17,26 @@
 2. 截图保存位置、怪物情报两个下拉的当前项长文案溢出选择框；
 3. 底部「窗口大小」标签由代码自造、被 64px 限宽裁成「大小」。
 
-经核对，v83 原生本就是「完整窗口底板图 + 代码交互控件覆盖」模式（原版 `UIWindow.img/SysOpt/backgrnd` 即含控件烘焙），代码再画交互态覆盖其上并非双绘。因此**推翻原剥离决策，改为整帧直接贴**：
+经核对，v83 原生本就是「完整窗口底板图 + 代码交互控件覆盖」模式（原版 `UIWindow.img/SysOpt/backgrnd` 即含控件烘焙），代码再画交互态覆盖其上并非双绘。因此**推翻原剥离决策，底图采用参考图整帧（含新增「窗口大小」行）**：
 
-- `sysopt_backgrnd.png` 直接等于 `reference_分辨率.png`（299×396 整帧），由 `tools/resolution/make_sysopt_bg.py` 复制生成（不再剥离）；
-- 静态排版（标签、边框、配色、底部「窗口大小」行）全部由图提供，代码不再自造静态标签 / 矩形；
+- 静态排版（标签、边框、配色、底部「窗口大小」行）全部由 `UIWindow.img/SysOpt/backgrnd` 节点（299×396 整帧）提供，代码不再自造静态标签 / 矩形；
 - 仅交互控件（6 滑条、5 勾选、2 原生下拉、新增分辨率下拉、OK·Cancel）由代码在其上叠加实时态；下拉收起态盒体沿用 `Basic.img/ComboBox`（与原版一致），当前项文字加 `max_width` 防溢出。
+
+### 决策变更（v3）：回归原生 IMG 加载，弃用散落 PNG
+
+v2 为让底板生效，在 `UISysOpt` 里加 `LocalPngTexture` 散落 PNG 覆盖（读 `UI/SysOpt/sysopt_backgrnd.png` 相对路径）。但客户端从 `E:/MXD/BeiDou-Client-xy` 启动，该相对路径在运行目录不存在 → 静默回退到 WZ 旧 `SysOpt/backgrnd`（299×365），实机「底图没切换」。
+
+用户纠正：**UI 替换应直接改客户端 Data 里的 IMG 节点，而非散落 PNG**。故 v3：
+- 用户经 img MCP 把 `E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img` 的 `SysOpt/backgrnd` 节点替换为 299×396 整帧（运行期 `--resource-probe` dump 核验通过）；
+- 撤销 `LocalPngTexture` 覆盖逻辑，`UISysOpt` 恢复 v83 原生 `Texture(SysOpt["backgrnd"])` 加载，`dimension = backgrnd.get_dimensions()` 自动取 299×396；
+- `UI/SysOpt/sysopt_backgrnd.png`、`docs/.../sysopt_backgrnd.png`、`tools/resolution/make_sysopt_bg.py` 不再被运行时引用，仅留作历史证据。
 
 控件坐标校准基线：参考图逐像素量取（滑条轨道右端 x≈229、下拉当前项文字限宽等），其余沿用 `_settings_map2.txt` 的 SAD=0.00 原生坐标。
 
 ## 规范例外记录（skill 门禁 16）
 
-用户明确决策「完整的用我给的图，不需要代码重绘，按我给的图重新排版信息」= 跟图、1x、静态外观不重绘。本版底图整帧采用 `reference_分辨率.png`，静态排版（标签/边框/配色/底部「窗口大小」行）由图提供，代码不再自造静态标签与矩形；**仅交互态**（滑条位置、勾选态、下拉展开列表、下拉当前项文字）由代码叠加——这是 v83 原生「底板图 + 代码控件覆盖」模式，非双绘，无法纯烘焙。控件位图仍用 `Basic.img/ComboBox` 原生资产，故**未产出 PSD 可编辑图层版本**；替代物（本 manifest + 可复跑脚本 + 差异日志）在此显式留档。
+用户明确决策「完整的用我给的图，不需要代码重绘，按我给的图重新排版信息」= 跟图、1x、静态外观不重绘。本版底图整帧采用 `reference_分辨率.png`，静态排版（标签/边框/配色/底部「窗口大小」行）由图提供，代码不再自造静态标签与矩形；**仅交互态**（滑条位置、勾选态、下拉展开列表、下拉当前项文字）由代码叠加——这是 v83 原生「底板图 + 代码控件覆盖」模式，非双绘，无法纯烘焙。控件位图仍用 `Basic.img/ComboBox` 原生资产，故**未产出 PSD 可编辑图层版本**；替代物（本 manifest + 差异日志）在此显式留档。
 
-## 复跑
+## 历史脚本（已弃用）
 
-```powershell
-python -u e:/project/MapleStory-Client/tools/resolution/make_sysopt_bg.py
-```
-
-复跑会覆盖 `UI/SysOpt/sysopt_backgrnd.png`、归档副本与日志；如需回到原生单分辨率行为，删除该 PNG 即可（代码自动回退到 299×365 IMG 底板）。
+`tools/resolution/make_sysopt_bg.py` 及产物 `UI/SysOpt/sysopt_backgrnd.png`、`docs/.../sysopt_backgrnd.png` 为 v2 散落 PNG 方案遗留，**v3 起运行时不再引用**，仅留作演进回溯。底图改法见上方 v3：直接改 `UIWindow.img/SysOpt/backgrnd` 节点（经 img MCP），不要再靠该脚本。
