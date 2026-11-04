@@ -267,8 +267,10 @@ namespace ms
 		void set_res_rows(bool show);
 
 		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值。
+		// TRACK_X1 取参考图滑条轨道右端 x≈229；滑块右沿 = 229+1 = 230，
+		// 须严格小于右侧「大」字左缘 x≈231，避免滑块压住文字。
 		static constexpr int16_t TRACK_X0 = 99;
-		static constexpr int16_t TRACK_X1 = 245;
+		static constexpr int16_t TRACK_X1 = 229;
 		// 6 条滑条的滑钮顶边行（原生逐格 SAD=0.00）。
 		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 40, 70, 100, 160, 190, 220 };
 		// 5 个勾选框的画布落位（x, y）。

@@ -1,9 +1,4 @@
-# make_sysopt_bg.py 像素处理日志
-base=e:\project\MapleStory-Client\docs/features/ui-v83-window-restore/evidence/r15-newrefs/_nx_all\UIWindow.img_SysOpt_backgrnd.png size=(299, 365)
-ref=E:/MXD/扩展改动/083多分辨率/分辨率.png size=(299, 396)
+# make_sysopt_bg.py 整帧复制日志
+ref=e:\project\MapleStory-Client\docs/features/multi-resolution/ui/uisysopt/v1\reference_分辨率.png size=(299, 396)
 out=e:\project\MapleStory-Client\UI/SysOpt/sysopt_backgrnd.png size=(299, 396)
-rows_reused_from_runtime_base=0..364 (299x365, no runtime controls)
-rows_appended=365..395 (31 px, light-gray band from ref y=364..371)
-ref_vs_base_diff_px(>30)=59251 ratio=0.5429
-blue_selection_bar(med RGB)=[(372, (187, 204, 221)), (380, (153, 170, 204)), (388, (153, 170, 204))] -> NOT baked (runtime Combo state)
-label/dropdown/OK-Cancel drawn by code (Combo 76,338 166x18; BTN_Y=372)
+mode=full-frame-copy (no control stripping; v83 native overlay)

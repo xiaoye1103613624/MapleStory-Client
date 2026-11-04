@@ -32,9 +32,12 @@
 #include "../../Audio/Audio.h"
 #include "../../Configuration.h"
 #include "../../Constants.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Graphics/LocalPngTexture.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
+#include "../../Util/PerfLog.h"
 #include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -890,14 +893,6 @@ namespace ms
 
 		UIElement::draw_buttons(inter);
 
-		// 新增「窗口大小」行标签：用户指定图里它是烘焙文字，但纯底板不含控件/文字，
-		// 由代码按原生粉红标签配色绘制，文案走 i18n（zh-CN / en-US）。
-		ColorBox(64, 16, Color(0xDD6688FF), 1.0f)
-			.draw(position + Point<int16_t>(8, RES_COMBO_Y + 1));
-		Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE,
-			Locale::text("sysopt.label.resolution"), 64)
-			.draw(position + Point<int16_t>(8, RES_COMBO_Y + 2));
-
 		// 展开的列表压在窗体（含底部确定/取消钮）之上，故排在 draw_buttons 之后。
 		if (sysopt_res_open)
 			draw_resolution_list();
@@ -939,7 +934,10 @@ namespace ms
 
 		arrow.draw(lp);
 
-		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK, option)
+		// 当前项文字限制在盒体内部（左内边距 6px，右预留箭头 18px + 4px），
+		// 避免长文案（如「MapleStory文件夹」）溢出选择框。
+		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+			option, COMBO_W - 5)
 			.draw(Point<int16_t>(position.x() + COMBO_X + 6, position.y() + y + 1));
 	}
 
@@ -1010,7 +1008,8 @@ namespace ms
 		arrow.draw(lp);
 
 		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-			Locale::text(std::string("sysopt.combo.resolution.") + std::to_string(sysopt_res_tier)))
+			Locale::text(std::string("sysopt.combo.resolution.") + std::to_string(sysopt_res_tier)),
+			RES_COMBO_W - 24)
 			.draw(position + Point<int16_t>(RES_COMBO_X + 6, RES_COMBO_Y + 2));
 	}
 
@@ -1224,6 +1223,30 @@ namespace ms
 		Setting<SysOptMouseSpeed>::get().save(sliders[SL_MOUSE].get_value());
 		Setting<SysOptHpWarn>::get().save(sliders[SL_HP].get_value());
 		Setting<SysOptMpWarn>::get().save(sliders[SL_MP].get_value());
+
+		// Wave 1-1.1「报警阈值上行」：把本地百分比换算成 s9 挡位（step/20=百分比，
+		// 每挡 5%，服务端 HpMpAlertService 限幅 0..19）后发 SET_HPMPALERT(0x1000)。
+		// 未登录（无角色）时不发；服务端不在场只是收不到，本地闪铃仍按落盘值工作。
+		if (Stage::get().get_player().get_oid() > 0)
+		{
+			const int hp_pct = sliders[SL_HP].get_value();
+			const int mp_pct = sliders[SL_MP].get_value();
+			// 百分比 -> 挡位：pct/5 就近取整并钳到 0..19（19=95%，20 不可达）
+			auto to_step = [](int pct) -> uint8_t
+			{
+				int step = (pct + 2) / 5;
+				if (step < 0) step = 0;
+				if (step > 19) step = 19;
+				return static_cast<uint8_t>(step);
+			};
+			SetHpMpAlertPacket(to_step(hp_pct), to_step(mp_pct)).dispatch();
+
+			// 真机验收判据（perf 通道，Release 可见）：点系统设置「确定」
+			// （进游戏态）应出 [PERF] HPA out hp=X mp=Y pct=A/B。
+			perf::mark("HPA", std::string("out hp=") + std::to_string(to_step(hp_pct))
+				+ " mp=" + std::to_string(to_step(mp_pct))
+				+ " pct=" + std::to_string(hp_pct) + "/" + std::to_string(mp_pct));
+		}
 		Setting<SysOptSkillEffects>::get().save(skill_effects);
 		Setting<SysOptWindowMode>::get().save(window_mode);
 		Setting<SysOptAltEnter>::get().save(alt_enter);
