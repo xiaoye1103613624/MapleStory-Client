@@ -1,0 +1,24 @@
+[build gate] tools/build_smoke.bat — MapleStory.sln Release|x64 (MSBuild v142)
+GATE OK: opcode matrix matches both sources (s9 44d0d5d9ca)
+GATE OK
+EXITCODE=0
+
+[deployed artifact]
+E:\MXD\BeiDou-Client-xy\MapleStory.exe  2026-11-04 17:26:07  4658176 bytes
+E:\MXD\BeiDou-Client-xy\MapleStory.pdb  (same build)
+
+[timeline]
+16:33:51  EXITCODE=1  — concurrent edit of Util/Resource/ImgSource.h/.cpp produced
+                        C2371 "s_map_files: redefinition; different basic types".
+                        Resolved by the concurrent change owner; unrelated to this feature.
+16:35:48  EXITCODE=0  — first full link after the C2371 window closed.
+16:51:43  EXITCODE=0  — UINpcTalk centering + all-SET_FIELD viewport restore compiled.
+17:12:44  EXITCODE=0  — SDL resize-feedback fix compiled (heap-corruption root cause).
+17:26:07  EXITCODE=0  — concurrent session rebuilt the same feature sources; exe refreshed.
+final     EXITCODE=0  — gate re-run; no compile/link errors, protocol matrix gate OK.
+
+[notes]
+- Build output is written directly to the deploy dir by vcxproj OutDir; never copy from x64/Release.
+- A running MapleStory.exe may cause LNK1104 while build_smoke.bat can still report EXITCODE=0;
+  always stop the client first and confirm the exe timestamp actually changed.
+- read_lints on modified files: zero diagnostics. No [DBG-] / temporary file logging added.

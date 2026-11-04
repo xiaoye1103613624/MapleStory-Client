@@ -23,6 +23,7 @@
 #include "Window.h"
 
 #include "../Configuration.h"
+#include "../Util/ResolutionTiers.h"
 
 #include "UITypes/UIChannel.h"
 #include "UITypes/UIChat.h"
@@ -82,6 +83,13 @@ namespace ms
 
 	void UI::change_state(State id)
 	{
+		// 从游戏/商城返回登录或选角时恢复登录视口 1280×720（UI/Login.img/Common/frame
+		// 原生尺寸）。UIStateLogin 在下一行构造，读到的已是登录尺寸；实际建窗由下一帧
+		// Window::check_events 完成。启动时 UI::init() 也走这里，值相同不会重复建窗。
+		if (id == State::LOGIN)
+			ResolutionTiers::apply_viewsize(
+				ResolutionTiers::LOGIN_W, ResolutionTiers::LOGIN_H);
+
 		switch (id)
 		{
 			case State::LOGIN:

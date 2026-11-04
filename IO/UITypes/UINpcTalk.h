@@ -58,6 +58,8 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override;
+		// 多分辨率：视口变化后按新屏幕重锚对话窗。
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
@@ -70,6 +72,9 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
+		// 1280×720 保留原生 (400,240) 定位；其它档位按视口居中。
+		void reanchor_talk();
+
 		TalkType get_by_value(int8_t value);
 		TalkType resolve_say_style(int16_t style) const;
 		std::string format_text(const std::string& tx, const int32_t& npcid);

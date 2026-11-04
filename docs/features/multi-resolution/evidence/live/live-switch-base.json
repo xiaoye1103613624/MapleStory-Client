@@ -1,0 +1,379 @@
+{
+  "label": "live-switch-base",
+  "exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe",
+  "pid": 11484,
+  "desktop_w": 2560,
+  "desktop_h": 1600,
+  "samples": [
+    {
+      "t": 2.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 4.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 6.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 8.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 10.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 12.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:0 延迟:--】【当前时间：2026-11-04 17:23:44】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 14.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:0 延迟:--】【当前时间：2026-11-04 17:23:44】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 16.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:150 延迟:--】【当前时间：2026-11-04 17:23:49】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 18.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 20.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 22.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 24.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 26.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 28.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【FPS:148 延迟:--】【当前时间：2026-11-04 17:23:51】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 30.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:166 延迟:--】【当前时间：2026-11-04 17:24:03】【在线时长：00 00:00:01】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 32.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:145 延迟:--】【当前时间：2026-11-04 17:24:05】【在线时长：00 00:00:03】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 34.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:165 延迟:--】【当前时间：2026-11-04 17:24:07】【在线时长：00 00:00:05】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 36.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 3933724,
+          "pid": 11484,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:162 延迟:--】【当前时间：2026-11-04 17:24:09】【在线时长：00 00:00:07】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "distinct_client_sizes": [
+      [
+        1280,
+        720
+      ]
+    ],
+    "crashed": false,
+    "last_alive": true
+  }
+}

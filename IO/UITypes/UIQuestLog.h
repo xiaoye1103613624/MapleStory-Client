@@ -35,6 +35,8 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override;
+		// 多分辨率：视口变化时按新屏幕居中重锚（保留原生 1x 尺寸与相对偏移）。
+		void update_screen(int16_t new_width, int16_t new_height) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 		void refresh();

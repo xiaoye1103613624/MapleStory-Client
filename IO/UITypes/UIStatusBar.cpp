@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStatusBar.h"
 
+#include "../../Util/ResolutionTiers.h"
+
 #include "UIAdmin.h"
 #include "UIChannel.h"
 #include "UICharInfo.h"
@@ -202,6 +204,11 @@ namespace ms
 		nl::node status = mainBar[stat];
 		nl::node EXPBar = mainBar["EXPBar"];
 		nl::node EXPBarRes = EXPBar[VWIDTH];
+
+		// 多分辨率兜底：modern HUD 的 EXPBar 只有 800/1024/1280/1366/1920 五套分件，
+		// 非枚举宽度（1600/1440/1680/2560）取不到时回退 1280 那套，避免空节点。
+		if (!UiAssetResolve::usable(EXPBarRes))
+			EXPBarRes = EXPBar[1280];
 		nl::node menu = mainBar["menu"];
 		nl::node quickSlot = mainBar["quickSlot"];
 		nl::node submenu = mainBar["submenu"];
@@ -407,11 +414,24 @@ namespace ms
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
-
-		if (quickslot_active)
-			buttons[Buttons::BT_EXTEND_QS]->set_active(false);
 		else
-			buttons[Buttons::BT_FOLD_QS]->set_active(false);
+		{
+			// 多分辨率兜底：1600/1440/1680/2560 等非枚举宽度按 1280 基准的快捷栏
+			// 相对位置建钮，否则下面 set_active 与 draw 里的 at() 会空指针/抛异常。
+			Point<int16_t> quickslot_qs = Point<int16_t>(
+				static_cast<int16_t>(621 + (VWIDTH - 1280) / 2), 37);
+
+			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
+			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
+		}
+
+		if (buttons[Buttons::BT_FOLD_QS] && buttons[Buttons::BT_EXTEND_QS])
+		{
+			if (quickslot_active)
+				buttons[Buttons::BT_EXTEND_QS]->set_active(false);
+			else
+				buttons[Buttons::BT_FOLD_QS]->set_active(false);
+		}
 
 #pragma region Menu
 		menubackground[0] = submenu["backgrnd"]["0"];
@@ -495,6 +515,17 @@ namespace ms
 			position_y = position.y() + 40;
 			dimension = Point<int16_t>(VWIDTH - position_x, 80);
 		}
+		else
+		{
+			// 多分辨率兜底：1600/1440/1680/2560 等非枚举宽度不能落到默认的
+			// position=(0,0)/dimension=(0,0)（菜单命中与量表会整体崩坏）。
+			// 按 1280 基准的「右侧 610 宽菜单区」推导，保持底栏贴底、菜单右区不越界。
+			LOG(LOG_WARN, "[MR] StatusBar modern fallback for VWIDTH=" << VWIDTH);
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 75));
+			position_x = static_cast<int16_t>(VWIDTH - 610);
+			position_y = static_cast<int16_t>(position.y() + 42);
+			dimension = Point<int16_t>(610, 75);
+		}
 	}
 
 	void UIStatusBar::draw(float alpha) const
@@ -550,8 +581,14 @@ namespace ms
 
 		namelabel.draw(position + namelabel_pos);
 
-		buttons.at(Buttons::BT_FOLD_QS)->draw(position + quickslot_adj);
-		buttons.at(Buttons::BT_EXTEND_QS)->draw(position + quickslot_adj - quickslot_qs_adj);
+		// 多分辨率兜底：非枚举宽度下若这两个钮创建失败，不能用 at() 抛异常。
+		if (const auto fold_it = buttons.find(Buttons::BT_FOLD_QS);
+			fold_it != buttons.end() && fold_it->second)
+			fold_it->second->draw(position + quickslot_adj);
+
+		if (const auto extend_it = buttons.find(Buttons::BT_EXTEND_QS);
+			extend_it != buttons.end() && extend_it->second)
+			extend_it->second->draw(position + quickslot_adj - quickslot_qs_adj);
 
 		if (VWIDTH > 800 && VWIDTH < 1366)
 		{
@@ -1987,10 +2024,18 @@ namespace ms
 		zero_origin(classic_quickslot);
 
 		const int16_t qs_panel_w = classic_quickslot.get_dimensions().x();
+		// 多分辨率（用户决策，明确偏离原生）：原生是底栏左贴边 + 快捷格贴 VWIDTH
+		// 右缘（见本函数上方注释 c）。分辨率过宽时把「1280 设计网格」整组水平居中；
+		// 1280 及以下保持原生布局。底栏背景仍通栏铺满，不随内容组偏移。
+		const int16_t hud_center_x = VWIDTH > ResolutionTiers::LOGIN_W
+			? static_cast<int16_t>((VWIDTH - ResolutionTiers::LOGIN_W) / 2)
+			: 0;
+		const int16_t hud_grid_w = hud_center_x > 0 ? ResolutionTiers::LOGIN_W : VWIDTH;
+
 		// 参考端：面板贴底条右缘（1280 屏 x=814=1280-466，实测与 quickSlot26 宽一致）；
 		// 面板自身 y2 是 1px 高亮线，参考截图该线在 y643 → 面板顶 y=641 = 底条 649 - 8。
 		quickslot_pos = Point<int16_t>(
-			static_cast<int16_t>(VWIDTH - qs_panel_w),
+			static_cast<int16_t>(hud_grid_w - qs_panel_w),
 			-8
 		);
 		const int16_t group_x = static_cast<int16_t>(quickslot_pos.x() - (wide ? 241 : 75));
@@ -2036,8 +2081,9 @@ namespace ms
 		quickslot_active = true;
 		quickslot_adj = Point<int16_t>(0, 0);
 
-		// 左贴边、底贴边。
-		position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
+		// 1280 及以下：原生「左贴边 + 底贴边」；过宽：整组按 1280 设计网格水平居中
+		// （用户决策，唯一明确偏离原生定位处）。按钮命中基于 position，自动跟随偏移。
+		position = Point<int16_t>(hud_center_x, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
 		position_x = position.x();
 		position_y = static_cast<int16_t>(position.y() - 9);
 		dimension = Point<int16_t>(VWIDTH, 80);
@@ -2165,10 +2211,12 @@ namespace ms
 
 	void UIStatusBar::draw_classic(float alpha) const
 	{
-		// backgrnd：宽屏横向拉伸铺满，消除左右黑边（正确端截图为通栏）。
-		// backgrnd2：左侧 LV/名字/量表层，保持自然宽度贴左。
+		// backgrnd：通栏横向平铺铺满 VWIDTH，消除左右黑边（正确端截图为通栏）。
+		// 多分辨率：内容组过宽居中后，通栏背景仍必须从 x=0 起画，不能跟着 position.x
+		// 右移（否则左侧留黑边、右侧溢出）。backgrnd2 等内容层继续按 position 绘制。
 		if (classic_backgrnd)
-			classic_backgrnd.draw(DrawArgument(position, Point<int16_t>(VWIDTH, 0)));
+			classic_backgrnd.draw(DrawArgument(
+				Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
 
 		if (classic_backgrnd2)
 			classic_backgrnd2.draw(position);

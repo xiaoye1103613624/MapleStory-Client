@@ -28,6 +28,7 @@
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Util/Misc.h"
+#include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
 #include "../../MapleStory.h"
@@ -160,6 +161,19 @@ namespace ms
 		set_search(search_background.is_valid());
 
 		dragarea = Point<int16_t>(bg_dimensions_x, 20);
+
+		// 多分辨率：PosMAP(313,64) 是 1280×720 基准下的居中读数；其它档位按新视口居中。
+		// 1280×720 保持原生绝对位置，不覆盖用户拖拽后保存的 Setting<PosMAP>。
+		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
+			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
+			center_on_screen();
+	}
+
+	void UIWorldMap::update_screen(int16_t, int16_t)
+	{
+		// 分辨率实时切换：UIState 只对 active 元素广播，故这里只重锚不缩放（1x 原生像素）。
+		center_on_screen();
+		ensure_panels_on_screen();
 	}
 
 	void UIWorldMap::draw(float alpha) const

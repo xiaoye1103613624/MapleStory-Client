@@ -5,6 +5,19 @@ server:
   ip: 127.0.0.1
   port: 8484
 
+window:
+  # 登录/选角/世界/频道视口：恒 1280×720（Login.img/Common/frame 原生尺寸），不要改。
+  width: 1280
+  height: 720
+  # 进入游戏后的分辨率：game_tier 取 0..8，顺序见 Util/ResolutionTiers.h：
+  # 0 800x600 / 1 1024x768 / 2 1366x768 / 3 1600x900 / 4 1920x1080 /
+  # 5 1280x720 / 6 1440x900 / 7 1680x1050 / 8 2560x1440
+  # 255 = 未显式选档，按 game_width/game_height；档位超过桌面时自动回落最大可用档。
+  # 不设置这三个键时，游戏态沿用登录尺寸 1280×720。
+  game_width: 1280
+  game_height: 720
+  game_tier: 5
+
 data:
   # 生产：显式 img。开发可用 auto / wz / nx。
   format: img

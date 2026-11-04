@@ -1,0 +1,107 @@
+{
+  "dump": "C:\\Users\\11036\\AppData\\Local\\CrashDumps\\MapleStory.exe.15936.dmp",
+  "exception": {
+    "tid": 3748,
+    "code": "0xC0000374",
+    "address": 140725452898453
+  },
+  "main_module": {
+    "base": 140701602807808,
+    "size": 5115904,
+    "name": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe"
+  },
+  "module_count": 111,
+  "streams": [
+    0,
+    3,
+    4,
+    5,
+    6,
+    7,
+    13,
+    14,
+    15,
+    21,
+    22,
+    24
+  ],
+  "stack_symbols": [
+    {
+      "address": "0x7FF7A53D9D9B",
+      "rva": "0x2F9D9B",
+      "symbol": "operator new",
+      "displacement": 31,
+      "stack_offset": 5248
+    },
+    {
+      "address": "0x7FF7A552EE10",
+      "rva": "0x44EE10",
+      "symbol": "ms::Singleton<ms::Window>::instance",
+      "displacement": 0,
+      "stack_offset": 5280
+    },
+    {
+      "address": "0x7FF7A532A83E",
+      "rva": "0x24A83E",
+      "symbol": "ms::Window::initwindow",
+      "displacement": 846,
+      "stack_offset": 5376
+    },
+    {
+      "address": "0x7FF7A5402488",
+      "rva": "0x322488",
+      "symbol": "`string'",
+      "displacement": 0,
+      "stack_offset": 5560
+    },
+    {
+      "address": "0x7FF7A511E5CD",
+      "rva": "0x3E5CD",
+      "symbol": "ms::Configuration::reload_if_changed",
+      "displacement": 349,
+      "stack_offset": 5728
+    },
+    {
+      "address": "0x7FF7A5329B58",
+      "rva": "0x249B58",
+      "symbol": "ms::Window::check_events",
+      "displacement": 56,
+      "stack_offset": 5824
+    },
+    {
+      "address": "0x7FF7A533F6EF",
+      "rva": "0x25F6EF",
+      "symbol": "ms::loop",
+      "displacement": 399,
+      "stack_offset": 5888
+    },
+    {
+      "address": "0x7FF7A533F926",
+      "rva": "0x25F926",
+      "symbol": "ms::start",
+      "displacement": 278,
+      "stack_offset": 5968
+    },
+    {
+      "address": "0x7FF7A53FE48B",
+      "rva": "0x31E48B",
+      "symbol": "`string'",
+      "displacement": 0,
+      "stack_offset": 6016
+    },
+    {
+      "address": "0x7FF7A533FA44",
+      "rva": "0x25FA44",
+      "symbol": "WinMain",
+      "displacement": 244,
+      "stack_offset": 6064
+    },
+    {
+      "address": "0x7FF7A53DA93E",
+      "rva": "0x2FA93E",
+      "symbol": "__scrt_common_main_seh",
+      "displacement": 262,
+      "stack_offset": 6160
+    }
+  ]
+}

@@ -24,6 +24,7 @@
 
 #include "../../Audio/Audio.h"
 #include "../../Configuration.h"
+#include "../../Util/ResolutionTiers.h"
 
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
@@ -43,6 +44,44 @@ namespace ms
 	static void enter_game_log(const std::string& line)
 	{
 		LOG(LOG_DEBUG, line);
+	}
+
+	// 选角进游戏后按 window.game_* 设置视口；登录/选角/世界/频道恒 1280×720。
+	// 只写 Constants：本函数在 Window::fadeout 的回调里，禁止调 check_events()
+	// （回调内 initwindow → GraphicsGL::reinit 会清掉刚上传的图块导致黑屏）。
+	// 实际建窗由下一帧 MapleStory::update() 的 Window::check_events 完成。
+	static void apply_game_viewsize()
+	{
+		const int tier = static_cast<int>(Setting<GameTier>::get().load());
+		const int16_t fallback_w = static_cast<int16_t>(Setting<GameWidth>::get().load());
+		const int16_t fallback_h = static_cast<int16_t>(Setting<GameHeight>::get().load());
+		const int16_t max_w = Configuration::get().get_max_width();
+		const int16_t max_h = Configuration::get().get_max_height();
+
+		int16_t width = 0;
+		int16_t height = 0;
+		const int chosen = ResolutionTiers::resolve_game_size(
+			tier, fallback_w, fallback_h, max_w, max_h, width, height);
+
+		if (chosen < 0)
+		{
+			LOG(LOG_WARN, "[MR] game tier " << tier << " exceeds desktop "
+				<< max_w << "x" << max_h << " and no tier fits; keeping viewport");
+			return;
+		}
+
+		// 仅当「显式选了某一档且该档超桌面」才算回落；TIER_NONE(255) 走 fallback 不算。
+		if (chosen != tier && ResolutionTiers::valid(tier))
+		{
+			LOG(LOG_WARN, "[MR] game tier " << tier << " exceeds desktop; fall back to tier " << chosen);
+			// 同步内存值，避免设置窗下拉显示与实际视口不一致（不在此处写盘）。
+			Setting<GameTier>::get().save(static_cast<uint8_t>(chosen));
+			Setting<GameWidth>::get().save(static_cast<uint16_t>(width));
+			Setting<GameHeight>::get().save(static_cast<uint16_t>(height));
+		}
+
+		ResolutionTiers::apply_viewsize(width, height);
+		LOG(LOG_INFO, "[MR] enter game viewport " << width << "x" << height << " tier=" << chosen);
 	}
 
 	void SetFieldHandler::transition(int32_t mapid, uint8_t portalid, bool enter_game) const
@@ -102,6 +141,13 @@ namespace ms
 				GraphicsGL::get().unlock();
 				enter_game_log("[SetField] GraphicsGL unlocked");
 
+				// 所有 SET_FIELD（首次进游戏 / 换图 / 传送 / 退出商城）都按 window.game_*
+				// 恢复游戏视口：商城由 SetCashShopHandler::transition 单独设 1024×768，
+				// 若只在 enter_game 分支恢复，退出商城后视口会一直停在 1024×768。
+				// 只写 Constants；实际建窗等下一帧主循环 check_events 完成（本回调内禁止
+				// 调 check_events：reinit 会清掉刚上传的图块导致黑屏）。
+				apply_game_viewsize();
+
 				// Switch to GAME UI after the map is loaded (and GL unlocked).
 				// Constructing StatusBar3/UIWindow2 HUD while locked used to
 				// freeze the client on v83 packs that only ship StatusBar /
@@ -143,9 +189,10 @@ namespace ms
 
 	void SetFieldHandler::handle(InPacket& recv) const
 	{
-		Constants::Constants::get().set_viewwidth(Setting<Width>::get().load());
-		Constants::Constants::get().set_viewheight(Setting<Height>::get().load());
-
+		// 旧实现每次 SET_FIELD 都把 window.width/height 回灌 Constants —— 那是登录基准，
+		// 换图/传送时会把游戏内已切换的分辨率覆盖掉。游戏态视口统一由
+		// transition() 按 window.game_* 恢复（含 enter_game=false 的换图/退出商城），
+		// 登录态由 UI::change_state(State::LOGIN) 恢复；此处不再回灌。
 		int32_t channel = recv.read_int();
 
 		// 服务端每次 SET_FIELD 的首个 int 就是**当前 0 基频道号**

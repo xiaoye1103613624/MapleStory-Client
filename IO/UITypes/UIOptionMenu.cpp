@@ -32,8 +32,10 @@
 #include "../../Audio/Audio.h"
 #include "../../Configuration.h"
 #include "../../Constants.h"
+#include "../../Graphics/LocalPngTexture.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
+#include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
@@ -681,6 +683,18 @@ namespace ms
 		// UIOptionMenu.h 被 4 个 TU 包含，给它加数据成员要走全量 Rebuild。
 		// 窗体每次打开都由 UI::emplace 重建（UIMiscShells.cpp），构造函数里复位。
 		uint16_t sysopt_open = 0;
+
+		// 多分辨率：全部放文件作用域，不给 UIOptionMenu.h 加数据成员
+		// （该类头被多个 TU 包含，加成员会踩增量构建旧 obj 坑、需整工程 Rebuild）。
+		constexpr size_t SYSOPT_BG_ATLAS = 0x5359534Full; // 'SYSO'，避开 UIMapSearchPanel::ATLAS_BASE
+		LocalPngTexture sysopt_bg_png;
+		uint8_t sysopt_res_tier = 5;
+		bool sysopt_res_open = false;
+		// 插件 rs.cpp L2011-2025：OK 时立即落盘，窗口销毁后再切分辨率，
+		// 避免模态窗内 UIStatusBar 重建竞态。这里延迟到「下一帧 update」应用。
+		bool sysopt_pending_apply = false;
+		int16_t sysopt_pending_w = 0;
+		int16_t sysopt_pending_h = 0;
 	}
 
 	UISysOpt::UISysOpt()
@@ -699,7 +713,25 @@ namespace ms
 		}
 
 		backgrnd = Texture(SysOpt["backgrnd"]);
-		dimension = backgrnd.get_dimensions();
+
+		// 用户指定 299x396 纯底板（含新增「窗口大小」行）走 LocalPngTexture；
+		// 它是完整窗口截帧剥离控件后的产物，见 ui/uisysopt/v1/manifest.md。
+		sysopt_bg_png = LocalPngTexture();
+		const bool has_new_bg = sysopt_bg_png.load(SYSOPT_BG_ATLAS, {
+			"UI/SysOpt/sysopt_backgrnd.png",
+			"docs/features/multi-resolution/ui/uisysopt/v1/sysopt_backgrnd.png"
+		});
+
+		if (has_new_bg)
+			dimension = Point<int16_t>(sysopt_bg_png.width(), sysopt_bg_png.height());
+		else
+		{
+			// 资源缺失回退：底板只有 365 高，但窗体仍按 396 计算命中/按钮落位，
+			// 保证 OK/Cancel 等控件不跑到窗体之外（R6：节点缺失属预期，须有兜底）。
+			dimension = Point<int16_t>(backgrnd.get_dimensions().x(), 396);
+			LOG(LOG_WARN, "[MR] UISysOpt local PNG missing; fallback to IMG backgrnd 299x365");
+		}
+
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		nl::node Basic = nl::nx::UI["Basic.img"];
@@ -748,7 +780,19 @@ namespace ms
 				Point<int16_t>(COMBO_X, COMBO_Y_MOB + COMBO_H + COMBO_H * i),
 				Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
 
+		// 多分辨率：第三个下拉盒体 (76,338,166,18) + 9 个向上展开的条目。
+		sysopt_res_open = false;
+		buttons[RESOLUTION] = std::make_unique<AreaButton>(
+			Point<int16_t>(RES_COMBO_X, RES_COMBO_Y),
+			Point<int16_t>(RES_COMBO_W, RES_COMBO_H));
+
+		for (uint8_t i = 0; i < RES_COUNT; i++)
+			buttons[RES_OPT0 + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(RES_COMBO_X, RES_LIST_Y + RES_COMBO_H * i),
+				Point<int16_t>(RES_COMBO_W, RES_COMBO_H));
+
 		set_combo_rows(false, false);
+		set_res_rows(false);
 
 		// 同 UIGameOpt：传按钮根节点，不是 ["normal"][0] 叶子。
 		nl::node bt_ok = Basic["BtOK2"];
@@ -781,6 +825,19 @@ namespace ms
 		alt_enter = Setting<SysOptAltEnter>::get().load();
 		mob_info = Setting<SysOptMobInfo>::get().load();
 		screenshot_path = Setting<SysOptScreenshotPath>::get().load();
+
+		// 多分辨率：显示真实当前档，不能恒显示 0 档（rs.cpp L1988-1996 的坑）。
+		// game_tier=255 表示旧配置未显式选档，按 window.game_width/height 反查。
+		const uint8_t tier = Setting<GameTier>::get().load();
+		const int16_t game_w = static_cast<int16_t>(Setting<GameWidth>::get().load());
+		const int16_t game_h = static_cast<int16_t>(Setting<GameHeight>::get().load());
+		const int shown = ResolutionTiers::valid(tier)
+			? static_cast<int>(tier)
+			: ResolutionTiers::tier_from_dims(game_w, game_h);
+
+		sysopt_res_tier = static_cast<uint8_t>(shown);
+		sysopt_res_open = false;
+		sysopt_pending_apply = false;
 	}
 
 	void UISysOpt::mute_state(uint8_t& stash, SettingsSlider& slider)
@@ -798,7 +855,11 @@ namespace ms
 
 	void UISysOpt::draw(float inter) const
 	{
-		backgrnd.draw(position);
+		// 299x396 纯底板（LocalPngTexture）优先；资源缺失时回退 IMG 底板 299x365。
+		if (sysopt_bg_png.is_valid())
+			sysopt_bg_png.draw(position);
+		else
+			backgrnd.draw(position);
 
 		for (uint8_t i = 0; i < SL_COUNT; i++)
 			sliders[i].draw(position);
@@ -825,11 +886,22 @@ namespace ms
 
 		draw_combo(COMBO_Y_PATH, combo_item(SCREENSHOT_PATH_KEY, screenshot_path));
 		draw_combo(COMBO_Y_MOB, combo_item(MOB_INFO_KEY, mob_info));
+		draw_resolution_combo();
 
 		UIElement::draw_buttons(inter);
 
+		// 新增「窗口大小」行标签：用户指定图里它是烘焙文字，但纯底板不含控件/文字，
+		// 由代码按原生粉红标签配色绘制，文案走 i18n（zh-CN / en-US）。
+		ColorBox(64, 16, Color(0xDD6688FF), 1.0f)
+			.draw(position + Point<int16_t>(8, RES_COMBO_Y + 1));
+		Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE,
+			Locale::text("sysopt.label.resolution"), 64)
+			.draw(position + Point<int16_t>(8, RES_COMBO_Y + 2));
+
 		// 展开的列表压在窗体（含底部确定/取消钮）之上，故排在 draw_buttons 之后。
-		if (sysopt_open == MOB_INFO)
+		if (sysopt_res_open)
+			draw_resolution_list();
+		else if (sysopt_open == MOB_INFO)
 			draw_combo_list(COMBO_Y_MOB, MOB_INFO_COUNT, MOB_INFO_KEY, mob_info);
 		else if (sysopt_open == SCREENSHOT_PATH)
 			draw_combo_list(COMBO_Y_PATH, SCREENSHOT_PATH_COUNT, SCREENSHOT_PATH_KEY, screenshot_path);
@@ -899,6 +971,89 @@ namespace ms
 		}
 	}
 
+	// 多分辨率下拉：复用 Basic.img/ComboBox 三段贴图铺出 166x18 的盒体，
+	// 坐标 (76,338) 对齐插件 rs.cpp L1973；当前项文字走 i18n 的 9 条档位文案。
+	void UISysOpt::draw_resolution_combo() const
+	{
+		nl::node src = nl::nx::UI["Basic.img"]["ComboBox"]["normal"][0];
+
+		if (!UiAssetResolve::usable(src))
+			return;
+
+		Texture left(src);
+		Texture mid(nl::nx::UI["Basic.img"]["ComboBox"]["normal"][1]);
+		Texture arrow(nl::nx::UI["Basic.img"]["ComboBox"]["normal"][2]);
+
+		if (!mid.is_valid() || !arrow.is_valid())
+			return;
+
+		Point<int16_t> lp(position.x() + RES_COMBO_X, position.y() + RES_COMBO_Y);
+
+		left.draw(lp);
+		lp.shift_x(left.width());
+
+		int16_t mid_w = mid.width();
+
+		if (mid_w < 1)
+			mid_w = 1;
+
+		const int16_t fill_w = RES_COMBO_W - left.width() - arrow.width();
+		int16_t drawn = 0;
+
+		while (drawn < fill_w)
+		{
+			mid.draw(lp);
+			lp.shift_x(mid_w);
+			drawn += mid_w;
+		}
+
+		arrow.draw(lp);
+
+		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Locale::text(std::string("sysopt.combo.resolution.") + std::to_string(sysopt_res_tier)))
+			.draw(position + Point<int16_t>(RES_COMBO_X + 6, RES_COMBO_Y + 2));
+	}
+
+	// 9 条档位向上展开（y=176..338），完整落在 299x396 底板内，不会盖住底部按钮。
+	void UISysOpt::draw_resolution_list() const
+	{
+		const Point<int16_t> lt(position.x() + RES_COMBO_X, position.y() + RES_LIST_Y);
+		const int16_t list_h = RES_COUNT * RES_COMBO_H;
+
+		ColorBox frame(RES_COMBO_W, list_h + 2, Color::Name::DUSTYGRAY, 1.0f);
+		ColorBox inner(RES_COMBO_W - 2, list_h, Color::Name::GALLERY, 1.0f);
+
+		frame.draw(lt);
+		inner.draw(lt + Point<int16_t>(1, 1));
+
+		if (sysopt_res_tier < RES_COUNT)
+		{
+			ColorBox current(RES_COMBO_W - 2, RES_COMBO_H - 2, Color::Name::GRAYOLIVE, 1.0f);
+
+			current.draw(lt + Point<int16_t>(1,
+				static_cast<int16_t>(1 + RES_COMBO_H * sysopt_res_tier)));
+		}
+
+		for (uint8_t i = 0; i < RES_COUNT; i++)
+		{
+			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+				Locale::text(std::string("sysopt.combo.resolution.") + std::to_string(i)))
+				.draw(lt + Point<int16_t>(6, static_cast<int16_t>(RES_COMBO_H * i + 1)));
+		}
+	}
+
+	void UISysOpt::set_res_rows(bool show)
+	{
+		for (uint8_t i = 0; i < RES_COUNT; i++)
+		{
+			if (const auto& row = buttons.find(RES_OPT0 + i); row != buttons.end())
+			{
+				row->second->set_active(show);
+				row->second->set_state(Button::State::NORMAL);
+			}
+		}
+	}
+
 	void UISysOpt::set_combo_rows(bool show_mob, bool show_path)
 	{
 		for (uint8_t i = 0; i < MOB_INFO_COUNT; i++)
@@ -923,6 +1078,17 @@ namespace ms
 
 	void UISysOpt::update()
 	{
+		// OK 的下一帧才改 Constants：按钮回调已结束、设置窗随后 deactivate，
+		// 再下一帧 Window::check_events 完成 initwindow → reinit → UI 重锚全链。
+		if (sysopt_pending_apply)
+		{
+			sysopt_pending_apply = false;
+			ResolutionTiers::apply_viewsize(sysopt_pending_w, sysopt_pending_h);
+			LOG(LOG_INFO, "[MR] applied game viewport " << sysopt_pending_w
+				<< "x" << sysopt_pending_h << " tier=" << unsigned(sysopt_res_tier));
+			deactivate();
+		}
+
 		UIElement::update();
 	}
 
@@ -952,6 +1118,8 @@ namespace ms
 			const bool reopen = (sysopt_open != buttonid);
 
 			sysopt_open = reopen ? buttonid : 0;
+			sysopt_res_open = false;
+			set_res_rows(false);
 			set_combo_rows(sysopt_open == Buttons::MOB_INFO, sysopt_open == Buttons::SCREENSHOT_PATH);
 
 			LOG(LOG_INFO, "UISysOpt: combo " << buttonid << " " << (sysopt_open ? "expanded" : "collapsed"));
@@ -980,12 +1148,46 @@ namespace ms
 			LOG(LOG_INFO, "UISysOpt: screenshot path ordinal " << unsigned(screenshot_path));
 
 			return Button::State::IDENTITY;
+		case Buttons::RESOLUTION:
+		{
+			// 第三个下拉：与另两个互斥，展开时收起它们。
+			sysopt_res_open = !sysopt_res_open;
+			sysopt_open = 0;
+			set_combo_rows(false, false);
+			set_res_rows(sysopt_res_open);
+
+			LOG(LOG_INFO, "[MR] UISysOpt resolution combo "
+				<< (sysopt_res_open ? "expanded" : "collapsed"));
+
+			return Button::State::IDENTITY;
+		}
+		case Buttons::RES_OPT0:
+		case Buttons::RES_OPT1:
+		case Buttons::RES_OPT2:
+		case Buttons::RES_OPT3:
+		case Buttons::RES_OPT4:
+		case Buttons::RES_OPT5:
+		case Buttons::RES_OPT6:
+		case Buttons::RES_OPT7:
+		case Buttons::RES_OPT8:
+			sysopt_res_tier = static_cast<uint8_t>(buttonid - Buttons::RES_OPT0);
+			sysopt_res_open = false;
+			set_res_rows(false);
+
+			LOG(LOG_INFO, "[MR] UISysOpt resolution tier " << unsigned(sysopt_res_tier));
+
+			return Button::State::IDENTITY;
 		case Buttons::OK:
 			commit();
-			deactivate();
-			return Button::State::NORMAL;
+			// 不在此处 deactivate：分辨率改 Constants 延迟到下一帧 update()，
+			// 规避模态窗 UI 回调内触发 UIStatusBar 重建竞态（插件 rs.cpp 实测坑）。
+			// commit() 已完成落盘，取消/ESC 通过 sysopt_pending_apply=false 回滚。
+			return Button::State::IDENTITY;
 		case Buttons::CANCEL:
 			load_values();
+			sysopt_res_open = false;
+			set_res_rows(false);
+			sysopt_pending_apply = false;
 			deactivate();
 			return Button::State::NORMAL;
 		default:
@@ -1027,6 +1229,45 @@ namespace ms
 		Setting<SysOptAltEnter>::get().save(alt_enter);
 		Setting<SysOptMobInfo>::get().save(mob_info);
 		Setting<SysOptScreenshotPath>::get().save(screenshot_path);
+
+		////////////////////////////////////////////////////////////////////////////////
+		// 多分辨率（用户决策 D2/D4）：档位合法性 + 桌面校验 → 写 3 个新键 → 排队延迟应用。
+		// 超桌面时回落到最大可用档并给 WARN；连 800x600 都放不下则拒绝并保留原档。
+		// 写盘由本函数末尾的 Configuration::get().save() 统一完成（旧空壳 SELECT_RES 漏了它）。
+		////////////////////////////////////////////////////////////////////////////////
+		const int16_t max_w = Configuration::get().get_max_width();
+		const int16_t max_h = Configuration::get().get_max_height();
+		const int16_t fallback_w = static_cast<int16_t>(Setting<GameWidth>::get().load());
+		const int16_t fallback_h = static_cast<int16_t>(Setting<GameHeight>::get().load());
+
+		int16_t game_w = 0;
+		int16_t game_h = 0;
+		const int chosen = ResolutionTiers::resolve_game_size(
+			sysopt_res_tier, fallback_w, fallback_h, max_w, max_h, game_w, game_h);
+
+		if (chosen < 0)
+		{
+			LOG(LOG_WARN, "[MR] resolution tier " << unsigned(sysopt_res_tier)
+				<< " exceeds desktop " << max_w << "x" << max_h
+				<< " and no tier fits; keeping previous setting");
+		}
+		else
+		{
+			if (chosen != sysopt_res_tier)
+			{
+				LOG(LOG_WARN, "[MR] resolution tier " << unsigned(sysopt_res_tier)
+					<< " exceeds desktop; fall back to tier " << chosen);
+				sysopt_res_tier = static_cast<uint8_t>(chosen);
+			}
+
+			Setting<GameTier>::get().save(sysopt_res_tier);
+			Setting<GameWidth>::get().save(static_cast<uint16_t>(game_w));
+			Setting<GameHeight>::get().save(static_cast<uint16_t>(game_h));
+
+			sysopt_pending_w = game_w;
+			sysopt_pending_h = game_h;
+			sysopt_pending_apply = true;
+		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// 画面模式（B4-4）
@@ -1080,7 +1321,13 @@ namespace ms
 			return;
 
 		if (escape)
+		{
+			// ESC 与「取消」同义：未落盘的分辨率排队必须清掉，不能下一帧偷偷生效。
+			sysopt_pending_apply = false;
+			sysopt_res_open = false;
+			set_res_rows(false);
 			deactivate();
+		}
 	}
 
 	Cursor::State UISysOpt::send_cursor(bool clicked, Point<int16_t> cursorpos)

@@ -1,0 +1,11 @@
+[
+  {"click": [489, 371]},
+  {"wait": 0.5},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-03-combo-open.png"},
+  {"click": [489, 317]},
+  {"wait": 0.5},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-04-tier-selected.png"},
+  {"click": [547, 405]},
+  {"wait": 1.5},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-05-after-ok.png"}
+]

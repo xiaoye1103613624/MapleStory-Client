@@ -1,0 +1,8 @@
+[
+  {"key": "{ESC}"},
+  {"wait": 1},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-01-menu.png"},
+  {"click": [714, 631]},
+  {"wait": 1},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-02-sysopt.png"}
+]

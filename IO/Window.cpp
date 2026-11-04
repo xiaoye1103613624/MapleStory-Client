@@ -27,6 +27,7 @@
 #include "../Configuration.h"
 #include "../MapleStory.h"
 #include "../Timer.h"
+#include "../Util/ResolutionTiers.h"
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -830,29 +831,43 @@ namespace ms
 				case SDL_EVENT_MOUSE_WHEEL:
 					UI::get().send_scroll(event.wheel.y);
 					break;
+				case SDL_EVENT_WINDOW_RESIZED:
+				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+				{
+					// 窗口创建时没有 SDL_WINDOW_RESIZABLE（见 init() 的 SDL_CreateWindow），
+					// 用户拖不动边框；这两个事件只可能来自 initwindow() 自己的
+					// SDL_SetWindowSize。把事件尺寸回写 Constants 会与 check_events 构成
+					// 自反馈：每帧 initwindow → stbi_load / operator new 高频分配，
+					// 1440×900 档实测 6 秒内 0xC0000374 堆损坏崩溃（两次 dump 栈一致）。
+					// 视口只由 Constants → check_events → initwindow 单向驱动。
+					// 将来要支持手动拖边框：先加 SDL_WINDOW_RESIZABLE，再只在事件尺寸
+					// 与私有 width/height 不同时回写，避免把主动切档当成用户 resize。
+					break;
+				}
 #ifdef __ANDROID__
 				case SDL_EVENT_FINGER_DOWN:
 				{
 					input_events++;
 
-					// Finger coordinates are normalised [0,1]; map to window pixels.
-					float fx = event.tfinger.x * static_cast<float>(width);
-					float fy = event.tfinger.y * static_cast<float>(height);
+					// 触屏坐标归一到 [0,1]，必须按当前视口 Constants 换算；旧代码用
+					// Window 私有 width/height，分辨率切换后两者可能失步导致命中错位。
+					float fx = event.tfinger.x * static_cast<float>(Constants::Constants::get().get_viewwidth());
+					float fy = event.tfinger.y * static_cast<float>(Constants::Constants::get().get_viewheight());
 					send_cursor_position(fx, fy);
 					UI::get().send_cursor(true);
 					break;
 				}
 				case SDL_EVENT_FINGER_MOTION:
 				{
-					float fx = event.tfinger.x * static_cast<float>(width);
-					float fy = event.tfinger.y * static_cast<float>(height);
+					float fx = event.tfinger.x * static_cast<float>(Constants::Constants::get().get_viewwidth());
+					float fy = event.tfinger.y * static_cast<float>(Constants::Constants::get().get_viewheight());
 					send_cursor_position(fx, fy);
 					break;
 				}
 				case SDL_EVENT_FINGER_UP:
 				{
-					float fx = event.tfinger.x * static_cast<float>(width);
-					float fy = event.tfinger.y * static_cast<float>(height);
+					float fx = event.tfinger.x * static_cast<float>(Constants::Constants::get().get_viewwidth());
+					float fy = event.tfinger.y * static_cast<float>(Constants::Constants::get().get_viewheight());
 					send_cursor_position(fx, fy);
 					UI::get().send_cursor(false);
 					break;
@@ -959,19 +974,17 @@ namespace ms
 
 	void Window::check_events()
 	{
-		int16_t max_width = Configuration::get().get_max_width();
-		int16_t max_height = Configuration::get().get_max_height();
-		int16_t new_width = Constants::Constants::get().get_viewwidth();
-		int16_t new_height = Constants::Constants::get().get_viewheight();
+		const int16_t new_width = Constants::Constants::get().get_viewwidth();
+		const int16_t new_height = Constants::Constants::get().get_viewheight();
 
 		if (width != new_width || height != new_height)
 		{
 			width = new_width;
 			height = new_height;
 
-			if (new_width >= max_width || new_height >= max_height)
-				fullscreen = true;
-
+			// 旧门禁 new_width >= max_width → fullscreen=true 与「超桌面回落」冲突：
+			// 档位合法性已在 Util/ResolutionTiers::resolve_game_size 里校验完毕，
+			// 这里只按用户选择建窗，不强制全屏、不改写 window.fullscreen。
 			initwindow();
 		}
 
@@ -1031,7 +1044,10 @@ namespace ms
 		int16_t max_width = Configuration::get().get_max_width();
 		int16_t max_height = Configuration::get().get_max_height();
 
-		if (width < max_width && height < max_height)
+		// 旧 `<` 门禁会让「档位恰好等于桌面尺寸」时 ALT+回车失效（如 1920×1080 档）。
+		// 档位超过桌面已由 Util/ResolutionTiers::resolve_game_size 拒绝/回落，
+		// 这里只需保证不越界，因此放宽为 `<=`。
+		if (width <= max_width && height <= max_height)
 		{
 			fullscreen = !fullscreen;
 			Setting<Fullscreen>::get().save(fullscreen);

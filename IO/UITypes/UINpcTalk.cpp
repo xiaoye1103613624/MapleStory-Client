@@ -28,7 +28,9 @@
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
+#include "../../Util/ResolutionTiers.h"
 
+#include "../../Constants.h"
 #include "../../MapleStory.h"
 
 #include <cctype>
@@ -817,5 +819,35 @@ namespace ms
 		// 命中区 = 壳体重绘高度（t + 正文 + s）。原来写死 height + 120，比实际绘制高出 30 余px，
 		// 那段空白会白白吞掉点击（点不到下层的窗口/世界）。
 		dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
+
+		// 多分辨率：上面的 (400,240) 是 800×600 时代按中心点记的常量，高分辨率下
+		// 会把对话窗钉在左上。非 1280×720 档位按视口居中；1280×720 零回归。
+		reanchor_talk();
+	}
+
+	void UINpcTalk::update_screen(int16_t, int16_t)
+	{
+		reanchor_talk();
+	}
+
+	void UINpcTalk::reanchor_talk()
+	{
+		// UtilDlgEx 缺失时构造早退，dimension 为 0，居中会把窗口挪出视口。
+		if (top.width() <= 0 || dimension.x() <= 0)
+			return;
+
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		if (vieww == ResolutionTiers::LOGIN_W && viewh == ResolutionTiers::LOGIN_H)
+		{
+			// 切回 1280×720 时也要恢复原生绝对定位（不能沿用上一次的居中坐标）。
+			position = Point<int16_t>(
+				static_cast<int16_t>(400 - top.width() / 2),
+				static_cast<int16_t>(240 - height / 2));
+			return;
+		}
+
+		center_on_screen();
 	}
 }

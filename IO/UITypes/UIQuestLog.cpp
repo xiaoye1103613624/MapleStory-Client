@@ -8,6 +8,7 @@
 #include "../../Net/Packets/QuestPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/Locale.h"
+#include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
 #include <cctype>
@@ -219,6 +220,18 @@ namespace ms
 		layout();
 		activate_buttons();
 		rebuild_list();
+
+		// 多分辨率：PosQUEST 是 1280×720 基准下的绝对读数；其它档位按新视口居中。
+		// 1280×720 保持原生绝对位置，不覆盖用户拖拽后保存的 Setting<PosQUEST>。
+		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
+			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
+			center_on_screen();
+	}
+
+	void UIQuestLog::update_screen(int16_t, int16_t)
+	{
+		// 分辨率实时切换：重锚到视口中心，窗内控件相对偏移与 1x 位图尺寸保持不变。
+		center_on_screen();
 	}
 
 	void UIQuestLog::draw(float inter) const

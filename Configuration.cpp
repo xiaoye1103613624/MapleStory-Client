@@ -22,6 +22,7 @@
 
 #include "Constants.h"
 #include "Util/Misc.h"
+#include "Util/ResolutionTiers.h"
 
 #include <fstream>
 #include <sstream>
@@ -85,6 +86,9 @@ namespace ms
 		{ "窗口",       "window.height",				"窗口高度，读取后同步到运行时常量" },
 		{ "窗口",       "window.fullscreen",			"是否全屏启动" },
 		{ "窗口",       "window.vsync",					"是否开启垂直同步" },
+		{ "窗口",       "window.game_width",			"进入游戏后的视口宽度（登录仍用 window.width）" },
+		{ "窗口",       "window.game_height",		"进入游戏后的视口高度（登录仍用 window.height）" },
+		{ "窗口",       "window.game_tier",			"游戏分辨率档位 0..8；255 = 未显式选档，按宽高走" },
 
 		// 字体
 		{ "字体",       "font.path.normal",				"常规字体文件路径" },
@@ -209,6 +213,9 @@ namespace ms
 		settings.emplace<Fullscreen>();
 		settings.emplace<Width>();
 		settings.emplace<Height>();
+		settings.emplace<GameWidth>();
+		settings.emplace<GameHeight>();
+		settings.emplace<GameTier>();
 		settings.emplace<VSync>();
 		settings.emplace<BootLogo>();
 		settings.emplace<BootLogoFrameMs>();
@@ -358,9 +365,39 @@ namespace ms
 				setting.second->value = rsiter->second;
 		}
 
-		// 将配置中的宽高同步到运行时常量，供 Window/渲染/布局使用。
-		Constants::Constants::get().set_viewwidth(Setting<Width>::get().load());
-		Constants::Constants::get().set_viewheight(Setting<Height>::get().load());
+		// 登录态基准：window.width/height 恒 1280×720（UI/Login.img/Common/frame 原生尺寸），
+		// 不随游戏档位变化；成对写入避免 Window::check_events 读到宽高不配对的中间态。
+		const int16_t login_width = static_cast<int16_t>(Setting<Width>::get().load());
+		const int16_t login_height = static_cast<int16_t>(Setting<Height>::get().load());
+		Constants::Constants::get().set_viewsize(login_width, login_height);
+
+		// 旧配置没有 window.game_* 时，游戏档位回落到登录尺寸（零回归）。
+		// game_tier 合法时以档位表为准，避免配置里宽高与档位不一致；否则用显式宽高。
+		const uint8_t game_tier = Setting<GameTier>::get().load();
+		int16_t game_width = 0;
+		int16_t game_height = 0;
+
+		if (!ResolutionTiers::dims_from_tier(static_cast<int>(game_tier), game_width, game_height))
+		{
+			game_width = static_cast<int16_t>(Setting<GameWidth>::get().load());
+			game_height = static_cast<int16_t>(Setting<GameHeight>::get().load());
+
+			const bool has_dims = rawsettings.count("window.game_width") > 0
+				&& rawsettings.count("window.game_height") > 0;
+
+			if (!has_dims || game_width < 640 || game_height < 480)
+			{
+				game_width = login_width;
+				game_height = login_height;
+			}
+		}
+
+		// 回灌规整后的值，保证 UI 下拉、进图切换、写盘三处看到同一组数。
+		Setting<GameWidth>::get().save(static_cast<uint16_t>(game_width));
+		Setting<GameHeight>::get().save(static_cast<uint16_t>(game_height));
+		LOG(LOG_INFO, "[MR] login=" << login_width << "x" << login_height
+			<< " game=" << game_width << "x" << game_height
+			<< " tier=" << static_cast<int>(game_tier));
 		}
 
 	std::unordered_map<std::string, std::string> Configuration::parse_config_file(

@@ -1,0 +1,19 @@
+{
+  "label": "after-ok",
+  "desktop_w": 2560,
+  "desktop_h": 1600,
+  "windows": [
+    {
+      "hwnd": 3933724,
+      "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:149 延迟:--】【当前时间：2026-11-04 17:25:46】【在线时长：00 00:01:44】",
+      "client_w": 1280,
+      "client_h": 720,
+      "window_rect": [
+        632,
+        385,
+        1928,
+        1144
+      ]
+    }
+  ]
+}

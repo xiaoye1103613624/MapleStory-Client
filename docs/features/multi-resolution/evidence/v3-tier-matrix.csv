@@ -1,0 +1,10 @@
+tier,expected,login_1280x720,reached_expected,crashed,verdict,evidence
+0,800x600,1,1,0,PASS,tier0-800x600.json
+1,1024x768,1,1,0,PASS,tier1-1024x768.json
+2,1366x768,1,1,0,PASS,tier2-1366x768.json
+3,1600x900,1,1,0,PASS,tier3-1600x900.json
+4,1920x1080,1,1,0,PASS,tier4-1920x1080.json
+5,1280x720,1,1,0,PASS,tier5-1280x720.json
+6,1440x900,1,1,0,PASS,tier6-1440x900.json
+7,1680x1050,1,1,0,PASS,tier7-1680x1050.json
+8,2560x1440,1,1,0,PASS,tier8-2560x1440.json

@@ -43,6 +43,9 @@ namespace ms
 
 		void draw(bool textfield) const;
 
+		// 多分辨率：视口变化时按新屏幕居中重锚（弹窗族 UINotice/UIYesNo/UIEnterNumber/UIOk）。
+		void update_screen(int16_t new_width, int16_t new_height) override;
+
 		int16_t box2offset(bool textfield) const;
 
 	private:

@@ -66,6 +66,14 @@ namespace ms
 				VIEWHEIGHT = height;
 			}
 
+			// 登录态（window.width/height，默认 1280×720）与游戏态（window.game_*）切换时
+			// 成对写入，避免 Window::check_events 在两帧之间读到宽高不配对的中间态。
+			void set_viewsize(int16_t width, int16_t height)
+			{
+				VIEWWIDTH = width;
+				VIEWHEIGHT = height;
+			}
+
 		private:
 			// Window and screen width
 			int16_t VIEWWIDTH;

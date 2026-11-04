@@ -225,7 +225,18 @@ namespace ms
 			MOB_OPT2,
 			MOB_OPT3,
 			PATH_OPT0,
-			PATH_OPT1
+			PATH_OPT1,
+			// 多分辨率：第三个下拉（窗口大小）的盒体与 9 个档位条目。
+			RESOLUTION,
+			RES_OPT0,
+			RES_OPT1,
+			RES_OPT2,
+			RES_OPT3,
+			RES_OPT4,
+			RES_OPT5,
+			RES_OPT6,
+			RES_OPT7,
+			RES_OPT8
 		};
 
 		enum Sliders : uint8_t
@@ -250,6 +261,10 @@ namespace ms
 		void draw_combo_list(int16_t y, uint8_t count, const char* key_prefix, uint8_t selected) const;
 		// 条目命中区随展开态开关；全关时两个下拉都只响应盒体本身。
 		void set_combo_rows(bool show_mob, bool show_path);
+		// 多分辨率：第三个下拉的收起态 / 展开态绘制与 9 个条目命中区开关。
+		void draw_resolution_combo() const;
+		void draw_resolution_list() const;
+		void set_res_rows(bool show);
 
 		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值。
 		static constexpr int16_t TRACK_X0 = 99;
@@ -275,8 +290,18 @@ namespace ms
 		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
 		static constexpr uint8_t MOB_INFO_COUNT = 4;
 		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
-		// 底部两颗橙色钮（47x19），与「游戏设置」同一件，只是落位不同。
-		static constexpr int16_t BTN_Y = 342;
+		// 多分辨率新增行：插件 rs.cpp L1973 Combo(76,338,166,18)，9 档见 rs_tier_dims。
+		// 列表向上展开（9*18=162px，从 y=176 到 338，完整落在 299x396 底板内）。
+		static constexpr int16_t RES_COMBO_X = 76;
+		static constexpr int16_t RES_COMBO_Y = 338;
+		static constexpr int16_t RES_COMBO_W = 166;
+		static constexpr int16_t RES_COMBO_H = 18;
+		static constexpr uint8_t RES_COUNT = 9;
+		static constexpr int16_t RES_LIST_Y =
+			static_cast<int16_t>(RES_COMBO_Y - RES_COUNT * RES_COMBO_H);
+		// 底部两颗橙色钮（47x19）：插件 rs.cpp L3313 把 OK/Cancel 从 342 下移到 372，
+		// 给新增的「窗口大小」行腾出空间。
+		static constexpr int16_t BTN_Y = 372;
 		static constexpr int16_t OK_X = 194;
 		static constexpr int16_t CANCEL_X = 244;
 

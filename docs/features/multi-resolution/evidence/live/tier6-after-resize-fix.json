@@ -1,0 +1,1406 @@
+{
+  "label": "tier6-after-resize-fix",
+  "exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe",
+  "pid": 57712,
+  "desktop_w": 2560,
+  "desktop_h": 1600,
+  "samples": [
+    {
+      "t": 1.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 2.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 3.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 4.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 5.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 6.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 7.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 8.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 9.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【FPS:1 延迟:--】【当前时间：2026-11-04 17:13:12】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 10.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【FPS:1 延迟:--】【当前时间：2026-11-04 17:13:12】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:1 延迟:--】【当前时间：2026-11-04 17:13:13】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 11.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:14】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:68 延迟:--】【当前时间：2026-11-04 17:13:14】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 12.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【FPS:128 延迟:--】【当前时间：2026-11-04 17:13:15】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:73 延迟:--】【当前时间：2026-11-04 17:13:15】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 13.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:188 延迟:--】【当前时间：2026-11-04 17:13:16】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 14.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:222 延迟:--】【当前时间：2026-11-04 17:13:17】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 15.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:228 延迟:--】【当前时间：2026-11-04 17:13:18】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 16.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:208 延迟:--】【当前时间：2026-11-04 17:13:19】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 17.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:216 延迟:--】【当前时间：2026-11-04 17:13:20】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 18.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:224 延迟:--】【当前时间：2026-11-04 17:13:21】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 19.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:222 延迟:--】【当前时间：2026-11-04 17:13:22】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 20.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:226 延迟:--】【当前时间：2026-11-04 17:13:23】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 21.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:224 延迟:--】【当前时间：2026-11-04 17:13:24】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 22.0,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:15】【在线时长：00 00:00:00】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:214 延迟:--】【当前时间：2026-11-04 17:13:25】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 23.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:117 延迟:--】【当前时间：2026-11-04 17:13:26】【在线时长：00 00:00:10】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:68 延迟:--】【当前时间：2026-11-04 17:13:26】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 24.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:141 延迟:--】【当前时间：2026-11-04 17:13:27】【在线时长：00 00:00:11】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:78 延迟:--】【当前时间：2026-11-04 17:13:27】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 25.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:145 延迟:--】【当前时间：2026-11-04 17:13:28】【在线时长：00 00:00:12】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:77 延迟:--】【当前时间：2026-11-04 17:13:28】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 26.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:29】【在线时长：00 00:00:13】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:76 延迟:--】【当前时间：2026-11-04 17:13:29】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 27.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:143 延迟:--】【当前时间：2026-11-04 17:13:30】【在线时长：00 00:00:14】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:81 延迟:--】【当前时间：2026-11-04 17:13:30】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 28.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:141 延迟:--】【当前时间：2026-11-04 17:13:31】【在线时长：00 00:00:15】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:84 延迟:--】【当前时间：2026-11-04 17:13:31】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 29.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:143 延迟:--】【当前时间：2026-11-04 17:13:32】【在线时长：00 00:00:16】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:83 延迟:--】【当前时间：2026-11-04 17:13:32】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 30.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:152 延迟:--】【当前时间：2026-11-04 17:13:33】【在线时长：00 00:00:17】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:83 延迟:--】【当前时间：2026-11-04 17:13:33】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 31.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:158 延迟:--】【当前时间：2026-11-04 17:13:34】【在线时长：00 00:00:18】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:77 延迟:--】【当前时间：2026-11-04 17:13:34】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 32.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:150 延迟:--】【当前时间：2026-11-04 17:13:35】【在线时长：00 00:00:19】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:75 延迟:--】【当前时间：2026-11-04 17:13:35】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 33.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:143 延迟:--】【当前时间：2026-11-04 17:13:36】【在线时长：00 00:00:20】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:70 延迟:--】【当前时间：2026-11-04 17:13:36】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 34.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:154 延迟:--】【当前时间：2026-11-04 17:13:37】【在线时长：00 00:00:21】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:69 延迟:--】【当前时间：2026-11-04 17:13:37】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 35.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:150 延迟:--】【当前时间：2026-11-04 17:13:38】【在线时长：00 00:00:22】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:83 延迟:--】【当前时间：2026-11-04 17:13:38】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 36.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:142 延迟:--】【当前时间：2026-11-04 17:13:39】【在线时长：00 00:00:23】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:78 延迟:--】【当前时间：2026-11-04 17:13:39】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 37.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:134 延迟:--】【当前时间：2026-11-04 17:13:40】【在线时长：00 00:00:24】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:74 延迟:--】【当前时间：2026-11-04 17:13:40】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 38.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:142 延迟:--】【当前时间：2026-11-04 17:13:41】【在线时长：00 00:00:25】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:78 延迟:--】【当前时间：2026-11-04 17:13:41】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 39.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:141 延迟:--】【当前时间：2026-11-04 17:13:42】【在线时长：00 00:00:26】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:75 延迟:--】【当前时间：2026-11-04 17:13:42】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 40.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:143 延迟:--】【当前时间：2026-11-04 17:13:43】【在线时长：00 00:00:27】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:77 延迟:--】【当前时间：2026-11-04 17:13:43】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 41.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:145 延迟:--】【当前时间：2026-11-04 17:13:44】【在线时长：00 00:00:28】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:71 延迟:--】【当前时间：2026-11-04 17:13:44】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 42.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:144 延迟:--】【当前时间：2026-11-04 17:13:45】【在线时长：00 00:00:29】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:89 延迟:--】【当前时间：2026-11-04 17:13:45】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 43.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:145 延迟:--】【当前时间：2026-11-04 17:13:46】【在线时长：00 00:00:30】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:81 延迟:--】【当前时间：2026-11-04 17:13:46】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 44.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:148 延迟:--】【当前时间：2026-11-04 17:13:47】【在线时长：00 00:00:31】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:78 延迟:--】【当前时间：2026-11-04 17:13:47】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    },
+    {
+      "t": 45.1,
+      "alive": true,
+      "exitcode": null,
+      "windows": [
+        {
+          "hwnd": 16717156,
+          "title": "XiaoYE MS v0.0.1【1-Admin】【FPS:157 延迟:--】【当前时间：2026-11-04 17:13:48】【在线时长：00 00:00:32】",
+          "client_w": 1440,
+          "client_h": 900,
+          "window_rect": [
+            632,
+            385,
+            2088,
+            1324
+          ]
+        },
+        {
+          "hwnd": 10093286,
+          "title": "XiaoYE MS v0.0.1【FPS:84 延迟:--】【当前时间：2026-11-04 17:13:48】",
+          "client_w": 1280,
+          "client_h": 720,
+          "window_rect": [
+            632,
+            385,
+            1928,
+            1144
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "distinct_client_sizes": [
+      [
+        1280,
+        720
+      ],
+      [
+        1440,
+        900
+      ]
+    ],
+    "crashed": false,
+    "last_alive": true
+  }
+}

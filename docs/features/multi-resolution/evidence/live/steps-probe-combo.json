@@ -1,0 +1,9 @@
+[
+  {"move": [640, 360]},
+  {"wait": 0.6},
+  {"move": [489, 371]},
+  {"wait": 0.4},
+  {"click": [489, 371]},
+  {"wait": 0.5},
+  {"cap": "e:\\project\\MapleStory-Client\\docs\\features\\multi-resolution\\evidence\\live\\live-06-combo-probe.png"}
+]

@@ -25,6 +25,7 @@
 
 #include "../../Audio/Audio.h"
 #include "../../Util/Misc.h"
+#include "../../Util/ResolutionTiers.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -69,9 +70,21 @@ namespace ms
 
 		if (type != NoticeType::ENTERNUMBER)
 			Sound(Sound::Name::DLGNOTICE).play();
+
+		// 多分辨率：PosNOTICE(400,285) 是 800×600 时代按中心点记的常量，在其它档位
+		// 会明显偏左上。非 1280×720 视口下按视口居中；1280×720 保留原生绝对位置。
+		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
+			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
+			center_on_screen();
 	}
 
 	UINotice::UINotice(std::string message, NoticeType t) : UINotice(message, t, Text::Alignment::CENTER) {}
+
+	void UINotice::update_screen(int16_t, int16_t)
+	{
+		// 弹窗族（UINotice / UIYesNo / UIEnterNumber / UIOk）在实时切换分辨率时居中重锚。
+		center_on_screen();
+	}
 
 	void UINotice::draw(bool textfield) const
 	{

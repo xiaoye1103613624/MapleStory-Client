@@ -472,6 +472,25 @@ namespace ms
 		Height() : ShortEntry("window.height", "720") {}
 	};
 
+	// 多分辨率：登录态使用上面的 window.width/height（恒 1280×720），
+	// 进入游戏后按下面三项切换。game_tier 合法时以 Util/ResolutionTiers.h 的档位表为准，
+	// 否则用 game_width/game_height；两者缺键时回落登录尺寸，保证旧配置零回归。
+	// 255 = TIER_NONE（未显式选档，只按宽高走）。
+	struct GameWidth : public Configuration::ShortEntry
+	{
+		GameWidth() : ShortEntry("window.game_width", "1280") {}
+	};
+
+	struct GameHeight : public Configuration::ShortEntry
+	{
+		GameHeight() : ShortEntry("window.game_height", "720") {}
+	};
+
+	struct GameTier : public Configuration::ByteEntry
+	{
+		GameTier() : ByteEntry("window.game_tier", "255") {}
+	};
+
 	// Whether to use VSync
 	// 是否开启垂直同步，关闭后可能出现画面撕裂。
 	struct VSync : public Configuration::BoolEntry
