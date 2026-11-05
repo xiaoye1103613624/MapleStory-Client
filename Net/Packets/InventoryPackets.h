@@ -148,12 +148,6 @@ namespace ms
 			write_time();
 			write_short(slot);
 			write_int(itemid);
-
-			if (is_town_scroll(itemid))
-			{
-				LOG(LOG_INFO, "[UseItem] USE_RETURN_SCROLL slot=" << slot
-					<< " item=" << itemid);
-			}
 		}
 	};
 
