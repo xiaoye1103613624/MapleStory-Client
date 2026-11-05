@@ -22,6 +22,8 @@
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 
+#include "../KeyMapTranslate.h"
+
 #include "../../IO/UITypes/UIBuffList.h"
 #include "../../IO/UITypes/UICashShop.h"
 #include "../../IO/UITypes/UIChannel.h"
@@ -369,7 +371,8 @@ namespace ms
 			uint8_t type = recv.read_byte();
 			int32_t action = recv.read_int();
 
-			UI::get().add_keymapping(i, type, action);
+			// v83 服务端编号 → 本客户端枚举（方案甲，见 Net/KeyMapTranslate.h）。
+			UI::get().add_keymapping(i, type, KeyAction::from_server(action));
 		}
 		while (recv.available())
 			recv.skip_byte();

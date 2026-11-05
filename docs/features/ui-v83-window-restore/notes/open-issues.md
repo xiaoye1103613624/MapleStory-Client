@@ -622,10 +622,23 @@ update_static_markers(); toggle_buttons(); update_npclist();`（`:242-247`）。
 越界保护会把 `has_map` 置 false 并退回 MIN。需要换一张**有 miniMap canvas 的图**再看，或从
 `Map.nx` 侧确认该图是否真的没烤小地图。
 
-### C2 小地图 −/＋ 缩放钮无法还原
-参考端顶带有蓝色「−」和灰色「＋」，但本包 `UIWindow.img/MiniMap` 只有 `BtMap`（36×12）；
-`BtMin/BtMax/BtSmall/BtBig/BtNpc` 与 `Window/Max` 子树**都不存在**。→ 素材代次差异，不是代码问题。
-要还原得换 UI 素材代次（同 C3）。
+### C2 小地图 −/＋ 缩放钮无法还原 —— ⚠ 2026-11-05 已翻案（结论作废）
+参考端顶带有蓝色「−」和灰色「＋」。旧结论「本包 `UIWindow.img/MiniMap` 只有 `BtMap`（36×12），
+`BtMin/BtMax/BtSmall/BtBig/BtNpc` 与 `Window/Max` 子树都不存在 ⇒ 素材代次差异、无法还原」
+**只对 `UIWindow.img/MiniMap` 这棵子树成立，被错误外推到了全包**。
+
+全包实测（`E:/MXD/BeiDou-Client-xy/Basic.img_runtime.json`，运行时散装 img 权威数据）：
+`Basic.img/BtMin`（蓝 −，横杠在第 7..8 行）与 `Basic.img/BtMax`（灰 +，十字）各 12×12 四态
+`{normal,mouseOver,pressed,disabled}/0`，项目聊天栏早已当真件使用
+（`README.md:70`、`evidence/w4-chatbar/coords.md:18` 逐像素 ASCII 比对完全一致）。
+`refcrops/minimap_5x.png` 顶带那两颗钮正是它们，之前把该帧排除出证据链是误判。
+
+2026-11-05 已完整还原：`UIMiniMap` 构造把 `BT_MIN/BT_MAX` 绑到
+`nl::nx::UI["Basic.img"]["BtMin"]/["BtMax"]`，去掉城镇强制 MAX、删 send_key 任意键调试环、
+补 `Setting<MiniMapType>::save()` + `Configuration::get().save()` 持久化、修 toggle_buttons
+两处宽度笔误；实机三态可点可切、跨图一致、重启保持。详见
+[docs/features/minimap-mode-switch/README.md](../../minimap-mode-switch/README.md)。
+`BtSmall/BtBig/BtNpc` 包内确无，仍为显式预留。
 
 ### C3 `UIOptionMenu` 只能是空壳
 本包 `GameOpt`/`SysOpt` 下**只有 `backgrnd`**（158×284 / 299×365），没有任何控件；且无
@@ -824,7 +837,14 @@ W3 的落地状态见 [../evidence/w1w3-hud/coords.md](../evidence/w1w3-hud/coor
 
 ---
 
-## F. 【需用户抉择】键位 action id 表错位（协议级，本线最严重的一条）
+## F. ~~键位 action id 表错位~~ —— **已按方案甲修复（2026-11-02，见 [f-keymap-action-translate.md](f-keymap-action-translate.md)）**
+
+> 修复口径：`Net/KeyMapTranslate.h` 双向翻译（收包 v83→本枚举、发包回译），`KeyAction.h` 与
+> 28 个 case 一字不动。四处映射：22→MONSTERCOLLECTION、23→CASHSHOP、24→ALLIANCECHAT、
+> 27→枚举空位（灭「`;` 开错窗」）。构建 GATE OK；真机五步复测配方见修复笔记。
+> 顺带更正：HUD「商城」钮的「40 vs 229 跨线必失败」结论过时（对比对象搞错，40 是
+> `ENTER_CASHSHOP` 而非 `CASHSHOP_OPERATION`），s9 `EnterCashShopHandler` 完整可用 ⇒
+> 商城钮与 `` ` `` 键都直接进商城，C5/D4 的「点了没反应/黄字提示」状态作废。
 
 **证据链（不靠抓帧，两条硬证据）**
 1. 封包：`packet_dump.log` 里 recv `4f 01`（=335/`0x14F` `KEYMAP`），body 451 字节
