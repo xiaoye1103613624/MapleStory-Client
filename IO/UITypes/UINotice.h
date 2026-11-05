@@ -21,6 +21,8 @@
 
 #include "../Components/Textfield.h"
 
+#include "../../Graphics/SpecialText.h"
+
 namespace ms
 {
 	class UINotice : public UIDragElement<PosNOTICE>
@@ -57,6 +59,8 @@ namespace ms
 		Texture bottom;
 		Texture bottombox;
 		Text question;
+		// OK tip：IDA sub_9929DD→Draw sub_99311B duration=1000 用 font style 19 白字 + style 20 描边 #355A84（A12）。
+		OutlinedText tip_question;
 		int16_t height;
 		NoticeType type;
 		Text::Alignment alignment;

@@ -13,7 +13,7 @@
 | --- | --- | --- | --- | --- |
 | 1 | WORLD_MAP_PLAYERS | ✅ 2026-11-05 | c2s 277 / s2c 376 | 已真机闭环，证据见下方「本次真机验收记录」；同图 0 玩家符合预期 |
 | 2 | USE_RETURN_SCROLL | ⏳ 待测 | c2s 85 | 回城卷双击 |
-| 3 | SoftKey：登录遮罩截图 | ⏳ 待测 | — | SoftKey 尾巴 |
+| 3 | SoftKey：登录遮罩截图 | ✅ 2026-11-05 | — | 根因 `screenshot_directory()` 已修并真机出图；见 `notes/scrolllock-rootcause.md` 与 `evidence/live-20261105-scrolllock-proof.png` |
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
 | 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | s2c 313 mode1 | 本机 look + 脚点 0.70；代码已闭环 |
 | 5b | Messenger blink / chatBalloon | ⏳ 待测 | s2c 313 mode6 | 打字泡 + 标题 blink；见 §5b |
@@ -31,9 +31,38 @@
 | 17 | CLICK_GUIDE | ⏳ 待测 | c2s 162 | SPAWN_GUIDE 后点引导场标 → MIMO/LILIN |
 | 18 | 隐藏门三态动画 | ⏳ 待测 | — | 靠近/离开隐藏门看 Start/Continue/Exit |
 | 19 | NPC 对话 A11b+A11c | ⏳ 待测 | c2s NPC_TALK_MORE | 下项发 selection；α/TEXT_Y/Next=`W-78`；见 npc-talk-utildlgex-align |
+| 22 | NPC tip 817–821 + Pet inset A11g | ⏳ 待测 | — | 校验 tip 样式；Pet speaker=2 输入 inset=25 |
 
 ---
 
+
+## 第二轮验收记录（2026-11-05 18:30–19:05，Plan 续作）
+
+> 范围：用户授权「全量闭环」+ 自备 dbx MCP + 一并修截图键。代码改动未提交（用户未授权 commit）。
+
+### 已闭环
+
+| 项 | 结论 | 证据 |
+| --- | --- | --- |
+| SoftKey 登录遮罩截图（#3） | ✅ 根因 = `IO/Window.cpp::screenshot_directory()` 对**已存在**的 exe 目录调用 `SDL_CreateDirectory` 失败即 `return ""`，请求全链路正常但从不落盘；改为 best-effort 创建并补 `SHOT` 节点日志；另加 `GLFW_KEY_PRINT_SCREEN` 等价键 | `notes/scrolllock-rootcause.md`；`boot_perf.log` 的 `request kc=281 → pending → consume → enter → dirfn → dir → write → saved`；`evidence/live-20261105-scrolllock-proof.png`（源 `MapleStory-20261105_185119.png`，1,112,547 字节） |
+| dbx 通道与只读基线 | ✅ stdio 直连用户自备 MCP（18 个工具，连接 `localhost/beidou`），导出角色/配置/键位/道具快照 | `notes/character-snapshot-before.json`、`notes/db-change-list.md` |
+| 构建与部署 | ✅ `tools/build_smoke.bat` 多次 `EXITCODE=0`；18:50:34 部署 exe 含修复（二进制含 `SHOT`、无旧 `screenshot: cannot create`）；19:02 并行会话重建后修复仍在 | — |
+
+### 仍待测 / 阻塞（显式预留）
+
+| 阻塞 | 影响项 | 补验路径 / 责任方 |
+| --- | --- | --- |
+| 聊天框 GM 命令自动注入失败：`!` 与空格被 `IO/UI.cpp:264-269` 的文本映射吞掉；`SendKeys` / 剪贴板 `Ctrl+V` / Unicode `SendInput` 三种方式均未产生 `0x31` 命令包（只出现普通聊天 `level30` 或动作包 `2c 00`） | #2/#9/#10/#11、原 harness 遗留 4 项（手雷 `0x6D` / 一键 AP `0x58` / Buff 取消 / 书袋双击）、#15/#16 等需等级/技能/道具前置的项 | **用户手输** `notes/gm-prereq-commands.md` 的命令补齐前置后点验；或授权执行 `notes/db-change-list.md` 的逐条 DML 后重登再自动验 |
+| 需第二角色 / 公会 / 自由市场 / 商城额度 | #4/#5/#5b/#6/#8/#12/#13/#14 | 需受控 DML 造数据（清单已列、**未执行**），由用户逐条确认 |
+| `game_config.use_server_auto_pot=false` | #7 `SET_HPMPALERT(4096)` 端到端回灌 | 优先管理端 8686 `/config/{latest}/updateConfig`；改后若需重启 s9 由用户执行 |
+| 并行会话高频改同一仓库 / 重建 exe / 结束客户端进程（17:05–19:02 连续提交，19:02:23 重建 exe），后段新客户端登录后未进频道 | 所有需长时间稳定客户端会话的项 | 待并行会话收工后重跑；本轮已避让其 `UINpcTalk` / `UIMessenger` / `LoginBackground` 等在途文件 |
+| 快照角色仍 lv1 / job0 / ap0 / 装备 8 件，无回城卷/技能书/召唤袋 | #2 及依赖道具的项 | 同 GM / DML 路径 |
+
+### 环境收尾
+
+`xy-config.yaml` 已按备份逐字节还原（`login.auto=false`、`debug.*` 全关）；调试日志作为证据保留；临时驱动脚本已清理。
+
+---
 
 ## 本次真机验收记录（2026-11-05 17:03，自动驱动）
 
@@ -212,7 +241,8 @@
 - **A11d 高亮（2026-11-05 已接线，待真机）**：悬停/↑↓ 后选项下应有黑底线 + 灰虚线 `#919191`；字色仍 DARKGREY。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
 - **A11e GetText/GetNumber（2026-11-05 已接线，待真机）**：正文下黑/白输入槽 + 内嵌光标；右下「确定」可点；OK/回车发包。证据：同上。
 - **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；原生 tip 817–821；Pet inset。
+- **A11g tip + Pet inset（2026-11-05 已接线，待真机）**：校验失败弹 tip 817–821（A12 白+`#355A84` 描边）；Pet `speaker&6` 输入 inset=25。证据：[a11g](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；ScriptMessage 全量 OnPacket；tip 820（位数下限，助手常 0）。
 
 ## 18. 隐藏门三态
 
@@ -259,7 +289,22 @@
 - **期望**：服务端仅在合法提交时推进；无崩；未回 SimHei。
 - **opcode**：c2s `NPC_TALK_MORE`。
 - **文档**：[npc-talk-utildlgex-align/evidence/a11f](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)
-- **仍预留**：原生 tip 文案（817–821）；Pet `speaker&6` inset=25；ScriptMessage 全量 OnPacket 逐行对齐。
+- **仍预留（非本项）**：见 §22 / ScriptMessage 全量 OnPacket。
+
+## 22. NPC tip 817–821 + Pet inset A11g
+
+- **前置**：
+  - tip：任意 `sendGetNumber(def,min,max)` / 带最小长度的 `sendGetText`。
+  - Pet：`speaker=2`（或 `(speaker&6)!=0`）的 GetText/GetNumber（非 Avatar 皮肤）。
+- **操作**：
+  1. GetNumber 输入字母 → 确定 → 弹 tip「Only numbers are allowed.»；对话窗不关；关 tip 后可继续改。
+  2. 输入 `<min` → tip 含「higher than {min}」；`>max` → 「lower than {max}」。
+  3. GetText 短于最小长度 → tip「at least {n} characters」。
+  4. 肉眼 tip：A12 白字 + 蓝灰描边（`#355A84`），α 实心；宋体路径（非 SimHei）。
+  5. Pet GetNumber：黑白输入槽左缘约 **x=25**（相对窗；非 157）；Avatar `speaker=1` 仍走固定槽、无黑白框。
+- **期望**：非法提交不发包；合法仍发包关窗；无崩。
+- **文档**：[a11g-tip-817-821-pet-inset-ida](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)
+- **仍预留**：tip 820；ScriptMessage 全量 OnPacket；Pet Say 正文 `TEXT_X`（无独立 inset 证据）。
 
 ## 7. SET_HPMPALERT
 

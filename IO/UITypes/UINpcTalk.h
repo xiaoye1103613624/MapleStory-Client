@@ -140,9 +140,11 @@ namespace ms
 		static constexpr int16_t BTN_PAIR_PITCH = 65;
 
 		// GetText/GetNumber 输入槽（IDA sub_9A83F6 / sub_9ACC20）：
-		//   content_left = 157（非 Avatar）；黑框 h=18、白底 h=16、Edit h=14；
+		//   content_left = (speaker&6)!=0 ? 25 : 157（Pet speaker=2 置位；非 Avatar 布局）；
+		//   黑框 h=18、白底 h=16、Edit h=14；
 		//   黑框 y = content_top + text_h + 2，白底 +3，Edit +5；宽 = W - 2*left ± 边。
 		static constexpr int16_t INPUT_LEFT = 157;
+		static constexpr int16_t INPUT_LEFT_PET = 25; // IDA sub_9ACC20 + this[441]
 		static constexpr int16_t INPUT_BLACK_H = 18;
 		static constexpr int16_t INPUT_WHITE_H = 16;
 		static constexpr int16_t INPUT_EDIT_H = 14;
@@ -249,5 +251,8 @@ namespace ms
 		void setup_input_field();
 		void clear_input_field();
 		bool dispatch_input_field();
+		// 校验失败 tip（IDA sub_9AB50A → sub_9929DD，StringPool 817–821）
+		void show_input_tip(const std::string& message);
+		int16_t input_content_left() const;
 	};
 }

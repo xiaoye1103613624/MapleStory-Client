@@ -79,7 +79,7 @@ GetNumber(msgtype=3): string talk, int def, int min, int max, int pad(=0)
 
 ## 5. 局限 / pending
 
-- 原生 tip 文案（string 817–821）与 `sub_9929DD` 未接
+- ~~原生 tip 文案（string 817–821）与 `sub_9929DD`~~ → **A11g 已接**（见 a11g）
 - ScriptMessage 完整 OnPacket 未逐行对齐；线参以服务端 PacketCreator + 9AC732/9AB50A 交叉为准
 - Avatar 窗总高与 `H-30` 映射用 `BTN_DY-4` 近似，真机 ±1～2px
-- Pet（speaker=2）inset=25 未单独接线
+- ~~Pet（speaker=2）inset=25~~ → **A11g 已接**（`(speaker&6)!=0` → 25）

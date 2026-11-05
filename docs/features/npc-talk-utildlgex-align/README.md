@@ -1,6 +1,6 @@
 # NPC 对话框 UtilDlgEx 原端对齐
 
-> 日期：2026-11-05 ｜ 本轮：A11f GetText Avatar + 包内 min/max
+> 日期：2026-11-05 ｜ 本轮：A11g tip 817–821 + Pet inset=25
 
 ## 本轮闭环
 
@@ -14,9 +14,10 @@
 | A11e GetText/GetNumber 布局 | ✅ IDA `0x9A83F6`/`0x9ACC20`：inset=157、黑/白框、Edit、BtOK |
 | A11f GetText Avatar 变体 | ✅ IDA `0x9A8716`：Edit 226×15@(19,H-73)；OK@158 / Close@208 @(H-30)；无黑白框 |
 | A11f 包内 min/max | ✅ GetNumber 解析 def/min/max；OK 全数字+范围校验；失败不关窗 |
+| A11g tip 817–821 | ✅ IDA `sub_9929DD`/`99311B`：A12 白+描边 `#355A84` α1；校验失败弹 UIOk |
+| A11g Pet inset=25 | ✅ IDA `sub_9ACC20`：`(speaker&6)!=0` → content_left=25 |
 | 宋体路线 | ✅ 未改字体路径；保持 A11M/A12M + 思源宋体 |
 | KeyDown 持续技松开取消 | ⏸ 证据不足：s9 仅有上行 `SKILL_EFFECT`、无 cancel recv |
-| 原生 tip 817–821 / Pet inset | ⏸ 显式预留 |
 
 ## 证据
 

@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UINpcTalk.h"
 
+#include "UINotice.h"
+
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
@@ -35,6 +37,7 @@
 
 #include <cctype>
 #include <climits>
+#include <cstdio>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -52,6 +55,19 @@ namespace ms
 		{
 			if (src)
 				buttons[id] = std::make_unique<MapleButton>(src);
+		}
+
+		// BeiDou StringPool（tools/beidou_stringpool.py / IDA sub_406455）：校验 tip 817–821。
+		constexpr const char* TIP_817 = "Only numbers are allowed.";
+		constexpr const char* TIP_818 = "You may only enter a number \r\nequal to or higher than %d.";
+		constexpr const char* TIP_819 = "You may only enter a number \r\nequal to or lower than %d.";
+		constexpr const char* TIP_821 = "Please enter at least %d characters.";
+
+		std::string format_tip(const char* fmt, int32_t value)
+		{
+			char buf[192];
+			std::snprintf(buf, sizeof(buf), fmt, value);
+			return std::string(buf);
 		}
 	}
 
@@ -195,12 +211,13 @@ namespace ms
 			if (!input_avatar_layout)
 			{
 				const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
-				const int16_t bx = static_cast<int16_t>(position.x() + INPUT_LEFT - 1);
+				const int16_t ileft = input_content_left();
+				const int16_t bx = static_cast<int16_t>(position.x() + ileft - 1);
 				const int16_t by = static_cast<int16_t>(position.y() + input_box_y);
-				const int16_t bw = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 3);
-				const int16_t wx = static_cast<int16_t>(position.x() + INPUT_LEFT);
+				const int16_t bw = static_cast<int16_t>(dlg_w - 2 * ileft + 3);
+				const int16_t wx = static_cast<int16_t>(position.x() + ileft);
 				const int16_t wy = static_cast<int16_t>(by + 1);
-				const int16_t ww = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 1);
+				const int16_t ww = static_cast<int16_t>(dlg_w - 2 * ileft + 1);
 				ColorBox(bw, INPUT_BLACK_H, Color::Name::BLACK, 1.0f)
 					.draw(DrawArgument(Point<int16_t>(bx, by)));
 				ColorBox(ww, INPUT_WHITE_H, Color::Name::WHITE, 1.0f)
@@ -1046,10 +1063,11 @@ namespace ms
 		}
 		else
 		{
-			// IDA sub_9A83F6：Edit @ (left+2, content_top+text_h+5)，h=14，w=W-(2*left+2)
-			edit_x = static_cast<int16_t>(position.x() + INPUT_LEFT + 2);
+			// IDA sub_9A83F6 / sub_9ACC20：Edit @ (left+2, …)；left = (speaker&6)?25:157
+			const int16_t ileft = input_content_left();
+			edit_x = static_cast<int16_t>(position.x() + ileft + 2);
 			edit_y = static_cast<int16_t>(position.y() + input_box_y + 3);
-			edit_w = static_cast<int16_t>(dlg_w - (2 * INPUT_LEFT + 2));
+			edit_w = static_cast<int16_t>(dlg_w - (2 * ileft + 2));
 			edit_h = INPUT_EDIT_H;
 		}
 		const Point<int16_t> tl(edit_x, edit_y);
@@ -1103,6 +1121,32 @@ namespace ms
 		input_active = false;
 	}
 
+	int16_t UINpcTalk::input_content_left() const
+	{
+		// IDA sub_9ACC20：this[441]=(speaker&6)!=0 → content_left 25，否则 157。
+		// Pet speaker=2 置位；Avatar speaker=1 的 (1&6)==0 仍 157（且走 9A8716 固定槽）。
+		if ((static_cast<uint8_t>(dlg_speaker) & 6u) != 0)
+			return INPUT_LEFT_PET;
+		return INPUT_LEFT;
+	}
+
+	void UINpcTalk::show_input_tip(const std::string& message)
+	{
+		// IDA sub_9AB50A 失败 → sub_9929DD（Notice tip，不关对话窗）。
+		input_field.set_state(Textfield::State::DISABLED);
+		UI::get().emplace<UIOk>(message, [this](bool)
+		{
+			if (input_active)
+			{
+				input_field.set_state(Textfield::State::FOCUSED);
+				UI::get().focus_textfield(&input_field);
+			}
+			if (buttons.count(Buttons::OK))
+				buttons[Buttons::OK]->set_state(Button::State::NORMAL);
+		});
+		LOG(LOG_DEBUG, "UINpcTalk: input tip len=" << message.size());
+	}
+
 	bool UINpcTalk::dispatch_input_field()
 	{
 		if (!input_active)
@@ -1111,11 +1155,12 @@ namespace ms
 		const std::string s = input_field.get_text();
 		if (type == TalkType::SENDGETTEXT)
 		{
-			// IDA sub_9AB50A：内部 dlgType==3 时 len < this+0xDC 拒收；线参常为 0。
+			// IDA sub_9AB50A：内部 dlgType==3 时 len < this+0xDC → tip 821；线参常为 0。
 			if (static_cast<int32_t>(s.size()) < input_params.text_min_len)
 			{
 				LOG(LOG_DEBUG, "UINpcTalk: GetText reject len=" << s.size()
 					<< " min=" << input_params.text_min_len);
+				show_input_tip(format_tip(TIP_821, input_params.text_min_len));
 				return false;
 			}
 			NpcTalkMorePacket(s).dispatch();
@@ -1125,22 +1170,26 @@ namespace ms
 		if (type == TalkType::SENDGETNUMBER)
 		{
 			// IDA sub_9AB50A：内部 dlgType==2 — 全数字、atoi64、min/max（this+0xD0/0xD4）。
-			// 线协议 msgtype=3=GetNumber（BeiDou getNPCTalkNum）；按 TalkType 校验，不套内部编号。
-			if (s.empty())
-				return false;
+			// tip 817 非数字；818 <min；819 >max / 越界负；空串 → atoi64=0 再走 min。
 			for (unsigned char ch : s)
 			{
 				if (ch < '0' || ch > '9')
 				{
 					LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject non-digit");
+					show_input_tip(TIP_817);
 					return false;
 				}
 			}
 			try
 			{
-				const long long n64 = std::stoll(s);
+				const long long n64 = s.empty() ? 0LL : std::stoll(s);
 				if (n64 < 0 || n64 > static_cast<long long>(INT32_MAX))
+				{
+					const int32_t tip_max = input_params.has_number_bounds
+						? input_params.max_number : INT32_MAX;
+					show_input_tip(format_tip(TIP_819, tip_max));
 					return false;
+				}
 				const int32_t n = static_cast<int32_t>(n64);
 				if (input_params.has_number_bounds)
 				{
@@ -1148,12 +1197,14 @@ namespace ms
 					{
 						LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject <min " << n
 							<< "<" << input_params.min_number);
+						show_input_tip(format_tip(TIP_818, input_params.min_number));
 						return false;
 					}
 					if (n > input_params.max_number)
 					{
 						LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject >max " << n
 							<< ">" << input_params.max_number);
+						show_input_tip(format_tip(TIP_819, input_params.max_number));
 						return false;
 					}
 				}
@@ -1163,6 +1214,7 @@ namespace ms
 			}
 			catch (...)
 			{
+				show_input_tip(TIP_817);
 				return false;
 			}
 		}

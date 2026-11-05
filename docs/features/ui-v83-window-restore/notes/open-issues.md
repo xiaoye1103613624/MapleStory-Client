@@ -324,6 +324,12 @@ IDA `0x9A8716`：Avatar Edit `(19,H-73) 226×15`，OK@158 / Close@208 @`H-30`，
 包：GetNumber `def/min/max`（BeiDou `getNPCTalkNum`）+ `sub_9AB50A` 全数字/范围校验；失败不关窗。  
 证据：[npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md](../../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
 
+### A11g 原生 tip 817–821 + Pet inset—— **已定案并接线（2026-11-05）**
+
+IDA `sub_9929DD` → Draw `sub_99311B`（duration=1000）：A12 白 α1 + 描边 `#355A84` α1；StringPool 817–821。  
+校验失败弹 `UIOk` tip，对话不关。Pet：`sub_9ACC20` `(speaker&6)!=0` → content_left=**25**。  
+证据：[npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md](../../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
+
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 
 04:42 那份**能正常在线一小时**的产物（md5 `51d3fe17…`，PID 49660），在我用 `_quit.py`

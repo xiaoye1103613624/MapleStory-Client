@@ -57,10 +57,26 @@ namespace ms
 		}
 		else if (type == NoticeType::OK)
 		{
+			// IDA sub_9929DD / Draw sub_99311B：duration==1000 → style19 白字(0xFFFFFFFF)+style20 描边(0xFF355A84)，字号 0x0C=12。
+			// α=1.0；本仓字体路径保持思源宋体（不跟原生 Arialdf）。
 			uint16_t maxwidth = top.width() - 6;
+			std::string tip = message;
+			for (size_t i = 0; i + 1 < tip.size();)
+			{
+				if (tip[i] == '\r' && tip[i + 1] == '\n')
+					tip.erase(i, 1);
+				else
+					++i;
+			}
 
 			position.shift_y(-8);
-			question = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, message, maxwidth);
+			// OutlinedText 默认无 maxwidth；五路同参 Text 保证折行一致。
+			tip_question.inner = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, tip, maxwidth);
+			tip_question.l = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::NOTICEOUTLINE, tip, maxwidth);
+			tip_question.r = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::NOTICEOUTLINE, tip, maxwidth);
+			tip_question.t = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::NOTICEOUTLINE, tip, maxwidth);
+			tip_question.b = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::NOTICEOUTLINE, tip, maxwidth);
+			question = tip_question.inner;
 		}
 
 		height = question.height();
@@ -117,7 +133,9 @@ namespace ms
 			box.draw(start);
 			start.shift_y(box.height());
 
-			if (type == NoticeType::YESNO && alignment == Text::Alignment::LEFT)
+			if (type == NoticeType::OK)
+				tip_question.draw(position + Point<int16_t>(131, 14));
+			else if (type == NoticeType::YESNO && alignment == Text::Alignment::LEFT)
 				question.draw(position + Point<int16_t>(31, 14));
 			else
 				question.draw(position + Point<int16_t>(131, 14));
