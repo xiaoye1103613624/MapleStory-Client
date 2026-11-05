@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-//	W5 TemporaryStatView — 原生节点仅 32×32 图标；明细列表本地绘制
+//	W5 TemporaryStatView — 原生节点仅 32×32 图标；明细列表本地绘制（宋体/原色）
 ////////////////////////////////////////////////////////////////////////////////
 #include "UITemporaryStatView.h"
 
@@ -10,6 +10,7 @@
 #include "../../Data/SkillData.h"
 #include "../../Data/ItemData.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Graphics/Geometry.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -22,7 +23,7 @@
 namespace ms
 {
 	UITemporaryStatView::UITemporaryStatView()
-		: title_label(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "TemporaryStat")
+		: title_label(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "临时属性")
 	{
 		position = Point<int16_t>(16, 80);
 		dimension = Point<int16_t>(220, 200);
@@ -94,7 +95,7 @@ namespace ms
 			}
 			else
 			{
-				row.title = "stat" + std::to_string(-row.skillid);
+				row.title = "状态" + std::to_string(-row.skillid);
 			}
 
 			char buf[96];
@@ -105,6 +106,7 @@ namespace ms
 				std::snprintf(buf, sizeof(buf), "%s  x%d", row.title.c_str(), (int)row.value);
 
 			rows.push_back(row);
+			// A11M = 宋体 11；WHITE 对齐原生明细字色
 			line_labels.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, buf);
 		}
 
@@ -116,13 +118,14 @@ namespace ms
 
 	void UITemporaryStatView::draw(float) const
 	{
-		// 半透明底（无完整 backgrnd；原生仅 32×32）
-		Color::Name fill = Color::Name::BLACK;
-		(void)fill;
-		if (has_assets && back_icon)
-			back_icon.draw(position);
+		// 原生仅 32×32 图标；明细区用半透明黑底（α≈0.55）托住宋体字
+		ColorBox panel(dimension.x(), dimension.y(), Color::Name::BLACK, 0.55f);
+		panel.draw(position);
 
-		title_label.draw(position + Point<int16_t>(8, 4));
+		if (has_assets && back_icon)
+			back_icon.draw(position + Point<int16_t>(4, 4));
+
+		title_label.draw(position + Point<int16_t>(has_assets ? 40 : 8, 4));
 		int16_t y = 22;
 		for (const auto& lab : line_labels)
 		{
