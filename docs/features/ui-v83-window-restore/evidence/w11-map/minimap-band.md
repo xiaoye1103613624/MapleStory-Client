@@ -27,8 +27,15 @@ MiniMap
 2. `UIMiniMap::update_canvas()` 用的常量 `n_top=29 / n_bot=14 / m_top=72 /
    m_bot=15 / side=6 / n_cap=60`、以及 Min 的 `8 / 1x / 4`，**与切片逐一对上**，
    九切片拼法本身没有错。`MAX_ADJ = 43` 也正好是 `72 - 29`。
-3. **本包没有 BtMin / BtMax / BtSmall / BtBig / BtNpc** —— 小地图上原生只有
-   一颗钮。之前渲染出「透明空壳钮」的问题（W11 已修）根因就在这。
+3. **`UIWindow.img/MiniMap` 子树没有 BtMin / BtMax / BtSmall / BtBig / BtNpc**
+   —— 小地图**这一棵子树**上只有一颗 `BtMap`。之前渲染出「透明空壳钮」的问题
+   （W11 已修）根因就在这。
+   ⚠ **2026-11-05 翻案**：这个「只有一颗钮」不能外推到全包 —— 全包
+   `Basic.img/BtMin`（蓝 −）/`BtMax`（灰 +）12×12 四态是现成真件（聊天栏已用，
+   `evidence/w4-chatbar/coords.md:18` 逐像素一致），已绑回 `UIMiniMap BT_MIN/BT_MAX`
+   并实机验证三态切换 + 持久化 + 重启保持，见
+   [docs/features/minimap-mode-switch/README.md](../../../minimap-mode-switch/README.md)。
+   下文 §4/§7 基于「全包只有一颗钮」的推论与 `minimap_5x.png` 排除结论同批作废。
 
 ## 2 顶带分区（决定性证据）
 
@@ -86,10 +93,14 @@ if (auto wm = UI::get().get_element<UIWorldMap>()) { if (!wm->is_active()) wm->m
 else UI::get().emplace<UIWorldMap>();
 ```
 
-三态切换仍留在 `send_key` 的调试分支（UIMiniMap.cpp:406-416），验证 MIN/NORMAL/MAX
-时照旧可用。**这一条是行为改动，联合验证时需要用户确认**（见 §6）；
-如果用户先前「点击只缩放」的实测确实来自原生，则本改动需要回退，
-届时以原生为准重写。
+⚠ **2026-11-05 翻案**：`BT_MAP` 语义（打开世界地图）保持正确；但三态切换**不再**
+靠 `send_key` 调试分支 —— 那个「任意键循环切态」是非原生行为，已删除。现在
+MIN/NORMAL/MAX 由顶带 `Basic.img/BtMin`（−）/`BtMax`（+）真件逐级切换，
+`button_pressed` 写回 `Setting<MiniMapType>` 并 `Configuration::get().save()` 落盘，
+去城镇强制 MAX 后换图/重启都保持同一全局态。实机验证见
+[docs/features/minimap-mode-switch/README.md](../../../minimap-mode-switch/README.md)。
+下面 §6 第 5 项「user_type 只由调试键改、需确认是否保留」同步作废：已确认为
+全局持久化项、实机坐实。
 
 ## 5 顺带核对通过（未改）
 
@@ -107,14 +118,17 @@ else UI::get().emplace<UIWorldMap>();
 2. NORMAL 态：街道名与画布上沿的叠压关系是否与 `d15f70a2` 一致。
 3. **点「大地图」钮 → 应打开世界地图**（§4 行为改动，需用户拍板）。
 4. 换一张 `info/mapMark` 为空的地图，确认标记缺失时不崩、不留黑块。
-5. `user_type`（Setting<MiniMapType>）在钮改语义后成为「只由调试键改」的存档项，
-   需要用户确认是否保留。
+5. ⚠ `user_type`（Setting<MiniMapType>）**已定案保留并落地**（2026-11-05）：
+   它是全局单一 `minimap.type`，`button_pressed` 写回 + `Configuration::get().save()`
+   落盘到 `Settings`，跨图/重启保持同一态，实机坐实 —— 不再是「只由调试键改」。
 
 ## 7 已知不足 / 阻塞
 
 - 本包只有两张极小的小地图截图，**文字基线未能用像素配准钉死**，
   现在的 22 / 39 是「切片分区 + 字量模型」的推导值，误差估计 ±2px。
-- `refcrops/minimap_5x.png`（640×720）里有 `−` / `+` 两颗钮，与本包
-  「只有 BtMap」矛盾 ⇒ 该图**不是本包客户端**的截图，只能当版式参考，
-  不能当按钮清单依据。本文件已把它排除在证据链外。
+- ⚠ **2026-11-05 翻案**：`refcrops/minimap_5x.png`（640×720）里的 `−` / `+`
+  两颗钮**正是本包全包现成真件** `Basic.img/BtMin`（蓝 −）/`BtMax`（灰 +），
+  之前以「`MiniMap` 子树只有 BtMap」为由把它排除出证据链是**错误外推**（把子树
+  结论当全包结论）。该帧已回归为三态版式与按钮的还原目标，实机抓帧坐实，
+  见 [docs/features/minimap-mode-switch/README.md](../../../minimap-mode-switch/README.md)。
 - 无 `ida-pro-mcp`，`BtMap` 的处理函数无法从二进制侧确认（§4 属资源语义推断）。

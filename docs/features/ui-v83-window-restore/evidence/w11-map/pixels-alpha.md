@@ -87,5 +87,10 @@ MinMap{...}
 title
 ```
 
-参考端顶带上的蓝色「−」/灰色「＋」两颗缩放钮在本包**没有对应节点**
-（`BtMin/BtMax/BtSmall/BtBig/BtNpc`、`Window/Max` 子树均不存在）→ 素材代次差异，非代码缺陷。
+⚠ **2026-11-05 翻案**：上面这段清单只列了 `UIWindow.img/MiniMap` 子树，
+参考端顶带上的蓝色「−」/灰色「＋」两颗缩放钮在**全包**是有真件的：
+`Basic.img/BtMin`（蓝 −）/`BtMax`（灰 +）12×12 四态，聊天栏早已使用
+（`evidence/w4-chatbar/coords.md:18` 逐像素一致）。「MiniMap 子树没有」≠「本包没有」，
+旧「素材代次差异、非代码缺陷」结论作废。已绑回 `UIMiniMap BT_MIN/BT_MAX` 并实机
+坐实三态 + 持久化 + 重启保持，见
+[docs/features/minimap-mode-switch/README.md](../../../minimap-mode-switch/README.md)。

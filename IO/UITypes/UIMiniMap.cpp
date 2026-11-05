@@ -29,6 +29,7 @@
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Configuration.h"
 #include "../../Constants.h"
 
 #include <cmath>
@@ -75,14 +76,31 @@ namespace ms
 
 		if (MiniMap)
 		{
-			// 本包 UIWindow.img/MiniMap 只有 BtMap（36x12，origin 0）；BtMin/BtMax/
-			// BtSmall/BtBig/BtNpc 是越代件，包内不存在，请求它们只会得到透明空壳。
+			// 「大地图」钮（36x12 橙底白字）来自本包 UIWindow.img/MiniMap/BtMap，
+			// 语义是打开世界地图（见 evidence/w11-map/minimap-band.md §4）。
 			nl::node btmap = MiniMap["BtMap"];
 
 			if (UiAssetResolve::usable(btmap))
 				buttons[Buttons::BT_MAP] = std::make_unique<MapleButton>(btmap, Point<int16_t>(0, 0));
 			else
 				UiAssetResolve::diag_once("minimap btmap", "UIWindow.img/MiniMap/BtMap missing");
+
+			// 逐级缩放钮用全包现成真件：Basic.img/BtMin（蓝 −）与 BtMax（灰 +），
+			// 12x12、normal/pressed/mouseOver/disabled 四态齐全，聊天栏已按同一
+			// 口径绑定（UIChatBar.cpp:183-184）；逐像素比对见
+			// evidence/w4-chatbar/coords.md:18。MiniMap 子树下没有这两颗钮，但
+			// 它们本就不是 MiniMap 专属资源，而是全包共用的通用缩放按钮。
+			nl::node basic = nl::nx::UI["Basic.img"];
+
+			if (UiAssetResolve::usable(basic["BtMin"]))
+				buttons[Buttons::BT_MIN] = std::make_unique<MapleButton>(basic["BtMin"], Point<int16_t>(0, 0));
+			else
+				UiAssetResolve::diag_once("minimap btmin", "Basic.img/BtMin missing");
+
+			if (UiAssetResolve::usable(basic["BtMax"]))
+				buttons[Buttons::BT_MAX] = std::make_unique<MapleButton>(basic["BtMax"], Point<int16_t>(0, 0));
+			else
+				UiAssetResolve::diag_once("minimap btmax", "Basic.img/BtMax missing");
 		}
 
 		region_text = OutlinedText(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
@@ -172,14 +190,20 @@ namespace ms
 			mapid = mid;
 			Map = NxHelper::Map::get_map_node_name(mapid);
 
-			nl::node town = Map["info"]["town"];
 			nl::node miniMap = Map["miniMap"];
 
-			// Official tutorial maps ship miniMap canvases up to ~6000px wide.
-			// Uploading those into the 8192 atlas on the main thread freezes the
-			// client (black screen + Not Responding) right after enter-game.
-			// Guard both the width/height metadata AND the canvas bitmap itself —
-			// some packs report small metadata while canvas pixels are huge.
+			// A tutorial map can ship a giant miniMap canvas bitmap (e.g. 5944x1311)
+			// that freezes the 8192 atlas upload on the main thread right after
+			// enter-game (black screen + Not Responding). Guard ONLY the canvas
+			// bitmap pixels (bmp_w/bmp_h) with the 2048 edge limit.
+			//
+			// miniMap["width"]/["height"] are the map's WORLD extents (Henesys =
+			// 7444x1391), NOT the canvas bitmap size (Henesys canvas = 465x86).
+			// Comparing those world extents to 2048 used to reject virtually every
+			// normal map: has_map=false collapsed the mini-map into the MIN strip —
+			// no region icon, no two-line label, no scene preview. That is why the
+			// same account/map shows a full mini-map in the native client but an
+			// empty strip here — the data was always present, only this gate was wrong.
 			constexpr int32_t kMaxCanvasEdge = 2048;
 			int32_t canvas_w = miniMap ? static_cast<int32_t>(miniMap["width"]) : 0;
 			int32_t canvas_h = miniMap ? static_cast<int32_t>(miniMap["height"]) : 0;
@@ -198,9 +222,11 @@ namespace ms
 				}
 			}
 
+			// canvas_w/canvas_h are world extents: only require them positive so the
+			// scale/center_offset maths below stays valid. The atlas guard is bmp_bad,
+			// which looks at the actual bitmap that gets uploaded into the atlas.
 			const bool meta_bad = !miniMap
-				|| canvas_w <= 0 || canvas_h <= 0
-				|| canvas_w > kMaxCanvasEdge || canvas_h > kMaxCanvasEdge;
+				|| canvas_w <= 0 || canvas_h <= 0;
 			const bool bmp_bad = bmp_w <= 0 || bmp_h <= 0
 				|| bmp_w > kMaxCanvasEdge || bmp_h > kMaxCanvasEdge;
 			const bool canvas_too_large = meta_bad || bmp_bad;
@@ -222,10 +248,10 @@ namespace ms
 			{
 				has_map = true;
 
-				if (town && town.get_bool())
-					type = Type::MAX;
-				else
-					type = user_type;
+				// 原生 minimap 模式是全局 UI 设置、跨图保持：不因 town 强制
+				// 切到 MAX，换图也不重置。用户通过 −/＋ 钮选的态写进
+				// minimap.type（见 button_pressed::persist），换图后沿用 user_type。
+				type = user_type;
 			}
 
 			if (miniMap)
@@ -340,7 +366,7 @@ namespace ms
 				std::string name = n->get_name();
 				std::string func = n->get_func();
 
-				UI::get().show_map(Tooltip::Parent::MINIMAP, name, func, {}, false, false);
+				UI::get().show_map(Tooltip::Parent::MINIMAP, name, func, {}, true, false);
 				break;
 			}
 		}
@@ -364,7 +390,7 @@ namespace ms
 					{
 						found = true;
 
-						UI::get().show_map(Tooltip::Parent::MINIMAP, portal_name, "", portal_tm, false, true);
+						UI::get().show_map(Tooltip::Parent::MINIMAP, portal_name, "", portal_tm, true, true);
 						break;
 					}
 				}
@@ -406,33 +432,39 @@ namespace ms
 			else if (!wm->is_active()) wm->makeactive();
 			return;
 		}
-		if (has_map)
-		{
-			if (type < Type::MAX)
-				type++;
-			else
-				type = Type::MIN;
-
-			user_type = type;
-
-			toggle_buttons();
-		}
+		// MIN/NORMAL/MAX 由 BT_MIN/BT_MAX 驱动（button_pressed），
+		// 原生没有「任意键循环切态」的调试分支，已移除。
 	}
 
 	Button::State UIMiniMap::button_pressed(uint16_t buttonid)
 	{
+		// 全局单态：切态后写回 minimap.type 并落盘，跨图 / 重启保持。
+		// Setting<>::save 只改内存项，落盘必须显式 Configuration::get().save()。
+		auto persist = [this]()
+		{
+			user_type = type;
+			Setting<MiniMapType>::get().save(static_cast<uint8_t>(type));
+			Configuration::get().save();
+		};
+
 		switch (buttonid)
 		{
 			case BT_MIN:
 			{
-				type -= 1;
+				if (type > Type::MIN)
+					type -= 1;
+
+				persist();
 				toggle_buttons();
 
 				return type == Type::MIN ? Button::State::DISABLED : Button::State::NORMAL;
 			}
 			case BT_MAX:
 			{
-				type += 1;
+				if (type < Type::MAX)
+					type += 1;
+
+				persist();
 				toggle_buttons();
 
 				return type == Type::MAX ? Button::State::DISABLED : Button::State::NORMAL;
@@ -448,11 +480,9 @@ namespace ms
 			case BT_MAP:
 			{
 				// 这颗钮的贴图就是「大地图」三个字（UIWindow.img/MiniMap/BtMap/normal/0，
-				// 36x12 橙底白字，见 evidence/w11-map/minimap-band.md §4），本包 MiniMap
-				// 节点下也只有 BtMap 一颗钮（无 BtMin/BtMax/BtSmall/BtBig/BtNpc）。
-				// 所以它的语义是「打开大地图」，不是缩放小地图；小地图的
-				// MIN/NORMAL/MAX 由 Map/info/town 自动决定（城镇 -> MAX）。
-				// 缩放切换仍保留在 send_key 的调试分支里，便于验证三种态。
+				// 36x12 橙底白字，见 evidence/w11-map/minimap-band.md §4）：打开世界地图。
+				// MIN/NORMAL/MAX 由 BT_MIN/BT_MAX（Basic.img/BtMin|BtMax 真件）逐级切换，
+				// 选中的态持久化到 minimap.type，换图 / 重启保持。
 				if (auto wm = UI::get().get_element<UIWorldMap>())
 				{
 					if (!wm->is_active())
@@ -581,7 +611,7 @@ namespace ms
 			if (Button* b = btn(Buttons::BT_MIN))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
-			bt_min_x += bt_max_width;
+			bt_min_x += bt_min_width;
 
 			if (Button* b = btn(Buttons::BT_MAX))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
@@ -593,7 +623,10 @@ namespace ms
 			if (Button* b = btn(Buttons::BT_BIG))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
-			bt_min_x += bt_max_width;
+			// SMALL/BIG 未注册（本包无件，显式预留）时 small_w=0，不推进；
+			// 与 :588 起点 middle_right_x - (bt_min+small+bt_max+bt_map+npc) 对称，
+			// 保证 BT_MAP 精确右对齐、不溢出。原笔误 += bt_max_width 会右移 13px。
+			bt_min_x += small_w;
 
 			if (Button* b = btn(Buttons::BT_MAP))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
@@ -702,8 +735,10 @@ namespace ms
 		map_draw_origin_y = n_top;
 		middle_right_x = W;
 
-		// Min 三切片收缩条（左8 / 中平铺 / 右4，高20）。
-		int16_t W_min = combined_text_width + bt_map_width + 18;
+		// Min 三切片收缩条（左8 / 中平铺 / 右4，高20）。注册 BT_MIN/BT_MAX 后背景条
+		// 必须容纳两颗 12x12 缩放钮：宽度与 toggle_buttons():548 的 min_dimensions
+		// 对齐（combined_text_width + 11 + bt_min_width + bt_max_width + bt_map_width + 7）。
+		int16_t W_min = combined_text_width + bt_min_width + bt_max_width + bt_map_width + 18;
 		int16_t body_w_min = W_min - 8 - 4;
 
 		min_sprites.emplace_back(slice(Min["w"], 0, 0, 0, 0));
