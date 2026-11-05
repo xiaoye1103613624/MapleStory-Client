@@ -244,14 +244,17 @@ namespace ms
 
 	void GachaponBoxHandler::handle(InPacket& recv) const
 	{
-		int8_t mode = recv.available() ? recv.read_byte() : 0;
-		auto ui = UI::get().get_element<UIRemoteGachapon>();
-		if (!ui) ui = UI::get().emplace<UIRemoteGachapon>();
-		else if (!ui->is_active()) ui->makeactive();
+		// s9 PacketCreator.UseTreasureBox(itemId)：SUCCESS_IN_USE_GACHAPON_BOX + int
+		// （UseTreasureChestHandler 开金/银宝箱成功后下发）。不是 RemoteGachapon。
+		const int32_t item_id = recv.available() >= 4 ? recv.read_int() : 0;
+		auto ui = UI::get().get_element<UITreasureBox>();
+		if (!ui)
+			ui = UI::get().emplace<UITreasureBox>();
 		if (ui)
-			ui->set_result(mode);
+			ui->apply_result(item_id);
 		while (recv.available())
 			recv.skip_byte();
+		LOG(LOG_DEBUG, "GachaponBoxHandler: TreasureBox item=" << item_id);
 	}
 
 	void FamilyInfoHandler::handle(InPacket& recv) const

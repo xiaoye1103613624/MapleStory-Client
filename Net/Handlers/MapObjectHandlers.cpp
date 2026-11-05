@@ -24,7 +24,6 @@
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIMiscShells.h"
-#include "../../IO/UITypes/UITreasureBox.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIItemInventory.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
@@ -898,32 +897,10 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 
+		// HitReactor：只驱动 Reactor 动画/换态。金/银宝箱 UI 走道具
+		// UseTreasureChest → SUCCESS_IN_USE_GACHAPON_BOX（GachaponBoxHandler），
+		// 不得在任意 state>0 的地图反应堆上超发 UITreasureBox（G10）。
 		Stage::get().get_reactors().trigger(oid, state);
-
-		// 宝箱：ensure TreasureBox；开箱(state≥4)无背包时场标
-		if (state > 0)
-		{
-			auto box = UI::get().get_element<UITreasureBox>();
-			if (!box) box = UI::get().emplace<UITreasureBox>();
-			else if (!box->is_active()) box->makeactive();
-			if (box)
-				box->set_opened(state >= 4);
-			if (state >= 4)
-			{
-				if (auto inv = UI::get().get_element<UIItemInventory>())
-				{
-					if (inv->is_active())
-						return;
-				}
-				auto& markers = Stage::get().get_field_markers();
-				const int32_t mid = oid ^ 0x34000000;
-				if (markers.contains(mid))
-					markers.set_label(mid, "Chest opened");
-				else
-					markers.spawn(mid, FieldMarker::Kind::DOOR, point + Point<int16_t>(0, -40),
-						"Chest opened", 0, 2500);
-			}
-		}
 		(void)point;
 		(void)stance;
 	}

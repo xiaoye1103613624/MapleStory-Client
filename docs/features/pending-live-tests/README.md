@@ -37,6 +37,7 @@
 | 25 | AskBoxText A11j | ⏳ 待测 | s2c 304 / c2s 60 | `sendAskBoxText`；OK `(13,1,str)`；Cancel `(13,0)`；单行局限 |
 | 29 | G11 场标贴图 | ⏳ 待测 | s2c Catch/Chalk/CharBox/ItemFX | Catch 成败圈；黑板 sample；店招 signboard；ItemEff 无英文名牌 |
 | 30 | 风筝 iconReward | ⏳ 待测 | s2c SPAWN_KITE 271 | 508 风筝动画 + 留言白字；收起/无法放置 |
+| 31 | G10 金/银宝箱 | ⏳ 待测 | c2s UseTreasureChest / s2c 117 | 踩普通 Reactor 不弹窗；双击 4280000/1+钥匙见 opened 皮肤 |
 
 ---
 
@@ -393,6 +394,15 @@
 - **opcode**：s2c 304 msgtype 9/10/14；c2s 60。
 - **文档**：[a11n-mirror-ani-btmain](../npc-talk-utildlgex-align/evidence/a11n-mirror-ani-btmain.md) · [a11m](../npc-talk-utildlgex-align/evidence/a11m-askpet-dlgtype6-full-ui.md) · [a11l](../npc-talk-utildlgex-align/evidence/a11l-askpet-mirror-ida.md)
 - **仍预留**：AskPet 亲密/饱食原生位图条（无 gage 资源，ColorBox）。
+
+## 31. G10 金/银宝箱（TreasureBox）
+
+- **前置**：ETC 有 `4280000`/`4280001`，现金栏有对应钥匙 `5490000`/`5490001`；另备一张有普通 Reactor 的图。
+- **操作 / 期望**：
+  1. 踩/打普通 Reactor → **不应**弹出 TreasureBox 窗，也不应出现英文 `"Chest opened"` 场标；Reactor 动画/掉落照常。
+  2. 双击金/银宝箱 → 出站 UseTreasureChest；成功后入站开 `UITreasureBox` opened 皮肤（金=variant0 / 银=variant1）。
+  3. Esc 关窗；无钥匙/栏位满时服务端 tip，客户端不崩。
+- **文档**：[g10-treasure-box-semantics](../g10-treasure-box-semantics/)
 
 ## 7. SET_HPMPALERT
 
