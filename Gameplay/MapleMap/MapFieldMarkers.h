@@ -22,8 +22,10 @@ namespace ms
 		void spawn(int32_t oid, FieldMarker::Kind kind, Point<int16_t> pos, const std::string& label, int32_t skill_id = 0, int32_t lifetime_ms = 0);
 		void spawn_summon(int32_t oid, int32_t owner_cid, int32_t skill_id, Point<int16_t> pos,
 			int8_t skill_level = 0, int32_t lifetime_ms = 0);
-		void spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, Point<int16_t> pos,
-			int32_t lifetime_ms = 60000);
+		// SPAWN_MIST：矩形 box + mist_type/level 驱动 Skill tile 平铺（见 MapMist）。
+		void spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, int32_t mist_type,
+			int8_t skill_level, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+			int32_t lifetime_ms = 0);
 		// G6 mystic door（真对象化）：owner 即门 id（s9 spawnDoor/RemoveDoor 同键）。
 		// 重复下发只刷新 launched/位置（放门→收回→再放门场景）。
 		void spawn_door(int32_t owner, Point<int16_t> pos, bool launched);

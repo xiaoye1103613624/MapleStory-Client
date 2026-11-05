@@ -1,6 +1,6 @@
 # 地图对象逻辑还原（map-object-parity）
 
-> 状态：波1/2/3 已完成并提交；波4/5（隐藏门三态、迷雾区域、风筝/商店盒贴图）按证据边界显式预留。
+> 状态：波1/2/3 已完成并提交；隐藏门三态 / 迷雾区域 / 反应堆 idle 已后续闭合；余风筝/商店盒等按证据边界显式预留。
 > 适用客户端：MapleStory-Client（Journey 系）· 权威参照：BeiDou-Server_s9 源码 + BeiDou.exe V17.7（IDA/REA）+ Data/*.img（自研 nlnx 探针）
 > 产物目录：`docs/features/map-object-parity/`
 > 日期：2026-11-03
@@ -86,7 +86,7 @@ MapHelper portal/game 三族：pv(0..7 帧样式族)/ph(default 三态)/psh(1..4
 | 项 | 原因 | 解锁路径 |
 | --- | --- | --- |
 | 隐藏门三态动画（portalStart/Exit） | ✅ 2026-11-05 已接（每门独立 Animation + HidePhase；见 [hidden-portal-tristate](../hidden-portal-tristate/)） | pending §18 真机 |
-| 迷雾区域渲染（矩形平铺贴图） | 贴图键未定位（MapHelper/BasicEff 无命中） | IDA 函数级：CField 雾绘制或 OnPacket 273 处理器反编译 |
+| 迷雾区域渲染（矩形平铺贴图） | ✅ 2026-11-05 已接（Skill tile 平铺；见 [mist-area-render](../mist-area-render/)） | pending 真机 |
 | 出生特效播放 | 本数据无 Mob/SpecialEff.img（0009000.img 不存在） | 资源补齐（图鉴站）后接 effect>0 |
 | 风筝/商店盒/Evan 龙贴图 | 同上，字符串池无直接命中 | IDA `sub_531325` 分发器 case 271/265/181 反编译 |
 | BossHP 多目标队列/名牌色表 | 原生缓存规则未取证 | IDA DualMobGauge 状态函数深读 |

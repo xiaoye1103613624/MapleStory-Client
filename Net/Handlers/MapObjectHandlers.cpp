@@ -1348,14 +1348,19 @@ namespace ms
 			<< " owner=" << owner << " skill=" << skill << " lv=" << (int)level
 			<< " box=(" << x1 << "," << y1 << ")-(" << x2 << "," << y2 << ")");
 
-		// G4 语义修正：存活期由服务端 REMOVE_MIST 驱动（s9 spawnMist 的 duration
-		// 只进服务端 Timer，MapleMap.java:2156-2164，包内无时长字段）⇒ 客户端
-		// 不再写死 60000 自杀（毒雾 duration 可到数分钟，写死会提前吞雾）。
-		Stage::get().get_field_markers().spawn_mist(oid, owner, skill, pos, 0);
+		// G4：存活期由 REMOVE_MIST 驱动（包内无 duration）⇒ lifetime=0。
+		// 区域贴图：Skill tile 平铺（IDA sub_432776 / MobSkill tile 串），非 Map/Effect。
+		if (!havebox)
+		{
+			// 短包无框：退化为点雾（1×1），仍尝试加载 tile。
+			x1 = pos.x();
+			y1 = pos.y();
+			x2 = x1 + 1;
+			y2 = y1 + 1;
+		}
 
-		// 类型/尺寸交给波 3 的区域渲染（部署 Map/Effect.img 无 mist 素材，
-		// 显式预留见报告 G4）；锚点、type、level 字节已对齐消费。
-		(void)mist_type; (void)x2; (void)y2; (void)level;
+		Stage::get().get_field_markers().spawn_mist(
+			oid, owner, skill, mist_type, level, x1, y1, x2, y2, 0);
 
 		while (recv.available())
 			recv.skip_byte();

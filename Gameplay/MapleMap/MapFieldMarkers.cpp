@@ -20,6 +20,7 @@
 #include "../../Gameplay/Movement.h"
 #include "../../Constants.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <cmath>
@@ -100,20 +101,21 @@ namespace ms
 		markers.add(std::make_unique<MapSummon>(oid, owner_cid, skill_id, pos, skill_level, lifetime_ms));
 	}
 
-	void MapFieldMarkers::spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, Point<int16_t> pos,
+	void MapFieldMarkers::spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, int32_t mist_type,
+		int8_t skill_level, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 		int32_t lifetime_ms)
 	{
-		if (auto existing = markers.get(oid))
-		{
-			if (auto* fm = dynamic_cast<FieldMarker*>(existing.get()))
-				fm->set_label("Mist " + std::to_string(skill_id));
-			existing->set_position(pos);
-			existing->makeactive();
-			(void)owner_cid;
-			(void)lifetime_ms;
-			return;
-		}
-		markers.add(std::make_unique<MapMist>(oid, owner_cid, skill_id, pos, lifetime_ms));
+		Point<int16_t> pos(
+			static_cast<int16_t>(std::clamp(x1, -32768, 32767)),
+			static_cast<int16_t>(std::clamp(y1, -32768, 32767)));
+
+		// 同 oid 整包刷新：雾区矩形/技能可能变，重建真对象（对齐门/召唤兽刷新语义）。
+		if (markers.get(oid))
+			markers.remove(oid);
+
+		markers.add(std::make_unique<MapMist>(
+			oid, owner_cid, skill_id, mist_type, skill_level, x1, y1, x2, y2, lifetime_ms));
+		(void)pos;
 	}
 
 	void MapFieldMarkers::spawn_door(int32_t owner, Point<int16_t> pos, bool launched)
