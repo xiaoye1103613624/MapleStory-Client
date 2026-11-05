@@ -758,6 +758,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UITermsOfService.h" />
     <ClInclude Include="IO\UITypes\UIUserList.h" />
     <ClInclude Include="IO\UITypes\UIWorldMap.h" />
+    <ClInclude Include="Net\Handlers\WorldMapHandlers.h" />
     <ClInclude Include="IO\UITypes\UIMapMobPanel.h" />
     <ClInclude Include="IO\UITypes\UIMapSearchPanel.h" />
     <ClInclude Include="IO\UITypes\UIWorldSelect.h" />

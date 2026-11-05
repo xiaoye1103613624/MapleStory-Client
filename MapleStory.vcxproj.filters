@@ -474,6 +474,9 @@
     <ClCompile Include="Net\Handlers\WaveAShellHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\DueyHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1257,6 +1260,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WaveAShellHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\WorldMapHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UICharSelect.h">
