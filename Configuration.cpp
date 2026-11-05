@@ -295,6 +295,7 @@ namespace ms
 		settings.emplace<PosFAMILY>();
 		settings.emplace<PosFAMILYTREE>();
 		settings.emplace<PosMEMO>();
+		settings.emplace<PosGUILDBBS>();
 		settings.emplace<PosPARTYRACE>();
 		settings.emplace<MiniMapType>();
 		settings.emplace<MiniMapSimpleMode>();

@@ -7,7 +7,7 @@
 | 登录遮罩叠图 | knobs 已锁（r201 playbook） | 需 `evidence/r20/current_shots/` 截图对照 |
 | PersonalShop CREATE FM | SoftKey 店名 → `HiredMerchantCreatePacket`（514/503） | 需自由市场图持有许可证点测 |
 | Messenger 立绘 | NameBar 脚点 + scale 0.70（r495） | 需实机截图再微调 |
-| Guild BBS | SoftKey `B` 全包出站；s2c 写入公会窗 `[BBS]` 摘要栏 | 有公会后 `B`→List 验收多页签（GuildBBS.img 独立窗仍预留） |
+| Guild BBS | 公会窗 `B` → `UIGuildBBS` 完整窗 + List；摘要栏仍同步 | 见 [guild-bbs-ui](../guild-bbs-ui/) / pending §12 |
 
 ## 本轮代码补强
 - `UIGuild::set_bbs_summary`：列表/帖摘要与公告分栏绘制

@@ -949,6 +949,12 @@ namespace ms
 		PosMEMO() : PointEntry("ui.position.memo", "(280, 100)") {}
 	};
 
+	/// 公会 BBS 窗默认落点（GuildBBS.img/backgrnd 734×526，居中偏上）
+	struct PosGUILDBBS : public Configuration::PointEntry
+	{
+		PosGUILDBBS() : PointEntry("ui.position.guildbbs", "(40, 40)") {}
+	};
+
 	struct PosPARTYRACE : public Configuration::PointEntry
 	{
 		PosPARTYRACE() : PointEntry("ui.position.partyrace", "(20, 80)") {}

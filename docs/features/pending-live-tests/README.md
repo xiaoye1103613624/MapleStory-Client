@@ -3,7 +3,7 @@
 > 维护约定：测不了/未测的写这里，步骤列全；已闭合标 ✅ + 日期 + 证据路径。  
 > 本轮（2026-11-05）按用户改口：**不做桌面点测**，仅维护步骤供用户统一测。
 
-相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/)
+相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/)
 
 ---
 
@@ -16,12 +16,13 @@
 | 3 | SoftKey：登录遮罩截图 | ⏳ 待测 | — | SoftKey 尾巴 |
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
 | 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | — | NameBar 脚点 |
-| 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | SoftKey `B` |
+| 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | 公会窗摘要栏（兼容） |
 | 7 | SET_HPMPALERT | ⏳ 待测 | c2s 4096 / s2c 扩展 | Wave1 已接线；端到端需服务端配置 |
 | 8 | PICK_ALL_CHAR | ⏳ 待测 | c2s 14 / 32 | VAC 选角（本轮修正误发 19） |
 | 9 | HEAL_OVER_TIME | ⏳ 待测 | c2s 89 | 自然回复上报 |
 | 10 | TOUCH_MONSTER_ATTACK | ⏳ 待测 | c2s 47 | 身体压力/能量满触怪 |
 | 11 | CANCEL_DEBUFF | ⏳ 待测 | c2s 99 | s9 handler 空实现；仅协议对齐 |
+| 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
 
 ---
 
@@ -65,9 +66,23 @@
 
 ### 6. Guild BBS 摘要
 - **前置**：已加入公会。
-- **操作**：SoftKey `B` → 开公会窗看 `[BBS]` 摘要栏。
-- **期望**：列表/帖摘要与公告分栏；完整 GuildBBS.img 多页签仍属后续 UI 票。
-- **opcode**：c2s `BBS_OPERATION=155`。
+- **操作**：开公会窗 → 看 `[BBS]` 摘要栏（打开完整 BBS 窗后回包也会同步摘要）。
+- **期望**：列表/帖摘要与公告分栏。
+- **opcode**：c2s `BBS_OPERATION=155` / s2c `GUILD_BBS_PACKET=59`。
+
+### 12. GuildBBS 完整窗（GuildBBS.img）
+- **前置**：角色已加入公会；服务端 `bbs_threads` 可为空。
+- **操作**：
+  1. 打开公会窗 → 按 `B` → 应弹出 `GuildBBS.img` 大窗（734×526）并自动发 List(page=0)。
+  2. 空库：列表为空、无崩；有帖：可见标题行与回复数；有公告（localid=0）时顶栏黄字 `[公告]`。
+  3. 单击选中行 → 双击或 `O` → 进读帖页（subject/body/replies）。
+  4. `W` 或 BtWrite → SoftKey 标题 → SoftKey 正文 → 发帖（mode 0）；`N` 发公告帖；`1/2/3` 选 icon。
+  5. `E` / BtRetouch → 编辑选中帖；`D` 删帖；读帖页 `P` 回复、BtReplyDelete 删回复。
+  6. `,` / `.` 或翻页钮切页；Esc 从写/读退回列表，再 Esc 关窗。
+  7.（可选）抓包确认 List=`mode2`、Open=`mode3`、Post=`mode0`、Reply=`mode4`。
+- **期望**：窗体贴图来自 `Data/UI/GuildBBS.img`；协议字段与 s9 `GuildPackets` 一致；公会窗摘要栏同步更新。
+- **道具/地图/opcode**：任意城镇；c2s `155`；s2c `59` mode `0x06`/`0x07`。
+- **功能文档**：[guild-bbs-ui](../guild-bbs-ui/)
 
 ## 7. SET_HPMPALERT
 

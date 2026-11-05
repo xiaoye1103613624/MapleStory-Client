@@ -44,6 +44,7 @@
 #include "../../IO/UITypes/UIMiniMap.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIGuild.h"
+#include "../../IO/UITypes/UIGuildBBS.h"
 #include "../../IO/UITypes/UIQuestLog.h"
 #include "../../IO/UITypes/UIMonsterBook.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
@@ -69,6 +70,7 @@
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Util/Misc.h"
 
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <unordered_set>
@@ -3902,62 +3904,100 @@ namespace ms
 
 	void GuildBbsHandler::handle(InPacket& recv) const
 	{
-		int8_t mode = recv.available() ? recv.read_byte() : 0;
-		LOG(LOG_DEBUG, "GuildBBS mode=0x" << std::hex << (int)(uint8_t)mode << std::dec
-			<< " rem=" << recv.available());
-		std::vector<std::string> lines;
-		std::string tip = (mode == 0x06) ? "Guild BBS"
-			: (mode == 0x07) ? "Guild BBS thread"
-			: ("Guild BBS 0x" + std::to_string(mode));
-		if (mode == 0x06 && recv.available() >= 4)
+		// s9 GuildPackets：0x06=BBSThreadList，0x07=showThread（字段序与 Odin 系一致）
+		const int8_t mode = recv.available() ? recv.read_byte() : 0;
+		LOG(LOG_DEBUG, "[GuildBBS] s2c mode=0x" << std::hex << (int)(uint8_t)mode
+			<< std::dec << " rem=" << recv.available());
+
+		std::vector<std::string> summary_lines;
+		auto ensure_bbs = []() -> Optional<UIGuildBBS>
 		{
-			int32_t n = recv.read_int();
-			tip += " (" + std::to_string(n) + ")";
-			for (int32_t i = 0; i < n && i < 8 && recv.available() >= 4; ++i)
-			{
-				if (recv.available() >= 4)
-					recv.read_int(); // localid
-				if (recv.available() >= 4)
-					recv.read_int(); // poster
-				std::string subj = recv.available() ? recv.read_string() : "";
-				if (recv.available() >= 8)
-					recv.skip(8); // time / icon
-				if (!subj.empty())
-				{
-					lines.push_back(subj);
-					tip += (i == 0 ? ": " : ", ") + subj;
-				}
-			}
-		}
-		else if (mode == 0x07 && recv.available())
+			auto bbs = UI::get().get_element<UIGuildBBS>();
+			if (!bbs)
+				bbs = UI::get().emplace<UIGuildBBS>();
+			else if (!bbs->is_active())
+				bbs->makeactive();
+			return bbs;
+		};
+
+		auto read_summary = [&](bool is_notice) -> BbsThreadSummary
 		{
-			std::string subject = recv.read_string();
-			std::string body = recv.available() ? recv.read_string() : "";
-			if (!subject.empty())
+			BbsThreadSummary row;
+			row.is_notice = is_notice;
+			row.local_id = recv.available() >= 4 ? recv.read_int() : 0;
+			row.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+			row.subject = recv.available() ? recv.read_string() : "";
+			row.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+			row.icon = recv.available() >= 4 ? recv.read_int() : 0;
+			row.reply_count = recv.available() >= 4 ? recv.read_int() : 0;
+			return row;
+		};
+
+		if (mode == 0x06)
+		{
+			// hasNotice(byte) [+ notice thread] + total(int) + pageCount(int) + threads
+			const bool has_notice = recv.available() ? (recv.read_byte() != 0) : false;
+			BbsThreadSummary notice;
+			if (has_notice)
+				notice = read_summary(true);
+			const int32_t total = recv.available() >= 4 ? recv.read_int() : 0;
+			const int32_t page_n = recv.available() >= 4 ? recv.read_int() : 0;
+			std::vector<BbsThreadSummary> page;
+			page.reserve(static_cast<size_t>(std::max(0, page_n)));
+			for (int32_t i = 0; i < page_n && recv.available() >= 4; ++i)
 			{
-				lines.push_back(subject);
-				tip += ": " + subject;
+				BbsThreadSummary row = read_summary(false);
+				if (!row.subject.empty())
+					summary_lines.push_back(row.subject);
+				page.push_back(std::move(row));
 			}
-			if (!body.empty())
-			{
-				std::string short_body = body.size() > 72 ? body.substr(0, 72) + "..." : body;
-				lines.push_back(short_body);
-				tip += " | " + short_body;
-			}
+			if (auto bbs = ensure_bbs())
+				bbs->apply_list(has_notice, notice, total, std::move(page));
+			if (has_notice && !notice.subject.empty())
+				summary_lines.insert(summary_lines.begin(), std::string("[N] ") + notice.subject);
 		}
+		else if (mode == 0x07)
+		{
+			BbsThreadDetail detail;
+			detail.local_id = recv.available() >= 4 ? recv.read_int() : 0;
+			detail.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+			detail.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+			detail.subject = recv.available() ? recv.read_string() : "";
+			detail.body = recv.available() ? recv.read_string() : "";
+			detail.icon = recv.available() >= 4 ? recv.read_int() : 0;
+			const int32_t reply_n = recv.available() >= 4 ? recv.read_int() : 0;
+			for (int32_t i = 0; i < reply_n && recv.available() >= 4; ++i)
+			{
+				BbsReply r;
+				r.reply_id = recv.read_int();
+				r.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+				r.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+				r.content = recv.available() ? recv.read_string() : "";
+				detail.replies.push_back(std::move(r));
+			}
+			if (!detail.subject.empty())
+				summary_lines.push_back(detail.subject);
+			if (!detail.body.empty())
+			{
+				std::string short_body = detail.body.size() > 72
+					? detail.body.substr(0, 72) + "..." : detail.body;
+				summary_lines.push_back(short_body);
+			}
+			if (auto bbs = ensure_bbs())
+				bbs->apply_thread(std::move(detail));
+		}
+		else
+		{
+			LOG(LOG_WARN, "[GuildBBS] unhandled s2c mode=" << (int)(uint8_t)mode);
+		}
+
 		while (recv.available())
 			recv.skip_byte();
-		auto ui = UI::get().get_element<UIGuild>();
-		if (!ui)
-			ui = UI::get().emplace<UIGuild>();
-		else if (!ui->is_active())
-			ui->makeactive();
-		if (ui)
-		{
-			if (!lines.empty())
-				ui->set_bbs_summary(lines);
-			ui->set_notice(tip);
-		}
+
+		// SoftKey 时代摘要栏仍同步到公会窗，便于未开 BBS 窗时一眼看到
+		auto guild = UI::get().get_element<UIGuild>();
+		if (guild && !summary_lines.empty())
+			guild->set_bbs_summary(summary_lines);
 	}
 
 	void SetQuestClearHandler::handle(InPacket& recv) const

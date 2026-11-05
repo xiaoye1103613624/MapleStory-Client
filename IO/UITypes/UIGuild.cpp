@@ -24,6 +24,7 @@
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
 #include "UICharInfo.h"
+#include "UIGuildBBS.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/BbsPackets.h"
 #include "../../Net/Packets/GuildPackets.h"
@@ -324,64 +325,15 @@ namespace ms
 			if (!ui) ui = UI::get().emplace<UIFamily>();
 			else if (!ui->is_active()) ui->makeactive();
 		} else if (keycode == 'B' || keycode == 'b') {
-			// Guild BBS：空/页码 → List；o,id → Open；d,id → Delete；r,id,text → Reply；p,title|text → Post
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) {
-					BbsListPacket(0).dispatch();
-					LOG(LOG_DEBUG, "UIGuild: BBS List page=0");
-					return;
-				}
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				try {
-					auto after_cmd = [&](char cmd) -> std::string {
-						if (t.empty() || t[0] != cmd) return {};
-						if (t.size() >= 2 && (t[1] == ',' || t[1] == ':' || t[1] == '|'))
-							return tip.substr(2);
-						return tip.substr(1);
-					};
-					if (t[0] == 'o') {
-						int32_t id = std::stoi(after_cmd('o'));
-						if (id > 0) {
-							BbsOpenPacket(id).dispatch();
-							LOG(LOG_DEBUG, "UIGuild: BBS Open id=" << id);
-						}
-					} else if (t[0] == 'd') {
-						int32_t id = std::stoi(after_cmd('d'));
-						if (id > 0) {
-							BbsDeletePacket(id).dispatch();
-							LOG(LOG_DEBUG, "UIGuild: BBS Delete id=" << id);
-						}
-					} else if (t[0] == 'r') {
-						std::string rest = after_cmd('r');
-						size_t c = rest.find(',');
-						if (c == std::string::npos) c = rest.find(':');
-						if (c == std::string::npos) return;
-						int32_t id = std::stoi(rest.substr(0, c));
-						std::string text = rest.substr(c + 1);
-						if (id > 0 && !text.empty()) {
-							BbsReplyPacket(id, text).dispatch();
-							LOG(LOG_DEBUG, "UIGuild: BBS Reply id=" << id);
-						}
-					} else if (t[0] == 'p') {
-						std::string rest = after_cmd('p');
-						size_t sep = rest.find('|');
-						if (sep == std::string::npos) sep = rest.find(',');
-						if (sep == std::string::npos) return;
-						std::string title = rest.substr(0, sep);
-						std::string text = rest.substr(sep + 1);
-						if (!title.empty() && !text.empty()) {
-							BbsPostPacket(false, title, text).dispatch();
-							LOG(LOG_DEBUG, "UIGuild: BBS Post title=" << title);
-						}
-					} else {
-						int32_t page = std::stoi(tip);
-						if (page < 0) page = 0;
-						BbsListPacket(page).dispatch();
-						LOG(LOG_DEBUG, "UIGuild: BBS List page=" << page);
-					}
-				} catch (...) {}
-			}, []() {}, "BBS page|o,id|d,id|r,id,text|p,title|text");
+			// 打开原生 GuildBBS.img 窗并请求第 0 页；高级 SoftKey 命令仍可用 Shift+B
+			auto bbs = UI::get().get_element<UIGuildBBS>();
+			if (!bbs)
+				bbs = UI::get().emplace<UIGuildBBS>();
+			else if (!bbs->is_active())
+				bbs->makeactive();
+			if (bbs)
+				bbs->request_list(0);
+			LOG(LOG_INFO, "UIGuild: open GuildBBS list");
 		}
 	}
 

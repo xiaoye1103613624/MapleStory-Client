@@ -36,7 +36,7 @@
    "s9_send_distinct_values": 313,
    "s9_send_emitted": 252
   },
-  "generated_at": "2026-11-05T16:22:20",
+  "generated_at": "2026-11-05T16:34:23",
   "generated_by": "tools/gen_opcode_matrix.py",
   "s9_git_head": "b5a6ed73535989a445a0f9a4efaef8def657fe11",
   "s9_shadowed_registrations": {
@@ -3716,9 +3716,13 @@
     {
      "file": "Net/Packets/BbsPackets.h",
      "line": 63
+    },
+    {
+     "file": "Net/Packets/BbsPackets.h",
+     "line": 80
     }
    ],
-   "client_sent_count": 5,
+   "client_sent_count": 7,
    "client_value": 155,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "BBSOperationHandler",

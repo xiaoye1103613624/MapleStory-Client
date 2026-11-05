@@ -379,6 +379,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIBuddyList.cpp" />
     <ClCompile Include="IO\UITypes\UITrade.cpp" />
     <ClCompile Include="IO\UITypes\UIGuild.cpp" />
+    <ClCompile Include="IO\UITypes\UIGuildBBS.cpp" />
     <ClCompile Include="IO\UITypes\UIMerchant.cpp" />
     <ClCompile Include="IO\UITypes\UIMonsterBook.cpp" />
     <ClCompile Include="IO\UITypes\UIMaker.cpp" />
@@ -722,6 +723,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIFamily.h" />
     <ClInclude Include="IO\UITypes\UIFamilyTree.h" />
     <ClInclude Include="IO\UITypes\UIMemo.h" />
+    <ClInclude Include="IO\UITypes\UIGuildBBS.h" />
     <ClInclude Include="Net\Handlers\WaveAShellHandlers.h" />
     <ClInclude Include="Net\Handlers\DueyHandlers.h" />
     <ClInclude Include="IO\UITypes\UICharSelect.h" />
