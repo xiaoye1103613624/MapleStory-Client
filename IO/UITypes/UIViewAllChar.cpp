@@ -17,7 +17,7 @@
 
 namespace ms
 {
-	UIViewAllChar::UIViewAllChar() : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)), selected(-1), sel_cid(-1), sel_use_pic(false)
+	UIViewAllChar::UIViewAllChar() : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)), selected(-1), sel_cid(-1), sel_world(0), sel_use_pic(false)
 	{
 		nl::node vac = nl::nx::UI["Login.img"]["ViewAllChar"];
 
@@ -68,6 +68,7 @@ namespace ms
 				ce.highlight = hlproto;
 				ce.highlight.change_text(ctxt);
 				ce.cid = chr.id;
+				ce.worldid = world.worldid;
 				ce.is_char = true;
 				ce.use_pic = world.use_pic;
 				// 职业图标（Job[0]，19x11；该 img 仅定义 beginner）
@@ -133,6 +134,7 @@ namespace ms
 				{
 					selected = static_cast<int16_t>(i);
 					sel_cid = e.cid;
+					sel_world = e.worldid;
 					sel_use_pic = e.use_pic;
 					break;
 				}
@@ -153,13 +155,14 @@ namespace ms
 		if (keycode == KeyAction::Id::RETURN) { button_pressed(Buttons::BtEnter); return; }
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
+			// SoftKey 仅输入 cid：world 填 0（s9 读后丢弃，按 charId 定世界）。
 			UI::get().emplace<UISoftKey>([](const std::string& tip) {
 				if (tip.empty()) return;
 				try {
 					int32_t cid = std::stoi(tip);
 					if (cid > 0) {
-						SelectCharPacket(cid).dispatch();
-						LOG(LOG_DEBUG, "UIViewAllChar: SoftKey SelectChar cid=" << cid);
+						PickAllCharPacket(cid, 0).dispatch();
+						LOG(LOG_DEBUG, "UIViewAllChar: SoftKey PickAllChar cid=" << cid);
 					}
 				} catch (...) {}
 			}, []() {}, "Char cid");
@@ -184,33 +187,37 @@ namespace ms
 				break;
 			case BtEnter:
 			{
+				// VAC 选角必须走 PICK_ALL_CHAR(14) / VIEW_ALL_WITH_PIC(32)，
+				// 误发 CHAR_SELECT(19) 会少一个 world int，macs/hwid 整段错位。
 				if (sel_cid > 0)
 				{
 					if (sel_use_pic)
 					{
-						// 该世界要求二次密码：弹软键盘输入 PIC 后随选角包提交。
+						const int32_t cid = sel_cid;
+						const int32_t wid = sel_world;
 						UI::get().emplace<UISoftKey>(
-							[this](const std::string& pic) {
+							[cid, wid](const std::string& pic) {
 								if (!pic.empty())
-									SelectCharPicPacket(pic, sel_cid).dispatch();
+									PickAllCharPicPacket(pic, cid, wid).dispatch();
 							},
 							[]() {}, "PIC");
 					}
 					else
 					{
-						SelectCharPacket(sel_cid).dispatch();
+						PickAllCharPacket(sel_cid, sel_world).dispatch();
+						LOG(LOG_DEBUG, "UIViewAllChar: PickAllChar cid=" << sel_cid
+							<< " world=" << sel_world);
 					}
 					deactivate();
 				}
 				else
 				{
-					// 未点选角色：退回 cid 输入方式，避免按钮无响应。
 					UI::get().emplace<UISoftKey>([](const std::string& tip) {
 						if (tip.empty()) return;
 						try {
 							int32_t cid = std::stoi(tip);
 							if (cid > 0)
-								SelectCharPacket(cid).dispatch();
+								PickAllCharPacket(cid, 0).dispatch();
 						} catch (...) {}
 					}, []() {}, "Char cid");
 				}

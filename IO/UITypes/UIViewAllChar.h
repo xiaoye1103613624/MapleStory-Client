@@ -48,6 +48,7 @@ namespace ms
 			OutlinedText label;
 			OutlinedText highlight;
 			int32_t cid = -1;
+			int32_t worldid = 0;
 			bool is_char = false;
 			bool is_world = false;
 			bool use_pic = false;
@@ -56,6 +57,7 @@ namespace ms
 		std::vector<EntryView> entry_views;
 		int16_t selected;
 		int32_t sel_cid = -1;
+		int32_t sel_world = 0;
 		bool sel_use_pic = false;
 	};
 }

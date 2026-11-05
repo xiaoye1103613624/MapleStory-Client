@@ -33,6 +33,37 @@ namespace ms
 		}
 	};
 
+	// ViewAllChar 选角（无 PIC）。
+	// Opcode: PICK_ALL_CHAR(14 / 0x0E)
+	// s9 ViewAllCharSelectedHandler：int charId, int world(ignored), macs, hwid。
+	class PickAllCharPacket : public OutPacket
+	{
+	public:
+		PickAllCharPacket(int32_t cid, int32_t worldid = 0)
+			: OutPacket(OutPacket::Opcode::PICK_ALL_CHAR)
+		{
+			write_int(cid);
+			write_int(worldid);
+			write_hardware_info();
+		}
+	};
+
+	// ViewAllChar 选角（带 PIC）。
+	// Opcode: VIEW_ALL_WITH_PIC(32 / 0x20)
+	// s9 ViewAllCharSelectedWithPicHandler：pic, charId, world(ignored), macs, hwid。
+	class PickAllCharPicPacket : public OutPacket
+	{
+	public:
+		PickAllCharPicPacket(const std::string& pic, int32_t cid, int32_t worldid = 0)
+			: OutPacket(OutPacket::Opcode::VIEW_ALL_WITH_PIC)
+		{
+			write_string(pic);
+			write_int(cid);
+			write_int(worldid);
+			write_hardware_info();
+		}
+	};
+
 	// Requests the list of all characters across worlds.
 	// Opcode: VIEW_ALL_CHAR(13) — 服务端 RecvOpcode.VIEW_ALL_CHAR = 0x0D。
 	// s9 ViewAllCharHandler 不读任何字段（p 未使用），空包即可。

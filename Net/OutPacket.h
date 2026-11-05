@@ -57,6 +57,11 @@ namespace ms
 			REGISTER_PIC = 29,
 			SELECT_CHAR_PIC = 30,
 			VIEW_ALL_CHAR = 13,
+			/// s9 RecvOpcode.PICK_ALL_CHAR = 0x0E —— ViewAllChar 选角（相对
+			/// CHAR_SELECT 多一个 world int；服务端读后丢弃，以 charId 定世界）。
+			PICK_ALL_CHAR = 14,
+			/// s9 RecvOpcode.VIEW_ALL_WITH_PIC = 0x20 —— VAC + PIC
+			VIEW_ALL_WITH_PIC = 32,
 
 			/// Gameplay 1
 			CHANGEMAP = 38,
@@ -67,6 +72,9 @@ namespace ms
 			CLOSE_ATTACK = 44,
 			RANGED_ATTACK = 45,
 			MAGIC_ATTACK = 46,
+			/// s9 RecvOpcode.TOUCH_MONSTER_ATTACK = 0x2F：身体压力 / 能量条满
+			/// 时触怪伤害；body 与 CLOSE_ATTACK 同形（parseDamage）。
+			TOUCH_MONSTER_ATTACK = 47,
 			TAKE_DAMAGE = 48,
 			/// s9 RecvOpcode.CANCEL_CHAIR = 0x2A / USE_CHAIR = 0x2B
 			CANCEL_CHAIR = 42,
@@ -136,6 +144,13 @@ namespace ms
 			SPEND_SP = 90,
 			/// s9 RecvOpcode.CANCEL_BUFF = 0x5C（body = int sourceid 技能id）
 			CANCEL_BUFF = 92,
+			/// s9 RecvOpcode.HEAL_OVER_TIME = 0x59：自然回血/回蓝上报。
+			/// body = skip(8) + short healHP + short healMP（HealOvertimeHandler）。
+			HEAL_OVER_TIME = 89,
+			/// s9 RecvOpcode.CANCEL_DEBUFF = 0x63：临时减益到期通知。
+			/// s9 CancelDebuffHandler 本体已注释（空实现）；本端仍按原生
+			/// CheckTemporaryStatDuration 语义发空包，便于日后解禁或对照。
+			CANCEL_DEBUFF = 99,
 			/// s9 RecvOpcode.AUTO_DISTRIBUTE_AP = 0x58。标准分支
 			/// （use_server_auto_assigner=false，DB 种子默认）body：
 			/// 时间戳后 2×{int type,int val}，type 用 Stat.getBy5ByteEncoding
