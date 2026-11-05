@@ -105,3 +105,6 @@ _tools/summon_probe/*.dll
 # å¤šåˆ†è¾¨ç‡äº¤ä»˜è¯æ®ï¼šå…¨å±€ *.log çš„ä¾‹å¤–ï¼ˆå‹¿è¯¯ä¼¤åŠŸèƒ½é—¨ç¦ä¸åº•æ¿ç”Ÿæˆæ—¥å¿—ï¼‰
 !docs/features/multi-resolution/builds/build.log
 !docs/features/multi-resolution/patches/make_sysopt_bg.log
+
+# ±¾»úÂ·¾¶Ó²±àÂëµÄÁÙÊ±¹¹½¨½Å±¾
+/build_portal_fix.bat
