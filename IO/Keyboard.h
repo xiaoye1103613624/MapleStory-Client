@@ -20,6 +20,7 @@
 #include "KeyAction.h"
 #include "KeyType.h"
 
+#include <array>
 #include <map>
 
 namespace ms
@@ -63,10 +64,27 @@ namespace ms
 		Mapping get_maple_mapping(int32_t keycode) const;
 		Mapping get_text_mapping(int32_t keycode, bool shift) const;
 
+		// ---- 快捷栏绑定（Wave 1-1.2）----
+		// 这条数据面原本不存在：QUICKSLOT_INIT(0x9F) 下发被旧 handler
+		// 错写进普通键位表（no-op 语义），改键也从不回发 CHANGE_QUICKSLOT。
+		// 存储=8 个触发键（v83 GLFW 系编码，与 s9 quickslotkeymapped
+		// long 打包的字节值同域——服务端 (byte)readInt 截断，键值 >0xFF
+		// 会撞车，此表全部 <0x100 安全）。
+		static constexpr size_t QUICKSLOT_COUNT = 8;
+
+		void assign_quickslot(uint8_t slot, uint32_t key);
+		void clear_quickslots();
+		// 换角色清残留：触发键若等于默认表，QUICKSLOT_INIT 走 bool=false
+		// 分支不下发任何键值，不清会把上一角色的键泄漏给下一角色。
+		uint32_t default_quickslot_key(size_t slot);
+		uint32_t get_quickslot_key(uint8_t slot) const;
+		const std::array<uint32_t, QUICKSLOT_COUNT>& quickslots() const { return quickslot_keys; }
+
 	private:
 		std::map<int32_t, Mapping> keymap;
 		std::map<int32_t, Mapping> maplekeys;
 		std::map<int32_t, KeyAction::Id> textactions;
 		std::map<int32_t, bool> keystate;
+		std::array<uint32_t, QUICKSLOT_COUNT> quickslot_keys{};
 	};
 }

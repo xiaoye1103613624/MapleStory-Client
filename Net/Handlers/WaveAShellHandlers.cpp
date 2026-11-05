@@ -3,6 +3,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "WaveAShellHandlers.h"
 
+// UpdateHpMpAlertHandler 回灌本地设置需要 Setting<SysOptHpWarn/MpWarn>。
+// QuickslotInitHandler 的真机验收判据走 perf::mark（Release 唯一观测通道）。
+#include "../../Configuration.h"
+#include "../../Util/PerfLog.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIViciousHammer.h"
 #include "../../IO/UITypes/UIVegaSpell.h"
@@ -2949,24 +2953,48 @@ namespace ms
 
 	void QuickslotInitHandler::handle(InPacket& recv) const
 	{
-		// note
+		// v83 语义（s9 QuickslotBinding.encode 坐实）：bool + 8×int = 8 个
+		// **触发键**（非槽位绑定，槽内技能/道具走 KEYMAP(135) 既有通道）。
+		// 旧实现把触发键 add_keymapping(key & 0xFF, 0, i) 写进键位表槽号——
+		// type=0(NONE) 时 assign 直接吞掉是良性 no-op，但键码 >0x100 时
+		// (key & 0xFF) 会命中真实键位表项，污染用户常规绑定。Wave 1-1.2
+		// 改为存进 Keyboard 的专用 quickslot 触发键表。
+		//
+		// 等于默认时服务端只发 bool=false（不下发键值）——此时**必须清表回
+		// 默认**：上一角色若设了自定义触发键，本角色走默认分支时不清就串号
+		// （sendMacros 注释里同款"switching characters"问题的 quickslot 版）。
 		bool custom = recv.available() ? recv.read_bool() : false;
-		std::string tip = custom ? "Quickslot custom:" : "Quickslot default";
+
+		Keyboard& keyboard = UI::get().get_keyboard();
+
 		if (custom)
 		{
 			for (int i = 0; i < 8 && recv.available() >= 4; ++i)
 			{
 				int32_t key = recv.read_int();
-				tip += " " + std::to_string(key);
-				// note
-				UI::get().add_keymapping(static_cast<uint8_t>(key & 0xFF), 0, i);
+				keyboard.assign_quickslot(static_cast<uint8_t>(i), static_cast<uint32_t>(key));
 			}
 		}
-		LOG(LOG_DEBUG, "QuickslotInit custom=" << custom << " rem=" << recv.available());
+		else
+		{
+			keyboard.clear_quickslots();
+		}
+
+		LOG(LOG_INFO, "QuickslotInit custom=" << custom << " rem=" << recv.available());
+		// 真机验收判据（Release LOG 是 no-op，走 perf 通道）：开 debug.perf_log
+		// 进图应见 [PERF] QSI custom=0|1；custom=1 时附 8 个触发键值。
+		{
+			std::string perf_msg = std::string("custom=") + (custom ? "1" : "0");
+			if (custom)
+			{
+				const auto& qs = UI::get().get_keyboard().quickslots();
+				for (uint32_t k : qs) perf_msg += " " + std::to_string(k);
+			}
+			perf::mark("QSI", perf_msg);
+		}
 		while (recv.available())
 			recv.skip_byte();
-		(void)tip;
-// note
+
 		if (auto kc = UI::get().get_element<UIKeyConfig>())
 		{
 			if (kc->is_active())

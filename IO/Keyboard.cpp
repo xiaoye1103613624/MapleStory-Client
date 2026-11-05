@@ -74,6 +74,10 @@ namespace ms
 
 	Keyboard::Keyboard()
 	{
+		// 触发键表初始 = s9 默认（QuickslotInit 下行 bool=false 分支也会重刷，
+		// 但构造期初始化消灭"登录前读到全 0"的窗口）。
+		clear_quickslots();
+
 		keymap[GLFW_KEY_LEFT] = Mapping(KeyType::Id::ACTION, KeyAction::Id::LEFT);
 		keymap[GLFW_KEY_RIGHT] = Mapping(KeyType::Id::ACTION, KeyAction::Id::RIGHT);
 		keymap[GLFW_KEY_UP] = Mapping(KeyType::Id::ACTION, KeyAction::Id::UP);
@@ -155,6 +159,41 @@ namespace ms
 
 		keymap[Keytable[key]] = mapping;
 		maplekeys[key] = mapping;
+	}
+
+	// ---- 快捷栏触发键（Wave 1-1.2）----
+	// v83 语义（s9 源码坐实）：QUICKSLOT_INIT(0x9F) 下发 / CHANGE_QUICKSLOT(183)
+	// 上行的是 **8 个触发键**（服务端 quickslotkeymapped 按 byte 打包 long）；
+	// 槽内技能/道具绑定走 KEYMAP(135) 既有通道，与本表无关。旧 QuickslotInit
+	// handler 把触发键写进键位表槽号（add_keymapping(key & 0xFF, 0, i)），
+	// 会污染用户的常规绑定 —— 已改为存进本表。
+	// 默认值与 s9 QuickslotBinding.DEFAULT_QUICKSLOTS 逐项一致
+	// （0x2A,0x52,0x47,0x49,0x1D,0x53,0x4F,0x51 = *,R,G,I,Ctrl,S,O,Q）；
+	// 服务端「等于默认则不下发/不落库」，本地默认表让 UI 显示同步成立。
+	// 键值全部 <0x100，byte 截断无撞车（服务端 (byte)readInt 语义）。
+
+	void Keyboard::assign_quickslot(uint8_t slot, uint32_t key)
+	{
+		if (slot < QUICKSLOT_COUNT)
+			quickslot_keys[slot] = key;
+	}
+
+	void Keyboard::clear_quickslots()
+	{
+		for (size_t i = 0; i < QUICKSLOT_COUNT; i++)
+			quickslot_keys[i] = default_quickslot_key(i);
+	}
+
+	uint32_t Keyboard::default_quickslot_key(size_t slot)
+	{
+		// s9 QuickslotBinding.DEFAULT_QUICKSLOTS（byte 值 = 本端 v83 键码）
+		static const uint32_t kDefault[QUICKSLOT_COUNT] = { 0x2A, 0x52, 0x47, 0x49, 0x1D, 0x53, 0x4F, 0x51 };
+		return slot < QUICKSLOT_COUNT ? kDefault[slot] : 0;
+	}
+
+	uint32_t Keyboard::get_quickslot_key(uint8_t slot) const
+	{
+		return slot < QUICKSLOT_COUNT ? quickslot_keys[slot] : 0;
 	}
 
 	Keyboard::Mapping Keyboard::get_text_mapping(int32_t keycode, bool shift) const
