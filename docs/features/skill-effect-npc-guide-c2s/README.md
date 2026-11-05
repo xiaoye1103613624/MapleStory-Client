@@ -30,4 +30,5 @@
 | tip / 字体 | 未触碰；客户端默认宋体/思源宋体路线保持 | 若改 tip 须 IDA/IMG/像素取证，禁臆造、禁回 SimHei |
 | NPC 对话交互 | 点选 `#L` 发 selection 已通；`TalkToNPC`+`NPC_ACTION` 已接 | — |
 | NPC 对话「下项」A11b | ✅ 2026-11-05：IDA 定「下项=提交高亮 selection」并接线；待真机 | [npc-talk-utildlgex-align](../npc-talk-utildlgex-align/) |
+| NPC 高亮 A11d / GetText 布局 A11e | ✅ 2026-11-05：虚线高亮 + inset=157 输入槽；待真机 | 同上 |
 | NPC 对话框样式 | ✅ A11c：α=1.0；TEXT_Y 动态居中；Next=`W-78` / OK=`W-54`；宋体未改 | 真机对帧 pending |

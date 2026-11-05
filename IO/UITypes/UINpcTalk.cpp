@@ -19,9 +19,8 @@
 
 #include "../UI.h"
 
-#include "UISoftKey.h"
-
 #include "../Components/MapleButton.h"
+#include "../KeyAction.h"
 
 #include "../../Gameplay/Stage.h"
 
@@ -32,6 +31,7 @@
 
 #include "../../Constants.h"
 #include "../../MapleStory.h"
+#include "../../Graphics/Geometry.h"
 
 #include <cctype>
 #include <map>
@@ -66,7 +66,9 @@ namespace ms
 		formatted_text_pos(0),
 		timestep(0),
 		type(TalkType::NONE),
-		msgtype_wire(0)
+		msgtype_wire(0),
+		input_active(false),
+		input_box_y(0)
 	{
 		nl::node UtilDlgEx = UiAssetResolve::window("UtilDlgEx");
 
@@ -150,11 +152,63 @@ namespace ms
 			// 正文 Y：IDA sub_9A64FC 按 content 高度居中（见 change_text 写入的 text_draw_y）。
 			text.draw(position + Point<int16_t>(TEXT_X, text_draw_y));
 		}
+
+		// SENDSIMPLE 选中态：IDA sub_9A3E9F 在匹配 list[cur] 的正文元素下画
+		// 黑 1px 实线 + #919191 虚线（3px 实 / 3px 空），宽 = 标签宽+8。
+		if (type == TalkType::SENDSIMPLE
+			&& !simple_choices.empty()
+			&& simple_selected >= 0
+			&& static_cast<size_t>(simple_selected) < simple_choices.size())
+		{
+			const SimpleChoice& c = simple_choices[static_cast<size_t>(simple_selected)];
+			const int16_t scroll = show_slider ? offset * (height - TEXT_SLACK) : 0;
+			const int16_t y = static_cast<int16_t>(text_draw_y + c.pos.y() - scroll);
+			const int16_t band_top = top.height() - 1;
+			const int16_t band_bottom = static_cast<int16_t>(band_top + height - TEXT_SLACK);
+			const bool visible = !show_slider
+				|| (y >= band_top && y + c.size.y() <= band_bottom);
+
+			if (visible && c.size.x() > 0)
+			{
+				const int16_t ux = static_cast<int16_t>(position.x() + TEXT_X + c.pos.x());
+				const int16_t uy = static_cast<int16_t>(position.y() + y + c.size.y());
+				const int16_t uw = static_cast<int16_t>(c.size.x() + SIMPLE_UL_EXT);
+				ColorBox(uw, 1, Color::Name::BLACK, 1.0f)
+					.draw(DrawArgument(Point<int16_t>(ux, uy)));
+				const Color dash(SIMPLE_DASH_R, SIMPLE_DASH_G, SIMPLE_DASH_B, 255);
+				for (int16_t dx = 0; dx + 3 <= uw; dx = static_cast<int16_t>(dx + 6))
+				{
+					ColorBox(3, 1, dash, 1.0f)
+						.draw(DrawArgument(Point<int16_t>(
+							static_cast<int16_t>(ux + dx), uy)));
+				}
+			}
+		}
+
+		// GetText/GetNumber 输入槽：IDA sub_9A83F6 黑框(-16777216) + 白底(-1) + Edit。
+		if (input_active)
+		{
+			const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
+			const int16_t bx = static_cast<int16_t>(position.x() + INPUT_LEFT - 1);
+			const int16_t by = static_cast<int16_t>(position.y() + input_box_y);
+			const int16_t bw = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 3);
+			const int16_t wx = static_cast<int16_t>(position.x() + INPUT_LEFT);
+			const int16_t wy = static_cast<int16_t>(by + 1);
+			const int16_t ww = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 1);
+			ColorBox(bw, INPUT_BLACK_H, Color::Name::BLACK, 1.0f)
+				.draw(DrawArgument(Point<int16_t>(bx, by)));
+			ColorBox(ww, INPUT_WHITE_H, Color::Name::WHITE, 1.0f)
+				.draw(DrawArgument(Point<int16_t>(wx, wy)));
+			input_field.draw(Point<int16_t>(0, 0));
+		}
 	}
 
 	void UINpcTalk::update()
 	{
 		UIElement::update();
+
+		if (input_active)
+			input_field.update();
 
 		if (draw_text)
 		{
@@ -192,6 +246,15 @@ namespace ms
 
 	Button::State UINpcTalk::button_pressed(uint16_t buttonid)
 	{
+		// 先快照输入：deactivate 会清焦点，OK 提交必须读关窗前的文本。
+		std::string input_snapshot;
+		const bool submit_input = input_active
+			&& buttonid == Buttons::OK
+			&& (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER);
+		if (submit_input)
+			input_snapshot = input_field.get_text();
+
+		clear_input_field();
 		deactivate();
 
 		int8_t lastmsg = wire_msgtype();
@@ -300,12 +363,12 @@ namespace ms
 						NpcTalkMorePacket(lastmsg, 0).dispatch();
 						break;
 					case Buttons::OK:
-						UI::get().emplace<UISoftKey>([this](const std::string& s) {
-							if (s.empty()) return;
-							deactivate();
-							NpcTalkMorePacket(s).dispatch();
-							LOG(LOG_DEBUG, "UINpcTalk: SoftKey GetText len=" << s.size());
-						}, []() {}, "Npc text");
+						// IDA sub_9AB50A：OK 读 Edit 内容后校验收口；本仓内嵌 Textfield。
+						if (!input_snapshot.empty())
+						{
+							NpcTalkMorePacket(input_snapshot).dispatch();
+							LOG(LOG_DEBUG, "UINpcTalk: GetText OK len=" << input_snapshot.size());
+						}
 						break;
 				}
 				break;
@@ -318,14 +381,16 @@ namespace ms
 						NpcTalkMorePacket(lastmsg, 0).dispatch();
 						break;
 					case Buttons::OK:
-						UI::get().emplace<UISoftKey>([this](const std::string& s) {
-							try {
-								int32_t n = std::stoi(s);
-								deactivate();
-								NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
-								LOG(LOG_DEBUG, "UINpcTalk: SoftKey GetNumber=" << n);
-							} catch (...) {}
-						}, []() {}, "Npc number");
+						try
+						{
+							const int32_t n = std::stoi(input_snapshot);
+							NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
+							LOG(LOG_DEBUG, "UINpcTalk: GetNumber OK=" << n);
+						}
+						catch (...)
+						{
+							LOG(LOG_DEBUG, "UINpcTalk: GetNumber OK reject non-int");
+						}
 						break;
 				}
 
@@ -366,6 +431,13 @@ namespace ms
 	Cursor::State UINpcTalk::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
 		Point<int16_t> cursor_relative = cursorpos - position;
+
+		if (input_active)
+		{
+			Cursor::State istate = input_field.send_cursor(cursorpos, clicked);
+			if (istate != Cursor::State::IDLE)
+				return istate;
+		}
 
 		if (type == TalkType::SENDSIMPLE && !simple_choices.empty())
 		{
@@ -423,46 +495,53 @@ namespace ms
 	{
 		if (pressed && escape)
 		{
+			clear_input_field();
 			deactivate();
 
 			NpcTalkMorePacket(wire_msgtype(), 0).dispatch();
 			return;
 		}
 		if (!pressed) return;
-		if (type == TalkType::SENDGETTEXT && (keycode == 'T' || keycode == 't' || keycode == 'S' || keycode == 's'))
+
+		// UI 路由传入的是 KeyAction::Id（见 UI.cpp），不是 GLFW 原始键码。
+		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				if (s.empty()) return;
-				deactivate();
-				NpcTalkMorePacket(s).dispatch();
-			}, []() {}, "Npc text");
-		}
-		else if (type == TalkType::SENDGETNUMBER && (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's'))
-		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t n = std::stoi(s);
+			if (keycode == KeyAction::Id::RETURN)
+			{
+				if (dispatch_input_field())
+				{
+					clear_input_field();
 					deactivate();
-					NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
-				} catch (...) {}
-			}, []() {}, "Npc number");
+				}
+				return;
+			}
 		}
-		else if (type == TalkType::SENDSIMPLE && (keycode == 'S' || keycode == 's'))
+
+		if (type == TalkType::SENDSIMPLE)
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t sel = std::stoi(s);
+			if (keycode == KeyAction::Id::UP)
+			{
+				if (simple_selected > 0)
+					--simple_selected;
+				return;
+			}
+			if (keycode == KeyAction::Id::DOWN)
+			{
+				if (!simple_choices.empty()
+					&& simple_selected + 1 < static_cast<int32_t>(simple_choices.size()))
+					++simple_selected;
+				return;
+			}
+			// 回车：等同下项钮（IDA sub_9AC0B6 Enter → 提交 list[cur]）
+			if (keycode == KeyAction::Id::RETURN)
+			{
+				if (dispatch_simple_selection())
+				{
+					clear_input_field();
 					deactivate();
-					NpcTalkMorePacket(sel).dispatch();
-				} catch (...) {}
-			}, []() {}, "Npc select");
-		}
-		else if (type == TalkType::SENDSIMPLE
-			&& (keycode == 13 || keycode == 'N' || keycode == 'n'))
-		{
-			// 回车 / N：等同下项钮（提交当前高亮）；无选项则忽略
-			if (dispatch_simple_selection())
-				deactivate();
+				}
+				return;
+			}
 		}
 	}
 
@@ -773,6 +852,24 @@ namespace ms
 			text_draw_y = static_cast<int16_t>(
 				top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
 
+		// GetText/GetNumber：在正文下方留输入栈（IDA sub_9A83F6），正文在剩余区内再居中。
+		input_box_y = 0;
+		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
+		{
+			const int16_t need = static_cast<int16_t>(text_block_height + INPUT_STACK);
+			if (need > height)
+				height = need;
+			const int16_t text_area = static_cast<int16_t>(height - INPUT_STACK);
+			if (text_area > text_block_height)
+				text_draw_y = static_cast<int16_t>(
+					top.height() + (text_area - text_block_height) / 2 + TEXT_Y_PAD);
+			else
+				text_draw_y = static_cast<int16_t>(top.height() + TEXT_Y_PAD);
+			input_box_y = static_cast<int16_t>(text_draw_y + text_block_height + 2);
+		}
+
+		clear_input_field();
+
 		for (auto& button : buttons)
 		{
 			button.second->set_active(false);
@@ -860,8 +957,13 @@ namespace ms
 				break;
 			}
 			case TalkType::SENDGETNUMBER:
+			case TalkType::SENDGETTEXT:
 			{
+				// IDA sub_9A83F6：BtOK @ (W-54, H-26) + BtClose @ (9, H-26)；Edit id=1000。
 				activate(Buttons::OK, Point<int16_t>(x_ok, y_bottom));
+				setup_input_field();
+				LOG(LOG_DEBUG, "UINpcTalk: GetText/Number OK x=" << x_ok
+					<< " input_y=" << input_box_y);
 				break;
 			}
 			case TalkType::SENDSIMPLE:
@@ -873,7 +975,6 @@ namespace ms
 					<< " y=" << y_next << " choices=" << simple_choices.size());
 				break;
 			}
-			case TalkType::SENDGETTEXT:
 			default:
 			{
 				break;
@@ -888,11 +989,15 @@ namespace ms
 		// 多分辨率：上面的 (400,240) 是 800×600 时代按中心点记的常量，高分辨率下
 		// 会把对话窗钉在左上。非 1280×720 档位按视口居中；1280×720 零回归。
 		reanchor_talk();
+		if (input_active)
+			setup_input_field();
 	}
 
 	void UINpcTalk::update_screen(int16_t, int16_t)
 	{
 		reanchor_talk();
+		if (input_active)
+			setup_input_field();
 	}
 
 	void UINpcTalk::reanchor_talk()
@@ -914,5 +1019,87 @@ namespace ms
 		}
 
 		center_on_screen();
+	}
+
+	void UINpcTalk::setup_input_field()
+	{
+		if (type != TalkType::SENDGETTEXT && type != TalkType::SENDGETNUMBER)
+			return;
+
+		const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
+		// IDA：Edit @ (left+2, content_top+text_h+5)，h=14，w = W-(2*left+2)
+		const int16_t edit_x = static_cast<int16_t>(position.x() + INPUT_LEFT + 2);
+		const int16_t edit_y = static_cast<int16_t>(position.y() + input_box_y + 3);
+		const int16_t edit_w = static_cast<int16_t>(dlg_w - (2 * INPUT_LEFT + 2));
+		const Point<int16_t> tl(edit_x, edit_y);
+		const Point<int16_t> br(static_cast<int16_t>(edit_x + edit_w),
+			static_cast<int16_t>(edit_y + INPUT_EDIT_H));
+		const size_t limit = (type == TalkType::SENDGETNUMBER) ? 10 : 64;
+		const std::string keep = input_active ? input_field.get_text() : std::string();
+
+		input_field = Textfield(
+			Text::Font::A12M,
+			Text::Alignment::LEFT,
+			Color::Name::BLACK,
+			Rectangle<int16_t>(tl, br),
+			limit,
+			12);
+		input_field.set_accept_unicode(type == TalkType::SENDGETTEXT);
+		input_field.set_text_shift(Point<int16_t>(1, 11));
+		if (!keep.empty())
+			input_field.change_text(keep);
+		input_field.set_enter_callback(
+			[this](std::string)
+			{
+				if (dispatch_input_field())
+				{
+					clear_input_field();
+					deactivate();
+				}
+			});
+		input_field.set_state(Textfield::State::FOCUSED);
+		UI::get().focus_textfield(&input_field);
+		input_active = true;
+	}
+
+	void UINpcTalk::clear_input_field()
+	{
+		if (!input_active && input_field.get_state() == Textfield::State::DISABLED)
+			return;
+
+		input_field.set_state(Textfield::State::DISABLED);
+		UI::get().remove_textfield();
+		input_active = false;
+	}
+
+	bool UINpcTalk::dispatch_input_field()
+	{
+		if (!input_active)
+			return false;
+
+		const std::string s = input_field.get_text();
+		if (type == TalkType::SENDGETTEXT)
+		{
+			if (s.empty())
+				return false;
+			NpcTalkMorePacket(s).dispatch();
+			LOG(LOG_DEBUG, "UINpcTalk: GetText enter len=" << s.size());
+			return true;
+		}
+		if (type == TalkType::SENDGETNUMBER)
+		{
+			try
+			{
+				const int32_t n = std::stoi(s);
+				NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
+				LOG(LOG_DEBUG, "UINpcTalk: GetNumber enter=" << n);
+				return true;
+			}
+			catch (...)
+			{
+				return false;
+			}
+		}
+		return false;
 	}
 }

@@ -20,7 +20,9 @@
 #include "../UIElement.h"
 
 #include "../Components/Slider.h"
+#include "../Components/Textfield.h"
 
+#include "../../Graphics/Geometry.h"
 #include "../../Graphics/Text.h"
 
 #include <string>
@@ -120,6 +122,20 @@ namespace ms
 		static constexpr int16_t BTN_X_RIGHT_WIDE = 466;
 		static constexpr int16_t BTN_PAIR_PITCH = 65;
 
+		// GetText/GetNumber 输入槽（IDA sub_9A83F6 / sub_9ACC20）：
+		//   content_left = 157（非 Avatar）；黑框 h=18、白底 h=16、Edit h=14；
+		//   黑框 y = content_top + text_h + 2，白底 +3，Edit +5；宽 = W - 2*left ± 边。
+		static constexpr int16_t INPUT_LEFT = 157;
+		static constexpr int16_t INPUT_BLACK_H = 18;
+		static constexpr int16_t INPUT_WHITE_H = 16;
+		static constexpr int16_t INPUT_EDIT_H = 14;
+		static constexpr int16_t INPUT_STACK = static_cast<int16_t>(2 + INPUT_BLACK_H + 8);
+		// SENDSIMPLE 选中态（IDA sub_9A3E9F）：黑 1px 底线 + #919191 虚线（3 on / 3 off），宽 = 标签宽+8。
+		static constexpr int16_t SIMPLE_UL_EXT = 8;
+		static constexpr uint8_t SIMPLE_DASH_R = 0x91;
+		static constexpr uint8_t SIMPLE_DASH_G = 0x91;
+		static constexpr uint8_t SIMPLE_DASH_B = 0x91;
+
 		enum Buttons
 		{
 			ALLLEVEL,
@@ -186,6 +202,11 @@ namespace ms
 		// 点 #L 仍可直接发 selection，下项钮发当前高亮项。
 		int32_t simple_selected = 0;
 
+		// GetText/GetNumber：内嵌输入（对齐原生 CCtrlEdit id=1000）；非本类型时 DISABLED。
+		Textfield input_field;
+		bool input_active = false;
+		int16_t input_box_y = 0;
+
 		std::function<void(bool)> onmoved;
 
 		// 把 #L<n>#label#l 就地拆成正文里的 label + 可点区间，返回剥掉令牌后的文本
@@ -194,5 +215,9 @@ namespace ms
 		void layout_simple_choices(const Text& body);
 		// SENDSIMPLE：发当前高亮项的 selection（下项钮 / SoftKey 共用）
 		bool dispatch_simple_selection();
+		// GetText/GetNumber：布置/刷新内嵌输入框几何与焦点
+		void setup_input_field();
+		void clear_input_field();
+		bool dispatch_input_field();
 	};
 }

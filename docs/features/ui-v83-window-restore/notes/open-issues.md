@@ -305,6 +305,19 @@ IDA（BeiDou `sub_9AB92A` / `sub_9A8FEF`）：`dlgType==4` 建 **BtNext(id=8193)
 框体整体 α=1.0（IDA blit 255 + t/c/s 主体 α255）；TEXT_Y 动态居中；Next=`W-78`、OK=`W-54`。
 证据：[npc-talk-utildlgex-align/evidence/a11c-frame-alpha-texty-btnext.md](../../npc-talk-utildlgex-align/evidence/a11c-frame-alpha-texty-btnext.md)。
 
+### A11d SENDSIMPLE 高亮条/选中态—— **已定案并接线（2026-11-05）**
+
+IDA `sub_9A3E9F`：匹配 `list[cur]` 的选项下画黑 1px 实线 + `#919191` 虚线（3/3），宽=`label_w+8`；
+无改字色。本仓：`draw` 按 `simple_selected` 绘制；悬停 + ↑↓ 改 cur；回车=`KeyAction::RETURN`。
+证据：[npc-talk-utildlgex-align/evidence/a11d-sendsimple-highlight-ida.md](../../npc-talk-utildlgex-align/evidence/a11d-sendsimple-highlight-ida.md)。
+真机：pending「NPC 高亮 / 下项」。
+
+### A11e GetText / GetNumber 布局—— **已定案并接线（2026-11-05）**
+
+布局在 `0x9A83F6`/`0x9ACC20`（`0x9AB50A` 是 OK 校验收口）。inset=157；黑框 18 / 白底 16 / Edit 14；
+BtOK=`W-54`。本仓内嵌 `Textfield`，撤 SoftKey 旁路。Avatar 变体与 min/max 线参预留。
+证据：[npc-talk-utildlgex-align/evidence/a11e-gettext-getnumber-layout-ida.md](../../npc-talk-utildlgex-align/evidence/a11e-gettext-getnumber-layout-ida.md)。
+
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 
 04:42 那份**能正常在线一小时**的产物（md5 `51d3fe17…`，PID 49660），在我用 `_quit.py`

@@ -207,9 +207,11 @@
 - **16**：任意城镇点 NPC 对话 → 应先发 197（6B）再发 58；双端同图时对方可见 NPC 姿态。
 - **17**：新手图有 SPAWN_GUIDE 时点引导标记 → 空包 162 → 开 MIMO/LILIN 脚本窗。
 - **文档**：同上。
-- **A11b「下项」（2026-11-05 已接线，待真机）**：`SENDSIMPLE` 右下「下项」应激活；悬停选项后点下项 / 回车 / N → 出站 `NPC_TALK_MORE` + selection（与点 `#L` 同包）；点 `#L` 直发仍通；宋体/A12M 不变。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
+- **A11b「下项」（2026-11-05 已接线，待真机）**：`SENDSIMPLE` 右下「下项」应激活；悬停选项后点下项 / 回车 → 出站 `NPC_TALK_MORE` + selection（与点 `#L` 同包）；点 `#L` 直发仍通；宋体/A12M 不变。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
 - **A11c 框体/正文/槽位（2026-11-05 已接线，待真机）**：α 保持 1.0；正文按 content 高居中；Next=`W-78`、OK=`W-54`、Next 纵向高于 Close 51px。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）。
+- **A11d 高亮（2026-11-05 已接线，待真机）**：悬停/↑↓ 后选项下应有黑底线 + 灰虚线 `#919191`；字色仍 DARKGREY。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
+- **A11e GetText/GetNumber（2026-11-05 已接线，待真机）**：正文下黑/白输入槽 + 内嵌光标；右下「确定」可点；OK/回车发包；空串/非整数不发。证据：同上。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；GetText Avatar 变体；min/max 线参校验。
 
 ## 18. 隐藏门三态
 
@@ -217,18 +219,32 @@
 - **操作**：走近门 → 应播出现动画并循环；走开 → 播消失后隐藏。
 - **文档**：[hidden-portal-tristate](../hidden-portal-tristate/)
 
-## 19. NPC SENDSIMPLE「下项」A11b
+## 19. NPC SENDSIMPLE「下项」A11b + 高亮 A11d
 
 - **前置**：任意会走 `SENDSIMPLE`（可选项列表）的 NPC 脚本（如任务/传送多选）。
 - **操作**：
   1. 打开对话后确认右下「下项」为激活态（非灰）。
-  2. 鼠标悬停不同选项 → 高亮切换；再点「下项」或按回车/`N` → 应发 `NPC_TALK_MORE` 且 body 为当前高亮项 `selection`。
-  3. 直接点 `#L…#l` 选项行 → 仍直发同包（不经下项）。
-  4. 肉眼：正文 A11M/A12M 思源宋体；短文在正文区垂直居中；「下项」约在 `W-78`（勿与「确定」`W-54` 混淆）；框体不额外半透明；未回 SimHei。
+  2. 鼠标悬停 / ↑↓ 不同选项 → 该项下出现黑 1px 底线 + 灰虚线；字色仍暗灰。
+  3. 再点「下项」或按回车 → 应发 `NPC_TALK_MORE` 且 body 为当前高亮项 `selection`。
+  4. 直接点 `#L…#l` 选项行 → 仍直发同包（不经下项）。
+  5. 肉眼：正文 A11M/A12M 思源宋体；短文在正文区垂直居中；「下项」约在 `W-78`（勿与「确定」`W-54` 混淆）；框体不额外半透明；未回 SimHei。
 - **期望**：服务端按 selection 推进脚本；无崩；关闭钮仍关窗。
 - **opcode**：c2s `NPC_TALK_MORE`（既有 `NpcTalkMorePacket`）。
 - **文档**：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)
 - **仍预留（非本项阻塞）**：KeyDown 持续技松开取消。
+
+## 20. NPC GetText / GetNumber 布局 A11e
+
+- **前置**：脚本 `cm.sendGetText` / `cm.sendGetNumber`（或等价 msgtype 2/3）。
+- **操作**：
+  1. 打开后确认正文下方有黑边白底输入槽，光标可打字；右下「确定」激活、左下「关闭」仍在。
+  2. 输入非空文本（GetText）或整数（GetNumber）→ 点确定或回车 → 出站 `NPC_TALK_MORE`（msgtype=2 带 string / msgtype=3 带 int）。
+  3. 空串（GetText）或非数字（GetNumber）点确定 → 不应发包、窗可仍在或保持可改。
+  4. 肉眼：输入槽左缘约 x=157（相对窗）；宋体/A12M；非 Avatar 皮肤。
+- **期望**：服务端收到文本/数字并推进；无崩。
+- **opcode**：c2s `NPC_TALK_MORE`。
+- **文档**：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)
+- **仍预留**：Avatar 皮肤输入槽；包内 min/max/maxlen 校验。
 
 ## 7. SET_HPMPALERT
 
