@@ -12,7 +12,8 @@
 | 候选 | 证据充分度 | 结论 |
 | --- | --- | --- |
 | **G10 TreasureBox** | s9 `UseTreasureChestHandler`→`UseTreasureBox(int)`；HitReactor 对任意 `state>0` 超发 UI | **本轮闭合** |
-| atlas_dbg 清理 | 工程债，非玩法缺口 | 下一项候选 |
+| atlas_dbg 清理 | 工程债 | ✅ 本轮后已清（atlas-dbg-cleanup） |
+| Messenger BtClose | 需 IDA 坐标 | ✅ 本轮后已接 SetCtrl (276,6) |
 | C9 EXP 数字位 | coords 已落地，缺新截图差异证据 | 等真机/截图 |
 | G8/G9 | 缺 SpecialEff / status 资源 | 显式预留 |
 

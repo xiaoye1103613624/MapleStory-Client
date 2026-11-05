@@ -27,7 +27,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -37,28 +36,6 @@
 
 namespace ms
 {
-	// [DBG-ATLAS] 临时联调诊断：图集异常事件落文件（限 200 条）。
-	// 排查「登录页竖条纹/错贴」用，闭环后删除。
-	static void dbgatlas(const char* kind, size_t id, int bw, int bh, int ow, int oh)
-	{
-		static std::ofstream log;
-		static int count = 0;
-
-		if (count >= 200)
-			return;
-
-		if (!log.is_open())
-			log.open("atlas_dbg.log", std::ios::app);
-
-		if (log.is_open())
-		{
-			log << kind << " id=" << id << " bmp=" << bw << "x" << bh
-				<< " cached=" << ow << "x" << oh << '\n';
-			log.flush();
-			count++;
-		}
-	}
-
 	GraphicsGL::GraphicsGL()
 	{
 		locked = false;
@@ -655,8 +632,7 @@ namespace ms
 			if (cached.right - cached.left != static_cast<GLshort>(bmp.width())
 				|| cached.bottom - cached.top != static_cast<GLshort>(bmp.height()))
 			{
-				dbgatlas("stale-offset", id, bmp.width(), bmp.height(),
-					cached.right - cached.left, cached.bottom - cached.top);
+				// 陈旧 id 复用：尺寸不符则丢缓存并重传（不再落 atlas_dbg.log）。
 				offsets.erase(offiter);
 			}
 			else
@@ -867,10 +843,7 @@ namespace ms
 		// 直接跳过，等下一帧重传（实心填充走 drawrectangle/drawscreenfill，
 		// 不经过本函数，不受影响）。
 		if (&offset == &nulloffset)
-		{
-			dbgatlas("null-offset-draw", bmp.id(), bmp.width(), bmp.height(), 0, 0);
 			return;
-		}
 
 		offset.top += vertical.first();
 		offset.bottom -= vertical.second();

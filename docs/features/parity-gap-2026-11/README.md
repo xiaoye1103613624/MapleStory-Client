@@ -172,7 +172,7 @@
 | i18n pending-copy | 🟡 | R27-B1c 台账尚存待补键行（138 行版），软键盘档豁免 |
 | 联机冒烟 | 🟡 | 聊天 s9 回显矩阵、地图对象波1-3、攻击布局 13 用例等均有「待真机确认」清单未逐项勾绿 |
 | 工作树 | ⚠ 214 文件未提交 | GM 命令窗 + 字体兜底 + 商城按钮等并发在途 hunk（归属清单见 commit-hunks-B4b.md），未原子提交 |
-| 调试残留 | ⚠ | `GraphicsGL.cpp dbgatlas → atlas_dbg.log` 仍在 Release 链路，待验证轮收尾删（r810 §5） |
+| 调试残留 | ✅ | `dbgatlas → atlas_dbg.log` 已删（2026-11-06，见 atlas-dbg-cleanup）；B11 `_ui_asset_diag` 仍待用户点头 |
 
 ---
 

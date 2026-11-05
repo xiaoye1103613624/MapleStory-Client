@@ -372,7 +372,7 @@
 - 三条限制记在这儿备查：拆分粒度是**文件**而非 hunk（一个文件叠了多条轮次就无法再分）；
   `UIElement` / `PacketSwitch` / `vcxproj` 这类共享注册件只落一次；
   **中间提交不保证各自可构建**，只有最后一次源码提交 `358193d`（其后仅两笔文档提交）等于本轮真机验过的那份 `9636f77b4030ab4d9a85379cb0694911`。
-- 一条新查出的收尾欠账：`Graphics/GraphicsGL.cpp:33` 的 `dbgatlas()` 仍会在 Windows Release 落 `atlas_dbg.log`
+- ~~`GraphicsGL.cpp dbgatlas → atlas_dbg.log`~~：**已删**（2026-11-06，`atlas-dbg-cleanup`）
   （无开关、限 200 条），属登录页竖条纹轮遗留，随 #44 关闭时删除。
 - 本机临时件已按「是否仍被引用」清过一遍（**1529 个 / 168.9 MB 删除，删后反查引用断链 0**）：
   判据脚本 [`tools/scratch_sweep.py`](tools/scratch_sweep.py)，清单与副作用见
