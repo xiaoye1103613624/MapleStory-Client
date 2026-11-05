@@ -1,0 +1,7 @@
+[PERF] t=25730ms IMG mapload cold mapid=16 ms=0
+[PERF] t=25779ms QSI custom=0
+[PERF] t=25978ms SETFIELD after_unload_atlas map=16 cum_ms=0
+[PERF] t=25978ms SETFIELD after_ensure_map_roots map=16 cum_ms=0
+[PERF] t=25978ms IMG mapload cold mapid=16 ms=0
+[PERF] t=25979ms SETFIELD after_unlock map=16 cum_ms=0
+[PERF] t=26001ms SETFIELD total map=16 cum_ms=22

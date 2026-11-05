@@ -1,0 +1,12 @@
+[PERF] t=25309ms IMG mapload cold mapid=1 ms=0
+[PERF] t=25571ms SETFIELD after_unload_atlas map=1 cum_ms=0
+[PERF] t=25571ms SETFIELD after_ensure_map_roots map=1 cum_ms=0
+[PERF] t=26095ms SETFIELD after_stage_load map=1 cum_ms=524
+[PERF] t=26095ms SETFIELD after_unlock map=1 cum_ms=524
+[PERF] t=26110ms SETFIELD total map=1 cum_ms=539
+[PERF] t=222230ms SETFIELD after_unload_atlas map=100000000 cum_ms=0
+[PERF] t=222230ms SETFIELD after_ensure_map_roots map=100000000 cum_ms=0
+[PERF] t=222233ms IMG mapload cold mapid=100000000 ms=2
+[PERF] t=222543ms SETFIELD after_stage_load map=100000000 cum_ms=313
+[PERF] t=222543ms SETFIELD after_unlock map=100000000 cum_ms=313
+[PERF] t=222544ms SETFIELD total map=100000000 cum_ms=313

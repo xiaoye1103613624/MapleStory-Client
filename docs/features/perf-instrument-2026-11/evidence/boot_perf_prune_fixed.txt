@@ -1,0 +1,33 @@
+[PERF] t=516ms BOOT window=511ms
+[PERF] t=519ms BOOT patch=0ms
+[PERF] t=769ms ROOT UI=216ms
+[PERF] t=3843ms ROOT Map=3074ms
+[PERF] t=5865ms ROOT Sound=2021ms
+[PERF] t=5983ms ROOT String=117ms
+[PERF] t=6331ms ROOT Effect=347ms
+[PERF] t=6364ms ROOT Etc=33ms
+[PERF] t=6365ms BOOT resource=5814ms
+[PERF] t=9734ms ROOT Character=3368ms
+[PERF] t=9875ms ROOT Item=140ms
+[PERF] t=9917ms ROOT Morph=42ms
+[PERF] t=9918ms ROOT TamingMob=0ms
+[PERF] t=9919ms ROOT Base=0ms
+[PERF] t=9919ms ROOT Map2=0ms
+[PERF] t=12885ms BOOT ui=6028ms
+[PERF] t=12888ms RTT winsock WSAIoctl fail wsa=10022
+[PERF] t=13393ms RTT winsock WSAIoctl fail wsa=10022
+[PERF] t=13898ms RTT winsock WSAIoctl fail wsa=10022
+[PERF] t=16671ms ROOT Mob=6752ms
+[PERF] t=16672ms ROOT Mob001=0ms
+[PERF] t=16672ms ROOT Mob002=0ms
+[PERF] t=16672ms ROOT Mob2=0ms
+[PERF] t=18099ms ROOT Npc=1426ms
+[PERF] t=18168ms ROOT Quest=69ms
+[PERF] t=18572ms ROOT Reactor=404ms
+[PERF] t=19006ms ROOT Skill=433ms
+[PERF] t=19006ms ROOT Skill001=0ms
+[PERF] t=19006ms ROOT Skill002=0ms
+[PERF] t=19006ms ROOT Skill003=0ms
+[PERF] t=19006ms ROOT Sound001=0ms
+[PERF] t=19006ms ROOT Sound002=0ms
+[PERF] t=19006ms ROOT Sound2=0ms
