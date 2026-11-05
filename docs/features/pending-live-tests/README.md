@@ -30,7 +30,7 @@
 | 16 | NPC_ACTION 对话姿态 | ⏳ 待测 | c2s 197 | 点 NPC 对话；他人侧 NPC 应有动作 |
 | 17 | CLICK_GUIDE | ⏳ 待测 | c2s 162 | SPAWN_GUIDE 后点引导场标 → MIMO/LILIN |
 | 18 | 隐藏门三态动画 | ⏳ 待测 | — | 靠近/离开隐藏门看 Start/Continue/Exit |
-| 19 | NPC SENDSIMPLE「下项」A11b | ⏳ 待测 | c2s NPC_TALK_MORE | 悬停后点下项/回车发 selection；点 #L 直发；见 npc-talk-utildlgex-align |
+| 19 | NPC 对话 A11b+A11c | ⏳ 待测 | c2s NPC_TALK_MORE | 下项发 selection；α/TEXT_Y/Next=`W-78`；见 npc-talk-utildlgex-align |
 
 ---
 
@@ -208,7 +208,8 @@
 - **17**：新手图有 SPAWN_GUIDE 时点引导标记 → 空包 162 → 开 MIMO/LILIN 脚本窗。
 - **文档**：同上。
 - **A11b「下项」（2026-11-05 已接线，待真机）**：`SENDSIMPLE` 右下「下项」应激活；悬停选项后点下项 / 回车 / N → 出站 `NPC_TALK_MORE` + selection（与点 `#L` 同包）；点 `#L` 直发仍通；宋体/A12M 不变。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
-- **仍预留**：框体 α / `TEXT_Y` 居中 / 「下项」x450 vs 474 孤例对帧；KeyDown 持续技松开取消（无 cancel 上行证据）。
+- **A11c 框体/正文/槽位（2026-11-05 已接线，待真机）**：α 保持 1.0；正文按 content 高居中；Next=`W-78`、OK=`W-54`、Next 纵向高于 Close 51px。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）。
 
 ## 18. 隐藏门三态
 
@@ -223,11 +224,11 @@
   1. 打开对话后确认右下「下项」为激活态（非灰）。
   2. 鼠标悬停不同选项 → 高亮切换；再点「下项」或按回车/`N` → 应发 `NPC_TALK_MORE` 且 body 为当前高亮项 `selection`。
   3. 直接点 `#L…#l` 选项行 → 仍直发同包（不经下项）。
-  4. 肉眼：正文 A11M/A12M 思源宋体；框体几何与 R25 一致；未回 SimHei。
+  4. 肉眼：正文 A11M/A12M 思源宋体；短文在正文区垂直居中；「下项」约在 `W-78`（勿与「确定」`W-54` 混淆）；框体不额外半透明；未回 SimHei。
 - **期望**：服务端按 selection 推进脚本；无崩；关闭钮仍关窗。
 - **opcode**：c2s `NPC_TALK_MORE`（既有 `NpcTalkMorePacket`）。
 - **文档**：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)
-- **仍预留（非本项阻塞）**：框体 α / `TEXT_Y` 居中 / 「下项」x450 vs 474 对帧；KeyDown 持续技松开取消。
+- **仍预留（非本项阻塞）**：KeyDown 持续技松开取消。
 
 ## 7. SET_HPMPALERT
 

@@ -87,26 +87,38 @@ namespace ms
 		// 正文块位置：三张原生对话帧（528x261 / 526x349 / 523x203）逐列量的暗字像素边界，
 		// 左缘 163..170、右缘 474..476，取中位 166 + 折行宽 310（= 右缘 476）。
 		// 原来写死 x=162/166 + maxwidth=320 会把正文铺到 x482，和右下角「确定」(474..520) 叠住。
-		// TEXT_Y 是绘制点（不是字面墨迹顶）：三张帧量到的墨迹顶是 39 / 58 / 72，原生似乎按
-		// 正文高度在正文区里居中；这里保持 cj 原来的 48（落在区间中间），留待真机对帧再定。
+		// 正文 Y：IDA CUtilDlgEx::LayoutControls 路径（BeiDou sub_9A64FC）在正文装得下时
+		//   y = (content_h - text_h) / 2 + t.height + 7；装不下（滑条）则贴 content 顶 +7。
+		// 运行时写入 text_draw_y，禁止再写死 48。
 		static constexpr int16_t TEXT_X = 166;
-		static constexpr int16_t TEXT_Y = 48;
 		static constexpr int16_t TEXT_WIDTH = 310;
 		// 正文可视区上下各留的余量（沿用原实现的 18px），翻页步长 = 壳高 - 该余量。
 		static constexpr int16_t TEXT_SLACK = 18;
+		// IDA sub_9A64FC 非 Avatar/Pet 时正文绘制点相对几何居中再 +7。
+		static constexpr int16_t TEXT_Y_PAD = 7;
 
 		// 底带按钮槽位（窗口左上为原点）。UtilDlgEx 里每个按钮的 origin 都是 (0,0)，
 		// 所以位置只能由这里给；不给就会全部叠在窗口左上角。
 		// 尺寸取自 .nxcache/UI.nx：BtClose 85x19 / BtOK,BtYes,BtNo,BtNext,BtPrev 46x18 / BtQ* 57x17。
-		// 纵向 49 由两张独立原生帧互证：壳高 = t(28)+正文+s(58)，
-		// 528x261 帧反解正文 175、按钮顶 224 ⇒ 差 49；526x349 帧反解正文 263、按钮顶 312 ⇒ 差 49。
-		// 也即底片 s 内分隔条 +15..+20、按钮压 +21，21 + t.height(28) = 49。
+		// 纵向底带 BTN_DY=49：两张独立原生帧互证（R25）。
+		// Next/Prev 纵向：IDA sub_9A7C8B / sub_9A8FEF 用 wnd_h-77，Close/OK 用 wnd_h-26，
+		// 差值 51 ⇒ BTN_DY_NEXT = BTN_DY - 51（相对本仓 content height 坐标系）。
 		static constexpr int16_t BTN_DY = 49;
-		// 横向：右对齐留边 9（46 宽 → 474..520），成对时左那颗退 65（原生 接受/拒绝 实测间距 65）。
-		static constexpr int16_t BTN_X_RIGHT = 474;
+		static constexpr int16_t BTN_DY_NEXT = static_cast<int16_t>(BTN_DY - 51);
+		// 横向（IDA，相对窗宽 W=top.width()）：
+		//   BtOK          = W - 54          （R25 参考帧 474 = 528-54，曾误当成 Next）
+		//   BtNext/BtPrev = W - inset - 68 / W - inset - 122（inset=10；Avatar 皮肤 inset=140）
+		//   BtClose       = 9（TEXT）/ 10（LIST）
+		// QYes/QNo 仍用 R25 像素：宽钮右位 466、成对间距 65。
+		static constexpr int16_t BTN_OK_RIGHT_INSET = 54;
+		static constexpr int16_t BTN_NEXT_RIGHT_INSET = 68;
+		static constexpr int16_t BTN_PREV_RIGHT_INSET = 122;
+		static constexpr int16_t BTN_EDGE_INSET = 10;
+		static constexpr int16_t BTN_EDGE_INSET_AVATAR = 140;
+		static constexpr int16_t BTN_X_CLOSE = 9;
+		static constexpr int16_t BTN_X_CLOSE_LIST = 10;
 		static constexpr int16_t BTN_X_RIGHT_WIDE = 466;
 		static constexpr int16_t BTN_PAIR_PITCH = 65;
-		static constexpr int16_t BTN_X_CLOSE = 12;
 
 		enum Buttons
 		{
@@ -141,6 +153,10 @@ namespace ms
 		int16_t unitrows;
 		int16_t rowmax;
 		int16_t min_height;
+		// 正文绘制点 y（窗内坐标）。change_text 按 IDA 居中公式写入；SENDSIMPLE 命中同值。
+		int16_t text_draw_y;
+		int16_t text_block_height;
+		int8_t dlg_speaker;
 
 		bool show_slider;
 		bool draw_text;

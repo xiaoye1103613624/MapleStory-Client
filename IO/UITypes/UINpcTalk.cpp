@@ -57,6 +57,9 @@ namespace ms
 		offset(0),
 		unitrows(0),
 		rowmax(0),
+		text_draw_y(0),
+		text_block_height(0),
+		dlg_speaker(0),
 		show_slider(false),
 		draw_text(false),
 		formatted_text(""),
@@ -139,14 +142,13 @@ namespace ms
 			int16_t text_min_height = position.y() + top.height() - 1;
 			// 每翻一页恰好滚动一屏（可见高 = height - TEXT_SLACK）。原来是固定 400px，
 			// 而可见区最多 248-18=230px，翻页会把中间约 170px 的正文直接跳过去。
-			text.draw(position + Point<int16_t>(TEXT_X, TEXT_Y - offset * (height - TEXT_SLACK)), Range<int16_t>(text_min_height, text_min_height + height - TEXT_SLACK));
+			text.draw(position + Point<int16_t>(TEXT_X, text_draw_y - offset * (height - TEXT_SLACK)), Range<int16_t>(text_min_height, text_min_height + height - TEXT_SLACK));
 			slider.draw(position);
 		}
 		else
 		{
-			// 正文顶对齐（原生即如此）：原来用 48 - (height - min_height) 让窗口一拉长就整体上移，
-			// 结果是长文本反而往上贴到窗框、往下压住「确定」。
-			text.draw(position + Point<int16_t>(TEXT_X, TEXT_Y));
+			// 正文 Y：IDA sub_9A64FC 按 content 高度居中（见 change_text 写入的 text_draw_y）。
+			text.draw(position + Point<int16_t>(TEXT_X, text_draw_y));
 		}
 	}
 
@@ -376,7 +378,7 @@ namespace ms
 			for (size_t i = 0; i < simple_choices.size(); ++i)
 			{
 				const SimpleChoice& c = simple_choices[i];
-				const int16_t y = TEXT_Y + c.pos.y() - scroll;
+				const int16_t y = text_draw_y + c.pos.y() - scroll;
 
 				// 滚出可视带的选项不可点（绘制也被裁掉了）。
 				if (show_slider && (y < band_top || y + c.size.y() > band_bottom))
@@ -702,6 +704,7 @@ namespace ms
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx)
 	{
 		apply_dlg_skin(speakerbyte);
+		dlg_speaker = speakerbyte;
 
 		msgtype_wire = msgtype;
 		type = get_by_value(msgtype);
@@ -718,7 +721,8 @@ namespace ms
 		// 原来 maxwidth=320 起笔在 x162，正文右缘铺到 x482，和右下角「确定」(474..520) 叠住。
 		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, TEXT_WIDTH);
 
-		int16_t text_height = text.height();
+		text_block_height = text.height();
+		const int16_t text_height = text_block_height;
 
 		// 命中框必须在正文被清空前反取：下面 change_text("") 会把布局丢掉，
 		// 而选项的落点只存在于整段文本的折行结果里。
@@ -762,17 +766,34 @@ namespace ms
 			}
 		}
 
+		// IDA sub_9A64FC：装得下 → (content_h - text_h)/2 + t.height + 7；滑条 → 贴顶 +7。
+		if (show_slider)
+			text_draw_y = static_cast<int16_t>(top.height() + TEXT_Y_PAD);
+		else
+			text_draw_y = static_cast<int16_t>(
+				top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
+
 		for (auto& button : buttons)
 		{
 			button.second->set_active(false);
 			button.second->set_state(Button::State::NORMAL);
 		}
 
-		int16_t y_cord = height + BTN_DY;
+		// 底带（OK/Close/Yes/No）：y = height + BTN_DY（R25 = wnd≈height+86 的 -26 校准）。
+		// Next/Prev：IDA 相对 Close 高 51px ⇒ height + BTN_DY_NEXT。
+		const int16_t y_bottom = static_cast<int16_t>(height + BTN_DY);
+		const int16_t y_next = static_cast<int16_t>(height + BTN_DY_NEXT);
+		const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
+		const int16_t edge = (dlg_speaker == 1) ? BTN_EDGE_INSET_AVATAR : BTN_EDGE_INSET;
+		const int16_t x_ok = static_cast<int16_t>(dlg_w - BTN_OK_RIGHT_INSET);
+		const int16_t x_next = static_cast<int16_t>(dlg_w - edge - BTN_NEXT_RIGHT_INSET);
+		const int16_t x_prev = static_cast<int16_t>(dlg_w - edge - BTN_PREV_RIGHT_INSET);
+		const int16_t x_close = (type == TalkType::SENDSIMPLE) ? BTN_X_CLOSE_LIST : BTN_X_CLOSE;
+		const int16_t x_pair_wide = static_cast<int16_t>(BTN_X_RIGHT_WIDE - BTN_PAIR_PITCH);
 
 		if (buttons.count(Buttons::CLOSE))
 		{
-			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(BTN_X_CLOSE, y_cord));
+			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(x_close, y_bottom));
 			buttons[Buttons::CLOSE]->set_active(true);
 		}
 
@@ -785,50 +806,48 @@ namespace ms
 			buttons[id]->set_active(true);
 		};
 
-		const int16_t x_right = BTN_X_RIGHT;
-		const int16_t x_pair = static_cast<int16_t>(BTN_X_RIGHT - BTN_PAIR_PITCH);
-		const int16_t x_pair_wide = static_cast<int16_t>(BTN_X_RIGHT_WIDE - BTN_PAIR_PITCH);
-
 		switch (type)
 		{
 			case TalkType::SENDOK:
 			{
-				activate(Buttons::OK, Point<int16_t>(x_right, y_cord));
+				// IDA sub_9A7C8B：无 Next 时 BtOK @ (W-54, H-26)。
+				activate(Buttons::OK, Point<int16_t>(x_ok, y_bottom));
 				break;
 			}
 			case TalkType::SENDNEXT:
 			{
-				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
+				activate(Buttons::NEXT, Point<int16_t>(x_next, y_next));
 				break;
 			}
 			case TalkType::SENDPREV:
 			{
-				activate(Buttons::PREV, Point<int16_t>(x_pair, y_cord));
+				activate(Buttons::PREV, Point<int16_t>(x_prev, y_next));
 				break;
 			}
 			case TalkType::SENDNEXTPREV:
 			{
-				activate(Buttons::PREV, Point<int16_t>(x_pair, y_cord));
-				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
+				activate(Buttons::PREV, Point<int16_t>(x_prev, y_next));
+				activate(Buttons::NEXT, Point<int16_t>(x_next, y_next));
 				break;
 			}
 			case TalkType::SENDYESNO:
 			{
-				// 原生顺序：主操作在左、次操作在右（莎丽的 接受/拒绝 实测 401 / 466，间距 65）。
-				Point<int16_t> yes_position = Point<int16_t>(x_pair, y_cord);
-				activate(Buttons::YES, yes_position);
-				activate(Buttons::NO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
+				// IDA sub_9A8062：Yes @ W-(2*44+20)、No @ W-44-10；主操作在左。
+				// 46 宽钮与 44 槽接近；Q* 回退仍走 R25 宽钮常量。
+				const int16_t x_no = x_ok;
+				const int16_t x_yes = static_cast<int16_t>(dlg_w - (2 * 44 + 20));
+				activate(Buttons::YES, Point<int16_t>(x_yes, y_bottom));
+				activate(Buttons::NO, Point<int16_t>(x_no, y_bottom));
 
-				// Fall back to quest-styled yes/no if normal buttons are missing.
 				if (!buttons.count(Buttons::YES))
-					activate(Buttons::QYES, Point<int16_t>(x_pair_wide, y_cord));
+					activate(Buttons::QYES, Point<int16_t>(x_pair_wide, y_bottom));
 				if (!buttons.count(Buttons::NO))
-					activate(Buttons::QNO, Point<int16_t>(BTN_X_RIGHT_WIDE, y_cord));
+					activate(Buttons::QNO, Point<int16_t>(BTN_X_RIGHT_WIDE, y_bottom));
 				break;
 			}
 			case TalkType::SENDACCEPTDECLINE:
 			{
-				Point<int16_t> yes_position = Point<int16_t>(x_pair_wide, y_cord);
+				Point<int16_t> yes_position = Point<int16_t>(x_pair_wide, y_bottom);
 				activate(Buttons::QYES, yes_position);
 				activate(Buttons::QNO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
 
@@ -842,17 +861,16 @@ namespace ms
 			}
 			case TalkType::SENDGETNUMBER:
 			{
-				activate(Buttons::OK, Point<int16_t>(x_right, y_cord));
+				activate(Buttons::OK, Point<int16_t>(x_ok, y_bottom));
 				break;
 			}
 			case TalkType::SENDSIMPLE:
 			{
-				// IDA sub_9A8FEF (dlgType==4 LIST)：右下 BtNext(id=8193) + 左下 BtClose(id=2)。
-				// 槽位沿用 R25 像素常量 BTN_X_RIGHT / BTN_DY（IMG BtNext 46×18 已复核）。
-				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
+				// IDA sub_9A8FEF：BtNext(8193) @ (W-edge-68, H-77) + BtClose(2) @ (10, H-26)。
+				activate(Buttons::NEXT, Point<int16_t>(x_next, y_next));
 				simple_selected = 0;
-				LOG(LOG_DEBUG, "UINpcTalk: SENDSIMPLE activate NEXT choices="
-					<< simple_choices.size());
+				LOG(LOG_DEBUG, "UINpcTalk: SENDSIMPLE activate NEXT x=" << x_next
+					<< " y=" << y_next << " choices=" << simple_choices.size());
 				break;
 			}
 			case TalkType::SENDGETTEXT:

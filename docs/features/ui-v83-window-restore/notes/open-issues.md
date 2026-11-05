@@ -280,30 +280,30 @@ R25 用四张原生帧（528×261 / 526×349 / 523×203 + 二级弹窗 527×351�
 | 常量 | 值 | 依据 |
 | --- | --- | --- |
 | `TEXT_X` / `TEXT_WIDTH` | 166 / 310 | 正文暗字左缘 163..170、右缘 474..476 取中位；折行宽 = 右缘−起笔 |
-| `TEXT_Y` | 48 | 三帧墨迹顶 39 / 58 / 72，**原生疑似按正文高度在正文区居中**，未定案（见下） |
-| `BTN_DY` | `height + 49` | 底片 `s` 顶 = `t.height+height`，`s` 内分隔条 +15..+20，按钮压 +21（实测 224 / 312） |
-| `BTN_X_RIGHT` | 474 | 46 宽 ⇒ 474..520，右对齐留边 9 |
+| `text_draw_y` | 动态 | IDA `sub_9A64FC`：`(content_h-text_h)/2 + t.height + 7`（滑条贴顶+7） |
+| `BTN_DY` / `BTN_DY_NEXT` | `+49` / `−2` | 底带 OK/Close = R25；Next/Prev = IDA `wnd_h-77` 相对底带差 51 |
+| `x_ok` / `x_next` | `W-54` / `W-78` | IDA：OK 与 Next **不是**同一 X；474≠450 已销「孤例」 |
 | `BTN_X_RIGHT_WIDE` / `BTN_PAIR_PITCH` | 466 / 65 | 57 宽的 `BtQYes/BtQNo`；成对间距实测 65（莎丽 接受/拒绝 401 / 466） |
-| `BTN_X_CLOSE` | 12 | 「结束对话」在左下 |
+| `BTN_X_CLOSE` | 9 / LIST=10 | IDA TEXT=9、LIST=10（R25 像素量 12≈裁剪噪声） |
 
 > **推翻了一条我自己上一轮写进注释的"实测"**：`TEXT_X=122 / TEXT_Y=35 / TEXT_WIDTH=387`
 > 来自一次把 2× 网格叠画看走眼的读数，真量下来该帧正文左缘是 **170**。
 > 教训：注释里写「实测」的数字必须能被脚本复现，否则就是在编。复现脚本已归档
 > [../evidence/r25-npctalk-geometry/](../evidence/r25-npctalk-geometry/README.md)。
 
-两个**留给真机对帧**的开放点：
-- `TEXT_Y`：三帧墨迹顶 39/58/72 不是同一个偏移，先取 cj 原值 48（落在区间中间）。
-- 「下项」槽位冲突：`NPC对话2.png` 量到 450 而参考帧量到 474，纵向一个 `height+11` 一个 `height+49`，
-  差值来自两张图的裁剪边界不同，**没有编码这个孤例**，等真机同场景拍一张再定。
-
 ### A11b `SENDSIMPLE`（NPC 可选项列表）「下项」—— **已定案并接线（2026-11-05）**
 
 IDA（BeiDou `sub_9AB92A` / `sub_9A8FEF`）：`dlgType==4` 建 **BtNext(id=8193)+BtClose(2)**；
 点下项 = 取当前高亮 `list[cur].selection` 后收口（不是空操作，也不是「只循环高亮」）。
-本仓：`SENDSIMPLE` 激活 `BtNext@BTN_X_RIGHT`；悬停更新 `simple_selected`；下项/回车/N 发
+本仓：`SENDSIMPLE` 激活 `BtNext@(W-78, height+BTN_DY_NEXT)`；悬停更新 `simple_selected`；下项/回车/N 发
 `NpcTalkMorePacket(sel)`；点 `#L` 直发不变。证据：
 [npc-talk-utildlgex-align/evidence/a11b-sendsimple-next-ida.md](../../npc-talk-utildlgex-align/evidence/a11b-sendsimple-next-ida.md)。
 真机：pending-live-tests「NPC 下项」。
+
+### A11c 框体 α / TEXT_Y / BtNext×OK—— **已定案并接线（2026-11-05）**
+
+框体整体 α=1.0（IDA blit 255 + t/c/s 主体 α255）；TEXT_Y 动态居中；Next=`W-78`、OK=`W-54`。
+证据：[npc-talk-utildlgex-align/evidence/a11c-frame-alpha-texty-btnext.md](../../npc-talk-utildlgex-align/evidence/a11c-frame-alpha-texty-btnext.md)。
 
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 
