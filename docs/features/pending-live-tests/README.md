@@ -24,6 +24,7 @@
 | 11 | CANCEL_DEBUFF | ⏳ 待测 | c2s 99 | s9 handler 空实现；仅协议对齐 |
 | 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
 | 13 | 公会 Boss HUD+物件 | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` + `MapGuildBoss` |
+| 14 | CharInfo SoftKey 便签 | ⏳ 待测 | c2s 131 | `N` → NoteSend；需商城便签额度 |
 
 ---
 
@@ -108,6 +109,18 @@
 - **opcode**：s2c `GUILD_BOSS_HEALER_MOVE=287` body=`short y`；`GUILD_BOSS_PULLEY_STATE_CHANGE=288` body=`byte state`。
 - **功能文档**：[guild-boss-hud](../guild-boss-hud/)
 - **预留**：pulley 交互上行（原生 `sub_558B45`）未接——无服务端消费证据。
+
+## 14. CharInfo SoftKey 便签（NOTE_ACTION）
+
+- **前置**：打开角色信息窗（点其他角色 / 自己）；s9 `NoteActionHandler` **仅当** `CashShop.getAvailableNotes()>0` 才落库（商城赠送便签额度）。
+- **操作**：
+  1. CharInfo 聚焦 → 按 `N`。
+  2. 已有目标名：SoftKey 输入正文 → 发 `NOTE_ACTION=131` action0。
+  3. 无目标名：SoftKey 先收件人名，再正文。
+  4.（可选）`UIClaim` SoftKey 同包对照；抓包 body=`byte0 + mapleStr name + mapleStr msg`。
+- **期望**：有额度时对方可在 Memo 收到；无额度时客户端仍发包、服务端静默跳过（不崩）。
+- **opcode**：c2s `NOTE_ACTION=131`。
+- **备注**：与 `UIClaim` 同走 `NoteSendPacket`；本项补的是 CharInfo 快捷键路径。
 
 ## 7. SET_HPMPALERT
 

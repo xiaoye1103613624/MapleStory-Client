@@ -27,6 +27,7 @@
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Net/Packets/MessengerPackets.h"
 #include "../../Net/Packets/MiscOutPackets.h"
+#include "../../Net/Packets/NotePackets.h"
 #include "../../Net/Packets/PartyPackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
@@ -596,6 +597,30 @@ namespace ms
 			if (!n.empty()) {
 				MessengerInvitePacket(n).dispatch();
 				LOG(LOG_DEBUG, "UICharInfo: MessengerInvite name=" << n);
+			}
+		}
+		else if (keycode == 'N' || keycode == 'n')
+		{
+			// NOTE_ACTION(131) action0：商城便签额度 >0 时 s9 才落库（NoteActionHandler）。
+			// SoftKey 补齐 CharInfo「写便签」发包路径（parity-gap §1.2-E 复核项）。
+			std::string n = target_character ? target_character->get_name() : name.get_text();
+			if (n.empty())
+				n = get_target_name();
+			if (!n.empty()) {
+				UI::get().emplace<UISoftKey>([n](const std::string& msg) {
+					if (msg.empty()) return;
+					NoteSendPacket(n, msg).dispatch();
+					LOG(LOG_DEBUG, "UICharInfo: NoteSend to=" << n << " len=" << msg.size());
+				}, []() {}, Locale::text("charinfo.prompt_note"));
+			} else {
+				UI::get().emplace<UISoftKey>([](const std::string& to) {
+					if (to.empty()) return;
+					UI::get().emplace<UISoftKey>([to](const std::string& msg) {
+						if (msg.empty()) return;
+						NoteSendPacket(to, msg).dispatch();
+						LOG(LOG_DEBUG, "UICharInfo: NoteSend to=" << to << " len=" << msg.size());
+					}, []() {}, Locale::text("charinfo.prompt_note"));
+				}, []() {}, Locale::text("charinfo.prompt_note_to"));
 			}
 		}
 		else if (keycode == 'Y' || keycode == 'y')

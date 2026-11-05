@@ -12,10 +12,10 @@
 - **原生证据**：REA 搜 `BeiDou.exe` 字符串 `email`（不区分大小写）= **0 命中** → 原生无 email 功能痕迹。
 - **决策**：原生没有 → **忽略**（保留客户端发包不动，无害；不实现、不删除）。
 
-## 2. WORLD_MAP_PLAYERS @ 376（s2c：s9 发、客户端无 handler）
-- **功能**：世界地图上显示其他玩家 / 角色位置标记。
-- **原生证据**：REA 搜 `BeiDou.exe` `WorldMap` = **3 命中**（`p/WorldMap/WorldMap%d.img`、`Map/WorldMap/`、`Map/MapHelper.img/worldMap/npcPos`）→ 原生**有世界地图功能**。
-- **决策**：原生有 → 扩展阶段**对照 REA 开发**（需实现世界地图 UI + 玩家标记渲染）；当前仅记录、不实现。
+## 2. WORLD_MAP_PLAYERS @ 376（s2c）— ✅ 客户端已接（2026-11-05）
+- **功能**：世界地图选点玩家列表。
+- **客户端**：`WorldMapPlayersHandler` + `UIWorldMap::set_map_players`；c2s `277`。见 `docs/features/world-map-players/`。
+- **真机**：pending-live-tests §1。
 
 ## 3. GUILD_BOSS_HEALER_MOVE @ 287（s2c）— ✅ 客户端已接（2026-11-05）
 - **功能**：公会 PQ 治疗精灵 Y 同步。
