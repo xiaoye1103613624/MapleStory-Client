@@ -8,6 +8,7 @@
 
 #include "../UI.h"
 #include "../Components/MapleButton.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MessengerPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Locale.h"
@@ -164,6 +165,9 @@ namespace ms
 		create_sent = true;
 		LOG(LOG_DEBUG, "UIMessenger: create room (Open id=0)");
 		MessengerOpenPacket(0).dispatch();
+		// s9 create 路径历史上静默（仅 setMessenger）；即便已补 joinMessenger(0)，
+		// 也先乐观占位 0 号座 + 本机立绘，避免回包前白窗。
+		set_local_pos(0);
 	}
 
 	void UIMessenger::toggle_active()
@@ -213,6 +217,25 @@ namespace ms
 		in_room_ = true;
 		create_sent = true;
 		LOG(LOG_DEBUG, "UIMessenger: local_pos=" << static_cast<int>(pos));
+		// joinMessenger / 建房回包均不带 CharLook；本机立绘只能本地灌。
+		fill_local_look(pos);
+	}
+
+	void UIMessenger::fill_local_look(int8_t pos)
+	{
+		if (pos < 0 || static_cast<size_t>(pos) >= SLOT_COUNT)
+			return;
+
+		Player& pl = Stage::get().get_player();
+		Slot& s = slots[static_cast<size_t>(pos)];
+		s.occupied = true;
+		s.name = pl.get_name();
+		s.channel = -1; // 本机座位不标频道
+		// CharLook 拷贝当前外观（指针指向静态 Body/Hair/Face 池，Equips 按值）
+		s.charlook = std::make_unique<CharLook>(pl.get_look());
+		slot_labels[static_cast<size_t>(pos)].change_text(s.name);
+		LOG(LOG_DEBUG, "UIMessenger: fill_local_look pos=" << static_cast<int>(pos)
+			<< " name=" << s.name);
 	}
 
 	void UIMessenger::set_member(int8_t pos, const std::string& name, int8_t channel, const LookEntry& look)
@@ -332,15 +355,18 @@ namespace ms
 		{
 			if (!slots[i].occupied)
 				continue;
-			// 立绘：脚点落 NameBar 中线上方；0.70 缩放（待实机再微调）
+			// 立绘：脚点 = NameBar 中线上方 LOOK_FOOT_*；缩放 LOOK_SCALE（见头文件注释）
 			if (slots[i].charlook)
 			{
-				Point<int16_t> look_pos = position + namebar_pos[i] + Point<int16_t>(44, -10);
+				Point<int16_t> look_pos = position + namebar_pos[i]
+					+ Point<int16_t>(LOOK_FOOT_DX, LOOK_FOOT_DY);
 				slots[i].charlook->set_stance(Stance::Id::STAND1);
 				slots[i].charlook->set_expression(Expression::Id::DEFAULT);
-				slots[i].charlook->draw(DrawArgument(look_pos, 0.70f, 0.70f), 1.0f);
+				slots[i].charlook->draw(
+					DrawArgument(look_pos, LOOK_SCALE, LOOK_SCALE), 1.0f);
 			}
-			slot_labels[i].draw(position + namebar_pos[i] + Point<int16_t>(44, 2));
+			slot_labels[i].draw(
+				position + namebar_pos[i] + Point<int16_t>(LOOK_NAME_DX, LOOK_NAME_DY));
 		}
 
 		// 只画最近 CHAT_LOG_VISIBLE 行，落在 backgrnd2 之下露出的白框 y240..301 里；

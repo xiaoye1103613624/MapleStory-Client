@@ -99,9 +99,20 @@ namespace ms
 		static constexpr int16_t BT_ENTER_X = 247;
 		static constexpr int16_t BT_ENTER_Y = 322;
 
+		// 立绘脚点（相对 NameBar 左上）：NameBar 89×19 → 水平中线 44；
+		// 垂直贴名牌上沿再上抬 10（TAN 面板 y26..117，脚点≈98 时 0.70 身高约 50px 不撞标题）。
+		// 证据：messenger-layers.md §2–3；r495/r474 缩放经验值（无原生 oracle，待真机微调）。
+		static constexpr float LOOK_SCALE = 0.70f;
+		static constexpr int16_t LOOK_FOOT_DX = 44;
+		static constexpr int16_t LOOK_FOOT_DY = -10;
+		static constexpr int16_t LOOK_NAME_DX = 44;
+		static constexpr int16_t LOOK_NAME_DY = 2;
+
 		void leave_room();
 		void prompt_invite();
 		void send_chat(const std::string& text);
+		/// s9 建房/进房对本机只发 joinMessenger(pos) 不带 look；用本机 Player::CharLook 填座位。
+		void fill_local_look(int8_t pos);
 
 		bool has_assets;
 		bool in_room_;

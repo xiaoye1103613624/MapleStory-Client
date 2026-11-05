@@ -6,12 +6,15 @@
 | --- | --- | --- |
 | 登录遮罩叠图 | knobs 已锁（r201 playbook） | 需 `evidence/r20/current_shots/` 截图对照 |
 | PersonalShop CREATE FM | SoftKey 店名 → `HiredMerchantCreatePacket`（514/503） | 需自由市场图持有许可证点测 |
-| Messenger 立绘 | NameBar 脚点 + scale 0.70（r495） | 需实机截图再微调 |
+| Messenger 立绘 | ✅ 本机 look + 脚点常量 + s9 create→join | 需实机截图确认缩放/脚点 |
 | Guild BBS | 公会窗 `B` → `UIGuildBBS` 完整窗 + List；摘要栏仍同步 | 见 [guild-bbs-ui](../guild-bbs-ui/) / pending §12 |
 
-## 本轮代码补强
-- `UIGuild::set_bbs_summary`：列表/帖摘要与公告分栏绘制
-- `GuildBbsHandler`：解析标题进摘要栏并激活公会窗；修正文拼接乱码
+## 本轮代码补强（Messenger 立绘）
+
+- 根因：s9 `joinMessenger` 不带 look；create 曾静默 → 本机座位无立绘。
+- 客户端：`UIMessenger::fill_local_look` + `LOOK_SCALE/FOOT_*` 常量；开窗乐观占座 0。
+- s9：`MessengerHandler` create 后 `joinMessenger(0)`。
+- 笔记：[notes/messenger-look-2026-11-05.md](notes/messenger-look-2026-11-05.md)
 
 ## 真机步骤
 

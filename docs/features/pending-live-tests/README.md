@@ -15,7 +15,7 @@
 | 2 | USE_RETURN_SCROLL | ⏳ 待测 | c2s 85 | 回城卷双击 |
 | 3 | SoftKey：登录遮罩截图 | ⏳ 待测 | — | SoftKey 尾巴 |
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
-| 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | — | NameBar 脚点 |
+| 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | s2c 313 mode1 | 本机 look + 脚点 0.70；代码已闭环 |
 | 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | 公会窗摘要栏（兼容） |
 | 7 | SET_HPMPALERT | ⏳ 待测 | c2s 4096 / s2c 扩展 | Wave1 已接线；端到端需服务端配置 |
 | 8 | PICK_ALL_CHAR | ⏳ 待测 | c2s 14 / 32 | VAC 选角（本轮修正误发 19） |
@@ -61,9 +61,17 @@
 - **期望**：发出 `HiredMerchantCreatePacket`；店面出现。
 
 ### 5. Messenger 立绘
-- **前置**：可开 Messenger 窗。
-- **操作**：开 Messenger → 看 NameBar 立绘脚点与缩放（约 0.70）。
-- **期望**：立绘不悬空、不裁切；可截图对照再微调。
+- **前置**：已登录进图；`UIWindow.img/Messenger` 资源可用；建议再开第二角色测对方立绘。
+- **操作**：
+  1. 快捷键开 Messenger（状态栏社交 / `V` 等入口，以当前键位为准）→ 应自动建房。
+  2. **本机**：0 号 NameBar（灰，左上）上方应立即出现本机 STAND1 立绘（scale≈0.70，脚点在名牌中线上沿）。
+  3. SoftKey / 空槽点邀请第二角色 → 对方接受后，对应色 NameBar 上方出现对方立绘 + `Ch.N` 标签。
+  4. 发一句聊天 → 下方白框有字；本机立绘不消失。
+  5.（可选）抓包：建房后应收到 s2c `MESSENGER=313` **mode=1** `joinMessenger(pos=0)`；对方进房有 mode=0 `addMessengerPlayer`（含 look）。
+  6. 截图存 `docs/features/softkey-tails/evidence/messenger-look/`（若脚点悬空/裁切，记偏移再微调 `LOOK_FOOT_*`）。
+- **期望**：本机与对方立绘均可见；不悬空、不裁进标题条；关窗再开可重建。
+- **道具/地图/opcode**：任意城镇；c2s `MESSENGER=122`；s2c `313`。
+- **功能文档**：[softkey-tails](../softkey-tails/) · [notes/messenger-look-2026-11-05.md](../softkey-tails/notes/messenger-look-2026-11-05.md)
 
 ### 6. Guild BBS 摘要
 - **前置**：已加入公会。
