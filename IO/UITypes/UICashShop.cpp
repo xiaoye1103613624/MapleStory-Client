@@ -310,7 +310,8 @@ namespace ms
 			Constants::Constants::get().set_viewwidth(width);
 			Constants::Constants::get().set_viewheight(height);
 
-			float fadestep = 0.025f;
+			// 与 SetField/CashShopHandlers 同批提速：0.025→0.04（200ms/侧）。
+			float fadestep = 0.04f;
 
 			Window::get().fadeout(
 				fadestep,

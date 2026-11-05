@@ -34,6 +34,7 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Configuration.h"
+#include "../../Util/Resource/ResourceService.h"
 
 #include "../../Audio/Audio.h"
 #include "../../Character/Job.h"
@@ -1045,6 +1046,15 @@ namespace ms
 						case 2:
 						{
 							request_pending = true;
+							// Wave 0.3 进图预热：点「开始」即按该角色 charlist 里的
+							// mapid 提前 ensure_map（幂等：ImgSource s_bound_mapid 门）。
+							// 把最重的单图 img 解密从 SetField 淡入窗口挪到点击瞬间，
+							// 失败无害——SetField 路径仍会兜底再调一次。
+							{
+								const int32_t pre_mapid = characters[selected_character].stats.mapid;
+								if (pre_mapid > 0)
+									ms::res::ResourceService::get().ensure_map(pre_mapid);
+							}
 							SelectCharPacket(id).dispatch();
 							break;
 						}

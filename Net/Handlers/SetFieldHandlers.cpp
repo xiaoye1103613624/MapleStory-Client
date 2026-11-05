@@ -35,8 +35,11 @@
 #include "../../Graphics/Color.h"
 
 #include "../../Util/Misc.h"
+#include "../../Util/PerfLog.h"
 #include "../../Util/Resource/ResourceService.h"
 
+#include <chrono>
+#include <fstream>
 #include <string>
 
 namespace ms
@@ -86,12 +89,28 @@ namespace ms
 
 	void SetFieldHandler::transition(int32_t mapid, uint8_t portalid, bool enter_game) const
 	{
-		float fadestep = 0.025f;
+		// 淡出+淡入各 1/step 个 TIMESTEP(8ms) 拍：0.025→40 拍=320ms/侧，
+		// 0.04→25 拍=200ms/侧（Wave P 丝滑批，原生无此长黑窗）。
+		// 保留黑场是为遮住装图卡顿，不是留 640ms 仪式感。
+		float fadestep = 0.04f;
 
 		Window::get().fadeout(
 			fadestep,
 			[mapid, portalid, enter_game]()
 			{
+				// Wave 0.1 仪器：淡出回调整体跑在一帧里，它的耗时 = 用户感知的
+				// "换图黑一下"。分段 mark 到 boot_perf.log（debug.perf_log 开关）。
+				const auto seg_t0 = std::chrono::steady_clock::now();
+				// 捕获 [&]：body 要读外层 lambda 捕获的 mapid —— 显式只捕
+				// seg_t0 时外层按值捕获名在嵌套 lambda 里不可见（C3493 根因）。
+				auto seg = [&](const char* label)
+				{
+					const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+						std::chrono::steady_clock::now() - seg_t0).count();
+					perf::mark("SETFIELD", std::string(label) + " map=" + std::to_string(mapid)
+						+ " cum_ms=" + std::to_string(ms));
+				};
+
 				// Always unlock after the fade even if map/HUD load throws —
 				// otherwise GraphicsGL stays locked (black screen) while BGM
 				// already started in Stage::respawn, and the main thread can
@@ -106,6 +125,7 @@ namespace ms
 				enter_game_log(enter_game
 					? "[SetField] unload_atlas (enter_game)"
 					: "[SetField] unload_atlas (map transfer)");
+				seg("after_unload_atlas");
 
 				// img：补齐 Mob/Npc 等进图根；单张地图在 Stage::load → ensure_map。
 				try
@@ -113,6 +133,7 @@ namespace ms
 					ms::res::ResourceService::get().ensure_map_roots();
 					enter_game_log("[SetField] ensure_map_roots ok");
 					Window::get().poll_events();
+					seg("after_ensure_map_roots");
 				}
 				catch (const std::exception& ex)
 				{
@@ -124,6 +145,7 @@ namespace ms
 					Stage::get().load(mapid, portalid);
 					enter_game_log("[SetField] Stage::load ok");
 					Window::get().poll_events();
+					seg("after_stage_load");
 				}
 				catch (const std::exception& ex)
 				{
@@ -140,6 +162,9 @@ namespace ms
 				Timer::get().start();
 				GraphicsGL::get().unlock();
 				enter_game_log("[SetField] GraphicsGL unlocked");
+				// after_stage_load→after_unlock 差值 = HUD 构建 + 视口切换成本；
+				// 首帧真正的贴图上传发生在解锁后的第一个 draw（不在本回调内）。
+				seg("after_unlock");
 
 				// 所有 SET_FIELD（首次进游戏 / 换图 / 传送 / 退出商城）都按 window.game_*
 				// 恢复游戏视口：商城由 SetCashShopHandler::transition 单独设 1024×768，
@@ -171,6 +196,7 @@ namespace ms
 				{
 					Stage::get().transfer_player();
 					enter_game_log("[SetField] transfer_player ok");
+					seg("total");
 				}
 				catch (const std::exception& ex)
 				{

@@ -160,11 +160,23 @@ namespace ms
 		// poll_events（SDL 事件只允许主线程泵，主循环照常泵）。
 		std::thread([this]()
 		{
+			ImgSource::set_bg_loading(true);
 			ImgSource::set_pump_enabled(false);
 			ensure_game_roots();
-			ImgSource::set_pump_enabled(true);
+			// 就绪标志必须紧跟选角根：LoginResultHandler 登录成功时泵 Wait
+			// 弹窗等的就是这个门。
+			// 【2026-11-04 自纠回归】上一批我把 store(true) 挪到了
+			// ensure_remaining 之后 —— 等于让登录等待吃满全量预热（ROOT 实测
+			// 链 Mob 7583ms / Character 5293ms / Npc 1706ms…合计 ~25s），
+			// 把"消除进图 7.5s"的收益反向加进了登录段。现在恢复早放行：
+			// 选角根就绪即放行，全量根继续后台跑（ensure() 已互斥，主线程
+			// ensure_map_roots 撞上进行中的后台装载 = 拿锁等一根，仍优于
+			// 旧的整段同步 7.5s）。
 			game_roots_ready_.store(true);
-			LOG(LOG_INFO, "[RES] prewarm_game_roots done (background)");
+			ImgSource::ensure_remaining();
+			ImgSource::set_pump_enabled(true);
+			ImgSource::set_bg_loading(false);
+			LOG(LOG_INFO, "[RES] prewarm done (char-select released early, remaining in bg)");
 		}).detach();
 	}
 

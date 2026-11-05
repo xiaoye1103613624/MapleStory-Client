@@ -647,7 +647,9 @@ namespace ms
 		Constants::Constants::get().set_viewwidth(1024);
 		Constants::Constants::get().set_viewheight(768);
 
-		float fadestep = 0.025f;
+		// 商城进出是纯状态切换（不装地图），黑场只服务观感；与换图同批提速
+		// 0.025→0.04（25 拍 ×8ms = 200ms/侧），Wave P 丝滑批。
+		float fadestep = 0.04f;
 
 		Window::get().fadeout(
 			fadestep,

@@ -7,11 +7,13 @@
 #include "../../Configuration.h"
 #include "../../IO/Window.h"
 #include "../../MapleStory.h"
+#include "../PerfLog.h"
 #include "RootTable.h"
 
 #include <nlnx/wz.hpp>
 
 #include <cctype>
+#include <chrono>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -20,6 +22,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -29,14 +32,22 @@ namespace ms
 	namespace res
 	{
 		std::vector<std::unique_ptr<nl::img_file>> ImgSource::s_files;
+		std::vector<ImgSource::map_slot> ImgSource::s_map_files;
 		std::map<std::string, std::string> ImgSource::s_dirs;
 		std::set<std::string> ImgSource::s_loaded;
 		int32_t ImgSource::s_bound_mapid = -2;
 		std::atomic<bool> ImgSource::s_pump_enabled{ true };
+		std::mutex ImgSource::s_load_mtx;
+		std::atomic<bool> ImgSource::s_bg_loading{ false };
 
 		void ImgSource::set_pump_enabled(bool enabled)
 		{
 			s_pump_enabled.store(enabled);
+		}
+
+		void ImgSource::set_bg_loading(bool loading)
+		{
+			s_bg_loading.store(loading);
 		}
 
 		// 16 个标准根名（与 ImgFiles.cpp 的 ROOTS[16] 一致）。
@@ -110,6 +121,11 @@ namespace ms
 
 			// Boot only the roots needed to paint the login screen quickly.
 			// Sound001/002、Character、Map002 等延后，避免启动/登录卡很久。
+			// Wave 0.2 复核（grep 实测）：Map/Map001 **不可**移出 boot ——
+			// 登录背景本体 = Map001["Back"]["login.img"]/["UI_login.img"]
+			// （LoginBackground.cpp:168、UILogin.cpp:96-98、UICharSelect.cpp:214），
+			// 木牌 = Map["Obj"]["login.img"]（UILogin:140 等）。曾试移除，
+			// 会造成登录页空纹理，已撤销；启动占比问题改由 gather 剪枝解决。
 			static const RootId kBootRoots[] = {
 				RootId::UI,
 				RootId::Map,
@@ -140,7 +156,10 @@ namespace ms
 				if (id == RootId::Map002)
 					continue;
 				ensure(id);
-				Window::get().poll_events();
+				// 本函数可在后台线程跑（prewarm 第二阶段）：SDL 事件泵只许
+				// 主线程，pump 关闭时跳过（与 ensure_char_select 同规）。
+				if (s_pump_enabled.load())
+					Window::get().poll_events();
 			}
 
 			LOG(LOG_INFO, "[IMG] ensure_remaining bound_roots="
@@ -173,10 +192,50 @@ namespace ms
 		{
 			ensure(RootId::Map);
 
+			// s_map_files/LRU 环与 RootTable::bind 与后台预热线程的 s_files/bind
+			// 并发（bind 直接写全局 nl::node 引用，无内部锁）——整段罩同一把
+			// 装载锁。load_single_map 不回入 ensure()，无嵌套加锁。
+			std::lock_guard<std::mutex> map(s_load_mtx);
+
 			if (s_bound_mapid == mapid && RootTable::root(RootId::Map002))
 				return;
 
+			// 近张命中（回城/折返/传送往返极常见）：MAP_KEEP 环里已有该图，
+			// 直接重绑走人 —— 跳过磁盘读 + img 解压，这两步是换图黑屏时长里
+			// 最大的可消除项。命中后把该槽提到队尾（LRU 尾 = 最新，保活）。
+			// 必须在 load_single_map 之前：放进读盘之后再判等于没有快路径。
+			for (auto mi = s_map_files.begin(); mi != s_map_files.end(); ++mi)
+			{
+				if (mi->mapid != mapid)
+					continue;
+
+				RootTable::bind(RootId::Map002, mi->file->root());
+				s_bound_mapid = mapid;
+
+				if (mi + 1 != s_map_files.end())
+				{
+					map_slot hit = std::move(*mi);
+					s_map_files.erase(mi);
+					s_map_files.push_back(std::move(hit));
+				}
+
+				LOG(LOG_INFO, "[IMG] ensure_map rebind hit mapid=" << mapid);
+				return;
+			}
+
+			// 冷路径：磁盘读 + img 解压 —— 换图黑时长里最大的可测量段。
+			// perf_log 开启时落 [PERF] mapload 毫秒（Release 唯一观测通道）。
+			const auto cold_t0 = std::chrono::steady_clock::now();
+
 			load_single_map(mapid);
+
+			{
+				const auto cold_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::steady_clock::now() - cold_t0).count();
+				perf::mark("IMG", "mapload cold mapid=" + std::to_string(mapid)
+					+ " ms=" + std::to_string(cold_ms));
+			}
+
 			Window::get().poll_events();
 		}
 
@@ -188,12 +247,28 @@ namespace ms
 			if (!fs::is_directory(directory, ec))
 				return out;
 
+			// Map 根专用剪枝：顶层 Map/ 子树（实测 97MB、5364 个单图文件）
+			// 全部是"读进来再被 load_map_helpers 的 Map/ 前缀过滤器丢弃"的
+			// 死字节 —— 单图由 load_single_map 按路径直开，不经 gather。
+			// 目录遍历阶段直接不下潜，省 IO + 省堆。
+			// 仅当被扫目录本身叫 Map（= Data/Map，load_map_helpers 的传入）
+			// 时生效；其余根（Character/Item/…）filename 不同，行为不变。
+			// depth 语义为 MSVC 实测：根的直接子项 depth()==0 —— 第一版写成
+			// ==1 永不命中（复测 Map=5733ms 无变化才暴露），已纠。
+			const bool prune_map_subtree = (directory.filename() == "Map");
+
 			size_t n = 0;
 			for (auto it = fs::recursive_directory_iterator(directory,
 				fs::directory_options::skip_permission_denied, ec);
 				it != fs::recursive_directory_iterator(); ++it)
 			{
 				std::error_code lec;
+				if (prune_map_subtree && it.depth() == 0 && it->is_directory(lec)
+					&& it->path().filename() == "Map")
+				{
+					it.disable_recursion_pending();
+					continue;
+				}
 				if (!it->is_regular_file(lec) || lec)
 					continue;
 				if (!iequals(it->path().extension().string(), ".img"))
@@ -331,7 +406,19 @@ namespace ms
 			auto file = std::make_unique<nl::img_file>();
 			file->open_tree(std::move(maps));
 			RootTable::bind(RootId::Map002, file->root());
-			s_files.push_back(std::move(file));
+			s_map_files.push_back({ mapid, std::move(file) });
+
+			// 长跑内存治理（2026-11-04 审计坐实的泄漏）：原先每次换图向 s_files
+			// append 一个解压后的地图树（数十 KB~MB 级）且只增不减，反复换图
+			// = 单调增长。但 nlnx node 引用 img_file 内部缓冲，换绑瞬间不能
+			// 销毁旧 file（悬垂）——故用有界 FIFO：保留最近 MAP_KEEP 张
+			// （当前图 + 前两张宽限窗，覆盖旧图 sprite/atlas 残留引用），
+			// 超出即销毁最老。上界 3×单图体积，长跑恒定。
+			constexpr size_t MAP_KEEP = 3;
+
+			while (s_map_files.size() > MAP_KEEP)
+				s_map_files.erase(s_map_files.begin());
+
 			s_bound_mapid = mapid;
 			s_loaded.insert("Map002");
 
@@ -341,6 +428,13 @@ namespace ms
 
 		void ImgSource::ensure(RootId id)
 		{
+			// 并行预热改造：ensure_remaining 现在跑在后台线程，主线程的
+			// ensure_char_select()/ensure_map(→ensure(Map)) 与之并发。
+			// s_loaded/s_files/RootTable 是裸容器：判重必须与解析、绑定同罩
+			// 一把锁，否则双线程各看见"未加载"就各解析一遍、双绑同一根。
+			// 锁粒度=单根（最长秒级）；主线程最多在淡入黑场里等一根。
+			std::lock_guard<std::mutex> load(s_load_mtx);
+
 			std::string phys;
 			switch (id)
 			{
@@ -357,6 +451,21 @@ namespace ms
 			}
 			if (s_loaded.count(phys))
 				return;
+
+			// Wave 0.2 仪器：单根装载（gather 读盘 + open_merge 解析 + bind）
+			// 分段计时落 boot_perf.log（debug.perf_log）。resource 段占冷启动
+			// 87%，先拿每根占比再决定并行/收窄的刀口。RAII：三个出口都记。
+			struct root_timer
+			{
+				const std::string* name;
+				std::chrono::steady_clock::time_point t0;
+				~root_timer()
+				{
+					const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+						std::chrono::steady_clock::now() - t0).count();
+					perf::mark("ROOT", *name + "=" + std::to_string(ms) + "ms");
+				}
+			} rtimer{ &phys, std::chrono::steady_clock::now() };
 
 			try
 			{
@@ -390,7 +499,18 @@ namespace ms
 
 		void ImgSource::close()
 		{
+			// 退出/切后端与后台预热竞态防护：detached 预热线程可能正在
+			// s_load_mtx 内解析绑定，此时主线程 clear() 裸容器 = UB。
+			// 等 s_bg_loading 自然落定（后台在装载循环末尾清零），再持锁
+			// 清表 —— 只验一次+拿锁再放，会漏"标志已置但线程还在排队拿锁"
+			// 的窗口。常态（进游戏后才可能退出）标志早已为 false，零等待。
+			while (s_bg_loading.load())
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+			std::lock_guard<std::mutex> load(s_load_mtx);
+
 			s_files.clear();
+			s_map_files.clear();
 			s_dirs.clear();
 			s_loaded.clear();
 			s_bound_mapid = -2;
