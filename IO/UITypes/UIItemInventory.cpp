@@ -791,6 +791,18 @@ namespace ms
 							auto ui = UI::get().get_element<UIKarmaScissors>();
 							if (!ui) ui = UI::get().emplace<UIKarmaScissors>();
 							else if (!ui->is_active()) ui->makeactive();
+						} else if (prefix == 514) {
+							// 514* 个人商店许可证：开 PersonalShop（ctor SoftKey 店名 → CREATE，需 FM）
+							auto ui = UI::get().get_element<UIPersonalShop>();
+							if (!ui) ui = UI::get().emplace<UIPersonalShop>();
+							else if (!ui->is_active()) ui->makeactive();
+							LOG(LOG_DEBUG, "UIItemInventory: PersonalShop permit id=" << item_id);
+						} else if (prefix == 503) {
+							// 503* 雇佣商人许可证：开 EntrustedShop（SoftKey 店名 → CREATE type5）
+							auto ui = UI::get().get_element<UIEntrustedShop>();
+							if (!ui) ui = UI::get().emplace<UIEntrustedShop>();
+							else if (!ui->is_active()) ui->makeactive();
+							LOG(LOG_DEBUG, "UIItemInventory: EntrustedShop permit id=" << item_id);
 						} else if (prefix == 545) {
 							// 545* 远程雇佣商人：开 EntrustedShop + OPEN_STORE
 							auto ui = UI::get().get_element<UIEntrustedShop>();

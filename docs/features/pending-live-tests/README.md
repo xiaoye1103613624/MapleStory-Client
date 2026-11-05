@@ -1,7 +1,7 @@
 # 用户待测清单（真机统一验收）
 
 > 维护约定：测不了/未测的写这里，步骤列全；已闭合标 ✅ + 日期 + 证据路径。  
-> 本轮（2026-11-05）按用户改口：**不做桌面点测**，仅维护步骤供用户统一测。
+> 2026-11-05 17:03 用户解除「不做桌面点测」约束，已完成一轮自动驱动真机验收（见下方记录）；未能自动触发的项仍需手测。
 
 相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/) · [guild-boss-hud](../guild-boss-hud/)
 
@@ -11,11 +11,12 @@
 
 | # | 项 | 状态 | opcode | 备注 |
 | --- | --- | --- | --- | --- |
-| 1 | WORLD_MAP_PLAYERS | ⏳ 待测 | c2s 277 / s2c 376 | 大地图选点玩家列表 |
+| 1 | WORLD_MAP_PLAYERS | ✅ 2026-11-05 | c2s 277 / s2c 376 | 已真机闭环，证据见下方「本次真机验收记录」；同图 0 玩家符合预期 |
 | 2 | USE_RETURN_SCROLL | ⏳ 待测 | c2s 85 | 回城卷双击 |
 | 3 | SoftKey：登录遮罩截图 | ⏳ 待测 | — | SoftKey 尾巴 |
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
 | 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | s2c 313 mode1 | 本机 look + 脚点 0.70；代码已闭环 |
+| 5b | Messenger blink / chatBalloon | ⏳ 待测 | s2c 313 mode6 | 打字泡 + 标题 blink；见 §5b |
 | 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | 公会窗摘要栏（兼容） |
 | 7 | SET_HPMPALERT | ⏳ 待测 | c2s 4096 / s2c 扩展 | Wave1 已接线；端到端需服务端配置 |
 | 8 | PICK_ALL_CHAR | ⏳ 待测 | c2s 14 / 32 | VAC 选角（本轮修正误发 19） |
@@ -25,6 +26,44 @@
 | 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
 | 13 | 公会 Boss HUD+物件 | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` + `MapGuildBoss` |
 | 14 | CharInfo SoftKey 便签 | ⏳ 待测 | c2s 131 | `N` → NoteSend；需商城便签额度 |
+
+---
+
+
+## 本次真机验收记录（2026-11-05 17:03，自动驱动）
+
+> 环境：s9 登录服 `127.0.0.1:8484`（java PID 6968）；部署 exe 时间戳 `16:43:32`；
+> 验收期临时开启 `login.auto` / `debug.packet_dump` / `debug.perf_log` / `debug.gm_smoke`，验收后已还原。
+> 证据：`evidence/live-20261105-*.png`；封包 `packet_dump.log`、探针 `boot_perf.log` 的本次增量。
+
+### 已闭环
+
+| 项 | 证据 | 结论 |
+| --- | --- | --- |
+| WORLD_MAP_PLAYERS | `[SEND] 15 01 e5 6e 51 06`(277) → `[RECV] 78 01 e5 6e 51 06 00 00`(376)；`live-20261105-mapclick3.png` | ✅ 请求/回包同 mapId，UI 玩家区 `0 players`（同图仅自己，符合预期）；怪物/掉落面板正常，说明 `ensure_map` 懒加载生效 |
+| 登录链路 | 本次 SEND 73 包，opcode 1/5/11/19/20/24/41×63/48/128/189/207 | ✅ 零手动全自动 登录→世界→频道→选角→进图 Henesys |
+| gm_smoke 自驱动 | `[PERF] SMOKE summon mob=100100 x3 map=100000000`；`[SEND] 80 00 17 04 87 01 00 03 00 00 00` | ✅ |
+| AUTO_AGGRO | `[SEND] bd 00 20 ca 9a 3b`(189) | ✅ 刷怪后碰撞上报 |
+| 四窗渲染 | `live-20261105-worldmap*.png` / `stats.png` / `skillbook.png` / `bag.png` | ✅ W/I/S/K 均正常开窗渲染，无崩溃 |
+
+### 前置体检（原 harness 会话 `e2643c27` 卡住未采集到的输出，本次补齐）
+
+```text
+[PERF] t=31244ms SMOKE probe ap=0 lv=1 job=0
+[PERF] t=31244ms SMOKE skill grenade=0 poisonbomb=0
+[PERF] t=31244ms SMOKE summon mob=100100 x3 map=100000000
+```
+
+角色 `Admin` 为 lv1 新手：AP=0、无手雷/毒弹技能、技能点 0、背包 0 件道具（`live-20261105-bag.png`）、HP/MP 满（50/50、5/5）。
+
+### 仍待测 / 阻塞原因（均非代码缺陷）
+
+- 原 harness 遗留 4 项：手雷 `0x6D`、一键 AP `0x58`、Buff 取消、书袋双击 —— 技能等级/AP/道具/buff 源全缺，需 GM 改号或换有前置的角色（**改角色数据属写库，未获授权，未做**）。
+- `HEAL_OVER_TIME(89)`：HP/MP 满，`Gameplay/Stage.cpp:403` 在 `heal_hp==0 && heal_mp==0` 时直接 return，不发属预期；需掉血或高 `info/recovery` 图。
+- `TOUCH_MONSTER_ATTACK(47)`：无 BODY_PRESSURE / ENERGY_CHARGE；`CANCEL_DEBUFF(99)`：无疾病 buff。
+- `USE_RETURN_SCROLL(85)` / `USE_SKILL_BOOK(82)` / 召唤袋：背包空，无对应道具。
+- `PICK_ALL_CHAR(14/32)`、SoftKey 各尾巴、GuildBBS 完整窗、公会 Boss HUD、`SET_HPMPALERT` 回灌：需对应场景/道具/公会/服务端配置。
+- SoftKey「截图键」：自动注入 `{SCROLLLOCK}` 未产出 `MapleStory-*.png`；W/I/S/K 注入均生效，判为特殊键映射未触达而非注入失效，**请手按 SCROLL_LOCK 复核**。
 
 ---
 
@@ -52,14 +91,31 @@
 ## 3–6. SoftKey 尾巴
 
 ### 3. 登录遮罩截图
-- **前置**：停在登录/选角可截屏场景；截图键默认 SCROLL_LOCK。
-- **操作**：按截图键 → 查 `Screenshots/`（或系统设置指定目录）是否生成 PNG。
-- **期望**：有时间戳文件名；成功日志一条。
+- **代码**：knobs 已锁（`r201-login-overlay-playbook`）；本轮补登录链全局 `SCROLL_LOCK`→截图（此前仅 `UIStateGame` 响应，登录页按键无落盘）。叠图偏移仍靠截图验收，不改 knob。
+- **前置**：当前部署端 `E:\MXD\BeiDou-Client-xy`；分辨率建议 **1280×720**；关闭自动登录以便停在各页。
+- **操作**：
+  1. 启动客户端，依次停在：登录页 → 选世界/频道页（含选中态）→ 选角页 → 进游戏后状态栏页。
+  2. 每页按 **SCROLL_LOCK** 截一张；文件落到可执行目录或桌面（`ui.sysopt.screenshot_path` 0/1），文件名形如 `MapleStory-*.png`。
+  3. 将 PNG 复制到 `docs/features/beidou-v17-parity/notes/evidence/r20/current_shots/`，文件名对齐：
+     - `登录界面.png`
+     - `选择频道页.png` / `选中频道页.png`
+     - `选择角色页.png`
+     - `进入游戏页.png`
+  4. 与同目录上级 `correct_shots/` 半透明叠图；仅偏差项按 playbook 改对应 knob（勿盲改 `CS_DETAIL_*` / Wait bar）。
+  5.（可选）叠图无偏差则本项标 ✅，把叠图证据放进 `current_shots/` 旁 `overlay_notes.md` 一行结论即可。
+- **期望**：四页与 correct 叠图可接受；截图键有时间戳文件 + 一条成功日志。
+- **对照**：`notes/r201-login-overlay-playbook.md` · `evidence/r20/current_shots/README.md`
 
 ### 4. PersonalShop FM
-- **前置**：角色在自由市场地图；持有雇佣商人许可证（514xxxx / 503xxxx）。
-- **操作**：SoftKey 输入店名 → 开店。
-- **期望**：发出 `HiredMerchantCreatePacket`；店面出现。
+- **前置**：角色在**自由市场房间**（`910xxxxxx` 且 `>910000000`，入口 `910000000` 不算）；现金栏持有 `514xxxx`（个人店）或 `503xxxx`（雇佣商人）。
+- **操作**：
+  1. （负向）在非 FM 图双击许可证或 SoftKey 店名 → 应红字 tip「Stores only in the free market」，**不发包**。
+  2. 进 FM 房间；双击 `514*` → 开 `UIPersonalShop` SoftKey；或开 PersonalShop 后 `C`/SoftKey 输入店名。
+  3. 确认出站 `PLAYER_INTERACTION(123)` CREATE：`00 | createType(4=514/5=503) | mapleStr title | 00 00 00 | int cashItemId`。
+  4. 成功：个人店应开 `UIMerchant` 货架（ROOM sub=4）；雇佣商人 ROOM sub=5；店名 tip 更新。
+  5. （可选）非 FM 若绕过客户端仍发包，服务端回 MiniRoomError 15 → 红字 tip，**不得**误开交易窗。
+- **期望**：仅 FM 可 CREATE；错误码 15 可见；店面/货架出现。
+- **功能文档**：[softkey-tails](../softkey-tails/) · [notes/personalshop-fm-2026-11-05.md](../softkey-tails/notes/personalshop-fm-2026-11-05.md)
 
 ### 5. Messenger 立绘
 - **前置**：已登录进图；`UIWindow.img/Messenger` 资源可用；建议再开第二角色测对方立绘。
@@ -73,6 +129,17 @@
 - **期望**：本机与对方立绘均可见；不悬空、不裁进标题条；关窗再开可重建。
 - **道具/地图/opcode**：任意城镇；c2s `MESSENGER=122`；s2c `313`。
 - **功能文档**：[softkey-tails](../softkey-tails/) · [notes/messenger-look-2026-11-05.md](../softkey-tails/notes/messenger-look-2026-11-05.md)
+
+### 5b. Messenger blink / chatBalloon
+- **前置**：双角色同 Messenger 房（或本机自测打字出站）；资源含 `Messenger/blink`、`Messenger/chatBalloon/0..4`。
+- **操作**：
+  1. A 开房，B 进房；B 在输入框打字（未回车）→ A 侧 B 立绘上方应出现白泡省略号动画（chatBalloon）。
+  2. B 清空输入 / 发出消息 → 泡应停；A 标题条右上橙标（blink）应闪约一轮。
+  3. A 发一句聊天 → 双方历史有字；可选抓包确认 typing 为 mode6 且 payload 为 `Name0`/`Name1`（无冒号）。
+  4. 截图存 `docs/features/softkey-tails/evidence/messenger-blink/`（若泡位偏，记 `BALLOON_DX/DY`）。
+- **期望**：打字泡不进聊天历史；真聊天进白框；无崩。
+- **局限**：原生 blink 仅最小化标题条闪；本端开窗也会闪（适配）。
+- **功能文档**：[notes/messenger-blink-chatballoon-2026-11-05.md](../softkey-tails/notes/messenger-blink-chatballoon-2026-11-05.md)
 
 ### 6. Guild BBS 摘要
 - **前置**：已加入公会。

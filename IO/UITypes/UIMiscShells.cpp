@@ -189,6 +189,12 @@ bool find_shop_permit(int16_t& slot, int32_t& itemid, bool prefer_player_shop)
 	return scan(514);
 }
 
+// 对齐 s9 GameConstants.isFreeMarketRoom：910xxxxxx 且 > 910000000（入口本身不算）
+bool is_free_market_room(int32_t mapid)
+{
+	return mapid / 1000000 == 910 && mapid > 910000000;
+}
+
 void dispatch_shop_create_or_open(const std::string& title, bool prefer_player_shop, Text& tip)
 {
 	auto sm_tip = [](Color::Name color, const std::string& msg) {
@@ -202,6 +208,13 @@ void dispatch_shop_create_or_open(const std::string& title, bool prefer_player_s
 		sm_tip(Color::Name::WHITE, Locale::text("common.open_store"));
 		return;
 	}
+	int32_t mapid = Stage::get().get_mapid();
+	if (!is_free_market_room(mapid)) {
+		tip.change_text(Locale::text("miniroom.err_free_market"));
+		sm_tip(Color::Name::RED, Locale::text("miniroom.err_free_market"));
+		LOG(LOG_DEBUG, "Shop CREATE blocked: not FM map=" << mapid);
+		return;
+	}
 	int16_t slot = 0; int32_t itemid = 0;
 	if (!find_shop_permit(slot, itemid, prefer_player_shop)) {
 		tip.change_text(Locale::text("shop.no_514_503_permit"));
@@ -213,7 +226,8 @@ void dispatch_shop_create_or_open(const std::string& title, bool prefer_player_s
 	HiredMerchantCreatePacket(title, itemid, ctype).dispatch();
 	tip.change_text(Locale::format("shop.create", title));
 	sm_tip(Color::Name::YELLOW, Locale::format("shop.create", title));
-	LOG(LOG_DEBUG, "Shop CREATE titleLen=" << title.size() << " item=" << itemid << " type=" << (int)ctype);
+	LOG(LOG_DEBUG, "Shop CREATE titleLen=" << title.size() << " item=" << itemid
+		<< " type=" << (int)ctype << " map=" << mapid);
 	(void)slot;
 }
 
@@ -1585,6 +1599,7 @@ void UIPersonalShop::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 }
 UIElement::Type UIPersonalShop::get_type() const { return TYPE; }
+void UIPersonalShop::set_tip(const std::string& tip) { tip_label.change_text(tip); }
 
 UIMemberShop::UIMemberShop()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("membershop.membershop_softkey_title"))
@@ -1845,6 +1860,7 @@ void UIEntrustedShop::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 }
 UIElement::Type UIEntrustedShop::get_type() const { return TYPE; }
+void UIEntrustedShop::set_tip(const std::string& tip) { tip_label.change_text(tip); }
 
 UICashTradingRoom::UICashTradingRoom()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("cashtradingroom.cashtrade_softkey_meso_chat_c_x"))

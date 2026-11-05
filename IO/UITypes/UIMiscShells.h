@@ -242,6 +242,7 @@ public:
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
+	void set_tip(const std::string& tip);
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
@@ -275,6 +276,7 @@ public:
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
+	void set_tip(const std::string& tip);
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };

@@ -86,6 +86,8 @@ namespace ms
 		keymap[GLFW_KEY_ENTER] = Mapping(KeyType::Id::ACTION, KeyAction::Id::RETURN);
 		keymap[GLFW_KEY_KP_ENTER] = Mapping(KeyType::Id::ACTION, KeyAction::Id::RETURN);
 		keymap[GLFW_KEY_TAB] = Mapping(KeyType::Id::ACTION, KeyAction::Id::TAB);
+		// 登录链即可截图（KEYMAP 包到达前）；与 KeyConfig 默认 SCROLL_LOCK→SCREENSHOT 一致
+		keymap[GLFW_KEY_SCROLL_LOCK] = Mapping(KeyType::Id::MENU, KeyAction::Id::SCREENSHOT);
 
 		textactions[GLFW_KEY_BACKSPACE] = KeyAction::Id::BACK;
 		textactions[GLFW_KEY_ENTER] = KeyAction::Id::RETURN;

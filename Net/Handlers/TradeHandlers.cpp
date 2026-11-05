@@ -31,6 +31,7 @@
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Template/EnumMap.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 namespace ms
 {
@@ -123,9 +124,35 @@ namespace ms
 
 		switch (mode)
 		{
-			case 5: // ROOM：交易 / 雇佣商人 / 小游戏（Omok/MatchCard）共用，靠后续字节区分
+			case 5: // ROOM：交易 / 个人店 / 雇佣商人 / 小游戏 / MiniRoomError 共用，靠后续字节区分
 			{
 				uint8_t sub = recv.read_byte();
+				// s9 getMiniRoomError：ROOM + byte0 + status（15=仅自由市场等）
+				if (sub == 0)
+				{
+					uint8_t status = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+					while (recv.available())
+						recv.skip_byte();
+					std::string tip;
+					switch (status)
+					{
+						case 12: tip = Locale::text("miniroom.err_channel"); break;
+						case 13: tip = Locale::text("miniroom.err_establish"); break;
+						case 15: tip = Locale::text("miniroom.err_free_market"); break;
+						case 17: tip = Locale::text("miniroom.err_enter"); break;
+						case 18: tip = Locale::text("miniroom.err_maintenance"); break;
+						default:
+							tip = Locale::format("miniroom.err_generic", std::to_string(status));
+							break;
+					}
+					LOG(LOG_DEBUG, "TradeHandler: MiniRoomError status=" << static_cast<int>(status));
+					ensure_sm(Color::Name::RED, tip);
+					if (auto ps = UI::get().get_element<UIPersonalShop>())
+						ps->set_tip(tip);
+					if (auto es = UI::get().get_element<UIEntrustedShop>())
+						es->set_tip(tip);
+					break;
+				}
 				if (sub == 1) // getMiniGame：type=1
 				{
 					// s9 visitMiniGame 大致：slot + charLook + name + gameType(+wins…)
@@ -171,6 +198,75 @@ namespace ms
 					if (table) {
 						table->set_game_kind(game_type == 2 ? 2 : 1);
 						table->set_tip(tip);
+					}
+					break;
+				}
+				// s9 getPlayerShop：ROOM + 4 + 4 + (owner?0:1) + sold?/0 + look + name + visitors + FF + desc + slots + items
+				if (sub == 4)
+				{
+					std::string owner;
+					std::string desc;
+					std::vector<UIMerchant::MerchItem> items;
+					try {
+						if (recv.available())
+							recv.read_byte(); // 第二字节 4（slotMax 类）
+						uint8_t number = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+						if (number == 0) {
+							uint8_t sold = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+							for (uint8_t i = 0; i < sold && recv.available(); ++i) {
+								recv.read_int();    // itemId
+								recv.read_short();  // qty
+								recv.read_int();    // mesos
+								recv.read_string(); // buyer
+							}
+						} else if (recv.available()) {
+							recv.read_byte(); // visitor path 补 0
+						}
+						if (recv.available() >= 10)
+							skip_charlook(recv);
+						if (recv.available() >= 2)
+							owner = recv.read_string();
+						while (recv.available()) {
+							int8_t v = static_cast<int8_t>(recv.read_byte());
+							if (v == -1)
+								break;
+							skip_charlook(recv);
+							recv.read_string();
+						}
+						if (recv.available() >= 2)
+							desc = recv.read_string();
+						if (recv.available())
+							recv.read_byte(); // 0x10 slots
+						uint8_t items_size = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+						for (uint8_t i = 0; i < items_size && recv.available(); ++i) {
+							int16_t bundles = recv.read_short();
+							int16_t qty = recv.read_short();
+							int32_t price = recv.read_int();
+							int32_t itemid = 0;
+							skip_iteminfo(recv, itemid);
+							items.push_back({ itemid, qty, price, bundles });
+						}
+					} catch (...) {
+					}
+					while (recv.available())
+						recv.skip_byte();
+					LOG(LOG_DEBUG, "TradeHandler: ROOM PlayerShop ownerLen=" << owner.size()
+						<< " items=" << items.size());
+					std::string tip = owner.empty() ? Locale::text("personalshop.open")
+						: Locale::format("merchant.owner_shop", owner);
+					if (!desc.empty())
+						tip += " · " + desc;
+					// 勿 emplace PersonalShop：ctor 会再弹 SoftKey；CREATE 路径通常已开着
+					if (auto ps = UI::get().get_element<UIPersonalShop>()) {
+						if (!ps->is_active())
+							ps->makeactive();
+						ps->set_tip(tip);
+					} else {
+						ensure_sm(Color::Name::YELLOW, tip);
+					}
+					if (auto uimerchant = ensure_merchant()) {
+						uimerchant->set_owner(owner.empty() ? "PlayerShop" : owner);
+						uimerchant->set_items(items);
 					}
 					break;
 				}
@@ -224,15 +320,24 @@ namespace ms
 					while (recv.available())
 						recv.skip_byte();
 					// Merchant UI 已显，不 tip
+					break;
 				}
-				else // 交易开始（sub == 3）
+				if (sub == 3) // 交易开始（getTradeStart）
 				{
 					while (recv.available())
 						recv.skip_byte();
 					if (ensure_trade())
 						uitrade->start_trade();
 					// Trade UI 已开，不 SM
+					break;
 				}
+				// 未知 ROOM 子类型：勿误开交易窗
+				LOG(LOG_DEBUG, "TradeHandler: ROOM unknown sub=" << static_cast<int>(sub)
+					<< " rem=" << recv.available());
+				while (recv.available())
+					recv.skip_byte();
+				ensure_sm(Color::Name::YELLOW,
+					Locale::format("miniroom.err_generic", std::to_string(sub)));
 				break;
 			}
 			case 0x19: // updateHiredMerchant
