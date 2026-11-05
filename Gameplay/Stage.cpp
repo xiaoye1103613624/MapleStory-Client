@@ -202,6 +202,23 @@ namespace ms
 
 				if (waited >= 3000)
 				{
+					// 冒烟前置体检：把四项未验项各自缺什么一次打清楚
+					// （AP 是否够、等级/职业能否用目标技能、背包有无书/袋、
+					//   场上是否有 buff 源）。只读不改，perf 通道落盘。
+					{
+						const CharStats& cs = player.get_stats();
+						const int32_t ap = cs.get_stat(MapleStat::Id::AP);
+						const int32_t lv = cs.get_stat(MapleStat::Id::LEVEL);
+						const int32_t job = cs.get_job().get_id();
+						perf::mark("SMOKE", "probe ap=" + std::to_string(ap)
+							+ " lv=" + std::to_string(lv)
+							+ " job=" + std::to_string(job));
+						// 手雷前置：Gunslinger.GRENADE(5201002) / NightWalker.POISON_BOMB(14111006)
+						// 本端只有一个技能书容器，取等级 0 即"没这个技能"。
+						perf::mark("SMOKE", "skill grenade=" + std::to_string(player.get_skills().get_level(5201002))
+							+ " poisonbomb=" + std::to_string(player.get_skills().get_level(14111006)));
+					}
+
 					const int32_t mob = Setting<GmSmokeMob>::get().load();
 					int32_t qty = Setting<GmSmokeCount>::get().load();
 					if (qty <= 0) qty = 1;
