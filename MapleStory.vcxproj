@@ -270,6 +270,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Gameplay\MapleMap\MapFieldMarkers.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapSummon.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapMist.cpp" />
+    <ClCompile Include="Gameplay\MapleMap\MapGuildBoss.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapDoor.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapDragon.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapInfo.cpp" />
@@ -609,6 +610,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Gameplay\MapleMap\MapFieldMarkers.h" />
     <ClInclude Include="Gameplay\MapleMap\MapSummon.h" />
     <ClInclude Include="Gameplay\MapleMap\MapMist.h" />
+    <ClInclude Include="Gameplay\MapleMap\MapGuildBoss.h" />
     <ClInclude Include="Gameplay\MapleMap\MapDoor.h" />
     <ClInclude Include="Gameplay\MapleMap\MapDragon.h" />
     <ClInclude Include="Gameplay\MapleMap\MapInfo.h" />

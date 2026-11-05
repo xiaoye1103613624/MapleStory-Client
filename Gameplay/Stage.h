@@ -22,6 +22,7 @@
 #include "MapleMap/MapDrops.h"
 #include "MapleMap/MapEffect.h"
 #include "MapleMap/MapFieldMarkers.h"
+#include "MapleMap/MapGuildBoss.h"
 #include "MapleMap/MapNpcs.h"
 #include "MapleMap/MapPortals.h"
 #include "MapleMap/MapTilesObjs.h"
@@ -78,6 +79,8 @@ namespace ms
 		MapDrops& get_drops();
 		// Field placeholders (summon/mist/door/kite/dragon) until full sprites
 		MapFieldMarkers& get_field_markers();
+		/// 公会 PQ healer/pulley 物件（有地图属性时才加载）
+		MapGuildBoss& get_guild_boss();
 		// Returns a reference to the Player
 		Player& get_player();
 		// Return a reference to the attack and buff component
@@ -158,6 +161,7 @@ namespace ms
 		MapMobs mobs;
 		MapDrops drops;
 		MapFieldMarkers field_markers;
+		MapGuildBoss guild_boss;
 		MapEffect effect;
 
 		Combat combat;

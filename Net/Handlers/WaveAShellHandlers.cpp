@@ -2828,10 +2828,12 @@ namespace ms
 
 	void GuildBossHealerMoveHandler::handle(InPacket& recv) const
 	{
-		// s9 GuildPackets.GuildBoss_HealerMove：short newY
+		// 原生 CField_GuildBoss::OnPacket(287) → sub_558C0C：short 绝对 Y，
+		// RelMove(delta=newY-oldY) 后覆写 field 当前 Y。本端驱动地图物件 + HUD。
 		const int16_t ny = recv.available() >= 2 ? recv.read_short() : 0;
 		while (recv.available())
 			recv.skip_byte();
+		Stage::get().get_guild_boss().set_healer_y(ny);
 		auto ui = UI::get().get_element<UIGuildBoss>();
 		if (!ui)
 			ui = UI::get().emplace<UIGuildBoss>();
@@ -2841,10 +2843,12 @@ namespace ms
 
 	void GuildBossPulleyStateHandler::handle(InPacket& recv) const
 	{
-		// s9 GuildPackets.GuildBoss_PulleyStateChange：byte state
+		// 原生 OnPacket(288) → sub_558C3B：byte 写入 field+507（交互门控）。
 		const int8_t st = recv.available() ? recv.read_byte() : 0;
 		while (recv.available())
 			recv.skip_byte();
+		Stage::get().get_guild_boss().set_pulley_state(
+			static_cast<uint8_t>(st));
 		auto ui = UI::get().get_element<UIGuildBoss>();
 		if (!ui)
 			ui = UI::get().emplace<UIGuildBoss>();

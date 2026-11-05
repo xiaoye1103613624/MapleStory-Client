@@ -390,6 +390,9 @@
     <ClCompile Include="Gameplay\MapleMap\MapMist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Gameplay\MapleMap\MapGuildBoss.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIPartyRace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1212,6 +1215,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\MapleMap\MapMist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\MapleMap\MapGuildBoss.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIPartyRace.h">

@@ -102,6 +102,7 @@ namespace ms
 		drops.clear();
 		reactors.clear();
 		field_markers.clear();
+		guild_boss.clear();
 		aggro_sent.clear();	// Wave 4：换图清仇恨节流表（oid 图内唯一，跨图必换）
 		touch_atk_sent.clear();
 		hot_accum_ms = 0;
@@ -135,6 +136,8 @@ namespace ms
 		physics = Physics(src["foothold"]);
 		mapinfo = MapInfo(src, physics.get_fht().get_walls(), physics.get_fht().get_borders());
 		portals = MapPortals(src["portal"], mapid);
+		// 公会 PQ：地图根节点 healer/pulley（仅 990000900 等有）
+		guild_boss = MapGuildBoss(src);
 	}
 
 	void Stage::respawn(int8_t portalid)
@@ -174,6 +177,7 @@ namespace ms
 
 		combat.draw(viewx, viewy, alpha);
 		portals.draw(viewpos, alpha);
+		guild_boss.draw(viewpos, alpha);
 		backgrounds.drawforegrounds(viewx, viewy, alpha);
 		effect.draw();
 	}
@@ -253,6 +257,7 @@ namespace ms
 		backgrounds.update();
 		effect.update();
 		tilesobjs.update();
+		guild_boss.update();
 
 		reactors.update(physics);
 		npcs.update(physics);
@@ -592,6 +597,11 @@ namespace ms
 	MapFieldMarkers& Stage::get_field_markers()
 	{
 		return field_markers;
+	}
+
+	MapGuildBoss& Stage::get_guild_boss()
+	{
+		return guild_boss;
 	}
 
 	Player& Stage::get_player()

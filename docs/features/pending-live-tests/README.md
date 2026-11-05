@@ -23,7 +23,7 @@
 | 10 | TOUCH_MONSTER_ATTACK | ⏳ 待测 | c2s 47 | 身体压力/能量满触怪 |
 | 11 | CANCEL_DEBUFF | ⏳ 待测 | c2s 99 | s9 handler 空实现；仅协议对齐 |
 | 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
-| 13 | 公会 Boss HUD | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` 顶栏 |
+| 13 | 公会 Boss HUD+物件 | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` + `MapGuildBoss` |
 
 ---
 
@@ -85,17 +85,21 @@
 - **道具/地图/opcode**：任意城镇；c2s `155`；s2c `59` mode `0x06`/`0x07`。
 - **功能文档**：[guild-bbs-ui](../guild-bbs-ui/)
 
-### 13. 公会 Boss HUD（Healer / Pulley）
-- **前置**：进入会触发 `GuildBoss_HealerMove` / `GuildBoss_PulleyStateChange` 的公会 PQ 图（莎莲娜等）；或服务端脚本主动 `GuildPackets.GuildBoss_*`。
+### 13. 公会 Boss HUD + 地图物件（Healer / Pulley）
+- **前置**：
+  1. 进 **`990000900`**（莎莲娜王室，地图根有 `healer`/`pulley`）；或任意图仅测 HUD。
+  2. s9 当前脚本**不发** `GuildBoss_*`（仅 `GuildPackets` 工厂）→ 需 GM/临时脚本 `broadcastPacket(GuildPackets.GuildBoss_HealerMove(y))` / `PulleyStateChange(state)`，或改 PQ 事件补发。
 - **操作**：
-  1. 触发治疗精灵移动包 → 屏幕上方居中出现「公会副本」HUD，显示 `治疗精灵 Y=…`。
-  2. 触发滑轮状态包 → 同窗追加/刷新 `滑轮状态=…`。
-  3. 12s 无新包自动隐藏；Esc 立即关。
-  4. 确认 **不再** 往任务闹钟/QuestAlarm 灌 tip。
-- **期望**：数值与包体 short/byte 一致；无崩溃。
+  1. 进 `990000900` → 日志应有 `[GuildBoss] map healer path=Map/Obj/guild.img/...` 与 pulley；屏幕可见治疗精灵（约 x=295,y=-564）与滑轮（约 x=-59,y=-394）。
+  2. 发 HealerMove(y)（建议 y 在 yMin=-564 .. yMax=-350）→ 精灵 Y 插值移动；顶栏 HUD 显示 `治疗精灵 Y=…`。
+  3. 发 PulleyStateChange(state) → 日志 `pulley state=`；HUD 刷新；精灵帧仍循环（原生 state 只门控交互）。
+  4. 12s 无新包 HUD 自动隐藏；Esc 立即关 HUD（物件仍在）。
+  5. 确认 **不再** 往 QuestAlarm 灌 tip。
+  6. 换到无 healer 节点的图再发包 → HUD 仍更新；物件侧 debug「no map object」。
+- **期望**：Y/state 与包体一致；`990000900` 上精灵可见且随 287 移动；无崩溃。
 - **opcode**：s2c `GUILD_BOSS_HEALER_MOVE=287` body=`short y`；`GUILD_BOSS_PULLEY_STATE_CHANGE=288` body=`byte state`。
 - **功能文档**：[guild-boss-hud](../guild-boss-hud/)
-- **预留**：地图 `healer`/`pulley` 物件动画态机（IDA `sub_5587B3`）未做。
+- **预留**：pulley 交互上行（原生 `sub_558B45`）未接——无服务端消费证据。
 
 ## 7. SET_HPMPALERT
 

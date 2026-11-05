@@ -17,15 +17,17 @@
 - **原生证据**：REA 搜 `BeiDou.exe` `WorldMap` = **3 命中**（`p/WorldMap/WorldMap%d.img`、`Map/WorldMap/`、`Map/MapHelper.img/worldMap/npcPos`）→ 原生**有世界地图功能**。
 - **决策**：原生有 → 扩展阶段**对照 REA 开发**（需实现世界地图 UI + 玩家标记渲染）；当前仅记录、不实现。
 
-## 3. GUILD_BOSS_HEALER_MOVE @ 287（s2c：s9 发、客户端无 handler）
-- **功能**：家族 Boss（扎昆 / 暗黑龙王）PQ 里治疗师 NPC 的位置移动同步。
-- **原生证据**：REA 搜 `BeiDou.exe` `GuildBoss` = **0 命中**。注意游戏逻辑在 `Gr2D_DX8.dll`（未加载于 REA），EXE 无痕迹不能直接定论 DLL 内部，但倾向原生未强调该子功能。
-- **决策**：记录、延后；扩展阶段如需实现，先以 REA 加载游戏 DLL 还原治疗师移动逻辑再开发。
+## 3. GUILD_BOSS_HEALER_MOVE @ 287（s2c）— ✅ 客户端已接（2026-11-05）
+- **功能**：公会 PQ 治疗精灵 Y 同步。
+- **原生证据（IDA）**：`sub_558B0F` 对 opcode **287** 调 `sub_558C0C`（读 short → RelMove）；地图属性见 `sub_5587B3`。
+- **客户端**：`GuildBossHealerMoveHandler` → `MapGuildBoss` + `UIGuildBoss`。详见 `docs/features/guild-boss-hud/`。
+- **仍缺**：s9 脚本侧几乎不调用 `GuildPackets.GuildBoss_HealerMove`（仅工厂）→ 真机需补脚本/GM 发包。
 
-## 4. GUILD_BOSS_PULLEY_STATE_CHANGE @ 288（s2c：s9 发、客户端无 handler）
-- **功能**：家族 Boss PQ 里滑轮（pulley）状态变化同步。
-- **原生证据**：同 #3（`GuildBoss` 无 EXE 痕迹）。
-- **决策**：同 #3，记录、延后、扩展阶段 REA 还原后开发。
+## 4. GUILD_BOSS_PULLEY_STATE_CHANGE @ 288（s2c）— ✅ 客户端已接（2026-11-05）
+- **功能**：公会 PQ 滑轮状态字节。
+- **原生证据（IDA）**：`sub_558B0F` → `sub_558C3B`（写 field state；不改帧）。
+- **客户端**：`GuildBossPulleyStateHandler` → `MapGuildBoss` + `UIGuildBoss`。
+- **仍缺**：同 #3 服务端发包；交互上行（`sub_558B45`）未接。
 
 ## 汇总
 - **协议层结论**：已全量对齐（c2s 102/103 + 1 冗余发包；s2c 299/311 + 3 缺口 + 9 死 opcode），**无需更改任何 opcode 真值**。
