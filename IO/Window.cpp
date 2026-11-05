@@ -25,6 +25,7 @@
 #include "../Gameplay/Stage.h"
 
 #include "../Configuration.h"
+#include "../Util/PerfLog.h"
 #include "../MapleStory.h"
 #include "../Timer.h"
 #include "../Util/ResolutionTiers.h"
@@ -271,6 +272,7 @@ namespace ms
 			const uint8_t ordinal = Setting<SysOptScreenshotPath>::get().load();
 
 			// SDL3：GetBasePath/GetUserFolder 返回 SDL 内部持有的借用字符串，不可 SDL_free。
+			perf::mark("SHOT", "dirfn ordinal=" + std::to_string(ordinal));
 			const char* root = ordinal == 1 ? SDL_GetUserFolder(SDL_FOLDER_DESKTOP) : SDL_GetBasePath();
 
 			if (!root)
@@ -287,18 +289,19 @@ namespace ms
 			while (!base.empty() && (base.back() == '\\' || base.back() == '/'))
 				base.pop_back();
 
-			if (!SDL_CreateDirectory(base.c_str()))
-			{
-				LOG(LOG_WARN, "screenshot: cannot create " << base << " (" << SDL_GetError() << ")");
+			// The target is the exe base directory (or Desktop), which already exists.
+			// SDL3 SDL_CreateDirectory may report failure for an existing path; treat
+			// creation as best-effort and let the PNG writer surface real errors.
+			SDL_CreateDirectory(base.c_str());
 
-				return "";
-			}
+			perf::mark("SHOT", "dir=" + base);
 
 			return base;
 		}
 
 		void capture_screenshot()
 		{
+			perf::mark("SHOT", "enter");
 			const int16_t w = Constants::Constants::get().get_viewwidth();
 			const int16_t h = Constants::Constants::get().get_viewheight();
 
@@ -337,10 +340,12 @@ namespace ms
 
 			const std::string path = directory + "\\MapleStory-" + stamp + ".png";
 
+			perf::mark("SHOT", "write " + path);
+
 			if (stbi_write_png(path.c_str(), w, h, 4, flipped.data(), static_cast<int>(pitch)))
-				LOG(LOG_INFO, "screenshot: saved " << path);
+				perf::mark("SHOT", "saved");
 			else
-				LOG(LOG_WARN, "screenshot: encode failed for " << path);
+				perf::mark("SHOT", "encode failed");
 		}
 	}
 
@@ -973,6 +978,7 @@ namespace ms
 		// 截图必须在 SwapWindow 之前回读：那时后台缓冲就是刚画完的这一帧。
 		if (screenshot_pending)
 		{
+			perf::mark("SHOT", "consume");
 			screenshot_pending = false;
 			capture_screenshot();
 		}
@@ -982,6 +988,7 @@ namespace ms
 
 	void Window::request_screenshot()
 	{
+		perf::mark("SHOT", "pending");
 		screenshot_pending = true;
 	}
 

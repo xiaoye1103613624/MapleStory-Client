@@ -23,6 +23,7 @@
 #include "Window.h"
 
 #include "../Configuration.h"
+#include "../Util/PerfLog.h"
 #include "../Util/ResolutionTiers.h"
 
 #include "UITypes/UIChannel.h"
@@ -213,11 +214,15 @@ namespace ms
 		// SoftKey 尾巴「登录遮罩截图」验收依赖此路径（勿仅挂在 UIStateGame）。
 		if (pressed)
 		{
-			const bool scroll_lock = (keycode == GLFW_KEY_SCROLL_LOCK);
+			// PRINT_SCREEN is an additional screenshot key: SendKeys automation
+			// cannot deliver VK_SCROLL on this host; low-level keybd_event can.
+			const bool scroll_lock = (keycode == GLFW_KEY_SCROLL_LOCK
+				|| keycode == GLFW_KEY_PRINT_SCREEN);
 			const bool mapped_shot =
 				keyboard.get_mapping(keycode).action == KeyAction::Id::SCREENSHOT;
 			if (scroll_lock || mapped_shot)
 			{
+				perf::mark("SHOT", "request kc=" + std::to_string(keycode));
 				Window::get().request_screenshot();
 				is_key_down[keycode] = pressed;
 				return;
