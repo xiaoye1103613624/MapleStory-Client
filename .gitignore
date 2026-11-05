@@ -108,3 +108,7 @@ _tools/summon_probe/*.dll
 
 # 本机路径硬编码的临时构建脚本
 /build_portal_fix.bat
+
+/build_compile_check.txt
+/build_smoke_alt.log
+/build/smoke_out/
