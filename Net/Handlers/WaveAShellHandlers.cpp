@@ -3128,8 +3128,25 @@ namespace ms
 		LOG(LOG_DEBUG, "HpMpAlert hp=" << (int)hp << " mp=" << (int)mp);
 		while (recv.available())
 			recv.skip_byte();
-		// note
-		(void)hp; (void)mp;
+
+		// 真机验收判据（perf 通道，Release 可见）：登录链路应出
+		// [PERF] HPA hp=X mp=Y（服务端 step 0..19）。
+		perf::mark("HPA", "hp=" + std::to_string((int)hp)
+			+ " mp=" + std::to_string((int)mp));
+
+		// Wave 1-1.1 回灌：s9 登录时 updateClientSettings(hp_step, mp_step) 下发
+		// 角色存库挡位（HpMpAlertService：step/20=百分比，每挡 5%）。换算回
+		// 0..100 存进本地设置，UIStatusBar 的闪铃消费端（B4-5）直接吃这两个
+		// Setting —— 阈值从此跟随角色而非本机 Settings 文件。
+		// 0 挡=不报警，与本地语义一致；钳 0..19 防异常值。
+		auto step_to_pct = [](int8_t step) -> uint8_t
+		{
+			int s = step < 0 ? 0 : (step > 19 ? 19 : step);
+			return static_cast<uint8_t>(s * 5);
+		};
+
+		Setting<SysOptHpWarn>::get().save(step_to_pct(hp));
+		Setting<SysOptMpWarn>::get().save(step_to_pct(mp));
 	}
 
 	void SetItcHandler::handle(InPacket& recv) const

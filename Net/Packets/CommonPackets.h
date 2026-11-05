@@ -28,4 +28,17 @@ namespace ms
 	public:
 		PongPacket() : OutPacket(PONG) {}
 	};
+
+	// Opcode: CANCEL_BUFF(92 / 0x5C) — s9 CancelBuffHandler body 只有一个
+	// int sourceid（增益来源技能 id）。服务端白名单技能走专用取消，default
+	// 分支 cancelEffect(skill(sourceid))；结算后回 s2c CANCEL_BUFF(33) 移除
+	// 列表图标。Wave 3：UIBuffList 右键点图标即发本包。
+	class CancelBuffPacket : public OutPacket
+	{
+	public:
+		CancelBuffPacket(int32_t sourceid) : OutPacket(OutPacket::Opcode::CANCEL_BUFF)
+		{
+			write_int(sourceid);
+		}
+	};
 }

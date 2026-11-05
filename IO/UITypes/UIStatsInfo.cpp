@@ -29,6 +29,7 @@
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/PlayerPackets.h"
+#include "../../Util/PerfLog.h"
 #include "../../Util/UiAssetResolve.h"
 
 #include "../../Character/ExpTable.h"
@@ -704,21 +705,46 @@ namespace ms
 				{
 					if (yes)
 					{
-						if (autostr > 0)
-							for (size_t i = 0; i < autostr; i++)
-								send_apup(MapleStat::Id::STR);
+						// Wave 3：单包 AUTO_DISTRIBUTE_AP(88) 替换旧的 N 次
+						// SPEND_AP(87) 逐点循环（HeavenClient 遗法：AP=40 就
+						// 40 个网络往返 + 40 次 s2c 回显）。s9 标准分支（DB 种子
+						// use_server_auto_assigner=false）body = skip(8) +
+						// 2×{int type,int val}，type 走 Stat.getBy5ByteEncoding
+						// （STR=64/DEX=128/INT=256/LUK=512，与 MapleStat::codes
+						// 不是一套），val 须 0..remainingAp。
+						// 语义与旧循环一致：主属性吃满全额。第二对给 0 值占位
+						// （服务端严格读满 16B）；gainStatByType 先 gain<=0 早退，
+						// type=0(null) 不会被解引用 switch。
+						auto to_code = [](uint16_t which) -> AutoAssignApPacket::StatCode
+						{
+							switch (which)
+							{
+								case 0: return AutoAssignApPacket::StatCode::STR;
+								case 1: return AutoAssignApPacket::StatCode::DEX;
+								case 2: return AutoAssignApPacket::StatCode::INT;
+								default: return AutoAssignApPacket::StatCode::LUK;
+							}
+						};
 
-						if (autodex > 0)
-							for (size_t i = 0; i < autodex; i++)
-								send_apup(MapleStat::Id::DEX);
+						// 主属性 = 预演算里唯一非零项（上面 switch 只填一个）
+						int primary = autostr > 0 ? 0 : (autodex > 0 ? 1 : (autoint > 0 ? 2 : 3));
+						const int32_t ap = primary == 0 ? autostr : (primary == 1 ? autodex : (primary == 2 ? autoint : autoluk));
 
-						if (autoint > 0)
-							for (size_t i = 0; i < autoint; i++)
-								send_apup(MapleStat::Id::INT);
+						if (ap <= 0)
+							return;	// 无 AP 可分：不发
 
-						if (autoluk > 0)
-							for (size_t i = 0; i < autoluk; i++)
-								send_apup(MapleStat::Id::LUK);
+						// 主属性吃满 AP（与旧逐点循环同语义：旧代码也只点 primary）；
+						// 第二对给合法类型码 + 0 值占位（服务端严格读满 16B；
+						// gainStatByType 在 gain<=0 早退，switch 不求值 type）。
+						// 第二对类型码避开主属性：primary 0=STR 1=DEX 2=INT 3=LUK
+						// → 取 (primary+1)%4 的编码，永不与主属性撞。
+						const AutoAssignApPacket::StatCode second_code =
+							to_code((primary + 1) % 4);
+
+						AutoAssignApPacket(to_code(primary), ap, second_code, 0).dispatch();
+
+						perf::mark("AP", "autoassign primary=" + std::to_string(primary)
+							+ " ap=" + std::to_string(ap));
 					}
 				};
 

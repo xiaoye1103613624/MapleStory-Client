@@ -39,6 +39,10 @@ namespace ms
 			/// Login
 			LOGIN = 1,
 			LOGIN_EMAIL = 3,
+			//（RELOG=0x1C 已裁决"明确不做"，不占枚举位：s9 RelogRequestHandler
+			// 仅回 byte 1 无重登逻辑，发送只会触发本端垃圾 tip。分析见
+			// docs/features/parity-gap-2026-11/README.md §1.2；此位维持原
+			// 门禁不变量——OutPacket 枚举全部有构造点。）
 			CHARLIST_REQUEST = 5,
 			SERVERSTATUS_REQUEST = 6,
 			ACCEPT_TOS = 7,
@@ -143,6 +147,10 @@ namespace ms
 			PARTY_OPERATION = 124,
 			ADMIN_COMMAND = 128,
 			MOVE_MONSTER = 188,
+			/// s9 RecvOpcode.CHANGE_QUICKSLOT = 0xB7（快捷栏 8 个触发键上行）。
+			/// 存储/下行已闭环（Wave 1-1.2）；改键 UI 面需 v83 KeyConfig 快捷页
+			/// 实体化（Wave 6 素材线），本枚举+包类先行登记，暂不接线。
+			CHANGE_QUICKSLOT = 183,
 			PICKUP_ITEM = 202,
 			DAMAGE_REACTOR = 205,
 			PLAYER_MAP_TRANSFER = 207,
@@ -226,7 +234,12 @@ namespace ms
 			/// s9 RecvOpcode.OPEN_ITEMUI = 0xEC（Raise/Plant infoNumber）
 			OPEN_ITEMUI = 236,
 			/// s9 RecvOpcode.WORLD_MAP_PLAYERS = 0x115
-			WORLD_MAP_PLAYERS = 277
+			WORLD_MAP_PLAYERS = 277,
+			/// s9 RecvOpcode.WORLD_MAP_DROP_REQUEST = 0x116
+			WORLD_MAP_DROP_REQUEST = 278,
+			/// s9 RecvOpcode.SET_HPMPALERT = 0x1000（扩展通道）：
+			/// body = byte hp_step + byte mp_step（0..19 挡位，每挡 5%；服务端限幅）
+			SET_HPMPALERT = 4096
 		};
 
 	protected:

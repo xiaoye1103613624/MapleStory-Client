@@ -718,6 +718,8 @@ namespace ms
 							if (!ui) ui = UI::get().emplace<UIEnchantSkill>();
 							else if (!ui->is_active()) ui->makeactive();
 						}
+						// Wave 2a/3：路由（技能书/召唤袋分流）已下沉到
+						// UseItemPacket 构造内部，调用点不再传标志位。
 						UseItemPacket(slot, item_id).dispatch();
 						break;
 					}

@@ -22,8 +22,10 @@
 #include "../UI.h"
 #include "../../Configuration.h"
 #include "../../Data/ItemData.h"
+#include "../../Net/Packets/CommonPackets.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/Misc.h"
+#include "../../Util/PerfLog.h"
 
 #include <cstdio>
 
@@ -165,8 +167,12 @@ namespace ms
 	{
 		Point<int16_t> icpos = position;
 
+		// 顺序快照：右键命中索引用同一顺序（unordered_map 迭代序在 erase 后可变）
+		draw_order.clear();
+
 		for (auto& icon : icons)
 		{
+			draw_order.push_back(icon.first);
 			icon.second.draw(icpos, alpha);
 			icpos.shift_x(-32);
 		}
@@ -194,6 +200,50 @@ namespace ms
 	Cursor::State UIBuffList::send_cursor(bool pressed, Point<int16_t> cursorposition)
 	{
 		return UIElement::send_cursor(pressed, cursorposition);
+	}
+
+	// Wave 3：命中框 = 条带并集，几何与 draw() 严格同构：
+	// 第 i 格锚点 icpos_i = (position.x - 32*i, position.y)，图标 origin(0,32)
+	// 底边对齐锚点 → 可见框 [x-32i, x-32i+32) × [y-32, y]。
+	// 并集 = [position.x - 32*(n-1), position.x + 32) × [position.y - 32, position.y]。
+	// 基类矩形（position..position+dimension）在此窗不成立（见头注释）。
+	bool UIBuffList::is_in_range(Point<int16_t> cursor_position) const
+	{
+		if (icons.empty())
+			return false;
+
+		const int32_t w = cursor_position.x() - position.x();
+		const int32_t left = -32 * (static_cast<int32_t>(icons.size()) - 1);
+
+		return w >= left && w < 32
+			&& cursor_position.y() >= position.y() - 32 && cursor_position.y() <= position.y();
+	}
+
+	void UIBuffList::rightclick(Point<int16_t> cursorpos)
+	{
+		const int32_t w = cursorpos.x() - position.x();
+
+		if (w >= 32 || !is_in_range(cursorpos))
+			return;
+
+		// 槽号 = draw 顺序快照里的第几格（与上一帧实际渲染一致）。
+		// w∈[-32(n-1), 32) → slot = (31 - w)/32 ∈ [0, n)。
+		size_t slot = static_cast<size_t>((31 - w) / 32);
+
+		if (slot >= draw_order.size())
+			return;
+
+		const int32_t skillid = draw_order[slot];
+
+		auto it = icons.find(skillid);
+		if (it == icons.end())
+			return;	// 快照滞后一帧（项刚过期）：静默丢弃
+
+		// s9 CancelBuffHandler：body 只有一个 int sourceid（技能id，图标 key
+		// 天然就是 add_buff 时的 skillid）。服务端结算后回 s2c CANCEL_BUFF(33)
+		// → remove_buff 自然更新；本地不提前擦（服务端拒绝时观感才不裂）。
+		CancelBuffPacket(skillid).dispatch();
+		perf::mark("BUFF", "cancel request skillid=" + std::to_string(skillid));
 	}
 
 	UIElement::Type UIBuffList::get_type() const

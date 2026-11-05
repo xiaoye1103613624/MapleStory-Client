@@ -83,6 +83,7 @@ namespace ms
 		drops.clear();
 		reactors.clear();
 		field_markers.clear();
+		aggro_sent.clear();	// Wave 4：换图清仇恨节流表（oid 图内唯一，跨图必换）
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -202,6 +203,18 @@ namespace ms
 
 		if (int32_t oid_id = mobs.find_colliding(player.get_phobj()))
 		{
+			// Wave 4：触怪上报自动仇恨（s9 AutoAggroHandler int oid）。放在
+			// create_attack 之外 —— 无 bodyAttack 的怪服务端同样该转战。
+			// 每 oid 1s 节流（碰撞每帧跑）。
+			auto aggro_it = aggro_sent.find(oid_id);
+			const auto now = std::chrono::steady_clock::now();
+
+			if (aggro_it == aggro_sent.end() || now - aggro_it->second >= std::chrono::seconds(1))
+			{
+				aggro_sent[oid_id] = now;
+				AutoAggroPacket(oid_id).dispatch();
+			}
+
 			if (MobAttack attack = mobs.create_attack(oid_id))
 			{
 				MobAttackResult result = player.damage(attack);

@@ -30,6 +30,9 @@
 
 #include "../IO/KeyType.h"
 
+#include <chrono>
+#include <unordered_map>
+
 namespace ms
 {
 	class Stage : public Singleton<Stage>
@@ -84,6 +87,8 @@ namespace ms
 
 		// Return a pointer to a character, possibly the player.
 		Optional<Char> get_character(int32_t cid);
+		// 按名查找地图上已加载角色的 oid（聊天点名「查看角色信息」用）。找不到返回 -1。
+		int32_t find_character_id(const std::string& name) const;
 
 		// Set a map effect
 		void add_effect(std::string path);
@@ -105,7 +110,7 @@ namespace ms
 	private:
 		void load_map(int32_t mapid);
 		void respawn(int8_t portalid);
-		void check_portals();
+		void check_portals(bool allow_hidden = false);
 		void check_seats();
 		void check_ladders(bool up);
 		void check_drops();
@@ -124,6 +129,11 @@ namespace ms
 		Optional<Playable> playable;
 		State state;
 		int32_t mapid;
+
+		// Wave 4：AUTO_AGGRO 上报节流 —— 碰撞检测每帧跑，同一怪 1s 内只报
+		// 一次（等效原生的"进入接触"事件式上报；本端无接触沿检测，值为近似，
+		// NO-NATIVE-EXACT）。Stage::clear() 换图时清空。
+		std::unordered_map<int32_t, std::chrono::steady_clock::time_point> aggro_sent;
 
 		MapInfo mapinfo;
 		MapTilesObjs tilesobjs;

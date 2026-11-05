@@ -23,6 +23,7 @@
 #include "../../Graphics/Text.h"
 
 #include <string>
+#include <vector>
 
 namespace ms
 {
@@ -77,6 +78,15 @@ namespace ms
 		Cursor::State send_cursor(bool pressed, Point<int16_t> position) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 
+		// Wave 3：右键点掉增益图标 = 取消该 buff（s9 CancelBuffHandler 只认
+		// int sourceid=技能id，回 s2c CANCEL_BUFF(33) 后列表自然移除）。
+		// 命中判定必须自算：基类 is_in_range 用 (position, position+dimension)，
+		// dimension=(position.x,32) 使矩形从条带**右缘**起向屏外延伸 ——
+		// 图标所在条带 [x-32(n-1), x+32) 的左段永远打不中本窗，
+		// 右键全落进地图 ContextMenu。
+		bool is_in_range(Point<int16_t> cursor_position) const override;
+		void rightclick(Point<int16_t> cursorpos) override;
+
 		UIElement::Type get_type() const override;
 
 		void add_buff(int32_t buffid, int32_t duration);
@@ -84,6 +94,10 @@ namespace ms
 
 	private:
 		std::unordered_map<int32_t, BuffIcon> icons;
+		// draw() 迭代顺序快照（draw 是 const → mutable）。unordered_map 在
+		// update() 擦除过期项后迭代序可变，右键命中必须按"这一帧实际画出来
+		// 的顺序"索引，不能重拼迭代器。
+		mutable std::vector<int32_t> draw_order;
 		// ui.buff_timer：是否在图标上叠加剩余时间文本。
 		bool show_timer;
 	};
