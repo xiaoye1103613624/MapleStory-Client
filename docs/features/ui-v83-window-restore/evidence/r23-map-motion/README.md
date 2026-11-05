@@ -41,12 +41,12 @@ Map/MapX/<mapid>.img/foothold/<layer>/<chunk>/<fhid>/{x1,y1,x2,y2,prev,next[,for
 | 地图键 | 出现量 | 客户端 | 状态 |
 | --- | --- | --- | --- |
 | `foothold/*.force` | 51 图 / 855 条 | **本轮接上** | ✅ 修 |
-| `foothold/*.forbidFallDown` | 400 图抽样里 322 条 | 全仓库 0 引用 | ⚠ 预留（见 open-issues） |
+| `foothold/*.forbidFallDown` | 400 图抽样里 322 条 | **已接**（C12 → `enablejd`） | ✅ 见 [`../../forbid-fall-down/`](../../forbid-fall-down/) |
 | `ladderRope` | 3097 图 | `MapInfo.cpp:57` | ✅ 本来就有 |
 | `seat` | 99 图 | `MapInfo.cpp:54` | ✅ 本来就有 |
 | `portal` / `info.link` | 3097 / 2266 图 | `MapPortals` / `Npc.cpp:39` | ✅ 本来就有 |
 | `vportal`、`machine` | **0 图** | 0 引用 | ✅ 不是缺陷：这批数据里根本没有这两个节点 |
 | `reactor` | 3067 图 | 由服务端下发，不读地图节点 | ✅ 与履带无关 |
 
-也就是说：**这一类问题只有 `force`（已修）和 `forbidFallDown`（数据有、客户端没实现）两条**，
+也就是说：**这一类问题只有 `force` 与 `forbidFallDown` 两条**（均已接），
 不存在"还有别的驱动方式没接"的隐藏面。

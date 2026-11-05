@@ -800,12 +800,12 @@ W3 的落地状态见 [../evidence/w1w3-hud/coords.md](../evidence/w1w3-hud/coor
 - Admin 监控（后台）仍在跑，本线未动；
 - `game_config` 的双向日志位**已只读核实为 false**，见 D1。
 
-### C12 `foothold/forbidFallDown` 数据有、客户端零实现（R23-A 同类审计副产物）
+### C12 `foothold/forbidFallDown` 数据有、客户端零实现（R23-A 同类审计副产物）—— **已闭环**
 400 张抽样里有 322 条落脚点带这个键（全量比例见
-[../evidence/r23-map-motion/_r23_mapfeat.txt](../evidence/r23-map-motion/_r23_mapfeat.txt)），
-全仓库 `forbidFallDown` **0 引用**。语义是"这段平台上不许往下跳/掉落"，
-要接就得动 `Foothold` + `FootholdTree` 的边界判定，且**原生到底怎么表现我没有证据**
-（无 IDA、无参考帧）⇒ 按门禁 5「禁止想象修改」不接，只在此显式预留。
+[../evidence/r23-map-motion/_r23_mapfeat.txt](../evidence/r23-map-motion/_r23_mapfeat.txt)）。
+2026-11-05 已用 IDA（`sub_A43E7B` / string id 4417）+ sdlMS/SoloMapling 对照闭合：
+`Foothold` 解析 `forbidFallDown`，`FootholdTree::update_fh` 将其并入 `enablejd` 门控。
+详见 [`../../forbid-fall-down/README.md`](../../forbid-fall-down/README.md)。真机点测仍待做。
 
 ### C13 任务窗「寻找NPC位置」按了仍然没反应 —— 显式预留，不是漏实现
 原生行为是"把该任务 NPC 所在地图在世界地图上高亮点出"。要落地需要两样本包都没有的东西：

@@ -89,6 +89,10 @@ namespace ms
 		double ground_below(double x) const;
 		// 履带速度（foothold 的 force 属性，单位 px/s，符号即滚动方向）。非履带为 0。
 		int16_t force() const;
+		// 禁止下跳：foothold 的 forbidFallDown 属性（C12）。
+		// 原生 sub_A43E7B @0xA43E7B 以 string id 4417 "forbidFallDown:" 读成 bool（!=0）；
+		// 本端接到 enablejd 门控，站在此类平台上不可 ↓+跳 穿板。
+		bool forbidFallDown() const;
 
 	private:
 		uint16_t m_id;
@@ -96,6 +100,7 @@ namespace ms
 		uint16_t m_next;
 		uint8_t m_layer;
 		int16_t m_force;
+		bool m_forbidFallDown;
 		Range<int16_t> m_horizontal;
 		Range<int16_t> m_vertical;
 	};

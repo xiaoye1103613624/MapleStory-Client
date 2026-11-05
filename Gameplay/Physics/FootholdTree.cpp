@@ -207,17 +207,28 @@ namespace ms
 
 		if (phobj.enablejd || phobj.is_flag_set(PhysicsObject::Flag::CHECKBELOW))
 		{
-			uint16_t belowid = get_fhid_below(x, nextfh.ground_below(x) + 1.0);
-
-			if (belowid > 0)
+			// C12 forbidFallDown：当前落脚点禁止下跳时直接关 enablejd。
+			// 证据：原生 foothold 加载 sub_A43E7B 读 4417→bool；sdlMS/SoloMapling
+			// 在 prone+jump 路径上 `if (!forbidFallDown)` 才穿板。本端下跳已统一
+			// 门控于 enablejd（PlayerStates Walk/Prone），此处并入即可闭合。
+			if (nextfh.forbidFallDown())
 			{
-				double nextground = get_fh(belowid).ground_below(x);
-				phobj.enablejd = (nextground - ground) < 600.0;
-				phobj.groundbelow = ground + 1.0;
+				phobj.enablejd = false;
 			}
 			else
 			{
-				phobj.enablejd = false;
+				uint16_t belowid = get_fhid_below(x, nextfh.ground_below(x) + 1.0);
+
+				if (belowid > 0)
+				{
+					double nextground = get_fh(belowid).ground_below(x);
+					phobj.enablejd = (nextground - ground) < 600.0;
+					phobj.groundbelow = ground + 1.0;
+				}
+				else
+				{
+					phobj.enablejd = false;
+				}
 			}
 
 			phobj.clear_flag(PhysicsObject::Flag::CHECKBELOW);
