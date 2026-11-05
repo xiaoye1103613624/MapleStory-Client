@@ -44,10 +44,13 @@ namespace ms
 			float chance;
 			float critical;
 			float ignoredef;
+			// 运行时 Skill.nx level 节点 `criticalDamage`（实测值 105/110/.../125，百分比）。
+			// 0 = 该技能未配置；v2 公式把它叠加到暴击倍率上。
+			float criticaldamage;
 			float hrange;
 			Rectangle<int16_t> range;
 
-			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), hrange(hrange), range(range) {}
+			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range, float criticaldamage = 0.0f) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), criticaldamage(criticaldamage), hrange(hrange), range(range) {}
 		};
 
 		// Skill flags, unfortunately these just have to be hard-coded

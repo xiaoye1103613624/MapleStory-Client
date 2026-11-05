@@ -20,6 +20,7 @@
 #include "../../Character/SkillId.h"
 #include "../../Data/SkillData.h"
 #include "../../Util/Misc.h"
+#include "../../Configuration.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -180,6 +181,8 @@ namespace ms
 		int32_t level = user.get_skilllevel(skillid);
 		const SkillData::Stats stats = SkillData::get(skillid).get_stats(level);
 
+		const bool v2 = Configuration::get().get_damage_formula_v2();
+
 		if (stats.fixdamage)
 		{
 			attack.fixdamage = stats.fixdamage;
@@ -189,6 +192,17 @@ namespace ms
 		{
 			attack.matk += stats.matk;
 			attack.damagetype = Attack::DMG_MAGIC;
+
+			// v2：魔法技能改用独立魔法基础值（MAD/INT/LUK），而不是武器 min/max。
+			// 旧公式把 DMG_MAGIC 送到 Mob::calculate_maxdamage 时仍用物理面板值，
+			// 这是三层矩阵中标为「缺失」的一项。
+			if (v2 && attack.magicdamage > 0.0)
+			{
+				double multiplier = stats.damage > 0.0f ? stats.damage : 1.0f;
+				double base = attack.magicdamage * multiplier + stats.matk;
+				attack.mindamage = base;
+				attack.maxdamage = base;
+			}
 		}
 		else
 		{
@@ -198,7 +212,19 @@ namespace ms
 		}
 
 		attack.critical += stats.critical;
-		attack.ignoredef += stats.ignoredef;
+
+		if (v2)
+		{
+			attack.ignoredef += stats.ignoredef;
+
+			// criticalDamage 是百分比（105 = +5% 暴伤），叠加到暴击倍率区间。
+			if (stats.criticaldamage > 100.0f)
+			{
+				float bonus = (stats.criticaldamage - 100.0f) / 100.0f;
+				attack.critical_min += bonus;
+				attack.critical_max += bonus;
+			}
+		}
 		attack.mobcount = stats.mobcount;
 		attack.hrange = stats.hrange;
 

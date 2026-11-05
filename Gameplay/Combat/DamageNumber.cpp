@@ -23,9 +23,10 @@
 
 namespace ms
 {
-	DamageNumber::DamageNumber(Type t, int32_t damage, int16_t starty, int16_t x)
+	DamageNumber::DamageNumber(Type t, int64_t damage, int16_t starty, int16_t x)
 	{
 		type = t;
+		numscale = 1.0f;
 
 		if (damage > 0)
 		{
@@ -65,7 +66,15 @@ namespace ms
 				total += advance;
 			}
 
-			shift = total / 2;
+			// 2^53 是 16 位数字；默认图集每字符约 24px，不缩放会横向溢出。
+			// 运行时 BasicEff.img 只有 0-9 与 Miss，没有 K/M/B 等单位字符，
+			// 因此按最大宽度等比缩放，既保留完整数值又不截断（notes/r001 §4）。
+			constexpr int16_t MAX_DAMAGE_WIDTH = 260;
+
+			if (total > MAX_DAMAGE_WIDTH)
+				numscale = static_cast<float>(MAX_DAMAGE_WIDTH) / total;
+
+			shift = static_cast<int16_t>(total * numscale / 2);
 		}
 		else
 		{
@@ -79,7 +88,7 @@ namespace ms
 		opacity.set(1.5f);
 	}
 
-	DamageNumber::DamageNumber() {}
+	DamageNumber::DamageNumber() : numscale(1.0f) {}
 
 	void DamageNumber::draw(double viewx, double viewy, float alpha) const
 	{
@@ -93,18 +102,18 @@ namespace ms
 		}
 		else
 		{
-			charsets[type][false].draw(firstnum, { position, interopc });
+			charsets[type][false].draw(firstnum, { position, numscale, numscale, interopc });
 
 			if (multiple)
 			{
-				int16_t first_advance = getadvance(firstnum, true);
+				int16_t first_advance = static_cast<int16_t>(getadvance(firstnum, true) * numscale);
 				position.shift_x(first_advance);
 
 				for (size_t i = 0; i < restnum.length(); i++)
 				{
 					char c = restnum[i];
 					Point<int16_t> yshift = { 0, static_cast<int16_t>((i % 2) ? -2 : 2) };
-					charsets[type][true].draw(c, { position + yshift, interopc });
+					charsets[type][true].draw(c, { position + yshift, numscale, numscale, interopc });
 
 					int16_t advance;
 
@@ -120,7 +129,7 @@ namespace ms
 						advance = getadvance(c, false);
 					}
 
-					position.shift_x(advance);
+					position.shift_x(static_cast<int16_t>(advance * numscale));
 				}
 			}
 		}

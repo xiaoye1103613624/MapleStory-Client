@@ -1,0 +1,744 @@
+diff --git a/gms-server/src/main/java/org/gms/client/Character.java b/gms-server/src/main/java/org/gms/client/Character.java
+index 300f90cc85..3a11c14766 100644
+--- a/gms-server/src/main/java/org/gms/client/Character.java
++++ b/gms-server/src/main/java/org/gms/client/Character.java
+@@ -34,6 +34,7 @@ import org.gms.client.keybind.QuickslotBinding;
+ import org.gms.client.processor.action.PetAutopotProcessor;
+ import org.gms.client.processor.npc.FredrickProcessor;
+ import org.gms.config.GameConfig;
++import org.gms.config.DamageLinesConfig;
+ import org.gms.constants.game.DelayedQuestUpdate;
+ import org.gms.constants.game.ExpTable;
+ import org.gms.constants.game.GameConstants;
+@@ -252,6 +253,11 @@ public class Character extends AbstractCharacterObject {
+     private long lastExpression = 0;
+     @Setter
+     private long jailExpiration = -1;
++    // 破功值（单段伤害上限）：内存态，默认 2^53；本轮不做 DB 持久化。
++    // 0x3730 上线时下发，客户端取 min(配置 cap, 本值, 2^53)。
++    @Getter
++    @Setter
++    private long limitBreak = DamageLinesConfig.EXACT_INT_CAP;
+     private transient int localstr, localdex, localluk, localint_, localmagic, localwatk;
+     private transient int equipmaxhp, equipmaxmp, equipstr, equipdex, equipluk, equipint_, equipmagic, equipwatk, localchairhp, localchairmp;
+     private int localchairrate;
+diff --git a/gms-server/src/main/java/org/gms/net/opcodes/SendOpcode.java b/gms-server/src/main/java/org/gms/net/opcodes/SendOpcode.java
+index 2ba240ffd3..69e6c66960 100644
+--- a/gms-server/src/main/java/org/gms/net/opcodes/SendOpcode.java
++++ b/gms-server/src/main/java/org/gms/net/opcodes/SendOpcode.java
+@@ -356,8 +356,10 @@ public enum SendOpcode implements Opcode {
+     VICIOUS_HAMMER(0x162), // 恶毒锤子
+     VEGA_SCROLL(0x166), // VEGA卷轴
+     DPT_TRACKER(0x3714), // 个人伤害统计
++    LIMIT_BREAK_SYNC(0x3730), // 角色破功伤害上限同步（与客户端既有 opcode 一致）
+ 
+     WORLD_MAP_PLAYERS(0x178), // 世界地图 tooltip 玩家列表回复
++    WORLD_MAP_DROP_RESULT(0x179), // 世界地图掉落查询回复（服务端→客户端）
+     UPDATE_HPMPAALERT(0x1000), // 更新HP/MP/EXP警报
+     ;
+     private int code = -2;
+diff --git a/gms-server/src/main/java/org/gms/net/server/channel/handlers/AbstractDealDamageHandler.java b/gms-server/src/main/java/org/gms/net/server/channel/handlers/AbstractDealDamageHandler.java
+index 583542904a..eacfa8da10 100644
+--- a/gms-server/src/main/java/org/gms/net/server/channel/handlers/AbstractDealDamageHandler.java
++++ b/gms-server/src/main/java/org/gms/net/server/channel/handlers/AbstractDealDamageHandler.java
+@@ -30,6 +30,7 @@ import org.gms.client.autoban.AutobanFactory;
+ import org.gms.client.status.MonsterStatus;
+ import org.gms.client.status.MonsterStatusEffect;
+ import org.gms.config.GameConfig;
++import org.gms.config.DamageLinesConfig;
+ import org.gms.constants.game.GameConstants;
+ import org.gms.constants.id.ItemId;
+ import org.gms.constants.id.MapId;
+@@ -74,7 +75,11 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+     public static class AttackInfo {
+ 
+         public int numAttacked, numDamage, numAttackedAndDamage, skill, skilllevel, stance, direction, rangedirection, charge, display;
+-        public Map<Integer, List<Integer>> allDamage;
++        // 伤害行类型统一为 long；数值用符号编码暴击：
++        //   > 0 普通伤害，< 0 暴击（绝对值即真实伤害），0 = miss / 免疫。
++        // legacy 4 字节/行与 12 字节/行都归一到这个表示，applyAttack 不再做
++        // Integer.MAX_VALUE 补偿（旧实现会让广播伤害少 1 点）。
++        public Map<Integer, List<Long>> allDamage;
+         public boolean ranged, magic;
+         public int speed = 4;
+         public Point position = new Point();
+@@ -195,7 +200,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                 return;
+             }*/
+ 
+-            int totDamage = 0;
++            long totDamage = 0L;
+             long dptAttackDamage = 0L;
+             Monster distanceHackWorstMonster = null;
+             double distanceHackWorstDistance = Double.NEGATIVE_INFINITY;
+@@ -307,40 +312,45 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                         }
+                     }
+ 
+-                    int totDamageToOneMonster = 0;
+-                    List<Integer> onedList = attack.allDamage.get(oned);
++                    long totDamageToOneMonster = 0L;
++                    List<Long> onedList = attack.allDamage.get(oned);
++
++                    if (onedList == null) {
++                        continue;
++                    }
+ 
+                     if (attack.magic) { // thanks BHB, Alex (CanIGetaPR) for noticing no immunity status check here
+                         if (monster.isBuffed(MonsterStatus.MAGIC_IMMUNITY)) {
+-                            Collections.fill(onedList, 1);
++                            Collections.fill(onedList, 1L);
+                         }
+                     } else {
+                         if (monster.isBuffed(MonsterStatus.WEAPON_IMMUNITY)) {
+-                            Collections.fill(onedList, 1);
++                            Collections.fill(onedList, 1L);
+                         }
+                     }
+ 
+                     if (MobId.isDojoBoss(monster.getId())) {
+                         if (attack.skill == 1009 || attack.skill == 10001009 || attack.skill == 20001009) {
+-                            int dmgLimit = (int) Math.ceil(0.3 * monster.getMaxHp());
+-                            List<Integer> _onedList = new LinkedList<>();
+-                            for (Integer i : onedList) {
+-                                _onedList.add(i < dmgLimit ? i : dmgLimit);
++                            long dmgLimit = (long) Math.ceil(0.3 * monster.getMaxHp());
++                            List<Long> _onedList = new LinkedList<>();
++                            for (Long i : onedList) {
++                                long value = i == null ? 0L : Math.abs(i);
++                                _onedList.add(Math.min(value, dmgLimit));
+                             }
+ 
+                             onedList = _onedList;
+                         }
+                     }
+ 
+-                    for (Integer eachd : onedList) {
+-                        if (eachd != null && eachd > 0) {
+-                            dptAttackDamage += (long) eachd;
++                    for (Long eachd : onedList) {
++                        if (eachd == null) {
++                            continue;
+                         }
+ 
+-                        if (eachd < 0) {
+-                            eachd += Integer.MAX_VALUE;
+-                        }
+-                        totDamageToOneMonster += eachd;
++                        // 负数只是暴击标志；真实伤害恒为非负绝对值。
++                        long real = Math.abs(eachd);
++                        dptAttackDamage += real;
++                        totDamageToOneMonster += real;
+                     }
+                     totDamage += totDamageToOneMonster;
+                     monster.aggroMonsterDamage(player, totDamageToOneMonster);
+@@ -350,16 +360,13 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                         if (picklv > 0) {
+                             int delay = 0;
+                             final int maxmeso = player.getBuffedValue(BuffStat.PICKPOCKET);
+-                            for (Integer eachd : onedList) {
+-                                eachd += Integer.MAX_VALUE;
++                            for (Long eachd : onedList) {
++                                if (eachd == null) {
++                                    continue;
++                                }
+ 
+                                 if (pickpocket.getEffect(picklv).makeChanceResult()) {
+-                                    final int eachdf;
+-                                    if (eachd < 0) {
+-                                        eachdf = eachd + Integer.MAX_VALUE;
+-                                    } else {
+-                                        eachdf = eachd;
+-                                    }
++                                    final long eachdf = Math.abs(eachd);
+ 
+                                     TimerManager.getInstance().schedule(() -> map.spawnMesoDrop(Math.min((int) Math.max(((double) eachdf / (double) 20000) * (double) maxmeso, 1), maxmeso), new Point((int) (monster.getPosition().getX() + Randomizer.nextInt(100) - 50), (int) (monster.getPosition().getY())), monster, player, true, (byte) 2), delay);
+                                     delay += 100;
+@@ -481,7 +488,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                         Skill skill;
+                         if (player.getBuffedValue(BuffStat.COMBO_DRAIN) != null) {
+                             skill = SkillFactory.getSkill(21100005);
+-                            player.addHP(((totDamage * skill.getEffect(player.getSkillLevel(skill)).getX()) / 100));
++                            player.addHP(DamageLinesConfig.clampToInt((totDamage * skill.getEffect(player.getSkillLevel(skill)).getX()) / 100));
+                         }
+                     } else if (job == 412 || job == 422 || job == 1411) {
+                         Skill type = SkillFactory.getSkill(player.getJob().getId() == 412 ? 4120005 : (player.getJob().getId() == 1411 ? 14110004 : 4220005));
+@@ -561,7 +568,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                     }
+                     if (attack.skill == Paladin.HEAVENS_HAMMER) {
+                         if (!monster.isBoss()) {
+-                            int trackerDamage = monster.getHp() - 1;
++                            long trackerDamage = monster.getHp() - 1;
+                             if (trackerDamage > 0) {
+                                 dptAttackDamage += trackerDamage;
+                             }
+@@ -576,7 +583,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                         }
+                     } else if (attack.skill == Aran.COMBO_TEMPEST) {
+                         if (!monster.isBoss()) {
+-                            int trackerDamage = monster.getHp();
++                            long trackerDamage = monster.getHp();
+                             if (trackerDamage > 0) {
+                                 dptAttackDamage += trackerDamage;
+                             }
+@@ -658,7 +665,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+         }
+     }
+ 
+-    private static void damageMonsterWithSkill(final Character attacker, final MapleMap map, final Monster monster, final int damage, int skillid, int fixedTime) {
++    private static void damageMonsterWithSkill(final Character attacker, final MapleMap map, final Monster monster, final long damage, int skillid, int fixedTime) {
+         int animationTime;
+ 
+         if (fixedTime == 0) {
+@@ -678,6 +685,34 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+         }
+     }
+ 
++    /**
++     * 读一条伤害行并归一成「符号编码暴击的 long」：
++     * 正值=普通，负值=暴击（绝对值为真实伤害）。
++     *
++     * <p>legacy 4 字节/行：int 负数沿用旧服务端 -Integer.MAX_VALUE + d - 1 编码，
++     * 这里用低 31 位还原成精确真实值（旧 applyAttack 的 +MAX_VALUE 会少 1 点）。
++     * 12 字节/行：int32 vanillaLine（含 0x80000000 暴击位与 INT_MAX 哨兵）
++     * + int64 真实值；真实值恒非负，异常包回退到 vanilla 的低 31 位。
++     */
++    private static Long readDamageLine(InPacket p) {
++        int vanilla = p.readInt();
++        boolean critical = vanilla < 0;
++        long real;
++
++        if (DamageLinesConfig.isLongLines()) {
++            long raw = p.readLong();
++            real = DamageLinesConfig.clampDamage(raw);
++
++            if (real <= 0) {
++                real = DamageLinesConfig.clampDamage(vanilla & 0x7FFFFFFFL);
++            }
++        } else {
++            real = critical ? (vanilla & 0x7FFFFFFFL) : (long) Math.max(0, vanilla);
++        }
++
++        return critical ? -real : real;
++    }
++
+     protected AttackInfo parseDamage(InPacket p, Character chr, boolean ranged, boolean magic) {
+         //2C 00 00 01 91 A1 12 00 A5 57 62 FC E2 75 99 10 00 47 80 01 04 01 C6 CC 02 DD FF 5F 00
+ 
+@@ -730,10 +765,9 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                 if (i < ret.numAttacked) {
+                     p.skip(12);
+                     int bullets = p.readByte();
+-                    List<Integer> allDamageNumbers = new ArrayList<>();
++                    List<Long> allDamageNumbers = new ArrayList<>();
+                     for (int j = 0; j < bullets; j++) {
+-                        int damage = p.readInt();
+-                        allDamageNumbers.add(damage);
++                        allDamageNumbers.add(readDamageLine(p));
+                     }
+                     ret.allDamage.put(oid, allDamageNumbers);
+                     p.skip(4);
+@@ -906,7 +940,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+         for (int i = 0; i < ret.numAttacked; i++) {
+             int oid = p.readInt();
+             p.skip(14);
+-            List<Integer> allDamageNumbers = new ArrayList<>();
++            List<Long> allDamageNumbers = new ArrayList<>();
+             Monster monster = chr.getMap().getMonsterByOid(oid);
+ 
+             if (chr.getBuffEffect(BuffStat.WK_CHARGE) != null) {
+@@ -979,7 +1013,10 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+             }
+ 
+             for (int j = 0; j < ret.numDamage; j++) {
+-                int damage = p.readInt();
++                Long parsedLine = readDamageLine(p);
++                long damage = parsedLine == null ? 0L : Math.abs(parsedLine);
++                boolean critical = parsedLine != null && parsedLine < 0;
++                final boolean longLines = DamageLinesConfig.isLongLines();
+                 long hitDmgMax = calcDmgMax;
+                 if (ret.skill == Buccaneer.BARRAGE || ret.skill == ThunderBreaker.BARRAGE) {
+                     if (j > 3) {
+@@ -994,9 +1031,12 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                     }
+                 }
+ 
+-                if (ret.skill == Marksman.SNIPE) {
++                if (!longLines && ret.skill == Marksman.SNIPE) {
++                    // legacy 下 SNIPE 仍保持服务端固定 195000~199999 的技能语义；
++                    // 12 字节模式下按用户决议不再把它当封顶值，采信客户端真实伤害。
+                     damage = 195000 + Randomizer.nextInt(5000);
+                     hitDmgMax = 200000;
++                    critical = true;
+                 } else if (ret.skill == Beginner.BAMBOO_RAIN || ret.skill == Noblesse.BAMBOO_RAIN || ret.skill == Evan.BAMBOO_THRUST || ret.skill == Legend.BAMBOO_THRUST) {
+                     hitDmgMax = 82569000; // 30% of Max HP of strongest Dojo boss
+                 }
+@@ -1007,19 +1047,24 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                     maxWithCrit *= 2;
+                 }
+ 
+-                // Warn if the damage is over 1.5x what we calculated above.
+-                if (damage > maxWithCrit * 1.5) {
+-                    AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+-                }
++                // 12 字节模式下按用户决议移除「幅度 DAMAGE_HACK」：伤害上限由
++                // 客户端 2^53 与服务端 cap 共同约束，旧的 calcDmgMax 只作为
++                // 遗留校验参考；legacy 模式保留原有反外挂行为不变。
++                if (!longLines) {
++                    // Warn if the damage is over 1.5x what we calculated above.
++                    if (damage > maxWithCrit * 1.5) {
++                        AutobanFactory.DAMAGE_HACK.alert(chr, "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
++                    }
+ 
+-                // Add a ab point if its over 5x what we calculated.
+-                if (damage > maxWithCrit * 5) {
+-                    AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutoBanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
+-                }
++                    // Add a ab point if its over 5x what we calculated.
++                    if (damage > maxWithCrit * 5) {
++                        AutobanFactory.DAMAGE_HACK.addPoint(chr.getAutoBanManager(), "DMG: " + damage + " MaxDMG: " + maxWithCrit + " SID: " + ret.skill + " MobID: " + (monster != null ? monster.getId() : "null") + " Map: " + chr.getMap().getMapName() + " (" + chr.getMapId() + ")");
++                    }
+ 
+-                if (ret.skill == Marksman.SNIPE || (canCrit && damage > hitDmgMax)) {
+-                    // If the skill is a crit, inverse the damage to make it show up on clients.
+-                    damage = -Integer.MAX_VALUE + damage - 1;
++                    if (canCrit && damage > hitDmgMax) {
++                        // legacy 暴击由服务端按阈值反推，广播时用负数编码。
++                        critical = true;
++                    }
+                 }
+ 
+                 if (effect != null) {
+@@ -1032,7 +1077,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
+                     }
+                 }
+ 
+-                allDamageNumbers.add(damage);
++                allDamageNumbers.add(critical ? -damage : damage);
+             }
+             if (ret.skill != Corsair.RAPID_FIRE || ret.skill != Aran.HIDDEN_FULL_DOUBLE || ret.skill != Aran.HIDDEN_FULL_TRIPLE || ret.skill != Aran.HIDDEN_OVER_DOUBLE || ret.skill != Aran.HIDDEN_OVER_TRIPLE) {
+                 p.skip(4);
+diff --git a/gms-server/src/main/java/org/gms/net/server/channel/handlers/CloseRangeDamageHandler.java b/gms-server/src/main/java/org/gms/net/server/channel/handlers/CloseRangeDamageHandler.java
+index 06ba38e0bf..c4fe78883c 100644
+--- a/gms-server/src/main/java/org/gms/net/server/channel/handlers/CloseRangeDamageHandler.java
++++ b/gms-server/src/main/java/org/gms/net/server/channel/handlers/CloseRangeDamageHandler.java
+@@ -28,6 +28,7 @@ import org.gms.client.Job;
+ import org.gms.client.Skill;
+ import org.gms.client.SkillFactory;
+ import org.gms.config.GameConfig;
++import org.gms.config.DamageLinesConfig;
+ import org.gms.constants.game.GameConstants;
+ import org.gms.constants.id.MapId;
+ import org.gms.constants.skills.Crusader;
+@@ -144,13 +145,17 @@ public final class CloseRangeDamageHandler extends AbstractDealDamageHandler {
+             }
+         }
+         if (attack.numAttacked > 0 && attack.skill == DragonKnight.SACRIFICE) {
+-            int totDamageToOneMonster = 0; // sacrifice attacks only 1 mob with 1 attack
+-            final Iterator<List<Integer>> dmgIt = attack.allDamage.values().iterator();
++            long totDamageToOneMonster = 0L; // sacrifice attacks only 1 mob with 1 attack
++            final Iterator<List<Long>> dmgIt = attack.allDamage.values().iterator();
+             if (dmgIt.hasNext()) {
+-                totDamageToOneMonster = dmgIt.next().get(0);
++                List<Long> lines = dmgIt.next();
++                if (lines != null && !lines.isEmpty() && lines.get(0) != null) {
++                    // 负值只是暴击标志，真实伤害取绝对值。
++                    totDamageToOneMonster = Math.abs(lines.get(0));
++                }
+             }
+ 
+-            chr.safeAddHP(-1 * totDamageToOneMonster * attack.getAttackEffect(chr, null).getX() / 100);
++            chr.safeAddHP(DamageLinesConfig.clampToInt(-1 * totDamageToOneMonster * attack.getAttackEffect(chr, null).getX() / 100));
+         }
+         if (attack.numAttacked > 0 && attack.skill == 1211002) {
+             boolean advcharge_prob = false;
+diff --git a/gms-server/src/main/java/org/gms/net/server/channel/handlers/MobDamageMobFriendlyHandler.java b/gms-server/src/main/java/org/gms/net/server/channel/handlers/MobDamageMobFriendlyHandler.java
+index 8fc90080e2..4ffbb05890 100644
+--- a/gms-server/src/main/java/org/gms/net/server/channel/handlers/MobDamageMobFriendlyHandler.java
++++ b/gms-server/src/main/java/org/gms/net/server/channel/handlers/MobDamageMobFriendlyHandler.java
+@@ -78,7 +78,7 @@ public final class MobDamageMobFriendlyHandler extends AbstractPacketHandler {
+         }
+ 
+         monster.applyAndGetHpDamage(damage, false);
+-        int remainingHp = monster.getHp();
++        int remainingHp = (int) Math.max(Integer.MIN_VALUE, Math.min(monster.getHp(), Integer.MAX_VALUE));
+         if (remainingHp <= 0) {
+             remainingHp = 0;
+             map.removeMapObject(monster);
+diff --git a/gms-server/src/main/java/org/gms/net/server/channel/handlers/PlayerLoggedinHandler.java b/gms-server/src/main/java/org/gms/net/server/channel/handlers/PlayerLoggedinHandler.java
+index efd75b88d3..9eca953eb9 100644
+--- a/gms-server/src/main/java/org/gms/net/server/channel/handlers/PlayerLoggedinHandler.java
++++ b/gms-server/src/main/java/org/gms/net/server/channel/handlers/PlayerLoggedinHandler.java
+@@ -250,6 +250,9 @@ public final class PlayerLoggedinHandler extends AbstractPacketHandler {
+             }
+ 
+             c.sendPacket(PacketCreator.getCharInfo(player));    //这里发送登录成功封包
++            // 破功值（单段伤害上限）同步：客户端 0x3730 handler 同时写标题与 clamp。
++            // 默认内存态取 2^53，不做 DB 持久化。
++            c.sendPacket(PacketCreator.limitBreakSync(player.getLimitBreak()));
+             if (player.isHidden()) {
+                 if (!GameConfig.getServerBoolean("use_auto_hide_gm")) {
+                     player.toggleHide(true);
+diff --git a/gms-server/src/main/java/org/gms/net/server/coordinator/world/MonsterAggroCoordinator.java b/gms-server/src/main/java/org/gms/net/server/coordinator/world/MonsterAggroCoordinator.java
+index ab95491b7c..a969ecff1d 100644
+--- a/gms-server/src/main/java/org/gms/net/server/coordinator/world/MonsterAggroCoordinator.java
++++ b/gms-server/src/main/java/org/gms/net/server/coordinator/world/MonsterAggroCoordinator.java
+@@ -147,7 +147,7 @@ public class MonsterAggroCoordinator {
+         }
+     }
+ 
+-    public void addAggroDamage(Monster mob, int cid, int damage) { // assumption: should not trigger after dispose()
++    public void addAggroDamage(Monster mob, int cid, long damage) { // assumption: should not trigger after dispose()
+         if (!mob.isAlive()) {
+             return;
+         }
+@@ -195,7 +195,8 @@ public class MonsterAggroCoordinator {
+             return;
+         }
+ 
+-        insertEntryDamage(aggroEntry, damage);
++        // aggro 表仍是 int 统计；超 int 的伤害按 INT_MAX 计入，避免溢出成负仇恨。
++        insertEntryDamage(aggroEntry, (int) Math.min(Math.max(0L, damage), Integer.MAX_VALUE));
+     }
+ 
+     private void runAggroUpdate(int deltaTime) {
+diff --git a/gms-server/src/main/java/org/gms/scripting/event/EventInstanceManager.java b/gms-server/src/main/java/org/gms/scripting/event/EventInstanceManager.java
+index d51090165c..45204e7124 100644
+--- a/gms-server/src/main/java/org/gms/scripting/event/EventInstanceManager.java
++++ b/gms-server/src/main/java/org/gms/scripting/event/EventInstanceManager.java
+@@ -1456,10 +1456,10 @@ public class EventInstanceManager {
+         }
+     }
+ 
+-    public void addDamage(Character chr, int damage) {
++    public void addDamage(Character chr, long damage) {
+         if (!recordDamage || chr == null || damage <= 0) return;
+ 
+-        long newValue = playerDamage.merge(chr.getId(), (long) damage, Long::sum);
++        long newValue = playerDamage.merge(chr.getId(), damage, Long::sum);
+         playerNames.putIfAbsent(chr.getId(), chr.getName()); //保存角色名
+         // 防止溢出
+         if (newValue < 0) {
+diff --git a/gms-server/src/main/java/org/gms/server/life/Monster.java b/gms-server/src/main/java/org/gms/server/life/Monster.java
+index cf6170104e..37601de9ec 100644
+--- a/gms-server/src/main/java/org/gms/server/life/Monster.java
++++ b/gms-server/src/main/java/org/gms/server/life/Monster.java
+@@ -31,6 +31,7 @@ import org.gms.client.SkillFactory;
+ import org.gms.client.status.MonsterStatus;
+ import org.gms.client.status.MonsterStatusEffect;
+ import org.gms.config.GameConfig;
++import org.gms.config.DamageLinesConfig;
+ import org.gms.constants.id.MapId;
+ import org.gms.constants.id.MobId;
+ import org.gms.constants.skills.Crusader;
+@@ -92,7 +93,8 @@ public class Monster extends AbstractLoadedLife {
+ 
+     private ChangeableStats ostats = null;  //unused, v83 WZs offers no support for changeable stats.
+     private MonsterStats stats;
+-    private final AtomicInteger hp = new AtomicInteger(1);
++    // 伤害 long 化后怪物血量必须同步放开，否则 >21 亿伤害会回绕。
++    private final AtomicLong hp = new AtomicLong(1);
+     private final AtomicLong maxHpPlusHeal = new AtomicLong(1);
+     private int mp;
+     private WeakReference<Character> controller = new WeakReference<>(null);
+@@ -237,7 +239,7 @@ public class Monster extends AbstractLoadedLife {
+         return r;
+     }
+ 
+-    public int getHp() {
++    public long getHp() {
+         return hp.get();
+     }
+ 
+@@ -248,6 +250,14 @@ public class Monster extends AbstractLoadedLife {
+         this.hp.addAndGet(hp);
+     }
+ 
++    /** long 版血量增量（伤害链路专用；旧 int 重载保持不变）。 */
++    public synchronized void addHp(long hp) {
++        if (this.hp.get() <= 0) {
++            return;
++        }
++        this.hp.addAndGet(hp);
++    }
++
+     public synchronized void setStartingHp(int hp) {
+         stats.setHp(hp);    // refactored mob stats after non-static HP pool suggestion thanks to twigs
+         this.hp.set(hp);
+@@ -329,7 +339,7 @@ public class Monster extends AbstractLoadedLife {
+     }
+ 
+     public void setHpZero() {     // force HP = 0
+-        applyAndGetHpDamage(Integer.MAX_VALUE, false);
++        applyAndGetHpDamage(Long.MAX_VALUE, false);
+     }
+ 
+     private boolean applyAnimationIfRoaming(int attackPos, MobSkill skill) {   // roam: not casting attack or skill animations
+@@ -357,8 +367,8 @@ public class Monster extends AbstractLoadedLife {
+         }
+     }
+ 
+-    public synchronized Integer applyAndGetHpDamage(int delta, boolean stayAlive) {
+-        int curHp = hp.get();
++    public synchronized Long applyAndGetHpDamage(long delta, boolean stayAlive) {
++        long curHp = hp.get();
+         if (curHp <= 0) {       // this monster is already dead
+             return null;
+         }
+@@ -367,14 +377,14 @@ public class Monster extends AbstractLoadedLife {
+             if (stayAlive) {
+                 curHp--;
+             }
+-            int trueDamage = Math.min(curHp, delta);
++            long trueDamage = Math.min(curHp, delta);
+ 
+             hp.addAndGet(-trueDamage);
+             return trueDamage;
+         } else {
+-            int trueHeal = -delta;
+-            int hp2Heal = curHp + trueHeal;
+-            int maxHp = getMaxHp();
++            long trueHeal = -delta;
++            long hp2Heal = curHp + trueHeal;
++            long maxHp = getMaxHp();
+ 
+             if (hp2Heal > maxHp) {
+                 trueHeal -= (hp2Heal - maxHp);
+@@ -394,8 +404,8 @@ public class Monster extends AbstractLoadedLife {
+             from.setPlayerAggro(this.hashCode());
+             from.getMap().broadcastBossHpMessage(this, this.hashCode(), makeBossHPBarPacket(), getPosition());
+         } else if (!isBoss()) {
+-            int remainingHP = (int) Math.max(1, hp.get() * 100f / getMaxHp());
+-            Packet packet = PacketCreator.showMonsterHP(getObjectId(), remainingHP);
++            long remainingHP = Math.max(1L, Math.min(100L, hp.get() * 100L / Math.max(1, getMaxHp())));
++            Packet packet = PacketCreator.showMonsterHP(getObjectId(), DamageLinesConfig.clampToInt(remainingHP));
+             if (from.getParty() != null) {
+                 for (PartyCharacter mpc : from.getParty().getMembers()) {
+                     Character member = from.getMap().getCharacterById(mpc.getId()); // god bless
+@@ -409,7 +419,7 @@ public class Monster extends AbstractLoadedLife {
+         }
+     }
+ 
+-    public boolean damage(Character attacker, int damage, boolean stayAlive) {
++    public boolean damage(Character attacker, long damage, boolean stayAlive) {
+         boolean lastHit = false;
+ 
+         this.lockMonster();
+@@ -451,8 +461,8 @@ public class Monster extends AbstractLoadedLife {
+      * @param damage
+      * @param stayAlive
+      */
+-    private void applyDamage(Character from, int damage, boolean stayAlive, boolean fake) {
+-        Integer trueDamage = applyAndGetHpDamage(damage, stayAlive);
++    private void applyDamage(Character from, long damage, boolean stayAlive, boolean fake) {
++        Long trueDamage = applyAndGetHpDamage(damage, stayAlive);
+         if (trueDamage == null) {
+             return;
+         }
+@@ -462,7 +472,8 @@ public class Monster extends AbstractLoadedLife {
+         }
+ 
+         if (!fake) {
+-            dispatchMonsterDamaged(from, trueDamage);
++            // 监听器接口仍是 int（本轮不改脚本 API），这里统一收窄。
++            dispatchMonsterDamaged(from, DamageLinesConfig.clampToInt(trueDamage));
+         }
+ 
+         // ========== 通知事件实例记录伤害 ==========
+@@ -480,12 +491,12 @@ public class Monster extends AbstractLoadedLife {
+         broadcastMobHpBar(from);
+     }
+ 
+-    public void applyFakeDamage(Character from, int damage, boolean stayAlive) {
++    public void applyFakeDamage(Character from, long damage, boolean stayAlive) {
+         applyDamage(from, damage, stayAlive, true);
+     }
+ 
+     public void heal(int hp, int mp) {
+-        Integer hpHealed = applyAndGetHpDamage(-hp, false);
++        Long hpHealed = applyAndGetHpDamage(-hp, false);
+         if (hpHealed == null) {
+             return;
+         }
+@@ -502,7 +513,7 @@ public class Monster extends AbstractLoadedLife {
+         }
+ 
+         maxHpPlusHeal.addAndGet(hpHealed);
+-        dispatchMonsterHealed(hpHealed);
++        dispatchMonsterHealed(DamageLinesConfig.clampToInt(hpHealed));
+     }
+ 
+     public boolean isAttackedBy(Character chr) {
+@@ -1049,7 +1060,11 @@ public class Monster extends AbstractLoadedLife {
+     }
+ 
+     public Packet makeBossHPBarPacket() {
+-        return PacketCreator.showBossHP(getId(), getHp(), getMaxHp(), getTagColor(), getTagBgColor());
++        // Boss 血条包仍是 int：按百分比归一化后收窄，避免 long HP 直接溢出。
++        long maxHp = Math.max(1L, getMaxHp());
++        long curHp = Math.max(0L, Math.min(getHp(), maxHp));
++        int normalizedHp = DamageLinesConfig.clampToInt(curHp);
++        return PacketCreator.showBossHP(getId(), normalizedHp, DamageLinesConfig.clampToInt(maxHp), getTagColor(), getTagBgColor());
+     }
+ 
+     public boolean hasBossHPBar() {
+@@ -1642,14 +1657,14 @@ public class Monster extends AbstractLoadedLife {
+ 
+         @Override
+         public void run() {
+-            int curHp = hp.get();
++            long curHp = hp.get();
+             if (curHp <= 1) {
+                 MobStatusService service = (MobStatusService) map.getChannelServer().getServiceAccess(ChannelServices.MOB_STATUS);
+                 service.interruptMobStatus(map.getId(), status);
+                 return;
+             }
+ 
+-            int damage = dealDamage;
++            long damage = dealDamage;
+             if (damage >= curHp) {
+                 damage = curHp - 1;
+                 if (type == 1 || type == 2) {
+@@ -2089,7 +2104,7 @@ public class Monster extends AbstractLoadedLife {
+      * Applied damage input for this mob, enough damage taken implies an aggro
+      * target update for the attacker shortly.
+      */
+-    public void aggroMonsterDamage(Character attacker, int damage) {
++    public void aggroMonsterDamage(Character attacker, long damage) {
+         MonsterAggroCoordinator mmac = this.getMapAggroCoordinator();
+         mmac.addAggroDamage(this, attacker.getId(), damage);
+ 
+diff --git a/gms-server/src/main/java/org/gms/server/maps/MapleMap.java b/gms-server/src/main/java/org/gms/server/maps/MapleMap.java
+index 7728d100b2..fc07bbeceb 100644
+--- a/gms-server/src/main/java/org/gms/server/maps/MapleMap.java
++++ b/gms-server/src/main/java/org/gms/server/maps/MapleMap.java
+@@ -1343,7 +1343,7 @@ public class MapleMap {
+         return count;
+     }
+ 
+-    public boolean damageMonster(final Character chr, final Monster monster, final int damage) {
++    public boolean damageMonster(final Character chr, final Monster monster, final long damage) {
+         if (monster.getId() == MobId.ZAKUM_1) {
+             for (MapObject object : chr.getMap().getMapObjects()) {
+                 Monster mons = chr.getMap().getMonsterByOid(object.getObjectId());
+diff --git a/gms-server/src/main/java/org/gms/util/PacketCreator.java b/gms-server/src/main/java/org/gms/util/PacketCreator.java
+index 30187fde39..c653d0115a 100644
+--- a/gms-server/src/main/java/org/gms/util/PacketCreator.java
++++ b/gms-server/src/main/java/org/gms/util/PacketCreator.java
+@@ -51,6 +51,7 @@ import org.gms.model.pojo.NewYearCardRecord;
+ import org.gms.client.status.MonsterStatus;
+ import org.gms.client.status.MonsterStatusEffect;
+ import org.gms.config.GameConfig;
++import org.gms.config.DamageLinesConfig;
+ import org.gms.constants.game.ExpTable;
+ import org.gms.constants.game.GameConstants;
+ import org.gms.constants.id.ItemId;
+@@ -2356,20 +2357,20 @@ public class PacketCreator {
+         }
+         */
+ 
+-    public static Packet closeRangeAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, Map<Integer, List<Integer>> damage, int speed, int direction, int display) {
++    public static Packet closeRangeAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, Map<Integer, List<Long>> damage, int speed, int direction, int display) {
+         final OutPacket p = OutPacket.create(SendOpcode.CLOSE_RANGE_ATTACK);
+         addAttackBody(p, chr, skill, skilllevel, stance, numAttackedAndDamage, 0, damage, speed, direction, display);
+         return p;
+     }
+ 
+-    public static Packet rangedAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, int projectile, Map<Integer, List<Integer>> damage, int speed, int direction, int display) {
++    public static Packet rangedAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, int projectile, Map<Integer, List<Long>> damage, int speed, int direction, int display) {
+         final OutPacket p = OutPacket.create(SendOpcode.RANGED_ATTACK);
+         addAttackBody(p, chr, skill, skilllevel, stance, numAttackedAndDamage, projectile, damage, speed, direction, display);
+         p.writeInt(0);
+         return p;
+     }
+ 
+-    public static Packet magicAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, Map<Integer, List<Integer>> damage, int charge, int speed, int direction, int display) {
++    public static Packet magicAttack(Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, Map<Integer, List<Long>> damage, int charge, int speed, int direction, int display) {
+         final OutPacket p = OutPacket.create(SendOpcode.MAGIC_ATTACK);
+         addAttackBody(p, chr, skill, skilllevel, stance, numAttackedAndDamage, 0, damage, speed, direction, display);
+         if (charge != -1) {
+@@ -2378,7 +2379,7 @@ public class PacketCreator {
+         return p;
+     }
+ 
+-    private static void addAttackBody(OutPacket p, Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, int projectile, Map<Integer, List<Integer>> damage, int speed, int direction, int display) {
++    private static void addAttackBody(OutPacket p, Character chr, int skill, int skilllevel, int stance, int numAttackedAndDamage, int projectile, Map<Integer, List<Long>> damage, int speed, int direction, int display) {
+         p.writeInt(chr.getId());
+         p.writeByte(numAttackedAndDamage);
+         p.writeByte(0x5B);//?
+@@ -2392,16 +2393,29 @@ public class PacketCreator {
+         p.writeByte(speed);
+         p.writeByte(0x0A);
+         p.writeInt(projectile);
++        final boolean longLines = DamageLinesConfig.isLongLines();
++
+         for (Integer oned : damage.keySet()) {
+-            List<Integer> onedList = damage.get(oned);
++            List<Long> onedList = damage.get(oned);
+             if (onedList != null) {
+                 p.writeInt(oned);
+                 p.writeByte(0x0);
+                 if (skill == 4211006) {
+                     p.writeByte(onedList.size());
+                 }
+-                for (Integer eachd : onedList) {
+-                    p.writeInt(eachd);
++                for (Long eachd : onedList) {
++                    // allDamage 用符号编码暴击：负值=暴击，绝对值为真实伤害。
++                    boolean critical = eachd != null && eachd < 0;
++                    long real = eachd == null ? 0L : Math.abs(eachd);
++
++                    if (longLines) {
++                        // 12 字节/行：int32 vanillaLine + int64 真实值。
++                        p.writeInt(DamageLinesConfig.vanillaLine(real, critical));
++                        p.writeLong(real);
++                    } else {
++                        // legacy 4 字节/行：暴击仍用服务端旧负数编码。
++                        p.writeInt(DamageLinesConfig.legacyBroadcastLine(real, critical));
++                    }
+                 }
+             }
+         }
+@@ -4108,10 +4122,27 @@ public class PacketCreator {
+         return damageMonster(oid, damage, 0, 0);
+     }
+ 
++    /** long 伤害的兼容入口：HP 弹字包仍是 int，统一收窄避免溢出成负数。 */
++    public static Packet damageMonster(int oid, long damage) {
++        return damageMonster(oid, DamageLinesConfig.clampToInt(damage));
++    }
++
+     public static Packet healMonster(int oid, int heal, int curhp, int maxhp) {
+         return damageMonster(oid, -heal, curhp, maxhp);
+     }
+ 
++    /** Monster.hp 改 AtomicLong 后的兼容入口。 */
++    public static Packet healMonster(int oid, int heal, long curhp, int maxhp) {
++        return damageMonster(oid, -heal, DamageLinesConfig.clampToInt(curhp), maxhp);
++    }
++
++    /** 同步角色破功伤害上限到客户端（0x3730，布局与 BeiDou-Server 一致）。 */
++    public static Packet limitBreakSync(long limitBreak) {
++        final OutPacket p = OutPacket.create(SendOpcode.LIMIT_BREAK_SYNC);
++        p.writeLong(limitBreak);
++        return p;
++    }
++
+     private static Packet damageMonster(int oid, int damage, int curhp, int maxhp) {
+         final OutPacket p = OutPacket.create(SendOpcode.DAMAGE_MONSTER);
+         p.writeInt(oid);
+diff --git a/gms-server/src/main/resources/application.yml b/gms-server/src/main/resources/application.yml
+index bad79f9ada..9b62d4d14f 100644
+--- a/gms-server/src/main/resources/application.yml
++++ b/gms-server/src/main/resources/application.yml
+@@ -67,3 +67,10 @@ gms:
+     localhost: 127.0.0.1
+     # 客户端登录端口
+     login-port: 8484
++    damage:
++      # 12 字节/行伤害封包（int32 vanillaLine + int64 真实值）。
++      # 必须与客户端 xy-config.yaml 的 damage.long_lines 同时为 true/false，
++      # 双端不一致会导致攻击包整体读错位。回滚时双端同时改回 false。
++      long-lines: false
++      # 单段伤害上限，默认 2^53（double 可精确表示的最大整数）。
++      cap: 9007199254740992

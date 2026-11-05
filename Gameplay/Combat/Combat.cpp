@@ -378,7 +378,7 @@ namespace ms
 						DamageEffect effect{
 							attackuser,
 							number,
-							line.second[i].first,
+							damage::legacy_line(line.second[i].first),
 							result.toleft,
 							oid,
 							move.get_id()
@@ -420,7 +420,7 @@ namespace ms
 							user.get_attackdelay(i),
 							attackuser,
 							number,
-							line.second[i].first,
+							damage::legacy_line(line.second[i].first),
 							result.toleft,
 							oid,
 							move.get_id()
@@ -433,14 +433,14 @@ namespace ms
 		}
 	}
 
-	std::vector<DamageNumber> Combat::place_numbers(int32_t oid, const std::vector<std::pair<int32_t, bool>>& damagelines)
+	std::vector<DamageNumber> Combat::place_numbers(int32_t oid, const damage::DamageLines& damagelines)
 	{
 		std::vector<DamageNumber> numbers;
 		int16_t head = mobs.get_mob_head_position(oid).y();
 
 		for (auto& line : damagelines)
 		{
-			int32_t amount = line.first;
+			int64_t amount = line.first;
 			bool critical = line.second;
 			DamageNumber::Type type = critical ? DamageNumber::Type::CRITICAL : DamageNumber::Type::NORMAL;
 			numbers.emplace_back(type, amount, head);

@@ -140,7 +140,7 @@ namespace ms
 		void show_effect(const Animation& animation, int8_t pos, int8_t z, bool flip);
 
 		// Calculate the damage to this mob with the specified attack
-		std::vector<std::pair<int32_t, bool>> calculate_damage(const Attack& attack);
+		damage::DamageLines calculate_damage(const Attack& attack);
 		// Apply damage to the mob
 		void apply_damage(int32_t damage, bool toleft);
 
@@ -180,8 +180,10 @@ namespace ms
 		double calculate_mindamage(int16_t leveldelta, double mindamage, bool magic) const;
 		// Calculate the maximum damage
 		double calculate_maxdamage(int16_t leveldelta, double maxdamage, bool magic) const;
-		// Calculate a random damage line based on the specified values
-		std::pair<int32_t, bool> next_damage(double mindamage, double maxdamage, float hitchance, float critical) const;
+		// Calculate a random damage line based on the specified values.
+		// 单段伤害在这里统一饱和到 2^53（或配置/破功值上限），是唯一 clamp 点。
+		damage::DamageLine next_damage(double mindamage, double maxdamage, float hitchance,
+			float critical, float critical_min, float critical_max) const;
 
 		// Return the current 'head' position
 		Point<int16_t> get_head_position(Point<int16_t> position) const;
@@ -207,6 +209,8 @@ namespace ms
 		uint16_t avoid;
 		uint16_t knockback;
 		bool undead;
+		// v2：WZ info/boss 标记，用于 BOSS 增伤词缀（原生 boss 判定资源节点）。
+		bool boss;
 		bool touchdamage;
 		bool noflip;
 		bool notattack;

@@ -22,6 +22,8 @@
 
 #include "../../Net/Packets/GameplayPackets.h"
 
+#include <algorithm>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -48,6 +50,7 @@ namespace ms
 		flyspeed = info["flySpeed"];
 		touchdamage = info["bodyAttack"].get_bool();
 		undead = info["undead"].get_bool();
+		boss = info["boss"].get_bool();
 		noflip = info["noFlip"].get_bool();
 		notattack = info["notAttack"].get_bool();
 		canjump = src["jump"].size() > 0;
@@ -753,25 +756,28 @@ namespace ms
 		return maxdamage < 1.0 ? 1.0 : maxdamage;
 	}
 
-	std::vector<std::pair<int32_t, bool>> Mob::calculate_damage(const Attack& attack)
+	damage::DamageLines Mob::calculate_damage(const Attack& attack)
 	{
-		double mindamage;
-		double maxdamage;
-		float hitchance;
-		float critical;
+		// damage.formula_v2 = false 时完全保持旧 Fyms085 公式与数值，便于一键回滚。
+		const bool v2 = Configuration::get().get_damage_formula_v2();
+
+		double mindamage = 1.0;
+		double maxdamage = 1.0;
+		float hitchance = 1.0f;
+		float critical = 0.0f;
 		int16_t leveldelta = level - attack.playerlevel;
 
 		if (leveldelta < 0)
 			leveldelta = 0;
 
-		Attack::DamageType damagetype = attack.damagetype;
+		const bool magic = attack.damagetype == Attack::DamageType::DMG_MAGIC;
 
-		switch (damagetype)
+		switch (attack.damagetype)
 		{
 		case Attack::DamageType::DMG_WEAPON:
 		case Attack::DamageType::DMG_MAGIC:
-			mindamage = calculate_mindamage(leveldelta, attack.mindamage, damagetype == Attack::DamageType::DMG_MAGIC);
-			maxdamage = calculate_maxdamage(leveldelta, attack.maxdamage, damagetype == Attack::DamageType::DMG_MAGIC);
+			mindamage = calculate_mindamage(leveldelta, attack.mindamage, magic);
+			maxdamage = calculate_maxdamage(leveldelta, attack.maxdamage, magic);
 			hitchance = calculate_hitchance(leveldelta, attack.accuracy);
 			critical = attack.critical;
 			break;
@@ -783,13 +789,52 @@ namespace ms
 			break;
 		}
 
-		std::vector<std::pair<int32_t, bool>> result(attack.hitcount);
+		if (v2)
+		{
+			// 无视防御：把防御减免中被忽略的比例加回。原生 CalcDamage 的 PDD/MDD
+			// 分支见 notes/r001，这里按 0..1 比例线性还原，避免改动防御函数的既有语义。
+			if (attack.ignoredef > 0.0f)
+			{
+				float ignored = std::min<float>(std::max<float>(attack.ignoredef, 0.0f), 1.0f);
+				double defmin = magic
+					? (1 + 0.01 * leveldelta) * mdef * 0.6
+					: wdef * 0.6;
+				double defmax = magic
+					? (1 + 0.01 * leveldelta) * mdef * 0.5
+					: wdef * 0.5;
+
+				mindamage += defmin * ignored;
+				maxdamage += defmax * ignored;
+			}
+
+			// BOSS 增伤：WZ info/boss 标记（构造时读取）。
+			if (boss && attack.bossdamage > 0.0f)
+			{
+				double factor = 1.0 + attack.bossdamage;
+				mindamage *= factor;
+				maxdamage *= factor;
+			}
+		}
+
+		if (mindamage < 1.0)
+			mindamage = 1.0;
+
+		if (maxdamage < mindamage)
+			maxdamage = mindamage;
+
+		// 暴击倍率区间：CharStats 的 mincrit/maxcrit 是「额外倍率」，故 1+x。
+		// 开关关闭时固定 ×1.5，与改造前一致。
+		float critical_min = v2 ? attack.critical_min : 1.5f;
+		float critical_max = v2 ? attack.critical_max : 1.5f;
+
+		damage::DamageLines result(attack.hitcount);
 
 		std::generate(
 			result.begin(), result.end(),
 			[&]()
 			{
-				return next_damage(mindamage, maxdamage, hitchance, critical);
+				return next_damage(mindamage, maxdamage, hitchance, critical,
+					critical_min, critical_max);
 			}
 		);
 
@@ -798,29 +843,40 @@ namespace ms
 		return result;
 	}
 
-	std::pair<int32_t, bool> Mob::next_damage(double mindamage, double maxdamage, float hitchance, float critical) const
+	damage::DamageLine Mob::next_damage(double mindamage, double maxdamage, float hitchance,
+		float critical, float critical_min, float critical_max) const
 	{
 		bool hit = randomizer.below(hitchance);
 
 		if (!hit)
-			return std::pair<int32_t, bool>(0, false);
-
-		constexpr double DAMAGECAP = 999999.0;
+			return damage::DamageLine(0, false);
 
 		double damage = randomizer.next_real(mindamage, maxdamage);
 		bool iscritical = randomizer.below(critical);
 
 		if (iscritical)
-			damage *= 1.5;
+		{
+			float low = std::min<float>(critical_min, critical_max);
+			float high = std::max<float>(critical_min, critical_max);
 
-		if (damage < 1)
-			damage = 1;
-		else if (damage > DAMAGECAP)
-			damage = DAMAGECAP;
+			if (low < 1.0f)
+				low = 1.0f;
 
-		auto intdamage = static_cast<int32_t>(damage);
+			if (high < low)
+				high = low;
 
-		return std::pair<int32_t, bool>(intdamage, iscritical);
+			damage *= (low == high) ? low : randomizer.next_real(low, high);
+		}
+
+		if (damage < 1.0)
+			damage = 1.0;
+
+		// 唯一 clamp 点：2^53 精度上限 ∩ 配置 cap ∩ 服务端 0x3730 破功值。
+		// 原生端的 199999.0 硬封顶（IDA 0xAFE8A0）按用户决议移除。
+		int64_t cap = damage::effective_cap(Configuration::get().get_damage_cap());
+		int64_t intdamage = damage::clamp_damage(damage, cap);
+
+		return damage::DamageLine(intdamage, iscritical);
 	}
 
 	void Mob::apply_damage(int32_t damage, bool toleft)

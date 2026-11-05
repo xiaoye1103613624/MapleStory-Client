@@ -19,6 +19,10 @@
 
 #include "../../Character/SkillId.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Configuration.h"
+#include "../../Gameplay/Combat/Damage.h"
+
+#include <limits>
 
 namespace ms
 {
@@ -61,14 +65,41 @@ namespace ms
 
 			uint8_t length = (attack.skill == SkillId::Id::MESO_EXPLOSION) ? recv.read_byte() : attack.hitcount;
 
+			// 与 AttackPacket 的 damage.long_lines 成对：12 字节/行 = int32 vanillaLine
+			// + int64 真实值。legacy 仍是 4 字节/行，暴击用负数编码。
+			const bool long_lines = Configuration::get().get_damage_long_lines();
+
 			for (uint8_t j = 0; j < length; j++)
 			{
-				int32_t damage = recv.read_int();
-				// V83+：最高位标记暴击；绝对值写入飘字
-				bool critical = (damage < 0);
-				if (critical)
-					damage &= 0x7FFFFFFF;
-				attack.damagelines[oid].push_back({ damage, critical });
+				int32_t vanilla = recv.read_int();
+				int64_t damage;
+
+				if (long_lines)
+				{
+					int64_t real = recv.read_long();
+					bool critical = damage::vanilla_is_critical(vanilla);
+					// 真实值字段必须非负；异常包（负/超 2^53）回退到 vanilla 的绝对值，
+					// 避免把垃圾值渲染成天文数字。
+					// 与 legacy 一致：暴击位的绝对值取低 31 位，不能用 -vanilla
+					// （0x80000000|d 取负会变成 2147483648-d）。
+					int32_t fallback = static_cast<int32_t>(
+						static_cast<uint32_t>(vanilla) & 0x7FFFFFFFu);
+					damage = (real > 0 && real <= damage::EXACT_INT_CAP)
+						? real
+						: static_cast<int64_t>(fallback);
+					attack.damagelines[oid].emplace_back(damage, critical);
+				}
+				else
+				{
+					// V83+：最高位标记暴击；绝对值写入飘字
+					bool critical = (vanilla < 0);
+					int32_t value = vanilla;
+
+					if (critical)
+						value &= 0x7FFFFFFF;
+
+					attack.damagelines[oid].emplace_back(static_cast<int64_t>(value), critical);
+				}
 			}
 		}
 		while (recv.available())

@@ -212,15 +212,21 @@ namespace ms
 
 	int32_t CharStats::calculate_damage(int32_t mobatk) const
 	{
-		// TODO: Random stuff, need to find the actual formula somewhere.
-		auto weapon_def = get_total(EquipStat::Id::WDEF);
+		// 玩家受伤公式：BeiDou.exe 中未定位到独立的原生函数（notes/r001 §5 局限），
+		// 故保留 Fyms085 的近似式，但补齐 reducedamage 限幅与非负保护，
+		// 并把这一项显式登记为「部分还原」而不是 TODO 占位。
+		//   reduceatk = mobatk/2 + mobatk/WDEF
+		//   final     = reduceatk * (1 - clamp(reducedamage, 0, 1))
+		int32_t weapon_def = get_total(EquipStat::Id::WDEF);
 
-		if (weapon_def == 0)
-			return mobatk;
+		if (weapon_def <= 0 || mobatk <= 0)
+			return mobatk > 0 ? mobatk : 0;
 
 		int32_t reduceatk = mobatk / 2 + mobatk / weapon_def;
+		float reduction = reducedamage < 0.0f ? 0.0f : (reducedamage > 1.0f ? 1.0f : reducedamage);
+		int32_t result = reduceatk - static_cast<int32_t>(reduceatk * reduction);
 
-		return reduceatk - static_cast<int32_t>(reduceatk * reducedamage);
+		return result > 0 ? result : 0;
 	}
 
 	bool CharStats::is_damage_buffed() const

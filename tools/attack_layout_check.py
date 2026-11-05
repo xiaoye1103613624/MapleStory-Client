@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""J7 出站攻击包对拍：把服务端 parseDamage 的读法和客户端 AttackPacket 的写法
-都翻译成 Python，逐字节走一遍，证明两边不脱节。
+"""J7 出站攻击包对拍（双模式）：把服务端 parseDamage 的读法和客户端 AttackPacket
+的写法都翻译成 Python，逐字节走一遍，证明两边不脱节。
 
-依据（只读，不改服务端）：
-  AbstractDealDamageHandler.java:681-1047  parseDamage
-  Net/Packets/AttackAndSkillPackets.h      AttackPacket
+模式（必须与 s9 gms.service.damage.long-lines / 客户端 damage.long_lines 一致）：
+  legacy  每条伤害行 4 字节 int32                      （默认）
+  long    每条伤害行 12 字节 = int32 vanillaLine + int64 真实值
+          vanillaLine 溢出写 INT_MAX 哨兵、暴击置 0x80000000 位
 
-用法：python tools/attack_layout_check.py
+依据：
+  AbstractDealDamageHandler.java  parseDamage / readDamageLine
+  PacketCreator.addAttackBody     S2C 广播
+  Net/Packets/AttackAndSkillPackets.h  AttackPacket
+  Gameplay/Combat/Damage.h        clamp_damage / vanilla_line
+
+用法：
+  python tools/attack_layout_check.py             # legacy 13/13
+  python tools/attack_layout_check.py --long     # 12B/行（含超 INT_MAX 与 2^53 边界）
+  python tools/attack_layout_check.py --legacy   # 修复前反向对照，应当出现 FAIL
 """
 import struct
 import sys
@@ -32,6 +42,33 @@ SUSTAINED_SKILLS = {BOW_HURRICANE, WIND_HURRICANE, PIERCING_ARROW, RAPID_FIRE}
 
 MESO_EXPLOSION = 4211006
 
+INT32_MAX = 0x7FFFFFFF
+EXACT_INT_CAP = 9007199254740992  # 2^53，double 精确整数上限
+
+
+def line_value(line):
+    """伤害行可以是 int，也可以是 (值, 是否暴击)。"""
+    return line[0] if isinstance(line, tuple) else line
+
+
+def line_critical(line):
+    return line[1] if isinstance(line, tuple) else False
+
+
+def vanilla_line(value, critical):
+    """Gameplay/Combat/Damage.h::vanilla_line 的 Python 版。"""
+    safe = max(0, min(value, EXACT_INT_CAP))
+    base = INT32_MAX if safe > INT32_MAX else safe
+    if critical:
+        base |= 0x80000000
+        if base >= 1 << 31:
+            base -= 1 << 32
+    return base
+
+
+def clamp_legacy(value):
+    return max(0, min(value, INT32_MAX))
+
 
 class Reader:
     """模拟 s9 InPacket：读操作推进游标，越界即抛（等价于服务端读到脏数据/异常）。"""
@@ -56,6 +93,9 @@ class Reader:
     def read_int(self):
         return self._take(4, "<i")[0]
 
+    def read_long(self):
+        return self._take(8, "<q")[0]
+
     def skip(self, n):
         if self.pos + n > len(self.data):
             raise IndexError("EOF(skip) at %d, need %d of %d" % (self.pos, n, len(self.data)))
@@ -65,7 +105,20 @@ class Reader:
         return len(self.data) - self.pos
 
 
-def parse_damage(buf, ranged=False):
+def read_damage_line(p, long_lines):
+    """服务端 readDamageLine 的 Python 版；返回真实伤害（非负）。"""
+    vanilla = p.read_int()
+    if long_lines:
+        real = p.read_long()
+        if real <= 0 or real > EXACT_INT_CAP:
+            real = vanilla & 0x7FFFFFFF
+        return max(0, min(real, EXACT_INT_CAP))
+    if vanilla < 0:
+        return vanilla & 0x7FFFFFFF
+    return max(0, vanilla)
+
+
+def parse_damage(buf, ranged=False, long_lines=False):
     """服务端 parseDamage 的读法，只保留与字节布局有关的部分。"""
     p = Reader(buf)
     ret = dict(reader=p)
@@ -100,7 +153,7 @@ def parse_damage(buf, ranged=False):
             if i < ret["num_attacked"]:
                 p.skip(12)
                 bullets = p.read_byte()
-                dmgs = [p.read_int() for _ in range(bullets)]
+                dmgs = [read_damage_line(p, long_lines) for _ in range(bullets)]
                 p.skip(4)
                 mobs.append((oid, dmgs))
             else:
@@ -129,7 +182,7 @@ def parse_damage(buf, ranged=False):
     for _ in range(ret["num_attacked"]):             # :906-1041
         oid = p.read_int()
         p.skip(14)
-        dmgs = [p.read_int() for _ in range(ret["num_damage"])]
+        dmgs = [read_damage_line(p, long_lines) for _ in range(ret["num_damage"])]
         p.skip(4)                                    # :1037-1039 条件恒真
         damage.append((oid, dmgs))
     ret["damage"] = damage
@@ -141,7 +194,7 @@ def parse_damage(buf, ranged=False):
     return ret
 
 
-def build_packet(attack):
+def build_packet(attack, long_lines=False):
     """客户端 AttackPacket 的写法，与 AttackAndSkillPackets.h 一一对应。"""
     out = bytearray()
     w = out.extend
@@ -158,6 +211,18 @@ def build_packet(attack):
 
     def i32(v):
         w(struct.pack("<i", v))
+
+    def i64(v):
+        w(struct.pack("<q", v))
+
+    def damage_line(line):
+        value = line_value(line)
+        critical = line_critical(line)
+        if long_lines:
+            i32(vanilla_line(value, critical))
+            i64(value)
+        else:
+            i32(clamp_legacy(value))
 
     charge = attack.get("charge", 0)
     # Combat::apply_move 把候选怪钳到 15（协议高 4 位上限），所以发出去的怪物块不会超过 15 个。
@@ -192,7 +257,7 @@ def build_packet(attack):
             pad(12)
             byte(len(dmgs))
             for d in dmgs:
-                i32(d)
+                damage_line(d)
             pad(4)
         i32(0)      # 服务端多读的那一块：oid(int) + 金币堆数(byte)
         byte(0)
@@ -201,7 +266,7 @@ def build_packet(attack):
             i32(oid)
             pad(14)
             for d in dmgs:
-                i32(d)
+                damage_line(d)
             pad(4)
         if attack["skill"] == POISON_BOMB:
             pad(4)
@@ -241,6 +306,32 @@ CASES = [
     # 客户端按协议钳到 15 只。
     ("竹林 30怪（钳到15）", dict(ranged=False, mobcount=30, hitcount=1, skill=10001009,
                            damage=[(10 + i, [i]) for i in range(30)])),
+]
+
+
+# 12 字节/行专用用例：超过 INT_MAX 的真实伤害、2^53 边界、暴击符号位、
+# 以及梅索爆炸/竹林等专用版式在长行下是否仍被服务端整包读满。
+LONG_CASES = [
+    ("long 普通近战 1怪1击", dict(ranged=False, mobcount=1, hitcount=1, skill=0,
+                              damage=[(7, [432])])),
+    ("long 超 INT_MAX 单段", dict(ranged=False, mobcount=1, hitcount=2, skill=0,
+                              damage=[(7, [2147483648, 5000000000])])),
+    ("long 2^53 精度上限", dict(ranged=False, mobcount=1, hitcount=2, skill=0,
+                            damage=[(7, [EXACT_INT_CAP, EXACT_INT_CAP - 1])])),
+    ("long 暴击符号位", dict(ranged=False, mobcount=2, hitcount=2, skill=0,
+                        damage=[(7, [(123456, True), (9876543210, True)]),
+                                (8, [(999, False), (2147483647, True)])])),
+    ("long 远程 3怪6击", dict(ranged=True, mobcount=3, hitcount=6, skill=31000002,
+                          damage=[(7, [2 ** 33] * 6), (8, [1] * 6), (9, [EXACT_INT_CAP] * 6)])),
+    ("long 充能+落点", dict(ranged=False, mobcount=2, hitcount=6, skill=POISON_BOMB,
+                        charge=255, origin=(10125, -240),
+                        damage=[(7, [3 ** 30] * 6), (8, [(5 ** 20, True)] * 6)])),
+    ("long 暴怒 2怪3击", dict(ranged=False, mobcount=2, hitcount=3, skill=MESO_EXPLOSION,
+                          damage=[(7, [2 ** 40] * 3), (8, [(7, True)] * 3)])),
+    ("long 暴怒 lv20 段数20", dict(ranged=False, mobcount=2, hitcount=20, skill=MESO_EXPLOSION,
+                               damage=[(7, [2 ** 35] * 20), (8, [1] * 20)])),
+    ("long 竹林 30怪钳到15", dict(ranged=False, mobcount=30, hitcount=1, skill=10001009,
+                             damage=[(10 + i, [i * 10 ** 12]) for i in range(30)])),
 ]
 
 
@@ -293,15 +384,26 @@ def build_packet_legacy(attack):
     return bytes(out)
 
 
-def check(name, attack, builder):
-    buf = builder(attack)
+def check(name, attack, builder, long_lines=False):
+    if builder is build_packet:
+        buf = builder(attack, long_lines)
+    else:
+        buf = builder(attack)
     try:
-        info = parse_damage(buf, ranged=attack["ranged"])
+        info = parse_damage(buf, ranged=attack["ranged"], long_lines=long_lines)
     except IndexError as e:
         return ["服务端读不完：%s" % e]
 
     problems = []
-    want_lines = attack["damage"][:min(attack["mobcount"], 15)]
+    raw_lines = attack["damage"][:min(attack["mobcount"], 15)]
+    if long_lines:
+        want_lines = [(oid, [min(line_value(d), EXACT_INT_CAP) for d in dmgs])
+                      for oid, dmgs in raw_lines]
+    elif builder is build_packet:
+        want_lines = [(oid, [clamp_legacy(line_value(d)) for d in dmgs])
+                      for oid, dmgs in raw_lines]
+    else:
+        want_lines = raw_lines
     want_mobcount = len(want_lines)
     if info["reader"].left() != 0:
         problems.append("尾部剩 %d 字节" % info["reader"].left())
@@ -323,20 +425,28 @@ def check(name, attack, builder):
 
 
 def main():
-    builder = build_packet_legacy if "--legacy" in sys.argv else build_packet
-    label = "修复前" if builder is build_packet_legacy else "修复后"
+    legacy_reverse = "--legacy" in sys.argv
+    long_lines = "--long" in sys.argv
+    builder = build_packet_legacy if legacy_reverse else build_packet
+    cases = CASES if legacy_reverse else (LONG_CASES if long_lines else CASES)
+    label = "修复前(legacy)" if legacy_reverse else ("12字节/行" if long_lines else "legacy 4字节/行")
     fails = 0
-    for name, attack in CASES:
-        problems = check(name, attack, builder)
-        size = len(builder(attack))
+
+    for name, attack in cases:
+        problems = check(name, attack, builder, long_lines=long_lines and not legacy_reverse)
+        buf = builder(attack, long_lines) if builder is build_packet else builder(attack)
+        size = len(buf)
         if problems:
             print("FAIL %-24s %s" % (name, "; ".join(problems)))
             fails += 1
         else:
             print("ok   %-24s %3d 字节，服务端整包读满" % (name, size))
 
-    print("\n[%s] %d/%d 用例异常" % (label, fails, len(CASES)))
-    print("ALL LAYOUTS ALIGN" if fails == 0 else "%d CASE(S) BROKEN" % fails)
+    print("\n[%s] %d/%d 用例异常" % (label, fails, len(cases)))
+    if legacy_reverse:
+        print("EXPECTED FAILURES (legacy reverse control)")
+    else:
+        print("ALL LAYOUTS ALIGN" if fails == 0 else "%d CASE(S) BROKEN" % fails)
     return 1 if fails else 0
 
 

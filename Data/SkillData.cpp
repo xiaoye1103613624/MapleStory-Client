@@ -81,6 +81,10 @@ namespace ms
 			float chance = (float)sub["prop"].get_real(100.0) / 100;
 			float critical = 0.0f;
 			float ignoredef = 0.0f;
+			// 运行时 Skill.nx 只存在 `criticalDamage`（百分比，如 105 = +5% 暴伤），
+			// 不存在 ignoreDef/bossDamage 节点；缺失时这两个值保持 0（R6：精简数据需兜底）。
+			float criticaldamage = (float)sub["criticalDamage"].get_integer(0);
+			ignoredef = (float)sub["ignoreDef"].get_integer(0) / 100;
 			float hrange = (float)sub["range"].get_real(100.0) / 100;
 			Rectangle<int16_t> range = sub;
 			int32_t level = string_conversion::or_default<int32_t>(sub.name(), -1);
@@ -88,7 +92,7 @@ namespace ms
 			stats.emplace(
 				std::piecewise_construct,
 				std::forward_as_tuple(level),
-				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range)
+				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range, criticaldamage)
 			);
 		}
 

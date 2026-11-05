@@ -23,6 +23,9 @@
 
 #include "../../IO/Components/Charset.h"
 
+#include <cstdint>
+#include <string>
+
 namespace ms
 {
 	class DamageNumber
@@ -37,7 +40,7 @@ namespace ms
 			TOPLAYER
 		};
 
-		DamageNumber(Type type, int32_t damage, int16_t starty, int16_t x = 0);
+		DamageNumber(Type type, int64_t damage, int16_t starty, int16_t x = 0);
 		DamageNumber();
 
 		void draw(double viewx, double viewy, float alpha) const;
@@ -58,6 +61,9 @@ namespace ms
 		int8_t firstnum;
 		std::string restnum;
 		int16_t shift;
+		// 超长伤害数字（最多 16 位，2^53）的等比缩放系数，保证不溢出屏幕。
+		// 运行时字符集只有 0-9 + Miss，无单位符号，故用缩放而不是单位缩写。
+		float numscale;
 		MovingObject moveobj;
 		Linear<float> opacity;
 

@@ -1,0 +1,14 @@
+﻿[WARNING] /E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/client/inventory/Equip.java:[74,5] Not generating getLevel(): A method with that name already exists
+[INFO] /E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/server/maps/MapleMap.java: ĳЩ�����ļ�ʹ����δ�����򲻰�ȫ�Ĳ�����
+[INFO] /E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/server/maps/MapleMap.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:unchecked ���±��롣
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for BeiDou 1.0-SNAPSHOT:
+[INFO] 
+[INFO] BeiDou ............................................. SUCCESS [  0.003 s]
+[INFO] gms-server ......................................... SUCCESS [ 18.093 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.346 s
+[INFO] Finished at: 2026-11-04T19:58:08+08:00
+[INFO] ------------------------------------------------------------------------

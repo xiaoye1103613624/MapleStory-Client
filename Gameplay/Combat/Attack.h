@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../../Template/Rectangle.h"
+#include "Damage.h"
 
 #include <unordered_map>
 #include <vector>
@@ -46,7 +47,15 @@ namespace ms
 		double mindamage = 1.0;
 		double maxdamage = 1.0;
 		float critical = 0.0f;
+		// v2：暴击倍率区间（原生 mincrit/maxcrit），默认保持旧的固定 ×1.5。
+		float critical_min = 1.5f;
+		float critical_max = 1.5f;
+		// v2：无视防御比例 0..1；作用于怪物 wdef/mdef。
 		float ignoredef = 0.0f;
+		// v2：BOSS 增伤比例，0.2 = +20%；仅对 boss 生效。
+		float bossdamage = 0.0f;
+		// v2：魔法基础伤害（MAD 钳到 1999 后），DMG_MAGIC 时替代武器 min/max。
+		double magicdamage = 0.0;
 		int32_t matk = 0;
 		int32_t accuracy = 0;
 		int32_t fixdamage = 0;
@@ -87,12 +96,12 @@ namespace ms
 
 	struct MobAttackResult
 	{
-		int32_t damage;
+		int64_t damage;
 		int32_t mobid;
 		int32_t oid;
 		uint8_t direction;
 
-		MobAttackResult(const MobAttack& attack, int32_t damage, uint8_t direction) : damage(damage), direction(direction), mobid(attack.mobid), oid(attack.oid) {}
+		MobAttackResult(const MobAttack& attack, int64_t damage, uint8_t direction) : damage(damage), direction(direction), mobid(attack.mobid), oid(attack.oid) {}
 	};
 
 	struct AttackResult
@@ -124,7 +133,7 @@ namespace ms
 		uint8_t speed = 0;
 		bool toleft = false;
 		Point<int16_t> origin;
-		std::unordered_map<int32_t, std::vector<std::pair<int32_t, bool>>> damagelines;
+		std::unordered_map<int32_t, damage::DamageLines> damagelines;
 		int32_t first_oid;
 		int32_t last_oid;
 	};

@@ -296,7 +296,7 @@ namespace ms
 		// 窗口标题的基础部分，运行时由 IO/Window 追加角色/职业/破功值/时间等段落
 		// （见 Window::build_title()）。
 		const char* TITLE = "XiaoYE MS v0.0.1";
-		const char* VERSION = "228.3";
+		const char* VERSION = "0.83";
 		const char* LoginMusic = "BgmUI.img/Title";
 		const char* LoginMusicSEA = "BgmGL.img/OldMaple";
 		const char* LoginMusicNewtro = "BgmEvent2.img/Newtro_Login";

@@ -40,3 +40,15 @@ boot:
   logo: true
   # 单帧时长（毫秒）；Nexon 共 137 帧，40ms ≈ 5.5s。任意按键/点击可跳过。
   frame_ms: 40
+
+damage:
+  # 原生取证补齐的伤害公式（魔法攻击 / 无视防御 / 暴击区间 / 玩家受伤）。
+  # false = 保持旧 Fyms085 公式；改动玩法数值前请先备份配置。
+  formula_v2: false
+  # 12 字节/行伤害封包：int32 vanillaLine + int64 真实值。
+  # 必须与 s9 服务端 gms.service.damage.long-lines 同时为 true/false，
+  # 双端不一致会导致攻击包整体读错位。回滚时双端同时改回 false。
+  long_lines: false
+  # 单段伤害上限，默认 2^53（double 可精确表示的最大整数）。
+  # 服务端下发破功值 0x3730 时取 min(cap, limitBreak)。
+  cap: 9007199254740992

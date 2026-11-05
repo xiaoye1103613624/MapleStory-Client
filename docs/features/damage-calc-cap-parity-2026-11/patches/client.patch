@@ -1,0 +1,1537 @@
+diff --git a/Character/Char.cpp b/Character/Char.cpp
+index b4e88f8..45c397c 100644
+--- a/Character/Char.cpp
++++ b/Character/Char.cpp
+@@ -199,7 +199,7 @@ namespace ms
+ 		ironbody.set_for(500);
+ 	}
+ 
+-	void Char::show_damage(int32_t damage)
++	void Char::show_damage(int64_t damage)
+ 	{
+ 		int16_t start_y = phobj.get_y() - 60;
+ 		int16_t x = phobj.get_x() - 10;
+diff --git a/Character/Char.h b/Character/Char.h
+index 832ec88..41b0538 100644
+--- a/Character/Char.h
++++ b/Character/Char.h
+@@ -102,7 +102,7 @@ namespace ms
+ 		// Display the iron body skill animation
+ 		void show_iron_body();
+ 		// Display damage over the characters head
+-		void show_damage(int32_t damage);
++		void show_damage(int64_t damage);
+ 		// Display a chat bubble with the specified line in it
+ 		void speak(const std::string& line);
+ 		// Change a part of the character's look
+diff --git a/Character/CharStats.cpp b/Character/CharStats.cpp
+index b6fd39f..a417dd5 100644
+--- a/Character/CharStats.cpp
++++ b/Character/CharStats.cpp
+@@ -212,15 +212,21 @@ namespace ms
+ 
+ 	int32_t CharStats::calculate_damage(int32_t mobatk) const
+ 	{
+-		// TODO: Random stuff, need to find the actual formula somewhere.
+-		auto weapon_def = get_total(EquipStat::Id::WDEF);
++		// 玩家受伤公式：BeiDou.exe 中未定位到独立的原生函数（notes/r001 §5 局限），
++		// 故保留 Fyms085 的近似式，但补齐 reducedamage 限幅与非负保护，
++		// 并把这一项显式登记为「部分还原」而不是 TODO 占位。
++		//   reduceatk = mobatk/2 + mobatk/WDEF
++		//   final     = reduceatk * (1 - clamp(reducedamage, 0, 1))
++		int32_t weapon_def = get_total(EquipStat::Id::WDEF);
+ 
+-		if (weapon_def == 0)
+-			return mobatk;
++		if (weapon_def <= 0 || mobatk <= 0)
++			return mobatk > 0 ? mobatk : 0;
+ 
+ 		int32_t reduceatk = mobatk / 2 + mobatk / weapon_def;
++		float reduction = reducedamage < 0.0f ? 0.0f : (reducedamage > 1.0f ? 1.0f : reducedamage);
++		int32_t result = reduceatk - static_cast<int32_t>(reduceatk * reduction);
+ 
+-		return reduceatk - static_cast<int32_t>(reduceatk * reducedamage);
++		return result > 0 ? result : 0;
+ 	}
+ 
+ 	bool CharStats::is_damage_buffed() const
+diff --git a/Character/Player.cpp b/Character/Player.cpp
+index 8ddbc78..6093bcc 100644
+--- a/Character/Player.cpp
++++ b/Character/Player.cpp
+@@ -25,6 +25,9 @@
+ #include "../IO/UITypes/UIStatsInfo.h"
+ #include "../Net/Packets/GameplayPackets.h"
+ #include "../Net/Packets/InventoryPackets.h"
++#include "../Configuration.h"
++
++#include <algorithm>
+ 
+ namespace ms
+ {
+@@ -308,6 +311,23 @@ namespace ms
+ 
+ 		attack.critical = stats.get_critical();
+ 		attack.ignoredef = stats.get_ignoredef();
++
++		if (Configuration::get().get_damage_formula_v2())
++		{
++			// 原生 MDamage 的 MAD 输入钳到 1999（IDA sub_791617）。
++			// 魔法基础值沿用 v83 的 (INT*4 + LUK)/100 * MAD 结构，与
++			// 物理 calculateMaxBaseDamage 的武器倍率 4.0 同构。
++			int32_t mad = std::min<int32_t>(stats.get_total(EquipStat::Id::MAGIC), 1999);
++			int32_t int_ = stats.get_total(EquipStat::Id::INT);
++			int32_t luk = stats.get_total(EquipStat::Id::LUK);
++			attack.magicdamage = (int_ * 4.0 + luk) / 100.0 * mad;
++
++			// CharStats 的 mincrit/maxcrit 是额外倍率，转成 1+x 的暴击区间。
++			attack.critical_min = 1.0f + stats.get_mincrit();
++			attack.critical_max = 1.0f + stats.get_maxcrit();
++			attack.bossdamage = stats.get_bossdmg();
++		}
++
+ 		attack.accuracy = stats.get_total(EquipStat::Id::ACC);
+ 		attack.playerlevel = stats.get_stat(MapleStat::Id::LEVEL);
+ 		attack.range = stats.get_range();
+@@ -342,7 +362,7 @@ namespace ms
+ 
+ 	MobAttackResult Player::damage(const MobAttack& attack)
+ 	{
+-		int32_t damage = stats.calculate_damage(attack.watk);
++		int64_t damage = stats.calculate_damage(attack.watk);
+ 		show_damage(damage);
+ 
+ 		bool fromleft = attack.origin.x() > phobj.get_x();
+diff --git a/Configuration.cpp b/Configuration.cpp
+index 457e75c..ea1cac0 100644
+--- a/Configuration.cpp
++++ b/Configuration.cpp
+@@ -16,6 +16,7 @@
+ //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
+ //////////////////////////////////////////////////////////////////////////////////
+ #include "Configuration.h"
++#include "MapleStory.h"
+ #include "Util/Locale.h"
+ 
+ #include "Util/Resource/Keyring.h"
+@@ -176,8 +177,14 @@ namespace ms
+ 		{ "界面位置",   "ui.position.dailygift",		"每日礼物" },
+ 		{ "界面位置",   "ui.position.partyrace",		"组队竞赛" },
+ 
++		// 伤害
++		{ "伤害",       "damage.formula_v2",			"是否启用原生取证补齐的伤害公式（关闭则保持旧结果）" },
++		{ "伤害",       "damage.long_lines",			"伤害行 12 字节模式，必须与 s9 服务端成对开启" },
++		{ "伤害",       "damage.cap",				"单段伤害上限，默认 2^53 = 9007199254740992" },
++
+ 		// 调试
+-		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" }
++		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" },
++		{ "调试",       "debug.perf_log",				"分段耗时落盘 boot_perf.log（基线采集用，生产勿开）" }
+ 	};
+ 
+ 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
+@@ -219,6 +226,9 @@ namespace ms
+ 		settings.emplace<VSync>();
+ 		settings.emplace<BootLogo>();
+ 		settings.emplace<BootLogoFrameMs>();
++		settings.emplace<DamageFormulaV2>();
++		settings.emplace<DamageLongLines>();
++		settings.emplace<DamageCap>();
+ 		settings.emplace<BuffTimer>();
+ 		settings.emplace<EquipCompare>();
+ 		settings.emplace<UiLanguage>();
+@@ -287,6 +297,7 @@ namespace ms
+ 		settings.emplace<MiniMapSimpleMode>();
+ 		settings.emplace<MiniMapDefaultHelpers>();
+ 		settings.emplace<PacketDumpLog>();
++		settings.emplace<PerfLogEnabled>();
+ 
+ 		load();
+ 	}
+@@ -302,6 +313,47 @@ namespace ms
+ #endif
+ 	}
+ 
++	namespace
++	{
++		////////////////////////////////////////////////////////////////////////////////
++		// R28-B5 字体兜底
++		//
++		// 默认字体从 SimHei 换成思源宋体，simhei.ttf 已随仓库删除；而装机上残留的
++		// Settings / xy-config.yaml 里仍可能写着旧路径 ⇒ FreeType 打不开 face，
++		// 所有文字（连拉丁一起）渲染成空白，现场看起来像"客户端坏了"而不是"少个字体"。
++		// 所以在"配置值覆盖默认值"这一步拦一道：字体键且指向的文件不存在 ⇒ 保留打包默认，
++		// 并留一条上线级 WARN（装机要靠这行定位，不是临时调试日志）。
++		////////////////////////////////////////////////////////////////////////////////
++		bool is_font_path_key(const std::string& name)
++		{
++			return name == "font.path.normal" || name == "font.path.bold";
++		}
++
++		bool file_present(const std::string& path)
++		{
++#if defined(_WIN32)
++			struct _stat st;
++
++			return _stat(path.c_str(), &st) == 0;
++#else
++			struct stat st;
++
++			return ::stat(path.c_str(), &st) == 0;
++#endif
++		}
++
++		/// true = 这一条是"指向不存在文件的字体路径"，调用方应当不覆盖当前值。
++		bool stale_font_path(const std::string& name, const std::string& incoming, const std::string& current)
++		{
++			if (!is_font_path_key(name) || file_present(incoming))
++				return false;
++
++			LOG(LOG_WARN, "config: font path \"" << incoming << "\" not found, keeping \"" << current << "\"");
++
++			return true;
++		}
++	}
++
+ 	void Configuration::load()
+ 	{
+ 		// 收集所有已知配置项的名字。解析器用它区分两种"冒号后没有值"的情况：
+@@ -361,7 +413,8 @@ namespace ms
+ 
+ 			auto rsiter = rawsettings.find(setting.second->name);
+ 
+-			if (rsiter != rawsettings.end())
++			if (rsiter != rawsettings.end()
++				&& !stale_font_path(setting.second->name, rsiter->second, setting.second->value))
+ 				setting.second->value = rsiter->second;
+ 		}
+ 
+@@ -551,7 +604,8 @@ namespace ms
+ 				continue;
+ 
+ 			auto it = xysettings.find(setting.second->name);
+-			if (it != xysettings.end())
++			if (it != xysettings.end()
++				&& !stale_font_path(setting.second->name, it->second, setting.second->value))
+ 				setting.second->value = it->second;
+ 		}
+ 
+@@ -835,6 +889,37 @@ namespace ms
+ 		return Setting<EquipCompare>::get().load();
+ 	}
+ 
++	bool Configuration::get_damage_formula_v2() const
++	{
++		return Setting<DamageFormulaV2>::get().load();
++	}
++
++	bool Configuration::get_damage_long_lines() const
++	{
++		return Setting<DamageLongLines>::get().load();
++	}
++
++	int64_t Configuration::get_damage_cap() const
++	{
++		// 0 = 使用内置 2^53；任何配置值都不允许超过 double 精确整数上限。
++		constexpr uint64_t EXACT_INT_LIMIT = 9007199254740992ULL;
++		uint64_t cap = 0;
++
++		try
++		{
++			cap = std::stoull(Setting<DamageCap>::get().load());
++		}
++		catch (const std::exception&)
++		{
++			cap = 0;
++		}
++
++		if (cap == 0 || cap > EXACT_INT_LIMIT)
++			cap = EXACT_INT_LIMIT;
++
++		return static_cast<int64_t>(cap);
++	}
++
+ 	std::string Configuration::get_ui_language() const
+ 	{
+ 		std::string lang = Setting<UiLanguage>::get().load();
+diff --git a/Configuration.h b/Configuration.h
+index 31ae2d1..6f500d2 100644
+--- a/Configuration.h
++++ b/Configuration.h
+@@ -27,6 +27,7 @@ namespace ms { namespace res { enum class KeyMode; } }
+ #include <unordered_map>
+ #include <unordered_set>
+ #include <vector>
++#include <cstdint>
+ #include <ctime>
+ 
+ namespace ms
+@@ -102,6 +103,12 @@ namespace ms
+ 		bool get_boot_logo() const;
+ 		// 启动动画单帧时长，毫秒（boot.logo.frame_ms，取值已限幅到 10~1000）。
+ 		uint16_t get_boot_logo_frame_ms() const;
++		// 伤害公式 v2（damage.formula_v2）：启用原生取证补齐的魔法/无视防御/暴击区间分支。
++		bool get_damage_formula_v2() const;
++		// 伤害行 12 字节模式（damage.long_lines）：必须与 s9 服务端成对开启。
++		bool get_damage_long_lines() const;
++		// 单段伤害上限（damage.cap）：默认 2^53，与 double 精确整数上限一致。
++		int64_t get_damage_cap() const;
+ 		// 装备悬停时是否显示同部位已装备物品的对比（ui.equip_compare）。
+ 		bool get_equip_compare() const;
+ 		// UI 语言码（ui.language），默认 zh-CN；可被 xy-config 覆盖，支持热重载。
+@@ -542,15 +549,18 @@ namespace ms
+ 	struct FontPathNormal : public Configuration::StringEntry
+ 	{
+ 		// 中文客户端：默认字体须含 CJK 字形，否则运行时中文（职业名/对话/聊天）
+-		// 经 FreeType 渲染为空（纯拉丁 Arial 无中文字形）。SimHei 为系统中文黑体。
+-		FontPathNormal() : StringEntry("font.path.normal", "fonts/SimHei/simhei.ttf") {}
++		// 经 FreeType 渲染为空（纯拉丁 Arial 无中文字形）。
++		// R28-B5：由 SimHei（微软系统字体，公开仓库有授权风险）换成思源宋体
++		// Source Han Serif SC Regular（SIL OFL 1.11，随包 LICENSE-OFL.txt）。
++		// 装机上残留的旧路径由 Configuration::load 的字体兜底处理（见 evidence/w8-font-swap）。
++		FontPathNormal() : StringEntry("font.path.normal", "fonts/SourceHanSerifSC/SourceHanSerifSC-Regular.otf") {}
+ 	};
+ 
+ 	// The bold font which will be used
+ 	// 粗体字体文件路径，缺失时回退到常规字体渲染。
+ 	struct FontPathBold : public Configuration::StringEntry
+ 	{
+-		FontPathBold() : StringEntry("font.path.bold", "fonts/SimHei/simhei.ttf") {}
++		FontPathBold() : StringEntry("font.path.bold", "fonts/SourceHanSerifSC/SourceHanSerifSC-Bold.otf") {}
+ 	};
+ 
+ 	// Music Volume
+@@ -965,6 +975,30 @@ namespace ms
+ 		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
+ 	};
+ 
++	// 伤害公式补齐开关（damage.formula_v2，默认 false = 保持原 Fyms085 公式）。
++	// 开启后 Skill/Mob/CharStats 走原生取证补齐的魔法攻击、无视防御、暴击区间、
++	// PAD/MAD 1999 钳制与玩家受伤公式；关闭时伤害结果与改造前一致，便于回滚。
++	struct DamageFormulaV2 : public Configuration::BoolEntry
++	{
++		DamageFormulaV2() : BoolEntry("damage.formula_v2", "false") {}
++	};
++
++	// 12 字节/行伤害封包开关（damage.long_lines，默认 false = legacy 4 字节/行）。
++	// 必须与 s9 服务端 damage.long-lines 同时开启/关闭；失步会导致整包读错位。
++	struct DamageLongLines : public Configuration::BoolEntry
++	{
++		DamageLongLines() : BoolEntry("damage.long_lines", "false") {}
++	};
++
++	// 单段伤害上限（damage.cap，默认 9007199254740992 = 2^53）。
++	// 超过该值的整数无法被 double 公式精确表示；破功值下发时会取两者较小值。
++	// 不用 LongEntry：string_conversion::or_default 内部用 std::stoi，
++	// 会把 2^53 当越界异常吞成 0；这里用 StringEntry + std::stoull 自己解析。
++	struct DamageCap : public Configuration::StringEntry
++	{
++		DamageCap() : StringEntry("damage.cap", "9007199254740992") {}
++	};
++
+ 	// 封包调试转储（debug.packet_dump，默认 false）。
+ 	// 开启后把收/发的每个明文封包按参考端 PacketDump 格式（前缀 "PacketDump : "
+ 	// + 每字节 "%02x " 小写十六进制；格式重建自 BeiDou.exe 0x6EC7C0：
+@@ -975,6 +1009,15 @@ namespace ms
+ 		PacketDumpLog() : BoolEntry("debug.packet_dump", "false") {}
+ 	};
+ 
++	// 分段耗时文件日志（debug.perf_log，默认 false；Wave 0.1 测量仪器）。
++	// Release 下 LOG() 是 no-op（MapleStory.h _DEBUG 门控），本键是 [BOOT]/
++	// [SETFIELD] 毫秒分段唯一的落盘通道（Util/PerfLog.h → boot_perf.log）。
++	// 基线采集期临时开；采集完成按门禁保持默认关。
++	struct PerfLogEnabled : public Configuration::BoolEntry
++	{
++		PerfLogEnabled() : BoolEntry("debug.perf_log", "false") {}
++	};
++
+ 	// 本地点券标签缓存（服务端字段就绪前 SoftKey/Point 按钮写入）
+ 	struct MaplePointsLocal : public Configuration::LongEntry
+ 	{
+diff --git a/Data/SkillData.cpp b/Data/SkillData.cpp
+index 1d4f4b3..b810ea8 100644
+--- a/Data/SkillData.cpp
++++ b/Data/SkillData.cpp
+@@ -81,6 +81,10 @@ namespace ms
+ 			float chance = (float)sub["prop"].get_real(100.0) / 100;
+ 			float critical = 0.0f;
+ 			float ignoredef = 0.0f;
++			// 运行时 Skill.nx 只存在 `criticalDamage`（百分比，如 105 = +5% 暴伤），
++			// 不存在 ignoreDef/bossDamage 节点；缺失时这两个值保持 0（R6：精简数据需兜底）。
++			float criticaldamage = (float)sub["criticalDamage"].get_integer(0);
++			ignoredef = (float)sub["ignoreDef"].get_integer(0) / 100;
+ 			float hrange = (float)sub["range"].get_real(100.0) / 100;
+ 			Rectangle<int16_t> range = sub;
+ 			int32_t level = string_conversion::or_default<int32_t>(sub.name(), -1);
+@@ -88,7 +92,7 @@ namespace ms
+ 			stats.emplace(
+ 				std::piecewise_construct,
+ 				std::forward_as_tuple(level),
+-				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range)
++				std::forward_as_tuple(damage, matk, fixdamage, mastery, attackcount, mobcount, bulletcount, bulletcost, hpcost, mpcost, chance, critical, ignoredef, hrange, range, criticaldamage)
+ 			);
+ 		}
+ 
+diff --git a/Data/SkillData.h b/Data/SkillData.h
+index c3cb075..d0c3cd7 100644
+--- a/Data/SkillData.h
++++ b/Data/SkillData.h
+@@ -44,10 +44,13 @@ namespace ms
+ 			float chance;
+ 			float critical;
+ 			float ignoredef;
++			// 运行时 Skill.nx level 节点 `criticalDamage`（实测值 105/110/.../125，百分比）。
++			// 0 = 该技能未配置；v2 公式把它叠加到暴击倍率上。
++			float criticaldamage;
+ 			float hrange;
+ 			Rectangle<int16_t> range;
+ 
+-			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), hrange(hrange), range(range) {}
++			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range, float criticaldamage = 0.0f) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), criticaldamage(criticaldamage), hrange(hrange), range(range) {}
+ 		};
+ 
+ 		// Skill flags, unfortunately these just have to be hard-coded
+diff --git a/Gameplay/Combat/Attack.h b/Gameplay/Combat/Attack.h
+index 724fbaf..13259a0 100644
+--- a/Gameplay/Combat/Attack.h
++++ b/Gameplay/Combat/Attack.h
+@@ -18,6 +18,7 @@
+ #pragma once
+ 
+ #include "../../Template/Rectangle.h"
++#include "Damage.h"
+ 
+ #include <unordered_map>
+ #include <vector>
+@@ -46,7 +47,15 @@ namespace ms
+ 		double mindamage = 1.0;
+ 		double maxdamage = 1.0;
+ 		float critical = 0.0f;
++		// v2：暴击倍率区间（原生 mincrit/maxcrit），默认保持旧的固定 ×1.5。
++		float critical_min = 1.5f;
++		float critical_max = 1.5f;
++		// v2：无视防御比例 0..1；作用于怪物 wdef/mdef。
+ 		float ignoredef = 0.0f;
++		// v2：BOSS 增伤比例，0.2 = +20%；仅对 boss 生效。
++		float bossdamage = 0.0f;
++		// v2：魔法基础伤害（MAD 钳到 1999 后），DMG_MAGIC 时替代武器 min/max。
++		double magicdamage = 0.0;
+ 		int32_t matk = 0;
+ 		int32_t accuracy = 0;
+ 		int32_t fixdamage = 0;
+@@ -87,12 +96,12 @@ namespace ms
+ 
+ 	struct MobAttackResult
+ 	{
+-		int32_t damage;
++		int64_t damage;
+ 		int32_t mobid;
+ 		int32_t oid;
+ 		uint8_t direction;
+ 
+-		MobAttackResult(const MobAttack& attack, int32_t damage, uint8_t direction) : damage(damage), direction(direction), mobid(attack.mobid), oid(attack.oid) {}
++		MobAttackResult(const MobAttack& attack, int64_t damage, uint8_t direction) : damage(damage), direction(direction), mobid(attack.mobid), oid(attack.oid) {}
+ 	};
+ 
+ 	struct AttackResult
+@@ -124,7 +133,7 @@ namespace ms
+ 		uint8_t speed = 0;
+ 		bool toleft = false;
+ 		Point<int16_t> origin;
+-		std::unordered_map<int32_t, std::vector<std::pair<int32_t, bool>>> damagelines;
++		std::unordered_map<int32_t, damage::DamageLines> damagelines;
+ 		int32_t first_oid;
+ 		int32_t last_oid;
+ 	};
+diff --git a/Gameplay/Combat/Combat.cpp b/Gameplay/Combat/Combat.cpp
+index 359a952..b969e8b 100644
+--- a/Gameplay/Combat/Combat.cpp
++++ b/Gameplay/Combat/Combat.cpp
+@@ -295,10 +295,18 @@ namespace ms
+ 
+ 	void Combat::apply_damage_effect(const DamageEffect& effect)
+ 	{
++		// 伤害数字总量钳制（Wave P）：AoE 群怪/多段技能瞬时可堆几百个数字，
++		// 每个都在 update/draw 上花时间。超过 160 就从最老的丢——最老的
++		// 本就接近淡出尾声，观感无损，尖峰负载有界。
++		constexpr size_t MAX_DAMAGE_NUMBERS = 160;
++
+ 		Point<int16_t> head_position = mobs.get_mob_head_position(effect.target_oid);
+ 		damagenumbers.push_back(effect.number);
+ 		damagenumbers.back().set_x(head_position.x());
+ 
++		while (damagenumbers.size() > MAX_DAMAGE_NUMBERS)
++			damagenumbers.pop_front();
++
+ 		const SpecialMove& move = get_move(effect.move_id);
+ 		mobs.apply_damage(effect.target_oid, effect.damage, effect.toleft, effect.user, move);
+ 	}
+@@ -363,7 +371,7 @@ namespace ms
+ 						DamageEffect effect{
+ 							attackuser,
+ 							number,
+-							line.second[i].first,
++							damage::legacy_line(line.second[i].first),
+ 							result.toleft,
+ 							oid,
+ 							move.get_id()
+@@ -405,7 +413,7 @@ namespace ms
+ 							user.get_attackdelay(i),
+ 							attackuser,
+ 							number,
+-							line.second[i].first,
++							damage::legacy_line(line.second[i].first),
+ 							result.toleft,
+ 							oid,
+ 							move.get_id()
+@@ -418,14 +426,14 @@ namespace ms
+ 		}
+ 	}
+ 
+-	std::vector<DamageNumber> Combat::place_numbers(int32_t oid, const std::vector<std::pair<int32_t, bool>>& damagelines)
++	std::vector<DamageNumber> Combat::place_numbers(int32_t oid, const damage::DamageLines& damagelines)
+ 	{
+ 		std::vector<DamageNumber> numbers;
+ 		int16_t head = mobs.get_mob_head_position(oid).y();
+ 
+ 		for (auto& line : damagelines)
+ 		{
+-			int32_t amount = line.first;
++			int64_t amount = line.first;
+ 			bool critical = line.second;
+ 			DamageNumber::Type type = critical ? DamageNumber::Type::CRITICAL : DamageNumber::Type::NORMAL;
+ 			numbers.emplace_back(type, amount, head);
+diff --git a/Gameplay/Combat/Combat.h b/Gameplay/Combat/Combat.h
+index 3cd8dc8..4083ae1 100644
+--- a/Gameplay/Combat/Combat.h
++++ b/Gameplay/Combat/Combat.h
+@@ -18,6 +18,7 @@
+ #pragma once
+ 
+ #include "RegularAttack.h"
++#include "Damage.h"
+ 
+ #include "../MapleMap/MapChars.h"
+ #include "../MapleMap/MapMobs.h"
+@@ -75,7 +76,7 @@ namespace ms
+ 		void apply_bullet_effect(const BulletEffect& effect);
+ 		void apply_damage_effect(const DamageEffect& effect);
+ 		void extract_effects(const Char& user, const SpecialMove& move, const AttackResult& result);
+-		std::vector<DamageNumber> place_numbers(int32_t oid, const std::vector<std::pair<int32_t, bool>>& damagelines);
++		std::vector<DamageNumber> place_numbers(int32_t oid, const damage::DamageLines& damagelines);
+ 		const SpecialMove& get_move(int32_t move_id);
+ 
+ 		Player& player;
+diff --git a/Gameplay/Combat/DamageNumber.cpp b/Gameplay/Combat/DamageNumber.cpp
+index 78f17c7..6fde9ef 100644
+--- a/Gameplay/Combat/DamageNumber.cpp
++++ b/Gameplay/Combat/DamageNumber.cpp
+@@ -23,9 +23,10 @@
+ 
+ namespace ms
+ {
+-	DamageNumber::DamageNumber(Type t, int32_t damage, int16_t starty, int16_t x)
++	DamageNumber::DamageNumber(Type t, int64_t damage, int16_t starty, int16_t x)
+ 	{
+ 		type = t;
++		numscale = 1.0f;
+ 
+ 		if (damage > 0)
+ 		{
+@@ -65,7 +66,15 @@ namespace ms
+ 				total += advance;
+ 			}
+ 
+-			shift = total / 2;
++			// 2^53 是 16 位数字；默认图集每字符约 24px，不缩放会横向溢出。
++			// 运行时 BasicEff.img 只有 0-9 与 Miss，没有 K/M/B 等单位字符，
++			// 因此按最大宽度等比缩放，既保留完整数值又不截断（notes/r001 §4）。
++			constexpr int16_t MAX_DAMAGE_WIDTH = 260;
++
++			if (total > MAX_DAMAGE_WIDTH)
++				numscale = static_cast<float>(MAX_DAMAGE_WIDTH) / total;
++
++			shift = static_cast<int16_t>(total * numscale / 2);
+ 		}
+ 		else
+ 		{
+@@ -79,7 +88,7 @@ namespace ms
+ 		opacity.set(1.5f);
+ 	}
+ 
+-	DamageNumber::DamageNumber() {}
++	DamageNumber::DamageNumber() : numscale(1.0f) {}
+ 
+ 	void DamageNumber::draw(double viewx, double viewy, float alpha) const
+ 	{
+@@ -93,18 +102,18 @@ namespace ms
+ 		}
+ 		else
+ 		{
+-			charsets[type][false].draw(firstnum, { position, interopc });
++			charsets[type][false].draw(firstnum, { position, numscale, numscale, interopc });
+ 
+ 			if (multiple)
+ 			{
+-				int16_t first_advance = getadvance(firstnum, true);
++				int16_t first_advance = static_cast<int16_t>(getadvance(firstnum, true) * numscale);
+ 				position.shift_x(first_advance);
+ 
+ 				for (size_t i = 0; i < restnum.length(); i++)
+ 				{
+ 					char c = restnum[i];
+ 					Point<int16_t> yshift = { 0, static_cast<int16_t>((i % 2) ? -2 : 2) };
+-					charsets[type][true].draw(c, { position + yshift, interopc });
++					charsets[type][true].draw(c, { position + yshift, numscale, numscale, interopc });
+ 
+ 					int16_t advance;
+ 
+@@ -120,7 +129,7 @@ namespace ms
+ 						advance = getadvance(c, false);
+ 					}
+ 
+-					position.shift_x(advance);
++					position.shift_x(static_cast<int16_t>(advance * numscale));
+ 				}
+ 			}
+ 		}
+diff --git a/Gameplay/Combat/DamageNumber.h b/Gameplay/Combat/DamageNumber.h
+index eafef67..c8e77d8 100644
+--- a/Gameplay/Combat/DamageNumber.h
++++ b/Gameplay/Combat/DamageNumber.h
+@@ -23,6 +23,9 @@
+ 
+ #include "../../IO/Components/Charset.h"
+ 
++#include <cstdint>
++#include <string>
++
+ namespace ms
+ {
+ 	class DamageNumber
+@@ -37,7 +40,7 @@ namespace ms
+ 			TOPLAYER
+ 		};
+ 
+-		DamageNumber(Type type, int32_t damage, int16_t starty, int16_t x = 0);
++		DamageNumber(Type type, int64_t damage, int16_t starty, int16_t x = 0);
+ 		DamageNumber();
+ 
+ 		void draw(double viewx, double viewy, float alpha) const;
+@@ -58,6 +61,9 @@ namespace ms
+ 		int8_t firstnum;
+ 		std::string restnum;
+ 		int16_t shift;
++		// 超长伤害数字（最多 16 位，2^53）的等比缩放系数，保证不溢出屏幕。
++		// 运行时字符集只有 0-9 + Miss，无单位符号，故用缩放而不是单位缩写。
++		float numscale;
+ 		MovingObject moveobj;
+ 		Linear<float> opacity;
+ 
+diff --git a/Gameplay/Combat/Skill.cpp b/Gameplay/Combat/Skill.cpp
+index 0a62391..cf54d23 100644
+--- a/Gameplay/Combat/Skill.cpp
++++ b/Gameplay/Combat/Skill.cpp
+@@ -20,6 +20,7 @@
+ #include "../../Character/SkillId.h"
+ #include "../../Data/SkillData.h"
+ #include "../../Util/Misc.h"
++#include "../../Configuration.h"
+ 
+ #ifdef USE_NX
+ #include <nlnx/nx.hpp>
+@@ -180,6 +181,8 @@ namespace ms
+ 		int32_t level = user.get_skilllevel(skillid);
+ 		const SkillData::Stats stats = SkillData::get(skillid).get_stats(level);
+ 
++		const bool v2 = Configuration::get().get_damage_formula_v2();
++
+ 		if (stats.fixdamage)
+ 		{
+ 			attack.fixdamage = stats.fixdamage;
+@@ -189,6 +192,17 @@ namespace ms
+ 		{
+ 			attack.matk += stats.matk;
+ 			attack.damagetype = Attack::DMG_MAGIC;
++
++			// v2：魔法技能改用独立魔法基础值（MAD/INT/LUK），而不是武器 min/max。
++			// 旧公式把 DMG_MAGIC 送到 Mob::calculate_maxdamage 时仍用物理面板值，
++			// 这是三层矩阵中标为「缺失」的一项。
++			if (v2 && attack.magicdamage > 0.0)
++			{
++				double multiplier = stats.damage > 0.0f ? stats.damage : 1.0f;
++				double base = attack.magicdamage * multiplier + stats.matk;
++				attack.mindamage = base;
++				attack.maxdamage = base;
++			}
+ 		}
+ 		else
+ 		{
+@@ -198,7 +212,19 @@ namespace ms
+ 		}
+ 
+ 		attack.critical += stats.critical;
+-		attack.ignoredef += stats.ignoredef;
++
++		if (v2)
++		{
++			attack.ignoredef += stats.ignoredef;
++
++			// criticalDamage 是百分比（105 = +5% 暴伤），叠加到暴击倍率区间。
++			if (stats.criticaldamage > 100.0f)
++			{
++				float bonus = (stats.criticaldamage - 100.0f) / 100.0f;
++				attack.critical_min += bonus;
++				attack.critical_max += bonus;
++			}
++		}
+ 		attack.mobcount = stats.mobcount;
+ 		attack.hrange = stats.hrange;
+ 
+diff --git a/Gameplay/MapleMap/Mob.cpp b/Gameplay/MapleMap/Mob.cpp
+index 172cd1f..eae9df9 100644
+--- a/Gameplay/MapleMap/Mob.cpp
++++ b/Gameplay/MapleMap/Mob.cpp
+@@ -22,6 +22,8 @@
+ 
+ #include "../../Net/Packets/GameplayPackets.h"
+ 
++#include <algorithm>
++
+ #ifdef USE_NX
+ #include <nlnx/nx.hpp>
+ #endif
+@@ -48,6 +50,7 @@ namespace ms
+ 		flyspeed = info["flySpeed"];
+ 		touchdamage = info["bodyAttack"].get_bool();
+ 		undead = info["undead"].get_bool();
++		boss = info["boss"].get_bool();
+ 		noflip = info["noFlip"].get_bool();
+ 		notattack = info["notAttack"].get_bool();
+ 		canjump = src["jump"].size() > 0;
+@@ -753,25 +756,28 @@ namespace ms
+ 		return maxdamage < 1.0 ? 1.0 : maxdamage;
+ 	}
+ 
+-	std::vector<std::pair<int32_t, bool>> Mob::calculate_damage(const Attack& attack)
++	damage::DamageLines Mob::calculate_damage(const Attack& attack)
+ 	{
+-		double mindamage;
+-		double maxdamage;
+-		float hitchance;
+-		float critical;
++		// damage.formula_v2 = false 时完全保持旧 Fyms085 公式与数值，便于一键回滚。
++		const bool v2 = Configuration::get().get_damage_formula_v2();
++
++		double mindamage = 1.0;
++		double maxdamage = 1.0;
++		float hitchance = 1.0f;
++		float critical = 0.0f;
+ 		int16_t leveldelta = level - attack.playerlevel;
+ 
+ 		if (leveldelta < 0)
+ 			leveldelta = 0;
+ 
+-		Attack::DamageType damagetype = attack.damagetype;
++		const bool magic = attack.damagetype == Attack::DamageType::DMG_MAGIC;
+ 
+-		switch (damagetype)
++		switch (attack.damagetype)
+ 		{
+ 		case Attack::DamageType::DMG_WEAPON:
+ 		case Attack::DamageType::DMG_MAGIC:
+-			mindamage = calculate_mindamage(leveldelta, attack.mindamage, damagetype == Attack::DamageType::DMG_MAGIC);
+-			maxdamage = calculate_maxdamage(leveldelta, attack.maxdamage, damagetype == Attack::DamageType::DMG_MAGIC);
++			mindamage = calculate_mindamage(leveldelta, attack.mindamage, magic);
++			maxdamage = calculate_maxdamage(leveldelta, attack.maxdamage, magic);
+ 			hitchance = calculate_hitchance(leveldelta, attack.accuracy);
+ 			critical = attack.critical;
+ 			break;
+@@ -783,13 +789,52 @@ namespace ms
+ 			break;
+ 		}
+ 
+-		std::vector<std::pair<int32_t, bool>> result(attack.hitcount);
++		if (v2)
++		{
++			// 无视防御：把防御减免中被忽略的比例加回。原生 CalcDamage 的 PDD/MDD
++			// 分支见 notes/r001，这里按 0..1 比例线性还原，避免改动防御函数的既有语义。
++			if (attack.ignoredef > 0.0f)
++			{
++				float ignored = std::min<float>(std::max<float>(attack.ignoredef, 0.0f), 1.0f);
++				double defmin = magic
++					? (1 + 0.01 * leveldelta) * mdef * 0.6
++					: wdef * 0.6;
++				double defmax = magic
++					? (1 + 0.01 * leveldelta) * mdef * 0.5
++					: wdef * 0.5;
++
++				mindamage += defmin * ignored;
++				maxdamage += defmax * ignored;
++			}
++
++			// BOSS 增伤：WZ info/boss 标记（构造时读取）。
++			if (boss && attack.bossdamage > 0.0f)
++			{
++				double factor = 1.0 + attack.bossdamage;
++				mindamage *= factor;
++				maxdamage *= factor;
++			}
++		}
++
++		if (mindamage < 1.0)
++			mindamage = 1.0;
++
++		if (maxdamage < mindamage)
++			maxdamage = mindamage;
++
++		// 暴击倍率区间：CharStats 的 mincrit/maxcrit 是「额外倍率」，故 1+x。
++		// 开关关闭时固定 ×1.5，与改造前一致。
++		float critical_min = v2 ? attack.critical_min : 1.5f;
++		float critical_max = v2 ? attack.critical_max : 1.5f;
++
++		damage::DamageLines result(attack.hitcount);
+ 
+ 		std::generate(
+ 			result.begin(), result.end(),
+ 			[&]()
+ 			{
+-				return next_damage(mindamage, maxdamage, hitchance, critical);
++				return next_damage(mindamage, maxdamage, hitchance, critical,
++					critical_min, critical_max);
+ 			}
+ 		);
+ 
+@@ -798,29 +843,40 @@ namespace ms
+ 		return result;
+ 	}
+ 
+-	std::pair<int32_t, bool> Mob::next_damage(double mindamage, double maxdamage, float hitchance, float critical) const
++	damage::DamageLine Mob::next_damage(double mindamage, double maxdamage, float hitchance,
++		float critical, float critical_min, float critical_max) const
+ 	{
+ 		bool hit = randomizer.below(hitchance);
+ 
+ 		if (!hit)
+-			return std::pair<int32_t, bool>(0, false);
+-
+-		constexpr double DAMAGECAP = 999999.0;
++			return damage::DamageLine(0, false);
+ 
+ 		double damage = randomizer.next_real(mindamage, maxdamage);
+ 		bool iscritical = randomizer.below(critical);
+ 
+ 		if (iscritical)
+-			damage *= 1.5;
++		{
++			float low = std::min<float>(critical_min, critical_max);
++			float high = std::max<float>(critical_min, critical_max);
++
++			if (low < 1.0f)
++				low = 1.0f;
++
++			if (high < low)
++				high = low;
++
++			damage *= (low == high) ? low : randomizer.next_real(low, high);
++		}
+ 
+-		if (damage < 1)
+-			damage = 1;
+-		else if (damage > DAMAGECAP)
+-			damage = DAMAGECAP;
++		if (damage < 1.0)
++			damage = 1.0;
+ 
+-		auto intdamage = static_cast<int32_t>(damage);
++		// 唯一 clamp 点：2^53 精度上限 ∩ 配置 cap ∩ 服务端 0x3730 破功值。
++		// 原生端的 199999.0 硬封顶（IDA 0xAFE8A0）按用户决议移除。
++		int64_t cap = damage::effective_cap(Configuration::get().get_damage_cap());
++		int64_t intdamage = damage::clamp_damage(damage, cap);
+ 
+-		return std::pair<int32_t, bool>(intdamage, iscritical);
++		return damage::DamageLine(intdamage, iscritical);
+ 	}
+ 
+ 	void Mob::apply_damage(int32_t damage, bool toleft)
+diff --git a/Gameplay/MapleMap/Mob.h b/Gameplay/MapleMap/Mob.h
+index ce5f79e..387fb77 100644
+--- a/Gameplay/MapleMap/Mob.h
++++ b/Gameplay/MapleMap/Mob.h
+@@ -140,7 +140,7 @@ namespace ms
+ 		void show_effect(const Animation& animation, int8_t pos, int8_t z, bool flip);
+ 
+ 		// Calculate the damage to this mob with the specified attack
+-		std::vector<std::pair<int32_t, bool>> calculate_damage(const Attack& attack);
++		damage::DamageLines calculate_damage(const Attack& attack);
+ 		// Apply damage to the mob
+ 		void apply_damage(int32_t damage, bool toleft);
+ 
+@@ -180,8 +180,10 @@ namespace ms
+ 		double calculate_mindamage(int16_t leveldelta, double mindamage, bool magic) const;
+ 		// Calculate the maximum damage
+ 		double calculate_maxdamage(int16_t leveldelta, double maxdamage, bool magic) const;
+-		// Calculate a random damage line based on the specified values
+-		std::pair<int32_t, bool> next_damage(double mindamage, double maxdamage, float hitchance, float critical) const;
++		// Calculate a random damage line based on the specified values.
++		// 单段伤害在这里统一饱和到 2^53（或配置/破功值上限），是唯一 clamp 点。
++		damage::DamageLine next_damage(double mindamage, double maxdamage, float hitchance,
++			float critical, float critical_min, float critical_max) const;
+ 
+ 		// Return the current 'head' position
+ 		Point<int16_t> get_head_position(Point<int16_t> position) const;
+@@ -207,6 +209,8 @@ namespace ms
+ 		uint16_t avoid;
+ 		uint16_t knockback;
+ 		bool undead;
++		// v2：WZ info/boss 标记，用于 BOSS 增伤词缀（原生 boss 判定资源节点）。
++		bool boss;
+ 		bool touchdamage;
+ 		bool noflip;
+ 		bool notattack;
+diff --git a/IO/UITypes/UICharInfo.cpp b/IO/UITypes/UICharInfo.cpp
+index d5a9e22..9ece8ed 100644
+--- a/IO/UITypes/UICharInfo.cpp
++++ b/IO/UITypes/UICharInfo.cpp
+@@ -453,6 +453,10 @@ namespace ms
+ 						}
+ 					} catch (...) {}
+ 				}, []() {}, "Damage skin id");
++				// 伤害皮肤：运行时 UI.nx/UIWindow.img 无 DamageSkin 节点、Effect.nx
++				// BasicEff.img 无 damageSkin 节点（notes/r001 §4），s9 也无对应协议，
++				// 故只保留「按现金道具 id 发送使用包」的调试入口；
++				// 皮肤切换与资源装载按证据不足显式预留，不凭空造节点。
+ 				return Button::State::NORMAL;
+ 			}
+ 			case Buttons::BtArrayGet:
+diff --git a/IO/UITypes/UIStatsInfo.cpp b/IO/UITypes/UIStatsInfo.cpp
+index 0d30cbb..dce436b 100644
+--- a/IO/UITypes/UIStatsInfo.cpp
++++ b/IO/UITypes/UIStatsInfo.cpp
+@@ -1,4 +1,4 @@
+-﻿//////////////////////////////////////////////////////////////////////////////////
++//////////////////////////////////////////////////////////////////////////////////
+ //	This file is part of the continued Journey MMORPG client					//
+ //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
+ //																				//
+@@ -29,6 +29,7 @@
+ #include "../../Gameplay/Stage.h"
+ 
+ #include "../../Net/Packets/PlayerPackets.h"
++#include "../../Util/PerfLog.h"
+ #include "../../Util/UiAssetResolve.h"
+ 
+ #include "../../Character/ExpTable.h"
+@@ -213,6 +214,8 @@ namespace ms
+ 			// 字形的 bitmap_top，而 SimHei 11px 的 CJK 分 9/10 两档（170 字抽样：
+ 			// 126 字 9、42 字 10）——「新手」的顶是「新」= 10，「50 / 50」的顶是
+ 			// '/' = 9。按「行类别」挑常量必然错 1px，只有按串精算才对。
++			// （上面那组 9/10 是 SimHei 的读数，R28-B5 换成思源宋体后数值变了，
++			//  但结论不变：正因为逐字不齐，才不能按行类别抄常量。）
+ 			//
+ 			// r27 更正 r15：r15 手抄的 bitmap_top「数字 8、'/' 11、CJK 11」里后两个
+ 			// 是 PIL 口径，FreeType 的 glyph.bitmap_top 实测 9~10 ⇒ 那几行一直画低
+@@ -704,21 +707,46 @@ namespace ms
+ 				{
+ 					if (yes)
+ 					{
+-						if (autostr > 0)
+-							for (size_t i = 0; i < autostr; i++)
+-								send_apup(MapleStat::Id::STR);
+-
+-						if (autodex > 0)
+-							for (size_t i = 0; i < autodex; i++)
+-								send_apup(MapleStat::Id::DEX);
+-
+-						if (autoint > 0)
+-							for (size_t i = 0; i < autoint; i++)
+-								send_apup(MapleStat::Id::INT);
+-
+-						if (autoluk > 0)
+-							for (size_t i = 0; i < autoluk; i++)
+-								send_apup(MapleStat::Id::LUK);
++						// Wave 3：单包 AUTO_DISTRIBUTE_AP(88) 替换旧的 N 次
++						// SPEND_AP(87) 逐点循环（HeavenClient 遗法：AP=40 就
++						// 40 个网络往返 + 40 次 s2c 回显）。s9 标准分支（DB 种子
++						// use_server_auto_assigner=false）body = skip(8) +
++						// 2×{int type,int val}，type 走 Stat.getBy5ByteEncoding
++						// （STR=64/DEX=128/INT=256/LUK=512，与 MapleStat::codes
++						// 不是一套），val 须 0..remainingAp。
++						// 语义与旧循环一致：主属性吃满全额。第二对给 0 值占位
++						// （服务端严格读满 16B）；gainStatByType 先 gain<=0 早退，
++						// type=0(null) 不会被解引用 switch。
++						auto to_code = [](uint16_t which) -> AutoAssignApPacket::StatCode
++						{
++							switch (which)
++							{
++								case 0: return AutoAssignApPacket::StatCode::STR;
++								case 1: return AutoAssignApPacket::StatCode::DEX;
++								case 2: return AutoAssignApPacket::StatCode::INT;
++								default: return AutoAssignApPacket::StatCode::LUK;
++							}
++						};
++
++						// 主属性 = 预演算里唯一非零项（上面 switch 只填一个）
++						int primary = autostr > 0 ? 0 : (autodex > 0 ? 1 : (autoint > 0 ? 2 : 3));
++						const int32_t ap = primary == 0 ? autostr : (primary == 1 ? autodex : (primary == 2 ? autoint : autoluk));
++
++						if (ap <= 0)
++							return;	// 无 AP 可分：不发
++
++						// 主属性吃满 AP（与旧逐点循环同语义：旧代码也只点 primary）；
++						// 第二对给合法类型码 + 0 值占位（服务端严格读满 16B；
++						// gainStatByType 在 gain<=0 早退，switch 不求值 type）。
++						// 第二对类型码避开主属性：primary 0=STR 1=DEX 2=INT 3=LUK
++						// → 取 (primary+1)%4 的编码，永不与主属性撞。
++						const AutoAssignApPacket::StatCode second_code =
++							to_code((primary + 1) % 4);
++
++						AutoAssignApPacket(to_code(primary), ap, second_code, 0).dispatch();
++
++						perf::mark("AP", "autoassign primary=" + std::to_string(primary)
++							+ " ap=" + std::to_string(ap));
+ 					}
+ 				};
+ 
+@@ -779,10 +807,30 @@ namespace ms
+ 
+ 		// classic：「详情」钮常显（点它=开/关切换，见 button_pressed）；
+ 		// 收起钮 BtHide 只在展开时可点 —— 修复「展开后收不回」（§6-Q2）。
++		// 展开时窗口加宽以容纳主窗右侧的 backgrnd2 详情板（否则画在 x>主窗宽 处被裁切、
++		// 右侧「攻击力/防御等」详情面板不可见）；收起恢复主窗宽。
++		if (classic)
++		{
++			nl::node statnode = UiAssetResolve::window4("Stat");
++			Texture mainbg = statnode["backgrnd"];
++
++			if (mainbg.is_valid())
++			{
++				const int16_t main_w = mainbg.get_dimensions().x();
++				const int16_t main_h = mainbg.get_dimensions().y();
++				const int16_t detail_w = classic_detail.is_valid() ? classic_detail.get_dimensions().x() : 0;
++				const int16_t gap = 4;
++
++				dimension = enabled
++					? Point<int16_t>(main_w + gap + detail_w, main_h)
++					: Point<int16_t>(main_w, main_h);
++			}
++		}
++
+ 		if (auto* b = find_btn(buttons, Buttons::BT_DETAILOPEN))
+ 			b->set_active(classic || !enabled);
+ 		if (auto* b = find_btn(buttons, Buttons::BT_DETAILCLOSE))
+-			b->set_active(enabled);
++			b->set_active(!classic && enabled);
+ 	}
+ 
+ 	void UIStatsInfo::update_ap()
+diff --git a/Net/Handlers/AttackHandlers.cpp b/Net/Handlers/AttackHandlers.cpp
+index 98a62d8..3656e0d 100644
+--- a/Net/Handlers/AttackHandlers.cpp
++++ b/Net/Handlers/AttackHandlers.cpp
+@@ -19,6 +19,10 @@
+ 
+ #include "../../Character/SkillId.h"
+ #include "../../Gameplay/Stage.h"
++#include "../../Configuration.h"
++#include "../../Gameplay/Combat/Damage.h"
++
++#include <limits>
+ 
+ namespace ms
+ {
+@@ -61,14 +65,41 @@ namespace ms
+ 
+ 			uint8_t length = (attack.skill == SkillId::Id::MESO_EXPLOSION) ? recv.read_byte() : attack.hitcount;
+ 
++			// 与 AttackPacket 的 damage.long_lines 成对：12 字节/行 = int32 vanillaLine
++			// + int64 真实值。legacy 仍是 4 字节/行，暴击用负数编码。
++			const bool long_lines = Configuration::get().get_damage_long_lines();
++
+ 			for (uint8_t j = 0; j < length; j++)
+ 			{
+-				int32_t damage = recv.read_int();
+-				// V83+：最高位标记暴击；绝对值写入飘字
+-				bool critical = (damage < 0);
+-				if (critical)
+-					damage &= 0x7FFFFFFF;
+-				attack.damagelines[oid].push_back({ damage, critical });
++				int32_t vanilla = recv.read_int();
++				int64_t damage;
++
++				if (long_lines)
++				{
++					int64_t real = recv.read_long();
++					bool critical = damage::vanilla_is_critical(vanilla);
++					// 真实值字段必须非负；异常包（负/超 2^53）回退到 vanilla 的绝对值，
++					// 避免把垃圾值渲染成天文数字。
++					// 与 legacy 一致：暴击位的绝对值取低 31 位，不能用 -vanilla
++					// （0x80000000|d 取负会变成 2147483648-d）。
++					int32_t fallback = static_cast<int32_t>(
++						static_cast<uint32_t>(vanilla) & 0x7FFFFFFFu);
++					damage = (real > 0 && real <= damage::EXACT_INT_CAP)
++						? real
++						: static_cast<int64_t>(fallback);
++					attack.damagelines[oid].emplace_back(damage, critical);
++				}
++				else
++				{
++					// V83+：最高位标记暴击；绝对值写入飘字
++					bool critical = (vanilla < 0);
++					int32_t value = vanilla;
++
++					if (critical)
++						value &= 0x7FFFFFFF;
++
++					attack.damagelines[oid].emplace_back(static_cast<int64_t>(value), critical);
++				}
+ 			}
+ 		}
+ 		while (recv.available())
+diff --git a/Net/Handlers/CommonHandlers.cpp b/Net/Handlers/CommonHandlers.cpp
+index 6c33c09..d5756ac 100644
+--- a/Net/Handlers/CommonHandlers.cpp
++++ b/Net/Handlers/CommonHandlers.cpp
+@@ -25,6 +25,7 @@
+ #include "../../IO/UITypes/UIStatusMessenger.h"
+ #include "../../IO/Window.h"
+ #include "../../Graphics/Color.h"
++#include "../../Gameplay/Combat/Damage.h"
+ 
+ #include <string>
+ 
+@@ -41,6 +42,9 @@ namespace ms
+ 		while (recv.available())
+ 			recv.skip_byte();
+ 		Window::get().set_limit_break(lb);
++		// 破功值不再只用于标题：同步给伤害 clamp（min(配置 cap, 破功值, 2^53)）。
++		// 负值/0 表示服务端未配置上限，effective_cap 会忽略该项。
++		damage::set_server_limit_break(lb);
+ 		std::string tip = "LimitBreak " + std::to_string(lb);
+ 		if (auto ui = UI::get().get_element<UIAdmin>())
+ 		{
+diff --git a/Net/OutPacket.cpp b/Net/OutPacket.cpp
+index 3782a87..a2e8f7e 100644
+--- a/Net/OutPacket.cpp
++++ b/Net/OutPacket.cpp
+@@ -79,7 +79,7 @@ namespace ms
+ 	{
+ 		// D2：原来是 sizeof(long)。MSVC 下 long 是 4 字节（LP64/LLP64 陷阱），
+ 		// 会把 64 位值只写出低 4 字节，与 s9 的 ByteBufOutPacket.writeLong（8 字节）差 4 字节，
+-		// 后续字段全部错位。当前全仓还没有调用点，属于**潜伏缺陷**：等第一个 long 字段出现才会炸。
++		// 后续字段全部错位。已修复；首个调用点是 12 字节/行伤害封包（AttackPacket）。
+ 		for (size_t i = 0; i < sizeof(int64_t); i++)
+ 		{
+ 			write_byte(static_cast<int8_t>(lg));
+diff --git a/Net/Packets/AttackAndSkillPackets.h b/Net/Packets/AttackAndSkillPackets.h
+index 5d7cb4e..a755623 100644
+--- a/Net/Packets/AttackAndSkillPackets.h
++++ b/Net/Packets/AttackAndSkillPackets.h
+@@ -19,6 +19,9 @@
+ 
+ #include "../OutPacket.h"
+ 
++#include "../../Gameplay/Combat/Attack.h"
++#include "../../Configuration.h"
++
+ namespace ms
+ {
+ 	// Notifies the server of an attack
+@@ -35,6 +38,24 @@ namespace ms
+ 		// stance / speed 和整段伤害行就会整体位移，服务端拿到的是垃圾 oid 与垃圾伤害。
+ 		AttackPacket(const AttackResult& attack) : OutPacket(opcodefor(attack.type))
+ 		{
++			// damage.long_lines：每条伤害行由 legacy 的 4 字节扩为
++			// int32 vanillaLine + int64 真实值（共 12 字节）。必须与 s9
++			// gms.service.damage.long-lines 成对切换，详见 Damage.h 契约。
++			const bool long_lines = Configuration::get().get_damage_long_lines();
++
++			auto write_damage_line = [this, long_lines](const damage::DamageLine& line)
++			{
++				if (long_lines)
++				{
++					write_int(damage::vanilla_line(line.first, line.second));
++					write_long(line.first);
++				}
++				else
++				{
++					write_int(damage::legacy_line(line.first));
++				}
++			};
++
+ 			// parseDamage:686-691：1 字节占位 + numAttackedAndDamage + skill(int)。
+ 			skip(1);
+ 
+@@ -96,7 +117,7 @@ namespace ms
+ 					write_byte(static_cast<int8_t>(damagetomob.second.size()));
+ 
+ 					for (auto& singledamage : damagetomob.second)
+-						write_int(singledamage.first);
++						write_damage_line(singledamage);
+ 
+ 					skip(4);
+ 				}
+@@ -116,8 +137,10 @@ namespace ms
+ 
+ 					for (auto& singledamage : damagetomob.second)
+ 					{
+-						write_int(singledamage.first);
+-						// TODO: Add critical here
++						// legacy 版式不带暴击位：s9 广播时用负数反写暴击标志，
++						// 客户端在 AttackHandler 入站解析。12 字节模式下暴击位
++						// 由 vanillaLine 的 0x80000000 位承载（Damage.h）。
++						write_damage_line(singledamage);
+ 					}
+ 
+ 					// parseDamage:1037-1039 的排除条件写成 `a != x || a != y || ...`，
+@@ -211,7 +234,7 @@ namespace ms
+ 		}
+ 
+ 		// From mob attack result
+-		TakeDamagePacket(const MobAttackResult& result, From from) : TakeDamagePacket(from, 0, result.damage, result.mobid, result.oid, result.direction) {}
++		TakeDamagePacket(const MobAttackResult& result, From from) : TakeDamagePacket(from, 0, damage::legacy_line(result.damage), result.mobid, result.oid, result.direction) {}
+ 	};
+ 
+ 	// Packet which notifies the server of a skill usage
+diff --git a/Util/Randomizer.h b/Util/Randomizer.h
+index d40cd02..644a94e 100644
+--- a/Util/Randomizer.h
++++ b/Util/Randomizer.h
+@@ -54,10 +54,8 @@ namespace ms
+ 				return from;
+ 
+ 			std::uniform_real_distribution<T> range(from, to);
+-			std::random_device rd;
+-			std::default_random_engine engine{ rd() };
+ 
+-			return range(engine);
++			return range(engine());
+ 		}
+ 
+ 		template <class T>
+@@ -73,10 +71,8 @@ namespace ms
+ 				return from;
+ 
+ 			std::uniform_int_distribution<T> range(from, to - 1);
+-			std::random_device rd;
+-			std::default_random_engine engine{ rd() };
+ 
+-			return range(engine);
++			return range(engine());
+ 		}
+ 
+ 		template <class E>
+@@ -92,5 +88,15 @@ namespace ms
+ 
+ 			return static_cast<E>(next_underlying);
+ 		}
++
++	private:
++		// 伤害计算是每次攻击 × 命中怪数 × 段数的热路径。原实现每次调用都重建
++		// random_device + default_random_engine（系统调用且序列不可复现），
++		// 这里改为线程内复用一份引擎；分布对象仍按调用构造，采样语义不变。
++		static std::default_random_engine& engine()
++		{
++			static thread_local std::default_random_engine instance{ std::random_device{}() };
++			return instance;
++		}
+ 	};
+ }
+\ No newline at end of file
+diff --git a/docs/features/s9-protocol-align/notes/opcode-diff.md b/docs/features/s9-protocol-align/notes/opcode-diff.md
+index ddbf3ec..d36d168 100644
+--- a/docs/features/s9-protocol-align/notes/opcode-diff.md
++++ b/docs/features/s9-protocol-align/notes/opcode-diff.md
+@@ -1,5 +1,7 @@
+ # T2 · opcode 差异归因（客户端 ↔ s9）
+ 
++> **复核记录（2026-11-04，伤害 long 化）**：s9 新增 `SendOpcode.LIMIT_BREAK_SYNC(0x3730)`（破功值同步），客户端收侧本就已有同名 handler，未改客户端枚举、未重分配 opcode。已重跑 `python tools/gen_opcode_matrix.py` 并复核 `python tools/gen_opcode_matrix.py --check` → `GATE OK`。下方 §0 的数字是本文写就时的历史快照；当前权威数字以 `protocol/opcode-matrix.json` 的 `_meta` 为准（本次为 s9 send 313 常量 / 252 下发、客户端 s2c 304 常量 / 303 handler、c2s MATCHED 109）。
++
+ 数据源：`protocol/opcode-matrix.json`（由 `tools/gen_opcode_matrix.py` 从两侧源码生成，`--check` 做门禁）。
+ 规范源：`E:\project\BeiDou-Server_s9`（git head `44d0d5d9ca`，`ServerConstants.VERSION = 83`）。
+ 本文只谈 **opcode 层**（谁发、谁收、值对不对）；body 字段级对账在 P2 的 S1..S11 切片。
+diff --git a/tools/attack_layout_check.py b/tools/attack_layout_check.py
+index 72333f1..b279faf 100644
+--- a/tools/attack_layout_check.py
++++ b/tools/attack_layout_check.py
+@@ -1,12 +1,22 @@
+ #!/usr/bin/env python3
+-"""J7 出站攻击包对拍：把服务端 parseDamage 的读法和客户端 AttackPacket 的写法
+-都翻译成 Python，逐字节走一遍，证明两边不脱节。
+-
+-依据（只读，不改服务端）：
+-  AbstractDealDamageHandler.java:681-1047  parseDamage
+-  Net/Packets/AttackAndSkillPackets.h      AttackPacket
+-
+-用法：python tools/attack_layout_check.py
++"""J7 出站攻击包对拍（双模式）：把服务端 parseDamage 的读法和客户端 AttackPacket
++的写法都翻译成 Python，逐字节走一遍，证明两边不脱节。
++
++模式（必须与 s9 gms.service.damage.long-lines / 客户端 damage.long_lines 一致）：
++  legacy  每条伤害行 4 字节 int32                      （默认）
++  long    每条伤害行 12 字节 = int32 vanillaLine + int64 真实值
++          vanillaLine 溢出写 INT_MAX 哨兵、暴击置 0x80000000 位
++
++依据：
++  AbstractDealDamageHandler.java  parseDamage / readDamageLine
++  PacketCreator.addAttackBody     S2C 广播
++  Net/Packets/AttackAndSkillPackets.h  AttackPacket
++  Gameplay/Combat/Damage.h        clamp_damage / vanilla_line
++
++用法：
++  python tools/attack_layout_check.py             # legacy 13/13
++  python tools/attack_layout_check.py --long     # 12B/行（含超 INT_MAX 与 2^53 边界）
++  python tools/attack_layout_check.py --legacy   # 修复前反向对照，应当出现 FAIL
+ """
+ import struct
+ import sys
+@@ -32,6 +42,33 @@ SUSTAINED_SKILLS = {BOW_HURRICANE, WIND_HURRICANE, PIERCING_ARROW, RAPID_FIRE}
+ 
+ MESO_EXPLOSION = 4211006
+ 
++INT32_MAX = 0x7FFFFFFF
++EXACT_INT_CAP = 9007199254740992  # 2^53，double 精确整数上限
++
++
++def line_value(line):
++    """伤害行可以是 int，也可以是 (值, 是否暴击)。"""
++    return line[0] if isinstance(line, tuple) else line
++
++
++def line_critical(line):
++    return line[1] if isinstance(line, tuple) else False
++
++
++def vanilla_line(value, critical):
++    """Gameplay/Combat/Damage.h::vanilla_line 的 Python 版。"""
++    safe = max(0, min(value, EXACT_INT_CAP))
++    base = INT32_MAX if safe > INT32_MAX else safe
++    if critical:
++        base |= 0x80000000
++        if base >= 1 << 31:
++            base -= 1 << 32
++    return base
++
++
++def clamp_legacy(value):
++    return max(0, min(value, INT32_MAX))
++
+ 
+ class Reader:
+     """模拟 s9 InPacket：读操作推进游标，越界即抛（等价于服务端读到脏数据/异常）。"""
+@@ -56,6 +93,9 @@ class Reader:
+     def read_int(self):
+         return self._take(4, "<i")[0]
+ 
++    def read_long(self):
++        return self._take(8, "<q")[0]
++
+     def skip(self, n):
+         if self.pos + n > len(self.data):
+             raise IndexError("EOF(skip) at %d, need %d of %d" % (self.pos, n, len(self.data)))
+@@ -65,7 +105,20 @@ class Reader:
+         return len(self.data) - self.pos
+ 
+ 
+-def parse_damage(buf, ranged=False):
++def read_damage_line(p, long_lines):
++    """服务端 readDamageLine 的 Python 版；返回真实伤害（非负）。"""
++    vanilla = p.read_int()
++    if long_lines:
++        real = p.read_long()
++        if real <= 0 or real > EXACT_INT_CAP:
++            real = vanilla & 0x7FFFFFFF
++        return max(0, min(real, EXACT_INT_CAP))
++    if vanilla < 0:
++        return vanilla & 0x7FFFFFFF
++    return max(0, vanilla)
++
++
++def parse_damage(buf, ranged=False, long_lines=False):
+     """服务端 parseDamage 的读法，只保留与字节布局有关的部分。"""
+     p = Reader(buf)
+     ret = dict(reader=p)
+@@ -100,7 +153,7 @@ def parse_damage(buf, ranged=False):
+             if i < ret["num_attacked"]:
+                 p.skip(12)
+                 bullets = p.read_byte()
+-                dmgs = [p.read_int() for _ in range(bullets)]
++                dmgs = [read_damage_line(p, long_lines) for _ in range(bullets)]
+                 p.skip(4)
+                 mobs.append((oid, dmgs))
+             else:
+@@ -129,7 +182,7 @@ def parse_damage(buf, ranged=False):
+     for _ in range(ret["num_attacked"]):             # :906-1041
+         oid = p.read_int()
+         p.skip(14)
+-        dmgs = [p.read_int() for _ in range(ret["num_damage"])]
++        dmgs = [read_damage_line(p, long_lines) for _ in range(ret["num_damage"])]
+         p.skip(4)                                    # :1037-1039 条件恒真
+         damage.append((oid, dmgs))
+     ret["damage"] = damage
+@@ -141,7 +194,7 @@ def parse_damage(buf, ranged=False):
+     return ret
+ 
+ 
+-def build_packet(attack):
++def build_packet(attack, long_lines=False):
+     """客户端 AttackPacket 的写法，与 AttackAndSkillPackets.h 一一对应。"""
+     out = bytearray()
+     w = out.extend
+@@ -159,6 +212,18 @@ def build_packet(attack):
+     def i32(v):
+         w(struct.pack("<i", v))
+ 
++    def i64(v):
++        w(struct.pack("<q", v))
++
++    def damage_line(line):
++        value = line_value(line)
++        critical = line_critical(line)
++        if long_lines:
++            i32(vanilla_line(value, critical))
++            i64(value)
++        else:
++            i32(clamp_legacy(value))
++
+     charge = attack.get("charge", 0)
+     # Combat::apply_move 把候选怪钳到 15（协议高 4 位上限），所以发出去的怪物块不会超过 15 个。
+     lines = attack["damage"][:min(attack["mobcount"], 15)]
+@@ -192,7 +257,7 @@ def build_packet(attack):
+             pad(12)
+             byte(len(dmgs))
+             for d in dmgs:
+-                i32(d)
++                damage_line(d)
+             pad(4)
+         i32(0)      # 服务端多读的那一块：oid(int) + 金币堆数(byte)
+         byte(0)
+@@ -201,7 +266,7 @@ def build_packet(attack):
+             i32(oid)
+             pad(14)
+             for d in dmgs:
+-                i32(d)
++                damage_line(d)
+             pad(4)
+         if attack["skill"] == POISON_BOMB:
+             pad(4)
+@@ -244,6 +309,32 @@ CASES = [
+ ]
+ 
+ 
++# 12 字节/行专用用例：超过 INT_MAX 的真实伤害、2^53 边界、暴击符号位、
++# 以及梅索爆炸/竹林等专用版式在长行下是否仍被服务端整包读满。
++LONG_CASES = [
++    ("long 普通近战 1怪1击", dict(ranged=False, mobcount=1, hitcount=1, skill=0,
++                              damage=[(7, [432])])),
++    ("long 超 INT_MAX 单段", dict(ranged=False, mobcount=1, hitcount=2, skill=0,
++                              damage=[(7, [2147483648, 5000000000])])),
++    ("long 2^53 精度上限", dict(ranged=False, mobcount=1, hitcount=2, skill=0,
++                            damage=[(7, [EXACT_INT_CAP, EXACT_INT_CAP - 1])])),
++    ("long 暴击符号位", dict(ranged=False, mobcount=2, hitcount=2, skill=0,
++                        damage=[(7, [(123456, True), (9876543210, True)]),
++                                (8, [(999, False), (2147483647, True)])])),
++    ("long 远程 3怪6击", dict(ranged=True, mobcount=3, hitcount=6, skill=31000002,
++                          damage=[(7, [2 ** 33] * 6), (8, [1] * 6), (9, [EXACT_INT_CAP] * 6)])),
++    ("long 充能+落点", dict(ranged=False, mobcount=2, hitcount=6, skill=POISON_BOMB,
++                        charge=255, origin=(10125, -240),
++                        damage=[(7, [3 ** 30] * 6), (8, [(5 ** 20, True)] * 6)])),
++    ("long 暴怒 2怪3击", dict(ranged=False, mobcount=2, hitcount=3, skill=MESO_EXPLOSION,
++                          damage=[(7, [2 ** 40] * 3), (8, [(7, True)] * 3)])),
++    ("long 暴怒 lv20 段数20", dict(ranged=False, mobcount=2, hitcount=20, skill=MESO_EXPLOSION,
++                               damage=[(7, [2 ** 35] * 20), (8, [1] * 20)])),
++    ("long 竹林 30怪钳到15", dict(ranged=False, mobcount=30, hitcount=1, skill=10001009,
++                             damage=[(10 + i, [i * 10 ** 12]) for i in range(30)])),
++]
++
++
+ def build_packet_legacy(attack):
+     """修复前的写法（保留在这里做反向对照：`--legacy` 应当看到 FAIL）。
+ 
+@@ -293,15 +384,26 @@ def build_packet_legacy(attack):
+     return bytes(out)
+ 
+ 
+-def check(name, attack, builder):
+-    buf = builder(attack)
++def check(name, attack, builder, long_lines=False):
++    if builder is build_packet:
++        buf = builder(attack, long_lines)
++    else:
++        buf = builder(attack)
+     try:
+-        info = parse_damage(buf, ranged=attack["ranged"])
++        info = parse_damage(buf, ranged=attack["ranged"], long_lines=long_lines)
+     except IndexError as e:
+         return ["服务端读不完：%s" % e]
+ 
+     problems = []
+-    want_lines = attack["damage"][:min(attack["mobcount"], 15)]
++    raw_lines = attack["damage"][:min(attack["mobcount"], 15)]
++    if long_lines:
++        want_lines = [(oid, [min(line_value(d), EXACT_INT_CAP) for d in dmgs])
++                      for oid, dmgs in raw_lines]
++    elif builder is build_packet:
++        want_lines = [(oid, [clamp_legacy(line_value(d)) for d in dmgs])
++                      for oid, dmgs in raw_lines]
++    else:
++        want_lines = raw_lines
+     want_mobcount = len(want_lines)
+     if info["reader"].left() != 0:
+         problems.append("尾部剩 %d 字节" % info["reader"].left())
+@@ -323,20 +425,28 @@ def check(name, attack, builder):
+ 
+ 
+ def main():
+-    builder = build_packet_legacy if "--legacy" in sys.argv else build_packet
+-    label = "修复前" if builder is build_packet_legacy else "修复后"
++    legacy_reverse = "--legacy" in sys.argv
++    long_lines = "--long" in sys.argv
++    builder = build_packet_legacy if legacy_reverse else build_packet
++    cases = CASES if legacy_reverse else (LONG_CASES if long_lines else CASES)
++    label = "修复前(legacy)" if legacy_reverse else ("12字节/行" if long_lines else "legacy 4字节/行")
+     fails = 0
+-    for name, attack in CASES:
+-        problems = check(name, attack, builder)
+-        size = len(builder(attack))
++
++    for name, attack in cases:
++        problems = check(name, attack, builder, long_lines=long_lines and not legacy_reverse)
++        buf = builder(attack, long_lines) if builder is build_packet else builder(attack)
++        size = len(buf)
+         if problems:
+             print("FAIL %-24s %s" % (name, "; ".join(problems)))
+             fails += 1
+         else:
+             print("ok   %-24s %3d 字节，服务端整包读满" % (name, size))
+ 
+-    print("\n[%s] %d/%d 用例异常" % (label, fails, len(CASES)))
+-    print("ALL LAYOUTS ALIGN" if fails == 0 else "%d CASE(S) BROKEN" % fails)
++    print("\n[%s] %d/%d 用例异常" % (label, fails, len(cases)))
++    if legacy_reverse:
++        print("EXPECTED FAILURES (legacy reverse control)")
++    else:
++        print("ALL LAYOUTS ALIGN" if fails == 0 else "%d CASE(S) BROKEN" % fails)
+     return 1 if fails else 0
+ 
+ 
+diff --git a/xy-config.example.yaml b/xy-config.example.yaml
+index c7cee1f..fb02046 100644
+--- a/xy-config.example.yaml
++++ b/xy-config.example.yaml
+@@ -40,3 +40,15 @@ boot:
+   logo: true
+   # 单帧时长（毫秒）；Nexon 共 137 帧，40ms ≈ 5.5s。任意按键/点击可跳过。
+   frame_ms: 40
++
++damage:
++  # 原生取证补齐的伤害公式（魔法攻击 / 无视防御 / 暴击区间 / 玩家受伤）。
++  # false = 保持旧 Fyms085 公式；改动玩法数值前请先备份配置。
++  formula_v2: false
++  # 12 字节/行伤害封包：int32 vanillaLine + int64 真实值。
++  # 必须与 s9 服务端 gms.service.damage.long-lines 同时为 true/false，
++  # 双端不一致会导致攻击包整体读错位。回滚时双端同时改回 false。
++  long_lines: false
++  # 单段伤害上限，默认 2^53（double 可精确表示的最大整数）。
++  # 服务端下发破功值 0x3730 时取 min(cap, limitBreak)。
++  cap: 9007199254740992

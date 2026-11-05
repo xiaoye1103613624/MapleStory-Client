@@ -18,6 +18,7 @@
 #pragma once
 
 #include "RegularAttack.h"
+#include "Damage.h"
 
 #include "../MapleMap/MapChars.h"
 #include "../MapleMap/MapMobs.h"
@@ -75,7 +76,7 @@ namespace ms
 		void apply_bullet_effect(const BulletEffect& effect);
 		void apply_damage_effect(const DamageEffect& effect);
 		void extract_effects(const Char& user, const SpecialMove& move, const AttackResult& result);
-		std::vector<DamageNumber> place_numbers(int32_t oid, const std::vector<std::pair<int32_t, bool>>& damagelines);
+		std::vector<DamageNumber> place_numbers(int32_t oid, const damage::DamageLines& damagelines);
 		const SpecialMove& get_move(int32_t move_id);
 
 		Player& player;

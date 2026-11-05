@@ -19,6 +19,9 @@
 
 #include "../OutPacket.h"
 
+#include "../../Gameplay/Combat/Attack.h"
+#include "../../Configuration.h"
+
 namespace ms
 {
 	// Notifies the server of an attack
@@ -35,6 +38,24 @@ namespace ms
 		// stance / speed 和整段伤害行就会整体位移，服务端拿到的是垃圾 oid 与垃圾伤害。
 		AttackPacket(const AttackResult& attack) : OutPacket(opcodefor(attack.type))
 		{
+			// damage.long_lines：每条伤害行由 legacy 的 4 字节扩为
+			// int32 vanillaLine + int64 真实值（共 12 字节）。必须与 s9
+			// gms.service.damage.long-lines 成对切换，详见 Damage.h 契约。
+			const bool long_lines = Configuration::get().get_damage_long_lines();
+
+			auto write_damage_line = [this, long_lines](const damage::DamageLine& line)
+			{
+				if (long_lines)
+				{
+					write_int(damage::vanilla_line(line.first, line.second));
+					write_long(line.first);
+				}
+				else
+				{
+					write_int(damage::legacy_line(line.first));
+				}
+			};
+
 			// parseDamage:686-691：1 字节占位 + numAttackedAndDamage + skill(int)。
 			skip(1);
 
@@ -96,7 +117,7 @@ namespace ms
 					write_byte(static_cast<int8_t>(damagetomob.second.size()));
 
 					for (auto& singledamage : damagetomob.second)
-						write_int(singledamage.first);
+						write_damage_line(singledamage);
 
 					skip(4);
 				}
@@ -116,8 +137,10 @@ namespace ms
 
 					for (auto& singledamage : damagetomob.second)
 					{
-						write_int(singledamage.first);
-						// TODO: Add critical here
+						// legacy 版式不带暴击位：s9 广播时用负数反写暴击标志，
+						// 客户端在 AttackHandler 入站解析。12 字节模式下暴击位
+						// 由 vanillaLine 的 0x80000000 位承载（Damage.h）。
+						write_damage_line(singledamage);
 					}
 
 					// parseDamage:1037-1039 的排除条件写成 `a != x || a != y || ...`，

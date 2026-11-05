@@ -54,10 +54,8 @@ namespace ms
 				return from;
 
 			std::uniform_real_distribution<T> range(from, to);
-			std::random_device rd;
-			std::default_random_engine engine{ rd() };
 
-			return range(engine);
+			return range(engine());
 		}
 
 		template <class T>
@@ -73,10 +71,8 @@ namespace ms
 				return from;
 
 			std::uniform_int_distribution<T> range(from, to - 1);
-			std::random_device rd;
-			std::default_random_engine engine{ rd() };
 
-			return range(engine);
+			return range(engine());
 		}
 
 		template <class E>
@@ -91,6 +87,16 @@ namespace ms
 			auto next_underlying = next_int<typename std::underlying_type<E>::type>(from, to);
 
 			return static_cast<E>(next_underlying);
+		}
+
+	private:
+		// 伤害计算是每次攻击 × 命中怪数 × 段数的热路径。原实现每次调用都重建
+		// random_device + default_random_engine（系统调用且序列不可复现），
+		// 这里改为线程内复用一份引擎；分布对象仍按调用构造，采样语义不变。
+		static std::default_random_engine& engine()
+		{
+			static thread_local std::default_random_engine instance{ std::random_device{}() };
+			return instance;
 		}
 	};
 }
