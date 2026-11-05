@@ -27,6 +27,7 @@
 #include "../../Gameplay/Stage.h"
 
 #include "../../Data/ItemData.h"
+#include "../../Data/SkillData.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
@@ -307,7 +308,8 @@ namespace ms
 				if (formatted_text_pos < formatted_text.size())
 				{
 					std::string t = text.get_text();
-					// #i/#v/#s/#f 整段原子喂入，避免打字机半截令牌被布局器当成正文。
+					// 令牌须原子喂入：半截 `#` 会被布局器先吞掉，下一拍字母当正文闪现。
+					// 图标 #i/#v/#s/#f…# 吃到闭合；色标/样式 #b/#r/#e… 固定 2 字节（IDA skip+=2）。
 					size_t take = 1;
 					const size_t pos = formatted_text_pos;
 
@@ -321,6 +323,12 @@ namespace ms
 
 							if (end != std::string::npos)
 								take = end - pos + 1;
+						}
+						else if (tag == 'b' || tag == 'd' || tag == 'e' || tag == 'E'
+							|| tag == 'g' || tag == 'k' || tag == 'n' || tag == 'N'
+							|| tag == 'r' || tag == 'l')
+						{
+							take = 2;
 						}
 					}
 
@@ -732,9 +740,10 @@ namespace ms
 
 	std::string UINpcTalk::format_text(const std::string& tx, const int32_t& npcid)
 	{
-		// C6 收口：#p/#h/#t/#z 必须**逐处**展开（旧实现各只替第一处）；
+		// C6 收口：#p/#h/#t/#z/#q 必须**逐处**展开（旧实现各只替第一处）；
 		// 闭合 `#` 一并吃掉（旧写法留下悬空 `#`）；#t/#z 走 ItemData 全品类名，
-		// 不再只查 Consume.img。#i/#v/#s/#f 留给 LayoutBuilder 行内画图标（勿剥除）。
+		// #q 走 SkillData 名（IDA case17 + '%07d' → String/Skill.img）。
+		// #i/#v/#s/#f 留给 LayoutBuilder 行内画图标（勿剥除）。
 		std::string formatted_text = tx;
 
 		auto trim_body = [](std::string body) {
@@ -811,6 +820,21 @@ namespace ms
 		};
 		replace_named('t', resolve_item);
 		replace_named('z', resolve_item);
+
+		// IDA sub_99DD54 case17：tag=='q' → atoi(token+2) → %07d → Skill 名串，插入为正文元素。
+		replace_named('q', [](const std::string& body, std::string& out) {
+			if (body.empty())
+				return false;
+			try
+			{
+				out = SkillData::get(std::stoi(body)).get_name();
+				return !out.empty();
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		});
 
 		// #i/#v/#s/#f 保留给 LayoutBuilder（IDA type1/2 行内 icon）；#L 仍在下方剥除。
 		return strip_simple_choices(formatted_text);

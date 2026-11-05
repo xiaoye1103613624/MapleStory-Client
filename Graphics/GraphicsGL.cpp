@@ -1165,10 +1165,10 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #q[id]# - Shows the name of the given skill
+							// #q[id]# - 技能名：由 UINpcTalk::format_text 展开（IDA case17）
 							case 'q':
 							{
-								// TODO: Needs implemented
+								// 若仍落到布局器（展开失败），至少吃掉 `#q`，避免残片。
 								skip += 2;
 								break;
 							}
