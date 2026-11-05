@@ -17,6 +17,7 @@
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
 | 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | s2c 313 mode1 | 本机 look + 脚点 0.70；代码已闭环 |
 | 5b | Messenger blink / chatBalloon | ⏳ 待测 | s2c 313 mode6 | 打字泡 + 标题 blink；见 §5b |
+| 5c | Messenger 关闭钮 (276,6) | ⏳ 待测 | — | BtClose3/close_btn；见 messenger-btclose-coords |
 | 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | 公会窗摘要栏（兼容） |
 | 7 | SET_HPMPALERT | ⏳ 待测 | c2s 4096 / s2c 扩展 | Wave1 已接线；端到端需服务端配置 |
 | 8 | PICK_ALL_CHAR | ⏳ 待测 | c2s 14 / 32 | VAC 选角（本轮修正误发 19） |
@@ -180,6 +181,12 @@
 - **期望**：打字泡不进聊天历史；真聊天进白框；无崩。
 - **局限**：原生 blink 仅最小化标题条闪；本端开窗也会闪（适配）。
 - **功能文档**：[notes/messenger-blink-chatballoon-2026-11-05.md](../softkey-tails/notes/messenger-blink-chatballoon-2026-11-05.md)
+
+### 5c. Messenger 关闭钮坐标
+- **前置**：已登录进图；能开 Messenger。
+- **操作**：开窗 → 看标题栏右上关闭钮是否完整落在窗内（勿越右沿）→ 点击应关窗。
+- **期望**：钮位约窗口内 `(276,6)`（12×12 蓝底白叉）；不溢出、可点。
+- **功能文档**：[messenger-btclose-coords](../messenger-btclose-coords/)
 
 ### 6. Guild BBS 摘要
 - **前置**：已加入公会。

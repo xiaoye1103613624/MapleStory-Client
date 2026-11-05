@@ -565,7 +565,7 @@ update_static_markers(); toggle_buttons(); update_npclist();`（`:242-247`）。
 | A 窗根**没有**关闭钮 | `Item`/`Stat`/`Skill`/`Quest`/`Trunk`/`TradingRoom`/`UserInfo` … | 节点不存在 ⇒ 旧写法造出的是**空贴图**，`Texture::draw` 在 `is_valid()` 直接 return（[Graphics/Texture.cpp:94](../../../Graphics/Texture.cpp#L94)），所以既看不见也点不动 | 一律 `UiAssetResolve::close_btn()` → `Basic.img/BtClose`（12×12 实心蓝块 + 白 X，不透明比 0.97）。现共 **33 个窗**走这条 |
 | B 实心亮块 | `Basic.img/BtClose`、`UIWindow.img/CashGachapon/BtClose`、`UIWindow.img/Family/BtClose` | 12×12，不透明比 **0.97**，三颗点阵同形（均值 BGR 168,135,65 / 167,133,63 / 164,131,66，**探针按 RGBA 求均值所以看着像暖色，实际是蓝**）| 就是原生本尊；后两颗是各自窗体的原生件，**不换** |
 | C 文字宽钮 | `UtilDlgEx/BtClose` 85×19（与 `BtYes/BtNo` 同尺寸）、`NewYearsCard/BtClose` 48×22、`FamilyTree/BtClose` 11×11（暗底 X 镂空）| 不透明比 0.93 / 0.99 / 0.73 | **保真**。`UINpcTalk` 在 draw 里 `set_position` 重排（[IO/UITypes/UINpcTalk.cpp:649](../../../IO/UITypes/UINpcTalk.cpp#L649)），不受共享件影响 |
-| D 原生英文 CLOSE 圆顶钮 | `UIWindow.img/BtUIClose` / `BtUIClose2` | **32×15**，origin (0,0)，蓝底圆顶 + 白 X + 「CLOSE」字样（导出图已存 `E:/project/_r21_btuiclose_8x.png`）| `UIMessenger` 用它是原生正解；但位置写的是 `dimension.x() - 21`（[IO/UITypes/UIMessenger.cpp:132](../../../IO/UITypes/UIMessenger.cpp#L132)）—— 那颗钮宽 32 ⇒ **右沿越窗 11px**。缺原生悄悄话房截图，暂不改，挂验证轮 |
+| D 原生英文 CLOSE 圆顶钮 | `UIWindow.img/BtUIClose` / `BtUIClose2` | **32×15**，origin (0,0)，蓝底圆顶 + 白 X + 「CLOSE」字样（导出图已存 `E:/project/_r21_btuiclose_8x.png`）| **Messenger 已翻案（2026-11-06）**：v95 `SetCtrl` 用 `Basic.img/BtClose3` @ **(276,6)**，不是 BtUIClose。本包无 BtClose3 → `close_btn()`；见 [`messenger-btclose-coords`](../../messenger-btclose-coords/)。BtUIClose 仍属对话框族，其它窗按各自证据 |
 
 顺带修掉三处**凭空写出来的**旧逻辑（`bn ? MapleButton(bn) : MapleButton(bn, pos)` 两分支都拿不到贴图，
 真值分支还会把坐标丢成窗口原点）：`UIBuddyList`、`UIGuild`、`UIMerchant`、`UIStorage`、`UIParty`、`UITrade`

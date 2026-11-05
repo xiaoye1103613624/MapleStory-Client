@@ -133,16 +133,18 @@ namespace ms
 				namebars[i].shift(o);
 		}
 
-		nl::node close = UiAssetResolve::close_btn();
+		// v95 SetCtrl：StringPool → UI/Basic.img/BtClose3 @ (276,6)（展开态）。
+		// 旧写法 dim.x()-21 + BtUIClose(32×15) 越窗；本包 BtClose3 不可用，走 close_btn。
+		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
 
-		if (!close)
-			close = nl::nx::UI["UIWindow.img"]["BtUIClose"];
+		if (!UiAssetResolve::usable(close))
+			close = UiAssetResolve::close_btn();
 
 		if (close)
 		{
 			buttons[Buttons::BtClose] = std::make_unique<MapleButton>(
 				close,
-				Point<int16_t>(static_cast<int16_t>(dimension.x() - 21), 5)
+				Point<int16_t>(BT_CLOSE_X, BT_CLOSE_Y)
 			);
 		}
 

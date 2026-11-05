@@ -103,6 +103,11 @@ namespace ms
 		//   与徽标同时归零，245 才是把钮挪偏的那一步。）
 		static constexpr int16_t BT_ENTER_X = 247;
 		static constexpr int16_t BT_ENTER_Y = 322;
+		// 关闭钮：v95 CUIMessenger::SetCtrl（0x7F34C0）m_nState!=2 时
+		// CCtrlButton::Create(…, x=276, y=6)，资源串 UI/Basic.img/BtClose3。
+		// 本包无可用 BtClose3 → close_btn()（BtClose 12×12）；坐标仍按 IDA 立即数。
+		static constexpr int16_t BT_CLOSE_X = 276;
+		static constexpr int16_t BT_CLOSE_Y = 6;
 
 		// 立绘脚点（相对 NameBar 左上）：NameBar 89×19 → 水平中线 44；
 		// 垂直贴名牌上沿再上抬 10（TAN 面板 y26..117，脚点≈98 时 0.70 身高约 50px 不撞标题）。

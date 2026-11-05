@@ -46,5 +46,4 @@
 
 - 位置：33 扇窗的关闭钮坐标是按 14x14 写的，换成 12x12 后右/下边缘各内收 2px。
   逐窗校准属于「混合方案」的后续批次，本轮不铺开。
-- `UIMessenger.cpp:132` 用 `BtUIClose`(32x15) 摆在 `x = dimension.x() - 21` ⇒ 右侧溢出 11px。
-  缺该窗原生帧，暂记 `open-issues.md`，不猜。
+- `UIMessenger` 已按 v95 `SetCtrl` 改为 `(276,6)` + `BtClose3`/`close_btn()`（见 `messenger-btclose-coords`）。
