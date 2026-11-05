@@ -28,4 +28,4 @@
 ## 验证
 
 - 构建：`tools/build_smoke.bat`
-- 冒烟：开大地图 → 点选有人地图 → 右上出现「在线: N」列表；切点后旧列表清空；按 `L` 可重请求
+- 真机步骤：[pending-live-tests §1](../pending-live-tests/README.md)

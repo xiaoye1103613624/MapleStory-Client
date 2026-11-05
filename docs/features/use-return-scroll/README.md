@@ -27,4 +27,4 @@
 ## 验证
 
 - 构建：`tools/build_smoke.bat`
-- 冒烟：背包双击 `2030000` 段回城卷 → 服务端收 opcode 85 → 扣物并传送；`2030100` 仍走 72
+- 真机步骤：[pending-live-tests §2](../pending-live-tests/README.md)

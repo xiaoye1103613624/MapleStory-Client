@@ -12,3 +12,7 @@
 ## 本轮代码补强
 - `UIGuild::set_bbs_summary`：列表/帖摘要与公告分栏绘制
 - `GuildBbsHandler`：解析标题进摘要栏并激活公会窗；修正文拼接乱码
+
+## 真机步骤
+
+见 [pending-live-tests §3–6](../pending-live-tests/README.md)。

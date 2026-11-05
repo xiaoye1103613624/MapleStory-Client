@@ -37,7 +37,7 @@
 
 | 场景 | opcode（s9 名） | 现状细节 |
 | --- | --- | --- |
-| 背包点 Buff 图标右键解除 | 92 `CANCEL_BUFF` / 99 `CANCEL_DEBUFF` | `UIBuffList` 有列表无解除发送；debuff 无法手动解 |
+| 背包点 Buff 图标右键解除 | 92 `CANCEL_BUFF` / 99 `CANCEL_DEBUFF` | ✅ CANCEL_BUFF 已接（Wave3）；CANCEL_DEBUFF 空包已接（s9 handler 故意空，真解除走药剂 72） |
 | 道具效果取消（坐骑/状态道具） | 73 `CANCEL_ITEM_EFFECT` | 有效果系统无取消入口 |
 | 能力值窗「自动分配」 | 88 `AUTO_DISTRIBUTE_AP` | `UIStatsInfo` 无该钮；原生有 |
 | 技能书双击使用 | 82 `USE_SKILL_BOOK` | `UISkillBook` 是浏览窗，不消费技能书 |
@@ -46,13 +46,13 @@
 | 捕捉道具（怪物捕捉球） | 81 `USE_CATCH_ITEM` | 无 UI 分支 |
 | 召唤袋 | 75 `USE_SUMMON_BAG` | 无发送（召唤兽显示已接） |
 | 死亡道具（复活币类） | 53 `USE_DEATHITEM` | 无 |
-| HOT 持续治疗请求 | 89 `HEAL_OVER_TIME` | 吃药 HOT 由服务端算，客户端状态同步面缺一角 |
+| HOT 持续治疗请求 | 89 `HEAL_OVER_TIME` | ✅ 2026-11-05 已接自然回复上报（见 heal-over-time） |
 | 快捷栏拖拽换键保存 | 183 `CHANGE_QUICKSLOT` | 3×3 快捷格（hotkey-grid）已做，改键**不持久化到服务端** |
-| HP/MP 报警阈值存档 | 4096 `SET_HPMPALERT` | R28-B4b 只做了本地消费（低于阈值闪），**不发 0x1000** → 换机/重登阈值不跟随角色 |
+| HP/MP 报警阈值存档 | 4096 `SET_HPMPALERT` | ✅ Wave1 已上行+回灌（见 set-hpmpalert）；端到端回灌待 `use_server_auto_pot` |
 | 地图内特殊交互 | 100 `CHANGE_MAP_SPECIAL` / 101 `USE_INNER_PORTAL` / 206 `TOUCHING_REACTOR` / 115 `USE_TREASUER_CHEST` / 112 `USE_ITEM_REWARD` | 隐藏传送点/触碰式反应器/宝箱开启不发送；反应堆渲染已修但交互半通 |
-| 触怪伤害 | 47 `TOUCH_MONSTER_ATTACK` | 碰撞扣血渲染有（Stage TakeDamage），上报路径未接 |
+| 触怪伤害 | 47 `TOUCH_MONSTER_ATTACK` | ✅ 2026-11-05 身体压力/能量满触怪发 47（见 touch-monster-attack） |
 | 断线重连 | 28 `RELOG` | 断线只能重走全登录 |
-| 世界地图查看后选角 | 14 `PICK_ALL_CHAR` | `UIViewAllChar` 只做概览，双击选角派发未接 |
+| 世界地图查看后选角 | 14 `PICK_ALL_CHAR` | ✅ 2026-11-05 修正误发 19→14/32（见 pick-all-char） |
 | 远程扭蛋 | 116 `USE_REMOTE` | `UIRemoteGachapon` 有壳，抽一次发不出 |
 | 引导点击 | 162 `CLICK_GUIDE` / 197 `NPC_ACTION` / 163 `ARAN_COMBO_COUNTER`(见 B) | 新手引导/监视器 NPC 动作不上报 |
 | 组队搜索 | 220 `PARTY_SEARCH_REGISTER` | 已按 r-note 用 `PARTY_SEARCH_START` 代理（s9 0xDC 是空 stub）→ 视同已消化，留档 |
