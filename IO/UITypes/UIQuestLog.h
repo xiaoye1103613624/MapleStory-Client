@@ -88,6 +88,9 @@ namespace ms
 		int16_t row_index_at(Point<int16_t> local) const;
 		const Texture* current_icon() const;
 		void draw_gauge() const;
+		// 连锁任务页码条：Gauge spot 刻度 + "连锁任务 ( n / m )"（IDA sub_83EA05 / 4497）。
+		void draw_chain_page_gauge() const;
+		bool has_chain_pages() const;
 		std::string area_name(int32_t area) const;
 		void set_collapsed(bool collapsed);
 		void relayout_slots();

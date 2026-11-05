@@ -89,7 +89,7 @@ MapHelper portal/game 三族：pv(0..7 帧样式族)/ph(default 三态)/psh(1..4
 | 迷雾区域渲染（矩形平铺贴图） | ✅ 2026-11-05 已接（Skill tile 平铺；见 [mist-area-render](../mist-area-render/)） | pending 真机 |
 | 出生特效播放 | 本数据无 Mob/SpecialEff.img（0009000.img 不存在） | 资源补齐（图鉴站）后接 effect>0 |
 | 风筝/商店盒/Evan 龙贴图 | 同上，字符串池无直接命中 | IDA `sub_531325` 分发器 case 271/265/181 反编译 |
-| BossHP 多目标队列/名牌色表 | 原生缓存规则未取证 | IDA DualMobGauge 状态函数深读 |
+| BossHP 多目标队列/名牌色表 | DualMobGauge=`sub_56C9B7` 实为 PartyRace 专用（硬编码 9700036），非多目标队列；MobGage 单槽 + s9 5s 节流已证 | 双槽 UI 若要做需另取证布局；见 quest-page-icons README §5 |
 | 反应堆 default 悬浮动画 | ✅ 2026-11-05 已接（idle 循环 `update` + `reload_idle`；见 [reactor-default-idle](../reactor-default-idle/)） | pending 真机 |
 | 客户端上行 MOVE_PET/SUMMON/DRAGON | 服务端收包口存在，但上行构造器涉及宠物/召唤跟随 AI，非本波范围 | 后续独立切片 |
 

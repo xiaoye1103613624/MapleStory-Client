@@ -780,11 +780,12 @@ A2 里两颗钮暂时都路由到 `UIOptionMenu`，等素材到位再拆成子�
    **禁止为了对齐截图去硬编码书名。**
 4. 职业行第二行 `[新手]`：参考端 `角色能力` 窗「职业」行就是 `新手[新手]` ⇒ 我们那行不是 bug（D 类）。
 
-### C8 任务详情缺页码图标（NPC 头像部分本轮已修，见 A8）
-`UIQuest` 详情面板的「第 N / M 页」那类小图标在参考端有、我们没画。
-头像那一半已按 `QuestData::get_npc()` + `Npc.nx/<id>/stand/0` 落进蓝横幅右格（A8）；
-页码图标仍缺 —— 卡点是**不知道它由什么驱动**（`Quest/backgrnd2` 里没有对应位图，
-`Quest` 根下也没有 page 相关节点），需要 IDA 侧 `CQuestWindow` 的绘制函数才能定性，本会话无 IDA MCP ⇒ 预留。
+### C8 任务详情缺页码图标（NPC 头像部分本轮已修，见 A8）—— **已闭环 2026-11-05**
+`UIQuest` 详情面板的「第 N / M 页」不是独立位图节点，而是**连锁任务 Gauge spot 刻度**：
+IDA `sub_83EA05`（total>1 画刻度）+ `sub_83FEC6` 格式 `"%s ( %d / %d )"` + pool 4497 `Chain Quest`；
+数据侧 `QuestInfo.parent` + `order`。已接 `UIQuestLog::draw_chain_page_gauge` + 按 tab 取状态摘要页。
+详见 [`../../quest-page-icons/README.md`](../../quest-page-icons/README.md)。真机点测仍待做。
+头像那一半已按 `QuestData::get_npc()` + `Npc.nx/<id>/stand/0` 落进蓝横幅右格（A8）。
 
 ### C9 HUD `EXP [0.00%]` 的数字位
 经验百分比数字与参考端不一致，需 `StatusBar` 位图字库那套的度量依据（W1 遗留）。

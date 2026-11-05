@@ -1,0 +1,170 @@
+int __thiscall sub_5330F7(char *this, wchar_t *String2)
+{
+  wchar_t *v2; // esi
+  int result; // eax
+  int v5; // edi
+  int v6; // esi
+  wchar_t *v7; // eax
+  int v8; // ecx
+  int v9; // ecx
+  int v10; // eax
+  bool v11; // zf
+  int v12; // eax
+  int v13; // eax
+  int *v14; // ebx
+  unsigned __int8 v15; // al
+  void *v16; // esp
+  size_t v17; // eax
+  int v18; // edi
+  int v19; // eax
+  int v20; // edi
+  int v21; // ebx
+  int v22; // eax
+  int v23; // ecx
+  int v24; // esi
+  void *v25; // [esp-4h] [ebp-50h]
+  double v26; // [esp+0h] [ebp-4Ch] BYREF
+  int v27; // [esp+8h] [ebp-44h]
+  int v28; // [esp+Ch] [ebp-40h]
+  int v29; // [esp+10h] [ebp-3Ch] BYREF
+  int v30; // [esp+14h] [ebp-38h] BYREF
+  wchar_t v31[6]; // [esp+18h] [ebp-34h] BYREF
+  int *v32; // [esp+24h] [ebp-28h]
+  int v33; // [esp+28h] [ebp-24h] BYREF
+  int v34; // [esp+2Ch] [ebp-20h] BYREF
+  int v35; // [esp+30h] [ebp-1Ch] BYREF
+  int v36; // [esp+34h] [ebp-18h] BYREF
+  int v37; // [esp+38h] [ebp-14h] BYREF
+  int v38; // [esp+3Ch] [ebp-10h] BYREF
+  int v39; // [esp+48h] [ebp-4h]
+
+  v2 = String2; /*0x533106*/
+  result = (unsigned __int8)sub_4065F3(this: (int)String2); /*0x533113*/
+  switch ( (char)result ) /*0x53311f*/
+  {
+    case 0: /*0x53311f*/
+      v5 = (unsigned __int8)sub_4065F3(this: (int)v2); /*0x53312f*/
+      v36 = sub_406629(a1: v2); /*0x533139*/
+      v6 = sub_406629(a1: v2); /*0x533143*/
+      v38 = 0; /*0x533145*/
+      v39 = 0; /*0x533151*/
+      sub_79E805(); /*0x533154*/
+      v7 = *(wchar_t **)sub_406276(a1: (int)&v35, a2: 1590); /*0x533160*/
+      v30 = v5; /*0x533162*/
+      LOBYTE(v39) = 1; /*0x533168*/
+      sub_416821(a1: &v38, Format: v7); /*0x53316c*/
+      LOBYTE(v39) = 0; /*0x533179*/
+      if ( v35 != 0 ) /*0x53317c*/
+      {
+        sub_4033A7(lpAddend: (volatile LONG *)(v35 - 12)); /*0x533182*/
+        v8 = v30; /*0x533187*/
+      }
+      v30 = -1073343324; /*0x533188*/
+      v29 = v8; /*0x53318d*/
+      String2 = (wchar_t *)&v29; /*0x533190*/
+      sub_432C10(a1: 0); /*0x533194*/
+      v28 = v6; /*0x533199*/
+      v27 = v36; /*0x53319a*/
+      LOBYTE(v39) = 2; /*0x53319d*/
+      HIDWORD(v26) = v9; /*0x5331a1*/
+      v32 = (int *)&v26 + 1; /*0x5331a4*/
+      sub_432BDD(a1: 0); /*0x5331a8*/
+      LOBYTE(v39) = 0; /*0x5331b1*/
+      v25 = (void *)sub_41468C(a1: &v38); /*0x5331b9*/
+      sub_432CBC(); /*0x5331ba*/
+      sub_439750(Src: v25, a2: 0, a3: HIDWORD(v26), a4: v27, a5: v28, a6: v29, a7: v30); /*0x5331c1*/
+      v10 = sub_9894F3(a1: v36, a2: v6); /*0x5331ca*/
+      sub_98A2D4(a1: v5, a2: v10); /*0x5331d1*/
+      result = v38; /*0x5331d6*/
+      v39 = -1; /*0x5331dc*/
+      goto LABEL_5; /*0x5331dc*/
+    case 1: /*0x53311f*/
+      v18 = (unsigned __int8)sub_4065F3(this: (int)v2); /*0x5333e1*/
+      v19 = sub_406629(a1: v2); /*0x5333e4*/
+      return sub_43DA05(a1: 30.0, a2: v18, a3: v19, a4: 0, a5: 0); /*0x533405*/
+    case 2: /*0x53311f*/
+      sub_46F30C(a1: &v36); /*0x5331fc*/
+      v39 = 4; /*0x533208*/
+      sub_642ACA(a1: v36, a2: -1); /*0x53320f*/
+      result = v36; /*0x533214*/
+      v39 = -1; /*0x533217*/
+      v11 = v36 == 0; /*0x53321b*/
+      goto LABEL_18; /*0x53321d*/
+    case 3: /*0x53311f*/
+      v12 = *(_DWORD *)sub_46F30C(a1: &v34); /*0x53322d*/
+      v39 = 5; /*0x533237*/
+      v38 = 0; /*0x53323e*/
+      sub_48FC03(a1: v12, a2: -1); /*0x533241*/
+      LOBYTE(v39) = 7; /*0x53324b*/
+      if ( v34 != 0 ) /*0x53324f*/
+        sub_428D13(lpAddend: (volatile LONG *)(v34 - 12)); /*0x533255*/
+      String2 = (wchar_t *)&v30; /*0x533261*/
+      v30 = 0; /*0x533265*/
+      sub_41CF93(a1: &v38); /*0x533267*/
+      sub_534F92(a1: v30); /*0x53326e*/
+      v39 = -1; /*0x533273*/
+      result = v38; /*0x533277*/
+      goto LABEL_5; /*0x53327a*/
+    case 4: /*0x53311f*/
+      v13 = *(_DWORD *)sub_46F30C(a1: &v33); /*0x53328a*/
+      v39 = 8; /*0x533294*/
+      v38 = 0; /*0x53329b*/
+      sub_48FC03(a1: v13, a2: -1); /*0x53329e*/
+      LOBYTE(v39) = 10; /*0x5332a8*/
+      if ( v33 != 0 ) /*0x5332ac*/
+        sub_428D13(lpAddend: (volatile LONG *)(v33 - 12)); /*0x5332b2*/
+      sub_98A563(a1: v38, a2: 100); /*0x5332bd*/
+      v39 = -1; /*0x5332c2*/
+      result = v38; /*0x5332c6*/
+LABEL_5:
+      if ( result != 0 ) /*0x5331e2*/
+        result = sub_4033A7(lpAddend: (volatile LONG *)(result - 12)); /*0x5331ec*/
+      break; /*0x5331f1*/
+    case 5: /*0x53311f*/
+      v32 = (int *)sub_406629(a1: v2); /*0x5332d9*/
+      v38 = sub_406629(a1: v2); /*0x5332e3*/
+      v36 = sub_406629(a1: v2); /*0x5332ed*/
+      v14 = (int *)(unsigned __int8)sub_4065F3(this: (int)v2); /*0x5332f9*/
+      v15 = sub_4065F3(this: (int)v2); /*0x5332fb*/
+      result = sub_5336CA(this, i: v32, a3: v14, a4: (int *)v15, a5: v38, a6: v36); /*0x533310*/
+      break; /*0x533315*/
+    case 6: /*0x53311f*/
+      sub_46F30C(a1: &v37); /*0x533320*/
+      v39 = 11; /*0x53332e*/
+      sub_79E805(); /*0x533335*/
+      sub_406276(a1: (int)&String2, a2: 1534); /*0x53333c*/
+      LOBYTE(v39) = 12; /*0x53334a*/
+      v16 = alloca(2 * dword_BF03D0(a1: 0, a2: 0, a3: v37, a4: -1, a5: 0, a6: 0)); /*0x53335e*/
+      dword_BF03D0(a1: 0, a2: 0, a3: v37, a4: -1, a5: v31, a6: 0x3FFFFFFF); /*0x533372*/
+      v17 = wcslen(String: v31); /*0x533379*/
+      sub_48EF51(Src: v31, a2: v17); /*0x533384*/
+      sub_43F301(String2, a2: 1, a3: 600, a4: 0, a5: 0); /*0x53339b*/
+      sub_41CF93(a1: &String2); /*0x5333a7*/
+      LOBYTE(v39) = 11; /*0x5333b1*/
+      if ( String2 != nullptr ) /*0x5333b5*/
+        sub_4033A7(lpAddend: (volatile LONG *)String2 - 3); /*0x5333bb*/
+      result = v37; /*0x5333c1*/
+      v39 = -1; /*0x5333c4*/
+      v11 = v37 == 0; /*0x5333c8*/
+LABEL_18:
+      if ( !v11 ) /*0x5333ca*/
+        result = sub_428D13(lpAddend: (volatile LONG *)(result - 12)); /*0x5333d0*/
+      break; /*0x5333d0*/
+    case 7: /*0x53311f*/
+      v20 = sub_406629(a1: v2); /*0x533410*/
+      v21 = sub_406629(a1: v2); /*0x533419*/
+      v22 = sub_406629(a1: v2); /*0x53341b*/
+      v30 = v23; /*0x533420*/
+      v24 = v22; /*0x533421*/
+      v32 = &v30; /*0x533425*/
+      sub_538CAA(); /*0x533429*/
+      sub_48BBA5(a1: &v30); /*0x533430*/
+      v39 = -1; /*0x533435*/
+      sub_432CBC(); /*0x53343c*/
+      result = sub_43D083(a1: v20, Value: v21, a3: v24, a4: v30); /*0x533443*/
+      break; /*0x533443*/
+    default:
+      return result;
+  }
+  return result; /*0x53344e*/
+}

@@ -330,12 +330,82 @@ namespace ms
 		UIElement::draw_buttons(inter);
 	}
 
+	bool UIQuestLog::has_chain_pages() const
+	{
+		if (selected_id < 0)
+			return false;
+
+		return QuestData::get(selected_id).is_chain_quest();
+	}
+
+	// 连锁页码条（C8）：parent 链 total>1 时，按 order 填 Gauge，并在分界处戳 spot。
+	// 证据：IDA sub_83EA05（total>1 才画刻度）+ sub_83FEC6 格式串 "%s ( %d / %d )" + pool 4497 "Chain Quest"。
+	void UIQuestLog::draw_chain_page_gauge() const
+	{
+		if (gauge_frame.width() <= 0 || selected_id < 0)
+			return;
+
+		const QuestData& qd = QuestData::get(selected_id);
+		const int16_t order = qd.get_chain_order();
+		const int16_t total = qd.get_chain_total();
+
+		if (total <= 1 || order <= 0)
+			return;
+
+		const int16_t frame_w = gauge_frame.width();
+		const int16_t frame_h = gauge_frame.height();
+		const Point<int16_t> frame_tl = position + gauge_pos + gauge_frame_origin;
+		gauge_frame.draw(frame_tl);
+
+		const int16_t bar_x = position.x() + gauge_pos.x() + 2;
+		const int16_t bar_y = position.y() + gauge_pos.y() + (frame_h - gauge_bar.height()) / 2;
+		const int16_t inner_max = frame_w > 4 ? static_cast<int16_t>(frame_w - 4) : frame_w;
+		// order/total：第 1/2 步填一半，第 2/2 填满（与原生分段 spot 同序）。
+		int16_t inner = static_cast<int16_t>(inner_max * order / total);
+
+		if (inner < 0)
+			inner = 0;
+		if (inner > inner_max)
+			inner = inner_max;
+
+		if (gauge_bar.width() > 0 && inner > 0)
+			gauge_bar.draw(DrawArgument(Point<int16_t>(bar_x, bar_y), Point<int16_t>(inner, gauge_bar.height())));
+
+		// 页界 spot：k=1..total-1 处分段戳点（对应原生 for 循环写边界）。
+		if (gauge_spot.width() > 0 && total > 1)
+		{
+			const int16_t spot_dy = (gauge_bar.height() - gauge_spot.height()) / 2;
+
+			for (int16_t k = 1; k < total; k++)
+			{
+				int16_t x = static_cast<int16_t>(inner_max * k / total);
+				gauge_spot.draw(DrawArgument(Point<int16_t>(bar_x + x, bar_y + spot_dy)));
+			}
+		}
+
+		// 宋体 A11M 黑字；格式对齐原生 "%s ( %d / %d )"。
+		Text page_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Locale::format_all("quest.chain_page",
+				{ std::to_string(order), std::to_string(total) }));
+		page_label.draw(position + Point<int16_t>(gauge_pos.x() + frame_w + 6, gauge_pos.y() + 1));
+	}
+
 	// 进度条：Gauge/frame(163x14，原点 (81,0)) 作底，1x11 的 gauge 横向拉伸成进度，spot 收尾。
+	// 连锁任务优先画页码条；否则走需求进度（进行中 tab）。
 	void UIQuestLog::draw_gauge() const
 	{
+		if (gauge_frame.width() <= 0)
+			return;
+
+		if (has_chain_pages())
+		{
+			draw_chain_page_gauge();
+			return;
+		}
+
 		int16_t ratio = gauge_ratio();
 
-		if (ratio < 0 || gauge_frame.width() <= 0)
+		if (ratio < 0)
 			return;
 
 		const int16_t frame_w = gauge_frame.width();
@@ -600,7 +670,8 @@ namespace ms
 			return;
 		}
 
-		const std::string& sum = qd.get_summary();
+		// 按当前分类页取对应状态摘要（0/1/2），避免把三页拼成一坨。
+		const std::string& sum = qd.get_summary_for_tab(tab);
 		size_t start = 0;
 
 		while (start <= sum.size())
@@ -632,6 +703,9 @@ namespace ms
 
 		activate_buttons();
 		rebuild_list();
+		// 分类页切换后摘要页（QuestInfo 0/1/2）要跟着换。
+		update_detail();
+		update_sliders();
 	}
 
 	void UIQuestLog::on_list_scroll(bool upwards)

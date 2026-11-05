@@ -12,6 +12,9 @@
 
 #include <cctype>
 #include <cstdlib>
+#include <initializer_list>
+#include <mutex>
+#include <unordered_map>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -21,6 +24,49 @@ namespace ms
 {
 	namespace
 	{
+		// parent → 同链任务数；首次查询时扫一遍 QuestInfo.img。
+		std::mutex chain_mu;
+		std::unordered_map<std::string, int16_t> chain_totals;
+		bool chain_index_ready = false;
+
+		void ensure_chain_index()
+		{
+#ifdef USE_NX
+			std::lock_guard<std::mutex> lock(chain_mu);
+
+			if (chain_index_ready)
+				return;
+
+			nl::node info_root = nl::nx::Quest["QuestInfo.img"];
+
+			if (info_root)
+			{
+				for (const auto& child : info_root)
+				{
+					nl::node p = child["parent"];
+
+					if (!p)
+						continue;
+
+					// 个别条目 parent 是 int（非链名）——跳过。
+					if (p.data_type() == nl::node::type::integer)
+						continue;
+
+					std::string key = p.get_string();
+
+					if (key.empty())
+						continue;
+
+					chain_totals[key] = static_cast<int16_t>(chain_totals[key] + 1);
+				}
+			}
+
+			chain_index_ready = true;
+#else
+			chain_index_ready = true;
+#endif
+		}
+
 		void read_int_list(nl::node parent, const char* name, std::vector<int16_t>& out)
 		{
 			nl::node node = parent[name];
@@ -82,6 +128,7 @@ namespace ms
 
 	QuestData::QuestData(int32_t id) :
 	questid(static_cast<int16_t>(id)),
+	chain_order(0),
 	min_level(0),
 	max_level(0),
 	npc(0),
@@ -101,6 +148,9 @@ namespace ms
 			if (name.empty())
 				name = info.get_string();
 
+			// 分状态页：0/1/2… 各是一页摘要（可接短述 / 详细 / 进行中…），
+			// 不是把整段正文拆页。原生 Gauge spot 用 parent+order 标连锁进度
+			// （IDA sub_83EA05：total>1 才画刻度；sub_83FEC6 提示 "Chain Quest ( n / m )"）。
 			for (const char* key : { "0", "1", "2", "3", "4" })
 			{
 				nl::node line = info[key];
@@ -111,6 +161,8 @@ namespace ms
 
 					if (!s.empty())
 					{
+						pages.push_back(s);
+
 						if (!summary.empty())
 							summary += "\n";
 
@@ -118,6 +170,14 @@ namespace ms
 					}
 				}
 			}
+
+			nl::node parent_n = info["parent"];
+
+			if (parent_n && parent_n.data_type() != nl::node::type::integer)
+				chain_parent = parent_n.get_string();
+
+			if (info["order"])
+				chain_order = static_cast<int16_t>(info["order"].get_integer());
 
 			valid = !name.empty() || !summary.empty();
 
@@ -170,6 +230,60 @@ namespace ms
 	const std::string& QuestData::get_summary() const
 	{
 		return summary;
+	}
+
+	const std::string& QuestData::get_summary_for_tab(uint16_t tab) const
+	{
+		if (pages.empty())
+			return summary;
+
+		// tab0 可接 → 优先短述 0，否则详细 1；
+		// tab1 进行 → 优先进行中页 2，否则详细 1；
+		// tab2 完成 → 优先最后一页。
+		auto pick = [&](std::initializer_list<size_t> idxs) -> const std::string&
+		{
+			for (size_t i : idxs)
+			{
+				if (i < pages.size() && !pages[i].empty())
+					return pages[i];
+			}
+
+			return pages.front();
+		};
+
+		if (tab == 0)
+			return pick({ 0, 1 });
+		if (tab == 1)
+			return pick({ 2, 1, 0 });
+
+		return pages.back();
+	}
+
+	const std::string& QuestData::get_chain_parent() const
+	{
+		return chain_parent;
+	}
+
+	int16_t QuestData::get_chain_order() const
+	{
+		return chain_order;
+	}
+
+	int16_t QuestData::get_chain_total() const
+	{
+		if (chain_parent.empty())
+			return 0;
+
+		ensure_chain_index();
+
+		auto it = chain_totals.find(chain_parent);
+
+		return it != chain_totals.end() ? it->second : 0;
+	}
+
+	bool QuestData::is_chain_quest() const
+	{
+		return get_chain_total() > 1 && chain_order > 0;
 	}
 
 	int16_t QuestData::get_min_level() const
