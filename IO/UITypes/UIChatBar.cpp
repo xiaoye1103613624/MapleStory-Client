@@ -21,6 +21,7 @@
 #include "UICharInfo.h"
 #include "UIItemInventory.h"
 #include "UISoftKey.h"
+#include "GMCommandList.h"
 // 悄悄话目标弹层 UIWhisperTargetDlg（它落在已编译的 UIMiscShells TU 里 —— 本工程
 // 的 vcxproj 逐文件列源，新增 .cpp 必须改工程文件）。
 #include "UIMiscShells.h"
@@ -1535,6 +1536,11 @@ namespace ms
 				}
 				return;
 			}
+			if (keycode == KeyAction::Id::TAB && view_input)
+			{
+				complete_gm_command();
+				return;
+			}
 			if (keycode == KeyAction::Id::RETURN)
 			{
 				if (!view_input)
@@ -2552,6 +2558,59 @@ namespace ms
 			default:
 				return CHANNEL_FALLBACK;
 		}
+	}
+
+	void UIChatBar::complete_gm_command()
+	{
+		if (!Configuration::get().get_admin())
+			return;
+
+		std::string text = input_text.get_text();
+		if (text.empty() || (text[0] != '!' && text[0] != '@'))
+			return;
+
+		// 提取命令名部分（保留参数），支持 "!cmd args" 形式补全命令名。
+		size_t sp = text.find(' ');
+		std::string cmd = (sp == std::string::npos) ? text.substr(1) : text.substr(1, sp - 1);
+		std::string args = (sp == std::string::npos) ? "" : text.substr(sp); // 含前导空格
+
+		if (cmd.empty())
+			return;
+
+		const auto& cmds = gm_commands();
+		std::vector<std::string> matches;
+		for (const auto& c : cmds)
+			// 【2026-11-03 构建修复】c.name 是 const char*，无 .rfind 成员
+			// （C2228 阻塞全工程构建）；包一层 std::string 保持前缀匹配语义。
+			if (std::string(c.name).rfind(cmd, 0) == 0) // 前缀匹配
+				matches.push_back(c.name);
+
+		if (matches.empty())
+			return;
+
+		// 计算最长公共前缀，多匹配时只补到 LCP。
+		std::string lcp = matches[0];
+		for (size_t i = 1; i < matches.size(); ++i)
+		{
+			size_t j = 0;
+			size_t m = lcp.size() < matches[i].size() ? lcp.size() : matches[i].size();
+			while (j < m && lcp[j] == matches[i][j])
+				++j;
+			lcp = lcp.substr(0, j);
+		}
+
+		// 唯一匹配且无条件时补空格，方便继续输入参数；多匹配只补到 LCP。
+		std::string completion = (matches.size() == 1) ? matches[0] : lcp;
+		if (matches.size() == 1 && args.empty())
+			completion += ' ';
+
+		input_text.change_text("!" + completion + args);
+	}
+
+	void UIChatBar::set_input(const std::string& text)
+	{
+		if (view_input)
+			input_text.change_text(text);
 	}
 
 	void UIChatBar::input_text_escape_callback()

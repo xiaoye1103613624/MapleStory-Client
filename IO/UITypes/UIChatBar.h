@@ -115,6 +115,8 @@ namespace ms
 		// 悄悄话目标弹层（UIWhisperTargetDlg）确认后的回填入口：目标切到「密语」、
 		// 展开输入行并预置 "/w <名字> "，键盘焦点留给玩家补正文。
 		void set_whisper_target(const std::string& target);
+		// 供 GM 命令列表窗点击后回填聊天输入框（GMCommandList 在 friend 之外需 public）。
+		void set_input(const std::string& text);
 		// WhisperResultHandler（Net/Handlers/MessagingHandlers）成功分支回调：
 		// 把 Q5 暂存的自说悄悄话正文回显成 "(To X) 我 : 正文"。ok=false 时只清暂存。
 		void on_whisper_result(const std::string& target, bool ok);
@@ -147,6 +149,7 @@ namespace ms
 		void input_text_escape_callback();
 		void close_input();
 		void change_message(bool up);
+		void complete_gm_command();
 
 		enum Buttons
 		{
