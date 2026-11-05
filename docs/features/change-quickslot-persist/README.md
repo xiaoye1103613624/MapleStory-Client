@@ -20,11 +20,13 @@
 2. 新窗 `UIQuickslotConfig`：`KeyConfig` 的 KEYSETTING（BtQuickSlot）打开；点槽 → 按键 → 互换撞车 → `commit_quickslots`。
 3. StatusBar 8 槽显示/激活跟 `quickslots()` 触发键。
 
-## 真机验收（pending / 可复测）
+## 真机验收
 
-1. 键设置 →「变更快捷键」→ 点第 1 槽 → 按 `Q` → 槽显示 Q。
-2. 关窗重登：该槽仍为 Q；DB `quickslotkeymapped` 有账号行。
-3. 进图日志不应在 `QSI` 后立刻刷 8 次 CHANGE_QUICKSLOT。
+| # | 项 | 状态 | 证据 |
+| --- | --- | --- | --- |
+| 3 | 进图 QSI 后不刷 CHANGE_QUICKSLOT | ✅ 2026-11-06 | [evidence/live-accept-2026-11-06-qsi.md](evidence/live-accept-2026-11-06-qsi.md)：SEND 183=0；RECV `9f 00 00`×2 |
+| 1 | 键设置 → 变更快捷键 → 改槽显示 | ⏳ | 自动化未闭环；待手点 |
+| 2 | 重登 / DB `quickslotkeymapped` | ⏳ | 依赖 #1 |
 
 ## 非本项
 
