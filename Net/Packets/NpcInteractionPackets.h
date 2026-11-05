@@ -116,7 +116,8 @@ namespace ms
 			write_string(response);
 		}
 
-		// SpeedQuiz 出站（IDA 7EC934）：lastMsg=6 + string，无 action。本轮 UI 仍预留。
+		// SpeedQuiz 出站（IDA 7EC934）：lastMsg=6 + maple string，**无** action。
+		// 空串=超时/Next；"__GIVEUP__"=放弃（IDA 7EC46B）。
 		struct AskSpeedQuiz {};
 		NpcTalkMorePacket(AskSpeedQuiz, const std::string& response) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
 		{

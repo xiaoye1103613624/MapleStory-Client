@@ -145,11 +145,46 @@ public:
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UISpeedQuiz();
 	void draw(float inter) const override;
+	void update() override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
-	void set_tip(const std::string& tip);
+	// 开窗：nType/dwAnswer/nCorrect/nRemain/remainSec（IDA A26C66 → 7EC595）
+	// nType 0=Npc/%07d/stand/0；1=Mob/%07d/stand/0；≥2=道具图标
+	void open(int32_t n_type, int32_t dw_answer, int32_t n_correct, int32_t n_remain, int32_t remain_sec);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture backgrnd; Text tip_label;
+	enum Buttons : uint16_t { BtOk, BtNext, BtGiveup };
+	void setup_input();
+	void clear_input();
+	void load_tip(int32_t n_type, int32_t dw_answer);
+	void refresh_labels();
+	bool try_submit();
+	void submit_answer(const std::string& ans);
+	void abort_empty(); // 超时 / Next / Esc → 空串
+	void give_up();     // BtGiveup → "__GIVEUP__"
+
+	bool has_assets = false;
+	Texture backgrnd;
+	Texture digit[10];
+	Texture colon_tex;
+	bool has_digits = false;
+	Texture tip_tex;
+	bool has_tip = false;
+
+	Text pts_label;
+	Text remain_label;
+	Textfield input_field;
+	bool input_active = false;
+	bool closing = false;
+
+	int32_t n_type = 0;
+	int32_t dw_answer = 0;
+	int32_t n_correct = 0;
+	int32_t n_remain = 0;
+	int32_t remain_sec = 0;
+	int32_t remain_ms = 0;
 };
 class UIInitialQuiz : public UIDragElement<PosNOTICE> {
 public:

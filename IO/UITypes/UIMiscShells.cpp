@@ -71,6 +71,7 @@
 #include "UIRpsGame.h"
 #include "../../Character/SkillMacros.h"
 #include "../../Data/SkillData.h"
+#include "../../Data/ItemData.h"
 #include "UIJoypad.h"
 #include "UIKeyConfig.h"
 #include "UIMessenger.h"
@@ -1097,45 +1098,347 @@ Button::State UITeleport::button_pressed(uint16_t id)
 }
 
 UISpeedQuiz::UISpeedQuiz()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("speedquiz.quiz_softkey_answer"))
+	: pts_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY),
+	  remain_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY)
 {
-	position = Point<int16_t>(280, 140); dimension = Point<int16_t>(300, 200); dragarea = Point<int16_t>(300, 20);
+	// 壳：UIWindow.img/SpeedQuiz/backgrnd 286×410（IMG + IDA 7EB303 / StringPool 3924）
+	position = Point<int16_t>(257, 95);
+	dimension = Point<int16_t>(286, 410);
+	dragarea = Point<int16_t>(286, 20);
 	has_assets = load_window_bg("SpeedQuiz", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UISpeedQuiz: missing");
+	if (has_assets)
+		dragarea = Point<int16_t>(dimension.x(), 20);
+	else
+		LOG(LOG_WARN, "UISpeedQuiz: missing SpeedQuiz backgrnd");
+
+#ifdef USE_NX
+	{
+		nl::node root = UiAssetResolve::window("SpeedQuiz");
+		nl::node n1 = root["num1"];
+		if (n1)
+		{
+			has_digits = true;
+			for (int i = 0; i < 10; ++i)
+			{
+				nl::node d = n1[std::to_string(i)];
+				if (d)
+					digit[i] = Texture(d);
+			}
+			if (n1["comma"])
+				colon_tex = Texture(n1["comma"]);
+		}
+		// IDA 7EB516：OK=Basic BtOK2 @ (233,380)；BtNext @ (190,380)；BtGiveup @ (126,380)
+		nl::node ok = nl::nx::UI["Basic.img"]["BtOK2"];
+		nl::node next = root["BtNext"];
+		nl::node giveup = root["BtGiveup"];
+		if (ok)
+		{
+			buttons[BtOk] = std::make_unique<MapleButton>(ok, Point<int16_t>(233, 380));
+			buttons[BtOk]->set_active(true);
+		}
+		if (next)
+		{
+			buttons[BtNext] = std::make_unique<MapleButton>(next, Point<int16_t>(190, 380));
+			buttons[BtNext]->set_active(true);
+		}
+		if (giveup)
+		{
+			buttons[BtGiveup] = std::make_unique<MapleButton>(giveup, Point<int16_t>(126, 380));
+			buttons[BtGiveup]->set_active(true);
+		}
+	}
+#endif
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& ans) {
-		if (ans.empty()) { tip_label.change_text(Locale::text("speedquiz.empty_answer")); return; }
-		tip_label.change_text(Locale::format("speedquiz.ans", ans));
-		NpcTalkMorePacket(ans).dispatch();
-		LOG(LOG_DEBUG, "UISpeedQuiz: SoftKey NpcTalkMore len=" << ans.size());
-	}, []() {}, "Quiz answer");
+	LOG(LOG_INFO, "UISpeedQuiz: constructed assets=" << (has_assets ? 1 : 0)
+		<< " digits=" << (has_digits ? 1 : 0));
 }
-void UISpeedQuiz::set_tip(const std::string& tip) { tip_label.change_text(tip); }
+
+void UISpeedQuiz::open(int32_t type, int32_t answer, int32_t correct, int32_t remain, int32_t remain_s)
+{
+	closing = false;
+	n_type = type;
+	dw_answer = answer;
+	n_correct = correct;
+	n_remain = remain;
+	remain_sec = remain_s > 0 ? remain_s : 0;
+	remain_ms = remain_sec * 1000;
+	load_tip(n_type, dw_answer);
+	refresh_labels();
+	setup_input();
+	if (!is_active())
+		makeactive();
+	LOG(LOG_INFO, "UISpeedQuiz: open type=" << n_type << " answer=" << dw_answer
+		<< " correct=" << n_correct << " remainQ=" << n_remain
+		<< " remainSec=" << remain_sec << " tip=" << (has_tip ? 1 : 0));
+}
+
+void UISpeedQuiz::load_tip(int32_t type, int32_t answer)
+{
+	has_tip = false;
+	tip_tex = Texture();
+#ifdef USE_NX
+	// IDA 7EC595：type<2 走 StringPool 2706/1594 路径立绘；≥2 走道具图标
+	if (type < 2)
+	{
+		const std::string id7 = string_format::extend_id(answer, 7) + ".img";
+		nl::node frame;
+		if (type == 1)
+			frame = nl::nx::Mob[id7]["stand"]["0"];
+		else
+			frame = nl::nx::Npc[id7]["stand"]["0"];
+		if (frame)
+		{
+			tip_tex = Texture(frame);
+			has_tip = static_cast<bool>(tip_tex);
+		}
+	}
+	else
+	{
+		const Texture& icon = ItemData::get(answer).get_icon(false);
+		if (icon)
+		{
+			tip_tex = icon;
+			has_tip = true;
+		}
+	}
+#else
+	(void)type;
+	(void)answer;
+#endif
+	if (!has_tip)
+		LOG(LOG_WARN, "UISpeedQuiz: tip missing type=" << type << " id=" << answer);
+}
+
+void UISpeedQuiz::refresh_labels()
+{
+	// IDA 7EB7D5：StringPool 3929="%2d pts"；nRemain 用 "%2d"
+	char pts_buf[32];
+	std::snprintf(pts_buf, sizeof(pts_buf), "%2d pts", n_correct);
+	pts_label.change_text(pts_buf);
+	char rem_buf[16];
+	std::snprintf(rem_buf, sizeof(rem_buf), "%2d", n_remain);
+	remain_label.change_text(rem_buf);
+}
+
+void UISpeedQuiz::setup_input()
+{
+	clear_input();
+	// IDA 7EB516 CreateEdit：(100,339) 165×13
+	const int16_t edit_w = 165;
+	const int16_t edit_h = 13;
+	const Point<int16_t> tl(
+		static_cast<int16_t>(position.x() + 100),
+		static_cast<int16_t>(position.y() + 339));
+	const Point<int16_t> br(
+		static_cast<int16_t>(tl.x() + edit_w),
+		static_cast<int16_t>(tl.y() + edit_h));
+	input_field = Textfield(
+		Text::Font::A12M,
+		Text::Alignment::LEFT,
+		Color::Name::BLACK,
+		Rectangle<int16_t>(tl, br),
+		64,
+		12);
+	input_field.set_accept_unicode(true);
+	input_field.set_text_shift(Point<int16_t>(1, 11));
+	input_field.set_enter_callback([this](std::string)
+	{
+		if (try_submit())
+			deactivate();
+	});
+	input_field.set_state(Textfield::State::FOCUSED);
+	UI::get().focus_textfield(&input_field);
+	input_active = true;
+}
+
+void UISpeedQuiz::clear_input()
+{
+	if (!input_active && input_field.get_state() == Textfield::State::DISABLED)
+		return;
+	input_field.set_state(Textfield::State::DISABLED);
+	UI::get().remove_textfield();
+	input_active = false;
+}
+
+bool UISpeedQuiz::try_submit()
+{
+	if (closing || !input_active)
+		return false;
+	// IDA 7EC46B：OK 要求 len≥2 且 remain>0
+	const std::string s = input_field.get_text();
+	if (static_cast<int32_t>(s.size()) < 2)
+	{
+		LOG(LOG_DEBUG, "UISpeedQuiz: reject len=" << s.size() << " < 2");
+		return false;
+	}
+	if (remain_sec <= 0 && remain_ms <= 0)
+	{
+		LOG(LOG_DEBUG, "UISpeedQuiz: reject remain expired");
+		return false;
+	}
+	submit_answer(s);
+	return true;
+}
+
+void UISpeedQuiz::submit_answer(const std::string& ans)
+{
+	if (closing)
+		return;
+	closing = true;
+	clear_input();
+	NpcTalkMorePacket(NpcTalkMorePacket::AskSpeedQuiz{}, ans).dispatch();
+	LOG(LOG_INFO, "UISpeedQuiz: submit len=" << ans.size());
+}
+
+void UISpeedQuiz::abort_empty()
+{
+	if (closing)
+		return;
+	closing = true;
+	clear_input();
+	NpcTalkMorePacket(NpcTalkMorePacket::AskSpeedQuiz{}, std::string()).dispatch();
+	LOG(LOG_INFO, "UISpeedQuiz: abort empty (timeout/next/esc)");
+	deactivate();
+}
+
+void UISpeedQuiz::give_up()
+{
+	if (closing)
+		return;
+	closing = true;
+	clear_input();
+	// IDA 7EC46B case 1001：固定 "__GIVEUP__"
+	NpcTalkMorePacket(NpcTalkMorePacket::AskSpeedQuiz{}, std::string("__GIVEUP__")).dispatch();
+	LOG(LOG_INFO, "UISpeedQuiz: giveup");
+	deactivate();
+}
+
 void UISpeedQuiz::draw(float) const
 {
-	if (has_assets && backgrnd) backgrnd.draw(position);
-	tip_label.draw(position + Point<int16_t>(16, 40));
+	if (!has_assets || !backgrnd)
+		return;
+	backgrnd.draw(position);
+
+	// 倒计时 MM:SS — IDA 7EB7D5 数字位 (111/132/168/189,33)，冒号 (155,33)
+	if (has_digits && remain_sec >= 0)
+	{
+		const int32_t sec = remain_sec > 0 ? remain_sec : 0;
+		const int mm = sec / 60;
+		const int ss = sec % 60;
+		const int digits[4] = { mm / 10, mm % 10, ss / 10, ss % 10 };
+		const int16_t xs[4] = { 111, 132, 168, 189 };
+		for (int i = 0; i < 4; ++i)
+		{
+			const int d = digits[i];
+			if (d >= 0 && d < 10 && digit[d])
+				digit[d].draw(position + Point<int16_t>(xs[i], 33));
+		}
+		if (colon_tex)
+			colon_tex.draw(position + Point<int16_t>(155, 33));
+	}
+
+	// pts @ (237,45)；剩余题数 @ (99,381) — IDA 7EB7D5
+	pts_label.draw(position + Point<int16_t>(237, 45));
+	remain_label.draw(position + Point<int16_t>(99, 381));
+
+	// 题面：底右对齐到 (156,287)；nType==2 时 x 再偏 -16（IDA 7EB7D5）
+	if (has_tip && tip_tex)
+	{
+		const int16_t tip_w = tip_tex.width();
+		const int16_t tip_h = tip_tex.height();
+		const int16_t x_off = (n_type == 2) ? 16 : 0;
+		const Point<int16_t> tip_pos(
+			static_cast<int16_t>(position.x() + 156 - x_off - tip_w),
+			static_cast<int16_t>(position.y() + 287 - tip_h));
+		tip_tex.draw(tip_pos);
+	}
+
+	if (input_active)
+		input_field.draw(Point<int16_t>(0, 0));
 }
+
+void UISpeedQuiz::update()
+{
+	UIElement::update();
+	if (closing)
+		return;
+
+	if (input_active)
+	{
+		input_field.update(
+			Point<int16_t>(
+				static_cast<int16_t>(position.x() + 100),
+				static_cast<int16_t>(position.y() + 339)),
+			Point<int16_t>(165, 13));
+		input_field.update();
+	}
+
+	if (remain_ms > 0)
+	{
+		remain_ms -= Constants::TIMESTEP;
+		if (remain_ms < 0)
+			remain_ms = 0;
+		const int32_t next = remain_ms / 1000;
+		if (next != remain_sec)
+			remain_sec = next;
+		if (remain_ms <= 0)
+		{
+			// IDA 7EC7CB：到期发空串并关窗
+			abort_empty();
+		}
+	}
+}
+
+Cursor::State UISpeedQuiz::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	if (input_active)
+	{
+		Cursor::State istate = input_field.send_cursor(cursorpos, clicked);
+		if (istate != Cursor::State::IDLE)
+			return istate;
+	}
+	return UIDragElement::send_cursor(clicked, cursorpos);
+}
+
 void UISpeedQuiz::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) { deactivate(); return; }
-	if (!pressed) return;
-	if (keycode == 'A' || keycode == 'a' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& ans) {
-			if (ans.empty()) return;
-			tip_label.change_text(Locale::format("speedquiz.ans", ans));
-			NpcTalkMorePacket(ans).dispatch();
-		}, []() {}, "Quiz answer");
-	} else if (keycode == 'I' || keycode == 'i') {
-		auto ui = UI::get().get_element<UIInitialQuiz>();
-		if (!ui) ui = UI::get().emplace<UIInitialQuiz>();
-		else if (!ui->is_active()) ui->makeactive();
+	if (!pressed)
+		return;
+	if (escape)
+	{
+		abort_empty();
+		return;
 	}
-	if (keycode == 'X' || keycode == 'x') {
-		deactivate();
+	if (keycode == 13) // Enter
+	{
+		button_pressed(BtOk);
+		return;
 	}
 }
+
+Button::State UISpeedQuiz::button_pressed(uint16_t buttonid)
+{
+	if (closing)
+		return Button::State::NORMAL;
+	if (buttonid == BtOk)
+	{
+		if (try_submit())
+			deactivate();
+		return Button::State::NORMAL;
+	}
+	if (buttonid == BtNext)
+	{
+		abort_empty();
+		return Button::State::NORMAL;
+	}
+	if (buttonid == BtGiveup)
+	{
+		give_up();
+		return Button::State::NORMAL;
+	}
+	return Button::State::NORMAL;
+}
+
 UIElement::Type UISpeedQuiz::get_type() const { return TYPE; }
 
 UIInitialQuiz::UIInitialQuiz()

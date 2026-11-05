@@ -27,7 +27,7 @@
 | 3 GetNumber | `746DFF` → `9AC732` | `string` + `int def/min/max`；助手 **`a5=0,a6=10,a7=0`** | 展示 |
 | 4 Simple | `746FAD` | `string` | 展示 |
 | 5 Quiz | `747A22` → `A26B09` | `byte res`；`res==0` → 3×string + **3×int** | ✅ `UIInitialQuiz` + 出站 `5+string` |
-| 6 SpeedQuiz | `747A34` → `A26C66` | `byte res`；`res==0` → **5×int** | ⏸ 仍吞包 `-1`（协议已对齐） |
+| 6 SpeedQuiz | `747A34` → `A26C66` | `byte res`；`res==0` → **5×int** | ✅ `UISpeedQuiz` + 出站 `6+string`（见 a11k） |
 | 7 AskAvatar | `74713D` | `string` + `byte n` + `n×int` | 吞包 `-1` |
 | 8 MembershopAvatar | `74730B` | 同 7 | 吞包 `-1` |
 | 9 AskPet | `7474A2` | `string` + `byte n` + `n×byte`（本机 pet 反查） | 吞包 `-1` |

@@ -1,7 +1,7 @@
 # A11j Quiz / SpeedQuiz（msgtype 5/6）— 已定案已接线
 
 > IDB：`BeiDou.exe.i64` ｜ 日期：2026-11-05  
-> 结论：**Quiz UI + 出站已接线**；SpeedQuiz 协议已对齐，UI 本轮仍吞包。
+> 结论：**Quiz UI + 出站已接线**；SpeedQuiz 协议已对齐。完整 UI 见 [a11k-speedquiz-ui-ida.md](a11k-speedquiz-ui-ida.md)。
 
 ## 1. 已证实（IDA）
 
@@ -24,10 +24,10 @@ IMG：`UIWindow.img/InitialQuiz` → `backgrnd` **288×229**；`num1`/`num2` 数
 | s9 发包 | `OnAskQuiz` msgtype **5** + 3×int | `OnAskSpeedQuiz` msgtype **6** |
 | s9 回程 | `NPCMoreTalkHandler` lastMsg 5：无 action，`readString` | 同形 lastMsg 6 |
 | CM API | `sendAskQuiz` / `askQuiz` | `sendAskSpeedQuiz` / `askSpeedQuiz` |
-| 客户端入站 | case 5 → `UIInitialQuiz::open` | case 6 仍读尽 + `-1` |
-| 客户端出站 | `NpcTalkMorePacket(AskQuiz{}, str)` = `5+string` | 标签已备，UI 未接 |
+| 客户端入站 | case 5 → `UIInitialQuiz::open` | case 6 → `UISpeedQuiz::open`（见 a11k） |
+| 客户端出站 | `NpcTalkMorePacket(AskQuiz{}, str)` = `5+string` | `AskSpeedQuiz` = `6+string` |
 | Avatar | **不动**（msgtype 7） | — |
 
-## 3. SpeedQuiz pending
+## 3. SpeedQuiz → a11k
 
-题面依赖 `nType/dwAnswer` 查表/图标，IDA/IMG 证据不足，不臆造完整 UI。协议字节已与 IDA 对齐，下一项接 UI 时只补渲染与出站 `AskSpeedQuiz`。
+题面（Npc/Mob/Item）与完整 UI 已在 a11k 闭环；本文件保留 Quiz 定案与协议对照。

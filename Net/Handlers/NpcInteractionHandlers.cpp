@@ -163,19 +163,47 @@ namespace ms
 			return;
 		}
 
-		case 6: // SpeedQuiz — A26C66：byte res；res==0 → 5×int；本轮仍吞包预留 UI
+		case 6: // SpeedQuiz — A26C66：byte res；res==0 → 5×int → UISpeedQuiz
 		{
 			const int8_t res = recv.available() ? recv.read_byte() : static_cast<int8_t>(0);
+			int32_t sq_type = 0, sq_answer = 0, sq_correct = 0, sq_remain = 0, sq_remain_sec = 0;
 			if (res == 0)
 			{
-				for (int i = 0; i < 5; ++i)
-				{
-					if (recv.length() >= 4)
-						recv.read_int();
-				}
+				if (recv.length() >= 4) sq_type = recv.read_int();
+				if (recv.length() >= 4) sq_answer = recv.read_int();
+				if (recv.length() >= 4) sq_correct = recv.read_int();
+				if (recv.length() >= 4) sq_remain = recv.read_int();
+				if (recv.length() >= 4) sq_remain_sec = recv.read_int();
 			}
-			end_unhandled = true;
-			break;
+			drain_rest();
+			if (res != 0)
+			{
+				// res!=0：关窗路径（IDA A26C66 res==1 销毁单例）
+				LOG(LOG_INFO, "[NPC] AskSpeedQuiz res=" << static_cast<int>(res) << "; skip UI");
+				if (auto ui = UI::get().get_element<UISpeedQuiz>())
+					ui->deactivate();
+				return;
+			}
+			if (!UiAssetResolve::usable(UiAssetResolve::window("SpeedQuiz")))
+			{
+				LOG(LOG_WARN, "[NPC] SpeedQuiz missing; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				return;
+			}
+			auto ui = UI::get().get_element<UISpeedQuiz>();
+			if (!ui)
+				ui = UI::get().emplace<UISpeedQuiz>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			UI::get().enable();
+			if (ui)
+				ui->open(sq_type, sq_answer, sq_correct, sq_remain, sq_remain_sec);
+			else
+			{
+				LOG(LOG_WARN, "[NPC] UISpeedQuiz emplace failed; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			}
+			return;
 		}
 
 		case 7: // AskAvatar — 74713D → UI dlgType=5（sub_9AC552 / sub_9A92C9）

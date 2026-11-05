@@ -246,7 +246,7 @@
 - **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
 - **A11g tip + Pet inset（2026-11-05 已接线，待真机）**：校验失败弹 tip 817–821（A12 白+`#355A84` 描边）；Pet `speaker&6` 输入 inset=25。证据：[a11g](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
 - **A11h ScriptMessage OnPacket + tip 820（2026-11-05 已接线，待真机）**：见 §23。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；SpeedQuiz/Pet/Mirror **UI**（SpeedQuiz 协议已对齐仍吞包）；Avatar UI 已接见 §24；Quiz UI 见 §26。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；Pet/Mirror **UI**；Avatar UI 已接见 §24；Quiz UI 见 §26；SpeedQuiz UI 见 §27。
 
 ## 18. 隐藏门三态
 
@@ -323,7 +323,7 @@
 - **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
 - **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
 - **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
-- **仍预留**：SpeedQuiz/Pet/Mirror 完整 UI；KeyDown cancel。
+- **仍预留**：Pet/Mirror 完整 UI；KeyDown cancel；SpeedQuiz 见 §27。
 
 ## 24. AskAvatar / sendStyle A11i
 
@@ -350,7 +350,7 @@
 - **期望**：无崩；文本回程进脚本。
 - **opcode**：s2c 304 msgtype13；c2s 60。
 - **文档**：[a11j-askboxtext-ida](../npc-talk-utildlgex-align/evidence/a11j-askboxtext-ida.md)
-- **仍预留**：SpeedQuiz/Pet/Mirror；BoxText 真多行换行。
+- **仍预留**：Pet/Mirror；BoxText 真多行换行；SpeedQuiz 见 §27。
 
 ## 26. InitialQuiz A11j（msgtype 5）
 
@@ -361,10 +361,24 @@
   3. 非法长度 → tip 英文明文（3920/3921 占位），**不关窗**。
   4. **超时 / Esc / Cancel** → 上行空串，脚本不挂死。
   5. **回归**：`cm.sendStyle` Avatar（msgtype 7）仍 `(7,1,sel)`；旧错误 msgtype 6/7 发包不再出现。
-- **期望**：无崩；SpeedQuiz（6）仍吞包 `-1`。
+- **期望**：无崩；SpeedQuiz（6）见 §27。
 - **opcode**：s2c 304 msgtype5；c2s 60 body=`byte5 + string`。
 - **文档**：[a11j-quiz-speedquiz-ida](../npc-talk-utildlgex-align/evidence/a11j-quiz-speedquiz-ida.md)
-- **仍预留**：SpeedQuiz 完整 UI；Pet/Mirror。
+- **仍预留**：Pet/Mirror。
+
+## 27. SpeedQuiz A11k（msgtype 6）
+
+- **前置**：脚本 `cm.askSpeedQuiz(type, answer, correct, remain, remainSec)`（s9 已补）；客户端有 `UIWindow.img/SpeedQuiz`。
+- **操作 / 期望**：
+  1. `type=0` → 开 **SpeedQuiz** 286×410，题面 `Npc/{answer:07d}/stand/0`；`type=1` → Mob；`type≥2` → 道具图标。
+  2. 显示 `%2d pts`（correct）与余题 `%2d`（remain）；倒计时 num1。
+  3. 输入 ≥2 字 → **OK/Enter** → 上行 **`6 + string`（无 action）**。
+  4. **Next / 超时 / Esc** → 上行空串；**Giveup** → `"__GIVEUP__"`。
+  5. **回归**：Quiz(5)、Avatar(7) 不受影响；场 OX 包走 FloatNotice。
+- **期望**：无崩；答案进 `cm.getText()`。
+- **opcode**：s2c 304 msgtype6；c2s 60 body=`byte6 + string`。
+- **文档**：[a11k-speedquiz-ui-ida](../npc-talk-utildlgex-align/evidence/a11k-speedquiz-ui-ida.md)
+- **仍预留**：Timer SFX；Pet/Mirror UI。
 
 ## 7. SET_HPMPALERT
 

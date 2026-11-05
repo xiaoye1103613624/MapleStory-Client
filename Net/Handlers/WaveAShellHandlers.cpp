@@ -1101,11 +1101,12 @@ namespace ms
 			? ("OX Q set=" + std::to_string(qset) + " id=" + std::to_string(qid))
 			: ("OX A set=" + std::to_string(qset) + " id=" + std::to_string(qid));
 		LOG(LOG_DEBUG, "OxQuiz: " << tip);
-		auto quiz = UI::get().get_element<UISpeedQuiz>();
-		if (!quiz) quiz = UI::get().emplace<UISpeedQuiz>();
-		else if (!quiz->is_active()) quiz->makeactive();
-		if (quiz)
-			quiz->set_tip(tip);
+		// OX 场题与 NPC SpeedQuiz（msgtype6）不同窗；tip 走 FloatNotice，勿再占用 UISpeedQuiz。
+		auto fn = UI::get().get_element<UIFloatNotice>();
+		if (!fn) fn = UI::get().emplace<UIFloatNotice>();
+		else if (!fn->is_active()) fn->makeactive();
+		if (fn)
+			fn->set_tip(tip);
 		// note
 	}
 
