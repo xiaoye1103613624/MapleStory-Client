@@ -301,4 +301,52 @@ namespace ms
 			// TODO: A point (4 bytes) could be added at the end
 		}
 	};
+
+	// Opcode: SKILL_EFFECT(93 / 0x5D) — s9 SkillEffectHandler 白名单技能起手
+	// 广播。body 与 handler 逐字段：skillId / level / flags / speed / direction。
+	// 本端无 KeyDown 条状态机时，在 apply_move 发一次即可让他人看到特效；
+	// 持续技真正的按住/松开需后续 KeyDown 切片。
+	class SkillEffectPacket : public OutPacket
+	{
+	public:
+		// 与 SkillEffectHandler switch 白名单逐项对齐（常量取自
+		// org/gms/constants/skills/*）。
+		static bool is_effect_skill(int32_t skill)
+		{
+			switch (skill)
+			{
+			case 2111002:	// FPMage.EXPLOSION
+			case 2121001:	// FPArchMage.BIG_BANG
+			case 2221001:	// ILArchMage.BIG_BANG
+			case 2321001:	// Bishop.BIG_BANG
+			case 3121004:	// Bowmaster.HURRICANE
+			case 3221001:	// Marksman.PIERCING_ARROW
+			case 4211001:	// ChiefBandit.CHAKRA
+			case 5101004:	// Brawler.CORKSCREW_BLOW
+			case 5201002:	// Gunslinger.GRENADE
+			case 5221004:	// Corsair.RAPID_FIRE
+			case 13111002:	// WindArcher.HURRICANE
+			case 14111006:	// NightWalker.POISON_BOMB
+			case 15101003:	// ThunderBreaker.CORKSCREW_BLOW
+			case 1121001:	// Hero.MONSTER_MAGNET
+			case 1221001:	// Paladin.MONSTER_MAGNET
+			case 1321001:	// DarkKnight.MONSTER_MAGNET
+			case 22121000:	// Evan.ICE_BREATH
+			case 22151001:	// Evan.FIRE_BREATH
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		SkillEffectPacket(int32_t skillid, int32_t level, int8_t flags, int8_t speed, int8_t direction)
+			: OutPacket(OutPacket::Opcode::SKILL_EFFECT)
+		{
+			write_int(skillid);
+			write_byte(static_cast<int8_t>(level));
+			write_byte(flags);
+			write_byte(speed);
+			write_byte(direction);
+		}
+	};
 }

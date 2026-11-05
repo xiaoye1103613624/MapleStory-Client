@@ -79,6 +79,7 @@ namespace ms
 				if (pressed)
 				{
 					// TODO: Try finding dialog first
+					// TalkToNPCPacket 构造内已顺带派发 NPC_ACTION 对话姿态。
 					TalkToNPCPacket(npc->get_oid()).dispatch();
 
 					return Cursor::State::IDLE;

@@ -172,6 +172,15 @@ namespace ms
 			apply_use_movement(move);
 			apply_result_movement(move, result);
 
+			// SKILL_EFFECT：白名单充能/持续技起手广播，须在伤害包之前，
+			// 让他人先看到施法姿态（s9 SkillEffectHandler → skillEffect）。
+			if (SkillEffectPacket::is_effect_skill(result.skill))
+			{
+				int32_t lv = player.get_skills().get_level(result.skill);
+				int8_t dir = result.toleft ? 1 : 0;
+				SkillEffectPacket(result.skill, lv, dir, static_cast<int8_t>(result.speed), dir).dispatch();
+			}
+
 			AttackPacket(result).dispatch();
 
 			// Wave 4：手雷/毒弹投掷点上报。s9 GrenadeEffectHandler 白名单
@@ -204,6 +213,14 @@ namespace ms
 
 			int32_t moveid = move.get_id();
 			int32_t level = player.get_skills().get_level(moveid);
+			// CHAKRA / MONSTER_MAGNET 等非攻击白名单也走 SKILL_EFFECT。
+			if (SkillEffectPacket::is_effect_skill(moveid))
+			{
+				// getflip()==facing_right；direction 用「朝左」位与攻击包 toleft 同语义。
+				int8_t dir = player.getflip() ? 0 : 1;
+				int8_t speed = player.get_integer_attackspeed();
+				SkillEffectPacket(moveid, level, dir, speed, dir).dispatch();
+			}
 			UseSkillPacket(moveid, level).dispatch();
 		}
 	}

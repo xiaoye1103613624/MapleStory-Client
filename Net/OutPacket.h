@@ -178,8 +178,16 @@ namespace ms
 
 			/// Skill
 			USE_SKILL = 91,
+			/// s9 RecvOpcode.SKILL_EFFECT = 0x5D：充能/持续技起手广播。
+			/// body = int skillId + byte level + byte flags + byte speed + byte direction
+			/// （SkillEffectHandler → PacketCreator.skillEffect 原样广播）。
+			SKILL_EFFECT = 93,
 			SKILL_MACRO = 110,
 			RPS_ACTION = 136,
+			/// s9 RecvOpcode.CLICK_GUIDE = 0xA2：点新手引导（空包）→ 开 MIMO/LILIN 脚本
+			CLICK_GUIDE = 162,
+			/// s9 RecvOpcode.NPC_ACTION = 0xC5：NPC 对话/移动动画中继
+			NPC_ACTION = 197,
 
 			/// Quest (BeiDou RecvOpcode.QUEST_ACTION)
 			QUEST_ACTION = 107,

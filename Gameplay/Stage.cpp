@@ -561,6 +561,12 @@ namespace ms
 				return statusbar->send_cursor(clicked, cursor_position);
 		}
 
+		{
+			Cursor::State guide_st = Cursor::State::IDLE;
+			if (field_markers.try_click_guide(clicked, cursor_position, camera.position(), guide_st))
+				return guide_st;
+		}
+
 		return npcs.send_cursor(clicked, cursor_position, camera.position());
 	}
 

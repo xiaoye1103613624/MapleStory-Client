@@ -21,15 +21,39 @@
 
 namespace ms
 {
+	// Opcode: NPC_ACTION(197 / 0xC5) — s9 NPCAnimationHandler length==6 对话分支。
+	// body = int oid + byte + byte；handler 原样回广播 SendOpcode.NPC_ACTION。
+	// Odin 系客户端对话起手固定 (-1, 0)；移动分支 length>6 另切片。
+	class NpcActionTalkPacket : public OutPacket
+	{
+	public:
+		explicit NpcActionTalkPacket(int32_t oid) : OutPacket(OutPacket::Opcode::NPC_ACTION)
+		{
+			write_int(oid);
+			write_byte(-1);
+			write_byte(0);
+		}
+	};
+
 	// Packet which requests a dialog with a server-sided NPC
-	// Opcode: TALK_TO_NPC(58)
+	// Opcode: TALK_TO_NPC(58)。构造时顺带派发 NPC_ACTION 对话姿态，
+	// 所有 TalkToNPC 调用点（点击/SoftKey/快捷）自动继承，避免漏发。
 	class TalkToNPCPacket : public OutPacket
 	{
 	public:
 		TalkToNPCPacket(int32_t oid) : OutPacket(OutPacket::Opcode::TALK_TO_NPC)
 		{
+			NpcActionTalkPacket(oid).dispatch();
 			write_int(oid);
 		}
+	};
+
+	// Opcode: CLICK_GUIDE(162 / 0xA2) — 空包。s9 ClickGuideHandler 按职业开
+	// MIMO(1101008 骑士团) / LILIN(1202000 其它) NPC 脚本。
+	class ClickGuidePacket : public OutPacket
+	{
+	public:
+		ClickGuidePacket() : OutPacket(OutPacket::Opcode::CLICK_GUIDE) {}
 	};
 
 	// Packet which sends a response to an NPC dialog to the server

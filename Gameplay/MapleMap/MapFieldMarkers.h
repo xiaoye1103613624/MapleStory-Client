@@ -6,6 +6,8 @@
 #include "FieldMarker.h"
 #include "MapObjects.h"
 
+#include "../../IO/Cursor.h"
+
 #include <cstdint>
 #include <string>
 
@@ -45,6 +47,11 @@ namespace ms
 		void apply_damage(int32_t oid, int32_t damage);
 		void remove(int32_t oid);
 		void clear();
+
+		// SPAWN_GUIDE 场标点击：命中写 out 并返回 true（pressed 时已发 CLICK_GUIDE），
+		// 未命中返回 false。由 Stage::send_cursor 优先于 NPC 命中调用。
+		// （本仓 Optional<T> 只包指针，不能 Optional<Cursor::State>。）
+		bool try_click_guide(bool pressed, Point<int16_t> cursor, Point<int16_t> viewpos, Cursor::State& out);
 
 		// W2：本角色召唤兽/龙上行（移动/攻击/龙移）
 		void report_owned_c2s(int32_t local_cid, Point<int16_t> playerpos, class MapMobs& mobs);

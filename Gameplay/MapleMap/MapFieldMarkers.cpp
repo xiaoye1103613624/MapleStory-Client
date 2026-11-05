@@ -14,6 +14,7 @@
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Net/Packets/SummonDragonPackets.h"
+#include "../../Net/Packets/NpcInteractionPackets.h"
 #include "MapMobs.h"
 #include "Mob.h"
 #include "../../Gameplay/Movement.h"
@@ -259,6 +260,29 @@ namespace ms
 	bool MapFieldMarkers::contains(int32_t oid) const
 	{
 		return markers.contains(oid);
+	}
+
+	bool MapFieldMarkers::try_click_guide(bool pressed, Point<int16_t> cursor, Point<int16_t> viewpos, Cursor::State& out)
+	{
+		// 与 SpawnGuideHandler 约定的场标 oid 一致。
+		constexpr int32_t GUIDE_OID = 0x70000001;
+		auto existing = markers.get(GUIDE_OID);
+		if (!existing)
+			return false;
+
+		Point<int16_t> absp = existing->get_position() + viewpos;
+		Rectangle<int16_t> hit(
+			static_cast<int16_t>(absp.x() - 40),
+			static_cast<int16_t>(absp.x() + 40),
+			static_cast<int16_t>(absp.y() - 80),
+			static_cast<int16_t>(absp.y() + 20));
+		if (!hit.contains(cursor))
+			return false;
+
+		if (pressed)
+			ClickGuidePacket().dispatch();
+		out = pressed ? Cursor::State::IDLE : Cursor::State::CANCLICK;
+		return true;
 	}
 
 	void MapFieldMarkers::apply_damage(int32_t oid, int32_t damage)

@@ -54,7 +54,7 @@
 | 断线重连 | 28 `RELOG` | 断线只能重走全登录 |
 | 世界地图查看后选角 | 14 `PICK_ALL_CHAR` | ✅ 2026-11-05 修正误发 19→14/32（见 pick-all-char） |
 | 远程扭蛋 | 116 `USE_REMOTE` | `UIRemoteGachapon` 有壳，抽一次发不出 |
-| 引导点击 | 162 `CLICK_GUIDE` / 197 `NPC_ACTION` / 163 `ARAN_COMBO_COUNTER`(见 B) | 新手引导/监视器 NPC 动作不上报 |
+| 引导点击 | 162 `CLICK_GUIDE` / 197 `NPC_ACTION` / 163 `ARAN_COMBO_COUNTER`(见 B) | ✅ 2026-11-05 CLICK_GUIDE+NPC_ACTION 已接（见 skill-effect-npc-guide-c2s）；163 假缺口早销 |
 | 组队搜索 | 220 `PARTY_SEARCH_REGISTER` | 已按 r-note 用 `PARTY_SEARCH_START` 代理（s9 0xDC 是空 stub）→ 视同已消化，留档 |
 
 **B. 战斗/环境内部报文（多数由渲染侧顺带补发，优先级低但属真实差集）**
