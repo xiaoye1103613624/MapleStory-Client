@@ -55,6 +55,9 @@ namespace ms
 		void reconnect(const char* address, const char* port);
 		// Check if the connection is alive
 		bool is_connected() const;
+		// 内核层 TCP 平滑 RTT（微秒）。供窗口标题的延迟显示使用；
+		// 未连接或后端不支持（Asio）时返回 false。
+		bool tcp_rtt_us(uint64_t& out) const;
 
 	private:
 		bool init(const char* host, const char* port);

@@ -5,10 +5,10 @@
 
 #if defined(USE_POSIX_SOCKET)
 #include <cstring>
-#include <fstream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <cerrno>
@@ -27,15 +27,6 @@ namespace ms
 
 	bool SocketPosix::open(const char* iaddr, const char* port)
 	{
-		// [DBG-SOCK] 临时诊断：把 open 各阶段结果落到 cwd/_socket_debug.log，
-		// 联调通过后整段移除。
-		auto dbg = [iaddr, port](const char* stage, long v1, long v2)
-		{
-			std::ofstream f("_socket_debug.log", std::ios::app);
-			f << stage << " host=" << iaddr << " port=" << port
-				<< " v1=" << v1 << " v2=" << v2 << '\n';
-		};
-
 		struct addrinfo hints;
 		std::memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_UNSPEC;
@@ -46,11 +37,8 @@ namespace ms
 		int gai = getaddrinfo(iaddr, port, &hints, &addr_info);
 		if (gai != 0)
 		{
-			dbg("gai_fail", gai, errno);
 			return false;
 		}
-
-		dbg("resolved", addr_info->ai_addrlen, errno);
 
 		bool connected = false;
 		for (struct addrinfo* ptr = addr_info; ptr != nullptr; ptr = ptr->ai_next)
@@ -58,18 +46,15 @@ namespace ms
 			sock = ::socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 			if (sock < 0)
 			{
-				dbg("socket_fail", sock, errno);
 				continue;
 			}
 
 			if (::connect(sock, ptr->ai_addr, static_cast<int>(ptr->ai_addrlen)) == 0)
 			{
 				connected = true;
-				dbg("connect_ok", ptr->ai_family, 0);
 				break;
 			}
 
-			dbg("connect_fail", ptr->ai_family, errno);
 			::close(sock);
 			sock = -1;
 		}
@@ -82,8 +67,6 @@ namespace ms
 		// Read the server handshake (the MapleStory login handshake is sent
 		// immediately after connect).
 		ssize_t result = ::recv(sock, reinterpret_cast<char*>(buffer), 32, 0);
-
-		dbg("recv", static_cast<long>(result), errno);
 
 		return result == static_cast<ssize_t>(HANDSHAKE_LEN);
 	}
@@ -148,6 +131,23 @@ namespace ms
 	const int8_t* SocketPosix::get_buffer() const
 	{
 		return buffer;
+	}
+
+	bool SocketPosix::rtt_us(uint64_t& out) const
+	{
+		// Linux/Android：TCP_INFO 的 tcpi_rtt 单位为微秒（内核 4.x 起与 Windows/BSD 对齐）。
+		// 未连接或内核不支持时 getsockopt 失败 → false，标题显示 "--"。
+		if (sock < 0)
+			return false;
+
+		struct tcp_info ti;
+		socklen_t len = sizeof(ti);
+
+		if (getsockopt(sock, IPPROTO_TCP, TCP_INFO, &ti, &len) != 0)
+			return false;
+
+		out = ti.tcpi_rtt;
+		return out > 0;
 	}
 }
 #endif

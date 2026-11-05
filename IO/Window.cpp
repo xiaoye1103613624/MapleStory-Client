@@ -28,6 +28,7 @@
 #include "../MapleStory.h"
 #include "../Timer.h"
 #include "../Util/ResolutionTiers.h"
+#include "../Net/Session.h"
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -736,6 +737,38 @@ namespace ms
 			title += "】";
 		}
 
+		// 【实时 FPS/延迟】：FPS 取 end() 的帧计数在 500ms 节流窗内折算；
+		// 延迟读内核 TCP 平滑 RTT（Windows: WSAIoctl(SIO_TCP_INFO)，
+		// POSIX: getsockopt(TCP_INFO)）。未连接/系统不支持/Asio 桩时显示
+		// "--"。标题是性能仪器（Wave P 首批），常驻显示——同参考端 ijl15
+		// 的标题惯例，不加开关。
+		{
+			auto now = std::chrono::steady_clock::now();
+
+			if (perf_fps_since.time_since_epoch().count() == 0)
+				perf_fps_since = now;
+
+			int64_t win_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+				now - perf_fps_since).count();
+
+			if (win_ms >= 400)
+			{
+				perf_fps = static_cast<int>(perf_frames * 1000 / (win_ms > 0 ? win_ms : 1));
+				perf_frames = 0;
+				perf_fps_since = now;
+			}
+
+			title += "【FPS:" + std::to_string(perf_fps);
+
+			uint64_t rtt_us = 0;
+			if (Session::get().tcp_rtt_us(rtt_us))
+				title += " 延迟:" + std::to_string(rtt_us / 1000) + "ms";
+			else
+				title += " 延迟:--";
+
+			title += "】";
+		}
+
 		// 【当前时间：yyyy-MM-dd HH:mm:ss】
 		title += "【当前时间：";
 		title += format_local_time();
@@ -999,6 +1032,12 @@ namespace ms
 	void Window::end() const
 	{
 		GraphicsGL::get().flush(opacity);
+
+		// 标题 FPS 采样：每个 SwapWindow 即一个渲染帧。build_title 的 500ms
+		// 节流窗把它折算成 FPS 后清零，本处只负责 +1（两条字段见 Window.h）。
+		++perf_frames;
+		if (perf_fps_since.time_since_epoch().count() == 0)
+			perf_fps_since = std::chrono::steady_clock::now();
 
 		// 截图必须在 SwapWindow 之前回读：那时后台缓冲就是刚画完的这一帧。
 		if (screenshot_pending)

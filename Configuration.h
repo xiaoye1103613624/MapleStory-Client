@@ -975,6 +975,15 @@ namespace ms
 		PacketDumpLog() : BoolEntry("debug.packet_dump", "false") {}
 	};
 
+	// 分段耗时文件日志（debug.perf_log，默认 false；Wave 0.1 测量仪器）。
+	// Release 下 LOG() 是 no-op（MapleStory.h _DEBUG 门控），本键是 [BOOT]/
+	// [SETFIELD] 毫秒分段唯一的落盘通道（Util/PerfLog.h → boot_perf.log）。
+	// 基线采集期临时开；采集完成按门禁保持默认关。
+	struct PerfLogEnabled : public Configuration::BoolEntry
+	{
+		PerfLogEnabled() : BoolEntry("debug.perf_log", "false") {}
+	};
+
 	// 本地点券标签缓存（服务端字段就绪前 SoftKey/Point 按钮写入）
 	struct MaplePointsLocal : public Configuration::LongEntry
 	{

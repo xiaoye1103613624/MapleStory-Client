@@ -17,6 +17,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+// SIO_TCP_INFO / TCP_INFO_v0（rtt_us 用）在 SDK 头里门控于
+// NTDDI_VERSION >= NTDDI_WIN10_RS2（0x0A000003）。注意只定义 _WIN32_WINNT
+// 不够：sdkddkver 的换算 0x0A00 -> 0x0A000000 达不到 RS2 粒度，直接钉 NTDDI。
+#if defined(_WIN32) && !defined(USE_ASIO) && !defined(NTDDI_VERSION)
+#define WINVER 0x0A00
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0A00
+#endif
+#define NTDDI_VERSION 0x0A000003	// NTDDI_WIN10_RS2
+#endif
+
 #include "../MapleStory.h"
 
 #ifndef USE_ASIO
@@ -39,6 +50,10 @@ namespace ms
 		bool dispatch(const int8_t* bytes, size_t length) const;
 		size_t receive(bool* connected);
 		const int8_t* get_buffer() const;
+
+		// 内核层 TCP 平滑往返时延（微秒，tcpi_rtt）。零发包成本、不依赖服务端
+		// 应用层协议；未连接/系统不支持时返回 false。
+		bool rtt_us(uint64_t& out) const;
 
 	private:
 		uint64_t sock;

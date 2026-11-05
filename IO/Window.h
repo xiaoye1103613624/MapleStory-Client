@@ -127,6 +127,11 @@ namespace ms
 		// ---- 窗口标题相关状态 ----
 		// 破功值：由 0x3730 同步，< 0 表示尚未同步。
 		int64_t limit_break = -1;
+		// 实时 FPS 采样：end() 每渲染帧 +1，build_title 的 500ms 节流窗折算。
+		// mutable：end() 是 const（绘制收尾），计数只服务标题展示。
+		mutable uint32_t perf_frames = 0;
+		mutable std::chrono::steady_clock::time_point perf_fps_since;
+		mutable int perf_fps = 0;
 		// 已经写到窗口上的标题，用来避免重复调用 SDL_SetWindowTitle。
 		std::string applied_title;
 		// 正在计时的角色 id；0 表示当前没有角色（登录界面）。

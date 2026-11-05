@@ -176,8 +176,14 @@ namespace ms
 		{ "界面位置",   "ui.position.dailygift",		"每日礼物" },
 		{ "界面位置",   "ui.position.partyrace",		"组队竞赛" },
 
+		// 伤害
+		{ "伤害",       "damage.formula_v2",			"是否启用原生取证补齐的伤害公式（关闭则保持旧结果）" },
+		{ "伤害",       "damage.long_lines",			"伤害行 12 字节模式，必须与 s9 服务端成对开启" },
+		{ "伤害",       "damage.cap",				"单段伤害上限，默认 2^53 = 9007199254740992" },
+
 		// 调试
-		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" }
+		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" },
+		{ "调试",       "debug.perf_log",				"分段耗时落盘 boot_perf.log（基线采集用，生产勿开）" }
 	};
 
 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
@@ -287,6 +293,7 @@ namespace ms
 		settings.emplace<MiniMapSimpleMode>();
 		settings.emplace<MiniMapDefaultHelpers>();
 		settings.emplace<PacketDumpLog>();
+		settings.emplace<PerfLogEnabled>();
 
 		load();
 	}

@@ -217,4 +217,12 @@ namespace ms
 	{
 		return connected;
 	}
+
+	bool Session::tcp_rtt_us(uint64_t& out) const
+	{
+		if (!connected)
+			return false;
+
+		return socket.rtt_us(out);
+	}
 }

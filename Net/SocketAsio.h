@@ -51,6 +51,15 @@ namespace ms
 		const int8_t* get_buffer() const;
 		bool dispatch(const int8_t* bytes, size_t length);
 
+		// TCP 平滑 RTT（微秒）。Asio 后端在本仓库为备用通道（USE_ASIO 默认关闭、
+		// asio 头文件未随仓库分发），此处返回 false，标题显示 "--"；
+		// Winsock / POSIX 后端为实装。
+		bool rtt_us(uint64_t& out) const
+		{
+			(void)out;
+			return false;
+		}
+
 	private:
 		io_service ioservice;
 		tcp::resolver resolver;

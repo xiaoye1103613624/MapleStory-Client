@@ -441,6 +441,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Net\Handlers\GuildHandlers.cpp" />
     <ClCompile Include="Net\Handlers\HiredMerchantBoxHandlers.cpp" />
     <ClCompile Include="Net\Handlers\MonsterBookHandlers.cpp" />
+    <ClCompile Include="Util\PerfLog.cpp" />
     <ClCompile Include="Net\Handlers\AllianceHandlers.cpp" />
     <ClCompile Include="Net\Handlers\QuestHandlers.cpp" />
     <ClCompile Include="Net\Handlers\SetFieldHandlers.cpp" />

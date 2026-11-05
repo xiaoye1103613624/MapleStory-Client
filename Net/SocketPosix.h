@@ -34,6 +34,10 @@ namespace ms
 		size_t receive(bool* connected);
 		const int8_t* get_buffer() const;
 
+		// 内核层 TCP 平滑往返时延（微秒，tcpi_rtt）。零发包成本；未连接或
+		// 平台不支持时返回 false。
+		bool rtt_us(uint64_t& out) const;
+
 	private:
 		int sock;
 		int8_t buffer[MAX_PACKET_LENGTH];
