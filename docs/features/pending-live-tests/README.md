@@ -246,7 +246,7 @@
 - **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
 - **A11g tip + Pet inset（2026-11-05 已接线，待真机）**：校验失败弹 tip 817–821（A12 白+`#355A84` 描边）；Pet `speaker&6` 输入 inset=25。证据：[a11g](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
 - **A11h ScriptMessage OnPacket + tip 820（2026-11-05 已接线，待真机）**：见 §23。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；Quiz/Avatar/Pet/Mirror **UI**（本轮仅吞包 `-1`）；s9 `OnAskQuiz`/`OnAskSpeedQuiz` msgtype 与 IDA 不一致（服务端未改）。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；SpeedQuiz/Pet/Mirror **UI**（SpeedQuiz 协议已对齐仍吞包）；Avatar UI 已接见 §24；Quiz UI 见 §26。
 
 ## 18. 隐藏门三态
 
@@ -318,12 +318,12 @@
   2. **Say `speaker&4`**：若脚本带 override npc，立绘应对齐覆盖后的 templateId（无此类脚本则跳过）。
   3. **GetText short×2**：s9 `writeInt(0)` 路径与原先一致（minLen=0 不弹 tip 821）。
   4. **GetNumber tip 820**：正常 `sendGetNumber` **不应**弹「more than %d digits」；若要肉眼验 tip 820，需临时把 `TalkInputParams::number_min_digits` 调为 >0（或调试断点改字段）再输入偏短数字串。
-  5. **未接 UI 收口**：Mirror（14）、Quiz/SpeedQuiz/Pet（5/6/9/10）→ 客户端应 `NpcTalkMore(-1)` 结束；日志 `reserved/no-UI`。AskBoxText（13）见 §25。
+  5. **未接 UI 收口**：Mirror（14）、SpeedQuiz/Pet（6/9/10）→ 客户端应 `NpcTalkMore(-1)` 结束；日志 `reserved/no-UI`。Quiz（5）见 §26；AskBoxText（13）见 §25。
   6. **AskAvatar（A11i，另条）**：见 §24；本条不再把 sendStyle 当吞包项。
 - **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
 - **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
 - **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
-- **仍预留**：Quiz/Pet/Mirror 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
+- **仍预留**：SpeedQuiz/Pet/Mirror 完整 UI；KeyDown cancel。
 
 ## 24. AskAvatar / sendStyle A11i
 
@@ -337,7 +337,7 @@
 - **期望**：无崩；样式选择可走完；取消不挂脚本。
 - **opcode**：s2c `NPC_TALK=304` msgtype7/8；c2s `NPC_TALK_MORE=60`。
 - **文档**：[a11i-askavatar-sendstyle-ida](../npc-talk-utildlgex-align/evidence/a11i-askavatar-sendstyle-ida.md)
-- **仍预留**：Quiz / Pet / Mirror UI。
+- **仍预留**：SpeedQuiz / Pet / Mirror UI。
 
 ## 25. AskBoxText A11j
 
@@ -350,7 +350,21 @@
 - **期望**：无崩；文本回程进脚本。
 - **opcode**：s2c 304 msgtype13；c2s 60。
 - **文档**：[a11j-askboxtext-ida](../npc-talk-utildlgex-align/evidence/a11j-askboxtext-ida.md)
-- **仍预留**：Quiz/Pet/Mirror；BoxText 真多行换行。
+- **仍预留**：SpeedQuiz/Pet/Mirror；BoxText 真多行换行。
+
+## 26. InitialQuiz A11j（msgtype 5）
+
+- **前置**：脚本 `cm.askQuiz(title, problem, hint, min, max, remainSec)`（s9 已补）；客户端有 `UIWindow.img/InitialQuiz`。
+- **操作 / 期望**：
+  1. 触发 → 开 **InitialQuiz** 288×229；标题/题面/提示宋体 A12M；倒计时 num1；输入槽可打字。
+  2. 合法答案（len∈[min,max]）→ **OK/Enter** → 上行 **`5 + string`（无 action）**；`cm.getText()` 可读。
+  3. 非法长度 → tip 英文明文（3920/3921 占位），**不关窗**。
+  4. **超时 / Esc / Cancel** → 上行空串，脚本不挂死。
+  5. **回归**：`cm.sendStyle` Avatar（msgtype 7）仍 `(7,1,sel)`；旧错误 msgtype 6/7 发包不再出现。
+- **期望**：无崩；SpeedQuiz（6）仍吞包 `-1`。
+- **opcode**：s2c 304 msgtype5；c2s 60 body=`byte5 + string`。
+- **文档**：[a11j-quiz-speedquiz-ida](../npc-talk-utildlgex-align/evidence/a11j-quiz-speedquiz-ida.md)
+- **仍预留**：SpeedQuiz 完整 UI；Pet/Mirror。
 
 ## 7. SET_HPMPALERT
 

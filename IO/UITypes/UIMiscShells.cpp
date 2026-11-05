@@ -38,6 +38,7 @@
 #include "UIQuestLog.h"
 #include "UISkillBook.h"
 #include "UISoftKey.h"
+#include "UINotice.h"
 #include "UIStatsInfo.h"
 #include "UIUserList.h"
 #include "UIBuddyList.h"
@@ -83,6 +84,7 @@
 #include <nlnx/nx.hpp>
 #endif
 #include <algorithm>
+#include <cstdio>
 namespace ms {
 namespace {
 int32_t nearest_map_oid(MapObjects* objs)
@@ -1136,33 +1138,292 @@ void UISpeedQuiz::send_key(int32_t keycode, bool pressed, bool escape)
 }
 UIElement::Type UISpeedQuiz::get_type() const { return TYPE; }
 
-UIInitialQuiz::UIInitialQuiz() {
-	position = Point<int16_t>(280, 140); dimension = Point<int16_t>(300, 200); dragarea = Point<int16_t>(300, 20);
+UIInitialQuiz::UIInitialQuiz()
+	: title_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::DARKGREY),
+	  problem_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY),
+	  hint_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY)
+{
+	// 壳：UIWindow.img/InitialQuiz/backgrnd 288×229（IMG + IDA 7E99BC）
+	position = Point<int16_t>(280, 140);
+	dimension = Point<int16_t>(288, 229);
+	dragarea = Point<int16_t>(288, 20);
 	has_assets = load_window_bg("InitialQuiz", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UIInitialQuiz: missing");
+	if (has_assets)
+		dragarea = Point<int16_t>(dimension.x(), 20);
+	else
+		LOG(LOG_WARN, "UIInitialQuiz: missing InitialQuiz backgrnd");
+
+#ifdef USE_NX
+	{
+		nl::node root = UiAssetResolve::window("InitialQuiz");
+		nl::node n1 = root["num1"];
+		if (n1)
+		{
+			has_digits = true;
+			for (int i = 0; i < 10; ++i)
+			{
+				nl::node d = n1[std::to_string(i)];
+				if (d)
+					digit[i] = Texture(d);
+			}
+			if (n1["comma"])
+				colon_tex = Texture(n1["comma"]);
+		}
+		nl::node ok = nl::nx::UI["Basic.img"]["BtOK2"];
+		nl::node cancel = nl::nx::UI["Basic.img"]["BtCancel2"];
+		// IDA 7E9BC4：OK @ (241,199)；Cancel 同源 Basic 二态钮（InitialQuiz 无 Bt*）
+		if (ok)
+		{
+			buttons[BtOk] = std::make_unique<MapleButton>(ok, Point<int16_t>(241, 199));
+			buttons[BtOk]->set_active(true);
+		}
+		if (cancel)
+		{
+			buttons[BtCancel] = std::make_unique<MapleButton>(cancel, Point<int16_t>(180, 199));
+			buttons[BtCancel]->set_active(true);
+		}
+	}
+#endif
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& ans) {
-		if (ans.empty()) return;
-		NpcTalkMorePacket(ans).dispatch();
-		LOG(LOG_DEBUG, "UIInitialQuiz: SoftKey NpcTalkMore len=" << ans.size());
-	}, []() {}, "Initial quiz");
+	LOG(LOG_INFO, "UIInitialQuiz: constructed assets=" << (has_assets ? 1 : 0)
+		<< " digits=" << (has_digits ? 1 : 0));
 }
-void UIInitialQuiz::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
+
+void UIInitialQuiz::open(const std::string& title, const std::string& problem, const std::string& hint,
+	int32_t min_input, int32_t max_input, int32_t remain)
+{
+	closing = false;
+	min_len = min_input;
+	max_len = max_input > 0 ? max_input : 64;
+	remain_sec = remain > 0 ? remain : 0;
+	remain_ms = remain_sec * 1000;
+	title_label.change_text(title);
+	problem_label.change_text(problem);
+	hint_label.change_text(hint);
+	setup_input();
+	if (!is_active())
+		makeactive();
+	LOG(LOG_INFO, "UIInitialQuiz: open min=" << min_len << " max=" << max_len
+		<< " remainSec=" << remain_sec
+		<< " titleLen=" << title.size() << " problemLen=" << problem.size());
+}
+
+void UIInitialQuiz::setup_input()
+{
+	clear_input();
+	// IDA 7E9BC4 CreateEdit：(109,157) 150×13
+	const int16_t edit_w = 150;
+	const int16_t edit_h = 13;
+	const Point<int16_t> tl(
+		static_cast<int16_t>(position.x() + 109),
+		static_cast<int16_t>(position.y() + 157));
+	const Point<int16_t> br(
+		static_cast<int16_t>(tl.x() + edit_w),
+		static_cast<int16_t>(tl.y() + edit_h));
+	const size_t limit = max_len > 0 ? static_cast<size_t>(max_len) : 64u;
+	input_field = Textfield(
+		Text::Font::A12M,
+		Text::Alignment::LEFT,
+		Color::Name::BLACK,
+		Rectangle<int16_t>(tl, br),
+		limit,
+		12);
+	input_field.set_accept_unicode(true);
+	input_field.set_text_shift(Point<int16_t>(1, 11));
+	input_field.set_enter_callback([this](std::string)
+	{
+		if (try_submit())
+			deactivate();
+	});
+	input_field.set_state(Textfield::State::FOCUSED);
+	UI::get().focus_textfield(&input_field);
+	input_active = true;
+}
+
+void UIInitialQuiz::clear_input()
+{
+	if (!input_active && input_field.get_state() == Textfield::State::DISABLED)
+		return;
+	input_field.set_state(Textfield::State::DISABLED);
+	UI::get().remove_textfield();
+	input_active = false;
+}
+
+void UIInitialQuiz::show_tip(const std::string& message)
+{
+	// 对齐 IDA 7EAE53 → 9929DD Notice tip；失败不关窗
+	input_field.set_state(Textfield::State::DISABLED);
+	UI::get().emplace<UIOk>(message, [this](bool)
+	{
+		if (input_active)
+		{
+			input_field.set_state(Textfield::State::FOCUSED);
+			UI::get().focus_textfield(&input_field);
+		}
+		if (buttons.count(BtOk))
+			buttons[BtOk]->set_state(Button::State::NORMAL);
+	});
+}
+
+bool UIInitialQuiz::try_submit()
+{
+	if (closing || !input_active)
+		return false;
+	const std::string s = input_field.get_text();
+	const int32_t len = static_cast<int32_t>(s.size());
+	// IDA 7EAE53：len ∈ [min,max]；tip StringPool 3920/3921（英文明文占位）
+	if (len < min_len)
+	{
+		char buf[128];
+		std::snprintf(buf, sizeof(buf), "Please enter at least %d characters.", min_len);
+		show_tip(buf);
+		LOG(LOG_DEBUG, "UIInitialQuiz: reject len=" << len << " < min=" << min_len);
+		return false;
+	}
+	if (len > max_len)
+	{
+		char buf[128];
+		std::snprintf(buf, sizeof(buf), "Please enter no more than %d characters.", max_len);
+		show_tip(buf);
+		LOG(LOG_DEBUG, "UIInitialQuiz: reject len=" << len << " > max=" << max_len);
+		return false;
+	}
+	submit_answer(s);
+	return true;
+}
+
+void UIInitialQuiz::submit_answer(const std::string& ans)
+{
+	if (closing)
+		return;
+	closing = true;
+	clear_input();
+	NpcTalkMorePacket(NpcTalkMorePacket::AskQuiz{}, ans).dispatch();
+	LOG(LOG_INFO, "UIInitialQuiz: submit len=" << ans.size());
+}
+
+void UIInitialQuiz::abort_empty()
+{
+	if (closing)
+		return;
+	closing = true;
+	clear_input();
+	NpcTalkMorePacket(NpcTalkMorePacket::AskQuiz{}, std::string()).dispatch();
+	LOG(LOG_INFO, "UIInitialQuiz: abort empty (timeout/cancel)");
+	deactivate();
+}
+
+void UIInitialQuiz::draw(float) const
+{
+	if (!has_assets || !backgrnd)
+		return;
+	backgrnd.draw(position);
+
+	// 倒计时 MM:SS — IDA 7E9D54 数字位约 (111/132/168/189, 33)，冒号 (155,33)
+	if (has_digits && remain_sec >= 0)
+	{
+		const int32_t sec = remain_sec > 0 ? remain_sec : 0;
+		const int mm = sec / 60;
+		const int ss = sec % 60;
+		const int digits[4] = { mm / 10, mm % 10, ss / 10, ss % 10 };
+		const int16_t xs[4] = { 111, 132, 168, 189 };
+		for (int i = 0; i < 4; ++i)
+		{
+			const int d = digits[i];
+			if (d >= 0 && d < 10 && digit[d])
+				digit[d].draw(position + Point<int16_t>(xs[i], 33));
+		}
+		if (colon_tex)
+			colon_tex.draw(position + Point<int16_t>(155, 33));
+	}
+
+	// 标题居中 y≈80；题面/提示（IDA 正文约 x=92,y=110/130）
+	title_label.draw(position + Point<int16_t>(144, 80));
+	problem_label.draw(position + Point<int16_t>(92, 110));
+	hint_label.draw(position + Point<int16_t>(92, 130));
+
+	if (input_active)
+		input_field.draw(Point<int16_t>(0, 0));
+}
+
+void UIInitialQuiz::update()
+{
+	UIElement::update();
+	if (closing)
+		return;
+
+	// 拖窗后同步 Edit 绝对 bounds（IDA CreateEdit 相对窗）
+	if (input_active)
+	{
+		input_field.update(
+			Point<int16_t>(
+				static_cast<int16_t>(position.x() + 109),
+				static_cast<int16_t>(position.y() + 157)),
+			Point<int16_t>(150, 13));
+		input_field.update();
+	}
+
+	if (remain_ms > 0)
+	{
+		remain_ms -= Constants::TIMESTEP;
+		if (remain_ms < 0)
+			remain_ms = 0;
+		const int32_t next = remain_ms / 1000;
+		if (next != remain_sec)
+			remain_sec = next;
+		if (remain_ms <= 0)
+		{
+			// IDA 7EB16E：到期发空串并关窗
+			abort_empty();
+		}
+	}
+}
+
+Cursor::State UIInitialQuiz::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	if (input_active)
+	{
+		Cursor::State istate = input_field.send_cursor(cursorpos, clicked);
+		if (istate != Cursor::State::IDLE)
+			return istate;
+	}
+	return UIDragElement::send_cursor(clicked, cursorpos);
+}
+
 void UIInitialQuiz::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) { deactivate(); return; }
-	if (!pressed) return;
-	if (keycode == 'A' || keycode == 'a' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& ans) {
-			if (ans.empty()) return;
-			NpcTalkMorePacket(ans).dispatch();
-		}, []() {}, "Quiz answer");
+	if (!pressed)
+		return;
+	if (escape)
+	{
+		abort_empty();
+		return;
 	}
-	if (keycode == 'X' || keycode == 'x') {
-		deactivate();
+	if (keycode == 13) // Enter
+	{
+		button_pressed(BtOk);
+		return;
 	}
 }
+
+Button::State UIInitialQuiz::button_pressed(uint16_t buttonid)
+{
+	if (closing)
+		return Button::State::NORMAL;
+	if (buttonid == BtOk)
+	{
+		if (try_submit())
+			deactivate();
+		return Button::State::NORMAL;
+	}
+	if (buttonid == BtCancel)
+	{
+		abort_empty();
+		return Button::State::NORMAL;
+	}
+	return Button::State::NORMAL;
+}
+
 UIElement::Type UIInitialQuiz::get_type() const { return TYPE; }
 
 UIRanking::UIRanking()

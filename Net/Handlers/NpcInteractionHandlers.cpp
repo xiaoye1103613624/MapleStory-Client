@@ -120,27 +120,50 @@ namespace ms
 			show_ui = true;
 			break;
 
-		case 5: // Quiz — A26B09：byte res；res==0 → 3×string + 3×int（本轮无 UI）
+		case 5: // Quiz — A26B09：byte res；res==0 → 3×string + 3×int → UIInitialQuiz
 		{
 			const int8_t res = recv.available() ? recv.read_byte() : static_cast<int8_t>(0);
+			std::string quiz_title, quiz_problem, quiz_hint;
+			int32_t quiz_min = 0, quiz_max = 0, quiz_remain = 0;
 			if (res == 0)
 			{
-				for (int i = 0; i < 3; ++i)
-				{
-					if (recv.length() >= 2)
-						recv.read_string();
-				}
-				for (int i = 0; i < 3; ++i)
-				{
-					if (recv.length() >= 4)
-						recv.read_int();
-				}
+				if (recv.length() >= 2) quiz_title = recv.read_string();
+				if (recv.length() >= 2) quiz_problem = recv.read_string();
+				if (recv.length() >= 2) quiz_hint = recv.read_string();
+				if (recv.length() >= 4) quiz_min = recv.read_int();
+				if (recv.length() >= 4) quiz_max = recv.read_int();
+				if (recv.length() >= 4) quiz_remain = recv.read_int();
 			}
-			end_unhandled = true;
-			break;
+			drain_rest();
+			if (res != 0)
+			{
+				// res!=0：关窗/失败路径，无需开 UI
+				LOG(LOG_INFO, "[NPC] AskQuiz res=" << static_cast<int>(res) << "; skip UI");
+				return;
+			}
+			if (!UiAssetResolve::usable(UiAssetResolve::window("InitialQuiz")))
+			{
+				LOG(LOG_WARN, "[NPC] InitialQuiz missing; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				return;
+			}
+			auto ui = UI::get().get_element<UIInitialQuiz>();
+			if (!ui)
+				ui = UI::get().emplace<UIInitialQuiz>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			UI::get().enable();
+			if (ui)
+				ui->open(quiz_title, quiz_problem, quiz_hint, quiz_min, quiz_max, quiz_remain);
+			else
+			{
+				LOG(LOG_WARN, "[NPC] UIInitialQuiz emplace failed; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			}
+			return;
 		}
 
-		case 6: // SpeedQuiz — A26C66：byte res；res==0 → 5×int
+		case 6: // SpeedQuiz — A26C66：byte res；res==0 → 5×int；本轮仍吞包预留 UI
 		{
 			const int8_t res = recv.available() ? recv.read_byte() : static_cast<int8_t>(0);
 			if (res == 0)

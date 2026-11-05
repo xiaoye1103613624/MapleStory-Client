@@ -1,6 +1,6 @@
 # NPC 对话框 UtilDlgEx 原端对齐
 
-> 日期：2026-11-05 ｜ 本轮：A11j AskBoxText（msgtype 13）完整 UI + s9 文本回程
+> 日期：2026-11-05 ｜ 本轮：Quiz msgtype 5/6 对齐 + InitialQuiz UI
 
 ## 本轮闭环
 
@@ -11,7 +11,8 @@
 | A11j AskBoxText UI | ✅ IDA `746C46`/`9A8910`：dlgType=8；cols/rows 定框；OK=`(13,1,str)` |
 | A11j s9 回程 | ✅ `NPCMoreTalkHandler` 认 lastMsg 13；`getNPCTalkBoxText` / `sendAskBoxText` |
 | 宋体 / 颜色 / α | ✅ 正文 A12M+DARKGREY；输入 A12M+BLACK；名牌 A11M+WHITE |
-| Quiz/SpeedQuiz | ⏸ 吞包 `-1`；msgtype/字段与 s9 冲突；见 evidence |
+| Quiz（5） | ✅ s9 msgtype5+3×int；回程无 action 读 string；`UIInitialQuiz` + 出站 `5+string` |
+| SpeedQuiz（6） | ⏸ 协议已对齐 msgtype6；UI 仍吞包 `-1`（题面证据不足） |
 | AskPet / Mirror | ⏸ 吞包 `-1`；见 evidence |
 
 ## 证据

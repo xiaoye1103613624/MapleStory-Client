@@ -106,6 +106,23 @@ namespace ms
 			write_byte(1);
 			write_string(response);
 		}
+
+		// InitialQuiz OK/超时（IDA 7EB276）：lastMsg=5 + maple string，**无** action。
+		// 空串 = 超时 / Escape 放弃（对齐超时路径，避免脚本挂死）。
+		struct AskQuiz {};
+		NpcTalkMorePacket(AskQuiz, const std::string& response) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(5);
+			write_string(response);
+		}
+
+		// SpeedQuiz 出站（IDA 7EC934）：lastMsg=6 + string，无 action。本轮 UI 仍预留。
+		struct AskSpeedQuiz {};
+		NpcTalkMorePacket(AskSpeedQuiz, const std::string& response) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(6);
+			write_string(response);
+		}
 	};
 
 	// Packet which tells the server of an interaction with an NPC shop

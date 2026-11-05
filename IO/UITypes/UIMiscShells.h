@@ -157,10 +157,41 @@ public:
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIInitialQuiz();
 	void draw(float inter) const override;
+	void update() override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
+	// 开窗：title/problem/hint + min/max 字长 + remainSec（IDA A26B09 / 7EB0CC）
+	void open(const std::string& title, const std::string& problem, const std::string& hint,
+		int32_t min_len, int32_t max_len, int32_t remain_sec);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture backgrnd;
+	enum Buttons : uint16_t { BtOk, BtCancel };
+	void setup_input();
+	void clear_input();
+	void show_tip(const std::string& message);
+	bool try_submit();
+	void submit_answer(const std::string& ans);
+	void abort_empty(); // 超时 / ESC / Cancel → 空串
+
+	bool has_assets = false;
+	Texture backgrnd;
+	Texture digit[10];
+	Texture colon_tex;
+	bool has_digits = false;
+
+	Text title_label;
+	Text problem_label;
+	Text hint_label;
+	Textfield input_field;
+	bool input_active = false;
+	bool closing = false;
+
+	int32_t min_len = 0;
+	int32_t max_len = 0;
+	int32_t remain_sec = 0;
+	int32_t remain_ms = 0;
 };
 class UIRanking : public UIDragElement<PosNOTICE> {
 public:
