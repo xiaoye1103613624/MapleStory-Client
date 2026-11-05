@@ -4,20 +4,33 @@
 #include "UIAdmin.h"
 #include "UIMiscShells.h"
 #include "UISoftKey.h"
+#include "UIGMCommandList.h"
+#include "GMCommandList.h"
 
 #include "../UI.h"
+#include "../../Configuration.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
 #include "../../Util/Locale.h"
+
+#include <sstream>
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
 
 namespace ms
 {
+	namespace
+	{
+		constexpr int16_t GM_QUICK_X = 16;
+		constexpr int16_t GM_QUICK_Y = 56;
+		constexpr int16_t GM_QUICK_H = 14;
+		constexpr int16_t GM_QUICK_W = 180;
+	}
+
 	UIAdmin::UIAdmin()
 		: msg_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("admin.title"))
 	{
@@ -41,6 +54,16 @@ namespace ms
 			dragarea = Point<int16_t>(dimension.x(), 20);
 		}
 		center_on_screen();
+
+		// GM 命令快捷（无参数常用命令），点击派发。硬编码坐标兜底，遵守 R5/R6。
+		const char* quick[] = { "help", "online", "whereami", "rates", "uptime", "gm", "dispose", "goto" };
+		int16_t y = GM_QUICK_Y;
+		for (const char* c : quick)
+		{
+			gm_quick.push_back({ Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLUE, std::string("!") + c), Point<int16_t>(GM_QUICK_X, y), c });
+			y += GM_QUICK_H;
+		}
+
 		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
 			if (msg.empty()) return;
 			std::string t = msg;
@@ -77,6 +100,8 @@ namespace ms
 		if (backgrnd)
 			backgrnd.draw(position);
 		msg_label.draw(position + Point<int16_t>(16, 40));
+		for (const auto& e : gm_quick)
+			e.text.draw(position + e.pos);
 	}
 
 	void UIAdmin::send_key(int32_t keycode, bool pressed, bool escape)
@@ -88,6 +113,39 @@ namespace ms
 				if (msg.empty()) return;
 				std::string t = msg;
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+				// Wave 0.1 冒烟配套：刷怪 / 设经验。
+				// 走 ADMIN_COMMAND(0x80) 的 0x17 / 0x02 分支（服务端
+				// AdminCommandHandler 现成能力），**不是**聊天命令——s9 的
+				// CommandsExecutor 命令表被整段注释（空表），"!summon" 这类
+				// 聊天命令不会有任何效果（本轮冒烟实测坐实）。
+				// 语法：summon <mobid> [数量]  /  exp <数值>
+				if (t.rfind("summon ", 0) == 0)
+				{
+					std::istringstream iss(t.substr(7));
+					std::string s1, s2;
+					iss >> s1 >> s2;
+					if (!s1.empty())
+					{
+						int32_t mobid = string_conversion::or_zero<int32_t>(s1);
+						int32_t qty = s2.empty() ? 1 : string_conversion::or_zero<int32_t>(s2);
+						if (mobid > 0)
+						{
+							if (qty <= 0) qty = 1;
+							if (qty > 50) qty = 50;	// 防手滑刷爆本图
+							AdminSummonMobPacket(mobid, qty).dispatch();
+							msg_label.change_text("summon mob=" + std::to_string(mobid)
+								+ " x" + std::to_string(qty));
+							return;
+						}
+					}
+				}
+				if (t.rfind("exp ", 0) == 0)
+				{
+					int32_t e = string_conversion::or_zero<int32_t>(t.substr(4));
+					AdminSetExpPacket(e).dispatch();
+					msg_label.change_text("set exp=" + std::to_string(e));
+					return;
+				}
 				if (t == "users" || t == "show") {
 					AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
 					msg_label.change_text(Locale::text("admin.show_users"));
@@ -118,7 +176,34 @@ namespace ms
 			if (!ui) ui = UI::get().emplace<UIGMBoard>();
 			else if (!ui->is_active()) ui->makeactive();
 		}
+		else if (keycode == 'C' || keycode == 'c')
+		{
+			auto ui = UI::get().get_element<UIGMCommandList>();
+			if (!ui) ui = UI::get().emplace<UIGMCommandList>();
+			else if (!ui->is_active()) ui->makeactive();
+		}
 	}
 
 	UIElement::Type UIAdmin::get_type() const { return TYPE; }
+
+	Cursor::State UIAdmin::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		if (clicked && has_assets)
+		{
+			Point<int16_t> local(cursorpos.x() - position.x(), cursorpos.y() - position.y());
+			for (const auto& e : gm_quick)
+			{
+				if (local.x() >= e.pos.x() && local.x() <= e.pos.x() + GM_QUICK_W &&
+					local.y() >= e.pos.y() && local.y() <= e.pos.y() + GM_QUICK_H)
+				{
+					std::string cmd = "!" + e.cmd;
+					GeneralChatPacket(cmd, true).dispatch();
+					if (Configuration::get().get_admin())
+						msg_label.change_text(">> " + cmd);
+					return Cursor::State::IDLE;
+				}
+			}
+		}
+		return UIDragElement<PosNOTICE>::send_cursor(clicked, cursorpos);
+	}
 }

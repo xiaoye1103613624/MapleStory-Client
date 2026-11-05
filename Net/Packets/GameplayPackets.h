@@ -162,12 +162,25 @@ namespace ms
 	};
 
 	// Opcode: ADMIN_COMMAND(128)
+	// 服务端权威：s9 AdminCommandHandler.java（switch(mode)，权限门 = isGM()）
+	//   0x00 召唤袋刷怪（读 int itemId，走 ItemInformationProvider.getSummonMobs）
+	//   0x02 设置经验（读 int exp）
+	//   0x11 入图（其内再读 byte 子操作：0=列本图用户、12=uclip）
+	//   0x15 杀怪（int mobId + int amount）
+	//   0x17 刷怪（int mobId + int quantity → spawnMonsterOnGroundBelow）★
+	//   0x18 报怪血量（int mobId）
+	// 客户端此前只发了 0x11（子操作 0/12），0x17 这条"按 mobId 直接刷怪"没接，
+	// 导致冒烟时无法在有怪/空图造测试怪（见 evidence/smoke-2026-11-05.md 阻塞2）。
 	class AdminCommandPacket : public OutPacket
 	{
 	public:
 		enum Mode : int8_t
 		{
-			ENTER_MAP = 0x11
+			ENTER_MAP = 0x11,
+			SUMMON_MOB = 0x17,
+			SET_EXP = 0x02,
+			KILL_MOB = 0x15,
+			MOB_HP = 0x18
 		};
 
 	protected:
@@ -190,6 +203,31 @@ namespace ms
 		AdminEnterMapPacket(Operation op) : AdminCommandPacket(AdminCommandPacket::Mode::ENTER_MAP)
 		{
 			write_byte(op);
+		}
+	};
+
+	// Wave 0.1 冒烟配套：按 mobId 在脚下刷 N 只（s9 AdminCommandHandler case 0x17）。
+	// 用途 = 真机冒烟造测试怪（触怪仇恨 0xBD / 手雷广播 0x6D / 受击数字等都需要怪），
+	// 也是 GM 工具箱里原本缺失的一件。服务端已是现成能力，本包只是把入口接出来。
+	class AdminSummonMobPacket : public AdminCommandPacket
+	{
+	public:
+		AdminSummonMobPacket(int32_t mobid, int32_t quantity)
+			: AdminCommandPacket(AdminCommandPacket::Mode::SUMMON_MOB)
+		{
+			write_int(mobid);
+			write_int(quantity);
+		}
+	};
+
+	// s9 case 0x02：直接设经验（int），用于冒烟造升级 → 拿 AP 验一键分配。
+	class AdminSetExpPacket : public AdminCommandPacket
+	{
+	public:
+		explicit AdminSetExpPacket(int32_t exp)
+			: AdminCommandPacket(AdminCommandPacket::Mode::SET_EXP)
+		{
+			write_int(exp);
 		}
 	};
 
