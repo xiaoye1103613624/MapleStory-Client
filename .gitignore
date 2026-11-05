@@ -68,6 +68,7 @@ __pycache__/
 /.codegraph/
 # 只用于链接验证的第二处构建输出（exe/pdb/dll）
 /build_check/
+/build_verify/
 # 版式测量脚本的一次性输出目录
 /build/
 # 根目录散落的重建日志 / 凭据扫描残留 / 窗体对照拼图
@@ -79,6 +80,27 @@ __pycache__/
 # summon_probe 构建产物（源码/脚本/桩已入库，二进制不入库）
 _tools/summon_probe/*.exe
 _tools/summon_probe/*.dll
+
+# ===== 会话探针 / 真机截图 / IDA 一次性脚本（勿入库）=====
+/_cs_panel
+/_cs_panel.png
+/_live_*
+/_ws_*
+/_out/
+/_probe/
+/.dsh-vision-router/
+/build_log2.txt
+/setfield_trace.log
+/tools/_q_*.py
+/tools/_grab_*
+/tools/_mcp*.py
+/tools/_idap.py
+/tools/_owz.py
+/tools/_out/
+/tools/_title_probe.txt
+/_tools/_*.png
+/_tools/mapobj_probe/
+/_tools/png_dims.py
 
 # 多分辨率交付证据：全局 *.log 的例外（勿误伤功能门禁与底板生成日志）
 !docs/features/multi-resolution/builds/build.log
