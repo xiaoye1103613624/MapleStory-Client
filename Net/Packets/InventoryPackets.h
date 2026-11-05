@@ -81,7 +81,8 @@ namespace ms
 
 	// A packet which requests that an 'USE' item is used
 	// Opcode: USE_ITEM(72)；技能书特例：USE_SKILL_BOOK(82 / 0x52)；
-	// 召唤袋特例：USE_SUMMON_BAG(75 / 0x4B)
+	// 召唤袋特例：USE_SUMMON_BAG(75 / 0x4B)；
+	// 回城卷特例：USE_RETURN_SCROLL(85 / 0x55)
 	//
 	// Wave 3 收敛点：s9 对 243xxxx（技能书）有专用 handler
 	// （PacketProcessor:244 registerHandler(RecvOpcode.USE_SKILL_BOOK,
@@ -96,6 +97,11 @@ namespace ms
 	// case，落到脚本物品 useType 路径），发 72 的袋子不会刷怪。s9
 	// UseSummonBagHandler body 与 USE_ITEM 逐字段同形（int ts / short slot /
 	// int itemid），故同一包类三分支，仅 opcode 不同。
+	//
+	// P0.5 回城卷：原生 SendPortalScrollUseRequest 发 USE_RETURN_SCROLL(85)。
+	// s9 虽把 85/72 同挂 UseItemHandler（发 72 也能回城），但原生对齐须走 85；
+	// 判定对齐 ItemConstants.isTownScroll：2030000 <= id < 2030100
+	// （ANTI_BANISH_SCROLL=2030100 仍走 USE_ITEM）。
 	//
 	// 路由**下沉在本 ctor**（不在 7 个调用点散传标志位）：背包双击/快捷格/
 	// 聊天命令/壳窗全部自动同语义，新增调用点零成本继承。ItemData 是缓存
@@ -119,6 +125,13 @@ namespace ms
 			return itemid / 10000 == 226;
 		}
 
+		/// 回城/传送卷（s9 ItemConstants.isTownScroll / 原生 PortalScroll）。
+		/// 不含 2030100 抗放逐卷（antibanish 仍走 USE_ITEM）。
+		static constexpr bool is_town_scroll(int32_t itemid)
+		{
+			return itemid >= 2030000 && itemid < 2030100;
+		}
+
 		UseItemPacket(int16_t slot, int32_t itemid)
 			: OutPacket(
 				ItemData::get(itemid).is_summon_bag() ? Opcode::USE_SUMMON_BAG
@@ -126,14 +139,21 @@ namespace ms
 				: (is_pet_food(itemid) ? Opcode::PET_FOOD
 				: (is_mount_food(itemid) ? Opcode::USE_MOUNT_FOOD
 				: (ItemData::get(itemid).is_scripted_item() ? Opcode::SCRIPTED_ITEM
-					: Opcode::USE_ITEM)))))
+				: (is_town_scroll(itemid) ? Opcode::USE_RETURN_SCROLL
+					: Opcode::USE_ITEM))))))
 		{
 			Sound(itemid).play();
 
-			// PET_FOOD / USE_MOUNT_FOOD / SCRIPTED_ITEM / USE_ITEM body 同形
+			// PET_FOOD / USE_MOUNT_FOOD / SCRIPTED_ITEM / USE_RETURN_SCROLL / USE_ITEM body 同形
 			write_time();
 			write_short(slot);
 			write_int(itemid);
+
+			if (is_town_scroll(itemid))
+			{
+				LOG(LOG_INFO, "[UseItem] USE_RETURN_SCROLL slot=" << slot
+					<< " item=" << itemid);
+			}
 		}
 	};
 

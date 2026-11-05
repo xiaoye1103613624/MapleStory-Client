@@ -282,8 +282,10 @@ namespace ms
 			}
 		}
 
-		// 玩家层（0x178）：选中地图当前在线玩家。逐行画在底图右上区，
-		// 行首色块区分频道。上限 20 行（服务端 MAX_PLAYERS=20）。
+		// 玩家层（0x178）：选中地图当前在线玩家。逐行画在底图右上区。
+		// 服务端 WorldMapPlayersHandler.MAX_PLAYERS=40；可视区按行高截断。
+		// 注：原生 BeiDou 大地图无「在线玩家列表」UI（IDA 仅见 MapLink/linkMap
+		// 加载），本层为 s9 自定义协议挂接，布局取右上可读区而非原生节点。
 		if (players_mapid == selected_map_id && !map_players.empty())
 		{
 			int16_t line_y = 24;
@@ -291,7 +293,7 @@ namespace ms
 
 			{
 				Text hdr(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
-					"Online: " + std::to_string(map_players.size()));
+					Locale::format("worldmap.players.online", std::to_string(map_players.size())));
 				hdr.draw(anchor + Point<int16_t>(0, line_y));
 				line_y += 16;
 			}
@@ -1000,13 +1002,14 @@ namespace ms
 		});
 		map_search_panel.set_selected_map(map_id);
 
-		// 0x178 玩家层：选中即请求（服务端 WorldMapPlayersHandler 有 3s 世界缓存，
-		// 重复请求不触发全量扫描）。旧「按 L 手动请求」保留为调试通道。
+		// 0x178 玩家层：选中即请求（服务端 CACHE_TTL_MS=750，短时重复命中缓存）。
+		// SoftKey「L」保留为手动刷新/无选中时输入 mapid 的调试通道。
 		if (map_id > 0)
 		{
 			WorldMapPlayersPacket(map_id).dispatch();
 			map_players.clear();
 			players_mapid = 0;	// 应答到达前视为无数据，避免显示上一图的列表
+			LOG(LOG_DEBUG, "[UIWorldMap] WORLD_MAP_PLAYERS request map=" << map_id);
 		}
 
 		LOG(LOG_INFO, "[UIWorldMap] selected_map_id=" << selected_map_id);

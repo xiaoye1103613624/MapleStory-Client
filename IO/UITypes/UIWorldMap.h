@@ -72,7 +72,7 @@ namespace ms
 		int32_t get_selected_map_id() const { return selected_map_id; }
 
 		// WORLD_MAP_PLAYERS(0x178) 回包入口：只有 mapid 与当前选中一致才缓存，
-		// 防止连续切换选中后旧应答覆盖新应答（服务端有 3s 缓存，乱序可达）。
+		// 防止连续切换选中后旧应答覆盖新应答（服务端 CACHE_TTL_MS=750，乱序可达）。
 		void set_map_players(int32_t map_id, std::vector<WorldMapPlayer>&& players);
 
 	protected:
