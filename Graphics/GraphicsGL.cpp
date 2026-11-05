@@ -1013,17 +1013,19 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #B[%]# - Shows a progress bar
+							// #B[%]# - 进度条（IDA enum12→type2；pool 1374=UI/Login.img/Notice/Loading/bar/%d）
 							case 'B':
 							{
-								// TODO: Needs implemented
-								skip += 2;
+								int16_t iw = 0;
+								placed_icon = try_parse_progress_bar(text, first, last, skip, iw);
+
+								if (!placed_icon)
+									skip += 2;
 								break;
 							}
-							// #c[id]# - Show how many of a given item are in the player's inventory in an orange color
+							// #c - 橙色（format_text 已把 #c<id># 展开为 #c + 持有数）
 							case 'c':
 							{
-								// TODO: Show the number of items
 								color = Color::Name::ORANGE;
 								skip += 2;
 								break;
@@ -1118,10 +1120,9 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #m[id]# - Shows the name of the given map
+							// #m[id]# - 地图名：由 UINpcTalk::format_text 展开（IDA case17 + mapName）
 							case 'm':
 							{
-								// TODO: Needs implemented
 								skip += 2;
 								break;
 							}
@@ -1151,10 +1152,9 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #o[id]# - Shows the name of the given monster
+							// #o[id]# - 怪物名：由 UINpcTalk::format_text 展开（IDA case17 'o'）
 							case 'o':
 							{
-								// TODO: Needs implemented
 								skip += 2;
 								break;
 							}
@@ -1217,10 +1217,9 @@ namespace ms
 								skip += 1;
 								break;
 							}
-							// #x - Returns "0%" (Need more information on this)
+							// #x[id]# - 由 format_text 展开为 "0%"（IDA pool 1941；任务表未接）
 							case 'x':
 							{
-								// TODO: Needs implemented
 								skip += 2;
 								break;
 							}
@@ -1669,6 +1668,67 @@ namespace ms
 		(void)first;
 		(void)last;
 		(void)skip;
+		return false;
+#endif
+	}
+
+	bool GraphicsGL::LayoutBuilder::try_parse_progress_bar(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
+		// IDA case12（'B'→enum12）：*elem=2；atoi(body) 钳 [10,100]；
+		// 路径 pool 1374 = UI/Login.img/Notice/Loading/bar/%d。
+		// 原生叠 bar/10 + bar/(pct/10-1)；本仓用单帧 pct/10（与 UILoginWait 0..10 一致）。
+		out_w = 0;
+
+		if (last < first + 2)
+			return false;
+
+		int32_t pct = 0;
+		bool any_digit = false;
+
+		for (size_t p = first + 2; p < last; ++p)
+		{
+			const char ch = text[p];
+
+			if (ch < '0' || ch > '9')
+				return false;
+
+			any_digit = true;
+			const int32_t next = pct * 10 + (ch - '0');
+
+			if (next < pct)
+				return false;
+
+			pct = next;
+		}
+
+		if (!any_digit)
+			return false;
+
+		if (pct < 10)
+			pct = 10;
+		else if (pct > 100)
+			pct = 100;
+
+		const int32_t frame = pct / 10;
+
+#ifdef USE_NX
+		nl::node node = nl::nx::UI.resolve(
+			std::string("Login.img/Notice/Loading/bar/") + std::to_string(frame));
+
+		if (node && node.data_type() != nl::node::type::bitmap)
+		{
+			if (nl::node frame0 = node["0"])
+				node = frame0;
+		}
+
+		set_pending_icon(Texture(node), first, last, skip, out_w);
+		return true;
+#else
+		(void)text;
+		(void)first;
+		(void)last;
+		(void)skip;
+		(void)frame;
 		return false;
 #endif
 	}

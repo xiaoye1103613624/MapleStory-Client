@@ -284,6 +284,7 @@ namespace ms
 			bool try_parse_item_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
 			bool try_parse_skill_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
 			bool try_parse_path_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
+			bool try_parse_progress_bar(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
 			void set_pending_icon(const Texture& tex, size_t first, size_t last, size_t& skip, int16_t& out_w);
 
 			// text[pos] 处这个字符的推进量，consumed 输出它占的字节数。

@@ -309,7 +309,8 @@ namespace ms
 				{
 					std::string t = text.get_text();
 					// 令牌须原子喂入：半截 `#` 会被布局器先吞掉，下一拍字母当正文闪现。
-					// 图标 #i/#v/#s/#f…# 吃到闭合；色标/样式 #b/#r/#e… 固定 2 字节（IDA skip+=2）。
+					// 图标/进度条 #i/#v/#s/#f/#B…# 吃到闭合；色标/样式 #b/#r/#c/#e… 固定 2 字节。
+					// #m/#o/#x 正常已被 format_text 展开；残留闭合体仍按 body 原子喂入兜底。
 					size_t take = 1;
 					const size_t pos = formatted_text_pos;
 
@@ -317,14 +318,15 @@ namespace ms
 					{
 						const char tag = formatted_text[pos + 1];
 
-						if (tag == 'i' || tag == 'v' || tag == 's' || tag == 'f' || tag == 'F')
+						if (tag == 'i' || tag == 'v' || tag == 's' || tag == 'f' || tag == 'F'
+							|| tag == 'B' || tag == 'm' || tag == 'o' || tag == 'x')
 						{
 							const size_t end = formatted_text.find('#', pos + 2);
 
 							if (end != std::string::npos)
 								take = end - pos + 1;
 						}
-						else if (tag == 'b' || tag == 'd' || tag == 'e' || tag == 'E'
+						else if (tag == 'b' || tag == 'c' || tag == 'd' || tag == 'e' || tag == 'E'
 							|| tag == 'g' || tag == 'k' || tag == 'n' || tag == 'N'
 							|| tag == 'r' || tag == 'l')
 						{
@@ -740,10 +742,11 @@ namespace ms
 
 	std::string UINpcTalk::format_text(const std::string& tx, const int32_t& npcid)
 	{
-		// C6 收口：#p/#h/#t/#z/#q 必须**逐处**展开（旧实现各只替第一处）；
+		// C6 收口：#p/#h/#t/#z/#q/#m/#o/#c/#x 必须**逐处**展开（旧实现各只替第一处）；
 		// 闭合 `#` 一并吃掉（旧写法留下悬空 `#`）；#t/#z 走 ItemData 全品类名，
-		// #q 走 SkillData 名（IDA case17 + '%07d' → String/Skill.img）。
-		// #i/#v/#s/#f 留给 LayoutBuilder 行内画图标（勿剥除）。
+		// #q 走 SkillData 名（IDA case17 + '%07d' → String/Skill.img）；
+		// #m→mapName，#o→Mob 名，#c→持有数（保留 #c 橙色素标），#x→未接任务时 "0%"。
+		// #i/#v/#s/#f/#B 留给 LayoutBuilder 行内画图标/进度条（勿剥除）。
 		std::string formatted_text = tx;
 
 		auto trim_body = [](std::string body) {
@@ -836,7 +839,70 @@ namespace ms
 			}
 		});
 
-		// #i/#v/#s/#f 保留给 LayoutBuilder（IDA type1/2 行内 icon）；#L 仍在下方剥除。
+		// IDA case17 'm'：string pool 1730=mapName → sub_5CF792(mapid)。
+		replace_named('m', [](const std::string& body, std::string& out) {
+			if (body.empty())
+				return false;
+			try
+			{
+				out = NxHelper::Map::get_map_info_by_id(std::stoi(body)).name;
+				return !out.empty();
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		});
+
+		// IDA case17 'o'（111）：与 #p 同族正文名，读 String/Mob.img/<id>/name。
+		replace_named('o', [](const std::string& body, std::string& out) {
+			if (body.empty())
+				return false;
+			try
+			{
+				const int32_t id = std::stoi(body);
+				if (id <= 0)
+					return false;
+#ifdef USE_NX
+				out = nl::nx::String["Mob.img"][std::to_string(id)]["name"].get_string();
+#endif
+				return !out.empty();
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		});
+
+		// IDA case17 'c'：sub_A2858C(itemid) 汇总背包数量 → 橙色素插入。
+		// 展开为「#c」色标 + 十进制数，LayoutBuilder 对 #c 仍 ORANGE+skip+=2。
+		replace_named('c', [](const std::string& body, std::string& out) {
+			if (body.empty())
+				return false;
+			try
+			{
+				const int32_t id = std::stoi(body);
+				if (id <= 0)
+					return false;
+				const int16_t n = Stage::get().get_player().get_inventory().get_total_item_count(id);
+				out = std::string("#c") + std::to_string(static_cast<int>(n));
+				return true;
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		});
+
+		// IDA case17 'x'→sub_9A2557→sub_4E6A98；未命中用 pool 1941="%d%%"+0 → "0%"。
+		// 任务进度表未接线：固定 "0%"（与原生未接 quest 时一致）；仍吃掉令牌避免残片。
+		replace_named('x', [](const std::string& body, std::string& out) {
+			(void)body;
+			out = "0%";
+			return true;
+		});
+
+		// #i/#v/#s/#f/#B 保留给 LayoutBuilder（IDA type1/2 行内 icon/bar）；#L 仍在下方剥除。
 		return strip_simple_choices(formatted_text);
 	}
 
