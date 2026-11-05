@@ -26,6 +26,7 @@
 
 #include "../../Gameplay/Stage.h"
 
+#include "../../Data/ItemData.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
@@ -717,53 +718,94 @@ namespace ms
 
 	std::string UINpcTalk::format_text(const std::string& tx, const int32_t& npcid)
 	{
+		// C6 收口：#p/#h/#t/#z 必须**逐处**展开（旧实现各只替第一处）；
+		// 闭合 `#` 一并吃掉（旧写法留下悬空 `#`）；#t/#z 走 ItemData 全品类名，
+		// 不再只查 Consume.img。#i/#v 图标令牌本仓 LayoutBuilder 尚未画图，
+		// 整段剥掉以免 `#i…##t…#` 露出数字残片（图标实装后改回插图）。
 		std::string formatted_text = tx;
-		size_t begin = formatted_text.find("#p");
 
-		if (begin != std::string::npos)
-		{
-			size_t end = formatted_text.find("#", begin + 1);
+		auto trim_body = [](std::string body) {
+			while (!body.empty() && (body.front() == ' ' || body.front() == '\t'))
+				body.erase(body.begin());
+			while (!body.empty() && (body.back() == ' ' || body.back() == '\t'))
+				body.pop_back();
+			return body;
+		};
 
-			if (end != std::string::npos)
+		auto replace_named = [&](char tag, const auto& resolve) {
+			size_t search = 0;
+			for (int guard = 0; guard < 256; ++guard)
 			{
-				std::string namestr = nl::nx::String["Npc.img"][std::to_string(npcid)]["name"];
-				formatted_text.replace(begin, end - begin, namestr);
+				const size_t begin = formatted_text.find(std::string("#") + tag, search);
+				if (begin == std::string::npos)
+					break;
+				const size_t end = formatted_text.find('#', begin + 2);
+				if (end == std::string::npos)
+					break;
+
+				const std::string body = trim_body(
+					formatted_text.substr(begin + 2, end - (begin + 2)));
+				std::string replacement;
+				const bool ok = resolve(body, replacement);
+				if (!ok)
+				{
+					// 非法令牌：跳过本段，避免死循环；原文留给布局器。
+					search = end + 1;
+					continue;
+				}
+
+				formatted_text.replace(begin, end - begin + 1, replacement);
+				search = begin + replacement.size();
 			}
-		}
+		};
 
-		begin = formatted_text.find("#h");
+		replace_named('h', [&](const std::string&, std::string& out) {
+			out = Stage::get().get_player().get_name();
+			return true;
+		});
 
-		if (begin != std::string::npos)
-		{
-			size_t end = formatted_text.find("#", begin + 1);
-
-			if (end != std::string::npos)
+		replace_named('p', [&](const std::string& body, std::string& out) {
+			int32_t id = npcid;
+			if (!body.empty())
 			{
-				std::string charstr = Stage::get().get_player().get_name();
-				formatted_text.replace(begin, end - begin, charstr);
-			}
-		}
-
-		begin = formatted_text.find("#t");
-
-		if (begin != std::string::npos)
-		{
-			size_t end = formatted_text.find("#", begin + 1);
-
-			if (end != std::string::npos)
-			{
-				size_t b = begin + 2;
 				try
 				{
-					int32_t itemid = std::stoi(formatted_text.substr(b, end - b));
-					std::string itemname = nl::nx::String["Consume.img"][itemid]["name"];
-					formatted_text.replace(begin, end - begin, itemname);
+					id = std::stoi(body);
 				}
 				catch (const std::exception&)
 				{
-					// 非法 #t 令牌：保留原文，避免 NPC 对话路径抛异常崩溃。
+					return false;
 				}
 			}
+			if (id <= 0)
+				return false;
+			out = nl::nx::String["Npc.img"][std::to_string(id)]["name"];
+			return !out.empty();
+		});
+
+		auto resolve_item = [](const std::string& body, std::string& out) {
+			if (body.empty())
+				return false;
+			try
+			{
+				out = ItemData::get(std::stoi(body)).get_name();
+				return !out.empty();
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		};
+		replace_named('t', resolve_item);
+		replace_named('z', resolve_item);
+
+		// 剥 #i[id]# / #v[id]#（整段，含闭合 #）
+		for (char tag : { 'i', 'v' })
+		{
+			replace_named(tag, [](const std::string&, std::string& out) {
+				out.clear();
+				return true;
+			});
 		}
 
 		// 令牌剥除放在这里，而不是交给布局器：打字机逐字符喂的就是这份文本，
