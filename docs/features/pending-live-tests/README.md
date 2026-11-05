@@ -34,6 +34,7 @@
 | 22 | NPC tip 817–821 + Pet inset A11g | ⏳ 待测 | — | 校验 tip 样式；Pet speaker=2 输入 inset=25 |
 | 23 | ScriptMessage OnPacket + tip 820 A11h | ⏳ 待测 | s2c 304 | 0/1/2/3/4/12 回归；未接 UI `-1` 收口；tip 820 需人为 min_digits>0 |
 | 24 | AskAvatar / sendStyle A11i | ⏳ 待测 | s2c 304 / c2s 60 | UtilDlgEx_Avatar 选样式；OK `(7,1,sel)`；Cancel `(7,0)` |
+| 25 | AskBoxText A11j | ⏳ 待测 | s2c 304 / c2s 60 | `sendAskBoxText`；OK `(13,1,str)`；Cancel `(13,0)`；单行局限 |
 
 ---
 
@@ -62,7 +63,7 @@
 
 ### 环境收尾
 
-`xy-config.yaml` 已按备份逐字节还原（`login.auto=false`、`debug.*` 全关）；调试日志作为证据保留；临时驱动脚本已清理。
+`xy-config.yaml` 已按备份逐字节还原（`login.auto=false`、`debug.*` 全关）；调试日志作为证据保留。临时驱动脚本集中在本轮工作区 `c:\Users\11036\CodeBuddy\20261103175716\_*`（批量清理审批超时未执行，可手动删除）；项目仓库内未留临时文件。
 
 ---
 
@@ -317,12 +318,12 @@
   2. **Say `speaker&4`**：若脚本带 override npc，立绘应对齐覆盖后的 templateId（无此类脚本则跳过）。
   3. **GetText short×2**：s9 `writeInt(0)` 路径与原先一致（minLen=0 不弹 tip 821）。
   4. **GetNumber tip 820**：正常 `sendGetNumber` **不应**弹「more than %d digits」；若要肉眼验 tip 820，需临时把 `TalkInputParams::number_min_digits` 调为 >0（或调试断点改字段）再输入偏短数字串。
-  5. **未接 UI 收口**：Mirror（14）、Quiz/SpeedQuiz/Pet/AskBoxText（5/6/9/10/13）→ 客户端应 `NpcTalkMore(-1)` 结束，脚本不永久挂死；日志 `[NPC] ScriptMessage msgtype=… reserved/no-UI`。
+  5. **未接 UI 收口**：Mirror（14）、Quiz/SpeedQuiz/Pet（5/6/9/10）→ 客户端应 `NpcTalkMore(-1)` 结束；日志 `reserved/no-UI`。AskBoxText（13）见 §25。
   6. **AskAvatar（A11i，另条）**：见 §24；本条不再把 sendStyle 当吞包项。
 - **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
 - **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
 - **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
-- **仍预留**：Quiz/Pet/Mirror/AskBoxText 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
+- **仍预留**：Quiz/Pet/Mirror 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
 
 ## 24. AskAvatar / sendStyle A11i
 
@@ -336,7 +337,20 @@
 - **期望**：无崩；样式选择可走完；取消不挂脚本。
 - **opcode**：s2c `NPC_TALK=304` msgtype7/8；c2s `NPC_TALK_MORE=60`。
 - **文档**：[a11i-askavatar-sendstyle-ida](../npc-talk-utildlgex-align/evidence/a11i-askavatar-sendstyle-ida.md)
-- **仍预留**：Quiz / Pet / Mirror / AskBoxText UI。
+- **仍预留**：Quiz / Pet / Mirror UI。
+
+## 25. AskBoxText A11j
+
+- **前置**：脚本 `cm.sendAskBoxText(text, def, cols, rows)`（s9 本轮新增）；或等价发包 msgtype=13。
+- **操作 / 期望**：
+  1. 开 UtilDlgEx；正文下出现按 `6*cols` / `12*rows` 尺寸的输入框（黑/白框）。
+  2. 输入中文/ASCII → **OK/Enter** → 上行 `(13,1,string)`；`getText()` 可读。
+  3. **Close/Esc** → `(13,0)`，脚本结束不挂死。
+  4. 多行 `rows>1`：框变高；本仓 Textfield 仍单行（↩ 提交，不插行）——已知局限。
+- **期望**：无崩；文本回程进脚本。
+- **opcode**：s2c 304 msgtype13；c2s 60。
+- **文档**：[a11j-askboxtext-ida](../npc-talk-utildlgex-align/evidence/a11j-askboxtext-ida.md)
+- **仍预留**：Quiz/Pet/Mirror；BoxText 真多行换行。
 
 ## 7. SET_HPMPALERT
 

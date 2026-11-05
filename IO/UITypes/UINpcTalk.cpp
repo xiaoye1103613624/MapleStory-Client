@@ -244,9 +244,10 @@ namespace ms
 			}
 		}
 
-		// GetText/GetNumber 输入槽：
-		//   非 Avatar：IDA sub_9A83F6 黑框(-16777216) + 白底(-1) + Edit；
-		//   Avatar：IDA sub_9A8716 仅 Edit（无 DrawRect 黑白框）。
+		// GetText/GetNumber/AskBoxText 输入槽：
+		//   非 Avatar GetText/Number：IDA sub_9A83F6 黑框 + 白底 + Edit；
+		//   AskBoxText：IDA sub_9A8910 按 cols/rows 定黑白框；
+		//   Avatar：GetText/Number 无框；BoxText Avatar 亦无框。
 		if (input_active)
 		{
 			if (!input_avatar_layout)
@@ -255,13 +256,30 @@ namespace ms
 				const int16_t ileft = input_content_left();
 				const int16_t bx = static_cast<int16_t>(position.x() + ileft - 1);
 				const int16_t by = static_cast<int16_t>(position.y() + input_box_y);
-				const int16_t bw = static_cast<int16_t>(dlg_w - 2 * ileft + 3);
 				const int16_t wx = static_cast<int16_t>(position.x() + ileft);
 				const int16_t wy = static_cast<int16_t>(by + 1);
-				const int16_t ww = static_cast<int16_t>(dlg_w - 2 * ileft + 1);
-				ColorBox(bw, INPUT_BLACK_H, Color::Name::BLACK, 1.0f)
+				int16_t bw;
+				int16_t ww;
+				int16_t bh;
+				int16_t wh;
+				if (type == TalkType::SENDBOXTEXT && input_box_w > 0 && input_box_h > 0)
+				{
+					// IDA：黑 w=v3+3、h=v43+4；白 w=v3+1、h=v43+2；v3=6*cols+4
+					bw = input_box_w;
+					bh = input_box_h;
+					ww = static_cast<int16_t>(input_box_w - 2);
+					wh = static_cast<int16_t>(input_box_h - 2);
+				}
+				else
+				{
+					bw = static_cast<int16_t>(dlg_w - 2 * ileft + 3);
+					ww = static_cast<int16_t>(dlg_w - 2 * ileft + 1);
+					bh = INPUT_BLACK_H;
+					wh = INPUT_WHITE_H;
+				}
+				ColorBox(bw, bh, Color::Name::BLACK, 1.0f)
 					.draw(DrawArgument(Point<int16_t>(bx, by)));
-				ColorBox(ww, INPUT_WHITE_H, Color::Name::WHITE, 1.0f)
+				ColorBox(ww, wh, Color::Name::WHITE, 1.0f)
 					.draw(DrawArgument(Point<int16_t>(wx, wy)));
 			}
 			input_field.draw(Point<int16_t>(0, 0));
@@ -353,10 +371,10 @@ namespace ms
 			}
 		}
 
-		// GetText/GetNumber 点 OK：先校验；失败则保持开窗（对齐 IDA sub_9AB50A 弹 tip 不收口）。
+		// GetText/GetNumber/AskBoxText 点 OK：先校验；失败则保持开窗（对齐 IDA sub_9AB50A）。
 		const bool submit_input = input_active
 			&& buttonid == Buttons::OK
-			&& (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER);
+			&& is_input_talk();
 		if (submit_input)
 		{
 			if (!dispatch_input_field())
@@ -472,8 +490,10 @@ namespace ms
 			}
 			case TalkType::SENDGETTEXT:
 			case TalkType::SENDGETNUMBER:
+			case TalkType::SENDBOXTEXT:
 			{
 				// OK 已在入口经 dispatch_input_field 收口；此处仅处理关闭。
+				// AskBoxText：IDA Close(result==3) 静默；本仓发 (13,0) 防脚本挂死。
 				if (buttonid == Buttons::CLOSE)
 					NpcTalkMorePacket(lastmsg, 0).dispatch();
 				break;
@@ -614,7 +634,7 @@ namespace ms
 		}
 
 		// UI 路由传入的是 KeyAction::Id（见 UI.cpp），不是 GLFW 原始键码。
-		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
+		if (is_input_talk())
 		{
 			if (keycode == KeyAction::Id::RETURN)
 			{
@@ -672,6 +692,7 @@ namespace ms
 			case 7: return TalkType::SENDAVATAR;
 			case 8: return TalkType::SENDMEMBERSHOPAVATAR;
 			case 12: return TalkType::SENDACCEPTDECLINE;
+			case 13: return TalkType::SENDBOXTEXT;
 			default: return TalkType::NONE;
 		}
 	}
@@ -904,10 +925,16 @@ namespace ms
 		apply_dlg_skin(speakerbyte);
 		dlg_speaker = speakerbyte;
 		input_params = input;
-		// speaker==1 → UtilDlgEx_Avatar 皮肤；布局走 sub_9A8716（IDA a1[41] 非零）。
-		input_avatar_layout = (speakerbyte == 1)
-			&& (get_by_value(msgtype) == TalkType::SENDGETTEXT
-				|| get_by_value(msgtype) == TalkType::SENDGETNUMBER);
+		input_box_w = 0;
+		input_box_h = 0;
+		// speaker==1 → UtilDlgEx_Avatar；GetText/Number 走 9A8716，BoxText 走 9A8910 Avatar 支。
+		{
+			const TalkType wire_ty = get_by_value(msgtype);
+			input_avatar_layout = (speakerbyte == 1)
+				&& (wire_ty == TalkType::SENDGETTEXT
+					|| wire_ty == TalkType::SENDGETNUMBER
+					|| wire_ty == TalkType::SENDBOXTEXT);
+		}
 
 		msgtype_wire = msgtype;
 		type = get_by_value(msgtype);
@@ -999,12 +1026,14 @@ namespace ms
 					top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
 		}
 
-		// GetText/GetNumber：在正文下方留输入栈，正文在剩余区内再居中。
-		//   非 Avatar：IDA sub_9A83F6（INPUT_STACK）；Avatar：sub_9A8716 固定带。
+		// GetText/GetNumber/AskBoxText：正文下方留输入栈，正文在剩余区内再居中。
+		//   GetText 非 Avatar：9A83F6；BoxText：9ACDF3/9A8910（rows>1 扣 12*rows）。
 		input_box_y = 0;
-		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
+		if (is_input_talk())
 		{
-			const int16_t stack = input_avatar_layout ? INPUT_AVATAR_STACK : INPUT_STACK;
+			const int16_t stack = input_avatar_layout
+				? INPUT_AVATAR_STACK
+				: (type == TalkType::SENDBOXTEXT ? box_input_stack() : INPUT_STACK);
 			const int16_t need = static_cast<int16_t>(text_block_height + stack);
 			if (need > height)
 				height = need;
@@ -1114,15 +1143,25 @@ namespace ms
 			}
 			case TalkType::SENDGETNUMBER:
 			case TalkType::SENDGETTEXT:
+			case TalkType::SENDBOXTEXT:
 			{
-				// 非 Avatar：sub_9A83F6 BtOK@(W-54,H-26)；Avatar：sub_9A8716 BtOK@(158,H-30)。
-				const int16_t ok_x = input_avatar_layout ? BTN_AVATAR_OK_X : x_ok;
+				// GetText 非 Avatar：9A83F6 OK@(W-54,H-26)；Avatar：9A8716 OK@158。
+				// BoxText Avatar：9A8910 OK@176 / Close@218。
+				int16_t ok_x = x_ok;
+				if (input_avatar_layout)
+					ok_x = (type == TalkType::SENDBOXTEXT) ? BTN_BOX_AVATAR_OK_X : BTN_AVATAR_OK_X;
+				if (type == TalkType::SENDBOXTEXT && input_avatar_layout && buttons.count(Buttons::CLOSE))
+				{
+					buttons[Buttons::CLOSE]->set_position(
+						Point<int16_t>(BTN_BOX_AVATAR_CLOSE_X, y_input_btn));
+				}
 				activate(Buttons::OK, Point<int16_t>(ok_x, y_input_btn));
 				setup_input_field();
-				LOG(LOG_DEBUG, "UINpcTalk: GetText/Number OK x=" << ok_x
+				LOG(LOG_DEBUG, "UINpcTalk: input OK x=" << ok_x
+					<< " type=" << static_cast<int>(type)
 					<< " input_y=" << input_box_y
 					<< " avatar=" << (input_avatar_layout ? 1 : 0)
-					<< " bounds=" << (input_params.has_number_bounds ? 1 : 0));
+					<< " box=" << box_cols_eff() << "x" << box_rows_eff());
 				break;
 			}
 			case TalkType::SENDSIMPLE:
@@ -1209,9 +1248,33 @@ namespace ms
 		center_on_screen();
 	}
 
+	bool UINpcTalk::is_input_talk() const
+	{
+		return type == TalkType::SENDGETTEXT
+			|| type == TalkType::SENDGETNUMBER
+			|| type == TalkType::SENDBOXTEXT;
+	}
+
+	int16_t UINpcTalk::box_cols_eff() const
+	{
+		return input_params.box_cols > 0 ? input_params.box_cols : static_cast<int16_t>(1);
+	}
+
+	int16_t UINpcTalk::box_rows_eff() const
+	{
+		return input_params.box_rows > 0 ? input_params.box_rows : static_cast<int16_t>(1);
+	}
+
+	int16_t UINpcTalk::box_input_stack() const
+	{
+		// 黑框 h=12*rows+6，外加上下余量（对齐 GetText INPUT_STACK 精神）。
+		const int16_t rows = box_rows_eff();
+		return static_cast<int16_t>(2 + (12 * rows + 6) + 8);
+	}
+
 	void UINpcTalk::setup_input_field()
 	{
-		if (type != TalkType::SENDGETTEXT && type != TalkType::SENDGETNUMBER)
+		if (!is_input_talk())
 			return;
 
 		const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
@@ -1219,7 +1282,32 @@ namespace ms
 		int16_t edit_y;
 		int16_t edit_w;
 		int16_t edit_h;
-		if (input_avatar_layout)
+		if (type == TalkType::SENDBOXTEXT)
+		{
+			const int16_t cols = box_cols_eff();
+			const int16_t rows = box_rows_eff();
+			const int16_t v3 = static_cast<int16_t>(6 * cols + 4);
+			const int16_t v43 = static_cast<int16_t>(12 * rows + 2);
+			input_box_w = static_cast<int16_t>(v3 + 3);
+			input_box_h = static_cast<int16_t>(v43 + 4);
+			if (input_avatar_layout)
+			{
+				// IDA sub_9A8910 Avatar：Edit @ (19, H-73)，尺寸 (v3, v43)
+				edit_x = static_cast<int16_t>(position.x() + INPUT_AVATAR_EDIT_X);
+				edit_y = static_cast<int16_t>(position.y() + input_box_y);
+				edit_w = v3;
+				edit_h = v43;
+			}
+			else
+			{
+				const int16_t ileft = input_content_left();
+				edit_x = static_cast<int16_t>(position.x() + ileft + 2);
+				edit_y = static_cast<int16_t>(position.y() + input_box_y + 3);
+				edit_w = static_cast<int16_t>(v3 - 2);
+				edit_h = v43;
+			}
+		}
+		else if (input_avatar_layout)
 		{
 			// IDA sub_9A8716：Edit @ (19, H-73)，226×15
 			edit_x = static_cast<int16_t>(position.x() + INPUT_AVATAR_EDIT_X);
@@ -1240,26 +1328,35 @@ namespace ms
 		const Point<int16_t> br(static_cast<int16_t>(edit_x + edit_w),
 			static_cast<int16_t>(edit_y + edit_h));
 		size_t limit = (type == TalkType::SENDGETNUMBER) ? 10u : 64u;
-		if (input_params.edit_maxlen > 0)
+		if (type == TalkType::SENDBOXTEXT)
+		{
+			const int32_t cap = static_cast<int32_t>(box_cols_eff()) * static_cast<int32_t>(box_rows_eff());
+			limit = cap > 0 ? static_cast<size_t>(cap) : 64u;
+		}
+		else if (input_params.edit_maxlen > 0)
+		{
 			limit = static_cast<size_t>(input_params.edit_maxlen);
+		}
 		const std::string keep = input_active ? input_field.get_text() : std::string();
 		std::string initial = keep;
 		if (initial.empty())
 		{
-			if (type == TalkType::SENDGETTEXT)
+			if (type == TalkType::SENDGETTEXT || type == TalkType::SENDBOXTEXT)
 				initial = input_params.def_text;
 			else if (input_params.has_number_bounds || input_params.def_number != 0)
 				initial = std::to_string(input_params.def_number);
 		}
 
+		const int16_t marker_h = (type == TalkType::SENDBOXTEXT && edit_h > 14)
+			? static_cast<int16_t>(edit_h - 2) : static_cast<int16_t>(12);
 		input_field = Textfield(
 			Text::Font::A12M,
 			Text::Alignment::LEFT,
 			Color::Name::BLACK,
 			Rectangle<int16_t>(tl, br),
 			limit,
-			12);
-		input_field.set_accept_unicode(type == TalkType::SENDGETTEXT);
+			marker_h);
+		input_field.set_accept_unicode(type == TalkType::SENDGETTEXT || type == TalkType::SENDBOXTEXT);
 		input_field.set_text_shift(Point<int16_t>(1, 11));
 		if (!initial.empty())
 			input_field.change_text(initial);
@@ -1319,6 +1416,14 @@ namespace ms
 			return false;
 
 		const std::string s = input_field.get_text();
+		if (type == TalkType::SENDBOXTEXT)
+		{
+			// IDA sub_9AB50A dlgType==8：无 minLen 校验，直接收口。
+			NpcTalkMorePacket(NpcTalkMorePacket::AskBoxText{}, s).dispatch();
+			LOG(LOG_INFO, "UINpcTalk: AskBoxText OK len=" << s.size()
+				<< " cols=" << box_cols_eff() << " rows=" << box_rows_eff());
+			return true;
+		}
 		if (type == TalkType::SENDGETTEXT)
 		{
 			// IDA sub_9AB50A：内部 dlgType==3 时 len < this+0xDC → tip 821；线参常为 0。

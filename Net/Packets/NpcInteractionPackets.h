@@ -96,6 +96,16 @@ namespace ms
 			write_byte(1);
 			write_byte(selection);
 		}
+
+		// AskBoxText OK（IDA sub_746C46）：lastMsg=13, action=1, string。
+		// Cancel/Close 本仓发 (13,0)；IDA Close(result==3) 静默，见 a11j。
+		struct AskBoxText {};
+		NpcTalkMorePacket(AskBoxText, const std::string& response) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(13);
+			write_byte(1);
+			write_string(response);
+		}
 	};
 
 	// Packet which tells the server of an interaction with an NPC shop

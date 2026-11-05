@@ -37,7 +37,7 @@ namespace ms
 	public:
 		// Wire msgtype values (BeiDou / v83):
 		// 0=Say(OK/Next/Prev via style), 1=YesNo, 2=GetText, 3=GetNumber,
-		// 4=Simple, 7=AskAvatar, 8=MembershopAvatar, 12=AcceptDecline
+		// 4=Simple, 7=AskAvatar, 8=MembershopAvatar, 12=AcceptDecline, 13=AskBoxText
 		enum TalkType : int8_t
 		{
 			NONE = -1,
@@ -49,6 +49,7 @@ namespace ms
 			SENDAVATAR = 7,
 			SENDMEMBERSHOPAVATAR = 8,
 			SENDACCEPTDECLINE = 12,
+			SENDBOXTEXT = 13,
 			// Style-derived variants of SENDOK (not wire values)
 			SENDNEXT = 100,
 			SENDNEXTPREV = 101,
@@ -88,6 +89,9 @@ namespace ms
 			int32_t number_min_digits = 0;
 			// AskAvatar / MembershopAvatar：style id 列表（发型/脸型/肤色）
 			std::vector<int32_t> style_ids;
+			// AskBoxText：746C46 → 9AC811 this+224/228（cols/rows）；容量 cols*rows
+			int16_t box_cols = 0;
+			int16_t box_rows = 0;
 		};
 
 		void change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speaker, const std::string& text);
@@ -167,6 +171,9 @@ namespace ms
 		static constexpr int16_t BTN_AVATAR_CLOSE_X = 208;
 		static constexpr int16_t BTN_AVATAR_Y_DELTA = 4; // H-30 vs 非 Avatar H-26
 		static constexpr int16_t INPUT_AVATAR_STACK = 56; // 预留正文下输入带（约 H-73 带）
+		// AskBoxText Avatar（IDA sub_9A8910 this+164!=0）：BtOK/Close 与 GetText Avatar 不同。
+		static constexpr int16_t BTN_BOX_AVATAR_OK_X = 176;
+		static constexpr int16_t BTN_BOX_AVATAR_CLOSE_X = 218;
 		// SENDSIMPLE 选中态（IDA sub_9A3E9F）：黑 1px 底线 + #919191 虚线（3 on / 3 off），宽 = 标签宽+8。
 		static constexpr int16_t SIMPLE_UL_EXT = 8;
 		static constexpr uint8_t SIMPLE_DASH_R = 0x91;
@@ -272,10 +279,14 @@ namespace ms
 		// 点 #L 仍可直接发 selection，下项钮发当前高亮项。
 		int32_t simple_selected = 0;
 
-		// GetText/GetNumber：内嵌输入（对齐原生 CCtrlEdit id=1000）；非本类型时 DISABLED。
+		// GetText/GetNumber/AskBoxText：内嵌输入；非本类型时 DISABLED。
+		// AskBoxText Edit id=1003（IDA sub_9A8910）；本仓仍复用 Textfield。
 		Textfield input_field;
 		bool input_active = false;
 		int16_t input_box_y = 0;
+		// AskBoxText 黑框尺寸（IDA：黑 w=6*cols+7、h=12*rows+6）
+		int16_t input_box_w = 0;
+		int16_t input_box_h = 0;
 		TalkInputParams input_params;
 		bool input_avatar_layout = false;
 
@@ -297,10 +308,15 @@ namespace ms
 		void layout_simple_choices(const Text& body);
 		// SENDSIMPLE：发当前高亮项的 selection（下项钮 / SoftKey 共用）
 		bool dispatch_simple_selection();
-		// GetText/GetNumber：布置/刷新内嵌输入框几何与焦点
+		// GetText/GetNumber/AskBoxText：布置/刷新内嵌输入框几何与焦点
 		void setup_input_field();
 		void clear_input_field();
 		bool dispatch_input_field();
+		bool is_input_talk() const;
+		// AskBoxText：钳后的 cols/rows（包内 ≤0 时升为 1）
+		int16_t box_cols_eff() const;
+		int16_t box_rows_eff() const;
+		int16_t box_input_stack() const;
 		// 校验失败 tip（IDA sub_9AB50A → sub_9929DD，StringPool 817–821；含 tip 820 位数下限）
 		void show_input_tip(const std::string& message);
 		int16_t input_content_left() const;

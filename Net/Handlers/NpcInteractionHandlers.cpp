@@ -199,16 +199,16 @@ namespace ms
 			break;
 		}
 
-		case 13: // AskBoxText — 746C46：同 GetText 形态（dlgType=8）
+		case 13: // AskBoxText — 746C46：talk+def+short cols+short rows → dlgType=8
 			if (recv.length() >= 2)
-				recv.read_string();
+				text = recv.read_string();
 			if (recv.length() >= 2)
-				recv.read_string();
+				input.def_text = recv.read_string();
 			if (recv.length() >= 2)
-				recv.read_short();
+				input.box_cols = recv.read_short();
 			if (recv.length() >= 2)
-				recv.read_short();
-			end_unhandled = true;
+				input.box_rows = recv.read_short();
+			show_ui = true;
 			break;
 
 		case 14: // Mirror — 76B5C8：int + string
