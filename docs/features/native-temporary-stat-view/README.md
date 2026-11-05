@@ -20,4 +20,5 @@
 - 标题改为中文「临时属性」（宋体 A12B / WHITE）
 - 明细行 A11M + WHITE；半透明黑底 α=0.55 托字（原生无整窗底板）
 - 无独立 TEMPORARY_STAT 协议（s9 零命中）——继续本地驱动
-- 真机：有 buff 时按 `D` 开窗，见名称/层数/倒计时（pending 造 buff）
+- 真机：SoftKey `D` 开窗 ✅（2026-11-06）；明细行仍 pending 造 buff（`!buffme` / Admin 面板点击）
+- SoftKey 路径修复：未绑定键 ASCII 回退 + `UIShortCut::FOCUSED` + 全局 SoftKey `D` 兜底（见 `evidence/live-accept-2026-11-06.md`）

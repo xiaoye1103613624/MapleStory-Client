@@ -622,7 +622,9 @@ private:
 class UIShortCut : public UIElement {
 public:
 	static constexpr Type TYPE = UIElement::Type::SHORTCUTUI;
-	static constexpr bool FOCUSED = false; static constexpr bool TOGGLED = false;
+	// SoftKey 字母捷径（A→UIAdmin / S→技能…）依赖 focused 下传 ASCII action；
+	// FOCUSED=false 时按键进不了 UIShortCut::send_key，Admin SoftKey 造 buff 等路径全死。
+	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIShortCut();
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;

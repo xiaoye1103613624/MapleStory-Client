@@ -36,6 +36,7 @@
 #include "UITypes/UIQuickslotConfig.h"
 #include "UITypes/UIShop.h"
 #include "UITypes/UIStatusBar.h"
+#include "UITypes/UITemporaryStatView.h"
 #include "UITypes/UIWorldMap.h"
 
 namespace ms
@@ -299,6 +300,17 @@ namespace ms
 		else
 		{
 			Keyboard::Mapping mapping = keyboard.get_mapping(keycode);
+			// SoftKey 字母捷径（UIAdmin / UIBuffList / UIShortCut / UIStatusBar / UIGameMenu…）
+			// 用 ASCII 比较 'A'/'S'/'D'/'4'。未绑定键 get_mapping → NONE/0，捷径永不触发。
+			// GLFW 可打印键码与 ASCII 同值（A=65…Z=90，'4'=52），未绑定时把 keycode
+			// 当作 action 下传；已绑定键仍走 KEYMAP，不受影响。
+			KeyType::Id map_type = mapping.type;
+			int32_t map_action = mapping.action;
+			if (map_type == KeyType::Id::NONE
+				&& keycode >= GLFW_KEY_SPACE && keycode <= GLFW_KEY_Z)
+			{
+				map_action = keycode;
+			}
 
 			bool sent = false;
 			std::list<UIElement::Type> types;
@@ -324,47 +336,47 @@ namespace ms
 
 			if (npctalk && npctalk->is_active())
 			{
-				npctalk->send_key(mapping.action, pressed, escape);
+				npctalk->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (statusbar && statusbar->is_menu_active())
 			{
-				statusbar->send_key(mapping.action, pressed, escape);
+				statusbar->send_key(map_action, pressed, escape);
 				sent = true;
 			}
-			else if (channel && channel->is_active() && mapping.action != KeyAction::Id::CHANGECHANNEL)
+			else if (channel && channel->is_active() && map_action != KeyAction::Id::CHANGECHANNEL)
 			{
-				channel->send_key(mapping.action, pressed, escape);
+				channel->send_key(map_action, pressed, escape);
 				sent = true;
 			}
-			else if (worldmap && worldmap->is_active() && mapping.action != KeyAction::Id::WORLDMAP)
+			else if (worldmap && worldmap->is_active() && map_action != KeyAction::Id::WORLDMAP)
 			{
-				worldmap->send_key(mapping.action, pressed, escape);
+				worldmap->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (optionmenu && optionmenu->is_active())
 			{
-				optionmenu->send_key(mapping.action, pressed, escape);
+				optionmenu->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (shop && shop->is_active())
 			{
-				shop->send_key(mapping.action, pressed, escape);
+				shop->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (joypad && joypad->is_active())
 			{
-				joypad->send_key(mapping.action, pressed, escape);
+				joypad->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (rank && rank->is_active())
 			{
-				rank->send_key(mapping.action, pressed, escape);
+				rank->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else if (quit && quit->is_active())
 			{
-				quit->send_key(mapping.action, pressed, escape);
+				quit->send_key(map_action, pressed, escape);
 				sent = true;
 			}
 			else
@@ -433,7 +445,7 @@ namespace ms
 
 					if (element && element != nullptr)
 					{
-						element->send_key(mapping.action, pressed, escape);
+						element->send_key(map_action, pressed, escape);
 						sent = true;
 					}
 				}
@@ -441,20 +453,34 @@ namespace ms
 
 			if (!sent)
 			{
-				if (escape)
+				// SoftKey D：TemporaryStatView 开关。UIBuffList SoftKey D 因 FOCUSED=false
+				// 键进不去；未绑定 D 时在此兜底（与 BuffList::send_key SoftKey D 同语义）。
+				if (pressed && !escape && map_type == KeyType::Id::NONE
+					&& (map_action == 'D' || map_action == 'd'))
 				{
-					state->send_key(mapping.type, mapping.action, pressed, escape);
+					auto tsv = UI::get().get_element<UITemporaryStatView>();
+					if (!tsv)
+						tsv = UI::get().emplace<UITemporaryStatView>();
+					else if (!tsv->is_active())
+						tsv->makeactive();
+					else
+						tsv->deactivate();
+					sent = true;
+				}
+				else if (escape)
+				{
+					state->send_key(map_type, map_action, pressed, escape);
 				}
 				else if (enter)
 				{
 					if (auto chatbar = UI::get().get_element<UIChatBar>())
-						chatbar->send_key(mapping.action, pressed, escape);
+						chatbar->send_key(map_action, pressed, escape);
 					else
-						state->send_key(mapping.type, mapping.action, pressed, escape);
+						state->send_key(map_type, map_action, pressed, escape);
 				}
 				else
 				{
-					state->send_key(mapping.type, mapping.action, pressed, escape);
+					state->send_key(map_type, map_action, pressed, escape);
 				}
 			}
 		}

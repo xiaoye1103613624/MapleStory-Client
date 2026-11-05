@@ -57,7 +57,8 @@ namespace ms
 		center_on_screen();
 
 		// GM 命令快捷（无参数常用命令），点击派发。硬编码坐标兜底，遵守 R5/R6。
-		const char* quick[] = { "help", "online", "whereami", "rates", "uptime", "gm", "dispose", "goto" };
+		// buffme：真机 TemporaryStatView 验收用（避免聊天框吞 !/空格）；点击即 GeneralChatPacket
+		const char* quick[] = { "help", "online", "whereami", "rates", "uptime", "gm", "dispose", "goto", "buffme" };
 		int16_t y = GM_QUICK_Y;
 		for (const char* c : quick)
 		{
