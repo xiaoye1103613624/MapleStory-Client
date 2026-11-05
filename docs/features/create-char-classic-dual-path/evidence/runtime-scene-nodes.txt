@@ -1,0 +1,75 @@
+# 建角场景节点运行时取证（R1：一律以部署数据为准）
+日期：2026-11-05
+数据源：E:\MXD\BeiDou-Client-xy\Data\.nxcache\{Map001,UI}.nx
+工具：python tools/nx_inspect.py list <nx> <depth> <path...>
+
+## 1. 整屏场景真位图（Map001.nx）
+
+$ python tools/nx_inspect.py list E:/MXD/BeiDou-Client-xy/Data/.nxcache/Map001.nx 1 \
+    Back/login.img/back/16 Back/login.img/back/30 Back/login.img/back/33
+
+===== Back/login.img/back/16
+16 [bitmap] bitmap 1280x720
+  origin [vector] (483, 476)
+  z [int] 0
+===== Back/login.img/back/30
+30 [bitmap] bitmap 1280x900
+  origin [vector] (510, 400)
+  z [int] 0
+===== Back/login.img/back/33
+33 [bitmap] bitmap 1280x720
+  origin [vector] (593, 385)
+  z [int] 0
+
+## 2. 错误来源：UI/MapLogin.img/back/<no> 只是视差参数容器
+
+$ python tools/nx_inspect.py list E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx 2 \
+    MapLogin.img/back/16
+
+===== MapLogin.img/back/16
+16 [null]
+  a [int] 255
+  ani [int] 1
+  bS [string] 'login'
+  cx [int] 1100
+  cy [int] 0
+  f [int] 0
+  front [int] 0
+  no [int] 1
+  rx [int] 12
+  ry [int] 4294967196
+  type [int] 4
+  x [int] 4294967099
+  y [int] 4294965955
+
+无 bitmap 子帧 ⇒ Animation::Animation 收集不到帧 ⇒ Frame() 空纹理 ⇒
+Sprite 什么都不画。这正是建角页背景仍停留在「选职业大树场景」的根因。
+
+## 3. 三职业编号对应关系（no 字段）
+
+$ python tools/nx_inspect.py list E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx 1 \
+    MapLogin.img/back/39 MapLogin.img/back/41 MapLogin.img/back/45
+
+===== MapLogin.img/back/39
+39 [null]
+  bS [string] 'login'
+  no [int] 33       -> 战神雪原
+===== MapLogin.img/back/41
+41 [null]
+  bS [string] 'login'
+  no [int] 16       -> 冒险家蘑菇村
+===== MapLogin.img/back/45
+45 [null]
+  bS [string] 'login'
+  no [int] 30       -> 骑士团凉亭
+
+与 UICommonCreation::init_classic() 的映射一致：
+  className "adventurer"   -> scene_no "16" -> 落点 (-3, -26)
+  className "cygnusKnight" -> scene_no "30" -> 落点 (-33, -32)
+  其它（aran）              -> scene_no "33" -> 落点 (-3, -25)
+
+## 结论
+场景源必须用 nl::nx::Map001["Back"]["login.img"]["back"][scene_no]。
+三张位图均带非零 origin，LoginBackground::set_scene() 已做
+`scene_pos = pos + scene_sprite.get_origin()` 补偿，调用方传的仍是
+「位图左上在窗口内的落点」，无需改动。

@@ -149,7 +149,19 @@ namespace ms
 		classic_text_gl = RaceSelect["textGL"]["0"];
 
 		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 1));
-		buttons[Buttons::BtMake] = std::make_unique<MapleButton>(RaceSelect["BtSelect"], classic_select_pos);
+
+		// IDA sub_6157C9: CCtrlButton::Create(1003, 530, 422) 是「选择」按钮的**位图左上**，
+		// 与说明板自带白槽（板内 (412,111)、(118,311)+ = (530,422)）完全重合。
+		// 运行时 Login.img/RaceSelect/BtSelect/normal/0 的 origin 为 (36,14)；
+		// MapleButton::draw 以 (position - origin) 作位图左上，直接手工构造
+		// 会把按钮画到 (494,408)，白槽裸露 → 实机截图里那块浅蓝/白色矩形。
+		// try_maple_btn 会补回 origin，使按钮恰好盖住白槽（R1：以运行时 img 为准）。
+		if (!try_maple_btn(buttons, Buttons::BtMake, RaceSelect["BtSelect"],
+			classic_select_pos, "RaceSelect/classic/BtSelect"))
+		{
+			LoginUiAssets::log_error("[RaceSelect] BtSelect asset missing; fallback without origin compensation");
+			buttons[Buttons::BtMake] = std::make_unique<MapleButton>(RaceSelect["BtSelect"], classic_select_pos);
+		}
 
 		// Default highlight: explorer (middle), matching ctor field init pattern.
 		selected_index = 1;

@@ -55,6 +55,8 @@ namespace ms
 		}
 
 		// 建角页（classic 命名态）整屏场景 overlay：绘制在 frame 之前、其余背景之后。
+		// src 必须是位图节点（Map001/Back/login.img/back/<no>），
+		// pos 为该位图左上角在窗口内的落点（内部自动补偿 origin）。
 		void set_scene(nl::node src, Point<int16_t> pos);
 		void clear_scene();
 		bool has_scene() const

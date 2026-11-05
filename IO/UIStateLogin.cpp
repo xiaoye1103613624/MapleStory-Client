@@ -97,6 +97,25 @@ namespace ms
 			}
 		}
 
+		// VIEWALLCHAR 关闭（BtVAC / ESC / 选角成功）只会 deactivate 自己。
+		// 这里恢复弹出时被失活的下层窗口，保持「回到选角流程」的原有语义；
+		// 若已切到游戏状态，本 UIStateLogin 会被销毁，不会误恢复。
+		if (!viewall_hidden.empty())
+		{
+			UIElement* viewall = get(UIElement::Type::VIEWALLCHAR);
+
+			if (!viewall || !viewall->is_active())
+			{
+				for (auto hidden : viewall_hidden)
+				{
+					if (UIElement* element = get(hidden))
+						element->makeactive();
+				}
+
+				viewall_hidden.clear();
+			}
+		}
+
 		// 补间结束：激活被延迟的步进窗口（等价于参考端 OnStepChanged 的窗口切换）。
 		if (pending_activation != UIElement::Type::NONE && !LoginBackground::get().is_transitioning())
 		{
@@ -232,7 +251,32 @@ namespace ms
 
 	void UIStateLogin::post_add(UIElement::Type type, UIElement* element)
 	{
-		if (!element || !is_step_window(type))
+		if (!element)
+			return;
+
+		// 「查看所有角色」是独占整屏窗口。draw()/update() 会遍历所有 active 元素，
+		// 若选角页、建角页、世界页等下层窗口仍 active，就会与它同屏叠影
+		// （左侧木牌、吊牌、按钮重影）。这里只失活、不销毁实例，关闭后由
+		// update() 按 viewall_hidden 恢复；不改木牌数量与位置，也不破坏返回选角流程。
+		if (type == UIElement::Type::VIEWALLCHAR)
+		{
+			viewall_hidden.clear();
+
+			for (auto iter : elements)
+			{
+				UIElement* other = iter.second.get();
+
+				if (other && other->is_active() && other->get_type() != type)
+				{
+					other->deactivate();
+					viewall_hidden.push_back(other->get_type());
+				}
+			}
+
+			return;
+		}
+
+		if (!is_step_window(type))
 			return;
 
 		// 参考端 CLogin::OnStepChanged 在补间结束后才显示新窗口。

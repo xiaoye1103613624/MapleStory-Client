@@ -237,7 +237,10 @@ namespace ms
 			return;
 		}
 		scene_sprite = Sprite(src);
-		scene_pos = pos;
+		// Sprite::draw 以 (pos - origin) 作为位图左上角；调用方给的是
+		// 「场景图左上在窗口内的落点」，需把位图 origin 补回去，
+		// 否则 Map001 场景位图（origin 如 483,476）会被整体推出屏幕。
+		scene_pos = pos + scene_sprite.get_origin();
 		has_scene_flag = true;
 	}
 

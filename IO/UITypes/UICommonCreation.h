@@ -56,6 +56,9 @@ namespace ms
 	private:
 		void init_modern(nl::node Login, nl::node Common);
 		void init_classic(nl::node Login, nl::node Common);
+		// 原生 classic 确有 step4「设定角色」阶段（notes/appearance-branch-decision.md），
+		// 但运行时 NewChar*/charSet / avatarSel / 各 Bt* 均无 pos 定位向量，
+		// 没有可用的节点位置信息；按 R1 与「禁止凭截图猜坐标」本轮显式预留，不落推导坐标。
 		void randomize_look();
 		void load_char_look();
 		void load_classic_char_look();
@@ -178,12 +181,20 @@ namespace ms
 		Texture classic_gender_female;
 		Sprite classic_dice;
 
+		// 原生 step4「设定角色」面板（charSet 225x377 + 9 行 avatarSel 200x17
+		// + BtLeft/BtRight 15x16 + BtCheck 50x24）显式预留：运行时节点无 pos
+		// 定位向量，按 R1 不落推导坐标。见 notes/appearance-branch-decision.md §4。
+
 		Charset createLimitNum;
 		Point<int16_t> createLimitPos;
 
 		CharLook newCharLook;
 		Point<int16_t> newCharNamePos;
 		Textfield newCharName;
+		// 名字查重通过后 Textfield 转 DISABLED（draw 直接 return），
+		// 用只读 Text 在吊牌上继续呈现已确认名字。
+		Text confirmed_name;
+		Point<int16_t> classic_name_shift;
 
 		size_t faceIndex;
 		Text faceName;

@@ -433,14 +433,25 @@ namespace ms
 		buttons[Buttons::BtNo] = std::make_unique<MapleButton>(NewChar["BtNo"], classic_no_name);
 
 		// Textfield::draw 会叠加 position（此处为 0,0），输入框落在吊牌输入槽内。
+		// 输入槽 150x24 与 img 位图实测吻合（evidence/img-node-layout.txt §2）。
+		// 槽位图像素均色约 RGB(135,69,14) 深棕木纹，黑字不可读 → 取与吊牌
+		// 白色描边标题一致的白字（用户缺陷「字色不对」）。
 		newCharNamePos = charNameOrigin + slot_pos;
 		Point<int16_t> newCharNameDim(150, 24);
 		newCharName = Textfield(
 			Text::Font::A12M,
 			Text::Alignment::LEFT,
-			Color::Name::BLACK,
+			Color::Name::WHITE,
 			Rectangle<int16_t>(newCharNamePos, newCharNamePos + newCharNameDim),
 			12);
+
+		// A12M 约 12px，FreeType 以 y 为基线，字形可见区约 [y-9, y+3]；
+		// 24px 槽垂直居中需把基线放到 y=15（槽中线 12 + 降部 3）。
+		// 这是字体度量推导（img 无文字基线节点），实机截图可再微调；
+		// 只作用于本窗口，不改通用 Textfield。
+		classic_name_shift = Point<int16_t>(0, 15);
+		newCharName.set_text_shift(classic_name_shift);
+		confirmed_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE);
 
 		newCharName.set_enter_callback([&](std::string) { button_pressed(Buttons::BtYes); });
 		newCharName.set_key_callback(KeyAction::Id::ESCAPE, [&]() { button_pressed(Buttons::BtNo); });
@@ -495,7 +506,11 @@ namespace ms
 			buttons[Buttons::BtViewAll] = std::make_unique<MapleButton>(
 				Login["WorldSelect"]["BtViewAll"], Point<int16_t>(0, 377));
 
-		// 建角场景（原生整屏背景：冒险家蘑菇村/骑士团凉亭/战神雪亭）。
+		// 建角场景（原生整屏背景：冒险家蘑菇村/骑士团凉亭/战神雪原）。
+		// 位图真身在 Map001/Back/login.img/back/<no>：16=1280x720、30=1280x900、33=1280x720，
+		// 由 MapLogin.img/back/<no> 的 bS=no 引用。后者只是视差参数容器
+		// （bS/no/type/x/y/cx/rx/ry，无 bitmap），传给 Sprite 只会得到空动画 ——
+		// 这正是建角页此前仍显示「选职业大树场景」的根因。
 		// 落点由正确端截图模板匹配测得（场景图左上在 1280x720 窗口内的位置）。
 		const char* scene_no = nullptr;
 		Point<int16_t> scene_pos;
@@ -516,7 +531,25 @@ namespace ms
 		}
 		if (LoginBackground::get().available())
 		{
-			nl::node scene = nl::nx::UI["MapLogin.img"]["back"][scene_no];
+			// R1：场景位图必须以运行时部署数据为准。UI/MapLogin.img/back/<no>
+			// 只是 [null] 视差参数容器（bS/no/type/x/y/cx/rx/ry，无 bitmap 子帧），
+			// 传给 Sprite 会得到空动画 —— 建角页因此一直显示「选职业大树」背景。
+			// 真位图在 Map001/Back/login.img/back/<no>：16=蘑菇村(冒险家)、
+			// 30=凉亭(骑士团)、33=雪原(战神)；编号对应关系由
+			// MapLogin.img/back/41|45|39 的 no 字段确认。
+			nl::node scene = nl::nx::Map001["Back"]["login.img"]["back"][scene_no];
+
+			if (!scene)
+				scene = nl::nx::Map["Back"]["login.img"]["back"][scene_no];
+
+			if (scene)
+				LoginUiAssets::log_info(std::string("[Creation] scene ") + scene_no
+					+ " for " + classType);
+			else
+				LoginUiAssets::log_error(std::string("[Creation] missing scene ")
+					+ scene_no + " for " + classType);
+
+			// 空节点走 set_scene 内既有的 clear_scene()，不残留上一张场景。
 			LoginBackground::get().set_scene(scene, scene_pos);
 		}
 
@@ -774,6 +807,12 @@ namespace ms
 
 					nameboard.draw(charNameOrigin);
 
+					// 名字查重通过到 UIKeySelect 关闭之间仍要保留已确认的名字与角色，
+					// 否则吊牌空槽 + 空平台就是「输入名字后角色与名字消失」。
+					// Textfield 在此态是 DISABLED（draw 直接 return），故用只读 Text 呈现。
+					confirmed_name.draw(position + newCharNamePos + classic_name_shift);
+					newCharLook.draw(newAvatarPos, inter);
+
 					UIElement::draw_buttons(inter);
 				}
 			}
@@ -876,6 +915,8 @@ namespace ms
 				charNameSelected = true;
 
 				std::string name = newCharName.get_text();
+				confirmed_name = Text(Text::Font::A12M, Text::Alignment::LEFT,
+					Color::Name::WHITE, name);
 				int32_t job = -1;
 				int64_t face = faces[female][faceIndex];
 

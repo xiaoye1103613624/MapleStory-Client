@@ -84,6 +84,9 @@ namespace ms
 		// 补间结束后需要激活的步进窗口（LOGIN/WORLDSELECT/CHARSELECT/...）。
 		UIElement::Type pending_activation = UIElement::Type::NONE;
 
+		// VIEWALLCHAR 独占显示时被失活的下层窗口；窗口关闭后由 update() 恢复。
+		std::vector<UIElement::Type> viewall_hidden;
+
 		// 用于检测视口变化，向登录弹窗广播 update_screen（与 UIStateGame 对齐）。
 		int16_t VWIDTH;
 		int16_t VHEIGHT;
