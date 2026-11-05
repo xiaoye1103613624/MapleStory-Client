@@ -25,6 +25,7 @@
 #include "../IO/UITypes/UIStatusBar.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Util/PerfLog.h"
 #include "../Util/Resource/ResourceService.h"
 
 #include <stdexcept>
@@ -50,15 +51,23 @@ namespace ms
 		switch (state)
 		{
 			case State::INACTIVE:
-				load_map(mapid);
-				respawn(portalid);
+				load_map(mapid);   // 抛异常 = 真失败（map data missing），交给上层记录
 				break;
 			case State::TRANSITION:
-				respawn(portalid);
 				break;
 		}
 
+		// 地图数据一就绪就激活，不要等 respawn。
+		// 旧实现把 state=ACTIVE 放在 respawn() 之后：respawn 里任一步
+		// （get_portal_by_id / get_y_below / player.respawn / camera.set_view）
+		// 抛异常都会让那行永不执行，Stage::draw 的 state!=ACTIVE 直接 return，
+		// 整层背景/瓦片/角色全不画，每帧只剩 glClearColor(1,1,1,1) 的纯白 ——
+		// 这就是「白屏 + 看不到角色 + 小地图不刷新」共用的上游故障。
+		// respawn 的异常继续冒泡给 SetFieldHandlers（那边已落盘 ex.what()），
+		// 但不再拖住 ACTIVE 状态：至少地图/瓦片可绘制，GL 也已由上层解锁。
 		state = State::ACTIVE;
+
+		respawn(portalid);
 	}
 
 	void Stage::loadplayer(const CharEntry& entry)
@@ -161,6 +170,55 @@ namespace ms
 		if (state != State::ACTIVE)
 			return;
 
+		// debug.gm_smoke：进图稳住 3s 后自动发一次刷怪包（仅 GM 冒烟用）。
+		// 为什么需要它：本机输入注入全部受阻（SetForegroundWindow/AttachThreadInput
+		// 夺焦失败、PostMessage WM_CHAR 不被 SDL 接收），UI 驱动的冒烟跑不起来；
+		// 而"场上有怪"是验证触怪仇恨(0xBD)/手雷(0x6D)/一键AP(0x58) 的共同前置。
+		// 三态机 + 每图只发一次；关掉开关则整段零开销（一次 bool 读取）。
+		// 注意：这里**不**用 Configuration::get_admin() 做门 —— 服务端 admin 位是
+		// (use_enforce_admin_account||canFly) && GMLevel>1（PacketCreator.getAuthSuccess），
+		// 本机 DB 种子该开关 false 且账号非 IP 放行，admin 位会是 false，
+		// 但服务端 AdminCommandHandler 自己的门是 chr.isGM()（GMLevel>0），
+		// 两者不等价。冒烟开关本身就是显式 opt-in，够安全。
+		if (smoke_state != 2)
+		{
+			if (smoke_state == 0)
+			{
+				if (Setting<GmSmokeEnabled>::get().load())
+				{
+					smoke_state = 1;
+					smoke_armed_at = std::chrono::steady_clock::now();
+					perf::mark("SMOKE", "armed map=" + std::to_string(mapid));
+				}
+				else
+				{
+					smoke_state = 2;	// 未启用：本进程不再检查
+				}
+			}
+			else if (smoke_state == 1)
+			{
+				const auto waited = std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::steady_clock::now() - smoke_armed_at).count();
+
+				if (waited >= 3000)
+				{
+					const int32_t mob = Setting<GmSmokeMob>::get().load();
+					int32_t qty = Setting<GmSmokeCount>::get().load();
+					if (qty <= 0) qty = 1;
+					if (qty > 50) qty = 50;
+
+					if (mob > 0)
+					{
+						AdminSummonMobPacket(mob, qty).dispatch();
+						perf::mark("SMOKE", "summon mob=" + std::to_string(mob)
+							+ " x" + std::to_string(qty) + " map=" + std::to_string(mapid));
+					}
+
+					smoke_state = 2;
+				}
+			}
+		}
+
 		combat.update();
 		backgrounds.update();
 		effect.update();
@@ -182,8 +240,16 @@ namespace ms
 			if (player.is_key_down(KeyAction::Id::UP) && !player.is_key_down(KeyAction::Id::DOWN))
 				check_ladders(true);
 
+			// 可见/触摸传送门（REGULAR/TOUCH 等）：走进即传送，无需按键
+			check_portals();
+
+			// 隐藏/脚本隐藏传送门：需按上键主动交互
 			if (player.is_key_down(KeyAction::Id::UP))
-				check_portals();
+				check_portals(true);
+
+			// G6 mystic door：触碰式（进门框即上行 USE_DOOR，归属裁决在服务端
+			// DoorHandler；冷却防刷屏见 MapFieldMarkers::check_doors）
+			field_markers.check_doors(player.get_position());
 
 			if (player.is_key_down(KeyAction::Id::DOWN))
 				check_ladders(false);
@@ -229,13 +295,13 @@ namespace ms
 			character->show_effect_id(effect);
 	}
 
-	void Stage::check_portals()
+	void Stage::check_portals(bool allow_hidden)
 	{
 		if (player.is_attacking())
 			return;
 
 		Point<int16_t> playerpos = player.get_position();
-		Portal::WarpInfo warpinfo = portals.find_warp_at(playerpos);
+		Portal::WarpInfo warpinfo = portals.find_warp_at(playerpos, allow_hidden);
 
 		if (warpinfo.intramap)
 		{
@@ -372,6 +438,11 @@ namespace ms
 			return player;
 		else
 			return chars.get_char(cid);
+	}
+
+	int32_t Stage::find_character_id(const std::string& name) const
+	{
+		return chars.find_id_by_name(name);
 	}
 
 	int Stage::get_mapid()

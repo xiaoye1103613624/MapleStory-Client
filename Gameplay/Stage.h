@@ -135,6 +135,12 @@ namespace ms
 		// NO-NATIVE-EXACT）。Stage::clear() 换图时清空。
 		std::unordered_map<int32_t, std::chrono::steady_clock::time_point> aggro_sent;
 
+		// debug.gm_smoke 自驱动（仅 GM 冒烟，生产默认关）：进图后延时 3s 发一次
+		// ADMIN_COMMAND 刷怪包，用来在没有输入注入手段的环境里造测试怪。
+		// 三态：0=未触发 1=已排队(计时中) 2=已发/本图不再发。
+		int smoke_state = 0;
+		std::chrono::steady_clock::time_point smoke_armed_at;
+
 		MapInfo mapinfo;
 		MapTilesObjs tilesobjs;
 		MapBackgrounds backgrounds;

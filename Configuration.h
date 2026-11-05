@@ -27,6 +27,7 @@ namespace ms { namespace res { enum class KeyMode; } }
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <cstdint>
 #include <ctime>
 
 namespace ms
@@ -102,6 +103,12 @@ namespace ms
 		bool get_boot_logo() const;
 		// 启动动画单帧时长，毫秒（boot.logo.frame_ms，取值已限幅到 10~1000）。
 		uint16_t get_boot_logo_frame_ms() const;
+		// 伤害公式 v2（damage.formula_v2）：启用原生取证补齐的魔法/无视防御/暴击区间分支。
+		bool get_damage_formula_v2() const;
+		// 伤害行 12 字节模式（damage.long_lines）：必须与 s9 服务端成对开启。
+		bool get_damage_long_lines() const;
+		// 单段伤害上限（damage.cap）：默认 2^53，与 double 精确整数上限一致。
+		int64_t get_damage_cap() const;
 		// 装备悬停时是否显示同部位已装备物品的对比（ui.equip_compare）。
 		bool get_equip_compare() const;
 		// UI 语言码（ui.language），默认 zh-CN；可被 xy-config 覆盖，支持热重载。
@@ -542,15 +549,18 @@ namespace ms
 	struct FontPathNormal : public Configuration::StringEntry
 	{
 		// 中文客户端：默认字体须含 CJK 字形，否则运行时中文（职业名/对话/聊天）
-		// 经 FreeType 渲染为空（纯拉丁 Arial 无中文字形）。SimHei 为系统中文黑体。
-		FontPathNormal() : StringEntry("font.path.normal", "fonts/SimHei/simhei.ttf") {}
+		// 经 FreeType 渲染为空（纯拉丁 Arial 无中文字形）。
+		// R28-B5：由 SimHei（微软系统字体，公开仓库有授权风险）换成思源宋体
+		// Source Han Serif SC Regular（SIL OFL 1.11，随包 LICENSE-OFL.txt）。
+		// 装机上残留的旧路径由 Configuration::load 的字体兜底处理（见 evidence/w8-font-swap）。
+		FontPathNormal() : StringEntry("font.path.normal", "fonts/SourceHanSerifSC/SourceHanSerifSC-Regular.otf") {}
 	};
 
 	// The bold font which will be used
 	// 粗体字体文件路径，缺失时回退到常规字体渲染。
 	struct FontPathBold : public Configuration::StringEntry
 	{
-		FontPathBold() : StringEntry("font.path.bold", "fonts/SimHei/simhei.ttf") {}
+		FontPathBold() : StringEntry("font.path.bold", "fonts/SourceHanSerifSC/SourceHanSerifSC-Bold.otf") {}
 	};
 
 	// Music Volume
@@ -965,6 +975,30 @@ namespace ms
 		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
 	};
 
+	// 伤害公式补齐开关（damage.formula_v2，默认 false = 保持原 Fyms085 公式）。
+	// 开启后 Skill/Mob/CharStats 走原生取证补齐的魔法攻击、无视防御、暴击区间、
+	// PAD/MAD 1999 钳制与玩家受伤公式；关闭时伤害结果与改造前一致，便于回滚。
+	struct DamageFormulaV2 : public Configuration::BoolEntry
+	{
+		DamageFormulaV2() : BoolEntry("damage.formula_v2", "false") {}
+	};
+
+	// 12 字节/行伤害封包开关（damage.long_lines，默认 false = legacy 4 字节/行）。
+	// 必须与 s9 服务端 damage.long-lines 同时开启/关闭；失步会导致整包读错位。
+	struct DamageLongLines : public Configuration::BoolEntry
+	{
+		DamageLongLines() : BoolEntry("damage.long_lines", "false") {}
+	};
+
+	// 单段伤害上限（damage.cap，默认 9007199254740992 = 2^53）。
+	// 超过该值的整数无法被 double 公式精确表示；破功值下发时会取两者较小值。
+	// 不用 LongEntry：string_conversion::or_default 内部用 std::stoi，
+	// 会把 2^53 当越界异常吞成 0；这里用 StringEntry + std::stoull 自己解析。
+	struct DamageCap : public Configuration::StringEntry
+	{
+		DamageCap() : StringEntry("damage.cap", "9007199254740992") {}
+	};
+
 	// 封包调试转储（debug.packet_dump，默认 false）。
 	// 开启后把收/发的每个明文封包按参考端 PacketDump 格式（前缀 "PacketDump : "
 	// + 每字节 "%02x " 小写十六进制；格式重建自 BeiDou.exe 0x6EC7C0：
@@ -982,6 +1016,27 @@ namespace ms
 	struct PerfLogEnabled : public Configuration::BoolEntry
 	{
 		PerfLogEnabled() : BoolEntry("debug.perf_log", "false") {}
+	};
+
+	// 真机冒烟自驱动（debug.gm_smoke，默认 false；仅 GM 号自测用，生产必关）。
+	// 开启后进图 3s 自动发一次 ADMIN_COMMAND(0x80) 的 0x17 刷怪，用来在**无输入
+	// 注入手段**的环境里验证 GM 包与"怪物相关"链路（触怪仇恨 0xBD / 手雷 0x6D /
+	// 一键 AP 0x58 都需要场上先有怪）。参数两条独立键，见下。
+	struct GmSmokeEnabled : public Configuration::BoolEntry
+	{
+		GmSmokeEnabled() : BoolEntry("debug.gm_smoke", "false") {}
+	};
+
+	// 自驱动刷的怪 id（默认 100100 = 绿水灵，新手图必在 Mob.nx 内）。
+	struct GmSmokeMob : public Configuration::IntegerEntry<int32_t>
+	{
+		GmSmokeMob() : IntegerEntry("debug.gm_smoke_mob", "100100") {}
+	};
+
+	// 自驱动刷怪数量（默认 3；运行时钳 1..50）。
+	struct GmSmokeCount : public Configuration::IntegerEntry<int32_t>
+	{
+		GmSmokeCount() : IntegerEntry("debug.gm_smoke_count", "3") {}
 	};
 
 	// 本地点券标签缓存（服务端字段就绪前 SoftKey/Point 按钮写入）

@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Configuration.h"
+#include "MapleStory.h"
 #include "Util/Locale.h"
 
 #include "Util/Resource/Keyring.h"
@@ -183,7 +184,10 @@ namespace ms
 
 		// 调试
 		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" },
-		{ "调试",       "debug.perf_log",				"分段耗时落盘 boot_perf.log（基线采集用，生产勿开）" }
+		{ "调试",       "debug.perf_log",				"分段耗时落盘 boot_perf.log（基线采集用，生产勿开）" },
+		{ "调试",       "debug.gm_smoke",				"GM 冒烟自驱动：进图 3s 自动发一次刷怪包（生产必关）" },
+		{ "调试",       "debug.gm_smoke_mob",			"自驱动刷怪 mobId（默认 100100 绿水灵）" },
+		{ "调试",       "debug.gm_smoke_count",			"自驱动刷怪数量 1..50（默认 3）" }
 	};
 
 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
@@ -225,6 +229,9 @@ namespace ms
 		settings.emplace<VSync>();
 		settings.emplace<BootLogo>();
 		settings.emplace<BootLogoFrameMs>();
+		settings.emplace<DamageFormulaV2>();
+		settings.emplace<DamageLongLines>();
+		settings.emplace<DamageCap>();
 		settings.emplace<BuffTimer>();
 		settings.emplace<EquipCompare>();
 		settings.emplace<UiLanguage>();
@@ -294,6 +301,9 @@ namespace ms
 		settings.emplace<MiniMapDefaultHelpers>();
 		settings.emplace<PacketDumpLog>();
 		settings.emplace<PerfLogEnabled>();
+		settings.emplace<GmSmokeEnabled>();
+		settings.emplace<GmSmokeMob>();
+		settings.emplace<GmSmokeCount>();
 
 		load();
 	}
@@ -307,6 +317,47 @@ namespace ms
 #ifndef _DEBUG
 		save();
 #endif
+	}
+
+	namespace
+	{
+		////////////////////////////////////////////////////////////////////////////////
+		// R28-B5 字体兜底
+		//
+		// 默认字体从 SimHei 换成思源宋体，simhei.ttf 已随仓库删除；而装机上残留的
+		// Settings / xy-config.yaml 里仍可能写着旧路径 ⇒ FreeType 打不开 face，
+		// 所有文字（连拉丁一起）渲染成空白，现场看起来像"客户端坏了"而不是"少个字体"。
+		// 所以在"配置值覆盖默认值"这一步拦一道：字体键且指向的文件不存在 ⇒ 保留打包默认，
+		// 并留一条上线级 WARN（装机要靠这行定位，不是临时调试日志）。
+		////////////////////////////////////////////////////////////////////////////////
+		bool is_font_path_key(const std::string& name)
+		{
+			return name == "font.path.normal" || name == "font.path.bold";
+		}
+
+		bool file_present(const std::string& path)
+		{
+#if defined(_WIN32)
+			struct _stat st;
+
+			return _stat(path.c_str(), &st) == 0;
+#else
+			struct stat st;
+
+			return ::stat(path.c_str(), &st) == 0;
+#endif
+		}
+
+		/// true = 这一条是"指向不存在文件的字体路径"，调用方应当不覆盖当前值。
+		bool stale_font_path(const std::string& name, const std::string& incoming, const std::string& current)
+		{
+			if (!is_font_path_key(name) || file_present(incoming))
+				return false;
+
+			LOG(LOG_WARN, "config: font path \"" << incoming << "\" not found, keeping \"" << current << "\"");
+
+			return true;
+		}
 	}
 
 	void Configuration::load()
@@ -368,7 +419,8 @@ namespace ms
 
 			auto rsiter = rawsettings.find(setting.second->name);
 
-			if (rsiter != rawsettings.end())
+			if (rsiter != rawsettings.end()
+				&& !stale_font_path(setting.second->name, rsiter->second, setting.second->value))
 				setting.second->value = rsiter->second;
 		}
 
@@ -558,7 +610,8 @@ namespace ms
 				continue;
 
 			auto it = xysettings.find(setting.second->name);
-			if (it != xysettings.end())
+			if (it != xysettings.end()
+				&& !stale_font_path(setting.second->name, it->second, setting.second->value))
 				setting.second->value = it->second;
 		}
 
@@ -840,6 +893,37 @@ namespace ms
 	bool Configuration::get_equip_compare() const
 	{
 		return Setting<EquipCompare>::get().load();
+	}
+
+	bool Configuration::get_damage_formula_v2() const
+	{
+		return Setting<DamageFormulaV2>::get().load();
+	}
+
+	bool Configuration::get_damage_long_lines() const
+	{
+		return Setting<DamageLongLines>::get().load();
+	}
+
+	int64_t Configuration::get_damage_cap() const
+	{
+		// 0 = 使用内置 2^53；任何配置值都不允许超过 double 精确整数上限。
+		constexpr uint64_t EXACT_INT_LIMIT = 9007199254740992ULL;
+		uint64_t cap = 0;
+
+		try
+		{
+			cap = std::stoull(Setting<DamageCap>::get().load());
+		}
+		catch (const std::exception&)
+		{
+			cap = 0;
+		}
+
+		if (cap == 0 || cap > EXACT_INT_LIMIT)
+			cap = EXACT_INT_LIMIT;
+
+		return static_cast<int64_t>(cap);
 	}
 
 	std::string Configuration::get_ui_language() const
