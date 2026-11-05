@@ -50,7 +50,9 @@
 namespace ms
 {
 	UICommonCreation::UICommonCreation(const std::string& c) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
-		classic_mode(false), classType(c), className(class_map[c]), genderSelected(false), charLookSelected(false),
+		classic_mode(false), classic_look_stage(false), classic_creation_sent(false), classic_dice_frame(0),
+		classic_dice_elapsed(0), classic_dice_playing(false),
+		classType(c), className(class_map[c]), genderSelected(false), charLookSelected(false),
 		charNameSelected(false), newCharNameDisabled(true), female(false), choosableGender(true),
 		vCanvasCount(0), genderTopHeight(0), boardMidHeight(0), hairSelectSize(0),
 		faceIndex(0), hairStyleIndex(0), hairColorEnabled(false), hairColorIndex(0), skinColorIndex(0),
@@ -568,6 +570,106 @@ namespace ms
 			LoginUiAssets::log_error("[Creation] MakeCharInfo pools empty for " + classType);
 		}
 
+		// ── 原生 step4「设定角色」外观 / 发色阶段（R1：运行时 NewChar* 节点） ──
+		// 板内锚点来自 charSet 位图逐像素量测（notes/native-step4-layout.md §3）：
+		// 米黄内容区板内 (8,100)-(211,273) 204x174；9 行 avatarSel 200x17 × 18px
+		// 步距 = 162px 恰好容纳；底部小板 x≈22..200, y≈323..377 放骰子 / 性别。
+		// 屏幕落点 (323,150) 为几何避让推导（左栏 150px、吊牌 x=721、角色 x=627），
+		// 置信度低，已在对照表 §5 标为决策点，不伪装成原生常量。
+		classic_charset_pos = Point<int16_t>(323, 150);
+
+		// REA：sub_5F5962 证明 step4 复用同一窗口单例显隐、不新建窗口类，
+		// 故确定 / 取消沿用命名页锚点，阶段切换只换内容不挪按钮。
+		classic_yes_gender = classic_yes_name;
+		classic_no_gender = classic_no_name;
+		classic_yes_avatar = classic_yes_name;
+		classic_no_avatar = classic_no_name;
+
+		classic_charset = NewChar["charSet"];
+
+		if (!classic_charset.is_valid())
+			LoginUiAssets::log_error("[Creation] missing " + root_name + "/charSet");
+
+		for (size_t i = 0; i < 9; i++)
+		{
+			nl::node row = NewChar["avatarSel"][i];
+
+			classic_avatar_sel[i][0] = Texture(row["normal"]);
+			classic_avatar_sel[i][1] = Texture(row["disabled"]);
+		}
+
+		classic_stat_tb = NewChar["statTb"];
+
+		// dice/0..3 无 delay：手动帧播放并定格末帧，避开循环 Animation 永真陷阱。
+		if (nl::node dice = NewChar["dice"])
+		{
+			for (const nl::node& f : dice)
+			{
+				Frame frame(f);
+
+				if (frame.get_dimensions().x() > 0)
+					classic_dice_frames.push_back(frame);
+			}
+		}
+
+		// 9 行行序：sub_5FCF8A 的 9 类外观池 + 运行时 avatarSel/0..8。
+		// 0 肤色 / 1 脸型 / 2 发型 / 3 发色(色板, 无左右箭头) / 4 上衣 /
+		// 5 裤裙 / 6 披风 / 7 鞋 / 8 武器；与现有 Buttons 枚举一一对应。
+		auto add_look_pair = [&](uint16_t left_id, uint16_t right_id, size_t row)
+		{
+			int16_t y = classic_charset_pos.y() + 100 + static_cast<int16_t>(row * 18);
+
+			try_maple_btn(buttons, left_id, NewChar["BtLeft"],
+				Point<int16_t>(classic_charset_pos.x() + 168, y), "Creation/step4/BtLeft");
+			try_maple_btn(buttons, right_id, NewChar["BtRight"],
+				Point<int16_t>(classic_charset_pos.x() + 185, y), "Creation/step4/BtRight");
+		};
+
+		add_look_pair(Buttons::BtSkinLeft, Buttons::BtSkinRight, 0);
+		add_look_pair(Buttons::BtFaceLeft, Buttons::BtFaceRight, 1);
+		add_look_pair(Buttons::BtHairLeft, Buttons::BtHairRight, 2);
+		add_look_pair(Buttons::BtTopLeft, Buttons::BtTopRight, 4);
+		add_look_pair(Buttons::BtBottomLeft, Buttons::BtBottomRight, 5);
+		add_look_pair(Buttons::BtCapeLeft, Buttons::BtCapeRight, 6);
+		add_look_pair(Buttons::BtShoesLeft, Buttons::BtShoesRight, 7);
+		add_look_pair(Buttons::BtWeaponLeft, Buttons::BtWeaponRight, 8);
+
+		// 发色色板：运行时无 hairSelect 专属资产（R6 精简包），
+		// 用 BtLeft 15x16 作热区 + ColorBox 色块作颜色呈现。
+		static const Color::Name hair_swatch_colors[8] =
+		{
+			Color::Name::BLACK, Color::Name::BROWN, Color::Name::DARKRED, Color::Name::ORANGE,
+			Color::Name::YELLOW, Color::Name::BLUE, Color::Name::VIOLET, Color::Name::WHITE
+		};
+
+		hairSelectSize = 8;
+
+		for (size_t i = 0; i < 8; i++)
+		{
+			Point<int16_t> swatch(classic_charset_pos.x() + 38 + static_cast<int16_t>(i * 20),
+				classic_charset_pos.y() + 100 + 3 * 18);
+
+			try_maple_btn(buttons, static_cast<uint16_t>(Buttons::BtHairSelect0 + i),
+				NewChar["BtLeft"], swatch, "Creation/step4/BtHairSelect");
+			classic_hair_swatches.emplace_back(12, 12, hair_swatch_colors[i], 1.0f);
+		}
+
+		// 底部小板：性别切换 ×2 + 骰子随机（BtCheck 50x24 兜底资产）。
+		int16_t bottom_y = classic_charset_pos.y() + 330;
+
+		try_maple_btn(buttons, Buttons::BtGenderMale, NewChar["BtCheck"],
+			Point<int16_t>(classic_charset_pos.x() + 30, bottom_y), "Creation/step4/BtGenderMale");
+		try_maple_btn(buttons, Buttons::BtGenderFemale, NewChar["BtCheck"],
+			Point<int16_t>(classic_charset_pos.x() + 85, bottom_y), "Creation/step4/BtGenderFemale");
+		try_maple_btn(buttons, Buttons::BtDice, NewChar["BtCheck"],
+			Point<int16_t>(classic_charset_pos.x() + 140, bottom_y), "Creation/step4/BtDice");
+
+		// 首屏仍是命名态，step4 控件全部先隐藏。
+		disable_char_look();
+
+		LoginUiAssets::log_info(std::string("[Creation] step4 rows=9 dice=")
+			+ std::to_string(classic_dice_frames.size()) + " class=" + classType);
+
 		randomize_look();
 		newCharLook.set_direction(true);
 	}
@@ -655,8 +757,10 @@ namespace ms
 			no_pos = classic_no_name;
 		}
 
-		buttons[Buttons::BtYes]->set_position(yes_pos);
-		buttons[Buttons::BtNo]->set_position(no_pos);
+		if (buttons[Buttons::BtYes])
+			buttons[Buttons::BtYes]->set_position(yes_pos);
+		if (buttons[Buttons::BtNo])
+			buttons[Buttons::BtNo]->set_position(no_pos);
 	}
 
 	void UICommonCreation::draw(float inter) const
@@ -664,7 +768,11 @@ namespace ms
 		for (const Sprite& sprite : sprites_background)
 			sprite.draw(position, inter);
 
-		if (!genderSelected)
+		if (classic_mode && classic_look_stage)
+		{
+			draw_classic_look_stage(inter);
+		}
+		else if (!genderSelected)
 		{
 			for (size_t i = 0; i < sprites_gender_select.size(); i++)
 			{
@@ -836,6 +944,24 @@ namespace ms
 
 	void UICommonCreation::update()
 	{
+		if (classic_mode && classic_look_stage && classic_dice_playing
+			&& !classic_dice_frames.empty())
+		{
+			// dice/0..3 无 delay：按 ~80ms/帧手动推进，播完定格末帧；
+			// 不使用 Animation::update()（循环动画永不返回 true 的已知陷阱）。
+			classic_dice_elapsed = static_cast<uint16_t>(classic_dice_elapsed + 16);
+
+			if (classic_dice_elapsed >= 80)
+			{
+				classic_dice_elapsed = 0;
+
+				if (classic_dice_frame + 1 < classic_dice_frames.size())
+					classic_dice_frame++;
+				else
+					classic_dice_playing = false;
+			}
+		}
+
 		if (!genderSelected)
 		{
 			for (Sprite& sprite : sprites_gender_select)
@@ -906,6 +1032,128 @@ namespace ms
 		return TYPE;
 	}
 
+	void UICommonCreation::draw_classic_look_stage(float inter) const
+	{
+		UIElement::draw_sprites(inter);
+
+		// 命名态的吊牌与已确认名字保持可见（缺陷 3），角色继续站在平台上。
+		nameboard.draw(charNameOrigin);
+		confirmed_name.draw(position + newCharNamePos + classic_name_shift);
+
+		if (classic_charset.is_valid())
+			classic_charset.draw(classic_charset_pos);
+
+		// 9 行条件：avatarSel/disabled 的深棕底色表示该行当前无可切换项，
+		// 与 enable_char_look() 的池大小判断一致（R5 资产语义核验）。
+		const bool row_enabled[9] =
+		{
+			skinColors.size() > 1,
+			faces[female].size() > 1,
+			hairStyles[female].size() > 1,
+			hairColorEnabled,
+			tops[female].size() > 1,
+			bottomEnabled && bottoms[female].size() > 1,
+			capeEnabled && capes[female].size() > 1,
+			shoes[female].size() > 1,
+			weapons[female].size() > 1
+		};
+
+		for (size_t i = 0; i < 9; i++)
+		{
+			const Texture& row = classic_avatar_sel[i][row_enabled[i] ? 0 : 1];
+
+			if (row.is_valid())
+				row.draw(classic_charset_pos + Point<int16_t>(8, 100)
+					+ Point<int16_t>(0, static_cast<int16_t>(i * 18)));
+		}
+
+		// 发色色板内嵌在 15x16 热区里（留 1px 边框）；池为空时不呈现。
+		for (size_t i = 0; hairColorEnabled && i < classic_hair_swatches.size(); i++)
+		{
+			Point<int16_t> swatch(classic_charset_pos.x() + 38 + static_cast<int16_t>(i * 20),
+				classic_charset_pos.y() + 100 + 3 * 18);
+
+			classic_hair_swatches[i].draw(swatch + Point<int16_t>(1, 1));
+		}
+
+		// dice/0..3 无 delay：按 80ms/帧手动推进并定格末帧。
+		if (!classic_dice_frames.empty())
+		{
+			const Frame& frame = classic_dice_frames[
+				std::min(classic_dice_frame, classic_dice_frames.size() - 1)];
+
+			frame.draw(DrawArgument(Point<int16_t>(classic_charset_pos.x() + 155,
+				classic_charset_pos.y() + 290)));
+		}
+
+		// 四属性表落在面板右侧空白带，避开吊牌 (721,155) 与角色 (627,430)。
+		if (classic_stat_tb.is_valid())
+			classic_stat_tb.draw(classic_charset_pos + Point<int16_t>(225, 60));
+
+		newCharLook.draw(newAvatarPos, inter);
+
+		UIElement::draw_buttons(inter);
+	}
+
+	void UICommonCreation::enter_classic_look_stage()
+	{
+		classic_look_stage = true;
+		classic_creation_sent = false;
+		newCharNameDisabled = true;
+		classic_dice_frame = 0;
+		classic_dice_elapsed = 0;
+		classic_dice_playing = !classic_dice_frames.empty();
+
+		enable_char_look();
+		set_classic_yes_no(1);
+
+		// 命名阶段发出查重包前把 Yes/No 置成 DISABLED，外观阶段必须恢复，
+		// 否则「确定」不可点、流程卡死。
+		if (buttons[Buttons::BtYes])
+			buttons[Buttons::BtYes]->set_state(Button::State::NORMAL);
+		if (buttons[Buttons::BtNo])
+			buttons[Buttons::BtNo]->set_state(Button::State::NORMAL);
+
+		LoginUiAssets::log_info(std::string("[Creation] step4 entered class=") + classType);
+	}
+
+	void UICommonCreation::leave_classic_look_stage()
+	{
+		classic_look_stage = false;
+		classic_creation_sent = false;
+		charNameSelected = false;
+		newCharNameDisabled = false;
+
+		disable_char_look();
+		set_classic_yes_no(2);
+
+		if (buttons[Buttons::BtYes])
+			buttons[Buttons::BtYes]->set_state(Button::State::NORMAL);
+		if (buttons[Buttons::BtNo])
+			buttons[Buttons::BtNo]->set_state(Button::State::NORMAL);
+
+		LoginUiAssets::log_info(std::string("[Creation] step4 left class=") + classType);
+	}
+
+	void UICommonCreation::create_new_character()
+	{
+		if (classic_creation_sent)
+			return;
+
+		classic_creation_sent = true;
+		disable_char_look();
+
+		// 名字已在命名阶段查重；重入 send_naming_result 复用同一条 CreateCharPacket
+		// 路径（11 字段、hair 基础发型 + hairColor 增量、UIKeySelect 时序均不变）。
+		// 进入发包路径时 classic_look_stage 仍为 true，作为「外观已确认」
+		// 门闩跳过 send_naming_result 内的再次 gate。
+		charNameSelected = false;
+		send_naming_result(false);
+
+		// 发包后回到命名确认态：吊牌 + 已确认名字 + 角色继续可见（缺陷 3）。
+		classic_look_stage = false;
+	}
+
 	void UICommonCreation::send_naming_result(bool nameused)
 	{
 		if (!charNameSelected)
@@ -917,6 +1165,17 @@ namespace ms
 				std::string name = newCharName.get_text();
 				confirmed_name = Text(Text::Font::A12M, Text::Alignment::LEFT,
 					Color::Name::WHITE, name);
+
+				// classic：名字查重通过后先进入原生 step4 外观 / 发色阶段，
+				// 吊牌上的已确认名字与平台上的角色保持可见；外观阶段点「确定」
+				// 才发 CreateCharPacket。外观已确认时 classic_look_stage=true，
+				// 重入本函数不再 gate，发包逻辑保持原样。
+				if (classic_mode && !classic_look_stage)
+				{
+					enter_classic_look_stage();
+					return;
+				}
+
 				int32_t job = -1;
 				int64_t face = faces[female][faceIndex];
 
@@ -1037,6 +1296,13 @@ namespace ms
 		}
 		else if (buttonid == Buttons::BtYes)
 		{
+			// classic step4 外观阶段的「确定」才真正发建角包。
+			if (classic_mode && classic_look_stage)
+			{
+				create_new_character();
+				return Button::State::NORMAL;
+			}
+
 			if (!genderSelected)
 			{
 				genderSelected = true;
@@ -1139,7 +1405,14 @@ namespace ms
 		{
 			if (classic_mode)
 			{
-				// 原生 classic 建角无性别/外观态可回退：取消直接回职业团选择页。
+				// step4 外观阶段的「取消」退回命名态，输入框重新获得焦点。
+				if (classic_look_stage)
+				{
+					leave_classic_look_stage();
+					return Button::State::NORMAL;
+				}
+
+				// 原生 classic 命名态取消直接回职业团选择页。
 				Sound(Sound::Name::SCROLLUP).play();
 
 				UI::get().remove(UIElement::Type::CLASSCREATION);
@@ -1377,32 +1650,59 @@ namespace ms
 				female = false;
 
 				randomize_look();
-			}
 
-			return Button::State::NORMAL;
-		}
-		else if (buttonid == Buttons::BtGenderFemale)
+				// 性别切换后外观池大小可能变化：重算各行的可用性 / 按钮激活状态，
+				// 与 draw_classic_look_stage() 的 row_enabled 保持一致。
+				if (classic_mode && classic_look_stage)
+				{
+					disable_char_look();
+					enable_char_look();
+				}
+				}
+
+				return Button::State::NORMAL;
+				}
+				else if (buttonid == Buttons::BtGenderFemale)
 		{
 			if (!female)
 			{
 				female = true;
 
 				randomize_look();
+
+				if (classic_mode && classic_look_stage)
+				{
+					disable_char_look();
+					enable_char_look();
+				}
+				}
+
+				return Button::State::NORMAL;
+				}
+				else if (buttonid == Buttons::BtDice)
+		{
+			randomize_look();
+
+			if (classic_mode && !classic_dice_frames.empty())
+			{
+				classic_dice_frame = 0;
+				classic_dice_elapsed = 0;
+				classic_dice_playing = true;
 			}
 
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtDice)
-		{
-			randomize_look();
-			return Button::State::NORMAL;
-		}
 		else if (buttonid >= Buttons::BtHairSelect0 && buttonid < Buttons::LENGTH)
 		{
-			hairColorIndex = buttonid - Buttons::BtHairSelect0;
-
-			int64_t hairStyle = hairStyles[female][hairStyleIndex];
+			size_t picked = buttonid - Buttons::BtHairSelect0;
+			int64_t hairStyle = hairStyles[female].empty() ? 0 : hairStyles[female][hairStyleIndex];
 			auto hairColors_ = hairColors[female][hairStyle];
+
+			// classic 色板固定 8 格，实际发色池可能更少；越界时不改外观。
+			if (picked >= hairColors_.size())
+				return Button::State::NORMAL;
+
+			hairColorIndex = picked;
 
 			newCharLook.set_hair(hairColors_[hairColorIndex]);
 			hairStyleName.change_text(newCharLook.get_hair()->get_name());
@@ -1583,103 +1883,134 @@ namespace ms
 
 	void UICommonCreation::enable_char_look()
 	{
+		// classic 的按钮是可选兜底资产（R6 精简包可能缺节点），逐个判空，
+		// 避免第三轮指出的空 unique_ptr 解引用；不伤 modern 原有行为。
+		auto set_active = [&](uint16_t id, bool active)
+		{
+			if (buttons[id])
+				buttons[id]->set_active(active);
+		};
+
 		if (classic_mode)
 			set_classic_yes_no(1);
 		else
 		{
-			buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["avatar"]));
-			buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["avatar"]));
+			if (buttons[Buttons::BtYes])
+				buttons[Buttons::BtYes]->set_position(genderOrigin + Point<int16_t>(BtYesPos["avatar"]));
+			if (buttons[Buttons::BtNo])
+				buttons[Buttons::BtNo]->set_position(genderOrigin + Point<int16_t>(BtNoPos["avatar"]));
 		}
 
 		if (faces[female].size() > 1)
 		{
-			buttons[Buttons::BtFaceLeft]->set_active(true);
-			buttons[Buttons::BtFaceRight]->set_active(true);
+			set_active(Buttons::BtFaceLeft, true);
+			set_active(Buttons::BtFaceRight, true);
 		}
 
 		if (hairStyles[female].size() > 1)
 		{
-			buttons[Buttons::BtHairLeft]->set_active(true);
-			buttons[Buttons::BtHairRight]->set_active(true);
+			set_active(Buttons::BtHairLeft, true);
+			set_active(Buttons::BtHairRight, true);
 		}
 
 		if (skinColors.size() > 1)
 		{
-			buttons[Buttons::BtSkinLeft]->set_active(true);
-			buttons[Buttons::BtSkinRight]->set_active(true);
+			set_active(Buttons::BtSkinLeft, true);
+			set_active(Buttons::BtSkinRight, true);
 		}
 
 		if (tops[female].size() > 1)
 		{
-			buttons[Buttons::BtTopLeft]->set_active(true);
-			buttons[Buttons::BtTopRight]->set_active(true);
+			set_active(Buttons::BtTopLeft, true);
+			set_active(Buttons::BtTopRight, true);
 		}
 
 		if (bottomEnabled && bottoms[female].size() > 1)
 		{
-			buttons[Buttons::BtBottomLeft]->set_active(true);
-			buttons[Buttons::BtBottomRight]->set_active(true);
+			set_active(Buttons::BtBottomLeft, true);
+			set_active(Buttons::BtBottomRight, true);
 		}
 
 		if (capeEnabled && capes[female].size() > 1)
 		{
-			buttons[Buttons::BtCapeLeft]->set_active(true);
-			buttons[Buttons::BtCapeRight]->set_active(true);
+			set_active(Buttons::BtCapeLeft, true);
+			set_active(Buttons::BtCapeRight, true);
 		}
 
 		if (shoes[female].size() > 1)
 		{
-			buttons[Buttons::BtShoesLeft]->set_active(true);
-			buttons[Buttons::BtShoesRight]->set_active(true);
+			set_active(Buttons::BtShoesLeft, true);
+			set_active(Buttons::BtShoesRight, true);
 		}
 
 		if (weapons[female].size() > 1)
 		{
-			buttons[Buttons::BtWeaponLeft]->set_active(true);
-			buttons[Buttons::BtWeaponRight]->set_active(true);
+			set_active(Buttons::BtWeaponLeft, true);
+			set_active(Buttons::BtWeaponRight, true);
 		}
 
 		if (hairColorEnabled)
 			for (size_t i = 0; i < hairSelectSize; i++)
-				buttons[Buttons::BtHairSelect0 + i]->set_active(true);
+				set_active(static_cast<uint16_t>(Buttons::BtHairSelect0 + i), true);
 
-		if (classic_mode && buttons[Buttons::BtDice])
-			buttons[Buttons::BtDice]->set_active(true);
+		if (classic_mode)
+		{
+			set_active(Buttons::BtDice, true);
+			set_active(Buttons::BtGenderMale, true);
+			set_active(Buttons::BtGenderFemale, true);
+		}
 	}
 
 	void UICommonCreation::disable_char_look()
 	{
-		buttons[Buttons::BtFaceLeft]->set_active(false);
-		buttons[Buttons::BtFaceRight]->set_active(false);
-		buttons[Buttons::BtHairLeft]->set_active(false);
-		buttons[Buttons::BtHairRight]->set_active(false);
-		buttons[Buttons::BtSkinLeft]->set_active(false);
-		buttons[Buttons::BtSkinRight]->set_active(false);
-		buttons[Buttons::BtTopLeft]->set_active(false);
-		buttons[Buttons::BtTopRight]->set_active(false);
+		auto set_active = [&](uint16_t id, bool active)
+		{
+			if (buttons[id])
+				buttons[id]->set_active(active);
+		};
+
+		set_active(Buttons::BtFaceLeft, false);
+		set_active(Buttons::BtFaceRight, false);
+		set_active(Buttons::BtHairLeft, false);
+		set_active(Buttons::BtHairRight, false);
+		set_active(Buttons::BtSkinLeft, false);
+		set_active(Buttons::BtSkinRight, false);
+		set_active(Buttons::BtTopLeft, false);
+		set_active(Buttons::BtTopRight, false);
 
 		if (bottomEnabled)
 		{
-			buttons[Buttons::BtBottomLeft]->set_active(false);
-			buttons[Buttons::BtBottomRight]->set_active(false);
+			set_active(Buttons::BtBottomLeft, false);
+			set_active(Buttons::BtBottomRight, false);
 		}
 
 		if (capeEnabled)
 		{
-			buttons[Buttons::BtCapeLeft]->set_active(false);
-			buttons[Buttons::BtCapeRight]->set_active(false);
+			set_active(Buttons::BtCapeLeft, false);
+			set_active(Buttons::BtCapeRight, false);
 		}
 
-		buttons[Buttons::BtShoesLeft]->set_active(false);
-		buttons[Buttons::BtShoesRight]->set_active(false);
-		buttons[Buttons::BtWeaponLeft]->set_active(false);
-		buttons[Buttons::BtWeaponRight]->set_active(false);
+		set_active(Buttons::BtShoesLeft, false);
+		set_active(Buttons::BtShoesRight, false);
+		set_active(Buttons::BtWeaponLeft, false);
+		set_active(Buttons::BtWeaponRight, false);
 
 		for (size_t i = 0; i < hairSelectSize; i++)
-			buttons[Buttons::BtHairSelect0 + i]->set_active(false);
+			set_active(static_cast<uint16_t>(Buttons::BtHairSelect0 + i), false);
 
-		if (classic_mode && buttons[Buttons::BtDice])
-			buttons[Buttons::BtDice]->set_active(false);
+		// 性别按钮在 modern 首屏由 button_pressed 自行激活，此处只收敛 classic。
+		if (classic_mode)
+		{
+			// classic 的 9 行按钮全部由本阶段独占，命名态一律隐藏；
+			// 不受 bottom/cape 池开关影响，避免首屏漏出箭头。
+			set_active(Buttons::BtBottomLeft, false);
+			set_active(Buttons::BtBottomRight, false);
+			set_active(Buttons::BtCapeLeft, false);
+			set_active(Buttons::BtCapeRight, false);
+			set_active(Buttons::BtDice, false);
+			set_active(Buttons::BtGenderMale, false);
+			set_active(Buttons::BtGenderFemale, false);
+		}
 	}
 
 	void UICommonCreation::check_names()

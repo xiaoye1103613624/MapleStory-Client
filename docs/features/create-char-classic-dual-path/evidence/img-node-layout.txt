@@ -74,3 +74,44 @@ Sprite::draw 再减 origin，最终位图左上 = 调用方传入的 pos。
   native_newchar_charset.png
   native_common_step3.png
   native_scene16.png / native_scene30.png / native_scene33.png
+
+## 5. 第四轮补证：位图导出与逐像素量测（2026-11-05）
+
+数据源仍是部署 UI.nx（非打包 UI.wz）。导出命令模板：
+  python tools/nx_inspect.py image E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx ^
+      Login.img/NewChar/<node> docs/features/create-char-classic-dual-path/evidence/native_<name>.png
+复跑量测：
+  python docs/features/create-char-classic-dual-path/evidence/measure_charset.py
+
+本轮新增导出（25 张）：native_charSet / native_statTb / native_charAlert /
+native_charName / native_avatarSel_{0,4}_{normal,disabled} / native_dice_0..3 /
+native_scroll_{0,1}_0..3 / native_Bt{Check,Left,Right,Yes,No}_normal_0。
+
+### 5.1 节点时序（上一轮记「无 delay」有误，此处更正）
+
+  scroll/0 (展开): 0=242x30 delay=250, 1=242x214 delay=50,
+                   2=242x212 delay=50, 3=242x210 (末帧定格)
+  scroll/1 (收起): 0=242x210, 1=250x212 delay=50,
+                   2=242x214 delay=50, 3=242x30 delay=1000
+  dice/0..3: 37x26 / 25x54 / 27x56 / 28x43，无 delay，
+             origin (0,-30) / (0,-2) / (0,0) / (0,-13)
+  → 卷轴帧自带时序，dice 需手动帧播放定格末帧。
+
+### 5.2 量测输出摘要
+
+  charSet 225x377 主色 (255,255,221)
+    米黄内容区连续带 y=100..273（每行 204 像素）→ x≈8..211, 204x174
+    标题带 y≈45..90（橙木纹 (204,102,0)）；底部小板 x≈22..200, y≈323..377
+  avatarSel 200x17：normal (255,238,204) / disabled (204,170,136)
+    → disabled 为深棕禁用底色（本轮按外观池大小判定该行是否可切换）；
+      9 行 × 18px = 162px ≤ 内容区 174px
+  BtCheck 50x24 / BtLeft,BtRight 15x16 / BtYes,BtNo 81x41，origin 全 (0,0)
+  statTb 65x77 = 「力量/敏捷/智力/运气」四属性表
+  charAlert 187x120 白底提示框；charName 201x224，输入槽板内 (28,102) 150x25
+
+### 5.3 结论
+
+`pos` 向量缺失不等于位置信息缺失：位图内的烘焙槽位、内容区边界、按钮尺寸、
+帧 delay 与 origin 共同构成 step4 板内坐标证据。逐控件对照见
+`notes/native-step4-layout.md`。屏幕绝对落点仍无原生证据，已在对照表 §5
+标为低置信度推导值与决策点，不伪装成原生常量。

@@ -25,6 +25,8 @@
 #include "../../Template/BoolPair.h"
 
 #include "../../Character/Look/CharLook.h"
+#include "../../Graphics/Animation.h"
+#include "../../Graphics/Geometry.h"
 
 namespace ms
 {
@@ -56,10 +58,14 @@ namespace ms
 	private:
 		void init_modern(nl::node Login, nl::node Common);
 		void init_classic(nl::node Login, nl::node Common);
-		// 原生 classic 确有 step4「设定角色」阶段（notes/appearance-branch-decision.md），
-		// 但运行时 NewChar*/charSet / avatarSel / 各 Bt* 均无 pos 定位向量，
-		// 没有可用的节点位置信息；按 R1 与「禁止凭截图猜坐标」本轮显式预留，不落推导坐标。
+		// 原生 classic step4「设定角色」阶段：坐标权威为运行时 charSet 位图
+		// 烘焙槽位 / 尺寸 / origin / 帧 delay（notes/native-step4-layout.md），
+		// 而非 img 的 pos 向量。第四轮已推翻「显式预留」裁决。
 		void randomize_look();
+		void draw_classic_look_stage(float inter) const;
+		void enter_classic_look_stage();
+		void leave_classic_look_stage();
+		void create_new_character();
 		void load_char_look();
 		void load_classic_char_look();
 		void load_classic_gender_pool(bool female, nl::node gender_node);
@@ -181,9 +187,20 @@ namespace ms
 		Texture classic_gender_female;
 		Sprite classic_dice;
 
-		// 原生 step4「设定角色」面板（charSet 225x377 + 9 行 avatarSel 200x17
-		// + BtLeft/BtRight 15x16 + BtCheck 50x24）显式预留：运行时节点无 pos
-		// 定位向量，按 R1 不落推导坐标。见 notes/appearance-branch-decision.md §4。
+		// 原生 step4 外观 / 发色阶段（notes/native-step4-layout.md）：
+		// charSet 米黄内容区板内 (8,100)-(211,273)，9 行 avatarSel 200x17 按 18px 步距铺满；
+		// 屏幕绝对落点 (323,150) 为几何避让推导值（低置信度，已在对照表 §5 标为决策点）。
+		bool classic_look_stage;
+		bool classic_creation_sent;	// 外观阶段「确定」只发一次包
+		Point<int16_t> classic_charset_pos;
+		Texture classic_charset;
+		Texture classic_avatar_sel[9][2];	// [行][0=normal, 1=disabled(不可切换)]
+		Texture classic_stat_tb;
+		std::vector<Frame> classic_dice_frames;
+		std::vector<ColorBox> classic_hair_swatches;
+		size_t classic_dice_frame;
+		uint16_t classic_dice_elapsed;
+		bool classic_dice_playing;
 
 		Charset createLimitNum;
 		Point<int16_t> createLimitPos;

@@ -1,66 +1,91 @@
-# 条件分支裁决：原生 classic 是否有「角色装备条件 / 头发颜色设置页」
+# 条件分支裁决：原生 classic「角色装备条件 / 头发颜色设置页」
 
-日期：2026-11-05
-裁决状态：**原生确有该阶段；但运行时 img 未提供定位向量，本轮按证据红线显式预留，不落推导坐标**
-证据优先级：REA / IDA 反编译 → 运行时部署 img 节点 →（用户截图仅最后观感参考，不作坐标来源）
+日期：2026-11-05（第四轮复核重写）
+裁决状态：**推翻第三轮「显式预留」结论；按原生逻辑实现 step4 外观 / 发色阶段**
+证据优先级：REA / IDA 反编译 → 运行时部署 img 位图像素锚点 → 已实机验证的同页锚点 →
+（用户截图仅最后观感参考，不作坐标来源）
 
-## 1. 结论
+## 1. 推翻理由
 
-| 问题 | 裁决 | 主要证据 |
+第三轮以「运行时 `charSet` / `avatarSel` / 各 `Bt*` 只有位图尺寸、无 `pos` 定位向量」
+判定「无节点位置信息 ⇒ 显式预留」。本轮复核认定这是**方法错误**：
+
+1. v83 经典建角 UI 的控件坐标本就硬编码在代码/脚本里，img 只提供位图；
+   `pos` 向量不是位置信息的唯一形式。职业团页就是范例：IDA `sub_6157C9` 给出
+   `CCtrlButton::Create(1003,530,422)`，而 `RaceSelect/normal/text/0` 位图内的白槽
+   `(412,111)` 加说明板 blit `(118,311)` 恰等于 `(530,422)` —— 位图烘焙槽位就是位置证据。
+2. 本轮导出 `charSet` 并逐像素量测，得到米黄内容区 `x≈8..211, y=100..273`
+   （204x174）、标题带 `y≈45..90`、底部小板 `x≈22..200, y≈323..377`；
+   9 行 `avatarSel` 200x17 × 18px 行距 = 162px，恰好落在内容区内。
+   `BtLeft/BtRight` 15x16、`BtCheck` 50x24、`BtYes/BtNo` 81x41 与板内区域吻合。
+3. `scroll/0,1` 帧**带 `delay`**（展开 250/50/50、收起 50/50/1000），
+   `dice/0..3` 带各自 origin —— 上一轮「动画无时序、需自定」也不成立。
+4. REA 深挖（`native-evidence.md` §5）证明 step4 复用既有窗口单例、不新建窗口类，
+   主 exe 对该面板节点名 ASCII/UTF-16LE 均 0 命中，即**面板落点本来就不在 exe 立即数里**；
+   「没找到第二个 OnCreate 立即数」是原生架构结论，不是停止取证的借口。
+
+故第三轮「证据不足、交用户裁决」不成立，本轮直接实现。
+
+## 2. 原生行为与状态顺序
+
+| 问题 | 裁决 | 依据 |
 | --- | --- | --- |
-| 原生 classic 是否存在独立的外观 / 发色设置阶段？ | **存在**（step4） | `CLogin::ChangeStep` step4 分支；`sub_5FCF8A` 9 类外观池；运行时 `Login.img/NewChar*` 的 `charSet` / `avatarSel/0..8` / `dice` / `statTb` / `BtCheck` / `BtLeft` / `BtRight` 资产齐全 |
-| 该阶段在当前客户端为何缺失？ | `init_classic()` 把 `genderSelected` / `charLookSelected` 直接置 `true`，跳过 gender/look 两态；`send_naming_result()` 名字可用后立即发 `CreateCharPacket`，没有外观确认环节 | `IO/UITypes/UICommonCreation.cpp` 的 `init_classic()` / `send_naming_result()` |
-| 该阶段放在命名前还是命名后？ | **命名之后、`CreateCharPacket` 之前** | 用户缺陷原文「输入名字后角色与名字消失及外观/发色设置页缺失」；用户裁决「骑士团页的角色占位、亭子、名字输入框正确，保持不动并作为对照基准」→ 首屏必须仍是命名页 |
-| 运行时 img 是否提供该面板的精确落点？ | **否** | `evidence/img-node-layout.txt` §2：`charSet` / `avatarSel` / `statTb` / 各 `Bt*` 只有位图尺寸与 `origin=(0,0)`，**无 `pos` / `ctrl` / `offset` 定位向量**；`CustomizeChar` / `RaceSelect_new` / `createLimit` 为 `<absent>`（R6 精简包预期） |
-| 本轮是否实现该面板？ | **否，显式预留** | 用户红线「还原/校验必须先以原生界面逻辑与 img 节点位置信息为依据，截图不得作为坐标来源」；节点位置信息缺失时，任何精确坐标都只能是推导值。按 xiaoye 门禁应把证据不足的决策点交用户抉择，而不是把推导值伪装成原生常量 |
+| 原生是否存在外观 / 发色阶段 | **存在**（step4） | `CLogin::ChangeStep` step4 分支初始化 `CAvatar::Init(...)` 与 9 类外观池；`sub_5FCF8A`；运行时 `charSet` / `avatarSel/0..8` / `dice` / `scroll` / `statTb` / `BtCheck` / `BtLeft` / `BtRight` 资产齐全 |
+| 与命名态的先后 | **命名 → 外观/发色 → `CreateCharPacket`** | 用户缺陷 3/6 原文「输入名字后角色与名字消失及外观/发色设置页缺失」；4 张原生建角截图（`C:\Users\11036\Desktop\正确客户端截图`）均为命名页，说明命名页是进入该流程的首屏 |
+| 命名确认后角色/名字是否保留 | **保留** | 同上；第三轮已用 `confirmed_name` + `newCharLook.draw()` 修复，本轮外观阶段继续保留 |
+| 命名页三项是否移动 | **不动** | 用户裁决「骑士团页的角色占位、亭子、名字输入框正确，保持不动并作为对照基准」 |
+| 面板屏幕绝对落点 | 无原生证据，取几何避让推导 `(323,150)` | 见 `native-step4-layout.md` §4/§5，明确标为低置信度决策点 |
 
-## 2. 原生行为证据（REA / IDA）
+**流程推断标注**：IDA 只钉到 step4 存在，没有钉死它与命名态的严格先后；
+上述顺序来自缺陷描述与截图观感，属流程级推断，不是 exe 立即数结论。
 
-目标：`E:\MXD\BeiDou-ClientV17.7\BeiDou.exe`（PE x86, imagebase `0x400000`）
-既有产物：`docs/features/login-flow-ui-ida-align/evidence/CLogin_ChangeStep_0x5f53c0.txt`
-摘要见 `notes/native-evidence.md` §2 / §3。
+## 3. 实现方案（本轮落地）
 
-- `CLogin::ChangeStep`（`0x5F53C0`）：
-  - step3（`v13=0`，反编译 `:200-218`）创建 `CUINewCharRaceSelect` —— 职业团选择页。
-  - step4（`v14=0`，反编译 `:148-198`）创建 `CAvatar` + `CAvatarLook::Init`，`pOrigin = (-2369-600*step, ...)`、`x=22`，并调用 `sub_5FCF8A(this)` 初始化外观池。
-  - step5（`v14=1`）清标志。
-  - `CUINewCharRaceSelect` 的 `BtSelect`(id 1003) 点击 → `CLogin::ChangeStep(login, -1)`，即 step3 → step4 是**连续的原生阶段**。
-- `sub_5FCF8A`（`0x5FCF8A`, size `0x1b3`）：按性别从 `Male` / `Female` 两组各 **9 类**外观池取值，用 `rand()` 随机化；对应运行时 `avatarSel/0..8` 的 9 行与 `dice` 动画。
-- 局限（见 `native-evidence.md` §4）：`search_strings` 只索引 ASCII，搜不到 `charSet` / `NewChar` 不表示原生没有；布局由 WZ/脚本驱动，exe 立即数里没有按钮落点。
+不新建 UI 类型、不动 modern 路径、不动协议与 `CreateCharPacket` 字段：
 
-**取证边界**：IDA 证据只能钉死「阶段存在 + 状态机顺序 + 外观池数量」，钉不出面板逐像素落点。
-
-## 3. 运行时资源证据（R1，部署数据为准）
-
-完整节点 dump 与命令输出见 `evidence/img-node-layout.txt`、`evidence/runtime-scene-nodes.txt`，本文件不复制命令输出。要点：
-
-- `charSet` [bitmap] 225x377、`avatarSel/0..8` [bitmap] 200x17、`statTb` 65x77、`BtCheck` 50x24、`BtLeft/BtRight` 15x16、`BtYes/BtNo` 81x41；`charName` 201x224、`charAlert` 187x120、`dice/0..3` 与 `scroll/0,1` 卷轴动画均存在。
-- 上述面板节点 **均无 `pos` / `ctrl` / `offset` 定位向量**，`origin=(0,0)`。
-- `native_newchar_charname.png` 实测：输入槽深棕木纹，板内约 `(28,102)`、约 150x25；代码 `slot_pos(28,104)` / `newCharNameDim(150,24)` 与节点吻合 → 本轮据此只修基线/字色，不动锚点。
-- `native_newchar_slot_zoom.png` 像素采样：中心 RGB ≈ `(165,69,0)`，全图均色 `(135,69,14)` → `Color::Name::BLACK` 在该槽上不可读，是「字色不对」的物理解释。
-
-**关键结论**：`charSet` 及 9 行 `avatarSel` 的落点没有 img 节点位置信息。按 R1 与「禁止凭截图猜布局」，本轮不把这些推导值写进代码。
+1. `init_classic()` 仍以命名态为首屏（`genderSelected=charLookSelected=true`），
+   吊牌 / 确定 / 取消 / 输入槽 / 角色脚底锚点全部保持第三轮实机验证值。
+2. 增设 `classic_look_stage` 状态位：`send_naming_result(false)`（名字查重通过）不再立即发包，
+   改为进入外观阶段并保留 `confirmed_name`；把原发包逻辑抽到 `create_new_character()`，
+   由外观阶段的 `BtYes` 触发。
+3. 外观阶段绘制：`charSet` 面板 + 9 行 `avatarSel`（`disabled` 深棕底色表示该行
+   当前无可切换项，与 `enable_char_look()` 的池大小判断一致）+ 每行左右切换箭头 +
+   8 格发色色板 + 骰子 4 帧 + `statTb` + 已确认名字与角色。
+   全部节点按 R6 加 `if (node)` / `is_valid()` / `try_maple_btn()` 兜底；
+   `dice` 用手动帧播放（~80ms/帧、定格末帧），避开循环动画 `update()` 永不返回 true 的陷阱。
+   **R5 取舍**：`scroll/0,1` 帧序列带 delay 已在节点层钉死，但其宽高 242x30..214 与
+   `charSet` 225x377 不匹配，同锚点叠加会重影，本轮核验后不绘制（NO-FIX，非遗漏）。
+4. 补齐 classic 侧此前未创建的 18 个外观切换按钮、`BtGenderMale/Female`、
+   `BtHairSelect0..7`、`BtDice`；`enable_char_look()` / `disable_char_look()` 加判空，
+   避免第三轮指出的空 `unique_ptr` 解引用。
+5. `BtNo` 在外观阶段退回命名态（恢复输入焦点），命名态仍按原生回职业团页；
+   `BtYes`/`BtNo` 位置由 `set_classic_yes_no(1/2)` 切换，补齐此前未赋值的
+   `classic_yes_avatar` / `classic_no_avatar`。
+6. 外观池继续用 `load_classic_char_look()` 的 9 类数据、`randomize_look()` 与
+   既有 `button_pressed` 的 `BtSkinLeft..BtWeaponRight` / `BtHairSelect*` / `BtDice` 分支。
 
 ## 4. 方案取舍
 
-计划中曾考虑三条路径，均未在本轮落地为「新建面板」：
-
-1. **复用 modern 的 gender/look/name 三态首屏** —— 否决。用户裁决骑士团命名页三项保持不动作为基准；`draw()` 的 `!charLookSelected` 分支会访问 classic 下未初始化的 `sprites_lookboard` / `sprites_char_look` / `avatarOrigin`，`enable_char_look()` 会解引用 classic 下未创建的 18 个按钮。爆炸半径远超最小修正。
-2. **命名后追加「设定角色」确认态并绘制 charSet 面板** —— 否决。面板落点无节点证据，只能靠位图尺寸 + 截图锚点推导，违反用户红线。
-3. **抽出 `create_new_character()` 做二次确认** —— 否决。原生是否「命名后再点一次确定」没有独立证据（IDA 只钉到 step4 存在），改交互流程属无据变更。
-
-**本轮采用**：只修复有确凿代码/资源证据的部分 —— `charNameSelected` 绘制分支补回已确认名字与角色、输入槽基线与字色；外观阶段在源码注释、本文件与 README §11 中**显式预留**，并把决策点交给用户。
-
-预留所需的现成机制（后续若取得带 `pos` 的资源包可直接复用，无需新建架构）：`load_classic_char_look()` 的 9 类外观池、`randomize_look()`、`Buttons::BtSkinLeft..BtWeaponRight` / `BtHairSelect0..7` / `BtDice` 的 `button_pressed` 分支、`enable_char_look()` / `disable_char_look()`、`getAvatarSelPos()`。
+| 方案 | 取舍 |
+| --- | --- |
+| 放开既有 GMS 三态「性别 → 外观 → 命名」 | 否决。首屏会变成运行时 img 无资产的性别面板，且 `getAvatarSelPos` 那套 `(489,97)` 会盖住北斗角色 `(627,430)`；违反用户「命名页三项保持不动」裁决 |
+| 直接照抄 `getAvatarSelPos` / `getBtYesPos(1)` | 否决。它们是 v83 `CustomizeChar` 坐标，与北斗改版后的吊牌 `(721,155)` 不在同一布局；只复用 18px 行距与「确定/取消落在底部小板」的相对关系 |
+| 命名后追加外观阶段（本轮采用） | 同时闭合缺陷 3 与 6，命名页首屏与三项锚点零改动；`CreateCharPacket` 字段与 `UIKeySelect` 时序不变 |
 
 ## 5. 影响面与回归界限
 
-- **不改**：modern 路径；三职业命名页已验证的吊牌、确定/取消、输入槽、角色脚底锚点（骑士团三项保持原值）；`UIWorldSelect` 木牌数量与位置；`LoginBackground::set_scene()` 的 origin 补偿语义；`CreateCharPacket` 字段与发包时序；服务端。
-- **本轮改动**：`UIRaceSelect.cpp`（BtSelect origin）、`UICommonCreation.{h,cpp}`（名字字色/基线/命名态绘制）、`UIStateLogin.{h,cpp}`（VIEWALLCHAR 独占显示与恢复）。
+- **不改**：modern 路径；三职业命名页已验证的吊牌、确定/取消、输入槽、角色脚底；
+  `UIWorldSelect` 木牌数量与位置；`LoginBackground::set_scene()` 的 origin 补偿语义；
+  `CreateCharPacket` 字段与 `NameCharPacket` 时序；服务端；不提交 git。
+- **本轮改动**：`IO/UITypes/UICommonCreation.{h,cpp}`、`IO/UITypes/UIRaceSelect.cpp`（仅在发现偏差时）、
+  本目录证据与文档。
 
-## 6. 待用户裁决 / 后续项
+## 6. 仍缺落点 / 后续决策点
 
-1. **决策点**：是否允许按「位图尺寸 + 已实机验证的吊牌锚点」推导 `charSet` / 9 行 `avatarSel` / `statTb` / `BtCheck` / `BtLeft` / `BtRight` 的落点来实现 step4 面板（推导值、低置信度），或提供带 `pos` 定位向量的 `NewChar*` 资源包后再还原。
-2. 若取得带 `pos` 的资源包，按节点向量重校后接入 `scroll/0,1` 卷轴展开动画（242x30 → 250x212）；节点无 `delay`，节奏需自定（参考 `BootSplash::play_logo()`）。
-3. 在 IDA 中定位 step4 窗口类（同构特征：`sub_41C06C(&word_AF0E08,-1)` + `sub_403065(14xx)` + `sub_8ABxxx` 辅助，体量 ~14KB）以取得按钮创建立即数。
-4. `charAlert`（187x120）与 `statTb`（65x77）的语义未在 IDA 中钉死，未绘制。
+1. `charSet` 绝对落点 `(323,150)` 为低置信度几何推导；若取得原生 step4 截图或带 `pos`
+   的资源包，应优先按那份证据重校（本次不因该缺口回退到「预留」）。
+2. `BtGenderMale/Female`、`BtHairSelect0..7` 运行时无专属资产，用 `BtCheck` / `BtLeft`
+   位图兜底；若补齐资源应换回原生资产。
+3. `statTb` 落点、`charAlert` 显示时机无 xref；本轮 `charAlert` 不绘制。
+4. 三职业 appearance 页叠图实机确认：受频道页 `world_selected` 门闩影响可能跑不到，
+   跑不到时如实记为未跑项。

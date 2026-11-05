@@ -181,12 +181,12 @@ BtNew → use_classic_race_select()?
 | 3 | 输入名字后角色与名字消失 | 代码缺陷，已修 | `draw()` 的 `charNameSelected` 分支只画 `nameboard` + 按钮；且 `Textfield` 在 DISABLED 态 `draw()` 直接 return。→ 新增只读 `confirmed_name` 文本并恢复 `newCharLook.draw()` |
 | 4 | 名字输入框未垂直居中、字色不对 | 已修（基线为字体度量推导值） | 槽 150x24 与 img 吻合；`native_newchar_slot_zoom.png` 均色 RGB(135,69,14) 深棕木纹 → BLACK 不可读，取 WHITE；A12M 12px + FreeType 基线 → `set_text_shift(0,15)`（img 无文字基线节点，属推导值，实机可微调） |
 | 5 | 点击查看所有角色界面错乱 | 多窗口同屏叠影，已修 | `UIStateLogin::draw/update` 遍历所有 active 元素；`ViewAllCharHandler` emplace 前未失活下层 → `post_add()` 对 VIEWALLCHAR 独占失活、`update()` 关闭后按 `viewall_hidden` 恢复。木牌数量与位置未动 |
-| 6 | 外观 / 发色设置页缺失 | 原生**确有** step4，但运行时 img 无定位向量 → **显式预留** | `notes/appearance-branch-decision.md`：IDA `CLogin::ChangeStep` step4 + `sub_5FCF8A` 9 类外观池；`charSet` / `avatarSel` / 各 `Bt*` 只有位图尺寸、`origin=(0,0)`，无 `pos`。按 R1 与「禁止凭截图猜坐标」不落推导坐标，决策点交用户 |
+| 6 | 外观 / 发色设置页缺失 | 原生**确有** step4；第三轮判「显式预留」**已于第四轮 §12 推翻并实现** | 第三轮依据：`notes/appearance-branch-decision.md` 旧版（IDA step4 + `sub_5FCF8A` 9 类外观池，img 无 `pos`）。第四轮补 REA/位图彻底取证后认定「无 `pos` 向量 ≠ 无位置信息」，按原生逻辑落地，详见 §12 |
 
 ### 11.2 改动清单
 
 - `IO/UITypes/UIRaceSelect.cpp`：`BtSelect` 改走 `try_maple_btn()` 补回运行时 origin。
-- `IO/UITypes/UICommonCreation.{h,cpp}`：名字字色 WHITE、`set_text_shift(0,15)`、新增只读 `confirmed_name` 与 `classic_name_shift`、命名确认态补画名字与角色；移除无节点证据的 step4 面板半成品成员与接口声明，改为显式预留注释。
+- `IO/UITypes/UICommonCreation.{h,cpp}`：名字字色 WHITE、`set_text_shift(0,15)`、新增只读 `confirmed_name` 与 `classic_name_shift`、命名确认态补画名字与角色；移除无节点证据的 step4 面板半成品成员与接口声明，改为显式预留注释（**该预留裁决已在第四轮 §12 推翻并重新实现**）。
 - `IO/UIStateLogin.{h,cpp}`：新增 `viewall_hidden`；`post_add()` 独占失活下层窗口，`update()` 在 VIEWALLCHAR 关闭后恢复。
 - `Net/Handlers/LoginHandlers.cpp`、`IO/UITypes/UIViewAllChar.cpp`、`IO/UITypes/UIWorldSelect.cpp` **未改**：生命周期收敛在 UIState 更内聚，且木牌数量保持原生。
 
@@ -201,4 +201,77 @@ BtNew → use_classic_race_select()?
 
 1. 三职业建角页叠图实机确认（同 §10.4：自动登录直接进游戏、频道页 `world_selected` 门闩使流程停在频道页）。
 2. 名字基线与字色需实机截图做最后观感校验；`set_text_shift(0,15)` 是字体度量推导值。
-3. step4 外观面板落点：待用户裁决是否接受推导值，或提供带 `pos` 定位向量的 `NewChar*` 资源包后按节点还原。
+3. step4 外观面板：**第四轮已实现**（§12）；其屏幕绝对落点 `(323,150)` 仍是低置信度几何推导值，若取得原生 step4 截图或带 `pos` 的 `NewChar*` 资源包应优先重校。外观页实机叠图仍未跑，见 §12.4。
+
+## 12. 2026-11-05 第四轮闭环：推翻「显式预留」，按原生逻辑实现 step4 外观 / 发色阶段
+
+### 12.1 用户质疑与自查
+
+用户原话：「2经过rea彻底分析客户端了？img资源也分析过没？分析完了就 先照着原生逻辑实现一下」。
+自查：第三轮 REA 只到 `CLogin::ChangeStep` 的 step4 分发与 `sub_5FCF8A` 9 类外观池，
+img 只到节点层（尺寸 / 类型 / 缺失清单），**没有导出位图逐像素量测**；
+以「img 无 `pos` 向量」判「显式预留」是方法错误，本轮推翻。
+
+### 12.2 补做的彻底取证
+
+- **REA / IDA**（`notes/native-evidence.md` §5）：xref `0x5FCF8A`→`0x5F5571`、
+  `0xAF6C28`→`sub_5FBA85`、`0x6246CE` 调用者 `0x5F42CD/0x5F53C0/0x5F95B7`；
+  反编译 `sub_5F5962` 证实 `CLogin` 按 step 批量显隐 `dword_BEDA34..BEDA6C` 窗口单例，
+  **step4 不新建窗口类**；`sub_6157C9` 复核职业团页的 `CCtrlButton::Create` 立即数。
+  全量 PE ASCII / UTF-16LE 串扫描对 `charSet` / `avatarSel` / `BtCheck` / `BtDice` /
+  `NewChar` / `RaceSelect` 等 **0 命中** → 面板节点名由脚本 / WZ 按名查，主 exe 无按钮创建立即数。
+- **运行时 img**（`evidence/img-node-layout.txt` §5、`evidence/measure_charset.py`）：
+  导出 25 张位图逐像素量测 —— `charSet` 米黄内容区板内 `(8,100)-(211,273)`（204x174）、
+  标题带 `y≈45..90`、底部小板 `x≈22..200, y≈323..377`；9 行 `avatarSel` 200x17 × 18px
+  = 162px 恰好落入内容区；`normal (255,238,204)` / `disabled (204,170,136)` 为
+  未选中 / 不可切换底色；`scroll/0` 展开 delay `250/50/50`、`scroll/1` 收起
+  `50/50/1000`（**推翻「卷轴无 delay」**）；`dice/0..3` 各自 origin 且无 delay → 手动帧播放。
+  `statTb` 65x77 为「力量/敏捷/智力/运气」四属性表，`charAlert` 187x120 为白底提示框。
+- 逐控件坐标对照表：`notes/native-step4-layout.md`；裁决重写：`notes/appearance-branch-decision.md`。
+
+### 12.3 实现（只动 classic 分支）
+
+状态机：**命名 → step4 外观 / 发色 → `CreateCharPacket`**（依据缺陷 3/6 与 4 张原生建角截图
+均为命名页；IDA 只钉到 step4 存在，顺序属流程推断）。首屏命名页及吊牌 / 确定 / 取消 /
+输入槽 / 角色脚底锚点全部保持不动，骑士团三项对照基准未改。
+
+| 改动 | 文件 / 位置 |
+| --- | --- |
+| `classic_look_stage` / `classic_creation_sent` 状态位、`charSet` / 9 行 `avatarSel` / `statTb` / 骰子帧成员 | `IO/UITypes/UICommonCreation.h` |
+| `init_classic()` 补运行时资产与 18 个左右切换按钮 + 8 格发色色板 + 2 性别 + 1 骰子（全走 `try_maple_btn()` 兜底），首屏 `disable_char_look()` 全隐藏 | `IO/UITypes/UICommonCreation.cpp` |
+| `draw_classic_look_stage()`：面板 + 9 行（`disabled` 底色表示不可切换）+ 色块 + 骰子帧 + `statTb` + 已确认名字与角色 + 按钮 | 同上 |
+| `enter/leave_classic_look_stage()`、`create_new_character()`；`send_naming_result(false)` 先 gate 进外观阶段，外观阶段 `BtYes` 才发包 | 同上 |
+| `enable/disable_char_look()` 全部按钮判空（修第三轮指出的空 `unique_ptr` 风险）、发色越界保护、`BtDice` 重播骰子动画、`BtNo` 外观阶段退回命名态 | 同上 |
+| 性别切换后 `disable_char_look()` + `enable_char_look()` 重算行可用性，与 `draw_classic_look_stage()` 的 `row_enabled` 同步 | 同上 |
+
+**坐标证据**：板内锚点全部来自运行时位图像素实测；屏幕落点 `(323,150)` 为几何避让推导
+（左栏 150px、吊牌 x=721、角色 x=627、面板 225x377），**低置信度，明确标为决策点**，
+未伪装成原生常量。确定 / 取消沿用命名页锚点，依据是 `sub_5F5962` 的「同窗口单例显隐」结论。
+
+**R5 核验取舍**：`scroll/0,1` 帧带 delay 已在节点层钉死，但宽高 242x30..214 与
+`charSet` 225x377 不匹配，叠加会产生重影，本轮不绘制；`dice` 用手动帧播放定格末帧。
+`charAlert` 显示时机无 xref，不绘制。`BtGender*` / `BtHairSelect*` 运行时无专属资产
+（R6 精简包预期），用 `BtCheck` / `BtLeft` 位图兜底。
+
+### 12.4 验证
+
+- `read_lints`：`UICommonCreation.{h,cpp}` 0 错误。
+- 构建：`tools/build_smoke.bat` 后台执行（全量重编译约 8 分钟），`GATE OK` / `EXITCODE=0`，
+  `build_log.txt` 中 `: error` 0 行（仅既有 `LNK4099` 与 C4100/C4828 警告）；
+  最终 obj `23:21:41`、部署 exe `23:23:52 / 4860416 B` 均刷新。
+  并在部署 exe 二进制中检索到本轮新增字符串 `step4 rows=9` / `step4 entered` /
+  `step4 left` / `Creation/step4/BtHairSelect` / `Creation/step4/BtDice`（全部 True），
+  **确认新代码确实链接进产物**，而非增量构建跳过。
+- 启动冒烟：`MapleStory.exe`（`login.auto=false`，带正确 `-WorkingDirectory`）运行 12s，
+  `Responding=True`、窗口标题 `XiaoYE MS v0.0.1` 正常，无崩溃；`_create_char.log` 无新增错误。
+- **未跑项**：step4 外观页三职业叠图实机确认。原因同 §10.4 / §11.4 —— 自动登录直接进游戏、
+  频道页 `world_selected` 门闩使流程停在频道页，且 `SendKeys` 进不了客户端 `Textfield`
+  无法在命名页输入名字触发查重包；**未伪称通过**。
+
+### 12.5 仍缺落点 / 决策点
+
+1. `charSet` 绝对落点 `(323,150)` 为低置信度推导；若有原生 step4 截图或带 `pos` 的资源包应重校。
+2. step4 与命名态严格先后为流程推断（IDA 只钉到 step4 存在）。
+3. `statTb` 具体落点、`charAlert` 显示时机无 xref。
+4. 本轮不提交 git；modern 路径、服务端、协议、`CreateCharPacket` 字段、
+   `UIWorldSelect` 木牌数量与位置均零改动。
