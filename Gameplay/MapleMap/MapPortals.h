@@ -43,7 +43,16 @@ namespace ms
 		Point<int16_t> get_portal_by_name(const std::string& name) const;
 
 	private:
-		static std::unordered_map<Portal::Type, Animation> animations;
+		// 显式门共享动画（MapHelper portal/game/pv）
+		static Animation regular_anim;
+		// 隐藏门三态（ph/default）
+		static Animation ph_start;
+		static Animation ph_continue;
+		static Animation ph_exit;
+		// 脚本隐藏门三态（psh/default；样式 1..4 本版统一用 default）
+		static Animation psh_start;
+		static Animation psh_continue;
+		static Animation psh_exit;
 
 		std::unordered_map<uint8_t, Portal> portals_by_id;
 		std::unordered_map<std::string, uint8_t> portal_ids_by_name;

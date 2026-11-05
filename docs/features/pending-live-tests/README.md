@@ -26,6 +26,10 @@
 | 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
 | 13 | 公会 Boss HUD+物件 | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` + `MapGuildBoss` |
 | 14 | CharInfo SoftKey 便签 | ⏳ 待测 | c2s 131 | `N` → NoteSend；需商城便签额度 |
+| 15 | SKILL_EFFECT 起手广播 | ⏳ 待测 | c2s 93 | 飓风/大炮等白名单技；他人应见特效 |
+| 16 | NPC_ACTION 对话姿态 | ⏳ 待测 | c2s 197 | 点 NPC 对话；他人侧 NPC 应有动作 |
+| 17 | CLICK_GUIDE | ⏳ 待测 | c2s 162 | SPAWN_GUIDE 后点引导场标 → MIMO/LILIN |
+| 18 | 隐藏门三态动画 | ⏳ 待测 | — | 靠近/离开隐藏门看 Start/Continue/Exit |
 
 ---
 
@@ -188,6 +192,26 @@
 - **期望**：有额度时对方可在 Memo 收到；无额度时客户端仍发包、服务端静默跳过（不崩）。
 - **opcode**：c2s `NOTE_ACTION=131`。
 - **备注**：与 `UIClaim` 同走 `NoteSendPacket`；本项补的是 CharInfo 快捷键路径。
+
+## 15. SKILL_EFFECT（充能/持续技起手）
+
+- **前置**：角色已学白名单技之一（如弓手飓风 3121004、海盗手雷 5201002、奇攻 4211001）。
+- **操作**：释放该技；抓包应有 `[SEND] …` opcode **93**；第二角色视角应见施法特效。
+- **期望**：无崩；非白名单技不发 93。
+- **局限**：无 KeyDown 条时只发起手一包（松开取消未接）。
+- **文档**：[skill-effect-npc-guide-c2s](../skill-effect-npc-guide-c2s/)
+
+## 16–17. NPC_ACTION / CLICK_GUIDE
+
+- **16**：任意城镇点 NPC 对话 → 应先发 197（6B）再发 58；双端同图时对方可见 NPC 姿态。
+- **17**：新手图有 SPAWN_GUIDE 时点引导标记 → 空包 162 → 开 MIMO/LILIN 脚本窗。
+- **文档**：同上。
+
+## 18. 隐藏门三态
+
+- **前置**：含 `pt=HIDDEN` 的地图（常见教学/任务隐藏门）。
+- **操作**：走近门 → 应播出现动画并循环；走开 → 播消失后隐藏。
+- **文档**：[hidden-portal-tristate](../hidden-portal-tristate/)
 
 ## 7. SET_HPMPALERT
 

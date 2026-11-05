@@ -19,27 +19,77 @@
 
 namespace ms
 {
-	Portal::Portal(const Animation* a, Type t, std::string nm, bool intramap, Point<int16_t> p, int32_t tid, std::string tnm)
-		: animation(a), type(t), name(nm), position(p),
+	Portal::Portal(const Animation* a, HideAnims hide, Type t, std::string nm, bool intramap, Point<int16_t> p, int32_t tid, std::string tnm)
+		: regular(a), hide_src(hide), type(t), name(nm), position(p),
 		  warpinfo(tid, intramap, tnm, nm,
 			t == SCRIPTED || t == SCRIPTED_INVISIBLE || t == SCRIPTED_TOUCH || t == SCRIPTED_HIDDEN)
 	{
 		touched = false;
+		phase = HidePhase::NONE;
 	}
 
-	Portal::Portal() : Portal(nullptr, SPAWN, "", false, Point<int16_t>(), 0, "") {}
+	Portal::Portal() : Portal(nullptr, {}, SPAWN, "", false, Point<int16_t>(), 0, "") {}
+
+	void Portal::set_phase(HidePhase next, const Animation* src)
+	{
+		phase = next;
+		if (src)
+		{
+			owned = *src;
+			owned.reset();
+		}
+	}
 
 	void Portal::update(Point<int16_t> playerpos)
 	{
-		touched = bounds().contains(playerpos);
+		bool now = bounds().contains(playerpos);
+
+		if (is_hide_family(type))
+		{
+			// 上升沿：进入 → Start；下降沿：离开 → Exit。
+			if (now && !touched)
+				set_phase(HidePhase::START, hide_src.start ? hide_src.start : hide_src.cont);
+			else if (!now && touched)
+				set_phase(HidePhase::EXIT, hide_src.exit ? hide_src.exit : hide_src.cont);
+
+			touched = now;
+
+			if (phase == HidePhase::NONE)
+				return;
+
+			bool ended = owned.update();
+			if (!ended)
+				return;
+
+			if (phase == HidePhase::START)
+				set_phase(HidePhase::CONTINUE, hide_src.cont ? hide_src.cont : hide_src.start);
+			else if (phase == HidePhase::EXIT)
+				phase = HidePhase::NONE;
+			// CONTINUE：循环，update 结束时 Animation 自复位；再 reset 一次保险
+			else if (phase == HidePhase::CONTINUE)
+				owned.reset();
+			return;
+		}
+
+		// TOUCH：仅跟踪 touched（显式门动画由 MapPortals 共享推进）
+		touched = now;
 	}
 
 	void Portal::draw(Point<int16_t> viewpos, float inter) const
 	{
-		if (!animation || (type == HIDDEN && !touched))
+		if (is_hide_family(type))
+		{
+			if (phase == HidePhase::NONE)
+				return;
+			owned.draw(position + viewpos, inter);
+			return;
+		}
+
+		if (!regular)
 			return;
 
-		animation->draw(position + viewpos, inter);
+		// 旧语义：HIDDEN 未触碰不画——已迁到 hide 家族；TOUCH 始终画。
+		regular->draw(position + viewpos, inter);
 	}
 
 	std::string Portal::get_name() const

@@ -29,6 +29,9 @@ namespace ms
 {
 	MapPortals::MapPortals(nl::node src, int32_t mapid)
 	{
+		Portal::HideAnims ph{ &ph_start, &ph_continue, &ph_exit };
+		Portal::HideAnims psh{ &psh_start, &psh_continue, &psh_exit };
+
 		for (auto sub : src)
 		{
 			int8_t portal_id = string_conversion::or_default<int8_t>(sub.name(), -1);
@@ -42,13 +45,25 @@ namespace ms
 			int32_t target_id = sub["tm"];
 			Point<int16_t> position = { sub["x"], sub["y"] };
 
-			const Animation* animation = &animations[type];
 			bool intramap = target_id == mapid;
+			const Animation* shared = nullptr;
+			Portal::HideAnims hide{};
+
+			if (Portal::is_hide_family(type))
+			{
+				// SCRIPTED_HIDDEN → psh；普通 HIDDEN → ph
+				hide = (type == Portal::SCRIPTED_HIDDEN) ? psh : ph;
+			}
+			else if (type == Portal::REGULAR || type == Portal::TOUCH
+				|| type == Portal::SCRIPTED_TOUCH)
+			{
+				shared = &regular_anim;
+			}
 
 			portals_by_id.emplace(
 				std::piecewise_construct,
 				std::forward_as_tuple(portal_id),
-				std::forward_as_tuple(animation, type, name, intramap, position, target_id, target_name)
+				std::forward_as_tuple(shared, hide, type, name, intramap, position, target_id, target_name)
 			);
 
 			portal_ids_by_name.emplace(name, portal_id);
@@ -64,8 +79,7 @@ namespace ms
 
 	void MapPortals::update(Point<int16_t> playerpos)
 	{
-		animations[Portal::REGULAR].update(Constants::TIMESTEP);
-		animations[Portal::HIDDEN].update(Constants::TIMESTEP);
+		regular_anim.update(Constants::TIMESTEP);
 
 		for (auto& iter : portals_by_id)
 		{
@@ -73,8 +87,12 @@ namespace ms
 			switch (portal.get_type())
 			{
 			case Portal::HIDDEN:
+			case Portal::SCRIPTED_HIDDEN:
 			case Portal::TOUCH:
+			case Portal::SCRIPTED_TOUCH:
 				portal.update(playerpos);
+				break;
+			default:
 				break;
 			}
 		}
@@ -147,15 +165,47 @@ namespace ms
 	{
 		nl::node src = nl::nx::Map["MapHelper.img"]["portal"]["game"];
 
-		animations[Portal::HIDDEN] = src["ph"]["default"]["portalContinue"];
+		// 隐藏门三态（波4）：ph/default/{portalStart,portalContinue,portalExit}
+		nl::node ph = src["ph"]["default"];
+		ph_start = ph["portalStart"];
+		ph_continue = ph["portalContinue"];
+		ph_exit = ph["portalExit"];
+		// 缺任一态时回退 continue，避免空 Animation 不画。
+		if (!ph["portalStart"])
+			ph_start = ph_continue;
+		if (!ph["portalExit"])
+			ph_exit = ph_continue;
 
-		// REGULAR 门动画（探针实测，_tools/summon_probe 第三轮）：本数据 pv 直接
-		// 下挂 0..7 八个 bitmap 帧（无 default 容器）。修前读 pv["default"] 恒空
-		// ⇒ 显式门没有动画。带 default 的其它版本数据仍优先取 default。
+		// 脚本隐藏门：psh/default 同形；无 default 时试 psh/1
+		nl::node psh = src["psh"]["default"];
+		if (!psh)
+			psh = src["psh"]["1"];
+		psh_start = psh["portalStart"];
+		psh_continue = psh["portalContinue"];
+		psh_exit = psh["portalExit"];
+		if (!psh["portalStart"])
+			psh_start = psh_continue;
+		if (!psh["portalExit"])
+			psh_exit = psh_continue;
+		// psh 全空时回退到 ph，保证脚本隐藏门至少有 continue。
+		if (!psh["portalContinue"] && ph["portalContinue"])
+		{
+			psh_start = ph_start;
+			psh_continue = ph_continue;
+			psh_exit = ph_exit;
+		}
+
+		// REGULAR 门动画：本数据 pv 直接下挂 0..7；带 default 的版本优先 default。
 		nl::node pv = src["pv"];
 		nl::node pv_default = pv["default"];
-		animations[Portal::REGULAR] = pv_default ? pv_default : pv;
+		regular_anim = pv_default ? Animation(pv_default) : Animation(pv);
 	}
 
-	std::unordered_map<Portal::Type, Animation> MapPortals::animations;
+	Animation MapPortals::regular_anim;
+	Animation MapPortals::ph_start;
+	Animation MapPortals::ph_continue;
+	Animation MapPortals::ph_exit;
+	Animation MapPortals::psh_start;
+	Animation MapPortals::psh_continue;
+	Animation MapPortals::psh_exit;
 }

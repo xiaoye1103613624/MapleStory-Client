@@ -85,7 +85,7 @@ MapHelper portal/game 三族：pv(0..7 帧样式族)/ph(default 三态)/psh(1..4
 
 | 项 | 原因 | 解锁路径 |
 | --- | --- | --- |
-| 隐藏门三态动画（portalStart/Exit） | 原生语义已取证，实现涉及动画所有权（共享 Animation 的 reset/推进归属），未在本波展开 | 波4：MapPortals 持有 ph 三态 + 每门 hidestate 状态机（草稿已在本 ledger 演化记录中） |
+| 隐藏门三态动画（portalStart/Exit） | ✅ 2026-11-05 已接（每门独立 Animation + HidePhase；见 [hidden-portal-tristate](../hidden-portal-tristate/)） | pending §18 真机 |
 | 迷雾区域渲染（矩形平铺贴图） | 贴图键未定位（MapHelper/BasicEff 无命中） | IDA 函数级：CField 雾绘制或 OnPacket 273 处理器反编译 |
 | 出生特效播放 | 本数据无 Mob/SpecialEff.img（0009000.img 不存在） | 资源补齐（图鉴站）后接 effect>0 |
 | 风筝/商店盒/Evan 龙贴图 | 同上，字符串池无直接命中 | IDA `sub_531325` 分发器 case 271/265/181 反编译 |
