@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	BeiDou V17 parity — lightweight field placeholder (summon/mist/door/kite/dragon)
+//	G11：Catch / Chalkboard / CharBox / ItemFX 贴图化（不再一律黄字场标）
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -8,6 +9,7 @@
 
 #include "../../Graphics/Animation.h"
 #include "../../Graphics/Text.h"
+#include "../../Graphics/Texture.h"
 
 #include <cstdint>
 #include <string>
@@ -28,7 +30,12 @@ namespace ms
 			DRAGON,
 			// G7：动态传送门（SPAWN_PORTAL，镇侧门框/神秘门目标端）。
 			// 与 DOOR 分开：NONE 清除命令按本 kind 全清，不误删真门/文本场标。
-			PORTAL
+			PORTAL,
+			// G11：捕获圈 / 黑板 / 店招 / 道具特效（Effect/Cash 真件）
+			CATCH,
+			CHALKBOARD,
+			CHARBOX,
+			ITEMFX
 		};
 
 		FieldMarker(int32_t oid, Kind kind, Point<int16_t> pos, const std::string& label, int32_t skill_id = 0, int32_t lifetime_ms = 0);
@@ -54,10 +61,15 @@ namespace ms
 		void try_load_mist();
 		void try_load_dragon();
 		void try_load_kite();
+		void try_load_catch(bool success);
+		void try_load_chalkboard();
+		void try_load_charbox();
 
 		Kind kind;
 		Animation anim;
 		bool has_anim = false;
+		Texture board;
+		bool has_board = false;
 		int32_t lifetime_ms = 0;
 		int32_t hp_cur = -1;
 		static constexpr int8_t DRAW_LAYER = Layer::Id::SIX;

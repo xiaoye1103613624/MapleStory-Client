@@ -438,7 +438,7 @@ namespace ms
 		// team 供竞技场分队着色；CharSpawn 尚无该字段（波 2 后续切片接入），
 		// 本包至少不再错位。
 		(void)team;
-		// 店招 / 黑板：仅场标，不叠 speak
+		// G11：店招 / 黑板走真件底板（CharBox signboard / Cash 537 sample），不叠 speak
 		auto& markers = Stage::get().get_field_markers();
 		if (!shop_title.empty())
 		{
@@ -446,7 +446,7 @@ namespace ms
 			if (markers.contains(shop_oid))
 				markers.set_label(shop_oid, shop_title);
 			else
-				markers.spawn(shop_oid, FieldMarker::Kind::DOOR,
+				markers.spawn(shop_oid, FieldMarker::Kind::CHARBOX,
 					position + Point<int16_t>(0, -60), shop_title, 0, 0);
 		}
 		if (chalkboard && !chalktext.empty())
@@ -455,7 +455,7 @@ namespace ms
 			if (markers.contains(chalk_oid))
 				markers.set_label(chalk_oid, chalktext);
 			else
-				markers.spawn(chalk_oid, FieldMarker::Kind::DOOR,
+				markers.spawn(chalk_oid, FieldMarker::Kind::CHALKBOARD,
 					position + Point<int16_t>(0, -80), chalktext, 0, 0);
 		}
 		if (!guildname.empty())
@@ -971,15 +971,12 @@ namespace ms
 		{
 			if (open && !text.empty())
 			{
-				// 场标承接黑板文案，不叠 speak
+				// G11：Cash 537 sample 黑板 + 宋体文案；首开须重建（spawn 命中旧 oid 只改字）
+				Point<int16_t> pos = character->get_position() + Point<int16_t>(0, -80);
 				if (markers.contains(chalk_oid))
 					markers.set_label(chalk_oid, text);
 				else
-				{
-					Point<int16_t> pos = character->get_position();
-					markers.spawn(chalk_oid, FieldMarker::Kind::DOOR,
-						pos + Point<int16_t>(0, -80), text, 0, 0);
-				}
+					markers.spawn(chalk_oid, FieldMarker::Kind::CHALKBOARD, pos, text, 0, 0);
 			}
 			else
 			{
@@ -1177,31 +1174,20 @@ namespace ms
 		LOG(LOG_DEBUG, "CatchMonster oid=" << oid << " ok=" << (int)success);
 		while (recv.available())
 			recv.skip_byte();
-		if (success)
-		{
-			const int32_t mid = oid ^ 0x53000000;
-			auto& markers = Stage::get().get_field_markers();
-			Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
-			if (markers.contains(mid))
-				markers.set_label(mid, "Catch");
-			else
-				markers.spawn(mid, FieldMarker::Kind::SUMMON, pos, "Catch", 0, 2000);
-		}
-		else
+		if (!success)
 		{
 			if (auto inv = UI::get().get_element<UIItemInventory>())
 			{
 				if (inv->is_active())
 					return;
 			}
-			const int32_t mid = oid ^ 0x53000000;
-			auto& markers = Stage::get().get_field_markers();
-			Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
-			if (markers.contains(mid))
-				markers.set_label(mid, "Catch fail");
-			else
-				markers.spawn(mid, FieldMarker::Kind::SUMMON, pos, "Catch fail", 0, 1500);
 		}
+		// G11：BasicEff/Catch/{Success|Fail}；skill_id 仅作成败开关（1/0）
+		const int32_t mid = oid ^ 0x53000000;
+		auto& markers = Stage::get().get_field_markers();
+		Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
+		markers.remove(mid);
+		markers.spawn(mid, FieldMarker::Kind::CATCH, pos, "", success ? 1 : 0, success ? 2000 : 1500);
 	}
 
 	void CatchMonsterWithItemHandler::handle(InPacket& recv) const
@@ -1212,31 +1198,21 @@ namespace ms
 		LOG(LOG_DEBUG, "CatchMonsterWithItem oid=" << oid << " item=" << itemid << " ok=" << (int)success);
 		while (recv.available())
 			recv.skip_byte();
-		if (success)
-		{
-			const int32_t mid = oid ^ 0x53000000;
-			auto& markers = Stage::get().get_field_markers();
-			Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
-			if (markers.contains(mid))
-				markers.set_label(mid, "Catch");
-			else
-				markers.spawn(mid, FieldMarker::Kind::SUMMON, pos, "Catch", itemid, 2000);
-		}
-		else
+		if (!success)
 		{
 			if (auto inv = UI::get().get_element<UIItemInventory>())
 			{
 				if (inv->is_active())
 					return;
 			}
-			const int32_t mid = oid ^ 0x53000000;
-			auto& markers = Stage::get().get_field_markers();
-			Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
-			if (markers.contains(mid))
-				markers.set_label(mid, "Catch fail");
-			else
-				markers.spawn(mid, FieldMarker::Kind::SUMMON, pos, "Catch fail", itemid, 1500);
 		}
+		// 原生视觉仍走 Catch/Success|Fail（串池 b1400c/b14000），itemid 仅日志
+		const int32_t mid = oid ^ 0x53000000;
+		auto& markers = Stage::get().get_field_markers();
+		Point<int16_t> pos = Stage::get().get_mobs().get_mob_position(oid);
+		markers.remove(mid);
+		markers.spawn(mid, FieldMarker::Kind::CATCH, pos, "", success ? 1 : 0, success ? 2000 : 1500);
+		(void)itemid;
 	}
 
 	void PetChatHandler::handle(InPacket& recv) const
@@ -1509,12 +1485,11 @@ namespace ms
 		if (auto character = Stage::get().get_character(cid))
 			pos = character->get_position();
 		{
+			// G11：ItemEff/CashEff 动画；强制重建以免旧 SUMMON 场标只改字
 			const int32_t oid = cid ^ 0x50000000;
 			auto& markers = Stage::get().get_field_markers();
-			if (markers.contains(oid))
-				markers.set_label(oid, "ItemFX");
-			else
-				markers.spawn(oid, FieldMarker::Kind::SUMMON, pos, "ItemFX", itemid, 2500);
+			markers.remove(oid);
+			markers.spawn(oid, FieldMarker::Kind::ITEMFX, pos, "", itemid, 2500);
 		}
 		while (recv.available())
 			recv.skip_byte();
@@ -1536,15 +1511,12 @@ namespace ms
 		{
 			if (open && !title.empty())
 			{
-				// 场标承接店招，不叠 speak
+				// G11：雇佣店 signboard / PersonalShop.select 店招
+				Point<int16_t> pos = character->get_position() + Point<int16_t>(0, -60);
 				if (markers.contains(box_oid))
 					markers.set_label(box_oid, title);
 				else
-				{
-					Point<int16_t> pos = character->get_position();
-					markers.spawn(box_oid, FieldMarker::Kind::DOOR,
-						pos + Point<int16_t>(0, -60), title, 0, 0);
-				}
+					markers.spawn(box_oid, FieldMarker::Kind::CHARBOX, pos, title, 0, 0);
 			}
 			else if (!open)
 			{

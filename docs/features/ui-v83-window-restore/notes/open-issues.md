@@ -821,14 +821,13 @@ W3 的落地状态见 [../evidence/w1w3-hud/coords.md](../evidence/w1w3-hud/coor
 `IO/UITypes/UIQuestLog.cpp` 的 `button_pressed()` `case Buttons::MARKNPC`。
 注意：这颗钮**过去连点都点不到**（A8 的 `dimension` 笔误），现在能点、只是行为预留。
 
-### C14 `Mob::set_stance` 对 stance 字节 ≥12 会 `std::out_of_range`（审计到、未证实发生）
-`animations` 只插了 STAND/MOVE/JUMP/HIT/DIE 五个偶数键，
-`set_stance(uint8_t)` 只钳下界（`< MOVE → MOVE`），上界不钳；
-`nameof()` 的 `index = (stance-1)/2` 对 12 会取到 `"fly"`，而 `fly` 从不进 map ⇒ `.at()` 抛。
-**如果**服务端下发 12/13（飞行怪），表现就是这只怪静默消失，正好落在用户报的"有的怪物没显示"里。
-但我**没有任何一次实测抓到**这个 stance 字节（Release 无日志，见 [[client-build-deploy-and-observability]]），
-按「不为不会发生的场景加处理」的约定先不改；线上若再出现"单只怪不显示、其余正常"，
-第一条该查的就是这里。
+### C14 `Mob::set_stance` 对 stance 字节 ≥12 会 `std::out_of_range` —— **已闭环（代码侧）**
+`Mob.cpp:190-207` 已按 `animations.find` 钳姿：无对应帧则退回 MOVE/STAND，不再 `.at()` 抛。
+台账原「只钳下界」描述过期。真机飞行怪仍待 pending 点测。
+
+### G11 Chalkboard/CharBox/ItemFX/Catch 文本场标 —— **已闭环 2026-11-05**
+见 [`../../field-marker-g11/README.md`](../../field-marker-g11/README.md)：Catch 播 `BasicEff/Catch/{Success,Fail}`；
+黑板 `Cash/0537 sample`；店招 `Cash/0503 signboard`；ItemFX 去英文名牌。真机点测仍待做。
 
 ---
 

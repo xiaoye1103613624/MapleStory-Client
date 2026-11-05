@@ -43,7 +43,7 @@
 | G8 | P2 | Mob 出生特效 | `effect>0`（烟雾/石棺等，s9 注释枚举 1/3/4/6/7/8/13/19…）只存储不播放；`item_effect` 读出即弃。**注意**：部署 Mob 命名空间**无 Mob/SpecialEff.img**（catalog_Mob.json 2057 文件零命中），还原需另找特效来源或显式预留 | Mob.cpp:141 vs 无播放点；R1 资源核验 |
 | G9 | P2 | 怪物状态图标 | debuff 只在怪旁生成文本场标；原生/参照按 Mob `info/state` 图标渲染。**部署资源核验**：Mob.img 2057 个文件**无 status/level 节点**（catalog 扫描零命中），BuffIcon.img 现仅供玩家 Buffs 列表 | G1 同点；catalog 扫描 2026-11-04 |
 | G10 | P2 | HitReactor UI | `state>0` 即 emplace UITreasureBox；s9 `UseTreasureBox`（SUCCESS_IN_USE_GACHAPON_BOX）**全库无调用点**——宝箱窗触发语义与参照端不匹配（原生以 Reactor 动画+掉落表现为准） | PacketCreator.java:7552 grep 零发送 |
-| G11 | P2 | Chalkboard/CharBox/ItemFX/Catch | 文本场标替代原生贴图/气泡（Chalkboard 黑板图、商店招牌图、ItemEff 真特效、Catch 捕获圈）。ItemFX 已有 try_load_anim 走 ItemEff（部署存在 ItemEff.img），Catch 同理可用 BasicEff/Catch(2) | FieldMarker.cpp:80-137；catalog_Effect.json |
+| G11 | P2 **✅已修（2026-11-05）** | Chalkboard/CharBox/ItemFX/Catch | 文本场标 ⇒ 真件：Catch=`BasicEff/Catch/{Success,Fail}`；黑板=`Cash/0537 sample`；店招=`Cash/0503 signboard`；ItemFX=`ItemEff`（去英文名牌）。见 [field-marker-g11](../field-marker-g11/) | FieldMarker + MapObjectHandlers |
 
 > 显式预留（不做）：Mob 情报浮窗（G8 资源缺源部分）、Boss 分阶段专属逻辑（s9 客户端侧仅 HP 条+tagColor，原生行为已由 mode5 覆盖）、`activates_by_touch/reactInBox`（s9 服务端在 `stats.getType(state)` 裁决，客户端无需还原该数据层）。
 
@@ -63,14 +63,14 @@ G4/G5/G6/G7 已修（上表 ✅）；探针基建 `_tools/mapobj_probe`（build.
 ## 未做（显式预留，不藏半成品）
 
 - G8 出生特效、G9 怪物状态图标、G4 雾区贴图：**参照端资源同缺**（探针实证部署树，非本端遗漏；协议/语义侧已全部消费对齐）。补资源即接线：G8=SpecialEff 挂载点（Mob.cpp 已存 effect）；G4=Map/Effect mist 键；G9=图标源待定后替换文本场标。
-- G10 宝箱窗语义（s9 UseTreasureBox 全库零调用 ⇒ 现 UI 触发属超发，建议改 Reactor 动画驱动，需交互决策）；G11 Chalkboard/CharBox/Catch/ItemFX 贴图化（可用部署 Effect 资源，未点名不动）。
+- G10 宝箱窗语义（s9 UseTreasureBox 全库零调用 ⇒ 现 UI 触发属超发，建议改 Reactor 动画驱动，需交互决策）；G11 ✅ 已贴图化（field-marker-g11）。
 - UIBossHP 多 oid 分段（双段扎昆同时只显最后一条；s9 逐 oid 广播，客户端单条承接——需 UI 布局决策）。
 - 改动未 git commit（等用户发话）。
 
 ## 构建/运行注意
 
 - G4 Mist 区域渲染（MapHelper/mark，70 子节点已在案）；G5 Dragon 真精灵（spawn 尾段 stance/job 未消费）；G6 Door 真门对象+交互；G7 动态 Portal 多实例（现常量 oid 互斥覆盖）。
-- G8 出生特效**显式预留**：部署 Mob 命名空间无 Mob/SpecialEff.img（catalog 2057 零命中，R1），特效来源需用户提供或按 s9 注释枚举逐项映射；G9 怪物 debuff 图标：部署 Mob.img 无 status 节点——原生图标源待决（交用户抉择）；G10 宝箱窗触发语义与 s9 不匹配（UseTreasureBox 无调用点），建议按 Reactor 动画驱动重定；G11 文本场标→贴图化（Chalkboard/CharBox/Catch 可用部署 Effect 资源）。
+- G8 出生特效**显式预留**：部署 Mob 命名空间无 Mob/SpecialEff.img（catalog 2057 零命中，R1），特效来源需用户提供或按 s9 注释枚举逐项映射；G9 怪物 debuff 图标：部署 Mob.img 无 status 节点——原生图标源待决（交用户抉择）；G10 宝箱窗触发语义与 s9 不匹配（UseTreasureBox 无调用点），建议按 Reactor 动画驱动重定；G11 ✅ 已贴图化。
 
 ## 构建/运行注意
 

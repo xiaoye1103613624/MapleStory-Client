@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	BeiDou V17 parity — FieldMarker
+//	G11：Catch/Success|Fail、黑板 sample、店招 signboard、ItemEff 真特效
 //////////////////////////////////////////////////////////////////////////////////
 #include "FieldMarker.h"
 
@@ -18,18 +19,53 @@ namespace ms
 		base_label(text),
 		lifetime_ms(life_ms)
 	{
-		if (skill_id > 0)
-			try_load_anim(skill_id);
-		if (!has_anim)
+		// G11 专用路径优先：Catch / 黑板 / 店招不走通用 skill 动画，避免错挂 ItemEff。
+		if (k == Kind::CATCH)
 		{
-			if (k == Kind::DOOR)
-				try_load_door();
-			else if (k == Kind::MIST)
-				try_load_mist();
-			else if (k == Kind::DRAGON)
-				try_load_dragon();
-			else if (k == Kind::KITE)
-				try_load_kite();
+			try_load_catch(skill_id != 0);
+			// 捕获圈原生无黄字名牌；有动画则清空文案。
+			if (has_anim)
+			{
+				base_label.clear();
+				label.change_text("");
+			}
+		}
+		else if (k == Kind::CHALKBOARD)
+		{
+			try_load_chalkboard();
+			// 黑板上白粉笔字：宋体路线 A11M + 白字无名牌底
+			label = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NONE, text);
+		}
+		else if (k == Kind::CHARBOX)
+		{
+			try_load_charbox();
+			label = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NONE, text);
+		}
+		else if (k == Kind::ITEMFX)
+		{
+			if (skill_id > 0)
+				try_load_anim(skill_id);
+			if (has_anim)
+			{
+				base_label.clear();
+				label.change_text("");
+			}
+		}
+		else
+		{
+			if (skill_id > 0)
+				try_load_anim(skill_id);
+			if (!has_anim)
+			{
+				if (k == Kind::DOOR)
+					try_load_door();
+				else if (k == Kind::MIST)
+					try_load_mist();
+				else if (k == Kind::DRAGON)
+					try_load_dragon();
+				else if (k == Kind::KITE)
+					try_load_kite();
+			}
 		}
 	}
 
@@ -89,6 +125,51 @@ namespace ms
 #endif
 	}
 
+	void FieldMarker::try_load_catch(bool success)
+	{
+#ifdef USE_NX
+		// 原生串池：Catch/Success、Catch/Fail（BasicEff.img）
+		nl::node node = nl::nx::Effect["BasicEff.img"]["Catch"][success ? "Success" : "Fail"];
+		if (node)
+		{
+			anim = Animation(node);
+			has_anim = true;
+		}
+#else
+		(void)success;
+#endif
+	}
+
+	void FieldMarker::try_load_chalkboard()
+	{
+#ifdef USE_NX
+		// 现金黑板 5370000 的 info/sample 即立牌可视件（80×68）
+		nl::node node = nl::nx::Item["Cash"]["0537.img"]["05370000"]["info"]["sample"];
+		if (!node)
+			node = nl::nx::Item["Cash"]["0537.img"]["05370000"]["info"]["icon"];
+		if (node)
+		{
+			board = Texture(node);
+			has_board = board.is_valid();
+		}
+#endif
+	}
+
+	void FieldMarker::try_load_charbox()
+	{
+#ifdef USE_NX
+		// 雇佣店员皮肤招牌；无皮肤时回退 PersonalShop select 条
+		nl::node node = nl::nx::Item["Cash"]["0503.img"]["05030000"]["skin"]["signboard"];
+		if (!node)
+			node = nl::nx::UI["UIWindow.img"]["PersonalShop"]["select"];
+		if (node)
+		{
+			board = Texture(node);
+			has_board = board.is_valid();
+		}
+#endif
+	}
+
 	void FieldMarker::try_load_anim(int32_t skill_id)
 	{
 #ifdef USE_NX
@@ -142,9 +223,24 @@ namespace ms
 			return;
 
 		Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
+
+		if (has_board)
+		{
+			// 黑板 / 店招：底板 + 居中宋体文案（α=1）
+			board.draw(DrawArgument(absp, alpha));
+			const int16_t dy = kind == Kind::CHALKBOARD ? -24 : -18;
+			if (!base_label.empty())
+				label.draw(absp + Point<int16_t>(0, dy));
+			return;
+		}
+
 		if (has_anim)
 			anim.draw(absp, alpha);
-		label.draw(absp + Point<int16_t>(0, has_anim ? -40 : -20));
+
+		// Catch / ItemFX 有动画时不再叠英文名牌；其余场标保留黄字兜底
+		const bool hide_label = (kind == Kind::CATCH || kind == Kind::ITEMFX) && has_anim;
+		if (!hide_label && !base_label.empty())
+			label.draw(absp + Point<int16_t>(0, has_anim ? -40 : -20));
 	}
 
 	int8_t FieldMarker::update(const Physics&)
