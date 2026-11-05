@@ -37,7 +37,7 @@ namespace ms
 		void update(Point<int16_t> playerpos);
 		void draw(Point<int16_t> viewpos, float inter) const;
 
-		Portal::WarpInfo find_warp_at(Point<int16_t> playerpos);
+		Portal::WarpInfo find_warp_at(Point<int16_t> playerpos, bool allow_hidden = false);
 
 		Point<int16_t> get_portal_by_id(uint8_t id) const;
 		Point<int16_t> get_portal_by_name(const std::string& name) const;

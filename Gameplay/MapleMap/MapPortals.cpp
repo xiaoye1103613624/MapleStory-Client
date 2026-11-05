@@ -115,18 +115,28 @@ namespace ms
 			return {};
 	}
 
-	Portal::WarpInfo MapPortals::find_warp_at(Point<int16_t> playerpos)
+	Portal::WarpInfo MapPortals::find_warp_at(Point<int16_t> playerpos, bool allow_hidden)
 	{
-		if (cooldown == 0)
+		if (cooldown > 0)
+			return {};
+
+		for (auto& iter : portals_by_id)
 		{
-			cooldown = WARPCD;
+			const Portal& portal = iter.second;
+			Portal::Type t = portal.get_type();
 
-			for (auto& iter : portals_by_id)
+			// 隐藏/脚本隐藏门需玩家主动交互（按上键），行走经过不自动触发
+			if (!allow_hidden && (t == Portal::HIDDEN || t == Portal::SCRIPTED_HIDDEN))
+				continue;
+
+			if (portal.bounds().contains(playerpos))
 			{
-				const Portal& portal = iter.second;
-
-				if (portal.bounds().contains(playerpos))
-					return portal.getwarpinfo();
+				Portal::WarpInfo info = portal.getwarpinfo();
+				if (info.valid)
+				{
+					cooldown = WARPCD;
+					return info;
+				}
 			}
 		}
 

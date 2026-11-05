@@ -25,7 +25,10 @@ namespace ms
 			MIST,
 			DOOR,
 			KITE,
-			DRAGON
+			DRAGON,
+			// G7：动态传送门（SPAWN_PORTAL，镇侧门框/神秘门目标端）。
+			// 与 DOOR 分开：NONE 清除命令按本 kind 全清，不误删真门/文本场标。
+			PORTAL
 		};
 
 		FieldMarker(int32_t oid, Kind kind, Point<int16_t> pos, const std::string& label, int32_t skill_id = 0, int32_t lifetime_ms = 0);

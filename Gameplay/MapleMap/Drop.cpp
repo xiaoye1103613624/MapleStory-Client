@@ -107,20 +107,27 @@ namespace ms
 
 	void Drop::expire(int8_t type, const PhysicsObject* lt)
 	{
+		// s9 实际发送的 animation 值（removeItemFromMap 调用点全枚举）：0/1/2/4/5
+		//（PacketCreator.java:2602 注释 0=expire 1=无动画 2=拾取 4=爆炸；
+		//  Character.java:2078 pet 拾取走 5；AbstractDealDamageHandler.java:229 走 4）。
+		// 修前 3/4/5 与未知值不进任何 case ⇒ 状态不变、永不消失，掉落物永久残留。
 		switch (type)
 		{
 		case 0:
 			state = Drop::State::PICKEDUP;
 			break;
-		case 1:
-			deactivate();
-			break;
 		case 2:
+		case 4: // 爆炸/吸卷拾取（s9 chrId=0 ⇒ looter 为空，原地淡出）
+		case 5: // 宠物拾取：RemoveLootHandler 已把主人 phobj 喂给 looter，同 2 飞取
 			angle.set(0.0f);
 			state = Drop::State::PICKEDUP;
 			looter = lt;
 			phobj.vspeed = -4.5f;
 			phobj.type = PhysicsObject::Type::NORMAL;
+			break;
+		case 1:
+		default:
+			deactivate();
 			break;
 		}
 	}

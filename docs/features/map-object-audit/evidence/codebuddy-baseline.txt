@@ -1,0 +1,207 @@
+已完成「very thorough」级别的检索与交叉比对。以下为结构化审计基线结果。
+
+---
+
+# 地图对象逻辑全量审计基线（客户端 ↔ s9 服务端）
+
+## 核心架构结论（先看这条）
+
+该客户端是**「场标(FieldMarker)审计客户端」**，并非完整渲染客户端。其对象渲染分三层：
+
+1. **真实渲染对象**（有精灵、进容器管理）：`Mob / Npc / Reactor / Drop(+ItemDrop/MesoDrop) / Char / Pet`，以及 `MapSummon`、`MapMist`（二者是 `FieldMarker` 子类，带真实精灵与状态机）。
+2. **纯文本场标**（仅一个 label，无真实精灵）：`Dragon / Door / Portal / MonsterStatus / Catch / ItemFX / CharBox / UpdateCharBox`，全部经 `Stage::get_field_markers()` 以 `FieldMarker` 承载。
+3. **静态装饰**（从 WZ 载入，不由 opcode 生成）：`Portal / Obj / Tile`。
+
+所有客户端 opcode 数值与 s9 `SendOpcode` **完全一致**（见下，差值均为 0），协议基线对齐良好。未发现「已注册但 handle() 为空」的 handler；所有声明均已完成注册且有实现体。
+
+---
+
+## A. 对象类与容器清单
+
+### MapObject 子类（继承 `MapObject`）
+
+| 对象类 | 路径 | 角色 | 明显 TODO |
+|---|---|---|---|
+| `Mob` | `E:\project\MapleStory-Client\Gameplay\MapleMap\Mob.h:39` / `Mob.cpp:32` | 真实渲染（22KB 重类） | `Mob.cpp:362,383,634`（移动/状态槽预留） |
+| `Npc` | `Npc.h:30` / `Npc.cpp:30` | 真实渲染 | 无 |
+| `Reactor` | `Reactor.h:29` / `Reactor.cpp:28` | 真实渲染 | `Reactor.h:53,55`（GMS 客户端字段）、`Reactor.cpp:37,57`（default 动画/音效） |
+| `Drop` | `Drop.h:26` / `Drop.cpp:22` | 基类；`ItemDrop`(`ItemDrop.h/.cpp`)、`MesoDrop`(`MesoDrop.h/.cpp`) 为子类 | 无 |
+| `FieldMarker` | `FieldMarker.h:19` / `FieldMarker.cpp:15` | 场标基类 | 无 |
+| `MapSummon` | `MapSummon.h:20`（`public FieldMarker`） | 真实渲染子类（Skill.img summon 状态机：stand/hit/die/summoned） | 无 |
+| `MapMist` | `MapMist.h:10`（`public FieldMarker`） | 真实渲染子类（迷雾） | 无 |
+
+### 非 MapObject 子类（静态装饰，不由 opcode 生成）
+
+| 类 | 路径 | 备注 |
+|---|---|---|
+| `Portal` | `Portal.h:24` | standalone；动态传送门(SPAWN_PORTAL)另走场标 |
+| `Obj` | `Obj.h:25` | 地图装饰 |
+| `Tile` | `Tile.h:29` | 瓦片；`Tile.cpp:33` TODO（NX 转换） |
+
+### 容器类
+
+| 容器 | 路径 | 备注 |
+|---|---|---|
+| `MapChars` | `MapChars.h/.cpp` | TODO `MapChars.cpp:29,38` |
+| `MapNpcs` | `MapNpcs.h/.cpp` | TODO `MapNpcs.cpp:33,81` |
+| `MapMobs` | `MapMobs.h/.cpp` | TODO `MapMobs.cpp:34,132` |
+| `MapReactors` | `MapReactors.h/.cpp` | TODO `MapReactors.cpp:30` |
+| `MapDrops` | `MapDrops.h/.cpp` | TODO `MapDrops.cpp:52` |
+| `MapPortals` | `MapPortals.h/.cpp` | 静态 portal 容器 |
+| `MapFieldMarkers` | `MapFieldMarkers.h/.cpp` | **统管 summon/mist/dragon/door/portal/charbox 等场标** |
+| `MapBackgrounds` | `MapBackgrounds.h/.cpp` | TODO `MapBackgrounds.cpp:69` |
+| `MapTilesObjs` | `MapTilesObjs.h/.cpp` | Tile+Obj |
+| `MapEffect` | `MapEffect.h/.cpp` | 背景特效 |
+| `MapInfo` | `MapInfo.h/.cpp` | TODO `MapInfo.cpp:42` |
+
+> 注：你清单里的 `MapSummon` 在本仓库是**对象类**（FieldMarker 子类），不是容器；召唤/迷雾经 `Stage::get_field_markers()` 管理。
+
+---
+
+## B. Handler 注册与实现状态
+
+注册集中在 `E:\project\MapleStory-Client\Net\PacketSwitch.cpp`（枚举定义 `:100–302`，`emplace` 注册 `:515–629`）。**全部 52 个 `MapObjectHandlers` handler 均有 `::handle` 实现体**（grep 命中 52 处），外加 `SpawnPortalHandler`、`FieldEffectHandler`、`CheckSpwResultHandler`，**无空实现**。
+
+| 客户端 Opcode(值) | s9 SendOpcode(值) | Handler 类 | 文件:行 | 渲染/效果 |
+|---|---|---|---|---|
+| `SPAWN_CHAR`(160) | `SPAWN_PLAYER`(0xA0) | `SpawnCharHandler` | `MapObjectHandlers.cpp:314` | Char 真实 |
+| `REMOVE_CHAR`(161) | `REMOVE_PLAYER_FROM_MAP`(0xA1) | `RemoveCharHandler` | `:474` | 移除 |
+| `SPAWN_PET`(168) | `SPAWN_PET`(0xA8) | `SpawnPetHandler` | `:487` | Pet 挂角色 |
+| `CHAR_MOVED`(185) | `MOVE_PLAYER`(0xB9) | `CharMovedHandler` | `:538` | Char 移动 |
+| `UPDATE_CHARLOOK`(197) | `UPDATE_CHAR_LOOK`(0xC5) | `UpdateCharLookHandler` | `:549` | 外观 |
+| `SHOW_FOREIGN_EFFECT`(198) | `SHOW_FOREIGN_EFFECT`(0xC6) | `ShowForeignEffectHandler` | `:560` | 特效 |
+| `SPAWN_MOB`(236) | `SPAWN_MONSTER`(0xEC) | `SpawnMobHandler` | `:617` | **Mob 真实** |
+| `KILL_MOB`(237) | `KILL_MONSTER`(0xED) | `KillMobHandler` | `:657` | 移除 |
+| `SPAWN_MOB_C`(238) | `SPAWN_MONSTER_CONTROL`(0xEE) | `SpawnMobControllerHandler` | `:667` | Mob 真实（含隐身逻辑） |
+| `MOB_MOVED`(239) | `MOVE_MONSTER`(0xEF) | `MobMovedHandler` | `:730` | Mob 移动 |
+| `SHOW_MOB_HP`(250) | `SHOW_MONSTER_HP`(0xFA) | `ShowMobHpHandler` | `:750` | 血条 |
+| `SPAWN_NPC`(257) | `SPAWN_NPC`(0x101) | `SpawnNpcHandler` | `:769` | **Npc 真实** |
+| `SPAWN_NPC_C`(259) | `SPAWN_NPC_REQUEST_CONTROLLER`(0x103) | `SpawnNpcControllerHandler` | `:789` | Npc 真实 |
+| `DROP_LOOT`(268) | `DROP_ITEM_FROM_MAPOBJECT`(0x10C) | `DropLootHandler` | `:820` | **Drop 真实** |
+| `REMOVE_LOOT`(269) | `REMOVE_ITEM_FROM_MAP`(0x10D) | `RemoveLootHandler` | `:859` | 移除（修宠物拾取） |
+| `HIT_REACTOR`(277) | `REACTOR_HIT`(0x115) | `HitReactorHandler` | `:890` | **Reactor 真实**（TODO:stance/未用字段） |
+| `SPAWN_REACTOR`(279) | `REACTOR_SPAWN`(0x117) | `SpawnReactorHandler` | `:931` | Reactor 真实（TODO:未用 fhid） |
+| `REMOVE_REACTOR`(280) | `REACTOR_DESTROY`(0x118) | `RemoveReactorHandler` | `:950` | 移除（客户端未读 pos） |
+| `CHALKBOARD`(164) | `CHALKBOARD`(0xA4) | `ChalkboardHandler` | `:962` | 黑板 |
+| `FACIAL_EXPRESSION`(193) | `FACIAL_EXPRESSION`(0xC1) | `FacialExpressionHandler` | `:996` | 表情 |
+| `SHOW_CHAIR`(196) | `SHOW_CHAIR`(0xC4) | `ShowChairHandler` | `:1008` | 椅子 |
+| `SKILL_EFFECT`(190) | `SKILL_EFFECT`(0xBE) | `SkillEffectHandler` | `:1020` | 技能特效 |
+| `CANCEL_SKILL_EFFECT`(191) | `CANCEL_SKILL_EFFECT`(0xBF) | `CancelSkillEffectHandler` | `:1043` | 取消特效 |
+| `DAMAGE_PLAYER`(192) | `DAMAGE_PLAYER`(0xC0) | `DamagePlayerHandler` | `:1059` | 玩家受伤 |
+| `GIVE_FOREIGN_BUFF`(199) | `GIVE_FOREIGN_BUFF`(0xC7) | `GiveForeignBuffHandler` | `:1080` | 增益 |
+| `CANCEL_FOREIGN_BUFF`(200) | `CANCEL_FOREIGN_BUFF`(0xC8) | `CancelForeignBuffHandler` | `:1152` | 取消增益 |
+| `CATCH_MONSTER`(251) | `CATCH_MONSTER`(0xFB) | `CatchMonsterHandler` | `:1173` | **场标 "Catch"** |
+| `CATCH_MONSTER_WITH_ITEM`(252) | `CATCH_MONSTER_WITH_ITEM`(0xFC) | `CatchMonsterWithItemHandler` | `:1207` | 场标 |
+| `PET_CHAT`(171) | `PET_CHAT`(0xAB) | `PetChatHandler` | `:1242` | 宠物说话 |
+| `PET_NAMECHANGE`(172) | `PET_NAMECHANGE`(0xAC) | `PetNameChangeHandler` | `:1263` | 改名 |
+| `PET_COMMAND`(174) | `PET_COMMAND`(0xAE) | `PetCommandHandler` | `:1279` | 命令 |
+| `REMOVE_NPC`(258) | `REMOVE_NPC`(0x102) | `RemoveNpcHandler` | `:1296` | 移除 |
+| `SPAWN_MIST`(273) | `SPAWN_MIST`(0x111) | `SpawnMistHandler` | `:1305` | **MapMist 真实** |
+| `REMOVE_MIST`(274) | `REMOVE_MIST`(0x112) | `RemoveMistHandler` | `:1359` | 场标移除 |
+| `SPAWN_DOOR`(275) | `SPAWN_DOOR`(0x113) | `SpawnDoorHandler` | `:1368` | **场标 "Door"** |
+| `REMOVE_DOOR`(276) | `REMOVE_DOOR`(0x114) | `RemoveDoorHandler` | `:1388` | 场标移除 |
+| `SPAWN_SPECIAL_MAPOBJECT`(175) | `SPAWN_SPECIAL_MAPOBJECT`(0xAF) | `SpawnSummonHandler` | `:1399` | **MapSummon 真实** |
+| `REMOVE_SPECIAL_MAPOBJECT`(176) | `REMOVE_SPECIAL_MAPOBJECT`(0xB0) | `RemoveSummonHandler` | `:1452` | 召唤移除 |
+| `DAMAGE_MONSTER`(246) | `DAMAGE_MONSTER`(0xF6) | `DamageMonsterHandler` | `:1469` | 血条 |
+| `SHOW_ITEM_EFFECT`(194) | `SHOW_ITEM_EFFECT`(0xC2) | `ShowItemEffectHandler` | `:1496` | 场标 "ItemFX" |
+| `UPDATE_CHAR_BOX`(165) | `UPDATE_CHAR_BOX`(0xA5) | `UpdateCharBoxHandler` | `:1517` | 场标店招 |
+| `SPAWN_DRAGON`(181) | `SPAWN_DRAGON`(0xB5) | `SpawnDragonHandler` | `:1554` | **场标 "Dragon"（无精灵）** |
+| `MOVE_DRAGON`(182) | `MOVE_DRAGON`(0xB6) | `MoveDragonHandler` | `:1574` | 场标移动 |
+| `REMOVE_DRAGON`(183) | `REMOVE_DRAGON`(0xB7) | `RemoveDragonHandler` | `:1587` | 场标移除 |
+| `SUMMON_SKILL`(180) | `SUMMON_SKILL`(0xB4) | `SummonSkillHandler` | `:1596` | 召唤技能 |
+| `MOVE_SUMMON`(177) | `MOVE_SUMMON`(0xB1) | `MoveSummonHandler` | `:1613` | 召唤移动 |
+| `SUMMON_ATTACK`(178) | `SUMMON_ATTACK`(0xB2) | `SummonAttackHandler` | `:1628` | 召唤攻击 |
+| `DAMAGE_SUMMON`(179) | `DAMAGE_SUMMON`(0xB3) | `DamageSummonHandler` | `:1663` | 召唤受伤 |
+| `APPLY_MONSTER_STATUS`(242) | `APPLY_MONSTER_STATUS`(0xF2) | `ApplyMonsterStatusHandler` | `:1679` | **仅场标 "Debuff"（未可视化）** |
+| `CANCEL_MONSTER_STATUS`(243) | `CANCEL_MONSTER_STATUS`(0xF3) | `CancelMonsterStatusHandler` | `:1714` | 场标移除 |
+| `MOVE_PET`(170) | `MOVE_PET`(0xAA) | `MovePetHandler` | `:1731` | 宠物移动 |
+| `PET_EXCEPTION_LIST`(173) | `PET_EXCEPTION_LIST`(0xAD) | `PetExceptionListHandler` | `:1750` | 宠物排除 |
+| `SPAWN_PORTAL`(67) | `SPAWN_PORTAL`(0x43) | `SpawnPortalHandler` | `WaveAShellHandlers.cpp:2079` | **场标 "Portal->"（无真实传送门对象）** |
+| `FIELD_EFFECT`(138) | `FIELD_EFFECT`(0x8A) | `FieldEffectHandler` | `TestingHandlers.cpp:75` | BossHP 经 mode5→`UIBossHP` |
+| `CHECK_SPW_RESULT` | — | `CheckSpwResultHandler` | `TestingHandlers.cpp:51` | PIC 校验 |
+
+### TestingHandlers.cpp 分发结构（重点）
+`FieldEffectHandler::handle`（`TestingHandlers.cpp:75`）按 `mode=recv.read_byte()` 分发：
+- `mode 1` tremble：type(byte)+delay(int) → `Stage::get_camera().tremble`（`TestingHandlers.cpp:80`）
+- `mode 3` 屏幕/地图特效路径(string) → `Stage::add_effect`（`TestingHandlers.cpp:93`）
+- `mode 4` mapSound/playSound(string) → `Sound`（`TestingHandlers.cpp:104`）
+- **`mode 5` = showBossHP**：`oid(int)+cur(int)+max(int)+tag(byte)+tagbg(byte)` → `UIBossHP::set_hp`（`TestingHandlers.cpp:128–147`）。与 s9 `showBossHP` 字段完全一致。
+- `mode 6` musicChange(string) → `Music`（`TestingHandlers.cpp:155`）
+- `mode 0/2` 及其它 string → `Stage::add_effect`（`TestingHandlers.cpp:167`）
+- 其余：skip 剩余字节 + 日志（`TestingHandlers.cpp:184`）
+
+`CheckSpwResultHandler::handle`（`:51`）：读 `reason(byte)`，skip 余下，reason==0→`UILoginNotice::INCORRECT_PIC`，否则 tip。
+
+> BossHP 在本协议里**没有独立 BOSS_HP opcode**，而是复用 `FIELD_EFFECT`(`0x8A`) mode5；s9 `showBossHP`（`PacketCreator.java:3696`）同样写 `FIELD_EFFECT`+byte5。已对齐。
+
+---
+
+## C. s9 服务端包格式对照（关键字段顺序）
+
+| s9 方法（文件:行） | 对应 Opcode | 字段顺序 |
+|---|---|---|
+| `spawnMonsterInternal`（`PacketCreator.java:1514`；`spawnMonster:1398`/`controlMonster:1422`） | `SPAWN_MONSTER` / `SPAWN_MONSTER_CONTROL` | oid(int) → controller(1: 5/1) → id(int) → [16零字节 或 `encodeTemporary`] → pos → stance(byte) → originFh(short0) → fh(short) → [effect+parentOid 或 `encodeParentlessMobSpawnEffect`] → team(byte) → getItemEffect(int0) |
+| `spawnNPC`(`:1362`) / `spawnNPCRequestController`(`:1376`) | `SPAWN_NPC` / `SPAWN_NPC_REQUEST_CONTROLLER` | oid(int) → id(int) → x(short) → cy(short) → flip(bool, f!=1) → fh(short) → rx0(short) → rx1(short) → [mode1时 minimap(bool)] |
+| `dropItemFromMapObject`(`:1835`) | `DROP_ITEM_FROM_MAPOBJECT` | mod(byte) → oid(int) → meso(bool) → itemid(int) → owner(int) → dropType(byte) → dropto(pos) → dropperOid(int) → [mod!=2: dropfrom(pos)+short0] → [meso==0: 过期时间] → playerDrop(bool: 0/1) |
+| `removeItemFromMap`(`:2602`) | `REMOVE_ITEM_FROM_MAP` | animation(byte) → oid(int) → [animation>=2: chrId(int) → [pet: slot(byte)]] |
+| `killMonster`(`:1798`) | `KILL_MONSTER` | oid(int) → animation(byte) |
+| `spawnReactor`(`:4210`) | `REACTOR_SPAWN` | oid(int) → id(int) → state(byte) → pos → byte0 → short0 |
+| `triggerReactor`(`:4222`) | `REACTOR_HIT` | oid(int) → state(byte) → pos → stance(byte) → short0 → byte5(帧延迟) |
+| `destroyReactor`(`:4233`) | `REACTOR_DESTROY` | oid(int) → state(byte) → pos |
+| `showMonsterHP`(`:3689`) | `SHOW_MONSTER_HP` | oid(int) → remhppercentage(byte) |
+| `showBossHP`(`:3696`) | `FIELD_EFFECT`(mode5) | byte5 → oid(int) → currHP(int) → maxHP(int) → tagColor(byte) → tagBgColor(byte) |
+| `applyMonsterStatus`(`:4009`) | `APPLY_MONSTER_STATUS` | oid(int) → long0 → `writeIntMask`(掩码) → 每状态[short(value) → int(skill) → short(-1)] → size(byte) → int0 |
+| `cancelMonsterStatus`(`:4038`) | `CANCEL_MONSTER_STATUS` | oid(int) → long0 → `writeIntMask` → int0 |
+| `spawnMist`(`:4074`) | `SPAWN_MIST` | oid(int) → type(int) → ownerId(int) → skill(int) → level(byte) → skillDelay(short) → box(x,y,x+w,y+h)(4×int) → int0 |
+| `removeMist`(`:4090`) | `REMOVE_MIST` | oid(int) |
+| `spawnDoor`(`:1131`) | `SPAWN_DOOR` | launched(bool) → ownerid(int) → pos |
+| `removeDoor`(`:1146`) | `REMOVE_DOOR` / `SPAWN_PORTAL`(town) | [REMOVE_DOOR: byte0 → ownerId(int)]；[SPawn_PORTAL: int(NONE) → int(NONE)] |
+| `spawnPortal`(`:1115`) | `SPAWN_PORTAL` | townId(int) → targetId(int) → pos |
+| `spawnSummon`(`:1167`) | `SPAWN_SPECIAL_MAPOBJECT` | owner(int) → oid(int) → skill(int) → 0x0A(byte) → level(byte) → pos → stance(byte) → short0 → moveType(byte) → !puppet(bool) → !animated(bool) |
+| `removeSummon`(`:1190`) | `REMOVE_SPECIAL_MAPOBJECT` | owner(int) → oid(int) → anim(byte: 4/1) |
+| `spawnDragon`(`:7405`) | `SPAWN_DRAGON` | ownerId(int) → x(short) → 0(short) → y(short) → 0(short) → stance(byte) → 0(byte) → job(short) |
+| `removeDragon`(`:7432`) | `REMOVE_DRAGON` | chrId(int) |
+
+**比对结论**：客户端 `SpawnMobHandler`/`SpawnNpcHandler`/`DropLootHandler`/`SpawnReactorHandler`/`HitReactorHandler`/`SpawnSummonHandler`/`SpawnDragonHandler` 等字段解析与 s9 发送顺序**逐字段对齐**（含 controller/0x0A 填充、effect/parent、team 等易错位字段，客户端注释标明「修前读错位」已修正）。
+
+**一处需注意的协议差异**：s9 `applyMonsterStatus` 每状态写 `short(value)+int(skill)+short(-1)`，而客户端 `ApplyMonsterStatusHandler`（`MapObjectHandlers.cpp:1689–1692`）只按 `bits` 读 `short(value)+int(skill)`，**未消费每状态尾随的 `short(-1)`**。多 buff 时可能错位——但该 handler 仅生成调试场标、不可视化状态，影响有限（见 D 汇总「部分实现」）。
+
+---
+
+## D. 当前实现快照要点
+
+- **`MapObjectHandlers.cpp`（55KB，52 个 handler）**：地图对象 handler 主文件，覆盖上述全表。所有 handler 均有实现体；TODO 多为「已修复缺陷的注释留痕」（如 `:675` 隐身、`:873` 宠物拾取、`:895` reactor stance、`:940` reactor 未用字段），非未完成项。**核心缺口**是 Summon/Dragon/Door/Portal/MonsterStatus/Catch/ItemFX/CharBox 仅以 `FieldMarker` 文本呈现，无真实渲染/交互。
+- **`SetFieldHandlers.cpp`（8KB，1 个 handler）**：`SetFieldHandler`（`:144`）是进图初始化核心，按 `mode1/mode2` 走 `change_map`/`set_field`，负责整图对象装载。完整，是「对象生成」的总入口。
+- **`NpcInteractionHandlers.cpp`（4.6KB，3 个 handler）**：`NpcDialogueHandler`(:39)、`OpenNpcShopHandler`(:71)、`ConfirmShopTransactionHandler`(:129) — 负责 NPC 对话/商店，已完整。
+- **`QuestHandlers.cpp`（3.6KB，1 个 handler）**：`UpdateQuestInfoHandler`(:60) — 任务信息更新，已完整。
+- **`AttackHandlers.cpp`（2.5KB，1 个 handler 基类）**：`AttackHandler`（`:30`，按构造 `Attack::Type` 区分近战/远程/魔法/能量），由 `CloseAttack/RangedAttack/MagicAttack/EnergyAttack` 复用 — 已完整。
+
+---
+
+## 汇总清单（按对象类型）
+
+### ✅ 已实现（真实渲染 / 完整解析）
+- **Mob**：`SPAWN_MOB` / `KILL_MOB` / `SPAWN_MOB_C` / `MOB_MOVED` / `SHOW_MOB_HP` / `DAMAGE_MONSTER`（血条）/ `APPLY/CANCEL_MONSTER_STATUS` 包已解析（但状态未可视化，见下）
+- **Npc**：`SPAWN_NPC` / `SPAWN_NPC_C` / `REMOVE_NPC`
+- **Reactor**：`SPAWN_REACTOR` / `HIT_REACTOR` / `REMOVE_REACTOR`
+- **Drop**：`DROP_LOOT` / `REMOVE_LOOT`（含 Meso/Item，宠物拾取修正）
+- **Char/Pet**：`SPAWN_CHAR` / `REMOVE_CHAR` / `CHAR_MOVED` / `UPDATE_CHARLOOK` / `SHOW_FOREIGN_EFFECT` / `SPAWN_PET` / `MOVE_PET` / `PET_CHAT` / `PET_NAMECHANGE` / `PET_COMMAND` / `PET_EXCEPTION_LIST`
+- **Summon（真实精灵）**：`SPAWN_SPECIAL_MAPOBJECT` / `REMOVE_SPECIAL_MAPOBJECT` / `MOVE_SUMMON` / `SUMMON_ATTACK` / `DAMAGE_SUMMON` / `SUMMON_SKILL`
+- **Mist（真实精灵）**：`SPAWN_MIST` / `REMOVE_MIST`
+- **效果/交互**：`CHALKBOARD` / `FACIAL_EXPRESSION` / `SHOW_CHAIR` / `SKILL_EFFECT` / `CANCEL_SKILL_EFFECT` / `DAMAGE_PLAYER` / `GIVE/CANCEL_FOREIGN_BUFF` / `SHOW_ITEM_EFFECT` / `UPDATE_CHAR_BOX` / `CATCH_MONSTER`(+WITH_ITEM) / `FIELD_EFFECT`(含 BossHP mode5) / `CHECK_SPW_RESULT`
+
+### ⚠️ 部分实现（含 TODO / 仅场标，无真实渲染或交互）
+- **Dragon**：`SPAWN_DRAGON` / `MOVE_DRAGON` / `REMOVE_DRAGON` — 仅 `FieldMarker` 文本 "Dragon"，**无龙精灵渲染**。
+- **Door**：`SPAWN_DOOR` / `REMOVE_DOOR` — 仅场标 "Door"，无真实门对象/碰撞。
+- **Portal（动态 mystic door）**：`SPAWN_PORTAL` — 仅场标 "Portal->"，**无真实传送门对象**（静态 portal 由 WZ 载入）。
+- **MonsterStatus**：`APPLY_MONSTER_STATUS` / `CANCEL_MONSTER_STATUS` — 仅生成调试场标 "Debuff#..."，**状态未可视化到怪物**；且 `applyMonsterStatus` 每状态尾随 `short(-1)` 客户端未消费（多 buff 潜在错位）。
+- **Catch / ItemFX / CharBox**：`CATCH_MONSTER`(+WITH_ITEM) / `SHOW_ITEM_EFFECT` / `UPDATE_CHAR_BOX` — 仅场标文本，无对象化。
+- **Reactor**：`SpawnReactorHandler` 有 TODO 未读 `fhid`/尾字节（靠 while-skip 兜底）；`RemoveReactorHandler` 未读 s9 写入的 pos（靠 skip 兜底）。
+- **Reactor.h/cpp**：GMS 客户端字段/默认动画/音效标注 TODO（`Reactor.h:53,55`、`Reactor.cpp:37,57`）。
+
+### ❌ 缺失（无 handler / 无对象）
+- 本审计覆盖的地图对象 opcode **全部已注册且实现**（无「声明未注册」「注册未实现」）。
+- 真正「缺失」的是**渲染层**，而非协议层：Dragon/Door/动态 Portal/MonsterStatus/Catch/ItemFX/CharBox 在客户端层面不存在真实可交互的 MapObject，仅以 `FieldMarker` 文本占位（这是该审计客户端的既定设计上限，若要补全需新建对应 MapObject 子类并接入容器）。
+- `APPLY_MONSTER_STATUS`/`CANCEL_MONSTER_STATUS` 的可视化状态应用（debuff 图标/动画）缺失。
+
+> 建议后续优先补齐：① `MonsterStatus` 可视化（影响战斗可读性，且协议解析有尾字节错位风险）；② 动态 `Door`/`Portal` 真实对象（影响功能性）；③ `Dragon` 精灵（纯显示缺失）。Mob/Npc/Reactor/Drop/Char/Summon/Mist 已达「可审计」完整度。

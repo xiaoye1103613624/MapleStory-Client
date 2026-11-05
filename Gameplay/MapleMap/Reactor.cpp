@@ -76,25 +76,50 @@ namespace ms
 		return phobj.fhlayer;
 	}
 
-	void Reactor::set_state(int8_t state)
+	void Reactor::set_state(int8_t newstate)
 	{
+		const int8_t old = this->state;
+		// 转场帧必须按 draw/update 的取帧下标（state-1）存储，而不是旧状态值：
+		// s9 顺序触发（new = old+1，Reactor.java:292 setState）时两者重合、行为不变；
+		// 乱序跳态（timeout 换状态 Reactor.java:347-349）时修前 animations.at(state-1)
+		// 查不到旧键直接抛 std::out_of_range（崩溃点 :62/:71）。
+		this->state = newstate;
+
 		if (hittable)
 		{
-			animations[this->state] = src[this->state]["hit"];
-			animation_ended = false;
-			play_state_sound(this->state);
+			nl::node hit = src[old]["hit"];
+			if (hit)
+			{
+				animations[newstate - 1] = hit;
+				animation_ended = false;
+				play_state_sound(old);
+			}
+			// 缺 hit 帧：保持 animation_ended，画 normal，不再 at() 崩。
 		}
-
-		this->state = state;
 	}
 
-	void Reactor::destroy(int8_t, Point<int16_t>)
+	void Reactor::destroy(int8_t newstate, Point<int16_t> position)
 	{
-		animations[this->state] = src[this->state]["hit"];
-		play_state_sound(this->state);
-		state++;
+		// s9 destroyReactor（PacketCreator.java:4233：oid+state+pos）传破坏后状态与落点；
+		// 修前两个参数全弃用、写死 ++，服务端乱序下发时与真实状态脱节。
+		if (position.x() || position.y())
+			set_position(position);
+
+		const int8_t old = this->state;
+		this->state = (newstate > old) ? newstate : static_cast<int8_t>(old + 1);
+
+		nl::node hit = src[old]["hit"];
+		if (hit)
+		{
+			animations[this->state - 1] = hit;
+			play_state_sound(old);
+			animation_ended = false;
+		}
+		else
+		{
+			animation_ended = true; // 无 hit 帧：update 下一拍直接 deactivate
+		}
 		dead = true;
-		animation_ended = false;
 	}
 
 	void Reactor::play_state_sound(int8_t st)

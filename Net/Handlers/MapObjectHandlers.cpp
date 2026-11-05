@@ -1314,8 +1314,9 @@ namespace ms
 		int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
 
+		int8_t level = 0;
 		if (recv.available())
-			recv.read_byte(); // skillLevel
+			level = recv.read_byte(); // skillLevel
 
 		if (recv.available() >= 2)
 			recv.read_short(); // skillDelay
@@ -1344,13 +1345,17 @@ namespace ms
 		}
 
 		LOG(LOG_DEBUG, "SpawnMist oid=" << oid << " type=" << mist_type
-			<< " owner=" << owner << " skill=" << skill
+			<< " owner=" << owner << " skill=" << skill << " lv=" << (int)level
 			<< " box=(" << x1 << "," << y1 << ")-(" << x2 << "," << y2 << ")");
 
-		Stage::get().get_field_markers().spawn_mist(oid, owner, skill, pos, 60000);
+		// G4 语义修正：存活期由服务端 REMOVE_MIST 驱动（s9 spawnMist 的 duration
+		// 只进服务端 Timer，MapleMap.java:2156-2164，包内无时长字段）⇒ 客户端
+		// 不再写死 60000 自杀（毒雾 duration 可到数分钟，写死会提前吞雾）。
+		Stage::get().get_field_markers().spawn_mist(oid, owner, skill, pos, 0);
 
-		// 类型/尺寸交给波 3 的区域渲染；当前仍按点标记，但锚点与字节已对齐。
-		(void)mist_type; (void)x2; (void)y2;
+		// 类型/尺寸交给波 3 的区域渲染（部署 Map/Effect.img 无 mist 素材，
+		// 显式预留见报告 G4）；锚点、type、level 字节已对齐消费。
+		(void)mist_type; (void)x2; (void)y2; (void)level;
 
 		while (recv.available())
 			recv.skip_byte();
@@ -1367,6 +1372,9 @@ namespace ms
 
 	void SpawnDoorHandler::handle(InPacket& recv) const
 	{
+		// s9 spawnDoor（PC:1131-1144）：bool launched + int ownerid + pos。
+		// ownerid 即门 id（RemoveDoor 同键；Door.java ownerId<0 的失败分支
+		// 服务端根本不 spawn ⇒ 本包 owner 恒 >0，无 0 号门歧义）。
 		bool launched = recv.available() ? recv.read_bool() : false;
 		int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
 		Point<int16_t> pos = recv.available() >= 4 ? recv.read_point() : Point<int16_t>(0, 0);
@@ -1374,15 +1382,9 @@ namespace ms
 			<< " (" << pos.x() << "," << pos.y() << ")");
 		while (recv.available())
 			recv.skip_byte();
-		{
-			const std::string label = launched ? "Door*" : "Door";
-			auto& markers = Stage::get().get_field_markers();
-			if (markers.contains(owner))
-				markers.set_label(owner, label);
-			else
-				markers.spawn(owner, FieldMarker::Kind::DOOR, pos, label);
-		}
-		// 门标记自显，不 tip
+
+		// G6 真对象化：Map/Obj/door.img 门板+把手，踩门上行 USE_DOOR。
+		Stage::get().get_field_markers().spawn_door(owner, pos, launched);
 	}
 
 	void RemoveDoorHandler::handle(InPacket& recv) const
@@ -1553,32 +1555,53 @@ namespace ms
 
 	void SpawnDragonHandler::handle(InPacket& recv) const
 	{
+		// s9 spawnDragon（PC:7405-7415）：int ownerId + short x + short 0
+		// + short y + short 0 + byte stance + byte 0 + short job。
+		// 修前 stance/job 落进 skip；job 用于龙形映射（部署只有 8840000 一只，
+		// 全档同帧集，见 MapDragon.h 取证注）。
 		int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
 		int16_t x = recv.available() >= 2 ? recv.read_short() : 0;
 		if (recv.available() >= 2)
 			recv.read_short();
 		int16_t y = recv.available() >= 2 ? recv.read_short() : 0;
-		LOG(LOG_DEBUG, "SpawnDragon cid=" << cid << " (" << x << "," << y << ") rem=" << recv.available());
-		{
-			const int32_t oid = cid ^ 0x40000000;
-			auto& markers = Stage::get().get_field_markers();
-			if (markers.contains(oid))
-				markers.set_label(oid, "Dragon");
-			else
-				markers.spawn(oid, FieldMarker::Kind::DRAGON, Point<int16_t>(x, y), "Dragon");
-		}
+		if (recv.available() >= 2)
+			recv.read_short();
+
+		int8_t stance = recv.available() ? recv.read_byte() : 0;
+		if (recv.available())
+			recv.skip_byte(); // 恒 0
+		int16_t job = recv.available() >= 2 ? recv.read_short() : 0;
+
+		LOG(LOG_DEBUG, "SpawnDragon cid=" << cid << " (" << x << "," << y << ")"
+			<< " stance=" << (int)stance << " job=" << job << " rem=" << recv.available());
+
+		// G5 真对象化：Mob/8840000.img 帧集（stand/move/hit/die1 探针在案）。
+		Stage::get().get_field_markers().spawn_dragon(cid ^ 0x40000000, cid,
+			Point<int16_t>(x, y), stance, job);
+
 		while (recv.available())
 			recv.skip_byte();
 	}
 
 	void MoveDragonHandler::handle(InPacket& recv) const
 	{
+		// s9 moveDragon：int cid + pos(start) + movement list（末尾 8 字节 state）。
+		// 修前只读 start 挪场标；真对象化后末字节（含朝向奇偶）交给
+		// MapDragon::apply_move 决定 flip 与 move 段。
 		int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
 		LOG(LOG_DEBUG, "MoveDragon cid=" << cid << " rem=" << recv.available());
 		if (recv.available() >= 4)
 		{
 			Point<int16_t> pos = recv.read_point();
-			Stage::get().get_field_markers().move(cid ^ 0x40000000, pos);
+			std::vector<Movement> movements = MovementParser::parse_movements(recv);
+
+			uint8_t last_state = 4;	// 默认站立态
+			if (!movements.empty())
+				last_state = movements.back().newstate;
+			else if (recv.available() >= 2)
+				last_state = static_cast<uint8_t>(recv.read_short());
+
+			Stage::get().get_field_markers().dragon_move(cid ^ 0x40000000, pos, last_state);
 		}
 		while (recv.available())
 			recv.skip_byte();
@@ -1678,28 +1701,59 @@ namespace ms
 
 	void ApplyMonsterStatusHandler::handle(InPacket& recv) const
 	{
+		// s9 applyMonsterStatus（PacketCreator.java:4009-4036）精确布局：
+		//   int(oid) + long(0) + writeIntMask(= int firstmask + int secondmask，两个 int！)
+		//   + 每状态[short(value) + int(skill)（mobskill 为 short type+short level，同宽）+ short(-1)] = 8B/条
+		//   + [int(reflection)]* + byte(size) + int(0)
+		// 修前两处错位：① mask 只消费一个 int（secondmask 4 字节被当成首条 value 读，
+		// 单 buff 也错位）；② 只读第一条 6 字节、尾随 short(-1) 不消费 ⇒ 多 buff 整体错位。
+		//（审计 G1，P0；技能图标化 = G9，随资源决策二期。）
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		if (recv.available() >= 8)
 			recv.read_long(); // pad
-		uint32_t mask = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
-		int bits = 0;
-		for (uint32_t m = mask; m; m &= m - 1)
-			++bits;
+		const uint32_t mask0 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+		const uint32_t mask1 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+
+		auto popcount = [](uint32_t m)
+		{
+			int n = 0;
+			for (; m; m &= m - 1) ++n;
+			return n;
+		};
+		const int bits = popcount(mask0) + popcount(mask1);
+
 		int32_t skill = 0;
-		if (bits > 0 && recv.available() >= 6)
+		int skipped = 0;
+		for (int i = 0; i < bits && recv.available() >= 8; ++i)
 		{
 			recv.read_short(); // value
-			skill = recv.read_int();
+			const int32_t sk = recv.read_int(); // skill id（mobskill 的 type|level 拼宽，同 4B）
+			recv.read_short(); // -1（s9 注释：可能是 buffTime，客户端不显示）
+			if (i == 0)
+				skill = sk;
+			else
+				++skipped;
 		}
-		LOG(LOG_DEBUG, "ApplyMonsterStatus oid=" << oid << " bits=" << bits
-			<< " skill=" << skill << " rem=" << recv.available());
+
+		// 尾部固定 byte(size)+int(0)，前面是 0 或多个 int(reflection)（s9 反射计数）。
+		if (recv.available() >= 5)
+		{
+			recv.skip(recv.available() - 5);
+			recv.read_byte(); // size（含 reflection/2 的语义，展示不用）
+			recv.read_int(); // 0
+		}
 		while (recv.available())
 			recv.skip_byte();
+
+		LOG(LOG_DEBUG, "ApplyMonsterStatus oid=" << oid << " bits=" << bits
+			<< " skill=" << skill);
 		if (bits > 0)
 		{
 			const int32_t mid = oid ^ 0x54000000;
 			auto& markers = Stage::get().get_field_markers();
-			const std::string label = skill ? ("Debuff#" + std::to_string(skill)) : "Debuff";
+			std::string label = skill ? ("Debuff#" + std::to_string(skill)) : "Debuff";
+			if (skipped > 0)
+				label += "+" + std::to_string(skipped); // 多状态聚合提示
 			if (markers.contains(mid))
 				markers.set_label(mid, label);
 			else
@@ -1713,12 +1767,15 @@ namespace ms
 
 	void CancelMonsterStatusHandler::handle(InPacket& recv) const
 	{
+		// s9 cancelMonsterStatus（:4038-4045）：int(oid)+long(0)+int(first)+int(second)+int(0)。
+		// 修前 mask 也只读一个 int；本包无变长段、错位不改变行为，补齐保持协议整洁。
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		if (recv.available() >= 8)
 			recv.read_long();
-		uint32_t mask = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+		const uint32_t mask0 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+		const uint32_t mask1 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
 		int bits = 0;
-		for (uint32_t m = mask; m; m &= m - 1)
+		for (uint32_t m = mask0 | mask1; m; m &= m - 1)
 			++bits;
 		LOG(LOG_DEBUG, "CancelMonsterStatus oid=" << oid << " bits=" << bits
 			<< " rem=" << recv.available());

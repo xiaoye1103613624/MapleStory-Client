@@ -47,6 +47,16 @@ namespace ms
 	static void enter_game_log(const std::string& line)
 	{
 		LOG(LOG_DEBUG, line);
+
+		// Release 下 LOG 被定义成 void(0)（MapleStory.h:77），所有 [SetField]
+		// 行都不落盘，白屏时拿不到 Stage::load 是否抛异常的实锤。这里额外写
+		// exe 同目录 setfield_trace.log，绕过日志级别，供进图问题取证。
+		static std::ofstream trace("setfield_trace.log", std::ios::app);
+		if (trace.is_open())
+		{
+			trace << line << std::endl;
+			trace.flush();
+		}
 	}
 
 	// 选角进游戏后按 window.game_* 设置视口；登录/选角/世界/频道恒 1280×720。

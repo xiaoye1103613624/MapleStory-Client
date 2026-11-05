@@ -191,11 +191,15 @@ namespace ms
 		black = src["0"]["bS"].get_string() == "";
 	}
 
-	MapBackgrounds::MapBackgrounds() {}
+	// black 是 bool 成员，默认构造必须初始化；否则换图重建 MapBackgrounds 时
+	// 读到未定义值，drawbackgrounds 的铺底判断随机失效 → 露白清屏。
+	MapBackgrounds::MapBackgrounds() : black(true) {}
 
 	void MapBackgrounds::drawbackgrounds(double viewx, double viewy, float alpha) const
 	{
-		if (black)
+		// 背景列表为空（img 包缺 back 层、或装图竞态尚未填充）时强制铺一层
+		// 不透明底，保证 Stage 层永远有覆盖全屏的 quad，不会露出清屏色。
+		if (black || backgrounds.empty())
 			GraphicsGL::get().drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
 
 		for (auto& background : backgrounds)
