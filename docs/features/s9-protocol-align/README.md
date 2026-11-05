@@ -35,7 +35,7 @@
 
 ## 4. 已知非致命缺口（非协议错配，不需改协议层）
 
-- **3 个 s9 已发但客户端未接的 s2c**（功能缺口，非崩溃）：`GUILD_BOSS_HEALER_MOVE(287)`、`GUILD_BOSS_PULLEY_STATE_CHANGE(288)`、`WORLD_MAP_PLAYERS(376)`。属特性开发，不在本协议对齐切片范围。
+- **历史功能缺口（现多已接）**：`GUILD_BOSS_HEALER_MOVE(287)` / `PULLEY(288)` 已由 `MapGuildBoss`+`UIGuildBoss` 承接（见 `guild-boss-hud/`）；仍待特性闭环的主要是 `WORLD_MAP_PLAYERS(376)`。属特性开发，不在本协议对齐切片范围。
 - **9 个 s9 定义但从不发送的 s2c**（死 opcode，无害）：`ZAKUM_SHRINE` 等（见 `t14b-s2c-scan.md` §6）。
 - **s9 自身 `RecvOpcode` 撞名** `WEDDING_TALK`/`WEDDING_TALK_MORE=139`：服务端内部问题，与客户端无关，不改。
 - **客户端 `client_in` 35 号别名** `RECALCULATE_STATS`/`FORCED_STAT_RESET`：v83 命名冗余，35 仅注册 `ForcedStatResetHandler`，功能正确（非缺陷，见 `t14b-s2c-scan.md` §3）。
