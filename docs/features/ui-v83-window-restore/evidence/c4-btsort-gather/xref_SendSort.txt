@@ -1,0 +1,2 @@
+/* xrefs to CWvsContext::SendSortItemRequest(long) @ 0x9d5c60 */
+0x7cbb99 from CUIItem::OnSort(void) (0x7cbb70) type=17

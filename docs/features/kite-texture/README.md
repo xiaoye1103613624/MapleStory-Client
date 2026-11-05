@@ -12,7 +12,7 @@
 | 候选 | 证据充分度 | 结论 |
 | --- | --- | --- |
 | **风筝贴图** | IDA case 271→`sub_65ACDF` + NX `Cash/0508/iconReward` + s9 `spawnKite` | **本轮闭合** |
-| C4 BtSort/BtGather | 素材/叠槽已修；`GatherResult→set_sort(true)` / `SortResult→set_sort(false)` 已在；本 IDB 无 `BtGather`/`CUIItem` 串锚，按钮回调表未钉 | **下一项**（需另开 WvsContext/UI 窗函数取证） |
+| C4 BtSort/BtGather | Maplestory95 已钉：点击只发包，Result→`SetArrangeButton`；按页签记忆 | **已交棒** → `c4-btsort-gather-semantics` |
 
 ## 2. 证据
 

@@ -1,0 +1,5 @@
+/* xrefs to SetArrangeButton @ 0x7ccc90 */
+0x7cefd3 <- CUIItem::OnCreate(void *) (0x7ce520)
+0x7cf1a5 <- CUIItem::OnTabChanged(long) (0x7cf040)
+0x9f12a4 <- CWvsContext::OnGatherItemResult(CInPacket &) (0x9f1280)
+0x9f12d4 <- CWvsContext::OnSortItemResult(CInPacket &) (0x9f12b0)

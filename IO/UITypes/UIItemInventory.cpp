@@ -113,11 +113,14 @@ namespace ms
 		}
 	}
 
-	// sort_enabled 初值必须是 false：`set_sort(false)` 走的是「显示 BT_GATHER」那一支，
-	// 与切 tab 时的复位（:666 `set_sort(false)`）和两张参考截图一致；旧初值 true
-	// 会让窗口刚打开时显示 BtSort（三条横杠），与原生不符。
+	// 开窗默认全页签 nState=0 → 显示 BtGather（红底 +）。
+	// 证据：Maplestory95 CUIItem::OnCreate @ 0x7CE520 将 m_anSortBtState[0..5]=0 后
+	// SetArrangeButton(m_nItemTI, 0) → AddButton(…/BtGather, id=0x7D3)。
 	UIItemInventory::UIItemInventory(const Inventory& invent) : UIDragElement<PosINV>(), inventory(invent), ignore_tooltip(false), tab(InventoryType::Id::EQUIP), sort_enabled(false)
 	{
+		for (int i = 0; i < InventoryType::Id::LENGTH; ++i)
+			arrange_bt_state[i] = false;
+
 		nl::node Item = UiAssetResolve::window("Item");
 
 		if (!UiAssetResolve::usable(Item))
@@ -517,6 +520,10 @@ namespace ms
 				tab = InventoryType::Id::DEC;
 				break;
 			}
+			// 原生 CUIItem::OnButtonClicked @ 0x7CC4F0：
+			//   0x7D3 → OnGather → SendGatherItemRequest（点击不切钮）
+			//   0x7D4 → OnSort   → SendSortItemRequest（点击不切钮）
+			// 切钮只发生在 Gather/Sort Result → SetArrangeButton。
 			case Buttons::BT_GATHER:
 			case Buttons::BT_GATHER_SM:
 			{
@@ -681,7 +688,9 @@ namespace ms
 				b->set_state(Button::State::PRESSED);
 
 			load_icons();
-			set_sort(false);
+			// 原生 OnTabChanged @ 0x7CF040：SetArrangeButton(m_nItemTI, m_anSortBtState[m_nItemTI])
+			// —— 恢复该页签上次状态，而不是一律复位 Gather。
+			set_arrange_button(tab, arrange_bt_state[tab]);
 		}
 
 		return Button::State::IDENTITY;
@@ -1308,9 +1317,20 @@ namespace ms
 		}
 	}
 
-	void UIItemInventory::set_sort(bool enabled)
+	void UIItemInventory::set_arrange_button(InventoryType::Id type, bool show_sort)
 	{
-		sort_enabled = enabled;
+		// 对齐原生 SetArrangeButton(nTI, nState) @ 0x7CCC90：
+		//   m_anSortBtState[nTI]=nState；仅当 nTI==当前页签时替换 m_pBtArrange
+		//   nState==0 → BtGather(0x7D3)；nState==1 → BtSort(0x7D4)
+		if (type < InventoryType::Id::EQUIP || type > InventoryType::Id::DEC)
+			return;
+
+		arrange_bt_state[type] = show_sort;
+
+		if (type != tab)
+			return;
+
+		sort_enabled = show_sort;
 
 		auto set_act = [&](uint16_t id, bool act)
 		{
@@ -1319,9 +1339,8 @@ namespace ms
 		};
 
 		// classic 包没有 AutoBuild/FullAutoBuild ⇒ BT_SORT_SM / BT_GATHER_SM 这两颗**根本不会被创建**
-		// （见构造函数 :250 的 `if (FullAutoBuild)` 分支）。展开态原来只点亮 _SM 那颗，
-		// 于是 W-31 槽位整颗消失；而两张参考（`背包栏（折叠）.png` / `背包栏展开.png`）
-		// 中间那颗红色 `+`（= `Item/BtGather`，12×12，已用 nx_inspect 导出比对）在两个态下都在。
+		// （见构造函数 FullAutoBuild 分支）。展开态原来只点亮 _SM 那颗，
+		// 于是 W-31 槽位整颗消失；参考图中间红 `+`（Item/BtGather）两态都在。
 		// ⇒ _SM 对缺席时回退到与非展开态共用的同一对按钮。
 		const bool sm_pair = find_btn(buttons, Buttons::BT_SORT_SM)
 			|| find_btn(buttons, Buttons::BT_GATHER_SM);
@@ -1360,6 +1379,11 @@ namespace ms
 				set_act(Buttons::BT_GATHER_SM, false);
 			}
 		}
+	}
+
+	void UIItemInventory::set_sort(bool enabled)
+	{
+		set_arrange_button(tab, enabled);
 	}
 
 	void UIItemInventory::change_tab(InventoryType::Id type)

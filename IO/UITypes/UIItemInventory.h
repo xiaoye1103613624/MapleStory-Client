@@ -46,6 +46,9 @@ namespace ms
 		UIElement::Type get_type() const override;
 
 		void modify(InventoryType::Id type, int16_t pos, int8_t mode, int16_t arg);
+		// 显示侧：show_sort=false → BtGather；true → BtSort（「下一步动作」）。
+		// 对齐原生 CUIItem::SetArrangeButton(nTI, nState)（Maplestory95 @ 0x7CCC90）。
+		void set_arrange_button(InventoryType::Id type, bool show_sort);
 		void set_sort(bool enabled);
 		void change_tab(InventoryType::Id type);
 		void clear_new();
@@ -161,7 +164,9 @@ namespace ms
 		int16_t icon_height;
 		bool ignore_tooltip;
 
-		bool sort_enabled;
+		// 每页签整理钮状态：false=显示 Gather，true=显示 Sort（原生 m_anSortBtState[nTI]）。
+		bool arrange_bt_state[InventoryType::Id::LENGTH];
+		bool sort_enabled; // 当前 tab 的 arrange_bt_state 缓存，供 set_full 重排
 		bool full_enabled;
 		Texture backgrnd;
 		Texture backgrnd2;

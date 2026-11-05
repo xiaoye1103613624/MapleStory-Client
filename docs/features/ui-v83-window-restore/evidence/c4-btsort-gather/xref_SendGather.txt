@@ -1,0 +1,2 @@
+/* xrefs to CWvsContext::SendGatherItemRequest(long) @ 0x9d5b70 */
+0x7cbb69 from CUIItem::OnGather(void) (0x7cbb40) type=17

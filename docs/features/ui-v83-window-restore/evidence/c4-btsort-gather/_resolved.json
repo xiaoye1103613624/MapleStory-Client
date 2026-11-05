@@ -1,0 +1,13 @@
+{
+  "?OnGatherItemResult@CWvsContext@@IAEXAAVCInPacket@@@Z": "18446744073709551615",
+  "?OnSortItemResult@CWvsContext@@IAEXAAVCInPacket@@@Z": "18446744073709551615",
+  "?SendGatherItemRequest@CWvsContext@@QAEXJ@Z": "0x9d5b70",
+  "?SendSortItemRequest@CWvsContext@@QAEXJ@Z": "0x9d5c60",
+  "?OnButtonClicked@CUIItem@@UAEXI@Z": "0x7cc4f0",
+  "?OnCreate@CUIItem@@UAEXPAX@Z": "0x7ce520",
+  "CUIItem::OnButtonClicked": "0x8b2a30",
+  "SendGatherItemRequest": "0x9d5b70",
+  "SendSortItemRequest": "0x9d5c60",
+  "OnGatherItemResult": "0x9f1280",
+  "OnSortItemResult": "0x9f12b0"
+}

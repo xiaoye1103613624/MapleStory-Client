@@ -181,7 +181,7 @@
 | I-2 之 B8.1 金币条透出 | ⏸ **素材侧定案**：`UIWindow.img/ToolTip` 下**只有 `Equip`**，原生 `backdrop` 位图本包确实没有 ⇒ 只能调程序描边的 α（`TextTooltip.h:37` 的 `0.9f`）。**需你拍板**：0.9 透 / 1.0 实 / 先给一张原生 tooltip 参考帧 | §B8.1 |
 | I-2 之 B8.5 英文串 | ⏸ 不改：换中文需要 v83 原生文案依据（`String.img`/IDA），**禁止凭记忆编** | §B8.5 |
 | I-3 + I-5（同一条根因） | ✅ 已修：`UIStateGame::send_key` 清脏焦点后**继续**下发，不再 `return` 吞键 ⇒ 「第一下 Esc 没反应、要按第二下」应当消失。**背包窗本来就写了 Esc 处理**（`UIItemInventory.cpp:939-946`），我原先「背包没写 Esc」的判断是错的 | `IO/UIStateGame.cpp:211-226`、§B9 |
-| I-6 背包中间那颗红 `+` | ✅ 已修：classic 包没有 `AutoBuild/FullAutoBuild` ⇒ `_SM` 那对按钮根本不创建，展开态却只点亮 `_SM`，中间那颗就消失了；现在 `_SM` 缺席时回退到公用的一对。另把 `sort_enabled` 初值 `true→false`（原生开窗默认显示 `BtGather`，不是 `BtSort`） | [IO/UITypes/UIItemInventory.cpp:112](file:///E:/project/MapleStory-Client/IO/UITypes/UIItemInventory.cpp)、`set_sort()` |
+| I-6 背包中间那颗红 `+` | ✅ 已修：classic 缺 `_SM` 时回退公用对；开窗默认 `BtGather`。**点击语义**（2026-11-06）：下一步动作，仅 Result 切钮；`set_arrange_button` + 按页签记忆（Maplestory95 `SetArrangeButton`） | `UIItemInventory` / `InventoryHandlers`；证据 `evidence/c4-btsort-gather/` |
 | **工具坑：驱动没抢到前台** | ⚠ 本轮复测 `i`/`e` 全部「没反应」，实测 `GetForegroundWindow()` 是**原生「北斗」客户端**（`MapleStoryClass`，你正在里面截图，屏上还弹着「保存图像」），我的测试客户端已被最小化。旧 `_drive.py` 不看 `SetForegroundWindow` 返回值，照样打印 `tapped i x1` ⇒ **所有「按键没反应」的结论都必须重测**。已改为 attach+裸 ALT 解锁+校验 `fg==hwnd`，抢不到就 ABORT/退出码 3；另加 `_postkey.py`（`PostMessage` 直投 SDL 队列，后台可用） | §B5 第四条 |
 | 撤回一条旧结论 | `g` 是死键的**线上探针**作废（键位错位的结论本身不受影响，它靠 `4f 01` 封包解码 + `grep case` 得出） | §F |
 | 顺带记一笔（**未改**） | `UIStateGame.cpp:296` 编译告警 C4701「`tab` 可能未初始化」：外层 `switch` 已保证 `action ∈ {FRIENDS,PARTY,BOSSPARTY}`，三个 `case` 全覆盖 ⇒ 实际不会未初始化，属告警噪声。要不要加个初值消警告，等你点头再动 | `IO/UIStateGame.cpp:277` |

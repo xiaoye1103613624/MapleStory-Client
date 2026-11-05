@@ -50,23 +50,33 @@ namespace ms
 		}
 	}
 
-	void GatherResultHandler::handle(InPacket&) const
+	void GatherResultHandler::handle(InPacket& recv) const
 	{
+		// 原生 CWvsContext::OnGatherItemResult @ 0x9F1280：
+		// Decode1(); ti=Decode1(); CUIItem::SetArrangeButton(ui, ti, 1) → 显示 BtSort
+		recv.read_byte();
+		InventoryType::Id type = InventoryType::by_value(recv.read_byte());
+
 		if (auto iteminventory = UI::get().get_element<UIItemInventory>())
 		{
 			if (!iteminventory->is_active())
 				iteminventory->makeactive();
-			iteminventory->set_sort(true);
+			iteminventory->set_arrange_button(type, true);
 		}
 	}
 
-	void SortResultHandler::handle(InPacket&) const
+	void SortResultHandler::handle(InPacket& recv) const
 	{
+		// 原生 CWvsContext::OnSortItemResult @ 0x9F12B0：
+		// Decode1(); ti=Decode1(); CUIItem::SetArrangeButton(ui, ti, 0) → 显示 BtGather
+		recv.read_byte();
+		InventoryType::Id type = InventoryType::by_value(recv.read_byte());
+
 		if (auto iteminventory = UI::get().get_element<UIItemInventory>())
 		{
 			if (!iteminventory->is_active())
 				iteminventory->makeactive();
-			iteminventory->set_sort(false);
+			iteminventory->set_arrange_button(type, false);
 			iteminventory->clear_new();
 		}
 	}
