@@ -3905,6 +3905,7 @@ namespace ms
 		int8_t mode = recv.available() ? recv.read_byte() : 0;
 		LOG(LOG_DEBUG, "GuildBBS mode=0x" << std::hex << (int)(uint8_t)mode << std::dec
 			<< " rem=" << recv.available());
+		std::vector<std::string> lines;
 		std::string tip = (mode == 0x06) ? "Guild BBS"
 			: (mode == 0x07) ? "Guild BBS thread"
 			: ("Guild BBS 0x" + std::to_string(mode));
@@ -3912,8 +3913,7 @@ namespace ms
 		{
 			int32_t n = recv.read_int();
 			tip += " (" + std::to_string(n) + ")";
-// note
-			for (int32_t i = 0; i < n && i < 4 && recv.available() >= 4; ++i)
+			for (int32_t i = 0; i < n && i < 8 && recv.available() >= 4; ++i)
 			{
 				if (recv.available() >= 4)
 					recv.read_int(); // localid
@@ -3923,7 +3923,10 @@ namespace ms
 				if (recv.available() >= 8)
 					recv.skip(8); // time / icon
 				if (!subj.empty())
+				{
+					lines.push_back(subj);
 					tip += (i == 0 ? ": " : ", ") + subj;
+				}
 			}
 		}
 		else if (mode == 0x07 && recv.available())
@@ -3931,16 +3934,30 @@ namespace ms
 			std::string subject = recv.read_string();
 			std::string body = recv.available() ? recv.read_string() : "";
 			if (!subject.empty())
+			{
+				lines.push_back(subject);
 				tip += ": " + subject;
-			if (!body.empty() && body.size() < 80)
-				tip += " 鈥?" + body;
+			}
+			if (!body.empty())
+			{
+				std::string short_body = body.size() > 72 ? body.substr(0, 72) + "..." : body;
+				lines.push_back(short_body);
+				tip += " | " + short_body;
+			}
 		}
 		while (recv.available())
 			recv.skip_byte();
 		auto ui = UI::get().get_element<UIGuild>();
-		if (ui && ui->is_active())
+		if (!ui)
+			ui = UI::get().emplace<UIGuild>();
+		else if (!ui->is_active())
+			ui->makeactive();
+		if (ui)
+		{
+			if (!lines.empty())
+				ui->set_bbs_summary(lines);
 			ui->set_notice(tip);
-		// note
+		}
 	}
 
 	void SetQuestClearHandler::handle(InPacket& recv) const

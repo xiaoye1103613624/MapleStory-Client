@@ -71,6 +71,8 @@ namespace ms
 		void set_member_rank(int32_t id, int32_t rank);
 		void set_member_online(int32_t id, bool online);
 		void set_notice(const std::string& notice);
+		// SoftKey BBS 列表/帖摘要（与公会公告 notice 分栏）
+		void set_bbs_summary(const std::vector<std::string>& lines);
 
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
@@ -100,5 +102,7 @@ namespace ms
 		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 		mutable OutlinedText notice_label;
+		std::vector<std::string> bbs_lines;
+		mutable OutlinedText bbs_label;
 	};
 }

@@ -37,7 +37,8 @@ namespace ms
 {
 	UIGuild::UIGuild() : UIElement(Point<int16_t>(300, 40), Point<int16_t>(300, 380)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK),
-		notice_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, Color::Name::BLACK)
+		notice_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, Color::Name::BLACK),
+		bbs_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LIGHTGREY, Color::Name::BLACK)
 	{
 		nl::node guild = nl::nx::UI["GuildUI.img"];
 		if (guild["backgrnd"])
@@ -64,7 +65,25 @@ namespace ms
 		notice_label.change_text(guild.notice);
 		notice_label.draw(position + Point<int16_t>(10, 28));
 
-		int16_t y = 55;
+		int16_t y = 48;
+		if (!bbs_lines.empty())
+		{
+			bbs_label.change_text("[BBS]");
+			bbs_label.draw(position + Point<int16_t>(10, y));
+			y = static_cast<int16_t>(y + 14);
+			for (size_t i = 0; i < bbs_lines.size() && i < 5; ++i)
+			{
+				bbs_label.change_text(bbs_lines[i]);
+				bbs_label.draw(position + Point<int16_t>(14, y));
+				y = static_cast<int16_t>(y + 14);
+			}
+			y = static_cast<int16_t>(y + 4);
+		}
+		else
+		{
+			y = 55;
+		}
+
 		for (const auto& m : guild.members)
 		{
 			OutlinedText row(Text::Font::A11M, Text::Alignment::LEFT,
@@ -165,6 +184,11 @@ namespace ms
 		for (auto& m : guild.members)
 			if (m.id == id)
 				m.online = online;
+	}
+
+	void UIGuild::set_bbs_summary(const std::vector<std::string>& lines)
+	{
+		bbs_lines = lines;
 	}
 
 	void UIGuild::set_notice(const std::string& notice)
