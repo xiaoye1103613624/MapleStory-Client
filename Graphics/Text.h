@@ -18,9 +18,11 @@
 #pragma once
 
 #include "DrawArgument.h"
+#include "Texture.h"
 
 #include <cstdint>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace ms
@@ -75,15 +77,17 @@ namespace ms
 				Point<int16_t> position;
 			};
 
-			// 行内道具图标（#i/#v）。IDA sub_99DD54 case7/8 → 元素 type1；
-			// 宽高取 canvas；ax 是相对行起点的笔位（与 advances 同坐标系）。
+			// 行内图标：#i/#v 道具、#s 技能、#f 路径图。
+			// IDA：i/v→enum7/8→type1；s→enum9→type1；f/F→enum10/11→type2；
+			// 宽高取 canvas GetWidth/Height；ax 相对行起点（与 advances 同坐标系）。
+			// texture 在布局期解析并持有，绘制不再二次查表。
 			struct Icon
 			{
 				size_t line;
 				int16_t ax;
 				int16_t width;
 				int16_t height;
-				int32_t item_id;
+				Texture texture;
 			};
 
 			Layout(const std::vector<Line>& lines, const std::vector<int16_t>& advances, int16_t width, int16_t height, int16_t endx, int16_t endy);

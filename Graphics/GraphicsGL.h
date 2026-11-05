@@ -280,8 +280,11 @@ namespace ms
 		private:
 			void add_word(size_t first, size_t last, Text::Font font, Color::Name color);
 			void add_line();
-			// 解析 #i/#v 令牌 → skip + 图标度量；真正占位在 add() 折行之后。
+			// 解析 #i/#v/#s/#f 令牌 → skip + 图标度量；真正占位在 add() 折行之后。
 			bool try_parse_item_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
+			bool try_parse_skill_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
+			bool try_parse_path_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
+			void set_pending_icon(const Texture& tex, size_t first, size_t last, size_t& skip, int16_t& out_w);
 
 			// text[pos] 处这个字符的推进量，consumed 输出它占的字节数。
 			// 与 drawtext 共用 utf8_next，保证"量的"和"画的"不会分叉。
@@ -310,7 +313,7 @@ namespace ms
 			// 本行内容最大高度（图标 canvas 高）；0 = 本行尚无图标。
 			int16_t line_max_h;
 			bool line_has_icon;
-			int32_t pending_icon_id;
+			Texture pending_icon_tex;
 			int16_t pending_icon_w;
 			int16_t pending_icon_h;
 			bool has_pending_icon;

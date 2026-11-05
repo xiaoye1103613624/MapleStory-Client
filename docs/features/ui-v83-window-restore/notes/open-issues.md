@@ -747,9 +747,9 @@ A2 里两颗钮暂时都路由到 `UIOptionMenu`，等素材到位再拆成子�
   3. 选项版式自创（逐行另起 + 硬涂 LIGHTBLUE）⇒ 原生是**行内**排版、颜色由脚本色标决定。
 - 口子状态：
   - `#p/#h/#t/#z` 全量展开 —— **已闭环（2026-11-05）**；
-  - `#i/#v` LayoutBuilder 行内 icon（IDA type1 / info/icon）—— **已接线（2026-11-05）**，见
-    [npc-talk-format-tokens/README.md](../../npc-talk-format-tokens/README.md)；
-  - 打字机对 `#i/#v` 已整段原子喂入；其它色标半截闪现仍登记。
+  - `#i/#v/#s/#f` LayoutBuilder 行内 icon —— **已接线（2026-11-05）**，见
+    [npc-talk-format-tokens/README.md](../../npc-talk-format-tokens/README.md)（ida-i-v + ida-f-s）；
+  - 打字机对上述令牌整段原子喂入；其它色标半截闪现仍登记。
 
 ### C7 技能窗三处疑点，本轮逐条定性（结论和最初记录不同）
 

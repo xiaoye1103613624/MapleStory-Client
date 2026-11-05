@@ -19,8 +19,6 @@
 
 #include "GraphicsGL.h"
 
-#include "../Data/ItemData.h"
-
 namespace ms
 {
 	Text::Text(Font f, Alignment a, Color::Name c, Background b, const std::string& t, uint16_t mw, bool fm, int16_t la) : font(f), alignment(a), color(c), background(b), maxwidth(mw), formatted(fm), line_adj(la)
@@ -73,8 +71,8 @@ namespace ms
 	{
 		GraphicsGL::get().drawtext(args, vertical, text, layout, font, color, background);
 
-		// #i/#v 行内图标：布局期已占位；此处按 IDA 底对齐基线画 canvas
-		// （UtilDlgEx 元素 y = line_pos - height，blit 左上角）。
+		// #i/#v/#s/#f 行内图标：布局期已占位；按 IDA 底对齐基线画 canvas
+		// （UtilDlgEx 元素 y = line_pos - height，blit 左上角；type1/2 同路径）。
 		const Point<int16_t> base = args.getpos();
 		const bool clip_v = vertical.first() > 0 || vertical.second() > 0;
 
@@ -111,15 +109,13 @@ namespace ms
 					continue;
 			}
 
-			const Texture& tex = ItemData::get(icon.item_id).get_icon(false);
-
-			if (!tex)
+			if (!icon.texture)
 				continue;
 
 			// Texture::draw 会扣 origin；原生 blit 按左上角落点，故先加回 origin。
-			tex.draw(DrawArgument(Point<int16_t>(
-				static_cast<int16_t>(draw_x + tex.get_origin().x()),
-				static_cast<int16_t>(draw_y + tex.get_origin().y()))));
+			icon.texture.draw(DrawArgument(Point<int16_t>(
+				static_cast<int16_t>(draw_x + icon.texture.get_origin().x()),
+				static_cast<int16_t>(draw_y + icon.texture.get_origin().y()))));
 		}
 	}
 

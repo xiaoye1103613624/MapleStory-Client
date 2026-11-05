@@ -20,6 +20,7 @@
 
 #include "../Configuration.h"
 #include "../Data/ItemData.h"
+#include "../Data/SkillData.h"
 #include "../MapleStory.h"
 #include "../IO/Window.h"
 
@@ -27,7 +28,12 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <string>
 #include <vector>
+
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
 
 namespace ms
 {
@@ -920,7 +926,7 @@ namespace ms
 		endy = 0;
 		line_max_h = 0;
 		line_has_icon = false;
-		pending_icon_id = 0;
+		pending_icon_tex = Texture();
 		pending_icon_w = 0;
 		pending_icon_h = 0;
 		has_pending_icon = false;
@@ -1055,11 +1061,15 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #f[path]# - Shows an image within the WZ file
+							// #f[path]# / #F[path]# - WZ 路径图（IDA enum10/11 → type2）
 							case 'f':
+							case 'F':
 							{
-								// TODO: Needs implemented
-								skip += 2;
+								int16_t iw = 0;
+								placed_icon = try_parse_path_icon(text, first, last, skip, iw);
+
+								if (!placed_icon)
+									skip += 2;
 								break;
 							}
 							// #g - Green text
@@ -1169,11 +1179,14 @@ namespace ms
 								skip += 2;
 								break;
 							}
-							// #s[id]# - Shows the image of the given skill
+							// #s[id]# - 技能 icon（IDA enum9 → type1，与 #i 同行内排版）
 							case 's':
 							{
-								// TODO: Needs implemented
-								skip += 2;
+								int16_t iw = 0;
+								placed_icon = try_parse_skill_icon(text, first, last, skip, iw);
+
+								if (!placed_icon)
+									skip += 2;
 								break;
 							}
 							// #t[id]#
@@ -1341,7 +1354,7 @@ namespace ms
 		{
 			if (pending_icon_w > 0)
 			{
-				icons.push_back({ lines.size(), ax, pending_icon_w, pending_icon_h, pending_icon_id });
+				icons.push_back({ lines.size(), ax, pending_icon_w, pending_icon_h, pending_icon_tex });
 
 				if (pending_icon_h > line_max_h)
 					line_max_h = pending_icon_h;
@@ -1349,6 +1362,7 @@ namespace ms
 				line_has_icon = true;
 			}
 
+			pending_icon_tex = Texture();
 			has_pending_icon = false;
 		}
 
@@ -1442,7 +1456,13 @@ namespace ms
 
 		advances.push_back(ax);
 
-		return Text::Layout(lines, advances, icons, width, ay, ax, endy);
+		// 首行大图标抬高了 line_y 时，布局高度跟到行盒底（IDA max_h 下限 16）。
+		int16_t layout_h = ay;
+
+		if (!lines.empty() && lines.back().position.y() > layout_h)
+			layout_h = lines.back().position.y();
+
+		return Text::Layout(lines, advances, icons, width, layout_h, ax, endy);
 	}
 
 	void GraphicsGL::LayoutBuilder::add_word(size_t word_first, size_t word_last, Text::Font word_font, Color::Name word_color)
@@ -1454,6 +1474,16 @@ namespace ms
 	{
 		int16_t line_x = 0;
 		int16_t line_y = ay;
+
+		// 首行大图标：IDA 行盒顶从 0 起、底对齐 max_h；本仓 ay 初值是 linespace，
+		// 若不抬基线，图标顶会伸到文本原点上方（evidence 预留项）。
+		if (line_has_icon && lines.empty())
+		{
+			const int16_t h = line_max_h < 16 ? 16 : line_max_h;
+
+			if (line_y < h)
+				line_y = h;
+		}
 
 		switch (alignment)
 		{
@@ -1467,6 +1497,19 @@ namespace ms
 
 		lines.push_back({ words, { line_x, line_y } });
 		words.clear();
+	}
+
+	void GraphicsGL::LayoutBuilder::set_pending_icon(const Texture& tex, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
+		const int16_t iw = tex ? tex.width() : 0;
+		const int16_t ih = tex ? tex.height() : 0;
+
+		pending_icon_tex = tex;
+		pending_icon_w = iw;
+		pending_icon_h = ih;
+		has_pending_icon = true;
+		out_w = iw;
+		skip = last - first;
 	}
 
 	bool GraphicsGL::LayoutBuilder::try_parse_item_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
@@ -1500,18 +1543,134 @@ namespace ms
 		if (!any_digit || item_id <= 0)
 			return false;
 
-		const Texture& tex = ItemData::get(item_id).get_icon(false);
-		// 证据：宽高取 canvas 真值；无效道具仍吞令牌（宽 0）以免数字残片。
-		const int16_t iw = tex ? tex.width() : 0;
-		const int16_t ih = tex ? tex.height() : 0;
-
-		pending_icon_id = item_id;
-		pending_icon_w = iw;
-		pending_icon_h = ih;
-		has_pending_icon = true;
-		out_w = iw;
-		skip = last - first;
+		// 无效道具仍吞令牌（宽 0）以免数字残片。
+		set_pending_icon(ItemData::get(item_id).get_icon(false), first, last, skip, out_w);
 		return true;
+	}
+
+	bool GraphicsGL::LayoutBuilder::try_parse_skill_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
+		// IDA case9：atoi(token+2) → CSkillInfo；icon canvas + GetWidth/Height；*elem=1。
+		out_w = 0;
+
+		if (last < first + 2)
+			return false;
+
+		int32_t skill_id = 0;
+		bool any_digit = false;
+
+		for (size_t p = first + 2; p < last; ++p)
+		{
+			const char ch = text[p];
+
+			if (ch < '0' || ch > '9')
+				return false;
+
+			any_digit = true;
+			const int32_t next = skill_id * 10 + (ch - '0');
+
+			if (next < skill_id)
+				return false;
+
+			skill_id = next;
+		}
+
+		if (!any_digit || skill_id <= 0)
+			return false;
+
+		set_pending_icon(SkillData::get(skill_id).get_icon(SkillData::Icon::NORMAL), first, last, skip, out_w);
+		return true;
+	}
+
+	bool GraphicsGL::LayoutBuilder::try_parse_path_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
+		// IDA case10/11：*elem=2；路径 = token+2（如 UI/UIWindow.img/QuestIcon/7/0）；
+		// IWzProperty 解析后取 canvas 宽高。本仓按根名映射 nl::nx::* 再 resolve。
+		out_w = 0;
+
+		if (last < first + 2)
+			return false;
+
+		const std::string path(text + first + 2, text + last);
+
+		if (path.empty())
+			return false;
+
+#ifdef USE_NX
+		const size_t slash = path.find('/');
+
+		if (slash == std::string::npos || slash == 0)
+			return false;
+
+		const std::string root = path.substr(0, slash);
+		const std::string rest = path.substr(slash + 1);
+		nl::node base;
+
+		if (root == "UI")
+			base = nl::nx::UI;
+		else if (root == "Effect")
+			base = nl::nx::Effect;
+		else if (root == "Item")
+			base = nl::nx::Item;
+		else if (root == "Skill")
+			base = nl::nx::Skill;
+		else if (root == "Skill001")
+			base = nl::nx::Skill001;
+		else if (root == "Skill002")
+			base = nl::nx::Skill002;
+		else if (root == "Skill003")
+			base = nl::nx::Skill003;
+		else if (root == "Map")
+			base = nl::nx::Map;
+		else if (root == "Map001")
+			base = nl::nx::Map001;
+		else if (root == "Map002")
+			base = nl::nx::Map002;
+		else if (root == "Etc")
+			base = nl::nx::Etc;
+		else if (root == "Character")
+			base = nl::nx::Character;
+		else if (root == "Npc")
+			base = nl::nx::Npc;
+		else if (root == "Mob")
+			base = nl::nx::Mob;
+		else if (root == "Quest")
+			base = nl::nx::Quest;
+		else if (root == "String")
+			base = nl::nx::String;
+		else if (root == "TamingMob")
+			base = nl::nx::TamingMob;
+		else if (root == "Reactor")
+			base = nl::nx::Reactor;
+		else if (root == "Morph")
+			base = nl::nx::Morph;
+
+		Texture tex;
+
+		if (base)
+		{
+			nl::node node = base.resolve(rest);
+
+			// 部分脚本路径停在目录上；尝试帧 "0"。
+			if (node && node.data_type() != nl::node::type::bitmap)
+			{
+				if (nl::node frame0 = node["0"])
+					node = frame0;
+			}
+
+			tex = Texture(node);
+		}
+
+		// 解析失败也吞令牌（宽 0），避免路径残片进正文。
+		set_pending_icon(tex, first, last, skip, out_w);
+		return true;
+#else
+		(void)text;
+		(void)first;
+		(void)last;
+		(void)skip;
+		return false;
+#endif
 	}
 
 	void GraphicsGL::drawtext(const DrawArgument& args, const Range<int16_t>& vertical, const std::string& text, const Text::Layout& layout, Text::Font id, Color::Name colorid, Text::Background background)
