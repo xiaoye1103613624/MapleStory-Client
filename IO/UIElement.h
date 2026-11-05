@@ -181,6 +181,8 @@ namespace ms
 			GUILD,
 			/// 公会公告板独立窗（UI/GuildBBS.img）；与 GUILD 成员窗分型，避免互相抢焦点。
 			GUILDBBS,
+			/// 公会 Boss PQ HUD（healer Y / pulley state，s2c 287/288）
+			GUILDBOSS,
 			MERCHANT,
 			MONSTERBOOK,
 			MAKER,

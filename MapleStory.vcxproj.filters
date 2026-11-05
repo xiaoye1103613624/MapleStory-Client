@@ -474,6 +474,9 @@
     <ClCompile Include="IO\UITypes\UIGuildBBS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIGuildBoss.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\WaveAShellHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1263,6 +1266,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIGuildBBS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIGuildBoss.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WaveAShellHandlers.h">

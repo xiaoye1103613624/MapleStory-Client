@@ -3,7 +3,7 @@
 > 维护约定：测不了/未测的写这里，步骤列全；已闭合标 ✅ + 日期 + 证据路径。  
 > 本轮（2026-11-05）按用户改口：**不做桌面点测**，仅维护步骤供用户统一测。
 
-相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/)
+相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/) · [guild-boss-hud](../guild-boss-hud/)
 
 ---
 
@@ -23,6 +23,7 @@
 | 10 | TOUCH_MONSTER_ATTACK | ⏳ 待测 | c2s 47 | 身体压力/能量满触怪 |
 | 11 | CANCEL_DEBUFF | ⏳ 待测 | c2s 99 | s9 handler 空实现；仅协议对齐 |
 | 12 | GuildBBS 完整窗 | ⏳ 待测 | c2s 155 / s2c 59 | `UIGuildBBS` 列表/读帖/发帖 |
+| 13 | 公会 Boss HUD | ⏳ 待测 | s2c 287 / 288 | `UIGuildBoss` 顶栏 |
 
 ---
 
@@ -83,6 +84,18 @@
 - **期望**：窗体贴图来自 `Data/UI/GuildBBS.img`；协议字段与 s9 `GuildPackets` 一致；公会窗摘要栏同步更新。
 - **道具/地图/opcode**：任意城镇；c2s `155`；s2c `59` mode `0x06`/`0x07`。
 - **功能文档**：[guild-bbs-ui](../guild-bbs-ui/)
+
+### 13. 公会 Boss HUD（Healer / Pulley）
+- **前置**：进入会触发 `GuildBoss_HealerMove` / `GuildBoss_PulleyStateChange` 的公会 PQ 图（莎莲娜等）；或服务端脚本主动 `GuildPackets.GuildBoss_*`。
+- **操作**：
+  1. 触发治疗精灵移动包 → 屏幕上方居中出现「公会副本」HUD，显示 `治疗精灵 Y=…`。
+  2. 触发滑轮状态包 → 同窗追加/刷新 `滑轮状态=…`。
+  3. 12s 无新包自动隐藏；Esc 立即关。
+  4. 确认 **不再** 往任务闹钟/QuestAlarm 灌 tip。
+- **期望**：数值与包体 short/byte 一致；无崩溃。
+- **opcode**：s2c `GUILD_BOSS_HEALER_MOVE=287` body=`short y`；`GUILD_BOSS_PULLEY_STATE_CHANGE=288` body=`byte state`。
+- **功能文档**：[guild-boss-hud](../guild-boss-hud/)
+- **预留**：地图 `healer`/`pulley` 物件动画态机（IDA `sub_5587B3`）未做。
 
 ## 7. SET_HPMPALERT
 

@@ -45,6 +45,7 @@
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIGuild.h"
 #include "../../IO/UITypes/UIGuildBBS.h"
+#include "../../IO/UITypes/UIGuildBoss.h"
 #include "../../IO/UITypes/UIQuestLog.h"
 #include "../../IO/UITypes/UIMonsterBook.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
@@ -2827,22 +2828,28 @@ namespace ms
 
 	void GuildBossHealerMoveHandler::handle(InPacket& recv) const
 	{
-		int16_t ny = recv.available() >= 2 ? recv.read_short() : 0;
-		LOG(LOG_DEBUG, "GuildBossHealerMove y=" << ny);
-		std::string tip = "Guild healer y=" + std::to_string(ny);
-		auto alarm = UI::get().get_element<UIQuestAlarm>();
-		if (!alarm) alarm = UI::get().emplace<UIQuestAlarm>();
-		if (alarm) alarm->set_tip(tip);
+		// s9 GuildPackets.GuildBoss_HealerMove：short newY
+		const int16_t ny = recv.available() >= 2 ? recv.read_short() : 0;
+		while (recv.available())
+			recv.skip_byte();
+		auto ui = UI::get().get_element<UIGuildBoss>();
+		if (!ui)
+			ui = UI::get().emplace<UIGuildBoss>();
+		if (ui)
+			ui->set_healer_y(ny);
 	}
 
 	void GuildBossPulleyStateHandler::handle(InPacket& recv) const
 	{
-		int8_t st = recv.available() ? recv.read_byte() : 0;
-		LOG(LOG_DEBUG, "GuildBossPulley state=" << (int)st);
-		std::string tip = "Guild pulley=" + std::to_string(st);
-		auto alarm = UI::get().get_element<UIQuestAlarm>();
-		if (!alarm) alarm = UI::get().emplace<UIQuestAlarm>();
-		if (alarm) alarm->set_tip(tip);
+		// s9 GuildPackets.GuildBoss_PulleyStateChange：byte state
+		const int8_t st = recv.available() ? recv.read_byte() : 0;
+		while (recv.available())
+			recv.skip_byte();
+		auto ui = UI::get().get_element<UIGuildBoss>();
+		if (!ui)
+			ui = UI::get().emplace<UIGuildBoss>();
+		if (ui)
+			ui->set_pulley_state(st);
 	}
 
 	void MonsterCarnivalSummonHandler::handle(InPacket& recv) const
