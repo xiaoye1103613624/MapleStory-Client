@@ -1,6 +1,6 @@
 # NPC 对话框 UtilDlgEx 原端对齐
 
-> 日期：2026-11-05 ｜ 本轮：AskPet dlgType=6 完整 UI（立绘/等级/亲密条）
+> 日期：2026-11-05 ｜ 本轮：Mirror 动画底 + BtMain 目的地图标
 
 ## 本轮闭环
 
@@ -14,10 +14,12 @@
 | Quiz（5） | ✅ s9 msgtype5+3×int；回程无 action 读 string；`UIInitialQuiz` + 出站 `5+string` |
 | SpeedQuiz（6） | ✅ 协议已对齐；`UISpeedQuiz` 题面(Npc/Mob/Item)+出站 `6+string` |
 | AskPet / AskPetAll（9/10） | ✅ dlgType=6：UtilDlgEx_Pet + Prev/Next 轮播 + stand0 + nameTag + Lv/亲密/饱食；出站 int64 |
-| Mirror（14） | ✅ `UIDimensionalMirror`（SlideMenu/0）+ 出站 `14+action+int` |
+| Mirror（14） | ✅ 动画底（IsAniBackgrd）+ Choice 内 BtMain 图标 + BtMove 前往；出站 `14+action+int` |
+| AskPet 原生亲密位图条 | ⏸ UtilDlgEx_Pet 无 gage；维持 ColorBox |
 
 ## 证据
 
+- [evidence/a11n-mirror-ani-btmain.md](evidence/a11n-mirror-ani-btmain.md)
 - [evidence/a11m-askpet-dlgtype6-full-ui.md](evidence/a11m-askpet-dlgtype6-full-ui.md)
 - [evidence/a11l-askpet-mirror-ida.md](evidence/a11l-askpet-mirror-ida.md)
 - [evidence/a11j-askboxtext-ida.md](evidence/a11j-askboxtext-ida.md)
@@ -29,5 +31,6 @@
 
 ## 改动文件
 
-- 客户端：`IO/UITypes/UIMiscShells.{h,cpp}`、`Character/Inventory/{Pet,Inventory}.*`、`Net/Handlers/Helpers/ItemParser.cpp`、`Character/Look/PetLook.*`
-- 服务端：本轮无改（AskPet long 已于 A11l 对齐）
+- 客户端：`IO/UITypes/UIMiscShells.{h,cpp}`（本轮 Mirror 动画底 / BtMain 图标）
+- 服务端：本轮无改
+- 构建：Release|x64 → `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-05）

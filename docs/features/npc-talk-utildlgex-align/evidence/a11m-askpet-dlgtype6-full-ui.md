@@ -37,6 +37,6 @@
 
 | 项 | 说明 |
 | --- | --- |
-| 亲密/饱食原生位图条 | 无 UtilDlgEx 专用 canvas；ColorBox 几何条 |
-| Mirror 动画底 / BtMain 全态 | 见 a11l |
+| 亲密/饱食原生位图条 | 无 UtilDlgEx 专用 canvas；ColorBox 几何条（a11n 再扫仍无） |
+| Mirror 动画底 / BtMain | ✅ 见 [a11n](a11n-mirror-ani-btmain.md) |
 | 未入库 uniqueId 的旧号 | 仅召唤宠可显示名字；等级/条需现金栏命中 |

@@ -38,12 +38,12 @@
 - 出站：`NpcTalkMorePacket(DimensionalMirror{}, action, selection)`
 - s9 既有 `getDimensionalMirror` / `NPCMoreTalkHandler` int selection 已对齐
 
-## 3. 显式预留
+## 3. 显式预留 / 接续
 
 | 项 | 说明 |
 | --- | --- |
 | AskPet 完整 dlgType=6 | ✅ 已由 [a11m](a11m-askpet-dlgtype6-full-ui.md) 接续（立绘/等级/亲密·饱食 ColorBox） |
 | 现金栏 64 位 uniqueId 入库 | ✅ ItemParser 读 long 写入 `Pet::unique_id`；出站仍用包内 uniqueId |
-| Mirror 动画底图 | `IsAniBackgrd` / `backgrd` 多帧未播；固定 `backgrd/0` |
-| Mirror BtMain 全态切换 | 选中后尝试 `BtMain/<id>`，缺则保留 `BtMove` |
-| AskPet 原生亲密位图条 | UtilDlgEx 无专用 gage；现 ColorBox |
+| Mirror 动画底图 | ✅ 已由 [a11n](a11n-mirror-ani-btmain.md) 接续（`IsAniBackgrd` + `backgrd` 多帧） |
+| Mirror BtMain | ✅ a11n：Choice 内图标；**不**替 BtMove（A11l 旧表述已纠正） |
+| AskPet 原生亲密位图条 | ⏸ UtilDlgEx_Pet 仅 backgrnd，无 gage；维持 ColorBox |

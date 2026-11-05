@@ -2086,43 +2086,50 @@ Button::State UIAskPet::button_pressed(uint16_t buttonid)
 UIElement::Type UIAskPet::get_type() const { return TYPE; }
 
 // ---------------------------------------------------------------------------
-// DimensionalMirror — IDA 76B3F0 / 76BE7A / 747A46；SlideMenu/0 235×165
+// DimensionalMirror — IDA 76B3F0 / 76B9FC / 76BE7A / 747A46；SlideMenu/<param> 235×165
 // ---------------------------------------------------------------------------
 UIDimensionalMirror::UIDimensionalMirror()
 	: prev_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::DARKGREY),
 	  cur_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::BLACK),
 	  next_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::DARKGREY)
 {
-	// IDA sub_4EDAB7(235, 165)
+	// IDA sub_4EDAB7(235, 165)；箭头切换后仍强制同尺寸（76C69E→4EDA94）。
 	position = Point<int16_t>(282, 217);
-	dimension = Point<int16_t>(235, 165);
-	dragarea = Point<int16_t>(235, 20);
+	dimension = Point<int16_t>(WND_W, WND_H);
+	dragarea = Point<int16_t>(WND_W, 20);
 
 #ifdef USE_NX
-	nl::node root = UiAssetResolve::window("SlideMenu");
-	nl::node skin = root["0"] ? root["0"] : root;
+	nl::node skin = resolve_skin();
 	if (skin)
 	{
-		nl::node bg = skin["backgrd"]["0"] ? skin["backgrd"]["0"] : skin["backgrnd"];
-		if (!bg && skin["backgrd"])
-			bg = skin["backgrd"]["0"];
-		if (bg)
+		// IDA 76B9FC：读 IsAniBackgrd；==1 → 动画底（9E0750），否则静帧（9E0AB2）。
+		ani_backgrd = skin["IsAniBackgrd"].get_integer() != 0;
+		nl::node bg_dir = skin["backgrd"] ? skin["backgrd"] : skin["backgrnd"];
+		if (ani_backgrd && bg_dir)
 		{
-			backgrnd = Texture(bg);
-			Point<int16_t> o = backgrnd.get_origin();
-			if (o.x() || o.y())
-				backgrnd.shift(o);
-			dimension = backgrnd.get_dimensions();
-			if (dimension.x() <= 0)
-				dimension = Point<int16_t>(235, 165);
+			backgrd_ani = Animation(bg_dir);
 			has_assets = true;
+		}
+		else
+		{
+			nl::node bg = bg_dir["0"] ? bg_dir["0"] : bg_dir;
+			if (bg)
+			{
+				backgrnd = Texture(bg);
+				has_assets = static_cast<bool>(backgrnd);
+			}
+		}
+		if (skin["Cover"])
+		{
+			cover = Texture(skin["Cover"]);
+			has_cover = static_cast<bool>(cover);
 		}
 		if (skin["Choice"])
 		{
 			choice_mark = Texture(skin["Choice"]);
 			has_choice_mark = static_cast<bool>(choice_mark);
 		}
-		// IDA 76BE7A：左(11,67) 右(200,67) 取消(69,134) 前往(128,134)
+		// IDA 76BE7A：左(11,67) 右(200,67) 取消(69,134) 前往(128,134)；BtMove 恒为前往钮。
 		if (skin["BtArrow"]["left"])
 		{
 			buttons[BtLeft] = std::make_unique<MapleButton>(skin["BtArrow"]["left"], Point<int16_t>(11, 67));
@@ -2146,11 +2153,28 @@ UIDimensionalMirror::UIDimensionalMirror()
 	}
 #endif
 	if (!has_assets)
-		LOG(LOG_WARN, "UIDimensionalMirror: missing SlideMenu/0");
+		LOG(LOG_WARN, "UIDimensionalMirror: missing SlideMenu skin");
 	dragarea = Point<int16_t>(dimension.x(), 20);
 	center_on_screen();
 	LOG(LOG_INFO, "UIDimensionalMirror: constructed assets=" << (has_assets ? 1 : 0)
+		<< " ani=" << (ani_backgrd ? 1 : 0)
 		<< " dim=" << dimension.x() << "x" << dimension.y());
+}
+
+nl::node UIDimensionalMirror::resolve_skin() const
+{
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("SlideMenu");
+	if (!root)
+		return {};
+	// 入站 mirror_param 即皮肤下标（s9 getDimensionalMirror 写 0 → SlideMenu/0）。
+	nl::node skin = root[std::to_string(mirror_param)];
+	if (!skin)
+		skin = root["0"] ? root["0"] : root;
+	return skin;
+#else
+	return {};
+#endif
 }
 
 void UIDimensionalMirror::parse_choices(const std::string& talk)
@@ -2210,12 +2234,15 @@ void UIDimensionalMirror::open(int32_t mirror_param_in, const std::string& talk)
 			break;
 		}
 	}
+	if (ani_backgrd)
+		backgrd_ani.reset();
 	refresh_labels();
-	rebuild_go_button();
+	rebuild_main_icon();
 	if (!is_active())
 		makeactive();
 	LOG(LOG_INFO, "UIDimensionalMirror: open param=" << mirror_param
-		<< " choices=" << choices.size() << " sel=" << selected);
+		<< " choices=" << choices.size() << " sel=" << selected
+		<< " ani=" << (ani_backgrd ? 1 : 0));
 }
 
 void UIDimensionalMirror::refresh_labels()
@@ -2241,23 +2268,30 @@ void UIDimensionalMirror::refresh_labels()
 		buttons[BtGo]->set_active(can_go);
 }
 
-void UIDimensionalMirror::rebuild_go_button()
+void UIDimensionalMirror::rebuild_main_icon()
 {
+	has_main_icon = false;
+	main_icon = Texture();
 #ifdef USE_NX
-	// BtMain/<id> 为目的地专用钮；无则保留 BtMove。
+	// BtMain/<id>：Choice 框内 38×38 目的地图标（IMG normal/pressed/mouseOver/disabled 全态资源齐）；
+	// 非交互（IDA 点击分发仅 3000–3003/3005），此处画 normal；缺资源则只留 Choice 框。
 	if (choices.empty() || selected < 0 || static_cast<size_t>(selected) >= choices.size())
 		return;
 	const int32_t id = choices[static_cast<size_t>(selected)].id;
-	nl::node root = UiAssetResolve::window("SlideMenu");
-	nl::node skin = root["0"] ? root["0"] : root;
+	if (id < 0)
+		return;
+	nl::node skin = resolve_skin();
 	nl::node main = skin["BtMain"][std::to_string(id)];
-	if (main && UiAssetResolve::usable(main))
+	nl::node frame = main["normal"]["0"] ? main["normal"]["0"] : main["0"];
+	if (!frame && main)
+		frame = main;
+	if (frame && UiAssetResolve::usable(frame))
 	{
-		buttons[BtGo] = std::make_unique<MapleButton>(main, Point<int16_t>(128, 134));
-		buttons[BtGo]->set_active(id != -1);
+		main_icon = Texture(frame);
+		has_main_icon = static_cast<bool>(main_icon);
 	}
-#else
-	(void)0;
+	LOG(LOG_DEBUG, "UIDimensionalMirror: BtMain id=" << id
+		<< " icon=" << (has_main_icon ? 1 : 0));
 #endif
 }
 
@@ -2285,17 +2319,33 @@ void UIDimensionalMirror::submit_cancel()
 	deactivate();
 }
 
-void UIDimensionalMirror::draw(float) const
+void UIDimensionalMirror::draw(float inter) const
 {
-	if (has_assets && backgrnd)
-		backgrnd.draw(position);
-	// IDA 76BE7A 文案：prev(45,58) cur(97,58) next(149,58)
+	if (has_assets)
+	{
+		if (ani_backgrd)
+			backgrd_ani.draw(position, inter);
+		else if (backgrnd)
+			backgrnd.draw(position);
+		if (has_cover && cover)
+			cover.draw(position);
+	}
+	// IDA 76BE7A 文案：prev(45,58) cur(97,58) next(149,58)；Choice 框叠 BtMain 图标。
 	prev_label.draw(position + Point<int16_t>(45 + 20, 58 + 12));
 	if (has_choice_mark && choice_mark)
-		choice_mark.draw(position + Point<int16_t>(90, 50));
+		choice_mark.draw(position + Point<int16_t>(CHOICE_X, CHOICE_Y));
+	if (has_main_icon && main_icon)
+		main_icon.draw(position + Point<int16_t>(MAIN_ICON_X, MAIN_ICON_Y));
 	cur_label.draw(position + Point<int16_t>(97 + 20, 58 + 12));
 	next_label.draw(position + Point<int16_t>(149 + 20, 58 + 12));
 	UIElement::draw_buttons(0.0f);
+}
+
+void UIDimensionalMirror::update()
+{
+	UIElement::update();
+	if (ani_backgrd)
+		backgrd_ani.update();
 }
 
 void UIDimensionalMirror::send_key(int32_t keycode, bool pressed, bool escape)
@@ -2316,14 +2366,14 @@ void UIDimensionalMirror::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		--selected;
 		refresh_labels();
-		rebuild_go_button();
+		rebuild_main_icon();
 	}
 	else if ((keycode == 39 || keycode == 262)
 		&& static_cast<size_t>(selected + 1) < choices.size())
 	{
 		++selected;
 		refresh_labels();
-		rebuild_go_button();
+		rebuild_main_icon();
 	}
 }
 
@@ -2336,7 +2386,7 @@ Button::State UIDimensionalMirror::button_pressed(uint16_t buttonid)
 		{
 			--selected;
 			refresh_labels();
-			rebuild_go_button();
+			rebuild_main_icon();
 		}
 		break;
 	case BtRight:
@@ -2344,7 +2394,7 @@ Button::State UIDimensionalMirror::button_pressed(uint16_t buttonid)
 		{
 			++selected;
 			refresh_labels();
-			rebuild_go_button();
+			rebuild_main_icon();
 		}
 		break;
 	case BtGo:

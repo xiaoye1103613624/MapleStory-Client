@@ -309,13 +309,15 @@ private:
 	int16_t tip_draw_y = 28;
 };
 
-// 维度镜（IDA 76B3F0 / 747A46）：UIWindow.img/SlideMenu/0，窗 235×165
+// 维度镜（IDA 76B3F0 / 76B9FC / 747A46）：UIWindow.img/SlideMenu/<param>
+// IsAniBackgrd=1 → backgrd 多帧动画；BtMain/<id> 为 Choice 内 38×38 目的地图标（非 BtMove 替身）。
 class UIDimensionalMirror : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::DIMENSIONALMIRROR;
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIDimensionalMirror();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
 	void open(int32_t mirror_param, const std::string& talk);
@@ -329,14 +331,29 @@ private:
 	};
 	void parse_choices(const std::string& talk);
 	void refresh_labels();
-	void rebuild_go_button();
+	void rebuild_main_icon();
 	void submit_ok();
 	void submit_cancel();
+	nl::node resolve_skin() const;
+
+	// IDA sub_4EDAB7(235,165)；Choice 框 (90,50) 40×40；BtMain 38×38 居中内嵌。
+	static constexpr int16_t WND_W = 235;
+	static constexpr int16_t WND_H = 165;
+	static constexpr int16_t CHOICE_X = 90;
+	static constexpr int16_t CHOICE_Y = 50;
+	static constexpr int16_t MAIN_ICON_X = 91;
+	static constexpr int16_t MAIN_ICON_Y = 51;
 
 	bool has_assets = false;
+	bool ani_backgrd = false;
+	Animation backgrd_ani;
 	Texture backgrnd;
+	Texture cover;
+	bool has_cover = false;
 	Texture choice_mark;
 	bool has_choice_mark = false;
+	Texture main_icon;
+	bool has_main_icon = false;
 	Text prev_label;
 	Text cur_label;
 	Text next_label;
