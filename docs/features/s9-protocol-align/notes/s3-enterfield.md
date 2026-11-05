@@ -42,3 +42,12 @@
 - s2c 握手 `CHANNEL_SELECTED` 客户端防御式解析、天然容错；`SET_FIELD` 服务端驱动且实机渲染成功。
 - 进图整链与 s9 一致，**无字段级错配**。
 - 本切片**未动任何代码**，符合授权边界。
+
+## 5. 后续修正（2026-11-05）：§2.2/§4 的「无字段级错配」已作废
+
+> 上述 §2.2「SET_FIELD 实机渲染成功、无字段解析异常」和 §4「进图整链与 s9 一致、无字段级错配」是基于**旧会话（mapid=1）**的结论，已被 2026-11-05 的实机负对照推翻：admin 进图纯白屏、看不到角色、小地图无预览。
+
+- 真因是当前 `BeiDou-Server_s9` 的 `PacketCreator.addCharStats:208` 把 `exp` 写成 `writeInt` 4 字节 + `:213` 尾部 `writeInt(0)` 4 字节；客户端 `LoginParser::parse_stats` 按 `read_long` 8 字节（S10/主线口径）且无尾部 skip ⇒ 字段整体平移 4 字节，`skip(4)//gachaexp` 吞掉真实 mapId `100000000`，再从 spawnpoint 槽读出 `16` 当 mapid → `Stage::load` 抛 `map data missing` → 白屏。
+- 两种布局总宽都是 19 字节，**不抛异常、只平移字段**，故旧实机"看起来进图成功"掩盖了错配。
+- 已修复并实机验证闭环（`Stage::load ok map=100000000`、射手村地图/角色/小地图 MAX 态全恢复）。完整证据链、字节表、6 文件修复清单与防复发判据见 **`notes/enterfield-exp-misalign.md`**。
+- 修正结论：**SET_FIELD 存在字段级错配（exp 宽度），本切片「无错配」结论作废**；opcode 名值对齐部分仍然成立。

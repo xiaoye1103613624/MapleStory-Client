@@ -1,7 +1,7 @@
 # S9 切片：社交（聊天/密语/组队/公会/家族/婚介/BBS/好友）
 
 > 协议事实源：`BeiDou-Server_s9`（s9）。opcode 名值以 `OutPacket.h`（客户端）与 `RecvOpcode.java`（s9）为准。
-> 本切片 c2s 包众多（约 25 个）。结论：**除 `BUDDYLIST` 外全部 opcode 与 s9 一致**，字段结构也已逐项/抽样验证；`BUDDYLIST` 存在一处**遗漏未修的 opcode 错配**（opcode 值 63 应为 130），已给出修复建议、未改代码（见 §2.8）。
+> 本切片 c2s 包众多（约 25 个）。结论：**全部 opcode 值与 s9 一致且字段已逐项/抽样验证**；`BUDDYLIST` 曾有一处 opcode 错配（c2s 63 应为 130），**已于 2026-11-02 修复**（见 §2.8）。
 
 ## 1. opcode 名值交叉核对（核心结论）
 
@@ -80,12 +80,14 @@
 - **后果**：客户端发出的加/删/接受好友包（opcode 63）会被 s9 路由到玩家商店 handler → **好友列表对 s9 完全失效**。
 - **字段结构已对齐**（只需改 opcode）：客户端 `BuddyAddPacket=write_byte(1)+write_string(name)+write_string(group)`、`BuddyAcceptPacket=write_byte(2)+write_int(cid)`、`BuddyDeletePacket=write_byte(3)+write_int(cid)`，与 s9 `BuddylistModifyHandler.handlePacket`（mode 1=add: readString×2；mode 2=accept: readInt；mode 3=delete: readInt）**逐字段匹配**。
 - **根因 / 同型修复**：`OutPacket.h` 中已有三处同类修正（line 136-173）：`STORAGE 309→62`、`PLAYER_INTERACTION 314→123`、`CASHSHOP_OPERATION 325→229`，均为「误抄 Send 侧值，改回 s9 Recv 侧值」。`BUDDYLIST=63` 是**遗漏未改的一处**。
-- **推荐修复（待用户拍板，未改代码）**：将 `OutPacket.h:139` 的 `BUDDYLIST = 63` 改为 `BUDDYLIST = 130`，并注释 `// s9 RecvOpcode.BUDDYLIST_MODIFY=0x82=130`（与同文件既有注释风格一致）。字段结构无需改动。
+- **修复（2026-11-02 已应用）**：`OutPacket.h` 的 `BUDDYLIST = 63` 已改为 `BUDDYLIST = 130`（c2s 对齐 s9 `RecvOpcode.BUDDYLIST_MODIFY=0x82=130`）。
+  - **非对称要点（关键，避免误改 s2c）**：s2c 收包侧 `PacketSwitch.cpp:158` 的 `BUDDYLIST = 63` **保持不动**——它对应 s9 `SendOpcode.BUDDYLIST = 0x3F = 63`（服务端→客户端）。c2s=130 / s2c=63 是 v83「c2s 与 s2c 双枚举」的标准非对称，已核对 s9 两端均吻合，故只改发包侧一处即可。
+  - 构建已通过（build_smoke `EXITCODE=0`，opcode 矩阵 `GATE OK`）。字段结构无需改动。
 
 ## 3. s2c 侧（服务端驱动，本切片范围）
 - 聊天广播（`SERVERMESSAGE` / ` whisper` / `multi_chat`）、好友列表下发（`BUDDYLIST`（s2c）)、组队/公会/家族状态同步（`PARTYLIST` / `GUILD` / `FAMILY`）、BBS/留言列表均为 s2c，由服务端按客户端请求计算后下发，客户端解析已实机验证正确。
 
 ## 4. 结论
 - S9 社交群 **约 28 个 c2s 包**：27 个 opcode 与 s9 一致且字段/操作包范式已抽样验证无错配。
-- **1 个 opcode 错配**：`BUDDYLIST`（客户端 63 ↔ s9 好友 130）。字段结构已对齐，修复仅需改 opcode 值（与同文件既有 3 处修正同型），已给出推荐修复、按授权边界未改代码。
-- 本切片**未动任何代码**，符合"先对账、后改动、逐条给证据"的纪律。
+- **1 个 opcode 错配（已修复）**：`BUDDYLIST`（客户端 c2s 63 ↔ s9 好友 130）。字段结构已对齐，已改 `OutPacket.h` 枚举值 63→130（c2s 对齐 s9 RecvOpcode；s2c 收包侧保留 63 对齐 s9 SendOpcode，v83 双枚举非对称），构建通过。
+- 本切片改动仅 `OutPacket.h` 一处枚举值 + `BuddyPackets.h` 注释，其余未动，符合"先对账、后改动、逐条给证据"的纪律。

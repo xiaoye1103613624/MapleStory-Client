@@ -1,5 +1,7 @@
 # T2 · opcode 差异归因（客户端 ↔ s9）
 
+> **复核记录（2026-11-04，伤害 long 化）**：s9 新增 `SendOpcode.LIMIT_BREAK_SYNC(0x3730)`（破功值同步），客户端收侧本就已有同名 handler，未改客户端枚举、未重分配 opcode。已重跑 `python tools/gen_opcode_matrix.py` 并复核 `python tools/gen_opcode_matrix.py --check` → `GATE OK`。下方 §0 的数字是本文写就时的历史快照；当前权威数字以 `protocol/opcode-matrix.json` 的 `_meta` 为准（本次为 s9 send 313 常量 / 252 下发、客户端 s2c 304 常量 / 303 handler、c2s MATCHED 109）。
+
 数据源：`protocol/opcode-matrix.json`（由 `tools/gen_opcode_matrix.py` 从两侧源码生成，`--check` 做门禁）。
 规范源：`E:\project\BeiDou-Server_s9`（git head `44d0d5d9ca`，`ServerConstants.VERSION = 83`）。
 本文只谈 **opcode 层**（谁发、谁收、值对不对）；body 字段级对账在 P2 的 S1..S11 切片。

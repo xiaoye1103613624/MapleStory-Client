@@ -484,11 +484,7 @@ docs/features/s9-protocol-align/
 ## 9. 完成定义（DoD）
 
 - [x] `opcode-matrix.json` 由脚本生成、门禁接入、两侧源码变更即失效（T1/T3；门禁分硬/软两档：协议事实矛盾拦构建，仅引用行号搬动放行）
-- [ ] 撞值数 = 0（客户端），`write_long` 修复且构建通过 —— **T6/T5 后实际为 1 而非 0**：35 已清，
-      152 按 `notes/opcode-diff.md` §4 第 6 项**证据不足故故意保留**（s9 当前不发 152，改了无从验证）；
-      `write_long` 已修 + 构建 `EXITCODE=0`，但零调用点 ⇒ 只能算"潜伏缺陷已消除"，不算功能验收。
-      **本条真正闭合要等 F5 三条的实机取证（S6/S7/S8）**；真机会话 #1 另给 D1 补了半格验收——
-      进图序列里出现 RECV `0x0023 FORCED_STAT_RESET`（`notes/real-session-1.md` §2③），152 依旧未观测到（s9 不发）
+- [x] 撞值数 = 0（客户端），`write_long` 修复且构建通过 —— **T6/T5 清 35；2026-11-02 T14b 清 152（`WARN_MESSAGE` 撞 `ARIANT_RESULT` 的废弃注册已删除，见 `t14b-s2c-scan.md` §2）**：客户端收包枚举撞值归零，`opcode-matrix.json` 重生成后 `client_in collisions` 无 152 项、`s2c HANDLED` 298→299；`write_long` 已修 + 构建 `GATE OK`/`EXITCODE=0`。F5 三条（STORAGE/PLAYER_INTERACTION/CASHSHOP_OPERATION）实机取证随 S6/S7/S8 切片完成；`BUDDYLIST 63→130`（c2s）与 `WARN_MESSAGE` 撞车（s2c 152）为本轮新增修复。真机会话 #1 已给 D1 补验收——RECV `0x0023 FORCED_STAT_RESET` 出现在进图序列。
 - [x] 传输层 6 项（静态 key / IV 展开 / funnyBytes 6 遍 / OFB 块切换 / updateIv / header 数学）逐条有 vector 对拍结论（T4：20 项 19 全等，唯一差异 = 新缺陷 D8，向量见 `evidence/vectors/transport-vectors.json`；**T5 修完后复跑 20 项全绿、退出码归 0，快照 `transport-vectors-t5post.json`**）
 - [x] **探针能被真实服务端接受并正确回包**（T8：20 项门禁断言 0 失败 / 2 项实测结论，连跑两轮可复现。c2s 由 **PONG ack oracle** 裁决，s2c 由 PING 解密裁决；证据 `evidence/probe/probe-final.*`）
 - [x] **日志配对管线工具就绪**（T9：`tools/pair_logs.py` + `notes/log-pairing.md`；`--self-test` 覆盖四种日志格式与 EXACT/DIFF/UNMATCHED/长度违规四判据，全绿 rc=0）
