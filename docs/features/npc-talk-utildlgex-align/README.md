@@ -1,6 +1,6 @@
 # NPC 对话框 UtilDlgEx 原端对齐
 
-> 日期：2026-11-05 ｜ 本轮：A11g tip 817–821 + Pet inset=25
+> 日期：2026-11-05 ｜ 本轮：A11h ScriptMessage OnPacket 全量对齐 + tip 820
 
 ## 本轮闭环
 
@@ -16,6 +16,8 @@
 | A11f 包内 min/max | ✅ GetNumber 解析 def/min/max；OK 全数字+范围校验；失败不关窗 |
 | A11g tip 817–821 | ✅ IDA `sub_9929DD`/`99311B`：A12 白+描边 `#355A84` α1；校验失败弹 UIOk |
 | A11g Pet inset=25 | ✅ IDA `sub_9ACC20`：`(speaker&6)!=0` → content_left=25 |
+| A11h ScriptMessage OnPacket | ✅ IDA `sub_74660A` 逐 case；Say `speaker&4`；GetText short×2；5/6/7/8/9/10/13/14 吞包 `-1` |
+| A11h tip 820 | ✅ 接线 `number_min_digits`；线路径 OnPacket 置 0（对齐 `9AC732` a5） |
 | 宋体路线 | ✅ 未改字体路径；保持 A11M/A12M + 思源宋体 |
 | KeyDown 持续技松开取消 | ⏸ 证据不足：s9 仅有上行 `SKILL_EFFECT`、无 cancel recv |
 
@@ -26,6 +28,8 @@
 - [evidence/a11d-sendsimple-highlight-ida.md](evidence/a11d-sendsimple-highlight-ida.md)
 - [evidence/a11e-gettext-getnumber-layout-ida.md](evidence/a11e-gettext-getnumber-layout-ida.md)
 - [evidence/a11f-gettext-avatar-minmax-ida.md](evidence/a11f-gettext-avatar-minmax-ida.md)
+- [evidence/a11g-tip-817-821-pet-inset-ida.md](evidence/a11g-tip-817-821-pet-inset-ida.md)
+- [evidence/a11h-scriptmessage-onpacket-ida.md](evidence/a11h-scriptmessage-onpacket-ida.md)
 - 几何：`docs/features/ui-v83-window-restore/evidence/r25-npctalk-geometry/`
 
 ## 改动文件

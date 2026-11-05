@@ -330,6 +330,12 @@ IDA `sub_9929DD` → Draw `sub_99311B`（duration=1000）：A12 白 α1 + 描边
 校验失败弹 `UIOk` tip，对话不关。Pet：`sub_9ACC20` `(speaker&6)!=0` → content_left=**25**。  
 证据：[npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md](../../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
 
+### A11h ScriptMessage OnPacket 全量 + tip 820—— **已定案并接线（2026-11-05）**
+
+IDA `sub_74660A` 逐 case：Say `speaker&4`、GetText `short×2`、GetNumber `number_min_digits=0`；  
+msgtype 5/6/7/8/9/10/13/14 按 IDA 读尽后 `NpcTalkMore(-1)`（不新建 Quiz/Avatar/Pet/Mirror UI）。  
+tip 820 已接；线路径恒 0。证据：[npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md](../../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)。
+
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 
 04:42 那份**能正常在线一小时**的产物（md5 `51d3fe17…`，PID 49660），在我用 `_quit.py`

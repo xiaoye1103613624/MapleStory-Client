@@ -32,6 +32,7 @@
 | 18 | 隐藏门三态动画 | ⏳ 待测 | — | 靠近/离开隐藏门看 Start/Continue/Exit |
 | 19 | NPC 对话 A11b+A11c | ⏳ 待测 | c2s NPC_TALK_MORE | 下项发 selection；α/TEXT_Y/Next=`W-78`；见 npc-talk-utildlgex-align |
 | 22 | NPC tip 817–821 + Pet inset A11g | ⏳ 待测 | — | 校验 tip 样式；Pet speaker=2 输入 inset=25 |
+| 23 | ScriptMessage OnPacket + tip 820 A11h | ⏳ 待测 | s2c 304 | 0/1/2/3/4/12 回归；未接 UI `-1` 收口；tip 820 需人为 min_digits>0 |
 
 ---
 
@@ -242,7 +243,8 @@
 - **A11e GetText/GetNumber（2026-11-05 已接线，待真机）**：正文下黑/白输入槽 + 内嵌光标；右下「确定」可点；OK/回车发包。证据：同上。
 - **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
 - **A11g tip + Pet inset（2026-11-05 已接线，待真机）**：校验失败弹 tip 817–821（A12 白+`#355A84` 描边）；Pet `speaker&6` 输入 inset=25。证据：[a11g](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；ScriptMessage 全量 OnPacket；tip 820（位数下限，助手常 0）。
+- **A11h ScriptMessage OnPacket + tip 820（2026-11-05 已接线，待真机）**：见 §23。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；Quiz/Avatar/Pet/Mirror **UI**（本轮仅吞包 `-1`）；s9 `OnAskQuiz`/`OnAskSpeedQuiz` msgtype 与 IDA 不一致（服务端未改）。
 
 ## 18. 隐藏门三态
 
@@ -304,7 +306,22 @@
   5. Pet GetNumber：黑白输入槽左缘约 **x=25**（相对窗；非 157）；Avatar `speaker=1` 仍走固定槽、无黑白框。
 - **期望**：非法提交不发包；合法仍发包关窗；无崩。
 - **文档**：[a11g-tip-817-821-pet-inset-ida](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)
-- **仍预留**：tip 820；ScriptMessage 全量 OnPacket；Pet Say 正文 `TEXT_X`（无独立 inset 证据）。
+- **仍预留**：Pet Say 正文 `TEXT_X`（无独立 inset 证据）。见 §23 tip 820 / OnPacket。
+
+## 23. ScriptMessage OnPacket 全量 + tip 820 A11h
+
+- **前置**：城镇可对话 NPC；可选 `cm.sendStyle` / Quiz / Mirror 脚本；GetNumber 普通路径即可（线路径 `number_min_digits=0`）。
+- **操作 / 期望**：
+  1. **回归 0/1/2/3/4/12**：Say / YesNo / GetText / GetNumber / Simple / AcceptDecline 仍正常开窗、发包、关窗；宋体/A12 不变。
+  2. **Say `speaker&4`**：若脚本带 override npc，立绘应对齐覆盖后的 templateId（无此类脚本则跳过）。
+  3. **GetText short×2**：s9 `writeInt(0)` 路径与原先一致（minLen=0 不弹 tip 821）。
+  4. **GetNumber tip 820**：正常 `sendGetNumber` **不应**弹「more than %d digits」；若要肉眼验 tip 820，需临时把 `TalkInputParams::number_min_digits` 调为 >0（或调试断点改字段）再输入偏短数字串。
+  5. **未接 UI 收口**：`sendStyle`（msgtype 7）、Mirror（14）、Quiz/SpeedQuiz/Pet/AskBoxText（5/6/9/10/13）→ 客户端应 `NpcTalkMore(-1)` 结束，脚本不永久挂死；日志 `[NPC] ScriptMessage msgtype=… reserved/no-UI`。
+  6. **Avatar/Quiz UI**：本轮**故意不接**；真机只验收口，不验选发型/答题窗。
+- **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
+- **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
+- **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
+- **仍预留**：Quiz/Avatar/Pet/Mirror 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
 
 ## 7. SET_HPMPALERT
 

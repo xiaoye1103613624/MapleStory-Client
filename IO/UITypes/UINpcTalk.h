@@ -77,10 +77,12 @@ namespace ms
 			int32_t max_number = 0;
 			// GetNumber 包内带了 def/min/max 时置位；未置位则只做本地空/非 int 校验
 			bool has_number_bounds = false;
-			// GetText 包尾 int（常为 0）；仅当 >0 时作最小长度（对齐 9AB50A type3 vs this+0xDC）
+			// GetText：746A8B 首 short → 9AC7CB a3 → this+0xDC；仅当 >0 触发 tip 821
 			int32_t text_min_len = 0;
-			// Edit 字符上限：AskNumber 助手常传 10→this+0xCC；GetText 未进包则用默认
+			// Edit 字符上限：AskNumber 助手常传 10→this+0xCC；GetText 次 short 为 0 则用默认
 			int32_t edit_maxlen = 0;
+			// GetNumber：9AC732 a5 → this+0xDC；线路径恒 0，tip 820 仅人为 >0 时可见
+			int32_t number_min_digits = 0;
 		};
 
 		void change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speaker, const std::string& text);
@@ -251,7 +253,7 @@ namespace ms
 		void setup_input_field();
 		void clear_input_field();
 		bool dispatch_input_field();
-		// 校验失败 tip（IDA sub_9AB50A → sub_9929DD，StringPool 817–821）
+		// 校验失败 tip（IDA sub_9AB50A → sub_9929DD，StringPool 817–821；含 tip 820 位数下限）
 		void show_input_tip(const std::string& message);
 		int16_t input_content_left() const;
 	};

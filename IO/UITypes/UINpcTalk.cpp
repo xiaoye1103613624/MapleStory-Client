@@ -61,6 +61,7 @@ namespace ms
 		constexpr const char* TIP_817 = "Only numbers are allowed.";
 		constexpr const char* TIP_818 = "You may only enter a number \r\nequal to or higher than %d.";
 		constexpr const char* TIP_819 = "You may only enter a number \r\nequal to or lower than %d.";
+		constexpr const char* TIP_820 = "Please enter more than %d digits.";
 		constexpr const char* TIP_821 = "Please enter at least %d characters.";
 
 		std::string format_tip(const char* fmt, int32_t value)
@@ -1207,6 +1208,16 @@ namespace ms
 						show_input_tip(format_tip(TIP_819, input_params.max_number));
 						return false;
 					}
+				}
+				// IDA sub_9AB50A：min/max 通过后 len(this+0xE8) < this+0xDC → tip 820。
+				// 线路径 9AC732 a5=0，正常 AskNumber 不弹；仅 number_min_digits>0 可见。
+				if (input_params.number_min_digits > 0
+					&& static_cast<int32_t>(s.size()) < input_params.number_min_digits)
+				{
+					LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject digits=" << s.size()
+						<< " min=" << input_params.number_min_digits);
+					show_input_tip(format_tip(TIP_820, input_params.number_min_digits));
+					return false;
 				}
 				NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
 				LOG(LOG_DEBUG, "UINpcTalk: GetNumber enter=" << n);
