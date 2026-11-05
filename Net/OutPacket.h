@@ -123,6 +123,12 @@ namespace ms
 			USE_CASH_ITEM = 79,
 			/// s9 RecvOpcode.SPAWN_PET = 0x62
 			SPAWN_PET = 98,
+			/// s9 RecvOpcode.USE_RETURN_SCROLL = 0x55（回城/传送卷）。
+			/// 原生 CWvsContext::SendPortalScrollUseRequest（v95@0x9fca70）发本 opcode；
+			/// body 与 USE_ITEM 同形（int ts / short slot / int itemid）。
+			/// s9 PacketProcessor 将本 opcode 与 USE_ITEM 同挂 UseItemHandler，
+			/// 其中 ItemConstants.isTownScroll(2030000..2030099) 走回城结算。
+			USE_RETURN_SCROLL = 85,
 			SCROLL_EQUIP = 86,
 
 			/// Player
