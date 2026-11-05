@@ -72,13 +72,19 @@ namespace ms
 		// 会撞车，此表全部 <0x100 安全）。
 		static constexpr size_t QUICKSLOT_COUNT = 8;
 
+		// 静默写槽（QUICKSLOT_INIT 下行用；禁止在此上行 183，否则进图会回声）。
+		void set_quickslot(uint8_t slot, uint32_t key);
+		// 用户改键：写槽 + 上行 CHANGE_QUICKSLOT(183) 整表 8×int。
 		void assign_quickslot(uint8_t slot, uint32_t key);
+		void commit_quickslots();
 		void clear_quickslots();
 		// 换角色清残留：触发键若等于默认表，QUICKSLOT_INIT 走 bool=false
 		// 分支不下发任何键值，不清会把上一角色的键泄漏给下一角色。
 		uint32_t default_quickslot_key(size_t slot);
 		uint32_t get_quickslot_key(uint8_t slot) const;
 		const std::array<uint32_t, QUICKSLOT_COUNT>& quickslots() const { return quickslot_keys; }
+		// GLFW → v83 maple 键码（KeyConfig::Key / Keytable 下标）；0 = 不可映射。
+		uint8_t maple_keycode_from_glfw(int32_t glfw_key) const;
 
 	private:
 		std::map<int32_t, Mapping> keymap;

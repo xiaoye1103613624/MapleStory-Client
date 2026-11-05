@@ -175,20 +175,39 @@ namespace ms
 	// 服务端「等于默认则不下发/不落库」，本地默认表让 UI 显示同步成立。
 	// 键值全部 <0x100，byte 截断无撞车（服务端 (byte)readInt 语义）。
 
-	void Keyboard::assign_quickslot(uint8_t slot, uint32_t key)
+	void Keyboard::set_quickslot(uint8_t slot, uint32_t key)
 	{
 		if (slot < QUICKSLOT_COUNT)
-		{
 			quickslot_keys[slot] = key;
-			// W3：改键即上行 CHANGE_QUICKSLOT（8×int）
-			ChangeQuickslotPacket(quickslot_keys).dispatch();
-		}
+	}
+
+	void Keyboard::commit_quickslots()
+	{
+		ChangeQuickslotPacket(quickslot_keys).dispatch();
+	}
+
+	void Keyboard::assign_quickslot(uint8_t slot, uint32_t key)
+	{
+		set_quickslot(slot, key);
+		commit_quickslots();
 	}
 
 	void Keyboard::clear_quickslots()
 	{
 		for (size_t i = 0; i < QUICKSLOT_COUNT; i++)
 			quickslot_keys[i] = default_quickslot_key(i);
+	}
+
+	uint8_t Keyboard::maple_keycode_from_glfw(int32_t glfw_key) const
+	{
+		if (glfw_key == 0)
+			return 0;
+		for (uint8_t i = 0; i < 90; ++i)
+		{
+			if (Keytable[i] == glfw_key)
+				return i;
+		}
+		return 0;
 	}
 
 	uint32_t Keyboard::default_quickslot_key(size_t slot)

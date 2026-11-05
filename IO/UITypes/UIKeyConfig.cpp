@@ -22,6 +22,7 @@
 #include "UIJoypad.h"
 #include "UIItemInventory.h"
 #include "UIMiscShells.h"
+#include "UIQuickslotConfig.h"
 #include "UISoftKey.h"
 
 #include "../UI.h"
@@ -772,6 +773,16 @@ namespace ms
 				save_staged_mappings();
 				close();
 
+				return Button::State::NORMAL;
+			}
+			case Buttons::KEYSETTING:
+			{
+				// 原生「变更快捷键」→ quickslotConfig：点槽再按键上行 CHANGE_QUICKSLOT(183)
+				auto qs = UI::get().get_element<UIQuickslotConfig>();
+				if (!qs)
+					qs = UI::get().emplace<UIQuickslotConfig>();
+				else
+					qs->makeactive();
 				return Button::State::NORMAL;
 			}
 			default:

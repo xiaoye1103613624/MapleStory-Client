@@ -3047,7 +3047,8 @@ namespace ms
 			for (int i = 0; i < 8 && recv.available() >= 4; ++i)
 			{
 				int32_t key = recv.read_int();
-				keyboard.assign_quickslot(static_cast<uint8_t>(i), static_cast<uint32_t>(key));
+				// 下行静默写表；禁止 assign_quickslot（会回声 CHANGE_QUICKSLOT）。
+				keyboard.set_quickslot(static_cast<uint8_t>(i), static_cast<uint32_t>(key));
 			}
 		}
 		else

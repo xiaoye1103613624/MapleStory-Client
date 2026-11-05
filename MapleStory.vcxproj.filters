@@ -522,6 +522,9 @@
     <ClCompile Include="IO\UITypes\UIKeyConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIQuickslotConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UILogin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1317,6 +1320,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIKeyConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIQuickslotConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UILogin.h">

@@ -47,7 +47,7 @@
 | 召唤袋 | 75 `USE_SUMMON_BAG` | 无发送（召唤兽显示已接） |
 | 死亡道具（复活币类） | 53 `USE_DEATHITEM` | 无 |
 | HOT 持续治疗请求 | 89 `HEAL_OVER_TIME` | ✅ 2026-11-05 已接自然回复上报（见 heal-over-time） |
-| 快捷栏拖拽换键保存 | 183 `CHANGE_QUICKSLOT` | 3×3 快捷格（hotkey-grid）已做，改键**不持久化到服务端** |
+| 快捷栏触发键保存 | 183 `CHANGE_QUICKSLOT` | ✅ 2026-11-06：`UIQuickslotConfig`（点槽+按键）+ `commit_quickslots`；Init 静默写防回声（见 [change-quickslot-persist](../change-quickslot-persist/)） |
 | HP/MP 报警阈值存档 | 4096 `SET_HPMPALERT` | ✅ Wave1 已上行+回灌（见 set-hpmpalert）；端到端回灌待 `use_server_auto_pot` |
 | 地图内特殊交互 | 100 `CHANGE_MAP_SPECIAL` / 101 `USE_INNER_PORTAL` / 206 `TOUCHING_REACTOR` / 115 `USE_TREASUER_CHEST` / 112 `USE_ITEM_REWARD` | 隐藏传送点/触碰式反应器/宝箱开启不发送；反应堆渲染已修但交互半通 |
 | 触怪伤害 | 47 `TOUCH_MONSTER_ATTACK` | ✅ 2026-11-05 身体压力/能量满触怪发 47（见 touch-monster-attack） |

@@ -8,7 +8,7 @@
 | # | 票 | 状态 | 关键证据 |
 | --- | --- | --- | --- |
 | 1.1 | HP/MP 报警阈值跟随角色 | ✅ 上行+回灌+探针 | s9 `SetHpMpAlertHandler`（byte×2 step 0..19，`HpMpAlertService`: step/20=百分比）；回灌 `UpdateHpMpAlertHandler` 写回 `ui.sysopt.*_warn`；commit 点 `to_step=(pct+2)/5` 钳 0..19 |
-| 1.2 | 快捷栏触发键存储/下行 | ✅ 存储闭环；⏸ 改键 UI 接线显式预留 | s9 `QuickslotBinding.encode`：QUICKSLOT_INIT(0x9F)= bool+8×int=**触发键**（非槽绑定，槽绑定走 KEYMAP135）；旧 handler 把触发键写进键位表槽号（`(key&0xFF)` 有污染常规键位风险）→ 改存 `Keyboard::quickslot_keys[8]`；`ChangeQuickslotPacket(183)` 登记（8×int） |
+| 1.2 | 快捷栏触发键存储/下行 | ✅ 存储+改键 UI（2026-11-06） | s9 `QuickslotBinding.encode`：QUICKSLOT_INIT(0x9F)= bool+8×int=**触发键**；`Keyboard::set/commit_quickslots`；`UIQuickslotConfig` 经 KEYSETTING 打开；见 [change-quickslot-persist](../change-quickslot-persist/) |
 | 1.3 | WORLD_MAP_PLAYERS(376) 回包 | ✅ | `WorldMapPlayersHandler` 逐字段对账 s9（int mapid/short count/N×{string,short,byte}）；选中即请求+陈旧应答丢弃+右上区渲染；`select_map_spot` 切图清层 |
 | 1.4 | PICK_ALL_CHAR | ✅ **证伪为已实现** | `UIViewAllChar.cpp:161/201/213` 三处派发 `SelectCharPacket`/`SelectCharPicPacket`——gap 表登记陈旧，本票销案 |
 | 1.5 | RELOG(28) | ✅ **裁决"明确不做"（证据反转）** | s9 `RelogRequestHandler.validateState=!isLoggedIn`，收到只回 `RELOG_RESPONSE(byte 1)`，零重登逻辑；本端发送只会触发垃圾 UIAdmin tip。gap-inventory 原"可实现"分类按此收紧；枚举不占位（维持"枚举全有构造点"门禁不变量），注释+本档记录裁决 |
@@ -23,7 +23,7 @@
 
 ## 显式预留（门禁 9）
 
-1. **1.2 改键 UI 接线**：v83 KeyConfig 无原生快捷页编辑面（KEYSETTING 钮仅建未成页）；待 Wave 6 原生窗体线实体化后把 `ChangeQuickslotPacket` 接上。存储层已就绪，接线是纯 UI 活。
+1. **1.2 改键 UI**：✅ 已接 `UIQuickslotConfig`（真机点测仍 pending，见 change-quickslot-persist）。
 2. **1.1 端到端**：需 s9 `use_server_auto_pot=true`（DB 配置，等用户授权）；打开后预期日志序列：点确定→`HPA out`，重登→`HPA hp=…`。
 
 ## 触碰文件

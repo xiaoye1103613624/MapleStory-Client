@@ -396,6 +396,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIItemInventory.cpp" />
     <ClCompile Include="IO\UITypes\UIJoypad.cpp" />
     <ClCompile Include="IO\UITypes\UIKeyConfig.cpp" />
+    <ClCompile Include="IO\UITypes\UIQuickslotConfig.cpp" />
     <ClCompile Include="IO\UITypes\UILogin.cpp" />
     <ClCompile Include="IO\UITypes\UILoginNotice.cpp" />
     <ClCompile Include="IO\UITypes\UILoginWait.cpp" />
@@ -743,6 +744,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIItemInventory.h" />
     <ClInclude Include="IO\UITypes\UIJoypad.h" />
     <ClInclude Include="IO\UITypes\UIKeyConfig.h" />
+    <ClInclude Include="IO\UITypes\UIQuickslotConfig.h" />
     <ClInclude Include="IO\UITypes\UILogin.h" />
     <ClInclude Include="IO\UITypes\UILoginNotice.h" />
     <ClInclude Include="IO\UITypes\UILoginWait.h" />

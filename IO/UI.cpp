@@ -33,6 +33,7 @@
 #include "UITypes/UINpcTalk.h"
 #include "UITypes/UIOptionMenu.h"
 #include "UITypes/UIQuit.h"
+#include "UITypes/UIQuickslotConfig.h"
 #include "UITypes/UIShop.h"
 #include "UITypes/UIStatusBar.h"
 #include "UITypes/UIWorldMap.h"
@@ -232,6 +233,32 @@ namespace ms
 		if (is_key_down[keyboard.capslockcode()])
 			caps_lock_enabled = !caps_lock_enabled;
 
+		// quickslotConfig 捕获态：需要 GLFW→maple 键码，不能走 mapping.action。
+		if (auto qs = get_element<UIQuickslotConfig>())
+		{
+			if (qs->is_active() && qs->is_capturing() && pressed)
+			{
+				if (keycode == GLFW_KEY_ESCAPE)
+				{
+					qs->send_key(0, true, true);
+				}
+				else
+				{
+					uint8_t mk = keyboard.maple_keycode_from_glfw(keycode);
+					if (mk)
+						qs->capture_maple_key(mk);
+				}
+				is_key_down[keycode] = pressed;
+				return;
+			}
+			if (qs->is_active() && keycode == GLFW_KEY_ESCAPE && pressed)
+			{
+				qs->send_key(0, true, true);
+				is_key_down[keycode] = pressed;
+				return;
+			}
+		}
+
 		if (focusedtextfield)
 		{
 			bool ctrl = is_key_down[keyboard.leftctrlcode()] || is_key_down[keyboard.rightctrlcode()];
@@ -362,6 +389,7 @@ namespace ms
 
 					// Game
 					types.emplace_back(UIElement::Type::NOTICE);
+					types.emplace_back(UIElement::Type::QUICKSLOTCONFIG);
 					types.emplace_back(UIElement::Type::KEYCONFIG);
 					types.emplace_back(UIElement::Type::CHAT);
 					types.emplace_back(UIElement::Type::EVENT);

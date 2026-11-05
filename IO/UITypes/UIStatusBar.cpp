@@ -2115,7 +2115,12 @@ namespace ms
 		{
 			classic_qs_icons[i] = Texture();
 			classic_qs_names[i].clear();
-			Keyboard::Mapping mapping = keyboard.get_maple_mapping(CLASSIC_QS_KEYS[i]);
+			// 8 槽快捷栏：触发键走 Keyboard::quickslots（可被 CHANGE_QUICKSLOT 改）。
+			// 26/32 宽格仍用 CLASSIC_QS_KEYS 固定表。
+			uint8_t maple_key = (classic_qs_count == 8 && i < 8)
+				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(i)))
+				: CLASSIC_QS_KEYS[i];
+			Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
 
 			if (mapping.type == KeyType::Id::SKILL)
 			{
@@ -2192,7 +2197,11 @@ namespace ms
 		if (slot >= CLASSIC_QS_SLOTS)
 			return;
 
-		Keyboard::Mapping mapping = UI::get().get_keyboard().get_maple_mapping(CLASSIC_QS_KEYS[slot]);
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
+			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+			: CLASSIC_QS_KEYS[slot];
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
 
 		if (mapping.type == KeyType::Id::NONE)
 			return;
@@ -2370,14 +2379,55 @@ namespace ms
 					classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, QS_ICON_SHIFT_Y));
 
 				// 键帽层（W3/RC14）：宽窄面板都画，且画在图标之上（贴纸高 11，占格顶带）。
-				const int8_t cap = CLASSIC_QS_KEYCAP[i];
-				const char* keyname = CLASSIC_QS_KEYNAME[i];
+				// 8 槽模式跟 quickslots 触发键；宽格仍用 CLASSIC_QS_* 固定表。
+				int8_t cap = -1;
+				std::string keyname;
+				if (classic_qs_count == 8 && i < 8)
+				{
+					uint8_t mk = static_cast<uint8_t>(
+						UI::get().get_keyboard().get_quickslot_key(static_cast<uint8_t>(i)));
+					switch (mk)
+					{
+						case KeyConfig::Key::LEFT_SHIFT: case KeyConfig::Key::RIGHT_SHIFT: cap = 0; break;
+						case KeyConfig::Key::INSERT: cap = 1; break;
+						case KeyConfig::Key::HOME: cap = 2; break;
+						case KeyConfig::Key::PAGE_UP: cap = 3; break;
+						case KeyConfig::Key::LEFT_CONTROL: case KeyConfig::Key::RIGHT_CONTROL: cap = 4; break;
+						case KeyConfig::Key::DELETE: cap = 5; break;
+						case KeyConfig::Key::END: cap = 6; break;
+						case KeyConfig::Key::PAGE_DOWN: keyname = "Pdn"; break;
+						case KeyConfig::Key::NUM1: keyname = "1"; break;
+						case KeyConfig::Key::NUM2: keyname = "2"; break;
+						case KeyConfig::Key::NUM3: keyname = "3"; break;
+						case KeyConfig::Key::NUM4: keyname = "4"; break;
+						case KeyConfig::Key::NUM5: keyname = "5"; break;
+						case KeyConfig::Key::Q: keyname = "Q"; break;
+						case KeyConfig::Key::W: keyname = "W"; break;
+						case KeyConfig::Key::E: keyname = "E"; break;
+						case KeyConfig::Key::R: keyname = "R"; break;
+						case KeyConfig::Key::T: keyname = "T"; break;
+						case KeyConfig::Key::A: keyname = "A"; break;
+						case KeyConfig::Key::S: keyname = "S"; break;
+						case KeyConfig::Key::D: keyname = "D"; break;
+						case KeyConfig::Key::F: keyname = "F"; break;
+						case KeyConfig::Key::Z: keyname = "Z"; break;
+						case KeyConfig::Key::X: keyname = "X"; break;
+						case KeyConfig::Key::C: keyname = "C"; break;
+						case KeyConfig::Key::V: keyname = "V"; break;
+						default: break;
+					}
+				}
+				else
+				{
+					cap = CLASSIC_QS_KEYCAP[i];
+					keyname = CLASSIC_QS_KEYNAME[i];
+				}
 
 				if (cap >= 0 && classic_key_label[cap])
 				{
 					classic_key_label[cap].draw(cell_pos);
 				}
-				else if (keyname[0] != '\0')
+				else if (!keyname.empty())
 				{
 					// 原生键帽字身左上角 = 格左上角 + (4,4)（参考截图 FontMemo 同形量得），
 					// OutlinedText 的 inner 即字身，故直接按该偏移落笔。
