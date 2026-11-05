@@ -26,13 +26,19 @@
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Net/Packets/PetPackets.h"
+#include "../Net/Packets/PlayerPackets.h"
 #include "../Net/Packets/SummonDragonPackets.h"
 #include "../Net/Packets/MapInteractPackets.h"
 #include "MapleMap/Reactor.h"
+#include "../Constants.h"
+#include "../Util/Misc.h"
 #include "../Util/PerfLog.h"
 #include "../Util/Resource/ResourceService.h"
 
+#include <algorithm>
+#include <cmath>
 #include <stdexcept>
+#include <vector>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -97,6 +103,8 @@ namespace ms
 		reactors.clear();
 		field_markers.clear();
 		aggro_sent.clear();	// Wave 4：换图清仇恨节流表（oid 图内唯一，跨图必换）
+		touch_atk_sent.clear();
+		hot_accum_ms = 0;
 		touching_reactor_oid = 0;
 	}
 
@@ -291,6 +299,14 @@ namespace ms
 				check_drops();
 		}
 
+		// HEAL_OVER_TIME：每 10s 上报一次自然回复（对账 s9 HealOvertimeHandler）。
+		hot_accum_ms = static_cast<uint16_t>(hot_accum_ms + Constants::TIMESTEP);
+		if (hot_accum_ms >= 10000)
+		{
+			hot_accum_ms = 0;
+			try_heal_over_time();
+		}
+
 		if (player.is_invincible())
 			return;
 
@@ -308,12 +324,86 @@ namespace ms
 				AutoAggroPacket(oid_id).dispatch();
 			}
 
+			// TOUCH_MONSTER_ATTACK(47)：身体压力或能量条满(15000)时触怪造成伤害。
+			// s9 TouchMonsterDamageHandler 仅此两条件结算；body=parseDamage。
+			const bool body_pressure = player.has_buff(Buffstat::Id::BODY_PRESSURE);
+			const bool energy_full = player.get_buff_value(Buffstat::Id::ENERGY_CHARGE) >= 15000;
+			if (body_pressure || energy_full)
+			{
+				auto touch_it = touch_atk_sent.find(oid_id);
+				if (touch_it == touch_atk_sent.end()
+					|| now - touch_it->second >= std::chrono::milliseconds(500))
+				{
+					touch_atk_sent[oid_id] = now;
+					Attack attack = player.prepare_attack(false);
+					if (body_pressure)
+					{
+						const int32_t sid = player.get_buff_skillid(Buffstat::Id::BODY_PRESSURE);
+						attack.skill = sid > 0 ? sid : 21101003; // Aran.BODY_PRESSURE 缺省
+					}
+					attack.hitcount = 1;
+					attack.mobcount = 1;
+					AttackResult result(attack);
+					std::vector<int32_t> targets{ oid_id };
+					mobs.send_attack(result, attack, targets, 1);
+					result.attacker = player.get_oid();
+					AttackPacket(result, OutPacket::Opcode::TOUCH_MONSTER_ATTACK).dispatch();
+					LOG(LOG_DEBUG, "[Stage] TOUCH_MONSTER_ATTACK oid=" << oid_id
+						<< " skill=" << attack.skill
+						<< " energy=" << (int)player.get_buff_value(Buffstat::Id::ENERGY_CHARGE));
+				}
+			}
+
 			if (MobAttack attack = mobs.create_attack(oid_id))
 			{
 				MobAttackResult result = player.damage(attack);
 				TakeDamagePacket(result, TakeDamagePacket::From::TOUCH).dispatch();
 			}
 		}
+	}
+
+	void Stage::try_heal_over_time()
+	{
+		// 死亡或未进图不报。
+		const uint16_t hp = player.get_stats().get_stat(MapleStat::Id::HP);
+		if (hp == 0)
+			return;
+
+		const uint16_t maxhp = player.get_stats().get_stat(MapleStat::Id::MAXHP);
+		const uint16_t mp = player.get_stats().get_stat(MapleStat::Id::MP);
+		const uint16_t maxmp = player.get_stats().get_stat(MapleStat::Id::MAXMP);
+		const float rec = mapinfo.get_recovery();
+		if (rec <= 0.0f)
+			return;
+
+		// 原生近似：每 tick ≈ max * 1% * recovery；钳到 s9 abHeal=77*rec*1.5。
+		const int ab_heal = static_cast<int>(77.0f * rec * 1.5f + 0.5f);
+		auto clamp_heal = [ab_heal](int want, int room) -> int16_t
+		{
+			if (want <= 0 || room <= 0)
+				return 0;
+			int v = std::min(want, room);
+			v = std::min(v, std::max(ab_heal, 1));
+			return static_cast<int16_t>(v);
+		};
+
+		const int want_hp = static_cast<int>(std::lround(static_cast<double>(maxhp) * 0.01 * rec));
+		const int want_mp = static_cast<int>(std::lround(static_cast<double>(maxmp) * 0.01 * rec));
+		const int16_t heal_hp = clamp_heal(want_hp, static_cast<int>(maxhp) - static_cast<int>(hp));
+		int16_t heal_mp = clamp_heal(want_mp, static_cast<int>(maxmp) - static_cast<int>(mp));
+		// s9：healMP != 0 && healMP < 1000 才加；钳到 999。
+		if (heal_mp >= 1000)
+			heal_mp = 999;
+
+		if (heal_hp == 0 && heal_mp == 0)
+			return;
+
+		HealOvertimePacket(heal_hp, heal_mp).dispatch();
+		LOG(LOG_DEBUG, "[Stage] HEAL_OVER_TIME hp=" << heal_hp << " mp=" << heal_mp
+			<< " rec=" << rec << " abHeal=" << ab_heal);
+		perf::mark("HOT", std::string("hp=") + std::to_string(heal_hp)
+			+ " mp=" + std::to_string(heal_mp)
+			+ " rec=" + std::to_string(rec));
 	}
 
 	void Stage::show_character_effect(int32_t cid, CharEffect::Id effect)

@@ -115,7 +115,10 @@ namespace ms
 		void check_ladders(bool up);
 		void check_drops();
 		void check_touch_reactors();
+		/// 自然回血/回蓝：累计 TIMESTEP 满 10s 发 HEAL_OVER_TIME(89)。
+		void try_heal_over_time();
 		int32_t touching_reactor_oid = 0;
+		uint16_t hot_accum_ms = 0;
 
 		enum State
 		{
@@ -136,6 +139,8 @@ namespace ms
 		// 一次（等效原生的"进入接触"事件式上报；本端无接触沿检测，值为近似，
 		// NO-NATIVE-EXACT）。Stage::clear() 换图时清空。
 		std::unordered_map<int32_t, std::chrono::steady_clock::time_point> aggro_sent;
+		// TOUCH_MONSTER_ATTACK 节流：身体压力/能量满触怪，同 oid 500ms 一发。
+		std::unordered_map<int32_t, std::chrono::steady_clock::time_point> touch_atk_sent;
 
 		// debug.gm_smoke 自驱动（仅 GM 冒烟，生产默认关）：进图后延时 3s 发一次
 		// ADMIN_COMMAND 刷怪包，用来在没有输入注入手段的环境里造测试怪。

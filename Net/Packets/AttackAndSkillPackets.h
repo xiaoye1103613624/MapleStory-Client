@@ -36,7 +36,12 @@ namespace ms
 		// （s9 gms-server/.../handlers/AbstractDealDamageHandler.java:681-1047）。
 		// 这个解析器是「定长顺序读」：前面每少读/多读一个字段，后面 display / direction /
 		// stance / speed 和整段伤害行就会整体位移，服务端拿到的是垃圾 oid 与垃圾伤害。
-		AttackPacket(const AttackResult& attack) : OutPacket(opcodefor(attack.type))
+		AttackPacket(const AttackResult& attack) : AttackPacket(attack, opcodefor(attack.type)) {}
+
+		// 显式 opcode 重载：TOUCH_MONSTER_ATTACK(47) 与 CLOSE_ATTACK 同 body
+		// （s9 TouchMonsterDamageHandler → parseDamage）；勿用 bool 重载以免
+		// 与 Opcode 枚举整型提升歧义。
+		AttackPacket(const AttackResult& attack, OutPacket::Opcode opcode) : OutPacket(opcode)
 		{
 			// damage.long_lines：每条伤害行由 legacy 的 4 字节扩为
 			// int32 vanillaLine + int64 真实值（共 12 字节）。必须与 s9

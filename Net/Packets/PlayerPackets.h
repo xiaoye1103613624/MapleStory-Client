@@ -71,6 +71,21 @@ namespace ms
 		}
 	};
 
+	// Opcode: HEAL_OVER_TIME(89 / 0x59) — 自然回血/回蓝上报。
+	// s9 HealOvertimeHandler：skip(8) + short healHP + short healMP；
+	// HP 上限 abHeal = 77 * map.recovery * 1.5，超限 autoban。
+	class HealOvertimePacket : public OutPacket
+	{
+	public:
+		HealOvertimePacket(int16_t heal_hp, int16_t heal_mp)
+			: OutPacket(OutPacket::Opcode::HEAL_OVER_TIME)
+		{
+			skip(8);
+			write_short(heal_hp);
+			write_short(heal_mp);
+		}
+	};
+
 	// Requests a skill level increase by spending SP
 	// Opcode: SPEND_SP(90)
 	class SpendSpPacket : public OutPacket

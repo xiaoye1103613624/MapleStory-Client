@@ -64,6 +64,9 @@ namespace ms
 		std::string get_bgm() const;
 		Range<int16_t> get_walls() const;
 		Range<int16_t> get_borders() const;
+		/// 地图 info/recovery（桑拿等）；缺省 1.0。HEAL_OVER_TIME 上限与
+		/// s9 `77 * recovery * 1.5` 对账。
+		float get_recovery() const;
 
 		// Find a seat the player's position
 		Optional<const Seat> findseat(Point<int16_t> position) const;
@@ -82,6 +85,7 @@ namespace ms
 		bool swim;
 		bool town;
 		bool hideminimap;
+		float recovery = 1.0f;
 		Range<int16_t> mapwalls;
 		Range<int16_t> mapborders;
 		std::vector<Seat> seats;

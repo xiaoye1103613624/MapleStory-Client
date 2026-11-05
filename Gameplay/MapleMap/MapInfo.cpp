@@ -50,6 +50,11 @@ namespace ms
 		mapmark = info["mapMark"].get_string();
 		swim = info["swim"].get_bool();
 		town = info["town"].get_bool();
+		// info/recovery：桑拿等图 >1；缺节点按 1.0（与 MapleMap 默认一致）。
+		if (info["recovery"])
+			recovery = static_cast<float>(info["recovery"].get_real());
+		else
+			recovery = 1.0f;
 
 		for (auto seat : src["seat"])
 			seats.push_back(seat);
@@ -78,6 +83,11 @@ namespace ms
 	Range<int16_t> MapInfo::get_borders() const
 	{
 		return mapborders;
+	}
+
+	float MapInfo::get_recovery() const
+	{
+		return recovery;
 	}
 
 	Optional<const Seat> MapInfo::findseat(Point<int16_t> position) const
