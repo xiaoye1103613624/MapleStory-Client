@@ -213,93 +213,41 @@ namespace ms
 
 	void send_cursor_position(float xpos, float ypos)
 	{
-		Point<int16_t> cursor_position = Point<int16_t>(
-			static_cast<int16_t>(xpos),
-			static_cast<int16_t>(ypos)
-			);
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
 
-		Point<int16_t> screen = Point<int16_t>(
-			Constants::Constants::get().get_viewwidth(),
-			Constants::Constants::get().get_viewheight()
-			);
+		// 把 SDL 绝对坐标 clamp 进视图内并始终派发：去掉旧版 x>0&&y>0 的丢弃
+		//（会让左/上边缘的光标更新被吞）与右侧超限的「冻结」，确保四角/四边均与真实光标重合。
+		const int16_t cx = static_cast<int16_t>(std::clamp(xpos, 0.0f, static_cast<float>(vieww - 1)));
+		const int16_t cy = static_cast<int16_t>(std::clamp(ypos, 0.0f, static_cast<float>(viewh - 1)));
 
-		if (cursor_position.x() > 0 && cursor_position.y() > 0)
-			if (cursor_position.x() < screen.x() && cursor_position.y() < screen.y())
-				UI::get().send_cursor(cursor_position);
+		UI::get().send_cursor(Point<int16_t>(cx, cy));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
-	// 「鼠标速度调整」真生效（B4-1，R28-B4b 重写）
+	// 自绘手势光标 1:1 贴合真实光标（R28-B4c 重写）
 	//
-	// 原生语义（IDB 取证，evidence/w8-sysopt-behavior/README.md §2.6）：滑条 0..19 档
-	// → 客户端内光标倍速 (n + 5) / 10，**只放大客户区内的相对位移**，虚拟光标钳制在
-	// 客户区，画的是客户端自绘光标（系统光标由 SDL_HideCursor 隐藏）。
+	// 系统光标由 SDL_HideCursor 隐藏，游戏画自己的手势光标（Cursor 类）。位置直接采用
+	// SDL 回报的绝对鼠标坐标（窗口坐标空间＝视图空间：窗口尺寸由 check_events 同步成
+	// viewwidth/height，且建窗无 SDL_WINDOW_ALLOW_HIGHDPI），不再做「倍速积分虚拟光标」。
 	//
-	// 与上一版的关键差别：**不再把虚拟光标回写成系统光标**。上一版用
-	// SDL_WarpMouseInWindow 回写，构成反馈环 —— warp 目标是小数坐标而系统光标只能落
-	// 在整数像素，回抛的 motion 事件与 warp 目标差 ±0.5px，这个纯噪声残差又被 1.5×
-	// 倍速放大并再次回写 ⇒ 鼠标只要动着（甚至静止不动）游戏光标就逐帧在原位抖约 1px，
-	// 即用户报的「移动鼠标乱闪」。原生从不这么干：BeiDou.exe 连同 Gr2D_DX8 / suipre /
-	// ijl15 / Canvas / Shape2D 六个模块，导入表里只有 ShowCursor 一枚光标 API，
-	// SetCursorPos / GetCursorPos / SendInput / ClipCursor / mouse_event 命中数全为 0。
-	// ⇒ 本包按原生口径只加工相对位移，不回写，环路从结构上消失。
+	// 旧版用 相对位移 × gain 累加并钳制到视图矩形，导致手势光标与真实光标脱钩、到右侧
+	// 超限被冻结在视图右缘 —— 用户报「真实光标到最右、手势偏左很多」。现在每帧把 SDL
+	// 绝对坐标 clamp 进视图内直接派发，四角/四边均与真实光标重合（尤其最右侧）。
 	//
-	// 本包 ui.sysopt.mouse_speed 落盘的是 0..100 百分比（滑条管线复用音量那条），故按
-	// 19/100 反推档号。默认 52% ↔ 原生注册表 soMouseSpeed = 10（0..19 档，滑钮实测落
-	// 在行程 51.0%），倍速 1.5× 就是原生默认手感 —— 上一版把它当成疑点，现已澄清。
+	// 注：「系统设置 → 鼠标速度」(Setting<SysOptMouseSpeed>) 原通过该积分器影响手势光标
+	// 灵敏度；改 1:1 后此设置对光标位置不再生效，设置项保留落盘，后续可另作他用。
 	////////////////////////////////////////////////////////////////////////////////
 
 	namespace
 	{
 		// 文件级状态：不给 Window 加数据成员 —— 公共头改类布局会踩增量构建的
 		// 旧 obj 坑（memory:msbuild-header-layout-stale-objs，登录阶段 100% AV）。
-		struct VirtualCursor
-		{
-			/// 倍速加工后的虚拟光标（送进 UI 并绘制的那一份）。
-			/// < 0 表示还没锚定过，下一帧从真实光标起步。
-			float virt_x = -1.0f;
-			float virt_y = -1.0f;
-		};
-
-		VirtualCursor vcursor;
-
-		/// 0..100 百分比 → 原生 0..19 档。
-		int mouse_speed_index()
-		{
-			const uint8_t percent = Setting<SysOptMouseSpeed>::get().load();
-
-			return percent >= 100 ? 19 : percent * 19 / 100;
-		}
-
-		/// 丢弃攒下的虚拟位置：换分辨率 / 换全屏态之后坐标系变了，
-		/// 旧的累加值必须作废，否则新坐标系里光标落在上一套尺度的位置上。
-		void reset_virtual_cursor()
-		{
-			vcursor.virt_x = -1.0f;
-			vcursor.virt_y = -1.0f;
-		}
 
 		void handle_mouse_motion(float x, float y, float xrel, float yrel)
 		{
-			if (vcursor.virt_x < 0.0f || vcursor.virt_y < 0.0f)
-			{
-				// 锚定帧：虚拟光标从真实光标起步，本帧不放大。
-				vcursor.virt_x = x;
-				vcursor.virt_y = y;
-			}
-			else
-			{
-				const float gain = static_cast<float>(mouse_speed_index() + 5) * 0.1f;
-
-				const int16_t vieww = Constants::Constants::get().get_viewwidth();
-				const int16_t viewh = Constants::Constants::get().get_viewheight();
-
-				// 钳制在客户区内 —— 与原生一致；到边即停，攒下的位移不外溢。
-				vcursor.virt_x = std::clamp(vcursor.virt_x + xrel * gain, 0.0f, static_cast<float>(vieww - 1));
-				vcursor.virt_y = std::clamp(vcursor.virt_y + yrel * gain, 0.0f, static_cast<float>(viewh - 1));
-			}
-
-			send_cursor_position(vcursor.virt_x, vcursor.virt_y);
+			// xrel/yrel 形参保留以维持 SDL_EVENT_MOUSE_MOTION 派发签名；本端只取绝对坐标。
+			send_cursor_position(x, y);
 		}
 
 		////////////////////////////////////////////////////////////////////////////////
@@ -579,9 +527,7 @@ namespace ms
 
 		SDL_HideCursor();
 
-		// 虚拟光标必须重新锚定：换分辨率 / 全屏切换后坐标系变了，
-		// 上一套尺度攒下的累加值在这里作废（R28-B4b，配合无 warp 重写）。
-		reset_virtual_cursor();
+		// 1:1 直采绝对坐标后不再有「虚拟光标累加值」需要作废（见 send_cursor_position）。
 
 		float xpos = 0.0f;
 		float ypos = 0.0f;
@@ -952,25 +898,16 @@ namespace ms
 		if (!SDL_TextInputActive(glwnd))
 			SDL_StartTextInput(glwnd);
 #elif defined(_WIN32)
-		// Account/password are ASCII-only. Leaving the system IME attached makes
-		// Chinese input mode swallow KEY_DOWN letters and commit UTF-8 that our
-		// FreeType atlas cannot draw (looks like mojibake / "invisible" text).
-		if (!ime_suppressed)
-		{
-			SDL_PropertiesID props = SDL_GetWindowProperties(glwnd);
-			HWND hwnd = static_cast<HWND>(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr));
+		// Desktop uses the system IME for composed text (CJK search etc.).
+		// UI::send_key already skips KeyType::TEXT while text_input_active(),
+		// so all text (ASCII + CJK) arrives via SDL_EVENT_TEXT_INPUT with no
+		// double-insert. The FreeType glyph cache renders CJK, so the old
+		// "invisible text" concern no longer applies.
+		if (!SDL_TextInputActive(glwnd))
+			SDL_StartTextInput(glwnd);
 
-			if (hwnd)
-			{
-				ime_context = ImmAssociateContext(hwnd, nullptr);
-				ime_suppressed = true;
-			}
-		}
-
-		// Do not SDL_StartTextInput on desktop: that re-enables IME and blocks
-		// the KEY_DOWN → Keyboard ASCII path HeavenClient relies on.
-		if (SDL_TextInputActive(glwnd))
-			SDL_StopTextInput(glwnd);
+		ime_suppressed = false;
+		ime_context = nullptr;
 #else
 		if (SDL_TextInputActive(glwnd))
 			SDL_StopTextInput(glwnd);
@@ -986,17 +923,11 @@ namespace ms
 		if (SDL_TextInputActive(glwnd))
 			SDL_StopTextInput(glwnd);
 #elif defined(_WIN32)
-		if (ime_suppressed)
-		{
-			SDL_PropertiesID props = SDL_GetWindowProperties(glwnd);
-			HWND hwnd = static_cast<HWND>(SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr));
+		if (SDL_TextInputActive(glwnd))
+			SDL_StopTextInput(glwnd);
 
-			if (hwnd)
-				ImmAssociateContext(hwnd, static_cast<HIMC>(ime_context));
-
-			ime_context = nullptr;
-			ime_suppressed = false;
-		}
+		ime_suppressed = false;
+		ime_context = nullptr;
 #endif
 	}
 
