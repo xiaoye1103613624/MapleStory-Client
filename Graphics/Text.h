@@ -134,6 +134,8 @@ namespace ms
 		// 现在窗口侧只记「量到的墨迹顶」，换算一律走下面的实例方法（它按当前
 		// text 逐字形取最大 bitmap_top，SimHei 11px 下 CJK 分 9/10 两档，
 		// 「新手」的顶是「新」= 10，选类别会错 1px）。
+		// 注：上面那些具体数值是 SimHei 时代的历史读数；R28-B5 起默认字体换成思源宋体，
+		// 换算按字形现取，机制与字体无关，数值不可再抄。
 		static int16_t linespace(Font font);
 		// 本 Text 当前文字的「绘制点 y → 墨迹顶」偏移 = linespace - max(bitmap_top)。
 		int16_t ink_offset() const;
