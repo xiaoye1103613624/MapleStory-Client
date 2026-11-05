@@ -100,6 +100,10 @@ namespace ms
 			TELEPORTUI,
 			SPEEDQUIZ,
 			INITIALQUIZ,
+			/// NPC AskPet / AskPetAll（msgtype 9/10，IDA 7474A2 / 74775C）
+			ASKPET,
+			/// 维度镜 SlideMenu（msgtype 14，IDA 76B3F0）
+			DIMENSIONALMIRROR,
 			RANKINGUI,
 			ITEMMEGAPHONE,
 			COUNSEL,

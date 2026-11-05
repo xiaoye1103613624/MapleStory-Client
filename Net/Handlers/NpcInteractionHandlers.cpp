@@ -33,6 +33,8 @@
 #include "../../MapleStory.h"
 
 #include <string>
+#include <vector>
+#include <cstdint>
 
 namespace ms
 {
@@ -226,28 +228,65 @@ namespace ms
 			break;
 		}
 
-		case 9: // AskPet — 7474A2：string + byte n + n×byte
+		case 9: // AskPet — 7474A2：string + byte n + n×(long uniqueId + byte pad)
+		case 10: // AskPetAll — 74775C：string + byte n + byte flag + n×(long + byte)
 		{
+			std::string pet_tip;
 			if (recv.length() >= 2)
-				recv.read_string();
+				pet_tip = recv.read_string();
 			const int n = recv.available() ? static_cast<unsigned char>(recv.read_byte()) : 0;
-			for (int i = 0; i < n && recv.available(); ++i)
-				recv.read_byte();
-			end_unhandled = true;
-			break;
-		}
+			uint8_t pet_flag = 0;
+			if (msgtype == 10 && recv.available())
+				pet_flag = static_cast<uint8_t>(recv.read_byte());
 
-		case 10: // AskPetAll — 74775C：string + byte n + byte flag + n×byte
-		{
-			if (recv.length() >= 2)
-				recv.read_string();
-			const int n = recv.available() ? static_cast<unsigned char>(recv.read_byte()) : 0;
-			if (recv.available())
-				recv.read_byte();
-			for (int i = 0; i < n && recv.available(); ++i)
-				recv.read_byte();
-			end_unhandled = true;
-			break;
+			std::vector<int64_t> pet_uids;
+			pet_uids.reserve(static_cast<size_t>(n > 0 ? n : 0));
+			for (int i = 0; i < n; ++i)
+			{
+				if (recv.length() < 8)
+					break;
+				pet_uids.push_back(recv.read_long());
+				if (recv.available())
+					recv.read_byte(); // IDA 读后丢弃的 pad/索引
+			}
+
+			// IDA：AskPet n<=0 → action=2；AskPetAll n<=(flag==0?1:0) → action=2
+			const int early_threshold = (msgtype == 9) ? 0 : (pet_flag == 0 ? 1 : 0);
+			if (n <= early_threshold)
+			{
+				LOG(LOG_INFO, "[NPC] AskPet early action=2 lastMsg="
+					<< static_cast<int>(msgtype) << " n=" << n << " flag=" << static_cast<int>(pet_flag));
+				NpcTalkMorePacket(NpcTalkMorePacket::AskPet{}, msgtype, 2).dispatch();
+				return;
+			}
+			// 空正文：action=1 + 8×0（IDA 7476ef）
+			if (pet_tip.empty())
+			{
+				LOG(LOG_INFO, "[NPC] AskPet empty tip → action=1 uid=0");
+				NpcTalkMorePacket(NpcTalkMorePacket::AskPet{}, msgtype, 1, 0).dispatch();
+				return;
+			}
+			if (!UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx"))
+				&& !UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx_Pet")))
+			{
+				LOG(LOG_WARN, "[NPC] AskPet missing UtilDlgEx; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				return;
+			}
+			auto ui = UI::get().get_element<UIAskPet>();
+			if (!ui)
+				ui = UI::get().emplace<UIAskPet>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			UI::get().enable();
+			if (ui)
+				ui->open(msgtype, pet_tip, pet_uids, pet_flag);
+			else
+			{
+				LOG(LOG_WARN, "[NPC] UIAskPet emplace failed; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			}
+			return;
 		}
 
 		case 13: // AskBoxText — 746C46：talk+def+short cols+short rows → dlgType=8
@@ -262,13 +301,35 @@ namespace ms
 			show_ui = true;
 			break;
 
-		case 14: // Mirror — 76B5C8：int + string
+		case 14: // Mirror — 76B5C8：int + string → UIDimensionalMirror（SlideMenu）
+		{
+			int32_t mirror_param = 0;
+			std::string mirror_talk;
 			if (recv.length() >= 4)
-				recv.read_int();
+				mirror_param = recv.read_int();
 			if (recv.length() >= 2)
-				recv.read_string();
-			end_unhandled = true;
-			break;
+				mirror_talk = recv.read_string();
+			if (!UiAssetResolve::usable(UiAssetResolve::window("SlideMenu")))
+			{
+				LOG(LOG_WARN, "[NPC] SlideMenu missing; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				return;
+			}
+			auto ui = UI::get().get_element<UIDimensionalMirror>();
+			if (!ui)
+				ui = UI::get().emplace<UIDimensionalMirror>();
+			else if (!ui->is_active())
+				ui->makeactive();
+			UI::get().enable();
+			if (ui)
+				ui->open(mirror_param, mirror_talk);
+			else
+			{
+				LOG(LOG_WARN, "[NPC] UIDimensionalMirror emplace failed; NpcTalkMore(-1)");
+				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			}
+			return;
+		}
 
 		default:
 			end_unhandled = true;

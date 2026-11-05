@@ -1729,6 +1729,469 @@ Button::State UIInitialQuiz::button_pressed(uint16_t buttonid)
 
 UIElement::Type UIInitialQuiz::get_type() const { return TYPE; }
 
+// ---------------------------------------------------------------------------
+// AskPet / AskPetAll — IDA 7474A2 / 74775C；出站 lastMsg+action+int64
+// ---------------------------------------------------------------------------
+UIAskPet::UIAskPet()
+	: tip_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY)
+{
+	// dlgType=6 走 UtilDlgEx；Pet 壳仅 backgrnd，优先 UtilDlgEx。
+	position = Point<int16_t>(250, 160);
+	dimension = Point<int16_t>(280, 200);
+	dragarea = Point<int16_t>(280, 20);
+	has_assets = load_window_bg("UtilDlgEx", backgrnd, dimension);
+	if (!has_assets)
+		has_assets = load_window_bg("UtilDlgEx_Pet", backgrnd, dimension);
+	if (has_assets)
+		dragarea = Point<int16_t>(dimension.x(), 20);
+	else
+		LOG(LOG_WARN, "UIAskPet: missing UtilDlgEx/UtilDlgEx_Pet");
+
+#ifdef USE_NX
+	{
+		nl::node root = UiAssetResolve::window("UtilDlgEx");
+		if (root["list1"])
+		{
+			list_sel = Texture(root["list1"]);
+			has_list_sel = static_cast<bool>(list_sel);
+		}
+		nl::node ok = root["BtOK"] ? root["BtOK"] : nl::nx::UI["Basic.img"]["BtOK"];
+		nl::node close = root["BtClose"] ? root["BtClose"] : nl::nx::UI["Basic.img"]["BtClose"];
+		const int16_t by = static_cast<int16_t>(dimension.y() - 36);
+		if (ok)
+		{
+			buttons[BtOk] = std::make_unique<MapleButton>(ok, Point<int16_t>(
+				static_cast<int16_t>(dimension.x() - 90), by));
+			buttons[BtOk]->set_active(true);
+		}
+		if (close)
+		{
+			buttons[BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(
+				static_cast<int16_t>(dimension.x() - 50), by));
+			buttons[BtClose]->set_active(true);
+		}
+	}
+#endif
+	center_on_screen();
+	LOG(LOG_INFO, "UIAskPet: constructed assets=" << (has_assets ? 1 : 0));
+}
+
+void UIAskPet::open(int8_t lastmsg_in, const std::string& tip, const std::vector<int64_t>& unique_ids, uint8_t /*flag*/)
+{
+	closing = false;
+	lastmsg = lastmsg_in;
+	tip_label.change_text(tip);
+	entries.clear();
+	entries.reserve(unique_ids.size());
+
+	const Char& ch = Stage::get().get_player();
+	for (int64_t uid : unique_ids)
+	{
+		Entry e;
+		e.unique_id = uid;
+		int32_t itemid = 0;
+		// 召唤宠 uniqueid 本仓截断为 int32；按低 32 位反查 itemId 作可证子集标签。
+		const int32_t uid32 = static_cast<int32_t>(uid);
+		for (uint8_t i = 0; i < 3; ++i)
+		{
+			const PetLook& pet = ch.get_pet(i);
+			if (pet.get_itemid() > 0 && pet.get_uniqueid() == uid32)
+			{
+				itemid = pet.get_itemid();
+				break;
+			}
+		}
+		char buf[64];
+		if (itemid > 0)
+			std::snprintf(buf, sizeof(buf), "%d [%lld]", itemid, static_cast<long long>(uid));
+		else
+			std::snprintf(buf, sizeof(buf), "Pet [%lld]", static_cast<long long>(uid));
+		e.label = buf;
+		e.label_tex = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, e.label);
+		entries.push_back(std::move(e));
+	}
+	selected = entries.empty() ? -1 : 0;
+	refresh_labels();
+	if (!is_active())
+		makeactive();
+	LOG(LOG_INFO, "UIAskPet: open lastMsg=" << static_cast<int>(lastmsg)
+		<< " pets=" << entries.size() << " tipLen=" << tip.size());
+}
+
+void UIAskPet::refresh_labels()
+{
+	for (auto& e : entries)
+		e.label_tex.change_text(e.label);
+}
+
+void UIAskPet::submit_ok()
+{
+	if (closing)
+		return;
+	closing = true;
+	int64_t uid = 0;
+	if (selected >= 0 && static_cast<size_t>(selected) < entries.size())
+		uid = entries[static_cast<size_t>(selected)].unique_id;
+	NpcTalkMorePacket(NpcTalkMorePacket::AskPet{}, lastmsg, 1, uid).dispatch();
+	LOG(LOG_INFO, "UIAskPet: OK lastMsg=" << static_cast<int>(lastmsg) << " uid=" << uid);
+	deactivate();
+}
+
+void UIAskPet::submit_cancel()
+{
+	if (closing)
+		return;
+	closing = true;
+	NpcTalkMorePacket(NpcTalkMorePacket::AskPet{}, lastmsg, 0).dispatch();
+	LOG(LOG_INFO, "UIAskPet: cancel lastMsg=" << static_cast<int>(lastmsg));
+	deactivate();
+}
+
+void UIAskPet::draw(float) const
+{
+	if (has_assets && backgrnd)
+		backgrnd.draw(position);
+	tip_label.draw(position + Point<int16_t>(16, 28));
+	int16_t y = 52;
+	for (size_t i = 0; i < entries.size(); ++i)
+	{
+		if (static_cast<int32_t>(i) == selected && has_list_sel && list_sel)
+			list_sel.draw(position + Point<int16_t>(12, y - 2));
+		entries[i].label_tex.draw(position + Point<int16_t>(18, static_cast<int16_t>(y + 12)));
+		y = static_cast<int16_t>(y + 18);
+	}
+	UIElement::draw_buttons(0.0f);
+}
+
+Cursor::State UIAskPet::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
+	if (!clicked)
+		return st;
+	const Point<int16_t> rel = cursorpos - position;
+	int16_t y = 52;
+	for (size_t i = 0; i < entries.size(); ++i)
+	{
+		if (rel.x() >= 12 && rel.x() < dimension.x() - 12
+			&& rel.y() >= y && rel.y() < y + 18)
+		{
+			selected = static_cast<int32_t>(i);
+			LOG(LOG_DEBUG, "UIAskPet: select=" << selected);
+			return Cursor::State::CLICKING;
+		}
+		y = static_cast<int16_t>(y + 18);
+	}
+	return st;
+}
+
+void UIAskPet::send_key(int32_t keycode, bool pressed, bool escape)
+{
+	if (!pressed)
+		return;
+	if (escape)
+	{
+		submit_cancel();
+		return;
+	}
+	if (keycode == 13 || keycode == '\r')
+	{
+		if (!entries.empty())
+			submit_ok();
+		return;
+	}
+	if ((keycode == 38 || keycode == 265) && selected > 0)
+		--selected;
+	else if ((keycode == 40 || keycode == 264) && selected + 1 < static_cast<int32_t>(entries.size()))
+		++selected;
+}
+
+Button::State UIAskPet::button_pressed(uint16_t buttonid)
+{
+	if (buttonid == BtOk && !entries.empty())
+		submit_ok();
+	else if (buttonid == BtClose)
+		submit_cancel();
+	return Button::State::NORMAL;
+}
+
+UIElement::Type UIAskPet::get_type() const { return TYPE; }
+
+// ---------------------------------------------------------------------------
+// DimensionalMirror — IDA 76B3F0 / 76BE7A / 747A46；SlideMenu/0 235×165
+// ---------------------------------------------------------------------------
+UIDimensionalMirror::UIDimensionalMirror()
+	: prev_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::DARKGREY),
+	  cur_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::BLACK),
+	  next_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::DARKGREY)
+{
+	// IDA sub_4EDAB7(235, 165)
+	position = Point<int16_t>(282, 217);
+	dimension = Point<int16_t>(235, 165);
+	dragarea = Point<int16_t>(235, 20);
+
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("SlideMenu");
+	nl::node skin = root["0"] ? root["0"] : root;
+	if (skin)
+	{
+		nl::node bg = skin["backgrd"]["0"] ? skin["backgrd"]["0"] : skin["backgrnd"];
+		if (!bg && skin["backgrd"])
+			bg = skin["backgrd"]["0"];
+		if (bg)
+		{
+			backgrnd = Texture(bg);
+			Point<int16_t> o = backgrnd.get_origin();
+			if (o.x() || o.y())
+				backgrnd.shift(o);
+			dimension = backgrnd.get_dimensions();
+			if (dimension.x() <= 0)
+				dimension = Point<int16_t>(235, 165);
+			has_assets = true;
+		}
+		if (skin["Choice"])
+		{
+			choice_mark = Texture(skin["Choice"]);
+			has_choice_mark = static_cast<bool>(choice_mark);
+		}
+		// IDA 76BE7A：左(11,67) 右(200,67) 取消(69,134) 前往(128,134)
+		if (skin["BtArrow"]["left"])
+		{
+			buttons[BtLeft] = std::make_unique<MapleButton>(skin["BtArrow"]["left"], Point<int16_t>(11, 67));
+			buttons[BtLeft]->set_active(true);
+		}
+		if (skin["BtArrow"]["right"])
+		{
+			buttons[BtRight] = std::make_unique<MapleButton>(skin["BtArrow"]["right"], Point<int16_t>(200, 67));
+			buttons[BtRight]->set_active(true);
+		}
+		if (skin["BtCancle"])
+		{
+			buttons[BtCancel] = std::make_unique<MapleButton>(skin["BtCancle"], Point<int16_t>(69, 134));
+			buttons[BtCancel]->set_active(true);
+		}
+		if (skin["BtMove"])
+		{
+			buttons[BtGo] = std::make_unique<MapleButton>(skin["BtMove"], Point<int16_t>(128, 134));
+			buttons[BtGo]->set_active(true);
+		}
+	}
+#endif
+	if (!has_assets)
+		LOG(LOG_WARN, "UIDimensionalMirror: missing SlideMenu/0");
+	dragarea = Point<int16_t>(dimension.x(), 20);
+	center_on_screen();
+	LOG(LOG_INFO, "UIDimensionalMirror: constructed assets=" << (has_assets ? 1 : 0)
+		<< " dim=" << dimension.x() << "x" << dimension.y());
+}
+
+void UIDimensionalMirror::parse_choices(const std::string& talk)
+{
+	choices.clear();
+	// 脚本形如 "#0# Ariant#1# Dojo"；IDA 76B6D2 按 #id#label# 切分。
+	size_t i = 0;
+	while (i < talk.size())
+	{
+		if (talk[i] != '#')
+		{
+			++i;
+			continue;
+		}
+		++i;
+		size_t id_begin = i;
+		while (i < talk.size() && talk[i] != '#')
+			++i;
+		if (i >= talk.size())
+			break;
+		const std::string id_str = talk.substr(id_begin, i - id_begin);
+		++i;
+		size_t lab_begin = i;
+		while (i < talk.size() && talk[i] != '#')
+			++i;
+		std::string lab = talk.substr(lab_begin, i - lab_begin);
+		// 去首尾空白
+		while (!lab.empty() && (lab.front() == ' ' || lab.front() == '\t'))
+			lab.erase(lab.begin());
+		while (!lab.empty() && (lab.back() == ' ' || lab.back() == '\t'))
+			lab.pop_back();
+		Choice c;
+		try {
+			c.id = std::stoi(id_str);
+		} catch (...) {
+			c.id = -1;
+		}
+		c.label = lab.empty() ? id_str : lab;
+		choices.push_back(std::move(c));
+		if (i < talk.size() && talk[i] == '#')
+			; // 下一项仍以 # 开头，循环继续
+	}
+}
+
+void UIDimensionalMirror::open(int32_t mirror_param_in, const std::string& talk)
+{
+	closing = false;
+	mirror_param = mirror_param_in;
+	parse_choices(talk);
+	selected = 0;
+	// 跳过 id==-1 的「无处可去」占位，仍保留在列表供显示。
+	for (size_t i = 0; i < choices.size(); ++i)
+	{
+		if (choices[i].id != -1)
+		{
+			selected = static_cast<int32_t>(i);
+			break;
+		}
+	}
+	refresh_labels();
+	rebuild_go_button();
+	if (!is_active())
+		makeactive();
+	LOG(LOG_INFO, "UIDimensionalMirror: open param=" << mirror_param
+		<< " choices=" << choices.size() << " sel=" << selected);
+}
+
+void UIDimensionalMirror::refresh_labels()
+{
+	prev_label.change_text("");
+	cur_label.change_text("");
+	next_label.change_text("");
+	if (choices.empty() || selected < 0 || static_cast<size_t>(selected) >= choices.size())
+		return;
+	cur_label.change_text(choices[static_cast<size_t>(selected)].label);
+	if (selected > 0)
+		prev_label.change_text(choices[static_cast<size_t>(selected - 1)].label);
+	if (static_cast<size_t>(selected + 1) < choices.size())
+		next_label.change_text(choices[static_cast<size_t>(selected + 1)].label);
+
+	if (buttons.count(BtLeft) && buttons[BtLeft])
+		buttons[BtLeft]->set_active(selected > 0);
+	if (buttons.count(BtRight) && buttons[BtRight])
+		buttons[BtRight]->set_active(static_cast<size_t>(selected + 1) < choices.size());
+	const bool can_go = !choices.empty()
+		&& choices[static_cast<size_t>(selected)].id != -1;
+	if (buttons.count(BtGo) && buttons[BtGo])
+		buttons[BtGo]->set_active(can_go);
+}
+
+void UIDimensionalMirror::rebuild_go_button()
+{
+#ifdef USE_NX
+	// BtMain/<id> 为目的地专用钮；无则保留 BtMove。
+	if (choices.empty() || selected < 0 || static_cast<size_t>(selected) >= choices.size())
+		return;
+	const int32_t id = choices[static_cast<size_t>(selected)].id;
+	nl::node root = UiAssetResolve::window("SlideMenu");
+	nl::node skin = root["0"] ? root["0"] : root;
+	nl::node main = skin["BtMain"][std::to_string(id)];
+	if (main && UiAssetResolve::usable(main))
+	{
+		buttons[BtGo] = std::make_unique<MapleButton>(main, Point<int16_t>(128, 134));
+		buttons[BtGo]->set_active(id != -1);
+	}
+#else
+	(void)0;
+#endif
+}
+
+void UIDimensionalMirror::submit_ok()
+{
+	if (closing || choices.empty() || selected < 0
+		|| static_cast<size_t>(selected) >= choices.size())
+		return;
+	const int32_t id = choices[static_cast<size_t>(selected)].id;
+	if (id == -1)
+		return;
+	closing = true;
+	NpcTalkMorePacket(NpcTalkMorePacket::DimensionalMirror{}, 1, id).dispatch();
+	LOG(LOG_INFO, "UIDimensionalMirror: OK selection=" << id);
+	deactivate();
+}
+
+void UIDimensionalMirror::submit_cancel()
+{
+	if (closing)
+		return;
+	closing = true;
+	NpcTalkMorePacket(NpcTalkMorePacket::DimensionalMirror{}, 0).dispatch();
+	LOG(LOG_INFO, "UIDimensionalMirror: cancel");
+	deactivate();
+}
+
+void UIDimensionalMirror::draw(float) const
+{
+	if (has_assets && backgrnd)
+		backgrnd.draw(position);
+	// IDA 76BE7A 文案：prev(45,58) cur(97,58) next(149,58)
+	prev_label.draw(position + Point<int16_t>(45 + 20, 58 + 12));
+	if (has_choice_mark && choice_mark)
+		choice_mark.draw(position + Point<int16_t>(90, 50));
+	cur_label.draw(position + Point<int16_t>(97 + 20, 58 + 12));
+	next_label.draw(position + Point<int16_t>(149 + 20, 58 + 12));
+	UIElement::draw_buttons(0.0f);
+}
+
+void UIDimensionalMirror::send_key(int32_t keycode, bool pressed, bool escape)
+{
+	if (!pressed)
+		return;
+	if (escape)
+	{
+		submit_cancel();
+		return;
+	}
+	if (keycode == 13 || keycode == '\r')
+	{
+		submit_ok();
+		return;
+	}
+	if ((keycode == 37 || keycode == 263) && selected > 0)
+	{
+		--selected;
+		refresh_labels();
+		rebuild_go_button();
+	}
+	else if ((keycode == 39 || keycode == 262)
+		&& static_cast<size_t>(selected + 1) < choices.size())
+	{
+		++selected;
+		refresh_labels();
+		rebuild_go_button();
+	}
+}
+
+Button::State UIDimensionalMirror::button_pressed(uint16_t buttonid)
+{
+	switch (buttonid)
+	{
+	case BtLeft:
+		if (selected > 0)
+		{
+			--selected;
+			refresh_labels();
+			rebuild_go_button();
+		}
+		break;
+	case BtRight:
+		if (static_cast<size_t>(selected + 1) < choices.size())
+		{
+			++selected;
+			refresh_labels();
+			rebuild_go_button();
+		}
+		break;
+	case BtGo:
+		submit_ok();
+		break;
+	case BtCancel:
+		submit_cancel();
+		break;
+	default:
+		break;
+	}
+	return Button::State::NORMAL;
+}
+
+UIElement::Type UIDimensionalMirror::get_type() const { return TYPE; }
+
 UIRanking::UIRanking()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("ranking.ranking_softkey_name"))
 {

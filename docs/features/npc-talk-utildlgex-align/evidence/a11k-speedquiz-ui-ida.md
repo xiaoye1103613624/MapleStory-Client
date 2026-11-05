@@ -46,4 +46,4 @@
 | --- | --- |
 | Timer SFX | IDA `7EC7CB` remain≤120 播 StringPool 1563=`Timer`；本轮未接音频 |
 | `SpeedQuiz/BtOK` 节点 | IMG 有，但 IDA 用 `Basic/BtOK2`；跟 IDA |
-| Pet / Mirror UI | 仍吞包 `-1` |
+| Pet / Mirror UI | 见 a11l（已接线可证子集 / Mirror 完整） |

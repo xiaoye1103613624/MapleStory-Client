@@ -1,24 +1,23 @@
-# A11j AskPet / AskPetAll / Mirror — 预留说明
+# A11j AskPet / AskPetAll / Mirror — 预留说明（已由 A11l 接续）
 
-> 日期：2026-11-05 ｜ 本轮优先 AskBoxText；此项证据不足完整可交互 UI，继续吞包 `-1`。
+> 日期：2026-11-05 ｜ **已由 [a11l-askpet-mirror-ida.md](a11l-askpet-mirror-ida.md) 接续接线**。
 
 ## AskPet (9) / AskPetAll (10)
 
 | | AskPet `7474A2` | AskPetAll `74775C` |
 | --- | --- | --- |
-| 入站 | string + byte n + n×byte（槽位索引） | string + byte n + byte flag + n×byte |
-| UI | `9AC552(..., a2=6)` UtilDlgEx dlgType=6 | 同族 |
-| 出站 OK | lastMsg=9，action=1，再写 pet 相关 8 字节（`46C00C`） | 待完整反编译确认 |
-| 空列表 | action=1 或 2 早退 | — |
-
-阻塞：需本机宠物栏反查（`46D301` 等）与 dlgType=6 列表布局（`9ACB27`）IMG/IDA 对照；无宠物运行态时无法验收。本轮不臆造选宠 UI。
+| 入站 | string + byte n + **n×(long+byte)** | string + byte n + byte flag + n×(long+byte) |
+| UI | `UIAskPet`（UtilDlgEx 壳，可证子集） | 同 |
+| 出站 OK | lastMsg + action=1 + int64 | 同 |
+| 仍预留 | dlgType=6 完整宠立绘/亲密条；现金栏 64 位 uniqueId 入库 | 同 |
 
 ## Mirror (14)
 
 | | |
 | --- | --- |
-| 入站 | `76B5C8`：`int` + `string`（s9 `getDimensionalMirror`：int(0)+string） |
-| UI | **非** UtilDlgEx；独立 ctor `76B3F0` / 列表填充 `76C781` 等 |
-| 出站 | 未在本轮钉死（需跟选择/关闭 xref） |
+| 入站 | `76B5C8`：`int` + `string` |
+| UI | `UIDimensionalMirror`（`SlideMenu/0`，235×165） |
+| 出站 | lastMsg=14 + action + int selection |
+| 仍预留 | `IsAniBackgrd` 动画底；BtMain 全态打磨 |
 
-阻塞：维度镜独立窗体资源与选择出站未取全。继续 `-1` 防挂死。
+详见 a11l。

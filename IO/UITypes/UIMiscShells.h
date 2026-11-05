@@ -228,6 +228,80 @@ private:
 	int32_t remain_sec = 0;
 	int32_t remain_ms = 0;
 };
+
+// NPC AskPet / AskPetAll（IDA 7474A2 / 74775C → UtilDlgEx dlgType=6）
+// 可证子集：列表选宠 + 出站 lastMsg+action+int64；完整立绘/亲密度条仍预留。
+class UIAskPet : public UIDragElement<PosNOTICE> {
+public:
+	static constexpr Type TYPE = UIElement::Type::ASKPET;
+	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
+	UIAskPet();
+	void draw(float inter) const override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	UIElement::Type get_type() const override;
+	void open(int8_t lastmsg, const std::string& tip, const std::vector<int64_t>& unique_ids, uint8_t flag = 0);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
+private:
+	enum Buttons : uint16_t { BtOk, BtClose };
+	struct Entry {
+		int64_t unique_id = 0;
+		std::string label;
+		Text label_tex;
+	};
+	void refresh_labels();
+	void submit_ok();
+	void submit_cancel();
+
+	bool has_assets = false;
+	Texture backgrnd;
+	Texture list_sel;
+	bool has_list_sel = false;
+	Text tip_label;
+	std::vector<Entry> entries;
+	int32_t selected = 0;
+	int8_t lastmsg = 9;
+	bool closing = false;
+};
+
+// 维度镜（IDA 76B3F0 / 747A46）：UIWindow.img/SlideMenu/0，窗 235×165
+class UIDimensionalMirror : public UIDragElement<PosNOTICE> {
+public:
+	static constexpr Type TYPE = UIElement::Type::DIMENSIONALMIRROR;
+	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
+	UIDimensionalMirror();
+	void draw(float inter) const override;
+	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	UIElement::Type get_type() const override;
+	void open(int32_t mirror_param, const std::string& talk);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
+private:
+	enum Buttons : uint16_t { BtLeft, BtRight, BtCancel, BtGo };
+	struct Choice {
+		int32_t id = 0;
+		std::string label;
+	};
+	void parse_choices(const std::string& talk);
+	void refresh_labels();
+	void rebuild_go_button();
+	void submit_ok();
+	void submit_cancel();
+
+	bool has_assets = false;
+	Texture backgrnd;
+	Texture choice_mark;
+	bool has_choice_mark = false;
+	Text prev_label;
+	Text cur_label;
+	Text next_label;
+	std::vector<Choice> choices;
+	int32_t selected = 0;
+	int32_t mirror_param = 0;
+	bool closing = false;
+};
+
 class UIRanking : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::RANKINGUI;

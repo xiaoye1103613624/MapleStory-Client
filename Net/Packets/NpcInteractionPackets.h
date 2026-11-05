@@ -124,6 +124,27 @@ namespace ms
 			write_byte(6);
 			write_string(response);
 		}
+
+		// AskPet / AskPetAll OK（IDA 7474A2 / 74775C）：lastMsg=9|10, action=1, int64 uniqueId。
+		// Cancel：action=0。空列表早退：action=2（无 uniqueId）。空正文：action=1 + 8×0。
+		struct AskPet {};
+		NpcTalkMorePacket(AskPet, int8_t lastmsg, int8_t action, int64_t unique_id = 0) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(lastmsg);
+			write_byte(action);
+			if (action == 1)
+				write_long(unique_id);
+		}
+
+		// DimensionalMirror OK（IDA 747A46）：lastMsg=14, action=1, int selection；Cancel：action=0。
+		struct DimensionalMirror {};
+		NpcTalkMorePacket(DimensionalMirror, int8_t action, int32_t selection = 0) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(14);
+			write_byte(action);
+			if (action == 1)
+				write_int(selection);
+		}
 	};
 
 	// Packet which tells the server of an interaction with an NPC shop
