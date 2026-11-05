@@ -30,6 +30,7 @@
 | 16 | NPC_ACTION 对话姿态 | ⏳ 待测 | c2s 197 | 点 NPC 对话；他人侧 NPC 应有动作 |
 | 17 | CLICK_GUIDE | ⏳ 待测 | c2s 162 | SPAWN_GUIDE 后点引导场标 → MIMO/LILIN |
 | 18 | 隐藏门三态动画 | ⏳ 待测 | — | 靠近/离开隐藏门看 Start/Continue/Exit |
+| 19 | NPC SENDSIMPLE「下项」A11b | ⏳ 待测 | c2s NPC_TALK_MORE | 悬停后点下项/回车发 selection；点 #L 直发；见 npc-talk-utildlgex-align |
 
 ---
 
@@ -206,13 +207,27 @@
 - **16**：任意城镇点 NPC 对话 → 应先发 197（6B）再发 58；双端同图时对方可见 NPC 姿态。
 - **17**：新手图有 SPAWN_GUIDE 时点引导标记 → 空包 162 → 开 MIMO/LILIN 脚本窗。
 - **文档**：同上。
-- **未纳入本轮（下一项）**：`UINpcTalk` 框体/字体/α/「下项」A11b 全量原端对齐；本批只补协议，样式须 IDA/IMG 取证后再改（宋体路线、禁臆造）。
+- **A11b「下项」（2026-11-05 已接线，待真机）**：`SENDSIMPLE` 右下「下项」应激活；悬停选项后点下项 / 回车 / N → 出站 `NPC_TALK_MORE` + selection（与点 `#L` 同包）；点 `#L` 直发仍通；宋体/A12M 不变。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
+- **仍预留**：框体 α / `TEXT_Y` 居中 / 「下项」x450 vs 474 孤例对帧；KeyDown 持续技松开取消（无 cancel 上行证据）。
 
 ## 18. 隐藏门三态
 
 - **前置**：含 `pt=HIDDEN` 的地图（常见教学/任务隐藏门）。
 - **操作**：走近门 → 应播出现动画并循环；走开 → 播消失后隐藏。
 - **文档**：[hidden-portal-tristate](../hidden-portal-tristate/)
+
+## 19. NPC SENDSIMPLE「下项」A11b
+
+- **前置**：任意会走 `SENDSIMPLE`（可选项列表）的 NPC 脚本（如任务/传送多选）。
+- **操作**：
+  1. 打开对话后确认右下「下项」为激活态（非灰）。
+  2. 鼠标悬停不同选项 → 高亮切换；再点「下项」或按回车/`N` → 应发 `NPC_TALK_MORE` 且 body 为当前高亮项 `selection`。
+  3. 直接点 `#L…#l` 选项行 → 仍直发同包（不经下项）。
+  4. 肉眼：正文 A11M/A12M 思源宋体；框体几何与 R25 一致；未回 SimHei。
+- **期望**：服务端按 selection 推进脚本；无崩；关闭钮仍关窗。
+- **opcode**：c2s `NPC_TALK_MORE`（既有 `NpcTalkMorePacket`）。
+- **文档**：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)
+- **仍预留（非本项阻塞）**：框体 α / `TEXT_Y` 居中 / 「下项」x450 vs 474 对帧；KeyDown 持续技松开取消。
 
 ## 7. SET_HPMPALERT
 

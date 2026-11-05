@@ -296,13 +296,14 @@ R25 用四张原生帧（528×261 / 526×349 / 523×203 + 二级弹窗 527×351�
 - 「下项」槽位冲突：`NPC对话2.png` 量到 450 而参考帧量到 474，纵向一个 `height+11` 一个 `height+49`，
   差值来自两张图的裁剪边界不同，**没有编码这个孤例**，等真机同场景拍一张再定。
 
-### A11b `SENDSIMPLE`（NPC 可选项列表）没有动作按钮（预留，未修）
+### A11b `SENDSIMPLE`（NPC 可选项列表）「下项」—— **已定案并接线（2026-11-05）**
 
-原生 `NPC对话2.png` 的 4 项列表右下角有「下项」，但本仓库 `TalkType::SENDSIMPLE` 分支
-在 `switch (type)` 里是 `break`（不激活任何按钮），且 `button_pressed` 的 `NEXT` 路径对 simple 列表
-只会 `deactivate()` 而**不发封包**。硬接一个 `Buttons::NEXT` 就是「看得见、点了没反应」的半成品，
-违反门禁 9，所以显式预留：需要先定「选中项 → `NpcScriptRequestPacket` 的 selection 语义」再接。
-列表本身（渲染 + 点击发 `selection`）是通的。
+IDA（BeiDou `sub_9AB92A` / `sub_9A8FEF`）：`dlgType==4` 建 **BtNext(id=8193)+BtClose(2)**；
+点下项 = 取当前高亮 `list[cur].selection` 后收口（不是空操作，也不是「只循环高亮」）。
+本仓：`SENDSIMPLE` 激活 `BtNext@BTN_X_RIGHT`；悬停更新 `simple_selected`；下项/回车/N 发
+`NpcTalkMorePacket(sel)`；点 `#L` 直发不变。证据：
+[npc-talk-utildlgex-align/evidence/a11b-sendsimple-next-ida.md](../../npc-talk-utildlgex-align/evidence/a11b-sendsimple-next-ida.md)。
+真机：pending-live-tests「NPC 下项」。
 
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 

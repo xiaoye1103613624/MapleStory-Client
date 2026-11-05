@@ -165,6 +165,10 @@ namespace ms
 			Point<int16_t> size;
 		};
 		std::vector<SimpleChoice> simple_choices;
+		// SENDSIMPLE 当前高亮项（键盘/悬停）。IDA CUtilDlgEx::OnButtonClicked
+		// (BeiDou sub_9AB92A) dlgType==4：BtNext(id=8193) 读 list[cur].sel 后收口；
+		// 点 #L 仍可直接发 selection，下项钮发当前高亮项。
+		int32_t simple_selected = 0;
 
 		std::function<void(bool)> onmoved;
 
@@ -172,5 +176,7 @@ namespace ms
 		std::string strip_simple_choices(const std::string& tx);
 		// 正文 Text 建好布局后，把字节区间换算成命中框
 		void layout_simple_choices(const Text& body);
+		// SENDSIMPLE：发当前高亮项的 selection（下项钮 / SoftKey 共用）
+		bool dispatch_simple_selection();
 	};
 }

@@ -334,7 +334,17 @@ namespace ms
 				switch (buttonid)
 				{
 					case Buttons::CLOSE:
+						// 原生 BtClose id=2 → 收口取消；本端仍发 response=0
 						NpcTalkMorePacket(lastmsg, 0).dispatch();
+						break;
+					case Buttons::NEXT:
+						// IDA sub_9AB92A case dlgType==4：BtNext(8193) 取当前高亮项
+						// selection 后收口。点 #L 直发不变；下项钮走同一封包。
+						if (!dispatch_simple_selection())
+						{
+							// 无选项时下项等同关闭，避免「看得见点了没反应」
+							NpcTalkMorePacket(lastmsg, 0).dispatch();
+						}
 						break;
 					default:
 						break;
@@ -363,8 +373,9 @@ namespace ms
 			const int16_t band_top = top.height() - 1;
 			const int16_t band_bottom = band_top + height - TEXT_SLACK;
 
-			for (const SimpleChoice& c : simple_choices)
+			for (size_t i = 0; i < simple_choices.size(); ++i)
 			{
+				const SimpleChoice& c = simple_choices[i];
 				const int16_t y = TEXT_Y + c.pos.y() - scroll;
 
 				// 滚出可视带的选项不可点（绘制也被裁掉了）。
@@ -378,10 +389,13 @@ namespace ms
 					y + c.size.y());
 				if (box.contains(cursor_relative))
 				{
+					// 悬停即高亮索引，供「下项」钮提交（对齐原生 list[cur]）
+					simple_selected = static_cast<int32_t>(i);
 					if (clicked)
 					{
 						deactivate();
 						NpcTalkMorePacket(c.selection).dispatch();
+						LOG(LOG_DEBUG, "UINpcTalk: SENDSIMPLE click sel=" << c.selection);
 					}
 					return Cursor::State::CANCLICK;
 				}
@@ -440,6 +454,13 @@ namespace ms
 					NpcTalkMorePacket(sel).dispatch();
 				} catch (...) {}
 			}, []() {}, "Npc select");
+		}
+		else if (type == TalkType::SENDSIMPLE
+			&& (keycode == 13 || keycode == 'N' || keycode == 'n'))
+		{
+			// 回车 / N：等同下项钮（提交当前高亮）；无选项则忽略
+			if (dispatch_simple_selection())
+				deactivate();
 		}
 	}
 
@@ -536,9 +557,26 @@ namespace ms
 		return strip_simple_choices(formatted_text);
 	}
 
+	bool UINpcTalk::dispatch_simple_selection()
+	{
+		if (simple_choices.empty())
+			return false;
+
+		const size_t idx = (simple_selected >= 0
+			&& static_cast<size_t>(simple_selected) < simple_choices.size())
+			? static_cast<size_t>(simple_selected)
+			: 0;
+		const int32_t sel = simple_choices[idx].selection;
+		NpcTalkMorePacket(sel).dispatch();
+		LOG(LOG_DEBUG, "UINpcTalk: SENDSIMPLE next/confirm sel=" << sel
+			<< " idx=" << idx);
+		return true;
+	}
+
 	std::string UINpcTalk::strip_simple_choices(const std::string& tx)
 	{
 		simple_choices.clear();
+		simple_selected = 0;
 
 		std::string out;
 		out.reserve(tx.size());
@@ -808,6 +846,15 @@ namespace ms
 				break;
 			}
 			case TalkType::SENDSIMPLE:
+			{
+				// IDA sub_9A8FEF (dlgType==4 LIST)：右下 BtNext(id=8193) + 左下 BtClose(id=2)。
+				// 槽位沿用 R25 像素常量 BTN_X_RIGHT / BTN_DY（IMG BtNext 46×18 已复核）。
+				activate(Buttons::NEXT, Point<int16_t>(x_right, y_cord));
+				simple_selected = 0;
+				LOG(LOG_DEBUG, "UINpcTalk: SENDSIMPLE activate NEXT choices="
+					<< simple_choices.size());
+				break;
+			}
 			case TalkType::SENDGETTEXT:
 			default:
 			{

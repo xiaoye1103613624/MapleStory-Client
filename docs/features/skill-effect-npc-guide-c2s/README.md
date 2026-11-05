@@ -29,5 +29,5 @@
 | --- | --- | --- |
 | tip / 字体 | 未触碰；客户端默认宋体/思源宋体路线保持 | 若改 tip 须 IDA/IMG/像素取证，禁臆造、禁回 SimHei |
 | NPC 对话交互 | 点选 `#L` 发 selection 已通；`TalkToNPC`+`NPC_ACTION` 已接 | — |
-| NPC 对话「下项」A11b | 列表可点；右下「下项」钮未激活（open-issues A11b） | IDA 定语义后再接，禁半成品钮 |
-| NPC 对话框样式 | UtilDlgEx 既有；名牌 A11M 白 / 正文 A12M DARKGREY | 全量像素对齐原端（框体/α/按钮/立绘）另立切片 |
+| NPC 对话「下项」A11b | ✅ 2026-11-05：IDA 定「下项=提交高亮 selection」并接线；待真机 | [npc-talk-utildlgex-align](../npc-talk-utildlgex-align/) |
+| NPC 对话框样式 | UtilDlgEx 几何沿用 R25；名牌 A11M 白 / 正文 A12M DARKGREY（思源宋体） | α / TEXT_Y 居中 / x450 孤例对帧另立 |
