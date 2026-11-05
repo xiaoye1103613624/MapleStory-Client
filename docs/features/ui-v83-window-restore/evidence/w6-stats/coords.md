@@ -94,11 +94,24 @@ BtHide（黄绿底白色左箭头，语义 hide）**像素全等**且远优于�
 标注：**近似复刻，可后续 IDA 复核**（native 真身或为 UIN 皮肤下另一节点，但资源全等度已是
 本包最优）。
 
+## BtAuto 落点（2026-11-05 补证闭合）
+
+新手参考帧（s1 / native_stat）AP 区被 `basicStat` 盖住，SAD 扫 `BtAuto/1/2` 峰 SAD≥53
+均为假峰 → 截图路径不可用。改走 **IDA（Maplestory95.i64）+ UIWindow2 dump**：
+
+| 证据 | 结论 |
+|---|---|
+| `CUIStat::OnCreate` @ `0x867b90` | `CLayoutMan::AddButton(..., nOffsetX=0, nOffsetY=0)` 对 `UI/UIWindow2.img/Stat/main/BtAuto`（id `0x7D7`） |
+| `CCtrlOriginButton::GetRect` | `OffsetRect(-get_cx, -get_cy)` → Create(0,0) 时 **topleft = −origin** |
+| `UIWindow2_img.json` `Stat/main/BtAuto/normal/0` | 67×34，origin **(−94, −198)** ⇒ 现代 topleft **(94, 198)** |
+| 同行 ApUp y | 现代 STR 244 / 经典 245（Δ≈0）⇒ 经典 **y=198** |
+| 本包 `Stat/BtAuto` | **100×35**（非现代 67）→ 若按 ApUp Δx=+39 得 (133,198) 右缘越界；按窗宽 208 右缘 2px 钳 **x=106** |
+
+定案：`try_maple_btn(..., Point(106, 198), "Stat/BtAuto")`。`BtAuto1/2` 仍不接（本端仅一颗 `BT_AUTO`，发包逻辑已在 Wave3）。
+
 ## 放弃 / 预留项
 
-- `Stat/BtAuto(100x35)/BtAuto1/BtAuto2(73x17)`：节点存在但 s1 中 AP 区被 basicStat 板盖住，
-  落点无法取证 → **预留**：显式 `maple_btn_nopos()` 不创建，diag 记录；BT_AUTO 行为代码保留
-  （永不触发）。
+- `BtAuto1` / `BtAuto2`：包内有件，原生为 Auto 族备选态；本端单钮 `BT_AUTO` 已接 `BtAuto`，不另建。
 - `BtApDown`（减点钮）：包内不存在 → v83 无减点入口，接受缺失。
 - `Stat/main`、`detail/*`、`cover0/cover1`、`BtHyperStat*`、`detail/BtAbility`、
   `Stat/BtClose3`：本包不存在；原调用点全部清理（含旧坐标 position 版与无 position 版，

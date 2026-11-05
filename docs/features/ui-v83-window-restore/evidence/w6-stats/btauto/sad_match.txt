@@ -1,0 +1,20 @@
+== role_cap 角色能力.png 428x349 origin=None
+  BtAuto: SAD=53.28 abs=(268,111) opaque=3492 size=100x35
+  BtAuto1: SAD=53.66 abs=(281,131) opaque=1233 size=73x17
+  BtAuto2: SAD=54.15 abs=(281,131) opaque=1233 size=73x17
+== seik 打开了S-E-I-K页面.png 1280x720 origin=(175, 191)
+  BtAuto: SAD=49.58 abs=(456,302) win-rel=(281,111) opaque=3492 size=100x35
+  BtAuto1: SAD=52.00 abs=(650,304) win-rel=(475,113) opaque=1233 size=73x17
+  BtAuto2: SAD=52.89 abs=(650,304) win-rel=(475,113) opaque=1233 size=73x17
+== native_stat native_stat.png 428x349 origin=(1, 2)
+  BtAuto: SAD=53.28 abs=(268,111) win-rel=(267,109) opaque=3492 size=100x35
+  BtAuto1: SAD=53.66 abs=(281,131) win-rel=(280,129) opaque=1233 size=73x17
+  BtAuto2: SAD=54.15 abs=(281,131) win-rel=(280,129) opaque=1233 size=73x17
+== native_fs native_stat_fullscreen.png 1280x720 origin=(175, 191)
+  BtAuto: SAD=49.58 abs=(456,302) win-rel=(281,111) opaque=3492 size=100x35
+  BtAuto1: SAD=52.00 abs=(650,304) win-rel=(475,113) opaque=1233 size=73x17
+  BtAuto2: SAD=52.89 abs=(650,304) win-rel=(475,113) opaque=1233 size=73x17
+== live_stat live-postfix-stat.png 1296x759 origin=None
+  BtAuto: SAD=47.67 abs=(288,190) opaque=3492 size=100x35
+  BtAuto1: SAD=41.79 abs=(971,402) opaque=1233 size=73x17
+  BtAuto2: SAD=44.40 abs=(971,402) opaque=1233 size=73x17

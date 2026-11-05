@@ -79,7 +79,7 @@
 | D1 | 能力值（对照 `角色能力.png`、`打开了S-E-I-K页面.png`） | 8 行身份 + 4 行属性重排；`basicStat[159x121]` 蓝头**总是**画在 (8,195)；13 行数值重测（旧 DEX/INT/LUK 分别低 10/18/28px） | 与参考逐边对齐 ≤2px | [coords.md](evidence/w6-stats/coords.md) |
 | D2 | 能力值 | `+` 钮 `BtApUp`×6 在 (186,115…299)；`BtDetail[46x19]` 落右下角（角锚 kx=9/ky=4 → (153,324)） | 位置对；点击可展开 | 同上 |
 | D3 | 能力值「收不回」（定案） | 收缩钮真身 = `Basic.img/BtHide`（13×12，SAD 模板匹配命中），在窗相对 (405,326)，**仅展开态可点**；`BtDetail` 本身也做开/关双保险。旧代码读不存在的 `main/BtDetailClose` → `set_detail(false)` 永不可达 | 展开→收起可反复 | 同上 |
-| D4 | 能力值 | ⚠ 预留：`BtAuto` 仍未给坐标（本包无对应原生位）；`Disabled{STR,DEX,INT,LUK}` 用于不可加点态 | 不可加点时显示禁用贴片 | 同上 |
+| D4 | 能力值 | `BtAuto` @ (106,198)（IDA OriginButton −origin + 经典右缘钳）；`Disabled{STR,DEX,INT,LUK}` 不可加点态 | 非新手可见/可点；AP>0 发 AUTO_DISTRIBUTE_AP | 同上 |
 | D5 | 装备（对照 `角色装备.png`） | 「左上两钮弹二级密码」定案为**误读**：那是烤图的 `Equip/BtDetail`「详细信息」46×19 与 `Equip/BtCashshop`「Shop」32×11（全仓/全客户端/exe 内「二级密码」0 字节命中）。两颗**默认隐藏**（原生匹配 mae 55.8/61.1） | 不再莫名弹窗 | [coords.md](evidence/w7-equip/coords.md) |
 | D6 | 装备 | 宠物区：`pet[177x181]` 面板 + `BtPet1/2/3` 三页签 + `BtPetEquipShow[67x18]`/`BtPetEquipHide[17x16]`，按右下锚算位；展开改 `dimension` | 可展开/收起 | 同上 |
 | D7 | 装备 ⚠ | 预留：宠物槽**穿戴逻辑**未接（仅版式与开关）；宠物面板 4 格的**改色**未接（`Equip/pet` 改色带预测命中仅 34.7~77.2%，偏移没尺，等展开态原生帧）。原「modern 分支 6 颗钮无坐标」一行**作废**：该分支（`btEffect/btSalon/BtConsumeSetting/BtException` + 页签/totem/六列坐标表）经 §5 实测路径链属永不可达，R27-B3 已连按钮带处理器一并删除 | 不算回归失败 | [r27-b3-equip/README.md §5/§8](evidence/r27-b3-equip/README.md) |

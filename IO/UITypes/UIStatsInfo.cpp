@@ -143,10 +143,16 @@ namespace ms
 		try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(186, 281), "Stat/BtApUp/INT");
 		try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(186, 299), "Stat/BtApUp/LUK");
 
-		// BtAuto(100x35)/BtAuto1/2(73x17) 包内存在，但参考截图中 AP 区被 basicStat
-		// 信息板盖住，落点无法取证 → 预留（不创建，diag 记录），见 coords.md。
+		// BtAuto：Maplestory95 CUIStat::OnCreate(0x867b90) 对
+		// UI/UIWindow2.img/Stat/main/BtAuto 走 CLayoutMan::AddButton(nOffset=0,0)
+		// → CCtrlOriginButton 落点 = -canvas.origin。UIWindow2 dump：
+		// origin=(-94,-198) ⇒ 现代窗 topleft=(94,198)。ApUp 同行 y 与经典几乎同值
+		// （现代 STR y=244 / 经典 245），故 y 直取 198。本包 BtAuto 为 100x35
+		// （现代 67x34），按窗宽 208 右缘 2px 钳 x=208-100-2=106（若按 ApUp
+		// Δx=+39 映射得 133 会越界）。新手态仍由下面 BEGINNER 分支熄灭；
+		// 有转职后与 BtApUp 同步 set_active(show_ap)。见 evidence/w6-stats/coords.md。
 		nl::node bt_auto = main["BtAuto"] ? main["BtAuto"] : (Stat["BtAuto"] ? Stat["BtAuto"] : Stat["BtAutoAP"]);
-		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, maple_btn_nopos(), "Stat/BtAuto(reserved)");
+		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, Point<int16_t>(106, 198), "Stat/BtAuto");
 
 		// BtDetail 46x19 右下角锚算：x=208-46-9、y=347-19-4（k 截图实测 SAD=0.25）。
 		nl::node detail_open = main["BtDetailOpen"] ? main["BtDetailOpen"] : (Stat["BtDetail"] ? Stat["BtDetail"] : main["BtDetail"]);
