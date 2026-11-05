@@ -77,10 +77,10 @@ namespace ms
 				Point<int16_t> position;
 			};
 
-			// 行内图标：#i/#v 道具、#s 技能、#f 路径图。
+			// 行内图标：#i/#v 道具、#s 技能、#f 路径图、#B 进度条。
 			// IDA：i/v→enum7/8→type1；s→enum9→type1；f/F→enum10/11→type2；
-			// 宽高取 canvas GetWidth/Height；ax 相对行起点（与 advances 同坐标系）。
-			// texture 在布局期解析并持有，绘制不再二次查表。
+			// B→enum12→type2；宽高取 canvas GetWidth/Height；ax 相对行起点。
+			// texture 在布局期解析并持有；underlay 仅 #B（先画 bar/10，再画分段帧）。
 			struct Icon
 			{
 				size_t line;
@@ -88,6 +88,7 @@ namespace ms
 				int16_t width;
 				int16_t height;
 				Texture texture;
+				Texture underlay;
 			};
 
 			Layout(const std::vector<Line>& lines, const std::vector<int16_t>& advances, int16_t width, int16_t height, int16_t endx, int16_t endy);

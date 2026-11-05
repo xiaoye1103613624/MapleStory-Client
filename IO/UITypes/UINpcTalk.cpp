@@ -745,7 +745,8 @@ namespace ms
 		// C6 收口：#p/#h/#t/#z/#q/#m/#o/#c/#x 必须**逐处**展开（旧实现各只替第一处）；
 		// 闭合 `#` 一并吃掉（旧写法留下悬空 `#`）；#t/#z 走 ItemData 全品类名，
 		// #q 走 SkillData 名（IDA case17 + '%07d' → String/Skill.img）；
-		// #m→mapName，#o→Mob 名，#c→持有数（保留 #c 橙色素标），#x→未接任务时 "0%"。
+		// #m→mapName，#o→Mob 名，#c→持有数（保留 #c 橙色素标），
+		// #x→任务进度（命中 +N / 未命中 N%，见 pool 1942/1941）。
 		// #i/#v/#s/#f/#B 留给 LayoutBuilder 行内画图标/进度条（勿剥除）。
 		std::string formatted_text = tx;
 
@@ -894,11 +895,77 @@ namespace ms
 			}
 		});
 
-		// IDA case17 'x'→sub_9A2557→sub_4E6A98；未命中用 pool 1941="%d%%"+0 → "0%"。
-		// 任务进度表未接线：固定 "0%"（与原生未接 quest 时一致）；仍吃掉令牌避免残片。
+		// IDA case17 'x'→sub_9A2557→sub_4E6A98：
+		//   查任务进度串，按 '/' 切三段 a/b/c（sub_4E6ED1）；
+		//   b!=0 → pool 1942="+%d" 填 c；否则 pool 1941="%d%%" 填 c（未接/解析失败 c=0 → "0%"）。
 		replace_named('x', [](const std::string& body, std::string& out) {
-			(void)body;
-			out = "0%";
+			// 非法 body 仍吃掉令牌，避免残片；语义等同未命中 → "0%"。
+			int b = 0;
+			int c = 0;
+
+			try
+			{
+				if (!body.empty())
+				{
+					const int32_t qid = std::stoi(body);
+
+					if (qid > 0 && qid <= 32767)
+					{
+						const std::string progress =
+							Stage::get().get_player().get_quests().get_progress(static_cast<int16_t>(qid));
+
+						if (!progress.empty())
+						{
+							// 原生 sub_4E6ED1：必须成功拆出 3 段才算命中表项。
+							size_t p0 = 0;
+							int parts[3] = { 0, 0, 0 };
+							int n = 0;
+
+							for (; n < 3; ++n)
+							{
+								const size_t slash = progress.find('/', p0);
+								const std::string piece = (slash == std::string::npos)
+									? progress.substr(p0)
+									: progress.substr(p0, slash - p0);
+
+								try
+								{
+									parts[n] = std::stoi(piece);
+								}
+								catch (const std::exception&)
+								{
+									parts[n] = 0;
+								}
+
+								if (slash == std::string::npos)
+								{
+									++n;
+									break;
+								}
+
+								p0 = slash + 1;
+							}
+
+							if (n >= 3)
+							{
+								b = parts[1];
+								c = parts[2];
+							}
+						}
+					}
+				}
+			}
+			catch (const std::exception&)
+			{
+				b = 0;
+				c = 0;
+			}
+
+			if (b != 0)
+				out = std::string("+") + std::to_string(c);
+			else
+				out = std::to_string(c) + "%";
+
 			return true;
 		});
 

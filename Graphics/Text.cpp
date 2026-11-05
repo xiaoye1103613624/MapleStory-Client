@@ -109,13 +109,19 @@ namespace ms
 					continue;
 			}
 
-			if (!icon.texture)
-				continue;
-
 			// Texture::draw 会扣 origin；原生 blit 按左上角落点，故先加回 origin。
-			icon.texture.draw(DrawArgument(Point<int16_t>(
-				static_cast<int16_t>(draw_x + icon.texture.get_origin().x()),
-				static_cast<int16_t>(draw_y + icon.texture.get_origin().y()))));
+			// #B：IDA case12 先 Copy bar/10，再 Copy bar/(pct/10-1)（α=255/mode3）。
+			auto blit_icon_layer = [&](const Texture& tex) {
+				if (!tex)
+					return;
+
+				tex.draw(DrawArgument(Point<int16_t>(
+					static_cast<int16_t>(draw_x + tex.get_origin().x()),
+					static_cast<int16_t>(draw_y + tex.get_origin().y()))));
+			};
+
+			blit_icon_layer(icon.underlay);
+			blit_icon_layer(icon.texture);
 		}
 	}
 

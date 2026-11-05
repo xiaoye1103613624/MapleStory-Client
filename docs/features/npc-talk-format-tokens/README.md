@@ -19,11 +19,11 @@
 | `#m<id>#` | 全量 → `NxHelper::Map::…mapName`（IDA pool 1730） |
 | `#o<id>#` | 全量 → `String/Mob.img/<id>/name` |
 | `#c<id>#` | → `#c` + 持有数；LayoutBuilder 橙色（IDA `sub_A2858C`） |
-| `#x…#` | → `"0%"`（IDA pool 1941；任务表未接） |
+| `#x<qid>#` | 进度串 `a/b/c`：`b≠0`→`+c`（pool 1942）；否则 `c%`（pool 1941，未接=`0%`） |
 | `#i<id>#` / `#v<id>#` | **保留**；`LayoutBuilder` 行内画 `info/icon`（IDA type1） |
 | `#s<id>#` | **保留**；行内画技能 `icon`（IDA type1） |
 | `#f<path>#` / `#F<path>#` | **保留**；行内画 WZ 路径 canvas（IDA type2） |
-| `#B<pct>#` | **保留**；行内画 `Login…/bar/(pct/10)`（IDA enum12，钳 10..100） |
+| `#B<pct>#` | **保留**；双层 `bar/10` + `bar/(pct/10-1)`（IDA enum12，钳 10..100） |
 
 闭合 `#` 一并消费；非法/缺图令牌跳过不崩。
 打字机：`#i/#v/#s/#f/#B`（及残留 `#m/#o/#x`）整段原子喂入；色标/样式 `#b/#c/#r/#e/#n/#k…` 一次 2 字节。
@@ -34,9 +34,9 @@
 - `IO/UITypes/UINpcTalk.cpp`：`format_text` + 打字机
 - `Graphics/Text.h` / `Text.cpp`：`Layout::Icon`（持 Texture）+ 绘制
 - `Graphics/GraphicsGL.h` / `GraphicsGL.cpp`：`LayoutBuilder` 解析与占位
-- `evidence/ida-i-v-icon-layout.md`、`ida-f-s-icon-layout.md`、`ida-q-skill-name.md`、`ida-c-B-m-o-x-body-tokens.md`
+- `evidence/ida-i-v-icon-layout.md`、`ida-f-s-icon-layout.md`、`ida-q-skill-name.md`、`ida-c-B-m-o-x-body-tokens.md`、`ida-x-quest-progress-B-dual-bar.md`
 
 ## 验证
 
 - 构建：`tools/build_smoke.bat`
-- 真机（待测）：`#m/#o/#c/#x/#B`；`#q…#` 技能名；色标无半截闪；`#i…##t…#` / `#f…#` / `#s…#` 见图
+- 真机（待测）：`#x` 未接=`0%`、进度 `a/1/c`→`+c`；`#B50#` 见双层 bar；`#m/#o/#c/#q`；色标无半截闪；`#i…##t…#` / `#f…#` / `#s…#` 见图

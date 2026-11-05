@@ -927,6 +927,7 @@ namespace ms
 		line_max_h = 0;
 		line_has_icon = false;
 		pending_icon_tex = Texture();
+		pending_icon_underlay = Texture();
 		pending_icon_w = 0;
 		pending_icon_h = 0;
 		has_pending_icon = false;
@@ -1217,7 +1218,7 @@ namespace ms
 								skip += 1;
 								break;
 							}
-							// #x[id]# - 由 format_text 展开为 "0%"（IDA pool 1941；任务表未接）
+							// #x[id]# - 由 format_text 展开（命中 +N / 未命中 N%）
 							case 'x':
 							{
 								skip += 2;
@@ -1353,7 +1354,10 @@ namespace ms
 		{
 			if (pending_icon_w > 0)
 			{
-				icons.push_back({ lines.size(), ax, pending_icon_w, pending_icon_h, pending_icon_tex });
+				icons.push_back({
+					lines.size(), ax, pending_icon_w, pending_icon_h,
+					pending_icon_tex, pending_icon_underlay
+				});
 
 				if (pending_icon_h > line_max_h)
 					line_max_h = pending_icon_h;
@@ -1362,6 +1366,7 @@ namespace ms
 			}
 
 			pending_icon_tex = Texture();
+			pending_icon_underlay = Texture();
 			has_pending_icon = false;
 		}
 
@@ -1500,10 +1505,16 @@ namespace ms
 
 	void GraphicsGL::LayoutBuilder::set_pending_icon(const Texture& tex, size_t first, size_t last, size_t& skip, int16_t& out_w)
 	{
+		set_pending_icon(tex, Texture(), first, last, skip, out_w);
+	}
+
+	void GraphicsGL::LayoutBuilder::set_pending_icon(const Texture& tex, const Texture& underlay, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
 		const int16_t iw = tex ? tex.width() : 0;
 		const int16_t ih = tex ? tex.height() : 0;
 
 		pending_icon_tex = tex;
+		pending_icon_underlay = underlay;
 		pending_icon_w = iw;
 		pending_icon_h = ih;
 		has_pending_icon = true;
@@ -1674,9 +1685,12 @@ namespace ms
 
 	bool GraphicsGL::LayoutBuilder::try_parse_progress_bar(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
 	{
-		// IDA case12（'B'→enum12）：*elem=2；atoi(body) 钳 [10,100]；
-		// 路径 pool 1374 = UI/Login.img/Notice/Loading/bar/%d。
-		// 原生叠 bar/10 + bar/(pct/10-1)；本仓用单帧 pct/10（与 UILoginWait 0..10 一致）。
+		// IDA case12（'B'→enum12 @ sub_99DD54）：*elem=2；atoi(body) 钳 [10,100]；
+		// pool 1374 = UI/Login.img/Notice/Loading/bar/%d。
+		// 原生双层（asm 0x99E85D..0x99ED07）：
+		//   1) Create canvas，Copy bar/10（底）α=255/mode3
+		//   2) Copy bar/(pct/10-1)（分段帧 0..9）α=255/mode3
+		// idiv 余数（pct%10）未写入——分段粒度为 10%。
 		out_w = 0;
 
 		if (last < first + 2)
@@ -1709,26 +1723,34 @@ namespace ms
 		else if (pct > 100)
 			pct = 100;
 
-		const int32_t frame = pct / 10;
+		const int32_t fill_frame = pct / 10 - 1;
 
 #ifdef USE_NX
-		nl::node node = nl::nx::UI.resolve(
-			std::string("Login.img/Notice/Loading/bar/") + std::to_string(frame));
+		auto load_bar_frame = [](int32_t frame) -> Texture {
+			nl::node node = nl::nx::UI.resolve(
+				std::string("Login.img/Notice/Loading/bar/") + std::to_string(frame));
 
-		if (node && node.data_type() != nl::node::type::bitmap)
-		{
-			if (nl::node frame0 = node["0"])
-				node = frame0;
-		}
+			if (node && node.data_type() != nl::node::type::bitmap)
+			{
+				if (nl::node frame0 = node["0"])
+					node = frame0;
+			}
 
-		set_pending_icon(Texture(node), first, last, skip, out_w);
+			return Texture(node);
+		};
+
+		const Texture underlay = load_bar_frame(10);
+		const Texture fill = load_bar_frame(fill_frame);
+		// 行宽取分段帧；底轨同尺寸（109×8），缺失时退化为单层。
+		const Texture& primary = fill ? fill : underlay;
+		set_pending_icon(primary, underlay, first, last, skip, out_w);
 		return true;
 #else
 		(void)text;
 		(void)first;
 		(void)last;
 		(void)skip;
-		(void)frame;
+		(void)fill_frame;
 		return false;
 #endif
 	}

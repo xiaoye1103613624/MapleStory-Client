@@ -286,6 +286,7 @@ namespace ms
 			bool try_parse_path_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
 			bool try_parse_progress_bar(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w);
 			void set_pending_icon(const Texture& tex, size_t first, size_t last, size_t& skip, int16_t& out_w);
+			void set_pending_icon(const Texture& tex, const Texture& underlay, size_t first, size_t last, size_t& skip, int16_t& out_w);
 
 			// text[pos] 处这个字符的推进量，consumed 输出它占的字节数。
 			// 与 drawtext 共用 utf8_next，保证"量的"和"画的"不会分叉。
@@ -315,6 +316,7 @@ namespace ms
 			int16_t line_max_h;
 			bool line_has_icon;
 			Texture pending_icon_tex;
+			Texture pending_icon_underlay;
 			int16_t pending_icon_w;
 			int16_t pending_icon_h;
 			bool has_pending_icon;

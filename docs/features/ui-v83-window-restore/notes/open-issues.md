@@ -747,11 +747,13 @@ A2 里两颗钮暂时都路由到 `UIOptionMenu`，等素材到位再拆成子�
   3. 选项版式自创（逐行另起 + 硬涂 LIGHTBLUE）⇒ 原生是**行内**排版、颜色由脚本色标决定。
 - 口子状态：
   - `#p/#h/#t/#z/#q/#m/#o/#c/#x` 全量展开 —— **已闭环（2026-11-05）**
-    （`#q`＝技能名 ida-q；`#m/#o/#c/#x`＋`#B` bar 见 ida-c-B-m-o-x）；
+    （`#q`＝技能名 ida-q；`#m/#o/#c/#x`＋`#B` bar 见 ida-c-B-m-o-x /
+    ida-x-quest-progress-B-dual-bar）；
   - `#i/#v/#s/#f/#B` LayoutBuilder 行内 icon/bar —— **已接线（2026-11-05）**，见
     [npc-talk-format-tokens/README.md](../../npc-talk-format-tokens/README.md)；
+    `#B` 双层 `bar/10`+`bar/(pct/10-1)` —— **已接**；
   - 打字机：图标/`#B` 整段原子喂入；色标/样式 `#b/#c/#r/#e…` 一次 2 字节 —— **已修**；
-  - 预留：`#x` 任务进度命中支（`+%d`）；`#B` 原生双层 `bar/10` 合成（现单帧近似）。
+  - `#x` 命中支（pool 1942=`+%d`，进度 `a/b/c`）—— **已接**。
 
 ### C7 技能窗三处疑点，本轮逐条定性（结论和最初记录不同）
 
