@@ -36,6 +36,7 @@
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/UITypes/UIStatusBar.h"
 #include "../../IO/UITypes/UIBuddyList.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatsInfo.h"
 #include "../../IO/UITypes/UIWedding.h"
 #include "../../IO/UITypes/UIMiscShells.h"
@@ -692,6 +693,17 @@ namespace ms
 		LOG(LOG_DEBUG, "MultiChat mode=" << (int)mode << " from=" << name);
 		while (recv.available())
 			recv.skip_byte();
+		// 游戏设置频道拒绝：好友聊天 / 联盟聊天（家族聊天无独立 MultiChat mode）
+		if (mode == 0 && !UIGameOpt::accepts(UIGameOpt::BUDDY_CHAT))
+		{
+			LOG(LOG_DEBUG, "MultiChat: GameOpt refuse BUDDY_CHAT from=" << name);
+			return;
+		}
+		if (mode == 3 && !UIGameOpt::accepts(UIGameOpt::UNION_CHAT))
+		{
+			LOG(LOG_DEBUG, "MultiChat: GameOpt refuse UNION_CHAT from=" << name);
+			return;
+		}
 		// Guild/Alliance：ensure 再 notice，不叠 ChatBar
 		if (mode == 2)
 		{
@@ -742,10 +754,15 @@ namespace ms
 			std::string message = recv.available() ? recv.read_string() : "";
 			(void)from_admin;
 			std::string speaker = sender + " (ch" + std::to_string(channel + 1) + ")";
-			std::string line = speaker + " : " + message;
 			LOG(LOG_DEBUG, "Whisper recv from=" << sender);
 			while (recv.available())
 				recv.skip_byte();
+			// 游戏设置「悄悄话」拒绝 → 静默丢弃入站显示
+			if (!UIGameOpt::accepts(UIGameOpt::WHISPER))
+			{
+				LOG(LOG_DEBUG, "Whisper: GameOpt refuse WHISPER from=" << sender);
+				return;
+			}
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
 				chatbar->show_message("", speaker, message, UIChatBar::ChatChannel::WHISPER);
 			return;

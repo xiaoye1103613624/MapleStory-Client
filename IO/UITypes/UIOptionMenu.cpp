@@ -499,11 +499,9 @@ namespace ms
 	////////////////////////////////////////////////////////////////////////////////
 	// UIGameOpt —— v83「游戏设置」
 	//
-	// 预留说明（B7-4）：这 12 个同意/拒绝位**已落盘并可查询**，但拦截点尚未接线。
-	// 邀请回包的收发在 Net/Handlers/PlayerHandlers.cpp（本轮由并行会话持有，
-	// 见 docs/.../notes 的禁改清单），故本版只把 UI 与存档做齐：
-	//   消费方 = UIGameOpt::accepts(Option)，接线时只需在对应 *_REQ 的 handler
-	//   里查一次并回绝包，UI 侧无需再改。
+	// 12 个同意/拒绝位落盘于 ui.gameopt.mask；消费方 = UIGameOpt::accepts(Option)。
+	// 邀请/频道拦截已接（2026-11-06）：Party/Trade/Messenger/FamilyJoin/FamilySummon
+	// 与 Whisper/Buddy/Alliance 聊天入站；未接项见 docs/features/gameopt-invite-mask/。
 	////////////////////////////////////////////////////////////////////////////////
 
 	UIGameOpt::UIGameOpt()

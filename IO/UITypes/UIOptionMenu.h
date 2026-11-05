@@ -155,7 +155,7 @@ namespace ms
 			OPTION_COUNT
 		};
 
-		// 第 option 行是否「同意」。邀请拦截点应查此函数（消费方见 .cpp 顶部预留说明）。
+		// 第 option 行是否「同意」。邀请/频道入站 handler 查此函数（见 gameopt-invite-mask）。
 		static bool accepts(Option option);
 
 	protected:

@@ -28,7 +28,7 @@
 
 - **正确的是**：目录气球「游戏设置 / 系统设置」与 `O` 键分别打开 `UIGameOpt` / `UISysOpt` 两扇真窗；两窗控件相对底板的坐标全部与 IMG 烘焙行逐格 SAD≈0 对齐；9 项系统设置已真接线到渲染/输入/音频/告警/截图等消费方；ESC 白名单已含 `GAMEOPT/SYSOPT`。
 - **不正确的是**：底栏「设置→选项」仍指向退化空壳 `UIOptionMenu`（本包缺 `StatusBar3.img/OptionMenu`，构造早退、只画底板无控件）；`PosGAMEOPT(170,24)` / `PosSYSOPT(330,24)` 为无 oracle 依据的绝对像素且无 `update_screen` 重锚；真窗**完全没有分辨率选项**（旧 `SELECT_RES` 6 档下拉与 SoftKey `WxH` 都在空壳里不可达，OK 分支还漏 `Configuration::save()`）。
-- **部分正确 / 预留**：`GameOptMask` 12 位同意掩码可存可查但未接入邀请回包；下拉展开态为自绘（原生无展开态截帧）；画质档数与 VSync 阈值无原生依据。
+- **部分正确 / 预留**：`GameOptMask` 主路径已接邀请/聊天拦截（见 gameopt-invite-mask；三行仍预留）；下拉展开态为自绘（原生无展开态截帧）；画质档数与 VSync 阈值无原生依据。
 
 详见 [notes/analysis-settings-window.md](notes/analysis-settings-window.md)。
 
@@ -52,7 +52,7 @@
 2. **实时切换**：`SetFieldHandlers.cpp` 的 `enter_game` 分支写游戏档位到 `Constants`（回调内禁止 `check_events`，下一帧主循环生效）、退登录恢复 1280×720；去掉每次换图的旧键回灌；`Window.cpp` 补 `SDL_EVENT_WINDOW_RESIZED / PIXEL_SIZE_CHANGED` 回写、把强制全屏门禁改为档位校验与回落、触屏换算改用 `Constants`、同步命中坐标。
 3. **UI 重锚（保留原生定位）**：不做全局 transform / DPI 缩放；`UIStatusBar` 补非枚举宽度通用分支（`y=H-71`），过宽时底栏/快捷栏/聊天输入行整组水平居中（按用户要求，标注偏离原生）；大地图、任务窗、公告/弹窗按 `(W-dim.w)/2,(H-dim.h)/2` 居中并夹回视口。
 4. **系统设置窗**：`tools/resolution/make_sysopt_bg.py` 对 `分辨率.png` 做控件区剥离 → 299×396 纯底板，经 `Graphics/LocalPngTexture` 接入（独立 atlas id，回退到原 `SysOpt/backgrnd`）；`UISysOpt` 新增第 3 个下拉（9 档文案走 `locale/zh-CN.ini`），显示真实当前尺寸，OK 立即持久化 + 窗口销毁后延迟应用（规避模态窗内重建状态栏黑屏），取消/ESC 不生效。
-5. **不动**：`UIElement::Type` 枚举、公共头类布局、`MapleStory.vcxproj`、底栏空壳入口、两窗居中重锚、`GameOptMask` 邀请接线、服务端与协议。
+5. **不动**：`UIElement::Type` 枚举、公共头类布局、`MapleStory.vcxproj`、底栏空壳入口、两窗居中重锚、服务端与协议。
 
 ## 4. 详细验证点
 
@@ -81,7 +81,7 @@ docs/features/multi-resolution/
 
 ## 7. 显式预留（本版不动，非静默半成品）
 
-底栏「设置→选项」空壳入口；`UIGameOpt/UISysOpt` 绝对落位与 `update_screen` 重锚；`GameOptMask` 邀请拦截接线；下拉展开态外观自绘；画质档数与 VSync 阈值无原生依据；REA/IDA 新增反编译取证与 orange-wz 通道恢复。每项均在对应 notes 标注原因与接线点。
+底栏「设置→选项」空壳入口；`UIGameOpt/UISysOpt` 绝对落位与 `update_screen` 重锚；下拉展开态外观自绘；画质档数与 VSync 阈值无原生依据；REA/IDA 新增反编译取证与 orange-wz 通道恢复。每项均在对应 notes 标注原因与接线点。
 
 ## 8. 实现结果（最终实现逻辑）
 

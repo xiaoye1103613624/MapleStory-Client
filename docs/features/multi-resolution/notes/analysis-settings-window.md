@@ -20,7 +20,7 @@
 | 下拉展开态 | ⚠ 已实现但自绘 | `draw_combo_list`(cpp:874-900) / `set_combo_rows`(cpp:902-922) / `sysopt_open`(cpp:683)；原生无展开态截帧，配色沿用 `MapleComboBox`，属显式自定 |
 | 窗体整体落位 | ❌ 不正确 | `Configuration.h:771-774 PosGAMEOPT(170,24)`、`:778-781 PosSYSOPT(330,24)` 为绝对像素且注释自认「非 oracle 读数」；`IO/UIDragElement.h:79` 从 `Setting<PosXXX>::load()` 读取；三窗均**无 `update_screen` override**（`IO/UIElement.h:200` 是已有钩子） |
 | 9 项系统设置功能接线 | ✅ 正确 | 见下表「功能消费方」 |
-| 游戏设置 12 位同意掩码 | ⚠ 部分正确 | `ui.gameopt.mask` 默认 0xFFF，`UIGameOpt::accepts()` 可查，但 `UIOptionMenu.cpp:498-502` 明确「邀请拦截点尚未接线」，消费方应在 `Net/Handlers/PlayerHandlers.cpp` |
+| 游戏设置 12 位同意掩码 | ✅ 已接线（2026-11-06） | `ui.gameopt.mask` + `UIGameOpt::accepts()`；Party/Trade/Messenger/Family/Whisper/Buddy·Alliance 聊天已拦；`GAME_INVITE`/`FAMILY_CHAT`/`UNION_APPLY` 仍预留，见 [gameopt-invite-mask](../../gameopt-invite-mask/) |
 | 分辨率选项 | ❌ 缺失 | 真窗无；空壳 `UIOptionMenu.cpp:92-146` 有 6 档 `SELECT_RES`，OK 分支 cpp:194-227 只写 `Setting<Width/Height>` + `Constants`、**漏 `Configuration::get().save()`**；SoftKey `"WxH"` cpp:327-339 允许任意 w≥640/h≥480，同样不落盘；二者均因空壳早退而不可达 |
 | 旧 5 个 tab / UIRESET | ❌ 不可达 | `UIOptionMenu.cpp:73-79,239-248`，同样被空壳早退吞掉 |
 
@@ -39,7 +39,7 @@
 | 画面模式 | `ui.sysopt.window_mode` / `ui.sysopt.alt_enter` | `Window.cpp:502`（启动回灌）、`:1079`（ALT 镜像）、`IO/UI.cpp:193`、`UISysOpt::commit:1040-1046` |
 | 怪物情报 | `ui.sysopt.mob_info` | `Mob.cpp:545-547 MOB_INFO_TIER[4]`（源自 `ijl15.dll@0x293ec`） |
 
-> ⚠ `Configuration.h:793,801,808,815,822,856` 六处注释仍写「当前无消费方，仅落盘」，是 R28-B4 之前的旧文案，**与代码不符**；判断预留项时不能按注释，须按上表。真正未接线的只有 `GameOptMask` 邀请拦截。
+> ⚠ SysOpt 部分条目注释可能仍写「仅落盘」——以本表「功能消费方」为准。`GameOptMask` 邀请/聊天拦截已于 2026-11-06 接线。
 
 ## 3. 落盘链路
 

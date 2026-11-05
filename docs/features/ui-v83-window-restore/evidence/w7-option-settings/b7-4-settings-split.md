@@ -99,7 +99,7 @@ Basic["BtOK2"]
 
 | # | 预留项 | 原因 / 接线点 |
 | --- | --- | --- |
-| R1 | `UIGameOpt` 12 个同意位**不拦截邀请** | 值已落盘、`accepts(Option)` 可查；回包收发在 [Net/Handlers/PlayerHandlers.cpp](../../../../../Net/Handlers/PlayerHandlers.cpp)，本轮由并行会话持有（禁改清单）。接线只需在对应 `*_REQ` handler 里查一次并回绝包，UI 侧不再动 |
+| R1 | ~~`UIGameOpt` 同意位不拦截邀请~~ | ✅ **2026-11-06 已接**（Party/Trade/Messenger/Family/Whisper/Buddy·Alliance 聊天）；残留 `GAME_INVITE`/`FAMILY_CHAT`/`UNION_APPLY` 见 [gameopt-invite-mask](../../../gameopt-invite-mask/) |
 | R2 | `UISysOpt` 两个下拉（截图路径 / 怪物信息）**只有收起态** | 整块 83×17 作命中区，点击只出 `LOG(LOG_INFO, ...)`；展开列表未实现。另：`MapleComboBox` 命中区本身有 bug，见 [notes/combo-box-hitbug.md](../../notes/combo-box-hitbug.md) |
 | R3 | 画质 / 鼠标速度 / 窗口模式 / Alt-Enter / HP·MP 警戒 / 怪物信息 / 截图路径 **无运行时消费方** | 全仓检索 `SysOpt*` 只有 `Configuration.cpp:225-233` 注册 + `UIOptionMenu` 读写，没有任何渲染/输入/告警代码读它们。本版只保证「能改、能存、能查」，效果接线属后续批次 |
 | R4 | 底栏那颗旧设置钮仍开空壳 `UIOptionMenu` | 落点 [IO/UITypes/UIStatusBar.cpp:969](../../../../../IO/UITypes/UIStatusBar.cpp)，该文件由并行会话持有，本轮不改 |

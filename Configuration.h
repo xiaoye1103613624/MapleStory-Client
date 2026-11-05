@@ -810,6 +810,7 @@ namespace ms
 	// 「游戏设置」12 行的同意/拒绝位图：bit i = 第 i 行（画布自上而下），
 	// 1 = 同意。默认 0xFFF（全同意）—— 原生截帧里第 7 行未勾是**那位玩家当时的
 	// 状态**，不是出厂默认，故不照抄。消费方见 UIGameOpt.h 顶部说明。
+	// 12 位同意掩码；消费方 UIGameOpt::accepts → 邀请/聊天入站拦截（gameopt-invite-mask）
 	struct GameOptMask : public Configuration::ShortEntry
 	{
 		GameOptMask() : ShortEntry("ui.gameopt.mask", "4095") {}

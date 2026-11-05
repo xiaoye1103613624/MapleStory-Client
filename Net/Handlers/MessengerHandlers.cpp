@@ -9,6 +9,7 @@
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIMessenger.h"
 #include "../../IO/UITypes/UINotice.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Graphics/Color.h"
 #include "../../Net/Packets/MessengerPackets.h"
@@ -97,6 +98,14 @@ namespace ms
 				recv.read_byte();
 				while (recv.available())
 					recv.skip_byte();
+
+				// 游戏设置「聊天邀请」拒绝 → 静默 Decline
+				if (!UIGameOpt::accepts(UIGameOpt::CHAT_INVITE))
+				{
+					MessengerDeclinePacket(from).dispatch();
+					LOG(LOG_DEBUG, "MessengerHandler: GameOpt refuse CHAT_INVITE from=" << from);
+					break;
+				}
 
 				std::string msg = from + " has invited you to Maple Messenger.";
 				// YesNo 已显，不重复 SM

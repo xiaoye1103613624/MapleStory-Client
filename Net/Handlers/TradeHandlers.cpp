@@ -25,6 +25,7 @@
 #include "../../IO/UITypes/UIMinigame.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIMiscShells.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Graphics/Color.h"
 #include "../../Net/Packets/TradePackets.h"
@@ -390,6 +391,13 @@ namespace ms
 				recv.skip(4);
 				while (recv.available())
 					recv.skip_byte();
+				// 游戏设置「交易申请」拒绝 → 静默 Exit，不弹 YesNo
+				if (!UIGameOpt::accepts(UIGameOpt::TRADE_APPLY))
+				{
+					TradeExitPacket().dispatch();
+					LOG(LOG_DEBUG, "TradeHandler: GameOpt refuse TRADE_APPLY from=" << name);
+					break;
+				}
 				std::string msg = name + " wants to trade. Accept?";
 				// YesNo 已显，不重复 SM
 				UI::get().emplace<UIYesNo>(msg, [name](bool yes)

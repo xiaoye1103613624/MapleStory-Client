@@ -17,6 +17,7 @@
 #include "../../IO/UITypes/UIMemo.h"
 #include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UINpcTalk.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIWedding.h"
 #include "../../IO/UITypes/UIMonsterCarnival.h"
 #include "../../IO/UITypes/UIRpsGame.h"
@@ -395,6 +396,14 @@ namespace ms
 		LOG(LOG_DEBUG, "FamilyJoinRequest: from=" << inviter << " id=" << inviter_id);
 		while (recv.available())
 			recv.skip_byte();
+
+		// 游戏设置「家族邀请」拒绝 → 静默 Accept=false
+		if (!UIGameOpt::accepts(UIGameOpt::FAMILY_APPLY))
+		{
+			FamilyAcceptPacket(inviter_id, inviter, false).dispatch();
+			LOG(LOG_DEBUG, "FamilyJoinRequest: GameOpt refuse FAMILY_APPLY from=" << inviter);
+			return;
+		}
 
 		std::string msg = inviter.empty()
 			? "Someone wants you to join their family. Accept?"
@@ -1967,6 +1976,13 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		// note
+		// 游戏设置「学院招待」拒绝 → 静默 summon reject
+		if (!UIGameOpt::accepts(UIGameOpt::ACADEMY_INVITE))
+		{
+			FamilySummonResponsePacket(family, false).dispatch();
+			LOG(LOG_DEBUG, "FamilySummon: GameOpt refuse ACADEMY_INVITE from=" << from);
+			return;
+		}
 		std::string msg = from.empty()
 			? "A family member is summoning you. Accept?"
 			: (from + " is summoning you to their map. Accept?");

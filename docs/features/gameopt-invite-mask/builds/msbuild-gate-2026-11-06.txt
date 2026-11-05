@@ -1,0 +1,4 @@
+GATE OK: opcode matrix matches both sources (s9 0849e18d4e)
+GATE OK
+EXITCODE=0
+# Release|x64 via tools/build_smoke.bat；占用策略 B

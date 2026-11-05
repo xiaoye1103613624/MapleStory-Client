@@ -19,12 +19,14 @@
 
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIParty.h"
 #include "../../IO/UITypes/UIPartySearch.h"
 #include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Net/Packets/PartyPackets.h"
 #include "../../Net/Packets/PartySearchPackets.h"
+#include "../../Util/Misc.h"
 
 #include <string>
 
@@ -66,6 +68,21 @@ namespace ms
 					recv.skip_byte();
 				bool from_search = (from.size() >= 4 && from.compare(0, 4, "PS: ") == 0);
 				std::string display = from_search ? from.substr(4) : from;
+				// 游戏设置：组队邀请 / 寻找组队 —— 拒绝位则静默回绝，不弹 YesNo
+				auto opt = from_search ? UIGameOpt::PARTY_SEARCH : UIGameOpt::PARTY_APPLY;
+				if (!UIGameOpt::accepts(opt))
+				{
+					DenyPartyRequestPacket(from).dispatch();
+					if (from_search)
+					{
+						if (auto ps = UI::get().get_element<UIPartySearch>())
+							ps->set_searching(false);
+					}
+					LOG(LOG_DEBUG, "PartyHandler: GameOpt refuse "
+						<< (from_search ? "PARTY_SEARCH" : "PARTY_APPLY")
+						<< " from=" << display);
+					break;
+				}
 				std::string msg = from_search
 					? (display + " found you via Party Search. Join their party?")
 					: (display + " has invited you to a party.");
