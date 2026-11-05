@@ -30,3 +30,22 @@
 3. **C5/C8 最后**：UIWorldMap.cpp 现含并发未定义符号风险（SIDE_EXPAND_MS 由本会话临时安置，见 wave1 README），等面板会话提交自己部分后我方可干净摘出；
 4. 每笔提交前跑 `tools/build_smoke.bat`（GATE OK 才 commit；提交本身不改码）。
 5. **等用户一句「按台账提交」再动 git**（门禁：不擅自 commit/push）。
+
+---
+
+## 执行结果（2026-11-05 08:45，未推）
+
+| 笔 | hash | 主题 | 状态 |
+| --- | --- | --- | --- |
+| C7 | 995c8d5 | docs 全案归档（含证据 .txt 化，绕 .gitignore *.log） | ✅（标题/详情空行待安静窗口补） |
+| C1 | 3c38f57 | 标题 FPS/RTT + PerfLog 通道（Window.cpp 按 hunk 摘，IME 两块留下） | ✅（同上补空行） |
+| C2 | 7c29713 | 视口剔除 + 伤害钳制 + 手雷上行（包层同笔保可编译） | ✅ |
+| C3 | fb4fe4e | 并行预热/互斥/LRU/gather 剪枝（实测 resource −31%）/淡入 | ✅ |
+| C4 | 6d66352 | 快捷栏触发键存储 + SetHpMpAlert 包（补 HEAD 已被并发带入调用的依赖） | ✅ |
+| C6 | 3d5cca0 | Buff 右键取消/一键AP/书袋路由/触怪仇恨 | ✅ |
+| 工具 | b4d2280 | hunk_pick + fix_msg_blankline | ✅ |
+| C5/C8 | — | 376 玩家层 + vcxproj 登记 | ⏸ 按计划等地图面板并发线收敛（WorldMapHandlers.{h,cpp} 保持 untracked、HEAD 无引用=自洽） |
+
+- 每笔前 `build_smoke` GATE OK；末次全树 0 error（08:42 exe）。
+- 历史重写（C7/C1 补空行）遇脏树拒（并发会话在动文件）——**不强推共享历史**，脚本备好入工具笔 message。
+- 待用户答复：`fonts/SimHei/simhei.ttf` 与 UIMapDropPanel 的 3 个 `D` 删除是否授意；是否 push。
