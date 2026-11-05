@@ -155,15 +155,23 @@ namespace ms
 			break;
 		}
 
-		case 7: // AskAvatar — 74713D
-		case 8: // MembershopAvatar — 74730B
+		case 7: // AskAvatar — 74713D → UI dlgType=5（sub_9AC552 / sub_9A92C9）
+		case 8: // MembershopAvatar — 74730B（同 UI；出站 lastMsg=8）
 		{
 			if (recv.length() >= 2)
-				recv.read_string();
+				text = recv.read_string();
 			const int n = recv.available() ? static_cast<unsigned char>(recv.read_byte()) : 0;
+			input.style_ids.clear();
+			input.style_ids.reserve(static_cast<size_t>(n));
 			for (int i = 0; i < n && recv.length() >= 4; ++i)
-				recv.read_int();
-			end_unhandled = true;
+				input.style_ids.push_back(recv.read_int());
+			if (!input.style_ids.empty())
+				show_ui = true;
+			else
+			{
+				// 空样式：对齐服务端 sendStyle 空数组走 Ok+dispose；本端直接 -1 收口
+				end_unhandled = true;
+			}
 			break;
 		}
 
@@ -220,7 +228,7 @@ namespace ms
 
 		if (end_unhandled)
 		{
-			// 未接 Quiz/Avatar/Pet/Mirror 等 UI：读完包后安全收口，避免脚本挂死。
+			// 未接 Quiz/Pet/Mirror 等 UI：读完包后安全收口，避免脚本挂死。
 			LOG(LOG_WARN, "[NPC] ScriptMessage msgtype=" << static_cast<int>(msgtype)
 				<< " reserved/no-UI; NpcTalkMore(-1)");
 			NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
@@ -230,10 +238,16 @@ namespace ms
 		if (!show_ui)
 			return;
 
-		// 缺 UtilDlgEx 时不要 emplace 隐形窗口，否则脚本会一直等客户端回复。
-		if (!UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx")))
+		const bool need_avatar = (msgtype == 7 || msgtype == 8);
+		const bool has_shell = need_avatar
+			? UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx_Avatar"))
+			: UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx"));
+		// 缺窗体资源时不要 emplace 隐形窗口，否则脚本会一直等客户端回复。
+		if (!has_shell)
 		{
-			LOG(LOG_WARN, "[NPC] UtilDlgEx missing; end talk msgtype=" << static_cast<int>(msgtype));
+			LOG(LOG_WARN, "[NPC] "
+				<< (need_avatar ? "UtilDlgEx_Avatar" : "UtilDlgEx")
+				<< " missing; end talk msgtype=" << static_cast<int>(msgtype));
 			NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
 			return;
 		}

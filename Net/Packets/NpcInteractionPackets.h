@@ -86,6 +86,16 @@ namespace ms
 			write_byte(1);
 			write_int(amount);
 		}
+
+		// AskAvatar / MembershopAvatar OK（IDA sub_74713D / sub_74730B）：
+		// lastMsg=7|8, action=1, selection=byte(index)。Cancel：action=0（无 selection）。
+		struct AskAvatar {};
+		NpcTalkMorePacket(AskAvatar, int8_t lastmsg, int8_t selection) : OutPacket(OutPacket::Opcode::NPC_TALK_MORE)
+		{
+			write_byte(lastmsg);
+			write_byte(1);
+			write_byte(selection);
+		}
 	};
 
 	// Packet which tells the server of an interaction with an NPC shop

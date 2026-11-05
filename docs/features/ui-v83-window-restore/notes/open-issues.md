@@ -333,8 +333,14 @@ IDA `sub_9929DD` → Draw `sub_99311B`（duration=1000）：A12 白 α1 + 描边
 ### A11h ScriptMessage OnPacket 全量 + tip 820—— **已定案并接线（2026-11-05）**
 
 IDA `sub_74660A` 逐 case：Say `speaker&4`、GetText `short×2`、GetNumber `number_min_digits=0`；  
-msgtype 5/6/7/8/9/10/13/14 按 IDA 读尽后 `NpcTalkMore(-1)`（不新建 Quiz/Avatar/Pet/Mirror UI）。  
+msgtype 5/6/9/10/13/14 读尽后 `NpcTalkMore(-1)`（Quiz/Pet/Mirror/BoxText 仍无 UI）。  
 tip 820 已接；线路径恒 0。证据：[npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md](../../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)。
+
+### A11i AskAvatar / sendStyle（msgtype 7/8）—— **已定案并接线（2026-11-05）**
+
+IDA `74713D`/`9A92C9`：`UtilDlgEx_Avatar` 419×306；Prev/Next/OK2/Cancel2/Exit/Off/On；  
+CharLook 预览；OK=`(7|8,1,sel)`，Cancel 按 Membershop 发 `(7|8,0)`。  
+证据：[npc-talk-utildlgex-align/evidence/a11i-askavatar-sendstyle-ida.md](../../npc-talk-utildlgex-align/evidence/a11i-askavatar-sendstyle-ida.md)。
 
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 

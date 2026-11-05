@@ -121,7 +121,25 @@ namespace ms
 		try_add_button(buttons, Buttons::QYES, UtilDlgEx["BtQYes"]);
 		try_add_button(buttons, Buttons::YES, UtilDlgEx["BtYes"]);
 
+		// AskAvatar 专用钮（IDA StringPool 2268–2272/2724/1257–1258）
+		nl::node AvatarDlg = UiAssetResolve::window("UtilDlgEx_Avatar");
+		if (UiAssetResolve::usable(AvatarDlg))
+		{
+			if (AvatarDlg["backgrnd"])
+				avatar_backgrnd = AvatarDlg["backgrnd"];
+			if (AvatarDlg["nameTag"])
+				avatar_nametag = AvatarDlg["nameTag"];
+			try_add_button(buttons, Buttons::AVATAR_PREV, AvatarDlg["BtPrev"]);
+			try_add_button(buttons, Buttons::AVATAR_NEXT, AvatarDlg["BtNext"]);
+			try_add_button(buttons, Buttons::AVATAR_EXIT, AvatarDlg["BtExit"]);
+			try_add_button(buttons, Buttons::AVATAR_OFF, AvatarDlg["BtOff"]);
+			try_add_button(buttons, Buttons::AVATAR_ON, AvatarDlg["BtOn"]);
+		}
+		try_add_button(buttons, Buttons::AVATAR_YES, nl::nx::UI["Basic.img"]["BtOK2"]);
+		try_add_button(buttons, Buttons::AVATAR_NO, nl::nx::UI["Basic.img"]["BtCancel2"]);
+
 		name = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
+		avatar_style_name = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE);
 
 		onmoved = [&](bool upwards)
 		{
@@ -138,6 +156,28 @@ namespace ms
 
 	void UINpcTalk::draw(float inter) const
 	{
+		// AskAvatar：整窗 backgrnd 419×306（IDA sub_9A3CED / UtilDlgEx_Avatar）
+		if (is_avatar_talk() && avatar_backgrnd.is_valid())
+		{
+			avatar_backgrnd.draw(position);
+			UIElement::draw(inter);
+
+			text.draw(position + Point<int16_t>(AVATAR_TEXT_X, text_draw_y));
+
+			const CharLook& look = avatar_show_new ? avatar_preview : avatar_base;
+			look.draw(DrawArgument(position + Point<int16_t>(AVATAR_LOOK_X, AVATAR_LOOK_Y)), inter);
+
+			if (avatar_category != 2 && avatar_nametag.is_valid())
+			{
+				const Point<int16_t> tag_pos = position + Point<int16_t>(AVATAR_NAMETAG_X, AVATAR_NAMETAG_Y);
+				avatar_nametag.draw(tag_pos);
+				const int16_t name_x = static_cast<int16_t>(
+					tag_pos.x() + avatar_nametag.width() / 2);
+				avatar_style_name.draw(Point<int16_t>(name_x, static_cast<int16_t>(tag_pos.y() + 2)));
+			}
+			return;
+		}
+
 		Point<int16_t> drawpos = position;
 		top.draw(drawpos);
 		drawpos.shift_y(top.height());
@@ -232,6 +272,12 @@ namespace ms
 	{
 		UIElement::update();
 
+		if (is_avatar_talk() && avatar_active)
+		{
+			avatar_base.update(Constants::TIMESTEP);
+			avatar_preview.update(Constants::TIMESTEP);
+		}
+
 		if (input_active)
 			input_field.update();
 
@@ -271,6 +317,42 @@ namespace ms
 
 	Button::State UINpcTalk::button_pressed(uint16_t buttonid)
 	{
+		// AskAvatar：左右切换 / 原貌·新样式 不关窗；Yes/No/Exit 才收口。
+		if (is_avatar_talk())
+		{
+			switch (buttonid)
+			{
+				case Buttons::AVATAR_PREV:
+					cycle_avatar_style(-1);
+					return Button::State::NORMAL;
+				case Buttons::AVATAR_NEXT:
+					cycle_avatar_style(1);
+					return Button::State::NORMAL;
+				case Buttons::AVATAR_OFF:
+					// IDA 8194：切回原貌（this+67=0），BtOff 隐藏 / BtOn 显示
+					avatar_show_new = false;
+					refresh_avatar_toggle_buttons();
+					return Button::State::NORMAL;
+				case Buttons::AVATAR_ON:
+					avatar_show_new = true;
+					refresh_avatar_toggle_buttons();
+					return Button::State::NORMAL;
+				case Buttons::AVATAR_YES:
+					dispatch_avatar_ok();
+					clear_avatar_preview();
+					deactivate();
+					return Button::State::NORMAL;
+				case Buttons::AVATAR_NO:
+				case Buttons::AVATAR_EXIT:
+					dispatch_avatar_cancel();
+					clear_avatar_preview();
+					deactivate();
+					return Button::State::NORMAL;
+				default:
+					break;
+			}
+		}
+
 		// GetText/GetNumber 点 OK：先校验；失败则保持开窗（对齐 IDA sub_9AB50A 弹 tip 不收口）。
 		const bool submit_input = input_active
 			&& buttonid == Buttons::OK
@@ -495,6 +577,13 @@ namespace ms
 	{
 		if (pressed && escape)
 		{
+			if (is_avatar_talk())
+			{
+				dispatch_avatar_cancel();
+				clear_avatar_preview();
+				deactivate();
+				return;
+			}
 			clear_input_field();
 			deactivate();
 
@@ -502,6 +591,27 @@ namespace ms
 			return;
 		}
 		if (!pressed) return;
+
+		if (is_avatar_talk())
+		{
+			if (keycode == KeyAction::Id::LEFT)
+			{
+				cycle_avatar_style(-1);
+				return;
+			}
+			if (keycode == KeyAction::Id::RIGHT)
+			{
+				cycle_avatar_style(1);
+				return;
+			}
+			if (keycode == KeyAction::Id::RETURN)
+			{
+				dispatch_avatar_ok();
+				clear_avatar_preview();
+				deactivate();
+				return;
+			}
+		}
 
 		// UI 路由传入的是 KeyAction::Id（见 UI.cpp），不是 GLFW 原始键码。
 		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
@@ -559,6 +669,8 @@ namespace ms
 			case 2: return TalkType::SENDGETTEXT;
 			case 3: return TalkType::SENDGETNUMBER;
 			case 4: return TalkType::SENDSIMPLE;
+			case 7: return TalkType::SENDAVATAR;
+			case 8: return TalkType::SENDMEMBERSHOPAVATAR;
 			case 12: return TalkType::SENDACCEPTDECLINE;
 			default: return TalkType::NONE;
 		}
@@ -788,6 +900,7 @@ namespace ms
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx,
 		const TalkInputParams& input)
 	{
+		clear_avatar_preview();
 		apply_dlg_skin(speakerbyte);
 		dlg_speaker = speakerbyte;
 		input_params = input;
@@ -807,9 +920,13 @@ namespace ms
 		formatted_text_pos = 0;
 		formatted_text = format_text(tx, npcid);
 
+		const bool avatar_talk = is_avatar_talk();
+		const int16_t body_width = avatar_talk ? AVATAR_TEXT_W : TEXT_WIDTH;
+
 		// 折行宽度 = 原生三帧量出来的正文块右缘(474..476) - TEXT_X(166)。
 		// 原来 maxwidth=320 起笔在 x162，正文右缘铺到 x482，和右下角「确定」(474..520) 叠住。
-		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, TEXT_WIDTH);
+		// AskAvatar：IDA sub_9ACC20 a2!=0 → left=110，窗宽 419。
+		text = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, formatted_text, body_width);
 
 		text_block_height = text.height();
 		const int16_t text_height = text_block_height;
@@ -820,7 +937,13 @@ namespace ms
 
 		text.change_text("");
 
-		if (speakerbyte == 0)
+		if (avatar_talk)
+		{
+			// AskAvatar 无 NPC 立绘；预览角色走 setup_avatar_preview。
+			speaker = Texture();
+			name.change_text("");
+		}
+		else if (speakerbyte == 0)
 		{
 			// 与 Npc.cpp 对齐用 extend_id：原来的 7 - strid.size() 遇到 8 位 npcid 会无符号下溢，
 			// insert(0, 巨值, '0') 抛 length_error，整条对话直接打不开。
@@ -838,7 +961,17 @@ namespace ms
 		height = min_height;
 		show_slider = false;
 
-		if (text_height > height)
+		if (avatar_talk)
+		{
+			// 固定窗高 306；正文区高 100（IDA sub_9A3D71 case5），Y=(area-th-6)/2+28。
+			height = AVATAR_H;
+			if (text_block_height <= AVATAR_TEXT_AREA_H)
+				text_draw_y = static_cast<int16_t>(
+					(AVATAR_TEXT_AREA_H - text_block_height - 6) / 2 + 28);
+			else
+				text_draw_y = 22;
+		}
+		else if (text_height > height)
 		{
 			if (text_height > MAX_HEIGHT)
 			{
@@ -857,11 +990,14 @@ namespace ms
 		}
 
 		// IDA sub_9A64FC：装得下 → (content_h - text_h)/2 + t.height + 7；滑条 → 贴顶 +7。
-		if (show_slider)
-			text_draw_y = static_cast<int16_t>(top.height() + TEXT_Y_PAD);
-		else
-			text_draw_y = static_cast<int16_t>(
-				top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
+		if (!avatar_talk)
+		{
+			if (show_slider)
+				text_draw_y = static_cast<int16_t>(top.height() + TEXT_Y_PAD);
+			else
+				text_draw_y = static_cast<int16_t>(
+					top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
+		}
 
 		// GetText/GetNumber：在正文下方留输入栈，正文在剩余区内再居中。
 		//   非 Avatar：IDA sub_9A83F6（INPUT_STACK）；Avatar：sub_9A8716 固定带。
@@ -998,16 +1134,41 @@ namespace ms
 					<< " y=" << y_next << " choices=" << simple_choices.size());
 				break;
 			}
+			case TalkType::SENDAVATAR:
+			case TalkType::SENDMEMBERSHOPAVATAR:
+			{
+				// IDA sub_9A92C9 固定槽（窗 419×306）
+				activate(Buttons::AVATAR_PREV, Point<int16_t>(AVATAR_BTN_PREV_X, AVATAR_BTN_PREV_Y));
+				activate(Buttons::AVATAR_NEXT, Point<int16_t>(AVATAR_BTN_NEXT_X, AVATAR_BTN_NEXT_Y));
+				activate(Buttons::AVATAR_YES, Point<int16_t>(AVATAR_BTN_YES_X, AVATAR_BTN_BOTTOM_Y));
+				activate(Buttons::AVATAR_NO, Point<int16_t>(AVATAR_BTN_NO_X, AVATAR_BTN_BOTTOM_Y));
+				activate(Buttons::AVATAR_EXIT, Point<int16_t>(AVATAR_BTN_EXIT_X, AVATAR_BTN_BOTTOM_Y));
+				setup_avatar_preview();
+				LOG(LOG_INFO, "UINpcTalk: AskAvatar styles=" << avatar_styles.size()
+					<< " cat=" << static_cast<int>(avatar_category)
+					<< " msgtype=" << static_cast<int>(msgtype_wire));
+				break;
+			}
 			default:
 			{
 				break;
 			}
 		}
 
-		position = Point<int16_t>(400 - top.width() / 2, 240 - height / 2);
-		// 命中区 = 壳体重绘高度（t + 正文 + s）。原来写死 height + 120，比实际绘制高出 30 余px，
-		// 那段空白会白白吞掉点击（点不到下层的窗口/世界）。
-		dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
+		if (avatar_talk && avatar_backgrnd.is_valid())
+		{
+			dimension = Point<int16_t>(avatar_backgrnd.width(), avatar_backgrnd.height());
+			position = Point<int16_t>(
+				static_cast<int16_t>(400 - dimension.x() / 2),
+				static_cast<int16_t>(240 - dimension.y() / 2));
+		}
+		else
+		{
+			position = Point<int16_t>(400 - top.width() / 2, 240 - height / 2);
+			// 命中区 = 壳体重绘高度（t + 正文 + s）。原来写死 height + 120，比实际绘制高出 30 余px，
+			// 那段空白会白白吞掉点击（点不到下层的窗口/世界）。
+			dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
+		}
 
 		// 多分辨率：上面的 (400,240) 是 800×600 时代按中心点记的常量，高分辨率下
 		// 会把对话窗钉在左上。非 1280×720 档位按视口居中；1280×720 零回归。
@@ -1026,7 +1187,9 @@ namespace ms
 	void UINpcTalk::reanchor_talk()
 	{
 		// UtilDlgEx 缺失时构造早退，dimension 为 0，居中会把窗口挪出视口。
-		if (top.width() <= 0 || dimension.x() <= 0)
+		if (dimension.x() <= 0)
+			return;
+		if (!is_avatar_talk() && top.width() <= 0)
 			return;
 
 		const int16_t vieww = Constants::Constants::get().get_viewwidth();
@@ -1035,9 +1198,11 @@ namespace ms
 		if (vieww == ResolutionTiers::LOGIN_W && viewh == ResolutionTiers::LOGIN_H)
 		{
 			// 切回 1280×720 时也要恢复原生绝对定位（不能沿用上一次的居中坐标）。
+			const int16_t anchor_w = is_avatar_talk() ? dimension.x() : top.width();
+			const int16_t anchor_h = is_avatar_talk() ? dimension.y() : height;
 			position = Point<int16_t>(
-				static_cast<int16_t>(400 - top.width() / 2),
-				static_cast<int16_t>(240 - height / 2));
+				static_cast<int16_t>(400 - anchor_w / 2),
+				static_cast<int16_t>(240 - anchor_h / 2));
 			return;
 		}
 
@@ -1230,5 +1395,131 @@ namespace ms
 			}
 		}
 		return false;
+	}
+
+	bool UINpcTalk::is_avatar_talk() const
+	{
+		return type == TalkType::SENDAVATAR || type == TalkType::SENDMEMBERSHOPAVATAR;
+	}
+
+	void UINpcTalk::clear_avatar_preview()
+	{
+		avatar_active = false;
+		avatar_styles.clear();
+		avatar_selected = 0;
+		avatar_show_new = true;
+		avatar_category = 1;
+		avatar_style_name.change_text("");
+	}
+
+	void UINpcTalk::setup_avatar_preview()
+	{
+		avatar_styles = input_params.style_ids;
+		avatar_selected = 0;
+		avatar_show_new = true;
+		avatar_active = !avatar_styles.empty();
+
+		if (avatar_styles.empty())
+		{
+			LOG(LOG_WARN, "UINpcTalk: AskAvatar empty styles");
+			return;
+		}
+
+		// IDA sub_9AC92C：style/10000 → 2=face(0) / 3=hair(1) / else=skin(2)
+		const int32_t first = avatar_styles.front();
+		const int32_t kind = first / 10000;
+		if (kind == 2)
+			avatar_category = 0;
+		else if (kind == 3)
+			avatar_category = 1;
+		else
+			avatar_category = 2;
+
+		avatar_base = Stage::get().get_player().get_look();
+		avatar_base.set_direction(false);
+		avatar_preview = avatar_base;
+		apply_avatar_selection();
+		refresh_avatar_toggle_buttons();
+	}
+
+	void UINpcTalk::apply_avatar_selection()
+	{
+		if (avatar_styles.empty())
+			return;
+
+		if (avatar_selected < 0)
+			avatar_selected = static_cast<int32_t>(avatar_styles.size()) - 1;
+		if (static_cast<size_t>(avatar_selected) >= avatar_styles.size())
+			avatar_selected = 0;
+
+		const int32_t style_id = avatar_styles[static_cast<size_t>(avatar_selected)];
+		avatar_preview = avatar_base;
+		avatar_preview.set_direction(false);
+
+		// IDA sub_9AA69E：cat0→face / cat1→hair / cat2→skin
+		if (avatar_category == 0)
+			avatar_preview.set_face(style_id);
+		else if (avatar_category == 1)
+			avatar_preview.set_hair(style_id);
+		else
+			avatar_preview.set_body(style_id);
+
+		std::string style_label;
+		if (avatar_category == 0 && avatar_preview.get_face())
+			style_label = avatar_preview.get_face()->get_name();
+		else if (avatar_category == 1 && avatar_preview.get_hair())
+			style_label = avatar_preview.get_hair()->get_name();
+		else if (avatar_category == 2 && avatar_preview.get_body())
+			style_label = avatar_preview.get_body()->get_name();
+		avatar_style_name.change_text(style_label);
+	}
+
+	void UINpcTalk::refresh_avatar_toggle_buttons()
+	{
+		// IDA：show_new(this+67)==1 → BtOff 可见；==0 → BtOn 可见（互斥）
+		if (buttons.count(Buttons::AVATAR_OFF))
+		{
+			buttons[Buttons::AVATAR_OFF]->set_position(
+				Point<int16_t>(AVATAR_BTN_TOGGLE_X, AVATAR_BTN_BOTTOM_Y));
+			buttons[Buttons::AVATAR_OFF]->set_active(avatar_show_new);
+			buttons[Buttons::AVATAR_OFF]->set_state(Button::State::NORMAL);
+		}
+		if (buttons.count(Buttons::AVATAR_ON))
+		{
+			buttons[Buttons::AVATAR_ON]->set_position(
+				Point<int16_t>(AVATAR_BTN_TOGGLE_X, AVATAR_BTN_BOTTOM_Y));
+			buttons[Buttons::AVATAR_ON]->set_active(!avatar_show_new);
+			buttons[Buttons::AVATAR_ON]->set_state(Button::State::NORMAL);
+		}
+	}
+
+	void UINpcTalk::cycle_avatar_style(int delta)
+	{
+		if (avatar_styles.empty())
+			return;
+
+		const int32_t n = static_cast<int32_t>(avatar_styles.size());
+		avatar_selected = (avatar_selected + delta) % n;
+		if (avatar_selected < 0)
+			avatar_selected += n;
+		apply_avatar_selection();
+		LOG(LOG_DEBUG, "UINpcTalk: AskAvatar sel=" << avatar_selected
+			<< " id=" << avatar_styles[static_cast<size_t>(avatar_selected)]);
+	}
+
+	void UINpcTalk::dispatch_avatar_ok()
+	{
+		const int8_t sel = static_cast<int8_t>(avatar_selected & 0xFF);
+		NpcTalkMorePacket(NpcTalkMorePacket::AskAvatar{}, msgtype_wire, sel).dispatch();
+		LOG(LOG_INFO, "UINpcTalk: AskAvatar OK msgtype=" << static_cast<int>(msgtype_wire)
+			<< " sel=" << static_cast<int>(sel));
+	}
+
+	void UINpcTalk::dispatch_avatar_cancel()
+	{
+		// IDA AskAvatar(74713D) Close 静默；MembershopAvatar(74730B) 恒发 (8,0)。
+		// 本仓统一发 (msgtype,0)，对齐 Membershop 与 s9 NPCMoreTalkHandler，避免脚本挂死。
+		NpcTalkMorePacket(msgtype_wire, 0).dispatch();
+		LOG(LOG_INFO, "UINpcTalk: AskAvatar cancel msgtype=" << static_cast<int>(msgtype_wire));
 	}
 }

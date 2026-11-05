@@ -36,7 +36,7 @@
    "s9_send_distinct_values": 313,
    "s9_send_emitted": 252
   },
-  "generated_at": "2026-11-05T17:58:28",
+  "generated_at": "2026-11-05T19:34:01",
   "generated_by": "tools/gen_opcode_matrix.py",
   "s9_git_head": "308d118b204961ec2da8858a41e3b234d78de06d",
   "s9_shadowed_registrations": {
@@ -1048,9 +1048,13 @@
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
      "line": 83
+    },
+    {
+     "file": "Net/Packets/NpcInteractionPackets.h",
+     "line": 93
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 3,
    "client_value": 60,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCMoreTalkHandler",
@@ -1071,7 +1075,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 119
+     "line": 129
     }
    ],
    "client_sent_count": 1,

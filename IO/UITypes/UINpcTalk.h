@@ -24,6 +24,7 @@
 
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/Text.h"
+#include "../../Character/Look/CharLook.h"
 
 #include <string>
 #include <utility>
@@ -36,7 +37,7 @@ namespace ms
 	public:
 		// Wire msgtype values (BeiDou / v83):
 		// 0=Say(OK/Next/Prev via style), 1=YesNo, 2=GetText, 3=GetNumber,
-		// 4=Simple, 12=AcceptDecline
+		// 4=Simple, 7=AskAvatar, 8=MembershopAvatar, 12=AcceptDecline
 		enum TalkType : int8_t
 		{
 			NONE = -1,
@@ -45,6 +46,8 @@ namespace ms
 			SENDGETTEXT = 2,
 			SENDGETNUMBER = 3,
 			SENDSIMPLE = 4,
+			SENDAVATAR = 7,
+			SENDMEMBERSHOPAVATAR = 8,
 			SENDACCEPTDECLINE = 12,
 			// Style-derived variants of SENDOK (not wire values)
 			SENDNEXT = 100,
@@ -83,6 +86,8 @@ namespace ms
 			int32_t edit_maxlen = 0;
 			// GetNumber：9AC732 a5 → this+0xDC；线路径恒 0，tip 820 仅人为 >0 时可见
 			int32_t number_min_digits = 0;
+			// AskAvatar / MembershopAvatar：style id 列表（发型/脸型/肤色）
+			std::vector<int32_t> style_ids;
 		};
 
 		void change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speaker, const std::string& text);
@@ -168,6 +173,27 @@ namespace ms
 		static constexpr uint8_t SIMPLE_DASH_G = 0x91;
 		static constexpr uint8_t SIMPLE_DASH_B = 0x91;
 
+		// AskAvatar（IDA sub_9A92C9 / sub_9A3CED / UtilDlgEx_Avatar）：
+		// 固定窗 419×306；正文 left=110；预览脚点 (207,245)；底钮 y=281。
+		static constexpr int16_t AVATAR_W = 419;
+		static constexpr int16_t AVATAR_H = 306;
+		static constexpr int16_t AVATAR_TEXT_X = 110;
+		static constexpr int16_t AVATAR_TEXT_W = 289;
+		static constexpr int16_t AVATAR_TEXT_AREA_H = 100;
+		static constexpr int16_t AVATAR_LOOK_X = 207;
+		static constexpr int16_t AVATAR_LOOK_Y = 245;
+		static constexpr int16_t AVATAR_NAMETAG_X = 123;
+		static constexpr int16_t AVATAR_NAMETAG_Y = 246;
+		static constexpr int16_t AVATAR_BTN_PREV_X = 15;
+		static constexpr int16_t AVATAR_BTN_PREV_Y = 195;
+		static constexpr int16_t AVATAR_BTN_NEXT_X = 341;
+		static constexpr int16_t AVATAR_BTN_NEXT_Y = 195;
+		static constexpr int16_t AVATAR_BTN_YES_X = 314;
+		static constexpr int16_t AVATAR_BTN_NO_X = 363;
+		static constexpr int16_t AVATAR_BTN_EXIT_X = 9;
+		static constexpr int16_t AVATAR_BTN_TOGGLE_X = 172;
+		static constexpr int16_t AVATAR_BTN_BOTTOM_Y = 281;
+
 		enum Buttons
 		{
 			ALLLEVEL,
@@ -184,7 +210,15 @@ namespace ms
 			QNO,
 			QSTART,
 			QYES,
-			YES
+			YES,
+			// AskAvatar 专用（UtilDlgEx_Avatar + Basic BtOK2/BtCancel2；不覆盖普通对话钮）
+			AVATAR_PREV,
+			AVATAR_NEXT,
+			AVATAR_YES,
+			AVATAR_NO,
+			AVATAR_EXIT,
+			AVATAR_OFF,
+			AVATAR_ON
 		};
 
 		Texture top;
@@ -192,6 +226,10 @@ namespace ms
 		Texture bottom;
 		Texture nametag;
 		Texture speaker;
+		// AskAvatar 整窗底图（UtilDlgEx_Avatar/backgrnd 419×306）与样式名牌
+		Texture avatar_backgrnd;
+		Texture avatar_nametag;
+		Text avatar_style_name;
 
 		Text text;
 		Text name;
@@ -241,6 +279,16 @@ namespace ms
 		TalkInputParams input_params;
 		bool input_avatar_layout = false;
 
+		// AskAvatar 预览：基貌 + 当前选中样式；avatar_show_new=true 时画预览（IDA this+67）
+		CharLook avatar_base;
+		CharLook avatar_preview;
+		std::vector<int32_t> avatar_styles;
+		int32_t avatar_selected = 0;
+		bool avatar_show_new = true;
+		// 0=face / 1=hair / 2=skin（IDA sub_9AC92C style_id/10000）
+		int8_t avatar_category = 1;
+		bool avatar_active = false;
+
 		std::function<void(bool)> onmoved;
 
 		// 把 #L<n>#label#l 就地拆成正文里的 label + 可点区间，返回剥掉令牌后的文本
@@ -256,5 +304,13 @@ namespace ms
 		// 校验失败 tip（IDA sub_9AB50A → sub_9929DD，StringPool 817–821；含 tip 820 位数下限）
 		void show_input_tip(const std::string& message);
 		int16_t input_content_left() const;
+		bool is_avatar_talk() const;
+		void clear_avatar_preview();
+		void setup_avatar_preview();
+		void apply_avatar_selection();
+		void refresh_avatar_toggle_buttons();
+		void cycle_avatar_style(int delta);
+		void dispatch_avatar_ok();
+		void dispatch_avatar_cancel();
 	};
 }

@@ -33,6 +33,7 @@
 | 19 | NPC 对话 A11b+A11c | ⏳ 待测 | c2s NPC_TALK_MORE | 下项发 selection；α/TEXT_Y/Next=`W-78`；见 npc-talk-utildlgex-align |
 | 22 | NPC tip 817–821 + Pet inset A11g | ⏳ 待测 | — | 校验 tip 样式；Pet speaker=2 输入 inset=25 |
 | 23 | ScriptMessage OnPacket + tip 820 A11h | ⏳ 待测 | s2c 304 | 0/1/2/3/4/12 回归；未接 UI `-1` 收口；tip 820 需人为 min_digits>0 |
+| 24 | AskAvatar / sendStyle A11i | ⏳ 待测 | s2c 304 / c2s 60 | UtilDlgEx_Avatar 选样式；OK `(7,1,sel)`；Cancel `(7,0)` |
 
 ---
 
@@ -316,12 +317,26 @@
   2. **Say `speaker&4`**：若脚本带 override npc，立绘应对齐覆盖后的 templateId（无此类脚本则跳过）。
   3. **GetText short×2**：s9 `writeInt(0)` 路径与原先一致（minLen=0 不弹 tip 821）。
   4. **GetNumber tip 820**：正常 `sendGetNumber` **不应**弹「more than %d digits」；若要肉眼验 tip 820，需临时把 `TalkInputParams::number_min_digits` 调为 >0（或调试断点改字段）再输入偏短数字串。
-  5. **未接 UI 收口**：`sendStyle`（msgtype 7）、Mirror（14）、Quiz/SpeedQuiz/Pet/AskBoxText（5/6/9/10/13）→ 客户端应 `NpcTalkMore(-1)` 结束，脚本不永久挂死；日志 `[NPC] ScriptMessage msgtype=… reserved/no-UI`。
-  6. **Avatar/Quiz UI**：本轮**故意不接**；真机只验收口，不验选发型/答题窗。
+  5. **未接 UI 收口**：Mirror（14）、Quiz/SpeedQuiz/Pet/AskBoxText（5/6/9/10/13）→ 客户端应 `NpcTalkMore(-1)` 结束，脚本不永久挂死；日志 `[NPC] ScriptMessage msgtype=… reserved/no-UI`。
+  6. **AskAvatar（A11i，另条）**：见 §24；本条不再把 sendStyle 当吞包项。
 - **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
 - **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
 - **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
-- **仍预留**：Quiz/Avatar/Pet/Mirror 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
+- **仍预留**：Quiz/Pet/Mirror/AskBoxText 完整 UI；s9 Quiz msgtype 字节与 IDA 对齐（服务端改包另开）；KeyDown cancel。
+
+## 24. AskAvatar / sendStyle A11i
+
+- **前置**：理发/整容/护肤 NPC（如 `cm.sendStyle`）；库存有对应优惠券更易走完脚本。
+- **操作 / 期望**：
+  1. 触发 `sendStyle` → 开 **UtilDlgEx_Avatar** 419×306 窗；正文宋体 A12M；角色预览在右下。
+  2. **←/→ 或 BtPrev/BtNext** 切换样式，预览与名牌（非肤色）更新。
+  3. **BtOff** 看原貌、**BtOn** 看新样式（互斥）。
+  4. **BtOK2** → 上行 `(7,1,sel)`，脚本按 selection 继续；**Cancel2/Exit/ESC** → `(7,0)` 结束。
+  5. MembershopAvatar（msgtype 8，若有脚本）同 UI，出站 lastMsg=8。
+- **期望**：无崩；样式选择可走完；取消不挂脚本。
+- **opcode**：s2c `NPC_TALK=304` msgtype7/8；c2s `NPC_TALK_MORE=60`。
+- **文档**：[a11i-askavatar-sendstyle-ida](../npc-talk-utildlgex-align/evidence/a11i-askavatar-sendstyle-ida.md)
+- **仍预留**：Quiz / Pet / Mirror / AskBoxText UI。
 
 ## 7. SET_HPMPALERT
 
