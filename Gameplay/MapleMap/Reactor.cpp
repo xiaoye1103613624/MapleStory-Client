@@ -36,15 +36,38 @@ namespace ms
 		// 因此命中哪个状态播该状态的 Hit（见 play_state_sound）。
 		// 修前：TODO 从不播；波2-B 初版按 {rid}/Hit 加载，层级错误 ⇒ 空节点静音。
 
-		normal = src[0];
 		animation_ended = true;
 		dead = false;
 		hittable = false;
 
-		for (auto sub : src[0])
+		nl::node st = src[state] ? src[state] : src[0];
+		for (auto sub : st)
 			if (sub.name() == "event")
 				if (sub["0"]["type"].get_integer() == 0)
 					hittable = true;
+
+		reload_idle();
+	}
+
+	void Reactor::reload_idle()
+	{
+		// Idle / 悬浮：原生读 state 节点下的帧循环；部分版本另挂 "default" 子节点
+		// （IDA string id 960，sub_71165A @0x712213 push 3C0h）。
+		// 本包 079/s9 Reactor.wz 无 name="default" 键（全量 XML 零命中），
+		// 暗黑龙王裂隙 2201004 等靠 state/0 下 0..N canvas（delay=120）循环漂浮。
+		// 修前：normal=src[0] 且 idle 分支从不 update ⇒ 523+ 多帧 idle 冻在第 0 帧。
+		nl::node st = src[state];
+		if (!st)
+			st = src[0];
+
+		nl::node idle = st["default"];
+		if (!idle)
+			idle = st;
+		if (!idle)
+			idle = src["default"];
+
+		if (idle)
+			normal = Animation(idle);
 	}
 
 	void Reactor::draw(double viewx, double viewy, float alpha) const
@@ -54,7 +77,6 @@ namespace ms
 
 		if (animation_ended)
 		{
-			// TODO: Handle 'default' animations (horntail reactor floating)
 			normal.draw(absp - shift, alpha);
 		}
 		else
@@ -68,7 +90,17 @@ namespace ms
 		physics.move_object(phobj);
 
 		if (!animation_ended)
+		{
 			animation_ended = animations.at(state - 1).update();
+			// hit 转场播完后切到新状态 idle（含多帧悬浮），否则会一直画旧 normal。
+			if (animation_ended)
+				reload_idle();
+		}
+		else
+		{
+			// idle 循环：Animation::update 末帧返回 ended=true 并 rewind 到 0，忽略返回值。
+			normal.update();
+		}
 
 		if (animation_ended && dead)
 			deactivate();
@@ -94,7 +126,18 @@ namespace ms
 				animation_ended = false;
 				play_state_sound(old);
 			}
-			// 缺 hit 帧：保持 animation_ended，画 normal，不再 at() 崩。
+			else
+			{
+				// 缺 hit 帧：立刻换新状态 idle，不再 at() 崩。
+				animation_ended = true;
+				reload_idle();
+			}
+		}
+		else
+		{
+			// 非打击型（道具/触碰等）：无 hit 转场，直接切 idle。
+			animation_ended = true;
+			reload_idle();
 		}
 	}
 
@@ -118,6 +161,7 @@ namespace ms
 		else
 		{
 			animation_ended = true; // 无 hit 帧：update 下一拍直接 deactivate
+			reload_idle();
 		}
 		dead = true;
 	}

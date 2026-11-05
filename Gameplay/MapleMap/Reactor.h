@@ -50,12 +50,10 @@ namespace ms
 		// 路径经 _tools/summon_probe 解析 Sound/Reactor.img 取证（2026-11-03，
 		// 与 IDA sub_989ADD 的 "Sound/Reactor.img/%s/%s"+"Hit" 吻合）。
 		void play_state_sound(int8_t st);
-		// TODO: Below
-		//int8_t stance; // ??
-		// TODO: These are in the GMS client
-		//bool movable; // Snowball?
-		//int32_t questid;
-		//bool activates_by_touch;
+		// 加载当前 state 的 idle/悬浮动画（优先 state/default，否则 state 本体多帧）。
+		// 依据：native-map-object-re §3.2（string id 960 "default"）；
+		// 079/s9 Reactor.wz 实测无 default 子键，523+ 反应堆靠 state 下 0..N canvas 循环。
+		void reload_idle();
 
 		nl::node src;
 		std::map<int8_t, Animation> animations;

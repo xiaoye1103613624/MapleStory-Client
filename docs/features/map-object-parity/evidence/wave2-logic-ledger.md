@@ -22,7 +22,7 @@
 | 项 | 阻塞原因 | 下一步 |
 | --- | --- | --- |
 | 传送门全类型动画 | Portal::Type 15 种 → 动画节点映射缺完整 IDA 证据（只确证 pg/pv/ph 存在，映射表未定位） | 补 IDA 取证原生 CField::Load 或 portal pool 的 type→anim 表后实现 |
-| 反应堆 default 悬浮动画 | Reactor.cpp 注释 TODO（horntail floating），原生 sub 未定位 | 同上 |
+| 反应堆 default 悬浮动画 | ✅ `reactor-default-idle`：idle 每拍 update + reload_idle；IDA 960/`sub_71165A`；本包无 default 子键、靠 state 多帧 | 真机待测 |
 | 出生特效实际播放 | Mob/SpecialEff.img 在本数据缺失（Mob 目录只有逐怪 img + QuestCountGroup） | 资源补齐后再接 effect>0 播放 |
 | Boss 血条多目标队列 | 原生缓存规则（多 mob 轮换）未取证 | 补 IDA 后实现 |
 
