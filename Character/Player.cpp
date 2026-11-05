@@ -23,10 +23,13 @@
 #include "../IO/UI.h"
 
 #include "../IO/UITypes/UIStatsInfo.h"
+#include "../Net/Packets/CommonPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Net/Packets/InventoryPackets.h"
 #include "../Net/Packets/PetPackets.h"
 #include "../Configuration.h"
+#include "../Constants.h"
+#include "../MapleStory.h"
 
 #include <algorithm>
 
@@ -203,6 +206,33 @@ namespace ms
 		}
 
 		climb_cooldown.update();
+
+		// CANCEL_DEBUFF(99)：疾病类临时状态本地倒计时到期后发空包。
+		// 对照 port-095 CWvsContext::CheckTemporaryStatDuration → CANCEL_DEBUFF；
+		// s9 CancelDebuffHandler 当前为空实现，发了无副作用，仅协议对齐。
+		static constexpr Buffstat::Id k_diseases[] = {
+			Buffstat::Id::STUN,
+			Buffstat::Id::POISON,
+			Buffstat::Id::SEAL,
+			Buffstat::Id::DARKNESS,
+			Buffstat::Id::WEAKEN
+		};
+		bool expired_disease = false;
+		for (Buffstat::Id id : k_diseases)
+		{
+			Buff& b = buffs[id];
+			if (b.value <= 0 || b.duration <= 0)
+				continue;
+			b.duration -= Constants::TIMESTEP;
+			if (b.duration <= 0)
+			{
+				b = {};
+				expired_disease = true;
+				LOG(LOG_DEBUG, "[Player] disease expired stat=" << static_cast<int>(id));
+			}
+		}
+		if (expired_disease)
+			CancelDebuffPacket().dispatch();
 
 		return get_layer();
 	}

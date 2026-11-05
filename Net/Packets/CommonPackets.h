@@ -41,4 +41,13 @@ namespace ms
 			write_int(sourceid);
 		}
 	};
+
+	// Opcode: CANCEL_DEBUFF(99 / 0x63) — 原生 CheckTemporaryStatDuration 在
+	// 疾病到期时发空包。s9 CancelDebuffHandler 当前为空实现（注释块带
+	// "TIP: BAD STUFF LOL!"，不解禁），本包仅做协议对齐与可观测性。
+	class CancelDebuffPacket : public OutPacket
+	{
+	public:
+		CancelDebuffPacket() : OutPacket(OutPacket::Opcode::CANCEL_DEBUFF) {}
+	};
 }
