@@ -307,11 +307,22 @@ namespace ms
 				if (formatted_text_pos < formatted_text.size())
 				{
 					std::string t = text.get_text();
-					char c = formatted_text[formatted_text_pos];
+					// #i/#v 整段原子喂入，避免打字机半截令牌被布局器当成正文数字。
+					size_t take = 1;
+					const size_t pos = formatted_text_pos;
 
-					text.change_text(t + c);
+					if (pos + 1 < formatted_text.size()
+						&& formatted_text[pos] == '#'
+						&& (formatted_text[pos + 1] == 'i' || formatted_text[pos + 1] == 'v'))
+					{
+						const size_t end = formatted_text.find('#', pos + 2);
 
-					formatted_text_pos++;
+						if (end != std::string::npos)
+							take = end - pos + 1;
+					}
+
+					text.change_text(t + formatted_text.substr(pos, take));
+					formatted_text_pos += take;
 					timestep = 0;
 				}
 				else
@@ -720,8 +731,7 @@ namespace ms
 	{
 		// C6 收口：#p/#h/#t/#z 必须**逐处**展开（旧实现各只替第一处）；
 		// 闭合 `#` 一并吃掉（旧写法留下悬空 `#`）；#t/#z 走 ItemData 全品类名，
-		// 不再只查 Consume.img。#i/#v 图标令牌本仓 LayoutBuilder 尚未画图，
-		// 整段剥掉以免 `#i…##t…#` 露出数字残片（图标实装后改回插图）。
+		// 不再只查 Consume.img。#i/#v 留给 LayoutBuilder 行内画图标（勿剥除）。
 		std::string formatted_text = tx;
 
 		auto trim_body = [](std::string body) {
@@ -799,17 +809,7 @@ namespace ms
 		replace_named('t', resolve_item);
 		replace_named('z', resolve_item);
 
-		// 剥 #i[id]# / #v[id]#（整段，含闭合 #）
-		for (char tag : { 'i', 'v' })
-		{
-			replace_named(tag, [](const std::string&, std::string& out) {
-				out.clear();
-				return true;
-			});
-		}
-
-		// 令牌剥除放在这里，而不是交给布局器：打字机逐字符喂的就是这份文本，
-		// 布局器只负责排版，中途出现半截 #L 会画成乱码。
+		// #i/#v 保留给 LayoutBuilder（IDA type1 行内 icon）；#L 仍在下方剥除。
 		return strip_simple_choices(formatted_text);
 	}
 

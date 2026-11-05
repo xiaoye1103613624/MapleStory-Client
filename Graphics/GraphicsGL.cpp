@@ -19,6 +19,7 @@
 #include "Utf8.h"
 
 #include "../Configuration.h"
+#include "../Data/ItemData.h"
 #include "../MapleStory.h"
 #include "../IO/Window.h"
 
@@ -917,6 +918,12 @@ namespace ms
 		ay = font.linespace();
 		width = 0;
 		endy = 0;
+		line_max_h = 0;
+		line_has_icon = false;
+		pending_icon_id = 0;
+		pending_icon_w = 0;
+		pending_icon_h = 0;
+		has_pending_icon = false;
 
 		if (maxwidth == 0)
 			maxwidth = 800;
@@ -931,6 +938,7 @@ namespace ms
 		Color::Name last_color = color;
 		size_t skip = 0;
 		bool linebreak = false;
+		bool placed_icon = false;
 
 		if (formatted)
 		{
@@ -1072,8 +1080,11 @@ namespace ms
 							// #i[id]# - Shows a picture of the given item
 							case 'i':
 							{
-								// TODO: Needs implemented
-								skip += 2;
+								int16_t iw = 0;
+								placed_icon = try_parse_item_icon(text, first, last, skip, iw);
+
+								if (!placed_icon)
+									skip += 2;
 								break;
 							}
 							// #k - Black text
@@ -1177,10 +1188,20 @@ namespace ms
 								break;
 							}
 							// #v[id]# - Shows a picture of the given item
+							// IDA sub_9A2DE0：'i'→enum7、'v'→enum8，case 7/8 同 type1 同 icon 路径
 							case 'v':
 							{
-								// TODO: Needs implemented
-								skip += 2;
+								int16_t iw = 0;
+								placed_icon = try_parse_item_icon(text, first, last, skip, iw);
+
+								if (!placed_icon)
+									skip += 2;
+								break;
+							}
+							// 单独闭合 `#`（createlayout 把 `#i123#` 拆成 `#i123` + `#`）
+							case '#':
+							{
+								skip += 1;
 								break;
 							}
 							// #x - Returns "0%" (Need more information on this)
@@ -1192,10 +1213,17 @@ namespace ms
 							}
 							default:
 							{
+								// 未知 `#X`：至少吃掉 `#`，避免闭合符/残片被当正文画出来。
+								skip += 1;
 								single_console::log_message("[GraphicsGL::LayoutBuilder::add] Unknown format: [" + std::to_string(c) + "]");
 								break;
 							}
 						}
+					}
+					else
+					{
+						// 文本以孤立 `#` 结尾：吞掉，不画。
+						skip += 1;
 					}
 
 					break;
@@ -1237,7 +1265,12 @@ namespace ms
 
 		int16_t wordwidth = 0;
 
-		if (!linebreak)
+		// 图标令牌：折行宽度用 canvas 宽（IDA v46[8]=GetWidth），不计量数字残片。
+		if (placed_icon && has_pending_icon)
+		{
+			wordwidth = pending_icon_w;
+		}
+		else if (!linebreak && !placed_icon)
 		{
 			// 逐**字符**（不是逐字节）累加宽度：中文一个字符 3 字节，旧实现只认 32..127，
 			// 于是整段中文对 wordwidth 的贡献恒为 0 —— 长中文文本只溢出不换行。
@@ -1283,10 +1316,40 @@ namespace ms
 
 			endy = ay;
 			ax = 0;
-			ay += font.linespace();
 
-			if (lines.size() > 0)
-				ay -= line_adj;
+			// IDA sub_9A2D01/9A2D95：本行有图标时行高 = max(h,16)，行距 +2；
+			// 纯文本行保持既有 linespace / line_adj（宋体度量已对齐 NPC 对话）。
+			if (line_has_icon)
+			{
+				const int16_t h = line_max_h < 16 ? 16 : line_max_h;
+				ay = static_cast<int16_t>(ay + h + 2);
+			}
+			else
+			{
+				ay += font.linespace();
+
+				if (lines.size() > 0)
+					ay -= line_adj;
+			}
+
+			line_max_h = 0;
+			line_has_icon = false;
+		}
+
+		// 折行完成后落图标（与正文共用 newline 刷新的 ax/行号）。
+		if (has_pending_icon)
+		{
+			if (pending_icon_w > 0)
+			{
+				icons.push_back({ lines.size(), ax, pending_icon_w, pending_icon_h, pending_icon_id });
+
+				if (pending_icon_h > line_max_h)
+					line_max_h = pending_icon_h;
+
+				line_has_icon = true;
+			}
+
+			has_pending_icon = false;
 		}
 
 		// advances 按**字节**索引（Textfield 的光标用 advance(byte) 定位），所以一个
@@ -1312,6 +1375,21 @@ namespace ms
 				width = ax;
 
 			pos += consumed;
+		}
+
+		// 图标跳过了字宽累加，在此按 canvas 宽推进笔位。
+		if (placed_icon && pending_icon_w > 0)
+		{
+			// pending 已清空；用刚刚写入的最后一个 icon
+			if (!icons.empty())
+			{
+				ax = static_cast<int16_t>(ax + icons.back().width);
+
+				if (width < ax)
+					width = ax;
+			}
+
+			pending_icon_w = 0;
 		}
 
 		if (newword || newline)
@@ -1364,7 +1442,7 @@ namespace ms
 
 		advances.push_back(ax);
 
-		return Text::Layout(lines, advances, width, ay, ax, endy);
+		return Text::Layout(lines, advances, icons, width, ay, ax, endy);
 	}
 
 	void GraphicsGL::LayoutBuilder::add_word(size_t word_first, size_t word_last, Text::Font word_font, Color::Name word_color)
@@ -1389,6 +1467,51 @@ namespace ms
 
 		lines.push_back({ words, { line_x, line_y } });
 		words.clear();
+	}
+
+	bool GraphicsGL::LayoutBuilder::try_parse_item_icon(const char* text, size_t first, size_t last, size_t& skip, int16_t& out_w)
+	{
+		// createlayout 把 `#i2000000#` 切成 first→`#i2000000`、last→闭合 `#`。
+		// IDA sub_9A262F：atoi(token+2)；sub_5D3BD8(...,1,0) 取 info/icon（非 iconRaw）。
+		out_w = 0;
+
+		if (last < first + 2)
+			return false;
+
+		int32_t item_id = 0;
+		bool any_digit = false;
+
+		for (size_t p = first + 2; p < last; ++p)
+		{
+			const char ch = text[p];
+
+			if (ch < '0' || ch > '9')
+				return false;
+
+			any_digit = true;
+			const int32_t next = item_id * 10 + (ch - '0');
+
+			if (next < item_id)
+				return false;
+
+			item_id = next;
+		}
+
+		if (!any_digit || item_id <= 0)
+			return false;
+
+		const Texture& tex = ItemData::get(item_id).get_icon(false);
+		// 证据：宽高取 canvas 真值；无效道具仍吞令牌（宽 0）以免数字残片。
+		const int16_t iw = tex ? tex.width() : 0;
+		const int16_t ih = tex ? tex.height() : 0;
+
+		pending_icon_id = item_id;
+		pending_icon_w = iw;
+		pending_icon_h = ih;
+		has_pending_icon = true;
+		out_w = iw;
+		skip = last - first;
+		return true;
 	}
 
 	void GraphicsGL::drawtext(const DrawArgument& args, const Range<int16_t>& vertical, const std::string& text, const Text::Layout& layout, Text::Font id, Color::Name colorid, Text::Background background)

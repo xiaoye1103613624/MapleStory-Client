@@ -19,6 +19,7 @@
 
 #include "DrawArgument.h"
 
+#include <cstdint>
 #include <map>
 #include <vector>
 
@@ -74,7 +75,19 @@ namespace ms
 				Point<int16_t> position;
 			};
 
+			// 行内道具图标（#i/#v）。IDA sub_99DD54 case7/8 → 元素 type1；
+			// 宽高取 canvas；ax 是相对行起点的笔位（与 advances 同坐标系）。
+			struct Icon
+			{
+				size_t line;
+				int16_t ax;
+				int16_t width;
+				int16_t height;
+				int32_t item_id;
+			};
+
 			Layout(const std::vector<Line>& lines, const std::vector<int16_t>& advances, int16_t width, int16_t height, int16_t endx, int16_t endy);
+			Layout(const std::vector<Line>& lines, const std::vector<int16_t>& advances, const std::vector<Icon>& icons, int16_t width, int16_t height, int16_t endx, int16_t endy);
 			Layout();
 
 			int16_t width() const;
@@ -82,6 +95,7 @@ namespace ms
 			int16_t advance(size_t index) const;
 			Point<int16_t> get_dimensions() const;
 			Point<int16_t> get_endoffset() const;
+			const std::vector<Icon>& get_icons() const;
 
 			// 字节 pos 布局后相对绘制原点的位置。advances 本来就是按字节索引的，
 			// 缺的只是「这个字节落在哪一行」，所以按行的词区间来定位。
@@ -95,6 +109,7 @@ namespace ms
 		private:
 			std::vector<Line> lines;
 			std::vector<int16_t> advances;
+			std::vector<Icon> icons;
 			Point<int16_t> dimensions;
 			Point<int16_t> endoffset;
 		};

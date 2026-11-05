@@ -19,6 +19,8 @@
 
 #include "GraphicsGL.h"
 
+#include "../Data/ItemData.h"
+
 namespace ms
 {
 	Text::Text(Font f, Alignment a, Color::Name c, Background b, const std::string& t, uint16_t mw, bool fm, int16_t la) : font(f), alignment(a), color(c), background(b), maxwidth(mw), formatted(fm), line_adj(la)
@@ -70,6 +72,55 @@ namespace ms
 	void Text::draw(const DrawArgument& args, const Range<int16_t>& vertical) const
 	{
 		GraphicsGL::get().drawtext(args, vertical, text, layout, font, color, background);
+
+		// #i/#v 行内图标：布局期已占位；此处按 IDA 底对齐基线画 canvas
+		// （UtilDlgEx 元素 y = line_pos - height，blit 左上角）。
+		const Point<int16_t> base = args.getpos();
+		const bool clip_v = vertical.first() > 0 || vertical.second() > 0;
+
+		for (const Text::Layout::Icon& icon : layout.get_icons())
+		{
+			size_t li = 0;
+			Point<int16_t> linepos;
+			bool found = false;
+
+			for (const Text::Layout::Line& line : layout)
+			{
+				if (li == icon.line)
+				{
+					linepos = line.position;
+					found = true;
+					break;
+				}
+
+				++li;
+			}
+
+			if (!found)
+				continue;
+
+			const int16_t draw_x = static_cast<int16_t>(base.x() + linepos.x() + icon.ax);
+			const int16_t draw_y = static_cast<int16_t>(base.y() + linepos.y() - icon.height);
+
+			if (clip_v)
+			{
+				const int16_t vmin = vertical.first() > 0 ? vertical.first() : draw_y;
+				const int16_t vmax = vertical.second() > 0 ? vertical.second() : static_cast<int16_t>(draw_y + icon.height);
+
+				if (draw_y + icon.height < vmin || draw_y > vmax)
+					continue;
+			}
+
+			const Texture& tex = ItemData::get(icon.item_id).get_icon(false);
+
+			if (!tex)
+				continue;
+
+			// Texture::draw 会扣 origin；原生 blit 按左上角落点，故先加回 origin。
+			tex.draw(DrawArgument(Point<int16_t>(
+				static_cast<int16_t>(draw_x + tex.get_origin().x()),
+				static_cast<int16_t>(draw_y + tex.get_origin().y()))));
+		}
 	}
 
 	uint16_t Text::advance(size_t pos) const
@@ -132,7 +183,12 @@ namespace ms
 		return static_cast<int16_t>(ink_top - ink_offset());
 	}
 
-	Text::Layout::Layout(const std::vector<Layout::Line>& l, const std::vector<int16_t>& a, int16_t w, int16_t h, int16_t ex, int16_t ey) : lines(l), advances(a), dimensions(w, h), endoffset(ex, ey) {}
+	Text::Layout::Layout(const std::vector<Layout::Line>& l, const std::vector<int16_t>& a, int16_t w, int16_t h, int16_t ex, int16_t ey)
+		: Layout(l, a, std::vector<Icon>(), w, h, ex, ey) {}
+
+	Text::Layout::Layout(const std::vector<Layout::Line>& l, const std::vector<int16_t>& a, const std::vector<Icon>& ic, int16_t w, int16_t h, int16_t ex, int16_t ey)
+		: lines(l), advances(a), icons(ic), dimensions(w, h), endoffset(ex, ey) {}
+
 	Text::Layout::Layout() : Layout(std::vector<Layout::Line>(), std::vector<int16_t>(), 0, 0, 0, 0) {}
 
 	int16_t Text::Layout::width() const
@@ -158,6 +214,11 @@ namespace ms
 	Point<int16_t> Text::Layout::get_endoffset() const
 	{
 		return endoffset;
+	}
+
+	const std::vector<Text::Layout::Icon>& Text::Layout::get_icons() const
+	{
+		return icons;
 	}
 
 	Point<int16_t> Text::Layout::position_of(size_t pos) const
