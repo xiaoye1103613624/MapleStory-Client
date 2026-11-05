@@ -69,8 +69,10 @@ namespace ms
 		void modify(InventoryType::Id type, int16_t pos, int8_t mode, int16_t arg, Movement movement);
 		// Add a general item
 		void add_item(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint16_t count, const std::string& owner, int16_t flag);
-		// Add a pet item
-		void add_pet(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, const std::string& name, int8_t level, int16_t closeness, int8_t fullness);
+		// Add a pet item（unique_id：现金宠包内 64 位；非现金可为 0）
+		void add_pet(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, const std::string& name, int8_t level, int16_t closeness, int8_t fullness, int64_t unique_id = 0);
+		// 按服务端 uniqueId 反查现金宠（AskPet dlgType=6）
+		Optional<const Pet> find_pet_by_unique_id(int64_t unique_id) const;
 		// Add an equip item
 		void add_equip(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t itemlevel, uint16_t itemexp, int32_t vicious);
 

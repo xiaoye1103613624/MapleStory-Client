@@ -1730,98 +1730,206 @@ Button::State UIInitialQuiz::button_pressed(uint16_t buttonid)
 UIElement::Type UIInitialQuiz::get_type() const { return TYPE; }
 
 // ---------------------------------------------------------------------------
-// AskPet / AskPetAll — IDA 7474A2 / 74775C；出站 lastMsg+action+int64
+// AskPet / AskPetAll — IDA 7474A2 / 74775C / 9A9B25 / 9ACB27 / 9AA9F0
+// dlgType=6：UtilDlgEx_Pet 419×297；Avatar 同族 Prev/Next/OK2/Cancel2/Exit；出站 int64
 // ---------------------------------------------------------------------------
 UIAskPet::UIAskPet()
-	: tip_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY)
+	: tip_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY),
+	  name_label(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::BLACK),
+	  level_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY),
+	  close_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY),
+	  full_label(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY)
 {
-	// dlgType=6 走 UtilDlgEx；Pet 壳仅 backgrnd，优先 UtilDlgEx。
-	position = Point<int16_t>(250, 160);
-	dimension = Point<int16_t>(280, 200);
-	dragarea = Point<int16_t>(280, 20);
-	has_assets = load_window_bg("UtilDlgEx", backgrnd, dimension);
+	// IDA sub_9A3CAE/9A3CED：dlgType6 → 419×297；底图 UtilDlgEx_Pet/backgrnd 419×296。
+	position = Point<int16_t>(190, 150);
+	dimension = Point<int16_t>(WND_W, WND_H);
+	dragarea = Point<int16_t>(WND_W, 20);
+	has_assets = load_window_bg("UtilDlgEx_Pet", backgrnd, dimension);
 	if (!has_assets)
-		has_assets = load_window_bg("UtilDlgEx_Pet", backgrnd, dimension);
+		has_assets = load_window_bg("UtilDlgEx_Avatar", backgrnd, dimension);
 	if (has_assets)
+	{
+		dimension = Point<int16_t>(
+			backgrnd.width() > 0 ? backgrnd.width() : WND_W,
+			backgrnd.height() > 0 ? backgrnd.height() : WND_H);
 		dragarea = Point<int16_t>(dimension.x(), 20);
+	}
 	else
-		LOG(LOG_WARN, "UIAskPet: missing UtilDlgEx/UtilDlgEx_Pet");
+		LOG(LOG_WARN, "UIAskPet: missing UtilDlgEx_Pet/Avatar backgrnd");
 
 #ifdef USE_NX
 	{
-		nl::node root = UiAssetResolve::window("UtilDlgEx");
-		if (root["list1"])
+		nl::node avatar = UiAssetResolve::window("UtilDlgEx_Avatar");
+		if (avatar["nameTag"])
 		{
-			list_sel = Texture(root["list1"]);
-			has_list_sel = static_cast<bool>(list_sel);
+			name_tag = Texture(avatar["nameTag"]);
+			has_name_tag = static_cast<bool>(name_tag);
 		}
-		nl::node ok = root["BtOK"] ? root["BtOK"] : nl::nx::UI["Basic.img"]["BtOK"];
-		nl::node close = root["BtClose"] ? root["BtClose"] : nl::nx::UI["Basic.img"]["BtClose"];
-		const int16_t by = static_cast<int16_t>(dimension.y() - 36);
+		if (avatar["shadow"])
+		{
+			shadow = Texture(avatar["shadow"]);
+			has_shadow = static_cast<bool>(shadow);
+		}
+		// StringPool 2268/2269/2724 + Basic BtOK2/BtCancel2（与 AskAvatar 同节点）
+		nl::node prev = avatar["BtPrev"];
+		nl::node next = avatar["BtNext"];
+		nl::node exitn = avatar["BtExit"];
+		nl::node ok = nl::nx::UI["Basic.img"]["BtOK2"];
+		nl::node cancel = nl::nx::UI["Basic.img"]["BtCancel2"];
+		if (prev)
+		{
+			buttons[BtPrev] = std::make_unique<MapleButton>(prev, Point<int16_t>(BTN_PREV_X, BTN_PREV_Y));
+			buttons[BtPrev]->set_active(true);
+		}
+		if (next)
+		{
+			buttons[BtNext] = std::make_unique<MapleButton>(next, Point<int16_t>(BTN_NEXT_X, BTN_NEXT_Y));
+			buttons[BtNext]->set_active(true);
+		}
 		if (ok)
 		{
-			buttons[BtOk] = std::make_unique<MapleButton>(ok, Point<int16_t>(
-				static_cast<int16_t>(dimension.x() - 90), by));
+			buttons[BtOk] = std::make_unique<MapleButton>(ok, Point<int16_t>(BTN_OK_X, BTN_BOTTOM_Y));
 			buttons[BtOk]->set_active(true);
 		}
-		if (close)
+		if (cancel)
 		{
-			buttons[BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(
-				static_cast<int16_t>(dimension.x() - 50), by));
-			buttons[BtClose]->set_active(true);
+			buttons[BtCancel] = std::make_unique<MapleButton>(cancel, Point<int16_t>(BTN_CANCEL_X, BTN_BOTTOM_Y));
+			buttons[BtCancel]->set_active(true);
+		}
+		if (exitn)
+		{
+			buttons[BtExit] = std::make_unique<MapleButton>(exitn, Point<int16_t>(BTN_EXIT_X, BTN_BOTTOM_Y));
+			buttons[BtExit]->set_active(true);
 		}
 	}
 #endif
 	center_on_screen();
-	LOG(LOG_INFO, "UIAskPet: constructed assets=" << (has_assets ? 1 : 0));
+	LOG(LOG_INFO, "UIAskPet: constructed assets=" << (has_assets ? 1 : 0)
+		<< " dim=" << dimension.x() << "x" << dimension.y());
 }
 
 void UIAskPet::open(int8_t lastmsg_in, const std::string& tip, const std::vector<int64_t>& unique_ids, uint8_t /*flag*/)
 {
 	closing = false;
 	lastmsg = lastmsg_in;
-	tip_label.change_text(tip);
+	// 宋体 A12M / DARKGREY；折行宽对齐 AskAvatar TEXT_W（IDA left=110）。
+	tip_label = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, tip, TEXT_W);
+	const int16_t th = tip_label.height();
+	if (th <= TEXT_AREA_H)
+		tip_draw_y = static_cast<int16_t>((TEXT_AREA_H - th - 6) / 2 + 28);
+	else
+		tip_draw_y = 22;
+
 	entries.clear();
 	entries.reserve(unique_ids.size());
 
-	const Char& ch = Stage::get().get_player();
+	const Player& player = Stage::get().get_player();
+	const Inventory& inv = player.get_inventory();
 	for (int64_t uid : unique_ids)
 	{
 		Entry e;
 		e.unique_id = uid;
-		int32_t itemid = 0;
-		// 召唤宠 uniqueid 本仓截断为 int32；按低 32 位反查 itemId 作可证子集标签。
-		const int32_t uid32 = static_cast<int32_t>(uid);
-		for (uint8_t i = 0; i < 3; ++i)
+		// 1) 现金栏按 64 位 uniqueId（ItemParser 已入库）
+		if (auto pet = inv.find_pet_by_unique_id(uid))
 		{
-			const PetLook& pet = ch.get_pet(i);
-			if (pet.get_itemid() > 0 && pet.get_uniqueid() == uid32)
+			e.item_id = pet->get_itemid();
+			e.name = pet->get_name();
+			e.level = pet->get_level();
+			e.closeness = pet->get_closeness();
+			e.fullness = pet->get_fullness();
+			e.has_stats = true;
+		}
+		else
+		{
+			// 2) 召唤宠：uniqueid 本仓为 int32
+			const int32_t uid32 = static_cast<int32_t>(uid);
+			for (uint8_t i = 0; i < 3; ++i)
 			{
-				itemid = pet.get_itemid();
-				break;
+				const PetLook& look = player.get_pet(i);
+				if (look.get_itemid() > 0 && look.get_uniqueid() == uid32)
+				{
+					e.item_id = look.get_itemid();
+					e.name = look.get_name();
+					// PetLook 无等级/亲密；等级条仅现金栏命中时绘制
+					break;
+				}
 			}
 		}
-		char buf[64];
-		if (itemid > 0)
-			std::snprintf(buf, sizeof(buf), "%d [%lld]", itemid, static_cast<long long>(uid));
-		else
+		if (e.name.empty() && e.item_id > 0)
+			e.name = ItemData::get(e.item_id).get_name();
+		if (e.name.empty())
+		{
+			char buf[48];
 			std::snprintf(buf, sizeof(buf), "Pet [%lld]", static_cast<long long>(uid));
-		e.label = buf;
-		e.label_tex = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::DARKGREY, e.label);
+			e.name = buf;
+		}
 		entries.push_back(std::move(e));
 	}
 	selected = entries.empty() ? -1 : 0;
-	refresh_labels();
+	refresh_selected();
 	if (!is_active())
 		makeactive();
 	LOG(LOG_INFO, "UIAskPet: open lastMsg=" << static_cast<int>(lastmsg)
 		<< " pets=" << entries.size() << " tipLen=" << tip.size());
 }
 
-void UIAskPet::refresh_labels()
+void UIAskPet::load_pet_stand(int32_t item_id)
 {
-	for (auto& e : entries)
-		e.label_tex.change_text(e.label);
+	has_pet_stand = false;
+	has_pet_icon = false;
+	pet_stand = Animation();
+	pet_icon = Texture();
+	if (item_id <= 0)
+		return;
+#ifdef USE_NX
+	const std::string strid = std::to_string(item_id);
+	nl::node src = nl::nx::Item["Pet"][strid + ".img"];
+	nl::node stand = src["stand0"] ? src["stand0"] : src["stand"];
+	if (stand)
+	{
+		pet_stand = Animation(stand);
+		has_pet_stand = true;
+	}
+	const Texture& icon = ItemData::get(item_id).get_icon(true);
+	if (icon.is_valid())
+	{
+		pet_icon = icon;
+		has_pet_icon = true;
+	}
+#endif
+}
+
+void UIAskPet::refresh_selected()
+{
+	if (selected < 0 || static_cast<size_t>(selected) >= entries.size())
+	{
+		name_label.change_text("");
+		level_label.change_text("");
+		close_label.change_text("");
+		full_label.change_text("");
+		load_pet_stand(0);
+		return;
+	}
+	const Entry& e = entries[static_cast<size_t>(selected)];
+	name_label.change_text(e.name);
+	char buf[64];
+	std::snprintf(buf, sizeof(buf), "Lv.%u", static_cast<unsigned>(e.level));
+	level_label.change_text(buf);
+	if (e.has_stats)
+	{
+		std::snprintf(buf, sizeof(buf), "亲密 %u", static_cast<unsigned>(e.closeness));
+		close_label.change_text(buf);
+		std::snprintf(buf, sizeof(buf), "饱食 %u", static_cast<unsigned>(e.fullness));
+		full_label.change_text(buf);
+	}
+	else
+	{
+		close_label.change_text("");
+		full_label.change_text("");
+	}
+	load_pet_stand(e.item_id);
+	LOG(LOG_DEBUG, "UIAskPet: sel=" << selected << " item=" << e.item_id
+		<< " lv=" << static_cast<int>(e.level) << " close=" << e.closeness);
 }
 
 void UIAskPet::submit_ok()
@@ -1847,41 +1955,81 @@ void UIAskPet::submit_cancel()
 	deactivate();
 }
 
-void UIAskPet::draw(float) const
+void UIAskPet::draw(float inter) const
 {
 	if (has_assets && backgrnd)
 		backgrnd.draw(position);
-	tip_label.draw(position + Point<int16_t>(16, 28));
-	int16_t y = 52;
-	for (size_t i = 0; i < entries.size(); ++i)
+
+	tip_label.draw(position + Point<int16_t>(TEXT_X, tip_draw_y));
+
+	const bool have_sel = selected >= 0 && static_cast<size_t>(selected) < entries.size();
+	const Entry* e = have_sel ? &entries[static_cast<size_t>(selected)] : nullptr;
+
+	// 过期宠画 icon（9AA9F0 v72[4]!=0 → (226,218)）；否则 stand0 @ (209,218)
+	if (e && e->expired && has_pet_icon)
+		pet_icon.draw(position + Point<int16_t>(PET_ICON_X, PET_LOOK_Y));
+	else if (has_pet_stand)
+		pet_stand.draw(DrawArgument(position + Point<int16_t>(PET_LOOK_X, PET_LOOK_Y)), inter);
+	else if (has_pet_icon)
+		pet_icon.draw(position + Point<int16_t>(PET_LOOK_X, PET_LOOK_Y));
+
+	if (has_shadow)
+		shadow.draw(position + Point<int16_t>(
+			static_cast<int16_t>(PET_LOOK_X - shadow.width() / 2),
+			static_cast<int16_t>(PET_LOOK_Y + 2)));
+
+	if (has_name_tag)
 	{
-		if (static_cast<int32_t>(i) == selected && has_list_sel && list_sel)
-			list_sel.draw(position + Point<int16_t>(12, y - 2));
-		entries[i].label_tex.draw(position + Point<int16_t>(18, static_cast<int16_t>(y + 12)));
-		y = static_cast<int16_t>(y + 18);
+		const Point<int16_t> tag = position + Point<int16_t>(NAMETAG_X, NAMETAG_Y);
+		name_tag.draw(tag);
+		name_label.draw(Point<int16_t>(
+			static_cast<int16_t>(tag.x() + name_tag.width() / 2),
+			static_cast<int16_t>(tag.y() + 2)));
 	}
-	UIElement::draw_buttons(0.0f);
+	else
+	{
+		name_label.draw(position + Point<int16_t>(
+			static_cast<int16_t>(NAMETAG_X + BAR_W / 2), NAMETAG_Y));
+	}
+
+	// 等级在 nameTag 左侧；亲密/饱食条在 nameTag 下方（UtilDlgEx 无专用 gage 节点，ColorBox 按条宽对齐 nameTag）。
+	level_label.draw(position + Point<int16_t>(
+		static_cast<int16_t>(NAMETAG_X - 40), static_cast<int16_t>(NAMETAG_Y + 2)));
+
+	if (e && e->has_stats)
+	{
+		const int16_t bar_x = NAMETAG_X;
+		const int16_t close_y = static_cast<int16_t>(NAMETAG_Y + 22);
+		const int16_t full_y = static_cast<int16_t>(close_y + BAR_H + 10);
+		ColorBox(BAR_W, BAR_H, Color::Name::DARKGREY, 0.85f)
+			.draw(position + Point<int16_t>(bar_x, close_y));
+		const int16_t cw = static_cast<int16_t>(
+			std::max(0, std::min(static_cast<int>(BAR_W),
+				static_cast<int>(BAR_W) * static_cast<int>(e->closeness) / CLOSE_MAX)));
+		if (cw > 0)
+			ColorBox(cw, BAR_H, Color::Name::YELLOW, 1.0f)
+				.draw(position + Point<int16_t>(bar_x, close_y));
+		close_label.draw(position + Point<int16_t>(bar_x, static_cast<int16_t>(close_y - 14)));
+
+		ColorBox(BAR_W, BAR_H, Color::Name::DARKGREY, 0.85f)
+			.draw(position + Point<int16_t>(bar_x, full_y));
+		const int16_t fw = static_cast<int16_t>(
+			std::max(0, std::min(static_cast<int>(BAR_W),
+				static_cast<int>(BAR_W) * static_cast<int>(e->fullness) / FULL_MAX)));
+		if (fw > 0)
+			ColorBox(fw, BAR_H, Color::Name::LIGHTGREEN, 1.0f)
+				.draw(position + Point<int16_t>(bar_x, full_y));
+		full_label.draw(position + Point<int16_t>(bar_x, static_cast<int16_t>(full_y - 14)));
+	}
+
+	UIElement::draw_buttons(inter);
 }
 
-Cursor::State UIAskPet::send_cursor(bool clicked, Point<int16_t> cursorpos)
+void UIAskPet::update()
 {
-	Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
-	if (!clicked)
-		return st;
-	const Point<int16_t> rel = cursorpos - position;
-	int16_t y = 52;
-	for (size_t i = 0; i < entries.size(); ++i)
-	{
-		if (rel.x() >= 12 && rel.x() < dimension.x() - 12
-			&& rel.y() >= y && rel.y() < y + 18)
-		{
-			selected = static_cast<int32_t>(i);
-			LOG(LOG_DEBUG, "UIAskPet: select=" << selected);
-			return Cursor::State::CLICKING;
-		}
-		y = static_cast<int16_t>(y + 18);
-	}
-	return st;
+	UIElement::update();
+	if (has_pet_stand)
+		pet_stand.update();
 }
 
 void UIAskPet::send_key(int32_t keycode, bool pressed, bool escape)
@@ -1899,17 +2047,38 @@ void UIAskPet::send_key(int32_t keycode, bool pressed, bool escape)
 			submit_ok();
 		return;
 	}
-	if ((keycode == 38 || keycode == 265) && selected > 0)
-		--selected;
-	else if ((keycode == 40 || keycode == 264) && selected + 1 < static_cast<int32_t>(entries.size()))
-		++selected;
+	// 左右 / 上下均轮播（对齐 IDA case6 Prev/Next 环绕）
+	const bool prev = (keycode == 37 || keycode == 263 || keycode == 38 || keycode == 265);
+	const bool next = (keycode == 39 || keycode == 262 || keycode == 40 || keycode == 264);
+	if (entries.empty())
+		return;
+	if (prev)
+	{
+		selected = (selected <= 0) ? static_cast<int32_t>(entries.size() - 1) : selected - 1;
+		refresh_selected();
+	}
+	else if (next)
+	{
+		selected = (selected + 1 >= static_cast<int32_t>(entries.size())) ? 0 : selected + 1;
+		refresh_selected();
+	}
 }
 
 Button::State UIAskPet::button_pressed(uint16_t buttonid)
 {
-	if (buttonid == BtOk && !entries.empty())
+	if (buttonid == BtPrev && !entries.empty())
+	{
+		selected = (selected <= 0) ? static_cast<int32_t>(entries.size() - 1) : selected - 1;
+		refresh_selected();
+	}
+	else if (buttonid == BtNext && !entries.empty())
+	{
+		selected = (selected + 1 >= static_cast<int32_t>(entries.size())) ? 0 : selected + 1;
+		refresh_selected();
+	}
+	else if (buttonid == BtOk && !entries.empty())
 		submit_ok();
-	else if (buttonid == BtClose)
+	else if (buttonid == BtCancel || buttonid == BtExit)
 		submit_cancel();
 	return Button::State::NORMAL;
 }

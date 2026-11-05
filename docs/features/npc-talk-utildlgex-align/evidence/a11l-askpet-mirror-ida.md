@@ -42,7 +42,8 @@
 
 | 项 | 说明 |
 | --- | --- |
-| AskPet 完整 dlgType=6 | 宠图标/等级/亲密/饱食条（`9ACB27`）未接；标签用召唤宠 itemId 或 `Pet [uid]` |
-| 现金栏 64 位 uniqueId 入库 | Inventory 仍用本地 running_uid；出站用包内 uniqueId |
+| AskPet 完整 dlgType=6 | ✅ 已由 [a11m](a11m-askpet-dlgtype6-full-ui.md) 接续（立绘/等级/亲密·饱食 ColorBox） |
+| 现金栏 64 位 uniqueId 入库 | ✅ ItemParser 读 long 写入 `Pet::unique_id`；出站仍用包内 uniqueId |
 | Mirror 动画底图 | `IsAniBackgrd` / `backgrd` 多帧未播；固定 `backgrd/0` |
 | Mirror BtMain 全态切换 | 选中后尝试 `BtMain/<id>`，缺则保留 `BtMove` |
+| AskPet 原生亲密位图条 | UtilDlgEx 无专用 gage；现 ColorBox |

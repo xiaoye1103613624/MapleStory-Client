@@ -2,6 +2,7 @@
 #include "../UIDragElement.h"
 #include "../Components/Slider.h"
 #include "../Components/Textfield.h"
+#include "../../Graphics/Animation.h"
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/Texture.h"
 #include "../../Graphics/Text.h"
@@ -230,39 +231,82 @@ private:
 };
 
 // NPC AskPet / AskPetAll（IDA 7474A2 / 74775C → UtilDlgEx dlgType=6）
-// 可证子集：列表选宠 + 出站 lastMsg+action+int64；完整立绘/亲密度条仍预留。
+// IDA 9A9B25/9ACB27/9AA9F0：UtilDlgEx_Pet 419×296；Prev/Next 轮播；stand0 立绘；nameTag+等级/亲密条。
 class UIAskPet : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::ASKPET;
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIAskPet();
 	void draw(float inter) const override;
-	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
 	void open(int8_t lastmsg, const std::string& tip, const std::vector<int64_t>& unique_ids, uint8_t flag = 0);
 protected:
 	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	enum Buttons : uint16_t { BtOk, BtClose };
+	// 与 AskAvatar 同族：Prev=0x2000 / Next=0x2001；OK/Cancel/Exit 槽位见 9A9B25。
+	enum Buttons : uint16_t { BtPrev, BtNext, BtOk, BtCancel, BtExit };
 	struct Entry {
 		int64_t unique_id = 0;
-		std::string label;
-		Text label_tex;
+		int32_t item_id = 0;
+		std::string name;
+		uint8_t level = 1;
+		uint16_t closeness = 0;
+		uint8_t fullness = 100;
+		bool expired = false;
+		bool has_stats = false;
 	};
-	void refresh_labels();
+
+	void refresh_selected();
+	void load_pet_stand(int32_t item_id);
 	void submit_ok();
 	void submit_cancel();
 
+	// IDA sub_9A3CAE/9A3CED dlgType6；9A9B25 钮槽；9AA9F0 立绘脚点。
+	static constexpr int16_t WND_W = 419;
+	static constexpr int16_t WND_H = 297;
+	static constexpr int16_t TEXT_X = 110;
+	static constexpr int16_t TEXT_W = 289;
+	static constexpr int16_t TEXT_AREA_H = 100;
+	static constexpr int16_t PET_LOOK_X = 209;
+	static constexpr int16_t PET_LOOK_Y = 218;
+	static constexpr int16_t PET_ICON_X = 226;
+	static constexpr int16_t NAMETAG_X = 123;
+	static constexpr int16_t NAMETAG_Y = 237;
+	static constexpr int16_t BTN_PREV_X = 15;
+	static constexpr int16_t BTN_PREV_Y = 191;
+	static constexpr int16_t BTN_NEXT_X = 341;
+	static constexpr int16_t BTN_NEXT_Y = 191;
+	static constexpr int16_t BTN_OK_X = 314;
+	static constexpr int16_t BTN_CANCEL_X = 363;
+	static constexpr int16_t BTN_EXIT_X = 9;
+	static constexpr int16_t BTN_BOTTOM_Y = 272;
+	static constexpr int16_t BAR_W = 173;
+	static constexpr int16_t BAR_H = 6;
+	static constexpr int16_t CLOSE_MAX = 30000;
+	static constexpr int16_t FULL_MAX = 100;
+
 	bool has_assets = false;
 	Texture backgrnd;
-	Texture list_sel;
-	bool has_list_sel = false;
+	Texture name_tag;
+	Texture shadow;
+	bool has_name_tag = false;
+	bool has_shadow = false;
 	Text tip_label;
+	Text name_label;
+	Text level_label;
+	Text close_label;
+	Text full_label;
+	Texture pet_icon;
+	bool has_pet_icon = false;
+	Animation pet_stand;
+	bool has_pet_stand = false;
 	std::vector<Entry> entries;
 	int32_t selected = 0;
 	int8_t lastmsg = 9;
 	bool closing = false;
+	int16_t tip_draw_y = 28;
 };
 
 // 维度镜（IDA 76B3F0 / 747A46）：UIWindow.img/SlideMenu/0，窗 235×165

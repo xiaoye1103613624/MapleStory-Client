@@ -25,7 +25,14 @@ namespace ms
 	class Pet
 	{
 	public:
-		Pet(int32_t item_id, int64_t expiration, const std::string& name, uint8_t level, uint16_t closeness, uint8_t fullness);
+		Pet(int32_t item_id, int64_t expiration, const std::string& name, uint8_t level, uint16_t closeness, uint8_t fullness, int64_t unique_id = 0);
+
+		int32_t get_itemid() const { return item_id; }
+		int64_t get_uniqueid() const { return unique_id; }
+		const std::string& get_name() const { return petname; }
+		uint8_t get_level() const { return petlevel; }
+		uint16_t get_closeness() const { return closeness; }
+		uint8_t get_fullness() const { return fullness; }
 
 	private:
 		int32_t item_id;
@@ -34,5 +41,7 @@ namespace ms
 		uint8_t petlevel;
 		uint16_t closeness;
 		uint8_t fullness;
+		// 现金宠服务端 64 位 uniqueId（AskPet 包内 long）；未解析时为 0。
+		int64_t unique_id;
 	};
 }

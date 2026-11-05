@@ -246,7 +246,7 @@
 - **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
 - **A11g tip + Pet inset（2026-11-05 已接线，待真机）**：校验失败弹 tip 817–821（A12 白+`#355A84` 描边）；Pet `speaker&6` 输入 inset=25。证据：[a11g](../npc-talk-utildlgex-align/evidence/a11g-tip-817-821-pet-inset-ida.md)。
 - **A11h ScriptMessage OnPacket + tip 820（2026-11-05 已接线，待真机）**：见 §23。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；AskPet 完整立绘/亲密条；Mirror 动画底。Avatar UI 已接见 §24；Quiz UI 见 §26；SpeedQuiz UI 见 §27；AskPet/Mirror 可证 UI 见 §28。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；Mirror 动画底；AskPet 亲密/饱食原生位图条（现 ColorBox）。Avatar UI 已接见 §24；Quiz UI 见 §26；SpeedQuiz UI 见 §27；AskPet/Mirror 见 §28。
 
 ## 18. 隐藏门三态
 
@@ -385,12 +385,12 @@
 - **前置**：AskPet 需脚本发 msgtype 9/10（本仓 s9 少见）；Mirror 点维度镜 NPC `9010022`（`cm.sendDimensionalMirror`）。
 - **操作 / 期望**：
   1. **Mirror**：开 SlideMenu 235×165；左右切目的地；前往 → 上行 `14,1,int(id)`；取消/Esc → `14,0`；脚本按 selection 传送。
-  2. **AskPet**：列表选宠 → OK → 上行 `9|10,1,int64(uid)`；取消 → `action=0`；空列表 → `action=2`。
+  2. **AskPet**：UtilDlgEx_Pet 419×297；Prev/Next 轮播；stand0 立绘 + nameTag + Lv/亲密/饱食条；OK → `9|10,1,int64(uid)`；取消 → `action=0`；空列表 → `action=2`。
   3. 宋体 A12M；α 不改。
-- **期望**：不再吞包 `-1`；脚本不挂死。
+- **期望**：不再吞包 `-1`；脚本不挂死；现金宠等级/条在 uniqueId 命中时显示。
 - **opcode**：s2c 304 msgtype 9/10/14；c2s 60。
-- **文档**：[a11l-askpet-mirror-ida](../npc-talk-utildlgex-align/evidence/a11l-askpet-mirror-ida.md)
-- **仍预留**：AskPet 完整 dlgType=6 立绘/亲密；现金栏 64 位 uniqueId 入库；Mirror 动画底。
+- **文档**：[a11m-askpet-dlgtype6-full-ui](../npc-talk-utildlgex-align/evidence/a11m-askpet-dlgtype6-full-ui.md) · [a11l](../npc-talk-utildlgex-align/evidence/a11l-askpet-mirror-ida.md)
+- **仍预留**：AskPet 亲密/饱食原生位图条（现 ColorBox）；Mirror 动画底。
 
 ## 7. SET_HPMPALERT
 

@@ -47,9 +47,10 @@ namespace ms
 		{
 			// Read all pet stats
 			bool cash = recv.read_bool();
-
+			// AskPet / 本机反查依赖包内 64 位 uniqueId，不可再 skip。
+			int64_t unique_id = 0;
 			if (cash)
-				recv.skip(8); // unique id
+				unique_id = recv.read_long();
 
 			int64_t expire = recv.read_long();
 			std::string petname = recv.read_padded_string(13);
@@ -60,7 +61,7 @@ namespace ms
 			// Some unused bytes
 			recv.skip(18);
 
-			inventory.add_pet(invtype, slot, id, cash, expire, petname, petlevel, closeness, fullness);
+			inventory.add_pet(invtype, slot, id, cash, expire, petname, petlevel, closeness, fullness, unique_id);
 		}
 
 		// Parse an equip from a packet

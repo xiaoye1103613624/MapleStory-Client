@@ -61,6 +61,7 @@ namespace ms
 
 		int32_t get_itemid() const;
 		int32_t get_uniqueid() const;
+		const std::string& get_name() const;
 		Stance get_stance() const;
 		Point<int16_t> get_position() const;
 		const PhysicsObject& get_phobj() const;

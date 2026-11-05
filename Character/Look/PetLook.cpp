@@ -189,6 +189,11 @@ namespace ms
 		return uniqueid;
 	}
 
+	const std::string& PetLook::get_name() const
+	{
+		return name;
+	}
+
 	PetLook::Stance PetLook::get_stance() const
 	{
 		return stance;
