@@ -174,6 +174,13 @@ namespace ms
 
 			AttackPacket(result).dispatch();
 
+			// Wave 4：手雷/毒弹投掷点上报。s9 GrenadeEffectHandler 白名单
+			// GRENADE(5201002)/POISON_BOMB(14111006)，技能等级>0 时回
+			// THROW_GRENADE(204) 广播落点（本端 204 已接渲染）——缺的只有
+			// 这条上行。坐标用攻击 origin（世界坐标，与 s9 Point 同域）。
+			if (GrenadeEffectPacket::is_grenade(result.skill))
+				GrenadeEffectPacket(origin, result.skill).dispatch();
+
 			// 战神连击由攻击命中驱动：服务端 AranComboHandler 每收到一个空的
 			// ARAN_COMBO_COUNTER(0xA3) 就把连击 +1（距上次超过 3000ms 先归零，
 			// 每满 10 层按 Combo Ability 等级发 ARAN_COMBO buff），计数再由
@@ -295,9 +302,17 @@ namespace ms
 
 	void Combat::apply_damage_effect(const DamageEffect& effect)
 	{
+		// 伤害数字总量钳制（Wave P）：AoE 群怪/多段技能瞬时可堆几百个数字，
+		// 每个都在 update/draw 上花时间。超过 160 就从最老的丢——最老的
+		// 本就接近淡出尾声，观感无损，尖峰负载有界。
+		constexpr size_t MAX_DAMAGE_NUMBERS = 160;
+
 		Point<int16_t> head_position = mobs.get_mob_head_position(effect.target_oid);
 		damagenumbers.push_back(effect.number);
 		damagenumbers.back().set_x(head_position.x());
+
+		while (damagenumbers.size() > MAX_DAMAGE_NUMBERS)
+			damagenumbers.pop_front();
 
 		const SpecialMove& move = get_move(effect.move_id);
 		mobs.apply_damage(effect.target_oid, effect.damage, effect.toleft, effect.user, move);

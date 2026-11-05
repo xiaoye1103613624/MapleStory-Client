@@ -94,12 +94,33 @@ namespace ms
 			SORT_ITEMS = 70,
 			MOVE_ITEM = 71,
 			USE_ITEM = 72,
+			/// s9 RecvOpcode.USE_SUMMON_BAG = 0x4B；body 与 USE_ITEM 同形
+			/// （readInt ts + short slot + int itemId，UseSummonBagHandler 坐实；
+			/// 服务端扣 1 个后按 ItemData.mob 子表概率刷怪）。Wave 2a。
+			USE_SUMMON_BAG = 75,
+			/// s9 RecvOpcode.GRENADE_EFFECT = 0x6D（Wave 4）：int x, int y,
+			/// int keyDown, int skillId —— 手雷/毒弹投掷点上报，服务端回
+			/// THROW_GRENADE(204) 广播落点。
+			GRENADE_EFFECT = 109,
 			USE_CASH_ITEM = 79,
 			SCROLL_EQUIP = 86,
 
 			/// Player
 			SPEND_AP = 87,
 			SPEND_SP = 90,
+			/// s9 RecvOpcode.CANCEL_BUFF = 0x5C（body = int sourceid 技能id）
+			CANCEL_BUFF = 92,
+			/// s9 RecvOpcode.AUTO_DISTRIBUTE_AP = 0x58。标准分支
+			/// （use_server_auto_assigner=false，DB 种子默认）body：
+			/// 时间戳后 2×{int type,int val}，type 用 Stat.getBy5ByteEncoding
+			/// （STR=64/DEX=128/INT=256/LUK=512）
+			AUTO_DISTRIBUTE_AP = 88,
+			/// s9 RecvOpcode.AUTO_AGGRO = 0xBD（Wave 4）：int oid —— 触怪碰撞
+			/// 时上报该怪 oid，服务端 aggroAutoAggroUpdate 驱其进战斗状态。
+			AUTO_AGGRO = 189,
+			/// s9 RecvOpcode.USE_SKILL_BOOK = 0x52；body 与 USE_ITEM 完全同形
+			/// （readInt 时间戳 + short slot + int itemId，SkillBookHandler.java 坐实）
+			USE_SKILL_BOOK = 82,
 			/// s9 RecvOpcode.MESO_DROP = 0x5E
 			MESO_DROP = 94,
 			/// s9 RecvOpcode.GIVE_FAME = 0x5F

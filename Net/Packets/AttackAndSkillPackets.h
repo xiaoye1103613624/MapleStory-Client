@@ -211,7 +211,47 @@ namespace ms
 		}
 
 		// From mob attack result
-		TakeDamagePacket(const MobAttackResult& result, From from) : TakeDamagePacket(from, 0, result.damage, result.mobid, result.oid, result.direction) {}
+		TakeDamagePacket(const MobAttackResult& result, From from) : TakeDamagePacket(from, 0, damage::legacy_line(result.damage), result.mobid, result.oid, result.direction) {}
+	};
+
+	// Wave 4：手雷/毒弹投掷点上报。s9 GrenadeEffectHandler 读
+	// int x, int y, int keyDown, int skillId；服务端校验技能等级>0 后回
+	// THROW_GRENADE(204) 广播（本端该 s2c 已接渲染）。keyDown 语义（HeavenMS
+	// 同源）= 按下状态位，本端一次性投掷固定 1；skillId 即命中的技能 id。
+	// 判据与 has_charge_field 同集合（GRENADE / POISON_BOMB / CORKSCREW_BLOW /
+	// BIG_BANG / Evan 吐息）——但服务端 switch 只对 POISON_BOMB/GRENADE 结算，
+	// 故调用点仅对手雷族发本包，其余 charge 技能不发（发了也被丢，徒增流量）。
+	class GrenadeEffectPacket : public OutPacket
+	{
+	public:
+		// s9 switch 白名单（GrenadeEffectHandler）：POISON_BOMB / GRENADE /
+		// （CORKSCREW 在 Grenade 分支外的另一 case，值不同轮不混用）。
+		static constexpr bool is_grenade(int32_t skill)
+		{
+			return skill == 5201002		// Gunslinger.GRENADE
+				|| skill == 14111006;	// NightWalker.POISON_BOMB
+		}
+
+		GrenadeEffectPacket(Point<int16_t> pos, int32_t skillid)
+			: OutPacket(OutPacket::Opcode::GRENADE_EFFECT)
+		{
+			write_int(pos.x());
+			write_int(pos.y());
+			write_int(1);			// keyDown：按下即投
+			write_int(skillid);
+		}
+	};
+
+	// Wave 4：触怪自动仇恨。s9 AutoAggroHandler 读 int oid，
+	// map.getMonsterByOid(oid).aggroAutoAggroUpdate(chr) —— 玩家撞进怪
+	// 碰撞盒时服务端默认不动手的怪会转攻击状态。Stage 碰撞帧调用。
+	class AutoAggroPacket : public OutPacket
+	{
+	public:
+		AutoAggroPacket(int32_t oid) : OutPacket(OutPacket::Opcode::AUTO_AGGRO)
+		{
+			write_int(oid);
+		}
 	};
 
 	// Packet which notifies the server of a skill usage

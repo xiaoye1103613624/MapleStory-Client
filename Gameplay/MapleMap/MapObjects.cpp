@@ -17,16 +17,42 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "MapObjects.h"
 
+#include "../../Constants.h"
+
 namespace ms
 {
+	namespace
+	{
+		// 视口剔除余量（像素）。对象锚点（脚/中心）落在屏幕外这么远就不画。
+		// 余量要盖住最高的怪物名牌+血条、掉落标签与常见贴图越界，512 足以
+		// 宽容全部 v83 素材。收益在大场景（几百怪 / 满地掉落）：屏幕外对象
+		// 不再逐帧走动画取帧与 quad 提交——这是渲染侧最大的白烧。
+		constexpr int32_t CULL_MARGIN = 512;
+	}
+
 	void MapObjects::draw(Layer::Id layer, double viewx, double viewy, float alpha) const
 	{
+		const int32_t vw = Constants::Constants::get().get_viewwidth();
+		const int32_t vh = Constants::Constants::get().get_viewheight();
+
 		for (auto& oid : layers[layer])
 		{
 			auto mmo = get(oid);
 
-			if (mmo && mmo->is_active())
-				mmo->draw(viewx, viewy, alpha);
+			if (!mmo || !mmo->is_active())
+				continue;
+
+			// 屏幕坐标 = 世界坐标 + 相机偏移（viewx/viewy 为负向）。剔除只查
+			// 锚点，插值抖动由余量吸收；不取包围盒，免得把剔除做成新的开销。
+			const Point<int16_t> pos = mmo->get_position();
+			const int32_t sx = pos.x() + static_cast<int32_t>(viewx);
+			const int32_t sy = pos.y() + static_cast<int32_t>(viewy);
+
+			if (sx < -CULL_MARGIN || sx > vw + CULL_MARGIN
+				|| sy < -CULL_MARGIN || sy > vh + CULL_MARGIN)
+				continue;
+
+			mmo->draw(viewx, viewy, alpha);
 		}
 	}
 
