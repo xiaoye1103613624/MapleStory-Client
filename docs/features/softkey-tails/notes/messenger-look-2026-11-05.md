@@ -19,5 +19,5 @@
 ## 局限
 
 - 缩放无原生 oracle（r474/r495 经验值）；真机截图可再微调。
-- `blink` / `chatBalloon` 仍预留（见 messenger-layers §5）。
+- ~~`blink` / `chatBalloon` 仍预留~~ → 已接（见 [messenger-blink-chatballoon-2026-11-05.md](messenger-blink-chatballoon-2026-11-05.md)）。
 - 换装后本机立绘不自动刷（无对本机的 updateMessenger）。

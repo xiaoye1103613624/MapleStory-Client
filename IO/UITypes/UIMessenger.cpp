@@ -25,7 +25,10 @@ namespace ms
 		has_assets(false),
 		in_room_(false),
 		create_sent(false),
-		local_pos(-1)
+		input_typing_sent(false),
+		local_pos(-1),
+		blink_ticks(0),
+		typing_throttle_ms(0)
 	{
 		position = Point<int16_t>(500, 80);
 		dimension = Point<int16_t>(295, 364);
@@ -151,6 +154,19 @@ namespace ms
 			);
 		}
 
+		// blink：标题条注意标（v95 m_pLayerBlink；本包单帧 12×10 橙泡）
+		if (root["blink"])
+		{
+			blink = Texture(root["blink"]);
+			Point<int16_t> o = blink.get_origin();
+			if (o.x() != 0 || o.y() != 0)
+				blink.shift(o);
+		}
+
+		// chatBalloon/0..4：座位上方打字气泡（delay=120）；v95 LoadLayer(…/chatBalloon)
+		if (root["chatBalloon"])
+			balloon_proto = Animation(root["chatBalloon"]);
+
 		// 输入框位置由 CHAT_INPUT_* 常量定死（切片 origin 全为 0，窗口尺寸就是
 		// backgrnd 的 295x364），不再按 dimension 反推。
 		chat_input.set_state(Textfield::State::NORMAL);
@@ -199,7 +215,10 @@ namespace ms
 
 		in_room_ = false;
 		create_sent = false;
+		input_typing_sent = false;
 		local_pos = -1;
+		blink_ticks = 0;
+		typing_throttle_ms = 0;
 
 		for (auto& s : slots)
 			s = Slot{};
@@ -209,6 +228,92 @@ namespace ms
 
 		chat_log.clear();
 		chat_labels.clear();
+	}
+
+	void UIMessenger::start_blink()
+	{
+		// 对照 v95 StartBlink(1)：仅在未闪时置 30；本端收真聊天 / 进离房都会触发。
+		if (blink_ticks <= 0)
+			blink_ticks = BLINK_TICKS;
+	}
+
+	int8_t UIMessenger::find_slot_by_name(const std::string& name) const
+	{
+		for (size_t i = 0; i < SLOT_COUNT; i++)
+		{
+			if (slots[i].occupied && slots[i].name == name)
+				return static_cast<int8_t>(i);
+		}
+		return -1;
+	}
+
+	void UIMessenger::set_slot_typing(int8_t pos, bool typing)
+	{
+		if (pos < 0 || static_cast<size_t>(pos) >= SLOT_COUNT)
+			return;
+		if (!slots[static_cast<size_t>(pos)].occupied)
+			return;
+
+		Slot& s = slots[static_cast<size_t>(pos)];
+		if (s.typing == typing)
+			return;
+		s.typing = typing;
+		if (typing)
+			s.balloon.reset();
+		LOG(LOG_DEBUG, "UIMessenger: typing pos=" << static_cast<int>(pos)
+			<< " on=" << (typing ? 1 : 0));
+	}
+
+	void UIMessenger::send_typing(bool typing)
+	{
+		if (!in_room_ || local_pos < 0)
+			return;
+
+		std::string self = "Me";
+		if (static_cast<size_t>(local_pos) < SLOT_COUNT && slots[static_cast<size_t>(local_pos)].occupied)
+			self = slots[static_cast<size_t>(local_pos)].name;
+
+		// v95 Update：EncodeStr(charName + "0"|"1")，无冒号 ⇒ OnChat 走打字分支。
+		MessengerChatPacket(self + (typing ? "1" : "0")).dispatch();
+		input_typing_sent = typing;
+		typing_throttle_ms = TYPING_THROTTLE_MS;
+		LOG(LOG_DEBUG, "UIMessenger: send_typing " << (typing ? 1 : 0));
+	}
+
+	void UIMessenger::handle_messenger_chat(const std::string& text)
+	{
+		if (text.empty())
+			return;
+
+		// v95 OnChat：有 " : " → 真聊天；否则末字符 0/1 为打字指示。
+		const std::string sep = " : ";
+		size_t colon = text.find(sep);
+		if (colon != std::string::npos)
+		{
+			std::string speaker = text.substr(0, colon);
+			int8_t pos = find_slot_by_name(speaker);
+			if (pos >= 0)
+				set_slot_typing(pos, false);
+			append_chat(text);
+			start_blink();
+			return;
+		}
+
+		if (text.size() >= 2)
+		{
+			char flag = text.back();
+			if (flag == '0' || flag == '1')
+			{
+				std::string speaker = text.substr(0, text.size() - 1);
+				int8_t pos = find_slot_by_name(speaker);
+				if (pos >= 0)
+					set_slot_typing(pos, flag == '1');
+				return; // 打字包不进聊天历史
+			}
+		}
+
+		append_chat(text);
+		start_blink();
 	}
 
 	void UIMessenger::set_local_pos(int8_t pos)
@@ -229,10 +334,12 @@ namespace ms
 		Player& pl = Stage::get().get_player();
 		Slot& s = slots[static_cast<size_t>(pos)];
 		s.occupied = true;
+		s.typing = false;
 		s.name = pl.get_name();
 		s.channel = -1; // 本机座位不标频道
 		// CharLook 拷贝当前外观（指针指向静态 Body/Hair/Face 池，Equips 按值）
 		s.charlook = std::make_unique<CharLook>(pl.get_look());
+		s.balloon = balloon_proto;
 		slot_labels[static_cast<size_t>(pos)].change_text(s.name);
 		LOG(LOG_DEBUG, "UIMessenger: fill_local_look pos=" << static_cast<int>(pos)
 			<< " name=" << s.name);
@@ -248,10 +355,12 @@ namespace ms
 
 		Slot& s = slots[static_cast<size_t>(pos)];
 		s.occupied = true;
+		s.typing = false;
 		s.name = name;
 		s.channel = channel;
 		s.look = look;
 		s.charlook = std::make_unique<CharLook>(look);
+		s.balloon = balloon_proto;
 
 		std::string label = name;
 
@@ -296,10 +405,15 @@ namespace ms
 
 		std::string payload = self + " : " + text;
 		MessengerChatPacket(payload).dispatch();
+		// 发真聊天后清打字态（对照 v95 ProcessChat 置 m_bInputState=0）。
+		if (input_typing_sent)
+			send_typing(false);
+		input_typing_sent = false;
 		// 回显行单独走 i18n：占位名 "Me" 是协议侧字段（出站包内容不随语言变），
 		// 只把「给人看的那一行」里的名字换成当前语言（默认中文「我」）。
 		std::string shown = (self == "Me" ? Locale::text("messenger.self") : self) + " : " + text;
 		append_chat(shown); // 本地回显，不等服务端回推
+		start_blink();
 		chat_input.change_text("");
 	}
 
@@ -356,14 +470,21 @@ namespace ms
 			if (!slots[i].occupied)
 				continue;
 			// 立绘：脚点 = NameBar 中线上方 LOOK_FOOT_*；缩放 LOOK_SCALE（见头文件注释）
+			Point<int16_t> look_pos = position + namebar_pos[i]
+				+ Point<int16_t>(LOOK_FOOT_DX, LOOK_FOOT_DY);
 			if (slots[i].charlook)
 			{
-				Point<int16_t> look_pos = position + namebar_pos[i]
-					+ Point<int16_t>(LOOK_FOOT_DX, LOOK_FOOT_DY);
 				slots[i].charlook->set_stance(Stance::Id::STAND1);
 				slots[i].charlook->set_expression(Expression::Id::DEFAULT);
 				slots[i].charlook->draw(
 					DrawArgument(look_pos, LOOK_SCALE, LOOK_SCALE), 1.0f);
+			}
+			// chatBalloon：打字中循环播；相对脚点 BALLOON_DX/DY（v95 RelMove 缩放近似）
+			if (slots[i].typing)
+			{
+				slots[i].balloon.draw(
+					DrawArgument(look_pos + Point<int16_t>(BALLOON_DX, BALLOON_DY)),
+					1.0f);
 			}
 			slot_labels[i].draw(
 				position + namebar_pos[i] + Point<int16_t>(LOOK_NAME_DX, LOOK_NAME_DY));
@@ -389,6 +510,10 @@ namespace ms
 
 		chat_input.draw(Point<int16_t>(0, 0));
 		UIElement::draw_buttons(inter);
+
+		// blink：blink_ticks 在 (HALF, TICKS] 显、在 (0, HALF] 隐（对齐 ToggleBlink 半周期）
+		if (blink && blink_ticks > BLINK_HALF)
+			blink.draw(position + Point<int16_t>(BLINK_DRAW_X, BLINK_DRAW_Y));
 	}
 
 	void UIMessenger::update()
@@ -401,6 +526,40 @@ namespace ms
 		{
 			if (slots[i].charlook)
 				slots[i].charlook->update(Constants::TIMESTEP);
+			if (slots[i].typing)
+				slots[i].balloon.update(Constants::TIMESTEP);
+		}
+
+		// blink 计数：对齐 v95 Update（每 tick -1；到 0 重置为 30 继续闪，直到停）
+		// 本端无最小化态，收消息后闪若干周期再停（约 4 个半周期后清零）。
+		if (blink_ticks > 0)
+		{
+			--blink_ticks;
+			if (blink_ticks == 0)
+			{
+				// 再开一轮；用高位标记「剩余轮数」会更干净，这里简单再闪一轮后彻底停：
+				// 若刚被 start_blink 置 30，跑完 30 tick（含隐半程）即停。
+			}
+		}
+
+		// 打字指示出站（对照 v95 Update m_bInputState ↔ 输入框空/非空）
+		if (typing_throttle_ms > 0)
+		{
+			typing_throttle_ms -= Constants::TIMESTEP;
+			if (typing_throttle_ms < 0)
+				typing_throttle_ms = 0;
+		}
+		else if (in_room_ && chat_input.get_state() == Textfield::State::FOCUSED)
+		{
+			bool has_text = !chat_input.get_text().empty();
+			if (has_text && !input_typing_sent)
+				send_typing(true);
+			else if (!has_text && input_typing_sent)
+				send_typing(false);
+		}
+		else if (input_typing_sent)
+		{
+			send_typing(false);
 		}
 	}
 

@@ -7,6 +7,7 @@
 | 登录遮罩叠图 | knobs 已锁（r201 playbook） | 需 `evidence/r20/current_shots/` 截图对照 |
 | PersonalShop CREATE FM | SoftKey 店名 → `HiredMerchantCreatePacket`（514/503） | 需自由市场图持有许可证点测 |
 | Messenger 立绘 | ✅ 本机 look + 脚点常量 + s9 create→join | 需实机截图确认缩放/脚点 |
+| Messenger blink / chatBalloon | ✅ IDA+IMG 取证后接入打字泡与标题 blink | 双人房真机；blink 无 Min 态属适配 |
 | Guild BBS | 公会窗 `B` → `UIGuildBBS` 完整窗 + List；摘要栏仍同步 | 见 [guild-bbs-ui](../guild-bbs-ui/) / pending §12 |
 
 ## 本轮代码补强（Messenger 立绘）

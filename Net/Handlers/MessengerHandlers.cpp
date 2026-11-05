@@ -142,7 +142,7 @@ namespace ms
 
 				break;
 			}
-			case 0x06: // messengerChat
+			case 0x06: // messengerChat（真聊天 "Name : msg" 或打字指示 Name+"0"|"1"）
 			{
 				std::string text = recv.read_string();
 				while (recv.available())
@@ -150,10 +150,11 @@ namespace ms
 
 				if (auto ui = ensure_ui())
 				{
-					ui->append_chat(text);
+					ui->handle_messenger_chat(text);
 					break;
 				}
-				if (!text.empty())
+				// 无窗时：打字指示丢弃；真聊天仍走 StatusMessenger
+				if (!text.empty() && text.find(" : ") != std::string::npos)
 					ensure_sm(Color::Name::YELLOW, text);
 
 				break;

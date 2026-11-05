@@ -8,6 +8,7 @@
 
 #include "../../Graphics/Texture.h"
 #include "../../Graphics/Text.h"
+#include "../../Graphics/Animation.h"
 #include "../../Character/Look/CharLook.h"
 #include "../../Net/Login.h"
 
@@ -42,6 +43,8 @@ namespace ms
 		void set_member(int8_t pos, const std::string& name, int8_t channel, const LookEntry& look);
 		void clear_member(int8_t pos);
 		void append_chat(const std::string& line);
+		/// s2c mode=6：区分真聊天（含 " : "）与打字指示（尾字符 0/1，对照 v95 OnChat）。
+		void handle_messenger_chat(const std::string& text);
 		bool in_room() const { return in_room_; }
 
 	protected:
@@ -57,10 +60,12 @@ namespace ms
 		struct Slot
 		{
 			bool occupied = false;
+			bool typing = false; // 对方正在输入（chatBalloon GA_REPEAT）
 			std::string name;
 			int8_t channel = 0;
 			LookEntry look;
 			std::unique_ptr<CharLook> charlook;
+			Animation balloon; // 每座独立动画时钟
 		};
 
 		// 底板画了 4 枚名牌（NameBar/0..3，灰/蓝/红/绿，三上一中），模型却只留 3 格
@@ -108,21 +113,45 @@ namespace ms
 		static constexpr int16_t LOOK_NAME_DX = 44;
 		static constexpr int16_t LOOK_NAME_DY = 2;
 
+		// chatBalloon：v95 SetAvatar RelMove(-45,-100) 相对 Avatar 原点；本端脚点 + 0.70 缩放
+		// → 近似 (-45*0.70, -100*0.70) ≈ (-31,-70)。证据 ida-v95-blink-chatballoon.txt。
+		static constexpr int16_t BALLOON_DX = -31;
+		static constexpr int16_t BALLOON_DY = -70;
+
+		// blink：v95 StartBlink 置 m_nBlink=30；Update 每 tick -1，==15 隐、==0 重置并显。
+		// 原生仅 m_nState==2（最小化标题条）才闪；本端无 Min 态，收消息时在标题条右上闪烁。
+		static constexpr int16_t BLINK_TICKS = 30;
+		static constexpr int16_t BLINK_HALF = 15;
+		static constexpr int16_t BLINK_DRAW_X = 260; // 295-21(close)-14 ≈ 标题条右
+		static constexpr int16_t BLINK_DRAW_Y = 4;
+
+		// 打字状态节流：v95 m_tRestUpdateState=3000（ms 量级）。
+		static constexpr int32_t TYPING_THROTTLE_MS = 3000;
+
 		void leave_room();
 		void prompt_invite();
 		void send_chat(const std::string& text);
 		/// s9 建房/进房对本机只发 joinMessenger(pos) 不带 look；用本机 Player::CharLook 填座位。
 		void fill_local_look(int8_t pos);
+		void start_blink();
+		void set_slot_typing(int8_t pos, bool typing);
+		void send_typing(bool typing);
+		int8_t find_slot_by_name(const std::string& name) const;
 
 		bool has_assets;
 		bool in_room_;
 		bool create_sent;
+		bool input_typing_sent; // 已上报「正在输入」
 		int8_t local_pos;
+		int16_t blink_ticks; // >0 闪烁中；偶半显、奇半隐（对齐 ToggleBlink）
+		int32_t typing_throttle_ms;
 		std::string selected_name;
 
 		Texture backgrnd;
 		Texture backgrnd2;
 		Texture backgrnd3;
+		Texture blink; // UIWindow.img/Messenger/blink 12×10 橙标
+		Animation balloon_proto; // chatBalloon/0..4 样板，座位拷贝用
 		std::array<Texture, NAMEBAR_COUNT> namebars;
 		std::array<Point<int16_t>, NAMEBAR_COUNT> namebar_pos;
 		std::array<Slot, SLOT_COUNT> slots;

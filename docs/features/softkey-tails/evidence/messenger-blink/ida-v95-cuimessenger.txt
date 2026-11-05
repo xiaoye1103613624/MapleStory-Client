@@ -1,0 +1,1304 @@
+=== named CUIMessenger funcs ===
+0x7efad0 ?HitTest@CUIMessenger@@UAEHJJPAPAVCCtrlWnd@@@Z size=81
+0x7efb30 ?OnMouseEnter@CUIMessenger@@UAEXH@Z size=34
+0x7efb60 ?OnChildNotify@CUIMessenger@@UAEXIII@Z size=57
+0x7efba0 ?StartBlink@CUIMessenger@@IAEXH@Z size=51
+0x7efbe0 ??1?$TSingleton@VCUIMessenger@@@@QAE@XZ size=11
+0x7efc00 ?ToggleBlink@CUIMessenger@@IAEXH@Z size=238
+0x7efcf0 ?SetShowState@CUIMessenger@@QAEXJ@Z size=1448
+0x7f02a0 ?TryDelete@CUIMessenger@@QAEXXZ size=85
+0x7f0300 ?_Reserve@?$ZArray@UChatTextInfo@CUIMessenger@@@@AAEPAUChatTextInfo@CUIMessenger@@IABVZAllocHelper@@@Z size=125
+0x7f0380 ?Clear@CHARACTER@CUIMessenger@@QAEXXZ size=100
+0x7f03f0 ?OnDestroy@CUIMessenger@@UAEXXZ size=180
+0x7f04b0 ??$construct@UChatTextInfo@CUIMessenger@@@@YAPAUChatTextInfo@CUIMessenger@@PAU01@@Z size=18
+0x7f04d0 ?InsertBefore@?$ZArray@UChatTextInfo@CUIMessenger@@@@QAEAAUChatTextInfo@CUIMessenger@@H@Z size=138
+0x7f0560 ?_Destroy@?$ZArray@UChatTextInfo@CUIMessenger@@@@CAXPAUChatTextInfo@CUIMessenger@@0@Z size=44
+0x7f0590 ??1CHARACTER@CUIMessenger@@QAE@XZ size=110
+0x7f0600 ?OnMouseMove@CUIMessenger@@UAEHJJ@Z size=631
+0x7f0880 ?SetAvatar@CUIMessenger@@QAEXJABUAvatarLook@@H@Z size=4244
+0x7f1920 ?SetLayer@CUIMessenger@@QAEXXZ size=4454
+0x7f2a90 ?DrawTextA@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z size=543
+0x7f2cb0 ?OnInvite@CUIMessenger@@SAXAAVCInPacket@@@Z size=482
+0x7f2ea0 ?OnAvatar@CUIMessenger@@QAEXAAVCInPacket@@@Z size=162
+0x7f2f50 ?RemoveAll@?$ZArray@UChatTextInfo@CUIMessenger@@@@QAEXXZ size=49
+0x7f2f90 ??0CHARACTER@CUIMessenger@@QAE@XZ size=87
+0x7f2ff0 ?Update@CUIMessenger@@UAEXXZ size=811
+0x7f3320 ?SendClaim@CUIMessenger@@IAEXXZ size=364
+0x7f3490 ?OnSelfAvatarChanged@CUIMessenger@@QAEXABUAvatarLook@@@Z size=35
+0x7f34c0 ?SetCtrl@CUIMessenger@@QAEXXZ size=2306
+0x7f3dd0 ??1?$ZArray@UChatTextInfo@CUIMessenger@@@@QAE@XZ size=5
+0x7f3de0 ??0CUIMessenger@@QAE@K@Z size=357
+0x7f3f50 ?ClearToolTip@CUIMessenger@@UAEXXZ size=11
+0x7f3f60 ??_ECUIMessenger@@W7AEPAXI@Z size=8
+0x7f3f70 ??1CUIMessenger@@UAE@XZ size=455
+0x7f4140 ?TryNew@CUIMessenger@@SAHK@Z size=182
+0x7f4200 ?SetState@CUIMessenger@@QAEXJ@Z size=46
+0x7f4230 ??_ECUIMessenger@@UAEPAXI@Z size=32
+0x7f4250 ?AddChatText@CUIMessenger@@IAEXV?$ZXString@G@@J@Z size=1219
+0x7f4730 ?OnEnter@CUIMessenger@@QAEXJABUAvatarLook@@PBDJH@Z size=555
+0x7f4960 ?OnSelfEnter@CUIMessenger@@QAEXJH@Z size=301
+0x7f4a90 ?OnLeave@CUIMessenger@@QAEXJ@Z size=265
+0x7f4ba0 ?DrawStatusBar@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z size=1163
+0x7f5030 ?OnInviteResult@CUIMessenger@@QAEXAAVCInPacket@@@Z size=355
+0x7f51a0 ?OnBlocked@CUIMessenger@@QAEXAAVCInPacket@@@Z size=291
+0x7f52d0 ?OnChat@CUIMessenger@@QAEXAAVCInPacket@@@Z size=1096
+0x7f5720 ?OnMigrated@CUIMessenger@@QAEXAAVCInPacket@@@Z size=256
+0x7f5820 ?SendInviteMsg@CUIMessenger@@QAEXV?$ZXString@D@@@Z size=429
+0x7f59d0 ?OnCreate@CUIMessenger@@UAEXPAX@Z size=664
+0x7f5c70 ?Draw@CUIMessenger@@UAEXPBUtagRECT@@@Z size=182
+0x7f5d30 ?OnEnter@CUIMessenger@@QAEXAAVCInPacket@@@Z size=201
+0x7f5e00 ?OnSelfEnterResult@CUIMessenger@@QAEXAAVCInPacket@@@Z size=29
+0x7f5e20 ?OnLeave@CUIMessenger@@QAEXAAVCInPacket@@@Z size=27
+0x7f5e40 ?OnPacket@CUIMessenger@@SAXAAVCInPacket@@@Z size=117
+0x7f5ee0 ?HandleSlashCommand@CUIMessenger@@QAEHV?$ZXString@D@@@Z size=595
+0x7f6140 ?ProcessChat@CUIMessenger@@IAEXXZ size=565
+0x7f6380 ?OnButtonClicked@CUIMessenger@@UAEXI@Z size=99
+0x7f6400 ?OnKey@CUIMessenger@@UAEXII@Z size=792
+
+=== string hits blink/chatBalloon/Messenger path ===
+0xb9ee88 UI/UIWindow2.img/Messenger/Max/icon
+0xb9eeac UI/UIWindow2.img/Messenger/Min/icon
+0xb9eed0 UI/UIWindow2.img/Messenger/Min2/icon
+
+=== decompile key funcs ===
+
+----- ?OnDestroy@CUIMessenger@@UAEXXZ @ 0x7f03f0 -----
+void __thiscall CUIMessenger::OnDestroy(CUIMessenger *this)
+{
+  int v2; // edx
+  char *m_pStr; // ebx
+  int v4; // eax
+  int v5; // [esp-8h] [ebp-34h]
+  int m_nState; // [esp-4h] [ebp-30h]
+  COutPacket oPacket; // [esp+10h] [ebp-1Ch] BYREF
+  int v8; // [esp+28h] [ebp-4h]
+
+  if ( TSingleton<CClientSocket>::ms_pInstance != nullptr )
+  {
+    COutPacket::COutPacket(&oPacket, 143);
+    v8 = 0;
+    COutPacket::Encode1(&oPacket, 2);
+    CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v2, &oPacket);
+    v8 = -1;
+    ZArray<unsigned char>::RemoveAll(&oPacket.m_aSendBuff);
+  }
+  m_pStr = TSingleton<CConfig>::ms_pInstance._m_pStr;
+  m_nState = this->m_nState;
+  v5 = this->CWnd::IUIMsgHandler::vfptr->GetAbsTop(&this->IUIMsgHandler);
+  v4 = this->CWnd::IUIMsgHandler::vfptr->GetAbsLeft(&this->IUIMsgHandler);
+  CConfig::SetUIWndPos((CConfig *)m_pStr, 8, v4, v5, m_nState);
+}
+
+
+----- ?DrawTextA@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z @ 0x7f2a90 -----
+void __thiscall CUIMessenger::DrawTextA(
+        CUIMessenger *this,
+        _com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > pCanvas)
+{
+  int m_nCurPos; // ecx
+  int v4; // ebp
+  bool v5; // cc
+  int v6; // edi
+  CUIMessenger::ChatTextInfo *a; // eax
+  HRESULT v8; // eax
+  CUIMessenger::ChatTextInfo *v9; // eax
+  const wchar_t *m_pStr; // eax
+  IWzFont *v11; // ecx
+  FONT_TYPE ftColor; // [esp-14h] [ebp-64h]
+  int v13; // [esp-14h] [ebp-64h]
+  _bstr_t v14; // [esp-10h] [ebp-60h] BYREF
+  IWzCanvas *m_pInterface; // [esp-Ch] [ebp-5Ch]
+  Ztl_variant_t *p_pvargDest; // [esp-8h] [ebp-58h]
+  Ztl_variant_t *p_pvarg; // [esp-4h] [ebp-54h]
+  int i; // [esp+14h] [ebp-3Ch]
+  _com_ptr_t<_com_IIID<IWzFont,&_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac> > result; // [esp+18h] [ebp-38h] BYREF
+  int nStartIdx; // [esp+1Ch] [ebp-34h]
+  _bstr_t *v21; // [esp+20h] [ebp-30h]
+  VARIANTARG pvargDest; // [esp+24h] [ebp-2Ch] BYREF
+  VARIANTARG pvarg; // [esp+34h] [ebp-1Ch] BYREF
+  int v24; // [esp+4Ch] [ebp-4h]
+
+  m_nCurPos = this->m_pSB.p->m_nCurPos;
+  v4 = 0;
+  v5 = this->m_nTextLineCount <= 0;
+  v24 = 0;
+  nStartIdx = m_nCurPos;
+  i = 0;
+  if ( !v5 )
+  {
+    v6 = m_nCurPos;
+    while ( 1 )
+    {
+      a = this->m_aChatText.a;
+      if ( a == nullptr || (unsigned int)(m_nCurPos + i) >= a[-1].ftColor )
+        break;
+      VariantInit(&pvarg);
+      v8 = ZComAPI::ZComVariantCopy(&pvarg, &vtMissing);
+      if ( v8 < 0
+        || (LOBYTE(v24) = 1, VariantInit(&pvargDest), (v8 = ZComAPI::ZComVariantCopy(&pvargDest, &vtMissing)) < 0) )
+      {
+        _com_issue_error(v8);
+      }
+      p_pvarg = (Ztl_variant_t *)&pvarg;
+      p_pvargDest = (Ztl_variant_t *)&pvargDest;
+      m_pInterface = pCanvas.m_pInterface;
+      v9 = this->m_aChatText.a;
+      v14.m_Data = (_bstr_t::Data_t *)&pvarg;
+      m_pStr = v9[v6].sChatText._m_pStr;
+      v21 = &v14;
+      LOBYTE(v24) = 2;
+      _bstr_t::_bstr_t(&v14, m_pStr);
+      ftColor = this->m_aChatText.a[v6].ftColor;
+      LOBYTE(v24) = 3;
+      v11 = get_basic_font(&result, ftColor)->m_pInterface;
+      LOBYTE(v24) = 4;
+      if ( v11 == nullptr )
+        _com_issue_error(-2147467261);
+      v13 = v4 + (this->m_nState != 0 ? 60 : 155);
+      LOBYTE(v24) = 5;
+      IWzFont::DrawTextA(v11, 12, v13, (Ztl_bstr_t)v14.m_Data, m_pInterface, p_pvargDest, p_pvarg);
+      LOBYTE(v24) = 2;
+      if ( result.m_pInterface != nullptr )
+        result.m_pInterface->vfptr->Release(result.m_pInterface);
+      LOBYTE(v24) = 1;
+      if ( pvargDest.vt == 8 )
+      {
+        pvargDest.vt = 0;
+        if ( pvargDest.decVal.Lo32 != 0 )
+          ZAPI.CoTaskMemFree((void *)(pvargDest.decVal.Lo32 - 4));
+      }
+      else
+      {
+        VariantClear(&pvargDest);
+      }
+      LOBYTE(v24) = 0;
+      if ( pvarg.vt == 8 )
+      {
+        pvarg.vt = 0;
+        if ( pvarg.decVal.Lo32 != 0 )
+          ZAPI.CoTaskMemFree((void *)(pvarg.decVal.Lo32 - 4));
+      }
+      else
+      {
+        VariantClear(&pvarg);
+      }
+      ++v6;
+      v4 += 16;
+      v5 = ++i < this->m_nTextLineCount;
+      if ( !v5 )
+        break;
+      m_nCurPos = nStartIdx;
+    }
+  }
+  v24 = -1;
+  if ( pCanvas.m_pInterface != nullptr )
+    pCanvas.m_pInterface->vfptr->Release(pCanvas.m_pInterface);
+}
+
+
+----- ?OnAvatar@CUIMessenger@@QAEXAAVCInPacket@@@Z @ 0x7f2ea0 -----
+void __thiscall CUIMessenger::OnAvatar(CUIMessenger *this, CInPacket *iPacket)
+{
+  unsigned int v3; // edi
+  bool v4; // zf
+  AvatarLook v5; // [esp+10h] [ebp-214h] BYREF
+  int v6; // [esp+220h] [ebp-4h]
+
+  v3 = (unsigned __int8)CInPacket::Decode1(iPacket);
+  if ( v3 <= 2 && this->m_aCharacter[v3].bCharged != 0 )
+  {
+    AvatarLook::AvatarLook(&v5, iPacket);
+    v4 = this->m_nState == 0;
+    v6 = 0;
+    if ( v4 )
+      CUIMessenger::SetAvatar(this, v3, &v5, 1);
+  }
+}
+
+
+----- ?Update@CUIMessenger@@UAEXXZ @ 0x7f2ff0 -----
+void __thiscall CUIMessenger::Update(CUIMessenger *this)
+{
+  char v2; // bl
+  CAvatar **p_p; // edi
+  int i; // ebp
+  int m_tRestUpdateState; // eax
+  CCtrlEdit *p; // ecx
+  char *m_pStr; // eax
+  char *v8; // ecx
+  int v9; // eax
+  const char *v10; // eax
+  int v11; // edx
+  IUIMsgHandler *v12; // ecx
+  ZArray<unsigned char> *p_m_aSendBuff; // ecx
+  char *v14; // eax
+  bool v15; // zf
+  char *v16; // ecx
+  int v17; // eax
+  const char *v18; // eax
+  int v19; // edx
+  IUIMsgHandler *v20; // ecx
+  int m_nBlink; // eax
+  int v22; // eax
+  ZXString<char> v23[6]; // [esp-4h] [ebp-50h] BYREF
+  bool v24; // [esp+17h] [ebp-35h]
+  ZXString<char> result; // [esp+18h] [ebp-34h] BYREF
+  ZXString<char> *v26; // [esp+1Ch] [ebp-30h]
+  COutPacket oPacket; // [esp+20h] [ebp-2Ch] BYREF
+  COutPacket v28; // [esp+30h] [ebp-1Ch] BYREF
+  int v29; // [esp+48h] [ebp-4h]
+
+  v2 = 0;
+  result._m_pStr = nullptr;
+  p_p = &this->m_aCharacter[0].pAvatar.p;
+  for ( i = 3; i != 0; --i )
+  {
+    if ( *p_p != nullptr )
+      CAvatar::Update(*p_p);
+    p_p += 8;
+  }
+  m_tRestUpdateState = this->m_tRestUpdateState;
+  if ( m_tRestUpdateState > 0 )
+  {
+    this->m_tRestUpdateState = m_tRestUpdateState - 30;
+    goto LABEL_45;
+  }
+  p = this->m_pEditChat.p;
+  if ( p != nullptr )
+  {
+    v24 = this->m_bInputState != 0
+       && ((m_pStr = CCtrlEdit::GetText(p, &result)->_m_pStr, v2 = 1, m_pStr == nullptr) || *m_pStr == 0);
+    if ( (v2 & 1) != 0 )
+    {
+      v2 &= ~1u;
+      if ( result._m_pStr != nullptr )
+        ZXString<char>::_Release((ZXString<char>::_ZXStringData *)result._m_pStr - 1);
+    }
+    if ( v24 )
+    {
+      COutPacket::COutPacket(&oPacket, 143);
+      v29 = 0;
+      COutPacket::Encode1(&oPacket, 6);
+      result._m_pStr = nullptr;
+      *ZXString<char>::GetBuffer(&result, 1, 0) = a0[0];
+      ZXString<char>::ReleaseBuffer(&result, 1);
+      v9 = *((_DWORD *)TSingleton<CWvsContext>::ms_pInstance._m_pStr + 2099);
+      LOBYTE(v29) = 1;
+      if ( v9 != 0 )
+        v10 = (const char *)(v9 + 4);
+      else
+        v10 = nullptr;
+      v23[0]._m_pStr = v8;
+      v26 = v23;
+      operator+<char,char>(v23, v10, &result);
+      COutPacket::EncodeStr(&oPacket, v23[0]);
+      LOBYTE(v29) = 0;
+      if ( result._m_pStr != nullptr )
+        ZXString<char>::_Release((ZXString<char>::_ZXStringData *)result._m_pStr - 1);
+      CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v11, &oPacket);
+      v12 = &this->m_pBtEnter.p->IUIMsgHandler;
+      this->m_bInputState = 0;
+      v12->vfptr->SetEnable(v12, 0);
+      p_m_aSendBuff = &oPacket.m_aSendBuff;
+    }
+    else
+    {
+      if ( this->m_bInputState != 0
+        || (v14 = CCtrlEdit::GetText(this->m_pEditChat.p, &result)->_m_pStr, v2 |= 2u, v14 == nullptr)
+        || (v15 = *v14 == 0, v24 = true, v15) )
+      {
+        v24 = false;
+      }
+      if ( (v2 & 2) != 0 && result._m_pStr != nullptr )
+        ZXString<char>::_Release((ZXString<char>::_ZXStringData *)result._m_pStr - 1);
+      if ( !v24 )
+        goto LABEL_38;
+      COutPacket::COutPacket(&v28, 143);
+      v29 = 2;
+      COutPacket::Encode1(&v28, 6);
+      result._m_pStr = nullptr;
+      *ZXString<char>::GetBuffer(&result, 1, 0) = a1_4[0];
+      ZXString<char>::ReleaseBuffer(&result, 1);
+      v17 = *((_DWORD *)TSingleton<CWvsContext>::ms_pInstance._m_pStr + 2099);
+      LOBYTE(v29) = 3;
+      if ( v17 != 0 )
+        v18 = (const char *)(v17 + 4);
+      else
+        v18 = nullptr;
+      v23[0]._m_pStr = v16;
+      v26 = v23;
+      operator+<char,char>(v23, v18, &result);
+      COutPacket::EncodeStr(&v28, v23[0]);
+      LOBYTE(v29) = 2;
+      if ( result._m_pStr != nullptr )
+        ZXString<char>::_Release((ZXString<char>::_ZXStringData *)result._m_pStr - 1);
+      CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v19, &v28);
+      v20 = &this->m_pBtEnter.p->IUIMsgHandler;
+      this->m_bInputState = 1;
+      v20->vfptr->SetEnable(v20, 1);
+      p_m_aSendBuff = &v28.m_aSendBuff;
+    }
+    v29 = -1;
+    this->m_tRestUpdateState = 3000;
+    ZArray<unsigned char>::RemoveAll(p_m_aSendBuff);
+  }
+LABEL_38:
+  if ( this->m_nState == 2 && (m_nBlink = this->m_nBlink) > 0 )
+  {
+    v22 = m_nBlink - 1;
+    this->m_nBlink = v22;
+    if ( v22 > 0 )
+    {
+      if ( v22 == 15 )
+        CUIMessenger::ToggleBlink(this, 0);
+    }
+    else
+    {
+      v23[0]._m_pStr = (char *)1;
+      this->m_nBlink = 30;
+      CUIMessenger::ToggleBlink(this, (int)v23[0]._m_pStr);
+    }
+  }
+  else
+  {
+    CUIMessenger::StartBlink(this, 0);
+  }
+LABEL_45:
+  CWnd::Update(this);
+}
+
+
+----- ?OnEnter@CUIMessenger@@QAEXJABUAvatarLook@@PBDJH@Z @ 0x7f4730 -----
+void __thiscall CUIMessenger::OnEnter(
+        CUIMessenger *this,
+        ZXString<char> nIdx,
+        AvatarLook *al,
+        char *sID,
+        const char *nChannelID,
+        int bNew)
+{
+  CUIMessenger::CHARACTER *v7; // esi
+  _bstr_t::Data_t **p_m_Data; // ebp
+  const char *v9; // eax
+  const char *ChannelName; // eax
+  StringPool *Instance; // eax
+  ZXString<char> *String; // esi
+  _bstr_t::Data_t *v13; // ebp
+  char *m_str; // ebp
+  ZXString<char> v15; // esi
+  bool v16; // zf
+  ZXString<char> v17; // [esp-10h] [ebp-30h] BYREF
+  ZXString<char> *v18; // [esp-Ch] [ebp-2Ch]
+  ZXString<unsigned short> v19; // [esp-8h] [ebp-28h] BYREF
+  StringPoolStrings v20; // [esp-4h] [ebp-24h]
+  int v21; // [esp+1Ch] [ebp-4h]
+
+  if ( (unsigned int)nIdx._m_pStr > 2 )
+    return;
+  v7 = &this->m_aCharacter[(int)nIdx._m_pStr];
+  CUIMessenger::CHARACTER::Clear(v7);
+  v20 = (StringPoolStrings)sID;
+  v7->bCharged = 1;
+  _bstr_t::_bstr_t((_bstr_t *)&sID, (const char *)v20);
+  p_m_Data = &v7->sID.m_Data;
+  if ( &v7->sID != (Ztl_bstr_t *)&sID )
+  {
+    if ( *p_m_Data != nullptr )
+    {
+      _bstr_t::Data_t::Release(*p_m_Data);
+      *p_m_Data = nullptr;
+    }
+    v9 = sID;
+    *p_m_Data = (_bstr_t::Data_t *)sID;
+    if ( v9 == nullptr )
+      goto LABEL_9;
+    InterlockedIncrement((LPLONG)v9 + 2);
+  }
+  if ( sID != nullptr )
+    _bstr_t::Data_t::Release((_bstr_t::Data_t *)sID);
+LABEL_9:
+  v7->nChannelID = (int)nChannelID;
+  v7->bInputState = 0;
+  if ( this->m_nState == 2 )
+    CUIMessenger::StartBlink(this, 1);
+  CUIMessenger::SetAvatar(this, (int)nIdx._m_pStr, al, 0);
+  if ( bNew != 0 )
+  {
+    nIdx._m_pStr = nullptr;
+    v21 = 0;
+    al = nullptr;
+    nChannelID = nullptr;
+    v20 = v7->nChannelID;
+    LOBYTE(v21) = 2;
+    ChannelName = CWvsContext::GetChannelName((CWvsContext *)TSingleton<CWvsContext>::ms_pInstance._m_pStr, v20);
+    ZXString<char>::operator=<char>(&nIdx, ChannelName);
+    v20 = SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID;
+    v19._m_pStr = (wchar_t *)&nChannelID;
+    v18 = (ZXString<char> *)&al;
+    sID = (char *)&v17;
+    v17._m_pStr = nullptr;
+    ZXString<char>::operator=(&v17, &nIdx);
+    separate_channelName(v17, v18, (ZXString<char> *)v19._m_pStr, v20);
+    v20 = SP_819___S_HAS_ENTERED;
+    v19._m_pStr = (wchar_t *)&bNew;
+    Instance = StringPool::GetInstance();
+    String = StringPool::GetString(Instance, (ZXString<char> *)v19._m_pStr, v20);
+    v13 = *p_m_Data;
+    LOBYTE(v21) = 3;
+    sID = (char *)nChannelID;
+    if ( v13 != nullptr )
+    {
+      if ( v13->m_str == nullptr )
+        v13->m_str = _com_util::ZtlConvertBSTRToString(v13->m_wstr);
+      m_str = v13->m_str;
+    }
+    else
+    {
+      m_str = nullptr;
+    }
+    ZXString<char>::Format(&nIdx, String->_m_pStr, m_str, sID);
+    LOBYTE(v21) = 2;
+    if ( bNew != 0 )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)(bNew - 12));
+    v15._m_pStr = nIdx._m_pStr;
+    v20 = DUMMY|SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID;
+    sID = (char *)&v19;
+    v19._m_pStr = nullptr;
+    ZXString<unsigned short>::Assign<char>(&v19, nIdx._m_pStr, -1);
+    CUIMessenger::AddChatText(this, v19, v20);
+    v16 = this->m_bInputState == 0;
+    this->m_tRestUpdateState = 0;
+    LOBYTE(v21) = 1;
+    this->m_bInputState = v16;
+    if ( nChannelID != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)nChannelID - 1);
+    LOBYTE(v21) = 0;
+    if ( al != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)al[-1].anPetID);
+    v21 = -1;
+    if ( v15._m_pStr != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)v15._m_pStr - 1);
+  }
+}
+
+
+----- ?DrawStatusBar@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z @ 0x7f4ba0 -----
+void __thiscall CUIMessenger::DrawStatusBar(
+        CUIMessenger *this,
+        _com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > pCanvas)
+{
+  CUIMessenger *v2; // esi
+  wchar_t *m_pStr; // ebp
+  Ztl_bstr_t *p_sID; // edi
+  IWzFont *m_pInterface; // esi
+  int v6; // eax
+  const wchar_t *m_wstr; // edx
+  StringPool *Instance; // eax
+  wchar_t *v9; // eax
+  int v10; // ecx
+  IWzGr2DLayer *v11; // ecx
+  void (__stdcall *v12)(VARIANTARG *); // esi
+  HRESULT v13; // eax
+  int v14; // edi
+  HRESULT v15; // eax
+  HRESULT v16; // eax
+  wchar_t *v17; // eax
+  _bstr_t::Data_t *v18; // ecx
+  IWzCanvas *v19; // esi
+  unsigned int (__stdcall *Release)(IUnknown *); // edx
+  HRESULT v21; // eax
+  int (*QueryInterface)(void); // edx
+  CUIMessenger *v23; // edi
+  HRESULT v24; // eax
+  unsigned int (__stdcall *v25)(IUnknown *); // eax
+  _bstr_t v26; // [esp+8h] [ebp-80h] BYREF
+  _bstr_t v27; // [esp+Ch] [ebp-7Ch] BYREF
+  int v28; // [esp+10h] [ebp-78h]
+  Ztl_variant_t *p_pvarg; // [esp+14h] [ebp-74h]
+  ZXString<unsigned short> sStatusBar; // [esp+2Ch] [ebp-5Ch] BYREF
+  _com_ptr_t<_com_IIID<IWzFont,&_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac> > pFont; // [esp+30h] [ebp-58h] BYREF
+  int i; // [esp+34h] [ebp-54h] BYREF
+  ZXString<unsigned short> result; // [esp+38h] [ebp-50h] BYREF
+  CUIMessenger *v34; // [esp+3Ch] [ebp-4Ch]
+  _com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > pCanvasBlink; // [esp+40h] [ebp-48h] BYREF
+  ZXString<unsigned short> v36; // [esp+44h] [ebp-44h] BYREF
+  _bstr_t *v37; // [esp+48h] [ebp-40h]
+  Ztl_variant_t vIndex; // [esp+4Ch] [ebp-3Ch] BYREF
+  VARIANTARG pvarg; // [esp+5Ch] [ebp-2Ch] BYREF
+  VARIANTARG pvargDest; // [esp+6Ch] [ebp-1Ch] BYREF
+  int v41; // [esp+84h] [ebp-4h]
+
+  v2 = this;
+  v34 = this;
+  m_pStr = nullptr;
+  v41 = 1;
+  sStatusBar._m_pStr = nullptr;
+  p_sID = &this->m_aCharacter[0].sID;
+  for ( i = 3; i != 0; --i )
+  {
+    if ( p_sID[-3].m_Data != nullptr && p_sID[-2].m_Data != nullptr )
+    {
+      if ( m_pStr != nullptr && *m_pStr != 0 )
+      {
+        pFont.m_pInterface = nullptr;
+        ZXString<unsigned short>::Assign<char>((ZXString<unsigned short> *)&pFont, szSeperator, -1);
+        m_pInterface = pFont.m_pInterface;
+        LOBYTE(v41) = 2;
+        v6 = pFont.m_pInterface != nullptr ? (unsigned int)pFont.m_pInterface[-1].vfptr >> 1 : 0;
+        ZXString<unsigned short>::_Cat(&sStatusBar, (const wchar_t *)pFont.m_pInterface, v6);
+        LOBYTE(v41) = 1;
+        if ( m_pInterface != nullptr )
+          ZXString<unsigned short>::_Release((ZXString<unsigned short>::_ZXStringData *)&m_pInterface[-3]);
+      }
+      if ( p_sID->m_Data != nullptr )
+        m_wstr = p_sID->m_Data->m_wstr;
+      else
+        m_wstr = nullptr;
+      ZXString<unsigned short>::_Cat(&sStatusBar, m_wstr, wcslen(m_wstr));
+      m_pStr = sStatusBar._m_pStr;
+      v2 = v34;
+    }
+    p_sID += 8;
+  }
+  if ( m_pStr != nullptr && *m_pStr != 0 )
+  {
+    Instance = StringPool::GetInstance();
+    v9 = StringPool::GetStringW(Instance, &result, SP_824__IS_TYPING)->_m_pStr;
+    LOBYTE(v41) = 3;
+    if ( v9 != nullptr )
+      v10 = *((_DWORD *)v9 - 1) >> 1;
+    else
+      v10 = 0;
+    ZXString<unsigned short>::_Cat(&sStatusBar, v9, v10);
+    LOBYTE(v41) = 1;
+    if ( result._m_pStr != nullptr )
+      ZXString<unsigned short>::_Release((ZXString<unsigned short>::_ZXStringData *)result._m_pStr - 1);
+    get_basic_font(&pFont, FONT_SMALL_BLACK);
+    vIndex.vt = 3;
+    vIndex.decVal.Lo32 = 0;
+    v11 = v2->m_pLayerBlink.m_pInterface;
+    LOBYTE(v41) = 5;
+    if ( v11 == nullptr )
+      _com_issue_error(-2147467261);
+    IWzGr2DLayer::Getcanvas(v11, &pCanvasBlink, &vIndex);
+    LOBYTE(v41) = 7;
+    if ( vIndex.vt == 8 )
+    {
+      vIndex.vt = 0;
+      if ( vIndex.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(vIndex.decVal.Lo32 - 4));
+    }
+    else
+    {
+      VariantClear(&vIndex);
+    }
+    v12 = *(void (__stdcall **)(VARIANTARG *))VariantInit;
+    VariantInit(&pvarg);
+    v13 = ZComAPI::ZComVariantCopy(&pvarg, &vtMissing);
+    if ( v13 < 0 )
+      _com_issue_error(v13);
+    m_pStr = sStatusBar._m_pStr;
+    p_pvarg = (Ztl_variant_t *)&pvarg;
+    v28 = 252;
+    v27.m_Data = (_bstr_t::Data_t *)&pvarg;
+    v36._m_pStr = (wchar_t *)&v27;
+    LOBYTE(v41) = 8;
+    _bstr_t::_bstr_t(&v27, sStatusBar._m_pStr);
+    LOBYTE(v41) = 9;
+    if ( pFont.m_pInterface == nullptr )
+      _com_issue_error(-2147467261);
+    LOBYTE(v41) = 8;
+    v14 = IWzFont::CalcLongestText(pFont.m_pInterface, (Ztl_bstr_t)v27.m_Data, v28, p_pvarg);
+    LOBYTE(v41) = 7;
+    if ( pvarg.vt == 8 )
+    {
+      pvarg.vt = 0;
+      if ( pvarg.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(pvarg.decVal.Lo32 - 4));
+    }
+    else
+    {
+      VariantClear(&pvarg);
+    }
+    v12(&pvargDest);
+    v15 = ZComAPI::ZComVariantCopy(&pvargDest, &vtMissing);
+    if ( v15 < 0 )
+      _com_issue_error(v15);
+    LOBYTE(v41) = 10;
+    v12(&pvarg);
+    v16 = ZComAPI::ZComVariantCopy(&pvarg, &vtMissing);
+    if ( v16 < 0 )
+      _com_issue_error(v16);
+    p_pvarg = (Ztl_variant_t *)&pvargDest;
+    v28 = (int)&pvarg;
+    v27.m_Data = (_bstr_t::Data_t *)pFont.m_pInterface;
+    LOBYTE(v41) = 11;
+    v17 = ZXString<unsigned short>::Left(&sStatusBar, &v36, v14)->_m_pStr;
+    v26.m_Data = v18;
+    v37 = &v26;
+    LOBYTE(v41) = 12;
+    _bstr_t::_bstr_t(&v26, v17);
+    v19 = pCanvasBlink.m_pInterface;
+    LOBYTE(v41) = 13;
+    if ( pCanvasBlink.m_pInterface == nullptr )
+      _com_issue_error(-2147467261);
+    Release = pCanvasBlink.m_pInterface->vfptr[9].Release;
+    i = 0;
+    v21 = ((int (__stdcall *)(IWzCanvas *, int *, _bstr_t::Data_t *, _bstr_t::Data_t *))Release)(
+            pCanvasBlink.m_pInterface,
+            &i,
+            v26.m_Data,
+            v27.m_Data);
+    if ( v21 < 0 )
+      _com_issue_errorex(v21, v19, &_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e);
+    QueryInterface = (int (*)(void))v19->vfptr[9].QueryInterface;
+    v23 = v34;
+    v27.m_Data = (_bstr_t::Data_t *)&pCanvasBlink;
+    v26.m_Data = (_bstr_t::Data_t *)v19;
+    pCanvasBlink.m_pInterface = nullptr;
+    v24 = QueryInterface();
+    if ( v24 < 0 )
+      _com_issue_errorex(v24, v19, &_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e);
+    if ( pCanvas.m_pInterface == nullptr )
+      _com_issue_error(-2147467261);
+    LOBYTE(v41) = 12;
+    IWzCanvas::DrawTextA(
+      pCanvas.m_pInterface,
+      17 - (unsigned int)result._m_pStr,
+      -(int)v23,
+      (Ztl_bstr_t)v26.m_Data,
+      (IWzFont *)v27.m_Data,
+      (Ztl_variant_t *)v28,
+      p_pvarg);
+    LOBYTE(v41) = 11;
+    if ( v36._m_pStr != nullptr )
+      ZXString<unsigned short>::_Release((ZXString<unsigned short>::_ZXStringData *)v36._m_pStr - 1);
+    LOBYTE(v41) = 10;
+    if ( pvarg.vt == 8 )
+    {
+      pvarg.vt = 0;
+      if ( pvarg.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(pvarg.decVal.Lo32 - 4));
+    }
+    else
+    {
+      VariantClear(&pvarg);
+    }
+    LOBYTE(v41) = 7;
+    if ( pvargDest.vt == 8 )
+    {
+      pvargDest.vt = 0;
+      if ( pvargDest.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(pvargDest.decVal.Lo32 - 4));
+    }
+    else
+    {
+      VariantClear(&pvargDest);
+    }
+    CUIMessenger::ToggleBlink(v34, 1);
+    v25 = v19->vfptr->Release;
+    LOBYTE(v41) = 4;
+    v25(v19);
+    LOBYTE(v41) = 1;
+    if ( pFont.m_pInterface != nullptr )
+      pFont.m_pInterface->vfptr->Release(pFont.m_pInterface);
+  }
+  else
+  {
+    CUIMessenger::ToggleBlink(v2, 0);
+  }
+  LOBYTE(v41) = 0;
+  if ( m_pStr != nullptr )
+    ZXString<unsigned short>::_Release((ZXString<unsigned short>::_ZXStringData *)m_pStr - 1);
+  v41 = -1;
+  if ( pCanvas.m_pInterface != nullptr )
+    pCanvas.m_pInterface->vfptr->Release(pCanvas.m_pInterface);
+}
+
+
+----- ?OnChat@CUIMessenger@@QAEXAAVCInPacket@@@Z @ 0x7f52d0 -----
+void __thiscall CUIMessenger::OnChat(CUIMessenger *this, CInPacket *iPacket)
+{
+  int v3; // ebx
+  BOOL v4; // esi
+  char *v5; // eax
+  unsigned int m_uOffset; // eax
+  ZXString<char> *v7; // eax
+  ZXString<char> *v8; // eax
+  ZXString<char> *v9; // eax
+  Ztl_bstr_t *p_sID; // ebp
+  _bstr_t::Data_t *m_Data; // edi
+  const char *m_str; // edi
+  CUIMessenger *v13; // eax
+  char *v14; // ebp
+  IUnknown *v15; // edi
+  HRESULT v16; // eax
+  void (__stdcall *v17)(VARIANTARG *); // edi
+  HRESULT v18; // eax
+  HRESULT v19; // eax
+  IWzGr2DLayer *v20; // ecx
+  void (__stdcall *v21)(VARIANTARG *); // edi
+  int v22; // eax
+  unsigned int v23; // esi
+  int v24; // eax
+  char *Buffer; // eax
+  ZXString<char> *v26; // eax
+  char *m_pStr; // eax
+  CUIMessenger *v28; // esi
+  ZXString<unsigned short> v29; // [esp-4h] [ebp-64h] BYREF
+  tagRECT *v30; // [esp+0h] [ebp-60h]
+  ZXString<char> sMsg; // [esp+18h] [ebp-48h] BYREF
+  ZXString<char> sCharName; // [esp+1Ch] [ebp-44h] BYREF
+  int i; // [esp+20h] [ebp-40h] BYREF
+  CUIMessenger *v34; // [esp+24h] [ebp-3Ch]
+  ZXString<char> sSpeakerName; // [esp+28h] [ebp-38h] BYREF
+  ZXString<char> result; // [esp+2Ch] [ebp-34h] BYREF
+  ZXString<unsigned short> *v37; // [esp+30h] [ebp-30h]
+  VARIANTARG pvargDest; // [esp+34h] [ebp-2Ch] BYREF
+  VARIANTARG pvarg; // [esp+44h] [ebp-1Ch] BYREF
+  int v40; // [esp+5Ch] [ebp-4h]
+
+  v34 = this;
+  CInPacket::DecodeStr(iPacket, (ZXString<char> *)&iPacket);
+  v3 = 0;
+  v40 = 1;
+  sCharName._m_pStr = nullptr;
+  v4 = false;
+  v5 = (char *)ZXString<char>::Find((ZXString<char> *)&iPacket, asc_B4B88C, 0, 0);
+  sMsg._m_pStr = v5;
+  if ( (int)v5 >= 0 )
+  {
+    v9 = ZXString<char>::Left((ZXString<char> *)&iPacket, &sSpeakerName, (int)v5);
+    LOBYTE(v40) = 3;
+    ZXString<char>::operator=(&sCharName, v9);
+    LOBYTE(v40) = 1;
+  }
+  else
+  {
+    if ( iPacket != nullptr )
+      m_uOffset = iPacket[-1].m_uOffset;
+    else
+      m_uOffset = 0;
+    v7 = ZXString<char>::Left((ZXString<char> *)&iPacket, &sSpeakerName, m_uOffset - 1);
+    LOBYTE(v40) = 2;
+    ZXString<char>::operator=(&sCharName, v7);
+    LOBYTE(v40) = 1;
+    if ( sSpeakerName._m_pStr != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sSpeakerName._m_pStr - 1);
+    v8 = ZXString<char>::Right((ZXString<char> *)&iPacket, &sSpeakerName, 1);
+    v4 = ZXString<char>::Compare(v8, a0) != 0;
+  }
+  if ( sSpeakerName._m_pStr != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sSpeakerName._m_pStr - 1);
+  p_sID = &this->m_aCharacter[0].sID;
+  while ( 1 )
+  {
+    if ( p_sID[-3].m_Data != nullptr )
+    {
+      m_Data = p_sID->m_Data;
+      if ( p_sID->m_Data != nullptr )
+      {
+        if ( m_Data->m_str == nullptr )
+          m_Data->m_str = _com_util::ZtlConvertBSTRToString(m_Data->m_wstr);
+        m_str = m_Data->m_str;
+      }
+      else
+      {
+        m_str = nullptr;
+      }
+      if ( ZXString<char>::Compare(&sCharName, m_str) == 0 )
+        break;
+    }
+    ++v3;
+    p_sID += 8;
+    if ( v3 >= 3 )
+    {
+      i = v3;
+      goto LABEL_40;
+    }
+  }
+  v13 = v34;
+  i = v3;
+  v14 = (char *)v34 + 32 * v3;
+  *((_DWORD *)v14 + 60) = v4;
+  if ( v13->m_nState <= 1u )
+  {
+    v15 = *((IUnknown **)v14 + 58);
+    if ( v15 == nullptr )
+      _com_issue_error(-2147467261);
+    v16 = ((int (__stdcall *)(IUnknown *, unsigned int))v15->vfptr[18].Release)(v15, v4 ? 0xCFFFFFFF : 0);
+    if ( v16 < 0 )
+      _com_issue_errorex(v16, v15, &_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf);
+    v17 = *(void (__stdcall **)(VARIANTARG *))VariantInit;
+    VariantInit(&pvarg);
+    v18 = ZComAPI::ZComVariantCopy(&pvarg, &vtMissing);
+    if ( v18 < 0 )
+      _com_issue_error(v18);
+    LOBYTE(v40) = 4;
+    v17(&pvargDest);
+    v19 = ZComAPI::ZComVariantCopy(&pvargDest, &vtMissing);
+    if ( v19 < 0 )
+      _com_issue_error(v19);
+    v20 = *((IWzGr2DLayer **)v14 + 58);
+    LOBYTE(v40) = 5;
+    if ( v20 == nullptr )
+      _com_issue_error(-2147467261);
+    IWzGr2DLayer::Animate(v20, v4 ? GA_REPEAT : GA_STOP, (Ztl_variant_t *)&pvargDest, (Ztl_variant_t *)&pvarg);
+    v21 = *(void (__stdcall **)(VARIANTARG *))VariantClear;
+    LOBYTE(v40) = 4;
+    if ( pvargDest.vt == 8 )
+    {
+      pvargDest.vt = 0;
+      if ( pvargDest.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(pvargDest.decVal.Lo32 - 4));
+    }
+    else
+    {
+      VariantClear(&pvargDest);
+    }
+    LOBYTE(v40) = 1;
+    if ( pvarg.vt == 8 )
+    {
+      pvarg.vt = 0;
+      if ( pvarg.decVal.Lo32 != 0 )
+        ZAPI.CoTaskMemFree((void *)(pvarg.decVal.Lo32 - 4));
+    }
+    else
+    {
+      v21(&pvarg);
+    }
+  }
+LABEL_40:
+  v30 = nullptr;
+  if ( (int)sMsg._m_pStr < 0 )
+  {
+    CWnd::InvalidateRect(v34, v30);
+  }
+  else
+  {
+    v22 = ZXString<char>::Find((ZXString<char> *)&iPacket, asc_B4B88C, 0, (int)v30);
+    ZXString<char>::Left((ZXString<char> *)&iPacket, &sSpeakerName, v22);
+    LOBYTE(v40) = 6;
+    if ( iPacket != nullptr )
+      v23 = iPacket[-1].m_uOffset;
+    else
+      v23 = 0;
+    v24 = ZXString<char>::Find((ZXString<char> *)&iPacket, asc_B4B88C, 0, 0);
+    ZXString<char>::Right((ZXString<char> *)&iPacket, &sMsg, v23 - v24 - 3);
+    LOBYTE(v40) = 7;
+    Buffer = ZXString<char>::GetBuffer(&sMsg, 1024, 1);
+    CCurseProcess::ProcessString(Buffer, nullptr, 1);
+    ZXString<char>::ReleaseBuffer(&sMsg, -1);
+    v30 = (tagRECT *)i;
+    v26 = ZXString<char>::operator+(&sSpeakerName, &result, asc_B4B88C);
+    LOBYTE(v40) = 8;
+    m_pStr = ZXString<char>::operator+(v26, (ZXString<char> *)&i, &sMsg)->_m_pStr;
+    v37 = &v29;
+    LOBYTE(v40) = 9;
+    v29._m_pStr = nullptr;
+    ZXString<unsigned short>::Assign<char>(&v29, m_pStr, -1);
+    v28 = v34;
+    CUIMessenger::AddChatText(v34, v29, (int)v30);
+    LOBYTE(v40) = 8;
+    if ( i != 0 )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)(i - 12));
+    LOBYTE(v40) = 7;
+    if ( result._m_pStr != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)result._m_pStr - 1);
+    CUIMessenger::StartBlink(v28, 1);
+    LOBYTE(v40) = 6;
+    if ( sMsg._m_pStr != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sMsg._m_pStr - 1);
+    LOBYTE(v40) = 1;
+    if ( sSpeakerName._m_pStr != nullptr )
+      ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sSpeakerName._m_pStr - 1);
+  }
+  LOBYTE(v40) = 0;
+  if ( sCharName._m_pStr != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sCharName._m_pStr - 1);
+  v40 = -1;
+  if ( iPacket != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)&iPacket[-1].m_uLength);
+}
+
+
+----- ?OnCreate@CUIMessenger@@UAEXPAX@Z @ 0x7f59d0 -----
+void __thiscall CUIMessenger::OnCreate(CUIMessenger *this, void *pData)
+{
+  IWzFont *m_pInterface; // eax
+  IWzFont *v4; // edi
+  StringPool *Instance; // eax
+  wchar_t *m_pStr; // eax
+  HRESULT v7; // eax
+  StringPool *v8; // eax
+  IWzFont *v9; // ecx
+  wchar_t *v10; // ecx
+  StringPool *v11; // eax
+  wchar_t *v12; // ecx
+  StringPool *v13; // eax
+  wchar_t *v14; // ecx
+  StringPool *v15; // eax
+  wchar_t *v16; // ecx
+  StringPool *v17; // eax
+  wchar_t *v18; // ecx
+  StringPool *v19; // eax
+  int v20; // edx
+  Ztl_bstr_t v21; // [esp-Ch] [ebp-50h] BYREF
+  StringPoolStrings v22; // [esp-8h] [ebp-4Ch]
+  ZXString<unsigned short> v23; // [esp-4h] [ebp-48h] BYREF
+  int p_pvarg; // [esp+0h] [ebp-44h]
+  _com_ptr_t<_com_IIID<IWzFont,&_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac> > result; // [esp+14h] [ebp-30h] BYREF
+  VARIANTARG pvarg; // [esp+18h] [ebp-2Ch] BYREF
+  COutPacket oPacket; // [esp+28h] [ebp-1Ch] BYREF
+  int v28; // [esp+40h] [ebp-4h]
+
+  CLayoutMan::Init(&this->m_lm, this, 0, 0);
+  CUIMessenger::SetLayer(this);
+  CUIMessenger::SetCtrl(this);
+  m_pInterface = get_basic_font(&result, FONT_BASIC_BLACK)->m_pInterface;
+  v4 = this->m_pFontText.m_pInterface;
+  if ( v4 != m_pInterface )
+  {
+    this->m_pFontText.m_pInterface = m_pInterface;
+    if ( m_pInterface != nullptr )
+      m_pInterface->vfptr->AddRef(m_pInterface);
+    if ( v4 != nullptr )
+      v4->vfptr->Release(v4);
+  }
+  if ( result.m_pInterface != nullptr )
+    result.m_pInterface->vfptr->Release(result.m_pInterface);
+  Instance = StringPool::GetInstance();
+  m_pStr = StringPool::GetStringW(Instance, (ZXString<unsigned short> *)&result, SP_1455_CANVASFONT)->_m_pStr;
+  v28 = 0;
+  PcCreateObject<_com_ptr_t<_com_IIID<IWzFont,&__s_GUID const _GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac>>>(
+    m_pStr,
+    &this->m_pFontID,
+    nullptr);
+  v28 = -1;
+  if ( result.m_pInterface != nullptr )
+    ZXString<unsigned short>::_Release((ZXString<unsigned short>::_ZXStringData *)&result.m_pInterface[-3]);
+  VariantInit(&pvarg);
+  v7 = ZComAPI::ZComVariantCopy(&pvarg, &vtMissing);
+  if ( v7 < 0 )
+    _com_issue_error(v7);
+  p_pvarg = (int)&pvarg;
+  v23._m_pStr = (wchar_t *)-1;
+  v22 = SP_12_BEGINNER;
+  v21.m_Data = (_bstr_t::Data_t *)&pvarg;
+  result.m_pInterface = (IWzFont *)&v21;
+  v28 = 1;
+  v8 = StringPool::GetInstance();
+  StringPool::GetBSTR(v8, &v21, SP_6693_ARIAL);
+  v9 = this->m_pFontID.m_pInterface;
+  LOBYTE(v28) = 2;
+  if ( v9 == nullptr )
+    _com_issue_error(-2147467261);
+  LOBYTE(v28) = 1;
+  IWzFont::Create(v9, v21, v22, (unsigned int)v23._m_pStr, (Ztl_variant_t *)p_pvarg);
+  v28 = -1;
+  if ( pvarg.vt == 8 )
+  {
+    pvarg.vt = 0;
+    if ( pvarg.decVal.Lo32 != 0 )
+      ZAPI.CoTaskMemFree((void *)(pvarg.decVal.Lo32 - 4));
+  }
+  else
+  {
+    VariantClear(&pvarg);
+  }
+  p_pvarg = -1;
+  v23._m_pStr = v10;
+  result.m_pInterface = (IWzFont *)&v23;
+  v22 = SP_816___MAPLE_MESSENGER_HELP__;
+  v21.m_Data = (_bstr_t::Data_t *)&v23;
+  v11 = StringPool::GetInstance();
+  StringPool::GetStringW(v11, (ZXString<unsigned short> *)v21.m_Data, v22);
+  CUIMessenger::AddChatText(this, v23, p_pvarg);
+  p_pvarg = -1;
+  v23._m_pStr = v12;
+  result.m_pInterface = (IWzFont *)&v23;
+  v22 = SP_1900__________________________;
+  v21.m_Data = (_bstr_t::Data_t *)&v23;
+  v13 = StringPool::GetInstance();
+  StringPool::GetStringW(v13, (ZXString<unsigned short> *)v21.m_Data, v22);
+  CUIMessenger::AddChatText(this, v23, p_pvarg);
+  p_pvarg = -1;
+  v23._m_pStr = v14;
+  result.m_pInterface = (IWzFont *)&v23;
+  v22 = SP_817_INVITE___INVITE_CHARACTER_NAME;
+  v21.m_Data = (_bstr_t::Data_t *)&v23;
+  v15 = StringPool::GetInstance();
+  StringPool::GetStringW(v15, (ZXString<unsigned short> *)v21.m_Data, v22);
+  CUIMessenger::AddChatText(this, v23, p_pvarg);
+  p_pvarg = -1;
+  v23._m_pStr = v16;
+  result.m_pInterface = (IWzFont *)&v23;
+  v22 = SP_818_END___Q;
+  v21.m_Data = (_bstr_t::Data_t *)&v23;
+  v17 = StringPool::GetInstance();
+  StringPool::GetStringW(v17, (ZXString<unsigned short> *)v21.m_Data, v22);
+  CUIMessenger::AddChatText(this, v23, p_pvarg);
+  p_pvarg = -1;
+  v23._m_pStr = v18;
+  result.m_pInterface = (IWzFont *)&v23;
+  v22 = SP_1900__________________________;
+  v21.m_Data = (_bstr_t::Data_t *)&v23;
+  v19 = StringPool::GetInstance();
+  StringPool::GetStringW(v19, (ZXString<unsigned short> *)v21.m_Data, v22);
+  CUIMessenger::AddChatText(this, v23, p_pvarg);
+  if ( pData != nullptr )
+    this->m_nSelfCharacter = -1;
+  else
+    CUIMessenger::OnSelfEnter(this, 0, 0);
+  COutPacket::COutPacket(&oPacket, 143);
+  v28 = 3;
+  COutPacket::Encode1(&oPacket, 0);
+  COutPacket::Encode4(&oPacket, (unsigned int)pData);
+  CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v20, &oPacket);
+  v28 = -1;
+  ZArray<unsigned char>::RemoveAll(&oPacket.m_aSendBuff);
+}
+
+
+----- ?Draw@CUIMessenger@@UAEXPBUtagRECT@@@Z @ 0x7f5c70 -----
+void __thiscall CUIMessenger::Draw(CUIMessenger *this, tagRECT *pRect)
+{
+  unsigned int m_nState; // eax
+  IWzCanvas *v4; // esi
+  _com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > v5[4]; // [esp-4h] [ebp-20h] BYREF
+  _com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > *v6; // [esp+Ch] [ebp-10h]
+  int v7; // [esp+18h] [ebp-4h]
+
+  CWnd::Draw(this, pRect);
+  CWnd::GetCanvas(this, (_com_ptr_t<_com_IIID<IWzCanvas,&_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e> > *)&pRect);
+  m_nState = this->m_nState;
+  v4 = (IWzCanvas *)pRect;
+  v7 = 0;
+  if ( m_nState <= 1 )
+  {
+    v6 = v5;
+    v5[0].m_pInterface = (IWzCanvas *)pRect;
+    if ( pRect != nullptr )
+      (*(void (__stdcall **)(tagRECT *))(pRect->left + 4))(pRect);
+    CUIMessenger::DrawTextA(this, v5[0]);
+    v6 = v5;
+    v5[0].m_pInterface = v4;
+    if ( v4 != nullptr )
+      v4->vfptr->AddRef(v4);
+    CUIMessenger::DrawStatusBar(this, v5[0]);
+  }
+  v7 = -1;
+  if ( v4 != nullptr )
+    v4->vfptr->Release(v4);
+}
+
+
+----- ?OnEnter@CUIMessenger@@QAEXAAVCInPacket@@@Z @ 0x7f5d30 -----
+void __thiscall CUIMessenger::OnEnter(CUIMessenger *this, CInPacket *iPacket)
+{
+  ZXString<char> v3; // ebp
+  const char *v4; // ebx
+  unsigned __int8 v5; // al
+  ZXString<char> sID; // [esp+14h] [ebp-218h] BYREF
+  AvatarLook v7; // [esp+18h] [ebp-214h] BYREF
+  int v8; // [esp+228h] [ebp-4h]
+
+  v3._m_pStr = (char *)(unsigned __int8)CInPacket::Decode1(iPacket);
+  AvatarLook::AvatarLook(&v7, iPacket);
+  v8 = 0;
+  CInPacket::DecodeStr(iPacket, &sID);
+  LOBYTE(v8) = 1;
+  v4 = (const char *)(unsigned __int8)CInPacket::Decode1(iPacket);
+  v5 = CInPacket::Decode1(iPacket);
+  CUIMessenger::OnEnter(this, v3, &v7, sID._m_pStr, v4, v5);
+  LOBYTE(v8) = 0;
+  if ( sID._m_pStr != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sID._m_pStr - 1);
+}
+
+
+----- ?ProcessChat@CUIMessenger@@IAEXXZ @ 0x7f6140 -----
+void __thiscall CUIMessenger::ProcessChat(CUIMessenger *this)
+{
+  char *m_pStr; // eax
+  int v3; // edx
+  char *v4; // edx
+  unsigned int v5; // edi
+  char *Buffer; // eax
+  ZXString<char> *v7; // eax
+  int v8; // edx
+  CCtrlEdit *p; // eax
+  CCtrlButton *v10; // esi
+  ZXString<unsigned short> v11; // [esp-8h] [ebp-3Ch] BYREF
+  ZXString<char> v12[4]; // [esp-4h] [ebp-38h] BYREF
+  ZXString<char> sChat; // [esp+Ch] [ebp-28h] BYREF
+  ZXString<char> sText; // [esp+10h] [ebp-24h] BYREF
+  ZXString<char> *v15; // [esp+14h] [ebp-20h]
+  COutPacket oPacket; // [esp+18h] [ebp-1Ch] BYREF
+  int v17; // [esp+30h] [ebp-4h]
+
+  CCtrlEdit::GetText(this->m_pEditChat.p, &sChat);
+  m_pStr = sChat._m_pStr;
+  v17 = 0;
+  if ( sChat._m_pStr == nullptr || *sChat._m_pStr == 0 || this->m_nSelfCharacter < 0 )
+    goto LABEL_20;
+  CCtrlEdit::SetText(this->m_pEditChat.p, nullptr);
+  if ( *sChat._m_pStr != 47 )
+  {
+    v12[0]._m_pStr = (char *)&sChat;
+    this->m_bInputState = 0;
+    if ( CChatHelper::TryChat(&this->m_chatHelper, (ZXString<char> *)v12[0]._m_pStr) != 0 )
+    {
+      v3 = *((_DWORD *)TSingleton<CWvsContext>::ms_pInstance._m_pStr + 2099);
+      if ( v3 != 0 )
+        v4 = (char *)(v3 + 4);
+      else
+        v4 = nullptr;
+      sText._m_pStr = nullptr;
+      if ( v4 != nullptr )
+      {
+        v5 = strlen(v4);
+        v11._m_pStr = (wchar_t *)v4;
+        Buffer = ZXString<char>::GetBuffer(&sText, v5, 0);
+        memcpy(Buffer, v11._m_pStr, v5);
+        ZXString<char>::ReleaseBuffer(&sText, v5);
+      }
+      LOBYTE(v17) = 1;
+      v7 = ZXString<char>::operator+=(&sText, asc_B4B88C);
+      ZXString<char>::operator+=(v7, &sChat);
+      v12[0] = (ZXString<char>)this->m_nSelfCharacter;
+      v15 = (ZXString<char> *)&v11;
+      v11._m_pStr = nullptr;
+      ZXString<unsigned short>::Assign<char>(&v11, sText._m_pStr, -1);
+      CUIMessenger::AddChatText(this, v11, (int)v12[0]._m_pStr);
+      COutPacket::COutPacket(&oPacket, 143);
+      LOBYTE(v17) = 2;
+      COutPacket::Encode1(&oPacket, 6);
+      v15 = v12;
+      v12[0]._m_pStr = nullptr;
+      ZXString<char>::operator=(v12, &sText);
+      COutPacket::EncodeStr(&oPacket, v12[0]);
+      CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v8, &oPacket);
+      LOBYTE(v17) = 1;
+      ZArray<unsigned char>::RemoveAll(&oPacket.m_aSendBuff);
+      LOBYTE(v17) = 0;
+      if ( sText._m_pStr != nullptr )
+        ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sText._m_pStr - 1);
+    }
+    goto LABEL_15;
+  }
+  sText._m_pStr = (char *)v12;
+  v12[0]._m_pStr = nullptr;
+  ZXString<char>::operator=(v12, &sChat);
+  if ( CUIMessenger::HandleSlashCommand(this, v12[0]) == 0 )
+  {
+LABEL_15:
+    p = this->m_pEditChat.p;
+    if ( p != nullptr )
+      CWndMan::SetFocus(TSingleton<CWndMan>::ms_pInstance, &p->IUIMsgHandler);
+    v10 = this->m_pBtEnter.p;
+    if ( v10 != nullptr )
+      v10->CCtrlWnd::IUIMsgHandler::vfptr->SetEnable(&v10->IUIMsgHandler, 0);
+  }
+  m_pStr = sChat._m_pStr;
+LABEL_20:
+  v17 = -1;
+  if ( m_pStr != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)m_pStr - 1);
+}
+
+
+----- ?OnInvite@CUIMessenger@@SAXAAVCInPacket@@@Z @ 0x7f2cb0 -----
+void __cdecl CUIMessenger::OnInvite(CInPacket *iPacket)
+{
+  CWvsContext *m_pStr; // edi
+  int v2; // ebp
+  char *v3; // ebx
+  int v4; // eax
+  CharacterData *p; // edi
+  char *sCharacterName; // ecx
+  unsigned int v7; // esi
+  char *Buffer; // eax
+  int v9; // edx
+  CUIFadeYesNo *v10; // eax
+  CUIFadeYesNo *v11; // eax
+  CUIFadeYesNo *v12; // esi
+  ZXString<char> v13; // [esp-Ch] [ebp-44h] BYREF
+  int v14; // [esp-8h] [ebp-40h]
+  ZXString<char> v15[6]; // [esp-4h] [ebp-3Ch] BYREF
+  ZXString<char> sInviter; // [esp+14h] [ebp-24h] BYREF
+  ZXString<char> *v17; // [esp+18h] [ebp-20h]
+  COutPacket oPacket; // [esp+1Ch] [ebp-1Ch] BYREF
+  int v19; // [esp+34h] [ebp-4h]
+
+  m_pStr = (CWvsContext *)TSingleton<CWvsContext>::ms_pInstance._m_pStr;
+  CInPacket::DecodeStr(iPacket, &sInviter);
+  v19 = 0;
+  v2 = (unsigned __int8)CInPacket::Decode1(iPacket);
+  v3 = (char *)CInPacket::Decode4(iPacket);
+  v4 = (unsigned __int8)CInPacket::Decode1(iPacket);
+  if ( (_BYTE)v4 == 0
+    && (*((_DWORD *)TSingleton<CConfig>::ms_pInstance._m_pStr + 10) == v4
+     || (v17 = v15,
+         v15[0]._m_pStr = nullptr,
+         ZXString<char>::operator=(v15, &sInviter),
+         CConfig::IsInBlackList((CConfig *)TSingleton<CConfig>::ms_pInstance._m_pStr, v15[0]) != 0)) )
+  {
+    COutPacket::COutPacket(&oPacket, 143);
+    LOBYTE(v19) = 1;
+    COutPacket::Encode1(&oPacket, 5);
+    v17 = v15;
+    v15[0]._m_pStr = nullptr;
+    ZXString<char>::operator=(v15, &sInviter);
+    COutPacket::EncodeStr(&oPacket, v15[0]);
+    p = m_pStr->m_pCharacterData.p;
+    if ( p != nullptr )
+      sCharacterName = p->characterStat.sCharacterName;
+    else
+      sCharacterName = nullptr;
+    v17 = v15;
+    v15[0]._m_pStr = nullptr;
+    if ( sCharacterName != nullptr )
+    {
+      v7 = strlen(sCharacterName);
+      v13._m_pStr = sCharacterName;
+      Buffer = ZXString<char>::GetBuffer(v15, v7, 0);
+      memcpy(Buffer, v13._m_pStr, v7);
+      ZXString<char>::ReleaseBuffer(v15, v7);
+    }
+    COutPacket::EncodeStr(&oPacket, v15[0]);
+    COutPacket::Encode1(&oPacket, 1);
+    CClientSocket::SendPacket(TSingleton<CClientSocket>::ms_pInstance, v9, &oPacket);
+    LOBYTE(v19) = 0;
+    ZArray<unsigned char>::RemoveAll(&oPacket.m_aSendBuff);
+  }
+  else
+  {
+    v10 = (CUIFadeYesNo *)ZAllocEx<ZAllocAnonSelector>::Alloc(&ZAllocEx<ZAllocAnonSelector>::_s_alloc, 0x144u);
+    v17 = (ZXString<char> *)v10;
+    LOBYTE(v19) = 2;
+    if ( v10 != nullptr )
+    {
+      CUIFadeYesNo::CUIFadeYesNo(v10);
+      v12 = v11;
+    }
+    else
+    {
+      v12 = nullptr;
+    }
+    v15[0]._m_pStr = v3;
+    v14 = v2;
+    v17 = &v13;
+    LOBYTE(v19) = 0;
+    v13._m_pStr = nullptr;
+    ZXString<char>::operator=(&v13, &sInviter);
+    CUIFadeYesNo::CreateMSMInvite(v12, v13, v14, (unsigned int)v15[0]._m_pStr);
+    CWvsContext::SetNewFadeWnd(m_pStr, v12);
+  }
+  v19 = -1;
+  if ( sInviter._m_pStr != nullptr )
+    ZXString<char>::_Release((ZXString<char>::_ZXStringData *)sInviter._m_pStr - 1);
+}
+
+
+=== xrefs to strings containing chatBalloon or blink near Messenger ===
