@@ -29,3 +29,14 @@
 1. 进图 →「界面」→ `A` → SoftKey 手输 `!buffme` 回车，**或** 关 SoftKey 后点 Admin 列表 `!buffme`  
 2. 确认右上 BuffList 图标 + SoftKey `D` 明细行有中文名/倒计时  
 3. 截图覆盖本目录  
+
+## 2026-11-06 续轮（本会话）
+
+| 项 | 状态 | 备注 |
+| --- | --- | --- |
+| SoftKey `D` 开板 | ✅（上轮） | 已提交 `ec97ee9` |
+| 自动化 `!buffme`（SendKeys / SoftKey A / 聊天框） | ❌ | `packet_dump` 无 SEND `31 00`、无 RECV `20 00`；仅心跳 `18 00`/`11 00` |
+| 手点 Admin 列表 `!buffme` | ⏳ | Admin 面板路径已接；自动化抢焦点未点到蓝字列表 |
+| 明细行验收 | ⏳ | 依赖造 buff |
+
+建议手点：进图 →「界面」→ `A` → 点 `!buffme`（或 SoftKey 手输）→ `D` 看明细。
