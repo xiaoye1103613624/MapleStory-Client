@@ -3,7 +3,7 @@
 > 维护约定：测不了/未测的写这里，步骤列全；已闭合标 ✅ + 日期 + 证据路径。  
 > 2026-11-05 17:03 用户解除「不做桌面点测」约束，已完成一轮自动驱动真机验收（见下方记录）；未能自动触发的项仍需手测。
 
-相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/) · [guild-boss-hud](../guild-boss-hud/)
+相关功能目录：[world-map-players](../world-map-players/) · [use-return-scroll](../use-return-scroll/) · [softkey-tails](../softkey-tails/) · [set-hpmpalert](../set-hpmpalert/) · [pick-all-char](../pick-all-char/) · [heal-over-time](../heal-over-time/) · [touch-monster-attack](../touch-monster-attack/) · [cancel-debuff](../cancel-debuff/) · [guild-bbs-ui](../guild-bbs-ui/) · [guild-boss-hud](../guild-boss-hud/) · [skill-effect-npc-guide-c2s](../skill-effect-npc-guide-c2s/) · [hidden-portal-tristate](../hidden-portal-tristate/)
 
 ---
 
@@ -206,6 +206,7 @@
 - **16**：任意城镇点 NPC 对话 → 应先发 197（6B）再发 58；双端同图时对方可见 NPC 姿态。
 - **17**：新手图有 SPAWN_GUIDE 时点引导标记 → 空包 162 → 开 MIMO/LILIN 脚本窗。
 - **文档**：同上。
+- **未纳入本轮（下一项）**：`UINpcTalk` 框体/字体/α/「下项」A11b 全量原端对齐；本批只补协议，样式须 IDA/IMG 取证后再改（宋体路线、禁臆造）。
 
 ## 18. 隐藏门三态
 
