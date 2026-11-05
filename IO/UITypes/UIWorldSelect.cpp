@@ -118,12 +118,24 @@ namespace ms
 	static constexpr int16_t CH_PANEL_H = 233;
 
 	// MapLogin WorldSelect/signboard/0 横杆；木牌挂在其底边绳扣下。
-	static constexpr Point<int16_t> WS_POLE_MAP_POS(51, -888);
+	// 经「选中频道页.png」逐像素定标（木牌 top-left 参照 (499,164) / 实机 (515,172)，
+	// Δ=(+16,+8)），平移修正使木牌与其地图横杆及频道面板整体与原生一致。
+	// X 左移 16、Y 上移 8。
+	static constexpr Point<int16_t> WS_POLE_MAP_POS(35, -896);
 	static constexpr int16_t WS_BOARD_HANG_PAD = 4;
 
 	// MapLogin WorldSelect/signboard/2 羊皮卷；频道面板顶边在其底边之下。
-	static constexpr Point<int16_t> WS_SCROLL_MAP_POS(42, -753);
+	// 频道面板中心锚定到卷轴(signboard/2)底边：经「选中频道页.png」逐像素定标
+	//（标签法：面板 top-left 参照 (449,281) / 实机 (430,299)，Δ=(-19,+18)），
+	// 由 WS_SCROLL_MAP_POS 平移修正使面板与原生一致。X 右移 19、Y 上移 18。
+	static constexpr Point<int16_t> WS_SCROLL_MAP_POS(61, -771);
 	static constexpr int16_t CH_BELOW_GAP = 8;
+
+	// 点世界牌后「卷轴展开」动画(Login.img/WorldSelect/scroll/0：4 帧 513×[152→401]、
+	// origin(0,0)、自上而下展开) 的锚点(左上角)相对面板中心 panel_c 的偏移。
+	// 经「选中频道页.png」卷筒实测 top-left≈(358,128)、panel_c≈(660,402) ⇒ (-302,-274)。
+	// 与背景横杆 signboard/2 卷筒同位，故展开动画自然地自卷筒向下铺开。
+	static constexpr Point<int16_t> WS_SCROLL_ANIM_OFF(-302, -274);
 
 	// LoginBackground 不可用时的兜底（退化路径，按 1280x720 标定值）。
 	static constexpr int16_t WS_BANNER_FALLBACK_Y = 111;
@@ -160,8 +172,16 @@ namespace ms
 	static constexpr int16_t WS_SIDEBAR_Y2 = 427;		// BtStart
 	static constexpr Point<int16_t> WS_EXIT_POS(8, 8);
 
-	// 公告底板相对 chBackgrn 中心：放在面板左侧。
-	static constexpr int16_t WS_NOTICE_GAP = 12;
+	// 公告板（Login.img/WorldNotice/BalloonForLoginProcess 九宫，静止外框 184x74）
+	// 相对频道面板的定位。经「选中频道页.png」逐像素定标（2026-11-03 重测）：
+	//   公告外框 (285,297)-(469,371)；面板 chBackgrn(449x233) 左缘 x≈436、顶缘 y≈282
+	//   ⇒ 公告左上 = 面板左上 + (-151, +15)，右缘越过面板左缘约 33px（原生即叠在
+	//   面板左缘之前，CH.1 红圈被板右缘裁切）。
+	// 公式 notice_x = panel_topleft.x - world_notice.width() - WS_NOTICE_GAP，
+	// width=184 ⇒ WS_NOTICE_GAP = 0 (right_edge = panel_topleft.x - gap => gap 0 == flush left, no world-label occlusion)（负值=与面板左缘重叠）。
+	// 【旧值 -48 被实机证伪】旧版框宽按自适应 tile 铺行算出 ≈135，代入同公式后
+	// 板被推入面板内部遮挡频道列表；旧注释还把右缘量到红圈 481 上（199 宽系误测）。
+	static constexpr int16_t WS_NOTICE_GAP = 0;
 
 	// 频道按钮/负载条在频道面板内的网格偏移。
 	static Point<int16_t> channel_cell_offset(uint16_t i)
@@ -174,6 +194,27 @@ namespace ms
 
 		return Point<int16_t>(22 + CELL_W * d.rem, 56 + CELL_H * d.quot);
 	}
+
+	// 负载条（chgauge 73x9 彩虹条）相对单元格原点的落点：负载槽烘焙在单元
+	// 位图 channel/N/normal (92x30) 的 (6..80, 18..26)，条 73x9 居中放入
+	// ⇒ (+7,+18)。旧实现画在原点 (0,0)，彩虹条盖住 CH.N 标签
+	// （选中频道页.png 逐像素取证 2026-11-02）。
+	static constexpr Point<int16_t> CH_GAUGE_OFFSET(7, 18);
+
+	// 选中频道红圈（chSelect 末帧 59x33）相对单元格原点的落点 (-2,-9)。
+	// 依据（选中频道页.png 逐像素定标 2026-11-02）：
+	//   · CH.1 文字核在单元位图内 x10..27/y5..11，与参照图 x481..498/y342..348
+	//     逐行吻合（7 行全对齐）⇒ 参照图中单元格原点 (471,337)；
+	//   · 末帧红弧 bbox 帧内 x1..58/y0..31，参照图 x470..520/y328..359
+	//     ⇒ 帧左上 (469,328) = 单元格原点 + (-2,-9)。
+	// 【origin 三源矛盾，get_origin() 补偿必须保留】打包 UI.wz（MapleLib dump）
+	// 无 origin 节点、.nxcache/UI.nx 给 (29,16)，而游戏实际读取的
+	// Data/UI/Login.img 实测为 (12,16)（实机渲染反推：draw=(cell-2,-9) 时弧
+	// 左/上/下边 439/330/361 与右缘被光标手套 480+ 遮挡全部吻合）。像素级
+	// 结论一律以 Data 运行时数据为准（R1/R2），故绘制参数须加回 get_origin()
+	// 抵消纹理 origin，使渲染左上恰好落在单元格原点 + (-2,-9) + 逐帧居中。
+	// 旧硬编码 (2,-9) 的 Y 对、X 差 4px，后被整体移除，残余 (+2,+9) 偏差。
+	static constexpr Point<int16_t> CH_SELECT_CIRCLE_OFFSET(-2, -9);
 
 	UIWorldSelect::UIWorldSelect() : UIElement(
 			Point<int16_t>(0, 0),
@@ -511,7 +552,9 @@ namespace ms
 		{
 			if (scroll_playing && scroll_has_anim)
 			{
-				scroll_open.draw(position + panel_c, alpha);
+				// 卷轴展开动画(scroll/0 四帧，origin(0,0) 自上而下生长) 锚到卷筒 top-left，
+				// 而非面板中心——否则整卷会压在面板正中、与背景卷筒错位。
+				scroll_open.draw(position + panel_c + WS_SCROLL_ANIM_OFF, alpha);
 			}
 			else
 			{
@@ -525,8 +568,14 @@ namespace ms
 
 				if (reveal < full_h)
 				{
+					// 自上而下卷轴展开：目标矩形必须是「完整面板矩形」(左上角 panel_c)，
+					// 由 Range 同时裁剪源与目标底边。源取顶部 reveal 行、目标高度亦为
+					// reveal，1:1 纵向揭示。若把 reveal 当作 DrawArgument 的 stretch 高度，
+					// 目标矩形先被压成 reveal 高、再被 Range 二次裁掉 (full_h-reveal)，
+					// 实际目标高度 = 2*reveal - full_h（中段为负/零）→ 整段动画不绘制，
+					// 仅 panel_expand 到 1 时整板瞬现，表现为「卷轴不滚动」。
 					channels_background.draw(
-						DrawArgument(position + panel_c, Point<int16_t>(0, reveal)),
+						DrawArgument(position + panel_c),
 						Range<int16_t>(0, static_cast<int16_t>(full_h - reveal))
 					);
 				}
@@ -561,23 +610,35 @@ namespace ms
 				for (size_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0 && i < channel_total; i++)
 				{
 					channel_gauge[i].draw(
-						DrawArgument(position + panel_topleft + channel_cell_offset(static_cast<uint16_t>(i)), content_alpha)
+						DrawArgument(
+							position + panel_topleft
+								+ channel_cell_offset(static_cast<uint16_t>(i)) + CH_GAUGE_OFFSET,
+							content_alpha
+						)
 					);
 				}
 
 				// 选中频道红圈圈选（channel/chSelect，播完定格末帧）。
-				// 帧为「中心锚点」且逐帧变大（23x11→59x33）：anchor 取末帧 origin，
-				// 使末帧视觉框恰好以频道单元原点为左上、圈心始终对准 CH.N 标签；
-				// 之前硬编码 (2,-9) 没补偿 origin，圈被上左平移了半个帧
-				// （用户实测「圈选位置不在选中的频道上」）。
+				// 各帧以末帧几何中心为基准居中展开（帧位图裁到红弧紧贴边框，
+				// 同左上落点会往右下生长；参照端圈绕 CH.N 标签中心收放），
+				// 末帧落点 = 单元格原点 + CH_SELECT_CIRCLE_OFFSET（实测依据见常量注释）。
+				// 必须加回 get_origin() 抵消纹理 origin（运行时 Data/UI/Login.img
+				// 实测 (12,16)，三源不一致见常量注释），否则渲染会整体偏移 origin。
 				if (channelid != 0xFF && !ch_select_frames.empty())
 				{
 					const Frame& circle = ch_select_frames[static_cast<size_t>(
 						ch_select_playing ? ch_select_frame : ch_select_frames.size() - 1
 					)];
 
+					const Point<int16_t> last_dims = ch_select_frames.back().get_dimensions();
+					const Point<int16_t> centering(
+						static_cast<int16_t>((last_dims.x() - circle.get_dimensions().x()) / 2),
+						static_cast<int16_t>((last_dims.y() - circle.get_dimensions().y()) / 2)
+					);
+
 					circle.draw(DrawArgument(
-						position + panel_topleft + channel_cell_offset(channelid) + circle.get_origin(),
+						position + panel_topleft + channel_cell_offset(channelid)
+							+ CH_SELECT_CIRCLE_OFFSET + centering + circle.get_origin(),
 						content_alpha
 					));
 				}
@@ -587,11 +648,14 @@ namespace ms
 					// 公告随 channel_slide 自上方滑入（与卷轴展开同步）。
 					// LoginProcessNotice::draw 只接受坐标，无 alpha 通道，故不参与淡入。
 					const int16_t notice_dy = static_cast<int16_t>((1.0f - notice_slide) * (-40));
+					// 公告板：右缘越过面板左缘 33px（WS_NOTICE_GAP=-33，原生叠在面板前，
+					// 且绘制顺序在本块——板右缘裁切 CH.1 红圈，与参考图一致）；
+					// 顶缘 = panel_topleft.y + 15（选中频道页.png 实测 297-282=15）。
 					const int16_t notice_x = static_cast<int16_t>(
 						panel_c.x() - CH_PANEL_W / 2 - world_notice.width() - WS_NOTICE_GAP
 					);
 					const int16_t notice_y = static_cast<int16_t>(
-						panel_c.y() - CH_PANEL_H / 2 + 8 + notice_dy
+						panel_c.y() - CH_PANEL_H / 2 + 15 + notice_dy
 					);
 					world_notice.draw(position + Point<int16_t>(notice_x, notice_y));
 				}
@@ -1165,22 +1229,16 @@ namespace ms
 			notice_slide = 0.0f;
 			panel_expand = 0.0f;
 			pending_channel_limit = 0;
-			// BeiDou 地图已有 signboard 卷轴；Login.img/WorldSelect/scroll 是旧版全屏卷（513×401），
-			// 锚在频道面板中心会错位。仅用 CH_SLIDE，不再播该动画。
-			if (!LoginBackground::get().available())
+			// 点世界牌后「卷轴展开」动画(Login.img/WorldSelect/scroll/0 四帧：513×152→401、
+			// origin(0,0)、自上而下展开) 即原生「卷轴滚动」效果。BeiDou 地图横杆 signboard/2
+			// 仅作卷筒静态底，展开动画锚点由 WS_SCROLL_ANIM_OFF 定到卷筒 top-left，
+			// 与背景卷筒同位；播完由 update() 置 scroll_playing=false 转交 chBackgrn。
+			if (nl::node open = nl::nx::UI["Login.img"]["WorldSelect"]["scroll"]["0"])
 			{
-				if (nl::node open = nl::nx::UI["Login.img"]["WorldSelect"]["scroll"]["0"])
-				{
-					scroll_open = Animation(open);
-					scroll_open.reset();
-					scroll_has_anim = true;
-					scroll_playing = true;
-				}
-				else
-				{
-					scroll_has_anim = false;
-					scroll_playing = false;
-				}
+				scroll_open = Animation(open);
+				scroll_open.reset();
+				scroll_has_anim = true;
+				scroll_playing = true;
 			}
 			else
 			{

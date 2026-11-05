@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -489,28 +489,27 @@ namespace ms
 					{
 						Point<int16_t> detail_pos = charpos + CS_CHARINFO_OFF;
 
-						// 卷轴：仅展开动画期间绘制（2026-10-29 参考图逐像素取证：
-						// 静止状态原生只画 charInfo1 内容板，四周无卷轴外露——
-						// 面板上方是书页底+气泡，左右是蘑菇屋/天空）。旧实现把
-						// scroll_frame 常驻画在内容板后方且上露 39px，即用户所见
-						// 「属性框相对卷轴偏下」。动画播完定格末帧后不再绘制。
+						// 卷轴（2026-11-04 正确端视频 12s 帧 +《选择角色页.png》取证）：
+						// 原生静止态 = scroll/2 末帧 217x193 常驻（顶部小卷筒+垂纸+底卷边），
+						// charInfo 内容画在纸内 —— 原生并不隐藏卷轴。旧实现「播完定格后
+						// 不再绘制」是反向修复；正确做法是末帧常驻打底 + 内容叠加，两者
+						// 共用 detail_pos 锚点即天然对齐（纸面即原生底色，无需 ColorBox）。
 						if (charinfo_has_scroll)
 						{
 							const Frame& scroll_frame = charinfo_scroll_frames[
-								static_cast<size_t>(charinfo_scroll_playing ? charinfo_scroll_frame : charinfo_scroll_frames.size() - 1)
+								charinfo_scroll_playing
+									? static_cast<size_t>(charinfo_scroll_frame)
+									: charinfo_scroll_frames.size() - 1
 							];
 
 							scroll_frame.draw(DrawArgument(detail_pos - CS_SCROLL_CONTENT_OFF));
 						}
 
-						if (!charinfo_has_scroll || !charinfo_scroll_playing)
 						{
-							Point<int16_t> ci_dim = charinfo.get_dimensions();
 							// nxcache 脏 origin 补偿：纹理实际渲染位 = 参数 - origin，
 							// 加回 origin 使底板左上角精确落在 detail_pos（值行常量
 							// 由此可用纯纹理相对坐标，消除 ~7-11px 系统偏差）。
 							Point<int16_t> ci_pos = detail_pos + charinfo.get_origin();
-							ColorBox(ci_dim.x(), ci_dim.y(), Color::Name::CREAM, 1.0f).draw(ci_pos);
 							charinfo.draw(ci_pos);
 
 							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);

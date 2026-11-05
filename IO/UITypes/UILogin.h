@@ -96,5 +96,11 @@ namespace ms
 		// opt-in 自动登录挂起标志：构造期仅预填账号密码并置位，首个 update 帧（UI 就绪后）
 		// 再走完整 login()，与手动点「连接」同一路径，避免构造期 UI/Session 未就绪导致丢包。
 		bool auto_login_pending = false;
+
+		// 构造期记录的「端点视角」。木框由 LoginBackground::draw() 每帧按当前
+		// get_viewpos() 绘制，而本窗控件坐标在构造期固化（r08：不可用插值起点，
+		// 否则窗口落在半途）。update() 用二者差值平移整窗，使补间滚动或
+		// 多分辨率视口变化时输入框始终与木框雕刻槽同源；稳定态差值为 (0,0)。
+		Point<int16_t> anchor_viewpos;
 		};
 }

@@ -120,10 +120,11 @@ namespace ms
 		}
 
 		// 进度条：bar/0..10 共 11 帧，每帧多点亮一格（0%..100%）。
-		// 位置实测（tools/_wz.py 解码 backgrnd + 像素扫描）：
-		//   白槽区 y=90..113（中心 101），LOADING 字形 x=51..95（基线中心 y≈101）；
-		//   条 109×8 紧随 LOADING 右侧、与文字同基线居中：x=95+4=99，y=101-4=97。
-		static const Point<int16_t> kBeiDouBarOff(99, 97);
+		// 2026-11-05 正确端截图（XiaoYe_2026-11-05_00-29-43.png）逐像素定标：
+		// 弹窗=Loading/backgrnd 282x144（模板匹配原点=截图(0,9)）；条带 y88..113、
+		// x46..253 无内槽；截图仅见第 0 段 8x8 橙块 @ 弹窗内(130..141,98..105)
+		// （左侧条带纯白排除 bar@100 段3 的解释）⇒ bar 画在弹窗内 (131,98)。
+		static const Point<int16_t> kBeiDouBarOff(131, 98);
 
 		nl::node progress = pick_loading_anim(Loading);
 
@@ -189,9 +190,10 @@ namespace ms
 			int16_t cancel_y;
 			if (bedou)
 			{
-				cancel_y = static_cast<int16_t>(
-					std::max(0, load_dim.y() - cancel_dim.y() - 8)
-				);
+				// 2026-11-05 正确端截图逐像素定标：取消钮 65x23 在弹窗内 (188,44)，
+				// 与「正在连接到服务器。」文字同行、右缘距弹窗右缘 29px。
+				// 旧实现坠到卷轴底部居中（y=113），即用户所见错位。
+				cancel_y = 44;
 				dimension = load_dim;
 			}
 			else
@@ -204,7 +206,9 @@ namespace ms
 			}
 
 			Point<int16_t> cancel_pos(
-				static_cast<int16_t>((dimension.x() - cancel_dim.x()) / 2),
+				bedou
+					? static_cast<int16_t>(dimension.x() - cancel_dim.x() - 29)
+					: static_cast<int16_t>((dimension.x() - cancel_dim.x()) / 2),
 				cancel_y
 			);
 			buttons[Buttons::BtCancel] = std::make_unique<MapleButton>(bt_cancel, cancel_pos);

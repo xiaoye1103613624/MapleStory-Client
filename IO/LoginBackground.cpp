@@ -44,11 +44,15 @@ namespace ms
 		if (step == 5)
 			step = 1;
 
-		// step0：登录告示牌锚 X=137；step1+：选频木牌锚 X=28（正确截图构图）。
-		// 二者 X 不同是地图焦点切换所需；时长仍按参考端 300*|Δ|+500。
-		if (step == 0)
-			return { 137.0, -20.0 };
-
+		// r04（CLogin::Init / ChangeStep@0x5F53C0）：相机中心 X 恒为 28，
+		// Y = GetStepHeight(step) = -8 - 600*step；step0 并无特例。
+		// 旧实现给 step0 硬编码 {137, -20}，把「告示牌 obj 的 map x=137」
+		// 误当成相机 offset：代入 1280x720 得 viewpos=(503,380)、木牌左上
+		// (456,283)；而正确客户端截图木牌左上 ≈(564,272)、r04 由 logo 反推
+		// viewpos=(611,369)。改用原生 (28,-8) 后 viewpos=(612,368)、
+		// 木牌左上 (565,271)，逐像素吻合。
+		// 同时 step0→1 从「斜向 109px 横移 + 588px 纵移」恢复为原生纯纵向
+		// 600px 滚动 —— 这是用户实测「登录页到频道页动画不流畅」的主因。
 		return { 28.0, static_cast<double>(step_height(step)) };
 	}
 
@@ -225,6 +229,24 @@ namespace ms
 		);
 	}
 
+	void LoginBackground::set_scene(nl::node src, Point<int16_t> pos)
+	{
+		if (!src)
+		{
+			clear_scene();
+			return;
+		}
+		scene_sprite = Sprite(src);
+		scene_pos = pos;
+		has_scene_flag = true;
+	}
+
+	void LoginBackground::clear_scene()
+	{
+		has_scene_flag = false;
+		scene_sprite = Sprite();
+	}
+
 	void LoginBackground::draw(float alpha) const
 	{
 		if (!enabled)
@@ -268,6 +290,10 @@ namespace ms
 		if (has_backs)
 			backgrounds.drawforegrounds(viewpos.x(), viewpos.y(), alpha);
 
+		// 建角页整屏场景 overlay（绘制在其余背景之后、相框之前）。
+		if (has_scene_flag)
+			scene_sprite.draw(scene_pos, alpha);
+
 		// Draw the single selected border exactly once.
 		if (has_frame)
 			frame.draw(Point<int16_t>(0, 0), alpha);
@@ -289,5 +315,8 @@ namespace ms
 
 		if (has_frame)
 			frame.update();
+
+		if (has_scene_flag)
+			scene_sprite.update();
 	}
 }

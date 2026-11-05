@@ -107,8 +107,10 @@ namespace ms
 		classic_card_pos[1] = Point<int16_t>(293, 79);
 		classic_card_pos[2] = Point<int16_t>(511, 80);
 		// Description banner sits under the cards inside the 700x460 wnd.
-		classic_text_pos = Point<int16_t>(60, 270);
-		// IDA: CCtrlButton Create id:1003 BtSelect @ (530, 422).
+		// 【2026-11-03 修复】原值 (60,270) 被参考图像素实测证伪：desc_board 原生渲染在 (358,351)，代码 pos+(60,270)=(300,310) →
+		// 差值 (+58,+41)。改 (118,311) 后与原生对齐。
+		classic_text_pos = Point<int16_t>(118, 311);
+		// IDA: CCtrlButton Create id:1003 BtSelect @ (530, 422). 实测 bt_select 原生在 (770,462)，窗口原点 (240,40) → 相对 (530,422) ✅ 无需改。
 		classic_select_pos = Point<int16_t>(530, 422);
 
 		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
@@ -119,7 +121,15 @@ namespace ms
 			classic_card[i] = btn["normal"]["0"];
 			classic_card_over[i] = btn["mouseOver"]["0"] ? Texture(btn["mouseOver"]["0"]) : classic_card[i];
 			classic_on_ani[i] = Sprite(card["OnAnimation"]);
-			classic_text[i] = card["text"];
+			// 修复（2026-11-03 实机：种族选择页底部大面积空缺）：原生底部说明横幅
+			//（579x163 描述板）不显示的根因——运行时取证 Login.img_runtime.json：
+			// RaceSelect/{knight,normal,aran}/text 是目录节点，位图在其子节点 "0"
+			//（text/0 = 579x163）。Texture(nl::node) 仅接受 data_type==bitmap，
+			// 旧代码 classic_text[i] = card["text"] 拿到 dir 节点 → 无效纹理 →
+			// draw() 静默 no-op → 底部整块缺失。同文件上方 classic_card 用的正是
+			// btn["normal"]["0"] 取法，此处漏了 ["0"]。R6 守卫：缺节点时留无效
+			// 纹理，draw 自然跳过不崩。
+			classic_text[i] = card["text"]["0"] ? Texture(card["text"]["0"]) : Texture();
 
 			// Texture::draw uses (pos - origin); AreaButton must use the same LT
 			// or the colorful OnAnimation sits outside the clickable rect.

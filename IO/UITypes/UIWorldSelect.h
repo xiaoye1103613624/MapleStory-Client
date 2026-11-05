@@ -61,6 +61,13 @@ namespace ms
 		void set_region(uint8_t value);
 		uint16_t get_worldbyid(uint16_t worldid);
 
+		/// 建角页侧栏「选择的:世界」信息框所需数据（UICommonCreation 消费）。
+		uint8_t get_channelid() const { return channelid; }
+		const World* get_selected_world() const
+		{
+			return worldid < worlds.size() ? &worlds[worldid] : nullptr;
+		}
+
 		/// 服务端 SERVERSTATUS 回包：0 正常 / 1 拥挤 / 2 满员。
 		/// 拥挤仅提示，满员额外阻止进入该世界（参考端 CUIWorldSelect 语义）。
 		void set_server_status(int16_t status);

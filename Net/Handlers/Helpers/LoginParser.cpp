@@ -149,9 +149,17 @@ namespace ms
 		statsentry.stats[MapleStat::Id::MAXMP] = recv.read_short();
 		statsentry.stats[MapleStat::Id::AP] = recv.read_short();
 		statsentry.stats[MapleStat::Id::SP] = recv.read_short();
-		// exp 为 8 字节（北斗 writeLong）；实测 gachaExp=10000、mapId=2、spawnPoint=0
-		// 恰好在 exp(8) 之后对齐。
-		statsentry.exp = recv.read_long();
+		// exp 宽度必须按当前对接服务端的 PacketCreator.addCharStats 对齐：
+		//  - s9（BeiDou-Server_s9，本客户端目标）：writeInt(exp)=4 字节，末尾另补 writeInt(0)=4 字节
+		//    布局 exp4 / fame2 / gacha4 / map4 / spawn1 / tail4
+		//  - S10 与主线版本：writeLong(exp)=8 字节，末尾无 tail
+		//    布局 exp8 / fame2 / gacha4 / map4 / portal1
+		// 两者从 exp 到 charLook 都是 19 字节，所以「读错 exp 宽度」不会抛 PacketError，
+		// 只会把中间字段整体平移 4 字节：旧代码按 8 字节 exp 解析 s9 的包时，
+		// skip(4)//gachaexp 恰好吞掉真实 mapId(00 e1 f5 05 = 100000000 射手村)，
+		// 再从 spawnpoint 槽读出 16 当 mapid → Stage::load 抛 map data missing → 进图白屏。
+		// 实机字节：CHARLIST(0x0b) mapId=100000000 @88、spawnpoint=16 @92、charLook @97。
+		statsentry.exp = recv.read_int();
 		statsentry.stats[MapleStat::Id::FAME] = recv.read_short();
 
 		recv.skip(4); // gachaexp
@@ -159,8 +167,10 @@ namespace ms
 		statsentry.mapid = recv.read_int();
 		statsentry.portal = recv.read_byte();
 
-		// 注意：北斗包体在此**没有**尾部 timestamp(int)，旧代码多 skip(4) 会让
-		// 后续 parse_look 整体前移 4 字节、等值槽位循环读不到 0xFF 而抛 PacketError。
+		// s9 addCharStats 在 spawnpoint 之后固定补一个 int(0)；跳过它 parse_look
+		// 才会落在 charLook 起点（stats+89）。旧文档的「无尾部 timestamp」只适用于
+		// S10/主线的 8 字节 exp 布局，对 s9 已失效。
+		recv.skip(4);
 		return statsentry;
 	}
 

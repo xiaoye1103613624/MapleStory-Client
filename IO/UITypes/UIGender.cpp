@@ -106,6 +106,8 @@ namespace ms
 		{
 			UI::get().emplace<UILoginWait>();
 			GenderPacket(false).dispatch();
+			// 同 button_pressed(YES)：确认即收框，不等封包时序（见该处注释）。
+			deactivate();
 			LOG(LOG_DEBUG, "UIGender: male");
 			return;
 		}
@@ -113,12 +115,13 @@ namespace ms
 		{
 			UI::get().emplace<UILoginWait>();
 			GenderPacket(true).dispatch();
+			deactivate();
 			LOG(LOG_DEBUG, "UIGender: female");
 			return;
 		}
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
 				if (tip.empty()) return;
 				std::string t = tip;
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
@@ -131,6 +134,7 @@ namespace ms
 					return;
 				UI::get().emplace<UILoginWait>();
 				GenderPacket(female).dispatch();
+				this->deactivate();	// lambda 内需显式 this->（C4573：基类成员查找）
 				LOG(LOG_DEBUG, "UIGender: SoftKey female=" << female);
 			}, []() {}, "m|f");
 		}
@@ -158,6 +162,14 @@ namespace ms
 
 				uint16_t selected_value = buttons[Buttons::SELECT]->get_selected();
 				GenderPacket(selected_value).dispatch();
+
+				// 修复（2026-11-03 实机：创建流程多 UI 态同屏叠加）：欢迎框此前
+				// 只等 LOGIN_RESULT 的 remove(GENDER) 回收，而旧 remove 在
+				// `loginwait->is_active()` 门内——Wait 满条自 deactivate 后该门
+				// 不成立，GENDER 永不拆除，跨页残留与频道/创建窗口叠加。
+				// 原生行为是「确认即收框」：就地 deactivate（实例由
+				// LOGIN_RESULT/GENDER_DONE 的统一清理回收），不再赌封包时序。
+				deactivate();
 
 				return Button::State::NORMAL;
 			}

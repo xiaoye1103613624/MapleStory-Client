@@ -54,6 +54,14 @@ namespace ms
 			return step;
 		}
 
+		// 建角页（classic 命名态）整屏场景 overlay：绘制在 frame 之前、其余背景之后。
+		void set_scene(nl::node src, Point<int16_t> pos);
+		void clear_scene();
+		bool has_scene() const
+		{
+			return has_scene_flag;
+		}
+
 		Point<int16_t> get_frame_topleft() const
 		{
 			return frame_topleft;
@@ -108,6 +116,11 @@ namespace ms
 		std::vector<Sprite> bg_layers;
 		Sprite frame;
 		Point<int16_t> frame_topleft;
+
+		// 建角页整屏场景 overlay（冒险家蘑菇村/骑士团凉亭/战神雪亭）。
+		bool has_scene_flag = false;
+		Sprite scene_sprite;
+		Point<int16_t> scene_pos;
 		bool enabled;
 		bool has_map;
 		bool has_backs;

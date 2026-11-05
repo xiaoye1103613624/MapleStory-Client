@@ -36,6 +36,7 @@ namespace ms
 		static constexpr bool TOGGLED = false;
 
 		UICommonCreation(const std::string& classType);
+		~UICommonCreation() override;
 
 		void draw(float inter) const override;
 		void update() override;
@@ -120,6 +121,7 @@ namespace ms
 			BtHairSelect5,
 			BtHairSelect6,
 			BtHairSelect7,
+			BtViewAll,
 			LENGTH
 		};
 
@@ -132,6 +134,12 @@ namespace ms
 
 		Text version;
 		Point<int16_t> version_pos;
+
+		// 原生 classic 建角页左侧栏（创建角色步骤框 / 选择的:世界信息框 / 世界名·频道文本）。
+		Sprite step_create;
+		Sprite selworld_box;
+		Text world_text;
+		Text channel_text;
 		Texture nameboard;
 		std::vector<Sprite> sprites_char_look;
 		std::vector<Sprite> sprites_gender_select;

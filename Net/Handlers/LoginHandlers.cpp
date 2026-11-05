@@ -47,13 +47,19 @@ namespace ms
 	{
 		auto loginwait = UI::get().get_element<UILoginWait>();
 
+		// 修复（2026-11-03 实机：创建流程多 UI 态同屏叠加）：这三项清理原只在
+		// loginwait 活跃分支内执行；Wait 被门闩看护提前回收（UIStateLogin.cpp:86
+		// 的 inactive→remove）或竞态失活时走 else，GENDER/TOS/LOGINNOTICE 残留
+		// active，跨到频道/选角/创建页与后续窗口叠加。LOGIN_RESULT 到达即代表
+		// 上一轮登录/性别/EULA 对话终结——无论 Wait 是否还在，都必须拆干净。
+		UI::get().remove(UIElement::Type::LOGINNOTICE);
+		UI::get().remove(UIElement::Type::TOS);
+		UI::get().remove(UIElement::Type::GENDER);
+
 		if (loginwait && loginwait->is_active())
 		{
 			// 失败路径才立刻拆掉 Wait；成功路径要等 ensure_game_roots 结束再拆，
 			// 否则装 Character 时无加载框，像“登录卡死半分钟”。
-			UI::get().remove(UIElement::Type::LOGINNOTICE);
-			UI::get().remove(UIElement::Type::TOS);
-			UI::get().remove(UIElement::Type::GENDER);
 
 			std::function<void()> okhandler = loginwait->get_handler();
 
@@ -451,9 +457,15 @@ namespace ms
 		// 注意：s9 的 SetGenderHandler 成功后回的是 LOGIN_RESULT（auth success），
 		// 性别流程已在该 handler 闭环（LoginResultHandler 读 account.female）；
 		// 此 opcode 在 s9 下不会下发，注册仅作协议完整性保留，连参考端/未来 s9 启用时生效。
+		// 修复（2026-11-03）：参考端下发 GENDER_DONE 时走的是本 handler——旧代码
+		// 只发 ServerRequestPacket，从不拆 UIGender 欢迎框与 UILoginWait，导致
+		// 性别欢迎框跨到频道/创建页残留叠加（用户实机问题 4 的第一条泄漏路径）。
 		recv.read_byte(); // gender
 		while (recv.available())
 			recv.skip_byte();
+
+		UI::get().remove(UIElement::Type::GENDER);
+		UI::get().remove(UIElement::Type::LOGINWAIT);
 
 		ServerRequestPacket().dispatch();
 	}

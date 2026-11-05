@@ -140,7 +140,11 @@ namespace ms
 			Texture sign_tex(nl::nx::Map["Obj"]["login.img"]["Title"]["signboard"]["0"]["0"]);
 			Point<int16_t> sign_origin = sign_tex.get_origin();
 			Point<int16_t> signboard_map_pos(137, 21);
-			Point<int16_t> sign_topleft = signboard_map_pos + LoginBackground::get().get_target_viewpos() - sign_origin;
+			// 构造期只能用端点视角（r08：用插值起点会让窗口落在半途），并记住该
+			// 端点；update() 再按「当前视角 - 端点」平移整窗，使补间滚动或
+			// 多分辨率视口变化时输入框与木框雕刻槽始终同源。
+			anchor_viewpos = LoginBackground::get().get_target_viewpos();
+			Point<int16_t> sign_topleft = signboard_map_pos + anchor_viewpos - sign_origin;
 
 			// CUITitle 窗口原点相对告示牌左上角的偏移。
 			//
@@ -233,7 +237,7 @@ namespace ms
 		if (bedou)
 		{
 			account_src_dim = Point<int16_t>(132, 15);
-			textfield_pos = account_pos + Point<int16_t>(2, 1);
+			textfield_pos = account_pos + Point<int16_t>(2, 0);
 		}
 
 		// BeiDou carved wood slots are only 15px tall. A11M (linespace ≈15)
@@ -280,7 +284,7 @@ namespace ms
 		if (bedou)
 		{
 			password_src_dim = Point<int16_t>(120, 15);
-			textfield_pos = password_pos + Point<int16_t>(2, 1);
+			textfield_pos = password_pos + Point<int16_t>(2, 0);
 		}
 
 		password = Textfield(
@@ -315,8 +319,8 @@ namespace ms
 		// BeiDou 槽高 15：Text 布局已自带 linespace 基线，勿再 +11，否则字形落在槽外只剩竖线伪影。
 		if (bedou)
 		{
-			account.set_text_shift(Point<int16_t>(2, 0));
-			password.set_text_shift(Point<int16_t>(2, 0));
+			account.set_text_shift(Point<int16_t>(2, -3));
+			password.set_text_shift(Point<int16_t>(2, -3));
 		}
 #pragma endregion
 
@@ -386,6 +390,13 @@ namespace ms
 
 	void UILogin::update()
 	{
+		// 木框由 LoginBackground 每帧按当前 get_viewpos() 绘制，本窗控件按构造期
+		// 端点锚定。用二者差值平移整窗，使 step 补间滚动时旧窗口随木框一起滚出
+		//（r08 §4 记录的参考端行为），多分辨率视口变化后也不与雕刻槽脱节。
+		// 静态（无补间）时 current_offset 即 target_offset，差值为 (0,0)，不改变布局。
+		if (bedou && LoginBackground::get().available())
+			position = LoginBackground::get().get_viewpos() - anchor_viewpos;
+
 		UIElement::update();
 
 		// 首个 update 帧（UI 已就绪）触发挂起的自动登录，走与手动点击一致的 login()。
@@ -564,10 +575,16 @@ namespace ms
 
 	Cursor::State UILogin::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
-		if (Cursor::State new_state = account.send_cursor(cursorpos, clicked))
+		// Textfield::draw(position) 把 position 叠加到构造期绝对 bounds 上，
+		// 但 Textfield::send_cursor 直接对绝对 bounds 判命中。整窗随木框补偿
+		// 平移后，这里必须减去同一补偿量，否则输入框点不中（按钮由
+		// UIElement::send_cursor 的 bounds(position) 处理，无需修正）。
+		Point<int16_t> field_cursor = cursorpos - position;
+
+		if (Cursor::State new_state = account.send_cursor(field_cursor, clicked))
 			return new_state;
 
-		if (Cursor::State new_state = password.send_cursor(cursorpos, clicked))
+		if (Cursor::State new_state = password.send_cursor(field_cursor, clicked))
 			return new_state;
 
 		return UIElement::send_cursor(clicked, cursorpos);

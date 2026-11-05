@@ -27,6 +27,7 @@
 #include "../LoginBackground.h"
 
 #include "../Components/AreaButton.h"
+#include "../Components/LocalTwoSpriteButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Configuration.h"
@@ -36,11 +37,15 @@
 #include "../../Data/ItemData.h"
 
 #include "../../Net/Packets/CharCreationPackets.h"
+#include "../../Net/Packets/SelectCharPackets.h"
 #include "../../Util/LoginUiAssets.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
+
+#include <algorithm>
+#include <cctype>
 
 namespace ms
 {
@@ -355,23 +360,20 @@ namespace ms
 
 	void UICommonCreation::init_classic(nl::node Login, nl::node Common)
 	{
-		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
-		bind_text(version, "version.prefix", version_text);
-
+		// 原生 classic 建角页只有「命名」一个形态（职业团选择在 UIRaceSelect 完成）：
+		// 吊牌 charName + 确定/取消 + 名称输入框 + 平台角色预览，无性别/外观选择。
+		// 元素铺满屏幕（position=0,0），按钮/输入框坐标直接使用 1280x720 原生屏幕值；
+		// nameboard 与 newCharLook 的 draw 调用本身即绝对坐标。
 		const int16_t view_w = Constants::Constants::get().get_viewwidth();
 		const int16_t view_h = Constants::Constants::get().get_viewheight();
-		dimension = Point<int16_t>(800, 600);
-		position = Point<int16_t>(
-			static_cast<int16_t>((view_w - 800) / 2),
-			static_cast<int16_t>((view_h - 600) / 2));
+		dimension = Point<int16_t>(view_w, view_h);
+		position = Point<int16_t>(0, 0);
 
 		if (LoginBackground::get().available())
 			LoginBackground::get().set_step(3);
 
 		std::string root_name = LoginUiAssets::classic_newchar_root(classType);
 		nl::node NewChar = Login[root_name];
-		nl::node Gender = Login["Gender"];
 
 		if (!NewChar)
 		{
@@ -379,86 +381,59 @@ namespace ms
 			return;
 		}
 
-		int sign_idx = LoginUiAssets::classic_signboard_index(classType);
-		nl::node signboard = nl::nx::Map["Obj"]["login.img"]["NewChar"]["signboard"][sign_idx];
-		sprites_background.emplace_back(signboard["0"] ? signboard["0"] : signboard, Point<int16_t>(100, 40));
+		// 直接进入命名态（GMS 三态流 gender→look→name 的前两态在原生 classic 中不存在）。
+		genderSelected = true;
+		charLookSelected = true;
+		newCharNameDisabled = false;
 
-		genderOrigin = Point<int16_t>(220, 120);
-		avatarOrigin = Point<int16_t>(70, 80);
-		charNameOrigin = Point<int16_t>(280, 160);
-		newAvatarPos = Point<int16_t>(520, 320);
+		// 原生锚点：由正确端建角页截图（1280x720）模板匹配测得。
+		// sign = 吊牌 NewChar*/charName 左上；yes/no = 确定/取消左上（各职业专属按钮资产）；
+		// slot = 输入槽相对吊牌偏移；avatar = 预览角色脚底。
+		Point<int16_t> sign_pos;
+		Point<int16_t> yes_pos;
+		Point<int16_t> no_pos;
+		Point<int16_t> slot_pos;
+		Point<int16_t> avatar_pos;
 
-		if (Gender["backgrnd"]["0"])
-			sprites_gender_select.emplace_back(Gender["backgrnd"]["0"], genderOrigin);
-		else
-			sprites_gender_select.emplace_back(NewChar["charSet"], genderOrigin);
-
-		classic_gender_male = Gender["text"]["0"];
-		classic_gender_female = Gender["text"]["1"];
-
-		sprites_lookboard.emplace_back(NewChar["charSet"], avatarOrigin);
-
-		nl::node avatarSel = NewChar["avatarSel"];
-		Point<int16_t> label_base = avatarOrigin + Point<int16_t>(28, 48);
-		size_t row = 0;
-
-		for (nl::node sel : avatarSel)
+		if (className == "adventurer")
 		{
-			sprites_char_look.emplace_back(sel["normal"], label_base + Point<int16_t>(0, static_cast<int16_t>(18 * row)));
-			row++;
-			if (row >= 8)
-				break;
+			sign_pos = Point<int16_t>(721, 155);
+			yes_pos = Point<int16_t>(748, 333);
+			no_pos = Point<int16_t>(822, 333);
+			slot_pos = Point<int16_t>(28, 104);
+			avatar_pos = Point<int16_t>(627, 430);
+		}
+		else if (className == "cygnusKnight")
+		{
+			sign_pos = Point<int16_t>(725, 155);
+			yes_pos = Point<int16_t>(756, 336);
+			no_pos = Point<int16_t>(829, 336);
+			slot_pos = Point<int16_t>(28, 104);
+			avatar_pos = Point<int16_t>(637, 396);
+		}
+		else
+		{
+			sign_pos = Point<int16_t>(716, 166);
+			yes_pos = Point<int16_t>(750, 304);
+			no_pos = Point<int16_t>(824, 304);
+			slot_pos = Point<int16_t>(28, 96);
+			avatar_pos = Point<int16_t>(652, 401);
 		}
 
 		nameboard = NewChar["charName"];
+		charNameOrigin = sign_pos;
+		newAvatarPos = avatar_pos;
 
-		classic_yes_gender = genderOrigin + Point<int16_t>(60, 160);
-		classic_no_gender = genderOrigin + Point<int16_t>(160, 160);
-		classic_yes_avatar = avatarOrigin + Point<int16_t>(40, 340);
-		classic_no_avatar = avatarOrigin + Point<int16_t>(130, 340);
-		classic_yes_name = charNameOrigin + Point<int16_t>(30, 180);
-		classic_no_name = charNameOrigin + Point<int16_t>(120, 180);
+		classic_yes_name = yes_pos;
+		classic_no_name = no_pos;
 
-		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 1));
+		// 侧栏「回到首页」与原生 UIWorldSelect 同位 (0,427)；职业专属确定/取消。
+		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 427));
+		buttons[Buttons::BtYes] = std::make_unique<MapleButton>(NewChar["BtYes"], classic_yes_name);
+		buttons[Buttons::BtNo] = std::make_unique<MapleButton>(NewChar["BtNo"], classic_no_name);
 
-		buttons[Buttons::BtGenderMale] = std::make_unique<AreaButton>(
-			genderOrigin + Point<int16_t>(40, 50), Point<int16_t>(120, 40));
-		buttons[Buttons::BtGenderFemale] = std::make_unique<AreaButton>(
-			genderOrigin + Point<int16_t>(180, 50), Point<int16_t>(120, 40));
-
-		Point<int16_t> left = avatarOrigin + Point<int16_t>(12, 48);
-		Point<int16_t> right = avatarOrigin + Point<int16_t>(190, 48);
-
-		auto place_lr = [&](uint16_t left_id, uint16_t right_id, int16_t y)
-		{
-			buttons[left_id] = std::make_unique<MapleButton>(NewChar["BtLeft"], Point<int16_t>(left.x(), y));
-			buttons[right_id] = std::make_unique<MapleButton>(NewChar["BtRight"], Point<int16_t>(right.x(), y));
-		};
-
-		place_lr(Buttons::BtSkinLeft, Buttons::BtSkinRight, left.y());
-		place_lr(Buttons::BtFaceLeft, Buttons::BtFaceRight, left.y() + 18);
-		place_lr(Buttons::BtHairLeft, Buttons::BtHairRight, left.y() + 36);
-		place_lr(Buttons::BtTopLeft, Buttons::BtTopRight, left.y() + 54);
-
-		if (bottomEnabled)
-			place_lr(Buttons::BtBottomLeft, Buttons::BtBottomRight, left.y() + 72);
-
-		int16_t shoe_y = left.y() + (bottomEnabled ? 90 : 72);
-		place_lr(Buttons::BtShoesLeft, Buttons::BtShoesRight, shoe_y);
-		place_lr(Buttons::BtWeaponLeft, Buttons::BtWeaponRight, shoe_y + 18);
-
-		buttons[Buttons::BtDice] = std::make_unique<AreaButton>(
-			avatarOrigin + Point<int16_t>(90, 300), Point<int16_t>(37, 26));
-		classic_dice = Sprite(NewChar["dice"]);
-
-		buttons[Buttons::BtYes] = std::make_unique<MapleButton>(NewChar["BtYes"], classic_yes_gender);
-		buttons[Buttons::BtNo] = std::make_unique<MapleButton>(NewChar["BtNo"], classic_no_gender);
-
-		hairSelectSize = 0;
-		disable_char_look();
-		buttons[Buttons::BtDice]->set_active(false);
-
-		newCharNamePos = charNameOrigin + Point<int16_t>(28, 90);
+		// Textfield::draw 会叠加 position（此处为 0,0），输入框落在吊牌输入槽内。
+		newCharNamePos = charNameOrigin + slot_pos;
 		Point<int16_t> newCharNameDim(150, 24);
 		newCharName = Textfield(
 			Text::Font::A12M,
@@ -469,6 +444,81 @@ namespace ms
 
 		newCharName.set_enter_callback([&](std::string) { button_pressed(Buttons::BtYes); });
 		newCharName.set_key_callback(KeyAction::Id::ESCAPE, [&]() { button_pressed(Buttons::BtNo); });
+
+		// 左侧栏：创建角色步骤框（step/3）与选择的:世界信息框（selectWorld），与原生 UIWorldSelect 同位。
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK,
+					   std::string("Ver. ") + Configuration::get().get_version());
+		// 原生参考「Ver. 0.83」文字中心 y≈17；实测当前绘制中心 y≈25，上移 7px 对齐。
+		version_pos = Point<int16_t>(1061, 9);
+
+		step_create = Sprite(Common["step"]["3"], Point<int16_t>(0, 33));
+		selworld_box = Sprite(Common["selectWorld"], Point<int16_t>(0, 96));
+
+		// 选择的:世界信息框内的世界名 / 频道文本（从 UIWorldSelect 取当前选择）。
+		std::string wname;
+		uint8_t wch = 0xFF;
+		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+		{
+			if (const World* w = worldselect->get_selected_world())
+				wname = w->name;
+			wch = worldselect->get_channelid();
+		}
+		// 进入选角后 UIWorldSelect 会清空选中频道（channelid=0xFF）；
+		// enter_world() 已把实际频道存入 Configuration，回退读取。
+		if (wch == 0xFF)
+			wch = Configuration::get().get_channelid();
+		// 原生侧栏世界名为全大写（参考截图：SCANIA / CH.1）。
+		std::transform(wname.begin(), wname.end(), wname.begin(),
+			[](unsigned char c) { return static_cast<char>(std::toupper(c)); });
+		world_text = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, wname);
+		channel_text = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE,
+							"CH." + std::to_string(wch + 1));
+
+		// 查看所有角色按钮（与原生 UIWorldSelect 同位）。
+		// 运行时 Login.img 的 BtViewAll 资产与 BtViewChoice 同图（均为「查看世界地图」，
+		// 已由 nx_inspect 导出核实），原生端为「查看所有角色」——用参考截图裁出的
+		// 真资产 PNG（99x35）覆盖；PNG 缺失时回退 img 资产。
+		LocalPngTexture btva_normal;
+		LocalPngTexture btva_pressed;
+		constexpr size_t ATLAS_BTVA = 0x43524254ull;	// 'CRBT'
+		bool btva_ok = btva_normal.load(ATLAS_BTVA, {
+				"UI/Creation/BtViewAll_normal.png",
+				"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_normal.png" })
+			&& btva_pressed.load(ATLAS_BTVA + 1, {
+				"UI/Creation/BtViewAll_pressed.png",
+				"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_pressed.png" });
+
+		if (btva_ok)
+			buttons[Buttons::BtViewAll] = std::make_unique<LocalTwoSpriteButton>(
+				std::move(btva_normal), std::move(btva_pressed), Point<int16_t>(0, 377));
+		else
+			buttons[Buttons::BtViewAll] = std::make_unique<MapleButton>(
+				Login["WorldSelect"]["BtViewAll"], Point<int16_t>(0, 377));
+
+		// 建角场景（原生整屏背景：冒险家蘑菇村/骑士团凉亭/战神雪亭）。
+		// 落点由正确端截图模板匹配测得（场景图左上在 1280x720 窗口内的位置）。
+		const char* scene_no = nullptr;
+		Point<int16_t> scene_pos;
+		if (className == "adventurer")
+		{
+			scene_no = "16";
+			scene_pos = Point<int16_t>(-3, -26);
+		}
+		else if (className == "cygnusKnight")
+		{
+			scene_no = "30";
+			scene_pos = Point<int16_t>(-33, -32);
+		}
+		else
+		{
+			scene_no = "33";
+			scene_pos = Point<int16_t>(-3, -25);
+		}
+		if (LoginBackground::get().available())
+		{
+			nl::node scene = nl::nx::UI["MapLogin.img"]["back"][scene_no];
+			LoginBackground::get().set_scene(scene, scene_pos);
+		}
 
 		skinColorName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
 		faceName = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK);
@@ -733,6 +783,14 @@ namespace ms
 		if (!classic_mode)
 			createLimitNum.draw("10", 5, position - createLimitPos + Point<int16_t>(7, 0));
 
+		if (classic_mode)
+		{
+			step_create.draw(position, inter);
+			selworld_box.draw(position, inter);
+			world_text.draw(position + Point<int16_t>(99, 111));
+			channel_text.draw(position + Point<int16_t>(99, 127));
+		}
+
 		if (version_pos.x() || version_pos.y() || !classic_mode)
 			version.draw(position + version_pos - Point<int16_t>(0, 5));
 	}
@@ -907,7 +965,13 @@ namespace ms
 
 	Button::State UICommonCreation::button_pressed(uint16_t buttonid)
 	{
-		if (buttonid == Buttons::BtStart)
+		if (buttonid == Buttons::BtViewAll)
+		{
+			Sound(Sound::Name::SCROLLUP).play();
+			ViewAllCharPacket().dispatch();
+			return Button::State::NORMAL;
+		}
+		else if (buttonid == Buttons::BtStart)
 		{
 			Sound(Sound::Name::SCROLLUP).play();
 
@@ -1032,6 +1096,18 @@ namespace ms
 		}
 		else if (buttonid == Buttons::BtNo)
 		{
+			if (classic_mode)
+			{
+				// 原生 classic 建角无性别/外观态可回退：取消直接回职业团选择页。
+				Sound(Sound::Name::SCROLLUP).play();
+
+				UI::get().remove(UIElement::Type::CLASSCREATION);
+
+				UI::get().emplace<UIRaceSelect>();
+
+				return Button::State::NORMAL;
+			}
+
 			if (charLookSelected)
 			{
 				charLookSelected = false;
@@ -1925,5 +2001,11 @@ namespace ms
 			return 97;
 		else
 			return 0;
+	}
+
+	UICommonCreation::~UICommonCreation()
+	{
+		if (LoginBackground::get().available() && LoginBackground::get().has_scene())
+			LoginBackground::get().clear_scene();
 	}
 }
