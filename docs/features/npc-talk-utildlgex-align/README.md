@@ -1,6 +1,6 @@
 # NPC 对话框 UtilDlgEx 原端对齐
 
-> 日期：2026-11-05 ｜ 本轮：Mirror 动画底 + BtMain 目的地图标
+> 日期：2026-11-05 ｜ 本轮接续：SpeedQuiz Timer SFX（Mirror 动画底已于 a11n / 4afeb74）
 
 ## 本轮闭环
 

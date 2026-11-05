@@ -1146,11 +1146,19 @@ UISpeedQuiz::UISpeedQuiz()
 			buttons[BtGiveup] = std::make_unique<MapleButton>(giveup, Point<int16_t>(126, 380));
 			buttons[BtGiveup]->set_active(true);
 		}
+		// IDA 7EC7CB / StringPool 1563：倒计时 tick 播 Sound/MiniGame.img/Timer
+		nl::node timer_n = nl::nx::Sound["MiniGame.img"]["Timer"];
+		if (timer_n)
+		{
+			timer_sfx = Sound(timer_n);
+			has_timer_sfx = true;
+		}
 	}
 #endif
 	center_on_screen();
 	LOG(LOG_INFO, "UISpeedQuiz: constructed assets=" << (has_assets ? 1 : 0)
-		<< " digits=" << (has_digits ? 1 : 0));
+		<< " digits=" << (has_digits ? 1 : 0)
+		<< " timerSfx=" << (has_timer_sfx ? 1 : 0));
 }
 
 void UISpeedQuiz::open(int32_t type, int32_t answer, int32_t correct, int32_t remain, int32_t remain_s)
@@ -1380,7 +1388,13 @@ void UISpeedQuiz::update()
 			remain_ms = 0;
 		const int32_t next = remain_ms / 1000;
 		if (next != remain_sec)
+		{
 			remain_sec = next;
+			// IDA 7EC7CB：秒数变化且 remain≤120 播 Timer（原生另有 (1-remain/total)*100 音量斜坡；
+			// 本端 Sound::play 无逐次音量，默认全局 SFX 音量）。
+			if (remain_sec <= 120 && has_timer_sfx)
+				timer_sfx.play();
+		}
 		if (remain_ms <= 0)
 		{
 			// IDA 7EC7CB：到期发空串并关窗

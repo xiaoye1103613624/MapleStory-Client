@@ -378,7 +378,7 @@
 - **期望**：无崩；答案进 `cm.getText()`。
 - **opcode**：s2c 304 msgtype6；c2s 60 body=`byte6 + string`。
 - **文档**：[a11k-speedquiz-ui-ida](../npc-talk-utildlgex-align/evidence/a11k-speedquiz-ui-ida.md)
-- **仍预留**：Timer SFX。
+- **Timer SFX**：✅ 已接（`MiniGame.img/Timer`，remain≤120 每秒）；原生音量斜坡未复刻（无逐次音量 API）。
 
 ## 28. NPC AskPet(9/10) + Mirror(14)
 

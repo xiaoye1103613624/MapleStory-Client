@@ -2,6 +2,7 @@
 #include "../UIDragElement.h"
 #include "../Components/Slider.h"
 #include "../Components/Textfield.h"
+#include "../../Audio/Audio.h"
 #include "../../Graphics/Animation.h"
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/Texture.h"
@@ -186,6 +187,9 @@ private:
 	int32_t n_remain = 0;
 	int32_t remain_sec = 0;
 	int32_t remain_ms = 0;
+	// IDA 7EC7CB / StringPool 1563 → Sound/MiniGame.img/Timer（≤120s 每秒 tick）
+	Sound timer_sfx;
+	bool has_timer_sfx = false;
 };
 class UIInitialQuiz : public UIDragElement<PosNOTICE> {
 public:

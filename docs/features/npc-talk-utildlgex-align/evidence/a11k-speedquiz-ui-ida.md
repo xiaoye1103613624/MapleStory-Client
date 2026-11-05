@@ -40,10 +40,10 @@
 
 正文与 Edit：宋体路径 **A12M** + `DARKGREY`/`BLACK`（对齐 InitialQuiz / 用户约定；原生 Edit 字库名 StringPool 5527=`Arial`，本仓不换字库文件）。
 
-## 5. 显式预留
+## 5. 显式预留 / 接续
 
 | 项 | 说明 |
 | --- | --- |
-| Timer SFX | IDA `7EC7CB` remain≤120 播 StringPool 1563=`Timer`；本轮未接音频 |
+| Timer SFX | ✅ 已接：`Sound/MiniGame.img/Timer`；remain≤120 且秒变化时 `play()`；原生音量斜坡 `(1-remain/total)*100` 本端无逐次音量 API，用全局 SFX 音量 |
 | `SpeedQuiz/BtOK` 节点 | IMG 有，但 IDA 用 `Basic/BtOK2`；跟 IDA |
-| Pet / Mirror UI | 见 a11l（已接线可证子集 / Mirror 完整） |
+| Pet / Mirror UI | 见 a11l / a11n |
