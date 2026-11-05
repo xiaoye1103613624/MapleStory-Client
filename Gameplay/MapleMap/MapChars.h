@@ -43,6 +43,9 @@ namespace ms
 
 		// Returns a reference to the MapObjects` object
 		MapObjects* get_chars();
+		const MapObjects* get_chars() const;
+		// 按角色名查找地图上已加载角色的 oid（聊天点名「查看角色信息」用）。找不到返回 -1。
+		int32_t find_id_by_name(const std::string& name) const;
 
 		// Update a character's movement
 		void send_movement(int32_t cid, const std::vector<Movement>& movements);

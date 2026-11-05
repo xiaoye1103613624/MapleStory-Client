@@ -19,6 +19,7 @@
 
 #include "UISoftKey.h"
 #include "UIMiniMap.h"
+#include "UINotice.h"
 
 #include "../UI.h"
 
@@ -27,6 +28,8 @@
 #include "../../IO/Components/MapleButton.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MiscOutPackets.h"
+#include "../../Net/Packets/MessagingPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
@@ -104,6 +107,11 @@ namespace ms
 		search_background = backgrnd;
 		search_notice = WorldMapSearch["notice"];
 
+		// 两侧把手箭头：复用原生 Basic.img/BtHide 的 normal 帧（13x12 黄绿底白左箭头）。
+		// BtHide 是按钮容器（normal/mouseOver/pressed 子帧），必须取到 bitmap 帧，
+		// 直接 Texture(容器) 会 is_valid()==false 导致箭头不渲染。
+		collapse_arrow = nl::nx::UI["Basic.img"]["BtHide"]["normal"]["0"];
+
 		bg_dimensions = Point<int16_t>(frame_w, frame_h);
 		bg_search_dimensions = search_background.get_dimensions();
 
@@ -145,7 +153,11 @@ namespace ms
 		{
 			select_map_spot(id);
 		});
-		drop_panel.set_content_height(bg_dimensions.y());
+		// todo 8：双击结果行 = 跳到该图所属分区并选中它。
+		map_search_panel.set_doubleclick_handler([this](int32_t id)
+		{
+			jump_to_map_region(id);
+		});
 
 		if (kUseMapInfoPanel)
 		{
@@ -181,14 +193,11 @@ namespace ms
 		if (mob_panel.is_visible())
 			mob_panel.draw(alpha);
 
-		if (kUseMapInfoPanel && info_panel.is_visible())
+		if (kUseMapInfoPanel && left_expand > 0.001f && info_panel.is_visible())
 			info_panel.draw(alpha);
 
-		if (map_search_panel.is_visible())
+		if (right_expand > 0.001f && map_search_panel.is_visible())
 			map_search_panel.draw(alpha);
-
-		if (drop_panel.is_visible())
-			drop_panel.draw(alpha);
 
 		UIElement::draw_sprites(alpha);
 
@@ -201,6 +210,11 @@ namespace ms
 
 		// 底图本身带 origin (320, 235)，加回 origin 才能把可见左上角落在 base_position。
 		base_img.draw(position + base_position + base_img.get_origin());
+
+		// 两侧收起/展开箭头：已移入地图框内，必须在底图之后绘制，否则被底图覆盖；
+		// 悬停有 tip（见 send_cursor），点击切换收起/展开。
+		draw_tab(get_left_tab_rect(), left_state, true);
+		draw_tab(get_right_tab_rect(), right_state, false);
 
 		if (link_images.size() > 0)
 		{
@@ -268,6 +282,38 @@ namespace ms
 			}
 		}
 
+		// 玩家层（0x178）：选中地图当前在线玩家。逐行画在底图右上区，
+		// 行首色块区分频道。上限 20 行（服务端 MAX_PLAYERS=20）。
+		if (players_mapid == selected_map_id && !map_players.empty())
+		{
+			int16_t line_y = 24;
+			Point<int16_t> anchor = position + base_anchor + Point<int16_t>(-138, -150);
+
+			{
+				Text hdr(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+					"Online: " + std::to_string(map_players.size()));
+				hdr.draw(anchor + Point<int16_t>(0, line_y));
+				line_y += 16;
+			}
+
+			for (const auto& p : map_players)
+			{
+				// lv/名字/频道；短行文本按半透明底衬保证可读（底图是彩色地图）
+				std::string line = std::to_string(static_cast<int>(p.level)) + " " + p.name
+					+ " c" + std::to_string(static_cast<int>(p.channel));
+
+				ColorBox row(150, 12, Color::Name::WHITE, 0.55f);
+				row.draw(anchor + Point<int16_t>(-2, line_y - 1));
+
+				Text t(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line);
+				t.draw(anchor + Point<int16_t>(0, line_y));
+
+				line_y += 13;
+				if (line_y > 220)
+					break;
+			}
+		}
+
 		UIElement::draw_buttons(alpha);
 	}
 
@@ -294,9 +340,11 @@ namespace ms
 		cur_pos.update();
 
 		sync_side_panels();
+		advance_side(left_expand, left_state);
+		advance_side(right_expand, right_state);
+		layout_panels();
 		mob_panel.update();
 		map_search_panel.update();
-		drop_panel.update();
 		info_panel.update();
 
 		UIElement::update();
@@ -311,6 +359,17 @@ namespace ms
 			clear_side_panels();
 			set_search(true);
 			update_world(user_map);
+		}
+		else
+		{
+			// 打开大地图：默认两侧收起，纯看地图更干净（低分辨率也不会被挤爆）。
+			left_state = SideState::COLLAPSED;
+			right_state = SideState::COLLAPSED;
+			left_expand = 0.0f;
+			right_expand = 0.0f;
+			left_pinned = false;
+			right_pinned = false;
+			layout_panels();
 		}
 	}
 
@@ -346,7 +405,7 @@ namespace ms
 		{
 			set_search(true);
 			if (selected_map_id != 0) {
-				ChangeMapPacket(false, selected_map_id, "", false).dispatch();
+				request_teleport(selected_map_id);
 				LOG(LOG_DEBUG, "UIWorldMap: SoftKey teleport selected=" << selected_map_id);
 			} else {
 				UI::get().emplace<UISoftKey>([this](const std::string& q) {
@@ -355,7 +414,7 @@ namespace ms
 						int32_t mapid = std::stoi(q);
 						if (mapid > 0) {
 							select_map_spot(mapid);
-							ChangeMapPacket(false, mapid, "", false).dispatch();
+							request_teleport(mapid);
 							LOG(LOG_DEBUG, "UIWorldMap: SoftKey teleport map=" << mapid);
 							return;
 						}
@@ -369,7 +428,7 @@ namespace ms
 		{
 			if (selected_map_id != 0)
 			{
-				ChangeMapPacket(false, selected_map_id, "", false).dispatch();
+				request_teleport(selected_map_id);
 				LOG(LOG_DEBUG, "UIWorldMap: teleport selected=" << selected_map_id);
 			}
 		}
@@ -381,9 +440,14 @@ namespace ms
 			else if (!mm->is_active())
 				mm->makeactive();
 		}
+		else if (keycode == 'X' || keycode == 'x')
+		{
+			toggle_left();
+		}
 		else if (keycode == 'P' || keycode == 'p')
 		{
-			set_search(!map_search_panel.is_visible());
+			set_search(!search);
+			toggle_right();
 		}
 		else if (keycode == 'L' || keycode == 'l')
 		{
@@ -426,7 +490,10 @@ namespace ms
 		if (map_search_panel.is_visible() && map_search_panel.get_bounds().contains(cursor_position))
 			return true;
 
-		if (drop_panel.is_visible() && drop_panel.get_bounds().contains(cursor_position))
+		// 两侧收起/展开把手（已移入地图框内）也必须并入命中区，
+		// 否则 get_front 派发不到本元素 → 点击把手变成「点击窗外」（地图失活/穿透）。
+		if (get_left_tab_rect().contains(cursor_position)
+			|| get_right_tab_rect().contains(cursor_position))
 			return true;
 
 		return false;
@@ -450,6 +517,7 @@ namespace ms
 				return Button::State::NORMAL;
 			case Buttons::BT_SEARCH:
 				set_search(!search);
+				toggle_right();
 				return Button::State::NORMAL;
 			case Buttons::BT_SEARCH_CLOSE:
 				set_search(false);
@@ -468,7 +536,6 @@ namespace ms
 		show_path_img = false;
 		mob_panel.remove_cursor();
 		map_search_panel.remove_cursor();
-		drop_panel.remove_cursor();
 
 		if (kUseMapInfoPanel)
 			info_panel.remove_cursor();
@@ -476,6 +543,31 @@ namespace ms
 
 	Cursor::State UIWorldMap::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
+		// 两侧把手：悬停显示 tip，点击切换收起/展开。把手已移入地图框内，
+		// 优先判定以拦截边缘的点击。
+		const Rectangle<int16_t> ltab = get_left_tab_rect();
+		const Rectangle<int16_t> rtab = get_right_tab_rect();
+
+		if (ltab.contains(cursorpos) || rtab.contains(cursorpos))
+		{
+			if (ltab.contains(cursorpos))
+				UI::get().show_text(Tooltip::Parent::WORLDMAP,
+					left_state == SideState::COLLAPSED ? "怪物 / 掉落信息 ▸ 点击展开 (X)" : "◂ 收起信息面板 (X)");
+			else
+				UI::get().show_text(Tooltip::Parent::WORLDMAP,
+					right_state == SideState::COLLAPSED ? "地图搜索 ▸ 点击展开 (P)" : "◂ 收起搜索面板 (P)");
+
+			if (clicked)
+			{
+				if (ltab.contains(cursorpos))
+					toggle_left();
+				else
+					toggle_right();
+			}
+
+			return clicked ? Cursor::State::CLICKING : Cursor::State::CANCLICK;
+		}
+
 		if (mob_panel.is_visible())
 		{
 			Cursor::State mob_state = mob_panel.send_cursor(clicked, cursorpos);
@@ -498,14 +590,6 @@ namespace ms
 
 			if (search_state != Cursor::State::IDLE || map_search_panel.get_bounds().contains(cursorpos))
 				return search_state == Cursor::State::IDLE ? Cursor::State::IDLE : search_state;
-		}
-
-		if (drop_panel.is_visible())
-		{
-			Cursor::State drop_state = drop_panel.send_cursor(clicked, cursorpos);
-
-			if (drop_state != Cursor::State::IDLE || drop_panel.get_bounds().contains(cursorpos))
-				return drop_state == Cursor::State::IDLE ? Cursor::State::IDLE : drop_state;
 		}
 
 		if (Cursor::State new_state = search_text.send_cursor(cursorpos, clicked))
@@ -655,32 +739,26 @@ namespace ms
 
 	Point<int16_t> UIWorldMap::get_map_info_panel_pos() const
 	{
-		// Left-adsorb: flush against the world-map chrome (wider than mob panel).
-		return position - Point<int16_t>(UIMapInfoPanel::WIDTH, 0);
+		// 左吸附：面板右缘紧贴地图左缘（把手已入框内，不再留 TAB_W 间隙），收起时整体左移缓动。
+		const int16_t slide = static_cast<int16_t>(UIMapInfoPanel::WIDTH * (1.0f - left_expand));
+		return position - Point<int16_t>(UIMapInfoPanel::WIDTH + slide, 0);
 	}
 
 	Point<int16_t> UIWorldMap::get_map_search_panel_pos() const
 	{
-		// Outside original WorldMapSearch rail (decision 1B).
-		return position + Point<int16_t>(bg_dimensions.x() + search_rail_width(), 0);
-	}
-
-	Point<int16_t> UIWorldMap::get_drop_panel_pos() const
-	{
-		// Right of the new map-search panel (Border + search rail + MapSearch width).
-		return position + Point<int16_t>(
-			bg_dimensions.x() + search_rail_width() + UIMapSearchPanel::WIDTH, 0);
+		// 右吸附：搜索面板左缘紧贴地图右缘（+搜索栏宽度，无把手间隙），收起时整体右移缓动。
+		const int16_t slide = static_cast<int16_t>(UIMapSearchPanel::WIDTH * (1.0f - right_expand));
+		return position + Point<int16_t>(bg_dimensions.x() + search_rail_width() + slide, 0);
 	}
 
 	void UIWorldMap::sync_side_panels()
 	{
-		if (mob_panel.is_visible() || map_search_panel.is_visible() || drop_panel.is_visible()
+		if (mob_panel.is_visible() || map_search_panel.is_visible()
 			|| (kUseMapInfoPanel && info_panel.is_visible()))
 			ensure_panels_on_screen();
 
 		mob_panel.set_content_height(bg_dimensions.y());
 		map_search_panel.set_content_height(bg_dimensions.y());
-		drop_panel.set_content_height(bg_dimensions.y());
 
 		if (kUseMapInfoPanel)
 		{
@@ -690,7 +768,6 @@ namespace ms
 
 		mob_panel.set_position(get_mob_panel_pos());
 		map_search_panel.set_position(get_map_search_panel_pos());
-		drop_panel.set_position(get_drop_panel_pos());
 		map_search_panel.set_back_handler([this]() {
 			clear_side_panels();
 			set_search(false);
@@ -702,7 +779,6 @@ namespace ms
 	{
 		selected_map_id = 0;
 		mob_panel.clear();
-		drop_panel.clear();
 
 		if (kUseMapInfoPanel)
 			info_panel.clear();
@@ -711,13 +787,150 @@ namespace ms
 		map_search_panel.set_teleport_handler(nullptr);
 	}
 
+	void UIWorldMap::expand_left()
+	{
+		if (left_state == SideState::EXPANDED || left_state == SideState::EXPANDING)
+			return;
+
+		left_state = SideState::EXPANDING;
+		left_pinned = false;
+
+		// 用户直接点把手展开时，若已选中地图就补上信息面板内容，保证有可见反馈。
+		if (kUseMapInfoPanel && selected_map_id != 0)
+			info_panel.set_map(selected_map_id);
+
+		layout_panels();
+	}
+
+	void UIWorldMap::collapse_left()
+	{
+		if (left_state == SideState::COLLAPSED || left_state == SideState::COLLAPSING)
+			return;
+
+		left_state = SideState::COLLAPSING;
+		left_pinned = true;
+		layout_panels();
+	}
+
+	void UIWorldMap::toggle_left()
+	{
+		if (left_state == SideState::COLLAPSED || left_state == SideState::COLLAPSING)
+			expand_left();
+		else
+			collapse_left();
+	}
+
+	void UIWorldMap::expand_right()
+	{
+		if (right_state == SideState::EXPANDED || right_state == SideState::EXPANDING)
+			return;
+
+		right_state = SideState::EXPANDING;
+		right_pinned = false;
+		layout_panels();
+	}
+
+	void UIWorldMap::collapse_right()
+	{
+		if (right_state == SideState::COLLAPSED || right_state == SideState::COLLAPSING)
+			return;
+
+		right_state = SideState::COLLAPSING;
+		right_pinned = true;
+		layout_panels();
+	}
+
+	void UIWorldMap::toggle_right()
+	{
+		if (right_state == SideState::COLLAPSED || right_state == SideState::COLLAPSING)
+			expand_right();
+		else
+			collapse_right();
+	}
+
+	void UIWorldMap::advance_side(float& value, SideState& state)
+	{
+		if (state == SideState::EXPANDING)
+		{
+			value += Constants::TIMESTEP / SIDE_EXPAND_MS;
+
+			if (value >= 1.0f)
+			{
+				value = 1.0f;
+				state = SideState::EXPANDED;
+			}
+		}
+		else if (state == SideState::COLLAPSING)
+		{
+			value -= Constants::TIMESTEP / SIDE_EXPAND_MS;
+
+			if (value <= 0.0f)
+			{
+				value = 0.0f;
+				state = SideState::COLLAPSED;
+			}
+		}
+	}
+
+	void UIWorldMap::layout_panels()
+	{
+		if (kUseMapInfoPanel)
+			info_panel.set_position(get_map_info_panel_pos());
+
+		map_search_panel.set_position(get_map_search_panel_pos());
+	}
+
+	Rectangle<int16_t> UIWorldMap::get_left_tab_rect() const
+	{
+		const int16_t ty = (bg_dimensions.y() - TAB_H) / 2;
+		// 把手移入世界地图框内（左侧内缘），不再外凸在窗体外。
+		return Rectangle<int16_t>(
+			position.x(), position.x() + TAB_W,
+			position.y() + ty, position.y() + ty + TAB_H);
+	}
+
+	Rectangle<int16_t> UIWorldMap::get_right_tab_rect() const
+	{
+		const int16_t ty = (bg_dimensions.y() - TAB_H) / 2;
+		return Rectangle<int16_t>(
+			position.x() + bg_dimensions.x() - TAB_W, position.x() + bg_dimensions.x(),
+			position.y() + ty, position.y() + ty + TAB_H);
+	}
+
+	void UIWorldMap::draw_tab(const Rectangle<int16_t>& rect, SideState state, bool left) const
+	{
+		if (!collapse_arrow.is_valid())
+			return;
+
+		const Point<int16_t> tl = rect.get_left_top();
+		const Point<int16_t> dim = collapse_arrow.get_dimensions();
+
+		// 箭头放大 2x（原 13x12 → 26x24），居中绘制在把手命中区内。
+		// 把手已移入世界地图框内，不再绘制外凸棕色背景，仅保留箭头作展开/收起指示。
+		const float scale = 2.0f;
+		const int16_t aw = static_cast<int16_t>(dim.x() * scale);
+		const int16_t ah = static_cast<int16_t>(dim.y() * scale);
+
+		// 收起时箭头指向面板所在侧（外），展开时指向内（表示收起动作）。
+		const bool expanded_like = (state == SideState::EXPANDING || state == SideState::EXPANDED);
+		const bool flip = left ? expanded_like : !expanded_like;
+
+		const Point<int16_t> ap = tl + Point<int16_t>(
+			(TAB_W - aw) / 2 + (flip ? aw : 0),
+			(TAB_H - ah) / 2);
+		collapse_arrow.draw(DrawArgument(ap, flip ? -scale : scale, scale));
+	}
+
 	void UIWorldMap::ensure_panels_on_screen()
 	{
 		const int16_t margin = 4;
 		const int16_t view_w = Constants::Constants::get().get_viewwidth();
 
-		const bool left_visible = mob_panel.is_visible() || (kUseMapInfoPanel && info_panel.is_visible());
-		const int16_t left_width = mob_panel.is_visible() ? UIMapMobPanel::WIDTH : UIMapInfoPanel::WIDTH;
+		// 仅当面板实际展开（缓动进度 > 0）才参与贴边布局，默认收起时不挤动地图。
+		const bool left_visible = kUseMapInfoPanel
+			? (info_panel.is_visible() && left_expand > 0.001f)
+			: mob_panel.is_visible();
+		const int16_t left_width = kUseMapInfoPanel ? UIMapInfoPanel::WIDTH : UIMapMobPanel::WIDTH;
 
 		if (left_visible)
 		{
@@ -730,11 +943,8 @@ namespace ms
 		{
 			int16_t right_extra = 0;
 
-			if (map_search_panel.is_visible())
+			if (map_search_panel.is_visible() && right_expand > 0.001f)
 				right_extra = static_cast<int16_t>(right_extra + UIMapSearchPanel::WIDTH);
-
-			if (drop_panel.is_visible())
-				right_extra = static_cast<int16_t>(right_extra + UIMapDropPanel::WIDTH);
 
 			if (right_extra > 0)
 			{
@@ -767,14 +977,16 @@ namespace ms
 			// 信息面板接管左侧：旧 mob_panel 仅保留代码，不显示（D2 并存）。
 			mob_panel.clear();
 			info_panel.set_map(map_id);
+			// 选中地图点 = 触发左侧信息面板展开（除非用户手动收起过）。
+			if (!left_pinned)
+				expand_left();
 		}
 		else
 		{
 			mob_panel.set_map(map_id);
 		}
 
-		// Drop panel stays visible with empty/select prompt until a mob row is chosen.
-		drop_panel.set_mob(0);
+		// 选中地图点：左侧信息面板接管（含掉落），右侧仅搜索。
 		ensure_panels_on_screen();
 		mob_panel.set_position(get_mob_panel_pos());
 
@@ -782,28 +994,102 @@ namespace ms
 			info_panel.set_position(get_map_info_panel_pos());
 
 		map_search_panel.set_position(get_map_search_panel_pos());
-		drop_panel.set_position(get_drop_panel_pos());
 		map_search_panel.set_teleport_enabled(map_id != 0);
 		map_search_panel.set_teleport_handler([this]() {
-			if (selected_map_id == 0) return;
-			ChangeMapPacket(false, selected_map_id, "", false).dispatch();
-			LOG(LOG_DEBUG, "UIWorldMap: BtTeleport map=" << selected_map_id);
+			request_teleport(selected_map_id);
 		});
 		map_search_panel.set_selected_map(map_id);
+
+		// 0x178 玩家层：选中即请求（服务端 WorldMapPlayersHandler 有 3s 世界缓存，
+		// 重复请求不触发全量扫描）。旧「按 L 手动请求」保留为调试通道。
+		if (map_id > 0)
+		{
+			WorldMapPlayersPacket(map_id).dispatch();
+			map_players.clear();
+			players_mapid = 0;	// 应答到达前视为无数据，避免显示上一图的列表
+		}
 
 		LOG(LOG_INFO, "[UIWorldMap] selected_map_id=" << selected_map_id);
 	}
 
+	void UIWorldMap::doubleclick(Point<int16_t> cursorpos)
+	{
+		// 目前只有右侧搜索结果行接了双击（todo 8：跳分区）。面板自身判命中区，
+		// 未命中就什么都不做 —— 与 send_cursor 的列表分支共用同一套几何。
+		if (map_search_panel.is_visible())
+			map_search_panel.doubleclick(cursorpos);
+	}
+
+	// mapid → 所属分区：原生分区名就是 "WorldMap0" + mapid/10000000，与本文件
+	// update() 里算玩家当前图 parent 的口径完全一致，因此不需要另建反向索引表。
+	void UIWorldMap::jump_to_map_region(int32_t map_id)
+	{
+		if (map_id <= 0)
+			return;
+
+		const std::string region = "WorldMap0" + std::to_string(map_id / 10000000);
+
+		// 分区不存在时不跳：update_world 对缺失节点会回落到 WorldMap.img 默认图，
+		// 静默换图会让人以为「跳错了地方」，所以这里显式拒绝并留日志。
+		if (!nl::nx::Map["WorldMap"][region + ".img"])
+		{
+			LOG(LOG_WARN, "[UIWorldMap] jump_to_map_region: no such region " << region << " (map=" << map_id << ")");
+			return;
+		}
+
+		Sound(Sound::Name::SELECTMAP).play();
+
+		clear_side_panels();
+		update_world(region);
+		select_map_spot(map_id);
+
+		LOG(LOG_INFO, "[UIWorldMap] jumped to region " << region << " map=" << map_id);
+	}
+
+	void UIWorldMap::request_teleport(int32_t map_id)
+	{
+		if (map_id == 0)
+			return;
+
+		constexpr int64_t MAPWARP_COST = 100000;
+		if (Stage::get().get_player().get_inventory().get_meso() < MAPWARP_COST)
+		{
+			// 事件驱动现取（不进绑定表）：这条文案每次点击都可能带不同数值，
+			// 属于「有第二个写入点且由事件驱动」那一类，按绑定判据不许上表。
+			UI::get().emplace<UIOk>(
+				Locale::format("mapwarp.insufficient", std::to_string(MAPWARP_COST)),
+				[](bool) {});
+			return;
+		}
+
+		GeneralChatPacket("!mapwarp " + std::to_string(map_id), true).dispatch();
+		LOG(LOG_DEBUG, "UIWorldMap: request_teleport !mapwarp map=" << map_id);
+	}
+
+	void UIWorldMap::set_map_players(int32_t map_id, std::vector<WorldMapPlayer>&& players)
+	{
+		// 乱序陈旧应答丢弃：只接受当前选中图的回包。
+		if (map_id != selected_map_id)
+			return;
+
+		map_players = std::move(players);
+		players_mapid = map_id;
+	}
+
 	void UIWorldMap::on_mob_selected(int32_t mob_id)
 	{
-		drop_panel.set_mob(mob_id);
-
 		if (kUseMapInfoPanel)
+		{
 			info_panel.set_mob(mob_id);
+			// 选中怪物：展开左侧信息 + 右侧掉落（除非用户手动收起过）。
+			if (!left_pinned)
+				expand_left();
+			if (!right_pinned)
+				expand_right();
+		}
 
 		ensure_panels_on_screen();
 		map_search_panel.set_position(get_map_search_panel_pos());
-		drop_panel.set_position(get_drop_panel_pos());
 
 		if (kUseMapInfoPanel)
 			info_panel.set_position(get_map_info_panel_pos());

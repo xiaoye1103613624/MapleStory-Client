@@ -73,6 +73,10 @@ namespace ms
 		// Reflect an externally-selected map (e.g. spot click) in the list highlight.
 		void set_selected_map(int32_t id);
 
+		// 双击结果行 → 宿主跳该图所属世界地图分区（todo 8）。
+		void set_doubleclick_handler(std::function<void(int32_t)> handler);
+		void doubleclick(Point<int16_t> cursorpos);
+
 	private:
 		struct PngButton
 		{
@@ -121,14 +125,14 @@ namespace ms
 		int32_t selected_map_id;
 		bool index_loaded;
 		std::string last_query;
-		LocalPngTexture detail_frame;
 		LocalPngTexture list_row_sel;
-		mutable Text detail_name;
-		mutable Text detail_street;
 		Text list_header;
 		Text no_data;
 		Text cost_label;
+		// 面板标题「地图搜索」：程序绘制于顶部标题脊（chrome 不烤字，跨语言可换）。
+		Text title_text;
 		std::function<void(int32_t)> on_select;
+		std::function<void(int32_t)> on_doubleclick;
 		// 语言重载刷新通道。构造时就把宿主名带上，日志里才分得清是哪块面板重取过。
 		LocaleBindings locale_binds{ "UIMapSearchPanel" };
 
@@ -144,12 +148,12 @@ namespace ms
 		static constexpr int16_t SEARCH_H = 18;
 
 		static constexpr int16_t BACK_X = 18;
-		static constexpr int16_t BACK_Y = 90;
+		static constexpr int16_t BACK_Y = 89;
 		static constexpr int16_t BACK_W = 44;
 		static constexpr int16_t BACK_H = 18;
 
 		static constexpr int16_t TELE_X = 177;
-		static constexpr int16_t TELE_Y = 484;
+		static constexpr int16_t TELE_Y = 480;
 		static constexpr int16_t TELE_W = 64;
 		static constexpr int16_t TELE_H = 22;
 	};

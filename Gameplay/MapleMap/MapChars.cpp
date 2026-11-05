@@ -66,6 +66,25 @@ namespace ms
 		return &chars;
 	}
 
+	const MapObjects * MapChars::get_chars() const
+	{
+		return &chars;
+	}
+
+	int32_t MapChars::find_id_by_name(const std::string& name) const
+	{
+		const MapObjects& objs = *get_chars();
+
+		for (const auto& kv : objs)
+		{
+			if (const OtherChar* oc = dynamic_cast<const OtherChar*>(kv.second.get()))
+				if (oc->get_name() == name)
+					return kv.first;
+		}
+
+		return -1;
+	}
+
 	void MapChars::send_movement(int32_t cid, const std::vector<Movement>& movements)
 	{
 		if (Optional<OtherChar> otherchar = get_char(cid))

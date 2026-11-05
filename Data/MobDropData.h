@@ -33,6 +33,14 @@ namespace ms
 		// Convenience: returns sorted drops (empty until a real loader is wired).
 		static std::vector<MobDropEntry> get_drops(int32_t mob_id);
 
+		// Populated from the server drop-data packet. Replaces any prior entry.
+		static void load(int32_t mob_id, std::vector<MobDropEntry> entries);
+		// True once the server has supplied drops for this mob.
+		static bool is_loaded(int32_t mob_id);
+		// Server drop-table version, used to detect reloads.
+		static int32_t get_version();
+		static void set_version(int32_t version);
+
 	private:
 		friend Cache<MobDropData>;
 		MobDropData(int32_t mob_id);
@@ -40,5 +48,6 @@ namespace ms
 		int32_t mob_id;
 		std::vector<MobDropEntry> entries;
 		bool valid;
+		static int32_t data_version;
 	};
 }

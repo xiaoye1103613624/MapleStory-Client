@@ -576,9 +576,6 @@
     <ClCompile Include="IO\UITypes\UIMapMobPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IO\UITypes\UIMapDropPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IO\UITypes\UIMapSearchPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1362,9 +1359,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIMapMobPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\UITypes\UIMapDropPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIMapSearchPanel.h">

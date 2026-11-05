@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Misc.h"
 
+#include "Resource/ImgSource.h"
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -315,6 +317,10 @@ namespace ms
 
 			nl::node get_map_node_name(int32_t mapid)
 			{
+				// Map002 是按需懒加载源（默认只绑玩家当前所在地图），
+				// 世界地图/任务窗查询任意地图前必须先装载该 img，否则恒为空节点。
+				res::ImgSource::ensure_map(mapid);
+
 				std::string prefix = std::to_string(mapid / 100000000);
 				std::string mapid_str = string_format::extend_id(mapid, 9);
 

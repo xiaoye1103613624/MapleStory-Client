@@ -19,16 +19,29 @@
 
 #include "../UIDragElement.h"
 
+#include "../../Graphics/Texture.h"
+#include "../../Graphics/LocalPngTexture.h"
+#include "../../Template/Rectangle.h"
+
 #include "../Components/AreaButton.h"
 #include "../Components/Textfield.h"
 
-#include "UIMapDropPanel.h"
+#include <vector>
+
 #include "UIMapInfoPanel.h"
 #include "UIMapMobPanel.h"
 #include "UIMapSearchPanel.h"
 
 namespace ms
 {
+	// s9 WORLD_MAP_PLAYERS(0x178) 回包单元：同一地图在线玩家（名字/等级/频道）。
+	struct WorldMapPlayer
+	{
+		std::string name;
+		int16_t level = 0;
+		int8_t channel = 0;
+	};
+
 	class UIWorldMap : public UIDragElement<PosMAP>
 	{
 	public:
@@ -48,6 +61,8 @@ namespace ms
 		void remove_cursor() override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_pos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		// 双击右侧搜索结果行 → 跳到该图所属分区并选中点位（todo 8）。
+		void doubleclick(Point<int16_t> cursorpos) override;
 
 		UIElement::Type get_type() const override;
 
@@ -56,17 +71,59 @@ namespace ms
 
 		int32_t get_selected_map_id() const { return selected_map_id; }
 
+		// WORLD_MAP_PLAYERS(0x178) 回包入口：只有 mapid 与当前选中一致才缓存，
+		// 防止连续切换选中后旧应答覆盖新应答（服务端有 3s 缓存，乱序可达）。
+		void set_map_players(int32_t map_id, std::vector<WorldMapPlayer>&& players);
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
 		static constexpr uint8_t MAPSPOT_TYPE_MAX = 4u;
 
+		// 两侧吸附面板的收起/展开状态机与缓动进度（复用 UIWorldSelect::panel_expand 范式）。
+		enum class SideState
+		{
+			COLLAPSED,
+			EXPANDING,
+			EXPANDED,
+			COLLAPSING
+		};
+
+		// 两侧把手（箭头）命中区：现已移入世界地图框内（不再外凸），
+		// 宽度取 2x 箭头尺寸，使放大后的箭头完整可见且可点。
+		static constexpr int16_t TAB_W = 26;
+		static constexpr int16_t TAB_H = 92;
+
+		// 侧栏展开/收起全程时长（ms）。
+		// 安置说明（2026-11-04）：在途的 advance_side 用
+		// `Constants::TIMESTEP / SIDE_EXPAND_MS` 累加进度，本常量必须为 float —
+		// 整型除法会恒为 0，侧栏永远展不开。取值对齐同族先例
+		// UIWorldSelect.cpp:149 `CH_EXPAND_MS = 220.0f`。
+		static constexpr float SIDE_EXPAND_MS = 220.0f;
+
+		void expand_left();
+		void collapse_left();
+		void toggle_left();
+		void expand_right();
+		void collapse_right();
+		void toggle_right();
+		void advance_side(float& value, SideState& state);
+		void layout_panels();
+		Rectangle<int16_t> get_left_tab_rect() const;
+		Rectangle<int16_t> get_right_tab_rect() const;
+		void draw_tab(const Rectangle<int16_t>& rect, SideState state, bool left) const;
+
 		void set_search(bool enable);
 		void update_world(std::string parent_map);
 		void sync_side_panels();
 		void clear_side_panels();
 		void select_map_spot(int32_t map_id);
+		// 付费传送：扣 10 万金币（服务端 !mapwarp 校验+扣费），统一四个入口（按钮 / S·F / T·回车 / 搜索框）。
+		void request_teleport(int32_t map_id);
+		// mapid → 所属 WorldMap 分区（原生分区名即 "WorldMap0" + mapid/10000000，
+		// 与 update() 里玩家当前图算 parent 的口径完全一致，不需要自建反向索引）。
+		void jump_to_map_region(int32_t map_id);
 		void on_mob_selected(int32_t mob_id);
 		// Keep left/right docked panels inside the viewport (default PosMAP is near the left edge).
 		void ensure_panels_on_screen();
@@ -75,7 +132,6 @@ namespace ms
 		Point<int16_t> get_mob_panel_pos() const;
 		Point<int16_t> get_map_info_panel_pos() const;
 		Point<int16_t> get_map_search_panel_pos() const;
-		Point<int16_t> get_drop_panel_pos() const;
 		int16_t search_rail_width() const;
 
 		enum Buttons
@@ -112,6 +168,15 @@ namespace ms
 		bool search;
 		bool show_path_img;
 
+		// 两侧面板收起/展开状态（默认收起：打开大地图即纯看地图，低分辨率不被挤爆）。
+		SideState left_state = SideState::COLLAPSED;
+		SideState right_state = SideState::COLLAPSED;
+		float left_expand = 0.0f;
+		float right_expand = 0.0f;
+		bool left_pinned = false;   // 用户手动收起 → 不再自动展开
+		bool right_pinned = false;
+		Texture collapse_arrow;     // UI/Basic.img/BtHide（左箭头），右面板翻转复用
+
 		int32_t mapid;
 		int32_t selected_map_id;
 
@@ -133,6 +198,11 @@ namespace ms
 
 		std::vector<std::pair<Point<int16_t>, MapSpot>> map_spots;
 
+		// 选中地图的在线玩家（0x178 回包缓存）。players_mapid = 缓存归属图，
+		// 与 selected_map_id 不一致时不显示（陈旧应答丢弃）。
+		std::vector<WorldMapPlayer> map_players;
+		int32_t players_mapid = 0;
+
 		Point<int16_t> bg_dimensions;
 		Point<int16_t> bg_search_dimensions;
 		Point<int16_t> background_dimensions;
@@ -145,7 +215,6 @@ namespace ms
 
 		UIMapMobPanel mob_panel;
 		UIMapSearchPanel map_search_panel;
-		UIMapDropPanel drop_panel;
 		// 左侧信息面板（地图信息：怪物列表 + 掉落网格 + 金币条 + 四档标签）。
 		// 启用时替代 UIMapMobPanel 的占位（D2 并存：mob_panel 代码保留，仅不显示）。
 		static constexpr bool kUseMapInfoPanel = true;

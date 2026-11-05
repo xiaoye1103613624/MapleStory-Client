@@ -4,12 +4,15 @@
 #include "UIMapInfoPanel.h"
 
 #include "../UI.h"
+#include "../Components/Charset.h"
 
+#include "../../Audio/Audio.h"
 #include "../../Character/Inventory/Inventory.h"
 #include "../../Gameplay/Stage.h"
 #include "../../MapleStory.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
+#include "../../Net/Packets/MiscOutPackets.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -36,6 +39,18 @@ namespace ms
 				return Texture(*it);
 
 			return {};
+		}
+
+		// Mirror UIMapMobPanel: shift origin to (0,0) so the icon draws from top-left.
+		void normalize_icon_origin(Texture& icon)
+		{
+			if (!icon.is_valid())
+				return;
+
+			Point<int16_t> origin = icon.get_origin();
+
+			if (origin.x() != 0 || origin.y() != 0)
+				icon.shift(origin);
 		}
 	}
 
@@ -88,6 +103,8 @@ namespace ms
 		panel_height(HEIGHT),
 		active_tab(Tab::ALL)
 	{
+		// D5：标题「地图信息」烤进底板顶脊（原生管线产物）。客户端运行时优先，
+		// 仓库 chrome 兜底；标题由 PNG 携带，程序侧不重复绘制。
 		chrome.load(ATLAS_ID, {
 			"UI/MapInfo/info_panel_backgrnd.png",
 			"docs/features/map-info-panel/resources/chrome/info_panel_backgrnd.png",
@@ -98,20 +115,39 @@ namespace ms
 
 		row_selected.load(ATLAS_ID, {
 			"UI/MapInfo/list_row_selected.png",
+			"docs/features/map-info-panel/ui/list_row_selected/v2/list_row_selected.png",
 			"docs/features/map-info-panel/resources/chrome/list_row_selected.png",
 		});
 		slot.load(ATLAS_ID, {
 			"UI/MapInfo/slot.png",
+			"docs/features/map-info-panel/ui/slot/v2/slot.png",
 			"docs/features/map-info-panel/resources/chrome/slot.png",
+		});
+
+		// v2 原生风：怪物行交替底纹（含图标灰底）。缺图则回退到无底纹（旧观感）。
+		row_bg_a.load(ATLAS_ID, {
+			"UI/MapInfo/mob_row_bg_a.png",
+			"docs/features/map-info-panel/ui/mob_row_bg/v2/mob_row_bg_a.png",
+		});
+		row_bg_b.load(ATLAS_ID, {
+			"UI/MapInfo/mob_row_bg_b.png",
+			"docs/features/map-info-panel/ui/mob_row_bg/v2/mob_row_bg_b.png",
 		});
 
 		for (size_t i = 0; i < static_cast<size_t>(Tab::LENGTH); i++)
 		{
 			LocalPngTexture nsrc;
 			LocalPngTexture ssrc;
+			std::string key(TAB_NAMES[i]);
 
-			nsrc.load(ATLAS_ID, { "UI/MapInfo/Tab/disabled/" + std::string(TAB_NAMES[i]) + ".png" });
-			ssrc.load(ATLAS_ID, { "UI/MapInfo/Tab/enabled/" + std::string(TAB_NAMES[i]) + ".png" });
+			nsrc.load(ATLAS_ID, {
+				"UI/MapInfo/Tab/disabled/" + key + ".png",
+				"docs/features/map-info-panel/ui/tab/v2/" + key + "_disabled.png",
+			});
+			ssrc.load(ATLAS_ID, {
+				"UI/MapInfo/Tab/enabled/" + key + ".png",
+				"docs/features/map-info-panel/ui/tab/v2/" + key + "_enabled.png",
+			});
 
 			tab_buttons[i] = std::make_unique<LocalTwoSpriteButton>(
 				nsrc, ssrc, Point<int16_t>(TAB_X[i], TAB_Y));
@@ -168,6 +204,11 @@ namespace ms
 		);
 		drop_slider.setenabled(false);
 
+		drop_hover = ColorBox(SLOT, SLOT, Color::Name::BLACK, 0.12f);
+		hover_drop_idx = -1;
+		// v2 行底纹缺图时的兜底：图标位灰底（40x40，与 mob_row_bg 烤的灰底同位同色）。
+		icon_back = ColorBox(ICON_BOX, ICON_BOX, Color::Name::GRAY, 0.25f);
+
 		// 三条标签都只在 ctor 写 => 进绑定表。下一行 meso_amount 的 "0" 不建键：那是数据初值，
 		// draw 前会被 meso_str 改写，按绑定判据（有无第二个写入点）不许上表。
 		empty_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
@@ -177,6 +218,10 @@ namespace ms
 		meso_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 		locale_binds.bind(meso_label, "mappanel.mesos");
 		meso_amount = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "0");
+
+		// D5：标题烤进底板，程序侧不画（防双字）。绑定仍在，供日后切回无字底板复用。
+		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, "地图信息");
+		locale_binds.bind(title_text, "mapinfo.title");
 	}
 
 	void UIMapInfoPanel::set_select_callback(SelectCallback callback)
@@ -203,6 +248,19 @@ namespace ms
 	void UIMapInfoPanel::set_mob(int32_t id)
 	{
 		selected_mob_id = id;
+		meso_drop_range.clear();
+
+		// Always ask the server for this mob's drops. The server reads from an
+		// in-memory, concurrency-safe cache (no per-request DB hit) and carries a
+		// bumped version on reload, so re-requesting keeps the panel fresh after a
+		// server-side !reloaddrops without any client-side version tracking.
+		if (id != 0)
+		{
+			WorldMapDropRequestPacket(id, map_id, true).dispatch();
+			last_requested_mob = id;
+		}
+
+		drop_built_mob = -1; // rebuild once the server responds
 		rebuild_drops();
 	}
 
@@ -216,6 +274,9 @@ namespace ms
 		drop_offset = 0;
 		mob_rows.clear();
 		drop_cells.clear();
+		last_requested_mob = 0;
+		drop_built_mob = -1;
+		meso_drop_range.clear();
 		mob_slider.setenabled(false);
 		drop_slider.setenabled(false);
 		UI::get().clear_tooltip(Tooltip::Parent::WORLDMAP);
@@ -266,6 +327,9 @@ namespace ms
 		if (chrome.is_valid())
 			chrome.draw(position, WIDTH, panel_height);
 
+		// D5：标题烤进底板，程序侧不画（防双字）。
+		(void)title_text;
+
 		// Upper mob list well.
 		Rectangle<int16_t> area = mob_list_area();
 
@@ -283,6 +347,14 @@ namespace ms
 					break;
 
 				Point<int16_t> row_pos = position + Point<int16_t>(area.left(), area.top() + i * MOB_ROW_H);
+
+				// v2 原生风：奇偶行交替底纹（图标灰底已烤在行图里）。
+				const LocalPngTexture& stripe = (i % 2 == 0) ? row_bg_a : row_bg_b;
+
+				if (stripe.is_valid())
+					stripe.draw(row_pos);
+				else
+					icon_back.draw(row_pos + Point<int16_t>(2, 4));
 
 				if (static_cast<int16_t>(idx) == selected_index && row_selected.is_valid())
 					row_selected.draw(row_pos);
@@ -342,8 +414,25 @@ namespace ms
 
 						if (cell.icon.is_valid())
 						{
-							Point<int16_t> origin = cell.icon.get_origin();
-							cell.icon.draw(cell_pos + Point<int16_t>(1 + origin.x(), 1 + origin.y()));
+							// Origin normalized to (0,0); center the icon in the 32x32 slot.
+							Point<int16_t> off(
+								static_cast<int16_t>((SLOT - cell.icon.width()) / 2),
+								static_cast<int16_t>((SLOT - cell.icon.height()) / 2));
+							cell.icon.draw(cell_pos + off);
+						}
+
+						if (static_cast<size_t>(idx) == static_cast<size_t>(hover_drop_idx))
+							drop_hover.draw(cell_pos);
+
+						// ItemNo 数量字：背包同款位图字库（Basic.img/ItemNo，8x11），
+						// 右下角，仅数量 >1 时显示（min==max 取 min，否则取上限）。
+						// 百分比让位到右上角，避免与数量字叠在同一角。
+						int16_t qty = (cell.min_qty == cell.max_qty) ? cell.min_qty : cell.max_qty;
+
+						if (qty > 1)
+						{
+							static const Charset countset(nl::nx::UI["Basic.img"]["ItemNo"], Charset::Alignment::RIGHT);
+							countset.draw(std::to_string(qty), DrawArgument(cell_pos + Point<int16_t>(SLOT - 1, SLOT - 12)));
 						}
 
 						if (cell.chance > 0.0)
@@ -353,7 +442,7 @@ namespace ms
 								<< std::setprecision(cell.chance < 0.01 ? 1 : 0)
 								<< (cell.chance * 100.0) << "%";
 							Text rate(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BROWN, oss.str());
-							rate.draw(cell_pos + Point<int16_t>(SLOT - 2, SLOT - 14));
+							rate.draw(cell_pos + Point<int16_t>(SLOT - 2, 1));
 						}
 					}
 				}
@@ -363,12 +452,20 @@ namespace ms
 				drop_slider.draw(position);
 		}
 
-		// Meso bar (bottom).
-		int64_t meso = Stage::get().get_player().get_inventory().get_meso();
-		std::string meso_str = std::to_string(meso);
-		string_format::split_number(meso_str);
+		// Meso bar (bottom). Prefer the per-mob meso drop range from the drop table.
+		std::string meso_str;
+		if (!meso_drop_range.empty())
+		{
+			meso_str = meso_drop_range;
+		}
+		else
+		{
+			int64_t meso = Stage::get().get_player().get_inventory().get_meso();
+			meso_str = std::to_string(meso);
+			string_format::split_number(meso_str);
+		}
 		meso_amount.change_text(meso_str);
-		meso_amount.draw(position + Point<int16_t>(MESO_X + 4, MESO_Y));
+		meso_amount.draw(position + Point<int16_t>(MESO_X + MESO_W, MESO_Y));
 		meso_label.draw(position + Point<int16_t>(MESO_LABEL_X, MESO_Y));
 	}
 
@@ -380,12 +477,20 @@ namespace ms
 		if (locale_binds.refresh())
 			LOG(LOG_INFO, "Locale refresh gen=" << Locale::get().generation() << " rebound "
 				<< locale_binds.count() << " labels (" << locale_binds.hostname() << ")");
+
+		// Lazily rebuild the drop grid once the server's drop data has arrived.
+		if (selected_mob_id != 0 && MobDropData::is_loaded(selected_mob_id) && drop_built_mob != selected_mob_id)
+		{
+			rebuild_drops();
+			drop_built_mob = selected_mob_id;
+		}
 	}
 
 	void UIMapInfoPanel::remove_cursor()
 	{
 		mob_slider.remove_cursor();
 		drop_slider.remove_cursor();
+		hover_drop_idx = -1;
 		UI::get().clear_tooltip(Tooltip::Parent::WORLDMAP);
 	}
 
@@ -394,17 +499,39 @@ namespace ms
 		if (!visible || !get_bounds().contains(cursorpos))
 			return Cursor::State::IDLE;
 
-		// Tabs.
+		// Tabs — hover + click, mirror UIMapSearchPanel.
 		for (size_t i = 0; i < static_cast<size_t>(Tab::LENGTH); i++)
 		{
-			Rectangle<int16_t> b = tab_buttons[i]->bounds(position);
+			auto* btn = tab_buttons[i].get();
+			Rectangle<int16_t> b = btn->bounds(position);
 
 			if (b.contains(cursorpos))
 			{
-				if (clicked)
-					set_tab(static_cast<Tab>(i));
+				if (btn->get_state() == Button::State::NORMAL)
+				{
+					Sound(Sound::Name::BUTTONOVER).play();
+					btn->set_state(Button::State::MOUSEOVER);
+					return Cursor::State::CANCLICK;
+				}
+				else if (btn->get_state() == Button::State::MOUSEOVER)
+				{
+					if (clicked)
+					{
+						Sound(Sound::Name::BUTTONCLICK).play();
+						set_tab(static_cast<Tab>(i));
+						return Cursor::State::CLICKING;
+					}
+
+					return Cursor::State::CANCLICK;
+				}
 
 				return Cursor::State::CANCLICK;
+			}
+			else if (btn->get_state() == Button::State::MOUSEOVER)
+			{
+				// Revert hover: keep highlighted only if this tab is the active one.
+				btn->set_state(i == static_cast<size_t>(active_tab)
+					? Button::State::MOUSEOVER : Button::State::NORMAL);
 			}
 		}
 
@@ -438,7 +565,7 @@ namespace ms
 			}
 		}
 
-		// Lower drop grid hover -> item tooltip.
+		// Lower drop grid hover -> item tooltip + cell highlight.
 		if (selected_mob_id != 0 && !drop_cells.empty())
 		{
 			Rectangle<int16_t> g = drop_grid_area();
@@ -456,12 +583,18 @@ namespace ms
 
 					if (idx < drop_cells.size())
 					{
+						hover_drop_idx = static_cast<int16_t>(idx);
 						UI::get().show_item(Tooltip::Parent::WORLDMAP, drop_cells[idx].item_id);
 						return Cursor::State::CANCLICK;
 					}
 				}
 
+				hover_drop_idx = -1;
 				UI::get().clear_tooltip(Tooltip::Parent::WORLDMAP);
+			}
+			else
+			{
+				hover_drop_idx = -1;
 			}
 		}
 
@@ -479,6 +612,7 @@ namespace ms
 			MobRow row;
 			row.id = mob.id;
 			row.icon = load_mob_stand_icon(mob.id);
+			normalize_icon_origin(row.icon);
 
 			if (row.icon.is_valid())
 			{
@@ -551,17 +685,30 @@ namespace ms
 
 		for (const auto& d : drops)
 		{
+			// Meso drop: drive the meso bar instead of the item grid.
+			if (d.item_id == 0)
+			{
+				meso_drop_range = (d.min_qty == d.max_qty)
+					? std::to_string(d.min_qty)
+					: (std::to_string(d.min_qty) + "~" + std::to_string(d.max_qty));
+				continue;
+			}
+
 			if (!classify_drop(active_tab, d.item_id))
 				continue;
 
 			DropCell cell;
 			cell.item_id = d.item_id;
 			cell.chance = d.chance;
+			cell.min_qty = d.min_qty;
+			cell.max_qty = d.max_qty;
 
 			const ItemData& item = ItemData::get(d.item_id);
 
 			if (item.is_valid())
 				cell.icon = item.get_icon(false);
+
+			normalize_icon_origin(cell.icon);
 
 			drop_cells.push_back(std::move(cell));
 		}

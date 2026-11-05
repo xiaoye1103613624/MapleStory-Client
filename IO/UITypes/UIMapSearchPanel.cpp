@@ -31,22 +31,22 @@ namespace ms
 		const int16_t DETAIL_ICON = 48;
 
 		const int16_t LIST_HDR_X = 18;
-		const int16_t LIST_HDR_Y = 232;
+		const int16_t LIST_HDR_Y = 112;
 
 		const int16_t LIST_X = 18;
-		const int16_t LIST_Y = 250;
+		const int16_t LIST_Y = 130;
 		const int16_t LIST_W = 223;
-		const int16_t LIST_H = 227;
-		const int16_t RROW_H = 22;
-		const int16_t RVISIBLE = LIST_H / RROW_H; // ~10 rows
+		const int16_t LIST_H = 343;
+		const int16_t RROW_H = 28; // matches list_row_selected.png (216x28)
+		const int16_t RVISIBLE = LIST_H / RROW_H;
 
 		const int16_t LIST_SCROLL_X = 246;
-		const int16_t LIST_SCROLL_Y = 250;
+		const int16_t LIST_SCROLL_Y = 130;
 		const int16_t LIST_SCROLL_W = 9;
-		const int16_t LIST_SCROLL_H = 227;
+		const int16_t LIST_SCROLL_H = 343;
 
 		const int16_t COST_X = 18;
-		const int16_t COST_Y = 484;
+		const int16_t COST_Y = 480;
 	}
 
 	Rectangle<int16_t> UIMapSearchPanel::PngButton::bounds(Point<int16_t> panel_pos) const
@@ -96,7 +96,15 @@ namespace ms
 	{
 		size_t atlas = ATLAS_BASE;
 
-		if (!load_png(chrome, atlas++, "search_panel_backgrnd.png"))
+		// v3 管线底板（原生 Border 拼框 + 标题烤字，D5）。候选顺序：客户端运行时 →
+		// v3 管线产物 → v1 资源（带详情卡残留，仅兜底）。
+		chrome.load(atlas++, {
+			"UI/MapSearch/search_panel_backgrnd.png",
+			"docs/features/map-search-ui/ui/search_panel_backgrnd/v3_pipeline/chrome/search_panel_backgrnd.png",
+			"docs/features/map-search-ui/resources/chrome/search_panel_backgrnd.png",
+		});
+
+		if (!chrome.is_valid())
 			LOG(LOG_WARN, "[UIMapSearchPanel] chrome PNG missing");
 
 		// Inventory-style: Tab/disabled/{key} + Tab/enabled/{key} → LocalTwoSpriteButton
@@ -134,7 +142,6 @@ namespace ms
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, field, 24);
 		search_text.set_state(Textfield::State::NORMAL);
 
-		load_png(detail_frame, atlas++, "detail_icon_frame.png");
 		load_png(list_row_sel, atlas++, "list_row_selected.png");
 
 		result_slider = Slider(
@@ -161,8 +168,7 @@ namespace ms
 		);
 		result_slider.setenabled(false);
 
-		detail_name = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::EMPEROR, "");
-		detail_street = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY, "");
+		// 详情卡已移除（todo 5）：detail_frame/detail_name/detail_street 不再加载与持有。
 		// 吸附面板不是 UIElement，绑定走自带的 LocaleBindings（与 UIMapMobPanel 等同源）。
 		// 三条都在 ctor 写死、之后只 draw => 满足绑定判据。cost_label 的「0」是本包还没接
 		// 传送费用的假初值（全文只有这一处写入，永远不会被数据改写），所以连值一起进表；
@@ -172,7 +178,15 @@ namespace ms
 		no_data = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY);
 		locale_binds.bind(no_data, "mapsearch.no_data");
 		cost_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
-		locale_binds.bind(cost_label, "mapsearch.cost", "0");
+		locale_binds.bind(cost_label, "mapsearch.cost", "100000");
+
+		// 面板标题：D5 已把「地图搜索」烤进 v3 底板顶脊（与信息面板同管线），
+		// 程序不再重复绘制；title_text 保留绑定仅作兜底数据（不 draw）。
+		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, "地图搜索");
+		locale_binds.bind(title_text, "mapsearch.title");
+
+		// 搜索框接收中文：启用系统 IME，UTF-8 直接进字图缓存（思源宋体含 CJK）。
+		search_text.set_accept_unicode(true);
 
 		apply_filter();
 
@@ -264,37 +278,9 @@ namespace ms
 
 		bt_back.draw(position);
 		bt_teleport.draw(position);
+		// D5：标题烤进底板，程序侧不画（防双字）。绑定仍在，供日后切回无字底板复用。
+		(void)title_text;
 		search_text.draw(Point<int16_t>(0, 0));
-
-		// ---- Detail card ----
-		if (detail_frame.is_valid())
-			detail_frame.draw(position + Point<int16_t>(DETAIL_X, DETAIL_Y), DETAIL_W, DETAIL_H);
-
-		if (selected_map_id != 0)
-		{
-			std::string nm;
-			std::string st;
-
-			for (const auto& e : index_store)
-			{
-				if (e.id == selected_map_id)
-				{
-					nm = e.name;
-					st = e.street;
-					break;
-				}
-			}
-
-			detail_name.change_text(nm);
-			// 街名是 Map.img 的数据，「街: 」是文案 => 整行每帧现取，不进绑定表。
-			detail_street.change_text(st.empty() ? "" : Locale::format("mapsearch.street", st));
-			detail_name.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 8));
-			detail_street.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 30));
-		}
-		else
-		{
-			no_data.draw(position + Point<int16_t>(DETAIL_X + DETAIL_ICON + 6, DETAIL_Y + 8));
-		}
 
 		// ---- Results list ----
 		list_header.draw(position + Point<int16_t>(LIST_HDR_X, LIST_HDR_Y));
@@ -312,6 +298,10 @@ namespace ms
 
 				const auto& e = index_store[filtered[idx]];
 				Point<int16_t> rowpos = position + Point<int16_t>(LIST_X, LIST_Y + r * RROW_H);
+
+				// 列表行底纹：奇偶行交替浅灰，区分条目（风格对齐技能窗列表）。
+				ColorBox rowbg(LIST_W, RROW_H, Color::Name::GRAY, (r % 2 == 0) ? 0.06f : 0.12f);
+				rowbg.draw(rowpos);
 
 				if (static_cast<int32_t>(e.id) == selected_map_id && list_row_sel.is_valid())
 					list_row_sel.draw(rowpos, LIST_W, RROW_H);
@@ -595,5 +585,39 @@ namespace ms
 
 		if (on_select)
 			on_select(id);
+	}
+
+	void UIMapSearchPanel::set_doubleclick_handler(std::function<void(int32_t)> handler)
+	{
+		on_doubleclick = std::move(handler);
+	}
+
+	// 双击结果行：命中区与 send_cursor 的列表分支同一套几何（LIST_X/Y/W/H + RROW_H），
+	// 于是「选中」与「跳分区」落在同一行上，不会出现两套坐标各说各话。
+	void UIMapSearchPanel::doubleclick(Point<int16_t> cursorpos)
+	{
+		if (!visible || (active_tab != Tab::ALL && active_tab != Tab::MAP) || filtered.empty())
+			return;
+
+		Rectangle<int16_t> larea(
+			position + Point<int16_t>(LIST_X, LIST_Y),
+			position + Point<int16_t>(LIST_X + LIST_W, LIST_Y + LIST_H));
+
+		if (!larea.contains(cursorpos))
+			return;
+
+		int16_t ly = cursorpos.y() - larea.top();
+		int16_t row = ly / RROW_H;
+		size_t idx = static_cast<size_t>(result_offset) + static_cast<size_t>(row);
+
+		if (idx >= filtered.size())
+			return;
+
+		int32_t id = index_store[filtered[idx]].id;
+
+		LOG(LOG_INFO, "[UIMapSearchPanel] doubleclick map_id=" << id);
+
+		if (on_doubleclick)
+			on_doubleclick(id);
 	}
 }

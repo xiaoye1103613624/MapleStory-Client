@@ -46,4 +46,32 @@ namespace ms
 	{
 		return get(mob_id).get_entries();
 	}
+
+	void MobDropData::load(int32_t mob_id, std::vector<MobDropEntry> entries)
+	{
+		MobDropData md(mob_id);
+		md.entries = std::move(entries);
+		md.valid = true;
+		// MobDropData 没有默认构造（Cache::get 走 T{id}），unordered_map::operator[]
+		// 会强制默认构造 ⇒ C2512。insert_or_assign 只需要可移动/可赋值。
+		Cache<MobDropData>::cache.insert_or_assign(mob_id, std::move(md));
+	}
+
+	bool MobDropData::is_loaded(int32_t mob_id)
+	{
+		auto it = Cache<MobDropData>::cache.find(mob_id);
+		return it != Cache<MobDropData>::cache.end() && it->second.valid;
+	}
+
+	int32_t MobDropData::get_version()
+	{
+		return data_version;
+	}
+
+	void MobDropData::set_version(int32_t version)
+	{
+		data_version = version;
+	}
+
+	int32_t MobDropData::data_version = 0;
 }

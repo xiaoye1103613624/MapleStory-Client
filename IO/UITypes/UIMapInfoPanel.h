@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 #include <vector>
 
 namespace ms
@@ -80,6 +81,8 @@ namespace ms
 		{
 			int32_t item_id = 0;
 			double chance = 0.0;
+			int16_t min_qty = 1;
+			int16_t max_qty = 1;
 			Texture icon;
 		};
 
@@ -106,9 +109,20 @@ namespace ms
 		LocalPngTexture chrome;
 		LocalPngTexture row_selected;
 		LocalPngTexture slot;
+		// v2 原生风资产：怪物行交替底纹（奇偶两图，图标灰底烤在行图里）。
+		LocalPngTexture row_bg_a;
+		LocalPngTexture row_bg_b;
 
 		Slider mob_slider;
 		Slider drop_slider;
+
+		ColorBox drop_hover; // faint overlay on the hovered drop cell
+		int16_t hover_drop_idx;
+		ColorBox icon_back; // fallback icon plate when v2 row stripes are missing
+
+		int32_t last_requested_mob; // last mob we asked the server drops for
+		int32_t drop_built_mob;     // last mob whose drops we rendered
+		std::string meso_drop_range; // "min~max" override for the meso bar
 
 		// Index order matches layout.json tab xs/widths: all, equip, consume, etc.
 		std::unique_ptr<LocalTwoSpriteButton> tab_buttons[static_cast<size_t>(Tab::LENGTH)];
@@ -120,6 +134,8 @@ namespace ms
 		Text empty_drops_label;
 		Text meso_label;
 		mutable Text meso_amount;
+		// 面板标题「地图信息」：D5 已烤进底板顶脊；Text 保留绑定仅作兜底数据。
+		Text title_text;
 
 		SelectCallback on_select;
 		// 语言重载刷新通道。构造时就把宿主名带上，日志里才分得清是哪块面板重取过。
