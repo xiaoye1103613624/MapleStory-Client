@@ -725,9 +725,10 @@ A2 里两颗钮暂时都路由到 `UIOptionMenu`，等素材到位再拆成子�
 - `:112` 初值 `sort_enabled(true)` → **`false`**，使开窗即显示 `BtGather`，与参考和 `:666` 复位一致。
 - 两处都写了「为什么」的注释，并注明：**若 IDA 后续证明 `_SM` 才是原生展开态的真身，去掉守卫即可**，回退成本一行。
 
-> **仍未定案**：`BtSort`/`BtGather` 的**点击语义**（按钮表示「当前模式」还是「下一步动作」）
-> 只有包络证据（`BT_GATHER → GatherItemsPacket`、`BT_SORT → SortItemsPacket`），
-> 没有原生端验证过「点一下会不会换成另一颗」。这条**留在 IDA 待办**，不算闭环。
+> **仍未定案（下一项）**：`BtSort`/`BtGather` 的**点击语义**（按钮表示「当前模式」还是「下一步动作」）。
+> 客户端包络：`BT_GATHER → GatherItemsPacket`、`BT_SORT → SortItemsPacket`；
+> 回包侧已有 `GatherResultHandler → set_sort(true)`、`SortResultHandler → set_sort(false)`（即「下一步动作」假说）。
+> 本 IDB 无 `BtGather`/`CUIItem` 串锚，原生 OnButtonClicked 表未钉死——**留 IDA/WvsContext 待办**，不算闭环。
 
 ### C5 商城
 出站 40 vs `CASHSHOP_OPERATION=229`、HUD 换态靠 recv `SET_CASH_SHOP=127` —— 属 s9 协议线，
@@ -824,6 +825,10 @@ W3 的落地状态见 [../evidence/w1w3-hud/coords.md](../evidence/w1w3-hud/coor
 ### C14 `Mob::set_stance` 对 stance 字节 ≥12 会 `std::out_of_range` —— **已闭环（代码侧）**
 `Mob.cpp:190-207` 已按 `animations.find` 钳姿：无对应帧则退回 MOVE/STAND，不再 `.at()` 抛。
 台账原「只钳下界」描述过期。真机飞行怪仍待 pending 点测。
+
+### 风筝贴图（SPAWN_KITE / Cash 508）—— **已闭环 2026-11-06**
+原 `try_load_kite` 错挂 `BasicEff/ItemUp`，且 `SpawnKiteHandler` 未传 item、把 s9 foothold 当 y。
+IDA `sub_65ACDF` + NX `iconReward` 已接；见 [kite-texture](../../kite-texture/)。
 
 ### G11 Chalkboard/CharBox/ItemFX/Catch 文本场标 —— **已闭环 2026-11-05**
 见 [`../../field-marker-g11/README.md`](../../field-marker-g11/README.md)：Catch 播 `BasicEff/Catch/{Success,Fail}`；

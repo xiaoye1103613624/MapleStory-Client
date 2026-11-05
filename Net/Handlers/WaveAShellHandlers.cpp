@@ -2937,26 +2937,38 @@ namespace ms
 
 	void SpawnKiteHandler::handle(InPacket& recv) const
 	{
+		// s9 PacketCreator.spawnKite：oid + itemId + msg + name + x + ft(foothold)
+		// IDA SPAWN_KITE(sub_65ACDF)：同槽两 short 当 x/y，绘制原点 (x-3, y-100)。
+		// s9 第二 short 是 foothold 不是 y ⇒ 不能 read_point；用包内 x + 本地角色脚底 y。
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
 		std::string msg = recv.available() ? recv.read_string() : "";
 		std::string name = recv.available() ? recv.read_string() : "";
-		Point<int16_t> pos = Stage::get().get_player().get_position();
-		if (recv.available() >= 4)
-			pos = recv.read_point();
+		const Point<int16_t> feet = Stage::get().get_player().get_position();
+		int16_t kx = feet.x();
+		int16_t ft = 0;
+		if (recv.available() >= 2)
+			kx = recv.read_short();
+		if (recv.available() >= 2)
+			ft = recv.read_short();
+		// 悬浮：脚底 y-100、x-3（与原生绘制原点一致）
+		Point<int16_t> pos(static_cast<int16_t>(kx - 3), static_cast<int16_t>(feet.y() - 100));
 		LOG(LOG_DEBUG, "SpawnKite oid=" << oid << " item=" << item
-			<< " by=" << name << " rem=" << recv.available());
+			<< " by=" << name << " ft=" << ft << " rem=" << recv.available());
 		while (recv.available())
 			recv.skip_byte();
-		std::string label = name.empty() ? ("Kite " + std::to_string(item)) : name;
-		if (!msg.empty())
-			label = name + ": " + msg;
+		// 文案优先风筝留言；无留言才显示主人名（避免英文 "Kite N" 名牌）
+		std::string label = !msg.empty() ? msg : name;
 		auto& markers = Stage::get().get_field_markers();
 		if (markers.contains(oid))
+		{
 			markers.set_label(oid, label);
+		}
 		else
-			markers.spawn(oid, FieldMarker::Kind::KITE, pos, label);
-		// note
+		{
+			// skill_id 槽位传 cash itemid → FieldMarker::try_load_kite(iconReward)
+			markers.spawn(oid, FieldMarker::Kind::KITE, pos, label, item);
+		}
 	}
 
 	void RemoveKiteHandler::handle(InPacket& recv) const

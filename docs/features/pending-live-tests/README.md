@@ -36,6 +36,7 @@
 | 24 | AskAvatar / sendStyle A11i | ⏳ 待测 | s2c 304 / c2s 60 | UtilDlgEx_Avatar 选样式；OK `(7,1,sel)`；Cancel `(7,0)` |
 | 25 | AskBoxText A11j | ⏳ 待测 | s2c 304 / c2s 60 | `sendAskBoxText`；OK `(13,1,str)`；Cancel `(13,0)`；单行局限 |
 | 29 | G11 场标贴图 | ⏳ 待测 | s2c Catch/Chalk/CharBox/ItemFX | Catch 成败圈；黑板 sample；店招 signboard；ItemEff 无英文名牌 |
+| 30 | 风筝 iconReward | ⏳ 待测 | s2c SPAWN_KITE 271 | 508 风筝动画 + 留言白字；收起/无法放置 |
 
 ---
 

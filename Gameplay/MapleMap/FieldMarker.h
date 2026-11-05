@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	BeiDou V17 parity — lightweight field placeholder (summon/mist/door/kite/dragon)
-//	G11：Catch / Chalkboard / CharBox / ItemFX 贴图化（不再一律黄字场标）
+//	G11：Catch / Chalkboard / CharBox / ItemFX 贴图化
+//	Kite：Cash/0508 iconReward（IDA SPAWN_KITE sub_65ACDF）
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -60,7 +61,8 @@ namespace ms
 		void try_load_door();
 		void try_load_mist();
 		void try_load_dragon();
-		void try_load_kite();
+		// item_id=508xxxx → iconReward 动画；其它/0 → 默认 5080000 再回退 ItemUp
+		void try_load_kite(int32_t item_id);
 		void try_load_catch(bool success);
 		void try_load_chalkboard();
 		void try_load_charbox();

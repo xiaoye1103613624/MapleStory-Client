@@ -1,6 +1,6 @@
 # 地图对象逻辑还原（map-object-parity）
 
-> 状态：波1/2/3 已完成并提交；隐藏门三态 / 迷雾区域 / 反应堆 idle / G11 场标贴图已后续闭合；余风筝等按证据边界显式预留。
+> 状态：波1/2/3 已完成并提交；隐藏门三态 / 迷雾区域 / 反应堆 idle / G11 场标 / 风筝 iconReward 已后续闭合；余商店盒等按证据边界显式预留。
 > 适用客户端：MapleStory-Client（Journey 系）· 权威参照：BeiDou-Server_s9 源码 + BeiDou.exe V17.7（IDA/REA）+ Data/*.img（自研 nlnx 探针）
 > 产物目录：`docs/features/map-object-parity/`
 > 日期：2026-11-03
@@ -88,7 +88,8 @@ MapHelper portal/game 三族：pv(0..7 帧样式族)/ph(default 三态)/psh(1..4
 | 隐藏门三态动画（portalStart/Exit） | ✅ 2026-11-05 已接（每门独立 Animation + HidePhase；见 [hidden-portal-tristate](../hidden-portal-tristate/)） | pending §18 真机 |
 | 迷雾区域渲染（矩形平铺贴图） | ✅ 2026-11-05 已接（Skill tile 平铺；见 [mist-area-render](../mist-area-render/)） | pending 真机 |
 | 出生特效播放 | 本数据无 Mob/SpecialEff.img（0009000.img 不存在） | 资源补齐（图鉴站）后接 effect>0 |
-| 风筝/商店盒/Evan 龙贴图 | 同上，字符串池无直接命中 | IDA `sub_531325` 分发器 case 271/265/181 反编译 |
+| 风筝贴图 | ✅ 2026-11-06 已接（`Cash/0508/iconReward`；见 [kite-texture](../kite-texture/)） | pending 真机 |
+| 商店盒/Evan 龙贴图补强 | Evan 龙已 G5 MapDragon；商店盒招牌随 G11 CharBox | 商店盒若另有独立盒体贴图需再取证 |
 | BossHP 多目标队列/名牌色表 | DualMobGauge=`sub_56C9B7` 实为 PartyRace 专用（硬编码 9700036），非多目标队列；MobGage 单槽 + s9 5s 节流已证 | 双槽 UI 若要做需另取证布局；见 quest-page-icons README §5 |
 | G11 Catch/黑板/店招/ItemFX | ✅ 2026-11-05 已接（见 [field-marker-g11](../field-marker-g11/)） | pending 真机 |
 | 反应堆 default 悬浮动画 | ✅ 2026-11-05 已接（idle 循环 `update` + `reload_idle`；见 [reactor-default-idle](../reactor-default-idle/)） | pending 真机 |

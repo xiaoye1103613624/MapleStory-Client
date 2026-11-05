@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	BeiDou V17 parity — FieldMarker
 //	G11：Catch/Success|Fail、黑板 sample、店招 signboard、ItemEff 真特效
+//	Kite：Cash/0508.img/*/iconReward（IDA sub_65ACDF + NX）
 //////////////////////////////////////////////////////////////////////////////////
 #include "FieldMarker.h"
 
@@ -19,7 +20,7 @@ namespace ms
 		base_label(text),
 		lifetime_ms(life_ms)
 	{
-		// G11 专用路径优先：Catch / 黑板 / 店招不走通用 skill 动画，避免错挂 ItemEff。
+		// G11 / Kite 专用路径优先：Catch / 黑板 / 店招 / 风筝不走通用 skill 动画，避免错挂 ItemEff。
 		if (k == Kind::CATCH)
 		{
 			try_load_catch(skill_id != 0);
@@ -39,6 +40,21 @@ namespace ms
 		else if (k == Kind::CHARBOX)
 		{
 			try_load_charbox();
+			label = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NONE, text);
+		}
+		else if (k == Kind::KITE)
+		{
+			// 真风筝 508*：iconReward；Weather 等误用 KITE + 非 508 itemid 时先试 ItemEff。
+			const bool kite_item = skill_id >= 5080000 && skill_id < 5090000;
+			if (kite_item || skill_id <= 0)
+				try_load_kite(skill_id > 0 ? skill_id : 5080000);
+			else
+			{
+				try_load_anim(skill_id);
+				if (!has_anim)
+					try_load_kite(5080000);
+			}
+			// 风筝文案：宋体 A11M 白字（原生为聊天气泡底板，本版先对齐字色/字号；气球壳另预留）
 			label = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NONE, text);
 		}
 		else if (k == Kind::ITEMFX)
@@ -63,8 +79,6 @@ namespace ms
 					try_load_mist();
 				else if (k == Kind::DRAGON)
 					try_load_dragon();
-				else if (k == Kind::KITE)
-					try_load_kite();
 			}
 		}
 	}
@@ -113,15 +127,28 @@ namespace ms
 #endif
 	}
 
-	void FieldMarker::try_load_kite()
+	void FieldMarker::try_load_kite(int32_t item_id)
 	{
 #ifdef USE_NX
-		nl::node node = nl::nx::Effect["BasicEff.img"]["ItemUp"]["0"];
+		// IDA SPAWN_KITE(sub_65ACDF)：sub_5D3322(item) → 子键 1588(=iconReward) 作场上动画。
+		// NX：Item/Cash/0508.img/0508000x/iconReward/{0,1,2}；无则 info/icon；再回退 ItemUp。
+		if (item_id <= 0)
+			item_id = 5080000;
+
+		const std::string prefix = "0" + std::to_string(item_id / 10000) + ".img";
+		const std::string iid = "0" + string_format::extend_id(item_id, 7);
+		nl::node node = nl::nx::Item["Cash"][prefix][iid]["iconReward"];
+		if (!node)
+			node = nl::nx::Item["Cash"][prefix][iid]["info"]["icon"];
+		if (!node)
+			node = nl::nx::Effect["BasicEff.img"]["ItemUp"]["0"];
 		if (node)
 		{
 			anim = Animation(node);
 			has_anim = true;
 		}
+#else
+		(void)item_id;
 #endif
 	}
 
@@ -237,10 +264,13 @@ namespace ms
 		if (has_anim)
 			anim.draw(absp, alpha);
 
-		// Catch / ItemFX 有动画时不再叠英文名牌；其余场标保留黄字兜底
+		// Catch / ItemFX 有动画时不再叠英文名牌；风筝白字叠在上方；其余场标保留黄字兜底
 		const bool hide_label = (kind == Kind::CATCH || kind == Kind::ITEMFX) && has_anim;
 		if (!hide_label && !base_label.empty())
-			label.draw(absp + Point<int16_t>(0, has_anim ? -40 : -20));
+		{
+			const int16_t dy = kind == Kind::KITE ? -48 : (has_anim ? -40 : -20);
+			label.draw(absp + Point<int16_t>(0, dy));
+		}
 	}
 
 	int8_t FieldMarker::update(const Physics&)
