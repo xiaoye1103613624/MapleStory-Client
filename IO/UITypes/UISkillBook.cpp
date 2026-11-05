@@ -356,7 +356,7 @@ namespace ms
 			// v83 经典窗（175x289）分区实测（对照帧 = 技能展开宏指令.png，与
 			// UIWindow.img/Skill/backgrnd 逐像素对齐后 xoff/yoff 均为 0）：
 			// 标题 0..20（已烘焙）· tab 条 23..41 · 红下划线 42..44（已烘焙）·
-			// 书封暗栏 55..86（暗底 62..80）· 列表区 99..253 · 技能点行 253..289。
+			// 书封暗栏 55..86（暗底 62..80）· 列表区 87..257 · 技能点行 258..289。
 			// 「技能」标题、tab 条白底、红下划线、暗栏都在 backgrnd 里烤好了，
 			// 客户端只补三件：tab 底板（按钮）+ 页码点 + 书页图标/书名。
 			// 页码点必须等 UIElement::draw_buttons 之后再画（见本函数末尾），
@@ -368,6 +368,9 @@ namespace ms
 			// 旧值 (92, 274) 出自另一张全屏截图的「窗口原点 (308,2)」推算法，那套
 			// 读法把数字放到框中间（x86..91）且低 6px；本帧逐像素图直接否掉了它。
 			// splabel = A12M + RIGHT，沿用「墨迹左 = draw_x - 推进量 6」⇒ draw_x = 109。
+			// 书封暗栏 55..86：补齐 classic 缺失的技能书图标 + 书名（原生一致性）。
+			bookicon.draw(position + BOOK_TOPLEFT + bookicon.get_origin());
+			booktext.draw(position + Point<int16_t>(28 + booktext.width() / 2, booktext.y_for_ink_top(BOOK_TEXT_INK_TOP)));
 			splabel.draw(position + Point<int16_t>(109, splabel.y_for_ink_top(268)));
 		}
 		else

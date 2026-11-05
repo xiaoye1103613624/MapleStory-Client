@@ -152,7 +152,7 @@ namespace ms
 		textlabel.change_text(text);
 	}
 
-	LoginProcessNotice::LoginProcessNotice() : box_w(0), box_h(0)
+	LoginProcessNotice::LoginProcessNotice() : box_w(0), box_h(0), top_border(0), bottom_border(0)
 	{
 		// 优先整板用 BalloonForLoginProcess 九宫（决策 9.7）；缺件时回退 Balloon 小九宫 + Title。
 		nl::node loginproc = nl::nx::UI["Login.img"]["WorldNotice"]["BalloonForLoginProcess"];
@@ -176,6 +176,15 @@ namespace ms
 		xtile = std::max<int16_t>(north.width(), 1);
 		ytile = std::max<int16_t>(west.height(), 1);
 
+		// 九宫边框厚度以角件为准（运行时取证 Login.img_runtime.json：
+		// BalloonForLoginProcess nw/ne 22x40、sw/se 22x24 —— 上边框 40、下边框 24，
+		// 静止框高 64，与参考图「选中频道页.png」公告 (287,298)-(486,366) 高 68
+		// 一致。旧实现按 west 条高(9px)铺行数，框高/框宽都算错（实机 ≈135x73 小方盒）。
+		top_border = northwest.is_valid() ? northwest.height() : 0;
+		bottom_border = southwest.is_valid() ? southwest.height() : 0;
+		left_border = northwest.is_valid() ? northwest.width() : 0;
+		right_border = northeast.is_valid() ? northeast.width() : 0;
+
 		textlabel = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::BLACK);
 	}
 
@@ -194,19 +203,20 @@ namespace ms
 			return;
 		}
 
-		constexpr int16_t pad_x = 18;
-		constexpr int16_t pad_y = 8;
-		constexpr int16_t gap = 4;
+		// 九宫语义（运行时 Login.img 取证）：每块 tile 的 origin 是其「内角」，
+		// 绘制时 tile 从内容区角点向外延展——nw/ne 上带 40px（容纳标题），
+		// sw/se 下带 24px（容纳正文），左右带 22px。box_w/box_h 为**外框**尺寸。
+		// 原生公告板为固定小板：参考「选中频道页.png」逐像素实测外框
+		// (284,297)-(468,371) ≈ 184x74（计划写的 199x68 系旧测量把右缘量到了
+		// 红圈 481 上；实机截图为最高 ground truth）。内容区 = 外框 - 边框
+		// = 140x10，恰好容纳一行 A12B 正文——与原生一致。
+		// 旧实现按 west 条高 9px 自适应铺行、把内容宽当外宽 → 实机 135x73
+		// 小方盒，且 UIWorldSelect 用 width() 反推位置时被撑偏进面板内部。
+		constexpr int16_t box_w_ref = 184;
+		constexpr int16_t box_h_ref = 74;
 
-		const int16_t inner_w = std::max(title.width(), static_cast<int16_t>(textlabel.width() + pad_x));
-		const int16_t inner_h = static_cast<int16_t>(title.height() + gap + textlabel.height() + pad_y);
-
-		// 与 ChatBalloonHorizontal 一致：按 tile 对齐，避免边框与填充错缝。
-		const int16_t numhor = inner_w / xtile + 2;
-		const int16_t numver = std::max<int16_t>(inner_h / ytile, 1) + 1;
-
-		box_w = static_cast<int16_t>(numhor * xtile);
-		box_h = static_cast<int16_t>(numver * ytile);
+		box_w = box_w_ref;
+		box_h = box_h_ref;
 	}
 
 	bool LoginProcessNotice::empty() const
@@ -229,35 +239,55 @@ namespace ms
 		if (empty() || box_w <= 0 || box_h <= 0)
 			return;
 
+		// 九宫语义（运行时取证 + Texture::draw origin 机制）：tile 实际渲染左上
+		// = 绘制参数 - origin。BalloonForLoginProcess 各件 origin 即「内角」：
+		//   nw 22x40 o(22,40)  ne 22x40 o(0,40)  sw 22x24 o(22,0)  se 22x24 o(0,0)
+		//   n 12x40 o(0,40)  s 12x24 o(0,0)  w 19x9 o(19,0)  e 22x9 o(0,0)
+		// 因此四角件参数取内容框角点 (cl/ct/cr/cb)，渲染后自动向外延展成边框；
+		// 上/下边件平铺于顶/底带（参数 y=top/bottom 渲染带顶/带底），左右边件
+		// 平铺于左/右带（参数 x=left/right 渲染带左/带右）；中心件拉伸铺满
+		// 内容框。旧实现把参数当渲染位直传 → 边框整体向内塌陷、板面错位。
 		const int16_t left = topleft.x();
 		const int16_t top = topleft.y();
 		const int16_t right = static_cast<int16_t>(left + box_w);
 		const int16_t bottom = static_cast<int16_t>(top + box_h);
 
-		northwest.draw(DrawArgument(left, top));
-		northeast.draw(DrawArgument(right, top));
-		southwest.draw(DrawArgument(left, bottom));
-		southeast.draw(DrawArgument(right, bottom));
+		const int16_t cl = static_cast<int16_t>(left + left_border);
+		const int16_t cr = static_cast<int16_t>(right - right_border);
+		const int16_t ct = static_cast<int16_t>(top + top_border);
+		const int16_t cb = static_cast<int16_t>(bottom - bottom_border);
 
-		for (int16_t y = top; y < bottom; y += ytile)
+		northwest.draw(DrawArgument(cl, ct));
+		northeast.draw(DrawArgument(cr, ct));
+		southwest.draw(DrawArgument(cl, cb));
+		southeast.draw(DrawArgument(cr, cb));
+
+		// 边件同理：渲染位 = 参数 - origin，故 n/s 参数 y 取 ct/cb（内容框上下缘），
+		// w/e 参数 x 取 cl/cr（内容框左右缘），tile 自动外扩进对应边框带。
+		for (int16_t x = cl; x < cr; x += xtile)
 		{
-			west.draw(DrawArgument(left, y));
-			east.draw(DrawArgument(right, y));
+			north.draw(DrawArgument(x, ct));
+			south.draw(DrawArgument(x, cb));
 		}
 
-		center.draw(DrawArgument(Point<int16_t>(left, top), Point<int16_t>(box_w + 1, box_h)));
-
-		for (int16_t x = left; x < right; x += xtile)
+		for (int16_t y = ct; y < cb; y += ytile)
 		{
-			north.draw(DrawArgument(x, top));
-			south.draw(DrawArgument(x, bottom));
+			west.draw(DrawArgument(cl, y));
+			east.draw(DrawArgument(cr, y));
 		}
 
+		if (cr > cl && cb > ct)
+		{
+			center.draw(DrawArgument(Point<int16_t>(cl, ct), Point<int16_t>(cr - cl, cb - ct)));
+		}
+
+		// 标题「公告」(170x18, origin 0) 居中于顶带；正文居中于内容区。
+		// 参考图实测：标题行 y≈305-315（顶带内），正文「Scania」y≈339-350（内容区）。
 		const int16_t title_x = static_cast<int16_t>(left + (box_w - title.width()) / 2);
-		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 4)));
+		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 6)));
 
-		const int16_t text_x = static_cast<int16_t>(left + box_w / 2);
-		const int16_t text_y = static_cast<int16_t>(top + title.height() + 10);
+		const int16_t text_x = static_cast<int16_t>(cl + (cr - cl) / 2);
+		const int16_t text_y = static_cast<int16_t>(ct + (cb - ct - textlabel.height()) / 2);
 		textlabel.draw(Point<int16_t>(text_x, text_y));
 	}
 }

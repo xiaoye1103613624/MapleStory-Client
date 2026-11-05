@@ -97,6 +97,10 @@ namespace ms
 		// Clear the buffer contents
 		void clearscene();
 
+		/// 回读当前帧缓冲（RGBA，自下而上）。截图用（B4-7）：由 Window::end() 在
+		/// SwapWindow 之前调用，此时读到的就是刚画完的那一帧。
+		void read_pixels(int16_t width, int16_t height, uint8_t* out) const;
+
 	private:
 		void clearinternal();
 		bool addfont(const char* name, Text::Font id, FT_UInt width, FT_UInt height);

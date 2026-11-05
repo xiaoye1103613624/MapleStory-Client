@@ -59,10 +59,11 @@ namespace ms
 				barfront.draw(draw_args, {}, Range<int16_t>(left_omit, right_omit));
 			}
 		}
-		else
+		else if (type != Type::WORLDSELECT)
 		{
-			if (type == Type::WORLDSELECT)
-				barfront.draw(args, {}, Range<int16_t>(0, barfront.width() - 1));
+			// WORLDSELECT 0% 不画填充：负载槽已烘焙在频道单元位图
+			// channel/N/normal (6..80, 18..26) 内，参照帧空负载时槽为空
+			// （选中频道页.png 无彩虹条）；旧实现画满宽彩虹条，观感不符。
 		}
 	}
 

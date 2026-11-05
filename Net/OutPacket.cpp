@@ -79,7 +79,7 @@ namespace ms
 	{
 		// D2：原来是 sizeof(long)。MSVC 下 long 是 4 字节（LP64/LLP64 陷阱），
 		// 会把 64 位值只写出低 4 字节，与 s9 的 ByteBufOutPacket.writeLong（8 字节）差 4 字节，
-		// 后续字段全部错位。当前全仓还没有调用点，属于**潜伏缺陷**：等第一个 long 字段出现才会炸。
+		// 后续字段全部错位。已修复；首个调用点是 12 字节/行伤害封包（AttackPacket）。
 		for (size_t i = 0; i < sizeof(int64_t); i++)
 		{
 			write_byte(static_cast<int8_t>(lg));

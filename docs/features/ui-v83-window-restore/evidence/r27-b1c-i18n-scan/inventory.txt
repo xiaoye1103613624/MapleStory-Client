@@ -4,8 +4,8 @@ R27-B1c 展示文案硬编码站点清点
 Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类名）：
   UIAdmin UIAlliance UIAriantMatch UIAvatarMegaphone UIBuddyList UICashGachapon UICashShop UIChannel UICharInfo UIChatBar UIClaim UIClock UIDelivery UIEnergyBar UIEquipInventory UIEvent UIFamily UIFamilyTree UIGuild UIIncubator UIItemInventory UIKeyConfig UIMTS UIMaker UIMapleTV UIMemo UIMerchant UIMessenger UIMiniMap UIMonsterBook UIMonsterCarnival UINewYearsCard UINpcTalk UIParty UIPartyRace UIPartySearch UIPersonalShop UIQuestAlarm UIQuestLog UIRemoteGachapon UIRpsGame UIShop UISkillBook UISkillUp UISpeedQuiz UIStatsInfo UIStatusBar UIStorage UIStoreBank UITermsOfService UITrade UIVegaSpell UIViciousHammer UIWedding UIWorldSelect UIYesNo
 
-总计 2 处 | 英文 2（壳窗 2 / 在用窗 0）| 中文 0 | 软键盘豁免 426
-按形状分档（全站，中英合并）：change_text=1 / Text ctor=1
+总计 6 处 | 英文 2（壳窗 2 / 在用窗 0）| 中文 4 | 软键盘豁免 426
+按形状分档（全站，中英合并）：change_text=1 / Text ctor=5
 
 
 == 英文原文 · 在用窗 ==
@@ -14,7 +14,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 == 英文原文 · 壳窗 ==
 
 [IO/UITypes/UIChatBar.cpp] 1 处
-  L1789  [change_text ] /w 
+  L2003  [change_text ] /w 
 
 [IO/UITypes/UIWorldSelect.cpp] 1 处
   L229   [Text ctor   ] Ver. 
@@ -22,13 +22,21 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 == 中文硬编码（直接搬 key，无「编造原生文案」风险）==
 
+[IO/UITypes/UIChatBar.cpp] 3 处
+  L1909  [Text ctor   ] 密语
+  L1910  [Text ctor   ] 查看角色信息
+  L1911  [Text ctor   ] 加好友
+
+[IO/UITypes/UIGMCommandList.cpp] 1 处
+  L38    [Text ctor   ] GM 命令 (点击填充)
+
 
 == 软键盘豁免档（§11.6 用户裁决「不接」；**不是删除**，是换一档记账）==
 命中 426 处，不计入待接入站点数。逐条带 文件:行；理由 = 整档一条原生判据（按形状豁免，见下）。软键盘在原生 v83 打不开 ⇒ 若日后启用（升级到引用 SoftKey 的二进制），这些站点要按 5a 的输入语法/提示语两档重新清点。
 
 [SoftKey hint] 426 处 —— §11.6 裁决(用户 2026-11-03「不接」)：原生 v83 不启用软键盘(北斗 exe 零引用,素材 v95 才加载)⇒ 整形状豁免
-  IO/UITypes/UIAdmin.cpp             L83    users|alert|msg
-  IO/UITypes/UIAdmin.cpp             L125   users|alert|msg
+  IO/UITypes/UIAdmin.cpp             L84    users|alert|msg
+  IO/UITypes/UIAdmin.cpp             L126   users|alert|msg
   IO/UITypes/UIAlliance.cpp          L152   Invite guild
   IO/UITypes/UIAlliance.cpp          L160   Alliance notice
   IO/UITypes/UIAlliance.cpp          L184   Invite guild
@@ -36,7 +44,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   IO/UITypes/UIAlliance.cpp          L207   inviter,guild
   IO/UITypes/UIAriantMatch.cpp       L48    result idx|tip
   IO/UITypes/UIAriantMatch.cpp       L101   result idx|tip
-  IO/UITypes/UIBossHP.cpp            L132   cur,max|pct|tip
+  IO/UITypes/UIBossHP.cpp            L157   cur,max|pct|tip
   IO/UITypes/UIBuddyList.cpp         L190   Group (All)
   IO/UITypes/UIBuddyList.cpp         L199   Group (All)
   IO/UITypes/UIBuddyList.cpp         L200   Buddy name
@@ -92,17 +100,17 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   IO/UITypes/UIChat.cpp              L224   Buddy cid
   IO/UITypes/UIChat.cpp              L240   Find player
   IO/UITypes/UIChat.cpp              L327   Rank find
-  IO/UITypes/UIChatBar.cpp           L629   Emote id
-  IO/UITypes/UIChatBar.cpp           L638   Spouse chat
-  IO/UITypes/UIChatBar.cpp           L694   itemid|link
-  IO/UITypes/UIChatBar.cpp           L1399  Chat
-  IO/UITypes/UIChatBar.cpp           L1407  Spouse chat
-  IO/UITypes/UIChatBar.cpp           L1416  Party chat
-  IO/UITypes/UIChatBar.cpp           L1425  Guild chat
-  IO/UITypes/UIChatBar.cpp           L1434  Alliance chat
-  IO/UITypes/UIChatBar.cpp           L1450  Buddy chat
-  IO/UITypes/UIChatBar.cpp           L1466  Find name
-  IO/UITypes/UIChatBar.cpp           L1758  Whisper msg
+  IO/UITypes/UIChatBar.cpp           L645   Emote id
+  IO/UITypes/UIChatBar.cpp           L654   Spouse chat
+  IO/UITypes/UIChatBar.cpp           L710   itemid|link
+  IO/UITypes/UIChatBar.cpp           L1463  Chat
+  IO/UITypes/UIChatBar.cpp           L1471  Spouse chat
+  IO/UITypes/UIChatBar.cpp           L1480  Party chat
+  IO/UITypes/UIChatBar.cpp           L1489  Guild chat
+  IO/UITypes/UIChatBar.cpp           L1498  Alliance chat
+  IO/UITypes/UIChatBar.cpp           L1514  Buddy chat
+  IO/UITypes/UIChatBar.cpp           L1530  Find name
+  IO/UITypes/UIChatBar.cpp           L1972  Whisper msg
   IO/UITypes/UIClock.cpp             L105   Clock|sec|tip
   IO/UITypes/UIClock.cpp             L116   Clock text
   IO/UITypes/UICommonCreation.cpp    L793   Char name
@@ -399,7 +407,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   IO/UITypes/UIPartySearch.cpp       L207   Lv min-max
   IO/UITypes/UIPartySearch.cpp       L219   Jobs mask
   IO/UITypes/UIQuit.cpp              L182   y|n
-  IO/UITypes/UIRaceSelect.cpp        L543   idx|make
+  IO/UITypes/UIRaceSelect.cpp        L545   idx|make
   IO/UITypes/UIRegion.cpp            L86    na|eu
   IO/UITypes/UIRemoteGachapon.cpp    L80    Town 0-9
   IO/UITypes/UIShop.cpp              L447   Buy qty (selected)
@@ -410,17 +418,17 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   IO/UITypes/UISkillBook.cpp         L817   Skill id SP
   IO/UITypes/UISkillBook.cpp         L845   Skill id use
   IO/UITypes/UIStatsInfo.cpp         L492   AP str|dex|int|luk|1-4
-  IO/UITypes/UIStatusBar.cpp         L1237  Whisper msg
-  IO/UITypes/UIStatusBar.cpp         L1245  Whisper msg
-  IO/UITypes/UIStatusBar.cpp         L1246  Whisper to
-  IO/UITypes/UIStatusBar.cpp         L1254  Chat
-  IO/UITypes/UIStatusBar.cpp         L1266  Emote id
-  IO/UITypes/UIStatusBar.cpp         L1278  Channel #
-  IO/UITypes/UIStatusBar.cpp         L1301  Chair itemid
-  IO/UITypes/UIStatusBar.cpp         L1331  Pickup oid
-  IO/UITypes/UIStatusBar.cpp         L1363  Reactor oid
-  IO/UITypes/UIStatusBar.cpp         L1386  Effect itemid
-  IO/UITypes/UIStatusBar.cpp         L1420  NPC oid
+  IO/UITypes/UIStatusBar.cpp         L1240  Whisper msg
+  IO/UITypes/UIStatusBar.cpp         L1248  Whisper msg
+  IO/UITypes/UIStatusBar.cpp         L1249  Whisper to
+  IO/UITypes/UIStatusBar.cpp         L1257  Chat
+  IO/UITypes/UIStatusBar.cpp         L1269  Emote id
+  IO/UITypes/UIStatusBar.cpp         L1281  Channel #
+  IO/UITypes/UIStatusBar.cpp         L1304  Chair itemid
+  IO/UITypes/UIStatusBar.cpp         L1334  Pickup oid
+  IO/UITypes/UIStatusBar.cpp         L1366  Reactor oid
+  IO/UITypes/UIStatusBar.cpp         L1389  Effect itemid
+  IO/UITypes/UIStatusBar.cpp         L1423  NPC oid
   IO/UITypes/UIStatusMessenger.cpp   L96    Status tip
   IO/UITypes/UIStatusMessenger.cpp   L108   Red tip
   IO/UITypes/UIStatusMessenger.cpp   L115   White tip
@@ -456,7 +464,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
 
 
 == 白名单（PLAN §4.1，逐条挂原生判据；**不是删除**，是换一档记账）==
-命中 20 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
+命中 21 处，不计入上面的待接入站点数。理由跟着键走，新增键必须同时补一条依据。
 
 '0%'  5 处 —— 比率数值格式；原生是 " %d%%"(0x73BCC0) 格式串
   L566   [change_text ] IO/UITypes/UIStatsInfo.cpp
@@ -465,15 +473,16 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L573   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L576   [change_text ] IO/UITypes/UIStatsInfo.cpp
 
+'!'  4 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
+  L61    [Text ctor   ] IO/UITypes/UIAdmin.cpp
+  L2402  [change_text ] IO/UITypes/UIChatBar.cpp
+  L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
+  L23    [Text ctor   ] IO/UITypes/UIGMCommandList.cpp
+
 ' ~ '  3 处 —— 区间分隔符；原生侧是格式串 "%d ~ %d"(0x6F2928)，分隔符不随语言变
   L164   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
   L551   [change_text ] IO/UITypes/UIStatsInfo.cpp
   L565   [change_text ] IO/UITypes/UIStatsInfo.cpp
-
-'!'  3 处 —— UIDailyGift 感叹标记；原生同类标记走位图，无字面量
-  L60    [Text ctor   ] IO/UITypes/UIAdmin.cpp
-  L2182  [change_text ] IO/UITypes/UIChatBar.cpp
-  L165   [Text ctor   ] IO/UITypes/UIDailyGift.cpp
 
 '-'  2 处 —— 空值占位符；原生无该字面量，locale 中性标点
   L678   [change_text ] IO/UITypes/UICharInfo.cpp
@@ -493,7 +502,7 @@ Wave-A 壳窗（依据 Net/Handlers/WaveAShellHandlers.cpp 里 emplace 到的类
   L171   [Text ctor   ] IO/UITypes/UICharInfo.cpp
 
 '>> '  1 处 —— GM 回显符号前缀；">> " 三编码 0 命中，串池 ">>"@0x73BAD0 是 BtNPT 邻居的节点名档、非该语义 ⇒ locale 中性标点
-  L160   [change_text ] IO/UITypes/UIAdmin.cpp
+  L167   [change_text ] IO/UITypes/UIAdmin.cpp
 
 'V'  1 处 —— UIDailyGift 已领标记（字母 V 当对勾）；原生走位图，无字面量
   L141   [Text ctor   ] IO/UITypes/UIDailyGift.cpp

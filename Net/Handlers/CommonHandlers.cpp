@@ -25,6 +25,7 @@
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/Window.h"
 #include "../../Graphics/Color.h"
+#include "../../Gameplay/Combat/Damage.h"
 
 #include <string>
 
@@ -41,6 +42,9 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		Window::get().set_limit_break(lb);
+		// 破功值不再只用于标题：同步给伤害 clamp（min(配置 cap, 破功值, 2^53)）。
+		// 负值/0 表示服务端未配置上限，effective_cap 会忽略该项。
+		damage::set_server_limit_break(lb);
 		std::string tip = "LimitBreak " + std::to_string(lb);
 		if (auto ui = UI::get().get_element<UIAdmin>())
 		{

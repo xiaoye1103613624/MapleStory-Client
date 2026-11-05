@@ -453,6 +453,10 @@ namespace ms
 						}
 					} catch (...) {}
 				}, []() {}, "Damage skin id");
+				// 伤害皮肤：运行时 UI.nx/UIWindow.img 无 DamageSkin 节点、Effect.nx
+				// BasicEff.img 无 damageSkin 节点（notes/r001 §4），s9 也无对应协议，
+				// 故只保留「按现金道具 id 发送使用包」的调试入口；
+				// 皮肤切换与资源装载按证据不足显式预留，不凭空造节点。
 				return Button::State::NORMAL;
 			}
 			case Buttons::BtArrayGet:

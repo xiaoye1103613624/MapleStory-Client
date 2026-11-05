@@ -28,6 +28,14 @@ namespace ms
 	SkillTooltip::SkillTooltip()
 	{
 		skill_id = 0;
+
+#ifdef USE_NX
+		// 原生技能图标画在 UIWindow.img/IconBase 32x32 灰底板上
+		// （正确端《技能悬浮提示信息.png》：图标位于 tip 左上、标题在其右侧）。
+		nl::node ib = nl::nx::UI["UIWindow.img"]["IconBase"]["0"];
+		if (ib)
+			iconbase = Texture(ib);
+#endif
 	}
 
 	void SkillTooltip::set_skill(int32_t id, int32_t level, int32_t mlevel, int64_t expiration)
@@ -115,7 +123,7 @@ namespace ms
 			levelstr += "[Next Level: " + std::to_string(level + 1) + "]\\n" + data.get_level_desc(level + 1);
 
 		icon = data.get_icon(SkillData::Icon::NORMAL);
-		name = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, data.get_name(), 320);
+		name = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, data.get_name(), 185);
 		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, descstr, 210);
 		leveldesc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, levelstr, 290);
 
@@ -153,12 +161,16 @@ namespace ms
 
 		// 框体 = 内容包围盒外扩（Q1：程序描边，见 TextTooltip.h TooltipBackdrop）
 		backdrop.draw(pos + Point<int16_t>(-6, -6), width + 30, height + 20);
-		name.draw(pos + Point<int16_t>(33, 3));
+		name.draw(pos + Point<int16_t>(102, 3));
 
 		pos.shift_y(icon_offset);
 
-		box.draw(DrawArgument(pos + Point<int16_t>(26, 21)));
-		icon.draw(DrawArgument(pos + Point<int16_t>(28, 87), 2.0f, 2.0f));
+		if (iconbase.is_valid())
+			iconbase.draw(DrawArgument(pos + Point<int16_t>(26, 23), 2.0f, 2.0f));
+		else
+			box.draw(DrawArgument(pos + Point<int16_t>(26, 21)));
+
+		icon.draw(DrawArgument(pos + Point<int16_t>(28, 25), 2.0f, 2.0f));
 		desc.draw(pos + Point<int16_t>(102, 15));
 
 		pos.shift_y(level_offset);

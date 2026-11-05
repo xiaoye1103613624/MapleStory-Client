@@ -41,6 +41,7 @@ namespace ms
 		int16_t level_offset;
 		Texture icon;
 		Texture required_icon;
+		Texture iconbase; // UIWindow.img/IconBase/0 灰底板
 
 		Text name;
 		Text desc;

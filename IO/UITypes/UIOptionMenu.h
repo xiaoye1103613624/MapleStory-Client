@@ -271,31 +271,36 @@ namespace ms
 		// 须严格小于右侧「大」字左缘 x≈231，避免滑块压住文字。
 		static constexpr int16_t TRACK_X0 = 99;
 		static constexpr int16_t TRACK_X1 = 229;
-		// 6 条滑条的滑钮顶边行（原生逐格 SAD=0.00）。
-		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 40, 70, 100, 160, 190, 220 };
-		// 5 个勾选框的画布落位（x, y）。
+		// 6 条滑条的滑钮顶边行。原值 40/70/100/160/190/220 取自旧 365 布局（_settings_map2.txt，
+		// 原生逐格 SAD=0.00）；新 299x396 底图＝旧布局整体下移 +28px（10 行中心 40→68 … 310→338，
+		// 等距 30px），故统一 +28 对齐到新底图行中心 68/98/128/188/218/248。
+		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 68, 98, 128, 188, 218, 248 };
+		// 5 个勾选框的画布落位（x, y）。y 随底图整体下移 +28 对齐（x 不变）。
 		static constexpr int16_t CHECK_BOX[5][2] = {
-			{ 241, 71 },	// 背景音乐 · 静音
-			{ 241, 101 },	// 效果音响 · 静音
-			{ 64, 251 },	// 画面效果
-			{ 64, 304 },	// 画面模式 · 窗口化
-			{ 64, 315 }		// 画面模式 · ALT+回车可切换
+			{ 241, 99 },	// 背景音乐 · 静音
+			{ 241, 129 },	// 效果音响 · 静音
+			{ 64, 279 },	// 画面效果
+			{ 64, 332 },	// 画面模式 · 窗口化
+			{ 64, 343 }		// 画面模式 · ALT+回车可切换
 		};
 		// 下拉框：盒体左上 + 中段宽度（右端箭头 18x17 实测落在 x=222）。
 		static constexpr int16_t COMBO_X = 157;
 		static constexpr int16_t COMBO_W = 60;
-		static constexpr int16_t COMBO_Y_PATH = 127;
-		static constexpr int16_t COMBO_Y_MOB = 278;
+		// 两个原生下拉盒体顶边 y：随底图整体下移 +28（127→155 截图保存位置；278→306 怪物情报）。
+		static constexpr int16_t COMBO_Y_PATH = 155;
+		static constexpr int16_t COMBO_Y_MOB = 306;
 		// 盒体高 = ComboBox 三段贴图的公共高（5x17 / 5x17 / 18x17）；列表行同宽同高。
 		static constexpr int16_t COMBO_H = 17;
 		static constexpr int16_t COMBO_TOTAL_W = 5 + COMBO_W + 18;
 		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
 		static constexpr uint8_t MOB_INFO_COUNT = 4;
 		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
-		// 多分辨率新增行：插件 rs.cpp L1973 Combo(76,338,166,18)，9 档见 rs_tier_dims。
-		// 列表向上展开（9*18=162px，从 y=176 到 338，完整落在 299x396 底板内）。
+		// 多分辨率新增行（窗口大小）：插件 rs.cpp 参考 Combo(76,338,166,18)，9 档见 rs_tier_dims。
+		// 实测新底图：该行被夹在「画面模式」(row10, y≈338) 与 OK/Cancel 分隔线(y≈369)之间，
+		// 盒体顶边取 343（18px 高 → 343~361，上不压 row10、下不压分隔线/OK_Cancel）。
+		// 列表向上展开（9*18=162px，从 y=181 到 343，完整落在 299x396 底板内）。
 		static constexpr int16_t RES_COMBO_X = 76;
-		static constexpr int16_t RES_COMBO_Y = 338;
+		static constexpr int16_t RES_COMBO_Y = 343;
 		static constexpr int16_t RES_COMBO_W = 166;
 		static constexpr int16_t RES_COMBO_H = 18;
 		static constexpr uint8_t RES_COUNT = 9;

@@ -317,9 +317,11 @@ namespace ms
 			fillheight = height;
 	}
 
-	void MapTooltip::set_minimap_title(bool)
+	void MapTooltip::set_minimap_title(bool bolded)
 	{
-		title_label = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, title);
+		// 原生通用 tip 规范：名称用 A12B（加粗），与 set_worldmap_title /
+		// EquipTooltip 的名称口径一致；desc 仍 A12M。旧实现忽略 bolded 恒用 A12M。
+		title_label = Text(bolded ? Text::Font::A12B : Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, title);
 
 		int16_t width = title_label.width();
 		int16_t height = title_label.height();

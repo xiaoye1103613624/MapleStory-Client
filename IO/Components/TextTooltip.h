@@ -40,7 +40,7 @@ namespace ms
 			// ⇒ 透出 ≈0.3%。证据与采样网格：docs/features/ui-v83-window-restore/evidence/
 			// native-verdicts-2026-11-03/native-tooltip-alpha-raw.txt。
 			// 注：原生背板「色相」是深蓝不是纯黑，量级与是否跟改另立待量项，本条只裁决 α。
-			ColorBox fill(width, height, Color(0.0f, 0.0f, 0.0f, 1.0f), 1.0f);
+			ColorBox fill(width, height, Color(0.333f, 0.333f, 0.510f, 1.0f), 1.0f);
 			fill.draw(topleft);
 
 			const Color edge(0.5f, 0.5f, 0.5f, 1.0f);

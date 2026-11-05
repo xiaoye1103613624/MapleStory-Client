@@ -52,6 +52,8 @@ namespace ms
 		void set_limit(size_t limit);
 		/// 文字相对 bounds 左上角的绘制偏移（FreeType 基线在 y，木牌矮槽需下移）。
 		void set_text_shift(Point<int16_t> shift) { text_shift = shift; }
+		/// 允许接收 UTF-8（IME/剪贴板中文）。默认 false（账号/密码等仍限 ASCII）。
+		void set_accept_unicode(bool accept) { accept_unicode = accept; }
 
 		void set_enter_callback(std::function<void(std::string)> onreturn);
 		void set_key_callback(KeyAction::Id key, std::function<void(void)> action);
@@ -77,6 +79,7 @@ namespace ms
 		Rectangle<int16_t> bounds;
 		size_t limit;
 		int8_t crypt;
+		bool accept_unicode = false;
 		State state;
 		Point<int16_t> text_shift;
 

@@ -99,6 +99,13 @@ namespace ms
 		Text textlabel;
 		int16_t xtile;
 		int16_t ytile;
+		// 九宫边框厚度（以角件尺寸为准）。BalloonForLoginProcess 实测
+		// nw/ne 22x40、sw/se 22x24：上带 40px 容纳标题「公告」，下带 24px
+		// 容纳正文——原生静止框 ≈199x68（选中频道页.png 逐像素取证）。
+		int16_t top_border;
+		int16_t bottom_border;
+		int16_t left_border;
+		int16_t right_border;
 		int16_t box_w;
 		int16_t box_h;
 	};

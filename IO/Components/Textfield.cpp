@@ -189,9 +189,14 @@ namespace ms
 					{
 						if (text.size() > 0 && markerpos > 0)
 						{
-							text.erase(markerpos - 1, 1);
+							// 按 UTF-8 码点删除：回退到光标前最近的非续字节处，
+							// 避免把多字节汉字拆成半截导致乱码。
+							size_t start = static_cast<size_t>(markerpos) - 1;
+							while (start > 0 && (static_cast<unsigned char>(text[start]) & 0xC0) == 0x80)
+								start--;
 
-							markerpos--;
+							text.erase(start, static_cast<size_t>(markerpos) - start);
+							markerpos = static_cast<int32_t>(start);
 
 							modifytext(text);
 						}
@@ -224,7 +229,11 @@ namespace ms
 					{
 						if (text.size() > 0 && markerpos < text.size())
 						{
-							text.erase(markerpos, 1);
+							size_t end = static_cast<size_t>(markerpos) + 1;
+							while (end < text.size() && (static_cast<unsigned char>(text[end]) & 0xC0) == 0x80)
+								end++;
+
+							text.erase(static_cast<size_t>(markerpos), end - static_cast<size_t>(markerpos));
 
 							modifytext(text);
 						}
@@ -266,10 +275,19 @@ namespace ms
 	{
 		for (unsigned char c : str)
 		{
-			// FreeType atlas is ASCII 32–127 only; reject anything else so
-			// IME / clipboard UTF-8 cannot produce mojibake in the slot.
-			if (c < 32 || c >= 128)
-				continue;
+			// Unicode-capable fields (e.g. map search) accept full UTF-8 so
+			// IME / clipboard CJK commits render via the FreeType glyph cache.
+			// ASCII-only fields (account/password) keep the legacy allowlist.
+			if (accept_unicode)
+			{
+				if (c < 32)
+					continue;
+			}
+			else
+			{
+				if (c < 32 || c >= 128)
+					continue;
+			}
 
 			if (belowlimit())
 			{
@@ -291,8 +309,16 @@ namespace ms
 
 		for (unsigned char c : t)
 		{
-			if (c >= 32 && c < 128)
-				filtered.push_back(static_cast<char>(c));
+			if (accept_unicode)
+			{
+				if (c >= 32)
+					filtered.push_back(static_cast<char>(c));
+			}
+			else
+			{
+				if (c >= 32 && c < 128)
+					filtered.push_back(static_cast<char>(c));
+			}
 		}
 
 		if (crypt > 0)

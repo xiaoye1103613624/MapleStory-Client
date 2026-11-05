@@ -25,7 +25,7 @@
 
 namespace ms
 {
-	// 现金商城购买包：Opcode CASHSHOP_OPERATION(325)，与 s9 CashOperationHandler action 0x03 对齐。
+	// 现金商城购买包：Opcode CASHSHOP_OPERATION(229)（已修正：原误抄 Send 侧 325，见 OutPacket.h 注释），与 s9 CashOperationHandler action 0x03 对齐。
 	// 服务端读取顺序：byte action(0x03) -> byte(占位 0) -> int useNX -> int sn。
 	class CashShopBuyPacket : public OutPacket
 	{

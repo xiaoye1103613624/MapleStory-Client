@@ -424,19 +424,10 @@ namespace ms
 		if (!focusedtextfield || text.empty())
 			return;
 
-		// FreeType atlas only has ASCII 32–127; drop anything else so IME
-		// commits cannot push out-of-range bytes into Font::chars[].
-		std::string filtered;
-		filtered.reserve(text.size());
-
-		for (unsigned char c : text)
-		{
-			if (c >= 32 && c < 128)
-				filtered.push_back(static_cast<char>(c));
-		}
-
-		if (!filtered.empty())
-			focusedtextfield->add_string(filtered);
+		// Composed text (IME / clipboard) may be UTF-8 (CJK). The Textfield
+		// applies its own allowlist: unicode-capable fields keep it, ASCII-only
+		// fields (account/password) still drop it.
+		focusedtextfield->add_string(text);
 	}
 
 	void UI::focus_textfield(Textfield* tofocus)

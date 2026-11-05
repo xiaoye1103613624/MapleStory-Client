@@ -31,17 +31,14 @@ namespace ms
 
 	Icon::Icon(std::unique_ptr<Type> type, Texture t, int16_t c) : type(std::move(type)), texture(t), count(c)
 	{
-		// 上游在这里做 texture.shift(Point(0, 32))，用于抵消 WZ 图标 origin 的
-		// 「锚点在底边」写法；本包（北斗 .nxcache）所有 icon 的 origin 都是小值
-		// （实测 Coat/Cap (-2,-1)、Glove (-4,-1)、Weapon (0,0)、Consume (-3,-1)、
-		// Skill 全部 (0,0)），再减 32 会把每个图标整体下移 32px。
-		// 依据（参考截图 现有道具+tooltip.png e75687e9 逐像素实测，见
-		// docs/features/ui-v83-window-restore/evidence/w0-icon/coords.md）：
-		// 背包格线 x=32/68/104/140（距 36）、y=46/80/114（距 34），
-		// 与 UIItemInventory 回退 slot_pos=(8,50)+步进 36/34 完全对齐（格顶 50 由
-		// R27-B2 按展开态 72 颗 Item/disabled 逐像素定案，尺子 = r27-oracle/ItemFull.json）；
-		// 白棉T恤图标墨迹左上 = 格左上 + (4,1)，而 -origin = (2,1) ⇒ 原生没有 32px 下移。
-		// 所以此处不再 shift，图标左上 = 绘制点 - origin。
+		// 物品/装备图标落位修正：北斗 .nxcache 的 item/equip 图标贴图实际可见内容
+		// 相对格顶整体下移一格（32px = Icon::cell_height）。旧实现曾用 texture.shift(0,32)
+		// 抵消，移除后物品/装备图标整体偏上一格（命中区 get_slotpos 不受影响，故悬浮
+		// 原位仍正确显示物品信息）。这里仅对 ITEM/EQUIP 类型恢复该下移；技能走
+		// StatefulIcon（SKILL）等其它类型不应用，以免三态贴图与基类锚点错开。
+		if (this->type && (this->type->get_type() == IconType::ITEM || this->type->get_type() == IconType::EQUIP))
+			texture.shift(Point<int16_t>(0, 32));
+
 		showcount = count > -1;
 		dragged = false;
 	}

@@ -167,13 +167,14 @@ namespace ms
 		static constexpr int16_t ROW_HEIGHT = 40;
 		static constexpr int16_t ROW_WIDTH = 143;
 		static constexpr Point<int16_t> SKILL_OFFSET = Point<int16_t>(11, 93);
-		// v83 经典窗单列技能行基准：行底左上角实测 (7,99)（打开了S-E-I-K页面.png，
-		// 行框 y=99/139/179/219，pitch 40；行右缘 x=148 → 左缘 148-141=7）。
-		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(7, 99);
-		// v83 经典窗列表区实测 y=99..253（154px），行高 40 → 可见 4 行。
+		// 原生（BeiDou V17.7）经典窗单列技能行基准：列表区顶 y=87..257（170px），
+		// 行高 40 → 可见 4 行；行左缘 x=10。UIWindow.img/Skill/backgrnd 逐行扫描实测
+		// （标题 0..22 / tab 23..54 / 书封暗栏 55..86 / 列表 87..257）。
+		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(10, 87);
+		// 原生经典窗列表区 y=87..257（170px），行高 40 → 可见 4 行。
 		static constexpr int16_t CLASSIC_ROWS = 4;
 		// 行内 SP 升级「+」钮相对行起点的偏移：实测 + 号框左上角 (132,119)。
-		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(125, 20);
+		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(130, 20);
 		// ---- 坐标口径（本轮实测钉死）------------------------------------------
 		// oracle = 技能展开宏指令.png；它与 UIWindow.img/Skill/backgrnd 逐像素对齐
 		// 后 xoff/yoff 均为 0（真机同口径复测：烘焙红下划线 ours 帧 x3..171 ==
@@ -204,13 +205,13 @@ namespace ms
 		// 旧值 28 是按「150px 盒内居中」算的，那个语义在本引擎里不存在，于是整串
 		// 文字压到书页图标上（真机实测 ours 墨迹中心 帧 17）。y 由 y_for_ink_top 反解。
 		static constexpr int16_t BOOK_TEXT_CENTER_X = 105;
-		static constexpr int16_t BOOK_TEXT_INK_TOP = 67;
+		static constexpr int16_t BOOK_TEXT_INK_TOP = 68;
 		// 宏指令钮（Basic.img/BtMacro 48x18）：实测左上角 (121,265)。
 		static constexpr Point<int16_t> MACRO_BTN_TOPLEFT = Point<int16_t>(121, 265);
 		// 滚动条：Basic.img/VScr（宽12）prev/next 钮实测左上角 x=156、顶 y=100、底 y=242。
-		static constexpr int16_t CLASSIC_SLIDER_X = 156;
-		static constexpr int16_t CLASSIC_SLIDER_TOP = 100;
-		static constexpr int16_t CLASSIC_SLIDER_BOTTOM = 242;
+		static constexpr int16_t CLASSIC_SLIDER_X = 158;
+		static constexpr int16_t CLASSIC_SLIDER_TOP = 87;
+		static constexpr int16_t CLASSIC_SLIDER_BOTTOM = 258;
 		static constexpr Point<int16_t> SKILL_META_OFFSET = Point<int16_t>(2, 2);
 		static constexpr Point<int16_t> LINE_OFFSET = Point<int16_t>(0, 37);
 

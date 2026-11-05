@@ -763,7 +763,7 @@ namespace ms
 				Point<int16_t>(COMBO_X, COMBO_Y_MOB + COMBO_H + COMBO_H * i),
 				Point<int16_t>(COMBO_TOTAL_W, COMBO_H));
 
-		// 多分辨率：第三个下拉盒体 (76,338,166,18) + 9 个向上展开的条目。
+		// 多分辨率：第三个下拉盒体 (76,343,166,18) + 9 个向上展开的条目（本端盒体顶边取 343，对齐新底图）。
 		sysopt_res_open = false;
 		buttons[RESOLUTION] = std::make_unique<AreaButton>(
 			Point<int16_t>(RES_COMBO_X, RES_COMBO_Y),
@@ -946,7 +946,7 @@ namespace ms
 	}
 
 	// 多分辨率下拉：复用 Basic.img/ComboBox 三段贴图铺出 166x18 的盒体，
-	// 坐标 (76,338) 对齐插件 rs.cpp L1973；当前项文字走 i18n 的 9 条档位文案。
+	// 坐标 (76,343) 对齐插件 rs.cpp L1973 同款三段贴图；本端盒体顶边取 343 贴合新底图（窗口大小行）。
 	void UISysOpt::draw_resolution_combo() const
 	{
 		nl::node src = nl::nx::UI["Basic.img"]["ComboBox"]["normal"][0];
@@ -989,7 +989,7 @@ namespace ms
 			.draw(position + Point<int16_t>(RES_COMBO_X + 6, RES_COMBO_Y + 2));
 	}
 
-	// 9 条档位向上展开（y=176..338），完整落在 299x396 底板内，不会盖住底部按钮。
+	// 9 条档位向上展开（y=181..343），完整落在 299x396 底板内，不会盖住底部按钮。
 	void UISysOpt::draw_resolution_list() const
 	{
 		const Point<int16_t> lt(position.x() + RES_COMBO_X, position.y() + RES_LIST_Y);

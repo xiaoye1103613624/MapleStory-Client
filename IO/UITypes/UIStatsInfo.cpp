@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -214,6 +214,8 @@ namespace ms
 			// 字形的 bitmap_top，而 SimHei 11px 的 CJK 分 9/10 两档（170 字抽样：
 			// 126 字 9、42 字 10）——「新手」的顶是「新」= 10，「50 / 50」的顶是
 			// '/' = 9。按「行类别」挑常量必然错 1px，只有按串精算才对。
+			// （上面那组 9/10 是 SimHei 的读数，R28-B5 换成思源宋体后数值变了，
+			//  但结论不变：正因为逐字不齐，才不能按行类别抄常量。）
 			//
 			// r27 更正 r15：r15 手抄的 bitmap_top「数字 8、'/' 11、CJK 11」里后两个
 			// 是 PIL 口径，FreeType 的 glyph.bitmap_top 实测 9~10 ⇒ 那几行一直画低
@@ -805,10 +807,30 @@ namespace ms
 
 		// classic：「详情」钮常显（点它=开/关切换，见 button_pressed）；
 		// 收起钮 BtHide 只在展开时可点 —— 修复「展开后收不回」（§6-Q2）。
+		// 展开时窗口加宽以容纳主窗右侧的 backgrnd2 详情板（否则画在 x>主窗宽 处被裁切、
+		// 右侧「攻击力/防御等」详情面板不可见）；收起恢复主窗宽。
+		if (classic)
+		{
+			nl::node statnode = UiAssetResolve::window4("Stat");
+			Texture mainbg = statnode["backgrnd"];
+
+			if (mainbg.is_valid())
+			{
+				const int16_t main_w = mainbg.get_dimensions().x();
+				const int16_t main_h = mainbg.get_dimensions().y();
+				const int16_t detail_w = classic_detail.is_valid() ? classic_detail.get_dimensions().x() : 0;
+				const int16_t gap = 4;
+
+				dimension = enabled
+					? Point<int16_t>(main_w + gap + detail_w, main_h)
+					: Point<int16_t>(main_w, main_h);
+			}
+		}
+
 		if (auto* b = find_btn(buttons, Buttons::BT_DETAILOPEN))
 			b->set_active(classic || !enabled);
 		if (auto* b = find_btn(buttons, Buttons::BT_DETAILCLOSE))
-			b->set_active(enabled);
+			b->set_active(!classic && enabled);
 	}
 
 	void UIStatsInfo::update_ap()

@@ -1586,7 +1586,9 @@ namespace ms
 			quads.emplace_back(SCREEN.left(), SCREEN.right(), SCREEN.top(), SCREEN.bottom(), nulloffset, color, 0.0f);
 		}
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		// 中性黑兜底：任何一帧 quads 为空（换图装图竞态、atlas_clear_pending
+		// 延迟清理、Stage 尚未激活）时露出的应是黑底而非刺眼纯白。
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		GLsizeiptr csize = quads.size() * sizeof(Quad);
@@ -1628,6 +1630,14 @@ namespace ms
 
 		if (coverscene)
 			quads.pop_back();
+	}
+
+	void GraphicsGL::read_pixels(int16_t width, int16_t height, uint8_t* out) const
+	{
+		// 视图宽度未必是 4 的倍数，关掉按行对齐否则回读会错位。
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, out);
+		glPixelStorei(GL_PACK_ALIGNMENT, 4);
 	}
 
 	void GraphicsGL::clearscene()

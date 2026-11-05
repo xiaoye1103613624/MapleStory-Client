@@ -32,6 +32,7 @@
 | A1 | 登录 → 选世界 → 选角 → 进游戏 | 四屏版式与 `登录界面.png / 选择频道页.png / 选择角色页.png / 进入游戏页.png` 一致（上一轮 ui-layout-v83-unify 的成果） | 无新增错位；不崩；能正常进图 |
 | A2 | 进图后站立 30s，打一只怪 | 无崩溃、无刷屏日志；`_ui_asset_diag.log` 行数不随时间增长（只写一次） | 帧率无明显下降 |
 | A3 | 走路时看怪物/NPC 头顶名牌 | 中文名牌**仍正常**（W12 改了 `NameTag` 三切片，但游戏内名牌走的是 `GraphicsGL` 的 `Text::Background::NAMETAG`，本轮**没**接 id → 预期就是「和改之前一样」） | 无花屏/无空白框 |
+| A4 | 选世界 → 点世界牌展开频道板 → 点选频道 | **B5 精修（2026-11-02，已实机验证）**：① 红圈以 CH.N 标签为中心圈选——绘制参数 = 单元格原点 + `(-2,-9)` + `get_origin()` + 逐帧居中（选中频道页.png 逐像素定标：CH.1 文字核帧内 x10..27/y5..11 == 参照 x481..498/y342..348 推得参照单元格原点 (471,337)，末帧红弧帧内 x1..58/y0..31 == 参照 x470..520/y328..359）。**origin 三源矛盾**（打包 UI.wz 无 origin / .nxcache (29,16) / 游戏实际读的 Data/UI/Login.img 实测 (12,16)——R1/R2 以运行时为准），`get_origin()` 补偿**必须保留**；② 负载条嵌在单元烘焙槽内（原点 + `(7,18)`），0 负载**不画**彩虹条（参照帧槽为空）——旧实现彩虹条画在原点 (0,0) 盖住 CH.N 标签。实机复测：渲染弧 bbox (451..508,346..377) 与 origin=(12,16) 模型预测逐像素一致，相对单元格左/上/下三边 (-1,-9,+22) 与参照完全相等（右缘 7px 差为尾部半透明像素混色/资产微差）。证据 `evidence/b5-worldselect/`（live-ch1-circle.png / live-panel-empty-gauge.png） | 红圈圈住选中频道的 CH.N 标签（文字在 C 形开口内、上弧越出单元顶）；各频道槽内空/按负载显示彩虹条，标签不被遮挡 |
 
 ---
 
@@ -125,7 +126,7 @@
 | RC7 商城协议（出站 40 vs `CASHSHOP_OPERATION=229`，HUD 换态靠 recv `SET_CASH_SHOP=127`） | **不换**（跨 s9 协议线，挂 #24 T14）。本轮只把「点了没反应」变「明确提示未支持」 |
 | NPC 对话乱码 | **不属本线** → 属 T13（IME/文本处理）。取证已转记：`UINpcTalk.cpp:467-519` 残留收尾 `#`、`:157-165` 逐字节打字机 |
 | 「目录」`GameMenu` 5 钮 | **已实装**（底板 + 5 颗 81×25 真钮；频道/游戏设置/系统设置/游戏结束均有落点，仅「场景变更」显式预留黄字提示）→ 见 [notes/open-issues.md §A2](notes/open-issues.md) |
-| 小地图 −/＋ 缩放钮 | 本包无 `BtMin/BtMax/BtSmall/BtBig/BtNpc` 与 `Window/Max` 子树，**素材代次差异**，无法还原（§C2） |
+| 小地图 −/＋ 缩放钮 | **已还原**（2026-11-05）：`UIWindow.img/MiniMap` 子树无 `BtMin/BtMax`，但全包 `Basic.img/BtMin`（蓝 −）/`BtMax`（灰 +）12×12 四态是真件、聊天栏已用；已绑回 `UIMiniMap BT_MIN/BT_MAX` 并实机验证三态切换 + `minimap.type` 持久化 + 重启保持。见 [docs/features/minimap-mode-switch/README.md](../minimap-mode-switch/README.md)。`BtSmall/BtBig/BtNpc` 仍显式预留（§C2 旧结论对 MiniMap 子树成立、对全包不成立） |
 | 宠物槽穿戴、任务 `BtOK/BtNo/BtAlert/BtMarkNpc` 动作 | 版式就绪、动作预留（不发明协议） |
 | 大地图 NPC 列表 / 搜索栏 / 简单模式 | 本包无件，显式预留 |
 | 游戏内名牌接真 id | 需跨 4 个文件授权 |

@@ -745,10 +745,10 @@ namespace ms
 		{
 			case Buttons::BT_CLASSIC_SHOP:
 			{
-				// 本包商城走 s9 协议线（EnterCashShop 40 vs 229），跨线必失败（PLAN RC7）。
-				// 不换 opcode，改成玩家可见提示，避免「点了没反应」。
-				if (auto chatbar = UI::get().get_element<UIChatBar>())
-					chatbar->show_message("商城暂未支持。", UIChatBar::MessageType::YELLOW);
+				// ENTER_CASHSHOP(40) 已核实 == s9 ENTER_CASHSHOP(0x28)，EnterCashShopHandler
+				// 完整可用（open-issues C5 的「40 vs 229」结论过时——那是 CASHSHOP_OPERATION 的
+				// 对比，进商城走的是独立 opcode）。与 BT_CASHSHOP 同路径直接进商城。
+				EnterCashShopPacket().dispatch();
 				break;
 			}
 			case Buttons::BT_CASHSHOP:
@@ -1348,8 +1348,18 @@ namespace ms
 			}
 			else if (keycode == 'D' || keycode == 'd')
 			{
-				UseDoorPacket(true).dispatch();
-				LOG(LOG_DEBUG, "UIStatusBar: UseDoor party");
+				// USE_DOOR 语义修正（同 UIGameMenu 'O'）：真门踩线自动上行走
+				// MapFieldMarkers::check_doors；本键 SoftKey 输 ownerid 调试兜底。
+				UI::get().emplace<UISoftKey>([](const std::string& s) {
+					try {
+						int32_t owner = std::stoi(s);
+						if (owner > 0) {
+							UseDoorPacket(owner).dispatch();
+							LOG(LOG_DEBUG, "UIStatusBar: UseDoor owner=" << owner);
+						}
+					} catch (...) {}
+				}, []() {}, "Door owner cid");
+				LOG(LOG_DEBUG, "UIStatusBar: UseDoor prompt");
 			}
 			else if (keycode == 'K' || keycode == 'k')
 			{

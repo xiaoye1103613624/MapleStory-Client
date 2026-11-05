@@ -98,7 +98,7 @@ bool try_maple_btn(map<uint16_t, unique_ptr<Button>>& buttons, uint16_t id, nl::
 
 ## 5. 预留清单（显式，非静默）
 
-`BtAuto`（能力值自动加点）｜宠物槽**穿戴逻辑**｜modern 装备分支 6 颗（`btEffect/btSalon/BtConsumeSetting/BtException/BtShop/BtSlot`，UIEquipInventory.cpp:288-293）｜`Skill/recommend` 显示条件（新手参考帧里看不到，疑高转职/选中态）｜任务 `BtOK/BtNo/BtAlert/BtMarkNpc` 动作（无现成协议，不发明）｜`UIGameMenu` 的**「场景变更」一颗**（本客户端无任何皮肤 UI/协议线 → 点它出黄字「场景变更暂未支持。」；其余 4 颗已实装，见 [notes/open-issues.md §A2](notes/open-issues.md)）｜大地图 `ListNpc`/`WorldMapSearch`/`BtSearch`/`BtAutoFly_1`/`BtNaviRegister`/`MiniMapSimpleMode`｜游戏内名牌接真 id（需改 `Npc/Mob/Char/UIStateGame`，未授权）｜任务窗 Tab 粉底/灰底、黑边框、选中行横条（本包无位图，**保留 ColorBox** 并附实测色值）｜小地图 −/＋ 缩放钮（本包无 `BtMin/BtMax/BtSmall/BtBig/BtNpc` 与 `Window/Max` 子树，素材代次差异）。
+`BtAuto`（能力值自动加点）｜宠物槽**穿戴逻辑**｜modern 装备分支 6 颗（`btEffect/btSalon/BtConsumeSetting/BtException/BtShop/BtSlot`，UIEquipInventory.cpp:288-293）｜`Skill/recommend` 显示条件（新手参考帧里看不到，疑高转职/选中态）｜任务 `BtOK/BtNo/BtAlert/BtMarkNpc` 动作（无现成协议，不发明）｜`UIGameMenu` 的**「场景变更」一颗**（本客户端无任何皮肤 UI/协议线 → 点它出黄字「场景变更暂未支持。」；其余 4 颗已实装，见 [notes/open-issues.md §A2](notes/open-issues.md)）｜大地图 `ListNpc`/`WorldMapSearch`/`BtSearch`/`BtAutoFly_1`/`BtNaviRegister`/`MiniMapSimpleMode`｜游戏内名牌接真 id（需改 `Npc/Mob/Char/UIStateGame`，未授权）｜任务窗 Tab 粉底/灰底、黑边框、选中行横条（本包无位图，**保留 ColorBox** 并附实测色值）｜小地图 −/＋ 缩放钮 **已还原**：`UIWindow.img/MiniMap` 子树确无 `BtMin/BtMax`，但**全包 `Basic.img` 有现成真件** `BtMin`（蓝 −）/ `BtMax`（灰 +）12×12 四态（聊天栏早已使用，见 `evidence/w4-chatbar/coords.md:18` 逐像素比对）；2026-11-05 已把它绑回 `UIMiniMap` 的 `BT_MIN/BT_MAX`，三态可点可切、跨图一致、`minimap.type` 持久化到 `Settings`，无需重绘——详见 [docs/features/minimap-mode-switch/README.md](../minimap-mode-switch/README.md)。`BtSmall/BtBig/BtNpc` 包内确无，仍为显式预留。
 
 ## 6. 构建与产物
 

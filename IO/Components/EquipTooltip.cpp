@@ -642,13 +642,20 @@ namespace ms
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
 
-		// 原生就是「6 张职业名叠在同一坐标」——全职业装备（reqjob=0）时糊成一团白块。
-		// 真机对照（正确客户端 e75687e9，白棉T恤 tooltip）：把 Can 下 6 张职业名按同原点
-		// 合成后与原生截图逐像素比对，SAD=0.12、仅取原生墨点时 SAD=0.00；改用单张职业名
-		// 则 SAD 95~148。⇒ 横排可读版是偏离原生，此处按原生保真（证据见
-		// docs/features/ui-v83-window-restore/evidence/w5-tooltip/equip-native-compare.md §4）。
-		for (auto& jbit : okjobs)
-			jobs[canequip[MapleStat::Id::JOB]].at(jbit).draw(job_position);
+		// 职业列表 = 横排一行（2026-11-04 正确端截图《背包中鼠标悬浮物品上显示的物品
+		// 信息内容.png》复核：全职业装备的 6 个职业名沿一行依次排开、间距 2px，并非
+		// 此前 SAD 对拍判定的同原点叠绘 —— 叠绘只在单职业装备上碰巧成立，全职业时
+		// 糊成白块正是用户所报缺陷。旧证据 equip-native-compare.md §4 作废）。
+		{
+			int16_t job_x = 0;
+			const auto& jobmap = jobs[canequip[MapleStat::Id::JOB]];
+			for (auto& jbit : okjobs)
+			{
+				const Texture& jobtex = jobmap.at(jbit);
+				jobtex.draw(job_position + Point<int16_t>(job_x, 0));
+				job_x += static_cast<int16_t>(jobtex.get_dimensions().x() + 2);
+			}
+		}
 
 		separator.draw(pos + Point<int16_t>(0, 47));
 
@@ -749,9 +756,17 @@ namespace ms
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
 
-		// 与主窗体同一处：原生按同原点叠绘（见上面原生保真注释）。
-		for (auto& jbit : okjobs_preview)
-			jobs[canequip_preview[MapleStat::Id::JOB]].at(jbit).draw(job_position);
+		// 与主窗体同一处：原生横排一行（证据见上方注释）。
+		{
+			int16_t job_x = 0;
+			const auto& jobmap = jobs[canequip_preview[MapleStat::Id::JOB]];
+			for (auto& jbit : okjobs_preview)
+			{
+				const Texture& jobtex = jobmap.at(jbit);
+				jobtex.draw(job_position + Point<int16_t>(job_x, 0));
+				job_x += static_cast<int16_t>(jobtex.get_dimensions().x() + 2);
+			}
+		}
 
 		separator.draw(pos + Point<int16_t>(0, 47));
 
