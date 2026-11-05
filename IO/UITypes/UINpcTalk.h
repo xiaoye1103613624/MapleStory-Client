@@ -68,7 +68,24 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
+		// GetText/GetNumber 线参（BeiDou PacketCreator.getNPCTalkText/Num + IDA sub_9AC732/9AC7CB）
+		struct TalkInputParams
+		{
+			std::string def_text;
+			int32_t def_number = 0;
+			int32_t min_number = 0;
+			int32_t max_number = 0;
+			// GetNumber 包内带了 def/min/max 时置位；未置位则只做本地空/非 int 校验
+			bool has_number_bounds = false;
+			// GetText 包尾 int（常为 0）；仅当 >0 时作最小长度（对齐 9AB50A type3 vs this+0xDC）
+			int32_t text_min_len = 0;
+			// Edit 字符上限：AskNumber 助手常传 10→this+0xCC；GetText 未进包则用默认
+			int32_t edit_maxlen = 0;
+		};
+
 		void change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speaker, const std::string& text);
+		void change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speaker, const std::string& text,
+			const TalkInputParams& input);
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -130,6 +147,17 @@ namespace ms
 		static constexpr int16_t INPUT_WHITE_H = 16;
 		static constexpr int16_t INPUT_EDIT_H = 14;
 		static constexpr int16_t INPUT_STACK = static_cast<int16_t>(2 + INPUT_BLACK_H + 8);
+		// Avatar 变体（IDA sub_9A8716，a1[41]/speaker 头像态）：无黑白框；
+		//   Edit(1000)=(19, H-73) 226×15；BtOK=(158,H-30)；BtClose=(208,H-30)。
+		// 本仓 H-26 ≈ height+BTN_DY ⇒ H-30 = height+BTN_DY-4；Edit 相对 OK 高 43。
+		static constexpr int16_t INPUT_AVATAR_EDIT_X = 19;
+		static constexpr int16_t INPUT_AVATAR_EDIT_W = 226;
+		static constexpr int16_t INPUT_AVATAR_EDIT_H = 15;
+		static constexpr int16_t INPUT_AVATAR_EDIT_ABOVE_OK = 43;
+		static constexpr int16_t BTN_AVATAR_OK_X = 158;
+		static constexpr int16_t BTN_AVATAR_CLOSE_X = 208;
+		static constexpr int16_t BTN_AVATAR_Y_DELTA = 4; // H-30 vs 非 Avatar H-26
+		static constexpr int16_t INPUT_AVATAR_STACK = 56; // 预留正文下输入带（约 H-73 带）
 		// SENDSIMPLE 选中态（IDA sub_9A3E9F）：黑 1px 底线 + #919191 虚线（3 on / 3 off），宽 = 标签宽+8。
 		static constexpr int16_t SIMPLE_UL_EXT = 8;
 		static constexpr uint8_t SIMPLE_DASH_R = 0x91;
@@ -206,6 +234,8 @@ namespace ms
 		Textfield input_field;
 		bool input_active = false;
 		int16_t input_box_y = 0;
+		TalkInputParams input_params;
+		bool input_avatar_layout = false;
 
 		std::function<void(bool)> onmoved;
 

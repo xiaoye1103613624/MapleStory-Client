@@ -45,6 +45,7 @@
 
 ## 4. 局限 / pending
 
-- Avatar 变体 `0x9A8716`（固定 226×15 @ y=H-73）未接。
-- 线参 min/max/maxlen（`this+52/53/55`）未从 `NpcTalk` 包解析，校验仅本地空/非 int。
+- ~~Avatar 变体 `0x9A8716`~~ → **A11f 已接**（见 a11f）。
+- ~~线参 min/max~~ → **A11f 已接**（GetNumber）；GetText 包尾 int>0 才作 min_len。
 - 真机：输入槽相对正文间距、光标基线 ±1px。
+- 原生 tip 文案未接。

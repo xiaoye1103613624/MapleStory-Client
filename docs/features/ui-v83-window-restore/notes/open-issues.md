@@ -318,6 +318,12 @@ IDA `sub_9A3E9F`：匹配 `list[cur]` 的选项下画黑 1px 实线 + `#919191` 
 BtOK=`W-54`。本仓内嵌 `Textfield`，撤 SoftKey 旁路。Avatar 变体与 min/max 线参预留。
 证据：[npc-talk-utildlgex-align/evidence/a11e-gettext-getnumber-layout-ida.md](../../npc-talk-utildlgex-align/evidence/a11e-gettext-getnumber-layout-ida.md)。
 
+### A11f GetText Avatar + 包内 min/max—— **已定案并接线（2026-11-05）**
+
+IDA `0x9A8716`：Avatar Edit `(19,H-73) 226×15`，OK@158 / Close@208 @`H-30`，无黑白框。  
+包：GetNumber `def/min/max`（BeiDou `getNPCTalkNum`）+ `sub_9AB50A` 全数字/范围校验；失败不关窗。  
+证据：[npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md](../../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
+
 ### A12 退出路径 `STATUS_HEAP_CORRUPTION`（既有，非本轮引入，未修）
 
 04:42 那份**能正常在线一小时**的产物（md5 `51d3fe17…`，PID 49660），在我用 `_quit.py`

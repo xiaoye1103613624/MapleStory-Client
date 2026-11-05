@@ -41,14 +41,42 @@ namespace ms
 		recv.skip(1);
 
 		int32_t npcid = recv.read_int();
-		int8_t msgtype = recv.read_byte(); // 0 Say, 1 YesNo, 4 Simple, 12 AcceptDecline
+		int8_t msgtype = recv.read_byte(); // 0 Say, 1 YesNo, 2 GetText, 3 GetNumber, 4 Simple, 12 AcceptDecline
 		int8_t speaker = recv.read_byte();
 		std::string text = recv.read_string();
 
 		int16_t style = 0;
+		UINpcTalk::TalkInputParams input;
 
-		if (msgtype == 0 && recv.available() > 0)
+		if (msgtype == 0 && recv.length() >= 2)
 			style = recv.read_short();
+		// BeiDou PacketCreator.getNPCTalkText：def string + int(常 0)
+		// getNPCTalkNum：def/min/max int + int(常 0)。校验依据 IDA sub_9AB50A / sub_9AC732。
+		// 注意：InPacket::available() 是 bool；剩余字节数须用 length()。
+		else if (msgtype == 2)
+		{
+			if (recv.length() >= 2)
+				input.def_text = recv.read_string();
+			if (recv.length() >= 4)
+			{
+				const int32_t tail = recv.read_int();
+				if (tail > 0)
+					input.text_min_len = tail;
+			}
+		}
+		else if (msgtype == 3)
+		{
+			if (recv.length() >= 12)
+			{
+				input.def_number = recv.read_int();
+				input.min_number = recv.read_int();
+				input.max_number = recv.read_int();
+				input.has_number_bounds = true;
+				input.edit_maxlen = 10; // IDA AskNumber 助手 sub_9AC732 a6→this+0xCC 常 10
+			}
+			if (recv.length() >= 4)
+				recv.read_int(); // trailing padding（服务端写 0）
+		}
 		while (recv.available())
 			recv.skip_byte();
 
@@ -64,7 +92,7 @@ namespace ms
 		UI::get().enable();
 
 		if (auto npctalk = UI::get().get_element<UINpcTalk>())
-			npctalk->change_text(npcid, msgtype, style, speaker, text);
+			npctalk->change_text(npcid, msgtype, style, speaker, text, input);
 		// NpcTalk 已显，不重复 tip
 	}
 

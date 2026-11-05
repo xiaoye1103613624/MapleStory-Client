@@ -210,8 +210,9 @@
 - **A11b「下项」（2026-11-05 已接线，待真机）**：`SENDSIMPLE` 右下「下项」应激活；悬停选项后点下项 / 回车 → 出站 `NPC_TALK_MORE` + selection（与点 `#L` 同包）；点 `#L` 直发仍通；宋体/A12M 不变。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
 - **A11c 框体/正文/槽位（2026-11-05 已接线，待真机）**：α 保持 1.0；正文按 content 高居中；Next=`W-78`、OK=`W-54`、Next 纵向高于 Close 51px。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
 - **A11d 高亮（2026-11-05 已接线，待真机）**：悬停/↑↓ 后选项下应有黑底线 + 灰虚线 `#919191`；字色仍 DARKGREY。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)。
-- **A11e GetText/GetNumber（2026-11-05 已接线，待真机）**：正文下黑/白输入槽 + 内嵌光标；右下「确定」可点；OK/回车发包；空串/非整数不发。证据：同上。
-- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；GetText Avatar 变体；min/max 线参校验。
+- **A11e GetText/GetNumber（2026-11-05 已接线，待真机）**：正文下黑/白输入槽 + 内嵌光标；右下「确定」可点；OK/回车发包。证据：同上。
+- **A11f Avatar + min/max（2026-11-05 已接线，待真机）**：`speaker=1` 无黑白框、Edit 约 226 宽；GetNumber 超 min/max 不发包不关窗。证据：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)。
+- **仍预留**：KeyDown 持续技松开取消（无 cancel 上行证据）；原生 tip 817–821；Pet inset。
 
 ## 18. 隐藏门三态
 
@@ -235,16 +236,30 @@
 
 ## 20. NPC GetText / GetNumber 布局 A11e
 
-- **前置**：脚本 `cm.sendGetText` / `cm.sendGetNumber`（或等价 msgtype 2/3）。
+- **前置**：脚本 `cm.sendGetText` / `cm.sendGetNumber`（或等价 msgtype 2/3），`speaker=0`。
 - **操作**：
   1. 打开后确认正文下方有黑边白底输入槽，光标可打字；右下「确定」激活、左下「关闭」仍在。
-  2. 输入非空文本（GetText）或整数（GetNumber）→ 点确定或回车 → 出站 `NPC_TALK_MORE`（msgtype=2 带 string / msgtype=3 带 int）。
-  3. 空串（GetText）或非数字（GetNumber）点确定 → 不应发包、窗可仍在或保持可改。
+  2. 输入文本（GetText）或整数（GetNumber）→ 点确定或回车 → 出站 `NPC_TALK_MORE`（msgtype=2 带 string / msgtype=3 带 int）。
+  3. 非数字（GetNumber）点确定 → 不应发包、窗保持可改。
   4. 肉眼：输入槽左缘约 x=157（相对窗）；宋体/A12M；非 Avatar 皮肤。
 - **期望**：服务端收到文本/数字并推进；无崩。
 - **opcode**：c2s `NPC_TALK_MORE`。
 - **文档**：[npc-talk-utildlgex-align](../npc-talk-utildlgex-align/)
-- **仍预留**：Avatar 皮肤输入槽；包内 min/max/maxlen 校验。
+
+## 21. NPC GetText Avatar + GetNumber min/max A11f
+
+- **前置**：
+  - Avatar：`cm.sendGetText(text, speaker=1)` 或等价（玩家头像皮肤）。
+  - min/max：`cm.sendGetNumber(text, def, min, max)`（如 min=1 max=100）。
+- **操作**：
+  1. Avatar：确认**无**黑白输入框，Edit 约在窗中偏下、宽约 226；「确定」约 x=158、「关闭」约 x=208（相对窗左）；宋体不变。
+  2. GetNumber：输入 `<min` 或 `>max` 或含非数字 → 点确定/回车 → **不发包、窗不关**；输入范围内整数 → 发包并关窗。
+  3. GetNumber 打开时输入框应预填 `def`。
+  4. 非 Avatar GetText/Number 回归：黑白框与 A11e 行为仍在。
+- **期望**：服务端仅在合法提交时推进；无崩；未回 SimHei。
+- **opcode**：c2s `NPC_TALK_MORE`。
+- **文档**：[npc-talk-utildlgex-align/evidence/a11f](../npc-talk-utildlgex-align/evidence/a11f-gettext-avatar-minmax-ida.md)
+- **仍预留**：原生 tip 文案（817–821）；Pet `speaker&6` inset=25；ScriptMessage 全量 OnPacket 逐行对齐。
 
 ## 7. SET_HPMPALERT
 

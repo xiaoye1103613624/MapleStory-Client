@@ -34,9 +34,11 @@
 #include "../../Graphics/Geometry.h"
 
 #include <cctype>
+#include <climits>
 #include <map>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -185,20 +187,25 @@ namespace ms
 			}
 		}
 
-		// GetText/GetNumber 输入槽：IDA sub_9A83F6 黑框(-16777216) + 白底(-1) + Edit。
+		// GetText/GetNumber 输入槽：
+		//   非 Avatar：IDA sub_9A83F6 黑框(-16777216) + 白底(-1) + Edit；
+		//   Avatar：IDA sub_9A8716 仅 Edit（无 DrawRect 黑白框）。
 		if (input_active)
 		{
-			const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
-			const int16_t bx = static_cast<int16_t>(position.x() + INPUT_LEFT - 1);
-			const int16_t by = static_cast<int16_t>(position.y() + input_box_y);
-			const int16_t bw = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 3);
-			const int16_t wx = static_cast<int16_t>(position.x() + INPUT_LEFT);
-			const int16_t wy = static_cast<int16_t>(by + 1);
-			const int16_t ww = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 1);
-			ColorBox(bw, INPUT_BLACK_H, Color::Name::BLACK, 1.0f)
-				.draw(DrawArgument(Point<int16_t>(bx, by)));
-			ColorBox(ww, INPUT_WHITE_H, Color::Name::WHITE, 1.0f)
-				.draw(DrawArgument(Point<int16_t>(wx, wy)));
+			if (!input_avatar_layout)
+			{
+				const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
+				const int16_t bx = static_cast<int16_t>(position.x() + INPUT_LEFT - 1);
+				const int16_t by = static_cast<int16_t>(position.y() + input_box_y);
+				const int16_t bw = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 3);
+				const int16_t wx = static_cast<int16_t>(position.x() + INPUT_LEFT);
+				const int16_t wy = static_cast<int16_t>(by + 1);
+				const int16_t ww = static_cast<int16_t>(dlg_w - 2 * INPUT_LEFT + 1);
+				ColorBox(bw, INPUT_BLACK_H, Color::Name::BLACK, 1.0f)
+					.draw(DrawArgument(Point<int16_t>(bx, by)));
+				ColorBox(ww, INPUT_WHITE_H, Color::Name::WHITE, 1.0f)
+					.draw(DrawArgument(Point<int16_t>(wx, wy)));
+			}
 			input_field.draw(Point<int16_t>(0, 0));
 		}
 	}
@@ -246,13 +253,21 @@ namespace ms
 
 	Button::State UINpcTalk::button_pressed(uint16_t buttonid)
 	{
-		// 先快照输入：deactivate 会清焦点，OK 提交必须读关窗前的文本。
-		std::string input_snapshot;
+		// GetText/GetNumber 点 OK：先校验；失败则保持开窗（对齐 IDA sub_9AB50A 弹 tip 不收口）。
 		const bool submit_input = input_active
 			&& buttonid == Buttons::OK
 			&& (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER);
 		if (submit_input)
-			input_snapshot = input_field.get_text();
+		{
+			if (!dispatch_input_field())
+			{
+				LOG(LOG_DEBUG, "UINpcTalk: input OK reject; keep dialog");
+				return Button::State::NORMAL;
+			}
+			clear_input_field();
+			deactivate();
+			return Button::State::NORMAL;
+		}
 
 		clear_input_field();
 		deactivate();
@@ -356,44 +371,11 @@ namespace ms
 				break;
 			}
 			case TalkType::SENDGETTEXT:
-			{
-				switch (buttonid)
-				{
-					case Buttons::CLOSE:
-						NpcTalkMorePacket(lastmsg, 0).dispatch();
-						break;
-					case Buttons::OK:
-						// IDA sub_9AB50A：OK 读 Edit 内容后校验收口；本仓内嵌 Textfield。
-						if (!input_snapshot.empty())
-						{
-							NpcTalkMorePacket(input_snapshot).dispatch();
-							LOG(LOG_DEBUG, "UINpcTalk: GetText OK len=" << input_snapshot.size());
-						}
-						break;
-				}
-				break;
-			}
 			case TalkType::SENDGETNUMBER:
 			{
-				switch (buttonid)
-				{
-					case Buttons::CLOSE:
-						NpcTalkMorePacket(lastmsg, 0).dispatch();
-						break;
-					case Buttons::OK:
-						try
-						{
-							const int32_t n = std::stoi(input_snapshot);
-							NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
-							LOG(LOG_DEBUG, "UINpcTalk: GetNumber OK=" << n);
-						}
-						catch (...)
-						{
-							LOG(LOG_DEBUG, "UINpcTalk: GetNumber OK reject non-int");
-						}
-						break;
-				}
-
+				// OK 已在入口经 dispatch_input_field 收口；此处仅处理关闭。
+				if (buttonid == Buttons::CLOSE)
+					NpcTalkMorePacket(lastmsg, 0).dispatch();
 				break;
 			}
 			case TalkType::SENDSIMPLE:
@@ -782,8 +764,19 @@ namespace ms
 
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx)
 	{
+		change_text(npcid, msgtype, style, speakerbyte, tx, TalkInputParams{});
+	}
+
+	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx,
+		const TalkInputParams& input)
+	{
 		apply_dlg_skin(speakerbyte);
 		dlg_speaker = speakerbyte;
+		input_params = input;
+		// speaker==1 → UtilDlgEx_Avatar 皮肤；布局走 sub_9A8716（IDA a1[41] 非零）。
+		input_avatar_layout = (speakerbyte == 1)
+			&& (get_by_value(msgtype) == TalkType::SENDGETTEXT
+				|| get_by_value(msgtype) == TalkType::SENDGETNUMBER);
 
 		msgtype_wire = msgtype;
 		type = get_by_value(msgtype);
@@ -852,14 +845,16 @@ namespace ms
 			text_draw_y = static_cast<int16_t>(
 				top.height() + (height - text_block_height) / 2 + TEXT_Y_PAD);
 
-		// GetText/GetNumber：在正文下方留输入栈（IDA sub_9A83F6），正文在剩余区内再居中。
+		// GetText/GetNumber：在正文下方留输入栈，正文在剩余区内再居中。
+		//   非 Avatar：IDA sub_9A83F6（INPUT_STACK）；Avatar：sub_9A8716 固定带。
 		input_box_y = 0;
 		if (type == TalkType::SENDGETTEXT || type == TalkType::SENDGETNUMBER)
 		{
-			const int16_t need = static_cast<int16_t>(text_block_height + INPUT_STACK);
+			const int16_t stack = input_avatar_layout ? INPUT_AVATAR_STACK : INPUT_STACK;
+			const int16_t need = static_cast<int16_t>(text_block_height + stack);
 			if (need > height)
 				height = need;
-			const int16_t text_area = static_cast<int16_t>(height - INPUT_STACK);
+			const int16_t text_area = static_cast<int16_t>(height - stack);
 			if (text_area > text_block_height)
 				text_draw_y = static_cast<int16_t>(
 					top.height() + (text_area - text_block_height) / 2 + TEXT_Y_PAD);
@@ -887,10 +882,17 @@ namespace ms
 		const int16_t x_prev = static_cast<int16_t>(dlg_w - edge - BTN_PREV_RIGHT_INSET);
 		const int16_t x_close = (type == TalkType::SENDSIMPLE) ? BTN_X_CLOSE_LIST : BTN_X_CLOSE;
 		const int16_t x_pair_wide = static_cast<int16_t>(BTN_X_RIGHT_WIDE - BTN_PAIR_PITCH);
+		// Avatar GetText/Number：OK/Close 用 sub_9A8716 固定槽（H-30 ⇒ y_bottom-4）。
+		const int16_t y_input_btn = input_avatar_layout
+			? static_cast<int16_t>(y_bottom - BTN_AVATAR_Y_DELTA) : y_bottom;
+		if (input_avatar_layout)
+			input_box_y = static_cast<int16_t>(y_input_btn - INPUT_AVATAR_EDIT_ABOVE_OK);
 
 		if (buttons.count(Buttons::CLOSE))
 		{
-			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(x_close, y_bottom));
+			const int16_t cx = input_avatar_layout ? BTN_AVATAR_CLOSE_X : x_close;
+			const int16_t cy = input_avatar_layout ? y_input_btn : y_bottom;
+			buttons[Buttons::CLOSE]->set_position(Point<int16_t>(cx, cy));
 			buttons[Buttons::CLOSE]->set_active(true);
 		}
 
@@ -959,11 +961,14 @@ namespace ms
 			case TalkType::SENDGETNUMBER:
 			case TalkType::SENDGETTEXT:
 			{
-				// IDA sub_9A83F6：BtOK @ (W-54, H-26) + BtClose @ (9, H-26)；Edit id=1000。
-				activate(Buttons::OK, Point<int16_t>(x_ok, y_bottom));
+				// 非 Avatar：sub_9A83F6 BtOK@(W-54,H-26)；Avatar：sub_9A8716 BtOK@(158,H-30)。
+				const int16_t ok_x = input_avatar_layout ? BTN_AVATAR_OK_X : x_ok;
+				activate(Buttons::OK, Point<int16_t>(ok_x, y_input_btn));
 				setup_input_field();
-				LOG(LOG_DEBUG, "UINpcTalk: GetText/Number OK x=" << x_ok
-					<< " input_y=" << input_box_y);
+				LOG(LOG_DEBUG, "UINpcTalk: GetText/Number OK x=" << ok_x
+					<< " input_y=" << input_box_y
+					<< " avatar=" << (input_avatar_layout ? 1 : 0)
+					<< " bounds=" << (input_params.has_number_bounds ? 1 : 0));
 				break;
 			}
 			case TalkType::SENDSIMPLE:
@@ -1027,15 +1032,41 @@ namespace ms
 			return;
 
 		const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
-		// IDA：Edit @ (left+2, content_top+text_h+5)，h=14，w = W-(2*left+2)
-		const int16_t edit_x = static_cast<int16_t>(position.x() + INPUT_LEFT + 2);
-		const int16_t edit_y = static_cast<int16_t>(position.y() + input_box_y + 3);
-		const int16_t edit_w = static_cast<int16_t>(dlg_w - (2 * INPUT_LEFT + 2));
+		int16_t edit_x;
+		int16_t edit_y;
+		int16_t edit_w;
+		int16_t edit_h;
+		if (input_avatar_layout)
+		{
+			// IDA sub_9A8716：Edit @ (19, H-73)，226×15
+			edit_x = static_cast<int16_t>(position.x() + INPUT_AVATAR_EDIT_X);
+			edit_y = static_cast<int16_t>(position.y() + input_box_y);
+			edit_w = INPUT_AVATAR_EDIT_W;
+			edit_h = INPUT_AVATAR_EDIT_H;
+		}
+		else
+		{
+			// IDA sub_9A83F6：Edit @ (left+2, content_top+text_h+5)，h=14，w=W-(2*left+2)
+			edit_x = static_cast<int16_t>(position.x() + INPUT_LEFT + 2);
+			edit_y = static_cast<int16_t>(position.y() + input_box_y + 3);
+			edit_w = static_cast<int16_t>(dlg_w - (2 * INPUT_LEFT + 2));
+			edit_h = INPUT_EDIT_H;
+		}
 		const Point<int16_t> tl(edit_x, edit_y);
 		const Point<int16_t> br(static_cast<int16_t>(edit_x + edit_w),
-			static_cast<int16_t>(edit_y + INPUT_EDIT_H));
-		const size_t limit = (type == TalkType::SENDGETNUMBER) ? 10 : 64;
+			static_cast<int16_t>(edit_y + edit_h));
+		size_t limit = (type == TalkType::SENDGETNUMBER) ? 10u : 64u;
+		if (input_params.edit_maxlen > 0)
+			limit = static_cast<size_t>(input_params.edit_maxlen);
 		const std::string keep = input_active ? input_field.get_text() : std::string();
+		std::string initial = keep;
+		if (initial.empty())
+		{
+			if (type == TalkType::SENDGETTEXT)
+				initial = input_params.def_text;
+			else if (input_params.has_number_bounds || input_params.def_number != 0)
+				initial = std::to_string(input_params.def_number);
+		}
 
 		input_field = Textfield(
 			Text::Font::A12M,
@@ -1046,8 +1077,8 @@ namespace ms
 			12);
 		input_field.set_accept_unicode(type == TalkType::SENDGETTEXT);
 		input_field.set_text_shift(Point<int16_t>(1, 11));
-		if (!keep.empty())
-			input_field.change_text(keep);
+		if (!initial.empty())
+			input_field.change_text(initial);
 		input_field.set_enter_callback(
 			[this](std::string)
 			{
@@ -1080,17 +1111,52 @@ namespace ms
 		const std::string s = input_field.get_text();
 		if (type == TalkType::SENDGETTEXT)
 		{
-			if (s.empty())
+			// IDA sub_9AB50A：内部 dlgType==3 时 len < this+0xDC 拒收；线参常为 0。
+			if (static_cast<int32_t>(s.size()) < input_params.text_min_len)
+			{
+				LOG(LOG_DEBUG, "UINpcTalk: GetText reject len=" << s.size()
+					<< " min=" << input_params.text_min_len);
 				return false;
+			}
 			NpcTalkMorePacket(s).dispatch();
 			LOG(LOG_DEBUG, "UINpcTalk: GetText enter len=" << s.size());
 			return true;
 		}
 		if (type == TalkType::SENDGETNUMBER)
 		{
+			// IDA sub_9AB50A：内部 dlgType==2 — 全数字、atoi64、min/max（this+0xD0/0xD4）。
+			// 线协议 msgtype=3=GetNumber（BeiDou getNPCTalkNum）；按 TalkType 校验，不套内部编号。
+			if (s.empty())
+				return false;
+			for (unsigned char ch : s)
+			{
+				if (ch < '0' || ch > '9')
+				{
+					LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject non-digit");
+					return false;
+				}
+			}
 			try
 			{
-				const int32_t n = std::stoi(s);
+				const long long n64 = std::stoll(s);
+				if (n64 < 0 || n64 > static_cast<long long>(INT32_MAX))
+					return false;
+				const int32_t n = static_cast<int32_t>(n64);
+				if (input_params.has_number_bounds)
+				{
+					if (n < input_params.min_number)
+					{
+						LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject <min " << n
+							<< "<" << input_params.min_number);
+						return false;
+					}
+					if (n > input_params.max_number)
+					{
+						LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject >max " << n
+							<< ">" << input_params.max_number);
+						return false;
+					}
+				}
 				NpcTalkMorePacket(NpcTalkMorePacket::GetNumber{}, n).dispatch();
 				LOG(LOG_DEBUG, "UINpcTalk: GetNumber enter=" << n);
 				return true;
