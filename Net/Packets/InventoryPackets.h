@@ -109,13 +109,28 @@ namespace ms
 			return itemid / 10000 == 243;
 		}
 
+		static constexpr bool is_pet_food(int32_t itemid)
+		{
+			return itemid / 10000 == 212;
+		}
+
+		static constexpr bool is_mount_food(int32_t itemid)
+		{
+			return itemid / 10000 == 226;
+		}
+
 		UseItemPacket(int16_t slot, int32_t itemid)
 			: OutPacket(
 				ItemData::get(itemid).is_summon_bag() ? Opcode::USE_SUMMON_BAG
-				: (is_skill_book(itemid) ? Opcode::USE_SKILL_BOOK : Opcode::USE_ITEM))
+				: (is_skill_book(itemid) ? Opcode::USE_SKILL_BOOK
+				: (is_pet_food(itemid) ? Opcode::PET_FOOD
+				: (is_mount_food(itemid) ? Opcode::USE_MOUNT_FOOD
+				: (ItemData::get(itemid).is_scripted_item() ? Opcode::SCRIPTED_ITEM
+					: Opcode::USE_ITEM)))))
 		{
 			Sound(itemid).play();
 
+			// PET_FOOD / USE_MOUNT_FOOD / SCRIPTED_ITEM / USE_ITEM body 同形
 			write_time();
 			write_short(slot);
 			write_int(itemid);

@@ -116,6 +116,19 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// W4：公会副本 s2c（287/288）
+	class GuildBossHealerMoveHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	class GuildBossPulleyStateHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
 	class RpsGameHandler : public PacketHandler
 	{
 	public:

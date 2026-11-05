@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -49,6 +49,10 @@
 
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/InventoryPackets.h"
+#include "../../Net/Packets/PetPackets.h"
+#include "../../Net/Packets/ItemAClassPackets.h"
+#include "../../Net/Packets/MapInteractPackets.h"
+#include "../../Gameplay/MapleMap/Mob.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Configuration.h"
 #include "../../Util/UiAssetResolve.h"
@@ -718,8 +722,37 @@ namespace ms
 							if (!ui) ui = UI::get().emplace<UIEnchantSkill>();
 							else if (!ui->is_active()) ui->makeactive();
 						}
-						// Wave 2a/3：路由（技能书/召唤袋分流）已下沉到
-						// UseItemPacket 构造内部，调用点不再传标志位。
+						// W3：捕捉球 227* → USE_CATCH_ITEM + 最近怪 oid
+						if (item_id / 10000 == 227) {
+							int32_t mob_oid = 0;
+							int best = 400 * 400;
+							Point<int16_t> ppos = Stage::get().get_player().get_position();
+							if (auto* list = Stage::get().get_mobs().get_mobs()) {
+								for (auto& mk : *list) {
+									auto* mob = dynamic_cast<Mob*>(mk.second.get());
+									if (!mob || !mob->is_active()) continue;
+									Point<int16_t> mp = mob->get_position();
+									int ddx = mp.x() - ppos.x();
+									int ddy = mp.y() - ppos.y();
+									int d2 = ddx * ddx + ddy * ddy;
+									if (d2 < best) { best = d2; mob_oid = mob->get_oid(); }
+								}
+							}
+							if (mob_oid > 0)
+								UseCatchItemPacket(slot, item_id, mob_oid).dispatch();
+							else
+								LOG(LOG_DEBUG, "UIItemInventory: CATCH no mob nearby");
+							break;
+						}
+						// W4：物品奖励盒（无右键菜单时 SoftKey 确认走 USE_ITEM_REWARD）
+						if (item_id / 10000 == 202) {
+							int16_t use_slot = slot; int32_t use_id = item_id;
+							UI::get().emplace<UISoftKey>([use_slot, use_id](const std::string&) {
+								UseItemRewardPacket(use_slot, use_id).dispatch();
+							}, []() {}, "Item reward?");
+							break;
+						}
+						// Wave 2a/3：路由（技能书/召唤袋/脚本）已下沉到 UseItemPacket。
 						UseItemPacket(slot, item_id).dispatch();
 						break;
 					}
@@ -727,7 +760,22 @@ namespace ms
 					{
 						// 现金道具双击：开对应壳（拖装备由各 UI 自己处理）
 						int32_t prefix = item_id / 10000;
-						if (prefix == 557) {
+						if (Stage::get().get_player().get_stats().get_stat(MapleStat::Id::HP) == 0) {
+							// W3：死亡态现金外观/效果 → USE_DEATHITEM
+							UseDeathItemPacket(item_id).dispatch();
+							break;
+						}
+						if (prefix == 500) {
+							// W1：宠物召唤/收回 — SPAWN_PET(0x62)
+							bool lead = !Stage::get().get_player().has_pet();
+							SpawnPetPacket(static_cast<int8_t>(slot), lead).dispatch();
+							LOG(LOG_DEBUG, "UIItemInventory: SPAWN_PET slot=" << slot
+								<< " id=" << item_id << " lead=" << lead);
+						} else if (item_id == 5451000) {
+							auto ui = UI::get().get_element<UIRemoteGachapon>();
+							if (!ui) ui = UI::get().emplace<UIRemoteGachapon>();
+							else if (!ui->is_active()) ui->makeactive();
+						} else if (prefix == 557) {
 							auto ui = UI::get().get_element<UIViciousHammer>();
 							if (!ui) ui = UI::get().emplace<UIViciousHammer>();
 							else if (!ui->is_active()) ui->makeactive();
@@ -836,6 +884,13 @@ namespace ms
 								LOG(LOG_DEBUG, "UIItemInventory: generic USE_CASH id=" << cash_id);
 							}, []() {}, "Cash use");
 						}
+						break;
+					}
+					case InventoryType::Id::ETC:
+					{
+						// W4：金/银宝箱
+						if (item_id == 4280000 || item_id == 4280001)
+							UseTreasureChestPacket(slot, item_id).dispatch();
 						break;
 					}
 					default:

@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIKeyConfig.h"
+#include "../../Net/Packets/SkillMacroPackets.h"
 
 #include "UICharInfo.h"
 #include "UIJoypad.h"
@@ -1228,6 +1229,9 @@ namespace ms
 
 		if (updated_actions.size() > 0)
 			ChangeKeyMapPacket(updated_actions).dispatch();
+		// W3：保存键位同时同步快捷栏触发键
+		if (keyboard)
+			ChangeQuickslotPacket(keyboard->quickslots()).dispatch();
 
 		for (auto& action : updated_actions)
 		{

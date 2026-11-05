@@ -5,6 +5,7 @@
 #include "../../Character/Inventory/InventoryType.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/CashItemPackets.h"
+#include "../../Net/Packets/ItemAClassPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 #include "../../Util/Locale.h"
@@ -16,10 +17,14 @@ namespace {
 bool find_remote_gacha(int16_t& slot, int32_t& itemid)
 {
 	const Inventory& inv = Stage::get().get_player().get_inventory();
+	// 优先 5451000 远程扭蛋券（s9 REMOTE_GACHAPON_TICKET）
 	for (int16_t i = 1; i <= 96; ++i) {
 		int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
-		// 545* 远程 / 522* 扭蛋票均可触发浅出站
-		if (id / 10000 == 545 || id / 10000 == 522) { slot = i; itemid = id; return true; }
+		if (id == 5451000) { slot = i; itemid = id; return true; }
+	}
+	for (int16_t i = 1; i <= 96; ++i) {
+		int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
+		if (id / 10000 == 545) { slot = i; itemid = id; return true; }
 	}
 	return false;
 }
@@ -75,8 +80,8 @@ void UIRemoteGachapon::send_key(int32_t keycode, bool pressed, bool escape)
 			if (town < 0 || town > 9) return;
 			int16_t slot = 0; int32_t itemid = 0;
 			if (!find_remote_gacha(slot, itemid)) return;
-			UseCashItemBasicPacket(slot, itemid).dispatch();
-			LOG(LOG_DEBUG, "UIRemoteGachapon: SoftKey town=" << town << " id=" << itemid);
+			UseRemoteGachaponPacket(itemid, town).dispatch();
+			LOG(LOG_DEBUG, "UIRemoteGachapon: SoftKey USE_REMOTE town=" << town << " id=" << itemid);
 		}, []() {}, "Town 0-9");
 	} else if (keycode == 'X' || keycode == 'x' || keycode == 'C' || keycode == 'c') {
 		deactivate();
@@ -91,8 +96,8 @@ Button::State UIRemoteGachapon::button_pressed(uint16_t id) {
 		LOG(LOG_DEBUG, "UIRemoteGachapon: no 545/522 cash");
 		return Button::State::NORMAL;
 	}
-	UseCashItemBasicPacket(slot, itemid).dispatch();
-	LOG(LOG_DEBUG, "UIRemoteGachapon: town=" << town << " USE_CASH id=" << itemid);
+	UseRemoteGachaponPacket(itemid, static_cast<int32_t>(town)).dispatch();
+	LOG(LOG_DEBUG, "UIRemoteGachapon: town=" << town << " USE_REMOTE id=" << itemid);
 	return Button::State::NORMAL;
 }
 }

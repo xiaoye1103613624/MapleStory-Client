@@ -184,8 +184,23 @@ namespace ms
 		return itemid;
 	}
 
+	int32_t PetLook::get_uniqueid() const
+	{
+		return uniqueid;
+	}
+
 	PetLook::Stance PetLook::get_stance() const
 	{
 		return stance;
+	}
+
+	Point<int16_t> PetLook::get_position() const
+	{
+		return phobj.get_position();
+	}
+
+	const PhysicsObject& PetLook::get_phobj() const
+	{
+		return phobj;
 	}
 }

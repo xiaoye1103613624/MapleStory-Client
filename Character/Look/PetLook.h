@@ -60,7 +60,10 @@ namespace ms
 		void set_name(const std::string& nm);
 
 		int32_t get_itemid() const;
+		int32_t get_uniqueid() const;
 		Stance get_stance() const;
+		Point<int16_t> get_position() const;
+		const PhysicsObject& get_phobj() const;
 
 	private:
 		int32_t itemid;

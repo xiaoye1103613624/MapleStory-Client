@@ -55,8 +55,10 @@ namespace ms
 			std::string name;
 			bool intramap;
 			bool valid;
+			bool scripted;	// W4：脚本门走 CHANGE_MAP_SPECIAL
 
-			WarpInfo(int32_t m, bool i, std::string tn, std::string n) : mapid(m), intramap(i), toname(tn), name(n)
+			WarpInfo(int32_t m, bool i, std::string tn, std::string n, bool sc = false)
+				: mapid(m), intramap(i), toname(tn), name(n), scripted(sc)
 			{
 				valid = mapid < 999999999;
 			}

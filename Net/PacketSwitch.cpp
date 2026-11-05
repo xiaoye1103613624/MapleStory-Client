@@ -23,6 +23,7 @@
 #include "Handlers/InventoryHandlers.h"
 #include "Handlers/LoginHandlers.h"
 #include "Handlers/MapObjectHandlers.h"
+#include "Handlers/WorldMapHandlers.h"
 #include "Handlers/MessagingHandlers.h"
 #include "Handlers/NpcInteractionHandlers.h"
 #include "Handlers/PlayerHandlers.h"
@@ -345,7 +346,6 @@ namespace ms
 		GUILD_BBS_PACKET = 59,
 		SET_QUEST_CLEAR_FIELD = 150,
 		SET_QUEST_TIME = 151,
-		WARN_MESSAGE = 152,
 		SET_OBJECT_STATE = 153,
 		CHATTEXT1 = 163,
 		SHOW_CONSUME_EFFECT = 166,
@@ -403,6 +403,14 @@ namespace ms
 		CASHSHOP_OPERATION = 325,
 
 		/// 北斗自定义 opcode（0x37xx，走 PacketSwitch 的扩展表）
+		/// s9 SendOpcode.GUILD_BOSS_HEALER_MOVE / PULLEY（W4）
+		GUILD_BOSS_HEALER_MOVE = 287,
+		GUILD_BOSS_PULLEY_STATE_CHANGE = 288,
+		/// 世界地图掉落查询回复（对接 s9 SendOpcode.WORLD_MAP_DROP_RESULT = 0x179）
+		WORLD_MAP_DROP_RESULT = 377,
+		/// 世界地图玩家列表回复（对接 s9 SendOpcode.WORLD_MAP_PLAYERS = 0x178）
+		WORLD_MAP_PLAYERS = 376,
+
 		LIMIT_BREAK_SYNC = 0x3730
 	};
 
@@ -651,6 +659,8 @@ namespace ms
 		emplace<CANNOT_SPAWN_KITE, CannotSpawnKiteHandler>();
 		emplace<SPAWN_KITE, SpawnKiteHandler>();
 		emplace<REMOVE_KITE, RemoveKiteHandler>();
+		emplace<GUILD_BOSS_HEALER_MOVE, GuildBossHealerMoveHandler>();
+		emplace<GUILD_BOSS_PULLEY_STATE_CHANGE, GuildBossPulleyStateHandler>();
 		emplace<MONSTER_CARNIVAL_SUMMON, MonsterCarnivalSummonHandler>();
 		emplace<MONSTER_CARNIVAL_DIED, MonsterCarnivalDiedHandler>();
 		emplace<WITCH_TOWER_SCORE_UPDATE, WitchTowerScoreHandler>();
@@ -686,7 +696,6 @@ namespace ms
 		emplace<GUILD_BBS_PACKET, GuildBbsHandler>();
 		emplace<SET_QUEST_CLEAR_FIELD, SetQuestClearHandler>();
 		emplace<SET_QUEST_TIME, SetQuestTimeHandler>();
-		emplace<WARN_MESSAGE, WarnMessageHandler>();
 		emplace<SET_OBJECT_STATE, SetObjectStateHandler>();
 		emplace<CHATTEXT1, ChatText1Handler>();
 		emplace<SHOW_CONSUME_EFFECT, ShowConsumeEffectHandler>();
@@ -766,6 +775,10 @@ namespace ms
 
 		// 北斗自定义包：破功值（伤害上限）同步
 		emplace<LIMIT_BREAK_SYNC, LimitBreakSyncHandler>();
+
+		// 世界地图掉落查询回复
+		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();
+		emplace<WORLD_MAP_PLAYERS, WorldMapPlayersHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -983,7 +996,7 @@ namespace ms
 			case 149: opcode_msg = "CONTI_STATE"; break;
 			case 150: opcode_msg = "SET_QUEST_CLEAR"; break;
 			case 151: opcode_msg = "SET_QUEST_TIME"; break;
-			case 152: opcode_msg = "WARN_MESSAGE"; break;
+			case 152: opcode_msg = "ARIANT_RESULT"; break;
 			case 153: opcode_msg = "SET_OBJECT_STATE"; break;
 			case 154: opcode_msg = "STOP_CLOCK"; break;
 			case 155: opcode_msg = "ARIANT_ARENA_SHOW_RESULT"; break;

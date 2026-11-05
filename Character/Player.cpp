@@ -25,6 +25,10 @@
 #include "../IO/UITypes/UIStatsInfo.h"
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Net/Packets/InventoryPackets.h"
+#include "../Net/Packets/PetPackets.h"
+#include "../Configuration.h"
+
+#include <algorithm>
 
 namespace ms
 {
@@ -183,6 +187,21 @@ namespace ms
 			lastmove = newmove;
 		}
 
+		// W1：宠物跟随位移上报（对账 MovePetHandler）
+		for (uint8_t i = 0; i < 3; ++i)
+		{
+			const PetLook& pet = get_pet(i);
+			if (pet.get_itemid() <= 0 || pet.get_uniqueid() <= 0)
+				continue;
+			uint8_t petstance = static_cast<uint8_t>(pet.get_stance()) * 2;
+			Movement petmove(pet.get_phobj(), petstance);
+			if (lastpetmove[i].hasmoved(petmove))
+			{
+				MovePetPacket(pet.get_uniqueid(), petmove).dispatch();
+				lastpetmove[i] = petmove;
+			}
+		}
+
 		climb_cooldown.update();
 
 		return get_layer();
@@ -308,6 +327,23 @@ namespace ms
 
 		attack.critical = stats.get_critical();
 		attack.ignoredef = stats.get_ignoredef();
+
+		if (Configuration::get().get_damage_formula_v2())
+		{
+			// 原生 MDamage 的 MAD 输入钳到 1999（IDA sub_791617）。
+			// 魔法基础值沿用 v83 的 (INT*4 + LUK)/100 * MAD 结构，与
+			// 物理 calculateMaxBaseDamage 的武器倍率 4.0 同构。
+			int32_t mad = std::min<int32_t>(stats.get_total(EquipStat::Id::MAGIC), 1999);
+			int32_t int_ = stats.get_total(EquipStat::Id::INT);
+			int32_t luk = stats.get_total(EquipStat::Id::LUK);
+			attack.magicdamage = (int_ * 4.0 + luk) / 100.0 * mad;
+
+			// CharStats 的 mincrit/maxcrit 是额外倍率，转成 1+x 的暴击区间。
+			attack.critical_min = 1.0f + stats.get_mincrit();
+			attack.critical_max = 1.0f + stats.get_maxcrit();
+			attack.bossdamage = stats.get_bossdmg();
+		}
+
 		attack.accuracy = stats.get_total(EquipStat::Id::ACC);
 		attack.playerlevel = stats.get_stat(MapleStat::Id::LEVEL);
 		attack.range = stats.get_range();
@@ -342,7 +378,7 @@ namespace ms
 
 	MobAttackResult Player::damage(const MobAttack& attack)
 	{
-		int32_t damage = stats.calculate_damage(attack.watk);
+		int64_t damage = stats.calculate_damage(attack.watk);
 		show_damage(damage);
 
 		bool fromleft = attack.origin.x() > phobj.get_x();
@@ -385,6 +421,11 @@ namespace ms
 	int32_t Player::get_buff_skillid(Buffstat::Id stat) const
 	{
 		return buffs[stat].skillid;
+	}
+
+	int32_t Player::get_buff_duration(Buffstat::Id stat) const
+	{
+		return buffs[stat].duration;
 	}
 
 	void Player::change_skill(int32_t skill_id, int32_t skill_level, int32_t masterlevel, int64_t expiration)

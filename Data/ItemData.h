@@ -56,6 +56,13 @@ namespace ms
 		// Returns one of the item's icons
 		// For each item there is a 'raw' icon and an icon with a drop shadow
 		const Texture& get_icon(bool raw) const;
+		// Wave 2a：召唤袋判定 —— 与 s9 ItemInformationProvider.getSummonMobs
+		// 同规则（Item 数据 info 节点下存在 mob 子表 = 刷怪袋；s9 无前缀规则；
+		// 2022 段的 useType==2022 判定属于"即时传送类"，不可混用）。
+		// 构造期解析一次存位，避免每次使用路由现查 nx。
+		bool is_summon_bag() const;
+		// W3：info/script 节点存在 = 脚本道具（对账 s9 getScriptedItemInfo）
+		bool is_scripted_item() const;
 
 	private:
 		// Allow the cache to use the constructor
@@ -81,5 +88,8 @@ namespace ms
 		bool unique;
 		bool unsellable;
 		bool cashitem;
+		// Wave 2a：Item info 节点存在 mob 子表 = 召唤袋（构造期解析一次）。
+		bool summonbag;
+		bool scripted = false;
 	};
 }

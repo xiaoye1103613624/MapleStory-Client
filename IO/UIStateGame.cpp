@@ -21,6 +21,7 @@
 #include "Window.h"
 
 #include "UITypes/UIBuffList.h"
+#include "UITypes/UITemporaryStatView.h"
 #include "UITypes/UIEnergyBar.h"
 #include "UITypes/UIComboCounter.h"
 #include "UITypes/UIBossHP.h"
@@ -84,6 +85,9 @@ namespace ms
 
 		emplace<UIMiniMap>(stats);
 		emplace<UIBuffList>();
+		emplace<UITemporaryStatView>();
+		if (auto tsv = UI::get().get_element<UITemporaryStatView>())
+			tsv->deactivate();
 		emplace<UIEnergyBar>();
 		emplace<UIComboCounter>();
 		emplace<UIBossHP>();

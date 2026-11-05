@@ -25,6 +25,10 @@
 #include "../IO/UITypes/UIStatusBar.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Net/Packets/PetPackets.h"
+#include "../Net/Packets/SummonDragonPackets.h"
+#include "../Net/Packets/MapInteractPackets.h"
+#include "MapleMap/Reactor.h"
 #include "../Util/PerfLog.h"
 #include "../Util/Resource/ResourceService.h"
 
@@ -93,6 +97,7 @@ namespace ms
 		reactors.clear();
 		field_markers.clear();
 		aggro_sent.clear();	// Wave 4：换图清仇恨节流表（oid 图内唯一，跨图必换）
+		touching_reactor_oid = 0;
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -248,6 +253,8 @@ namespace ms
 		drops.update(physics);
 		field_markers.update(physics);
 		player.update(physics);
+		// W2：本角色召唤兽/龙 MOVE + SUMMON_ATTACK
+		field_markers.report_owned_c2s(player.get_oid(), player.get_position(), mobs);
 
 		portals.update(player.get_position());
 		camera.update(player.get_position());
@@ -263,6 +270,9 @@ namespace ms
 			// 隐藏/脚本隐藏传送门：需按上键主动交互
 			if (player.is_key_down(KeyAction::Id::UP))
 				check_portals(true);
+
+			// W4：触碰式反应器 enter/leave
+			check_touch_reactors();
 
 			// G6 mystic door：触碰式（进门框即上行 USE_DOOR，归属裁决在服务端
 			// DoorHandler；冷却防刷屏见 MapFieldMarkers::check_doors）
@@ -322,6 +332,8 @@ namespace ms
 
 		if (warpinfo.intramap)
 		{
+			// W4：同图内门上报 USE_INNER_PORTAL，本地仍瞬移保手感
+			UseInnerPortalPacket(warpinfo.name).dispatch();
 			Point<int16_t> spawnpoint = portals.get_portal_by_name(warpinfo.toname);
 			Point<int16_t> startpos = physics.get_y_below(spawnpoint);
 
@@ -329,7 +341,10 @@ namespace ms
 		}
 		else if (warpinfo.valid)
 		{
-			ChangeMapPacket(false, -1, warpinfo.name, false).dispatch();
+			if (warpinfo.scripted)
+				ChangeMapSpecialPacket(warpinfo.name).dispatch();
+			else
+				ChangeMapPacket(false, -1, warpinfo.name, false).dispatch();
 
 			CharStats& stats = Stage::get().get_player().get_stats();
 
@@ -362,8 +377,58 @@ namespace ms
 		Point<int16_t> playerpos = player.get_position();
 		MapDrops::Loot loot = drops.find_loot_at(playerpos);
 
-		if (loot.first)
+		if (!loot.first)
+			return;
+
+		// W1：有召唤宠物时优先走 PET_LOOT（服务端校验宠物/玩家距离与吸物装备）
+		int32_t pet_uid = 0;
+		for (uint8_t i = 0; i < 3; ++i)
+		{
+			const PetLook& pet = player.get_pet(i);
+			if (pet.get_itemid() > 0 && pet.get_uniqueid() > 0)
+			{
+				pet_uid = pet.get_uniqueid();
+				break;
+			}
+		}
+		if (pet_uid > 0)
+			PetLootPacket(pet_uid, loot.first).dispatch();
+		else
 			PickupItemPacket(loot.first, loot.second).dispatch();
+	}
+
+	void Stage::check_touch_reactors()
+	{
+		Point<int16_t> playerpos = player.get_position();
+		int32_t found = 0;
+		if (auto* list = reactors.get_reactors())
+		{
+			for (auto& kv : *list)
+			{
+				auto* r = dynamic_cast<Reactor*>(kv.second.get());
+				if (!r || !r->is_active())
+					continue;
+				// 不可攻击的反应器视为触碰型（对账 TouchReactor 用途）
+				if (r->is_hittable())
+					continue;
+				Rectangle<int16_t> range(
+					playerpos + Point<int16_t>(-40, -80),
+					playerpos + Point<int16_t>(40, 20));
+				if (r->is_in_range(range))
+				{
+					found = r->get_oid();
+					break;
+				}
+			}
+		}
+		if (found != touching_reactor_oid)
+		{
+			if (touching_reactor_oid > 0)
+				TouchingReactorPacket(touching_reactor_oid, false).dispatch();
+			if (found > 0)
+				TouchingReactorPacket(found, true).dispatch();
+			touching_reactor_oid = found;
+		}
 	}
 
 	void Stage::send_key(KeyType::Id type, int32_t action, bool down)

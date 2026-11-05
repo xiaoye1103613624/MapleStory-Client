@@ -102,7 +102,7 @@ namespace ms
 		// Display the iron body skill animation
 		void show_iron_body();
 		// Display damage over the characters head
-		void show_damage(int32_t damage);
+		void show_damage(int64_t damage);
 		// Display a chat bubble with the specified line in it
 		void speak(const std::string& line);
 		// Change a part of the character's look
@@ -143,6 +143,8 @@ namespace ms
 		PhysicsObject& get_phobj();
 		// True if any of the 3 pet slots has an item
 		bool has_pet() const;
+		// Active pet look at index 0..2（无则 itemid==0）
+		const PetLook& get_pet(uint8_t index) const;
 
 		// Initialize character effects
 		static void init();

@@ -2089,18 +2089,27 @@ namespace ms
 			<< " (" << pos.x() << "," << pos.y() << ")");
 		while (recv.available())
 			recv.skip_byte();
-		// town/target==999999999 means clear mystic door portal
-		const int32_t portal_oid = 0x50000001;
+		// s9 语义：townId/targetId = MapId.NONE(999999999) ⇒ 清除（removeDoor town
+		// 分支，PC:1148-1152）；否则这是 Mystic Door 镇侧门框，每扇门一条，
+		// 同屏可多扇。修前用常量 oid 0x50000001 承载 ⇒ 第二扇门的 spawn 直接
+		// 覆盖第一扇（G7，组队多门互踩）。按 pos 派生实例键：同一位置重复
+		// 下发=刷新（s9 对同门只发一次 spawn，位置键足够去重），NONE=全清。
 		auto& markers = Stage::get().get_field_markers();
 		if (town == 999999999 || target == 999999999)
-			markers.remove(portal_oid);
+			markers.remove_by_kind(FieldMarker::Kind::PORTAL);
 		else
 		{
+			// pos 两个 short 拼 int32 键（门框坐标 ±32767 内单射）。
+			// 段基址 0x55000000：全仓已用异或段（0x30..0x34/0x40/0x50..0x54/0x60/0x61）
+			// 均避开；0x50000000 是 ShowItemEffect 的 cid^段，撞段会互删。
+			const int32_t portal_oid = 0x55000000
+				| (static_cast<uint32_t>(static_cast<uint16_t>(pos.x())) << 16)
+				| static_cast<uint32_t>(static_cast<uint16_t>(pos.y()));
 			const std::string label = "Portal->" + std::to_string(target);
 			if (markers.contains(portal_oid))
 				markers.set_label(portal_oid, label);
 			else
-				markers.spawn(portal_oid, FieldMarker::Kind::DOOR, pos, label);
+				markers.spawn(portal_oid, FieldMarker::Kind::PORTAL, pos, label);
 		}
 		// note
 	}
@@ -2811,6 +2820,27 @@ namespace ms
 			markers.set_label(mid, tip);
 		else
 			markers.spawn(mid, FieldMarker::Kind::DOOR, pos + Point<int16_t>(0, -50), tip, 0, 2500);
+	}
+
+
+	void GuildBossHealerMoveHandler::handle(InPacket& recv) const
+	{
+		int16_t ny = recv.available() >= 2 ? recv.read_short() : 0;
+		LOG(LOG_DEBUG, "GuildBossHealerMove y=" << ny);
+		std::string tip = "Guild healer y=" + std::to_string(ny);
+		auto alarm = UI::get().get_element<UIQuestAlarm>();
+		if (!alarm) alarm = UI::get().emplace<UIQuestAlarm>();
+		if (alarm) alarm->set_tip(tip);
+	}
+
+	void GuildBossPulleyStateHandler::handle(InPacket& recv) const
+	{
+		int8_t st = recv.available() ? recv.read_byte() : 0;
+		LOG(LOG_DEBUG, "GuildBossPulley state=" << (int)st);
+		std::string tip = "Guild pulley=" + std::to_string(st);
+		auto alarm = UI::get().get_element<UIQuestAlarm>();
+		if (!alarm) alarm = UI::get().emplace<UIQuestAlarm>();
+		if (alarm) alarm->set_tip(tip);
 	}
 
 	void MonsterCarnivalSummonHandler::handle(InPacket& recv) const

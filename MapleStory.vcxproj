@@ -270,6 +270,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Gameplay\MapleMap\MapFieldMarkers.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapSummon.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapMist.cpp" />
+    <ClCompile Include="Gameplay\MapleMap\MapDoor.cpp" />
+    <ClCompile Include="Gameplay\MapleMap\MapDragon.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapInfo.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapMobs.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapNpcs.cpp" />
@@ -333,6 +335,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UIStateGame.cpp" />
     <ClCompile Include="IO\UIStateLogin.cpp" />
     <ClCompile Include="IO\UITypes\UIBuffList.cpp" />
+    <ClCompile Include="IO\UITypes\UITemporaryStatView.cpp" />
     <ClCompile Include="IO\UITypes\UIEnergyBar.cpp" />
     <ClCompile Include="IO\UITypes\UIComboCounter.cpp" />
     <ClCompile Include="IO\UITypes\UIBossHP.cpp" />
@@ -347,6 +350,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIMinigame.cpp" />
     <ClCompile Include="IO\UITypes\UITreasureBox.cpp" />
     <ClCompile Include="IO\UITypes\UIAdmin.cpp" />
+    <ClCompile Include="IO\UITypes\UIGMCommandList.cpp" />
     <ClCompile Include="IO\UITypes\UIPlant.cpp" />
     <ClCompile Include="IO\UITypes\UIMapleTV.cpp" />
     <ClCompile Include="IO\UITypes\UIMegaphone.cpp" />
@@ -411,7 +415,6 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIUserList.cpp" />
     <ClCompile Include="IO\UITypes\UIWorldMap.cpp" />
     <ClCompile Include="IO\UITypes\UIMapMobPanel.cpp" />
-    <ClCompile Include="IO\UITypes\UIMapDropPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIMapSearchPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIMapInfoPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIWorldSelect.cpp" />
@@ -441,6 +444,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Net\Handlers\GuildHandlers.cpp" />
     <ClCompile Include="Net\Handlers\HiredMerchantBoxHandlers.cpp" />
     <ClCompile Include="Net\Handlers\MonsterBookHandlers.cpp" />
+    <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp" />
     <ClCompile Include="Util\PerfLog.cpp" />
     <ClCompile Include="Net\Handlers\AllianceHandlers.cpp" />
     <ClCompile Include="Net\Handlers\QuestHandlers.cpp" />
@@ -603,6 +607,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Gameplay\MapleMap\MapFieldMarkers.h" />
     <ClInclude Include="Gameplay\MapleMap\MapSummon.h" />
     <ClInclude Include="Gameplay\MapleMap\MapMist.h" />
+    <ClInclude Include="Gameplay\MapleMap\MapDoor.h" />
+    <ClInclude Include="Gameplay\MapleMap\MapDragon.h" />
     <ClInclude Include="Gameplay\MapleMap\MapInfo.h" />
     <ClInclude Include="Gameplay\MapleMap\MapMobs.h" />
     <ClInclude Include="Gameplay\MapleMap\MapNpcs.h" />
@@ -678,6 +684,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UIStateLogin.h" />
     <ClInclude Include="IO\UITypes\UIAranCreation.h" />
     <ClInclude Include="IO\UITypes\UIBuffList.h" />
+    <ClInclude Include="IO\UITypes\UITemporaryStatView.h" />
     <ClInclude Include="IO\UITypes\UICashShop.h" />
     <ClInclude Include="IO\UITypes\UIChannel.h" />
     <ClInclude Include="IO\UITypes\UICharInfo.h" />
@@ -703,6 +710,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIMinigame.h" />
     <ClInclude Include="IO\UITypes\UITreasureBox.h" />
     <ClInclude Include="IO\UITypes\UIAdmin.h" />
+    <ClInclude Include="IO\UITypes\UIGMCommandList.h" />
     <ClInclude Include="IO\UITypes\UIPlant.h" />
     <ClInclude Include="IO\UITypes\UIMapleTV.h" />
     <ClInclude Include="IO\UITypes\UIMegaphone.h" />
@@ -751,7 +759,6 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIUserList.h" />
     <ClInclude Include="IO\UITypes\UIWorldMap.h" />
     <ClInclude Include="IO\UITypes\UIMapMobPanel.h" />
-    <ClInclude Include="IO\UITypes\UIMapDropPanel.h" />
     <ClInclude Include="IO\UITypes\UIMapSearchPanel.h" />
     <ClInclude Include="IO\UITypes\UIWorldSelect.h" />
     <ClInclude Include="IO\Window.h" />

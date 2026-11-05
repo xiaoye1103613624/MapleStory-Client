@@ -77,6 +77,8 @@ namespace ms
 			FACE_EXPRESSION = 51,
 			/// s9 RecvOpcode.USE_ITEMEFFECT = 0x34
 			USE_ITEMEFFECT = 52,
+			/// s9 RecvOpcode.USE_DEATHITEM = 0x35
+			USE_DEATHITEM = 53,
 
 			/// Messaging
 			GENERAL_CHAT = 49,
@@ -102,11 +104,25 @@ namespace ms
 			/// （readInt ts + short slot + int itemId，UseSummonBagHandler 坐实；
 			/// 服务端扣 1 个后按 ItemData.mob 子表概率刷怪）。Wave 2a。
 			USE_SUMMON_BAG = 75,
+			/// s9 RecvOpcode.PET_FOOD = 0x4C
+			PET_FOOD = 76,
+			/// s9 RecvOpcode.USE_MOUNT_FOOD = 0x4D
+			USE_MOUNT_FOOD = 77,
+			/// s9 RecvOpcode.SCRIPTED_ITEM = 0x4E
+			SCRIPTED_ITEM = 78,
+			/// s9 RecvOpcode.USE_CATCH_ITEM = 0x51
+			USE_CATCH_ITEM = 81,
+			/// s9 RecvOpcode.CANCEL_ITEM_EFFECT = 0x49
+			CANCEL_ITEM_EFFECT = 73,
+			/// s9 RecvOpcode.USE_REMOTE = 0x74
+			USE_REMOTE = 116,
 			/// s9 RecvOpcode.GRENADE_EFFECT = 0x6D（Wave 4）：int x, int y,
 			/// int keyDown, int skillId —— 手雷/毒弹投掷点上报，服务端回
 			/// THROW_GRENADE(204) 广播落点。
 			GRENADE_EFFECT = 109,
 			USE_CASH_ITEM = 79,
+			/// s9 RecvOpcode.SPAWN_PET = 0x62
+			SPAWN_PET = 98,
 			SCROLL_EQUIP = 86,
 
 			/// Player
@@ -132,6 +148,12 @@ namespace ms
 			CHANGE_KEYMAP = 135,
 			/// s9 RecvOpcode.USE_DOOR = 0x85
 			USE_DOOR = 133,
+			/// s9 RecvOpcode 地图特殊交互（W4）
+			CHANGE_MAP_SPECIAL = 100,
+			USE_INNER_PORTAL = 101,
+			USE_ITEM_REWARD = 112,
+			USE_TREASUER_CHEST = 115,
+			TOUCHING_REACTOR = 206,
 
 			/// Skill
 			USE_SKILL = 91,
@@ -151,6 +173,19 @@ namespace ms
 			/// 存储/下行已闭环（Wave 1-1.2）；改键 UI 面需 v83 KeyConfig 快捷页
 			/// 实体化（Wave 6 素材线），本枚举+包类先行登记，暂不接线。
 			CHANGE_QUICKSLOT = 183,
+			/// s9 RecvOpcode 宠物族上行（W1）
+			MOVE_PET = 167,
+			PET_CHAT = 168,
+			PET_COMMAND = 169,
+			PET_LOOT = 170,
+			PET_AUTO_POT = 171,
+			PET_EXCLUDE_ITEMS = 172,
+			/// s9 RecvOpcode 召唤兽/龙上行（W2）
+			MOVE_SUMMON = 175,
+			SUMMON_ATTACK = 176,
+			DAMAGE_SUMMON = 177,
+			BEHOLDER = 178,
+			MOVE_DRAGON = 181,
 			PICKUP_ITEM = 202,
 			DAMAGE_REACTOR = 205,
 			PLAYER_MAP_TRANSFER = 207,

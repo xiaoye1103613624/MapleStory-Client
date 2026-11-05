@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Keyboard.h"
+#include "../Net/Packets/SkillMacroPackets.h"
 
 #include "KeyCodes.h"
 
@@ -175,7 +176,11 @@ namespace ms
 	void Keyboard::assign_quickslot(uint8_t slot, uint32_t key)
 	{
 		if (slot < QUICKSLOT_COUNT)
+		{
 			quickslot_keys[slot] = key;
+			// W3：改键即上行 CHANGE_QUICKSLOT（8×int）
+			ChangeQuickslotPacket(quickslot_keys).dispatch();
+		}
 	}
 
 	void Keyboard::clear_quickslots()

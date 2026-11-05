@@ -29,6 +29,7 @@ namespace ms
 		unique = false;
 		unsellable = false;
 		cashitem = false;
+		summonbag = false;
 		gender = 0;
 
 		nl::node src;
@@ -76,6 +77,11 @@ namespace ms
 			unique = src["only"].get_bool();
 			unsellable = src["notSale"].get_bool();
 			cashitem = src["cash"].get_bool();
+			// Wave 2a 召唤袋判定：与 s9 ItemInformationProvider.getSummonMobs
+			// 同源 —— info 下存在 mob 子表（s9 逐格读 "mob/x/id|prob"）。
+			// 只查节点存在性，构造期一次，不在使用路由现查。
+			summonbag = static_cast<bool>(src["mob"]);
+			scripted = static_cast<bool>(src["script"]);
 			gender = get_item_gender(itemid);
 
 			name = strsrc["name"].get_string();
@@ -165,6 +171,16 @@ namespace ms
 	bool ItemData::is_cashitem() const
 	{
 		return cashitem;
+	}
+
+	bool ItemData::is_summon_bag() const
+	{
+		return summonbag;
+	}
+
+	bool ItemData::is_scripted_item() const
+	{
+		return scripted;
 	}
 
 	ItemData::operator bool() const

@@ -52,6 +52,7 @@
 #include "../../Net/Packets/TradePackets.h"
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/CashItemPackets.h"
+#include "../../Net/Packets/PetPackets.h"
 #include "../../Net/Packets/NotePackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
@@ -4742,8 +4743,19 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		}
 		deactivate();
 	} else if (keycode == 'O' || keycode == 'o') {
-		UseDoorPacket(true).dispatch();
-		LOG(LOG_DEBUG, "UIGameMenu: UseDoor party");
+		// USE_DOOR 语义修正（s9 DoorHandler 读 int ownerid）：真门踩线自动上行
+		// 已由 MapFieldMarkers::check_doors 接管；本键为调试兜底——SoftKey 输
+		// ownerid（放门者角色 cid）。修前 byte+byte 布局服务端永远匹配不到门。
+		UI::get().emplace<UISoftKey>([](const std::string& s) {
+			try {
+				int32_t owner = std::stoi(s);
+				if (owner > 0) {
+					UseDoorPacket(owner).dispatch();
+					LOG(LOG_DEBUG, "UIGameMenu: UseDoor owner=" << owner);
+				}
+			} catch (...) {}
+		}, []() {}, "Door owner cid");
+		LOG(LOG_DEBUG, "UIGameMenu: UseDoor prompt");
 		deactivate();
 	} else if (keycode == 'F' || keycode == 'f') {
 		// USE_SKILL(91)：SkillBook 选中则直接放；否则 SoftKey skillid
@@ -5545,6 +5557,71 @@ void UIUtilDlgExPet::send_key(int32_t keycode, bool pressed, bool escape)
 		auto ui = UI::get().get_element<UIUtilDlgExMultiPet>();
 		if (!ui) ui = UI::get().emplace<UIUtilDlgExMultiPet>();
 		else if (!ui->is_active()) ui->makeactive();
+	} else if (keycode == 'C' || keycode == 'c') {
+		// W1：PET_COMMAND — SoftKey 输入命令号 0..9
+		UI::get().emplace<UISoftKey>([](const std::string& s) {
+			if (s.empty()) return;
+			int cmd = 0;
+			try { cmd = std::stoi(s); } catch (...) { return; }
+			if (cmd < 0 || cmd > 9) return;
+			const Player& pl = Stage::get().get_player();
+			for (uint8_t i = 0; i < 3; ++i) {
+				const PetLook& pet = pl.get_pet(i);
+				if (pet.get_uniqueid() > 0) {
+					PetCommandPacket(pet.get_uniqueid(), static_cast<int8_t>(cmd)).dispatch();
+					return;
+				}
+			}
+		}, []() {}, "cmd 0-9");
+	} else if (keycode == 'T' || keycode == 't') {
+		// W1：PET_CHAT — SoftKey 文本
+		UI::get().emplace<UISoftKey>([](const std::string& text) {
+			if (text.empty()) return;
+			const Player& pl = Stage::get().get_player();
+			for (uint8_t i = 0; i < 3; ++i) {
+				const PetLook& pet = pl.get_pet(i);
+				if (pet.get_uniqueid() > 0) {
+					PetChatPacket(pet.get_uniqueid(), 0, text).dispatch();
+					return;
+				}
+			}
+		}, []() {}, "pet chat");
+	} else if (keycode == 'E' || keycode == 'e') {
+		// W1：PET_EXCLUDE_ITEMS — SoftKey 逗号分隔 itemId 列表
+		UI::get().emplace<UISoftKey>([](const std::string& s) {
+			const Player& pl = Stage::get().get_player();
+			int32_t uid = 0;
+			for (uint8_t i = 0; i < 3; ++i) {
+				const PetLook& pet = pl.get_pet(i);
+				if (pet.get_uniqueid() > 0) { uid = pet.get_uniqueid(); break; }
+			}
+			if (uid <= 0) return;
+			std::vector<int32_t> ids;
+			std::string token;
+			for (size_t i = 0; i <= s.size(); ++i) {
+				if (i == s.size() || s[i] == ',') {
+					if (!token.empty()) {
+						try { ids.push_back(std::stoi(token)); } catch (...) {}
+						token.clear();
+					}
+				} else if (s[i] != ' ') {
+					token.push_back(s[i]);
+				}
+			}
+			PetExcludeItemsPacket(uid, ids).dispatch();
+		}, []() {}, "exclude ids");
+	} else if (keycode == 'P' || keycode == 'p') {
+		// W1：PET_AUTO_POT — SoftKey useSlot,itemId
+		UI::get().emplace<UISoftKey>([](const std::string& s) {
+			auto comma = s.find(',');
+			if (comma == std::string::npos) return;
+			try {
+				int16_t use_slot = static_cast<int16_t>(std::stoi(s.substr(0, comma)));
+				int32_t itemid = std::stoi(s.substr(comma + 1));
+				if (use_slot > 0 && itemid > 0)
+					PetAutoPotPacket(use_slot, itemid).dispatch();
+			} catch (...) {}
+		}, []() {}, "slot,itemId");
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();

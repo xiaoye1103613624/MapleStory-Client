@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIBuffList.h"
+#include "UITemporaryStatView.h"
 
 #include "UISoftKey.h"
 
@@ -23,6 +24,7 @@
 #include "../../Configuration.h"
 #include "../../Data/ItemData.h"
 #include "../../Net/Packets/CommonPackets.h"
+#include "../../Net/Packets/ItemAClassPackets.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/PerfLog.h"
@@ -239,10 +241,11 @@ namespace ms
 		if (it == icons.end())
 			return;	// 快照滞后一帧（项刚过期）：静默丢弃
 
-		// s9 CancelBuffHandler：body 只有一个 int sourceid（技能id，图标 key
-		// 天然就是 add_buff 时的 skillid）。服务端结算后回 s2c CANCEL_BUFF(33)
-		// → remove_buff 自然更新；本地不提前擦（服务端拒绝时观感才不裂）。
-		CancelBuffPacket(skillid).dispatch();
+		// 技能 buff → CANCEL_BUFF；道具效果（itemid 量级）→ CANCEL_ITEM_EFFECT(W3)
+		if (skillid >= 1000000)
+			CancelItemEffectPacket(skillid).dispatch();
+		else
+			CancelBuffPacket(skillid).dispatch();
 		perf::mark("BUFF", "cancel request skillid=" + std::to_string(skillid));
 	}
 
@@ -282,6 +285,14 @@ namespace ms
 					}
 				} catch (...) {}
 			}, []() {}, "Clear buff id");
+		}
+		else if (keycode == 'D' || keycode == 'd')
+		{
+			// W5：打开 TemporaryStatView 明细板
+			auto ui = UI::get().get_element<UITemporaryStatView>();
+			if (!ui) ui = UI::get().emplace<UITemporaryStatView>();
+			else if (!ui->is_active()) ui->makeactive();
+			else ui->deactivate();
 		}
 	}
 

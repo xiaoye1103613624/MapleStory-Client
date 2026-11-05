@@ -88,6 +88,8 @@ namespace ms
 		int16_t get_buff_value(Buffstat::Id stat) const;
 		// Skill id attached to active buff (0 if none)
 		int32_t get_buff_skillid(Buffstat::Id stat) const;
+		// Duration ms from last GIVE_BUFF（本地明细窗倒计时用）
+		int32_t get_buff_duration(Buffstat::Id stat) const;
 
 		// Change a skill
 		void change_skill(int32_t skill_id, int32_t level, int32_t masterlevel, int64_t expiration);
@@ -167,6 +169,7 @@ namespace ms
 		std::map<KeyAction::Id, bool> keysdown;
 
 		Movement lastmove;
+		Movement lastpetmove[3];
 
 		Randomizer randomizer;
 

@@ -22,6 +22,18 @@ namespace ms
 			int8_t skill_level = 0, int32_t lifetime_ms = 0);
 		void spawn_mist(int32_t oid, int32_t owner_cid, int32_t skill_id, Point<int16_t> pos,
 			int32_t lifetime_ms = 60000);
+		// G6 mystic door（真对象化）：owner 即门 id（s9 spawnDoor/RemoveDoor 同键）。
+		// 重复下发只刷新 launched/位置（放门→收回→再放门场景）。
+		void spawn_door(int32_t owner, Point<int16_t> pos, bool launched);
+		// G5 Evan dragon（真对象化）：oid 沿用原生键 cid^0x40000000。
+		void spawn_dragon(int32_t oid, int32_t owner_cid, Point<int16_t> pos, int8_t stance, int16_t job);
+		void dragon_move(int32_t oid, Point<int16_t> pos, uint8_t state_byte);
+		// G6 门交互（Stage::check_doors）：玩家踩到任一 MapDoor 门框 ⇒ 发
+		// USE_DOOR(owner)。归属/队伍裁决在服务端（DoorHandler.java），客户端只管
+		// 上行——与 check_seats/check_portals 同构。内部带换图冷却防逐帧刷屏。
+		void check_doors(Point<int16_t> playerpos);
+		// G7：按 kind 清除全部场标（SPAWN_PORTAL town/target=NONE 清动态门）。
+		void remove_by_kind(FieldMarker::Kind kind);
 		void set_summon_stance(int32_t oid, int8_t stance);
 		// 真对象化（波3）：召唤兽入场/死亡动画需要拿到 MapSummon 实例，
 		// 只经 FieldMarker 基类接口够不到 play_die/play_spawn。
@@ -34,7 +46,15 @@ namespace ms
 		void remove(int32_t oid);
 		void clear();
 
+		// W2：本角色召唤兽/龙上行（移动/攻击/龙移）
+		void report_owned_c2s(int32_t local_cid, Point<int16_t> playerpos, class MapMobs& mobs);
+
 	private:
 		MapObjects markers;
+		Point<int16_t> last_summon_pos[8]{};
+		int32_t last_summon_oid[8]{};
+		uint8_t last_summon_n = 0;
+		Point<int16_t> last_dragon_pos{};
+		int32_t attack_cd_ms = 0;
 	};
 }

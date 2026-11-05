@@ -11,6 +11,7 @@
 #include "../../Configuration.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
+#include "../../Net/Packets/SummonDragonPackets.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
@@ -146,6 +147,34 @@ namespace ms
 					msg_label.change_text("set exp=" + std::to_string(e));
 					return;
 				}
+				// W2：BEHOLDER oid,skillId  /  dmgsummon oid,dmg,mobid
+				if (t.rfind("beholder ", 0) == 0)
+				{
+					std::istringstream iss(t.substr(9));
+					std::string s1, s2;
+					iss >> s1 >> s2;
+					int32_t oid = string_conversion::or_zero<int32_t>(s1);
+					int32_t skill = string_conversion::or_zero<int32_t>(s2);
+					if (oid > 0 && skill > 0) {
+						BeholderPacket(oid, skill).dispatch();
+						msg_label.change_text("beholder");
+						return;
+					}
+				}
+				if (t.rfind("dmgsummon ", 0) == 0)
+				{
+					std::istringstream iss(t.substr(10));
+					std::string s1, s2, s3;
+					iss >> s1 >> s2 >> s3;
+					int32_t oid = string_conversion::or_zero<int32_t>(s1);
+					int32_t dmg = string_conversion::or_zero<int32_t>(s2);
+					int32_t mid = string_conversion::or_zero<int32_t>(s3);
+					if (oid > 0) {
+						DamageSummonPacket(oid, dmg, mid).dispatch();
+						msg_label.change_text("dmgsummon");
+						return;
+					}
+				}
 				if (t == "users" || t == "show") {
 					AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
 					msg_label.change_text(Locale::text("admin.show_users"));
@@ -158,7 +187,7 @@ namespace ms
 				}
 				msg_label.change_text(msg);
 				GeneralChatPacket(msg, true).dispatch();
-			}, []() {}, "users|alert|msg");
+			}, []() {}, "summon id [n]|exp n|users|alert|msg");
 		}
 		else if (keycode == 'U' || keycode == 'u')
 		{

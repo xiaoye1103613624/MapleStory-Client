@@ -4,15 +4,11 @@
    "RECALCULATE_STATS"
   ],
   "client_source_hashes": {
-   "Net/OutPacket.h": "43b15c658e21db47d3bc454cec86cd54e1bd2e1175fdf18b5574545bf3398b47",
-   "Net/PacketSwitch.cpp": "e66601907e4bc056d7d7759a4e8532ceb65417ea2db89aee8f1355f79f63a75b"
+   "Net/OutPacket.h": "dbf9a51beab9089b29289f9472666d49d6cd42478de7c547cca5d9ef7168c96a",
+   "Net/PacketSwitch.cpp": "b6317281ad9006febfe564e9b01c185e91db1ab09f3913c043a797f3ae90ce18"
   },
   "collisions": {
    "client_in": {
-    "152": [
-     "ARIANT_RESULT",
-     "WARN_MESSAGE"
-    ],
     "35": [
      "RECALCULATE_STATS",
      "FORCED_STAT_RESET"
@@ -28,19 +24,19 @@
    "s9_send": {}
   },
   "counts": {
-   "client_in_constants": 303,
-   "client_in_registrations": 302,
-   "client_out_constants": 103,
-   "client_out_sent": 103,
-   "s9_recv_constants": 181,
-   "s9_recv_distinct_values": 180,
-   "s9_registered_handlers": 173,
-   "s9_registration_sites": 174,
-   "s9_send_constants": 311,
-   "s9_send_distinct_values": 311,
-   "s9_send_emitted": 250
+   "client_in_constants": 306,
+   "client_in_registrations": 305,
+   "client_out_constants": 136,
+   "client_out_sent": 136,
+   "s9_recv_constants": 182,
+   "s9_recv_distinct_values": 181,
+   "s9_registered_handlers": 174,
+   "s9_registration_sites": 175,
+   "s9_send_constants": 313,
+   "s9_send_distinct_values": 313,
+   "s9_send_emitted": 252
   },
-  "generated_at": "2026-11-02T10:34:22",
+  "generated_at": "2026-11-05T15:05:19",
   "generated_by": "tools/gen_opcode_matrix.py",
   "s9_git_head": "44d0d5d9caa861ca844054a24c9fb7a0d6a300d3",
   "s9_shadowed_registrations": {
@@ -56,9 +52,9 @@
    }
   },
   "source_hashes": {
-   "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "abfe0edf4137c1a97fc414200648015d923949070031cf3f095f66af205553f0",
-   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "bfbe27e4a0a8c6453343b2517a9aa2310a773dd287d5599ad22f456cb7f80ae2",
-   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "6537caaf3fe4b263ccbf5806fd573c711dc6e4ef48760bc07fe45c75ca94ecb5"
+   "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "6e5ecd14aa334a2573156ce73736b222cadeb4d46f271f1d31ae6204416ab91d",
+   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "22ca7e0f574d257f1bc2c24fea39686c6956c7303e5f51c5c6f9eed936f1dd41",
+   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "7a93f365b9090fcd854c46b1d04b0697d268ce782da493ff9b33d37783913973"
   }
  },
  "c2s": [
@@ -113,7 +109,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 42,
+   "client_line": 46,
    "client_name": "CHARLIST_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -137,7 +133,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 43,
+   "client_line": 47,
    "client_name": "SERVERSTATUS_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -161,7 +157,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 44,
+   "client_line": 48,
    "client_name": "ACCEPT_TOS",
    "client_sent": true,
    "client_sent_at": [
@@ -185,7 +181,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 45,
+   "client_line": 49,
    "client_name": "SET_GENDER",
    "client_sent": true,
    "client_sent_at": [
@@ -209,7 +205,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 46,
+   "client_line": 50,
    "client_name": "SERVERLIST_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -233,7 +229,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 47,
+   "client_line": 51,
    "client_name": "SELECT_CHAR",
    "client_sent": true,
    "client_sent_at": [
@@ -257,7 +253,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 48,
+   "client_line": 52,
    "client_name": "PLAYER_LOGIN",
    "client_sent": true,
    "client_sent_at": [
@@ -281,7 +277,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 49,
+   "client_line": 53,
    "client_name": "NAME_CHAR",
    "client_sent": true,
    "client_sent_at": [
@@ -307,7 +303,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 50,
+   "client_line": 54,
    "client_name": "CREATE_CHAR",
    "client_sent": true,
    "client_sent_at": [
@@ -331,7 +327,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 51,
+   "client_line": 55,
    "client_name": "DELETE_CHAR",
    "client_sent": true,
    "client_sent_at": [
@@ -359,7 +355,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 52,
+   "client_line": 56,
    "client_name": "PONG",
    "client_sent": true,
    "client_sent_at": [
@@ -383,7 +379,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 53,
+   "client_line": 57,
    "client_name": "REGISTER_PIC",
    "client_sent": true,
    "client_sent_at": [
@@ -407,7 +403,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 54,
+   "client_line": 58,
    "client_name": "SELECT_CHAR_PIC",
    "client_sent": true,
    "client_sent_at": [
@@ -431,7 +427,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 55,
+   "client_line": 59,
    "client_name": "VIEW_ALL_CHAR",
    "client_sent": true,
    "client_sent_at": [
@@ -455,7 +451,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 58,
+   "client_line": 62,
    "client_name": "CHANGEMAP",
    "client_sent": true,
    "client_sent_at": [
@@ -488,13 +484,13 @@
      "value": 39
     }
    ],
-   "client_line": 60,
+   "client_line": 64,
    "client_name": "CHANGE_CHANNEL",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 54
+     "line": 69
     }
    ],
    "client_sent_count": 1,
@@ -512,7 +508,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 61,
+   "client_line": 65,
    "client_name": "ENTER_CASHSHOP",
    "client_sent": true,
    "client_sent_at": [
@@ -536,13 +532,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 62,
+   "client_line": 66,
    "client_name": "MOVE_PLAYER",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 65
+     "line": 81
     }
    ],
    "client_sent_count": 1,
@@ -560,13 +556,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 63,
+   "client_line": 67,
    "client_name": "CLOSE_ATTACK",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/AttackAndSkillPackets.h",
-     "line": 147
+     "line": 170
     }
    ],
    "client_sent_count": 1,
@@ -584,13 +580,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 64,
+   "client_line": 68,
    "client_name": "RANGED_ATTACK",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/AttackAndSkillPackets.h",
-     "line": 149
+     "line": 172
     }
    ],
    "client_sent_count": 1,
@@ -608,13 +604,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 65,
+   "client_line": 69,
    "client_name": "MAGIC_ATTACK",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/AttackAndSkillPackets.h",
-     "line": 151
+     "line": 174
     }
    ],
    "client_sent_count": 1,
@@ -632,13 +628,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 66,
+   "client_line": 70,
    "client_name": "TAKE_DAMAGE",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/AttackAndSkillPackets.h",
-     "line": 202
+     "line": 225
     }
    ],
    "client_sent_count": 1,
@@ -661,13 +657,13 @@
      "value": 42
     }
    ],
-   "client_line": 68,
+   "client_line": 72,
    "client_name": "CANCEL_CHAIR",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 119
+     "line": 155
     }
    ],
    "client_sent_count": 1,
@@ -685,13 +681,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 69,
+   "client_line": 73,
    "client_name": "USE_CHAIR",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 109
+     "line": 145
     }
    ],
    "client_sent_count": 1,
@@ -714,13 +710,13 @@
      "value": 50
     }
    ],
-   "client_line": 71,
+   "client_line": 75,
    "client_name": "CLOSE_CHALKBOARD",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 126
+     "line": 162
     }
    ],
    "client_sent_count": 1,
@@ -743,13 +739,13 @@
      "value": 51
     }
    ],
-   "client_line": 73,
+   "client_line": 77,
    "client_name": "FACE_EXPRESSION",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 99
+     "line": 135
     }
    ],
    "client_sent_count": 1,
@@ -772,13 +768,13 @@
      "value": 52
     }
    ],
-   "client_line": 75,
+   "client_line": 79,
    "client_name": "USE_ITEMEFFECT",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 133
+     "line": 169
     }
    ],
    "client_sent_count": 1,
@@ -794,9 +790,38 @@
    "status": "MATCHED"
   },
   {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_DEATHITEM",
+     "value": 53
+    }
+   ],
+   "client_line": 81,
+   "client_name": "USE_DEATHITEM",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/ItemAClassPackets.h",
+     "line": 43
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 53,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "UseDeathItemHandler",
+   "s9_line": 71,
+   "s9_name": "USE_DEATHITEM",
+   "s9_names_at_value": [],
+   "s9_reg_line": 290,
+   "s9_shadowed_by": null,
+   "s9_value": 53,
+   "status": "MATCHED"
+  },
+  {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 78,
+   "client_line": 84,
    "client_name": "GENERAL_CHAT",
    "client_sent": true,
    "client_sent_at": [
@@ -820,7 +845,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 79,
+   "client_line": 85,
    "client_name": "MULTI_CHAT",
    "client_sent": true,
    "client_sent_at": [
@@ -849,7 +874,7 @@
      "value": 120
     }
    ],
-   "client_line": 81,
+   "client_line": 87,
    "client_name": "WHISPER",
    "client_sent": true,
    "client_sent_at": [
@@ -877,7 +902,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 82,
+   "client_line": 88,
    "client_name": "SPOUSE_CHAT",
    "client_sent": true,
    "client_sent_at": [
@@ -901,7 +926,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 85,
+   "client_line": 91,
    "client_name": "TALK_TO_NPC",
    "client_sent": true,
    "client_sent_at": [
@@ -925,7 +950,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 86,
+   "client_line": 92,
    "client_name": "NPC_TALK_MORE",
    "client_sent": true,
    "client_sent_at": [
@@ -953,7 +978,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 87,
+   "client_line": 93,
    "client_name": "NPC_SHOP_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -977,7 +1002,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 90,
+   "client_line": 96,
    "client_name": "CHAR_INFO_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -1001,13 +1026,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 93,
+   "client_line": 99,
    "client_name": "GATHER_ITEMS",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 31
+     "line": 32
     }
    ],
    "client_sent_count": 1,
@@ -1025,13 +1050,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 94,
+   "client_line": 100,
    "client_name": "SORT_ITEMS",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 43
+     "line": 44
     }
    ],
    "client_sent_count": 1,
@@ -1049,13 +1074,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 95,
+   "client_line": 101,
    "client_name": "MOVE_ITEM",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 55
+     "line": 56
     }
    ],
    "client_sent_count": 1,
@@ -1073,13 +1098,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 96,
+   "client_line": 102,
    "client_name": "USE_ITEM",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 86
+     "line": 129
     }
    ],
    "client_sent_count": 1,
@@ -1095,9 +1120,253 @@
    "status": "MATCHED"
   },
   {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_SUMMON_BAG",
+     "value": 75
+    }
+   ],
+   "client_line": 106,
+   "client_name": "USE_SUMMON_BAG",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 124
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 75,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "UseSummonBagHandler",
+   "s9_line": 90,
+   "s9_name": "USE_SUMMON_BAG",
+   "s9_names_at_value": [],
+   "s9_reg_line": 195,
+   "s9_shadowed_by": null,
+   "s9_value": 75,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "PET_FOOD",
+     "value": 76
+    }
+   ],
+   "client_line": 108,
+   "client_name": "PET_FOOD",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 126
+    },
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 34
+    }
+   ],
+   "client_sent_count": 2,
+   "client_value": 76,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetFoodHandler",
+   "s9_line": 91,
+   "s9_name": "PET_FOOD",
+   "s9_names_at_value": [],
+   "s9_reg_line": 239,
+   "s9_shadowed_by": null,
+   "s9_value": 76,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_MOUNT_FOOD",
+     "value": 77
+    }
+   ],
+   "client_line": 110,
+   "client_name": "USE_MOUNT_FOOD",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 127
+    },
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 48
+    }
+   ],
+   "client_sent_count": 2,
+   "client_value": 77,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "UseMountFoodHandler",
+   "s9_line": 92,
+   "s9_name": "USE_MOUNT_FOOD",
+   "s9_names_at_value": [],
+   "s9_reg_line": 248,
+   "s9_shadowed_by": null,
+   "s9_value": 77,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "SCRIPTED_ITEM",
+     "value": 78
+    }
+   ],
+   "client_line": 112,
+   "client_name": "SCRIPTED_ITEM",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 128
+    },
+    {
+     "file": "Net/Packets/ItemAClassPackets.h",
+     "line": 15
+    }
+   ],
+   "client_sent_count": 2,
+   "client_value": 78,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "ScriptedItemHandler",
+   "s9_line": 93,
+   "s9_name": "SCRIPTED_ITEM",
+   "s9_names_at_value": [],
+   "s9_reg_line": 275,
+   "s9_shadowed_by": null,
+   "s9_value": 78,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_CATCH_ITEM",
+     "value": 81
+    }
+   ],
+   "client_line": 114,
+   "client_name": "USE_CATCH_ITEM",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/ItemAClassPackets.h",
+     "line": 29
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 81,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "UseCatchItemHandler",
+   "s9_line": 96,
+   "s9_name": "USE_CATCH_ITEM",
+   "s9_names_at_value": [],
+   "s9_reg_line": 293,
+   "s9_shadowed_by": null,
+   "s9_value": 81,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "CANCEL_ITEM_EFFECT",
+     "value": 73
+    }
+   ],
+   "client_line": 116,
+   "client_name": "CANCEL_ITEM_EFFECT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/ItemAClassPackets.h",
+     "line": 54
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 73,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "CancelItemEffectHandler",
+   "s9_line": 89,
+   "s9_name": "CANCEL_ITEM_EFFECT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 203,
+   "s9_shadowed_by": null,
+   "s9_value": 73,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_REMOTE",
+     "value": 116
+    }
+   ],
+   "client_line": 118,
+   "client_name": "USE_REMOTE",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/ItemAClassPackets.h",
+     "line": 65
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 116,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "RemoteGachaponHandler",
+   "s9_line": 124,
+   "s9_name": "USE_REMOTE",
+   "s9_names_at_value": [],
+   "s9_reg_line": 287,
+   "s9_shadowed_by": null,
+   "s9_value": 116,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "GRENADE_EFFECT",
+     "value": 109
+    }
+   ],
+   "client_line": 122,
+   "client_name": "GRENADE_EFFECT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/AttackAndSkillPackets.h",
+     "line": 259
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 109,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "GrenadeEffectHandler",
+   "s9_line": 119,
+   "s9_name": "GRENADE_EFFECT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 178,
+   "s9_shadowed_by": null,
+   "s9_value": 109,
+   "status": "MATCHED"
+  },
+  {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 97,
+   "client_line": 123,
    "client_name": "USE_CASH_ITEM",
    "client_sent": true,
    "client_sent_at": [
@@ -1139,15 +1408,44 @@
    "status": "MATCHED"
   },
   {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "SPAWN_PET",
+     "value": 98
+    }
+   ],
+   "client_line": 125,
+   "client_name": "SPAWN_PET",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 19
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 98,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "SpawnPetHandler",
+   "s9_line": 111,
+   "s9_name": "SPAWN_PET",
+   "s9_names_at_value": [],
+   "s9_reg_line": 235,
+   "s9_shadowed_by": null,
+   "s9_value": 98,
+   "status": "MATCHED"
+  },
+  {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 98,
+   "client_line": 126,
    "client_name": "SCROLL_EQUIP",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 108
+     "line": 152
     }
    ],
    "client_sent_count": 1,
@@ -1165,13 +1463,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 101,
+   "client_line": 129,
    "client_name": "SPEND_AP",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 33
+     "line": 35
     }
    ],
    "client_sent_count": 1,
@@ -1189,13 +1487,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 102,
+   "client_line": 130,
    "client_name": "SPEND_SP",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 45
+     "line": 79
     }
    ],
    "client_sent_count": 1,
@@ -1214,17 +1512,133 @@
    "annotation_consistent": true,
    "client_annotations": [
     {
+     "s9_name": "CANCEL_BUFF",
+     "value": 92
+    }
+   ],
+   "client_line": 132,
+   "client_name": "CANCEL_BUFF",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/CommonPackets.h",
+     "line": 39
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 92,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "CancelBuffHandler",
+   "s9_line": 106,
+   "s9_name": "CANCEL_BUFF",
+   "s9_names_at_value": [],
+   "s9_reg_line": 202,
+   "s9_shadowed_by": null,
+   "s9_value": 92,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "AUTO_DISTRIBUTE_AP",
+     "value": 88
+    }
+   ],
+   "client_line": 137,
+   "client_name": "AUTO_DISTRIBUTE_AP",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PlayerPackets.h",
+     "line": 63
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 88,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "AutoAssignHandler",
+   "s9_line": 102,
+   "s9_name": "AUTO_DISTRIBUTE_AP",
+   "s9_names_at_value": [],
+   "s9_reg_line": 263,
+   "s9_shadowed_by": null,
+   "s9_value": 88,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "AUTO_AGGRO",
+     "value": 189
+    }
+   ],
+   "client_line": 140,
+   "client_name": "AUTO_AGGRO",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/AttackAndSkillPackets.h",
+     "line": 274
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 189,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "AutoAggroHandler",
+   "s9_line": 179,
+   "s9_name": "AUTO_AGGRO",
+   "s9_names_at_value": [],
+   "s9_reg_line": 241,
+   "s9_shadowed_by": null,
+   "s9_value": 189,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "USE_SKILL_BOOK",
+     "value": 82
+    }
+   ],
+   "client_line": 143,
+   "client_name": "USE_SKILL_BOOK",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 125
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 82,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "SkillBookHandler",
+   "s9_line": 97,
+   "s9_name": "USE_SKILL_BOOK",
+   "s9_names_at_value": [],
+   "s9_reg_line": 244,
+   "s9_shadowed_by": null,
+   "s9_value": 82,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
      "s9_name": "MESO_DROP",
      "value": 94
     }
    ],
-   "client_line": 104,
+   "client_line": 145,
    "client_name": "MESO_DROP",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 88
+     "line": 124
     }
    ],
    "client_sent_count": 1,
@@ -1247,13 +1661,13 @@
      "value": 95
     }
    ],
-   "client_line": 106,
+   "client_line": 147,
    "client_name": "GIVE_FAME",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 77
+     "line": 113
     }
    ],
    "client_sent_count": 1,
@@ -1271,13 +1685,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 107,
+   "client_line": 148,
    "client_name": "CHANGE_KEYMAP",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 57
+     "line": 91
     }
    ],
    "client_sent_count": 1,
@@ -1300,13 +1714,13 @@
      "value": 133
     }
    ],
-   "client_line": 109,
+   "client_line": 150,
    "client_name": "USE_DOOR",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/PlayerPackets.h",
-     "line": 143
+     "line": 183
     }
    ],
    "client_sent_count": 1,
@@ -1324,13 +1738,133 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 112,
+   "client_line": 152,
+   "client_name": "CHANGE_MAP_SPECIAL",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MapInteractPackets.h",
+     "line": 18
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 100,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "ChangeMapSpecialHandler",
+   "s9_line": 113,
+   "s9_name": "CHANGE_MAP_SPECIAL",
+   "s9_names_at_value": [],
+   "s9_reg_line": 209,
+   "s9_shadowed_by": null,
+   "s9_value": 100,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 153,
+   "client_name": "USE_INNER_PORTAL",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MapInteractPackets.h",
+     "line": 32
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 101,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "InnerPortalHandler",
+   "s9_line": 114,
+   "s9_name": "USE_INNER_PORTAL",
+   "s9_names_at_value": [],
+   "s9_reg_line": 201,
+   "s9_shadowed_by": null,
+   "s9_value": 101,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 154,
+   "client_name": "USE_ITEM_REWARD",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MapInteractPackets.h",
+     "line": 71
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 112,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "ItemRewardHandler",
+   "s9_line": 121,
+   "s9_name": "USE_ITEM_REWARD",
+   "s9_names_at_value": [],
+   "s9_reg_line": 286,
+   "s9_shadowed_by": null,
+   "s9_value": 112,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 155,
+   "client_name": "USE_TREASUER_CHEST",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MapInteractPackets.h",
+     "line": 58
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 115,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "UseTreasureChestHandler",
+   "s9_line": 123,
+   "s9_name": "USE_TREASUER_CHEST",
+   "s9_names_at_value": [],
+   "s9_reg_line": 265,
+   "s9_shadowed_by": null,
+   "s9_value": 115,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 156,
+   "client_name": "TOUCHING_REACTOR",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MapInteractPackets.h",
+     "line": 45
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 206,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "TouchReactorHandler",
+   "s9_line": 187,
+   "s9_name": "TOUCHING_REACTOR",
+   "s9_names_at_value": [],
+   "s9_reg_line": 276,
+   "s9_shadowed_by": null,
+   "s9_value": 206,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 159,
    "client_name": "USE_SKILL",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/AttackAndSkillPackets.h",
-     "line": 222
+     "line": 285
     }
    ],
    "client_sent_count": 1,
@@ -1348,13 +1882,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 113,
+   "client_line": 160,
    "client_name": "SKILL_MACRO",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/SkillMacroPackets.h",
-     "line": 14
+     "line": 16
     }
    ],
    "client_sent_count": 1,
@@ -1372,7 +1906,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 114,
+   "client_line": 161,
    "client_name": "RPS_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1400,7 +1934,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 117,
+   "client_line": 164,
    "client_name": "QUEST_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1429,7 +1963,7 @@
      "value": 122
     }
    ],
-   "client_line": 121,
+   "client_line": 168,
    "client_name": "MESSENGER",
    "client_sent": true,
    "client_sent_at": [
@@ -1469,13 +2003,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 122,
+   "client_line": 169,
    "client_name": "PARTY_OPERATION",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 88
+     "line": 104
     },
     {
      "file": "Net/Packets/PartyPackets.h",
@@ -1513,13 +2047,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 123,
+   "client_line": 170,
    "client_name": "ADMIN_COMMAND",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 158
+     "line": 187
     }
    ],
    "client_sent_count": 1,
@@ -1537,13 +2071,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 124,
+   "client_line": 171,
    "client_name": "MOVE_MONSTER",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 185
+     "line": 239
     }
    ],
    "client_sent_count": 1,
@@ -1559,15 +2093,308 @@
    "status": "MATCHED"
   },
   {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "CHANGE_QUICKSLOT",
+     "value": 183
+    }
+   ],
+   "client_line": 175,
+   "client_name": "CHANGE_QUICKSLOT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SkillMacroPackets.h",
+     "line": 44
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 183,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "QuickslotKeyMappedModifiedHandler",
+   "s9_line": 177,
+   "s9_name": "CHANGE_QUICKSLOT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 316,
+   "s9_shadowed_by": null,
+   "s9_value": 183,
+   "status": "MATCHED"
+  },
+  {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 125,
+   "client_line": 177,
+   "client_name": "MOVE_PET",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 62
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 167,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "MovePetHandler",
+   "s9_line": 166,
+   "s9_name": "MOVE_PET",
+   "s9_names_at_value": [],
+   "s9_reg_line": 236,
+   "s9_shadowed_by": null,
+   "s9_value": 167,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 178,
+   "client_name": "PET_CHAT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 77
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 168,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetChatHandler",
+   "s9_line": 167,
+   "s9_name": "PET_CHAT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 237,
+   "s9_shadowed_by": null,
+   "s9_value": 168,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 179,
+   "client_name": "PET_COMMAND",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 93
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 169,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetCommandHandler",
+   "s9_line": 168,
+   "s9_name": "PET_COMMAND",
+   "s9_names_at_value": [],
+   "s9_reg_line": 238,
+   "s9_shadowed_by": null,
+   "s9_value": 169,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 180,
+   "client_name": "PET_LOOT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 108
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 170,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetLootHandler",
+   "s9_line": 169,
+   "s9_name": "PET_LOOT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 240,
+   "s9_shadowed_by": null,
+   "s9_value": 170,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 181,
+   "client_name": "PET_AUTO_POT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 123
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 171,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetAutoPotHandler",
+   "s9_line": 170,
+   "s9_name": "PET_AUTO_POT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 252,
+   "s9_shadowed_by": null,
+   "s9_value": 171,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 182,
+   "client_name": "PET_EXCLUDE_ITEMS",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/PetPackets.h",
+     "line": 139
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 172,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "PetExcludeItemsHandler",
+   "s9_line": 171,
+   "s9_name": "PET_EXCLUDE_ITEMS",
+   "s9_names_at_value": [],
+   "s9_reg_line": 253,
+   "s9_shadowed_by": null,
+   "s9_value": 172,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 184,
+   "client_name": "MOVE_SUMMON",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SummonDragonPackets.h",
+     "line": 19
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 175,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "MoveSummonHandler",
+   "s9_line": 172,
+   "s9_name": "MOVE_SUMMON",
+   "s9_names_at_value": [],
+   "s9_reg_line": 219,
+   "s9_shadowed_by": null,
+   "s9_value": 175,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 185,
+   "client_name": "SUMMON_ATTACK",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SummonDragonPackets.h",
+     "line": 42
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 176,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "SummonDamageHandler",
+   "s9_line": 173,
+   "s9_name": "SUMMON_ATTACK",
+   "s9_names_at_value": [],
+   "s9_reg_line": 220,
+   "s9_shadowed_by": null,
+   "s9_value": 176,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 186,
+   "client_name": "DAMAGE_SUMMON",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SummonDragonPackets.h",
+     "line": 66
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 177,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "DamageSummonHandler",
+   "s9_line": 174,
+   "s9_name": "DAMAGE_SUMMON",
+   "s9_names_at_value": [],
+   "s9_reg_line": 218,
+   "s9_shadowed_by": null,
+   "s9_value": 177,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 187,
+   "client_name": "BEHOLDER",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SummonDragonPackets.h",
+     "line": 81
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 178,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "BeholderHandler",
+   "s9_line": 175,
+   "s9_name": "BEHOLDER",
+   "s9_names_at_value": [],
+   "s9_reg_line": 277,
+   "s9_shadowed_by": null,
+   "s9_value": 178,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 188,
+   "client_name": "MOVE_DRAGON",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/SummonDragonPackets.h",
+     "line": 96
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 181,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "MoveDragonHandler",
+   "s9_line": 176,
+   "s9_name": "MOVE_DRAGON",
+   "s9_names_at_value": [],
+   "s9_reg_line": 313,
+   "s9_shadowed_by": null,
+   "s9_value": 181,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": null,
+   "client_annotations": [],
+   "client_line": 189,
    "client_name": "PICKUP_ITEM",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 210
+     "line": 264
     }
    ],
    "client_sent_count": 1,
@@ -1585,13 +2412,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 126,
+   "client_line": 190,
    "client_name": "DAMAGE_REACTOR",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 224
+     "line": 278
     }
    ],
    "client_sent_count": 1,
@@ -1609,13 +2436,13 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 127,
+   "client_line": 191,
    "client_name": "PLAYER_MAP_TRANSFER",
    "client_sent": true,
    "client_sent_at": [
     {
      "file": "Net/Packets/GameplayPackets.h",
-     "line": 239
+     "line": 293
     }
    ],
    "client_sent_count": 1,
@@ -1633,7 +2460,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 129,
+   "client_line": 193,
    "client_name": "PARTY_SEARCH_START",
    "client_sent": true,
    "client_sent_at": [
@@ -1657,7 +2484,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 130,
+   "client_line": 194,
    "client_name": "PARTY_SEARCH_UPDATE",
    "client_sent": true,
    "client_sent_at": [
@@ -1681,7 +2508,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 133,
+   "client_line": 197,
    "client_name": "DENY_PARTY_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -1710,7 +2537,7 @@
      "value": 127
     }
    ],
-   "client_line": 135,
+   "client_line": 199,
    "client_name": "DENY_GUILD_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -1739,7 +2566,7 @@
      "value": 62
     }
    ],
-   "client_line": 138,
+   "client_line": 202,
    "client_name": "STORAGE",
    "client_sent": true,
    "client_sent_at": [
@@ -1768,7 +2595,7 @@
      "value": 130
     }
    ],
-   "client_line": 143,
+   "client_line": 207,
    "client_name": "BUDDYLIST",
    "client_sent": true,
    "client_sent_at": [
@@ -1800,7 +2627,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 145,
+   "client_line": 209,
    "client_name": "FREDRICK_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1833,7 +2660,7 @@
      "value": 66
     }
    ],
-   "client_line": 147,
+   "client_line": 211,
    "client_name": "OWL_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1862,7 +2689,7 @@
      "value": 67
     }
    ],
-   "client_line": 149,
+   "client_line": 213,
    "client_name": "OWL_WARP",
    "client_sent": true,
    "client_sent_at": [
@@ -1891,7 +2718,7 @@
      "value": 260
     }
    ],
-   "client_line": 151,
+   "client_line": 215,
    "client_name": "USE_HAMMER",
    "client_sent": true,
    "client_sent_at": [
@@ -1915,7 +2742,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 153,
+   "client_line": 217,
    "client_name": "NOTE_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -1943,7 +2770,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 154,
+   "client_line": 218,
    "client_name": "OPEN_FAMILY_PEDIGREE",
    "client_sent": true,
    "client_sent_at": [
@@ -1967,7 +2794,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 155,
+   "client_line": 219,
    "client_name": "OPEN_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -1991,7 +2818,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 156,
+   "client_line": 220,
    "client_name": "ADD_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2015,7 +2842,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 158,
+   "client_line": 222,
    "client_name": "SEPARATE_FAMILY_BY_SENIOR",
    "client_sent": true,
    "client_sent_at": [
@@ -2039,7 +2866,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 160,
+   "client_line": 224,
    "client_name": "SEPARATE_FAMILY_BY_JUNIOR",
    "client_sent": true,
    "client_sent_at": [
@@ -2063,7 +2890,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 161,
+   "client_line": 225,
    "client_name": "ACCEPT_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2087,7 +2914,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 162,
+   "client_line": 226,
    "client_name": "USE_FAMILY",
    "client_sent": true,
    "client_sent_at": [
@@ -2111,7 +2938,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 163,
+   "client_line": 227,
    "client_name": "CHANGE_FAMILY_MESSAGE",
    "client_sent": true,
    "client_sent_at": [
@@ -2140,7 +2967,7 @@
      "value": 153
     }
    ],
-   "client_line": 165,
+   "client_line": 229,
    "client_name": "FAMILY_SUMMON_RESPONSE",
    "client_sent": true,
    "client_sent_at": [
@@ -2164,7 +2991,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 166,
+   "client_line": 230,
    "client_name": "DUEY_ACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -2204,7 +3031,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 167,
+   "client_line": 231,
    "client_name": "GUILD_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2253,7 +3080,7 @@
      "value": 123
     }
    ],
-   "client_line": 170,
+   "client_line": 234,
    "client_name": "PLAYER_INTERACTION",
    "client_sent": true,
    "client_sent_at": [
@@ -2302,7 +3129,7 @@
      "value": 256
     }
    ],
-   "client_line": 172,
+   "client_line": 236,
    "client_name": "USE_MAPLELIFE",
    "client_sent": true,
    "client_sent_at": [
@@ -2331,7 +3158,7 @@
      "value": 228
     }
    ],
-   "client_line": 174,
+   "client_line": 238,
    "client_name": "CHECK_CASH",
    "client_sent": true,
    "client_sent_at": [
@@ -2360,7 +3187,7 @@
      "value": 229
     }
    ],
-   "client_line": 177,
+   "client_line": 241,
    "client_name": "CASHSHOP_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2409,7 +3236,7 @@
      "value": 230
     }
    ],
-   "client_line": 179,
+   "client_line": 243,
    "client_name": "COUPON_CODE",
    "client_sent": true,
    "client_sent_at": [
@@ -2438,7 +3265,7 @@
      "value": 102
     }
    ],
-   "client_line": 181,
+   "client_line": 245,
    "client_name": "TROCK_ADD_MAP",
    "client_sent": true,
    "client_sent_at": [
@@ -2467,7 +3294,7 @@
      "value": 106
     }
    ],
-   "client_line": 183,
+   "client_line": 247,
    "client_name": "REPORT",
    "client_sent": true,
    "client_sent_at": [
@@ -2496,7 +3323,7 @@
      "value": 159
     }
    ],
-   "client_line": 185,
+   "client_line": 249,
    "client_name": "NEW_YEAR_CARD_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -2520,7 +3347,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 186,
+   "client_line": 250,
    "client_name": "MONSTER_BOOK_COVER",
    "client_sent": true,
    "client_sent_at": [
@@ -2549,7 +3376,7 @@
      "value": 59
     }
    ],
-   "client_line": 188,
+   "client_line": 252,
    "client_name": "REMOTE_STORE",
    "client_sent": true,
    "client_sent_at": [
@@ -2573,7 +3400,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 189,
+   "client_line": 253,
    "client_name": "MAKER_SKILL",
    "client_sent": true,
    "client_sent_at": [
@@ -2602,7 +3429,7 @@
      "value": 117
     }
    ],
-   "client_line": 191,
+   "client_line": 255,
    "client_name": "WATER_OF_LIFE",
    "client_sent": true,
    "client_sent_at": [
@@ -2626,7 +3453,7 @@
   {
    "annotation_consistent": null,
    "client_annotations": [],
-   "client_line": 192,
+   "client_line": 256,
    "client_name": "ALLIANCE_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2663,7 +3490,7 @@
      "value": 144
     }
    ],
-   "client_line": 194,
+   "client_line": 258,
    "client_name": "DENY_ALLIANCE_REQUEST",
    "client_sent": true,
    "client_sent_at": [
@@ -2692,7 +3519,7 @@
      "value": 155
     }
    ],
-   "client_line": 196,
+   "client_line": 260,
    "client_name": "BBS_OPERATION",
    "client_sent": true,
    "client_sent_at": [
@@ -2737,7 +3564,7 @@
      "value": 156
     }
    ],
-   "client_line": 198,
+   "client_line": 262,
    "client_name": "ENTER_MTS",
    "client_sent": true,
    "client_sent_at": [
@@ -2766,7 +3593,7 @@
      "value": 157
     }
    ],
-   "client_line": 200,
+   "client_line": 264,
    "client_name": "USE_SOLOMON_ITEM",
    "client_sent": true,
    "client_sent_at": [
@@ -2795,7 +3622,7 @@
      "value": 158
     }
    ],
-   "client_line": 202,
+   "client_line": 266,
    "client_name": "USE_GACHA_EXP",
    "client_sent": true,
    "client_sent_at": [
@@ -2824,7 +3651,7 @@
      "value": 163
     }
    ],
-   "client_line": 204,
+   "client_line": 268,
    "client_name": "ARAN_COMBO_COUNTER",
    "client_sent": true,
    "client_sent_at": [
@@ -2853,7 +3680,7 @@
      "value": 236
     }
    ],
-   "client_line": 206,
+   "client_line": 270,
    "client_name": "OPEN_ITEMUI",
    "client_sent": true,
    "client_sent_at": [
@@ -2882,7 +3709,7 @@
      "value": 277
     }
    ],
-   "client_line": 208,
+   "client_line": 272,
    "client_name": "WORLD_MAP_PLAYERS",
    "client_sent": true,
    "client_sent_at": [
@@ -2901,6 +3728,64 @@
    "s9_reg_line": 318,
    "s9_shadowed_by": null,
    "s9_value": 277,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "WORLD_MAP_DROP_REQUEST",
+     "value": 278
+    }
+   ],
+   "client_line": 274,
+   "client_name": "WORLD_MAP_DROP_REQUEST",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MiscOutPackets.h",
+     "line": 51
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 278,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "WorldMapDropRequestHandler",
+   "s9_line": 209,
+   "s9_name": "WORLD_MAP_DROP_REQUEST",
+   "s9_names_at_value": [],
+   "s9_reg_line": 319,
+   "s9_shadowed_by": null,
+   "s9_value": 278,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "SET_HPMPALERT",
+     "value": 4096
+    }
+   ],
+   "client_line": 277,
+   "client_name": "SET_HPMPALERT",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/MiscOutPackets.h",
+     "line": 66
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 4096,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "SetHpMpAlertHandler",
+   "s9_line": 210,
+   "s9_name": "SET_HPMPALERT",
+   "s9_names_at_value": [],
+   "s9_reg_line": 317,
+   "s9_shadowed_by": null,
+   "s9_value": 4096,
    "status": "MATCHED"
   }
  ],
@@ -5052,23 +5937,19 @@
    "status": "HANDLED"
   },
   {
-   "client_handler_wins": "WarnMessageHandler",
+   "client_handler_wins": "AriantResultHandler",
    "client_handlers": [
-    "AriantResultHandler",
-    "WarnMessageHandler"
-   ],
-   "client_names": [
-    "ARIANT_RESULT",
-    "WARN_MESSAGE"
-   ],
-   "client_shadowed_handlers": [
     "AriantResultHandler"
    ],
+   "client_names": [
+    "ARIANT_RESULT"
+   ],
+   "client_shadowed_handlers": [],
    "s9_emitted": false,
    "s9_line": 185,
    "s9_name": "ARIANT_RESULT",
    "s9_value": 152,
-   "status": "CLIENT_DUP_VALUE"
+   "status": "HANDLED"
   },
   {
    "client_handler_wins": "SetObjectStateHandler",
@@ -6661,26 +7542,34 @@
    "status": "HANDLED"
   },
   {
-   "client_handler_wins": null,
-   "client_handlers": [],
-   "client_names": [],
+   "client_handler_wins": "GuildBossHealerMoveHandler",
+   "client_handlers": [
+    "GuildBossHealerMoveHandler"
+   ],
+   "client_names": [
+    "GUILD_BOSS_HEALER_MOVE"
+   ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
    "s9_line": 294,
    "s9_name": "GUILD_BOSS_HEALER_MOVE",
    "s9_value": 287,
-   "status": "UNHANDLED_EMITTED"
+   "status": "HANDLED"
   },
   {
-   "client_handler_wins": null,
-   "client_handlers": [],
-   "client_names": [],
+   "client_handler_wins": "GuildBossPulleyStateHandler",
+   "client_handlers": [
+    "GuildBossPulleyStateHandler"
+   ],
+   "client_names": [
+    "GUILD_BOSS_PULLEY_STATE_CHANGE"
+   ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
    "s9_line": 295,
    "s9_name": "GUILD_BOSS_PULLEY_STATE_CHANGE",
    "s9_value": 288,
-   "status": "UNHANDLED_EMITTED"
+   "status": "HANDLED"
   },
   {
    "client_handler_wins": "MonsterCarnivalStartHandler",
@@ -7502,15 +8391,49 @@
    "status": "HANDLED"
   },
   {
-   "client_handler_wins": null,
-   "client_handlers": [],
-   "client_names": [],
+   "client_handler_wins": "LimitBreakSyncHandler",
+   "client_handlers": [
+    "LimitBreakSyncHandler"
+   ],
+   "client_names": [
+    "LIMIT_BREAK_SYNC"
+   ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
-   "s9_line": 360,
+   "s9_line": 359,
+   "s9_name": "LIMIT_BREAK_SYNC",
+   "s9_value": 14128,
+   "status": "HANDLED"
+  },
+  {
+   "client_handler_wins": "WorldMapPlayersHandler",
+   "client_handlers": [
+    "WorldMapPlayersHandler"
+   ],
+   "client_names": [
+    "WORLD_MAP_PLAYERS"
+   ],
+   "client_shadowed_handlers": [],
+   "s9_emitted": true,
+   "s9_line": 361,
    "s9_name": "WORLD_MAP_PLAYERS",
    "s9_value": 376,
-   "status": "UNHANDLED_EMITTED"
+   "status": "HANDLED"
+  },
+  {
+   "client_handler_wins": "WorldMapDropResultHandler",
+   "client_handlers": [
+    "WorldMapDropResultHandler"
+   ],
+   "client_names": [
+    "WORLD_MAP_DROP_RESULT"
+   ],
+   "client_shadowed_handlers": [],
+   "s9_emitted": true,
+   "s9_line": 362,
+   "s9_name": "WORLD_MAP_DROP_RESULT",
+   "s9_value": 377,
+   "status": "HANDLED"
   },
   {
    "client_handler_wins": "UpdateHpMpAlertHandler",
@@ -7522,7 +8445,7 @@
    ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
-   "s9_line": 361,
+   "s9_line": 363,
    "s9_name": "UPDATE_HPMPAALERT",
    "s9_value": 4096,
    "status": "HANDLED"

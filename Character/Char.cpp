@@ -199,7 +199,7 @@ namespace ms
 		ironbody.set_for(500);
 	}
 
-	void Char::show_damage(int32_t damage)
+	void Char::show_damage(int64_t damage)
 	{
 		int16_t start_y = phobj.get_y() - 60;
 		int16_t x = phobj.get_x() - 10;
@@ -410,6 +410,14 @@ namespace ms
 			if (pet.get_itemid() > 0)
 				return true;
 		return false;
+	}
+
+	const PetLook& Char::get_pet(uint8_t index) const
+	{
+		static PetLook empty;
+		if (index >= 3)
+			return empty;
+		return pets[index];
 	}
 
 	PhysicsObject& Char::get_phobj()

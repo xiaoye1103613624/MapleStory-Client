@@ -114,6 +114,8 @@ namespace ms
 		void check_seats();
 		void check_ladders(bool up);
 		void check_drops();
+		void check_touch_reactors();
+		int32_t touching_reactor_oid = 0;
 
 		enum State
 		{
