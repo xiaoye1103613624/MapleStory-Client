@@ -437,6 +437,7 @@ namespace ms
 			return;
 		}
 
+		// Text 模式：角色名可短于 6、允许物理键盘（Pic SoftKey 会吞键盘并拒短串）。
 		UI::get().emplace<UISoftKey>([this](const std::string& s)
 		{
 			if (s.empty())
@@ -444,7 +445,8 @@ namespace ms
 
 			LOG(LOG_DEBUG, "UIMessenger: invite " << s);
 			MessengerInvitePacket(s).dispatch();
-		});
+			append_chat(Locale::format("messenger.invited", s));
+		}, []() {}, Locale::text("messenger.prompt_invite"), UISoftKey::Mode::Text);
 	}
 
 	void UIMessenger::draw(float inter) const
@@ -628,7 +630,7 @@ namespace ms
 					MessengerDeclinePacket(s).dispatch();
 					append_chat(Locale::format("messenger.declined", s));
 					LOG(LOG_DEBUG, "UIMessenger: Decline " << s);
-				}, []() {}, Locale::text("messenger.prompt_decline"));
+				}, []() {}, Locale::text("messenger.prompt_decline"), UISoftKey::Mode::Text);
 			}
 			return;
 		}
@@ -639,7 +641,7 @@ namespace ms
 			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
 				if (msg.empty()) return;
 				send_chat(msg);
-			}, []() {}, Locale::text("messenger.prompt_chat"));
+			}, []() {}, Locale::text("messenger.prompt_chat"), UISoftKey::Mode::Text);
 			return;
 		}
 

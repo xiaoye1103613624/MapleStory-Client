@@ -100,6 +100,7 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'A' || keycode == 'a' || keycode == 'S' || keycode == 's') {
+			// Text 模式：命令可键盘输入且可短于 6（Pic SoftKey 会拦键盘 / 拒短串）。
 			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
 				if (msg.empty()) return;
 				std::string t = msg;
@@ -177,7 +178,7 @@ namespace ms
 				}
 				msg_label.change_text(msg);
 				GeneralChatPacket(msg, true).dispatch();
-			}, []() {}, "summon id [n]|exp n|users|alert|msg");
+			}, []() {}, "summon id [n]|exp n|users|alert|msg", UISoftKey::Mode::Text);
 		}
 		else if (keycode == 'U' || keycode == 'u')
 		{

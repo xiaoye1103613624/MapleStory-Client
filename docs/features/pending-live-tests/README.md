@@ -15,9 +15,9 @@
 | 2 | USE_RETURN_SCROLL | ⏳ 待测 | c2s 85 | 回城卷双击 |
 | 3 | SoftKey：登录遮罩截图 | ✅ 2026-11-05 | — | 根因 `screenshot_directory()` 已修并真机出图；见 `notes/scrolllock-rootcause.md` 与 `evidence/live-20261105-scrolllock-proof.png` |
 | 4 | SoftKey：PersonalShop FM | ⏳ 待测 | 雇佣店创建 | 需自由市场 + 许可证 |
-| 5 | SoftKey：Messenger 立绘 | ⏳ 待测 | s2c 313 mode1 | 本机 look + 脚点 0.70；代码已闭环 |
-| 5b | Messenger blink / chatBalloon | ⏳ 待测 | s2c 313 mode6 | 打字泡 + 标题 blink；见 §5b |
-| 5c | Messenger 关闭钮 (276,6) | ⏳ 待测 | — | BtClose3/close_btn；见 messenger-btclose-coords |
+| 5 | SoftKey：Messenger 立绘 | 🟡 本机✅ / 对方⏳ | s2c 313 mode1 | 2026-11-06 双开：本机立绘已验；对方待清 Admin 占线后邀请；见 messenger-look/live-accept-2026-11-06-dual.md |
+| 5b | Messenger blink / chatBalloon | ⏳ 待测 | s2c 313 mode6 | 依赖同房；SoftKey Text 模式已修；见 §5b |
+| 5c | Messenger 关闭钮 (276,6) | ✅ 2026-11-06 | — | 真机点关白底归零；见 messenger-btclose-coords + dual 证据 |
 | 6 | SoftKey：Guild BBS 摘要 | ⏳ 待测 | BBS 155 | 公会窗摘要栏（兼容） |
 | 7 | SET_HPMPALERT | ⏳ 待测 | c2s 4096 / s2c 扩展 | Wave1 已接线；端到端需服务端配置 |
 | 8 | PICK_ALL_CHAR | ⏳ 待测 | c2s 14 / 32 | VAC 选角（本轮修正误发 19） |

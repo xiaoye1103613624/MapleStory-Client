@@ -27,19 +27,28 @@
 
 namespace ms
 {
-	// Keyboard which is used via the mouse
-	// The game uses this for PIC/PIN input
+	// SoftKey 虚拟键盘（Login.img/Common/SoftKey）。
+	// Pic：二级密码/PIC —— 仅鼠标点键、密文、最短 6、重复字符校验（原生约束）。
+	// Text：角色名/聊天/命令等自由文本 —— 允许物理键盘、明文、最短 1、跳过 PIC 校验。
+	// 历史误用：Messenger 邀请等复用默认 Pic，导致短名无法 OK、键盘输入被 text_callback 吞掉。
 	class UISoftKey : public UIElement
 	{
 	public:
 		using OkCallback = std::function<void(const std::string& entered)>;
 		using CancelCallback = std::function<void()>;
 
+		enum class Mode : uint8_t
+		{
+			Pic,  // 二级密码（默认，保持登录链路行为）
+			Text  // 自由文本（Messenger / 密语 / Admin 命令等）
+		};
+
 		static constexpr Type TYPE = UIElement::Type::SOFTKEYBOARD;
 		static constexpr bool FOCUSED = true;
 		static constexpr bool TOGGLED = false;
 
-		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos);
+		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos, Mode mode = Mode::Pic);
+		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Mode mode);
 		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text);
 		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback);
 		UISoftKey(OkCallback ok_callback);
@@ -77,7 +86,8 @@ namespace ms
 			BtNum0
 		};
 
-		static constexpr size_t MIN_TEXT_LEN = 6;
+		static constexpr size_t PIC_MIN_TEXT_LEN = 6;
+		static constexpr size_t TEXT_MIN_TEXT_LEN = 1;
 		static constexpr size_t MAX_TEXT_LEN = 16;
 
 		static constexpr uint16_t ROW_MAX = 12;
@@ -91,6 +101,8 @@ namespace ms
 		static constexpr uint16_t CASE_KEYS = ROW_MAX * 2 + ROW4_MAX;
 
 		bool highCase;
+		Mode mode;
+		size_t min_text_len;
 		std::string row1keys[ROW_MAX];
 		std::string row2keys[ROW_MAX];
 		std::string row3keys[ROW_MAX];

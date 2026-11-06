@@ -30,7 +30,14 @@
 
 namespace ms
 {
-	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos) : UIElement(Point<int16_t>(216, 224), Point<int16_t>(0, 0)), ok_callback(ok_callback), cancel_callback(cancel_callback), tooltip_pos(tooltip_pos), highCase(false)
+	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos, Mode mode)
+		: UIElement(Point<int16_t>(216, 224), Point<int16_t>(0, 0)),
+		  highCase(false),
+		  mode(mode),
+		  min_text_len(mode == Mode::Pic ? PIC_MIN_TEXT_LEN : TEXT_MIN_TEXT_LEN),
+		  ok_callback(ok_callback),
+		  cancel_callback(cancel_callback),
+		  tooltip_pos(tooltip_pos)
 	{
 		nl::node SoftKey = nl::nx::UI["Login.img"]["Common"]["SoftKey"];
 		nl::node backgrnd = SoftKey["backgrnd"];
@@ -261,7 +268,11 @@ namespace ms
 		Point<int16_t> textfield_topleft = position + Point<int16_t>(202, 61);
 
 		textfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Rectangle<int16_t>(textfield_topleft, textfield_topleft + Point<int16_t>(188, 21)), MAX_TEXT_LEN);
-		textfield.set_cryptchar('*');
+
+		// Pic：二级密码密文 + 拦截物理键盘字母数字（原生「只能用鼠标」）。
+		// Text：明文 + 不设 text_callback，物理键盘可直接写入 Textfield。
+		if (mode == Mode::Pic)
+			textfield.set_cryptchar('*');
 
 		textfield.set_enter_callback(
 			[&](std::string)
@@ -277,22 +288,32 @@ namespace ms
 			}
 		);
 
-		textfield.set_text_callback(
-			[&]()
-			{
-				clear_tooltip();
-				show_text("and the numbers and letters can only be entered using a mouse.", 175, true, 1);
-			}
-		);
+		if (mode == Mode::Pic)
+		{
+			textfield.set_text_callback(
+				[&]()
+				{
+					clear_tooltip();
+					show_text("and the numbers and letters can only be entered using a mouse.", 175, true, 1);
+				}
+			);
+		}
 
 		show_text(tooltip_text);
 
 		dimension = Texture(backgrnd).get_dimensions();
+		LOG(LOG_DEBUG, "UISoftKey: mode=" << (mode == Mode::Pic ? "Pic" : "Text")
+			<< " min_len=" << min_text_len);
 	}
 
-	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text) : UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0)) {}
-	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback) : UISoftKey(ok_callback, cancel_callback, "") {}
-	UISoftKey::UISoftKey(OkCallback ok_callback) : UISoftKey(ok_callback, []() {}) {}
+	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Mode mode)
+		: UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0), mode) {}
+	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text)
+		: UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0), Mode::Pic) {}
+	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback)
+		: UISoftKey(ok_callback, cancel_callback, "") {}
+	UISoftKey::UISoftKey(OkCallback ok_callback)
+		: UISoftKey(ok_callback, []() {}) {}
 
 	void UISoftKey::draw(float inter) const
 	{
@@ -427,9 +448,10 @@ namespace ms
 		}
 		else if (buttonid == Buttons::BtOK)
 		{
-			if (size >= MIN_TEXT_LEN)
+			if (size >= min_text_len)
 			{
-				if (check_pic())
+				// Text 模式跳过 PIC 重复字符等门禁；Pic 仍走 check_pic。
+				if (mode == Mode::Text || check_pic())
 				{
 					deactivate();
 
@@ -440,7 +462,10 @@ namespace ms
 			else
 			{
 				clear_tooltip();
-				show_text("The PIC needs to be at least 6 characters long.");
+				if (mode == Mode::Pic)
+					show_text("The PIC needs to be at least 6 characters long.");
+				else
+					show_text("Please enter at least 1 character.");
 			}
 
 			return Button::State::NORMAL;
