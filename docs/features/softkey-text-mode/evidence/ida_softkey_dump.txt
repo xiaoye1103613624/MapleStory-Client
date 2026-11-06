@@ -1,0 +1,14 @@
+
+##### E:\MXD\BeiDou-ClientV17.7\_audit_copy.i64 segs=[('1', '0x401000', '0xaf0000'), ('9', '0xaf0000', '0xaf03fc'), ('3', '0xaf03fc', '0xbd7000'), ('5', '0xbd7000', '0xbf9000'), ('6', '0xbf9000', '0xd73000'), ('7', '0xd73000', '0xe92000'), ('8', '0xe92000', '0xe94000')] #####
+pat b'S\x00o\x00f\x00t\x00K\x00e\x00y\x00' hits=0 []
+pat b'SoftKey' hits=0 []
+pat b'B\x00t\x00N\x00u\x00m\x00' hits=0 []
+pat b'K\x00e\x00y\x00W\x00i\x00n\x00d\x00o\x00w\x00' hits=0 []
+code funcs referencing patterns: 0
+
+##### E:\MXD\BeiDou-ClientV17.7\suipre.dll.i64 segs=[('1', '0x10001000', '0x1002f000'), ('6', '0x1002f000', '0x1002f69c'), ('3', '0x1002f69c', '0x1003b000'), ('5', '0x1003b000', '0x1004d000')] #####
+pat b'S\x00o\x00f\x00t\x00K\x00e\x00y\x00' hits=0 []
+pat b'SoftKey' hits=0 []
+pat b'B\x00t\x00N\x00u\x00m\x00' hits=0 []
+pat b'K\x00e\x00y\x00W\x00i\x00n\x00d\x00o\x00w\x00' hits=0 []
+code funcs referencing patterns: 0

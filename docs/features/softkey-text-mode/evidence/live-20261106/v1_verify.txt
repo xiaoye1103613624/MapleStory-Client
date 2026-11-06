@@ -1,0 +1,3 @@
+creds len user=5 pass=5
+login rc=0 tail=ng | click(588,302) screen=(1228,718) hit=8396920 root=8396920 want=8396920 | cap acct -> E:/project/_r27_acct.png | click(642,354) screen=(1282,770) hit=8396920 root=8396920 want=8396920 | click(774,317) screen=(1414,733) hit=8396920 root=8396920 want=8396920 | cap login2 -> E:/project/_r27_login2.png | 
+ingame=False title=XiaoYE MS v0.0.1【FPS:130 延迟:--】【当前时间：2026-11-06 17:13:00】

@@ -22,15 +22,14 @@
 #include "../Components/Textfield.h"
 #include "../Components/TextTooltip.h"
 
-#include "../../Template/BoolPair.h"
-#include "../../Util/Randomizer.h"
-
 namespace ms
 {
-	// SoftKey 虚拟键盘（Login.img/Common/SoftKey）。
-	// Pic：二级密码/PIC —— 仅鼠标点键、密文、最短 6、重复字符校验（原生约束）。
-	// Text：角色名/聊天/命令等自由文本 —— 允许物理键盘、明文、最短 1、跳过 PIC 校验。
-	// 历史误用：Messenger 邀请等复用默认 Pic，导致短名无法 OK、键盘输入被 text_callback 吞掉。
+	// 虚拟键盘（V17.7 原生 UIWindow.img/SoftKeyboard 宽 QWERTY）。
+	// 与 Login.img/Common/SoftKey 是两套原生键盘：后者是 PIC 二级密码竖版随机键盘，
+	// 本类曾误用其底板 + Journey 45px/12 列 keypos，键帽漂出底板盖住 Messenger。
+	// 现按 UIWindow.img/SoftKeyboard 逐键 origin 网格还原（37 键 + 功能键 + 双皮肤）。
+	// Pic：二级密码/PIC —— 密文、最短 6、重复字符校验；Text：自由文本 —— 明文、最短 1、跳过 PIC 校验。
+	// 两种模式均可用鼠标点键，也保留物理键盘输入（Text 走 KEY TEXT，见 update()）。
 	class UISoftKey : public UIElement
 	{
 	public:
@@ -70,85 +69,37 @@ namespace ms
 		void show_text(std::string text, uint16_t maxwidth = 0, bool formatted = true, int16_t line_adj = 0);
 		void clear_tooltip();
 		void append_key(std::string key);
-
-		Point<int16_t> keypos(uint16_t index, uint16_t row) const;
-		Button::State case_pressed(uint16_t buttonid);
-		std::string get_key_map_index(std::string key);
-		std::string get_key_from_index(uint16_t index);
 		bool check_pic();
 
 		enum Buttons : uint16_t
 		{
-			BtCancel,
-			BtDel,
-			BtOK,
-			BtShift,
-			BtNum0
+			BtClose,
+			BtBackspace,
+			BtEnter,
+			BtCapsLock,
+			BtLShift,
+			BtRShift,
+			BtKey0
 		};
 
+		static constexpr uint16_t KEY_COUNT = 37;
 		static constexpr size_t PIC_MIN_TEXT_LEN = 6;
 		static constexpr size_t TEXT_MIN_TEXT_LEN = 1;
 		static constexpr size_t MAX_TEXT_LEN = 16;
 
-		static constexpr uint16_t ROW_MAX = 12;
-
-		static constexpr uint16_t ROW1_KEYS = 10;
-		static constexpr uint16_t ROW2_KEYS = 10;
-		static constexpr uint16_t ROW3_KEYS = 9;
-		static constexpr uint16_t ROW4_KEYS = 7;
-
-		static constexpr uint16_t ROW4_MAX = ROW4_KEYS + 1;
-		static constexpr uint16_t CASE_KEYS = ROW_MAX * 2 + ROW4_MAX;
-
-		bool highCase;
+		bool caps_lock;      // CapsLock：持久锁定大写
+		bool shift_pending;  // 左/右 Shift：下一个字母后自动复位
 		Mode mode;
 		size_t min_text_len;
-		std::string row1keys[ROW_MAX];
-		std::string row2keys[ROW_MAX];
-		std::string row3keys[ROW_MAX];
-		std::string row4keys[ROW4_MAX];
-		BoolPair<std::unique_ptr<Button>> BtCaseKeys[CASE_KEYS];
 
 		OkCallback ok_callback;
 		CancelCallback cancel_callback;
 
 		Textfield textfield;
 
-		int16_t tooltip_timestep;
+		int16_t tooltip_timestep = 0;
 		TextTooltip tetooltip;
 		Optional<Tooltip> tooltip;
 		Point<int16_t> tooltip_pos;
-
-		Randomizer random;
-
-		std::map<uint16_t, std::string> KeyMap =
-		{
-			{  0, "A" },
-			{  1, "B" },
-			{  2, "C" },
-			{  3, "D" },
-			{  4, "E" },
-			{  5, "F" },
-			{  6, "G" },
-			{  7, "H" },
-			{  8, "I" },
-			{  9, "J" },
-			{ 10, "K" },
-			{ 11, "L" },
-			{ 12, "M" },
-			{ 13, "N" },
-			{ 14, "O" },
-			{ 15, "P" },
-			{ 16, "Q" },
-			{ 17, "R" },
-			{ 18, "S" },
-			{ 19, "T" },
-			{ 20, "U" },
-			{ 21, "V" },
-			{ 22, "W" },
-			{ 23, "X" },
-			{ 24, "Y" },
-			{ 25, "Z" }
-		};
 	};
 }

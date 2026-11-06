@@ -112,3 +112,9 @@ _tools/summon_probe/*.dll
 /build_compile_check.txt
 /build_smoke_alt.log
 /build/smoke_out/
+
+# softkey-text-mode process shots and mojibake dump (structured evidence/scripts committed separately)
+docs/features/softkey-text-mode/evidence/native-20261106-*.png
+docs/features/softkey-text-mode/evidence/_zoom_panel.png
+docs/features/softkey-text-mode/evidence/uiwindow-softkeyboard-dump.txt
+docs/features/softkey-text-mode/evidence/live-20261106/_verify_stdout.txt

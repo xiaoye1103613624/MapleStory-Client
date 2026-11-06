@@ -1,0 +1,374 @@
+source=E:\MXD\BeiDou-Client-xy\REA反编译\wz_dump\Login_img.json
+found=True
+SoftKey [sub]
+  SoftKey/backgrnd2 [canvas] 128x252 origin=(-7, -22)
+  SoftKey/backgrnd3 [canvas] 120x242 origin=(-8, -27)
+  SoftKey/BtNum [sub]
+    SoftKey/BtNum/0 [sub]
+      SoftKey/BtNum/0/normal [sub]
+        SoftKey/BtNum/0/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/0/mouseOver [sub]
+        SoftKey/BtNum/0/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/0/pressed [sub]
+        SoftKey/BtNum/0/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/0/disabled [sub]
+        SoftKey/BtNum/0/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/1 [sub]
+      SoftKey/BtNum/1/normal [sub]
+        SoftKey/BtNum/1/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/1/mouseOver [sub]
+        SoftKey/BtNum/1/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/1/pressed [sub]
+        SoftKey/BtNum/1/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/1/disabled [sub]
+        SoftKey/BtNum/1/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/2 [sub]
+      SoftKey/BtNum/2/normal [sub]
+        SoftKey/BtNum/2/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/2/mouseOver [sub]
+        SoftKey/BtNum/2/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/2/pressed [sub]
+        SoftKey/BtNum/2/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/2/disabled [sub]
+        SoftKey/BtNum/2/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/3 [sub]
+      SoftKey/BtNum/3/normal [sub]
+        SoftKey/BtNum/3/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/3/mouseOver [sub]
+        SoftKey/BtNum/3/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/3/pressed [sub]
+        SoftKey/BtNum/3/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/3/disabled [sub]
+        SoftKey/BtNum/3/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/4 [sub]
+      SoftKey/BtNum/4/normal [sub]
+        SoftKey/BtNum/4/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/4/mouseOver [sub]
+        SoftKey/BtNum/4/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/4/pressed [sub]
+        SoftKey/BtNum/4/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/4/disabled [sub]
+        SoftKey/BtNum/4/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/5 [sub]
+      SoftKey/BtNum/5/normal [sub]
+        SoftKey/BtNum/5/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/5/mouseOver [sub]
+        SoftKey/BtNum/5/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/5/pressed [sub]
+        SoftKey/BtNum/5/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/5/disabled [sub]
+        SoftKey/BtNum/5/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/6 [sub]
+      SoftKey/BtNum/6/normal [sub]
+        SoftKey/BtNum/6/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/6/mouseOver [sub]
+        SoftKey/BtNum/6/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/6/pressed [sub]
+        SoftKey/BtNum/6/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/6/disabled [sub]
+        SoftKey/BtNum/6/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/7 [sub]
+      SoftKey/BtNum/7/normal [sub]
+        SoftKey/BtNum/7/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/7/mouseOver [sub]
+        SoftKey/BtNum/7/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/7/pressed [sub]
+        SoftKey/BtNum/7/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/7/disabled [sub]
+        SoftKey/BtNum/7/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/8 [sub]
+      SoftKey/BtNum/8/normal [sub]
+        SoftKey/BtNum/8/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/8/mouseOver [sub]
+        SoftKey/BtNum/8/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/8/pressed [sub]
+        SoftKey/BtNum/8/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/8/disabled [sub]
+        SoftKey/BtNum/8/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtNum/9 [sub]
+      SoftKey/BtNum/9/normal [sub]
+        SoftKey/BtNum/9/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/9/mouseOver [sub]
+        SoftKey/BtNum/9/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/9/pressed [sub]
+        SoftKey/BtNum/9/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtNum/9/disabled [sub]
+        SoftKey/BtNum/9/disabled/0 [canvas] 40x35 origin=(0, 0)
+  SoftKey/BtHighCase [sub]
+    SoftKey/BtHighCase/0 [sub]
+      SoftKey/BtHighCase/0/normal [sub]
+        SoftKey/BtHighCase/0/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/0/mouseOver [sub]
+        SoftKey/BtHighCase/0/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/0/pressed [sub]
+        SoftKey/BtHighCase/0/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/0/disabled [sub]
+        SoftKey/BtHighCase/0/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/1 [sub]
+      SoftKey/BtHighCase/1/normal [sub]
+        SoftKey/BtHighCase/1/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/1/mouseOver [sub]
+        SoftKey/BtHighCase/1/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/1/pressed [sub]
+        SoftKey/BtHighCase/1/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/1/disabled [sub]
+        SoftKey/BtHighCase/1/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/2 [sub]
+      SoftKey/BtHighCase/2/normal [sub]
+        SoftKey/BtHighCase/2/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/2/mouseOver [sub]
+        SoftKey/BtHighCase/2/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/2/pressed [sub]
+        SoftKey/BtHighCase/2/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/2/disabled [sub]
+        SoftKey/BtHighCase/2/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/3 [sub]
+      SoftKey/BtHighCase/3/normal [sub]
+        SoftKey/BtHighCase/3/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/3/mouseOver [sub]
+        SoftKey/BtHighCase/3/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/3/pressed [sub]
+        SoftKey/BtHighCase/3/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/3/disabled [sub]
+        SoftKey/BtHighCase/3/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/4 [sub]
+      SoftKey/BtHighCase/4/normal [sub]
+        SoftKey/BtHighCase/4/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/4/mouseOver [sub]
+        SoftKey/BtHighCase/4/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/4/pressed [sub]
+        SoftKey/BtHighCase/4/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/4/disabled [sub]
+        SoftKey/BtHighCase/4/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/5 [sub]
+      SoftKey/BtHighCase/5/normal [sub]
+        SoftKey/BtHighCase/5/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/5/mouseOver [sub]
+        SoftKey/BtHighCase/5/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/5/pressed [sub]
+        SoftKey/BtHighCase/5/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/5/disabled [sub]
+        SoftKey/BtHighCase/5/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/6 [sub]
+      SoftKey/BtHighCase/6/normal [sub]
+        SoftKey/BtHighCase/6/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/6/mouseOver [sub]
+        SoftKey/BtHighCase/6/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/6/pressed [sub]
+        SoftKey/BtHighCase/6/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/6/disabled [sub]
+        SoftKey/BtHighCase/6/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/7 [sub]
+      SoftKey/BtHighCase/7/normal [sub]
+        SoftKey/BtHighCase/7/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/7/mouseOver [sub]
+        SoftKey/BtHighCase/7/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/7/pressed [sub]
+        SoftKey/BtHighCase/7/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/7/disabled [sub]
+        SoftKey/BtHighCase/7/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/8 [sub]
+      SoftKey/BtHighCase/8/normal [sub]
+        SoftKey/BtHighCase/8/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/8/mouseOver [sub]
+        SoftKey/BtHighCase/8/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/8/pressed [sub]
+        SoftKey/BtHighCase/8/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/8/disabled [sub]
+        SoftKey/BtHighCase/8/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtHighCase/9 [sub]
+      SoftKey/BtHighCase/9/normal [sub]
+        SoftKey/BtHighCase/9/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/9/mouseOver [sub]
+        SoftKey/BtHighCase/9/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/9/pressed [sub]
+        SoftKey/BtHighCase/9/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtHighCase/9/disabled [sub]
+        SoftKey/BtHighCase/9/disabled/0 [canvas] 40x35 origin=(0, 0)
+  SoftKey/BtLowCase [sub]
+    SoftKey/BtLowCase/0 [sub]
+      SoftKey/BtLowCase/0/normal [sub]
+        SoftKey/BtLowCase/0/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/0/mouseOver [sub]
+        SoftKey/BtLowCase/0/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/0/pressed [sub]
+        SoftKey/BtLowCase/0/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/0/disabled [sub]
+        SoftKey/BtLowCase/0/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/1 [sub]
+      SoftKey/BtLowCase/1/normal [sub]
+        SoftKey/BtLowCase/1/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/1/mouseOver [sub]
+        SoftKey/BtLowCase/1/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/1/pressed [sub]
+        SoftKey/BtLowCase/1/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/1/disabled [sub]
+        SoftKey/BtLowCase/1/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/2 [sub]
+      SoftKey/BtLowCase/2/normal [sub]
+        SoftKey/BtLowCase/2/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/2/mouseOver [sub]
+        SoftKey/BtLowCase/2/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/2/pressed [sub]
+        SoftKey/BtLowCase/2/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/2/disabled [sub]
+        SoftKey/BtLowCase/2/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/3 [sub]
+      SoftKey/BtLowCase/3/normal [sub]
+        SoftKey/BtLowCase/3/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/3/mouseOver [sub]
+        SoftKey/BtLowCase/3/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/3/pressed [sub]
+        SoftKey/BtLowCase/3/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/3/disabled [sub]
+        SoftKey/BtLowCase/3/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/4 [sub]
+      SoftKey/BtLowCase/4/normal [sub]
+        SoftKey/BtLowCase/4/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/4/mouseOver [sub]
+        SoftKey/BtLowCase/4/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/4/pressed [sub]
+        SoftKey/BtLowCase/4/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/4/disabled [sub]
+        SoftKey/BtLowCase/4/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/5 [sub]
+      SoftKey/BtLowCase/5/normal [sub]
+        SoftKey/BtLowCase/5/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/5/mouseOver [sub]
+        SoftKey/BtLowCase/5/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/5/pressed [sub]
+        SoftKey/BtLowCase/5/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/5/disabled [sub]
+        SoftKey/BtLowCase/5/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/6 [sub]
+      SoftKey/BtLowCase/6/normal [sub]
+        SoftKey/BtLowCase/6/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/6/mouseOver [sub]
+        SoftKey/BtLowCase/6/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/6/pressed [sub]
+        SoftKey/BtLowCase/6/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/6/disabled [sub]
+        SoftKey/BtLowCase/6/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/7 [sub]
+      SoftKey/BtLowCase/7/normal [sub]
+        SoftKey/BtLowCase/7/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/7/mouseOver [sub]
+        SoftKey/BtLowCase/7/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/7/pressed [sub]
+        SoftKey/BtLowCase/7/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/7/disabled [sub]
+        SoftKey/BtLowCase/7/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/8 [sub]
+      SoftKey/BtLowCase/8/normal [sub]
+        SoftKey/BtLowCase/8/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/8/mouseOver [sub]
+        SoftKey/BtLowCase/8/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/8/pressed [sub]
+        SoftKey/BtLowCase/8/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/8/disabled [sub]
+        SoftKey/BtLowCase/8/disabled/0 [canvas] 40x35 origin=(0, 0)
+    SoftKey/BtLowCase/9 [sub]
+      SoftKey/BtLowCase/9/normal [sub]
+        SoftKey/BtLowCase/9/normal/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/9/mouseOver [sub]
+        SoftKey/BtLowCase/9/mouseOver/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/9/pressed [sub]
+        SoftKey/BtLowCase/9/pressed/0 [canvas] 40x35 origin=(0, 0)
+      SoftKey/BtLowCase/9/disabled [sub]
+        SoftKey/BtLowCase/9/disabled/0 [canvas] 40x35 origin=(0, 0)
+  SoftKey/BtDel [sub]
+    SoftKey/BtDel/normal [sub]
+      SoftKey/BtDel/normal/0 [canvas] 40x35 origin=(-51, -199)
+    SoftKey/BtDel/mouseOver [sub]
+      SoftKey/BtDel/mouseOver/0 [canvas] 40x35 origin=(-51, -199)
+    SoftKey/BtDel/pressed [sub]
+      SoftKey/BtDel/pressed/0 [canvas] 40x35 origin=(-51, -199)
+    SoftKey/BtDel/disabled [sub]
+      SoftKey/BtDel/disabled/0 [canvas] 40x35 origin=(-51, -199)
+  SoftKey/BtNext [sub]
+    SoftKey/BtNext/normal [sub]
+      SoftKey/BtNext/normal/0 [canvas] 40x35 origin=(-90, -199)
+    SoftKey/BtNext/mouseOver [sub]
+      SoftKey/BtNext/mouseOver/0 [canvas] 40x35 origin=(-90, -199)
+    SoftKey/BtNext/pressed [sub]
+      SoftKey/BtNext/pressed/0 [canvas] 40x35 origin=(-90, -199)
+    SoftKey/BtNext/disabled [sub]
+      SoftKey/BtNext/disabled/0 [canvas] 40x35 origin=(-90, -199)
+  SoftKey/BtCancel [sub]
+    SoftKey/BtCancel/normal [sub]
+      SoftKey/BtCancel/normal/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtCancel/mouseOver [sub]
+      SoftKey/BtCancel/mouseOver/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtCancel/pressed [sub]
+      SoftKey/BtCancel/pressed/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtCancel/disabled [sub]
+      SoftKey/BtCancel/disabled/0 [canvas] 57x33 origin=(0, 0)
+  SoftKey/BtOK [sub]
+    SoftKey/BtOK/normal [sub]
+      SoftKey/BtOK/normal/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtOK/mouseOver [sub]
+      SoftKey/BtOK/mouseOver/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtOK/pressed [sub]
+      SoftKey/BtOK/pressed/0 [canvas] 57x33 origin=(0, 0)
+    SoftKey/BtOK/disabled [sub]
+      SoftKey/BtOK/disabled/0 [canvas] 57x33 origin=(0, 0)
+  SoftKey/backgrnd [canvas] 140x280 origin=(-1, 0)
+  SoftKey/Tab [sub]
+    SoftKey/Tab/selected [sub]
+      SoftKey/Tab/selected/0 [canvas] 39x19 origin=(-12, -68)
+      SoftKey/Tab/selected/1 [canvas] 39x19 origin=(-52, -68)
+      SoftKey/Tab/selected/2 [canvas] 39x19 origin=(-92, -68)
+    SoftKey/Tab/normal [sub]
+      SoftKey/Tab/normal/0 [canvas] 39x17 origin=(-12, -70)
+      SoftKey/Tab/normal/1 [canvas] 39x17 origin=(-52, -70)
+      SoftKey/Tab/normal/2 [canvas] 39x17 origin=(-92, -70)
+
+=== button normal/0 origins ===
+SoftKey/BtNum/0/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/1/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/2/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/3/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/4/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/5/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/6/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/7/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/8/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtNum/9/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/0/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/1/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/2/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/3/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/4/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/5/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/6/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/7/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/8/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtHighCase/9/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/0/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/1/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/2/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/3/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/4/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/5/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/6/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/7/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/8/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtLowCase/9/normal/0: 40x35 origin=(0, 0)
+SoftKey/BtDel/normal/0: 40x35 origin=(-51, -199)
+SoftKey/BtNext/normal/0: 40x35 origin=(-90, -199)
+SoftKey/BtCancel/normal/0: 57x33 origin=(0, 0)
+SoftKey/BtOK/normal/0: 57x33 origin=(0, 0)
+SoftKey/Tab/normal/0: 39x17 origin=(-12, -70)
+
+=== SoftKey top children ===
+  backgrnd2 [canvas]
+  backgrnd3 [canvas]
+  BtNum [sub]
+  BtHighCase [sub]
+  BtLowCase [sub]
+  BtDel [sub]
+  BtNext [sub]
+  BtCancel [sub]
+  BtOK [sub]
+  backgrnd [canvas]
+  Tab [sub]

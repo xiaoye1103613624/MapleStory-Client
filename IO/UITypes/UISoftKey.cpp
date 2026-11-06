@@ -23,6 +23,8 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Graphics/DrawArgument.h"
+#include "../../Graphics/Texture.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -31,244 +33,88 @@
 
 namespace ms
 {
+	namespace
+	{
+		// V17.7 原生 UIWindow.img/SoftKeyboard 的 37 键编号→字符，
+		// 由运行时 UI.nx 位图逐张导出后视觉识读（keys_sheet.png）。
+		constexpr char KEY_CHARS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-";
+
+		// 逐键 window-local top-left。来源 origins.json 的 normal/0/origin：
+		//   T = ANCHOR_WINDOW(283, 30) - raw_origin。
+		// k36 '-' 与 k35 'Z' 共用 origin(207,-76)，按原生实拍手工错位到数字行第 11 位。
+		constexpr int16_t KEY_X[37] =
+		{
+			232, 25, 48, 71, 94, 117, 140, 163, 186, 209,
+			60, 168, 122, 106, 94, 129, 152, 175, 209, 198,
+			221, 244, 214, 191, 232, 255, 48, 117, 83, 140,
+			186, 145, 71, 99, 163, 76, 255
+		};
+
+		constexpr int16_t KEY_Y[37] =
+		{
+			37, 37, 37, 37, 37, 37, 37, 37, 37, 37,
+			83, 106, 106, 83, 60, 83, 83, 83, 60, 83,
+			83, 83, 106, 106, 60, 60, 60, 60, 83, 60,
+			60, 106, 60, 106, 60, 106, 37
+		};
+	}
+
 	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos, Mode mode)
 		: UIElement(Point<int16_t>(216, 224), Point<int16_t>(0, 0)),
-		  highCase(false),
+		  caps_lock(false),
+		  shift_pending(false),
 		  mode(mode),
 		  min_text_len(mode == Mode::Pic ? PIC_MIN_TEXT_LEN : TEXT_MIN_TEXT_LEN),
 		  ok_callback(ok_callback),
 		  cancel_callback(cancel_callback),
 		  tooltip_pos(tooltip_pos)
 	{
-		nl::node SoftKey = nl::nx::UI["Login.img"]["Common"]["SoftKey"];
-		nl::node backgrnd = SoftKey["backgrnd"];
+		nl::node SoftKey = nl::nx::UI["UIWindow.img"]["SoftKeyboard"];
 
-		sprites.emplace_back(backgrnd);
+		// 背景三层：卷轴底板 / 标题条 / 键区托盘。
+		// 三层位图的 origin 都是画布中心，Sprite 按 origin 回减，必须用
+		// DrawArgument(origin + 期望TL) 才能把它们精确摆到窗口 local 坐标
+		// （同 UIKeyConfig.cpp:85-95 的处理）。tray 内嵌于 frame 的 (18,30)。
+		nl::node backgrnd = SoftKey["backgrnd"]["1"];
+		nl::node frame = backgrnd["back"];     // 315×127
+		nl::node title = backgrnd["1"];        // 147×34
+		nl::node tray = backgrnd["keyboard"];  // 278×95
 
-		Point<int16_t> button_adj = Point<int16_t>(1, 0);
+		if (frame)
+			sprites.emplace_back(frame, DrawArgument(Texture(frame).get_origin()));
 
-		buttons[Buttons::BtCancel] = std::make_unique<MapleButton>(SoftKey["BtCancel"], button_adj);
-		buttons[Buttons::BtDel] = std::make_unique<MapleButton>(SoftKey["BtDel"], button_adj);
-		buttons[Buttons::BtOK] = std::make_unique<MapleButton>(SoftKey["BtOK"], button_adj);
-		if (SoftKey["BtShift"])
-			buttons[Buttons::BtShift] = std::make_unique<MapleButton>(SoftKey["BtShift"], button_adj);
+		if (title)
+			sprites.emplace_back(title, DrawArgument(Texture(title).get_origin()));
 
-#pragma region BtNum
-#pragma region Row 1
-		std::string row1KeysMap[ROW1_KEYS];
+		if (tray)
+			sprites.emplace_back(tray, DrawArgument(Texture(tray).get_origin() + Point<int16_t>(18, 30)));
 
-		row1KeysMap[0] = "1";
-		row1KeysMap[1] = "2";
-		row1KeysMap[2] = "3";
-		row1KeysMap[3] = "4";
-		row1KeysMap[4] = "5";
-		row1KeysMap[5] = "6";
-		row1KeysMap[6] = "7";
-		row1KeysMap[7] = "8";
-		row1KeysMap[8] = "9";
-		row1KeysMap[9] = "0";
+		// 标题栏右上关闭钮（皮肤 1，14×14）。
+		try_maple_btn(buttons, Buttons::BtClose, SoftKey["Bt"]["1"]["BtClose"], Point<int16_t>(299, 2), "softkey close");
 
-		uint16_t row1r1 = random.next_int(ROW_MAX);
-		uint16_t row1r2 = random.next_int(ROW_MAX);
+		// 功能键 top-left = _preview_layout.py 的 FUNC_TL + TRAY_TL(18,30)。
+		nl::node funckey = SoftKey["funckey"];
 
-		while (row1r1 == row1r2)
-			row1r2 = random.next_int(ROW_MAX);
+		try_maple_btn(buttons, Buttons::BtBackspace, funckey["backspace"], Point<int16_t>(274, 36), "softkey backspace");
+		try_maple_btn(buttons, Buttons::BtEnter, funckey["enter"], Point<int16_t>(263, 83), "softkey enter");
+		try_maple_btn(buttons, Buttons::BtCapsLock, funckey["capslock"], Point<int16_t>(20, 83), "softkey capslock");
+		try_maple_btn(buttons, Buttons::BtLShift, funckey["lshift"], Point<int16_t>(20, 106), "softkey lshift");
+		try_maple_btn(buttons, Buttons::BtRShift, funckey["rshift"], Point<int16_t>(249, 106), "softkey rshift");
 
-		row1keys[row1r1] = "Blank";
-		row1keys[row1r2] = "Blank";
+		// 37 键：编号→字符映射与逐键 origin 网格来自 UI.nx 位图实证。
+		// try_maple_btn 的 position 语义是期望 top-left，内部自洽抵消 sanitized
+		// origin，故键帽恒落在 KEY_X/KEY_Y，键帽 21×22 全装进 315×127 底板。
+		nl::node keys = SoftKey["key"];
 
-		uint16_t keyIndex = 0;
+		for (uint16_t n = 0; n < KEY_COUNT; n++)
+			try_maple_btn(buttons, static_cast<uint16_t>(Buttons::BtKey0 + n), keys[std::to_string(n)],
+				Point<int16_t>(KEY_X[n], KEY_Y[n]), "softkey key");
 
-		for (std::string& key : row1keys)
-		{
-			if (key != "Blank" && keyIndex < ROW1_KEYS)
-			{
-				key = row1KeysMap[keyIndex];
-				keyIndex++;
-			}
-		}
+		// 输入缓冲：窗口下方紧凑条，取代旧实现漂到 x=419 的散落文本框。
+		Point<int16_t> textfield_topleft = position + Point<int16_t>(10, 130);
 
-		for (uint16_t i = 0; i < ROW_MAX; i++)
-		{
-			const std::string& key = row1keys[i];
-
-			if (key == "Blank")
-			{
-				if (SoftKey["BtblankNum"])
-					buttons[Buttons::BtNum0 + i] = std::make_unique<MapleButton>(SoftKey["BtblankNum"], keypos(i, 0));
-			}
-			else
-				buttons[Buttons::BtNum0 + i] = std::make_unique<MapleButton>(SoftKey["BtNum"][key], keypos(i, 0));
-		}
-#pragma endregion
-#pragma endregion
-
-#pragma region BtLowCase / BtHighCase
-#pragma region Row 2
-		std::string row2KeysMap[ROW2_KEYS];
-
-		row2KeysMap[0] = get_key_map_index("Q");
-		row2KeysMap[1] = get_key_map_index("W");
-		row2KeysMap[2] = get_key_map_index("E");
-		row2KeysMap[3] = get_key_map_index("R");
-		row2KeysMap[4] = get_key_map_index("T");
-		row2KeysMap[5] = get_key_map_index("Y");
-		row2KeysMap[6] = get_key_map_index("U");
-		row2KeysMap[7] = get_key_map_index("I");
-		row2KeysMap[8] = get_key_map_index("O");
-		row2KeysMap[9] = get_key_map_index("P");
-
-		uint16_t row2r1 = random.next_int(ROW_MAX);
-		uint16_t row2r2 = random.next_int(ROW_MAX);
-
-		while (row2r1 == row2r2)
-			row2r2 = random.next_int(ROW_MAX);
-
-		row2keys[row2r1] = "Blank";
-		row2keys[row2r2] = "Blank";
-
-		keyIndex = 0;
-
-		for (std::string& key : row2keys)
-		{
-			if (key != "Blank" && keyIndex < ROW2_KEYS)
-			{
-				key = row2KeysMap[keyIndex];
-				keyIndex++;
-			}
-		}
-
-		uint16_t caseKeyIndex = 0;
-
-		for (uint16_t i = 0; i < ROW_MAX; i++, caseKeyIndex++)
-		{
-			const std::string& key = row2keys[i];
-
-			if (key == "Blank")
-			{
-				if (SoftKey["BtblankCase"])
-				{
-					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
-					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 1));
-				}
-			}
-			else
-			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtHighCase"][key], keypos(i, 1));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtLowCase"][key], keypos(i, 1));
-			}
-		}
-#pragma endregion
-
-#pragma region Row 3
-		std::string row3KeysMap[ROW3_KEYS];
-
-		row3KeysMap[0] = get_key_map_index("A");
-		row3KeysMap[1] = get_key_map_index("S");
-		row3KeysMap[2] = get_key_map_index("D");
-		row3KeysMap[3] = get_key_map_index("F");
-		row3KeysMap[4] = get_key_map_index("G");
-		row3KeysMap[5] = get_key_map_index("H");
-		row3KeysMap[6] = get_key_map_index("J");
-		row3KeysMap[7] = get_key_map_index("K");
-		row3KeysMap[8] = get_key_map_index("L");
-
-		uint16_t row3r1 = random.next_int(ROW_MAX);
-		uint16_t row3r2 = random.next_int(ROW_MAX);
-
-		while (row3r1 == row3r2)
-			row3r2 = random.next_int(ROW_MAX);
-
-		uint16_t row3r3 = random.next_int(ROW_MAX);
-
-		while (row3r1 == row3r3 || row3r2 == row3r3)
-			row3r3 = random.next_int(ROW_MAX);
-
-		row3keys[row3r1] = "Blank";
-		row3keys[row3r2] = "Blank";
-		row3keys[row3r3] = "Blank";
-
-		keyIndex = 0;
-
-		for (std::string& key : row3keys)
-		{
-			if (key != "Blank" && keyIndex < ROW3_KEYS)
-			{
-				key = row3KeysMap[keyIndex];
-				keyIndex++;
-			}
-		}
-
-		for (uint16_t i = 0; i < ROW_MAX; i++, caseKeyIndex++)
-		{
-			const std::string& key = row3keys[i];
-
-			if (key == "Blank")
-			{
-				if (SoftKey["BtblankCase"])
-				{
-					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
-					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 2));
-				}
-			}
-			else
-			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtHighCase"][key], keypos(i, 2));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtLowCase"][key], keypos(i, 2));
-			}
-		}
-#pragma endregion
-
-#pragma region Row 4
-		std::string row4KeysMap[ROW4_KEYS];
-
-		row4KeysMap[0] = get_key_map_index("Z");
-		row4KeysMap[1] = get_key_map_index("X");
-		row4KeysMap[2] = get_key_map_index("C");
-		row4KeysMap[3] = get_key_map_index("V");
-		row4KeysMap[4] = get_key_map_index("B");
-		row4KeysMap[5] = get_key_map_index("N");
-		row4KeysMap[6] = get_key_map_index("M");
-
-		uint16_t row4r1 = random.next_int(ROW4_MAX);
-
-		row4keys[row4r1] = "Blank";
-
-		keyIndex = 0;
-
-		for (std::string& key : row4keys)
-		{
-			if (key != "Blank" && keyIndex < ROW4_KEYS)
-			{
-				key = row4KeysMap[keyIndex];
-				keyIndex++;
-			}
-		}
-
-		for (uint16_t i = 0; i < ROW4_MAX; i++, caseKeyIndex++)
-		{
-			const std::string& key = row4keys[i];
-
-			if (key == "Blank")
-			{
-				if (SoftKey["BtblankCase"])
-				{
-					BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
-					BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtblankCase"], keypos(i, 3));
-				}
-			}
-			else
-			{
-				BtCaseKeys[caseKeyIndex][true] = std::make_unique<MapleButton>(SoftKey["BtHighCase"][key], keypos(i, 3));
-				BtCaseKeys[caseKeyIndex][false] = std::make_unique<MapleButton>(SoftKey["BtLowCase"][key], keypos(i, 3));
-			}
-		}
-#pragma endregion
-#pragma endregion
-
-		Point<int16_t> textfield_topleft = position + Point<int16_t>(202, 61);
-
-		textfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Rectangle<int16_t>(textfield_topleft, textfield_topleft + Point<int16_t>(188, 21)), MAX_TEXT_LEN);
+		textfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Rectangle<int16_t>(textfield_topleft, textfield_topleft + Point<int16_t>(200, 18)), MAX_TEXT_LEN);
 
 		// Pic：二级密码密文 + 拦截物理键盘字母数字（原生「只能用鼠标」）。
 		// Text：明文 + 不设 text_callback，物理键盘可直接写入 Textfield。
@@ -278,14 +124,14 @@ namespace ms
 		textfield.set_enter_callback(
 			[&](std::string)
 			{
-				button_pressed(Buttons::BtOK);
+				button_pressed(Buttons::BtEnter);
 			}
 		);
 
 		textfield.set_key_callback(
 			KeyAction::Id::ESCAPE,
 			[&]() {
-				button_pressed(Buttons::BtCancel);
+				button_pressed(Buttons::BtClose);
 			}
 		);
 
@@ -306,9 +152,10 @@ namespace ms
 		else
 			show_text(tooltip_text);
 
-		dimension = Texture(backgrnd).get_dimensions();
-		LOG(LOG_DEBUG, "UISoftKey: mode=" << (mode == Mode::Pic ? "Pic" : "Text")
-			<< " min_len=" << min_text_len);
+		dimension = frame ? Texture(frame).get_dimensions() : Point<int16_t>(315, 127);
+
+		LOG(LOG_DEBUG, "UISoftKey: UIWindow.img/SoftKeyboard mode=" << (mode == Mode::Pic ? "Pic" : "Text")
+			<< " min_len=" << min_text_len << " buttons=" << buttons.size());
 	}
 
 	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Mode mode)
@@ -322,25 +169,13 @@ namespace ms
 
 	void UISoftKey::draw(float inter) const
 	{
+		// 背景 Sprite + 全部键帽/功能键按钮由基类统一绘制（顺序：sprites → buttons）。
 		UIElement::draw(inter);
 
-		for (uint16_t i = 0; i < CASE_KEYS; i++)
-		{
-			const Button* btn = BtCaseKeys[i][highCase].get();
-
-			// BeiDou 的 SoftKey.img 缺 BtblankCase：Blank 槽位不会创建按钮，
-			// 此处保持为空 unique_ptr，必须跳过（0xC0000005 @ UISoftKey::draw+0x42，
-			// mov rax,[rcx] 虚调用 rcx=NULL，2026-10-29 事件日志实证）。
-			if (!btn)
-				continue;
-
-			btn->draw(position);
-		}
-
-		textfield.draw(Point<int16_t>(44, 0));
+		textfield.draw(Point<int16_t>(0, 0));
 
 		if (tooltip)
-			tooltip->draw(position + Point<int16_t>(419, 50) + tooltip_pos);
+			tooltip->draw(position + Point<int16_t>(10, 150) + tooltip_pos);
 	}
 
 	void UISoftKey::update()
@@ -378,45 +213,8 @@ namespace ms
 		if (Cursor::State new_state = textfield.send_cursor(cursorpos, clicked))
 			return new_state;
 
-		for (uint16_t i = 0; i < CASE_KEYS; i++)
-		{
-			auto& btn = BtCaseKeys[i][highCase];
-
-			// 同 draw：BtblankCase 缺失的 Blank 槽位为空，跳过防崩。
-			if (!btn)
-				continue;
-
-			if (btn->is_active() && btn->bounds(position).contains(cursorpos))
-			{
-				if (btn->get_state() == Button::State::NORMAL)
-				{
-					Sound(Sound::Name::BUTTONOVER).play();
-
-					btn->set_state(Button::State::MOUSEOVER);
-					return Cursor::State::CANCLICK;
-				}
-				else if (btn->get_state() == Button::State::MOUSEOVER)
-				{
-					if (clicked)
-					{
-						Sound(Sound::Name::BUTTONCLICK).play();
-
-						btn->set_state(case_pressed(i));
-
-						return Cursor::State::IDLE;
-					}
-					else
-					{
-						return Cursor::State::CANCLICK;
-					}
-				}
-			}
-			else if (btn->get_state() == Button::State::MOUSEOVER)
-			{
-				btn->set_state(Button::State::NORMAL);
-			}
-		}
-
+		// 37 键 + 功能键 + 关闭钮全在 buttons 里，hover/click/音效/回调
+		// 由基类统一处理（button_pressed 分发到 append_key / 大小写 / 提交）。
 		return UIElement::send_cursor(clicked, cursorpos);
 	}
 
@@ -425,9 +223,9 @@ namespace ms
 		if (pressed)
 		{
 			if (escape)
-				button_pressed(Buttons::BtCancel);
+				button_pressed(Buttons::BtClose);
 			else if (keycode == KeyAction::Id::RETURN)
-				button_pressed(Buttons::BtOK);
+				button_pressed(Buttons::BtEnter);
 		}
 	}
 
@@ -441,7 +239,7 @@ namespace ms
 		std::string pic = textfield.get_text();
 		size_t size = pic.size();
 
-		if (buttonid == Buttons::BtCancel)
+		if (buttonid == Buttons::BtClose)
 		{
 			deactivate();
 
@@ -450,7 +248,7 @@ namespace ms
 
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtDel)
+		else if (buttonid == Buttons::BtBackspace)
 		{
 			if (size > 0)
 			{
@@ -460,7 +258,7 @@ namespace ms
 
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtOK)
+		else if (buttonid == Buttons::BtEnter)
 		{
 			if (size >= min_text_len)
 			{
@@ -476,6 +274,7 @@ namespace ms
 			else
 			{
 				clear_tooltip();
+
 				if (mode == Mode::Pic)
 					show_text("The PIC needs to be at least 6 characters long.");
 				else
@@ -484,18 +283,37 @@ namespace ms
 
 			return Button::State::NORMAL;
 		}
-		else if (buttonid == Buttons::BtShift)
+		else if (buttonid == Buttons::BtCapsLock)
 		{
-			highCase = !highCase;
+			// CapsLock 持久锁定大写（再点一次解锁）。
+			caps_lock = !caps_lock;
 
 			return Button::State::NORMAL;
 		}
-		else if (buttonid >= Buttons::BtNum0)
+		else if (buttonid == Buttons::BtLShift || buttonid == Buttons::BtRShift)
 		{
-			std::string key = row1keys[buttonid - Buttons::BtNum0];
+			// 左/右 Shift 一次性：下一个字母后由 append 分支复位。
+			shift_pending = !shift_pending;
 
-			if (key != "Blank")
-				append_key(key);
+			return Button::State::NORMAL;
+		}
+		else if (buttonid >= Buttons::BtKey0)
+		{
+			uint16_t n = static_cast<uint16_t>(buttonid - Buttons::BtKey0);
+
+			if (n < KEY_COUNT)
+			{
+				char c = KEY_CHARS[n];
+
+				// 键帽是大写字形；默认（无 Caps/Shift）输入小写，与旧
+				// get_key_from_index 的 highCase?key:tolower(key) 口径一致。
+				if (!caps_lock && !shift_pending && c >= 'A' && c <= 'Z')
+					c = static_cast<char>(c - 'A' + 'a');
+
+				append_key(std::string(1, c));
+			}
+
+			shift_pending = false;
 
 			return Button::State::NORMAL;
 		}
@@ -535,99 +353,11 @@ namespace ms
 		}
 	}
 
-	Point<int16_t> UISoftKey::keypos(uint16_t index, uint16_t row) const
-	{
-		int16_t x = index * 45;
-		int16_t y = row * 43;
-
-		// Third row starts at the third character position
-		if (row == 3)
-			x += 45 * 2;
-
-		return Point<int16_t>(27 + x, 95 + y);
-	}
-
-	Button::State UISoftKey::case_pressed(uint16_t buttonid)
-	{
-		// Row 2
-		if (buttonid >= 0 && buttonid < ROW_MAX)
-		{
-			std::string string_index = row2keys[buttonid];
-
-			if (string_index != "Blank")
-			{
-				uint16_t index = std::stoi(string_index);
-				std::string key = get_key_from_index(index);
-
-				append_key(key);
-			}
-
-			return Button::State::NORMAL;
-		}
-		// Row 3
-		else if (buttonid >= ROW_MAX && buttonid < ROW_MAX * 2)
-		{
-			std::string string_index = row3keys[buttonid - ROW_MAX];
-
-			if (string_index != "Blank")
-			{
-				uint16_t index = std::stoi(string_index);
-				std::string key = get_key_from_index(index);
-
-				append_key(key);
-			}
-
-			return Button::State::NORMAL;
-		}
-		// Row 4
-		else if (buttonid >= ROW_MAX * 2 && buttonid < ROW_MAX * 2 + ROW4_MAX)
-		{
-			std::string string_index = row4keys[buttonid - ROW_MAX * 2];
-
-			if (string_index != "Blank")
-			{
-				uint16_t index = std::stoi(string_index);
-				std::string key = get_key_from_index(index);
-
-				append_key(key);
-			}
-
-			return Button::State::NORMAL;
-		}
-
-		return Button::State::DISABLED;
-	}
-
-	std::string UISoftKey::get_key_map_index(std::string key)
-	{
-		for (auto map : KeyMap)
-			if (map.second == key)
-				return std::to_string(map.first);
-
-		LOG(LOG_DEBUG, "Could not find index for key [" << key << "] in KeyMap.");
-
-		return "Blank";
-	}
-
-	std::string UISoftKey::get_key_from_index(uint16_t index)
-	{
-		auto iter = KeyMap.find(index);
-
-		if (iter != KeyMap.end())
-		{
-			std::string key = KeyMap.at(index);
-
-			return highCase ? key : string_format::tolower(key);
-		}
-
-		LOG(LOG_DEBUG, "Could not find key at index [" << index << "] in KeyMap.");
-
-		return "Blank";
-	}
-
 	bool UISoftKey::check_pic()
 	{
-		const char* pStr = textfield.get_text().c_str();
+		// 保留旧校验：仅拦「连续 3 个相同字符」。
+		std::string text = textfield.get_text();
+		const char* pStr = text.c_str();
 
 		if (pStr == NULL)
 			return false;
