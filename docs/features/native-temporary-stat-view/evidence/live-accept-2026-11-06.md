@@ -40,3 +40,14 @@
 | 明细行验收 | ⏳ | 依赖造 buff |
 
 建议手点：进图 →「界面」→ `A` → 点 `!buffme`（或 SoftKey 手输）→ `D` 看明细。
+
+## 2026-11-06 再续（本会话 computer-use）
+
+| 项 | 状态 | 备注 |
+| --- | --- | --- |
+| Admin 在线 | ✅ | 标题 `1-Admin`，图内自由市场入口 |
+| SoftKey `界面` 开板 | ✅ | ShortCut 气球可见 |
+| SoftKey `A` → Admin | ⚠️ | 键/坐标偶发命中；曾发出 `GeneralChat !help`（点到 quick[0]） |
+| `!buffme` | ❌ | 无新 SEND `31 00 … 21 62 75 66 66 6d 65`；NPC 对话挡焦点 + SoftKey 文本注入仍吞键 |
+| SoftKey `D` / 明细行 | ⏳ | 无 `GIVE_BUFF(0x20)`；板子路径上轮已通 |
+| 阻塞 | NPC `UtilDlgEx` 未关干净时字母键进不了 ShortCut/Admin | 手点：先「结束对话」→「界面」→`A`→点蓝字 `!buffme`→`D` |

@@ -1,0 +1,15 @@
+﻿void __thiscall CVecCtrl::UpdateActive(CVecCtrl *this)
+{
+  unsigned int v2; // edi
+  void *(__thiscall *vecDelDtor)(ZRefCounted *, unsigned int); // edx
+
+  v2 = ((int (__thiscall *)(CVecCtrl *))this->ZRefCounted::vfptr[9].__vecDelDtor)(a1: this); /*0x99098b*/
+  if ( v2 != 0 ) /*0x99098f*/
+  {
+    vecDelDtor = this->ZRefCounted::vfptr[14].__vecDelDtor; /*0x990993*/
+    this->m_bBeginUpdateActivePassed = 1; /*0x990998*/
+    ((void (__thiscall *)(CVecCtrl *))vecDelDtor)(a1: this); /*0x9909a2*/
+    if ( this->ZRefCounted::vfptr[10].__vecDelDtor(this, a2: v2) != nullptr ) /*0x9909b0*/
+      ((void (__thiscall *)(CVecCtrl *))this->ZRefCounted::vfptr[11].__vecDelDtor)(a1: this); /*0x9909bb*/
+  }
+}

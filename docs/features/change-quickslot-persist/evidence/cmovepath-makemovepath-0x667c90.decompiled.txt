@@ -1,0 +1,139 @@
+﻿void __thiscall CMovePath::MakeMovePath(
+        CMovePath *this,
+        int nAttr,
+        CStaticFoothold *pfh,
+        CStaticFoothold *pfhStart,
+        CLadderOrRope *pLR,
+        __int16 x,
+        __int16 y,
+        int vx,
+        int vy,
+        char nMoveAction,
+        int tElapse,
+        int xOffset,
+        int yOffset)
+{
+  CMovePath::ELEM *m_pTail; // eax
+  __int16 v15; // cx
+  bool v16; // cc
+  __int16 v17; // cx
+  bool v18; // cc
+  __int16 fh; // [esp+18h] [ebp+8h]
+  __int16 fhFallStart; // [esp+20h] [ebp+10h]
+
+  this->m_tGatherDuration += tElapse; /*0x667c99*/
+  if ( pfh != nullptr ) /*0x667ca5*/
+  {
+    fh = pfh->m_dwSN; /*0x667cab*/
+  }
+  else if ( pLR != nullptr ) /*0x667cb7*/
+  {
+    fh = -LOWORD(pLR->dwSN); /*0x667cc2*/
+  }
+  else
+  {
+    fh = 0; /*0x667cc8*/
+  }
+  if ( pfhStart != nullptr ) /*0x667cd2*/
+    fhFallStart = pfhStart->m_dwSN; /*0x667cd8*/
+  else
+    fhFallStart = 0; /*0x667cde*/
+  if ( this->m_lElem._m_uCount != 0 ) /*0x667ce5*/
+    m_pTail = this->m_lElem._m_pTail; /*0x667ceb*/
+  else
+    m_pTail = nullptr; /*0x667ce7*/
+  if ( nAttr == 0 || nAttr == 14 || nAttr == 12 ) /*0x667d06*/
+  {
+    if ( m_pTail == nullptr ) /*0x667d3f*/
+    {
+LABEL_46:
+      m_pTail = ZList<CMovePath::ELEM>::AddTail(this: &this->m_lElem); /*0x667ddf*/
+      *(_DWORD *)&m_pTail->nAttr = 0; /*0x667de9*/
+      *(_DWORD *)&m_pTail->y = 0; /*0x667deb*/
+      *(_DWORD *)&m_pTail->vy = 0; /*0x667dee*/
+      *(_DWORD *)&m_pTail->fh = 0; /*0x667df1*/
+      *(_DWORD *)&m_pTail->tElapse = 0; /*0x667df4*/
+      *(_DWORD *)&m_pTail->xOffset = 0; /*0x667df7*/
+      *(_DWORD *)&m_pTail->usRandCnt = 0; /*0x667dfa*/
+LABEL_47:
+      m_pTail->tElapse += tElapse; /*0x667dfd*/
+      goto LABEL_48; /*0x667e02*/
+    }
+    if ( (unsigned __int8)m_pTail->nAttr == nAttr /*0x667d6d*/
+      && m_pTail->fh == fh
+      && m_pTail->fhFallStart == fhFallStart
+      && m_pTail->bMoveAction == nMoveAction )
+    {
+      v15 = m_pTail->vy; /*0x667d6f*/
+      v16 = v15 <= 0; /*0x667d73*/
+      if ( v15 < 0 ) /*0x667d76*/
+      {
+        if ( vy > 0 ) /*0x667d7a*/
+          goto LABEL_44; /*0x667d7a*/
+        v16 = v15 <= 0; /*0x667d7c*/
+      }
+      if ( v16 || vy >= 0 ) /*0x667d83*/
+      {
+        if ( v15 != 0 ) /*0x667d88*/
+        {
+          if ( vy == 0 ) /*0x667d8c*/
+            goto LABEL_44; /*0x667d8c*/
+        }
+        else if ( vy != 0 ) /*0x667d95*/
+        {
+          goto LABEL_44; /*0x667d95*/
+        }
+        v17 = m_pTail->vx; /*0x667d97*/
+        v18 = v17 <= 0; /*0x667d9b*/
+        if ( v17 < 0 ) /*0x667d9e*/
+        {
+          if ( vx > 0 ) /*0x667da2*/
+            goto LABEL_44; /*0x667da2*/
+          v18 = v17 <= 0; /*0x667da4*/
+        }
+        if ( v18 || vx >= 0 ) /*0x667dab*/
+        {
+          if ( v17 != 0 ) /*0x667db0*/
+          {
+            if ( vx == 0 ) /*0x667db4*/
+              goto LABEL_44; /*0x667db4*/
+          }
+          else if ( vx != 0 ) /*0x667dbd*/
+          {
+            goto LABEL_44; /*0x667dbd*/
+          }
+          if ( m_pTail->xOffset == xOffset && m_pTail->yOffset == yOffset ) /*0x667dd1*/
+            goto LABEL_47; /*0x667dd1*/
+        }
+      }
+    }
+LABEL_44:
+    if ( m_pTail->tElapse == 0 && m_pTail->nAttr == 0 ) /*0x667ddd*/
+      goto LABEL_47; /*0x667ddd*/
+    goto LABEL_46; /*0x667ddd*/
+  }
+  if ( m_pTail == nullptr || m_pTail->tElapse != 0 || m_pTail->nAttr != 0 ) /*0x667d14*/
+  {
+    m_pTail = ZList<CMovePath::ELEM>::AddTail(this: &this->m_lElem); /*0x667d1d*/
+    *(_DWORD *)&m_pTail->nAttr = 0; /*0x667d24*/
+    *(_DWORD *)&m_pTail->y = 0; /*0x667d26*/
+    *(_DWORD *)&m_pTail->vy = 0; /*0x667d29*/
+    *(_DWORD *)&m_pTail->fh = 0; /*0x667d2c*/
+    *(_DWORD *)&m_pTail->tElapse = 0; /*0x667d2f*/
+    *(_DWORD *)&m_pTail->xOffset = 0; /*0x667d32*/
+    *(_DWORD *)&m_pTail->usRandCnt = 0; /*0x667d35*/
+  }
+LABEL_48:
+  m_pTail->fh = fh; /*0x667e06*/
+  m_pTail->fhFallStart = fhFallStart; /*0x667e19*/
+  m_pTail->x = x; /*0x667e22*/
+  m_pTail->y = y; /*0x667e2a*/
+  m_pTail->bMoveAction = nMoveAction; /*0x667e33*/
+  m_pTail->nAttr = nAttr; /*0x667e3b*/
+  m_pTail->vx = vx; /*0x667e3d*/
+  m_pTail->vy = vy; /*0x667e41*/
+  m_pTail->xOffset = xOffset; /*0x667e45*/
+  m_pTail->yOffset = yOffset; /*0x667e49*/
+  m_pTail->usRandCnt = this->m_usRandCnt; /*0x667e52*/
+  m_pTail->usActualRandCnt = this->m_usActualRandCnt; /*0x667e5c*/
+}

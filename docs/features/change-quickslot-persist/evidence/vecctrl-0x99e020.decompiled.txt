@@ -1,0 +1,152 @@
+﻿void __thiscall CVecCtrlNpc::UpdateActiveInterrupted(CVecCtrlNpc *this, int tElapse, int v)
+{
+  CAttrShoe *p; // edi
+  RelPos *p_m_rp; // ebx
+  int v6; // eax
+  long double Data; // st7
+  long double t; // st7
+  double v9; // st6
+  long double v10; // st5
+  long double v11; // st6
+  long double v12; // st5
+  long double v13; // st7
+  unsigned int v14; // eax
+  CVecCtrlNpc *v15; // esi
+  unsigned int m_dwSNPrev; // eax
+  long double v17; // st7
+  CStaticFoothold *m_pfh; // ecx
+  unsigned int m_dwSNNext; // eax
+  unsigned int v20; // ecx
+  unsigned int t_4; // [esp+14h] [ebp-84h]
+  int tSlice; // [esp+3Ch] [ebp-5Ch]
+  double v24; // [esp+48h] [ebp-50h] BYREF
+  long double v25; // [esp+50h] [ebp-48h]
+  double v26; // [esp+58h] [ebp-40h]
+  long double v27; // [esp+60h] [ebp-38h]
+  long double rpl[6]; // [esp+68h] [ebp-30h] BYREF
+  int tElapsea; // [esp+A0h] [ebp+8h]
+
+  p = this->m_pOwner->CVecCtrl::vfptr->GetShoeAttr(this: this->m_pOwner, result: &v24)->p; /*0x99e041*/
+  if ( HIDWORD(v24) != 0 ) /*0x99e04a*/
+  {
+    if ( InterlockedDecrement(lpAddend: (LPLONG)(HIDWORD(v24) + 4)) == 0 ) /*0x99e058*/
+    {
+      InterlockedIncrement(lpAddend: (LPLONG)(HIDWORD(v24) + 4)); /*0x99e062*/
+      if ( HIDWORD(v24) != 0 ) /*0x99e06e*/
+        (**(void (__thiscall ***)(_DWORD, int))HIDWORD(v24))(a1: HIDWORD(v24), a2: 1); /*0x99e076*/
+    }
+    HIDWORD(v24) = 0; /*0x99e078*/
+  }
+  if ( this->m_pfh != nullptr ) /*0x99e087*/
+  {
+    p_m_rp = &this->m_rp; /*0x99e090*/
+    this->m_rp._ZtlSecureTear_v_CS = _ZtlSecureTear<double>(t: (double)v, at: this->m_rp._ZtlSecureTear_v); /*0x99e0a4*/
+    AbsPos::SetFromRelPos(this: &this->m_ap, rp: &this->m_rp, pfh: this->m_pfh); /*0x99e0b2*/
+    CVecCtrl::SetMovePathAttribute(this, nAttr: 2); /*0x99e0bb*/
+    v6 = tElapse; /*0x99e0c0*/
+    if ( tElapse > 0 ) /*0x99e0c5*/
+    {
+      while ( 1 ) /*0x99e0e6*/
+      {
+        tSlice = 30; /*0x99e0e6*/
+        if ( v6 <= 30 ) /*0x99e0ee*/
+          tSlice = v6; /*0x99e0f0*/
+        qmemcpy(rpl, p_m_rp, sizeof(rpl)); /*0x99e103*/
+        tElapsea = v6 - tSlice; /*0x99e109*/
+        Data = TSecType<double>::GetData(this: &p->mass); /*0x99e10c*/
+        t_4 = p_m_rp->_ZtlSecureTear_v_CS; /*0x99e114*/
+        v25 = Data; /*0x99e115*/
+        t = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_v, uCS: t_4); /*0x99e11d*/
+        v26 = (double)tSlice; /*0x99e129*/
+        v9 = v26 / DOUBLE_1000_0; /*0x99e12d*/
+        if ( t <= 0.0 ) /*0x99e13c*/
+        {
+          if ( DOUBLE_N0_0 > t ) /*0x99e168*/
+          {
+            v12 = v9 * (fDrag / v25); /*0x99e176*/
+            v11 = DOUBLE_N0_0; /*0x99e176*/
+            t = t + v12; /*0x99e178*/
+            if ( DOUBLE_N0_0 < t ) /*0x99e181*/
+LABEL_17:
+              t = v11; /*0x99e183*/
+          }
+        }
+        else
+        {
+          v10 = t; /*0x99e14a*/
+          t = 0.0; /*0x99e14a*/
+          v11 = v10 - v9 * (fDrag / v25); /*0x99e14c*/
+          if ( v11 >= 0.0 ) /*0x99e155*/
+            goto LABEL_17; /*0x99e155*/
+        }
+        p_m_rp->_ZtlSecureTear_v_CS = _ZtlSecureTear<double>(t, at: p_m_rp->_ZtlSecureTear_v); /*0x99e18b*/
+        v27 = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_pos, uCS: p_m_rp->_ZtlSecureTear_pos_CS); /*0x99e1a6*/
+        v25 = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_v, uCS: p_m_rp->_ZtlSecureTear_v_CS); /*0x99e1b7*/
+        v13 = _ZtlSecureFuse<double>(at: &rpl[3], uCS: LODWORD(rpl[5])); /*0x99e1c8*/
+        v14 = _ZtlSecureTear<double>( /*0x99e1ed*/
+                t: (v13 + v25) * DOUBLE_0_5 * v26 / DOUBLE_1000_0 + v27,
+                at: p_m_rp->_ZtlSecureTear_pos);
+        p_m_rp->_ZtlSecureTear_pos_CS = v14; /*0x99e1f6*/
+        if ( _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_pos, uCS: v14) >= 0.0 ) /*0x99e20c*/
+        {
+          v17 = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_pos, uCS: p_m_rp->_ZtlSecureTear_pos_CS); /*0x99e2dc*/
+          m_pfh = this->m_pfh; /*0x99e2e5*/
+          if ( v17 <= m_pfh->m_len ) /*0x99e2f6*/
+            goto LABEL_32; /*0x99e2f6*/
+          m_dwSNNext = m_pfh->m_dwSNNext; /*0x99e2fc*/
+          if ( m_dwSNNext == 0 || *(double *)(m_dwSNNext + 64) <= 0.0 ) /*0x99e311*/
+          {
+            p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>(t: m_pfh->m_len, at: p_m_rp->_ZtlSecureTear_pos); /*0x99e3b3*/
+            p_m_rp->_ZtlSecureTear_v_CS = _ZtlSecureTear<double>(t: 0.0, at: p_m_rp->_ZtlSecureTear_v); /*0x99e3bb*/
+LABEL_32:
+            v15 = this; /*0x99e3be*/
+LABEL_33:
+            AbsPos::SetFromRelPos(this: &v15->m_ap, rp: p_m_rp, pfh: v15->m_pfh); /*0x99e3c2*/
+            v15->CVecCtrl::ZRefCounted::vfptr[6].__vecDelDtor(this: v15, a2: tSlice); /*0x99e3de*/
+            goto LABEL_34; /*0x99e3de*/
+          }
+          v27 = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_pos, uCS: p_m_rp->_ZtlSecureTear_pos_CS) /*0x99e330*/
+              - this->m_pfh->m_len;
+          p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>(t: v27, at: p_m_rp->_ZtlSecureTear_pos); /*0x99e33c*/
+          v20 = this->m_pfh->m_dwSNNext; /*0x99e345*/
+          if ( *(double *)(v20 + 80) < v27 ) /*0x99e354*/
+            p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>( /*0x99e366*/
+                                              t: *(double *)(v20 + 80),
+                                              at: p_m_rp->_ZtlSecureTear_pos);
+          AbsPos::SetFromRelPos(this: &this->m_ap, rp: p_m_rp, pfh: this->m_pfh->m_pfhNext); /*0x99e377*/
+          ((void (__thiscall *)(CVecCtrlNpc *, unsigned int, _DWORD, int))this->CVecCtrl::ZRefCounted::vfptr[5].__vecDelDtor)( /*0x99e394*/
+            a1: this,
+            a2: this->m_pfh->m_dwSNNext,
+            a3: 0,
+            a4: tSlice);
+        }
+        else
+        {
+          v15 = this; /*0x99e212*/
+          m_dwSNPrev = this->m_pfh->m_dwSNPrev; /*0x99e21c*/
+          if ( m_dwSNPrev == 0 || *(double *)(m_dwSNPrev + 64) <= 0.0 ) /*0x99e22f*/
+          {
+            p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>(t: 0.0, at: p_m_rp->_ZtlSecureTear_pos); /*0x99e2c5*/
+            p_m_rp->_ZtlSecureTear_v_CS = _ZtlSecureTear<double>(t: 0.0, at: p_m_rp->_ZtlSecureTear_v); /*0x99e2cd*/
+            goto LABEL_33; /*0x99e2d0*/
+          }
+          v27 = _ZtlSecureFuse<double>(at: p_m_rp->_ZtlSecureTear_pos, uCS: p_m_rp->_ZtlSecureTear_pos_CS) /*0x99e24b*/
+              + *(double *)(this->m_pfh->m_dwSNPrev + 80);
+          p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>(t: v27, at: p_m_rp->_ZtlSecureTear_pos); /*0x99e259*/
+          if ( v27 < 0.0 ) /*0x99e265*/
+            p_m_rp->_ZtlSecureTear_pos_CS = _ZtlSecureTear<double>(t: 0.0, at: p_m_rp->_ZtlSecureTear_pos); /*0x99e274*/
+          AbsPos::SetFromRelPos(this: &this->m_ap, rp: p_m_rp, pfh: this->m_pfh->m_pfhPrev); /*0x99e289*/
+          ((void (__thiscall *)(CVecCtrlNpc *, unsigned int, _DWORD, int))this->CVecCtrl::ZRefCounted::vfptr[5].__vecDelDtor)( /*0x99e2a6*/
+            a1: this,
+            a2: this->m_pfh->m_dwSNPrev,
+            a3: 0,
+            a4: tSlice);
+        }
+LABEL_34:
+        if ( tElapsea <= 0 ) /*0x99e3e4*/
+          return; /*0x99e3e4*/
+        v6 = tElapsea; /*0x99e0e0*/
+      }
+    }
+  }
+}

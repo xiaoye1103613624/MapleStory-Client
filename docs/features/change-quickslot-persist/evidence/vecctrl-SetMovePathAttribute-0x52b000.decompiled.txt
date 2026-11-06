@@ -1,0 +1,37 @@
+﻿void __thiscall CVecCtrl::SetMovePathAttribute(CVecCtrl *this, int nAttr)
+{
+  CStaticFoothold *pfhFallStart; // ebp
+  int m_nMoveAction; // ebx
+  CLadderOrRope *v5; // esi
+  long double v6; // [esp+10h] [ebp-20h]
+  long double v7; // [esp+18h] [ebp-18h]
+  long double v8; // [esp+20h] [ebp-10h]
+  long double v9; // [esp+28h] [ebp-8h]
+
+  if ( nAttr == 11 && this->m_falldownNext.bValid != 0 ) /*0x52b017*/
+    pfhFallStart = this->m_falldownNext.pfhFallStart; /*0x52b019*/
+  else
+    pfhFallStart = this->m_pfhFallStart; /*0x52b021*/
+  m_nMoveAction = this->m_nMoveAction; /*0x52b02a*/
+  v6 = _ZtlSecureFuse<double>(at: this->m_ap._ZtlSecureTear_vy, uCS: this->m_ap._ZtlSecureTear_vy_CS); /*0x52b03d*/
+  v7 = _ZtlSecureFuse<double>(at: this->m_ap._ZtlSecureTear_vx, uCS: this->m_ap._ZtlSecureTear_vx_CS); /*0x52b04e*/
+  v8 = _ZtlSecureFuse<double>(at: this->m_ap._ZtlSecureTear_y, uCS: this->m_ap._ZtlSecureTear_y_CS); /*0x52b05f*/
+  v9 = _ZtlSecureFuse<double>(at: this->m_ap._ZtlSecureTear_x, uCS: this->m_ap._ZtlSecureTear_x_CS); /*0x52b06d*/
+  v5 = _ZtlSecureFuse<CLadderOrRope *>( /*0x52b092*/
+         at: this->_ZtlSecureTear_m_pLadderOrRope,
+         uCS: this->_ZtlSecureTear_m_pLadderOrRope_CS);
+  CMovePath::MakeMovePath( /*0x52b0cc*/
+    this: &this->m_path,
+    nAttr,
+    pfh: this->m_pfh,
+    pfhStart: pfhFallStart,
+    pLR: v5,
+    x: (int)v9,
+    y: (int)v8,
+    vx: (int)v7,
+    vy: (int)v6,
+    nMoveAction: m_nMoveAction,
+    tElapse: 0,
+    xOffset: 0,
+    yOffset: 0);
+}

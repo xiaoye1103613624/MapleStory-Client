@@ -1,0 +1,31 @@
+﻿int __thiscall CMovePath::IsTimeForFlush(CMovePath *this, int bFly, __POSITION *bDynamicFoothold)
+{
+  int m_bShortUpdate; // edx
+  int v4; // eax
+  CMovePath::ELEM *m_pTail; // eax
+
+  if ( this->m_lElem._m_uCount == 0 ) /*0x666874*/
+    return 0; /*0x666874*/
+  m_bShortUpdate = this->m_bShortUpdate; /*0x666876*/
+  v4 = m_bShortUpdate != 0 ? (bDynamicFoothold != nullptr ? 200 : 500) : 1000;
+  if ( this->m_tGatherDuration < v4 ) /*0x666899*/
+    return 0; /*0x666899*/
+  if ( m_bShortUpdate == 0 && bFly == 0 ) /*0x6668a3*/
+  {
+    m_pTail = this->m_lElem._m_pTail; /*0x6668a5*/
+    bDynamicFoothold = (__POSITION *)m_pTail; /*0x6668a8*/
+    if ( m_pTail != nullptr ) /*0x6668ae*/
+    {
+      while ( m_pTail->fh <= 0 ) /*0x6668b5*/
+      {
+        ZList<CMovePath::ELEM>::GetPrev(pos: &bDynamicFoothold); /*0x6668bc*/
+        m_pTail = (CMovePath::ELEM *)bDynamicFoothold; /*0x6668c1*/
+        if ( bDynamicFoothold == nullptr ) /*0x6668ca*/
+          return 0; /*0x6668ca*/
+      }
+      return 1; /*0x6668b5*/
+    }
+    return 0; /*0x6668ce*/
+  }
+  return 1; /*0x6668ce*/
+}
