@@ -31,4 +31,5 @@
 ## 非本项
 
 - 槽内技能/道具绑定仍走 `KEYMAP(135)`（拖技能到快捷格 ≠ 183）。
-- NPC_ACTION 移动分支、KeyDown cancel、公会滑轮上行：无充分证据，不发明。
+- NPC_ACTION 移动：Encode 最小上行已接（`MovePathEncode` / 授控可动 NPC）；完整 VecCtrl 与 197 抓包仍预留。见 [notes/npc-action-move-pending.md](notes/npc-action-move-pending.md)。
+- KeyDown cancel、公会滑轮上行：无充分证据，不发明。

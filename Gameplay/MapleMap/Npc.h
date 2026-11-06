@@ -41,6 +41,10 @@ namespace ms
 		// Changes stance and resets animation
 		void set_stance(const std::string& stance);
 
+		// SPAWN_NPC_C 授控：本端负责攒/发 NPC_ACTION 移动 path
+		void set_control(bool value);
+		bool has_control() const;
+
 		// Check whether this is a server-sided NPC
 		bool isscripted() const;
 		// Check if the NPC is in range of the cursor
@@ -52,6 +56,10 @@ namespace ms
 		std::string get_func();
 
 	private:
+		// 控制器：≥1000ms 攒一节 absolute(attr0) 后 Flush→NPC_ACTION（对齐 IsTimeForFlush）
+		void try_flush_movepath();
+		void next_control_move();
+
 		std::map<std::string, Animation> animations;
 		std::map<std::string, std::vector<std::string>> lines;
 		std::vector<std::string> states;
@@ -65,6 +73,10 @@ namespace ms
 		bool flip;
 		std::string stance;
 		bool control;
+		bool movable;           // wz 有 move 动画 / info.move
+		int16_t path_accum_ms;  // 距上次上行的累计 ms
+		int16_t path_start_x;
+		int16_t path_start_y;
 
 		Randomizer random;
 		Text namelabel;

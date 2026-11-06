@@ -29,7 +29,7 @@ namespace ms
 	class NpcSpawn
 	{
 	public:
-		NpcSpawn(int32_t oid, int32_t npcid, Point<int16_t> position, bool mirrored, uint16_t fh);
+		NpcSpawn(int32_t oid, int32_t npcid, Point<int16_t> position, bool mirrored, uint16_t fh, bool control = false);
 
 		int32_t get_oid() const;
 		std::unique_ptr<MapObject> instantiate(const Physics& physics) const;
@@ -40,6 +40,7 @@ namespace ms
 		Point<int16_t> position;
 		bool flip;
 		uint16_t fh;
+		bool control;
 	};
 
 	class MobSpawn

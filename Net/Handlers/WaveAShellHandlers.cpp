@@ -3466,21 +3466,52 @@ namespace ms
 
 	void NpcActionHandler::handle(InPacket& recv) const
 	{
+		// 下行 = 上行原样广播（s9 NPCAnimationHandler）。
+		// length==6：oid+action+chat（对话姿态）。
+		// length>6：oid+action+chat + CMovePath::Encode；服务端已丢尾 9，
+		// 故此处无 keyPad/rect。解析头 x/y 对齐 Encode（IDA 0x666e20）。
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		size_t rem = recv.available();
 		LOG(LOG_DEBUG, "NpcAction oid=" << oid << " rem=" << rem);
+
+		int8_t action = 0;
+		int8_t chat_idx = 0;
+		bool has_path = rem > 2;
+		if (rem >= 2)
+		{
+			action = recv.read_byte();
+			chat_idx = recv.read_byte();
+			rem = recv.available();
+		}
+
 		if (MapObjects* npcs = Stage::get().get_npcs().get_npcs())
 		{
 			if (Optional<MapObject> obj = npcs->get(oid))
 			{
 				if (auto* npc = dynamic_cast<Npc*>(obj.get()))
-					npc->set_stance(rem > 0 ? "move" : "stand");
+				{
+					if (has_path && rem >= 8)
+					{
+						int16_t x = recv.read_short();
+						int16_t y = recv.read_short();
+						recv.skip(4); // vx, vy
+						npc->set_position(x, y);
+						npc->set_stance("move");
+						LOG(LOG_DEBUG, "NpcAction path oid=" << oid
+							<< " x=" << x << " y=" << y
+							<< " act=" << static_cast<int>(action)
+							<< " chat=" << static_cast<int>(chat_idx));
+					}
+					else
+					{
+						npc->set_stance(has_path ? "move" : "stand");
+					}
+				}
 			}
 		}
 		while (recv.available())
 			recv.skip_byte();
-		// note
-		(void)rem;
+		(void)chat_idx;
 	}
 
 	void SummonItemUnavailableHandler::handle(InPacket& recv) const

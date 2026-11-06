@@ -36,9 +36,9 @@
    "s9_send_distinct_values": 313,
    "s9_send_emitted": 252
   },
-  "generated_at": "2026-11-05T20:38:19",
+  "generated_at": "2026-11-06T08:16:00",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "0849e18d4eb2347194a73b8bf623be7fea7e6d30",
+  "s9_git_head": "9dcd23e331a24aa7040d8876c15e92932f31f931",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",
@@ -1019,7 +1019,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 44
+     "line": 66
     }
    ],
    "client_sent_count": 1,
@@ -1043,27 +1043,27 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 64
+     "line": 86
     },
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 83
+     "line": 105
     },
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 93
+     "line": 115
     },
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 103
+     "line": 125
     },
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 113
+     "line": 135
     },
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 122
+     "line": 144
     }
    ],
    "client_sent_count": 8,
@@ -1087,7 +1087,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 178
+     "line": 200
     }
    ],
    "client_sent_count": 1,
@@ -2164,7 +2164,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 56
+     "line": 78
     }
    ],
    "client_sent_count": 1,
@@ -2193,10 +2193,14 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/NpcInteractionPackets.h",
-     "line": 30
+     "line": 33
+    },
+    {
+     "file": "Net/Packets/NpcInteractionPackets.h",
+     "line": 51
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 197,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCAnimationHandler",

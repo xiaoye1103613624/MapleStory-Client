@@ -1,6 +1,6 @@
-# NPC_ACTION 移动分支 — 取证推进（显式预留接线）
+# NPC_ACTION 移动分支 — 接线进度
 
-> 更新：2026-11-06（VecCtrl 攒 path 条件钉死；仍缺实现与抓包）
+> 更新：2026-11-06（CMovePath Encode 最小上行已接；真机 197 length>6 抓包仍建议补）
 
 ## 已证实（s9）
 
@@ -11,54 +11,43 @@
 
 本端已有：
 
-- 上行：`NpcActionTalkPacket`（oid + `0xFF` + `0x00`）挂在 `TalkToNPCPacket`
-- 下行：`NpcActionHandler`：读 oid 后 `rem>0 → set_stance("move")` / 否则 `"stand"`；**不解析路径、不位移**
+- 上行对话：`NpcActionTalkPacket`（oid + `0xFF` + `0x00`）挂在 `TalkToNPCPacket`
+- 上行移动：**`NpcActionMovePacket`** + `MovePathEncode.h`（本轮）
+- 下行：`NpcActionHandler`：对话姿态 / 移动头 `x,y` 写 `set_position` + `move` stance
 
 ## IDA（Maplestory95.i64）
 
-### 上轮：包形
-
-见 [evidence/npc-action-generatemovepath-2026-11-06.md](../evidence/npc-action-generatemovepath-2026-11-06.md)
-
 | 项 | 值 |
 | --- | --- |
-| 符号 | `?GenerateMovePath@CNpc@@IAEXJJ@Z` |
-| 地址 | `0x671590` |
+| `CNpc::GenerateMovePath` | `0x671590` |
+| `CMovePath::Encode` | `0x666e20` |
+| `CMovePath::Flush` | `0x668160` |
+| `IsTimeForFlush` | 默认 ≥1000ms + walk 需 fh>0 |
 | v95 send op | **241** → s9 `NPC_ACTION` **197** |
-| 移动 body | `bMove` 时 `Flush` → `Encode` |
 | 尾 9 | `keyPadCount==0` → `1+8`，对齐 s9 `length-9` |
 
-### 本轮：攒 path 条件（钉死）
+证据目录：`evidence/npc-action-generatemovepath-2026-11-06.md`、`npc-vecctrl-path-accumulate-2026-11-06.md`、`cmovepath-encode-0x666e20.decompiled.txt`。
 
-见 [evidence/npc-vecctrl-path-accumulate-2026-11-06.md](../evidence/npc-vecctrl-path-accumulate-2026-11-06.md)
+## 本轮实现（最小可发送）
 
-| 环节 | 结论 |
+| 文件 | 作用 |
 | --- | --- |
-| 触发 | `Update`：`m_bMovePathSent==0` ∧ `bMove` ∧ `UpdatePassive==-1` |
-| 攒 | ≤55× `UpdateActive`，直到 `IsTimeForFlush` |
-| Flush 阈值 | 默认 **≥1000ms** gather，且 walk 需 **fh>0** |
-| 入表 | `SetMovePathAttribute` → `MakeMovePath` → `m_lElem` AddTail/合并 |
-| Interrupted | 动作帧 delay 切片物理 + `SetMovePathAttribute(2)` |
+| `Net/Packets/MovePathEncode.h` | 移植 Encode attr switch（IDA 表）；空 keyPad + rect |
+| `NpcActionMovePacket` | oid + action + chatIdx + Encode |
+| `Npc` 授控 | `SPAWN_NPC_C` → `control=true`；`movable`（wz move）；≥1000ms + fh>0 发一节 attr=0 |
+| `NpcActionHandler` | 广播 path 时读头 x/y 位移 |
 
-同族：`CMob::GenerateMovePath` @ `0x651100`。
+**故意不做**：完整 `CVecCtrlNpc` 物理；`ClientOptMan GetOpt(2)` rand 附加（v83/s9 默认关）；发明非 IDA attr 字段。
 
-## 与本端差异
+`MovementPacket::writemovement` **仍禁止**用于 NPC_ACTION。
 
-`MovementPacket::writemovement` **≠** 原生 `CMovePath::Encode`。禁止直接拿玩家 Move 包当 NPC 移动 body。
+## 仍缺 / 预留
 
-本端无 `CVecCtrlNpc` / `MakeMovePath` 等价物 → **无法本地攒 ELEM 上行**。
-
-## 缺什么（仍阻塞上行接线）
-
-1. ~~攒 path 条件~~ → **本轮已钉死**
-2. **本端路径生成器**（VecCtrlNpc 物理或可接受的简化落点/fh 合成）
-3. **真机 c2s 197 `length>6` 十六进制样例**（本轮 packet_dump 仅见 talk `c5 00 … ff 00`）
-4. **双开观感**
-
-不解 2–3 之前：**禁止发明** move body / 禁止改 s9 handler。
-
-下行可选下一刀（不依赖 VecCtrl）：按 Encode 表解析广播包，把 NPC `set_position` + stance——仍建议先有样例再写。
+1. 真机 c2s 197 `length>6` 十六进制样例（对照 Encode 字节）
+2. 双开观感（第二端看 move）
+3. 完整 VecCtrl 攒多节 / Interrupted 动作帧
+4. 下行完整 elem 表插值（本轮只吃头坐标）
 
 ## 本轮结论
 
-包形 + **攒 path 条件**均有 IDA 完整证据；**接线仍预留**（缺路径生成实现与抓包样例）。
+包形 + 攒 path 条件 + **最小 Encode 上行/下行头解析**已接；完整原生 VecCtrl 仍预留。

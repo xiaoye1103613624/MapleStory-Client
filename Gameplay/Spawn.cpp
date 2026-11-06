@@ -27,7 +27,8 @@
 
 namespace ms
 {
-	NpcSpawn::NpcSpawn(int32_t o, int32_t i, Point<int16_t> p, bool fl, uint16_t f) : oid(o), id(i), position(p), flip(fl), fh(f) {}
+	NpcSpawn::NpcSpawn(int32_t o, int32_t i, Point<int16_t> p, bool fl, uint16_t f, bool cnt)
+		: oid(o), id(i), position(p), flip(fl), fh(f), control(cnt) {}
 
 	int32_t NpcSpawn::get_oid() const
 	{
@@ -40,7 +41,7 @@ namespace ms
 		// get_y_below 会挑到下面一层平台，NPC 就"站到路下面"去了；反查不到时被丢到地图边界外，
 		// 表现为 NPC 不见了。怪物包传的是真 y，所以一直是好的——这里跟怪物对齐。
 		auto spawnposition = physics.get_spawn_point(position, fh);
-		return std::make_unique<Npc>(id, oid, flip, fh, false, spawnposition);
+		return std::make_unique<Npc>(id, oid, flip, fh, control, spawnposition);
 	}
 
 	MobSpawn::MobSpawn(int32_t o, int32_t i, int8_t m, int8_t st, uint16_t f, bool ns, int8_t t, Point<int16_t> p,

@@ -18,6 +18,9 @@
 #pragma once
 
 #include "../OutPacket.h"
+#include "MovePathEncode.h"
+
+#include <vector>
 
 namespace ms
 {
@@ -32,6 +35,25 @@ namespace ms
 			write_int(oid);
 			write_byte(-1);
 			write_byte(0);
+		}
+	};
+
+	// Opcode: NPC_ACTION(197) 移动分支（length>6）。
+	// 包形对齐 Maplestory95 CNpc::GenerateMovePath @ 0x671590：
+	//   int oid + byte nAction + byte nChatIdx + CMovePath::Encode(...)
+	// Encode 权威：0x666e20（见 MovePathEncode.h）。s9 丢弃尾 9（空 keyPad+rect）。
+	class NpcActionMovePacket : public MovePathPacket
+	{
+	public:
+		NpcActionMovePacket(int32_t oid, int8_t action, int8_t chat_idx,
+			int16_t x, int16_t y, int16_t vx, int16_t vy,
+			const std::vector<MovePathElem>& elems)
+			: MovePathPacket(OutPacket::Opcode::NPC_ACTION)
+		{
+			write_int(oid);
+			write_byte(action);
+			write_byte(chat_idx);
+			encode_movepath(x, y, vx, vy, elems);
 		}
 	};
 

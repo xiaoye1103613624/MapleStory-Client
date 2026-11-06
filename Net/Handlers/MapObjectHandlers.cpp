@@ -21,6 +21,7 @@
 #include "Helpers/MovementParser.h"
 
 #include "../../Character/Buff.h"
+#include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIMiscShells.h"
@@ -794,6 +795,15 @@ namespace ms
 		{
 			while (recv.available())
 				recv.skip_byte();
+			// 原生撤控不一定删对象；本端历史 remove。若仍在场则清 control。
+			if (MapObjects* npcs = Stage::get().get_npcs().get_npcs())
+			{
+				if (Optional<MapObject> obj = npcs->get(oid))
+				{
+					if (auto* npc = dynamic_cast<Npc*>(obj.get()))
+						npc->set_control(false);
+				}
+			}
 			Stage::get().get_npcs().remove(oid);
 		}
 		else
@@ -809,8 +819,9 @@ namespace ms
 			while (recv.available())
 				recv.skip_byte();
 
+			// SPAWN_NPC_C：本端成为控制器 → control=true，可发 NPC_ACTION 移动
 			Stage::get().get_npcs().spawn(
-				{ oid, id, position, flip, fh }
+				{ oid, id, position, flip, fh, true }
 			);
 			(void)id;
 		}

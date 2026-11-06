@@ -806,6 +806,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Net\Packets\InventoryPackets.h" />
     <ClInclude Include="Net\Packets\LoginPackets.h" />
     <ClInclude Include="Net\Packets\MessagingPackets.h" />
+    <ClInclude Include="Net\Packets\MovePathEncode.h" />
     <ClInclude Include="Net\Packets\MovementPacket.h" />
     <ClInclude Include="Net\Packets\NpcInteractionPackets.h" />
     <ClInclude Include="Net\Packets\PlayerInteractionPackets.h" />
