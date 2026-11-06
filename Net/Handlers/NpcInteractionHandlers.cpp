@@ -60,6 +60,34 @@ namespace ms
 				recv.skip_byte();
 		};
 
+		// End-of-talk packets must match the s9 NPCMoreTalkHandler read contract:
+		//  - lastMsg 2/13 (GetText/AskBoxText): action!=0 forces readString(), so (x,-1)
+		//    is a short packet; action=0 reaches getCM().dispose() cleanly (same as the
+		//    CLOSE path in UINpcTalk.cpp).
+		//  - lastMsg 5/6 (Quiz/SpeedQuiz): readString() is unconditional; send the existing
+		//    empty-string packet (5|6,"") so the script can give up via getText().
+		//  - everything else: mode/action=-1 disposes in NPCScriptManager.nextLevel or
+		//    the script's action(-1,..) branch.
+		auto end_talk = [](int8_t lastmsg)
+		{
+			switch (lastmsg)
+			{
+			case 2:
+			case 13:
+				NpcTalkMorePacket(lastmsg, static_cast<int8_t>(0)).dispatch();
+				break;
+			case 5:
+				NpcTalkMorePacket(NpcTalkMorePacket::AskQuiz{}, std::string()).dispatch();
+				break;
+			case 6:
+				NpcTalkMorePacket(NpcTalkMorePacket::AskSpeedQuiz{}, std::string()).dispatch();
+				break;
+			default:
+				NpcTalkMorePacket(lastmsg, static_cast<int8_t>(-1)).dispatch();
+				break;
+			}
+		};
+
 		switch (msgtype)
 		{
 		case 0: // Say — 7467AB：(speaker&4)? override npc；string；prev+next
@@ -145,8 +173,8 @@ namespace ms
 			}
 			if (!UiAssetResolve::usable(UiAssetResolve::window("InitialQuiz")))
 			{
-				LOG(LOG_WARN, "[NPC] InitialQuiz missing; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] InitialQuiz missing; end_talk");
+				end_talk(msgtype);
 				return;
 			}
 			auto ui = UI::get().get_element<UIInitialQuiz>();
@@ -159,8 +187,8 @@ namespace ms
 				ui->open(quiz_title, quiz_problem, quiz_hint, quiz_min, quiz_max, quiz_remain);
 			else
 			{
-				LOG(LOG_WARN, "[NPC] UIInitialQuiz emplace failed; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] UIInitialQuiz emplace failed; end_talk");
+				end_talk(msgtype);
 			}
 			return;
 		}
@@ -188,8 +216,8 @@ namespace ms
 			}
 			if (!UiAssetResolve::usable(UiAssetResolve::window("SpeedQuiz")))
 			{
-				LOG(LOG_WARN, "[NPC] SpeedQuiz missing; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] SpeedQuiz missing; end_talk");
+				end_talk(msgtype);
 				return;
 			}
 			auto ui = UI::get().get_element<UISpeedQuiz>();
@@ -202,8 +230,8 @@ namespace ms
 				ui->open(sq_type, sq_answer, sq_correct, sq_remain, sq_remain_sec);
 			else
 			{
-				LOG(LOG_WARN, "[NPC] UISpeedQuiz emplace failed; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] UISpeedQuiz emplace failed; end_talk");
+				end_talk(msgtype);
 			}
 			return;
 		}
@@ -269,8 +297,8 @@ namespace ms
 			if (!UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx"))
 				&& !UiAssetResolve::usable(UiAssetResolve::window("UtilDlgEx_Pet")))
 			{
-				LOG(LOG_WARN, "[NPC] AskPet missing UtilDlgEx; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] AskPet missing UtilDlgEx; end_talk");
+				end_talk(msgtype);
 				return;
 			}
 			auto ui = UI::get().get_element<UIAskPet>();
@@ -283,8 +311,8 @@ namespace ms
 				ui->open(msgtype, pet_tip, pet_uids, pet_flag);
 			else
 			{
-				LOG(LOG_WARN, "[NPC] UIAskPet emplace failed; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] UIAskPet emplace failed; end_talk");
+				end_talk(msgtype);
 			}
 			return;
 		}
@@ -311,8 +339,8 @@ namespace ms
 				mirror_talk = recv.read_string();
 			if (!UiAssetResolve::usable(UiAssetResolve::window("SlideMenu")))
 			{
-				LOG(LOG_WARN, "[NPC] SlideMenu missing; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] SlideMenu missing; end_talk");
+				end_talk(msgtype);
 				return;
 			}
 			auto ui = UI::get().get_element<UIDimensionalMirror>();
@@ -325,8 +353,8 @@ namespace ms
 				ui->open(mirror_param, mirror_talk);
 			else
 			{
-				LOG(LOG_WARN, "[NPC] UIDimensionalMirror emplace failed; NpcTalkMore(-1)");
-				NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				LOG(LOG_WARN, "[NPC] UIDimensionalMirror emplace failed; end_talk");
+				end_talk(msgtype);
 			}
 			return;
 		}
@@ -342,8 +370,8 @@ namespace ms
 		{
 			// 未接 Quiz/Pet/Mirror 等 UI：读完包后安全收口，避免脚本挂死。
 			LOG(LOG_WARN, "[NPC] ScriptMessage msgtype=" << static_cast<int>(msgtype)
-				<< " reserved/no-UI; NpcTalkMore(-1)");
-			NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+				<< " reserved/no-UI; end_talk");
+			end_talk(msgtype);
 			return;
 		}
 
@@ -360,7 +388,7 @@ namespace ms
 			LOG(LOG_WARN, "[NPC] "
 				<< (need_avatar ? "UtilDlgEx_Avatar" : "UtilDlgEx")
 				<< " missing; end talk msgtype=" << static_cast<int>(msgtype));
-			NpcTalkMorePacket(msgtype, static_cast<int8_t>(-1)).dispatch();
+			end_talk(msgtype);
 			return;
 		}
 

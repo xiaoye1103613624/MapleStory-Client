@@ -328,11 +328,11 @@
   2. **Say `speaker&4`**：若脚本带 override npc，立绘应对齐覆盖后的 templateId（无此类脚本则跳过）。
   3. **GetText short×2**：s9 `writeInt(0)` 路径与原先一致（minLen=0 不弹 tip 821）。
   4. **GetNumber tip 820**：正常 `sendGetNumber` **不应**弹「more than %d digits」；若要肉眼验 tip 820，需临时把 `TalkInputParams::number_min_digits` 调为 >0（或调试断点改字段）再输入偏短数字串。
-  5. **未接 UI 收口**：Mirror（14）、SpeedQuiz/Pet（6/9/10）→ 客户端应 `NpcTalkMore(-1)` 结束；日志 `reserved/no-UI`。Quiz（5）见 §26；AskBoxText（13）见 §25。
+  5. **未接 UI 收口（`end_talk` 按服务端读包契约分派，2026-11-06 修复）**：Mirror（14）/Pet（9/10）→ `(msgtype,-1)`；GetText/AskBoxText（2/13）缺资源 → `(msgtype,0)`；Quiz/SpeedQuiz（5/6）缺资源 → `(5|6, "")` 空串。日志 `reserved/no-UI` / `end_talk`。旧版 10 处一律 `(x,-1)` 对 2/5/6/13 会踩 s9 `NPCMoreTalkHandler.readString()` 短包，已修；详见 [end-talk-read-contract](../npc-talk-utildlgex-align/evidence/end-talk-read-contract-2026-11-06.md)。
   6. **AskAvatar（A11i，另条）**：见 §24；本条不再把 sendStyle 当吞包项。
-- **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束。
+- **期望**：无崩；0–4/12 行为与 A11g 前一致；预留类型安全结束（2/13/5/6 不再发 2 字节短包）。
 - **opcode**：s2c `NPC_TALK=304`；c2s `NPC_TALK_MORE`。
-- **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md)
+- **文档**：[a11h-scriptmessage-onpacket-ida](../npc-talk-utildlgex-align/evidence/a11h-scriptmessage-onpacket-ida.md) · [end-talk-read-contract](../npc-talk-utildlgex-align/evidence/end-talk-read-contract-2026-11-06.md)
 - **仍预留**：Pet/Mirror 完整 UI；KeyDown cancel；SpeedQuiz 见 §27。
 
 ## 24. AskAvatar / sendStyle A11i
