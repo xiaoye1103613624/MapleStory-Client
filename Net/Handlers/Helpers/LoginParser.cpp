@@ -137,7 +137,8 @@ namespace ms
 		// 证据：CHARLIST 实包 153B，name(13)+gender(1)+skin(1)+face(4)+hair(4)+petid×3(8)
 		// 到 54 字节结束，55 字节为 level=0x01，其后 job 起均为 short 对齐
 		// （job=0, str=12, dex=5, int=4, luk=4, hp/maxhp=50, mp/maxmp=5 全部自洽）。
-		statsentry.stats[MapleStat::Id::LEVEL] = recv.read_byte();
+		// 无符号读取等级：read_byte() 返回 int8_t，等级 255(0xFF) 须按 uint8 解析，否则溢出为 -1。
+		statsentry.stats[MapleStat::Id::LEVEL] = static_cast<uint8_t>(recv.read_byte());
 		statsentry.stats[MapleStat::Id::JOB] = recv.read_short();
 		statsentry.stats[MapleStat::Id::STR] = recv.read_short();
 		statsentry.stats[MapleStat::Id::DEX] = recv.read_short();

@@ -23,7 +23,7 @@ namespace ms
 {
 	namespace ExpTable
 	{
-		constexpr size_t LEVELCAP = 201;
+		constexpr size_t LEVELCAP = 256;
 		extern const std::array<int64_t, LEVELCAP> values;
 	}
 }
