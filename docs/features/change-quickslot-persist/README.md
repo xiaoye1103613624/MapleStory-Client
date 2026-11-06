@@ -25,7 +25,7 @@
 | # | 项 | 状态 | 证据 |
 | --- | --- | --- | --- |
 | 3 | 进图 QSI 后不刷 CHANGE_QUICKSLOT | ✅ 2026-11-06 | [evidence/live-accept-2026-11-06-qsi.md](evidence/live-accept-2026-11-06-qsi.md)：SEND 183=0；RECV `9f 00 00`×2 |
-| 1 | 键设置 → 变更快捷键 → 改槽显示 | ⏳ | 自动化未闭环；待手点 |
+| 1 | 键设置 → 变更快捷键 → 改槽显示 | ⏳ | 2026-11-06 续：自动化未点开 KeyConfig/KEYSETTING；待手点 |
 | 2 | 重登 / DB `quickslotkeymapped` | ⏳ | 依赖 #1 |
 
 ## 非本项
