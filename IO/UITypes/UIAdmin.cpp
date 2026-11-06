@@ -57,12 +57,19 @@ namespace ms
 		center_on_screen();
 
 		// GM 命令快捷（无参数常用命令），点击派发。硬编码坐标兜底，遵守 R5/R6。
-		// buffme：真机 TemporaryStatView 验收用（避免聊天框吞 !/空格）；点击即 GeneralChatPacket
-		const char* quick[] = { "help", "online", "whereami", "rates", "uptime", "gm", "dispose", "goto", "buffme" };
+		// buffme 必须排在前：Block/backgrnd 仅 209×156，GM_QUICK_Y=56、步长 14
+		// → 最多约 7 行落在命中矩形内；旧序把 buffme 放末行 y=168 超出 dimension，
+		// SoftKey/聊天注入又吃不进，导致 TemporaryStatView 验收点不到。
+		const char* quick[] = { "buffme", "help", "online", "whereami", "rates", "uptime", "gm" };
 		int16_t y = GM_QUICK_Y;
 		for (const char* c : quick)
 		{
-			gm_quick.push_back({ Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLUE, std::string("!") + c), Point<int16_t>(GM_QUICK_X, y), c });
+			// formatted=false：默认 true 时 '!' 会进 Maple 格式解析，蓝字整行被吃掉（真机 GM TOOL 无 !buffme 可点）。
+			gm_quick.push_back({
+				Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLUE, std::string("!") + c, 0, false),
+				Point<int16_t>(GM_QUICK_X, y),
+				c
+			});
 			y += GM_QUICK_H;
 		}
 
