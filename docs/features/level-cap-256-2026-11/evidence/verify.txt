@@ -1,32 +1,46 @@
-ExpTable / LoginParser verification (subtask 5) 2026-11-06
+ExpTable / LoginParser verification (aligned to s9 server) 2026-11-06
 
-LEVELCAP (ExpTable.h)                = 256
-values element count (ExpTable.cpp)  = 256
-MATCH (count == LEVELCAP)            = True
-array type                           = std::array<int64_t, LEVELCAP>
-first / last value                   = 1 / 41832114835
-max value < 2^63 (int64 safe)        = True
-values >= INT32_MAX (need int64)     = 51
-non-increasing adjacencies           = [(10, 1242, 1144), (163, 223471711, 223471711)]
-  (L10 1242->1144 and L163 223471711->223471711 are PRE-EXISTING in HEAD v83 table, not introduced by this change)
-L201..L256 segment length            = 56
-L201..L256 strictly increasing       = True
-L201..L256 ratio min/max             = 1.060000 / 1.060000  (constant 1.06 extrapolation)
-  NOTE: 201-256 are a 1.06 geometric extrapolation, NOT official native values.
-  Native S9 client is 200-cap + LVL3 mod patch to 300 (BeiDou-Client_S9/level300_debug.txt:
-  "GetNextLevelExp_max @ 0x0078D16A: imm 200 -> 300", "FixMovzx_ExpTableLookup_Level @ 0x0078DAEB").
-  => client-side placeholder; must be recalibrated against server-side ExpTable before claiming parity.
+== Server truth (decisive) ==
+  E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/constants/game/ExpTable.java:31
+    public static int getExpNeededForLevel(int level) { return level > 200 ? 2000000000 : exp[level]; }
+  exp[] = 201 entries (index 0..200), exp[0]=15 exp[200]=1697021059.
+  Three servers (BeiDou-Server_s9 / BeiDou-Server_S10 / BeiDou-Server) have IDENTICAL exp[]
+  and IDENTICAL flat contract level>200 -> 2000000000; S10/base also declare MAX_LEVEL=200.
+  s9 Character.java:5054 getMaxClassLevel()=255 (non-Cygnus); :3074 while(exp>=getExpNeededForLevel(level)) levelUp.
+  => s9 effective cap 255 == client LEVELCAP=256 (valid level 1..255). NO 201+ progressive truth exists.
+  grep 41832114835|300-level|level300 across all server trees = 0 hits.
 
-Consumer boundary analysis (LEVELCAP 201 -> 256):
-  IO/UITypes/UIQuit.cpp:249       if (level >= LEVELCAP) return 0; else values[level]   -> max index 255 < 256 OK
-  IO/UITypes/UIStatusBar.cpp:1839 if (level >= LEVELCAP) return 0; else values[level]   -> max index 255 < 256 OK
-  IO/UITypes/UIStatsInfo.cpp:861  if (level>0 && level<LEVELCAP) values[level]*100      -> max index 255 < 256 OK
-  All three compare against the SAME LEVELCAP constant, so widening the array keeps every index in bounds.
+== Client table (after this fix) ==
+  Character/ExpTable.h:26 LEVELCAP = 256
+  array type = std::array<int64_t, LEVELCAP>  (kept; flat values are int32-safe but type unchanged)
+  values element count = 256 ; MATCH(count==LEVELCAP) = True
+  values[0]=1 (dummy)  values[200]=1697021059  values[201]=2000000000  values[255]=2000000000
+  max value = 2000000000 ; all < INT32_MAX = True ; all < 2^63 = True
+  values[201..255] (55 entries) ALL == 2000000000 : True
+  dbcefb0f previously used 55 x 1.06 geometric extrapolation up to 41832114835
+  (~20x off server contract) -> removed as imagined values (xiaoye gate 5).
 
-LoginParser LEVEL parse               = static_cast<uint8_t>(recv.read_byte())
-InPacket::read_byte() returns int8_t (Net/InPacket.h:46); 0xFF would sign-extend to -1 without the cast.
-StatsEntry.stats is EnumMap<MapleStat::Id, uint16_t> (Net/Login.h:53) -> uint8 cast widens cleanly to uint16.
-uint8 fix correct                    = True
+== Value-by-value reconciliation client values[1..200] vs server exp[1..200] ==
+  diffs = [(9, 1242, 1144), (10, 1144, 1242)]
+  Only index 9/10 are swapped (client 1242/1144 vs server 1144/1242): PRE-EXISTING
+  in HEAD v83 table (git show HEAD:Character/ExpTable.cpp), NOT introduced by this change;
+  kept untouched, recorded for user adjudication.
+  values[200]==exp[200]==1697021059 : L201 boundary matches.
 
-Build gate: tools/build_smoke.bat 2026-11-06 16:45 full /m compile -> GATE OK + EXITCODE=0
-  (that build already compiled these 3 stable files; a fresh gate run accompanies this commit)
+== Monotonicity ==
+  non-increasing adjacencies in legacy 1..199 = [(9, 1242, 1144), (162, 223471711, 223471711)]
+  (the 223471711->223471711 equality is HEAD-inherited; indices here are 0-based array subscripts)
+  flat 200+ equal adjacent pairs = 54 : EXPECTED (server returns flat constant for level>200).
+
+== Consumer boundary (unchanged, all vs SAME LEVELCAP) ==
+  IO/UITypes/UIQuit.cpp:249       if (level >= LEVELCAP) return 0; else values[level]  -> max idx 255<256 OK
+  IO/UITypes/UIStatusBar.cpp:1839 if (level >= LEVELCAP) return 0; else values[level]  -> max idx 255<256 OK
+  IO/UITypes/UIStatsInfo.cpp:861  if (level>0 && level<LEVELCAP) values[level]*100     -> max idx 255<256 OK
+
+== LoginParser LEVEL parse (dbcefb0f, unchanged) ==
+  = static_cast<uint8_t>(recv.read_byte())
+  InPacket::read_byte() returns int8_t (Net/InPacket.h:46); 0xFF would sign-extend to -1 without the cast.
+  StatsEntry.stats is EnumMap<MapleStat::Id, uint16_t> (Net/Login.h:53) -> clean widen.  correct = True
+
+== Build gate ==
+  tools/build_smoke.bat fresh run accompanies this commit: GATE OK + EXITCODE=0 (see build_smoke_run.log).
