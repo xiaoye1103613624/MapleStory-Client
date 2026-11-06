@@ -18,6 +18,7 @@
 #include "UISoftKey.h"
 
 #include "../UI.h"
+#include "../Window.h"
 
 #include "../Components/MapleButton.h"
 
@@ -299,7 +300,11 @@ namespace ms
 			);
 		}
 
-		show_text(tooltip_text);
+		// Text tip 禁止 formatted：# 色码会吞邀请提示明文（联调误判 SoftKey 文案缺失）。
+		if (mode == Mode::Text)
+			show_text(tooltip_text, 0, false, 0);
+		else
+			show_text(tooltip_text);
 
 		dimension = Texture(backgrnd).get_dimensions();
 		LOG(LOG_DEBUG, "UISoftKey: mode=" << (mode == Mode::Pic ? "Pic" : "Text")
@@ -344,6 +349,15 @@ namespace ms
 
 		textfield.update();
 		textfield.set_state(Textfield::State::FOCUSED);
+
+		// Text 模式：邀请名 / Admin 命令等为 ASCII。
+		// focus_textfield → begin_ascii_text_input 后 UI::send_key 会在
+		// text_input_active 时跳过 KeyType::TEXT，只等 SDL_EVENT_TEXT_INPUT。
+		// 自动化扫码与部分宿主不产 TEXT_INPUT ⇒ SoftKey 框永远空、邀请发不出，
+		// 联调会误判「Messenger/协议坏了」。Text 关掉 StopTextInput，走 KEY TEXT。
+		// Pic（二级密码）保持 StartTextInput + 仅鼠标点键，行为不变。
+		if (mode == Mode::Text)
+			Window::get().end_ascii_text_input();
 
 		if (tooltip)
 		{

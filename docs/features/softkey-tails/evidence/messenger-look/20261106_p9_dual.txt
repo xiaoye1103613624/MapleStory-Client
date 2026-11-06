@@ -1,0 +1,38 @@
+launch admin
+launch xiaoye
+pids 53492 26888
+[admin] XiaoYE MS v0.0.1
+[admin] XiaoYE MS v0.0.1【FPS:97 延迟:--】【当前时间：2026-11-06 10:07:39】
+[admin] XiaoYE MS v0.0.1【FPS:33 延迟:--】【当前时间：2026-11-06 10:07:53】
+[admin] XiaoYE MS v0.0.1【1-Admin】【破功值：199999】【FPS:57 延迟:--】【当前时间：2026-11-06 10:07:55】【在线时长：00 00:00:01】
+[xiaoye] XiaoYE MS v0.0.1【2-xiaoye】【破功值：199999】【FPS:224 延迟:--】【当前时间：2026-11-06 10:07:55】【在线时长：00 00:00:01】
+ingame admin=True xy=True
+click dismiss_a (180,520)
+click dismiss_x (180,520)
+cap admin_open_c0 white=77112
+cap admin_local white=77130
+click namebar1 (647,197)
+cap admin_softkey white=76016
+click softkey_tf (508,295)
+cap admin_typed white=76129
+cap admin_after_invite white=77399
+cap xy_invite white=6234
+click yes_545 (545,400)
+click yes_575 (575,400)
+click yes_560 (560,380)
+click yes_600 (600,410)
+cap xy_after_yes white=76471
+cap admin_both white=76486
+cap xy_both white=76482
+cap xy_pre white=76496
+cap xy_room white=76492
+cap admin_room white=76473
+click input (560,405)
+cap xy_balloon white=76368
+cap admin_typing white=76387
+cap xy_blink white=76395
+cap admin_sent white=76364
+cap admin_preclose white=76393
+click close (782,92)
+cap admin_postclose white=13331
+CLOSE 76393->13331 ok=False

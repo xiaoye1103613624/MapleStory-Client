@@ -4,46 +4,45 @@
 
 | 项 | 值 |
 | --- | --- |
-| exe | `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（含 SoftKey Text 模式后重建） |
+| exe | `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（SoftKey Text + KEY-TEXT 修复后，约 10:06） |
 | Admin | `BeiDou-Client-xy` + `login.auto` 临时 true（已回 false，未入库口令） |
 | xiaoye | `E:\MXD\ms-alt-b53` + `XY_DATA_DIR`→主 Data；账号仅落仓库外 config |
-| 开窗键 | Admin Settings 历史为 `V`（本轮实测 **`C` 才开 Messenger**）；alt 无 Settings → 默认 `C` |
+| 开窗键 | 实测 **`C`**（white>50k 才算真 Messenger；误开其它窗 white≈5k） |
 
 ## 已闭合
 
 | # | 项 | 结论 | 证据 |
 | --- | --- | --- | --- |
-| 5 | 本机立绘 | ✅ Admin / xiaoye 各自开房均见 STAND1 立绘 + NameBar 四色条 | `20261106_p2_admin_local.png`、`20261106_xiaoye_room.png` |
-| 5c | 关闭钮 | ✅ 标题栏右上 X 可见；点 `(282,12)` 后白底计数 77k→~5k | `messenger-btclose-coords/evidence/20261106_p2_admin_open.png`、`…_closed.png` |
+| 5 | 本机立绘 | ✅ | `20261106_p2_admin_local.png`、`20261106_p9_admin_local.png` |
+| 5 | **对方立绘** | ✅ p9 | SoftKey Text KEY-TEXT 修复后邀请成功；`20261106_p9_admin_both.png` / `20261106_p9_xy_both.png`（双方 STAND1） |
+| 5c | 关闭钮 | ✅ | `(282,12)` 可关；p6/p7 77k→~6k；p9 77k→13k（残余白块见下 SoftKey 散落） |
 
-## 未闭合（显式预留）
+## 部分闭合 / 待拍
 
-| # | 项 | 阻塞 | 补验 |
+| # | 项 | 结论 | 备注 |
 | --- | --- | --- | --- |
-| 5 | 对方立绘 | 邀请未进房 | SoftKey **Pic** 门禁曾拦短名/键盘；已改为 **Text** 模式（见下）。本轮收尾 Admin 强杀后占线（登录弹「正在连接的账户」），未再双开复验邀请 |
-| 5b | blink / chatBalloon | 同上，需同房双方 | 清 `loggedin`/踢幽灵会话后：Admin 开房→空名牌 SoftKey 键入 `xiaoye`→对方 Enter 同意→打字不回车看泡→回车看 blink |
+| 5b | blink / chatBalloon | 🟡 同房已具备 | p9 已同房并打字；单帧未稳定抓到泡/blink 动画 → pending 手点补拍 |
 
-## SoftKey 根因（本轮代码已修）
+## SoftKey：影响联调的 UI
 
-`UISoftKey` 默认按 **PIC 二级密码**实现：
-
-1. `set_text_callback` 吞掉物理键盘字母数字（提示只能用鼠标）
-2. OK 要求长度 ≥ 6
-3. `check_pic` 重复字符校验
-
-Messenger 邀请/聊天/拒绝与 UIAdmin 命令误用默认 Pic → 自动化 `type_text` 无效、短名无法 OK。
-
-**修复**：`UISoftKey::Mode::{Pic,Text}`；Messenger / UIAdmin 走 `Mode::Text`（明文、最短 1、可键盘）；登录二级密码仍默认 Pic。
+| 问题 | 影响 | 状态 |
+| --- | --- | --- |
+| Text 聚焦后 KEY TEXT 被 `text_input_active` 跳过 | 邀请名进不了框 → 误判协议 | ✅ 已修（`UISoftKey::update` Text→`end_ascii_text_input`） |
+| Text tip `formatted=true` | `#` 可能吞提示 | ✅ Text tip 改 `formatted=false` |
+| SoftKey **按键散落**（键帽漂出底板盖住 Messenger） | 鼠标点键不可信；关窗白底计数偏高 | ⏳ pending：需 SoftKey.img origin/`keypos` 对账（orange-wz 对本批 img 内部节点有已知解析限制）证据 `_p9_softkey_region.png` |
 
 ## 手点路径（邀请）
 
-1. 双开进图；Admin 按 **`C`** 开 Messenger（见本机立绘）。
-2. 点空 NameBar（或 `I` 且输入框未聚焦）→ SoftKey。
-3. **键盘**输入对方角色名 → Enter/OK → 出站 `7a 00 03` + mapleStr。
-4. 对方 YesNo → Enter 同意；双方应见对方立绘。
-5. 一方输入框打字不回车 → 对方立绘上方 chatBalloon；回车 → 标题 blink。
-6. 点关闭钮 `(276,6)` 关窗。
+1. 双开进图；Admin 按 **`C`** 开 Messenger（white≈77k）。
+2. 点空 NameBar → SoftKey Text；**键盘**输入角色名 → Enter。
+3. 对方 YesNo → Enter；双方应见对方立绘。
+4. 打字不回车看 chatBalloon；回车看 blink。
+5. 点关闭 `(282,12)`。
 
 ## 配置收尾
 
-`xy-config.yaml`（主目录 + `ms-alt-b53`）`login.auto` / `packet_dump` 已回 **false**；口令未进仓库。
+`xy-config.yaml`（主目录 + `ms-alt-b53`）`login.auto` 已回 **false**；口令未进仓库；不 push。
+
+## DML
+
+授权 `UPDATE accounts SET loggedin=0 WHERE name IN ('admin','xiaoye')`：先 SELECT 均为 0；UPDATE 行数 0（本已清）。
