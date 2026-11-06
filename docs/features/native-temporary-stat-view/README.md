@@ -22,3 +22,4 @@
 - 无独立 TEMPORARY_STAT 协议（s9 零命中）——继续本地驱动
 - 真机：SoftKey `D` 开窗 ✅（2026-11-06）；明细行仍 pending 造 buff（`!buffme` / Admin 面板点击）
 - SoftKey 路径修复：未绑定键 ASCII 回退 + `UIShortCut::FOCUSED` + 全局 SoftKey `D` 兜底（见 `evidence/live-accept-2026-11-06.md`）
+- UIAdmin：`!buffme` `formatted=false` + 置顶可点区（`6a4830b`）；去掉构造期 SoftKey 防挡快捷行（见 `evidence/live-accept-2026-11-06-buffme-uiadmin.md`）；自动化点蓝字仍未发出 GENERAL_CHAT，待手点闭环

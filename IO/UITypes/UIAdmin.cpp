@@ -73,26 +73,8 @@ namespace ms
 			y += GM_QUICK_H;
 		}
 
-		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-			if (msg.empty()) return;
-			std::string t = msg;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "users" || t == "show") {
-				AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-				msg_label.change_text(Locale::text("admin.show_users"));
-				LOG(LOG_DEBUG, "UIAdmin: AdminEnterMap SHOW_USERS");
-				return;
-			}
-			if (t == "alert") {
-				AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-				msg_label.change_text(Locale::text("admin.alert_admins"));
-				LOG(LOG_DEBUG, "UIAdmin: AdminEnterMap ALERT_ADMINS");
-				return;
-			}
-			msg_label.change_text(msg);
-			GeneralChatPacket(msg, true).dispatch();
-			LOG(LOG_DEBUG, "UIAdmin: SoftKey GeneralChat len=" << msg.size());
-		}, []() {}, "users|alert|msg");
+		// 不开构造期 SoftKey：Login SoftKey 盖住 Block 快捷行，!buffme 点不到。
+		// 自定义输入仍走 SoftKey A/S（send_key）。
 		LOG(LOG_DEBUG, "UIAdmin: open");
 #endif
 	}
