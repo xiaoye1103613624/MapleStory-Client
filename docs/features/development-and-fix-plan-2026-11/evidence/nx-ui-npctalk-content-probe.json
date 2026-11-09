@@ -1,0 +1,216 @@
+{
+  "fallback_reason": "orange-wz content-layer IMG 解析失败 (see orange-wz-npctalk-ui-structure.json)",
+  "tool": "tools/nx_inspect.py (Nx/PKG4 reader)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "file": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx",
+  "util_dlg_ex": {
+    "node": "UIWindow.img/UtilDlgEx",
+    "child_count": 24,
+    "controls": [
+      {
+        "name": "BtClose",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtNext",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtNo",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtOK",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtPrev",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtQGiveup",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtQNo",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtQYes",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "BtYes",
+        "type": "null",
+        "child_count": 5
+      },
+      {
+        "name": "bar",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "c",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "dot0",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "dot1",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "ic",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "is",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "it",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "line",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "list0",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "list1",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "list2",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "list3",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "notice",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "s",
+        "type": "bitmap",
+        "child_count": 1
+      },
+      {
+        "name": "t",
+        "type": "bitmap",
+        "child_count": 1
+      }
+    ]
+  },
+  "node_count": 43859,
+  "root_child_count": 20,
+  "root_children": [
+    {
+      "name": "Basic.img",
+      "child_count": 75
+    },
+    {
+      "name": "BuffIcon.img",
+      "child_count": 2
+    },
+    {
+      "name": "CashShop.img",
+      "child_count": 23
+    },
+    {
+      "name": "CashShopPreview.img",
+      "child_count": 15
+    },
+    {
+      "name": "ChatBalloon.img",
+      "child_count": 95
+    },
+    {
+      "name": "DialogImage.img",
+      "child_count": 1
+    },
+    {
+      "name": "GuildBBS.img",
+      "child_count": 1
+    },
+    {
+      "name": "GuildMark.img",
+      "child_count": 2
+    },
+    {
+      "name": "ITC.img",
+      "child_count": 14
+    },
+    {
+      "name": "ITCPreview.img",
+      "child_count": 15
+    },
+    {
+      "name": "Login.img",
+      "child_count": 19
+    },
+    {
+      "name": "Logo.img",
+      "child_count": 2
+    },
+    {
+      "name": "MapLogin.img",
+      "child_count": 16
+    },
+    {
+      "name": "MapleEzorsiaV2wzfiles.img",
+      "child_count": 3
+    },
+    {
+      "name": "MapleTV.img",
+      "child_count": 7
+    },
+    {
+      "name": "NameTag.img",
+      "child_count": 94
+    },
+    {
+      "name": "Npt_GuideLine.img",
+      "child_count": 2
+    },
+    {
+      "name": "StatusBar.img",
+      "child_count": 18
+    },
+    {
+      "name": "UIWindow.img",
+      "child_count": 112
+    },
+    {
+      "name": "tutorial.img",
+      "child_count": 32
+    }
+  ]
+}

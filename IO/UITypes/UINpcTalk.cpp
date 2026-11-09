@@ -732,10 +732,54 @@ namespace ms
 
 		if (type == TalkType::SENDSIMPLE)
 		{
+			// Wave2 2-3：键盘导航把高亮移到滚出可视带的行时，draw() 的选中虚线因
+			// visible=false 不画、send_cursor 也点不到，但回车 dispatch_simple_selection()
+			// 仍会提交这个不可见项——与 round34 UIWorldSelect / round35 UICharSelect /
+			// round36 Textfield 同族：主体路径有守卫，旁路分支漏守卫。
+			// 这里用与 draw()/send_cursor() 同源的可视带判据把选中项滚回视野，并同步滑块 thumb。
+			auto ensure_visible = [&]()
+			{
+				if (!show_slider
+					|| simple_choices.empty()
+					|| simple_selected < 0
+					|| static_cast<size_t>(simple_selected) >= simple_choices.size())
+					return;
+	
+				const SimpleChoice& c = simple_choices[static_cast<size_t>(simple_selected)];
+				const int16_t ls = Text::linespace(Text::Font::A12M);
+				const int16_t band_top = static_cast<int16_t>(top.height() - 1);
+				const int16_t band_bottom = static_cast<int16_t>(band_top + height - TEXT_SLACK);
+				int16_t maxoffset = static_cast<int16_t>(rowmax - unitrows);
+				if (maxoffset < 0)
+					maxoffset = 0;
+	
+				// vline 与 draw():234 / send_cursor():636 逐字同源。
+				int16_t vline = static_cast<int16_t>(text_draw_y + c.pos.y() - offset * scroll_step);
+				if (vline + ls > band_bottom)
+				{
+					while (offset < maxoffset && vline + ls > band_bottom)
+					{
+						++offset;
+						vline = static_cast<int16_t>(text_draw_y + c.pos.y() - offset * scroll_step);
+					}
+				}
+				else if (vline < band_top)
+				{
+					while (offset > 0 && vline < band_top)
+					{
+						--offset;
+						vline = static_cast<int16_t>(text_draw_y + c.pos.y() - offset * scroll_step);
+					}
+				}
+				// Slider::row 与 UINpcTalk::offset 同源；setrows 只回写 row，不触发 onmoved。
+				slider.setrows(offset, unitrows, rowmax);
+			};
+	
 			if (keycode == KeyAction::Id::UP)
 			{
 				if (simple_selected > 0)
 					--simple_selected;
+				ensure_visible();
 				return;
 			}
 			if (keycode == KeyAction::Id::DOWN)
@@ -743,6 +787,7 @@ namespace ms
 				if (!simple_choices.empty()
 					&& simple_selected + 1 < static_cast<int32_t>(simple_choices.size()))
 					++simple_selected;
+				ensure_visible();
 				return;
 			}
 			// 回车：等同下项钮（IDA sub_9AC0B6 Enter → 提交 list[cur]）

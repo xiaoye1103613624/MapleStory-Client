@@ -532,3 +532,28 @@
 | 15-2 BACK/DELETE 组合 | 上一步后连按 LEFT + BACK / RIGHT + DELETE | 整字删除，不残留半字节、不误删相邻字 | 需真机输入法提交 + 回删链路 |
 | 15-3 ASCII 回归 | 账号/密码/聊天框纯英文，左右键 + 插入 + 回删 | 与修复前逐字节一致，无回归 | 需登录服 + 冷启动手工按键（harness 已证算法等价） |
 | 15-4 IME 预编辑 | 中文输入法候选态（未提交）看输入框 | 当前只收已提交串；预编辑态观感须另行取证（notes §5） | 需多输入法矩阵 + 真机截图 |
+
+---
+
+## 16. round37 NPC 对话 SENDSIMPLE 键盘导航可视带（#devfix-npctalk-visible，需用户一起测）
+
+> 修复内容：`IO/UITypes/UINpcTalk.cpp:send_key` SENDSIMPLE 分支插入 `ensure_visible()`
+> lambda（与 `draw():225-263` / `send_cursor():630-651` 同源可视带判据），UP/DOWN
+> 后把选中项滚回视野并用 `slider.setrows(offset, unitrows, rowmax)` 同步 thumb；
+> 修复前长菜单键盘可把高亮移到滚出可视带的行、回车 `dispatch_simple_selection()`
+> 仍提交不可见项。 orange-wz 门禁按 AGENTS.md 先跑：结构层 `Data/UI children=20`
+> WORKS / 内容层 4 次 `IMG 解析失败` FAILS（原文+65536B key 规格留证）→ 合规 `.nx`
+> 回退 `UI.nx UtilDlgEx controls=24`。
+> 自动自测 `tools/test_npctalk_simple_visible.py` 只覆盖**静态守卫 + 几何算法复刻**
+> （7 守卫 + 10 场景 PASS，before bad=16 → after 0，no-slider/边界回归一致）+
+> 构建 GATE OK/EXITCODE=0；**真机字图渲染、UtilDlgEx 资源、服务端 selection 回包
+> 必须联测**，不冒充已验证。exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`
+> （2026-11-10 00:08 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-npctalk-recheck-20261109.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 16-1 长菜单键盘 | 拍卖行 9900001 / 长 `#L` 列表对话，连按 DOWN 越过可视带 | 高亮虚线始终跟随、滑块 thumb 同步下滚、无「看不见却被选中」 | harness 只复刻几何，需真机字图渲染 + UtilDlgEx 资源 |
+| 16-2 回车提交 | 16-1 末尾直接回车 | 提交的是当前高亮可见项，与点「下项」一致 | 需登录服 + 服务端脚本回包验证 selection |
+| 16-3 回滚 UP | 16-1 后连按 UP 回首行 | offset 收敛回 0、thumb 归位、无残留滚动 | 需真机滑条控件状态 |
+| 16-4 短菜单回归 | 2/3/5/8 项短对话（无滑条）上下键 + 回车 | 与修复前一致、无回归 | 需多个 NPC 脚本触发点 |

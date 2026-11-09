@@ -114,6 +114,8 @@
 | 2-2 | 动 | `DamageSkin` 运行时资源、宠物亲密/饱食 gage 条、场标→真精灵、MapleTV 双屏轮播 | `feature-gap` §16 #17 / §7 E19-E22 / §14.3；`Gameplay/MapleMap/Npc.cpp:151-198` | 资源层 | Photoshop MCP 出图 + native 动画规范 |
 | 2-3 | UI | NPC 对话排版 A11b–A11j（下项/高亮/GetText/GetNumber/AskAvatar/AskBoxText）、玩家列表五页签、UIGuildBBS 多页 | `pending-live-tests` #19/22-25/36；`UINpcTalk.h:35-347` | 样式资源 + 真机 | 先做可离屏渲染的拼接，观感项进 §6 |
 | 2-4 | 动 | 隐藏门三态 Start/Continue/Exit、SKILL_EFFECT 起手广播、NPC_ACTION 对话姿态 | `pending-live-tests` #15/16/18；`Portal.h:52-58` | 真机触发 | 代码已接线，动画观感进 §6 |
+| **2-5** | 交 | **UINpcTalk SENDSIMPLE 键盘导航可视带守卫**：长 #L 菜单 UP/DOWN 只挪 `simple_selected` 不动 `offset`，draw/send_cursor 有可视带裁剪而 send_key 漏守卫 → 回车提交不可见项 | live `UINpcTalk.cpp:733-758` vs `:225-263/:630-651`；`Slider.cpp:116-121` 三参 `setrows` 不触发 onmoved；`notes/wave2-npctalk-recheck-20261109.md` | 无（纯本地 L-A，可离屏自测） | `UINpcTalk.cpp` 插入 `ensure_visible()`（45+）+ 同步 thumb；orange-wz 结构层 WORKS/内容层 FAILS 后合规 `.nx` 回退留证 |
+| | | ↳ 自测/门禁 | `tools/test_npctalk_simple_visible.py`（7 守卫+10 场景 PASS，before bad=16→after 0，回归 OK）+ `python tools/gen_opcode_matrix.py --check`（GATE OK）+ `build_smoke.bat`（GATE OK + EXITCODE=0，00:08 真重编译） | | ✅ `#devfix-npctalk-visible`（round37 已提交）；真机观感项进 §6 / `pending-live-tests` §16 |
 
 ### Wave 3 · L-B 待裁决 / 双端立项（**本计划不自动开工**，见 §3）
 

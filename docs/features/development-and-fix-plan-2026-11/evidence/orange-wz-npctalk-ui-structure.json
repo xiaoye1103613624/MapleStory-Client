@@ -1,0 +1,106 @@
+{
+  "rule": "AGENTS.md YG 2026-11-09: orange-wz MCP first; .nx fallback only on parse failure; record raw error + key spec",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "connection": "custom-orange_wz (global, streamable-http, 29 tools)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "exclusive": false,
+  "target": "UINpcTalk UtilDlgEx (Data/UI/UIWindow.img)",
+  "orange_wz_calls": [
+    {
+      "tool": "load_files",
+      "tag": "load_Data_UI",
+      "class": "OK",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "class": "OK",
+      "raw": "{\"roots\":[{\"name\":\"UI\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "UI_top_children",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"Basic.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Basic.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"BuffIcon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\BuffIcon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShop.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShop.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShopPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShopPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ChatBalloon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ChatBalloon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"DialogImage.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\DialogImage.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildBBS.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildBBS.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildMark.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildMark.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITC.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITC.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITCPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITCPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Login.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Login.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Logo.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Logo.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleEzorsiaV2wzfiles.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapleEzorsiaV2wzfiles.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleTV.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapleTV.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapLogin.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapLogin.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"NameTag.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\NameTag.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Npt_GuideLine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Npt_GuideLine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"tutorial.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\tutorial.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"UIWindow.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Basic.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Basic.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Basic.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Basic.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_UIWindow.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: UIWindow.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_UIWindow.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: UIWindow.img"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "class": "OK",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "class": "OK",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "raw_error_texts_verbatim": [
+    "IMG 解析失败: Basic.img",
+    "IMG 解析失败: UIWindow.img"
+  ],
+  "root_path": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI",
+  "ui_top_child_count": 20,
+  "ui_top_child_names": [
+    "Basic.img",
+    "BuffIcon.img",
+    "CashShop.img",
+    "CashShopPreview.img",
+    "ChatBalloon.img",
+    "DialogImage.img",
+    "GuildBBS.img",
+    "GuildMark.img",
+    "ITC.img",
+    "ITCPreview.img",
+    "Login.img",
+    "Logo.img",
+    "MapleEzorsiaV2wzfiles.img",
+    "MapleTV.img",
+    "MapLogin.img",
+    "NameTag.img",
+    "Npt_GuideLine.img",
+    "StatusBar.img",
+    "tutorial.img",
+    "UIWindow.img"
+  ],
+  "content_descent_targets": [
+    "Basic.img",
+    "UIWindow.img"
+  ],
+  "final_roots": "{\"roots\":[],\"rootCount\":0}",
+  "parse_fail_count": 4,
+  "conclusion": {
+    "orange_wz_structure_layer": "WORKS - Data/UI directory enumeration returns real .img child nodes",
+    "orange_wz_content_layer": "FAILS - internal .img tree/search returns IMG 解析失败 with full 65536B key + autoParse:true",
+    "fallback_condition_met": true,
+    "fallback_source": ".nxcache/UI.nx (PKG4) via tools/nx_inspect.py",
+    "fallback_recorded": "raw error text + key spec captured above (AGENTS.md section 2)",
+    "no_fake_green": "PARSE_FAIL classified separately; 'IMG 解析失败' never counted as OK"
+  }
+}
