@@ -305,7 +305,7 @@ namespace ms
 	{
 		markers.clear();
 		door_tip_shown = false;
-		last_summon_n = 0;
+		last_summon_pos.clear();
 		last_dragon_pos = {};
 		attack_cd_ms = 0;
 	}
@@ -317,6 +317,19 @@ namespace ms
 
 		if (attack_cd_ms > 0)
 			attack_cd_ms -= Constants::TIMESTEP;
+
+		// 影子缓存自愈：die 动画播完 / lifetime 到期 / RemoveSummonHandler 都会让
+		// 召唤兽从 markers 消失，旧数组槽却永不回收；槽满后新召唤每帧重发
+		// MOVE_SUMMON（约 60/s）。先按 live 状态裁剪，再按 oid 查缓存。
+		for (auto it = last_summon_pos.begin(); it != last_summon_pos.end();)
+		{
+			auto ex = markers.get(it->first);
+			auto* ex_sum = ex ? dynamic_cast<MapSummon*>(ex.get()) : nullptr;
+			if (!ex || !ex->is_active() || !ex_sum || ex_sum->get_owner() != local_cid)
+				it = last_summon_pos.erase(it);
+			else
+				++it;
+		}
 
 		for (auto& kv : markers)
 		{
@@ -341,27 +354,14 @@ namespace ms
 					pos = sum->get_position();
 				}
 
-				bool moved = true;
-				for (uint8_t i = 0; i < last_summon_n; ++i)
-				{
-					if (last_summon_oid[i] == sum->get_oid())
-					{
-						moved = last_summon_pos[i] != pos;
-						last_summon_pos[i] = pos;
-						break;
-					}
-				}
+				auto cache = last_summon_pos.find(sum->get_oid());
+				bool moved = cache == last_summon_pos.end() || cache->second != pos;
+				if (cache == last_summon_pos.end())
+					last_summon_pos.emplace(sum->get_oid(), pos);
+				else
+					cache->second = pos;
 				if (moved)
 				{
-					bool found = false;
-					for (uint8_t i = 0; i < last_summon_n; ++i)
-						if (last_summon_oid[i] == sum->get_oid()) { found = true; break; }
-					if (!found && last_summon_n < 8)
-					{
-						last_summon_oid[last_summon_n] = sum->get_oid();
-						last_summon_pos[last_summon_n] = pos;
-						++last_summon_n;
-					}
 					Movement mv(pos.x(), pos.y(), pos.x(), pos.y(), 0, 1);
 					MoveSummonPacket(sum->get_oid(), pos, mv).dispatch();
 				}

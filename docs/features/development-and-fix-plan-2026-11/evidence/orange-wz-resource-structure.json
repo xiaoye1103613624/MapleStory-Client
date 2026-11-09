@@ -1,0 +1,217 @@
+{
+  "rule": "AGENTS.md YG 2026-11-09: orange-wz MCP first; .nx fallback only on parse failure; record raw error + key spec",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "connection": "custom-orange_wz (global, streamable-http, 29 tools)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "exclusive": false,
+  "target": "Wave2 2-2 resource layer (Data/Skill, Data/Effect, Data/Npc)",
+  "orange_wz_calls": [
+    {
+      "tool": "load_files",
+      "tag": "load_3_resource_dirs",
+      "class": "OK",
+      "raw": "{\"loadedCount\":3,\"rootCount\":3,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "class": "OK",
+      "raw": "{\"roots\":[{\"name\":\"Skill\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Effect\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Npc\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":3}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "top_Skill",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"110.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\110.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"111.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\111.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1110.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1110.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1111.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1111.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1112.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1112.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"112.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\112.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"120.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\120.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1200.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1200.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"121.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\121.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1210.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1210.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1211.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1211.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1212.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1212.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"122.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\122.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"130.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\130.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1300.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1300.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"131.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\131.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1310.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1310.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1311.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1311.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1312.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1312.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"132.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\132.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1400.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1400.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1410.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1410.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1411.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1411.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1412.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1412.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1500.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1500.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1510.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1510.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1511.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1511.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1512.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\1512.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"200.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\200.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"2000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\2000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"210.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\210.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"2100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\2100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"211.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\211.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"2110.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\2110.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"2111.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\2111.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"2112.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\2112.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"212.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\212.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"220.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\220.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"221.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\221.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"222.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\222.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"230.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\230.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"231.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\231.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"232.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\232.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"300.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\300.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"310.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\310.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"311.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\311.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"312.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\312.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"320.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\320.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"321.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\321.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"322.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\\\\322.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"400.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Cli"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Skill_000.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 000.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Skill_000.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 000.img"
+    },
+    {
+      "tool": "list_children",
+      "tag": "top_Effect",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"BasicEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\BasicEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CharacterEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\CharacterEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Direction.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Direction.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Direction1.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Direction1.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Direction2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Direction2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Direction3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Direction3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ItemEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\ItemEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\MapEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"OnUserEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\OnUserEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"PetEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\PetEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"SetEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\SetEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"SkillName1.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\SkillName1.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"SkillName2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\SkillName2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"SkillName3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\SkillName3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"SkillName4.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\SkillName4.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Summon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Summon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Tomb.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\\\\Tomb.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Effect_BasicEff.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: BasicEff.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Effect_BasicEff.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: BasicEff.img"
+    },
+    {
+      "tool": "list_children",
+      "tag": "top_Npc",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"0002000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002002.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002002.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002003.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002003.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002004.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002004.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002005.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002005.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002006.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002006.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002007.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002007.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002101.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002101.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002102.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002102.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002103.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002103.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0002104.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0002104.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010200.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010200.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010201.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010201.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010202.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010202.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010203.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010203.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0010204.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0010204.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0011000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0011000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0011100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0011100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0012000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0012000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0012100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0012100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0012101.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0012101.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0020000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0020000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0020001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0020001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0020002.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0020002.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0020100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0020100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0021000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0021000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0022000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\0022000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1001000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1001000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1001001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1001001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1001100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1001100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002002.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002002.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002003.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002003.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002004.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002004.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002005.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002005.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002006.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002006.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002007.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002007.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002101.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002101.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002102.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002102.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002103.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002103.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1002104.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1002104.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1010100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1010100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1011000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1011000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1011001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1011001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1011100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1011100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1012000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1012000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"1012001.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\\\\1012001.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\""
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Npc_0002000.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0002000.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Npc_0002000.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0002000.img"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "class": "OK",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "class": "OK",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "raw_error_texts_verbatim": [
+    "IMG 解析失败: 000.img",
+    "IMG 解析失败: BasicEff.img",
+    "IMG 解析失败: 0002000.img"
+  ],
+  "dir_structures": {
+    "Skill": {
+      "child_count": 76,
+      "children": [
+        "000.img",
+        "100.img",
+        "1000.img",
+        "110.img",
+        "1100.img",
+        "111.img",
+        "1110.img",
+        "1111.img",
+        "1112.img",
+        "112.img",
+        "120.img",
+        "1200.img",
+        "121.img",
+        "1210.img",
+        "1211.img",
+        "1212.img",
+        "122.img",
+        "130.img",
+        "1300.img",
+        "131.img",
+        "1310.img",
+        "1311.img",
+        "1312.img",
+        "132.img",
+        "1400.img",
+        "1410.img",
+        "1411.img",
+        "1412.img",
+        "1500.img",
+        "1510.img",
+        "1511.img",
+        "1512.img",
+        "200.img",
+        "2000.img",
+        "210.img",
+        "2100.img",
+        "211.img",
+        "2110.img",
+        "2111.img",
+        "2112.img"
+      ]
+    },
+    "Effect": {
+      "child_count": 17,
+      "children": [
+        "BasicEff.img",
+        "CharacterEff.img",
+        "Direction.img",
+        "Direction1.img",
+        "Direction2.img",
+        "Direction3.img",
+        "ItemEff.img",
+        "MapEff.img",
+        "OnUserEff.img",
+        "PetEff.img",
+        "SetEff.img",
+        "SkillName1.img",
+        "SkillName2.img",
+        "SkillName3.img",
+        "SkillName4.img",
+        "Summon.img",
+        "Tomb.img"
+      ]
+    },
+    "Npc": {
+      "child_count": 7198,
+      "children": [
+        "0002000.img",
+        "0002001.img",
+        "0002002.img",
+        "0002003.img",
+        "0002004.img",
+        "0002005.img",
+        "0002006.img",
+        "0002007.img",
+        "0002100.img",
+        "0002101.img",
+        "0002102.img",
+        "0002103.img",
+        "0002104.img",
+        "0010000.img",
+        "0010200.img",
+        "0010201.img",
+        "0010202.img",
+        "0010203.img",
+        "0010204.img",
+        "0011000.img",
+        "0011100.img",
+        "0012000.img",
+        "0012100.img",
+        "0012101.img",
+        "0020000.img",
+        "0020001.img",
+        "0020002.img",
+        "0020100.img",
+        "0021000.img",
+        "0022000.img",
+        "1001000.img",
+        "1001001.img",
+        "1001100.img",
+        "1002000.img",
+        "1002001.img",
+        "1002002.img",
+        "1002003.img",
+        "1002004.img",
+        "1002005.img",
+        "1002006.img"
+      ]
+    }
+  },
+  "final_roots": "{\"roots\":[],\"rootCount\":0}",
+  "parse_fail_count": 6,
+  "conclusion": {
+    "orange_wz_structure_layer": "WORKS - resource dir enumeration returns real .img child nodes",
+    "orange_wz_content_layer": "FAILS - internal .img tree/search returns IMG 解析失败 with full 65536B key + autoParse:true",
+    "fallback_condition_met": true,
+    "fallback_source": ".nxcache/{Skill,Effect,Npc}.nx (PKG4) via tools/nx_inspect.py",
+    "fallback_recorded": "raw error text + key spec captured above (AGENTS.md section 2)",
+    "no_fake_green": "PARSE_FAIL classified separately; 'IMG 解析失败' never counted as OK"
+  }
+}

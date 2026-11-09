@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 namespace ms
 {
@@ -60,9 +61,9 @@ namespace ms
 
 	private:
 		MapObjects markers;
-		Point<int16_t> last_summon_pos[8]{};
-		int32_t last_summon_oid[8]{};
-		uint8_t last_summon_n = 0;
+		// oid -> last MOVE_SUMMON position. Keyed (no 8-slot ceiling);
+		// report_owned_c2s prunes gone / inactive / non-MapSummon / foreign entries each frame.
+		std::unordered_map<int32_t, Point<int16_t>> last_summon_pos;
 		Point<int16_t> last_dragon_pos{};
 		int32_t attack_cd_ms = 0;
 	};

@@ -1,0 +1,413 @@
+{
+  "fallback_reason": "orange-wz content-layer IMG 解析失败 (see orange-wz-resource-structure.json)",
+  "tool": "tools/nx_inspect.py (Nx/PKG4 reader)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "files": {
+    "Skill": {
+      "file": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/Skill.nx",
+      "node_count": 124428,
+      "root_child_count": 76,
+      "root_children": [
+        {
+          "name": "000.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "100.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1000.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "110.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1100.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "111.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1110.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1111.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1112.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "112.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "120.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1200.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "121.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1210.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1211.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1212.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "122.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "130.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1300.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "131.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1310.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1311.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1312.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "132.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1400.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1410.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1411.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1412.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1500.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "1510.img",
+          "type": "null",
+          "child_count": 2
+        }
+      ]
+    },
+    "Effect": {
+      "file": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/Effect.nx",
+      "node_count": 27107,
+      "root_child_count": 17,
+      "root_children": [
+        {
+          "name": "BasicEff.img",
+          "type": "null",
+          "child_count": 41
+        },
+        {
+          "name": "CharacterEff.img",
+          "type": "null",
+          "child_count": 21
+        },
+        {
+          "name": "Direction.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "Direction1.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "Direction2.img",
+          "type": "null",
+          "child_count": 7
+        },
+        {
+          "name": "Direction3.img",
+          "type": "null",
+          "child_count": 10
+        },
+        {
+          "name": "ItemEff.img",
+          "type": "null",
+          "child_count": 46
+        },
+        {
+          "name": "MapEff.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "OnUserEff.img",
+          "type": "null",
+          "child_count": 3
+        },
+        {
+          "name": "PetEff.img",
+          "type": "null",
+          "child_count": 49
+        },
+        {
+          "name": "SetEff.img",
+          "type": "null",
+          "child_count": 101
+        },
+        {
+          "name": "SkillName1.img",
+          "type": "null",
+          "child_count": 21
+        },
+        {
+          "name": "SkillName2.img",
+          "type": "null",
+          "child_count": 19
+        },
+        {
+          "name": "SkillName3.img",
+          "type": "null",
+          "child_count": 13
+        },
+        {
+          "name": "SkillName4.img",
+          "type": "null",
+          "child_count": 11
+        },
+        {
+          "name": "Summon.img",
+          "type": "null",
+          "child_count": 27
+        },
+        {
+          "name": "Tomb.img",
+          "type": "null",
+          "child_count": 2
+        }
+      ]
+    },
+    "Npc": {
+      "file": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/Npc.nx",
+      "node_count": 222641,
+      "root_child_count": 7198,
+      "root_children": [
+        {
+          "name": "0002000.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "0002001.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0002002.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0002003.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0002004.img",
+          "type": "null",
+          "child_count": 1
+        },
+        {
+          "name": "0002005.img",
+          "type": "null",
+          "child_count": 1
+        },
+        {
+          "name": "0002006.img",
+          "type": "null",
+          "child_count": 6
+        },
+        {
+          "name": "0002007.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0002100.img",
+          "type": "null",
+          "child_count": 9
+        },
+        {
+          "name": "0002101.img",
+          "type": "null",
+          "child_count": 6
+        },
+        {
+          "name": "0002102.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0002103.img",
+          "type": "null",
+          "child_count": 9
+        },
+        {
+          "name": "0002104.img",
+          "type": "null",
+          "child_count": 9
+        },
+        {
+          "name": "0010000.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "0010200.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0010201.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0010202.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0010203.img",
+          "type": "null",
+          "child_count": 3
+        },
+        {
+          "name": "0010204.img",
+          "type": "null",
+          "child_count": 3
+        },
+        {
+          "name": "0011000.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0011100.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "0012000.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0012100.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0012101.img",
+          "type": "null",
+          "child_count": 6
+        },
+        {
+          "name": "0020000.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0020001.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "0020002.img",
+          "type": "null",
+          "child_count": 4
+        },
+        {
+          "name": "0020100.img",
+          "type": "null",
+          "child_count": 5
+        },
+        {
+          "name": "0021000.img",
+          "type": "null",
+          "child_count": 2
+        },
+        {
+          "name": "0022000.img",
+          "type": "null",
+          "child_count": 2
+        }
+      ]
+    }
+  }
+}
