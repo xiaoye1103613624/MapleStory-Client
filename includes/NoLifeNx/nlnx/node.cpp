@@ -99,17 +99,22 @@ namespace nl {
     node node::operator[](node const & o) const {
         return operator[](o.get_string());
     }
+    // WZ 的 int 节点是 32 位有符号值。底层 ireal 以零扩展的 uint64 存储
+    // （负数如 -444 存成 4294966852），若直接 (short)get_integer() 只取低 16 位
+    // 会得到 +11332 之类的大正数，把负坐标（自由市场等延伸到负空间的地图）整个
+    // 甩到屏幕外——表现为传送光圈错位、隐藏门用不了、负坐标 NPC 点不到。
+    // 原生语义是先按 32 位符号扩展、再截断到目标宽度，故这里先落到 int32/uint32。
     node::operator unsigned char() const {
-        return static_cast<unsigned char>(get_integer());
+        return static_cast<unsigned char>(static_cast<uint32_t>(get_integer()));
     }
     node::operator signed char() const {
-        return static_cast<signed char>(get_integer());
+        return static_cast<signed char>(static_cast<int32_t>(get_integer()));
     }
     node::operator unsigned short() const {
-        return static_cast<unsigned short>(get_integer());
+        return static_cast<unsigned short>(static_cast<uint32_t>(get_integer()));
     }
     node::operator signed short() const {
-        return static_cast<signed short>(get_integer());
+        return static_cast<signed short>(static_cast<int32_t>(get_integer()));
     }
     node::operator unsigned int() const {
         return static_cast<unsigned int>(get_integer());
