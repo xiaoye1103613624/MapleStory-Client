@@ -612,3 +612,21 @@
 | 19-2 正常移动 | 召唤兽跟随玩家移动 / 远离 120·80 阈值被拉近 | 每个真实位移仍正常发一次 `MOVE_SUMMON`，跟随不卡住 | 需真机位置/物理 |
 | 19-3 换图 clear | 带召唤兽换图后重新召唤 | `clear()` 清缓存、新图首帧正常登记，无残留 oid 串扰 | 需真机换图流程 |
 | 19-4 多召唤 + 他人召唤 | 同时存在自己多只召唤兽 + 他人召唤兽 | 裁剪判据 `get_owner()!=local_cid` 生效，只上报自己的、互不串扰、无越界 | 需多角色/多人联机 |
+
+---
+
+## 20. round41 · UIItemInventory 重复 G 键入口遮蔽修复（#devfix-iteminventory-gkey，需用户一起测）
+
+> 自动自测 `tools/test_iteminventory_gkey.py` 只覆盖**静态守卫 + else-if 优先链算法复刻**
+> （10 守卫 + 10 键位 case PASS，before Gacha reach=0→after 2，duplicate G 2→1，回归 8/8）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（01:50 真重编译）；
+> **真机 G/g 整理、X/x 触发 GACHA_EXP、旧键回归与 X 键语义必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 01:50 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-iteminventory-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 20-1 G/g 整理回归 | 背包打开按 G 或 g | 与修复前一致，执行整理（GatherItemsPacket），X 分支不抢 | harness 只复刻键位链，需真机服务器响应 |
+| 20-2 X/x 触发 GACHA_EXP | 背包打开按 X 或 x | 发送 `USE_GACHA_EXP(158)` 空包，服务端按 GachaExp 道具态响应 | 需真机账号持有 GachaExp 道具 + 服务端闭环 |
+| 20-3 旧键回归 | O/U/D/S/Y/E 等既有单键 | 与修复前一致、无串扰 | 需真机各功能路径 |
+| 20-4 X 键语义裁决 | 确认 X 是否与其他全局快捷键/客户端功能冲突 | 若冲突，交用户裁决是否迁到菜单按钮或其它键 | 需用户确认最终键位意图；旧账 r803 曾写 G→GachaExp，本次按 live 主路径让 G 归整理 |

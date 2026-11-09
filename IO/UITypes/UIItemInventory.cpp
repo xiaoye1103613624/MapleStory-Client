@@ -1226,7 +1226,12 @@ namespace ms
 					}, []() {}, "Use slot");
 				}
 			}
-			else if (keycode == 'G' || keycode == 'g')
+			// 原为 'G'/'g'，与 :1182 的 GatherItems 同键；同一 else-if 链一命中即跳，
+			// 本分支从未可达，USE_GACHA_EXP(158) 空包等于「补了包没给入口」。
+			// r803 笔记的「SoftKey G → UseGachaExp」是旧账口径；G 归 Gather（父版本 df31fb1c^ 既有 +
+			// BT_GATHER 按钮同源）。改用链内空位 X/x 让两个出站包都可达；SoftKey 是本端调试键，
+			// 不涉协议/包体/原生键位映射。
+			else if (keycode == 'X' || keycode == 'x')
 			{
 				UseGachaExpPacket().dispatch();
 				LOG(LOG_DEBUG, "UIItemInventory: UseGachaExp");
