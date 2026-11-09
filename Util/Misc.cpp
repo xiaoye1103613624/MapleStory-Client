@@ -32,6 +32,28 @@ namespace ms
 {
 	namespace string_format
 	{
+		std::string format_exp_compact(int64_t n)
+		{
+			if (n < 0)
+				n = 0;
+
+			// 亿（1e8）：保留两位小数 + 中文单位
+			if (n >= 100000000LL)
+			{
+				char buf[32];
+				std::snprintf(buf, sizeof(buf), "%.2f亿", static_cast<double>(n) / 100000000.0);
+				return std::string(buf);
+			}
+			// 万（1e4）
+			if (n >= 10000LL)
+			{
+				char buf[32];
+				std::snprintf(buf, sizeof(buf), "%.2f万", static_cast<double>(n) / 10000.0);
+				return std::string(buf);
+			}
+			return std::to_string(n);
+		}
+
 		void split_number(std::string& input)
 		{
 			for (size_t i = input.size(); i > 3; i -= 3)

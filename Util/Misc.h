@@ -54,6 +54,10 @@ namespace ms
 
 	namespace string_format
 	{
+		// 超大整数按 亿/万 压缩显示，避免状态栏/属性窗经验值超宽。
+		// 例：123456789 -> "1.23亿"，1234567 -> "123.46万"，1234 -> "1234"。
+		std::string format_exp_compact(int64_t n);
+
 		// Format a number string so that each three decimal points are separated by a comma
 		void split_number(std::string& input);
 
