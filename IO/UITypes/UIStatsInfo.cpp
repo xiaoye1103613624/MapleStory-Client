@@ -858,12 +858,20 @@ namespace ms
 		int64_t exp = stats.get_exp();
 		std::string exptext = std::to_string(exp);
 
-		if (level > 0 && level < ExpTable::LEVELCAP)
+		// level 上限已扩到 999：不能再以 ExpTable::LEVELCAP(=256) 截断，也
+		// 不能直接索引 values[level]（200+ 已由 1.06 公式覆盖，表项为占位 0）。
+		// 统一走 required_exp()，与 UIStatusBar::getexppercent 同源。
+		if (level > 0)
 		{
-			int32_t pct = static_cast<int32_t>(
-				static_cast<double>(exp) / static_cast<double>(ExpTable::values[level]) * 100.0
-				);
-			exptext += " (" + std::to_string(pct) + "%)";
+			int64_t need = ExpTable::required_exp(level);
+
+			if (need > 0)
+			{
+				int32_t pct = static_cast<int32_t>(
+					static_cast<double>(exp) / static_cast<double>(need) * 100.0
+					);
+				exptext += " (" + std::to_string(pct) + "%)";
+			}
 		}
 
 		statlabels[StatLabel::EXP].change_text(exptext);

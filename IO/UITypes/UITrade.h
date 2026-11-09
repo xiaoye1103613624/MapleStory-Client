@@ -14,7 +14,7 @@
 //																				//
 //	You should have received a copy of the GNU Affero General Public License	//
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 #include "../UIElement.h"
@@ -33,6 +33,9 @@ namespace ms
 		int16_t quantity;
 	};
 
+	// 实时面交窗（Type::TRADE），由 TradeHandler 按 s9 PLAYER_INTERACTION 包驱动。
+	// 底图/按钮取自 UIWindow.img/TradingRoom；与 UIMiscShells 里的 UITradingRoom
+	// （DIY 调试壳，Type::TRADINGROOM）不是同一个窗。
 	class UITrade : public UIElement
 	{
 	public:
@@ -47,15 +50,17 @@ namespace ms
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
 
-		void start_trade();
+		// getTradeStart(ROOM/3)：number=0 发起人 / 1 被邀请人；partner 名可为空。
+		void start_trade(uint8_t number, const std::string& self_name, const std::string& partner_name);
 		void partner_joined(const std::string& name);
 		void set_meso(uint8_t number, int32_t meso);
 		void add_item(uint8_t number, uint8_t slot, int32_t itemid, int16_t quantity);
-		void set_locked();
+		// 收到 CONFIRM(0x11) 表示"对方已锁定"，不是自己锁定。
+		void set_partner_locked();
 		void result(uint8_t number, uint8_t op);
 		void add_chat(const std::string& msg);
 
-		// 物品栏双击时由 UIItemInventory 调用：加入交易
+		// 背包双击时取下一个空闲目标槽（1..9）；0 表示已满。
 		uint8_t next_slot() const;
 
 	protected:
@@ -64,25 +69,29 @@ namespace ms
 	private:
 		enum Buttons : uint16_t
 		{
-			BtAddMeso,
-			BtLock,
-			BtTrade,
-			BtCancel,
-			BtChat
+			BtCoin,    // UIWindow.img/TradingRoom/BtCoin
+			BtReset,   // BtReset
+			BtTrade,   // BtTrade
+			BtCancel,  // BtCancel
+			BtChat     // 原生无此钮，仅由快捷键触发
 		};
 
 		void prompt_meso();
 		void prompt_chat();
+		void confirm_trade();
+		void clear_state();
 
 		bool started;
-		bool locked;
+		bool self_locked;
+		bool partner_locked;
+		uint8_t my_number;
 		int32_t my_meso;
 		int32_t partner_meso;
 		std::vector<TradeSlot> my_items;
 		std::vector<TradeSlot> partner_items;
+		std::string self_name;
 		std::string partner_name;
 		std::vector<std::string> chat_log;
-		uint8_t add_count;
 		mutable OutlinedText title;
 	};
 }

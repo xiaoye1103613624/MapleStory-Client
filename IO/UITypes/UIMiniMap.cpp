@@ -21,6 +21,7 @@
 #include "UIWorldMap.h"
 
 #include "../UI.h"
+#include "../KeyAction.h"   // M 键循环：KeyAction::Id::MINIMAP 由 UIStateGame 转发进来
 
 #include "../Components/MapleButton.h"
 
@@ -408,6 +409,45 @@ namespace ms
 
 	void UIMiniMap::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		// 原生 M 键循环：MIN → NORMAL → MAX → 关（隐藏）→ MIN …
+		// UIStateGame 的 MINIMAP 分支只在窗体存在时转发到这里（keycode 即
+		// KeyAction::Id::MINIMAP），所以「关」态由 deactivate 表达；
+		// 下一次 M 键走 UIStateGame 的 emplace 重建，从 MIN 起。
+		if (pressed && keycode == KeyAction::Id::MINIMAP)
+		{
+			// 窗体被 M 关过但对象仍在 elements 里（get 不筛 active）：
+			// 再按 M 从 MIN 重新打开。
+			if (!is_active())
+			{
+				type = Type::MIN;
+				user_type = type;
+				Setting<MiniMapType>::get().save(static_cast<uint8_t>(type));
+				Configuration::get().save();
+				update_dimensions();
+				toggle_buttons();
+				makeactive();
+				return;
+			}
+
+			if (type < Type::MAX)
+			{
+				type += 1;
+				user_type = type;
+				Setting<MiniMapType>::get().save(static_cast<uint8_t>(type));
+				Configuration::get().save();
+				update_dimensions();
+				toggle_buttons();
+			}
+			else
+			{
+				// MAX → 关：下一次 M 从 MIN 起。
+				user_type = Type::MIN;
+				Setting<MiniMapType>::get().save(static_cast<uint8_t>(Type::MIN));
+				Configuration::get().save();
+				deactivate();
+			}
+			return;
+		}
 		if (pressed && (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'))
 		{
 			UI::get().emplace<UISoftKey>([](const std::string& tip) {

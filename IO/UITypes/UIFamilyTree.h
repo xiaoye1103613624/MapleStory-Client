@@ -17,7 +17,7 @@ namespace ms
 		int32_t chr_id = 0;
 		int32_t senior_id = 0;
 		int16_t job = 0;
-		uint8_t level = 0;
+		uint16_t level = 0;
 		bool online = false;
 		int32_t rep = 0;
 		int32_t tot_rep = 0;

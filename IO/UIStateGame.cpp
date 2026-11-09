@@ -33,6 +33,7 @@
 #include "UITypes/UIMessenger.h"
 #include "UITypes/UIEquipInventory.h"
 #include "UITypes/UIEvent.h"
+#include "UITypes/UISpecial.h"
 #include "UITypes/UIItemInventory.h"
 #include "UITypes/UIKeyConfig.h"
 #include "UITypes/UIMiniMap.h"
@@ -48,7 +49,11 @@
 #include "UITypes/UIMonsterBook.h"
 #include "UITypes/UIMaker.h"
 #include "UITypes/UIMiscShells.h"
+#include "UITypes/UIGuild.h"
+#include "UITypes/UIFamily.h"
+#include "UITypes/UIPartySearch.h"
 #include "UITypes/UILoginNotice.h"
+#include "../Net/Packets/FamilyPackets.h"
 
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Gameplay/Stage.h"
@@ -261,6 +266,56 @@ namespace ms
 					{
 						switch (action)
 						{
+							// ===== §f-keymap 遗留五死键接线（2026-11-06）=====
+							// 本枚举 21+ 段沿用新版编号，v83 的 11/17/25/26 透传后落在
+							// WHISPER/GUILD/MANAGELEGION(MEDALS槽)/MEDALS(FAMILY槽)，
+							// 原先无 case ⇒ 键发了、没反应。窗口本体全部已存在。
+							case KeyAction::Id::WHISPER:
+							{
+								// v83 H(11) = WHISPER：原生「请输入悄悄话的对象」弹层；
+								// 其确认回调 = ChatBar::set_whisper_target（切密语频道+预置 /w）。
+								// 与底栏密语钮、下拉选「悄悄话」同一条路（pick_classic_target）。
+								if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
+								{
+									dlg->makeactive();
+									dlg->open();
+								}
+								else if (auto new_dlg = UI::get().emplace<UIWhisperTargetDlg>())
+								{
+									new_dlg->open();
+								}
+								break;
+							}
+							case KeyAction::Id::MANAGELEGION:
+							{
+								// v83 O(25) = PARTYSEARCH 组队搜索窗（枚举名沿用新版军团管理）。
+								if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+									emplace<UIPartySearch>();
+								break;
+							}
+							case KeyAction::Id::MEDALS:
+							{
+								// v83 F(33 键) action 26 = FAMILY 学院（家族）窗。
+								// KeyAction.h:55 `MEDALS // FAMILY (v83)` 为编号错位实证。
+								// 开窗前照刷新钮语义请求一次（s9 回 95 FAMILY_INFO_RESULT
+								// 回灌活动窗；登录数据层已有，双保险）。
+								OpenFamilyPacket().dispatch();
+								auto fam = UI::get().get_element<UIFamily>();
+								if (!fam)
+									fam = UI::get().emplace<UIFamily>();
+								else if (!fam->is_active())
+									fam->makeactive();
+								break;
+							}
+							case KeyAction::Id::NOTIFIER:
+							{
+								// v83 L(20) = NOTIFIER 通知窗。查证：s9 SendOpcode 无任何 NOTIFIER/
+								// SERVERNOTICE 窗口化下发（18 号在 s9 未使用），原生通知窗内容源
+								// = notifier 列表封包 —— 服务端不存在 ⇒ 按门禁 7 不做假窗。
+								// 通知文案实际全走 serverNotice/chat（已接）。保留灭活并留证。
+								LOG(LOG_DEBUG, "UIStateGame: NOTIFIER key (v83 L) — no s9 notifier backend, intentionally inert");
+								break;
+							}
 							case KeyAction::Id::EQUIPMENT:
 							{
 								if (UiAssetResolve::usable(UiAssetResolve::window4("Equip")))
@@ -301,7 +356,11 @@ namespace ms
 							case KeyAction::Id::FRIENDS:
 							case KeyAction::Id::PARTY:
 							case KeyAction::Id::BOSSPARTY:
+							case KeyAction::Id::GUILD:
 							{
+								// v83 G(17) = GUILD「家族」：用户 2026-11-07 指正，原生是
+								// 「好友/组员/家族/家族联盟/拒绝列表」共用窗的第 3 页签，
+								// 不是独立 UIGuild 浮窗（浮窗仍由底栏社区钮保留入口）。
 								UIUserList::Tab tab;
 
 								switch (action)
@@ -313,6 +372,7 @@ namespace ms
 										tab = UIUserList::Tab::PARTY;
 										break;
 									case KeyAction::Id::BOSSPARTY:
+									case KeyAction::Id::GUILD:
 										tab = UIUserList::Tab::GUILD;
 										break;
 								}
@@ -367,6 +427,9 @@ namespace ms
 							{
 								if (auto minimap = UI::get().get_element<UIMiniMap>())
 									minimap->send_key(action, pressed, escape);
+								else
+									// M 关过窗体后对象可能随换图销毁：重建即回到 MIN 态。
+									emplace<UIMiniMap>(Stage::get().get_player().get_stats());
 
 								break;
 							}
@@ -466,8 +529,8 @@ namespace ms
 							}
 							case KeyAction::Id::EVENT:
 							{
-								if (UiAssetResolve::usable(UiAssetResolve::window("EventList")))
-									emplace<UIEvent>();
+								// 095 自定义中文 UI：暂时复用 EVENT 键打开福利中心（后续补独立 SPECIAL 键位 + 服务端 keymap）。
+								emplace<UISpecial>();
 								break;
 							}
 							case KeyAction::Id::CHARINFO:

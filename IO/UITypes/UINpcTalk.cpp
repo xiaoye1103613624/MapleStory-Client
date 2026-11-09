@@ -183,7 +183,15 @@ namespace ms
 		Point<int16_t> drawpos = position;
 		top.draw(drawpos);
 		drawpos.shift_y(top.height());
-		fill.draw(DrawArgument(drawpos, Point<int16_t>(0, height)));
+		// 原生按 c 纹理原始高度（529x20）竖向平铺：正确端截图白区逐行噪声与 c 的 20 行序列
+		// 逐像素周期吻合。拉伸会把 20px 薄片放大成粗横条纹（GL_NEAREST 放大噪声行）。
+		// 末片不足整片时按实际高度压缩绘制（≤20px 噪声，肉眼无感）。
+		const int16_t cph = fill.height() > 0 ? fill.height() : 20;
+		for (int16_t ty = 0; ty < height; ty += cph)
+		{
+			const int16_t tph = static_cast<int16_t>((height - ty < cph) ? height - ty : cph);
+			fill.draw(DrawArgument(drawpos + Point<int16_t>(0, ty), Point<int16_t>(0, tph)));
+		}
 		drawpos.shift_y(height);
 		bottom.draw(drawpos);
 		drawpos.shift_y(bottom.height());
@@ -205,7 +213,7 @@ namespace ms
 			int16_t text_min_height = position.y() + top.height() - 1;
 			// 每翻一页恰好滚动一屏（可见高 = height - TEXT_SLACK）。原来是固定 400px，
 			// 而可见区最多 248-18=230px，翻页会把中间约 170px 的正文直接跳过去。
-			text.draw(position + Point<int16_t>(TEXT_X, text_draw_y - offset * (height - TEXT_SLACK)), Range<int16_t>(text_min_height, text_min_height + height - TEXT_SLACK));
+			text.draw(position + Point<int16_t>(TEXT_X, text_draw_y - offset * scroll_step), Range<int16_t>(text_min_height, text_min_height + height - TEXT_SLACK));
 			slider.draw(position);
 		}
 		else
@@ -222,17 +230,25 @@ namespace ms
 			&& static_cast<size_t>(simple_selected) < simple_choices.size())
 		{
 			const SimpleChoice& c = simple_choices[static_cast<size_t>(simple_selected)];
-			const int16_t scroll = show_slider ? offset * (height - TEXT_SLACK) : 0;
-			const int16_t y = static_cast<int16_t>(text_draw_y + c.pos.y() - scroll);
+			const int16_t scroll = show_slider ? offset * scroll_step : 0;
+			const int16_t vline = static_cast<int16_t>(text_draw_y + c.pos.y() - scroll);
+			// 墨迹对齐：drawtext 按基线画字形（char_y = draw_y + line.y - bt），
+			// 本行可见墨迹 = [line.y - bt, line.y - bt + bh]，基线到下一行基线差 linespace。
+			// 旧框 [line.y, line.y + label.height] 比可见文字低大半行：虚线正好落到
+			// 下一行文字中部（「点上面选中的却是下一行」的根因）。
+			const int16_t ls = Text::linespace(Text::Font::A12M);
+			const int16_t ink_top = static_cast<int16_t>(vline - (ls - text.ink_offset()));
+			const int16_t row_bottom = static_cast<int16_t>(ink_top + ls);
 			const int16_t band_top = top.height() - 1;
 			const int16_t band_bottom = static_cast<int16_t>(band_top + height - TEXT_SLACK);
+			// 可视带用「行基线」判（绘制 Range 按基线裁），不可用墨迹顶，否则首行被误删。
 			const bool visible = !show_slider
-				|| (y >= band_top && y + c.size.y() <= band_bottom);
+				|| (vline >= band_top && vline + ls <= band_bottom);
 
 			if (visible && c.size.x() > 0)
 			{
 				const int16_t ux = static_cast<int16_t>(position.x() + TEXT_X + c.pos.x());
-				const int16_t uy = static_cast<int16_t>(position.y() + y + c.size.y());
+				const int16_t uy = static_cast<int16_t>(position.y() + row_bottom);
 				const int16_t uw = static_cast<int16_t>(c.size.x() + SIMPLE_UL_EXT);
 				ColorBox(uw, 1, Color::Name::BLACK, 1.0f)
 					.draw(DrawArgument(Point<int16_t>(ux, uy)));
@@ -308,13 +324,13 @@ namespace ms
 				if (formatted_text_pos < formatted_text.size())
 				{
 					std::string t = text.get_text();
-					// 令牌须原子喂入：半截 `#` 会被布局器先吞掉，下一拍字母当正文闪现。
-					// 图标/进度条 #i/#v/#s/#f/#B…# 吃到闭合；色标/样式 #b/#r/#c/#e… 固定 2 字节。
-					// #m/#o/#x 正常已被 format_text 展开；残留闭合体仍按 body 原子喂入兜底。
+					// 字符按 UTF-8 码点整段喂入（CJK 3 字节），否则逐字节会让排版吃到半截
+					// UTF-8 序列（npc-talk-triage §3.2）—— 中间态是半截空格、且 #b/#L 等标记在
+					// 只喂到 '#' 的那一拍会闪现字面 '#'。令牌仍原子喂入。
 					size_t take = 1;
 					const size_t pos = formatted_text_pos;
 
-					if (pos + 1 < formatted_text.size() && formatted_text[pos] == '#')
+					if (pos < formatted_text.size() && formatted_text[pos] == '#')
 					{
 						const char tag = formatted_text[pos + 1];
 
@@ -332,6 +348,16 @@ namespace ms
 						{
 							take = 2;
 						}
+					}
+					else if (pos < formatted_text.size())
+					{
+						// 普通字符：按首字节判断 UTF-8 码点长度，整段喂入，避免拆碎汉字。
+						const unsigned char uc = static_cast<unsigned char>(formatted_text[pos]);
+						if (uc < 0x80) take = 1;
+						else if ((uc & 0xE0) == 0xC0) take = 2;
+						else if ((uc & 0xF0) == 0xE0) take = 3;
+						else if ((uc & 0xF8) == 0xF0) take = 4;
+						else take = 1;
 					}
 
 					text.change_text(t + formatted_text.substr(pos, take));
@@ -559,6 +585,28 @@ namespace ms
 	{
 		Point<int16_t> cursor_relative = cursorpos - position;
 
+		// 标题带拖拽：按住顶部标题区（t 帧高度）拖动整窗。顶带内无按钮/选项，故不与其它命中冲突。
+		if (dlg_dragging)
+		{
+			if (clicked)
+			{
+				position = cursorpos - dlg_drag_offset;
+				return Cursor::State::CLICKING;
+			}
+			dlg_dragging = false;
+		}
+		else if (clicked
+			&& cursor_relative.y() >= 0
+			&& cursor_relative.y() < top.height()
+			&& cursor_relative.x() >= 0
+			&& cursor_relative.x() < top.width()
+			&& dlg_speaker != 1)
+		{
+			dlg_dragging = true;
+			dlg_drag_offset = cursor_relative;
+			return Cursor::State::CLICKING;
+		}
+
 		if (input_active)
 		{
 			Cursor::State istate = input_field.send_cursor(cursorpos, clicked);
@@ -570,24 +618,34 @@ namespace ms
 		{
 			// 选项随正文一起滚动，命中框必须跟着同一套偏移；否则翻页后点的是
 			// 屏幕上的空位，真正被选中的是另一行。
-			const int16_t scroll = show_slider ? offset * (height - TEXT_SLACK) : 0;
+			const int16_t scroll = show_slider ? offset * scroll_step : 0;
 			const int16_t band_top = top.height() - 1;
 			const int16_t band_bottom = band_top + height - TEXT_SLACK;
+			// 命中框按墨迹对齐（与 draw() 的选中虚线同一套换算）：行墨迹 =
+			// [基线 - bt, 基线 - bt + linespace]。旧框 [基线, 基线 + label.height]
+			// 整体低大半行 —— 点文字上半截落进上一行、点下半截才算本行。
+			const int16_t ls = Text::linespace(Text::Font::A12M);
+			const int16_t bt = static_cast<int16_t>(ls - text.ink_offset());
 
 			for (size_t i = 0; i < simple_choices.size(); ++i)
 			{
 				const SimpleChoice& c = simple_choices[i];
-				const int16_t y = text_draw_y + c.pos.y() - scroll;
+				// 行基线位置：与绘制 Range 同一坐标系（band_top/band_bottom 也按基线裁）。
+				// 可视带必须用「基线」判，不能用墨迹顶——否则 TEXT_Y_PAD(7) < bt(~10)
+				// 时首行墨迹顶落在 band_top 之上被误删，首行选项直接点不到。
+				const int16_t vline = static_cast<int16_t>(text_draw_y + c.pos.y() - scroll);
+				const int16_t y = static_cast<int16_t>(vline - bt);  // 墨迹顶 = 命中框上沿
+				const int16_t y2 = static_cast<int16_t>(y + ls);
 
 				// 滚出可视带的选项不可点（绘制也被裁掉了）。
-				if (show_slider && (y < band_top || y + c.size.y() > band_bottom))
+				if (show_slider && (vline < band_top || vline + ls > band_bottom))
 					continue;
 
 				Rectangle<int16_t> box(
 					TEXT_X + c.pos.x(),
 					TEXT_X + c.pos.x() + c.size.x(),
 					y,
-					y + c.size.y());
+					y2);
 				if (box.contains(cursor_relative))
 				{
 					// 悬停即高亮索引，供「下项」钮提交（对齐原生 list[cur]）
@@ -775,8 +833,11 @@ namespace ms
 				const bool ok = resolve(body, replacement);
 				if (!ok)
 				{
-					// 非法令牌：跳过本段，避免死循环；原文留给布局器。
-					search = end + 1;
+					// 解析失败（如 id 不在数据里）：整段令牌移除，原生即掉落该标记；
+					// 否则会把 "#tag...#" 残片留给布局器，屏幕上出现字面 # 与数字
+					//（npc-talk-triage §3.1：汉字里夹一串数字和 #）。
+					formatted_text.replace(begin, end - begin + 1, "");
+					search = begin;
 					continue;
 				}
 
@@ -1145,9 +1206,13 @@ namespace ms
 			type = resolve_say_style(style);
 
 		timestep = 0;
-		draw_text = true;
 		formatted_text_pos = 0;
 		formatted_text = format_text(tx, npcid);
+		// 选项菜单（SENDSIMPLE 且含 choice）关闭打字机：选项命中框是按**全文**布局
+		// 反取的，而打字机期间正文是逐步显现的「前缀」，前缀与全文折行不同 → 可见选项
+		// 与命中框错位、点不到（拍卖行 9900001 等长菜单 / GM 段尤甚）。选项需立即可点，
+		// 故正文直接整段显示，命中框与绘制严格同源。
+		draw_text = !(type == TalkType::SENDSIMPLE && !simple_choices.empty());
 
 		const bool avatar_talk = is_avatar_talk();
 		const int16_t body_width = avatar_talk ? AVATAR_TEXT_W : TEXT_WIDTH;
@@ -1164,7 +1229,10 @@ namespace ms
 		// 而选项的落点只存在于整段文本的折行结果里。
 		layout_simple_choices(text);
 
-		text.change_text("");
+		// 选项菜单保留全文（draw_text 已为 false，正文即刻整段显示，命中框与绘制同源）；
+		// 其余类型清空，交由打字机逐步显现。
+		if (draw_text)
+			text.change_text("");
 
 		if (avatar_talk)
 		{
@@ -1200,21 +1268,31 @@ namespace ms
 			else
 				text_draw_y = 22;
 		}
-		else if (text_height > height)
+		else if (text_height + TEXT_BOTTOM_PAD > height)
 		{
-			if (text_height > MAX_HEIGHT)
+			if (text_height + TEXT_BOTTOM_PAD > MAX_HEIGHT)
 			{
+				// 超上限才考虑滑条；且只有真有超出量（over>0）才挂——旧实现内容仅
+				// 略超时也会挂出 rowmax=1 的退化滑条，拖动只能在上下两端跳。
+				const int16_t over = static_cast<int16_t>(text_height - (MAX_HEIGHT - TEXT_SLACK));
 				height = MAX_HEIGHT;
-				show_slider = true;
-				rowmax = text_height / (MAX_HEIGHT - TEXT_SLACK) + 1;
-				unitrows = 1;
+				if (over > 0)
+				{
+					show_slider = true;
+					// 无极滚动：offset 每格 = 一行行距（正确端实测行距 18px，A12M 同源）。
+					// 旧实现按「页」算 rowmax，内容只超一两行时滑条只有上下两档。
+					scroll_step = Text::linespace(Text::Font::A12M);
+					rowmax = static_cast<int16_t>((over + scroll_step - 1) / scroll_step + 1);
+					unitrows = 1;
 
-				int16_t slider_y = top.height() - 7;
-				slider = Slider(Slider::Type::DEFAULT_SILVER, Range<int16_t>(slider_y, slider_y + height - 20), top.width() - 26, unitrows, rowmax, onmoved);
+					int16_t slider_y = top.height() - 7;
+					slider = Slider(Slider::Type::DEFAULT_SILVER, Range<int16_t>(slider_y, slider_y + height - 20), top.width() - 26, unitrows, rowmax, onmoved);
+				}
 			}
 			else
 			{
-				height = text_height;
+				// 底部留按钮带：正确端实测 fill_h=244 ≈ 正文布局高 +34。
+				height = static_cast<int16_t>(text_height + TEXT_BOTTOM_PAD);
 			}
 		}
 
@@ -1258,8 +1336,14 @@ namespace ms
 
 		// 底带（OK/Close/Yes/No）：y = height + BTN_DY（R25 = wnd≈height+86 的 -26 校准）。
 		// Next/Prev：IDA 相对 Close 高 51px ⇒ height + BTN_DY_NEXT。
-		const int16_t y_bottom = static_cast<int16_t>(height + BTN_DY);
-		const int16_t y_next = static_cast<int16_t>(height + BTN_DY_NEXT);
+		// 按钮锚在 s 帧起点（top.height()+height）：见头文件 BTN_*_FROM_S 的实测说明。
+		// Avatar 皮肤（dlg_speaker==1）用整块背景、无 t/c/s 拼接，保持旧式 height+const。
+		const bool avatar_win = (dlg_speaker == 1);
+		const int16_t s_top = static_cast<int16_t>(top.height() + height);
+		const int16_t y_bottom = avatar_win ? static_cast<int16_t>(height + BTN_DY)
+							   : static_cast<int16_t>(s_top + BTN_DY_FROM_S);
+		const int16_t y_next = avatar_win ? static_cast<int16_t>(height + BTN_DY_NEXT)
+							   : static_cast<int16_t>(s_top + BTN_NEXT_FROM_S);
 		const int16_t dlg_w = top.width() > 0 ? top.width() : static_cast<int16_t>(529);
 		const int16_t edge = (dlg_speaker == 1) ? BTN_EDGE_INSET_AVATAR : BTN_EDGE_INSET;
 		const int16_t x_ok = static_cast<int16_t>(dlg_w - BTN_OK_RIGHT_INSET);
@@ -1273,7 +1357,7 @@ namespace ms
 		if (input_avatar_layout)
 			input_box_y = static_cast<int16_t>(y_input_btn - INPUT_AVATAR_EDIT_ABOVE_OK);
 
-		if (buttons.count(Buttons::CLOSE))
+		if (buttons.count(Buttons::CLOSE) && (!avatar_talk || input_avatar_layout))
 		{
 			const int16_t cx = input_avatar_layout ? BTN_AVATAR_CLOSE_X : x_close;
 			const int16_t cy = input_avatar_layout ? y_input_btn : y_bottom;

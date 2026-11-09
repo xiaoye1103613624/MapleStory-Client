@@ -22,8 +22,6 @@
 #include "../Components/Textfield.h"
 // 展开态右端竖滚动条（B5-1），与背包/帮助窗同一件 Basic.img/VScr 组件。
 #include "../Components/Slider.h"
-// Q1 定案的共享框体件（半透明黑底 + 1px 灰边），聊天历史框与 tooltip 同判据。
-#include "../Components/TextTooltip.h"
 // 收起态灰带用纯色矩形（本包没有对应位图，见 classic_fold_panel 注释）。
 #include "../../Graphics/Geometry.h"
 #include <array>
@@ -323,7 +321,6 @@ namespace ms
 		// 从列表里选（原生没有点击循环，用户 2026-11-02 定调）；历史框展开/收起用
 		// Basic.img 的 BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
-		TooltipBackdrop classic_log_backdrop;
 		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
 		// 坐标约定与 UIItemInventory 一致：vertical/x 是「相对历史框左上角」的局部量，
 		// draw(log_pos) 时才加窗口偏移，所以拖拽改高度必须同步 setvertical。
@@ -355,8 +352,11 @@ namespace ms
 		std::string pending_whisper_text;
 
 		// 目标列表（点开 chatTarget 框 / ▶ 箭头后向上展开）。
-		// 原生 v83 的展开态截图本包没有，所以框体沿用本客户端已定版的下拉观感
-		// （1px 黑沿 + 白内区 + 悬浮橄榄色，与 UIWhisperTargetDlg 同一套）；
+		// 样式定版依据 = 原生截帧「聊天选择对话的类型.png」逐像素实测
+		// （evidence/w4-chatbar/coords-targetlist.md，用户 2026-11-07 指定按此图）：
+		//   面板 = 1px 灰沿 (153,153,153) + 蓝内区 (51,85,119)，行距 16，
+		//   选中/悬浮行 = 整行贯通的亮蓝条 (85,153,187)，正文白字、墨迹左沿
+		//   = 面板左 + 6、首行墨顶 = 面板顶 + 2。
 		// 位置只能向上 —— 底栏贴屏幕下沿，向下没有空间。
 		// Q5: 频道下拉补全。原生 v83 的 chatTarget 列表就是全频道选择器；本端
 		// 此前只有 4 项，且发送完全不读它（只认斜杠命令）。扩到 8 项后，
@@ -375,16 +375,19 @@ namespace ms
 			TARGET_COUNT
 		};
 
-		static constexpr int16_t TARGET_LIST_ROW_H = 15;
+		static constexpr int16_t TARGET_LIST_ROW_H = 16;
 		static constexpr int16_t TARGET_LIST_W = CHAT_TARGET_W;
 
 		bool classic_target_list_open = false;
 		size_t classic_target_hover = 0;
 		std::vector<Text> classic_target_list_texts;
-		// 列表高度随项数变，而 draw() 是 const ⇒ 只有 setheight 的那两块 mutable。
+		// 面板沿/内区/选中条三块高度随项数变（项数=TARGET_COUNT 是定值，但沿高
+		// = 项数×行距+2），而 draw() 是 const ⇒ mutable。
+		// 配色全部按原生截帧实测（见上方 coords-targetlist 注释）：
+		//   沿 (153,153,153)、内区 (51,85,119)、选中条 (85,153,187)。
 		mutable ColorBox classic_target_list_back;
 		mutable ColorBox classic_target_list_inner;
-		ColorBox classic_target_list_mark;
+		mutable ColorBox classic_target_list_mark;
 
 		void set_classic_target(uint8_t target_id);
 		// 目标项文案（chat.target.* 八键，Q5 补全）；列表与当前标签共用同一处取值。

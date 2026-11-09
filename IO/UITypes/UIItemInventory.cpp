@@ -22,6 +22,11 @@
 #include "UIViciousHammer.h"
 #include "UIVegaSpell.h"
 #include "UIMiscShells.h"
+#include "UICharInfo.h"
+#include "UIChatBar.h"
+#include "UIWedding.h"
+#include "../../Character/MarriageInfo.h"
+#include "../../Net/Packets/WeddingPackets.h"
 #include "UIMegaphone.h"
 #include "UICashGachapon.h"
 #include "UIRemoteGachapon.h"
@@ -34,6 +39,7 @@
 #include "UIStorage.h"
 #include "UITrade.h"
 #include "../../Net/Packets/CashItemPackets.h"
+#include "../../Net/Packets/CashShopPackets.h"
 #include "../../Net/Packets/MakerPackets.h"
 #include "../../Net/Packets/SolomonPackets.h"
 #include "../../Net/Packets/StoragePackets.h"
@@ -55,6 +61,7 @@
 #include "../../Gameplay/MapleMap/Mob.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Configuration.h"
+#include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
@@ -704,10 +711,32 @@ namespace ms
 		{
 			if (int32_t item_id = inventory.get_item_id(tab, slot))
 			{
+				// 面交窗打开时，双击任意背包道具 = 加入交易。必须放在 switch 之前，
+				// 否则 EQUIP/USE/CASH 会走道具自身用途（魔方重洗 / 使用 / 现金效果）。
+				if (auto uitrade = UI::get().get_element<UITrade>())
+				{
+					if (uitrade->is_active())
+					{
+						uint8_t trade_slot = uitrade->next_slot();
+						if (trade_slot > 0)
+						{
+							int16_t qty = inventory.get_item_count(tab, slot);
+							if (qty < 1)
+								qty = 1;
+							TradeAddItemPacket(static_cast<uint8_t>(tab), slot, qty, trade_slot).dispatch();
+						}
+						return;
+					}
+				}
+
 				switch (tab)
 				{
 					case InventoryType::Id::EQUIP:
 					{
+						// 原生双击 = 穿戴（can_wear_equip 内含性别/职业/等级/属性
+						// 校验，不满足时弹 UIOk 提示；这是 item6「双击不可穿戴装备
+						// 无提示」的正解）。095 魔方重洗入口收回到 CASH 页签的
+						// 243* 魔方道具双击（见下面 CASH 分支），不再劫持装备双击。
 						if (can_wear_equip(slot))
 						{
 							EquipSlot::Id equipslot = inventory.find_equipslot(item_id);
@@ -720,11 +749,32 @@ namespace ms
 
 							EquipItemPacket(slot, equipslot).dispatch();
 						}
-
 						break;
 					}
 					case InventoryType::Id::USE:
 					{
+						// 订婚戒指盒（2240000..2240015，s9 ENGAGEMENT_BOX_MIN/MAX）：
+						// 原生双击 = 输入对象名 → RING_ACTION mode0 求婚。
+						// 先开婚礼窗（内含对端提示位），再走 SoftKey 取对象名。
+						if (WeddingItem::is_proposal_box(item_id)) {
+							int32_t box_id = item_id;
+							std::string pre;
+							if (auto ci = UI::get().get_element<UICharInfo>())
+								pre = ci->get_target_name();
+							auto ask_target = [box_id](const std::string& name) {
+								if (name.empty()) return;
+								WeddingProposalPacket(name, box_id).dispatch();
+								LOG(LOG_DEBUG, "UIItemInventory: proposal name=" << name << " box=" << box_id);
+							};
+							if (!pre.empty())
+								ask_target(pre);
+							else
+								UI::get().emplace<UISoftKey>([ask_target](const std::string& name) {
+									ask_target(name);
+								}, []() {}, Locale::text("wedding.softkey_target"));
+							// 求婚不消费 USE 道具本体（s9 校验 haveItem 后由 mode2 接受时 removeById）。
+							break;
+						}
 						// 强化卷轴类：先开 EnchantSkill 壳再发包（可拖装备）
 						if (item_id / 10000 == 204) {
 							auto ui = UI::get().get_element<UIEnchantSkill>();
@@ -889,6 +939,20 @@ namespace ms
 								if (text.empty()) return;
 								UseKitePacket(cash_slot, cash_id, text).dispatch();
 							}, []() {}, "Kite");
+						} else if (prefix == 243) {
+							// 095 魔方（243*）：原生双击魔方 = 重洗「选中的装备」。
+							// 本端 UICube 未建，先按装备背包槽位收口（服务端
+							// CashOperationHandler action 0x40 读 EQUIP 槽位）。
+							int16_t cube_slot = slot;
+							int32_t cube_id = item_id;
+							UI::get().emplace<UISoftKey>([cube_slot, cube_id](const std::string& text) {
+								int32_t target = 0;
+								try { if (!text.empty()) target = std::stoi(text); } catch (...) {}
+								if (target <= 0) return;
+								CubeRerollPacket(static_cast<int16_t>(target)).dispatch();
+								LOG(LOG_DEBUG, "UIItemInventory: cube reroll cash_slot=" << cube_slot
+									<< " id=" << cube_id << " equip_slot=" << target);
+							}, []() {}, Locale::text("cube.prompt_slot"), UISoftKey::Mode::Text);
 						} else if (prefix == 512) {
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
@@ -909,6 +973,58 @@ namespace ms
 					}
 					case InventoryType::Id::ETC:
 					{
+						// 婚礼请柬（4031377/4031395，待寄出）：原生 desc「双击邀请函输入您要邀请的角色名」
+						// ⇒ RING_ACTION mode5（guest + marriageId + 本道具槽位）。
+						if (WeddingItem::is_send_invitation(item_id)) {
+							const MarriageInfo& m = Stage::get().get_player().get_marriage();
+							if (m.relationship_id <= 0) {
+								if (auto chatbar = UI::get().get_element<UIChatBar>())
+									chatbar->show_message(Locale::text("wedding.no_invitation").c_str(),
+										UIChatBar::MessageType::YELLOW);
+								break;
+							}
+							int16_t inv_slot = slot;
+							const int32_t rel_id = m.relationship_id;
+							std::string pre;
+							if (auto ci = UI::get().get_element<UICharInfo>())
+								pre = ci->get_target_name();
+							auto ask_guest = [inv_slot, rel_id](const std::string& name) {
+								if (name.empty()) return;
+								WeddingInvitePacket(name, rel_id, inv_slot).dispatch();
+								LOG(LOG_DEBUG, "UIItemInventory: invitation guest=" << name
+									<< " rel=" << rel_id << " slot=" << inv_slot);
+							};
+							if (!pre.empty())
+								ask_guest(pre);
+							else
+								UI::get().emplace<UISoftKey>([ask_guest](const std::string& name) {
+									ask_guest(name);
+								}, []() {}, Locale::text("wedding.softkey_guest"));
+							break;
+						}
+						// 已收到的请柬（4031406/4031407）：双击 → mode6 查看新人
+						if (WeddingItem::is_received_invitation(item_id)) {
+							WeddingOpenInvitationPacket(slot, item_id).dispatch();
+							LOG(LOG_DEBUG, "UIItemInventory: open invitation slot=" << slot
+								<< " id=" << item_id);
+							auto ui = UI::get().get_element<UIWedding>();
+							if (!ui) ui = UI::get().emplace<UIWedding>();
+							else if (!ui->is_active()) ui->makeactive();
+							break;
+						}
+						// 订婚凭据 4031357..4031364（s9 EMPTY_ENGAGEMENT_BOX_* / ENGAGEMENT_RING_*）：
+						// 双击 = 解除订婚（RING_ACTION mode3 → breakMarriageRing → breakEngagement）。
+						// s9 判据 itemId/10000==403 且 ETC 栏真的持有该道具。
+						// 婚礼戒指 11128xx 属 EQUIP 栏，不在本页签，其解约入口走婚礼窗 B 键。
+						if (WeddingItem::is_engagement_token(item_id)) {
+							UI::get().emplace<UIYesNo>(Locale::text("wedding.break_confirm"),
+								[item_id](bool yes) {
+									if (!yes) return;
+									WeddingBreakPacket(item_id).dispatch();
+									LOG(LOG_DEBUG, "UIItemInventory: break token=" << item_id);
+								});
+							break;
+						}
 						// W4：金/银宝箱
 						if (item_id == 4280000 || item_id == 4280001)
 							UseTreasureChestPacket(slot, item_id).dispatch();

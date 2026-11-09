@@ -246,11 +246,8 @@ namespace ms
 
 	float UIQuit::getexppercent(uint16_t level, int64_t exp) const
 	{
-		if (level >= ExpTable::LEVELCAP)
-			return 0.0f;
-
 		return static_cast<float>(
-			static_cast<double>(exp) / ExpTable::values[level]
+			static_cast<double>(exp) / ExpTable::required_exp(level)
 			);
 	}
 

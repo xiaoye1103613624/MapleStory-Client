@@ -59,11 +59,11 @@ namespace ms
 	{
 		UIElement::draw_sprites(alpha);
 
-		title.change_text(guild.name.empty() ? Locale::text("guild.title_plain")
-			: Locale::format("guild.title_named", guild.name));
+		title.change_text(guild().name.empty() ? Locale::text("guild.title_plain")
+			: Locale::format("guild.title_named", guild().name));
 		title.draw(position + Point<int16_t>(10, 8));
 
-		notice_label.change_text(guild.notice);
+		notice_label.change_text(guild().notice);
 		notice_label.draw(position + Point<int16_t>(10, 28));
 
 		int16_t y = 48;
@@ -85,7 +85,7 @@ namespace ms
 			y = 55;
 		}
 
-		for (const auto& m : guild.members)
+		for (const auto& m : guild().members)
 		{
 			OutlinedText row(Text::Font::A11M, Text::Alignment::LEFT,
 				Color::Name::WHITE, Color::Name::BLACK);
@@ -109,9 +109,9 @@ namespace ms
 	void UIGuild::doubleclick(Point<int16_t> cursorpos)
 	{
 		int16_t row = row_by_position(cursorpos - position);
-		if (row >= 0 && row < static_cast<int16_t>(guild.members.size()))
+		if (row >= 0 && row < static_cast<int16_t>(guild().members.size()))
 		{
-			const GuildMember& m = guild.members[row];
+			const GuildMember& m = guild().members[row];
 			selected_cid = m.id;
 			GuildExpelPacket(m.id, m.name).dispatch();
 		}
@@ -123,9 +123,9 @@ namespace ms
 		if (!clicked || !active)
 			return st;
 		int16_t row = row_by_position(cursorpos - position);
-		if (row >= 0 && row < static_cast<int16_t>(guild.members.size()))
+		if (row >= 0 && row < static_cast<int16_t>(guild().members.size()))
 		{
-			selected_cid = guild.members[row].id;
+			selected_cid = guild().members[row].id;
 			LOG(LOG_DEBUG, "UIGuild: select cid=" << selected_cid);
 		}
 		return st;
@@ -133,7 +133,7 @@ namespace ms
 
 	const GuildMember* UIGuild::selected_member() const
 	{
-		for (const auto& m : guild.members)
+		for (const auto& m : guild().members)
 			if (m.id == selected_cid)
 				return &m;
 		return nullptr;
@@ -146,45 +146,34 @@ namespace ms
 
 	void UIGuild::set_guild(const GuildData& g)
 	{
-		guild = g;
+		GuildModel::get().set(g);
 	}
 
 	void UIGuild::clear_guild()
 	{
-		guild = GuildData{};
+		GuildModel::get().clear();
 	}
 
 	void UIGuild::add_member(const GuildMember& m)
 	{
-		guild.members.push_back(m);
+		GuildModel::get().add_member(m);
 	}
 
 	void UIGuild::remove_member(int32_t id)
 	{
 		if (selected_cid == id)
 			selected_cid = 0;
-		for (size_t i = 0; i < guild.members.size(); i++)
-		{
-			if (guild.members[i].id == id)
-			{
-				guild.members.erase(guild.members.begin() + i);
-				break;
-			}
-		}
+		GuildModel::get().remove_member(id);
 	}
 
 	void UIGuild::set_member_rank(int32_t id, int32_t rank)
 	{
-		for (auto& m : guild.members)
-			if (m.id == id)
-				m.rank = rank;
+		GuildModel::get().set_member_rank(id, rank);
 	}
 
 	void UIGuild::set_member_online(int32_t id, bool online)
 	{
-		for (auto& m : guild.members)
-			if (m.id == id)
-				m.online = online;
+		GuildModel::get().set_member_online(id, online);
 	}
 
 	void UIGuild::set_bbs_summary(const std::vector<std::string>& lines)
@@ -194,7 +183,7 @@ namespace ms
 
 	void UIGuild::set_notice(const std::string& notice)
 	{
-		guild.notice = notice;
+		GuildModel::get().mutable_data().notice = notice;
 	}
 
 	int16_t UIGuild::row_by_position(Point<int16_t> pos) const

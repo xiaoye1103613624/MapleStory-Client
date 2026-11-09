@@ -455,7 +455,12 @@ namespace ms
 		// toggle_fullscreen() 里镜像，这里是另一半。
 		Setting<SysOptWindowMode>::get().save(!fullscreen);
 
-		if (!SDL_Init(SDL_INIT_VIDEO))
+		// 声明 PerMonitorV2 DPI 感知：进程不感知时 DWM 会把整个窗口按系统显示缩放
+	// 比例拉伸合成（125%/150% 下 1280x720 背板被放大 1.25x/1.5x），全画面发虚；
+	// 原生 BeiDou.exe 声明了 DPI 感知故清晰。必须在 SDL_Init 之前设置。
+	SDL_SetHint("SDL_WINDOWS_DPI_AWARENESS", "permonitorv2");
+
+	if (!SDL_Init(SDL_INIT_VIDEO))
 			return Error::Code::GLFW;
 
 		// 记录桌面尺寸：check_events() / toggle_fullscreen() 用它判断是否"超出可窗口化

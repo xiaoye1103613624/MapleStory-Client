@@ -188,14 +188,16 @@ namespace ms
 				Locale::text("chat.target.all")
 			);
 
-			// 目标列表：四项文案都走 Locale（非位图文案一律 i18n，用户 2026-11-01 定调）。
+			// 目标列表：八项文案都走 Locale（非位图文案一律 i18n，用户 2026-11-01 定调）。
 			for (uint8_t i = 0; i < ChatTargetIndex::TARGET_COUNT; ++i)
 				classic_target_list_texts.emplace_back(Text::Font::A11M,
-					Text::Alignment::LEFT, Color::Name::BLACK, chat_target_name(i));
+					Text::Alignment::LEFT, Color::Name::WHITE, chat_target_name(i));
 
-			classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color::Name::DUSTYGRAY, 1.0f);
-			classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color::Name::GALLERY, 1.0f);
-			classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color::Name::GRAYOLIVE, 1.0f);
+			classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color(153.0f, 153.0f, 153.0f, 255.0f), 1.0f);
+			classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color(51.0f, 85.0f, 119.0f, 255.0f), 1.0f);
+			// 原生选中条 = 亮蓝 (85,153,187)，整行贯通内区、高 15（行距 16 的帧
+			// 「聊天选择对话的类型.png」实测，见 coords-targetlist.md）。
+			classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 1, Color(85.0f, 153.0f, 187.0f, 255.0f), 1.0f);
 
 			set_classic_log(classic_log_open);
 
@@ -371,15 +373,18 @@ namespace ms
 				return;
 				}
 
-			// 聊天历史框（展开时，输入行上方）：与 tooltip 同一 Q1 判据 ——
-			// 半透明黑底 + 1px 灰边（共享件 TooltipBackdrop），不再裸画 ColorBox。
+			// 聊天历史框（展开时，输入行上方）：半透明压暗底板（用户 2026-11-07 裁决有透明度）。
+			// 实测「聊天框展开时候.png」col y0:场景 (51,51,17)→(24,24,8)、(102,102,34)→(48,40,16)
+			// 三通道比一致≈0.47~0.53 ⇒ 黑色 α≈0.5 平涂，无边；宽=566 全行，高=user_view_y。
+			// **先画底板**，再画消息/滚动条；目标列表在底板之上（draw() 里稍后画）。
 			if (classic_log_open)
 			{
 				// 底边与白带顶齐平：min_view_y == position.y - user_view_y，
 				// 框就是 input_pos - (0, user_view_y) 起、高 user_view_y。
 				Point<int16_t> log_pos = classic_log_position();
 
-				classic_log_backdrop.draw(log_pos, dimension.x(), user_view_y);
+				ColorBox(566, user_view_y, Color(0, 0, 0, 0.5f), 1.0f)
+					.draw(DrawArgument(log_pos));
 
 				// 右端竖滚动条：原生那列灰轨 x 551..564、行 4..70（历史框内），
 				// 拖拽改高度后由 sync_classic_scrollbar 同步轨道长度与可见性。
@@ -388,7 +393,17 @@ namespace ms
 
 			// 输入行（26px 白带）：聊天目标对话框（对谁聊天）+ 带下细条 + 输入文本。
 			if (classic_chat_target)
+			{
 				classic_chat_target.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+			}
+			else
+			{
+				// R6：base/chatTarget 缺失时仍要保证下面的 WHITE 目标文字可读。
+				// 底栏 backgrnd 自带白色输入带，不铺深色框就是白字压白底（用户报的
+				// 「聊天类型不显示 / 聊天 UI 变白底」）。深色取原生 chatTarget 内区色。
+				ColorBox(CHAT_TARGET_W, CHAT_TARGET_H, Color(0x1B3159FF), 1.0f)
+					.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+			}
 
 			// 目标文字：行内墨迹顶 TARGET_TEXT_INK_TOP，绘制点按 classic_target_text
 			// 当前内容（密语对象名，可能是中文也可能是拉丁）自己的度量反解
@@ -403,7 +418,10 @@ namespace ms
 				DrawArgument(input_pos + Point<int16_t>(target_x, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP)))
 			);
 
-			// 目标列表（点开框/箭头后向上展开）：后画，压在历史框底板之上。
+			// 目标列表（点开框/箭头后向上展开）：后画，压在历史框底板与历史消息之上。
+			// 样式 = 原生截帧「聊天选择对话的类型.png」实测：1px 灰沿 (153,153,153) +
+			// 蓝内区 (51,85,119)，行距 16；选中条整行贯通亮蓝 (85,153,187)、高 15，
+			// 正文白字左沿 = 面板左 + 4，墨迹顶 = 面板顶 + 2。hover 初始化为已选中的行。
 			if (classic_target_list_open)
 			{
 				const Point<int16_t> list_pos = classic_target_list_position();
@@ -411,6 +429,7 @@ namespace ms
 
 				classic_target_list_back.setheight(list_h);
 				classic_target_list_inner.setheight(list_h - 2);
+				classic_target_list_mark.setheight(TARGET_LIST_ROW_H - 1); // 选中条高 15（row16）
 
 				classic_target_list_back.draw(list_pos);
 				classic_target_list_inner.draw(list_pos + Point<int16_t>(1, 1));
@@ -1628,7 +1647,9 @@ namespace ms
 			return;
 
 		classic_target_list_open = open;
-		classic_target_hover = 0;
+		// 初始选中当前频道行（hover = 已选中的 row），不是固定 0；
+		// 这样打开时标记条直接落在「对所有人/密语/组队…」对应位置，视觉不跳。
+		classic_target_hover = classic_chat_target_id;
 	}
 
 	void UIChatBar::pick_classic_target(size_t index)
@@ -1636,6 +1657,7 @@ namespace ms
 		if (index >= TARGET_COUNT)
 			return;
 
+		classic_target_hover = index; // 选中后更新 hover，视觉标记条落位到刚点的那行
 		set_classic_target(static_cast<uint8_t>(index));
 
 		// 原生选了「悄悄话」之后要输对象名，走「请输入悄悄话的对象。」那一层

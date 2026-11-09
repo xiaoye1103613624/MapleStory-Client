@@ -101,6 +101,23 @@ namespace ms
 		notice_label.change_text(Locale::format("alliance.notice_line", notice));
 	}
 
+	void UIAlliance::set_guild_names(const std::vector<std::string>& guild_names)
+	{
+		// 0x0D 只带公会块；若公会 id 列表还没到（0x0C/0x0F 未到），
+		// 按块的书写次序，名称数组即可直接当 id 数组的并行展示。
+		if (guilds.empty() && !guild_names.empty())
+		{
+			guilds.resize(guild_names.size(), 0);
+		}
+		this->guild_names = guild_names;
+		refresh_guild_label();
+	}
+
+	void UIAlliance::set_ranks(const std::vector<std::string>& ranks)
+	{
+		this->rank_titles = ranks;
+	}
+
 	void UIAlliance::refresh_guild_label()
 	{
 		std::string txt = Locale::format("alliance.guilds_header", std::to_string(guilds.size()));

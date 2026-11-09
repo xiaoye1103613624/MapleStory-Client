@@ -512,7 +512,18 @@ namespace ms
 		focusedtextfield = tofocus;
 
 		if (focusedtextfield)
-			Window::get().begin_ascii_text_input();
+		{
+			// 桌面端 SDL3 在部分宿主/输入法环境下不产生 SDL_EVENT_TEXT_INPUT，
+			// 而 UI::send_key 会在 text_input_active() 时丢弃 KeyType::TEXT 的
+			// KEY_DOWN。两者相抵消会让 ASCII 输入框（账号/密码/聊天）永远收不到字符。
+			// 与 UISoftKey(Mode::Text) 的既有做法一致：ASCII-only 字段关掉 SDL
+			// 文本输入，改走 KEY_DOWN ASCII 通路；需要中文 IME 的字段仍保留
+			// StartTextInput，由 send_text() 送 UTF-8。
+			if (focusedtextfield->accepts_unicode())
+				Window::get().begin_ascii_text_input();
+			else
+				Window::get().end_ascii_text_input();
+		}
 	}
 
 	void UI::remove_textfield()

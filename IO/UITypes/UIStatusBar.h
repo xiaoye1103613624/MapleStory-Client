@@ -174,6 +174,7 @@ namespace ms
 		Charset classic_showlevel;			// Basic.img/ShowLevel/0 白数字 5x12（LevelNo 缺失时回退）
 		Texture classic_showlevel_bracket;	// ShowLevel/Bracket/right 2x12
 		ColorBox classic_exp_dot;			// number 无 '.' 字模：EXP 小数点用 1x1 白点
+		ColorBox classic_exp_pct_dot;		// 经验值百分比位图 tint（蓝紫，独立于血量白字）
 		Texture classic_key_label[7];		// key/0..6：Shift/Ins/Hm/Pup/Ctrl/Del/End 键名贴纸（key/7 本包为红箭头，非 Pdn）
 		mutable OutlinedText classic_qs_keytext;	// 数字/字母/Pdn 键帽：#AABBCC 字身 + 白描边（原生位图字母缺失，描边文字统一回退）
 		mutable Text classic_qs_label;		// 快捷格中文名称：Text maxwidth（T12b 度量换行路径）

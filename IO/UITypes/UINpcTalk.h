@@ -124,6 +124,9 @@ namespace ms
 		static constexpr int16_t TEXT_WIDTH = 310;
 		// 正文可视区上下各留的余量（沿用原实现的 18px），翻页步长 = 壳高 - 该余量。
 		static constexpr int16_t TEXT_SLACK = 18;
+		// 正文块下缘到 fill 底的按钮留白：正确端截图实测 fill_h=244、正文墨迹底距
+		// fill 底 ≈31px（折算布局高度 +34）。不加时 fill 恰好被正文占满，下页钮压末行。
+		static constexpr int16_t TEXT_BOTTOM_PAD = 34;
 		// IDA sub_9A64FC 非 Avatar/Pet 时正文绘制点相对几何居中再 +7。
 		static constexpr int16_t TEXT_Y_PAD = 7;
 
@@ -131,10 +134,17 @@ namespace ms
 		// 所以位置只能由这里给；不给就会全部叠在窗口左上角。
 		// 尺寸取自 .nxcache/UI.nx：BtClose 85x19 / BtOK,BtYes,BtNo,BtNext,BtPrev 46x18 / BtQ* 57x17。
 		// 纵向底带 BTN_DY=49：两张独立原生帧互证（R25）。
-		// Next/Prev 纵向：IDA sub_9A7C8B / sub_9A8FEF 用 wnd_h-77，Close/OK 用 wnd_h-26，
-		// 差值 51 ⇒ BTN_DY_NEXT = BTN_DY - 51（相对本仓 content height 坐标系）。
+		//（并行会话重校 BTN_DY_NEXT 时把这一行连带删了，cpp:1284 仍在用 ⇒ 补回）
 		static constexpr int16_t BTN_DY = 49;
-		static constexpr int16_t BTN_DY_NEXT = static_cast<int16_t>(BTN_DY - 51);
+		// Next/Prev 纵向：按正确端截图逐像素实测重校——下页钮顶 = fill 底上方 21px
+		// （fill 底 y=264、钮顶 y=243）。窗内坐标 = top.height() + height - 21，
+		// top.height()≈11（UtilDlgEx t 帧，与原生同资产）⇒ -10。旧值 -2 会压到末行正文上。
+		// Next/Prev 纵向：按正确端截图逐像素实测，相对 s 帧（底帧 58px、蓝条即其下半段）起点定位。
+		// 旧实现用 height+const 假设顶帧 11px（实测 UtilDlgEx t=28 / s=58），故改为 s 边界：
+		//   下页/上页 顶 = s 起点 -25（白区右下角）；Close/OK/Yes/No 顶 = s 起点 +26（蓝条上）。
+		static constexpr int16_t BTN_DY_NEXT = -10;  // 仅 Avatar 皮肤沿用旧式（其无 t/c/s 拼接）
+		static constexpr int16_t BTN_NEXT_FROM_S = -25;
+		static constexpr int16_t BTN_DY_FROM_S = 26;
 		// 横向（IDA，相对窗宽 W=top.width()）：
 		//   BtOK          = W - 54          （R25 参考帧 474 = 528-54，曾误当成 Next）
 		//   BtNext/BtPrev = W - inset - 68 / W - inset - 122（inset=10；Avatar 皮肤 inset=140）
@@ -245,6 +255,11 @@ namespace ms
 		int16_t offset;
 		int16_t unitrows;
 		int16_t rowmax;
+		// 滑条滚动步长（px/格）= A12M 行距；正文滚动像素 = offset * scroll_step。
+		int16_t scroll_step = 18;
+		// 标题带拖拽状态（原生 NPC 对话窗可按住顶部标题区拖动整窗）
+		bool dlg_dragging = false;
+		Point<int16_t> dlg_drag_offset = Point<int16_t>();
 		int16_t min_height;
 		// 正文绘制点 y（窗内坐标）。change_text 按 IDA 居中公式写入；SENDSIMPLE 命中同值。
 		int16_t text_draw_y;

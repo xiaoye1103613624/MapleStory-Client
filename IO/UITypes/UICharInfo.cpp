@@ -386,7 +386,7 @@ namespace ms
 			case Buttons::BtTrad:
 			{
 				if (target_cid > 0) {
-					TradeInvitePacket(target_cid).dispatch();
+					dispatch_trade_invite(target_cid);
 					LOG(LOG_DEBUG, "UICharInfo: TradeInvite cid=" << target_cid);
 				}
 				return Button::State::NORMAL;

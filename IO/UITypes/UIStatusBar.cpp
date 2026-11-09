@@ -55,6 +55,7 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Character/ExpTable.h"
+#include "../../Util/Misc.h"
 #include "../../Gameplay/Stage.h"
 
 #include "../../Data/ItemData.h"
@@ -92,6 +93,10 @@ namespace ms
 	constexpr int16_t SEG_W_HP = 108;
 	constexpr int16_t SEG_W_MP = 107;
 	constexpr int16_t SEG_W_EXP = 118;
+	// 经典底栏三联量规整体框（graduation）位置：init_classic 参考截图判定值，
+	// draw_classic 的「百分比叠条」也需要同一几何，故上移为文件级常量。
+	constexpr int16_t GAUGE_X = 218;
+	constexpr int16_t GAUGE_Y = 38;
 
 	// classic 快捷格几何（由 base/quickSlot08|26|32 图集自身反推，非截图量）：
 	//   151 = 9 + 4*28 + 3*7 + 9   → quickSlot08 4 列
@@ -551,8 +556,8 @@ namespace ms
 		hpmp_sprites[2].draw(position, alpha);
 
 		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
-		int16_t hp = stats.get_stat(MapleStat::Id::HP);
-		int16_t mp = stats.get_stat(MapleStat::Id::MP);
+		int32_t hp = stats.get_stat(MapleStat::Id::HP);
+		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
 		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
 		int64_t exp = stats.get_exp();
@@ -1836,13 +1841,10 @@ namespace ms
 	{
 		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
 
-		if (level >= ExpTable::LEVELCAP)
-			return 0.0f;
-
 		int64_t exp = stats.get_exp();
 
 		return static_cast<float>(
-			static_cast<double>(exp) / ExpTable::values[level]
+			static_cast<double>(exp) / ExpTable::required_exp(level)
 			);
 	}
 
@@ -1925,8 +1927,7 @@ namespace ms
 		//   graduation 暗边框整幅跨 x218..557（= 340，与图集同宽）→ GAUGE_X=218、
 		//   三段间距就是图集打包间距 0/109/222（旧「128/255」是把商城红按钮当成了段界）。
 		//   边框 y700..717（18 行）、HP 红填充 y702..715（14 行）→ 图集 y0 = 687 → GAUGE_Y=38。
-		constexpr int16_t GAUGE_X = 218;
-		constexpr int16_t GAUGE_Y = 38;
+		//   （GAUGE_X/GAUGE_Y 已上移为文件级常量，draw_classic 的「百分比叠条」共用。）
 
 		hpmp_pos = Point<int16_t>(GAUGE_X, GAUGE_Y);
 		exp_pos = Point<int16_t>(GAUGE_X, GAUGE_Y);
@@ -2074,6 +2075,7 @@ namespace ms
 
 		// 量规数值改画 number 位图字库（W1）；标签 HP/MP/EXP 用 gauge/bar 图集烘焙，不建 Text。
 		classic_exp_dot = ColorBox(1, 1, Color::Name::WHITE, 1.0f);
+		classic_exp_pct_dot = ColorBox(1, 1, Color(0x8A2BE2FF), 1.0f);
 		joblabel = OutlinedText(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 
 		// 键帽层（W3）：key/0..6 = Shift/Ins/Hm/Pup/Ctrl/Del/End 贴纸（key/7 本包为红箭头，非 Pdn）；
@@ -2304,10 +2306,11 @@ namespace ms
 			classic_mp_flash_sprite.draw(position, alpha);
 
 		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
-		int16_t hp = stats.get_stat(MapleStat::Id::HP);
-		int16_t mp = stats.get_stat(MapleStat::Id::MP);
+		int32_t hp = stats.get_stat(MapleStat::Id::HP);
+		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
 		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
+		int64_t exp = stats.get_exp();
 
 		// 等级：Basic.img/LevelNo 橙盒数字（11x13，推进 11+1），以参考实测单字中心
 		// x = lvbadge_pos.x() + 5 居中对齐；LevelNo 缺失时回退 ShowLevel 白字 + 右括号。
@@ -2352,15 +2355,43 @@ namespace ms
 			"[" + std::to_string(mp) + "/" + std::to_string(maxmp) + "]",
 			DrawArgument(position + mpset_pos));
 
-		// number 无 '.' 字形：小数点用 classic_exp_dot（1x1 白点）补，见 draw_hud_number。
-		std::string expstr = std::to_string(getexppercent() * 100.0f);
-		size_t decpt = expstr.find('.');
+		// EXP 段与 HP/MP 同款位图字库：黑区两行完整数值（上=当前、下=上限，
+		// 上限 = required_exp(level)）；百分比 "[xx.xx%]" 蓝紫、与经验框右缘
+		// 对齐（填充段内 x1..115 / y53..66，7px 字形垂直居中）。exp 异常
+		// （累计值大于需求）时百分比封顶 100%。
+		int64_t need = ExpTable::required_exp(level);
+		double ratio = (need > 0) ? (static_cast<double>(exp) / static_cast<double>(need)) : 0.0;
+		float pct = (ratio >= 1.0) ? 100.0f : static_cast<float>(ratio * 100.0);
 
-		if (decpt != std::string::npos)
-			expstr = expstr.substr(0, decpt + 3);
+		// EXP 数值：字体/颜色按血量——同款位图字库（白字）在经验条上方黑区两行
+		// 显示完整数值，不用「亿/万」单位（位图字库无汉字）。
+		const std::string exp_cur = std::to_string(exp);
+		const std::string exp_need = std::to_string(need);
+		constexpr int16_t EXP_LINE_H = 7;
+		// 整体上移 3px（黑区 y38..52，共 14px 恰好两行 7px 字形），行底 52 不碰经验条顶 53。
+		Point<int16_t> expnum_at = position + statset_pos + Point<int16_t>(0, -3);
+		draw_hud_number(hpmpset, classic_exp_dot, exp_cur, DrawArgument(expnum_at));
+		draw_hud_number(hpmpset, classic_exp_dot, exp_need,
+			DrawArgument(expnum_at + Point<int16_t>(0, EXP_LINE_H)));
 
-		draw_hud_number(hpmpset, classic_exp_dot, "[" + expstr + "%]",
-			DrawArgument(position + statset_pos));
+		char pbuf[16];
+		std::snprintf(pbuf, sizeof(pbuf), "[%.2f%%]", pct);
+		std::string pctstr(pbuf);
+
+		int16_t pw = 0;
+		for (char c : pctstr)
+			pw += hud_advance(hpmpset, c);
+
+		constexpr int16_t EXP_FILL_X = 1;
+		constexpr int16_t EXP_FILL_W = 114;
+		constexpr int16_t EXP_FILL_Y = 53;
+		constexpr int16_t EXP_FILL_H = 14;
+		constexpr int16_t GLYPH_H = 7;
+		// 百分比与经验框右缘对齐（留 2px 边距）
+		Point<int16_t> pct_at(
+			static_cast<int16_t>(GAUGE_X + SEG_EXP + EXP_FILL_X + EXP_FILL_W - pw - 2),
+			static_cast<int16_t>(EXP_FILL_Y + (EXP_FILL_H - GLYPH_H) / 2));
+		draw_hud_number(hpmpset, classic_exp_pct_dot, pctstr, DrawArgument(position + pct_at));
 
 		if (quickslot_active && classic_quickslot)
 		{

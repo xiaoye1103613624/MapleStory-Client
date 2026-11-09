@@ -118,6 +118,10 @@ namespace ms
 
 	void UITemporaryStatView::draw(float) const
 	{
+		// 无 buff 时不渲染（避免一块空的半透明黑板叠在场景/小地图上）
+		if (rows.empty())
+			return;
+
 		// 原生仅 32×32 图标；明细区用半透明黑底（α≈0.55）托住宋体字
 		ColorBox panel(dimension.x(), dimension.y(), Color::Name::BLACK, 0.55f);
 		panel.draw(position);

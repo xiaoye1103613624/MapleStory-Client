@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -368,9 +368,10 @@ namespace ms
 			// 旧值 (92, 274) 出自另一张全屏截图的「窗口原点 (308,2)」推算法，那套
 			// 读法把数字放到框中间（x86..91）且低 6px；本帧逐像素图直接否掉了它。
 			// splabel = A12M + RIGHT，沿用「墨迹左 = draw_x - 推进量 6」⇒ draw_x = 109。
-			// 书封暗栏 55..86：补齐 classic 缺失的技能书图标 + 书名（原生一致性）。
-			bookicon.draw(position + BOOK_TOPLEFT + bookicon.get_origin());
-			booktext.draw(position + Point<int16_t>(28 + booktext.width() / 2, booktext.y_for_ink_top(BOOK_TEXT_INK_TOP)));
+			// 书封暗栏（bookicon / booktext）在此**只画一次**：原生叠放次序是
+			// 底板(按钮)→页码点→书页→书名，书名/书页必须在 draw_buttons 之后才画
+			// （见本函数末尾 line ~509）。之前这里多画了一次 booktext，且 x 取
+			// 28+width/2、与末尾 BOOK_TEXT_CENTER_X 不同 → 「冒险家技能」被显示两遍。
 			splabel.draw(position + Point<int16_t>(109, splabel.y_for_ink_top(268)));
 		}
 		else
@@ -666,9 +667,26 @@ namespace ms
 	{
 		if (!is_skillpoint_enabled())
 		{
+			bool was_active = is_active();
 			UIElement::toggle_active();
 
 			clear_tooltip();
+
+			// K 键关闭走的是 pre_add → toggle_active()（不是 close()）：
+			// 收窗时必须把技能组合栏（UISkillMacroEx，独立窗）一起收掉，
+			// 否则就是用户报的「技能窗关了组合栏还在」。
+			if (was_active && !is_active())
+			{
+				if (auto mex = UI::get().get_element<UISkillMacroEx>())
+					mex->deactivate();
+
+				macro_enabled = false;
+
+				if (auto* b = find_btn(buttons, Buttons::BT_MACRO_OK))
+					b->set_active(false);
+
+				dimension = bg_dimensions;
+			}
 		}
 	}
 
@@ -1084,6 +1102,16 @@ namespace ms
 
 		int32_t id = skills[row].get_id();
 
+		// 升级确认面板资源 UIWindow.img/Skill/skillPoint 在本包 WZ 中缺失
+		// （nx_inspect 实测 NOT FOUND），于是 BT_OKAY 等钮从未创建、
+		// set_skillpoint(true) 恒为 false，点「+」毫无反应（用户报「升级技能按键没反应」）。
+		// 资源缺失时直接扣点发包，保证技能仍能升级；资源齐全时仍走原生确认面板。
+		if (!find_btn(buttons, Buttons::BT_OKAY))
+		{
+			SpendSpPacket(id).dispatch();
+			return;
+		}
+
 		if (sp_enabled && id == sp_id)
 		{
 			set_skillpoint(false);
@@ -1172,6 +1200,10 @@ namespace ms
 	void UISkillBook::close()
 	{
 		clear_tooltip();
+		// 组合栏（UISkillMacroEx）是独立窗：技能窗关闭（X / ESC / K 再按）时
+		// 必须一起收掉，否则留下「技能窗关了组合栏还在」的孤儿窗（item12）。
+		if (auto mex = UI::get().get_element<UISkillMacroEx>())
+			mex->deactivate();
 		deactivate();
 	}
 

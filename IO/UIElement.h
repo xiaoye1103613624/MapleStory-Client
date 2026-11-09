@@ -199,6 +199,7 @@ namespace ms
 			// 必须整工程 Rebuild（增量编译会留下按旧尺寸编译的目标文件）。
 			GAMEOPT,
 			SYSOPT,
+			SPECIALUI,
 			NUM_TYPES
 		};
 

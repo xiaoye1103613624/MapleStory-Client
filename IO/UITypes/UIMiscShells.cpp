@@ -51,6 +51,7 @@
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Net/Packets/TradePackets.h"
+#include "UITrade.h"
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Net/Packets/PetPackets.h"
@@ -2972,9 +2973,11 @@ void UITradingRoom::send_key(int32_t keycode, bool pressed, bool escape)
 		tip_label.change_text(Locale::text("common.confirm"));
 		LOG(LOG_DEBUG, "UITradingRoom: TradeConfirm");
 	} else if (keycode == 'T' || keycode == 't') {
-		TradeTransactionPacket().dispatch();
-		tip_label.change_text(Locale::text("common.transaction"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeTransaction");
+		// s9 Action 枚举虽留 TRANSACTION(0x14)，但 handler 没有 0x14 分支：
+		// 成交只能由双方各发一次 CONFIRM(0x11) 完成握手。
+		TradeConfirmPacket().dispatch();
+		tip_label.change_text(Locale::text("common.confirm"));
+		LOG(LOG_DEBUG, "UITradingRoom: TradeConfirm");
 	} else if (keycode == 'V' || keycode == 'v') {
 		TradeVisitPacket().dispatch();
 		tip_label.change_text(Locale::text("common.visit"));
@@ -3168,9 +3171,10 @@ void UICashTradingRoom::send_key(int32_t keycode, bool pressed, bool escape)
 		tip_label.change_text(Locale::text("common.confirm"));
 		LOG(LOG_DEBUG, "UICashTradingRoom: TradeConfirm");
 	} else if (keycode == 'T' || keycode == 't') {
-		TradeTransactionPacket().dispatch();
-		tip_label.change_text(Locale::text("common.transaction"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeTransaction");
+		// 同上：0x14 是死链路，成交统一用 CONFIRM(0x11)。
+		TradeConfirmPacket().dispatch();
+		tip_label.change_text(Locale::text("common.confirm"));
+		LOG(LOG_DEBUG, "UICashTradingRoom: TradeConfirm");
 	} else if (keycode == 'V' || keycode == 'v') {
 		TradeVisitPacket().dispatch();
 		tip_label.change_text(Locale::text("common.visit"));
@@ -4217,7 +4221,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (auto ci = UI::get().get_element<UICharInfo>())
 				from_ci = ci->get_target_cid();
 			if (from_ci > 0) {
-				TradeInvitePacket(from_ci).dispatch();
+				dispatch_trade_invite(from_ci);
 				LOG(LOG_DEBUG, "UIShortCut: TradeInvite cid=" << from_ci);
 			} else {
 				UI::get().emplace<UISoftKey>([](const std::string& s) {
@@ -4231,7 +4235,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 					try {
 						int32_t cid = std::stoi(s);
 						if (cid > 0) {
-							TradeInvitePacket(cid).dispatch();
+							dispatch_trade_invite(cid);
 							LOG(LOG_DEBUG, "UIShortCut: TradeInvite cid=" << cid);
 						}
 					} catch (...) {}
@@ -4821,10 +4825,12 @@ void UISkillMacroEx::draw(float) const
 
 	slider.setrows(VISIBLE_ROWS, total);
 
-	// 宏条数为 0（新角色 / 服务端没存过宏）时也必须画出**一行空槽**：这一行既是
-	// 「正在编辑哪一条」的唯一可视指示，也是唯一能点到选择钮的地方。整段跳过会让
-	// 面板变成一块白板，用户既看不到版式也没法创建第一条宏（就是「组合栏内部 UI 缺失」）。
-	const int16_t rows = total > 0 ? total : 1;
+	// 宏条数为 0（新角色 / 服务端没存过宏）时也必须画满 **三行空槽**：原生版式
+	// （参考截图 技能框+技能组合框.png）里空角色就是三行空格 + 行尾选择钮，
+	// 这三行既是「正在编辑哪一条」的可视指示，也是点到选择钮创建第一条宏的唯一入口。
+	// 旧写法 rows=total>0?total:1 让空角色只剩一行 —— 就是用户报的「组合栏只有一行」。
+	// idx 上限收在 MACRO_COUNT（macro_icon[] 只有这么多贴图，get_slot 越界会读脏）。
+	const int16_t rows = MACRO_COUNT;
 
 	for (int16_t r = 0; r < VISIBLE_ROWS; r++)
 	{
@@ -5323,7 +5329,7 @@ void UIContextMenu::activate_row(int row)
 		}
 		case 4:
 			if (target_cid > 0) {
-				TradeInvitePacket(target_cid).dispatch();
+				dispatch_trade_invite(target_cid);
 				LOG(LOG_DEBUG, "UIContextMenu: TradeInvite cid=" << target_cid);
 			}
 			deactivate();
@@ -5593,8 +5599,10 @@ void UISlideMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		if (!ui) ui = UI::get().emplace<UIPersonalShop>();
 		else if (!ui->is_active()) ui->makeactive();
 	} else if (keycode == 'T' || keycode == 't') {
-		auto ui = UI::get().get_element<UITradingRoom>();
-		if (!ui) ui = UI::get().emplace<UITradingRoom>();
+		// 面交由服务端 ROOM(5)/3 驱动 UITrade；UITradingRoom 是不接实时数据的 DIY 壳，
+		// 快捷键统一指向真实窗，避免两个交易窗并存、DIY 壳发出错包。
+		auto ui = UI::get().get_element<UITrade>();
+		if (!ui) ui = UI::get().emplace<UITrade>();
 		else if (!ui->is_active()) ui->makeactive();
 	} else if (keycode == 'E' || keycode == 'e') {
 		button_pressed(BtEvent);
@@ -5842,8 +5850,10 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == '6') {
-		auto ui = UI::get().get_element<UITradingRoom>();
-		if (!ui) ui = UI::get().emplace<UITradingRoom>();
+		// 面交由服务端 ROOM(5)/3 驱动 UITrade；UITradingRoom 是不接实时数据的 DIY 壳，
+		// 快捷键统一指向真实窗，避免两个交易窗并存、DIY 壳发出错包。
+		auto ui = UI::get().get_element<UITrade>();
+		if (!ui) ui = UI::get().emplace<UITrade>();
 		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == '7') {
@@ -6474,7 +6484,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			from_ci = ci->get_target_cid();
 		if (from_ci > 0) {
-			TradeInvitePacket(from_ci).dispatch();
+			dispatch_trade_invite(from_ci);
 			LOG(LOG_DEBUG, "UIGameMenu: TradeInvite cid=" << from_ci);
 			deactivate();
 			return;
@@ -6490,7 +6500,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			try {
 				int32_t cid = std::stoi(s);
 				if (cid > 0) {
-					TradeInvitePacket(cid).dispatch();
+					dispatch_trade_invite(cid);
 					LOG(LOG_DEBUG, "UIGameMenu: TradeInvite cid=" << cid);
 				}
 			} catch (...) {}

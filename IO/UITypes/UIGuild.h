@@ -19,6 +19,8 @@
 
 #include "../UIElement.h"
 
+#include "../../Character/GuildModel.h"
+
 #include "../../Graphics/SpecialText.h"
 
 #include <string>
@@ -26,28 +28,8 @@
 
 namespace ms
 {
-	struct GuildMember
-	{
-		int32_t id;
-		std::string name;
-		int32_t job;
-		int32_t level;
-		int32_t rank;
-		bool online;
-		int32_t allianceRank;
-	};
-
-	struct GuildData
-	{
-		int32_t id;
-		std::string name;
-		std::string rankTitles[5];
-		std::vector<GuildMember> members;
-		int32_t capacity;
-		int32_t gp;
-		int32_t allianceId;
-		std::string notice;
-	};
+	// GuildMember / GuildData 已上移至 Character/GuildModel.h（家族页切片，
+	// 2026-11-07）：共用窗 UIUserList 第 3 页签与本浮窗共读同一模型。
 
 	class UIGuild : public UIElement
 	{
@@ -98,7 +80,11 @@ namespace ms
 		void prompt_deny();
 		const GuildMember* selected_member() const;
 
-		GuildData guild;
+		/// 家族数据已上移至 GuildModel（2026-11-07 家族页切片）：
+		/// 视图统一经 guild() 取模型引用，浮窗与共用窗页签共读共写。
+		const GuildData& guild() const { return GuildModel::get().data(); }
+		GuildData& guild_mut() { return GuildModel::get().mutable_data(); }
+
 		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 		mutable OutlinedText notice_label;

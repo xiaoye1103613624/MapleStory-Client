@@ -53,6 +53,10 @@ namespace ms
 			const std::string& notice);
 		void set_notice(const std::string& notice);
 		const std::string& get_notice() const { return alliance_notice; }
+		/// 0x0D getGuildAlliances：只更新成员公会名（id 列表以 0x0C/0x0F 为准）。
+		void set_guild_names(const std::vector<std::string>& guild_names);
+		/// 0x1A changeAllianceRankTitle：更新 5 个职衔（当前展示未用到，先存）。
+		void set_ranks(const std::vector<std::string>& ranks);
 
 	private:
 		void refresh_guild_label();
@@ -77,5 +81,6 @@ namespace ms
 		std::string alliance_notice;
 		std::vector<int32_t> guilds;
 		std::vector<std::string> guild_names;
+		std::vector<std::string> rank_titles;
 	};
 }
