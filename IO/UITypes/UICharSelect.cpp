@@ -827,6 +827,19 @@ namespace ms
 				}
 				else
 				{
+					// 空角色列表（新账号 / 删光角色 / 重连后列表未就绪）：网格导航会把
+					// next_index - COLUMNS + CHARACTER_SLOT0 算到 CHARACTER_SLOT0 之前，
+					// 误触发 BtResetPIC 等无关按钮；与 UIWorldSelect::send_key 的 0 频道
+					// 守卫同口径，此处不进入网格导航。
+					if (characters_count <= 0)
+						return;
+
+					// 删除角色后 selected_character 可能残留越界的绝对索引（remove_character
+					// 只在该值 < characters_count 时刷新选中态）。收敛到当前角色集合，
+					// 否则 std::div 的 quot 越出 rows，导航落到不存在的槽段。
+					if (selected_character >= static_cast<uint8_t>(characters_count))
+						selected_character = static_cast<uint8_t>(characters_count - 1);
+
 					uint8_t selected_index = selected_character;
 					uint8_t index_total = std::min(characters_count, static_cast<int8_t>((selected_page + 1) * PAGESIZE));
 

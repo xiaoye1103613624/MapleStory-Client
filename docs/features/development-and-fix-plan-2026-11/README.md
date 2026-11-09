@@ -82,13 +82,21 @@
 
 ### Wave 1 · 可自测但需构建/协议门禁（L-A，收包与死代码，不改包体字节）
 
+> **round35 现场复核修订（2026-11-09）**：1-2 / 1-4 是 `PacketSwitch.cpp:735-740`
+> 与 `MessagingHandlers.cpp:504-510` 写明理由的**有意裁决**（强接会崩），1-1 的
+> deactivate / LOG 多为 v83 正确语义 → 销案、零改动；同构排查反而揪出
+> `UICharSelect::send_key` 空列表误翻页 / 越界残留误触发 → 立项 1-6 并已修复/
+> 自测/构建。逐字证据见 `notes/wave1-charselect-recheck-20261109.md`。
+> 1-3 死注册 / 1-5 IME 光标本轮未逐字核准，保留 ⏳ 待续，不伪称已核。
+
 | # | 标签 | 功能点 | 证据锚点 | 改动范围 | 自测方式 | 提交 scope |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1-1 | 错 | 5 个收包空实现：`WEDDING_CEREMONY_END(321)`/`MONSTER_CARNIVAL_LEAVE(295)`/`MTS_OPERATION(348,347)`/`FIELD_EFFECT(138)` 仅 deactivate/LOG/return | `feature-gap` §9.5.3 #9；`WaveAShellHandlers.cpp:507,710,3551,3565`、`TestingHandlers.cpp:186` | handler 补最小语义 + 日志 | 构造回包灌入，观察 UI/状态变化 | `#devfix-recv-stubs` |
-| 1-2 | 错 | `RECALCULATE_STATS`(recv 35) 与 `FORCED_STAT_RESET`(35) 撞值致 `RecalculateStatsHandler` 死代码 | `Net/PacketSwitch.cpp:735-740`；`PlayerHandlers.cpp:275` | 注册去重/明确优先级 | `gen_opcode_matrix.py --check` + 灌 35 回包 | `#devfix-stat-opcode-collision` |
-| 1-3 | 错 | `GENDER_DONE(4)`/`CONFIRM_EULA_RESULT(5)` 事实死注册（s9 不下发） | `LoginHandlers.cpp:459,476`；`PacketSwitch.cpp:58-60,436-437` | 标注/收敛死注册 | 登录链烟测无回归 | `#devfix-dead-register` |
-| 1-4 | 错 | `WEEK_EVENT_MESSAGE(77)` 降级 yellow tip、`UIEvent` 16 条硬编码无数据通路 | `MessagingHandlers.cpp:506-510`；`PacketSwitch.cpp:749` | 数据通路接线 | 灌 77 回包看事件列表 | `#devfix-week-event` |
-| 1-5 | 交 | 中文 IME `Textfield` 光标 + 显示链路（IME 已在 `IO/Window.cpp:901-925` 开启） | `feature-gap` §16 #13 | `IO/Components/Textfield` | 本地输入中文看光标/回显 | `#devfix-ime-caret` |
+| 1-1 | 错 | ~~5 个收包空实现需补语义~~ | `WaveAShellHandlers.cpp:507-513,710-714,3551-3578` deactivate/`set_status` 即 v83 结束/离开语义；`TestingHandlers.cpp:184-186` 未知 mode 兜底 | 无（语义正确） | 灌回包看 UI 状态 | ✅ 销案（旧账 #9 已闭环） |
+| 1-2 | 错 | ~~`RECALCULATE_STATS`(35) 撞值死代码~~ | `Net/PacketSwitch.cpp:735-740` 已注销该 emplace 并写明 s9 只发 `FORCED_STAT_RESET`、被顶掉属性不回弹；`PlayerHandlers.cpp:275` handler 仍在 | 无（有意裁决） | `gen_opcode_matrix.py --check` | ✅ 销案（有意裁决，强接会破坏属性回弹） |
+| 1-3 | 错 | `GENDER_DONE(4)`/`CONFIRM_EULA_RESULT(5)` 事实死注册（s9 不下发） | `LoginHandlers.cpp:459,476`；`PacketSwitch.cpp:58-60,436-437` | 标注/收敛死注册 | 登录链烟测无回归 | ⏳ `#devfix-dead-register`（round35 未逐字核准，待续） |
+| 1-4 | 错 | ~~`WEEK_EVENT_MESSAGE(77)` 需接 `UIEvent` 数据通路~~ | `MessagingHandlers.cpp:501-510` 已改走 yellow tip；注释「强开窗让 GM 反馈看不见且 `UIEvent.cpp:123` 资源缺失越界崩」 | 无（有意裁决） | 灌 77 回包看 yellow tip | ✅ 销案（强接会崩） |
+| 1-5 | 交 | 中文 IME `Textfield` 光标 + 显示链路（IME 已在 `IO/Window.cpp:901-925` 开启） | `feature-gap` §16 #13 | `IO/Components/Textfield` | 本地输入中文看光标/回显 | ⏳ `#devfix-ime-caret`（round35 未逐字核准，待续） |
+| **1-6** | 错 | **UICharSelect 键盘导航边界守卫**：空列表 RIGHT 误翻页 `BtPageR` / 删角色后 `selected_character` 残留越界致 `button_pressed` 落到 `CHARACTER_SLOT0` 之前（实测 `8=BtPreview`） | live `UICharSelect.cpp:828-894`（`remove_character():955-987` + `select_last_slot():1322-1335` 残留越界）；同构 round34 `72f1a6ce`；`notes/wave1-charselect-recheck-20261109.md` §2 | `UICharSelect.cpp` 2 处守卫（13+） | `python tools/test_charselect_guard.py`（2 守卫 + 10 边界 PASS，A:press 2→0 / B:misfire 2→0）+ `build_smoke.bat` GATE OK + EXITCODE=0 | ✅ `#devfix-charselect-guard`（本轮已提交） |
 
 ### Wave 2 · 需 orange-wz 内容层 / Photoshop 位图（L-A，UI 拼接·动画·样式，多数当前 ⏳）
 

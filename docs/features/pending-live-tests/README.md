@@ -492,3 +492,22 @@
 | 13-3 频道数缩水 | 先记 high channel（如 ch20），让服务端把该世界频道数缩到 3，再按方向键 | `selected_channel` 收敛到 0，导航不越出 `rows`×`columns` | 需服务端下发变化的世界列表 |
 | 13-4 Channel # SoftKey 延迟 | 弹出「Channel #」输入框后，让 SERVERLIST 刷新（`clear_worlds()`），再确认输入 | 无越界读崩溃，回调被守卫吞掉 | 需真机时序 + 输入框交互 |
 | 13-5 常规回归 | 正常单频道 / 多频道（7、30）世界，上下左右/TAB 导航 + 回车 + 点同频道 `enter_world()` | 导航/选中/进世界与修复前一致，无回归 | 需登录服在跑 + 冷启动 + 手工按键 |
+
+---
+
+## 14. round35 选角页键盘导航边界（#devfix-charselect-guard，需用户一起测）
+
+> 修复内容：`IO/UITypes/UICharSelect.cpp:send_key` 网格分支 2 处守卫（空列表早退 /
+> `selected_character` 越界夹取），同构 round34 `72f1a6ce` 的 `UIWorldSelect` 守卫。
+> 自动自测 `tools/test_charselect_guard.py` 只覆盖**静态守卫 + 算法复刻**
+> （2 守卫 + 10 边界 PASS，守卫 A 空列表 presses 2→0 / 守卫 B 越界 misfire 2→0）
+> + 构建 GATE OK/EXITCODE=0；**真机时序与登录服交互必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-09 22:58 重编译）。
+> 逐字证据见 `development-and-fix-plan-2026-11/notes/wave1-charselect-recheck-20261109.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 14-1 空列表按键 | 新账号（0 角色）进选角页，按 上/下/左/右/TAB/回车 | 不翻页、不弹无关窗、无崩溃 | 需登录服 + 0 角色账号，harness 只覆盖算法 |
+| 14-2 删光残留 | 有角色账号删到只剩 1 个，删完瞬间按方向键 | 不误触发 BtPreview / 无越段跳转 | 需真机时序 + 删除链路 |
+| 14-3 多页导航回归 | 4 / 7 / 15 角色翻页后上下左右 + 回车进游戏 | 导航/选中/进世界与修复前一致 | 需登录服在跑 + 冷启动 + 手工按键 |
+| 14-4 重连竞态 | 选角页触发重连、列表未就绪瞬间按键 | 无崩溃、按键被守卫安全吞掉 | 需掐准 SERVERLIST 刷新窗口 |
