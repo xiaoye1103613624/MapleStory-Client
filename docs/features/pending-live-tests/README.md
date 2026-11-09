@@ -689,3 +689,25 @@
 | 23-2 退格清空后确认 | 数字框退格清空，分别按 RETURN / 点 OK / Textfield 回车 | 不闪退，弹既有 `Only numbers are allowed.` 提示，可重试输入 | 需真机 Textfield 退格 + 三条入口分发观察；自动测无法构造真 UI 事件 |
 | 23-3 超长/溢出数字观感 | 输入 `9999999999` / `2147483648` 及 SoftKey 超长串 | 不崩，弹同一提示（文案是否另立 too-large 专文交裁决），可退出 | 需真机 int32 溢出观察 + 产品文案体感 |
 | 23-4 SoftKey 数字入口回归 | 用 S/N 打开 SoftKey 送合法数字与空串 | 合法数字与修复前一致；空串仍被 `:310 if (s.empty()) return;` 挡住 | 需真机 SoftKey 弹窗 + 输入分发，观测冗余守卫是否重复提示 |
+---
+
+## 24. round45 · UIItemInventory 资源驱动 slot_col 除零旁路守卫（#devfix-iteminventory-slotcol，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42) / §22(round43) / §23(round44) / §24(round45)，与前文
+> `## 21. NPC GetText Avatar + GetNumber min/max A11f`（`:298`）、`## 22. NPC tip 817–821 + Pet inset A11g`（`:313`）、
+> `## 23. ScriptMessage OnPacket 全量 + tip 820 A11h`（`:328`）、`## 24. AskAvatar / sendStyle A11i`（`:343`）
+> 按标题中的 roundNN 区分；历史编号原样保留，不回溯改动。
+
+> 自动自测 `tools/test_iteminventory_slotcol_guard.py` 只覆盖**静态守卫 + 修复前/后算法复刻**
+> （17 守卫 + 3 计数守卫 + 13 场景 PASS，before DIV0 9/BAD 6→after BAD 0，回归 7/7）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（03:29 真重编译 9426B / ERROR_LINES 0）；
+> **当前 shipped v83 包 `UIWindow.img/Item` 无 `pos` 节点走 else 分支恒安全，`if(pos)` 旁路当前不可达**；
+> 带 `pos` 且 `slot_col`/`slot_row` 缺失或为 0 的裁剪资源包、切页签/slider 行数观感必须真机联测，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 03:29 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-iteminventory-slotcol-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 24-1 当前 shipped 包正常态回归 | 用现有 v83 数据开道具栏、切 6 页签、拖滚动条 | 与修复前逐字一致（走 else `slot_col=4`），无空白/越界 | harness 只复刻算法，需真机 UI 渲染与鼠标分发 |
+| 24-2 带 pos 合法资源包 | 换入含完整 `Item/pos`（col>0 且 row>0）的资源包开道具栏 | 布局按资源值渲染，与修复前逐字一致，守卫不触发 | 需真机替换 WZ/IMG 资源包观察排版，自动测无法构造 |
+| 24-3 裁剪/畸形 pos 包 | 换入 `pos` 存在但 `slot_col`/`slot_row` 缺失、为 0 或为负的资源包 | 不闪退，整组回退到 4×6 默认布局，可正常切页签 | 需真机加载畸形资源 + 观察构造/切页签，harness 仅复刻整数路径 |
+| 24-4 C4701 消警复核 | 后续轮次按 §5 建议加 `default:` 或 `newtab = tab` 后重编译 | 编译输出不再出现 `UIItemInventory.cpp(1194): warning C4701`，行为无变化 | 属编译器告警处置，需真机编译输出比对，本轮保守误报不立项 |

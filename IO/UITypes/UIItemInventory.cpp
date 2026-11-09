@@ -146,6 +146,20 @@ namespace ms
 			slot_row = pos["slot_row"];
 			slot_space_x = pos["slot_space_x"];
 			slot_space_y = pos["slot_space_y"];
+
+			// 防御性守卫：子节点缺失/非整数时 nlnx get_integer() 返回默认 0
+			// （includes/NoLifeNx/nlnx/node.cpp:161-179），slot_col / slot_row 为 0
+			// 会让 :310 / :689 / :690 三处整数除法除零、max_slots 归零，构造或切
+			// 页签直接崩。整组回退到与下方 else 相同的 v83 BeiDou 位图实测常量；
+			// 合法带 pos 的资源包（col>0 且 row>0）逐字保留、不触发本分支。
+			if (slot_col <= 0 || slot_row <= 0)
+			{
+				slot_col = 4;
+				slot_row = 6;
+				slot_space_x = 4;
+				slot_space_y = 2;
+				slot_pos = Point<int16_t>(8, 50);
+			}
 		}
 		else
 		{
