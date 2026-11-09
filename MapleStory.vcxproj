@@ -232,6 +232,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Character\Look\PetLook.cpp" />
     <ClCompile Include="Character\Look\Stance.cpp" />
     <ClCompile Include="Character\MapleStat.cpp" />
+    <ClCompile Include="Character\FamilyModel.cpp" />
+    <ClCompile Include="Character\GuildModel.cpp" />
     <ClCompile Include="Character\MonsterBook.cpp" />
     <ClCompile Include="Character\OtherChar.cpp" />
     <ClCompile Include="Character\PassiveBuffs.cpp" />
@@ -384,6 +386,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIGuildBoss.cpp" />
     <ClCompile Include="IO\UITypes\UIMerchant.cpp" />
     <ClCompile Include="IO\UITypes\UIMonsterBook.cpp" />
+    <ClCompile Include="IO\UITypes\UISpecial.cpp" />
     <ClCompile Include="IO\UITypes\UIMaker.cpp" />
     <ClCompile Include="IO\UITypes\UIAlliance.cpp" />
     <ClCompile Include="IO\UITypes\UIChat.cpp" />
@@ -546,6 +549,9 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Character\CharStats.h" />
     <ClInclude Include="Character\EquipStat.h" />
     <ClInclude Include="Character\ExpTable.h" />
+    <ClInclude Include="Character\FamilyModel.h" />
+    <ClInclude Include="Character\GuildModel.h" />
+    <ClInclude Include="Character\MarriageInfo.h" />
     <ClInclude Include="Character\Inventory\Equip.h" />
     <ClInclude Include="Character\Inventory\EquipQuality.h" />
     <ClInclude Include="Character\Inventory\Inventory.h" />
