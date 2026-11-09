@@ -711,3 +711,24 @@
 | 24-2 带 pos 合法资源包 | 换入含完整 `Item/pos`（col>0 且 row>0）的资源包开道具栏 | 布局按资源值渲染，与修复前逐字一致，守卫不触发 | 需真机替换 WZ/IMG 资源包观察排版，自动测无法构造 |
 | 24-3 裁剪/畸形 pos 包 | 换入 `pos` 存在但 `slot_col`/`slot_row` 缺失、为 0 或为负的资源包 | 不闪退，整组回退到 4×6 默认布局，可正常切页签 | 需真机加载畸形资源 + 观察构造/切页签，harness 仅复刻整数路径 |
 | 24-4 C4701 消警复核 | 后续轮次按 §5 建议加 `default:` 或 `newtab = tab` 后重编译 | 编译输出不再出现 `UIItemInventory.cpp(1194): warning C4701`，行为无变化 | 属编译器告警处置，需真机编译输出比对，本轮保守误报不立项 |
+
+## 25. round46 · UICharInfo 子窗口稀疏 map 裸 at(i) 守卫（#devfix-charinfo-buttonguard，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42) / §22(round43) / §23(round44) / §24(round45) / §25(round46)，与前文
+> `## 21. NPC GetText Avatar + GetNumber min/max A11f`（`:298`）、`## 22. NPC tip 817–821 + Pet inset A11g`（`:313`）、
+> `## 23. ScriptMessage OnPacket 全量 + tip 820 A11h`（`:328`）、`## 24. AskAvatar / sendStyle A11i`（`:343`）、
+> `## 25. AskBoxText A11j`（`:357`）按标题中的 roundNN 区分；历史编号原样保留，不回溯改动。
+
+> 自动自测 `tools/test_charinfo_button_guard.py` 只覆盖**静态守卫 + 修复前/后稀疏 map 算法复刻**
+> （13 守卫 + 2 计数守卫 + 13 场景 PASS，before THROW 6→after 0，回归 7/7）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（04:00 真重编译 5256B / ERROR_LINES 0）；
+> **当前 shipped v83 包 `UIWindow.img/UserInfo` 无 collect/damage/character 子节点，子窗循环不常进**；
+> 带 collect/damage 资源包或缺按钮节点的裁剪包、子窗按钮渲染必须真机联测，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 04:00 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-charinfo-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 25-1 当前 shipped 包回归 | 打开人物信息窗、看主窗口按钮与 BtBook 渲染 | 与修复前逐字一致（走 find+判空），无空白/闪退 | harness 只复刻算法，需真机 UI 渲染 |
+| 25-2 带 collect/damage 资源包 | 换入含完整 collect/damage 子窗节点的资源包开人物信息、切子窗 | 子窗按钮按资源渲染，与修复前逐字一致，守卫不触发 | 需真机替换 WZ/IMG 资源包观察排版 |
+| 25-3 裁剪/畸形资源包 | 换入缺部分子窗按钮节点（BtArrayGet/BtFAQ 等）的资源包 | 不闪退，缺失/空指针键跳过，其余按钮照常渲染 | 需真机加载畸形资源 + 观察 draw()，harness 仅复刻稀疏 map 路径 |
+| 25-4 buttons.size() 上界语义裁决 | 真机观察 damage 子窗（`i < buttons.size()`）按钮是否画全 | 若发现按钮被漏画，另立 L-B 裁决改键域上界（本轮不裁决） | 属上界语义正确性，需真机观测后决定是否立项 |

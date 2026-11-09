@@ -275,9 +275,15 @@ namespace ms
 				default_medal.draw(position + bottom_window_adj + Point<int16_t>(61, 66) + Point<int16_t>(38 * div.rem, 38 * div.quot), inter);
 			}
 
+			// buttons 是稀疏 map（try_btn 只在资源节点存在时插入），裸 at(i) 对缺失 id
+			// 会抛 std::out_of_range；主窗口 :225-230 的 find+判空才是库层要求范式
+			// （IO/UIElement.cpp:168-176 注释明言「必须判空后再解引用」）。
 			for (size_t i = Buttons::BtArrayGet; i < Buttons::BtFAQ; i++)
-				if (const auto button = buttons.at(i).get())
-					button->draw(position);
+			{
+				auto it = buttons.find(static_cast<uint16_t>(i));
+				if (it != buttons.end() && it->second)
+					it->second->draw(position);
+			}
 
 			Point<int16_t> text_pos = Point<int16_t>(121, 8);
 
@@ -291,9 +297,15 @@ namespace ms
 			for (Sprite sprite : damage_sprites)
 				sprite.draw(position, inter);
 
+			// 同上：稀疏 map 不能用裸 at(i)。原上界 buttons.size() 是元素个数、
+			// 与 map 键域无关（缺 BtFAQ/BtRegist 时 at 直接抛）；保留原循环边界
+			// 不改动可画到的按钮集合，仅把越界抛异常换成 find 判空跳过。
 			for (size_t i = Buttons::BtFAQ; i < buttons.size(); i++)
-				if (const auto button = buttons.at(i).get())
-					button->draw(position);
+			{
+				auto it = buttons.find(static_cast<uint16_t>(i));
+				if (it != buttons.end() && it->second)
+					it->second->draw(position);
+			}
 		}
 
 		/// Item
