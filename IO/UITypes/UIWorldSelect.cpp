@@ -756,10 +756,35 @@ namespace ms
 		{
 			if (world_selected)
 			{
+				// 重连 / 新一轮 SERVERLIST 会 clear_worlds() 而 world_selected 可能仍为 true；
+				// 与 draw() 的 worldid < worlds.size() 守卫同口径，避免越界读 worlds[worldid]。
+				if (worldid >= worlds.size())
+					return;
+
 				World selectedWorld = worlds[worldid];
 
 				uint8_t selected_channel = (channelid == 0xFF) ? 0 : channelid;
 				uint8_t channel_total = selectedWorld.channel_count;
+
+				// 服务端偶发下发 0 频道的畸形世界：columns=0 会让 std::div 除零(UB)，
+				// 行数与上下导航随之失真。该世界没有可导航的频道网格，仅保留退出逃生键。
+				if (channel_total == 0)
+				{
+					if (escape)
+					{
+						world_selected = false;
+						channel_slide = 1.0f;
+						panel_expand = 1.0f;
+						clear_selected_world();
+					}
+
+					return;
+				}
+
+				// 频道数在重连后可能变小，channelid 仍指向旧频道；收敛到合法网格，
+				// 否则 std::div 的 quot 会越出 rows，上下导航落到不存在的按钮段。
+				if (selected_channel >= channel_total)
+					selected_channel = 0;
 
 				uint8_t columns = std::min(channel_total, COLUMNS);
 
@@ -827,7 +852,10 @@ namespace ms
 						try {
 							int ch = std::stoi(s);
 							if (ch < 0) return;
-							World selectedWorld = worlds[worldid];
+							// 软键盘回调延迟执行：弹出到确认之间可能已重连清空 worlds，
+							// 与 send_key 主路径同口径守卫，避免越界读 worlds[worldid]。
+							if (worldid >= worlds.size()) return;
+							const World& selectedWorld = worlds[worldid];
 							if (ch >= selectedWorld.channel_count) return;
 							button_pressed(static_cast<uint16_t>(ch + Buttons::BtChannel0));
 							LOG(LOG_DEBUG, "UIWorldSelect: SoftKey channel=" << ch);

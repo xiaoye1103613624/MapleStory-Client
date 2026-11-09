@@ -473,3 +473,22 @@
 
 另：开播态（使用 MapleTV Messenger 5075xxx 后 15~60s 的角色立绘 + 5 行文案）
 属显式预留，当前 `SEND_TV` 只保留了提示窗，待 REA/IDA 取证后另立 Plan。
+
+---
+
+## 13. round34 世界选择键盘导航边界（#devfix-worldselect-guard，需用户一起测）
+
+> 修复内容：`IO/UITypes/UIWorldSelect.cpp:send_key` 4 处守卫（重连越界读 /
+> 0 频道 `std::div(x,0)` 除零 / 频道缩水越段 / Channel # SoftKey 延迟回调）。
+> 自动自测 `tools/test_worldselect_guard.py` 只覆盖**静态守卫 + 算法复刻**（4 守卫 +
+> 10 边界 PASS）+ 构建 GATE OK/EXITCODE=0；**时序竞态与 s9 畸形包必须真机联测**，
+> 不冒充已验证。exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-09 22:28 重编译）。
+> 逐字证据见 `development-and-fix-plan-2026-11/notes/wave0-live-recheck-20261109.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 13-1 重连竞态 | 选世界进频道后，触发重新连接/新一轮 SERVERLIST，世界牌尚未重建瞬间按 上/下/左/右/TAB/回车 | 无崩溃、无非法频道按钮段跳转；按键被守卫安全吞掉 | 需真实登录服 + 掐准 `clear_worlds()` 与 `world_selected` 未复位的时序窗口 |
+| 13-2 0 频道畸形 world | 构造/让服务端下发一个 `channel_total==0` 的世界，选中后按方向键、再按 ESC | 方向键无 SIGFPE；ESC 退回世界列表（`world_selected=false` + 面板复位） | 需服务端/代理灌畸形包，客户端本地无法伪造 |
+| 13-3 频道数缩水 | 先记 high channel（如 ch20），让服务端把该世界频道数缩到 3，再按方向键 | `selected_channel` 收敛到 0，导航不越出 `rows`×`columns` | 需服务端下发变化的世界列表 |
+| 13-4 Channel # SoftKey 延迟 | 弹出「Channel #」输入框后，让 SERVERLIST 刷新（`clear_worlds()`），再确认输入 | 无越界读崩溃，回调被守卫吞掉 | 需真机时序 + 输入框交互 |
+| 13-5 常规回归 | 正常单频道 / 多频道（7、30）世界，上下左右/TAB 导航 + 回车 + 点同频道 `enter_world()` | 导航/选中/进世界与修复前一致，无回归 | 需登录服在跑 + 冷启动 + 手工按键 |
