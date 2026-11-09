@@ -58,6 +58,7 @@
 #include "../../IO/UITypes/UIStorage.h"
 #include "../../IO/UITypes/UIDelivery.h"
 #include "../../IO/UITypes/UIEvent.h"
+#include "../../IO/UITypes/UISoftKey.h"
 #include "../../IO/UITypes/UITermsOfService.h"
 #include "../../IO/UITypes/UIStatusBar.h"
 #include "../../IO/UITypes/UIEnergyBar.h"
@@ -70,6 +71,9 @@
 #include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Net/Packets/FamilyPackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h"
+#include "../../Net/Packets/WeddingPackets.h"
+#include "../../Net/Handlers/Helpers/CharacterParser.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 #include <algorithm>
@@ -277,31 +281,33 @@ namespace ms
 			data.name = recv.read_string();
 		if (recv.available())
 			data.message = recv.read_string();
-		std::vector<std::string> privs;
+		// s9 getFamilyInfo 尾段：int count + count × (int ordinal + int used)。
+		// used 落进模型供学院窗「限制次数 0/1」显示。
 		if (recv.available() >= 4) {
 			int32_t n = recv.read_int();
 			if (n < 0) n = 0;
 			if (n > 64) n = 64;
+			data.used.assign(static_cast<size_t>(n), 0);
 			for (int32_t i = 0; i < n && recv.available() >= 8; i++) {
 				int32_t id = recv.read_int();
-				recv.read_int();
-				privs.emplace_back("#" + std::to_string(id));
+				int32_t used = recv.read_int();
+				if (id >= 0 && id < (int32_t)data.used.size())
+					data.used[id] = static_cast<uint8_t>(used ? 1 : 0);
 			}
 		}
 
 		LOG(LOG_DEBUG, "FamilyInfoHandler: name=" << data.name << " rep=" << data.cur_rep
-			<< " privs=" << privs.size());
+			<< " juniors=" << data.juniors << "/" << data.juniors_max
+			<< " used=" << data.used.size());
+
+		// 先落常驻模型（R28-B2：窗不在场也要存，开窗时自取）。
+		FamilyModel::get().set_info(data);
 
 		auto ui = UI::get().get_element<UIFamily>();
 		if (ui && ui->is_active())
-		{
-			ui->set_info(data);
-			if (!privs.empty())
-				ui->set_privileges(privs);
-		}
+			ui->refresh_from_model();
 		while (recv.available())
 			recv.skip_byte();
-		// note
 	}
 
 	void FamilyChartHandler::handle(InPacket& recv) const
@@ -324,7 +330,7 @@ namespace ms
 			e.chr_id = recv.read_int();
 			e.senior_id = recv.read_int();
 			if (recv.available() >= 2) e.job = recv.read_short();
-			if (recv.available()) e.level = static_cast<uint8_t>(recv.read_byte());
+			if (recv.available() >= 2) e.level = static_cast<uint16_t>(recv.read_short());
 			if (recv.available()) e.online = recv.read_byte() != 0;
 			if (recv.available() >= 20) {
 				e.rep = recv.read_int();
@@ -349,33 +355,37 @@ namespace ms
 				recv.read_int();
 			}
 		}
-		std::vector<std::string> chart_privs;
+		// s9 getFamilyChartPacket 尾段与 getFamilyInfo 同构：ordinal/used 对。
+		// 落模型（族谱视角下的特权使用态），不再拼 "#id" 塞窗。
 		if (recv.available() >= 4) {
 			int32_t ent_n = recv.read_int();
 			if (ent_n < 0) ent_n = 0;
 			if (ent_n > 64) ent_n = 64;
+			FamilyInfoData cur = FamilyModel::get().info();
+			if ((int32_t)cur.used.size() < ent_n)
+				cur.used.resize(static_cast<size_t>(ent_n), 0);
 			for (int32_t i = 0; i < ent_n && recv.available() >= 8; i++) {
 				int32_t id = recv.read_int();
-				recv.read_int();
-				chart_privs.emplace_back("#" + std::to_string(id));
+				int32_t used = recv.read_int();
+				if (id >= 0 && id < (int32_t)cur.used.size())
+					cur.used[id] = static_cast<uint8_t>(used ? 1 : 0);
 			}
+			FamilyModel::get().set_info(cur);
 		}
 		if (recv.available() >= 2)
 			add_enabled = recv.read_short();
 
 		const size_t n_entries = entries.size();
 		LOG(LOG_DEBUG, "FamilyChartHandler: viewed=" << viewed_id
-			<< " entries=" << n_entries << " add=" << add_enabled
-			<< " privs=" << chart_privs.size());
+			<< " entries=" << n_entries << " add=" << add_enabled);
 
 		auto ui = UI::get().get_element<UIFamilyTree>();
 		if (ui && ui->is_active())
 			ui->set_chart(viewed_id, std::move(entries), add_enabled);
-		if (!chart_privs.empty())
 		{
 			auto fam = UI::get().get_element<UIFamily>();
 			if (fam && fam->is_active())
-				fam->set_privileges(chart_privs);
+				fam->refresh_from_model();
 		}
 		while (recv.available())
 			recv.skip_byte();
@@ -424,11 +434,14 @@ namespace ms
 		std::string tip = accepted
 			? (name.empty() ? "Family invite accepted." : (name + " joined your family."))
 			: (name.empty() ? "Family invite declined." : (name + " declined the invite."));
-		auto ui = UI::get().get_element<UIFamily>();
-		if (ui && ui->is_active())
+		// 学院窗重做后 set_privileges 不再当 tip 槽用；回执走聊天栏 + 模型刷新
+		// （s9 接受后回 getFamilyInfo，juniors 数会经模型进窗）。
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
 		{
-			ui->set_privileges({ tip });
-			return;
+			auto ui = UI::get().get_element<UIFamily>();
+			if (ui && ui->is_active())
+				ui->refresh_from_model();
 		}
 		auto& markers = Stage::get().get_field_markers();
 		const int32_t mid = 0x33F00001;
@@ -457,11 +470,13 @@ namespace ms
 		};
 		std::string tip = (type < 8) ? msgs[type]
 			: ("Family notice (" + std::to_string(type) + ")");
-		auto ui = UI::get().get_element<UIFamily>();
-		if (ui && ui->is_active())
+		// 同上：结果码走聊天栏；学院窗数据以模型为准。
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
 		{
-			ui->set_privileges({ tip });
-			return;
+			auto ui = UI::get().get_element<UIFamily>();
+			if (ui && ui->is_active())
+				ui->refresh_from_model();
 		}
 		auto& markers = Stage::get().get_field_markers();
 		const int32_t mid = 0x33F00000 ^ static_cast<int32_t>(type);
@@ -499,21 +514,106 @@ namespace ms
 
 	void WeddingGiftResultHandler::handle(InPacket& recv) const
 	{
+		// s9 WeddingPackets.onWeddingGiftResult(mode, itemnames, items)。
+		// mode 决定后续体（WeddingPackets.java:383-421）：
+		//   0x09 = byte nameCount + names
+		//   0x0A / 0x0F = long(32) + byte itemCount + items
+		//   0x0B = byte nameCount + names + long(32) + byte itemCount + items
+		//   0x0C / 0x0E = 无体
 		int8_t mode = recv.available() ? recv.read_byte() : 0;
-		int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
-		LOG(LOG_DEBUG, "WeddingGiftResult mode=" << (int)mode << " item=" << item
-			<< " rem=" << recv.available());
+		LOG(LOG_DEBUG, "WeddingGiftResult mode=" << (int)mode << " rem=" << recv.available());
+
+		std::vector<std::string> wishlist;
+		std::vector<int32_t> gift_itemids;
+
+		auto read_names = [&]() {
+			if (!recv.available()) return;
+			uint8_t n = static_cast<uint8_t>(recv.read_byte());
+			for (uint8_t i = 0; i < n && recv.available(); i++)
+				wishlist.push_back(recv.read_string());
+		};
+		auto read_items = [&]() {
+			if (recv.available() >= 8)
+				recv.read_long();	// s9 writeLong(32)
+			if (!recv.available()) return;
+			uint8_t n = static_cast<uint8_t>(recv.read_byte());
+			for (uint8_t i = 0; i < n && recv.available(); i++)
+			{
+				// s9 addItemInfo：byte itemType（0=道具 1=装备 2=宠物）先行，再 int itemId。
+				const int8_t item_type = recv.read_byte();
+				const int32_t itemid = recv.read_int();
+				gift_itemids.push_back(itemid);
+				const bool cash = recv.read_bool();
+				if (cash)
+					recv.skip(8);
+				if (recv.available() >= 8)
+					recv.skip(8);	// expiration long
+				if (!recv.available())
+					break;
+				if (item_type == 2)
+				{
+					// 宠物体：fixed13 名 + byte lv + short 亲 + byte 饱 + long 过期 + short×2 + int + short
+					recv.skip(13 + 1 + 2 + 1);
+					recv.skip(8);
+					recv.skip(2 + 2 + 4 + 2);
+				}
+				else if (item_type == 1)
+				{
+					recv.skip(2);			// slots + level
+					recv.skip(30);			// 15 × short 属性
+					recv.read_string();		// owner
+					recv.skip(2);			// flag
+					if (cash)
+						recv.skip(10);
+					else
+						// byte 0 + byte itemLevel + int expNibble + int vicious + long 0 = 18
+						recv.skip(2 + 4 + 4 + 8);
+					recv.skip(8 + 4);		// long time + int -1
+					recv.skip(10);			// 5 × short 潜能
+				}
+				else
+				{
+					recv.skip(2);			// quantity
+					recv.read_string();		// owner
+					recv.skip(2);			// flag
+					const int32_t prefix = itemid / 10000;
+					if (prefix == 233 || prefix == 207)
+						recv.skip(8);		// 可充能弹药
+				}
+
+			}
+		};
+
+		switch (static_cast<uint8_t>(mode))
+		{
+			case 0x09: read_names(); break;
+			case 0x0A:
+			case 0x0F: read_items(); break;
+			case 0x0B: read_names(); read_items(); break;
+			default: break;
+		}
 		while (recv.available())
 			recv.skip_byte();
-		std::string tip = item
-			? ("Wedding gift #" + std::to_string(item))
-			: ("Wedding gift m" + std::to_string(mode));
+
+		std::string tip;
+		switch (static_cast<uint8_t>(mode))
+		{
+			case 0x09: tip = Locale::text("wedding.registry_loaded"); break;
+			case 0x0A: tip = Locale::format("wedding.wishlist_shown", std::to_string(gift_itemids.size())); break;
+			case 0x0B: tip = Locale::format("wedding.gift_sent", std::to_string(wishlist.size())); break;
+			case 0x0C: tip = Locale::text("wedding.gift_dup"); break;
+			case 0x0E: tip = Locale::text("wedding.gift_failed"); break;
+			case 0x0F: tip = Locale::format("wedding.gift_taken", std::to_string(gift_itemids.size())); break;
+			default: tip = Locale::format("wedding.gift_mode", std::to_string(mode)); break;
+		}
 		auto ui = UI::get().get_element<UIWedding>();
 		if (!ui) ui = UI::get().emplace<UIWedding>();
 		else if (!ui->is_active()) ui->makeactive();
 		if (ui)
+		{
 			ui->set_invitation(true, tip);
-		// note
+			ui->set_gifts(wishlist, gift_itemids);
+		}
 	}
 
 	void MonsterCarnivalStartHandler::handle(InPacket& recv) const
@@ -830,9 +930,11 @@ namespace ms
 		tip += std::to_string(static_cast<int>(type));
 		tip += "] ";
 		// note
+		std::vector<std::string> tv_lines;
 		for (int i = 0; i < 5; i++)
 		{
 			std::string line = recv.read_string();
+			tv_lines.push_back(line);
 			if (!line.empty())
 			{
 				if (i) tip += " | ";
@@ -849,6 +951,10 @@ namespace ms
 		if (!ui) ui = UI::get().emplace<UIMapleTV>();
 		else if (!ui->is_active()) ui->makeactive();
 		if (ui) ui->set_tip(tip);
+
+		// 场域 TV 大屏（自由市场 9250025 等 info/MapleTV=1 的 NPC）：把 5 行文字
+		// 灌进上屏，就是用户报的「MapleTV 没有画面显示」的正解。
+		Stage::get().get_npcs().broadcast_tv_message(tv_lines);
 		LOG(LOG_DEBUG, "SendTV tip=" << tip);
 	}
 
@@ -858,6 +964,8 @@ namespace ms
 			recv.skip_byte();
 		if (auto ui = UI::get().get_element<UIMapleTV>())
 			ui->deactivate();
+		// 收回场域 TV 大屏文字层（回默认台标）
+		Stage::get().get_npcs().broadcast_tv_message({});
 		LOG(LOG_DEBUG, "RemoveTV");
 	}
 
@@ -1948,11 +2056,16 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		std::string tip = name + (online ? " logged in" : " logged out");
-		auto ui = UI::get().get_element<UIFamily>();
-		if (ui && ui->is_active())
+		// 学院窗 set_privileges 已非 tip 槽：上线/下线提示走聊天栏，
+		// 窗与族谱在场时只刷模型（族谱在线态另有链路）。
 		{
-			ui->set_privileges({ tip });
-			return;
+			auto ui = UI::get().get_element<UIFamily>();
+			if (ui && ui->is_active())
+			{
+				if (auto chatbar = UI::get().get_element<UIChatBar>())
+					chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
+				return;
+			}
 		}
 		if (auto tree = UI::get().get_element<UIFamilyTree>())
 		{
@@ -2001,11 +2114,13 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		std::string tip = "Family senior: " + name;
-		auto ui = UI::get().get_element<UIFamily>();
-		if (ui && ui->is_active())
+		// 学院窗数据以模型为准；新长辈关系走聊天栏回执。
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
 		{
-			ui->set_privileges({ tip });
-			return;
+			auto ui = UI::get().get_element<UIFamily>();
+			if (ui && ui->is_active())
+				ui->refresh_from_model();
 		}
 		auto& markers = Stage::get().get_field_markers();
 		const int32_t mid = 0x33F00002;
@@ -2745,32 +2860,39 @@ namespace ms
 
 	void FamilyPrivilegeListHandler::handle(InPacket& recv) const
 	{
+		// s9 PacketCreator.loadFamily：int count + count ×
+		//   (byte type(≤1→1 否则2) + int repCost + int usageLimit +
+		//    string name + string desc)
+		// 全字段落 FamilyModel（学院窗特权浏览器数据源）。
 		int32_t n = recv.available() >= 4 ? recv.read_int() : 0;
 		if (n < 0) n = 0;
 		if (n > 64) n = 64;
 		LOG(LOG_DEBUG, "FamilyPrivilegeList count=" << n);
-		std::vector<std::string> names;
-		names.reserve(static_cast<size_t>(n));
+		std::vector<FamilyPrivilegeDef> defs;
+		defs.reserve(static_cast<size_t>(n));
 		for (int32_t i = 0; i < n && recv.available(); ++i)
 		{
+			FamilyPrivilegeDef d;
+			d.ordinal = i;
 			if (recv.available())
-				recv.read_byte();
+				recv.read_byte();	// type（1=主动 2=被动，窗不消费）
 			if (recv.available() >= 4)
-				recv.read_int();
+				d.rep_cost = recv.read_int();
 			if (recv.available() >= 4)
-				recv.read_int();
-			std::string a = recv.available() ? recv.read_string() : "";
-			std::string b = recv.available() ? recv.read_string() : "";
-			if (!a.empty())
-				names.push_back(a);
-			else if (!b.empty())
-				names.push_back(b);
+				d.usage_limit = recv.read_int();
+			if (recv.available())
+				d.name = recv.read_string();
+			if (recv.available())
+				d.desc = recv.read_string();
+			defs.push_back(std::move(d));
 		}
 		while (recv.available())
 			recv.skip_byte();
+		FamilyModel::get().set_privileges(defs);
+		LOG(LOG_DEBUG, "FamilyPrivilegeList: model defs=" << defs.size());
 		auto ui = UI::get().get_element<UIFamily>();
 		if (ui && ui->is_active())
-			ui->set_privileges(names);
+			ui->refresh_from_model();
 	}
 
 	void FamilyRepGainHandler::handle(InPacket& recv) const
@@ -2780,12 +2902,14 @@ namespace ms
 		LOG(LOG_DEBUG, "FamilyRep +" << gain << " from=" << from);
 		while (recv.available())
 			recv.skip_byte();
-		std::string tip = "Family REP +" + std::to_string(gain)
-			+ (from.empty() ? "" : (" (" + from + ")"));
+		std::string tip = Locale::format_all("family.rep_gain",
+			{ std::to_string(gain), from });
+		// 乐观加计 + 窗刷新（s9 随后会重发 getFamilyInfo 覆盖真值）。
+		FamilyModel::get().add_rep(gain);
 		auto ui = UI::get().get_element<UIFamily>();
 		if (ui && ui->is_active())
 		{
-			ui->set_privileges({ tip });
+			ui->refresh_from_model();
 			return;
 		}
 		if (auto tree = UI::get().get_element<UIFamilyTree>())
@@ -2804,45 +2928,34 @@ namespace ms
 
 	void FamilySetPrivilegeHandler::handle(InPacket& recv) const
 	{
-		int32_t priv = recv.available() >= 4 ? recv.read_int() : 0;
-		LOG(LOG_DEBUG, "FamilySetPrivilege=" << priv);
+		// 本包真身 = s9 PacketCreator.familyBuff（SendOpcode.FAMILY_SET_PRIVILEGE=0x67）：
+		//   byte type；type∈[2,4] 时再 int buffnr + int(type==3?0:amount)
+		//   + int(type==2?0:amount) + byte 0 + int time(ms)。
+		//   familyBuff(0,...) 语义 = buff 解除（FamilyUseHandler 召唤/heal 收口）。
+		// 旧实现把它当 int 位掩码特权表显示，字段序与语义双错。
+		// 原生客户端此包驱动的是 buff 生效（家族 bonding 类），不是学院窗内容
+		// ⇒ 解析消费 + 上线级日志；学院窗数据仍以模型为准。
+		int8_t type = recv.available() ? recv.read_byte() : 0;
+		int32_t buffnr = 0, a1 = 0, a2 = 0, time_ms = 0;
+		if (type >= 2 && type <= 4)
+		{
+			if (recv.available() >= 4) buffnr = recv.read_int();
+			if (recv.available() >= 4) a1 = recv.read_int();
+			if (recv.available() >= 4) a2 = recv.read_int();
+			if (recv.available()) recv.read_byte();
+			if (recv.available() >= 4) time_ms = recv.read_int();
+		}
 		while (recv.available())
 			recv.skip_byte();
-		static const char* bit_names[] = {
-			"Teleport", "Summon", "DropShare", "EXP",
-			"PartyTP", "PartySummon", "PartyDrop", "PartyEXP",
-			"BossTP", "Meso", "Item", "Pet",
-			"Skill", "Shop", "Wedding", "Event"
-		};
-		std::vector<std::string> names;
-		for (int i = 0; i < 16; ++i)
+		LOG(LOG_INFO, "FamilyBuff type=" << (int)type << " buffnr=" << buffnr
+			<< " a=" << a1 << "/" << a2 << " time=" << time_ms << "ms");
+		if (type == 0)
 		{
-			if (priv & (1 << i))
-				names.emplace_back(bit_names[i]);
+			// 解除：s9 随后 getFamilyInfo 会刷新 used 态；窗在场即刷。
+			auto ui = UI::get().get_element<UIFamily>();
+			if (ui && ui->is_active())
+				ui->refresh_from_model();
 		}
-		if (names.empty())
-			names.emplace_back(priv ? ("priv#" + std::to_string(priv)) : "none");
-		auto ui = UI::get().get_element<UIFamily>();
-		if (ui && ui->is_active())
-		{
-			ui->set_privileges(names);
-			return;
-		}
-		if (auto tree = UI::get().get_element<UIFamilyTree>())
-		{
-			if (tree->is_active())
-				return;
-		}
-		std::string tip = "Family priv";
-		for (size_t i = 0; i < names.size() && i < 4; ++i)
-			tip += (i == 0 ? ": " : ",") + names[i];
-		auto& markers = Stage::get().get_field_markers();
-		const int32_t mid = 0x33F00005;
-		Point<int16_t> pos = Stage::get().get_player().get_position();
-		if (markers.contains(mid))
-			markers.set_label(mid, tip);
-		else
-			markers.spawn(mid, FieldMarker::Kind::DOOR, pos + Point<int16_t>(0, -50), tip, 0, 2500);
 	}
 
 
@@ -3638,36 +3751,47 @@ namespace ms
 		int8_t mode = recv.available() ? recv.read_byte() : 0;
 		if (mode == 0)
 		{
+			// s9 WeddingPackets.onMarriageRequest：byte 0 + string(求婚者名) + int(其 cid)。
+			// 对端向你求婚 → 原生是 YesNo；同意发 RING_ACTION mode2。
 			std::string name = recv.available() ? recv.read_string() : "";
 			int32_t pid = recv.available() >= 4 ? recv.read_int() : 0;
 			LOG(LOG_DEBUG, "MarriageRequest engage from=" << name << " id=" << pid);
 			while (recv.available())
 				recv.skip_byte();
-			auto ui = UI::get().get_element<UIWedding>();
-			if (!ui)
-				ui = UI::get().emplace<UIWedding>();
-			else if (!ui->is_active())
-				ui->makeactive();
-			if (ui)
-				ui->set_invitation(false, "Engage: " + name);
-			(void)pid;
+			std::string msg = Locale::format("wedding.ask_engage", name);
+			UI::get().emplace<UIYesNo>(msg, [pid, name](bool yes) {
+				WeddingAnswerPacket(name, pid, yes).dispatch();
+				LOG(LOG_DEBUG, "MarriageRequest: answer=" << yes << " from=" << name);
+			});
 		}
 		else if (mode == 9)
 		{
-			int n = 0;
-			while (recv.available() >= 4)
-			{
-				recv.read_int();
-				++n;
-			}
-			while (recv.available())
-				recv.skip_byte();
-			std::string tip = "Wishlist n=" + std::to_string(n);
-			LOG(LOG_DEBUG, "MarriageRequest " << tip);
-			auto ui = UI::get().get_element<UIWedding>();
-			if (!ui) ui = UI::get().emplace<UIWedding>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui) ui->set_invitation(false, tip);
+			// s9 WeddingPackets.sendWishList：仅 byte 9，无后续体。
+			// = 服务端（NPC 9201010 createMarriageWishlist）请新人录心愿单；
+			// 客户端收齐 ≤10 条道具名后回 RING_ACTION mode9。
+			LOG(LOG_DEBUG, "MarriageRequest: wishlist prompt");
+			UI::get().emplace<UISoftKey>([](const std::string& line) {
+				if (line.empty()) return;
+				// 逗号分隔多条（软键盘单行输入限制）；服务端截到 10 条。
+				std::vector<std::string> items;
+				size_t start = 0;
+				while (start <= line.size() && items.size() < 10)
+				{
+					size_t c = line.find(',', start);
+					if (c == std::string::npos)
+					{
+						items.push_back(line.substr(start));
+						break;
+					}
+					items.push_back(line.substr(start, c - start));
+					start = c + 1;
+				}
+				if (!items.empty())
+				{
+					WeddingWishlistPacket(items).dispatch();
+					LOG(LOG_DEBUG, "MarriageRequest: wishlist sent n=" << items.size());
+				}
+			}, []() {}, Locale::text("wedding.softkey_wishlist"));
 		}
 		else
 		{
@@ -3697,24 +3821,39 @@ namespace ms
 		};
 		if (msg == 11)
 		{
-			push_wedding("Marriage / engagement updated", false);
+			// s9 OnMarriageResult(marriageId, chr, wedding)：与登录 addRingInfo 的
+			// marriage 块逐字段同构（int relId + groomId + brideId + short status +
+			// int ringId×2 + fixed13 名×2）。收下即刷新本地 MarriageInfo。
+			MarriageInfo info;
+			if (CharacterParser::parse_marriage_block(recv, info))
+			{
+				Stage::get().get_player().get_marriage() = std::move(info);
+				LOG(LOG_DEBUG, "MarriageResult: marriage updated rel="
+					<< Stage::get().get_player().get_marriage().relationship_id
+					<< " status=" << Stage::get().get_player().get_marriage().status);
+			}
+			push_wedding(Locale::text("wedding.result_updated"), false);
 		}
 		else if (msg == 15)
 		{
 			std::string groom = recv.available() ? recv.read_string() : "";
 			std::string bride = recv.available() ? recv.read_string() : "";
-			push_wedding(groom + " & " + bride, true);
+			// s9 sendWeddingInvitation 尾部 short：0=Cathedral 普通 1=Cathedral 高级 2=Chapel 普通。
+			// 即 0/1 走 Cathedral 贴图，仅 2 用 Vegas(Chapel)。s9 目前恒写 1。
+			int16_t wt = recv.available() >= 2 ? recv.read_short() : 1;
+			push_wedding(groom + " & " + bride, wt != 2);
 		}
 		else if (msg == 36)
 		{
 			if (recv.available())
 				recv.read_byte();
-			std::string text = recv.available() ? recv.read_string() : "You are now engaged.";
+			std::string text = recv.available() ? recv.read_string() : Locale::text("wedding.now_engaged");
 			push_wedding(text, false);
 		}
 		else
 		{
-			push_wedding("Marriage result " + std::to_string(msg), false);
+			// msg 0 = s9 失败回执（OnMarriageResult((byte)0)），原生弹「等待她的回应」窗关闭。
+			push_wedding(Locale::format("wedding.result_msg", std::to_string(msg)), false);
 		}
 		while (recv.available())
 			recv.skip_byte();
@@ -3727,17 +3866,17 @@ namespace ms
 		LOG(LOG_DEBUG, "PartnerMapTransfer map=" << mapid << " partner=" << partner);
 		while (recv.available())
 			recv.skip_byte();
-		std::string tip = "Partner -> map " + std::to_string(mapid);
-		if (auto ci = UI::get().get_element<UICharInfo>())
+		// 只更新数据层；R28-B2：不为「配偶换图」这种纯信息包开婚礼窗。
+		// s9 登录/结契/解契都会发（OnNotifyWeddingPartnerTransfer(0,0) 即解绑）。
+		MarriageInfo& m = Stage::get().get_player().get_marriage();
+		m.partner_mapid = mapid;
+		if (mapid == 0 && partner == 0)
+			m = MarriageInfo{};
+		if (auto ui = UI::get().get_element<UIWedding>())
 		{
-			if (ci->is_active())
-				return;
+			if (ui->is_active())
+				ui->set_invitation(false, "Partner -> map " + std::to_string(mapid));
 		}
-		auto ui = UI::get().get_element<UIWedding>();
-		if (!ui) ui = UI::get().emplace<UIWedding>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui) ui->set_invitation(false, tip);
-		(void)partner;
 	}
 
 	void WeddingPhotoHandler::handle(InPacket& recv) const

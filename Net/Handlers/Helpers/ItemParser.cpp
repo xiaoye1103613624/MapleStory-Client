@@ -113,7 +113,16 @@ namespace ms
 				slot = -slot;
 			}
 
-			inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious);
+			// 095 潜能/魔方：s9 在 equip 包尾部（writeInt(-1) 之后）追加 5 个 int16 潜能行。
+		// 与 s9 PacketCreator.addItem 的 equip 序列化严格对齐；旧 s9 不发时本协议会少读 10 字节，
+		// 故必须与 s9 同步上线。
+		int16_t p1 = recv.read_short();
+		int16_t p2 = recv.read_short();
+		int16_t p3 = recv.read_short();
+		int16_t bp1 = recv.read_short();
+		int16_t bp2 = recv.read_short();
+
+		inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious, p1, p2, p3, bp1, bp2);
 		}
 
 		void parse_item(InPacket& recv, InventoryType::Id invtype, int16_t slot, Inventory& inventory)

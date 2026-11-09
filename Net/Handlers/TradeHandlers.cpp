@@ -54,43 +54,57 @@ namespace ms
 		recv.skip_int(); // 3 pets
 	}
 
-	// 跳过 s9 addItemInfo(item, true)（zeroPosition）并取出 itemId，供雇佣商人商品展示。
-	static void skip_iteminfo(InPacket& recv, int32_t& itemid_out)
+	// 严格按 s9 PacketCreator.addItemInfo(p, item, /*zeroPosition=*/true) 解析。
+	// 三处旧版错位：PET 块是 35 字节（不是 37）；EQUIP 尾部还有 5 个 short 潜能行
+	// （095 追加 10 字节）；普通道具的 quantity 要作为结果返回。
+	static void parse_iteminfo(InPacket& recv, int32_t& itemid_out, int16_t& quantity_out)
 	{
+		quantity_out = 1;
 		uint8_t itemType = recv.read_byte();
 		int32_t itemid = recv.read_int();
 		itemid_out = itemid;
 
 		bool isCash = recv.read_bool();
 		if (isCash)
-			recv.skip(8); // cash id (long)
-		recv.skip(8);     // expiration time (long)
+			recv.skip(8); // cash id / pet id / ring id (long)
+		recv.skip(8);     // expiration (long)
 
+		if (itemid >= 5000000 && itemid <= 5000102) // PET
+		{
+			// 13 name + 1 level + 2 tameness + 1 fullness + 8 expiration
+			// + 2 attribute + 2 skill + 4 remainLife + 2 attribute = 35
+			recv.skip(35);
+			return;
+		}
 		if (itemType == 1) // EQUIP
 		{
-			recv.skip(2);  // upgradeSlots + level
-			recv.skip(30); // 15 shorts
+			recv.skip(2);   // upgradeSlots + level
+			recv.skip(30);  // 15 shorts (str..jump)
 			recv.skip_string(); // owner
 			recv.skip_short();  // flag
 			if (isCash)
-				recv.skip(10);
+				recv.skip(10); // 10 x 0x40
 			else
-				recv.skip(18); // byte + byte + int + int + long
-			recv.skip(8);  // getTime(-2)
-			recv.skip(4);  // -1
-		}
-		else if (itemid >= 5000000 && itemid <= 5000102) // PET
-		{
-			recv.skip(37); // 宠物块（固定串13 + 等级/亲密度/饱食 + 到期 + 属性等）
+				recv.skip(18); // byte + byte + int expNibble + int vicious + long
+			recv.skip(8);   // getTime(-2)
+			recv.skip(4);   // -1
+			recv.skip(10);  // 5 x short 潜能（potential1..3 / bonus1..2）
 		}
 		else // 普通道具
 		{
-			recv.skip_short();  // quantity
+			quantity_out = recv.read_short();
 			recv.skip_string(); // owner
 			recv.skip_short();  // flag
-			if ((itemid / 10000 == 233) || (itemid / 10000 == 207))
-				recv.skip(8); // rechargeable 附加
+			if ((itemid / 10000 == 207) || (itemid / 10000 == 233))
+				recv.skip(8); // rechargeable: int 2 + 4 字节标记
 		}
+	}
+
+	// 供雇佣商人商品展示：只需 itemId，数量忽略。
+	static void skip_iteminfo(InPacket& recv, int32_t& itemid_out)
+	{
+		int16_t quantity = 1;
+		parse_iteminfo(recv, itemid_out, quantity);
 	}
 
 	void TradeHandler::handle(InPacket& recv) const
@@ -325,10 +339,37 @@ namespace ms
 				}
 				if (sub == 3) // 交易开始（getTradeStart）
 				{
+					// s9 PacketCreator.getTradeStart：
+					//   ROOM(5), 3, 2, number,
+					//   [number==1 ? 0 + charLook(partner) + partnerName],
+					//   number, charLook(self), selfName, 0xFF
+					// number=0 为发起人（此时伙伴尚未进入），1 为被邀请人。
+					uint8_t number = 0;
+					std::string self;
+					std::string partner;
+					try
+					{
+						if (recv.available())
+							recv.read_byte(); // 2 (slotMax)
+						if (recv.available())
+							number = static_cast<uint8_t>(recv.read_byte());
+						if (number == 1)
+						{
+							recv.read_byte(); // 0
+							skip_charlook(recv);
+							partner = recv.read_string();
+						}
+						recv.read_byte(); // number 重复
+						skip_charlook(recv);
+						self = recv.read_string();
+					}
+					catch (...)
+					{
+					}
 					while (recv.available())
 						recv.skip_byte();
 					if (ensure_trade())
-						uitrade->start_trade();
+						uitrade->start_trade(number, self, partner);
 					// Trade UI 已开，不 SM
 					break;
 				}
@@ -391,10 +432,11 @@ namespace ms
 				recv.skip(4);
 				while (recv.available())
 					recv.skip_byte();
-				// 游戏设置「交易申请」拒绝 → 静默 Exit，不弹 YesNo
+				// 游戏设置「交易申请」拒绝 → 发 DECLINE(3) 拒绝邀请，不弹 YesNo。
+				// 不能用 EXIT(0xA)：那是"退出已建立的交易"，会走 cancelTrade，语义不同。
 				if (!UIGameOpt::accepts(UIGameOpt::TRADE_APPLY))
 				{
-					TradeExitPacket().dispatch();
+					TradeDeclinePacket().dispatch();
 					LOG(LOG_DEBUG, "TradeHandler: GameOpt refuse TRADE_APPLY from=" << name);
 					break;
 				}
@@ -412,7 +454,7 @@ namespace ms
 					}
 					else
 					{
-						TradeExitPacket().dispatch();
+						TradeDeclinePacket().dispatch();
 						LOG(LOG_DEBUG, "TradeHandler: deny trade from=" << name);
 					}
 				});
@@ -443,12 +485,13 @@ namespace ms
 				(void)itemid; (void)quantity;
 				break;
 			}
-			case 0x11: // getTradeConfirmation（锁定）
+			case 0x11: // getTradeConfirmation：对方按下确认并已锁定
 			{
+				// s9 Trade.lockTrade() 只给 partner 发这个包，所以收到它表示"对方已确认"。
 				while (recv.available())
 					recv.skip_byte();
 				if (ensure_trade())
-					uitrade->set_locked();
+					uitrade->set_partner_locked();
 				break;
 			}
 			case 0x3A: // minigame READY
@@ -536,23 +579,37 @@ namespace ms
 				ensure_sm(Color::Name::WHITE, tip);
 				break;
 			}
-			case 0x0A: // getTradeResult
+			case 0x0A: // getTradeResult：EXIT(0xA) + number + operation
 			{
-				recv.read_byte(); // number
-				uint8_t op = recv.read_byte();
+				uint8_t number = static_cast<uint8_t>(recv.read_byte());
+				uint8_t op = static_cast<uint8_t>(recv.read_byte());
 				while (recv.available())
 					recv.skip_byte();
 				if (ensure_trade())
-					uitrade->result(0, op);
-				else
-					ensure_sm(Color::Name::WHITE,
-						op == 6 ? "Trade success" : ("Trade result " + std::to_string(op)));
+					uitrade->result(number, op);
+
+				// s9 Trade.TradeResult：1 无响应 / 2 对方取消 / 7 成功 / 8 失败 /
+				// 9 唯一道具上限 / 12 不同地图 / 13 文件损坏。旧代码把 6 当成功是错的。
+				std::string tip;
+				Color::Name color = Color::Name::WHITE;
+				switch (op)
+				{
+					case 1: tip = Locale::text("trade.result.no_response"); break;
+					case 2: tip = Locale::text("trade.result.partner_cancel"); break;
+					case 7: tip = Locale::text("trade.result.success"); color = Color::Name::YELLOW; break;
+					case 8: tip = Locale::text("trade.result.unsuccessful"); color = Color::Name::RED; break;
+					case 9: tip = Locale::text("trade.result.unique_limit"); color = Color::Name::RED; break;
+					case 12: tip = Locale::text("trade.result.another_map"); color = Color::Name::RED; break;
+					case 13: tip = Locale::text("trade.result.damaged"); color = Color::Name::RED; break;
+					default: tip = Locale::format("trade.result.unknown", std::to_string(op)); break;
+				}
+				ensure_sm(color, tip);
 				break;
 			}
-			case 6: // getTradeChat
+			case 6: // getTradeChat：CHAT(6) + CHAT_THING(8) + byte owner + "name : msg"
 			{
 				recv.read_byte(); // 8
-				recv.read_bool();
+				recv.read_byte(); // owner: 0 = 自己 / 1 = 对方（s9 写的是 byte 不是 bool）
 				std::string msg = recv.read_string();
 				while (recv.available())
 					recv.skip_byte();
@@ -585,45 +642,8 @@ namespace ms
 
 	void TradeHandler::parse_trade_item(InPacket& recv, int32_t& itemid, int16_t& quantity) const
 	{
-		uint8_t type = recv.read_byte();
-		int32_t iid = recv.read_int();
-		itemid = iid;
-
-		if (type == 1) // EQUIP
-		{
-			recv.read_bool();
-			recv.read_long();
-			recv.read_byte();
-			recv.read_byte();
-			EnumMap<EquipStat::Id, uint16_t> stats;
-			for (auto& s : stats)
-				s.second = recv.read_short();
-			recv.read_string();
-			recv.read_short();
-			recv.skip(8);
-			quantity = 1;
-		}
-		else if (iid >= 5000000 && iid <= 5000102)
-		{
-			recv.read_bool();
-			recv.read_long();
-			recv.read_padded_string(13);
-			recv.read_byte();
-			recv.read_short();
-			recv.read_byte();
-			recv.skip(18);
-			quantity = 1;
-		}
-		else
-		{
-			recv.read_bool();
-			recv.read_long();
-			int16_t qty = recv.read_short();
-			recv.read_string();
-			recv.read_short();
-			if ((iid / 10000 == 233) || (iid / 10000 == 207))
-				recv.skip(8);
-			quantity = qty;
-		}
+		// 与雇佣商人共用 addItemInfo(zeroPosition=true) 的解析，避免两处布局漂移：
+		// 旧实现漏跳 cashId、装备潜能尾部 10 字节，且宠物块按 37 字节跳（实为 35）。
+		parse_iteminfo(recv, itemid, quantity);
 	}
 }

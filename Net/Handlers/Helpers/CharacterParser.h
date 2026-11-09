@@ -31,7 +31,11 @@ namespace ms
 		void parse_questlog(InPacket& recv, QuestLog& quests);
 		void parse_ring1(InPacket& recv);
 		void parse_ring2(InPacket& recv);
-		void parse_ring3(InPacket& recv);
+		/// marriage 块（s9 addRingInfo 第三段）：解析出订婚/结婚状态。
+		void parse_ring3(InPacket& recv, MarriageInfo& marriage);
+		/// 只解析块体（short present + 后续字段），供 MARRIAGE_RESULT mode11 复用：
+		/// s9 WeddingPackets.OnMarriageResult 与 addRingInfo 的写序逐字段同构。
+		bool parse_marriage_block(InPacket& recv, MarriageInfo& marriage);
 		void parse_minigame(InPacket& recv);
 		void parse_monsterbook(InPacket& recv, MonsterBook& monsterbook);
 		void parse_teleportrock(InPacket& recv, TeleportRock& teleportrock);

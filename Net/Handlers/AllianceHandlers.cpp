@@ -6,7 +6,10 @@
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIAlliance.h"
 #include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UINotice.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Net/Packets/AlliancePackets.h"
 #include "../../Util/Misc.h"
 
 namespace ms
@@ -62,12 +65,12 @@ namespace ms
 		};
 
 		auto ensure_ui = []() -> Optional<UIAlliance> {
+			// R28-B2：联盟数据只回写「已在场且活动」的窗，绝不为回包开窗。
+			// 开窗方（UIAlliance ctor 发 0x01 请求）自会在活动态收到 0x0C。
 			auto ui = UI::get().get_element<UIAlliance>();
-			if (!ui)
-				ui = UI::get().emplace<UIAlliance>();
-			else if (!ui->is_active())
-				ui->makeactive();
-			return ui;
+			if (ui && ui->is_active())
+				return ui;
+			return {};
 		};
 
 		uint8_t action = recv.read_byte();
@@ -108,6 +111,102 @@ namespace ms
 					break;
 				}
 				ensure_sm(Color::Name::YELLOW, notice.empty() ? "Alliance notice" : notice);
+				break;
+			}
+			case 0x02: // sendShowInfo（对应 c2s 0x01 刷新）：aid + cid，数据已在 0x0C/0x0F
+			{
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "Alliance: show info echo (0x02)");
+				break;
+			}
+			case 0x03: // allianceInvite —— 他盟邀请本盟加入
+			{
+				// s9 GuildPackets.allianceInvite：int allianceid + string(邀请人/本盟会名) + short 0。
+				int32_t aid = recv.read_int();
+				std::string from = recv.available() ? recv.read_string() : "";
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "AllianceInvite aid=" << aid << " from=" << from);
+				if (!UIGameOpt::accepts(UIGameOpt::UNION_APPLY))
+				{
+					LOG(LOG_DEBUG, "AllianceInvite: GameOpt refuse UNION_APPLY from=" << from);
+					break;
+				}
+				std::string msg = from.empty()
+					? std::string("Guild alliance invitation.")
+					: ("Invitation from " + from + ". Join the alliance?");
+				UI::get().emplace<UIYesNo>(msg, [aid](bool yes) {
+					// s9 AllianceOperationHandler case 0x04：int allianceid（仅盟主可发）。
+					AllianceAcceptPacket(aid).dispatch();
+					LOG(LOG_DEBUG, "AllianceInvite: accept=" << yes << " aid=" << aid);
+				});
+				break;
+			}
+			case 0x0D: // getGuildAlliances —— 全量公会块（含名称）
+			{
+				// s9 写的是 int count（GuildPackets.java:413），不是 byte。
+				const int32_t count = recv.read_int();
+				std::vector<std::string> gnames;
+				for (int32_t i = 0; i < count && recv.available(); i++)
+					gnames.push_back(parse_guild_info_name(recv));
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "AllianceInfo: 0x0D guilds=" << gnames.size());
+				// R28-B2：窗不在场不弹窗，仅记数据（下次开窗自取）。
+				if (auto ui = UI::get().get_element<UIAlliance>())
+				{
+					if (ui->is_active())
+						ui->set_guild_names(gnames);
+				}
+				break;
+			}
+			case 0x1D: // disbandAlliance：本盟被踢/联盟解散 → 只清窗内数据
+			{
+				if (recv.available() >= 4)
+					recv.read_int(); // alliance id
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "Alliance: disband/expel (0x1D)");
+				if (auto ui = UI::get().get_element<UIAlliance>())
+				{
+					if (ui->is_active())
+					{
+						ui->set_alliance(0, "", std::vector<std::string>{},
+							std::vector<int32_t>{}, std::vector<std::string>{}, "");
+					}
+				}
+				break;
+			}
+			case 0x0E: // allianceMemberOnline：int aid + gid + cid + bool online（不弹窗）
+			{
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "Alliance: member online/offline (0x0E)");
+				break;
+			}
+			case 0x18: // updateAllianceJobLevel：aid + gid + cid + level + job（不弹窗）
+			{
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "Alliance: member job/level update (0x18)");
+				break;
+			}
+			case 0x1A: // changeAllianceRankTitle：int aid + 5 × string
+			{
+				if (recv.available() >= 4)
+					recv.read_int();
+				std::vector<std::string> ranks;
+				for (int i = 0; i < 5 && recv.available(); i++)
+					ranks.push_back(recv.read_string());
+				while (recv.available())
+					recv.skip_byte();
+				LOG(LOG_DEBUG, "Alliance: rank titles (0x1A) n=" << ranks.size());
+				if (auto ui = UI::get().get_element<UIAlliance>())
+				{
+					if (ui->is_active())
+						ui->set_ranks(ranks);
+				}
 				break;
 			}
 			case 0x0F: // updateAllianceInfo

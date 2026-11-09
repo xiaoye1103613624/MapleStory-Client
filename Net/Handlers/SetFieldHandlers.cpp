@@ -286,9 +286,29 @@ namespace ms
 
 		Stage::get().loadplayer(playerentry);
 
-		LoginParser::parse_stats(recv);
+		// SET_FIELD 携带服务端刚从 DB 装载并修正过的权威角色状态；CHARLIST 的
+		// entry 只服务于选角页，其当前 HP/MP 在部分服务端版本是新手默认值。
+		// 旧实现把 parse_stats 的返回值丢弃，Player 一直沿用选角页数据，
+		// 于是进图首帧出现 50/3622 这类假血条，直到后续 STAT_CHANGED 才纠正。
+		// 这里把进图包 stats 应用回 Player，保证「下线多少、上线就是多少」。
+		StatsEntry fieldstats = LoginParser::parse_stats(recv);
 
 		Player& player = Stage::get().get_player();
+
+		static const MapleStat::Id synced_stats[] = {
+			MapleStat::Id::LEVEL, MapleStat::Id::JOB,
+			MapleStat::Id::STR, MapleStat::Id::DEX, MapleStat::Id::INT, MapleStat::Id::LUK,
+			MapleStat::Id::HP, MapleStat::Id::MAXHP,
+			MapleStat::Id::MP, MapleStat::Id::MAXMP,
+			MapleStat::Id::AP, MapleStat::Id::SP, MapleStat::Id::FAME
+		};
+
+		auto& playerstats = player.get_stats();
+
+		for (MapleStat::Id id : synced_stats)
+			playerstats.set_stat(id, fieldstats.stats[id]);
+
+		playerstats.set_exp(fieldstats.exp);
 
 		recv.read_byte(); // 'buddycap'
 
@@ -302,7 +322,7 @@ namespace ms
 		CharacterParser::parse_minigame(recv);
 		CharacterParser::parse_ring1(recv);
 		CharacterParser::parse_ring2(recv);
-		CharacterParser::parse_ring3(recv);
+		CharacterParser::parse_ring3(recv, player.get_marriage());
 		CharacterParser::parse_teleportrock(recv, player.get_teleportrock());
 		CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
 		CharacterParser::parse_nyinfo(recv);

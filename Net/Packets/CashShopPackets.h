@@ -178,4 +178,15 @@ namespace ms
 	public:
 		CheckCashPacket() : OutPacket(OutPacket::Opcode::CHECK_CASH) {}
 	};
+
+	// 095 魔方重洗请求：action 0x40 + 装备库存槽位(short)。服务端 CashOperationHandler 对应处理。
+	class CubeRerollPacket : public OutPacket
+	{
+	public:
+		CubeRerollPacket(int16_t slot) : OutPacket(OutPacket::Opcode::CASHSHOP_OPERATION)
+		{
+			write_byte(0x40);
+			write_short(slot);
+		}
+	};
 }

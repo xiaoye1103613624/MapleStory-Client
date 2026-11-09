@@ -464,7 +464,7 @@ namespace ms
 			if (markers.contains(guild_oid))
 				markers.set_label(guild_oid, guildname);
 			else
-				markers.spawn(guild_oid, FieldMarker::Kind::DOOR,
+				markers.spawn(guild_oid, FieldMarker::Kind::GUILDNAME,
 					position + Point<int16_t>(0, -100), guildname, 0, 0);
 		}
 		while (recv.available())

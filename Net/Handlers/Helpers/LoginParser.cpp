@@ -133,12 +133,9 @@ namespace ms
 		for (size_t i = 0; i < 3; i++)
 			statsentry.petids.push_back(recv.read_long());
 
-		// 北斗 gms083 服务端（实测包体）把 level 写成 **1 字节**，而非 short。
-		// 证据：CHARLIST 实包 153B，name(13)+gender(1)+skin(1)+face(4)+hair(4)+petid×3(8)
-		// 到 54 字节结束，55 字节为 level=0x01，其后 job 起均为 short 对齐
-		// （job=0, str=12, dex=5, int=4, luk=4, hp/maxhp=50, mp/maxmp=5 全部自洽）。
-		// 无符号读取等级：read_byte() 返回 int8_t，等级 255(0xFF) 须按 uint8 解析，否则溢出为 -1。
-		statsentry.stats[MapleStat::Id::LEVEL] = static_cast<uint8_t>(recv.read_byte());
+		// 北斗 gms083 服务端（已为 999 级改造）把 level 写成 **2 字节 short**。
+		// 旧代码按 1 字节 read_byte() 读取，等级 >=256 会被截断（256→0），所以 999 上限必须先改这里。
+		statsentry.stats[MapleStat::Id::LEVEL] = static_cast<uint16_t>(recv.read_short());
 		statsentry.stats[MapleStat::Id::JOB] = recv.read_short();
 		statsentry.stats[MapleStat::Id::STR] = recv.read_short();
 		statsentry.stats[MapleStat::Id::DEX] = recv.read_short();
@@ -160,7 +157,7 @@ namespace ms
 		// skip(4)//gachaexp 恰好吞掉真实 mapId(00 e1 f5 05 = 100000000 射手村)，
 		// 再从 spawnpoint 槽读出 16 当 mapid → Stage::load 抛 map data missing → 进图白屏。
 		// 实机字节：CHARLIST(0x0b) mapId=100000000 @88、spawnpoint=16 @92、charLook @97。
-		statsentry.exp = recv.read_int();
+		statsentry.exp = recv.read_long();
 		statsentry.stats[MapleStat::Id::FAME] = recv.read_short();
 
 		recv.skip(4); // gachaexp

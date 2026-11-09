@@ -937,15 +937,7 @@ namespace ms
 				return;
 			}
 		}
-		else if (type == 1)
-		{
-			auto ui = UI::get().get_element<UIFamily>();
-			if (ui && ui->is_active())
-			{
-				ui->set_privileges({ line });
-				return;
-			}
-		}
+		// type==1（学院成员升级）：R28-B2 —— 不为通知开学院窗；聊天栏一行即可。
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
 	}
@@ -974,15 +966,7 @@ namespace ms
 				return;
 			}
 		}
-		else
-		{
-			auto ui = UI::get().get_element<UIFamily>();
-			if (ui && ui->is_active())
-			{
-				ui->set_privileges({ line });
-				return;
-			}
-		}
+		// type==1（学院成员结婚）：R28-B2 不再开学院窗塞 tip；聊天栏一行。
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
 	}
@@ -1007,15 +991,7 @@ namespace ms
 				return;
 			}
 		}
-		else
-		{
-			auto ui = UI::get().get_element<UIFamily>();
-			if (ui && ui->is_active())
-			{
-				ui->set_privileges({ line });
-				return;
-			}
-		}
+		// type==1（学院成员转职）：R28-B2 不再开学院窗；聊天栏一行。
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(line.c_str(), UIChatBar::MessageType::YELLOW);
 	}

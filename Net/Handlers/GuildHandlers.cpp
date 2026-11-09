@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "GuildHandlers.h"
 
+#include "../../Character/GuildModel.h"
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIChatBar.h"
@@ -44,25 +45,23 @@ namespace ms
 
 		uint8_t mode = recv.read_byte();
 
-		auto uiguild = UI::get().get_element<UIGuild>();
-		auto ensure_guild = [&]() -> Optional<UIGuild> {
-			if (!uiguild)
-				uiguild = UI::get().emplace<UIGuild>();
-			else if (!uiguild->is_active())
-				uiguild->makeactive();
-			return uiguild;
+		// R28-B2 收口：家族回包只写 GuildModel，绝不为数据开 UIGuild 浮窗。
+		// 浮窗（状态栏钮）与共用窗家族页（G 键）都在 draw 时读模型，自取数据。
+		auto guild_ui_active = [&]() {
+			auto ui = UI::get().get_element<UIGuild>();
+			return ui && ui->is_active();
 		};
 
 		switch (mode)
 		{
-			case 0x1A: // getGuildInfo — 开窗
+			case 0x1A: // getGuildInfo — 全量下发 → 模型
 			{
-				if (!ensure_guild()) return;
 				uint8_t inGuild = recv.read_byte();
 				if (inGuild == 0)
 				{
-					uiguild->clear_guild();
-					uiguild->deactivate();
+					GuildModel::get().clear();
+					while (recv.available())
+						recv.skip_byte();
 					break;
 				}
 				GuildData g;
@@ -96,10 +95,11 @@ namespace ms
 				g.notice = recv.read_string();
 				g.gp = recv.read_int();
 				g.allianceId = recv.read_int();
-				uiguild->set_guild(g);
+				GuildModel::get().set(g);
 				while (recv.available())
 					recv.skip_byte();
-				// 公会窗已刷，不 tip
+				LOG(LOG_DEBUG, "GuildHandler: model set name=" << g.name
+					<< " members=" << g.members.size());
 				break;
 			}
 			case 0x05: // guildInvite
@@ -140,9 +140,8 @@ namespace ms
 				m.allianceRank = recv.read_int();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->add_member(m);
-				else if (!m.name.empty())
+				GuildModel::get().add_member(m);
+				if (!guild_ui_active() && !m.name.empty())
 					ensure_sm(Color::Name::WHITE, m.name + " joined guild");
 				break;
 			}
@@ -154,9 +153,8 @@ namespace ms
 				std::string name = recv.read_string();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->remove_member(id);
-				else if (!name.empty())
+				GuildModel::get().remove_member(id);
+				if (!name.empty())
 					ensure_sm(Color::Name::WHITE,
 						name + (mode == 0x2f ? " expelled" : " left guild"));
 				break;
@@ -168,9 +166,8 @@ namespace ms
 				int32_t rank = recv.read_byte();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->set_member_rank(id, rank);
-				else
+				GuildModel::get().set_member_rank(id, rank);
+				if (!guild_ui_active())
 					ensure_sm(Color::Name::WHITE,
 						"Guild rank #" + std::to_string(id) + " -> " + std::to_string(rank));
 				break;
@@ -181,9 +178,8 @@ namespace ms
 				std::string notice = recv.read_string();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->set_notice(notice);
-				else
+				GuildModel::get().mutable_data().notice = notice;
+				if (!guild_ui_active())
 					ensure_sm(Color::Name::YELLOW, notice.empty() ? "Guild notice" : notice);
 				break;
 			}
@@ -194,13 +190,12 @@ namespace ms
 				bool online = recv.read_bool();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->set_member_online(id, online);
+				GuildModel::get().set_member_online(id, online);
 				// 上线状态过密不 tip
 				(void)id; (void)online;
 				break;
 			}
-			default: // genericGuildMessage 等：已开 Guild 刷 notice；否则仅有意义码 tip
+			default: // genericGuildMessage 等：仅有意义码走聊天栏（不再往窗里塞 tip）
 			{
 				std::string tip;
 				switch (mode)
@@ -222,9 +217,10 @@ namespace ms
 				}
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_guild())
-					uiguild->set_notice(tip);
-				else if (mode != 0)
+				// 0x03 解散：清模型（原生此时窗随 serverNotice 关闭）。
+				if (mode == 0x03)
+					GuildModel::get().clear();
+				if (mode != 0)
 					ensure_sm(Color::Name::YELLOW, tip);
 				else
 					LOG(LOG_DEBUG, "Guild mode=0 rem drained");

@@ -87,6 +87,19 @@ namespace ms
 		}
 	};
 
+	// 修改成员职位（s9 GuildOperationHandler case 0x0e：int cid + byte newRank；
+	// newRank∈[3,5]，会长(guildrank==1)才可发，服务端校验）。
+	class GuildChangeRankPacket : public OutPacket
+	{
+	public:
+		GuildChangeRankPacket(int32_t cid, int8_t new_rank) : OutPacket(OutPacket::Opcode::GUILD_OPERATION)
+		{
+			write_byte(0x0E);
+			write_int(cid);
+			write_byte(new_rank);
+		}
+	};
+
 	// Opcode: DENY_GUILD_REQUEST(127 / 0x7F) — string inviter/guild name
 	class DenyGuildRequestPacket : public OutPacket
 	{

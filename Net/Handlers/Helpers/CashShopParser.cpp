@@ -49,7 +49,7 @@ namespace ms
 			CharacterParser::parse_minigame(recv);
 			CharacterParser::parse_ring1(recv);
 			CharacterParser::parse_ring2(recv);
-			CharacterParser::parse_ring3(recv);
+			CharacterParser::parse_ring3(recv, player.get_marriage());
 			CharacterParser::parse_teleportrock(recv, player.get_teleportrock());
 			CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
 			CharacterParser::parse_nyinfo(recv);
@@ -99,7 +99,7 @@ namespace ms
 			else
 				recv.read_short(); // remaining sp
 
-			statsentry.exp = recv.read_int();
+			statsentry.exp = recv.read_long();
 			statsentry.stats[MapleStat::Id::FAME] = recv.read_short();
 
 			recv.skip(4); // gachaexp

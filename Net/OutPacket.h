@@ -303,7 +303,18 @@ namespace ms
 			WORLD_MAP_DROP_REQUEST = 278,
 			/// s9 RecvOpcode.SET_HPMPALERT = 0x1000（扩展通道）：
 			/// body = byte hp_step + byte mp_step（0..19 挡位，每挡 5%；服务端限幅）
-			SET_HPMPALERT = 4096
+			SET_HPMPALERT = 4096,
+			/// s9 RecvOpcode.RING_ACTION = 0x89 → RingActionHandler。
+			/// 求婚/订婚答复/解约/婚礼请柬/心愿单，全走首字节 mode 分发。
+			RING_ACTION = 137,
+			/// s9 RecvOpcode.WEDDING_ACTION = 0x8A → WeddingHandler。
+			/// 婚礼礼物台：送礼(mode6)/取礼(mode7)/退出注册台(mode8)。
+			WEDDING_ACTION = 138,
+			/// s9 RecvOpcode.WEDDING_TALK = 0x8B → WeddingTalkHandler（byte action）。
+			/// 仪式中宾客/新人点击祝福对话；服务端按 action 回 OnWeddingProgress。
+			/// 注：s9 另有 WEDDING_TALK_MORE = 0x8B 与之一值一 handler，本端不重复建枚举
+			/// （会被 opcode 门禁判为「声明未构造」死项）。
+			WEDDING_TALK = 139
 		};
 
 	protected:

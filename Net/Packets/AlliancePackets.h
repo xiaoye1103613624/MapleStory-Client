@@ -55,6 +55,20 @@ namespace ms
 		}
 	};
 
+	// 接受联盟邀请（action 0x04）
+	// s9 AllianceOperationHandler case 0x04：readInt(allianceid)；
+	// 后续 recruiter 公会名一行被注释掉不读（AllianceOperationHandler.java:107-108）。
+	// 仅公会长度 1 的会长可发（服务端 guildrank==1 校验）。
+	class AllianceAcceptPacket : public OutPacket
+	{
+	public:
+		explicit AllianceAcceptPacket(int32_t allianceid) : OutPacket(OutPacket::Opcode::ALLIANCE_OPERATION)
+		{
+			write_byte(0x04);
+			write_int(allianceid);
+		}
+	};
+
 	// Opcode: DENY_ALLIANCE_REQUEST(144 / 0x90) — byte(0) + inviter + guild
 	class DenyAllianceRequestPacket : public OutPacket
 	{

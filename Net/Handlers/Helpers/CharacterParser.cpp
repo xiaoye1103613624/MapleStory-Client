@@ -146,21 +146,41 @@ namespace ms
 		}
 	}
 
-	void CharacterParser::parse_ring3(InPacket& recv)
+	bool CharacterParser::parse_marriage_block(InPacket& recv, MarriageInfo& marriage)
 	{
+		// 块体（不含前置 present 标志）：与 s9 addRingInfo / OnMarriageResult(11) 逐字段同构。
+		// 全量长度 = 3×int(12) + short(2) + 2×int(8) + 2×fixed13(26) = 48 字节。
+		// 不足 48 视为残包（理论上 s9 完整块恒 48）：拒读，调用方保持旧数据。
+		if (recv.length() < 48)
+			return false;
+
+		MarriageInfo info;
+		info.present = true;
+		info.relationship_id = recv.read_int();
+		info.groom_id = recv.read_int();
+		info.bride_id = recv.read_int();
+		info.status = recv.read_short();
+		info.ring_item_id = recv.read_int();
+		recv.read_int();	// 第二个 ringItemId（s9 对配偶侧写同一 id）
+		info.groom_name = recv.read_padded_string(13);
+		info.bride_name = recv.read_padded_string(13);
+
+		marriage = std::move(info);
+		return true;
+	}
+
+	void CharacterParser::parse_ring3(InPacket& recv, MarriageInfo& marriage)
+	{
+		// s9 PacketCreator.addRingInfo marriage 块：present 为 short（0/1）。
 		int16_t rsize = recv.read_short();
 
-		for (int16_t i = 0; i < rsize; i++)
+		if (rsize <= 0)
 		{
-			recv.read_int();
-			recv.read_int();
-			recv.read_int();
-			recv.read_short();
-			recv.read_int();
-			recv.read_int();
-			recv.read_padded_string(13);
-			recv.read_padded_string(13);
+			marriage = MarriageInfo{};
+			return;
 		}
+
+		parse_marriage_block(recv, marriage);
 	}
 
 	void CharacterParser::parse_minigame(InPacket& recv)

@@ -109,7 +109,7 @@ namespace ms
 			player.change_look(stat, recv.read_int());
 			break;
 		case MapleStat::Id::LEVEL:
-			player.change_level(recv.read_byte());
+			player.change_level(recv.read_short());
 			// CharInfo 开着看自己：请求刷等级
 			if (auto ci = UI::get().get_element<UICharInfo>())
 			{
@@ -126,7 +126,7 @@ namespace ms
 			}
 			break;
 		case MapleStat::Id::EXP:
-			player.get_stats().set_exp(recv.read_int());
+			player.get_stats().set_exp(recv.read_long());
 			break;
 		case MapleStat::Id::MESO:
 			player.get_inventory().set_meso(recv.read_int());
