@@ -178,7 +178,10 @@ namespace ms
 		else
 			sprites_char_look.emplace_back(avatarSel["WZ2_skin"], avatarOrigin + avatarSelAdj);
 
-		for (size_t i = 0; i < avatarSel.size() - 1; i++)
+		// avatarSel 可能为空（资源裁剪 / 节点缺失）：size()-1 是无符号下溢，
+		// 会变成 SIZE_MAX 让构造期挂在死循环里。i + 1 < size() 在
+		// size>=1 时与原式逐字等价（同样跳过最后一个子节点），size==0 时 0 次迭代。
+		for (size_t i = 0; i + 1 < avatarSel.size(); i++)
 		{
 			size_t t = i;
 

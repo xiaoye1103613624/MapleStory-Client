@@ -630,3 +630,22 @@
 | 20-2 X/x 触发 GACHA_EXP | 背包打开按 X 或 x | 发送 `USE_GACHA_EXP(158)` 空包，服务端按 GachaExp 道具态响应 | 需真机账号持有 GachaExp 道具 + 服务端闭环 |
 | 20-3 旧键回归 | O/U/D/S/Y/E 等既有单键 | 与修复前一致、无串扰 | 需真机各功能路径 |
 | 20-4 X 键语义裁决 | 确认 X 是否与其他全局快捷键/客户端功能冲突 | 若冲突，交用户裁决是否迁到菜单按钮或其它键 | 需用户确认最终键位意图；旧账 r803 曾写 G→GachaExp，本次按 live 主路径让 G 归整理 |
+
+---
+
+## 21. round42 · UICommonCreation avatarSel 空节点下溢守卫（#devfix-commoncreation-avatar，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42)，与前文 A11f 的 §21（`:298`）按标题中的 roundNN 区分；历史编号原样保留，不回溯改动。
+
+> 自动自测 `tools/test_commoncreation_avatar_guard.py` 只覆盖**静态守卫 + 修复前/后循环上界算法复刻**
+> （9 守卫 + 8 场景 PASS，before HANG 1→after 0，回归 7/7）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（02:22 真重编译）；
+> **真机 modern/classic 新建角色、资源裁剪态不挂死与各职业 avatarSel 子节点观感必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 02:22 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-commoncreation-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 21-1 modern 新建角色正常态 | 冒险家 / 战神 / 骑士团各进 modern 创角界面 | 外观预览层数与修复前一致（跳过最后一个子节点的语义不变），不闪退不空白 | harness 只复刻循环上界，需真机 WZ 资源渲染 |
+| 21-2 资源裁剪态不挂 | 用缺 `avatarSel` 节点的裁剪资源包进 modern 创角 | 构造期不挂死，窗口仍能加载（空贴图路径），可正常退出 | 需真机裁剪 WZ + 计时观察；自动测无法构造真 `nl::node` |
+| 21-3 classic 回归 | classic 新建角色流程 | `if (!NewChar)` 门控行为不变，与修复前一致 | 需真机 classic 资源分支 |
+| 21-4 各职业子节点排布 | 对比 adventurer / aran / cygnusKnight 的 `avatarSel` 子节点排布 | `t` 偏移与纵坐标与修复前一致，无错位 | 需真机逐职业像素观感 |
