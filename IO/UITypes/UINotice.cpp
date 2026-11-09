@@ -339,7 +339,11 @@ namespace ms
 	void UIEnterNumber::handlestring(std::string numstr)
 	{
 		int num = -1;
-		bool has_only_digits = (numstr.find_first_not_of("0123456789") == std::string::npos);
+		// 空串的 find_first_not_of 返回 npos（vacuous true），会让下面的 stoi("") 抛 invalid_argument：
+		// 退格清空数字框后按 RETURN / 点 OK / Textfield enter_callback 都会走到这里，必须显式挡住。
+		// 加 !empty() 后空串复用既有 "Only numbers are allowed." 提示，合法数字路径逐字不变。
+		bool has_only_digits = !numstr.empty()
+			&& (numstr.find_first_not_of("0123456789") == std::string::npos);
 
 		auto okhandler = [&](bool)
 		{
@@ -355,7 +359,18 @@ namespace ms
 		}
 		else
 		{
-			num = std::stoi(numstr);
+			// numfield 允许 10 字符（构造期 numfield_limit = 10），纯数字也可能溢出 int32
+			// （例如 9999999999 -> std::stoi 抛 out_of_range）。统一收口到同一提示，不崩交互。
+			try
+			{
+				num = std::stoi(numstr);
+			}
+			catch (...)
+			{
+				numfield.set_state(Textfield::State::DISABLED);
+				UI::get().emplace<UIOk>("Only numbers are allowed.", okhandler);
+				return;
+			}
 		}
 
 		if (num < 1)
