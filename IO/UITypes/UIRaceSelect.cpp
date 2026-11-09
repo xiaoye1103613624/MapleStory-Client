@@ -550,7 +550,10 @@ namespace ms
 					if (classic_mode) {
 						if (idx < CLASSIC_CLASS_COUNT)
 							select_classic_class(static_cast<uint16_t>(idx));
-					} else if (idx < static_cast<int>(order.size())) {
+					} else if (idx >= index_shift
+							&& idx < static_cast<int>(index_shift) + INDEX_COUNT
+							&& idx < static_cast<int>(order.size())) {
+						// 仅当前可见窗口的职业按钮可经 SoftKey 触发；越界 idx 会误触功能按钮或越界读 class_index[]。
 						button_pressed(static_cast<uint16_t>(Buttons::CLASS0 + idx - index_shift));
 					}
 				} catch (...) {}

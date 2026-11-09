@@ -557,3 +557,21 @@
 | 16-2 回车提交 | 16-1 末尾直接回车 | 提交的是当前高亮可见项，与点「下项」一致 | 需登录服 + 服务端脚本回包验证 selection |
 | 16-3 回滚 UP | 16-1 后连按 UP 回首行 | offset 收敛回 0、thumb 归位、无残留滚动 | 需真机滑条控件状态 |
 | 16-4 短菜单回归 | 2/3/5/8 项短对话（无滑条）上下键 + 回车 | 与修复前一致、无回归 | 需多个 NPC 脚本触发点 |
+
+---
+
+## 17. round38 · UIRaceSelect SoftKey 数字选职业可视窗口守卫（#devfix-raceselect-softkey，需用户一起测）
+
+> 自动自测 `tools/test_raceselect_softkey_guard.py` 只覆盖**静态守卫 + bid 映射算法复刻**
+> （4 守卫 + 10 边界 PASS，before bad=6 → after 0，合法职业按钮回归 4/4）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（00:36 真重编译）；
+> **真机 SoftKey 输入、RaceSelect_new 资源、翻页后窗口、字图渲染必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 00:36 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-raceselect-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 17-1 翻页后小号数字 | modern 职业选择页用右箭头翻过一页（index_shift>0），SoftKey 输 `0`/`2` | 不切世界、不开创建确认框、不翻页，输入被忽略 | harness 只复刻 bid 映射，需真机 SoftKey + UI 状态 |
+| 17-2 大号数字越界 | 不翻页 SoftKey 输 `6`/`12`，或翻页后输窗口外 idx | 无 `class_index[]` 越界读、零崩溃、输入被忽略 | 需真机 RaceSelect_new 资源与内存安全表现 |
+| 17-3 合法数字回归 | 当前可见窗口边界 `index_shift`/`index_shift+5` 及中间项输数字 + 回车 | 选中对应职业，高亮/音效与鼠标点击一致 | 需真机立绘/音效 |
+| 17-4 classic 模式 | SoftKey `C` 切 classic 后输 `0/1/2` | 与修复前一致、无回归 | classic 分支未改，需真机三职业卡 |
