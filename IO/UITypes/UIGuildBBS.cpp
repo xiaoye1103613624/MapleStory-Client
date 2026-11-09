@@ -514,7 +514,11 @@ namespace ms
 					request_list(page_index - 1);
 				break;
 			case BtPageRight:
-				request_list(page_index + 1);
+				// 与 BtPageLeft 的 page_index > 0 下界对称：当前页未满即末页，
+				// 不发必然返回空列表的越界页请求（否则 selected_row 被清成 -1、
+				// 窗口空白、page_index 停在越界值，只能再点「上一页」回退）。
+				if (static_cast<int>(threads.size()) >= LIST_MAX_ROWS)
+					request_list(page_index + 1);
 				break;
 			default:
 				break;

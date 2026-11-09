@@ -575,3 +575,21 @@
 | 17-2 大号数字越界 | 不翻页 SoftKey 输 `6`/`12`，或翻页后输窗口外 idx | 无 `class_index[]` 越界读、零崩溃、输入被忽略 | 需真机 RaceSelect_new 资源与内存安全表现 |
 | 17-3 合法数字回归 | 当前可见窗口边界 `index_shift`/`index_shift+5` 及中间项输数字 + 回车 | 选中对应职业，高亮/音效与鼠标点击一致 | 需真机立绘/音效 |
 | 17-4 classic 模式 | SoftKey `C` 切 classic 后输 `0/1/2` | 与修复前一致、无回归 | classic 分支未改，需真机三职业卡 |
+
+---
+
+## 18. round39 · UIGuildBBS 翻页上界守卫（#devfix-guildbbs-page，需用户一起测）
+
+> 自动自测 `tools/test_guildbbs_page_guard.py` 只覆盖**静态守卫 + 翻页算法复刻**
+> （5 守卫 + 10 边界 PASS，before bad=5 → after 0，合法满页翻页与 BtPageLeft 回归 4/4）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（00:52 真重编译）；
+> **真机 BBS 回包分页、公告条是否占一行、末页按钮观感必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 00:52 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-guildbbs-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 18-1 末页点下一页 | 公会 BBS 列表停在最后一页（本页不满 12 行），鼠标点 BtPageRight 或按 `.`/`]` | 不发越界页请求、窗口不空白、`selected_row` 不清成 -1、页码不跳到越界值 | harness 只复刻 `threads.size()` 判定，需真机 s9 BBS 回包 |
+| 18-2 满页翻页回归 | 本页恰好 12 行时点「下一页」 | 正常请求下一页，与修复前一致、无回归 | 需真机多页数据 |
+| 18-3 公告条占行 | 首屏有公告条（notice）时末页行数判定 | 若公告条额外占一行导致本页「满 12 但实为末页」，记录观感；本轮守卫用 `threads.size() >= LIST_MAX_ROWS` 偏保守，是否需按 `has_notice` 扣一行交用户裁决 | 需真机公告条布局 |
+| 18-4 上一页/键盘回归 | 任意页点 BtPageLeft 或按 `,`/`[`；非 list 页按 ESC | 与修复前一致、无回归 | BtPageLeft 未改，需真机确认三页状态切换 |
