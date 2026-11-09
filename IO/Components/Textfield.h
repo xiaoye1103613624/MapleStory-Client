@@ -54,6 +54,8 @@ namespace ms
 		void set_text_shift(Point<int16_t> shift) { text_shift = shift; }
 		/// 允许接收 UTF-8（IME/剪贴板中文）。默认 false（账号/密码等仍限 ASCII）。
 		void set_accept_unicode(bool accept) { accept_unicode = accept; }
+		/// UI::focus_textfield 据此决定开/关系统 IME 文本输入。
+		bool accepts_unicode() const { return accept_unicode; }
 
 		void set_enter_callback(std::function<void(std::string)> onreturn);
 		void set_key_callback(KeyAction::Id key, std::function<void(void)> action);

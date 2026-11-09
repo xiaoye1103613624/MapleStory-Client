@@ -31,6 +31,11 @@ namespace ms
 	ItemTooltip::ItemTooltip()
 	{
 		itemid = 0;
+		// 2026-11-09 R28 预留项③：IconBase/0 灰底板，2x 垫在道具图标下（与 EquipTooltip 同源）。
+		nl::node iconbase_node = nl::nx::UI["UIWindow.img"]["IconBase"]["0"];
+
+		if (iconbase_node)
+			iconbase = Texture(iconbase_node);
 	}
 
 	bool ItemTooltip::set_item(int32_t iid)
@@ -104,6 +109,9 @@ namespace ms
 			qual.draw(pos + Point<int16_t>(148, 27));
 
 		pos.shift(14, 18 + name.height() + adj_t);
+
+		if (iconbase.is_valid())
+			iconbase.draw(DrawArgument(pos + Point<int16_t>(6, 70), 2.0f, 2.0f));
 
 		itemicon.draw(DrawArgument(pos + Point<int16_t>(8, 72), 2.0f, 2.0f));
 		desc.draw(pos + Point<int16_t>(90, -6));

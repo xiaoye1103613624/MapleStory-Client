@@ -28,22 +28,23 @@ namespace ms
 	// Q1 定案（PLAN §6）：v83 原生 tooltip 框体是程序描边而非贴图 —— 包内无 UIToolTip.img、
 	// UIWindow.img/ToolTip 无九切片，且包内全部九切片族均为浅底气泡（证据见
 	// docs/features/ui-v83-window-restore/evidence/w5-tooltip/coords.md）。
-	// 用实心黑底 + 1px 灰边近似原生深底细边观感，5 个 tooltip 组件共用。
-	// 「实心」这条不是审美选择：原生背板经参考帧逐像素量过是 α≥0.99，见 draw() 里的实测注释。
+	// 5 个 tooltip 组件共用。
+	//
+	// 2026-11-08 逐像素复校（参考帧《背包中鼠标悬浮物品上显示的物品信息内容.png》）：
+	// 背板填充 = 实心 (79,79,119)，四边 1px 亮边 = (85,85,130)，**没有灰色外框**。
+	// 旧实现填充 (85,85,130) + 灰边 (128,128,128) 是「背景不对」的主因（偏亮 + 多一圈灰框）。
+	// 「实心」不是审美选择：同一块背板压米色窗 (79.2,79.2,119.6) / 压深色画面 (78.6,78.7,124.2)
+	// 只差 ΔR=0.6（0.9α 应差 ≈21）⇒ 透出 ≈0.3%，见
+	// docs/features/ui-v83-window-restore/evidence/native-verdicts-2026-11-03/native-tooltip-alpha-raw.txt。
 	class TooltipBackdrop
 	{
 	public:
 		void draw(Point<int16_t> topleft, int16_t width, int16_t height) const
 		{
-			// 原生实测 = **实心**，不是半透：同一块背板压在米色窗上 (79.2,79.2,119.6) 与压在深色画面上
-			// (78.6,78.7,124.2) 只差 ΔR=0.6（0.9α 应差 ≈21），且帧内背板外缘亮度 0..255 起伏、内部仍平坦
-			// ⇒ 透出 ≈0.3%。证据与采样网格：docs/features/ui-v83-window-restore/evidence/
-			// native-verdicts-2026-11-03/native-tooltip-alpha-raw.txt。
-			// 注：原生背板「色相」是深蓝不是纯黑，量级与是否跟改另立待量项，本条只裁决 α。
-			ColorBox fill(width, height, Color(0.333f, 0.333f, 0.510f, 1.0f), 1.0f);
+			ColorBox fill(width, height, Color(79.0f / 255.0f, 79.0f / 255.0f, 119.0f / 255.0f, 1.0f), 1.0f);
 			fill.draw(topleft);
 
-			const Color edge(0.5f, 0.5f, 0.5f, 1.0f);
+			const Color edge(85.0f / 255.0f, 85.0f / 255.0f, 130.0f / 255.0f, 1.0f);
 
 			ColorBox top(width, 1, edge, 1.0f);
 			top.draw(topleft);

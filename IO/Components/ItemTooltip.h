@@ -39,6 +39,8 @@ namespace ms
 		int16_t fillheight;
 		int16_t descdelta;
 		Texture itemicon;
+		// 2026-11-09 R28 预留项③：IconBase/0 灰底板，2x 垫在道具图标下（与 EquipTooltip 同源）。
+		Texture iconbase;
 
 		Text name;
 		Text desc;

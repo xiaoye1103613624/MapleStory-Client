@@ -28,19 +28,65 @@
 
 namespace ms
 {
+	// 2026-11-08 原生装备 tooltip 布局常量。
+	// 依据：evidence/r28-tooltip-native/req_6x.png（单列 8 行、12px 行距）、
+	// UIWindow.img_runtime.json 的 ToolTip/Equip/Can/reqXXX 47x11 与
+	// GrowthEnabled/{itemLEV,itemEXP,percent} 47x11 / 5x7 位图。
+	namespace
+	{
+		constexpr int16_t REQ_LABEL_X = 97;      // 需求块标签位图 x（相对需求块起点）
+		constexpr int16_t REQ_VALUE_DX = 50;     // 数字紧跟标签，47px 位图 + 3px 间隙
+		constexpr int16_t GROWTH_LEV_Y = 119;    // 第 7 行「道具等级」
+		constexpr int16_t GROWTH_EXP_Y = 131;    // 第 8 行「道具经验」
+		// 需求块推进：旧两列布局 88；单列 6 行 / 8 行分别 124 / 148。
+		constexpr int16_t REQ_SHIFT_LEGACY = 88;
+		constexpr int16_t REQ_SHIFT_BASE = 124;
+		constexpr int16_t REQ_SHIFT_GROWTH = 148;
+		// 框体基准高度：旧 540 对应推进 88；新增道具 ID 行占 15px。
+		constexpr int16_t HEIGHT_BASE = 540 + 15;
+		// FRAME_WIDTH / 2；用户抉择「正文整行居中」的锚点（FRAME_WIDTH 为类私有常量）。
+		constexpr int16_t BODY_CENTER_X = 132;
+	}
+
 	EquipTooltip::EquipTooltip()
 	{
 		nl::node Equip = nl::nx::UI["UIWindow.img"]["ToolTip"]["Equip"];
 		nl::node EquipCan = Equip["Can"];
 		nl::node EquipCannot = Equip["Cannot"];
 
-		separator = ColorLine(FRAME_WIDTH, Color::Name::WHITE, 0.4f, false);
+		// 原生职业行下方分隔线为 1px 纯白（参考帧 y237 全宽 255,255,255），旧 α0.4 偏灰。
+		separator = ColorLine(FRAME_WIDTH, Color::Name::WHITE, 1.0f, false);
+
+		// 道具图标下的灰底板：UIWindow.img/IconBase/0（32x32），2x 绘制。
+		// 节点缺失时 silent-skip（R6：BeiDou 的 img 为定制精简版）。
+		nl::node iconbase_node = nl::nx::UI["UIWindow.img"]["IconBase"]["0"];
+
+		if (iconbase_node)
+			iconbase = Texture(iconbase_node);
+
+		// 成长两行资源：启用态标签/字模/百分号，禁用态字模备用。
+		nl::node growth_on = Equip["GrowthEnabled"];
+		nl::node growth_off = Equip["GrowthDisabled"];
+
+		growth_lev_label = Texture(growth_on["itemLEV"]);
+		growth_exp_label = Texture(growth_on["itemEXP"]);
+		growth_percent = Texture(growth_on["percent"]);
+		fame_none = Texture(EquipCan["none"]);
+		growthset[true] = Charset(growth_on, Charset::Alignment::LEFT);
+		growthset[false] = Charset(growth_off, Charset::Alignment::LEFT);
+
+		show_growth = false;
+		show_growth_preview = false;
+		req_shift = REQ_SHIFT_BASE;
+		req_shift_preview = REQ_SHIFT_BASE;
 
 		requirements.push_back(MapleStat::Id::LEVEL);
 		requirements.push_back(MapleStat::Id::STR);
 		requirements.push_back(MapleStat::Id::DEX);
 		requirements.push_back(MapleStat::Id::INT);
 		requirements.push_back(MapleStat::Id::LUK);
+		// 原生需求块含「要求人气」行，位图 reqPOP 已在本函数映射。
+		requirements.push_back(MapleStat::Id::FAME);
 
 		reqstattextures[MapleStat::Id::LEVEL][false] = EquipCannot["reqLEV"];
 		reqstattextures[MapleStat::Id::LEVEL][true] = EquipCan["reqLEV"];
@@ -55,14 +101,15 @@ namespace ms
 		reqstattextures[MapleStat::Id::LUK][false] = EquipCannot["reqLUK"];
 		reqstattextures[MapleStat::Id::LUK][true] = EquipCan["reqLUK"];
 
-		// 三行需求位的行距必须一致（15px）。DEX/INT 原先是 y=71，与上一行 STR/LUK(y=62)
-		// 只差 9px，而 A11M 行高约 15px ⇒ 线上实测第 2、3 行文字直接叠成糊块
-		// （见 docs/features/ui-v83-window-restore/notes/open-issues.md §B8.2）。
-		reqstatpositions[MapleStat::Id::LEVEL] = Point<int16_t>(97, 47);
-		reqstatpositions[MapleStat::Id::STR] = Point<int16_t>(97, 62);
-		reqstatpositions[MapleStat::Id::LUK] = Point<int16_t>(177, 62);
-		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(97, 77);
-		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(177, 77);
+		// 2026-11-08 原生复校：需求块是单列 8 行、行距 12px（req_6x.png 逐像素取样），
+		// 旧两列 15px 布局与原生不符且缺「要求人气/道具等级/道具经验」三行。
+		// 47x11 标签位图 + 数字：行距 12px 才不会像 9px 那样叠成糊块。
+		reqstatpositions[MapleStat::Id::LEVEL] = Point<int16_t>(REQ_LABEL_X, 47);
+		reqstatpositions[MapleStat::Id::STR] = Point<int16_t>(REQ_LABEL_X, 59);
+		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(REQ_LABEL_X, 71);
+		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(REQ_LABEL_X, 83);
+		reqstatpositions[MapleStat::Id::LUK] = Point<int16_t>(REQ_LABEL_X, 95);
+		reqstatpositions[MapleStat::Id::FAME] = Point<int16_t>(REQ_LABEL_X, 107);
 
 		reqset[false] = Charset(EquipCannot, Charset::Alignment::LEFT);
 		reqset[true] = Charset(EquipCan, Charset::Alignment::LEFT);
@@ -92,6 +139,12 @@ namespace ms
 
 		invpos = ivp;
 		invpos_preview = 0;
+
+		// 每次重新悬停都重置成长行状态，避免沿用上一件装备的数据。
+		show_growth = false;
+		show_growth_preview = false;
+		req_shift = REQ_SHIFT_BASE;
+		req_shift_preview = REQ_SHIFT_BASE;
 
 		const Player& player = Stage::get().get_player();
 
@@ -133,7 +186,15 @@ namespace ms
 					const EquipData& equipdata = EquipData::get(item_id);
 					const ItemData& itemdata = equipdata.get_itemdata();
 
-					height_preview = 540;
+					const uint8_t preview_itemlevel = equip.get_itemlevel();
+					const int16_t preview_itemexp = equip.get_itemexp();
+
+					// 用户抉择：成长两行仅当 itemlevel/itemexp 任一非零时显示。
+					show_growth_preview = (preview_itemlevel > 0) || (preview_itemexp > 0);
+					req_shift_preview = show_growth_preview ? REQ_SHIFT_GROWTH : REQ_SHIFT_BASE;
+					growth_level_str_preview = std::to_string(preview_itemlevel);
+					growth_exp_str_preview = std::to_string(preview_itemexp);
+					height_preview = HEIGHT_BASE + (req_shift_preview - REQ_SHIFT_LEGACY);
 
 					itemicon_preview = itemdata.get_icon(false);
 
@@ -273,18 +334,19 @@ namespace ms
 
 					if (hasdesc_preview)
 					{
-						desc_preview = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, desctext, 250);
+						desc_preview = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::TOOLTIPBODY, desctext, 250);
 						height_preview += desc_preview.height() + 10;
 					}
 
-					category_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
+					itemid_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_itemid", std::to_string(item_id)));
+					category_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
 
 					is_weapon_preview = equipdata.is_weapon();
 
 					if (is_weapon_preview)
 					{
 						const WeaponData& weapon = WeaponData::get(item_id);
-						wepspeed_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
+						wepspeed_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
 					}
 					else
 					{
@@ -295,14 +357,14 @@ namespace ms
 
 					if (hasslots_preview)
 					{
-						slots_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
+						slots_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
 
 						std::string vicious = std::to_string(equip.get_vicious());
 
 						if (equip.get_vicious() > 1)
 							vicious.append(" " + Locale::text("equip.label_max") + " ");
 
-						hammers_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_hammers", vicious));
+						hammers_preview = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_hammers", vicious));
 					}
 					else
 					{
@@ -335,7 +397,7 @@ namespace ms
 							statstr.append(std::to_string(abs(scroll)) + ")");
 						}
 
-						statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
+						statlabels_preview[es] = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
 
 						// 悬停物品相对已装备物品的差值：正数绿色 (+N)，负数红色 (N)
 						int32_t diff = static_cast<int32_t>(hovered_value) - static_cast<int32_t>(equipped_value);
@@ -373,7 +435,15 @@ namespace ms
 		const EquipData& equipdata = EquipData::get(item_id);
 		const ItemData& itemdata = equipdata.get_itemdata();
 
-		height = 540;
+		const uint8_t itemlevel = equip.get_itemlevel();
+		const int16_t itemexp = equip.get_itemexp();
+
+		show_growth = (itemlevel > 0) || (itemexp > 0);
+		req_shift = show_growth ? REQ_SHIFT_GROWTH : REQ_SHIFT_BASE;
+		growth_level_str = std::to_string(itemlevel);
+		growth_exp_str = std::to_string(itemexp);
+		// height 与 draw 的需求块推进量共用同一增量，避免内容越出背板。
+		height = HEIGHT_BASE + (req_shift - REQ_SHIFT_LEGACY);
 
 		itemicon = itemdata.get_icon(false);
 
@@ -516,18 +586,19 @@ namespace ms
 
 		if (hasdesc)
 		{
-			desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, desctext, 250);
+			desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::TOOLTIPBODY, desctext, 250);
 			height += desc.height() + 10;
 		}
 
-		category = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
+		itemid = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_itemid", std::to_string(item_id)));
+		category = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_type", Locale::enum_text("equip.type.", equipdata.get_type())));
 
 		is_weapon = equipdata.is_weapon();
 
 		if (is_weapon)
 		{
 			const WeaponData& weapon = WeaponData::get(item_id);
-			wepspeed = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
+			wepspeed = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_wepspeed", Locale::enum_text("equip.speed.", weapon.getspeedstring())));
 		}
 		else
 		{
@@ -538,14 +609,14 @@ namespace ms
 
 		if (hasslots)
 		{
-			slots = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
+			slots = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_slots", std::to_string(equip.get_slots())));
 
 			std::string vicious = std::to_string(equip.get_vicious());
 
 			if (equip.get_vicious() > 1)
 				vicious.append(" " + Locale::text("equip.label_max") + " ");
 
-			hammers = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format("equip.label_hammers", vicious));
+			hammers = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format("equip.label_hammers", vicious));
 		}
 		else
 		{
@@ -568,7 +639,7 @@ namespace ms
 					statstr.append(std::to_string(abs(delta)) + ")");
 				}
 
-				statlabels[es] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
+				statlabels[es] = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::TOOLTIPBODY, Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr));
 			}
 			else
 			{
@@ -606,7 +677,6 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		// Q1 定案：框体程序描边（半透明黑底 + 1px 灰边），替代缺失的 UIToolTip Frame 三段
 		backdrop.draw(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height + 32);
 
 		name.draw(pos + Point<int16_t>(17, 7));
@@ -622,33 +692,64 @@ namespace ms
 		separator.draw(pos);
 
 		atkinc.draw(pos + Point<int16_t>(248, 4));
+
+		// 原生道具图标垫 IconBase/0 灰底板（32x32 2x），图标相对底板偏移 (2,2)，
+		// 与 SkillTooltip 的接入方式一致；节点缺失时仅跳过底板。
+		if (iconbase.is_valid())
+			iconbase.draw(DrawArgument(pos + Point<int16_t>(16, 80), 2.0f, 2.0f));
+
 		itemicon.draw(DrawArgument(pos + Point<int16_t>(18, 82), 2.0f, 2.0f));
 
 		pos.shift_y(12);
 
+		// 需求块：单列 12px，6 条固定需求 + 可选成长 2 行。
 		for (MapleStat::Id ms : requirements)
 		{
 			Point<int16_t> reqpos = reqstatpositions[ms];
 			bool reqok = canequip[ms];
 			reqstattextures[ms][reqok].draw(pos + reqpos);
 
-			if (ms != MapleStat::Id::LEVEL)
-				reqset[reqok].draw(reqstatstrings[ms], 6, pos + reqpos + Point<int16_t>(54, 0));
+			Point<int16_t> valuepos = pos + reqpos + Point<int16_t>(REQ_VALUE_DX, 0);
+
+			if (ms == MapleStat::Id::FAME)
+			{
+				// 原生「要求人气」值恒为短横（Can/none 5x1），不画 000。
+				fame_none.draw(valuepos);
+			}
+			else if (ms == MapleStat::Id::LEVEL)
+			{
+				lvset[reqok].draw(reqstatstrings[ms], 6, valuepos);
+			}
 			else
-				lvset[reqok].draw(reqstatstrings[ms], 6, pos + reqpos + Point<int16_t>(54, 0));
+			{
+				reqset[reqok].draw(reqstatstrings[ms], 6, valuepos);
+			}
 		}
 
-		pos.shift_y(88);
+		if (show_growth)
+		{
+			Point<int16_t> levpos = pos + Point<int16_t>(REQ_LABEL_X, GROWTH_LEV_Y);
+			Point<int16_t> exppos = pos + Point<int16_t>(REQ_LABEL_X, GROWTH_EXP_Y);
+
+			growth_lev_label.draw(levpos);
+			growth_exp_label.draw(exppos);
+
+			growthset[true].draw(growth_level_str, 6, levpos + Point<int16_t>(REQ_VALUE_DX, 0));
+
+			int16_t expw = growthset[true].draw(growth_exp_str, 6, exppos + Point<int16_t>(REQ_VALUE_DX, 0));
+			growth_percent.draw(exppos + Point<int16_t>(REQ_VALUE_DX + expw + 2, 0));
+		}
+
+		pos.shift_y(req_shift);
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
 
-		// 职业列表 = 横排一行（2026-11-04 正确端截图《背包中鼠标悬浮物品上显示的物品
-		// 信息内容.png》复核：全职业装备的 6 个职业名沿一行依次排开、间距 2px，并非
-		// 此前 SAD 对拍判定的同原点叠绘 —— 叠绘只在单职业装备上碰巧成立，全职业时
-		// 糊成白块正是用户所报缺陷。旧证据 equip-native-compare.md §4 作废）。
+		// 职业列表 = 横排一行（2026-11-04 正确端截图复核：全职业装备的 6 个职业名
+		// 沿一行依次排开、间距 2px，并非同原点叠绘）。
 		{
 			int16_t job_x = 0;
 			const auto& jobmap = jobs[canequip[MapleStat::Id::JOB]];
+
 			for (auto& jbit : okjobs)
 			{
 				const Texture& jobtex = jobmap.at(jbit);
@@ -661,16 +762,20 @@ namespace ms
 
 		pos.shift_y(49);
 
-		int16_t stat_x = 13;
+		// 用户抉择（2026-11-08）：正文行作为「名：值」整体在框内水平居中，
+		// 偏离原生左对齐；Text::Alignment::CENTER 以 draw 位置为行中心。
+		const Point<int16_t> body_center(BODY_CENTER_X, 0);
 		int16_t stat_y = 15;
 
-		category.draw(pos + Point<int16_t>(stat_x, 0));
+		itemid.draw(pos + body_center);
+		pos.shift_y(stat_y);
 
+		category.draw(pos + body_center);
 		pos.shift_y(stat_y);
 
 		if (is_weapon)
 		{
-			wepspeed.draw(pos + Point<int16_t>(stat_x, 0));
+			wepspeed.draw(pos + body_center);
 			pos.shift_y(stat_y);
 		}
 
@@ -679,15 +784,15 @@ namespace ms
 			if (label.empty())
 				continue;
 
-			label.draw(pos + Point<int16_t>(stat_x, 0));
+			label.draw(pos + body_center);
 			pos.shift_y(stat_y);
 		}
 
 		if (hasslots)
 		{
-			slots.draw(pos + Point<int16_t>(stat_x, 0));
+			slots.draw(pos + body_center);
 			pos.shift_y(stat_y);
-			hammers.draw(pos + Point<int16_t>(stat_x, 0));
+			hammers.draw(pos + body_center);
 			pos.shift_y(stat_y);
 		}
 
@@ -720,7 +825,6 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		// Q1 定案：对比窗框体同为程序描边，间距 = FRAME_WIDTH
 		backdrop.draw(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height_preview + 32);
 
 		name_preview.draw(pos + Point<int16_t>(17, 7));
@@ -736,6 +840,10 @@ namespace ms
 		separator.draw(pos);
 
 		atkinc_preview.draw(pos + Point<int16_t>(248, 4));
+
+		if (iconbase.is_valid())
+			iconbase.draw(DrawArgument(pos + Point<int16_t>(16, 80), 2.0f, 2.0f));
+
 		itemicon_preview.draw(DrawArgument(pos + Point<int16_t>(18, 82), 2.0f, 2.0f));
 
 		pos.shift_y(12);
@@ -746,20 +854,45 @@ namespace ms
 			bool reqok = canequip_preview[ms];
 			reqstattextures[ms][reqok].draw(pos + reqpos);
 
-			if (ms != MapleStat::Id::LEVEL)
-				reqset[reqok].draw(reqstatstrings_preview[ms], 6, pos + reqpos + Point<int16_t>(54, 0));
+			Point<int16_t> valuepos = pos + reqpos + Point<int16_t>(REQ_VALUE_DX, 0);
+
+			if (ms == MapleStat::Id::FAME)
+			{
+				fame_none.draw(valuepos);
+			}
+			else if (ms == MapleStat::Id::LEVEL)
+			{
+				lvset[reqok].draw(reqstatstrings_preview[ms], 6, valuepos);
+			}
 			else
-				lvset[reqok].draw(reqstatstrings_preview[ms], 6, pos + reqpos + Point<int16_t>(54, 0));
+			{
+				reqset[reqok].draw(reqstatstrings_preview[ms], 6, valuepos);
+			}
 		}
 
-		pos.shift_y(88);
+		if (show_growth_preview)
+		{
+			Point<int16_t> levpos = pos + Point<int16_t>(REQ_LABEL_X, GROWTH_LEV_Y);
+			Point<int16_t> exppos = pos + Point<int16_t>(REQ_LABEL_X, GROWTH_EXP_Y);
+
+			growth_lev_label.draw(levpos);
+			growth_exp_label.draw(exppos);
+
+			growthset[true].draw(growth_level_str_preview, 6, levpos + Point<int16_t>(REQ_VALUE_DX, 0));
+
+			int16_t expw = growthset[true].draw(growth_exp_str_preview, 6, exppos + Point<int16_t>(REQ_VALUE_DX, 0));
+			growth_percent.draw(exppos + Point<int16_t>(REQ_VALUE_DX + expw + 2, 0));
+		}
+
+		pos.shift_y(req_shift_preview);
 
 		Point<int16_t> job_position(pos + Point<int16_t>(10, 14));
 
-		// 与主窗体同一处：原生横排一行（证据见上方注释）。
+		// 与主窗体同一处：原生横排一行。
 		{
 			int16_t job_x = 0;
 			const auto& jobmap = jobs[canequip_preview[MapleStat::Id::JOB]];
+
 			for (auto& jbit : okjobs_preview)
 			{
 				const Texture& jobtex = jobmap.at(jbit);
@@ -772,16 +905,18 @@ namespace ms
 
 		pos.shift_y(49);
 
-		int16_t stat_x = 13;
+		const Point<int16_t> body_center(BODY_CENTER_X, 0);
 		int16_t stat_y = 15;
 
-		category_preview.draw(pos + Point<int16_t>(stat_x, 0));
+		itemid_preview.draw(pos + body_center);
+		pos.shift_y(stat_y);
 
+		category_preview.draw(pos + body_center);
 		pos.shift_y(stat_y);
 
 		if (is_weapon_preview)
 		{
-			wepspeed_preview.draw(pos + Point<int16_t>(stat_x, 0));
+			wepspeed_preview.draw(pos + body_center);
 			pos.shift_y(stat_y);
 		}
 
@@ -792,22 +927,23 @@ namespace ms
 			if (label.empty())
 				continue;
 
-			label.draw(pos + Point<int16_t>(stat_x, 0));
+			label.draw(pos + body_center);
 
-			// 差值紧跟属性文本，颜色在构造时已确定（正绿负红）
+			// 差值紧跟居中后的属性文本右侧；label 中心即 body_center，
+			// 故右边缘 = center + label.width()/2。
 			const Text& diff = statdeltas_preview[es];
 
 			if (!diff.empty())
-				diff.draw(pos + Point<int16_t>(stat_x + static_cast<int16_t>(label.width()), 0));
+				diff.draw(pos + Point<int16_t>(BODY_CENTER_X + static_cast<int16_t>(label.width()) / 2, 0));
 
 			pos.shift_y(stat_y);
 		}
 
 		if (hasslots_preview)
 		{
-			slots_preview.draw(pos + Point<int16_t>(stat_x, 0));
+			slots_preview.draw(pos + body_center);
 			pos.shift_y(stat_y);
-			hammers_preview.draw(pos + Point<int16_t>(stat_x, 0));
+			hammers_preview.draw(pos + body_center);
 			pos.shift_y(stat_y);
 		}
 

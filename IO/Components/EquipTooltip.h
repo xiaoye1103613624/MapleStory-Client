@@ -43,6 +43,12 @@ namespace ms
 		// 内容右界 ≈261（reqset 177+54+数字位宽），框宽取 264，兼作对比窗横向间距。
 		static constexpr int16_t FRAME_WIDTH = 264;
 
+		// 2026-11-09 R28 预留项②：装备 Tooltip 正文行前的橙色菱形项目符（ToolTip/Equip/Dot/0）。
+		static constexpr float DOT_SCALE = 2.0f;   // 与 itemicon/iconbase 同 2x 渲染
+		static constexpr int16_t DOT_GAP = 4;      // 项目符右缘到文本左缘间距
+		static constexpr int16_t DOT_W = 5;        // 位图原生尺寸 5x5
+		static constexpr int16_t DOT_H = 5;
+
 		int16_t invpos;
 		int16_t invpos_preview;
 		int16_t height;
@@ -59,6 +65,32 @@ namespace ms
 		EnumMap<MapleStat::Id, std::string> reqstatstrings_preview;
 		Texture itemicon;
 		Texture itemicon_preview;
+
+		// 2026-11-08 原生 tooltip 复校新增（evidence/r28-tooltip-native/）：
+		// IconBase/0 = 32x32 灰底板，2x 垫在道具图标下，与 SkillTooltip 同源。
+		Texture iconbase;
+		// 2026-11-09 R28 预留项②：ToolTip/Equip/Dot/0 = 5x5 橙色菱形项目符，逐行画在正文左缘前。
+		Texture dot;
+		// GrowthEnabled/GrowthDisabled 提供成长两行的标签、数字字模与 percent 位图；
+		// fame_none 为 Can/none（5x1 短横），用于原生「要求人气」行。
+		BoolPair<Charset> growthset;
+		Texture growth_lev_label;
+		Texture growth_exp_label;
+		Texture growth_percent;
+		Texture fame_none;
+		// 用户抉择：仅当 itemlevel/itemexp 任一非零时才显示成长两行。
+		bool show_growth;
+		bool show_growth_preview;
+		std::string growth_level_str;
+		std::string growth_exp_str;
+		std::string growth_level_str_preview;
+		std::string growth_exp_str_preview;
+		// 需求块整体推进量（6 固定行 / 8 行含成长两行），draw 与 height 共用以免脱节。
+		int16_t req_shift;
+		int16_t req_shift_preview;
+		// 装备分类上方新增的道具 ID 行。
+		Text itemid;
+		Text itemid_preview;
 
 		Text name;
 		Text name_preview;
@@ -86,6 +118,12 @@ namespace ms
 
 		Equip::Potential prank;
 		Equip::Potential prank_preview;
+
+		// 095 潜能/魔方：3 条主潜能 + 2 条 bonus 潜能行（值为 PotentialOption.img 行 id）。
+		bool haspotlines[5] = {};
+		Text potlines[5];
+		bool haspotlines_preview[5] = {};
+		Text potlines_preview[5];
 
 		std::vector<MapleStat::Id> requirements;
 		EnumMap<MapleStat::Id, BoolPair<Texture>> reqstattextures;
