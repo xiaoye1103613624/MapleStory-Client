@@ -983,7 +983,7 @@ namespace ms
 							// #b - Blue text
 							case 'b':
 							{
-								color = Color::Name::PERSIANGREEN;
+								color = Color::Name::BLUE;
 								skip += 2;
 								break;
 							}
@@ -1008,6 +1008,8 @@ namespace ms
 							case 'd':
 							{
 								// TODO: Need to get the proper color
+								color = Color::Name::VIOLET;
+
 								skip += 2;
 								break;
 							}
@@ -1052,6 +1054,8 @@ namespace ms
 							case 'g':
 							{
 								// TODO: Need to get the proper color
+								color = Color::Name::GREEN;
+
 								skip += 2;
 								break;
 							}
@@ -1217,7 +1221,9 @@ namespace ms
 				// \t - Tab (4 spaces)
 				case '\t':
 				{
-					ax = font.chars[' '].ax * 4;
+					ax += font.chars[' '].ax * 4; // 累加而非赋值：赋值会把整行已有笔位清成 4 空格宽，\t 之后的列全部叠回行首
+						// （9900001 三列菜单/标题缩进失效的根因）。词推进循环里 skip 已把 \t 字节跳过，
+						// 这里是笔位推进的唯一来源，故必须累加。
 					skip++;
 					break;
 				}
@@ -1266,10 +1272,7 @@ namespace ms
 				size_t consumed = 1;
 				const unsigned char uc = static_cast<unsigned char>(text[i]);
 
-				if (uc == '\t')
-					wordwidth += ax;
-				else
-					wordwidth += measure(text, i, last, consumed);
+				wordwidth += measure(text, i, last, consumed);
 
 				if (wordwidth > maxwidth)
 				{
@@ -1396,7 +1399,14 @@ namespace ms
 		if (cp == 0)
 			return 0;
 		if (cp < 128)
+			{
+			// \t 制表位：原生按 4 空格计宽（add() 里 tab 分支注释）。
+			// 旧实现对 '\t' 落在 chars[9] 默认 0，导致用 \t 排版的 #L 选项列被压成
+			// 0 宽、多列文字互相重叠（如拍卖行 9900001 的三列菜单）。
+			if (cp == '\t')
+				return font.chars[' '].ax * 4;
 			return font.chars[cp].ax;
+		}
 
 		return wide_advance(cp);
 	}
