@@ -93,9 +93,20 @@ namespace ms
 		for (size_t i = Buttons::TAB0; i < Buttons::CANCEL; i++)
 			buttons[i] = std::make_unique<TwoSpriteButton>(tab_disabled[i], tab_enabled[i]);
 
+		// sButtonUOL 末位是 MapleComboBox::Type 的数字后缀（如 ".../ComboBox1"）。
+		// get_string() 在节点缺失 / 非 string 类型时返回空串（nlnx/node.cpp:199-217）；
+		// 空串 .back() 是 UB，std::stoi("") / 非数字字符会抛 invalid_argument，构造期崩。
+		// 空串或末位非数字 → 回退 DEFAULT（同 UIGender.cpp:56 口径），合法数字路径逐字等价。
+		MapleComboBox::Type type = MapleComboBox::Type::DEFAULT;
 		std::string sButtonUOL = graphic["combo:resolution"]["sButtonUOL"].get_string();
-		std::string ctype = std::string(1, sButtonUOL.back());
-		MapleComboBox::Type type = static_cast<MapleComboBox::Type>(std::stoi(ctype));
+
+		if (!sButtonUOL.empty())
+		{
+			char ctype = sButtonUOL.back();
+
+			if (ctype >= '0' && ctype <= '9')
+				type = static_cast<MapleComboBox::Type>(std::stoi(std::string(1, ctype)));
+		}
 
 		std::vector<std::string> resolutions =
 		{

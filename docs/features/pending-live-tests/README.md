@@ -649,3 +649,22 @@
 | 21-2 资源裁剪态不挂 | 用缺 `avatarSel` 节点的裁剪资源包进 modern 创角 | 构造期不挂死，窗口仍能加载（空贴图路径），可正常退出 | 需真机裁剪 WZ + 计时观察；自动测无法构造真 `nl::node` |
 | 21-3 classic 回归 | classic 新建角色流程 | `if (!NewChar)` 门控行为不变，与修复前一致 | 需真机 classic 资源分支 |
 | 21-4 各职业子节点排布 | 对比 adventurer / aran / cygnusKnight 的 `avatarSel` 子节点排布 | `t` 偏移与纵坐标与修复前一致，无错位 | 需真机逐职业像素观感 |
+
+---
+
+## 22. round43 · UIOptionMenu sButtonUOL 空串守卫（#devfix-optionmenu-combo，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42) / §22(round43)，与前文 A11g 的 §22（`:313`）及 A11f 的 §21（`:298`）按标题中的 roundNN 区分；历史编号原样保留，不回溯改动。
+
+> 自动自测 `tools/test_optionmenu_combo_guard.py` 只覆盖**静态守卫 + 修复前/后转换算法复刻**
+> （12 守卫 + 13 场景 PASS，before UB/THROW 4→after 0，回归 9/9）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（02:43 真重编译 4962B / ERROR_LINES 0）；
+> **真机设置窗下拉框外观、资源裁剪态不崩且回退 DEFAULT、分辨率切换与各数字后缀观感必须联测**，不冒充已验证。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 02:43 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-optionmenu-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 22-1 设置窗正常态 | 打开选项/设置窗，点开分辨率下拉框 | 下拉框贴图/展开/收起与修复前一致（`ComboBox1` 数字后缀逐字等价），不闪退 | harness 只复刻字符串→Type 转换，需真机 WZ 资源渲染 |
+| 22-2 资源裁剪态不崩 | 用缺 `StatusBar3.img/OptionMenu/graphic/combo:resolution/sButtonUOL` 的裁剪资源包进设置窗 | 构造期不 UB/不抛异常，窗口以 `DEFAULT` 下拉框正常加载、可退出 | 需真机裁剪 WZ + 崩与否观察；自动测无法构造真 `nl::node` |
+| 22-3 分辨率切换回归 | 在设置窗切换分辨率并确认/返回 | 选中项、ComboBox 贴图与修复前一致，`:335-345` 已有 try/catch 行为不变 | 需真机交互 + 显示链路 |
+| 22-4 各数字后缀观感 | 对比 `ComboBox0/1/2/3/9` 及无数字后缀 `/` 尾部残缺 UOL | 合法数字逐字透传、无数字/空串回退 DEFAULT，无异常弹窗/空白框 | 需真机逐资源像素观感；非枚举值合法性归 Wave3 L-B 裁决 |
