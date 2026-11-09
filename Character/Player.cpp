@@ -613,6 +613,16 @@ namespace ms
 		return monsterbook;
 	}
 
+	MarriageInfo& Player::get_marriage()
+	{
+		return marriage;
+	}
+
+	const MarriageInfo& Player::get_marriage() const
+	{
+		return marriage;
+	}
+
 	Optional<const Ladder> Player::get_ladder() const
 	{
 		return ladder;

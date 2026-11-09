@@ -18,11 +18,13 @@
 #pragma once
 
 #include "ActiveBuffs.h"
+#include "MarriageInfo.h"
 #include "MonsterBook.h"
 #include "PassiveBuffs.h"
 #include "QuestLog.h"
 #include "SkillBook.h"
 #include "TeleportRock.h"
+
 
 #include "Inventory/Inventory.h"
 
@@ -151,6 +153,9 @@ namespace ms
 		TeleportRock& get_teleportrock();
 		// Obtain a reference to the player's MonsterBook
 		MonsterBook& get_monsterbook();
+		// 结婚/订婚数据（登录 addRingInfo 的 marriage 块 + MARRIAGE_RESULT mode11 更新）
+		MarriageInfo& get_marriage();
+		const MarriageInfo& get_marriage() const;
 
 	private:
 		CharStats stats;
@@ -159,6 +164,7 @@ namespace ms
 		QuestLog questlog;
 		TeleportRock teleportrock;
 		MonsterBook monsterbook;
+		MarriageInfo marriage;
 
 		EnumMap<Buffstat::Id, Buff> buffs;
 		ActiveBuffs active_buffs;

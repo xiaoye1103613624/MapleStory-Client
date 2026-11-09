@@ -19,9 +19,10 @@
 
 namespace ms
 {
-	Equip::Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious) : item_id(item_id), expiration(expiration), owner(owner), flags(flags), slots(slots), level(level), stats(stats), itemlevel(itemlevel), itemexp(itemexp), vicious(vicious)
+	Equip::Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2) : item_id(item_id), expiration(expiration), owner(owner), flags(flags), slots(slots), level(level), stats(stats), itemlevel(itemlevel), itemexp(itemexp), vicious(vicious), potential1(p1), potential2(p2), potential3(p3), bonusPotential1(bp1), bonusPotential2(bp2)
 	{
-		potrank = Equip::Potential::POT_NONE;
+		// 095 潜能/魔方：无显式 tier 字段时，按主潜能是否存在推导展示等级（POT_RARE 占位，后续可由 Potential.img 细分级）。
+		potrank = (p1 != 0 || p2 != 0 || p3 != 0) ? Equip::Potential::POT_RARE : Equip::Potential::POT_NONE;
 		quality = EquipQuality::check_quality(item_id, level > 0, stats);
 	}
 
@@ -60,6 +61,11 @@ namespace ms
 		return itemlevel;
 	}
 
+	int16_t Equip::get_itemexp() const
+	{
+		return itemexp;
+	}
+
 	uint16_t Equip::get_stat(EquipStat::Id type) const
 	{
 		return stats[type];
@@ -73,6 +79,27 @@ namespace ms
 	Equip::Potential Equip::get_potrank() const
 	{
 		return potrank;
+	}
+
+	int16_t Equip::get_potential(size_t index) const
+	{
+		switch (index)
+		{
+			case 0: return potential1;
+			case 1: return potential2;
+			case 2: return potential3;
+			default: return 0;
+		}
+	}
+
+	int16_t Equip::get_bonus_potential(size_t index) const
+	{
+		switch (index)
+		{
+			case 0: return bonusPotential1;
+			case 1: return bonusPotential2;
+			default: return 0;
+		}
 	}
 
 	EquipQuality::Id Equip::get_quality() const

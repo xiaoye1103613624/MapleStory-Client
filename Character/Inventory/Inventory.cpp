@@ -131,12 +131,12 @@ namespace ms
 		return {};
 	}
 
-	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious)
+	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2)
 	{
 		equips.emplace(
 			std::piecewise_construct,
 			std::forward_as_tuple(add_slot(invtype, slot, item_id, 1, cash)),
-			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious)
+			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious, p1, p2, p3, bp1, bp2)
 			);
 	}
 

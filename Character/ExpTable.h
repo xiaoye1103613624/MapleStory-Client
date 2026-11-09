@@ -25,5 +25,10 @@ namespace ms
 	{
 		constexpr size_t LEVELCAP = 256;
 		extern const std::array<int64_t, LEVELCAP> values;
+
+		// 升到下一级所需经验。level 超过经验表范围（>255）时回落到与服务端一致的封顶值
+		// 2000000000，以支持超过 256 的等级上限（如 999）。内部做边界钳制，level<=0 返回
+		// values[0]，绝不返回 0，调用方无需担心除零。
+		int64_t required_exp(int level);
 	}
 }

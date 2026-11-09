@@ -74,7 +74,7 @@ namespace ms
 		// 按服务端 uniqueId 反查现金宠（AskPet dlgType=6）
 		Optional<const Pet> find_pet_by_unique_id(int64_t unique_id) const;
 		// Add an equip item
-		void add_equip(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t itemlevel, uint16_t itemexp, int32_t vicious);
+		void add_equip(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t itemlevel, uint16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2);
 
 		// Check if the use inventory contains at least one projectile
 		bool has_projectile() const;

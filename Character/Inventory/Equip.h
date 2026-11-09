@@ -37,7 +37,7 @@ namespace ms
 			LENGTH
 		};
 
-		Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious);
+		Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2);
 
 		int32_t get_item_id() const;
 		int64_t get_expiration() const;
@@ -46,10 +46,15 @@ namespace ms
 		uint8_t get_slots() const;
 		uint8_t get_level() const;
 		uint8_t get_itemlevel() const;
+		// 道具经验（成长系统）：原生 tooltip「道具经验」行的数据源，值为百分比整数部分。
+		int16_t get_itemexp() const;
 		uint16_t get_stat(EquipStat::Id type) const;
 		int32_t get_vicious() const;
 		Potential get_potrank() const;
 		EquipQuality::Id get_quality() const;
+		// 095 潜能/魔方：3 条主潜能 + 2 条 bonus 潜能（值为 Potential.img 行 id，0 = 空）。
+		int16_t get_potential(size_t index) const;
+		int16_t get_bonus_potential(size_t index) const;
 
 	private:
 		EnumMap<EquipStat::Id, uint16_t> stats;
@@ -62,6 +67,11 @@ namespace ms
 		uint8_t itemlevel;
 		int16_t itemexp;
 		int32_t vicious;
+		int16_t potential1;
+		int16_t potential2;
+		int16_t potential3;
+		int16_t bonusPotential1;
+		int16_t bonusPotential2;
 		Potential potrank;
 		EquipQuality::Id quality;
 	};

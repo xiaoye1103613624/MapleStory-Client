@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "ExpTable.h"
+#include <cmath>
 
 namespace ms
 {
@@ -42,14 +43,24 @@ namespace ms
 		583827855,	615821622,	649568646,	685165008,	722712050,	762316670,	804091623,	848155844,	894634784,	943660770,	// Levels 181 - 190
 		995373379,	1049919840,	1107455447,	1168144006,	1232158297,	1299680571,	1370903066,	1446028554,	1525246918,	1608855764,	// Levels 191 - 200
 		1697021059,
-		// Levels 201 - 255: aligned to s9 server ExpTable.getExpNeededForLevel(level>200)
-		// = flat 2000000000 (E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/constants/game/ExpTable.java:31).
-		// dbcefb0f 曾用 1.06 等比外推想象值（到 41832114835），与服务端契约偏离约 20 倍，弃用。
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000,	// Levels 201 - 210
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000,	// Levels 211 - 220
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000,	// Levels 221 - 230
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000,	// Levels 231 - 240
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000, 2000000000,	// Levels 241 - 250
-		2000000000, 2000000000, 2000000000, 2000000000, 2000000000	// Levels 251 - 255
+		// Levels 201 - 255 are intentionally left as zero-fill. required_exp() no
+		// longer reads them: for level >= 200 it uses the 1.06 growth curve
+		// (matching s9 server ExpTable.getExpNeededForLevel), so the experience
+		// cap keeps scaling with the original progression instead of a flat value.
 	};
+
+	int64_t ExpTable::required_exp(int level)
+	{
+		if (level <= 0)
+			return values[0];
+		// Levels 1 - 199 use the precomputed table (aligned to s9 server exp[]).
+		if (level < 200)
+			return values[level];
+		// Levels >= 200 follow the server 1.06 growth curve so that the
+		// experience cap scales with the original progression instead of a
+		// flat value. base = 2e9 * 1.06^((level - 200) / 10).
+		double base = 2000000000.0;
+		double factor = std::pow(1.06, (level - 200) / 10.0);
+		return static_cast<int64_t>(base * factor + 0.5);
+	}
 }
