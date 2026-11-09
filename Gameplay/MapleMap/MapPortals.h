@@ -37,7 +37,16 @@ namespace ms
 		void update(Point<int16_t> playerpos);
 		void draw(Point<int16_t> viewpos, float inter) const;
 
-		Portal::WarpInfo find_warp_at(Point<int16_t> playerpos, bool allow_hidden = false);
+		// 传送门触发范围（对齐 v95：CPortal::CheckKey 的按键通道 vs ProcessPortal 的碰触通道）：
+		//   TOUCH_ONLY —— 行走经过即触发，仅 TOUCH / SCRIPTED_TOUCH 类（弹跳/碰触门）。
+		//   ALL        —— 按上键主动交互，放行全部可见/隐藏门。
+		enum class PortalScope : uint8_t
+		{
+			TOUCH_ONLY,
+			ALL
+		};
+
+		Portal::WarpInfo find_warp_at(Point<int16_t> playerpos, PortalScope scope = PortalScope::TOUCH_ONLY);
 
 		Point<int16_t> get_portal_by_id(uint8_t id) const;
 		Point<int16_t> get_portal_by_name(const std::string& name) const;

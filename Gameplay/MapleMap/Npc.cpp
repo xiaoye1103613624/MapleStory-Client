@@ -57,6 +57,39 @@ namespace ms
 
 		nl::node info = src["info"];
 
+		// MapleTV 大屏（原生 bMapleTV 模板，如自由市场 9250025 / 岛内枫叶电视）：
+		// 立绘里的两块深色屏幕本身不烘焙内容，画面由 CNpc::SetMapleTVMessage
+		// 用 UI/MapleTV.img 贴图叠出来。本客户端此前完全没读这棵 img，正是
+		// 「自由市场 MapleTV 没有画面显示」的根因。
+		// 偏移是 WZ short：msgX/msgY = 上屏(240x90)左上角，adX/adY = 下屏
+		// (240x180)左上角，均相对 NPC 锚点；少数 .nx 把负 short 读成 0xFFxx
+		// 正值（9250025 的 msgX=65304 实为 -232），统一按 int16_t 解释。
+		maple_tv = info["MapleTV"].get_bool();
+
+		if (maple_tv)
+		{
+			tv_msg_pos = Point<int16_t>(
+				static_cast<int16_t>(info["MapleTVmsgX"].get_integer()),
+				static_cast<int16_t>(info["MapleTVmsgY"].get_integer())
+			);
+			tv_ad_pos = Point<int16_t>(
+				static_cast<int16_t>(info["MapleTVadX"].get_integer()),
+				static_cast<int16_t>(info["MapleTVadY"].get_integer())
+			);
+
+			nl::node tvroot = nl::nx::UI["MapleTV.img"];
+			nl::node tv_media_src = tvroot["TVmedia"]["0"];
+			tv_basic = Texture(tvroot["TVbasic"]["0"]);       // 上屏默认台标
+			tv_chat = Texture(tvroot["TVchat"]["0"]);         // 上屏文字底板（SEND_TV 时盖台标）
+
+			// R6：节点缺失时静默降级，只保留 NPC 立绘。先判节点再构造 Animation，
+			// 否则空 Animation 的 get_origin()/get_dimensions() 会越界取 frames[0]。
+			if (tv_media_src && tv_media_src.size() > 0)
+				tv_media = Animation(tv_media_src);            // 下屏轮播广告
+
+			maple_tv = tv_basic.is_valid() && tv_media_src && tv_media_src.size() > 0;
+		}
+
 		hidename = info["hideName"].get_bool();
 		mouseonly = info["talkMouseOnly"].get_bool();
 		scripted = info["script"].size() > 0 || info["shop"].get_bool();
@@ -122,6 +155,40 @@ namespace ms
 		if (animations.count(stance))
 			animations.at(stance).draw(DrawArgument(absp, flip), alpha);
 
+		// 原生 TV 模板都是不翻转的场域静态对象（自由市场 9250025 的 life.f=0，
+		// 服务端 spawnNPC 写 getF()!=1 → 本端 flip=false）。若将来遇到 f=1 的
+		// 镜像模板，偏移需按镜像重算，这里宁可只留立绘也不画错位置。
+		if (maple_tv && !flip)
+		{
+			// 两块屏幕的位图都是 bottom-left origin（TVbasic 0,89 / TVmedia 0,180），
+			// 而 WZ 偏移给的是屏幕左上角，所以绘制锚点要补上当前帧 origin。
+			// 后画：压住立绘里那两块烘焙的深色屏底，不被木框/齿轮盖住。
+			// SEND_TV 文字层在场时，上屏用 TVchat（同 240x90、同 origin）替换
+			// 默认台标，再逐行画 5 行消息（原生 SetMapleTVMessage 语义）。
+			const bool tv_text_on = !tv_lines.empty() && tv_chat.is_valid();
+			const Texture& upper = tv_text_on ? tv_chat : tv_basic;
+
+			upper.draw(DrawArgument(absp + tv_msg_pos + upper.get_origin()));
+			tv_media.draw(DrawArgument(absp + tv_ad_pos + tv_media.get_origin()), alpha);
+
+			if (tv_text_on)
+			{
+				// 240x90 屏内 5 行：行距 14、首行墨迹约 y8，A11M 墨迹顶 = draw_y+10
+				// ⇒ 首行 draw_y = -2，逐行 +14（原生 TV 文字观感校准值）。
+				int16_t ty = static_cast<int16_t>(-2);
+
+				for (const std::string& line : tv_lines)
+				{
+					if (line.empty())
+						continue;
+
+					Text tl(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, line, 230);
+					tl.draw(absp + tv_msg_pos + Point<int16_t>(120, ty));
+					ty += 14;
+				}
+			}
+		}
+
 		if (!hidename)
 		{
 			// If ever changing code for namelabel confirm placements with map 10000
@@ -134,6 +201,11 @@ namespace ms
 	{
 		if (!active)
 			return phobj.fhlayer;
+
+		// MapleTV 下屏广告按 WZ 帧 delay（150/250ms）轮播；循环动画的 update()
+		// 不返回 true，这里不需要据返回值切下一组。
+		if (maple_tv)
+			tv_media.update();
 
 		if (control && movable)
 		{
@@ -316,5 +388,15 @@ namespace ms
 	std::string Npc::get_func()
 	{
 		return func;
+	}
+
+	// 原生 CNpc::SetMapleTVMessage：SEND_TV 的 5 行文字灌进场域 TV NPC 的上屏；
+	// 空 vector（removeTV）收回默认台标。非 MapleTV 模板的 NPC 忽略。
+	void Npc::set_tv_message(const std::vector<std::string>& lines)
+	{
+		if (!maple_tv)
+			return;
+
+		tv_lines = lines;
 	}
 }

@@ -55,6 +55,11 @@ namespace ms
 		// Returns the NPC's function description or title
 		std::string get_func();
 
+		// MapleTV 大屏消息（原生 CNpc::SetMapleTVMessage）：SEND_TV 广播的 5 行
+		// 文字落在上屏（TVchat 帧盖住默认台标 TVbasic）；空 vector = 收回台标。
+		void set_tv_message(const std::vector<std::string>& lines);
+		bool is_maple_tv() const { return maple_tv; }
+
 	private:
 		// 控制器：≥1000ms 攒一节 absolute(attr0) 后 Flush→NPC_ACTION（对齐 IsTimeForFlush）
 		void try_flush_movepath();
@@ -81,5 +86,21 @@ namespace ms
 		Randomizer random;
 		Text namelabel;
 		Text funclabel;
+
+		// MapleTV 大屏：原生 CNpc::SetMapleTVMessage 对 info/MapleTV=1 的 NPC 模板
+		// （自由市场 9250025 等）在立绘之上叠两块屏幕：上屏 240x90 台标、下屏
+		// 240x180 轮播广告。WZ 的 MapleTVmsgX/Y 与 MapleTVadX/Y 是两块屏幕相对
+		// NPC 锚点 absp 的左上角（short，部分 .nx 会读成 0x0000FFxx，按 int16 解释）。
+		// 证据：Data/.nxcache/Npc.nx 9250025.img/info、UI.nx MapleTV.img/*、
+		// 原生解密串 UI/MapleTV.img/TVbasic/0 与 UI/MapleTV.img/TVmedia/%d。
+		bool maple_tv = false;
+		Point<int16_t> tv_msg_pos;
+		Point<int16_t> tv_ad_pos;
+		Texture tv_basic;
+		Animation tv_media;
+		// SEND_TV 文字层：非空时上屏画 TVchat（240x90，origin 0,89）+ 逐行文字，
+		// 盖掉默认台标；收到 removeTV 清空回 TVbasic。
+		std::vector<std::string> tv_lines;
+		Texture tv_chat;
 	};
 }

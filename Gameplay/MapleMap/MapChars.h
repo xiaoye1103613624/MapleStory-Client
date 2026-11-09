@@ -22,6 +22,7 @@
 #include "../Spawn.h"
 
 #include "../../Character/OtherChar.h"
+#include "../../IO/Cursor.h"
 
 namespace ms
 {
@@ -33,6 +34,10 @@ namespace ms
 		void draw(Layer::Id layer, double viewx, double viewy, float alpha) const;
 		// Update all characters
 		void update(const Physics& physics);
+
+		// Send mouse input to clickable characters (hover → CANCLICK, click →
+		// 请求角色信息窗 CharInfoRequestPacket，与点击「查看角色信息」同一包)。
+		Cursor::State send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos);
 
 		// Spawn a new character, if it has not been spawned yet.
 		void spawn(CharSpawn&& spawn);

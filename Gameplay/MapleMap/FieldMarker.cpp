@@ -67,6 +67,10 @@ namespace ms
 				label.change_text("");
 			}
 		}
+		else if (k == Kind::GUILDNAME)
+		{
+			// 公会名：仅默认黄字名牌（NAMETAG 底），不加载任何特效
+		}
 		else
 		{
 			if (skill_id > 0)

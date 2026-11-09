@@ -68,6 +68,20 @@ namespace ms
 		return &npcs;
 	}
 
+	// SEND_TV 文字层广播：遍历场域 NPC，把 5 行消息灌进所有 MapleTV 模板
+	// （原生 broadcastTV 是全世界广播，但 TV 大屏只存在于自由市场等特定图，
+	// 本端按「当前图上的 TV NPC」落文字；removeTV 传空 vector 收回台标）。
+	void MapNpcs::broadcast_tv_message(const std::vector<std::string>& lines)
+	{
+		for (auto& map_object : npcs)
+		{
+			Npc* npc = static_cast<Npc*>(map_object.second.get());
+
+			if (npc && npc->is_maple_tv())
+				npc->set_tv_message(lines);
+		}
+	}
+
 	Cursor::State MapNpcs::send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos)
 	{
 		for (auto& map_object : npcs)

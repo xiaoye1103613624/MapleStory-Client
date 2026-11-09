@@ -48,6 +48,10 @@ namespace ms
 		// Send mouse input to clickable NPCs
 		Cursor::State send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos);
 
+		// SEND_TV / removeTV：向场域所有 MapleTV 模板 NPC 灌/收上屏文字
+		// （原生 CNpc::SetMapleTVMessage 的全场广播语义）
+		void broadcast_tv_message(const std::vector<std::string>& lines);
+
 	private:
 		MapObjects npcs;
 

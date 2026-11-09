@@ -36,6 +36,9 @@ namespace ms
 	{
 		nl::node src = nl::nx::Item["Special"]["0900.img"];
 
+		if (!src)  // 资源缺失时优雅降级，避免后续访问空节点
+			return;
+
 		mesoicons[MesoIcon::BRONZE] = src["09000000"]["iconRaw"];
 		mesoicons[MesoIcon::GOLD] = src["09000001"]["iconRaw"];
 		mesoicons[MesoIcon::BUNDLE] = src["09000002"]["iconRaw"];

@@ -36,7 +36,9 @@ namespace ms
 			CATCH,
 			CHALKBOARD,
 			CHARBOX,
-			ITEMFX
+			ITEMFX,
+			// 公会名纯名牌：不加载任何特效（曾误用 DOOR 导致 ItemUp 白光柱）
+			GUILDNAME
 		};
 
 		FieldMarker(int32_t oid, Kind kind, Point<int16_t> pos, const std::string& label, int32_t skill_id = 0, int32_t lifetime_ms = 0);

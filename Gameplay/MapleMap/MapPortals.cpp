@@ -55,7 +55,7 @@ namespace ms
 				hide = (type == Portal::SCRIPTED_HIDDEN) ? psh : ph;
 			}
 			else if (type == Portal::REGULAR || type == Portal::TOUCH
-				|| type == Portal::SCRIPTED_TOUCH)
+				|| type == Portal::SCRIPTED || type == Portal::SCRIPTED_TOUCH)
 			{
 				shared = &regular_anim;
 			}
@@ -133,7 +133,7 @@ namespace ms
 			return {};
 	}
 
-	Portal::WarpInfo MapPortals::find_warp_at(Point<int16_t> playerpos, bool allow_hidden)
+	Portal::WarpInfo MapPortals::find_warp_at(Point<int16_t> playerpos, PortalScope scope)
 	{
 		if (cooldown > 0)
 			return {};
@@ -143,8 +143,12 @@ namespace ms
 			const Portal& portal = iter.second;
 			Portal::Type t = portal.get_type();
 
-			// 隐藏/脚本隐藏门需玩家主动交互（按上键），行走经过不自动触发
-			if (!allow_hidden && (t == Portal::HIDDEN || t == Portal::SCRIPTED_HIDDEN))
+			// 原生语义（v95 CPortal::CheckKey / ProcessPortal）：
+			//  * 自动触发通道（无按键）只放行 TOUCH / SCRIPTED_TOUCH（碰触门）；
+			//  * REGULAR / SCRIPTED / INVISIBLE / WARP / HIDDEN 等一律要按上键；
+			//  * SPRING1/2 弹跳门走各自的 spring 通道，不在此处。
+			if (scope == PortalScope::TOUCH_ONLY
+				&& t != Portal::TOUCH && t != Portal::SCRIPTED_TOUCH)
 				continue;
 
 			if (portal.bounds().contains(playerpos))

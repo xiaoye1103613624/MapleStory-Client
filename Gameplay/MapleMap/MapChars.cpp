@@ -17,8 +17,41 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "MapChars.h"
 
+#include "../../Net/Packets/PlayerInteractionPackets.h"
+
 namespace ms
 {
+	Cursor::State MapChars::send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos)
+	{
+		// 命中框：以角色脚底为锚，宽约 72、高约 110（站立角色大致体型）。
+		// 与服务端 CHAR_INFO_REQUEST(97) 一致，点一下即开角色信息窗。
+		for (const auto& kv : chars)
+		{
+			const MapObject* mo = kv.second.get();
+
+			if (!mo || !mo->is_active())
+				continue;
+
+			Point<int16_t> absp = mo->get_position() + viewpos;
+			Rectangle<int16_t> bounds(absp.x() - 36, absp.x() + 36, absp.y() - 110, absp.y());
+
+			if (bounds.contains(position))
+			{
+				if (pressed)
+				{
+					CharInfoRequestPacket(kv.first).dispatch();
+					return Cursor::State::IDLE;
+				}
+				else
+				{
+					return Cursor::State::CANCLICK;
+				}
+			}
+		}
+
+		return Cursor::State::IDLE;
+	}
+
 	void MapChars::draw(Layer::Id layer, double viewx, double viewy, float alpha) const
 	{
 		chars.draw(layer, viewx, viewy, alpha);

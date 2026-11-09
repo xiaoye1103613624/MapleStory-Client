@@ -113,7 +113,7 @@ namespace ms
 	private:
 		void load_map(int32_t mapid);
 		void respawn(int8_t portalid);
-		void check_portals(bool allow_hidden = false);
+		void check_portals(MapPortals::PortalScope scope);
 		void check_seats();
 		void check_ladders(bool up);
 		void check_drops();

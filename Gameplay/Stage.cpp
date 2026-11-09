@@ -277,12 +277,13 @@ namespace ms
 			if (player.is_key_down(KeyAction::Id::UP) && !player.is_key_down(KeyAction::Id::DOWN))
 				check_ladders(true);
 
-			// 可见/触摸传送门（REGULAR/TOUCH 等）：走进即传送，无需按键
-			check_portals();
+			// 碰触门（TOUCH / SCRIPTED_TOUCH）：走进即传送，无需按键。
+			// 普通门（REGULAR/SCRIPTED/HIDDEN…）原生要求按上键，见下一个分支。
+			check_portals(MapPortals::PortalScope::TOUCH_ONLY);
 
-			// 隐藏/脚本隐藏传送门：需按上键主动交互
+			// 其余传送门：按上键主动交互（对齐 v95 CPortal::CheckKey）
 			if (player.is_key_down(KeyAction::Id::UP))
-				check_portals(true);
+				check_portals(MapPortals::PortalScope::ALL);
 
 			// W4：触碰式反应器 enter/leave
 			check_touch_reactors();
@@ -417,13 +418,13 @@ namespace ms
 			character->show_effect_id(effect);
 	}
 
-	void Stage::check_portals(bool allow_hidden)
+	void Stage::check_portals(MapPortals::PortalScope scope)
 	{
 		if (player.is_attacking())
 			return;
 
 		Point<int16_t> playerpos = player.get_position();
-		Portal::WarpInfo warpinfo = portals.find_warp_at(playerpos, allow_hidden);
+		Portal::WarpInfo warpinfo = portals.find_warp_at(playerpos, scope);
 
 		if (warpinfo.intramap)
 		{
@@ -567,7 +568,14 @@ namespace ms
 				return guide_st;
 		}
 
-		return npcs.send_cursor(clicked, cursor_position, camera.position());
+		Cursor::State npc_st = npcs.send_cursor(clicked, cursor_position, camera.position());
+
+		if (npc_st != Cursor::State::IDLE)
+			return npc_st;
+
+		// 其他玩家：悬停高亮、点击请求角色信息窗（此前完全没接，点玩家无反应 /
+		// 点击被聊天栏兜底吃掉）。
+		return chars.send_cursor(clicked, cursor_position, camera.position());
 	}
 
 	bool Stage::is_player(int32_t cid) const
