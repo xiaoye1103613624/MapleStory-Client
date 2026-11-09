@@ -87,16 +87,24 @@
 > deactivate / LOG 多为 v83 正确语义 → 销案、零改动；同构排查反而揪出
 > `UICharSelect::send_key` 空列表误翻页 / 越界残留误触发 → 立项 1-6 并已修复/
 > 自测/构建。逐字证据见 `notes/wave1-charselect-recheck-20261109.md`。
-> 1-3 死注册 / 1-5 IME 光标本轮未逐字核准，保留 ⏳ 待续，不伪称已核。
+>
+> **round36 现场复核收尾（2026-11-09）**：1-3「死注册」是 `PacketSwitch.cpp:58-62,
+> 434-437` + `LoginHandlers.cpp:454-486` 写明理由的有意裁决（s9 不发、注册仅作
+> v83 协议完整性；handler 带 2026-11-03 实机残留窗修复）→ 销案；1-5 IME 主体
+> （`set_accept_unicode`/`send_text`/`focus_textfield` + BACK/DELETE 码点对齐）
+> 已在盘，但揪出 **LEFT/RIGHT 裸 `markerpos±1` 与字节索引口径不对称** → 立项
+> 1-7 并已修复/自测/构建。逐字证据见 `notes/wave1-login-ime-recheck-20261109.md`。
+> **Wave1 1-1~1-5 至此全部逐字核准完毕。**
 
 | # | 标签 | 功能点 | 证据锚点 | 改动范围 | 自测方式 | 提交 scope |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1-1 | 错 | ~~5 个收包空实现需补语义~~ | `WaveAShellHandlers.cpp:507-513,710-714,3551-3578` deactivate/`set_status` 即 v83 结束/离开语义；`TestingHandlers.cpp:184-186` 未知 mode 兜底 | 无（语义正确） | 灌回包看 UI 状态 | ✅ 销案（旧账 #9 已闭环） |
 | 1-2 | 错 | ~~`RECALCULATE_STATS`(35) 撞值死代码~~ | `Net/PacketSwitch.cpp:735-740` 已注销该 emplace 并写明 s9 只发 `FORCED_STAT_RESET`、被顶掉属性不回弹；`PlayerHandlers.cpp:275` handler 仍在 | 无（有意裁决） | `gen_opcode_matrix.py --check` | ✅ 销案（有意裁决，强接会破坏属性回弹） |
-| 1-3 | 错 | `GENDER_DONE(4)`/`CONFIRM_EULA_RESULT(5)` 事实死注册（s9 不下发） | `LoginHandlers.cpp:459,476`；`PacketSwitch.cpp:58-60,436-437` | 标注/收敛死注册 | 登录链烟测无回归 | ⏳ `#devfix-dead-register`（round35 未逐字核准，待续） |
+| 1-3 | 错 | ~~`GENDER_DONE(4)`/`CONFIRM_EULA_RESULT(5)` 事实死注册需收敛~~ | `PacketSwitch.cpp:58-62,434-437` 注释「s9 下不发、注册仅作协议完整性」；`LoginHandlers.cpp:454-486` 两 handler 带 2026-11-03 实机残留窗修复；`:50-57` LOGIN_RESULT 无条件清 GENDER/TOS/LOGINNOTICE | 无（有意裁决） | 登录链烟测无回归 | ✅ 销案（强删破坏 v83 兼容 + 实机修复） |
 | 1-4 | 错 | ~~`WEEK_EVENT_MESSAGE(77)` 需接 `UIEvent` 数据通路~~ | `MessagingHandlers.cpp:501-510` 已改走 yellow tip；注释「强开窗让 GM 反馈看不见且 `UIEvent.cpp:123` 资源缺失越界崩」 | 无（有意裁决） | 灌 77 回包看 yellow tip | ✅ 销案（强接会崩） |
-| 1-5 | 交 | 中文 IME `Textfield` 光标 + 显示链路（IME 已在 `IO/Window.cpp:901-925` 开启） | `feature-gap` §16 #13 | `IO/Components/Textfield` | 本地输入中文看光标/回显 | ⏳ `#devfix-ime-caret`（round35 未逐字核准，待续） |
-| **1-6** | 错 | **UICharSelect 键盘导航边界守卫**：空列表 RIGHT 误翻页 `BtPageR` / 删角色后 `selected_character` 残留越界致 `button_pressed` 落到 `CHARACTER_SLOT0` 之前（实测 `8=BtPreview`） | live `UICharSelect.cpp:828-894`（`remove_character():955-987` + `select_last_slot():1322-1335` 残留越界）；同构 round34 `72f1a6ce`；`notes/wave1-charselect-recheck-20261109.md` §2 | `UICharSelect.cpp` 2 处守卫（13+） | `python tools/test_charselect_guard.py`（2 守卫 + 10 边界 PASS，A:press 2→0 / B:misfire 2→0）+ `build_smoke.bat` GATE OK + EXITCODE=0 | ✅ `#devfix-charselect-guard`（本轮已提交） |
+| 1-5 | 交 | ~~中文 IME `Textfield` 光标 + 显示链路需补齐~~ | `Textfield.h:55-58` `set_accept_unicode`/`accepts_unicode`；`IO/UI.cpp:496-527` `send_text`/`focus_textfield`；`UIMapSearchPanel.cpp:188` 启用中文 IME；`Textfield.cpp:192-202,230-238` BACK/DELETE 码点对齐 | 主体零改动（仅 1-7 补 LEFT/RIGHT） | `python tools/test_textfield_utf8_caret.py` | ✅ 主体销案（真缺陷转 1-7） |
+| **1-6** | 错 | **UICharSelect 键盘导航边界守卫**：空列表 RIGHT 误翻页 `BtPageR` / 删角色后 `selected_character` 残留越界致 `button_pressed` 落到 `CHARACTER_SLOT0` 之前（实测 `8=BtPreview`） | live `UICharSelect.cpp:828-894`（`remove_character():955-987` + `select_last_slot():1322-1335` 残留越界）；同构 round34 `72f1a6ce`；`notes/wave1-charselect-recheck-20261109.md` §2 | `UICharSelect.cpp` 2 处守卫（13+） | `python tools/test_charselect_guard.py`（2 守卫 + 10 边界 PASS，A:press 2→0 / B:misfire 2→0）+ `build_smoke.bat` GATE OK + EXITCODE=0 | ✅ `#devfix-charselect-guard`（round35 已提交） |
+| **1-7** | 交 | **Textfield UTF-8 光标边界守卫**：`markerpos` 是字节索引（`GraphicsGL.cpp:1349`），LEFT/RIGHT 裸 `±1` 落进多字节汉字续字节 → `add_string:294 text.insert` 劈成非法 UTF-8；BACK/DELETE 已有码点对齐，左右键漏守卫 | live `Textfield.cpp:174-187` vs `:192-202,230-238`；`Textfield.cpp:78 textlabel.advance(markerpos)`；`notes/wave1-login-ime-recheck-20261109.md` §2 | `Textfield.cpp` LEFT/RIGHT 补码点边界（ASCII 逐字节等价） | `python tools/test_textfield_utf8_caret.py`（6 守卫 + 10 边界 PASS，before bad=28/split=5 → after bad=0，ASCII 回归 OK）+ `build_smoke.bat` GATE OK + EXITCODE=0 | ✅ `#devfix-utf8-caret`（本轮已提交） |
 
 ### Wave 2 · 需 orange-wz 内容层 / Photoshop 位图（L-A，UI 拼接·动画·样式，多数当前 ⏳）
 

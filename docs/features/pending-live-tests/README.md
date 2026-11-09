@@ -511,3 +511,24 @@
 | 14-2 删光残留 | 有角色账号删到只剩 1 个，删完瞬间按方向键 | 不误触发 BtPreview / 无越段跳转 | 需真机时序 + 删除链路 |
 | 14-3 多页导航回归 | 4 / 7 / 15 角色翻页后上下左右 + 回车进游戏 | 导航/选中/进世界与修复前一致 | 需登录服在跑 + 冷启动 + 手工按键 |
 | 14-4 重连竞态 | 选角页触发重连、列表未就绪瞬间按键 | 无崩溃、按键被守卫安全吞掉 | 需掐准 SERVERLIST 刷新窗口 |
+
+---
+
+## 15. round36 Textfield UTF-8 光标边界（#devfix-utf8-caret，需用户一起测）
+
+> 修复内容：`IO/Components/Textfield.cpp:send_key` LEFT/RIGHT 补 UTF-8 码点
+> 边界移动（`markerpos` 是字节索引，旧裸 `±1` 会落进多字节汉字续字节，
+> 随后 `add_string:294 text.insert` 把字符劈成非法序列）。
+> 自动自测 `tools/test_textfield_utf8_caret.py` 只覆盖**静态守卫 + 字节算法
+> 复刻**（6 守卫 + 10 边界 PASS，before bad=28/split=5 → after bad=0，
+> ASCII 回归逐字节一致）+ 构建 GATE OK/EXITCODE=0；**IME 真机观感与字图缓存
+> 渲染必须联测**，不冒充已验证。exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`
+> （2026-11-09 23:14 重编译）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave1-login-ime-recheck-20261109.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 15-1 CJK 左右键 | 地图搜索框输入「你好世界」，HOME 后连按 RIGHT 4 次再插「X」 | 光标每次跳过整个汉字，插入得「X你好世界」/「你X好世界」等，无乱码无半字 | harness 只复刻字节算法，真机需 IME + 字图缓存渲染 |
+| 15-2 BACK/DELETE 组合 | 上一步后连按 LEFT + BACK / RIGHT + DELETE | 整字删除，不残留半字节、不误删相邻字 | 需真机输入法提交 + 回删链路 |
+| 15-3 ASCII 回归 | 账号/密码/聊天框纯英文，左右键 + 插入 + 回删 | 与修复前逐字节一致，无回归 | 需登录服 + 冷启动手工按键（harness 已证算法等价） |
+| 15-4 IME 预编辑 | 中文输入法候选态（未提交）看输入框 | 当前只收已提交串；预编辑态观感须另行取证（notes §5） | 需多输入法矩阵 + 真机截图 |

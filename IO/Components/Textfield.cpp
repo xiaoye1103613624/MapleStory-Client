@@ -174,14 +174,31 @@ namespace ms
 					case KeyAction::Id::LEFT:
 					{
 						if (markerpos > 0)
-							markerpos--;
+						{
+							// 与 BACK/DELETE 的码点对齐同口径：markerpos 是 UTF-8 字节
+							// 索引（GraphicsGL::LayoutBuilder::advances 按字节记槽），
+							// 左移须回退到前一个码点的首字节；否则光标落在续字节上，
+							// 之后 add_string 会把多字节字符从中间劈开成非法序列（乱码）。
+							size_t start = markerpos - 1;
+							while (start > 0 && (static_cast<unsigned char>(text[start]) & 0xC0) == 0x80)
+								start--;
+
+							markerpos = start;
+						}
 
 						break;
 					}
 					case KeyAction::Id::RIGHT:
 					{
 						if (markerpos < text.size())
-							markerpos++;
+						{
+							// 右移须跳过当前码点的全部续字节，落到下一个码点首字节。
+							size_t end = markerpos + 1;
+							while (end < text.size() && (static_cast<unsigned char>(text[end]) & 0xC0) == 0x80)
+								end++;
+
+							markerpos = end;
+						}
 
 						break;
 					}
