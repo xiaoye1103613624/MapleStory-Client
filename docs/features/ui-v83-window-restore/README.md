@@ -131,3 +131,21 @@ bool try_maple_btn(map<uint16_t, unique_ptr<Button>>& buttons, uint16_t id, nl::
    导出的素材直方图并排 —— 若各色**像素个数逐个对上、只有通道值同乘一个常数**，那就不是素材差异、
    也不是渲染错色，而是**不透明度被污染**（A1 就是靠这一招定性的，见
    [evidence/w11-map/pixels-alpha.md](evidence/w11-map/pixels-alpha.md)）。
+
+
+## 9. 2026-11-08 追加：装备 Tooltip 原生逐像素复校
+
+> 承接 dsh 会话 `session-b8e5680e-6d15-4acc-b734-8cba88ddfbfb`（取证完成、代码 0% 后中断）。
+> 完整实现逻辑、证据、几何推导与预留项：[notes/r28-equip-tooltip-align.md](notes/r28-equip-tooltip-align.md)；
+> 可复核 diff：[patches/r28-equip-tooltip-align.diff](patches/r28-equip-tooltip-align.diff)。
+
+| 项 | 结论 |
+| --- | --- |
+| 背板 | §3 W5 的「黑 0.9α + 灰边」定案**被逐像素证据推翻**：原生是实心 `(79,79,119)` + 1px 亮边 `(85,85,130)`、无灰外框，`TooltipBackdrop` 已改 |
+| 需求块 | 由两列 3 行 15px 改**单列 8 行 12px**，补 `要求人气`（`Can/none` 短横）与 `道具等级/道具经验`（`GrowthEnabled` 位图 + 数字字模 + `percent`）；成长两行仅 `itemlevel/itemexp` 非零时成组显示（用户抉择） |
+| 图标衬底 | 补 `UIWindow.img/IconBase/0` 32×32 灰板 2x，与 `SkillTooltip` 同源同偏移 |
+| 分隔线 / 正文 | 分隔线白 α1.0；正文改奶油色 `(255,238,204)`（`Color::TOOLTIPBODY`），属性行按用户抉择**整行居中**（明确偏离原生左对齐） |
+| 道具 ID | 装备分类上方新增一行 `equip.label_itemid`；zh/en 文案与部署 locale 同步；原生文案 `装备分类/可升级次数/金锤子已提高的强化次数` 已对齐 |
+| 几何闭环 | `height = 555 + (req_shift - 88)`，`draw`/`draw_preview` 共用 `req_shift`（124 / 148），背板高度同步，内容不越界 |
+| 验证 | `build_smoke.bat` `EXITCODE=0`、真实编译/链接错误 0、部署 exe 4,924,928 B @ 13:14:27、6 文件 lint 0、部署 locale md5 一致 |
+| 未跑 | 实机悬停对照截图（需真实 s9 服务端）；`Dot/0` 橙色项目符与 `ItemTooltip` 灰底板属显式预留，见 notes §6 |

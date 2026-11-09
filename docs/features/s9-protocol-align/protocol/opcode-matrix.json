@@ -4,7 +4,7 @@
    "RECALCULATE_STATS"
   ],
   "client_source_hashes": {
-   "Net/OutPacket.h": "538404c2652006a59514aefe66025ced02eda0583d90e017f441adacd2d6b6d9",
+   "Net/OutPacket.h": "4a4b0eed53c99daaf8a7b0b8e03e3a033beff2db2051679a1fe515ad8fec48d1",
    "Net/PacketSwitch.cpp": "b6317281ad9006febfe564e9b01c185e91db1ab09f3913c043a797f3ae90ce18"
   },
   "collisions": {
@@ -26,8 +26,8 @@
   "counts": {
    "client_in_constants": 306,
    "client_in_registrations": 305,
-   "client_out_constants": 145,
-   "client_out_sent": 145,
+   "client_out_constants": 148,
+   "client_out_sent": 148,
    "s9_recv_constants": 182,
    "s9_recv_distinct_values": 181,
    "s9_registered_handlers": 174,
@@ -36,9 +36,9 @@
    "s9_send_distinct_values": 313,
    "s9_send_emitted": 252
   },
-  "generated_at": "2026-11-06T08:16:00",
+  "generated_at": "2026-11-08T00:56:27",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "9dcd23e331a24aa7040d8876c15e92932f31f931",
+  "s9_git_head": "3d5ccc6f8e48f79be266448eee28cf1a72e75f30",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",
@@ -697,7 +697,7 @@
    "client_sent_at": [
     {
      "file": "Gameplay/Stage.cpp",
-     "line": 355
+     "line": 356
     }
    ],
    "client_sent_count": 1,
@@ -2824,7 +2824,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/GuildPackets.h",
-     "line": 94
+     "line": 107
     }
    ],
    "client_sent_count": 1,
@@ -3341,7 +3341,7 @@
      "line": 83
     }
    ],
-   "client_sent_count": 6,
+   "client_sent_count": 7,
    "client_value": 126,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "GuildOperationHandler",
@@ -3390,7 +3390,7 @@
      "line": 106
     }
    ],
-   "client_sent_count": 17,
+   "client_sent_count": 18,
    "client_value": 123,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PlayerInteractionHandler",
@@ -3497,7 +3497,7 @@
      "line": 100
     }
    ],
-   "client_sent_count": 11,
+   "client_sent_count": 13,
    "client_value": 229,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CashOperationHandler",
@@ -3749,9 +3749,13 @@
     {
      "file": "Net/Packets/AlliancePackets.h",
      "line": 51
+    },
+    {
+     "file": "Net/Packets/AlliancePackets.h",
+     "line": 65
     }
    ],
-   "client_sent_count": 3,
+   "client_sent_count": 4,
    "client_value": 143,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AllianceOperationHandler",
@@ -3777,7 +3781,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/AlliancePackets.h",
-     "line": 63
+     "line": 77
     }
    ],
    "client_sent_count": 1,
@@ -4072,6 +4076,124 @@
    "s9_shadowed_by": null,
    "s9_value": 4096,
    "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "RING_ACTION",
+     "value": 137
+    }
+   ],
+   "client_line": 309,
+   "client_name": "RING_ACTION",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 67
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 79
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 92
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 107
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 121
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 137
+    }
+   ],
+   "client_sent_count": 7,
+   "client_value": 137,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "RingActionHandler",
+   "s9_line": 143,
+   "s9_name": "RING_ACTION",
+   "s9_names_at_value": [],
+   "s9_reg_line": 250,
+   "s9_shadowed_by": null,
+   "s9_value": 137,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "WEDDING_ACTION",
+     "value": 138
+    }
+   ],
+   "client_line": 312,
+   "client_name": "WEDDING_ACTION",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 169
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 184
+    },
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 196
+    }
+   ],
+   "client_sent_count": 3,
+   "client_value": 138,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "WeddingHandler",
+   "s9_line": 144,
+   "s9_name": "WEDDING_ACTION",
+   "s9_names_at_value": [],
+   "s9_reg_line": 308,
+   "s9_shadowed_by": null,
+   "s9_value": 138,
+   "status": "MATCHED"
+  },
+  {
+   "annotation_consistent": true,
+   "client_annotations": [
+    {
+     "s9_name": "WEDDING_TALK",
+     "value": 139
+    }
+   ],
+   "client_line": 317,
+   "client_name": "WEDDING_TALK",
+   "client_sent": true,
+   "client_sent_at": [
+    {
+     "file": "Net/Packets/WeddingPackets.h",
+     "line": 210
+    }
+   ],
+   "client_sent_count": 1,
+   "client_value": 139,
+   "s9_group": "registerChannelHandlers",
+   "s9_handler": "WeddingTalkMoreHandler",
+   "s9_line": 145,
+   "s9_name": "WEDDING_TALK_MORE",
+   "s9_names_at_value": [
+    "WEDDING_TALK",
+    "WEDDING_TALK_MORE"
+   ],
+   "s9_reg_line": 310,
+   "s9_shadowed_by": null,
+   "s9_value": 139,
+   "status": "S9_DUP_VALUE"
   }
  ],
  "s2c": [

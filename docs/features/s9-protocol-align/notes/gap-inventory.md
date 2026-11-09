@@ -78,8 +78,8 @@ gap = sorted(set(reg) - sent)      # → 70
 | 0x0076 | ADMIN_CHAT | AdminChatHandler | 无玩家路径 | 明确不做 | 禁发 | GM 专属；客户端仅 `ADMIN_COMMAND=0x80` 已发 |
 | 0x0081 | ADMIN_LOG | AdminLogHandler | 无 | 明确不做 | 禁发 | GM 日志 |
 | 0x0082 | BUDDYLIST_MODIFY | BuddylistModifyHandler | 有（UIBuddyList/BuddyPackets） | 需先补UI | 禁发 | 好友增删发送路径未接线 |
-| 0x0089 | RING_ACTION | RingActionHandler | 无 | 明确不做 | 安全 | 婚戒社交，范围外 |
-| 0x008A | WEDDING_ACTION | WeddingHandler | 无 | 明确不做 | 禁发 | 婚礼系统，范围外 |
+| 0x0089 | RING_ACTION | RingActionHandler | 无 | **2026-11-06 已接** | — | 求婚/答复/解约/请柬/心愿单；见 [wedding-flow](../../wedding-flow/) |
+| 0x008A | WEDDING_ACTION | WeddingHandler | 无 | **2026-11-06 已接** | — | 礼物台送/取/退出；见 [wedding-flow](../../wedding-flow/) |
 | 0x008B | WEDDING_TALK_MORE | WeddingTalkMoreHandler | 无 | 明确不做 | 禁发 | 同上（撞值 0x8B） |
 | 0x00A1 | CASHSHOP_SURPRISE | CashShopSurpriseHandler | 无 | 明确不做 | 禁发 | 现金商店内容 |
 | 0x00A2 | CLICK_GUIDE | ClickGuideHandler | 有（引导） | 可实现 | 安全 | 点击引导 |

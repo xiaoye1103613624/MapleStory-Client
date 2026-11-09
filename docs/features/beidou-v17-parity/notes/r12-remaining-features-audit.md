@@ -95,4 +95,6 @@ CashGachapon / RemoteGachapon / ViciousHammer / VegaSpell / Auction(无服务端
 - 注册：`UIElement.h`(Type::ALLIANCE)、`PacketSwitch.cpp`(recv 66 + include)、`vcxproj`。
 - 构建：EXITCODE=0（仅 LNK4098/4099 既有警告）。
 - 已知简化：①仅展示联盟名/公告/成员公会 id（公会名需 guildInfo 块，0x0F 已跳过）；②创建联盟/邀请/改公告需文本输入（UISoftKey），当前未接按钮（仅刷新/离盟可测）；③0x0F 的 guildInfo 块整体跳过，仅取 guild id 列表。
+- **2026-11-06 补完（随 wedding-flow 同轮）**：上述简化②③已消解 —— 0x0F 的 guildInfo 块已按 s9 `getGuildInfo` 写序解析出公会名（`parse_guild_info_name`）；邀请/公告按钮 + SoftKey（`BtInvite`/`BtNotice`/`I`/`N` 键）已接；0x0D(getGuildAlliances)/0x03(allianceInvite→UIYesNo+`AllianceAcceptPacket` 0x04，消费 GameOpt `UNION_APPLY`)/0x02/0x0E/0x18/0x1A/0x1D(disband) 分支补全；`ensure_ui` 收口为「仅活动窗更新」（R28-B2）。创建联盟仍走 s9 NPC 脚本（非 c2s，端内无需包）。详见 [social-loop-audit-2026-11](../../social-loop-audit-2026-11/)。
+
 

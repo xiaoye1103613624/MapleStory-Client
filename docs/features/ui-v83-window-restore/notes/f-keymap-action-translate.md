@@ -53,3 +53,23 @@ open-issues C5 / CHECKLIST B14 记的「EnterCashShop 40 vs 229 跨线必失败�
 
 - 勋章窗（`;`/27 真身）未实现，`(Id)28` 空位是占位灭活；
 - `H/G/L/O/F` 五键对应窗体（密语/公会/通知/组队搜索/家族）按需另行立项。
+
+## 五死键接线（2026-11-07 补记，用户指认 083 键位表「学院」后落地）
+
+> 用户质疑「083 按键里面不是有学院吗！」为真：v83 action 26 = FAMILY（中文端「学院」）
+> 在 083 键位表内，且学院=家族窗 `UIFamily` 早已闭环 —— 缺的只是键位入口。
+> 上一轮 social-loop-audit 中「学院非 083 功能」指 v95 导师 Academy，两者勿混。
+
+`IO/UIStateGame.cpp` MENU 分支新增 case（KeyAction.h 枚举与 KeyMapTranslate 表**不动**）：
+
+| 键 | v83 action | 本枚举落点 | 接线行为 | 窗体证据（均 083 系既有） |
+| --- | --- | --- | --- | --- |
+| `H` | 11 WHISPER | WHISPER | UIWhisperTargetDlg（`makeactive()+open()`，同 pick_classic_target 路径） | UIChatBar 密语弹层 |
+| `G` | 17 GUILD | GUILD | UIGuild emplace/makeactive（同底栏公会钮 :954/:1076） | UIGuild 实体 |
+| `O` | 25 PARTYSEARCH | MANAGELEGION(25) 槽 | `window("PartySearch")` 可用则 emplace<UIPartySearch>（222/223） | UIPartySearch 实体 |
+| `F` | 26 FAMILY（学院） | MEDALS(26) 槽 | `OpenFamilyPacket().dispatch()` + UIFamily emplace/makeactive | UIFamily 全套（上轮闭环） |
+| `L` | 20 NOTIFIER | NOTIFIER | **保持灭活 + LOG 留证**：s9 `SendOpcode`/`net/opcodes` 全文 0 命中 notifier 后端（实测 grep），通知文案全走 serverNotice/chat；按门禁 7 不做假窗 | — |
+
+验证：`build_smoke.bat` GATE OK / EXITCODE=0，exe 已部署 00:02。
+真机点测并入 pending-live-tests（下一条）。
+

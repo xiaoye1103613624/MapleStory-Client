@@ -39,6 +39,11 @@
 | 29 | G11 场标贴图 | ⏳ 待测 | s2c Catch/Chalk/CharBox/ItemFX | Catch 成败圈；黑板 sample；店招 signboard；ItemEff 无英文名牌 |
 | 30 | 风筝 iconReward | ⏳ 待测 | s2c SPAWN_KITE 271 | 508 风筝动画 + 留言白字；收起/无法放置 |
 | 31 | G10 金/银宝箱 | ⏳ 待测 | c2s UseTreasureChest / s2c 117 | 踩普通 Reactor 不弹窗；双击 4280000/1+钥匙见 opened 皮肤 |
+| 32 | 结婚全链（wedding-flow） | ⏳ 待测 | c2s 137/138/139 / s2c 72/73/74/75/106/320/321 | 求婚→答复→请柬→礼台→解约 7 步，步骤见 [wedding-flow/README §4](../wedding-flow/README.md)；exe 已部署 23:16 |
+| 33 | 联盟补完（invite/0x0D/公告钮） | ⏳ 待测 | c2s 143/144 / s2c 66 | 双公会：盟主邀请→对端 YesNo→0x0D 公会名列表→N 改公告；GameOpt UNION_APPLY 拒绝位生效 |
+| 34 | 组队/家族 R28 回归抓帧 | ⏳ 待测 | s2c 62/95/96… | 冷启动登录链全程抓帧：UIParty/UIFamily/UIGuild/UIAlliance/UIWedding 不得出现在未主动打开的帧 |
+| 35 | 五死键接线（F 学院/H 密语/G 家族共用窗/O 组队搜索） | ⏳ 待测 | — | 默认键位逐键按：`F`→学院(家族)窗开+自动刷新；`H`→「请输入悄悄话的对象」弹层；`G`→**「玩家列表 & 家族」共用窗第 3 页签「家族」**（2026-11-08 起，不再是独立 `UIGuild` 浮窗；浮窗仍由底栏社区钮打开）；`O`→组队搜索窗；`L`→无反应属预期（NOTIFIER 灭活留证）。证据见 ui-v83-window-restore/notes/f-keymap-action-translate.md 补记 + [userlist-five-tabs/notes/diagnosis-and-plan.md](../userlist-five-tabs/notes/diagnosis-and-plan.md)；exe 2026-11-08 01:41 已部署 |
+| 36 | 玩家列表 & 家族五页签共用窗还原 | ⏳ 待测 | c2s BUDDYLIST(130) / PARTY_OPERATION(124) / GUILD_OPERATION / ALLIANCE_OPERATION(143) | 按 `G` 开窗后逐页复拍：好友（0/25 + 分组行 + 底部 12 钮）/ 组员（在线离线 0/0 + 9 钮）/ 家族（[0/0] 计数 + none 行 + 4x3 钮 + 滚动条）/ 家族联盟（还未加入联盟。+ 12 钮）/ 拒绝列表（0/26 + 增加删除）；TAB 循环五格；三张互斥底图不得叠底；按钮发包后对 s9 回包。oracle 帧见 `userlist-five-tabs/evidence/frames/`；exe 2026-11-08 01:41 已部署 |
 
 ---
 
@@ -450,3 +455,21 @@
 - **操作**：等待本地 duration 归零。
 - **期望**：发空包 opcode 99；s9 **当前不处理**（空 handler），仅确认客户端有发送/无崩溃。真解除仍走药剂 USE_ITEM(72)。
 - **opcode**：c2s `CANCEL_DEBUFF=99`（空 body）。
+
+---
+
+## 12. 2026-11-07「14 项回归」续作后仍需用户手点的项
+
+> 自动回归（pass1~pass6 + 本轮新 exe 冒烟）已闭环的项见
+> `ui-v83-window-restore/notes/regress-20261107-abifix.md` 与
+> `regress-20261107-mapletv.md`；exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`
+> （2026-11-07 10:49）。以下三项自动脚本无法覆盖，需手点：
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 10 MapleTV 双屏 | 进自由市场 `910000000`，走到两块木框黑板（NPC 9250025）前 | 上屏显示 MapleStory 台标，下屏播放轮播广告，均不越出木框 | 自动登录落在「番茄田/彩虹岛」，脚本没有换图能力 |
+| 11 点击事件 | 点 NPC / 点角色 / 点玩家 | NPC 对话 / 角色信息窗 / 玩家信息窗 | pass2/4/5b/6 点击坐标均未命中目标，截图无对话框，属驱动坐标问题非功能结论 |
+| 5 装备对比 | 穿上一件装备后悬浮另一件同类装备 | 已装备/对比装备排版与背景色按原生 | 测试号当前无可穿戴/已装备道具 |
+
+另：开播态（使用 MapleTV Messenger 5075xxx 后 15~60s 的角色立绘 + 5 行文案）
+属显式预留，当前 `SEND_TV` 只保留了提示窗，待 REA/IDA 取证后另立 Plan。

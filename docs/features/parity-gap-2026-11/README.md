@@ -102,7 +102,7 @@
 | 世界地图玩家层 | 376 | 🟡 | 请求发、回包不处理 |
 | 排名窗 | `Ranking` | 🟡 壳 | s9 无查询后端 → 空壳（原生是「排行不可用」提示，观感已对齐，功能双侧都空） |
 | 拍卖/MTS | `MTS` | 🟡 壳 | 同上，显式预留 |
-| 婚礼全套 | `Wedding` | 🟡 壳 | 裁决=不做玩法，仅壳 |
+| 婚礼全套 | `Wedding` | ✅ 双端闭环 | 2026-11-06 改判：s9 RingAction/Wedding/WeddingTalk 全存在且已注册，缺口纯在客户端；已接 c2s 137/138/139 全 mode + s2c 字段修正。见 [wedding-flow](../wedding-flow/)。合影仍预留（s9 需外部 WvsMapGen） |
 
 （`MonsterBook/Maker/Alliance/Storage/Trade/Merchant/Guild/Party/Buddy/Messenger/Delivery/StoreBank/Incubator…` 均已有实体窗；r12/r802/r804 等已闭环。）
 

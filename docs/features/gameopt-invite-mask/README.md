@@ -20,6 +20,7 @@
 | `FAMILY_APPLY` | 家族邀请 | `FamilyJoinRequestHandler` | `FamilyAcceptPacket(..., false)` |
 | `ACADEMY_INVITE` | 学院招待 | `FamilySummonRequestHandler` | `FamilySummonResponsePacket(..., false)` |
 | `UNION_CHAT` | 联盟聊天 | `MultiChatHandler` mode=3 | 静默丢弃（含联盟窗 notice） |
+| `UNION_APPLY` | 联盟邀请 | `AllianceInfoHandler` 0x03（`allianceInvite`） | 不发 `AllianceAcceptPacket`（2026-11-06 wedding-flow 同轮接上；原「显式预留」已消解） |
 
 ## 显式预留（证据不足，本轮不动）
 
@@ -27,7 +28,6 @@
 | --- | --- |
 | `GAME_INVITE` | 小游戏/迷你屋邀请入站 YesNo 路径未定位到独立分支 |
 | `FAMILY_CHAT` | MultiChat 无独立 family mode；无其它家族聊天入站 |
-| `UNION_APPLY` | `AllianceHandlers` 尚无联盟邀请 YesNo 入站分支 |
 
 好友申请 / 公会邀请不在上述 12 行枚举语义内，本轮不映射。
 
