@@ -154,6 +154,14 @@ namespace ms
 			// 归一化互相关定位后，"按钮 - 木牌左上角"与 IDA 偏移的差值恒为 (58, 16)
 			// （BtLogin/BtLoginIDSave/BtLoginIDLost/BtPasswdLost/BtNew/BtHomePage/BtQuit
 			// 逐个一致，匹配度 ncc≈1.000）；保存账号勾选框（窗口内 12,73）实测同样吻合。
+			// round74 read-only 083 review: live IDB `CUITitle::OnCreate @0x62054a`
+			// gives the 7 button coords (1000..1006 / (213,-5),(37,74),(144,73),(226,74),
+			// (14,122),(114,120),(214,120)) and 2 CCtrlEdit boxes (1007 / (67,12) 132x15
+			// @0x6209c0, 1008 / (67,40) 120x15 @0x620a2b, limit=12) that match the
+			// offsets below byte-for-byte -> this window IS the Angel-083 layout (a reverse
+			// case, not a self-made screenshot SAD rebuild). 083 OnCreate has NO window
+			// screen-origin immediate, so (58,16) below stays an honest screenshot-derived
+			// quantity and is NOT backed by an 083 number. See evidence/logintitle-083-round74.json.
 			const Point<int16_t> TITLE_WINDOW_OFFSET(58, 16);
 
 			// 面板原点 = CUITitle 窗口原点，后续按钮/输入框偏移以此为基准。
@@ -161,6 +169,8 @@ namespace ms
 			panel_pos = sign_topleft + TITLE_WINDOW_OFFSET;
 
 			// 输入框按原版 CUITitle::OnCreate 偏移（账号 67,12 / 密码 67,40，尺寸 132x15 / 120x15）。
+			// 083 权威：CUITitle::OnCreate @0x62054a 的 CCtrlEdit 1007 @0x6209c0 (67,12,132,15)
+			// 与 1008 @0x620a2b (67,40,120,15)，v75=12 即 TEXTFIELD_LIMIT；逐字一致。
 			account_pos = panel_pos + Point<int16_t>(67, 12);
 			password_pos = panel_pos + Point<int16_t>(67, 40);
 
@@ -233,6 +243,9 @@ namespace ms
 		account_src_dim = account_src.get_dimensions();
 
 		// BeiDou 数据缺少输入框贴图，按原版 CUITitle 输入区尺寸兜底 (132x15)。
+		// round74 运行时 open_merge 探针实测 Login.img/Title 仅 13 节点：MSTitle 397x219 +
+		// 7 Bt* + check/effect，mapleID/PW/backgrnd 全缺、Title_new 缺、Common/backgrnd 缺
+		// => bedou=true 属实；兜底尺寸 (132,15)/(120,15) 与 083 CCtrlEdit 宽高一致，非自造。
 		// 文字略上移，避免在木牌雕刻槽内显得贴底；不另铺白底（木牌自带输入区）。
 		if (bedou)
 		{
@@ -278,6 +291,7 @@ namespace ms
 		else
 			textfield_pos.shift_y(account_src_dim.y() + 1);
 
+		// 083 CCtrlEdit 1008 @0x620a2b 密码框 (67,40) 120x15；bedou 兜底沿用该宽高。
 		Texture password_src = Title_new["PW"];
 		password_src_dim = password_src.get_dimensions();
 
@@ -474,6 +488,10 @@ namespace ms
 		}
 	}
 
+	// 决策点 D-E（口径差异，非布局缺陷）：083 CUITitle::OnButtonClicked @0x620ca5 的
+	// 1002..1006 走 5 个 StringPool SP_* 外链常量（FORGOTID/FORGOTPASSWORD/AGECHECK/
+	// MAPLESTORYNEXONNET ...）；本端用 4 个 Configuration URL + SDL_OpenURL，属 s9/配置
+	// 适配。校准≠改回原生：不照搬 083 SP_ 常量，见 notes 决策点 D-E。
 	void UILogin::open_url(uint16_t id)
 	{
 		std::string url;

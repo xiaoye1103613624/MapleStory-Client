@@ -80,6 +80,9 @@ namespace ms
 		Point<int16_t> title_pos;
 
 		// BeiDou 原生布局（Login.img/Title 缺少 backgrd/mapleID/PW）：
+		// round74：083 活 IDB CUITitle::OnCreate @0x62054a 的 7 按钮 + 2 输入框立即数与本窗
+		// 逐字一致（反例：按 Angel 布局实现）；orange-wz 门禁 `IMG 解析失败: Login.img` 后
+		// .nx + 运行时 open_merge 探针双证 Login.img/Title 13 节点、mapleID/PW/backgrnd 缺。
 		// 面板与控件的绝对坐标由原客户端硬编码给出，这里按同样坐标重建。
 		bool bedou;
 		Point<int16_t> panel_pos;
@@ -89,6 +92,7 @@ namespace ms
 		Point<int16_t> check_pos;
 
 		// BeiDou 数据缺少输入框贴图，木牌自带雕刻槽，不再叠画白底 ColorBox。
+		// 083 CCtrlEdit 1007/1008 宽高 132x15 / 120x15 即此兜底依据，见 notes/logintitle-083-round74。
 		// account_border / account_field 等成员保留默认构造，draw 中不使用。
 		bool saveid;
 		bool nexon;

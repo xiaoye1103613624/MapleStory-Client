@@ -1,0 +1,81 @@
+{
+  "round": 74,
+  "face": "login-flow / UILogin-CUITitle 标题窗",
+  "verdict": "REVERSE CASE: implemented FROM Angel 083 OnCreate immediates (not a self-made screenshot layout)",
+  "authority": "Angel(13339) 083/v83 IDB (E:\\MXD\\反编译IDA\\v83\\Angel.i64)",
+  "ida_alive": {
+    "CUITitle_OnCreate": "0x62054a size 0x75b",
+    "CUITitle_OnButtonClicked": "0x620ca5 size 0x197",
+    "CUITitle_SetRet": "0x620e3c",
+    "CUITitle_IsRequestValid": "0x621156",
+    "CUITitle_EnableLoginCtrl": "0x621175",
+    "CCtrlEdit_OnCreate": "0x4ca25d",
+    "buttons": {
+      "1000 BtLogin": "(213,-5) @0x62064f",
+      "1001 BtLoginIDSave": "(37,74) @0x6206c6",
+      "1002 BtLoginIDLost": "(144,73) @0x620740",
+      "1003 BtPasswdLost": "(226,74) @0x6207ba",
+      "1004 BtNew": "(14,122) @0x620831",
+      "1005 BtHomePage": "(114,120) @0x6208a8",
+      "1006 BtQuit": "(214,120) @0x620922"
+    },
+    "ctrledit": {
+      "1007 account": "(67,12) 132x15 @0x6209c0",
+      "1008 password": "(67,40) 120x15 @0x620a2b",
+      "limit": "v75=12 -> TEXTFIELD_LIMIT=12"
+    },
+    "screen_origin_immediate": "NONE (OnCreate gives only window-relative control coords)"
+  },
+  "current_client_match": {
+    "UILogin.cpp:133-181": "7 button coords + (67,12)/(67,40) + check (12,73) all byte-equal to 083",
+    "UILogin.h:50": "TEXTFIELD_LIMIT = 12 == 083 v75=12",
+    "bedou fallback (132,15)/(120,15)": "== 083 CCtrlEdit width/height",
+    "TITLE_WINDOW_OFFSET (58,16)": "screenshot-SAD derived, 083 has NO such immediate; explicitly NOT 083-backed"
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "img": "E:/MXD/BeiDou-Client-xy/Data/UI/Login.img",
+    "key_spec": "65536B full GMS table, sha256_16=268a8407a47ee76c, iv=TSPHKw==",
+    "structure": "WORKS (load_files loadedCount=1 rootCount=1 generation=1)",
+    "content_error": "IMG 解析失败: Login.img (11 nodes: Title/Title_new/Title/BtLogin/Title/mapleID/Title/PW/Title/check/Title/backgrnd/Title/MSTitle/Common/frame/Common/backgrnd/Common/version)",
+    "fallback": ".nx dump + runtime probe (AGENTS.md compliant)",
+    "unload": "rootCount=0 ok=true"
+  },
+  "nx_facts": {
+    "cache": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (2026-09-21 stale snapshot)",
+    "Login.img/Title": "13 nodes: BtEmailLost/BtEmailSave/BtGuestLogin/BtHomePage/BtLogin/BtLoginIDLost/BtLoginIDSave/BtNew/BtPasswdLost/BtQuit/MSTitle(397x219)/check/effect",
+    "missing": [
+      "Title/mapleID",
+      "Title/PW",
+      "Title/backgrnd",
+      "Title_new",
+      "Common/backgrnd"
+    ],
+    "Common/frame": "bitmap 1280x720"
+  },
+  "runtime_probe": {
+    "tool": "_tools/lt_probe/lt_probe.exe (open_merge gather(Data/UI), production img backend)",
+    "reason": "round71 proved .nx can differ from runtime (SysOpt 299x365 vs 299x396)",
+    "stdout": "tools/_lt_rt_stdout.txt",
+    "result": "OPEN_MERGE_OK; GATHER_FILES=20 ROOT_CHILDREN=20; Login.img/Title kids=13; MSTitle 397x219; mapleID/PW/backgrnd MISSING; Title_new_valid=0; Common/frame 1280x720; Common/backgrnd MISSING",
+    "agrees_with_nx": true,
+    "bedou_true_confirmed": true
+  },
+  "decision_points": [
+    "D-E: 083 OnButtonClicked uses 5 StringPool SP_* URL constants; current client uses 4 Configuration URLs via SDL_OpenURL. s9/config adaptation, NOT a layout defect. No behavior change this round; needs user verdict only if aligning to 083 SP_ constants is desired."
+  ],
+  "patch": {
+    "type": "pure-comment basis correction (0 behavior literals)",
+    "files": [
+      "IO/UITypes/UILogin.cpp",
+      "IO/UITypes/UILogin.h"
+    ],
+    "blocks": 7,
+    "behavior_literals_changed": 0
+  },
+  "verify": {
+    "harness": "tools/test_round74_logintitle_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check -> GATE OK (s9 a78ba681a4)",
+    "build": "tools/build_smoke.bat EXITCODE=0, coverage UILogin.cpp"
+  }
+}

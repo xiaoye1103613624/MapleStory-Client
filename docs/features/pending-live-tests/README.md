@@ -994,3 +994,17 @@
 | 39-5 | 反例复核 | 确认本窗用的是真 IMG 资源（非手绘兜底），不因 m09859 逐面复核被误当同族病返工 | 保留项 |
 
 已知限制：083 无独立 Loading 窗类（`*LoginWait*`/`*Loading*`/`*CUIWait*` 全 0 命中），等待态是 `CLogin` 状态机，故无 083 版式立即数可逐像素对齐；`bar` 几何与「循环增长」语义均为当前端 Journey + 截图派生，仅作对照。`IO/LoginBackground.cpp:77` 线性插值经复核按 Angel 083 CLogin 修过，保留不动。
+
+## 40. round74 · UILogin/CUITitle 标题窗按 Angel 083 OnCreate 立即数复核（#devfix-logintitle-083-review）
+
+> 本轮为**只读取证 + 口径标注（0 行为字面量）**，结论 = **反例**：当前端按 Angel 083 立即数实现，非「截图 SAD 自造版式」，无需重修布局。依据：`evidence/logintitle-083-round74.json`、`notes/wave2-logintitle-083-review-20261111.md`（门禁 18：IDA→orange-wz→.nx→运行时 open_merge 探针）。
+
+| 编号 | 真机验收项 | 期望 | 关联 |
+| --- | --- | --- | --- |
+| 40-1 | 7 按钮像素对齐 | `CUITitle::OnCreate @0x62054a` 的 (213,-5)/(37,74)/(144,73)/(226,74)/(14,122)/(114,120)/(214,120) 相对 `panel_pos` 落位，与 `Login.img/Title` 7 Bt* 位图叠合无缝 | 083 立即数逐字命中 |
+| 40-2 | 输入框雕刻槽 | 账号 (67,12) 132x15、密码 (67,40) 120x15 落木牌自带槽内，A11M 字形不出槽、中文 IME 可输入 | `TEXTFIELD_LIMIT=12`、round54 IME |
+| 40-3 | 窗原点 (58,16) | 截图像素对齐全屏 1280x720 标题页；该量为截图 SAD 派生、083 OnCreate 无此立即数，真机五屏核对观感 | notes §3 ⚠️ |
+| 40-4 | bedou 真节点 | `Login.img/Title` 运行时 13 节点、`mapleID/PW/backgrnd` 缺 → 不叠白底 ColorBox；`Title_new`/`Common/backgrnd` 缺 → 回退 `Title` + `Common/frame` 正确 | open_merge 探针 |
+| 40-5 | **决策点 D-E** | 083 `OnButtonClicked @0x620ca5` 5 个 SP_ 外链常量 vs 本端 4 个 `Configuration` URL（`SDL_OpenURL`）：确认注册/官网/找回密码/找回账号四个外链可达；是否对齐 083 SP_ 常量交用户裁决 | 校准≠改回原生 / s9 适配 |
+
+已知限制：083 `CUITitle::OnCreate` **未给窗口屏幕原点立即数**，`(58,16)` 属截图 SAD 派生且注释已自认，不作 083 背书；083 外链为 Nexon 官方 StringPool 常量，本端按 s9/配置适配不照搬；本轮 0 行为字面量，真机观感（尤其 (58,16) 全屏配准与雕刻槽字形）需启 s9 + 五屏截图核。
