@@ -148,8 +148,8 @@ namespace ms
 			/// body = skip(8) + short healHP + short healMP（HealOvertimeHandler）。
 			HEAL_OVER_TIME = 89,
 			/// s9 RecvOpcode.CANCEL_DEBUFF = 0x63：临时减益到期通知。
-			/// s9 CancelDebuffHandler 本体已注释（空实现）；本端仍按原生
-			/// CheckTemporaryStatDuration 语义发空包，便于日后解禁或对照。
+			/// s9 CancelDebuffHandler 本体已注释（空实现）；本端按 s9 协议发空包，
+			/// 083 IDB 无对应到期检查符号，OnTemporaryStatSet @0xa202be / OnTemporaryStatReset @0xa2071f 仅作对照。
 			CANCEL_DEBUFF = 99,
 			/// s9 RecvOpcode.AUTO_DISTRIBUTE_AP = 0x58。标准分支
 			/// （use_server_auto_assigner=false，DB 种子默认）body：

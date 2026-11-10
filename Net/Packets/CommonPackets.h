@@ -42,9 +42,9 @@ namespace ms
 		}
 	};
 
-	// Opcode: CANCEL_DEBUFF(99 / 0x63) — 原生 CheckTemporaryStatDuration 在
-	// 疾病到期时发空包。s9 CancelDebuffHandler 当前为空实现（注释块带
-	// "TIP: BAD STUFF LOL!"，不解禁），本包仅做协议对齐与可观测性。
+	// Opcode: CANCEL_DEBUFF(99 / 0x63) — 按 s9 协议在疾病到期时发空包。
+	// 083 IDB 无对应到期检查符号（OnTemporaryStatSet @0xa202be / OnTemporaryStatReset @0xa2071f 仅作对照）；
+	// s9 CancelDebuffHandler 当前为空实现（注释块带 "TIP: BAD STUFF LOL!"，不解禁），本包仅做协议对齐与可观测性。
 	class CancelDebuffPacket : public OutPacket
 	{
 	public:

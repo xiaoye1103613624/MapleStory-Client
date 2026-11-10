@@ -3582,7 +3582,7 @@ namespace ms
 		// 下行 = 上行原样广播（s9 NPCAnimationHandler）。
 		// length==6：oid+action+chat（对话姿态）。
 		// length>6：oid+action+chat + CMovePath::Encode；服务端已丢尾 9，
-		// 故此处无 keyPad/rect。解析头 x/y 对齐 Encode（IDA 0x666e20）。
+		// 故此处无 keyPad/rect。解析头按 s9 契约（x/y/vx/vy）；083 Encode @0x68a563 仅作对照。
 		int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
 		size_t rem = recv.available();
 		LOG(LOG_DEBUG, "NpcAction oid=" << oid << " rem=" << rem);

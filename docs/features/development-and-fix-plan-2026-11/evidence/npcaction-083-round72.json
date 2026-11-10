@@ -1,0 +1,85 @@
+{
+  "round": 72,
+  "date": "2026-11-11",
+  "topic": "NPC_ACTION 移动包形 + CANCEL_DEBUFF 依据链按 Angel 083 复核纠偏",
+  "authority": "Angel(13339) 083/v83 IDB (E:/MXD/反编译IDA/v83/Angel.i64)",
+  "ida_symbols_083": {
+    "?Encode@CMovePath@@QAEXAAVCOutPacket@@PAH@Z": "0x68a563 size 0x269",
+    "?Decode@CMovePath@@QAEXAAVCInPacket@@H@Z": "0x68a33c size 0x1cb",
+    "?GenerateMovePath@CNpc@@IAEXJJ@Z": "0x6d3273 size 0x11f",
+    "?GenerateMovePath@CMob@@IAEXJHUTARGETINFO@1@HJJJHH@Z": "0x66b6fc size 0x711",
+    "?Flush@CMovePath@@QAEHAAVCOutPacket@@HAAV1@@Z": "0x68a88d",
+    "?OnTemporaryStatSet@CWvsContext@@QAEXAAVCInPacket@@@Z": "0xa202be size 0x461",
+    "?OnTemporaryStatReset@CWvsContext@@QAEXAAVCInPacket@@@Z": "0xa2071f size 0x1e0",
+    "?OnTemporaryStatChanged@CUserLocal@@UAEXVUINT128@@JH@Z": "0x95f065"
+  },
+  "ida_negatives_083": {
+    "*CheckTemporaryStatDuration*": "total 0",
+    "*CancelDebuff*": "total 0",
+    "*CUIOptionMenu* / *StatusBar3* (related)": "total 0"
+  },
+  "fake_095_addresses_falsified": {
+    "0x666e20": "ida_funcs.get_func -> func_start 0x666362 name sub_666362 (anonymous, NOT CMovePath::Encode)",
+    "0x671590": "ida_funcs.get_func -> func_start 0x6712e0 name ?TrySpeaking@CMob@@IAEXJJ@Z (NOT CNpc::GenerateMovePath)"
+  },
+  "encode_083_vs_current": {
+    "083_CMovePath_Encode_0x68a563": "Encode2(x); Encode2(y); Encode1(count); per-elem Encode1(attr)+switch(0..0x16); tail keyPad+rect",
+    "current_MovePathEncode_h": "write_short(x); write_short(y); write_short(vx); write_short(vy); ...; write_byte(elems.size()) -- 4 short header",
+    "old_095_evidence_file": "docs/features/change-quickslot-persist/evidence/cmovepath-encode-0x666e20.decompiled.txt (16317B) header = Encode2(m_x/m_y/m_vx/m_vy)+count, attr 0/5/0xC/0xE/0x23/0x24, CClientOptMan::GetOpt(2) usRandCnt, LABEL_15, keyPad+rect",
+    "verdict": "current implementation is verbatim 095 0x666e20, NOT 083 0x68a563. Mechanically swapping 0x666e20 -> 0x68a563 would fabricate a new false 083 endorsement. Correct basis = s9 server contract."
+  },
+  "cnpc_generatemovepath_083": "COutPacket(197); Encode4(oid); Encode1(action); Encode1(chatIdx); CMovePath::Flush(v4+428,...) -> Encode; SendPacket. opcode 197 matches; body goes via Flush, field order differs from current.",
+  "s9_contract": "E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/net/server/channel/handlers/NPCAnimationHandler.java:37-46 -- length==6 -> oid/action/chat only; length>6 -> readBytes(length-9) (tail 9 dropped). Verified, current downlink parser follows s9.",
+  "orange_wz_gate": "not applicable this round (pure IDA/comment, no WZ/IMG/XML read)",
+  "scanned_literals": {
+    "pattern": "0x666e20|0x671590|Maplestory95|port-095|CheckTemporaryStatDuration|LABEL_15|伪代码",
+    "hits": 11,
+    "files": 7,
+    "all_in_comments": true,
+    "behavior_literals_touched": 0
+  },
+  "patch": {
+    "blocks": 10,
+    "source_lines_with_095_literals_removed": 11,
+    "files": [
+      "Net/Packets/MovePathEncode.h",
+      "Net/Packets/NpcInteractionPackets.h",
+      "Net/Handlers/WaveAShellHandlers.cpp",
+      "Gameplay/MapleMap/Npc.cpp",
+      "Character/Player.cpp",
+      "Net/OutPacket.h",
+      "Net/Packets/CommonPackets.h"
+    ],
+    "new_083_basis": [
+      "0x68a563",
+      "0x68a33c",
+      "0x6d3273",
+      "0xa202be",
+      "0xa2071f"
+    ],
+    "new_authority": "s9 NPCAnimationHandler / s9 RecvOpcode.CANCEL_DEBUFF(99)",
+    "behavior_change": "none (comments only)",
+    "files_total": 13,
+    "opcode_matrix_json_included": true
+  },
+  "decision_points": [
+    "D-C: whether to rewrite NPC_ACTION movepath to 083 CMovePath::Encode field order (protocol-level, breaks s9 online) -- needs user verdict; NOT done this round",
+    "D-C2: whether to enable s9 CancelDebuffHandler (server-side) -- needs user verdict, client already protocol-aligned"
+  ],
+  "plt_28a": "5-entry ledger + 4 extra same-family sites = 9 blocks corrected; section retitled CLOSED, A5 updated with 083 true symbols",
+  "verification": {
+    "harness": "tools/test_round72_npcaction_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check",
+    "build": "tools/build_smoke.bat (MSYS2_ARG_CONV_EXCL='*' cmd.exe /d /c)"
+  },
+  "opcode_matrix_regenerated": {
+    "trigger": "Net/OutPacket.h comment change -> gen_opcode_matrix.py --check reported GATE STALE (not blocking): hashed sources changed",
+    "action": "ran python tools/gen_opcode_matrix.py, recheck = GATE OK: opcode matrix matches both sources (s9 a78ba681a4)",
+    "changed_lines": 3,
+    "client_source_hashes_Net_OutPacket_h": "4a4b0eed53c99daaf8a7b0b8e03e3a033beff2db2051679a1fe515ad8fec48d1 -> be70cbca216f9e587a88baffd490d0f65f9a76520ca0397d7e7e5d5d7d085ac7",
+    "generated_at": "2026-11-10T17:52:54 -> 2026-11-11T04:01:59",
+    "s9_git_head": "3741089c0f -> a78ba681a4 (verified real: 2026-11-10 18:07:34 damage_skin commit, external round55)",
+    "business_data_unchanged": "s9 recv=182 send=314 handlers=174 / client out=148 in=307 / c2s MATCHED=146 / s2c HANDLED=305 / stale assertion comments 0",
+    "commit_included": true
+  }
+}

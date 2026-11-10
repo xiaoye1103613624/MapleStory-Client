@@ -4,7 +4,7 @@
    "RECALCULATE_STATS"
   ],
   "client_source_hashes": {
-   "Net/OutPacket.h": "4a4b0eed53c99daaf8a7b0b8e03e3a033beff2db2051679a1fe515ad8fec48d1",
+   "Net/OutPacket.h": "be70cbca216f9e587a88baffd490d0f65f9a76520ca0397d7e7e5d5d7d085ac7",
    "Net/PacketSwitch.cpp": "647c3ef46127ed29bd132c1b247c9cb0f5bd384f3020d7df600034a287d6ccb4"
   },
   "collisions": {
@@ -36,9 +36,9 @@
    "s9_send_distinct_values": 314,
    "s9_send_emitted": 253
   },
-  "generated_at": "2026-11-10T17:52:54",
+  "generated_at": "2026-11-11T04:01:59",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "3741089c0f3da6fd072e65797d4db1223c2aba87",
+  "s9_git_head": "a78ba681a47f5fb0d7aed2eb17a106b956f6c33a",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",

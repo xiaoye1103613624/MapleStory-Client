@@ -39,9 +39,9 @@ namespace ms
 	};
 
 	// Opcode: NPC_ACTION(197) 移动分支（length>6）。
-	// 包形对齐 Maplestory95 CNpc::GenerateMovePath @ 0x671590：
-	//   int oid + byte nAction + byte nChatIdx + CMovePath::Encode(...)
-	// Encode 权威：0x666e20（见 MovePathEncode.h）。s9 丢弃尾 9（空 keyPad+rect）。
+	// 包形以 s9 NPCAnimationHandler 契约为准：int oid + byte nAction + byte nChatIdx + 移动段。
+	// 083 对照：CNpc::GenerateMovePath @0x6d3273（opcode 197，包体走 CMovePath::Flush→
+	// Encode @0x68a563），字段序与本端不同，不作本端依据；s9 丢弃尾 9（空 keyPad+rect）。
 	class NpcActionMovePacket : public MovePathPacket
 	{
 	public:

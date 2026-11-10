@@ -824,7 +824,7 @@
 | 28-3 Gather/Sort 切钮 | 道具栏点 BtGather 与 BtSort | 服务端回包后按钮切换与修复前一致（切钮源理解已更正，代码未动） | 需真机联服，客户端单侧无回包 |
 | 28-4 MapDrops 调试日志 | 把 `LOG_LEVEL` 调到 DEBUG 后进图刷怪 | 若出现 `MapDrops: no ItemData for itemid=... oid=...`，说明该 itemid 无 WZ 条目（既有台账「无真实掉落表」），不应伴随崩 | 需真机 + 特定 itemid；自动测只能验证字符串存在 |
 
-## 28-A. 待裁决：残留 095 线地址污染（5 处，本轮已取证未改）
+## 28-A. 已闭环：095 线依据污染 9 处纯注释纠偏（round72 §38；原 5 处 + 全仓补 4 处，行为字面量 0 改动）
 
 > 与 `corewindow/D5` 同源，但不在该决策点的 4 处范围内，且 `Player.cpp:211` 的 083 函数名尚未定位，故只登记不擅改。
 
@@ -834,7 +834,7 @@
 | 28-A2 | `Net/Packets/NpcInteractionPackets.h:42,44` | `CNpc::GenerateMovePath @ 0x671590`、`Encode 权威 0x666e20` | `?GenerateMovePath@CNpc@@IAEXJJ@Z @ 0x6d3273`（0x11f）、`CMovePath::Encode @ 0x68a563` |
 | 28-A3 | `Net/Handlers/WaveAShellHandlers.cpp:3585` | `IDA 0x666e20` | 同上 `0x68a563` |
 | 28-A4 | `Gameplay/MapleMap/Npc.cpp:253` | `CMovePath::Encode @ 0x666e20` | `0x68a563` |
-| 28-A5 | `Character/Player.cpp:211` | `对照 port-095 CWvsContext::CheckTemporaryStatDuration` | 未定位（083 IDB `*CheckTemporaryStat*` 0 命中，需换检索维度） |
+| 28-A5 | `Character/Player.cpp:211` | `对照 port-095 CWvsContext::CheckTemporaryStatDuration` | 083 IDB 该符号 0 命中；相关真符号 `OnTemporaryStatSet @0xa202be` / `OnTemporaryStatReset @0xa2071f`（round72 已按 s9 协议口径纠偏，见 §38） |
 
 反证：`0x666e20` 在 083 落在 `sub_666362`、`0x671590` 落在 `?TrySpeaking@CMob@@IAEXJJ@Z`——都不是路径编码函数。
 ## 29. round53 · 聊天目标快捷键接线（#devfix-chattarget-keybind，需用户一起测）
@@ -965,3 +965,17 @@
 | 37-5 | `data.format=img` 下 UIWindow2.img / StatusBar3.img / OptionMenu 缺失的退化壳表现 | 运行时 open_merge 探针 0 命中，UIOptionMenu 退化壳 | 口径 |
 
 已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（CHECK_X=130 / CHECK_TOP=34 / SLIDER_ROW +28 / 9 档分辨率 / BTN_Y=372 全在，harness 逐条守卫「仍在」）；只补 083 依据纯注释。`UIGameOpt` 经 v2 像素检测已闭环（按 Angel 布局对齐）；`UISysOpt` 是否回退 083（滑条 40/70/100/160/190/220、无分辨率下拉、OK/CANCEL y=342）属 **决策点 D-B**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；运行时底板 299x396 与旧 .nx 299x365 是两张完全不同的图，不得按行偏移盲改常量；校准≠改回原生、数值重合≠语义重合、s9 协议优先。
+
+## 38. round72 · NPC_ACTION / CANCEL_DEBUFF 依据链按 Angel 083 复核纠偏（#devfix-npcaction-083-review，需用户一起测 / 含决策点 D-C）
+
+> 性质：纯注释依据链纠偏，0 行为字面量；9 块 11 行 095 字面量清零，083 真符号仅作对照。PLT §28-A 九处台账同轮标闭环。
+
+| 项 | 真机观测点 | 预期 | 备注 |
+| --- | --- | --- | --- |
+| 38-1 | NPC_ACTION 移动段（length>6）联机观感 + 服务端 log | 尾 9 丢弃与 s9 NPCAnimationHandler 契约一致 | 本端下行解析器未改，仅注释口径 |
+| 38-2 | CANCEL_DEBUFF(99) 空包服务端是否收到 | s9 CancelDebuffHandler 空实现、发了无副作用 | 客户端已协议对齐 |
+| 38-3 | 决策点 D-C：是否按 083 CMovePath::Encode 重写移动包形 | 待用户裁决（协议级，会破坏 s9 联机） | 本轮不实施 |
+| 38-4 | 决策点 D-C2：s9 服务端是否解禁 CancelDebuffHandler | 待用户裁决（服务端） | 本轮不实施 |
+| 38-5 | 若 D-C 通过：五屏截图核对 NPC 移动动画与 083 观感 | 逐项对齐后另立 wave | 依赖 38-3 |
+
+已知限制：083 `CMovePath::Encode @0x68a563` 头仅 x/y+count、attr switch 到 0x16；本端按 s9 契约为 x/y/vx/vy+count、attr 含 0x23/0x24，两者不同版本；旧 095 `0x666e20` 证据文件仅作本地翻案留证、不作代码依据。`*CheckTemporaryStatDuration*` / `*CancelDebuff*` 在 083 符号表 0 命中。

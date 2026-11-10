@@ -208,7 +208,8 @@ namespace ms
 		climb_cooldown.update();
 
 		// CANCEL_DEBUFF(99)：疾病类临时状态本地倒计时到期后发空包。
-		// 对照 port-095 CWvsContext::CheckTemporaryStatDuration → CANCEL_DEBUFF；
+		// s9 RecvOpcode.CANCEL_DEBUFF(99) 协议对齐；083 IDB 该临时状态到期检查符号 0 命中，
+		// 相关 083 真符号 OnTemporaryStatSet @0xa202be / OnTemporaryStatReset @0xa2071f 仅作对照；
 		// s9 CancelDebuffHandler 当前为空实现，发了无副作用，仅协议对齐。
 		static constexpr Buffstat::Id k_diseases[] = {
 			Buffstat::Id::STUN,

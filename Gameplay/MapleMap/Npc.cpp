@@ -250,7 +250,7 @@ namespace ms
 	void Npc::try_flush_movepath()
 	{
 		// 最小可发送：一节 absolute attr=0（Encode case 0），尾空 keyPad+rect=9。
-		// 字段序仅来自 IDA CMovePath::Encode @ 0x666e20，禁止混入 MovementPacket。
+		// 字段序按 s9 NPC_ACTION 契约，禁止混入 MovementPacket；083 Encode @0x68a563 仅作对照。
 		const int16_t x = phobj.get_x();
 		const int16_t y = phobj.get_y();
 		const int16_t vx = static_cast<int16_t>(phobj.hspeed);
@@ -273,7 +273,7 @@ namespace ms
 		std::vector<MovePathElem> elems;
 		elems.push_back(elem);
 
-		// Encode 头是 Flush 时刻的安全坐标/速度（IDA Encode 读 m_x/m_y/m_vx/m_vy），
+		// 本端移动段头按 s9 契约带安全坐标/速度 x/y/vx/vy（083 Encode @0x68a563 头仅 x/y，仅作对照），
 		// 不是段起点。nAction/nChatIdx：纯移动常用 -1 / 0（与对话姿态对称）。
 		NpcActionMovePacket(oid, -1, 0, x, y, vx, vy, elems).dispatch();
 		LOG(LOG_DEBUG, "NpcActionMove oid=" << oid

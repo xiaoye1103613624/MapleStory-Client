@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////
-//	CMovePath::Encode 移植（Maplestory95.i64 @ 0x666e20）
-//	证据：docs/features/change-quickslot-persist/evidence/cmovepath-encode-0x666e20.decompiled.txt
+//	NPC_ACTION 移动段编码：包形以 s9 NPCAnimationHandler（length-9 / 尾 9 丢弃）契约为准。
+//	083 对照（字段序不同，仅作对照，不得据 083 改行为）：CMovePath::Encode @0x68a563、
+//	CMovePath::Decode @0x68a33c、CNpc::GenerateMovePath @0x6d3273（opcode 197，Flush→Encode）。
+//	083 头仅 x/y+count；本端按 s9 契约为 x/y/vx/vy+count、attr 分支集不同。
 //	禁止复用 MovementPacket::writemovement（玩家 Move 形 ≠ NPC path）。
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
@@ -13,7 +15,8 @@
 
 namespace ms
 {
-	// 与原生 CMovePath::ELEM 对齐的可编码节（字段名跟伪代码）。
+	// 可编码节：字段集按 s9 NPC_ACTION 契约（头 x/y/vx/vy + attr 分支表）。
+	// 083 CMovePath::Encode @0x68a563 的 ELEM 字段集不同，仅作对照，不作本端依据。
 	struct MovePathElem
 	{
 		uint8_t nAttr = 0;
@@ -117,7 +120,7 @@ namespace ms
 					write_short(e.vy);
 					break;
 				default:
-					// 未知 attr：不发明字段；仅写公共尾（与伪代码 default→LABEL_15 一致）
+					// 未知 attr：不发明字段；仅写公共尾（s9 契约公共尾，083 Encode @0x68a563 对照）。
 					break;
 				}
 
