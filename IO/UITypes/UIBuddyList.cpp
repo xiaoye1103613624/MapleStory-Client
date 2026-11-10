@@ -32,28 +32,28 @@
 
 namespace ms
 {
-	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(182, 310)),
+	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(312, 389)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
-		// [R6] 好友窗资源在运行时部署数据位于 UIWindow.img/FriendRecommendations/FriendsList
-		// （原代码读的 BuddyList.img 在 BeiDou 精简数据中不存在 → 窗口无背景、无加好友按钮）。
-		// back=182x310 即窗口背景；BtClose/BtAddBuddy/BtFind/BtDetail/BtWhisper/ComboBox 各含
-		// normal/pressed/disabled/mouseOver 四态。
-		// 注意：游戏内热键「好友列表&家族」窗是 UIUserList（已按原版 r27-oracle 校准）；
-		// 本窗（UIBuddyList）由 s2c BUDDYLIST=63 包到达时 BuddyHandler.ensure_buddy 自动弹出，
-		// 并被 UIChat/UIChatBar 好友频道收件人消费。
-		nl::node buddy = nl::nx::UI["UIWindow.img"]["FriendRecommendations"]["FriendsList"];
-		if (buddy["back"])
-			sprites.emplace_back(Sprite(buddy["back"], Point<int16_t>(0, 0)));
+		// 按 Angel 083 CUIUserList::OnCreate @0x919b73 重修（round68）：
+		// 083 好友/玩家列表共用窗资源根是 UIWindow.img/UserList，背景 backgrnd=312x389（.nx 实测）；
+		// 好友页加好友钮 = UserList/Friend/BtAddFriend（65x18，四态全）。
+		// 旧实现写的 FriendRecommendations/FriendsList 与 BuddyList.img 全库 0 命中
+		// → 运行时窗口无背景、无按钮（第三/第四例「找错节点后自造兜底」同族病）。
+		// 083 加好友钮坐标 @0x91a0de SP_2099 a3:2010 a4:5 a5:81 → (5,81)。
+		// 关闭钮沿用 UiAssetResolve::close_btn()（Basic.img/BtClose，v83 像素匹配真按钮），置右上角。
+		// 完整五页签 CUIUserList 属架构级决策点，本轮不新建窗口类型、不动 s9 协议。
+		nl::node userlist = nl::nx::UI["UIWindow.img"]["UserList"];
+		if (UiAssetResolve::usable(userlist["backgrnd"]))
+			sprites.emplace_back(Sprite(userlist["backgrnd"], Point<int16_t>(0, 0)));
 
-		// 关闭钮：好友窗自带 BtClose（13x13 描边 X），顶右。
-		if (buddy["BtClose"])
-			buttons[BtClose] = std::make_unique<MapleButton>(buddy["BtClose"], Point<int16_t>(165, 4));
+		// 083 好友页：BtAddFriend (5,81)。
+		try_maple_btn(buttons, BtAdd, userlist["Friend"]["BtAddFriend"],
+			Point<int16_t>(5, 81), "UIBuddyList add");
 
-		// BtAdd：原构造从未实例化（枚举有 BtAdd 但无创建）→ 好友窗无「加好友」可视按钮，
-		// 只能靠键盘 A。现补上，点击即 prompt_add()。顶右、紧邻关闭钮左侧。
-		if (buddy["BtAddBuddy"])
-			buttons[BtAdd] = std::make_unique<MapleButton>(buddy["BtAddBuddy"], Point<int16_t>(146, 4));
+		// 关闭钮：v83 真按钮，右上角（312 宽 - 12 钮宽 - 6 边距）。
+		try_maple_btn(buttons, BtClose, UiAssetResolve::close_btn(),
+			Point<int16_t>(294, 6), "UIBuddyList close");
 	}
 
 	void UIBuddyList::draw(float alpha) const
@@ -179,7 +179,8 @@ namespace ms
 	int16_t UIBuddyList::row_by_position(Point<int16_t> pos) const
 	{
 		int16_t row = (pos.y() - 40) / ROW_H;
-		if (pos.x() < 10 || pos.x() > 190 || row < 0)
+		// 083 共用窗背景 312 宽，好友行横向可用区随之放宽（旧 190 绑定 182 宽）。
+		if (pos.x() < 10 || pos.x() > 302 || row < 0)
 			return -1;
 		return row;
 	}

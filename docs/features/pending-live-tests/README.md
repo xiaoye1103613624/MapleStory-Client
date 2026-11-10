@@ -911,3 +911,17 @@
 | 33-5 | 未复刻场景 | 任务指引、其它需 blink 的 083 场景 | 当前端未接 `CUtilDlgEx::Draw` 任务指引链，观感是否符合预期交用户裁决 |
 
 已知限制（非缺陷，登记 backlog）：升级启动用 UI 层 `stats.get_stat(LEVEL)` 自感知，未改 s9 协议 handler；083 的 `CCtrlScrollBar` 与任务指引实体类不照搬（校准≠改回原生）；名牌/其它按 BeiDou 或自行修复的 UI/动画（D8 组队血条、好友窗几何）待后续 round 逐面复核。
+
+## 34. round68 · 好友窗 / 组队窗按 Angel 083 CUIUserList 真资源重修（#devfix-userlist-partyhp-083，需用户一起测）
+
+> 本面按 roundNN 编号沿用「用户 m09859 硬指令：ui 布局、动画一定要确认是否按 Angel 布局修复过，不是则重新修复」。外部程序 7105da94/d6bdce97 用全库 0 命中的虚构根 FriendRecommendations/FriendsList 与 Party.img + ColorBox 手绘血条，经 .nx 翻案为「找错节点后自造兜底」第三/四例，本轮按 083 真资源重修。
+
+| # | 项 | 观察点 | 预期 |
+| --- | --- | --- | --- |
+| 34-1 | 好友窗真背景 | 按 s2c BUDDYLIST=63 弹好友窗（或热键） | 显示 312x389「玩家列表 & 家族」浅蓝共用窗背景，加好友钮 BtAddFriend(5,81) 真位图可见可点，非空白 |
+| 34-2 | 组队窗真背景/四钮 | 组队后打开队伍窗 | 显示 312x389 真背景，邀请/离开/队长/开除四钮为 083 真位图且坐标对齐底栏 |
+| 34-3 | D8 血条真位图 | 组队成员掉血（s9 UPDATE_PARTYMEMBER_HP） | 血条为 GaugeBar graduation 刻度外框 + bar 亮黄填充，满/半/空按 cur/max 裁右，无 30% 转红白块 |
+| 34-4 | 血条像素对齐 | 对照 `C:\\Users\\11036\\Desktop\\正确客户端截图\\` 组队窗 | 63 宽血条与成员行 y+16 位置对齐，bar origin(-3,-3) 内缩正确，无错位/越界 |
+| 34-5 | 窗口布局 | 312 宽下好友行/成员行点击、关闭钮(294,6) | 行命中区覆盖到 x=302，关闭钮右上角可点，无遮挡 |
+
+已知限制（非缺陷，登记 backlog）：083 独立可拖拽 CUIPartyHP 悬浮窗、五页签 CUIUserList 共用窗、SP_4433_SHOWPARTYHP 配置开关(默认1)、SP_2116_PARTY_BTHP 血条开关钮、组队页完整 9 钮、CUtilDlgEx 任务指引链均属架构级决策点，本轮未复刻（不新增 UIElement::Type 枚举、不动 s9 协议）；血条与队伍行像素级对齐需真机截图核。

@@ -1,0 +1,168 @@
+{
+  "round": 68,
+  "date": "2026-11-11",
+  "face": "statusbar-hud/D8 组队血条 + 好友窗几何（UIBuddyList/UIParty 资源根）",
+  "user_directive": "m09859: 若碰到ui布局、动画一定要确认是否修复了，如果不是按照Angel 布局修复过的，可以重新修复；之前有很多参照BeiDou或者自行修复的ui、动画都有些问题",
+  "authority": "Angel 083 IDB (port 13339) + .nx 实测 (E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx)",
+  "ida": {
+    "CUIPartyHP_ctor": {
+      "symbol": "??0CUIPartyHP@@QAE@XZ",
+      "ea": "0x91f001",
+      "size": "0x7b1",
+      "note": "CUIWnd(a2:15...) + SP_2118_UI_UIWINDOWIMG_USERLIST_PARTY_PARTYHP + 8方向边框 SP_1394..1402 + 真血条 SP_4422_GAUGEBAR/SP_4423_GRADUATION/SP_4424_BAR/SP_1960_GAUGE"
+    },
+    "CUIPartyHP_Create": {
+      "symbol": "?Create@CUIPartyHP@@QAEXXZ",
+      "ea": "0x91f934",
+      "size": "0x1a6",
+      "note": "独立悬浮窗 CWnd::CreateWnd(z:10, bScreenCoord:1); while(v26<6) 6 人; v27+=100; if<150->150 最小宽; 高=行数*(字高+5)+5; CreateUIWndPosSaved 位置记忆"
+    },
+    "CConfig_GetShowPartyHP": {
+      "symbol": "?GetShowPartyHP@CConfig@@QAEHXZ",
+      "ea": "0x49f1ac",
+      "note": "SP_4433_SHOWPARTYHP -> GetOpt_BOOL(nType:2, bDefaultValue:1) 配置开关默认 1"
+    },
+    "CUIUserList_OnCreate": {
+      "symbol": "?OnCreate@CUIUserList@@UAEXPAX@Z",
+      "ea": "0x919b73",
+      "size": "0x1dc6",
+      "note": "SP_2090_UI_UIWINDOWIMG_USERLIST_BACKGRND -> CWnd::SetBackgrnd @0x919cf5; CCtrlTab(104B) id=2001 (6,23,w270); 61 个 SP_ 节点名(好友/组队/公会/黑名单/字体) 全表"
+    },
+    "friend_page_buttons": {
+      "SP_2099_BtAddFriend": "2010 (5,81) @0x91a0de",
+      "SP_2100_BtAddGroup": "2011 (72,81)",
+      "SP_2102_BtGroupWhisper": "2012 (8,341)",
+      "SP_2109_BtShowOnline": "2013 (232,81)",
+      "SP_2097_BtMod": "2014 (8,362)",
+      "SP_2105_BtChat": "2015 (49,362)",
+      "SP_2101_BtWhisper": "2016 (99,341)",
+      "SP_2107_BtMessage": "2017 (254,341)",
+      "SP_2106_BtParty": "2018 (254,362)",
+      "SP_2103_BtBlock": "2019 (99,362)",
+      "SP_2110_Party_BtCreate": "2020 (182,362) @0x91a59e"
+    },
+    "party_page_buttons": {
+      "SP_2111_BtInvite": "2200 (13,355)",
+      "SP_2112_BtKick": "2201 (72,365)",
+      "SP_2113_BtWithdraw": "2202 (190,344)",
+      "SP_2114_BtWhisper": "2203 (190,364)",
+      "SP_2115_BtChat": "2204 (249,345)",
+      "SP_4044_BtChangeBoss": "2205 (249,365)",
+      "SP_2116_BtHP": "2206 (131,365) 血条开关钮",
+      "SP_2117_BtSearch": "2207 (131,345)",
+      "guild": "2150 (60,355) / 2151 (180,355)"
+    },
+    "CUIPartyHP_no_Draw": "IDB 只 3 符号(ctor/Create/CreateInstance)，无 Draw 符号；绘制在 ctor 资源闭包/基类 CUIWnd → 比例填充画法用同仓 UIStatusBar.cpp:2321-2346 Texture::draw 裁右样板",
+    "artifacts": [
+      "tools/_ida_pb/symbols.json",
+      "tools/_ida_pb/CUIPartyHP_ctor.dec.txt",
+      "tools/_ida_pb/CUIPartyHP_Create.dec.txt",
+      "tools/_ida_pb/CConfig_GetShowPartyHP.dec.txt",
+      "tools/_ida_pb/CUIUserList_OnCreate.dec.txt",
+      "tools/_ida_pb/CUIUserList_Draw.dec.txt",
+      "tools/_ida_pb/CUIUserList_SetButton.dec.txt",
+      "tools/_ida_pb/CUIUserList_SetScrollBar.dec.txt"
+    ]
+  },
+  "orange_wz_gate": {
+    "rule": "AGENTS.md: WZ/IMG/XML 一律先 orange-wz MCP，IMG 解析失败才 .nx 回退",
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "probe": "tools/_uw_probe.py",
+    "key": {
+      "b64_len": 87384,
+      "raw_len": 65536,
+      "sha256_16": "268a8407a47ee76c",
+      "iv": "TSPHKw==",
+      "source": "tools/_gms_key.b64"
+    },
+    "structure_layer": "WORKS (load_files loadedCount=1 rootCount=1 generation=1)",
+    "content_layer": "FAILS - query_nodes list_children 对 UserList / UserList/backgrnd / UserList/Party / UserList/Party/PartyHP / Recommendations / Recommendations/FriendsList 六次全部 'IMG 解析失败: UIWindow.img' (GBK 原文已留证)",
+    "unload": "unload_all rootCount=0 ok=true",
+    "data": [
+      "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img (11808090B)",
+      "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (86919577B)"
+    ],
+    "fallback_legal": true
+  },
+  "nx_facts": {
+    "UIWindow.img top": "113 节点含 UserList（不是 Recommendations）",
+    "UserList children": [
+      "BlackList",
+      "Friend",
+      "Guild",
+      "GuildUnion",
+      "Party",
+      "Tab",
+      "backgrnd [bitmap 312x389]",
+      "backgrnd2 [312x389]",
+      "backgrnd3 [312x389]"
+    ],
+    "UserList/Friend": "16 个真按钮 BtAdd/BtAddFriend/BtAddGroup/BtBlock/BtChat/BtDelete/BtGroupWhisper/BtMate/BtMessage/BtMod/BtParty/BtShowAll/BtShowOnline/BtUnBlock/BtWhere/BtWhisper；BtAddFriend 四态各 0 [bitmap] 65x18",
+    "UserList/Party": "9 个 Bt* + PartyHP + party0..5 位图",
+    "UserList/Party/PartyHP/GaugeBar": {
+      "bar": "[bitmap] 63x7 origin (-3,-3)",
+      "gauge": "[bitmap] 1x7",
+      "graduation": "[bitmap] 69x13 origin (0,0)"
+    },
+    "UserList/Tab": "disabled/enabled 各 0..4 五页签",
+    "UIWindow.img/BtUIClose": "四态各 0 [bitmap] 32x15",
+    "zero_hits": [
+      "FriendRecommendations",
+      "Recommendations",
+      "FriendsList",
+      "BuddyList",
+      "BuddyList.img",
+      "Party.img",
+      "BtAddBuddy",
+      "UIWindow2.img/UserList"
+    ],
+    "conclusion": "外部程序 7105da94 的 UIWindow.img/FriendRecommendations/FriendsList 与 UIParty 的 Party.img 均全库 0 命中 → 凭空杜撰的资源根，运行时窗口直接空白",
+    "visual_exports": [
+      "tools/_uw_visual/UserList_backgrnd.png (312x389, sha256 23378e80...)",
+      "tools/_uw_visual/PartyHP_bar.png (63x7)",
+      "tools/_uw_visual/PartyHP_graduation.png (69x13)"
+    ]
+  },
+  "four_layer_refutation": {
+    "buddy_root": "外部程序 FriendRecommendations/FriendsList(0命中) + 自定 182x310/(165,4)/(146,4) vs 083 CUIUserList UIWindow.img/UserList/backgrnd 312x389 + Friend/BtAddFriend (5,81)",
+    "party_root": "外部程序 Party.img(0命中) + 200x300 vs 083 UIWindow.img/UserList/backgrnd 312x389 + Party/Bt* 真按钮",
+    "party_hp": "外部程序 UIParty::draw 里 ColorBox 手绘暗底+比例填充+30%转红 vs 083 独立悬浮窗 CUIPartyHP 用 GaugeBar/{bar,gauge,graduation} 真位图（6 人、宽>=150、配置开关 SP_4433 默认 1、SP_2116 血条开关钮）",
+    "family": "与 round66 (alert/backgrnd 找错后手绘) / round67 (KEY_ANI 误判缺资源后白块) 完全同族 —— 第三/第四例『找错节点后自造兜底』"
+  },
+  "current_before": {
+    "buddy": "IO/UITypes/UIBuddyList.cpp:35 (740,20)/(182,310); :45 UI['UIWindow.img']['FriendRecommendations']['FriendsList']; :46 back; :50 BtClose(165,4); :55 BtAddBuddy(146,4)",
+    "party": "IO/UITypes/UIParty.cpp:38 (520,20)/(200,300); :45 UI['Party.img']; :95-120 D8 ColorBox 血条 BAR_W=180 BAR_H=6 TORCHRED/JAPANESELAUREL"
+  },
+  "relayout": {
+    "boundary": "校准≠改回原生：不动 s9 协议/handler/memberhp 数据源；完整复刻 083 独立可拖拽 CUIPartyHP 悬浮窗 + 五页签 CUIUserList 共用窗属架构级决策点（新增 UIElement::Type 改 NUM_TYPES/EnumMap 须整工程 Rebuild、位置记忆、SP_4433 配置开关、页签状态机），交用户裁决，本轮不新建窗口类型/枚举",
+    "changes": [
+      "两处虚构资源根换 083 真根 UIWindow.img/UserList",
+      "两窗 dimension 换真背景 312x389 + UiAssetResolve::usable 守卫",
+      "好友页加好友钮换 UserList/Friend/BtAddFriend (5,81) 真位图",
+      "组队四功能钮换 UserList/Party/{BtInvite(13,355),BtWithdraw(190,344),BtChangeBoss(249,345),BtKick(72,365)} 真位图，保持既有 btnid→行为映射",
+      "D8 手绘 ColorBox 血条删除，改 GaugeBar graduation 外框 + bar 63x7 按 cur/max 裁右 (Range(0,BAR_W-fill_w))，沿用 UIStatusBar 真位图裁剪画法",
+      "两窗行命中上界 190→302（对齐 312 宽）；关闭钮 close_btn() 移 (294,6)",
+      "UIParty.h 加 Texture partyhp_bar/partyhp_graduation 成员",
+      "三处错注释改引 083 EA 与 .nx 实测"
+    ],
+    "files": [
+      "IO/UITypes/UIBuddyList.cpp",
+      "IO/UITypes/UIParty.cpp",
+      "IO/UITypes/UIParty.h"
+    ]
+  },
+  "verification": {
+    "harness": "tools/test_round68_userlist_083.py (37 静态守卫 + 16 场景 PASS / TEST_RC=0；含血条裁剪 0/50/100/clamp、6 人独立、行命中、083 几何容纳、LoginBackground 线性插值保留)",
+    "harness_self_bug": "守卫 E4 初版只匹配 'elapsed / tween_duration' 字面量，实际为 'static_cast<double>(elapsed) / static_cast<double>(tween_duration)' → 就地放宽为两形态 or 匹配，不计任务失败",
+    "diff_check": "DIFFCHECK_CLEAN",
+    "gate": "GATE OK: opcode matrix matches both sources (s9 3741089c0f)",
+    "build": "build_smoke.bat GATE OK x2 + EXITCODE=0；build_log.txt 00:02:51/71067B -> 01:00:05/57500B 真重编；UIParty.cpp 2 次 + UIBuddyList.cpp 2 次；ERROR_COUNT 0；MapleStory.exe 01:00:04 / 4943872B 重链接"
+  },
+  "decisions_open": [
+    "独立可拖拽 CUIPartyHP 悬浮窗（新增 UIElement::Type 枚举 + 位置记忆）属架构级，交用户裁决",
+    "五页签 CUIUserList 共用窗 + Tab.enabled/disabled 状态机属架构级，交用户裁决",
+    "SP_4433_SHOWPARTYHP 配置开关(默认1) + SP_2116_PARTY_BTHP 血条开关钮未接线",
+    "083 组队页完整 9 钮(本轮只接 4 功能) + CUtilDlgEx 任务指引链未复刻",
+    "血条 63 宽与队伍行 y+16 的像素级对齐需真机截图核（登记 PLT §34）"
+  ]
+}

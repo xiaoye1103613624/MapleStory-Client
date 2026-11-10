@@ -20,7 +20,8 @@
 #include <nlnx/nx.hpp>
 #include <string>
 
-#include "../../Graphics/Geometry.h" // ColorBox：组队成员血条可视化
+#include "../../Graphics/Geometry.h" // DrawArgument / Range（真血条 Texture::draw 裁剪）
+#include "../../Graphics/Texture.h"  // 083 CUIPartyHP GaugeBar 真血条位图（替代自造血条）
 
 #include "../UI.h"
 #include "../Components/MapleButton.h"
@@ -35,31 +36,43 @@
 
 namespace ms
 {
-	UIParty::UIParty() : UIElement(Point<int16_t>(520, 20), Point<int16_t>(200, 300)),
+	UIParty::UIParty() : UIElement(Point<int16_t>(520, 20), Point<int16_t>(312, 389)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
-		// 本包 UI.nx 根下没有 Party.img，v83 也没有独立队伍窗根（UIWindow.img/UserInfo 是
-		// 好友/信息窗，件表见 notes/asset-node-inventory.md §1.5，不能拿来当队伍窗底衬）。
-		// ⇒ 底衬与 邀请/离开/队长/开除 四钮显式预留（队伍操作仍有 SoftKey L/E 与菜单入口）。
-		// 关闭钮与其它功能窗共用同一颗描边 X（UiAssetResolve::close_btn() → BtClose2）。
-		nl::node party = nl::nx::UI["Party.img"];
-		if (party["backgrnd"])
-			sprites.emplace_back(Sprite(party["backgrnd"], Point<int16_t>(0, 0)));
+		// 按 Angel 083 CUIUserList::OnCreate @0x919b73 + CUIPartyHP::Create @0x91f934 重修
+		// （round68）：083 组队/玩家列表共用窗资源根 UIWindow.img/UserList，
+		// 背景 backgrnd=312x389（.nx 实测）；组队页按钮在 UserList/Party/Bt*（四态全）。
+		// 旧实现写的 Party.img 全库 0 命中 → 窗口无背景、四钮空壳（第三/四例同族病）。
+		nl::node userlist = nl::nx::UI["UIWindow.img"]["UserList"];
+		if (UiAssetResolve::usable(userlist["backgrnd"]))
+			sprites.emplace_back(Sprite(userlist["backgrnd"], Point<int16_t>(0, 0)));
 
-		// id 必须显式列出：枚举里 BtClose=2 夹在 BtLeave 与 BtLeader 之间，
-		// 直接拿循环下标当 id 会把「队长」钮注册成关闭钮。
-		const char* btnname[] = { "BtInvite", "BtLeave", "BtLeader", "BtExpel" };
+		// 083 D8 组队血条真位图：CUIPartyHP 用 UserList/Party/PartyHP/GaugeBar
+		// {bar 63x7 填充(origin -3,-3 自动内缩) / gauge 1x7 / graduation 69x13 刻度外框}（.nx 实测）。
+		// 旧实现在 draw 里 ColorBox 手绘暗底+30% 转红是「找错资源后自造」——已清除。
+		nl::node gaugebar = userlist["Party"]["PartyHP"]["GaugeBar"];
+		partyhp_bar = Texture(gaugebar["bar"]);
+		partyhp_graduation = Texture(gaugebar["graduation"]);
+
+		// 四功能钮绑到 083 组队页真位图（语义最近映射），坐标取 OnCreate 立即数：
+		// BtInvite 2200 (13,355) / BtWithdraw 2202 (190,344) / BtChangeBoss 2205 (249,345) /
+		// BtKick 2201 (72,365)。083 组队页完整 9 钮属架构级决策点，本轮只接现有四功能。
+		// id 必须显式列出：枚举里 BtClose=2 夹在 BtLeave 与 BtLeader 之间。
+		nl::node partysrc = userlist["Party"];
+		const char* btnname[] = { "BtInvite", "BtWithdraw", "BtChangeBoss", "BtKick" };
 		const uint16_t btnid[] = { BtInvite, BtLeave, BtLeader, BtExpel };
 		const Point<int16_t> btnpos[] = {
-			Point<int16_t>(20, 250),   // BtInvite
-			Point<int16_t>(100, 250),  // BtLeave
-			Point<int16_t>(20, 275),   // BtLeader
-			Point<int16_t>(100, 275)   // BtExpel
+			Point<int16_t>(13, 355),   // BtInvite 2200
+			Point<int16_t>(190, 344),  // BtWithdraw 2202
+			Point<int16_t>(249, 345),  // BtChangeBoss 2205
+			Point<int16_t>(72, 365)    // BtKick 2201
 		};
 		for (uint16_t i = 0; i < 4; i++)
-			try_maple_btn(buttons, btnid[i], party[btnname[i]], btnpos[i], "UIParty");
+			try_maple_btn(buttons, btnid[i], partysrc[btnname[i]], btnpos[i], "UIParty");
 
-		try_maple_btn(buttons, BtClose, UiAssetResolve::close_btn(), Point<int16_t>(180, 8), "UIParty close");
+		// 关闭钮：v83 真按钮，右上角（312 宽 - 12 - 6）。
+		try_maple_btn(buttons, BtClose, UiAssetResolve::close_btn(),
+			Point<int16_t>(294, 6), "UIParty close");
 	}
 
 	void UIParty::draw(float alpha) const
@@ -92,11 +105,14 @@ namespace ms
 			row.change_text(info);
 			row.draw(position + Point<int16_t>(10, y));
 
-			// D8：组队成员血条（s9 已通过 UPDATE_PARTYMEMBER_HP 下发 cid/curhp/maxhp，
-			// 原生 CUIPartyHP 同位置画 6 人血条；此前 memberhp 收了却没画）。
-			// 仅在收到过该成员血量时绘（同图外成员 s9 不下发，故无条）。
+			// D8：按 083 CUIPartyHP 真位图画血条（round68 重修）。
+			// 083 用 UserList/Party/PartyHP/GaugeBar：graduation 69x13 刻度外框 +
+			// bar 63x7 按 cur/max 裁右（与 UIStatusBar classic 三联量规同一画法）。
+			// 旧实现 ColorBox 手绘暗底+30% 转红是「找错 Party.img 后自造」——已清除。
+			// s9 UPDATE_PARTYMEMBER_HP 下发 cid/curhp/maxhp，仅在收到过血量时绘（同族 6 人）。
 			auto hp_it = memberhp.find(m.id);
-			if (hp_it != memberhp.end() && hp_it->second.second > 0)
+			if (hp_it != memberhp.end() && hp_it->second.second > 0
+				&& partyhp_bar && partyhp_graduation)
 			{
 				int32_t cur = hp_it->second.first;
 				int32_t max = hp_it->second.second;
@@ -105,18 +121,19 @@ namespace ms
 
 				const int16_t BAR_X = 10;
 				const int16_t BAR_Y = y + 16;
-				const int16_t BAR_W = 180;
-				const int16_t BAR_H = 6;
+				Point<int16_t> at = position + Point<int16_t>(BAR_X, BAR_Y);
 
-				ColorBox bg(BAR_W, BAR_H, Color::Name::BLACK, 0.5f);
-				bg.draw(DrawArgument(position + Point<int16_t>(BAR_X, BAR_Y)));
+				// 外框（origin 0,0）。
+				partyhp_graduation.draw(DrawArgument(at));
 
+				// 内条：bar origin (-3,-3)，Texture::draw 自动相对外框内缩 3px；
+				// 63 宽满条按百分比裁掉右侧未填充部分（horizontal Range 裁右）。
+				const int16_t BAR_W = partyhp_bar.width();
 				int16_t fill_w = static_cast<int16_t>(BAR_W * (max > 0 ? static_cast<double>(cur) / max : 0.0));
 				if (fill_w < 0) fill_w = 0;
-				// 血量 ≤30% 转红警示，其余用原生绿（JAPANESELAUREL）。
-				Color fill_color = (max > 0 && cur * 100 / max <= 30) ? Color::Name::TORCHRED : Color::Name::JAPANESELAUREL;
-				ColorBox fill(fill_w, BAR_H, fill_color, 1.0f);
-				fill.draw(DrawArgument(position + Point<int16_t>(BAR_X, BAR_Y)));
+				if (fill_w > BAR_W) fill_w = BAR_W;
+				Range<int16_t> crop_right(0, static_cast<int16_t>(BAR_W - fill_w));
+				partyhp_bar.draw(DrawArgument(at), {}, crop_right);
 			}
 
 			y += 30;
@@ -253,7 +270,8 @@ namespace ms
 		if (!clicked || !active)
 			return st;
 		Point<int16_t> rel = cursorpos - position;
-		if (rel.x() >= 10 && rel.x() <= 190 && rel.y() >= 40 && rel.y() < 250)
+		// 083 共用窗 312 宽，成员行横向可用区随之放宽（旧 190 绑定 200 宽）。
+		if (rel.x() >= 10 && rel.x() <= 302 && rel.y() >= 40 && rel.y() < 250)
 		{
 			int16_t row = static_cast<int16_t>((rel.y() - 40) / 30);
 			int32_t cid = member_at_row(row);

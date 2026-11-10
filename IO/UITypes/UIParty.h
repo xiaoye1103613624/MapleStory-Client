@@ -20,6 +20,7 @@
 #include "../UIElement.h"
 
 #include "../../Graphics/SpecialText.h"
+#include "../../Graphics/Texture.h"
 
 #include <array>
 #include <map>
@@ -88,6 +89,9 @@ namespace ms
 
 		Party party;
 		std::map<int32_t, std::pair<int32_t, int32_t>> memberhp;
+		// 083 CUIPartyHP GaugeBar 真血条位图（构造加载，draw 按 cur/max 裁右）。
+		Texture partyhp_bar;
+		Texture partyhp_graduation;
 		int32_t selected_cid = 0;
 		mutable OutlinedText title;
 	};
