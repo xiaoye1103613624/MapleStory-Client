@@ -149,6 +149,13 @@ namespace ms
 			// 24px 且下沿就是那条 5px 下划线，不上移的话打出来的字整个压在状态面板上。
 			input_text.set_text_shift(Point<int16_t>(0, -9));
 
+			// 聊天输入框接收中文：启用系统 IME（SDL_EVENT_TEXT_INPUT 通路），UTF-8 直接进
+			// 字图缓存（思源宋体含 CJK）。不启用时 Textfield::add_string 会丢弃全部 >=128
+			// 的字节，中文一个字都进不来。注意 limit=70 是字节上限（belowlimit 用 text.size()），
+			// 中文 3 字节/字故实际约 23 字；s9 GeneralChatHandler 按字符数限 127，
+			// 放宽上限属行为变更，本轮按「不改 happy-path」保留 70 并记台账。
+			input_text.set_accept_unicode(true);
+
 			input_text.set_enter_callback(
 				[&](std::string message)
 				{
@@ -289,6 +296,9 @@ namespace ms
 			Rectangle<int16_t>(get_input_text_position(), get_input_text_position() + Point<int16_t>(283, INPUT_TEXT_HEIGHT)),
 			input_text_limit, input_text_marker_height
 		);
+
+		// 同 classic 分支：启用系统 IME，否则中文被 >=128 过滤丢弃（见上处注释）。
+		input_text.set_accept_unicode(true);
 
 		input_text.set_enter_callback(
 			[&](std::string message)
