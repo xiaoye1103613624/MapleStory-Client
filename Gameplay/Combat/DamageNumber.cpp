@@ -75,6 +75,11 @@ namespace ms
 			// 2^53 是 16 位数字；默认图集每字符约 24px，不缩放会横向溢出。
 			// 运行时 BasicEff.img 只有 0-9 与 Miss，没有 K/M/B 等单位字符，
 			// 因此按最大宽度等比缩放，既保留完整数值又不截断（notes/r001 §4）。
+			// [083 校准 round70] 原生 v83 无 DamageNumber 类（IDA *DamageNumber* 0 命中），伤害数字走
+			// CAnimationDisplayer::Effect_HP @0x437d0f：逐位图 + 动态 3/5 字宽 + canvas 高 57 + 奇偶/随机 y 抖动
+			// + 400/600/1000ms 三段动画；MISS 走 SP_984_MISS 位图 + Effect_BasicFloat @0x43de28。本端是
+			// Journey 开源 DamageNumber + s9 DAMAGE_SKIN(247) 适配，校准≠改回原生，不按 083 整体重写。
+			// 对照清单/决策点 D-A 见 notes/wave2-damagenumber-083-review-20261111.md。
 			constexpr int16_t MAX_DAMAGE_WIDTH = 260;
 
 			if (total > MAX_DAMAGE_WIDTH)
@@ -141,6 +146,9 @@ namespace ms
 		}
 	}
 
+	// [083 校准 round70] 下表是 BasicEff.img 数字位图的近似宽度；083 Effect_HP @0x437d0f 用
+	// lWidth = 3 * v23 / 5 按真实位图宽动态计算。apply_skin 换成 DamageSkin 字形后本表仍按
+	// BasicEff 计算，皮肤数字间距可能错位 —— 决策点 D-A（视觉级，待用户裁决），本轮不擅改。
 	int16_t DamageNumber::getadvance(char c, bool first) const
 	{
 		constexpr size_t LENGTH = 10;
@@ -204,6 +212,10 @@ namespace ms
 		return critical ? 36 : 30;
 	}
 
+	// [083 校准 round70] v83 无伤害皮肤系统（IDA *DamageSkin* 0 命中），本函数是 s9 DAMAGE_SKIN(247) 适配。
+	// DamageSkin.img 可达性已由 round70 最小探针实测（生产同款 open_merge 整 Effect 目录 18 文件）：
+	// Effect["DamageSkin.img"] 有效、624 个皮肤节点、NoRed1/NoCri1 齐全，非死链；下方 if (!dmg)
+	// 是「该 skin id 不存在」的正常回落，别再误判成资源缺失。证据 evidence/damagenumber-083-round70.json。
 	void DamageNumber::apply_skin(int32_t skin, BoolPair<Charset>& out, Type type)
 	{
 		static std::map<int32_t, nl::node> skin_nodes;

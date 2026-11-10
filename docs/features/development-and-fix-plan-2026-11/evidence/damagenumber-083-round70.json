@@ -1,0 +1,87 @@
+{
+  "round": 70,
+  "date": "2026-11-11",
+  "scope": "read-only 083 review of field damage-number / damage-skin; user m09859 hard instruction (ui/animation must be Angel-083-based)",
+  "authorization": "m04292 (change source/self-test/commit/kill MapleStory.exe on lock/record non-self-testable) + m09859 (re-fix non-083 UI/animations) + m10982 (minimum open_merge probe, no inference-as-conclusion)",
+  "ida_083": {
+    "endpoint": "http://127.0.0.1:13339/mcp",
+    "ShowDamage": "?ShowDamage@CMob@@IAEXJJHHHH@Z 0x6691d3 size 0x9b -> nDamage<=0&&!=0 Effect_HP(a5:1) / ==0 Effect_Miss / >0 Effect_HP(a5:0); y=-15-a3*(bHalfHeight?15:30)+Gety",
+    "Effect_HP": "?Effect_HP@CAnimationDisplayer@@QAEXJJJJH@Z 0x437d0f size 0xcd9: SP_5515_D Format digits -> per-digit IWzProperty::GetItem bitmap -> lWidth = 3*v23/5 (dynamic) -> canvas h=57 -> v53 = 57-(idx%2!=0?1:4)-rand()%2 jitter -> sub_402FAB(400,3)/(600,3)/(v81+1000,3) 3-stage anim",
+    "Effect_Miss": "?Effect_Miss@CAnimationDisplayer@@QAEXJJJ@Z 0x438a21 size 0x115: SP_984_MISS bitmap + Effect_BasicFloat @0x43de28",
+    "ShowDamage_xrefs": [
+      "0x667684",
+      "0x6676d2",
+      "0x667720",
+      "0x667794 (CMob::Update 0x6675a8)",
+      "0x668e0d (CMob::OnHit 0x668b83)",
+      "0x66c6e4 (OnDamaged 0x66c6c2)",
+      "0x670e3b",
+      "0x6710e6"
+    ],
+    "zero_hit_filters": [
+      "*DamageNumber*",
+      "*DamageSkin*",
+      "*CharSet*",
+      "*NoCri*",
+      "*CDamageNumber*",
+      "*SetNumber*",
+      "*MakeDamage*",
+      "*CField*OnPacket*"
+    ],
+    "verdict": "083 has NO DamageNumber class / NO damage-skin system / NO CharSet class. Damage skin is post-v83. Current client is Journey open-source + s9 DAMAGE_SKIN(247)."
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "imgs": [
+      "E:/MXD/BeiDou-Client-xy/Data/Effect/BasicEff.img",
+      "E:/MXD/BeiDou-Client-xy/Data/Effect/DamageSkin.img"
+    ],
+    "key": {
+      "b64_len": 87384,
+      "raw_len": 65536,
+      "sha256_16": "268a8407a47ee76c",
+      "iv": "TSPHKw=="
+    },
+    "structure": "WORKS (load_files loadedCount=1 rootCount=1 exclusive=false; top-level list_children returns no error)",
+    "content_error": "IMG 解析失败: <name> (GBK raw kept) for every internal node query",
+    "fallback": "compliant .nx dump + runtime open_merge probe (AGENTS.md triggered)"
+  },
+  "nx_and_deploy_facts": {
+    "Effect.nx": "126168494B 2026-09-21; top-level 17 nodes, NO DamageSkin.img (stale cache; only used if data.format=nx, NOT current default)",
+    "data_format_default": "Configuration.h:389 DataFormat = 'img' (production); no config.ini/data.format override in deploy -> ImgBackend / ImgSource::init",
+    "ImgSource": "Util/Resource/ImgSource.cpp:297-309 load_standard gather(Effect dir 18 .img) -> nl::img_file::open_merge -> RootTable::bind(Effect); Effect is boot root (:129-137)",
+    "WzRuntime": "Util/WzRuntime.cpp:227-243 open_merge build_img_tree -> seh_try_invoke -> finalize; node name = rel filename (DamageSkin.img)",
+    "Effect_dir": "18 .img; DamageSkin.img 64282988B; BasicEff.img 3992551B",
+    "catalog_Effect.json": "10820B 2026-11-05 00:10, 17 files, missing DamageSkin.img; Effect dir mtime 2026-11-10 17:08 (> catalog) -> STALE SNAPSHOT, not parse failure"
+  },
+  "minimum_probe": {
+    "tool": "_tools/dmg_skin_probe/main.cpp + build.bat (mirrors _tools/mapobj_probe MSVC recipe)",
+    "dll_fix": "first run PROBE_EXIT=-1073741515 (0xC0000135 DLL missing, stdout empty, NOT parse failure) -> copied liblz4.dll + zlib1.dll beside exe",
+    "BASICEFF_SINGLE": "open_merge rel=Effect/BasicEff.img -> content_valid=1 children=41 (control)",
+    "DAMAGESKIN_SINGLE": "open_merge rel=Effect/DamageSkin.img -> content_valid=1 children=624 (catalog path works)",
+    "WHOLE_MINUS_DAMAGESKIN": "17-file whole-dir merge -> root children=17, Effect[DamageSkin.img] invalid (as expected)",
+    "WHOLE_ALL": "18-file whole-dir merge -> root children=18, Effect[DamageSkin.img] valid children=624, skins 1/10/100/1000/1001 NoRed1=1 NoCri1=1, OPEN_MERGE_OK",
+    "DAMAGESKIN_CATALOG_FULL": "full ResourceProbe.cpp:637-667 replica traversal -> 624 kids, 0 exception, FULL_TRAVERSAL_OK",
+    "VERDICT": "DamageSkin.img is REACHABLE at runtime. m10982 'whole-root merge may fail' hypothesis DISPROVED. catalog omission is a stale-snapshot observation blind spot."
+  },
+  "current_client_vs_083": {
+    "DamageNumber.cpp:75-83": "2^53 16-digit scaling comment; .nx verified TRUE (BasicEff only 0-9 + Miss); self-identifies Journey, does NOT falsely claim 083",
+    "DamageNumber.cpp:144-185 getadvance": "hardcoded table {24,20,22,22,24,23,24,22,24,24} BasicEff approx widths; 083 used dynamic 3/5",
+    "DamageNumber.cpp:207-241 apply_skin": "Effect[DamageSkin.img][skin] -> NoRed1/NoCri1; reachability PROVEN; if(!dmg) is normal missing-skin fallback",
+    "DamageNumber.cpp:99-142 draw MISS": "charset[true].draw('M') -> via IO/Components/Charset.cpp:30-43 charset_char('Miss')='M' resolves the dedicated 98x38 NoRed0/Miss bitmap (NOT char 'M'); earlier misjudgment corrected",
+    "DamageNumber.h:56": "FADE_TIME=500; rowheight 36/30",
+    "s9_wiring": "PacketSwitch.cpp:264 DAMAGE_SKIN=247 / Combat.cpp:478 / MapObjectHandlers.cpp:1472 / Player.h get_damage_skin",
+    "latent_defect_D_A": "apply_skin swaps charset to DamageSkin glyphs but getadvance still uses hardcoded BasicEff widths -> skin digit spacing may be misaligned. Visual/architecture-level DECISION POINT, not auto-fixed."
+  },
+  "decision": "校准≠改回原生 + s9 优先: DO NOT rewrite whole damage-number system to 083 CAnimationDisplayer (083 has no DamageNumber/skin at all). Deliver read-only review + comparison + decision point D-A + one-shot Plan + live backlog + zero-risk comment-only basis patches.",
+  "decision_points": [
+    "D-A: whether to align damage-number animation to 083 (dynamic 3/5 advance, 57 canvas, jitter, 3-stage anim) and fix skin-width misalignment — visual/architecture level, needs user verdict + 5-screen screenshots",
+    "DamageSkin.img reachability: CLOSED by probe (reachable); no longer a decision point"
+  ],
+  "zero_risk_patch": "4 comment-only inserts (DamageNumber.cpp x3 / .h x1): 083 authority + Journey+s9 identity + proven reachability + D-A note. 0 behavior literals changed (harness A2 guards).",
+  "verification": {
+    "harness": "tools/test_round70_damagenumber_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check -> GATE OK: opcode matrix matches both sources (s9 3741089c0f)",
+    "build": "tools/build_smoke.bat EXITCODE=0, build_log mtime/size change, DamageNumber.cpp compiled"
+  }
+}

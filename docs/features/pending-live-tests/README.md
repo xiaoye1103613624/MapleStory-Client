@@ -939,3 +939,17 @@
 | 35-5 | D2 聊天规则真机 | 启 s9 服务端：2000ms 限流 / 连续 4 同句 / 脏词 / !mute !unmute(gm3) | 服务端已双改，联机回归限流与禁言文案，与 D7 三态互不干扰 |
 
 已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（chat_type 赋值 / CLASSIC_LOG_H_* 常量 / button_pressed 分支 / Setting key），harness A4 逐条守卫「仍在」；只纠正 3 文件错误依据注释。083 三态整体改回（删紧凑态、nType2 改焦点瞬态不持久、去逐级、chat.type 持久化键语义、滚动条 id 1010、MakeCtrlEdit(0/1) 输入行有无）属 **决策点 D7-A**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；校准≠改回原生，s9 协议优先。
+
+## 36. round70 · 伤害数字 / 伤害皮肤按 Angel 083 CAnimationDisplayer 只读取证复核（#devfix-damagenumber-083-review，需用户一起测 / 含决策点 D-A）
+
+> 本面按 roundNN 编号沿用「用户 m09859 硬指令：ui 布局、动画一定要确认是否按 Angel 布局修复过，不是则重新修复」。083 伤害数字 = `CAnimationDisplayer::Effect_HP @0x437d0f` 逐位图动画（动态 3/5 字宽 / canvas 57 / 奇偶随机抖动 / 400-600-1000ms 三段），MISS 走 SP_984_MISS 专用位图；083 无 DamageNumber 类、无伤害皮肤系统。当前端是 Journey DamageNumber + s9 DAMAGE_SKIN(247) 适配，资源根与缩放注释经 .nx 实测属实 —— 属架构/版本差异而非「自造兜底冒称 083」。用户 m10982 强线索「catalog 漏 DamageSkin.img ⇒ 整根合并失败」经 5 组 open_merge 探针证伪：资源可达（624 皮肤节点），漏文件是过期快照。本轮只做只读取证 + 对照 + 纠错/依据注释，不改行为，是否按 083 动态字宽重排交用户裁决（D-A）。
+
+| # | 项 | 观察点 | 预期 |
+| --- | --- | --- | --- |
+| 36-1 | 伤害皮肤实际显示 | 启 s9，装备皮肤 id 1 / 10 / 100，对比默认 BasicEff 逐屏截图 | `Effect["DamageSkin.img"]` 可达且字形切换生效（探针已证 624 节点） |
+| 36-2 | 皮肤数字间距（D-A 前置） | 同一伤害值在默认 / 皮肤 A / 皮肤 B 下的数字排布 | 记录是否因硬编码 BasicEff 宽度表出现间距错位，作为 D-A 裁决依据 |
+| 36-3 | MISS 显示 | 打出 MISS | 显示 98×38 专用 MISS 位图（经 charset_char('Miss')='M' 解析），非字符 M |
+| 36-4 | 超长伤害缩放 | 16 位（接近 2^53）伤害数值 | 等比缩放不截断、不横向溢出（MAX_DAMAGE_WIDTH=260） |
+| 36-5 | 三型字形 | 普通 / 暴击 / TOPLAYER | NoRed / NoCri / NoViolet 三套字形与颜色正确 |
+
+已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（getadvance 表 / MAX_DAMAGE_WIDTH=260 / FADE_TIME=500 / rowheight 36-30 / apply_skin 分支 / init 字符集），harness A2 逐条守卫「仍在」；只补 4 处纯注释。083 整体重排（动态 3/5 字宽 + canvas 57 + 三段动画 + 皮肤间距修正）属 **决策点 D-A**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；校准≠改回原生（083 无 DamageNumber/皮肤系统）、s9 协议优先；DamageSkin.img 可达性已由最小探针闭环，不再是决策点。

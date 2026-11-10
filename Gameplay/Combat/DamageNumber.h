@@ -63,6 +63,8 @@ namespace ms
 		int16_t shift;
 		// 超长伤害数字（最多 16 位，2^53）的等比缩放系数，保证不溢出屏幕。
 		// 运行时字符集只有 0-9 + Miss，无单位符号，故用缩放而不是单位缩写。
+		// [083 校准 round70] 上述经 .nx 实测属实（BasicEff 仅 0-9 + Miss）；083 用逐位图动画而非缩放。
+		// 本端 Journey+s9 适配、非 083 CAnimationDisplayer，详见 notes/wave2-damagenumber-083-review-20261111.md。
 		float numscale;
 		int32_t skin_id = 0;
 		MovingObject moveobj;
