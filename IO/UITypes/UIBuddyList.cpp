@@ -32,21 +32,24 @@
 
 namespace ms
 {
-	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(200, 320)),
+	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(182, 310)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
-		nl::node buddy = nl::nx::UI["BuddyList.img"];
-		if (buddy["backgrnd"])
-			sprites.emplace_back(Sprite(buddy["backgrnd"], Point<int16_t>(0, 0)));
+		// [R6] 好友窗资源在运行时部署数据位于 UIWindow.img/Recommendations/FriendsList
+		// （原代码读的 BuddyList.img 在 BeiDou 精简数据中不存在 → 窗口无背景、无加好友按钮）。
+		// back=182x310 即窗口背景；BtClose/BtAddBuddy 各 13x13。
+		nl::node buddy = nl::nx::UI["UIWindow.img"]["Recommendations"]["FriendsList"];
+		if (buddy["back"])
+			sprites.emplace_back(Sprite(buddy["back"], Point<int16_t>(0, 0)));
 
-		// 本包 UI.nx 根下没有 BuddyList.img（nx_inspect 实测），也没有 Basic.img/BtAdd
-		// ⇒ 只有关闭钮能落地，且必须与其它功能窗共用同一颗描边 X
-		// （UiAssetResolve::close_btn() → Basic.img/BtClose2）。
-		// 旧写法 `bn ? MapleButton(bn) : MapleButton(bn, pos)` 两个分支都拿不到贴图，
-		// 真值分支还会把坐标丢成窗口原点，属于凭空写出来的逻辑。
-		nl::node close = UiAssetResolve::close_btn();
-		if (close)
-			buttons[BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(180, 8));
+		// 关闭钮：好友窗自带 BtClose（13x13 描边 X），顶右。
+		if (buddy["BtClose"])
+			buttons[BtClose] = std::make_unique<MapleButton>(buddy["BtClose"], Point<int16_t>(165, 4));
+
+		// BtAdd：原构造从未实例化（枚举有 BtAdd 但无创建）→ 好友窗无「加好友」可视按钮，
+		// 只能靠键盘 A。现补上，点击即 prompt_add()。顶右、紧邻关闭钮左侧。
+		if (buddy["BtAddBuddy"])
+			buttons[BtAdd] = std::make_unique<MapleButton>(buddy["BtAddBuddy"], Point<int16_t>(146, 4));
 	}
 
 	void UIBuddyList::draw(float alpha) const
