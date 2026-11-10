@@ -115,6 +115,15 @@ namespace ms
 		// （五个钮同处底图 y234 一行，从左到右 确定/取消/取消修改/全部消除/变更快捷键）。
 		// modern 支此前五颗都没传 position，被 W0 的 maple_btn_nopos 哨兵整批跳过 →
 		// 表现为「键盘设定窗没有按钮」。推导过程见 evidence/w2-hud-buttons/coords.md（T-4）。
+		// round75 · Angel 083 依据（CUIKeyConfig）：下面 5 颗功能钮 y=234 一行的坐标来自截图逐像素定标，
+		// 属门禁 18「主路径已尽仍缺关键节点」的截图备选，非 083 立即数背书，不得据 083 改这 5 个坐标。
+		// 活 IDB：CUIKeyConfig::CUIKeyConfig @0x832586 / OnButtonClicked @0x8335d0 /
+		// GetShortCutIndexByPos @0x833a65 / OnDestroy @0x833749 全无按钮坐标立即数；
+		// off_B397F0 是 L"KeyConfig" 的 BSTR 数据非坐标表，sub_832834 是析构（释放 6 个 CCtrlButton ZRef），
+		// 0x832000-0x837000 区间无本窗 CCtrlButton::CreateCtrl（全库仅 CheckBox/ScrollBar/Slider 三个具名），
+		// .nx 实测 UIWindow.img/KeyConfig 的 12 个直接子节点（backgrnd 629x373 origin(314,186) + 7 颗 Bt* +
+		// icon/key/notice/quickslotConfig）无任何坐标/consent 属性，故 083 主路径确给不出五按钮坐标。
+		// 骨架按 083 真数据表：dimension=bg_dimensions(629x373)、keys_pos 抄自 dword_BE27E0（非截图自造）。
 		try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]), Point<int16_t>(8, 234), "keyconfig ok");
 		try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]), Point<int16_t>(58, 234), "keyconfig cancel");
 		try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]), Point<int16_t>(112, 234), "keyconfig default");
@@ -140,6 +149,9 @@ namespace ms
 		// HeavenClient Key 枚举与官方位号在 F11/F12/Scroll 上不完全一致，见下方注释。
 		if (UiAssetResolve::is_classic_hud())
 		{
+			// 083 权威：GetShortCutIndexByPos @0x833a65 用 dword_BE27E0 成对 int32 做 32x32 槽判定
+			// (v7[2]=x+32 / v7[3]=y+32)；py_eval 实测字节首序列 (0,0)(0,0)(48,66)(82,66)(116,66)...(422,66)，
+			// 步长 34、y=66，故本表 NUM1=(48,66) 起逐字抄自 083，非截图自造。
 			keys_pos[KeyConfig::Key::NUM1] = Point<int16_t>(48, 66);
 			keys_pos[KeyConfig::Key::NUM2] = Point<int16_t>(82, 66);
 			keys_pos[KeyConfig::Key::NUM3] = Point<int16_t>(116, 66);
@@ -729,6 +741,9 @@ namespace ms
 			}
 			case Buttons::DEFAULT:
 			{
+				// 083 依据：OnButtonClicked @0x8335d0 case 2000/2001 弹 CNoticeDlg；CNoticeDlg ctor @0x83665b
+				// 用 SP_2503_UI_UIWINDOWIMG_KEYCONFIG_NOTICE_D 建 266x116 确认框 (CreateDlg a4:266 a5:116)。
+				// 本端用 UIOk + Locale::text_or 表达确认，属 s9/配置适配，非布局缺陷（决策台账 D-E 同族）。
 				const std::string message = Locale::text_or("keyconfig.confirm_default", "Would you like to revert to default settings?");
 
 				auto onok = [&](bool ok)

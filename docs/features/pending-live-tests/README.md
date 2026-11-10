@@ -1008,3 +1008,17 @@
 | 40-5 | **决策点 D-E** | 083 `OnButtonClicked @0x620ca5` 5 个 SP_ 外链常量 vs 本端 4 个 `Configuration` URL（`SDL_OpenURL`）：确认注册/官网/找回密码/找回账号四个外链可达；是否对齐 083 SP_ 常量交用户裁决 | 校准≠改回原生 / s9 适配 |
 
 已知限制：083 `CUITitle::OnCreate` **未给窗口屏幕原点立即数**，`(58,16)` 属截图 SAD 派生且注释已自认，不作 083 背书；083 外链为 Nexon 官方 StringPool 常量，本端按 s9/配置适配不照搬；本轮 0 行为字面量，真机观感（尤其 (58,16) 全屏配准与雕刻槽字形）需启 s9 + 五屏截图核。
+
+## 41. round75 · UIKeyConfig 键盘设置窗按 Angel 083 CUIKeyConfig 复核（#devfix-keyconfig-083-review）
+
+本轮为 read-only 复核 + 纯注释口径纠正（0 行为字面量），需启 s9 + 五屏截图做观感验收。
+
+| 项 | 验收动作 | 预期 |
+| --- | --- | --- |
+| 41-1 | 打开键盘设置窗，对照 083 原生截图 | 底图 629x373、7 颗 Bt* 真按钮、键位槽 32x32 对齐 |
+| 41-2 | 核对 5 颗功能钮（确定/取消/取消修改/全部消除/变更快捷键）一行 | y=234 截图派生坐标观感对齐，无重叠/错位 |
+| 41-3 | 点 DEFAULT / DELETE 弹确认 | 266x116 确认框语义（本端 UIOk + text_or 属 s9 适配） |
+| 41-4 | classic 键位高亮 / 拖拽映射 | keys_pos 来自 dword_BE27E0，NUM1=(48,66) 起步长 34 |
+| 41-5 | StatusBar.img/KeyConfig 缺失回退 | 自动回退 UIWindow.img/KeyConfig，窗口不空白 |
+
+已知限制：083 主路径（ctor/OnButtonClicked/区间 CreateCtrl/.nx 12 子节点）无 5 按钮坐标立即数，y=234 为门禁 18 截图备选派生、非 083 背书；是否按真机截图微调坐标属决策点 D-F，本轮零实施。D-E 同族：083 5 个 SP_ 外链 vs 本端 4 个 Configuration URL 属 s9 适配。

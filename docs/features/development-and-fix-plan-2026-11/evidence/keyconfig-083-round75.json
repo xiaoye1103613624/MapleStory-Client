@@ -1,0 +1,80 @@
+{
+  "round": 75,
+  "face": "UIKeyConfig / CUIKeyConfig",
+  "verdict": "legal_mixed_face_not_sibling_defect",
+  "authority": "Angel(13339) 083/v83 IDB",
+  "ida": {
+    "symbols": [
+      "CUIKeyConfig::CUIKeyConfig 0x832586 0x263",
+      "OnButtonClicked 0x8335d0 0x15c",
+      "OnMouseButton 0x83372c",
+      "OnDestroy 0x833749 0x132",
+      "OnMouseMove 0x8338f9 0x16c",
+      "GetShortCutIndexByPos 0x833a65 0x99",
+      "TryBeginDragFuncKeyMappedIcon 0x83550d 0x1040",
+      "CNoticeDlg ctor 0x83665b 0x18e",
+      "_ReleaseRaw 0x836de7"
+    ],
+    "ctor": "0x832586 CUIWnd(5,3,606,7,&off_B397F0) + SP_2406_UI_UIWINDOWIMG_KEYCONFIG + CreateWnd z:10 bSetFocus:1; no button coords immediates",
+    "onbutton": "0x8335d0 case 1/2 UI_Close(5), case 2000 CNoticeDlg(0)->DefaultFuncKeyMap, 2001 CNoticeDlg(1)->memset(0x1BD), 2002 sub_836C9B; no coords",
+    "getshortcut": "0x833a65 dword_BE27E0 paired int32, 32x32 slot hit (v7[2]=x+32 / v7[3]=y+32), switch 6->42/Y->29/Z->56",
+    "keytable_bytes": "(0,0)(0,0)(48,66)(82,66)(116,66)(150,66)(184,66)(218,66)(252,66)(286,66)(320,66)(354,66)(388,66)(422,66) step 34",
+    "noticedlg": "0x83665b SP_2503_UI_UIWINDOWIMG_KEYCONFIG_NOTICE_D -> CDialog::CreateDlg a4:266 a5:116 (266x116)",
+    "ondestroy": "0x833749 memcmp dirty(0x1BD/0x20) -> CNoticeDlg(2) -> SaveFuncKeyMap/SaveQuickslotKeyMap",
+    "exclusions": [
+      "off_B397F0 = L\"KeyConfig\" BSTR data, not a coord table",
+      "sub_832834 = destructor (6 CCtrlButton ZRef)",
+      "no CCtrlButton::CreateCtrl in 0x832000-0x837000 (only CheckBox/ScrollBar/Slider named)",
+      "vtable 0x832979 = CUISoftKeyboard::OnCreate, not this window's control creation"
+    ],
+    "xrefs": [
+      "0xa05bb5 in CWvsContext::UI_Open @0xa05ab8"
+    ]
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "key_raw_len": 65536,
+    "key_sha256_16": "268a8407a47ee76c",
+    "iv": "TSPHKw==",
+    "structure": "WORKS",
+    "content_error": "IMG 解析失败: UIWindow.img / StatusBar.img",
+    "nodes_queried": 9,
+    "compliant_fallback": ".nx (UI.nx)"
+  },
+  "nx_facts": {
+    "UIWindow.img/KeyConfig direct_children": 12,
+    "children": "BtCancel/BtClose/BtDefault/BtDelete/BtHelp/BtOK/BtQuickSlot/backgrnd/icon/key/notice/quickslotConfig",
+    "backgrnd": "629x373 origin(314,186) z0",
+    "button_coord_attrs": false,
+    "StatusBar.img/KeyConfig": "NOT FOUND",
+    "BtOK": "47x19",
+    "BtCancel": "47x19",
+    "BtDefault": "65x19",
+    "BtDelete": "71x19",
+    "BtQuickSlot": "96x18",
+    "BtClose": "12x12",
+    "BtHelp": "12x12"
+  },
+  "current_client": {
+    "skeleton": "083 data table: dimension=bg_dimensions(629x373), keys_pos from dword_BE27E0 (48,66 step34), 7 real Bt* nodes + first_node(button:XXX,BtXXX) fallback, StatusBar.img/KeyConfig miss -> window fallback",
+    "screenshot_derived": "5 button coords (8,58,112,177,260 / y=234) from 正确客户端截图/键盘设置.png",
+    "no_fictional_root": true,
+    "no_fake_fallback_replacing_real_assets": true
+  },
+  "decision_points": [
+    "D-F: whether to fine-tune the 5 button y=234 coords against 5-screen screenshots - visual, needs user verdict, 0 implementation this round",
+    "Legal mixed face per gate 18: 083 data-table skeleton + screenshot fallback for button row, NOT the 8th sibling defect"
+  ],
+  "patch": {
+    "files": [
+      "IO/UITypes/UIKeyConfig.cpp"
+    ],
+    "comment_blocks": 3,
+    "behavior_literals_changed": 0
+  },
+  "verification": {
+    "harness": "tools/test_round75_keyconfig_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check",
+    "build": "tools/build_smoke.bat EXITCODE=0 covering UIKeyConfig.cpp"
+  }
+}
