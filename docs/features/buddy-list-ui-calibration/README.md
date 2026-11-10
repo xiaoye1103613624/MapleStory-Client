@@ -1,5 +1,9 @@
 # 好友 UI（UIBuddyList）校准 · 2026-11-10
 
+> **窗口架构澄清（2026-11-10 晚，用户截图确证）**：游戏内有**两颗**好友相关窗：
+> 1. **`UIUserList`**——热键打开的「好友列表 & 家族」5 页签窗（好友/组队/家族/家族联盟/拒绝列表），已按原版截图 r27-oracle 校准（见 `UIUserList.cpp` 注释与 evidence/r27-oracle）。**用户截图即此窗，渲染正常。**
+> 2. **`UIBuddyList`**——本文件标的：s2c `BUDDYLIST=63` 包到达时由 `BuddyHandler.ensure_buddy` **自动弹出**的 v83 简版列表窗；`UIChat`/`UIChatBar`（好友频道收件人）、`UIMiscShells`、`MessagingHandlers`、`WaveAShellHandlers` 均消费它。
+
 ## 目标
 将好友窗 `UIBuddyList` 对齐 **BeiDou 运行时数据**与 **s9 服务端协议**，修正原代码读不到资源、缺「加好友」按钮的真实缺口（R6）。
 
@@ -18,7 +22,7 @@
 ## 决策点
 | # | 决策 | 结论 |
 | --- | --- | --- |
-| D1 | 资源路径 | 改为 `nl::nx::UI["UIWindow.img"]["Recommendations"]["FriendsList"]`（R6：以运行时数据为准） |
+| D1 | 资源路径 | 改为 `nl::nx::UI["UIWindow.img"]["FriendRecommendations"]["FriendsList"]`（R6：以运行时数据为准）。**勘误**：首版提交 `7105da94` 误写为 `Recommendations`（节点不存在→背景/按钮全读空），已修正为 `FriendRecommendations`（json.load 全量解析确证） |
 | D2 | 加好友按钮 | 构造内实例化 `BtAdd`（`buddy["BtAddBuddy"]`），点击即 `prompt_add()` |
 | D3 | 窗口尺寸 | 由 200×320 对齐资源 `back` 182×310 |
 | D4 | 协议 | 已核验 c2s/s2c 与 s9 对齐，不改 |

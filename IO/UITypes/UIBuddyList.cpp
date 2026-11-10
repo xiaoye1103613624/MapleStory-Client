@@ -35,10 +35,14 @@ namespace ms
 	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(182, 310)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
-		// [R6] 好友窗资源在运行时部署数据位于 UIWindow.img/Recommendations/FriendsList
+		// [R6] 好友窗资源在运行时部署数据位于 UIWindow.img/FriendRecommendations/FriendsList
 		// （原代码读的 BuddyList.img 在 BeiDou 精简数据中不存在 → 窗口无背景、无加好友按钮）。
-		// back=182x310 即窗口背景；BtClose/BtAddBuddy 各 13x13。
-		nl::node buddy = nl::nx::UI["UIWindow.img"]["Recommendations"]["FriendsList"];
+		// back=182x310 即窗口背景；BtClose/BtAddBuddy/BtFind/BtDetail/BtWhisper/ComboBox 各含
+		// normal/pressed/disabled/mouseOver 四态。
+		// 注意：游戏内热键「好友列表&家族」窗是 UIUserList（已按原版 r27-oracle 校准）；
+		// 本窗（UIBuddyList）由 s2c BUDDYLIST=63 包到达时 BuddyHandler.ensure_buddy 自动弹出，
+		// 并被 UIChat/UIChatBar 好友频道收件人消费。
+		nl::node buddy = nl::nx::UI["UIWindow.img"]["FriendRecommendations"]["FriendsList"];
 		if (buddy["back"])
 			sprites.emplace_back(Sprite(buddy["back"], Point<int16_t>(0, 0)));
 
