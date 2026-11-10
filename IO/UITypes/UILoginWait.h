@@ -46,7 +46,9 @@ namespace ms
 
 		// 请求结束等待：进度条必须先走完 0→100%（本轮未满则补满），
 		// 再由 update() 收尾（deactivate + 执行续场逻辑）。
-		// 参考端 Loading 满条后才切页；未满就拆窗会「没到 100% 就跳页」。
+		// 本端 Journey 设计：满条后才切页；未满就拆窗会「没到 100% 就跳页」。
+		// 083 无独立 Loading 窗类（等待态在 CLogin::Update @0x5f4c16 的 10s 超时链），
+		// 此行为不据 083 背书；10s 自动回标题是否补齐属决策点 D-D。
 		// 无进度条素材时立即执行续场逻辑（退化为旧行为）。
 		void begin_finish(std::function<void()> oncomplete);
 
@@ -62,7 +64,8 @@ namespace ms
 			BtCancel
 		};
 
-		// 进度条一帧：bar/0..10 每帧多点亮一格（0%..100%）。
+		// 进度条一帧：Login.img/Notice/Loading/bar/0..10 真位图 109x8，每帧多点亮
+		// 一格（0%..100%）；.nx 实测 0..9 帧 delay=100ms、10 帧缺省 100ms。
 		struct BarFrame
 		{
 			Texture texture;

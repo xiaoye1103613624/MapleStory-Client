@@ -979,3 +979,18 @@
 | 38-5 | 若 D-C 通过：五屏截图核对 NPC 移动动画与 083 观感 | 逐项对齐后另立 wave | 依赖 38-3 |
 
 已知限制：083 `CMovePath::Encode @0x68a563` 头仅 x/y+count、attr switch 到 0x16；本端按 s9 契约为 x/y/vx/vy+count、attr 含 0x23/0x24，两者不同版本；旧 095 `0x666e20` 证据文件仅作本地翻案留证、不作代码依据。`*CheckTemporaryStatDuration*` / `*CancelDebuff*` 在 083 符号表 0 命中。
+
+## 39. round73 · UILoginWait 加载进度条按 Angel 083 CLogin 等待态只读取证复核（#devfix-loginwait-083-review，需用户一起测）
+
+> 本轮为**只读取证 + 口径纠正（0 行为字面量）**，无功能改动；以下为需启 s9 + 正确端截图对照的观感/交互项。
+> 依据：`evidence/loginwait-083-round73.json`、`notes/wave2-loginwait-083-review-20261111.md`（门禁 18：IDA→orange-wz→合规 .nx 回退）。
+
+| 编号 | 真机验收项 | 期望 | 关联 |
+| --- | --- | --- | --- |
+| 39-1 | bar 像素对齐 | `Login.img/Notice/Loading/bar/0..10` 11 帧 109x8 画在 `(131,98)`，与 `backgrnd 282x144` 的 LOADING 凹槽逐像素对齐；083 无布局立即数，`(131,98)` 是截图 SAD 派生，非 083 权威 | 决策点：偏差是否按真机重定标 |
+| 39-2 | 动画帧序 | 0..9 帧 delay=100ms、10 帧缺省 100ms；等待期循环 0→100%→回 0，服务端响应后 `begin_finish` 补满到 100% 再切页 | `tools/_lw_visual/bar_{0,5,10}.png` |
+| 39-3 | 取消钮 | `BtCancel 65x23` 在弹窗内 `(188,44)` 与「正在连接到服务器。」同行；点击 `Session::reconnect()` + 关窗，未满条不执行被取消的续场 | 截图 SAD 派生坐标 |
+| 39-4 | **10s 超时（决策点 D-D）** | 083 `CLogin::Update @0x5f4c16` 十秒未响应即 `RemoveNoticeConnecting` + 回标题；当前端**无超时、永久循环** → 是否补齐需用户裁决（会改变「等到服务端响应」语义，s9 慢登录可能误回标题） | round73 零实施，待裁决后按一次性 Plan 单独提交 |
+| 39-5 | 反例复核 | 确认本窗用的是真 IMG 资源（非手绘兜底），不因 m09859 逐面复核被误当同族病返工 | 保留项 |
+
+已知限制：083 无独立 Loading 窗类（`*LoginWait*`/`*Loading*`/`*CUIWait*` 全 0 命中），等待态是 `CLogin` 状态机，故无 083 版式立即数可逐像素对齐；`bar` 几何与「循环增长」语义均为当前端 Journey + 截图派生，仅作对照。`IO/LoginBackground.cpp:77` 线性插值经复核按 Angel 083 CLogin 修过，保留不动。

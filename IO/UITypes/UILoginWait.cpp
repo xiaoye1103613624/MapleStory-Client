@@ -119,11 +119,18 @@ namespace ms
 			}
 		}
 
-		// 进度条：bar/0..10 共 11 帧，每帧多点亮一格（0%..100%）。
-		// 2026-11-05 正确端截图（XiaoYe_2026-11-05_00-29-43.png）逐像素定标：
-		// 弹窗=Loading/backgrnd 282x144（模板匹配原点=截图(0,9)）；条带 y88..113、
-		// x46..253 无内槽；截图仅见第 0 段 8x8 橙块 @ 弹窗内(130..141,98..105)
-		// （左侧条带纯白排除 bar@100 段3 的解释）⇒ bar 画在弹窗内 (131,98)。
+		// 进度条：Login.img/Notice/Loading/bar/0..10 共 11 帧真位图，
+		// 每帧 109x8 整条逐步填充（0%..100%：0 帧仅最左 8px 橙可见、10 帧满格），
+		// 0..9 帧 delay=100ms、10 帧无 delay 子节点按缺省回退 100ms（.nx 实测；
+		// AGENTS.md 门禁 orange-wz 结构层 WORKS / 内容层 `IMG 解析失败: Login.img`
+		// → 合规 .nx 回退，65536B GMS key sha256_16 268a8407a47ee76c / iv TSPHKw==）。
+		// 这是真 IMG 资源动画，不是「自行修复 / 参照 BeiDou 的手绘兜底」；此面为反例。
+		// 083 活 IDB 侧无独立 Loading 窗类（*LoginWait*/*Loading*/*CUIWait* 全 0 命中）：
+		// 等待态挂在 CLogin::Update @0x5f4c16 的 10s 超时链（v2-v6>10000 →
+		// RemoveNoticeConnecting @0x5fac26 + ResetVAC + GotoTitle(0,0)，8 个 xrefs），
+		// 083 未给本弹窗任何布局立即数。故 (131,98) 仍取正确端截图 SAD 定标（截图仅
+		// 拍到 0 帧橙块 @ 弹窗内(130..141,98..105)），不作 083 权威背书；像素级对齐与
+		// 10s 超时缺口属决策点 D-D，见 notes/wave2-loginwait-083-review-20261111.md。
 		static const Point<int16_t> kBeiDouBarOff(131, 98);
 
 		nl::node progress = pick_loading_anim(Loading);
@@ -251,10 +258,10 @@ namespace ms
 		if (finished || bar_frames.empty())
 			return;
 
-		// 进度条按帧延时往前走；满条后停在 100%，等 begin_finish 收尾。
+		// 进度条按帧延时往前走；满条后停在 100%，等 begin_finish 收尾（本端 Journey 设计）。
 		if (finish_pending)
 		{
-			// 收尾阶段：参考端满条后才切页，未满则补满到 100%。
+			// 收尾阶段：本端满条后才切页，未满则补满到 100%（非 083 权威，083 无此窗类）。
 			if (fill_elapsed < fill_total)
 			{
 				fill_elapsed = static_cast<uint16_t>(
@@ -274,8 +281,8 @@ namespace ms
 		}
 		else
 		{
-			// 等待阶段：参考端 LOADING 为「循环增长」的不确定进度动画，
-			// 满条后回到 0 重新长；旧逻辑只长一次并停在 100%，服务端未响应时
+			// 等待阶段：本端 Journey 的「循环增长」不确定进度动画（083 无独立 Loading 窗类，
+			// 无循环/停留权威，仅作对照）；满条后回到 0 重新长；旧逻辑只长一次并停在 100%，服务端未响应时
 			// 表现为进度条卡住不动（用户反馈"不是循环增长，会卡一会"）。
 			uint16_t next = static_cast<uint16_t>(fill_elapsed + Constants::TIMESTEP);
 

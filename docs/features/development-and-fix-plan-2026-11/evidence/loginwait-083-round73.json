@@ -1,0 +1,186 @@
+{
+  "round": 73,
+  "face": "UILoginWait loading progress bar / login-flow start",
+  "user_directive": "m09859: ui layout/animation not fixed per Angel may be re-fixed; many BeiDou/self-made UI+animation are problematic",
+  "verdict": "COUNTER-EXAMPLE: current uses REAL IMG frames (not a fabricated fallback). Correction = evidence-basis only, 0 behavior literals.",
+  "ida_live_basis": {
+    "note": "no independent Loading window class in 083; do not invent one",
+    "zero_hit_filters": [
+      "*LoginWait*",
+      "*LoginWaiting*",
+      "*CUIWait*",
+      "*Loading*",
+      "*CUILoading*",
+      "*CUIConnecting*",
+      "*CUIWaiting*",
+      "*WaitDlg*",
+      "*SetWait*"
+    ],
+    "CLogin_Update": {
+      "addr": "0x5f4c16",
+      "size": "0x752",
+      "timeout_chain": "if (*(this+71)!=0) { v6=*(this+73); if (v6!=0 && v2-v6>10000) { v7=*(this+76); *(this+71)=0; *(this+75)=v7; if(v7==0){ if(*(this+70)!=0) RemoveNoticeConnecting(this); ResetVAC(this); GotoTitle(this,0,0); return; } MakeVACDlg(this); ChangeStep(this,5); } }",
+      "timeout_ms": 10000
+    },
+    "RemoveNoticeConnecting": {
+      "addr": "0x5fac26",
+      "size": "0xe",
+      "body": "return (*(**(this+70)+52))(a1: *(this+70), a2: 3);",
+      "xref_count": 8,
+      "xref_fns": [
+        "?Update@CLogin@@UAEXXZ 0x5f4c16",
+        "?OnViewAllCharResult@CLogin@@IAEXAAVCInPacket@@@Z 0x5facca (x7)",
+        "?MakeVACDlg@CLogin@@QAEXXZ 0x5fb0e1"
+      ]
+    },
+    "other_CLogin_symbols": [
+      "??0CLogin@@QAE@XZ 0x5f3c59",
+      "?Init@CLogin@@UAEXPAX@Z 0x5f42cd",
+      "?ChangeStep@CLogin@@QAEXJ@Z 0x5f53c60",
+      "?OnStepChanged@CLogin@@QAEXXZ 0x5f5962",
+      "?OnPacket@CLogin@@UAEXJAAVCInPacket@@@Z 0x5f80ff",
+      "?OnCheckPasswordResult@CLogin@@IAEXAAVCInPacket@@@Z 0x5f83ee",
+      "?OnRecommendWorldMessage@CLogin@@IAEXAAVCInPacket@@@Z 0x5f8340"
+    ],
+    "string_table": {
+      "*Loading* strings": [
+        "w.img/UserList/Guild/GuildBoard/Loading (0xb3b0d4) — unrelated guild board"
+      ],
+      "Login.img/Notice/Loading": "NOT in exe ASCII string table (dynamic property path)"
+    },
+    "decompiled_files": [
+      "tools/_ida_loginwait/RemoveNoticeConnecting.dec.txt",
+      "tools/_ida_loginwait/CLogin_Update.dec.txt",
+      "tools/_ida_loginwait/CLogin_OnStepChanged.dec.txt",
+      "tools/_ida_loginwait/CLogin_OnPacket.dec.txt",
+      "tools/_ida_loginwait/CLogin_OnCheckPasswordResult.dec.txt",
+      "tools/_ida_loginwait/xrefs_RemoveNoticeConnecting.json"
+    ]
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "img": "E:/MXD/BeiDou-Client-xy/Data/UI/Login.img",
+    "key": {
+      "raw_len": 65536,
+      "b64_len": 87384,
+      "sha256_16": "268a8407a47ee76c",
+      "ivBase64": "TSPHKw=="
+    },
+    "structure": "WORKS (load_files loadedCount=1 rootCount=1 generation=1)",
+    "content_error": "IMG 解析失败: Login.img (all 7 node queries; GBK garbled in tools/_lw_probe_stdout.txt kept verbatim)",
+    "nodes_queried": [
+      "Notice",
+      "Notice/Loading",
+      "Notice/Loading/backgrnd",
+      "Notice/Loading/bar",
+      "Notice/Loading/bar/0",
+      "Notice/Loading/bar/10",
+      "Notice/Loading/BtCancel"
+    ],
+    "unload": "rootCount=0 ok=true",
+    "fallback": "AGENTS.md-compliant .nx dump + tools/nx_inspect.py"
+  },
+  "nx_facts": {
+    "cache": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (86919577B)",
+    "root": "Login.img/Notice/Loading (NOT a top-level Loading.img)",
+    "backgrnd": "bitmap 282x144 origin(0,0) — scroll with 正在连接到服务器。 + LOADING groove",
+    "bar_frames": "bar/0..10 = 11 frames, each bitmap 109x8 origin(0,0); frames 0..9 have delay [int] 100, frame 10 has no delay child (frame_delay() returns default 100)",
+    "bar_visual": [
+      "bar_0: leftmost ~8px orange, rest transparent",
+      "bar_5: orange->green gradient (about half filled)",
+      "bar_10: full 109px bar"
+    ],
+    "BtCancel": "normal/0 bitmap 65x23 origin(0,0); 4 states disabled/mouseOver/normal/pressed",
+    "visual_exports": [
+      "tools/_lw_visual/backgrnd.png",
+      "tools/_lw_visual/bar_0.png",
+      "tools/_lw_visual/bar_5.png",
+      "tools/_lw_visual/bar_10.png"
+    ]
+  },
+  "current_client": {
+    "resource_root": "nl::nx::UI[\"Login.img\"][\"Notice\"][\"Loading\"] (UILoginWait.cpp:79-81)",
+    "uses_real_frames": true,
+    "frame_collection": "pick_loading_anim(Loading) -> progress[std::to_string(i)] for i<64 -> BarFrame{Texture,delay}",
+    "bar_offset": "kBeiDouBarOff(131,98) — screenshot SAD derived, NOT 083 authority",
+    "animation": "Journey indeterminate loop (fill_elapsed += TIMESTEP, wrap at fill_total); begin_finish() clamps to 100% then oncomplete()",
+    "cancel": "BtCancel 65x23 at (188,44) when bedou; button_pressed -> Session::reconnect() + close()",
+    "call_sites": [
+      "IO/UITypes/UILogin.cpp:463",
+      "IO/UITypes/UIGender.cpp:107/116/135/161",
+      "IO/UITypes/UITermsOfService.cpp:165",
+      "IO/UITypes/UIWorldSelect.cpp:405/1366",
+      "Net/Handlers/LoginHandlers.cpp:169/336 begin_finish"
+    ],
+    "no_timeout": true
+  },
+  "comparison": [
+    {
+      "dim": "resource",
+      "083": "Login.img/Notice/Loading (dynamic property path, no ASCII string)",
+      "current": "same real root + real 11 frames",
+      "verdict": "ALIGNED"
+    },
+    {
+      "dim": "window class",
+      "083": "no independent class; CLogin state machine",
+      "current": "UILoginWait : UIElement (Journey)",
+      "verdict": "ARCHITECTURE DIFF, calibration != revert-to-native"
+    },
+    {
+      "dim": "bar geometry",
+      "083": "no layout immediate constants",
+      "current": "(131,98) from screenshot SAD, 109x8 frames",
+      "verdict": "screenshot-derived, needs real-machine pixel check (PLT 39-1)"
+    },
+    {
+      "dim": "loop vs single-pass",
+      "083": "not expressible (no such class)",
+      "current": "Journey loop until begin_finish",
+      "verdict": "Journey design; comment false-authority 参考端 corrected"
+    },
+    {
+      "dim": "10s timeout",
+      "083": "CLogin::Update v2-v6>10000 -> RemoveNoticeConnecting + GotoTitle",
+      "current": "NONE (loops forever)",
+      "verdict": "GAP -> decision D-D"
+    },
+    {
+      "dim": "comment misread",
+      "083": "n/a",
+      "current": "旧注释把 109x8 整帧说成「8x8 橙块」并拿截图当 083 权威",
+      "verdict": "CORRECTED (evidence-basis only)"
+    }
+  ],
+  "decision_points": [
+    "D-D: whether to add the 083 10s auto-return-to-title timeout to UILoginWait (interaction/behavior level, breaks current 'wait forever until server responds' semantics; needs user verdict + real-machine test). NOT implemented this round.",
+    "Bar pixel alignment (131,98) vs 282x144 backgrnd groove: screenshot-derived; 083 gives no constants; needs 5-screen real-machine screenshot (PLT 39-1)."
+  ],
+  "patch": {
+    "kind": "comment-only",
+    "files_total": 7,
+    "behavior_literals_changed": 0,
+    "files": [
+      "IO/UITypes/UILoginWait.cpp",
+      "IO/UITypes/UILoginWait.h",
+      "tools/test_round73_loginwait_083.py",
+      "docs/features/development-and-fix-plan-2026-11/evidence/loginwait-083-round73.json",
+      "docs/features/development-and-fix-plan-2026-11/notes/wave2-loginwait-083-review-20261111.md",
+      "docs/features/development-and-fix-plan-2026-11/README.md",
+      "docs/features/pending-live-tests/README.md"
+    ]
+  },
+  "verification": {
+    "harness": "tools/test_round73_loginwait_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check -> GATE OK (s9 a78ba681a4)",
+    "build": "tools/build_smoke.bat EXITCODE=0, must compile UILoginWait.cpp"
+  },
+  "constraints": [
+    "083/v83 only, no 095",
+    "s9 protocol priority",
+    "calibration != revert-to-native",
+    "numeric coincidence != semantic coincidence",
+    "AGENTS.md orange-wz first",
+    "zero-signature atomic commit"
+  ]
+}
