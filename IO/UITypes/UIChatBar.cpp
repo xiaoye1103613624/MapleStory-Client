@@ -1630,6 +1630,52 @@ namespace ms
 		return target_id < TARGET_COUNT ? Locale::text(KEYS[target_id]) : std::string();
 	}
 
+	// 频道快捷键接线（statusbar-hud/D4 + social-economy/D1）。
+	// 依据 Angel 083 `CWvsContext::UseFuncKeyMapped` @ 0xa0773d：
+	//   normal 键 case 4 -> `sub_8D4D43(0)` -> `CUIStatusBar::StartChat(0)`，
+	//   即「切到对所有人 + 立刻把输入行拉起来并聚焦」；case 17 -> 2、case 19 -> 1
+	//   同族。功能键侧（a2<0 分支）只产 0/1/2/3/4/5/7 这些目标号，与
+	//   ChatTargetIndex 的前三项一一对齐。
+	// 修前是 `{}` 空 stub：SAY/PARTYCHAT/FRIENDSCHAT/GUILDCHAT/ALLIANCECHAT/
+	// TOSPOUSE 六个频道键按下完全无反应。
+	// 说明：目标路由（send_to_target_channel）只在 classic HUD 的 chatTarget 上生效；
+	// modern HUD 没有该控件，此时至少保证输入行能开，频道仍可用斜杠别名切换。
+	void UIChatBar::change_target(int32_t action)
+	{
+		uint8_t target = TARGET_ALL;
+
+		switch (action)
+		{
+		case KeyAction::Id::SAY:
+			target = TARGET_ALL;
+			break;
+		case KeyAction::Id::PARTYCHAT:
+			target = TARGET_PARTY;
+			break;
+		case KeyAction::Id::FRIENDSCHAT:
+			target = TARGET_BUDDY;
+			break;
+		case KeyAction::Id::GUILDCHAT:
+			target = TARGET_GUILD;
+			break;
+		case KeyAction::Id::ALLIANCECHAT:
+			target = TARGET_ALLIANCE;
+			break;
+		case KeyAction::Id::TOSPOUSE:
+			target = TARGET_SPOUSE;
+			break;
+		default:
+			return;
+		}
+
+		set_classic_target(target);
+
+		if (!view_input)
+			toggle_input(true);
+
+		LOG(LOG_DEBUG, "UIChatBar: change_target target=" << static_cast<int>(target));
+	}
+
 	void UIChatBar::set_classic_target(uint8_t target_id)
 	{
 		if (target_id >= TARGET_COUNT)

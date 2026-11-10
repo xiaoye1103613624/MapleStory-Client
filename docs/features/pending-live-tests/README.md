@@ -821,3 +821,17 @@
 | 28-A5 | `Character/Player.cpp:211` | `对照 port-095 CWvsContext::CheckTemporaryStatDuration` | 未定位（083 IDB `*CheckTemporaryStat*` 0 命中，需换检索维度） |
 
 反证：`0x666e20` 在 083 落在 `sub_666362`、`0x671590` 落在 `?TrySpeaking@CMob@@IAEXJJ@Z`——都不是路径编码函数。
+## 29. round53 · 聊天目标快捷键接线（#devfix-chattarget-keybind，需用户一起测）
+
+> 编号说明：历史 `## 28. NPC AskPet(9/10) + Mirror(14)`、`## 27. SpeedQuiz A11k` 等早期节与本系列按标题 roundNN 区分，历史编号原样保留。
+
+范围：`statusbar-hud/D4` + `social-economy/D1` 合并 —— `UIChatBar::change_target` 由空 stub 改为
+`KeyAction::Id` → `ChatTargetIndex` 映射 + `set_classic_target()` + 按需 `toggle_input(true)`。
+不新增协议、不改 opcode、不改包体，六个聊天键从「按了没反应」恢复为切目标 + 开输入行。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 29-1 六键切目标 | classic HUD 下依次按 SAY / PARTYCHAT / FRIENDSCHAT / GUILDCHAT / ALLIANCECHAT / TOSPOUSE | 聊天框目标名依次变为 全部 / 组队 / 好友 / 公会 / 联盟 / 配偶，且输入行打开 | 需真机看目标文案与输入行观感，自动化只能断言映射表 |
+| 29-2 modern HUD 观感 | 切到 modern HUD 后按上述六键 | 输入行展开、5 个 Bt（聊天/物品链接/表情/帮助/收框）active 翻转正常 | `toggle_view(true, true)` 的视觉结果需真机 |
+| 29-3 输入行已开时再按 | 输入行打开状态下按其它频道键 | 只切目标、不收框（harness 已断言状态机，真机确认观感） | 需真机确认没有闪烁或焦点丢失 |
+| 29-4 无频道时发送 | 切到组队/公会/联盟但当前无对应频道，输入文字回车 | 走 `CHANNEL_HELD` / `CHANNEL_FALLBACK`，有提示且不误发到公共频道 | 需联服才能验证服务端回执与该分支 |

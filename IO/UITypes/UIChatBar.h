@@ -119,8 +119,16 @@ namespace ms
 		// 把 Q5 暂存的自说悄悄话正文回显成 "(To X) 我 : 正文"。ok=false 时只清暂存。
 		void on_whisper_result(const std::string& target, bool ok);
 
-		// TODO: Change these?
-		void change_target(int32_t action) {}
+		// 频道快捷键入口（SAY / PARTYCHAT / FRIENDSCHAT / GUILDCHAT / ALLIANCECHAT /
+		// TOSPOUSE，见 IO/UIStateGame.cpp:471-482）：切目标频道 + 开输入行。
+		// 证据 Angel 083 `CWvsContext::UseFuncKeyMapped` @ 0xa0773d：
+		//   normal 键 case 4（=SAY）→ v21=0 → `sub_8D4D43(0)` → `StartChat(0)`，
+		//   即「对所有人 + 立刻开输入行」；case 17 → v21=2、case 19 → v21=1 同族
+		//   （功能键分支 `v4-10` 链同样只产 0/1/2/3/4/5/7 这些目标号）。
+		// 目标号与 ChatTargetIndex 的 0/1/2 一一对齐；ALLIANCE/SPOUSE 在 083 走
+		// 另一条 SetWhisperTarget 分支，本端按频道名直切（斜杠别名仍保留）。
+		// 修前是空 stub：六个频道快捷键按下完全无反应（只翻历史框都不做）。
+		void change_target(int32_t action);
 
 	private:
 		static constexpr int16_t INPUT_TEXT_HEIGHT = 18;
