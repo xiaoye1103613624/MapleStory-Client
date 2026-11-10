@@ -1,0 +1,158 @@
+{
+  "round": 67,
+  "date": "2026-11-11",
+  "face": "statusbar-hud/D9 主窗 4 钮闪烁提示",
+  "user_directive": "m09859: 若碰到ui布局、动画一定要确认是否修复了，如果不是按照Angel 布局修复过的，可以重新修复；之前有很多参照BeiDou或者自行修复的ui、动画都有些问题",
+  "authority": "Angel 083 IDB (port 13339) + .nx 实测 (E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx)",
+  "ida": {
+    "SetButtonBlink": {
+      "symbol": "?SetButtonBlink@CUIStatusBar@@QAEXJH@Z",
+      "ea": "0x8dfe21",
+      "size": "0x5d0",
+      "semantics": "if(a2<4){ if(a3==0) return sub_428712(0); ... } a3==0 清除分支直接 return；a3!=0 才加载资源；a3==1 记 timeGetTime()，其它值置 -1",
+      "resources": [
+        "SP_1986_UI_STATUSBARIMG_EQUIPKEY_ANI(idx0)",
+        "SP_1987_UI_STATUSBARIMG_INVENKEY_ANI(idx1)",
+        "SP_1988_UI_STATUSBARIMG_STATKEY_ANI(idx2)",
+        "SP_1989_UI_STATUSBARIMG_SKILLKEY_ANI(idx3)"
+      ]
+    },
+    "xrefs_5_callsites": [
+      {
+        "caller": "CUIStatusBar::OnButtonClicked",
+        "ea": "0x8d423d",
+        "call": "0x8d4316",
+        "a3": 0,
+        "note": "2000-2003 UI_Toggle 后 SetButtonBlink(idx,0) = 开子窗清除 blink"
+      },
+      {
+        "caller": "CUIStatusBar::OnChildNotify",
+        "ea": "0x8d419c",
+        "call": "0x8d420d",
+        "a3": 0,
+        "note": "a2 in [0x7D0,0x7D4) && a3==100 -> SetButtonBlink(a2-2000,0) 清除"
+      },
+      {
+        "caller": "CUIStatusBar::Update",
+        "ea": "0x8de964",
+        "call": "0x8dea40",
+        "a3": 0,
+        "note": "v8+90000 < timeGetTime() && v8!=-1 -> SetButtonBlink(idx,0) 90s 超时清除"
+      },
+      {
+        "caller": "CWvsContext::OnStatChanged",
+        "ea": "0xa1fb52",
+        "call": "0xa1fce9",
+        "a3": 1,
+        "note": "低等级<=0xA(10)升级 -> STAT 钮(idx2) 启动；紧邻 SP_5547_LEVELUP 音效"
+      },
+      {
+        "caller": "CUtilDlgEx::Draw",
+        "ea": "0x9a3e9f",
+        "call": "0x9a4256",
+        "a3": 1,
+        "note": "case 3 任务指引 v32<4 -> SetButtonBlink(v32,1) 启动"
+      }
+    ],
+    "artifacts": [
+      "tools/_ida_hud_blink/SetButtonBlink.txt",
+      "tools/_ida_hud_blink/OnChildNotify.txt",
+      "tools/_ida_hud_blink/OnButtonClicked.txt",
+      "tools/_ida_hud_blink/Update.txt",
+      "tools/_ida_hud_blink/OnStatChanged.txt",
+      "tools/_ida_hud_blink/CUtilDlgEx_Draw.txt",
+      "tools/_ida_hud_blink/xrefs_SetButtonBlink.json",
+      "tools/_ida_hud_blink/symbols_blink.json"
+    ],
+    "sp_plain_text": "SP_1986..1989 是 IDA 局部重命名常量，list_globals/*1986* 与 py_eval idautils.Names() 全 0 命中，明文节点路径只能靠 .nx 实测"
+  },
+  "orange_wz_gate": {
+    "rule": "AGENTS.md: WZ/IMG/XML 一律先 orange-wz MCP，IMG 解析失败才 .nx 回退",
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "probe": "tools/_sb_probe.py",
+    "key": {
+      "b64_len": 87384,
+      "raw_len": 65536,
+      "sha256_16": "268a8407a47ee76c",
+      "iv": "TSPHKw==",
+      "source": "tools/_gms_key.b64"
+    },
+    "structure_layer": "WORKS (load_files loadedCount=1 rootCount=1 generation=1, 目录枚举真 .img 节点)",
+    "content_layer": "FAILS - query_nodes list_children 对 EquipKey / EquipKey/ani / InvenKey/ani / StatKey/ani / SkillKey/ani 五次全部 'IMG 解析失败: StatusBar.img' (GBK 原文已留证)",
+    "unload": "unload_all rootCount=0 ok=true",
+    "data": [
+      "E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img (135373B)",
+      "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (86919577B)"
+    ],
+    "fallback_legal": true
+  },
+  "nx_facts": {
+    "StatusBar.img top nodes(19)": [
+      "BtClaim",
+      "BtMenu",
+      "BtNPT",
+      "BtShop",
+      "BtShort",
+      "BtWhisper",
+      "EquipKey",
+      "FontMemo",
+      "InvenKey",
+      "KeySet",
+      "QuickSlot",
+      "QuickSlotD",
+      "SkillKey",
+      "StatKey",
+      "base",
+      "gauge",
+      "key",
+      "number"
+    ],
+    "ani_children": "EquipKey/InvenKey/StatKey/SkillKey/KeySet 每个都有 ani 子节点：ani/0 与 ani/1 各 [bitmap] 28x20 delay[int]500 origin(0,0)",
+    "pixel_truth": {
+      "EquipKey_ani_0": "亮黄发光版 633B sha256 c2382f4e...",
+      "EquipKey_ani_1": "常态暗版 427B sha256 a66b5b5b...",
+      "EquipKey_normal_0": "sha256 与 ani_1 完全相同"
+    },
+    "conclusion": "083 KEY_ANI = 常态帧<->发光帧两帧，delay 500ms = 1Hz 闪烁；资源根本没缺",
+    "visual_exports": "tools/_sb_visual/{EquipKey,InvenKey,StatKey,SkillKey}_ani_{0,1}.png + EquipKey_normal_0.png"
+  },
+  "three_layer_refutation": {
+    "resource": "外部程序误判『本包无 KEY_ANI 资源』改用手绘半透明白块 vs 083 真 ani 两帧发光位图（.nx 实测五个 ani 子树全在）",
+    "frequency": "外部程序 7.5Hz (每 4 帧翻转) + 0.75s 淡出 vs 083 delay 500ms = 1Hz，无淡出",
+    "timing": "外部程序点击开子窗即启动 0.75s 脉冲 vs 083 开子窗/子窗通知100/90s 超时 = 清除(a3=0)，升级(<=10)/任务指引 = 启动(a3=1)"
+  },
+  "current_before": {
+    "commit": "d6bdce97 (外部程序 HUD D9)",
+    "sites": "IO/UITypes/UIStatusBar.cpp:793/804/815/827 开子窗后 start_button_blink(id)",
+    "draw": "IO/UITypes/UIStatusBar.cpp:2500-2526 ColorBox 白块叠层 (blink_frames>>2 &1, 7.5Hz, alpha 淡出)",
+    "update": "IO/UITypes/UIStatusBar.cpp:2529-2536 每帧递减 blink_frames，无 90s 超时",
+    "header": "IO/UITypes/UIStatusBar.h:242-246 blink_frames / BLINK_DURATION=45"
+  },
+  "relayout": {
+    "boundary": "校准≠改回原生：不动 s9 协议、不动 RecommendedWorldMessageHandler；仅按 083 重修视觉层+时序；启动链用 UI 层 stats.get_stat(LEVEL) 自感知升级，不接协议 handler",
+    "changes": [
+      "用真 sb[<Key>][\"ani\"] 两帧 Animation 替换 ColorBox 白块",
+      "4 处『开子窗时启动』改为 083 的『开子窗时清除』stop_button_blink",
+      "start_button_blink 保留为 083 a3==1 启动入口（复位动画 + elapsed=0）",
+      "update_classic 递减改为 083 的 90s 超时清除 + 真动画 update() 推进",
+      "低等级<=10 升级自感知触发 STAT 钮启动（对齐 OnStatChanged @0xa1fce9）",
+      "三处错注释改引 083 真符号与 .nx 实测"
+    ],
+    "files": [
+      "IO/UITypes/UIStatusBar.h",
+      "IO/UITypes/UIStatusBar.cpp"
+    ]
+  },
+  "verification": {
+    "harness": "tools/test_hud_button_blink_083.py (37 静态守卫 + 13 场景 PASS / TEST_RC=0)",
+    "diff_check": "DIFFCHECK_CLEAN",
+    "gate": "GATE OK: opcode matrix matches both sources (s9 3741089c0f)",
+    "build": "build_smoke.bat GATE OK x2 + EXITCODE=0；build_log.txt 23:16:51/460448B -> 00:02:51/71067B 真重编；UIStatusBar.cpp 22 次；ERROR_COUNT 0；MapleStory.exe 00:02:50 / 4944384B 重链接",
+    "harness_self_bug": "场景8 500/8=62.5 帧才翻一帧，初版用整除 62 断言失败 -> 改 ceil=63，就地修不计任务失败"
+  },
+  "decisions_open": [
+    "启动链是否接 s9 升级 handler（协议级）交用户裁决：本轮用 UI 层等级自感知，不改协议",
+    "CUtilDlgEx::Draw 任务指引启动链（idx<4）当前端无对应实体，未复刻",
+    "名牌/其它按 BeiDou 或自行修复的 UI/动画（D8 组队血条、好友窗几何）继续逐面复核"
+  ]
+}

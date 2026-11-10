@@ -23,6 +23,9 @@
 #include "../Components/Gauge.h"
 
 #include "../../Graphics/Geometry.h"
+#include "../../Graphics/Animation.h"
+
+#include <cstdint>
 
 #include "../../Character/CharStats.h"
 #include "../../Graphics/SpecialText.h"
@@ -94,9 +97,13 @@ namespace ms
 		/// classic HUD 只建 BT_CLASSIC_* 那一组，modern 的 27 个 submenu 按钮根本不存在。
 		Button* button_at(uint16_t id) const;
 		void set_buttons_active(std::initializer_list<uint16_t> ids, bool active);
-		/// D9：主窗 4 钮（装备/背包/属性/技能）切换时触发闪烁提示（原生 SetButtonBlink）。
-		/// 索引 0/1/2/3 对应 BT_CLASSIC_EQUIP/INV/STAT/SKILL。
+		/// D9 · Angel 083 CUIStatusBar::SetButtonBlink @0x8dfe21：
+		/// a3==0 清除 / a3!=0 加载 SP_1986..1989_..._KEY_ANI 真动画（两帧 500ms=1Hz）。
+		/// 开子窗(OnButtonClicked 2000-2003 / OnChildNotify 100)与 Update(+90000ms)清除；
+		/// 低等级<=10 升级 -> STAT 钮启动（OnStatChanged @0xa1fce9）。
 		void start_button_blink(uint16_t id);
+		void stop_button_blink(uint16_t id);
+		int32_t blink_index(uint16_t id) const;
 		void toggle_setting();
 		void toggle_community();
 		void toggle_character();
@@ -239,10 +246,14 @@ namespace ms
 		bool classic_mode;
 		bool classic_qs_wide = false;	// true=26 格(13x2) quickSlot；false=8 格(4x2) quickSlot08
 
-		// D9：主窗 4 钮闪烁帧计数（原生 SetButtonBlink + OnChildNotify 通知链；本包无
-		// SP_1986..1989 KEY_ANI 资源，用脉冲高亮叠层替代）。索引 0/1/2/3 对应
-		// BT_CLASSIC_EQUIP/INV/STAT/SKILL；值 = 剩余闪烁帧（0 = 不闪）。
-		std::array<int32_t, 4> blink_frames = { 0, 0, 0, 0 };
-		static constexpr int32_t BLINK_DURATION = 45; // ≈0.75s @60fps
+		// D9 · Angel 083 真 KEY_ANI 动画（.nx 实测 StatusBar.img/<Key>/ani 两帧齐全）。
+		// 索引 0/1/2/3 对应 BT_CLASSIC_EQUIP/INV/STAT/SKILL。
+		std::array<Animation, 4> blink_ani;
+		// 083 SetButtonBlink：a3==1 记 timeGetTime() 于 [idx]，a3==0 / v8==-1 清除；
+		// Update 里 v8 + 90000 < timeGetTime() 超时清除。此处用逻辑帧累计毫秒等价实现。
+		std::array<int64_t, 4> blink_elapsed_ms = { -1, -1, -1, -1 };
+		int16_t blink_last_level = 0;
+		static constexpr int64_t BLINK_TIMEOUT_MS = 90000; // 083 Update 的 +90000ms
+		static constexpr int16_t BLINK_LEVEL_LIMIT = 10;   // 083 OnStatChanged 的 <=0xAu
 	};
 }

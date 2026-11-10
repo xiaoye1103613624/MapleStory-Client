@@ -790,7 +790,7 @@ namespace ms
 				UI::get().emplace<UIEquipInventory>(
 					Stage::get().get_player().get_inventory()
 				);
-				start_button_blink(id);
+				stop_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_INV:
@@ -801,7 +801,7 @@ namespace ms
 				UI::get().emplace<UIItemInventory>(
 					Stage::get().get_player().get_inventory()
 				);
-				start_button_blink(id);
+				stop_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_STAT:
@@ -812,7 +812,7 @@ namespace ms
 				UI::get().emplace<UIStatsInfo>(
 					Stage::get().get_player().get_stats()
 				);
-				start_button_blink(id);
+				stop_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_SKILL:
@@ -824,7 +824,7 @@ namespace ms
 					Stage::get().get_player().get_stats(),
 					Stage::get().get_player().get_skills()
 				);
-				start_button_blink(id);
+				stop_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_KEYSET:
@@ -1671,18 +1671,37 @@ namespace ms
 		return (it != buttons.end()) ? it->second.get() : nullptr;
 	}
 
-	void UIStatusBar::start_button_blink(uint16_t id)
+	int32_t UIStatusBar::blink_index(uint16_t id) const
 	{
-		int32_t idx = -1;
 		switch (id)
 		{
-			case Buttons::BT_CLASSIC_EQUIP:  idx = 0; break;
-			case Buttons::BT_CLASSIC_INV:    idx = 1; break;
-			case Buttons::BT_CLASSIC_STAT:   idx = 2; break;
-			case Buttons::BT_CLASSIC_SKILL:  idx = 3; break;
-			default: return;
+			case Buttons::BT_CLASSIC_EQUIP:  return 0;
+			case Buttons::BT_CLASSIC_INV:    return 1;
+			case Buttons::BT_CLASSIC_STAT:   return 2;
+			case Buttons::BT_CLASSIC_SKILL:  return 3;
+			default: return -1;
 		}
-		blink_frames[idx] = BLINK_DURATION;
+	}
+
+	// 083 a3==1（启动）：OnStatChanged 低等级<=10 升级 / CUtilDlgEx::Draw 任务指引。
+	// 记启动时刻（此处用逻辑帧累计毫秒归零）+ 复位真 KEY_ANI 两帧动画。
+	void UIStatusBar::start_button_blink(uint16_t id)
+	{
+		int32_t idx = blink_index(id);
+		if (idx < 0)
+			return;
+		blink_elapsed_ms[idx] = 0;
+		blink_ani[idx].reset();
+	}
+
+	// 083 a3==0（清除）：OnButtonClicked 2000-2003 开子窗 / OnChildNotify a3==100 /
+	// Update 的 +90000ms 超时。-1 对齐 083 的 v8 = -1（未启动）。
+	void UIStatusBar::stop_button_blink(uint16_t id)
+	{
+		int32_t idx = blink_index(id);
+		if (idx < 0)
+			return;
+		blink_elapsed_ms[idx] = -1;
 	}
 
 	void UIStatusBar::set_buttons_active(std::initializer_list<uint16_t> ids, bool active)
@@ -2082,6 +2101,14 @@ namespace ms
 		add_btn(Buttons::BT_CLASSIC_INV, sb["InvenKey"], group_x + 75, 8);
 		add_btn(Buttons::BT_CLASSIC_STAT, sb["StatKey"], group_x + 105, 8);
 		add_btn(Buttons::BT_CLASSIC_SKILL, sb["SkillKey"], group_x + 135, 8);
+
+		// D9 · 083 SetButtonBlink 的 SP_1986..1989_..._KEY_ANI 四组真动画：
+		// .nx 实测 StatusBar.img/<Key>/ani/{0,1} 两帧、delay 500ms（1Hz 常态<->发光）。
+		// 外部程序曾误判该资源缺失、改用手绘叠层，此处按 .nx 实测改回 083 真帧。
+		blink_ani[0] = Animation(sb["EquipKey"]["ani"]);
+		blink_ani[1] = Animation(sb["InvenKey"]["ani"]);
+		blink_ani[2] = Animation(sb["StatKey"]["ani"]);
+		blink_ani[3] = Animation(sb["SkillKey"]["ani"]);
 		add_btn(Buttons::BT_CLASSIC_KEYSET, sb["KeySet"], group_x + 165, 8);
 		// 快捷栏收起(上箭头 QuickSlot)/展开(下箭头 QuickSlotD)为同位单按钮：
 		// 图标随 quickslot_active 上下切换，而非两颗按钮并存（用户实测反馈）。
@@ -2499,30 +2526,24 @@ namespace ms
 
 		UIElement::draw_buttons(alpha);
 
-		// D9：主窗 4 钮闪烁提示叠层（原生 SetButtonBlink；本包无 KEY_ANI 资源，用脉冲高亮）。
-		// 在按钮之上叠加半透明白块，按帧做开关闪烁，剩余帧递减见 update_classic。
+		// D9 · Angel 083 SetButtonBlink @0x8dfe21：4 钮之上叠 SP_1986..1989 真 KEY_ANI
+		// 两帧动画（常态<->发光，delay 500ms=1Hz），仅在 blink_elapsed_ms[i]>=0 时显示。
+		// 外部程序误判资源并自定义脉冲叠层，已按 .nx 实测改回真帧。
 		static constexpr uint16_t blink_ids[4] = {
 			Buttons::BT_CLASSIC_EQUIP, Buttons::BT_CLASSIC_INV,
 			Buttons::BT_CLASSIC_STAT, Buttons::BT_CLASSIC_SKILL
 		};
 		for (int i = 0; i < 4; ++i)
 		{
-			if (blink_frames[i] <= 0)
+			if (blink_elapsed_ms[i] < 0)
 				continue;
 
 			Button* b = button_at(blink_ids[i]);
 			if (!b)
 				continue;
 
-			// 每 4 帧翻转一次 => 约 7.5Hz 可见闪烁；alpha 随剩余帧淡出。
-			if ((blink_frames[i] >> 2) & 1)
-			{
-				Rectangle<int16_t> r = b->bounds(position);
-				float a = 0.45f * static_cast<float>(blink_frames[i]) / BLINK_DURATION;
-				if (a < 0.0f) a = 0.0f;
-				ColorBox hl(r.width(), r.height(), Color::Name::WHITE, a);
-				hl.draw(DrawArgument(r.get_left_top()));
-			}
+			Rectangle<int16_t> r = b->bounds(position);
+			blink_ani[i].draw(DrawArgument(r.get_left_top()), alpha);
 		}
 	}
 
@@ -2530,10 +2551,28 @@ namespace ms
 	{
 		UIElement::update();
 
-		// D9：递减主窗 4 钮闪烁剩余帧。
+		// D9 · Angel 083 CUIStatusBar::Update @0x8de964：
+		//   do { v8=*v7; if (v8 + 90000 < timeGetTime() && v8 != -1) SetButtonBlink(idx, 0); } while(idx<4);
+		// 逻辑帧累计毫秒等价 90000ms 超时清除；同时推进真 KEY_ANI 两帧动画。
 		for (int i = 0; i < 4; ++i)
-			if (blink_frames[i] > 0)
-				--blink_frames[i];
+		{
+			if (blink_elapsed_ms[i] < 0)
+				continue;
+
+			blink_elapsed_ms[i] += Constants::TIMESTEP;
+			blink_ani[i].update();
+
+			if (blink_elapsed_ms[i] >= BLINK_TIMEOUT_MS)
+				blink_elapsed_ms[i] = -1;
+		}
+
+		// 083 CWvsContext::OnStatChanged @0xa1fce9：低等级(<=0xA=10)升级 -> STAT 钮启动 blink
+		//（紧邻 SP_5547_LEVELUP 音效）。UI 层自感知等级上升，不动 s9 协议 handler。
+		int16_t blink_level = stats.get_stat(MapleStat::Id::LEVEL);
+		if (blink_last_level > 0 && blink_level > blink_last_level
+			&& blink_level <= BLINK_LEVEL_LIMIT)
+			start_button_blink(Buttons::BT_CLASSIC_STAT);
+		blink_last_level = blink_level;
 
 		if (classic_hp_flash > 0)
 			classic_hp_flash_sprite.update();
