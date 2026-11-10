@@ -50,6 +50,17 @@ namespace ms
 			state = Drop::State::PICKEDUP;
 			phobj.vspeed = -5.0f;
 			break;
+		default:
+			// s9 的 DROP_ITEM mod 实际只发 {1,2,3}（MapleMap.spawnDrop/spawnMesoDrop 恒 1、
+			// MapItem:253 恒 2、disappearing*Drop 恒 3），所以下列分支在当前协议下不可达；
+			// 但 State state; 在 Drop.h 里没有初值，缺 default 时未知 mode 会让 state 保持
+			// 未初始化，update() 立刻拿它做比较（UB）。兜底成 DROPPED 等价于「最保守的落地态」，
+			// 合法 mode 的取值与旧行为逐字一致。
+			state = Drop::State::DROPPED;
+			basey = static_cast<double>(dest.y() - 4);
+			phobj.vspeed = -5.0f;
+			phobj.hspeed = static_cast<double>(dest.x() - start.x()) / 48;
+			break;
 		}
 	}
 

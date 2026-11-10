@@ -1898,11 +1898,14 @@ namespace ms
 
 		// ============ 经典底条布局（左贴边 + 右侧面板贴右缘）============
 		// 权威来源：
-		//  a) IDA BeiDou v17.7 脚本化 CreateCtrl(node, id, x, y, type)（sub_8D01B2）：
-		//       BtShop=1000/(573,543)  BtNPT=1001/(629,543)  BtMenu=1002/(685,543)
-		//       BtShort=1007/(741,543)  EquipKey=2000/(618,515) InvenKey=2001/(648,515)
-		//       StatKey=2002/(678,515) SkillKey=2003/(708,515) KeySet=2004/(738,515)
-		//       QuickSlot=2005/(768,515) QuickSlotD=2006/(573,515)
+		//  a) Angel 083 CUIStatusBar::OnCreate @ 0x8d01b2 逐字 CreateCtrl(caller, this, id, x, y, type)：
+		//       BtShop=1000/(573,543)  1001/(629,543)  BtMenu=1002/(685,543)
+		//       BtShort=1007/(741,543) EquipKey=2000/(618,515) InvenKey=2001/(648,515)
+		//       StatKey=2002/(678,515) SkillKey=2003/(708,515) KeySet=1005/(738,515)
+		//       QuickSlot=1006/(768,515) （1009/(573,515) = BtClaim，见 SP_1976_UI_STATUSBARIMG_BTCLAIM）
+		//     注：旧注释把 KeySet/QuickSlot/BtClaim 记成 2004/2005/2006，与 0x8d01b2 逐字不符；
+		//     1005/1006/1009 在 OnCreate 里紧接 2003 依次创建，节点名分别取自
+		//     SP_1983_..KEYSET / SP_1984_..QUICKSLOT / SP_1976_..BTCLAIM。
 		//     创建窗体高 578、top≈22 → 底条相对 y = CreateY - 507：543→36、515→8。
 		//     x 末端 741+54=795 / 768+28=796，证明设计网格宽 800（而非右移贴边）。
 		//  b) StatusBar.img 节点实测（nx_inspect，origin 全部 (0,0)）：

@@ -792,3 +792,32 @@
 | --- | --- | --- | --- |
 | 27-A1 短包行为基线 | 当前版本下走一遍登录 / 进图 / 商城 / 交易 / 聊天 | 记录现有可观察行为作为对照基线 | 需真机全链路，且缺陷本身是「守卫失效」非崩溃 |
 | 27-A2 类型修复后回归 | 若裁决修复 `available()` 返回类型，重跑 27-A1 全链路 | 各面行为不变或按预期变好，无新增断线/丢状态 | 需真机逐面比对，自动测只能覆盖算法 |
+
+## 28. round52 · K1 批量零风险销案（#devfix-k1-batch-round52，需用户一起测）
+
+> 与历史 `## 28. NPC AskPet(9/10) + Mirror(14)` 按标题 roundNN 区分，历史编号原样保留。
+
+范围：`drop/D7`（`Drop::Drop` switch 补 default）、`drop/D4`（`MapDrops` 缺 ItemData 补 DEBUG 日志）、
+`statusbar-hud/D5`（状态栏按钮 id 注释 1005/1006/1009）、`corewindow/D5`（6 处 095 线地址换 083 EA）。
+四条全部属「纯注释 / 纯日志 / 非法 mode 护栏」，**不改协议、不改坐标、不改 happy-path 行为**。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 28-1 掉落与金币 | 正常刷怪、丢弃、拾取金币与物品 | 掉落弧线、拾取提示、金币四档（<50 / 50-99 / 100-999 / >=1000）图标与修复前一致 | 需真机渲染比对；本批只加 default 与日志，属零行为改动 |
+| 28-2 三窗按钮位置 | 打开属性窗 / 道具栏 / 角色信息窗 | BtAuto(106,198)、BtGather/BtSort、BtDetail 等落点与修复前逐像素一致 | 只换注释依据不动坐标，自动测只能验证字符串 |
+| 28-3 Gather/Sort 切钮 | 道具栏点 BtGather 与 BtSort | 服务端回包后按钮切换与修复前一致（切钮源理解已更正，代码未动） | 需真机联服，客户端单侧无回包 |
+| 28-4 MapDrops 调试日志 | 把 `LOG_LEVEL` 调到 DEBUG 后进图刷怪 | 若出现 `MapDrops: no ItemData for itemid=... oid=...`，说明该 itemid 无 WZ 条目（既有台账「无真实掉落表」），不应伴随崩 | 需真机 + 特定 itemid；自动测只能验证字符串存在 |
+
+## 28-A. 待裁决：残留 095 线地址污染（5 处，本轮已取证未改）
+
+> 与 `corewindow/D5` 同源，但不在该决策点的 4 处范围内，且 `Player.cpp:211` 的 083 函数名尚未定位，故只登记不擅改。
+
+| # | 位置 | 现值（095） | Angel 083 真地址（已实测） |
+| --- | --- | --- | --- |
+| 28-A1 | `Net/Packets/MovePathEncode.h:2-3` | `Maplestory95.i64 @ 0x666e20` | `?Encode@CMovePath@@QAEXAAVCOutPacket@@PAH@Z @ 0x68a563`（0x269） |
+| 28-A2 | `Net/Packets/NpcInteractionPackets.h:42,44` | `CNpc::GenerateMovePath @ 0x671590`、`Encode 权威 0x666e20` | `?GenerateMovePath@CNpc@@IAEXJJ@Z @ 0x6d3273`（0x11f）、`CMovePath::Encode @ 0x68a563` |
+| 28-A3 | `Net/Handlers/WaveAShellHandlers.cpp:3585` | `IDA 0x666e20` | 同上 `0x68a563` |
+| 28-A4 | `Gameplay/MapleMap/Npc.cpp:253` | `CMovePath::Encode @ 0x666e20` | `0x68a563` |
+| 28-A5 | `Character/Player.cpp:211` | `对照 port-095 CWvsContext::CheckTemporaryStatDuration` | 未定位（083 IDB `*CheckTemporaryStat*` 0 命中，需换检索维度） |
+
+反证：`0x666e20` 在 083 落在 `sub_666362`、`0x671590` 落在 `?TrySpeaking@CMob@@IAEXJJ@Z`——都不是路径编码函数。

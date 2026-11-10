@@ -143,14 +143,17 @@ namespace ms
 		try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(186, 281), "Stat/BtApUp/INT");
 		try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(186, 299), "Stat/BtApUp/LUK");
 
-		// BtAuto：Maplestory95 CUIStat::OnCreate(0x867b90) 对
-		// UI/UIWindow2.img/Stat/main/BtAuto 走 CLayoutMan::AddButton(nOffset=0,0)
-		// → CCtrlOriginButton 落点 = -canvas.origin。UIWindow2 dump：
-		// origin=(-94,-198) ⇒ 现代窗 topleft=(94,198)。ApUp 同行 y 与经典几乎同值
-		// （现代 STR y=244 / 经典 245），故 y 直取 198。本包 BtAuto 为 100x35
-		// （现代 67x34），按窗宽 208 右缘 2px 钳 x=208-100-2=106（若按 ApUp
-		// Δx=+39 映射得 133 会越界）。新手态仍由下面 BEGINNER 分支熄灭；
-		// 有转职后与 BtApUp 同步 set_active(show_ap)。见 evidence/w6-stats/coords.md。
+		// BtAuto 落点依据（083/08v83 口径）：
+		//  - Angel 083 `CUIStat::OnCreate` @ 0x8c4c7f 逐字只创建 2006/(124,324) 的 BtDetail，
+		//    没有任何 BtAuto 的 CreateCtrl/AddButton 调用点（同函数内 SP_ 节点名仅 JOB /
+		//    BTDETAIL / STAT_DISABLED_）。故 BtAuto 坐标不是 083 EA 直接给出的结论。
+		//  - 现存落点由 `UI/UIWindow2.img/Stat/main/BtAuto` 的 canvas.origin 推：
+		//    origin=(-94,-198) ⇒ 现代窗 topleft=(94,198)；ApUp 同行 y 与经典几乎同值
+		//    （现代 STR y=244 / 经典 245），故 y 直取 198。本包 BtAuto 为 100x35
+		//    （现代 67x34），按窗宽 208 右缘 2px 钳 x=208-100-2=106（若按 ApUp
+		//    Δx=+39 映射得 133 会越界）。
+		//  → 该坐标属「节点 origin + 截图实测」推断，漂移风险记在 drop/core 面 backlog；
+		//    新手态仍由下面 BEGINNER 分支熄灭；有转职后与 BtApUp 同步 set_active(show_ap)。
 		nl::node bt_auto = main["BtAuto"] ? main["BtAuto"] : (Stat["BtAuto"] ? Stat["BtAuto"] : Stat["BtAutoAP"]);
 		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, Point<int16_t>(106, 198), "Stat/BtAuto");
 

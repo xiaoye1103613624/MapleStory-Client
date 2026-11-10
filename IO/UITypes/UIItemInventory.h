@@ -47,7 +47,7 @@ namespace ms
 
 		void modify(InventoryType::Id type, int16_t pos, int8_t mode, int16_t arg);
 		// 显示侧：show_sort=false → BtGather；true → BtSort（「下一步动作」）。
-		// 对齐原生 CUIItem::SetArrangeButton(nTI, nState)（Maplestory95 @ 0x7CCC90）。
+		// 对齐 Angel 083 CUIItem::SetArrangeButton(nTI, nState) @ 0x81e3a6。
 		void set_arrange_button(InventoryType::Id type, bool show_sort);
 		void set_sort(bool enabled);
 		void change_tab(InventoryType::Id type);

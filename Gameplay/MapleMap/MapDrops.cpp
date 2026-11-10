@@ -21,6 +21,10 @@
 
 #include "../../Data/ItemData.h"
 
+#include "../../MapleStory.h"
+
+#include <iostream>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -81,6 +85,13 @@ namespace ms
 				{
 					const Texture& icon = itemdata.get_icon(true);
 					drops.add(spawn.instantiate(icon));
+				}
+				else
+				{
+					// ItemData 无效（Item 节点缺失 / 图标未烘焙）时旧实现在这里静默 return，
+					// 掉落物既不实例化也不留痕，真机上只表现为「地上没有东西」。
+					// 只加 DEBUG 日志，不改变「不实例化」的行为（B11：功能缺口另立台账）。
+					LOG(LOG_DEBUG, "MapDrops: no ItemData for itemid=" << itemid << " oid=" << oid);
 				}
 			}
 		}

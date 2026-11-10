@@ -121,8 +121,10 @@ namespace ms
 	}
 
 	// 开窗默认全页签 nState=0 → 显示 BtGather（红底 +）。
-	// 证据：Maplestory95 CUIItem::OnCreate @ 0x7CE520 将 m_anSortBtState[0..5]=0 后
-	// SetArrangeButton(m_nItemTI, 0) → AddButton(…/BtGather, id=0x7D3)。
+	// 证据：Angel 083 CUIItem::OnCreate @ 0x81c6c9 逐字
+	//   `memset(this + 378, 0, 0x18u);`（m_anSortBtState[0..5] 全 0）
+	//   `CUIItem::SetArrangeButton(this + 377, this + *(this + 377) + 378);`
+	// → nState=0 走 SetArrangeButton @ 0x81e3a6 的 BtGather 分支（SP_1852 是 nState=1 的 BtSort）。
 	UIItemInventory::UIItemInventory(const Inventory& invent) : UIDragElement<PosINV>(), inventory(invent), ignore_tooltip(false), tab(InventoryType::Id::EQUIP), sort_enabled(false)
 	{
 		for (int i = 0; i < InventoryType::Id::LENGTH; ++i)
@@ -541,10 +543,12 @@ namespace ms
 				tab = InventoryType::Id::DEC;
 				break;
 			}
-			// 原生 CUIItem::OnButtonClicked @ 0x7CC4F0：
-			//   0x7D3 → OnGather → SendGatherItemRequest（点击不切钮）
-			//   0x7D4 → OnSort   → SendSortItemRequest（点击不切钮）
-			// 切钮只发生在 Gather/Sort Result → SetArrangeButton。
+			// 点击不切钮的依据（083/08v83 口径）：
+			//   Angel 083 `CUIItem::OnChildNotify` @ 0x81d01f 的 switch 只覆盖
+			//   0x7D4(Sort)/0x7D5(Expand)/0x7D6(Collapse)/0x7D7 的**悬停提示文案**，
+			//   按钮切换只由 `CWvsContext::OnGatherItemResult` @ 0xa1e943 /
+			//   `OnSortItemResult` @ 0xa1e96d 内部 SetArrangeButton(ui, ti, 1/0) 触发。
+			//   （旧注释曾引 095 线地址，在 083 IDB 里指向无关函数，已剔除。）
 			case Buttons::BT_GATHER:
 			case Buttons::BT_GATHER_SM:
 			{
@@ -1454,9 +1458,10 @@ namespace ms
 
 	void UIItemInventory::set_arrange_button(InventoryType::Id type, bool show_sort)
 	{
-		// 对齐原生 SetArrangeButton(nTI, nState) @ 0x7CCC90：
-		//   m_anSortBtState[nTI]=nState；仅当 nTI==当前页签时替换 m_pBtArrange
-		//   nState==0 → BtGather(0x7D3)；nState==1 → BtSort(0x7D4)
+		// 对齐 Angel 083 `CUIItem::SetArrangeButton(nTI, nState)` @ 0x81e3a6：
+		//   `*(this + nTI + 378) = nState;`（m_anSortBtState[nTI]=nState）
+		//   `if (nTI == *(this + 377))` 才替换 m_pBtArrange
+		//   nState==0 → BtGather(0x7D3)；nState==1 → SP_1852 = BtSort(0x7D4)
 		if (type < InventoryType::Id::EQUIP || type > InventoryType::Id::DEC)
 			return;
 

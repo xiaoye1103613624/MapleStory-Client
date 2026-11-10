@@ -52,8 +52,9 @@ namespace ms
 
 	void GatherResultHandler::handle(InPacket& recv) const
 	{
-		// 原生 CWvsContext::OnGatherItemResult @ 0x9F1280：
+		// Angel 083 CWvsContext::OnGatherItemResult @ 0xa1e943：
 		// Decode1(); ti=Decode1(); CUIItem::SetArrangeButton(ui, ti, 1) → 显示 BtSort
+		// （旧注释曾引另一个地址，在 083 IDB 里是 ZAllocEx 构造器，非本函数，已剔除。）
 		recv.read_byte();
 		InventoryType::Id type = InventoryType::by_value(recv.read_byte());
 
@@ -67,8 +68,9 @@ namespace ms
 
 	void SortResultHandler::handle(InPacket& recv) const
 	{
-		// 原生 CWvsContext::OnSortItemResult @ 0x9F12B0：
+		// Angel 083 CWvsContext::OnSortItemResult @ 0xa1e96d：
 		// Decode1(); ti=Decode1(); CUIItem::SetArrangeButton(ui, ti, 0) → 显示 BtGather
+		// （旧注释曾引另一个地址，083 IDB 里同为 ZAllocEx 构造器，已剔除。）
 		recv.read_byte();
 		InventoryType::Id type = InventoryType::by_value(recv.read_byte());
 
