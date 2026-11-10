@@ -30,6 +30,10 @@ namespace ms
 {
 	// GuildMember / GuildData 已上移至 Character/GuildModel.h（家族页切片，
 	// 2026-11-07）：共用窗 UIUserList 第 3 页签与本浮窗共读同一模型。
+	// round76 083 复核：CUIUserList::OnCreate @0x919b73 的公会页签是 083 唯一公会主体窗；
+	// 本 UIGuild（Type::GUILD）是额外独立浮窗，其根 GuildUI.img 在 083/物理/.nx/运行时
+	// 均不存在（tools/_guild_rt_stdout.txt + evidence/guild-window-083-round76.json）。
+	// 主路径 G 键已按 083 走共用窗，本窗去留属架构级决策点 D-G，待用户裁决。
 
 	class UIGuild : public UIElement
 	{

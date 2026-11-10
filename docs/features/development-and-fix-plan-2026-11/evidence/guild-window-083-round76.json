@@ -1,0 +1,109 @@
+{
+ "round": 76,
+ "face": "UIGuild floating window (guild/family)",
+ "verdict": "sibling_defect_fabricated_root_no_083_window_class",
+ "verdict_note": "8th sibling defect: fabricated IMG root + full-text self-draw + 083 has no independent CUIGuild class; BUT main G-key path already 083-aligned so replacement is architecture-level -> D-G, zero implementation this round.",
+ "ida_facts": {
+  "endpoint": "http://127.0.0.1:13339/mcp",
+  "query": "*Guild* total 54 symbols, *CUIGuild*/*UIGuild* only CUIGuildBBS",
+  "no_independent_CUIGuild_class": true,
+  "symbols": {
+   "CTabGuild::Draw": "0x90f17c (size 0x1a12) guild body on CUIUserList tab",
+   "CUIUserList::OnCreate": "0x919b73 (size 0x1dc6) shared window",
+   "CUIGuildBBS::CUIUserListBBS_ctor": "0x812fb4",
+   "CUIGuildBBS::OnCreate": "0x8133a9 (size 0x6c2)",
+   "CWvsContext::OnGuildResult": "0xa37490 (size 0x1ab1)",
+   "CField::InputGuildName": "0x5305ae"
+  },
+  "decompiles": [
+   "tools/_ida_guild/CTabGuild_Draw.dec.txt (1469 lines)",
+   "tools/_ida_guild/CUIGuildBBS_OnCreate.dec.txt (338 lines, 3 vtable+32 ctrl coords a3:2019/2021/2013)",
+   "tools/_ida_guild/CUIUserList_OnCreate.txt (66504B)",
+   "tools/_ida_guild/CTabGuildAlliance_LoadData.txt"
+  ],
+  "sp_names": {
+   "CTabGuild_Draw": [
+    "SP_3348__GUILD_NOTICE",
+    "SP_350_YOU_ARE_NOT_IN_THE_GUILD",
+    "SP_5641_NONE",
+    "SP_2082__D_D_"
+   ],
+   "CUIGuildBBS_OnCreate": [
+    "SP_3724_UI_GUILDBBSIMG_GUILDBBS_BTQUIT",
+    "SP_3725..SP_3728_..._EMOTICON_*",
+    "SP_3744_..._EMOTICON_CASH_D"
+   ]
+  },
+  "string_search": {
+   "GuildUI": "0 hits",
+   "Guild.img": "0 hits",
+   "GuildBBS.img": "0 hits (dynamic UOL path)",
+   "UserList": "30 hits",
+   "UIWindow": "30 hits"
+  }
+ },
+ "orange_wz_gate": {
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key": {
+   "b64_len": 87384,
+   "raw_len": 65536,
+   "sha256_16": "268a8407a47ee76c",
+   "iv": "TSPHKw==",
+   "source": "tools/_gms_key.b64"
+  },
+  "load_files": "exclusive:false",
+  "results": {
+   "GuildUI.img": "IMG_MISSING E:/MXD/BeiDou-Client-xy/Data/UI/GuildUI.img",
+   "GuildBBS.img": "loaded generation:1 structure layer WORKS; internal nodes IMG 解析失败: GuildBBS.img",
+   "UIWindow.img": "loaded generation:2 structure layer WORKS; internal nodes IMG 解析失败: UIWindow.img"
+  },
+  "raw_error_text_kept": "tools/_guild_probe_stdout.txt (GBK mojibake preserved)",
+  "unload_all": "rootCount:0 ok:true",
+  "fallback": "AGENTS.md compliant .nx fallback"
+ },
+ "nx_facts": {
+  "cache": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (86919577B, 2026-09-21 old snapshot)",
+  "GuildUI.img": "NOT FOUND",
+  "UIWindow.img/UserList": "9 children incl Guild, backgrnd 312x389",
+  "UIWindow.img/UserList/Guild": "8 children: GuildBoard/GuildEdit/GuildGrade/GuildInfo/GuildRank/Make/MakeMark/backgrnd (bitmap 233x304)",
+  "GuildBBS.img/GuildBBS": "14 children incl 9 Bt*, backgrnd 734x526, backgrnd2/3 327x288"
+ },
+ "runtime_probe": {
+  "source": "_tools/guild_probe/main.cpp + build.bat (MSVC, ImgSource::load_standard path)",
+  "stdout": "tools/_guild_rt_stdout.txt",
+  "result": "OPEN_MERGE_OK PROBE_EXIT=0",
+  "GATHER_FILES": 20,
+  "ROOT_CHILDREN": 20,
+  "GuildUI.img_valid": 0,
+  "UIWindow.img/UserList_kids": 9,
+  "UserList/backgrnd": "312x389",
+  "UserList/Guild_kids": 8,
+  "UserList/Guild/backgrnd": "233x304",
+  "GuildBBS.img/GuildBBS_kids": 14,
+  "GuildBBS/backgrnd": "734x526"
+ },
+ "current_end_facts": {
+  "file": "IO/UITypes/UIGuild.cpp (381 lines, LF)",
+  "root": "nl::node guild = nl::nx::UI[\"GuildUI.img\"];  // line 44, 5x proven absent",
+  "dimension": "hardcoded Point<int16_t>(300, 380) at (300,40)",
+  "draw": "full-text self draw (title/notice_label/bbs_label/member rows), no native bitmap background",
+  "buttons": "only BtClose via UiAssetResolve::close_btn(); BtCreate/BtInvite/BtNotice/BtAlliance have no sprites",
+  "main_path_already_083": "IO/UIStateGame.cpp:361-363 G(17)=GUILD -> UIUserList::Tab::GUILD (shared window tab 3, not this floating window)"
+ },
+ "decision_points": [
+  "D-G: whether to retire the extra UIGuild floating window and route the bottom-bar community entry into the 083 CUIUserList shared-window guild tab, or re-skin it with real 083 assets (UIWindow.img/UserList/Guild/backgrnd 233x304 + GuildBBS.img/GuildBBS 734x526). Architecture-level (UIElement::Type, GuildModel, s9 handlers, dimension 300x380 mismatch) -> needs user verdict + five-screen screenshots. Zero implementation this round."
+ ],
+ "patch": {
+  "behavior_literals_changed": 0,
+  "files_total": 7,
+  "comment_blocks": [
+   "IO/UITypes/UIGuild.cpp:48-52 replaced with 083 basis + fabricated-root five-proof + D-G",
+   "IO/UITypes/UIGuild.h:31-32 extended with CUIUserList::OnCreate @0x919b73 + D-G"
+  ]
+ },
+ "verification": {
+  "harness": "tools/test_round76_guild_window_083.py",
+  "gate": "python tools/gen_opcode_matrix.py --check",
+  "build": "MSYS2_ARG_CONV_EXCL='*' cmd.exe /d /c tools\\build_smoke.bat"
+ }
+}

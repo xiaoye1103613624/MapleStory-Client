@@ -1022,3 +1022,17 @@
 | 41-5 | StatusBar.img/KeyConfig 缺失回退 | 自动回退 UIWindow.img/KeyConfig，窗口不空白 |
 
 已知限制：083 主路径（ctor/OnButtonClicked/区间 CreateCtrl/.nx 12 子节点）无 5 按钮坐标立即数，y=234 为门禁 18 截图备选派生、非 083 背书；是否按真机截图微调坐标属决策点 D-F，本轮零实施。D-E 同族：083 5 个 SP_ 外链 vs 本端 4 个 Configuration URL 属 s9 适配。
+
+## 42. round76 · UIGuild 公会浮窗按 Angel 083 只读取证复核（#devfix-guild-window-083-review）
+
+本轮为 read-only 复核 + 纯注释口径纠正（0 行为字面量），需启 s9 + 五屏截图做观感验收。
+
+| 项 | 验收动作 | 预期 |
+| --- | --- | --- |
+| 42-1 | G(17) 打开公会窗，对照 083 原生截图 | 主路径走 UIUserList 共用窗第 3 页签（312x389），非 UIGuild 浮窗 |
+| 42-2 | 底栏社区钮打开本端 UIGuild 旁路 | 现为全文字自绘 + 300x380 空底衬，无 GuildUI.img 背景（虚构根已标注） |
+| 42-3 | 若裁决 D-G 换真资源 | UserList/Guild/backgrnd 233x304 或 GuildBBS.img/GuildBBS 734x526 需同步 dimension |
+| 42-4 | 五按钮（Create/Invite/Notice/Alliance/Close） | 仅 Close 有 close_btn() 贴图，其余为键盘快捷键入口 |
+| 42-5 | B 键打开公会看板 | UIGuildBBS 用 GuildBBS.img/GuildBBS 真资源（734x526），与本浮窗互证 |
+
+已知限制：083 无独立 CUIGuild 浮窗类，公会主体 = CTabGuild::Draw @0x90f17c 挂 CUIUserList；GuildUI.img 在 083/物理/.nx/运行时五证为 0，属第 8 例同族病（虚构根 + 自造全文字窗）。改窗/换真资源会动 UIElement::Type、GuildModel、底栏入口、s9 handler 与 dimension，属架构级决策点 D-G，本轮零实施、待用户裁决 + 五屏截图；主路径 G 键已按 083 路由共用窗，未破坏联机。

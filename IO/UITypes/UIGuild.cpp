@@ -45,11 +45,19 @@ namespace ms
 		if (guild["backgrnd"])
 			sprites.emplace_back(Sprite(guild["backgrnd"], Point<int16_t>(0, 0)));
 
-		// 本包 UI.nx 根下没有 GuildUI.img（nx_inspect 实测）⇒ Create/Invite/Notice/Alliance
-		// 四颗钮无原生贴图，只能显式预留；关闭钮与其它功能窗共用同一颗描边 X
-		// （UiAssetResolve::close_btn() → Basic.img/BtClose2）。
-		// 旧写法 `bn ? MapleButton(bn) : MapleButton(bn, pos)` 两个分支都拿不到贴图，
-		// 真值分支还会把坐标丢成窗口原点，属于凭空写出来的逻辑。
+		// round76 Angel 083 复核（REA→IDA→orange-wz→.nx→运行时 open_merge，只读取证）：
+		// 083 全库无独立 CUIGuild 浮窗类，公会主体 = CTabGuild::Draw @0x90f17c 挂在
+		// CUIUserList 共用窗第 3 页签（UserList/Guild/backgrnd 233x304 + 8 子节点），
+		// 独立看板 = CUIGuildBBS（ctor @0x812fb4 / OnCreate @0x8133a9，
+		// GuildBBS.img/GuildBBS/backgrnd 734x526 + 14 子节点）。
+		// 本行 GuildUI.img 是 083 不存在的虚构根：活 IDB search_text 0 命中 / 物理 Data/UI
+		// 无此文件 / orange-wz IMG_MISSING / .nx NOT FOUND / 运行时 open_merge valid=0（五证）。
+		// 主路径已按 083 修好：IO/UIStateGame.cpp:361-363 G(17) 路由 UIUserList::Tab::GUILD；
+		// 本浮窗仅是底栏社区钮保留的本端旁路，全文字自绘 + 300x380 自定 dimension 属显式
+		// 预留，不是按 Angel 布局修复过的窗口。是否并入共用窗 / 换真资源属架构级决策点 D-G，
+		// 交用户裁决；本轮零实施，不动 s9 协议 / GuildModel / 五按钮行为。
+		// 旧写法 `bn ? MapleButton(bn) : MapleButton(bn, pos)` 两个分支都拿不到贴图、
+		// 真值分支把坐标丢成窗口原点，已改为 close_btn() 单点守卫（见下方）。
 		nl::node close = UiAssetResolve::close_btn();
 		if (close)
 			buttons[BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(280, 8));
