@@ -28,6 +28,10 @@
 // Q5: collect_online_buddy_cids 返回 std::list（MultiChatPacket 收件人表同型）。
 #include <list>
 
+// D2：刷屏限流用稳定时钟；curse_words 返回 std::vector。
+#include <chrono>
+#include <vector>
+
 // TODO: Change these?
 #include "../Messages.h"
 
@@ -238,6 +242,12 @@ namespace ms
 		std::vector<std::string> user_message_history;
 		size_t user_message_history_index;
 
+		// D2：聊天业务规则本地状态。刷屏限流用稳定时钟（与帧率无关）；
+		// 连续同句检测保留最近 4 条发送串。
+		std::chrono::steady_clock::time_point last_sent_time = {};
+		std::string recent_lines[4];
+		int recent_count = 0;
+
 		bool classic_mode;
 		Texture classic_input_bg;
 		Texture classic_chat_target;
@@ -308,10 +318,13 @@ namespace ms
 		//            上箭头高光 y15、下箭头高光 y60 ⇒ 两端各内缩约 11~12；
 		//   半透明底板覆盖 0..565（x549 已被压暗、x565 之外是亮场景）。
 		static constexpr int16_t CLASSIC_LOG_H_DEFAULT = 80;
+		// D7：钳制范围对齐原生 SetChatType（nType 1/2/3 拖高 26..507，行高 13）。
 		// 下限按「3 行正文 + 上下呼吸」定，再小滚动条上下内缩会重叠；
 		// 上限 = 视图 720 - 底栏 71 - 顶部 229（留出场景可视区）。
-		static constexpr int16_t CLASSIC_LOG_H_MIN = 40;
-		static constexpr int16_t CLASSIC_LOG_H_MAX = 420;
+		static constexpr int16_t CLASSIC_LOG_H_MIN = 26;
+		static constexpr int16_t CLASSIC_LOG_H_MAX = 507;
+		// D7：紧凑态（nType 2）固定小历史框高度。
+		static constexpr int16_t CLASSIC_LOG_H_COMPACT = 120;
 		// 滚动条列宽与上下内缩（内缩取自原生：轨道两端到框沿各 11~12px）。
 		static constexpr int16_t SCROLL_W = 15;
 		static constexpr int16_t SCROLL_INSET = 11;
@@ -329,6 +342,8 @@ namespace ms
 		// 从列表里选（原生没有点击循环，用户 2026-11-02 定调）；历史框展开/收起用
 		// Basic.img 的 BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
+		// D7：聊天窗类型（原生 SetChatType 三态持久化）。1=收起 / 2=紧凑 / 3=完整。
+		int8_t chat_type = 3;
 		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
 		// 坐标约定与 UIItemInventory 一致：vertical/x 是「相对历史框左上角」的局部量，
 		// draw(log_pos) 时才加窗口偏移，所以拖拽改高度必须同步 setvertical。
@@ -433,6 +448,13 @@ namespace ms
 		// Q0: 发送后保持输入行开启并聚焦（清空文本 + 复位历史索引）。
 		// 斜杠命令分支原先各自 close_input()，与 Q0 连续输入口径冲突，统一走这里。
 		void keep_input_focus();
+		// D2：原生 CChatHelper::TryChat 四规则预检（禁言 / 2000ms 刷屏限流 /
+		// 连续 4 条同句 / 脏词替换）。返回 false = 拦截（已弹提示），调用方不发。
+		// message 可能被就地替换为脱敏串（脏词打星）。
+		bool try_chat(std::string& message);
+		// D2：客户端本地脏词表（与服务端 CURSE 双保险，缺服务端下发的词表时
+		// 仍有基础过滤）。词全小写，匹配时大小写不敏感、整词打星。
+		static const std::vector<std::string>& curse_words();
 		void set_classic_log(bool open);
 		// 三个贴图按钮（▶ 箭头 / + / −）的可见性只有一个判据：folded = 历史框关
 		// 且输入未激活。toggle_input 与 set_classic_log 两条状态迁移都要重算，

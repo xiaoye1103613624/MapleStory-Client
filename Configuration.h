@@ -657,6 +657,13 @@ namespace ms
 		ChatViewY() : ShortEntry("chat.y", "0") {}
 	};
 
+	// D7：聊天窗类型（原生 SetChatType 三态持久化）。
+	// 1=收起(仅输入行) / 2=紧凑(小历史框) / 3=完整(可拖高历史框)。
+	struct ChatType : public Configuration::ShortEntry
+	{
+		ChatType() : ShortEntry("chat.type", "3") {}
+	};
+
 	// The default position of UIStatsInfo
 	// 角色属性面板默认位置。
 	struct PosSTATS : public Configuration::PointEntry

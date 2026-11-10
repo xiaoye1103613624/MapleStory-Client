@@ -20,6 +20,8 @@
 #include <nlnx/nx.hpp>
 #include <string>
 
+#include "../../Graphics/Geometry.h" // ColorBox：组队成员血条可视化
+
 #include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "UIPartyRace.h"
@@ -89,6 +91,34 @@ namespace ms
 
 			row.change_text(info);
 			row.draw(position + Point<int16_t>(10, y));
+
+			// D8：组队成员血条（s9 已通过 UPDATE_PARTYMEMBER_HP 下发 cid/curhp/maxhp，
+			// 原生 CUIPartyHP 同位置画 6 人血条；此前 memberhp 收了却没画）。
+			// 仅在收到过该成员血量时绘（同图外成员 s9 不下发，故无条）。
+			auto hp_it = memberhp.find(m.id);
+			if (hp_it != memberhp.end() && hp_it->second.second > 0)
+			{
+				int32_t cur = hp_it->second.first;
+				int32_t max = hp_it->second.second;
+				if (cur < 0) cur = 0;
+				if (cur > max) cur = max;
+
+				const int16_t BAR_X = 10;
+				const int16_t BAR_Y = y + 16;
+				const int16_t BAR_W = 180;
+				const int16_t BAR_H = 6;
+
+				ColorBox bg(BAR_W, BAR_H, Color::Name::BLACK, 0.5f);
+				bg.draw(DrawArgument(position + Point<int16_t>(BAR_X, BAR_Y)));
+
+				int16_t fill_w = static_cast<int16_t>(BAR_W * (max > 0 ? static_cast<double>(cur) / max : 0.0));
+				if (fill_w < 0) fill_w = 0;
+				// 血量 ≤30% 转红警示，其余用原生绿（JAPANESELAUREL）。
+				Color fill_color = (max > 0 && cur * 100 / max <= 30) ? Color::Name::TORCHRED : Color::Name::JAPANESELAUREL;
+				ColorBox fill(fill_w, BAR_H, fill_color, 1.0f);
+				fill.draw(DrawArgument(position + Point<int16_t>(BAR_X, BAR_Y)));
+			}
+
 			y += 30;
 		}
 

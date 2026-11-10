@@ -27,6 +27,8 @@
 #include "../../Character/CharStats.h"
 #include "../../Graphics/SpecialText.h"
 
+#include <array>
+
 namespace ms
 {
 	class UIStatusBar : public UIElement
@@ -92,6 +94,9 @@ namespace ms
 		/// classic HUD 只建 BT_CLASSIC_* 那一组，modern 的 27 个 submenu 按钮根本不存在。
 		Button* button_at(uint16_t id) const;
 		void set_buttons_active(std::initializer_list<uint16_t> ids, bool active);
+		/// D9：主窗 4 钮（装备/背包/属性/技能）切换时触发闪烁提示（原生 SetButtonBlink）。
+		/// 索引 0/1/2/3 对应 BT_CLASSIC_EQUIP/INV/STAT/SKILL。
+		void start_button_blink(uint16_t id);
 		void toggle_setting();
 		void toggle_community();
 		void toggle_character();
@@ -233,5 +238,11 @@ namespace ms
 		bool event_active;
 		bool classic_mode;
 		bool classic_qs_wide = false;	// true=26 格(13x2) quickSlot；false=8 格(4x2) quickSlot08
+
+		// D9：主窗 4 钮闪烁帧计数（原生 SetButtonBlink + OnChildNotify 通知链；本包无
+		// SP_1986..1989 KEY_ANI 资源，用脉冲高亮叠层替代）。索引 0/1/2/3 对应
+		// BT_CLASSIC_EQUIP/INV/STAT/SKILL；值 = 剩余闪烁帧（0 = 不闪）。
+		std::array<int32_t, 4> blink_frames = { 0, 0, 0, 0 };
+		static constexpr int32_t BLINK_DURATION = 45; // ≈0.75s @60fps
 	};
 }

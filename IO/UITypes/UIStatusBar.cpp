@@ -790,6 +790,7 @@ namespace ms
 				UI::get().emplace<UIEquipInventory>(
 					Stage::get().get_player().get_inventory()
 				);
+				start_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_INV:
@@ -800,6 +801,7 @@ namespace ms
 				UI::get().emplace<UIItemInventory>(
 					Stage::get().get_player().get_inventory()
 				);
+				start_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_STAT:
@@ -810,6 +812,7 @@ namespace ms
 				UI::get().emplace<UIStatsInfo>(
 					Stage::get().get_player().get_stats()
 				);
+				start_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_SKILL:
@@ -821,6 +824,7 @@ namespace ms
 					Stage::get().get_player().get_stats(),
 					Stage::get().get_player().get_skills()
 				);
+				start_button_blink(id);
 				break;
 			}
 			case Buttons::BT_CLASSIC_KEYSET:
@@ -1667,6 +1671,20 @@ namespace ms
 		return (it != buttons.end()) ? it->second.get() : nullptr;
 	}
 
+	void UIStatusBar::start_button_blink(uint16_t id)
+	{
+		int32_t idx = -1;
+		switch (id)
+		{
+			case Buttons::BT_CLASSIC_EQUIP:  idx = 0; break;
+			case Buttons::BT_CLASSIC_INV:    idx = 1; break;
+			case Buttons::BT_CLASSIC_STAT:   idx = 2; break;
+			case Buttons::BT_CLASSIC_SKILL:  idx = 3; break;
+			default: return;
+		}
+		blink_frames[idx] = BLINK_DURATION;
+	}
+
 	void UIStatusBar::set_buttons_active(std::initializer_list<uint16_t> ids, bool active)
 	{
 		for (uint16_t id : ids)
@@ -2480,11 +2498,42 @@ namespace ms
 		}
 
 		UIElement::draw_buttons(alpha);
+
+		// D9：主窗 4 钮闪烁提示叠层（原生 SetButtonBlink；本包无 KEY_ANI 资源，用脉冲高亮）。
+		// 在按钮之上叠加半透明白块，按帧做开关闪烁，剩余帧递减见 update_classic。
+		static constexpr uint16_t blink_ids[4] = {
+			Buttons::BT_CLASSIC_EQUIP, Buttons::BT_CLASSIC_INV,
+			Buttons::BT_CLASSIC_STAT, Buttons::BT_CLASSIC_SKILL
+		};
+		for (int i = 0; i < 4; ++i)
+		{
+			if (blink_frames[i] <= 0)
+				continue;
+
+			Button* b = button_at(blink_ids[i]);
+			if (!b)
+				continue;
+
+			// 每 4 帧翻转一次 => 约 7.5Hz 可见闪烁；alpha 随剩余帧淡出。
+			if ((blink_frames[i] >> 2) & 1)
+			{
+				Rectangle<int16_t> r = b->bounds(position);
+				float a = 0.45f * static_cast<float>(blink_frames[i]) / BLINK_DURATION;
+				if (a < 0.0f) a = 0.0f;
+				ColorBox hl(r.width(), r.height(), Color::Name::WHITE, a);
+				hl.draw(DrawArgument(r.get_left_top()));
+			}
+		}
 	}
 
 	void UIStatusBar::update_classic()
 	{
 		UIElement::update();
+
+		// D9：递减主窗 4 钮闪烁剩余帧。
+		for (int i = 0; i < 4; ++i)
+			if (blink_frames[i] > 0)
+				--blink_frames[i];
 
 		if (classic_hp_flash > 0)
 			classic_hp_flash_sprite.update();

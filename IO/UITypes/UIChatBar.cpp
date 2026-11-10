@@ -42,6 +42,8 @@
 #include "../../Util/Misc.h"
 
 #include <list>
+#include <algorithm>
+#include <cctype>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -78,6 +80,19 @@ namespace ms
 			{
 				user_view_y = CLASSIC_LOG_H_DEFAULT;
 			}
+
+			// D7：聊天类型（原生 SetChatType 三态）持久化恢复。
+			if (const int8_t saved_type = static_cast<int8_t>(Setting<ChatType>::get().load());
+				saved_type >= 1 && saved_type <= 3)
+				chat_type = saved_type;
+			if (chat_type == 1)
+				classic_log_open = false;          // 收起：仅输入行
+			else if (chat_type == 2)
+			{
+				classic_log_open = true;           // 紧凑：小历史框
+				user_view_y = CLASSIC_LOG_H_COMPACT;
+			}
+			// chat_type == 3：保持 classic_log_open=true 与已算高度（完整）
 			min_x = 560;
 			max_x = 560;
 			top_y = 8;
@@ -639,8 +654,17 @@ namespace ms
 			case ms::UIChatBar::BtMax:
 			{
 				// classic 没有 max/min 视图，这对钮翻的是聊天历史框。
+				// D7：原生 SetChatType 三态的「展开」侧：收起(1)→完整(3)；紧凑(2)→完整(3)。
 				if (classic_mode)
+				{
+					if (chat_type == 2)
+					{
+						chat_type = 3;
+						if (user_view_y <= CLASSIC_LOG_H_COMPACT)
+							user_view_y = CLASSIC_LOG_H_DEFAULT;
+					}
 					set_classic_log(true);
+				}
 				else
 					toggle_view(true, true);
 
@@ -648,8 +672,20 @@ namespace ms
 			}
 			case ms::UIChatBar::BtMin:
 			{
+				// D7：原生 SetChatType 三态的「收起」侧：完整(3)→紧凑(2)→收起(1)。
 				if (classic_mode)
-					set_classic_log(false);
+				{
+					if (chat_type == 3)
+					{
+						user_view_y = CLASSIC_LOG_H_COMPACT;
+						chat_type = 2;
+						set_classic_log(true);
+					}
+					else
+					{
+						set_classic_log(false);
+					}
+				}
 				else
 					toggle_view(false, true);
 
@@ -1778,6 +1814,18 @@ namespace ms
 		if (!open)
 			classic_scroll_offset = 0;
 
+		// D7：聊天类型持久化（1=收起 / 2=紧凑 / 3=完整）。展开且当前是收起态时
+		// 升级为完整(3)；紧凑(2)展开态保持不变。
+		if (!open)
+			chat_type = 1;
+		else if (chat_type == 1)
+			chat_type = 3;
+		Setting<ChatType>::get().save(chat_type);
+
+		// 高度/状态变了，重算历史框顶（min_view_y 是展开态几何唯一真源）。
+		if (open)
+			min_view_y = static_cast<int16_t>(position.y() - user_view_y);
+
 		sync_classic_buttons();
 		sync_classic_scrollbar();
 	}
@@ -2374,6 +2422,11 @@ namespace ms
 		}
 		else
 		{
+			// D2：原生 CChatHelper::TryChat 四规则预检（刷屏/重复句/脏词/禁言）。
+			// 拦截则直接返回且不入历史（与原生「发不出去就不记录」一致）。
+			if (!try_chat(message))
+				return;
+
 			user_message_history.push_back(message);
 			user_message_history_index = user_message_history.size();
 			// Q4: 输入历史（↑/↓ 回溯）同样夹到 200 条，从最旧裁。
@@ -2505,6 +2558,68 @@ namespace ms
 
 	// Q5: 发送成功后的统一收口（原先各斜杠分支各自 close_input()，会把输入行
 	// 关掉、与 Q0「连续输入」直接冲突）。语义 = Q0 定稿的三件套。
+	// D2：脏词表（客户端本地，缺服务端词表下发时的兜底）。保持小写。
+	// 实际词库请以服务端 CURSE 规则为准，这里仅提供脱敏算法的接入点。
+	const std::vector<std::string>& UIChatBar::curse_words()
+	{
+		static const std::vector<std::string> words = {};
+		return words;
+	}
+
+	// D2：原生 CChatHelper::TryChat 四规则预检。返回 false = 拦截（已弹提示），
+	// 调用方不应继续发送；message 可能被就地脱敏（脏词打星）。
+	bool UIChatBar::try_chat(std::string& message)
+	{
+		// ② 刷屏限流：2000ms（原生 SP_892_TOO_MUCH_CHATTING）。稳定时钟，与帧率无关。
+		auto now = std::chrono::steady_clock::now();
+		if (last_sent_time.time_since_epoch().count() != 0)
+		{
+			auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sent_time).count();
+			if (ms < 2000)
+			{
+				show_message("说话速度太快，请稍后再试。", MessageType::RED);
+				return false;
+			}
+		}
+
+		// ③ 连续 4 条同句（原生 SP_891_REPEATING_THE_SAME_LINE）：最近 4 条全相同则拦。
+		recent_lines[recent_count % 4] = message;
+		int cnt = (recent_count < 4) ? (recent_count + 1) : 4;
+		bool allsame = (cnt == 4);
+		for (int i = 0; allsame && i < cnt; ++i)
+			if (recent_lines[i] != message)
+				allsame = false;
+		if (allsame)
+		{
+			show_message("你这句说了太多遍了。", MessageType::RED);
+			return false;
+		}
+		recent_count++;
+
+		// ④ 脏词脱敏：大小写不敏感，命中子串整段打星（不拦截）。
+		if (!curse_words().empty())
+		{
+			std::string lower = message;
+			std::transform(lower.begin(), lower.end(), lower.begin(),
+				[](unsigned char c) { return static_cast<unsigned char>(std::tolower(c)); });
+			for (const std::string& w : curse_words())
+			{
+				if (w.empty())
+					continue;
+				size_t pos = 0;
+				while ((pos = lower.find(w, pos)) != std::string::npos)
+				{
+					for (size_t k = pos; k < pos + w.size(); ++k)
+						message[k] = '*';
+					pos += w.size();
+				}
+			}
+		}
+
+		last_sent_time = now;
+		return true;
+	}
+
 	void UIChatBar::keep_input_focus()
 	{
 		input_text.change_text("");
