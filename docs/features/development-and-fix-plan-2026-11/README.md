@@ -59,6 +59,8 @@
 
 **L-B 清单（不动，等裁决）**：Quest 107 带 x/y、场地伤害族 `0xBF/0xC0/0xC1/0xC2/0xD4` 完全无、`0x04/0x09/0x38/0x1C`、`PARTY_SEARCH_REGISTER(220)`、`MTS_OPERATION(0xFD)`、`CUSTOM_PACKET(0x3713)` 撞值、Title 称号窗、扩展装备栏、每日签到双端、`trade-house-083`、`0x3730→0x3740` 规划。§14.1/§14.2/§14.3 已裁「明确不做」的项同样不重新立项。
 
+> **2026-11-10 裁决（m04292）**：采纳 §3 推荐默认，**L-B 全部 12 项「保持 s9 优先、不补 083 发包、不改协议、保留资源降级、不建提交」，销案为「无变更」**。含 §3.1 的 `InPacket::available()` 类型修复亦维持现状（协议级，盲改会让 393 处死守卫变活路径，须真机逐面回归后才可动，记 `pending-live-tests` §27-A）。盲改会断 s9 联机，故维持现状，不进入实现。详见 §11.1。
+
 ### 3.1 L-B 待裁决追加：`InPacket::available()` 返回 bool && 393 处当字节数比较（round49 附带发现）
 
 `Net/InPacket.h:37 bool available() const;` / `Net/InPacket.cpp:30-33 return length() > 0;`，全仓 393 处写成 `recv.available() >= 4` / `>= 8` / `< 5` / `== 21` / `recv.skip(recv.available() - 5)`。`bool` 提升成 int 只有 0/1，于是 `>= 2/4/8` 恒 false（短包守卫全部是死代码）、`< 5/14/24` 恒 true（长度预检全部误判为「不足」）、`available() - 5` 在 `size_t` 下溢。编译器已在 `MessagingHandlers.cpp:207/338/646/776/777/868/909/962` 报 `C4804`。
@@ -208,10 +210,31 @@ tools\build_smoke.bat                          # 实现阶段每批必跑
 tools\test_handshake.ps1                       # 部署后握手烟测
 ```
 
-**下一步**：用户对 §3 决策闸门逐条拍板（或直接采纳「推荐默认：保持 s9 优先」）后，按 Wave 0 → Wave 1 开工；Wave 0-1 每批「改源码 → 自测 → GATE OK + build 0 → 原子提交」；Wave 2 等 orange-wz 内容层 / Photoshop 出图；Wave 3 等裁决；不能自测的实时追加到 `docs/features/pending-live-tests/README.md`。
+**下一步**：§3 决策闸门已于 2026-11-10 由 m04292 裁决——L-B 全部「保持 s9 优先，无变更」（见 §11.1）。Wave 0–2 全部 L-A 项已 ✅ / 核验完成（见 §11.2），无遗留实现项。剩余仅 `docs/features/pending-live-tests/README.md` 真机观感验收（需用户启 s9 + 截屏）。复现命令同上。
 
 ---
 
+## 11. 收尾销案记录（2026-11-10 · m04292）
+
+### 11.1 L-B 决策闸门已裁决
+用户 m04292 于 2026-11-10 采纳 §3 推荐默认：**L-B 全部 12 项「保持 s9 优先、不补 083 发包、不改协议、保留资源降级、不建提交」**。即 Wave 3 清单（Quest 107 x/y、场地伤害族 `0xBF/0xC0/0xC1/0xC2/0xD4`、0x04/0x09/0x38/0x1C、`PARTY_SEARCH_REGISTER(220)`、`MTS_OPERATION(0xFD)`、`CUSTOM_PACKET(0x3713)`、Title 称号窗、扩展装备栏 #38、每日签到双端、`trade-house-083`、`0x3730→0x3740`、`InPacket::available()` 类型）全部**销案为「无变更」**，不进入实现。依据：盲改会断 s9 联机；现状已与 s9 联机对齐。
+
+### 11.2 计划内项目 ✅ 补标
+| # | 结论 | 证据 |
+| --- | --- | --- |
+| 0-4 | ✅ 复核完成，无缺项：`tab_plate` 借 `UiAssetResolve::window("Item")["New"]`、`set_macro` 显式 `mex->deactivate()`、`send_spup` 资源缺失降级——三项标记均在 `UISkillBook.cpp` 就位（grep 核验），无代码改动 | `UISkillBook.cpp` 标记计数 + r05 §2 S8 |
+| 2-1 | ✅ 核验完成：F 维核心节点（`CSEffect`/`CSList`/`Base` 等）运行时数据均在；缺失项（`CSMVPBanner`/`BestNew`/`CSGLChargeNX`/`CSPromotionBanner`）为精简数据 R6 缺资源，已加 `[R6]` 守卫并构建部署；像素级观感进 `pending-live-tests` | `CashShop_img.json`(1213) + `UICashShop.cpp` 守卫 + `build_smoke EXITCODE=0` |
+| 2-2 | ✅ 核验完成，无代码改动：DamageSkin 随 A+B 落地；宠物亲密/饱食 gage 在部署数据无专用位图（`Pet_img.json` 为外观精灵、`UIWindow.img` 无 pet gage 节点）→ `ColorBox` 降级兜底为正确 R6；场标→真精灵 7/8 已落真对象；MapleTV 为守卫良好的喊话输入窗（计划「双屏轮播」系误称） | `Pet_img.json`/`UIWindow_img.json` + `UIMapleTV.cpp` 守卫 + pet README D9/F02/F03 |
+| 2-3 | ✅ 代码闭环：SENDSIMPLE 键盘导航可视带守卫（`ensure_visible`）已落 `UINpcTalk.cpp`（round37 `#devfix-npctalk-visible`）；A11b–A11j 逐像素对齐属观感，进 `pending-live-tests` §16 | `UINpcTalk.cpp:21784` + `wave2-npctalk-recheck-20261109.md` |
+| 2-4 | ✅ 代码闭环：Reactor idle/多帧循环 + hit 转场 + state 层 Hit 音效已落 `Reactor.cpp`（`reactor-default-idle`）；隐藏门三态/动画观感进 `pending-live-tests` §18 | `Reactor.cpp` + `reactor-default-idle/README.md` |
+| 2-19 | ✅ 已提交（`d6029c63`）：`UIChatBar.cpp` 两处 `input_text` 构造均加 `set_accept_unicode(true)`，中文 IME 可入聊天 | `test_d3_chat_unicode.py` + git `d6029c63` |
+| 2-20 | ✅ 已提交（`fef8a56d`）：`UIMessenger.cpp` 095→083 地址替换 + `UIKeyConfig.cpp` 三处确认文案 i18n（locale/zh-CN.ini + en-US.ini） | `test_round55_d1_d14.py` + git `fef8a56d` |
+
+### 11.3 无残留确认
+- Wave 0（0-1~0-5）、Wave 1（1-1~1-7）、Wave 2（2-1~2-20）全部 ✅ 或销案为「无变更/已核验」；无遗留未决实现项。
+- L-B（Wave 3）已裁决为「保持 s9 优先，无变更」——无实现项。
+- 仅余 `docs/features/pending-live-tests/README.md` 中真机观感项（A+B 伤害数字/皮肤、2-1~2-4 像素级、各类 UI 实机点击）需用户启 s9 + 截屏联测，不属代码缺口。
+
 ## 10. 性质标注
 
-本文件是**开发/修复计划与决策清单**（校准证据 → 缺口分层 → 一次性 Plan → 分批提交与自测边界），非实现提交、非评分表。本轮全程只读产出文档，未改游戏源码/协议/WZ/IMG/XML，未建 Git 提交。目标 `goal-11388c42` 保持 active；实现工作按 §4 分批续作。
+本文件是**开发/修复计划与决策清单**（校准证据 → 缺口分层 → 一次性 Plan → 分批提交与自测边界），非实现提交、非评分表。2026-11-10 收尾更新（§11）：仅文档补充 L-B 裁决与 Wave 0–2 ✅ 补标，未动游戏源码/协议/WZ/IMG/XML。目标 `goal-11388c42` 保持 active；实现工作按 §4 分批续作。
