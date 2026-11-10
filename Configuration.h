@@ -657,7 +657,8 @@ namespace ms
 		ChatViewY() : ShortEntry("chat.y", "0") {}
 	};
 
-	// D7：聊天窗类型（原生 SetChatType 三态持久化）。
+	// 本端聊天窗类型（s9 适配三态，非 083 原生 SetChatType；差异与决策点 D7-A 见
+	// docs/features/development-and-fix-plan-2026-11/notes/wave2-chattype-083-review-20261111.md）。
 	// 1=收起(仅输入行) / 2=紧凑(小历史框) / 3=完整(可拖高历史框)。
 	struct ChatType : public Configuration::ShortEntry
 	{

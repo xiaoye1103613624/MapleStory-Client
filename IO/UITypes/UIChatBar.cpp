@@ -654,7 +654,7 @@ namespace ms
 			case ms::UIChatBar::BtMax:
 			{
 				// classic 没有 max/min 视图，这对钮翻的是聊天历史框。
-				// D7：原生 SetChatType 三态的「展开」侧：收起(1)→完整(3)；紧凑(2)→完整(3)。
+				// 本端展开侧（s9 适配）：收起(1)→完整(3)；紧凑(2)→完整(3)。083 无逐级，见 notes D7-A。
 				if (classic_mode)
 				{
 					if (chat_type == 2)
@@ -672,7 +672,7 @@ namespace ms
 			}
 			case ms::UIChatBar::BtMin:
 			{
-				// D7：原生 SetChatType 三态的「收起」侧：完整(3)→紧凑(2)→收起(1)。
+				// 本端收起侧（s9 适配）：完整(3)→紧凑(2)→收起(1)。083 无逐级，见 notes D7-A。
 				if (classic_mode)
 				{
 					if (chat_type == 3)
@@ -1814,7 +1814,8 @@ namespace ms
 		if (!open)
 			classic_scroll_offset = 0;
 
-		// D7：聊天类型持久化（1=收起 / 2=紧凑 / 3=完整）。展开且当前是收起态时
+		// 本端聊天类型持久化（1=收起 / 2=紧凑 / 3=完整，s9 适配；083 的 nType2 是
+		// 输入焦点瞬态、不持久化，见 notes 决策点 D7-A）。展开且当前是收起态时
 		// 升级为完整(3)；紧凑(2)展开态保持不变。
 		if (!open)
 			chat_type = 1;

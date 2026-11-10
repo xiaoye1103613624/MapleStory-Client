@@ -318,12 +318,16 @@ namespace ms
 		//            上箭头高光 y15、下箭头高光 y60 ⇒ 两端各内缩约 11~12；
 		//   半透明底板覆盖 0..565（x549 已被压暗、x565 之外是亮场景）。
 		static constexpr int16_t CLASSIC_LOG_H_DEFAULT = 80;
-		// D7：钳制范围对齐原生 SetChatType（nType 1/2/3 拖高 26..507，行高 13）。
-		// 下限按「3 行正文 + 上下呼吸」定，再小滚动条上下内缩会重叠；
-		// 上限 = 视图 720 - 底栏 71 - 顶部 229（留出场景可视区）。
+		// 083 SetChatType @0x8d4a6d：26..507 只在 nType3「完整」的拖拽高度上有意义，
+		// nType1/2 的 h 恒 24（各 1 行）；从 CConfig 恢复时越界回落默认 70（本端 DEFAULT=80，
+		// 见下方截帧依据，属 s9 适配，不照搬 083）。本端把 26/507 用作 user_view_y 拖拽
+		// clamp（与 ChangeChatWndSize @0x8d616c 同款），与 nType 无关。
+		// 下限按「3 行正文 + 上下呼吸」定；上限 = 视图 720 - 底栏 71 - 顶部 229。
 		static constexpr int16_t CLASSIC_LOG_H_MIN = 26;
 		static constexpr int16_t CLASSIC_LOG_H_MAX = 507;
-		// D7：紧凑态（nType 2）固定小历史框高度。
+		// 083 没有「紧凑态固定高度」；此 120 是本端 s9 适配自造的三态之一，与 083
+		// nType2「输入中 = 1 行历史 + 输入框（h 恒 24，输入焦点驱动，不持久化）」语义不同。
+		// 行为重修属决策点 D7-A，见 notes/wave2-chattype-083-review-20261111.md。
 		static constexpr int16_t CLASSIC_LOG_H_COMPACT = 120;
 		// 滚动条列宽与上下内缩（内缩取自原生：轨道两端到框沿各 11~12px）。
 		static constexpr int16_t SCROLL_W = 15;
@@ -342,7 +346,9 @@ namespace ms
 		// 从列表里选（原生没有点击循环，用户 2026-11-02 定调）；历史框展开/收起用
 		// Basic.img 的 BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
-		// D7：聊天窗类型（原生 SetChatType 三态持久化）。1=收起 / 2=紧凑 / 3=完整。
+		// 本端 s9 适配三态（非 083 原生 SetChatType）：1=收起 / 2=紧凑 / 3=完整。
+		// 083 真三态 = 1 收起(无输入框) / 2 输入中(1 行历史+输入框, 焦点驱动, 不持久) /
+		// 3 完整(可拖高)；按钮只有 1003→1 与 1004→3，无逐级。差异见 notes 决策点 D7-A。
 		int8_t chat_type = 3;
 		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
 		// 坐标约定与 UIItemInventory 一致：vertical/x 是「相对历史框左上角」的局部量，

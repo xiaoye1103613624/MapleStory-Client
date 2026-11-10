@@ -1,0 +1,153 @@
+{
+  "round": 69,
+  "date": "2026-11-11",
+  "scope": "statusbar-hud/D7 聊天三态 —— REA→IDA→orange-wz→.nx 只读取证与对照",
+  "authority": "Angel(13339) 083/v83 带符号 IDB（E:\\MXD\\反编译IDA\\v83\\Angel.i64）；禁 095 线",
+  "verdict": "083 三态语义与外部程序 d6bdce97 的实现整体不同：资源根用对了，但状态机语义被套到 083 名下（第 5 例同族病，错法=语义套壳而非虚构资源根）",
+  "ida_functions": {
+    "SetChatType": {
+      "symbol": "?SetChatType@CUIStatusBar@@QAEXJ@Z",
+      "ea": "0x8d4a6d",
+      "size": "0x2d6",
+      "facts": [
+        "if (nType == *(this+832)) return;  *v4 = nType; *(CConfig+21) = nType;  (持久化到 CConfig+21)",
+        "nType==1 @0x8d4c50: h=24; rows=1; top(509-h)=513; MakeCtrlEdit(a2:0) 无输入框; 滚动条 id=1010 a7:513 a8:h+1",
+        "nType==2 @0x8d4bac: h=24; rows=1; top=486; MakeCtrlEdit(a2:1) 有输入框; 滚动条 a7:510-h a8:h+1",
+        "nType==3 @0x8d4aab: v6=*(CConfig+23); if(v6<26||v6>507) h=70 else h=v6; rows=h/13; if(h%13==0) h+=2; top=509-h; MakeCtrlEdit(a2:1); 滚动条 id=1010 a7:510-h a8:h-2"
+      ]
+    },
+    "ChangeChatWndSize": {
+      "symbol": "?ChangeChatWndSize@CUIStatusBar@@QAEXJJJ@Z",
+      "ea": "0x8d616c",
+      "size": "0x22f",
+      "facts": [
+        "if(*(this+749)==0) return;  a4==1 时 h>=507 早退 / a4==0 时 h<26 早退; v9=h±13",
+        "if(v9>=507) h=507; elif(v9<=26) h=26;  rows=h/13; if(h%13==0) h+=2 (在 clamp 之后 → 507→509 / 26→28)",
+        "top=509-h; MakeCtrlEdit(1); 重建滚动条 id=1010 a7:510-h a8:h-2; SetScrollRange(m_aChatLog-rows+1); ChatLogDraw",
+        "*(CConfig+23)=h (写回持久化高度)"
+      ]
+    },
+    "OnButtonClicked": {
+      "symbol": "?OnButtonClicked@CUIStatusBar@@UAEXI@Z",
+      "ea": "0x8d423d",
+      "facts": [
+        "case 0x3EBu(1003) @0x8d42bd → SetChatType(nType:1)",
+        "case 0x3ECu(1004) @0x8d42c3 → SetChatType(nType:3)",
+        "全函数无 nType:2 按钮入口"
+      ]
+    },
+    "StartChat": {
+      "ea": "0x8d5a4d",
+      "facts": [
+        "if(*(this+832)==1) SetChatType(nType:2) @0x8d5a6d（焦点驱动进入输入中态）"
+      ]
+    },
+    "EndChat": {
+      "ea": "0x8d5aaf",
+      "facts": [
+        "if(*(this+832)==2) SetChatType(nType:1) @0x8d5aba（焦点离开清回收起）"
+      ]
+    },
+    "UseFuncKeyMapped": {
+      "ea": "0xa0773d",
+      "facts": [
+        "case16: if(ms_pInstance+3328==3) SetChatType(1) @0xa07905; else SetChatType(3) @0xa0790e"
+      ]
+    },
+    "OnGameStageChanged": {
+      "ea": "0xa0400e",
+      "facts": [
+        "if(ms_pInstance+3328==2) SetChatType(1) @0xa04161（切图清回输入中态）"
+      ]
+    },
+    "OnCreate_CallSite": {
+      "ea": "0x8d01b2",
+      "facts": [
+        "SetChatType @0x8d3a87 从 CConfig 恢复类型"
+      ]
+    }
+  },
+  "xrefs_SetChatType": [
+    "0x8d3a87 OnCreate",
+    "0x8d42c3 OnButtonClicked",
+    "0x8d5a6d StartChat",
+    "0x8d5aba EndChat",
+    "0xa04161 OnGameStageChanged",
+    "0xa07905 UseFuncKeyMapped",
+    "0xa0790e UseFuncKeyMapped"
+  ],
+  "three_state_truth": {
+    "nType1": "收起：h=24 / 1 行 / 无输入框(edit0) / 509-h=513",
+    "nType2": "输入中：h=24 / 1 行历史 + 输入框(edit1) / 509-h=486；由 StartChat 焦点驱动、EndChat 清回、切图清回；不持久化、非按钮触发",
+    "nType3": "完整：h=*(CConfig+23)；26..507 内可拖高，越界回落默认 70（非 clamp）；行=h/13；h%13==0 → h+=2；top=509-h",
+    "buttons": "只有 1003→1 / 1004→3 两颗；功能键 case16 3↔1；无「逐级 3→2→1」、无「紧凑态固定高度」"
+  },
+  "external_diff": {
+    "commit": "d6bdce97 (HUD D7)",
+    "resource_root": "正确：Basic.img/BtMax|BtMin（.nx 实测真存在），StatusBar.img/chat 不存在 —— 不是虚构根型",
+    "semantic_errors": [
+      "UIChatBar.h 注释把「nType 1/2/3 拖高 26..507」当原生，实际 26..507 只在 nType3 拖拽有意义，nType1/2 的 h 恒 24",
+      "CLASSIC_LOG_H_COMPACT=120 是本端自造「紧凑态固定高度」，083 无此值（nType2 是输入焦点瞬态 h 恒 24）",
+      "BtMin/BtMax 逐级 3→2→1 / 1→3→2 与 chat.type 持久化，083 只有 1003→1 / 1004→3，nType2 不持久化"
+    ],
+    "calibration_decision": "docs/features/statusbar-hud-angel-calibration-2026-11/README.md:288 D7 原记「先五屏实机截图核对三态可见差异，有差异再定」；:311 外部程序改写「✅ 已实施」但无 083 逐字依据"
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "img": "E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img",
+    "key_b64_len": 87384,
+    "key_raw_len": 65536,
+    "key_sha256_16": "268a8407a47ee76c",
+    "iv": "TSPHKw==",
+    "structure": "WORKS",
+    "load_files": {
+      "loadedCount": 1,
+      "rootCount": 1,
+      "exclusive": false,
+      "generation": 1
+    },
+    "content_error": "IMG 解析失败: StatusBar.img（7 节点 query 全部；GBK 乱码原文已留证）",
+    "unload": {
+      "rootCount": 0,
+      "ok": true
+    },
+    "fallback": "AGENTS.md 合规 .nx 回退触发条件满足"
+  },
+  "nx_facts": {
+    "database": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx (86919577B)",
+    "StatusBar_img_top": "BtClaim/BtMenu/BtNPT/BtShop/BtShort/BtWhisper/EquipKey/FontMemo/InvenKey/KeySet/QuickSlot/QuickSlotD/SkillKey/StatKey/base/gauge/key/number",
+    "StatusBar_chat": false,
+    "StatusBar_BtMax": false,
+    "StatusBar_BtMin": false,
+    "Basic_BtMax": true,
+    "Basic_BtMin": true,
+    "Basic_nodes": "BtMax/BtMax2/BtMin/BtMin2/VScr..VScr8"
+  },
+  "decision_D7A": {
+    "name": "D7-A 是否把聊天三态行为整体改回 083 SetChatType 状态机",
+    "why_decision": "校准 README D7 决策点明写「先五屏实机截图核对再定」；用户 m09859 授权边界是布局/动画重修而非交互逻辑连根拔；完整改回涉及删紧凑态、nType2 改焦点瞬态不持久、去逐级、持久化键语义、滚动条 id1010 体系、MakeCtrlEdit(0/1) 输入行有无",
+    "action_this_round": "不动任何行为字面量；只纠正错误依据注释 + 出对照清单/决策点/一次性 Plan，交用户裁决"
+  },
+  "patch": {
+    "files": [
+      "IO/UITypes/UIChatBar.h",
+      "IO/UITypes/UIChatBar.cpp",
+      "Configuration.h"
+    ],
+    "kind": "纯注释口径纠正（零行为/零协议/零常量变更）",
+    "diff": "3 files changed, 17 insertions(+), 9 deletions(-)"
+  },
+  "verification": {
+    "harness": "tools/test_round69_chattype_083.py（A1-A6 静态守卫 + B 20 场景 083 状态机真值表）",
+    "gate": "python tools/gen_opcode_matrix.py --check",
+    "build": "tools\\build_smoke.bat（EXITCODE=0 + 编到 UIChatBar.cpp/Configuration.h）"
+  },
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先",
+    "校准≠改回原生",
+    "数值重合≠语义重合",
+    "WZ/IMG 先 orange-wz MCP，IMG 解析失败才 .nx 回退",
+    "git-commit-standard 零署名精确 add"
+  ]
+}
