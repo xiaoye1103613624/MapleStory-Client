@@ -5,7 +5,7 @@
   ],
   "client_source_hashes": {
    "Net/OutPacket.h": "4a4b0eed53c99daaf8a7b0b8e03e3a033beff2db2051679a1fe515ad8fec48d1",
-   "Net/PacketSwitch.cpp": "b6317281ad9006febfe564e9b01c185e91db1ab09f3913c043a797f3ae90ce18"
+   "Net/PacketSwitch.cpp": "647c3ef46127ed29bd132c1b247c9cb0f5bd384f3020d7df600034a287d6ccb4"
   },
   "collisions": {
    "client_in": {
@@ -24,21 +24,21 @@
    "s9_send": {}
   },
   "counts": {
-   "client_in_constants": 306,
-   "client_in_registrations": 305,
+   "client_in_constants": 307,
+   "client_in_registrations": 306,
    "client_out_constants": 148,
    "client_out_sent": 148,
    "s9_recv_constants": 182,
    "s9_recv_distinct_values": 181,
    "s9_registered_handlers": 174,
    "s9_registration_sites": 175,
-   "s9_send_constants": 313,
-   "s9_send_distinct_values": 313,
-   "s9_send_emitted": 252
+   "s9_send_constants": 314,
+   "s9_send_distinct_values": 314,
+   "s9_send_emitted": 253
   },
-  "generated_at": "2026-11-08T00:56:27",
+  "generated_at": "2026-11-10T17:52:54",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "3d5ccc6f8e48f79be266448eee28cf1a72e75f30",
+  "s9_git_head": "3741089c0f3da6fd072e65797d4db1223c2aba87",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",
@@ -54,7 +54,7 @@
   "source_hashes": {
    "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "6e5ecd14aa334a2573156ce73736b222cadeb4d46f271f1d31ae6204416ab91d",
    "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "22ca7e0f574d257f1bc2c24fea39686c6956c7303e5f51c5c6f9eed936f1dd41",
-   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "7a93f365b9090fcd854c46b1d04b0697d268ce782da493ff9b33d37783913973"
+   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "13b5571731f59fbbcde5bb01602d2a168db168c0d0227a0be1ec64ada5e2fb44"
   }
  },
  "c2s": [
@@ -8843,6 +8843,21 @@
    "status": "HANDLED"
   },
   {
+   "client_handler_wins": "DamageSkinHandler",
+   "client_handlers": [
+    "DamageSkinHandler"
+   ],
+   "client_names": [
+    "DAMAGE_SKIN"
+   ],
+   "client_shadowed_handlers": [],
+   "s9_emitted": true,
+   "s9_line": 363,
+   "s9_name": "DAMAGE_SKIN",
+   "s9_value": 247,
+   "status": "HANDLED"
+  },
+  {
    "client_handler_wins": "UpdateHpMpAlertHandler",
    "client_handlers": [
     "UpdateHpMpAlertHandler"
@@ -8852,7 +8867,7 @@
    ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
-   "s9_line": 363,
+   "s9_line": 364,
    "s9_name": "UPDATE_HPMPAALERT",
    "s9_value": 4096,
    "status": "HANDLED"

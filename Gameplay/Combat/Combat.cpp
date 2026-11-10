@@ -322,8 +322,6 @@ namespace ms
 		// 伤害数字总量钳制（Wave P）：AoE 群怪/多段技能瞬时可堆几百个数字，
 		// 每个都在 update/draw 上花时间。超过 160 就从最老的丢——最老的
 		// 本就接近淡出尾声，观感无损，尖峰负载有界。
-		constexpr size_t MAX_DAMAGE_NUMBERS = 160;
-
 		Point<int16_t> head_position = mobs.get_mob_head_position(effect.target_oid);
 		damagenumbers.push_back(effect.number);
 		damagenumbers.back().set_x(head_position.x());
@@ -333,6 +331,23 @@ namespace ms
 
 		const SpecialMove& move = get_move(effect.move_id);
 		mobs.apply_damage(effect.target_oid, effect.damage, effect.toleft, effect.user, move);
+	}
+
+	void Combat::show_mob_damage(int32_t oid, int64_t damage, int32_t skin)
+	{
+		if (damage <= 0)
+			return;
+
+		Point<int16_t> head = mobs.get_mob_head_position(oid);
+
+		if (head.x() == 0 && head.y() == 0)
+			return;
+
+		damagenumbers.emplace_back(DamageNumber::Type::NORMAL, damage, head.y(), 0, skin);
+		damagenumbers.back().set_x(head.x());
+
+		while (damagenumbers.size() > MAX_DAMAGE_NUMBERS)
+			damagenumbers.pop_front();
 	}
 
 	void Combat::push_attack(const AttackResult& attack)
@@ -460,7 +475,7 @@ namespace ms
 			int64_t amount = line.first;
 			bool critical = line.second;
 			DamageNumber::Type type = critical ? DamageNumber::Type::CRITICAL : DamageNumber::Type::NORMAL;
-			numbers.emplace_back(type, amount, head);
+			numbers.emplace_back(type, amount, head, 0, player.get_damage_skin());
 
 			head -= DamageNumber::rowheight(critical);
 		}

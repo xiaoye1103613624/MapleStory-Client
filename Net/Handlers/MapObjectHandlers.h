@@ -265,6 +265,12 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// s9 DAMAGE_SKIN(247) — 登录下发玩家选择的伤害皮肤 id（0=默认 BasicEff）
+	class DamageSkinHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
 	// s9 SHOW_ITEM_EFFECT(194)
 	class ShowItemEffectHandler : public PacketHandler
 	{

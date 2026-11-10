@@ -261,6 +261,7 @@ namespace ms
 		MOVE_DRAGON = 182,
 		REMOVE_DRAGON = 183,
 		DAMAGE_MONSTER = 246,
+		DAMAGE_SKIN = 247,
 		FAME_RESPONSE = 38,
 		QUEST_CLEAR = 49,
 		SET_GENDER = 58,
@@ -609,6 +610,7 @@ namespace ms
 		emplace<MOVE_DRAGON, MoveDragonHandler>();
 		emplace<REMOVE_DRAGON, RemoveDragonHandler>();
 		emplace<DAMAGE_MONSTER, DamageMonsterHandler>();
+		emplace<DAMAGE_SKIN, DamageSkinHandler>();
 		emplace<FAME_RESPONSE, FameResponseHandler>();
 		emplace<QUEST_CLEAR, QuestClearHandler>();
 		emplace<SET_GENDER, SetGenderHandler>();

@@ -20,13 +20,19 @@
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
+#include <map>
 
 namespace ms
 {
-	DamageNumber::DamageNumber(Type t, int64_t damage, int16_t starty, int16_t x)
+	DamageNumber::DamageNumber(Type t, int64_t damage, int16_t starty, int16_t x, int32_t skin)
 	{
 		type = t;
+		skin_id = skin;
 		numscale = 1.0f;
+		charset = charsets[type];
+
+		if (skin_id != 0)
+			apply_skin(skin_id, charset, type);
 
 		if (damage > 0)
 		{
@@ -78,7 +84,7 @@ namespace ms
 		}
 		else
 		{
-			shift = charsets[type][true].getw('M') / 2;
+			shift = charset[true].getw('M') / 2;
 			miss = true;
 		}
 
@@ -98,11 +104,11 @@ namespace ms
 
 		if (miss)
 		{
-			charsets[type][true].draw('M', { position, interopc });
+			charset[true].draw('M', { position, interopc });
 		}
 		else
 		{
-			charsets[type][false].draw(firstnum, { position, numscale, numscale, interopc });
+			charset[false].draw(firstnum, { position, numscale, numscale, interopc });
 
 			if (multiple)
 			{
@@ -113,7 +119,7 @@ namespace ms
 				{
 					char c = restnum[i];
 					Point<int16_t> yshift = { 0, static_cast<int16_t>((i % 2) ? -2 : 2) };
-					charsets[type][true].draw(c, { position + yshift, numscale, numscale, interopc });
+					charset[true].draw(c, { position + yshift, numscale, numscale, interopc });
 
 					int16_t advance;
 
@@ -196,6 +202,42 @@ namespace ms
 	int16_t DamageNumber::rowheight(bool critical)
 	{
 		return critical ? 36 : 30;
+	}
+
+	void DamageNumber::apply_skin(int32_t skin, BoolPair<Charset>& out, Type type)
+	{
+		static std::map<int32_t, nl::node> skin_nodes;
+
+		auto it = skin_nodes.find(skin);
+
+		if (it == skin_nodes.end())
+		{
+			nl::node dmg = nl::nx::Effect["DamageSkin.img"][std::to_string(skin)];
+
+			if (!dmg)
+				return; // DamageSkin.img 缺失：保持默认 BasicEff
+
+			skin_nodes[skin] = dmg;
+			it = skin_nodes.find(skin);
+		}
+
+		nl::node dmg = it->second;
+
+		// 至少要有普通数字字形，否则回退默认
+		if (!dmg["NoRed1"])
+			return;
+
+		if (type == Type::CRITICAL)
+		{
+			out.set(false, dmg["NoCri1"], Charset::Alignment::LEFT);
+			out.set(true, dmg["NoCri0"], Charset::Alignment::LEFT);
+		}
+		else if (type == Type::NORMAL)
+		{
+			out.set(false, dmg["NoRed1"], Charset::Alignment::LEFT);
+			out.set(true, dmg["NoRed0"], Charset::Alignment::LEFT);
+		}
+		// TOPLAYER: 保持默认 BasicEff
 	}
 
 	void DamageNumber::init()

@@ -48,6 +48,8 @@ namespace ms
 		void show_buff(int32_t cid, int32_t skillid, int8_t level);
 		// Show a buff effect
 		void show_player_buff(int32_t skillid);
+		// Show a damage number from a server-broadcast mob damage (other players / field)
+		void show_mob_damage(int32_t oid, int64_t damage, int32_t skin = 0);
 
 	private:
 		struct DamageEffect
@@ -78,6 +80,8 @@ namespace ms
 		void extract_effects(const Char& user, const SpecialMove& move, const AttackResult& result);
 		std::vector<DamageNumber> place_numbers(int32_t oid, const damage::DamageLines& damagelines);
 		const SpecialMove& get_move(int32_t move_id);
+
+		static constexpr size_t MAX_DAMAGE_NUMBERS = 160;
 
 		Player& player;
 		MapChars& chars;

@@ -157,6 +157,10 @@ namespace ms
 		MarriageInfo& get_marriage();
 		const MarriageInfo& get_marriage() const;
 
+		// 本地玩家选择的伤害皮肤 id（0=默认 BasicEff），登录由 DAMAGE_SKIN(247) 包下发。
+		int32_t get_damage_skin() const { return damageSkin; }
+		void set_damage_skin(int32_t v) { damageSkin = v; }
+
 	private:
 		CharStats stats;
 		Inventory inventory;
@@ -183,5 +187,7 @@ namespace ms
 		TimedBool climb_cooldown;
 
 		bool underwater;
+
+		int32_t damageSkin = 0;
 	};
 }

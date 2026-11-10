@@ -40,7 +40,7 @@ namespace ms
 			TOPLAYER
 		};
 
-		DamageNumber(Type type, int64_t damage, int16_t starty, int16_t x = 0);
+		DamageNumber(Type type, int64_t damage, int16_t starty, int16_t x = 0, int32_t skin = 0);
 		DamageNumber();
 
 		void draw(double viewx, double viewy, float alpha) const;
@@ -64,9 +64,12 @@ namespace ms
 		// 超长伤害数字（最多 16 位，2^53）的等比缩放系数，保证不溢出屏幕。
 		// 运行时字符集只有 0-9 + Miss，无单位符号，故用缩放而不是单位缩写。
 		float numscale;
+		int32_t skin_id = 0;
 		MovingObject moveobj;
 		Linear<float> opacity;
 
 		static BoolPair<Charset> charsets[NUM_TYPES];
+		BoolPair<Charset> charset;
+		static void apply_skin(int32_t skin, BoolPair<Charset>& out, Type type);
 	};
 }

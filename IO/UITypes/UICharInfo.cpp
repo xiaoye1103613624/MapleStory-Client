@@ -466,10 +466,11 @@ namespace ms
 						}
 					} catch (...) {}
 				}, []() {}, "Damage skin id");
-				// 伤害皮肤：运行时 UI.nx/UIWindow.img 无 DamageSkin 节点、Effect.nx
-				// BasicEff.img 无 damageSkin 节点（notes/r001 §4），s9 也无对应协议，
-				// 故只保留「按现金道具 id 发送使用包」的调试入口；
-				// 皮肤切换与资源装载按证据不足显式预留，不凭空造节点。
+				// 伤害皮肤：s9 现已支持——characters.damage_skin 列 + 登录 DAMAGE_SKIN(247)
+				// 包下发 + DAMAGE_MONSTER 包附带 skin id；客户端 Data/Effect/DamageSkin.img
+				// 已移植 60+ 套皮肤，DamageNumber 按 id 切换字形、缺失回退 BasicEff。
+				// 本按钮仅作「按现金道具 id 发送使用包」的调试入口；
+				// 正式的皮肤选择 UI 按需求再接入。
 				return Button::State::NORMAL;
 			}
 			case Buttons::BtArrayGet:

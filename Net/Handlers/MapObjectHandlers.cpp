@@ -1445,6 +1445,7 @@ namespace ms
 		int32_t damage = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t curhp = recv.available() >= 4 ? recv.read_int() : 0;
 		int32_t maxhp = recv.available() >= 4 ? recv.read_int() : 0;
+		int32_t skin = recv.available() >= 4 ? recv.read_int() : 0;
 		LOG(LOG_DEBUG, "DamageMonster oid=" << oid << " dmg=" << damage
 			<< " hp=" << curhp << "/" << maxhp);
 		while (recv.available())
@@ -1460,8 +1461,15 @@ namespace ms
 					gage->set_tip("HP " + std::to_string(static_cast<int>(pct)) + "%");
 			}
 		}
-		// 大伤害数字自显，不 tip
-		(void)damage;
+		// 字段伤害数字：接住此前被丢弃的 damage，复用现有 DamageNumber 渲染到怪物头顶
+		if (damage > 0)
+			Stage::get().get_combat().show_mob_damage(oid, damage, skin);
+	}
+
+	void DamageSkinHandler::handle(InPacket& recv) const
+	{
+		int32_t skin = recv.available() >= 4 ? recv.read_int() : 0;
+		Stage::get().get_player().set_damage_skin(skin);
 	}
 
 	void ShowItemEffectHandler::handle(InPacket& recv) const
