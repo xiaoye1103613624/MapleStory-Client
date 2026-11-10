@@ -1,0 +1,169 @@
+face	face_idx	id	decision	recommend	resolved_option	impact	options
+login-flow	1	D1	总体取向：083 原生 vs s9 适配冲突怎么处置	(a)	保持 s9 联机优先，仅在文档标注差异	决定 C13/C14/B12/C10 等 18 条「s9 适配」条目是否动代码	(a) 保持 s9 联机优先，仅在文档标注差异；(b) 客户端做双协议兼容层（按服务端版本切解析）；(c) 逐项回归 083 原生，同步改 s9 服务端
+login-flow	1	D2	CHARLIST exp 宽度：`read_long()` 8 B vs 注释自述「exp4+tail4」 vs 083 原生 wire 4 B	(a)	先抓一帧真机 CHARLIST + 读 s9 `PacketCreator.addCharStats` 源码再定	决定 `LoginParser.cpp:160` 是否改；误改会「进图白屏」（`:156-158` 自述）	(a) 先抓一帧真机 CHARLIST + 读 s9 `PacketCreator.addCharStats` 源码再定；(b) 直接按 083 改 4 B；(c) 维持现状
+login-flow	1	D3	骑士团条件解码分支	(a)	先确认 s9 是否发追加段再补	`LoginParser::parse_stats`；补错会导致整条 CHARLIST 错位	(a) 先确认 s9 是否发追加段再补；(b) 按 083 直接补 `JOB/100==22 |  | 2001` 分支；(c) 不补
+login-flow	1	D4	level 1 B ↔ 2 B	(a)	保留 2 B（999 级改造，代码自证）	`LoginParser.cpp:138`	(a) 保留 2 B（999 级改造，代码自证）；(b) 加版本开关兼容 1 B
+login-flow	1	D5	滚动补间 S 曲线 → 线性	(a)	改为 Angel 常量速度线性	纯客户端、零联机风险；`LoginBackground.cpp:78-79`	(a) 改为 Angel 常量速度线性；(b) 保留 S 曲线
+login-flow	1	D6	`GetStepHeight` step4 偏移分支	(a)（需先确认本端 step4 是否可达）		`LoginBackground.cpp:35-39`	(a) 补 `if(step==4) 叠加 this+133`；(b) 维持
+login-flow	1	D7	原生独有交互/UI 分支：case 26 上次登录世界高亮、case 27 推荐世界弹窗、case 23 SPW 结果、case 1/2 GUEST/AccountInfo、125–130 兜底	(a)（GUEST 按 Q2 裁决不做、Academy/BossParty 按 MEMORY 不做）		新 UI 类 + handler 注册	(a) 按优先级补 26/27/23；(b) 全补；(c) 只登记不补
+login-flow	1	D8	View Choice / `CUILoginStart` 5 按钮	(a)	按 `CUIRecommendWorld` 四节点补真弹窗 + 复核 2 个缺失按钮	`UIWorldSelect.cpp:1181-1196` + 新 `UIRecommendWorld`	(a) 按 `CUIRecommendWorld` 四节点补真弹窗 + 复核 2 个缺失按钮；(b) 维持假 `UIRegion`
+login-flow	1	D9	60 频道翻页	(a)	补翻页（15 世界 / 60 频道 + 翻页控件）	`UIWorldSelect.h:43` / `.cpp:438,1362`	(a) 补翻页（15 世界 / 60 频道 + 翻页控件）；(b) 维持 30
+login-flow	1	D10	IMG 层 orange-wz MCP	(b)（既有文档记录该 MCP 对私服 img 有解析缺陷）		决定样式/排版层是否需重取证	(a) 接入并复验登录节点；(b) 继续用 `.nx` 字面量 + nlnx dump + `correct_shots/` 截图
+login-flow	1	D11	stub 文案与实现不一致	(a)	删除 `locale/zh-CN.ini:5-6` stub 文案、改为真行为提示	纯文案、零风险	(a) 删除 `locale/zh-CN.ini:5-6` stub 文案、改为真行为提示；(b) 保留
+login-flow	1	D12	登录发包字段布局 / VAC 编号	(a)	只做逐字节核对文档、不动代码	`LoginPackets.h:26-55` / `Net/OutPacket.h`	(a) 只做逐字节核对文档、不动代码；(b) 按 083 对齐发包
+login-flow	1	D13	CHARLIST 外层固定 15 槽 vs 按 charcount	(a)	保持 s9	`CharlistHandler:288-334`	(a) 保持 s9；(b) 加兼容分支
+login-flow	1	D14	上一轮遗留 6 项（r01 §9）	(a)（需实机/IMG）		`UIRaceSelect` 锚相机、`CUICharDetail` 地址消歧、`+140` 来源、ghost、rank/jobrank 绘制	(a) 按优先级逐项实机复核；(b) 归档不追
+statusbar-hud	2	D1	单体 `CUIStatusBar` → 当前端 10+2 类拆分，是否合并回单体？	保持拆分（功能性等价优先，合并会重写全部 HUD 类、风险极高）		A1 / D1 / `notes/r04` §9	
+statusbar-hud	2	D2	脏词 / 刷屏 / 重复句 / 禁言业务规则是否补？	先确认 s9 服务端是否已实现（避免双罚 / 与服务端判定冲突），确认后再定客户端补不补		B1–B4 / `CChatHelper::TryChat`	
+statusbar-hud	2	D3	IME 候选窗：重建 `CCtrlMLEdit` 状态机，还是只开聊天框 unicode？	先零风险开 `UIChatBar.cpp` 的 `set_accept_unicode(true)` + 复用系统 IME，不重建候选窗状态机		C8/C9/G8	
+statusbar-hud	2	D4	`change_target(int32_t action) {}` 空 stub 是否接线？	接线到 chatTarget 下拉选择（零风险，6 个频道快捷键复活）		G5 / `notes/r05` C	
+statusbar-hud	2	D5	按钮 id 注释误标（`2005/2006` vs `1006/1009`）是否改？	直接改注释（零风险，纯文档）		§5.2 / `notes/r02` §0	
+statusbar-hud	2	D6	QS 几何常量：改回原生 32×32/647/427/8 格，还是保持当前端 28/35/34/9/9？	保持当前端（已用正确端截图逐像素对齐，改回破坏实机排版）		E3 / s9 适配红线	
+statusbar-hud	2	D7	聊天窗三态 + 原生尺寸体系（26..507/509-h/id1010）是否对齐？	先五屏实机截图核对三态可见差异，有差异再定		C2/C3/E5	
+statusbar-hud	2	D8	`CUIPartyHP` 6 人组队血条是否实现？	先确认 s9 是否下发组队血条数据，无数据则不做（避免假窗）		A9/B7/C14/E7	
+statusbar-hud	2	D9	`SetButtonBlink` + `OnChildNotify` 通知链是否补？	低优先，先记录（视觉提示，不影响功能闭环）		A8/C1/C4/G9	
+statusbar-hud	2	D10	orange-wz IMG MCP 是否接入？	不接（已知解析缺陷，证据以 `.nx` dump + 截图 + `StatusBar.img.xml` 为准）		§1.2 / `notes/r02` §6	
+statusbar-hud	2	D11	是否回写 `feature-gap-inventory-2026-11/README.md` 的 4 条旧账（B1/B2/#2/#9）销案？	回写（属文档一致性，不改产品源码；本轮不擅自改，交用户裁决）		§5.4	
+statusbar-hud	2	D12	`UIMobGage.*` 空 Type（MOBGAGE=102）是否补实体类？	保持（`UIBossHP` 已覆盖 Boss 血条，空 Type 无害）		D9	
+statusbar-hud	2	D13	小地图 SMALL/BIG 缩放钮 / `TODO: Toggle scrolling map` 是否补？	保持显式预留（本包无件，「不发明客户端能力」门禁）		G11	
+statusbar-hud	2	D14	是否进入实施阶段？	先按 §7 P0 做零风险纯客户端校准，P1 待上述裁决；全程单测 + `tools/build_smoke.bat` + 五屏实机比对；原子提交须单独授权		门禁	
+corewindow	3	D1	是否把 12 独立窗 + 20+ 壳 + 5 组件合并回 Angel 62 类一一对应？	保持现有重构（合并会重写全部核心窗、风险极高且破坏已实机对齐的排版）		全局架构	
+corewindow	3	D2	083 原生语义 vs s9 联机，冲突处以谁为准？	保持 s9 联机优先，Angel 仅作语义校准源，差异逐条标注「改回原生会断联机」		全部 ⚠️ s9 适配项	
+corewindow	3	D3	脏词过滤整族（HUD 聊天 + 本面宏名）是否补？	先确认 s9 服务端是否已实现，避免双罚；确认后再定客户端是否补		B1/G11	
+corewindow	3	D4	扩展背包 `0x7D5` / 国服 `0x7D3=BtGather` 如何处理？	保留 s9/国服适配，仅记录差异，不补原生分支		A10/G4	
+corewindow	3	D5	095 线地址污染 4 处是否换依据？	零风险换注释：改引 Angel `CUIStat::OnCreate 0x8c4c7f` / `CUIItem::OnChildNotify 0x81d01f`，坐标结论保留		C13	
+corewindow	3	D6	`CLASSIC_SKILL_OFFSET` 文档 (7,99) vs 源码 (10,87)？	不改源码，先实机比对技能窗文字/贴图 12px 错位再定		E13	
+corewindow	3	D7	TooltipBackdrop 配色两版以谁为准？	以源码 `TextTooltip.h:28-47` 为真值，只回写文档中间态说明		F1	
+corewindow	3	D8	`CUIStat` 6 掩码 / `CUISkill` 500ms 门闩 / `CUIKeyConfig` 5 分支覆盖度？	先出逐条对照清单，不改代码；确认 s9 是否需要		B2/B3/B9/G5/G7	
+corewindow	3	D9	宏系统 32 格 → 当前端 5 槽是否补？	保持 5 槽（`SkillMacros::MAX_SLOTS=5` 与 s9 `SKILL_MACRO(110)` 对齐）		B7/G6	
+corewindow	3	D10	`CWorldMapDlg 666×524` 是否改当前端世界地图？	保持 s9 布局，原生「无在线玩家列表」结论已坐实，右上列表为 s9 挂接，不判缺失		B11/E14	
+corewindow	3	D11	Q2 清单 C14/C34/C35/C13 及 §16 #8/#9 等旧账是否回写？	交用户裁决后统一回写（本面只出销案证据，不擅改 Q2 文档）		文档一致性	
+corewindow	3	D12	是否补采 `ViciousHammer`/`VegaSpell`/`CTemporaryStatView` EA + 映射 `sub_8E49B5`/`sub_83EA05`？	下一轮补采（本面 441 精选未覆盖，用 `r24/*_wz_nodes.txt` 把 r16「仅 B 锚点」推到 C 前段）		C10–C12	
+corewindow	3	D13	orange-wz IMG MCP 阻塞如何处理？	不接（已知解析缺陷），保持仓库内 `nx_inspect.py` dump + 正确端截图链		IMG 层	
+corewindow	3	D14	stub / 英文占位文案是否本地化？	P0 零风险先做：`cashshop.stub_job/stub_name`、`UIKeyConfig.cpp:731` 英文、locale 英文原值批次（用户 2026-11-02 决策 B 保持英文原值者不动）		D9/F11/F12	
+social-economy	4	D1	`change_target()` 空 stub + 10+4 处 v95 注释污染是否本轮清理？	做：零风险先接线 `UIChatBar::change_target`（本地回显 6 频道）+ 只换注释依据引 Angel `CUIMessenger`/`CUIFamily`，不改行为/协议/坐标		C6/C8/C9/G2/G6；P0	
+social-economy	4	D2	`PARTY_SEARCH_START(222)` / `UPDATE(223)` 字段以哪套为准？	先抓帧 + 读 s9 服务端 `addCharStats` 再定，不盲改		B2 / §2.4 #1；改错断组队搜索	
+social-economy	4	D3	联盟双入口（页签 + `UIAlliance` 浮窗）/ `UIGuild` 浮窗是否合并回原生？	保持现状（083 原生无独立窗，但 s9 已用双入口）；合并风险极高		A9/D3；`校准 ≠ 改回原生`	
+social-economy	4	D4	`PARTY_SEARCH_REGISTER(220)` / MTS 0xFD / 每日签到是否立项补？	保持 s9 联机优先：220 用 222/223 代理、MTS/ITC 维持「仅壳」、每日签到维持 NO-NATIVE 假态		B1/B3/B4/B5；改回原生会断联机	
+social-economy	4	D5	`UNION` 排枚举末尾 / 动态 id 是否收敛为 Angel 连续 0..4？	保持 `tab_button()` 显式映射（非缺陷）		C2/E16；改编号牵动 `NUM_TYPES` 须全量 Rebuild	
+social-economy	4	D6	五页签落位/容量/权限显隐是否按 Angel 逐格回改？	先跑 5 张 oracle 帧 `layout.py` 量测，只在 Δ>2px 处微调；`TAB_POS` 是截图实测，比 IDA 立即数更贴实机		E3/E5/E6/E7/E8/E12；改回原生会破坏已对齐排版	
+social-economy	4	D7	`UIStorage ["Storage.img"]` × 083 `:29 Trunk` / 25 个节点名失配是否改节点路径？	先出「代码字面量 ↔ 运行时节点」对照清单，只改有运行时 dump 佐证的；无证据的保持显式预留		D7/E11/r03 §0；`node_ref_audit.txt:3` 52% 失配	
+social-economy	4	D8	UIParty 4 钮 / UIBuddyList / UIGuild 4 钮 / UIStorage 3 钮 / 六 DIY 壳 / pulley 上行 / 列表加长是否补深度？	先补零资源依赖的行为（SoftKey 已有）；需要 IMG 件的列 P2，不凭空造贴图		D4–D10/B6/B11/B12；门禁「不发明客户端能力」	
+social-economy	4	D9	`UIFriendGroup` / 公会徽章编辑 / MapleTV 完整 UI 三个「整族缺失」是否立项？	保持明确不做/搁置：083 顶层清单无独立窗、s9 无后端；MapleTV 待 REA/IDA 取证后另立 Plan		B8/B9/B10/D11/G13；`Academy`/`BossParty` 同理判不做	
+social-economy	4	D10	MTS / ITC 拍卖、UIWedding 玩法判定、s2c 空实现是否补？	保持：s9 无拍卖后端；UIWedding 判定留服务端；空实现属显式预留		B3/B14/C14/D14；列 §14 ⊘ 总表	
+social-economy	4	D11	Q2 清单 6 处自相矛盾 + 095 文档污染 + `TemporaryStatView 全缺` 旧账是否回写？	交用户裁决后统一回写（本面只出销案证据，不擅改 Q2 / 登录面 / 核心窗口面文档）		C10/C13/§5.3；与核心窗口面 D11 同型	
+social-economy	4	D12	`wedding.*` 26 键全英文 / en-US 中文硬编码 / stub 文案是否译？	保持决策 B「保持英文原值、只建键」，等 083 String.img / IDA 依据再换		F8–F12；不臆造译文	
+social-economy	4	D13	8 个社交窗缺 `ui.position.*` 项 / 五页签实机验收是否补？	补键为低优先（不动硬编码坐标）；实机验收需用户屏前复拍，本环境历史抓屏全黑不假装已验证		E13/G14；`diagnosis-and-plan.md:138`	
+social-economy	4	D14	是否接 orange-wz(IMG) MCP / 是否进入实现？	不接（Host 未注册 + 已知解析缺陷，替代链已够）；先完成 P0 零风险 + 全量 Rebuild + 五屏实机比对，原子提交须用户授权		§1.2 / §7；全程只读取证	
+pet-summon	5	D1	`MapPortals.h:40` 095 注释污染	做：只换注释依据引 Angel 083 `CPortal`，不碰通道逻辑		§4 新增 / r02 §5	
+pet-summon	5	D2	两处 s9 字节丢弃（`:526` 8B uid→int32、`:520-523`/`:1414-1417` 字段读了就丢）	保持 s9 联机优先，改回原生会断联机，交裁决		四面红线	
+pet-summon	5	D3	三页宠物装备负槽位穿戴（区间 21–29/31–37/39–45 + -100 偏移）	先补「槽位数据 ↔ 协议批次」对照，接线待裁决		`UIEquipInventory.cpp:622`	
+pet-summon	5	D4	CActionMan 动作帧 / TamingMob 骑宠实体 / 自动说话 / Lv≥15 / 500 冷却整族	维持不做（或单列补齐计划），待裁决		§4 硬发现 / A11/B08/B09/G06/G09/G11	
+pet-summon	5	D5	c2s/s2c 撞值分列口径	保持分列（167↔170、175↔175、181↔181）		`opcode-matrix.json` 两栏	
+pet-summon	5	D6	BtPet1/2/3 origin (15,13) vs (15,0)、y 高 13px	只记不改，等一张原生展开宠物面板帧再定		`UIEquipInventory.cpp:176-180`	
+pet-summon	5	D7	4 格改色命中率 34.67% 偏低格	先出「像素改色 ↔ 原生 disabled」对照，待裁决		r03 §0	
+pet-summon	5	D8	召唤/龙/骑宠 UI 资源层空白（无截图/layout/PS/顶层节点）	补 orange-wz 实解析或原生展开帧，待资源		r03 §7	
+pet-summon	5	D9	AskPet gage ColorBox / locale 4 stub 键 / Configuration 覆盖稀薄	维持降级占位（E19 无资源），低优先补文案		`UIMiscShells.cpp:2019`/`zh-CN.ini`	
+pet-summon	5	D10	场地伤害族 5 条 / 220 / G8 / G9 / `change_target` 空 stub 整族	维持不做，跨面统一登记		E19–E22 / G14	
+pet-summon	5	D11	Q2 文档债统一回写（`feature-gap:197/220/627`、`parity-gap:79`、`gap-inventory.md` 旧 head）	交裁决后统一回写，本面不擅改 Q2		§2.4 / r05 §12	
+pet-summon	5	D12	Beholder/DamageSummon 仅 GM 路径、PetExceptionListHandler 空实现、PetChat/"HitN"/MoveSummon 壳	是否补玩家路径 / 攻击帧，待裁决		A08/B07/C07–C10	
+pet-summon	5	D13	龙 die1/filpL/R/skill 帧 + 召唤浮动帧 + CQuestMan 联动 + move_ttl 余晖	资源在/不在分列，接不接待裁决		C11–C13/F10/F11/G08/B12	
+pet-summon	5	D14	门禁与提交 / 续作	不接 orange-wz；先 P0 + 全量 Rebuild + 1280×720 实机；原子提交须授权；P3 续作第六面		§7 Plan	
+activity-minigame	6	D1	`IO/UIStateGame.cpp:532` + `IO/UITypes/UISpecial.h:9` 095 注释污染	做：只换注释依据引 Angel 083，不碰福利中心行为		§4 / r02 §4 / C13	
+activity-minigame	6	D2	crosscheck「layout differs」阈值误判	更正为 844/844 字节级一致（字节审计文件为准），修正 `ida_angel_activity_crosscheck.py:107` 阈值逻辑		§1.4 / C01	
+activity-minigame	6	D3	小游戏 DIY 合并壳（Omok 胜负/禁手、MemoryGame 牌面、RPS 状态机、Factory 6 类）	维持「wire later」壳，单列补齐计划待裁决		A01–A04 / B04 / G01–G03	
+activity-minigame	6	D4	活动场地对象族 / 活动 UI 完整控件表 / Tutor·EventAlarm 壳	维持 `FieldMarker` 黄字 + HUD 壳降级，待裁决		A06 / A10–A11 / D01–D06 / F02–F05	
+activity-minigame	6	D5	三处硬冲突 + 4 个 s9 零枚举值（212 命名、case 296、299/300、212/213/215/218）	保持 s9 联机优先，改回原生会断联机，交裁决、不得盲改		五面红线 / B09 / C04–C07 / G05–G08	
+activity-minigame	6	D6	Maker 113 字段序（Angel 11 字段 vs `MakerPackets.h` 2 int 简化）	保持 s9 简化，出「字段序 ↔ s9 MakerProcessor」对照后待裁决		A09 / B07 / C11 / G10	
+activity-minigame	6	D7	c2s/s2c 撞值分列口径	保持分列（123↔314、189↔189、117↔117、130↔63）		`opcode-matrix.json` 两栏 / B10	
+activity-minigame	6	D8	IMG 资源层空白（活动截图/layout/PS/顶层场地节点全 0、Slidemenu 空壳、Quiz 304）	补 orange-wz 实解析或原生展开帧，待资源/待实机		r03 §7 / E11–E16 / F01	
+activity-minigame	6	D9	真缺整族（入场错误码 22、295 LEAVE、332 Stamp、locale stub、Configuration 7 键、`change_target` 空 stub、签到/XyLottery/MTS）	维持不做 / 低优先补文案，跨面统一登记		B02 / C09 / A12 / A14 / F07 / G13	
+activity-minigame	6	D10	295 LEAVE 是否补 `OnShowMemberOutMsg` 语义（SP_4096/4097）	先补零资源依赖行为，待裁决		C09	
+activity-minigame	6	D11	Q2 文档债统一回写（`feature-gap` F1/§14.1/§9.5.3 #9/§17、`:292` 238、`parity-gap:12,56`、`s9-protocol-align` 旧读数、`gap-inventory.md` 旧 head）	交裁决后统一回写，本面不擅改 Q2		§2.4 / r05 §4,§5 / C14	
+activity-minigame	6	D12	CGrenade::JustBomb 是否补完整 decompile（当前 disasm 兜底已足语义）	维持 disasm 兜底，低优先		C03	
+activity-minigame	6	D13	AskPet gage ColorBox / 通用组件常量已齐	维持降级占位，低优先		F06	
+activity-minigame	6	D14	门禁与提交 / 续作	不接 orange-wz；先 P0 + 全量 Rebuild + 1280×720 活动屏实机；原子提交须授权；P3 后续功能面续作		§7 Plan	
+cashshop	7	D1	入口 opcode 21/38/68/123 vs 40	保持 s9		断联机风险	
+cashshop	7	D2	是否拆 7 子窗	不拆，保持单窗		当前端已可运行	
+cashshop	7	D3	是否补齐 66 方法面	仅文档标注，不补		最小改动	
+cashshop	7	D4	`MAX_ITEMS=15` vs `CCSWnd_List` 18 控件	保持 15		s9 一手	
+cashshop	7	D5	外层缺 323/326/327/332 handler	记录遗留，不新增		无 s9 回包证据	
+cashshop	7	D6	48 case ↔ 19 mode 映射	不强行对齐		24 未名	
+cashshop	7	D7	123 现金交易房撞名	分列，不合并		协议纪律	
+cashshop	7	D8	`CubeRerollPacket:182` 095 注释	仅清理注释措辞（可选）		083 基准	
+cashshop	7	D9	24 未名 `sub_47xxxx`	待 IDA 补符号 / 动态跟包		证据不足	
+cashshop	7	D10	F 维 12 项 IMG 资源	待 orange-wz 恢复		门禁阻塞	
+cashshop	7	D11	7 vs 9 tab（E5/E11）	保持 9，标注差异		s9 一手	
+cashshop	7	D12	`SPEICAL` 拼写	保持原样		与 Angel 枚举一致	
+cashshop	7	D13	`256 USE_MAPLELIFE` 跨面归属	归跨面，本面只引用		避免重复计数	
+cashshop	7	D14	是否触发 build_smoke.bat	等 IMG 恢复后一并		无源码改动	
+skill	8	D1	`92/93/101` 同号异义是否对齐 083	保持 s9		改回原生断联机（§2.3）	
+skill	8	D2	`104/165` c2s↔s2c 撞号是否新增 083 发包	不新增，分列记录		方向不同，s9 优先	
+skill	8	D3	是否补 `CanSendExclRequest(500/300)` 互斥门禁	不新增		行为差异无联机影响（C2/C10）	
+skill	8	D4	是否新增独立 `CWndSkillGuide` 子窗	不新增		当前端 ESC 已闭环（A3）	
+skill	8	D5	`CUISkillChangeConfirm` 确认窗是否补齐	不补齐，保留降级		资源缺失，G12 已保底（A6）	
+skill	8	D6	`is_keydown_skill` / KeyDown 状态机是否补	不新增（P2 复评）		`SkillEffectPacket` 注释明示本端无状态机（B12）	
+skill	8	D7	`get_novice_skill_point` 新手 SP 特判是否补	记录遗留		影响面待 IMG/实机复评（D11）	
+skill	8	D8	`is_able_to_map_macrosys_skill` 宏准入白名单是否补	不新增		当前端 assign 无准入（D12）	
+skill	8	D9	双布局分支 `classic` 是否收敛为原生单布局	保持双布局		环境适配增量（E13）	
+skill	8	D10	`BT_SP*` 动态 x=`bg_dimensions.x()` 是否改静态	保持动态		依赖 IMG 尺寸（E14）	
+skill	8	D11	`BT_HYPER/GUILDSKILL/RIDE` 三空按钮是否接管	保持 DISABLED		无 083 语义落点（G14）	
+skill	8	D12	组合栏 `deactivate()` 与 `ShiftMacroUIState` 形态差异	保持当前端显式修复		修用户报障（G13）	
+skill	8	D13	技能记录回包 `Decode1/2/4` vs `UPDATE_SKILL(36)`	保持 s9		s2c 编号不同（C11）	
+skill	8	D14	F 样式 12 项 IMG 实机复核	挂起 P2		orange-wz 阻塞（r03 §4）	
+npc	9	D1	c2s 58 是否补 `Encode2(x)+Encode2(y)`	不补，保持 s9 `write_int(oid)` + 197 对话姿态		改回 083 包体会断 s9 `NPCAnimationHandler length==6` 契约	
+npc	9	D2	60/61/162 本面未抽到 `COutPacket` 是否判缺	不判缺，记 Angel 覆盖差异		这些走 `CUtilDlgEx`/`CUIShop` 独立链，不在 71 函数字面量内	
+npc	9	D3	是否补 083 `ShowQuestList` 本地任务列表窗	不补，P3 ⑪ 任务面统一裁决		当前端直发 58 与 s9 一致	
+npc	9	D4	s2c 304/305/306 与 c2s/s2c NPC_ACTION 撞名	分列不判等		三套命名空间纪律	
+npc	9	D5	095 依据是否沿用	不沿用为 083 一手，仅历史注记		`0x671590 ≠ 0x6d3273`、`v95 241 ≠ s9 197`	
+npc	9	D6	是否补完整 `CVecCtrlNpc` 攒多节	保留单节 attr=0 简化		s9 `length-9` 契约已满足，完整物理属 P3	
+npc	9	D7	是否接 `SP_4419/4420` NPC 召唤/回归特效	暂不接		需 IMG 帧序列 + 真机验证	
+npc	9	D8	AskAvatar / Quiz / Pet 缺窗体资源	保留 `end_talk` 降级		不 emplace 隐形窗，否则脚本一直等回复	
+npc	9	D9	是否新增当前端缺的 083 发包	不新增		s9 优先，083 只作标尺	
+npc	9	D10	是否补互斥门禁 / 改 `OutPacket.h`	不改		opcode-matrix GATE OK，双源一致	
+npc	9	D11	IMG 恢复前 F 维 12 项	保持 ⏳		不伪造 ✅	
+npc	9	D12	71/71 by bytes 是否推翻既有「同二进制」结论	不推翻，正向闭合		字节级证据更强	
+npc	9	D13	REA r17 subject 是否并入 13339 一手	不并入，单列		subject = `BeiDou-ClientV17.7/BeiDou.exe`	
+npc	9	D14	是否在本面建提交 / 改源码	不建、不改		P0 纯文档；原子提交须用户授权	
+map	10	D1	083 `SaveFuncKeyMap` 89 键差分 + `sub_4E43FA` 条目编码 vs s9 全量 `ChangeKeyMapPacket`	保持 s9 拆法，不回改		改回 083 发包断 s9 联机；`opcode 135` 数值语义已对齐，仅 body 微差	
+map	10	D2	083 `CMapLoadable` 36 方法资源管线是否照搬	不照搬，保持当前端 `MapInfo`/`Stage` 装载		功能覆盖，实现不同源	
+map	10	D3	083 无独立 portal c2s vs s9 `CHANGEMAP=38 / CHANGE_MAP_SPECIAL=100 / USE_INNER_PORTAL=101`	分列命名空间，保持 s9		083↔s9 两套协议	
+map	10	D4	083 `CWorldMapDlg` MFC 大窗 vs 当前端 `UIWorldMap` 侧栏状态机 + 付费传送	保持当前端		当前端为超集（多分辨率重锚/WORLD_MAP_PLAYERS/掉落查询）	
+map	10	D5	是否补齐 083 有而当前端未见的发包	不新增		本面 2 个 c2s 双端已对齐，无缺口	
+map	10	D6	`OnMapTransferResult` 083 case 2..11 + Decode4 列表 vs 当前端 2 字段 LOG	不强行对齐		真机多分支回包 hex 未采，盲改会错位	
+map	10	D7	`135/183` c2s↔s9 s2c 撞号（WHISPER=135 / REMOVE_DRAGON=183）	分列不混，禁止仅凭数值判等		承第八/九面纪律	
+map	10	D8	`CHANGE_QUICKSLOT` 服务端 `(byte)readInt` 截断 vs 客户端 8×`write_int`	保持既有注记，不回改		v83 触发键全 <0x100 无撞车	
+map	10	D9	083 地图名查表 `CItemInfo` vs 当前端 `String.nx`	保持当前端，P3 ⑪ 联动逐字对账		同源，非冲突	
+map	10	D10	IMG 内容层 `IMG 解析失败` 是否继续用 `.nx` 兜底	按 ACTIVE 规则合规回退，结构层留证，内容层 ⏳		原始报错 + 65536B key 规格已留证	
+map	10	D11	F 维 12 项是否现在标 ✅	保持 ⏳，P2 真机再翻		不假绿	
+map	10	D12	`SP_267` / `String.nx` 全量对账	P3 ⑪ 任务面联动		本面不扩范围	
+map	10	D13	`CWorldMapDlg::OnKey` 小键盘 54→42 触发 5 号动作	真机补映射，不盲加		当前端缺对应 `KeyAction`	
+map	10	D14	本面是否建原子提交 / 改协议	不建提交、不改源码/协议		P0 纯文档闭环；原子提交须用户授权	
+quest	11	D1	是否给 `QuestActionPacket` 补 `Encode2(x)+Encode2(y)`	不补		改回原生会断 s9 联机；083 作对照	
+quest	11	D2	是否补 action0 `OnCompleteQuestFailed` buffer 监听	不补		当前端无该 UI 路径，s9 无对应下行	
+quest	11	D3	是否补 action2 尾 `Encode4(v30)`	不补		083 专属尾字段，语义未实证(L2)	
+quest	11	D4	是否把 083 双 record 通道并进 `UPDATE_QUEST_INFO(211)`	不并		两套命名空间分列	
+quest	11	D5	是否实现 `UIQuestLog::send_key`	待裁决		当前端空实现，083 具名 OnKey 更细	
+quest	11	D6	是否拆 `CUIQuestInfo`/`CUIMedalQuestInfo` 独立窗	不拆		当前端合并窗已能跑，拆窗需 F 维资源	
+quest	11	D7	是否补 `IsAutoStartQuest` 等自动态机	不补		数据驱动已覆盖手动路径	
+quest	11	D8	是否把 `sub_721008` 条件分支搬进当前端	不搬		函数名无符号，语义待补(L2)	
+quest	11	D9	是否新增 c2s 107 真机抓包工具	挂 P2		需真机双开，非纯文档	
+quest	11	D10	是否修 orange-wz 内容层 `IMG 解析失败`	挂 P2		服务端解析能力，非当前端任务	
+quest	11	D11	是否补 F 样式维 12 项	挂 P2		等 IMG 内容层恢复或正确端截图	
+quest	11	D12	是否补 `CUIMedalQuestInfo` 独立窗	挂 P3		任务族续作	
+quest	11	D13	是否把 36 opcode 常量写回 facts 作专属结论	否		已判跨面假阳性，保留原样作证据	
+quest	11	D14	是否建 git commit / 改源码	否		全程只读，原子提交须用户授权	
+drop	12	D1	是否按 083 把 `269` 的 `animation=4` 改成读 `Decode2`	不改		s9 `removeItemFromMap` 写 4 字节 cid；改 short 会立刻错位（C9/G1）	
+drop	12	D2	是否补 `animation=0` 的 `IWzGr2DLayer` 消亡动画	不补		当前端无 083 COM 画布栈；现方案 48 帧淡出语义等价（A12/C5）	
+drop	12	D3	是否实现掉落归属超时（`pickuptype`/`playerdrop` 判定）	待裁决		字段已透传、判定未用；权威在服务端（A14/B3）	
+drop	12	D4	是否把 `MapDrops.cpp:80` 的静默丢弃加日志	建议加 DEBUG 日志		缺 icon 时无痕难排查；加日志零行为变化（B11）	
+drop	12	D5	是否立项 booby trap 全链（3 函数 + 告警包）	挂 P2		083 独有、s9 有 `SendBoobyTrapAlert` 通道但当前端零实现（A10）	
+drop	12	D6	是否立项拖拽丢弃族（9 函数 + `SetCursorState(11)`）	挂 P3		交互面大，当前端 SoftKey 已能达成结果（A11/D12）	
+drop	12	D7	是否给 `Drop::Drop` switch 补 `default` 护栏	建议补（`state=DROPPED`）		s9 当前只发 `{1,2,3}` 不可达，但未初值化是隐患（C1）	
+drop	12	D8	是否给 `Optional<Drop>` 向下转型加校验	不改		容器只装 `MesoDrop`/`ItemDrop`，恒合法；改则动 `Template/Optional.h`（C12）	
+drop	12	D9	是否补丢金币长确认文案（`SP_5280`）	待裁决		当前 `UIEnterNumber` 已可用，仅文案差异（D11）	
+drop	12	D10	是否处理 `DROP_ITEM mod=3`（消失掉落）的 `dropfrom` 语义	待裁决		目前靠尾吞兜住不错位，但 `dropfrom` 无意义（G10/#5）	
+drop	12	D11	是否补拾取 `map_tip`（`r471`）	待真机确认		083 只有 `SP_1245_PICKUPITEM` 音效、无 tip（D10）	
+drop	12	D12	是否补 `animation=4` 的延时爆炸帧	不改		s9 `chrId=0`，原端延时只服务原端自己的动画（C6/B5）	
+drop	12	D13	是否把 F 维 12 项按 `.nx` 像素补齐样式结论	挂 P2		IMG 内容层 `IMG 解析失败`，`.nx` 只能给结构不能给像素（F1–F12）	
+drop	12	D14	是否建 git commit / 改源码	否		本面为 P0 纯文档，全程只读	
