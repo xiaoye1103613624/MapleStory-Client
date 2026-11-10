@@ -1,0 +1,11 @@
+📦(data): 移植伤害皮肤 DamageSkin.img 缺失资源
+
+合并 3 个源客户端中当前端缺失的伤害皮肤 id，纯资源移植、零代码改动。
+
+- 探针结论：orange-wz 对这批私服 .img 内部节点解析失败（空 children / Index OOB，已知结构 bug），改走 MapleLib 直读
+- 源密钥探测：20dalu_079MS=EMS(597)、MapleRoot=GMS(624)、BeiDou_S9=GMS(20)
+- 保守策略：仅合入「源有而当前端无」的 17 个皮肤 id（1009/1013/1014/1061/1128/1129/1130/1131/1145/1296/1334/1335/1336/1338/1360/1425/1431）
+- 597 个同 id 增强候选（源子节点更全）按约定暂不合并，留待后续决策
+- 闭环验证：MapleLib 读-深度克隆(跨 EMS→GMS 密文安全)-GMS 重写；reload 校验 641 节点 / 0x73 文件头 / 17/17 新增皮肤像素完整
+- 二进制已原子替换至部署目录 E:\MXD\BeiDou-Client-xy\Data\Effect\DamageSkin.img，保留双 .bak 备份（DamageSkin.img.bak_20261111、DamageSkin.img.bak_20261111_074216）
+- 附比对清单 merge-report.txt 与可复现工具 _tools/dmg_skin_merge
