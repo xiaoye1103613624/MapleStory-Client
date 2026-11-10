@@ -69,9 +69,12 @@ namespace ms
 		nl::node CSEffect = CashShop["CSEffect"];
 
 		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(BestNew, Point<int16_t>(139, 346));
-
-		BestNew_dim = Texture(BestNew).get_dimensions();
+		// [R6] BestNew 在精简/定制部署数据中可能缺失；缺失时跳过，避免引用空节点。
+		if (BestNew)
+		{
+			sprites.emplace_back(BestNew, Point<int16_t>(139, 346));
+			BestNew_dim = Texture(BestNew).get_dimensions();
+		}
 
 		for (size_t i = 0; i < 3; i++)
 			preview_sprites[i] = Preview[i];
@@ -82,13 +85,16 @@ namespace ms
 		buttons[Buttons::BtPreview1]->set_state(Button::State::PRESSED);
 
 		buttons[Buttons::BtExit] = std::make_unique<MapleButton>(CSTab["BtExit"], Point<int16_t>(5, 728));
-		buttons[Buttons::BtChargeNX] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeNX"], Point<int16_t>(5, 554));
-		buttons[Buttons::BtChargeRefresh] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeRefresh"], Point<int16_t>(92, 554));
+		// [R6] CSGLChargeNX 在精简/定制部署数据中可能缺失；缺失时跳过其按钮创建。
+		if (CSGLChargeNX)
+		{
+			buttons[Buttons::BtChargeNX] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeNX"], Point<int16_t>(5, 554));
+			buttons[Buttons::BtChargeRefresh] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeRefresh"], Point<int16_t>(92, 554));
+		}
 
 		for (size_t i = 0; i < 9; i++)
 			menu_tabs[i] = CSTab["Tab"][i];
 
-		buttons[Buttons::BtChargeRefresh] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeRefresh"], Point<int16_t>(92, 554));
 		buttons[Buttons::BtWish] = std::make_unique<MapleButton>(CSStatus["BtWish"], Point<int16_t>(226, 6));
 		buttons[Buttons::BtMileage] = std::make_unique<MapleButton>(CSStatus["BtMileage"], Point<int16_t>(869, 4));
 		buttons[Buttons::BtHelp] = std::make_unique<MapleButton>(CSStatus["BtHelp"], Point<int16_t>(997, 4));
@@ -103,32 +109,41 @@ namespace ms
 		cs_meta_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, "");
 		refresh_cs_meta();
 
-		promotion_pos = Point<int16_t>(138, 40);
-		sprites.emplace_back(CSPromotionBanner["shadow"], promotion_pos);
+		// [R6] CSPromotionBanner 在精简/定制部署数据中可能缺失；缺失时跳过创建，避免引用空节点。
+		if (CSPromotionBanner)
+		{
+			promotion_pos = Point<int16_t>(138, 40);
+			sprites.emplace_back(CSPromotionBanner["shadow"], promotion_pos);
 
-		promotion_sprites.emplace_back(CSPromotionBanner["basic"]);
+			promotion_sprites.emplace_back(CSPromotionBanner["basic"]);
 
-		buttons[Buttons::BtNext] = std::make_unique<MapleButton>(CSPromotionBanner["BtNext"], promotion_pos);
-		buttons[Buttons::BtPrev] = std::make_unique<MapleButton>(CSPromotionBanner["BtPrev"], promotion_pos);
+			buttons[Buttons::BtNext] = std::make_unique<MapleButton>(CSPromotionBanner["BtNext"], promotion_pos);
+			buttons[Buttons::BtPrev] = std::make_unique<MapleButton>(CSPromotionBanner["BtPrev"], promotion_pos);
+		}
 
-		for (size_t i = 0; i < 7; i++)
-			mvp_sprites[i] = CSMVPBanner["grade"][i];
+		// [R6] CSMVPBanner 在精简/定制部署数据中可能缺失（F7 mvp 七级贴图 / F8 mvp 槽），
+		// 缺失时跳过创建，避免引用空节点；空 Gauge/Texture 渲染为 no-op，与 R6 裁剪一致。
+		if (CSMVPBanner)
+		{
+			for (size_t i = 0; i < 7; i++)
+				mvp_sprites[i] = CSMVPBanner["grade"][i];
 
-		mvp_pos = Point<int16_t>(63, 681);
-		buttons[Buttons::BtDetailPackage] = std::make_unique<MapleButton>(CSMVPBanner["BtDetailPackage"], mvp_pos);
-		buttons[Buttons::BtNonGrade] = std::make_unique<MapleButton>(CSMVPBanner["BtNonGrade"], mvp_pos);
+			mvp_pos = Point<int16_t>(63, 681);
+			buttons[Buttons::BtDetailPackage] = std::make_unique<MapleButton>(CSMVPBanner["BtDetailPackage"], mvp_pos);
+			buttons[Buttons::BtNonGrade] = std::make_unique<MapleButton>(CSMVPBanner["BtNonGrade"], mvp_pos);
 
-		buttons[Buttons::BtDetailPackage]->set_active(mvp_grade);
-		buttons[Buttons::BtNonGrade]->set_active(!mvp_grade);
+			buttons[Buttons::BtDetailPackage]->set_active(mvp_grade);
+			buttons[Buttons::BtNonGrade]->set_active(!mvp_grade);
 
-		mvp_gauge = Gauge(
-			Gauge::Type::CASHSHOP,
-			CSMVPBanner["gage"][0],
-			CSMVPBanner["gage"][2],
-			CSMVPBanner["gage"][1],
-			84,
-			0.0f
-		);
+			mvp_gauge = Gauge(
+				Gauge::Type::CASHSHOP,
+				CSMVPBanner["gage"][0],
+				CSMVPBanner["gage"][2],
+				CSMVPBanner["gage"][1],
+				84,
+				0.0f
+			);
+		}
 
 		Point<int16_t> search_pos = Point<int16_t>(0, 36);
 		sprites.emplace_back(CSItemSearch["backgrnd"], search_pos);
@@ -140,7 +155,7 @@ namespace ms
 		buttons[Buttons::BtSaveAvatar] = std::make_unique<MapleButton>(CSChar["BtSaveAvatar"], Point<int16_t>(864, 305));
 		buttons[Buttons::BtTakeoffAvatar] = std::make_unique<MapleButton>(CSChar["BtTakeoffAvatar"], Point<int16_t>(790, 305));
 
-		charge_charset = Charset(CSGLChargeNX["Number"], Charset::Alignment::RIGHT);
+		if (CSGLChargeNX) charge_charset = Charset(CSGLChargeNX["Number"], Charset::Alignment::RIGHT);
 
 		item_base = CSList["Base"];
 		item_line = Base["line"];

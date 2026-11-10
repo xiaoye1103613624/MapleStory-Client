@@ -425,6 +425,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIMapSearchPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIMapInfoPanel.cpp" />
     <ClCompile Include="IO\UITypes\UIWorldSelect.cpp" />
+    <ClCompile Include="IO\UITypes\UIRecommendWorld.cpp" />
     <ClCompile Include="IO\Window.cpp" />
     <ClCompile Include="MapleStory.cpp" />
     <ClCompile Include="Net\Cryptography.cpp" />

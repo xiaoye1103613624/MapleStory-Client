@@ -47,6 +47,10 @@ namespace ms
 			GENDER,
 			WORLDSELECT,
 			REGION,
+			/// 原生「查看推荐世界」弹窗（Angel 083 CUIRecommendWorld，BtViewChoice→OnButtonClicked
+			/// 1000/1001/1002 = MoveWorld(±1)/SelectWorld）。按 083 OnCreate @0x62b451 用
+			/// Login.img/WorldSelect/alert/backgrd 真背景与三颗真位图按钮（.nx 实测 alert 子树完整）。
+			RECOMMENDWORLD,
 			CHARSELECT,
 			VIEWALLCHAR,
 			LOGINWAIT,

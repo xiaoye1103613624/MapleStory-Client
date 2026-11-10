@@ -61,6 +61,16 @@ namespace ms
 		void set_region(uint8_t value);
 		uint16_t get_worldbyid(uint16_t worldid);
 
+		/// 供 UIRecommendWorld 浏览/选择世界：当前已登录世界数（0 表示列表未到）。
+		uint16_t get_world_count() const { return static_cast<uint16_t>(worlds.size()); }
+		/// 取第 index 个世界（0 起）；越界返回 nullptr。
+		const World* get_world(uint16_t index) const
+		{
+			return index < worlds.size() ? &worlds[index] : nullptr;
+		}
+		/// 当前预选世界槽位（UIRecommendWorld 初始化游标用）。
+		uint8_t get_worldid() const { return worldid; }
+
 		/// 建角页侧栏「选择的:世界」信息框所需数据（UICommonCreation 消费）。
 		uint8_t get_channelid() const { return channelid; }
 		const World* get_selected_world() const

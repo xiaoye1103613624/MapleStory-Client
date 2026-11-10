@@ -75,8 +75,10 @@ namespace ms
 			return tween_to;
 
 		double t = static_cast<double>(elapsed) / static_cast<double>(tween_duration);
-		// 平滑 S 曲线（两端速度为 0），与参考端滚动补间的观感一致。
-		t = t * t * (3.0 - 2.0 * t);
+		// Angel 083 CLogin 补间为「常量速度线性」（v62 = 7000*(v63-a2)/v62/2），
+		// 非当前端自造的 smoothstep S 曲线（两端速度为 0）。改为线性插值，
+		// 与原生滚动补间观感一致，且为纯客户端改动、无联机风险。
+		// （login-flow-angel-calibration-2026-11 README §6 D5 推荐 (a)）
 
 		return {
 			tween_from.x + (tween_to.x - tween_from.x) * t,

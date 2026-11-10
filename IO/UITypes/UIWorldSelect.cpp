@@ -25,6 +25,7 @@
 #include "../../Util/Locale.h"
 #include "UILoginWait.h"
 #include "UIRegion.h"
+#include "UIRecommendWorld.h"
 
 #include "../UI.h"
 
@@ -1208,19 +1209,10 @@ namespace ms
 		}
 		else if (id == Buttons::BtViewChoice)
 		{
-			// 登录态无世界地图：SoftKey 选区 / 回退提示
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) {
-					UI::get().emplace<UIRegion>();
-					deactivate();
-					LOG(LOG_DEBUG, "UIWorldSelect: BtViewChoice empty → UIRegion");
-					return;
-				}
-				auto reg = UI::get().get_element<UIRegion>();
-				if (!reg) reg = UI::get().emplace<UIRegion>();
-				else if (!reg->is_active()) reg->makeactive();
-				LOG(LOG_DEBUG, "UIWorldSelect: BtViewChoice SoftKey → UIRegion tip=" << tip);
-			}, []() {}, "Region tip|empty=Region");
+			// 原生 BtViewChoice → CUIRecommendWorld（查看推荐世界弹窗），替换旧
+			// 的 SoftKey→UIRegion 假窗路由。按 083 OnCreate 立即数用 alert/backgrd 真背景
+			// 与 BtArrowL/BtArrowR/BtChoice 三颗真位图按钮（.nx 实测子树完整，旧注释误判裁剪）。
+			UI::get().emplace<UIRecommendWorld>(this);
 			return Button::State::NORMAL;
 		}
 		else if (id == Buttons::BtRegion)
