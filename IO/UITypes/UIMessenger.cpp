@@ -133,7 +133,7 @@ namespace ms
 				namebars[i].shift(o);
 		}
 
-		// v95 SetCtrl：StringPool → UI/Basic.img/BtClose3 @ (276,6)（展开态）。
+		// Angel 083 CUIMessenger::SetCtrl @ 0x8505e2：CCtrlButton x = (m_nState != 2) ? 276 : 166（展开态 276）。
 		// 旧写法 dim.x()-21 + BtUIClose(32×15) 越窗；本包 BtClose3 不可用，走 close_btn。
 		nl::node close = nl::nx::UI["Basic.img"]["BtClose3"];
 
@@ -156,7 +156,7 @@ namespace ms
 			);
 		}
 
-		// blink：标题条注意标（v95 m_pLayerBlink；本包单帧 12×10 橙泡）
+		// blink：标题条注意标（Angel 083 CUIMessenger::OnCreate @ 0x84ddb0 经 StringPool 取 SP_1858_UI_UIWINDOWIMG_MESSENGER_BLINK；本包单帧 12×10 橙泡）
 		if (root["blink"])
 		{
 			blink = Texture(root["blink"]);
@@ -165,7 +165,7 @@ namespace ms
 				blink.shift(o);
 		}
 
-		// chatBalloon/0..4：座位上方打字气泡（delay=120）；v95 LoadLayer(…/chatBalloon)
+		// chatBalloon/0..4：座位上方打字气泡（delay=120）；Angel 083 由 CUIMessenger::SetAvatar @ 0x84f44b 建对应 IWzGr2DLayer
 		if (root["chatBalloon"])
 			balloon_proto = Animation(root["chatBalloon"]);
 
@@ -234,7 +234,7 @@ namespace ms
 
 	void UIMessenger::start_blink()
 	{
-		// 对照 v95 StartBlink(1)：仅在未闪时置 30；本端收真聊天 / 进离房都会触发。
+		// 对照 Angel 083 CUIMessenger::Update @ 0x84e930（blink 上限 30、归零再置 30）：仅在未闪时置 30；本端收真聊天 / 进离房都会触发。
 		if (blink_ticks <= 0)
 			blink_ticks = BLINK_TICKS;
 	}
@@ -275,7 +275,7 @@ namespace ms
 		if (static_cast<size_t>(local_pos) < SLOT_COUNT && slots[static_cast<size_t>(local_pos)].occupied)
 			self = slots[static_cast<size_t>(local_pos)].name;
 
-		// v95 Update：EncodeStr(charName + "0"|"1")，无冒号 ⇒ OnChat 走打字分支。
+		// Angel 083 CUIMessenger::Update @ 0x84e930：COutPacket(122) + Encode1(6) + EncodeStr(charName + "0"|"1")，无冒号 ⇒ OnChat 走打字分支。
 		MessengerChatPacket(self + (typing ? "1" : "0")).dispatch();
 		input_typing_sent = typing;
 		typing_throttle_ms = TYPING_THROTTLE_MS;
@@ -287,7 +287,7 @@ namespace ms
 		if (text.empty())
 			return;
 
-		// v95 OnChat：有 " : " → 真聊天；否则末字符 0/1 为打字指示。
+		// Angel 083 CUIMessenger::OnChat @ 0x8515d7：有 " : " → 真聊天；否则末字符 0/1 为打字指示。
 		const std::string sep = " : ";
 		size_t colon = text.find(sep);
 		if (colon != std::string::npos)
@@ -407,7 +407,7 @@ namespace ms
 
 		std::string payload = self + " : " + text;
 		MessengerChatPacket(payload).dispatch();
-		// 发真聊天后清打字态（对照 v95 ProcessChat 置 m_bInputState=0）。
+		// 发真聊天后清打字态（对照 Angel 083 CUIMessenger::ProcessChat @ 0x851d3b 置 m_bInputState=0）。
 		if (input_typing_sent)
 			send_typing(false);
 		input_typing_sent = false;
@@ -483,7 +483,7 @@ namespace ms
 				slots[i].charlook->draw(
 					DrawArgument(look_pos, LOOK_SCALE, LOOK_SCALE), 1.0f);
 			}
-			// chatBalloon：打字中循环播；相对脚点 BALLOON_DX/DY（v95 RelMove 缩放近似）
+			// chatBalloon：打字中循环播；相对脚点 BALLOON_DX/DY（按 Angel 083 SetAvatar 的图层位移 × 0.70 缩放近似）
 			if (slots[i].typing)
 			{
 				slots[i].balloon.draw(
@@ -534,7 +534,7 @@ namespace ms
 				slots[i].balloon.update(Constants::TIMESTEP);
 		}
 
-		// blink 计数：对齐 v95 Update（每 tick -1；到 0 重置为 30 继续闪，直到停）
+		// blink 计数：对齐 Angel 083 CUIMessenger::Update @ 0x84e930（每 tick -1；到 0 重置为 30 继续闪，直到停）
 		// 本端无最小化态，收消息后闪若干周期再停（约 4 个半周期后清零）。
 		if (blink_ticks > 0)
 		{
@@ -546,7 +546,7 @@ namespace ms
 			}
 		}
 
-		// 打字指示出站（对照 v95 Update m_bInputState ↔ 输入框空/非空）
+		// 打字指示出站（对照 Angel 083 CUIMessenger::Update @ 0x84e930 m_bInputState ↔ 输入框空/非空）
 		if (typing_throttle_ms > 0)
 		{
 			typing_throttle_ms -= Constants::TIMESTEP;

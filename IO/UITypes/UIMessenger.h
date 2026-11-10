@@ -43,7 +43,7 @@ namespace ms
 		void set_member(int8_t pos, const std::string& name, int8_t channel, const LookEntry& look);
 		void clear_member(int8_t pos);
 		void append_chat(const std::string& line);
-		/// s2c mode=6：区分真聊天（含 " : "）与打字指示（尾字符 0/1，对照 v95 OnChat）。
+		/// s2c mode=6：区分真聊天（含 " : "）与打字指示（尾字符 0/1，对照 Angel 083 CUIMessenger::OnChat @ 0x8515d7）。
 		void handle_messenger_chat(const std::string& text);
 		bool in_room() const { return in_room_; }
 
@@ -103,7 +103,7 @@ namespace ms
 		//   与徽标同时归零，245 才是把钮挪偏的那一步。）
 		static constexpr int16_t BT_ENTER_X = 247;
 		static constexpr int16_t BT_ENTER_Y = 322;
-		// 关闭钮：v95 CUIMessenger::SetCtrl（0x7F34C0）m_nState!=2 时
+		// 关闭钮：Angel 083 CUIMessenger::SetCtrl @ 0x8505e2 m_nState!=2 时
 		// CCtrlButton::Create(…, x=276, y=6)，资源串 UI/Basic.img/BtClose3。
 		// 本包无可用 BtClose3 → close_btn()（BtClose 12×12）；坐标仍按 IDA 立即数。
 		static constexpr int16_t BT_CLOSE_X = 276;
@@ -118,19 +118,19 @@ namespace ms
 		static constexpr int16_t LOOK_NAME_DX = 44;
 		static constexpr int16_t LOOK_NAME_DY = 2;
 
-		// chatBalloon：v95 SetAvatar RelMove(-45,-100) 相对 Avatar 原点；本端脚点 + 0.70 缩放
-		// → 近似 (-45*0.70, -100*0.70) ≈ (-31,-70)。证据 ida-v95-blink-chatballoon.txt。
+		// chatBalloon：Angel 083 CUIMessenger::SetAvatar @ 0x84f44b 两处图层位移 (-45,4) 与 (-28,-100)；本端以 y -100 为主、脚点 + 0.70 缩放
+		// → 近似 (-45*0.70, -100*0.70) ≈ (-31,-70)。083 无 (-45,-100) 这一对，见 drop 面外 round55 notes §1.3。
 		static constexpr int16_t BALLOON_DX = -31;
 		static constexpr int16_t BALLOON_DY = -70;
 
-		// blink：v95 StartBlink 置 m_nBlink=30；Update 每 tick -1，==15 隐、==0 重置并显。
+		// blink：Angel 083 CUIMessenger::Update @ 0x84e930 置 m_nBlink=30；每 tick -1，==15 隐、==0 重置并显。
 		// 原生仅 m_nState==2（最小化标题条）才闪；本端无 Min 态，收消息时在标题条右上闪烁。
 		static constexpr int16_t BLINK_TICKS = 30;
 		static constexpr int16_t BLINK_HALF = 15;
 		static constexpr int16_t BLINK_DRAW_X = 260; // 295-21(close)-14 ≈ 标题条右
 		static constexpr int16_t BLINK_DRAW_Y = 4;
 
-		// 打字状态节流：v95 m_tRestUpdateState=3000（ms 量级）。
+		// 打字状态节流：Angel 083 CUIMessenger::Update @ 0x84e930 m_tRestUpdateState=3000（ms 量级）。
 		static constexpr int32_t TYPING_THROTTLE_MS = 3000;
 
 		void leave_room();

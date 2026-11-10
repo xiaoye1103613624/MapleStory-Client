@@ -40,6 +40,7 @@
 #include "../../Configuration.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -728,7 +729,7 @@ namespace ms
 			}
 			case Buttons::DEFAULT:
 			{
-				static const std::string& message = "Would you like to revert to default settings?";
+				const std::string message = Locale::text_or("keyconfig.confirm_default", "Would you like to revert to default settings?");
 
 				auto onok = [&](bool ok)
 				{
@@ -756,7 +757,7 @@ namespace ms
 			}
 			case Buttons::DELETE:
 			{
-				static const std::string& message = "Would you like to clear all key bindings?";
+				const std::string message = Locale::text_or("keyconfig.confirm_clear", "Would you like to clear all key bindings?");
 
 				auto onok = [&](bool ok)
 				{
@@ -1003,7 +1004,7 @@ namespace ms
 	{
 		if (dirty)
 		{
-			static const std::string& message = "Do you want to save your changes?";
+			const std::string message = Locale::text_or("keyconfig.confirm_save", "Do you want to save your changes?");
 
 			auto onok = [&](bool ok)
 			{

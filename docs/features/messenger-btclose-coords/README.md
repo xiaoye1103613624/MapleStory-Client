@@ -13,7 +13,7 @@
 
 | 源 | 结论 |
 | --- | --- |
-| IDA Maplestory95 `CUIMessenger::SetCtrl` `0x7F34C0` | `m_nState!=2`：`CCtrlButton::Create(..., x=276, y=6)`；资源串 `UI/Basic.img/BtClose3`（SP_6498） |
+| Angel 083 `CUIMessenger::SetCtrl` `0x8505e2` | `m_nState!=2`：`CCtrlButton::Create(..., x=276, y=6)`；资源串 `UI/Basic.img/BtClose3`（SP_6498） |
 | 同函数 `m_nState==2` | 最小化态 `(191, 3)` —— 本端无 Min 态，不接 |
 | 本包 `Basic.img` | **无可用 BtClose3**（r15-closebtn）；`close_btn()`→`BtClose` 12×12 同族实心蓝叉 |
 | 旧实现 | `dim.x()-21`(=274) + 后备 `BtUIClose` 32×15 ⇒ 越窗；且 **BtUIClose 非原生 Messenger 件** |
