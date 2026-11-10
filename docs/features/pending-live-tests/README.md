@@ -731,4 +731,27 @@
 | 25-1 当前 shipped 包回归 | 打开人物信息窗、看主窗口按钮与 BtBook 渲染 | 与修复前逐字一致（走 find+判空），无空白/闪退 | harness 只复刻算法，需真机 UI 渲染 |
 | 25-2 带 collect/damage 资源包 | 换入含完整 collect/damage 子窗节点的资源包开人物信息、切子窗 | 子窗按钮按资源渲染，与修复前逐字一致，守卫不触发 | 需真机替换 WZ/IMG 资源包观察排版 |
 | 25-3 裁剪/畸形资源包 | 换入缺部分子窗按钮节点（BtArrayGet/BtFAQ 等）的资源包 | 不闪退，缺失/空指针键跳过，其余按钮照常渲染 | 需真机加载畸形资源 + 观察 draw()，harness 仅复刻稀疏 map 路径 |
-| 25-4 buttons.size() 上界语义裁决 | 真机观察 damage 子窗（`i < buttons.size()`）按钮是否画全 | 若发现按钮被漏画，另立 L-B 裁决改键域上界（本轮不裁决） | 属上界语义正确性，需真机观测后决定是否立项 |
+| ~~25-4 buttons.size() 上界语义裁决~~（**已于 round47 销案**：纯代码可证上界错，见 §26） | 真机观察 damage 子窗（`i < buttons.size()`）按钮是否画全 | 若发现按钮被漏画，另立 L-B 裁决改键域上界（本轮不裁决） | 属上界语义正确性，需真机观测后决定是否立项 |
+
+## 26. round47 · UICharInfo damage 子窗循环上界销案（#devfix-charinfo-damage-bound，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42) / §22(round43) / §23(round44) / §24(round45) / §25(round46) / §26(round47)，与历史
+> `## 21. NPC GetText Avatar + GetNumber min/max A11f`、`## 22. NPC tip 817–821 + Pet inset A11g`、
+> `## 23. ScriptMessage OnPacket 全量 + tip 820 A11h`、`## 24. AskAvatar / sendStyle A11i`、
+> `## 25. AskBoxText A11j` 按标题中的 roundNN 区分；历史编号原样保留，不回滚改动。
+
+> 本节同时**销案 §25-4**：round46 把「`i < buttons.size()` 上界语义」留作 L-B 待真机裁决，本轮逐字读 live 源码确认
+> `buttons.size()` 是元素个数、而 damage 子窗键域是枚举区间 `[BtFAQ, BtBook)`，两者无数量关系——纯代码即可证伪，故不再挂 L-B。
+>
+> 自动自测 `tools/test_charinfo_damage_bound.py` 只覆盖**静态守卫 + 上界 × 键集算法复刻**
+> （14 守卫 + 13 场景 PASS，before BAD 9 / BtBook 重复 3 → after 0，回归 4/4）+
+> `GATE OK` + `build_smoke.bat` `EXITCODE=0`（04:38 真重编译 / ERROR_LINES 0）；
+> **真机渲染仍需人眼确认**：harness 证明的是「算出来的键集合」，不是「屏幕上画出来的像素」。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 04:38 重编译，4928512B）。逐字证据见
+> `development-and-fix-plan-2026-11/notes/wave2-charinfo-damage-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 26-1 当前 shipped 包回归 | 打开人物信息窗、切 damage 子窗 | 与修复前视觉逐字一致，无空白/闪退 | harness 只复刻键集合算法，需真机 UI 渲染 |
+| 26-2 完整 damage 资源包 | 换入含 `BtFAQ` / `BtRegist` 两节点的资源包后切子窗 | 两个按钮都渲染出来（修复前 `size<16` 时全漏） | 需真机替换 WZ/IMG 资源包观察 |
+| 26-3 裁剪包 | 换入缺 damage 子窗按钮节点的包 | 不闪退，缺失键跳过，其余按钮照常渲染 | 需真机加载畸形资源 + 观察 draw() |
+| 26-4 BtBook 重影 | 键齐（含 BtBook 18）时看 damage 子窗 | BtBook 只画一次，无重影（修复前 `size>=19` 会画两次） | 重影属视觉像素现象，需人眼/截图比对 |

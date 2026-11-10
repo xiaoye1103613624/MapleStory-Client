@@ -297,10 +297,10 @@ namespace ms
 			for (Sprite sprite : damage_sprites)
 				sprite.draw(position, inter);
 
-			// 同上：稀疏 map 不能用裸 at(i)。原上界 buttons.size() 是元素个数、
-			// 与 map 键域无关（缺 BtFAQ/BtRegist 时 at 直接抛）；保留原循环边界
-			// 不改动可画到的按钮集合，仅把越界抛异常换成 find 判空跳过。
-			for (size_t i = Buttons::BtFAQ; i < buttons.size(); i++)
+			// 同上：稀疏 map 用 find 判空。damage 子窗键域是 [BtFAQ, BtBook)（BtFAQ=16 /
+			// BtRegist=17），与主窗 [0,BtArrayGet)、collect [BtArrayGet,BtFAQ) 同为枚举分段；
+			// 原上界 buttons.size() 是元素个数而非键域，缺资源时漏绘子窗按钮、键齐时又重复绘 BtBook(18)（:317 单独绘）。
+			for (size_t i = Buttons::BtFAQ; i < Buttons::BtBook; i++)
 			{
 				auto it = buttons.find(static_cast<uint16_t>(i));
 				if (it != buttons.end() && it->second)
