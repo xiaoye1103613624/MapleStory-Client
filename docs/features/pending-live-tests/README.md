@@ -755,3 +755,40 @@
 | 26-2 完整 damage 资源包 | 换入含 `BtFAQ` / `BtRegist` 两节点的资源包后切子窗 | 两个按钮都渲染出来（修复前 `size<16` 时全漏） | 需真机替换 WZ/IMG 资源包观察 |
 | 26-3 裁剪包 | 换入缺 damage 子窗按钮节点的包 | 不闪退，缺失键跳过，其余按钮照常渲染 | 需真机加载畸形资源 + 观察 draw() |
 | 26-4 BtBook 重影 | 键齐（含 BtBook 18）时看 damage 子窗 | BtBook 只画一次，无重影（修复前 `size>=19` 会画两次） | 重影属视觉像素现象，需人眼/截图比对 |
+
+## 27. round49 · SHOW_STATUS_INFO mode 5 语义错位销案（#devfix-showstatusinfo-mode5，需用户一起测）
+> 编号说明：本节沿用 round 链 §19(round40) / §20(round41) / §21(round42) / §22(round43) / §23(round44) / §24(round45) / §25(round46) / §26(round47) / §27(round49)，
+> 与历史 `## 27. SpeedQuiz A11k（msgtype 6）` 按标题中的 roundNN 区分；历史编号原样保留，不回滚改动。
+
+> 改前把「聊天窗金币提示」解析成「获得 SP」：`read_short` 只吃掉服务端 4 字节 `int gain` 的低 2 字节，
+> 再弹 `UISkillUp` 显示 `You have gained SP (+N)`。s9 `getShowMesoGain(gain, inChat=true)` 写 `writeByte(5)+writeInt(gain)+writeShort(0)`；
+> Angel 083 `OnIncMoneyMessage@0xa221f3` 也是 `Decode4` + `SP_290/SP_292` + `CHATLOG_ADD(nType:7)`。
+> 自动自测 `tools/test_showstatusinfo_mode5.py` 只覆盖**静态守卫 + 包体读法复刻**
+> （15 守卫 + 6 场景 PASS，before 误标 6/6 → after 0）；**真机渲染仍需人眼确认**。
+> exe = `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（2026-11-10 10:21 重编译，4928512B）。
+> 逐字证据见 `development-and-fix-plan-2026-11/notes/wave2-showstatusinfo-mode5-recheck-20261110.md`。
+
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 27-1 任务金币奖励 | 交一个给金币的任务 | 聊天窗出现 `You have gained mesos (+N)`，**不弹**技能加点窗 | 需真机跑任务链触发服务端包 |
+| 27-2 商店售出 / 传送扣费 | 卖出一件道具或 GM 传送扣费 | 红色 `You have lost mesos (-N)` | 需真机走 `spendMesoTransactionally` 路径 |
+| 27-3 SP 通道未受影响 | 升级获得 SP | 技能窗 SP 正常刷新（由 `ChangeStatsHandler` 负责） | 需真机升级观察技能窗 |
+| 27-4 大额金币 | 获得 ≥ 65536 金币 | 数值显示完整，无负数/截断（改前 short 截断） | 需真机大额交易 |
+
+### 27-A 待裁决：`InPacket::available()` 返回 bool 却被当字节数（393 处）
+
+> `Net/InPacket.h:37 bool available() const;` / `Net/InPacket.cpp:30-33 return length() > 0;`。
+> 全仓 393 处写成 `recv.available() >= 4` / `>= 8` / `< 5` / `== 21` / `recv.skip(recv.available() - 5)`。
+> `bool` 提升成 int 只有 0/1：`>= 2/4/8` 恒 false（短包守卫全是死代码）、`< 5/14/24` 恒 true（长度预检全误判）、
+> `available() - 5` 在 `size_t` 下溢。编译器已在 `MessagingHandlers.cpp:207/338/646/776/777/868/909/962` 报 `C4804`。
+>
+> 分布：`WaveAShellHandlers.cpp` 205、`MapObjectHandlers.cpp` 85、`CashShopHandlers.cpp` 75、
+> `MessagingHandlers.cpp` 8、`TradeHandlers.cpp` 8，其余 `AllianceHandlers` 3 / `InventoryHandlers` 3 / `QuestHandlers` 2 /
+> `TestingHandlers` 2 / `FredrickHandlers` 1 / `PlayerHandlers` 1。
+>
+> 一行类型修复（`size_t available() const { return length(); }`）会让 393 处原本恒假的守卫**同时变成活路径**，
+> 等于一次性改变几乎所有 handler 的短包行为——属协议级裁决，需在真机下逐面回归后才可动。
+| # | 操作 | 期望 | 为何自动测不了 |
+| --- | --- | --- | --- |
+| 27-A1 短包行为基线 | 当前版本下走一遍登录 / 进图 / 商城 / 交易 / 聊天 | 记录现有可观察行为作为对照基线 | 需真机全链路，且缺陷本身是「守卫失效」非崩溃 |
+| 27-A2 类型修复后回归 | 若裁决修复 `available()` 返回类型，重跑 27-A1 全链路 | 各面行为不变或按预期变好，无新增断线/丢状态 | 需真机逐面比对，自动测只能覆盖算法 |

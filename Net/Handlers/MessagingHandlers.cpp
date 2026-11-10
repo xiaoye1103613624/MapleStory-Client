@@ -312,41 +312,26 @@ namespace ms
 		}
 		else if (mode == 5)
 		{
-			// SP gain（短/整均可；优先 short）
-			int32_t sp = recv.available() >= 2 ? recv.read_short() : 0;
-			if (recv.available() >= 2)
-				recv.read_short(); // job（部分包）
-			std::string tip = "You have gained SP (+" + std::to_string(sp) + ")";
+			// mode 5 = 聊天窗金币提示，不是 SP。三方证据：
+			//   s9 PacketCreator.java:1763-1773 getShowMesoGain(gain, inChat=true)
+			//     → writeByte(5) + writeInt(gain) + writeShort(0)（同文件 :1713 注释 5 = mesos）；
+			//   Angel 083 CWvsContext::OnMessage case 5 → OnIncMoneyMessage@0xa221f3：
+			//     Decode4(gain)，gain<=0 取 SP_292_YOU_HAVE_LOST_MESOS_D，否则 SP_290_YOU_HAVE_GAINED_MESOS_D，
+			//     随后 CHATLOG_ADD(nType: 7)；
+			//   SP 在两端都不走 SHOW_STATUS_INFO：s9 updateSingleStat(Stat.SP)、客户端
+			//     ChangeStatsHandler::need_skillbook_update（PlayerHandlers.cpp:189-199）已处理 SP。
+			// 原实现按 SP 读 short，只会吃掉 gain 的低 2 字节，再把每次金币奖励显示成
+			// 「You have gained SP (+N)」并弹 UISkillUp 窗（任务金币奖励 / 商店售出 / 传送扣费均触发）。
+			int32_t gain = recv.read_int();
 			while (recv.available())
 				recv.skip_byte();
-			// SkillBook / SkillUp / Stats：刷 UI，不 tip
-			if (auto sb = UI::get().get_element<UISkillBook>())
-			{
-				if (sb->is_active())
-				{
-					sb->update_stat(MapleStat::Id::SP,
-						Stage::get().get_player().get_stats().get_stat(MapleStat::Id::SP));
-					return;
-				}
-			}
-			if (auto st = UI::get().get_element<UIStatsInfo>())
-			{
-				if (st->is_active())
-				{
-					st->update_all_stats();
-					return;
-				}
-			}
-			auto su = UI::get().get_element<UISkillUp>();
-			if (!su) su = UI::get().emplace<UISkillUp>();
-			else if (!su->is_active()) su->makeactive();
-			if (su)
-			{
-				su->set_tip(tip);
-				return;
-			}
+			std::string tip = gain <= 0
+				? ("You have lost mesos (" + std::to_string(gain) + ")")
+				: ("You have gained mesos (+" + std::to_string(gain) + ")");
+			// inChat 语义即聊天窗提示（Angel CHATLOG_ADD），不做 StatusBar/Stats 抑制
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
+				chatbar->show_message(tip.c_str(),
+					gain <= 0 ? UIChatBar::MessageType::RED : UIChatBar::MessageType::WHITE);
 		}
 		else if (mode == 6)
 		{
