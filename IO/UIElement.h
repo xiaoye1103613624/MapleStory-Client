@@ -201,6 +201,9 @@ namespace ms
 			// 注意：这两项让 UIElement::Type::NUM_TYPES 变大，而
 			// EnumMap<Type, UPtr, NUM_TYPES> 是 UIStateGame 的成员 —— 实例尺寸变了，
 			// 必须整工程 Rebuild（增量编译会留下按旧尺寸编译的目标文件）。
+			// round71 运行时 open_merge 探针实测：UIWindow2.img / StatusBar3.img /
+			// UIWindow.img/OptionMenu 三根 0 命中，「退化壳」判断属实；083 IDB 有独立的
+			// CUIGameOpt @0x993a30 / CUISysOpt @0x994163，无 StatusBar3 概念。
 			GAMEOPT,
 			SYSOPT,
 			SPECIALUI,

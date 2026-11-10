@@ -953,3 +953,15 @@
 | 36-5 | 三型字形 | 普通 / 暴击 / TOPLAYER | NoRed / NoCri / NoViolet 三套字形与颜色正确 |
 
 已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（getadvance 表 / MAX_DAMAGE_WIDTH=260 / FADE_TIME=500 / rowheight 36-30 / apply_skin 分支 / init 字符集），harness A2 逐条守卫「仍在」；只补 4 处纯注释。083 整体重排（动态 3/5 字宽 + canvas 57 + 三段动画 + 皮肤间距修正）属 **决策点 D-A**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；校准≠改回原生（083 无 DamageNumber/皮肤系统）、s9 协议优先；DamageSkin.img 可达性已由最小探针闭环，不再是决策点。
+
+## 37. round71 · GAMEOPT / SYSOPT 设置窗按 Angel 083 CUIGameOpt/CUISysOpt 只读取证复核（#devfix-optionmenu-083-review，需用户一起测 / 含决策点 D-B）
+
+| 编号 | 真机检查项 | 预期 | 关联 |
+| --- | --- | --- | --- |
+| 37-1 | 五屏截图：游戏设置 / 系统设置 / 分辨率下拉展开 / 滑条拖动 / OK-CANCEL 落位 | 与 083 版式及当前底板逐格对照 | D-B |
+| 37-2 | 083 y=342 与当前 BTN_Y=372 两版 OK/CANCEL 视觉对照 | 当前 372 落在 299x396 底板底部深色空条，083 342 落浅色区 | D-B |
+| 37-3 | +28 滑条 / 勾选 / 下拉是否压住印刷行名 | 浅色带 y27..307 无区分度，须真机定 | D-B |
+| 37-4 | 9 档分辨率下拉切换真机生效性 | 083 无此下拉，属本端扩展 | D-B |
+| 37-5 | `data.format=img` 下 UIWindow2.img / StatusBar3.img / OptionMenu 缺失的退化壳表现 | 运行时 open_merge 探针 0 命中，UIOptionMenu 退化壳 | 口径 |
+
+已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（CHECK_X=130 / CHECK_TOP=34 / SLIDER_ROW +28 / 9 档分辨率 / BTN_Y=372 全在，harness 逐条守卫「仍在」）；只补 083 依据纯注释。`UIGameOpt` 经 v2 像素检测已闭环（按 Angel 布局对齐）；`UISysOpt` 是否回退 083（滑条 40/70/100/160/190/220、无分辨率下拉、OK/CANCEL y=342）属 **决策点 D-B**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；运行时底板 299x396 与旧 .nx 299x365 是两张完全不同的图，不得按行偏移盲改常量；校准≠改回原生、数值重合≠语义重合、s9 协议优先。

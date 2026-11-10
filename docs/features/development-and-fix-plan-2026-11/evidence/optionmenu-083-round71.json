@@ -1,0 +1,98 @@
+{
+  "round": 71,
+  "topic": "GAMEOPT/SYSOPT settings windows - Angel 083 CUIGameOpt/CUISysOpt layout review (read-only)",
+  "authority": "Angel(13339) 083/v83 IDB, live-decompiled this round",
+  "ida_symbols": {
+    "CUIGameOpt::OnCreate": "0x993a30 (decomp @0x993a45), size 0x4fc",
+    "CUIGameOpt::OnChildNotify": "0x993f2c",
+    "CUIGameOpt::SetRet": "0x993f99",
+    "CUIGameOpt::GetSysOptFromCtrl": "0x9940bd",
+    "CUISysOpt::OnCreate": "0x994163 (decomp @0x99417a), size 0x789",
+    "CUISysOpt::OnChildNotify": "0x9948ec",
+    "CUISysOpt::SetRet": "0x9949e1",
+    "CUISysOpt::GetSysOptFromCtrl": "0x994b1a",
+    "CConfig::ApplySysOpt": "0x49ea33",
+    "CConfig::ApplyGameOpt": "0x49ea1c",
+    "absent": [
+      "*CUIOptionMenu*",
+      "*StatusBar3*"
+    ]
+  },
+  "ida_083_immediates": {
+    "gameopt": "12 CCtrlCheckBox x=128 y=33+18*i (33..231); OK BtOK2 (34,262) CANCEL BtCancel2 (84,262)",
+    "sysopt_sliders": "6 CCtrlSlider (99,40,147)/(99,70,105)/(99,100,105)/(99,160,147)/(99,190,147)/(99,220,147)",
+    "sysopt_combos": "id1005 (0,67,127,175,18), id1010 (0,67,278,175,18); AddItem 3 screenshot paths + 4 mob-info",
+    "sysopt_checks": "1002 (239,70) 1004 (239,100) 1009 (62,250) 1012 (62,303) 1011 (62,...)",
+    "sysopt_buttons": "OK (194,342) CANCEL (244,342)",
+    "no_resolution_combo": true,
+    "no_9_res_options": true
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "key_raw_len": 65536,
+    "key_sha256_16": "268a8407a47ee76c",
+    "iv": "TSPHKw==",
+    "structure": "WORKS (load_files generation 1/3)",
+    "content_error": "IMG parse failed: UIWindow.img / Basic.img (all 10 node queries, GBK raw kept)",
+    "missing_imgs": [
+      "UIWindow2.img",
+      "StatusBar3.img"
+    ],
+    "verdict": "AGENTS.md compliant .nx fallback triggered"
+  },
+  "nx_facts": {
+    "UIWindow.img/GameOpt/backgrnd": "bitmap 158x284 (GameOpt has 1 child)",
+    "UIWindow.img/SysOpt/backgrnd": "bitmap 299x365 (OLD snapshot, NOT runtime authority)",
+    "absent": [
+      "UIWindow.img/OptionMenu",
+      "UIWindow2.img",
+      "StatusBar3.img"
+    ],
+    "Basic.img/CheckBox": "4x bitmap 12x12",
+    "Basic.img/BtOK2/normal/0": "bitmap 47x19",
+    "Basic.img/Slider": "7 children",
+    "Basic.img/ComboBox": "5 states"
+  },
+  "runtime_probe": {
+    "tool": "_tools/opt_probe (nl::img_file::open_merge on Data/UI)",
+    "gather_files": 20,
+    "root_children": 20,
+    "UIWindow.img_valid": 1,
+    "UIWindow2.img_valid": 0,
+    "StatusBar3.img_valid": 0,
+    "GameOpt_backgrnd": "158x284",
+    "SysOpt_backgrnd": "299x396 (RUNTIME, differs from old .nx 299x365)",
+    "OptionMenu_valid": 0,
+    "CheckBox/BtOK2/BtCancel2/Slider/ComboBox_valid": 1,
+    "result": "OPEN_MERGE_OK / PROBE_DONE"
+  },
+  "pixel_verification": {
+    "old_nx_vs_runtime": "two completely different images, SAME_INDEX 0/365 / +28 0/365 / +31 0/365 -> cannot infer row alignment by shift",
+    "sysopt_light_bands": "y6..19 / y27..307 / y309..368 (too wide; BOTH 083 and +28 slider rows hit 6/6, no discrimination)",
+    "sysopt_bottom": "button zone light ratio y330..365 ~= 1.00, y370..395 = 0.00 (current BTN_Y=372 on dark strip, 083 y=342 on light zone)",
+    "gameopt_v2_rows": "12 distinct magenta cells y32..47/50..65/.../230..245 + 11 real gaps y48-49/.../228-229; 083 y=33+18i and current y=34+18i each land exactly in band 0..11 (real green, not the 215px-wide-band fake green)"
+  },
+  "current_end": {
+    "UIGameOpt": "CHECK_X=130 CHECK_TOP=34 CHECK_PITCH=18 BTN_Y=262 OK_X=34 CANCEL_X=84 -> +2/+1px inside printed rows, aligned to Angel 083",
+    "UISysOpt": "SLIDER_ROW +28 / CHECK_BOX +28 / COMBO +28 / RES 9 options / BTN_Y=372 -> local extension from rs.cpp plugin + screenshot SAD",
+    "resource_resolution": "UiAssetResolve::window('GameOpt'/'SysOpt') checks UIWindow2.img then UIWindow.img; dimension from real backgrnd.get_dimensions()"
+  },
+  "decision_points": [
+    "D-B: whether to revert UISysOpt +28/+30 layout, 9-resolution combo, BTN_Y=372 back to 083 (sliders 40/70/100/160/190/220, no res combo, OK/CANCEL y=342) - visual/architecture level, needs user verdict + 5-screen screenshots; runtime backgrnd 299x396 is NOT the old .nx 299x365 so no blind constant rewrite",
+    "UIGameOpt: CLOSED - verified aligned to 083 by v2 pixel test; no change"
+  ],
+  "fix_scope": "pure-comment only (UIOptionMenu.h 4 blocks + UIElement.h 1 block), ZERO behaviour literals",
+  "verification": {
+    "harness": "tools/test_round71_optionmenu_083.py",
+    "gate": "python tools/gen_opcode_matrix.py --check",
+    "build": "tools/build_smoke.bat (must cover UIOptionMenu.cpp)",
+    "loginbackground": "linear tween retained (Angel 083 CLogin), guarded by harness"
+  },
+  "constraints": [
+    "083/v83 only, no 095",
+    "s9 protocol priority",
+    "calibration != revert-to-native",
+    "numeric overlap != semantic overlap",
+    "twelve-face calibration docs read-only"
+  ]
+}

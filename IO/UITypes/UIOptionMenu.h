@@ -74,6 +74,14 @@ namespace ms
 	// 实测反馈的缺陷。版式常数全部来自
 	// docs/features/ui-v83-window-restore/evidence/w7-option-settings/_settings_map2.txt
 	// （原生 游戏设置.png / 系统设置.png 逐格模板 SAD 测量，SAD=0.00 才算命中）。
+	// 083 权威依据（round71 活 IDB 现场复核，见 notes/wave2-optionmenu-083-review-20261111.md）：
+	//   CUIGameOpt::OnCreate @0x993a45 —— 12 个 CCtrlCheckBox x=128、y=33+18*i（33..231），
+	//     OK Basic.img/BtOK2 (34,262) / CANCEL BtCancel2 (84,262)；
+	//   CUISysOpt::OnCreate @0x99417a —— 6 个 CCtrlSlider (99, 40/70/100/160/190/220)、
+	//     OK (194,342) / CANCEL (244,342)，2 个下拉（3 条截图路径 / 4 条怪情），**无 9 档分辨率下拉**；
+	//   CConfig::ApplyGameOpt @0x49ea1c / ApplySysOpt @0x49ea33。
+	// 本端 GameOpt 常量与 083 几乎逐字对齐；SysOpt +28/+30、9 档分辨率、BTN_Y=372 是以截图/
+	// rs.cpp 插件为参照的本端扩展，是否回退 083 属决策点 D-B（待用户裁决 + 五屏截图）。
 	////////////////////////////////////////////////////////////////////////////////
 
 	// 横向设置滑条（Basic.img/Slider 的 left/mid/right + thumbNormal）。
@@ -169,6 +177,11 @@ namespace ms
 			OPTIONOK
 		};
 
+		// 083 CUIGameOpt::OnCreate：勾选位图 12x12 落 x=128、y=33+18*i（步长 18）。
+		// 本端 130/34 是印刷行内 +2/+1px 的截图测量偏差：round71 v2 像素检测把运行时
+		// GameOpt/backgrnd 拆成 12 个独立洋红格（y32..47/50..65/…/230..245）与 11 个真实间隙，
+		// 083 y=33+18i 与当前端 y=34+18i 各精确落在第 0..11 格——同一批印刷行、视觉无感。
+		// 按「数值重合≠语义重合」不照抄 083 常量返工（GameOpt 已按 Angel 布局对齐）。
 		static constexpr int16_t CHECK_X = 130;
 		static constexpr int16_t CHECK_TOP = 34;
 		static constexpr int16_t CHECK_PITCH = 18;
@@ -274,6 +287,12 @@ namespace ms
 		// 6 条滑条的滑钮顶边行。原值 40/70/100/160/190/220 取自旧 365 布局（_settings_map2.txt，
 		// 原生逐格 SAD=0.00）；新 299x396 底图＝旧布局整体下移 +28px（10 行中心 40→68 … 310→338，
 		// 等距 30px），故统一 +28 对齐到新底图行中心 68/98/128/188/218/248。
+		// 083 CUISysOpt::OnCreate 的 6 条滑条原值 40/70/100/160/190/220（无 +28）。
+		// 本端 +28 与 CHECK_BOX/COMBO 的 +28/+30 来自「旧 299x365 底图 → 新 299x396 底图整体下移」
+		// 的截图推断；但 round71 运行时 open_merge 探针实测 SysOpt/backgrnd 是 299x396，
+		// 与旧 .nx 缓存的 299x365 是**两张完全不同的图**（逐像素 0/365 命中），不能用行偏移推算对齐。
+		// 浅色内容带 y27..307 对 083 与当前端两组 y 都 6/6 命中、无区分度 ⇒ 是否回退 083 常量
+		// 属决策点 D-B（待用户裁决 + 五屏实机截图），本轮不改任何行为字面量。
 		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 68, 98, 128, 188, 218, 248 };
 		// 5 个勾选框的画布落位（x, y）。y 随底图整体下移 +28 对齐（x 不变）。
 		static constexpr int16_t CHECK_BOX[5][2] = {
@@ -308,6 +327,9 @@ namespace ms
 			static_cast<int16_t>(RES_COMBO_Y - RES_COUNT * RES_COMBO_H);
 		// 底部两颗橙色钮（47x19）：插件 rs.cpp L3313 把 OK/Cancel 从 342 下移到 372，
 		// 给新增的「窗口大小」行腾出空间。
+		// 083 CUISysOpt::OnCreate OK/CANCEL 在 y=342（194,342）/(244,342)。
+		// 本端 372（OK_X=194/CANCEL_X=244）落在运行时 299x396 底板底部深色空白条
+		// （浅色占比 y370..395=0.00），为「窗口大小」行让位的本端扩展，见决策点 D-B。
 		static constexpr int16_t BTN_Y = 372;
 		static constexpr int16_t OK_X = 194;
 		static constexpr int16_t CANCEL_X = 244;
