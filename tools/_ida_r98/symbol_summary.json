@@ -1,0 +1,161 @@
+{
+ "skill_layout": {
+  "filter": "*CUISkill*",
+  "total": 10,
+  "names": [
+   "?CloseSkillGuide@CUISkill@@QAEXXZ",
+   "??0CUISkill@@QAE@HJ@Z",
+   "?OnCreate@CUISkill@@UAEXPAX@Z",
+   "?OnSkillLevelUpButton@CUISkill@@IAEXJ@Z",
+   "?ShiftMacroUIState@CUISkillEx@@QAEXXZ",
+   "?OnButtonClicked@CUISkillEx@@UAEXI@Z",
+   "?OnSkillLevelUpButton@CUISkillEx@@IAEXJ@Z",
+   "?GetSkillRootVisible@CUISkill@@IAEPBUSKILLROOT@@H@Z",
+   "?OpenCurSkillGuide@CUISkill@@QAEXXZ",
+   "?GetResult@CUISkillChangeConfirm@@QAEXAAJ0@Z"
+  ]
+ },
+ "skill_img_layout": {
+  "filter": "*SKILLROOT*",
+  "total": 2,
+  "names": [
+   "?GetSkillRootVisible@CSkillInfo@@QAEXJABVCharacterData@@AAUSKILLROOT@@@Z",
+   "?GetSkillRootVisible@CUISkill@@IAEPBUSKILLROOT@@H@Z"
+  ]
+ },
+ "wedding": {
+  "filter": "*Wedding*",
+  "total": 7,
+  "names": [
+   "??0CField_WeddingPhoto@@QAE@XZ",
+   "??0CField_Wedding@@QAE@XZ",
+   "?OnPacket@CField_Wedding@@UAEXJAAVCInPacket@@@Z",
+   "?OnWeddingProgress@CField_Wedding@@QAEXAAVCInPacket@@@Z",
+   "?OnWeddingCeremonyEnd@CField_Wedding@@QAEXAAVCInPacket@@@Z",
+   "?SetBlessEffect@CField_Wedding@@QAEXH@Z",
+   "?OnWeddingGiftResult@CWvsContext@@QAEXAAVCInPacket@@@Z"
+  ]
+ },
+ "dragon": {
+  "filter": "*CDragon*",
+  "total": 10,
+  "names": [
+   "?GetCurrentAction@CDragon@@QBEJPAJ@Z",
+   "?PrepareActionLayer@CDragon@@IAEXXZ",
+   "?SetFrameInfo@CDragon@@IAEXAAV?$ZList@V?$ZRef@USUMMONEDACTIONFRAMEENTRY@CActionMan@@@@@@PAU__POSITION@@@Z",
+   "?Update@CDragon@@UAEXXZ",
+   "?SetMoveAction@CDragon@@QAEXJH@Z",
+   "?ProcessAction@CDragon@@QAEXJ@Z",
+   "?UpdateQuestInfo@CDragon@@IAEXXZ",
+   "?NeedToTalk@CDragon@@QAEHJJ@Z",
+   "?CreateEffect@CDragon@@QAEXJ@Z",
+   "?SetOneTimeAction@CDragon@@QAEXJ@Z"
+  ]
+ },
+ "pet_decode": {
+  "filter": "*CPet*Decode*",
+  "total": 0,
+  "names": []
+ },
+ "pet": {
+  "filter": "*CPet@@*",
+  "total": 30,
+  "names": [
+   "?Init@CPet@@QAEXPAVCUser@@AAVCInPacket@@@Z",
+   "?SetShoeAttr@CPet@@QAEXXZ",
+   "?GetItemSlot@CPet@@QBEPAUGW_ItemSlotPet@@XZ",
+   "?GetLevel@CPet@@QBEJXZ",
+   "?SetMoveAction@CPet@@QAEXJH@Z",
+   "?GetBodyRect@CPet@@QBEXAAUtagRECT@@@Z",
+   "?PrepareActionLayer@CPet@@IAEXXZ",
+   "?Update@CPet@@UAEXXZ",
+   "?OnResolveMoveAction@CPet@@UAEJJJJPBVCVecCtrl@@@Z",
+   "?OnMove@CPet@@QAEXAAVCInPacket@@@Z",
+   "?OnAction@CPet@@QAEXAAVCInPacket@@@Z",
+   "?OnNameChanged@CPet@@QAEXAAVCInPacket@@@Z",
+   "?OnActionCommand@CPet@@QAEXAAVCInPacket@@@Z",
+   "?SetPositionContext@CPet@@QAEXJ@Z",
+   "?OnAvatarModified@CPet@@QAEXXZ",
+   "?OnValidateStat@CPet@@QAEXXZ",
+   "?ParseCommand@CPet@@QAEHV?$ZXString@D@@@Z",
+   "?ChatCommand@CPet@@QAEXABV?$ZXString@D@@@Z",
+   "?CursedChatCommand@CPet@@QAEXXZ",
+   "?DoAction@CPet@@AAEXJJVZtl_bstr_t@@HHH@Z"
+  ]
+ },
+ "login_selectchar": {
+  "filter": "*SelectCharacter*",
+  "total": 3,
+  "names": [
+   "?OnSelectCharacterByVACResult@CLogin@@IAEXAAVCInPacket@@@Z",
+   "?OnSelectCharacterResult@CLogin@@IAEXAAVCInPacket@@@Z",
+   "?SelectCharacter@CUIAvatar@@QAEXJ@Z"
+  ]
+ },
+ "login_charlist": {
+  "filter": "*CLogin*",
+  "total": 73,
+  "names": [
+   "??0CLogin@@QAE@XZ",
+   "?Init@CLogin@@UAEXPAX@Z",
+   "?Update@CLogin@@UAEXXZ",
+   "?OnMouseButton@CLogin@@UAEXIIJJ@Z",
+   "?ChangeStep@CLogin@@QAEXJ@Z",
+   "?OnStepChanged@CLogin@@QAEXXZ",
+   "?OnNewCharStep@CLogin@@QAEXH@Z",
+   "?OnSelectedCharChanged@CLogin@@QAEXJ@Z",
+   "?OnNewCharCanceled@CLogin@@QAEXXZ",
+   "?SendRequest@CLogin@@QAEXAAVCOutPacket@@@Z",
+   "?SendCheckPasswordPacket@CLogin@@QAEHPBD0@Z",
+   "?SendViewAllCharPacket@CLogin@@QAEHXZ",
+   "?SendSelectCharPacket@CLogin@@QAEXXZ",
+   "?SendSelectCharPacketByVAC@CLogin@@QAEXXZ",
+   "?SendDeleteCharPacket@CLogin@@QAEXXZ",
+   "?SendCheckDuplicateIDPacket@CLogin@@QAEXABV?$ZXString@D@@@Z",
+   "?SendCheckUserLimitPacket@CLogin@@QAEXJ@Z",
+   "?OnPacket@CLogin@@UAEXJAAVCInPacket@@@Z",
+   "?OnLatestConnectedWorld@CLogin@@IAEXAAVCInPacket@@@Z",
+   "?OnRecommendWorldMessage@CLogin@@IAEXAAVCInPacket@@@Z"
+  ]
+ },
+ "friendgroup": {
+  "filter": "*FriendGroup*",
+  "total": 3,
+  "names": [
+   "?LoadFriendGroup@CConfig@@QAEXXZ",
+   "?SetRet@CUIFriendGroup@@UAEXJ@Z",
+   "?OnOK@CUIFriendGroup@@IAEHXZ"
+  ]
+ },
+ "guildmark": {
+  "filter": "*GuildMark*",
+  "total": 1,
+  "names": [
+   "?SendSetGuildMarkMsg@CField@@QAEXGEGE@Z"
+  ]
+ },
+ "mapletv": {
+  "filter": "*MapleTV*",
+  "total": 6,
+  "names": [
+   "?IsLoadFlash@CMapleTVMan@@QAEHXZ",
+   "?SetMapleTVMessage@CNpc@@QAEXXZ",
+   "?DrawMapleTVMessage@CNpc@@QAEXXZ",
+   "?GetSenderName@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+   "?GetReceivername@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+   "?GetText@CUIMapleTV@@QAEXAAV?$ZXString@D@@00000@Z"
+  ]
+ },
+ "mapletv2": {
+  "filter": "*MapleTv*",
+  "total": 6,
+  "names": [
+   "?IsLoadFlash@CMapleTVMan@@QAEHXZ",
+   "?SetMapleTVMessage@CNpc@@QAEXXZ",
+   "?DrawMapleTVMessage@CNpc@@QAEXXZ",
+   "?GetSenderName@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+   "?GetReceivername@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+   "?GetText@CUIMapleTV@@QAEXAAV?$ZXString@D@@00000@Z"
+  ]
+ }
+}

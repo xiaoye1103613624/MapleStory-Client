@@ -1,0 +1,17 @@
+int __thiscall CField::SendSetGuildMarkMsg(CField *this, unsigned __int16 a2, char a3, unsigned __int16 a4, char a5)
+{
+  int v6; // [esp+0h] [ebp-1Ch] BYREF
+  _BYTE v7[12]; // [esp+4h] [ebp-18h] BYREF
+  int v8; // [esp+18h] [ebp-4h]
+
+  COutPacket::COutPacket(a1: 126); /*0x530f41*/
+  v8 = 0; /*0x530f46*/
+  COutPacket::Encode1(this: &v6, a2: 15); /*0x530f4f*/
+  COutPacket::Encode2(this: &v6, a2); /*0x530f5a*/
+  COutPacket::Encode1(this: &v6, a2: a3); /*0x530f65*/
+  COutPacket::Encode2(this: &v6, a2: a4); /*0x530f70*/
+  COutPacket::Encode1(this: &v6, a2: a5); /*0x530f7b*/
+  CClientSocket::SendPacket(this: dword_BE7914, a2: &v6); /*0x530f8a*/
+  v8 = -1; /*0x530f8f*/
+  return ZArray<unsigned char>::RemoveAll(a1: v7); /*0x530f9b*/
+}

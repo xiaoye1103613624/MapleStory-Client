@@ -172,6 +172,7 @@
 | **2-43** | round95 · `login-flow/D3` 命名纠偏（骑士团→Evan/龙神）+ `parse_stats` SP 表分支 + DECISIONS 11 处措辞消债 + P3 16 条转按 083 重做（A/B/C 分批 Plan） | `20f41436`… | `round95` |
 | **2-44** | round96 · P3 A 批前 3 条：`login-flow/D12` 逐字节文档（`DOC_ONLY` 完成）+ `skill/D11` 三钮定性「非 083」+ `corewindow/D10` 083 硬编码 666×524 坐实（纯注释，零行为） | — | `round96` |
 | **2-45** | round97 · P3 A 批余 6 条：`map/D1` 89 键差分 + `map/D8` 32B 快捷栏 + `cashshop/D2` 七子窗 + `map/D4` 侧栏 + `statusbar-hud/D1` 45 方法簇 + `social-economy/D3` 联盟双入口 —— **六条全 DOC_ONLY**（零源码改动） | — | `round97` |
+| **2-46** | round98 · P3 B 批 5 条（`skill/D9` / `social-economy/D12` / `pet-summon/D2` / `login-flow/D13` / `social-economy/D9`） | 083 三向对拍：D9 双布局=资源降级非缺陷、D12 实为 27 键且 083 仅 4 组 SP_、D2 截断在本端 int32（wire 8B 同宽，发包 int32 不动）、D13 15 槽是尾部 int32 容量非定长、D9 三族三分（不发明/登记/已对齐）；**零 wire / 零协议 / 零 WZ / 零源码行为改动**，算术 168 与 17 条分流全不动 | — | `round98` |
 
 ### Wave 3 · L-B 待裁决 / 双端立项（**本计划不自动开工**，见 §3）
 

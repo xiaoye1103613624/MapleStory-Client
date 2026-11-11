@@ -1254,3 +1254,16 @@
   （`git status` 均为 `M`/`??` 的外部改动，且这些文件里不含本轮任何标记串）。
   `EXITCODE=1`。round96 真重编（19:22）时这些文件尚未坏，坏点来自此后外部推进，
   与本轮交付无关；待外部 WIP 修好后需重跑一次门禁回归确认基线回绿。
+## 57. round98 · P3 B 批 5 条（三分 / DOC_ONLY / 本地类型扩展，零源码改动）
+
+57-1 `skill/D9` 双布局 **不是缺陷**：083 `CUISkill::OnCreate @0x8aaa88` 单一布局（4 钮 2010..2013 @y131 x=119/159/199/239 + 宏钮 2023 @(120,265)）；`UIWindow.img/Skill` 11 直接子节点无 `main` → 本端 `classic = !usable(Skill["main"])` 恒 true。真机观感项：技能窗在 083 资源下应与原生截图逐像素一致，请顺手比对一次四颗加点钮 x 间距 40px。
+
+57-2 `social-economy/D12` wedding 键：`locale/zh-CN.ini:302-321` 与 `en-US.ini` 各 **27 键**且 zh-CN 值是英文。083 侧仅 4 组 SP_（`SP_4202`/`SP_4203`/`SP_4204`/`SP_1666`）。真机项：婚礼流程里「教堂 BGM 名 / 祝福确认问句」两处若能对上 083 原文，可作为后续 P2 换键的锚点。
+
+57-3 `pet-summon/D2` 8B uid：发包侧 `MovePetPacket`/`PetCommandPacket` 用 int32 与 s9 `MovePetHandler.readInt` 一致（**不动**）；截断在 `PetLook.uniqueid` / `add_pet` / `MapObjectHandlers.cpp:526` 三处 int32。真机项：同屏两只宠物时 `UIMiscShells.cpp:1864` 的 `look.get_uniqueid() == uid32` 比较是否会把不同宠物认成同一只（uid 高位相同才撞）。
+
+57-4 `login-flow/D13` CHARLIST 槽数：s9 尾部 int32 = `getCharacterSlots()`（账号容量），两端均按 `charcount`/`chars.size()` 循环。真机项：角色数满时选角页空槽位显示是否正确（`UICharSelect.cpp` 单槽几何 `CS_SLOT_W 183 / CS_SLOT_H_EMPTY 115 / CS_SLOT_H_OCCUPIED 151`）。
+
+57-5 `social-economy/D9` 三族：`FriendGroup` 维持不做；**`guildmark` 有新发现**——083 有 `CField::SendSetGuildMarkMsg @0x530f2f`（`126/15` + 7B 定长）与本端**无出站封装**，IMG 真节点在 `UserList/Guild/GuildInfo/guildmark`；`MapleTV` 壳层已对齐（`UIMapleTV.h` 类在），播放栈属 F 维。真机项：公会窗里改徽章若无反应，即此缺出站包所致（登记，不在本轮实施）。
+
+57-6 本轮 **0 wire / 0 协议 / 0 WZ / 0 源码行为改动**；算术 168 与 reopen 17 条分流全不动；构建门禁只做回归，**不声称真重编覆盖**。

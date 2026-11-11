@@ -1,0 +1,201 @@
+{
+  "round": 98,
+  "batch": "P3-B",
+  "date": "2026-11-11",
+  "trigger": "user: 接着推 B 批",
+  "items": {
+    "skill/D9": {
+      "verdict": "KEEP",
+      "issue": "classic 双布局是否收敛为原生单布局",
+      "ida_083": {
+        "CUISkill::OnCreate": "0x8aaa88 size 0x82d",
+        "buttons": "4x (2010..2013) @y131 x=119/159/199/239; macro 2023 @(120,265)",
+        "note": "全程单一布局，无 classic/modern 分支"
+      },
+      "img_gate": {
+        "root": "UIWindow.img/Skill",
+        "children": [
+          "backgrnd",
+          "skill0",
+          "skill1",
+          "line",
+          "BtSpUp",
+          "Tab",
+          "tip0",
+          "tip1",
+          "tip2",
+          "CoolTime",
+          "recommend"
+        ],
+        "children_count": 11,
+        "has_main": false
+      },
+      "client": {
+        "file": "IO/UITypes/UISkillBook.cpp",
+        "line": 154,
+        "code": "classic = !UiAssetResolve::usable(Skill[\"main\"]);",
+        "effect": "083 资源下 classic 恒 true → 走 083 经典路径"
+      },
+      "s9": "DistributeSPHandler 上界与布局无关",
+      "decisions": "DECISIONS.md:195 BATCH_1_KEEP",
+      "action": "零改动，只出对照"
+    },
+    "social-economy/D12": {
+      "verdict": "P2",
+      "issue": "wedding.* 键值是否译",
+      "key_count_actual": 27,
+      "key_count_plan": 26,
+      "locale_files": [
+        "locale/zh-CN.ini:302-321",
+        "locale/en-US.ini"
+      ],
+      "zh_cn_values_are_english": true,
+      "ida_083": {
+        "CField_Wedding::OnWeddingProgress": "0x58153d size 0x60c",
+        "sp_strings": [
+          "SP_4202_SOUND_BGMGLIMG_CHAPEL @0x58166d",
+          "SP_4203_SOUND_BGMGLIMG_CATHEDRAL @0x5816af",
+          "SP_4204_DO_YOU_WANT_TO_BLESS_THIS_COUPLE @0x581785",
+          "SP_1666_STRING_NPCIMG @0x581882"
+        ],
+        "note": "仅 4 组 SP_，非 27 键逐键对应"
+      },
+      "decisions": "DECISIONS.md:122 BATCH_1_KEEP（决策 B）",
+      "action": "登记 P2，本轮不出键值"
+    },
+    "pet-summon/D2": {
+      "verdict": "LOCAL_TYPE",
+      "issue": "两处字节丢弃",
+      "ida_083": {
+        "CPet::Init": "0x703314 size 0x3a8",
+        "uid_read": "CInPacket::DecodeBuffer(this+160, 8u)",
+        "note": "083 无 nameTag/chatBalloon 两 bool（s9 扩展）"
+      },
+      "s9": {
+        "addPetInfo": "PacketCreator.java:4570-4584 writeLong(uniqueId) + writeBool x2",
+        "MovePetHandler": "readInt petId + readLong"
+      },
+      "client_truncation_points": [
+        "Net/Handlers/MapObjectHandlers.cpp:521 read_long() 读对",
+        "Net/Handlers/MapObjectHandlers.cpp:526 static_cast<int32_t>(uniqueid) 截断",
+        "Character/Char.h:116 add_pet(..., int32_t uniqueid, ...) 截断",
+        "Character/Look/PetLook.h:72 int32_t uniqueid; 截断"
+      ],
+      "client_int64_already": "Character/Inventory/Pet.h:31 int64_t get_uniqueid()",
+      "wire_unchanged": [
+        "Net/Packets/PetPackets.h:58-69 MovePetPacket write_int（与 s9 readInt 一致）",
+        "Net/Packets/PetPackets.h:89-100 PetCommandPacket write_int"
+      ],
+      "void_discards_keep": [
+        "MapObjectHandlers.cpp:520-523 nameTag/balloon（083 无此字段）",
+        "MapObjectHandlers.cpp:1414-1417 summon stance/movetype/attacking（083 无 Decode）"
+      ],
+      "decisions": "DECISIONS.md:131 BATCH_0_BASELINE",
+      "action": "登记本地类型扩展清单，本轮零改动"
+    },
+    "login-flow/D13": {
+      "verdict": "DOC_ONLY",
+      "issue": "CHARLIST 固定 15 槽",
+      "s9": "PacketCreator.java:935 getCharList 按 chars.size() 循环，槽数=尾部 int32 getCharacterSlots()",
+      "ida_083": {
+        "CLogin::SendSelectCharPacket": "0x5f726d size 0x424",
+        "opcodes": "19 / 29 / 30 三形态，与容量无关"
+      },
+      "client": {
+        "file": "Net/Handlers/LoginHandlers.cpp:290-330",
+        "pattern": "read_byte charcount → for i<charcount parse_charentry → read_byte pic → read_int slots",
+        "no_15_slot_const": "IO/UITypes/UICharSelect.cpp 无 15 槽常量"
+      },
+      "decisions": "DECISIONS.md:66 BATCH_0_BASELINE",
+      "action": "只出对照，零改动"
+    },
+    "social-economy/D9": {
+      "verdict": "THREE_WAY",
+      "issue": "UIFriendGroup / 公会徽章编辑 / MapleTV 三整族",
+      "friendgroup": {
+        "symbols": [
+          "LoadFriendGroup@CConfig 0x49e6fb",
+          "SetRet@CUIFriendGroup 0x80f0eb",
+          "OnOK@CUIFriendGroup 0x80f93e"
+        ],
+        "onok_decompiled_no_coutpacket": true,
+        "img_gate": "search FriendGroup → matches: []",
+        "client": "无 UIFriendGroup 类；仅 UIUserList.cpp:1305 friend4 281x27 横条",
+        "verdict": "不发明"
+      },
+      "guildmark": {
+        "symbols": [
+          "SendSetGuildMarkMsg@CField 0x530f2f size 0x7a"
+        ],
+        "packet_shape": "COutPacket(126) + Encode1(15) + Encode2 + Encode1 + Encode2 + Encode1 = 7B",
+        "img_gate": "UserList/Guild/GuildInfo/guildmark CANVAS_PROPERTY",
+        "client": "WaveAShellHandlers.h:941/:947 仅声明；GuildPackets.h 无出站封装",
+        "verdict": "登记（有节点无发包）"
+      },
+      "mapletv": {
+        "symbols": [
+          "IsLoadFlash@CMapleTVMan 0x63764c",
+          "SetMapleTVMessage@CNpc 0x6d417e",
+          "DrawMapleTVMessage@CNpc 0x6d4ad4",
+          "GetSenderName@CMapleTVMan 0x6d5811",
+          "GetReceivername@CMapleTVMan 0x6d5835",
+          "GetText@CUIMapleTV 0x7f0dc9"
+        ],
+        "img_gate": "MapleTV LIST_PROPERTY（UIWindow.img 顶层）；Data/UI/MapleTV.img 存在",
+        "client": "IO/UITypes/UIMapleTV.h 类已实现（BtOk/BtCancel/has_assets）",
+        "verdict": "壳层已对齐（播放栈属 F 维）"
+      },
+      "decisions": "DECISIONS.md:119 BATCH_1_KEEP",
+      "action": "只出族级对照"
+    }
+  },
+  "arithmetic_unchanged": {
+    "classification_168": "76 + 38 + 14 + 40 = 168",
+    "wle_tracks": "W38 + L130 = 168",
+    "reopen": "27 = 已注销 10 + 残余 17",
+    "residual": "17 = P1 0 + P2 1 + P3 16",
+    "note": "本轮 5 条全在 16 条 P3 内，不新增分母、不注销"
+  },
+  "zero_change": {
+    "wire": 0,
+    "protocol": 0,
+    "wz": 0,
+    "source_behavior": 0,
+    "note": "5 条全部 DOC_ONLY / KEEP / LOCAL_TYPE 登记，零源码行为改动"
+  },
+  "build_gate_regression": {
+    "real_rebuild_claimed": false,
+    "reason": "本轮零源码改动，只做门禁回归；不声称真重编覆盖"
+  },
+  "ida_evidence_files": [
+    "tools/_ida_r98/CField_SendSetGuildMarkMsg.code.txt",
+    "tools/_ida_r98/CField_Wedding_OnWeddingProgress.code.txt",
+    "tools/_ida_r98/CLogin_SendSelectCharPacket.code.txt",
+    "tools/_ida_r98/CPet_Init.code.txt",
+    "tools/_ida_r98/CUIFriendGroup_OnOK.code.txt",
+    "tools/_ida_r98/CUIMapleTV_GetText.code.txt",
+    "tools/_ida_r98/CUISkill_OnCreate.code.txt",
+    "tools/_ida_r98/img_gate.json",
+    "tools/_ida_r98/q_dragon.json",
+    "tools/_ida_r98/q_friendgroup.json",
+    "tools/_ida_r98/q_guildmark.json",
+    "tools/_ida_r98/q_login_charlist.json",
+    "tools/_ida_r98/q_login_selectchar.json",
+    "tools/_ida_r98/q_mapletv.json",
+    "tools/_ida_r98/q_mapletv2.json",
+    "tools/_ida_r98/q_pet.json",
+    "tools/_ida_r98/q_pet_decode.json",
+    "tools/_ida_r98/q_skill_img_layout.json",
+    "tools/_ida_r98/q_skill_layout.json",
+    "tools/_ida_r98/q_wedding.json",
+    "tools/_ida_r98/symbol_summary.json"
+  ],
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先（W 桶 6 字段 + 27 wire KEEP 零改动）",
+    "数值重合 ≠ 语义重合",
+    "校准 ≠ 改回原生（L 桶按 083 还原）",
+    "orange-wz 128B key + MCP-Protocol-Version 头 + loadedCount 判成功",
+    "门禁 5 禁想象修改 / 门禁 18 REA→IDA→orange-wz→.nx 只读取证"
+  ]
+}

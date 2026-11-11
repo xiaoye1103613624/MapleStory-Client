@@ -1,0 +1,170 @@
+void __thiscall CPet::Init(CPet *this, struct CUser *a2, VARIANTARG **a3)
+{
+  CInPacket *v3; // ebx
+  struct CInPacket *v5; // ecx
+  unsigned int v6; // eax
+  int v7; // eax
+  int v8; // eax
+  int ItemSlot; // eax
+  int v10; // edi
+  _DWORD *v11; // eax
+  __int16 v12; // ax
+  VARIANTARG *Foothold; // ebx
+  _DWORD *VecCtrl; // eax
+  int v15; // edi
+  struct CUser *Instance; // eax
+  int v17; // ecx
+  int *v18; // ecx
+  int *v19; // edx
+  int v20; // eax
+  int v21; // eax
+  int v22; // eax
+  int **v23; // eax
+  int v24; // eax
+  int v25; // eax
+  unsigned __int8 v26; // al
+  unsigned int v27; // eax
+  struct CInPacket *v28; // ecx
+  unsigned __int8 v29; // al
+  unsigned int v30; // eax
+  DWORD Time; // eax
+  VARIANTARG *v32; // ecx
+  int v33; // eax
+  int v34; // ecx
+  char *v35; // eax
+  unsigned int v36; // eax
+  int v37; // [esp-20h] [ebp-64h] BYREF
+  VARIANTARG *v38; // [esp-1Ch] [ebp-60h] BYREF
+  int v39; // [esp-18h] [ebp-5Ch]
+  int v40; // [esp-14h] [ebp-58h]
+  int v41; // [esp-10h] [ebp-54h]
+  int v42; // [esp-Ch] [ebp-50h]
+  int v43; // [esp-8h] [ebp-4Ch]
+  VARIANTARG *v44; // [esp-4h] [ebp-48h]
+  VARIANTARG pvargDest; // [esp+Ch] [ebp-38h] BYREF
+  VARIANTARG pvarg; // [esp+1Ch] [ebp-28h] BYREF
+  int *v47; // [esp+2Ch] [ebp-18h] BYREF
+  int *v48; // [esp+30h] [ebp-14h]
+  int v49; // [esp+34h] [ebp-10h] BYREF
+  int v50; // [esp+40h] [ebp-4h]
+
+  v48 = 0; /*0x703324*/
+  v3 = a3; /*0x703329*/
+  v5 = a3; /*0x703330*/
+  *(this + 37) = a2; /*0x703332*/
+  v6 = CInPacket::Decode4(this: v5); /*0x703338*/
+  *(this + 34) = CPetTemplate::GetPetTemplate(a1: v6); /*0x703344*/
+  v7 = CInPacket::DecodeStr(a1: &v49); /*0x703350*/
+  v50 = 0; /*0x703355*/
+  ZXString<char>::operator=(a1: v7); /*0x703362*/
+  v50 = -1; /*0x70336a*/
+  if ( v49 != 0 ) /*0x703370*/
+    ZXString<char>::_Release(lpAddend: (v49 - 12)); /*0x703376*/
+  v8 = sub_7078AF(a1: &v49, a2: dword_AFD5EC, a3: asc_AF1E78); /*0x70338c*/
+  v50 = 1; /*0x703394*/
+  ZXString<char>::operator=(a1: v8); /*0x70339b*/
+  v50 = -1; /*0x7033a3*/
+  if ( v49 != 0 ) /*0x7033a9*/
+    ZXString<char>::_Release(lpAddend: (v49 - 12)); /*0x7033af*/
+  CInPacket::DecodeBuffer(a1: this + 160, a2: 8u); /*0x7033c0*/
+  ItemSlot = CPet::GetItemSlot(this); /*0x7033c7*/
+  v10 = ItemSlot; /*0x7033cc*/
+  if ( ItemSlot != 0 ) /*0x7033d0*/
+  {
+    *(this + 42) = _ZtlSecureFuse<short>(a1: ItemSlot + 59, a2: *(ItemSlot + 63)); /*0x7033e1*/
+    *(this + 43) = _ZtlSecureFuse<unsigned char>(a1: v10 + 67, a2: *(v10 + 69)); /*0x7033f6*/
+    *(this + 44) = _ZtlSecureFuse<short>(a1: v10 + 73, a2: *(v10 + 77)); /*0x70340b*/
+    v11 = *(this + 34); /*0x703411*/
+    if ( v11 != 0 ) /*0x70341c*/
+      TSecType<long>::SetData(a1: *v11); /*0x703424*/
+  }
+  CPet::SetShoeAttr(this); /*0x70342b*/
+  *(this + 110) = CInPacket::Decode2(this: v3); /*0x70343c*/
+  *(this + 111) = CInPacket::Decode2(this: v3); /*0x70344a*/
+  *(this + 108) = *(this + 110); /*0x703456*/
+  *(this + 109) = *(this + 111); /*0x703464*/
+  *(this + 60) = CInPacket::Decode1(this: v3); /*0x703472*/
+  v12 = CInPacket::Decode2(this: v3); /*0x703480*/
+  Foothold = CWvsPhysicalSpace2D::GetFoothold(dwSN: v12); /*0x703496*/
+  VecCtrl = CUser::GetVecCtrl(this: *(this + 37), a2: &v49); /*0x70349c*/
+  v15 = *VecCtrl != 0 ? *VecCtrl - 12 : 0;
+  sub_41569E(a1: &v49); /*0x7034af*/
+  Instance = CVecCtrlPet::CreateInstance(); /*0x7034b4*/
+  v17 = *(this + 34); /*0x7034b9*/
+  a2 = Instance; /*0x7034bf*/
+  CVecCtrlPet::Init(this: Instance, a2: this != 0 ? (this + 4) : 0, a3: *(v17 + 8));
+  v18 = *(this + 37); /*0x7034db*/
+  v19 = *a2; /*0x7034e1*/
+  v20 = *v18; /*0x7034e3*/
+  v44 = Foothold; /*0x7034e5*/
+  v43 = *(this + 60); /*0x7034e6*/
+  v48 = v19; /*0x7034ec*/
+  v21 = (*(v20 + 12))(a1: v18, a2: *(this + 108), a3: *(this + 109), a4: 0, a5: 0, a6: v43, a7: Foothold); /*0x7034ff*/
+  (v48[1])(a1: a2, a2: v21); /*0x703509*/
+  *(this + 60) = *(a2 + 82); /*0x703515*/
+  v22 = sub_7090DC(a1: &a2); /*0x703525*/
+  if ( v22 < 0 && v22 != -2147467262 ) /*0x703535*/
+    _com_issue_error(a1: v22); /*0x703538*/
+  v44 = &pvargSrc; /*0x70353d*/
+  *(this + 54) = 0; /*0x703545*/
+  sub_402F85(&pvargDest, pvargSrc: v44); /*0x70354b*/
+  v50 = 2; /*0x703556*/
+  sub_402FAB(a1: 0, a2: 3); /*0x70355d*/
+  LOBYTE(v50) = 3; /*0x703568*/
+  if ( dword_BF14EC == 0 ) /*0x70356c*/
+    _com_issue_error(a1: -2147467261); /*0x703573*/
+  v23 = IWzGr2D::CreateLayer( /*0x70358f*/
+          this: dword_BF14EC,
+          a2: &v47,
+          nLeft: 0,
+          nTop: 0,
+          uWidth: 0,
+          uHeight: 0,
+          z: 0,
+          vCanvas: &pvarg,
+          dwFilter: &pvargDest);
+  sub_428712(a1: *v23); /*0x70359c*/
+  if ( v47 != 0 ) /*0x7035a6*/
+    (*(*v47 + 8))(a1: v47); /*0x7035ab*/
+  LOBYTE(v50) = 2; /*0x7035b2*/
+  v24 = ZComAPI::ZComVariantCopy(&pvarg); /*0x7035b6*/
+  if ( v24 < 0 ) /*0x7035be*/
+    _com_issue_error(a1: v24); /*0x7035c1*/
+  v50 = -1; /*0x7035c6*/
+  v25 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x7035ce*/
+  if ( v25 < 0 ) /*0x7035d6*/
+    _com_issue_error(a1: v25); /*0x7035d9*/
+  v26 = CInPacket::Decode1(this: a3); /*0x7035e1*/
+  v27 = _ZtlSecureTear<int>(t: v26, at: this + 98); /*0x7035f0*/
+  v28 = a3; /*0x7035f5*/
+  *(this + 100) = v27; /*0x7035f8*/
+  v29 = CInPacket::Decode1(this: v28); /*0x7035fe*/
+  v30 = _ZtlSecureTear<int>(t: v29, at: this + 101); /*0x70360d*/
+  v44 = *(this + 100); /*0x703612*/
+  *(this + 103) = v30; /*0x703618*/
+  v43 = this + 392; /*0x703624*/
+  Time = timeGetTime(); /*0x703625*/
+  v32 = v44; /*0x70362d*/
+  if ( Time != 0 ) /*0x70362e*/
+    v33 = *(*(this + 34) + 16); /*0x703636*/
+  else
+    v33 = 0; /*0x70363b*/
+  v44 = 0; /*0x70363d*/
+  v43 = 0; /*0x70363e*/
+  v42 = 0; /*0x70363f*/
+  v41 = 0; /*0x703640*/
+  v40 = v33; /*0x703641*/
+  v39 = 1003; /*0x703642*/
+  v38 = v32; /*0x703647*/
+  a3 = &v38; /*0x70364d*/
+  sub_707994(a1: &a2); /*0x703651*/
+  v37 = v34; /*0x703656*/
+  v48 = &v37; /*0x70365f*/
+  sub_4145AB(a1: this + 292); /*0x703663*/
+  v50 = -1; /*0x703668*/
+  v35 = sub_428226(a1: this + 152); /*0x703672*/
+  CLife::MakeNameTag(this, a2: v35, a3: v37, a4: v38, a5: v39, a6: v40, a7: v41, a8: v42, a9: v43, i: v44); /*0x70367a*/
+  v36 = _ZtlSecureFuse<CLadderOrRope *>(a1: (v15 + 292), a2: *(v15 + 300)); /*0x70368c*/
+  sub_705884(this, a2: v36 != 0, a3: 1); /*0x70369f*/
+  CPet::PrepareActionLayer(this); /*0x7036a6*/
+}

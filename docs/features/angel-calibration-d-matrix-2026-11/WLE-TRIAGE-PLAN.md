@@ -346,3 +346,16 @@ s9 写方 / 当前端读方 / 083 `Decode` 三维对照。结论：逐字段宽�
   `login-flow/D13`、`social-economy/D9`）与 C 批 2 条（`corewindow/D2`、`quest/D5`）待续。
 - 算术不动：`168 = 76+38+14+40` / `reopen 27 = 已注销 10 + 残余 17` /
   `残余 17 = P1 0 + P2 1 + P3 16` 三条守恒式本轮全部未触及。
+## 15. round98 · P3 B 批 5 条（三分 / DOC_ONLY / 本地类型扩展）
+
+对 `skill/D9` / `social-economy/D12` / `pet-summon/D2` / `login-flow/D13` / `social-economy/D9` 做 083 符号+反编译、s9 对端、当前端字面量、DECISIONS 四项对拍，结论逐条：
+
+- **`skill/D9` = KEEP**：083 `CUISkill::OnCreate @0x8aaa88` 全程单一布局（4 钮 2010..2013@y131 + 2023@(120,265)），`UIWindow.img/Skill` 11 直接子节点**无 `main`** → 本端 `classic` 恒 true，走的就是 083 经典路径。双布局是资源可用性降级（E13 环境适配），非缺陷。
+- **`social-economy/D12` = P2**：`wedding.*` 实为 **27 键**（非 26），zh-CN 值也是英文；083 `CField_Wedding::OnWeddingProgress @0x58153d` 只有 4 组 SP_（`SP_4202/4203/4204` 教堂/大教堂/祝福问句 + `SP_1666` NPC 图），**非逐键对应** → 要换须先逐键对照 `String.img`，本轮不出键值。
+- **`pet-summon/D2` = LOCAL_TYPE**：083 `CPet::Init @0x703314` 用 `DecodeBuffer(this+160, 8u)` 吃 8B uid，s9 `addPetInfo` 用 `writeLong` —— **wire 宽度相同无分叉**；丢的是本端 `PetLook.uniqueid` / `add_pet` / `:526` cast 三处 int32 收窄，而背包侧 `Character/Inventory/Pet.h:31` 已是 `int64_t`。发包 `MovePetPacket`/`PetCommandPacket` 用 int32 与 s9 `MovePetHandler.readInt` 一致，**绝不能改**。另两处 `(void)` 丢弃对应 083 根本不存在的 s9 扩展字段（nameTag/balloon、summon stance/movetype/attacking），按 m09729「扩展功能可以不对齐」保持。
+- **`login-flow/D13` = DOC_ONLY**：s9 `getCharList` 按 `chars.size()` 循环、槽数只是尾部 int32（`getCharacterSlots`）；083 `SendSelectCharPacket @0x5f726d` 只有 19/29/30 三形态与容量无关；本端 `LoginHandlers.cpp:290-330` 按 `charcount` 循环且 `UICharSelect.cpp` 无 15 槽常量 → 「15 槽」是账号容量展示值，不是包体定长，无需改。
+- **`social-economy/D9` = 三分**：`FriendGroup`（083 仅 3 符号、`OnOK` 90 行无 `COutPacket`、IMG `matches: []`）→ **维持不做**；`guildmark`（`SendSetGuildMarkMsg @0x530f2f` 17 行 = `126/15` + 7B 定长、IMG 真节点 `UserList/Guild/GuildInfo/guildmark`、本端**无出站封装**）→ 从「不做」改判「有节点无发包」登记 P3；`MapleTV`（`UIMapleTV.h` 类已实现、IMG 顶层 `MapleTV` LIST、`Data/UI/MapleTV.img` 在）→ 从「整族缺失」改判「壳层已对齐」，播放栈属 F 维。
+
+**算术不动**：168 / 38+130 / reopen 27 = 10+17 / 17 = P1 0 + P2 1 + P3 16 全部零改；本轮只补判定层与事实层。
+
+**零改动**：0 wire / 0 协议 / 0 WZ / 0 源码行为改动。

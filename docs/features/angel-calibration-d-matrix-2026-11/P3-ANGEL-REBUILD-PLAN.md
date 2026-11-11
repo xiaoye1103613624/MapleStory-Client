@@ -83,3 +83,12 @@ reopen 27 = 已注销 10 + 残余 17 照旧；残余 17 = P1 0 + P2 1 + P3 16 �
 | `social-economy/D3` | 保持现状：083 `CUIAlliance` 0 符号，入口是共用窗按钮 | 同上 §6 |
 
 六条均**零 wire / 零行为改动**；A 批 9 条（前 3 + 余 6）完成，B/C 批 7 条待续。
+## 8. round98 B 批回执
+
+| # | 决策点 | 判定 | 备注 |
+| --- | --- | --- | --- |
+| 10 | `skill/D9` | `KEEP` | 083 单一布局，`Skill` 无 `main`，classic 恒 true = 083 路径；E13 环境适配 |
+| 11 | `social-economy/D12` | `P2` | 27 键（非 26），083 可换 4 组 SP_；须逐键对照 `String.img`，本轮不出键值 |
+| 12 | `pet-summon/D2` | `LOCAL_TYPE` | wire 同宽（8B）；截断在本端 int32 三处；发包 int32 不动 |
+| 13 | `login-flow/D13` | `DOC_ONLY` | 槽数=尾部 int32 容量值，两端均按 charcount 循环 |
+| 14 | `social-economy/D9` | `三分` | FriendGroup 不做 / guildmark 登记 / MapleTV 壳已对齐 |

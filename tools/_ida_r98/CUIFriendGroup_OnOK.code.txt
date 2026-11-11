@@ -1,0 +1,90 @@
+int __thiscall CUIFriendGroup::OnOK(char **this)
+{
+  int v2; // ecx
+  int v3; // ebx
+  int v4; // edx
+  char *v5; // eax
+  int v6; // ecx
+  unsigned int i; // esi
+  int v8; // ecx
+  int v10; // [esp-14h] [ebp-34h] BYREF
+  wchar_t *v11; // [esp-10h] [ebp-30h]
+  int v12; // [esp-Ch] [ebp-2Ch]
+  int v13; // [esp-8h] [ebp-28h]
+  int v14; // [esp-4h] [ebp-24h]
+  int *v15; // [esp+8h] [ebp-18h]
+  int *v16; // [esp+Ch] [ebp-14h] BYREF
+  _BYTE *v17; // [esp+10h] [ebp-10h] BYREF
+  int v18; // [esp+1Ch] [ebp-4h]
+
+  CCtrlEdit::GetText(this: *(this + 32), a2: &v17); /*0x80f959*/
+  v3 = 0; /*0x80f961*/
+  v18 = 0; /*0x80f965*/
+  if ( v17 != 0 && *v17 != 0 ) /*0x80f96c*/
+  {
+    v4 = 0; /*0x80f991*/
+    v5 = (this + 43); /*0x80f993*/
+    while ( 1 ) /*0x80f999*/
+    {
+      v6 = *v5; /*0x80f999*/
+      if ( *(*v5 + 72) != 0 ) /*0x80f99e*/
+        break; /*0x80f99e*/
+      ++v4; /*0x80f9a0*/
+      v5 += 8; /*0x80f9a1*/
+      if ( v4 >= 7 ) /*0x80f9a7*/
+      {
+        v14 = 0; /*0x80f9a9*/
+        v13 = 0; /*0x80f9aa*/
+        v12 = 0; /*0x80f9ab*/
+        v11 = 0; /*0x80f9ac*/
+        v10 = v6; /*0x80f9ad*/
+        v16 = &v10; /*0x80f9b0*/
+        ZXString<char>::ZXString<char>(this: &v10, a2: aYouHaveNotSele, a3: 0xFFFFFFFF); /*0x80f9ba*/
+        goto LABEL_4; /*0x80f9ba*/
+      }
+    }
+    if ( *(this + 60) != 0 || ZXString<char>::operator==(a1: &v17) == 0 ) /*0x80f9d5*/
+    {
+      v16 = 0; /*0x80f9d7*/
+      LOBYTE(v18) = 1; /*0x80f9e4*/
+      sub_A3FC85(a1: &v16); /*0x80f9e8*/
+      for ( i = 0; v16 != 0 && i < *(v16 - 1); ++i ) /*0x80f9ed*/
+      {
+        if ( ZXString<char>::operator==(a1: &v17) != 0 ) /*0x80fa09*/
+        {
+          v14 = 0; /*0x80fa0e*/
+          v13 = 0; /*0x80fa0f*/
+          v12 = 0; /*0x80fa10*/
+          v11 = 0; /*0x80fa11*/
+          v10 = v8; /*0x80fa12*/
+          v15 = &v10; /*0x80fa15*/
+          ZXString<char>::ZXString<char>(this: &v10, a2: aThisNameAlread, a3: 0xFFFFFFFF); /*0x80fa1f*/
+          CUtilDlg::Notice(sMsg: v10, sSndName: v11, ppDialog: v12, bAutoSeparated: v13, bIsTightLine: v14); /*0x80fa24*/
+          LOBYTE(v18) = 0; /*0x80fa2f*/
+          ZArray<ZXString<char>>::RemoveAll(a1: &v16); /*0x80fa32*/
+          v18 = -1; /*0x80fa37*/
+          ZXString<char>::_Release(a1: &v17); /*0x80fa3e*/
+          return 0; /*0x80fa45*/
+        }
+      }
+      LOBYTE(v18) = 0; /*0x80fa4a*/
+      ZArray<ZXString<char>>::RemoveAll(a1: &v16); /*0x80fa4d*/
+    }
+    v3 = 1; /*0x80fa54*/
+  }
+  else
+  {
+    v14 = 0; /*0x80f96e*/
+    v13 = 0; /*0x80f96f*/
+    v12 = 0; /*0x80f970*/
+    v11 = 0; /*0x80f971*/
+    v10 = v2; /*0x80f972*/
+    v16 = &v10; /*0x80f975*/
+    ZXString<char>::ZXString<char>(this: &v10, a2: aPleaseEnterThe_0, a3: 0xFFFFFFFF); /*0x80f97f*/
+LABEL_4:
+    CUtilDlg::Notice(sMsg: v10, sSndName: v11, ppDialog: v12, bAutoSeparated: v13, bIsTightLine: v14); /*0x80f984*/
+  }
+  v18 = -1; /*0x80fa55*/
+  ZXString<char>::_Release(a1: &v17); /*0x80fa5c*/
+  return v3; /*0x80fa63*/
+}

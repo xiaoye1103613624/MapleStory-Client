@@ -1,0 +1,316 @@
+int __thiscall CField_Wedding::OnWeddingProgress(CField_Wedding *this, VARIANTARG **a2)
+{
+  char *v3; // edi
+  int result; // eax
+  int v5; // ebx
+  int v6; // eax
+  struct CInPacket *v7; // ecx
+  int v8; // eax
+  _DWORD *Instance; // eax
+  wchar_t *v10; // eax
+  int v11; // eax
+  _DWORD *v12; // eax
+  wchar_t *v13; // eax
+  struct CInPacket *v14; // eax
+  CUtilDlgEx *v15; // eax
+  int v16; // ebx
+  char *v17; // esi
+  int v18; // eax
+  VARIANTARG *v19; // ecx
+  _DWORD *v20; // eax
+  int v21; // eax
+  CUtilDlgEx *v22; // ecx
+  CUtilDlgEx *v23; // eax
+  int v24; // ecx
+  _DWORD *v25; // eax
+  int v26; // eax
+  int *v27; // eax
+  int v28; // eax
+  int v29; // eax
+  int v30; // eax
+  int v31; // eax
+  int v32; // eax
+  int v33; // eax
+  int v34; // eax
+  VARIANTARG *v35; // ecx
+  int v36; // eax
+  int v37; // eax
+  int v38; // eax
+  int v39; // eax
+  int v40; // eax
+  int *v41; // ecx
+  int Item; // eax
+  int v43; // eax
+  int v44; // eax
+  VARIANTARG *v45; // ecx
+  int v46; // eax
+  char v47; // al
+  int v48; // [esp-14h] [ebp-B8h] BYREF
+  VARIANTARG *v49; // [esp-10h] [ebp-B4h]
+  VARIANTARG *p_pvargDest; // [esp-Ch] [ebp-B0h] BYREF
+  int *v51; // [esp-8h] [ebp-ACh] BYREF
+  signed int v52; // [esp-4h] [ebp-A8h]
+  VARIANTARG v53; // [esp+Ch] [ebp-98h] BYREF
+  VARIANTARG v54; // [esp+1Ch] [ebp-88h] BYREF
+  VARIANTARG pvarg; // [esp+2Ch] [ebp-78h] BYREF
+  VARIANTARG pvargDest; // [esp+3Ch] [ebp-68h] BYREF
+  VARIANTARG v57; // [esp+4Ch] [ebp-58h] BYREF
+  int v58; // [esp+5Ch] [ebp-48h] BYREF
+  _BYTE v59[12]; // [esp+60h] [ebp-44h] BYREF
+  _BYTE v60[4]; // [esp+6Ch] [ebp-38h] BYREF
+  int v61; // [esp+70h] [ebp-34h] BYREF
+  int v62; // [esp+74h] [ebp-30h]
+  char v63[4]; // [esp+78h] [ebp-2Ch]
+  int *p_p_pvargDest; // [esp+7Ch] [ebp-28h] BYREF
+  int v65; // [esp+80h] [ebp-24h] BYREF
+  char v66[4]; // [esp+84h] [ebp-20h]
+  int v67; // [esp+88h] [ebp-1Ch] BYREF
+  _BYTE v68[4]; // [esp+8Ch] [ebp-18h] BYREF
+  CUtilDlgEx *v69; // [esp+90h] [ebp-14h]
+  int Unknown; // [esp+94h] [ebp-10h] BYREF
+  int v71; // [esp+A0h] [ebp-4h]
+
+  v3 = this + 312; /*0x58155d*/
+  v62 = *(*dword_BE7918 + 8352); /*0x581565*/
+  if ( TSecType<unsigned long>::GetData(a1: this + 312) == 680000110 ) /*0x581572*/
+  {
+    *v66 = &loc_8C6572 + 1; /*0x581574*/
+  }
+  else
+  {
+    result = TSecType<unsigned long>::GetData(a1: v3); /*0x58157f*/
+    if ( result != 680000210 ) /*0x581589*/
+      return result; /*0x581589*/
+    *v66 = &loc_8C6569 + 1; /*0x58158f*/
+  }
+  v5 = CInPacket::Decode1(this: a2); /*0x5815a3*/
+  *v63 = v5; /*0x5815a5*/
+  v6 = CInPacket::Decode4(this: a2); /*0x5815a8*/
+  v7 = a2; /*0x5815ad*/
+  *(this + 511) = v6; /*0x5815b0*/
+  *(this + 512) = CInPacket::Decode4(this: v7); /*0x5815bb*/
+  if ( *(this + 510) != 0 ) /*0x5815cb*/
+  {
+    if ( TSecType<unsigned long>::GetData(a1: this + 312) != 680000210 /*0x5815f9*/
+      || *(this + 508) != 2
+      || v62 == *(this + 511)
+      || v62 == *(this + 512) )
+    {
+      v8 = **(this + 510); /*0x58160d*/
+      v52 = 8193; /*0x58160f*/
+    }
+    else
+    {
+      v8 = **(this + 510); /*0x581601*/
+      v52 = 7; /*0x581603*/
+    }
+    (*(v8 + 32))(a1: v52); /*0x581614*/
+    ZRef<CUtilDlgEx>::_ReleaseRaw(a1: this + 2036); /*0x58161d*/
+  }
+  *(this + 508) = v5; /*0x581624*/
+  if ( v5 == 0 ) /*0x58162a*/
+  {
+    if ( *(this + 513) != 0 ) /*0x58163c*/
+      sub_428712(a1: 0); /*0x58163f*/
+    if ( TSecType<unsigned long>::GetData(a1: this + 312) == 680000110 ) /*0x581656*/
+    {
+      Instance = StringPool::GetInstance(); /*0x581661*/
+      v10 = *StringPool::GetStringW(this: Instance, a2: &Unknown, a3: SP_4202_SOUND_BGMGLIMG_CHAPEL); /*0x58166d*/
+      v71 = 0; /*0x58167b*/
+      CSoundMan::PlayBGM(a1: v10, a2: 1, a3: 0, a4: 0, a5: 0); /*0x58167e*/
+      v71 = -1; /*0x581683*/
+      v11 = Unknown; /*0x581687*/
+      goto LABEL_20; /*0x58168a*/
+    }
+    if ( TSecType<unsigned long>::GetData(a1: this + 312) == 680000210 ) /*0x581698*/
+    {
+      v12 = StringPool::GetInstance(); /*0x5816a3*/
+      v13 = *StringPool::GetStringW(this: v12, a2: &Unknown, a3: SP_4203_SOUND_BGMGLIMG_CATHEDRAL); /*0x5816af*/
+      v71 = 1; /*0x5816b8*/
+      CSoundMan::PlayBGM(a1: v13, a2: 1, a3: 0, a4: 0, a5: 0); /*0x5816c2*/
+      v71 = -1; /*0x5816c7*/
+      v11 = Unknown; /*0x5816cb*/
+LABEL_20:
+      if ( v11 != 0 ) /*0x5816d0*/
+        ZXString<unsigned short>::_Release(lpAddend: (v11 - 12)); /*0x5816d6*/
+    }
+  }
+  v69 = 0; /*0x5816dc*/
+  v71 = 2; /*0x5816e8*/
+  if ( TSecType<unsigned long>::GetData(a1: this + 312) == 680000210 && *(this + 508) == 2 ) /*0x581701*/
+  {
+    if ( v62 != *(this + 511) && v62 != *(this + 512) ) /*0x58171c*/
+    {
+      v14 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1768); /*0x58172c*/
+      a2 = v14; /*0x581731*/
+      LOBYTE(v71) = 3; /*0x581736*/
+      if ( v14 != 0 ) /*0x58173a*/
+        v15 = CUtilDlgEx::CUtilDlgEx(this: v14); /*0x58173e*/
+      else
+        v15 = 0; /*0x581745*/
+      LOBYTE(v71) = 2; /*0x58174b*/
+      v16 = sub_582004(a1: v15); /*0x581754*/
+      v17 = this + 2036; /*0x581758*/
+      sub_4289CD(a1: v16); /*0x58175e*/
+      ZRef<CUtilDlgEx>::_ReleaseRaw(a1: v17); /*0x581765*/
+      v18 = *(v16 + 4); /*0x58176a*/
+      v52 = 0; /*0x58176d*/
+      v51 = 0; /*0x58176e*/
+      p_pvargDest = v19; /*0x58176f*/
+      *(v17 + 1) = v18; /*0x581770*/
+      a2 = &p_pvargDest; /*0x581775*/
+      v20 = StringPool::GetInstance(); /*0x58177e*/
+      StringPool::GetString(this: v20, result: &p_pvargDest, nIdx: SP_4204_DO_YOU_WANT_TO_BLESS_THIS_COUPLE); /*0x581785*/
+      v49 = *v66; /*0x58178a*/
+      LOBYTE(v71) = 2; /*0x581792*/
+      v21 = sub_428688(a1: v68); /*0x581796*/
+      CUtilDlgEx::SetUtilDlgEx(this: v21, a2: 1, a3: v49, a4: p_pvargDest, a5: v51, a6: v52); /*0x58179d*/
+      CUtilDlgEx::SetUtilDlgEx_YESNO(a1: v69); /*0x5817a5*/
+      CUtilDlgEx::CreateUtilDlgEx(this: v69); /*0x5817ad*/
+      if ( CDialog::DoModal(a1: v69) == 6 ) /*0x5817bd*/
+      {
+        COutPacket::COutPacket(a1: 140); /*0x5817cb*/
+        LOBYTE(v71) = 5; /*0x5817da*/
+        CClientSocket::SendPacket(this: dword_BE7914, a2: &v58); /*0x5817de*/
+        LOBYTE(v71) = 2; /*0x5817e6*/
+        ZArray<unsigned char>::RemoveAll(a1: v59); /*0x5817ea*/
+      }
+    }
+  }
+  else
+  {
+    v22 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1768); /*0x581803*/
+    p_p_pvargDest = v22; /*0x581805*/
+    LOBYTE(v71) = 6; /*0x58180a*/
+    if ( v22 != 0 ) /*0x58180e*/
+      v23 = CUtilDlgEx::CUtilDlgEx(this: v22); /*0x581810*/
+    else
+      v23 = 0; /*0x581817*/
+    LOBYTE(v71) = 2; /*0x58181d*/
+    Unknown = sub_582004(a1: v23); /*0x581828*/
+    sub_4289CD(a1: Unknown); /*0x581831*/
+    ZRef<CUtilDlgEx>::_ReleaseRaw(a1: this + 2036); /*0x581838*/
+    *(this + 510) = *(Unknown + 4); /*0x581843*/
+    sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x58184f*/
+    LOBYTE(v71) = 7; /*0x581858*/
+    sub_402F85(pvargDest: &v57, pvargSrc: &pvargSrc); /*0x58185c*/
+    v52 = 0; /*0x581861*/
+    v51 = 0; /*0x581862*/
+    p_pvargDest = &pvargDest; /*0x581866*/
+    v49 = &v57; /*0x58186a*/
+    v48 = v24; /*0x58186b*/
+    p_p_pvargDest = &v48; /*0x58186e*/
+    LOBYTE(v71) = 8; /*0x581877*/
+    v25 = StringPool::GetInstance(); /*0x58187b*/
+    StringPool::GetBSTR(this: v25, a2: &v48, a3: SP_1666_STRING_NPCIMG); /*0x581882*/
+    LOBYTE(v71) = 8; /*0x58188b*/
+    v26 = sub_406472(); /*0x58188f*/
+    v27 = sub_402680(a1: v26); /*0x581896*/
+    IWzResMan::GetObjectA(this: v27, pvargDest: &pvarg, sUOL: v48, vParam: v49, vAux: p_pvargDest); /*0x58189d*/
+    LOBYTE(v71) = 10; /*0x5818a4*/
+    Unknown = Ztl_variant_t::GetUnknown(a1: v51, a2: v52); /*0x5818af*/
+    v67 = 0; /*0x5818b2*/
+    if ( Unknown != 0 ) /*0x5818ba*/
+    {
+      v28 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(a1: &Unknown); /*0x5818c3*/
+      if ( v28 < 0 && v28 != -2147467262 ) /*0x5818ce*/
+        _com_issue_error(a1: v28); /*0x5818d1*/
+    }
+    LOBYTE(v71) = 14; /*0x5818da*/
+    v29 = ZComAPI::ZComVariantCopy(&pvarg); /*0x5818de*/
+    if ( v29 < 0 ) /*0x5818e6*/
+      _com_issue_error(a1: v29); /*0x5818e9*/
+    LOBYTE(v71) = 13; /*0x5818f2*/
+    v30 = ZComAPI::ZComVariantCopy(pvarg: &v57); /*0x5818f6*/
+    if ( v30 < 0 ) /*0x5818fe*/
+      _com_issue_error(a1: v30); /*0x581901*/
+    LOBYTE(v71) = 12; /*0x58190a*/
+    v31 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x58190e*/
+    if ( v31 < 0 ) /*0x581916*/
+      _com_issue_error(a1: v31); /*0x581919*/
+    v52 = 0; /*0x58191e*/
+    v51 = 0; /*0x58191f*/
+    sub_4A9CDE(a1: v60); /*0x581923*/
+    LOBYTE(v71) = 15; /*0x58192b*/
+    v33 = ZXString<char>::Format(a1: v32, a2: dword_AF2444, a3: v66[0]); /*0x581935*/
+    v34 = sub_428226(a1: v33); /*0x58193f*/
+    p_pvargDest = v35; /*0x581944*/
+    p_p_pvargDest = &p_pvargDest; /*0x581947*/
+    _bstr_t::_bstr_t(a1: v34); /*0x58194b*/
+    v49 = &v54; /*0x581956*/
+    LOBYTE(v71) = 15; /*0x58195a*/
+    sub_40263B(a1: &v67); /*0x58195e*/
+    IWzProperty::GetItem(pvargDest: v49, a2: p_pvargDest); /*0x581965*/
+    LOBYTE(v71) = 17; /*0x58196c*/
+    v61 = Ztl_variant_t::GetUnknown(a1: v51, a2: v52); /*0x581977*/
+    v65 = 0; /*0x58197a*/
+    if ( v61 != 0 ) /*0x58197d*/
+    {
+      v36 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(a1: &v61); /*0x581986*/
+      if ( v36 < 0 && v36 != -2147467262 ) /*0x581991*/
+        _com_issue_error(a1: v36); /*0x581994*/
+    }
+    LOBYTE(v71) = 20; /*0x5819a0*/
+    v37 = ZComAPI::ZComVariantCopy(pvarg: &v54); /*0x5819a4*/
+    if ( v37 < 0 ) /*0x5819ac*/
+      _com_issue_error(a1: v37); /*0x5819af*/
+    LOBYTE(v71) = 19; /*0x5819b7*/
+    ZXString<char>::_Release(a1: v60); /*0x5819bb*/
+    v52 = &word_AF0E08; /*0x5819c0*/
+    sub_4A9CDE(a1: &p_p_pvargDest); /*0x5819c8*/
+    LOBYTE(v71) = 21; /*0x5819d0*/
+    v39 = ZXString<char>::Format(a1: v38, a2: aWeddingD, a3: v63[0]); /*0x5819da*/
+    v40 = sub_428226(a1: v39); /*0x5819e4*/
+    v51 = v41; /*0x5819e9*/
+    *v63 = &v51; /*0x5819ec*/
+    _bstr_t::_bstr_t(a1: v40); /*0x5819f0*/
+    p_pvargDest = &v53; /*0x5819fb*/
+    LOBYTE(v71) = 21; /*0x5819ff*/
+    sub_40263B(a1: &v65); /*0x581a03*/
+    Item = IWzProperty::GetItem(pvargDest: p_pvargDest, a2: v51); /*0x581a0a*/
+    LOBYTE(v71) = 23; /*0x581a10*/
+    v43 = sub_440D94(a1: Item, a2: v52); /*0x581a14*/
+    a2 = 0; /*0x581a21*/
+    ZXString<char>::Assign<unsigned short>(this: &a2, a2: v43, a3: -1); /*0x581a24*/
+    LOBYTE(v71) = 26; /*0x581a30*/
+    v44 = ZComAPI::ZComVariantCopy(pvarg: &v53); /*0x581a34*/
+    if ( v44 < 0 ) /*0x581a3c*/
+      _com_issue_error(a1: v44); /*0x581a3f*/
+    LOBYTE(v71) = 25; /*0x581a47*/
+    ZXString<char>::_Release(a1: &p_p_pvargDest); /*0x581a4b*/
+    v52 = 0; /*0x581a50*/
+    v51 = 0; /*0x581a51*/
+    p_pvargDest = v45; /*0x581a52*/
+    *v63 = &p_pvargDest; /*0x581a58*/
+    sub_428211(a1: &a2); /*0x581a5c*/
+    v49 = *v66; /*0x581a61*/
+    v48 = 0; /*0x581a67*/
+    LOBYTE(v71) = 25; /*0x581a68*/
+    v46 = sub_428688(a1: v68); /*0x581a6c*/
+    CUtilDlgEx::SetUtilDlgEx(this: v46, a2: v48, a3: v49, a4: p_pvargDest, a5: v51, a6: v52); /*0x581a73*/
+    CUtilDlgEx::SetUtilDlgEx_TEXT(this: v69, a2: 0, a3: 1); /*0x581a7e*/
+    CUtilDlgEx::CreateUtilDlgEx(this: v69); /*0x581a86*/
+    CDialog::DoModal(a1: v69); /*0x581a8e*/
+    if ( (v62 == *(this + 511) || v62 == *(this + 512)) /*0x581abf*/
+      && (TSecType<unsigned long>::GetData(a1: this + 312) != 680000210 || *(this + 508) != 2) )
+    {
+      COutPacket::COutPacket(a1: 139); /*0x581ac9*/
+      v47 = *(this + 2032); /*0x581ad0*/
+      LOBYTE(v71) = 28; /*0x581ad9*/
+      COutPacket::Encode1(this: &v58, a2: v47); /*0x581ade*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v58); /*0x581aed*/
+      LOBYTE(v71) = 25; /*0x581af5*/
+      ZArray<unsigned char>::RemoveAll(a1: v59); /*0x581af9*/
+    }
+    LOBYTE(v71) = 19; /*0x581b01*/
+    ZXString<char>::_Release(a1: &a2); /*0x581b05*/
+    LOBYTE(v71) = 12; /*0x581b0f*/
+    if ( v65 != 0 ) /*0x581b13*/
+      (*(*v65 + 8))(a1: v65); /*0x581b18*/
+    LOBYTE(v71) = 2; /*0x581b20*/
+    if ( v67 != 0 ) /*0x581b24*/
+      (*(*v67 + 8))(a1: v67); /*0x581b29*/
+  }
+  v71 = -1; /*0x581b2c*/
+  return ZRef<CUtilDlgEx>::_ReleaseRaw(a1: v68); /*0x581b38*/
+}

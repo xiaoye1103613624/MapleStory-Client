@@ -1,0 +1,113 @@
+void __thiscall CUIMapleTV::GetText(int this, int a2, int a3, int a4, int a5, int a6, int a7)
+{
+  _DWORD *Text; // eax
+  int v9; // ecx
+  int v10; // eax
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  int v14; // eax
+  int v15; // eax
+  int v16; // eax
+  int v17; // eax
+  int v18[5]; // [esp+Ch] [ebp-38h] BYREF
+  size_t v19[5]; // [esp+20h] [ebp-24h] BYREF
+  int i; // [esp+34h] [ebp-10h] BYREF
+  int v21; // [esp+40h] [ebp-4h]
+
+  if ( *(this + 188) != 1 ) /*0x7f0de5*/
+  {
+    Text = CCtrlEdit::GetText(this: *(this + 176), a2: &i); /*0x7f0df1*/
+    v21 = 0; /*0x7f0df9*/
+    ZXString<char>::operator=(a1: Text); /*0x7f0dfe*/
+    v21 = -1; /*0x7f0e08*/
+    if ( i != 0 ) /*0x7f0e0b*/
+      ZXString<char>::_Release(lpAddend: (i - 12)); /*0x7f0e11*/
+  }
+  memset(a1: v18, a2: 0, a3: sizeof(v18)); /*0x7f0e1f*/
+  memset(a1: v19, a2: 0, a3: sizeof(v19)); /*0x7f0e2c*/
+  v9 = *(this + 184); /*0x7f0e31*/
+  v10 = *(v9 + 68); /*0x7f0e37*/
+  if ( v10 != 0 ) /*0x7f0e42*/
+  {
+    a2 = *(v10 - 4); /*0x7f0e4e*/
+    if ( a2 > 5 ) /*0x7f0e51*/
+      a2 = 5; /*0x7f0e53*/
+  }
+  else
+  {
+    a2 = 0; /*0x7f0e44*/
+  }
+  v11 = 0; /*0x7f0e56*/
+  for ( i = 0; i < a2; ++i ) /*0x7f0e5e*/
+  {
+    if ( v11 != 0 ) /*0x7f0e62*/
+    {
+      if ( v11 == a2 - 1 ) /*0x7f0e83*/
+      {
+        v12 = v11; /*0x7f0e88*/
+        v18[v12] = *(*(v9 + 68) + v12 * 4); /*0x7f0e8e*/
+        v19[v12] = -1; /*0x7f0e92*/
+      }
+      else
+      {
+        v18[i] = *(*(v9 + 68) + 4 * v11); /*0x7f0ea1*/
+        v19[i] = *(*(v9 + 68) + 4 * i + 4); /*0x7f0eaf*/
+      }
+    }
+    else
+    {
+      v18[0] = 0; /*0x7f0e64*/
+      if ( a2 == 1 ) /*0x7f0e6b*/
+        v19[0] = -1; /*0x7f0e6d*/
+      else
+        v19[0] = *(*(v9 + 68) + 4); /*0x7f0e78*/
+    }
+    v11 = i + 1; /*0x7f0eb6*/
+  }
+  CCtrlMLEdit::GetText(this: v9, a2: &i); /*0x7f0ec3*/
+  v21 = 1; /*0x7f0ed1*/
+  v13 = sub_474382(a1: &a2, a2: v18[0], a3: v19[0]); /*0x7f0edb*/
+  LOBYTE(v21) = 2; /*0x7f0ee4*/
+  ZXString<char>::operator=(a1: v13); /*0x7f0ee8*/
+  LOBYTE(v21) = 1; /*0x7f0ef0*/
+  ZXString<char>::_Release(a1: &a2); /*0x7f0ef4*/
+  v21 = -1; /*0x7f0efc*/
+  ZXString<char>::_Release(a1: &i); /*0x7f0eff*/
+  CCtrlMLEdit::GetText(this: *(this + 184), a2: &a3); /*0x7f0f0e*/
+  v21 = 3; /*0x7f0f1c*/
+  v14 = sub_474382(a1: &a2, a2: v18[1], a3: v19[1]); /*0x7f0f26*/
+  LOBYTE(v21) = 4; /*0x7f0f2f*/
+  ZXString<char>::operator=(a1: v14); /*0x7f0f33*/
+  LOBYTE(v21) = 3; /*0x7f0f3b*/
+  ZXString<char>::_Release(a1: &a2); /*0x7f0f3f*/
+  v21 = -1; /*0x7f0f47*/
+  ZXString<char>::_Release(a1: &a3); /*0x7f0f4a*/
+  CCtrlMLEdit::GetText(this: *(this + 184), a2: &a3); /*0x7f0f59*/
+  v21 = 5; /*0x7f0f67*/
+  v15 = sub_474382(a1: &a2, a2: v18[2], a3: v19[2]); /*0x7f0f6d*/
+  LOBYTE(v21) = 6; /*0x7f0f76*/
+  ZXString<char>::operator=(a1: v15); /*0x7f0f7a*/
+  LOBYTE(v21) = 5; /*0x7f0f82*/
+  ZXString<char>::_Release(a1: &a2); /*0x7f0f85*/
+  v21 = -1; /*0x7f0f8d*/
+  ZXString<char>::_Release(a1: &a3); /*0x7f0f90*/
+  CCtrlMLEdit::GetText(this: *(this + 184), a2: &a3); /*0x7f0f9f*/
+  v21 = 7; /*0x7f0fad*/
+  v16 = sub_474382(a1: &a2, a2: v18[3], a3: v19[3]); /*0x7f0fb7*/
+  LOBYTE(v21) = 8; /*0x7f0fc0*/
+  ZXString<char>::operator=(a1: v16); /*0x7f0fc4*/
+  LOBYTE(v21) = 7; /*0x7f0fcc*/
+  ZXString<char>::_Release(a1: &a2); /*0x7f0fd0*/
+  v21 = -1; /*0x7f0fd8*/
+  ZXString<char>::_Release(a1: &a3); /*0x7f0fdb*/
+  CCtrlMLEdit::GetText(this: *(this + 184), a2: &a5); /*0x7f0fea*/
+  v21 = 9; /*0x7f0ff8*/
+  v17 = sub_474382(a1: &a4, a2: v18[4], a3: v19[4]); /*0x7f1002*/
+  LOBYTE(v21) = 10; /*0x7f100b*/
+  ZXString<char>::operator=(a1: v17); /*0x7f100f*/
+  LOBYTE(v21) = 9; /*0x7f1017*/
+  ZXString<char>::_Release(a1: &a4); /*0x7f101b*/
+  v21 = -1; /*0x7f1023*/
+  ZXString<char>::_Release(a1: &a5); /*0x7f1026*/
+}

@@ -1,0 +1,24 @@
+{
+ "data": {
+  "Skill_root": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/Skill.img",
+  "UIWindow_Wedding": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img/Wedding",
+  "UIWindow_FriendGroup": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img/FriendGroup",
+  "UIWindow_MapleTV": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img/MapleTV",
+  "search_Wedding": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Wedding\",\"matches\":[{\"name\":\"Wedding\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Wedding\",\"type\":\"LIST_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Wedding\",\"matches\":[{\"name\":\"Wedding\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Wedding\",\"type\":\"LIST_PROPERTY\"}]}]}",
+  "search_FriendGroup": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"FriendGroup\",\"matches\":[]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"FriendGroup\",\"matches\":[]}]}",
+  "search_MapleTV": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"MapleTV\",\"matches\":[{\"name\":\"MapleTV\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MapleTV\",\"type\":\"LIST_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"MapleTV\",\"matches\":[{\"name\":\"MapleTV\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MapleTV\",\"type\":\"LIST_PROPERTY\"}]}]}",
+  "search_GuildMark": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"GuildMark\",\"matches\":[{\"name\":\"guildmark\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Guild/GuildInfo/guildmark\",\"type\":\"CANVAS_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"GuildMark\",\"matches\":[{\"name\":\"guildmark\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Guild/GuildInfo/guildmark\",\"type\":\"CANVAS_PROPERTY\"}]}]}"
+ },
+ "findings": [],
+ "errors": [
+  {
+   "load": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+   "resp": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}"
+  },
+  {
+   "load": "E:/MXD/BeiDou-Client-xy/Data/Skill.img",
+   "resp": "路径不存在: E:/MXD/BeiDou-Client-xy/Data/Skill.img"
+  }
+ ],
+ "key_b64_len": 172
+}
