@@ -179,3 +179,22 @@ round88 四分类计数 `PURE76/WIRE38/MIXED14/OTHER40` 直接复用（稳定、
 
 **算术不动**：168 条历史裁定 / §4 `38+130=168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` 全不变；本轮只在 P1 **登记层**注销 3 条，不做语义再分类造假。
 **限制**：0 源码 / 0 wire / 0 协议 / 0 WZ / 0 新封包；计划轮，实施待用户确认一次性 Plan。
+## 9. round92 纠偏 — 实施片1+片2 的编号错配（m10905）
+
+**结论：round91 Plan §4 的 4 个 P1 编号全部错配 —— 同族病连续第 4 轮，且是系统性的一批，不是按片各算一次。**
+
+| Plan §4 编号 | round91 挂的锚点 | DECISIONS 真议题 | 本轮判定 |
+| --- | --- | --- | --- |
+| `skill/D12` | `CUIMacroSysEx::OnSelected` 选中态 | `deactivate()` vs `ShiftMacroUIState` 形态差异 | DOC_ONLY 编号错配 |
+| `corewindow/D9` | `CUIMacroSysEx::OnSelected` 选中态 | 32 格 → 5 槽数量 | DOC_ONLY 编号错配 |
+| `login-flow/D9` | `CUIChannelShift::OnKey` 网格导航 | 60 频道翻页控件（P3） | 编号错配 + 挖到真缺陷 |
+| `statusbar-hud/D12` | `CUIChannelShift::OnKey` 网格导航 | `UIMobGage.*` 空 Type | 编号错配 |
+
+- 片1 三证（128B 门禁 `Shout` 零命中 / 083 `CCtrlCheckBox` COM 栈 / 当前端无 Checkbox 实现类）坐实
+  「083 是 32 格 COM 编辑窗、当前端是 5 槽组合栏」，`shown_name` 已等价 `SetText` → **零源码改动**。
+- 片2 对应窗 `CUIChannelShift`(083) ↔ `UIChannel`(当前端 6 列) 门控对拍，挖到 `step_channel(±6)`
+  在 `channel_count=3` 时 uint8_t 下溢 → `send_key` 加 083 `count>6`/`count>1` 门控（**本轮唯一真实 L 桶补丁**）。
+- **规则回扫（P8 自我批判）**：§8 已写「登记前必附四项取证」，但同批 Plan §4 未回扫即发货。
+  本轮升级：任何 P1 候选登记必须四项齐备，且由 harness 静态守卫逐条断言，不靠人肉记忆。
+- 168 条 DECISIONS / §4 `W 38 + L 130 = 168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` **全不动**；
+  仅在 P1 登记层注销 4 个错配编号，不做语义再分类。W 桶 6 字段 + 27 wire KEEP 零改动。

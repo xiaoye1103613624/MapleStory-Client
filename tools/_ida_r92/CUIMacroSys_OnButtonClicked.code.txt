@@ -1,0 +1,58 @@
+void __thiscall CUIMacroSys::OnButtonClicked(_DWORD *this, int a2)
+{
+  char *Buffer; // eax
+  int v4; // ecx
+  const void **v5; // eax
+  int v6; // ecx
+  _DWORD *Instance; // eax
+  StringPoolStrings v8; // [esp-18h] [ebp-30h]
+  int v9; // [esp-14h] [ebp-2Ch] BYREF
+  wchar_t *v10; // [esp-10h] [ebp-28h]
+  int v11; // [esp-Ch] [ebp-24h]
+  int v12; // [esp-8h] [ebp-20h] BYREF
+  int v13; // [esp-4h] [ebp-1Ch]
+  int *v14; // [esp+8h] [ebp-10h]
+  int v15; // [esp+14h] [ebp-4h]
+
+  if ( a2 == 3000 && *(this + 361) != -1 ) /*0x8aa157*/
+  {
+    CCtrlEdit::GetText(this: *(this + 34), &a2); /*0x8aa167*/
+    v15 = 0; /*0x8aa17b*/
+    Buffer = ZXString<char>::GetBuffer(a1: 1024, a2: 1); /*0x8aa17e*/
+    v14 = CCurseProcess::ProcessString(a1: Buffer, a2: 0, a3: 1); /*0x8aa191*/
+    ZXString<char>::ReleaseBuffer(a1: -1); /*0x8aa194*/
+    if ( v14 != 0 ) /*0x8aa19c*/
+    {
+      v13 = *(*(this + 32) + 72); /*0x8aa1b5*/
+      v12 = v4; /*0x8aa1bb*/
+      v14 = &v12; /*0x8aa1be*/
+      sub_428211(a1: &a2); /*0x8aa1c2*/
+      v11 = *(this + 361); /*0x8aa1c7*/
+      LOBYTE(v15) = 0; /*0x8aa1cd*/
+      v5 = sub_8ADF76(); /*0x8aa1d0*/
+      CMacroSysMan::SetMacroInfo(this: v5, nMacroIdx: v11, sName: v12, bShout: v13); /*0x8aa1d7*/
+      v13 = 0; /*0x8aa1dc*/
+      v12 = 0; /*0x8aa1dd*/
+      v11 = 0; /*0x8aa1de*/
+      v10 = 0; /*0x8aa1df*/
+      v9 = v6; /*0x8aa1e0*/
+      v14 = &v9; /*0x8aa1e3*/
+      v8 = SP_3296_IT_IS_SAVED; /*0x8aa1e6*/
+    }
+    else
+    {
+      v13 = 0; /*0x8aa19e*/
+      v12 = 0; /*0x8aa19f*/
+      v11 = 0; /*0x8aa1a0*/
+      v10 = 0; /*0x8aa1a1*/
+      v9 = v4; /*0x8aa1a2*/
+      v14 = &v9; /*0x8aa1a5*/
+      v8 = SP_272_CURSING_IS_NOT_ALLOWED; /*0x8aa1a8*/
+    }
+    Instance = StringPool::GetInstance(); /*0x8aa1ec*/
+    StringPool::GetString(this: Instance, result: &v9, nIdx: v8); /*0x8aa1f3*/
+    CUtilDlg::Notice(sMsg: v9, sSndName: v10, ppDialog: v11, bAutoSeparated: v12, bIsTightLine: v13); /*0x8aa1f8*/
+    v15 = -1; /*0x8aa1fd*/
+    ZXString<char>::_Release(a1: &a2); /*0x8aa207*/
+  }
+}

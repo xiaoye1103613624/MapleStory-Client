@@ -217,21 +217,21 @@ namespace ms
 			{
 				change_channel();
 			}
-			else if (keycode == KeyAction::Id::UP)
+			// round92 按 083 CUIChannelShift::OnKey @0x995863 门控还原：
+			//   (a2 != 40 && a2 != 38 || count >= 7) —— UP/DOWN 跨行须频道数 > 单行 6 列；
+			//   (a2 != 37 && a2 != 39 || count >= 2) —— LEFT/RIGHT 须至少 2 个频道。
+			// 本服 channel_count 常为 3：缺门控时 step_channel(±6) 单次 wrap 后仍为负，
+			// uint8_t 下溢成 253..255 / 越界 3..5（tools/test_round92_channel_nav_083.py B1 复现）。
+			else if (keycode == KeyAction::Id::UP || keycode == KeyAction::Id::DOWN)
 			{
-				step_channel(selected_channel, -static_cast<int>(SLOTS_PER_ROW));
+				if (channel_count > SLOTS_PER_ROW)
+					step_channel(selected_channel, keycode == KeyAction::Id::UP
+						? -static_cast<int>(SLOTS_PER_ROW) : static_cast<int>(SLOTS_PER_ROW));
 			}
-			else if (keycode == KeyAction::Id::DOWN)
+			else if (keycode == KeyAction::Id::LEFT || keycode == KeyAction::Id::RIGHT)
 			{
-				step_channel(selected_channel, static_cast<int>(SLOTS_PER_ROW));
-			}
-			else if (keycode == KeyAction::Id::LEFT)
-			{
-				step_channel(selected_channel, -1);
-			}
-			else if (keycode == KeyAction::Id::RIGHT)
-			{
-				step_channel(selected_channel, 1);
+				if (channel_count > 1)
+					step_channel(selected_channel, keycode == KeyAction::Id::LEFT ? -1 : 1);
 			}
 			else if (keycode == 'C' || keycode == 'c')
 			{

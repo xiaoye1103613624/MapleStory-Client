@@ -1,0 +1,575 @@
+/* addr 0x995a35 */
+int __thiscall CUIChannelShift::Draw(CUIChannelShift *this, const struct tagRECT *_154)
+{
+  bool v3; // zf
+  int v4; // eax
+  int v5; // eax
+  int v6; // ecx
+  int v7; // eax
+  int v8; // eax
+  int v9; // ecx
+  int v10; // ecx
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  _DWORD *v14; // eax
+  int v15; // eax
+  int v16; // edx
+  int v17; // eax
+  int v18; // eax
+  int v19; // edi
+  _DWORD *Instance; // eax
+  char *v21; // eax
+  void *v22; // esp
+  int v23; // eax
+  wchar_t *v24; // eax
+  int v25; // eax
+  int *v26; // eax
+  int v27; // eax
+  int v28; // eax
+  int v29; // eax
+  int v30; // eax
+  int *v31; // esi
+  unsigned int v32; // eax
+  int v33; // eax
+  int v34; // eax
+  CUIChannelShift *v35; // esi
+  _DWORD *v36; // eax
+  char *v37; // eax
+  void *v38; // esp
+  int v39; // eax
+  wchar_t *v40; // eax
+  int v41; // eax
+  int *v42; // eax
+  int v43; // eax
+  int v44; // eax
+  int v45; // eax
+  int v46; // eax
+  int v47; // ecx
+  int v48; // eax
+  int v49; // eax
+  CUIChannelShift *v50; // esi
+  int v51; // ecx
+  int v52; // eax
+  int v53; // eax
+  int v54; // edx
+  int v55; // eax
+  VARIANTARG *v56; // eax
+  int v57; // edx
+  int v58; // eax
+  int v59; // ecx
+  int v60; // eax
+  int v61; // eax
+  int v62; // edx
+  int v63; // eax
+  int v64; // ecx
+  int v65; // eax
+  int v66; // eax
+  int v67; // edx
+  int v68; // eax
+  int v69; // eax
+  int v70; // edi
+  int v71; // eax
+  int *v73; // [esp-14h] [ebp-160h] BYREF
+  VARIANTARG v74; // [esp-10h] [ebp-15Ch]
+  _BYTE v75[12]; // [esp+0h] [ebp-14Ch] BYREF
+  VARIANTARG v76; // [esp+Ch] [ebp-140h] BYREF
+  VARIANTARG v77; // [esp+1Ch] [ebp-130h] BYREF
+  VARIANTARG v78; // [esp+2Ch] [ebp-120h] BYREF
+  VARIANTARG v79; // [esp+3Ch] [ebp-110h] BYREF
+  VARIANTARG pvargDest; // [esp+4Ch] [ebp-100h] BYREF
+  VARIANTARG v81; // [esp+5Ch] [ebp-F0h] BYREF
+  VARIANTARG v82; // [esp+6Ch] [ebp-E0h] BYREF
+  VARIANTARG v83; // [esp+7Ch] [ebp-D0h] BYREF
+  VARIANTARG v84; // [esp+8Ch] [ebp-C0h] BYREF
+  VARIANTARG v85; // [esp+9Ch] [ebp-B0h] BYREF
+  VARIANTARG v86; // [esp+ACh] [ebp-A0h] BYREF
+  VARIANTARG v87; // [esp+BCh] [ebp-90h] BYREF
+  VARIANTARG v88; // [esp+CCh] [ebp-80h] BYREF
+  VARIANTARG v89; // [esp+DCh] [ebp-70h] BYREF
+  VARIANTARG v90; // [esp+ECh] [ebp-60h] BYREF
+  int Unknown; // [esp+FCh] [ebp-50h] BYREF
+  int v92; // [esp+100h] [ebp-4Ch]
+  VARIANTARG pvarg; // [esp+104h] [ebp-48h] BYREF
+  _DWORD *v94; // [esp+114h] [ebp-38h] BYREF
+  _DWORD *a2; // [esp+118h] [ebp-34h] BYREF
+  int v96; // [esp+11Ch] [ebp-30h] BYREF
+  int *v97; // [esp+120h] [ebp-2Ch] BYREF
+  int v98; // [esp+124h] [ebp-28h] BYREF
+  int v99; // [esp+128h] [ebp-24h] BYREF
+  CUIChannelShift *v100; // [esp+12Ch] [ebp-20h]
+  int *v101; // [esp+130h] [ebp-1Ch] BYREF
+  int v102; // [esp+134h] [ebp-18h]
+  int *v103; // [esp+138h] [ebp-14h]
+  char v104[4]; // [esp+13Ch] [ebp-10h]
+  int v105; // [esp+148h] [ebp-4h]
+
+  v100 = this; /*0x995a4e*/
+  CWnd::GetCanvas(a1: &v94); /*0x995a51*/
+  v105 = 0; /*0x995a5e*/
+  sub_402FAB(a1: 0, a2: 3); /*0x995a61*/
+  v3 = *(this + 42) == 0; /*0x995a66*/
+  LOBYTE(v105) = 1; /*0x995a72*/
+  if ( v3 ) /*0x995a76*/
+    _com_issue_error(a1: -2147467261); /*0x995a7d*/
+  IWzGr2DLayer::GetCanvas(a1: &v101, a2: &pvarg); /*0x995a8e*/
+  LOBYTE(v105) = 3; /*0x995a97*/
+  v4 = ZComAPI::ZComVariantCopy(&pvarg); /*0x995a9b*/
+  if ( v4 < 0 ) /*0x995aa3*/
+    _com_issue_error(a1: v4); /*0x995aa6*/
+  sub_402FAB(a1: 0, a2: 3); /*0x995ab1*/
+  v3 = *(this + 43) == 0; /*0x995ab6*/
+  LOBYTE(v105) = 4; /*0x995ac2*/
+  if ( v3 ) /*0x995ac6*/
+    _com_issue_error(a1: -2147467261); /*0x995acd*/
+  IWzGr2DLayer::GetCanvas(a1: &v97, a2: &v88); /*0x995ade*/
+  LOBYTE(v105) = 6; /*0x995ae7*/
+  v5 = ZComAPI::ZComVariantCopy(pvarg: &v88); /*0x995aeb*/
+  if ( v5 < 0 ) /*0x995af3*/
+    _com_issue_error(a1: v5); /*0x995af6*/
+  v92 = *dword_BE7918; /*0x995b09*/
+  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x995b0c*/
+  *v104 = *(this + 36); /*0x995b17*/
+  LOBYTE(v105) = 7; /*0x995b1f*/
+  if ( v94 == 0 ) /*0x995b23*/
+    _com_issue_error(a1: -2147467261); /*0x995b2a*/
+  v6 = *v94; /*0x995b32*/
+  v98 = v94; /*0x995b47*/
+  v7 = (*(v6 + 128))( /*0x995b4b*/
+         a1: v94,
+         a2: 0,
+         a3: 0,
+         a4: *v104,
+         a5: *&pvarg.vt,
+         a6: pvarg.decVal.Hi32,
+         a7: pvarg.lVal,
+         a8: pvarg.cyVal.Hi);
+  if ( v7 < 0 ) /*0x995b53*/
+    _com_issue_errorex(a1: v7, a2: v98, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x995b5e*/
+  LOBYTE(v105) = 6; /*0x995b67*/
+  v8 = ZComAPI::ZComVariantCopy(&pvarg); /*0x995b6b*/
+  if ( v8 < 0 ) /*0x995b73*/
+    _com_issue_error(a1: v8); /*0x995b76*/
+  v9 = *(v100 + 34) - 37; /*0x995b87*/
+  *v104 = 67; /*0x995b8c*/
+  if ( v9 > 67 ) /*0x995b8f*/
+  {
+    do /*0x995c1f*/
+    {
+      sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x995b99*/
+      v98 = *(v100 + 37); /*0x995ba7*/
+      LOBYTE(v105) = 8; /*0x995baf*/
+      if ( v94 == 0 ) /*0x995bb3*/
+        _com_issue_error(a1: -2147467261); /*0x995bba*/
+      v10 = *v94; /*0x995bc2*/
+      a2 = v94; /*0x995bd8*/
+      v11 = (*(v10 + 128))( /*0x995bdc*/
+              a1: v94,
+              a2: 0,
+              a3: *v104,
+              a4: v98,
+              a5: *&pvarg.vt,
+              a6: pvarg.decVal.Hi32,
+              a7: pvarg.lVal,
+              a8: pvarg.cyVal.Hi);
+      if ( v11 < 0 ) /*0x995be4*/
+        _com_issue_errorex(a1: v11, a2, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x995bef*/
+      LOBYTE(v105) = 6; /*0x995bf8*/
+      v12 = ZComAPI::ZComVariantCopy(&pvarg); /*0x995bfc*/
+      if ( v12 < 0 ) /*0x995c04*/
+        _com_issue_error(a1: v12); /*0x995c07*/
+      v13 = *(v100 + 34); /*0x995c0f*/
+      *v104 += 10; /*0x995c15*/
+    }
+    while ( *v104 < v13 - 37 ); /*0x995c1f*/
+  }
+  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x995c29*/
+  v14 = *(v100 + 38); /*0x995c36*/
+  LOBYTE(v105) = 9; /*0x995c3c*/
+  a2 = v14; /*0x995c40*/
+  if ( v94 == 0 ) /*0x995c43*/
+    _com_issue_error(a1: -2147467261); /*0x995c4a*/
+  v15 = *(v100 + 34); /*0x995c55*/
+  v16 = *v94; /*0x995c5b*/
+  v98 = v94; /*0x995c72*/
+  v17 = (*(v16 + 128))( /*0x995c76*/
+          a1: v94,
+          a2: 0,
+          a3: v15 - 37,
+          a4: a2,
+          a5: *&pvarg.vt,
+          a6: pvarg.decVal.Hi32,
+          a7: pvarg.lVal,
+          a8: pvarg.cyVal.Hi);
+  if ( v17 < 0 ) /*0x995c7e*/
+    _com_issue_errorex(a1: v17, a2: v98, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x995c89*/
+  LOBYTE(v105) = 6; /*0x995c92*/
+  v18 = ZComAPI::ZComVariantCopy(&pvarg); /*0x995c96*/
+  if ( v18 < 0 ) /*0x995ca0*/
+    _com_issue_error(a1: v18); /*0x995ca3*/
+  v96 = 0; /*0x995ca8*/
+  v19 = *(v92 + 8276); /*0x995cae*/
+  LOBYTE(v105) = 10; /*0x995cbd*/
+  Instance = StringPool::GetInstance(); /*0x995cc1*/
+  v21 = *StringPool::GetString(this: Instance, result: &a2, nIdx: SP_2552_UI_UIWINDOWIMG_CHANNEL_WORLD_D); /*0x995ccd*/
+  LOBYTE(v105) = 11; /*0x995cd5*/
+  ZXString<char>::Format(a1: &v96, a2: v21, a3: v19); /*0x995cd9*/
+  LOBYTE(v105) = 10; /*0x995ce6*/
+  if ( a2 != 0 ) /*0x995cea*/
+    ZXString<char>::_Release(lpAddend: a2 - 3); /*0x995cf0*/
+  sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x995cfd*/
+  LOBYTE(v105) = 12; /*0x995d09*/
+  sub_402F85(pvargDest: &v82, pvargSrc: &pvargSrc); /*0x995d0d*/
+  LOBYTE(v105) = 13; /*0x995d19*/
+  v22 = alloca(2 * dword_BF03D0(a1: 0, a2: 0, a3: v96, a4: -1, a5: 0, a6: 0)); /*0x995d2d*/
+  v74.cyVal.int64 = 0; /*0x995d35*/
+  v74.decVal.Hi32 = &pvargDest; /*0x995d3c*/
+  *&v74.vt = &v82; /*0x995d43*/
+  v23 = sub_428226(a1: &v96); /*0x995d4a*/
+  v24 = sub_46ABB2(a1: v23, a2: v75, a3: -1); /*0x995d50*/
+  v103 = &v73; /*0x995d59*/
+  _bstr_t::_bstr_t(a1: v24); /*0x995d5d*/
+  LOBYTE(v105) = 13; /*0x995d69*/
+  v25 = sub_406472(); /*0x995d6d*/
+  v26 = sub_402680(a1: v25); /*0x995d74*/
+  IWzResMan::GetObjectA(this: v26, pvargDest: &v77, sUOL: v73, vParam: *&v74.vt, vAux: v74.decVal.Hi32); /*0x995d7b*/
+  LOBYTE(v105) = 15; /*0x995d82*/
+  a2 = Ztl_variant_t::GetUnknown(a1: v74.cVal, a2: SBYTE4(v74.decVal.Lo64)); /*0x995d8d*/
+  v99 = 0; /*0x995d90*/
+  if ( a2 != 0 ) /*0x995d93*/
+  {
+    v27 = sub_41E527(a1: &a2); /*0x995d9c*/
+    if ( v27 < 0 && v27 != -2147467262 ) /*0x995daa*/
+      _com_issue_error(a1: v27); /*0x995dad*/
+  }
+  LOBYTE(v105) = 19; /*0x995db9*/
+  v28 = ZComAPI::ZComVariantCopy(pvarg: &v77); /*0x995dbd*/
+  if ( v28 < 0 ) /*0x995dc5*/
+    _com_issue_error(a1: v28); /*0x995dc8*/
+  LOBYTE(v105) = 18; /*0x995dd4*/
+  v29 = ZComAPI::ZComVariantCopy(pvarg: &v82); /*0x995dd8*/
+  if ( v29 < 0 ) /*0x995de0*/
+    _com_issue_error(a1: v29); /*0x995de3*/
+  LOBYTE(v105) = 17; /*0x995def*/
+  v30 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x995df3*/
+  if ( v30 < 0 ) /*0x995dfb*/
+    _com_issue_error(a1: v30); /*0x995dfe*/
+  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x995e07*/
+  LOBYTE(v105) = 20; /*0x995e0f*/
+  if ( v99 == 0 ) /*0x995e13*/
+    _com_issue_error(a1: -2147467261); /*0x995e1a*/
+  if ( v101 == 0 ) /*0x995e22*/
+    _com_issue_error(a1: -2147467261); /*0x995e29*/
+  v31 = v101; /*0x995e2e*/
+  *v104 = v101; /*0x995e34*/
+  v98 = v99; /*0x995e37*/
+  v32 = sub_40B947(a1: v99); /*0x995e3a*/
+  v73 = v98; /*0x995e4b*/
+  v33 = (*(*v31 + 128))( /*0x995e5f*/
+          a1: *v104,
+          a2: 16,
+          a3: 40 - (v32 >> 1),
+          a4: v98,
+          a5: *&pvarg.vt,
+          a6: pvarg.decVal.Hi32,
+          a7: pvarg.lVal,
+          a8: pvarg.cyVal.Hi);
+  if ( v33 < 0 ) /*0x995e67*/
+    _com_issue_errorex(a1: v33, a2: *v104, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x995e72*/
+  LOBYTE(v105) = 17; /*0x995e7b*/
+  v34 = ZComAPI::ZComVariantCopy(&pvarg); /*0x995e7f*/
+  if ( v34 < 0 ) /*0x995e87*/
+    _com_issue_error(a1: v34); /*0x995e8a*/
+  v35 = v100; /*0x995e8f*/
+  *v104 = 0; /*0x995e92*/
+  if ( *(v100 + 33) > 0 ) /*0x995e9d*/
+  {
+    while ( 1 ) /*0x995eaf*/
+    {
+      v74.cyVal.Hi = 2560; /*0x995eaf*/
+      v74.lVal = &v98; /*0x995eb4*/
+      v36 = StringPool::GetInstance(); /*0x995eb5*/
+      v37 = *StringPool::GetString(this: v36, result: v74.plVal, nIdx: v74.cyVal.Hi); /*0x995ec1*/
+      LOBYTE(v105) = 21; /*0x995ec6*/
+      ZXString<char>::Format(a1: &v96, a2: v37, a3: v104[0]); /*0x995ecf*/
+      LOBYTE(v105) = 17; /*0x995edc*/
+      if ( v98 != 0 ) /*0x995ee0*/
+        ZXString<char>::_Release(lpAddend: (v98 - 12)); /*0x995ee6*/
+      sub_402F85(pvargDest: &v85, pvargSrc: &pvargSrc); /*0x995ef3*/
+      LOBYTE(v105) = 22; /*0x995eff*/
+      sub_402F85(pvargDest: &v81, pvargSrc: &pvargSrc); /*0x995f03*/
+      LOBYTE(v105) = 23; /*0x995f0f*/
+      v38 = alloca(2 * dword_BF03D0(a1: 0, a2: 0, a3: v96, a4: -1, a5: 0, a6: 0)); /*0x995f23*/
+      v74.cyVal.int64 = 0; /*0x995f2b*/
+      v74.decVal.Hi32 = &v85; /*0x995f32*/
+      *&v74.vt = &v81; /*0x995f39*/
+      v73 = -1; /*0x995f3a*/
+      v39 = sub_428226(a1: &v96); /*0x995f40*/
+      v40 = sub_46ABB2(a1: v39, a2: v75, a3: v73); /*0x995f46*/
+      v103 = &v73; /*0x995f4f*/
+      _bstr_t::_bstr_t(a1: v40); /*0x995f53*/
+      LOBYTE(v105) = 23; /*0x995f5f*/
+      v41 = sub_406472(); /*0x995f63*/
+      v42 = sub_402680(a1: v41); /*0x995f6a*/
+      IWzResMan::GetObjectA(this: v42, pvargDest: &v76, sUOL: v73, vParam: *&v74.vt, vAux: v74.decVal.Hi32); /*0x995f71*/
+      LOBYTE(v105) = 25; /*0x995f78*/
+      Unknown = Ztl_variant_t::GetUnknown(a1: v74.cVal, a2: SBYTE4(v74.decVal.Lo64)); /*0x995f81*/
+      v43 = sub_41E527(a1: &Unknown); /*0x995f8b*/
+      if ( v43 < 0 && v43 != -2147467262 ) /*0x995f99*/
+        _com_issue_error(a1: v43); /*0x995f9c*/
+      LOBYTE(v105) = 23; /*0x995fa8*/
+      v44 = ZComAPI::ZComVariantCopy(pvarg: &v76); /*0x995fac*/
+      if ( v44 < 0 ) /*0x995fb4*/
+        _com_issue_error(a1: v44); /*0x995fb7*/
+      LOBYTE(v105) = 22; /*0x995fc3*/
+      v45 = ZComAPI::ZComVariantCopy(pvarg: &v81); /*0x995fc7*/
+      if ( v45 < 0 ) /*0x995fcf*/
+        _com_issue_error(a1: v45); /*0x995fd2*/
+      LOBYTE(v105) = 17; /*0x995fde*/
+      v46 = ZComAPI::ZComVariantCopy(pvarg: &v85); /*0x995fe2*/
+      if ( v46 < 0 ) /*0x995fea*/
+        _com_issue_error(a1: v46); /*0x995fed*/
+      sub_9964DA(a1: &pvarg, a2: *v104); /*0x995ffb*/
+      sub_402F85(pvargDest: &v78, pvargSrc: &pvargSrc); /*0x996007*/
+      v102 = *(v35 + 39); /*0x996012*/
+      LOBYTE(v105) = 26; /*0x99601a*/
+      if ( v101 == 0 ) /*0x99601e*/
+        _com_issue_error(a1: -2147467261); /*0x996025*/
+      v47 = *v101; /*0x99602d*/
+      v73 = v102; /*0x996034*/
+      v74 = v78; /*0x996040*/
+      v103 = v101; /*0x996047*/
+      v48 = (*(v47 + 128))( /*0x99604b*/
+              a1: v101,
+              a2: *&pvarg.vt,
+              a3: pvarg.decVal.Hi32,
+              a4: v102,
+              a5: *&v78.vt,
+              a6: v78.decVal.Hi32,
+              a7: v78.lVal,
+              a8: v78.cyVal.Hi);
+      if ( v48 < 0 ) /*0x996053*/
+        _com_issue_errorex(a1: v48, a2: v103, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x99605e*/
+      LOBYTE(v105) = 17; /*0x99606a*/
+      v49 = ZComAPI::ZComVariantCopy(pvarg: &v78); /*0x99606e*/
+      if ( v49 < 0 ) /*0x996076*/
+        _com_issue_error(a1: v49); /*0x996079*/
+      v50 = v100; /*0x996081*/
+      if ( *v104 == *(v100 + 32) || *(v100 + 35) == 0 && *(*(v92 + 14040) + 4 * *v104) != 0 ) /*0x9960a6*/
+      {
+        v3 = *v104 == *(v100 + 31); /*0x99621e*/
+        v74.cyVal.Hi = &pvargSrc; /*0x996221*/
+        if ( v3 ) /*0x996222*/
+        {
+          sub_402F85(pvargDest: &v86, pvargSrc: v74.cyVal.Hi); /*0x99622e*/
+          v103 = *(v50 + 41); /*0x996239*/
+          LOBYTE(v105) = 27; /*0x996241*/
+          if ( v101 == 0 ) /*0x996245*/
+            _com_issue_error(a1: -2147467261); /*0x99624c*/
+          v59 = *v101; /*0x996254*/
+          v73 = v103; /*0x99625b*/
+          v74 = v86; /*0x996267*/
+          v102 = v101; /*0x99626e*/
+          v60 = (*(v59 + 128))( /*0x996272*/
+                  a1: v101,
+                  a2: *&pvarg.vt,
+                  a3: pvarg.decVal.Hi32,
+                  a4: v103,
+                  a5: *&v86.vt,
+                  a6: v86.decVal.Hi32,
+                  a7: v86.lVal,
+                  a8: v86.cyVal.Hi);
+          if ( v60 < 0 ) /*0x99627a*/
+            _com_issue_errorex(a1: v60, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x996285*/
+          LOBYTE(v105) = 17; /*0x996291*/
+          v61 = ZComAPI::ZComVariantCopy(pvarg: &v86); /*0x996295*/
+          if ( v61 < 0 ) /*0x99629d*/
+            _com_issue_error(a1: v61); /*0x9962a0*/
+          sub_402F85(pvargDest: &v84, pvargSrc: &pvargSrc); /*0x9962ac*/
+          LOBYTE(v105) = 28; /*0x9962b6*/
+          if ( v97 == 0 ) /*0x9962ba*/
+            _com_issue_error(a1: -2147467261); /*0x9962c1*/
+          v73 = v99; /*0x9962d4*/
+          *&v74.vt = *&v84.vt; /*0x9962dd*/
+          v103 = (*&pvarg.vt + 8); /*0x9962e6*/
+          v62 = *v97; /*0x9962ec*/
+          v74.cyVal.int64 = v84.cyVal.int64; /*0x9962ee*/
+          v102 = v97; /*0x9962f0*/
+          v63 = (*(v62 + 128))( /*0x9962f4*/
+                  a1: v97,
+                  a2: *&pvarg.vt + 8,
+                  a3: pvarg.decVal.Hi32 + 5,
+                  a4: v99,
+                  a5: *&v84.vt,
+                  a6: v84.decVal.Hi32,
+                  a7: v84.lVal,
+                  a8: v84.cyVal.Hi);
+          if ( v63 < 0 ) /*0x9962fc*/
+            _com_issue_errorex(a1: v63, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x996307*/
+          LOBYTE(v105) = 17; /*0x99630c*/
+          v56 = &v84; /*0x996310*/
+        }
+        else
+        {
+          sub_402F85(pvargDest: &v89, pvargSrc: v74.cyVal.Hi); /*0x99631e*/
+          v103 = *(v50 + 40); /*0x996329*/
+          LOBYTE(v105) = 29; /*0x996331*/
+          if ( v101 == 0 ) /*0x996335*/
+            _com_issue_error(a1: -2147467261); /*0x99633c*/
+          v64 = *v101; /*0x996344*/
+          v73 = v103; /*0x99634b*/
+          v74 = v89; /*0x996354*/
+          v102 = v101; /*0x99635b*/
+          v65 = (*(v64 + 128))( /*0x99635f*/
+                  a1: v101,
+                  a2: *&pvarg.vt,
+                  a3: pvarg.decVal.Hi32,
+                  a4: v103,
+                  a5: *&v89.vt,
+                  a6: v89.decVal.Hi32,
+                  a7: v89.lVal,
+                  a8: v89.cyVal.Hi);
+          if ( v65 < 0 ) /*0x996367*/
+            _com_issue_errorex(a1: v65, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x996372*/
+          LOBYTE(v105) = 17; /*0x99637b*/
+          v66 = ZComAPI::ZComVariantCopy(pvarg: &v89); /*0x99637f*/
+          if ( v66 < 0 ) /*0x996387*/
+            _com_issue_error(a1: v66); /*0x99638a*/
+          sub_402F85(pvargDest: &v90, pvargSrc: &pvargSrc); /*0x996393*/
+          LOBYTE(v105) = 30; /*0x99639d*/
+          if ( v97 == 0 ) /*0x9963a1*/
+            _com_issue_error(a1: -2147467261); /*0x9963a8*/
+          v73 = v99; /*0x9963bb*/
+          *&v74.vt = *&v90.vt; /*0x9963c1*/
+          v103 = (*&pvarg.vt + 8); /*0x9963ca*/
+          v67 = *v97; /*0x9963d0*/
+          v74.cyVal.int64 = v90.cyVal.int64; /*0x9963d2*/
+          v102 = v97; /*0x9963d4*/
+          v68 = (*(v67 + 128))( /*0x9963d8*/
+                  a1: v97,
+                  a2: *&pvarg.vt + 8,
+                  a3: pvarg.decVal.Hi32 + 5,
+                  a4: v99,
+                  a5: *&v90.vt,
+                  a6: v90.decVal.Hi32,
+                  a7: v90.lVal,
+                  a8: v90.cyVal.Hi);
+          if ( v68 < 0 ) /*0x9963e0*/
+            _com_issue_errorex(a1: v68, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x9963eb*/
+          LOBYTE(v105) = 17; /*0x9963f0*/
+          v56 = &v90; /*0x9963f4*/
+        }
+      }
+      else
+      {
+        v3 = *v104 == *(v100 + 31); /*0x9960ac*/
+        v74.cyVal.Hi = &pvargSrc; /*0x9960af*/
+        if ( v3 ) /*0x9960b0*/
+        {
+          sub_402F85(pvargDest: &v83, pvargSrc: v74.cyVal.Hi); /*0x9960bc*/
+          v103 = *(v50 + 41); /*0x9960c7*/
+          LOBYTE(v105) = 31; /*0x9960cf*/
+          if ( v101 == 0 ) /*0x9960d3*/
+            _com_issue_error(a1: -2147467261); /*0x9960da*/
+          v51 = *v101; /*0x9960e2*/
+          v73 = v103; /*0x9960e9*/
+          v74 = v83; /*0x9960f5*/
+          v102 = v101; /*0x9960fc*/
+          v52 = (*(v51 + 128))( /*0x996100*/
+                  a1: v101,
+                  a2: *&pvarg.vt,
+                  a3: pvarg.decVal.Hi32,
+                  a4: v103,
+                  a5: *&v83.vt,
+                  a6: v83.decVal.Hi32,
+                  a7: v83.lVal,
+                  a8: v83.cyVal.Hi);
+          if ( v52 < 0 ) /*0x996108*/
+            _com_issue_errorex(a1: v52, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x996113*/
+          LOBYTE(v105) = 17; /*0x99611f*/
+          v53 = ZComAPI::ZComVariantCopy(pvarg: &v83); /*0x996123*/
+          if ( v53 < 0 ) /*0x99612b*/
+            _com_issue_error(a1: v53); /*0x99612e*/
+          sub_402F85(pvargDest: &v79, pvargSrc: &pvargSrc); /*0x99613a*/
+          LOBYTE(v105) = 32; /*0x996144*/
+          if ( v97 == 0 ) /*0x996148*/
+            _com_issue_error(a1: -2147467261); /*0x99614f*/
+          v73 = v99; /*0x996162*/
+          *&v74.vt = *&v79.vt; /*0x99616b*/
+          v103 = (*&pvarg.vt + 8); /*0x996174*/
+          v54 = *v97; /*0x99617a*/
+          v74.cyVal.int64 = v79.cyVal.int64; /*0x99617c*/
+          v102 = v97; /*0x99617e*/
+          v55 = (*(v54 + 128))( /*0x996182*/
+                  a1: v97,
+                  a2: *&pvarg.vt + 8,
+                  a3: pvarg.decVal.Hi32 + 5,
+                  a4: v99,
+                  a5: *&v79.vt,
+                  a6: v79.decVal.Hi32,
+                  a7: v79.lVal,
+                  a8: v79.cyVal.Hi);
+          if ( v55 < 0 ) /*0x99618a*/
+            _com_issue_errorex(a1: v55, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x996195*/
+          LOBYTE(v105) = 17; /*0x99619a*/
+          v56 = &v79; /*0x99619e*/
+        }
+        else
+        {
+          sub_402F85(pvargDest: &v87, pvargSrc: v74.cyVal.Hi); /*0x9961af*/
+          LOBYTE(v105) = 33; /*0x9961b9*/
+          if ( v97 == 0 ) /*0x9961bd*/
+            _com_issue_error(a1: -2147467261); /*0x9961c4*/
+          v73 = v99; /*0x9961d7*/
+          *&v74.vt = *&v87.vt; /*0x9961e0*/
+          v103 = (*&pvarg.vt + 8); /*0x9961e9*/
+          v57 = *v97; /*0x9961ef*/
+          v74.cyVal.int64 = v87.cyVal.int64; /*0x9961f1*/
+          v102 = v97; /*0x9961f3*/
+          v58 = (*(v57 + 128))( /*0x9961f7*/
+                  a1: v97,
+                  a2: *&pvarg.vt + 8,
+                  a3: pvarg.decVal.Hi32 + 5,
+                  a4: v99,
+                  a5: *&v87.vt,
+                  a6: v87.decVal.Hi32,
+                  a7: v87.lVal,
+                  a8: v87.cyVal.Hi);
+          if ( v58 < 0 ) /*0x9961ff*/
+            _com_issue_errorex(a1: v58, a2: v102, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x99620a*/
+          LOBYTE(v105) = 17; /*0x99620f*/
+          v56 = &v87; /*0x996213*/
+        }
+      }
+      v69 = ZComAPI::ZComVariantCopy(pvarg: v56); /*0x9963f8*/
+      if ( v69 < 0 ) /*0x996400*/
+        _com_issue_error(a1: v69); /*0x996403*/
+      ++*v104; /*0x996408*/
+      if ( *v104 >= *(v100 + 33) ) /*0x996417*/
+        break; /*0x996417*/
+      v35 = v100; /*0x995ea7*/
+    }
+    v35 = v100; /*0x99641d*/
+  }
+  while ( *v104 < 6 * (*(v35 + 33) / 6 + 1) ) /*0x996434*/
+  {
+    sub_9964DA(a1: &v90, a2: *v104); /*0x99643f*/
+    sub_402F85(pvargDest: &v89, pvargSrc: &pvargSrc); /*0x996448*/
+    v70 = *(v35 + 39); /*0x996451*/
+    LOBYTE(v105) = 34; /*0x996457*/
+    if ( v101 == 0 ) /*0x99645b*/
+      _com_issue_error(a1: -2147467261); /*0x996462*/
+    sub_424BA7(a1: *&v90.vt, a2: v90.decVal.Hi32, a3: v70, a4: &v89); /*0x996475*/
+    LOBYTE(v105) = 17; /*0x99647e*/
+    v71 = ZComAPI::ZComVariantCopy(pvarg: &v89); /*0x996482*/
+    if ( v71 < 0 ) /*0x99648a*/
+      _com_issue_error(a1: v71); /*0x99648d*/
+    ++*v104; /*0x996492*/
+  }
+  sub_4156AB(a1: &v99); /*0x99649a*/
+  LOBYTE(v105) = 6; /*0x9964a2*/
+  ZXString<char>::_Release(a1: &v96); /*0x9964a6*/
+  sub_4156AB(a1: &v97); /*0x9964ae*/
+  sub_4156AB(a1: &v101); /*0x9964b6*/
+  return sub_4156AB(a1: &v94); /*0x9964cc*/
+}

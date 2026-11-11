@@ -161,3 +161,19 @@ WLE-TRIAGE-PLAN.md 三处纸面登记被现场取证证伪：
 - 外部程序在途 WIP 原样留工作树，精确 `git add` 隔离、零夹带。
 - 真机五屏截图 60 节/142 处、`InPacket::available()` 393 处 §27-A 逐面回归、D2 聊天规则，仍由用户认领。
 - 下一批实施前须用户确认本 Plan；确认后按 §5 逐片推进，每片一片一原子 commit。
+## 8. round92 实施回执（m10905「开始下面的计划」）
+
+> 本轮按 §5 推进片 1、片 2；结论是「先四方取证再定性」救了两次返工。
+
+- **片 1**（§4 P1 首选 `skill/D12`/`corewindow/D9` 宏选中态）：四方取证证伪 → 编号错配 DOC_ONLY，
+  零源码改动。083 `CUIMacroSysEx` 是 32 格 COM 编辑窗（`CCtrlCheckBox`/`CCtrlEdit`/`CUIToolTip`），
+  当前端 `UISkillMacroEx` 是 5 槽组合栏，`shown_name` 变更检测已等价 `SetText`；orange-wz 128B 门禁
+  `Shout` 零命中、当前端无 Checkbox 实现类 → 无干净补丁可落。
+- **片 2**（§4 P1 次选 `login-flow/D9`/`statusbar-hud/D12` 频道网格）：编号同样错配，但
+  `CUIChannelShift::OnKey @0x995863` 门控（`count>=7` 放 ↑/↓、`count>=2` 放 ←/→）对拍当前端
+  `UIChannel::send_key` 挖到真实缺陷 —— `step_channel(±6)` 在 `channel_count=3` 时单次 wrap 后仍负、
+  `uint8_t` 下溢 253..255 / 越界 3..5。**已落 L 桶纯逻辑补丁**（`send_key` 加 083 门控，
+  `step_channel` 函数体零改动，零 wire）。
+- **§4 候选登记表整体作废**：4 个编号均系从矩阵文本推导、未走四方取证。下一批必须重新按
+  「083 反编译 + s9 handler + 当前端字面量 + DECISIONS 四项」逐条立项（WLE §9 硬规则 + harness 守卫）。
+- 真机归口见 PLT §51；168 条裁定 / reopen 27 算术 / W 桶 6 字段 + 27 wire KEEP 全不动。

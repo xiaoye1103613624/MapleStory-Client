@@ -1,0 +1,48 @@
+CUIChannelShift *__thiscall CUIChannelShift::CUIChannelShift(CUIChannelShift *this)
+{
+  int v2; // eax
+  int v3; // eax
+  int v4; // ecx
+
+  CDialog::CDialog(this); /*0x994be2*/
+  *(this + 31) = -1; /*0x994beb*/
+  `eh vector constructor iterator'( /*0x994c06*/
+    a1: this + 144,
+    a2: 4u,
+    a3: 3,
+    a4: _com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>::_com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,
+    a5: _com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>::~_com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>);
+  `eh vector constructor iterator'( /*0x994c1c*/
+    a1: this + 156,
+    a2: 4u,
+    a3: 3,
+    a4: _com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>::_com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,
+    a5: _com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>::~_com_ptr_t<_com_IIID<IWzGr2DLayer,&__s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>);
+  *(this + 42) = 0; /*0x994c23*/
+  *(this + 43) = 0; /*0x994c29*/
+  *(this + 45) = 0; /*0x994c2f*/
+  *(this + 47) = 0; /*0x994c35*/
+  *this = &off_B3D9E0; /*0x994c3b*/
+  *(this + 1) = &off_B3D994; /*0x994c41*/
+  *(this + 2) = &off_B3D990; /*0x994c48*/
+  *(this + 32) = *(*dword_BE7918 + 8280); /*0x994c5a*/
+  v2 = *(*dword_BE7918 + 14036); /*0x994c65*/
+  if ( v2 != 0 ) /*0x994c71*/
+    v3 = *(v2 - 4); /*0x994c77*/
+  else
+    v3 = 0; /*0x994c73*/
+  *(this + 33) = v3; /*0x994c7c*/
+  v4 = 21 * (v3 / 6) + 125; /*0x994c90*/
+  *(this + 34) = v4; /*0x994ca6*/
+  CWnd::CreateWnd( /*0x994cb3*/
+    this,
+    nLeft: 182,
+    nTop: (600 - v4) / 2,
+    nWidth: 436,
+    nHeight: v4,
+    z: 10,
+    bScreenCoord: 1,
+    pData: 0,
+    bSetFocus: 1);
+  return this; /*0x994cb8*/
+}

@@ -1,0 +1,50 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+  "iv_b64": "TSPHKw==",
+  "key_b64_len": 172,
+  "key_sha_head": "EwAAAFIAAAAqAAAAWwAAAAgA",
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY (orange-wz MCP path)",
+  "queries": {
+    "Macro": {
+      "isError": false,
+      "text_len": 2108,
+      "head": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Macro/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Macro/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Macro/backgrnd3\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"num1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\U"
+    },
+    "SkillMacro": {
+      "isError": false,
+      "text_len": 2522,
+      "head": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacro/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"macroslot\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacro/macroslot\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"macroslot1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacro/macroslot1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"macroslot2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou"
+    },
+    "SkillMacroEx": {
+      "isError": false,
+      "text_len": 1978,
+      "head": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacroEx/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"macroslot2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacroEx/macroslot2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Macroicon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"SkillMacroEx/Macroicon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtMacroIn\",\"rootPath\":\"E:\\\\MXD\\\\Bei"
+    },
+    "search_Shout": {
+      "isError": false,
+      "text_len": 282,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Shout\",\"matches\":[]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Shout\",\"matches\":[]}]}"
+    },
+    "search_shout": {
+      "isError": false,
+      "text_len": 282,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"shout\",\"matches\":[]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"shout\",\"matches\":[]}]}"
+    },
+    "search_Check": {
+      "isError": false,
+      "text_len": 1356,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Check\",\"matches\":[{\"name\":\"check0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Memo/check0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"check1\",\"rootPath\":\"E:\\"
+    },
+    "search_BtShout": {
+      "isError": false,
+      "text_len": 286,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"BtShout\",\"matches\":[]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"BtShout\",\"matches\":[]}]}"
+    }
+  },
+  "verdict": "GATE_OK_128B_MACRO_NODES_ENUMERATED",
+  "errors": [],
+  "init_ok": true,
+  "load_text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}",
+  "load_isError": false
+}

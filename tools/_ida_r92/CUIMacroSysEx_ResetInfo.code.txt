@@ -1,0 +1,6 @@
+void __thiscall CUIMacroSysEx::ResetInfo(CUIMacroSysEx *this)
+{
+  (*(*(*(this + 32) + 4) + 36))(a1: *(this + 32) + 4, a2: *(dword_BF1080 + 1584) == 2); /*0x8a97aa*/
+  CUIToolTip::ClearToolTip(this: (this + 140)); /*0x8a97b3*/
+  CWnd::InvalidateRect(this, a2: 0); /*0x8a97bc*/
+}

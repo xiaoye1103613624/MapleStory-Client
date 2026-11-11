@@ -1151,3 +1151,10 @@
 50-3. **真干净下一批（自带 083 锚点）**：P1 首选 `skill/D12`/`corewindow/D9` 宏选中态 `CUIMacroSysEx::OnSelected @0x8a984d`（20 行纯 UI）+ `CUIMacroSys::OnKey @0x8a98dc`（ESC→`ProcessBasicUIKey(27,a2)`），零 `COutPacket`/`Encode`/`SendPacket`；P1 次选 `CUIChannelShift::OnKey @0x995863` 6 列方向键纯索引，`CUIChannelSelect::OnKey @0x628a1c` 须先拆 L/W（导航=L / `SendViewAllCharacterPacket`=W 保持 s9）；P2/F 维 `CUISkillEx::ShiftMacroUIState @0x8bad5a`（243 行 COM 画布栈，当前端无 COM 不补）。
 50-4. **门禁与算术**：orange-wz 128B `WzAESConstant.DEFAULT_KEY` base64（172 字符）+ iv `TSPHKw==` 对 `UIWindow.img` 的 `KeyConfig`/`Stat`/`Skill` 三根全 `isError=false` → `GATE_OK_128B_IMG_REACHABLE`（`tools/_ida_r91/img_gate.json`）；168 条 DECISIONS 历史裁定 / WLE §4 `38+130=168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` **全不动**，仅 P1 登记层注销 3 条；`GATE OK s9 a78ba681a4`；harness 全绿；零署名原子提交。
 50-5. **限制**：计划轮 **0 源码 / 0 wire / 0 协议 / 0 WZ / 0 新封包**；`tools/_ida_r91/` 只读取证留痕；工作树外部在途 WIP 原样保留、精确 add 隔离；真机五屏截图 60 节/142 处、`InPacket::available()` 393 处 §27-A 逐面回归、D2 聊天规则仍由用户认领；下一批实施前须用户确认一次性 Plan。
+## 51. round92 · 实施片1+片2（编号错配纠偏 + UIChannel 下溢修复）
+
+- **51-1** 本服 `channel_count=3` 打开换频窗，按 ↑/↓ 不再出现 253/254/255 幽灵选中帧或 3/4/5 越界高亮；左右键与 ESC 行为不变。
+- **51-2** 多频道服（>=7）换频窗 ↑/↓ 跨行正常、6 列落位与 083 `CUIChannelShift` 一致。
+- **51-3** 片1 宏组合栏选中态真机观感（DOC_ONLY 未改，`shown_name` 变更检测保持）。
+- **51-4** 硬规则：NEXT-BATCH-PLAN.md 任何 P1 候选登记须附 083 反编译 + s9 handler + 当前端字面量 + DECISIONS 四项（harness A12 守卫）。
+- 限制：① 零 wire / 零协议 / 零 WZ 改写 / 零新封包；② 4 个错配编号只在 P1 登记层注销，168 条 DECISIONS 裁定与 reopen 27 算术不动；③ W 桶 6 字段 + 27 wire KEEP 零改动；④ 真机五屏截图仍由用户认领。

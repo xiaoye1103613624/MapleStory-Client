@@ -1,0 +1,44 @@
+signed int __thiscall CUIMacroSysEx::GetIndexByPos(CUIMacroSysEx *this, int a2, int a3, int a4, int *a5, int *a6)
+{
+  int v6; // esi
+  int v7; // ecx
+  int v8; // edx
+  int v9; // ecx
+  int v10; // eax
+
+  v6 = 0; /*0x8a97cc*/
+  *a5 = 0; /*0x8a97ce*/
+  v7 = *(*(this + 30) + 56); /*0x8a97d3*/
+  v8 = 88; /*0x8a97d8*/
+  while ( v8 - 32 > a3 || a3 > v8 ) /*0x8a97e4*/
+  {
+    v8 += 45; /*0x8a97e6*/
+    ++v6; /*0x8a97e9*/
+    if ( v8 >= 223 ) /*0x8a97f0*/
+      goto LABEL_7; /*0x8a97f0*/
+  }
+  *a5 = v6 + v7; /*0x8a97f6*/
+LABEL_7:
+  if ( v6 != 3 ) /*0x8a97fd*/
+  {
+    v9 = 0; /*0x8a9804*/
+    v10 = 52; /*0x8a9806*/
+    while ( v10 - 32 > a2 || a2 > v10 ) /*0x8a9813*/
+    {
+      v10 += 37; /*0x8a9815*/
+      ++v9; /*0x8a9818*/
+      if ( v10 >= 163 ) /*0x8a981e*/
+        goto LABEL_14; /*0x8a981e*/
+    }
+    *a6 = v9; /*0x8a9822*/
+LABEL_14:
+    if ( v9 != 3 ) /*0x8a9826*/
+      return 1; /*0x8a9826*/
+    if ( a4 != 0 && a2 >= 146 && a2 <= 178 ) /*0x8a983c*/
+    {
+      *a6 = 3; /*0x8a983e*/
+      return 1; /*0x8a9846*/
+    }
+  }
+  return 0; /*0x8a9843*/
+}

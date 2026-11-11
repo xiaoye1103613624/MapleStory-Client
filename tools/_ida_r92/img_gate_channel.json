@@ -1,0 +1,44 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+  "iv_b64": "TSPHKw==",
+  "key_b64_len": 172,
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY",
+  "queries": {
+    "Channel": {
+      "isError": false,
+      "text_len": 2876,
+      "head": "{\"result\":{\"children\":[{\"name\":\"t\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/t\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"c\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/c\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"s\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/s\",\"type\":\"CANVAS_PROPERTY\"},{\"nam"
+    },
+    "channel0": {
+      "isError": false,
+      "text_len": 562,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"channel0\",\"matches\":[{\"name\":\"channel0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/channel0\",\"type\":\"CANVAS_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\""
+    },
+    "channel1": {
+      "isError": false,
+      "text_len": 562,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"channel1\",\"matches\":[{\"name\":\"channel1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/channel1\",\"type\":\"CANVAS_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\""
+    },
+    "channel2": {
+      "isError": false,
+      "text_len": 562,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"channel2\",\"matches\":[{\"name\":\"channel2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/channel2\",\"type\":\"CANVAS_PROPERTY\"}]},\"results\":[{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\""
+    },
+    "BtChange": {
+      "isError": false,
+      "text_len": 1462,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"BtChange\",\"matches\":[{\"name\":\"BtChange\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/BtChange\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtChangeBoss\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Party/BtChangeBos"
+    },
+    "BtCancel": {
+      "isError": false,
+      "text_len": 7294,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"BtCancel\",\"matches\":[{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"TradingRoom/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Channel/BtCancel\",\"type\":\""
+    }
+  },
+  "verdict": "GATE_OK_128B_CHANNEL_NODES_ENUMERATED",
+  "errors": [],
+  "init_ok": true,
+  "load_isError": false,
+  "load_text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}"
+}
