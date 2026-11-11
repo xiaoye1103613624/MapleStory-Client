@@ -1,0 +1,247 @@
+{
+  "round": "round87",
+  "task": "五面复核归档（m13177 / m09211 / goal-11388c42）",
+  "nature": "纯文档归档；0 源码 / 0 协议 / 0 WZ 改动",
+  "source_rounds": "round73-77 + round84 会话内 REA→IDA→IMG 只读取证",
+  "authority": "Angel(13339) 083/v83 带符号 IDB；s9 协议优先；校准≠改回原生",
+  "face_count": 5,
+  "faces": [
+    {
+      "id": "UIChannel",
+      "label": "选频道窗",
+      "file": "IO/UITypes/UIChannel.cpp",
+      "file_lines": 377,
+      "verdict": "已对齐 / 合法混合面，无需改源码",
+      "calibration_refs": [
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:168",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:234",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:242",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:285"
+      ],
+      "calibration_symbols": [
+        "CUIChannelSelect::OnKey @ 0x628a1c",
+        "CUIChannelSelect 0x62B2CF = CreateDlg(1"
+      ],
+      "source_anchors": [
+        "IO/UITypes/UIChannel.cpp:28",
+        "IO/UITypes/UIChannel.cpp:42-50",
+        "IO/UITypes/UIChannel.cpp:86-88",
+        "IO/UITypes/UIChannel.cpp:105",
+        "IO/UITypes/UIChannel.cpp:114",
+        "IO/UITypes/UIChannel.cpp:130"
+      ],
+      "constants": {
+        "SLOTS_PER_ROW": 6,
+        "GRID_TOP": 67,
+        "SLOT_PITCH_X": 70,
+        "SLOT_PITCH_Y": 20,
+        "STRIP_HEIGHT": 33,
+        "plate_tristate": "channel0(empty)/channel1(selected)/channel2(current)",
+        "channel_count_source": "Configuration::get().get_channel_total(worldid)",
+        "bt_y_native_frame": 99,
+        "bt_sad": "0.20/0.22"
+      },
+      "evidence_dirs": [
+        "docs/features/ui-v83-window-restore/evidence/w8-channel-layout-fix"
+      ],
+      "prior_notes": [],
+      "basis": "plate 三态取真 NX 节点、频道数由 Configuration 驱动；BtChange/BtCancel 顶边 y=99 与末排灰板由原生帧 SAD 定标，非自造版式。"
+    },
+    {
+      "id": "UICharSelect",
+      "label": "选角色窗",
+      "file": "IO/UITypes/UICharSelect.cpp",
+      "file_lines": 1478,
+      "verdict": "已对齐 / 合法混合面，无需改源码",
+      "calibration_refs": [
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:169",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:171",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:228",
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:233"
+      ],
+      "calibration_symbols": [
+        "CUICharSelect::OnButtonClicked @ 0x601667",
+        "CUICharDetailVAC @ 0x60745A",
+        "CLogin::SendDeleteCharPacket @ 0x5f7c4a"
+      ],
+      "source_anchors": [
+        "IO/UITypes/UICharSelect.cpp:93",
+        "IO/UITypes/UICharSelect.cpp:107-109",
+        "IO/UITypes/UICharSelect.cpp:338-339",
+        "IO/UITypes/UICharSelect.cpp:1373",
+        "IO/UITypes/UICharSelect.cpp:1380",
+        "IO/UITypes/UICharSelect.cpp:1384-1386"
+      ],
+      "constants": {
+        "PAGESIZE": 3,
+        "CS_CHARINFO_OFF": "(-94,-231)",
+        "CUICharDetail_Draw": "sub_602ADC @ 0x60292F",
+        "slot_occupied_width": 1384,
+        "slot_empty_width": 1348,
+        "button_ids": "1000/1001/1002 only",
+        "addr_table": "0x602960 / 0x60292F / 0x5F42CD / 0x9E03A6 / 0x48BBA5"
+      },
+      "evidence_dirs": [],
+      "prior_notes": [
+        "docs/features/development-and-fix-plan-2026-11/notes/wave1-charselect-recheck-20261109.md"
+      ],
+      "basis": "标签/值坐标表逐字来自 Angel 083 CUICharDetail::Draw (sub_602ADC)，占用 1384 / 空 1348、PAGESIZE=3、按钮仅 1000/1001/1002；截图只作旁证，非自造。"
+    },
+    {
+      "id": "UICommonCreation",
+      "label": "建角 / 取名窗",
+      "file": "IO/UITypes/UICommonCreation.cpp",
+      "file_lines": 2385,
+      "verdict": "已对齐 / 合法混合面，无需改源码",
+      "calibration_refs": [
+        "docs/features/login-flow-angel-calibration-2026-11/README.md:170"
+      ],
+      "calibration_symbols": [
+        "CUINewCharNameSelect::OnButtonClicked"
+      ],
+      "source_anchors": [
+        "IO/UITypes/UICommonCreation.cpp:62-63",
+        "IO/UITypes/UICommonCreation.cpp:69",
+        "IO/UITypes/UICommonCreation.cpp:76",
+        "IO/UITypes/UICommonCreation.cpp:89-97",
+        "IO/UITypes/UICommonCreation.cpp:394",
+        "IO/UITypes/UICommonCreation.cpp:495",
+        "IO/UITypes/UICommonCreation.cpp:499",
+        "IO/UITypes/UICommonCreation.cpp:584",
+        "IO/UITypes/UICommonCreation.cpp:618"
+      ],
+      "constants": {
+        "resource_root": "Login.img/Common + Login.img/CustomizeChar[classType]",
+        "init_modern": "全 NX 资源驱动 (board/genderSelect/info/avatarOrigin/avatarSize/charNameOrigin)",
+        "init_classic": "1280x720 三职业 sign/yes/no/slot/avatar 截图锚",
+        "BtViewAll": "真资产 PNG 99x35",
+        "ATLAS_BTVA": "0x43524254 ('CRBT')",
+        "scene": "Map001/Back/login.img/back/<no>",
+        "ida_helpers": "sub_5F5962 / sub_5FCF8A"
+      },
+      "evidence_dirs": [],
+      "prior_notes": [
+        "docs/features/development-and-fix-plan-2026-11/notes/wave2-commoncreation-recheck-20261110.md"
+      ],
+      "basis": "init_modern 全 NX 节点驱动；init_classic 仅少量 1280x720 截图锚补 083 无 OnCreate 立即数处（门禁 18 截图备选合法），BtViewAll 是真位图。"
+    },
+    {
+      "id": "UIMiscShells",
+      "label": "20+ shell 杂项窗",
+      "file": "IO/UITypes/UIMiscShells.cpp",
+      "file_lines": 7859,
+      "verdict": "已对齐 / 合法混合面，无需改源码",
+      "calibration_refs": [
+        "docs/features/activity-minigame-angel-calibration-2026-11/README.md:11",
+        "docs/features/activity-minigame-angel-calibration-2026-11/README.md:103",
+        "docs/features/activity-minigame-angel-calibration-2026-11/README.md:104",
+        "docs/features/activity-minigame-angel-calibration-2026-11/README.md:167"
+      ],
+      "calibration_symbols": [
+        "COmokDlg::OnKey",
+        "CMemoryGameDlg::OnKey",
+        "MiniRoom 6 类 → 单壳 (D09)"
+      ],
+      "source_anchors": [
+        "IO/UITypes/UIMiscShells.cpp:156",
+        "IO/UITypes/UIMiscShells.cpp:244",
+        "IO/UITypes/UIMiscShells.cpp:314",
+        "IO/UITypes/UIMiscShells.cpp:353-355",
+        "IO/UITypes/UIMiscShells.cpp:412",
+        "IO/UITypes/UIMiscShells.cpp:1758",
+        "IO/UITypes/UIMiscShells.cpp:2111",
+        "IO/UITypes/UIMiscShells.cpp:3870-3871",
+        "IO/UITypes/UIMiscShells.cpp:3963",
+        "IO/UITypes/UIMiscShells.cpp:4707-4709"
+      ],
+      "constants": {
+        "loader": "load_window_bg(name, Texture&, Point<int16_t>&) 真 NX 资源驱动",
+        "has_assets_true": 6,
+        "has_assets_false_hits": 0,
+        "balloon_sad": "7 件 SAD=0.00",
+        "macro_frame": "379x291 技能展开宏指令",
+        "ida_helpers": "sub_9A3CAE / sub_4EDAB7",
+        "dg_note": "round85 D-G 083 家族入口 = UIUserList 第 3 页签"
+      },
+      "evidence_dirs": [],
+      "prior_notes": [],
+      "basis": "has_assets=false 全库 0 命中、has_assets=true 6 处全走 load_window_bg 真 NX 底板；DIY 壳属 D 矩阵 P3 长尾（结构性差异），按 s9 优先 / 校准≠改回原生不重写。"
+    },
+    {
+      "id": "UIItemInventory",
+      "label": "物品栏窗",
+      "file": "IO/UITypes/UIItemInventory.cpp",
+      "file_lines": 2045,
+      "verdict": "已对齐 / 合法混合面，无需改源码",
+      "calibration_refs": [
+        "docs/features/corewindow-angel-calibration-2026-11/README.md:94",
+        "docs/features/corewindow-angel-calibration-2026-11/README.md:135",
+        "docs/features/corewindow-angel-calibration-2026-11/README.md:308",
+        "docs/features/drop-angel-calibration-2026-11/README.md:116"
+      ],
+      "calibration_symbols": [
+        "CUIItem::OnCreate @ 0x81c6c9",
+        "CUIItem::SetArrangeButton @ 0x81e3a6",
+        "CUIItem::OnChildNotify @ 0x81d01f",
+        "OnGatherItemResult 0xa1e943",
+        "OnSortItemResult 0xa1e96d"
+      ],
+      "source_anchors": [
+        "IO/UITypes/UIItemInventory.cpp:124-127",
+        "IO/UITypes/UIItemInventory.cpp:146-163",
+        "IO/UITypes/UIItemInventory.cpp:170",
+        "IO/UITypes/UIItemInventory.cpp:175-182",
+        "IO/UITypes/UIItemInventory.cpp:547-550",
+        "IO/UITypes/UIItemInventory.cpp:1461"
+      ],
+      "constants": {
+        "slot_col": 4,
+        "slot_row": 6,
+        "slot_pos": "(8,50)",
+        "expanded_sad": 0.0,
+        "zero_div_guard": "slot_col<=0||slot_row<=0 → 4/6/(8,50) 整组回退",
+        "ida_dec": "tools/_ida_CUIItem_OnCreate.txt / _ida_CUIItem_OnChildNotify.txt / _ida_CUIItem_OnMouseButton.txt"
+      },
+      "evidence_dirs": [
+        "docs/features/ui-v83-window-restore/evidence/w7-equip",
+        "docs/features/ui-v83-window-restore/evidence/r27-b3-equip"
+      ],
+      "prior_notes": [
+        "docs/features/development-and-fix-plan-2026-11/notes/wave2-iteminventory-recheck-20261110.md",
+        "docs/features/development-and-fix-plan-2026-11/notes/wave2-iteminventory-slotcol-recheck-20261110.md"
+      ],
+      "basis": "v83 位图实测 slot_col=4 / slot_row=6 / slot_pos(8,50)、展开态逐格 SAD=0.000；083 EA 已在源码注释逐字钉死，除零旁路守卫已销案。"
+    }
+  ],
+  "verdict_distribution": {
+    "已对齐 / 合法混合面，无需改源码": 5
+  },
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先",
+    "数值重合≠语义重合",
+    "校准≠改回原生（不重写 Journey 架构 / 不改已对齐坐标）",
+    "WZ/IMG/XML 先 orange-wz MCP（128B WzAESConstant.DEFAULT_KEY，.nx/NoLife 才 65536B key_gms）",
+    "门禁 18 REA→IDA→orange-wz→.nx 只读取证（截图仅备选）"
+  ],
+  "live_backlog": [
+    "五屏真机观感截图（用户认领，pending-live-tests 60 节 / 142 处标记）",
+    "展开宠物面板原生帧 / BtPet1-3 origin(15,13)（§45 用户认领）",
+    "D-F 五按钮 y=234 是否按五屏微调（决策点）",
+    "D2 聊天规则待真机",
+    "InPacket::available() 393 处 §27-A 真机逐面回归"
+  ],
+  "zero_change": {
+    "source_files_touched": 0,
+    "protocol_edits": 0,
+    "wz_edits": 0,
+    "deliverables": [
+      "docs/features/development-and-fix-plan-2026-11/evidence/five-face-review-round87.json",
+      "docs/features/development-and-fix-plan-2026-11/notes/wave3-five-face-review-archive-20261111.md",
+      "docs/features/development-and-fix-plan-2026-11/README.md (§4 2-35)",
+      "docs/features/pending-live-tests/README.md (§46)",
+      "tools/test_round87_five_face_archive.py",
+      "tools/_fiveface_deliver.py"
+    ]
+  }
+}
