@@ -166,9 +166,9 @@ namespace ms
 
 			// 聊天输入框接收中文：启用系统 IME（SDL_EVENT_TEXT_INPUT 通路），UTF-8 直接进
 			// 字图缓存（思源宋体含 CJK）。不启用时 Textfield::add_string 会丢弃全部 >=128
-			// 的字节，中文一个字都进不来。注意 limit=70 是字节上限（belowlimit 用 text.size()），
-			// 中文 3 字节/字故实际约 23 字；s9 GeneralChatHandler 按字符数限 127，
-			// 放宽上限属行为变更，本轮按「不改 happy-path」保留 70 并记台账。
+			// 的字节，中文一个字都进不来。limit=70 现为字符级上限（belowlimit 按 UTF-8
+			// 码点计数，见 Textfield.cpp），中英文混排统一按"字"计数，不再按字节劈断乱码；
+			// s9 GeneralChatHandler 按字符数限 127，70 < 127 安全。
 			input_text.set_accept_unicode(true);
 
 			input_text.set_enter_callback(

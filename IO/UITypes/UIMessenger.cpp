@@ -56,6 +56,8 @@ namespace ms
 			48,
 			11
 		);
+		// 好友聊天支持中文输入。
+		chat_input.set_accept_unicode(true);
 		chat_input.set_text_shift(Point<int16_t>(0, CHAT_INPUT_TEXT_SHIFT_Y));
 		chat_input.set_enter_callback([this](std::string s) { send_chat(s); });
 		// 焦点在输入框时，按键由 UI::send_key 整条交给 Textfield（IO/UI.cpp:202），

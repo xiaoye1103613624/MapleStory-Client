@@ -115,6 +115,8 @@ namespace ms
 
 		textfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
 			Rectangle<int16_t>(textfield_topleft, textfield_topleft + Point<int16_t>(200, 18)), MAX_TEXT_LEN);
+		// 软键盘输入框支持中文（含"角色名"等需中文的入口）；Pic 密文场景仍按 set_cryptchar 掩码。
+		textfield.set_accept_unicode(true);
 
 		// Pic：二级密码密文 + 拦截物理键盘字母数字（原生「只能用鼠标」）。
 		// Text：明文 + 不设 text_callback，物理键盘可直接写入 Textfield。

@@ -155,6 +155,8 @@ namespace ms
 		int16_t search_limit = 8;
 
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Rectangle<int16_t>(get_search_pos(), get_search_pos() + search_text_dim), search_limit);
+		// 地图名检索支持中文：开启系统 IME（focus_textfield 据此启动 SDL 文本输入）。
+		search_text.set_accept_unicode(true);
 
 		mob_panel.set_select_callback([this](int32_t mob_id)
 		{

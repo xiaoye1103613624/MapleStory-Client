@@ -324,6 +324,8 @@ namespace ms
 			newCharNameDim = Point<int16_t>(0, 0);
 
 		newCharName = Textfield(Text::Font::A12M, Text::Alignment::LEFT, getNewCharNameColor(), Rectangle<int16_t>(newCharNamePos, newCharNamePos + newCharNameDim), 12);
+		// 角色名支持中文输入。
+		newCharName.set_accept_unicode(true);
 
 		newCharName.set_enter_callback(
 			[&](std::string)
@@ -449,6 +451,8 @@ namespace ms
 			Color::Name::WHITE,
 			Rectangle<int16_t>(newCharNamePos, newCharNamePos + newCharNameDim),
 			12);
+		// 角色名支持中文输入（classic 版）。
+		newCharName.set_accept_unicode(true);
 
 		// A12M 约 12px，FreeType 以 y 为基线，字形可见区约 [y-9, y+3]；
 		// 24px 槽垂直居中需把基线放到 y=15（槽中线 12 + 降部 3）。

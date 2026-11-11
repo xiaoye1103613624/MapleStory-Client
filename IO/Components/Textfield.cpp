@@ -288,32 +288,65 @@ namespace ms
 		}
 	}
 
+	namespace
+	{
+		// UTF-8 首字节 → 该码点字节数；非法首字节按 1 处理，避免越界。
+		size_t utf8_char_len(unsigned char lead)
+		{
+			if (lead < 0x80)
+				return 1;
+			if ((lead & 0xE0) == 0xC0)
+				return 2;
+			if ((lead & 0xF0) == 0xE0)
+				return 3;
+			if ((lead & 0xF8) == 0xF0)
+				return 4;
+			return 1;
+		}
+
+		// 按 UTF-8 码点（而非字节）统计字符数，用于字符级长度限制。
+		size_t utf8_length(const std::string& s)
+		{
+			size_t n = 0;
+			size_t i = 0;
+			while (i < s.size())
+			{
+				i += utf8_char_len(static_cast<unsigned char>(s[i]));
+				n++;
+			}
+			return n;
+		}
+	}
+
 	void Textfield::add_string(const std::string& str)
 	{
-		for (unsigned char c : str)
+		size_t i = 0;
+		while (i < str.size())
 		{
-			// Unicode-capable fields (e.g. map search) accept full UTF-8 so
-			// IME / clipboard CJK commits render via the FreeType glyph cache.
-			// ASCII-only fields (account/password) keep the legacy allowlist.
-			if (accept_unicode)
-			{
-				if (c < 32)
-					continue;
-			}
-			else
-			{
-				if (c < 32 || c >= 128)
-					continue;
-			}
+			unsigned char lead = static_cast<unsigned char>(str[i]);
+			size_t cl = utf8_char_len(lead);
 
-			if (belowlimit())
+			// 防御 src 末尾被截断的非法序列越界。
+			if (cl > str.size() - i)
+				cl = str.size() - i;
+
+			// 过滤以「首字节」为单位判定（多字节字符的续字节恒 >= 0x80，不会单独出现）：
+			// Unicode 字段仅丢控制符（<32）；ASCII 字段保留 32..127，其余（含 CJK）丢弃。
+			bool keep = accept_unicode ? (lead >= 32) : (lead >= 32 && lead < 128);
+
+			if (keep)
 			{
-				text.insert(markerpos, 1, static_cast<char>(c));
+				// 字符级上限：整码点必须完整落进上限，否则停在码点边界，
+				// 不再把多字节字符从中间劈断成非法 UTF-8（乱码）发给服务端。
+				if (!belowlimit())
+					break;
 
-				markerpos++;
-
+				text.insert(markerpos, str, i, cl);
+				markerpos += static_cast<int32_t>(cl);
 				modifytext(text);
 			}
+
+			i += cl;
 		}
 	}
 
@@ -424,11 +457,13 @@ namespace ms
 	{
 		if (limit > 0)
 		{
-			return text.size() < limit;
+			// 字符级上限：中文 1 字 = 1 码点（3 字节），不再按字节计数，
+			// 否则 70 字节上限只能塞约 23 汉字，且易在多字节边界劈断成乱码。
+			return utf8_length(text) < limit;
 		}
 		else
 		{
-			uint16_t advance = textlabel.advance(text.size());
+			uint16_t advance = textlabel.advance(utf8_length(text));
 
 			return (advance + 50) < bounds.get_horizontal().length();
 		}
