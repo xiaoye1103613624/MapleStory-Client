@@ -1,0 +1,1 @@
+[{"kind":"functions","data":[{"kind":"function","addr":"0x8aa243","name":"??0CWndSkillGuide@@QAE@J@Z","size":"0x222","segment":"___","has_type":true},{"kind":"function","addr":"0x8aa4e4","name":"?OnKey@CWndSkillGuide@@UAEXII@Z","size":"0x20","segment":"___","has_type":true}],"next_offset":null,"total":2,"error":null}]

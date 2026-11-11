@@ -154,3 +154,28 @@ round88 四分类计数 `PURE76/WIRE38/MIXED14/OTHER40` 直接复用（稳定、
 
 **限制**：零源码行为改动（`Drop.cpp` 仅补三方对账纯注释）/ 零 wire / 零协议 / 零 WZ /
 零新封包；25 个外部程序在途 WIP 原样留工作树、精确 add 隔离；真机五屏截图 60 节/142 处仍由用户认领。
+
+## 8. round91 纠偏 — 下一批 3 条候选的四方对账（m10739）
+
+触发：用户「开始 下一批 的计划」→ 按门禁 1 先证据后计划，对 §2.3 :96 / §5 :123 /
+§7 :152-153 登记的 3 条「合法 L 桶候选」做 083 活 IDA + s9 源码 + 当前端 + DECISIONS 四方复核。
+**结论：三条全部不成立，不进 P1。这是继 round90 之后第三次同族误登记。**
+
+| 项 | round89/90 登记 | round91 判定 | 决定性证据 |
+| --- | --- | --- | --- |
+| `quest/D8` | L 桶 P1（搬 `sub_721008` 分支） | **W 桶 wire 条件追加段**，保持 s9 | 083 `CQuest::StartQuest @0x71751c` `COutPacket(107)` → `if (sub_721008(questid)==0){ Encode2(x); Encode2(y); }`；`sub_721008 = IsAutoStartQuest || sub_720FED`；s9 `QuestActionHandler.isNpcNearby` `if (p.available() >= 4)` 容忍有/无 x/y；当前端 `Net/Packets/QuestPackets.h` 从不写 x/y = 合法 s9 形态 |
+| `skill/D4` | L 桶 P1（新增 `CWndSkillGuide` 子窗） | **架构级单点裁决**，不新增 | 083 全库仅 2 符号（ctor `0x8aa243` / `OnKey 0x8aa4e4` `a2==27`→`CloseSkillGuide`）；当前端 `UISkillBook.cpp:797` ESC 已闭环；矩阵 `:243` / `DECISIONS.md:190` 已裁「不新增」；§6 自排除架构重写 |
+| `corewindow/D8` | L 桶 P1（覆盖度对照） | **DOC_ONLY 已发货**（round75 `c07b1a7b`） | 083 三份反编译（`CUIStat::OnButtonClicked 0x8c522f` 6 掩码 / `CUIKeyConfig::OnButtonClicked 0x8335d0` 5 分支 / `CUISkill::OnSkillLevelUpButton 0x8acf1a` + `CanSendExclRequest 0x485bf7` 500ms）；s9 `DistributeSPHandler` 无 500ms 限速 + `AssignAPProcessor` 不同编码；当前端 `PlayerPackets.h:48-72` 已注明两套编码勿复用；矩阵 `:152` / `DECISIONS.md:99/293/311` 裁「只出对照清单不改代码」 |
+
+**作废旧结论（历史文本保留，以本节为准）**：§2.3 :96「等状态机分支同理」、§5 :123「改走真正有 083 状态机证据且零 wire 的 L 桶候选（`quest/D8`/`skill/D4`/`corewindow/D8`）」、§7 :152-153「同族审计…均为状态机/条件分支、不碰 wire，属合法 L 桶候选，无同族误分类」。
+
+**同族病根因与硬规则**：从 D 矩阵「推荐默认文本」直接抄进 P1 登记层，没先跑该条的 083 反编译 + s9 handler + 当前端字面量 + DECISIONS 原裁定。今后任何「下一批 L 桶」登记必须先附这四项，不允许从矩阵文本推导批次。
+
+**真正干净的下一批（每条自带 083 反编译锚点，详见 `NEXT-BATCH-PLAN.md §4`）**：
+
+- P1 首选 `skill/D12`/`corewindow/D9` 宏选中态：`CUIMacroSysEx::OnSelected @0x8a984d`（20 行纯 UI，`*(this+361)=a2`/`GetMacroName`/`IsShoutMacro`/`ResetInfo`）+ `CUIMacroSys::OnKey @0x8a98dc`（ESC→`ProcessBasicUIKey(27,a2)`），零 `COutPacket`/零 `Encode`/零 `SendPacket`。
+- P1 次选 `login-flow/D9`/`statusbar-hud/D12` 频道网格：`CUIChannelShift::OnKey @0x995863` 6 列方向键纯索引；`CUIChannelSelect::OnKey @0x628a1c` **须先拆 L/W**（导航=L，`SendViewAllCharacterPacket`=W 保持 s9）。
+- P2/F 维 `CUISkillEx::ShiftMacroUIState @0x8bad5a`（243 行 COM 画布栈，当前端无 COM ⇒ 不补）。
+
+**算术不动**：168 条历史裁定 / §4 `38+130=168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` 全不变；本轮只在 P1 **登记层**注销 3 条，不做语义再分类造假。
+**限制**：0 源码 / 0 wire / 0 协议 / 0 WZ / 0 新封包；计划轮，实施待用户确认一次性 Plan。

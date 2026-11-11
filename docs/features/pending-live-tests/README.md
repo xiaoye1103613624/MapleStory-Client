@@ -1141,3 +1141,13 @@
 49-5. 验收：harness 全绿 + GATE OK + 真重编三证（build_log / EXE / Drop.cpp 覆盖）+ 零署名提交 + 25 个外部在途 WIP 零夹带 + feedback 无 rating。
 
 限制：① `Drop.cpp` 仅补三方对账纯注释，0 行为字面量 / 零 wire / 零协议 / 零 WZ / 零新封包；② 25 个外部在途 WIP 原样留工作树；③ 下一批改走 `quest/D8` / `skill/D4` / `corewindow/D8` 合法 L 桶候选，门禁 5 禁想象修改；④ 架构级重写仍单点裁决、真机五屏截图 60 节/142 处仍由用户认领。
+## 50. round91 · 下一批一次性 Plan（3 条候选纠偏 / 计划轮零源码改动）
+
+触发：m10739「开始 下一批 的计划」+ m10738「记录一次有可见 PUA 输出的交付，不记录评分。」
+主交付：`docs/features/angel-calibration-d-matrix-2026-11/NEXT-BATCH-PLAN.md`（门禁 1：确认计划后才实现）。
+
+50-1. **3 条候选全部不进 P1**：`quest/D8` = W 桶 wire 条件追加段（083 `CQuest::StartQuest @0x71751c` `COutPacket(107)` → `if (sub_721008(questid)==0){Encode2(x);Encode2(y);}`；`sub_721008 = IsAutoStartQuest || sub_720FED`；s9 `QuestActionHandler.java:48-64` `if (p.available() >= 4)` 容忍有/无 x/y；当前端 `Net/Packets/QuestPackets.h` 无后缀=合法 s9 形态）→ 保持 s9 零改动；`skill/D4` = 架构级（`CWndSkillGuide::OnKey @0x8aa4e4` 全库 2 符号，当前端 `UISkillBook.cpp:797` ESC 闭环）→ 不新增；`corewindow/D8` = K3 DOC_ONLY 已发货（round75 `c07b1a7b`），083 6 掩码/500ms/5 分支属参考值，s9 `DistributeSPHandler` 无 500ms 限速 + `AssignAPProcessor` 不同编码，当前端 `PlayerPackets.h:48-72` 已注明勿复用 → 只补逐字对照。
+50-2. **同族病第三次**：WLE-TRIAGE-PLAN.md `:96/:123/:152-153` 三处纸面登记（含「无同族误分类」）被 083 活 IDA 12 份反编译 + s9 5 handler + 当前端 + DECISIONS 四方证伪。硬规则写进 Plan §3 / WLE §8：任何「下一批 L 桶」登记前必附 083 反编译 + s9 handler + 当前端字面量 + DECISIONS 原裁定四项，不从矩阵文本推导批次。
+50-3. **真干净下一批（自带 083 锚点）**：P1 首选 `skill/D12`/`corewindow/D9` 宏选中态 `CUIMacroSysEx::OnSelected @0x8a984d`（20 行纯 UI）+ `CUIMacroSys::OnKey @0x8a98dc`（ESC→`ProcessBasicUIKey(27,a2)`），零 `COutPacket`/`Encode`/`SendPacket`；P1 次选 `CUIChannelShift::OnKey @0x995863` 6 列方向键纯索引，`CUIChannelSelect::OnKey @0x628a1c` 须先拆 L/W（导航=L / `SendViewAllCharacterPacket`=W 保持 s9）；P2/F 维 `CUISkillEx::ShiftMacroUIState @0x8bad5a`（243 行 COM 画布栈，当前端无 COM 不补）。
+50-4. **门禁与算术**：orange-wz 128B `WzAESConstant.DEFAULT_KEY` base64（172 字符）+ iv `TSPHKw==` 对 `UIWindow.img` 的 `KeyConfig`/`Stat`/`Skill` 三根全 `isError=false` → `GATE_OK_128B_IMG_REACHABLE`（`tools/_ida_r91/img_gate.json`）；168 条 DECISIONS 历史裁定 / WLE §4 `38+130=168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` **全不动**，仅 P1 登记层注销 3 条；`GATE OK s9 a78ba681a4`；harness 全绿；零署名原子提交。
+50-5. **限制**：计划轮 **0 源码 / 0 wire / 0 协议 / 0 WZ / 0 新封包**；`tools/_ida_r91/` 只读取证留痕；工作树外部在途 WIP 原样保留、精确 add 隔离；真机五屏截图 60 节/142 处、`InPacket::available()` 393 处 §27-A 逐面回归、D2 聊天规则仍由用户认领；下一批实施前须用户确认一次性 Plan。

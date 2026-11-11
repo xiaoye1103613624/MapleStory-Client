@@ -1,0 +1,6 @@
+BOOL __thiscall CWvsContext::CanSendExclRequest(CWvsContext *this, int a2, int a3)
+{
+  return *(this + 2089) == 0 /*0x485c3b*/
+      && (a3 != 0 || _ZtlSecureFuse<short>(a1: *(this + 2094) + 97, a2: *(*(this + 2094) + 101)) > 0)
+      && get_update_time() - *(this + 2090) >= a2;
+}

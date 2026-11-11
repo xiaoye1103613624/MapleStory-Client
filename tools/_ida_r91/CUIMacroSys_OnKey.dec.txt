@@ -1,0 +1,1 @@
+{"addr":"0x8a98dc","code":"int __stdcall CUIMacroSys::OnKey(unsigned int a1, signed int a2)\n{\n  int result; // eax\n\n  if ( a2 >= 0 && a1 == 27 ) /*0x8a98e8*/\n    return CWvsContext::ProcessBasicUIKey(a1: 27, a2); /*0x8a98f6*/\n  return result; /*0x8a98fb*/\n}","refs":[{"addr":"0xa07431","name":"?ProcessBasicUIKey@CWvsContext@@QAEHII@Z"}]}

@@ -1,0 +1,55 @@
+void __thiscall CUIKeyConfig::OnButtonClicked(CWnd *this, int a2)
+{
+  int v3; // eax
+  int v4; // eax
+
+  CUIWnd::OnButtonClicked(a1: a2); /*0x8335e0*/
+  if ( a2 == 1 ) /*0x8335e9*/
+  {
+    CFuncKeyMappedMan::SaveFuncKeyMap(this: dword_BED5A0); /*0x833700*/
+    CQuickslotKeyMappedMan::SaveQuickslotKeyMap(this: dword_BED658); /*0x83370b*/
+    goto LABEL_20; /*0x83370b*/
+  }
+  if ( a2 == 2 ) /*0x8335f0*/
+  {
+    CWnd::InvalidateRect(this: TSingleton<CUIStatusBar>::ms_pInstance, a2: 0); /*0x8336f3*/
+LABEL_20:
+    CWvsContext::UI_Close(this: *dword_BE7918, a2: 5); /*0x833710*/
+    return; /*0x833718*/
+  }
+  if ( a2 == 2000 ) /*0x8335fb*/
+  {
+    if ( ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444) != 0 ) /*0x8336aa*/
+      v4 = CUIKeyConfig::CNoticeDlg::CNoticeDlg(a1: this, a2: 0); /*0x8336af*/
+    else
+      v4 = 0; /*0x8336b6*/
+    if ( CDialog::DoModal(a1: v4) == 1 ) /*0x8336c6*/
+    {
+      CFuncKeyMappedMan::DefaultFuncKeyMap(this: dword_BED5A0); /*0x8336ce*/
+      CQuickslotKeyMappedMan::DefaultQuickslotKeyMap(this: dword_BED658); /*0x8336d9*/
+      CUIStatusBar::ReDrawQuickslot(this: TSingleton<CUIStatusBar>::ms_pInstance); /*0x8336e4*/
+      goto LABEL_12; /*0x8336e9*/
+    }
+  }
+  else
+  {
+    if ( a2 != 2001 ) /*0x833602*/
+    {
+      if ( a2 == 2002 ) /*0x833605*/
+        sub_836C9B(a1: this); /*0x83360d*/
+      return; /*0x833612*/
+    }
+    if ( ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444) != 0 ) /*0x833634*/
+      v3 = CUIKeyConfig::CNoticeDlg::CNoticeDlg(a1: this, a2: 1); /*0x833639*/
+    else
+      v3 = 0; /*0x833640*/
+    if ( CDialog::DoModal(a1: v3) == 1 ) /*0x833650*/
+    {
+      memset(a1: (dword_BED5A0 + 4), a2: 0, a3: 0x1BDu); /*0x833666*/
+      sub_836619(a1: this); /*0x833670*/
+      CWnd::InvalidateRect(this: TSingleton<CUIStatusBar>::ms_pInstance, a2: 0); /*0x83367d*/
+LABEL_12:
+      CWnd::InvalidateRect(this, a2: 0); /*0x833682*/
+    }
+  }
+}

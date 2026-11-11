@@ -1,0 +1,8 @@
+int __stdcall CUIMacroSys::OnKey(unsigned int a1, signed int a2)
+{
+  int result; // eax
+
+  if ( a2 >= 0 && a1 == 27 ) /*0x8a98e8*/
+    return CWvsContext::ProcessBasicUIKey(a1: 27, a2); /*0x8a98f6*/
+  return result; /*0x8a98fb*/
+}

@@ -1,0 +1,1 @@
+[{"kind":"functions","data":[{"kind":"function","addr":"0x8bad5a","name":"?ShiftMacroUIState@CUISkillEx@@QAEXXZ","size":"0x516","segment":"___","has_type":true}],"next_offset":null,"total":1,"error":null}]

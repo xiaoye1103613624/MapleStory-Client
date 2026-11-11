@@ -1,0 +1,8 @@
+int __thiscall CWndSkillGuide::OnKey(CWndSkillGuide *this, unsigned int a2, signed int a3)
+{
+  int result; // eax
+
+  if ( a3 >= 0 && a2 == 27 && dword_BF1080 != 0 ) /*0x8aa4fa*/
+    return CUISkill::CloseSkillGuide(this: dword_BF1080); /*0x8aa4fc*/
+  return result; /*0x8aa501*/
+}

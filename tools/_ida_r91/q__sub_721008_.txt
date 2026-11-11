@@ -1,0 +1,1 @@
+[{"kind":"functions","data":[{"kind":"function","addr":"0x721008","name":"sub_721008","size":"0x26","segment":"___","has_type":true}],"next_offset":null,"total":1,"error":null}]

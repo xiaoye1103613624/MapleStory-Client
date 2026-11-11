@@ -1,0 +1,41 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+  "iv_b64": "TSPHKw==",
+  "key_b64_len": 172,
+  "key_sha_head": "EwAAAFIAAAAqAAAAWwAAAAgA",
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY (orange-wz MCP path)",
+  "queries": {
+    "KeyConfig": {
+      "isError": false,
+      "text_len": 548,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"KeyConfig\",\"matches\":[{\"name\":\"KeyConfig\",\"rootPath\":\"E:\\\\MXD",
+      "match_hint": 2
+    },
+    "Stat": {
+      "isError": false,
+      "text_len": 2138,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Stat\",\"matches\":[{\"name\":\"Stat\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-C",
+      "match_hint": 14
+    },
+    "Skill": {
+      "isError": false,
+      "text_len": 4242,
+      "head": "{\"result\":{\"op\":\"search_by_keyword\",\"nodePath\":\"\",\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"keyword\":\"Skill\",\"matches\":[{\"name\":\"Skill\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou",
+      "match_hint": 30
+    }
+  },
+  "verdict": "GATE_OK_128B_IMG_REACHABLE",
+  "errors": [],
+  "init_ok": true,
+  "load_text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}",
+  "load_isError": false,
+  "load_structured": {
+    "loadedCount": 1,
+    "rootCount": 1,
+    "exclusive": false,
+    "generation": 1
+  },
+  "img_dependency": false,
+  "img_dependency_note": "三条判定靠 083 反编译 + s9 源码 + 当前端代码 + DECISIONS 裁定，均不依赖 IMG 资源布局；本次仅按门禁 18 验证 orange-wz 128B 可达且 KeyConfig/Stat/Skill 根存在。"
+}

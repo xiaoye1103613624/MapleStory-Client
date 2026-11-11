@@ -1,0 +1,306 @@
+{
+  "round": 91,
+  "date": "2026-11-11",
+  "trigger": "m10739 '开始 下一批 的计划' (gate-1 plan round, zero source change)",
+  "authority": "Angel.exe(13339) 083/v83 IDB; s9 source only constrains W-bucket wire widths",
+  "deliverable": "docs/features/angel-calibration-d-matrix-2026-11/NEXT-BATCH-PLAN.md",
+  "zero_source_change": true,
+  "zero_wire_change": true,
+  "zero_protocol_change": true,
+  "zero_wz_change": true,
+  "img_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+    "key_spec": "128B WzAESConstant.DEFAULT_KEY (orange-wz MCP path)",
+    "key_b64_len": 172,
+    "key_sha_head": "EwAAAFIAAAAqAAAAWwAAAAgA",
+    "iv_b64": "TSPHKw==",
+    "verdict": "GATE_OK_128B_IMG_REACHABLE",
+    "queries": {
+      "KeyConfig": {
+        "isError": false,
+        "text_len": 548
+      },
+      "Stat": {
+        "isError": false,
+        "text_len": 2138
+      },
+      "Skill": {
+        "isError": false,
+        "text_len": 4242
+      }
+    },
+    "img_dependency": false,
+    "note": "三条判定靠 083 反编译 + s9 源码 + 当前端代码 + DECISIONS 裁定，均不依赖 IMG 资源布局；本次仅按门禁 18 验证 orange-wz 128B 可达且 KeyConfig/Stat/Skill 根存在。"
+  },
+  "ida_evidence_files": [
+    "tools/_ida_r91/sub_721008.code.txt",
+    "tools/_ida_r91/CUIQuestInfo_StartQuest_action.code.txt",
+    "tools/_ida_r91/CUIStat_OnButtonClicked.code.txt",
+    "tools/_ida_r91/CUIKeyConfig_OnButtonClicked.code.txt",
+    "tools/_ida_r91/CUISkill_OnSkillLevelUpButton.code.txt",
+    "tools/_ida_r91/CanSendExclRequest.code.txt",
+    "tools/_ida_r91/CWndSkillGuide_OnKey.code.txt",
+    "tools/_ida_r91/CUIMacroSysEx_OnSelected.code.txt",
+    "tools/_ida_r91/CUIMacroSys_OnKey.code.txt",
+    "tools/_ida_r91/CUIChannelShift_OnKey.code.txt",
+    "tools/_ida_r91/CUIChannelSelect_OnKey.code.txt",
+    "tools/_ida_r91/CUISkillEx_ShiftMacroUIState.code.txt"
+  ],
+  "candidates": [
+    {
+      "id": "quest/D8",
+      "round89_registration": "L-bucket P1 (WLE-TRIAGE-PLAN.md:96, :123, :152-153)",
+      "round91_verdict": "W_bucket_wire_conditional_suffix_KEEP_s9_NOT_P1",
+      "matrix_row": "docs/features/angel-calibration-d-matrix-2026-11/README.md:304 '| **D8** | 是否把 sub_721008 条件分支搬进当前端 | 不搬 | K2 |'",
+      "decisions_row": "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md:251 '| **D8** | K2 | 是否把 `sub_721008` 条件分支搬进当前端 | 不搬 | `BATCH_1_KEEP` |'",
+      "ida": {
+        "symbol": "sub_721008 @0x721008",
+        "file": "tools/_ida_r91/sub_721008.code.txt",
+        "literal": [
+          "if ( CQuestMan::IsAutoStartQuest(this, a2) ) /*0x72100f*/",
+          "return 1; /*0x721016*/",
+          "result = sub_720FED(a1: a2); /*0x72101e*/",
+          "return 1; /*0x721029*/"
+        ],
+        "StartQuest": "CQuest::StartQuest @0x71751c COutPacket(107) action1/action2",
+        "StartQuest_file": "tools/_ida_r91/CUIQuestInfo_StartQuest_action.code.txt",
+        "wire_literal": [
+          "COutPacket::COutPacket(a1: 107); /*0x717087*/",
+          "COutPacket::Encode2(a1: v50); /*0x7170b9*/",
+          "COutPacket::Encode2(a1: v51); /*0x7170c4*/",
+          "COutPacket::COutPacket(a1: 107); /*0x717104*/",
+          "COutPacket::Encode2(a1: v50); /*0x717136*/",
+          "COutPacket::Encode2(a1: v51); /*0x717141*/",
+          "COutPacket::COutPacket(a1: 107); /*0x7174db*/",
+          "if ( sub_721008(a1: *(this + 6)) == 0 ) /*0x71751c*/",
+          "COutPacket::Encode2(a1: v50); /*0x717524*/",
+          "COutPacket::Encode2(a1: v51); /*0x71752f*/",
+          "COutPacket::COutPacket(a1: 107); /*0x71745c*/",
+          "if ( sub_721008(a1: *(this + 6)) == 0 ) /*0x71749d*/",
+          "COutPacket::Encode2(a1: v50); /*0x7174a5*/",
+          "COutPacket::Encode2(a1: v51); /*0x7174b0*/"
+        ]
+      },
+      "s9": {
+        "file": "E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/net/server/channel/handlers/QuestActionHandler.java",
+        "isNpcNearby": "if (p.available() >= 4) { playerP = new Point(p.readShort(), p.readShort()); } else { playerP = pos; }",
+        "note": "s9 tolerates BOTH forms (with/without 4B x/y suffix); current client's no-suffix packet is a legal s9 shape."
+      },
+      "client": {
+        "file": "Net/Packets/QuestPackets.h",
+        "layout": "byte action, short questid [, int npcid for start/complete/scripted] — NEVER writes x/y"
+      },
+      "reason": "sub_721008 gates a 4B x/y Encode2 suffix on the c2s 107 packet => wire layout, not pure logic. Restoring it changes packet shape (W bucket / protocol-level), and s9 already accepts the current shape. Original 'do not port' verdict stands.",
+      "symbol_semantics_resolved": "sub_721008 = IsAutoStartQuest(questid) || sub_720FED(questid); the old '函数名无符号语义待补 L2' note is now closed, but the KEEP verdict is unchanged because it is wire.",
+      "action": "no P1 patch; keep s9; record as W-bucket wire-conditional in NEXT-BATCH-PLAN"
+    },
+    {
+      "id": "skill/D4",
+      "round89_registration": "L-bucket P1 (WLE-TRIAGE-PLAN.md:96, :123, :152-153)",
+      "round91_verdict": "ARCHITECTURE_single_window_decision_KEEP_no_new_window_NOT_P1",
+      "matrix_row": "docs/features/angel-calibration-d-matrix-2026-11/README.md:243 '| **D4** | 是否新增独立 CWndSkillGuide 子窗 | 不新增 | K2 |'",
+      "decisions_row": "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md:190 '| **D4** | K2 | 是否新增独立 `CWndSkillGuide` 子窗 | 不新增 | `BATCH_1_KEEP` |'",
+      "ida": {
+        "symbols": [
+          "??0CWndSkillGuide@@QAE@J@Z @0x8aa243",
+          "?OnKey@CWndSkillGuide@@UAEXII@Z @0x8aa4e4"
+        ],
+        "file": "tools/_ida_r91/CWndSkillGuide_OnKey.code.txt",
+        "literal": [
+          "if ( a3 >= 0 && a2 == 27 && dword_BF1080 != 0 ) /*0x8aa4fa*/",
+          "return CUISkill::CloseSkillGuide(this: dword_BF1080); /*0x8aa4fc*/"
+        ]
+      },
+      "client": {
+        "file": "IO/UITypes/UISkillBook.cpp:797",
+        "send_key": "escape -> set_skillpoint(false) / close()",
+        "calibration": "docs/features/skill-angel-calibration-2026-11/README.md:79 A4 judged ESC closed-loop CONSISTENT"
+      },
+      "reason": "This is an architecture-level 'add a whole independent window family or not' decision, NOT a same-field original-logic restoration. WLE-TRIAGE-PLAN.md:133 itself excludes architecture rewrites from automatic landing scope. Original 'do not add' verdict stands.",
+      "action": "no P1 patch; keep no-new-window; single-point decision only if user reopens"
+    },
+    {
+      "id": "corewindow/D8",
+      "round89_registration": "L-bucket P1 (WLE-TRIAGE-PLAN.md:96, :123, :152-153)",
+      "round91_verdict": "DOC_ONLY_already_shipped_round75_NOT_P1",
+      "matrix_row": "docs/features/angel-calibration-d-matrix-2026-11/README.md:152 '| **D8** | CUIStat 6 掩码 / CUISkill 500ms 门闩 / CUIKeyConfig 5 分支覆盖度？ | 先出逐条对照清单，不改代码；确认 s9 是否需要 | K3 |'",
+      "decisions_rows": [
+        "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md:99",
+        "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md:293",
+        "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md:311"
+      ],
+      "ida": {
+        "CUIStat_OnButtonClicked": {
+          "addr": "0x8c522f",
+          "file": "tools/_ida_r91/CUIStat_OnButtonClicked.code.txt",
+          "masks": [
+            "case 2000: /*0x8c5245*/",
+            "v2 = 2048; /*0x8c524c*/",
+            "v2 = 0x2000; /*0x8c525b*/",
+            "v2 = 64; /*0x8c5264*/",
+            "v2 = 128; /*0x8c526e*/",
+            "v2 = 256; /*0x8c5267*/",
+            "v2 = 512; /*0x8c5275*/",
+            "CWvsContext::SendAbilityUpRequest(this: *dword_BE7918, a2: v2); /*0x8c5251*/"
+          ]
+        },
+        "CUIKeyConfig_OnButtonClicked": {
+          "addr": "0x8335d0",
+          "file": "tools/_ida_r91/CUIKeyConfig_OnButtonClicked.code.txt",
+          "branches": [
+            "if ( a2 == 1 ) /*0x8335e9*/",
+            "CFuncKeyMappedMan::SaveFuncKeyMap(this: dword_BED5A0); /*0x833700*/",
+            "if ( a2 == 2 ) /*0x8335f0*/",
+            "CWvsContext::UI_Close(this: *dword_BE7918, a2: 5); /*0x833710*/",
+            "if ( a2 == 2000 ) /*0x8335fb*/",
+            "CFuncKeyMappedMan::DefaultFuncKeyMap(this: dword_BED5A0); /*0x8336ce*/",
+            "if ( a2 != 2001 ) /*0x833602*/",
+            "if ( a2 == 2002 ) /*0x833605*/",
+            "memset(a1: (dword_BED5A0 + 4), a2: 0, a3: 0x1BDu); /*0x833666*/"
+          ]
+        },
+        "CUISkill_OnSkillLevelUpButton": {
+          "addr": "0x8acf1a",
+          "file": "tools/_ida_r91/CUISkill_OnSkillLevelUpButton.code.txt",
+          "gate": [
+            "if ( CWvsContext::CanSendExclRequest(a1: 500, a2: 0) != 0 ) /*0x8acf3f*/",
+            "v29 = SP_3510_YOURE_LACKING_LEVEL_1_SKILLS; /*0x8ad21a*/",
+            "v29 = SP_3509_YOURE_LACKING_LEVEL_1_OR_2_SKILLS; /*0x8ad175*/",
+            "v29 = SP_3511_YOU_ARE_LACKING_IN_EITHER_1ST_2ND_OR_3RD_LEVEL_SKILLS; /*0x8ad0ca*/"
+          ]
+        },
+        "CanSendExclRequest": {
+          "addr": "0x485bf7",
+          "file": "tools/_ida_r91/CanSendExclRequest.code.txt",
+          "literal": [
+            "&& get_update_time() - *(this + 2090) >= a2;"
+          ]
+        }
+      },
+      "s9": {
+        "DistributeSPHandler": "p.readInt(); int skillid = p.readInt(); AssignSPProcessor.SPAssignAction(c, skillid); — NO 500ms rate limit",
+        "AutoAssignHandler": "AssignAPProcessor.APAutoAssignAction(p, c) — s9 Stat 5-byte encoding",
+        "KeymapChangeHandler": "s9-private keymap delta form; QuickslotKeyMappedModifiedHandler reads QUICKSLOT_SIZE ints"
+      },
+      "client": {
+        "UIStatsInfo": "IO/UITypes/UIStatsInfo.cpp:729-755 to_code STR/DEX/INT/LUK -> AutoAssignApPacket::StatCode",
+        "StatCode": "Net/Packets/PlayerPackets.h:54-60 STR=64, DEX=128, INT=256, LUK=512 (4, not 6: 2048/0x2000 are HP/MP which s9 lacks)",
+        "UISkillBook": "IO/UITypes/UISkillBook.cpp:545-560 BT_OKAY while(used>0) spend_sp — no 500ms gate, CORRECT for s9",
+        "UIKeyConfig": "IO/UITypes/UIKeyConfig.cpp:731-810 button_pressed 6 cases (CLOSE/CANCEL/DEFAULT/DELETE/OK/KEYSETTING) aligned to 083 5 branches + local adaptation"
+      },
+      "reason": "K3 DOC_ONLY; round75 c07b1a7b already shipped the comparison list. s9 has no 500ms limit and a different Stat encoding => the 083 literals are reference-only, not a patch target. The 083-vs-client comparison is delivered as evidence this round (zero source change).",
+      "action": "no P1 patch; deliver the verbatim 083 comparison inside NEXT-BATCH-PLAN + evidence"
+    }
+  ],
+  "pattern_finding": {
+    "title": "THIRD occurrence of paper-registration-before-evidence (same family as round90 drop/D2+D12)",
+    "false_claim": "WLE-TRIAGE-PLAN.md:152-153 '同族审计：§2.3 其余候选 quest/D8 / skill/D4 / corewindow/D8 均为状态机/条件分支、不碰 wire，属合法 L 桶候选，无同族误分类'",
+    "also": "WLE-TRIAGE-PLAN.md:96 '等状态机分支同理' + :123 '改走真正有 083 状态机证据且零 wire 的 L 桶候选'",
+    "evidence": "083 live IDA (12 decompilations) + s9 handlers + client code + DECISIONS.md verdicts all disagree; all three are NOT L-bucket P1.",
+    "lesson": "Every 'next batch L-bucket' registration must carry its own 083 decompilation anchor + s9 handler + client literal BEFORE it is written into a plan. Generalize the fix: stop registering batches from the D-matrix text alone."
+  },
+  "next_batch_clean_L_bucket": [
+    {
+      "priority": "P1-first",
+      "ids": [
+        "skill/D12",
+        "corewindow/D9"
+      ],
+      "topic": "macro system selected-state / ESC state machine (pure UI, zero wire)",
+      "ida": [
+        {
+          "symbol": "CUIMacroSysEx::OnSelected @0x8a984d",
+          "file": "tools/_ida_r91/CUIMacroSysEx_OnSelected.code.txt",
+          "literal": [
+            "BOOL IsShoutMacro; // eax",
+            "*(this + 361) = a2; /*0x8a9863*/",
+            "MacroName = CMacroSysMan::GetMacroName(this: dword_BEC1F4, &a2, a3: v7); /*0x8a9870*/",
+            "IsShoutMacro = CMacroSysMan::IsShoutMacro(this: dword_BEC1F4, nMacroIdx: v2); /*0x8a98a0*/",
+            "CCtrlCheckBox::SetChecked(this: v5, a2: IsShoutMacro); /*0x8a98a8*/",
+            "CUIMacroSysEx::ResetInfo(this); /*0x8a98c6*/"
+          ]
+        },
+        {
+          "symbol": "CUIMacroSys::OnKey @0x8a98dc",
+          "file": "tools/_ida_r91/CUIMacroSys_OnKey.code.txt",
+          "literal": [
+            "if ( a2 >= 0 && a1 == 27 ) /*0x8a98e8*/",
+            "return CWvsContext::ProcessBasicUIKey(a1: 27, a2); /*0x8a98f6*/"
+          ]
+        }
+      ],
+      "why_clean": "20-line + 8-line pure UI state machine: *(this+361)=a2 / GetMacroName / IsShoutMacro / SetChecked / ResetInfo / ProcessBasicUIKey(27). Zero COutPacket / zero Encode / zero SendPacket.",
+      "client_anchor": "macro slots in UIKeyConfig / UISkillBook (32->5 slot adaptation, corewindow/D9)",
+      "gate": "REA->IDA->orange-wz(128B)->.nx read-only, then one atomic commit per slice"
+    },
+    {
+      "priority": "P1-second",
+      "ids": [
+        "login-flow/D9",
+        "statusbar-hud/D12"
+      ],
+      "topic": "channel grid keyboard navigation (pure index math, zero wire)",
+      "ida": [
+        {
+          "symbol": "CUIChannelShift::OnKey @0x995863",
+          "file": "tools/_ida_r91/CUIChannelShift_OnKey.code.txt",
+          "literal": [
+            "case 0x25u: /*0x9958af*/",
+            "v8 = v3 - 1; /*0x995967*/",
+            "case 0x26u: /*0x9958af*/",
+            "case 0x27u: /*0x9958af*/",
+            "case 0x28u: /*0x9958af*/"
+          ]
+        },
+        {
+          "symbol": "CUIChannelSelect::OnKey @0x628a1c",
+          "file": "tools/_ida_r91/CUIChannelSelect_OnKey.code.txt",
+          "literal": [
+            "if ( wParam == 9 ) /*0x628a38*/",
+            "if ( wParam != 13 ) /*0x628a43*/",
+            "if ( wParam == 27 ) /*0x628a4c*/",
+            "CUILoginStart::SendViewAllCharacterPacket(this: this - 1, a2: v4); /*0x628b87*/"
+          ]
+        }
+      ],
+      "why_clean": "CUIChannelShift = 6-column arrow-key index computation (case 0x25/0x26/0x27/0x28), no packet. CUIChannelSelect MUST be split: navigation = L bucket, SendViewAllCharacterPacket = W bucket (s9 first, keep).",
+      "gate": "split L/W before any patch; navigation only"
+    },
+    {
+      "priority": "P2-F-dim",
+      "ids": [
+        "skill/D12-macro-canvas"
+      ],
+      "topic": "CUISkillEx::ShiftMacroUIState COM canvas stack",
+      "ida": {
+        "symbol": "CUISkillEx::ShiftMacroUIState @0x8bad5a",
+        "file": "tools/_ida_r91/CUISkillEx_ShiftMacroUIState.code.txt",
+        "literal": [
+          "*(this + 401) = 2; /*0x8bada9*/",
+          "*(this + 401) = 0; /*0x8badde*/",
+          "Alpha = IWzGr2DLayer::GetAlpha(a1: &v42); /*0x8baefc*/",
+          "v18 = IWzGr2DLayer::GetAlpha(a1: &v43); /*0x8bafcd*/",
+          "LT = IWzGr2DLayer::GetLT(a1: &v42); /*0x8bb085*/",
+          "v25 = IWzGr2DLayer::GetLT(a1: &v42); /*0x8bb0c4*/"
+        ]
+      },
+      "why_not_P1": "243-line COM IWz canvas/Animate state machine; current client has no COM canvas stack => F-dimension P2, same class as round90 drop/D2. Do not invent."
+    }
+  ],
+  "arithmetic_unchanged": {
+    "decisions_168": "168 historical verdicts untouched",
+    "wle_section4": "W 38 + L 130 = 168 unchanged",
+    "reopen_27": "27 = 25 P1 + 1 W + 1 F-P2 (round90) unchanged; this round only cancels 3 P1 *registrations*, NOT the 168 classification",
+    "note": "Registration layer and historical verdict layer are separate; no semantic reclassification fraud."
+  },
+  "constraints": [
+    "083/v83 only, 095 forbidden",
+    "s9 wire first (W bucket 6 field widths + 27 wire KEEP: zero change)",
+    "numeric coincidence != semantic coincidence",
+    "L bucket = same-field original logic only, no wire touch",
+    "gate-5: no imagined modification (evidence before code)",
+    "gate-18: REA->IDA->orange-wz(128B)->.nx read-only first",
+    "plan round: ZERO source change, implementation starts after user confirms the plan"
+  ]
+}

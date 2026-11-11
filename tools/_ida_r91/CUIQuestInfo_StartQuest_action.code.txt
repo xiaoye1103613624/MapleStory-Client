@@ -1,0 +1,275 @@
+void __thiscall CQuest::StartQuest(unsigned __int16 *this, int a2)
+{
+  int *v3; // eax
+  int v4; // ecx
+  const struct CharacterData *v5; // edi
+  VARIANTARG **v6; // eax
+  int v7; // ecx
+  _DWORD *Instance; // eax
+  int v9; // eax
+  int *v10; // eax
+  int v11; // eax
+  int v12; // eax
+  int v13; // eax
+  int v14; // eax
+  void *v15; // esp
+  wchar_t *v16; // eax
+  int v17; // eax
+  int v18; // eax
+  void *v19; // esp
+  wchar_t *v20; // eax
+  int v21; // eax
+  int v22; // eax
+  int *v23; // ecx
+  _DWORD *v24; // eax
+  VARIANTARG *Item; // eax
+  int int32; // edi
+  int v27; // eax
+  signed int v28; // eax
+  bool v29; // zf
+  int v30; // edi
+  ULONG *p_Hi32; // ecx
+  VARIANTARG *v32; // [esp-4Ch] [ebp-E4h] BYREF
+  int *v33; // [esp-48h] [ebp-E0h] BYREF
+  int *v34; // [esp-44h] [ebp-DCh]
+  int v35; // [esp-40h] [ebp-D8h] BYREF
+  int v36; // [esp-2Ch] [ebp-C4h] BYREF
+  int v37; // [esp-28h] [ebp-C0h]
+  int v38; // [esp-24h] [ebp-BCh]
+  wchar_t v39; // [esp-20h] [ebp-B8h] BYREF
+  int v40; // [esp-14h] [ebp-ACh] BYREF
+  VARIANTARG *v41; // [esp-10h] [ebp-A8h]
+  VARIANTARG *p_pvargDest; // [esp-Ch] [ebp-A4h]
+  int v43; // [esp-8h] [ebp-A0h]
+  int v44; // [esp-4h] [ebp-9Ch]
+  VARIANTARG v45; // [esp+Ch] [ebp-8Ch] BYREF
+  VARIANTARG v46; // [esp+1Ch] [ebp-7Ch] BYREF
+  VARIANTARG pvarg; // [esp+2Ch] [ebp-6Ch] BYREF
+  VARIANTARG pvargDest; // [esp+3Ch] [ebp-5Ch] BYREF
+  VARIANTARG v49; // [esp+4Ch] [ebp-4Ch] BYREF
+  int v50; // [esp+5Ch] [ebp-3Ch]
+  int v51; // [esp+60h] [ebp-38h]
+  int v52; // [esp+64h] [ebp-34h] BYREF
+  _BYTE v53[4]; // [esp+68h] [ebp-30h] BYREF
+  _DWORD v54[2]; // [esp+6Ch] [ebp-2Ch] BYREF
+  int *v55; // [esp+74h] [ebp-24h] BYREF
+  int v56; // [esp+78h] [ebp-20h] BYREF
+  int Unknown; // [esp+7Ch] [ebp-1Ch] BYREF
+  int v58; // [esp+80h] [ebp-18h] BYREF
+  int v59; // [esp+84h] [ebp-14h] BYREF
+  int v60; // [esp+88h] [ebp-10h] BYREF
+  int v61; // [esp+94h] [ebp-4h]
+
+  v3 = (*(*(TSingleton<CUserLocal>::ms_pInstance + 4) + 16))(a1: TSingleton<CUserLocal>::ms_pInstance + 4); /*0x717000*/
+  v4 = *v3; /*0x717003*/
+  v51 = v3[1]; /*0x717008*/
+  v50 = v4; /*0x71700e*/
+  v5 = *(CWvsContext::GetCharacterData(this: *dword_BE7918, a2: v54) + 4); /*0x71701d*/
+  sub_4289B7(this: v54); /*0x717023*/
+  v6 = CQuestMan::CheckCompleteDemand( /*0x717044*/
+         this: dword_BED614,
+         a2: *(this + 6),
+         i: *(this + 4),
+         a4: v5,
+         a5: (*dword_BE7918 + 8500));
+  if ( v6 != 0 && (*(this + 5) == 1 || v6 == 11) ) /*0x717058*/
+  {
+    CQuest::OnCompleteQuestFailed(this, a2: v6); /*0x71705d*/
+    return; /*0x717062*/
+  }
+  if ( *(this + 5) == 0 && CQuestMan::IsStartScriptLinkedQuest(a1: *(this + 6)) != 0 ) /*0x717080*/
+  {
+    COutPacket::COutPacket(a1: 107); /*0x717087*/
+    v61 = 0; /*0x717091*/
+    COutPacket::Encode1(this: &v52, a2: 4); /*0x717094*/
+    COutPacket::Encode2(a1: *(this + 6)); /*0x7170a3*/
+    COutPacket::Encode4(this: &v52, a2: *(this + 4)); /*0x7170ae*/
+    COutPacket::Encode2(a1: v50); /*0x7170b9*/
+    COutPacket::Encode2(a1: v51); /*0x7170c4*/
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &v52); /*0x7170d3*/
+    v61 = -1; /*0x7170d8*/
+LABEL_11:
+    ZArray<unsigned char>::RemoveAll(a1: v53); /*0x71715c*/
+    return; /*0x717161*/
+  }
+  if ( *(this + 5) == 1 && CQuestMan::IsCompleteScriptLinkedQuest(a1: *(this + 6)) != 0 ) /*0x7170fd*/
+  {
+    COutPacket::COutPacket(a1: 107); /*0x717104*/
+    v61 = 1; /*0x71710e*/
+    COutPacket::Encode1(this: &v52, a2: 5); /*0x717111*/
+    COutPacket::Encode2(a1: *(this + 6)); /*0x717120*/
+    COutPacket::Encode4(this: &v52, a2: *(this + 4)); /*0x71712b*/
+    COutPacket::Encode2(a1: v50); /*0x717136*/
+    COutPacket::Encode2(a1: v51); /*0x717141*/
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &v52); /*0x717150*/
+    v61 = -1; /*0x717155*/
+    goto LABEL_11; /*0x717155*/
+  }
+  v60 = 0; /*0x717166*/
+  v29 = *(this + 5) == 0; /*0x717169*/
+  v61 = 2; /*0x71716c*/
+  if ( !v29 || !CQuestMan::IsAutoAutoAcceptQuest(this: dword_BED614, usQuestID: *(this + 6)) ) /*0x717189*/
+  {
+    sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x717198*/
+    LOBYTE(v61) = 3; /*0x7171a1*/
+    sub_402F85(pvargDest: &v49, pvargSrc: &pvargSrc); /*0x7171a5*/
+    v44 = 0; /*0x7171aa*/
+    v43 = 0; /*0x7171ab*/
+    p_pvargDest = &pvargDest; /*0x7171af*/
+    v41 = &v49; /*0x7171b3*/
+    v40 = v7; /*0x7171b4*/
+    v55 = &v40; /*0x7171b7*/
+    LOBYTE(v61) = 4; /*0x7171c0*/
+    Instance = StringPool::GetInstance(); /*0x7171c4*/
+    StringPool::GetBSTR(this: Instance, a2: &v40, a3: SP_3212_QUEST_SAYIMG); /*0x7171cb*/
+    LOBYTE(v61) = 4; /*0x7171d4*/
+    v9 = sub_406472(); /*0x7171d8*/
+    v10 = sub_402680(a1: v9); /*0x7171df*/
+    IWzResMan::GetObjectA(this: v10, pvargDest: &pvarg, sUOL: v40, vParam: v41, vAux: p_pvargDest); /*0x7171e6*/
+    LOBYTE(v61) = 6; /*0x7171ed*/
+    Unknown = Ztl_variant_t::GetUnknown(a1: v43, a2: v44); /*0x7171f8*/
+    v58 = 0; /*0x7171fb*/
+    if ( Unknown != 0 ) /*0x7171fe*/
+    {
+      v11 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(a1: &Unknown); /*0x717207*/
+      if ( v11 < 0 && v11 != -2147467262 ) /*0x717215*/
+        _com_issue_error(a1: v11); /*0x717218*/
+    }
+    LOBYTE(v61) = 10; /*0x717221*/
+    v12 = ZComAPI::ZComVariantCopy(&pvarg); /*0x717225*/
+    if ( v12 < 0 ) /*0x71722d*/
+      _com_issue_error(a1: v12); /*0x717230*/
+    LOBYTE(v61) = 9; /*0x717239*/
+    v13 = ZComAPI::ZComVariantCopy(pvarg: &v49); /*0x71723d*/
+    if ( v13 < 0 ) /*0x717245*/
+      _com_issue_error(a1: v13); /*0x717248*/
+    LOBYTE(v61) = 8; /*0x717251*/
+    v14 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x717255*/
+    if ( v14 < 0 ) /*0x71725d*/
+      _com_issue_error(a1: v14); /*0x717260*/
+    v15 = alloca(32); /*0x717268*/
+    v38 = 0; /*0x71726f*/
+    v37 = 0; /*0x717270*/
+    v16 = _Int2StrW(a1: *(this + 6), a2: &v39); /*0x717277*/
+    v55 = &v36; /*0x71727f*/
+    _bstr_t::_bstr_t(a1: v16); /*0x717283*/
+    LOBYTE(v61) = 8; /*0x71728f*/
+    sub_40263B(a1: &v58); /*0x717293*/
+    IWzProperty::GetItem(pvargDest: &v46, a2: v36); /*0x71729a*/
+    LOBYTE(v61) = 12; /*0x7172a1*/
+    v56 = Ztl_variant_t::GetUnknown(a1: v37, a2: v38); /*0x7172ac*/
+    v59 = 0; /*0x7172af*/
+    if ( v56 != 0 ) /*0x7172b2*/
+    {
+      v17 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(a1: &v56); /*0x7172bb*/
+      if ( v17 < 0 && v17 != -2147467262 ) /*0x7172c9*/
+        _com_issue_error(a1: v17); /*0x7172cc*/
+    }
+    LOBYTE(v61) = 14; /*0x7172d5*/
+    v18 = ZComAPI::ZComVariantCopy(pvarg: &v46); /*0x7172d9*/
+    if ( v18 < 0 ) /*0x7172e1*/
+      _com_issue_error(a1: v18); /*0x7172e4*/
+    v19 = alloca(32); /*0x7172ec*/
+    v34 = 0; /*0x7172f3*/
+    v33 = 0; /*0x7172f4*/
+    v20 = _Int2StrW(a1: *(this + 5), a2: &v35); /*0x7172f9*/
+    v54[1] = &v32; /*0x717301*/
+    _bstr_t::_bstr_t(a1: v20); /*0x717305*/
+    LOBYTE(v61) = 14; /*0x717314*/
+    sub_40263B(a1: &v59); /*0x717318*/
+    IWzProperty::GetItem(pvargDest: &v45, a2: v32); /*0x71731f*/
+    LOBYTE(v61) = 16; /*0x717326*/
+    v55 = Ztl_variant_t::GetUnknown(a1: v33, a2: v34); /*0x71732f*/
+    v21 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(a1: &v55); /*0x71733b*/
+    if ( v21 < 0 && v21 != -2147467262 ) /*0x717349*/
+      _com_issue_error(a1: v21); /*0x71734c*/
+    LOBYTE(v61) = 14; /*0x717358*/
+    v22 = ZComAPI::ZComVariantCopy(pvarg: &v45); /*0x71735c*/
+    v23 = v34; /*0x717363*/
+    if ( v22 < 0 ) /*0x717364*/
+      _com_issue_error(a1: v22); /*0x717367*/
+    if ( *(this + 6) != 0 ) /*0x71736e*/
+    {
+      v34 = 0; /*0x717374*/
+      v33 = v23; /*0x717375*/
+      v32 = SP_3214_ASK; /*0x71737b*/
+      v24 = StringPool::GetInstance(); /*0x717381*/
+      StringPool::GetBSTR(this: v24, a2: &v33, a3: v32); /*0x717388*/
+      v32 = &v45; /*0x717393*/
+      LOBYTE(v61) = 14; /*0x717396*/
+      sub_40263B(a1: this + 12); /*0x71739a*/
+      Item = IWzProperty::GetItem(pvargDest: v32, a2: v33); /*0x7173a1*/
+      LOBYTE(v61) = 18; /*0x7173a7*/
+      int32 = get_int32(pvarSrc: Item, a2: v34); /*0x7173b0*/
+      LOBYTE(v61) = 14; /*0x7173b9*/
+      v27 = ZComAPI::ZComVariantCopy(pvarg: &v45); /*0x7173bd*/
+      if ( v27 < 0 ) /*0x7173c7*/
+        _com_issue_error(a1: v27); /*0x7173ca*/
+      v34 = &v60; /*0x7173d4*/
+      if ( int32 != 0 ) /*0x7173d7*/
+        v28 = sub_717963(a1: v34); /*0x71740d*/
+      else
+        v28 = CQuest::SayNormal(this, a2: v34); /*0x7173d9*/
+      v29 = v28 == 0; /*0x7173de*/
+    }
+    else
+    {
+      v29 = a2 == 0; /*0x717414*/
+    }
+    LOBYTE(v61) = 8; /*0x7173e3*/
+    if ( v29 ) /*0x7173e7*/
+    {
+      if ( v59 != 0 ) /*0x7173eb*/
+        (*(*v59 + 8))(a1: v59); /*0x7173f0*/
+      LOBYTE(v61) = 2; /*0x7173f8*/
+      if ( v58 != 0 ) /*0x7173fc*/
+        (*(*v58 + 8))(a1: v58); /*0x717405*/
+      goto LABEL_61; /*0x717408*/
+    }
+    if ( v59 != 0 ) /*0x71741b*/
+      (*(*v59 + 8))(a1: v59); /*0x717420*/
+    LOBYTE(v61) = 2; /*0x717428*/
+    if ( v58 != 0 ) /*0x71742c*/
+      (*(*v58 + 8))(a1: v58); /*0x717431*/
+  }
+  if ( *(this + 5) != 1 ) /*0x717438*/
+  {
+    COutPacket::COutPacket(a1: 107); /*0x7174db*/
+    LOBYTE(v61) = 20; /*0x7174e5*/
+    COutPacket::Encode1(this: &v49, a2: 1); /*0x7174e9*/
+    COutPacket::Encode2(a1: *(this + 6)); /*0x7174f8*/
+    COutPacket::Encode4(this: &v49, a2: *(this + 4)); /*0x717503*/
+    if ( sub_721008(a1: *(this + 6)) == 0 ) /*0x71751c*/
+    {
+      COutPacket::Encode2(a1: v50); /*0x717524*/
+      COutPacket::Encode2(a1: v51); /*0x71752f*/
+    }
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &v49); /*0x71753e*/
+    LOBYTE(v61) = 2; /*0x717543*/
+    p_Hi32 = &v49.decVal.Hi32; /*0x717547*/
+    goto LABEL_60; /*0x717547*/
+  }
+  v30 = sub_71808A(a1: &v60); /*0x717449*/
+  if ( v30 != 0x7FFFFFFF ) /*0x717451*/
+  {
+    COutPacket::COutPacket(a1: 107); /*0x71745c*/
+    LOBYTE(v61) = 19; /*0x717466*/
+    COutPacket::Encode1(this: &v52, a2: 2); /*0x71746a*/
+    COutPacket::Encode2(a1: *(this + 6)); /*0x717479*/
+    COutPacket::Encode4(this: &v52, a2: *(this + 4)); /*0x717484*/
+    if ( sub_721008(a1: *(this + 6)) == 0 ) /*0x71749d*/
+    {
+      COutPacket::Encode2(a1: v50); /*0x7174a5*/
+      COutPacket::Encode2(a1: v51); /*0x7174b0*/
+    }
+    COutPacket::Encode4(this: &v52, a2: v30); /*0x7174b9*/
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &v52); /*0x7174c8*/
+    LOBYTE(v61) = 2; /*0x7174cd*/
+    p_Hi32 = v53; /*0x7174d1*/
+LABEL_60:
+    ZArray<unsigned char>::RemoveAll(a1: p_Hi32); /*0x71754a*/
+  }
+LABEL_61:
+  v61 = -1; /*0x71754f*/
+  ZArray<ZXString<char>>::RemoveAll(a1: &v60); /*0x717556*/
+}

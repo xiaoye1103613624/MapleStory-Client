@@ -1,0 +1,11 @@
+int __thiscall sub_721008(void *this, char a2)
+{
+  int result; // eax
+
+  if ( CQuestMan::IsAutoStartQuest(this, a2) ) /*0x72100f*/
+    return 1; /*0x721016*/
+  result = sub_720FED(a1: a2); /*0x72101e*/
+  if ( result != 0 ) /*0x721025*/
+    return 1; /*0x721029*/
+  return result; /*0x72102a*/
+}

@@ -1,0 +1,85 @@
+void __thiscall CUIChannelShift::OnKey(CUIChannelShift *this, unsigned int a2, signed int a3)
+{
+  int v3; // esi
+  int v4; // edx
+  int v5; // esi
+  __int64 v6; // rax
+  int v7; // esi
+  int v8; // eax
+  int v9; // eax
+  int v10; // [esp+Ch] [ebp-8h]
+  int v11; // [esp+10h] [ebp-4h]
+
+  if ( a3 >= 0 && (a2 != 37 && a2 != 39 || *(this + 32) >= 2) && (a2 != 40 && a2 != 38 || *(this + 32) >= 7) ) /*0x9958a0*/
+  {
+    v3 = *(this + 30); /*0x9958a9*/
+    v10 = v3; /*0x9958ac*/
+    switch ( a2 ) /*0x9958af*/
+    {
+      case 0xDu: /*0x9958af*/
+        (*(*(this - 1) + 52))(a1: this - 4, a2: 1); /*0x9959b1*/
+        return; /*0x9959b1*/
+      case 0x1Bu: /*0x9958af*/
+        (*(*(this - 1) + 52))(a1: this - 4, a2: 2); /*0x9959a7*/
+        return; /*0x9959a7*/
+      case 0x25u: /*0x9958af*/
+        if ( v3 >= 1 ) /*0x995965*/
+        {
+          v8 = v3 - 1; /*0x995967*/
+          goto LABEL_33; /*0x995967*/
+        }
+        break;
+      case 0x26u: /*0x9958af*/
+        if ( v3 / 6 != -1 ) /*0x99591b*/
+        {
+          if ( v3 / 6 != 0 ) /*0x99591f*/
+          {
+            v5 = v3 - 6; /*0x995921*/
+LABEL_26:
+            *(this + 30) = v5; /*0x995924*/
+LABEL_34:
+            if ( *(this + 32) <= 1 || (v9 = *(this + 30)) < 0 || v9 != *(this + 31) || v9 == v10 ) /*0x995985*/
+              CWnd::InvalidateRect(this: (this - 4), a2: 0); /*0x995998*/
+            else
+              (**this)(a1: this, a2, a3); /*0x99598f*/
+            return; /*0x995991*/
+          }
+          v6 = v3; /*0x99592b*/
+          v7 = 6; /*0x99592c*/
+          v11 = v6 % 6; /*0x995938*/
+          if ( *(this + 32) % 6 - 1 >= v11 ) /*0x995942*/
+            v7 = 0; /*0x995946*/
+          v8 = v11 + 6 * (*(this + 32) / 6) - v7; /*0x995954*/
+LABEL_33:
+          *(this + 30) = v8; /*0x99596a*/
+          goto LABEL_34; /*0x99596a*/
+        }
+        break;
+      case 0x27u: /*0x9958af*/
+        if ( v3 >= *(this + 32) - 1 ) /*0x995905*/
+          v5 = 0; /*0x99590a*/
+        else
+          v5 = v3 + 1; /*0x995907*/
+        goto LABEL_26; /*0x995908*/
+      case 0x28u: /*0x9958af*/
+        if ( v3 >= *(this + 32) - 6 ) /*0x9958e4*/
+        {
+          v4 = v3 % 6; /*0x9958f5*/
+        }
+        else if ( v3 / 6 >= 0 ) /*0x9958ea*/
+        {
+          v4 = v3 + 6; /*0x9958f0*/
+        }
+        else
+        {
+          v4 = 0; /*0x9958ec*/
+        }
+        *(this + 30) = v4; /*0x9958f7*/
+        goto LABEL_34; /*0x9958fa*/
+      default:
+        return; /*0x9958ce*/
+    }
+    v8 = *(this + 32) - 1; /*0x99595f*/
+    goto LABEL_33; /*0x995960*/
+  }
+}

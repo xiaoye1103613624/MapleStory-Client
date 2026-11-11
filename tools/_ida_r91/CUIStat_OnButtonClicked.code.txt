@@ -1,0 +1,41 @@
+void __thiscall CUIStat::OnButtonClicked(_DWORD *this, int a2)
+{
+  unsigned int v2; // eax
+
+  switch ( a2 ) /*0x8c5245*/
+  {
+    case 2000: /*0x8c5245*/
+      v2 = 2048; /*0x8c524c*/
+      goto LABEL_3; /*0x8c524c*/
+    case 2001: /*0x8c5245*/
+      v2 = 0x2000; /*0x8c525b*/
+      goto LABEL_3; /*0x8c5260*/
+    case 2002: /*0x8c5245*/
+      v2 = 64; /*0x8c5264*/
+      goto LABEL_3; /*0x8c5265*/
+    case 2003: /*0x8c5245*/
+      v2 = 128; /*0x8c526e*/
+      goto LABEL_3; /*0x8c5273*/
+    case 2004: /*0x8c5245*/
+      v2 = 256; /*0x8c5267*/
+      goto LABEL_3; /*0x8c526c*/
+    case 2005: /*0x8c5245*/
+      v2 = 512; /*0x8c5275*/
+LABEL_3:
+      CWvsContext::SendAbilityUpRequest(this: *dword_BE7918, a2: v2); /*0x8c5251*/
+      break; /*0x8c5259*/
+    case 2006: /*0x8c5245*/
+      CUIStat::ToggleDetail(this); /*0x8c527c*/
+      break; /*0x8c5281*/
+    case 2007: /*0x8c5245*/
+    case 2008: /*0x8c5245*/
+      CUIStat::AutoApUp(a1: 1); /*0x8c5285*/
+      break; /*0x8c5285*/
+    case 2009: /*0x8c5245*/
+      CUIStat::AutoApUp(a1: 0); /*0x8c5289*/
+      break; /*0x8c5289*/
+    default:
+      CUIWnd::OnButtonClicked(a1: a2); /*0x8c5291*/
+      break; /*0x8c5291*/
+  }
+}
