@@ -1,0 +1,328 @@
+int __thiscall CDropPool::OnDropLeaveField(CDropPool *this, struct CInPacket *a2)
+{
+  int v2; // edi
+  int v3; // ecx
+  int v4; // esi
+  int v5; // edi
+  int result; // eax
+  int v7; // ebx
+  int v8; // edi
+  int v9; // edi
+  _DWORD *Instance; // eax
+  wchar_t *v11; // eax
+  int v12; // eax
+  int v13; // ecx
+  char *v14; // eax
+  int *v15; // eax
+  int v16; // edx
+  int v17; // ecx
+  int v18; // eax
+  int v19; // ecx
+  int *v20; // eax
+  _DWORD *v21; // eax
+  wchar_t *v22; // eax
+  int v23; // eax
+  int v24; // ecx
+  int v25; // edi
+  int v26; // esi
+  int v27; // eax
+  int v28; // eax
+  int v29; // eax
+  int v30; // eax
+  int v31; // edi
+  int v32; // eax
+  int v33; // eax
+  int v34; // eax
+  int v35; // eax
+  int v36; // eax
+  int v37; // eax
+  int v38; // eax
+  int v39; // eax
+  int v40; // eax
+  struct CInPacket *v41; // ebx
+  int v42; // eax
+  int v43; // eax
+  int v44; // eax
+  int v45; // edx
+  int v46; // ecx
+  char *v47; // eax
+  int v48; // [esp-10h] [ebp-130h]
+  int v49; // [esp-Ch] [ebp-12Ch]
+  int v50; // [esp-8h] [ebp-128h]
+  char *v51; // [esp-4h] [ebp-124h]
+  int v52; // [esp-4h] [ebp-124h]
+  int *v53; // [esp+0h] [ebp-120h] BYREF
+  StringPoolStrings v54[4]; // [esp+4h] [ebp-11Ch] BYREF
+  VARIANTARG v55; // [esp+14h] [ebp-10Ch] BYREF
+  char v56; // [esp+24h] [ebp-FCh] BYREF
+  _BYTE v57[8]; // [esp+2Ch] [ebp-F4h] BYREF
+  char v58; // [esp+34h] [ebp-ECh] BYREF
+  VARIANTARG v59; // [esp+3Ch] [ebp-E4h] BYREF
+  VARIANTARG v60; // [esp+4Ch] [ebp-D4h] BYREF
+  VARIANTARG v61; // [esp+5Ch] [ebp-C4h] BYREF
+  VARIANTARG v62; // [esp+6Ch] [ebp-B4h] BYREF
+  VARIANTARG v63; // [esp+7Ch] [ebp-A4h] BYREF
+  VARIANTARG v64; // [esp+8Ch] [ebp-94h] BYREF
+  VARIANTARG v65; // [esp+9Ch] [ebp-84h] BYREF
+  VARIANTARG pvargDest; // [esp+ACh] [ebp-74h] BYREF
+  VARIANTARG v67; // [esp+BCh] [ebp-64h] BYREF
+  VARIANTARG v68; // [esp+CCh] [ebp-54h] BYREF
+  VARIANTARG pvarg; // [esp+DCh] [ebp-44h] BYREF
+  _BYTE v70[4]; // [esp+ECh] [ebp-34h] BYREF
+  int v71; // [esp+F0h] [ebp-30h] BYREF
+  int v72; // [esp+F4h] [ebp-2Ch] BYREF
+  int **v73; // [esp+F8h] [ebp-28h] BYREF
+  int v74; // [esp+FCh] [ebp-24h]
+  int *Data; // [esp+100h] [ebp-20h]
+  int v76; // [esp+104h] [ebp-1Ch] BYREF
+  int v77; // [esp+108h] [ebp-18h] BYREF
+  _BYTE v78[4]; // [esp+10Ch] [ebp-14h] BYREF
+  int v79; // [esp+110h] [ebp-10h]
+  int v80; // [esp+11Ch] [ebp-4h]
+
+  v2 = CInPacket::Decode1(this: a2); /*0x5065b0*/
+  v79 = 0; /*0x5065b8*/
+  v71 = CInPacket::Decode4(this: a2); /*0x5065bc*/
+  v80 = 0; /*0x5065bf*/
+  if ( sub_508AE3(a1: &v71, a2: v78) == 0 ) /*0x5065d5*/
+    goto LABEL_7; /*0x5065d5*/
+  if ( v2 == 2 || v2 == 3 || v2 == 5 ) /*0x5065e4*/
+  {
+    v7 = v79; /*0x50661f*/
+    *(v7 + 88) = CInPacket::Decode4(this: a2); /*0x506627*/
+  }
+  else if ( v2 == 4 ) /*0x5065eb*/
+  {
+    v4 = v79; /*0x5065f0*/
+    v5 = CInPacket::Decode2(this: a2); /*0x5065f8*/
+    *(v4 + 68) = get_update_time() + v5; /*0x506602*/
+    *(v79 + 72) = 4; /*0x506608*/
+LABEL_7:
+    v80 = -1; /*0x50660b*/
+    return sub_508917(a1: v78); /*0x506617*/
+  }
+  v53 = v3; /*0x50662e*/
+  v73 = &v53; /*0x506631*/
+  v54[0] = v79; /*0x506634*/
+  sub_5088FA(a1: &v53); /*0x506637*/
+  result = sub_5056AF(a1: v53, a2: v54[0]); /*0x50663e*/
+  if ( v2 == 0 ) /*0x506647*/
+  {
+    v77 = *(v79 + 60); /*0x5067d1*/
+    sub_4458F9(a1: &v77); /*0x5067d4*/
+    LOBYTE(v80) = 1; /*0x5067e2*/
+    sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x5067e6*/
+    LOBYTE(v80) = 2; /*0x5067ef*/
+    sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x5067f3*/
+    LOBYTE(v80) = 3; /*0x5067fe*/
+    v25 = v79; /*0x506802*/
+    Data = TSecType<long>::GetData(a1: (v79 + 116), a2: &pvargSrc); /*0x50680c*/
+    if ( v77 == 0 ) /*0x50680f*/
+      _com_issue_error(a1: -2147467261); /*0x506816*/
+    v26 = v77; /*0x50681b*/
+    v74 = v77; /*0x506821*/
+    v27 = TSecType<long>::GetData(a1: (v25 + 104), a2: &pvargSrc); /*0x506824*/
+    v28 = (*(*v26 + 144))( /*0x50684a*/
+            a1: v74,
+            a2: Data,
+            a3: v27,
+            a4: *&pvarg.vt,
+            a5: pvarg.decVal.Hi32,
+            a6: pvarg.lVal,
+            a7: pvarg.cyVal.Hi,
+            a8: *&pvargDest.vt,
+            a9: pvargDest.decVal.Hi32,
+            a10: pvargDest.lVal,
+            a11: pvargDest.cyVal.Hi);
+    if ( v28 < 0 ) /*0x506857*/
+      _com_issue_errorex(a1: v28, a2: v74, a3: dword_BD8348); /*0x50685e*/
+    LOBYTE(v80) = 2; /*0x506867*/
+    v29 = ZComAPI::ZComVariantCopy(&pvarg); /*0x50686b*/
+    if ( v29 < 0 ) /*0x506873*/
+      _com_issue_error(a1: v29); /*0x506876*/
+    LOBYTE(v80) = 1; /*0x50687f*/
+    v30 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x506883*/
+    if ( v30 < 0 ) /*0x50688b*/
+      _com_issue_error(a1: v30); /*0x50688e*/
+    if ( v77 == 0 ) /*0x506897*/
+      _com_issue_error(a1: -2147467261); /*0x50689e*/
+    v31 = v77; /*0x5068a3*/
+    v32 = (*(*v77 + 128))(a1: v77, a2: COERCE_UNSIGNED_INT64(0.0), a3: HIDWORD(COERCE_UNSIGNED_INT64(0.0))); /*0x5068b0*/
+    if ( v32 < 0 ) /*0x5068b8*/
+      _com_issue_errorex(a1: v32, a2: v31, a3: dword_BD8348); /*0x5068bd*/
+    a2 = *(v79 + 56); /*0x5068cb*/
+    sub_432D38(a1: &a2); /*0x5068ce*/
+    LOBYTE(v80) = 4; /*0x5068df*/
+    sub_402FAB(a1: 0, a2: 3); /*0x5068e3*/
+    LOBYTE(v80) = 5; /*0x5068ec*/
+    if ( a2 == 0 ) /*0x5068f5*/
+      _com_issue_error(a1: -2147467261); /*0x5068f8*/
+    IWzGr2DLayer::GetCanvas(a1: &v76, a2: &v62); /*0x50690b*/
+    LOBYTE(v80) = 7; /*0x506917*/
+    v33 = ZComAPI::ZComVariantCopy(pvarg: &v62); /*0x50691b*/
+    if ( v33 < 0 ) /*0x506923*/
+      _com_issue_error(a1: v33); /*0x506926*/
+    sub_402FAB(a1: -2, a2: 3); /*0x506934*/
+    LOBYTE(v80) = 8; /*0x50693d*/
+    if ( a2 == 0 ) /*0x506941*/
+      _com_issue_error(a1: -2147467261); /*0x506944*/
+    IWzGr2DLayer::RemoveCanvas(this: a2, a2: &v73, a3: &v64); /*0x506957*/
+    sub_4156AB(a1: &v73); /*0x50695f*/
+    LOBYTE(v80) = 7; /*0x50696b*/
+    v34 = ZComAPI::ZComVariantCopy(pvarg: &v64); /*0x50696f*/
+    if ( v34 < 0 ) /*0x506977*/
+      _com_issue_error(a1: v34); /*0x50697a*/
+    sub_402F85(pvargDest: &v61, pvargSrc: &pvargSrc); /*0x506986*/
+    LOBYTE(v80) = 9; /*0x506992*/
+    sub_402F85(pvargDest: &v63, pvargSrc: &pvargSrc); /*0x506996*/
+    LOBYTE(v80) = 10; /*0x5069a4*/
+    sub_402FAB(a1: 0, a2: 3); /*0x5069a8*/
+    LOBYTE(v80) = 11; /*0x5069b3*/
+    sub_402FAB(a1: -1, a2: 3); /*0x5069b7*/
+    LOBYTE(v80) = 12; /*0x5069c5*/
+    sub_402FAB(a1: 1000, a2: 3); /*0x5069c9*/
+    LOBYTE(v80) = 13; /*0x5069d2*/
+    if ( a2 == 0 ) /*0x5069d6*/
+      _com_issue_error(a1: -2147467261); /*0x5069d9*/
+    IWzGr2DLayer::Animate(pvargDest: &v55, a2: v76, a3: &v68, a4: &v67, a5: &v65, a6: &v63, a7: &v61); /*0x506a08*/
+    v35 = ZComAPI::ZComVariantCopy(pvarg: &v55); /*0x506a14*/
+    if ( v35 < 0 ) /*0x506a1c*/
+      _com_issue_error(a1: v35); /*0x506a1f*/
+    LOBYTE(v80) = 12; /*0x506a28*/
+    v36 = ZComAPI::ZComVariantCopy(pvarg: &v68); /*0x506a2c*/
+    if ( v36 < 0 ) /*0x506a34*/
+      _com_issue_error(a1: v36); /*0x506a37*/
+    LOBYTE(v80) = 11; /*0x506a40*/
+    v37 = ZComAPI::ZComVariantCopy(pvarg: &v67); /*0x506a44*/
+    if ( v37 < 0 ) /*0x506a4c*/
+      _com_issue_error(a1: v37); /*0x506a4f*/
+    LOBYTE(v80) = 10; /*0x506a5b*/
+    v38 = ZComAPI::ZComVariantCopy(pvarg: &v65); /*0x506a5f*/
+    if ( v38 < 0 ) /*0x506a67*/
+      _com_issue_error(a1: v38); /*0x506a6a*/
+    LOBYTE(v80) = 9; /*0x506a76*/
+    v39 = ZComAPI::ZComVariantCopy(pvarg: &v63); /*0x506a7a*/
+    if ( v39 < 0 ) /*0x506a82*/
+      _com_issue_error(a1: v39); /*0x506a85*/
+    LOBYTE(v80) = 7; /*0x506a91*/
+    v40 = ZComAPI::ZComVariantCopy(pvarg: &v61); /*0x506a95*/
+    if ( v40 < 0 ) /*0x506a9d*/
+      _com_issue_error(a1: v40); /*0x506aa0*/
+    sub_402F85(pvargDest: &v60, pvargSrc: &pvargSrc); /*0x506aac*/
+    LOBYTE(v80) = 14; /*0x506ab8*/
+    sub_402F85(pvargDest: &v59, pvargSrc: &pvargSrc); /*0x506abc*/
+    LOBYTE(v80) = 15; /*0x506ac5*/
+    if ( a2 == 0 ) /*0x506ac9*/
+      _com_issue_error(a1: -2147467261); /*0x506acc*/
+    v41 = a2; /*0x506ad6*/
+    v42 = (*(*a2 + 272))( /*0x506af7*/
+            a1: a2,
+            a2: 0,
+            a3: *&v59.vt,
+            a4: v59.decVal.Hi32,
+            a5: v59.lVal,
+            a6: v59.cyVal.Hi,
+            a7: *&v60.vt,
+            a8: v60.decVal.Hi32,
+            a9: v60.lVal,
+            a10: v60.cyVal.Hi);
+    if ( v42 < 0 ) /*0x506aff*/
+      _com_issue_errorex(a1: v42, a2: v41, a3: _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf); /*0x506b08*/
+    LOBYTE(v80) = 14; /*0x506b14*/
+    v43 = ZComAPI::ZComVariantCopy(pvarg: &v59); /*0x506b18*/
+    if ( v43 < 0 ) /*0x506b20*/
+      _com_issue_error(a1: v43); /*0x506b23*/
+    LOBYTE(v80) = 7; /*0x506b2f*/
+    v44 = ZComAPI::ZComVariantCopy(pvarg: &v60); /*0x506b33*/
+    if ( v44 < 0 ) /*0x506b3b*/
+      _com_issue_error(a1: v44); /*0x506b3e*/
+    Data = v54; /*0x506b49*/
+    v54[0] = a2; /*0x506b4c*/
+    sub_432D38(a1: v54); /*0x506b4e*/
+    LOBYTE(v80) = 7; /*0x506b53*/
+    v47 = sub_432CBC(a1: v46, a2: v45); /*0x506b57*/
+    sub_435D6F(this: v47, a2: v54[0]); /*0x506b5e*/
+    sub_4156AB(a1: &v76); /*0x506b66*/
+    sub_4156C5(a1: &a2); /*0x506b6e*/
+    result = sub_41569E(a1: &v77); /*0x506b76*/
+    goto LABEL_66; /*0x506b76*/
+  }
+  v8 = v2 - 2; /*0x50664e*/
+  if ( v8 != 0 ) /*0x50664f*/
+  {
+    v9 = v8 - 1; /*0x506655*/
+    if ( v9 == 0 ) /*0x506656*/
+    {
+      v54[0] = DUMMY|SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID; /*0x50670a*/
+      v18 = sub_508710(a1: v78); /*0x50670f*/
+      v53 = v19; /*0x506714*/
+      a2 = &v53; /*0x50671a*/
+      sub_4145AB(a1: v18 + 56); /*0x50671e*/
+      LOBYTE(v80) = 0; /*0x506723*/
+      sub_508710(a1: v78); /*0x506731*/
+      v20 = sub_506BA0(a1: v57); /*0x50673b*/
+      v52 = v20[1]; /*0x506740*/
+      v50 = *v20; /*0x506746*/
+      v49 = *(sub_508710(a1: v78) + 88); /*0x50674d*/
+      v48 = 0; /*0x506750*/
+      goto LABEL_17; /*0x506751*/
+    }
+    if ( v9 != 2 ) /*0x50665e*/
+      goto LABEL_66; /*0x50665e*/
+    if ( *(v79 + 88) == *(*dword_BE7918 + 8352) ) /*0x506675*/
+    {
+      v54[0] = SP_1245_PICKUPITEM; /*0x50667a*/
+      v53 = v70; /*0x50667f*/
+      Instance = StringPool::GetInstance(); /*0x506680*/
+      v11 = *StringPool::GetStringW(this: Instance, a2: v53, a3: v54[0]); /*0x50668c*/
+      LOBYTE(v80) = 20; /*0x506691*/
+      play_game_sound(a1: v11, a2: 100); /*0x506695*/
+      LOBYTE(v80) = 0; /*0x50669a*/
+      ZXString<unsigned short>::_Release(a1: v70); /*0x5066a3*/
+    }
+    v54[0] = CInPacket::Decode1(this: a2); /*0x5066b3*/
+    v12 = sub_508710(a1: v78); /*0x5066b7*/
+    v53 = v13; /*0x5066bc*/
+    a2 = &v53; /*0x5066c2*/
+    sub_4145AB(a1: v12 + 56); /*0x5066c6*/
+    LOBYTE(v80) = 0; /*0x5066cb*/
+    v14 = &v56; /*0x5066cf*/
+  }
+  else
+  {
+    if ( *(v79 + 88) == *(*dword_BE7918 + 8352) ) /*0x506764*/
+    {
+      v54[0] = SP_1245_PICKUPITEM; /*0x506769*/
+      v53 = &v72; /*0x50676e*/
+      v21 = StringPool::GetInstance(); /*0x50676f*/
+      v22 = *StringPool::GetStringW(this: v21, a2: v53, a3: v54[0]); /*0x50677b*/
+      LOBYTE(v80) = 17; /*0x506780*/
+      play_game_sound(a1: v22, a2: 100); /*0x506784*/
+      LOBYTE(v80) = 0; /*0x50678c*/
+      if ( v72 != 0 ) /*0x506794*/
+        ZXString<unsigned short>::_Release(lpAddend: (v72 - 12)); /*0x50679a*/
+    }
+    v54[0] = DUMMY|SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID; /*0x5067a0*/
+    v23 = sub_508710(a1: v78); /*0x5067a5*/
+    v53 = v24; /*0x5067aa*/
+    a2 = &v53; /*0x5067b0*/
+    sub_4145AB(a1: v23 + 56); /*0x5067b4*/
+    LOBYTE(v80) = 0; /*0x5067b9*/
+    v14 = &v58; /*0x5067bd*/
+  }
+  v51 = v14; /*0x5066d5*/
+  sub_508710(a1: v78); /*0x5066d9*/
+  v15 = sub_506BA0(a1: v51); /*0x5066e3*/
+  v52 = v15[1]; /*0x5066e8*/
+  v50 = *v15; /*0x5066ee*/
+  v49 = 0; /*0x5066f0*/
+  v48 = *(sub_508710(a1: v78) + 88); /*0x5066f6*/
+LABEL_17:
+  sub_432CBC(a1: v17, a2: v16); /*0x5066f9*/
+  result = sub_4360C3(a1: v48, a2: v49, a3: v50, a4: v52, a5: v53, a6: v54[0]); /*0x506700*/
+LABEL_66:
+  v80 = -1; /*0x506b7d*/
+  if ( v79 != 0 ) /*0x506b84*/
+    return sub_5089FF(a1: 0); /*0x506b8a*/
+  return result; /*0x506b8f*/
+}

@@ -118,6 +118,18 @@ namespace ms
 
 	void Drop::expire(int8_t type, const PhysicsObject* lt)
 	{
+		// round90 三方对账（Angel 083 只读取证；零行为改动，勿据此改 wire）：
+		// 083 CDropPool::OnDropLeaveField @0x506590:83-99 逐字 ——
+		//   v2 = Decode1(animation); Decode4(oid);
+		//   if (v2 == 2 || v2 == 3 || v2 == 5) Decode4(looter cid);
+		//   else if (v2 == 4) { Decode2(delay); *(v4+68) = get_update_time() + delay; *(v79+72) = 4; }
+		//   v2 == 0 走 IWzGr2DLayer::Animate / RemoveCanvas / GetCanvas COM 消亡动画。
+		// s9 PacketCreator.java:2624-2642 removeItemFromMap 对 animation >= 2 恒写 writeInt(chrId) 4B。
+		// => animation=4 是 wire 宽度分叉（083 2B delay vs s9 4B cid），数值同为 4、语义不同；
+		//    按 s9 读 int cid 才正确（W 桶；改回 083 读 short 会平移后续字段、断联机）。
+		// => animation=0 的 COM 画布特效当前端无 IWzGr2DLayer 栈，48 帧淡出语义等价（F 维 P2，不补）。
+		// 证据：tools/_ida_r90/OnDropLeaveField.code.txt +
+		//       drop-angel-calibration-2026-11/README.md:11/73/81/119/243-244/266-277。
 		// s9 实际发送的 animation 值（removeItemFromMap 调用点全枚举）：0/1/2/4/5
 		//（PacketCreator.java:2602 注释 0=expire 1=无动画 2=拾取 4=爆炸；
 		//  Character.java:2078 pet 拾取走 5；AbstractDealDamageHandler.java:229 走 4）。

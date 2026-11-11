@@ -1,4 +1,79 @@
 {
+  "round90_correction": {
+    "round": 90,
+    "date": "2026-11-11",
+    "trigger": "m10601 还有未完成的或者你可以自测的任务吗？（m09211/m09729/m09737 授权全量同方向自测）",
+    "verdict": "round89 WLE-TRIAGE-PLAN.md §2.3/§5 与 evidence/wle-triage-round89.json 的 L.p1_registered 把 drop/D2、drop/D12 登记为「按 083 反编译还原的 L 桶下一批」，且把函数锚点写成 268 进场 OnDropEnterField @0x505900；三方对账证伪：两条决策点都在 269 离场 OnDropLeaveField @0x506590，且一条是 wire 宽度分叉、一条是 COM 渲染栈资源缺口，均非 L 桶纯逻辑。",
+    "ida_basis": {
+      "endpoint": "http://127.0.0.1:13339/mcp",
+      "idb": "E:/MXD/反编译IDA/v83/Angel.i64",
+      "func": "CDropPool::OnDropLeaveField",
+      "addr": "0x506590",
+      "lines": "83-99",
+      "file": "tools/_ida_r90/OnDropLeaveField.code.txt",
+      "enter_func_not_applicable": "CDropPool::OnDropEnterField @0x505900（268 进场，非 269 离场）",
+      "enter_file": "tools/_ida_r90/OnDropEnterField.code.txt",
+      "verbatim": "v2 = CInPacket::Decode1(this: a2); /*0x5065b0*/ v71 = CInPacket::Decode4(this: a2); /*0x5065bc*/ if ( v2 == 2 || v2 == 3 || v2 == 5 ) { *(v7 + 88) = CInPacket::Decode4(this: a2); /*0x506627*/ } else if ( v2 == 4 ) { /*0x5065eb*/ v5 = CInPacket::Decode2(this: a2); /*0x5065f8*/ *(v4 + 68) = get_update_time() + v5; /*0x506602*/ *(v79 + 72) = 4; /*0x506608*/ } if ( v2 == 0 ) { ... IWzGr2DLayer::GetCanvas / RemoveCanvas / Animate ... }",
+      "on_packet_dispatch": "CDropPool::OnPacket @0x5058db：a1==268 → OnDropEnterField；a1==269 → OnDropLeaveField"
+    },
+    "s9_basis": {
+      "file": "PacketCreator.java:2624-2642",
+      "abs": "E:/project/BeiDou-Server_s9/gms-server/src/main/java/org/gms/util/PacketCreator.java",
+      "verbatim": "public static Packet removeItemFromMap(int objId, int animation, int chrId, boolean pet, int slot)",
+      "wire": "if (animation >= 2) { p.writeInt(chrId); if (pet) { p.writeByte(slot); } }",
+      "note": "animation>=2 恒写 4B cid；083 仅 v2==4 读 2B delay → 数值同为 4、语义不同"
+    },
+    "current_client": {
+      "file": "Gameplay/MapleMap/Drop.cpp:119-144",
+      "func": "void Drop::expire(int8_t type, const PhysicsObject* lt)",
+      "case4": "case 2 / case 4 / case 5：angle.set(0) + state=PICKEDUP + looter=lt + phobj.vspeed=-4.5f + type=NORMAL",
+      "case0": "case 0：state=PICKEDUP（48 帧淡出）",
+      "handler": "Net/Handlers/MapObjectHandlers.cpp RemoveLootHandler：mode>1 读 int cid（s9 正确解）",
+      "verdict": "按 s9 读 int cid 正确，不改 short；零 wire/协议/WZ/新封包改动"
+    },
+    "reclass": {
+      "drop/D12": {
+        "was": "L.p1_registered（animation=4 延时爆炸帧，按 083 还原）",
+        "now": "W 桶（wire 宽度分叉）",
+        "why": "083 v2==4 读 Decode2 delay + 写 +68/+72 记账；s9 写 4B cid。改回 083 读 short 会平移后续字段、复现 LoginParser.cpp:150-174 白屏类错位。W 桶保持 s9。",
+        "calibration": "drop-angel-calibration-2026-11/README.md:11/73/81/119/243-244/266/277（D1 不改、D12 不改）"
+      },
+      "drop/D2": {
+        "was": "L.p1_registered（animation=0 消亡动画，按 083 还原）",
+        "now": "F 维 P2（资源/渲染栈缺口，非逻辑）",
+        "why": "083 v2==0 走 IWzGr2DLayer::Animate/RemoveCanvas/GetCanvas COM 画布栈；当前端无该栈，48 帧淡出业务结果（消失）一致。校准≠改回原生，不补。",
+        "calibration": "drop-angel-calibration-2026-11/README.md:82/107/108/260/267（A12/C5/D2 不补、L3 遗留）"
+      }
+    },
+    "reopen_closure": {
+      "round89_reopen": 27,
+      "p1_remaining": 25,
+      "to_W": 1,
+      "to_F_P2": 1,
+      "arithmetic": "27 = 25 + 1 + 1",
+      "note": "168 条 DECISIONS 历史裁定与 WLE-TRIAGE-PLAN.md §4 的 38+130=168 算术不动；仅在 P1 登记层注销 2 条，不做语义再分类造假。"
+    },
+    "same_family_audit": {
+      "checked": "WLE-TRIAGE-PLAN.md §2.3 其余 P1 候选（quest/D8、skill/D4、corewindow/D8）逐条核",
+      "result": "状态机/条件分支、不碰 wire，属合法 L 桶候选，无同族误分类",
+      "next_batch": "改走 quest/D8 / skill/D4 / corewindow/D8，每批先出 083 符号+反编译锚点再落，门禁 5 禁想象修改"
+    },
+    "source_change": {
+      "behavior_literals": 0,
+      "wire": false,
+      "protocol": false,
+      "wz": false,
+      "new_packet": false,
+      "drop_cpp": "仅 expire() 前补 083/s9 三方对账纯注释（CRLF 字节级保持）"
+    },
+    "constraints": [
+      "083/v83 only 禁 095",
+      "s9 协议优先（W 桶 6 字段宽度/类型 + 27 条 wire KEEP 零改动）",
+      "数值重合 ≠ 语义重合",
+      "校准 ≠ 改回原生（L 桶同字段原始逻辑按 Angel 083 还原）",
+      "门禁 5 禁想象修改 / 门禁 18 REA→IDA→orange-wz→.nx 只读取证"
+    ]
+  },
   "round": 89,
   "date": "2026-11-11",
   "triggers": [

@@ -92,7 +92,7 @@
 
 ### 2.3 已有 083 活 IDA 证据、登记 P1（本轮不落补丁）
 
-- `drop/D2`（animation=0 消亡动画）+ `drop/D12`（animation=4 延时爆炸帧）：`CDropPool::OnDropEnterField @0x505900` 反编译逐字已落 `tools/_ida_r89/`，分支含 `MakeMoneyAnimation` / `*(v115+18)=3`，按 L 桶下一批还原。
+- ~~`drop/D2` / `drop/D12` 按 L 桶下一批还原~~ **round90 已证伪并注销（见 §7）**：两条决策点都在 **269 离场** `CDropPool::OnDropLeaveField @0x506590`，不在 268 进场 `OnDropEnterField @0x505900`；逐字 `tools/_ida_r90/OnDropLeaveField.code.txt:83-99` = `v2=Decode1(animation)` → `Decode4(oid)` → `if(v2==2||3||5) Decode4` / `else if(v2==4){ Decode2(delay); *(v4+68)=get_update_time()+delay; *(v79+72)=4; }` / `v2==0` 走 `IWzGr2DLayer` COM 消亡动画。s9 `PacketCreator.java:2624-2642` 对 `animation>=2` 恒写 `writeInt(chrId)` 4B ⇒ **D12 = W 桶 wire 宽度分叉**（083 2B delay vs s9 4B cid，数值重合≠语义重合，改回读 short 会平移字段、断联机）、**D2 = F 维 P2**（COM 画布栈当前端没有，48 帧淡出语义等价）。两者均非 L 桶，从 `L.p1_registered` 注销；168 条历史裁定与 §4 算术不动。
 - `quest/D8`、`skill/D4`、`corewindow/D8` 等状态机分支同理，逐面 REA→IDA→IMG 后再落，不凭空写。
 
 ## 3. E 桶 — s9 私有扩展（不对齐，5 项逐条带证据）
@@ -120,7 +120,7 @@ round88 四分类计数 `PURE76/WIRE38/MIXED14/OTHER40` 直接复用（稳定、
 ## 5. 一次性 P1 Plan（本轮 + 后续同方向批次）
 
 1. **本轮（已落地）**：W/L/E 口径修订 + 三桶总清单 + `UIQuestLog::change_tab` 1 行真实对齐补丁（083 反编译逐字为凭）；harness + GATE + 真重编三证 + 零署名原子提交。
-2. **下一批（drop 面）**：`CDropPool::OnDropEnterField` 的 animation 分支按 083 还原，REA→IDA→orange-wz(128B)→.nx 只读取证 → 纯逻辑补丁 → harness → GATE → 真重编 → 零署名提交。
+2. **下一批（round90 纠偏后）**：drop 面 D2/D12 已判 W / F 维 P2、**不进 P1**；改走真正有 083 状态机证据且零 wire 的 L 桶候选（`quest/D8` / `skill/D4` / `corewindow/D8`），每批先出 083 符号+反编译锚点，证据不足登记 P2/P3 不发明，再 REA→IDA→orange-wz(128B)→.nx 只读取证 → 纯逻辑补丁 → harness → GATE → 真重编 → 零署名提交。
 3. **逐面推进**：reopen 27 条按 12 面分批，每批先出 083 符号/反编译锚点，证据不足的登记 P2/P3 不发明；每批一片一原子 commit。
 4. **W 桶全程零改动**：6 字段宽度/类型 + 27 条 wire KEEP 不碰，避免复现白屏。
 5. **真机归口**：五屏截图 60 节/142 处、`InPacket::available()` 393 处 §27-A 逐面回归、D2 聊天规则，由用户认领后销案。
@@ -131,3 +131,26 @@ round88 四分类计数 `PURE76/WIRE38/MIXED14/OTHER40` 直接复用（稳定、
 - 工作树 17 个外部程序在途 WIP 原样保留，精确 add 隔离、零夹带。
 - 三桶只对「处置取向」分类，不改写 round86 DECISIONS.md 的 168 条历史裁定。
 - 架构级重写（如独立 CUIPartyHP 浮窗、CUIStatusBar 拆 10+2 类）仍须单点裁决，不在自动落地范围。
+
+
+## 7. round90 纠偏 — drop 面三方对账（m10601）
+
+触发：用户「还有未完成的或者你可以自测的任务吗？」→ 按 m09211/m09729/m09737
+「全部继续 / 按最完全反编译还原基础功能 / 其余同方向」授权，自测推进下一批时
+先复核 §2.3/§5 的 P1 登记，发现两处误分类。**先把上一轮自己埋的错挖出来，再开工。**
+
+| 项 | round89 登记 | round90 判定 | 决定性证据 |
+| --- | --- | --- | --- |
+| `drop/D12` animation=4 | L 桶 P1（按 083 还原延时爆炸帧） | **W 桶**（wire 宽度分叉，保持 s9） | 083 `OnDropLeaveField @0x506590:94-99` `Decode2(delay)`+`*(v4+68)`；s9 `removeItemFromMap` `animation>=2` 恒 `writeInt(chrId)` 4B |
+| `drop/D2` animation=0 | L 桶 P1（按 083 还原消亡动画） | **F 维 P2**（渲染栈缺口，不补） | 083 `v2==0` 走 `IWzGr2DLayer::Animate/RemoveCanvas/GetCanvas`；当前端无 COM 画布栈，48 帧淡出业务结果一致 |
+| 函数锚点 | `OnDropEnterField @0x505900`（268 进场） | `OnDropLeaveField @0x506590`（269 离场） | `CDropPool::OnPacket @0x5058db` 分派 268/269；反编译落 `tools/_ida_r90/` |
+
+**reopen 27 闭合**：`27 = 25 P1 + 1 W + 1 F-P2`。168 条 `DECISIONS.md` 历史裁定
+与 §4 的 `38+130=168` 算术**不动**——只在 P1 登记层注销 2 条，不做语义再分类造假
+（round88 四分类是「推荐默认文本」归类，round90 是「物理 wire 事实」判定，两层不互相覆盖）。
+
+**同族审计**：§2.3 其余候选 `quest/D8` / `skill/D4` / `corewindow/D8` 均为状态机/条件分支、
+不碰 wire，属合法 L 桶候选，无同族误分类；逐面取证后按同一方法推进。
+
+**限制**：零源码行为改动（`Drop.cpp` 仅补三方对账纯注释）/ 零 wire / 零协议 / 零 WZ /
+零新封包；25 个外部程序在途 WIP 原样留工作树、精确 add 隔离；真机五屏截图 60 节/142 处仍由用户认领。
