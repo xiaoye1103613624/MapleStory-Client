@@ -85,10 +85,10 @@ namespace ms
 	class TradeSetMesoPacket : public OutPacket
 	{
 	public:
-		TradeSetMesoPacket(int32_t meso) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
+		TradeSetMesoPacket(int64_t meso) : OutPacket(OutPacket::Opcode::PLAYER_INTERACTION)
 		{
 			write_byte(0x10);
-			write_int(meso);
+			write_long(meso);
 		}
 	};
 

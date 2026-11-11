@@ -155,7 +155,7 @@ namespace ms
 		started = true;
 	}
 
-	void UITrade::set_meso(uint8_t number, int32_t meso)
+	void UITrade::set_meso(uint8_t number, int64_t meso)
 	{
 		if (number == 0)
 			my_meso = meso;
@@ -280,7 +280,7 @@ namespace ms
 				return;
 			try
 			{
-				int32_t amt = std::stoi(s);
+				int64_t amt = std::stoll(s);
 				if (amt > 0)
 					TradeSetMesoPacket(amt).dispatch();
 			}

@@ -20,7 +20,7 @@ namespace ms
 	class DueySendPacket : public OutPacket
 	{
 	public:
-		DueySendPacket(int8_t invent, int16_t slot, int16_t amount, int32_t mesos,
+		DueySendPacket(int8_t invent, int16_t slot, int16_t amount, int64_t mesos,
 			const std::string& recipient, bool quick, const std::string& message)
 			: OutPacket(OutPacket::Opcode::DUEY_ACTION)
 		{
@@ -28,7 +28,7 @@ namespace ms
 			write_byte(invent);
 			write_short(slot);
 			write_short(amount);
-			write_int(mesos);
+			write_long(mesos);
 			write_string(recipient);
 			write_byte(quick ? 1 : 0);
 			if (quick)

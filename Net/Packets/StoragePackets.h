@@ -64,13 +64,13 @@ namespace ms
 		StorageArrangePacket() : StoragePacket(6) {}
 	};
 
-	// 金币：mode 7 -> int meso（正数=取出，负数=存入）
+	// 金币：mode 7 -> long meso（正数=取出，负数=存入）
 	class StorageMesoPacket : public StoragePacket
 	{
 	public:
-		StorageMesoPacket(int32_t meso) : StoragePacket(7)
+		StorageMesoPacket(int64_t meso) : StoragePacket(7)
 		{
-			write_int(meso);
+			write_long(meso);
 		}
 	};
 

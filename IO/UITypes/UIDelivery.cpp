@@ -144,8 +144,8 @@ namespace ms
 		auto ask_meso = [this, invent, slot, qty](const std::string& name) {
 			if (name.empty()) return;
 			UI::get().emplace<UISoftKey>([this, name, invent, slot, qty](const std::string& meso_s) {
-				int32_t mesos = 0;
-				try { mesos = std::stoi(meso_s); } catch (...) { mesos = 0; }
+				int64_t mesos = 0;
+				try { mesos = std::stoll(meso_s); } catch (...) { mesos = 0; }
 				int16_t amount = (invent > 0 && slot > 0) ? qty : 0;
 				DueySendPacket(invent, slot, amount, mesos, name, false, "").dispatch();
 				show_notice(Locale::format("delivery.sending_to", name));
@@ -227,16 +227,16 @@ namespace ms
 					pre = ci->get_target_name();
 				auto send_spec = [this, invent, slot](const std::string& name, const std::string& rest) {
 					if (name.empty()) return;
-					int32_t mesos = 0;
+					int64_t mesos = 0;
 					int16_t qty = 1;
 					size_t p2 = rest.find(',');
 					try {
 						if (rest.empty()) {
 							// meso default 0
 						} else if (p2 == std::string::npos) {
-							mesos = std::stoi(rest);
+							mesos = std::stoll(rest);
 						} else {
-							mesos = std::stoi(rest.substr(0, p2));
+							mesos = std::stoll(rest.substr(0, p2));
 							qty = static_cast<int16_t>(std::stoi(rest.substr(p2 + 1)));
 						}
 					} catch (...) {}
@@ -265,16 +265,16 @@ namespace ms
 					pre = ci->get_target_name();
 				auto parse_rest = [this](const std::string& name, const std::string& rest) {
 					if (name.empty()) return;
-					int32_t mesos = 0;
+					int64_t mesos = 0;
 					int8_t invent = 0;
 					int16_t slot = 0, qty = 0;
 					size_t p2 = rest.find(',');
 					try {
 						if (rest.empty()) {
 						} else if (p2 == std::string::npos) {
-							mesos = std::stoi(rest);
+							mesos = std::stoll(rest);
 						} else {
-							mesos = std::stoi(rest.substr(0, p2));
+							mesos = std::stoll(rest.substr(0, p2));
 							size_t p3 = rest.find(',', p2 + 1);
 							if (p3 == std::string::npos)
 								invent = static_cast<int8_t>(std::stoi(rest.substr(p2 + 1)));

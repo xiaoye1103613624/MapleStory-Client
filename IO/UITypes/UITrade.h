@@ -53,7 +53,7 @@ namespace ms
 		// getTradeStart(ROOM/3)：number=0 发起人 / 1 被邀请人；partner 名可为空。
 		void start_trade(uint8_t number, const std::string& self_name, const std::string& partner_name);
 		void partner_joined(const std::string& name);
-		void set_meso(uint8_t number, int32_t meso);
+		void set_meso(uint8_t number, int64_t meso);
 		void add_item(uint8_t number, uint8_t slot, int32_t itemid, int16_t quantity);
 		// 收到 CONFIRM(0x11) 表示"对方已锁定"，不是自己锁定。
 		void set_partner_locked();
@@ -85,8 +85,8 @@ namespace ms
 		bool self_locked;
 		bool partner_locked;
 		uint8_t my_number;
-		int32_t my_meso;
-		int32_t partner_meso;
+		int64_t my_meso;
+		int64_t partner_meso;
 		std::vector<TradeSlot> my_items;
 		std::vector<TradeSlot> partner_items;
 		std::string self_name;

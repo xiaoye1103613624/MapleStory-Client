@@ -129,7 +129,7 @@ namespace ms
 			player.get_stats().set_exp(recv.read_long());
 			break;
 		case MapleStat::Id::MESO:
-			player.get_inventory().set_meso(recv.read_int());
+		    player.get_inventory().set_meso(recv.read_long());
 			break;
 		case MapleStat::Id::GACHAEXP:
 			// 掩码 0x200000 在服务端落在兜底的 writeInt 分支（s9 PacketCreator.java:1059），

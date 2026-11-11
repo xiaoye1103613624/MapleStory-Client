@@ -63,7 +63,7 @@ namespace ms
 				recv.read_short();      // 0x7E
 				recv.read_short();
 				recv.read_int();
-				int64_t meso = recv.read_int();
+				int64_t meso = recv.read_long();
 				recv.read_short();
 				int16_t count = recv.read_byte();
 				std::vector<StoredItem> items;
@@ -109,7 +109,7 @@ namespace ms
 				recv.read_short();
 				recv.read_short();
 				recv.read_int();
-				int64_t meso = recv.read_int();
+				int64_t meso = recv.read_long();
 				if (auto uistorage = ensure_open())
 					uistorage->set_meso(slots, meso);
 				(void)meso;

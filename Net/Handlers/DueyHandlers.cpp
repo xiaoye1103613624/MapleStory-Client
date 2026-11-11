@@ -82,7 +82,7 @@ namespace ms
 					DueyPackage p;
 					p.id = recv.read_int();
 					p.sender = recv.read_padded_string(13);
-					p.mesos = recv.read_int();
+					p.mesos = recv.read_long();
 					recv.skip(8); // sentTimeFT
 					int32_t hasMsg = recv.read_int();
 					std::string msg = recv.read_padded_string(200);

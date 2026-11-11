@@ -23,7 +23,7 @@ namespace ms
 {
 	void CharacterParser::parse_inventory(InPacket& recv, Inventory& invent)
 	{
-		invent.set_meso(recv.read_int());
+		invent.set_meso(recv.read_long());
 		invent.set_slotmax(InventoryType::EQUIP, recv.read_byte());
 		invent.set_slotmax(InventoryType::USE, recv.read_byte());
 		invent.set_slotmax(InventoryType::SETUP, recv.read_byte());

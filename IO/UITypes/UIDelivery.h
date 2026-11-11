@@ -16,7 +16,7 @@ namespace ms
 	{
 		int32_t id = 0;
 		std::string sender;
-		int32_t mesos = 0;
+		int64_t mesos = 0;
 		std::string message;
 		int32_t itemid = 0;
 	};

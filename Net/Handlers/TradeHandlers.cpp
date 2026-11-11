@@ -306,7 +306,7 @@ namespace ms
 					std::string owner = recv.read_string();
 					recv.read_string();     // description
 					recv.skip_byte();       // 0x10 (slots)
-					recv.skip_int();        // meso
+					recv.skip_long();        // meso
 					uint8_t items_size = recv.read_byte();
 
 					std::vector<UIMerchant::MerchItem> items;
@@ -384,7 +384,7 @@ namespace ms
 			}
 			case 0x19: // updateHiredMerchant
 			{
-				recv.skip_int(); // meso
+				recv.skip_long(); // meso
 				uint8_t items_size = recv.read_byte();
 				std::vector<UIMerchant::MerchItem> items;
 				for (uint8_t i = 0; i < items_size && recv.available(); i++)
@@ -463,7 +463,7 @@ namespace ms
 			case 0x10: // getTradeMesoSet
 			{
 				uint8_t number = recv.read_byte();
-				int32_t meso = recv.read_int();
+				int64_t meso = recv.read_long();
 				while (recv.available())
 					recv.skip_byte();
 				if (ensure_trade())

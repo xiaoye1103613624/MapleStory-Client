@@ -80,7 +80,7 @@ namespace ms
 				recv.read_int(); // npcId
 				recv.read_int(); // opaque 32272
 				recv.skip(5);
-				int32_t mesos = recv.read_int();
+				int64_t mesos = recv.read_long();
 				recv.skip(1);
 				uint8_t count = recv.read_byte();
 
