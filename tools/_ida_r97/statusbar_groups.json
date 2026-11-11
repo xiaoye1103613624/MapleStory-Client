@@ -1,0 +1,194 @@
+{
+ "lifecycle": [
+  {
+   "addr": "0x8cfad8",
+   "name": "0CUIStatusBar"
+  },
+  {
+   "addr": "0x8cfdaa",
+   "name": "_ECUIStatusBar"
+  },
+  {
+   "addr": "0x8cfdce",
+   "name": "1CUIStatusBar"
+  },
+  {
+   "addr": "0x8d01b2",
+   "name": "OnCreate"
+  },
+  {
+   "addr": "0x8d80a4",
+   "name": "Draw"
+  },
+  {
+   "addr": "0x8de7da",
+   "name": "HitTest"
+  },
+  {
+   "addr": "0x8de964",
+   "name": "Update"
+  },
+  {
+   "addr": "0xa14ab7",
+   "name": "CreateInstance"
+  }
+ ],
+ "input": [
+  {
+   "addr": "0x8cfd76",
+   "name": "OnSetFocus"
+  },
+  {
+   "addr": "0x8d419c",
+   "name": "OnChildNotify"
+  },
+  {
+   "addr": "0x8d4225",
+   "name": "OnMouseEnter"
+  },
+  {
+   "addr": "0x8d423d",
+   "name": "OnButtonClicked"
+  },
+  {
+   "addr": "0x8d536c",
+   "name": "OnKey"
+  },
+  {
+   "addr": "0x8d5b5d",
+   "name": "OnMouseButton"
+  },
+  {
+   "addr": "0x8d795a",
+   "name": "OnMouseMove"
+  }
+ ],
+ "status": [
+  {
+   "addr": "0x8d82b8",
+   "name": "SetStatusValue"
+  }
+ ],
+ "quickslot": [
+  {
+   "addr": "0x8cfd7b",
+   "name": "ClearToolTip"
+  },
+  {
+   "addr": "0x8d76d7",
+   "name": "ProcessToolTip"
+  },
+  {
+   "addr": "0x8d82a7",
+   "name": "ReDrawQuickslot"
+  },
+  {
+   "addr": "0x8de8d5",
+   "name": "GetShortCutIndexByPos"
+  },
+  {
+   "addr": "0x8defae",
+   "name": "ResetButtonToolTip"
+  },
+  {
+   "addr": "0x8df4b1",
+   "name": "ToggleQuickSlot"
+  },
+  {
+   "addr": "0x8dfe21",
+   "name": "SetButtonBlink"
+  },
+  {
+   "addr": "0x8e03f1",
+   "name": "SetShortcutTooltip"
+  }
+ ],
+ "chat": [
+  {
+   "addr": "0x4c6db2",
+   "name": "GetWhisperTarget"
+  },
+  {
+   "addr": "0x8d4348",
+   "name": "ConvertWhisperToNormal"
+  },
+  {
+   "addr": "0x8d468d",
+   "name": "GetChatLog"
+  },
+  {
+   "addr": "0x8d4a6d",
+   "name": "SetChatType"
+  },
+  {
+   "addr": "0x8d4dbf",
+   "name": "ChangeWhisperTarget"
+  },
+  {
+   "addr": "0x8d5a4d",
+   "name": "StartChat"
+  },
+  {
+   "addr": "0x8d5aaf",
+   "name": "EndChat"
+  },
+  {
+   "addr": "0x8d5bfb",
+   "name": "TryBeginWhisper"
+  },
+  {
+   "addr": "0x8d616c",
+   "name": "ChangeChatWndSize"
+  },
+  {
+   "addr": "0x8db01c",
+   "name": "SetWhisperTarget"
+  },
+  {
+   "addr": "0x8db070",
+   "name": "ChatLogAdd"
+  },
+  {
+   "addr": "0x8db485",
+   "name": "0CChatLog"
+  },
+  {
+   "addr": "0x8dbb93",
+   "name": "ChatLogDraw"
+  },
+  {
+   "addr": "0x8dfb36",
+   "name": "MakeCtrlEdit"
+  }
+ ],
+ "misc": [
+  {
+   "addr": "0x8cfd83",
+   "name": "GetRTTI"
+  },
+  {
+   "addr": "0x8cfd89",
+   "name": "IsKindOf"
+  },
+  {
+   "addr": "0x8d4a22",
+   "name": "SendClaim"
+  },
+  {
+   "addr": "0x8d57ca",
+   "name": "GetEmotionKey"
+  },
+  {
+   "addr": "0x8d5acd",
+   "name": "FloatNotice"
+  },
+  {
+   "addr": "0x8d5b2b",
+   "name": "SetProblem"
+  },
+  {
+   "addr": "0x8df155",
+   "name": "SendGroupMessage"
+  }
+ ]
+}

@@ -1,0 +1,227 @@
+int __thiscall CTabGuildAlliance::LoadData(CTabGuildAlliance *this)
+{
+  _DWORD *v2; // esi
+  int result; // eax
+  bool v4; // zf
+  int v5; // eax
+  int v6; // eax
+  int v7; // eax
+  char *v8; // ebx
+  int v9; // esi
+  int AllianceGradeName; // eax
+  int v11; // ebx
+  int v12; // eax
+  int v13; // eax
+  char *job_name; // eax
+  int v15; // eax
+  int v16; // eax
+  int v17; // eax
+  int v18; // esi
+  int v19; // ebx
+  int v20; // eax
+  int v21; // eax
+  _DWORD *v22; // eax
+  int v23; // eax
+  int v24; // eax
+  char *v25; // eax
+  int v26; // eax
+  int v27; // ecx
+  int v28; // eax
+  int v29; // eax
+  int v30; // eax
+  _DWORD *v31; // esi
+  int k; // ebx
+  int v33; // ecx
+  char *v34; // [esp-8h] [ebp-E8h]
+  char v35[13]; // [esp+Ch] [ebp-D4h] BYREF
+  int v36; // [esp+19h] [ebp-C7h]
+  int v37; // [esp+1Dh] [ebp-C3h]
+  int v38; // [esp+21h] [ebp-BFh]
+  int v39; // [esp+25h] [ebp-BBh]
+  int v40; // [esp+2Dh] [ebp-B3h]
+  _DWORD v41[17]; // [esp+34h] [ebp-ACh] BYREF
+  _DWORD v42[17]; // [esp+78h] [ebp-68h] BYREF
+  _BYTE v43[4]; // [esp+BCh] [ebp-24h] BYREF
+  unsigned int v44; // [esp+C0h] [ebp-20h]
+  int v45; // [esp+C4h] [ebp-1Ch]
+  _DWORD *v46; // [esp+C8h] [ebp-18h] BYREF
+  int j; // [esp+CCh] [ebp-14h]
+  int i; // [esp+D0h] [ebp-10h] BYREF
+  int v49; // [esp+DCh] [ebp-4h]
+
+  v2 = (this + 124); /*0x91270b*/
+  for ( i = 5; i != 0; --i ) /*0x91270e*/
+  {
+    *(v2 - 1) = 1; /*0x912716*/
+    *v2 = 1; /*0x91271c*/
+    sub_9216DB(a1: v2 + 21); /*0x91271e*/
+    v2[22] = 0; /*0x912723*/
+    v2 += 32; /*0x912727*/
+  }
+  result = 0; /*0x912738*/
+  v4 = *(*dword_BE7918 + 12398) == 0; /*0x91273a*/
+  v45 = *dword_BE7918; /*0x912740*/
+  if ( v4 )
+  {
+    *(*(this + 9) + 2016) = 0; /*0x912748*/
+    *(*(this + 9) + 2020) = 0; /*0x912751*/
+  }
+  else
+  {
+    v5 = sub_912ABC(a1: &i); /*0x912762*/
+    v49 = 0; /*0x912767*/
+    ZXString<char>::operator=(a1: v5); /*0x91276f*/
+    v49 = -1; /*0x912774*/
+    ZXString<char>::_Release(a1: &i); /*0x91277b*/
+    v6 = sub_912AE0(a1: &i); /*0x912786*/
+    v49 = 1; /*0x91278f*/
+    ZXString<char>::operator=(a1: v6); /*0x912792*/
+    v49 = -1; /*0x912797*/
+    ZXString<char>::_Release(a1: &i); /*0x91279e*/
+    CTabGuildAlliance::MakeNoticeLayer(this); /*0x9127a5*/
+    v7 = 0; /*0x9127aa*/
+    v8 = this + 44; /*0x9127ac*/
+    do /*0x9127e2*/
+    {
+      v9 = v7 + 1; /*0x9127b2*/
+      AllianceGradeName = CWvsContext::GetAllianceGradeName(a1: &i, a2: v7 + 1); /*0x9127ba*/
+      v49 = 2; /*0x9127c2*/
+      ZXString<char>::operator=(a1: AllianceGradeName); /*0x9127c9*/
+      v49 = -1; /*0x9127ce*/
+      ZXString<char>::_Release(a1: &i); /*0x9127d5*/
+      v7 = v9; /*0x9127da*/
+      v8 += 4; /*0x9127dc*/
+    }
+    while ( v9 < 5 ); /*0x9127e2*/
+    for ( j = 0; ; ++j )
+    {
+      v11 = v45; /*0x9127e9*/
+      v12 = *(v45 + 12372); /*0x9127ec*/
+      v13 = v12 != 0 ? *(v12 - 4) : 0;
+      if ( j >= v13 ) /*0x912800*/
+        break; /*0x912800*/
+      CWvsContext::GetGuildMemberDataByIdx(a1: j, a2: &i, a3: v35); /*0x912816*/
+      if ( i != 0 ) /*0x912820*/
+      {
+        v42[1] = 0; /*0x912826*/
+        v42[2] = 0; /*0x912829*/
+        v42[10] = 0; /*0x91282c*/
+        v42[0] = i; /*0x91282f*/
+        v49 = 3; /*0x912840*/
+        ZXString<char>::GetBuffer(a1: v35, a2: 0xFFFFFFFF); /*0x912847*/
+        v42[3] = v36; /*0x912854*/
+        if ( v36 == -1 ) /*0x912857*/
+        {
+          ZXString<char>::GetBuffer(a1: dword_B3C1C8, a2: 0xFFFFFFFF); /*0x91285f*/
+        }
+        else
+        {
+          job_name = get_job_name(a1: v36); /*0x912862*/
+          ZXString<char>::GetBuffer(a1: job_name, a2: 0xFFFFFFFF); /*0x91286d*/
+        }
+        v42[4] = v37; /*0x91287e*/
+        v42[5] = v38; /*0x912887*/
+        v15 = CWvsContext::GetAllianceGradeName(a1: &v46, a2: v40); /*0x912890*/
+        LOBYTE(v49) = 4; /*0x912899*/
+        ZXString<char>::operator=(a1: v15); /*0x91289d*/
+        LOBYTE(v49) = 3; /*0x9128a5*/
+        ZXString<char>::_Release(a1: &v46); /*0x9128a9*/
+        v42[15] = 0; /*0x9128ae*/
+        v42[16] = v40; /*0x9128bf*/
+        if ( v39 != 0 ) /*0x9128c2*/
+        {
+          ZArray<CTabGuildAlliance::GUILDITEM>::InsertBefore(a1: -1); /*0x9128cf*/
+          CTabGuildAlliance::GUILDITEM::operator=(a1: v42); /*0x9128d6*/
+        }
+        ++*(this + 53); /*0x9128db*/
+        v49 = -1; /*0x9128e4*/
+        CTabGuildAlliance::GUILDITEM::~GUILDITEM(this: v42); /*0x9128e7*/
+      }
+    }
+    j = 0; /*0x9128fc*/
+    i = 0; /*0x9128ff*/
+    v46 = (this + 340); /*0x912902*/
+    while ( 1 )
+    {
+      v16 = *(v11 + 12460); /*0x912905*/
+      v17 = v16 != 0 ? *(v16 - 4) : 0;
+      if ( j >= v17 ) /*0x912919*/
+        break; /*0x912919*/
+      v18 = *(v45 + 12460) + i; /*0x912925*/
+      v19 = 0; /*0x91292b*/
+      v44 = 0; /*0x91292d*/
+      while ( 1 ) /*0x912930*/
+      {
+        v20 = *(v18 + 16); /*0x912930*/
+        if ( v20 == 0 || v44 >= *(v20 - 4) ) /*0x912943*/
+          break; /*0x912943*/
+        v21 = *(v18 + 12); /*0x912949*/
+        v4 = *(v21 + 4 * v44) == 0; /*0x91294c*/
+        v22 = (v21 + 4 * v44); /*0x91294f*/
+        if ( !v4 ) /*0x912952*/
+        {
+          v41[1] = 0; /*0x912958*/
+          v41[2] = 0; /*0x91295e*/
+          v41[10] = 0; /*0x912964*/
+          v41[0] = *v22; /*0x91296c*/
+          v34 = (*(v18 + 16) + v19); /*0x912979*/
+          v49 = 5; /*0x912980*/
+          ZXString<char>::GetBuffer(a1: v34, a2: 0xFFFFFFFF); /*0x912987*/
+          v23 = *(v18 + 16); /*0x91298c*/
+          v41[3] = *(v19 + v23 + 13); /*0x912997*/
+          v24 = *(v19 + v23 + 13); /*0x91299d*/
+          if ( v24 == -1 ) /*0x9129a2*/
+          {
+            ZXString<char>::GetBuffer(a1: dword_B3C1C8, a2: 0xFFFFFFFF); /*0x9129aa*/
+          }
+          else
+          {
+            v25 = get_job_name(a1: v24); /*0x9129ad*/
+            ZXString<char>::GetBuffer(a1: v25, a2: 0xFFFFFFFF); /*0x9129bc*/
+          }
+          v26 = *(v18 + 16); /*0x9129c1*/
+          v27 = *(v26 + v19 + 17); /*0x9129c4*/
+          v28 = v19 + v26; /*0x9129c8*/
+          v41[4] = v27; /*0x9129ca*/
+          v41[5] = *(v28 + 21); /*0x9129d3*/
+          v29 = CWvsContext::GetAllianceGradeName(a1: v43, a2: *(v28 + 33)); /*0x9129e3*/
+          LOBYTE(v49) = 6; /*0x9129ef*/
+          ZXString<char>::operator=(a1: v29); /*0x9129f3*/
+          LOBYTE(v49) = 5; /*0x9129fb*/
+          ZXString<char>::_Release(a1: v43); /*0x9129ff*/
+          v30 = *(v18 + 16); /*0x912a04*/
+          v41[15] = 0; /*0x912a07*/
+          v41[16] = *(v30 + v19 + 33); /*0x912a11*/
+          if ( *(v19 + v30 + 25) != 0 ) /*0x912a18*/
+          {
+            ZArray<CTabGuildAlliance::GUILDITEM>::InsertBefore(a1: -1); /*0x912a29*/
+            CTabGuildAlliance::GUILDITEM::operator=(a1: v41); /*0x912a30*/
+          }
+          ++*v46; /*0x912a38*/
+          v49 = -1; /*0x912a3a*/
+          CTabGuildAlliance::GUILDITEM::~GUILDITEM(this: v41); /*0x912a44*/
+        }
+        ++v44; /*0x912a49*/
+        v19 += 37; /*0x912a4c*/
+      }
+      ++j; /*0x912a54*/
+      i += 42; /*0x912a57*/
+      v46 += 32; /*0x912a5b*/
+      v11 = v45; /*0x912a62*/
+    }
+    *(*(this + 9) + 2016) = 0; /*0x912a71*/
+    v31 = (this + 208); /*0x912a77*/
+    for ( k = 5; k != 0; --k ) /*0x912a7d*/
+    {
+      sub_915C84(a1: v31 - 28); /*0x912a81*/
+      if ( *v31 != 0 ) /*0x912a8a*/
+        v33 = *(*v31 - 4); /*0x912a90*/
+      else
+        v33 = 0; /*0x912a8c*/
+      *(*(this + 9) + 2016) += v33; /*0x912a96*/
+      v31 += 32; /*0x912a9c*/
+    }
+    return sub_91EEE7(a1: *(this + 9)); /*0x912aa8*/
+  }
+  return result; /*0x912aad*/
+}

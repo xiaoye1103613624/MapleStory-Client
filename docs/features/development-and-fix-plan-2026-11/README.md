@@ -171,6 +171,7 @@
 | **2-42** | round94 reopen 残余 17 条 P1/P2/P3 分流（m11928） | 27 条 reopen 先纠算：前四轮已注销 10 条（round90 2 / round91 3 / round92 4 / round93 1），**残余 17 条**。本轮逐条落桶 **P1 = 0 / P2 = 1 / P3 = 16**（`0+1+16=17`）：唯一 P2 是 `login-flow/D3`（缺 s9 追加段协议事实，拿到即升 P1）；16 条 P3 全部是 canonical 已裁定「保持/不补/不做」的现状保持项。**P1=0 的理由**：P1 门槛「083 状态机证据 + 零 wire + 当前端确有缺陷」三条并发，残余 17 条无一条满足，硬塞 P1 即 round90/91/92 同族病。**零源码改动**；算术不动（168 条裁定 / `W 38 + L 130 = 168` / reopen 27 分母不变）。 |
 | **2-43** | round95 · `login-flow/D3` 命名纠偏（骑士团→Evan/龙神）+ `parse_stats` SP 表分支 + DECISIONS 11 处措辞消债 + P3 16 条转按 083 重做（A/B/C 分批 Plan） | `20f41436`… | `round95` |
 | **2-44** | round96 · P3 A 批前 3 条：`login-flow/D12` 逐字节文档（`DOC_ONLY` 完成）+ `skill/D11` 三钮定性「非 083」+ `corewindow/D10` 083 硬编码 666×524 坐实（纯注释，零行为） | — | `round96` |
+| **2-45** | round97 · P3 A 批余 6 条：`map/D1` 89 键差分 + `map/D8` 32B 快捷栏 + `cashshop/D2` 七子窗 + `map/D4` 侧栏 + `statusbar-hud/D1` 45 方法簇 + `social-economy/D3` 联盟双入口 —— **六条全 DOC_ONLY**（零源码改动） | — | `round97` |
 
 ### Wave 3 · L-B 待裁决 / 双端立项（**本计划不自动开工**，见 §3）
 

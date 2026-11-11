@@ -1,0 +1,4 @@
+void *__thiscall CQuickslotKeyMappedMan::DefaultQuickslotKeyMap(CQuickslotKeyMappedMan *this)
+{
+  return memcpy(a1: this + 4, a2: dword_BDAFAC, a3: 0x20u); /*0x72b8f9*/
+}

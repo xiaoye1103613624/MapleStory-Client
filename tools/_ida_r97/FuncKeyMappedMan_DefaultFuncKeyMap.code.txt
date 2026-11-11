@@ -1,0 +1,4 @@
+void *__thiscall CFuncKeyMappedMan::DefaultFuncKeyMap(CFuncKeyMappedMan *this)
+{
+  return memcpy(a1: this + 4, a2: dword_BD8BCC, a3: 0x1BDu); /*0x58e12a*/
+}

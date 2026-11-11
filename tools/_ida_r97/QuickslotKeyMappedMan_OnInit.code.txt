@@ -1,0 +1,11 @@
+int __thiscall CQuickslotKeyMappedMan::OnInit(char *this, int a2)
+{
+  if ( CInPacket::Decode1(this: a2) != 0 ) /*0x72b838*/
+    CInPacket::DecodeBuffer(a1: this + 4, a2: 0x20u); /*0x72b844*/
+  else
+    CQuickslotKeyMappedMan::DefaultQuickslotKeyMap(a1: this); /*0x72b84d*/
+  if ( TSingleton<CUIStatusBar>::ms_pInstance != 0 ) /*0x72b85a*/
+    CUIStatusBar::ReDrawQuickslot(this: TSingleton<CUIStatusBar>::ms_pInstance); /*0x72b85c*/
+  memcpy(a1: this + 36, a2: this + 4, a3: 0x20u); /*0x72b86b*/
+  return CQuickslotKeyMappedMan::SaveQuickslotKeyMap(a1: this); /*0x72b87a*/
+}

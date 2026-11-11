@@ -1226,3 +1226,31 @@
 - **55-4** 三条均零 wire / 零行为改动；源码侧只有 `UISkillBook.cpp` 与 `UIWorldMap.cpp` 的注释。
 - **55-5** 限制：本轮未做 A 批余 6 条与 B/C 批；`DECISIONS.md:101/197/288` 的历史结论
   保留原样，新口径写在 WLE §13 与 P3 Plan §6。
+
+## 56. round97 · P3 A 批余 6 条（六条全 DOC_ONLY / 零源码改动）
+
+- **56-1** `map/D1`：083 `SaveFuncKeyMap @0x58df2f` 89 槽 × 5B 差分 + `sub_4E43FA` 5B 条目，
+  s9 mode0 同形；本端 `ChangeKeyMapPacket` 已对齐。真机待验：改 2~3 个键 → 退出重登，
+  确认键位保留且未被重置（服务端 `keymap` 表应只增改对应行）。
+- **56-2** `map/D8`：083 `SaveQuickslotKeyMap @0x72b87e` = `183 + 0x20` raw；s9 严格 32B。
+  真机待验：改快捷栏触发键 → 重登确认 8 槽保留；若整包被服务端丢弃（键位回到默认），
+  即为长度不匹配信号。
+- **56-3** `cashshop/D2`：083 `CCSWnd_*` 7 类 / 70 符号 vs 本端单类，**不拆窗**。
+  真机待验：商城开窗 → 切分类/翻页/预览角色/看 locker/wish，确认无空白页与错位。
+- **56-4** `map/D4`：083 `CWorldMapDlg` 21 符号含 `Deeper/Shallower` 层级导航；
+  IMG `WorldMap` 仅 `title`+`Border`、`WorldMapSearch` 不存在。真机待验：世界地图开窗 →
+  点击地图节点跳转，确认侧栏与传送正常（搜索框预期不显示）。
+- **56-5** `statusbar-hud/D1`：083 `CUIStatusBar` 45 方法簇 `8/7/1/8/14/7` 全部有本端归属。
+  真机待验：HUD 全功能走一遍（快捷栏折叠/展开、聊天三态、Boss 血条、Buff 列表、时钟、
+  组队、低血闪烁），确认无缺失交互。
+- **56-6** `social-economy/D3`：083 无独立联盟窗（`CUIAlliance` 0 符号），入口是共用窗按钮；
+  本端保留 `UIAlliance` 浮窗 + UNION 页签。真机待验：G 键 → 家族页签 → 联盟按钮，
+  确认浮窗可开可关、页签不串位。
+- **56-7** 限制：A 批 9 条完成；B 批 5 条、C 批 2 条未做。本轮**零源码改动**，
+  故不声称真重编覆盖。构建门禁回归结果如实记录：`GATE OK`（协议门禁通过），
+  但 MSBuild 被**工作树里他人外部在途 WIP** 阻断 —— `UIChatBar.cpp(2581/2595) error C2664`、
+  `UIGender.cpp(189) fatal error C1070`、`UIMedal.cpp(38/67/161)`、`UISpecial.cpp(22/96)`、
+  `UITemporaryStatView.cpp(193)`，共 9 error / 3 fatal，全部落在本轮从未触碰的文件
+  （`git status` 均为 `M`/`??` 的外部改动，且这些文件里不含本轮任何标记串）。
+  `EXITCODE=1`。round96 真重编（19:22）时这些文件尚未坏，坏点来自此后外部推进，
+  与本轮交付无关；待外部 WIP 修好后需重跑一次门禁回归确认基线回绿。

@@ -1,0 +1,101 @@
+{
+ "round": 97,
+ "trigger": "m12009 P3(16) 按 Angel 083 全部重做 / 承接 round96 A 批前 3 条",
+ "scope": "P3 A 批余 6 条",
+ "items": {
+  "map/D1": {
+   "verdict": "DOC_ONLY",
+   "ida": "CFuncKeyMappedMan::SaveFuncKeyMap @0x58df2f (49 lines) + sub_4E43FA @0x4e43fa + FUNCKEY_MAPPED::Decode @0x4e4409 + DefaultFuncKeyMap @0x58e114 + FuncKeyMapped @0x58e12b",
+   "ida_facts": {
+    "opcode": 135,
+    "mode": 0,
+    "slots": 89,
+    "slot_bytes": 5,
+    "shadow_bytes": 445,
+    "shadow_hex": "0x1BD",
+    "entry_bytes": 5
+   },
+   "s9": "KeymapChangeHandler mode0: count + (key:int, type:byte, action:int); Character.keymap 为稀疏 LinkedHashMap",
+   "client": "Net/Packets/PlayerPackets.h ChangeKeyMapPacket: write_int(0) + write_int(size) + per-entry int/byte/int",
+   "conclusion": "083 与 s9 在 opcode/mode/差分条目三层同形，本端已对齐；89 槽 vs 稀疏 map 属存储形态差异"
+  },
+  "map/D8": {
+   "verdict": "DOC_ONLY",
+   "ida": "CQuickslotKeyMappedMan::SaveQuickslotKeyMap @0x72b87e + OnInit @0x72b82a + DefaultQuickslotKeyMap @0x72b8e6",
+   "ida_facts": {"opcode": 183, "body_bytes": 32, "body_hex": "0x20", "shadow_bytes": 32},
+   "s9": "QuickslotKeyMappedModifiedHandler: p.available() != QUICKSLOT_SIZE(8) * Integer.BYTES(4) -> return; per-slot (byte) readInt",
+   "client": "Net/Packets/SkillMacroPackets.h ChangeQuickslotPacket: 8 x write_int = 32B; IO/Keyboard.cpp:215 默认值 {0x2A,0x52,0x47,0x49,0x1D,0x53,0x4F,0x51}",
+   "conclusion": "(byte) 截断仅在键值 >= 0x100 发生，v83 键值域不含；32B raw 与 8x int 字节级等价"
+  },
+  "cashshop/D2": {
+   "verdict": "ARCH_DIFF_NO_SPLIT",
+   "ida": "*CCSWnd* 70 symbols / 7 classes; CCashShop 67 symbols",
+   "ida_facts": {
+    "classes": {"CCSWnd_Best": 5, "CCSWnd_Char": 18, "CCSWnd_Inventory": 9, "CCSWnd_List": 18, "CCSWnd_Locker": 8, "CCSWnd_Status": 4, "CCSWnd_Tab": 7},
+    "class_sum": 70,
+    "cashshop_methods": 67
+   },
+   "client": "IO/UITypes/UICashShop.h:31 单类; MAX_ITEMS = 7*2+1 = 15",
+   "conclusion": "MFC 七子窗 vs UIElement 单类职责等价；拆窗属重写全部商城 UI，不做"
+  },
+  "map/D4": {
+   "verdict": "RESOURCE_MISSING_ARCH_DIFF",
+   "ida": "CWorldMapDlg 21 symbols incl. SetWorldMapDeeper @0x9ee30e / SetWorldMapShallower @0x9ee507 / LoadMapList @0x9ed38b",
+   "img_gate": {"WorldMap_children": ["title", "Border"], "WorldMapSearch": "NOT_FOUND", "Border_sizes": {"0": "60x33", "1": "1x33", "2": "7x32", "3": "7x1", "4": "7x1", "5": "7x18", "6": "1x18", "7": "7x18"}},
+   "client": "IO/UITypes/UIWorldMap.cpp:53 引用 WorldMapSearch 恒空 -> :171 已注默认隐藏; 侧栏状态机 + 付费传送",
+   "conclusion": "083 层级导航靠 LoadMapList 数据结构；本端侧栏等价；搜索轨因资源缺失不发明"
+  },
+  "statusbar-hud/D1": {
+   "verdict": "ARCH_DIFF_NO_MERGE",
+   "ida": "CUIStatusBar 45 symbols (0x8cfad8..0xa14ab7)",
+   "ida_facts": {
+    "clusters": {"lifecycle": 8, "input": 7, "status": 1, "quickslot": 8, "chat": 14, "misc": 7},
+    "cluster_sum": 45,
+    "arithmetic": "8+7+1+8+14+7=45"
+   },
+   "client": "IO/UITypes/*.h 实测 18 个 HUD 面类，逐簇有归属、无孤儿方法",
+   "conclusion": "合并回单体等同重写全部 HUD 类；083 45 方法全部有簇归属，支持保持拆分"
+  },
+  "social-economy/D3": {
+   "verdict": "KEEP_AS_IS",
+   "ida": "*CUIAlliance* 0 symbols; CTabGuildAlliance 9 symbols; CUIUserList::CreateAllianceButton @0x91eba3",
+   "ida_facts": {"cui_alliance_symbols": 0, "tab_guild_alliance_symbols": 9, "entry_is_button": true},
+   "client": "IO/UITypes/UIAlliance.h:33 独立浮窗 + UIUserList UNION 页签（round85 4b2452c4 已收敛 4 处入口）",
+   "conclusion": "083 无独立窗但 s9 已用双入口；删浮窗或合并入口均属行为级改动，保持现状"
+  }
+ },
+ "batch_a": {"total": 9, "done_round96": 3, "done_round97": 6, "remaining": 0},
+ "batch_remaining": {"B": 5, "C": 2, "total": 7},
+ "zero_wire": true,
+ "zero_behavior_change": true,
+ "zero_source_change": true,
+ "build_gate_regression": {
+  "gate": "GATE OK: opcode matrix matches both sources (s9 a78ba681a4)",
+  "msbuild_exit": 1,
+  "cause": "external in-flight WIP in worktree (not touched by round97, no round97 markers)",
+  "error_files": {
+   "IO/UITypes/UIChatBar.cpp": "2581,2595 error C2664 (string -> const char*)",
+   "IO/UITypes/UIGender.cpp": "189 fatal error C1070 (#if/#endif mismatch)",
+   "IO/UITypes/UIMedal.cpp": "38,67 error C2440 + 161 fatal error C1070",
+   "IO/UITypes/UISpecial.cpp": "22 error C2440 + 96 fatal error C1070",
+   "IO/UITypes/UITemporaryStatView.cpp": "193 fatal error C1070"
+  },
+  "error_count": 9,
+  "fatal_count": 3,
+  "real_rebuild_claimed": false,
+  "note": "round96 19:22 real rebuild was green; these breakages arrived afterwards from external WIP. Rerun gate regression once external WIP is fixed."
+ },
+ "arithmetic_unchanged": {
+  "classification_168": "76+38+14+40=168",
+  "reopen": "27 = closed 10 + remaining 17",
+  "remaining_17": "P1 0 + P2 1 + P3 16"
+ },
+ "orange_wz_gate": "GATE_OK_128B_SKILL_NO_MAIN_WORLDMAP_TWO_NODES（round96 落盘，本轮复用 WorldMap 2 节点与 Border 8 片实测）",
+ "constraints": [
+  "083/v83 only，禁引 095",
+  "s9 协议优先，W 桶 6 字段宽度/类型与 27 条 wire KEEP 零改动",
+  "数值重合 != 语义重合",
+  "门禁 5 禁想象修改",
+  "门禁 18 REA -> IDA -> orange-wz -> .nx 只读取证"
+ ]
+}

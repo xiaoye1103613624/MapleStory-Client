@@ -1,0 +1,98 @@
+[
+  {
+    "addr": "0x90f137",
+    "name": "??1GUILDITEM@CTabGuild@@QAE@XZ",
+    "size": "0x45",
+    "segment": "___"
+  },
+  {
+    "addr": "0x90f17c",
+    "name": "?Draw@CTabGuild@@QAEJV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@00@Z",
+    "size": "0x1a12",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9112c0",
+    "name": "?OnKick@CTabGuild@@QAEXXZ",
+    "size": "0x81",
+    "segment": "___"
+  },
+  {
+    "addr": "0x911454",
+    "name": "?OnChat@CTabGuild@@QAEXXZ",
+    "size": "0x9d",
+    "segment": "___"
+  },
+  {
+    "addr": "0x911687",
+    "name": "?OnPartyInvite@CTabGuild@@QAEXXZ",
+    "size": "0x7a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9118a4",
+    "name": "?GetGuildItem@CTabGuild@@QAEJKAAUGUILDITEM@1@@Z",
+    "size": "0x8b",
+    "segment": "___"
+  },
+  {
+    "addr": "0x911997",
+    "name": "?GetToolTipString@CTabGuild@@QAE?AV?$ZXString@D@@JJ@Z",
+    "size": "0x2c5",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9126f4",
+    "name": "?LoadData@CTabGuildAlliance@@QAEXXZ",
+    "size": "0x3c8",
+    "segment": "___"
+  },
+  {
+    "addr": "0x912b04",
+    "name": "??1GUILDITEM@CTabGuildAlliance@@QAE@XZ",
+    "size": "0x45",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9146e4",
+    "name": "?MakeNoticeLayer@CTabGuildAlliance@@IAEXXZ",
+    "size": "0x250",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9153dc",
+    "name": "?OnPartyInvite@CTabGuildAlliance@@QAEXXZ",
+    "size": "0x7a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9155e9",
+    "name": "?GetGuildItem@CTabGuildAlliance@@QAEJKAAUGUILDITEM@1@@Z",
+    "size": "0x6e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x915657",
+    "name": "??4GUILDITEM@CTabGuildAlliance@@QAEAAU01@ABU01@@Z",
+    "size": "0x6e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x9156c5",
+    "name": "?GetToolTipString@CTabGuildAlliance@@QAE?AV?$ZXString@D@@JJ@Z",
+    "size": "0x2be",
+    "segment": "___"
+  },
+  {
+    "addr": "0x91eba3",
+    "name": "?CreateAllianceButton@CUIUserList@@QAEHJABUSectionData@CTabGuildAlliance@@ABUtagRECT@@J@Z",
+    "size": "0x2a6",
+    "segment": "___"
+  },
+  {
+    "addr": "0x921717",
+    "name": "?InsertBefore@?$ZArray@UGUILDITEM@CTabGuildAlliance@@@@QAEAAUGUILDITEM@CTabGuildAlliance@@H@Z",
+    "size": "0x85",
+    "segment": "___"
+  }
+]

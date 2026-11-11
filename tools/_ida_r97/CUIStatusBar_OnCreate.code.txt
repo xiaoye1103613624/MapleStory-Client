@@ -1,0 +1,215 @@
+void __thiscall CUIStat::OnCreate(_DWORD *this, int *a1)
+{
+  StringPoolStrings v3; // ecx
+  _DWORD *Instance; // eax
+  int v5; // eax
+  int *v6; // eax
+  int v7; // eax
+  int v8; // eax
+  int v9; // eax
+  int v10; // eax
+  _DWORD *v11; // eax
+  int StringW; // eax
+  int *v13; // ecx
+  _DWORD *v14; // eax
+  int v15; // eax
+  _DWORD *v16; // eax
+  __int64 v17; // rax
+  _DWORD *v18; // eax
+  _DWORD *v19; // eax
+  int v20; // eax
+  void *v21; // esp
+  _DWORD *v22; // eax
+  int v23; // eax
+  int v24; // eax
+  wchar_t *v25; // eax
+  int v26; // eax
+  int *v27; // eax
+  int v28; // eax
+  int v29; // eax
+  int v30; // eax
+  int v31; // eax
+  int v32; // [esp-18h] [ebp-BCh]
+  StringPoolStrings v33; // [esp-14h] [ebp-B8h] BYREF
+  VARIANTARG *v34; // [esp-10h] [ebp-B4h]
+  VARIANTARG *p_pvargDest; // [esp-Ch] [ebp-B0h]
+  StringPoolStrings **p_a2; // [esp-8h] [ebp-ACh]
+  wchar_t *v37; // [esp-4h] [ebp-A8h] BYREF
+  int v38; // [esp+0h] [ebp-A4h] BYREF
+  VARIANTARG v39; // [esp+Ch] [ebp-98h] BYREF
+  VARIANTARG pvarg; // [esp+1Ch] [ebp-88h] BYREF
+  VARIANTARG v41; // [esp+2Ch] [ebp-78h] BYREF
+  VARIANTARG pvargDest; // [esp+3Ch] [ebp-68h] BYREF
+  VARIANTARG v43; // [esp+4Ch] [ebp-58h] BYREF
+  VARIANTARG v44; // [esp+5Ch] [ebp-48h] BYREF
+  _DWORD v45[3]; // [esp+6Ch] [ebp-38h] BYREF
+  int v46; // [esp+78h] [ebp-2Ch] BYREF
+  int v47; // [esp+7Ch] [ebp-28h] BYREF
+  int Unknown; // [esp+80h] [ebp-24h] BYREF
+  _BYTE v49[4]; // [esp+84h] [ebp-20h] BYREF
+  _BYTE v50[4]; // [esp+88h] [ebp-1Ch] BYREF
+  StringPoolStrings *a2; // [esp+8Ch] [ebp-18h] BYREF
+  StringPoolStrings *v52; // [esp+90h] [ebp-14h]
+  _DWORD *v53; // [esp+94h] [ebp-10h]
+  int v54; // [esp+A0h] [ebp-4h]
+
+  v52 = &v37; /*0x8c4c97*/
+  v37 = 0; /*0x8c4ca3*/
+  sub_41C06C(a1: &word_AF0E08, a2: -1); /*0x8c4ca5*/
+  CUIWnd::OnCreate(a1, a2: v37); /*0x8c4caf*/
+  CUIStat::RestoreButtons(a1: this); /*0x8c4cb6*/
+  sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x8c4cc4*/
+  v54 = 0; /*0x8c4ccd*/
+  sub_402F85(pvargDest: &v44, pvargSrc: &pvargSrc); /*0x8c4cd0*/
+  v37 = 0; /*0x8c4cd5*/
+  p_a2 = 0; /*0x8c4cd6*/
+  p_pvargDest = &pvargDest; /*0x8c4cda*/
+  v34 = &v44; /*0x8c4cde*/
+  v33 = v3; /*0x8c4cdf*/
+  a2 = &v33; /*0x8c4ce2*/
+  LOBYTE(v54) = 1; /*0x8c4ceb*/
+  Instance = StringPool::GetInstance(); /*0x8c4cef*/
+  StringPool::GetBSTR(this: Instance, a2: &v33, a3: SP_1955_UI_UIWINDOWIMG_STAT_JOB); /*0x8c4cf6*/
+  LOBYTE(v54) = 1; /*0x8c4d02*/
+  v5 = sub_406472(); /*0x8c4d06*/
+  v6 = sub_402680(a1: v5); /*0x8c4d0d*/
+  IWzResMan::GetObjectA(this: v6, pvargDest: &pvarg, sUOL: v33, vParam: v34, vAux: p_pvargDest); /*0x8c4d14*/
+  LOBYTE(v54) = 3; /*0x8c4d1b*/
+  a1 = Ztl_variant_t::GetUnknown(a1: p_a2, a2: v37); /*0x8c4d24*/
+  v7 = _com_ptr_t<_com_IIID<IWzProperty,&__s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>::_QueryInterface<IUnknown *>(&a1); /*0x8c4d31*/
+  if ( v7 < 0 && v7 != -2147467262 ) /*0x8c4d3f*/
+    _com_issue_error(a1: v7); /*0x8c4d42*/
+  LOBYTE(v54) = 1; /*0x8c4d4e*/
+  v8 = ZComAPI::ZComVariantCopy(&pvarg); /*0x8c4d52*/
+  if ( v8 < 0 ) /*0x8c4d5a*/
+    _com_issue_error(a1: v8); /*0x8c4d5d*/
+  LOBYTE(v54) = 0; /*0x8c4d66*/
+  v9 = ZComAPI::ZComVariantCopy(pvarg: &v44); /*0x8c4d69*/
+  if ( v9 < 0 ) /*0x8c4d71*/
+    _com_issue_error(a1: v9); /*0x8c4d74*/
+  v54 = -1; /*0x8c4d79*/
+  v10 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x8c4d81*/
+  if ( v10 < 0 ) /*0x8c4d89*/
+    _com_issue_error(a1: v10); /*0x8c4d8c*/
+  v46 = 0; /*0x8c4d91*/
+  v37 = SP_2064_UI_UIWINDOWIMG_STAT_BTDETAIL; /*0x8c4d9d*/
+  p_a2 = &a1; /*0x8c4da2*/
+  v54 = 4; /*0x8c4da3*/
+  memset(v45, 0, sizeof(v45)); /*0x8c4daa*/
+  v11 = StringPool::GetInstance(); /*0x8c4dad*/
+  StringW = StringPool::GetStringW(this: v11, a2: p_a2, a3: v37); /*0x8c4db4*/
+  LOBYTE(v54) = 5; /*0x8c4dbd*/
+  ZXString<unsigned short>::operator=(a1: StringW); /*0x8c4dc1*/
+  LOBYTE(v54) = 4; /*0x8c4dcb*/
+  if ( a1 != 0 ) /*0x8c4dcf*/
+    ZXString<unsigned short>::_Release(lpAddend: a1 - 3); /*0x8c4dd5*/
+  v13 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444); /*0x8c4dea*/
+  a1 = v13; /*0x8c4dec*/
+  LOBYTE(v54) = 6; /*0x8c4df1*/
+  if ( v13 != 0 ) /*0x8c4df5*/
+    v14 = CCtrlButton::CCtrlButton(this: v13); /*0x8c4df7*/
+  else
+    v14 = 0; /*0x8c4dfe*/
+  LOBYTE(v54) = 4; /*0x8c4e07*/
+  v15 = sub_4284FF(a1: v14); /*0x8c4e0b*/
+  (*(**(v15 + 4) + 32))(a1: *(v15 + 4), a2: this, a3: 2006, a4: 124, a5: 324, a6: 1, a7: v45); /*0x8c4e2a*/
+  CUIStat::EnableApUpButton(a1: this); /*0x8c4e2f*/
+  v37 = SP_1953_STRING_TOOLTIPHELPIMG_GAME_UIWND_STAT; /*0x8c4e37*/
+  p_a2 = &a1; /*0x8c4e3c*/
+  v16 = StringPool::GetInstance(); /*0x8c4e3d*/
+  v37 = *StringPool::GetStringW(this: v16, a2: p_a2, a3: v37); /*0x8c4e49*/
+  LOBYTE(v54) = 7; /*0x8c4e51*/
+  sub_8F5DA9(a1: v37); /*0x8c4e55*/
+  LOBYTE(v54) = 4; /*0x8c4e5d*/
+  ZXString<unsigned short>::_Release(&a1); /*0x8c4e61*/
+  if ( *(this + 361) != 0 ) /*0x8c4e6c*/
+  {
+    a1 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1448); /*0x8c4e7d*/
+    LOBYTE(v54) = 8; /*0x8c4e82*/
+    if ( a1 != 0 ) /*0x8c4e86*/
+    {
+      v37 = ((*(*(this + 1) + 48))(a1: this + 1) + 144); /*0x8c4e99*/
+      v17 = (*(*(this + 1) + 44))(a1: this + 1); /*0x8c4e9c*/
+      v18 = CUIStatDetail::CUIStatDetail(a1, a2: SHIDWORD(v17), a3: v17 + 170, a4: v37); /*0x8c4ea8*/
+    }
+    else
+    {
+      v18 = 0; /*0x8c4eaf*/
+    }
+    LOBYTE(v54) = 4; /*0x8c4eb8*/
+    sub_8C88BC(a1: v18); /*0x8c4ebc*/
+    *(this + 398) = 1; /*0x8c4ec4*/
+    *(this + 361) = 1; /*0x8c4eca*/
+  }
+  if ( *(this + 400) != 0 ) /*0x8c4ed6*/
+    sub_8C6C84(a1: this); /*0x8c4eda*/
+  *ZArray<CUIWnd *>::InsertBefore(a1: -1) = this; /*0x8c4ef1*/
+  v53 = this + 405; /*0x8c4ef9*/
+  a1 = &dword_BF10AC; /*0x8c4efc*/
+  do /*0x8c508b*/
+  {
+    sub_402F85(pvargDest: &v43, pvargSrc: &pvargSrc); /*0x8c4f0c*/
+    LOBYTE(v54) = 9; /*0x8c4f15*/
+    sub_402F85(pvargDest: &v41, pvargSrc: &pvargSrc); /*0x8c4f19*/
+    v37 = SP_1947_UI_UIWINDOWIMG_STAT_DISABLED_; /*0x8c4f21*/
+    p_a2 = &a2; /*0x8c4f22*/
+    LOBYTE(v54) = 10; /*0x8c4f23*/
+    v19 = StringPool::GetInstance(); /*0x8c4f27*/
+    StringPool::GetString(this: v19, result: p_a2, nIdx: v37); /*0x8c4f2e*/
+    LOBYTE(v54) = 11; /*0x8c4f3c*/
+    v20 = *ZXString<char>::operator+(a1: v50, a2: a1); /*0x8c4f45*/
+    LOBYTE(v54) = 12; /*0x8c4f4e*/
+    v21 = alloca(2 * dword_BF03D0(a1: 0, a2: 0, a3: v20, a4: -1, a5: 0, a6: 0)); /*0x8c4f60*/
+    v52 = &v38; /*0x8c4f65*/
+    v37 = 0; /*0x8c4f68*/
+    p_a2 = 0; /*0x8c4f69*/
+    p_pvargDest = &v43; /*0x8c4f6d*/
+    v34 = &v41; /*0x8c4f71*/
+    v33 = SP_1947_UI_UIWINDOWIMG_STAT_DISABLED_; /*0x8c4f75*/
+    v22 = StringPool::GetInstance(); /*0x8c4f77*/
+    StringPool::GetString(this: v22, result: &v47, nIdx: v33); /*0x8c4f7e*/
+    LOBYTE(v54) = 13; /*0x8c4f8c*/
+    v23 = ZXString<char>::operator+(a1: v49, a2: a1); /*0x8c4f90*/
+    v33 = DUMMY|SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID; /*0x8c4f95*/
+    v32 = v52; /*0x8c4f97*/
+    LOBYTE(v54) = 14; /*0x8c4f9c*/
+    v24 = sub_428226(a1: v23); /*0x8c4fa0*/
+    v25 = sub_46ABB2(a1: v24, a2: v32, a3: v33); /*0x8c4fa6*/
+    v52 = &v33; /*0x8c4faf*/
+    _bstr_t::_bstr_t(a1: v25); /*0x8c4fb3*/
+    LOBYTE(v54) = 14; /*0x8c4fbf*/
+    v26 = sub_406472(); /*0x8c4fc3*/
+    v27 = sub_402680(a1: v26); /*0x8c4fca*/
+    IWzResMan::GetObjectA(this: v27, pvargDest: &v39, sUOL: v33, vParam: v34, vAux: p_pvargDest); /*0x8c4fd1*/
+    LOBYTE(v54) = 16; /*0x8c4fd8*/
+    Unknown = Ztl_variant_t::GetUnknown(a1: p_a2, a2: v37); /*0x8c4fe4*/
+    v28 = sub_41E527(a1: &Unknown); /*0x8c4feb*/
+    if ( v28 < 0 && v28 != -2147467262 ) /*0x8c4ff9*/
+      _com_issue_error(a1: v28); /*0x8c4ffc*/
+    LOBYTE(v54) = 14; /*0x8c5008*/
+    v29 = ZComAPI::ZComVariantCopy(pvarg: &v39); /*0x8c500c*/
+    if ( v29 < 0 ) /*0x8c5014*/
+      _com_issue_error(a1: v29); /*0x8c5017*/
+    LOBYTE(v54) = 13; /*0x8c501f*/
+    ZXString<char>::_Release(a1: v49); /*0x8c5023*/
+    LOBYTE(v54) = 12; /*0x8c502b*/
+    ZXString<char>::_Release(a1: &v47); /*0x8c502f*/
+    LOBYTE(v54) = 11; /*0x8c5037*/
+    ZXString<char>::_Release(a1: v50); /*0x8c503b*/
+    LOBYTE(v54) = 10; /*0x8c5043*/
+    ZXString<char>::_Release(a1: &a2); /*0x8c5047*/
+    LOBYTE(v54) = 9; /*0x8c5050*/
+    v30 = ZComAPI::ZComVariantCopy(pvarg: &v41); /*0x8c5054*/
+    if ( v30 < 0 ) /*0x8c505c*/
+      _com_issue_error(a1: v30); /*0x8c505f*/
+    LOBYTE(v54) = 4; /*0x8c5068*/
+    v31 = ZComAPI::ZComVariantCopy(pvarg: &v43); /*0x8c506c*/
+    if ( v31 < 0 ) /*0x8c5074*/
+      _com_issue_error(a1: v31); /*0x8c5077*/
+    ++a1; /*0x8c507c*/
+    ++v53; /*0x8c5080*/
+  }
+  while ( a1 < &dword_BF10BC ); /*0x8c508b*/
+  v54 = -1; /*0x8c5091*/
+  ZXString<unsigned short>::_Release(a1: &v46); /*0x8c5098*/
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "addr": "0x58ddb4",
+    "name": "?OnInit@CFuncKeyMappedMan@@QAEXAAVCInPacket@@@Z",
+    "size": "0x79",
+    "segment": "___"
+  },
+  {
+    "addr": "0x58deac",
+    "name": "?AdaptVirtualKey@CFuncKeyMappedMan@@QAEXXZ",
+    "size": "0x83",
+    "segment": "___"
+  },
+  {
+    "addr": "0x58df2f",
+    "name": "?SaveFuncKeyMap@CFuncKeyMappedMan@@QAEXXZ",
+    "size": "0x10d",
+    "segment": "___"
+  },
+  {
+    "addr": "0x58e114",
+    "name": "?DefaultFuncKeyMap@CFuncKeyMappedMan@@QAEXXZ",
+    "size": "0x17",
+    "segment": "___"
+  },
+  {
+    "addr": "0x58e12b",
+    "name": "?FuncKeyMapped@CFuncKeyMappedMan@@QAEAAUFUNCKEY_MAPPED@@J@Z",
+    "size": "0x56",
+    "segment": "___"
+  }
+]

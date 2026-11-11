@@ -1,0 +1,36 @@
+char *__thiscall CFuncKeyMappedMan::FuncKeyMapped(char *this, int nIdx)
+{
+  char *result; // eax
+
+  switch ( nIdx ) /*0x58e134*/
+  {
+    case 0: /*0x58e134*/
+      result = this + 214; /*0x58e13b*/
+      break; /*0x58e141*/
+    case 1: /*0x58e134*/
+      result = this + 414; /*0x58e143*/
+      break; /*0x58e149*/
+    case 2: /*0x58e134*/
+      result = this + 359; /*0x58e14b*/
+      break; /*0x58e151*/
+    case 3: /*0x58e134*/
+      result = this + 369; /*0x58e153*/
+      break; /*0x58e159*/
+    case 4: /*0x58e134*/
+      result = this + 149; /*0x58e15b*/
+      break; /*0x58e161*/
+    case 5: /*0x58e134*/
+      result = this + 419; /*0x58e163*/
+      break; /*0x58e169*/
+    case 6: /*0x58e134*/
+      result = this + 399; /*0x58e16b*/
+      break; /*0x58e171*/
+    case 7: /*0x58e134*/
+      result = this + 409; /*0x58e173*/
+      break; /*0x58e179*/
+    default:
+      result = this + 4; /*0x58e17b*/
+      break; /*0x58e17b*/
+  }
+  return result; /*0x58e17e*/
+}

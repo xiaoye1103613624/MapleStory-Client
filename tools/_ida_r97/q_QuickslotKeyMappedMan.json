@@ -1,0 +1,20 @@
+[
+  {
+    "addr": "0x72b82a",
+    "name": "?OnInit@CQuickslotKeyMappedMan@@QAEXAAVCInPacket@@@Z",
+    "size": "0x54",
+    "segment": "___"
+  },
+  {
+    "addr": "0x72b87e",
+    "name": "?SaveQuickslotKeyMap@CQuickslotKeyMappedMan@@QAEXXZ",
+    "size": "0x68",
+    "segment": "___"
+  },
+  {
+    "addr": "0x72b8e6",
+    "name": "?DefaultQuickslotKeyMap@CQuickslotKeyMappedMan@@QAEXXZ",
+    "size": "0x14",
+    "segment": "___"
+  }
+]

@@ -1,0 +1,27 @@
+int __thiscall CFuncKeyMappedMan::OnInit(char *this, int a2)
+{
+  char *v3; // edi
+  char *v4; // ebx
+  int i; // ebp
+
+  if ( CInPacket::Decode1(this: a2) != 0 ) /*0x58ddc3*/
+  {
+    v3 = this + 4; /*0x58ddcb*/
+    if ( CConfig::LoadFuncKeyMapped(this: TSingleton<CConfig>::ms_pInstance, a2: this + 4) == 0 ) /*0x58ddd6*/
+      CFuncKeyMappedMan::DefaultFuncKeyMap(this); /*0x58ddda*/
+    CFuncKeyMappedMan::SaveFuncKeyMap(this); /*0x58dde1*/
+  }
+  else
+  {
+    v3 = this + 4; /*0x58ddea*/
+    v4 = this + 4; /*0x58ddef*/
+    for ( i = 89; i != 0; --i ) /*0x58ddf1*/
+    {
+      FUNCKEY_MAPPED::Decode(a1: v4, a2); /*0x58ddf8*/
+      v4 += 5; /*0x58ddfd*/
+    }
+  }
+  CFuncKeyMappedMan::AdaptVirtualKey(this); /*0x58de07*/
+  memcpy(a1: this + 449, a2: v3, a3: 0x1BDu); /*0x58de19*/
+  return CFuncKeyMappedMan::SaveFuncKeyMap(this); /*0x58de28*/
+}

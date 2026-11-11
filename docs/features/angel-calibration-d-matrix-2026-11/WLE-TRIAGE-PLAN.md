@@ -307,3 +307,42 @@ s9 写方 / 当前端读方 / 083 `Decode` 三维对照。结论：逐字段宽�
 - 判定：**不做几何改动**（改外框会在贴图内侧留 5px 空隙，属视觉破坏；且 `DECISIONS.md:101`
   的 `BATCH_0_BASELINE` 理由是 s9 布局优先）。改为在代码侧写清 083 硬编码值与差值来源，
   真机对齐记 PLT §55-3。
+
+## 14. round97：P3 A 批余 6 条（D1 / D8 / D2 / D4 / D1 / D3）
+
+> 触发：用户 m12009「P3（16）按 Angel 全部重做」。承接 round96（A 批前 3 条），
+> 本轮做 A 批**余 6 条**，逐条 083 活 IDA 取证 + s9 源码 + 当前端字面量 三向对拍。
+> 映射表全文见 `P3-A-BATCH-REST-MAPS.md`。
+
+### 14.1 六条逐条结论
+
+- `map/D1`：083 `SaveFuncKeyMap @0x58df2f` = `COutPacket(135)` + `Encode4(mode=0)` +
+  `89` 槽 × `5` 字节与 `this+449` 的 **445B**（`0x1BD`）影子表逐槽差分，条目体
+  `sub_4E43FA @0x4e43fa` = `EncodeBuffer(5u)`。s9 `KeymapChangeHandler` mode0 同样是
+  「count + (key:int, type:byte, action:int)」，`Character.keymap` 是**稀疏 map**。
+  本端 `ChangeKeyMapPacket` 已 mode0 + 差分 + 5B 条目 → **`DOC_ONLY`**，零改动。
+- `map/D8`：083 `SaveQuickslotKeyMap @0x72b87e` = `COutPacket(183)` + `EncodeBuffer(0x20)`（32B raw），
+  默认表 `dword_BDAFAC`；s9 严格 `QUICKSLOT_SIZE * Integer.BYTES` = 32B，逐槽 `(byte)readInt`。
+  本端 8 × `write_int` = 32B，默认值 `{0x2A,0x52,0x47,0x49,0x1D,0x53,0x4F,0x51}` 与 s9 逐项一致
+  → **`DOC_ONLY`**，零改动（截断只在键值 ≥ 0x100 发生，v83 键值域不含）。
+- `cashshop/D2`：083 `*CCSWnd*` 实测 **70 符号 / 7 个类**（Best 5 / Char 18 / Inventory 9 /
+  List 18 / Locker 8 / Status 4 / Tab 7），`CCashShop` 本体 **67 方法**；本端 `UICashShop` 单类
+  + `MAX_ITEMS = 7*2+1 = 15` → **架构差异**，不拆窗。
+- `map/D4`：083 `CWorldMapDlg` 21 符号（`SetWorldMapDeeper @0x9ee30e` /
+  `Shallower @0x9ee507` / `LoadMapList @0x9ed38b`），IMG `UIWindow.img/WorldMap` 只有
+  `title` + `Border` 两节点、`WorldMapSearch` **不存在** → **资源缺失 + 架构差异**，不搬。
+- `statusbar-hud/D1`：083 `CUIStatusBar` **45 方法实测**，按簇 `lifecycle 8 / input 7 /
+  status 1 / quickslot 8 / chat 14 / misc 7`（`8+7+1+8+14+7 = 45` 现场减算）；本端 18 个 HUD 面类
+  逐簇有归属、无孤儿方法 → **架构差异**，不合并。
+- `social-economy/D3`：083 `*CUIAlliance*` 符号 **0**，`CTabGuildAlliance` **9 符号**，
+  联盟入口是 `CUIUserList::CreateAllianceButton @0x91eba3` 的**按钮**而非独立窗；
+  本端 `UIAlliance` 浮窗 + `UIUserList` UNION 页签（round85 `4b2452c4` 已收敛）
+  → **保持现状**，不删不合并。
+
+### 14.2 本轮口径
+
+- 六条**全部 `DOC_ONLY`**：零 wire / 零协议 / 零 WZ / 零源码行为改动。
+- A 批 9 条（3 + 6）至此完成；B 批 5 条（`skill/D9`、`social-economy/D12`、`pet-summon/D2`、
+  `login-flow/D13`、`social-economy/D9`）与 C 批 2 条（`corewindow/D2`、`quest/D5`）待续。
+- 算术不动：`168 = 76+38+14+40` / `reopen 27 = 已注销 10 + 残余 17` /
+  `残余 17 = P1 0 + P2 1 + P3 16` 三条守恒式本轮全部未触及。

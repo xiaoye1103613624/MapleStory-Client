@@ -1,0 +1,4 @@
+int __thiscall PARTYDATA::Decode(void *this, int a2)
+{
+  return CInPacket::DecodeBuffer(a1: this, a2: 0x12Au); /*0x4e43f7*/
+}

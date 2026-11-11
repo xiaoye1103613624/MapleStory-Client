@@ -47,7 +47,7 @@
 ## 3. 执行顺序
 
 1. ~~**批 A 前 3 条**（login-flow/D12、skill/D11、corewindow/D10）—— 证据全在库，直接出对照 + 补丁。~~ **round96 已完成**（见 §6）。
-2. 批 A 余 6 条 —— 每条补一个 IDA/IMG 探针后落。
+2. ~~批 A 余 6 条 —— 每条补一个 IDA/IMG 探针后落。~~ **round97 已完成**（见 §7，六条全 DOC_ONLY）。
 3. 批 B 5 条 —— 每条先出 083 反编译摘录，能证伪本端形态才动代码。
 4. 批 C 2 条 —— 重取证，预期维持，仅补文档。
 
@@ -70,3 +70,16 @@ reopen 27 = 已注销 10 + 残余 17 照旧；残余 17 = P1 0 + P2 1 + P3 16 �
 | `corewindow/D10` | 定性：083 硬编码 666×524，本端 654×521 属贴图推导 | `IO/UITypes/UIWorldMap.cpp` 纯注释 + PLT §55-3 真机对齐 |
 
 三条均零 wire / 零行为改动；A 批余 6 条待续。
+
+## 7. round97 回执（A 批余 6 条）
+
+| 条 | 结果 | 产出 |
+| --- | --- | --- |
+| `map/D1` | `DOC_ONLY`：083 89 槽 × 5B 差分 vs s9 mode0 稀疏 map，本端已同形 | `P3-A-BATCH-REST-MAPS.md` §1 |
+| `map/D8` | `DOC_ONLY`：083 `183 + 0x20` raw vs s9 严格 32B，本端 8×`write_int` 字节级等价 | 同上 §2 |
+| `cashshop/D2` | 架构差异：083 `CCSWnd_*` 7 类 / 70 符号 vs 本端单类，不拆窗 | 同上 §3 |
+| `map/D4` | 资源缺失 + 架构差异：`WorldMap` 仅 `title`+`Border`，`WorldMapSearch` 不存在 | 同上 §4 |
+| `statusbar-hud/D1` | 架构差异：45 方法簇 `8/7/1/8/14/7` 全部有本端归属，不合并 | 同上 §5 |
+| `social-economy/D3` | 保持现状：083 `CUIAlliance` 0 符号，入口是共用窗按钮 | 同上 §6 |
+
+六条均**零 wire / 零行为改动**；A 批 9 条（前 3 + 余 6）完成，B/C 批 7 条待续。

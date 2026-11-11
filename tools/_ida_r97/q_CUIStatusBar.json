@@ -1,0 +1,272 @@
+[
+  {
+    "addr": "0x4c6db2",
+    "name": "?GetWhisperTarget@CUIStatusBar@@QBE?AV?$ZXString@D@@XZ",
+    "size": "0x24",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfad8",
+    "name": "??0CUIStatusBar@@QAE@XZ",
+    "size": "0x29e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfd76",
+    "name": "?OnSetFocus@CUIStatusBar@@UAEHH@Z",
+    "size": "0x5",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfd7b",
+    "name": "?ClearToolTip@CUIStatusBar@@UAEXXZ",
+    "size": "0x8",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfd83",
+    "name": "?GetRTTI@CUIStatusBar@@UBEPBVCRTTI@@XZ",
+    "size": "0x6",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfd89",
+    "name": "?IsKindOf@CUIStatusBar@@UBEHPBVCRTTI@@@Z",
+    "size": "0x21",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfdaa",
+    "name": "??_ECUIStatusBar@@UAEPAXI@Z",
+    "size": "0x24",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8cfdce",
+    "name": "??1CUIStatusBar@@UAE@XZ",
+    "size": "0x3e4",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d01b2",
+    "name": "?OnCreate@CUIStatusBar@@UAEXPAX@Z",
+    "size": "0x392d",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d419c",
+    "name": "?OnChildNotify@CUIStatusBar@@UAEXIII@Z",
+    "size": "0x89",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d4225",
+    "name": "?OnMouseEnter@CUIStatusBar@@UAEXH@Z",
+    "size": "0x18",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d423d",
+    "name": "?OnButtonClicked@CUIStatusBar@@UAEXI@Z",
+    "size": "0xe3",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d4348",
+    "name": "?ConvertWhisperToNormal@CUIStatusBar@@QAE?AV?$ZXString@G@@V2@@Z",
+    "size": "0x345",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d468d",
+    "name": "?GetChatLog@CUIStatusBar@@QAE?AV?$ZArray@V?$ZXString@D@@@@XZ",
+    "size": "0x395",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d4a22",
+    "name": "?SendClaim@CUIStatusBar@@IAEXXZ",
+    "size": "0x4b",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d4a6d",
+    "name": "?SetChatType@CUIStatusBar@@QAEXJ@Z",
+    "size": "0x2d6",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d4dbf",
+    "name": "?ChangeWhisperTarget@CUIStatusBar@@QAEHXZ",
+    "size": "0x22f",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d536c",
+    "name": "?OnKey@CUIStatusBar@@UAEXII@Z",
+    "size": "0x43e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d57ca",
+    "name": "?GetEmotionKey@CUIStatusBar@@QAEIAAV?$ZXString@D@@@Z",
+    "size": "0x283",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5a4d",
+    "name": "?StartChat@CUIStatusBar@@QAEXPBD@Z",
+    "size": "0x62",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5aaf",
+    "name": "?EndChat@CUIStatusBar@@QAEXXZ",
+    "size": "0x1e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5acd",
+    "name": "?FloatNotice@CUIStatusBar@@QAEXPBDJK@Z",
+    "size": "0x5e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5b2b",
+    "name": "?SetProblem@CUIStatusBar@@QAEXPBD@Z",
+    "size": "0x32",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5b5d",
+    "name": "?OnMouseButton@CUIStatusBar@@UAEXIIJJ@Z",
+    "size": "0x9e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d5bfb",
+    "name": "?TryBeginWhisper@CUIStatusBar@@IAEHJJ@Z",
+    "size": "0x352",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d616c",
+    "name": "?ChangeChatWndSize@CUIStatusBar@@QAEXJJJ@Z",
+    "size": "0x22f",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d76d7",
+    "name": "?ProcessToolTip@CUIStatusBar@@IAEXJJ@Z",
+    "size": "0x283",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d795a",
+    "name": "?OnMouseMove@CUIStatusBar@@UAEHJJ@Z",
+    "size": "0x74a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d80a4",
+    "name": "?Draw@CUIStatusBar@@UAEXPBUtagRECT@@@Z",
+    "size": "0x1cd",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d82a7",
+    "name": "?ReDrawQuickslot@CUIStatusBar@@QAEXXZ",
+    "size": "0x11",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8d82b8",
+    "name": "?SetStatusValue@CUIStatusBar@@IAEXJJV?$ZXString@D@@@Z",
+    "size": "0x253",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8db01c",
+    "name": "?SetWhisperTarget@CUIStatusBar@@QAEXV?$ZXString@D@@H@Z",
+    "size": "0x54",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8db070",
+    "name": "?ChatLogAdd@CUIStatusBar@@QAEXPBDJJHV?$ZRef@UGW_ItemSlotBase@@@@@Z",
+    "size": "0x3ed",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8db485",
+    "name": "??0CChatLog@CUIStatusBar@@QAE@V?$ZXString@G@@JJJHHV?$ZRef@UGW_ItemSlotBase@@@@@Z",
+    "size": "0xa9",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8dbb93",
+    "name": "?ChatLogDraw@CUIStatusBar@@IAEXXZ",
+    "size": "0x1ccd",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8de7da",
+    "name": "?HitTest@CUIStatusBar@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "size": "0xfb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8de8d5",
+    "name": "?GetShortCutIndexByPos@CUIStatusBar@@QAEJJJ@Z",
+    "size": "0x68",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8de964",
+    "name": "?Update@CUIStatusBar@@UAEXXZ",
+    "size": "0x112",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8defae",
+    "name": "?ResetButtonToolTip@CUIStatusBar@@QAEXXZ",
+    "size": "0x51",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8df155",
+    "name": "?SendGroupMessage@CUIStatusBar@@IAEXJABV?$ZXString@D@@@Z",
+    "size": "0x35c",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8df4b1",
+    "name": "?ToggleQuickSlot@CUIStatusBar@@IAEXXZ",
+    "size": "0x511",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8dfb36",
+    "name": "?MakeCtrlEdit@CUIStatusBar@@IAEXH@Z",
+    "size": "0x2eb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8dfe21",
+    "name": "?SetButtonBlink@CUIStatusBar@@QAEXJH@Z",
+    "size": "0x5d0",
+    "segment": "___"
+  },
+  {
+    "addr": "0x8e03f1",
+    "name": "?SetShortcutTooltip@CUIStatusBar@@QAEXJD@Z",
+    "size": "0x243",
+    "segment": "___"
+  },
+  {
+    "addr": "0xa14ab7",
+    "name": "?CreateInstance@?$TSingleton@VCUIStatusBar@@@@SAPAVCUIStatusBar@@XZ",
+    "size": "0x45",
+    "segment": "___"
+  }
+]

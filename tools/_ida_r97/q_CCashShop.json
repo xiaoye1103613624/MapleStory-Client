@@ -1,0 +1,404 @@
+[
+  {
+    "addr": "0x468223",
+    "name": "??0CCashShop@@QAE@AAVCInPacket@@@Z",
+    "size": "0x220",
+    "segment": "___"
+  },
+  {
+    "addr": "0x468f3e",
+    "name": "?Init@CCashShop@@UAEXPAX@Z",
+    "size": "0x65c",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46959a",
+    "name": "?Close@CCashShop@@UAEXXZ",
+    "size": "0x8c",
+    "segment": "___"
+  },
+  {
+    "addr": "0x469626",
+    "name": "?OnKey@CCashShop@@UAEXII@Z",
+    "size": "0x8b",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4696b1",
+    "name": "?OnBuyAvatar@CCashShop@@QAEXXZ",
+    "size": "0x633",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46ba55",
+    "name": "?SendBuyAvatarPacket@CCashShop@@QAEXXZ",
+    "size": "0x2b9",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46bdcb",
+    "name": "?OnDefaultAvatar@CCashShop@@QAEXXZ",
+    "size": "0xb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46bdd6",
+    "name": "?OnTakeOff@CCashShop@@QAEXXZ",
+    "size": "0xb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46cafe",
+    "name": "?OnChangedCategory@CCashShop@@QAEXH@Z",
+    "size": "0x30",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46cb2e",
+    "name": "?OnChangedCategorySub@CCashShop@@QAEXH@Z",
+    "size": "0x30",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46cb5e",
+    "name": "?OnChangedPage@CCashShop@@QAEXH@Z",
+    "size": "0x18",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46cb76",
+    "name": "?IsUsableItem@CCashShop@@IAEHJAAV?$ZXString@D@@@Z",
+    "size": "0x75f",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46d5e2",
+    "name": "?IsUsableItemGift@CCashShop@@IAEHJAAV?$ZXString@D@@V2@ABVCharacterData@@ABUBasicStat@@@Z",
+    "size": "0x4fb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46e121",
+    "name": "?OnBuyPackage@CCashShop@@QAEXJ@Z",
+    "size": "0x4a4",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46ec85",
+    "name": "?OnGiftMateInfoResult@CCashShop@@QAEXAAVCInPacket@@@Z",
+    "size": "0x687",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46f940",
+    "name": "?SendGiftsPacket@CCashShop@@QAEXXZ",
+    "size": "0x2fb",
+    "segment": "___"
+  },
+  {
+    "addr": "0x46fc3b",
+    "name": "?OnGiftPackage@CCashShop@@QAEXJ@Z",
+    "size": "0x3ac",
+    "segment": "___"
+  },
+  {
+    "addr": "0x470480",
+    "name": "?OnBuyTransferWorldItem@CCashShop@@QAEXJ@Z",
+    "size": "0x1d3",
+    "segment": "___"
+  },
+  {
+    "addr": "0x470d7d",
+    "name": "?OnSetWish@CCashShop@@QAEXJ@Z",
+    "size": "0x160",
+    "segment": "___"
+  },
+  {
+    "addr": "0x470edd",
+    "name": "?OnRemoveWish@CCashShop@@QAEXJ@Z",
+    "size": "0xf3",
+    "segment": "___"
+  },
+  {
+    "addr": "0x470fd0",
+    "name": "?OnWear@CCashShop@@QAEXJJH@Z",
+    "size": "0x1a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x470fea",
+    "name": "?SetPet@CCashShop@@QAEXJJH@Z",
+    "size": "0x1a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471004",
+    "name": "?SetEmotion@CCashShop@@QAEXJ@Z",
+    "size": "0x12",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471016",
+    "name": "?SetActiveEffectItem@CCashShop@@QAEXJJ@Z",
+    "size": "0x16",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47102c",
+    "name": "?ShowBullet@CCashShop@@QAEXJ@Z",
+    "size": "0x12",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47103e",
+    "name": "?BlowWeather@CCashShop@@QAEXJ@Z",
+    "size": "0x12",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471050",
+    "name": "?ShowMessageBox@CCashShop@@QAEXJJ@Z",
+    "size": "0x16",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471066",
+    "name": "?ShowPersonalShop@CCashShop@@QAEXJJ@Z",
+    "size": "0x16",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47107c",
+    "name": "?ShowEntrustedShop@CCashShop@@QAEXJJ@Z",
+    "size": "0x16",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4710a8",
+    "name": "?OnStatusCharge@CCashShop@@QAEXXZ",
+    "size": "0x2a",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4710d2",
+    "name": "?OnStatusCheck@CCashShop@@QAEXXZ",
+    "size": "0x16",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4710e8",
+    "name": "?OnStatusCoupon@CCashShop@@QAEXXZ",
+    "size": "0x158",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471b72",
+    "name": "?OnStatusExit@CCashShop@@QAEXXZ",
+    "size": "0x5",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471bb5",
+    "name": "?GetCategorySubIndex@CCashShop@@QAEJJJ@Z",
+    "size": "0x34",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471be9",
+    "name": "?GetUsableCommodityIndexBySN@CCashShop@@QAEJAAJ@Z",
+    "size": "0x120",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471d09",
+    "name": "?OnChangedSortType@CCashShop@@QAEXH@Z",
+    "size": "0x22e",
+    "segment": "___"
+  },
+  {
+    "addr": "0x471f37",
+    "name": "?LoadData@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x604",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47253b",
+    "name": "?IsLimitGoodsRemain@CCashShop@@IAEHJ@Z",
+    "size": "0xb4",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4725ef",
+    "name": "?GoTo@CCashShop@@QAEXJJJ@Z",
+    "size": "0x43",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4729fd",
+    "name": "?FindWishList@CCashShop@@IAEJJ@Z",
+    "size": "0xb2",
+    "segment": "___"
+  },
+  {
+    "addr": "0x472b83",
+    "name": "?UpdateStock@CCashShop@@IAEHJJ@Z",
+    "size": "0x5d",
+    "segment": "___"
+  },
+  {
+    "addr": "0x472be0",
+    "name": "?ChangeLimitGoodsState@CCashShop@@IAEHJJ@Z",
+    "size": "0x87",
+    "segment": "___"
+  },
+  {
+    "addr": "0x472c67",
+    "name": "?GiftWishItem@CCashShop@@QAEXXZ",
+    "size": "0x4e2",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4731a9",
+    "name": "?ProcessBuy@CCashShop@@QAEXJJ@Z",
+    "size": "0xf0",
+    "segment": "___"
+  },
+  {
+    "addr": "0x473299",
+    "name": "?IsControlingUserPreview@CCashShop@@QAEHXZ",
+    "size": "0x7",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4732a0",
+    "name": "?SetUserPreviewControl@CCashShop@@QAEXH@Z",
+    "size": "0x32",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4732d2",
+    "name": "?RestoreFocus@CCashShop@@QAEXXZ",
+    "size": "0x32",
+    "segment": "___"
+  },
+  {
+    "addr": "0x473304",
+    "name": "?SendCheckDuplicateIDPacket@CCashShop@@QAEXV?$ZXString@D@@@Z",
+    "size": "0xc6",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4734e5",
+    "name": "?CheckTransferWorldPossible@CCashShop@@QAEHAAV?$ZXString@D@@@Z",
+    "size": "0xb7",
+    "segment": "___"
+  },
+  {
+    "addr": "0x478e2b",
+    "name": "?OnPacket@CCashShop@@UAEXJAAVCInPacket@@@Z",
+    "size": "0x9f",
+    "segment": "___"
+  },
+  {
+    "addr": "0x478f81",
+    "name": "?OnQueryCashResult@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0xef",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47908a",
+    "name": "?OnCashItemResLimitGoodsCountChanged@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0xd5",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47915f",
+    "name": "?OnCashItemResult@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x278",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4794f6",
+    "name": "?OnCashItemResLoadLockerDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x86",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47957c",
+    "name": "?OnCashItemResLoadLockerFailed@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x22",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47959e",
+    "name": "?OnCashItemResLoadGiftDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x222",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4797c0",
+    "name": "?OnCashItemResLoadGiftFailed@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x22",
+    "segment": "___"
+  },
+  {
+    "addr": "0x4797e2",
+    "name": "?OnCashItemResLoadWishDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x40",
+    "segment": "___"
+  },
+  {
+    "addr": "0x479822",
+    "name": "?OnCashItemResLoadWishFailed@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x22",
+    "segment": "___"
+  },
+  {
+    "addr": "0x479985",
+    "name": "?OnCashItemResBuyFailed@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x96",
+    "segment": "___"
+  },
+  {
+    "addr": "0x479a1b",
+    "name": "?OnCashItemResBuyPackageDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x185",
+    "segment": "___"
+  },
+  {
+    "addr": "0x479d8a",
+    "name": "?OnCashItemResUseCouponDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x5d8",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47a362",
+    "name": "?OnCashItemResGiftCouponDone@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x479",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47a7db",
+    "name": "?OnCashItemResUseCouponFailed@CCashShop@@IAEXAAVCInPacket@@@Z",
+    "size": "0x7b",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47c108",
+    "name": "?SendTransferFieldPacket@CCashShop@@IAEXXZ",
+    "size": "0x72",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47c17a",
+    "name": "?NoticeFailReason@CCashShop@@IAEXJ@Z",
+    "size": "0x4c8",
+    "segment": "___"
+  },
+  {
+    "addr": "0x47c75e",
+    "name": "?OnCashItemGachaponResult@CCashShop@@QAEXAAVCInPacket@@@Z",
+    "size": "0xde",
+    "segment": "___"
+  }
+]

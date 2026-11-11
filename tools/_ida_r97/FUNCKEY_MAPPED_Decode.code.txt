@@ -1,0 +1,4 @@
+void *__thiscall FUNCKEY_MAPPED::Decode(void *this, int a2)
+{
+  return CInPacket::DecodeBuffer(this: a2, a2: this, a3: 5u); /*0x4e4415*/
+}

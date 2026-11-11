@@ -1,0 +1,14 @@
+int __thiscall CQuickslotKeyMappedMan::SaveQuickslotKeyMap(CQuickslotKeyMappedMan *this)
+{
+  _BYTE v3[4]; // [esp+8h] [ebp-1Ch] BYREF
+  _BYTE v4[12]; // [esp+Ch] [ebp-18h] BYREF
+  int v5; // [esp+20h] [ebp-4h]
+
+  COutPacket::COutPacket(a1: 183); /*0x72b897*/
+  v5 = 0; /*0x72b89c*/
+  COutPacket::EncodeBuffer(a1: this + 4, a2: 0x20u); /*0x72b8a9*/
+  CClientSocket::SendPacket(this: dword_BE7914, a2: v3); /*0x72b8b8*/
+  memcpy(a1: this + 36, a2: this + 4, a3: 0x20u); /*0x72b8c4*/
+  v5 = -1; /*0x72b8c9*/
+  return ZArray<unsigned char>::RemoveAll(a1: v4); /*0x72b8d8*/
+}
