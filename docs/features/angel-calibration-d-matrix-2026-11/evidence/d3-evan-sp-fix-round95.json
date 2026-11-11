@@ -1,0 +1,67 @@
+{
+  "round": 95,
+  "date": "2026-11-11",
+  "trigger": "用户 m12009：11 处待拍板措辞 / P3(16) 按 Angel 全部重做 / 骑士团条件解码可否直接对协议",
+  "d3_naming_correction": {
+    "old_name": "骑士团条件解码（Cygnus）",
+    "correct_name": "Evan / 龙神系 SP 表分支（job 2001 + 2200/2210..2218）",
+    "proof_083": "GW_CharacterStat::Decode @0x4e2a84: v17 = _ZtlSecureFuse<short>(this + 57, v24); if ( v17 / 100 == 22 || v17 == 2001 ) → sub_4E2745(a2)",
+    "proof_s9": "PacketCreator.addCharStats:207 GameConstants.hasSPTable(job) → addRemainingSkillInfo",
+    "cygnus_range": "NOBLESSE 1000 / 1100 / 1200 / 1300 / 1400 / 1500（与本分支无关）"
+  },
+  "d3_wire_layout": {
+    "evan": "Decode1(count) + count x (Decode1(index) + Decode1(value))；SP 槽置 0",
+    "other": "Decode2 -> SP",
+    "both_sides_match": true
+  },
+  "patch": {
+    "file": "Net/Handlers/Helpers/LoginParser.cpp",
+    "added": [
+      "has_sp_table(int16_t job) 文件内匿名 namespace helper",
+      "parse_stats: job 局部变量 + SP 段分支"
+    ],
+    "zero_wire": true,
+    "touches_w_bucket_fields": false
+  },
+  "decisions_wording": {
+    "count": 11,
+    "lines": [
+      132,
+      133,
+      136,
+      142,
+      151,
+      152,
+      158,
+      248,
+      265,
+      271,
+      272
+    ],
+    "nature": "round86 批量裁决遗留措辞，状态早已定；本轮只换表述，0 结论变更"
+  },
+  "p3_rebuild": {
+    "total": 16,
+    "batches": {
+      "A": 9,
+      "B": 5,
+      "C": 2
+    },
+    "plan_doc": "docs/features/angel-calibration-d-matrix-2026-11/P3-ANGEL-REBUILD-PLAN.md",
+    "implements_this_round": 0,
+    "gate": "四证齐全（083 反编译 + s9 源码 + 当前端字面量 + DECISIONS 原文）才实施"
+  },
+  "arithmetic_unchanged": {
+    "taxonomy": "168 = PURE 76 + WIRE 38 + MIXED 14 + OTHER 40",
+    "route": "168 = W 38 + L 130",
+    "reopen": "27 = 已注销 10 + 残余 17",
+    "residual": "17 = P1 0 + P2 0 + P3 16（P2 本轮解掉 D3，转 P3 不变）",
+    "note": "客户端校准决策台账条数闭合，非运行期数值、非服务端逻辑、非 opcode 计数"
+  },
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先（W 桶 6 字段宽度/类型）",
+    "数值重合 ≠ 语义重合",
+    "校准 ≠ 改回原生（L 桶同字段原始逻辑按 083 还原）"
+  ]
+}

@@ -27,6 +27,34 @@ namespace ms
 		// 见 LoginParser.h 的说明：登录期 SERVER_IP 给的 charId，换频道重连后复用。
 		int32_t channel_entry_cid = 0;
 		bool channel_reentry_pending = false;
+
+		// SP 段是否走「按职业分列 SP 表」——判据与两端一致：
+		//   083 `GW_CharacterStat::Decode @0x4e2a84`：`v17 = _ZtlSecureFuse<short>(a1: this + 57, a2: v24);`
+		//        `if ( v17 / 100 == 22 || v17 == 2001 )`
+		//   s9  `GameConstants.hasSPTable(Job)`：EVAN(2001) + EVAN1..EVAN10(2200,2210..2218)
+		// 注意这不是「骑士团」（Cygnus 1000–1599），是 **Evan / 龙神系**；旧文档的
+		// 「骑士团条件解码」命名是错的（round95 纠偏）。wire 以 s9 为准，故按 s9 的
+		// 11 个 id 枚举，而不是 083 的 `job/100 == 22` 整段 2200–2299。
+		bool has_sp_table(int16_t job)
+		{
+			switch (job)
+			{
+			case 2001:
+			case 2200:
+			case 2210:
+			case 2211:
+			case 2212:
+			case 2213:
+			case 2214:
+			case 2215:
+			case 2216:
+			case 2217:
+			case 2218:
+				return true;
+			default:
+				return false;
+			}
+		}
 	}
 
 	Account LoginParser::parse_account(InPacket& recv)
@@ -136,7 +164,9 @@ namespace ms
 		// 北斗 gms083 服务端（已为 999 级改造）把 level 写成 **2 字节 short**。
 		// 旧代码按 1 字节 read_byte() 读取，等级 >=256 会被截断（256→0），所以 999 上限必须先改这里。
 		statsentry.stats[MapleStat::Id::LEVEL] = static_cast<uint16_t>(recv.read_short());
-		statsentry.stats[MapleStat::Id::JOB] = recv.read_short();
+		// job 必须留局部变量：SP 段是否走「分列 SP 表」完全由它决定（见下）。
+		const int16_t job = recv.read_short();
+		statsentry.stats[MapleStat::Id::JOB] = job;
 		statsentry.stats[MapleStat::Id::STR] = recv.read_int();
 		statsentry.stats[MapleStat::Id::DEX] = recv.read_int();
 		statsentry.stats[MapleStat::Id::INT] = recv.read_int();
@@ -146,7 +176,34 @@ namespace ms
 		statsentry.stats[MapleStat::Id::MP] = recv.read_int();
 		statsentry.stats[MapleStat::Id::MAXMP] = recv.read_int();
 		statsentry.stats[MapleStat::Id::AP] = recv.read_short();
-		statsentry.stats[MapleStat::Id::SP] = recv.read_short();
+		// SP 段有两个互斥形态，由职业决定（083 `GW_CharacterStat::Decode @0x4e2a84`）：
+		//  - Evan / 龙神系（`v17 / 100 == 22 || v17 == 2001`）：SP 字段置 0（不读包），
+		//    改由 `sub_4E2745` 读 `Decode1(count)` + 循环 `Decode1(index) + Decode1(value)`，
+		//    合计 1 + 2*count 字节；
+		//  - 其余职业：`Decode2` 读 1 个 short 当 SP。
+		// s9 `PacketCreator.addCharStats`（hasSPTable 分支）写的是同一形态：
+		//   `writeByte(effectiveLength)` + 每项 `writeByte(i + 1) + writeByte(remainingSp[i])`。
+		// 旧实现无条件 `read_short()` 只吃 2 字节，Evan 角色会少读 2*count 字节，把后面的
+		// exp / fame / gachaexp / mapid 整体前移 —— 与「按 8 字节 exp 解析 s9 包」同族，
+		// 只是这次错位发生在 SP 段。
+		// SP 语义：083 对 Evan 把 SP 槽置 0（逐职业 SP 只在表内），当前端技能窗也只有
+		// 单一 SP 槽，故同样置 0；表内数值只消费不落库，不发明多职业 SP 模型。
+		if (has_sp_table(job))
+		{
+			const uint8_t sp_entries = recv.read_byte();
+
+			for (uint8_t i = 0; i < sp_entries; i++)
+			{
+				recv.read_byte(); // 职业序号（i + 1）
+				recv.read_byte(); // 该职业剩余 SP
+			}
+
+			statsentry.stats[MapleStat::Id::SP] = 0;
+		}
+		else
+		{
+			statsentry.stats[MapleStat::Id::SP] = recv.read_short();
+		}
 		// exp 宽度必须按当前对接服务端的 PacketCreator.addCharStats 对齐：
 		//  - s9（BeiDou-Server_s9，本客户端目标）：writeInt(exp)=4 字节，末尾另补 writeInt(0)=4 字节
 		//    布局 exp4 / fame2 / gacha4 / map4 / spawn1 / tail4

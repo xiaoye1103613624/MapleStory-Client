@@ -129,17 +129,17 @@
 | --- | --- | --- | --- | --- |
 | **D1** | K4 | `MapPortals.h:40` 095 注释污染 | 做：只换注释依据引 Angel 083 `CPortal`，不碰通道逻辑 | `KEEP_WITH_NOTE` | MapPortals.h 095 注释：同 activity-minigame/D1，本端扩展身份标注，保留并补口径注记 |
 | **D2** | K2 | 两处 s9 字节丢弃（`:526` 8B uid→int32、`:520-523`/`:1414-1417` 字段读了就丢） | 保持 s9 联机优先，改回原生会断联机，交裁决 | `BATCH_0_BASELINE` | s9 联机优先 / Angel 083 仅语义校准源 |
-| **D3** | K3 | 三页宠物装备负槽位穿戴（区间 21–29/31–37/39–45 + -100 偏移） | 先补「槽位数据 ↔ 协议批次」对照，接线待裁决 | `P0_SHIPPED` | 三页宠物装备负槽位：round78 活 IDA CUIEquip/CUIPetEquip + .nx 真节点已判合法混合面；本轮收口归档，不重写 |
-| **D4** | K2 | CActionMan 动作帧 / TamingMob 骑宠实体 / 自动说话 / Lv≥15 / 500 冷却整族 | 维持不做（或单列补齐计划），待裁决 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
+| **D3** | K3 | 三页宠物装备负槽位穿戴（区间 21–29/31–37/39–45 + -100 偏移） | 先补「槽位数据 ↔ 协议批次」对照；接线按 round78 合法混合面结论归档 | `P0_SHIPPED` | 三页宠物装备负槽位：round78 活 IDA CUIEquip/CUIPetEquip + .nx 真节点已判合法混合面；本轮收口归档，不重写 |
+| **D4** | K2 | CActionMan 动作帧 / TamingMob 骑宠实体 / 自动说话 / Lv≥15 / 500 冷却整族 | 维持不做（BATCH_4_STANCE：不发明能力） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D5** | K2 | c2s/s2c 撞值分列口径 | 保持分列（167↔170、175↔175、181↔181） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D6** | K3 | BtPet1/2/3 origin (15,13) vs (15,0)、y 高 13px | 只记不改，等一张原生展开宠物面板帧再定 | `P2_LIVE` | BtPet1/2/3 origin (15,13) vs (15,0)：等一张原生展开宠物面板帧再定 |
-| **D7** | K3 | 4 格改色命中率 34.67% 偏低格 | 先出「像素改色 ↔ 原生 disabled」对照，待裁决 | `P2_LIVE` | 4 格改色命中率 34.67%：先出像素改色↔原生 disabled 对照，真机补证 |
+| **D7** | K3 | 4 格改色命中率 34.67% 偏低格 | 先出「像素改色 ↔ 原生 disabled」对照，真机补证（P2_LIVE） | `P2_LIVE` | 4 格改色命中率 34.67%：先出像素改色↔原生 disabled 对照，真机补证 |
 | **D8** | K3 | 召唤/龙/骑宠 UI 资源层空白（无截图/layout/PS/顶层节点） | 补 orange-wz 实解析或原生展开帧，待资源 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 | **D9** | K2 | AskPet gage ColorBox / locale 4 stub 键 / Configuration 覆盖稀薄 | 维持降级占位（E19 无资源），低优先补文案 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D10** | K2 | 场地伤害族 5 条 / 220 / G8 / G9 / `change_target` 空 stub 整族 | 维持不做，跨面统一登记 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D11** | K4 | Q2 文档债统一回写（`feature-gap:197/220/627`、`parity-gap:79`、`gap-inventory.md` 旧 head） | 交裁决后统一回写，本面... | `BATCH_3_DOC_DEBT` | 授权回写=裁决态销案；历史证据 README 不重写（证据链留存） |
 | **D12** | K3 | Beholder/DamageSummon 仅 GM 路径、PetExceptionListHandler 空实现、PetChat/"HitN"/MoveSummon 壳 | 是否补玩家... | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
-| **D13** | K3 | 龙 die1/filpL/R/skill 帧 + 召唤浮动帧 + CQuestMan 联动 + move_ttl 余晖 | 资源在/不在分列，接不接待裁决 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
+| **D13** | K3 | 龙 die1/filpL/R/skill 帧 + 召唤浮动帧 + CQuestMan 联动 + move_ttl 余晖 | 资源在/不在分列，维持不做（BATCH_4_STANCE） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D14** | K2 | 门禁与提交 / 续作 | 不接 orange-wz；先 P0 + 全量 Rebuild + 1280×720 实机；原子提交须授权；P3 续作第六面 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 
 ### 4.6 活动小游戏 (`activity-minigame`，14 条）
@@ -148,14 +148,14 @@
 | --- | --- | --- | --- | --- |
 | **D1** | K4 | `IO/UIStateGame.cpp:532` + `IO/UITypes/UISpecial.h:9` 095 注释污染 | 做：只换注释依据引 Angel 083，不碰福利中心行为 | `KEEP_WITH_NOTE` | 095 注释：UIStateGame.cpp:532 / UISpecial.h:9 逐字是「095 自定义中文 UI 入口」本端扩展身份标注，非 083 地址污染；按 round72 教训机械换地址=二次造假，保留并补口径注记 |
 | **D2** | K4 | crosscheck「layout differs」阈值误判 | 更正为 844/844 字节级一致（字节审计文件为准），修正 `ida_angel_activity_crosschec... | `DOC_ONLY` | crosscheck 阈值误判：844/844 字节级一致为准，工具层阈值逻辑登记 P2，不本轮改 |
-| **D3** | K2 | 小游戏 DIY 合并壳（Omok 胜负/禁手、MemoryGame 牌面、RPS 状态机、Factory 6 类） | 维持「wire later」壳，单列补齐计划待裁决 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
-| **D4** | K2 | 活动场地对象族 / 活动 UI 完整控件表 / Tutor·EventAlarm 壳 | 维持 `FieldMarker` 黄字 + HUD 壳降级，待裁决 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
+| **D3** | K2 | 小游戏 DIY 合并壳（Omok 胜负/禁手、MemoryGame 牌面、RPS 状态机、Factory 6 类） | 维持「wire later」壳，不做（BATCH_4_STANCE） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
+| **D4** | K2 | 活动场地对象族 / 活动 UI 完整控件表 / Tutor·EventAlarm 壳 | 维持 `FieldMarker` 黄字 + HUD 壳降级（BATCH_4_STANCE） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D5** | K2 | 三处硬冲突 + 4 个 s9 零枚举值（212 命名、case 296、299/300、212/213/215/218） | 保持 s9 联机优先，改回原生会断联机，交裁决、不得盲改 | `BATCH_0_BASELINE` | s9 联机优先 / Angel 083 仅语义校准源 |
 | **D6** | K2 | Maker 113 字段序（Angel 11 字段 vs `MakerPackets.h` 2 int 简化） | 保持 s9 简化，出「字段序 ↔ s9 MakerProcessor」... | `BATCH_0_BASELINE` | s9 联机优先 / Angel 083 仅语义校准源 |
 | **D7** | K2 | c2s/s2c 撞值分列口径 | 保持分列（123↔314、189↔189、117↔117、130↔63） | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D8** | K3 | IMG 资源层空白（活动截图/layout/PS/顶层场地节点全 0、Slidemenu 空壳、Quiz 304） | 补 orange-wz 实解析或原生展开帧，待资源/待实机 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 | **D9** | K2 | 真缺整族（入场错误码 22、295 LEAVE、332 Stamp、locale stub、Configuration 7 键、`change_target` 空 stub、签到/XyL... | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
-| **D10** | K3 | 295 LEAVE 是否补 `OnShowMemberOutMsg` 语义（SP_4096/4097） | 先补零资源依赖行为，待裁决 | `KEEP_S9` | 295 LEAVE / OnShowMemberOutMsg：s9 无该 opcode，不新增发包 |
+| **D10** | K3 | 295 LEAVE 是否补 `OnShowMemberOutMsg` 语义（SP_4096/4097） | 不补（KEEP_S9：s9 无该 opcode） | `KEEP_S9` | 295 LEAVE / OnShowMemberOutMsg：s9 无该 opcode，不新增发包 |
 | **D11** | K4 | Q2 文档债统一回写（`feature-gap` F1/§14.1/§9.5.3 #9/§17、`:292` 238、`parity-gap:12,56`、`s9-protocol-al... | `BATCH_3_DOC_DEBT` | 授权回写=裁决态销案；历史证据 README 不重写（证据链留存） |
 | **D12** | K2 | CGrenade::JustBomb 是否补完整 decompile（当前 disasm 兜底已足语义） | 维持 disasm 兜底，低优先 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D13** | K2 | AskPet gage ColorBox / 通用组件常量已齐 | 维持降级占位，低优先 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
@@ -245,7 +245,7 @@
 | **D2** | K2 | 是否补 action0 `OnCompleteQuestFailed` buffer 监听 | 不补 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D3** | K2 | 是否补 action2 尾 `Encode4(v30)` | 不补 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D4** | K2 | 是否把 083 双 record 通道并进 `UPDATE_QUEST_INFO(211)` | 不并 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
-| **D5** | K3 | 是否实现 `UIQuestLog::send_key` | 待裁决 | `KEEP_CURRENT` | UIQuestLog::send_key：s9 优先，不补当前端未接线键位，登记 P3 |
+| **D5** | K3 | 是否实现 `UIQuestLog::send_key` | 不补（KEEP_CURRENT：登记 P3） | `KEEP_CURRENT` | UIQuestLog::send_key：s9 优先，不补当前端未接线键位，登记 P3 |
 | **D6** | K2 | 是否拆 `CUIQuestInfo`/`CUIMedalQuestInfo` 独立窗 | 不拆 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 | **D7** | K2 | 是否补 `IsAutoStartQuest` 等自动态机 | 不补 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D8** | K2 | 是否把 `sub_721008` 条件分支搬进当前端 | 不搬 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
@@ -262,14 +262,14 @@
 | --- | --- | --- | --- | --- |
 | **D1** | K2 | 是否按 083 把 `269` 的 `animation=4` 改成读 `Decode2` | 不改 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D2** | K2 | 是否补 `animation=0` 的 `IWzGr2DLayer` 消亡动画 | 不补 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
-| **D3** | K3 | 是否实现掉落归属超时（`pickuptype`/`playerdrop` 判定） | 待裁决 | `KEEP_S9` | 掉落归属超时 pickuptype/playerdrop：s9 无该语义，不补判定 |
+| **D3** | K3 | 是否实现掉落归属超时（`pickuptype`/`playerdrop` 判定） | 不补（KEEP_S9：s9 无该语义） | `KEEP_S9` | 掉落归属超时 pickuptype/playerdrop：s9 无该语义，不补判定 |
 | **D4** | K1 | 是否把 `MapDrops.cpp:80` 的静默丢弃加日志 | 建议加 DEBUG 日志 | `P0_SHIPPED` | round52 / 2-17 已补 else+LOG |
 | **D5** | K3 | 是否立项 booby trap 全链（3 函数 + 告警包） | 挂 P2 | `P3_NO` | booby trap 全链（3 函数+告警包）：长尾，明确不做 |
 | **D6** | K3 | 是否立项拖拽丢弃族（9 函数 + `SetCursorState(11)`） | 挂 P3 | `BATCH_4_STANCE` | 不发明能力 / 撞号分列命名空间 / 跨面归属归对应面 P3 |
 | **D7** | K1 | 是否给 `Drop::Drop` switch 补 `default` 护栏 | 建议补（`state=DROPPED`） | `P0_SHIPPED` | round52 / 2-17 已补 default DROPPED |
 | **D8** | K2 | 是否给 `Optional<Drop>` 向下转型加校验 | 不改 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
-| **D9** | K3 | 是否补丢金币长确认文案（`SP_5280`） | 待裁决 | `KEEP_CURRENT` | 丢金币长确认 SP_5280：当前短提示可用，长文案属增强 P3 |
-| **D10** | K3 | 是否处理 `DROP_ITEM mod=3`（消失掉落）的 `dropfrom` 语义 | 待裁决 | `KEEP_S9` | DROP_ITEM mod=3 消失掉落 dropfrom：按 s9 移除语义，不改 |
+| **D9** | K3 | 是否补丢金币长确认文案（`SP_5280`） | 不补（KEEP_CURRENT：长文案属增强 P3） | `KEEP_CURRENT` | 丢金币长确认 SP_5280：当前短提示可用，长文案属增强 P3 |
+| **D10** | K3 | 是否处理 `DROP_ITEM mod=3`（消失掉落）的 `dropfrom` 语义 | 不改（KEEP_S9：按 s9 移除语义） | `KEEP_S9` | DROP_ITEM mod=3 消失掉落 dropfrom：按 s9 移除语义，不改 |
 | **D11** | K3 | 是否补拾取 `map_tip`（`r471`） | 待真机确认 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 | **D12** | K2 | 是否补 `animation=4` 的延时爆炸帧 | 不改 | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D13** | K3 | 是否把 F 维 12 项按 `.nx` 像素补齐样式结论 | 挂 P2 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |

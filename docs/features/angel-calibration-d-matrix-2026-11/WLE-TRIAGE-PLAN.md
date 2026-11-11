@@ -250,3 +250,26 @@ round92 `corewindow/D9`+`skill/D12`+`login-flow/D9`+`statusbar-hud/D12`；round9
 拿到 s9 抓包即可升 P1，拿到前不发明解码分支。
 
 **P3 = 16**：全部为「不改即正确」的现状保持项，登记在册防止后续被重复翻案。
+
+## 12. round95：D3 命名纠偏 + SP 表分支 + P3 16 条转重做
+
+### 12.1 `login-flow/D3` 不是「骑士团」，是 Evan / 龙神系
+
+- 083 `GW_CharacterStat::Decode @0x4e2a84` 判据逐字：`v17 = _ZtlSecureFuse<short>(a1: this + 57, a2: v24);`
+  `if ( v17 / 100 == 22 || v17 == 2001 )` → `JOB/100 == 22` 是 **2200–2299**，即 Evan（龙神）系；
+  骑士团 Cygnus 是 1000–1599（`NOBLESSE 1000` / `1100` / `1200` / `1300` / `1400` / `1500` 支）。
+  旧文档「骑士团条件解码」命名错误，本轮纠偏。
+- s9 `GameConstants.hasSPTable(Job)` 枚举同一集合：`EVAN(2001)` + `EVAN1..EVAN10(2200,2210..2218)`，
+  字节形态 `writeByte(effectiveLength)` + 每项 `writeByte(i + 1) + writeByte(remainingSp[i])`。
+- 结论：**s9 确实发追加段**，D3 采纳项 (a) 的前提成立 → 客户端缺分支 = 真缺陷（L 桶，零 wire）。
+
+### 12.2 本轮补丁
+
+`Net/Handlers/Helpers/LoginParser.cpp` 的 `parse_stats`：`job` 改存局部变量，SP 段按
+`has_sp_table(job)` 分支读（Evan 系读 `1 + 2*count`、SP 槽置 0；其余 `read_short()`）。
+零 wire / 零协议 / 零 WZ / 不碰 6 个改造字段。
+
+### 12.3 P3 16 条转「按 083 重做」
+
+round94 把 P3 16 条判为「保持现状」，用户 m12009 推翻该判定 → 转为
+`P3-ANGEL-REBUILD-PLAN.md` 的 A/B/C 三批重做，四证齐全才实施。算术不变。

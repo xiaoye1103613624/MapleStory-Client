@@ -1197,3 +1197,16 @@
 - 算术不动：168 条 DECISIONS 裁定 / `PURE76+WIRE38+MIXED14+OTHER40=168` / W 轨 38 + L 轨 130 = 168 /
   reopen 27 分母不变（17 分流 + 10 注销）。
 - 外部在途 WIP 零夹带。
+
+## 54. round95 · D3 命名纠偏 + parse_stats SP 表分支 + 11 处措辞 + P3 转重做
+
+- **54-1** `Net/Handlers/Helpers/LoginParser.cpp`：`parse_stats` 增加 `has_sp_table(job)` 分支。
+  真机待验：**Evan / 龙神系角色（2001 / 2200 / 2210–2218）登录 + 换频道 + 进图**，
+  选角页 SP 显示为 0、进图后技能窗 SP 不再错位；非 Evan 角色 SP 行为不变。
+- **54-2** `DECISIONS.md` 11 处「待裁决/待拍板」措辞改为状态表述（0 行为变更，纯文档）。
+- **54-3** `P3-ANGEL-REBUILD-PLAN.md`：P3 16 条转 A/B/C 三批重做，非本轮实施。
+- **54-4** 083 门控：`GW_CharacterStat::Decode @0x4e2a84` 判据 `JOB/100 == 22 || JOB == 2001`
+  为 **Evan 系**（2200–2299），非骑士团（Cygnus 1000–1599）；旧命名已纠偏。
+- **54-5** 限制：① 未抓包，协议事实取自 s9 源码（`PacketCreator.addCharStats` /
+  `GameConstants.hasSPTable`）；② 多职业 SP 表内数值只消费不落库（不发明模型）；
+  ③ W 桶 6 字段 + 27 条 wire KEEP 零改动。
