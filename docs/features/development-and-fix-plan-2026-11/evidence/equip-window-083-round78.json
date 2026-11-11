@@ -1,0 +1,152 @@
+{
+  "round": 78,
+  "face": "corewindow / UIEquipInventory 装备窗宠物区",
+  "verdict": "legal_mixed_face_counterexample",
+  "verdict_zh": "合法混合面反例（真资源根 + 截图 SAD 坐标 + 083 独立子窗架构差异），非虚构根同族病",
+  "zero_behavior_change": true,
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "key_spec": "128B WzAESConstant.DEFAULT_KEY",
+    "key_file": "tools/_gms_key_128.b64",
+    "key_b64_len": 172,
+    "key_head": "EwAAAFIAAAAqAAAAWwAAAAgA",
+    "iv": "TSPHKw==",
+    "probe": "tools/_equip_retest_128.py",
+    "img": "UIWindow.img/Equip",
+    "children_count": 10,
+    "children": [
+      "backgrnd",
+      "pet",
+      "FullBackgrnd",
+      "BtDetail",
+      "BtPet1",
+      "BtPet2",
+      "BtPet3",
+      "BtPetEquipShow",
+      "BtPetEquipHide",
+      "BtCashshop"
+    ],
+    "key_nodes_found": 9,
+    "isError": false,
+    "old_false_blocker": "tools/_equip_probe_stdout.txt 65536B NoLife 全量表 → IMG 解析失败（round85 4b2452c4 翻案）",
+    "root_cause": "WzMutableKey.java:84-90 走 128B→32B AES 派生；NoLife .nx 用 65536B 全量 XOR 表，规格互不通用"
+  },
+  "ida_083": {
+    "symbols": [
+      {
+        "name": "??0CUIEquip@@QAE@XZ",
+        "addr": "0x7fde7c"
+      },
+      {
+        "name": "?OnMouseMove@CUIEquip@@UAEHJJ@Z",
+        "addr": "0x7fe9bb"
+      },
+      {
+        "name": "?OnButtonClicked@CUIEquip@@UAEXI@Z",
+        "addr": "0x7feb72"
+      },
+      {
+        "name": "?ToggleDragonEquip@CUIEquip@@QAEXXZ",
+        "addr": "0x7ff8dd"
+      },
+      {
+        "name": "?TogglePetEquip@CUIEquip@@IAEXXZ",
+        "addr": "0x7ffa84"
+      },
+      {
+        "name": "?GetOffEquipItem@CDraggableItem",
+        "addr": "0x4f11b4"
+      },
+      {
+        "name": "?WearEquipItem",
+        "addr": "0x4f1a93"
+      },
+      {
+        "name": "?ThrowItem",
+        "addr": "0x4f31a5"
+      },
+      {
+        "name": "?OnMouseMove@CUIPetEquip@@UAEHJJ@Z",
+        "addr": "0x800f7b"
+      },
+      {
+        "name": "?OnButtonClicked@CUIPetEquip@@UAEXI@Z",
+        "addr": "0x8019f1"
+      }
+    ],
+    "symbol_count": 10,
+    "no_oncreate": true,
+    "oncreate_note": "sym2_CUIPetEquipOnCreate.json / sym2_CUIEquipOnCreate.json 均 total=0，无布局立即数",
+    "onbuttonclicked": "CUIEquip::OnButtonClicked @0x7feb72 case 3000 商城 / 3001 ToggleDragonEquip / 3002 TogglePetEquip",
+    "toggle_pet_equip": "CUIEquip::TogglePetEquip @0x7ffa84 ZAlloc 1456B 独立 CUIPetEquip 子窗（父窗偏移 +123）",
+    "pet_equip_onbutton": "CUIPetEquip::OnButtonClicked @0x8019f1 case 2000 收回 / 2001-2003 三页签 InvalidateRect",
+    "toggle_dragon": "CUIEquip::ToggleDragonEquip @0x7ff8dd ZAlloc 1408B 独立龙装窗（父窗 -142/+117）",
+    "dec_files": [
+      "CUIEquip_ctor.dec.txt",
+      "CUIEquip_OnButtonClicked.dec.txt",
+      "CUIEquip_TogglePetEquip.dec.txt",
+      "CUIEquip_ToggleDragonEquip.dec.txt",
+      "CUIPetEquip_OnButtonClicked.dec.txt",
+      "CUIPetEquip_OnMouseMove.dec.txt"
+    ]
+  },
+  "current_impl": {
+    "root": "UiAssetResolve::window4(\"Equip\") = UIWindow.img/Equip",
+    "backgrnd": "175x304",
+    "pet_panel": "Texture(Equip[\"pet\"]) 177x181 内嵌，pet_panel_pos=(right-3, bottom-h)",
+    "buttons": [
+      "BT_PET_SHOW",
+      "BT_PET_HIDE",
+      "BT_PET_TAB0",
+      "BT_PET_TAB1",
+      "BT_PET_TAB2"
+    ],
+    "tab_origin_note": "BtPet1/2/3 四态 origin (15,13)，现有 y 按 (15,0) 可能高 13px，只记不改待原生帧",
+    "icon_offset_fix": "draw_at(position) 去 +(4,4) 偏移（用户报装备 ui 位置偏移）",
+    "screenshot_basis": "正确客户端截图/角色装备.png + evidence/w7-equip/coords.md 模板匹配"
+  },
+  "patch": {
+    "zero_behavior_literals": true,
+    "comment_only": true,
+    "files": [
+      "IO/UITypes/UIEquipInventory.cpp"
+    ],
+    "block": "round78 / Angel 083 依据链（17 行纯注释）",
+    "docs": [
+      "docs/features/development-and-fix-plan-2026-11/README.md",
+      "docs/features/pending-live-tests/README.md",
+      "docs/features/development-and-fix-plan-2026-11/evidence/equip-window-083-round78.json",
+      "docs/features/development-and-fix-plan-2026-11/notes/wave3-equip-window-083-review-20261111.md"
+    ],
+    "harness": "tools/test_round78_equip_window_083.py",
+    "pre_patch_cpp_sha256": "362a9ba92f5c3b7b03fd4d0e40d55770979bd0905d8fd3a2e99b66ac20ec5464"
+  },
+  "backlog": [
+    {
+      "id": "45-1",
+      "what": "宠物面板展开帧 pet 相对右下角定位",
+      "owner": "用户真机"
+    },
+    {
+      "id": "45-2",
+      "what": "BtPet1/2/3 origin (15,13) 定 y",
+      "owner": "用户真机"
+    },
+    {
+      "id": "45-3",
+      "what": "BtDetail/BtCashshop 默认隐藏观感",
+      "owner": "用户真机"
+    },
+    {
+      "id": "45-4",
+      "what": "独立子窗 vs 内嵌面板交互观感",
+      "owner": "用户真机"
+    }
+  ],
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先",
+    "数值重合≠语义重合",
+    "校准≠改回原生"
+  ]
+}

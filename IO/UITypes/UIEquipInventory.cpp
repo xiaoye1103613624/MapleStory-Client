@@ -157,6 +157,23 @@ namespace ms
 		if (auto* b = find_btn(buttons, Buttons::BT_SHOP))
 			b->set_active(false);
 
+		// round78 / Angel 083 依据链（纯注释，0 行为字面量）：
+		// - 资源根：orange-wz MCP 128B WzAESConstant.DEFAULT_KEY 实证
+		//   UIWindow.img/Equip 10 真节点全在（backgrnd / pet / FullBackgrnd /
+		//   BtDetail / BtPet1-3 / BtPetEquipShow / BtPetEquipHide / BtCashshop）。
+		//   旧 _equip_probe_stdout.txt 的 "IMG 解析失败" 是 65536B NoLife 全量表
+		//   错规格假阻塞（round85 4b2452c4 已翻案），非 MCP 故障、非重名。
+		// - 083 活 IDA：CUIEquip::OnButtonClicked @0x7feb72 case 3000 商城 /
+		//   3001 ToggleDragonEquip / 3002 TogglePetEquip；
+		//   CUIEquip::TogglePetEquip @0x7ffa84 ZAlloc 1456B 独立 CUIPetEquip
+		//   子窗（父窗偏移 +123）；CUIPetEquip::OnButtonClicked @0x8019f1
+		//   case 2000 收回 / 2001-2003 三页签 InvalidateRect。
+		// - 083 无 CUIEquip / CUIPetEquip 的 OnCreate 符号（sym2_*OnCreate total=0）
+		//   ⇒ 无布局立即数，坐标按门禁 18 走截图 SAD 备选（合法）。
+		// - 定性：合法混合面反例（真资源根 + 截图坐标 + 083 独立子窗架构差异），
+		//   不是虚构根同族病。本端内嵌宠物面板是 Journey 架构差异、交互语义对齐
+		//   （BT_PET_SHOW/HIDE 开合 + BT_PET_TAB0/1/2 三页签）；按
+		//   「校准≠改回原生 / s9 优先」不重写架构，本轮 0 行为改动。
 		// 宠物装备区：以窗体右下角为锚，坐标逐像素模板匹配 正确客户端截图/角色装备.png 量得
 		// （窗口原点 = Equip/backgrnd 左上角，见 evidence/w7-equip/coords.md）。
 		pet_backgrnd = Texture(Equip["pet"]);

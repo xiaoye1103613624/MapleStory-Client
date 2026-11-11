@@ -1074,3 +1074,21 @@
 - T5 旧「orange-wz 内容层阻塞」前提已按 round85 `4b2452c4` 翻案：128B `WzAESConstant.DEFAULT_KEY` 实测 `query_nodes isError:false`；F 维挂 P2 仅因真机观感未采，非 MCP 故障。
 - L-B 12 项与 `InPacket::available()` 393 处经 m09211 追认维持现状（§27-A 仍挂真机逐面回归），零协议改动。
 - 外部程序在途 EXP WIP 原样留工作树，不夹带进本轮提交。
+
+## 45. round78 · UIEquipInventory 装备窗宠物区 083 复核 + 真机认领清单（#devfix-equip-window-083-review，需用户一起测）
+
+本轮 **0 行为字面量**：只补 083 依据纯注释 + 四文档 + harness。定性 = 合法混合面反例（真资源根 + 截图 SAD 坐标 + 083 独立子窗架构差异），非虚构根同族病；不重写 Journey 内嵌宠物面板架构。
+
+| 项 | 归口 | 验收动作 | 本轮状态 |
+| --- | --- | --- | --- |
+| 45-1 | 装备窗宠物面板展开帧 | 启 s9 冷启动开装备窗 → 点 BtPetEquipShow 展开宠物面板，截图核对 `pet 177x181` 相对主窗右下角 (right-3, bottom-h) 与底边齐平 | ⬜ 未执行，用户认领 |
+| 45-2 | BtPet1/2/3 三页签 origin | 展开帧量测 `BtPet1/2/3` 四态 origin 是否 (15,13)；现有 y 按 (15,0) 推可能整体高 13px（注释「只记不改」），待原生帧定 | ⬜ 未执行，用户认领 |
+| 45-3 | BtDetail / BtCashshop 默认隐藏 | 截图复核两钮全图模板匹配 mae 55.8 / 61.1（对照显示钮 ≤0.8）→ 原生帧内是否存在，当前端 `set_active(false)` 是否正确 | ⬜ 未执行，用户认领 |
+| 45-4 | 独立子窗 vs 内嵌面板交互观感 | 083 是 `CUIPetEquip` 独立浮窗（+123 偏移 / 2000 收回 / 2001-2003 三页签），本端内嵌面板 + BT_PET_SHOW/HIDE + 三页签，核对交互语义等价与观感差异是否可接受 | ⬜ 未执行，用户认领 |
+
+已知限制：
+
+- orange-wz MCP 路径用 128B `WzAESConstant.DEFAULT_KEY`（`tools/_gms_key_128.b64` 172 字符 + iv `TSPHKw==`）；旧 65536B 全量表 `IMG 解析失败` 是规格错配假阻塞，非 MCP 故障（round85 `4b2452c4`）。
+- 083 无 `CUIEquip`/`CUIPetEquip` 的 `OnCreate` 符号 ⇒ 无布局立即数，坐标按门禁 18 走截图 SAD 备选；不得据 IDA 缺符号判「虚构」。
+- 本轮不改 `iconpositions` / `pet_panel_pos` / 任何按钮坐标 / 任何行为字面量；§44 的 60 节 / 142 处真机标记与五屏仍全部由用户认领。
+- 外部程序在途 11 个源码 WIP 原样留工作树，不夹带进本轮提交。
