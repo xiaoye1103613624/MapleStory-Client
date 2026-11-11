@@ -697,6 +697,11 @@ namespace ms
 			return;
 
 		tab = tabid;
+		// round89 W/L/E：对齐 083 CUIQuestInfo::OnTabChanged @0x87fd4f 首行 *(this + 369) = -1;
+		// 切换分类页签必须先清选中，再由 rebuild_list() 自动选第一条可见任务（TryShowTopQuest /
+		// ToggleDetail(0) 语义）；旧实现保留上一页的 selected_id，跨页残留导致摘要页显示旧任务。
+		// 纯客户端状态机：零 wire / 零协议 / 零 WZ / 零新封包，不触碰 s9 改造字段宽度。
+		selected_id = -1;
 
 		for (uint16_t i = 0; i < 3; i++)
 			buttons[Buttons::TAB0 + i]->set_state(i == tabid ? Button::State::PRESSED : Button::State::NORMAL);
