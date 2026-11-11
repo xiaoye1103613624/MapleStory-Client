@@ -1,0 +1,122 @@
+{
+ "round": 85,
+ "face": "D-G UIGuild floating-window entry convergence + orange-wz key spec",
+ "verdict": "entry_converged_to_083_shared_window__uiguild_kept_as_deadcode",
+ "authority": "user m13177 '把需要对齐Angel的都修复一下' + m09859 '按 Angel 布局修复 UI/动画'",
+ "baseline": {
+  "HEAD": "187e2bc1",
+  "branch": "feature/dev_0.0.1",
+  "AHEAD": 0,
+  "GATE": "OK: opcode matrix matches both sources (s9 a78ba681a4)"
+ },
+ "ida_facts_reused_from_round76": {
+  "endpoint": "http://127.0.0.1:13339/mcp",
+  "no_independent_CUIGuild_class": true,
+  "CTabGuild::Draw": "0x90f17c (guild body on CUIUserList shared window tab)",
+  "CUIUserList::OnCreate": "0x919b73",
+  "CUIGuildBBS::OnCreate": "0x8133a9",
+  "GuildUI_img_five_proofs_zero": [
+   "IDA search_text 0 hits",
+   "physical Data/UI/GuildUI.img missing",
+   "orange-wz IMG_MISSING",
+   ".nx NOT FOUND",
+   "runtime open_merge valid=0"
+  ],
+  "real_resources": {
+   "UIWindow.img/UserList/Guild/backgrnd": "233x304 (+8 children)",
+   "GuildBBS.img/GuildBBS/backgrnd": "734x526 (+14 children)"
+  }
+ },
+ "current_client_083_shared_window": {
+  "UIStateGame.cpp:361-363": "v83 G(17)=GUILD 家族, native entry = UIUserList 3rd tab, not independent UIGuild floating window",
+  "UIStateGame.cpp:364-392": "GUILD -> UIUserList::Tab::GUILD + emplace<UIUserList>(tab) [main path ALREADY 083-aligned]",
+  "UIUserList.h:34": "UIUserList(uint16_t tab)",
+  "UIUserList.h:45-58": "enum Tab {FRIEND,PARTY,GUILD,BLACKLIST,PARTY_MINE,PARTY_SEARCH,FRIEND_ALL,FRIEND_ONLINE,UNION}",
+  "UIUserList.h:60-61": "void change_tab(uint8_t tabid); uint16_t get_tab();",
+  "UIUserList.cpp:268-301": "Guild tab real assets Main['Guild']['GuildInfo'] guildinfo6 282x20 @(12,78) + 12 gi_btn",
+  "UIUserList.cpp:447-517": "draw_guild_tab(float) full implementation",
+  "UIUserList.cpp:813-931": "button_pressed 12 guild buttons full implementation",
+  "UIUserList.cpp:1121-1129": "3 mutually-exclusive backgrnd3/backgrnd2/backgrnd 312x389",
+  "UIUserList.cpp:1265-1319": "bind_runtime_assets()",
+  "UIUserList.cpp:1441-1455": "tab_button() Tab::GUILD -> BT_TAB_GUILD"
+ },
+ "four_user_reachable_bypasses_before": [
+  "IO/UITypes/UIStatusBar.cpp:961-965 case Buttons::BT_MENU_UNION -> emplace<UIGuild>()",
+  "IO/UITypes/UIStatusBar.cpp:1081-1089 case Buttons::BT_COMMUNITY_GUILD -> get_element<UIGuild>()/emplace<UIGuild>() (FRIENDS/PARTY at :1047-1079 already correctly use UIUserList)",
+  "IO/UITypes/UIMiscShells.cpp:3962-3963 case '7' -> emplace<UIGuild>() (case '6' already emplace<UIUserList>(0))",
+  "IO/UITypes/UIMiscShells.cpp:5899-5903 'U'/'u' -> get_element<UIGuild>()/emplace<UIGuild>()"
+ ],
+ "patch": {
+  "script": "tools/_dg_fix.py (DG_FIX_ALL_OK, 5 replacements, EOL-preserving)",
+  "files": {
+   "IO/UITypes/UIStatusBar.cpp": "63+/27-  BT_COMMUNITY_GUILD -> UIUserList Tab::GUILD toggle template (same as FRIENDS/PARTY); BT_MENU_UNION -> Tab::UNION",
+   "IO/UITypes/UIMiscShells.cpp": "15+/3-  case '7' -> emplace<UIUserList>(Tab::GUILD); 'U'/'u' -> get_element<UIUserList>()+change_tab(Tab::GUILD)",
+   "IO/UITypes/UIGuild.cpp": "3+  round85 comment: D-G converged, class kept as dead-code compatible placeholder",
+   "AGENTS.md:23": "key spec corrected (see orange_wz_key_spec below)"
+  },
+  "diff_stat": "3 files changed, 54 insertions(+), 27 deletions(-)  [AGENTS.md separate]",
+  "residual_emplace_UIGuild": "NONE (only 1 comment mention in UIGuild.cpp:60)",
+  "protocol_changes": 0,
+  "GuildModel_changes": 0,
+  "s9_handler_changes": 0,
+  "UIElement_Type_changes": 0
+ },
+ "decisions": {
+  "architecture_level_NOT_done": "delete UIGuild class / replace GuildUI.img with real UserList/Guild resources / redraw 300x380 window -- would touch UIElement::Type serialization, GuildModel, bottom-bar, s9 handler, dimension. Kept as dead-code compatible placeholder.",
+  "done_this_round": "converge all 4 user-reachable entry points to the 083 shared window",
+  "calibration_not_revert_to_native": true,
+  "s9_protocol_priority": true
+ },
+ "orange_wz_key_spec": {
+  "verdict": "SPEC_MISMATCH_NOT_ZERO_KEY_NOT_SESSION_NOT_DUPLICATE_NAME_NOT_SERVER_FAULT",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "experiments": [
+   {
+    "n": 1,
+    "key": "65536B all-zero",
+    "result": "IMG 解析失败: UIWindow.img"
+   },
+   {
+    "n": 2,
+    "key": "65536B real key_gms (tools/_gms_key.b64, b64_len 87384, sha256_16 268a8407a47ee76c)",
+    "result": "load_files loadedCount=1 BUT query_nodes IMG 解析失败: UIWindow.img  -> falsifies 'zero key is the only cause'"
+   },
+   {
+    "n": 3,
+    "key": "128B WzAESConstant.DEFAULT_KEY (tools/_gms_key_128.b64, B64_LEN 172, HEAD EwAAAFIAAAAqAAAAWwAAAAgA)",
+    "result": "OK: query_nodes isError:false, matches = Equip(LIST_PROPERTY), Equip/BtPetEquipShow, Equip/BtPetEquipHide, ToolTip/Equip"
+   }
+  ],
+  "source_flow": [
+   "ToolParamHelper.java:161-165 getWzKey -> new WzKey(-1,name,iv,userKey) (no length validation)",
+   "LoadFilesTool.java:38-41 -> service.loadFiles(session,files,key,exclusive)",
+   "DefaultMcpWorkspaceService.java:84 new WzImageFile(...key.getUserKey()) -- CONSTRUCT ONLY, no parse",
+   "WzImageFile.java:36-46 parse() -> new BinaryReader(filePath, iv, key)",
+   "WzMutableKey.java:18-22 this.aesUserKey = getTrimmedUserKey()",
+   "WzMutableKey.java:84-90 byte[] key = new byte[32]; for (int i = 0; i < 128; i += 16) { key[i / 4] = userKey[i]; } return key;  -- ONLY first 128B, stride 16 -> 32B AES key",
+   "WzAESConstant.java:14-23 DEFAULT_KEY = 128B classic WzLib GMS key",
+   "WzAESConstant.java:6 WZ_GMS_IV = {0x4D,0x23,0xC7,0x2B} = TSPHKw=="
+  ],
+  "IMG_parse_failure_throw_sites": [
+   "DefaultMcpWorkspaceService.java:1035",
+   "DefaultMcpWorkspaceService.java:1122-1126",
+   "DefaultMcpWorkspaceService.java:1214-1218",
+   "NodePathResolver.java:104-107"
+  ],
+  "two_specs": {
+   "orange_wz_MCP": "128B WzAESConstant.DEFAULT_KEY base64 (AES-derived keystream)",
+   "nx_nlnx_tools_wz_py": "65536B key_gms full XOR table (tools/_wz.py:32 grab('key_gms',65536))"
+  },
+  "retest_scripts": [
+   "tools/_mcp_retest.py",
+   "tools/_mcp_retest_128.py"
+  ],
+  "AGENTS_md_corrected": true
+ },
+ "verification": {
+  "harness": "tools/test_round85_dg_guild_083.py",
+  "opcode_gate": "python tools/gen_opcode_matrix.py --check -> GATE OK (s9 a78ba681a4)",
+  "real_rebuild": "MSYS2_ARG_CONV_EXCL='*' cmd.exe /d /c tools\\build_smoke.bat -> EXITCODE=0",
+  "commit": "zero-signature atomic, precise git add"
+ }
+}

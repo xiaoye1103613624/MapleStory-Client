@@ -1035,4 +1035,23 @@
 | 42-4 | 五按钮（Create/Invite/Notice/Alliance/Close） | 仅 Close 有 close_btn() 贴图，其余为键盘快捷键入口 |
 | 42-5 | B 键打开公会看板 | UIGuildBBS 用 GuildBBS.img/GuildBBS 真资源（734x526），与本浮窗互证 |
 
-已知限制：083 无独立 CUIGuild 浮窗类，公会主体 = CTabGuild::Draw @0x90f17c 挂 CUIUserList；GuildUI.img 在 083/物理/.nx/运行时五证为 0，属第 8 例同族病（虚构根 + 自造全文字窗）。改窗/换真资源会动 UIElement::Type、GuildModel、底栏入口、s9 handler 与 dimension，属架构级决策点 D-G，本轮零实施、待用户裁决 + 五屏截图；主路径 G 键已按 083 路由共用窗，未破坏联机。
+已知限制：083 无独立 CUIGuild 浮窗类，公会主体 = CTabGuild::Draw @0x90f17c 挂 CUIUserList；GuildUI.img 在 083/物理/.nx/运行时五证为 0，属第 8 例同族病（虚构根 + 自造全文字窗）。改窗/换真资源会动 UIElement::Type、GuildModel、底栏入口、s9 handler 与 dimension，属架构级决策点 D-G，round76 零实施；**round85 已按用户 m13177 授权把「入口收敛」这一层收口（见 §43），但「删类 / 换真资源重绘」仍属架构级、本端保留 UIGuild 为 dead-code 兼容占位**。主路径 G 键已按 083 路由共用窗，未破坏联机。
+
+## 43. round85 · D-G 公会浮窗入口收敛 + orange-wz key 规格翻案（#devfix-guild-dg-resolution，需用户一起测）
+
+本轮为**行为级入口收敛**（4 处 `emplace<UIGuild>` → `UIUserList` 共用窗页签）+ 仓库规范补正，需启 s9 + 五屏截图做观感验收。
+
+| 项 | 验收动作 | 预期 |
+| --- | --- | --- |
+| 43-1 | 底栏「社区 → 家族」钮 | 打开 `UIUserList` 共用窗第 3 页签 `Tab::GUILD`（312x389 真资源），不再是 300x380 全文字 `UIGuild` 浮窗；反复点按 toggle 收起/展开，与「好友/组员」钮行为一致 |
+| 43-2 | 菜单「家族联盟」钮 | 打开 `UIUserList::Tab::UNION`，非独立浮窗 |
+| 43-3 | 快捷窗 `7` 键 / `U`\|`u` 键 | 均落到 `Tab::GUILD`；`U` 键在窗已存在但页签不同时 `change_tab(GUILD)` 而非重开 |
+| 43-4 | G(17) 主键 | 仍走 `IO/UIStateGame.cpp:361-392` 的 `UIUserList::Tab::GUILD`（回归守卫，确保本轮未破坏主路径） |
+| 43-5 | 真机公会看板 B 键 / 12 个 gi_btn | `UIGuildBBS` 与 `UIUserList` Guild 页真资源互证，无空白窗 / 无虚构根日志 |
+
+已知限制：
+
+- `UIGuild.cpp/.h`、`UIElement::Type::GUILD` 保留为 dead-code 兼容占位（无任何用户可触达入口再实例化）；彻底删除属架构级决策，本轮不做。
+- 本轮**不动** s9 协议 / `GuildModel` / GuildPackets / `dimension` / 五按钮行为，仅收敛 4 个入口。
+- **orange-wz key 规格翻案（本轮实证）**：`AGENTS.md:23` 旧「`userKeyBase64` 必须 65536B」对 orange-wz 路径是错规格。三次实验：①65536B 全零 key → `IMG 解析失败`；②真 65536B `key_gms`（`tools/_gms_key.b64`，87384 字符 base64）→ 仍 `IMG 解析失败`；③**128B `WzAESConstant.DEFAULT_KEY`**（`tools/_gms_key_128.b64`，172 字符）→ `query_nodes` 返回 `Equip`/`BtPetEquipShow`/`BtPetEquipHide`/`ToolTip/Equip`、`isError:false`。真因=`WzMutableKey.getTrimmedUserKey()` 走「128B→32B AES 派生」，与 `.nx`/nlnx 的 65536B 全量 XOR 表互不通用；非会话过期/非重名/非服务端故障/非零值。AGENTS.md 已按路径分两套规格补正。
+- 真机五屏截图观感、D1–D14 其余裁决、`InPacket::available()` 393 处、跨面矩阵残差 28、L-B 销案口径仍 open。

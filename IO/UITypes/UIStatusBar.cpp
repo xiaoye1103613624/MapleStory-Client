@@ -960,7 +960,15 @@ namespace ms
 			}
 			case Buttons::BT_MENU_UNION:
 			{
-				UI::get().emplace<UIGuild>();
+				// round85 D-G：v83「家族联盟」= UIUserList 五页签 Tab::UNION，
+				// 菜单联盟钮同样收敛到共用窗，不再开独立 UIGuild 浮窗。
+				auto userlist = UI::get().get_element<UIUserList>();
+				if (!userlist)
+					UI::get().emplace<UIUserList>(UIUserList::Tab::UNION);
+				else if (!userlist->is_active())
+					userlist->makeactive();
+				else if (userlist->get_tab() != UIUserList::Tab::UNION)
+					userlist->change_tab(UIUserList::Tab::UNION);
 				remove_menus();
 				break;
 			}
@@ -1080,11 +1088,26 @@ namespace ms
 			}
 			case Buttons::BT_COMMUNITY_GUILD:
 			{
-				auto guild = UI::get().get_element<UIGuild>();
-				if (!guild)
-					guild = UI::get().emplace<UIGuild>();
-				else if (!guild->is_active())
-					guild->makeactive();
+				// round85 D-G（按 Angel 083 收口）：家族 = UIUserList 第 3 页签
+				// Tab::GUILD，与上方 FRIENDS/PARTY 走完全相同的共用窗 toggle 路径，
+				// 不再实例化 GuildUI.img 虚构根的独立 UIGuild 浮窗。
+				auto userlist = UI::get().get_element<UIUserList>();
+				auto tab = UIUserList::Tab::GUILD;
+				if (!userlist)
+					UI::get().emplace<UIUserList>(tab);
+				else if (userlist->get_tab() == tab)
+				{
+					if (userlist->is_active())
+						userlist->deactivate();
+					else
+						userlist->makeactive();
+				}
+				else
+				{
+					if (!userlist->is_active())
+						userlist->makeactive();
+					userlist->change_tab(tab);
+				}
 				remove_menus();
 				break;
 			}

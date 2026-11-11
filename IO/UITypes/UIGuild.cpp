@@ -56,6 +56,9 @@ namespace ms
 		// 本浮窗仅是底栏社区钮保留的本端旁路，全文字自绘 + 300x380 自定 dimension 属显式
 		// 预留，不是按 Angel 布局修复过的窗口。是否并入共用窗 / 换真资源属架构级决策点 D-G，
 		// 交用户裁决；本轮零实施，不动 s9 协议 / GuildModel / 五按钮行为。
+		// round85 D-G 已按 m13177 授权收口：UIStatusBar(2 处)/UIMiscShells(2 处) 共 4 个
+		// emplace<UIGuild> 入口统一改走 UIUserList Tab::GUILD / Tab::UNION；本类保留为兼容
+		// 占位（dead-code，不再被任何用户可触达入口实例化），彻底删除属另一次架构决策。
 		// 旧写法 `bn ? MapleButton(bn) : MapleButton(bn, pos)` 两个分支都拿不到贴图、
 		// 真值分支把坐标丢成窗口原点，已改为 close_btn() 单点守卫（见下方）。
 		nl::node close = UiAssetResolve::close_btn();

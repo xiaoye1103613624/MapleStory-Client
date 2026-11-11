@@ -3960,7 +3960,8 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			UI::get().emplace<UIUserList>(0);
 			break;
 		case '7':
-			UI::get().emplace<UIGuild>();
+			// round85 D-G：083 家族入口 = UIUserList 第 3 页签（与 case '6' 同窗）。
+			UI::get().emplace<UIUserList>(UIUserList::Tab::GUILD);
 			break;
 		case '8':
 			UI::get().emplace<UIChannel>();
@@ -5897,9 +5898,15 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == 'U' || keycode == 'u') {
-		auto ui = UI::get().get_element<UIGuild>();
-		if (!ui) ui = UI::get().emplace<UIGuild>();
-		else if (!ui->is_active()) ui->makeactive();
+		// round85 D-G：U 键同样收敛到 083 UIUserList 第 3 页签。
+		auto ui = UI::get().get_element<UIUserList>();
+		if (!ui) ui = UI::get().emplace<UIUserList>(UIUserList::Tab::GUILD);
+		else
+		{
+			if (!ui->is_active()) ui->makeactive();
+			if (ui->get_tab() != UIUserList::Tab::GUILD)
+				ui->change_tab(UIUserList::Tab::GUILD);
+		}
 		deactivate();
 	} else if (keycode == 'W' || keycode == 'w') {
 		auto ui = UI::get().get_element<UIWedding>();
