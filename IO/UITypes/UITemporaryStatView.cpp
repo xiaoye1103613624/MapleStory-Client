@@ -18,12 +18,13 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include "../../Util/Locale.h"
 #endif
 
 namespace ms
 {
 	UITemporaryStatView::UITemporaryStatView()
-		: title_label(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "临时属性")
+		: title_label(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("uitemporarystatview.26"))
 	{
 		position = Point<int16_t>(16, 80);
 		dimension = Point<int16_t>(220, 200);
@@ -95,7 +96,7 @@ namespace ms
 			}
 			else
 			{
-				row.title = "状态" + std::to_string(-row.skillid);
+				row.title = Locale::text("uitemporarystatview.98") + std::to_string(-row.skillid);
 			}
 
 			char buf[96];

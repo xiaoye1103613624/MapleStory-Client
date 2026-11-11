@@ -61,133 +61,133 @@ namespace ms
 	const SettingDoc SETTINGS_ORDER[] =
 	{
 		// 登录服务器
-		{ "登录服务器", "server.ip",					"登录服 IP 地址" },
-		{ "登录服务器", "server.port",					"登录服端口，需与服务端配置一致" },
+		{ "config.section.1",	"server.ip",			"config.comment.server.ip" },
+		{ "config.section.1",	"server.port",			"config.comment.server.port" },
 
 		// 数据源
-		{ "数据源",     "data.format",					"数据源格式：auto / img（生产推荐）/ wz / nx" },
-		{ "数据源",     "data.dir",						"经典 .img 数据根目录，data.format=img 或定位时使用" },
-		{ "数据源",     "data.keymode",					"密钥模式：auto / builtin / external" },
-		{ "数据源",     "data.keyfile",					"外部密钥文件路径，可为空" },
+		{ "config.section.2",	"data.format",			"config.comment.data.format" },
+		{ "config.section.2",	"data.dir",			"config.comment.data.dir" },
+		{ "config.section.2",	"data.keymode",			"config.comment.data.keymode" },
+		{ "config.section.2",	"data.keyfile",			"config.comment.data.keyfile" },
 
 		// HTTP 补丁（独立于游戏服）
-		{ "补丁",       "patch.enabled",				"是否启用启动差异资源同步" },
-		{ "补丁",       "patch.url",					"manifest 完整 URL，空则跳过" },
-		{ "补丁",       "patch.channel",				"补丁频道，与 manifest.channel 比对" },
-		{ "补丁",       "patch.timeout_ms",				"HTTP 超时毫秒" },
-		{ "补丁",       "patch.retries",				"失败重试次数" },
-		{ "补丁",       "patch.allow_skip",				"失败时是否允许继续进游戏" },
+		{ "config.section.3",	"patch.enabled",			"config.comment.patch.enabled" },
+		{ "config.section.3",	"patch.url",			"config.comment.patch.url" },
+		{ "config.section.3",	"patch.channel",			"config.comment.patch.channel" },
+		{ "config.section.3",	"patch.timeout_ms",			"config.comment.patch.timeout_ms" },
+		{ "config.section.3",	"patch.retries",			"config.comment.patch.retries" },
+		{ "config.section.3",	"patch.allow_skip",			"config.comment.patch.allow_skip" },
 
 		// 启动
-		{ "启动",       "boot.logo",					"是否播放 Nexon 片头（任意键鼠可跳过）" },
-		{ "启动",       "boot.logo.frame_ms",			"片头每帧毫秒，限幅 10~1000" },
+		{ "config.section.4",	"boot.logo",			"config.comment.boot.logo" },
+		{ "config.section.4",	"boot.logo.frame_ms",			"config.comment.boot.logo.frame_ms" },
 
 		// 窗口
-		{ "窗口",       "window.width",					"窗口宽度，读取后同步到运行时常量" },
-		{ "窗口",       "window.height",				"窗口高度，读取后同步到运行时常量" },
-		{ "窗口",       "window.fullscreen",			"是否全屏启动" },
-		{ "窗口",       "window.vsync",					"是否开启垂直同步" },
-		{ "窗口",       "window.game_width",			"进入游戏后的视口宽度（登录仍用 window.width）" },
-		{ "窗口",       "window.game_height",		"进入游戏后的视口高度（登录仍用 window.height）" },
-		{ "窗口",       "window.game_tier",			"游戏分辨率档位 0..8；255 = 未显式选档，按宽高走" },
+		{ "config.section.5",	"window.width",			"config.comment.window.width" },
+		{ "config.section.5",	"window.height",			"config.comment.window.height" },
+		{ "config.section.5",	"window.fullscreen",			"config.comment.window.fullscreen" },
+		{ "config.section.5",	"window.vsync",			"config.comment.window.vsync" },
+		{ "config.section.5",	"window.game_width",			"config.comment.window.game_width" },
+		{ "config.section.5",	"window.game_height",			"config.comment.window.game_height" },
+		{ "config.section.5",	"window.game_tier",			"config.comment.window.game_tier" },
 
 		// 字体
-		{ "字体",       "font.path.normal",				"常规字体文件路径" },
-		{ "字体",       "font.path.bold",				"粗体字体文件路径" },
+		{ "config.section.6",	"font.path.normal",			"config.comment.font.path.normal" },
+		{ "config.section.6",	"font.path.bold",			"config.comment.font.path.bold" },
 
 		// 音频
-		{ "音频",       "audio.bgm.volume",				"背景音乐音量 0-100" },
-		{ "音频",       "audio.sfx.volume",				"音效音量 0-100" },
+		{ "config.section.7",	"audio.bgm.volume",			"config.comment.audio.bgm.volume" },
+		{ "config.section.7",	"audio.sfx.volume",			"config.comment.audio.sfx.volume" },
 
 		// 登录
-		{ "登录",       "login.save",					"是否记住上次使用的账号名" },
-		{ "登录",       "login.account",				"上次使用的账号名，可为空" },
-		{ "登录",       "login.world",					"上次选择的区服序号" },
-		{ "登录",       "login.channel",				"上次选择的频道序号" },
-		{ "登录",       "login.region",					"上次选择的地区序号" },
-		{ "登录",       "login.character",				"上次选择的角色槽位" },
-		{ "登录",       "login.auto",					"opt-in 自动登录开关（口令 login.pass 有意不落盘，只走 xy-config）" },
+		{ "config.section.8",	"login.save",			"config.comment.login.save" },
+		{ "config.section.8",	"login.account",			"config.comment.login.account" },
+		{ "config.section.8",	"login.world",			"config.comment.login.world" },
+		{ "config.section.8",	"login.channel",			"config.comment.login.channel" },
+		{ "config.section.8",	"login.region",			"config.comment.login.region" },
+		{ "config.section.8",	"login.character",			"config.comment.login.character" },
+		{ "config.section.8",	"login.auto",			"config.comment.login.auto" },
 
 		// 聊天栏
-		{ "聊天栏",     "chat.max",						"聊天栏是否展开" },
-		{ "聊天栏",     "chat.x",						"聊天栏宽度" },
-		{ "聊天栏",     "chat.y",						"聊天栏高度" },
+		{ "config.section.9",	"chat.max",			"config.comment.chat.max" },
+		{ "config.section.9",	"chat.x",			"config.comment.chat.x" },
+		{ "config.section.9",	"chat.y",			"config.comment.chat.y" },
 
 		// 小地图
-		{ "小地图",     "minimap.type",					"小地图类型（2 = 常规样式）" },
-		{ "小地图",     "minimap.simple",				"是否使用简约模式" },
-		{ "小地图",     "minimap.default_helpers",		"是否绘制默认标志物（NPC/传送点等）" },
+		{ "config.section.10",	"minimap.type",			"config.comment.minimap.type" },
+		{ "config.section.10",	"minimap.simple",			"config.comment.minimap.simple" },
+		{ "config.section.10",	"minimap.default_helpers",			"config.comment.minimap.default_helpers" },
 
 		// 系统设置（对应原生注册表 so* 行；滑条存 0..100 百分比，下拉存序号）
-		{ "系统设置",   "ui.sysopt.quality",			"画质调整 0-100（特效密度上限；过半同步开 VSync）" },
-		{ "系统设置",   "ui.sysopt.mouse_speed",		"鼠标速度调整 0-100（按 0..19 档反推，默认档 9）" },
-		{ "系统设置",   "ui.sysopt.hp_warn",			"HP 警报阈值 0-100（0 = 不报警）" },
-		{ "系统设置",   "ui.sysopt.mp_warn",			"MP 警报阈值 0-100（0 = 不报警）" },
-		{ "系统设置",   "ui.sysopt.skill_effects",		"技能使用时允许画面效果" },
-		{ "系统设置",   "ui.sysopt.window_mode",		"窗口化模式（window.fullscreen 的镜像，启动时回灌）" },
-		{ "系统设置",   "ui.sysopt.alt_enter",			"允许 ALT+回车切换画面模式" },
-		{ "系统设置",   "ui.sysopt.mob_info",			"怪物情报 0..3（0不显示/1名字/2HP/3名字和HP）" },
-		{ "系统设置",   "ui.sysopt.screenshot_path",	"截图保存位置 0..1（0客户端目录/1桌面）" },
+		{ "config.section.11",	"ui.sysopt.quality",			"config.comment.ui.sysopt.quality" },
+		{ "config.section.11",	"ui.sysopt.mouse_speed",			"config.comment.ui.sysopt.mouse_speed" },
+		{ "config.section.11",	"ui.sysopt.hp_warn",			"config.comment.ui.sysopt.hp_warn" },
+		{ "config.section.11",	"ui.sysopt.mp_warn",			"config.comment.ui.sysopt.mp_warn" },
+		{ "config.section.11",	"ui.sysopt.skill_effects",			"config.comment.ui.sysopt.skill_effects" },
+		{ "config.section.11",	"ui.sysopt.window_mode",			"config.comment.ui.sysopt.window_mode" },
+		{ "config.section.11",	"ui.sysopt.alt_enter",			"config.comment.ui.sysopt.alt_enter" },
+		{ "config.section.11",	"ui.sysopt.mob_info",			"config.comment.ui.sysopt.mob_info" },
+		{ "config.section.11",	"ui.sysopt.screenshot_path",			"config.comment.ui.sysopt.screenshot_path" },
 
 		// 游戏设置（UIGameOpt 十二项勾选的位掩码，bit0..11 = OPTION_*）
-		{ "游戏设置",   "ui.gameopt.mask",				"游戏设置勾选位掩码" },
+		{ "config.section.12",	"ui.gameopt.mask",			"config.comment.ui.gameopt.mask" },
 
 		// 自动喝药（挂机辅助绑定，0 = 未绑定）
-		{ "自动喝药",   "ui.autopot.hp_item",			"HP 自动喝药绑定的道具 ID" },
-		{ "自动喝药",   "ui.autopot.mp_item",			"MP 自动喝药绑定的道具 ID" },
+		{ "config.section.13",	"ui.autopot.hp_item",			"config.comment.ui.autopot.hp_item" },
+		{ "config.section.13",	"ui.autopot.mp_item",			"config.comment.ui.autopot.mp_item" },
 
 		// 界面开关
-		{ "界面",       "ui.buff_timer",				"是否在 buff 图标上显示剩余时间" },
-		{ "界面",       "ui.equip_compare",				"装备悬停时是否显示同部位已装备物品对比" },
-		{ "界面",       "ui.language",					"界面语言：zh-CN（默认）/ en-US；改后热重载" },
-		{ "界面",       "ui.maplepoints.local",			"本地点券缓存（登录后以服务端下发的为准）" },
+		{ "config.section.14",	"ui.buff_timer",			"config.comment.ui.buff_timer" },
+		{ "config.section.14",	"ui.equip_compare",			"config.comment.ui.equip_compare" },
+		{ "config.section.14",	"ui.language",			"config.comment.ui.language" },
+		{ "config.section.14",	"ui.maplepoints.local",			"config.comment.ui.maplepoints.local" },
 
 		// 界面位置（关闭客户端时的最后窗口位置）
-		{ "界面位置",   "ui.position.stats",			"角色属性面板" },
-		{ "界面位置",   "ui.position.eqinv",			"装备栏" },
-		{ "界面位置",   "ui.position.inv",				"消耗/其他栏" },
-		{ "界面位置",   "ui.position.skill",			"技能面板" },
-		{ "界面位置",   "ui.position.quest",			"任务面板" },
-		{ "界面位置",   "ui.position.map",				"世界地图" },
-		{ "界面位置",   "ui.position.userlist",			"用户列表" },
-		{ "界面位置",   "ui.position.chat",				"聊天栏" },
-		{ "界面位置",   "ui.position.minimap",			"小地图" },
-		{ "界面位置",   "ui.position.shop",				"NPC 商店" },
-		{ "界面位置",   "ui.position.notice",			"公告面板" },
-		{ "界面位置",   "ui.position.maplechat",		"枫叶聊天/排行榜" },
-		{ "界面位置",   "ui.position.channel",			"频道选择" },
-		{ "界面位置",   "ui.position.joypad",			"手柄面板" },
-		{ "界面位置",   "ui.position.event",			"活动面板" },
-		{ "界面位置",   "ui.position.keyconfig",		"按键设置" },
-		{ "界面位置",   "ui.position.optionmenu",		"系统选项" },
-		{ "界面位置",   "ui.position.charinfo",			"角色信息" },
-		{ "界面位置",   "ui.position.messenger",		"信使聊天室" },
-		{ "界面位置",   "ui.position.partysearch",		"组队搜索" },
-		{ "界面位置",   "ui.position.delivery",			"快递Duey" },
-		{ "界面位置",   "ui.position.storebank",		"寄存StoreBank" },
-		{ "界面位置",   "ui.position.vicioushammer",	"金锤子" },
-		{ "界面位置",   "ui.position.vegaspell",		"星卷Vega" },
-		{ "界面位置",   "ui.position.cashgachapon",		"现金扭蛋" },
-		{ "界面位置",   "ui.position.remotegachapon",	"远程扭蛋" },
-		{ "界面位置",   "ui.position.family",			"家族" },
-		{ "界面位置",   "ui.position.familytree",		"家族树" },
-		{ "界面位置",   "ui.position.memo",				"便签Memo" },
-		{ "界面位置",   "ui.position.gameopt",			"游戏设置窗" },
-		{ "界面位置",   "ui.position.sysopt",			"系统设置窗" },
-		{ "界面位置",   "ui.position.dailygift",		"每日礼物" },
-		{ "界面位置",   "ui.position.partyrace",		"组队竞赛" },
+		{ "config.section.15",	"ui.position.stats",			"config.comment.ui.position.stats" },
+		{ "config.section.15",	"ui.position.eqinv",			"config.comment.ui.position.eqinv" },
+		{ "config.section.15",	"ui.position.inv",			"config.comment.ui.position.inv" },
+		{ "config.section.15",	"ui.position.skill",			"config.comment.ui.position.skill" },
+		{ "config.section.15",	"ui.position.quest",			"config.comment.ui.position.quest" },
+		{ "config.section.15",	"ui.position.map",			"config.comment.ui.position.map" },
+		{ "config.section.15",	"ui.position.userlist",			"config.comment.ui.position.userlist" },
+		{ "config.section.15",	"ui.position.chat",			"config.comment.ui.position.chat" },
+		{ "config.section.15",	"ui.position.minimap",			"config.comment.ui.position.minimap" },
+		{ "config.section.15",	"ui.position.shop",			"config.comment.ui.position.shop" },
+		{ "config.section.15",	"ui.position.notice",			"config.comment.ui.position.notice" },
+		{ "config.section.15",	"ui.position.maplechat",			"config.comment.ui.position.maplechat" },
+		{ "config.section.15",	"ui.position.channel",			"config.comment.ui.position.channel" },
+		{ "config.section.15",	"ui.position.joypad",			"config.comment.ui.position.joypad" },
+		{ "config.section.15",	"ui.position.event",			"config.comment.ui.position.event" },
+		{ "config.section.15",	"ui.position.keyconfig",			"config.comment.ui.position.keyconfig" },
+		{ "config.section.15",	"ui.position.optionmenu",			"config.comment.ui.position.optionmenu" },
+		{ "config.section.15",	"ui.position.charinfo",			"config.comment.ui.position.charinfo" },
+		{ "config.section.15",	"ui.position.messenger",			"config.comment.ui.position.messenger" },
+		{ "config.section.15",	"ui.position.partysearch",			"config.comment.ui.position.partysearch" },
+		{ "config.section.15",	"ui.position.delivery",			"config.comment.ui.position.delivery" },
+		{ "config.section.15",	"ui.position.storebank",			"config.comment.ui.position.storebank" },
+		{ "config.section.15",	"ui.position.vicioushammer",			"config.comment.ui.position.vicioushammer" },
+		{ "config.section.15",	"ui.position.vegaspell",			"config.comment.ui.position.vegaspell" },
+		{ "config.section.15",	"ui.position.cashgachapon",			"config.comment.ui.position.cashgachapon" },
+		{ "config.section.15",	"ui.position.remotegachapon",			"config.comment.ui.position.remotegachapon" },
+		{ "config.section.15",	"ui.position.family",			"config.comment.ui.position.family" },
+		{ "config.section.15",	"ui.position.familytree",			"config.comment.ui.position.familytree" },
+		{ "config.section.15",	"ui.position.memo",			"config.comment.ui.position.memo" },
+		{ "config.section.15",	"ui.position.gameopt",			"config.comment.ui.position.gameopt" },
+		{ "config.section.15",	"ui.position.sysopt",			"config.comment.ui.position.sysopt" },
+		{ "config.section.15",	"ui.position.dailygift",			"config.comment.ui.position.dailygift" },
+		{ "config.section.15",	"ui.position.partyrace",			"config.comment.ui.position.partyrace" },
 
 		// 伤害
-		{ "伤害",       "damage.formula_v2",			"是否启用原生取证补齐的伤害公式（关闭则保持旧结果）" },
-		{ "伤害",       "damage.long_lines",			"伤害行 12 字节模式，必须与 s9 服务端成对开启" },
-		{ "伤害",       "damage.cap",				"单段伤害上限，默认 2^53 = 9007199254740992" },
+		{ "config.section.16",	"damage.formula_v2",			"config.comment.damage.formula_v2" },
+		{ "config.section.16",	"damage.long_lines",			"config.comment.damage.long_lines" },
+		{ "config.section.16",	"damage.cap",			"config.comment.damage.cap" },
 
 		// 调试
-		{ "调试",       "debug.packet_dump",			"是否输出收发包调试日志（生产勿开）" },
-		{ "调试",       "debug.perf_log",				"分段耗时落盘 boot_perf.log（基线采集用，生产勿开）" },
-		{ "调试",       "debug.gm_smoke",				"GM 冒烟自驱动：进图 3s 自动发一次刷怪包（生产必关）" },
-		{ "调试",       "debug.gm_smoke_mob",			"自驱动刷怪 mobId（默认 100100 绿水灵）" },
-		{ "调试",       "debug.gm_smoke_count",			"自驱动刷怪数量 1..50（默认 3）" }
+		{ "config.section.17",	"debug.packet_dump",			"config.comment.debug.packet_dump" },
+		{ "config.section.17",	"debug.perf_log",			"config.comment.debug.perf_log" },
+		{ "config.section.17",	"debug.gm_smoke",			"config.comment.debug.gm_smoke" },
+		{ "config.section.17",	"debug.gm_smoke_mob",			"config.comment.debug.gm_smoke_mob" },
+		{ "config.section.17",	"debug.gm_smoke_count",			"config.comment.debug.gm_smoke_count" },
 	};
 
 	constexpr size_t SETTINGS_ORDER_SIZE = sizeof(SETTINGS_ORDER) / sizeof(SETTINGS_ORDER[0]);
@@ -688,7 +688,7 @@ namespace ms
 			{
 				current_section = doc.section;
 
-				config << "\n# ---- " << doc.section << " ----\n";
+				config << "\n# ---- " << Locale::text(doc.section) << " ----\n";
 
 				open_groups.clear();
 			}
@@ -720,7 +720,7 @@ namespace ms
 
 			const std::string indent(open_groups.size() * INDENT_WIDTH, ' ');
 
-			config << indent << "# " << doc.comment << "\n";
+			config << indent << "# " << Locale::text(doc.comment) << "\n";
 
 			const std::string* value = find_value(doc.key);
 
@@ -931,6 +931,11 @@ namespace ms
 	{
 		std::string lang = Setting<UiLanguage>::get().load();
 		return lang.empty() ? std::string("zh-CN") : lang;
+	}
+
+	void Configuration::set_ui_language(const std::string& lang)
+	{
+		Setting<UiLanguage>::get().save(lang);
 	}
 
 	bool Configuration::get_patch_enabled() const

@@ -220,7 +220,7 @@ namespace ms
 		meso_amount = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "0");
 
 		// D5：标题烤进底板，程序侧不画（防双字）。绑定仍在，供日后切回无字底板复用。
-		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, "地图信息");
+		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, Locale::text("uimapinfopanel.223"));
 		locale_binds.bind(title_text, "mapinfo.title");
 	}
 

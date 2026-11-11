@@ -1938,7 +1938,7 @@ namespace ms
 		classic_scrollbar.remove_cursor();
 	}
 
-	void UIChatBar::show_message(const char* message, MessageType type)
+	void UIChatBar::show_message(const std::string& message, MessageType type)
 	{
 		Color::Name color = Color::Name::RED;
 
@@ -1993,7 +1993,7 @@ namespace ms
 		return Color::Name::WHITE;
 	}
 
-	void UIChatBar::show_message(const char* message, ChatChannel ch)
+	void UIChatBar::show_message(const std::string& message, ChatChannel ch)
 	{
 		Color::Name color = channel_color(ch);
 
@@ -2059,9 +2059,9 @@ namespace ms
 		name_menu_target = name;
 		name_menu_pos = screen_pos;
 		name_menu_hover = -1;
-		name_menu_items[NM_WHISPER] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "密语");
-		name_menu_items[NM_CHARINFO] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "查看角色信息");
-		name_menu_items[NM_BUDDY] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "加好友");
+		name_menu_items[NM_WHISPER] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("uichatbar.2062"));
+		name_menu_items[NM_CHARINFO] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("uichatbar.2063"));
+		name_menu_items[NM_BUDDY] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("uichatbar.2064"));
 		name_menu_open = true;
 	}
 
@@ -2092,7 +2092,7 @@ namespace ms
 				}
 				else
 				{
-					LOG(LOG_DEBUG, "UIChatNameMenu: 找不到角色 oid（可能不在当前地图）：" << name);
+					LOG(LOG_DEBUG, Locale::text("uichatbar.2095") << name);
 				}
 				break;
 			}
@@ -2578,7 +2578,7 @@ namespace ms
 			auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sent_time).count();
 			if (ms < 2000)
 			{
-				show_message("说话速度太快，请稍后再试。", MessageType::RED);
+				show_message(Locale::text("uichatbar.2581"), MessageType::RED);
 				return false;
 			}
 		}
@@ -2592,7 +2592,7 @@ namespace ms
 				allsame = false;
 		if (allsame)
 		{
-			show_message("你这句说了太多遍了。", MessageType::RED);
+			show_message(Locale::text("uichatbar.2595"), MessageType::RED);
 			return false;
 		}
 		recent_count++;

@@ -16,7 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Job.h"
-
+#include "../Util/Locale.h"
 namespace ms
 {
 	Job::Job(uint16_t i)
@@ -97,9 +97,9 @@ namespace ms
 		return 0;
 	}
 
-	const std::string& Job::get_name() const
+	std::string Job::get_name() const
 	{
-		return name;
+		return Locale::text(name);
 	}
 
 	Job::Level Job::get_level() const
@@ -128,147 +128,147 @@ namespace ms
 		switch (jid)
 		{
 			case 0:
-				return "新手";
+				return "job.0";
 			case 100:
-				return "战士";
+				return "job.100";
 			case 110:
-				return "剑客";
+				return "job.110";
 			case 111:
-				return "勇士";
+				return "job.111";
 			case 112:
-				return "英雄";
+				return "job.112";
 			case 120:
-				return "准骑士";
+				return "job.120";
 			case 121:
-				return "骑士";
+				return "job.121";
 			case 122:
-				return "圣骑士";
+				return "job.122";
 			case 130:
-				return "枪战士";
+				return "job.130";
 			case 131:
-				return "龙骑士";
+				return "job.131";
 			case 132:
-				return "黑骑士";
+				return "job.132";
 			case 200:
-				return "法师";
+				return "job.200";
 			case 210:
-				return "法师(火,毒)";
+				return "job.210";
 			case 211:
-				return "巫师(火,毒)";
+				return "job.211";
 			case 212:
-				return "魔导师(火,毒)";
+				return "job.212";
 			case 220:
-				return "法师(冰,雷)";
+				return "job.220";
 			case 221:
-				return "巫师(冰,雷)";
+				return "job.221";
 			case 222:
-				return "魔导师(冰,雷)";
+				return "job.222";
 			case 230:
-				return "牧师";
+				return "job.230";
 			case 231:
-				return "祭司";
+				return "job.231";
 			case 232:
-				return "主教";
+				return "job.232";
 			case 300:
-				return "弓箭手";
+				return "job.300";
 			case 310:
-				return "猎人";
+				return "job.310";
 			case 311:
-				return "射手";
+				return "job.311";
 			case 312:
-				return "神射手";
+				return "job.312";
 			case 320:
-				return "弩弓手";
+				return "job.320";
 			case 321:
-				return "游侠";
+				return "job.321";
 			case 322:
-				return "箭神";
+				return "job.322";
 			case 400:
-				return "飞侠";
+				return "job.400";
 			case 410:
-				return "刺客";
+				return "job.410";
 			case 411:
-				return "无影人";
+				return "job.411";
 			case 412:
-				return "隐士";
+				return "job.412";
 			case 420:
-				return "侠客";
+				return "job.420";
 			case 421:
-				return "独行客";
+				return "job.421";
 			case 422:
-				return "侠盗";
+				return "job.422";
 			case 500:
-				return "海盗";
+				return "job.500";
 			case 510:
-				return "拳手";
+				return "job.510";
 			case 511:
-				return "斗士";
+				return "job.511";
 			case 512:
-				return "冲锋队长";
+				return "job.512";
 			case 520:
-				return "火枪手";
+				return "job.520";
 			case 521:
-				return "大副";
+				return "job.521";
 			case 522:
-				return "船长";
+				return "job.522";
 			case 1000:
-				return "初心者";
+				return "job.1000";
 			case 1100:
-				return "魂骑士(1转)";
+				return "job.1100";
 			case 1110:
-				return "魂骑士(2转)";
+				return "job.1110";
 			case 1111:
-				return "魂骑士(3转)";
+				return "job.1111";
 			case 1112:
-				return "魂骑士(4转)";
+				return "job.1112";
 			case 1200:
-				return "炎术士(1转)";
+				return "job.1200";
 			case 1210:
-				return "炎术士(2转)";
+				return "job.1210";
 			case 1211:
-				return "炎术士(3转)";
+				return "job.1211";
 			case 1212:
-				return "炎术士(4转)";
+				return "job.1212";
 			case 1300:
-				return "风灵使者(1转)";
+				return "job.1300";
 			case 1310:
-				return "风灵使者(2转)";
+				return "job.1310";
 			case 1311:
-				return "风灵使者(3转)";
+				return "job.1311";
 			case 1312:
-				return "风灵使者(4转)";
+				return "job.1312";
 			case 1400:
-				return "夜行者(1转)";
+				return "job.1400";
 			case 1410:
-				return "夜行者(2转)";
+				return "job.1410";
 			case 1411:
-				return "夜行者(3转)";
+				return "job.1411";
 			case 1412:
-				return "夜行者(4转)";
+				return "job.1412";
 			case 1500:
-				return "奇袭者(1转)";
+				return "job.1500";
 			case 1510:
-				return "奇袭者(2转)";
+				return "job.1510";
 			case 1511:
-				return "奇袭者(3转)";
+				return "job.1511";
 			case 1512:
-				return "奇袭者(4转)";
+				return "job.1512";
 			case 2000:
-				return "战童";
+				return "job.2000";
 			case 2001:
-				return "龙初心";
+				return "job.2001";
 			case 2100:
-				return "战神(1转)";
+				return "job.2100";
 			case 2110:
-				return "战神(2转)";
+				return "job.2110";
 			case 2111:
-				return "战神(3转)";
+				return "job.2111";
 			case 2112:
-				return "战神(4转)";
+				return "job.2112";
 			case 800:
 			case 900:
 			case 910:
-				return "管理员";
+				return "job.910";
 			default:
 				return "";
 		}

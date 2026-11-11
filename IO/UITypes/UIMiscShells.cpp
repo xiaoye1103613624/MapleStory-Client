@@ -1932,10 +1932,10 @@ void UIAskPet::refresh_selected()
 	level_label.change_text(buf);
 	if (e.has_stats)
 	{
-		std::snprintf(buf, sizeof(buf), "亲密 %u", static_cast<unsigned>(e.closeness));
-		close_label.change_text(buf);
-		std::snprintf(buf, sizeof(buf), "饱食 %u", static_cast<unsigned>(e.fullness));
-		full_label.change_text(buf);
+		std::snprintf(buf, sizeof(buf), "%u", static_cast<unsigned>(e.closeness));
+		close_label.change_text(Locale::format("uimiscshells.intimacy", buf));
+		std::snprintf(buf, sizeof(buf), "%u", static_cast<unsigned>(e.fullness));
+		full_label.change_text(Locale::format("uimiscshells.fullness", buf));
 	}
 	else
 	{

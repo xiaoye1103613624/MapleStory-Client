@@ -34,6 +34,7 @@
 #include "../../Constants.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MiscOutPackets.h"
+#include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/PerfLog.h"
@@ -786,6 +787,10 @@ namespace ms
 		set_combo_rows(false, false);
 		set_res_rows(false);
 
+		// 语言切换命中区（无贴图，运行时自绘「语言：xxx」，点一下在 zh-CN/en-US 间切换）。
+		buttons[LANGUAGE] = std::make_unique<AreaButton>(
+			Point<int16_t>(COMBO_X, LANG_Y), Point<int16_t>(LANG_W, COMBO_H));
+
 		// 同 UIGameOpt：传按钮根节点，不是 ["normal"][0] 叶子。
 		nl::node bt_ok = Basic["BtOK2"];
 		nl::node bt_cancel = Basic["BtCancel2"];
@@ -817,6 +822,8 @@ namespace ms
 		alt_enter = Setting<SysOptAltEnter>::get().load();
 		mob_info = Setting<SysOptMobInfo>::get().load();
 		screenshot_path = Setting<SysOptScreenshotPath>::get().load();
+		// 当前语言序号：ui.language 是 zh-CN（默认）/ en-US。
+		language = (Configuration::get().get_ui_language() == "en-US") ? 1 : 0;
 
 		// 多分辨率：显示真实当前档，不能恒显示 0 档（rs.cpp L1988-1996 的坑）。
 		// game_tier=255 表示旧配置未显式选档，按 window.game_width/height 反查。
@@ -875,6 +882,13 @@ namespace ms
 		draw_combo(COMBO_Y_PATH, combo_item(SCREENSHOT_PATH_KEY, screenshot_path));
 		draw_combo(COMBO_Y_MOB, combo_item(MOB_INFO_KEY, mob_info));
 		draw_resolution_combo();
+
+		// 语言切换项：运行时自绘「语言：当前语言」，点一下在 zh-CN / en-US 间切换。
+		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Locale::text("sysopt.label.language") + std::string("：")
+				+ Locale::text(std::string(LANGUAGE_KEY) + std::to_string(language)),
+			LANG_W - 6)
+			.draw(position + Point<int16_t>(COMBO_X + 6, LANG_Y + 1));
 
 		UIElement::draw_buttons(inter);
 
@@ -1038,6 +1052,28 @@ namespace ms
 		}
 	}
 
+	void UISysOpt::apply_language(uint8_t ordinal)
+	{
+		const std::string lang_tag = (ordinal == 0) ? "zh-CN" : "en-US";
+
+		// 与当前语言相同则跳过（避免重复落盘 / reload / 发包）。
+		if (lang_tag == Configuration::get().get_ui_language())
+			return;
+
+		// 服务器语言码：zh-CN=3 / en-US=2（见服务端 CharsetConstants.LANGUAGE_CN/US）。
+		const int server_code = (ordinal == 0) ? 3 : 2;
+
+		// 1) 写客户端 ui.language 并落盘；2) 重读 locale ini 并 ++generation，
+		//    已开着的窗靠 LocaleBindings 每帧随代次刷新；3) 发 !changel 让服务器
+		//    侧按本账号语言解析消息 + 封包 GBK 编码随之切换。
+		Configuration::get().set_ui_language(lang_tag);
+		Configuration::get().save();
+		Locale::get().reload();
+		GeneralChatPacket("!changel " + std::to_string(server_code), true).dispatch();
+
+		LOG(LOG_INFO, "UISysOpt: language switched to " << lang_tag);
+	}
+
 	void UISysOpt::set_combo_rows(bool show_mob, bool show_path)
 	{
 		for (uint8_t i = 0; i < MOB_INFO_COUNT; i++)
@@ -1110,6 +1146,10 @@ namespace ms
 
 			return Button::State::IDENTITY;
 		}
+		case Buttons::LANGUAGE:
+			language = language ? 0 : 1;
+			apply_language(language);
+			return Button::State::IDENTITY;
 		case Buttons::MOB_OPT0:
 		case Buttons::MOB_OPT1:
 		case Buttons::MOB_OPT2:

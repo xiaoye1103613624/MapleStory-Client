@@ -230,6 +230,7 @@ namespace ms
 			ALT_ENTER,
 			MOB_INFO,
 			SCREENSHOT_PATH,
+			LANGUAGE,
 			CANCEL,
 			OK,
 			// 两个下拉展开后的条目钮；后缀数字就是原生注册表里存的那个序号。
@@ -278,6 +279,8 @@ namespace ms
 		void draw_resolution_combo() const;
 		void draw_resolution_list() const;
 		void set_res_rows(bool show);
+		// 运行时切换语言：写 ui.language + 落盘 + Locale::reload() + 通知服务器 changel。
+		void apply_language(uint8_t ordinal);
 
 		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值。
 		// TRACK_X1 取参考图滑条轨道右端 x≈229；滑块右沿 = 229+1 = 230，
@@ -314,6 +317,12 @@ namespace ms
 		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
 		static constexpr uint8_t MOB_INFO_COUNT = 4;
 		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
+		// 语言切换：运行时自绘文案 + 无贴图 AreaButton 命中区（底板标签烘焙进位图、版面较满，
+		// 故不新开下拉，直接做成「点一下在 zh-CN/en-US 间切换」的开关项）。
+		static constexpr int16_t LANG_Y = 259;		// 夹在末条滑条(248)与「画面效果」勾选(279)之间的空档；实机核对底图
+		static constexpr int16_t LANG_W = 150;
+		static constexpr uint8_t LANG_COUNT = 2;
+		static constexpr const char* LANGUAGE_KEY = "sysopt.combo.language.";
 		// 多分辨率新增行（窗口大小）：插件 rs.cpp 参考 Combo(76,338,166,18)，9 档见 rs_tier_dims。
 		// 实测新底图：该行被夹在「画面模式」(row10, y≈338) 与 OK/Cancel 分隔线(y≈369)之间，
 		// 盒体顶边取 343（18px 高 → 343~361，上不压 row10、下不压分隔线/OK_Cancel）。
@@ -347,5 +356,7 @@ namespace ms
 		bool alt_enter;
 		uint8_t mob_info;
 		uint8_t screenshot_path;
+		// 0 = zh-CN，1 = en-US；与客户端 ui.language 及服务器 accounts.language 码同步。
+		uint8_t language;
 	};
 }

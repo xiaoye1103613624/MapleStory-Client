@@ -1055,7 +1055,7 @@ namespace ms
 	void IncubatorResultHandler::handle(InPacket& recv) const
 	{
 		int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
-		std::string tip = item ? ("Incubator 鈫?#" + std::to_string(item)) : "Incubator result";
+		std::string tip = item ? (Locale::text("waveashellhandlers.1058") + std::to_string(item)) : "Incubator result";
 		LOG(LOG_DEBUG, "IncubatorResult item=" << item << " rem=" << recv.available());
 		while (recv.available())
 			recv.skip_byte();

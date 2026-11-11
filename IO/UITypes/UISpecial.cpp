@@ -7,6 +7,7 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include "../../Util/Locale.h"
 #endif
 
 namespace ms
@@ -18,8 +19,8 @@ namespace ms
 			Constants::Constants::get().get_viewwidth() / 2 - dimension.x() / 2,
 			Constants::Constants::get().get_viewheight() / 2 - dimension.y() / 2);
 
-		title = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::YELLOW, "福利中心", dimension.x());
-		const char* names[5] = { "每日签到", "兑换中心", "排行榜", "转职", "传送" };
+		title = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::YELLOW, Locale::text("uispecial.21"), dimension.x());
+		std::string names[5] = { Locale::text("uispecial.name.0"), Locale::text("uispecial.name.1"), Locale::text("uispecial.name.2"), Locale::text("uispecial.name.3"), Locale::text("uispecial.name.4") };
 		for (int16_t i = 0; i < 5; i++)
 			labels[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, names[i], 160);
 

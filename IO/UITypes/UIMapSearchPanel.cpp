@@ -182,7 +182,7 @@ namespace ms
 
 		// 面板标题：D5 已把「地图搜索」烤进 v3 底板顶脊（与信息面板同管线），
 		// 程序不再重复绘制；title_text 保留绑定仅作兜底数据（不 draw）。
-		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, "地图搜索");
+		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, Locale::text("uimapsearchpanel.185"));
 		locale_binds.bind(title_text, "mapsearch.title");
 
 		// 搜索框接收中文：启用系统 IME，UTF-8 直接进字图缓存（思源宋体含 CJK）。

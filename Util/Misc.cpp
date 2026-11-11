@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Misc.h"
+#include "Locale.h"
 
 #include "Resource/ImgSource.h"
 
@@ -41,15 +42,15 @@ namespace ms
 			if (n >= 100000000LL)
 			{
 				char buf[32];
-				std::snprintf(buf, sizeof(buf), "%.2f亿", static_cast<double>(n) / 100000000.0);
-				return std::string(buf);
+				std::snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(n) / 100000000.0);
+				return Locale::format("misc.billion", buf);
 			}
 			// 万（1e4）
 			if (n >= 10000LL)
 			{
 				char buf[32];
-				std::snprintf(buf, sizeof(buf), "%.2f万", static_cast<double>(n) / 10000.0);
-				return std::string(buf);
+				std::snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(n) / 10000.0);
+				return Locale::format("misc.ten_thousand", buf);
 			}
 			return std::to_string(n);
 		}

@@ -56,6 +56,26 @@ namespace ms
 
 		if (close)
 			buttons[Buttons::BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(dimension.x() - 21, 6));
+
+		// D4（2026-11-11）：Angel 083 CUIItemMaker::OnCreate @0x822350 建钮立即数 ——
+		// id20000 @(82,356)、id20001 @(163,356)（CreateCtrl a3/a4/a5 逐字）。
+		// BtStart = 制作当前选中配方（与点行/send_key C 同一条 MakerCreatePacket 路）；
+		// BtCancel = 关窗（原生语义=取消当前选择并收起）。
+		if (nl::node mkroot = UiAssetResolve::window("Maker"))
+		{
+			try_maple_btn(buttons, Buttons::BtStart, mkroot["BtStart"], Point<int16_t>(82, 356), "maker BtStart");
+			try_maple_btn(buttons, Buttons::BtCancel, mkroot["BtCancel"], Point<int16_t>(163, 356), "maker BtCancel");
+
+			// 显式预留（不编造数据源）：
+			//  · ComboBox1/2（IDA id30000 @(77,71,78x18) / id40000 @(157,71,143x18)，
+			//    IMG 件是 t/c/b/base 切片皮肤，非 MapleComboBox 的 Basic.img/ComboBoxN 三段件）
+			//    —— 选项内容需配方分类表，本包 Data 下无 Maker.img（分类数据缺失），
+			//    造选项=编造，故预留；配方选择已由列表点行 + SoftKey id 两条路覆盖。
+			//  · GaugeBar（bar/gauge 两件）—— 原生是制作进度回包驱动，本端无该 s2c 流，预留。
+			//  · BtDown / notUse / randomMake / randomRecipe —— 随机配方/置灰件，同上无数据流，预留。
+			if (!UiAssetResolve::usable(mkroot["BtStart"]) || !UiAssetResolve::usable(mkroot["BtCancel"]))
+				UiAssetResolve::diag_once("maker.d4", Locale::text("uimaker.77"));
+		}
 #endif
 
 		list_origin = Point<int16_t>(24, 86);
@@ -165,7 +185,22 @@ namespace ms
 		switch (buttonid)
 		{
 			case Buttons::BtClose:
+			case Buttons::BtCancel:
 				deactivate();
+				return Button::State::NORMAL;
+			case Buttons::BtStart:
+				// D4：制作当前选中配方；无选中时与 send_key 'C' 同语义走状态提示。
+				if (selected_item_id > 0)
+				{
+					MakerCreatePacket(selected_item_id).dispatch();
+					status.change_text(Locale::format("maker.craft", std::to_string(selected_item_id)));
+					LOG(LOG_DEBUG, "UIMaker: BtStart craft id=" << selected_item_id);
+				}
+				else
+				{
+					status.change_text(Locale::text("maker.bad_item_id"));
+					LOG(LOG_DEBUG, "UIMaker: BtStart no selection");
+				}
 				return Button::State::NORMAL;
 		}
 

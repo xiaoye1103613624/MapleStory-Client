@@ -31,7 +31,7 @@
 
 #include <cstdint>
 #include <string>
-
+#include "../../Util/Locale.h"
 namespace ms
 {
 	// Angel 083 CUIRecommendWorld::OnCreate @0x62b451 的布局立即数。
@@ -180,7 +180,7 @@ namespace ms
 
 		if (!has_worlds)
 		{
-			message_text.change_text("暂无可用世界");
+			message_text.change_text(Locale::text("uirecommendworld.183"));
 			return;
 		}
 
@@ -201,7 +201,7 @@ namespace ms
 			world_name = Texture(name_node);
 
 		if (!world_name)
-			name_text.change_text(w->name.empty() ? "(未知世界)" : w->name);
+			name_text.change_text(w->name.empty() ? Locale::text("uirecommendworld.204") : w->name);
 
 		// 083 消息 ZXString -> Assign<char> -> CalcLongestText(200) 换行。
 		message_text.change_text(w->event_message);

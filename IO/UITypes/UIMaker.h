@@ -63,7 +63,14 @@ namespace ms
 
 		enum Buttons : uint16_t
 		{
-			BtClose
+			// id 沿用 Angel 083 CUIItemMaker::OnCreate @0x822350 立即数：
+			// 30000/40000 = 两颗 ComboBox（(77,71,78x18) / (157,71,143x18)），
+			// 20000/20001 = 底部两颗按钮（(82,356) / (163,356)）。
+			BtClose = 1000,
+			BtStart = 20000,
+			BtCancel = 20001,
+			CbCategory = 30000,
+			CbRecipe = 40000
 		};
 
 		Sprite background;

@@ -567,10 +567,10 @@ namespace ms
 		{
 			if (ltab.contains(cursorpos))
 				UI::get().show_text(Tooltip::Parent::WORLDMAP,
-					left_state == SideState::COLLAPSED ? "怪物 / 掉落信息 ▸ 点击展开 (X)" : "◂ 收起信息面板 (X)");
+					left_state == SideState::COLLAPSED ? Locale::text("uiworldmap.557") : Locale::text("uiworldmap.557"));
 			else
 				UI::get().show_text(Tooltip::Parent::WORLDMAP,
-					right_state == SideState::COLLAPSED ? "地图搜索 ▸ 点击展开 (P)" : "◂ 收起搜索面板 (P)");
+					right_state == SideState::COLLAPSED ? Locale::text("uiworldmap.560") : Locale::text("uiworldmap.560"));
 
 			if (clicked)
 			{

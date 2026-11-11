@@ -6,7 +6,7 @@
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/DrawArgument.h"
 #include <algorithm>
-
+#include "../../Util/Locale.h"
 namespace ms
 {
 	UIGMCommandList::UIGMCommandList()
@@ -35,7 +35,7 @@ namespace ms
 		// 背景（ColorBox 纯色，硬编码坐标，无 img 依赖，遵守 R5/R6 兜底）
 		ColorBox(WIN_W, WIN_H, Color::Name::BLACK, 0.7f).draw(DrawArgument(position));
 		// 标题
-		Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, "GM 命令 (点击填充)").draw(position + Point<int16_t>(8, 4));
+		Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, Locale::text("uigmcommandlist.38")).draw(position + Point<int16_t>(8, 4));
 
 		// 条目（按 scroll 偏移，两列）
 		for (const auto& e : entries)

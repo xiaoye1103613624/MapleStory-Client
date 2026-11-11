@@ -61,7 +61,7 @@
 #include <cstring>
 #include <ctime>
 #include <iostream>
-
+#include "../Util/Locale.h"
 namespace ms
 {
 	// The game's key handling is expressed with GLFW's key code values (see
@@ -608,7 +608,7 @@ namespace ms
 		// 破功值（伤害上限）由服务端 LIMIT_BREAK_SYNC(0x3730) 下发，int64。
 		limit_break = value;
 
-		LOG(LOG_NETWORK, "破功值同步: " << limit_break);
+		LOG(LOG_NETWORK, Locale::text("window.611") << limit_break);
 	}
 
 	void Window::update_title()
@@ -688,7 +688,7 @@ namespace ms
 		// 【破功值：x】：服务端未同步前（limit_break < 0）不显示该段。
 		if (limit_break >= 0)
 		{
-			title += "【破功值：";
+			title += Locale::text("window.691");
 			title += std::to_string(limit_break);
 			title += "】";
 		}
@@ -718,15 +718,15 @@ namespace ms
 
 			uint64_t rtt_us = 0;
 			if (Session::get().tcp_rtt_us(rtt_us))
-				title += " 延迟:" + std::to_string(rtt_us / 1000) + "ms";
+				title += Locale::text("window.721") + std::to_string(rtt_us / 1000) + "ms";
 			else
-				title += " 延迟:--";
+				title += Locale::text("window.723");
 
 			title += "】";
 		}
 
 		// 【当前时间：yyyy-MM-dd HH:mm:ss】
-		title += "【当前时间：";
+		title += Locale::text("window.729");
 		title += format_local_time();
 		title += "】";
 
@@ -737,7 +737,7 @@ namespace ms
 				std::chrono::steady_clock::now() - online_since
 				).count();
 
-			title += "【在线时长：";
+			title += Locale::text("window.740");
 			title += format_duration(elapsed);
 			title += "】";
 		}

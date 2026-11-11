@@ -30,6 +30,7 @@
 #include "../../Util/Misc.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include "../../Util/Locale.h"
 #endif
 
 namespace ms
@@ -126,9 +127,9 @@ namespace ms
 				std::string t = tip;
 				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
 				bool female = false;
-				if (t == "f" || t == "female" || t == "1" || t == "女")
+				if (t == "f" || t == "female" || t == "1" || t == Locale::text("uigender.129"))
 					female = true;
-				else if (t == "m" || t == "male" || t == "0" || t == "男")
+				else if (t == "m" || t == "male" || t == "0" || t == Locale::text("uigender.131"))
 					female = false;
 				else
 					return;

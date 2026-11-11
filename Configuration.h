@@ -113,6 +113,8 @@ namespace ms
 		bool get_equip_compare() const;
 		// UI 语言码（ui.language），默认 zh-CN；可被 xy-config 覆盖，支持热重载。
 		std::string get_ui_language() const;
+		// 运行时切换 UI 语言：写内存项 + 立即生效；落盘由调用方显式 save()
+		void set_ui_language(const std::string& lang);
 		// HTTP 补丁：是否启用（patch.enabled）。
 		bool get_patch_enabled() const;
 		// HTTP 补丁：manifest URL（patch.url）。

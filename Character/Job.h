@@ -61,7 +61,7 @@ namespace ms
 		uint16_t get_id() const;
 		uint16_t get_subjob(Level level) const;
 		Level get_level() const;
-		const std::string& get_name() const;
+		std::string get_name() const;
 		EquipStat::Id get_primary(Weapon::Type weapontype) const;
 		EquipStat::Id get_secondary(Weapon::Type weapontype) const;
 

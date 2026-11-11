@@ -106,8 +106,8 @@ namespace ms
 		// UIStateGame 的 TOGGLECHAT 分支要在输入行收起时把它打开（classic 的 Enter 是
 		// 唯一入口，展开/缩放钮只管历史框），故必须公开。
 		void toggle_input(bool enabled);
-		void show_message(const char* message, MessageType type);
-		void show_message(const char* message, ChatChannel ch);
+		void show_message(const std::string& message, MessageType type);
+		void show_message(const std::string& message, ChatChannel ch);
 		// Q2: 带可点击玩家名的聊天消息。显示串 = prefix + speaker + " : " + message；
 		// speaker 非空即可点击，点击弹出名字菜单（密语/查角色/加好友）。
 		void show_message(const std::string& prefix, const std::string& speaker, const std::string& message, ChatChannel ch);
