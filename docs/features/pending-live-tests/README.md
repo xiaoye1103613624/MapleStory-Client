@@ -1165,3 +1165,35 @@
 - **52-3** 若后续要把 083 `CUserLocal::CheckPortal_Collision @0x94dac6` 的「按 portal type 分派」（`9` 脚本门 / `12` / 其余传送）搬进本端 `MapPortals::find_warp_at` 两通道抽象，属行为级变更，须先立决策点（当前判「不搬」：本端 PortalScope 是等价抽象，搬会改触发时机）。
 - **52-4** 硬规则：注释里引 083 符号必须先跑 `entity_query` 确认符号真实存在；`*CPortal@@*`/`*CPortal::*` 这类旧引用在 083 全库命中为 0，写进注释即依据链污染。
 - 限制：① 纯注释 5 处，零行为 / 零 wire / 零协议 / 零 WZ；② `DECISIONS.md:130` 历史行不改写（只在本节记明）；③ 真机五屏截图仍由用户认领。
+## 53. round94 · reopen 残余 17 条 P1/P2/P3 分流（账目轮 / 零源码改动）
+
+**触发**：User said (m11928)「处理掉：剩余 reopen 中 21 条属 P1/P2/P3 分流」。
+
+**先纠算**：上一轮答复里「21 条」是漏算 round91 的 3 条注销。现场实数：
+27 条 reopen 已被前四轮注销 **10** 条 → **残余 17 条**（`27 - 10 = 17`）。
+
+注销台账：
+
+| 轮次 | 注销条数 | 条目 |
+| --- | --- | --- |
+| round90 | 2 | `drop/D2`（F 维 P2，缺 COM 渲染栈）、`drop/D12`（W 桶 wire 宽度分叉） |
+| round91 | 3 | `corewindow/D8`（DOC_ONLY 已发货）、`skill/D4`（架构级 → 不新增）、`quest/D8`（W 桶 wire 条件追加段） |
+| round92 | 4 | `corewindow/D9`、`skill/D12`、`login-flow/D9`、`statusbar-hud/D12`（均为**编号错配**，真议题另有其人） |
+| round93 | 1 | `activity-minigame/D1`（095 注释已改判本端扩展 E 桶） |
+
+**分流结果**：**P1 = 0 / P2 = 1 / P3 = 16**（算术 `0 + 1 + 16 = 17`）。
+
+- **P2（1 条）**：`login-flow/D3` 骑士团条件解码分支 —— 缺 s9 侧是否发追加段的协议事实；
+  拿到 s9 抓包即可升 P1，拿到前按门禁 5 不发明解码分支。
+- **P3（16 条）**：`login-flow/D12`、`login-flow/D13`、`statusbar-hud/D1`、`corewindow/D2`、
+  `corewindow/D10`、`social-economy/D3`、`social-economy/D9`、`social-economy/D12`、
+  `pet-summon/D2`、`cashshop/D2`、`skill/D9`、`skill/D11`、`map/D1`、`map/D4`、`map/D8`、
+  `quest/D5` —— 全部是 canonical 已裁定「保持 / 不补 / 不做 / 不改」的现状保持项，登记在册防重复翻案。
+- **P1 = 0**：P1 门槛（083 状态机证据 + 零 wire + 当前端确有缺陷）三条并发，残余 17 条无一条满足。
+
+**验证**
+- `tools/test_round94_reopen_triage.py`：静态守卫 + 场景全绿（下条命令）。
+- `python tools/gen_opcode_matrix.py --check` → `GATE OK`（账目轮零源码改动，不声称真重编）。
+- 算术不动：168 条 DECISIONS 裁定 / `PURE76+WIRE38+MIXED14+OTHER40=168` / W 轨 38 + L 轨 130 = 168 /
+  reopen 27 分母不变（17 分流 + 10 注销）。
+- 外部在途 WIP 零夹带。
