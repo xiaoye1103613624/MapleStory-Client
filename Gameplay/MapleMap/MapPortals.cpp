@@ -143,7 +143,7 @@ namespace ms
 			const Portal& portal = iter.second;
 			Portal::Type t = portal.get_type();
 
-			// 原生语义（v95 CPortal::CheckKey / ProcessPortal）：
+			// 原生语义（083 `CPortalList::FindPortal @0x712ab1` 按键通道 / `CPortalList::FindPortal_Collision @0x712b61` 碰触通道，由 `CUserLocal::CheckPortal_Collision @0x94dac6` 按 portal type 分派；旧注释「v95 ...」依据链污染已纠偏）：
 			//  * 自动触发通道（无按键）只放行 TOUCH / SCRIPTED_TOUCH（碰触门）；
 			//  * REGULAR / SCRIPTED / INVISIBLE / WARP / HIDDEN 等一律要按上键；
 			//  * SPRING1/2 弹跳门走各自的 spring 通道，不在此处。

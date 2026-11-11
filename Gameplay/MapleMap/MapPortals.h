@@ -37,7 +37,7 @@ namespace ms
 		void update(Point<int16_t> playerpos);
 		void draw(Point<int16_t> viewpos, float inter) const;
 
-		// 传送门触发范围（对齐 v95：CPortal::CheckKey 的按键通道 vs ProcessPortal 的碰触通道）：
+		// 传送门触发范围（083 依据：按键通道 = `CPortalList::FindPortal @0x712ab1`，碰触通道 = `CPortalList::FindPortal_Collision @0x712b61`，入口 = `CUserLocal::CheckPortal_Collision @0x94dac6`；旧注释写「v95 CPortal::CheckKey / ProcessPortal」属依据链污染 —— 083 全库 `*CPortal@@*` / `*CPortal::*` 符号命中为 0，见 `tools/_ida_r93/portal_family.json`）：
 		//   TOUCH_ONLY —— 行走经过即触发，仅 TOUCH / SCRIPTED_TOUCH 类（弹跳/碰触门）。
 		//   ALL        —— 按上键主动交互，放行全部可见/隐藏门。
 		enum class PortalScope : uint8_t

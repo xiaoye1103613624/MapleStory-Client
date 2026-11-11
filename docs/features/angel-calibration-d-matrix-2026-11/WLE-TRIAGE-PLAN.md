@@ -198,3 +198,20 @@ round88 四分类计数 `PURE76/WIRE38/MIXED14/OTHER40` 直接复用（稳定、
   本轮升级：任何 P1 候选登记必须四项齐备，且由 harness 静态守卫逐条断言，不靠人肉记忆。
 - 168 条 DECISIONS / §4 `W 38 + L 130 = 168` / reopen `27 = 25 P1 + 1 W + 1 F-P2` **全不动**；
   仅在 P1 登记层注销 4 个错配编号，不做语义再分类。W 桶 6 字段 + 27 wire KEEP 零改动。
+
+## 10. round93 纠偏 - 5 处 095/v95 依据链（m11680 盘点后自测）
+
+**结论：reopen 清单里唯一「该做且能自测」的一条 `activity-minigame/D1`（KEEP_WITH_NOTE）扩展成 5 处同类。**
+
+| 文件:行 | 旧依据 | 083 实测 | 判定 |
+| --- | --- | --- | --- |
+| `IO/UIStateGame.cpp:533` | 095 自定义中文 UI：福利中心 | `*UISpecial*`/`*Fairy*`/`*Welfare*`/`*CheckIn*`/`*Attendance*` 全 0 | 本端扩展（E 桶） |
+| `IO/UITypes/UISpecial.h:9` | 095 自定义中文 UI 入口 | 同上 | 本端扩展（E 桶） |
+| `Gameplay/MapleMap/MapPortals.h:40` | v95 `CPortal::CheckKey` / `ProcessPortal` | `*CPortal@@*`/`*CPortal::*` 全 0；真锚点 `CPortalList::FindPortal @0x712ab1` / `FindPortal_Collision @0x712b61` | 依据链错（符号名不存在） |
+| `Gameplay/MapleMap/MapPortals.cpp:146` | v95 同上 | 同上 | 依据链错 |
+| `Gameplay/Stage.cpp:284` | v95 `CPortal::CheckKey` | 同上 | 依据链错 |
+
+- 五处均为**注释**，零行为 / 零 wire / 零协议 / 零 WZ；`MapPortals` 两通道抽象（PortalScope）保留，不把 083 的 type 分派搬进来（那属行为级，另立决策点）。
+- `DECISIONS.md:130` 写「引 Angel 083 `CPortal`」同样引了不存在的符号名 —— 该行是历史裁定，不改写，仅在此记明。
+- 规则升级（承接 8/9 节）：注释引 083 符号前必须 `entity_query` 实证，符号名不存在即不得写入。
+- reopen `27 = 25 P1 + 1 W + 1 F-P2` 算术不动；168 条 DECISIONS 裁定不动（本轮只改注释依据）。

@@ -1,0 +1,190 @@
+void __thiscall CUserLocal::CheckPortal_Collision(double *this)
+{
+  int v1; // eax
+  CPortalList *v2; // esi
+  char *v3; // edi
+  __int64 v4; // rax
+  _DWORD *Portal_Collision; // eax
+  _DWORD *v6; // esi
+  int v7; // eax
+  unsigned __int16 *v8; // eax
+  int v9; // eax
+  int v10; // edi
+  int update_time; // eax
+  CUserLocal *v12; // ecx
+  int v13; // ecx
+  int v14; // eax
+  _BYTE *v15; // ecx
+  int v16; // ecx
+  int *v17; // ecx
+  int *v18; // ecx
+  int v19; // eax
+  int v20; // ecx
+  _DWORD *v21; // eax
+  int StringW; // eax
+  bool v23; // zf
+  int v24; // edx
+  int v25; // ecx
+  char *v26; // eax
+  int *v27; // ecx
+  int field; // eax
+  int v29; // edx
+  _DWORD *Instance; // eax
+  wchar_t *v31; // eax
+  _DWORD *v32; // eax
+  wchar_t *v33; // eax
+  wchar_t *v34; // [esp-Ch] [ebp-54h]
+  BOOL v35; // [esp-8h] [ebp-50h]
+  int v36; // [esp-4h] [ebp-4Ch] BYREF
+  int v37; // [esp+0h] [ebp-48h]
+  int *v38; // [esp+4h] [ebp-44h]
+  int *v39; // [esp+8h] [ebp-40h] BYREF
+  char **v40[4]; // [esp+Ch] [ebp-3Ch] BYREF
+  int v41; // [esp+1Ch] [ebp-2Ch] BYREF
+  _BYTE v42[12]; // [esp+20h] [ebp-28h] BYREF
+  int *v43; // [esp+2Ch] [ebp-1Ch]
+  _BYTE v44[4]; // [esp+30h] [ebp-18h] BYREF
+  int v45; // [esp+34h] [ebp-14h] BYREF
+  CUserLocal *v46; // [esp+38h] [ebp-10h]
+  int v47; // [esp+44h] [ebp-4h]
+
+  v1 = *(this + 1); /*0x94dad3*/
+  v2 = dword_BED768; /*0x94dad8*/
+  v3 = this + 4; /*0x94dadf*/
+  v46 = this; /*0x94dae2*/
+  v40[0] = *((*(v1 + 16))(a1: this + 4) + 4); /*0x94daea*/
+  v4 = (*(*v3 + 16))(a1: v3); /*0x94daf1*/
+  Portal_Collision = CPortalList::FindPortal_Collision(this: v2, a2: SHIDWORD(v4), a3: *v4, a4: v40[0]); /*0x94daf8*/
+  v6 = Portal_Collision; /*0x94dafd*/
+  if ( Portal_Collision == 0 ) /*0x94db03*/
+    return; /*0x94db03*/
+  v7 = Portal_Collision[2]; /*0x94db09*/
+  if ( v7 == 9 ) /*0x94db0f*/
+  {
+    if ( CWvsContext::CanSendExclRequest(this: *dword_BE7918, a2: v6[11], a3: 0) /*0x94db3c*/
+      && (v6[10] == 0 || *v6 != *(v46 + 3181)) )
+    {
+      COutPacket::COutPacket(a1: 100); /*0x94db47*/
+      v47 = 0; /*0x94db4c*/
+      LOBYTE(v45) = *(get_field() + 308); /*0x94db5a*/
+      COutPacket::Encode1(this: &v41, a2: v45); /*0x94db63*/
+      v45 = v40; /*0x94db6e*/
+      v40[0] = 0; /*0x94db72*/
+      ZXString<char>::operator=(a1: v6 + 1); /*0x94db74*/
+      COutPacket::EncodeStr(this: &v41, a2: v40[0]); /*0x94db7c*/
+      v8 = (*(*v3 + 16))(a1: v3); /*0x94db85*/
+      COutPacket::Encode2(this: &v41, a2: *v8); /*0x94db8f*/
+      v9 = (*(*v3 + 16))(a1: v3); /*0x94db98*/
+      COutPacket::Encode2(this: &v41, a2: *(v9 + 4)); /*0x94dba3*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v41); /*0x94dbb2*/
+      v10 = *dword_BE7918; /*0x94dbb7*/
+      *(*dword_BE7918 + 8356) = 1; /*0x94dbbd*/
+      update_time = get_update_time(); /*0x94dbc7*/
+      v12 = v46; /*0x94dbcc*/
+      v47 = -1; /*0x94dbcf*/
+      *(v10 + 8360) = update_time; /*0x94dbd3*/
+      *(v12 + 3181) = *v6; /*0x94dbdb*/
+      ZArray<unsigned char>::RemoveAll(a1: v42); /*0x94dbe4*/
+    }
+    return; /*0x94dbe9*/
+  }
+  if ( v7 == 12 ) /*0x94dbf1*/
+  {
+    sub_94DE22(this: v46); /*0x94dbf6*/
+    return; /*0x94dbfb*/
+  }
+  if ( v7 != 13 ) /*0x94dc03*/
+  {
+    if ( v6[7] == 999999999 ) /*0x94dd65*/
+      return; /*0x94dd65*/
+    field = get_field(); /*0x94dd6b*/
+    if ( TSecType<unsigned long>::GetData(a1: field + 312) == v6[7] ) /*0x94dd80*/
+    {
+      if ( CUserLocal::TryRegisterTeleport( /*0x94dd98*/
+             a1: v46,
+             a2: v29,
+             pSkill: 0,
+             nSLV: 0,
+             sPortalName: v6[1],
+             sTargetPortalName: v6[8],
+             bForced: 1) == 0 )
+        return; /*0x94dd98*/
+      Instance = StringPool::GetInstance(); /*0x94dda3*/
+      v31 = *StringPool::GetStringW(this: Instance, a2: &v45, a3: SP_5562_PORTAL); /*0x94ddaf*/
+      v47 = 6; /*0x94ddb4*/
+      play_game_sound(a1: v31, a2: 100); /*0x94ddbb*/
+      v47 = -1; /*0x94ddc0*/
+      v27 = &v45; /*0x94ddc6*/
+    }
+    else
+    {
+      if ( CField::SendTransferFieldRequest(a1: -1, a2: v6[1], a3: 0, a4: 0, a5: 0) == 0 ) /*0x94dddd*/
+        return; /*0x94dddd*/
+      v32 = StringPool::GetInstance(); /*0x94dde8*/
+      v33 = *StringPool::GetStringW(this: v32, a2: v44, a3: SP_5562_PORTAL); /*0x94ddf4*/
+      v47 = 7; /*0x94ddf9*/
+      play_game_sound(a1: v33, a2: 100); /*0x94de00*/
+      v47 = -1; /*0x94de05*/
+      v27 = v44; /*0x94de0b*/
+    }
+    goto LABEL_29; /*0x94ddc9*/
+  }
+  v13 = get_field(); /*0x94dc0e*/
+  v45 = v13; /*0x94dc12*/
+  if ( v13 != 0 ) /*0x94dc15*/
+  {
+    v14 = (*(*v13 + 28))(a1: v13); /*0x94dc19*/
+    v13 = v45; /*0x94dc1c*/
+  }
+  else
+  {
+    v14 = 0; /*0x94dc21*/
+  }
+  if ( v14 == 19 || v14 == 20 || v14 == 21 || v14 == 25 || TSecType<unsigned long>::GetData(a1: v13 + 312) == 180000002 )
+  {
+    v15 = v6[15]; /*0x94dc4d*/
+    if ( v15 == 0
+      || *v15 == 0
+      || (v45 = v40,
+          v40[0] = 0,
+          ZXString<char>::operator=(a1: v6 + 15),
+          v47 = -1,
+          sub_9614D6(),
+          sub_735D13(a1: v40[0]) == 1) )
+    {
+      v16 = *(v46 + 1129); /*0x94dc85*/
+      if ( *(v16 != 0 ? v16 - 12 + 0x110 : 272) != 0 )
+      {
+        CVecCtrl::SetMovePathAttribute(this: v16 != 0 ? (v16 - 12) : 0, a2: 19);
+        v17 = *(v46 + 1129); /*0x94dcb5*/
+        v45 = -v6[13]; /*0x94dcc2*/
+        v38 = v17; /*0x94dcce*/
+        sub_7A6353(this: v17 != 0 ? (v17 - 3) : 0, a2: v6[14], a3: v45);
+        v40[0] = -1073343324; /*0x94dce1*/
+        v39 = v18; /*0x94dce6*/
+        v46 = &v39; /*0x94dce9*/
+        sub_432C10(a1: 0); /*0x94dced*/
+        v19 = *v3; /*0x94dcf2*/
+        v47 = 2; /*0x94dcf6*/
+        v38 = *((*(v19 + 16))(a1: v3) + 4); /*0x94dd00*/
+        v37 = *(*(*v3 + 16))(a1: v3); /*0x94dd0a*/
+        v36 = v20; /*0x94dd0c*/
+        v43 = &v36; /*0x94dd0f*/
+        sub_432BDD(a1: 0); /*0x94dd13*/
+        LOBYTE(v47) = 3; /*0x94dd21*/
+        v21 = StringPool::GetInstance(); /*0x94dd25*/
+        StringW = StringPool::GetStringW(this: v21, a2: &v45, a3: SP_2731_EFFECT_BASICEFFIMG_VERTICALJUMP); /*0x94dd2c*/
+        v23 = v6[14] == 0; /*0x94dd33*/
+        LOBYTE(v47) = 5; /*0x94dd36*/
+        v35 = !v23; /*0x94dd3d*/
+        v34 = sub_41468C(a1: StringW); /*0x94dd45*/
+        v26 = sub_432CBC(a1: v25, a2: v24); /*0x94dd46*/
+        CAnimationDisplayer::Effect_General(this: v26, a2: v34, a3: v35, a4: v36, a5: v37, a6: v38, a7: v39, a8: v40[0]); /*0x94dd4d*/
+        v47 = -1; /*0x94dd52*/
+        v27 = &v45; /*0x94dd56*/
+LABEL_29:
+        ZXString<unsigned short>::_Release(a1: v27); /*0x94de0e*/
+      }
+    }
+  }
+}

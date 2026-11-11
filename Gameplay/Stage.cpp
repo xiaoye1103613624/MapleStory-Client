@@ -281,7 +281,7 @@ namespace ms
 			// 普通门（REGULAR/SCRIPTED/HIDDEN…）原生要求按上键，见下一个分支。
 			check_portals(MapPortals::PortalScope::TOUCH_ONLY);
 
-			// 其余传送门：按上键主动交互（对齐 v95 CPortal::CheckKey）
+			// 其余传送门：按上键主动交互（083 依据：`CPortalList::FindPortal @0x712ab1` 按键通道命中框 = 水平 ±range / 垂直固定 ±50 band；旧注释「v95 CPortal::CheckKey」在 083 全库无此符号，属依据链污染，见 `tools/_ida_r93/portal_family.json`）
 			if (player.is_key_down(KeyAction::Id::UP))
 				check_portals(MapPortals::PortalScope::ALL);
 

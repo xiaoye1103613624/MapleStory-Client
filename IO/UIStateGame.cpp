@@ -529,7 +529,7 @@ namespace ms
 							}
 							case KeyAction::Id::EVENT:
 							{
-								// 095 自定义中文 UI：暂时复用 EVENT 键打开福利中心（后续补独立 SPECIAL 键位 + 服务端 keymap）。
+								// 本端扩展（E 桶）：福利中心（签到/兑换/排行/转职/传送）非 083 原生窗族 —— 083 活 IDB 全库 `*UISpecial*` / `*Fairy*` / `*Welfare*` / `*CheckIn*` / `*Attendance*` 符号命中均为 0（`tools/_ida_r93/special_family.json`），故按 m09729「扩展功能可以不对齐」保留且不改行为；暂时复用 EVENT 键打开（后续若补独立键位须同步服务端 keymap）。旧注释写「095 自定义中文 UI」属依据链污染，round93 按 083 零命中改判本端扩展身份。
 								emplace<UISpecial>();
 								break;
 							}

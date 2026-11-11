@@ -1,0 +1,38 @@
+{
+  "*Special*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[{\"kind\":\"function\",\"addr\":\"0x411256\",\"name\":\"?GetSpecialUOL@SKILLENTRY@@QBE?AVZtl_bstr_t@@J"
+    ]
+  },
+  "*UISpecial*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[],\"next_offset\":null,\"total\":0,\"error\":null}]"
+    ]
+  },
+  "*Fairy*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[],\"next_offset\":null,\"total\":0,\"error\":null}]"
+    ]
+  },
+  "*Welfare*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[],\"next_offset\":null,\"total\":0,\"error\":null}]"
+    ]
+  },
+  "*CheckIn*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[],\"next_offset\":null,\"total\":0,\"error\":null}]"
+    ]
+  },
+  "*Attendance*": {
+    "total": "?",
+    "sample": [
+      "[{\"kind\":\"functions\",\"data\":[],\"next_offset\":null,\"total\":0,\"error\":null}]"
+    ]
+  }
+}

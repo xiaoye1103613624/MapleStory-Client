@@ -1,0 +1,86 @@
+{
+  "round": "round93",
+  "date": "2026-11-11",
+  "trigger": "m11680 还有未完成/待拍板/未自测的事项 -> 自测推进 reopen 唯一可自测项 activity-minigame/D1 并扩展同类",
+  "scope": "comment_only_citation_fix",
+  "zero_source_behavior": true,
+  "zero_change_note": "5 处纯注释改写；零 wire / 零协议 / 零 WZ / 零新封包 / 零行为字面量",
+  "patches": [
+    {
+      "path": "IO/UIStateGame.cpp",
+      "action": "already",
+      "sha12": "e66dc1321f12"
+    },
+    {
+      "path": "IO/UITypes/UISpecial.h",
+      "action": "already",
+      "sha12": "1d1e27af8f17"
+    },
+    {
+      "path": "Gameplay/MapleMap/MapPortals.h",
+      "action": "already",
+      "sha12": "2c687709dc3c"
+    },
+    {
+      "path": "Gameplay/MapleMap/MapPortals.cpp",
+      "action": "already",
+      "sha12": "44da3f73a047"
+    },
+    {
+      "path": "Gameplay/Stage.cpp",
+      "action": "applied",
+      "sha12": "bf8442da4477"
+    }
+  ],
+  "ida_evidence": {
+    "special_family": {
+      "file": "tools/_ida_r93/special_family.json",
+      "queries": {
+        "*Special*": "1 (GetSpecialUOL@SKILLENTRY, 技能 UOL 非窗类)",
+        "*UISpecial*": 0,
+        "*Fairy*": 0,
+        "*Welfare*": 0,
+        "*CheckIn*": 0,
+        "*Attendance*": 0
+      },
+      "verdict": "083 无福利中心窗族 -> 本端扩展 E 桶"
+    },
+    "portal_family": {
+      "file": "tools/_ida_r93/portal_family.json",
+      "queries": {
+        "*CPortal@@*": 0,
+        "*CPortal::*": 0,
+        "*Portal*": 11
+      },
+      "real_anchors": {
+        "CPortalList::FindPortal @0x712ab1": "按键通道：dword_BF040C(a1: v9, a2: v7[3]-a5, a3: v7[4]-50, a4: v7[3]+a5, a5: v7[4]+50)，水平 +-range、垂直固定 +-50",
+        "CPortalList::FindPortal_Collision @0x712b61": "碰触通道：dword_BF040C(a1: v7, a2: v5[3]-v5[5]/2, a3: v5[4]-v5[6]/2, a4: v5[3]+v5[5]/2, a5: v5[4]+v5[6]/2)",
+        "CUserLocal::CheckPortal_Collision @0x94dac6": "size 0x35c=860B；按 v7[2] type 分派：9 -> COutPacket(100) 脚本门 Encode1(field)+EncodeStr+Encode2(x)+Encode2(y)；12 -> sub_94DE22；其余 -> CField::SendTransferFieldRequest 或 TryRegisterTeleport"
+      },
+      "decompiled": [
+        "tools/_ida_r93/CUserLocal_CheckPortal_Collision.code.txt (190 行)",
+        "tools/_ida_r93/CPortalList_FindPortal.code.txt (32 行)",
+        "tools/_ida_r93/CPortalList_FindPortal_Collision.code.txt (27 行)"
+      ],
+      "verdict": "旧注释引用 CPortal::CheckKey / ProcessPortal 在 083 全库不存在 -> 依据链错，换真锚点"
+    }
+  },
+  "decision_points": {
+    "portal_type_dispatch": "是否把 083 CheckPortal_Collision 的 type 分派搬进本端 MapPortals::find_warp_at？本轮判不搬：本端 PortalScope（TOUCH_ONLY/ALL）是等价抽象，搬会改触发时机 -> 行为级，另立决策点",
+    "decisions_130": "DECISIONS.md:130 写引 Angel 083 CPortal 同属符号名错误；该行是历史裁定不改写，仅在 notes/WLE 10 节记明"
+  },
+  "arithmetic_unchanged": {
+    "decisions_rows": 168,
+    "wle_section4": "W 38 + L 130 = 168",
+    "reopen": "27 = 25 P1 + 1 W + 1 F-P2",
+    "note": "本轮只改注释依据，不动任何裁定与算术"
+  },
+  "constraints": [
+    "083/v83 only，禁 095 依据",
+    "门禁 5 禁想象修改：不把不存在的 083 符号写进注释",
+    "门禁 18 REA->IDA->orange-wz->.nx 只读取证",
+    "W 桶 6 字段宽度/类型 + 27 条 wire KEEP 零改动",
+    "注释引 083 符号前必须 entity_query 实证"
+  ],
+  "live_backlog": "真机五屏 60 节/142 处由用户认领；InPacket::available() 393 处 27-A 逐面回归待真机"
+}

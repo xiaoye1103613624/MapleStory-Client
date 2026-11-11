@@ -1,0 +1,27 @@
+_DWORD *__fastcall CPortalList::FindPortal_Collision(CPortalList *this, int a2, int a3, int a4)
+{
+  int v4; // eax
+  _DWORD *v5; // esi
+  _DWORD v7[4]; // [esp+0h] [ebp-18h] BYREF
+  CPortalList *v8; // [esp+10h] [ebp-8h]
+  int v9; // [esp+14h] [ebp-4h]
+
+  v4 = *(this + 2); /*0x712b67*/
+  v8 = this; /*0x712b6c*/
+  if ( v4 != 0 ) /*0x712b6f*/
+    v4 = *(v4 - 4); /*0x712b71*/
+  v9 = v4 - 1; /*0x712b7a*/
+  if ( v4 - 1 < 0 ) /*0x712b7d*/
+    return 0; /*0x712bd7*/
+  while ( 1 ) /*0x712b8a*/
+  {
+    v5 = *(*(this + 2) + 8 * v9 + 4); /*0x712b8a*/
+    dword_BF040C(a1: v7, a2: v5[3] - v5[5] / 2, a3: v5[4] - v5[6] / 2, a4: v5[3] + v5[5] / 2, a5: v5[4] + v5[6] / 2); /*0x712bb8*/
+    if ( dword_BF0484(a1: v7, a2: a3, a3: a4) != 0 ) /*0x712bd0*/
+      break; /*0x712bd0*/
+    if ( --v9 < 0 ) /*0x712bd5*/
+      return 0; /*0x712bd5*/
+    this = v8; /*0x712b81*/
+  }
+  return v5; /*0x712bdc*/
+}

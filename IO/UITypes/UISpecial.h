@@ -6,7 +6,8 @@
 
 namespace ms
 {
-	// 095 自定义中文 UI 入口：福利中心（签到/兑换/排行/转职/传送）。
+	// 本端扩展（E 桶）入口：福利中心（签到/兑换/排行/转职/传送）。
+	// 083 活 IDB 全库 `*UISpecial*` / `*Fairy*` / `*Welfare*` / `*CheckIn*` / `*Attendance*` 符号命中均为 0（`tools/_ida_r93/special_family.json`），非 083 原生窗族；按 m09729「扩展功能可以不对齐」保留，零行为改动。旧注释「095 自定义中文 UI」= 依据链污染。
 	// 当前以程序化背板兜底（R6 精简 img 无 Special 背景时仍能开窗口），后续补充 Special.img 资产。
 	class UISpecial : public UIElement
 	{
