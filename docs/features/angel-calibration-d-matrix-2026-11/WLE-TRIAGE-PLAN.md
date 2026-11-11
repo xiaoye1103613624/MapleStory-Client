@@ -273,3 +273,37 @@ round92 `corewindow/D9`+`skill/D12`+`login-flow/D9`+`statusbar-hud/D12`；round9
 
 round94 把 P3 16 条判为「保持现状」，用户 m12009 推翻该判定 → 转为
 `P3-ANGEL-REBUILD-PLAN.md` 的 A/B/C 三批重做，四证齐全才实施。算术不变。
+
+## 13. round96：P3 A 批前 3 条（D12 / D11 / D10）
+
+用户 m12009 把 P3 16 条从「保持现状」改为「按 083 全部重做」。本轮先做 A 批前 3 条。
+
+### 13.1 `login-flow/D12` 登录 stats 段逐字节核对（`DOC_ONLY`）
+
+新增 `docs/features/angel-calibration-d-matrix-2026-11/BYTE-LEVEL-STATS.md`：26 个字段的
+s9 写方 / 当前端读方 / 083 `Decode` 三维对照。结论：逐字段宽度一致；与 083 的 3 处差异
+（`level 1B→2B`、`exp 8B→4B + tail4`、`gachaexp`）全部是 s9 有意改造（W 桶），保持不动。
+
+### 13.2 `skill/D11` BT_HYPER / GUILDSKILL / RIDE（083 不存在该三钮）
+
+- `UIWindow.img/Skill` 直接子节点（orange-wz 128B 实测）：`backgrnd / skill0 / skill1 / line /
+  BtSpUp / Tab / tip0..tip2 / CoolTime / recommend` —— **无 `main`**，故 `main/BtHyper` 等不存在。
+- 083 `CUISkill::OnCreate @0x8aaa88` 创建的按钮：`id 2010..2013`（x=119/159/199/239，y=131，
+  步进 40）、`id 2023`（x=120, y=265）、页签 `2000/2001`。
+- 全库 `*Hyper*` / `*GuildSkill*` 符号命中 0。
+- 判定：三钮是**非 083 扩展**。按 m09729「扩展功能可以不对齐」保留为显式占位 + DISABLED，
+  不删枚举（`send_key` switch 与索引耦合），不发明 083 行为。代码侧为纯注释。
+
+### 13.3 `corewindow/D10` `CWorldMapDlg` 尺寸（083 硬编码 666×524 已坐实）
+
+- 083 `CDialog::CreateDlg(this, 67, 0, 666, 524, 10, 1, 0)`（`CreateWorldMapDlg @0x9eb366:139`）
+  → 外层 **666×524**；`OnCreate @0x9eb75b` 里 `sub_9ECC4A(12, 34, 642, 472)` → 内容区
+  `(12, 34) 642×472`；`WorldMap` 直接子节点只有 `title` + `Border{0..7}`。
+- 当前端 `UIWorldMap` 由 `Border` 件尺寸推导：`content 640×470` + `top 33 / bot 18 / side 7`
+  → 外框 **654×521**，内容左上 `(7, 33)`。
+- 差 **12×3**（`666-654` / `524-521`），来源是 083 把外框尺寸硬编码（含 12px 内边距），
+  本端按贴图件推导。两者 `Border` 件实测一致（`0=60×33 / 1=1×33 / 2=7×32 / 3=7×1 /
+  4=7×1 / 5=7×18 / 6=1×18 / 7=7×18`）。
+- 判定：**不做几何改动**（改外框会在贴图内侧留 5px 空隙，属视觉破坏；且 `DECISIONS.md:101`
+  的 `BATCH_0_BASELINE` 理由是 s9 布局优先）。改为在代码侧写清 083 硬编码值与差值来源，
+  真机对齐记 PLT §55-3。

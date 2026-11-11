@@ -1,0 +1,302 @@
+int __thiscall CWorldMapDlg::Draw(CWorldMapDlg *this, struct tagRECT *a2)
+{
+  CWorldMapDlg *v2; // ebx
+  LONG left; // ecx
+  int v4; // eax
+  int v5; // eax
+  LONG v6; // ecx
+  int v7; // eax
+  int v8; // eax
+  _DWORD *Instance; // eax
+  void *v10; // eax
+  _DWORD *Property; // eax
+  int Item; // eax
+  int unknown; // eax
+  int v14; // eax
+  int v15; // eax
+  int v16; // ecx
+  _DWORD *v17; // eax
+  void *v18; // eax
+  _DWORD *v19; // eax
+  int v20; // eax
+  int v21; // eax
+  int v22; // eax
+  int v23; // esi
+  const struct tagRECT *v24; // edi
+  int v25; // ebx
+  int v26; // ebx
+  int v27; // esi
+  IWzCanvas *v28; // esi
+  LONG v29; // eax
+  int v30; // eax
+  int v31; // eax
+  int v32; // eax
+  _DWORD *v33; // esi
+  const struct tagRECT *v34; // edi
+  int v35; // ebx
+  int v36; // eax
+  int v37; // eax
+  int v38; // eax
+  int v39; // eax
+  int v40; // ecx
+  _DWORD *v41; // eax
+  void *v42; // eax
+  _DWORD *v43; // eax
+  int v44; // eax
+  int v45; // eax
+  int v46; // eax
+  int v47; // edi
+  int v48; // eax
+  int v49; // edi
+  int v50; // eax
+  int v51; // eax
+  int v53; // [esp-10h] [ebp-70h]
+  int v54; // [esp-Ch] [ebp-6Ch]
+  int v55; // [esp-8h] [ebp-68h]
+  int v56[4]; // [esp-4h] [ebp-64h] BYREF
+  VARIANTARG pvargDest; // [esp+Ch] [ebp-54h] BYREF
+  VARIANTARG pvarg; // [esp+1Ch] [ebp-44h] BYREF
+  IWzCanvas *v59; // [esp+2Ch] [ebp-34h] BYREF
+  IWzCanvas *v60; // [esp+30h] [ebp-30h] BYREF
+  int *v61; // [esp+34h] [ebp-2Ch] BYREF
+  _BYTE v62[4]; // [esp+38h] [ebp-28h] BYREF
+  CWorldMapDlg *v63; // [esp+3Ch] [ebp-24h]
+  const struct tagRECT *v64; // [esp+40h] [ebp-20h] BYREF
+  IWzCanvas *v65; // [esp+44h] [ebp-1Ch] BYREF
+  int v66; // [esp+48h] [ebp-18h] BYREF
+  IWzCanvas *v67; // [esp+4Ch] [ebp-14h] BYREF
+  IWzCanvas *v68; // [esp+50h] [ebp-10h] BYREF
+  int v69; // [esp+5Ch] [ebp-4h]
+
+  v2 = this; /*0x9eb9d9*/
+  v63 = this; /*0x9eb9db*/
+  CWnd::Draw(this, a2); /*0x9eb9de*/
+  CWnd::GetCanvas(a1: &a2); /*0x9eb9e9*/
+  v69 = 0; /*0x9eb9ee*/
+  sub_402FAB(a1: 255, a2: 3); /*0x9eb9fc*/
+  v64 = *(v2 + 363); /*0x9eba07*/
+  LOBYTE(v69) = 1; /*0x9eba0f*/
+  if ( a2 == 0 ) /*0x9eba13*/
+    _com_issue_error(a1: -2147467261); /*0x9eba1a*/
+  left = a2->left; /*0x9eba22*/
+  v65 = a2; /*0x9eba37*/
+  v4 = (*(left + 128))( /*0x9eba3b*/
+         a1: a2,
+         a2: 13,
+         a3: 35,
+         a4: v64,
+         a5: *&pvarg.vt,
+         a6: pvarg.decVal.Hi32,
+         a7: pvarg.lVal,
+         a8: pvarg.cyVal.Hi);
+  if ( v4 < 0 ) /*0x9eba43*/
+    _com_issue_errorex(a1: v4, a2: v65, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x9eba4e*/
+  LOBYTE(v69) = 0; /*0x9eba53*/
+  v5 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9eba5b*/
+  if ( v5 < 0 ) /*0x9eba63*/
+    _com_issue_error(a1: v5); /*0x9eba66*/
+  sub_402FAB(a1: 255, a2: 3); /*0x9eba75*/
+  v64 = *(v2 + 364); /*0x9eba80*/
+  LOBYTE(v69) = 2; /*0x9eba88*/
+  if ( a2 == 0 ) /*0x9eba8c*/
+    _com_issue_error(a1: -2147467261); /*0x9eba93*/
+  v6 = a2->left; /*0x9eba9b*/
+  v65 = a2; /*0x9ebab0*/
+  v7 = (*(v6 + 128))( /*0x9ebab4*/
+         a1: a2,
+         a2: 8,
+         a3: 10,
+         a4: v64,
+         a5: *&pvarg.vt,
+         a6: pvarg.decVal.Hi32,
+         a7: pvarg.lVal,
+         a8: pvarg.cyVal.Hi);
+  if ( v7 < 0 ) /*0x9ebabe*/
+    _com_issue_errorex(a1: v7, a2: v65, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x9ebac9*/
+  LOBYTE(v69) = 0; /*0x9ebace*/
+  v8 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9ebad6*/
+  if ( v8 < 0 ) /*0x9ebade*/
+    _com_issue_error(a1: v8); /*0x9ebae1*/
+  v59 = v56; /*0x9ebae9*/
+  Instance = StringPool::GetInstance(); /*0x9ebaf3*/
+  StringPool::GetBSTR(this: Instance, a2: v56, a3: SP_959_ORIGIN); /*0x9ebafa*/
+  LOBYTE(v69) = 3; /*0x9ebb09*/
+  v10 = sub_414576(a1: v2 + 1452); /*0x9ebb0d*/
+  Property = IWzCanvas::GetProperty(this: v10, a2: &v65); /*0x9ebb14*/
+  LOBYTE(v69) = 5; /*0x9ebb1f*/
+  sub_40263B(a1: Property); /*0x9ebb23*/
+  Item = IWzProperty::GetItem(pvargDest: &pvarg, a2: v56[0]); /*0x9ebb2a*/
+  LOBYTE(v69) = 6; /*0x9ebb34*/
+  unknown = get_unknown(a1: &v64, a2: Item); /*0x9ebb38*/
+  LOBYTE(v69) = 7; /*0x9ebb43*/
+  sub_41A4AF(a1: unknown); /*0x9ebb47*/
+  sub_4027B1(a1: &v64); /*0x9ebb4f*/
+  LOBYTE(v69) = 10; /*0x9ebb58*/
+  v14 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9ebb5c*/
+  if ( v14 < 0 ) /*0x9ebb64*/
+    _com_issue_error(a1: v14); /*0x9ebb67*/
+  sub_4027E9(a1: &v65); /*0x9ebb6f*/
+  v15 = *(v2 + 361); /*0x9ebb74*/
+  if ( v15 != -1 ) /*0x9ebb7d*/
+  {
+    v65 = *(*(v2 + 367) + 12 * v15 + 8); /*0x9ebb95*/
+    sub_4156B8(this: &v65); /*0x9ebb98*/
+    v56[0] = v16; /*0x9ebb9d*/
+    v59 = v56; /*0x9ebba0*/
+    LOBYTE(v69) = 12; /*0x9ebba5*/
+    v17 = StringPool::GetInstance(); /*0x9ebba9*/
+    StringPool::GetBSTR(this: v17, a2: v56, a3: SP_959_ORIGIN); /*0x9ebbb0*/
+    LOBYTE(v69) = 13; /*0x9ebbbc*/
+    v18 = sub_414576(a1: &v65); /*0x9ebbc0*/
+    v19 = IWzCanvas::GetProperty(this: v18, a2: &v61); /*0x9ebbc7*/
+    LOBYTE(v69) = 15; /*0x9ebbd2*/
+    sub_40263B(a1: v19); /*0x9ebbd6*/
+    v20 = IWzProperty::GetItem(&pvargDest, a2: v56[0]); /*0x9ebbdd*/
+    LOBYTE(v69) = 16; /*0x9ebbe7*/
+    v21 = get_unknown(a1: v62, a2: v20); /*0x9ebbeb*/
+    LOBYTE(v69) = 17; /*0x9ebbf6*/
+    sub_41A4AF(a1: v21); /*0x9ebbfa*/
+    sub_4027B1(a1: v62); /*0x9ebc02*/
+    LOBYTE(v69) = 20; /*0x9ebc0b*/
+    v22 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x9ebc0f*/
+    if ( v22 < 0 ) /*0x9ebc17*/
+      _com_issue_error(a1: v22); /*0x9ebc1a*/
+    LOBYTE(v69) = 19; /*0x9ebc22*/
+    sub_4027E9(a1: &v61); /*0x9ebc26*/
+    sub_402FAB(a1: 255, a2: 3); /*0x9ebc35*/
+    LOBYTE(v69) = 22; /*0x9ebc3d*/
+    if ( v68 == 0 ) /*0x9ebc46*/
+      _com_issue_error(a1: -2147467261); /*0x9ebc49*/
+    if ( v66 == 0 ) /*0x9ebc51*/
+      _com_issue_error(a1: -2147467261); /*0x9ebc54*/
+    v60 = v68; /*0x9ebc6d*/
+    v23 = v66; /*0x9ebc7c*/
+    if ( a2 == 0 ) /*0x9ebc7f*/
+      _com_issue_error(a1: -2147467261); /*0x9ebc82*/
+    v24 = a2; /*0x9ebc87*/
+    v64 = a2; /*0x9ebc8f*/
+    v59 = v65; /*0x9ebc92*/
+    v25 = 35 - IWzShape2D::Gety(a1: v66); /*0x9ebca0*/
+    v26 = IWzShape2D::Gety(a1: v68) + v25; /*0x9ebca9*/
+    v27 = 13 - IWzShape2D::Getx(a1: v23); /*0x9ebcb6*/
+    v28 = (IWzShape2D::Getx(a1: v60) + v27); /*0x9ebcbd*/
+    v29 = v24->left; /*0x9ebcbf*/
+    v60 = v28; /*0x9ebcc4*/
+    v30 = (*(v29 + 128))( /*0x9ebcda*/
+            a1: v64,
+            a2: v28,
+            a3: v26,
+            a4: v59,
+            a5: *&pvarg.vt,
+            a6: pvarg.decVal.Hi32,
+            a7: pvarg.lVal,
+            a8: pvarg.cyVal.Hi);
+    if ( v30 < 0 ) /*0x9ebce2*/
+      _com_issue_errorex(a1: v30, a2: v64, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x9ebced*/
+    LOBYTE(v69) = 19; /*0x9ebcf6*/
+    v31 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9ebcfa*/
+    if ( v31 < 0 ) /*0x9ebd02*/
+      _com_issue_error(a1: v31); /*0x9ebd05*/
+    sub_41569E(a1: &v66); /*0x9ebd0d*/
+    sub_4156AB(a1: &v65); /*0x9ebd15*/
+    v2 = v63; /*0x9ebd1a*/
+  }
+  v67 = 0; /*0x9ebd1f*/
+  LOBYTE(v69) = 23; /*0x9ebd22*/
+  v65 = 0; /*0x9ebd26*/
+  v66 = 0; /*0x9ebd29*/
+  while ( 1 ) /*0x9ebd2c*/
+  {
+    v32 = *(v2 + 366); /*0x9ebd2c*/
+    if ( v32 == 0 || v65 >= *(v32 - 4) ) /*0x9ebd40*/
+      break; /*0x9ebd40*/
+    v33 = (v32 + v66); /*0x9ebd4f*/
+    sub_4051E5(a1: *(*(v2 + 365) + 4 * *(v32 + v66 + 8))); /*0x9ebd5d*/
+    sub_402FAB(a1: 255, a2: 3); /*0x9ebd6c*/
+    LOBYTE(v69) = 24; /*0x9ebd76*/
+    if ( v67 == 0 ) /*0x9ebd7f*/
+      _com_issue_error(a1: -2147467261); /*0x9ebd82*/
+    v59 = v67; /*0x9ebd98*/
+    if ( a2 == 0 ) /*0x9ebd9b*/
+      _com_issue_error(a1: -2147467261); /*0x9ebd9e*/
+    v34 = a2; /*0x9ebda3*/
+    v64 = a2; /*0x9ebda9*/
+    v60 = v67; /*0x9ebdac*/
+    v35 = v33[1] - IWzCanvas::Getcy(this: v67) + 35; /*0x9ebdbc*/
+    v36 = IWzCanvas::Getcx(this: v59); /*0x9ebdbf*/
+    v37 = (*(v34->left + 128))( /*0x9ebde3*/
+            a1: v64,
+            a2: *v33 - v36 + 13,
+            a3: v35,
+            a4: v60,
+            a5: *&pvarg.vt,
+            a6: pvarg.decVal.Hi32,
+            a7: pvarg.lVal,
+            a8: pvarg.cyVal.Hi);
+    if ( v37 < 0 ) /*0x9ebdeb*/
+      _com_issue_errorex(a1: v37, a2: v64, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x9ebdf6*/
+    LOBYTE(v69) = 23; /*0x9ebdff*/
+    v38 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9ebe03*/
+    if ( v38 < 0 ) /*0x9ebe0b*/
+      _com_issue_error(a1: v38); /*0x9ebe0e*/
+    v65 = (v65 + 1); /*0x9ebe13*/
+    v66 += 68; /*0x9ebe16*/
+    v2 = v63; /*0x9ebe1a*/
+  }
+  v39 = *(v2 + 362); /*0x9ebe24*/
+  if ( v39 != -1 ) /*0x9ebe2d*/
+  {
+    v66 = *(*(v2 + 366) + 68 * v39 + 40); /*0x9ebe42*/
+    sub_4156B8(this: &v66); /*0x9ebe45*/
+    LOBYTE(v69) = 25; /*0x9ebe4e*/
+    if ( sub_41458C(a1: 0) == 0 ) /*0x9ebe59*/
+    {
+      v56[0] = v40; /*0x9ebe5f*/
+      v61 = v56; /*0x9ebe62*/
+      v41 = StringPool::GetInstance(); /*0x9ebe6b*/
+      StringPool::GetBSTR(this: v41, a2: v56, a3: SP_959_ORIGIN); /*0x9ebe72*/
+      LOBYTE(v69) = 26; /*0x9ebe7e*/
+      v42 = sub_414576(a1: &v66); /*0x9ebe82*/
+      v43 = IWzCanvas::GetProperty(this: v42, a2: &v60); /*0x9ebe89*/
+      LOBYTE(v69) = 28; /*0x9ebe94*/
+      sub_40263B(a1: v43); /*0x9ebe98*/
+      v44 = IWzProperty::GetItem(&pvargDest, a2: v56[0]); /*0x9ebe9f*/
+      LOBYTE(v69) = 29; /*0x9ebea9*/
+      v45 = get_unknown(a1: &v59, a2: v44); /*0x9ebead*/
+      LOBYTE(v69) = 30; /*0x9ebeb8*/
+      sub_41A4AF(a1: v45); /*0x9ebebc*/
+      sub_4027B1(a1: &v59); /*0x9ebec4*/
+      LOBYTE(v69) = 33; /*0x9ebecd*/
+      v46 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x9ebed1*/
+      if ( v46 < 0 ) /*0x9ebed9*/
+        _com_issue_error(a1: v46); /*0x9ebedc*/
+      LOBYTE(v69) = 32; /*0x9ebee4*/
+      sub_4027E9(a1: &v60); /*0x9ebee8*/
+      sub_402FAB(a1: 255, a2: 3); /*0x9ebef7*/
+      LOBYTE(v69) = 35; /*0x9ebeff*/
+      if ( v68 == 0 ) /*0x9ebf03*/
+        _com_issue_error(a1: -2147467261); /*0x9ebf0a*/
+      if ( v65 == 0 ) /*0x9ebf12*/
+        _com_issue_error(a1: -2147467261); /*0x9ebf19*/
+      v56[0] = &pvarg; /*0x9ebf24*/
+      v55 = v66; /*0x9ebf25*/
+      v47 = 35 - IWzShape2D::Gety(a1: v65); /*0x9ebf33*/
+      v54 = IWzShape2D::Gety(a1: v68) + v47; /*0x9ebf3c*/
+      v48 = sub_432BFA(a1: &v65); /*0x9ebf40*/
+      v49 = 13 - IWzShape2D::Getx(a1: v48); /*0x9ebf52*/
+      v50 = sub_432BFA(a1: &v68); /*0x9ebf54*/
+      v53 = IWzShape2D::Getx(a1: v50) + v49; /*0x9ebf62*/
+      sub_414576(a1: &a2); /*0x9ebf66*/
+      sub_424BA7(a1: v53, a2: v54, a3: v55, a4: v56[0]); /*0x9ebf6d*/
+      LOBYTE(v69) = 32; /*0x9ebf76*/
+      v51 = ZComAPI::ZComVariantCopy(&pvarg); /*0x9ebf7a*/
+      if ( v51 < 0 ) /*0x9ebf82*/
+        _com_issue_error(a1: v51); /*0x9ebf85*/
+      sub_41569E(a1: &v65); /*0x9ebf8d*/
+    }
+    sub_4156AB(a1: &v66); /*0x9ebf95*/
+  }
+  sub_4156AB(a1: &v67); /*0x9ebf9d*/
+  sub_41569E(a1: &v68); /*0x9ebfa5*/
+  return sub_4156AB(a1: &a2); /*0x9ebfb2*/
+}

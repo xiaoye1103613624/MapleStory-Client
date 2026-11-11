@@ -1,0 +1,50 @@
+{
+ "0": {
+  "declared_w": 60,
+  "png_w": 60,
+  "png_h": 33,
+  "origin": {}
+ },
+ "1": {
+  "declared_w": 1,
+  "png_w": 1,
+  "png_h": 33,
+  "origin": {}
+ },
+ "2": {
+  "declared_w": 7,
+  "png_w": 7,
+  "png_h": 32,
+  "origin": {}
+ },
+ "3": {
+  "declared_w": 7,
+  "png_w": 7,
+  "png_h": 1,
+  "origin": {}
+ },
+ "4": {
+  "declared_w": 7,
+  "png_w": 7,
+  "png_h": 1,
+  "origin": {}
+ },
+ "5": {
+  "declared_w": 7,
+  "png_w": 7,
+  "png_h": 18,
+  "origin": {}
+ },
+ "6": {
+  "declared_w": 1,
+  "png_w": 1,
+  "png_h": 18,
+  "origin": {}
+ },
+ "7": {
+  "declared_w": 7,
+  "png_w": 7,
+  "png_h": 18,
+  "origin": {}
+ }
+}

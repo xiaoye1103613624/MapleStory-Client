@@ -1,0 +1,55 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+  "iv_b64": "TSPHKw==",
+  "key_b64_len": 172,
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY",
+  "queries": {
+    "Skill": {
+      "isError": false,
+      "text_len": 3120,
+      "head": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"line\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/line\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtSpUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/BtSpUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/Tab\",\"type\":\"LIST_PROPER"
+    },
+    "Skill/main": {
+      "isError": true,
+      "text_len": 83,
+      "head": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=Skill/main"
+    },
+    "Skill/main/BtHyper": {
+      "isError": true,
+      "text_len": 16,
+      "head": "未知的批量查询 op: find"
+    },
+    "Skill/main/BtGuildSkill": {
+      "isError": true,
+      "text_len": 16,
+      "head": "未知的批量查询 op: find"
+    },
+    "Skill/main/BtRide": {
+      "isError": true,
+      "text_len": 16,
+      "head": "未知的批量查询 op: find"
+    },
+    "WorldMap": {
+      "isError": false,
+      "text_len": 786,
+      "head": "{\"result\":{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"}]}"
+    },
+    "WorldMap/WorldMapSearch": {
+      "isError": true,
+      "text_len": 96,
+      "head": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=WorldMap/WorldMapSearch"
+    }
+  },
+  "verdict": "GATE_FAIL",
+  "errors": [
+    "Skill/main: 节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=Skill/main",
+    "Skill/main/BtHyper: 未知的批量查询 op: find",
+    "Skill/main/BtGuildSkill: 未知的批量查询 op: find",
+    "Skill/main/BtRide: 未知的批量查询 op: find",
+    "WorldMap/WorldMapSearch: 节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=WorldMap/WorldMapSearch"
+  ],
+  "init_ok": true,
+  "load_isError": false,
+  "load_text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}"
+}

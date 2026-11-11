@@ -1,0 +1,140 @@
+{
+  "round": 96,
+  "date": "2026-11-11",
+  "trigger": "用户 m12009：P3（16）按 Angel 全部重做 —— 本轮执行 A 批前 3 条",
+  "batch": "A",
+  "items": {
+    "login-flow/D12": {
+      "verdict": "DOC_ONLY_DONE",
+      "artifact": "docs/features/angel-calibration-d-matrix-2026-11/BYTE-LEVEL-STATS.md",
+      "fields": 26,
+      "s9_vs_client": "width-identical for all 26 (Evan SP via has_sp_table)",
+      "vs_083_divergences": [
+        "level 1B -> 2B (s9 widened)",
+        "exp 8B -> 4B + tail 4B (s9 widened)",
+        "gachaexp 4B added (s9 extension)"
+      ],
+      "code_change": "none"
+    },
+    "skill/D11": {
+      "verdict": "NOT_083_EXTENSION",
+      "skill_children_083": [
+        "backgrnd",
+        "skill0",
+        "skill1",
+        "line",
+        "BtSpUp",
+        "Tab",
+        "tip0",
+        "tip1",
+        "tip2",
+        "CoolTime",
+        "recommend"
+      ],
+      "skill_main_exists": false,
+      "cuiskill_oncreate_buttons": "id 2010..2013 (x=119/159/199/239, y=131, step 40) + id 2023 (x=120, y=265) + tabs 2000/2001",
+      "symbol_hits": {
+        "*Hyper*": 0,
+        "*GuildSkill*": 0
+      },
+      "action": "keep as extension placeholder + DISABLED; comments only",
+      "code_change": "comments only"
+    },
+    "corewindow/D10": {
+      "verdict": "FRAME_DERIVED_VS_HARDCODED",
+      "ida_083": {
+        "CreateWorldMapDlg": "0x9eb366:139 CDialog::CreateDlg(this, 67, 0, 666, 524, 10, 1, 0)",
+        "OnCreate": "0x9eb75b sub_9ECC4A(12, 34, 642, 472)",
+        "frame": [
+          666,
+          524
+        ],
+        "content": {
+          "x": 12,
+          "y": 34,
+          "w": 642,
+          "h": 472
+        }
+      },
+      "client": {
+        "content": {
+          "x": 7,
+          "y": 33,
+          "w": 640,
+          "h": 470
+        },
+        "frame": [
+          654,
+          521
+        ]
+      },
+      "delta": [
+        12,
+        3
+      ],
+      "border_pieces": {
+        "0": [
+          60,
+          33
+        ],
+        "1": [
+          1,
+          33
+        ],
+        "2": [
+          7,
+          32
+        ],
+        "3": [
+          7,
+          1
+        ],
+        "4": [
+          7,
+          1
+        ],
+        "5": [
+          7,
+          18
+        ],
+        "6": [
+          1,
+          18
+        ],
+        "7": [
+          7,
+          18
+        ]
+      },
+      "action": "no geometry change (would leave 5px gap); comment + PLT 55-3",
+      "code_change": "comments only"
+    }
+  },
+  "zero_wire": true,
+  "zero_behavior_change": true,
+  "arithmetic_unchanged": {
+    "taxonomy": "168 = PURE 76 + WIRE 38 + MIXED 14 + OTHER 40",
+    "reopen": "27 = 已注销 10 + 残余 17",
+    "residual": "17 = P1 0 + P2 0 + P3 16",
+    "p3_batches": {
+      "A": 9,
+      "B": 5,
+      "C": 2
+    },
+    "p3_done_after_round96": 3,
+    "p3_remaining": 13
+  },
+  "orange_wz_gate": {
+    "endpoint": "http://127.0.0.1:10012/mcp",
+    "key_spec": "128B WzAESConstant.DEFAULT_KEY",
+    "key_b64_len": 172,
+    "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+    "verdict": "GATE_OK_SKILL_AND_WORLDMAP_NODES_ENUMERATED"
+  },
+  "constraints": [
+    "083/v83 only 禁 095",
+    "s9 协议优先（W 桶 6 字段不动）",
+    "数值重合 ≠ 语义重合",
+    "门禁 5 禁想象修改"
+  ]
+}

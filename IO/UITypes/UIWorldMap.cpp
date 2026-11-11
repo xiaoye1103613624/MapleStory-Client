@@ -71,6 +71,19 @@ namespace ms
 
 		// 大地图窗框：Border{0..7} 拼九切片（件→边框映射与算式见 evidence/w11-map/coords.md）。
 		// 底图固定 640x470（WorldMap.img BaseImg），顶/底/侧带高宽从各 Border 件 WxH 推出。
+		//
+		// round96（P3 · corewindow/D10）083 对照：本端这套「由贴图件推导」与 083 的
+		// 「外框硬编码」差 12x3，来源已坐实——
+		//   083 `CWorldMapDlg::CreateWorldMapDlg @0x9eb366:139`
+		//        `CDialog::CreateDlg(this, a2: 67, a3: 0, a4: 666, a5: 524, a6: 10, a7: 1, a8: 0)`
+		//        → 外层 666x524；
+		//   083 `CWorldMapDlg::OnCreate @0x9eb75b`
+		//        `sub_9ECC4A(a1: 12, a2: 34, a3: 642, a4: 472)` → 内容区 (12,34) 642x472；
+		//   本端 Backgrnd 640x470 + top 33 / bot 18 / side 7 → 654x521，内容 (7,33)。
+		// 083 的 666 = 12 + 642 + 12、524 = 34 + 472 + 18，即两侧各留 12px 内边距；
+		// 而 Border/3..4 实测仅 7px 宽，照搬硬编码会让贴图与内容之间留 5px 空隙（视觉破坏）。
+		// 故本轮**不改几何**（`DECISIONS.md:101` 的 s9 布局优先口径不变），只把差值来源钉在这里；
+		// 真要改须连同九切片重排一起做，真机对齐项见 PLT §55-3。
 		const int16_t content_w = 640;
 		const int16_t content_h = 470;
 		const int16_t top_h = Texture(Border["0"]).height();   // 33

@@ -46,7 +46,7 @@
 
 ## 3. 执行顺序
 
-1. **批 A 前 3 条**（login-flow/D12、skill/D11、corewindow/D10）—— 证据全在库，直接出对照 + 补丁。
+1. ~~**批 A 前 3 条**（login-flow/D12、skill/D11、corewindow/D10）—— 证据全在库，直接出对照 + 补丁。~~ **round96 已完成**（见 §6）。
 2. 批 A 余 6 条 —— 每条补一个 IDA/IMG 探针后落。
 3. 批 B 5 条 —— 每条先出 083 反编译摘录，能证伪本端形态才动代码。
 4. 批 C 2 条 —— 重取证，预期维持，仅补文档。
@@ -59,5 +59,14 @@ reopen 27 = 已注销 10 + 残余 17 照旧；残余 17 = P1 0 + P2 1 + P3 16 �
 
 ## 5. 与 login-flow/D3 的关系
 
-`login-flow/D3` 原属残余 17 的 **P2（1 条）**，本轮已用 s9 源码直接对协议解掉（round95），
+`login-flow/D3` 原属残余 17 的 **P2（1 条）**，已在 round95 用 s9 源码直接对协议解掉，
 故 P2 归零、P3=16 不变，合计 17 仍闭合。
+## 6. round96 回执（A 批前 3 条）
+
+| 条 | 结果 | 产出 |
+| --- | --- | --- |
+| `login-flow/D12` | `DOC_ONLY` 完成 | `docs/features/angel-calibration-d-matrix-2026-11/BYTE-LEVEL-STATS.md`（26 字段三维对照） |
+| `skill/D11` | 定性：三钮**非 083** | `IO/UITypes/UISkillBook.cpp` 纯注释（083 `Skill` 无 `main`、`OnCreate` 按钮 id 实证） |
+| `corewindow/D10` | 定性：083 硬编码 666×524，本端 654×521 属贴图推导 | `IO/UITypes/UIWorldMap.cpp` 纯注释 + PLT §55-3 真机对齐 |
+
+三条均零 wire / 零行为改动；A 批余 6 条待续。

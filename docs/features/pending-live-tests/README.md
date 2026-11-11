@@ -1210,3 +1210,19 @@
 - **54-5** 限制：① 未抓包，协议事实取自 s9 源码（`PacketCreator.addCharStats` /
   `GameConstants.hasSPTable`）；② 多职业 SP 表内数值只消费不落库（不发明模型）；
   ③ W 桶 6 字段 + 27 条 wire KEEP 零改动。
+
+## 55. round96 · P3 A 批前 3 条（D12 / D11 / D10）
+
+- **55-1** `login-flow/D12` `DOC_ONLY` 完成：`docs/features/angel-calibration-d-matrix-2026-11/BYTE-LEVEL-STATS.md`
+  逐字段对照。真机待验：**非 Evan 与 Evan 角色各一个**，登录 → 选角 → 进图 → 换频道，
+  确认 stats 段不错位（等级 / SP / exp / 地图 id 四项即可判断）。
+- **55-2** `skill/D11` 定性：`BT_HYPER / BT_GUILDSKILL / BT_RIDE` 三钮**不属于 083**
+  （`Skill` 无 `main` 子节点；083 `CUISkill::OnCreate` 按钮 id 为 2010..2013 / 2023）。
+  当前端保留为扩展占位 + DISABLED。真机待验：技能窗打开后三钮不显示、不响应（预期）。
+- **55-3** `corewindow/D10`：083 外层硬编码 **666×524**、内容区 `(12,34) 642×472`；
+  本端按 `Border` 件推导 **654×521**、内容 `(7,33) 640×470`，差 12×3。
+  真机待验：世界地图窗运行时四周边框是否完整、内容是否贴边无空隙。
+  若观感有差，须连同 `Border` 九切片重排一起改，不单独挪尺寸。
+- **55-4** 三条均零 wire / 零行为改动；源码侧只有 `UISkillBook.cpp` 与 `UIWorldMap.cpp` 的注释。
+- **55-5** 限制：本轮未做 A 批余 6 条与 B/C 批；`DECISIONS.md:101/197/288` 的历史结论
+  保留原样，新口径写在 WLE §13 与 P3 Plan §6。

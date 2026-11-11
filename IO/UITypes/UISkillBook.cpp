@@ -167,6 +167,17 @@ namespace ms
 		skillb = main["skillBlank"] ? main["skillBlank"] : Skill["skillBlank"];
 		line = main["line"] ? main["line"] : Skill["line"];
 
+		// round96（P3 · skill/D11）083 取证结论：这三颗钮 **不属于 083**。
+		//  - 083 `UIWindow.img/Skill` 的直接子节点经 orange-wz 128B 门禁实测只有
+		//    `backgrnd / skill0 / skill1 / line / BtSpUp / Tab / tip0..tip2 / CoolTime / recommend`，
+		//    **没有 `main` 子节点**，因此也不存在 `main/BtHyper`、`main/BtGuildSkill`、`main/BtRide`；
+		//  - 083 `CUISkill::OnCreate @0x8aaa88` 里创建的按钮是
+		//    `id 2010..2013`（x=119/159/199/239，y=131，步进 40）、`id 2023`（x=120, y=265）
+		//    以及页签 `2000/2001`；全库 `*Hyper*` / `*GuildSkill*` 符号命中 0；
+		//  - 故 `classic = !usable(Skill["main"])` 在 083 恒为 true，这三行 `try_maple_btn`
+		//    在 083 包上恒为死代码（`Button::State::DISABLED` 也就无从谈起）。
+		// 按 m09729「扩展功能可以不对齐」：保留三行与 DISABLED 作为本端扩展的显式占位，
+		// 不删枚举（`send_key` switch 与索引耦合），但不为它们发明 083 行为。
 		try_maple_btn(buttons, Buttons::BT_HYPER, main["BtHyper"]);
 		try_maple_btn(buttons, Buttons::BT_GUILDSKILL, main["BtGuildSkill"]);
 		try_maple_btn(buttons, Buttons::BT_RIDE, main["BtRide"]);

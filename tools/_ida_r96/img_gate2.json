@@ -1,0 +1,54 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img",
+  "iv_b64": "TSPHKw==",
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY (orange-wz MCP path)",
+  "key_b64_len": 172,
+  "load_isError": false,
+  "role": "Skill/WorldMap 节点枚举 + 预期内否定结果分类（findings 而非 errors）",
+  "queries": {
+    "Skill": {
+      "isError": false,
+      "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"line\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/line\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtSpUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/BtSpUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"tip0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"CoolTime\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/CoolTime\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"recommend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/recommend\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"Skill\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"line\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/line\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtSpUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/BtSpUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"tip0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"CoolTime\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/CoolTime\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"recommend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/recommend\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"Skill\",\"op\":\"list_children\"}]}"
+    },
+    "WorldMap": {
+      "isError": false,
+      "text": "{\"result\":{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"}]}"
+    },
+    "Skill/main": {
+      "isError": true,
+      "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=Skill/main"
+    },
+    "WorldMap/WorldMapSearch": {
+      "isError": true,
+      "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img, nodePath=WorldMap/WorldMapSearch"
+    }
+  },
+  "children": {
+    "Skill": [
+      "backgrnd",
+      "skill0",
+      "skill1",
+      "line",
+      "BtSpUp",
+      "Tab",
+      "tip0",
+      "tip1",
+      "tip2",
+      "CoolTime",
+      "recommend"
+    ],
+    "WorldMap": [
+      "title",
+      "Border"
+    ]
+  },
+  "findings": [
+    "Skill/main 不存在 —— 083 Skill 无 main 子节点，故 main/BtHyper|BtGuildSkill|BtRide 恒空",
+    "WorldMap/WorldMapSearch 不存在 —— 本端 UIWorldMap 旧搜索轨引用它恒为空（已默认隐藏）",
+    "Skill 直接子节点 11 个且无 main：backgrnd / skill0 / skill1 / line / BtSpUp / Tab / tip0 / tip1 / tip2 / CoolTime / recommend",
+    "WorldMap 直接子节点 2 个：title / Border"
+  ],
+  "errors": [],
+  "verdict": "GATE_OK_128B_SKILL_NO_MAIN_WORLDMAP_TWO_NODES"
+}
