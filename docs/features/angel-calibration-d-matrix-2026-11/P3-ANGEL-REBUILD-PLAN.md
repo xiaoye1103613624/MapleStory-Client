@@ -41,15 +41,15 @@
 | 12 | B | `pet-summon/D2` | 两处字节丢弃 | 需补：083 `CDragon`/`CPet` Decode 反编译 | 证伪/证实后决定是否补读 |
 | 13 | B | `login-flow/D13` | CHARLIST 固定 15 槽 | 需补：083 `CLogin::SendSelectCharacter` / s9 `getCharList` 对拍 | 出槽数对照，改则只改本地槽数组 |
 | 14 | B | `social-economy/D9` | `UIFriendGroup`/公会徽章/MapleTV 三整族 | 需补：083 三族符号 + IMG 节点 | 出族级对照；缺资源则登记不发明 |
-| 15 | C | `corewindow/D2` | 083 原生 vs s9 冲突 | 已有：`DECISIONS.md` s9 联机优先 | 重取证后确认维持 s9 |
-| 16 | C | `quest/D5` | `UIQuestLog::send_key` | 已有：083 全库 `*Quest*OnKey*` / `*Quest*SendKey*` total 0 | 维持不补（无 083 依据即不发明） |
+| 15 | C | `corewindow/D2` | 083 原生 vs s9 冲突 | 已有：`DECISIONS.md` s9 联机优先 | 重取证后确认维持 s9 |（round99 `KEEP` 验证）
+| 16 | C | `quest/D5` | `UIQuestLog::send_key` | 已有：083 全库 `*Quest*OnKey*` / `*Quest*SendKey*` total 0 | 维持不补（无 083 依据即不发明） |（round99 `*quest*key*`=0 重查，不补）
 
 ## 3. 执行顺序
 
 1. ~~**批 A 前 3 条**（login-flow/D12、skill/D11、corewindow/D10）—— 证据全在库，直接出对照 + 补丁。~~ **round96 已完成**（见 §6）。
 2. ~~批 A 余 6 条 —— 每条补一个 IDA/IMG 探针后落。~~ **round97 已完成**（见 §7，六条全 DOC_ONLY）。
 3. 批 B 5 条 —— 每条先出 083 反编译摘录，能证伪本端形态才动代码。
-4. 批 C 2 条 —— 重取证，预期维持，仅补文档。
+4. ~~批 C 2 条 —— 重取证，预期维持，仅补文档。~~ **round99 已完成**（见 §9）。
 
 ## 4. 算术不变
 
@@ -92,3 +92,12 @@ reopen 27 = 已注销 10 + 残余 17 照旧；残余 17 = P1 0 + P2 1 + P3 16 �
 | 12 | `pet-summon/D2` | `LOCAL_TYPE` | wire 同宽（8B）；截断在本端 int32 三处；发包 int32 不动 |
 | 13 | `login-flow/D13` | `DOC_ONLY` | 槽数=尾部 int32 容量值，两端均按 charcount 循环 |
 | 14 | `social-economy/D9` | `三分` | FriendGroup 不做 / guildmark 登记 / MapleTV 壳已对齐 |
+
+## 9. round99 C 批回查
+
+| # | 决策点 | 判定 | 备注 |
+| --- | --- | --- | --- |
+| 15 | `corewindow/D2` | `KEEP` | 083 核心窗符号族全，仍守 s9 协议优先，不改回原生 |
+| 16 | `quest/D5` | `KEEP_CURRENT` | 083 全库 `*quest*key*`=0，当前端空 `send_key` stub 与 083 一致，不补 |
+
+P3 全部 16 条收口（A9 + B5 + C2）。详细对拍见 `P3-C-BATCH-MAPS.md`。
