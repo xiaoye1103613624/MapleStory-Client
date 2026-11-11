@@ -33,7 +33,7 @@ namespace ms
 		explicit operator bool() const;
 
 		// Returns the weapon attack increase when using this bullet.
-		int16_t get_watk() const;
+		int32_t get_watk() const;
 		// Returns the bullet animation.
 		const Animation& get_animation() const;
 		// Returns the general item data.
@@ -48,6 +48,6 @@ namespace ms
 		const ItemData& itemdata;
 
 		Animation bullet;
-		int16_t watk;
+		int32_t watk;
 	};
 }

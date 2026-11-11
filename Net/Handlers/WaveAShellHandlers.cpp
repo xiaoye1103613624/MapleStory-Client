@@ -2784,7 +2784,7 @@ namespace ms
 		{
 			if ((mask & (1u << i)) == 0)
 				continue;
-			int16_t v = recv.available() >= 2 ? recv.read_short() : 0;
+			int32_t v = recv.available() >= 2 ? recv.read_short() : 0;
 			if (bits == 0)
 				first = v;
 			++bits;
@@ -3214,7 +3214,7 @@ namespace ms
 			Player& player = Stage::get().get_player();
 			player.show_damage(dmg);
 			CharStats& st = player.get_stats();
-			uint16_t hp = st.get_stat(MapleStat::Id::HP);
+			int32_t hp = st.get_stat(MapleStat::Id::HP);
 			uint16_t nhp = hp > static_cast<uint16_t>(dmg)
 				? static_cast<uint16_t>(hp - static_cast<uint16_t>(dmg))
 				: 0;

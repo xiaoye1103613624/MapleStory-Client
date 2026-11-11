@@ -136,7 +136,7 @@ namespace ms
 		}
 	}
 
-	void CharStats::set_stat(MapleStat::Id stat, uint16_t value)
+	void CharStats::set_stat(MapleStat::Id stat, int32_t value)
 	{
 		basestats[stat] = value;
 	}
@@ -234,7 +234,7 @@ namespace ms
 		return get_buffdelta(EquipStat::Id::WATK) > 0 || get_buffdelta(EquipStat::Id::MAGIC) > 0;
 	}
 
-	uint16_t CharStats::get_stat(MapleStat::Id stat) const
+	int32_t CharStats::get_stat(MapleStat::Id stat) const
 	{
 		return basestats[stat];
 	}

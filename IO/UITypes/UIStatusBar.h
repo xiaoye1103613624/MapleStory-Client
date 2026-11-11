@@ -178,6 +178,7 @@ namespace ms
 		Texture menubackground[3];
 		OutlinedText namelabel;
 		mutable OutlinedText joblabel;	// 原生底栏：LV 芯片内「职业名」一行（draw 内刷新）
+		mutable OutlinedText classic_exp_text;	// 经典底栏 EXP 段：当前经验值（中文 亿/万 缩写，描边文字；位图字库无汉字且 3000 级长数字溢出段宽）
 		std::vector<Sprite> hpmp_sprites;
 
 		// W1：量规数值改画 StatusBar.img/number 位图字库（5x7 白数字 + 2x9 黄绿括号），

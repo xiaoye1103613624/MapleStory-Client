@@ -139,6 +139,19 @@ namespace ms
 			// 实际什么都不做」的占位包（PacketCreator.java:4573），没有可信布局可依。
 			recv.skip(4);
 			break;
+		case MapleStat::Id::STR:
+		case MapleStat::Id::DEX:
+		case MapleStat::Id::INT:
+		case MapleStat::Id::LUK:
+		case MapleStat::Id::HP:
+		case MapleStat::Id::MP:
+		case MapleStat::Id::MAXHP:
+		case MapleStat::Id::MAXMP:
+			// 四维与 HP/MP/MAXHP/MAXMP 超过 short 上限，服务端按 int 发（updatePlayerStats 特判 writeInt），
+			// 故此处按 int 读；其余未特例 stat（JOB/AP/SP/LEVEL/FAME/EXP 等）仍走 default 的 read_short/对应分支。
+			player.get_stats().set_stat(stat, recv.read_int());
+			recalculate = true;
+			break;
 		default:
 			player.get_stats().set_stat(stat, recv.read_short());
 			recalculate = true;
@@ -155,7 +168,7 @@ namespace ms
 
 		if (update_skillbook)
 		{
-			int16_t value = player.get_stats().get_stat(stat);
+			int32_t value = player.get_stats().get_stat(stat);
 
 			if (auto skillbook = UI::get().get_element<UISkillBook>())
 				skillbook->update_stat(stat, value);

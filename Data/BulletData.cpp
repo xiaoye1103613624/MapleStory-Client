@@ -43,7 +43,7 @@ namespace ms
 		return is_valid();
 	}
 
-	int16_t BulletData::get_watk() const
+	int32_t BulletData::get_watk() const
 	{
 		return watk;
 	}

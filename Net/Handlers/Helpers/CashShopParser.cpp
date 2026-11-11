@@ -84,14 +84,14 @@ namespace ms
 			auto job = recv.read_short();
 
 			statsentry.stats[MapleStat::Id::JOB] = job;
-			statsentry.stats[MapleStat::Id::STR] = recv.read_short();
-			statsentry.stats[MapleStat::Id::DEX] = recv.read_short();
-			statsentry.stats[MapleStat::Id::INT] = recv.read_short();
-			statsentry.stats[MapleStat::Id::LUK] = recv.read_short();
-			statsentry.stats[MapleStat::Id::HP] = recv.read_short();
-			statsentry.stats[MapleStat::Id::MAXHP] = recv.read_short();
-			statsentry.stats[MapleStat::Id::MP] = recv.read_short();
-			statsentry.stats[MapleStat::Id::MAXMP] = recv.read_short();
+			statsentry.stats[MapleStat::Id::STR] = recv.read_int();
+			statsentry.stats[MapleStat::Id::DEX] = recv.read_int();
+			statsentry.stats[MapleStat::Id::INT] = recv.read_int();
+			statsentry.stats[MapleStat::Id::LUK] = recv.read_int();
+			statsentry.stats[MapleStat::Id::HP] = recv.read_int();
+			statsentry.stats[MapleStat::Id::MAXHP] = recv.read_int();
+			statsentry.stats[MapleStat::Id::MP] = recv.read_int();
+			statsentry.stats[MapleStat::Id::MAXMP] = recv.read_int();
 			statsentry.stats[MapleStat::Id::AP] = recv.read_short();
 
 			if (hasSPTable(job))

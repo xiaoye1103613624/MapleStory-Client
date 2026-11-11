@@ -555,7 +555,7 @@ namespace ms
 		hpmp_sprites[1].draw(position, alpha);
 		hpmp_sprites[2].draw(position, alpha);
 
-		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
+		int32_t level = stats.get_stat(MapleStat::Id::LEVEL);
 		int32_t hp = stats.get_stat(MapleStat::Id::HP);
 		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
@@ -1899,7 +1899,7 @@ namespace ms
 
 	float UIStatusBar::getexppercent() const
 	{
-		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
+		int32_t level = stats.get_stat(MapleStat::Id::LEVEL);
 
 		int64_t exp = stats.get_exp();
 
@@ -1910,7 +1910,7 @@ namespace ms
 
 	float UIStatusBar::gethppercent() const
 	{
-		int16_t hp = stats.get_stat(MapleStat::Id::HP);
+		int32_t hp = stats.get_stat(MapleStat::Id::HP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
 
 		return static_cast<float>(hp) / maxhp;
@@ -1918,7 +1918,7 @@ namespace ms
 
 	float UIStatusBar::getmppercent() const
 	{
-		int16_t mp = stats.get_stat(MapleStat::Id::MP);
+		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
 
 		return static_cast<float>(mp) / maxmp;
@@ -2148,6 +2148,7 @@ namespace ms
 		classic_exp_dot = ColorBox(1, 1, Color::Name::WHITE, 1.0f);
 		classic_exp_pct_dot = ColorBox(1, 1, Color(0x8A2BE2FF), 1.0f);
 		joblabel = OutlinedText(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
+		classic_exp_text = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 
 		// 键帽层（W3）：key/0..6 = Shift/Ins/Hm/Pup/Ctrl/Del/End 贴纸（key/7 本包为红箭头，非 Pdn）；
 		// 字母键名用描边文字回退，中文名称走 Text maxwidth（T12b 度量换行）。
@@ -2376,7 +2377,7 @@ namespace ms
 		if (classic_mp_flash > 0)
 			classic_mp_flash_sprite.draw(position, alpha);
 
-		int16_t level = stats.get_stat(MapleStat::Id::LEVEL);
+		int32_t level = stats.get_stat(MapleStat::Id::LEVEL);
 		int32_t hp = stats.get_stat(MapleStat::Id::HP);
 		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
@@ -2384,11 +2385,12 @@ namespace ms
 		int64_t exp = stats.get_exp();
 
 		// 等级：Basic.img/LevelNo 橙盒数字（11x13，推进 11+1），以参考实测单字中心
-		// x = lvbadge_pos.x() + 5 居中对齐；LevelNo 缺失时回退 ShowLevel 白字 + 右括号。
+		// x = lvbadge_pos.x() + 2 居中对齐（基准 +5→+2，使 3000 级 4 位数字整体左移、
+		// 右侧留出安全间距）；LevelNo 缺失时回退 ShowLevel 白字 + 右括号。
 		const std::string lvstr = std::to_string(level);
 		const int16_t lvw = static_cast<int16_t>(static_cast<int16_t>(lvstr.length()) * 12 - 1);
 		const Point<int16_t> lv_at = position
-			+ Point<int16_t>(static_cast<int16_t>(lvbadge_pos.x() + 5 - lvw / 2), lvbadge_pos.y());
+			+ Point<int16_t>(static_cast<int16_t>(lvbadge_pos.x() + 2 - lvw / 2), lvbadge_pos.y());
 
 		if (classic_levelno.getw('0') > 0)
 		{
@@ -2398,7 +2400,7 @@ namespace ms
 		{
 			const int16_t slw = static_cast<int16_t>(static_cast<int16_t>(lvstr.length()) * 6 - 1);
 			Point<int16_t> sl_at = position + Point<int16_t>(
-				static_cast<int16_t>(lvbadge_pos.x() + 5 - slw / 2), lvbadge_pos.y() + 1);
+				static_cast<int16_t>(lvbadge_pos.x() + 2 - slw / 2), lvbadge_pos.y() + 1);
 
 			classic_showlevel.draw(lvstr, DrawArgument(sl_at));
 
@@ -2426,24 +2428,16 @@ namespace ms
 			"[" + std::to_string(mp) + "/" + std::to_string(maxmp) + "]",
 			DrawArgument(position + mpset_pos));
 
-		// EXP 段与 HP/MP 同款位图字库：黑区两行完整数值（上=当前、下=上限，
-		// 上限 = required_exp(level)）；百分比 "[xx.xx%]" 蓝紫、与经验框右缘
-		// 对齐（填充段内 x1..115 / y53..66，7px 字形垂直居中）。exp 异常
-		// （累计值大于需求）时百分比封顶 100%。
+		// EXP 段：仅显示「当前经验值」（位图字库原始完整数字，与 HP/MP 同款，不缩写），
+		// 不显示升级所需；升级所需仅用于下方百分比计算。百分比 "[xx.xx%]" 仍叠画在
+		// 黄绿经验条填充区中央（见下方 draw_hud_number）。
 		int64_t need = ExpTable::required_exp(level);
 		double ratio = (need > 0) ? (static_cast<double>(exp) / static_cast<double>(need)) : 0.0;
 		float pct = (ratio >= 1.0) ? 100.0f : static_cast<float>(ratio * 100.0);
 
-		// EXP 数值：字体/颜色按血量——同款位图字库（白字）在经验条上方黑区两行
-		// 显示完整数值，不用「亿/万」单位（位图字库无汉字）。
-		const std::string exp_cur = std::to_string(exp);
-		const std::string exp_need = std::to_string(need);
-		constexpr int16_t EXP_LINE_H = 7;
-		// 整体上移 3px（黑区 y38..52，共 14px 恰好两行 7px 字形），行底 52 不碰经验条顶 53。
-		Point<int16_t> expnum_at = position + statset_pos + Point<int16_t>(0, -3);
-		draw_hud_number(hpmpset, classic_exp_dot, exp_cur, DrawArgument(expnum_at));
-		draw_hud_number(hpmpset, classic_exp_dot, exp_need,
-			DrawArgument(expnum_at + Point<int16_t>(0, EXP_LINE_H)));
+		// EXP 数字行：位图字库原始完整数字（不缩写，与 HP/MP 同款），与血量/蓝量数字行
+		// 同高（y=statset_pos.y()=41；仅当前经验值，不显示升级所需）。
+		draw_hud_number(hpmpset, classic_exp_dot, std::to_string(exp), DrawArgument(position + statset_pos));
 
 		char pbuf[16];
 		std::snprintf(pbuf, sizeof(pbuf), "[%.2f%%]", pct);

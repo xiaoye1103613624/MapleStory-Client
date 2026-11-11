@@ -155,8 +155,8 @@ namespace ms
 				recv.read_byte();       // slots
 				recv.read_byte();       // level
 				EnumMap<EquipStat::Id, uint16_t> stats;
-				for (auto& stat : stats)
-					stat.second = recv.read_short();
+				for (auto iter : stats)
+					iter.second = recv.read_short();
 				recv.read_string();     // owner
 				recv.read_short();      // flag
 				if (cash)

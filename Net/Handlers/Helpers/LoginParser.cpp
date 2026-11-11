@@ -137,14 +137,14 @@ namespace ms
 		// 旧代码按 1 字节 read_byte() 读取，等级 >=256 会被截断（256→0），所以 999 上限必须先改这里。
 		statsentry.stats[MapleStat::Id::LEVEL] = static_cast<uint16_t>(recv.read_short());
 		statsentry.stats[MapleStat::Id::JOB] = recv.read_short();
-		statsentry.stats[MapleStat::Id::STR] = recv.read_short();
-		statsentry.stats[MapleStat::Id::DEX] = recv.read_short();
-		statsentry.stats[MapleStat::Id::INT] = recv.read_short();
-		statsentry.stats[MapleStat::Id::LUK] = recv.read_short();
-		statsentry.stats[MapleStat::Id::HP] = recv.read_short();
-		statsentry.stats[MapleStat::Id::MAXHP] = recv.read_short();
-		statsentry.stats[MapleStat::Id::MP] = recv.read_short();
-		statsentry.stats[MapleStat::Id::MAXMP] = recv.read_short();
+		statsentry.stats[MapleStat::Id::STR] = recv.read_int();
+		statsentry.stats[MapleStat::Id::DEX] = recv.read_int();
+		statsentry.stats[MapleStat::Id::INT] = recv.read_int();
+		statsentry.stats[MapleStat::Id::LUK] = recv.read_int();
+		statsentry.stats[MapleStat::Id::HP] = recv.read_int();
+		statsentry.stats[MapleStat::Id::MAXHP] = recv.read_int();
+		statsentry.stats[MapleStat::Id::MP] = recv.read_int();
+		statsentry.stats[MapleStat::Id::MAXMP] = recv.read_int();
 		statsentry.stats[MapleStat::Id::AP] = recv.read_short();
 		statsentry.stats[MapleStat::Id::SP] = recv.read_short();
 		// exp 宽度必须按当前对接服务端的 PacketCreator.addCharStats 对齐：

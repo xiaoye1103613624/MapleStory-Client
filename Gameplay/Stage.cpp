@@ -371,13 +371,13 @@ namespace ms
 	void Stage::try_heal_over_time()
 	{
 		// 死亡或未进图不报。
-		const uint16_t hp = player.get_stats().get_stat(MapleStat::Id::HP);
+		const int32_t hp = player.get_stats().get_stat(MapleStat::Id::HP);
 		if (hp == 0)
 			return;
 
-		const uint16_t maxhp = player.get_stats().get_stat(MapleStat::Id::MAXHP);
-		const uint16_t mp = player.get_stats().get_stat(MapleStat::Id::MP);
-		const uint16_t maxmp = player.get_stats().get_stat(MapleStat::Id::MAXMP);
+		const int32_t maxhp = player.get_stats().get_stat(MapleStat::Id::MAXHP);
+		const int32_t mp = player.get_stats().get_stat(MapleStat::Id::MP);
+		const int32_t maxmp = player.get_stats().get_stat(MapleStat::Id::MAXMP);
 		const float rec = mapinfo.get_recovery();
 		if (rec <= 0.0f)
 			return;

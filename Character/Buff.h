@@ -114,7 +114,7 @@ namespace ms
 	struct Buff
 	{
 		Buffstat::Id stat;
-		int16_t value;
+		int32_t value;
 		int32_t skillid;
 		int32_t duration;
 
