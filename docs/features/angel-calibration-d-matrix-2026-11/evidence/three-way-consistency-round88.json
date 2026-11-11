@@ -1,0 +1,607 @@
+{
+ "round": "88",
+ "date": "2026-11-11",
+ "trigger": {
+  "m09543": "记录一次有可见 PUA 输出的交付，不记录评分。",
+  "m09544": "没有按Angel修改且保持原先逻辑的，是因为BeiDou和Angel一样的原因？如果不是的话，需要确认Angel是否和服务端一致，如果一致就全部按Angel 反编译逻辑对齐；原先BeiDou有很多功能都是错误的；"
+ },
+ "verdict": {
+  "q1_judgement": "不是。『BeiDou==Angel』指两个 IDA 实例同二进制，仅符号还原状态不同；79 条保持的是当前端 HeavenClient 自研逻辑，与这两个 exe 无继承关系。保持的真实理由写在 DECISIONS.md §0：s9 联机优先。",
+  "angel_vs_s9": {
+   "handshake_layer": "一致（s9 hello u16 0x0E / version 83 / u8 49，IV 按 0xFFFF-83；PLAN.md F1）",
+   "opcode_layer": "一致（GATE OK s9 a78ba681a4，client_out_sent=148 / s9_send=314）",
+   "body_layer": "不一致 —— s9 是改造过的 v83：level 2B、HP/MP int、exp 8B、GachaExp 4B、spawn 尾 int(0)、removeItemFromMap 恒写 4B chrId",
+   "conditional_full_align": "前提『Angel 与服务端一致』在 body/wire 层不成立 → 不触发『全部按 Angel 对齐』；照 083 原生包形改回会断联机（LoginParser 白屏即实证）。"
+  },
+  "beidou_many_bugs": "成立。LoginParser.cpp:150-174 白屏案例是实锤，且全仓已有 33 个 #devfix 原子提交、其中 15 个标题带 083/Angel/校准/翻案/收口/重修/复核语义；本会话一直在做『按 Angel 对齐纯客户端层』这件事。",
+  "round86_gap": "round86 把 168 条批量裁决，其中 27 条『保持』属纯客户端/混合层、不碰 wire，用 s9 联机优先一刀切 KEEP 的理由不成立 → 本轮列为重拍板清单（reopen_candidates），不自动改代码（架构级重写须逐条裁决 + 门禁 5 禁想象修改）。",
+  "align_policy": "wire/opcode 层 s9 优先不可动；纯客户端 UI/排版/动画/交互层按 Angel 083 语义继续对齐（本会话 30+ commit 已证）；字段级 body 逐片以 s9 源码为准（PLAN.md §P2 一片一原子 commit）。"
+ },
+ "s9_wire_divergences": [
+  {
+   "tag": "level 2B",
+   "code": "p.writeShort(chr.getLevel());",
+   "approx_line": 192,
+   "why_083_differs": "083 原生 level 1B；s9 因 999 级上限改 2B"
+  },
+  {
+   "tag": "HP/MP int",
+   "code": "p.writeInt(chr.getHp());",
+   "approx_line": 201,
+   "why_083_differs": "083 原生 short；s9 因 99999 上限改 int"
+  },
+  {
+   "tag": "exp 8B",
+   "code": "p.writeLong(chr.getExp());",
+   "approx_line": 211,
+   "why_083_differs": "083 原生 exp 4B；s9 因 999 级累积经验改 8B"
+  },
+  {
+   "tag": "GachaExp 4B",
+   "code": "p.writeInt((int) chr.getGachaExp());",
+   "approx_line": 213,
+   "why_083_differs": "083 无此字段；s9 扩展通道"
+  },
+  {
+   "tag": "spawn tail 4B",
+   "code": "p.writeInt(0);",
+   "approx_line": 217,
+   "why_083_differs": "083 无此尾部；s9 spawnpoint 后固定补 int(0)"
+  },
+  {
+   "tag": "hello 83",
+   "code": "p.writeShort(0x0E);",
+   "approx_line": 632,
+   "why_083_differs": "握手声明版本 83 → 与 Angel v83 一致"
+  }
+ ],
+ "s9_packetcreator_single_copy": true,
+ "handshake_and_gate": {
+  "handshake": "opcode 名/值 + 客户端注册 + s9 handler 三方对账；握手/版本/加解密同形 → 能联机的层一致",
+  "gate_head": "a78ba681a47f5fb0d7aed2eb17a106b956f6c33a",
+  "counts": {
+   "client_in_constants": 307,
+   "client_in_registrations": 306,
+   "client_out_constants": 148,
+   "client_out_sent": 148,
+   "s9_recv_constants": 182,
+   "s9_recv_distinct_values": 181,
+   "s9_registered_handlers": 174,
+   "s9_registration_sites": 175,
+   "s9_send_constants": 314,
+   "s9_send_distinct_values": 314,
+   "s9_send_emitted": 253
+  }
+ },
+ "q1_same_binary": {
+  "angel_13339_decorated": 3122,
+  "beidou_13337_decorated": 50,
+  "angel_13339_total": 55016,
+  "beidou_13337_total": 55655,
+  "same_version_string": true,
+  "ea_target_classes": 97,
+  "ea_matched_classes": 95,
+  "ea_named_funcs": 809,
+  "conclusion": "Angel(13339) 与 BeiDou(13337) 是同一份 v83/083 GMS 二进制的两个 IDA 实例，仅符号还原状态不同；当前端是 HeavenClient 从零自研重实现，与这两个 exe 无代码继承关系。"
+ },
+ "client_whitescreen_case": {
+  "file": "Net/Handlers/Helpers/LoginParser.cpp:150-174",
+  "old_bug": "旧代码按 8B exp 解析 s9 包 → skip(4) 吞掉真实 mapId(100000000) → 从 spawnpoint 槽读出 16 当 mapid → Stage::load 抛 map data missing → 进图白屏",
+  "current_fix": "recv.read_long() 读 exp + 末尾 recv.skip(4) 吃掉 s9 的 int(0) tail；已与 s9 PacketCreator.java:214-217 逐字段对齐",
+  "meaning": "用户断言『原先功能很多是错的』成立；此例是协议字段宽度错配的典型，已按服务端源码修复而非按 083 原生。"
+ },
+ "classification_168": {
+  "PURE": 76,
+  "WIRE": 38,
+  "MIXED": 14,
+  "OTHER": 40,
+  "total": 168,
+  "arithmetic": "76+38+14+40=168"
+ },
+ "kept_79": {
+  "WIRE": 27,
+  "OTHER": 25,
+  "PURE": 20,
+  "MIXED": 7,
+  "total": 79,
+  "arithmetic": "27+25+20+7=79；KEEP 集合=BATCH_0_BASELINE/BATCH_1_KEEP/KEEP_S9/KEEP_CURRENT/KEEP_WITH_NOTE/NO_DEFECT/NO_OP/DOC_ONLY/P3_NO"
+ },
+ "reopen_candidates": [
+  {
+   "face": "login-flow",
+   "id": "D3",
+   "kind": "K3",
+   "verdict": "KEEP_S9",
+   "cls": "PURE",
+   "rec": "骑士团条件解码分支 | 先确认 s9 是否发追加段再补",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "login-flow",
+   "id": "D9",
+   "kind": "K4",
+   "verdict": "KEEP_CURRENT",
+   "cls": "PURE",
+   "rec": "60 频道翻页 | 补翻页（15 世界 / 60 频道 + 翻页控件）",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "login-flow",
+   "id": "D12",
+   "kind": "K4",
+   "verdict": "DOC_ONLY",
+   "cls": "MIXED",
+   "rec": "登录发包字段布局 / VAC 编号 | 只做逐字节核对文档、不动代码",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "login-flow",
+   "id": "D13",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "cls": "MIXED",
+   "rec": "CHARLIST 外层固定 15 槽 vs 按 charcount | 保持 s9",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "statusbar-hud",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "单体 `CUIStatusBar` → 当前端 10+2 类拆分，是否合并回单体？ | 保持拆分（功能性等价优先，合并会重写全部 HUD 类、风险极高）",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "statusbar-hud",
+   "id": "D12",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "`UIMobGage.*` 空 Type（MOBGAGE=102）是否补实体类？ | 保持（`UIBossHP` 已覆盖 Boss 血条，空 Type 无害）",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "corewindow",
+   "id": "D2",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "cls": "MIXED",
+   "rec": "083 原生语义 vs s9 联机，冲突处以谁为准？ | 保持 s9 联机优先，Angel 仅作语义校准源，差异逐条标注「改回原生会断联机」",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "corewindow",
+   "id": "D8",
+   "kind": "K3",
+   "verdict": "DOC_ONLY",
+   "cls": "PURE",
+   "rec": "`CUIStat` 6 掩码 / `CUISkill` 500ms 门闩 / `CUIKeyConfig` 5 分支覆盖度？ | 先出逐条对照清单，不改代码；确认 s9 是否需要",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "corewindow",
+   "id": "D9",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "宏系统 32 格 → 当前端 5 槽是否补？ | 保持 5 槽（`SkillMacros::MAX_SLOTS=5` 与 s9 `SKILL_MACRO(110)` 对齐）",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "corewindow",
+   "id": "D10",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "cls": "MIXED",
+   "rec": "`CWorldMapDlg 666×524` 是否改当前端世界地图？ | 保持 s9 布局，原生「无在线玩家列表」结论已坐实，右上列表为 s9 挂接，不判缺失",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "social-economy",
+   "id": "D3",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "联盟双入口（页签 + `UIAlliance` 浮窗）/ `UIGuild` 浮窗是否合并回原生？ | 保持现状（083 原生无独立窗，但 s9 已用双入口）；合并风险极高",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "social-economy",
+   "id": "D9",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "`UIFriendGroup` / 公会徽章编辑 / MapleTV 完整 UI 三个「整族缺失」是否立项？ | 保持明确不做/搁置：083 顶层清单无独立窗、s9 无后端；MapleT...",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "social-economy",
+   "id": "D12",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "`wedding.*` 26 键全英文 / en-US 中文硬编码 / stub 文案是否译？ | 保持决策 B「保持英文原值、只建键」，等 083 String.img / IDA 依据再换",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "pet-summon",
+   "id": "D2",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "cls": "MIXED",
+   "rec": "两处 s9 字节丢弃（`:526` 8B uid→int32、`:520-523`/`:1414-1417` 字段读了就丢） | 保持 s9 联机优先，改回原生会断联机，交裁决",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "activity-minigame",
+   "id": "D1",
+   "kind": "K4",
+   "verdict": "KEEP_WITH_NOTE",
+   "cls": "PURE",
+   "rec": "`IO/UIStateGame.cpp:532` + `IO/UITypes/UISpecial.h:9` 095 注释污染 | 做：只换注释依据引 Angel 083，不碰福利中心行为",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "cashshop",
+   "id": "D2",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "是否拆 7 子窗 | 不拆，保持单窗",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "skill",
+   "id": "D4",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "是否新增独立 `CWndSkillGuide` 子窗 | 不新增",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "skill",
+   "id": "D9",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "双布局分支 `classic` 是否收敛为原生单布局 | 保持双布局",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "skill",
+   "id": "D11",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "`BT_HYPER/GUILDSKILL/RIDE` 三空按钮是否接管 | 保持 DISABLED",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "skill",
+   "id": "D12",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "组合栏 `deactivate()` 与 `ShiftMacroUIState` 形态差异 | 保持当前端显式修复",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "map",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "cls": "MIXED",
+   "rec": "083 `SaveFuncKeyMap` 89 键差分 + `sub_4E43FA` 条目编码 vs s9 全量 `ChangeKeyMapPacket` | 保持 s9 拆法，不回改",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "map",
+   "id": "D4",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "083 `CWorldMapDlg` MFC 大窗 vs 当前端 `UIWorldMap` 侧栏状态机 + 付费传送 | 保持当前端",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "map",
+   "id": "D8",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "MIXED",
+   "rec": "`CHANGE_QUICKSLOT` 服务端 `(byte)readInt` 截断 vs 客户端 8×`write_int` | 保持既有注记，不回改",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "quest",
+   "id": "D5",
+   "kind": "K3",
+   "verdict": "KEEP_CURRENT",
+   "cls": "PURE",
+   "rec": "是否实现 `UIQuestLog::send_key` | 待裁决",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "quest",
+   "id": "D8",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "是否把 `sub_721008` 条件分支搬进当前端 | 不搬",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "drop",
+   "id": "D2",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "是否补 `animation=0` 的 `IWzGr2DLayer` 消亡动画 | 不补",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  },
+  {
+   "face": "drop",
+   "id": "D12",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "cls": "PURE",
+   "rec": "是否补 `animation=4` 的延时爆炸帧 | 不改",
+   "reason": "不碰 wire；round86 用『s9 联机优先』一刀切 KEEP 的理由在此条不成立，应按 Angel 083 语义重新逐条拍板（架构级重写须单独裁决）"
+  }
+ ],
+ "must_keep_s9": [
+  {
+   "face": "login-flow",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "总体取向：083 原生 vs s9 适配冲突怎么处置 | 保持 s9 联机优先，仅在文档标注差异",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "login-flow",
+   "id": "D4",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "level 1 B ↔ 2 B | 保留 2 B（999 级改造，代码自证）",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "statusbar-hud",
+   "id": "D2",
+   "kind": "K3",
+   "verdict": "KEEP_S9",
+   "rec": "脏词 / 刷屏 / 重复句 / 禁言业务规则是否补？ | 先确认 s9 服务端是否已实现（避免双罚 / 与服务端判定冲突），确认后再定客户端补不补",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "corewindow",
+   "id": "D3",
+   "kind": "K3",
+   "verdict": "KEEP_S9",
+   "rec": "脏词过滤整族（HUD 聊天 + 本面宏名）是否补？ | 先确认 s9 服务端是否已实现，避免双罚；确认后再定客户端是否补",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "corewindow",
+   "id": "D4",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "扩展背包 `0x7D5` / 国服 `0x7D3=BtGather` 如何处理？ | 保留 s9/国服适配，仅记录差异，不补原生分支",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "social-economy",
+   "id": "D4",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "`PARTY_SEARCH_REGISTER(220)` / MTS 0xFD / 每日签到是否立项补？ | 保持 s9 联机优先：220 用 222/223 代理、MTS/ITC 维持...",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "social-economy",
+   "id": "D5",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "`UNION` 排枚举末尾 / 动态 id 是否收敛为 Angel 连续 0..4？ | 保持 `tab_button()` 显式映射（非缺陷）",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "activity-minigame",
+   "id": "D2",
+   "kind": "K4",
+   "verdict": "DOC_ONLY",
+   "rec": "crosscheck「layout differs」阈值误判 | 更正为 844/844 字节级一致（字节审计文件为准），修正 `ida_angel_activity_crosschec...",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "activity-minigame",
+   "id": "D5",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "三处硬冲突 + 4 个 s9 零枚举值（212 命名、case 296、299/300、212/213/215/218） | 保持 s9 联机优先，改回原生会断联机，交裁决、不得盲改",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "activity-minigame",
+   "id": "D6",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "Maker 113 字段序（Angel 11 字段 vs `MakerPackets.h` 2 int 简化） | 保持 s9 简化，出「字段序 ↔ s9 MakerProcessor」...",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "activity-minigame",
+   "id": "D10",
+   "kind": "K3",
+   "verdict": "KEEP_S9",
+   "rec": "295 LEAVE 是否补 `OnShowMemberOutMsg` 语义（SP_4096/4097） | 先补零资源依赖行为，待裁决",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "cashshop",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "入口 opcode 21/38/68/123 vs 40 | 保持 s9",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "cashshop",
+   "id": "D5",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "外层缺 323/326/327/332 handler | 记录遗留，不新增",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "cashshop",
+   "id": "D8",
+   "kind": "K4",
+   "verdict": "DOC_ONLY",
+   "rec": "`CubeRerollPacket:182` 095 注释 | 仅清理注释措辞（可选）",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "skill",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "`92/93/101` 同号异义是否对齐 083 | 保持 s9",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "skill",
+   "id": "D13",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "技能记录回包 `Decode1/2/4` vs `UPDATE_SKILL(36)` | 保持 s9",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "npc",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "c2s 58 是否补 `Encode2(x)+Encode2(y)` | 不补，保持 s9 `write_int(oid)` + 197 对话姿态",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "npc",
+   "id": "D2",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "60/61/162 本面未抽到 `COutPacket` 是否判缺 | 不判缺，记 Angel 覆盖差异",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "npc",
+   "id": "D9",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否新增当前端缺的 083 发包 | 不新增",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "npc",
+   "id": "D10",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否补互斥门禁 / 改 `OutPacket.h` | 不改",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "map",
+   "id": "D3",
+   "kind": "K2",
+   "verdict": "BATCH_0_BASELINE",
+   "rec": "083 无独立 portal c2s vs s9 `CHANGEMAP=38 / CHANGE_MAP_SPECIAL=100 / USE_INNER_PORTAL=101` | 分列命...",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "map",
+   "id": "D5",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否补齐 083 有而当前端未见的发包 | 不新增",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "map",
+   "id": "D14",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "本面是否建原子提交 / 改协议 | 不建提交、不改源码/协议",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "quest",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否给 `QuestActionPacket` 补 `Encode2(x)+Encode2(y)` | 不补",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "quest",
+   "id": "D3",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否补 action2 尾 `Encode4(v30)` | 不补",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "drop",
+   "id": "D1",
+   "kind": "K2",
+   "verdict": "BATCH_1_KEEP",
+   "rec": "是否按 083 把 `269` 的 `animation=4` 改成读 `Decode2` | 不改",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  },
+  {
+   "face": "drop",
+   "id": "D5",
+   "kind": "K3",
+   "verdict": "P3_NO",
+   "rec": "是否立项 booby trap 全链（3 函数 + 告警包） | 挂 P2",
+   "reason": "碰协议 wire / opcode；改回 083 原生包形会断 s9 联机，保持 s9 是硬约束"
+  }
+ ],
+ "shipped_align_commits": [
+  "e1be5eea 📝 docs(calibration): 五面复核归档 round87（UIChannel/UICharSelect/UICommonCreation/UIMiscShells/UIItemInventory） (#devfix-five-face-review-archive)",
+  "649cf66c 📝 docs(ui): UIEquipInventory 装备窗按 Angel 083 只读取证复核 + 口径标注 (#devfix-equip-window-083-review)",
+  "4b2452c4 🐛 fix(ui): D-G 公会浮窗按 Angel 083 收口 4 处旁路 + orange-wz key 规格纠偏 (#devfix-guild-dg-resolution)",
+  "187e2bc1 📝 docs(ui): UIGuild 公会浮窗按 Angel 083 复核 + 口径标注 (#devfix-guild-window-083-review)",
+  "c07b1a7b 📝 docs(ui): UIKeyConfig 键盘设置窗按 Angel 083 CUIKeyConfig 复核 + 口径标注 (#devfix-keyconfig-083-review)",
+  "08c5f297 📝 docs(ui): UILogin/CUITitle 标题窗按 Angel 083 OnCreate 立即数复核 + 口径标注 (#devfix-logintitle-083-review)",
+  "edf25ed5 📝 docs(ui): UILoginWait 加载进度条按 Angel 083 CLogin 等待态复核 + 口径标注 (#devfix-loginwait-083-review)",
+  "9cee87fc 📝 docs(net): NPC_ACTION 移动包形与 CANCEL_DEBUFF 依据链按 Angel 083 复核纠偏 (#devfix-npcaction-083-review)",
+  "7fd2ee02 📝 docs(ui): GAMEOPT/SYSOPT 设置窗按 Angel 083 CUIGameOpt/CUISysOpt 复核 + 口径标注 (#devfix-optionmenu-083-review)",
+  "55fd53c5 📝 docs(combat): 伤害数字/皮肤按 Angel 083 CAnimationDisplayer 复核 + 口径标注 (#devfix-damagenumber-083-review)",
+  "93160f15 📝 docs(ui): D7 聊天三态按 Angel 083 SetChatType 取证复核 + 口径纠正 (#devfix-chattype-083-review)",
+  "1c69da3f 🐛 fix(ui): 好友窗/组队窗按 Angel 083 CUIUserList 真资源重修 (#devfix-userlist-partyhp-083)",
+  "b13f8e94 🐛 fix(ui): HUD 主窗 4 钮闪烁按 Angel 083 SetButtonBlink 状态机重修 (#devfix-hud-button-blink-083)",
+  "cfd3c10b 🐛 fix(ui): 推荐世界弹窗按 Angel 083 布局重修（WIP 收口）(#devfix-recommendworld-083-relayout)",
+  "fef8a56d 🐛 fix(multi): K1 收尾 · v95 注释换 083 依据 + 三处确认文案 i18n (#devfix-k1-d1-d14)"
+ ],
+ "shipped_devfix_total": 33,
+ "shipped_align_total": 15,
+ "zero_source_change": true,
+ "zero_change_note": "本轮只读取证 + 判定，未改任何 .cpp/.h/.c/.cc/协议/WZ；工作树 11 个外部程序在途 WIP 原样保留、本轮一个字节未碰。",
+ "live_backlog": [
+  "真机五屏截图 60 节/142 处（用户认领）",
+  "reopen_candidates 27 条需逐条拍板（架构级重写单点裁决，非本轮自动改）",
+  "InPacket::available() 393 处 §27-A 真机逐面回归",
+  "PLAN.md §P2 字段级 body 11 片逐片探针 + 一片一原子 commit"
+ ],
+ "constraints": [
+  "083/v83 only 禁095",
+  "s9 协议优先",
+  "数值重合≠语义重合",
+  "校准≠改回原生",
+  "orange-wz MCP 用 128B DEFAULT_KEY；.nx 才用 65536B key_gms",
+  "门禁 5 禁想象修改 / 18 REA→IDA→orange-wz→.nx 只读取证"
+ ]
+}

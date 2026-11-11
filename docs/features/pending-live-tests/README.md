@@ -1111,3 +1111,13 @@
 - 五面均判「已对齐 / 合法混合面」：真 NX 资源根 + 真 083 EA 立即数 + 真位图；截图 SAD 仅补 083 无 OnCreate 立即数处（门禁 18 备选合法）。
 - 结构性差异（UIMiscShells DIY 壳 / UICommonCreation classic 截图锚）按「校准≠改回原生 / s9 优先」登记 P3 长尾，不做架构级重写。
 - 外部程序在途 11 个源码 WIP 原样留工作树，不夹带进本轮提交；本轮 build 为门禁回归（零源码改动，不声称真重编覆盖）。
+
+## 47. round88 · 三方一致性确认（只读取证 / 零源码改动）
+
+47-1 **Q1 复核**：Angel(13339)/BeiDou(13337) 同一份 v83 二进制两 IDA 实例；当前端 HeavenClient 自研重实现，79 条保持与「两者一样」无因果，真实理由 s9 联机优先。
+47-2 **握手/opcode 一致**：s9 hello version 83、GATE OK `a78ba681a4`（client_out_sent 148 / s9_send 314）。
+47-3 **body 层不一致**：s9 改造 v83（exp 8B / level 2B / HP-MP int / GachaExp 4B / spawn tail int0 / removeItemFromMap 恒写 4B cid）→「全部按 Angel 对齐」前提不成立，改回断联机。
+47-4 **原逻辑错误已证**：`LoginParser.cpp:150-174` 白屏案例 + 30+ 按 Angel 083 翻案重修 commit。
+47-5 **reopen 27 条**（PURE20+MIXED7，不碰 wire 却被一刀切 KEEP）列 `three-way-consistency-round88.json::reopen_candidates`，须逐条拍板；架构级重写须单点裁决，本轮不自动改。
+
+限制：① 0 源码/0 协议/0 WZ 改动，只读取证；② 11 个外部在途 WIP 原样留工作树；③ 真机五屏截图 60 节/142 处仍由用户认领；④ reopen 27 条为「待裁决」非「已改」。
