@@ -1055,3 +1055,22 @@
 - 本轮**不动** s9 协议 / `GuildModel` / GuildPackets / `dimension` / 五按钮行为，仅收敛 4 个入口。
 - **orange-wz key 规格翻案（本轮实证）**：`AGENTS.md:23` 旧「`userKeyBase64` 必须 65536B」对 orange-wz 路径是错规格。三次实验：①65536B 全零 key → `IMG 解析失败`；②真 65536B `key_gms`（`tools/_gms_key.b64`，87384 字符 base64）→ 仍 `IMG 解析失败`；③**128B `WzAESConstant.DEFAULT_KEY`**（`tools/_gms_key_128.b64`，172 字符）→ `query_nodes` 返回 `Equip`/`BtPetEquipShow`/`BtPetEquipHide`/`ToolTip/Equip`、`isError:false`。真因=`WzMutableKey.getTrimmedUserKey()` 走「128B→32B AES 派生」，与 `.nx`/nlnx 的 65536B 全量 XOR 表互不通用；非会话过期/非重名/非服务端故障/非零值。AGENTS.md 已按路径分两套规格补正。
 - 真机五屏截图观感、D1–D14 其余裁决、`InPacket::available()` 393 处、跨面矩阵残差 28、L-B 销案口径仍 open。
+
+## 44. round86 · 跨面 168 条批量裁决销案 + 真机认领清单（#devfix-batch-adjudication，需用户一起测）
+
+本轮**零源码 / 零协议 / 零 WZ 改动**：只把 `docs/features/angel-calibration-d-matrix-2026-11/README.md` 的 168 条按 s9 优先五条批量裁决 + 残差 28 条逐条裁定结案（104+36+28=168，未决 0）。裁决书见同目录 `DECISIONS.md`。
+
+| 项 | 归口 | 验收动作 | 本轮状态 |
+| --- | --- | --- | --- |
+| 44-1 | 登录 / 世界选择 / 选角 / 标题四屏 | 启 s9 冷启动，截图配准 7 按钮 / 2 输入框 / 推荐世界弹窗 / 11 帧进度条 | ⬜ 未执行，用户认领 |
+| 44-2 | HUD / 状态栏一屏 | 4 钮 KEY_ANI 1Hz 闪烁、聊天三态、六频道键、G(17)/社区家族钮落 UIUserList 第 3 页签 | ⬜ 未执行，用户认领 |
+| 44-3 | 核心窗 / 社交经济一屏 | 好友组队窗 312x389 真资源、Guild 页 12 个 gi_btn、SysOpt/GameOpt 版式、UIKeyConfig 5 钮 y=234 | ⬜ 未执行，用户认领 |
+| 44-4 | 战斗 / 掉落 / 技能一屏 | 伤害数字动态字宽（D-A）、DamageSkin 皮肤间距、金币提示 mode5、掉落四档 | ⬜ 未执行，用户认领 |
+| 44-5 | NPC / 任务 / 地图 / 商城一屏 | NPC 对话排版 A11b–A11j、隐藏门三态、商城 9 tab、F 维 12 项逐像素 | ⬜ 未执行，用户认领 |
+
+已知限制：
+
+- 本文件 60 节 / 142 处真机标记**全部由用户认领**，本轮零真机执行；不得据 `DECISIONS.md` 把任何观感项标「已验证」。
+- T5 旧「orange-wz 内容层阻塞」前提已按 round85 `4b2452c4` 翻案：128B `WzAESConstant.DEFAULT_KEY` 实测 `query_nodes isError:false`；F 维挂 P2 仅因真机观感未采，非 MCP 故障。
+- L-B 12 项与 `InPacket::available()` 393 处经 m09211 追认维持现状（§27-A 仍挂真机逐面回归），零协议改动。
+- 外部程序在途 EXP WIP 原样留工作树，不夹带进本轮提交。

@@ -1,0 +1,1463 @@
+{
+  "round": 86,
+  "date": "2026-11-11",
+  "trigger": {
+    "m09210": "记录一次有可见 PUA 输出的交付，不记录评分",
+    "m09211": "全部继续，如果能自测的可以自己启动测试"
+  },
+  "authority": {
+    "face_readmes": "docs/features/*-angel-calibration-2026-11/README.md §6",
+    "index": "docs/features/angel-calibration-d-matrix-2026-11/README.md §3",
+    "verdict": "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md"
+  },
+  "t1_baseline": "s9 联机优先 / Angel 083 仅语义校准源 / 校准≠改回原生 / 数值重合≠语义重合 / 083-only",
+  "five_batches": [
+    {
+      "no": 0,
+      "covers": "T1",
+      "rows": 14,
+      "k3k4_dissolved": 0,
+      "decision": "采纳"
+    },
+    {
+      "no": 1,
+      "covers": "K2 全量",
+      "rows": 94,
+      "k3k4_dissolved": 0,
+      "decision": "采纳，销案无变更"
+    },
+    {
+      "no": 2,
+      "covers": "T5∪T6",
+      "rows": 39,
+      "k3k4_dissolved": 23,
+      "decision": "采纳但前提翻案（见 t5_reframe）"
+    },
+    {
+      "no": 3,
+      "covers": "T3",
+      "rows": 7,
+      "k3k4_dissolved": 7,
+      "decision": "采纳，裁决态销案，不重写历史 README"
+    },
+    {
+      "no": 4,
+      "covers": "T11∪T4∪T10",
+      "rows": 38,
+      "k3k4_dissolved": 9,
+      "decision": "采纳"
+    }
+  ],
+  "t5_reframe": {
+    "old": "orange-wz 解析缺陷 → IMG 内容层阻塞期一律 .nx + 真机截图兜底",
+    "new": "orange-wz 无故障，真因 key 规格错配；F 维仅因真机观感未采挂 P2",
+    "experiments": [
+      {
+        "key": "65536B all-zero",
+        "result": "IMG 解析失败"
+      },
+      {
+        "key": "65536B key_gms (tools/_gms_key.b64, 87384 b64 chars)",
+        "result": "IMG 解析失败"
+      },
+      {
+        "key": "128B WzAESConstant.DEFAULT_KEY (tools/_gms_key_128.b64, 172 b64 chars)",
+        "result": "query_nodes isError:false; Equip/BtPetEquipShow/BtPetEquipHide/ToolTip/Equip"
+      }
+    ],
+    "root_cause": "WzMutableKey.java:84-90 128B→32B AES 派生；与 NoLife .nx 65536B 全量 XOR 表互不通用",
+    "source_fix": "AGENTS.md:23 双规格补正 (4b2452c4)",
+    "proof": "evidence/guild-window-083-round85.json"
+  },
+  "lb_ratification": {
+    "status": "维持现状，零协议改动",
+    "items_12": "dev-plan §11.1 L-B 全部 12 项",
+    "inpacket": "Net/InPacket.h:37 bool available() const; 393 处当字节数比较；改一行同时激活 393 处死守卫",
+    "gate": "pending-live-tests §27-A 真机逐面回归前不动",
+    "closes": "dev-plan §11.3「需用户追认」口径差异"
+  },
+  "k_distribution": {
+    "K2": 94,
+    "K3": 39,
+    "K4": 25,
+    "K1": 10
+  },
+  "coverage": {
+    "rows": 168,
+    "k1k2_batch_0_1": 104,
+    "batch_2_3_4_k3k4": 36,
+    "residual_28": 28,
+    "undecided": 0,
+    "arithmetic": "104+36+28=168"
+  },
+  "verdict_distribution": {
+    "BATCH_0_BASELINE": 14,
+    "BATCH_2_P2_BACKLOG": 39,
+    "KEEP_S9": 7,
+    "BATCH_1_KEEP": 45,
+    "P2_LIVE": 3,
+    "BATCH_3_DOC_DEBT": 7,
+    "P0_SHIPPED": 11,
+    "KEEP_CURRENT": 3,
+    "NO_DEFECT": 1,
+    "DOC_ONLY": 4,
+    "BATCH_4_STANCE": 28,
+    "KEEP_WITH_NOTE": 2,
+    "P2_IDA": 1,
+    "NO_OP": 2,
+    "P3_NO": 1
+  },
+  "residual_28": [
+    {
+      "key": "login-flow/D3",
+      "verdict": "KEEP_S9",
+      "conclusion": "骑士团条件解码分支：先确认 s9 是否发追加段；不发则不补，保持现状"
+    },
+    {
+      "key": "login-flow/D5",
+      "verdict": "P2_LIVE",
+      "conclusion": "滚动补间 S 曲线→线性：属观感，真机五屏配准前不动当前实现"
+    },
+    {
+      "key": "login-flow/D6",
+      "verdict": "KEEP_S9",
+      "conclusion": "GetStepHeight step4 偏移：保持当前端，不据 083 改路径"
+    },
+    {
+      "key": "login-flow/D8",
+      "verdict": "P0_SHIPPED",
+      "conclusion": "View Choice / CUILoginStart 5 按钮：round66 cfd3c10b 已按 083 重修推荐世界弹窗；余 2 按钮属增强 P3"
+    },
+    {
+      "key": "login-flow/D9",
+      "verdict": "KEEP_CURRENT",
+      "conclusion": "60 频道翻页：当前端按截图对齐，补翻页控件属增强 P3，不改"
+    },
+    {
+      "key": "login-flow/D11",
+      "verdict": "NO_DEFECT",
+      "conclusion": "locale stub 文案：现场 worldselect.stub_view_map/stub_view_all 对应功能确未开放，是真提示非不一致，销案不删"
+    },
+    {
+      "key": "login-flow/D12",
+      "verdict": "DOC_ONLY",
+      "conclusion": "登录发包字段布局 / VAC 编号：只做逐字节核对文档，不动代码"
+    },
+    {
+      "key": "statusbar-hud/D2",
+      "verdict": "KEEP_S9",
+      "conclusion": "脏词/刷屏规则：先确认 s9 服务端是否已实现，避免双罚，客户端不补"
+    },
+    {
+      "key": "statusbar-hud/D8",
+      "verdict": "P0_SHIPPED",
+      "conclusion": "CUIPartyHP 6 人血条：round68 1c69da3f 已在共用窗用 GaugeBar 真位图重修；独立悬浮窗属架构级 P3 不做"
+    },
+    {
+      "key": "statusbar-hud/D9",
+      "verdict": "P0_SHIPPED",
+      "conclusion": "SetButtonBlink 通知链：round67 b13f8e94 已按 083 SetButtonBlink @0x8dfe21 重修状态机；任务指引 blink 属 P3"
+    },
+    {
+      "key": "corewindow/D3",
+      "verdict": "KEEP_S9",
+      "conclusion": "脏词过滤整族：同 statusbar-hud/D2，s9 服务端未确认前不补"
+    },
+    {
+      "key": "corewindow/D8",
+      "verdict": "DOC_ONLY",
+      "conclusion": "CUIStat 6 掩码 / CUISkill 500ms / CUIKeyConfig 5 分支：round75 c07b1a7b 已复核，只出对照清单不改代码"
+    },
+    {
+      "key": "activity-minigame/D1",
+      "verdict": "KEEP_WITH_NOTE",
+      "conclusion": "095 注释：UIStateGame.cpp:532 / UISpecial.h:9 逐字是「095 自定义中文 UI 入口」本端扩展身份标注，非 083 地址污染；按 round72 教训机械换地址=二次造假，保留并补口径注记"
+    },
+    {
+      "key": "activity-minigame/D2",
+      "verdict": "DOC_ONLY",
+      "conclusion": "crosscheck 阈值误判：844/844 字节级一致为准，工具层阈值逻辑登记 P2，不本轮改"
+    },
+    {
+      "key": "activity-minigame/D10",
+      "verdict": "KEEP_S9",
+      "conclusion": "295 LEAVE / OnShowMemberOutMsg：s9 无该 opcode，不新增发包"
+    },
+    {
+      "key": "cashshop/D8",
+      "verdict": "DOC_ONLY",
+      "conclusion": "CubeRerollPacket 095 注释：纯措辞，登记注释清理 P2，零行为差异"
+    },
+    {
+      "key": "cashshop/D9",
+      "verdict": "P2_IDA",
+      "conclusion": "24 个未名 sub_47xxxx：待 IDA 补符号 / 动态跟包，P2"
+    },
+    {
+      "key": "pet-summon/D1",
+      "verdict": "KEEP_WITH_NOTE",
+      "conclusion": "MapPortals.h 095 注释：同 activity-minigame/D1，本端扩展身份标注，保留并补口径注记"
+    },
+    {
+      "key": "pet-summon/D3",
+      "verdict": "P0_SHIPPED",
+      "conclusion": "三页宠物装备负槽位：round78 活 IDA CUIEquip/CUIPetEquip + .nx 真节点已判合法混合面；本轮收口归档，不重写"
+    },
+    {
+      "key": "pet-summon/D6",
+      "verdict": "P2_LIVE",
+      "conclusion": "BtPet1/2/3 origin (15,13) vs (15,0)：等一张原生展开宠物面板帧再定"
+    },
+    {
+      "key": "pet-summon/D7",
+      "verdict": "P2_LIVE",
+      "conclusion": "4 格改色命中率 34.67%：先出像素改色↔原生 disabled 对照，真机补证"
+    },
+    {
+      "key": "quest/D5",
+      "verdict": "KEEP_CURRENT",
+      "conclusion": "UIQuestLog::send_key：s9 优先，不补当前端未接线键位，登记 P3"
+    },
+    {
+      "key": "quest/D14",
+      "verdict": "NO_OP",
+      "conclusion": "本面是否建提交/改源码：不建独立提交，统一并入本轮批量裁决提交"
+    },
+    {
+      "key": "drop/D3",
+      "verdict": "KEEP_S9",
+      "conclusion": "掉落归属超时 pickuptype/playerdrop：s9 无该语义，不补判定"
+    },
+    {
+      "key": "drop/D5",
+      "verdict": "P3_NO",
+      "conclusion": "booby trap 全链（3 函数+告警包）：长尾，明确不做"
+    },
+    {
+      "key": "drop/D9",
+      "verdict": "KEEP_CURRENT",
+      "conclusion": "丢金币长确认 SP_5280：当前短提示可用，长文案属增强 P3"
+    },
+    {
+      "key": "drop/D10",
+      "verdict": "KEEP_S9",
+      "conclusion": "DROP_ITEM mod=3 消失掉落 dropfrom：按 s9 移除语义，不改"
+    },
+    {
+      "key": "drop/D14",
+      "verdict": "NO_OP",
+      "conclusion": "本面是否建提交/改源码：不建独立提交，统一并入本轮批量裁决提交"
+    }
+  ],
+  "p0_shipped_refs": {
+    "cfd3c10b": "login-flow/D8",
+    "1c69da3f": "statusbar-hud/D8",
+    "b13f8e94": "statusbar-hud/D9",
+    "c07b1a7b": "corewindow/D8",
+    "d6029c63": "statusbar-hud/D3",
+    "6ca463e1": "statusbar-hud/D4",
+    "fef8a56d": "corewindow/D14+social-economy/D1",
+    "round52_2_17": "drop/D4+D7/statusbar-hud/D5/corewindow/D5",
+    "round78": "pet-summon/D3 合法混合面收口归档"
+  },
+  "rows": [
+    {
+      "face": "login-flow",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "login-flow",
+      "id": "D2",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "login-flow",
+      "id": "D3",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D5",
+      "kind": "K4",
+      "verdict": "P2_LIVE",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D6",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D7",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "login-flow",
+      "id": "D8",
+      "kind": "K4",
+      "verdict": "P0_SHIPPED",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D9",
+      "kind": "K4",
+      "verdict": "KEEP_CURRENT",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D10",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "login-flow",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "NO_DEFECT",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D12",
+      "kind": "K4",
+      "verdict": "DOC_ONLY",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "login-flow",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "login-flow",
+      "id": "D14",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D2",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D3",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D4",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D5",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D7",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D8",
+      "kind": "K3",
+      "verdict": "P0_SHIPPED",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D9",
+      "kind": "K3",
+      "verdict": "P0_SHIPPED",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "statusbar-hud",
+      "id": "D14",
+      "kind": "K1",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "corewindow",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "corewindow",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "corewindow",
+      "id": "D3",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "corewindow",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "corewindow",
+      "id": "D5",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "corewindow",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "corewindow",
+      "id": "D7",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "corewindow",
+      "id": "D8",
+      "kind": "K3",
+      "verdict": "DOC_ONLY",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "corewindow",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "corewindow",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "corewindow",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "corewindow",
+      "id": "D12",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "corewindow",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "corewindow",
+      "id": "D14",
+      "kind": "K1",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "social-economy",
+      "id": "D1",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "social-economy",
+      "id": "D2",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "social-economy",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "social-economy",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "social-economy",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "social-economy",
+      "id": "D6",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "social-economy",
+      "id": "D7",
+      "kind": "K3",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "social-economy",
+      "id": "D8",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "social-economy",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "social-economy",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "social-economy",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "social-economy",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "social-economy",
+      "id": "D13",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "social-economy",
+      "id": "D14",
+      "kind": "K1",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D1",
+      "kind": "K4",
+      "verdict": "KEEP_WITH_NOTE",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D3",
+      "kind": "K3",
+      "verdict": "P0_SHIPPED",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D6",
+      "kind": "K3",
+      "verdict": "P2_LIVE",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D7",
+      "kind": "K3",
+      "verdict": "P2_LIVE",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D8",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D12",
+      "kind": "K3",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D13",
+      "kind": "K3",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "pet-summon",
+      "id": "D14",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D1",
+      "kind": "K4",
+      "verdict": "KEEP_WITH_NOTE",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D2",
+      "kind": "K4",
+      "verdict": "DOC_ONLY",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D7",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D8",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D10",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D11",
+      "kind": "K4",
+      "verdict": "BATCH_3_DOC_DEBT",
+      "batch": "第 3 号裁决 T3"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "activity-minigame",
+      "id": "D14",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "cashshop",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "cashshop",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D7",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "cashshop",
+      "id": "D8",
+      "kind": "K4",
+      "verdict": "DOC_ONLY",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D9",
+      "kind": "K3",
+      "verdict": "P2_IDA",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D10",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "cashshop",
+      "id": "D11",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "cashshop",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "cashshop",
+      "id": "D14",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "skill",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "skill",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "skill",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "skill",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D7",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "skill",
+      "id": "D8",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "skill",
+      "id": "D11",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "skill",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "skill",
+      "id": "D14",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "npc",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "npc",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "npc",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "npc",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "npc",
+      "id": "D7",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "npc",
+      "id": "D8",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "npc",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D10",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D11",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "npc",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D13",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "npc",
+      "id": "D14",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "map",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "map",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "map",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_0_BASELINE",
+      "batch": "第 0 号裁决 T1"
+    },
+    {
+      "face": "map",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "map",
+      "id": "D5",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "map",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D7",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "map",
+      "id": "D8",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "map",
+      "id": "D9",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D10",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D11",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D12",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D13",
+      "kind": "K4",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "map",
+      "id": "D14",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D3",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D4",
+      "kind": "K2",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "quest",
+      "id": "D5",
+      "kind": "K3",
+      "verdict": "KEEP_CURRENT",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "quest",
+      "id": "D6",
+      "kind": "K2",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "quest",
+      "id": "D7",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D8",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "quest",
+      "id": "D9",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "quest",
+      "id": "D10",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "quest",
+      "id": "D11",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "quest",
+      "id": "D12",
+      "kind": "K3",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "quest",
+      "id": "D13",
+      "kind": "K4",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "quest",
+      "id": "D14",
+      "kind": "K4",
+      "verdict": "NO_OP",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "drop",
+      "id": "D1",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "drop",
+      "id": "D2",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "drop",
+      "id": "D3",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "drop",
+      "id": "D4",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "drop",
+      "id": "D5",
+      "kind": "K3",
+      "verdict": "P3_NO",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "drop",
+      "id": "D6",
+      "kind": "K3",
+      "verdict": "BATCH_4_STANCE",
+      "batch": "第 4 号裁决 T11∪T4∪T10"
+    },
+    {
+      "face": "drop",
+      "id": "D7",
+      "kind": "K1",
+      "verdict": "P0_SHIPPED",
+      "batch": "P0 零风险组（已销案）"
+    },
+    {
+      "face": "drop",
+      "id": "D8",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "drop",
+      "id": "D9",
+      "kind": "K3",
+      "verdict": "KEEP_CURRENT",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "drop",
+      "id": "D10",
+      "kind": "K3",
+      "verdict": "KEEP_S9",
+      "batch": "残差逐条裁定（§5.1）"
+    },
+    {
+      "face": "drop",
+      "id": "D11",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "drop",
+      "id": "D12",
+      "kind": "K2",
+      "verdict": "BATCH_1_KEEP",
+      "batch": "第 1 号裁决（94 条 K2）"
+    },
+    {
+      "face": "drop",
+      "id": "D13",
+      "kind": "K3",
+      "verdict": "BATCH_2_P2_BACKLOG",
+      "batch": "第 2 号裁决 T5∪T6"
+    },
+    {
+      "face": "drop",
+      "id": "D14",
+      "kind": "K4",
+      "verdict": "NO_OP",
+      "batch": "残差逐条裁定（§5.1）"
+    }
+  ],
+  "live_backlog": {
+    "plt_sections": 60,
+    "true_machine_markers": 142,
+    "owner": "user",
+    "executed_this_round": 0,
+    "note": "五屏截图归 PLT §44；不得据本裁决书标已验证"
+  },
+  "constraints": [
+    "零源码改动",
+    "零协议改动",
+    "零 WZ/IMG 改动",
+    "零署名原子提交",
+    "goal 保持 active"
+  ],
+  "artifacts": [
+    "docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md",
+    "docs/features/angel-calibration-d-matrix-2026-11/evidence/batch-adjudication-round86.json",
+    "docs/features/development-and-fix-plan-2026-11/notes/wave3-batch-adjudication-20261111.md",
+    "docs/features/development-and-fix-plan-2026-11/README.md",
+    "docs/features/pending-live-tests/README.md",
+    "tools/test_round86_batch_adjudication.py"
+  ]
+}

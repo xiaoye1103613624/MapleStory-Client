@@ -60,6 +60,8 @@
 **L-B 清单（不动，等裁决）**：Quest 107 带 x/y、场地伤害族 `0xBF/0xC0/0xC1/0xC2/0xD4` 完全无、`0x04/0x09/0x38/0x1C`、`PARTY_SEARCH_REGISTER(220)`、`MTS_OPERATION(0xFD)`、`CUSTOM_PACKET(0x3713)` 撞值、Title 称号窗、扩展装备栏、每日签到双端、`trade-house-083`、`0x3730→0x3740` 规划。§14.1/§14.2/§14.3 已裁「明确不做」的项同样不重新立项。
 
 > **2026-11-10 裁决（m04292）**：采纳 §3 推荐默认，**L-B 全部 12 项「保持 s9 优先、不补 083 发包、不改协议、保留资源降级、不建提交」，销案为「无变更」**。含 §3.1 的 `InPacket::available()` 类型修复亦维持现状（协议级，盲改会让 393 处死守卫变活路径，须真机逐面回归后才可动，记 `pending-live-tests` §27-A）。盲改会断 s9 联机，故维持现状，不进入实现。详见 §11.1。
+>
+> **2026-11-11 追认（m09211「全部继续」）**：上段口径差异（§11.3 自述 m04292 未逐条裁决）由用户 m09211 明确追认——L-B 12 项与 `InPacket::available()` 393 处**维持现状、零协议改动**；跨面 D 矩阵 168 条按 `docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md` 五条批量裁决 + 残差 28 条逐条裁定**全部结案（未决 0）**。T5 旧「orange-wz 阻塞」前提按 round85 `4b2452c4` 的 128B `WzAESConstant.DEFAULT_KEY` 实证翻案。真机五屏仍由用户认领（`pending-live-tests` §44）。
 
 ### 3.1 L-B 待裁决追加：`InPacket::available()` 返回 bool && 393 处当字节数比较（round49 附带发现）
 
@@ -157,6 +159,8 @@
 | **2-32** | 交/稳 | **D-G 公会浮窗按 Angel 083 收口（round85）**：round76 判第 8 例同族病（虚构根 `GuildUI.img` 五证为 0 + 全文字自绘 + 083 无独立 CUIGuild 类），主路径 `IO/UIStateGame.cpp:361-363` G(17) 已走 `UIUserList::Tab::GUILD`，但**用户仍可触达 4 处旁路**继续实例化虚构根浮窗：`IO/UITypes/UIStatusBar.cpp` `BT_MENU_UNION` / `BT_COMMUNITY_GUILD`、`IO/UITypes/UIMiscShells.cpp` `case '7'` / `'U'\|'u'` 键。按用户 m13177「把需要对齐 Angel 的都修复一下」+ m09859「按 Angel 布局修复」硬指令收敛：4 处 `emplace<UIGuild>`/`get_element<UIGuild>` 统一改走 `UIUserList` 共用窗 `Tab::GUILD`/`Tab::UNION` 的 toggle 模板（对齐 `:1047-1079` FRIENDS/PARTY 既有写法）。`UIGuild.cpp/.h` 与 `Type::GUILD` 枚举保留为 dead-code 兼容占位（删类属架构级、会动 UIElement::Type 序列化与 GuildModel，不做）。零协议/零 GuildModel/零 s9 handler 改动 | live `IO/UITypes/UIStatusBar.cpp:961-965/:1081-1089`（修复前）+ `IO/UITypes/UIMiscShells.cpp:3962-3963/:5899-5903`（修复前）+ `IO/UIStateGame.cpp:361-392` + `IO/UITypes/UIUserList.h:34/:45-58/:60-61` + `IO/UITypes/UIUserList.cpp:268-301/:447-517/:813-931/:1121-1129/:1265-1319/:1441-1455`（083 公会主体=完整共用窗页签，功能齐备）；`evidence/guild-window-083-round85.json`；`notes/wave2-guild-dg-resolution-20261111.md` | 门禁 18 IDA 主路径（round76 已走 REA→IDA→orange-wz→.nx→运行时 open_merge 五证）；校准≠改回原生（不删窗/不换根/不重绘，仅收敛入口）；s9 优先 | `UIStatusBar.cpp` / `UIMiscShells.cpp` / `UIGuild.cpp`（3 files, 54+/27-）+ `AGENTS.md:23` key 规格补正（orange-wz 128B DEFAULT_KEY vs .nx/NoLife 65536B 全量表） | `tools/test_round85_dg_guild_083.py`（静态守卫：4 处无 emplace<UIGuild> / UIStateGame G 键仍 Tab::GUILD / UIGuild 类保留 / AGENTS.md 双规格 / 128B 实证 + 场景：4 入口路由真值表 + toggle 语义 6 组） + `gen_opcode_matrix.py --check`（GATE OK）+ `build_smoke.bat`（EXITCODE=0 真重编覆盖 3 文件） | ✅ `#devfix-guild-dg-resolution`（round85）；真机 4 项进 `pending-live-tests` §43；**orange-wz 真因同步补正 AGENTS.md:23**：65536B 全量表对 orange-wz 是错规格，128B `WzAESConstant.DEFAULT_KEY` 实测 `query_nodes isError:false` |
 
 
+| **2-33** | 文/稳 | **跨面 168 条批量裁决销案（round86 / m09211）**：按 T1 第 0 号（s9 联机优先）采纳矩阵 §5 五条批量裁决 + §5.1 残差 28 条逐条裁定；104+36+28=168 未决 0。T5「orange-wz 阻塞」前提按 round85 128B `WzAESConstant.DEFAULT_KEY` 实证翻案；L-B 12 项 + `InPacket::available()` 393 处经 m09211 追认维持现状（§11.3 口径差异销案）。**零源码 / 零协议 / 零 WZ 改动** | `docs/features/angel-calibration-d-matrix-2026-11/DECISIONS.md` + `evidence/batch-adjudication-round86.json` + `notes/wave3-batch-adjudication-20261111.md` | s9 优先 / 校准≠改回原生；真机五屏交用户认领 | 纯文档（5 文件）+ harness | `test_round86_batch_adjudication.py` + `gen_opcode_matrix.py --check`（GATE OK）+ `build_smoke.bat`（EXITCODE=0，门禁回归非真重编） | ✅ `#devfix-batch-adjudication`（round86）；真机 60 节 / 142 处标记进 `pending-live-tests` §44 |
+
 ### Wave 3 · L-B 待裁决 / 双端立项（**本计划不自动开工**，见 §3）
 
 场地伤害族 c2s、Quest 107 x/y、`PARTY_SEARCH_REGISTER(220)`、`MTS_OPERATION(0xFD)`、公会副本 HUD s2c 287/288（需 s9 脚本）、Title 称号窗、扩展装备栏 #38、每日签到双端、怪物图鉴增强 #36、300 级/长伤害数值链路、交易所 `trade-house-083`。逐条对应 `feature-gap` §9.5.3 / §16 #12,#14,#18,#19,#20。
@@ -168,6 +172,8 @@
 | 门禁 | 命令 | 通过信号 |
 | --- | --- | --- |
 | 协议 | `python tools/gen_opcode_matrix.py --check` | `GATE OK: opcode matrix matches both sources (s9 3d5ccc6f8e)` |
+
+> 现场口径（2026-11-11）：opcode matrix 已 regen，当前 GATE 输出为 `GATE OK: opcode matrix matches both sources (s9 a78ba681a4)`；上行 `3d5ccc6f8e` 为 11-09 旧 head，保留作证据链。
 | 构建 | `tools\build_smoke.bat` | `GATE OK` + `EXITCODE=0`，日志 `build_log.txt` |
 | 握手 | `tools\test_handshake.ps1` | `HANDSHAKE bytes=16 hex=...`（依赖 s9 8484 在跑） |
 | 登录链 | 部署后冷启动 | `pending-live-tests` 记录形态：SEND 包序列 → 世界→频道→选角→进图，零崩溃 |
@@ -246,7 +252,7 @@ tools\test_handshake.ps1                       # 部署后握手烟测
 ### 11.3 无残留确认
 - Wave 0（0-1~0-5）、Wave 1（1-1~1-7）、Wave 2（2-1~2-20）全部 ✅ 或销案为「无变更/已核验」；无遗留未决实现项。
 - L-B（Wave 3）已裁决为「保持 s9 优先，无变更」——无实现项。
-- **口径差异披露（round66，需用户追认）**：§11.1 把「L-B 全部 12 项保持 s9 优先、无变更」记为 m04292 裁决，但 m04292 原文只授权「开发和修复、自测、测试完成提交、不能自测的记录下来一起测」，并未逐条裁决跨面 D 矩阵；此前挂着的 K3+K4 64 条（残差 28）待裁决被整体销案。本轮不改动该裁决口径。另 §11.2「2-1 ✅ 已构建部署」写就时 `UICashShop.cpp` R6 守卫尚未提交、未进构建日志，本轮真重编已覆盖（32 次），口径现与现场对齐。
+- **口径差异披露（round66 → 2026-11-11 已追认销案）**：§11.1 把「L-B 全部 12 项保持 s9 优先、无变更」记为 m04292 裁决，但 m04292 原文只授权「开发和修复、自测、测试完成提交、不能自测的记录下来一起测」，并未逐条裁决跨面 D 矩阵；此前挂着的 K3+K4 64 条（残差 28）待裁决被整体销案。**用户 m09211「全部继续，如果能自测的可以自己启动测试」已明确追认**：L-B 12 项 + `InPacket::available()` 393 处维持现状（协议级，真机逐面回归前不动，`pending-live-tests` §27-A），D 矩阵 168 条按 `DECISIONS.md` 五条批量裁决 + 残差 28 逐条裁定全部结案（未决 0），历史证据 README 不重写。另 §11.2「2-1 ✅ 已构建部署」写就时 `UICashShop.cpp` R6 守卫尚未提交、未进构建日志，本轮真重编已覆盖（32 次），口径现与现场对齐。
 - 仅余 `docs/features/pending-live-tests/README.md` 中真机观感项（A+B 伤害数字/皮肤、2-1~2-4 像素级、各类 UI 实机点击）需用户启 s9 + 截屏联测，不属代码缺口。
 
 ## 10. 性质标注
