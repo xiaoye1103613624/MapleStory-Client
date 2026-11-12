@@ -154,10 +154,19 @@ namespace ms
 		//    Δx=+39 映射得 133 会越界）。
 		//  → 该坐标属「节点 origin + 截图实测」推断，漂移风险记在 drop/core 面 backlog；
 		//    新手态仍由下面 BEGINNER 分支熄灭；有转职后与 BtApUp 同步 set_active(show_ap)。
+		//  - D7 复核（2026-11-11，evidence/d569_match.json）：BtAuto/normal/0 (100x35)
+		//    在 角色能力.png 全窗模板匹配最优 SAD=147.56（误配区，无可信落点）——
+		//    原生 v83 能力窗根本不绘制 BtAuto（IMG 有 BtAuto/BtAuto1/BtAuto2 素材，
+		//    客户端不建，与 D5 BtHelp 同型）。本地绑定保留为增强（新手态熄灭 +
+		//    转职门控），漂移风险降级：原生基准面无此件，不存在「与原生不一致」。
 		nl::node bt_auto = main["BtAuto"] ? main["BtAuto"] : (Stat["BtAuto"] ? Stat["BtAuto"] : Stat["BtAutoAP"]);
 		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, Point<int16_t>(106, 198), "Stat/BtAuto");
 
 		// BtDetail 46x19 右下角锚算：x=208-46-9、y=347-19-4（k 截图实测 SAD=0.25）。
+		// D6 复核（2026-11-11，evidence/d569_match.json）：BtDetail/normal/0 全窗模板
+		// 匹配最优 frame=(154,326) SAD=0.62 —— 本地 (153,324) 与原生帧差 1~2px，
+		// 像素级坐实。IDA CUIStat::OnCreate @0x8c4c97 的 a4:124 是 CreateCtrl 锚点
+		// 参数口径（非 top-left），与 SAD 实测不矛盾；坐标以 SAD 为准不改。
 		nl::node detail_open = main["BtDetailOpen"] ? main["BtDetailOpen"] : (Stat["BtDetail"] ? Stat["BtDetail"] : main["BtDetail"]);
 		try_maple_btn(buttons, Buttons::BT_DETAILOPEN, detail_open, Point<int16_t>(153, 324), "Stat/BtDetail");
 
@@ -432,10 +441,13 @@ namespace ms
 					statlabels[detail_rows[i]].draw(dp + Point<int16_t>(76, static_cast<int16_t>(24 + i * 18)));
 			}
 
-			// 窗内蓝头信息板 basicStat（159x121，origin=(78,0)）：始终绘制于窗内
+			// 窗内蓝头信息板 basicStat（159x121，origin=(78,0)）：绘制于窗内
 			// (8,195)（参考截图模板匹配 SAD=0.0）。Texture::draw 会减 origin，
 			// 故绘制点 = 左上角 + origin。
-			if (classic_help.is_valid())
+			// 该板讲的是「所有新手玩家的属性点由本职业特性自动分配」，
+			// 只对未转职（BEGINNER）成立；1 转后必须撤掉，否则会盖住下方
+			// AP 加点区（用户 2026-11-11 第 4 条）。判定与 :620 的 show_ap 同源。
+			if (classic_help.is_valid() && jobId == Job::Level::BEGINNER)
 				classic_help.draw(DrawArgument(position + Point<int16_t>(8, 195) + classic_help.get_origin()));
 		}
 		else if (showdetail && textures_detail.size() >= 4)
@@ -752,7 +764,14 @@ namespace ms
 						const AutoAssignApPacket::StatCode second_code =
 							to_code((primary + 1) % 4);
 
-						AutoAssignApPacket(to_code(primary), ap, second_code, 0).dispatch();
+						// L2：083 自动加点前 CanSendExclRequest(500,0) 等价本地节流（不动 wire）。
+						auto now = std::chrono::steady_clock::now();
+						if (last_ap_send.time_since_epoch().count() == 0 ||
+							std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ap_send).count() >= 500)
+						{
+							last_ap_send = now;
+							AutoAssignApPacket(to_code(primary), ap, second_code, 0).dispatch();
+						}
 
 						perf::mark("AP", "autoassign primary=" + std::to_string(primary)
 							+ " ap=" + std::to_string(ap));
@@ -797,6 +816,14 @@ namespace ms
 
 	void UIStatsInfo::send_apup(MapleStat::Id stat) const
 	{
+		// L2：083 SendAbilityUpRequest 前 CanSendExclRequest(500,0) 等价本地节流，
+		// 防连点刷 AP 包（纯本地，不动 wire/opcode）。
+		auto now = std::chrono::steady_clock::now();
+		if (last_ap_send.time_since_epoch().count() != 0 &&
+			std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ap_send).count() < 500)
+			return;
+		last_ap_send = now;
+
 		SpendApPacket(stat).dispatch();
 		UI::get().disable();
 	}

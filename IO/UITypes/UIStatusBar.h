@@ -66,6 +66,8 @@ namespace ms
 		void remove_menus();
 		bool is_menu_active();
 		bool is_classic() const { return classic_mode; }
+		// L5：KeyConfig 保存/恢复默认/清空后强制刷新快捷栏图标（083 ReDrawQuickslot / InvalidateRect 等价）。
+		void redraw_quickslots() { refresh_classic_qs_icons(); }
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;

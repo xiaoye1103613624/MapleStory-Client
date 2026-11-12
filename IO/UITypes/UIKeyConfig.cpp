@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -24,6 +24,7 @@
 #include "UIMiscShells.h"
 #include "UIQuickslotConfig.h"
 #include "UISoftKey.h"
+#include "UIStatusBar.h"
 
 #include "../UI.h"
 
@@ -117,6 +118,11 @@ namespace ms
 		// 表现为「键盘设定窗没有按钮」。推导过程见 evidence/w2-hud-buttons/coords.md（T-4）。
 		// round75 · Angel 083 依据（CUIKeyConfig）：下面 5 颗功能钮 y=234 一行的坐标来自截图逐像素定标，
 		// 属门禁 18「主路径已尽仍缺关键节点」的截图备选，非 083 立即数背书，不得据 083 改这 5 个坐标。
+		// D9 复核（2026-11-11，evidence/d569_match.json）：五颗钮在期望坐标逐颗 SAD 实测
+		// BtOK=0.22 / BtCancel=11.58 / BtDefault=0.20 / BtDelete=0.20 / BtQuickSlot=0.00
+		// （orange-wz 取件位图 vs 正确客户端截图/键盘设置.png，全点覆盖）——坐标像素级坐实，
+		// 口径由「截图目测」升级为「SAD 实测」。BtHelp 不绑：原生帧全窗最优 SAD=175 无落点，
+		// v83 根本不建这颗钮（与 IDA sub_832834 析构只释放 6 个 CCtrlButton 互证），非缺陷。
 		// 活 IDB：CUIKeyConfig::CUIKeyConfig @0x832586 / OnButtonClicked @0x8335d0 /
 		// GetShortCutIndexByPos @0x833a65 / OnDestroy @0x833749 全无按钮坐标立即数；
 		// off_B397F0 是 L"KeyConfig" 的 BSTR 数据非坐标表，sub_832834 是析构（释放 6 个 CCtrlButton ZRef），
@@ -356,7 +362,8 @@ namespace ms
 				KeyAction::Id::PARTYCHAT, KeyAction::Id::FRIENDSCHAT, KeyAction::Id::MENU, KeyAction::Id::QUICKSLOTS,
 				KeyAction::Id::TOGGLECHAT, KeyAction::Id::GUILD, KeyAction::Id::GUILDCHAT, KeyAction::Id::PARTY,
 				KeyAction::Id::NOTIFIER, KeyAction::Id::MAPLENEWS, KeyAction::Id::CASHSHOP, KeyAction::Id::ALLIANCECHAT,
-				KeyAction::Id::MANAGELEGION, KeyAction::Id::MEDALS, KeyAction::Id::BOSSPARTY,
+				// P0 / T2：未绑定条挂 MEDAL(28)（v83 action27 勋章）；不再提供 BOSSPARTY 误导槽。
+				KeyAction::Id::MANAGELEGION, KeyAction::Id::MEDALS, KeyAction::Id::MEDAL,
 				KeyAction::Id::PICKUP, KeyAction::Id::SIT, KeyAction::Id::ATTACK, KeyAction::Id::JUMP,
 				KeyAction::Id::INTERACT_HARVEST, KeyAction::Id::CHARINFO, KeyAction::Id::CHANGECHANNEL,
 				KeyAction::Id::SCREENSHOT
@@ -386,7 +393,8 @@ namespace ms
 		unbound_actions_pos[KeyAction::Id::TOGGLECHAT] = Point<int16_t>(row_x + (slot_width * 1), row_y + (slot_height * 0));
 		unbound_actions_pos[KeyAction::Id::WHISPER] = Point<int16_t>(row_x + (slot_width * 2), row_y + (slot_height * 0));
 		unbound_actions_pos[KeyAction::Id::MEDALS] = Point<int16_t>(row_x + (slot_width * 3), row_y + (slot_height * 0));
-		unbound_actions_pos[KeyAction::Id::BOSSPARTY] = Point<int16_t>(row_x + (slot_width * 4), row_y + (slot_height * 0));
+		// P0 / T2：原 BOSSPARTY 槽位改为 MEDAL（分号键勋章窗）；KeyMapTranslate 27↔28 不变。
+		unbound_actions_pos[KeyAction::Id::MEDAL] = Point<int16_t>(row_x + (slot_width * 4), row_y + (slot_height * 0));
 		unbound_actions_pos[KeyAction::Id::PROFESSION] = Point<int16_t>(row_x + (slot_width * 5), row_y + (slot_height * 0));
 		unbound_actions_pos[KeyAction::Id::EQUIPMENT] = Point<int16_t>(row_x + (slot_width * 6), row_y + (slot_height * 0));
 		unbound_actions_pos[KeyAction::Id::ITEMS] = Point<int16_t>(row_x + (slot_width * 7), row_y + (slot_height * 0));
@@ -1273,6 +1281,10 @@ namespace ms
 		}
 
 		dirty = false;
+
+		// L5：083 改键保存后 ReDrawQuickslot（状态栏快捷栏图标实时刷新）。
+		if (auto sb = UI::get().get_element<UIStatusBar>())
+			sb->redraw_quickslots();
 	}
 
 	void UIKeyConfig::bind_staged_action_keys()
@@ -1305,6 +1317,10 @@ namespace ms
 		bound_actions.clear();
 		staged_mappings = {};
 		dirty = true;
+
+		// L5：083 清空/恢复默认后 InvalidateRect（状态栏快捷栏图标实时刷新）。
+		if (auto sb = UI::get().get_element<UIStatusBar>())
+			sb->redraw_quickslots();
 	}
 
 	void UIKeyConfig::reset()

@@ -457,17 +457,9 @@ namespace ms
 
 		slider.draw(position);
 
-		if (macro_enabled)
-		{
-			Point<int16_t> macro_pos = position + Point<int16_t>(bg_dimensions.x(), 0);
-
-			macro_backgrnd.draw(macro_pos + Point<int16_t>(1, 0));
-			macro_backgrnd2.draw(macro_pos);
-			macro_backgrnd3.draw(macro_pos);
-
-			for (size_t i = 0; i < macro_labels.size(); i++)
-				macro_labels[i].draw(macro_pos + Point<int16_t>(12, static_cast<int16_t>(28 + i * 42)));
-		}
+		// 2026-11-11：组合栏改由独立窗 UISkillMacroEx 绘制。
+		// 这里若再画 SkillMacro backgrnd + "#1/#2/…" 标签，就会和右侧真组合栏
+		// 叠出用户报的多余「1/2/3/4/5」。
 
 		if (sp_enabled)
 		{
@@ -1117,9 +1109,19 @@ namespace ms
 		// （nx_inspect 实测 NOT FOUND），于是 BT_OKAY 等钮从未创建、
 		// set_skillpoint(true) 恒为 false，点「+」毫无反应（用户报「升级技能按键没反应」）。
 		// 资源缺失时直接扣点发包，保证技能仍能升级；资源齐全时仍走原生确认面板。
+		// L3 + L2：资源缺失直接扣点时，先做 SP 前置校验与 500ms 本地节流（不动 wire）。
 		if (!find_btn(buttons, Buttons::BT_OKAY))
 		{
-			SpendSpPacket(id).dispatch();
+			if (can_raise(id))
+			{
+				auto now = std::chrono::steady_clock::now();
+				if (last_sp_send.time_since_epoch().count() == 0 ||
+					std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sp_send).count() >= 500)
+				{
+					last_sp_send = now;
+					SpendSpPacket(id).dispatch();
+				}
+			}
 			return;
 		}
 
@@ -1164,6 +1166,15 @@ namespace ms
 
 	void UISkillBook::spend_sp(int32_t skill_id)
 	{
+		// L3：SP 前置校验（与 send_spup 同源门控）。
+		if (!can_raise(skill_id))
+			return;
+		// L2：500ms 本地节流。
+		auto now = std::chrono::steady_clock::now();
+		if (last_sp_send.time_since_epoch().count() != 0 &&
+			std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sp_send).count() < 500)
+			return;
+		last_sp_send = now;
 		SpendSpPacket(skill_id).dispatch();
 
 		UI::get().disable();
@@ -1261,18 +1272,12 @@ namespace ms
 	{
 		macro_enabled = enabled;
 
-		if (macro_enabled)
-		{
-			dimension = bg_dimensions + Point<int16_t>(macro_backgrnd.get_dimensions().x(), 0);
-			refresh_macros();
-		}
-		else if (!sp_enabled)
-		{
+		// 技能窗宽度保持原 bg；组合栏是独立窗，不再把 SkillMacro 底板拼进本窗。
+		if (!sp_enabled)
 			dimension = bg_dimensions;
-		}
 
 		if (auto* b = find_btn(buttons, Buttons::BT_MACRO_OK))
-			b->set_active(macro_enabled);
+			b->set_active(false);
 
 		// 组合栏是独立窗（UISkillMacroEx），只靠 macro_enabled 收不掉：以前「宏指令」
 		// 再点一次 / 按「确定」后技能窗缩回原宽，组合栏却留在原地 —— 就是用户报的
@@ -1290,7 +1295,7 @@ namespace ms
 			set_skillpoint(false);
 	}
 
-	bool UISkillBook::send_icon(const Icon& icon, Point<int16_t>)
+	bool UISkillBook::send_icon(const Icon& icon, Point<int16_t> cursor_position)
 	{
 		if (!macro_enabled)
 			return true;
@@ -1299,10 +1304,19 @@ namespace ms
 		if (sid <= 0)
 			return true;
 
-		if (SkillMacros::get().assign_skill(sid)) {
-			LOG(LOG_DEBUG, "UISkillBook: macro assign skill=" << sid);
-			set_macro(true); // refresh labels
+		// 拖到独立组合栏：交给 UISkillMacroEx 命中判定；否则写入当前选中宏。
+		if (auto mex = UI::get().get_element<UISkillMacroEx>())
+		{
+			if (mex->is_active() && mex->drop_skill(sid, cursor_position))
+			{
+				LOG(LOG_DEBUG, "UISkillBook: macro drop skill=" << sid);
+				return true;
+			}
 		}
+
+		if (SkillMacros::get().assign_skill(sid))
+			LOG(LOG_DEBUG, "UISkillBook: macro assign skill=" << sid);
+
 		return true;
 	}
 

@@ -11,6 +11,8 @@
 **s9 联机优先；Angel.exe(13339) 083/v83 带符号 IDB 仅作语义校准源；校准 ≠ 改回原生；数值重合 ≠ 语义重合；083/v83 only 禁引 095。**
 改回 083 原生包形会断 s9 联机；14 条 T1 明细（`login-flow/D1`、`corewindow/D2`、`skill/D13`、`map/D3` …）本身均属 K2「保持」，无需再逐条裁。
 
+> **round101（#15 `corewindow`）三层辨析补正（2026-11-12）**：「断 s9 联机」风险已收敛到 **W 桶**（wire/opcode/字段宽度/类型，保持 s9，零改动）。**L 桶**（客户端本地逻辑 / UI 行为 / 资源绑定）可按 Angel 083 原生还原，与 wire 正交、不断联机。据此 `corewindow/D8` 的 L 桶项（Stat/Skill 500ms 独占门闩、Skill SP 前置校验、KeyConfig 改键后状态栏跨窗重绘）已落地，W 桶（6 字段宽度等）全程零改动。BtAuto 三钮经现场反编译确认 083 `OnCreate` 不创建、由 `RestoreButtons`/状态机创建，当前端已保留为本地增强（原生基准面无此件，不存在「与原生不一致」）。
+
 ## 1. 五条批量裁决（按矩阵 §5 实算，裁定 = 采纳）
 
 | # | 裁决 | 覆盖组 | 条数 | 其中 K3/K4 | m09211 裁定 |
@@ -96,7 +98,7 @@
 | **D5** | K1 | 095 线地址污染 4 处是否换依据？ | 零风险换注释：改引 Angel `CUIStat::OnCreate 0x8c4c7f` / `CUIItem::OnChildNotify ... | `P0_SHIPPED` | round52 / 2-17 已换 083 EA |
 | **D6** | K2 | `CLASSIC_SKILL_OFFSET` 文档 (7,99) vs 源码 (10,87)？ | 不改源码，先实机比对技能窗文字/贴图 12px 错位再定 | `BATCH_2_P2_BACKLOG` | MCP 已可用（round85 128B 实证）；F 维/抓帧仅因真机观感未采挂 P2，非解析阻塞 |
 | **D7** | K4 | TooltipBackdrop 配色两版以谁为准？ | 以源码 `TextTooltip.h:28-47` 为真值，只回写文档中间态说明 | `BATCH_3_DOC_DEBT` | 授权回写=裁决态销案；历史证据 README 不重写（证据链留存） |
-| **D8** | K3 | `CUIStat` 6 掩码 / `CUISkill` 500ms 门闩 / `CUIKeyConfig` 5 分支覆盖度？ | 先出逐条对照清单，不改代码；确认 s9 是否需要 | `DOC_ONLY` | CUIStat 6 掩码 / CUISkill 500ms / CUIKeyConfig 5 分支：round75 c07b1a7b 已复核，只出对照清单不改代码 |
+| **D8** | K3 | `CUIStat` 6 掩码 / `CUISkill` 500ms 门闩 / `CUIKeyConfig` 5 分支覆盖度？ | round101 翻案：L 桶（本地 500ms 门闩 + SP 前置校验 + KeyConfig 跨窗重绘）按 083 `CanSendExclRequest(500,0)` 还原，W 桶保持 s9；已落地 | `L_BUCKET_DONE` | CUIStat/CUISkill 500ms / CUISkill SP 前置校验 / CUIKeyConfig 状态栏重绘：round75 c07b1a7b 原 `DOC_ONLY`；round101 P3-ITEM15 翻案，按 083 还原本地门闩，不动 wire |
 | **D9** | K2 | 宏系统 32 格 → 当前端 5 槽是否补？ | 保持 5 槽（`SkillMacros::MAX_SLOTS=5` 与 s9 `SKILL_MACRO(110)` 对齐） | `BATCH_1_KEEP` | 保持现状，认可即结案，无变更 |
 | **D10** | K2 | `CWorldMapDlg 666×524` 是否改当前端世界地图？ | 保持 s9 布局，原生「无在线玩家列表」结论已坐实，右上列表为 s9 挂接，不判缺失 | `BATCH_0_BASELINE` | s9 联机优先 / Angel 083 仅语义校准源 |
 | **D11** | K4 | Q2 清单 C14/C34/C35/C13 及 §16 #8/#9 等旧账是否回写？ | 交用户裁决后统一回写（本面只出销案证据，不擅改 Q2 文档） | `BATCH_3_DOC_DEBT` | 授权回写=裁决态销案；历史证据 README 不重写（证据链留存） |

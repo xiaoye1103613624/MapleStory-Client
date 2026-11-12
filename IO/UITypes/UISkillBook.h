@@ -29,6 +29,8 @@
 
 #include <array>
 
+#include <chrono>
+
 namespace ms
 {
 	class UISkillBook : public UIDragElement<PosSKILL>
@@ -273,5 +275,8 @@ namespace ms
 		Texture sp_skill;
 		int32_t sp_id;
 		int32_t sp_masterlevel;
+
+		// L2：083 OnSkillLevelUpButton 前 CanSendExclRequest(500,0) 等价本地节流（不动 wire）。
+		std::chrono::steady_clock::time_point last_sp_send{};
 	};
 }

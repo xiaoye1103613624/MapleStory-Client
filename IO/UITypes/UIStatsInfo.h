@@ -22,6 +22,8 @@
 #include "../../Character/CharStats.h"
 #include "../../Template/BoolPair.h"
 
+#include <chrono>
+
 namespace ms
 {
 	class UIStatsInfo : public UIDragElement<PosSTATS>
@@ -165,5 +167,9 @@ namespace ms
 		// 绘制点 = 墨迹顶 - Text::ink_offset()，由渲染器按该行文字自己的
 		// bitmap_top 现算（R27-B1b 唯一真源；INK_TOP_NONE 行沿用 statoffsets 的 y）。
 		int16_t statinktops[StatLabel::NUM_LABELS];
+
+		// L2：083 SendAbilityUpRequest 前 CanSendExclRequest(500,0) 等价本地节流。
+		// mutable 因 send_apup 为 const 方法（仅更新节流时间戳，不改逻辑状态）。
+		mutable std::chrono::steady_clock::time_point last_ap_send{};
 	};
 }

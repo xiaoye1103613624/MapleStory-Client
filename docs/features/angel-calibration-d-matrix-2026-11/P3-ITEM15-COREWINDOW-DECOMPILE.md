@@ -334,3 +334,34 @@ return *(this+2089)==0 && (a3!=0 || _ZtlSecureFuse<short>(...) > 0)
 本轮补反编译 5 个函数体后全部证伪。**影响**：§0、§2.1、§3、§4-Q1 的「W 桶冲突/断联机」表述已就地更正；
 §2.2–2.5 中「W 桶不同 → 不可直接改」的措辞同样应理解为「opcode 一致、保持 s9 现状、差异记 L 桶」。
 证据落盘 `evidence/p3-item15-disconnect-triage-round101.json`。
+
+## 8. round101 实施落点（2026-11-12 按计划落地）
+
+> 用户「那就按计划实施」后，将 §3 / §7 的 L 桶项落到当前端源码；W 桶（6 字段宽度等）全程零改动。
+
+### 8.1 已落地（源码 + `tools/build_smoke.bat` EXITCODE=0 通过）
+
+| # | L 桶项 | 083 依据 | 当前端改动 | 文件 |
+| --- | --- | --- | --- | --- |
+| L2 | Stat/Skill 500ms 独占门闩 | `CanSendExclRequest(500,0)` @0x485bf7（§7.4） | `send_apup` / 自动加点 `AutoAssignApPacket` 派发前、`UISkillBook::send_spup` / `spend_sp` 前加 `steady_clock` 500ms 本地节流（与 `UI::get().disable()` 并存，纯本地、不动 wire） | `UIStatsInfo.cpp/.h`、`UISkillBook.cpp/.h` |
+| L3 | Skill SP 前置校验覆盖所有发包入口 | 083 三档 `SP_3509/3510/3511` 本地门控 | `send_spup`（资源缺失直发路径）与 `spend_sp` 发包前调 `can_raise(skill_id)` | `UISkillBook.cpp` |
+| L5 | KeyConfig 改键后状态栏跨窗重绘 | 083 `CUIStatusBar::ReDrawQuickslot` / `InvalidateRect` | `clear()`（DEFAULT/DELETE/reset 经它）与 `save_staged_mappings()`（OK/safe_close 经它）后调 `UIStatusBar::redraw_quickslots()` | `UIKeyConfig.cpp`、`UIStatusBar.h` |
+| L6 | Stat 三颗 `BtAuto` 资产 | 083 `OnCreate` 不创建 `BtAuto`/`2007/2008/2009`，由 `RestoreButtons`/状态机创建；`OnButtonClicked` 仍处理 `2007/2008→AutoApUp(1)`、`2009→AutoApUp(0)` | 当前端 `UIStatsInfo.cpp` 已实现单 `BT_AUTO` 增强（注释明「原生基准面无此件、不存在与原生不一致」），保留为本地增强，**零新增** | `UIStatsInfo.cpp` |
+| L4 | Item 整理/聚集/展开/收起/槽位合并悬停提示 | 083 `CUIItem::OnChildNotify` a3==101（0x7D4/7D5/7D6/7D7/2003） | **文案已加**（`locale/zh-CN.ini` + `en-US.ini` 的 `inventory.tip_*`）；逐帧悬停 wiring 因现有 `send_cursor` 的 item tooltip 分支未联机验证，**标注待联机核验**，不盲改以免破坏现有道具 tooltip | `locale/zh-CN.ini`、`locale/en-US.ini` |
+
+### 8.2 口径变更回写（L7）
+
+- `DECISIONS.md` §0：追加 round101 W/L 桶三层辨析补正。
+- `DECISIONS.md` §4.3 `corewindow/D8`：裁定状态 `DOC_ONLY` → `L_BUCKET_DONE`。
+- `P3-C-BATCH-MAPS.md` #15（= `corewindow/D2`）：注明 W 桶 KEEP、L 桶已落地 D8。
+- `P3-ANGEL-REBUILD-PLAN.md` §9 #15：见 §8.3。
+
+### 8.3 与 P3-ANGEL-REBUILD-PLAN §9 的关系
+
+§9 #15 维持 `KEEP`（W 桶 s9 协议优先，与 `corewindow/D2` 判定一致）；本轮 L 桶落地项归属 `corewindow/D8`，不推翻 #15 的 W 桶 KEEP。
+
+### 8.4 构建与验收
+
+- `tools/build_smoke.bat`：`EXITCODE=0`、`GATE OK`；`MapleStory.exe` 已刷新至 `E:\MXD\BeiDou-Client-xy\`。
+- 注：3 个运行中 `MapleStory.exe`（含已知僵尸 34476）无法从本会话 `taskkill`（Access denied），磁盘 exe 已更新但运行实例仍为旧镜像，需用户重启客户端生效。
+- 真机联测（500ms 门闩手感、SP 校验提示、改键后状态栏刷新、Item 悬停提示）待用户屏前复拍，本环境历史抓屏全黑不假装已验证。

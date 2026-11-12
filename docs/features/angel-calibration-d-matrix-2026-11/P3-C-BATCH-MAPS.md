@@ -9,7 +9,7 @@
 
 | # | 决策点 | 判定 | 依据强度 | 本轮动作 |
 | --- | --- | --- | --- | --- |
-| 15 | `corewindow/D2` 083 原生 vs s9 协议冲突 | `KEEP`（s9 协议优先，BATCH_0_BASELINE） | 083 符号族 + DECISIONS 原裁定 | 只出对照，零改动 |
+| 15 | `corewindow/D2` 083 原生 vs s9 协议冲突 | `KEEP`（W 桶 s9 协议优先，BATCH_0_BASELINE） | 083 符号族 + DECISIONS 原裁定 + round101 三层辨析 | W 桶 KEEP 零改动；round101 澄清 L 桶（500ms 门闩/SP 校验/KeyConfig 重绘）与 wire 正交、可按 083 还原，已落地 D8 |
 | 16 | `quest/D5` UIQuestLog::send_key | `KEEP_CURRENT`（DOC_ONLY，空实现维持） | 083 全库 `*quest*key*`=0 + 当前端空 stub | 只出对照，零改动 |
 
 ## 1. `corewindow/D2` — 083 原生 vs s9 协议冲突，维持 s9 协议优先
