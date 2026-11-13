@@ -412,7 +412,9 @@ namespace ms
 		/// 世界地图玩家列表回复（对接 s9 SendOpcode.WORLD_MAP_PLAYERS = 0x178）
 		WORLD_MAP_PLAYERS = 376,
 
-		LIMIT_BREAK_SYNC = 0x3730
+		LIMIT_BREAK_SYNC = 0x3730,
+		/// BeiDou SendOpcode.SET_ITEM_FINAL_DAMAGE — 战斗面板显示同步
+		SET_ITEM_FINAL_DAMAGE = 0x175
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -777,6 +779,9 @@ namespace ms
 
 		// 北斗自定义包：破功值（伤害上限）同步
 		emplace<LIMIT_BREAK_SYNC, LimitBreakSyncHandler>();
+
+		// 套装/战斗面板属性显示同步（0x175）
+		emplace<SET_ITEM_FINAL_DAMAGE, SetItemFinalDamageHandler>();
 
 		// 世界地图掉落查询回复
 		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();
@@ -1159,6 +1164,7 @@ namespace ms
 			case 354: opcode_msg = "VICIOUS_HAMMER"; break;
 			case 358: opcode_msg = "VEGA_SCROLL"; break;
 			case 0x3730: opcode_msg = "LIMIT_BREAK_SYNC"; break;
+			case 0x175: opcode_msg = "SET_ITEM_FINAL_DAMAGE"; break;
 			default: break;
 		}
 

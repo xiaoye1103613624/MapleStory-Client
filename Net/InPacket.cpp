@@ -37,6 +37,19 @@ namespace ms
 		return top - pos;
 	}
 
+	size_t InPacket::position() const
+	{
+		return pos;
+	}
+
+	void InPacket::seek(size_t absolute_pos)
+	{
+		if (absolute_pos > top)
+			throw PacketError("Stack underflow at " + std::to_string(absolute_pos));
+
+		pos = absolute_pos;
+	}
+
 	void InPacket::skip(size_t count)
 	{
 		if (count > length())

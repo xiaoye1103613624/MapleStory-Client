@@ -5,7 +5,7 @@
   ],
   "client_source_hashes": {
    "Net/OutPacket.h": "be70cbca216f9e587a88baffd490d0f65f9a76520ca0397d7e7e5d5d7d085ac7",
-   "Net/PacketSwitch.cpp": "647c3ef46127ed29bd132c1b247c9cb0f5bd384f3020d7df600034a287d6ccb4"
+   "Net/PacketSwitch.cpp": "fee663394897d9a79eedcf01cca86b56b149eea4b6460da045c06c2be2ba5696"
   },
   "collisions": {
    "client_in": {
@@ -24,21 +24,21 @@
    "s9_send": {}
   },
   "counts": {
-   "client_in_constants": 307,
-   "client_in_registrations": 306,
+   "client_in_constants": 308,
+   "client_in_registrations": 307,
    "client_out_constants": 148,
    "client_out_sent": 148,
    "s9_recv_constants": 182,
    "s9_recv_distinct_values": 181,
    "s9_registered_handlers": 174,
    "s9_registration_sites": 175,
-   "s9_send_constants": 314,
-   "s9_send_distinct_values": 314,
+   "s9_send_constants": 317,
+   "s9_send_distinct_values": 317,
    "s9_send_emitted": 253
   },
-  "generated_at": "2026-11-11T04:01:59",
+  "generated_at": "2026-11-13T11:28:55",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "a78ba681a47f5fb0d7aed2eb17a106b956f6c33a",
+  "s9_git_head": "72816391cb8ca2a14394f8bd640ce658baa86e65",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",
@@ -54,7 +54,7 @@
   "source_hashes": {
    "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "6e5ecd14aa334a2573156ce73736b222cadeb4d46f271f1d31ae6204416ab91d",
    "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "22ca7e0f574d257f1bc2c24fea39686c6956c7303e5f51c5c6f9eed936f1dd41",
-   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "13b5571731f59fbbcde5bb01602d2a168db168c0d0227a0be1ec64ada5e2fb44"
+   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "f9d064b9b216d6388fc0478fdb0eb4908392e62c11e5f98d3f3f1a0f6640adcb"
   }
  },
  "c2s": [
@@ -697,7 +697,7 @@
    "client_sent_at": [
     {
      "file": "Gameplay/Stage.cpp",
-     "line": 356
+     "line": 361
     }
    ],
    "client_sent_count": 1,
@@ -1207,7 +1207,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 143
+     "line": 152
     }
    ],
    "client_sent_count": 1,
@@ -1236,7 +1236,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 137
+     "line": 146
     }
    ],
    "client_sent_count": 1,
@@ -1265,7 +1265,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 139
+     "line": 148
     },
     {
      "file": "Net/Packets/PetPackets.h",
@@ -1298,7 +1298,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 140
+     "line": 149
     },
     {
      "file": "Net/Packets/PetPackets.h",
@@ -1331,7 +1331,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 141
+     "line": 150
     },
     {
      "file": "Net/Packets/ItemAClassPackets.h",
@@ -1553,7 +1553,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 142
+     "line": 151
     }
    ],
    "client_sent_count": 1,
@@ -1577,7 +1577,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 166
+     "line": 175
     }
    ],
    "client_sent_count": 1,
@@ -1799,7 +1799,7 @@
    "client_sent_at": [
     {
      "file": "Net/Packets/InventoryPackets.h",
-     "line": 138
+     "line": 147
     }
    ],
    "client_sent_count": 1,
@@ -8843,6 +8843,43 @@
    "status": "HANDLED"
   },
   {
+   "client_handler_wins": "SetItemFinalDamageHandler",
+   "client_handlers": [
+    "SetItemFinalDamageHandler"
+   ],
+   "client_names": [
+    "SET_ITEM_FINAL_DAMAGE"
+   ],
+   "client_shadowed_handlers": [],
+   "s9_emitted": false,
+   "s9_line": 367,
+   "s9_name": "SET_ITEM_FINAL_DAMAGE",
+   "s9_value": 373,
+   "status": "HANDLED"
+  },
+  {
+   "client_handler_wins": null,
+   "client_handlers": [],
+   "client_names": [],
+   "client_shadowed_handlers": [],
+   "s9_emitted": false,
+   "s9_line": 368,
+   "s9_name": "SET_ITEM_SKILL_BONUS",
+   "s9_value": 374,
+   "status": "DEFINED_NOT_EMITTED"
+  },
+  {
+   "client_handler_wins": null,
+   "client_handlers": [],
+   "client_names": [],
+   "client_shadowed_handlers": [],
+   "s9_emitted": false,
+   "s9_line": 369,
+   "s9_name": "SET_SKILL_BONUS",
+   "s9_value": 378,
+   "status": "DEFINED_NOT_EMITTED"
+  },
+  {
    "client_handler_wins": "DamageSkinHandler",
    "client_handlers": [
     "DamageSkinHandler"
@@ -8852,7 +8889,7 @@
    ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
-   "s9_line": 363,
+   "s9_line": 371,
    "s9_name": "DAMAGE_SKIN",
    "s9_value": 247,
    "status": "HANDLED"
@@ -8867,7 +8904,7 @@
    ],
    "client_shadowed_handlers": [],
    "s9_emitted": true,
-   "s9_line": 364,
+   "s9_line": 372,
    "s9_name": "UPDATE_HPMPAALERT",
    "s9_value": 4096,
    "status": "HANDLED"

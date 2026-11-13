@@ -8,6 +8,9 @@
 //	  · "`"(23=v83 CASHSHOP) 只把聊天目标改成联盟频道，不开商城
 //	  · ";"(27=v83 MEDAL) 误开 Boss 队成员列表（开错窗）
 //	  · "5"(24=v83 TOALLIANCE) 落在枚举空位 → 死键
+	//	D1(2026-11-11)：";"(27) 不再压成死键 —— UIMedal 落地后 from_server(27)
+	//	改为具名 MEDAL(28)，to_server 双射回 27；四处映射仍保持双射。
+	//	P0(2026-11-12)：KeyConfig 未绑定条改挂 MEDAL，去掉 BOSSPARTY 槽误导；本文件映射不变。
 //
 //	方案甲约束：KeyAction.h 枚举与 UIStateGame 的 28 个 case 一字不动，
 //	只在此边界做双向翻译：
@@ -34,8 +37,7 @@ namespace ms
 				case 22: return MONSTERCOLLECTION;		// v83 MONSTERBOOK(22) → 本枚举 42（UIMonsterBook 入口）
 				case 23: return CASHSHOP;				// v83 CASHSHOP(23) → 本枚举 22（EnterCashShopPacket，s9 已处理）
 				case 24: return ALLIANCECHAT;			// v83 TOALLIANCE(24) → 本枚举 23（联盟聊天目标）
-				case 27: return static_cast<Id>(28);	// v83 MEDAL(27) → 本包无勋章窗，压成无 case 的枚举空位，
-														//   灭掉 BOSSPARTY(27)「; 开错窗」；勋章窗落地后改映射
+				case 27: return MEDAL;			// D1 v83 MEDAL(27) -> 分号键勋章窗（UIMedal，已落地）
 				default: return static_cast<Id>(action);
 			}
 		}
@@ -47,7 +49,7 @@ namespace ms
 				case MONSTERCOLLECTION: return 22;
 				case CASHSHOP: return 23;
 				case ALLIANCECHAT: return 24;
-				case static_cast<Id>(28): return 27;
+				case MEDAL: return 27;			// D1 双射回译，服务端存档仍是 v83 语义
 				default: return static_cast<int32_t>(action);
 			}
 		}

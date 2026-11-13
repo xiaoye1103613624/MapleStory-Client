@@ -37,6 +37,10 @@ namespace ms
 		bool available() const;
 		// Return the remaining length in bytes
 		size_t length() const;
+		// Absolute read cursor (bytes from packet start)
+		size_t position() const;
+		// Rewind/advance cursor; throws PacketError if past end
+		void seek(size_t absolute_pos);
 		// Skip a number of bytes (by increasing the offset)
 		void skip(size_t count);
 
