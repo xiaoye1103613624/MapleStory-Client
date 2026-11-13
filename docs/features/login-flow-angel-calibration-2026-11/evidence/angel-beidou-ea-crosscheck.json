@@ -1,0 +1,2639 @@
+{
+ "summary": {
+  "angel_funcs": 328,
+  "beidou_present": 327,
+  "beidou_sub_named": 322,
+  "beidou_real_named": 5,
+  "beidou_missing": 1,
+  "missing_eas": [
+   "0x4b7404"
+  ],
+  "conclusion": "layout differs"
+ },
+ "table": [
+  {
+   "class": "CCSWnd_Char",
+   "method": "OnCreate",
+   "ea": "0x4ab0b0",
+   "beidou_name": "sub_4AB0B0",
+   "beidou_size": "0xcbe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "Draw",
+   "ea": "0x4ac024",
+   "beidou_name": "sub_4AC024",
+   "beidou_size": "0x2e4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "OnMouseButton",
+   "ea": "0x4ac31e",
+   "beidou_name": "sub_4AC31E",
+   "beidou_size": "0x78",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "OnButtonClicked",
+   "ea": "0x4ac396",
+   "beidou_name": "sub_4AC396",
+   "beidou_size": "0x48",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "OnWear",
+   "ea": "0x4ac3de",
+   "beidou_name": "sub_4AC3DE",
+   "beidou_size": "0x298",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "CmpAvatar",
+   "ea": "0x4ac852",
+   "beidou_name": "sub_4AC852",
+   "beidou_size": "0x95",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "SetRing",
+   "ea": "0x4ac94b",
+   "beidou_name": "sub_4AC94B",
+   "beidou_size": "0x2c4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "CmpPet",
+   "ea": "0x4acda4",
+   "beidou_name": "sub_4ACDA4",
+   "beidou_size": "0xeb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "SetRiding",
+   "ea": "0x4aceb6",
+   "beidou_name": "sub_4ACEB6",
+   "beidou_size": "0x139",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "EndChat",
+   "ea": "0x4ad054",
+   "beidou_name": "sub_4AD054",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "SetEmotion",
+   "ea": "0x4ad12f",
+   "beidou_name": "sub_4AD12F",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "ShowBullet",
+   "ea": "0x4ad19d",
+   "beidou_name": "sub_4AD19D",
+   "beidou_size": "0x5b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "OnKeyRet",
+   "ea": "0x4ad20b",
+   "beidou_name": "sub_4AD20B",
+   "beidou_size": "0x220",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "GetWeaponItemID",
+   "ea": "0x4ad450",
+   "beidou_name": "sub_4AD450",
+   "beidou_size": "0xce",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "IsTwoHandWeapon",
+   "ea": "0x4ad71b",
+   "beidou_name": "sub_4AD71B",
+   "beidou_size": "0x138",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "BlowWeather",
+   "ea": "0x4ad853",
+   "beidou_name": "sub_4AD853",
+   "beidou_size": "0x31f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "CreateFloatNotice",
+   "ea": "0x4adb72",
+   "beidou_name": "sub_4ADB72",
+   "beidou_size": "0x912",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_Char",
+   "method": "TransientLayer_Weather",
+   "ea": "0x4ae492",
+   "beidou_name": "sub_4AE492",
+   "beidou_size": "0x181d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "OnCreate",
+   "ea": "0x4b6cbe",
+   "beidou_name": "sub_4B6CBE",
+   "beidou_size": "0x3ea",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "OnMouseMove",
+   "ea": "0x4b7297",
+   "beidou_name": "sub_4B7297",
+   "beidou_size": "0x109",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "OnKey",
+   "ea": "0x4b7404",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "OnKeyRet",
+   "ea": "0x4b7417",
+   "beidou_name": "sub_4B7417",
+   "beidou_size": "0x366",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "OnButtonClicked",
+   "ea": "0x4b77b4",
+   "beidou_name": "sub_4B77B4",
+   "beidou_size": "0x18c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "Update",
+   "ea": "0x4b7a91",
+   "beidou_name": "sub_4B7A91",
+   "beidou_size": "0x107",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "Draw",
+   "ea": "0x4b7b98",
+   "beidou_name": "sub_4B7B98",
+   "beidou_size": "0x1a45",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "SetCursorToPlate",
+   "ea": "0x4b95ed",
+   "beidou_name": "sub_4B95ED",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "GetPlateRect",
+   "ea": "0x4b965f",
+   "beidou_name": "sub_4B965F",
+   "beidou_size": "0x56",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "ChangeCategorySub",
+   "ea": "0x4b96b5",
+   "beidou_name": "sub_4B96B5",
+   "beidou_size": "0x1d5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "ChangePage",
+   "ea": "0x4b988a",
+   "beidou_name": "sub_4B988A",
+   "beidou_size": "0x613",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "ResetSlotIncComm",
+   "ea": "0x4ba419",
+   "beidou_name": "sub_4BA419",
+   "beidou_size": "0x20a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "SetPlateNo",
+   "ea": "0x4ba623",
+   "beidou_name": "sub_4BA623",
+   "beidou_size": "0x88f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "SetButtonKeyFocus",
+   "ea": "0x4baeb2",
+   "beidou_name": "sub_4BAEB2",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "ShowItemToolTip",
+   "ea": "0x4baf1a",
+   "beidou_name": "sub_4BAF1A",
+   "beidou_size": "0x462",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "WearItem",
+   "ea": "0x4bb37c",
+   "beidou_name": "sub_4BB37C",
+   "beidou_size": "0x273",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "WearCommodity",
+   "ea": "0x4bb5ef",
+   "beidou_name": "sub_4BB5EF",
+   "beidou_size": "0x127",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCSWnd_List",
+   "method": "GetCommodityGender",
+   "ea": "0x4bb716",
+   "beidou_name": "sub_4BB716",
+   "beidou_size": "0x15c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "SetOption",
+   "ea": "0x51f93d",
+   "beidou_name": "sub_51F93D",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "CreateFadeWnd",
+   "ea": "0x51f9ad",
+   "beidou_name": "sub_51F9AD",
+   "beidou_size": "0x184",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "Close",
+   "ea": "0x51fb4e",
+   "beidou_name": "sub_51FB4E",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "SendCloseMessage",
+   "ea": "0x51fff5",
+   "beidou_name": "sub_51FFF5",
+   "beidou_size": "0x25d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFloatNotice",
+   "method": "CreateFloatNotice",
+   "ea": "0x58c53b",
+   "beidou_name": "sub_58C53B",
+   "beidou_size": "0x776",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFloatNotice",
+   "method": "DeleteFloatNotice",
+   "ea": "0x58ccb1",
+   "beidou_name": "sub_58CCB1",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "OnDefaultAvatar",
+   "ea": "0x4ac7a5",
+   "beidou_name": "sub_4AC7A5",
+   "beidou_size": "0xad",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "InitRing",
+   "ea": "0x4ac920",
+   "beidou_name": "sub_4AC920",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "InitPet",
+   "ea": "0x4acc0f",
+   "beidou_name": "sub_4ACC0F",
+   "beidou_size": "0x113",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "SetPet",
+   "ea": "0x4acd22",
+   "beidou_name": "sub_4ACD22",
+   "beidou_size": "0x59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "OnCreate",
+   "ea": "0x5b0b8c",
+   "beidou_name": "sub_5B0B8C",
+   "beidou_size": "0x696",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "OnKey",
+   "ea": "0x5b1222",
+   "beidou_name": "sub_5B1222",
+   "beidou_size": "0xe3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Char",
+   "method": "GetWeaponItemID",
+   "ea": "0x5b1305",
+   "beidou_name": "sub_5B1305",
+   "beidou_size": "0xce",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_List",
+   "method": "OnCreate",
+   "ea": "0x5bb9b4",
+   "beidou_name": "sub_5BB9B4",
+   "beidou_size": "0x5ca",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_List",
+   "method": "ChangeCategorySub",
+   "ea": "0x5bdd12",
+   "beidou_name": "sub_5BDD12",
+   "beidou_size": "0x11b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CITCWnd_Tab",
+   "method": "OnButtonClicked",
+   "ea": "0x5b7106",
+   "beidou_name": "sub_5B7106",
+   "beidou_size": "0x234",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "Init",
+   "ea": "0x5f42cd",
+   "beidou_name": "sub_5F42CD",
+   "beidou_size": "0x949",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "Update",
+   "ea": "0x5f4c16",
+   "beidou_name": "sub_5F4C16",
+   "beidou_size": "0x752",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnMouseButton",
+   "ea": "0x5f5368",
+   "beidou_name": "sub_5F5368",
+   "beidou_size": "0x58",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "ChangeStep",
+   "ea": "0x5f53c0",
+   "beidou_name": "sub_5F53C0",
+   "beidou_size": "0x59b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnStepChanged",
+   "ea": "0x5f5962",
+   "beidou_name": "sub_5F5962",
+   "beidou_size": "0xac3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnNewCharStep",
+   "ea": "0x5f6425",
+   "beidou_name": "sub_5F6425",
+   "beidou_size": "0x5d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnSelectedCharChanged",
+   "ea": "0x5f6482",
+   "beidou_name": "sub_5F6482",
+   "beidou_size": "0x496",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnNewCharCanceled",
+   "ea": "0x5f6918",
+   "beidou_name": "sub_5F6918",
+   "beidou_size": "0x8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendRequest",
+   "ea": "0x5f6932",
+   "beidou_name": "sub_5F6932",
+   "beidou_size": "0x20",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendCheckPasswordPacket",
+   "ea": "0x5f6952",
+   "beidou_name": "sub_5F6952",
+   "beidou_size": "0x320",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendViewAllCharPacket",
+   "ea": "0x5f6d6a",
+   "beidou_name": "sub_5F6D6A",
+   "beidou_size": "0x47a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendSelectCharPacket",
+   "ea": "0x5f726d",
+   "beidou_name": "sub_5F726D",
+   "beidou_size": "0x424",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendSelectCharPacketByVAC",
+   "ea": "0x5f76ae",
+   "beidou_name": "sub_5F76AE",
+   "beidou_size": "0x59c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendDeleteCharPacket",
+   "ea": "0x5f7c4a",
+   "beidou_name": "sub_5F7C4A",
+   "beidou_size": "0x230",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendCheckDuplicateIDPacket",
+   "ea": "0x5f7fe7",
+   "beidou_name": "sub_5F7FE7",
+   "beidou_size": "0x91",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "SendCheckUserLimitPacket",
+   "ea": "0x5f8078",
+   "beidou_name": "sub_5F8078",
+   "beidou_size": "0x87",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnPacket",
+   "ea": "0x5f80ff",
+   "beidou_name": "sub_5F80FF",
+   "beidou_size": "0x181",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnLatestConnectedWorld",
+   "ea": "0x5f82f4",
+   "beidou_name": "sub_5F82F4",
+   "beidou_size": "0x4c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnRecommendWorldMessage",
+   "ea": "0x5f8340",
+   "beidou_name": "sub_5F8340",
+   "beidou_size": "0xae",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCheckPasswordResult",
+   "ea": "0x5f83ee",
+   "beidou_name": "sub_5F83EE",
+   "beidou_size": "0x9a8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnGuestIDLoginResult",
+   "ea": "0x5f8f27",
+   "beidou_name": "sub_5F8F27",
+   "beidou_size": "0x357",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCheckUserLimitResult",
+   "ea": "0x5f92ae",
+   "beidou_name": "sub_5F92AE",
+   "beidou_size": "0x31",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnAccountInfoResult",
+   "ea": "0x5f92df",
+   "beidou_name": "sub_5F92DF",
+   "beidou_size": "0x2a8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnWorldInformation",
+   "ea": "0x5f95b7",
+   "beidou_name": "sub_5F95B7",
+   "beidou_size": "0x246",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCancleRaceSelect",
+   "ea": "0x5f9805",
+   "beidou_name": "sub_5F9805",
+   "beidou_size": "0x8c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnSelectWorldResult",
+   "ea": "0x5f9891",
+   "beidou_name": "sub_5F9891",
+   "beidou_size": "0x3b1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCheckDuplicatedIDResult",
+   "ea": "0x5f9c72",
+   "beidou_name": "sub_5F9C72",
+   "beidou_size": "0xa3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnDeleteCharacterResult",
+   "ea": "0x5f9d15",
+   "beidou_name": "sub_5F9D15",
+   "beidou_size": "0x286",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCreateNewCharacterResult",
+   "ea": "0x5fa26c",
+   "beidou_name": "sub_5FA26C",
+   "beidou_size": "0x20b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "RemoveNoticeConnecting",
+   "ea": "0x5fac26",
+   "beidou_name": "sub_5FAC26",
+   "beidou_size": "0xe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnViewAllCharResult",
+   "ea": "0x5facca",
+   "beidou_name": "sub_5FACCA",
+   "beidou_size": "0x3f7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "MakeVACDlg",
+   "ea": "0x5fb0e1",
+   "beidou_name": "sub_5FB0E1",
+   "beidou_size": "0x74",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "ResetVAC",
+   "ea": "0x5fb155",
+   "beidou_name": "sub_5FB155",
+   "beidou_size": "0xda",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "EnableLoginStartCtrl",
+   "ea": "0x5fb22f",
+   "beidou_name": "sub_5FB22F",
+   "beidou_size": "0x16",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnSelectCharacterByVACResult",
+   "ea": "0x5fb245",
+   "beidou_name": "sub_5FB245",
+   "beidou_size": "0x2cc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnSelectCharacterResult",
+   "ea": "0x5fb541",
+   "beidou_name": "sub_5FB541",
+   "beidou_size": "0x2cc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnEnableSPWResult",
+   "ea": "0x5fb950",
+   "beidou_name": "sub_5FB950",
+   "beidou_size": "0xf9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCheckSPWResult",
+   "ea": "0x5fba49",
+   "beidou_name": "sub_5FBA49",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GetStepHeight",
+   "ea": "0x5fc0e4",
+   "beidou_name": "sub_5FC0E4",
+   "beidou_size": "0x27",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnAvatarChanged",
+   "ea": "0x5fc10b",
+   "beidou_name": "sub_5FC10B",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GotoTitle",
+   "ea": "0x5fc142",
+   "beidou_name": "sub_5FC142",
+   "beidou_size": "0x10f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "CloseChannelSelect",
+   "ea": "0x5fc2d0",
+   "beidou_name": "sub_5FC2D0",
+   "beidou_size": "0x43",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GotoWorldSelect",
+   "ea": "0x5fc36c",
+   "beidou_name": "sub_5FC36C",
+   "beidou_size": "0x9b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnAcceptLicense",
+   "ea": "0x5fc407",
+   "beidou_name": "sub_5FC407",
+   "beidou_size": "0x63",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnDenyLicense",
+   "ea": "0x5fc46a",
+   "beidou_name": "sub_5FC46A",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnSetAccountResult",
+   "ea": "0x5fc731",
+   "beidou_name": "sub_5FC731",
+   "beidou_size": "0x107",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnConfirmEULAResult",
+   "ea": "0x5fc838",
+   "beidou_name": "sub_5FC838",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnCheckPinCodeResult",
+   "ea": "0x5fc89d",
+   "beidou_name": "sub_5FC89D",
+   "beidou_size": "0x324",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "OnUpdatePinCodeResult",
+   "ea": "0x5fcbc1",
+   "beidou_name": "sub_5FCBC1",
+   "beidou_size": "0x31",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GetLocalMacAddress",
+   "ea": "0x5fcc81",
+   "beidou_name": "sub_5FCC81",
+   "beidou_size": "0x16c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GetLocalMacAddressWithHDDSerialNo",
+   "ea": "0x5fcded",
+   "beidou_name": "sub_5FCDED",
+   "beidou_size": "0x19d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "ShiftNewCharEquip",
+   "ea": "0x5fd13d",
+   "beidou_name": "sub_5FD13D",
+   "beidou_size": "0x1a3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "GetSelectedAL",
+   "ea": "0x5fd2e8",
+   "beidou_name": "sub_5FD2E8",
+   "beidou_size": "0x7c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogin",
+   "method": "ViewRecommendWorld",
+   "ea": "0x5fd364",
+   "beidou_name": "sub_5FD364",
+   "beidou_size": "0xf5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "YesNo",
+   "ea": "0x60eb58",
+   "beidou_name": "sub_60EB58",
+   "beidou_size": "0x106",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "YesNo2",
+   "ea": "0x60ed72",
+   "beidou_name": "sub_60ED72",
+   "beidou_size": "0xd5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "Notice",
+   "ea": "0x60f024",
+   "beidou_name": "sub_60F024",
+   "beidou_size": "0xf5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "Error",
+   "ea": "0x60f119",
+   "beidou_name": "sub_60F119",
+   "beidou_size": "0xf5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "DoModal",
+   "ea": "0x60f70b",
+   "beidou_name": "sub_60F70B",
+   "beidou_size": "0x4e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLoginUtilDlg",
+   "method": "Init",
+   "ea": "0x60f799",
+   "beidou_name": "sub_60F799",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogo",
+   "method": "Init",
+   "ea": "0x62edda",
+   "beidou_name": "sub_62EDDA",
+   "beidou_size": "0xb2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogo",
+   "method": "LogoEnd",
+   "ea": "0x62eeae",
+   "beidou_name": "sub_62EEAE",
+   "beidou_size": "0x4a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogo",
+   "method": "DrawWZLogo",
+   "ea": "0x62eef8",
+   "beidou_name": "sub_62EEF8",
+   "beidou_size": "0x382",
+   "status": "present_sub"
+  },
+  {
+   "class": "CLogo",
+   "method": "InitNXLogo",
+   "ea": "0x62f396",
+   "beidou_name": "sub_62F396",
+   "beidou_size": "0x473",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "Notice",
+   "ea": "0x61cf54",
+   "beidou_name": "sub_61CF54",
+   "beidou_size": "0xc9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "EnterPinCode",
+   "ea": "0x61d15b",
+   "beidou_name": "sub_61D15B",
+   "beidou_size": "0x1b9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "CreatePinCode",
+   "ea": "0x61d314",
+   "beidou_name": "sub_61D314",
+   "beidou_size": "0x53",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "ConfirmPinCode",
+   "ea": "0x61d367",
+   "beidou_name": "sub_61D367",
+   "beidou_size": "0x16f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "AssignPinCode",
+   "ea": "0x61d4d6",
+   "beidou_name": "sub_61D4D6",
+   "beidou_size": "0x1b8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "YesNo",
+   "ea": "0x61d68e",
+   "beidou_name": "sub_61D68E",
+   "beidou_size": "0x106",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "DoModal",
+   "ea": "0x61da6f",
+   "beidou_name": "sub_61DA6F",
+   "beidou_size": "0x4e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "Init",
+   "ea": "0x61dafd",
+   "beidou_name": "sub_61DAFD",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "OnCreate",
+   "ea": "0x61dbbb",
+   "beidou_name": "sub_61DBBB",
+   "beidou_size": "0x720",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPinCodeDlg",
+   "method": "OnButtonClicked",
+   "ea": "0x61e2db",
+   "beidou_name": "sub_61E2DB",
+   "beidou_size": "0xb2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSecurityClient",
+   "method": "OnPacket",
+   "ea": "0xa4bf03",
+   "beidou_name": "sub_A4BF03",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSecurityClient",
+   "method": "OnCheckClientIntegrityRequest",
+   "ea": "0xa4bf22",
+   "beidou_name": "sub_A4BF22",
+   "beidou_size": "0xfa",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSlideNotice",
+   "method": "OnCreate",
+   "ea": "0x7e1686",
+   "beidou_name": "sub_7E1686",
+   "beidou_size": "0x78",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSlideNotice",
+   "method": "SetMsg",
+   "ea": "0x7e16fe",
+   "beidou_name": "sub_7E16FE",
+   "beidou_size": "0x793",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlg",
+   "method": "OnCreate",
+   "ea": "0x7e048e",
+   "beidou_name": "sub_7E048E",
+   "beidou_size": "0x26e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlg",
+   "method": "Draw",
+   "ea": "0x7e06fc",
+   "beidou_name": "sub_7E06FC",
+   "beidou_size": "0xa",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlg",
+   "method": "GetResult",
+   "ea": "0x7e0706",
+   "beidou_name": "sub_7E0706",
+   "beidou_size": "0x53",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlgEx",
+   "method": "OnCreate",
+   "ea": "0x7e0759",
+   "beidou_name": "sub_7E0759",
+   "beidou_size": "0x404",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlgEx",
+   "method": "GetResult",
+   "ea": "0x7e0b5d",
+   "beidou_name": "sub_7E0B5D",
+   "beidou_size": "0xa9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSpeakerWorldDlgEx",
+   "method": "OnButtonClicked",
+   "ea": "0x7e0c06",
+   "beidou_name": "sub_7E0C06",
+   "beidou_size": "0x97a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAntiMacroCharacterName",
+   "method": "GetResult",
+   "ea": "0x96d2bc",
+   "beidou_name": "sub_96D2BC",
+   "beidou_size": "0x52",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatar",
+   "method": "OnCreate",
+   "ea": "0x6042dc",
+   "beidou_name": "sub_6042DC",
+   "beidou_size": "0xc82",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatar",
+   "method": "Refresh",
+   "ea": "0x605975",
+   "beidou_name": "sub_605975",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatar",
+   "method": "SelectCharacter",
+   "ea": "0x60599b",
+   "beidou_name": "sub_60599B",
+   "beidou_size": "0xb8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatar",
+   "method": "DrawNameTag",
+   "ea": "0x605b52",
+   "beidou_name": "sub_605B52",
+   "beidou_size": "0x3b7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatar",
+   "method": "ResetCharacter",
+   "ea": "0x606ba9",
+   "beidou_name": "sub_606BA9",
+   "beidou_size": "0x8b1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "OnCreate",
+   "ea": "0x608ca6",
+   "beidou_name": "sub_608CA6",
+   "beidou_size": "0x759",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "OnMouseButton",
+   "ea": "0x6093ff",
+   "beidou_name": "sub_6093FF",
+   "beidou_size": "0x5e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "SetSelection",
+   "ea": "0x60949a",
+   "beidou_name": "sub_60949A",
+   "beidou_size": "0xb7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "MakeCharacter",
+   "ea": "0x609551",
+   "beidou_name": "sub_609551",
+   "beidou_size": "0x434",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "MakeSelectedCharacterNameTag",
+   "ea": "0x609985",
+   "beidou_name": "sub_609985",
+   "beidou_size": "0x2a1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "MakeWorldIcon",
+   "ea": "0x609c26",
+   "beidou_name": "sub_609C26",
+   "beidou_size": "0x2d4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "GetSelectedIdx",
+   "ea": "0x609efa",
+   "beidou_name": "sub_609EFA",
+   "beidou_size": "0xf1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "ResetAvatarPosition",
+   "ea": "0x609feb",
+   "beidou_name": "sub_609FEB",
+   "beidou_size": "0x35",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "DrawWorldIcon",
+   "ea": "0x60ace2",
+   "beidou_name": "sub_60ACE2",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "OnButtonClicked",
+   "ea": "0x60af0a",
+   "beidou_name": "sub_60AF0A",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "OnChildNotify",
+   "ea": "0x60af2c",
+   "beidou_name": "sub_60AF2C",
+   "beidou_size": "0x84",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "IsRequestValid",
+   "ea": "0x60afd5",
+   "beidou_name": "sub_60AFD5",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAvatarVAC",
+   "method": "GetScrollBarIdx",
+   "ea": "0x60aff1",
+   "beidou_name": "sub_60AFF1",
+   "beidou_size": "0xa",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIBlockUser",
+   "method": "OnKey",
+   "ea": "0x998749",
+   "beidou_name": "sub_998749",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIBlockUser",
+   "method": "OnButtonClicked",
+   "ea": "0x998780",
+   "beidou_name": "sub_998780",
+   "beidou_size": "0x4d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIBlockUser",
+   "method": "SetResult",
+   "ea": "0x9987cd",
+   "beidou_name": "sub_9987CD",
+   "beidou_size": "0x7b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChangingCharacterName",
+   "method": "OnButtonClicked",
+   "ea": "0x7ee15b",
+   "beidou_name": "sub_7EE15B",
+   "beidou_size": "0x240",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelSelect",
+   "method": "OnKey",
+   "ea": "0x628a1c",
+   "beidou_name": "sub_628A1C",
+   "beidou_size": "0x1d0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "OnCreate",
+   "ea": "0x994da4",
+   "beidou_name": "sub_994DA4",
+   "beidou_size": "0xa53",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "OnKey",
+   "ea": "0x995863",
+   "beidou_name": "sub_995863",
+   "beidou_size": "0x158",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "SetRet",
+   "ea": "0x9959bb",
+   "beidou_name": "sub_9959BB",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "Draw",
+   "ea": "0x995a35",
+   "beidou_name": "sub_995A35",
+   "beidou_size": "0xaa5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharSelect",
+   "method": "OnButtonClicked",
+   "ea": "0x601667",
+   "beidou_name": "sub_601667",
+   "beidou_size": "0x6a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharSelect",
+   "method": "SetKeyFocus",
+   "ea": "0x601829",
+   "beidou_name": "sub_601829",
+   "beidou_size": "0x38",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharSelect",
+   "method": "IsRequestValid",
+   "ea": "0x601861",
+   "beidou_name": "sub_601861",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharacterSaleDlg",
+   "method": "ClearCurrentStep",
+   "ea": "0x7d56e4",
+   "beidou_name": "sub_7D56E4",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharacterSaleDlg",
+   "method": "ShowWindow",
+   "ea": "0x7d5749",
+   "beidou_name": "sub_7D5749",
+   "beidou_size": "0x4e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharacterSaleDlg",
+   "method": "OnButtonClicked",
+   "ea": "0x7d5797",
+   "beidou_name": "sub_7D5797",
+   "beidou_size": "0x20e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUICharacterSaleDlg",
+   "method": "SendCheckDuplicateIDPacket",
+   "ea": "0x7d75ab",
+   "beidou_name": "sub_7D75AB",
+   "beidou_size": "0xbf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIEventAlarm",
+   "method": "CreateEventAlarm",
+   "ea": "0x805439",
+   "beidou_name": "sub_805439",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnCreate",
+   "ea": "0x5203bb",
+   "beidou_name": "sub_5203BB",
+   "beidou_size": "0x2a2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "Draw",
+   "ea": "0x52065d",
+   "beidou_name": "sub_52065D",
+   "beidou_size": "0x1e59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnButtonClicked",
+   "ea": "0x522585",
+   "beidou_name": "sub_522585",
+   "beidou_size": "0x388",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnMouseButton",
+   "ea": "0x522945",
+   "beidou_name": "sub_522945",
+   "beidou_size": "0xe4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "Delete",
+   "ea": "0x522a4d",
+   "beidou_name": "sub_522A4D",
+   "beidou_size": "0x8d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "SendCloseMessage",
+   "ea": "0x522ada",
+   "beidou_name": "sub_522ADA",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateMSMInvite",
+   "ea": "0x522b2b",
+   "beidou_name": "sub_522B2B",
+   "beidou_size": "0x1f7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateFriendReg",
+   "ea": "0x522d22",
+   "beidou_name": "sub_522D22",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateTradeInvite",
+   "ea": "0x522f14",
+   "beidou_name": "sub_522F14",
+   "beidou_size": "0x226",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreatePartyInvite",
+   "ea": "0x52320d",
+   "beidou_name": "sub_52320D",
+   "beidou_size": "0x1fb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateQuestClear",
+   "ea": "0x523408",
+   "beidou_name": "sub_523408",
+   "beidou_size": "0x237",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateGuildInvite",
+   "ea": "0x52363f",
+   "beidou_name": "sub_52363F",
+   "beidou_size": "0x1fb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateAllianceInvite",
+   "ea": "0x52383a",
+   "beidou_name": "sub_52383A",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateUserAlarm",
+   "ea": "0x523a2c",
+   "beidou_name": "sub_523A2C",
+   "beidou_size": "0x234",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateParcelAlarm",
+   "ea": "0x523c60",
+   "beidou_name": "sub_523C60",
+   "beidou_size": "0x200",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateNewYearCardArrived",
+   "ea": "0x523e60",
+   "beidou_name": "sub_523E60",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateFamilyInvite",
+   "ea": "0x524298",
+   "beidou_name": "sub_524298",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "TryShowMemoListDlg",
+   "ea": "0x52448a",
+   "beidou_name": "sub_52448A",
+   "beidou_size": "0x112",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "MoveWndPosition",
+   "ea": "0x52459c",
+   "beidou_name": "sub_52459C",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameMenu",
+   "method": "ResetButtonState",
+   "ea": "0x84a510",
+   "beidou_name": "sub_84A510",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "OnCreate",
+   "ea": "0x993a30",
+   "beidou_name": "sub_993A30",
+   "beidou_size": "0x4fc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "OnChildNotify",
+   "ea": "0x993f2c",
+   "beidou_name": "sub_993F2C",
+   "beidou_size": "0x3e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "SetRet",
+   "ea": "0x993f99",
+   "beidou_name": "sub_993F99",
+   "beidou_size": "0x64",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "GetSysOptFromCtrl",
+   "ea": "0x9940bd",
+   "beidou_name": "sub_9940BD",
+   "beidou_size": "0xa6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnButtonClicked",
+   "ea": "0x8335d0",
+   "beidou_name": "sub_8335D0",
+   "beidou_size": "0x15c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnMouseButton",
+   "ea": "0x83372c",
+   "beidou_name": "sub_83372C",
+   "beidou_size": "0x1d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnDestroy",
+   "ea": "0x833749",
+   "beidou_name": "sub_833749",
+   "beidou_size": "0x132",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnMouseMove",
+   "ea": "0x8338f9",
+   "beidou_name": "sub_8338F9",
+   "beidou_size": "0x16c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "GetShortCutIndexByPos",
+   "ea": "0x833a65",
+   "beidou_name": "sub_833A65",
+   "beidou_size": "0x99",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "TryBeginDragFuncKeyMappedIcon",
+   "ea": "0x83550d",
+   "beidou_name": "sub_83550D",
+   "beidou_size": "0x1040",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "0CNoticeDlg",
+   "ea": "0x83665b",
+   "beidou_name": "sub_83665B",
+   "beidou_size": "0x18e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUILoginStart",
+   "method": "OnButtonClicked",
+   "ea": "0x60e499",
+   "beidou_name": "sub_60E499",
+   "beidou_size": "0x10d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUILoginStart",
+   "method": "EnableLoginStartCtrl",
+   "ea": "0x60eb04",
+   "beidou_name": "sub_60EB04",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUILoginStart",
+   "method": "SendViewAllCharacterPacket",
+   "ea": "0x629d0a",
+   "beidou_name": "sub_629D0A",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMapTransfer",
+   "method": "SetRet",
+   "ea": "0x83a3c2",
+   "beidou_name": "sub_83A3C2",
+   "beidou_size": "0x2a6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUINewCharNameSelect",
+   "method": "OnButtonClicked",
+   "ea": "0x6175ea",
+   "beidou_name": "sub_6175EA",
+   "beidou_size": "0x64",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUINewCharNameSelect",
+   "method": "OnKey",
+   "ea": "0x61764e",
+   "beidou_name": "sub_61764E",
+   "beidou_size": "0x9b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUINewCharNameSelect",
+   "method": "IsRequestValid",
+   "ea": "0x61770e",
+   "beidou_name": "sub_61770E",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "OnCreate",
+   "ea": "0x62b451",
+   "beidou_name": "sub_62B451",
+   "beidou_size": "0x2b7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "OnButtonClicked",
+   "ea": "0x62b708",
+   "beidou_name": "sub_62B708",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "IsRequestValid",
+   "ea": "0x62b94c",
+   "beidou_name": "sub_62B94C",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "SelectWorld",
+   "ea": "0x62b96b",
+   "beidou_name": "sub_62B96B",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "MoveWorld",
+   "ea": "0x62b99d",
+   "beidou_name": "sub_62B99D",
+   "beidou_size": "0x3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "ResetWorldAndMessage",
+   "ea": "0x62b9da",
+   "beidou_name": "sub_62B9DA",
+   "beidou_size": "0x3ec",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRecommendWorld",
+   "method": "OnMouseButton",
+   "ea": "0x62bef3",
+   "beidou_name": "sub_62BEF3",
+   "beidou_size": "0x5c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIShortCutMenu",
+   "method": "OnCreate",
+   "ea": "0x84a6bc",
+   "beidou_name": "sub_84A6BC",
+   "beidou_size": "0x67e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIShortCutMenu",
+   "method": "ResetButtonState",
+   "ea": "0x84af14",
+   "beidou_name": "sub_84AF14",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISoftKeyboard",
+   "method": "OnCreate",
+   "ea": "0x832979",
+   "beidou_name": "sub_832979",
+   "beidou_size": "0xc57",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "OnCreate",
+   "ea": "0x994163",
+   "beidou_name": "sub_994163",
+   "beidou_size": "0x789",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "OnChildNotify",
+   "ea": "0x9948ec",
+   "beidou_name": "sub_9948EC",
+   "beidou_size": "0xc6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "SetRet",
+   "ea": "0x9949e1",
+   "beidou_name": "sub_9949E1",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "GetSysOptFromCtrl",
+   "ea": "0x994b1a",
+   "beidou_name": "sub_994B1A",
+   "beidou_size": "0xb5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUITitle",
+   "method": "OnCreate",
+   "ea": "0x62054a",
+   "beidou_name": "sub_62054A",
+   "beidou_size": "0x75b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUITitle",
+   "method": "OnButtonClicked",
+   "ea": "0x620ca5",
+   "beidou_name": "sub_620CA5",
+   "beidou_size": "0x197",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUITitle",
+   "method": "SetRet",
+   "ea": "0x620e3c",
+   "beidou_name": "sub_620E3C",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUITitle",
+   "method": "IsRequestValid",
+   "ea": "0x621156",
+   "beidou_name": "sub_621156",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUITitle",
+   "method": "EnableLoginCtrl",
+   "ea": "0x621175",
+   "beidou_name": "sub_621175",
+   "beidou_size": "0x3b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "0ItemToolTipParam",
+   "ea": "0x483eed",
+   "beidou_name": "sub_483EED",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "1ItemToolTipParam",
+   "ea": "0x483f18",
+   "beidou_name": "sub_483F18",
+   "beidou_size": "0x19",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "ClearToolTip",
+   "ea": "0x8e6e23",
+   "beidou_name": "sub_8E6E23",
+   "beidou_size": "0x2f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetBasicInfo",
+   "ea": "0x8e6e52",
+   "beidou_name": "sub_8E6E52",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String",
+   "ea": "0x8e6e7d",
+   "beidou_name": "sub_8E6E7D",
+   "beidou_size": "0x1ab",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String_MultiLine",
+   "ea": "0x8e7028",
+   "beidou_name": "sub_8E7028",
+   "beidou_size": "0x128",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String2",
+   "ea": "0x8e7150",
+   "beidou_name": "sub_8E7150",
+   "beidou_size": "0x2e4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_WorldMap",
+   "ea": "0x8e7434",
+   "beidou_name": "sub_8E7434",
+   "beidou_size": "0x402",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "PrintValue",
+   "ea": "0x8e7836",
+   "beidou_name": "sub_8E7836",
+   "beidou_size": "0x13f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Ring",
+   "ea": "0x8e7975",
+   "beidou_name": "sub_8E7975",
+   "beidou_size": "0x8dd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip",
+   "ea": "0x8e8252",
+   "beidou_name": "sub_8E8252",
+   "beidou_size": "0x1e47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip2",
+   "ea": "0x8eba5b",
+   "beidou_name": "sub_8EBA5B",
+   "beidou_size": "0x3a9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip_Basic",
+   "ea": "0x8eca0c",
+   "beidou_name": "sub_8ECA0C",
+   "beidou_size": "0x5ca",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "DrawToolTip_Equip",
+   "ea": "0x8ed0d2",
+   "beidou_name": "sub_8ED0D2",
+   "beidou_size": "0x80e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Pet",
+   "ea": "0x8ed8f5",
+   "beidou_name": "sub_8ED8F5",
+   "beidou_size": "0x6d2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Bundle",
+   "ea": "0x8edfc7",
+   "beidou_name": "sub_8EDFC7",
+   "beidou_size": "0x165c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Package",
+   "ea": "0x8efcb7",
+   "beidou_name": "sub_8EFCB7",
+   "beidou_size": "0x1cf1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_SlotInc",
+   "ea": "0x8f19a8",
+   "beidou_name": "sub_8F19A8",
+   "beidou_size": "0x502",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_EquipExt",
+   "ea": "0x8f1eaa",
+   "beidou_name": "sub_8F1EAA",
+   "beidou_size": "0x3cc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_MacroSysSkill",
+   "ea": "0x8f2276",
+   "beidou_name": "sub_8F2276",
+   "beidou_size": "0x35a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Skill",
+   "ea": "0x8f25d0",
+   "beidou_name": "sub_8F25D0",
+   "beidou_size": "0x661",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "MakeLayer",
+   "ea": "0x8f3141",
+   "beidou_name": "sub_8F3141",
+   "beidou_size": "0x560",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "GetFontByType",
+   "ea": "0x8f36a1",
+   "beidou_name": "sub_8F36A1",
+   "beidou_size": "0xdc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "AddInfoEx",
+   "ea": "0x8f39e1",
+   "beidou_name": "sub_8F39E1",
+   "beidou_size": "0x1e2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "DrawItemIcon",
+   "ea": "0x8f421e",
+   "beidou_name": "sub_8F421E",
+   "beidou_size": "0x129",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "ShowItemToolTip",
+   "ea": "0x8f5b20",
+   "beidou_name": "sub_8F5B20",
+   "beidou_size": "0x284",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "CreateUIWndPosSaved",
+   "ea": "0x49f0b5",
+   "beidou_name": "sub_49F0B5",
+   "beidou_size": "0x30",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnCreate",
+   "ea": "0x92c2e8",
+   "beidou_name": "sub_92C2E8",
+   "beidou_size": "0x25c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnDestroy",
+   "ea": "0x92c544",
+   "beidou_name": "sub_92C544",
+   "beidou_size": "0x6a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnButtonClicked",
+   "ea": "0x92c5ae",
+   "beidou_name": "sub_92C5AE",
+   "beidou_size": "0x1e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnKey",
+   "ea": "0x92c6ee",
+   "beidou_name": "sub_92C6EE",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "OnCreate",
+   "ea": "0x624831",
+   "beidou_name": "sub_624831",
+   "beidou_size": "0x2b7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "OnButtonClicked",
+   "ea": "0x624ae8",
+   "beidou_name": "sub_624AE8",
+   "beidou_size": "0x7e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "DrawWorldItems",
+   "ea": "0x624e13",
+   "beidou_name": "sub_624E13",
+   "beidou_size": "0x535",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "EnableButtons",
+   "ea": "0x62536c",
+   "beidou_name": "sub_62536C",
+   "beidou_size": "0x4d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "SetKeyFocus",
+   "ea": "0x6253bc",
+   "beidou_name": "sub_6253BC",
+   "beidou_size": "0x4e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "IsRequestValid",
+   "ea": "0x62540a",
+   "beidou_name": "sub_62540A",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "SetFocusWorld",
+   "ea": "0x6272d0",
+   "beidou_name": "sub_6272D0",
+   "beidou_size": "0x3f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "MakeAdvice",
+   "ea": "0x6281b9",
+   "beidou_name": "sub_6281B9",
+   "beidou_size": "0x208",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWorldSelect",
+   "method": "UserLimitResult",
+   "ea": "0x6283c1",
+   "beidou_name": "sub_6283C1",
+   "beidou_size": "0x140",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnDragDrop",
+   "ea": "0x4243fe",
+   "beidou_name": "sub_4243FE",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsMyAddon",
+   "ea": "0x424403",
+   "beidou_name": "sub_424403",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseButton",
+   "ea": "0x424443",
+   "beidou_name": "nullsub_43",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseMove",
+   "ea": "0x424446",
+   "beidou_name": "sub_424446",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnChildNotify",
+   "ea": "0x42444e",
+   "beidou_name": "sub_42444E",
+   "beidou_size": "0x13",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnCreate_unsure",
+   "ea": "0x4259d9",
+   "beidou_name": "nullsub_46",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnDestroy_unsure",
+   "ea": "0x4259dc",
+   "beidou_name": "nullsub_47",
+   "beidou_size": "0x1",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetCanvas",
+   "ea": "0x425c4c",
+   "beidou_name": "sub_425C4C",
+   "beidou_size": "0xbf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetLayer",
+   "ea": "0x426604",
+   "beidou_name": "sub_426604",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnButtonClicked",
+   "ea": "0x45a63c",
+   "beidou_name": "nullsub_57",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetRTTI",
+   "ea": "0x45a63f",
+   "beidou_name": "sub_45A63F",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsKindOf",
+   "ea": "0x45a645",
+   "beidou_name": "sub_45A645",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "CreateWnd",
+   "ea": "0x9de4d2",
+   "beidou_name": "sub_9DE4D2",
+   "beidou_size": "0x329",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "PreCreateWnd",
+   "ea": "0x9de7fb",
+   "beidou_name": "sub_9DE7FB",
+   "beidou_size": "0x35c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMoveWnd",
+   "ea": "0x9deb57",
+   "beidou_name": "sub_9DEB57",
+   "beidou_size": "0x154f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnEndMoveWnd",
+   "ea": "0x9e00a6",
+   "beidou_name": "sub_9E00A6",
+   "beidou_size": "0x9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Destroy",
+   "ea": "0x9e00af",
+   "beidou_name": "sub_9E00AF",
+   "beidou_size": "0x119",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseEnter",
+   "ea": "0x9e01c8",
+   "beidou_name": "sub_9E01C8",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "HitTest",
+   "ea": "0x9e01e7",
+   "beidou_name": "sub_9E01E7",
+   "beidou_size": "0xc7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseWheel",
+   "ea": "0x9e02ae",
+   "beidou_name": "sub_9E02AE",
+   "beidou_size": "0xbb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnSetFocus",
+   "ea": "0x9e0369",
+   "beidou_name": "sub_9E0369",
+   "beidou_size": "0x3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetAbsLeft",
+   "ea": "0x9e03c5",
+   "beidou_name": "sub_9E03C5",
+   "beidou_size": "0x82",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetAbsTop",
+   "ea": "0x9e0447",
+   "beidou_name": "sub_9E0447",
+   "beidou_size": "0x82",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "InvalidateRect",
+   "ea": "0x9e04c9",
+   "beidou_name": "sub_9E04C9",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Draw",
+   "ea": "0x9e0502",
+   "beidou_name": "sub_9E0502",
+   "beidou_size": "0x17c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Update",
+   "ea": "0x9e067e",
+   "beidou_name": "sub_9E067E",
+   "beidou_size": "0x47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsFocused",
+   "ea": "0x9e06c5",
+   "beidou_name": "sub_9E06C5",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "RemoveChild",
+   "ea": "0x9e06f6",
+   "beidou_name": "sub_9E06F6",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetAnimationBackgrnd",
+   "ea": "0x9e0750",
+   "beidou_name": "sub_9E0750",
+   "beidou_size": "0x362",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetBackgrnd",
+   "ea": "0x9e0ab2",
+   "beidou_name": "sub_9E0AB2",
+   "beidou_size": "0x133",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetFocusChild",
+   "ea": "0x9e0be5",
+   "beidou_name": "sub_9E0BE5",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "ClipRect",
+   "ea": "0x9e0c1f",
+   "beidou_name": "sub_9E0C1F",
+   "beidou_size": "0x10d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetOrgWindow",
+   "ea": "0x48bba5",
+   "beidou_name": "sub_48BBA5",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "UpdateWindowPosition",
+   "ea": "0x9e03a6",
+   "beidou_name": "sub_9E03A6",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "PreCreateWnd",
+   "ea": "0x9e2fe0",
+   "beidou_name": "nullsub_254",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWndMan",
+   "method": "OnActivate",
+   "ea": "0x9e2fe3",
+   "beidou_name": "sub_9E2FE3",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetCursorPos",
+   "ea": "0x9e311b",
+   "beidou_name": "sub_9E311B",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetCursorPos",
+   "ea": "0x9e3180",
+   "beidou_name": "sub_9E3180",
+   "beidou_size": "0x6c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetFocus",
+   "ea": "0x9e3264",
+   "beidou_name": "sub_9E3264",
+   "beidou_size": "0x11a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetActiveWndImp",
+   "ea": "0x9e337e",
+   "beidou_name": "sub_9E337E",
+   "beidou_size": "0x7e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetCaptureWnd",
+   "ea": "0x9e33fc",
+   "beidou_name": "sub_9E33FC",
+   "beidou_size": "0x36",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ReleaseCaptureWnd",
+   "ea": "0x9e3432",
+   "beidou_name": "sub_9E3432",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "Unlink",
+   "ea": "0x9e3454",
+   "beidou_name": "sub_9E3454",
+   "beidou_size": "0xe9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "BeginDragDrop",
+   "ea": "0x9e353d",
+   "beidou_name": "sub_9E353D",
+   "beidou_size": "0x285",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "EndDragDrop",
+   "ea": "0x9e37c2",
+   "beidou_name": "sub_9E37C2",
+   "beidou_size": "0x2fe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ClearDragContext",
+   "ea": "0x9e3ac0",
+   "beidou_name": "sub_9E3AC0",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ProcessMouse",
+   "ea": "0x9e3ae6",
+   "beidou_name": "sub_9E3AE6",
+   "beidou_size": "0x4ef",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ProcessKey",
+   "ea": "0x9e40f1",
+   "beidou_name": "sub_9E40F1",
+   "beidou_size": "0x1a0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetHandlerFromPoint",
+   "ea": "0x9e42b2",
+   "beidou_name": "sub_9E42B2",
+   "beidou_size": "0x14d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "InsertWindow",
+   "ea": "0x9e43ff",
+   "beidou_name": "sub_9E43FF",
+   "beidou_size": "0xbb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveWindow",
+   "ea": "0x9e44ba",
+   "beidou_name": "sub_9E44BA",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveUpdateWindow",
+   "ea": "0x9e44dc",
+   "beidou_name": "sub_9E44DC",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "InsertInvalidatedWindow",
+   "ea": "0x9e44fe",
+   "beidou_name": "sub_9E44FE",
+   "beidou_size": "0x27",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveInvalidatedWindow",
+   "ea": "0x9e4525",
+   "beidou_name": "sub_9E4525",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RedrawInvalidatedWindows",
+   "ea": "0x9e4547",
+   "beidou_name": "sub_9E4547",
+   "beidou_size": "0x27c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "TranslateMessage",
+   "ea": "0x9e7d77",
+   "beidou_name": "sub_9E7D77",
+   "beidou_size": "0x389",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ClearComposition",
+   "ea": "0x9e85e7",
+   "beidou_name": "sub_9E85E7",
+   "beidou_size": "0xc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "EnableIME",
+   "ea": "0x9e85f3",
+   "beidou_name": "sub_9E85F3",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "NotifyIME",
+   "ea": "0x9e8659",
+   "beidou_name": "sub_9E8659",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  }
+ ]
+}

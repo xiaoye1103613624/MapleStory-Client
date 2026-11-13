@@ -1,0 +1,1216 @@
+# Angel v83 登录链路 — 控件 / 坐标 / 交互 / 常量 逐行摘录
+
+抽取自 `angel-login-decompile.json`（Hex-Rays 伪代码，带 `/*0xNNNN*/`）。
+只保留含控件创建、几何、按钮、补间、封包、资源节点语义的行；非全量伪代码。
+
+## CLogin::Init @ 0x5f42cd (28 行)
+
+```c
+  p_pvarg = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f430f*/
+  StringPool::GetBSTR(this: Instance, a2: &v73, a3: SP_1306_UI_MAPLOGINIMG); /*0x5f4330*/
+  p_pvarg = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f43c3*/
+  LODWORD(v74) = SP_961_INFO; /*0x5f43cb*/
+  p_pvarg = SP_5632_HOT|SP_2336_CHARACTER_GLOVE_08DIMG|0x2A000; /*0x5f445a*/
+  p_pvarg = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f4491*/
+  StringPool::GetBSTR(this: v18, a2: &v73, a3: SP_1307_UI_LOGINIMG_COMMON_FRAME); /*0x5f44b2*/
+  p_pvarg = SP_2895_VER_DD; /*0x5f4552*/
+  v26 = *StringPool::GetString(this: v25, result: v75, nIdx: p_pvarg); /*0x5f4568*/
+  p_pvarg = SP_83_THERE_IS_CURRENTLY_NOT_ENOUGH_AVAILABLE_MEMORY_TO_RUN_MAPLESTORY_R_NPLEASE_VISIT; /*0x5f456a*/
+  ZXString<char>::Format(a1: &v88, a2: v26, a3: 0); /*0x5f4576*/
+    ZXString<char>::_Release(lpAddend: a2 - 3); /*0x5f458d*/
+      ZXString<char>::operator=(a1: CmdLine); /*0x5f48d9*/
+      ZXString<char>::_Release(a1: &a2); /*0x5f48e5*/
+      ZXString<char>::operator=(a1: v58); /*0x5f4917*/
+      ZXString<char>::_Release(a1: &a2); /*0x5f4923*/
+  sub_5FD7DC(a1: v59); /*0x5f4964*/
+    sub_5FDD2D(a1: 15, a2: &a2 + 3); /*0x5f49b9*/
+    sub_5FDDA6(a1: 15, a2: &a2 + 3); /*0x5f49ca*/
+    sub_5FDC2A(a1: 15, a2: &a2 + 3); /*0x5f49db*/
+    sub_5FDD2D(a1: 60, a2: &a2 + 3); /*0x5f49ec*/
+    sub_5FDDA6(a1: 60, a2: &a2 + 3); /*0x5f49fd*/
+    COutPacket::COutPacket(a1: 4); /*0x5f4a33*/
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &pvarg); /*0x5f4a46*/
+  StepHeight = CLogin::GetStepHeight(this, a2: p_pvarg); /*0x5f4b2c*/
+  COutPacket::COutPacket(a1: 35); /*0x5f4bc4*/
+  CClientSocket::SendPacket(this: dword_BE7914, a2: v78); /*0x5f4bd7*/
+  ZXString<char>::_Release(a1: &v88); /*0x5f4bef*/
+```
+
+## CLogin::Update @ 0x5f4c16 (27 行)
+
+```c
+    CWnd::InvalidateRect(this: v5, a2: 0); /*0x5f4ca0*/
+        CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5f4cfd*/
+      CLogin::ChangeStep(this, a2: 5); /*0x5f4d12*/
+        CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5f4d6b*/
+          CWnd::Destroy(a1: dword_BEDA6C); /*0x5f4d9b*/
+          CWnd::Destroy(a1: dword_BEDA48); /*0x5f4dbc*/
+          CWnd::Destroy(a1: dword_BEDA44); /*0x5f4ddd*/
+          CWnd::Destroy(a1: dword_BEDA40); /*0x5f4dfe*/
+                sub_5FD8FF(); /*0x5f4e35*/
+              sub_5FD8FF(); /*0x5f4e70*/
+            sub_5FD8FF(); /*0x5f4eab*/
+        CWnd::Destroy(a1: dword_BEDA6C); /*0x5f4ee8*/
+        CWnd::Destroy(a1: dword_BEDA34); /*0x5f4f10*/
+              CWnd::Destroy(a1: dword_BEDA48); /*0x5f4f4c*/
+              CWnd::Destroy(a1: dword_BEDA44); /*0x5f4f6c*/
+              CWnd::Destroy(a1: dword_BEDA40); /*0x5f4f8c*/
+            CWnd::Destroy(a1: dword_BEDA48); /*0x5f4fda*/
+            CWnd::Destroy(a1: dword_BEDA44); /*0x5f4ffa*/
+            CWnd::Destroy(a1: dword_BEDA40); /*0x5f501a*/
+          CWnd::Destroy(a1: dword_BEDA48); /*0x5f5068*/
+          CWnd::Destroy(a1: dword_BEDA44); /*0x5f5088*/
+          CWnd::Destroy(a1: dword_BEDA40); /*0x5f50a8*/
+    CFadeWnd::Close(this: v30, a2: 0); /*0x5f51c8*/
+      CFadeWnd::Close(this: v34, a2: 0); /*0x5f524f*/
+          CLogin::SendSelectCharPacket(this); /*0x5f52b3*/
+          CLogin::SendViewAllCharPacket(this, a2: v43, a3: v46); /*0x5f5311*/
+        CLogin::SendCheckPasswordPacket(a1: *(this + 134), a2: *(this + 135)); /*0x5f5354*/
+```
+
+## CLogin::ChangeStep @ 0x5f53c0 (45 行)
+
+```c
+void __thiscall CLogin::ChangeStep(CLogin *this, wchar_t *a2)
+    v62 = 300 * abs(a1: v64 - v2) + 500; /*0x5f541f*/
+        v36 = SP_2_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTPASSWORD; /*0x5f5462*/
+        v36 = SP_17_; /*0x5f5474*/
+      v36 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f5485*/
+      CWnd::InvalidateRect(this: *(this + 120), a2: 0); /*0x5f54b4*/
+        CFadeWnd::Close(this: v9, a2: 0); /*0x5f54e0*/
+          CFadeWnd::Close(this: v24, a2: 0); /*0x5f5804*/
+                CWndMan::SetFocus(a1: this != 0 ? this + 4 : 0);
+              ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f5548*/
+              ZXString<char>::operator=(a1: &v63); /*0x5f555e*/
+              ZXString<char>::_Release(a1: &v63); /*0x5f556a*/
+              v36 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f55d5*/
+              v34 = (-2369 - 600 * sub_5F595B(a1: this)); /*0x5f55ec*/
+                nMoveAction: v29,
+                pOrigin: v30,
+                nScale: p_a1,
+              CFadeWnd::Close(this: v18, a2: 0); /*0x5f564a*/
+                CUINewCharRaceSelect::CUINewCharRaceSelect(a1: v21, a2: v20, a3: this); /*0x5f5678*/
+            CWndMan::SetFocus(a1: v19 != 0 ? v19 + 4 : 0);
+        sub_5FDD2D(a1: 15, a2: &a2 + 3); /*0x5f56ee*/
+        sub_5FDDA6(a1: 15, a2: &v60); /*0x5f56ff*/
+        sub_5FDC2A(a1: 15, a2: &v58); /*0x5f5710*/
+        sub_5FDD2D(a1: 60, a2: &v59); /*0x5f5721*/
+        sub_5FDDA6(a1: 60, a2: &v57); /*0x5f5732*/
+          CFadeWnd::Close(this: v23, a2: 0); /*0x5f5742*/
+          if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5758*/
+            CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f575a*/
+            if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5766*/
+              (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))( /*0x5f576f*/
+                a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8,
+          COutPacket::COutPacket(a1: 4); /*0x5f579a*/
+          CClientSocket::SendPacket(this: dword_BE7914, a2: v53); /*0x5f57b0*/
+        v22 = TSingleton<CUIWorldSelect>::ms_pInstance; /*0x5f57e9*/
+        CWndMan::SetFocus(a1: v22 != 0 ? v22 + 4 : 0);
+      StepHeight = CLogin::GetStepHeight(this, a2: v64); /*0x5f5826*/
+      v63 = CLogin::GetStepHeight(this, a2: v36); /*0x5f5844*/
+        a2 = CLogin::GetStepHeight(this, a2: 1); /*0x5f5852*/
+        v63 = CLogin::GetStepHeight(this, a2: 1); /*0x5f5867*/
+      v62 = 7000 * (v63 - a2) / v62 / 2; /*0x5f58a8*/
+      v36 = SP_1236_SCROLLUP; /*0x5f591d*/
+      v36 = *StringPool::GetStringW(this: v28, a2: p_a1, a3: v36); /*0x5f592f*/
+      play_ui_sound(a1: v36); /*0x5f5938*/
+      ZXString<unsigned short>::_Release(&a1); /*0x5f5945*/
+    v36 = SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID; /*0x5f5482*/
+```
+
+## CLogin::OnStepChanged @ 0x5f5962 (84 行)
+
+```c
+        CWnd::Destroy(a1: *dword_BEDA60); /*0x5f60d9*/
+        CWnd::Destroy(a1: dword_BEDA54); /*0x5f60f9*/
+        CWnd::Destroy(a1: dword_BEDA4C); /*0x5f6119*/
+        CWnd::Destroy(a1: dword_BEDA50); /*0x5f6139*/
+        CWnd::Destroy(a1: dword_BEDA48); /*0x5f6159*/
+        CWnd::Destroy(a1: dword_BEDA44); /*0x5f6179*/
+        CWnd::Destroy(a1: dword_BEDA40); /*0x5f6199*/
+        CWnd::Destroy(a1: dword_BEDA38); /*0x5f61b9*/
+        CWnd::Destroy(a1: dword_BEDA3C); /*0x5f61d9*/
+        CWnd::Destroy(a1: dword_BEDA34); /*0x5f61f9*/
+        CWnd::Destroy(a1: dword_BEDA6C); /*0x5f6219*/
+        CWnd::Destroy(a1: dword_BEDA68); /*0x5f5ed6*/
+        CWnd::Destroy(a1: *dword_BEDA60); /*0x5f5ef6*/
+      if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5f14*/
+        CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f5f16*/
+        if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5f22*/
+          (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8, a2: 1); /*0x5f5f2a*/
+        CWnd::Destroy(a1: TSingleton<CUIChannelSelect>::ms_pInstance); /*0x5f5f36*/
+        CWnd::Destroy(a1: dword_BEDA48); /*0x5f5f56*/
+        CWnd::Destroy(a1: dword_BEDA44); /*0x5f5f76*/
+        CWnd::Destroy(a1: dword_BEDA40); /*0x5f5f96*/
+        CWnd::Destroy(a1: dword_BEDA34); /*0x5f5fb6*/
+        CWnd::Destroy(a1: dword_BEDA6C); /*0x5f5fd6*/
+        CWnd::Destroy(a1: dword_BEDA38); /*0x5f5ff6*/
+        CWnd::Destroy(a1: dword_BEDA3C); /*0x5f6016*/
+      sub_5FD826(a1: v21); /*0x5f6076*/
+        sub_5FD826(a1: v23); /*0x5f60b7*/
+        if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f59b4*/
+          CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f59b6*/
+          if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f59c2*/
+            (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8, a2: 1); /*0x5f59ca*/
+          CWnd::Destroy(a1: TSingleton<CUIChannelSelect>::ms_pInstance); /*0x5f59d6*/
+          CWnd::Destroy(a1: dword_BEDA54); /*0x5f59f6*/
+          CWnd::Destroy(a1: *dword_BEDA60); /*0x5f5a16*/
+          CWnd::Destroy(a1: dword_BEDA4C); /*0x5f5a36*/
+          CWnd::Destroy(a1: dword_BEDA50); /*0x5f5a56*/
+          CWnd::Destroy(a1: dword_BEDA34); /*0x5f5a76*/
+          result = sub_5FD826(a1: v9); /*0x5f5abf*/
+        CWnd::Destroy(a1: dword_BEDA68); /*0x5f5afb*/
+        CWnd::Destroy(a1: *dword_BEDA60); /*0x5f5b1b*/
+      if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5b39*/
+        CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f5b3b*/
+        if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5b47*/
+          (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8, a2: 1); /*0x5f5b4f*/
+        CWnd::Destroy(a1: TSingleton<CUIChannelSelect>::ms_pInstance); /*0x5f5b5b*/
+        CWnd::Destroy(a1: dword_BEDA54); /*0x5f5b7b*/
+        CWnd::Destroy(a1: dword_BEDA4C); /*0x5f5b9b*/
+        CWnd::Destroy(a1: dword_BEDA50); /*0x5f5bbb*/
+        CWnd::Destroy(a1: dword_BEDA6C); /*0x5f5bdb*/
+        sub_5FD826(a1: v12); /*0x5f5c3c*/
+        sub_5FD826(a1: v14); /*0x5f5c80*/
+        CWnd::Destroy(a1: dword_BEDA68); /*0x5f5caa*/
+        CWnd::Destroy(a1: *dword_BEDA60); /*0x5f5cca*/
+      if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5ce8*/
+        CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f5cea*/
+        if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f5cf6*/
+          (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8, a2: 1); /*0x5f5cfe*/
+        CWnd::Destroy(a1: TSingleton<CUIChannelSelect>::ms_pInstance); /*0x5f5d0a*/
+        CWnd::Destroy(a1: dword_BEDA54); /*0x5f5d2a*/
+        CWnd::Destroy(a1: dword_BEDA4C); /*0x5f5d4a*/
+        CWnd::Destroy(a1: dword_BEDA50); /*0x5f5d6a*/
+        CWnd::Destroy(a1: dword_BEDA38); /*0x5f5d8a*/
+        CWnd::Destroy(a1: dword_BEDA3C); /*0x5f5daa*/
+        result = sub_5FD826(a1: v17); /*0x5f5e16*/
+        CWnd::Destroy(a1: dword_BEDA48); /*0x5f5e2a*/
+        CWnd::Destroy(a1: dword_BEDA44); /*0x5f5e4b*/
+        CWnd::Destroy(a1: dword_BEDA40); /*0x5f5e6c*/
+        return sub_5FD826(a1: v19); /*0x5f5ebf*/
+      CWnd::Destroy(a1: dword_BEDA68); /*0x5f6267*/
+    if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f6285*/
+      CWnd::Destroy(a1: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f6287*/
+      if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f6293*/
+        (**(TSingleton<CUIWorldSelect>::ms_pInstance + 8))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 8, a2: 1); /*0x5f629b*/
+      CWnd::Destroy(a1: TSingleton<CUIChannelSelect>::ms_pInstance); /*0x5f62a7*/
+      CWnd::Destroy(a1: dword_BEDA54); /*0x5f62c7*/
+      CWnd::Destroy(a1: dword_BEDA4C); /*0x5f62e7*/
+      CWnd::Destroy(a1: dword_BEDA50); /*0x5f6307*/
+      CWnd::Destroy(a1: dword_BEDA48); /*0x5f6327*/
+      CWnd::Destroy(a1: dword_BEDA44); /*0x5f6347*/
+      CWnd::Destroy(a1: dword_BEDA40); /*0x5f6367*/
+      CWnd::Destroy(a1: dword_BEDA38); /*0x5f6387*/
+      CWnd::Destroy(a1: dword_BEDA3C); /*0x5f63a7*/
+      CWnd::Destroy(a1: dword_BEDA34); /*0x5f63c7*/
+      CWnd::Destroy(a1: dword_BEDA6C); /*0x5f63e7*/
+```
+
+## CLogin::OnNewCharStep @ 0x5f6425 (2 行)
+
+```c
+    CLoginUtilDlg::Notice(a1: 36, a2: 0); /*0x5f6445*/
+    CLogin::ChangeStep(this, a2: 0xFFFFFFFF); /*0x5f647b*/
+```
+
+## CLogin::OnSelectedCharChanged @ 0x5f6482 (16 行)
+
+```c
+      v54 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f6763*/
+      v34 = sub_5FD76D(); /*0x5f6789*/
+      StringW = StringPool::GetStringW(this: Instance, a2: &v59, a3: SP_3982_UI_LOGINIMG_VIEWALLCHAR_SELECT); /*0x5f67b0*/
+      ZXString<unsigned short>::_Release(a1: &v59); /*0x5f6810*/
+      v54 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f64c7*/
+      v4 = sub_5FD76D(); /*0x5f6502*/
+      v7 = StringPool::GetStringW(this: v6, a2: &v60, a3: SP_1313_UI_LOGINIMG_CHARSELECT_EFFECT_0); /*0x5f6529*/
+        ZXString<unsigned short>::_Release(lpAddend: (v60 - 12)); /*0x5f656d*/
+      v54 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f6610*/
+      v19 = sub_5FD76D(); /*0x5f663d*/
+      v22 = StringPool::GetStringW(this: v21, a2: &v60, a3: SP_1314_UI_LOGINIMG_CHARSELECT_EFFECT_1); /*0x5f6664*/
+      ZXString<unsigned short>::_Release(a1: &v60); /*0x5f66a5*/
+    v54 = SP_1237_CHARSELECT; /*0x5f68da*/
+    v54 = *StringPool::GetStringW(this: v48, a2: v53, a3: v54); /*0x5f68ec*/
+    play_ui_sound(a1: v54); /*0x5f68f5*/
+    ZXString<unsigned short>::_Release(a1: &v58); /*0x5f6902*/
+```
+
+## CLogin::SendCheckPasswordPacket @ 0x5f6952 (16 行)
+
+```c
+int __thiscall CLogin::SendCheckPasswordPacket(_DWORD *this, char *a2, char *a3)
+  sub_5FDDE3(a1: this + 99); /*0x5f6984*/
+  sub_5FDF26(a1: this + 129); /*0x5f698f*/
+  COutPacket::COutPacket(a1: 1); /*0x5f6b78*/
+  ZXString<char>::GetBuffer(a1: a2, a2: 0xFFFFFFFF); /*0x5f6b90*/
+  COutPacket::EncodeStr(a1: v8[0]); /*0x5f6b98*/
+  ZXString<char>::GetBuffer(a1: a3, a2: 0xFFFFFFFF); /*0x5f6bad*/
+  COutPacket::EncodeStr(a1: v8[0]); /*0x5f6bb5*/
+  COutPacket::EncodeBuffer(a1: MachineId, a2: v8[0]); /*0x5f6bc8*/
+  COutPacket::Encode4(this: &v11, a2: GameRoomClient); /*0x5f6bd9*/
+  COutPacket::Encode1(this: &v11, a2: *(TSingleton<CWvsApp>::ms_pInstance + 36)); /*0x5f6be9*/
+  COutPacket::Encode1(this: &v11, a2: 0); /*0x5f6bf2*/
+  COutPacket::Encode1(this: &v11, a2: 0); /*0x5f6bfb*/
+  COutPacket::Encode4(this: &v11, a2: PartnerCode); /*0x5f6c0f*/
+  CClientSocket::SendPacket(this: dword_BE7914, a2: &v11); /*0x5f6c1e*/
+  ZXString<char>::GetBuffer(a1: a2, a2: 0xFFFFFFFF); /*0x5f6c32*/
+```
+
+## CLogin::SendViewAllCharPacket @ 0x5f6d6a (46 行)
+
+```c
+signed int __thiscall CLogin::SendViewAllCharPacket(CLogin *this, int a2, int a3)
+    ZArray<ZXString<char>>::_Alloc(a1: v11, a2: &a2 + 3); /*0x5f6e17*/
+    sub_5FDC2A(a1: v13, a2: &v39); /*0x5f6e38*/
+      ZXString<char>::operator=(a1: *(v9 + 7) + j); /*0x5f6e5b*/
+      COutPacket::COutPacket(a1: 5); /*0x5f6ee5*/
+      COutPacket::Encode1(this: &v35, a2: v16); /*0x5f6ef7*/
+        ZXString<char>::GetBuffer(a1: v31, a2: 0xFFFFFFFF); /*0x5f6f26*/
+        COutPacket::EncodeStr(a1: v30[0]); /*0x5f6f2e*/
+        COutPacket::EncodeBuffer(a1: MachineId, a2: v30[0]); /*0x5f6f41*/
+        COutPacket::Encode4(this: &v35, a2: GameRoomClient); /*0x5f6f52*/
+        COutPacket::Encode1(this: &v35, a2: *(TSingleton<CWvsApp>::ms_pInstance + 36)); /*0x5f6f62*/
+      COutPacket::Encode1(this: &v35, a2: *v9); /*0x5f6f7b*/
+      COutPacket::Encode1(this: &v35, a2: a3); /*0x5f6f86*/
+      COutPacket::Encode4(this: &v35, a2: v21); /*0x5f6fb6*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v35); /*0x5f6fc5*/
+      ZXString<char>::operator=(a1: v9 + 4); /*0x5f6fdf*/
+      ZArray<ZXString<char>>::RemoveAll(a1: &v42); /*0x5f700e*/
+      ZXString<char>::_Release(a1: &v40); /*0x5f6ee0*/
+        switch ( v18 ) /*0x5f7036*/
+          case 20000: /*0x5f7036*/
+          case 20021: /*0x5f7036*/
+          case 20002: /*0x5f7036*/
+          case 20003: /*0x5f7036*/
+          case 20006: /*0x5f7036*/
+          case 20007: /*0x5f7036*/
+          case 20008: /*0x5f7036*/
+          case 20009: /*0x5f7036*/
+          case 20010: /*0x5f7036*/
+          case 20015: /*0x5f7036*/
+            switch ( v23 ) /*0x5f70b7*/
+              case 2: /*0x5f70b7*/
+              case 4: /*0x5f70b7*/
+              case 7: /*0x5f70b7*/
+                CLogin::GotoTitle(this: v38, a2: 0, a3: 0); /*0x5f70eb*/
+              case 8: /*0x5f70b7*/
+              case 9: /*0x5f70b7*/
+              case 12: /*0x5f70b7*/
+              case 14: /*0x5f70b7*/
+                  v25 = *StringPool::GetString(this: v24, result: &a3, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5f712e*/
+              case 15: /*0x5f70b7*/
+                  v28 = *StringPool::GetString(this: v27, result: &v37, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5f7168*/
+                  ZXString<char>::_Release(a1: v26); /*0x5f717f*/
+              case 16: /*0x5f70b7*/
+              case 17: /*0x5f70b7*/
+            ZXString<char>::_Release(a1: &v40); /*0x5f71b4*/
+            ZArray<ZXString<char>>::RemoveAll(a1: &v42); /*0x5f71cc*/
+```
+
+## CLogin::SendSelectCharPacket @ 0x5f726d (46 行)
+
+```c
+void __thiscall CLogin::SendSelectCharPacket(CLogin *this)
+          sub_5FDA24(a1: v15); /*0x5f7408*/
+            sub_5FDA41(a1: v15); /*0x5f743f*/
+          COutPacket::COutPacket(a1: 30); /*0x5f745e*/
+          ZXString<char>::operator=(a1: &v18); /*0x5f7473*/
+          COutPacket::EncodeStr(a1: v8[0]); /*0x5f747b*/
+          COutPacket::Encode4(this: &v11, a2: v19); /*0x5f7486*/
+          ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f7499*/
+          ZXString<char>::operator=(a1: &v20); /*0x5f74b9*/
+          COutPacket::EncodeStr(a1: v8[0]); /*0x5f74c1*/
+          ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f74cf*/
+          ZXString<char>::operator=(a1: &v21); /*0x5f74ef*/
+          COutPacket::EncodeStr(a1: v8[0]); /*0x5f74f7*/
+          CClientSocket::SendPacket(this: dword_BE7914, a2: &v11); /*0x5f7506*/
+          ZXString<char>::_Release(a1: &v21); /*0x5f751d*/
+          ZXString<char>::_Release(a1: &v20); /*0x5f7529*/
+          ZXString<char>::_Release(a1: &v18); /*0x5f7541*/
+          sub_5FDA41(a1: v15); /*0x5f754d*/
+          COutPacket::COutPacket(a1: 19); /*0x5f72fe*/
+          COutPacket::Encode4(this: &v9, a2: v19); /*0x5f7310*/
+          ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f7323*/
+          ZXString<char>::operator=(a1: &v22); /*0x5f7343*/
+          COutPacket::EncodeStr(a1: v8[0]); /*0x5f734b*/
+          ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f7359*/
+          ZXString<char>::operator=(a1: &v23); /*0x5f7379*/
+          COutPacket::EncodeStr(a1: v8[0]); /*0x5f7381*/
+          CClientSocket::SendPacket(this: dword_BE7914, a2: &v9); /*0x5f7390*/
+          ZXString<char>::_Release(a1: &v23); /*0x5f739c*/
+          ZXString<char>::_Release(a1: &v22); /*0x5f73a8*/
+        CLoginUtilDlg::Notice(a1: 95, a2: this + 500); /*0x5f7560*/
+          ZXString<char>::_Release(a1: &v18); /*0x5f7583*/
+        COutPacket::COutPacket(a1: 29); /*0x5f7592*/
+        COutPacket::Encode1(this: &v13, a2: 1); /*0x5f75a0*/
+        COutPacket::Encode4(this: &v13, a2: v19); /*0x5f75ab*/
+        ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f75be*/
+        ZXString<char>::operator=(a1: &v21); /*0x5f75de*/
+        COutPacket::EncodeStr(a1: v8[0]); /*0x5f75e6*/
+        ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f75f4*/
+        ZXString<char>::operator=(a1: &v20); /*0x5f7614*/
+        COutPacket::EncodeStr(a1: v8[0]); /*0x5f761c*/
+        ZXString<char>::operator=(a1: &v18); /*0x5f762d*/
+        COutPacket::EncodeStr(a1: v8[0]); /*0x5f7635*/
+        CClientSocket::SendPacket(this: dword_BE7914, a2: &v13); /*0x5f7644*/
+        ZXString<char>::_Release(a1: &v20); /*0x5f7650*/
+        ZXString<char>::_Release(a1: &v21); /*0x5f765c*/
+        ZXString<char>::_Release(a1: &v18); /*0x5f7673*/
+```
+
+## CLogin::SendDeleteCharPacket @ 0x5f7c4a (9 行)
+
+```c
+unsigned int __thiscall CLogin::SendDeleteCharPacket(CLogin *this)
+          sub_5FDA24(a1: v12); /*0x5f7d03*/
+              COutPacket::COutPacket(a1: 23); /*0x5f7dc8*/
+              ZXString<char>::operator=(a1: v15); /*0x5f7ddf*/
+              COutPacket::EncodeStr(a1: v9); /*0x5f7de7*/
+              COutPacket::Encode4(this: &v10, a2: *(684 * *(this + 100) + *(this + 101))); /*0x5f7e04*/
+            ZXString<char>::_Release(a1: v15); /*0x5f7e5a*/
+          return sub_5FDA41(a1: v12); /*0x5f7e66*/
+          return CLoginUtilDlg::Notice(a1: 94, a2: this + 500); /*0x5f7cb1*/
+```
+
+## CLogin::SendCheckDuplicateIDPacket @ 0x5f7fe7 (4 行)
+
+```c
+void *__thiscall CLogin::SendCheckDuplicateIDPacket(CLogin *this, int *a2)
+      COutPacket::COutPacket(a1: 21); /*0x5f8030*/
+      ZXString<char>::operator=(a1: a2); /*0x5f8045*/
+      COutPacket::EncodeStr(a1: v5); /*0x5f804d*/
+```
+
+## CLogin::OnPacket @ 0x5f80ff (42 行)
+
+```c
+void __thiscall CLogin::OnPacket(char *this, signed int a2, struct CInPacket *a3)
+  switch ( a2 ) /*0x5f810e*/
+    case 0: /*0x5f810e*/
+      CLogin::OnCheckPasswordResult(a1: a3); /*0x5f811b*/
+    case 1: /*0x5f810e*/
+      CLogin::OnGuestIDLoginResult(a1: a3); /*0x5f812b*/
+    case 2: /*0x5f810e*/
+      CLogin::OnAccountInfoResult(a1: a3); /*0x5f813b*/
+    case 3: /*0x5f810e*/
+      CLogin::OnCheckUserLimitResult(a1: a3); /*0x5f814b*/
+    case 4: /*0x5f810e*/
+      CLogin::OnSetAccountResult(a1: a3); /*0x5f815b*/
+    case 5: /*0x5f810e*/
+      CLogin::OnConfirmEULAResult(a1: a3); /*0x5f816b*/
+    case 6: /*0x5f810e*/
+      CLogin::OnCheckPinCodeResult(a1: a3); /*0x5f817b*/
+    case 7: /*0x5f810e*/
+      CLogin::OnUpdatePinCodeResult(a1: a3); /*0x5f818b*/
+    case 8: /*0x5f810e*/
+      CLogin::OnViewAllCharResult(a1: a3); /*0x5f819b*/
+    case 9: /*0x5f810e*/
+      CLogin::OnSelectCharacterByVACResult(a1: a3); /*0x5f81ab*/
+    case 10: /*0x5f810e*/
+    case 11: /*0x5f810e*/
+      CLogin::OnSelectWorldResult(a1: a3); /*0x5f81cb*/
+    case 12: /*0x5f810e*/
+      CLogin::OnSelectCharacterResult(a1: a3); /*0x5f8208*/
+    case 13: /*0x5f810e*/
+      CLogin::OnCheckDuplicatedIDResult(a1: a3); /*0x5f81db*/
+    case 14: /*0x5f810e*/
+      CLogin::OnCreateNewCharacterResult(a1: a3); /*0x5f81fb*/
+    case 15: /*0x5f810e*/
+      CLogin::OnDeleteCharacterResult(a1: a3); /*0x5f81eb*/
+    case 22: /*0x5f810e*/
+    case 23: /*0x5f810e*/
+      CLogin::OnEnableSPWResult(a1: a3); /*0x5f8222*/
+    case 26: /*0x5f810e*/
+    case 27: /*0x5f810e*/
+    case 28: /*0x5f810e*/
+      CLogin::OnCheckSPWResult(a1: a3); /*0x5f822f*/
+          CMapLoadable::OnPacket(a1: a2, a2: a3); /*0x5f8277*/
+        CStage::OnPacket(this, nType: a2, iPacket: a3); /*0x5f825e*/
+```
+
+## CLogin::OnCheckPasswordResult @ 0x5f83ee (96 行)
+
+```c
+void __thiscall CLogin::OnCheckPasswordResult(CLogin *this, int result)
+  v99 = CInPacket::Decode1(this: v4); /*0x5f841d*/
+  *(this + 456) = CInPacket::Decode1(this: v2); /*0x5f8427*/
+  CInPacket::Decode4(this: v2); /*0x5f842d*/
+    CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5f843e*/
+    v6 = CInPacket::Decode1(this: v2); /*0x5f8454*/
+    CInPacket::DecodeBuffer(a1: v87, a2: 8u); /*0x5f845f*/
+      v75 = *StringPool::GetString( /*0x5f856e*/
+               nIdx: SP_2875_THE_ID_HAS_BEEN_PERMANENTLY_BLOCKED_R_NSO_YOU_WONT_BE_ABLE_TO_USE_THIS_ACCOUNT);
+      ZXString<char>::Format(a1: v101, a2: v75, a3: v76); /*0x5f8578*/
+      v9 = *StringPool::GetString(this: v8, result: &a2, nIdx: SP_2837_YOU_CAN_LOGIN_AFTER_R_NS_2D_4D_2D02D_S); /*0x5f8509*/
+      ZXString<char>::Format(a1: v101, a2: v9, a3: *&dword_BED9FC[4 * ((HIWORD(v89) - 1) % 12)]); /*0x5f8549*/
+    ZXString<char>::_Release(a1: &a2); /*0x5f8585*/
+      ZXString<char>::Format(a1: &result, a2: aYouHaveBeenBlo, a3: v101[0]); /*0x5f85a2*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f85aa*/
+      ZXString<char>::_Release(a1: &result); /*0x5f85cc*/
+      ZXString<char>::_Release(a1: p_Unknown); /*0x5f8a05*/
+    v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f85f8*/
+    StringPool::GetBSTR(this: v14, a2: &v71, a3: SP_2836_ETC_BLOCKREASONIMG); /*0x5f8619*/
+      v66 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f86cf*/
+        v66 = SP_1587_MSG; /*0x5f8759*/
+        ZXString<char>::Assign<unsigned short>(this: &v100, a2: v28, a3: -1); /*0x5f879f*/
+      v66 = SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID; /*0x5f87c0*/
+      ZXString<char>::operator+(a1: &v63, a2: v101); /*0x5f87e6*/
+      ZXString<char>::_Release(a1: &v95); /*0x5f87fa*/
+      ZXString<char>::_Release(a1: &v100); /*0x5f8806*/
+    ZXString<char>::_Release(a1: v101); /*0x5f883c*/
+    v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f884d*/
+    StringPool::GetString( /*0x5f8864*/
+      nIdx: SP_4836_PLEASE_DOWNLOAD_THE_FULL_CLIENT_TO_EXPERIENCE__R_NTHE_WORLD_OF_MAPLESTORY__R_NWO);
+      v75 = SP_3_HTTP__MAPLESTORYNEXONNET_WZASPXPART_DOWNLOADS_GAMEPATCHES; /*0x5f8879*/
+      v34 = *StringPool::GetString(this: v33, result: p_result, nIdx: v75); /*0x5f8888*/
+      ZXString<char>::_Release(a1: &result); /*0x5f88a1*/
+    v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f88c6*/
+    StringPool::GetString( /*0x5f88dd*/
+      nIdx: SP_4822_IF_YOU_WISH_TO_DOWNLOAD_THE_FULL_CLIENT_LATER__R_NYOU_CAN_ALWAYS_VISIT_MAPLESTOR);
+    switch ( v99 ) /*0x5f894f*/
+      case 13: /*0x5f894f*/
+        v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8a0f*/
+      case 14: /*0x5f894f*/
+        v75 = SP_2871_HTTP__WWWNEXONNET; /*0x5f89da*/
+        v39 = *StringPool::GetString(this: v38, result: p_result, nIdx: v75); /*0x5f89ec*/
+      case 15: /*0x5f894f*/
+        v75 = SP_2871_HTTP__WWWNEXONNET; /*0x5f899a*/
+        v37 = *StringPool::GetString(this: v36, result: p_result, nIdx: v75); /*0x5f89ac*/
+        v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8977*/
+        v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f896f*/
+    v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f897f*/
+    v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8944*/
+  switch ( v99 ) /*0x5f8903*/
+    case 6: /*0x5f8903*/
+    case 8: /*0x5f8903*/
+    case 9: /*0x5f8903*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f890a*/
+    case 2: /*0x5f8903*/
+    case 3: /*0x5f8903*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8912*/
+    case 4: /*0x5f8903*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8922*/
+    case 5: /*0x5f8903*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f891a*/
+    case 7: /*0x5f8903*/
+      CLogin::GotoTitle(this: v100, a2: 0, a3: 0); /*0x5f892f*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8934*/
+    case 10: /*0x5f8903*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f893c*/
+      CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 0); /*0x5f8a9c*/
+    a2 = CInPacket::Decode4(this: result); /*0x5f8ae0*/
+    v46 = CInPacket::Decode1(this: v45); /*0x5f8ae8*/
+    LOBYTE(Unknown) = CInPacket::Decode1(this: v45); /*0x5f8af7*/
+    LOBYTE(v99) = CInPacket::Decode1(this: v45); /*0x5f8b01*/
+    LOBYTE(v95) = CInPacket::Decode1(this: v45); /*0x5f8b09*/
+    CInPacket::DecodeStr(a1: v94); /*0x5f8b12*/
+    v101[0] = CInPacket::Decode1(this: v45); /*0x5f8b27*/
+    LOBYTE(v97) = CInPacket::Decode1(this: v45); /*0x5f8b2f*/
+    CInPacket::DecodeBuffer(a1: v83, a2: 8u); /*0x5f8b3a*/
+    CInPacket::DecodeBuffer(a1: v84, a2: 8u); /*0x5f8b58*/
+    v47 = CInPacket::Decode4(this: v45); /*0x5f8b78*/
+        CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5f8b8c*/
+      v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8bce*/
+      ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f8bd0*/
+      CWnd::Destroy(a1: *dword_BEDA70); /*0x5f8c41*/
+    ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f8c67*/
+    v52 = CInPacket::Decode1(this: result); /*0x5f8cce*/
+    v53 = CInPacket::Decode1(this: result); /*0x5f8cd1*/
+      COutPacket::COutPacket(a1: 11); /*0x5f8d4d*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &pvargDest); /*0x5f8d60*/
+      COutPacket::COutPacket(a1: 9); /*0x5f8cf7*/
+      COutPacket::Encode1(this: &v89, a2: 1); /*0x5f8d05*/
+      COutPacket::Encode1(this: &v89, a2: 1); /*0x5f8d0f*/
+      ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f8d23*/
+      COutPacket::EncodeStr(a1: p_result); /*0x5f8d2b*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v89); /*0x5f8d3a*/
+  v75 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x5f8a3d*/
+    v75 = SP_7_HTTP__PASSPORTNEXONNET_PART_MYMAPLE_VERIFYCODE; /*0x5f8a64*/
+    v44 = *StringPool::GetString(this: v43, result: p_result, nIdx: v75); /*0x5f8a73*/
+```
+
+## CLogin::OnWorldInformation @ 0x5f95b7 (33 行)
+
+```c
+  a2 = CInPacket::Decode1(this: a2); /*0x5f95d8*/
+    v4 = sub_5FDE1F(a1: -1); /*0x5f962f*/
+    v5 = CInPacket::DecodeStr(a1: &a2); /*0x5f963c*/
+    ZXString<char>::operator=(a1: v5); /*0x5f964c*/
+      ZXString<char>::_Release(lpAddend: (a2 - 12)); /*0x5f9660*/
+    v4[2] = CInPacket::Decode1(this: v2); /*0x5f9670*/
+    v6 = CInPacket::DecodeStr(a1: &a2); /*0x5f9679*/
+    ZXString<char>::operator=(a1: v6); /*0x5f9689*/
+      ZXString<char>::_Release(lpAddend: (a2 - 12)); /*0x5f969d*/
+    v4[4] = CInPacket::Decode2(this: v2); /*0x5f96af*/
+    v4[5] = CInPacket::Decode2(this: v2); /*0x5f96bc*/
+    v4[6] = CInPacket::Decode1(this: v2); /*0x5f96c9*/
+    v7 = CInPacket::Decode1(this: v2); /*0x5f96cc*/
+        v8 = sub_5FDC66(a1: -1); /*0x5f96eb*/
+        v9 = CInPacket::DecodeStr(a1: &v17); /*0x5f96f3*/
+        ZXString<char>::operator=(a1: v9); /*0x5f9702*/
+          ZXString<char>::_Release(lpAddend: (v17 - 12)); /*0x5f9716*/
+        v8[1] = CInPacket::Decode4(this: v2); /*0x5f9725*/
+        v8[2] = CInPacket::Decode1(this: v2); /*0x5f9732*/
+        v8[3] = CInPacket::Decode1(this: v2); /*0x5f973f*/
+        v10 = CInPacket::Decode1(this: v2); /*0x5f9742*/
+    *(this + 128) = CInPacket::Decode2(this: v2); /*0x5f9762*/
+    sub_5FDF26(a1: this + 516); /*0x5f9768*/
+          v15[0] = CInPacket::Decode2(this: v2); /*0x5f9794*/
+          v15[1] = CInPacket::Decode2(this: v2); /*0x5f979f*/
+          v14 = CInPacket::DecodeStr(a1: &v18); /*0x5f97a8*/
+          ZXString<char>::operator=(a1: v14); /*0x5f97b5*/
+          ZXString<char>::_Release(a1: &v18); /*0x5f97c1*/
+          sub_5FD8B5(a1: v15, a2: -1); /*0x5f97d2*/
+          ZXString<char>::_Release(a1: &v16); /*0x5f97de*/
+    if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x5f95e5*/
+      CUIWorldSelect::DrawWorldItems(this: TSingleton<CUIWorldSelect>::ms_pInstance); /*0x5f960f*/
+    CLogin::ChangeStep(this, a2: 1); /*0x5f9618*/
+```
+
+## CLogin::OnSelectWorldResult @ 0x5f9891 (41 行)
+
+```c
+void __thiscall CLogin::OnSelectWorldResult(CLogin *this, struct CInPacket *a2)
+    CWnd::Destroy(a1: dword_BEDA78); /*0x5f98b5*/
+  v3 = CInPacket::Decode1(this: a2); /*0x5f98e9*/
+      switch ( v3 ) /*0x5f9956*/
+        case 0xEu: /*0x5f9956*/
+          v9 = *StringPool::GetString(this: Instance, result: &v24, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5f99ed*/
+        case 0xFu: /*0x5f9956*/
+          v6 = *StringPool::GetString(this: v5, result: &v23, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5f99ad*/
+        case 0x10u: /*0x5f9956*/
+        case 0x11u: /*0x5f9956*/
+        case 0x15u: /*0x5f9956*/
+        case 0x19u: /*0x5f9956*/
+      ZXString<char>::_Release(a1: v7); /*0x5f9a02*/
+    switch ( v3 ) /*0x5f9905*/
+      case 0xFF: /*0x5f9905*/
+      case 6u: /*0x5f9905*/
+      case 8u: /*0x5f9905*/
+      case 9u: /*0x5f9905*/
+      case 2u: /*0x5f9905*/
+      case 3u: /*0x5f9905*/
+      case 4u: /*0x5f9905*/
+      case 5u: /*0x5f9905*/
+      case 7u: /*0x5f9905*/
+        CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5f9930*/
+      case 0xAu: /*0x5f9905*/
+    v12 = CInPacket::Decode1(this: a2); /*0x5f9a61*/
+        GW_CharacterStat::Decode(this: v13, a2, a3: 0); /*0x5f9a90*/
+        AvatarLook::Decode(this: (v13 + 231), a2); /*0x5f9a9e*/
+        *v14 = CInPacket::Decode1(this: a2); /*0x5f9abd*/
+        if ( CInPacket::Decode1(this: a2) != 0 ) /*0x5f9acb*/
+          CInPacket::DecodeBuffer(a1: (v23 + *(this + 102)), a2: 0x10u); /*0x5f9ada*/
+    *(this + 372) = CInPacket::Decode1(this: a2); /*0x5f9b34*/
+    v15 = CInPacket::Decode4(this: a2); /*0x5f9b3a*/
+      CUICharSelect::CUICharSelect(a1: v16, a2: v17, a3: this); /*0x5f9b73*/
+    CLogin::ChangeStep(this, a2: 0xFFFFFFFF); /*0x5f9bad*/
+      COutPacket::COutPacket(a1: 9); /*0x5f9bcb*/
+      COutPacket::Encode1(this: &v20, a2: 1); /*0x5f9bdc*/
+      COutPacket::Encode1(this: &v20, a2: 1); /*0x5f9be6*/
+      ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x5f9bf9*/
+      COutPacket::EncodeStr(a1: 0); /*0x5f9c01*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v20); /*0x5f9c10*/
+```
+
+## CLogin::OnCheckDuplicatedIDResult @ 0x5f9c72 (6 行)
+
+```c
+void __thiscall CLogin::OnCheckDuplicatedIDResult(CLogin *this, struct CInPacket *a2)
+  CInPacket::DecodeStr(a1: v5); /*0x5f9c92*/
+  v3 = CInPacket::Decode1(this: a2); /*0x5f9c9d*/
+    ZXString<char>::operator=(a1: v5); /*0x5f9cd0*/
+  ZXString<char>::_Release(a1: &v4); /*0x5f9cf3*/
+  ZXString<char>::_Release(a1: v5); /*0x5f9cff*/
+```
+
+## CLogin::OnDeleteCharacterResult @ 0x5f9d15 (17 行)
+
+```c
+void __thiscall CLogin::OnDeleteCharacterResult(CLogin *this, int a2)
+  v20 = CInPacket::Decode4(this: v3); /*0x5f9d38*/
+  v4 = CInPacket::Decode1(this: a2); /*0x5f9d3b*/
+  switch ( v4 ) /*0x5f9d46*/
+    case 10: /*0x5f9d46*/
+    case 22: /*0x5f9d46*/
+    case 29: /*0x5f9d46*/
+    case 18: /*0x5f9d46*/
+    case 20: /*0x5f9d46*/
+    case 24: /*0x5f9d46*/
+    case 9: /*0x5f9d46*/
+    case 26: /*0x5f9d46*/
+      StringPool::GetString( /*0x5f9dcc*/
+        nIdx: SP_4011_YOU_CANNOT_DELETE_A_CHARACTER_THAT_R_N_IS_CURRENTLY_GOING_THROUGH_THE_TRANSFER);
+    case 6: /*0x5f9d46*/
+    CWnd::Destroy(a1: dword_BEDA50); /*0x5f9f3f*/
+    CWndMan::SetFocus(a1: *(this + 98)); /*0x5f9f6a*/
+```
+
+## CLogin::OnCreateNewCharacterResult @ 0x5fa26c (13 行)
+
+```c
+void __thiscall CLogin::OnCreateNewCharacterResult(CLogin *this, struct CInPacket *a2)
+  v3 = CInPacket::Decode1(this: a2); /*0x5fa287*/
+  switch ( v3 ) /*0x5fa292*/
+    case 10: /*0x5fa292*/
+    case 26: /*0x5fa292*/
+      StringPool::GetString( /*0x5fa2b8*/
+        nIdx: SP_4016_YOU_CANNOT_CREATE_A_NEW_CHARACTER__R_NUNDER_THE_ACCOUNT_THAT__R_NHAS_REQUESTED_F);
+    case 30: /*0x5fa292*/
+      CWndMan::SetFocus(a1: *(this + 98)); /*0x5fa461*/
+  GW_CharacterStat::Decode(this: v10, a2, a3: 0); /*0x5fa339*/
+  AvatarLook::Decode(this: (v10 + 231), a2); /*0x5fa347*/
+    CUICharSelect::CUICharSelect(a1: v18, a2: v19, a3: this); /*0x5fa433*/
+  CLogin::ChangeStep(this, a2: 2); /*0x5fa440*/
+```
+
+## CLogin::OnViewAllCharResult @ 0x5facca (33 行)
+
+```c
+void __thiscall CLogin::OnViewAllCharResult(CLogin *this, struct CInPacket *a2)
+    switch ( CInPacket::Decode1(this: a2) ) /*0x5fad00*/
+      case 0: /*0x5fad00*/
+        v28 = CInPacket::Decode1(this: v3); /*0x5faf1e*/
+        v16 = CInPacket::Decode1(this: v3); /*0x5faf2e*/
+            GW_CharacterStat::Decode(this: v18, a2: v25, a3: v26); /*0x5faf6e*/
+            AvatarLook::Decode(this: (v18 + 231), a2); /*0x5faf7c*/
+            if ( CInPacket::Decode1(this: a2) != 0 ) /*0x5faf9c*/
+              CInPacket::DecodeBuffer(a1: (*(this + 79) + 16 * v17), a2: v26); /*0x5fafab*/
+          CLogin::ChangeStep(this, a2: 5); /*0x5fb02c*/
+      case 1: /*0x5fad00*/
+        v4 = CInPacket::Decode4(this: a2); /*0x5fad1d*/
+        *(this + 75) = CInPacket::Decode4(this: v5); /*0x5fad34*/
+        sub_5FDD2D(a1: 60, a2: &v32); /*0x5fad5d*/
+        sub_5FDDA6(a1: 60, a2: &v31); /*0x5fad6e*/
+        sub_5FDBEE(a1: 60, a2: &v30); /*0x5fad7f*/
+      case 2: /*0x5fad00*/
+        v21 = SP_3989_YOU_ARE_ALREADY_CONNECTED_TO_SERVER; /*0x5fadbe*/
+      case 3: /*0x5fad00*/
+      case 6: /*0x5fad00*/
+      case 7: /*0x5fad00*/
+        if ( CInPacket::Decode1(this: v3) != 0 ) /*0x5faddc*/
+          CInPacket::DecodeStr(a1: &a2); /*0x5fade4*/
+          ZXString<char>::_Release(a1: &a2); /*0x5fae11*/
+          v21 = SP_3990_UNKNOWN_ERROR__VIEW_ALL_CHARACTERS; /*0x5fae25*/
+          StringPool::GetString(this: Instance, result: &v22, nIdx: v21); /*0x5fae32*/
+        CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb0a7*/
+      case 4: /*0x5fad00*/
+      case 5: /*0x5fad00*/
+          CLogin::ChangeStep(this, a2: 5); /*0x5faeb4*/
+          StringPool::GetString(this: v13, result: &v22, nIdx: SP_3988_CANNOT_FIND_ANY_CHARACTERS); /*0x5fae95*/
+          CLogin::GotoWorldSelect(this, a2: 1); /*0x5faea6*/
+        ZXString<char>::ZXString<char>(this: &v22, a2: aError, a3: 0xFFFFFFFF); /*0x5fb09a*/
+```
+
+## CLogin::OnSelectCharacterResult @ 0x5fb541 (48 行)
+
+```c
+void __thiscall CLogin::OnSelectCharacterResult(CLogin *this, struct CInPacket *a2)
+  v4 = CInPacket::Decode1(this: v3); /*0x5fb566*/
+  v17 = CInPacket::Decode1(this: a2); /*0x5fb574*/
+    switch ( v4 ) /*0x5fb587*/
+      case 2: /*0x5fb587*/
+      case 3: /*0x5fb587*/
+      case 4: /*0x5fb587*/
+      case 5: /*0x5fb587*/
+      case 6: /*0x5fb587*/
+      case 8: /*0x5fb587*/
+      case 9: /*0x5fb587*/
+      case 7: /*0x5fb587*/
+        CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb5b2*/
+      case 10: /*0x5fb587*/
+  switch ( v4 ) /*0x5fb5d1*/
+    case 13: /*0x5fb5d1*/
+    case 14: /*0x5fb5d1*/
+      v13 = *StringPool::GetString(this: Instance, result: &v18, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5fb672*/
+    case 15: /*0x5fb5d1*/
+      v12 = *StringPool::GetString(this: v5, result: &v19, nIdx: SP_2871_HTTP__WWWNEXONNET); /*0x5fb632*/
+      ZXString<char>::_Release(a1: v6); /*0x5fb684*/
+    case 16: /*0x5fb5d1*/
+    case 17: /*0x5fb5d1*/
+    case 21: /*0x5fb5d1*/
+    case 25: /*0x5fb5d1*/
+        switch ( v17 ) /*0x5fb707*/
+          case 19: /*0x5fb707*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb740*/
+          case 25: /*0x5fb707*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb72f*/
+          case 27: /*0x5fb707*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb71e*/
+        switch ( v17 ) /*0x5fb6bb*/
+          case 13: /*0x5fb6bb*/
+          case 1: /*0x5fb6bb*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb6f7*/
+          case 2: /*0x5fb6bb*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb6e6*/
+          case 3: /*0x5fb6bb*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fb6d5*/
+          case 11: /*0x5fb6bb*/
+  v18 = CInPacket::Decode4(this: a2); /*0x5fb75f*/
+  LOWORD(v10) = CInPacket::Decode2(this: v8); /*0x5fb762*/
+  v19 = CInPacket::Decode4(this: v8); /*0x5fb773*/
+  LOBYTE(v8) = CInPacket::Decode1(this: v8); /*0x5fb77e*/
+  a2 = CInPacket::Decode4(this: a2); /*0x5fb785*/
+  v14 = *StringPool::GetStringW(this: v11, &a2, a3: SP_1243_GAMEIN); /*0x5fb7e4*/
+  ZXString<unsigned short>::_Release(a1: &a2); /*0x5fb7f7*/
+```
+
+## CLogin::GetStepHeight @ 0x5fc0e4 (2 行)
+
+```c
+int __thiscall CLogin::GetStepHeight(CLogin *this, int a2)
+  return -8 - 600 * (v2 + a2); /*0x5fc108*/
+```
+
+## CLogin::GotoTitle @ 0x5fc142 (4 行)
+
+```c
+void __thiscall CLogin::GotoTitle(CLogin *this, int a2, struct IUIMsgHandler *a3)
+          sub_5FDDE3(a1: this + 396); /*0x5fc20f*/
+      CLogin::ChangeStep(this, a2: v8); /*0x5fc223*/
+      CWndMan::SetFocus(a1: a3); /*0x5fc23c*/
+```
+
+## CLogin::GotoWorldSelect @ 0x5fc36c (5 行)
+
+```c
+void __thiscall CLogin::GotoWorldSelect(CLogin *this, int a2)
+    sub_5FDDE3(a1: this + 396); /*0x5fc3ad*/
+      COutPacket::COutPacket(a1: 12); /*0x5fc3bc*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: v3); /*0x5fc3ce*/
+    CLogin::ChangeStep(this, a2: 1); /*0x5fc3ef*/
+```
+
+## CLogin::OnConfirmEULAResult @ 0x5fc838 (4 行)
+
+```c
+int __thiscall CLogin::OnConfirmEULAResult(CLogin *this, struct CInPacket *a2)
+    CWnd::Destroy(a1: dword_BEDA78); /*0x5fc845*/
+  if ( CInPacket::Decode1(this: a2) != 0 ) /*0x5fc866*/
+  ZXString<char>::ZXString<char>(this: &v4, a2: aTryAgain, a3: 0xFFFFFFFF); /*0x5fc87d*/
+```
+
+## CLogin::OnCheckPinCodeResult @ 0x5fc89d (37 行)
+
+```c
+void __thiscall CLogin::OnCheckPinCodeResult(CLogin *this, struct CInPacket *a2)
+  v3 = CInPacket::Decode1(this: a2); /*0x5fc8b2*/
+            CLogin::GotoTitle(this, a2: 0, a3: 0); /*0x5fc8e9*/
+            CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5fc8f6*/
+        COutPacket::COutPacket(a1: 9); /*0x5fc93a*/
+        COutPacket::Encode1(this: &v30, a2: v10); /*0x5fc947*/
+          COutPacket::Encode1(this: &v30, a2: 0); /*0x5fc963*/
+          String = StringPool::GetString(this: Instance, result: &v35, nIdx: SP_5514_04D); /*0x5fc978*/
+          v14 = ZXString<char>::Format(a1: &a2, a2: v13, a3: v27[0]); /*0x5fc990*/
+          ZXString<char>::operator=(a1: v14); /*0x5fc9a0*/
+          COutPacket::EncodeStr(a1: v27[0]); /*0x5fc9a8*/
+          ZXString<char>::_Release(a1: &v35); /*0x5fc9b4*/
+          CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5fc958*/
+        CClientSocket::SendPacket(this: dword_BE7914, a2: &v30); /*0x5fc9c3*/
+        COutPacket::COutPacket(a1: 9); /*0x5fca18*/
+        COutPacket::Encode1(this: &v28, a2: v17); /*0x5fca25*/
+          COutPacket::Encode1(this: &v28, a2: 0); /*0x5fca41*/
+          v19 = StringPool::GetString(this: v18, result: &v33, nIdx: SP_5514_04D); /*0x5fca56*/
+          v21 = ZXString<char>::Format(a1: &v37, a2: v20, a3: v27[0]); /*0x5fca6e*/
+          ZXString<char>::operator=(a1: v21); /*0x5fca7e*/
+          COutPacket::EncodeStr(a1: v27[0]); /*0x5fca86*/
+          ZXString<char>::_Release(a1: &v33); /*0x5fca92*/
+          CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5fca36*/
+        CClientSocket::SendPacket(this: dword_BE7914, a2: &v28); /*0x5fcaa1*/
+      COutPacket::COutPacket(a1: 10); /*0x5fcadb*/
+        COutPacket::Encode1(this: &v28, a2: 1); /*0x5fcb03*/
+        v24 = StringPool::GetString(this: v23, result: &v32, nIdx: SP_5514_04D); /*0x5fcb18*/
+        v26 = ZXString<char>::Format(a1: &v37, a2: v25, a3: PinCode); /*0x5fcb2e*/
+        ZXString<char>::operator=(a1: v26); /*0x5fcb3e*/
+        COutPacket::EncodeStr(a1: v27[0]); /*0x5fcb46*/
+        ZXString<char>::_Release(a1: &v32); /*0x5fcb52*/
+        COutPacket::Encode1(this: &v28, a2: 0); /*0x5fcaec*/
+        CUITitle::EnableLoginCtrl(this: *dword_BEDA60, a2: 1); /*0x5fcaf8*/
+      CClientSocket::SendPacket(this: dword_BE7914, a2: &v28); /*0x5fcb61*/
+    ZXString<char>::_Release(a1: v15); /*0x5fc9db*/
+    COutPacket::COutPacket(a1: 11); /*0x5fcb8d*/
+    CClientSocket::SendPacket(this: dword_BE7914, a2: &v28); /*0x5fcb9f*/
+```
+
+## CLogin::ViewRecommendWorld @ 0x5fd364 (4 行)
+
+```c
+      CWnd::Destroy(a1: dword_BEDA68); /*0x5fd3e8*/
+      || (v6 = TSingleton<CUIWorldSelect>::ms_pInstance, TSingleton<CUIWorldSelect>::ms_pInstance != 0) )
+      CWndMan::SetFocus(a1: v6 != 0 ? v6 + 4 : 0);
+      CWndMan::SetFocus(a1: this != 0 ? this + 4 : 0);
+```
+
+## CUILoginStart::OnButtonClicked @ 0x60e499 (11 行)
+
+```c
+    switch ( a2 ) /*0x60e4b4*/
+      case 1000u: /*0x60e4b4*/
+          CLogin::GotoWorldSelect(this: v3, a2: 0); /*0x60e51d*/
+            CWnd::Destroy(a1: dword_BEDA3C); /*0x60e533*/
+            CWnd::Destroy(a1: dword_BEDA38); /*0x60e554*/
+          CLogin::GotoWorldSelect(this: *(this + 31), a2: 1); /*0x60e570*/
+          CLogin::GotoTitle(this: v3, a2: 1, a3: 0); /*0x60e575*/
+      case 1001u: /*0x60e4b4*/
+      case 1002u: /*0x60e4b4*/
+      case 1003u: /*0x60e4b4*/
+        CWndMan::SetFocus(a1: *(v5 + 392)); /*0x60e59c*/
+```
+
+## CUILoginStart::EnableLoginStartCtrl @ 0x60eb04 (0 行)
+
+```c
+```
+
+## CUITitle::OnCreate @ 0x62054a (33 行)
+
+```c
+void __thiscall CUITitle::OnCreate(CUITitle *this, void *pData)
+  ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x620577*/
+  ZXString<char>::GetBuffer(a1: &sStrDefault, a2: 0xFFFFFFFF); /*0x62058a*/
+      ZXString<char>::operator=(a1: v6); /*0x6205b5*/
+  StringW = StringPool::GetStringW(this: Instance, a2: &Unknown, a3: SP_1345_UI_LOGINIMG_TITLE_BTLOGIN); /*0x6205de*/
+  ZXString<unsigned short>::operator=(a1: StringW); /*0x6205eb*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x6205f7*/
+  v12 = StringPool::GetStringW(this: v11, a2: &Unknown, a3: SP_1347_UI_LOGINIMG_TITLE_BTLOGINIDSAVE); /*0x620662*/
+  ZXString<unsigned short>::operator=(a1: v12); /*0x62066f*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x62067b*/
+  v16 = StringPool::GetStringW(this: v15, a2: &Unknown, a3: SP_1348_UI_LOGINIMG_TITLE_BTLOGINIDLOST); /*0x6206d9*/
+  ZXString<unsigned short>::operator=(a1: v16); /*0x6206e6*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x6206f2*/
+  v20 = StringPool::GetStringW(this: v19, a2: &Unknown, a3: SP_1349_UI_LOGINIMG_TITLE_BTPASSWDLOST); /*0x620753*/
+  ZXString<unsigned short>::operator=(a1: v20); /*0x620760*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x62076c*/
+  v24 = StringPool::GetStringW(this: v23, a2: &Unknown, a3: SP_1350_UI_LOGINIMG_TITLE_BTNEW); /*0x6207cd*/
+  ZXString<unsigned short>::operator=(a1: v24); /*0x6207da*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x6207e6*/
+  v28 = StringPool::GetStringW(this: v27, a2: &Unknown, a3: SP_1351_UI_LOGINIMG_TITLE_BTHOMEPAGE); /*0x620844*/
+  ZXString<unsigned short>::operator=(a1: v28); /*0x620851*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x62085d*/
+  v32 = StringPool::GetStringW(this: v31, a2: &Unknown, a3: SP_1352_UI_LOGINIMG_TITLE_BTQUIT); /*0x6208bb*/
+  ZXString<unsigned short>::operator=(a1: v32); /*0x6208c8*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x6208d4*/
+  ZXString<char>::operator=(a1: &v83); /*0x620994*/
+  ZXString<char>::operator=(a1: &v80); /*0x6209fb*/
+  StringPool::GetBSTR(this: v44, a2: &v61, a3: SP_1353_UI_LOGINIMG_TITLE_CHECK_0); /*0x620a98*/
+  StringPool::GetBSTR(this: v54, a2: &v61, a3: SP_1354_UI_LOGINIMG_TITLE_CHECK_1); /*0x620b93*/
+  CWnd::SetFocusChild(this, a2: v65); /*0x620c53*/
+  ZXString<unsigned short>::_Release(a1: &v82); /*0x620c77*/
+  ZXString<char>::_Release(a1: &v80); /*0x620c83*/
+  ZXString<char>::_Release(a1: &v83); /*0x620c8f*/
+```
+
+## CUITitle::OnButtonClicked @ 0x620ca5 (21 行)
+
+```c
+void __thiscall CUITitle::OnButtonClicked(CUITitle *this, unsigned int a2)
+    if ( CUITitle::IsRequestValid(this) == 0 ) /*0x620e07*/
+    switch ( a2 ) /*0x620ccb*/
+      case 0x3EAu: /*0x620ccb*/
+        if ( CUITitle::IsRequestValid(this) == 0 ) /*0x620db8*/
+        v8 = *StringPool::GetString( /*0x620dcc*/
+                nIdx: SP_1_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTID);
+      case 0x3EBu: /*0x620ccb*/
+        if ( CUITitle::IsRequestValid(this) == 0 ) /*0x620d7b*/
+        v11 = *StringPool::GetString( /*0x620d97*/
+                 nIdx: SP_2_HTTP__PASSPORTNEXONNET_WZASPXPART_ACCOUNTS_FORGOTPASSWORD);
+      case 0x3ECu: /*0x620ccb*/
+        if ( CUITitle::IsRequestValid(this) == 0 ) /*0x620d3e*/
+        v10 = *StringPool::GetString( /*0x620d5a*/
+                 nIdx: SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK);
+      case 0x3EDu: /*0x620ccb*/
+        if ( CUITitle::IsRequestValid(this) == 0 ) /*0x620cfb*/
+        v9 = *StringPool::GetString(this: v3, result: &v15, nIdx: SP_5633_HTTP__MAPLESTORYNEXONNET); /*0x620d1a*/
+      case 0x3EEu: /*0x620ccb*/
+    ZXString<char>::_Release(a1: v4); /*0x620de3*/
+  if ( CUITitle::IsRequestValid(this) != 0 ) /*0x620df3*/
+```
+
+## CUITitle::IsRequestValid @ 0x621156 (1 行)
+
+```c
+BOOL __thiscall CUITitle::IsRequestValid(CUITitle *this)
+```
+
+## CUIWorldSelect::OnCreate @ 0x624831 (6 行)
+
+```c
+void __thiscall CUIWorldSelect::OnCreate(CUIWorldSelect *this, int *a2)
+  CUIWorldSelect *v22; // esi
+  CUIWorldSelect *v28; // [esp+44h] [ebp-10h]
+  v7 = *CWnd::GetLayer(a1: v27); /*0x6248f8*/
+  v16 = *CWnd::GetLayer(a1: v26); /*0x624a14*/
+  CUIWorldSelect::DrawWorldItems(this: v22); /*0x624ad2*/
+```
+
+## CUIWorldSelect::OnButtonClicked @ 0x624ae8 (6 行)
+
+```c
+void __thiscall CUIWorldSelect::OnButtonClicked(CUIWorldSelect *this, unsigned int a2)
+  if ( CUIWorldSelect::IsRequestValid(this) != 0 )
+      CUIWorldSelect::EnableButtons(this, a2: a2 - 1000); /*0x624b14*/
+      CUIWorldSelect::SetKeyFocus(this, a2: -1); /*0x624b1d*/
+      CLogin::SendCheckUserLimitPacket(this: v4, a2: v3); /*0x624b2f*/
+          CWndMan::SetFocus(a1: v5 != 0 ? v5 + 4 : 0);
+```
+
+## CUIWorldSelect::DrawWorldItems @ 0x624e13 (15 行)
+
+```c
+void __thiscall CUIWorldSelect::DrawWorldItems(CUIWorldSelect *this)
+        sub_5FDF26(a1: &v60); /*0x624ec8*/
+        sub_5FDF26(a1: &v61); /*0x624ed4*/
+        sub_5FDF26(a1: &v62); /*0x624ee0*/
+  v42 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x624f45*/
+  StringPool::GetBSTR(this: Instance, a2: &v38, a3: SP_3184_UI_LOGINIMG_WORLDNOTICE); /*0x624f66*/
+      v42 = SP_1357_UI_LOGINIMG_WORLDSELECT_BTWORLD_E; /*0x6252bc*/
+      v42 = *StringPool::GetStringW(this: v34, a2: v41, a3: v42); /*0x6252ce*/
+      ZXString<unsigned short>::_Release(a1: &v55); /*0x6252e6*/
+      v42 = SP_1355_UI_LOGINIMG_WORLDSELECT_BTWORLD_D; /*0x625039*/
+      StringW = StringPool::GetStringW(this: v20, a2: v41, a3: v42); /*0x625046*/
+      ZXString<unsigned short>::_Release(a1: v50); /*0x625067*/
+    CUIWorldSelect::MakeAdvice(this); /*0x62527a*/
+  CWnd::InvalidateRect(this, a2: 0); /*0x625282*/
+  ZXString<unsigned short>::_Release(a1: &v54); /*0x62529f*/
+```
+
+## CUIWorldSelect::EnableButtons @ 0x62536c (1 行)
+
+```c
+int __thiscall CUIWorldSelect::EnableButtons(CUIWorldSelect *this, int a2)
+```
+
+## CUIWorldSelect::IsRequestValid @ 0x62540a (1 行)
+
+```c
+BOOL __thiscall CUIWorldSelect::IsRequestValid(CUIWorldSelect *this)
+```
+
+## CUIWorldSelect::SetFocusWorld @ 0x6272d0 (2 行)
+
+```c
+void __thiscall CUIWorldSelect::SetFocusWorld(CUIWorldSelect *this, int nWorldID)
+    CUIWorldSelect::SetKeyFocus(this, a2: v3); /*0x627307*/
+```
+
+## CUIWorldSelect::MakeAdvice @ 0x6281b9 (1 行)
+
+```c
+int __thiscall CUIWorldSelect::MakeAdvice(CUIWorldSelect *this)
+```
+
+## CUIWorldSelect::UserLimitResult @ 0x6283c1 (6 行)
+
+```c
+CFadeWnd *__thiscall CUIWorldSelect::UserLimitResult(CUIWorldSelect *this, int a2, int a3)
+  CUIWorldSelect *v11; // [esp-14h] [ebp-40h] BYREF
+    StringPool::GetString( /*0x628443*/
+      nIdx: SP_1369_SINCE_THERE_ARE_MANY_R_NCONCURRENT_USERS_IN_THIS_WORLD_R_NYOU_MAY_ENCOUNTER_SOME);
+    StringPool::GetString( /*0x628401*/
+      nIdx: SP_1370_THE_CONCURRENT_USERS_IN_THIS_WORLD_R_NHAVE_REACHED_THE_MAX_R_NPLEASE_TRY_AGAIN_L);
+```
+
+## CUICharSelect::OnButtonClicked @ 0x601667 (10 行)
+
+```c
+void __thiscall CUICharSelect::OnButtonClicked(CLogin **this, unsigned int a2)
+  if ( CUICharSelect::IsRequestValid(this) != 0 )
+    CUICharSelect::SetKeyFocus(this, a2: -1); /*0x601677*/
+    switch ( a2 ) /*0x60168e*/
+      case 0x3E8u: /*0x60168e*/
+        CLogin::SendSelectCharPacket(this: *(this + 28)); /*0x6016ad*/
+      case 0x3E9u: /*0x60168e*/
+      case 0x3EAu: /*0x60168e*/
+        CLogin::SendDeleteCharPacket(this: *(this + 28)); /*0x601699*/
+      CWndMan::SetFocus(a1: this != 0 ? this + 1 : 0);
+```
+
+## CUICharSelect::IsRequestValid @ 0x601861 (1 行)
+
+```c
+BOOL __thiscall CUICharSelect::IsRequestValid(CUICharSelect *this)
+```
+
+## CUINewCharNameSelect::OnButtonClicked @ 0x6175ea (3 行)
+
+```c
+  if ( CUINewCharNameSelect::IsRequestValid(this) ) /*0x6175f7*/
+      CLogin::SendCheckDuplicateIDPacket(this: *(this + 27), a2: Text); /*0x61762e*/
+      ZXString<char>::_Release(a1: &a2); /*0x61763a*/
+```
+
+## CUINewCharNameSelect::IsRequestValid @ 0x61770e (1 行)
+
+```c
+BOOL __thiscall CUINewCharNameSelect::IsRequestValid(CUINewCharNameSelect *this)
+```
+
+## CUIRecommendWorld::OnCreate @ 0x62b451 (19 行)
+
+```c
+  if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x62b47b*/
+    (*(*(TSingleton<CUIWorldSelect>::ms_pInstance + 4) + 28))(a1: TSingleton<CUIWorldSelect>::ms_pInstance + 4, a2: 0); /*0x62b483*/
+  v22 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x62b486*/
+  StringPool::GetBSTR(this: Instance, a2: &v20, a3: SP_5362_UI_LOGINIMG_WORLDSELECT_ALERT_BACKGRD); /*0x62b49b*/
+  CWnd::SetBackgrnd(a1: v20, a2: p_pData, a3: v22); /*0x62b4a2*/
+  v22 = SP_116_MAPLESTORY_ERROR__MOB_ERROR; /*0x62b4f6*/
+  v22 = SP_5363_UI_LOGINIMG_WORLDSELECT_ALERT_BTARROWL; /*0x62b564*/
+  StringW = StringPool::GetStringW(this: v8, a2: p_pData, a3: v22); /*0x62b57b*/
+  ZXString<unsigned short>::operator=(a1: StringW); /*0x62b588*/
+  ZXString<unsigned short>::_Release(a1: &pData); /*0x62b594*/
+  v22 = SP_5364_UI_LOGINIMG_WORLDSELECT_ALERT_BTARROWR; /*0x62b5e8*/
+  v13 = StringPool::GetStringW(this: v12, a2: p_pData, a3: v22); /*0x62b5f8*/
+  ZXString<unsigned short>::operator=(a1: v13); /*0x62b605*/
+  ZXString<unsigned short>::_Release(a1: &pData); /*0x62b611*/
+  v22 = SP_5365_UI_LOGINIMG_WORLDSELECT_ALERT_BTCHOICE; /*0x62b668*/
+  v17 = StringPool::GetStringW(this: v16, a2: p_pData, a3: v22); /*0x62b678*/
+  ZXString<unsigned short>::operator=(a1: v17); /*0x62b685*/
+  ZXString<unsigned short>::_Release(a1: v25); /*0x62b691*/
+  ZXString<unsigned short>::_Release(a1: &v24); /*0x62b6f2*/
+```
+
+## CUIRecommendWorld::OnButtonClicked @ 0x62b708 (5 行)
+
+```c
+  if ( CUIRecommendWorld::IsRequestValid(a1: this) != 0 ) /*0x62b712*/
+    switch ( nId ) /*0x62b71d*/
+      case 1000: /*0x62b71d*/
+      case 1001: /*0x62b71d*/
+      case 1002: /*0x62b71d*/
+```
+
+## CUIRecommendWorld::SelectWorld @ 0x62b96b (3 行)
+
+```c
+  if ( TSingleton<CUIWorldSelect>::ms_pInstance != 0 ) /*0x62b976*/
+    CUIWorldSelect::SetFocusWorld( /*0x62b98d*/
+      this: TSingleton<CUIWorldSelect>::ms_pInstance,
+```
+
+## CUIRecommendWorld::MoveWorld @ 0x62b99d (0 行)
+
+```c
+```
+
+## CUIAvatarVAC::OnCreate @ 0x608ca6 (23 行)
+
+```c
+  v80 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x608cca*/
+  StringPool::GetBSTR(this: Instance, a2: &v96, a3: SP_3987_UI_LOGINIMG_VIEWALLCHAR_BACKGRND); /*0x608cdf*/
+  CWnd::SetBackgrnd(a1: v78, a2: v79, a3: v80); /*0x608d09*/
+  v80 = SP_3983_UI_LOGINIMG_VIEWALLCHAR_BTENTER; /*0x608d39*/
+  StringW = StringPool::GetStringW(this: v6, a2: v79, a3: v80); /*0x608d4d*/
+  ZXString<unsigned short>::operator=(a1: StringW); /*0x608d5a*/
+  ZXString<unsigned short>::_Release(a1: &v95); /*0x608d66*/
+  StringPool::GetBSTR(this: v15, a2: &v73, a3: SP_1323_UI_LOGINIMG_CHARSELECT_NAMETAG); /*0x608e7c*/
+      v65 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x608fbd*/
+    v65 = SP_3986_UI_LOGINIMG_VIEWALLCHAR_WORLDICONS_D; /*0x609075*/
+    v32 = *StringPool::GetStringW(this: v31, a2: v64, a3: v65); /*0x60908b*/
+    ZXString<unsigned short>::_Release(a1: &v93); /*0x6090a8*/
+    v65 = SP_0_HTTP__PASSPORTNEXONNET_PART_REGISTRATION_AGECHECK; /*0x6090f1*/
+    ZXString<unsigned short>::_Release(a1: &v95); /*0x6091ae*/
+  v65 = SP_1410_CANVASFONT; /*0x6091c7*/
+  v44 = *StringPool::GetStringW(this: v43, a2: v64, a3: v65); /*0x6091d9*/
+  ZXString<unsigned short>::_Release(a1: &v93); /*0x6091f7*/
+  v61 = SP_5527_ARIAL; /*0x60922d*/
+  v65 = SP_1410_CANVASFONT; /*0x609274*/
+  v50 = *StringPool::GetStringW(this: v49, a2: v64, a3: v65); /*0x609286*/
+  ZXString<unsigned short>::_Release(a1: &v93); /*0x6092a4*/
+  v61 = SP_5527_ARIAL; /*0x6092d7*/
+  ZXString<unsigned short>::_Release(a1: &v87); /*0x6093e3*/
+```
+
+## CUIAvatar::OnCreate @ 0x6042dc (22 行)
+
+```c
+  StringPool::GetBSTR(this: Instance, a2: &v122, a3: SP_1323_UI_LOGINIMG_CHARSELECT_NAMETAG); /*0x604337*/
+  p_pvarg = SP_1410_CANVASFONT; /*0x604519*/
+  v21 = *StringPool::GetStringW(this: v20, a2: v114, a3: p_pvarg); /*0x60452b*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x604549*/
+  StringPool::GetBSTR(this: v23, a2: &v112, a3: SP_5527_ARIAL); /*0x60457e*/
+  p_pvarg = SP_1410_CANVASFONT; /*0x6045b4*/
+  v26 = *StringPool::GetStringW(this: v25, a2: v114, a3: p_pvarg); /*0x6045c6*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x6045e4*/
+  StringPool::GetBSTR(this: v28, a2: &v112, a3: SP_5527_ARIAL); /*0x604611*/
+  StringPool::GetStringW(this: v35, a2: &v140, a3: SP_1315_UI_LOGINIMG_CHARSELECT_PAGEL_); /*0x6046ab*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x6046fe*/
+  ZXString<unsigned short>::_Release(a1: &v140); /*0x60470a*/
+  StringPool::GetStringW(this: v43, a2: &v140, a3: SP_1315_UI_LOGINIMG_CHARSELECT_PAGEL_); /*0x604851*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x6048a7*/
+  ZXString<unsigned short>::_Release(a1: &v140); /*0x6048b3*/
+  StringPool::GetStringW(this: v50, a2: &v140, a3: SP_1316_UI_LOGINIMG_CHARSELECT_PAGER_); /*0x6049e0*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x604a36*/
+  ZXString<unsigned short>::_Release(a1: &v140); /*0x604a42*/
+  StringPool::GetStringW(this: v57, a2: &v140, a3: SP_1316_UI_LOGINIMG_CHARSELECT_PAGER_); /*0x604b89*/
+  ZXString<unsigned short>::_Release(a1: &v141); /*0x604bdf*/
+  ZXString<unsigned short>::_Release(a1: &v140); /*0x604beb*/
+  StringPool::GetBSTR(this: v78, a2: &v83, a3: SP_4421_USE_THE_TAB_KEY_TO_TOGGLE_THE_MENU); /*0x604ec8*/
+```
+
+## CUIAvatar::DrawNameTag @ 0x605b52 (0 行)
+
+```c
+```
+
+## CUIChannelSelect::OnKey @ 0x628a1c (2 行)
+
+```c
+        switch ( wParam ) /*0x628a5c*/
+    CUILoginStart::SendViewAllCharacterPacket(this: this - 1, a2: v4); /*0x628b87*/
+```
+
+## CPinCodeDlg::OnCreate @ 0x61dbbb (32 行)
+
+```c
+  String = StringPool::GetString(this: Instance, result: &Unknown, nIdx: SP_3053_UI_LOGINIMG_PINCODE_TEXT_D); /*0x61dbe8*/
+  ZXString<char>::Format(a1: &v72, a2: p_Unknown, a3: v57); /*0x61dbfe*/
+  ZXString<char>::_Release(a1: &Unknown); /*0x61dc0d*/
+    StringW = StringPool::GetStringW(this: v45, a2: p_Unknown, a3: v57); /*0x61e1b9*/
+    ZXString<unsigned short>::operator=(a1: StringW); /*0x61e1c6*/
+    ZXString<unsigned short>::_Release(a1: v67); /*0x61e1d2*/
+    v50 = StringPool::GetStringW(this: v49, a2: p_Unknown, a3: v57); /*0x61e23f*/
+    ZXString<unsigned short>::operator=(a1: v50); /*0x61e24c*/
+    ZXString<unsigned short>::_Release(a1: &v71); /*0x61e258*/
+    v36 = StringPool::GetStringW(this: v35, a2: p_Unknown, a3: v57); /*0x61e00a*/
+    ZXString<unsigned short>::operator=(a1: v36); /*0x61e017*/
+    ZXString<unsigned short>::_Release(a1: v68); /*0x61e023*/
+    v40 = StringPool::GetStringW(this: v39, a2: p_Unknown, a3: v57); /*0x61e08d*/
+    ZXString<unsigned short>::operator=(a1: v40); /*0x61e09a*/
+    ZXString<unsigned short>::_Release(a1: v70); /*0x61e0a6*/
+    CWnd::SetFocusChild(this, a2: *(this + 65)); /*0x61e178*/
+    v32 = StringPool::GetStringW(this: v31, a2: p_Unknown, a3: v57); /*0x61df62*/
+    ZXString<unsigned short>::operator=(a1: v32); /*0x61df6f*/
+    ZXString<unsigned short>::_Release(a1: v69); /*0x61df7b*/
+    ZXString<unsigned short>::_Release(a1: &v74.decVal.Lo64 + 4); /*0x61dfdc*/
+  v17 = StringPool::GetStringW(this: v16, a2: p_Unknown, a3: v57); /*0x61dd36*/
+  ZXString<unsigned short>::operator=(a1: v17); /*0x61dd43*/
+  ZXString<unsigned short>::_Release(a1: &Unknown); /*0x61dd4f*/
+  v21 = StringPool::GetStringW(this: v20, a2: p_Unknown, a3: v57); /*0x61ddbc*/
+  ZXString<unsigned short>::operator=(a1: v21); /*0x61ddc9*/
+  ZXString<unsigned short>::_Release(a1: v65); /*0x61ddd5*/
+  v25 = StringPool::GetStringW(this: v24, a2: p_Unknown, a3: v57); /*0x61de39*/
+  ZXString<unsigned short>::operator=(a1: v25); /*0x61de46*/
+  ZXString<unsigned short>::_Release(a1: v66); /*0x61de52*/
+  CWnd::SetFocusChild(this, a2: *(this + 65)); /*0x61df21*/
+    ZXString<unsigned short>::_Release(lpAddend: (Hi - 12)); /*0x61e2b8*/
+  ZXString<char>::_Release(a1: &v72); /*0x61e2c5*/
+```
+
+## CPinCodeDlg::OnButtonClicked @ 0x61e2db (1 行)
+
+```c
+      ZXString<char>::_Release(a1: &a2); /*0x61e385*/
+```
+
+## CLoginUtilDlg::DoModal @ 0x60f70b (0 行)
+
+```c
+```
+
+## CLogo::Init @ 0x62edda (3 行)
+
+```c
+  ZXString<char>::operator=(a1: CmdLine); /*0x62ee24*/
+  ZXString<char>::_Release(a1: v4); /*0x62ee4f*/
+  ZXString<char>::_Release(a1: &v5); /*0x62ee77*/
+```

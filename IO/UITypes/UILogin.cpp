@@ -255,10 +255,11 @@ namespace ms
 
 		// BeiDou carved wood slots are only 15px tall. A11M (linespace ≈15)
 		// fits the trough; A13M baseline sat below the slot so glyphs vanished.
+		// 2026-11-12：用户要求账号/密码字色改回白色（Angel/083 木槽可见性以 WHITE 为准）。
 		account = Textfield(
 			bedou ? Text::Font::A11M : Text::Font::A13M,
 			Text::Alignment::LEFT,
-			bedou ? Color::Name::WHITE : Color::Name::JAMBALAYA,
+			Color::Name::WHITE,
 			Rectangle<int16_t>(textfield_pos, textfield_pos + account_src_dim),
 			TEXTFIELD_LIMIT,
 			bedou ? static_cast<int16_t>(10) : static_cast<int16_t>(12)
@@ -304,7 +305,7 @@ namespace ms
 		password = Textfield(
 			bedou ? Text::Font::A11M : Text::Font::A13M,
 			Text::Alignment::LEFT,
-			bedou ? Color::Name::WHITE : Color::Name::JAMBALAYA,
+			Color::Name::WHITE,
 			Rectangle<int16_t>(textfield_pos, textfield_pos + password_src_dim),
 			TEXTFIELD_LIMIT,
 			bedou ? static_cast<int16_t>(10) : static_cast<int16_t>(12)
@@ -330,11 +331,20 @@ namespace ms
 		password.set_cryptchar('*');
 		password_bg = password_src;
 
+		// 账号/密码槽允许 UTF-8（中文账号、中文密码）。
+		// Textfield::accept_unicode 默认 false，会让 IO/UI.cpp::focus_textfield 走
+		// end_ascii_text_input() → SDL_StopTextInput，IME 组合串根本到不了 send_text；
+		// 打开后才能经 SDL_EVENT_TEXT_INPUT → UI::send_text → add_string 落字。
+		account.set_accept_unicode(true);
+		password.set_accept_unicode(true);
+
 		// BeiDou 槽高 15：Text 布局已自带 linespace 基线，勿再 +11，否则字形落在槽外只剩竖线伪影。
+		// 纵向补偿从 -3 收到 -1：-3 会把 11px 字形整体压到槽上沿，配合 1.0 白字在木纹上
+		// 糊成一团；字形本身居中即可，横向 +2 保留（左内边距）。
 		if (bedou)
 		{
-			account.set_text_shift(Point<int16_t>(2, -3));
-			password.set_text_shift(Point<int16_t>(2, -3));
+			account.set_text_shift(Point<int16_t>(2, -1));
+			password.set_text_shift(Point<int16_t>(2, -1));
 		}
 #pragma endregion
 
@@ -612,21 +622,12 @@ namespace ms
 	{
 		if (!pressed) return;
 		if (escape) return;
-		if (keycode == 'A' || keycode == 'a')
-		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				account.change_text(s);
-				account.set_state(Textfield::State::NORMAL);
-				password.set_state(Textfield::State::FOCUSED);
-			}, []() {}, "Account");
-		}
-		else if (keycode == 'P' || keycode == 'p')
-		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				password.change_text(s);
-			}, []() {}, "Password");
-		}
-		else if (keycode == 'S' || keycode == 's' || keycode == KeyAction::Id::RETURN)
+		// v83 原生登录页没有任何软键盘入口：账号/密码靠 Textfield 自身接收键盘
+		// 与 IME（见构造函数里的 set_accept_unicode）。历史上的 A/P → UISoftKey
+		// 是 softkey 波次的临时接线（docs/features/beidou-v17-parity r177），
+		// 会把两者劫持成 PIC 二级密码软键盘（密文最小 6 位、37 键 ASCII），
+		// 既打不出中文也让「A/P/S/R」失去输入语义。此处整段移除。
+		if (keycode == 'S' || keycode == 's' || keycode == KeyAction::Id::RETURN)
 		{
 			login();
 		}

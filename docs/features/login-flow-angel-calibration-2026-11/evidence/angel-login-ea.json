@@ -1,0 +1,2059 @@
+{
+ "source": "13339 Angel v83",
+ "total_funcs": 328,
+ "total_classes": 42,
+ "classes": {
+  "CCSWnd_Char": [
+   {
+    "ea": "0x4ab0b0",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CCSWnd_Char@@UAEXPAX@Z",
+    "demangled": "public: virtual void CCSWnd_Char::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x4ac024",
+    "method": "Draw",
+    "decorated": "?Draw@CCSWnd_Char@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CCSWnd_Char::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x4ac31e",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CCSWnd_Char@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CCSWnd_Char::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x4ac396",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CCSWnd_Char@@UAEXI@Z",
+    "demangled": "public: virtual void CCSWnd_Char::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x4ac3de",
+    "method": "OnWear",
+    "decorated": "?OnWear@CCSWnd_Char@@QAEXJJH@Z",
+    "demangled": "public: void CCSWnd_Char::OnWear(long,long,int)"
+   },
+   {
+    "ea": "0x4ac852",
+    "method": "CmpAvatar",
+    "decorated": "?CmpAvatar@CCSWnd_Char@@QAEJJ@Z",
+    "demangled": "public: long CCSWnd_Char::CmpAvatar(long)"
+   },
+   {
+    "ea": "0x4ac94b",
+    "method": "SetRing",
+    "decorated": "?SetRing@CCSWnd_Char@@QAEXJJH@Z",
+    "demangled": "public: void CCSWnd_Char::SetRing(long,long,int)"
+   },
+   {
+    "ea": "0x4acda4",
+    "method": "CmpPet",
+    "decorated": "?CmpPet@CCSWnd_Char@@QAEJXZ",
+    "demangled": "public: long CCSWnd_Char::CmpPet(void)"
+   },
+   {
+    "ea": "0x4aceb6",
+    "method": "SetRiding",
+    "decorated": "?SetRiding@CCSWnd_Char@@QAEHJJJ@Z",
+    "demangled": "public: int CCSWnd_Char::SetRiding(long,long,long)"
+   },
+   {
+    "ea": "0x4ad054",
+    "method": "EndChat",
+    "decorated": "?EndChat@CCSWnd_Char@@QAEXXZ",
+    "demangled": "public: void CCSWnd_Char::EndChat(void)"
+   },
+   {
+    "ea": "0x4ad12f",
+    "method": "SetEmotion",
+    "decorated": "?SetEmotion@CCSWnd_Char@@QAEXJ@Z",
+    "demangled": "public: void CCSWnd_Char::SetEmotion(long)"
+   },
+   {
+    "ea": "0x4ad19d",
+    "method": "ShowBullet",
+    "decorated": "?ShowBullet@CCSWnd_Char@@QAEXJ@Z",
+    "demangled": "public: void CCSWnd_Char::ShowBullet(long)"
+   },
+   {
+    "ea": "0x4ad20b",
+    "method": "OnKeyRet",
+    "decorated": "?OnKeyRet@CCSWnd_Char@@QAEHII@Z",
+    "demangled": "public: int CCSWnd_Char::OnKeyRet(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x4ad450",
+    "method": "GetWeaponItemID",
+    "decorated": "?GetWeaponItemID@CCSWnd_Char@@QAEJJAAJ@Z",
+    "demangled": "public: long CCSWnd_Char::GetWeaponItemID(long,long __near &)"
+   },
+   {
+    "ea": "0x4ad71b",
+    "method": "IsTwoHandWeapon",
+    "decorated": "?IsTwoHandWeapon@CCSWnd_Char@@IAEHJ@Z",
+    "demangled": "protected: int CCSWnd_Char::IsTwoHandWeapon(long)"
+   },
+   {
+    "ea": "0x4ad853",
+    "method": "BlowWeather",
+    "decorated": "?BlowWeather@CCSWnd_Char@@QAEXJ@Z",
+    "demangled": "public: void CCSWnd_Char::BlowWeather(long)"
+   },
+   {
+    "ea": "0x4adb72",
+    "method": "CreateFloatNotice",
+    "decorated": "?CreateFloatNotice@CCSWnd_Char@@IAEXPBDJ@Z",
+    "demangled": "protected: void CCSWnd_Char::CreateFloatNotice(char const __near *,long)"
+   },
+   {
+    "ea": "0x4ae492",
+    "method": "TransientLayer_Weather",
+    "decorated": "?TransientLayer_Weather@CCSWnd_Char@@IAEXV?$ZXString@G@@JJJ@Z",
+    "demangled": "protected: void CCSWnd_Char::TransientLayer_Weather(class ZXString<unsigned short>,long,long,long)"
+   }
+  ],
+  "CCSWnd_List": [
+   {
+    "ea": "0x4b6cbe",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CCSWnd_List@@UAEXPAX@Z",
+    "demangled": "public: virtual void CCSWnd_List::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x4b7297",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CCSWnd_List@@UAEHJJ@Z",
+    "demangled": "public: virtual int CCSWnd_List::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x4b7404",
+    "method": "OnKey",
+    "decorated": "?OnKey@CCSWnd_List@@UAEXII@Z",
+    "demangled": "public: virtual void CCSWnd_List::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x4b7417",
+    "method": "OnKeyRet",
+    "decorated": "?OnKeyRet@CCSWnd_List@@QAEHII@Z",
+    "demangled": "public: int CCSWnd_List::OnKeyRet(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x4b77b4",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CCSWnd_List@@UAEXI@Z",
+    "demangled": "public: virtual void CCSWnd_List::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x4b7a91",
+    "method": "Update",
+    "decorated": "?Update@CCSWnd_List@@UAEXXZ",
+    "demangled": "public: virtual void CCSWnd_List::Update(void)"
+   },
+   {
+    "ea": "0x4b7b98",
+    "method": "Draw",
+    "decorated": "?Draw@CCSWnd_List@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CCSWnd_List::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x4b95ed",
+    "method": "SetCursorToPlate",
+    "decorated": "?SetCursorToPlate@CCSWnd_List@@QAEXJ@Z",
+    "demangled": "public: void CCSWnd_List::SetCursorToPlate(long)"
+   },
+   {
+    "ea": "0x4b965f",
+    "method": "GetPlateRect",
+    "decorated": "?GetPlateRect@CCSWnd_List@@QAE?AUtagRECT@@J@Z",
+    "demangled": "public: struct tagRECT CCSWnd_List::GetPlateRect(long)"
+   },
+   {
+    "ea": "0x4b96b5",
+    "method": "ChangeCategorySub",
+    "decorated": "?ChangeCategorySub@CCSWnd_List@@QAEXXZ",
+    "demangled": "public: void CCSWnd_List::ChangeCategorySub(void)"
+   },
+   {
+    "ea": "0x4b988a",
+    "method": "ChangePage",
+    "decorated": "?ChangePage@CCSWnd_List@@QAEXXZ",
+    "demangled": "public: void CCSWnd_List::ChangePage(void)"
+   },
+   {
+    "ea": "0x4ba419",
+    "method": "ResetSlotIncComm",
+    "decorated": "?ResetSlotIncComm@CCSWnd_List@@QAEXXZ",
+    "demangled": "public: void CCSWnd_List::ResetSlotIncComm(void)"
+   },
+   {
+    "ea": "0x4ba623",
+    "method": "SetPlateNo",
+    "decorated": "?SetPlateNo@CCSWnd_List@@IAEXJ@Z",
+    "demangled": "protected: void CCSWnd_List::SetPlateNo(long)"
+   },
+   {
+    "ea": "0x4baeb2",
+    "method": "SetButtonKeyFocus",
+    "decorated": "?SetButtonKeyFocus@CCSWnd_List@@IAEXJJ@Z",
+    "demangled": "protected: void CCSWnd_List::SetButtonKeyFocus(long,long)"
+   },
+   {
+    "ea": "0x4baf1a",
+    "method": "ShowItemToolTip",
+    "decorated": "?ShowItemToolTip@CCSWnd_List@@IAEHV?$ZRef@UCS_COMMODITY_EX@@@@JJ@Z",
+    "demangled": "protected: int CCSWnd_List::ShowItemToolTip(class ZRef<struct CS_COMMODITY_EX>,long,long)"
+   },
+   {
+    "ea": "0x4bb37c",
+    "method": "WearItem",
+    "decorated": "?WearItem@CCSWnd_List@@IAEHV?$ZRef@UCS_COMMODITY@@@@H@Z",
+    "demangled": "protected: int CCSWnd_List::WearItem(class ZRef<struct CS_COMMODITY>,int)"
+   },
+   {
+    "ea": "0x4bb5ef",
+    "method": "WearCommodity",
+    "decorated": "?WearCommodity@CCSWnd_List@@IAEXV?$ZRef@UCS_COMMODITY@@@@@Z",
+    "demangled": "protected: void CCSWnd_List::WearCommodity(class ZRef<struct CS_COMMODITY>)"
+   },
+   {
+    "ea": "0x4bb716",
+    "method": "GetCommodityGender",
+    "decorated": "?GetCommodityGender@CCSWnd_List@@QAEJV?$ZRef@UCS_COMMODITY@@@@@Z",
+    "demangled": "public: long CCSWnd_List::GetCommodityGender(class ZRef<struct CS_COMMODITY>)"
+   }
+  ],
+  "CFadeWnd": [
+   {
+    "ea": "0x51f93d",
+    "method": "SetOption",
+    "decorated": "?SetOption@CFadeWnd@@QAEXJJJUtagPOINT@@00JJJ@Z",
+    "demangled": "public: void CFadeWnd::SetOption(long,long,long,struct tagPOINT,struct tagPOINT,struct tagPOINT,long,long,long)"
+   },
+   {
+    "ea": "0x51f9ad",
+    "method": "CreateFadeWnd",
+    "decorated": "?CreateFadeWnd@CFadeWnd@@QAEXJJPBGJHPAXHW4UIOrigin@CWnd@@@Z",
+    "demangled": "public: void CFadeWnd::CreateFadeWnd(long,long,unsigned short const __near *,long,int,void __near *,int,enum CWnd::UIOrigin)"
+   },
+   {
+    "ea": "0x51fb4e",
+    "method": "Close",
+    "decorated": "?Close@CFadeWnd@@QAEXH@Z",
+    "demangled": "public: void CFadeWnd::Close(int)"
+   },
+   {
+    "ea": "0x51fff5",
+    "method": "SendCloseMessage",
+    "decorated": "?SendCloseMessage@CFadeWnd@@UAEXXZ",
+    "demangled": "public: virtual void CFadeWnd::SendCloseMessage(void)"
+   }
+  ],
+  "CFloatNotice": [
+   {
+    "ea": "0x58c53b",
+    "method": "CreateFloatNotice",
+    "decorated": "?CreateFloatNotice@CFloatNotice@@QAEXPBDJJJ@Z",
+    "demangled": "public: void CFloatNotice::CreateFloatNotice(char const __near *,long,long,long)"
+   },
+   {
+    "ea": "0x58ccb1",
+    "method": "DeleteFloatNotice",
+    "decorated": "?DeleteFloatNotice@CFloatNotice@@QAEXXZ",
+    "demangled": "public: void CFloatNotice::DeleteFloatNotice(void)"
+   }
+  ],
+  "CITCWnd_Char": [
+   {
+    "ea": "0x4ac7a5",
+    "method": "OnDefaultAvatar",
+    "decorated": "?OnDefaultAvatar@CITCWnd_Char@@QAEXXZ",
+    "demangled": "public: void CITCWnd_Char::OnDefaultAvatar(void)"
+   },
+   {
+    "ea": "0x4ac920",
+    "method": "InitRing",
+    "decorated": "?InitRing@CITCWnd_Char@@QAEXXZ",
+    "demangled": "public: void CITCWnd_Char::InitRing(void)"
+   },
+   {
+    "ea": "0x4acc0f",
+    "method": "InitPet",
+    "decorated": "?InitPet@CITCWnd_Char@@QAEXXZ",
+    "demangled": "public: void CITCWnd_Char::InitPet(void)"
+   },
+   {
+    "ea": "0x4acd22",
+    "method": "SetPet",
+    "decorated": "?SetPet@CITCWnd_Char@@QAEXJJH@Z",
+    "demangled": "public: void CITCWnd_Char::SetPet(long,long,int)"
+   },
+   {
+    "ea": "0x5b0b8c",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CITCWnd_Char@@UAEXPAX@Z",
+    "demangled": "public: virtual void CITCWnd_Char::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x5b1222",
+    "method": "OnKey",
+    "decorated": "?OnKey@CITCWnd_Char@@UAEXII@Z",
+    "demangled": "public: virtual void CITCWnd_Char::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x5b1305",
+    "method": "GetWeaponItemID",
+    "decorated": "?GetWeaponItemID@CITCWnd_Char@@QAEJJAAJ@Z",
+    "demangled": "public: long CITCWnd_Char::GetWeaponItemID(long,long __near &)"
+   }
+  ],
+  "CITCWnd_List": [
+   {
+    "ea": "0x5bb9b4",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CITCWnd_List@@UAEXPAX@Z",
+    "demangled": "public: virtual void CITCWnd_List::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x5bdd12",
+    "method": "ChangeCategorySub",
+    "decorated": "?ChangeCategorySub@CITCWnd_List@@QAEXXZ",
+    "demangled": "public: void CITCWnd_List::ChangeCategorySub(void)"
+   }
+  ],
+  "CITCWnd_Tab": [
+   {
+    "ea": "0x5b7106",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CITCWnd_Tab@@UAEXI@Z",
+    "demangled": "public: virtual void CITCWnd_Tab::OnButtonClicked(unsigned int)"
+   }
+  ],
+  "CLogin": [
+   {
+    "ea": "0x5f42cd",
+    "method": "Init",
+    "decorated": "?Init@CLogin@@UAEXPAX@Z",
+    "demangled": "public: virtual void CLogin::Init(void __near *)"
+   },
+   {
+    "ea": "0x5f4c16",
+    "method": "Update",
+    "decorated": "?Update@CLogin@@UAEXXZ",
+    "demangled": "public: virtual void CLogin::Update(void)"
+   },
+   {
+    "ea": "0x5f5368",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CLogin@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CLogin::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x5f53c0",
+    "method": "ChangeStep",
+    "decorated": "?ChangeStep@CLogin@@QAEXJ@Z",
+    "demangled": "public: void CLogin::ChangeStep(long)"
+   },
+   {
+    "ea": "0x5f5962",
+    "method": "OnStepChanged",
+    "decorated": "?OnStepChanged@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnStepChanged(void)"
+   },
+   {
+    "ea": "0x5f6425",
+    "method": "OnNewCharStep",
+    "decorated": "?OnNewCharStep@CLogin@@QAEXH@Z",
+    "demangled": "public: void CLogin::OnNewCharStep(int)"
+   },
+   {
+    "ea": "0x5f6482",
+    "method": "OnSelectedCharChanged",
+    "decorated": "?OnSelectedCharChanged@CLogin@@QAEXJ@Z",
+    "demangled": "public: void CLogin::OnSelectedCharChanged(long)"
+   },
+   {
+    "ea": "0x5f6918",
+    "method": "OnNewCharCanceled",
+    "decorated": "?OnNewCharCanceled@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnNewCharCanceled(void)"
+   },
+   {
+    "ea": "0x5f6932",
+    "method": "SendRequest",
+    "decorated": "?SendRequest@CLogin@@QAEXAAVCOutPacket@@@Z",
+    "demangled": "public: void CLogin::SendRequest(class COutPacket __near &)"
+   },
+   {
+    "ea": "0x5f6952",
+    "method": "SendCheckPasswordPacket",
+    "decorated": "?SendCheckPasswordPacket@CLogin@@QAEHPBD0@Z",
+    "demangled": "public: int CLogin::SendCheckPasswordPacket(char const __near *,char const __near *)"
+   },
+   {
+    "ea": "0x5f6d6a",
+    "method": "SendViewAllCharPacket",
+    "decorated": "?SendViewAllCharPacket@CLogin@@QAEHXZ",
+    "demangled": "public: int CLogin::SendViewAllCharPacket(void)"
+   },
+   {
+    "ea": "0x5f726d",
+    "method": "SendSelectCharPacket",
+    "decorated": "?SendSelectCharPacket@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::SendSelectCharPacket(void)"
+   },
+   {
+    "ea": "0x5f76ae",
+    "method": "SendSelectCharPacketByVAC",
+    "decorated": "?SendSelectCharPacketByVAC@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::SendSelectCharPacketByVAC(void)"
+   },
+   {
+    "ea": "0x5f7c4a",
+    "method": "SendDeleteCharPacket",
+    "decorated": "?SendDeleteCharPacket@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::SendDeleteCharPacket(void)"
+   },
+   {
+    "ea": "0x5f7fe7",
+    "method": "SendCheckDuplicateIDPacket",
+    "decorated": "?SendCheckDuplicateIDPacket@CLogin@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CLogin::SendCheckDuplicateIDPacket(class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x5f8078",
+    "method": "SendCheckUserLimitPacket",
+    "decorated": "?SendCheckUserLimitPacket@CLogin@@QAEXJ@Z",
+    "demangled": "public: void CLogin::SendCheckUserLimitPacket(long)"
+   },
+   {
+    "ea": "0x5f80ff",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CLogin@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CLogin::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f82f4",
+    "method": "OnLatestConnectedWorld",
+    "decorated": "?OnLatestConnectedWorld@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnLatestConnectedWorld(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f8340",
+    "method": "OnRecommendWorldMessage",
+    "decorated": "?OnRecommendWorldMessage@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnRecommendWorldMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f83ee",
+    "method": "OnCheckPasswordResult",
+    "decorated": "?OnCheckPasswordResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnCheckPasswordResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f8f27",
+    "method": "OnGuestIDLoginResult",
+    "decorated": "?OnGuestIDLoginResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnGuestIDLoginResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f92ae",
+    "method": "OnCheckUserLimitResult",
+    "decorated": "?OnCheckUserLimitResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnCheckUserLimitResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f92df",
+    "method": "OnAccountInfoResult",
+    "decorated": "?OnAccountInfoResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnAccountInfoResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f95b7",
+    "method": "OnWorldInformation",
+    "decorated": "?OnWorldInformation@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnWorldInformation(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f9805",
+    "method": "OnCancleRaceSelect",
+    "decorated": "?OnCancleRaceSelect@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnCancleRaceSelect(void)"
+   },
+   {
+    "ea": "0x5f9891",
+    "method": "OnSelectWorldResult",
+    "decorated": "?OnSelectWorldResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnSelectWorldResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f9c72",
+    "method": "OnCheckDuplicatedIDResult",
+    "decorated": "?OnCheckDuplicatedIDResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnCheckDuplicatedIDResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5f9d15",
+    "method": "OnDeleteCharacterResult",
+    "decorated": "?OnDeleteCharacterResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnDeleteCharacterResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fa26c",
+    "method": "OnCreateNewCharacterResult",
+    "decorated": "?OnCreateNewCharacterResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnCreateNewCharacterResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fac26",
+    "method": "RemoveNoticeConnecting",
+    "decorated": "?RemoveNoticeConnecting@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::RemoveNoticeConnecting(void)"
+   },
+   {
+    "ea": "0x5facca",
+    "method": "OnViewAllCharResult",
+    "decorated": "?OnViewAllCharResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnViewAllCharResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fb0e1",
+    "method": "MakeVACDlg",
+    "decorated": "?MakeVACDlg@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::MakeVACDlg(void)"
+   },
+   {
+    "ea": "0x5fb155",
+    "method": "ResetVAC",
+    "decorated": "?ResetVAC@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::ResetVAC(void)"
+   },
+   {
+    "ea": "0x5fb22f",
+    "method": "EnableLoginStartCtrl",
+    "decorated": "?EnableLoginStartCtrl@CLogin@@QAEXJ@Z",
+    "demangled": "public: void CLogin::EnableLoginStartCtrl(long)"
+   },
+   {
+    "ea": "0x5fb245",
+    "method": "OnSelectCharacterByVACResult",
+    "decorated": "?OnSelectCharacterByVACResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnSelectCharacterByVACResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fb541",
+    "method": "OnSelectCharacterResult",
+    "decorated": "?OnSelectCharacterResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnSelectCharacterResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fb950",
+    "method": "OnEnableSPWResult",
+    "decorated": "?OnEnableSPWResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnEnableSPWResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fba49",
+    "method": "OnCheckSPWResult",
+    "decorated": "?OnCheckSPWResult@CLogin@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CLogin::OnCheckSPWResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fc0e4",
+    "method": "GetStepHeight",
+    "decorated": "?GetStepHeight@CLogin@@IAEJJ@Z",
+    "demangled": "protected: long CLogin::GetStepHeight(long)"
+   },
+   {
+    "ea": "0x5fc10b",
+    "method": "OnAvatarChanged",
+    "decorated": "?OnAvatarChanged@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnAvatarChanged(void)"
+   },
+   {
+    "ea": "0x5fc142",
+    "method": "GotoTitle",
+    "decorated": "?GotoTitle@CLogin@@QAEXHPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CLogin::GotoTitle(int,struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x5fc2d0",
+    "method": "CloseChannelSelect",
+    "decorated": "?CloseChannelSelect@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::CloseChannelSelect(void)"
+   },
+   {
+    "ea": "0x5fc36c",
+    "method": "GotoWorldSelect",
+    "decorated": "?GotoWorldSelect@CLogin@@QAEXH@Z",
+    "demangled": "public: void CLogin::GotoWorldSelect(int)"
+   },
+   {
+    "ea": "0x5fc407",
+    "method": "OnAcceptLicense",
+    "decorated": "?OnAcceptLicense@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnAcceptLicense(void)"
+   },
+   {
+    "ea": "0x5fc46a",
+    "method": "OnDenyLicense",
+    "decorated": "?OnDenyLicense@CLogin@@QAEXXZ",
+    "demangled": "public: void CLogin::OnDenyLicense(void)"
+   },
+   {
+    "ea": "0x5fc731",
+    "method": "OnSetAccountResult",
+    "decorated": "?OnSetAccountResult@CLogin@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CLogin::OnSetAccountResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fc838",
+    "method": "OnConfirmEULAResult",
+    "decorated": "?OnConfirmEULAResult@CLogin@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CLogin::OnConfirmEULAResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fc89d",
+    "method": "OnCheckPinCodeResult",
+    "decorated": "?OnCheckPinCodeResult@CLogin@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CLogin::OnCheckPinCodeResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fcbc1",
+    "method": "OnUpdatePinCodeResult",
+    "decorated": "?OnUpdatePinCodeResult@CLogin@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CLogin::OnUpdatePinCodeResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5fcc81",
+    "method": "GetLocalMacAddress",
+    "decorated": "?GetLocalMacAddress@CLogin@@IAEXAAV?$ZXString@D@@@Z",
+    "demangled": "protected: void CLogin::GetLocalMacAddress(class ZXString<char> __near &)"
+   },
+   {
+    "ea": "0x5fcded",
+    "method": "GetLocalMacAddressWithHDDSerialNo",
+    "decorated": "?GetLocalMacAddressWithHDDSerialNo@CLogin@@IAEXAAV?$ZXString@D@@@Z",
+    "demangled": "protected: void CLogin::GetLocalMacAddressWithHDDSerialNo(class ZXString<char> __near &)"
+   },
+   {
+    "ea": "0x5fd13d",
+    "method": "ShiftNewCharEquip",
+    "decorated": "?ShiftNewCharEquip@CLogin@@QAEXJJ@Z",
+    "demangled": "public: void CLogin::ShiftNewCharEquip(long,long)"
+   },
+   {
+    "ea": "0x5fd2e8",
+    "method": "GetSelectedAL",
+    "decorated": "?GetSelectedAL@CLogin@@ABEXAAUAvatarLook@@@Z",
+    "demangled": "private: void CLogin::GetSelectedAL(struct AvatarLook __near &)const"
+   },
+   {
+    "ea": "0x5fd364",
+    "method": "ViewRecommendWorld",
+    "decorated": "?ViewRecommendWorld@CLogin@@QAEXH@Z",
+    "demangled": "public: void CLogin::ViewRecommendWorld(int)"
+   }
+  ],
+  "CLoginUtilDlg": [
+   {
+    "ea": "0x60eb58",
+    "method": "YesNo",
+    "decorated": "?YesNo@CLoginUtilDlg@@SAHJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static int CLoginUtilDlg::YesNo(long,class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x60ed72",
+    "method": "YesNo2",
+    "decorated": "?YesNo2@CLoginUtilDlg@@SAHJ@Z",
+    "demangled": "public: static int CLoginUtilDlg::YesNo2(long)"
+   },
+   {
+    "ea": "0x60f024",
+    "method": "Notice",
+    "decorated": "?Notice@CLoginUtilDlg@@SAXJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static void CLoginUtilDlg::Notice(long,class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x60f119",
+    "method": "Error",
+    "decorated": "?Error@CLoginUtilDlg@@SAXJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static void CLoginUtilDlg::Error(long,class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x60f70b",
+    "method": "DoModal",
+    "decorated": "?DoModal@CLoginUtilDlg@@QAEJXZ",
+    "demangled": "public: long CLoginUtilDlg::DoModal(void)"
+   },
+   {
+    "ea": "0x60f799",
+    "method": "Init",
+    "decorated": "?Init@CLoginUtilDlg@@QAEXJJ@Z",
+    "demangled": "public: void CLoginUtilDlg::Init(long,long)"
+   }
+  ],
+  "CLogo": [
+   {
+    "ea": "0x62edda",
+    "method": "Init",
+    "decorated": "?Init@CLogo@@UAEXPAX@Z",
+    "demangled": "public: virtual void CLogo::Init(void __near *)"
+   },
+   {
+    "ea": "0x62eeae",
+    "method": "LogoEnd",
+    "decorated": "?LogoEnd@CLogo@@IAEXXZ",
+    "demangled": "protected: void CLogo::LogoEnd(void)"
+   },
+   {
+    "ea": "0x62eef8",
+    "method": "DrawWZLogo",
+    "decorated": "?DrawWZLogo@CLogo@@IAEXJ@Z",
+    "demangled": "protected: void CLogo::DrawWZLogo(long)"
+   },
+   {
+    "ea": "0x62f396",
+    "method": "InitNXLogo",
+    "decorated": "?InitNXLogo@CLogo@@IAEXXZ",
+    "demangled": "protected: void CLogo::InitNXLogo(void)"
+   }
+  ],
+  "CPinCodeDlg": [
+   {
+    "ea": "0x61cf54",
+    "method": "Notice",
+    "decorated": "?Notice@CPinCodeDlg@@SAXJ@Z",
+    "demangled": "public: static void CPinCodeDlg::Notice(long)"
+   },
+   {
+    "ea": "0x61d15b",
+    "method": "EnterPinCode",
+    "decorated": "?EnterPinCode@CPinCodeDlg@@SAJPAV?$ZRef@VCDialog@@@@JPAJ@Z",
+    "demangled": "public: static long CPinCodeDlg::EnterPinCode(class ZRef<class CDialog> __near *,long,long __near *)"
+   },
+   {
+    "ea": "0x61d314",
+    "method": "CreatePinCode",
+    "decorated": "?CreatePinCode@CPinCodeDlg@@SAJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static long CPinCodeDlg::CreatePinCode(class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x61d367",
+    "method": "ConfirmPinCode",
+    "decorated": "?ConfirmPinCode@CPinCodeDlg@@SAJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static long CPinCodeDlg::ConfirmPinCode(class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x61d4d6",
+    "method": "AssignPinCode",
+    "decorated": "?AssignPinCode@CPinCodeDlg@@SAJPAV?$ZRef@VCDialog@@@@J@Z",
+    "demangled": "public: static long CPinCodeDlg::AssignPinCode(class ZRef<class CDialog> __near *,long)"
+   },
+   {
+    "ea": "0x61d68e",
+    "method": "YesNo",
+    "decorated": "?YesNo@CPinCodeDlg@@SAHJPAV?$ZRef@VCDialog@@@@@Z",
+    "demangled": "public: static int CPinCodeDlg::YesNo(long,class ZRef<class CDialog> __near *)"
+   },
+   {
+    "ea": "0x61da6f",
+    "method": "DoModal",
+    "decorated": "?DoModal@CPinCodeDlg@@QAEJXZ",
+    "demangled": "public: long CPinCodeDlg::DoModal(void)"
+   },
+   {
+    "ea": "0x61dafd",
+    "method": "Init",
+    "decorated": "?Init@CPinCodeDlg@@QAEXJJ@Z",
+    "demangled": "public: void CPinCodeDlg::Init(long,long)"
+   },
+   {
+    "ea": "0x61dbbb",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CPinCodeDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CPinCodeDlg::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x61e2db",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CPinCodeDlg@@UAEXI@Z",
+    "demangled": "public: virtual void CPinCodeDlg::OnButtonClicked(unsigned int)"
+   }
+  ],
+  "CSecurityClient": [
+   {
+    "ea": "0xa4bf03",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CSecurityClient@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CSecurityClient::OnPacket(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa4bf22",
+    "method": "OnCheckClientIntegrityRequest",
+    "decorated": "?OnCheckClientIntegrityRequest@CSecurityClient@@AAEXAAVCInPacket@@@Z",
+    "demangled": "private: void CSecurityClient::OnCheckClientIntegrityRequest(class CInPacket __near &)"
+   }
+  ],
+  "CSlideNotice": [
+   {
+    "ea": "0x7e1686",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CSlideNotice@@UAEXPAX@Z",
+    "demangled": "public: virtual void CSlideNotice::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x7e16fe",
+    "method": "SetMsg",
+    "decorated": "?SetMsg@CSlideNotice@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CSlideNotice::SetMsg(class ZXString<char>)"
+   }
+  ],
+  "CSpeakerWorldDlg": [
+   {
+    "ea": "0x7e048e",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CSpeakerWorldDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CSpeakerWorldDlg::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x7e06fc",
+    "method": "Draw",
+    "decorated": "?Draw@CSpeakerWorldDlg@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CSpeakerWorldDlg::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x7e0706",
+    "method": "GetResult",
+    "decorated": "?GetResult@CSpeakerWorldDlg@@QAEXAAV?$ZXString@D@@AAH@Z",
+    "demangled": "public: void CSpeakerWorldDlg::GetResult(class ZXString<char> __near &,int __near &)"
+   }
+  ],
+  "CSpeakerWorldDlgEx": [
+   {
+    "ea": "0x7e0759",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CSpeakerWorldDlgEx@@UAEXPAX@Z",
+    "demangled": "public: virtual void CSpeakerWorldDlgEx::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x7e0b5d",
+    "method": "GetResult",
+    "decorated": "?GetResult@CSpeakerWorldDlgEx@@QAEXAAV?$ZXString@D@@00AAH@Z",
+    "demangled": "public: void CSpeakerWorldDlgEx::GetResult(class ZXString<char> __near &,class ZXString<char> __near &,class ZXString<char> __near &,int __near &)"
+   },
+   {
+    "ea": "0x7e0c06",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CSpeakerWorldDlgEx@@UAEXI@Z",
+    "demangled": "public: virtual void CSpeakerWorldDlgEx::OnButtonClicked(unsigned int)"
+   }
+  ],
+  "CUIAntiMacroCharacterName": [
+   {
+    "ea": "0x96d2bc",
+    "method": "GetResult",
+    "decorated": "?GetResult@CUIAntiMacroCharacterName@@QAEXAAV?$ZXString@D@@@Z",
+    "demangled": "public: void CUIAntiMacroCharacterName::GetResult(class ZXString<char> __near &)"
+   }
+  ],
+  "CUIAvatar": [
+   {
+    "ea": "0x6042dc",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIAvatar@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIAvatar::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x605975",
+    "method": "Refresh",
+    "decorated": "?Refresh@CUIAvatar@@QAEXXZ",
+    "demangled": "public: void CUIAvatar::Refresh(void)"
+   },
+   {
+    "ea": "0x60599b",
+    "method": "SelectCharacter",
+    "decorated": "?SelectCharacter@CUIAvatar@@QAEXJ@Z",
+    "demangled": "public: void CUIAvatar::SelectCharacter(long)"
+   },
+   {
+    "ea": "0x605b52",
+    "method": "DrawNameTag",
+    "decorated": "?DrawNameTag@CUIAvatar@@AAEXJH@Z",
+    "demangled": "private: void CUIAvatar::DrawNameTag(long,int)"
+   },
+   {
+    "ea": "0x606ba9",
+    "method": "ResetCharacter",
+    "decorated": "?ResetCharacter@CUIAvatar@@AAEXJAAVAvatarData@@H@Z",
+    "demangled": "private: void CUIAvatar::ResetCharacter(long,class AvatarData __near &,int)"
+   }
+  ],
+  "CUIAvatarVAC": [
+   {
+    "ea": "0x608ca6",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIAvatarVAC@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIAvatarVAC::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x6093ff",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIAvatarVAC@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUIAvatarVAC::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x60949a",
+    "method": "SetSelection",
+    "decorated": "?SetSelection@CUIAvatarVAC@@QAEXJ@Z",
+    "demangled": "public: void CUIAvatarVAC::SetSelection(long)"
+   },
+   {
+    "ea": "0x609551",
+    "method": "MakeCharacter",
+    "decorated": "?MakeCharacter@CUIAvatarVAC@@QAEXJAAVAvatarData@@@Z",
+    "demangled": "public: void CUIAvatarVAC::MakeCharacter(long,class AvatarData __near &)"
+   },
+   {
+    "ea": "0x609985",
+    "method": "MakeSelectedCharacterNameTag",
+    "decorated": "?MakeSelectedCharacterNameTag@CUIAvatarVAC@@QAEXXZ",
+    "demangled": "public: void CUIAvatarVAC::MakeSelectedCharacterNameTag(void)"
+   },
+   {
+    "ea": "0x609c26",
+    "method": "MakeWorldIcon",
+    "decorated": "?MakeWorldIcon@CUIAvatarVAC@@QAEXJ@Z",
+    "demangled": "public: void CUIAvatarVAC::MakeWorldIcon(long)"
+   },
+   {
+    "ea": "0x609efa",
+    "method": "GetSelectedIdx",
+    "decorated": "?GetSelectedIdx@CUIAvatarVAC@@IAEJUtagPOINT@@@Z",
+    "demangled": "protected: long CUIAvatarVAC::GetSelectedIdx(struct tagPOINT)"
+   },
+   {
+    "ea": "0x609feb",
+    "method": "ResetAvatarPosition",
+    "decorated": "?ResetAvatarPosition@CUIAvatarVAC@@QAEXXZ",
+    "demangled": "public: void CUIAvatarVAC::ResetAvatarPosition(void)"
+   },
+   {
+    "ea": "0x60ace2",
+    "method": "DrawWorldIcon",
+    "decorated": "?DrawWorldIcon@CUIAvatarVAC@@IAEXJ@Z",
+    "demangled": "protected: void CUIAvatarVAC::DrawWorldIcon(long)"
+   },
+   {
+    "ea": "0x60af0a",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIAvatarVAC@@UAEXI@Z",
+    "demangled": "public: virtual void CUIAvatarVAC::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x60af2c",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CUIAvatarVAC@@UAEXIII@Z",
+    "demangled": "public: virtual void CUIAvatarVAC::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x60afd5",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUIAvatarVAC@@IAEHXZ",
+    "demangled": "protected: int CUIAvatarVAC::IsRequestValid(void)"
+   },
+   {
+    "ea": "0x60aff1",
+    "method": "GetScrollBarIdx",
+    "decorated": "?GetScrollBarIdx@CUIAvatarVAC@@QAEJXZ",
+    "demangled": "public: long CUIAvatarVAC::GetScrollBarIdx(void)"
+   }
+  ],
+  "CUIBlockUser": [
+   {
+    "ea": "0x998749",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUIBlockUser@@UAEXII@Z",
+    "demangled": "public: virtual void CUIBlockUser::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x998780",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIBlockUser@@UAEXI@Z",
+    "demangled": "public: virtual void CUIBlockUser::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x9987cd",
+    "method": "SetResult",
+    "decorated": "?SetResult@CUIBlockUser@@IAEXXZ",
+    "demangled": "protected: void CUIBlockUser::SetResult(void)"
+   }
+  ],
+  "CUIChangingCharacterName": [
+   {
+    "ea": "0x7ee15b",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIChangingCharacterName@@UAEXI@Z",
+    "demangled": "public: virtual void CUIChangingCharacterName::OnButtonClicked(unsigned int)"
+   }
+  ],
+  "CUIChannelSelect": [
+   {
+    "ea": "0x628a1c",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUIChannelSelect@@UAEXII@Z",
+    "demangled": "public: virtual void CUIChannelSelect::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "CUIChannelShift": [
+   {
+    "ea": "0x994da4",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIChannelShift@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIChannelShift::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x995863",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUIChannelShift@@UAEXII@Z",
+    "demangled": "public: virtual void CUIChannelShift::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x9959bb",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUIChannelShift@@UAEXJ@Z",
+    "demangled": "public: virtual void CUIChannelShift::SetRet(long)"
+   },
+   {
+    "ea": "0x995a35",
+    "method": "Draw",
+    "decorated": "?Draw@CUIChannelShift@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIChannelShift::Draw(struct tagRECT const __near *)"
+   }
+  ],
+  "CUICharSelect": [
+   {
+    "ea": "0x601667",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUICharSelect@@UAEXI@Z",
+    "demangled": "public: virtual void CUICharSelect::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x601829",
+    "method": "SetKeyFocus",
+    "decorated": "?SetKeyFocus@CUICharSelect@@IAEXJ@Z",
+    "demangled": "protected: void CUICharSelect::SetKeyFocus(long)"
+   },
+   {
+    "ea": "0x601861",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUICharSelect@@IAEHXZ",
+    "demangled": "protected: int CUICharSelect::IsRequestValid(void)"
+   }
+  ],
+  "CUICharacterSaleDlg": [
+   {
+    "ea": "0x7d56e4",
+    "method": "ClearCurrentStep",
+    "decorated": "?ClearCurrentStep@CUICharacterSaleDlg@@AAEHJ@Z",
+    "demangled": "private: int CUICharacterSaleDlg::ClearCurrentStep(long)"
+   },
+   {
+    "ea": "0x7d5749",
+    "method": "ShowWindow",
+    "decorated": "?ShowWindow@CUICharacterSaleDlg@@AAEHXZ",
+    "demangled": "private: int CUICharacterSaleDlg::ShowWindow(void)"
+   },
+   {
+    "ea": "0x7d5797",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUICharacterSaleDlg@@UAEXI@Z",
+    "demangled": "public: virtual void CUICharacterSaleDlg::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x7d75ab",
+    "method": "SendCheckDuplicateIDPacket",
+    "decorated": "?SendCheckDuplicateIDPacket@CUICharacterSaleDlg@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CUICharacterSaleDlg::SendCheckDuplicateIDPacket(class ZXString<char> const __near &)"
+   }
+  ],
+  "CUIEventAlarm": [
+   {
+    "ea": "0x805439",
+    "method": "CreateEventAlarm",
+    "decorated": "?CreateEventAlarm@CUIEventAlarm@@QAEXXZ",
+    "demangled": "public: void CUIEventAlarm::CreateEventAlarm(void)"
+   }
+  ],
+  "CUIFadeYesNo": [
+   {
+    "ea": "0x5203bb",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIFadeYesNo@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIFadeYesNo::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x52065d",
+    "method": "Draw",
+    "decorated": "?Draw@CUIFadeYesNo@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIFadeYesNo::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x522585",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIFadeYesNo@@UAEXI@Z",
+    "demangled": "public: virtual void CUIFadeYesNo::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x522945",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIFadeYesNo@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUIFadeYesNo::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x522a4d",
+    "method": "Delete",
+    "decorated": "?Delete@CUIFadeYesNo@@UAEXXZ",
+    "demangled": "public: virtual void CUIFadeYesNo::Delete(void)"
+   },
+   {
+    "ea": "0x522ada",
+    "method": "SendCloseMessage",
+    "decorated": "?SendCloseMessage@CUIFadeYesNo@@UAEXXZ",
+    "demangled": "public: virtual void CUIFadeYesNo::SendCloseMessage(void)"
+   },
+   {
+    "ea": "0x522b2b",
+    "method": "CreateMSMInvite",
+    "decorated": "?CreateMSMInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@JK@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateMSMInvite(class ZXString<char>,long,unsigned long)"
+   },
+   {
+    "ea": "0x522d22",
+    "method": "CreateFriendReg",
+    "decorated": "?CreateFriendReg@CUIFadeYesNo@@QAEXV?$ZXString@D@@JJK@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateFriendReg(class ZXString<char>,long,long,unsigned long)"
+   },
+   {
+    "ea": "0x522f14",
+    "method": "CreateTradeInvite",
+    "decorated": "?CreateTradeInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@KH@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateTradeInvite(class ZXString<char>,unsigned long,int)"
+   },
+   {
+    "ea": "0x52320d",
+    "method": "CreatePartyInvite",
+    "decorated": "?CreatePartyInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@JJKH@Z",
+    "demangled": "public: void CUIFadeYesNo::CreatePartyInvite(class ZXString<char>,long,long,unsigned long,int)"
+   },
+   {
+    "ea": "0x523408",
+    "method": "CreateQuestClear",
+    "decorated": "?CreateQuestClear@CUIFadeYesNo@@QAEXG@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateQuestClear(unsigned short)"
+   },
+   {
+    "ea": "0x52363f",
+    "method": "CreateGuildInvite",
+    "decorated": "?CreateGuildInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@JJKH@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateGuildInvite(class ZXString<char>,long,long,unsigned long,int)"
+   },
+   {
+    "ea": "0x52383a",
+    "method": "CreateAllianceInvite",
+    "decorated": "?CreateAllianceInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@K@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateAllianceInvite(class ZXString<char>,unsigned long)"
+   },
+   {
+    "ea": "0x523a2c",
+    "method": "CreateUserAlarm",
+    "decorated": "?CreateUserAlarm@CUIFadeYesNo@@QAEXV?$ZXString@D@@J@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateUserAlarm(class ZXString<char>,long)"
+   },
+   {
+    "ea": "0x523c60",
+    "method": "CreateParcelAlarm",
+    "decorated": "?CreateParcelAlarm@CUIFadeYesNo@@QAEXV?$ZXString@D@@H@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateParcelAlarm(class ZXString<char>,int)"
+   },
+   {
+    "ea": "0x523e60",
+    "method": "CreateNewYearCardArrived",
+    "decorated": "?CreateNewYearCardArrived@CUIFadeYesNo@@QAEXV?$ZXString@D@@K@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateNewYearCardArrived(class ZXString<char>,unsigned long)"
+   },
+   {
+    "ea": "0x524298",
+    "method": "CreateFamilyInvite",
+    "decorated": "?CreateFamilyInvite@CUIFadeYesNo@@QAEXV?$ZXString@D@@JJK@Z",
+    "demangled": "public: void CUIFadeYesNo::CreateFamilyInvite(class ZXString<char>,long,long,unsigned long)"
+   },
+   {
+    "ea": "0x52448a",
+    "method": "TryShowMemoListDlg",
+    "decorated": "?TryShowMemoListDlg@CUIFadeYesNo@@IAEXJJ@Z",
+    "demangled": "protected: void CUIFadeYesNo::TryShowMemoListDlg(long,long)"
+   },
+   {
+    "ea": "0x52459c",
+    "method": "MoveWndPosition",
+    "decorated": "?MoveWndPosition@CUIFadeYesNo@@QAEXXZ",
+    "demangled": "public: void CUIFadeYesNo::MoveWndPosition(void)"
+   }
+  ],
+  "CUIGameMenu": [
+   {
+    "ea": "0x84a510",
+    "method": "ResetButtonState",
+    "decorated": "?ResetButtonState@CUIGameMenu@@IAEXXZ",
+    "demangled": "protected: void CUIGameMenu::ResetButtonState(void)"
+   }
+  ],
+  "CUIGameOpt": [
+   {
+    "ea": "0x993a30",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIGameOpt@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIGameOpt::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x993f2c",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CUIGameOpt@@UAEXIII@Z",
+    "demangled": "public: virtual void CUIGameOpt::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x993f99",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUIGameOpt@@UAEXJ@Z",
+    "demangled": "public: virtual void CUIGameOpt::SetRet(long)"
+   },
+   {
+    "ea": "0x9940bd",
+    "method": "GetSysOptFromCtrl",
+    "decorated": "?GetSysOptFromCtrl@CUIGameOpt@@IAEXXZ",
+    "demangled": "protected: void CUIGameOpt::GetSysOptFromCtrl(void)"
+   }
+  ],
+  "CUIKeyConfig": [
+   {
+    "ea": "0x8335d0",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIKeyConfig@@MAEXI@Z",
+    "demangled": "protected: virtual void CUIKeyConfig::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x83372c",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIKeyConfig@@MAEXIIJJ@Z",
+    "demangled": "protected: virtual void CUIKeyConfig::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x833749",
+    "method": "OnDestroy",
+    "decorated": "?OnDestroy@CUIKeyConfig@@MAEXXZ",
+    "demangled": "protected: virtual void CUIKeyConfig::OnDestroy(void)"
+   },
+   {
+    "ea": "0x8338f9",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUIKeyConfig@@MAEHJJ@Z",
+    "demangled": "protected: virtual int CUIKeyConfig::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x833a65",
+    "method": "GetShortCutIndexByPos",
+    "decorated": "?GetShortCutIndexByPos@CUIKeyConfig@@QAEJJJ@Z",
+    "demangled": "public: long CUIKeyConfig::GetShortCutIndexByPos(long,long)"
+   },
+   {
+    "ea": "0x83550d",
+    "method": "TryBeginDragFuncKeyMappedIcon",
+    "decorated": "?TryBeginDragFuncKeyMappedIcon@CUIKeyConfig@@IAEXJJ@Z",
+    "demangled": "protected: void CUIKeyConfig::TryBeginDragFuncKeyMappedIcon(long,long)"
+   },
+   {
+    "ea": "0x83665b",
+    "method": "0CNoticeDlg",
+    "decorated": "??0CNoticeDlg@CUIKeyConfig@@QAE@PAV1@J@Z",
+    "demangled": "public: CUIKeyConfig::CNoticeDlg::CNoticeDlg(class CUIKeyConfig __near *,long)"
+   }
+  ],
+  "CUILoginStart": [
+   {
+    "ea": "0x60e499",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUILoginStart@@UAEXI@Z",
+    "demangled": "public: virtual void CUILoginStart::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x60eb04",
+    "method": "EnableLoginStartCtrl",
+    "decorated": "?EnableLoginStartCtrl@CUILoginStart@@QAEXJ@Z",
+    "demangled": "public: void CUILoginStart::EnableLoginStartCtrl(long)"
+   },
+   {
+    "ea": "0x629d0a",
+    "method": "SendViewAllCharacterPacket",
+    "decorated": "?SendViewAllCharacterPacket@CUILoginStart@@QAEHXZ",
+    "demangled": "public: int CUILoginStart::SendViewAllCharacterPacket(void)"
+   }
+  ],
+  "CUIMapTransfer": [
+   {
+    "ea": "0x83a3c2",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUIMapTransfer@@UAEXJ@Z",
+    "demangled": "public: virtual void CUIMapTransfer::SetRet(long)"
+   }
+  ],
+  "CUINewCharNameSelect": [
+   {
+    "ea": "0x6175ea",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUINewCharNameSelect@@UAEXI@Z",
+    "demangled": "public: virtual void CUINewCharNameSelect::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x61764e",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUINewCharNameSelect@@UAEXII@Z",
+    "demangled": "public: virtual void CUINewCharNameSelect::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x61770e",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUINewCharNameSelect@@IAEHXZ",
+    "demangled": "protected: int CUINewCharNameSelect::IsRequestValid(void)"
+   }
+  ],
+  "CUIRecommendWorld": [
+   {
+    "ea": "0x62b451",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIRecommendWorld@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIRecommendWorld::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x62b708",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIRecommendWorld@@UAEXI@Z",
+    "demangled": "public: virtual void CUIRecommendWorld::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x62b94c",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUIRecommendWorld@@QAEHXZ",
+    "demangled": "public: int CUIRecommendWorld::IsRequestValid(void)"
+   },
+   {
+    "ea": "0x62b96b",
+    "method": "SelectWorld",
+    "decorated": "?SelectWorld@CUIRecommendWorld@@QAEXXZ",
+    "demangled": "public: void CUIRecommendWorld::SelectWorld(void)"
+   },
+   {
+    "ea": "0x62b99d",
+    "method": "MoveWorld",
+    "decorated": "?MoveWorld@CUIRecommendWorld@@QAEXJ@Z",
+    "demangled": "public: void CUIRecommendWorld::MoveWorld(long)"
+   },
+   {
+    "ea": "0x62b9da",
+    "method": "ResetWorldAndMessage",
+    "decorated": "?ResetWorldAndMessage@CUIRecommendWorld@@QAEXH@Z",
+    "demangled": "public: void CUIRecommendWorld::ResetWorldAndMessage(int)"
+   },
+   {
+    "ea": "0x62bef3",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIRecommendWorld@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUIRecommendWorld::OnMouseButton(unsigned int,unsigned int,long,long)"
+   }
+  ],
+  "CUIShortCutMenu": [
+   {
+    "ea": "0x84a6bc",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIShortCutMenu@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIShortCutMenu::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x84af14",
+    "method": "ResetButtonState",
+    "decorated": "?ResetButtonState@CUIShortCutMenu@@IAEXXZ",
+    "demangled": "protected: void CUIShortCutMenu::ResetButtonState(void)"
+   }
+  ],
+  "CUISoftKeyboard": [
+   {
+    "ea": "0x832979",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUISoftKeyboard@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUISoftKeyboard::OnCreate(void __near *)"
+   }
+  ],
+  "CUISysOpt": [
+   {
+    "ea": "0x994163",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUISysOpt@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUISysOpt::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x9948ec",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CUISysOpt@@UAEXIII@Z",
+    "demangled": "public: virtual void CUISysOpt::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x9949e1",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUISysOpt@@UAEXJ@Z",
+    "demangled": "public: virtual void CUISysOpt::SetRet(long)"
+   },
+   {
+    "ea": "0x994b1a",
+    "method": "GetSysOptFromCtrl",
+    "decorated": "?GetSysOptFromCtrl@CUISysOpt@@IAEXXZ",
+    "demangled": "protected: void CUISysOpt::GetSysOptFromCtrl(void)"
+   }
+  ],
+  "CUITitle": [
+   {
+    "ea": "0x62054a",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUITitle@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUITitle::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x620ca5",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUITitle@@UAEXI@Z",
+    "demangled": "public: virtual void CUITitle::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x620e3c",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUITitle@@UAEXJ@Z",
+    "demangled": "public: virtual void CUITitle::SetRet(long)"
+   },
+   {
+    "ea": "0x621156",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUITitle@@IAEHXZ",
+    "demangled": "protected: int CUITitle::IsRequestValid(void)"
+   },
+   {
+    "ea": "0x621175",
+    "method": "EnableLoginCtrl",
+    "decorated": "?EnableLoginCtrl@CUITitle@@QAEXH@Z",
+    "demangled": "public: void CUITitle::EnableLoginCtrl(int)"
+   }
+  ],
+  "CUIToolTip": [
+   {
+    "ea": "0x483eed",
+    "method": "0ItemToolTipParam",
+    "decorated": "??0ItemToolTipParam@CUIToolTip@@QAE@XZ",
+    "demangled": "public: CUIToolTip::ItemToolTipParam::ItemToolTipParam(void)"
+   },
+   {
+    "ea": "0x483f18",
+    "method": "1ItemToolTipParam",
+    "decorated": "??1ItemToolTipParam@CUIToolTip@@QAE@XZ",
+    "demangled": "public: CUIToolTip::ItemToolTipParam::~ItemToolTipParam(void)"
+   },
+   {
+    "ea": "0x8e6e23",
+    "method": "ClearToolTip",
+    "decorated": "?ClearToolTip@CUIToolTip@@QAEXXZ",
+    "demangled": "public: void CUIToolTip::ClearToolTip(void)"
+   },
+   {
+    "ea": "0x8e6e52",
+    "method": "SetBasicInfo",
+    "decorated": "?SetBasicInfo@CUIToolTip@@QAEXJJJJ@Z",
+    "demangled": "public: void CUIToolTip::SetBasicInfo(long,long,long,long)"
+   },
+   {
+    "ea": "0x8e6e7d",
+    "method": "SetToolTip_String",
+    "decorated": "?SetToolTip_String@CUIToolTip@@QAEXJJPBD@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_String(long,long,char const __near *)"
+   },
+   {
+    "ea": "0x8e7028",
+    "method": "SetToolTip_String_MultiLine",
+    "decorated": "?SetToolTip_String_MultiLine@CUIToolTip@@QAEXJJV?$ZXString@D@@JH@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_String_MultiLine(long,long,class ZXString<char>,long,int)"
+   },
+   {
+    "ea": "0x8e7150",
+    "method": "SetToolTip_String2",
+    "decorated": "?SetToolTip_String2@CUIToolTip@@QAEXJJV?$ZXString@D@@0HHHJHH@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_String2(long,long,class ZXString<char>,class ZXString<char>,int,int,int,long,int,int)"
+   },
+   {
+    "ea": "0x8e7434",
+    "method": "SetToolTip_WorldMap",
+    "decorated": "?SetToolTip_WorldMap@CUIToolTip@@QAEXJJAAUWORLDMAP_ITEM@@AAV?$ZArray@UWORLDMAP_USERINFO@@@@@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_WorldMap(long,long,struct WORLDMAP_ITEM __near &,class ZArray<struct WORLDMAP_USERINFO> __near &)"
+   },
+   {
+    "ea": "0x8e7836",
+    "method": "PrintValue",
+    "decorated": "?PrintValue@CUIToolTip@@IAEXJJV?$ZXString@D@@H@Z",
+    "demangled": "protected: void CUIToolTip::PrintValue(long,long,class ZXString<char>,int)"
+   },
+   {
+    "ea": "0x8e7975",
+    "method": "SetToolTip_Ring",
+    "decorated": "?SetToolTip_Ring@CUIToolTip@@QAEXJJPAUGW_ItemSlotEquip@@JJJPAUCS_LIMITGOODS@@HJ@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Ring(long,long,struct GW_ItemSlotEquip __near *,long,long,long,struct CS_LIMITGOODS __near *,int,long)"
+   },
+   {
+    "ea": "0x8e8252",
+    "method": "SetToolTip_Equip",
+    "decorated": "?SetToolTip_Equip@CUIToolTip@@QAEXJJPAUGW_ItemSlotEquip@@JPBDJJPAUCS_LIMITGOODS@@JHJJJPAU_FILETIME@@1V?$ZRef@UITCITEM@@@@W4eITCToolTip@1@H@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Equip(long,long,struct GW_ItemSlotEquip __near *,long,char const __near *,long,long,struct CS_LIMITGOODS __near *,long,int,long,long,long,struct _FILETIME __near *,char const __near *,class ZRef<struct ITCITEM>,enum CUIToolTip::eITCToolTip,int)"
+   },
+   {
+    "ea": "0x8eba5b",
+    "method": "SetToolTip_Equip2",
+    "decorated": "?SetToolTip_Equip2@CUIToolTip@@QAEXJJPAUGW_ItemSlotEquip@@0HJH@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Equip2(long,long,struct GW_ItemSlotEquip __near *,struct GW_ItemSlotEquip __near *,int,long,int)"
+   },
+   {
+    "ea": "0x8eca0c",
+    "method": "SetToolTip_Equip_Basic",
+    "decorated": "?SetToolTip_Equip_Basic@CUIToolTip@@IAEXPAUGW_ItemSlotEquip@@@Z",
+    "demangled": "protected: void CUIToolTip::SetToolTip_Equip_Basic(struct GW_ItemSlotEquip __near *)"
+   },
+   {
+    "ea": "0x8ed0d2",
+    "method": "DrawToolTip_Equip",
+    "decorated": "?DrawToolTip_Equip@CUIToolTip@@IAEXJPAUGW_ItemSlotEquip@@@Z",
+    "demangled": "protected: void CUIToolTip::DrawToolTip_Equip(long,struct GW_ItemSlotEquip __near *)"
+   },
+   {
+    "ea": "0x8ed8f5",
+    "method": "SetToolTip_Pet",
+    "decorated": "?SetToolTip_Pet@CUIToolTip@@QAEXJJPAUGW_ItemSlotPet@@HHPBDJJPAUCS_LIMITGOODS@@HJ@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Pet(long,long,struct GW_ItemSlotPet __near *,int,int,char const __near *,long,long,struct CS_LIMITGOODS __near *,int,long)"
+   },
+   {
+    "ea": "0x8edfc7",
+    "method": "SetToolTip_Bundle",
+    "decorated": "?SetToolTip_Bundle@CUIToolTip@@QAEXJJJPAU_FILETIME@@HJPBD1JJPAUCS_LIMITGOODS@@PAUGW_ItemSlotEquip@@HJJJ01V?$ZRef@UITCITEM@@@@W4eITCToolTip@1@@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Bundle(long,long,long,struct _FILETIME __near *,int,long,char const __near *,char const __near *,long,long,struct CS_LIMITGOODS __near *,struct GW_ItemSlotEquip __near *,int,long,long,long,struct _FILETIME __near *,char const __near *,class ZRef<struct ITCITEM>,enum CUIToolTip::eITCToolTip)"
+   },
+   {
+    "ea": "0x8efcb7",
+    "method": "SetToolTip_Package",
+    "decorated": "?SetToolTip_Package@CUIToolTip@@QAEXJJV?$ZRef@UCS_COMMODITY@@@@HPAUCS_LIMITGOODS@@@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Package(long,long,class ZRef<struct CS_COMMODITY>,int,struct CS_LIMITGOODS __near *)"
+   },
+   {
+    "ea": "0x8f19a8",
+    "method": "SetToolTip_SlotInc",
+    "decorated": "?SetToolTip_SlotInc@CUIToolTip@@QAEXJJV?$ZRef@UCS_COMMODITY@@@@J@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_SlotInc(long,long,class ZRef<struct CS_COMMODITY>,long)"
+   },
+   {
+    "ea": "0x8f1eaa",
+    "method": "SetToolTip_EquipExt",
+    "decorated": "?SetToolTip_EquipExt@CUIToolTip@@QAEXJJV?$ZRef@UCS_COMMODITY@@@@J@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_EquipExt(long,long,class ZRef<struct CS_COMMODITY>,long)"
+   },
+   {
+    "ea": "0x8f2276",
+    "method": "SetToolTip_MacroSysSkill",
+    "decorated": "?SetToolTip_MacroSysSkill@CUIToolTip@@QAEXJJJ@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_MacroSysSkill(long,long,long)"
+   },
+   {
+    "ea": "0x8f25d0",
+    "method": "SetToolTip_Skill",
+    "decorated": "?SetToolTip_Skill@CUIToolTip@@QAEXJJPBUSKILLENTRY@@H@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Skill(long,long,struct SKILLENTRY const __near *,int)"
+   },
+   {
+    "ea": "0x8f3141",
+    "method": "MakeLayer",
+    "decorated": "?MakeLayer@CUIToolTip@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JJHHHKH@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>> CUIToolTip::MakeLayer(long,long,int,int,int,unsigned long,int)"
+   },
+   {
+    "ea": "0x8f36a1",
+    "method": "GetFontByType",
+    "decorated": "?GetFontByType@CUIToolTip@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzFont@@$1?_GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac@@3U__s_GUID@@B@@@@J@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzFont,&struct __s_GUID const _GUID_2bef046d_ccd6_445a_88c4_929fc35d30ac>> CUIToolTip::GetFontByType(long)"
+   },
+   {
+    "ea": "0x8f39e1",
+    "method": "AddInfoEx",
+    "decorated": "?AddInfoEx@CUIToolTip@@IAEXJJV?$ZXString@D@@0HJ@Z",
+    "demangled": "protected: void CUIToolTip::AddInfoEx(long,long,class ZXString<char>,class ZXString<char>,int,long)"
+   },
+   {
+    "ea": "0x8f421e",
+    "method": "DrawItemIcon",
+    "decorated": "?DrawItemIcon@CUIToolTip@@IAEXJJJHH@Z",
+    "demangled": "protected: void CUIToolTip::DrawItemIcon(long,long,long,int,int)"
+   },
+   {
+    "ea": "0x8f5b20",
+    "method": "ShowItemToolTip",
+    "decorated": "?ShowItemToolTip@CUIToolTip@@QAEXJJPAUGW_ItemSlotBase@@PAUItemToolTipParam@1@PAUCS_LIMITGOODS@@HJW4eITCToolTip@1@@Z",
+    "demangled": "public: void CUIToolTip::ShowItemToolTip(long,long,struct GW_ItemSlotBase __near *,struct CUIToolTip::ItemToolTipParam __near *,struct CS_LIMITGOODS __near *,int,long,enum CUIToolTip::eITCToolTip)"
+   }
+  ],
+  "CUIWnd": [
+   {
+    "ea": "0x49f0b5",
+    "method": "CreateUIWndPosSaved",
+    "decorated": "?CreateUIWndPosSaved@CUIWnd@@QAEXJJJ@Z",
+    "demangled": "public: void CUIWnd::CreateUIWndPosSaved(long,long,long)"
+   },
+   {
+    "ea": "0x92c2e8",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIWnd@@UAEXPAXV?$ZXString@G@@H@Z",
+    "demangled": "public: virtual void CUIWnd::OnCreate(void __near *,class ZXString<unsigned short>,int)"
+   },
+   {
+    "ea": "0x92c544",
+    "method": "OnDestroy",
+    "decorated": "?OnDestroy@CUIWnd@@UAEXXZ",
+    "demangled": "public: virtual void CUIWnd::OnDestroy(void)"
+   },
+   {
+    "ea": "0x92c5ae",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIWnd@@UAEXI@Z",
+    "demangled": "public: virtual void CUIWnd::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x92c6ee",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUIWnd@@UAEXII@Z",
+    "demangled": "public: virtual void CUIWnd::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "CUIWorldSelect": [
+   {
+    "ea": "0x624831",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIWorldSelect@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIWorldSelect::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x624ae8",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIWorldSelect@@UAEXI@Z",
+    "demangled": "public: virtual void CUIWorldSelect::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x624e13",
+    "method": "DrawWorldItems",
+    "decorated": "?DrawWorldItems@CUIWorldSelect@@QAEXXZ",
+    "demangled": "public: void CUIWorldSelect::DrawWorldItems(void)"
+   },
+   {
+    "ea": "0x62536c",
+    "method": "EnableButtons",
+    "decorated": "?EnableButtons@CUIWorldSelect@@QAEXJ@Z",
+    "demangled": "public: void CUIWorldSelect::EnableButtons(long)"
+   },
+   {
+    "ea": "0x6253bc",
+    "method": "SetKeyFocus",
+    "decorated": "?SetKeyFocus@CUIWorldSelect@@IAEXJ@Z",
+    "demangled": "protected: void CUIWorldSelect::SetKeyFocus(long)"
+   },
+   {
+    "ea": "0x62540a",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUIWorldSelect@@IAEHXZ",
+    "demangled": "protected: int CUIWorldSelect::IsRequestValid(void)"
+   },
+   {
+    "ea": "0x6272d0",
+    "method": "SetFocusWorld",
+    "decorated": "?SetFocusWorld@CUIWorldSelect@@QAEXJ@Z",
+    "demangled": "public: void CUIWorldSelect::SetFocusWorld(long)"
+   },
+   {
+    "ea": "0x6281b9",
+    "method": "MakeAdvice",
+    "decorated": "?MakeAdvice@CUIWorldSelect@@QAEXXZ",
+    "demangled": "public: void CUIWorldSelect::MakeAdvice(void)"
+   },
+   {
+    "ea": "0x6283c1",
+    "method": "UserLimitResult",
+    "decorated": "?UserLimitResult@CUIWorldSelect@@QAEXJJ@Z",
+    "demangled": "public: void CUIWorldSelect::UserLimitResult(long,long)"
+   }
+  ],
+  "CWnd": [
+   {
+    "ea": "0x4243fe",
+    "method": "OnDragDrop",
+    "decorated": "?OnDragDrop@CWnd@@UAEHJAAUDRAGCTX@@JJ@Z",
+    "demangled": "public: virtual int CWnd::OnDragDrop(long,struct DRAGCTX __near &,long,long)"
+   },
+   {
+    "ea": "0x424403",
+    "method": "IsMyAddon",
+    "decorated": "?IsMyAddon@CWnd@@UAEHPAV1@@Z",
+    "demangled": "public: virtual int CWnd::IsMyAddon(class CWnd __near *)"
+   },
+   {
+    "ea": "0x424443",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CWnd@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CWnd::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x424446",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CWnd@@UAEHJJ@Z",
+    "demangled": "public: virtual int CWnd::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x42444e",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CWnd@@UAEXIII@Z",
+    "demangled": "public: virtual void CWnd::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x4259d9",
+    "method": "OnCreate_unsure",
+    "decorated": "?OnCreate_unsure@CWnd@@UAEXPAX@Z",
+    "demangled": "public: virtual void CWnd::OnCreate_unsure(void __near *)"
+   },
+   {
+    "ea": "0x4259dc",
+    "method": "OnDestroy_unsure",
+    "decorated": "?OnDestroy_unsure@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::OnDestroy_unsure(void)"
+   },
+   {
+    "ea": "0x425c4c",
+    "method": "GetCanvas",
+    "decorated": "?GetCanvas@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>> CWnd::GetCanvas(void)"
+   },
+   {
+    "ea": "0x426604",
+    "method": "GetLayer",
+    "decorated": "?GetLayer@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>> CWnd::GetLayer(void)"
+   },
+   {
+    "ea": "0x45a63c",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CWnd@@UAEXI@Z",
+    "demangled": "public: virtual void CWnd::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x45a63f",
+    "method": "GetRTTI",
+    "decorated": "?GetRTTI@CWnd@@UBEPBVCRTTI@@XZ",
+    "demangled": "public: virtual class CRTTI const __near * CWnd::GetRTTI(void)const"
+   },
+   {
+    "ea": "0x45a645",
+    "method": "IsKindOf",
+    "decorated": "?IsKindOf@CWnd@@UBEHPBVCRTTI@@@Z",
+    "demangled": "public: virtual int CWnd::IsKindOf(class CRTTI const __near *)const"
+   },
+   {
+    "ea": "0x9de4d2",
+    "method": "CreateWnd",
+    "decorated": "?CreateWnd@CWnd@@QAEXJJJJJHPAXHW4UIOrigin@1@@Z",
+    "demangled": "public: void CWnd::CreateWnd(long,long,long,long,long,int,void __near *,int,enum CWnd::UIOrigin)"
+   },
+   {
+    "ea": "0x9de7fb",
+    "method": "PreCreateWnd",
+    "decorated": "?PreCreateWnd@CWnd@@UAEXJJJJJHPAX@Z",
+    "demangled": "public: virtual void CWnd::PreCreateWnd(long,long,long,long,long,int,void __near *)"
+   },
+   {
+    "ea": "0x9deb57",
+    "method": "OnMoveWnd",
+    "decorated": "?OnMoveWnd@CWnd@@UAEXJJ@Z",
+    "demangled": "public: virtual void CWnd::OnMoveWnd(long,long)"
+   },
+   {
+    "ea": "0x9e00a6",
+    "method": "OnEndMoveWnd",
+    "decorated": "?OnEndMoveWnd@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::OnEndMoveWnd(void)"
+   },
+   {
+    "ea": "0x9e00af",
+    "method": "Destroy",
+    "decorated": "?Destroy@CWnd@@QAEXXZ",
+    "demangled": "public: void CWnd::Destroy(void)"
+   },
+   {
+    "ea": "0x9e01c8",
+    "method": "OnMouseEnter",
+    "decorated": "?OnMouseEnter@CWnd@@UAEXH@Z",
+    "demangled": "public: virtual void CWnd::OnMouseEnter(int)"
+   },
+   {
+    "ea": "0x9e01e7",
+    "method": "HitTest",
+    "decorated": "?HitTest@CWnd@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "demangled": "public: virtual int CWnd::HitTest(long,long,class CCtrlWnd __near * __near *)"
+   },
+   {
+    "ea": "0x9e02ae",
+    "method": "OnMouseWheel",
+    "decorated": "?OnMouseWheel@CWnd@@UAEHJJJ@Z",
+    "demangled": "public: virtual int CWnd::OnMouseWheel(long,long,long)"
+   },
+   {
+    "ea": "0x9e0369",
+    "method": "OnSetFocus",
+    "decorated": "?OnSetFocus@CWnd@@UAEHH@Z",
+    "demangled": "public: virtual int CWnd::OnSetFocus(int)"
+   },
+   {
+    "ea": "0x9e03c5",
+    "method": "GetAbsLeft",
+    "decorated": "?GetAbsLeft@CWnd@@UAEJXZ",
+    "demangled": "public: virtual long CWnd::GetAbsLeft(void)"
+   },
+   {
+    "ea": "0x9e0447",
+    "method": "GetAbsTop",
+    "decorated": "?GetAbsTop@CWnd@@UAEJXZ",
+    "demangled": "public: virtual long CWnd::GetAbsTop(void)"
+   },
+   {
+    "ea": "0x9e04c9",
+    "method": "InvalidateRect",
+    "decorated": "?InvalidateRect@CWnd@@QAEXPBUtagRECT@@@Z",
+    "demangled": "public: void CWnd::InvalidateRect(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x9e0502",
+    "method": "Draw",
+    "decorated": "?Draw@CWnd@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CWnd::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x9e067e",
+    "method": "Update",
+    "decorated": "?Update@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::Update(void)"
+   },
+   {
+    "ea": "0x9e06c5",
+    "method": "IsFocused",
+    "decorated": "?IsFocused@CWnd@@QBEHXZ",
+    "demangled": "public: int CWnd::IsFocused(void)const"
+   },
+   {
+    "ea": "0x9e06f6",
+    "method": "RemoveChild",
+    "decorated": "?RemoveChild@CWnd@@QAEXPAVCCtrlWnd@@@Z",
+    "demangled": "public: void CWnd::RemoveChild(class CCtrlWnd __near *)"
+   },
+   {
+    "ea": "0x9e0750",
+    "method": "SetAnimationBackgrnd",
+    "decorated": "?SetAnimationBackgrnd@CWnd@@IAEXVZtl_bstr_t@@JJ@Z",
+    "demangled": "protected: void CWnd::SetAnimationBackgrnd(class Ztl_bstr_t,long,long)"
+   },
+   {
+    "ea": "0x9e0ab2",
+    "method": "SetBackgrnd",
+    "decorated": "?SetBackgrnd@CWnd@@IAEXVZtl_bstr_t@@JJHJJ@Z",
+    "demangled": "protected: void CWnd::SetBackgrnd(class Ztl_bstr_t,long,long,int,long,long)"
+   },
+   {
+    "ea": "0x9e0be5",
+    "method": "SetFocusChild",
+    "decorated": "?SetFocusChild@CWnd@@QAEXPAVCCtrlWnd@@@Z",
+    "demangled": "public: void CWnd::SetFocusChild(class CCtrlWnd __near *)"
+   },
+   {
+    "ea": "0x9e0c1f",
+    "method": "ClipRect",
+    "decorated": "?ClipRect@CWnd@@QAE?AVZtl_variant_t@@PBUtagRECT@@@Z",
+    "demangled": "public: class Ztl_variant_t CWnd::ClipRect(struct tagRECT const __near *)"
+   }
+  ],
+  "CWndMan": [
+   {
+    "ea": "0x48bba5",
+    "method": "GetOrgWindow",
+    "decorated": "?GetOrgWindow@CWndMan@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@W4UIOrigin@CWnd@@@Z",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>> CWndMan::GetOrgWindow(enum CWnd::UIOrigin)"
+   },
+   {
+    "ea": "0x9e03a6",
+    "method": "UpdateWindowPosition",
+    "decorated": "?UpdateWindowPosition@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::UpdateWindowPosition(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e2fe0",
+    "method": "PreCreateWnd",
+    "decorated": "?PreCreateWnd@CWndMan@@UAEXJJJJJHPAX@Z",
+    "demangled": "public: virtual void CWndMan::PreCreateWnd(long,long,long,long,long,int,void __near *)"
+   },
+   {
+    "ea": "0x9e2fe3",
+    "method": "OnActivate",
+    "decorated": "?OnActivate@CWndMan@@UAEHH@Z",
+    "demangled": "public: virtual int CWndMan::OnActivate(int)"
+   },
+   {
+    "ea": "0x9e311b",
+    "method": "GetCursorPos",
+    "decorated": "?GetCursorPos@CWndMan@@QAEXPAUtagPOINT@@H@Z",
+    "demangled": "public: void CWndMan::GetCursorPos(struct tagPOINT __near *,int)"
+   },
+   {
+    "ea": "0x9e3180",
+    "method": "SetCursorPos",
+    "decorated": "?SetCursorPos@CWndMan@@QAEXUtagPOINT@@H@Z",
+    "demangled": "public: void CWndMan::SetCursorPos(struct tagPOINT,int)"
+   },
+   {
+    "ea": "0x9e3264",
+    "method": "SetFocus",
+    "decorated": "?SetFocus@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::SetFocus(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e337e",
+    "method": "SetActiveWndImp",
+    "decorated": "?SetActiveWndImp@CWndMan@@AAEHPAVCWnd@@@Z",
+    "demangled": "private: int CWndMan::SetActiveWndImp(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e33fc",
+    "method": "SetCaptureWnd",
+    "decorated": "?SetCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::SetCaptureWnd(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e3432",
+    "method": "ReleaseCaptureWnd",
+    "decorated": "?ReleaseCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::ReleaseCaptureWnd(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e3454",
+    "method": "Unlink",
+    "decorated": "?Unlink@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::Unlink(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e353d",
+    "method": "BeginDragDrop",
+    "decorated": "?BeginDragDrop@CWndMan@@QAEXPAUIUIMsgHandler@@PAUIDraggable@@H@Z",
+    "demangled": "public: void CWndMan::BeginDragDrop(struct IUIMsgHandler __near *,struct IDraggable __near *,int)"
+   },
+   {
+    "ea": "0x9e37c2",
+    "method": "EndDragDrop",
+    "decorated": "?EndDragDrop@CWndMan@@QAEXJJH@Z",
+    "demangled": "public: void CWndMan::EndDragDrop(long,long,int)"
+   },
+   {
+    "ea": "0x9e3ac0",
+    "method": "ClearDragContext",
+    "decorated": "?ClearDragContext@CWndMan@@QAEXXZ",
+    "demangled": "public: void CWndMan::ClearDragContext(void)"
+   },
+   {
+    "ea": "0x9e3ae6",
+    "method": "ProcessMouse",
+    "decorated": "?ProcessMouse@CWndMan@@QAEJIIJ@Z",
+    "demangled": "public: long CWndMan::ProcessMouse(unsigned int,unsigned int,long)"
+   },
+   {
+    "ea": "0x9e40f1",
+    "method": "ProcessKey",
+    "decorated": "?ProcessKey@CWndMan@@QAEJIIJ@Z",
+    "demangled": "public: long CWndMan::ProcessKey(unsigned int,unsigned int,long)"
+   },
+   {
+    "ea": "0x9e42b2",
+    "method": "GetHandlerFromPoint",
+    "decorated": "?GetHandlerFromPoint@CWndMan@@QAEPAUIUIMsgHandler@@JJ@Z",
+    "demangled": "public: struct IUIMsgHandler __near * CWndMan::GetHandlerFromPoint(long,long)"
+   },
+   {
+    "ea": "0x9e43ff",
+    "method": "InsertWindow",
+    "decorated": "?InsertWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::InsertWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44ba",
+    "method": "RemoveWindow",
+    "decorated": "?RemoveWindow@CWndMan@@KAHPAVCWnd@@@Z",
+    "demangled": "protected: static int CWndMan::RemoveWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44dc",
+    "method": "RemoveUpdateWindow",
+    "decorated": "?RemoveUpdateWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::RemoveUpdateWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44fe",
+    "method": "InsertInvalidatedWindow",
+    "decorated": "?InsertInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::InsertInvalidatedWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e4525",
+    "method": "RemoveInvalidatedWindow",
+    "decorated": "?RemoveInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::RemoveInvalidatedWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e4547",
+    "method": "RedrawInvalidatedWindows",
+    "decorated": "?RedrawInvalidatedWindows@CWndMan@@SAXXZ",
+    "demangled": "public: static void CWndMan::RedrawInvalidatedWindows(void)"
+   },
+   {
+    "ea": "0x9e7d77",
+    "method": "TranslateMessage",
+    "decorated": "?TranslateMessage@CWndMan@@QAEHAAI0AAJPAJ@Z",
+    "demangled": "public: int CWndMan::TranslateMessage(unsigned int __near &,unsigned int __near &,long __near &,long __near *)"
+   },
+   {
+    "ea": "0x9e85e7",
+    "method": "ClearComposition",
+    "decorated": "?ClearComposition@CWndMan@@QAEXXZ",
+    "demangled": "public: void CWndMan::ClearComposition(void)"
+   },
+   {
+    "ea": "0x9e85f3",
+    "method": "EnableIME",
+    "decorated": "?EnableIME@CWndMan@@QAEXH@Z",
+    "demangled": "public: void CWndMan::EnableIME(int)"
+   },
+   {
+    "ea": "0x9e8659",
+    "method": "NotifyIME",
+    "decorated": "?NotifyIME@CWndMan@@QAEXKKK@Z",
+    "demangled": "public: void CWndMan::NotifyIME(unsigned long,unsigned long,unsigned long)"
+   }
+  ]
+ }
+}

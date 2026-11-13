@@ -1,0 +1,926 @@
+{
+ "total_strings": 1281,
+ "by_key": {
+  "UIWindow.img": [
+   {
+    "ea": "0xaf4dd8",
+    "len": 40,
+    "str": "UI/UIWindow.img/PartyRace/Stage/backgrd"
+   },
+   {
+    "ea": "0xaf4e98",
+    "len": 40,
+    "str": "UI/UIWindow.img/PartyRace/Stage/number2"
+   },
+   {
+    "ea": "0xaf4ec0",
+    "len": 39,
+    "str": "UI/UIWindow.img/PartyRace/Stage/number"
+   },
+   {
+    "ea": "0xaf4fbc",
+    "len": 41,
+    "str": "UI/UIWindow.img/DualMobGauge/Mob/9700036"
+   },
+   {
+    "ea": "0xaf4fe8",
+    "len": 35,
+    "str": "UI/UIWindow.img/DualMobGauge/gauge"
+   },
+   {
+    "ea": "0xaf500c",
+    "len": 34,
+    "str": "UI/UIWindow.img/DualMobGauge/text"
+   },
+   {
+    "ea": "0xaf5030",
+    "len": 37,
+    "str": "UI/UIWindow.img/DualMobGauge/backgrd"
+   },
+   {
+    "ea": "0xaf50e4",
+    "len": 41,
+    "str": "UI/UIWindow.img/PartyRace/Result/number2"
+   },
+   {
+    "ea": "0xaf5110",
+    "len": 40,
+    "str": "UI/UIWindow.img/PartyRace/Result/number"
+   },
+   {
+    "ea": "0xaf5138",
+    "len": 38,
+    "str": "UI/UIWindow.img/PartyRace/Result/lose"
+   },
+   {
+    "ea": "0xaf5160",
+    "len": 37,
+    "str": "UI/UIWindow.img/PartyRace/Result/win"
+   },
+   {
+    "ea": "0xaf5188",
+    "len": 41,
+    "str": "UI/UIWindow.img/PartyRace/Result/backgrd"
+   },
+   {
+    "ea": "0xb39260",
+    "len": 37,
+    "str": "UI/UIWindow.img/Maker/GaugeBar/gauge"
+   },
+   {
+    "ea": "0xb39288",
+    "len": 35,
+    "str": "UI/UIWindow.img/Maker/GaugeBar/bar"
+   },
+   {
+    "ea": "0xb392ac",
+    "len": 29,
+    "str": "UI/UIWindow.img/Maker/notUse"
+   },
+   {
+    "ea": "0xb39348",
+    "len": 33,
+    "str": "UI/UIWindow.img/Maker/randomMake"
+   },
+   {
+    "ea": "0xb3936c",
+    "len": 35,
+    "str": "UI/UIWindow.img/Maker/randomRecipe"
+   },
+   {
+    "ea": "0xb394e8",
+    "len": 45,
+    "str": "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge"
+   },
+   {
+    "ea": "0xb39518",
+    "len": 43,
+    "str": "UI/UIWindow.img/ViciousHammer/GaugeBar/bar"
+   },
+   {
+    "ea": "0xb395d4",
+    "len": 40,
+    "str": "UI/UIWindow.img/VegaSpell/EffectArrow/0"
+   },
+   {
+    "ea": "0xb395fc",
+    "len": 41,
+    "str": "UI/UIWindow.img/VegaSpell/GaugeBar/gauge"
+   },
+   {
+    "ea": "0xb399d0",
+    "len": 33,
+    "str": "UI/UIWindow.img/Quest/Gauge/spot"
+   },
+   {
+    "ea": "0xb399f4",
+    "len": 34,
+    "str": "UI/UIWindow.img/Quest/Gauge/gauge"
+   },
+   {
+    "ea": "0xb39a18",
+    "len": 34,
+    "str": "UI/UIWindow.img/Quest/Gauge/frame"
+   },
+   {
+    "ea": "0xb3bc5c",
+    "len": 45,
+    "str": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled"
+   },
+   {
+    "ea": "0xb3bc8c",
+    "len": 44,
+    "str": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled"
+   },
+   {
+    "ea": "0xb3c2dc",
+    "len": 45,
+    "str": "UI/UIWindow.img/UserList/GuildUnion/backgrnd"
+   },
+   {
+    "ea": "0xb3de68",
+    "len": 46,
+    "str": "UI/UIWindow.img/CashGachapon/EffectJackpot/16"
+   },
+   {
+    "ea": "0xb3de98",
+    "len": 45,
+    "str": "UI/UIWindow.img/CashGachapon/EffectNormal/16"
+   },
+   {
+    "ea": "0xb3dec8",
+    "len": 44,
+    "str": "UI/UIWindow.img/CashGachapon/EffectNormal/0"
+   }
+  ],
+  "PinCode": [
+   {
+    "ea": "0xaf6b48",
+    "len": 80,
+    "str": "You have been blocked for typing in an invalid password or pincode 5 times.\r\n%s"
+   }
+  ],
+  "Login.img": [
+   {
+    "ea": "0xaf6fd0",
+    "len": 31,
+    "str": "UI/Login.img/ViewAllChar/Job/0"
+   }
+  ],
+  "Notice": [
+   {
+    "ea": "0xaf85d4",
+    "len": 9,
+    "str": "_NOTICE_"
+   },
+   {
+    "ea": "0xb3c418",
+    "len": 70,
+    "str": "w.img/UserList/GuildUnion/Btnotice"
+   }
+  ],
+  "WorldMap": [
+   {
+    "ea": "0xb3f224",
+    "len": 52,
+    "str": "p/WorldMap/WorldMap%d.img"
+   },
+   {
+    "ea": "0xb3f268",
+    "len": 14,
+    "str": "Map/WorldMap/"
+   },
+   {
+    "ea": "0xb3f288",
+    "len": 34,
+    "str": "Map/MapHelper.img/worldMap/npcPos"
+   }
+  ]
+ },
+ "node_paths": [
+  {
+   "ea": "0xaf06e8",
+   "str": "f.img/Basic"
+  },
+  {
+   "ea": "0xaf0e3c",
+   "str": "f.img/Buff"
+  },
+  {
+   "ea": "0xaf0e70",
+   "str": "f.img/EmptyCanvas/0"
+  },
+  {
+   "ea": "0xaf0eb4",
+   "str": "f.img/ItemMake/Failure"
+  },
+  {
+   "ea": "0xaf0f00",
+   "str": "f.img/ItemMake/Success"
+  },
+  {
+   "ea": "0xaf0f44",
+   "str": "w.img/ViciousHammer/EffectE"
+  },
+  {
+   "ea": "0xaf0f90",
+   "str": "w.img/ViciousHammer/EffectP"
+  },
+  {
+   "ea": "0xaf0fdc",
+   "str": "w.img/VegaSpell/EffectSpelling"
+  },
+  {
+   "ea": "0xaf1030",
+   "str": "w.img/VegaSpell/EffectSuccess"
+  },
+  {
+   "ea": "0xaf1080",
+   "str": "w.img/VegaSpell/EffectFail"
+  },
+  {
+   "ea": "0xaf10cc",
+   "str": "w.img/VegaSpell/EffectArrow"
+  },
+  {
+   "ea": "0xaf1118",
+   "str": "w.img/VegaSpell/EffectTwinkling"
+  },
+  {
+   "ea": "0xaf116c",
+   "str": "w.img/CashGachapon/EffectNormal"
+  },
+  {
+   "ea": "0xaf11c0",
+   "str": "w.img/CashGachapon/EffectJackpot"
+  },
+  {
+   "ea": "0xaf16d8",
+   "str": "w.img/Book/backgrnd"
+  },
+  {
+   "ea": "0xaf286c",
+   "str": "p.img/CSItemSearch/Price"
+  },
+  {
+   "ea": "0xaf29fc",
+   "str": "p.img/CS3thEvent/0"
+  },
+  {
+   "ea": "0xaf4dd8",
+   "str": "UI/UIWindow.img/PartyRace/Stage/backgrd"
+  },
+  {
+   "ea": "0xaf4e14",
+   "str": "w.img/PartyRace/State/Blue/"
+  },
+  {
+   "ea": "0xaf4e60",
+   "str": "w.img/PartyRace/State/Red/"
+  },
+  {
+   "ea": "0xaf4e98",
+   "str": "UI/UIWindow.img/PartyRace/Stage/number2"
+  },
+  {
+   "ea": "0xaf4ec0",
+   "str": "UI/UIWindow.img/PartyRace/Stage/number"
+  },
+  {
+   "ea": "0xaf4ee8",
+   "str": "Map/Obj/etc.img/killing/backgrnd"
+  },
+  {
+   "ea": "0xaf4f0c",
+   "str": "Map/Obj/etc.img/killing/fontTime"
+  },
+  {
+   "ea": "0xaf4fbc",
+   "str": "UI/UIWindow.img/DualMobGauge/Mob/9700036"
+  },
+  {
+   "ea": "0xaf4fe8",
+   "str": "UI/UIWindow.img/DualMobGauge/gauge"
+  },
+  {
+   "ea": "0xaf500c",
+   "str": "UI/UIWindow.img/DualMobGauge/text"
+  },
+  {
+   "ea": "0xaf5030",
+   "str": "UI/UIWindow.img/DualMobGauge/backgrd"
+  },
+  {
+   "ea": "0xaf50e4",
+   "str": "UI/UIWindow.img/PartyRace/Result/number2"
+  },
+  {
+   "ea": "0xaf5110",
+   "str": "UI/UIWindow.img/PartyRace/Result/number"
+  },
+  {
+   "ea": "0xaf5138",
+   "str": "UI/UIWindow.img/PartyRace/Result/lose"
+  },
+  {
+   "ea": "0xaf5160",
+   "str": "UI/UIWindow.img/PartyRace/Result/win"
+  },
+  {
+   "ea": "0xaf5188",
+   "str": "UI/UIWindow.img/PartyRace/Result/backgrd"
+  },
+  {
+   "ea": "0xaf5668",
+   "str": "l/520.img/skill/5201002/ball"
+  },
+  {
+   "ea": "0xaf5fb0",
+   "str": "UI/ITC.img/Auction/backgrnd"
+  },
+  {
+   "ea": "0xaf605c",
+   "str": "UI/ITC.img/BtAuction"
+  },
+  {
+   "ea": "0xaf6074",
+   "str": "UI/ITC.img/BtSell"
+  },
+  {
+   "ea": "0xaf6098",
+   "str": "UI/ITC.img/Auction/BtBid"
+  },
+  {
+   "ea": "0xaf61d0",
+   "str": "UI/ITC.img/Auction/backgrnd1"
+  },
+  {
+   "ea": "0xaf6538",
+   "str": "c/ScanBlock.img"
+  },
+  {
+   "ea": "0xaf67c4",
+   "str": "Etc/ItemMake.img"
+  },
+  {
+   "ea": "0xaf67d8",
+   "str": "Item/Etc/0425.img"
+  },
+  {
+   "ea": "0xaf67fc",
+   "str": "Item/Etc/0426.img"
+  },
+  {
+   "ea": "0xaf6814",
+   "str": "Item/Etc/0400.img"
+  },
+  {
+   "ea": "0xaf6c2c",
+   "str": "c/MakeCharInfo.img/OrientCharFemale"
+  },
+  {
+   "ea": "0xaf6c78",
+   "str": "c/MakeCharInfo.img/OrientCharMale"
+  },
+  {
+   "ea": "0xaf6fd0",
+   "str": "UI/Login.img/ViewAllChar/Job/0"
+  },
+  {
+   "ea": "0xaf72e0",
+   "str": "UI/StatusBar.img/base/chatTarget"
+  },
+  {
+   "ea": "0xafca9c",
+   "str": "Etc/NpcLocation.img/"
+  },
+  {
+   "ea": "0xafcc84",
+   "str": "w.img/Delivery/empty"
+  },
+  {
+   "ea": "0xafccc4",
+   "str": "w.img/Delivery/receiveTB"
+  },
+  {
+   "ea": "0xafcd0c",
+   "str": "w.img/Delivery/line"
+  },
+  {
+   "ea": "0xafcd48",
+   "str": "w.img/Delivery/icon0"
+  },
+  {
+   "ea": "0xafcd88",
+   "str": "w.img/Delivery/npc1"
+  },
+  {
+   "ea": "0xafcdcc",
+   "str": "w.img/Delivery/say1"
+  },
+  {
+   "ea": "0xafce08",
+   "str": "w.img/Delivery/tax1"
+  },
+  {
+   "ea": "0xafce44",
+   "str": "w.img/Delivery/sendTB"
+  },
+  {
+   "ea": "0xafce84",
+   "str": "w.img/Delivery/npc2"
+  },
+  {
+   "ea": "0xafcec0",
+   "str": "w.img/Delivery/icon3"
+  },
+  {
+   "ea": "0xafcf54",
+   "str": "w.img/Delivery/tax"
+  },
+  {
+   "ea": "0xafcf90",
+   "str": "w.img/Delivery/icon2"
+  },
+  {
+   "ea": "0xafcfd0",
+   "str": "w.img/Delivery/icon1"
+  },
+  {
+   "ea": "0xafd010",
+   "str": "w.img/Delivery/npc0"
+  },
+  {
+   "ea": "0xafd04c",
+   "str": "w.img/Delivery/say0"
+  },
+  {
+   "ea": "0xafd114",
+   "str": "w.img/Delivery/backgrnd"
+  },
+  {
+   "ea": "0xafd158",
+   "str": "w.img/Delivery/Tab/disabled"
+  },
+  {
+   "ea": "0xafd1a4",
+   "str": "w.img/Delivery/Tab/enabled"
+  },
+  {
+   "ea": "0xafd6e8",
+   "str": "c/QuestCategory.img"
+  },
+  {
+   "ea": "0xafd8cc",
+   "str": "t/PQuest.img"
+  },
+  {
+   "ea": "0xafd958",
+   "str": "t/Exclusive.img"
+  },
+  {
+   "ea": "0xafdbdc",
+   "str": "w.img/Radio/Off/0"
+  },
+  {
+   "ea": "0xafdc14",
+   "str": "w.img/Radio/On/4"
+  },
+  {
+   "ea": "0xafdc4c",
+   "str": "w.img/Radio/On/3"
+  },
+  {
+   "ea": "0xafdc84",
+   "str": "w.img/Radio/On/2"
+  },
+  {
+   "ea": "0xafdcbc",
+   "str": "w.img/Radio/On/1"
+  },
+  {
+   "ea": "0xafdcf4",
+   "str": "w.img/Radio/On/0"
+  },
+  {
+   "ea": "0xafe190",
+   "str": "Skill/ItemSkill.img"
+  },
+  {
+   "ea": "0xafe1ac",
+   "str": "l/ItemSkill.img/%03d/level/%d/mob"
+  },
+  {
+   "ea": "0xafe1f8",
+   "str": "l/MobSkill.img/%03d/level/%d/tile"
+  },
+  {
+   "ea": "0xafe244",
+   "str": "l/MobSkill.img/%03d/level/%d/affected"
+  },
+  {
+   "ea": "0xafe2b4",
+   "str": "l/MCSkill.img"
+  },
+  {
+   "ea": "0xafe2d8",
+   "str": "l/MCGuardian.img"
+  },
+  {
+   "ea": "0xafe35c",
+   "str": "l/BFSkill.img"
+  },
+  {
+   "ea": "0xafe934",
+   "str": "D.img"
+  },
+  {
+   "ea": "0xb37870",
+   "str": "C.img"
+  },
+  {
+   "ea": "0xb38770",
+   "str": "w.img/EnchantSkill/backgrnd"
+  },
+  {
+   "ea": "0xb387bc",
+   "str": "w.img/EnchantSkill/say2"
+  },
+  {
+   "ea": "0xb38800",
+   "str": "w.img/EnchantSkill/say1"
+  },
+  {
+   "ea": "0xb38844",
+   "str": "w.img/EnchantSkill/say0"
+  },
+  {
+   "ea": "0xb38898",
+   "str": "w.img/EnchantSkill/Effect"
+  },
+  {
+   "ea": "0xb39260",
+   "str": "UI/UIWindow.img/Maker/GaugeBar/gauge"
+  },
+  {
+   "ea": "0xb39288",
+   "str": "UI/UIWindow.img/Maker/GaugeBar/bar"
+  },
+  {
+   "ea": "0xb392ac",
+   "str": "UI/UIWindow.img/Maker/notUse"
+  },
+  {
+   "ea": "0xb392e0",
+   "str": "w.img/Maker/BtCancel"
+  },
+  {
+   "ea": "0xb39320",
+   "str": "w.img/Maker/BtStart"
+  },
+  {
+   "ea": "0xb39348",
+   "str": "UI/UIWindow.img/Maker/randomMake"
+  },
+  {
+   "ea": "0xb3936c",
+   "str": "UI/UIWindow.img/Maker/randomRecipe"
+  },
+  {
+   "ea": "0xb394e8",
+   "str": "UI/UIWindow.img/ViciousHammer/GaugeBar/gauge"
+  },
+  {
+   "ea": "0xb39518",
+   "str": "UI/UIWindow.img/ViciousHammer/GaugeBar/bar"
+  },
+  {
+   "ea": "0xb395d4",
+   "str": "UI/UIWindow.img/VegaSpell/EffectArrow/0"
+  },
+  {
+   "ea": "0xb395fc",
+   "str": "UI/UIWindow.img/VegaSpell/GaugeBar/gauge"
+  },
+  {
+   "ea": "0xb39630",
+   "str": "/0204.img"
+  },
+  {
+   "ea": "0xb399d0",
+   "str": "UI/UIWindow.img/Quest/Gauge/spot"
+  },
+  {
+   "ea": "0xb399f4",
+   "str": "UI/UIWindow.img/Quest/Gauge/gauge"
+  },
+  {
+   "ea": "0xb39a18",
+   "str": "UI/UIWindow.img/Quest/Gauge/frame"
+  },
+  {
+   "ea": "0xb39e14",
+   "str": "w.img/MonsterBook/ContextMenu/BtRelease"
+  },
+  {
+   "ea": "0xb39e78",
+   "str": "w.img/MonsterBook/ContextMenu/BtRegister"
+  },
+  {
+   "ea": "0xb39ee0",
+   "str": "w.img/MonsterBook/ContextMenu/s"
+  },
+  {
+   "ea": "0xb39f34",
+   "str": "w.img/MonsterBook/ContextMenu/c"
+  },
+  {
+   "ea": "0xb39f88",
+   "str": "w.img/MonsterBook/ContextMenu/t"
+  },
+  {
+   "ea": "0xb3a1e8",
+   "str": "w.img/MonsterBook/fullMark"
+  },
+  {
+   "ea": "0xb3a234",
+   "str": "w.img/MonsterBook/select"
+  },
+  {
+   "ea": "0xb3a27c",
+   "str": "w.img/MonsterBook/cover"
+  },
+  {
+   "ea": "0xb3a71c",
+   "str": "w.img/PartySearch/BtStop"
+  },
+  {
+   "ea": "0xb3a764",
+   "str": "w.img/PartySearch/BtPause"
+  },
+  {
+   "ea": "0xb3a7ac",
+   "str": "w.img/PartySearch/BtStart"
+  },
+  {
+   "ea": "0xb3a844",
+   "str": "w.img/PartySearch/PartyMember"
+  },
+  {
+   "ea": "0xb3b0d4",
+   "str": "w.img/UserList/Guild/GuildBoard/Loading"
+  },
+  {
+   "ea": "0xb3b4c4",
+   "str": "w.img/AranSkillGuide/%d"
+  },
+  {
+   "ea": "0xb3b6a4",
+   "str": "w.img/Skill/Tab/AranButton/Bt%d"
+  },
+  {
+   "ea": "0xb3bab4",
+   "str": "UI/StatusBar.img/BtNPT"
+  },
+  {
+   "ea": "0xb3bc5c",
+   "str": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled"
+  },
+  {
+   "ea": "0xb3bc8c",
+   "str": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled"
+  },
+  {
+   "ea": "0xb3c2dc",
+   "str": "UI/UIWindow.img/UserList/GuildUnion/backgrnd"
+  },
+  {
+   "ea": "0xb3c3b4",
+   "str": "w.img/UserList/GuildUnion/BtPartyInvite"
+  },
+  {
+   "ea": "0xb3c418",
+   "str": "w.img/UserList/GuildUnion/Btnotice"
+  },
+  {
+   "ea": "0xb3c474",
+   "str": "w.img/UserList/GuildUnion/BtWhisper"
+  },
+  {
+   "ea": "0xb3c4d0",
+   "str": "w.img/UserList/GuildUnion/BtInfo"
+  },
+  {
+   "ea": "0xb3c528",
+   "str": "w.img/UserList/GuildUnion/BtChat"
+  },
+  {
+   "ea": "0xb3c580",
+   "str": "w.img/UserList/GuildUnion/BtChange"
+  },
+  {
+   "ea": "0xb3c5dc",
+   "str": "w.img/UserList/GuildUnion/BtDown"
+  },
+  {
+   "ea": "0xb3c634",
+   "str": "w.img/UserList/GuildUnion/BtUp"
+  },
+  {
+   "ea": "0xb3c688",
+   "str": "w.img/UserList/GuildUnion/BtKick"
+  },
+  {
+   "ea": "0xb3c6e0",
+   "str": "w.img/UserList/GuildUnion/BtWithdraw"
+  },
+  {
+   "ea": "0xb3c740",
+   "str": "w.img/UserList/GuildUnion/BtInvite"
+  },
+  {
+   "ea": "0xb3c9e8",
+   "str": "w.img/UserList/Guild/GuildBoard/BtWrite"
+  },
+  {
+   "ea": "0xb3ca4c",
+   "str": "w.img/UserList/Guild/GuildBoard/BtComment"
+  },
+  {
+   "ea": "0xb3cab4",
+   "str": "w.img/UserList/Guild/GuildBoard/BtDelete"
+  },
+  {
+   "ea": "0xb3cb1c",
+   "str": "w.img/UserList/Guild/GuildBoard/BtModify"
+  },
+  {
+   "ea": "0xb3cb84",
+   "str": "w.img/UserList/Guild/GuildBoard/backgrnd"
+  },
+  {
+   "ea": "0xb3cfa0",
+   "str": "f.img/TransformOnLadder"
+  },
+  {
+   "ea": "0xb3cfec",
+   "str": "f.img/Transform"
+  },
+  {
+   "ea": "0xb3d014",
+   "str": "l/510.img/skill/5101007/affected"
+  },
+  {
+   "ea": "0xb3d060",
+   "str": "l/510.img/skill/5101007/effect"
+  },
+  {
+   "ea": "0xb3d0bc",
+   "str": "Item/Etc/0429.img/%08d/effect"
+  },
+  {
+   "ea": "0xb3d0dc",
+   "str": "Item/Etc/0429.img/%08d/effect/"
+  },
+  {
+   "ea": "0xb3d274",
+   "str": "p/Obj/insideGL.img/inside1/aniN"
+  },
+  {
+   "ea": "0xb3d2b8",
+   "str": "p/Obj/insideGL.img/inside1/aniK"
+  },
+  {
+   "ea": "0xb3d50c",
+   "str": "f.img/ComboCommand/%d/1"
+  },
+  {
+   "ea": "0xb3d558",
+   "str": "f.img/ComboCommand/%d/0"
+  },
+  {
+   "ea": "0xb3d5a4",
+   "str": "f.img/Combo/%d/Combo"
+  },
+  {
+   "ea": "0xb3d5ec",
+   "str": "f.img/Combo/%d/%d"
+  },
+  {
+   "ea": "0xb3d828",
+   "str": "Map/MapHelper.img/weather/squib/squib%d"
+  },
+  {
+   "ea": "0xb3de68",
+   "str": "UI/UIWindow.img/CashGachapon/EffectJackpot/16"
+  },
+  {
+   "ea": "0xb3de98",
+   "str": "UI/UIWindow.img/CashGachapon/EffectNormal/16"
+  },
+  {
+   "ea": "0xb3dec8",
+   "str": "UI/UIWindow.img/CashGachapon/EffectNormal/0"
+  },
+  {
+   "ea": "0xb3e034",
+   "str": "w.img/Quest/Gauge2/gauge"
+  },
+  {
+   "ea": "0xb3e07c",
+   "str": "w.img/Quest/Gauge2/frame"
+  },
+  {
+   "ea": "0xb3e14c",
+   "str": "w.img/UtilDlgEx/is"
+  },
+  {
+   "ea": "0xb3e188",
+   "str": "w.img/UtilDlgEx/ic"
+  },
+  {
+   "ea": "0xb3e1c4",
+   "str": "w.img/UtilDlgEx/it"
+  },
+  {
+   "ea": "0xb3f224",
+   "str": "p/WorldMap/WorldMap%d.img"
+  },
+  {
+   "ea": "0xb3f268",
+   "str": "Map/WorldMap/"
+  },
+  {
+   "ea": "0xb3f288",
+   "str": "Map/MapHelper.img/worldMap/npcPos"
+  },
+  {
+   "ea": "0xb3fc08",
+   "str": "w.img/PartySearch/icon1"
+  },
+  {
+   "ea": "0xb3fc4c",
+   "str": "w.img/PartySearch/icon0/4"
+  },
+  {
+   "ea": "0xb3fc94",
+   "str": "w.img/PartySearch/icon0/3"
+  },
+  {
+   "ea": "0xb3fcdc",
+   "str": "w.img/PartySearch/icon0/2"
+  },
+  {
+   "ea": "0xb3fd24",
+   "str": "w.img/PartySearch/icon0/1"
+  },
+  {
+   "ea": "0xb3fd6c",
+   "str": "w.img/PartySearch/icon0/0"
+  },
+  {
+   "ea": "0xb40350",
+   "str": "p/Physics.img"
+  },
+  {
+   "ea": "0xb40450",
+   "str": "w.img/NewYearsCard/backgrnd3"
+  },
+  {
+   "ea": "0xb4053c",
+   "str": "w.img/NewYearsCard/BtClose"
+  },
+  {
+   "ea": "0xb40594",
+   "str": "w.img/NewYearsCard/backgrnd2"
+  },
+  {
+   "ea": "0xb40670",
+   "str": "w.img/NewYearsCard/backgrnd"
+  },
+  {
+   "ea": "0xb406bc",
+   "str": "w.img/NewYearsCard/BtCancel"
+  },
+  {
+   "ea": "0xb40708",
+   "str": "w.img/NewYearsCard/BtOk"
+  },
+  {
+   "ea": "0xb4074c",
+   "str": "w.img/NewYearsCard/BtSearch"
+  },
+  {
+   "ea": "0xb40830",
+   "str": "w.img/Transform/backgrnd"
+  },
+  {
+   "ea": "0xb40878",
+   "str": "w.img/Transform/BtCancel"
+  },
+  {
+   "ea": "0xb408c0",
+   "str": "w.img/Transform/BtOk"
+  }
+ ]
+}

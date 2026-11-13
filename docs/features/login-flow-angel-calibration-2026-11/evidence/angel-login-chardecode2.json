@@ -1,0 +1,17 @@
+{
+ "0x4e2745": {
+  "addr": "0x4e2745",
+  "ok": true,
+  "code": "{\"addr\":\"0x4e2745\",\"code\":\"int __thiscall sub_4E2745(void *this, int a2)\\n{\\n  int result; // eax\\n  char v3; // bl\\n  char v4; // al\\n  int v5; // ecx\\n  int v6; // eax\\n  int v7; // ecx\\n  bool v8; // zf\\n  __int64 v9; // [esp+0h] [ebp-18h] BYREF\\n  int v10; // [esp+8h] [ebp-10h]\\n  void *v11; // [esp+Ch] [ebp-Ch]\\n  int v12; // [esp+10h] [ebp-8h]\\n  char v13; // [esp+17h] [ebp-1h]\\n\\n  v11 = this; /*0x4e274b*/\\n  sub_4746A3(a1: this); /*0x4e274e*/\\n  result = CInPacket::Decode1(this: a2); /*0x4e275b*/\\n  if ( result != 0 ) /*0x4e2760*/\\n  {\\n    v12 = result; /*0x4e2765*/\\n    do /*0x4e27ab*/\\n    {\\n      v3 = CInPacket::Decode1(this: a2); /*0x4e2773*/\\n      v4 = CInPacket::Decode1(this: a2); /*0x4e2775*/\\n      LOBYTE(v5) = v3; /*0x4e277d*/\\n      v13 = v4; /*0x4e277f*/\\n      v6 = sub_4E807A(a1: v5, a2: &v9); /*0x4e2782*/\\n      LOBYTE(v7) = v13; /*0x4e2787*/\\n      *(&v9 + 2) = v6; /*0x4e278d*/\\n      v10 = sub_4E807A(a1: v7, a2: &v9 + 6); /*0x4e2798*/\\n      result = sub_4E80AD(a1: v11); /*0x4e279b*/\\n      v8 = v12-- == 1; /*0x4e27a0*/\\n      *result = v9; /*0x4e27a8*/\\n      *(result + 8) = v10; /*0x4e27aa*/\\n    }\\n    while ( !v8 ); /*0x4e27ab*/\\n  }\\n  return result; /*0x4e27b0*/\\n}\",\"refs\":[{\"addr\":\"0x4746a3\",\"name\":\"sub_4746A3\"},{\"addr\":\"0x4065f3\",\"name\":\"?Decode1@CInPacket@@QAEEXZ\"},{\"addr\":\"0x4e807a\",\"name\":\"sub_4E807A\"},{\"addr\":\"0x4e80ad\",\"name\":\"sub_4E80AD\"}]}"
+ },
+ "0x4e807a": {
+  "addr": "0x4e807a",
+  "ok": true,
+  "code": "{\"addr\":\"0x4e807a\",\"code\":\"unsigned int __fastcall sub_4E807A(char a1, unsigned __int8 *a2)\\n{\\n  unsigned __int8 v4; // al\\n\\n  v4 = CRand32::Random(a1: dword_BEDD38); /*0x4e8085*/\\n  *a2 = v4; /*0x4e808a*/\\n  a2[1] = a1 ^ v4; /*0x4e809a*/\\n  return (a1 ^ v4) + _rotr(a1: v4 ^ 0xBAADF00D, a2: 5); /*0x4e80aa*/\\n}\",\"refs\":[{\"addr\":\"0x4165ec\",\"name\":\"?Random@CRand32@@QAEIXZ\"},{\"addr\":\"0xbedd38\",\"name\":\"dword_BEDD38\"},{\"addr\":\"0xa61014\",\"name\":\"__rotr\"}]}"
+ },
+ "0x4e80eb": {
+  "addr": "0x4e80eb",
+  "ok": true,
+  "code": "{\"addr\":\"0x4e80eb\",\"code\":\"unsigned int __fastcall sub_4E80EB(__int16 a1, int a2)\\n{\\n  int v2; // edi\\n  unsigned int v3; // esi\\n  int v4; // ebx\\n  unsigned __int8 v5; // al\\n  char v6; // dl\\n  char *v7; // ecx\\n  unsigned __int8 v8; // dl\\n  unsigned int result; // eax\\n  int v10; // [esp+10h] [ebp-8h]\\n  __int16 v11; // [esp+16h] [ebp-2h] BYREF\\n\\n  v2 = a2 - &v11; /*0x4e80f9*/\\n  v3 = 0; /*0x4e8101*/\\n  v11 = a1; /*0x4e8103*/\\n  v10 = -1163005939; /*0x4e8107*/\\n  v4 = a2 + 2 - &v11; /*0x4e810e*/\\n  do /*0x4e814b*/\\n  {\\n    v5 = CRand32::Random(a1: dword_BEDD38); /*0x4e8115*/\\n    v6 = *(&v11 + v3); /*0x4e811a*/\\n    v7 = &v11 + v3; /*0x4e811e*/\\n    v7[v2] = v5; /*0x4e8122*/\\n    v8 = v5 ^ v6; /*0x4e8128*/\\n    v7[v4] = v8; /*0x4e812d*/\\n    result = v8 + _rotr(a1: v10 ^ v5, a2: 5); /*0x4e813f*/\\n    ++v3; /*0x4e8142*/\\n    v10 = result; /*0x4e8148*/\\n  }\\n  while ( v3 < 2 ); /*0x4e814b*/\\n  return result; /*0x4e814d*/\\n}\",\"refs\":[{\"addr\":\"0x4165ec\",\"name\":\"?Random@CRand32@@QAEIXZ\"},{\"addr\":\"0xbedd38\",\"name\":\"dword_BEDD38\"},{\"addr\":\"0xa61014\",\"name\":\"__rotr\"}]}"
+ }
+}

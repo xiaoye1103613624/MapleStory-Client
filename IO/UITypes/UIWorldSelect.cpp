@@ -188,8 +188,8 @@ namespace ms
 	static Point<int16_t> channel_cell_offset(uint16_t i)
 	{
 		constexpr int16_t COLS = 4;
-		constexpr int16_t CELL_W = 100;
-		constexpr int16_t CELL_H = 34;
+		constexpr int16_t CELL_W = 94;   // 亚像素 NCC 实测参照帧列 step=94（原 100→96→94）
+		constexpr int16_t CELL_H = 32;   // 实测参照帧行 step=32（原 34，每行漂 2px）
 
 		div_t d = std::div(static_cast<int>(i), static_cast<int>(COLS));
 

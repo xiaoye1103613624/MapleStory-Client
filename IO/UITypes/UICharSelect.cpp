@@ -64,28 +64,23 @@ namespace ms
 	// 木牌三横板：相对贴图顶边的按钮 Y（略下移使文字落在木条中带）。
 	static constexpr int16_t CS_SIGN_PLANK_Y[3] = { 15, 55, 106 };
 
-	// BeiDou CharSelect 无 pos/detailPos 节点；详情标签相对 charInfo1 面板（183×151）。
-	// 对齐 charInfo1 位图内「职业/等级/人气/四维」空槽（非 Journey 旧版单列）。
-	//
-	// 值行坐标 = charInfo1 纹理相对坐标（纹理左上角经 get_origin() 补偿后
-	// 精确落在 detail_pos）。2026-10-29 对本端渲染逐像素实测：
-	// 烘焙标签行顶 texture-y = 3/21/39/57（pitch 18），值行须与标签同行；
-	// 分隔行「服务器排行榜」texture-y=82，底部烘焙「排行榜」texture-y=112，
-	// 排行文本取 93（居于两者之间、与参考端相对布局一致）。
-	//   职业 (46,3)   等级 (46,21)  人气 (136,21)
-	//   力量 (46,39)  智力 (136,39)
-	//   敏捷 (46,57)  运气 (136,57)
-	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 3);
-	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 21);
-	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 21);
-	static constexpr Point<int16_t> CS_DETAIL_STR(46, 39);
-	static constexpr Point<int16_t> CS_DETAIL_INT(136, 39);
-	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 57);
-	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 57);
-	// 参考端详情面板不绘制角色名（名字由角色脚下 nametag 显示）；保留默认点仅用于 NX 缺省判定。
+	// 详情值行：Angel `CUICharDetail::Draw @0x602ADC` DrawTextA 字面量
+	// （相对 charInfo 画布；权威口径 2026-11-13：原始 UI 一律跟 Angel）。
+	//   职业 (46,1)   等级 (46,19)  人气 (136,19)
+	//   力量 (46,37)  智力 (136,37)
+	//   敏捷 (46,55)  运气 (136,55)
+	//   排行不可用 (36,99) / 排行数字 (115-w,99)
+	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 1);
+	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 19);
+	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 19);
+	static constexpr Point<int16_t> CS_DETAIL_STR(46, 37);
+	static constexpr Point<int16_t> CS_DETAIL_INT(136, 37);
+	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 55);
+	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 55);
+	// Angel 详情板不绘角色名（脚下 nametag）；保留默认点仅用于 NX 缺省判定。
 	static constexpr Point<int16_t> CS_DETAIL_NAME(153, 1);
-	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 93);
-	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 93);
+	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 99);
+	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 99);
 	// charInfo1（183×151）相对脚点。2026-10-24 按正确端截图（选择角色页.png）
 	// 重新实测：内容板（职业行）顶边在屏幕 (391,197)，槽 0 脚点 (485,428)
 	// ⇒ 偏移 (-94,-231)。旧值 (-93,-208) 把整板上移 23px（此前误将卷轴顶边
@@ -111,6 +106,14 @@ namespace ms
 	static constexpr int16_t CS_SLOT_W = 183;
 	static constexpr int16_t CS_SLOT_H_EMPTY = 115;
 	static constexpr int16_t CS_SLOT_H_OCCUPIED = 151;
+
+	// 人偶命中框（相对脚点）：仅覆盖角色外观，不得盖住右侧 signboard 木牌。
+	// 旧值 (-25,-220)/(233,250) 使槽2 框 (345,-1306)–(578,-1056) 吞掉
+	// BtSelect/BtNew/BtDelete（约 x440–541）；收紧后槽2 右缘 ≈410 < 木牌左缘 424。
+	static constexpr int16_t CS_DOLL_HIT_OFF_X = -40;
+	static constexpr int16_t CS_DOLL_HIT_OFF_Y = -200;
+	static constexpr int16_t CS_DOLL_HIT_W = 80;
+	static constexpr int16_t CS_DOLL_HIT_H = 210;
 
 	// 帧内坐标 -> 屏幕原点：position = LoginBackground::viewpos + 本常量。
 	static const Point<int16_t> CS_FRAME_ORIGIN(-237, -54);
@@ -373,14 +376,12 @@ namespace ms
 		levelset = Charset(lvset_node, Charset::Alignment::LEFT);
 		namelabel = OutlinedText(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, Color::Name::IRISHCOFFEE);
 
-		// 参考端 sub_602ADC 在 (46/136, 1/19/37/55) 以左对齐绘制文字；
-		// charInfo1 值槽 x38-90、127-180，左对齐后数字落在槽内左侧。
-		// 参考端属性值为纯深棕无描边；原 WHITE 描边在米色面板把字"洗白/发蓝"，
-		// 改为与填充同色 TOBACCOBROWN 即等效无描边（item 3 颜色修复）。
+		// Angel `get_basic_font(1)` → CreateFont 色 `#000000`（`0xFF000000` @`0x98A83A`）。
+		// 填充=描边同色 BLACK，等效无描边（避免旧 WHITE 描边在米色面板洗白）。
 		for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
-			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
 
-		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
 		// 开局先亮「取不到排行」。这一行**不进绑定表**：它会被 update_selected_character()
 		// 按数据改写，而那个函数是事件驱动的（选中变化 / Charlist 到达），不是每帧。
 		// 绑上来的后果是「切语言那一刻，已经显示真排行的行被刷回『排行不可用』，
@@ -502,7 +503,10 @@ namespace ms
 									: charinfo_scroll_frames.size() - 1
 							];
 
-							scroll_frame.draw(DrawArgument(detail_pos - CS_SCROLL_CONTENT_OFF));
+							// 与 charinfo 同口径：加回 frame origin，避免卷轴与羊皮纸错位。
+							const Point<int16_t> scroll_pos =
+								detail_pos - CS_SCROLL_CONTENT_OFF + scroll_frame.get_origin();
+							scroll_frame.draw(DrawArgument(scroll_pos));
 						}
 
 						{
@@ -513,29 +517,27 @@ namespace ms
 							charinfo.draw(ci_pos);
 
 							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-							// 职业/等级原本用 StatusBar.img/number 的 Charset 数字精灵，
-							// 该节点在 BeiDou 部署数据里缺失/无效 → 白字画在米色面板不可见。
-							// 改与同面板其他数值一致用 OutlinedText 文字绘制（参考端深棕文字）。
-							OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+							// 等级用 OutlinedText（Angel DrawTextA + get_basic_font(1) 黑字）；
+							// BeiDou 缺 StatusBar number Charset 时不能再走白精灵。
+							OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
 							lvltext.change_text(levelstr);
 							lvltext.draw(detail_pos + levelPos);
 
-							// 参考端 CUICharDetail::Draw 只绘制职业/等级/人气/四维；
-							// 角色名由角色脚下 nametag 显示，详情面板内不再重复绘制。
+							// Angel CUICharDetail::Draw 只绘职业/等级/人气/四维；名在脚下 nametag。
 							for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
 							{
 								Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
 								infolabels[li].draw(labelpos);
 							}
 
-							// 排行带：有 rank → 名次；否则「排行不可用」（对齐正确端截图 / sub_602ADC）。
+							// 排行带：有 rank → 名次；否则「排行不可用」（Angel nTop=99）。
 							ranklabel.draw(detail_pos + (character_stats.has_rank ? CS_DETAIL_RANK : CS_DETAIL_RANK_NA));
 						}
 					}
 					else if (LoginBackground::get().available())
 					{
 						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-						OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::TOBACCOBROWN, Color::Name::TOBACCOBROWN);
+						OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
 						lvltext.change_text(levelstr);
 						lvltext.draw(charpos + Point<int16_t>(0, -72));
 					}
