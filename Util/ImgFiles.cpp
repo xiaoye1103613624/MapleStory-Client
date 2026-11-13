@@ -26,7 +26,10 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdint>
+#include <cstring>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -54,6 +57,138 @@ namespace ms
 					return false;
 
 			return true;
+		}
+
+		// Validate a cached .nx before reuse.
+		//
+		// A conversion writes the 52-byte header and all lookup tables first,
+		// then appends the (much larger) bitmap payload with a SECOND stream.
+		// If the process is killed in between, the file still carries a valid
+		// PKG4 magic and plausible tables, but the bitmap data region is EMPTY.
+		// nl::nx::load_all() only checks the magic, so such a truncated file used
+		// to be reused verbatim; the first bitmap lookup then ran
+		// LZ4_decompress_fast() past the mapped file end and crashed inside
+		// liblz4.dll (0xc0000005). This is what made the character-select screen
+		// die right after CHARLIST.
+		//
+		// Header layout (nlnx/file_impl.hpp, packed 52 bytes):
+		//   u32 magic, u32 node_count, u64 node_offset,
+		//   u32 string_count, u64 string_offset (string TABLE),
+		//   u32 bitmap_count, u64 bitmap_offset (bitmap TABLE),
+		//   u32 audio_count, u64 audio_offset (audio TABLE)
+		// A bitmap block is [u32 compressed length][LZ4 block]; bitmap offsets
+		// must live past the bitmap table and the last block must fit in-file.
+		static bool nx_is_complete(const fs::path& path, std::error_code& ec)
+		{
+			ec.clear();
+			uint64_t size = static_cast<uint64_t>(fs::file_size(path, ec));
+			if (ec || size < 52)
+				return false;
+
+			std::ifstream in(path, std::ios::binary);
+			if (!in)
+				return false;
+
+			unsigned char hdr[52];
+			in.read(reinterpret_cast<char*>(hdr), sizeof(hdr));
+			if (in.gcount() != static_cast<std::streamsize>(sizeof(hdr)))
+				return false;
+
+			auto u32 = [&](size_t o) { uint32_t v; std::memcpy(&v, hdr + o, 4); return v; };
+			auto u64 = [&](size_t o) { uint64_t v; std::memcpy(&v, hdr + o, 8); return v; };
+
+			if (u32(0) != 0x34474B50u) // "PKG4"
+				return false;
+
+			uint64_t node_off = u64(8);
+			uint64_t str_tbl_off = u64(20);
+			uint64_t bmp_tbl_off = u64(32);
+			uint64_t aud_tbl_off = u64(44);
+			uint32_t node_count = u32(4);
+			uint32_t str_count = u32(16);
+			uint32_t bmp_count = u32(28);
+			uint32_t aud_count = u32(40);
+
+			auto fits = [&](uint64_t off, uint64_t n) { return off <= size && n <= size - off; };
+			auto read_at = [&](uint64_t off, void* dst, size_t n) -> bool
+			{
+				if (!fits(off, n))
+					return false;
+				in.clear();
+				in.seekg(static_cast<std::streamoff>(off), std::ios::beg);
+				if (!in)
+					return false;
+				in.read(static_cast<char*>(dst), static_cast<std::streamsize>(n));
+				return in.gcount() == static_cast<std::streamsize>(n);
+			};
+
+			if (!fits(node_off, static_cast<uint64_t>(node_count) * 20)
+				|| !fits(str_tbl_off, static_cast<uint64_t>(str_count) * 8)
+				|| !fits(bmp_tbl_off, static_cast<uint64_t>(bmp_count) * 8)
+				|| !fits(aud_tbl_off, static_cast<uint64_t>(aud_count) * 8))
+				return false;
+
+			if (bmp_count > 0)
+			{
+				uint64_t data_start = bmp_tbl_off + static_cast<uint64_t>(bmp_count) * 8;
+				uint64_t first = 0, last = 0;
+				if (!read_at(bmp_tbl_off, &first, 8)
+					|| !read_at(bmp_tbl_off + static_cast<uint64_t>(bmp_count - 1) * 8, &last, 8))
+					return false;
+				if (first < data_start || first >= size)
+					return false;
+				if (last < data_start || last >= size)
+					return false;
+				uint32_t clen = 0;
+				if (!read_at(last, &clen, 4) || clen == 0)
+					return false;
+				if (!fits(last + 4, clen))
+					return false;
+			}
+			else if (aud_count > 0)
+			{
+				uint64_t data_start = aud_tbl_off + static_cast<uint64_t>(aud_count) * 8;
+				uint64_t last = 0;
+				if (!read_at(aud_tbl_off + static_cast<uint64_t>(aud_count - 1) * 8, &last, 8))
+					return false;
+				if (last < data_start || last >= size)
+					return false;
+			}
+
+			return true;
+		}
+
+		// Convert into a temporary file and only publish it (atomic rename) once
+		// the result passes nx_is_complete(). An interrupted conversion can then
+		// never leave a half-written .nx behind that looks reusable.
+		//
+		// The nl::convert_* helpers append ".nx" to the base name they are given,
+		// so emit() receives "<name>.__tmp" and produces "<name>.__tmp.nx".
+		template <typename EmitFn>
+		static void convert_atomic(const fs::path& final_path, EmitFn emit)
+		{
+			std::error_code ec;
+			std::string final_str = final_path.string();
+			const std::string suffix = ".nx";
+			if (final_str.size() <= suffix.size()
+				|| final_str.compare(final_str.size() - suffix.size(), suffix.size(), suffix) != 0)
+				return;
+
+			std::string tmp_base = final_str.substr(0, final_str.size() - suffix.size()) + ".__tmp";
+			fs::path produced(tmp_base + ".nx");
+			fs::remove(produced, ec);
+
+			emit(tmp_base);
+
+			if (nx_is_complete(produced, ec))
+			{
+				fs::remove(final_path, ec);
+				fs::rename(produced, final_path, ec);
+			}
+			else
+			{
+				fs::remove(produced, ec);
+			}
 		}
 
 		Error init(const std::string& base_dir)
@@ -117,14 +252,21 @@ namespace ms
 					if (strcmp(root, "Map") != 0)
 					{
 						fs::path nxpath = cache / (std::string(root) + ".nx");
-						if (fs::exists(nxpath, ec))
-							continue; // reuse the cached conversion
+						if (nx_is_complete(nxpath, ec))
+							continue; // reuse only a validated, complete conversion
+
+						// A truncated/unvalidated cache is worthless and dangerous:
+						// remove it, then rebuild atomically.
+						fs::remove(nxpath, ec);
 
 						std::vector<std::string> imgs = gather(rootdir);
 						if (imgs.empty())
 							continue;
 
-						nl::convert_img_files_to_nx(imgs, (cache / root).string(), rootdir.string());
+						convert_atomic(nxpath, [&](const std::string& out_base)
+						{
+							nl::convert_img_files_to_nx(imgs, out_base, rootdir.string());
+						});
 					}
 					else
 					{
@@ -185,22 +327,42 @@ namespace ms
 
 						// Map001.nx = helpers (login background etc.)
 						fs::path map001nx = cache / "Map001.nx";
-						if (!fs::exists(map001nx, ec) && !helper_imgs.empty())
+						if (!nx_is_complete(map001nx, ec) && !helper_imgs.empty())
 						{
-							nl::convert_img_files_to_nx(helper_imgs, (cache / "Map001").string(), rootdir.string());
+							fs::remove(map001nx, ec);
+							convert_atomic(map001nx, [&](const std::string& out_base)
+							{
+								nl::convert_img_files_to_nx(helper_imgs, out_base, rootdir.string());
+							});
 						}
 						// Map.nx = same helpers (game uses bare nl::nx::Map for Obj/Tile/...)
 						fs::path mapnx = cache / "Map.nx";
-						if (!fs::exists(mapnx, ec) && fs::exists(map001nx, ec))
+						if (!nx_is_complete(mapnx, ec) && nx_is_complete(map001nx, ec))
 						{
+							// Publish the copy atomically as well.
+							fs::path tmpcopy = cache / "Map.__tmp.nx";
 							std::error_code cec;
-							fs::copy_file(map001nx, mapnx, fs::copy_options::overwrite_existing, cec);
+							fs::remove(tmpcopy, cec);
+							fs::copy_file(map001nx, tmpcopy, fs::copy_options::overwrite_existing, cec);
+							if (!cec && nx_is_complete(tmpcopy, cec))
+							{
+								fs::remove(mapnx, cec);
+								fs::rename(tmpcopy, mapnx, cec);
+							}
+							else
+							{
+								fs::remove(tmpcopy, cec);
+							}
 						}
 						// Map002.nx = per-map .img files
 						fs::path map002nx = cache / "Map002.nx";
-						if (!fs::exists(map002nx, ec) && !map_relpaths.empty())
+						if (!nx_is_complete(map002nx, ec) && !map_relpaths.empty())
 						{
-							nl::convert_img_files_to_nx(map_relpaths, (cache / "Map002").string());
+							fs::remove(map002nx, ec);
+							convert_atomic(map002nx, [&](const std::string& out_base)
+							{
+								nl::convert_img_files_to_nx(map_relpaths, out_base);
+							});
 						}
 					}
 				}
@@ -219,9 +381,13 @@ namespace ms
 							continue;
 						std::string name = it->path().stem().string();
 						fs::path nxpath = cache / (name + ".nx");
-						if (fs::exists(nxpath, ec))
+						if (nx_is_complete(nxpath, ec))
 							continue;
-						nl::convert_single_img_to_nx(it->path().string(), name);
+						fs::remove(nxpath, ec);
+						convert_atomic(nxpath, [&](const std::string& out_base)
+						{
+							nl::convert_single_img_to_nx(it->path().string(), out_base);
+						});
 					}
 				}
 				catch (const fs::filesystem_error&) {}

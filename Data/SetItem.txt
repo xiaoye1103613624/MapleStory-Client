@@ -1,0 +1,30 @@
+# 套装花名册（2026-11-12 装备槽位扩展 ⑤）
+# 格式：SET <setId> <name> <completeCount> / ITEM <itemId> / TIER <count> <statKey> <value>
+# statKey: STR/DEX/INT/LUK/HP/MP/WATK/MAGIC/WDEF/MDEF/ACC/AVOID/HANDS/SPEED/JUMP
+#          ALLSTAT / DAMAGE(百分比) / BOSS(百分比) / IGNOREDEF(百分比)
+# 参考：E:\MXD\扩展改动\套装系统\README.md 的 setItemName/completeCount/ItemID/Effect/{n}
+#       + E:\project\BeiDou-Server\...\SetItemManager.java（WZ 底稿 + DB 覆盖）
+# 本文件是客户端本地花名册；服务端 s9 的 xy_set_item 表（V1.11.10__set_item.sql）为权威，
+# 后续可由 0x176 下行文案/DB 导入替换此文件。
+
+# 示例：新手套装（占位，itemId 取自 v083 常规装备段；运营可按需替换）
+SET 101 新手套装 3
+ITEM 1002001
+ITEM 1040002
+ITEM 1060006
+TIER 2 STR 3
+TIER 2 DEX 2
+TIER 3 WATK 5
+TIER 3 ALLSTAT 2
+
+# 示例： boss 套装档位含伤害类加成
+SET 102 首领套装 4
+ITEM 1002586
+ITEM 1041054
+ITEM 1061061
+ITEM 1082140
+TIER 2 HP 100
+TIER 3 WATK 8
+TIER 3 DAMAGE 5
+TIER 4 BOSS 10
+TIER 4 IGNOREDEF 5
