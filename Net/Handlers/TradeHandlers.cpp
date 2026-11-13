@@ -440,7 +440,7 @@ namespace ms
 					LOG(LOG_DEBUG, "TradeHandler: GameOpt refuse TRADE_APPLY from=" << name);
 					break;
 				}
-				std::string msg = name + " wants to trade. Accept?";
+				std::string msg = Locale::format("trade.invite_ask", name);
 				// YesNo 已显，不重复 SM
 				UI::get().emplace<UIYesNo>(msg, [name](bool yes)
 				{

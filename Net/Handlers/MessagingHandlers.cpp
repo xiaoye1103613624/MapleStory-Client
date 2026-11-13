@@ -43,9 +43,25 @@
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Graphics/Color.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 namespace ms
 {
+	// 背包分页标签本地化：物品名来自 String.img（数据已本地化），这里只把
+	// 英文分类名（Eqp/Use/Setup/Etc/Cash）换成 zh-CN.ini 里的对应文案。
+	static std::string inv_tab_label(InventoryType::Id type)
+	{
+		switch (type)
+		{
+			case InventoryType::Id::EQUIP:  return Locale::text("status.tab.Eqp");
+			case InventoryType::Id::USE:    return Locale::text("status.tab.Use");
+			case InventoryType::Id::SETUP:  return Locale::text("status.tab.Setup");
+			case InventoryType::Id::ETC:    return Locale::text("status.tab.Etc");
+			case InventoryType::Id::CASH:   return Locale::text("status.tab.Cash");
+			default:                        return Locale::text("status.tab.Unknown");
+		}
+	}
+
 	// Modes:
 	// 0 - Item(0) or Meso(1)
 	// 1 - Quest progress (short questId, byte status, …)
@@ -74,7 +90,7 @@ namespace ms
 				// 背包已开：格子满自显，不叠 SM
 				if (inv_open)
 					return;
-				show_status(Color::Name::WHITE, "You can't get anymore items.");
+				show_status(Color::Name::WHITE, Locale::text("status.inv_full"));
 			}
 			else if (mode2 == 0)
 			{
@@ -95,46 +111,23 @@ namespace ms
 
 				InventoryType::Id type = InventoryType::by_item_id(itemid);
 
-				std::string tab = "";
-
-				switch (type)
-				{
-					case InventoryType::Id::EQUIP:
-						tab = "Eqp";
-						break;
-					case InventoryType::Id::USE:
-						tab = "Use";
-						break;
-					case InventoryType::Id::SETUP:
-						tab = "Setup";
-						break;
-					case InventoryType::Id::ETC:
-						tab = "Etc";
-						break;
-					case InventoryType::Id::CASH:
-						tab = "Cash";
-						break;
-					default:
-						tab = "UNKNOWN";
-						break;
-				}
-
 				// 背包已开：格子自显，不叠 SM
 				if (inv_open)
 					return;
 
+				std::string tab_label = inv_tab_label(type);
 				if (qty < 0)
 				{
 					int32_t lost = -qty;
 					std::string tip = lost == 1
-						? ("You have lost an item in the " + tab + " tab (" + name + ")")
-						: ("You have lost items in the " + tab + " tab (" + name + " " + std::to_string(lost) + ")");
+						? Locale::format_all("status.item.lost_one", { tab_label, name })
+						: Locale::format_all("status.item.lost_many", { tab_label, name, std::to_string(lost) });
 					show_status(Color::Name::RED, tip);
 				}
 				else if (qty == 1)
-					show_status(Color::Name::WHITE, "You have gained an item in the " + tab + " tab (" + name + ")");
+					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_one", { tab_label, name }));
 				else
-					show_status(Color::Name::WHITE, "You have gained items in the " + tab + " tab (" + name + " " + std::to_string(qty) + ")");
+					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_many", { tab_label, name, std::to_string(qty) }));
 			}
 			else if (mode2 == 1)
 			{
@@ -156,8 +149,8 @@ namespace ms
 						return;
 				}
 				std::string tip = gain < 0
-					? ("You have lost mesos (" + std::to_string(gain) + ")")
-					: ("You have gained mesos (+" + std::to_string(gain) + ")");
+					? Locale::format("status.meso.lost", std::to_string(gain))
+					: Locale::format("status.meso.gained", std::to_string(gain));
 				show_status(gain < 0 ? Color::Name::RED : Color::Name::WHITE, tip);
 			}
 			else
@@ -190,11 +183,23 @@ namespace ms
 				else if (!alarm->is_active()) alarm->makeactive();
 				if (alarm)
 				{
+					// P2：进度类走 NoticeQuestProgress 槽（3s×5）；一般提示仍 set_tip。
 					alarm->set_tip(tip);
 					return;
 				}
 				if (auto chatbar = UI::get().get_element<UIChatBar>())
 					chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
+			};
+			auto quest_progress = [&](const std::string& tip) {
+				auto alarm = UI::get().get_element<UIQuestAlarm>();
+				if (!alarm) alarm = UI::get().emplace<UIQuestAlarm>();
+				else if (!alarm->is_active()) alarm->makeactive();
+				if (alarm)
+				{
+					alarm->push_progress(tip);
+					return;
+				}
+				quest_tip(Color::Name::WHITE, tip);
 			};
 			// 服务端 s9 PacketCreator.java:2947-2962 对所有 status 写同一段：
 			// short questId / byte status / string progress / skip(5)。
@@ -211,7 +216,7 @@ namespace ms
 			{
 				quests.remove_started(qid);
 				if (!ql_open)
-					quest_tip(Color::Name::WHITE, "Quest forfeited: " + qdata.get_name());
+					quest_tip(Color::Name::WHITE, Locale::format("quest.forfeited", qdata.get_name()));
 			}
 			else if (status == 2)
 			{
@@ -219,13 +224,24 @@ namespace ms
 				// 时间戳在客户端无消费者，故记 0。
 				quests.set_completed(qid, 0);
 				if (!ql_open)
-					quest_tip(Color::Name::YELLOW, "Quest completed: " + qdata.get_name());
+					quest_tip(Color::Name::YELLOW, Locale::format("quest.completed", qdata.get_name()));
 			}
 			else
 			{
 				quests.set_started(qid, progress);
 				if (!ql_open)
-					quest_tip(Color::Name::WHITE, "Quest updated: " + qdata.get_name());
+				{
+					// P2：进度串 → NoticeQuestProgress 槽；无串则普通 tip。
+					if (!progress.empty())
+						quest_progress(Locale::format_all("quest.progress_tip",
+							{ qdata.get_name(), progress }));
+					else
+						quest_tip(Color::Name::WHITE, Locale::format("quest.updated", qdata.get_name()));
+				}
+
+				// T4 降级：菜单「任务」钮 blink（非 UtilDlgEx KEY_ANI 四主窗指引链）。
+				if (auto sb = UI::get().get_element<UIStatusBar>())
+					sb->blink_menu_quest();
 			}
 
 			while (recv.available())
@@ -250,41 +266,35 @@ namespace ms
 			while (recv.available())
 				recv.skip_byte();
 
-			std::string message = "You have gained experience (+" + std::to_string(gain) + ")";
+			std::string message = Locale::format("status.exp.gained", std::to_string(gain));
 			Color::Name col = white ? Color::Name::WHITE : Color::Name::YELLOW;
 
-			// StatusBar / Stats 已显 EXP：非 chat 路径静默（不叠 SM）
-			bool exp_ui = false;
-			if (auto bar = UI::get().get_element<UIStatusBar>())
-				exp_ui = bar->is_active();
-			if (!exp_ui)
-				if (auto st = UI::get().get_element<UIStatsInfo>())
-					exp_ui = st->is_active();
-
+			// 原生 v83 行为：EXP 获取一律在右下角状态栏播报；inchat=true（任务/GM 等）
+			// 时改走聊天栏。HUD 上的 EXP 百分比条不算「已显示本次获得」，不可据此静默。
 			if (inchat)
 			{
 				if (auto chatbar = UI::get().get_element<UIChatBar>())
 					chatbar->show_message(message.c_str(),
 						white ? UIChatBar::MessageType::WHITE : UIChatBar::MessageType::YELLOW);
-				else if (!exp_ui)
+				else
 					show_status(col, message);
 			}
-			else if (!exp_ui)
+			else
 			{
 				show_status(col, message);
 			}
 
 			if (bonus1 > 0)
 			{
-				std::string bonus = "+ Bonus EXP (+" + std::to_string(bonus1) + ")";
+				std::string bonus = Locale::format("status.exp.bonus", std::to_string(bonus1));
 				if (inchat)
 				{
 					if (auto chatbar = UI::get().get_element<UIChatBar>())
 						chatbar->show_message(bonus.c_str(), UIChatBar::MessageType::YELLOW);
-					else if (!exp_ui)
+					else
 						show_status(Color::Name::YELLOW, bonus);
 				}
-				else if (!exp_ui)
+				else
 					show_status(Color::Name::YELLOW, bonus);
 			}
 		}
@@ -292,8 +302,8 @@ namespace ms
 		{
 			int32_t gain = recv.read_int();
 			std::string tip = gain < 0
-				? ("You have lost fame. (" + std::to_string(gain) + ")")
-				: ("You have gained fame. (+" + std::to_string(gain) + ")");
+				? Locale::format("status.fame.lost", std::to_string(gain))
+				: Locale::format("status.fame.gained", std::to_string(gain));
 			while (recv.available())
 				recv.skip_byte();
 			// CharInfo ensure：人气自显，刷新并跳过 tip
@@ -326,8 +336,8 @@ namespace ms
 			while (recv.available())
 				recv.skip_byte();
 			std::string tip = gain <= 0
-				? ("You have lost mesos (" + std::to_string(gain) + ")")
-				: ("You have gained mesos (+" + std::to_string(gain) + ")");
+				? Locale::format("status.meso.lost", std::to_string(gain))
+				: Locale::format("status.meso.gained", std::to_string(gain));
 			// inChat 语义即聊天窗提示（Angel CHATLOG_ADD），不做 StatusBar/Stats 抑制
 			if (auto chatbar = UI::get().get_element<UIChatBar>())
 				chatbar->show_message(tip.c_str(),
@@ -337,8 +347,8 @@ namespace ms
 		{
 			int32_t gp = recv.available() >= 4 ? recv.read_int() : 0;
 			std::string tip = gp < 0
-				? ("You have lost GP (" + std::to_string(gp) + ")")
-				: ("You have gained GP (+" + std::to_string(gp) + ")");
+				? Locale::format("status.gp.lost", std::to_string(gp))
+				: Locale::format("status.gp.gained", std::to_string(gp));
 			while (recv.available())
 				recv.skip_byte();
 			auto guild = UI::get().get_element<UIGuild>();
@@ -372,6 +382,87 @@ namespace ms
 	void ServerMessageHandler::handle(InPacket& recv) const
 	{
 		int8_t type = recv.read_byte();
+
+		auto push_mega_line = [](const std::string& line) {
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+				chatbar->show_message(line.c_str(), UIChatBar::ChatChannel::MEGAPHONE);
+			else if (auto sm = UI::get().get_element<UIStatusMessenger>())
+				sm->show_status(Color::Name::YELLOW, line);
+			else if (auto sm = UI::get().emplace<UIStatusMessenger>())
+				sm->show_status(Color::Name::YELLOW, line);
+
+			auto fn = UI::get().get_element<UIFloatNotice>();
+			if (!fn)
+				fn = UI::get().emplace<UIFloatNotice>();
+			else if (!fn->is_active())
+				fn->makeactive();
+			if (fn)
+				fn->set_tip(line);
+		};
+
+		// s9 PacketCreator.itemMegaphone：type=8 + string + channel + whisper + (0 | slot+addItemInfo)
+		// 无 servermessage 标志字节；旧实现落入 else 会误 inspect 并把 item blob drain 丢光。
+		if (type == 8)
+		{
+			std::string message = recv.available() ? recv.read_string() : std::string();
+			int8_t channel = recv.available() ? recv.read_byte() : static_cast<int8_t>(0);
+			bool whisper = recv.available() ? recv.read_bool() : false;
+			(void)whisper;
+			// 道具附加：有则 slot≠0 后跟 addItemInfo；本端先吃完包体，图标展示另立。
+			if (recv.available())
+			{
+				uint8_t slot_or_zero = static_cast<uint8_t>(recv.read_byte());
+				(void)slot_or_zero;
+			}
+			while (recv.available())
+				recv.skip_byte();
+
+			std::string line = message;
+			if (channel >= 0)
+				line = "[Ch." + std::to_string(static_cast<int>(channel) + 1) + "] " + message;
+			push_mega_line(line);
+			LOG(LOG_DEBUG, "ServerMessage: itemMegaphone type8 ch=" << static_cast<int>(channel));
+			return;
+		}
+
+		// s9 getMultiMegaphone：type=0x0A + string0 + byte n + string[1..n) + 10×channel + ear + 1
+		if (type == 0x0A)
+		{
+			std::string joined;
+			if (recv.available())
+				joined = recv.read_string();
+			const int n = recv.available() ? static_cast<unsigned char>(recv.read_byte()) : 0;
+			for (int i = 1; i < n && recv.available(); ++i)
+			{
+				std::string part = recv.read_string();
+				if (part.empty())
+					continue;
+				if (!joined.empty())
+					joined.push_back(' ');
+				joined += part;
+			}
+			int8_t channel = 0;
+			for (int i = 0; i < 10 && recv.available(); ++i)
+			{
+				const int8_t ch = recv.read_byte();
+				if (i == 0)
+					channel = ch;
+			}
+			if (recv.available())
+				recv.skip_bool(); // ear
+			if (recv.available())
+				recv.skip_byte(); // trailing 1
+			while (recv.available())
+				recv.skip_byte();
+
+			std::string line = joined;
+			if (channel >= 0)
+				line = "[Ch." + std::to_string(static_cast<int>(channel) + 1) + "] " + joined;
+			push_mega_line(line);
+			LOG(LOG_DEBUG, "ServerMessage: multiMegaphone type0x0A lines~" << n);
+			return;
+		}
+
 		bool servermessage = recv.inspect_bool();
 
 		if (servermessage)
@@ -409,19 +500,7 @@ namespace ms
 			std::string line = message;
 			if (channel >= 0)
 				line = "[Ch." + std::to_string(channel + 1) + "] " + message;
-			if (auto chatbar = UI::get().get_element<UIChatBar>())
-				chatbar->show_message(line.c_str(), UIChatBar::ChatChannel::MEGAPHONE);
-			else
-				push_sm();
-			{
-				auto fn = UI::get().get_element<UIFloatNotice>();
-				if (!fn)
-					fn = UI::get().emplace<UIFloatNotice>();
-				else if (!fn->is_active())
-					fn->makeactive();
-				if (fn)
-					fn->set_tip(line);
-			}
+			push_mega_line(line);
 			(void)megaEar;
 		}
 		else if (type == 4)
@@ -599,8 +678,8 @@ namespace ms
 
 				std::string name = idata.get_name();
 				std::string message = qty < 0
-					? ("Lost an item: " + name + " (" + std::to_string(qty) + ")")
-					: ("Gained an item: " + name + " (+" + std::to_string(qty) + ")");
+					? Locale::format_all("status.item_inchat.lost", { name, std::to_string(qty) })
+					: Locale::format_all("status.item_inchat.gained", { name, std::to_string(qty) });
 
 				// 背包已开：格子自显，不叠 chat/SM；否则 chat→SM
 				bool inv_open = false;

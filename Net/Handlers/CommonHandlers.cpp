@@ -26,6 +26,8 @@
 #include "../../IO/Window.h"
 #include "../../Graphics/Color.h"
 #include "../../Gameplay/Combat/Damage.h"
+#include "../../Character/CombatPanelStats.h"
+#include "../../Util/PerfLog.h"
 
 #include <string>
 
@@ -56,5 +58,46 @@ namespace ms
 		}
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(tip.c_str(), UIChatBar::MessageType::WHITE);
+	}
+
+	void SetItemFinalDamageHandler::handle(InPacket& recv) const
+	{
+		// 布局对齐 BeiDou PacketCreator.setItemFinalDamageBonus / ijl15 SetItemBridge
+		CombatPanelStats& s = CombatPanelStats::get();
+		s.final_damage_percent = recv.read_short();
+		s.damage_skin_id = recv.read_int();
+		s.dam_r = recv.read_short();
+		s.boss_dam_r = recv.read_short();
+		s.normal_dam_r = recv.read_short();
+		s.ignore_pdr = recv.read_short();
+		s.ignore_mdr = recv.read_short();
+		s.crit_rate = recv.read_short();
+		s.crit_dam = recv.read_short();
+		s.pad_r = recv.read_short();
+		s.mad_r = recv.read_short();
+
+		const uint16_t fd_count = static_cast<uint16_t>(recv.read_short());
+		for (uint16_t i = 0; i < fd_count; i++)
+			recv.skip_short();
+
+		s.item_drop_prop = recv.read_short();
+		s.meso_drop_prop = recv.read_short();
+		s.damage_reduce = recv.read_short();
+
+		if (recv.available() >= 6)
+		{
+			s.asr_r = recv.read_short();
+			s.buff_time_r = recv.read_short();
+			s.stance_prop = recv.read_short();
+		}
+
+		while (recv.available())
+			recv.skip_byte();
+
+		s.synced = true;
+		s.notify_ui();
+		LOG(LOG_DEBUG, "CombatPanel 0x175 synced damR=" << s.dam_r
+			<< " fdR=" << s.final_damage_percent
+			<< " bdR=" << s.boss_dam_r);
 	}
 }

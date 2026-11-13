@@ -20,6 +20,7 @@
 #include "PlayerStates.h"
 
 #include "../Data/WeaponData.h"
+#include "../Data/SetItemData.h"
 #include "../IO/UI.h"
 
 #include "../IO/UITypes/UIStatsInfo.h"
@@ -32,9 +33,140 @@
 #include "../MapleStory.h"
 
 #include <algorithm>
+#include <vector>
 
 namespace ms
 {
+	namespace
+	{
+		// ⑤ 套装 statKey → EquipStat::Id（Data/SetItem.txt 的 TIER 行）。
+		EquipStat::Id set_stat_id(const std::string& key)
+		{
+			if (key == "STR") return EquipStat::Id::STR;
+			if (key == "DEX") return EquipStat::Id::DEX;
+			if (key == "INT") return EquipStat::Id::INT;
+			if (key == "LUK") return EquipStat::Id::LUK;
+			if (key == "HP") return EquipStat::Id::HP;
+			if (key == "MP") return EquipStat::Id::MP;
+			if (key == "WATK") return EquipStat::Id::WATK;
+			if (key == "MAGIC") return EquipStat::Id::MAGIC;
+			if (key == "WDEF") return EquipStat::Id::WDEF;
+			if (key == "MDEF") return EquipStat::Id::MDEF;
+			if (key == "ACC") return EquipStat::Id::ACC;
+			if (key == "AVOID") return EquipStat::Id::AVOID;
+			if (key == "HANDS") return EquipStat::Id::HANDS;
+			if (key == "SPEED") return EquipStat::Id::SPEED;
+			if (key == "JUMP") return EquipStat::Id::JUMP;
+			return EquipStat::Id::LENGTH;
+		}
+
+		// ⑦ 095 强化加成（Round 15）：星之力 / 火花 / 宝珠。
+		// 口径说明（避免臆造数值）：
+		//   · 星之力：官方是「每星 +固定四维/攻击」的阶梯表，本端无 StarForce.img
+		//     数据源，因此采用**线性保守模型**：每星 STR/DEX/INT/LUK +1、
+		//     WATK/MAGIC +1（25 星上限，与 get_starforce 的 0..25 一致）。
+		//     数值可由后续接入真实表替换，不改结构。
+		//   · 火花 / 宝珠：值是词条 id，本端无 AdditionalOption/SoulOption 表，
+		//     故**只做展示不做数值加成**（在 tooltip 出行），避免凭空造属性。
+		//     这与「潜能」同口径 —— 潜能也只展示，数值待词条表落地。
+		void apply_enchant_bonuses(CharStats& stats, const Inventory& inventory)
+		{
+			// 官方穿戴位（枚举值即 BodyPart 绝对值，见 EquipSlot.h 不变量）
+			static const EquipSlot::Id wear_slots[] = {
+				EquipSlot::Id::HAT, EquipSlot::Id::FACE, EquipSlot::Id::EYEACC,
+				EquipSlot::Id::EARACC, EquipSlot::Id::TOP, EquipSlot::Id::BOTTOM,
+				EquipSlot::Id::SHOES, EquipSlot::Id::GLOVES, EquipSlot::Id::CAPE,
+				EquipSlot::Id::SHIELD, EquipSlot::Id::WEAPON,
+				EquipSlot::Id::RING1, EquipSlot::Id::RING2,
+				EquipSlot::Id::RING3, EquipSlot::Id::RING4,
+				EquipSlot::Id::PENDANT1, EquipSlot::Id::PENDANT2,
+				EquipSlot::Id::SHOULDER, EquipSlot::Id::MEDAL, EquipSlot::Id::BELT,
+				EquipSlot::Id::BADGE, EquipSlot::Id::TOTEM1, EquipSlot::Id::TOTEM2,
+				EquipSlot::Id::TOTEM3, EquipSlot::Id::TOTEM4,
+				EquipSlot::Id::EMBLEM, EquipSlot::Id::ANDROID_SLOT, EquipSlot::Id::HEART
+			};
+
+			for (EquipSlot::Id slot : wear_slots)
+			{
+				auto oequip = inventory.get_equip(InventoryType::Id::EQUIPPED, slot);
+
+				if (!oequip)
+					continue;
+
+				const Equip& equip = *oequip;
+
+				uint8_t sf = equip.get_starforce();
+
+				if (sf == 0)
+					continue;
+
+				if (sf > 25)
+					sf = 25;
+
+				stats.add_value(EquipStat::Id::STR, sf);
+				stats.add_value(EquipStat::Id::DEX, sf);
+				stats.add_value(EquipStat::Id::INT, sf);
+				stats.add_value(EquipStat::Id::LUK, sf);
+				stats.add_value(EquipStat::Id::WATK, sf);
+				stats.add_value(EquipStat::Id::MAGIC, sf);
+			}
+		}
+
+		void apply_set_item_bonuses(CharStats& stats, const std::vector<int32_t>& equipped_item_ids)
+		{
+			// 按套装分组，避免同一件装备属于多套时重复计数。
+			std::vector<int32_t> seen_sets;
+
+			for (int32_t item_id : equipped_item_ids)
+			{
+				int32_t set_id = SetItemData::set_of(item_id);
+
+				if (set_id <= 0)
+					continue;
+
+				if (std::find(seen_sets.begin(), seen_sets.end(), set_id) != seen_sets.end())
+					continue;
+
+				seen_sets.push_back(set_id);
+
+				int16_t count = SetItemData::count_equipped(set_id, equipped_item_ids);
+
+				if (count <= 0)
+					continue;
+
+				for (const SetItemData::Tier& tier : SetItemData::active_tiers(set_id, count))
+				{
+					const std::string& key = tier.stat_key;
+
+					if (key == "ALLSTAT")
+					{
+						stats.add_value(EquipStat::Id::STR, tier.value);
+						stats.add_value(EquipStat::Id::DEX, tier.value);
+						stats.add_value(EquipStat::Id::INT, tier.value);
+						stats.add_value(EquipStat::Id::LUK, tier.value);
+					}
+					else if (key == "DAMAGE")
+					{
+						// 参考 README 的 damR/fdR 口径：百分比累加到 damagepercent。
+						stats.add_damagepercent(tier.value / 100.0f);
+					}
+					else if (key == "BOSS")
+					{
+						stats.add_bossdmg(tier.value / 100.0f);
+					}
+					else if (key == "IGNOREDEF")
+					{
+						stats.add_ignoredef(tier.value / 100.0f);
+					}
+					else if (EquipStat::Id id = set_stat_id(key); id != EquipStat::Id::LENGTH)
+					{
+						stats.add_value(id, tier.value);
+					}
+				}
+			}
+		}
+	}
+
 	const PlayerNullState nullstate;
 
 	const PlayerState* get_state(Char::State state)
@@ -115,6 +247,19 @@ namespace ms
 			int32_t inventory_total = inventory.get_stat(stat);
 			stats.add_value(stat, inventory_total);
 		}
+
+		// ⑤ 套装加成注入（2026-11-12）：
+		// 数据源 Data/SetItem.txt，按已穿戴 itemid 统计件数 → 达标档位累加。
+		// 权威口径 E:\project\BeiDou-Server\...\SetItemManager.java 与
+		// E:\MXD\扩展改动\套装系统\README.md；本端不移植 xy 的 combat.stat 框架
+		//（s9 无 CombatStatProfile/SetBonusStatProvider），改为本地结算。
+		// 唯一注入点：所有 recalc_stats 调用方（InventoryHandlers/SetField/PlayerHandlers/
+		// CashShopParser/Player.cpp）自动继承，不在 Combat.cpp 里绕圈（伤害由服务端回包）。
+		apply_set_item_bonuses(stats, inventory.equipped_item_ids());
+
+		// ⑦ 095 强化加成（Round 15）：星之力 / 火花 / 宝珠。
+		// 与套装同一注入点（close_totalstats 之前），6 个 recalc_stats 调用方自动继承。
+		apply_enchant_bonuses(stats, inventory);
 
 		auto passive_skills = skillbook.collect_passives();
 

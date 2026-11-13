@@ -18,11 +18,35 @@
 #include "CharacterParser.h"
 
 #include "ItemParser.h"
+#include "../../PacketError.h"
+
+#include <fstream>
+#include <vector>
 
 namespace ms
 {
+	static void cp_trace(const std::string& label, size_t remain)
+	{
+		static std::ofstream t("E:\\MXD\\BeiDou-Client-xy\\setfield_trace.log", std::ios::app);
+		if (t.is_open())
+		{
+			t << "[cp] " << label << " remain=" << remain << std::endl;
+			t.flush();
+		}
+	}
+
 	void CharacterParser::parse_inventory(InPacket& recv, Inventory& invent)
 	{
+		cp_trace("inventory-start", recv.length());
+		// 严格对齐 s9 PacketCreator.addInventoryInfo：
+		//   meso(long) + 5×slotmax(byte) + getTime(-2)(long)
+		//   + 装备(非现金) 列表：每项 addItemInfo，结尾 writeShort(0)
+		//   + 装备(现金)   列表：每项 addItemInfo，结尾 writeShort(0)
+		//   + 装备背包     列表：每项 addItemInfo，结尾 writeInt(0)
+		//   + USE/SETUP/ETC/CASH：每项 addItemInfo，各自结尾 writeByte(0)
+		// 旧实现用 3 个 read_short 循环 + skip(2)，把「装备背包的 writeInt(0) 结尾」
+		// 误当 writeShort(0)（少读 2 字节）且漏读整组现金装备，导致后续技能/任务整段
+		// 错位 → Stack underflow → 进图卡选角。
 		invent.set_meso(recv.read_long());
 		invent.set_slotmax(InventoryType::EQUIP, recv.read_byte());
 		invent.set_slotmax(InventoryType::USE, recv.read_byte());
@@ -30,58 +54,154 @@ namespace ms
 		invent.set_slotmax(InventoryType::ETC, recv.read_byte());
 		invent.set_slotmax(InventoryType::CASH, recv.read_byte());
 
-		recv.skip(8);
+		recv.skip(8); // getTime(-2)
 
-		for (size_t i = 0; i < 3; i++)
+		// 装备（非现金）：s9 直接写道具 + writeShort(0) 终结符（无独立 count）。循环读到 0 即止；
+		// 空段时首 read_short 读到终结符(0) 自动结束，终结符被本次读走，不会串到 cash 段。
+		int16_t pos = recv.read_short();
+		while (pos != 0)
 		{
-			InventoryType::Id inv = (i == 0) ? InventoryType::EQUIPPED : InventoryType::EQUIP;
-			int16_t pos = recv.read_short();
+			ItemParser::parse_item(recv, InventoryType::EQUIPPED, pos, invent);
+			pos = recv.read_short();
+		}
 
-			while (pos != 0)
+		// 装备（现金）：结构同上
+		pos = recv.read_short();
+		while (pos != 0)
+		{
+			ItemParser::parse_item(recv, InventoryType::EQUIPPED, pos, invent);
+			pos = recv.read_short();
+		}
+
+		// 装备背包：位置服务端按 writeShort 写，段尾 writeInt(0) 终结符（高 2 字节充当循环结束的 0，
+		// 低 2 字节由 skip(2) 吃掉）。注意：原始实现用 read_int 读位置（每枚多吞 2 字节）也会导致错位。
+		int16_t ipos = recv.read_short();
+		while (ipos != 0)
+		{
+			ItemParser::parse_item(recv, InventoryType::EQUIP, ipos, invent);
+			ipos = recv.read_short();
+		}
+		recv.skip(2); // writeInt(0) 终结符的低 2 字节
+
+		const InventoryType::Id byte_lists[3] =
+		{
+			InventoryType::USE, InventoryType::SETUP, InventoryType::ETC
+		};
+
+		for (InventoryType::Id inv : byte_lists)
+		{
+			int8_t bpos = recv.read_byte();
+			while (bpos != 0)
 			{
-				int16_t slot = (i == 1) ? -pos : pos;
-				ItemParser::parse_item(recv, inv, slot, invent);
-				pos = recv.read_short();
+				ItemParser::parse_item(recv, inv, bpos, invent);
+				bpos = recv.read_byte();
 			}
 		}
 
-		recv.skip(2);
-
-		InventoryType::Id toparse[4] =
+		// CASH：s9 addInventoryInfo 不在 CASH 段末尾写 writeByte(0) 终结符（它是 inventory
+		// 的最后一个子段，包尾即结束）。CASH 之后紧跟 addSkillInfo 写的 writeByte(0)（"start of
+		// skills" 标记），该 0 字节由 parse_skillbook 消费。故这里用 inspect_byte() 预看而非
+		// 读掉：遇到 0 即视为 CASH 结束并退出（不消耗那个 0），把 0 留给 parse_skillbook，
+		// 避免双重消费导致技能段 size 错位 1 字节 → Stack underflow（进图卡选角）。
+		while (recv.length() > 0 && recv.inspect_byte() != 0)
 		{
-			InventoryType::USE, InventoryType::SETUP, InventoryType::ETC, InventoryType::CASH
-		};
-
-		for (size_t i = 0; i < 4; i++)
-		{
-			InventoryType::Id inv = toparse[i];
-			int8_t pos = recv.read_byte();
-
-			while (pos != 0)
-			{
-				ItemParser::parse_item(recv, inv, pos, invent);
-				pos = recv.read_byte();
-			}
+			int8_t cpos = recv.read_byte();
+			ItemParser::parse_item(recv, InventoryType::CASH, cpos, invent);
 		}
 	}
 
 	void CharacterParser::parse_skillbook(InPacket& recv, SkillBook& skills)
 	{
-		int16_t size = recv.read_short();
-
-		for (int16_t i = 0; i < size; i++)
+		cp_trace("skillbook-start", recv.length());
+		// s9 PacketCreator.addSkillInfo：writeByte(0) + writeShort(size) + entries。
+		// CASH 段无独立终结符，正常应由本函数消费该 0。若库存解析多吞 1 字节把
+		// 标记吃掉，硬读前导字节会把 size 低位当标记 → size 错位 → Stack underflow
+		//（实测 remain=354 失败 / remain=355 偶发成功）。
+		// masterlevel：对齐 Angel is_skill_need_master_level@0x4e8f04 与 s9
+		// Skill.isFourthJob（job%10==2 + Evan 特例），旧公式
+		// (id%100000)/10000==2 在 Evan 等线会多读 4B。
+		auto skill_has_masterlevel = [](int32_t skill_id) -> bool
 		{
-			int32_t skill_id = recv.read_int();
-			int32_t level = recv.read_int();
-			int64_t expiration = recv.read_long();
-			bool fourthtjob = ((skill_id % 100000) / 10000 == 2);
-			int32_t masterlevel = fourthtjob ? recv.read_int() : 0;
-			skills.set_skill(skill_id, level, masterlevel, expiration);
-		}
+			const int32_t job = skill_id / 10000;
+			if (job == 2212)
+				return false;
+			if (skill_id == 22170001 || skill_id == 22171003 || skill_id == 22171004
+				|| skill_id == 22181002 || skill_id == 22181003)
+				return true;
+			if (job % 100 == 0)
+				return false;
+			return job % 10 == 2;
+		};
+
+		struct Entry
+		{
+			int32_t id;
+			int32_t level;
+			int32_t master;
+			int64_t expiration;
+		};
+
+		auto attempt = [&](bool consume_marker) -> bool
+		{
+			const size_t start = recv.position();
+			std::vector<Entry> batch;
+
+			try
+			{
+				if (consume_marker)
+				{
+					if (recv.length() < 3)
+						return false;
+					recv.read_byte();
+				}
+				else if (recv.length() < 2)
+				{
+					return false;
+				}
+
+				const int16_t size = recv.read_short();
+				if (size < 0)
+					return false;
+				// 每条至少 id+level+expiration = 16B；明显越界则换帧
+				if (static_cast<size_t>(size) * 16u > recv.length())
+					return false;
+
+				batch.reserve(static_cast<size_t>(size));
+				for (int16_t i = 0; i < size; i++)
+				{
+					Entry e;
+					e.id = recv.read_int();
+					e.level = recv.read_int();
+					e.expiration = recv.read_long();
+					e.master = skill_has_masterlevel(e.id) ? recv.read_int() : 0;
+					batch.push_back(e);
+				}
+
+				for (const Entry& e : batch)
+					skills.set_skill(e.id, e.level, e.master, e.expiration);
+
+				cp_trace(consume_marker ? "skillbook-framed-marker" : "skillbook-framed-raw",
+					recv.length());
+				return true;
+			}
+			catch (const PacketError&)
+			{
+				recv.seek(start);
+				return false;
+			}
+		};
+
+		if (attempt(true))
+			return;
+		if (attempt(false))
+			return;
+
+		throw PacketError("parse_skillbook: cannot frame skill segment");
 	}
 
 	void CharacterParser::parse_cooldowns(InPacket& recv, Player& player)
 	{
+		cp_trace("cooldowns-start", recv.length());
 		int16_t size = recv.read_short();
 
 		for (int16_t i = 0; i < size; i++)
@@ -94,6 +214,7 @@ namespace ms
 
 	void CharacterParser::parse_questlog(InPacket& recv, QuestLog& quests)
 	{
+		cp_trace("questlog-start", recv.length());
 		// First list: started quests (+ optional infoNumber twin entries as their own qid/qdata).
 		int16_t size = recv.read_short();
 
@@ -117,6 +238,7 @@ namespace ms
 
 	void CharacterParser::parse_ring1(InPacket& recv)
 	{
+		cp_trace("ring1-start", recv.length());
 		int16_t rsize = recv.read_short();
 
 		for (int16_t i = 0; i < rsize; i++)
@@ -132,7 +254,9 @@ namespace ms
 
 	void CharacterParser::parse_ring2(InPacket& recv)
 	{
+		cp_trace("ring2-start", recv.length());
 		int16_t rsize = recv.read_short();
+		cp_trace("ring2-rsize", static_cast<size_t>(rsize));
 
 		for (int16_t i = 0; i < rsize; i++)
 		{
@@ -171,6 +295,7 @@ namespace ms
 
 	void CharacterParser::parse_ring3(InPacket& recv, MarriageInfo& marriage)
 	{
+		cp_trace("ring3-start", recv.length());
 		// s9 PacketCreator.addRingInfo marriage 块：present 为 short（0/1）。
 		int16_t rsize = recv.read_short();
 
@@ -190,6 +315,7 @@ namespace ms
 
 	void CharacterParser::parse_monsterbook(InPacket& recv, MonsterBook& monsterbook)
 	{
+		cp_trace("monsterbook-start", recv.length());
 		monsterbook.set_cover(recv.read_int());
 
 		recv.skip(1);
@@ -207,6 +333,7 @@ namespace ms
 
 	void CharacterParser::parse_teleportrock(InPacket& recv, TeleportRock& teleportrock)
 	{
+		cp_trace("teleportrock-start", recv.length());
 		for (size_t i = 0; i < 5; i++)
 			teleportrock.addlocation(recv.read_int());
 
@@ -216,6 +343,7 @@ namespace ms
 
 	void CharacterParser::parse_nyinfo(InPacket& recv)
 	{
+		cp_trace("nyinfo-start", recv.length());
 		int16_t nysize = recv.read_short();
 
 		for (int16_t i = 0; i < nysize; i++)
@@ -236,6 +364,7 @@ namespace ms
 
 	void CharacterParser::parse_areainfo(InPacket& recv)
 	{
+		cp_trace("areainfo-start", recv.length());
 		std::map<int16_t, std::string> areainfo;
 		int16_t arsize = recv.read_short();
 

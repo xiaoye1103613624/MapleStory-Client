@@ -51,7 +51,7 @@ namespace ms
 		// Release 下 LOG 被定义成 void(0)（MapleStory.h:77），所有 [SetField]
 		// 行都不落盘，白屏时拿不到 Stage::load 是否抛异常的实锤。这里额外写
 		// exe 同目录 setfield_trace.log，绕过日志级别，供进图问题取证。
-		static std::ofstream trace("setfield_trace.log", std::ios::app);
+		static std::ofstream trace("E:\\MXD\\BeiDou-Client-xy\\setfield_trace.log", std::ios::app);
 		if (trace.is_open())
 		{
 			trace << line << std::endl;
@@ -229,7 +229,10 @@ namespace ms
 		// 换图/传送时会把游戏内已切换的分辨率覆盖掉。游戏态视口统一由
 		// transition() 按 window.game_* 恢复（含 enter_game=false 的换图/退出商城），
 		// 登录态由 UI::change_state(State::LOGIN) 恢复；此处不再回灌。
+		enter_game_log("[SetField] HANDLE ENTER");
+
 		int32_t channel = recv.read_int();
+		enter_game_log("[SetField] channel=" + std::to_string((int)channel));
 
 		// 服务端每次 SET_FIELD 的首个 int 就是**当前 0 基频道号**
 		// （BeiDou-Server_s9 util/PacketCreator.java:995 getCharInfo / :1076 getWarpToMap
@@ -241,11 +244,19 @@ namespace ms
 
 		int8_t mode1 = recv.read_byte();
 		int8_t mode2 = recv.read_byte();
+		enter_game_log("[SetField] mode1=" + std::to_string((int)mode1) + " mode2=" + std::to_string((int)mode2));
 
 		if (mode1 == 0 && mode2 == 0)
+		{
+			enter_game_log("[SetField] -> change_map");
 			change_map(recv, channel);
+		}
 		else
+		{
+			enter_game_log("[SetField] -> set_field");
 			set_field(recv);
+		}
+		enter_game_log("[SetField] HANDLE EXIT");
 	}
 
 	void SetFieldHandler::change_map(InPacket& recv, int32_t) const
@@ -262,9 +273,12 @@ namespace ms
 
 	void SetFieldHandler::set_field(InPacket& recv) const
 	{
+		enter_game_log("[SetField] set_field ENTRY avail=" + std::to_string(recv.available()));
 		recv.skip(23);
+		enter_game_log("[SetField] set_field after_skip avail=" + std::to_string(recv.available()));
 
 		int32_t cid = recv.read_int();
+		enter_game_log("[SetField] set_field cid=" + std::to_string(cid));
 		auto charselect = UI::get().get_element<UICharSelect>();
 
 		if (!charselect)
@@ -284,7 +298,11 @@ namespace ms
 			return;
 		}
 
+		enter_game_log("[SetField] set_field get_character ok id=" + std::to_string(playerentry.id));
+		try
+		{
 		Stage::get().loadplayer(playerentry);
+		enter_game_log("[SetField] loadplayer done");
 
 		// SET_FIELD 携带服务端刚从 DB 装载并修正过的权威角色状态；CHARLIST 的
 		// entry 只服务于选角页，其当前 HP/MP 在部分服务端版本是新手默认值。
@@ -292,6 +310,7 @@ namespace ms
 		// 于是进图首帧出现 50/3622 这类假血条，直到后续 STAT_CHANGED 才纠正。
 		// 这里把进图包 stats 应用回 Player，保证「下线多少、上线就是多少」。
 		StatsEntry fieldstats = LoginParser::parse_stats(recv);
+		enter_game_log("[SetField] parse_stats done");
 
 		Player& player = Stage::get().get_player();
 
@@ -316,32 +335,53 @@ namespace ms
 			recv.read_string(); // 'linkedname'
 
 		CharacterParser::parse_inventory(recv, player.get_inventory());
+		enter_game_log("[SetField] parse_inventory done");
 		CharacterParser::parse_skillbook(recv, player.get_skills());
+		enter_game_log("[SetField] parse_skillbook done");
 		CharacterParser::parse_cooldowns(recv, player);
+		enter_game_log("[SetField] parse_cooldowns done");
 		CharacterParser::parse_questlog(recv, player.get_quests());
+		enter_game_log("[SetField] parse_questlog done");
 		CharacterParser::parse_minigame(recv);
 		CharacterParser::parse_ring1(recv);
+		enter_game_log("[SetField] parse_ring1 done");
 		CharacterParser::parse_ring2(recv);
+		enter_game_log("[SetField] parse_ring2 done");
 		CharacterParser::parse_ring3(recv, player.get_marriage());
+		enter_game_log("[SetField] parse_ring3 done");
 		CharacterParser::parse_teleportrock(recv, player.get_teleportrock());
+		enter_game_log("[SetField] parse_teleportrock done");
 		CharacterParser::parse_monsterbook(recv, player.get_monsterbook());
+		enter_game_log("[SetField] parse_monsterbook done");
 		CharacterParser::parse_nyinfo(recv);
+		enter_game_log("[SetField] parse_nyinfo done");
 		CharacterParser::parse_areainfo(recv);
+		enter_game_log("[SetField] parse_areainfo done");
+		enter_game_log("[SetField] all parse_* done");
 		while (recv.available())
 			recv.skip_byte();
 
 		player.recalc_stats(true);
+		enter_game_log("[SetField] recalc_stats done");
 
 		PlayerUpdatePacket().dispatch();
+		enter_game_log("[SetField] PlayerUpdatePacket done");
 
 		uint8_t portalid = player.get_stats().get_portal();
 		int32_t mapid = player.get_stats().get_mapid();
 
 		// 进图淡入已显，不 tip
 		(void)mapid;
+		enter_game_log("[SetField] before transition mapid=" + std::to_string(mapid) + " portal=" + std::to_string((int)portalid));
 
 		transition(mapid, portalid, true);
+		enter_game_log("[SetField] transition returned");
 
 		Sound(Sound::Name::GAMESTART).play();
+		}
+		catch (const std::exception& err)
+		{
+			enter_game_log(std::string("[SetField] THREW: ") + err.what() + " remain=" + std::to_string(recv.length()));
+		}
 	}
 }

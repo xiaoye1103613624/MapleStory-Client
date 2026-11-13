@@ -1017,18 +1017,41 @@ namespace ms
 
 	void AvatarMegaphoneHandler::handle(InPacket& recv) const
 	{
-		std::string name = recv.available() ? recv.read_string() : "";
-		std::string line1 = recv.available() ? recv.read_string() : "";
-		std::string tip = name.empty() ? "Avatar Megaphone" : (name + ": " + line1);
-		LOG(LOG_DEBUG, "AvatarMegaphone from=" << name << " rem=" << recv.available());
+		// s9 PacketCreator.getAvatarMega：int itemId + string(medal+name) + 4×string
+		// + int (channel-1) + bool ear + addCharLook。旧实现先 read_string 会把 itemId
+		// 当成长度前缀，整包错位。
+		const int32_t item_id = recv.available() >= 4 ? recv.read_int() : 0;
+		const std::string name = recv.available() ? recv.read_string() : std::string();
+		std::string tip = name.empty() ? "Avatar Megaphone" : name;
+		for (int i = 0; i < 4 && recv.available(); ++i)
+		{
+			std::string line = recv.read_string();
+			if (line.empty())
+				continue;
+			tip.push_back(i == 0 ? ':' : ' ');
+			if (i == 0)
+				tip.push_back(' ');
+			tip += line;
+		}
+		const int32_t channel = recv.available() >= 4 ? recv.read_int() : -1;
+		const bool ear = recv.available() ? recv.read_bool() : false;
+		(void)ear;
 		while (recv.available())
-			recv.skip_byte();
+			recv.skip_byte(); // addCharLook 尾
+
+		if (channel >= 0)
+			tip = "[Ch." + std::to_string(channel + 1) + "] " + tip;
+
+		LOG(LOG_DEBUG, "AvatarMegaphone item=" << item_id << " name=" << name
+			<< " ch=" << channel);
 		auto ui = UI::get().get_element<UIAvatarMegaphone>();
 		if (!ui) ui = UI::get().emplace<UIAvatarMegaphone>();
 		else if (!ui->is_active()) ui->makeactive();
 		if (ui)
 			ui->set_tip(tip);
-		// note
+
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->show_message(tip.c_str(), UIChatBar::ChatChannel::MEGAPHONE);
 	}
 
 	void ClaimResultHandler::handle(InPacket& recv) const
@@ -2727,12 +2750,15 @@ namespace ms
 
 	void LastConnectedWorldHandler::handle(InPacket& recv) const
 	{
+		// Angel CLogin::OnLatestConnectedWorld @0x5f82f4：Decode4 → SetFocusWorld。
+		// 仅语义对齐高亮；不改 s9 opcode / 字段宽度。253/254/255 特殊值由 UI 侧消化。
 		int32_t world = recv.available() >= 4 ? recv.read_int() : 0;
 		LOG(LOG_DEBUG, "LastConnectedWorld=" << world);
 		while (recv.available())
 			recv.skip_byte();
-		// note
-		(void)world;
+
+		if (auto ws = UI::get().get_element<UIWorldSelect>())
+			ws->set_focus_world(world);
 	}
 
 	void RecommendedWorldMessageHandler::handle(InPacket& recv) const

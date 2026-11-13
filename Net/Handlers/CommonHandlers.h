@@ -33,4 +33,11 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// 套装/战斗面板同步（SendOpcode.SET_ITEM_FINAL_DAMAGE = 0x175）
+	// 仅刷新属性窗显示，不改客户端伤害公式。
+	class SetItemFinalDamageHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

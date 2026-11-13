@@ -65,18 +65,27 @@ namespace ms
 
 	// Packet which requests that an item is equipped
 	// Opcode: MOVE_ITEM(71)
+	// 2026-11-12：EquipSlot::Id 是连续数组索引，不是 wire BodyPart。
+	// 必须经 wire_bodypart() 转成官方负数位（SHOULDER→-20、PENDANT2→-51、
+	// TOTEM→-55..-58 等），否则服务端 EquipSlot.isAllowed() 会拒绝穿戴。
 	class EquipItemPacket : public MoveItemPacket
 	{
 	public:
-		EquipItemPacket(int16_t src, EquipSlot::Id dest) : MoveItemPacket(InventoryType::Id::EQUIP, src, -dest, 1) {}
+		EquipItemPacket(int16_t src, EquipSlot::Id dest)
+			: MoveItemPacket(InventoryType::Id::EQUIP, src,
+				-static_cast<int16_t>(EquipSlot::wire_bodypart(dest)), 1) {}
 	};
 
 	// Packet which requests that an item is unequipped
 	// Opcode: MOVE_ITEM(71)
+	// src 是 EquipSlot::Id（来自 UIEquipInventory::slot_by_position 等），
+	// 同样要转 wire；dest 是背包目标槽（正数），不动。
 	class UnequipItemPacket : public MoveItemPacket
 	{
 	public:
-		UnequipItemPacket(int16_t src, int16_t dest) : MoveItemPacket(InventoryType::Id::EQUIPPED, -src, dest, 1) {}
+		UnequipItemPacket(EquipSlot::Id src, int16_t dest)
+			: MoveItemPacket(InventoryType::Id::EQUIPPED,
+				-static_cast<int16_t>(EquipSlot::wire_bodypart(src)), dest, 1) {}
 	};
 
 	// A packet which requests that an 'USE' item is used
@@ -167,7 +176,7 @@ namespace ms
 		{
 			write_time();
 			write_short(source);
-			write_short(-target);
+			write_short(-static_cast<int16_t>(EquipSlot::wire_bodypart(target)));
 			write_short(flags);
 		}
 

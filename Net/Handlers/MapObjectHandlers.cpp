@@ -29,8 +29,10 @@
 #include "../../IO/UITypes/UIItemInventory.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Graphics/Color.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include <string>
+#include "../../Configuration.h"
 
 namespace ms
 {
@@ -731,20 +733,24 @@ namespace ms
 	{
 		int32_t oid = recv.read_int();
 
-		recv.read_byte();
-		recv.read_byte(); // useskill
-		recv.read_byte(); // skill
-		recv.read_byte(); // skill 1
-		recv.read_byte(); // skill 2
-		recv.read_byte(); // skill 3
-		recv.read_byte(); // skill 4
+		// s9 moveMonster 结构：int oid + byte(0) + bool skillPossible + byte skill +
+		// byte skillId + byte skillLevel + short pOption + pos + movement list。
+		// 共 7 字节技能头（pOption 为 short，拆成 2 字节消费，与原本 7×read_byte 对齐）。
+		recv.read_byte(); // 固定 0
+		bool skillpossible = recv.read_byte() != 0;
+		uint8_t skillbyte = static_cast<uint8_t>(recv.read_byte());
+		int8_t skillid = static_cast<int8_t>(recv.read_byte());
+		int8_t skilllevel = static_cast<int8_t>(recv.read_byte());
+		int16_t poption = recv.read_short(); // pOption
 
 		Point<int16_t> position = recv.read_point();
 		std::vector<Movement> movements = MovementParser::parse_movements(recv);
 		while (recv.available())
 			recv.skip_byte();
 
-		Stage::get().get_mobs().send_movement(oid, position, std::move(movements));
+		uint8_t usedskill = (skillpossible && skillbyte != 0) ? skillbyte : 0;
+		Stage::get().get_mobs().send_movement(oid, position, std::move(movements),
+			usedskill, skillid, skilllevel, poption);
 	}
 
 	void ShowMobHpHandler::handle(InPacket& recv) const
@@ -857,12 +863,30 @@ namespace ms
 		if (!meso)
 			recv.skip(8);
 
-		bool playerdrop = !recv.read_bool();
+		// ⑥ 掉落品质光环：尾部字段版本门控。
+		// 新服务端 = [grade:1B][playerDrop:1B]（PacketCreator.java:1926/1953 两处分支同位置插入），
+		// 旧服务端 = [playerDrop:1B]。必须按剩余字节数判定 ——
+		// 直接把第一个字节当 playerDrop 读，会把 grade 吃掉并让真 playerDrop 被下面的
+		// while 循环吞掉（Round 3 只读盘点定的 P0：掉落归属会反转）。
+		int8_t grade = 0;
+		bool playerdrop = true;
+
+		if (recv.available() >= 2)
+		{
+			grade = recv.read_byte();
+			playerdrop = !recv.read_bool();
+		}
+		else if (recv.available() == 1)
+		{
+			// 旧服务端包体：无 grade 字节，按普通掉落处理（不画光环）。
+			playerdrop = !recv.read_bool();
+		}
+
 		while (recv.available())
 			recv.skip_byte();
 
 		Stage::get().get_drops().spawn(
-			{ oid, itemid, meso, owner, dropfrom, dropto, pickuptype, mode, playerdrop }
+			{ oid, itemid, meso, owner, dropfrom, dropto, pickuptype, mode, playerdrop, grade }
 		);
 	}
 
@@ -887,9 +911,11 @@ namespace ms
 			if (auto character = Stage::get().get_character(cid))
 				looter = character->get_phobj(); // 宠物贴附在主人处，飞向其位置
 
+			// 083 拾取走 CHATLOG_ADD。只记自己的拾取，避免别人捡东西刷屏。
+			if (Stage::get().is_player(cid))
+				map_tip(Locale::text("drop.picked_up"), Color::Name::WHITE);
+
 			Sound(Sound::Name::PICKUP).play();
-			// Pickup 过密，不 tip
-			(void)cid;
 		}
 		while (recv.available())
 			recv.skip_byte();
@@ -1469,6 +1495,14 @@ namespace ms
 	void DamageSkinHandler::handle(InPacket& recv) const
 	{
 		int32_t skin = recv.available() >= 4 ? recv.read_int() : 0;
+		// s9 has no c2s path writing damage_skin, so the login packet always
+		// carries 0. A non-zero value is authoritative; zero must not erase
+		// the locally selected skin (otherwise it is lost on every relog).
+		if (skin != 0) {
+			Configuration::get().set_damage_skin(skin);
+		} else {
+			skin = Configuration::get().get_damage_skin();
+		}
 		Stage::get().get_player().set_damage_skin(skin);
 	}
 
@@ -1631,6 +1665,9 @@ namespace ms
 		int8_t count = recv.available() ? recv.read_byte() : 0;
 		LOG(LOG_DEBUG, "SummonAttack cid=" << cid << " oid=" << oid
 			<< " dir=" << (int)dir << " hits=" << (int)count);
+		// 召唤物本体播 attack1 帧（橙子实测多数召唤物有 attack1；缺则无动作）。
+		Stage::get().get_field_markers().summon_attack(oid);
+
 		int32_t total = 0;
 		for (int8_t i = 0; i < count && recv.available() >= 9; ++i)
 		{
