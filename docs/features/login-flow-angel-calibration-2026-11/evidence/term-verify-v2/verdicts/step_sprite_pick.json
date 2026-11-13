@@ -1,0 +1,67 @@
+{
+  "box": [
+    0,
+    30,
+    160,
+    92
+  ],
+  "frames": {
+    "TGT_char": "targets_desktop/desktop_char_select.png",
+    "TGT_race": "targets_desktop/desktop_racecreate_race.png",
+    "TGT_create": "targets_desktop/desktop_racecreate_adventurer.png",
+    "OUR_create": "shots/scene_reset_2_creation.png",
+    "OUR_char": "shots/v2_racecreate_settled.png",
+    "OUR_race": "shots/scene_reset_1_race_before.png"
+  },
+  "ncc": {
+    "TGT_char": {
+      "TGT_char": 1.0,
+      "TGT_race": 0.8944,
+      "TGT_create": 0.899,
+      "OUR_create": 0.8337,
+      "OUR_char": -0.1115,
+      "OUR_race": -0.109
+    },
+    "TGT_race": {
+      "TGT_char": 0.8944,
+      "TGT_race": 1.0,
+      "TGT_create": 0.9774,
+      "OUR_create": 0.9096,
+      "OUR_char": -0.0947,
+      "OUR_race": -0.049
+    },
+    "TGT_create": {
+      "TGT_char": 0.899,
+      "TGT_race": 0.9774,
+      "TGT_create": 1.0,
+      "OUR_create": 0.9308,
+      "OUR_char": -0.0858,
+      "OUR_race": -0.0644
+    },
+    "OUR_create": {
+      "TGT_char": 0.8337,
+      "TGT_race": 0.9096,
+      "TGT_create": 0.9308,
+      "OUR_create": 1.0,
+      "OUR_char": -0.0518,
+      "OUR_race": -0.0305
+    },
+    "OUR_char": {
+      "TGT_char": -0.1115,
+      "TGT_race": -0.0947,
+      "TGT_create": -0.0858,
+      "OUR_create": -0.0518,
+      "OUR_char": 1.0,
+      "OUR_race": 0.9107
+    },
+    "OUR_race": {
+      "TGT_char": -0.109,
+      "TGT_race": -0.049,
+      "TGT_create": -0.0644,
+      "OUR_create": -0.0305,
+      "OUR_char": 0.9107,
+      "OUR_race": 1.0
+    }
+  },
+  "conclusion": "see printed matrix; OUR_create is the proven step/3 render baseline"
+}

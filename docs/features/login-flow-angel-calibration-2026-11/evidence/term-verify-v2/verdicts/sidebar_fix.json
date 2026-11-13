@@ -1,0 +1,111 @@
+{
+  "method": "current-HEAD exe + single-instance + protocol-anchor + force_game_top + BitBlt",
+  "ts": "2026-11-14 03:54:13",
+  "strip_box": [
+    0,
+    0,
+    160,
+    470
+  ],
+  "blocks": {
+    "title_y36_85": [
+      36,
+      85
+    ],
+    "worldbar_y96_148": [
+      96,
+      148
+    ],
+    "viewall_y377_399": [
+      377,
+      399
+    ],
+    "home_y427_449": [
+      427,
+      449
+    ]
+  },
+  "config_head_before": "b'# M'",
+  "fix_under_test": "UICharSelect/UIRaceSelect 左侧四块：cs_/rs_step(0,33) + world_box(0,96) + BtViewAll(0,377) + BtStart(0,427)，装饰绝对坐标绘制，按钮局部=绝对-position",
+  "pid": 35492,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "field_input": {
+    "account": {
+      "text": "admin",
+      "sent_ok": true
+    },
+    "password": {
+      "text": "admin",
+      "sent_ok": true
+    }
+  },
+  "serverlist_anchor_hit": true,
+  "charlist_hit": true,
+  "frames": {
+    "sidebar_fix_1_charselect": {
+      "file": "sidebar_fix_1_charselect.png",
+      "path": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\sidebar_fix_1_charselect.png",
+      "mean": 143.99,
+      "std": 77.6,
+      "uniq": 1369,
+      "real_gl_frame": true
+    },
+    "sidebar_fix_2_raceselect": {
+      "file": "sidebar_fix_2_raceselect.png",
+      "path": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\sidebar_fix_2_raceselect.png",
+      "mean": 134.87,
+      "std": 76.7,
+      "uniq": 1113,
+      "real_gl_frame": true
+    }
+  },
+  "pages": [
+    {
+      "page": "char_select",
+      "shot": "sidebar_fix_1_charselect.png",
+      "target": "desktop_char_select.png",
+      "strip_ncc": 0.9313,
+      "blocks": {
+        "title_y36_85": 0.811,
+        "worldbar_y96_148": 0.8039,
+        "viewall_y377_399": 0.9594,
+        "home_y427_449": 0.7164
+      },
+      "blocks_present_gt0_5": 4,
+      "real_gl_frame": true,
+      "strip_pass": true
+    },
+    {
+      "page": "race_select",
+      "shot": "sidebar_fix_2_raceselect.png",
+      "target": "desktop_racecreate_race.png",
+      "strip_ncc": 0.9508,
+      "blocks": {
+        "title_y36_85": 1.0,
+        "worldbar_y96_148": 0.8246,
+        "viewall_y377_399": 0.9971,
+        "home_y427_449": 0.6543
+      },
+      "blocks_present_gt0_5": 4,
+      "real_gl_frame": true,
+      "strip_pass": true
+    }
+  ],
+  "verdict": {
+    "all_pass": true,
+    "detail": "SIDEBAR_FIX_VERIFIED"
+  },
+  "send_nonheartbeat": [
+    "[SEND] PacketDump : 01 00 05 00 61 64 6d 69 6e 05 00 61 64 6d 69 6e 00 00 00 00 ",
+    "[SEND] PacketDump : 0b 00 ",
+    "[SEND] PacketDump : 06 00 00 00 ",
+    "[SEND] PacketDump : 05 00 00 00 00 "
+  ],
+  "config_head_after": "b'# M'"
+}

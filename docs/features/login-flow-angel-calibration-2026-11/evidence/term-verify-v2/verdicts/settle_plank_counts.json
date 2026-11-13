@@ -1,0 +1,197 @@
+{
+  "TGT_login": {
+    "path": "targets_desktop/desktop_login.png",
+    "segments": [
+      [
+        166,
+        186
+      ]
+    ],
+    "seg_peaks": [
+      0.388
+    ],
+    "mean_dark": 0.1479
+  },
+  "TGT_channel": {
+    "path": "targets_desktop/desktop_channel_expanded.png",
+    "segments": [
+      [
+        36,
+        85
+      ],
+      [
+        127,
+        153
+      ],
+      [
+        377,
+        383
+      ],
+      [
+        390,
+        399
+      ],
+      [
+        427,
+        449
+      ]
+    ],
+    "seg_peaks": [
+      0.956,
+      0.925,
+      0.7,
+      0.713,
+      0.65
+    ],
+    "mean_dark": 0.2504
+  },
+  "TGT_char": {
+    "path": "targets_desktop/desktop_char_select.png",
+    "segments": [
+      [
+        36,
+        85
+      ],
+      [
+        99,
+        148
+      ],
+      [
+        377,
+        383
+      ],
+      [
+        390,
+        399
+      ],
+      [
+        427,
+        433
+      ],
+      [
+        441,
+        449
+      ]
+    ],
+    "seg_peaks": [
+      0.956,
+      0.975,
+      0.569,
+      0.569,
+      0.55,
+      0.594
+    ],
+    "mean_dark": 0.2707
+  },
+  "TGT_race": {
+    "path": "targets_desktop/desktop_racecreate_race.png",
+    "segments": [
+      [
+        36,
+        85
+      ],
+      [
+        99,
+        148
+      ],
+      [
+        377,
+        399
+      ],
+      [
+        427,
+        449
+      ]
+    ],
+    "seg_peaks": [
+      0.975,
+      0.944,
+      0.787,
+      0.706
+    ],
+    "mean_dark": 0.3211
+  },
+  "TGT_create": {
+    "path": "targets_desktop/desktop_racecreate_adventurer.png",
+    "segments": [
+      [
+        36,
+        85
+      ],
+      [
+        89,
+        95
+      ],
+      [
+        99,
+        148
+      ],
+      [
+        343,
+        350
+      ],
+      [
+        377,
+        415
+      ],
+      [
+        427,
+        449
+      ]
+    ],
+    "seg_peaks": [
+      0.975,
+      0.963,
+      0.975,
+      0.394,
+      0.95,
+      0.875
+    ],
+    "mean_dark": 0.3998
+  },
+  "OUR_char": {
+    "path": "shots/v2_racecreate_settled.png",
+    "segments": [],
+    "seg_peaks": [],
+    "mean_dark": 0.0459
+  },
+  "OUR_race": {
+    "path": "shots/scene_reset_1_race_before.png",
+    "segments": [],
+    "seg_peaks": [],
+    "mean_dark": 0.1123
+  },
+  "OUR_create": {
+    "path": "shots/scene_reset_2_creation.png",
+    "segments": [
+      [
+        36,
+        85
+      ],
+      [
+        99,
+        148
+      ],
+      [
+        343,
+        350
+      ],
+      [
+        377,
+        415
+      ],
+      [
+        429,
+        451
+      ]
+    ],
+    "seg_peaks": [
+      0.975,
+      0.975,
+      0.394,
+      0.95,
+      0.881
+    ],
+    "mean_dark": 0.3895
+  }
+}
