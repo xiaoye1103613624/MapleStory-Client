@@ -576,15 +576,27 @@ namespace ms
 			case Buttons::BT_COIN:
 			case Buttons::BT_COIN_SM:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t amt = std::stoi(s);
-						if (amt > 0) {
-							MesoDropPacket(amt).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: MesoDrop amt=" << amt);
-						}
-					} catch (...) {}
-				}, []() {}, "Drop meso");
+				// 083 CUIItem::OnDropMoney @0x81d996 → CUtilDlgEx 数字框 → MESO_DROP(94)。
+				// 历史上的 SoftKey 是 softkey 波次临时接线，会弹 PIC 软键盘而非数量输入。
+				int32_t meso = static_cast<int32_t>(inventory.get_meso());
+
+				if (meso <= 0)
+					return Button::State::NORMAL;
+
+				auto onenter = [](int32_t amt)
+				{
+					if (amt > 0)
+					{
+						MesoDropPacket(amt).dispatch();
+						LOG(LOG_DEBUG, "UIItemInventory: MesoDrop amt=" << amt);
+					}
+				};
+
+				UI::get().emplace<UIEnterNumber>(
+					Locale::text("inventory.drop_meso"),
+					onenter,
+					meso,
+					meso);
 				return Button::State::NORMAL;
 			}
 			case Buttons::BT_EXTRACT:
@@ -1153,9 +1165,41 @@ namespace ms
 		}
 		else
 		{
-			clear_tooltip();
+			// 083 CUIItem::OnChildNotify @0x81d01f a3==101：整理/扩展/收起悬停文案。
+			// 0x7D7 现金扩槽与 2003 槽位合并没有对应按钮，文案键保留、不发明控件。
+			Cursor::State bstate = UIElement::send_cursor(pressed, cursorpos);
 
-			return UIElement::send_cursor(pressed, cursorpos);
+			const char* tip_key = nullptr;
+			struct Tip { uint16_t id; const char* key; };
+			static const Tip tips[] = {
+				{ Buttons::BT_SORT, "inventory.tip_sort" },
+				{ Buttons::BT_SORT_SM, "inventory.tip_sort" },
+				{ Buttons::BT_GATHER, "inventory.tip_gather" },
+				{ Buttons::BT_GATHER_SM, "inventory.tip_gather" },
+				{ Buttons::BT_FULL, "inventory.tip_expand" },
+				{ Buttons::BT_SMALL, "inventory.tip_collapse" },
+			};
+
+			for (const Tip& tip : tips)
+			{
+				auto it = buttons.find(tip.id);
+
+				if (it == buttons.end() || !it->second || !it->second->is_active())
+					continue;
+
+				if (it->second->bounds(position).contains(cursorpos))
+				{
+					tip_key = tip.key;
+					break;
+				}
+			}
+
+			if (tip_key)
+				UI::get().show_text(Tooltip::Parent::ITEMINVENTORY, Locale::text(tip_key));
+			else
+				clear_tooltip();
+
+			return bstate;
 		}
 	}
 
@@ -1308,18 +1352,6 @@ namespace ms
 						} catch (...) {}
 					}, []() {}, "Move src,dst");
 				}
-			}
-			else if (keycode == 'Y' || keycode == 'y')
-			{
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t amt = std::stoi(s);
-						if (amt > 0) {
-							MesoDropPacket(amt).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: SoftKey meso drop=" << amt);
-						}
-					} catch (...) {}
-				}, []() {}, "Meso amt");
 			}
 			else if (keycode == 'F' || keycode == 'f')
 			{

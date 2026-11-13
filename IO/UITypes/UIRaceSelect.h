@@ -65,7 +65,8 @@ namespace ms
 
 		static constexpr uint16_t INDEX_COUNT = 6;
 		static constexpr uint16_t SELECTED_LIST = 35;
-		static constexpr uint16_t CLASSIC_CLASS_COUNT = 3;
+		// classic：骑士团 / 冒险家 / 战神 / 龙神 / 双刀（后两者缺专属 RaceSelect 卡时回落 aran/normal 图）
+		static constexpr uint16_t CLASSIC_CLASS_COUNT = 5;
 
 		enum Buttons : uint16_t
 		{
@@ -168,5 +169,7 @@ namespace ms
 		Point<int16_t> classic_text_pos;
 		Point<int16_t> classic_select_pos;
 		uint16_t classic_classes[CLASSIC_CLASS_COUNT];
+		// 五职业团卡面下方文字标签（龙神/双刀无专属 RaceSelect 图时用于辨认）
+		Text classic_card_label[CLASSIC_CLASS_COUNT];
 	};
 }

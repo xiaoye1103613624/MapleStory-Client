@@ -56,15 +56,26 @@ namespace ms
 		if (trade["backgrnd"])
 			sprites.emplace_back(Sprite(trade["backgrnd"], Point<int16_t>(0, 0)));
 
+		// 坐标对齐 Angel CTradingRoomDlg::OnCreate（IDA 0x7c23d0）。
 		struct BtnDef { const char* name; uint16_t id; Point<int16_t> pos; };
 		const BtnDef defs[] = {
-			{ "BtCoin",   BtCoin,   Point<int16_t>(3, 242) },
-			{ "BtReset",  BtReset,  Point<int16_t>(300, 438) },
-			{ "BtTrade",  BtTrade,  Point<int16_t>(380, 438) },
+			{ "BtCoin",   BtCoin,   Point<int16_t>(170, 244) },
+			{ "BtReset",  BtReset,  Point<int16_t>(116, 71) },
+			{ "BtTrade",  BtTrade,  Point<int16_t>(116, 49) },
 			{ "BtCancel", BtCancel, Point<int16_t>(460, 438) },
+			{ "BtEnter",  BtEnter,  Point<int16_t>(520, 244) },
 		};
 		for (const auto& d : defs)
 			try_maple_btn(buttons, d.id, trade[d.name], d.pos, "UITrade");
+		// TradingRoom 无 BtEnter（orange-wz）；Angel 用 Messenger 同款 BtEnter @ (520,244)。
+		if (!trade["BtEnter"])
+		{
+			nl::node enter = UiAssetResolve::window("Messenger")["BtEnter"];
+			if (!enter)
+				enter = trade["BtClaim"];
+			if (enter)
+				try_maple_btn(buttons, BtEnter, enter, Point<int16_t>(520, 244), "UITrade");
+		}
 	}
 
 	void UITrade::draw(float alpha) const
@@ -157,7 +168,8 @@ namespace ms
 
 	void UITrade::set_meso(uint8_t number, int64_t meso)
 	{
-		if (number == 0)
+		// s9 getTradeMesoSet 的 number 是交易席位（0/1），须相对 my_number 映射。
+		if (number == my_number)
 			my_meso = meso;
 		else
 			partner_meso = meso;
@@ -165,7 +177,7 @@ namespace ms
 
 	void UITrade::add_item(uint8_t number, uint8_t slot, int32_t itemid, int16_t quantity)
 	{
-		std::vector<TradeSlot>& list = (number == 0) ? my_items : partner_items;
+		std::vector<TradeSlot>& list = (number == my_number) ? my_items : partner_items;
 		for (auto& s : list)
 		{
 			if (s.slot == slot)
@@ -265,7 +277,7 @@ namespace ms
 				clear_state();
 				deactivate();
 				break;
-			case BtChat:
+			case BtEnter:
 				prompt_chat();
 				break;
 		}

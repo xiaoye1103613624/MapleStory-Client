@@ -17,8 +17,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UINotice.h"
 
-#include "UISoftKey.h"
-
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
@@ -87,8 +85,8 @@ namespace ms
 		if (type != NoticeType::ENTERNUMBER)
 			Sound(Sound::Name::DLGNOTICE).play();
 
-		// 多分辨率：PosNOTICE(400,285) 是 800×600 时代按中心点记的常量，在其它档位
-		// 会明显偏左上。非 1280×720 视口下按视口居中；1280×720 保留原生绝对位置。
+		// Center 策略：非 1280×720 视口居中；1280×720 保留 PosNOTICE 绝对位置。
+		set_layout_policy(LayoutPolicy::Center);
 		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
 			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
 			center_on_screen();
@@ -96,10 +94,9 @@ namespace ms
 
 	UINotice::UINotice(std::string message, NoticeType t) : UINotice(message, t, Text::Alignment::CENTER) {}
 
-	void UINotice::update_screen(int16_t, int16_t)
+	void UINotice::update_screen(int16_t new_width, int16_t new_height)
 	{
-		// 弹窗族（UINotice / UIYesNo / UIEnterNumber / UIOk）在实时切换分辨率时居中重锚。
-		center_on_screen();
+		UIElement::update_screen(new_width, new_height);
 	}
 
 	void UINotice::draw(bool textfield) const
@@ -188,19 +185,8 @@ namespace ms
 			yesnohandler(false);
 			deactivate();
 		}
-		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
-			|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
-		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "y" || t == "yes" || t == "ok" || t == "1")
-					button_pressed(Buttons::YES);
-				else if (t == "n" || t == "no" || t == "0")
-					button_pressed(Buttons::NO);
-			}, []() {}, "y|n");
-		}
+		// 2026-11-11：移除 S/T/Y/N → SoftKey 残枝。原生 YesNo 只认 RETURN / ESC；
+		// 这些字母捷径会把「点确认」劫持成软键盘，破坏正常弹窗逻辑。
 	}
 
 	UIElement::Type UIYesNo::get_type() const
@@ -304,16 +290,7 @@ namespace ms
 		{
 			deactivate();
 		}
-		else if (keycode == 'S' || keycode == 's' || keycode == 'N' || keycode == 'n')
-		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				if (s.empty()) return;
-				numfield.change_text(s);
-				handlestring(s);
-				deactivate();
-				LOG(LOG_DEBUG, "UIEnterNumber: SoftKey number=" << s);
-			}, []() {}, "Enter number");
-		}
+		// 2026-11-11：移除 S/N → SoftKey。数字框本身已聚焦接收键盘输入。
 	}
 
 	UIElement::Type UIEnterNumber::get_type() const
@@ -423,21 +400,7 @@ namespace ms
 				okhandler(false);
 				deactivate();
 			}
-			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
-				|| keycode == 'Y' || keycode == 'y' || keycode == 'O' || keycode == 'o')
-			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "1")
-						button_pressed(Buttons::OK);
-					else if (t == "n" || t == "no" || t == "0" || t == "cancel") {
-						okhandler(false);
-						deactivate();
-					}
-				}, []() {}, "ok|cancel");
-			}
+			// 2026-11-11：移除 S/T/Y/O → SoftKey。原生 UIOk 只认 RETURN / ESC。
 		}
 	}
 

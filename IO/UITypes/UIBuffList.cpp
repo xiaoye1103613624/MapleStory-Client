@@ -159,6 +159,9 @@ namespace ms
 	UIBuffList::UIBuffList() :
 		show_timer(Configuration::get().get_buff_timer())
 	{
+		// Edge 右上：图标条从右缘向左铺；dimension.x 历史语义见 update_screen。
+		set_layout_edge(LayoutEdge::TopRight, Point<int16_t>(35, 55));
+
 		int16_t height = Constants::Constants::get().get_viewheight();
 		int16_t width = Constants::Constants::get().get_viewwidth();
 
@@ -195,7 +198,10 @@ namespace ms
 
 	void UIBuffList::update_screen(int16_t new_width, int16_t)
 	{
-		position = Point<int16_t>(new_width - 35, 55);
+		// 锚点是「右缘内侧 35px」处的单格原点，不是窗口左上；故不用基类 Edge 的 dim 减法。
+		position = Point<int16_t>(
+			static_cast<int16_t>(new_width - layout_margin.x()),
+			layout_margin.y());
 		dimension = Point<int16_t>(position.x(), 32);
 	}
 

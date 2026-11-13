@@ -40,7 +40,8 @@ namespace ms
 	{
 	public:
 		static constexpr Type TYPE = UIElement::Type::TRADE;
-		static constexpr bool FOCUSED = false;
+		// Angel CTradingRoomDlg 为模态交互窗；聚焦以便快捷键落到本窗。
+		static constexpr bool FOCUSED = true;
 		static constexpr bool TOGGLED = false;
 
 		UITrade();
@@ -69,11 +70,11 @@ namespace ms
 	private:
 		enum Buttons : uint16_t
 		{
-			BtCoin,    // UIWindow.img/TradingRoom/BtCoin
-			BtReset,   // BtReset
-			BtTrade,   // BtTrade
-			BtCancel,  // BtCancel
-			BtChat     // 原生无此钮，仅由快捷键触发
+			BtCoin,    // Angel OnCreate id 1003 @ (170,244)
+			BtReset,   // id 2 @ (116,71) — s9 无 RESET，等价 EXIT
+			BtTrade,   // id 1002 @ (116,49)
+			BtCancel,  // 部署资源 BtCancel；Angel 多用 Esc/Leave
+			BtEnter    // Angel BtEnter @ (520,244) 发聊天（无独立 BtChat）
 		};
 
 		void prompt_meso();

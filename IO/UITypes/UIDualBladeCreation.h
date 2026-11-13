@@ -1,0 +1,15 @@
+//////////////////////////////////////////////////////////////////////////////////
+//	Dual Blade (双刀) creation — CREATE_CHAR job=4
+//////////////////////////////////////////////////////////////////////////////////
+#pragma once
+
+#include "UICommonCreation.h"
+
+namespace ms
+{
+	class UIDualBladeCreation : public UICommonCreation
+	{
+	public:
+		UIDualBladeCreation() : UICommonCreation("0004") {}
+	};
+}

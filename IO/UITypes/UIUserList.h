@@ -158,7 +158,8 @@ namespace ms
 		// Buddy tab
 		uint16_t friend_tab;
 		int friend_count = 0;
-		int friend_total = 50;
+		// 083 好友上限 25（正确截图「0/25」；旧 50 是 Journey/v095 残留）。
+		int friend_total = 25;
 		std::vector<Sprite> friend_sprites;
 		Texture friend_grid[4];
 		Text friends_online_text;
@@ -184,6 +185,11 @@ namespace ms
 		Text guild_notice_text;			// 公告文字（白条内）
 		Text guild_none_text;			// 米色标题条上的「没有参加的家族」
 		int32_t guild_selected_cid = 0;
+		// P1：好友/组员行选中（cid），供 Whisper/Where/Delete 等钮直接消费，免二次 SoftKey 输名。
+		int32_t friend_selected_cid = 0;
+		int32_t party_selected_cid = 0;
+		int32_t friend_row_at(Point<int16_t> cursorpos) const;	// → cid，0 无
+		int32_t party_row_at(Point<int16_t> cursorpos) const;
 
 		// ---- 2026-11-08 五页签运行时资源（全部取自 UIWindow.img/UserList 真实节点） ----
 		// 落位为 5 张 oracle 帧的目视初值，后续用 layout.py 逐格校准（见 notes §7）。

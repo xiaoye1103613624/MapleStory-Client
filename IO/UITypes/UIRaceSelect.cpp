@@ -7,6 +7,8 @@
 #include "UIAranCreation.h"
 #include "UICharSelect.h"
 #include "UICygnusCreation.h"
+#include "UIDualBladeCreation.h"
+#include "UIEvanCreation.h"
 #include "UIExplorerCreation.h"
 #include "UIMiscShells.h"
 #include "UILoginNotice.h"
@@ -18,6 +20,7 @@
 
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
+#include "../../Graphics/Text.h"
 
 #include "../../Configuration.h"
 #include "../../Constants.h"
@@ -48,10 +51,12 @@ namespace ms
 			mouseover[i] = false;
 		}
 
-		// IDA OnCreate: BtKnight@104 / BtNormal@293 / BtAran@511 (left→right).
+		// IDA OnCreate: BtKnight@104 / BtNormal@293 / BtAran@511；本端向后追加龙神/双刀。
 		classic_classes[0] = Classes::CYGNUSKNIGHTS;
 		classic_classes[1] = Classes::EXPLORERS;
 		classic_classes[2] = Classes::ARAN;
+		classic_classes[3] = Classes::EVAN;
+		classic_classes[4] = Classes::DUALBLADE;
 
 		if (LoginUiAssets::use_classic_race_select())
 		{
@@ -99,45 +104,45 @@ namespace ms
 
 		dimension = Point<int16_t>(kClassicWndW, kClassicWndH);
 
-		// IDA CUINewCharRaceSelect::OnCreate — left knight, mid explorer, right aran.
-		nl::node nodes[CLASSIC_CLASS_COUNT] = { RaceSelect["knight"], RaceSelect["normal"], RaceSelect["aran"] };
-		const char* btn_names[CLASSIC_CLASS_COUNT] = { "BtKnight", "BtNormal", "BtAran" };
+		// 前三职业走原生 RaceSelect/{knight,normal,aran}；龙神/双刀优先同名节点，缺则回落 aran/normal 卡面。
+		nl::node nodes[CLASSIC_CLASS_COUNT] = {
+			RaceSelect["knight"],
+			RaceSelect["normal"],
+			RaceSelect["aran"],
+			RaceSelect["evan"] ? RaceSelect["evan"] : (RaceSelect["Evan"] ? RaceSelect["Evan"] : RaceSelect["aran"]),
+			RaceSelect["dual"] ? RaceSelect["dual"] : (RaceSelect["dualBlade"] ? RaceSelect["dualBlade"] : RaceSelect["normal"])
+		};
+		const char* btn_names[CLASSIC_CLASS_COUNT] = { "BtKnight", "BtNormal", "BtAran", "BtAran", "BtNormal" };
 
-		classic_card_pos[0] = Point<int16_t>(104, 79);
-		classic_card_pos[1] = Point<int16_t>(293, 79);
-		classic_card_pos[2] = Point<int16_t>(511, 80);
-		// Description banner sits under the cards inside the 700x460 wnd.
-		// 【2026-11-03 修复】原值 (60,270) 被参考图像素实测证伪：desc_board 原生渲染在 (358,351)，代码 pos+(60,270)=(300,310) →
-		// 差值 (+58,+41)。改 (118,311) 后与原生对齐。
+		// 五卡横排压缩进 700 窗宽（原三卡 104/293/511）。
+		classic_card_pos[0] = Point<int16_t>(40, 90);
+		classic_card_pos[1] = Point<int16_t>(170, 90);
+		classic_card_pos[2] = Point<int16_t>(300, 90);
+		classic_card_pos[3] = Point<int16_t>(430, 90);
+		classic_card_pos[4] = Point<int16_t>(560, 90);
 		classic_text_pos = Point<int16_t>(118, 311);
-		// IDA: CCtrlButton Create id:1003 BtSelect @ (530, 422). 实测 bt_select 原生在 (770,462)，窗口原点 (240,40) → 相对 (530,422) ✅ 无需改。
 		classic_select_pos = Point<int16_t>(530, 422);
 
 		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
 		{
 			nl::node card = nodes[i];
 			nl::node btn = card[btn_names[i]];
+			if (!btn)
+			{
+				// 回落卡可能无同名按钮，改扫 card 下第一个含 normal 的子节点
+				btn = card["BtKnight"] ? card["BtKnight"] : (card["BtNormal"] ? card["BtNormal"] : card["BtAran"]);
+			}
 
 			classic_card[i] = btn["normal"]["0"];
 			classic_card_over[i] = btn["mouseOver"]["0"] ? Texture(btn["mouseOver"]["0"]) : classic_card[i];
 			classic_on_ani[i] = Sprite(card["OnAnimation"]);
-			// 修复（2026-11-03 实机：种族选择页底部大面积空缺）：原生底部说明横幅
-			//（579x163 描述板）不显示的根因——运行时取证 Login.img_runtime.json：
-			// RaceSelect/{knight,normal,aran}/text 是目录节点，位图在其子节点 "0"
-			//（text/0 = 579x163）。Texture(nl::node) 仅接受 data_type==bitmap，
-			// 旧代码 classic_text[i] = card["text"] 拿到 dir 节点 → 无效纹理 →
-			// draw() 静默 no-op → 底部整块缺失。同文件上方 classic_card 用的正是
-			// btn["normal"]["0"] 取法，此处漏了 ["0"]。R6 守卫：缺节点时留无效
-			// 纹理，draw 自然跳过不崩。
 			classic_text[i] = card["text"]["0"] ? Texture(card["text"]["0"]) : Texture();
 
-			// Texture::draw uses (pos - origin); AreaButton must use the same LT
-			// or the colorful OnAnimation sits outside the clickable rect.
 			Point<int16_t> card_size = classic_card[i].get_dimensions();
 			Point<int16_t> card_origin = classic_card[i].get_origin();
 			if (card_size.x() <= 0)
 			{
-				card_size = Point<int16_t>(200, 220);
+				card_size = Point<int16_t>(120, 160);
 				card_origin = Point<int16_t>(0, 0);
 			}
 
@@ -169,6 +174,16 @@ namespace ms
 		mouseover[selected_index] = true;
 		class_count = CLASSIC_CLASS_COUNT;
 		class_isdisabled = std::vector<bool>(class_count, false);
+
+		// 卡面文字：骑士团 / 冒险家 / 战神 / 龙神 / 双刀（后两者卡图回落 aran/normal，靠标签区分）
+		static const char* kClassicLabels[CLASSIC_CLASS_COUNT] = {
+			"骑士团", "冒险家", "战神", "龙神", "双刀"
+		};
+		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+		{
+			classic_card_label[i] = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE);
+			classic_card_label[i].change_text(kClassicLabels[i]);
+		}
 	}
 
 	void UIRaceSelect::init_modern()
@@ -245,6 +260,11 @@ namespace ms
 		class_isdisabled[Classes::EXPLORERS] = false;
 		class_isdisabled[Classes::CYGNUSKNIGHTS] = false;
 		class_isdisabled[Classes::ARAN] = false;
+		// Modern book UI fallback: expose Dual/Evan if their slots exist in order.
+		if (Classes::EVAN < class_isdisabled.size())
+			class_isdisabled[Classes::EVAN] = false;
+		if (Classes::DUALBLADE < class_isdisabled.size())
+			class_isdisabled[Classes::DUALBLADE] = false;
 
 		back = RaceSelect["Back"]["1"]["0"];
 		backZero = RaceSelect["Back"]["2"]["0"];
@@ -322,6 +342,14 @@ namespace ms
 					classic_card_over[i].draw(card_pos);
 				else
 					classic_card[i].draw(card_pos);
+
+				// 标签画在卡面下方居中，便于区分回落贴图的龙神/双刀
+				Point<int16_t> label_pos = card_pos + Point<int16_t>(
+					static_cast<int16_t>(classic_card[i].width() / 2),
+					static_cast<int16_t>(classic_card[i].height() + 4));
+				if (classic_card[i].width() <= 0)
+					label_pos = card_pos + Point<int16_t>(60, 164);
+				classic_card_label[i].draw(label_pos);
 			}
 
 			classic_text[selected_index].draw(position + classic_text_pos);
@@ -608,6 +636,16 @@ namespace ms
 			if (auto arancreation = UI::get().get_element<UIAranCreation>())
 				arancreation->send_naming_result(nameused);
 		}
+		else if (selected_class == Classes::EVAN)
+		{
+			if (auto evancreation = UI::get().get_element<UIEvanCreation>())
+				evancreation->send_naming_result(nameused);
+		}
+		else if (selected_class == Classes::DUALBLADE)
+		{
+			if (auto dualcreation = UI::get().get_element<UIDualBladeCreation>())
+				dualcreation->send_naming_result(nameused);
+		}
 	}
 
 	void UIRaceSelect::enter_creation()
@@ -623,6 +661,10 @@ namespace ms
 			UI::get().emplace<UICygnusCreation>();
 		else if (selected_class == Classes::ARAN)
 			UI::get().emplace<UIAranCreation>();
+		else if (selected_class == Classes::EVAN)
+			UI::get().emplace<UIEvanCreation>();
+		else if (selected_class == Classes::DUALBLADE)
+			UI::get().emplace<UIDualBladeCreation>();
 	}
 
 	void UIRaceSelect::select_classic_class(uint16_t index)

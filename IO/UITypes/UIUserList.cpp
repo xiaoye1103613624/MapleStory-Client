@@ -17,7 +17,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIUserList.h"
 #include "UICharInfo.h"
-#include "UIAlliance.h"
 #include "UIChatBar.h"
 #include "UIGuildBBS.h"
 #include "UIMessenger.h"
@@ -27,8 +26,10 @@
 #include "../UI.h"
 #include "../../IO/Components/MapleButton.h"
 #include "../../IO/Components/TwoSpriteButton.h"
+#include "../../Character/BuddyListModel.h"
 #include "../../Character/GuildModel.h"
 #include "../../Character/Job.h"
+#include "../../Character/PartyModel.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/AlliancePackets.h"
 #include "../../Net/Packets/BuddyPackets.h"
@@ -46,14 +47,25 @@
 
 namespace ms
 {
+	// P0 好友/组员行区（相对 UserList 窗；复用家族页行高经验，像素精修挂后续）。
+	static constexpr int16_t FRIEND_ROW_Y = 150;
+	static constexpr int16_t FRIEND_ROW_H = 18;
+	static constexpr int16_t FRIEND_MAX_ROWS = 7;
+	static constexpr int16_t PARTY_ONLINE_Y = 100;
+	static constexpr int16_t PARTY_OFFLINE_Y = 190;
+	static constexpr int16_t PARTY_ROW_H = 18;
+	static constexpr int16_t PARTY_ONLINE_ROWS = 3;
+	static constexpr int16_t PARTY_OFFLINE_ROWS = 5;
+
 	// 家族页行区（原生截图行带实测，evidence/guildpage/，tools/_measure_academy.py）：
 	// 在线横幅 y111 / 列头 y139 / 行区 y157 起 2 行；离线横幅 y189 / 列头 y217 /
-	// 行区 y217 起 5 行，行高 15。绘制与命中必须共用这组常量，否则点行选中会错位。
+	// 行区须在列头之下（旧 GUILD_OFFLINE_Y=217 与列头同 y，成员字压在列头上）。
+	// 2026-11-11：离线行起点改为 235（列头 217 + 行高约 18）。
 	constexpr int16_t GUILD_ROW_H = 15;
 	constexpr int16_t GUILD_ONLINE_ROWS = 2;
 	constexpr int16_t GUILD_OFFLINE_ROWS = 5;
 	constexpr int16_t GUILD_ONLINE_Y = 157;
-	constexpr int16_t GUILD_OFFLINE_Y = 217;
+	constexpr int16_t GUILD_OFFLINE_Y = 235;
 
 	UIUserList::UIUserList(uint16_t t) : UIDragElement<PosUSERLIST>(Point<int16_t>(260, 20)), tab(t)
 	{
@@ -207,7 +219,8 @@ namespace ms
 				buttons[id] = std::make_unique<MapleButton>(src, pos);
 		};
 
-		try_btn_at(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"], Point<int16_t>(0, 77));
+		// oracle / 好友列表框.png：BtAddFriend mae=0 @(1,77)，BtAddGroup @(68,77)。
+		try_btn_at(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"], Point<int16_t>(1, 77));
 		try_btn_at(Buttons::BT_FRIEND_ADD_GROUP, Friend["BtAddGroup"], Point<int16_t>(68, 77));
 		try_btn(Buttons::BT_FRIEND_EXPAND, Friend["BtPlusFriend"]);
 		// Friend 页无专用 Messenger 钮时：复用 UIWindow.img/Messenger/BtEnter 作开窗入口。
@@ -286,18 +299,18 @@ namespace ms
 		};
 
 		gi_btn(Buttons::BT_GUILD_NOTICE, "Btnotice", Point<int16_t>(287, 78));
-		// 底部两行：原生四列 x14/84/156/232，行 y306/328；末行 y356。
-		gi_btn(Buttons::BT_GUILD_INVITE, "BtInvite", Point<int16_t>(14, 306));
-		gi_btn(Buttons::BT_GUILD_RANKUP, "BtUp", Point<int16_t>(14, 328));
-		gi_btn(Buttons::BT_GUILD_WITHDRAW, "BtWithdraw", Point<int16_t>(84, 306));
-		gi_btn(Buttons::BT_GUILD_RANKDOWN, "BtDown", Point<int16_t>(84, 328));
-		gi_btn(Buttons::BT_GUILD_WHO, "BtWhere", Point<int16_t>(156, 306));
-		gi_btn(Buttons::BT_GUILD_KICK, "BtKick", Point<int16_t>(156, 328));
-		gi_btn(Buttons::BT_GUILD_WHISPER, "BtWhisper", Point<int16_t>(232, 306));
-		gi_btn(Buttons::BT_GUILD_CHAT, "BtChat", Point<int16_t>(232, 328));
-		gi_btn(Buttons::BT_GUILD_BBS, "BtGuildBBS", Point<int16_t>(120, 356));
-		gi_btn(Buttons::BT_GUILD_PARTYINVITE, "BtPartyInvite", Point<int16_t>(196, 356));
-		gi_btn(Buttons::BT_GUILD_INFO, "BtInfo", Point<int16_t>(268, 356));
+		// 底栏将被 bind_runtime_assets() 的 guild_grid(6/77/156/226 × 316/333/360) 覆盖。
+		gi_btn(Buttons::BT_GUILD_INVITE, "BtInvite", Point<int16_t>(6, 316));
+		gi_btn(Buttons::BT_GUILD_RANKUP, "BtUp", Point<int16_t>(6, 333));
+		gi_btn(Buttons::BT_GUILD_WITHDRAW, "BtWithdraw", Point<int16_t>(77, 316));
+		gi_btn(Buttons::BT_GUILD_RANKDOWN, "BtDown", Point<int16_t>(77, 333));
+		gi_btn(Buttons::BT_GUILD_WHO, "BtWhere", Point<int16_t>(156, 316));
+		gi_btn(Buttons::BT_GUILD_KICK, "BtKick", Point<int16_t>(156, 333));
+		gi_btn(Buttons::BT_GUILD_WHISPER, "BtWhisper", Point<int16_t>(226, 316));
+		gi_btn(Buttons::BT_GUILD_CHAT, "BtChat", Point<int16_t>(226, 333));
+		gi_btn(Buttons::BT_GUILD_BBS, "BtGuildBBS", Point<int16_t>(77, 360));
+		gi_btn(Buttons::BT_GUILD_PARTYINVITE, "BtPartyInvite", Point<int16_t>(156, 360));
+		gi_btn(Buttons::BT_GUILD_INFO, "BtInfo", Point<int16_t>(226, 360));
 		set_guild_buttons(false);
 
 		// 2026-11-08：按运行时节点树补齐五页签资源与按钮（覆盖上面几处旧命名绑定）。
@@ -340,12 +353,50 @@ namespace ms
 	{
 		UIElement::update();
 
-		if (tab == Buttons::BT_TAB_FRIEND)
+		if (tab == Tab::FRIEND)
 		{
 			for (Sprite sprite : friend_sprites)
 				sprite.update();
+
+			// P0：好友计数/分组文案从 BuddyListModel 同步（handler 只写模型）。
+			const BuddyListData& bl = BuddyListModel::get().data();
+			const int32_t cap = bl.capacity > 0 ? bl.capacity : 25;
+			const std::string cnt = "(" + std::to_string(bl.buddies.size())
+				+ "/" + std::to_string(cap) + ")";
+			if (friend_count_text.get_text() != cnt)
+				friend_count_text.change_text(cnt);
+
+			int online_n = 0;
+			for (const auto& b : bl.buddies)
+				if (b.online)
+					online_n++;
+			const std::string grp = Locale::text("userlist.friend_group")
+				+ "(" + std::to_string(online_n) + "/" + std::to_string(bl.buddies.size()) + ")";
+			if (friend_group_text.get_text() != grp)
+				friend_group_text.change_text(grp);
 		}
-		else if (tab == Buttons::BT_TAB_GUILD)
+		else if (tab == Tab::PARTY)
+		{
+			const Party& p = PartyModel::get().data();
+			int online_n = 0;
+			int total_n = 0;
+			for (const auto& m : p.members)
+			{
+				if (m.id == 0)
+					continue;
+				total_n++;
+				if (m.online)
+					online_n++;
+			}
+			const int offline_n = total_n - online_n;
+			const std::string on = std::to_string(online_n) + "/" + std::to_string(total_n);
+			const std::string off = std::to_string(offline_n) + "/" + std::to_string(total_n);
+			if (party_online_count_text.get_text() != on)
+				party_online_count_text.change_text(on);
+			if (party_offline_count_text.get_text() != off)
+				party_offline_count_text.change_text(off);
+		}
+		else if (tab == Tab::GUILD)
 		{
 			// 家族回包只写 GuildModel；页签可能在回包之后才打开，故每帧把公告
 			// 同步进 Text（仅在内容变化时重建布局，避免逐帧重排字形）。
@@ -432,13 +483,104 @@ namespace ms
 		return 0;
 	}
 
+	int32_t UIUserList::friend_row_at(Point<int16_t> cursorpos) const
+	{
+		const Point<int16_t> rel(
+			static_cast<int16_t>(cursorpos.x() - position.x()),
+			static_cast<int16_t>(cursorpos.y() - position.y()));
+
+		if (rel.x() < 12 || rel.x() > 280)
+			return 0;
+		if (rel.y() < FRIEND_ROW_Y)
+			return 0;
+
+		const int16_t row = static_cast<int16_t>((rel.y() - FRIEND_ROW_Y) / FRIEND_ROW_H);
+		if (row < 0 || row >= FRIEND_MAX_ROWS)
+			return 0;
+
+		const BuddyListData& bl = BuddyListModel::get().data();
+		const bool show_online_only = (friend_tab == Tab::FRIEND_ONLINE);
+		int16_t drawn = 0;
+
+		for (const auto& b : bl.buddies)
+		{
+			if (show_online_only && !b.online)
+				continue;
+			if (drawn == row)
+				return b.cid;
+			if (++drawn >= FRIEND_MAX_ROWS)
+				break;
+		}
+
+		return 0;
+	}
+
+	int32_t UIUserList::party_row_at(Point<int16_t> cursorpos) const
+	{
+		const Point<int16_t> rel(
+			static_cast<int16_t>(cursorpos.x() - position.x()),
+			static_cast<int16_t>(cursorpos.y() - position.y()));
+
+		if (rel.x() < 12 || rel.x() > 280)
+			return 0;
+
+		const Party& p = PartyModel::get().data();
+
+		auto hit = [&](bool online, int16_t rows_y, int16_t maxrows) -> int32_t
+		{
+			if (rel.y() < rows_y)
+				return 0;
+
+			const int16_t row = static_cast<int16_t>((rel.y() - rows_y) / PARTY_ROW_H);
+			if (row < 0 || row >= maxrows)
+				return 0;
+
+			int16_t drawn = 0;
+			for (const auto& m : p.members)
+			{
+				if (m.id == 0 || m.online != online)
+					continue;
+				if (drawn == row)
+					return m.id;
+				if (++drawn >= maxrows)
+					break;
+			}
+			return 0;
+		};
+
+		if (int32_t id = hit(true, PARTY_ONLINE_Y, PARTY_ONLINE_ROWS))
+			return id;
+		return hit(false, PARTY_OFFLINE_Y, PARTY_OFFLINE_ROWS);
+	}
+
 	Cursor::State UIUserList::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
 		// 成员行不是 Button：点选只更新选中态，事件仍交回基类处理按钮/拖拽。
-		if (tab == Buttons::BT_TAB_GUILD && clicked)
+		if (clicked)
 		{
-			if (int32_t cid = guild_row_at(cursorpos))
-				guild_selected_cid = cid;
+			if (tab == Buttons::BT_TAB_GUILD)
+			{
+				if (int32_t cid = guild_row_at(cursorpos))
+					guild_selected_cid = cid;
+			}
+			else if (tab == Buttons::BT_TAB_FRIEND || tab == Tab::FRIEND_ALL || tab == Tab::FRIEND_ONLINE)
+			{
+				if (int32_t cid = friend_row_at(cursorpos))
+				{
+					friend_selected_cid = cid;
+					page_selected_row = cid;
+					LOG(LOG_DEBUG, "UIUserList: friend select cid=" << cid);
+				}
+			}
+			else if (tab == Buttons::BT_TAB_PARTY || tab == Tab::PARTY_MINE)
+			{
+				if (int32_t cid = party_row_at(cursorpos))
+				{
+					party_selected_cid = cid;
+					page_selected_row = cid;
+					LOG(LOG_DEBUG, "UIUserList: party select cid=" << cid);
+				}
+			}
 		}
 
 		return UIDragElement<PosUSERLIST>::send_cursor(clicked, cursorpos);
@@ -466,12 +608,10 @@ namespace ms
 				banner.draw(position + Point<int16_t>(12, banner_y));
 			count.draw(position + Point<int16_t>(240, banner_y + 5));
 
+			// 只画一张列头（guildinfo7）。guildinfo3/4 是第二套列头/分隔，
+			// 叠在同行区上会「多画一层」（2026-11-11 用户家族页乱观感）。
 			if (guild_col_header)
 				guild_col_header.draw(position + Point<int16_t>(12, banner_y + 28));
-			if (guild_col_header2)
-				guild_col_header2.draw(position + Point<int16_t>(12, banner_y + 46));
-			if (guild_separator)
-				guild_separator.draw(position + Point<int16_t>(12, banner_y + 64));
 
 			int16_t y = rows_y;
 			int16_t drawn = 0;
@@ -774,7 +914,7 @@ namespace ms
 			}
 			case Buttons::BT_BLACKLIST_ADD:
 			{
-				// 无 Ignore opcode：FindPlayer 作检索代理
+				// P3 ⊘：s9 无 Ignore 包 → FindPlayer 检索代理（见 BuddylistModifyHandler mode∈{1,2,3}）。
 				std::string pre;
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					pre = ci->get_target_name();
@@ -959,6 +1099,28 @@ namespace ms
 			case Buttons::BT_PARTY_WHISPER:
 			case Buttons::BT_UNION_WHISPER:
 			{
+				// P1：已选中行则直接 whisper；否则 SoftKey 输名（对齐家族页 GUILD_WHISPER）。
+				std::string pre;
+				if (buttonid == Buttons::BT_PARTY_WHISPER)
+				{
+					if (const PartyMember* m = PartyModel::get().find(party_selected_cid))
+						pre = m->name;
+				}
+				else if (const Buddy* b = BuddyListModel::get().find(friend_selected_cid))
+				{
+					pre = b->name;
+				}
+
+				if (!pre.empty())
+				{
+					UI::get().emplace<UISoftKey>([pre](const std::string& msg)
+					{
+						if (!msg.empty())
+							WhisperPacket(pre, msg).dispatch();
+					}, []() {}, Locale::text("guild.whisper_prompt"));
+					break;
+				}
+
 				UI::get().emplace<UISoftKey>([](const std::string& name)
 				{
 					if (name.empty())
@@ -977,7 +1139,17 @@ namespace ms
 			case Buttons::BT_FRIEND_UNBLOCK:
 			case Buttons::BT_UNION_WHERE:
 			{
-				// v83 无 Ignore opcode：与既有拒绝列表一致，用 FindPlayer 作检索代理。
+				// P3 ⊘ 闭环：s9 BuddylistModifyHandler 仅 mode 1/2/3（add/accept/delete），
+				// 无 Ignore/黑名单 opcode → 保持 FindPlayer 检索代理；禁止发明拉黑协议。
+				if (buttonid == Buttons::BT_FRIEND_WHERE)
+				{
+					if (const Buddy* b = BuddyListModel::get().find(friend_selected_cid))
+					{
+						FindPlayerPacket(b->name).dispatch();
+						break;
+					}
+				}
+
 				UI::get().emplace<UISoftKey>([](const std::string& name)
 				{
 					if (!name.empty())
@@ -987,6 +1159,13 @@ namespace ms
 			}
 			case Buttons::BT_FRIEND_DELETE2:
 			{
+				if (friend_selected_cid > 0)
+				{
+					BuddyDeletePacket(friend_selected_cid).dispatch();
+					LOG(LOG_DEBUG, "UIUserList: BuddyDelete selected cid=" << friend_selected_cid);
+					break;
+				}
+
 				UI::get().emplace<UISoftKey>([](const std::string& s)
 				{
 					try
@@ -1076,16 +1255,9 @@ namespace ms
 			case Buttons::BT_UNION_INFO:
 			case Buttons::BT_UNION_PARTYINVITE:
 			{
-				// s9 AllianceOperationHandler 各 action 载荷不一，不臆造 action 字节：
-				// 统一打开已核对过协议的 UIAlliance 窗，由该窗完成具体操作。
-				auto alliance = UI::get().get_element<UIAlliance>();
-
-				if (!alliance)
-					alliance = UI::get().emplace<UIAlliance>();
-				else if (!alliance->is_active())
-					alliance->makeactive();
-
-				guild_hint("userlist.use_alliance_window");
+				// 2026-11-11：不再弹 UIAlliance 360x320 浮窗。083 联盟操作挂在
+				// 本共用窗页签内；协议 action 字节未逐条对拍前只提示，避免错窗。
+				guild_hint("userlist.need_data");
 				break;
 			}
 			case Buttons::BT_GUILD_BOARD:
@@ -1286,18 +1458,21 @@ namespace ms
 			if (n && n.size() > 0)
 				buttons[id] = std::make_unique<MapleButton>(n, pos);
 		};
-		// 原生底栏 4 列 x 3 行（五张 oracle 帧一致）。
-		auto grid = [](uint8_t i) -> Point<int16_t>
+		// 家族 / 联盟底栏：正确截图（家族联盟.png / 好友…拒绝列表.png）Tab0 对齐后
+		// 量得 4 列 x≈6/77/156/226、3 行 y≈316/333/360（旧 14/84/156/232 × 316/338/360
+		// 首列偏右 8px、中行偏下 5px）。
+		auto guild_grid = [](uint8_t i) -> Point<int16_t>
 		{
-			static const int16_t xs[4] = { 14, 84, 156, 232 };
-			static const int16_t ys[3] = { 306, 328, 350 };
+			static const int16_t xs[4] = { 6, 77, 156, 226 };
+			static const int16_t ys[3] = { 316, 333, 360 };
 			return Point<int16_t>(xs[i % 4], ys[(i / 4) % 3]);
 		};
 		struct NodeBtn { uint16_t id; const char* node; };
-		auto bind_grid = [&](nl::node parent, const NodeBtn* defs, uint8_t count)
+		auto bind_grid = [&](nl::node parent, const NodeBtn* defs, uint8_t count,
+			Point<int16_t>(*pos_of)(uint8_t))
 		{
 			for (uint8_t i = 0; i < count; i++)
-				bind_btn(defs[i].id, parent, defs[i].node, grid(i));
+				bind_btn(defs[i].id, parent, defs[i].node, pos_of(i));
 		};
 
 		// 好友页 Friend（38 个直接子节点，旧代码只用了 4 个）
@@ -1307,10 +1482,14 @@ namespace ms
 		friend_col_header2 = bitmap(Friend, "friend5");
 		friend_separator = bitmap(Friend, "friend3");
 		friend_line = bitmap(Friend, "friend6");
-		bind_btn(BT_FRIEND_ADD, Friend, "BtAddFriend", Point<int16_t>(14, 80));
-		bind_btn(BT_FRIEND_ADD_GROUP, Friend, "BtAddGroup", Point<int16_t>(80, 80));
-		bind_btn(BT_FRIEND_SHOW_ALL, Friend, "BtShowAll", Point<int16_t>(150, 80));
-		bind_btn(BT_FRIEND_SHOW_ONLINE, Friend, "BtShowOnline", Point<int16_t>(215, 80));
+		// r15/r27 oracle：BtAddFriend(1,77) / BtAddGroup(68,77) / BtShowOnline(228,77)。
+		// 旧 (14/80/150/215, 80) 使 65px 宽钮横向重叠 9px，且整体偏下 3px。
+		bind_btn(BT_FRIEND_ADD, Friend, "BtAddFriend", Point<int16_t>(1, 77));
+		bind_btn(BT_FRIEND_ADD_GROUP, Friend, "BtAddGroup", Point<int16_t>(68, 77));
+		bind_btn(BT_FRIEND_SHOW_ALL, Friend, "BtShowAll", Point<int16_t>(150, 77));
+		bind_btn(BT_FRIEND_SHOW_ONLINE, Friend, "BtShowOnline", Point<int16_t>(228, 77));
+		// 好友底栏：截图为「上排若干 + 下排一排」而非家族同款 4×3；仍按家族格落位作
+		// 可点热区（残差：个别钮与彩色截图列不完全重合，见 notes）。
 		static const NodeBtn friend_btns[] = {
 			{ BT_FRIEND_WHISPER, "BtWhisper" },
 			{ BT_FRIEND_MATE, "BtMate" },
@@ -1325,33 +1504,37 @@ namespace ms
 			{ BT_FRIEND_GROUP_MOD, "GroupMod" },
 			{ BT_FRIEND_ADD2, "BtAdd" }
 		};
-		bind_grid(Friend, friend_btns, 12);
+		bind_grid(Friend, friend_btns, 12, guild_grid);
 
-		// 组员页 Party（18 个直接子节点，旧代码 0 个有效）
+		// 组员页：组员列表框.png（Tab0 对齐）模板 mae≈0 ——
+		// Create(9,351)；2×4 格 Search/HP/Kick/Whisper @ y344、Invite/Boss/Withdraw/Chat @ y361，
+		// 列 x=68/127/186/245（步长 59）。旧 4×3@(14,316) 整排上偏约 28–35px。
 		party_online_banner = bitmap(Party, "party0");
 		party_offline_banner = bitmap(Party, "party4");
 		party_col_header = bitmap(Party, "party1");
 		party_col_header2 = bitmap(Party, "party5");
 		party_separator = bitmap(Party, "party2");
-		static const NodeBtn party_btns[] = {
-			{ BT_PARTY_CREATE2, "BtCreate" },
-			{ BT_PARTY_INVITE2, "BtInvite" },
-			{ BT_PARTY_WITHDRAW, "BtWithdraw" },
-			{ BT_PARTY_KICK, "BtKick" },
-			{ BT_PARTY_CHANGE_BOSS, "BtChangeBoss" },
-			{ BT_PARTY_SEARCH2, "BtSearch" },
-			{ BT_PARTY_HP, "BtHP" },
-			{ BT_PARTY_WHISPER, "BtWhisper" },
-			{ BT_PARTY_CHAT, "BtChat" }
+		struct PartyPos { uint16_t id; const char* node; Point<int16_t> pos; };
+		static const PartyPos party_btns[] = {
+			{ BT_PARTY_CREATE2, "BtCreate", Point<int16_t>(9, 351) },
+			{ BT_PARTY_SEARCH2, "BtSearch", Point<int16_t>(68, 344) },
+			{ BT_PARTY_HP, "BtHP", Point<int16_t>(127, 344) },
+			{ BT_PARTY_KICK, "BtKick", Point<int16_t>(186, 344) },
+			{ BT_PARTY_WHISPER, "BtWhisper", Point<int16_t>(245, 344) },
+			{ BT_PARTY_INVITE2, "BtInvite", Point<int16_t>(68, 361) },
+			{ BT_PARTY_CHANGE_BOSS, "BtChangeBoss", Point<int16_t>(127, 361) },
+			{ BT_PARTY_WITHDRAW, "BtWithdraw", Point<int16_t>(186, 361) },
+			{ BT_PARTY_CHAT, "BtChat", Point<int16_t>(245, 361) }
 		};
-		bind_grid(Party, party_btns, 9);
+		for (const auto& pb : party_btns)
+			bind_btn(pb.id, Party, pb.node, pb.pos);
 
-		// 拒绝列表 BlackList（旧代码只接了 2 个按钮，3 张烘焙件全漏）
+		// 拒绝列表：BtAdd mae=0 @(56,351)；Delete 同高约 @(175,350)（旧 60/160,352）。
 		blacklist_banner = bitmap(BlackList, "blacklist0");
 		blacklist_col_header = bitmap(BlackList, "blacklist1");
 		blacklist_separator = bitmap(BlackList, "blacklist2");
-		bind_btn(BT_BLACKLIST_ADD, BlackList, "BtAdd", Point<int16_t>(60, 352));
-		bind_btn(BT_BLACKLIST_DELETE, BlackList, "BtDelete", Point<int16_t>(160, 352));
+		bind_btn(BT_BLACKLIST_ADD, BlackList, "BtAdd", Point<int16_t>(56, 351));
+		bind_btn(BT_BLACKLIST_DELETE, BlackList, "BtDelete", Point<int16_t>(175, 350));
 
 		// 家族联盟 GuildUnion（20 个直接子节点，旧代码 0 个）
 		union_notice_bar = bitmap(GU, "guildinfo6");
@@ -1373,9 +1556,9 @@ namespace ms
 			{ BT_UNION_INFO, "BtInfo" },
 			{ BT_UNION_CHANGE, "BtChange" }
 		};
-		bind_grid(GU, union_btns, 12);
+		bind_grid(GU, union_btns, 12, guild_grid);
 
-		// 家族页补齐 + 12 按钮从 3 列改回原生 4x3
+		// 家族页补齐 + 12 按钮 4×3（列/行见 guild_grid）
 		guild_col_header2 = bitmap(GI, "guildinfo3");
 		guild_separator = bitmap(GI, "guildinfo4");
 		guild_mark = bitmap(GI, "guildmark");
@@ -1393,7 +1576,7 @@ namespace ms
 			{ BT_GUILD_INFO, "BtInfo" },
 			{ BT_GUILD_BOARD, "BtBoard" }
 		};
-		bind_grid(GI, guild_btns, 12);
+		bind_grid(GI, guild_btns, 12, guild_grid);
 
 		auto label = [](Color::Name c)
 		{
@@ -1478,31 +1661,98 @@ namespace ms
 
 	void UIUserList::draw_friend_tab(float) const
 	{
+		const BuddyListData& bl = BuddyListModel::get().data();
+
 		if (friend_banner)
 			friend_banner.draw(position + Point<int16_t>(12, 52));
 		friend_count_text.draw(position + Point<int16_t>(243, 56));
 		if (friend_group_bar)
 			friend_group_bar.draw(position + Point<int16_t>(12, 100));
 		friend_group_text.draw(position + Point<int16_t>(22, 104));
+		// 只保留一张列头；friend5 第二列头叠绘会造成「多画一层」。
 		if (friend_col_header)
 			friend_col_header.draw(position + Point<int16_t>(12, 119));
-		if (friend_col_header2)
-			friend_col_header2.draw(position + Point<int16_t>(12, 138));
 		if (friend_separator)
-			friend_separator.draw(position + Point<int16_t>(12, 156));
-		friend_none_text.draw(position + Point<int16_t>(24, 150));
+			friend_separator.draw(position + Point<int16_t>(12, 138));
+
+		// P0：从 BuddyListModel 绘成员行；空列表才显示 none。
+		int16_t y = FRIEND_ROW_Y;
+		int16_t drawn = 0;
+		const bool show_online_only = (friend_tab == Tab::FRIEND_ONLINE);
+
+		for (const auto& b : bl.buddies)
+		{
+			if (show_online_only && !b.online)
+				continue;
+			if (drawn >= FRIEND_MAX_ROWS)
+				break;
+
+			std::string info = b.name;
+			if (!b.group.empty() && b.group != "All")
+				info += " [" + b.group + "]";
+			info += " " + (b.online
+				? Locale::format("common.channel", std::to_string(b.channel + 1))
+				: Locale::text("common.offline"));
+
+			const Color::Name cname = (b.cid == friend_selected_cid)
+				? Color::Name::MEDIUMBLUE : Color::Name::BLACK;
+			Text row(Text::Font::A11M, Text::Alignment::LEFT, cname, info);
+			row.draw(position + Point<int16_t>(24, y));
+			y += FRIEND_ROW_H;
+			drawn++;
+		}
+
+		if (drawn == 0)
+			friend_none_text.draw(position + Point<int16_t>(24, FRIEND_ROW_Y));
+
 		friend_location_text.draw(position + Point<int16_t>(12, 292));
 		friends_slider.draw(position);
 	}
 
 	void UIUserList::draw_party_tab(float) const
 	{
+		const Party& p = PartyModel::get().data();
+
 		if (party_online_banner)
 			party_online_banner.draw(position + Point<int16_t>(12, 52));
 		party_online_count_text.draw(position + Point<int16_t>(250, 56));
 		if (party_col_header)
 			party_col_header.draw(position + Point<int16_t>(12, 80));
-		party_none_text.draw(position + Point<int16_t>(24, 105));
+
+		auto draw_party_rows = [&](bool online, int16_t rows_y, int16_t maxrows) -> int16_t
+		{
+			int16_t y = rows_y;
+			int16_t drawn = 0;
+
+			for (const auto& m : p.members)
+			{
+				if (m.id == 0 || m.online != online || drawn >= maxrows)
+					continue;
+
+				std::string info = m.name;
+				if (m.id == p.leader)
+					info += " *";
+				info += " Lv." + std::to_string(m.level);
+				if (online)
+					info += " " + Locale::format("common.channel", std::to_string(m.channel + 1));
+				else
+					info += " " + Locale::text("common.offline");
+
+				const Color::Name cname = (m.id == party_selected_cid)
+					? Color::Name::MEDIUMBLUE : Color::Name::BLACK;
+				Text row(Text::Font::A11M, Text::Alignment::LEFT, cname, info);
+				row.draw(position + Point<int16_t>(24, y));
+				y += PARTY_ROW_H;
+				drawn++;
+			}
+
+			return drawn;
+		};
+
+		const int16_t online_drawn = draw_party_rows(true, PARTY_ONLINE_Y, PARTY_ONLINE_ROWS);
+		if (online_drawn == 0)
+			party_none_text.draw(position + Point<int16_t>(24, PARTY_ONLINE_Y));
+
 		if (party_offline_banner)
 			party_offline_banner.draw(position + Point<int16_t>(12, 140));
 		party_offline_count_text.draw(position + Point<int16_t>(250, 144));
@@ -1510,6 +1760,8 @@ namespace ms
 			party_col_header2.draw(position + Point<int16_t>(12, 168));
 		if (party_separator)
 			party_separator.draw(position + Point<int16_t>(12, 186));
+
+		draw_party_rows(false, PARTY_OFFLINE_Y, PARTY_OFFLINE_ROWS);
 		party_slider.draw(position);
 	}
 
@@ -1528,17 +1780,11 @@ namespace ms
 
 	void UIUserList::draw_union_tab(float) const
 	{
+		// 空态（尚未加入联盟）：只画提示条 +「还未加入联盟。」，
+		// 不再无条件叠 guildinfo0/2/3/4 四件家族页烘焙件（2026-11-11）。
 		if (union_notice_bar)
 			union_notice_bar.draw(position + Point<int16_t>(12, 52));
 		union_none_text.draw(position + Point<int16_t>(96, 56));
-		if (union_banner)
-			union_banner.draw(position + Point<int16_t>(12, 84));
-		if (union_col_header)
-			union_col_header.draw(position + Point<int16_t>(12, 112));
-		if (union_col_header2)
-			union_col_header2.draw(position + Point<int16_t>(12, 130));
-		if (union_separator)
-			union_separator.draw(position + Point<int16_t>(12, 148));
 		union_slider.draw(position);
 	}
 

@@ -38,9 +38,12 @@ namespace ms
 		// 集中定义并由本类 Buttons 枚举**表达式推导**出各 id 段起点，
 		// 避免历史上「BtChannel0 隐式=5、BtGoWorld 硬编码=35」这种与枚举顺序
 		// 彼此独立写死的耦合——一旦增删世界按钮就会静默错位到频道按钮段。
-		// 取值对齐参考版（gms083）容量：15 个世界、30 个频道。
+		// 取值对齐 Angel CLogin::ChangeStep step1：`sub_5FDD2D(15)` / `sub_5FDD2D(60)`。
+		// 面板可视槽仍为 30（与 chBackgrn 449×233 网格一致）；>30 时翻页。
 		static constexpr uint16_t WORLD_BUTTON_COUNT = 15U;
-		static constexpr uint16_t CHANNEL_BUTTON_COUNT = 30U;
+		static constexpr uint16_t CHANNEL_PAGE_SIZE = 30U;
+		static constexpr uint16_t CHANNEL_CAPACITY = 60U;
+		static constexpr uint16_t CHANNEL_BUTTON_COUNT = CHANNEL_PAGE_SIZE;
 
 		UIWorldSelect();
 
@@ -84,6 +87,12 @@ namespace ms
 		/// 请求中止（Wait 取消 / 会话重连）后复位满员拦截与提示记录。
 		void reset_request_state();
 
+		/// Angel CLogin::OnLatestConnectedWorld @0x5f82f4 → CUIWorldSelect::SetFocusWorld @0x6272d0。
+		/// 按**服务端世界 id**（非槽位下标）高亮对应木牌；不打开频道板（仅 SetKeyFocus 语义）。
+		/// 世界列表尚未到达时缓存，等 draw_world() 末尾再应用。
+		/// 特殊值：253=不更新缓存；254/255=不聚焦（与原生一致）。
+		void set_focus_world(int32_t server_world_id);
+
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -118,11 +127,19 @@ namespace ms
 		/// </summary>
 		Button* get_world_button(uint16_t index) const;
 
-		/// 取第 index 个频道按钮（0 起）；语义同 get_world_button。
+		/// 取第 index 个**可视页内**频道按钮（0..PAGE_SIZE-1）；语义同 get_world_button。
 		Button* get_channel_button(uint16_t index) const;
 
 		/// 可参与键盘导航的世界槽数量 = min(服务端下发世界数, 世界按钮容量)。
 		uint16_t navigable_world_count() const;
+
+		/// 当前页频道逻辑下标起点 = channel_page * CHANNEL_PAGE_SIZE。
+		uint16_t channel_page_base() const;
+		/// 当前页可视频道数。
+		uint16_t channel_page_visible() const;
+		/// 按当前页刷新按钮激活 / 负载条 / 翻页钮。
+		void refresh_channel_page();
+		void set_channel_page(uint8_t page);
 
 		enum Buttons : uint16_t
 		{
@@ -143,6 +160,9 @@ namespace ms
 			BtWorld14,
 			BtChannel0 = BtWorld0 + WORLD_BUTTON_COUNT,
 			BtGoWorld = BtChannel0 + CHANNEL_BUTTON_COUNT,
+			/// 频道翻页（仅 channel_total > CHANNEL_PAGE_SIZE 时激活）
+			BtChPagePrev,
+			BtChPageNext,
 			BtRegion,
 			BtExit,
 			BtViewChoice,
@@ -212,8 +232,12 @@ namespace ms
 		float notice_slide;
 		/// 频道板卷轴展开进度 0..1：0 = 仅顶部一条，1 = 完全展开（参考端展开动画）。
 		float panel_expand = 1.0f;
-		/// change_world 时记录的频道数，展开完成后由 activate_panel_controls 激活按钮。
+		/// change_world 时记录的**总**频道数（可至 CHANNEL_CAPACITY），展开后 refresh_channel_page。
 		uint16_t pending_channel_limit = 0;
+		/// 已选世界频道负载快照（逻辑下标 0..total-1）；翻页只读本页切片。
+		std::vector<int32_t> channel_loads;
+		/// 频道翻页：0 = CH.1..30，1 = CH.31..60。
+		uint8_t channel_page = 0;
 
 		/// Login.img/WorldSelect/scroll/0 卷轴打开动画。
 		Animation scroll_open;
@@ -245,6 +269,12 @@ namespace ms
 
 		/// draw_world 已根据当前列表定稿；下一轮 SERVERLIST 的首个世界到达时需先 clear。
 		bool world_list_finalized = false;
+
+		/// LAST_CONNECTED_WORLD 到达早于 SERVERLIST 时暂存；-1=无待办。
+		int32_t pending_focus_world_id = -1;
+
+		/// 仅高亮世界木牌（SetKeyFocus），不触发 change_world / 频道板展开。
+		void apply_world_key_focus(uint8_t slot);
 
 		nl::node worldsrc;
 		nl::node worldnamesrc;

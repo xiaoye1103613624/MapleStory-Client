@@ -1,0 +1,15 @@
+//////////////////////////////////////////////////////////////////////////////////
+//	Evan (龙神) creation — CREATE_CHAR job=3
+//////////////////////////////////////////////////////////////////////////////////
+#pragma once
+
+#include "UICommonCreation.h"
+
+namespace ms
+{
+	class UIEvanCreation : public UICommonCreation
+	{
+	public:
+		UIEvanCreation() : UICommonCreation("2001") {}
+	};
+}
