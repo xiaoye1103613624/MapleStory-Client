@@ -149,3 +149,34 @@ docs/features/softkey-text-mode/evidence/live-20261106/_verify_stdout.txt
 /tools/orange_wz_*.py
 /tools/_*.img
 /tools/level999/
+
+
+# ===== term-verify cleanup: isolate historical round probes / build output (2026-11-13) =====
+# ASCII-only append: this file carries legacy GBK comments above; binary-append preserves them.
+# Scope: 768 untracked tools/_* probes + verify_out/ build output + 9 odd-name probes.
+# 373 already-tracked tools/_* files are UNAFFECTED (gitignore never hides tracked paths).
+# Future legit tool: use a non-underscore name, or git add -f <path>.
+/verify_out/
+/tools/vendor/OmniParser-MCP/
+/tools/_*/
+/tools/_*.json
+/tools/_*.txt
+/tools/_*.b64
+/tools/_*.img
+/tools/_*.bgra
+/tools/_*.png
+/tools/_*.py
+/tools/_*.md
+/tools/_*.xml
+/tools/_*.cpp
+/tools/_*.js
+/tools/_*.ini
+/tools/_*.patch
+/tools/_*.prev
+/tools/_*.err
+/tools/_*.bak
+/tools/_*.exe
+/tools/_*.pdb
+/tools/_*.dll
+/tools/face1*_*.py
+/tools/test_*.py
