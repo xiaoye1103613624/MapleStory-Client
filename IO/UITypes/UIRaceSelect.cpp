@@ -21,6 +21,8 @@
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 #include "../../Graphics/Text.h"
+#include "../Components/LocalTwoSpriteButton.h"
+#include "../../Net/Packets/SelectCharPackets.h"
 
 #include "../../Configuration.h"
 #include "../../Constants.h"
@@ -153,7 +155,49 @@ namespace ms
 
 		classic_text_gl = RaceSelect["textGL"]["0"];
 
-		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], Point<int16_t>(0, 1));
+		// 左侧栏四块（职业团页）：标题牌/世界框/查看所有角色/回到首页，
+		// 屏幕绝对 (0,33)/(0,96)/(0,377)/(0,427)；本页 position=(240,40)，
+		// 装饰以绝对坐标单独绘制，按钮局部坐标 = 绝对 − position。
+		rs_step = Sprite(Common["step"]["3"], Point<int16_t>(0, 33));
+		rs_world_box = Sprite(Common["selectWorld"], Point<int16_t>(0, 96));
+		
+		std::string rs_wname;
+		uint8_t rs_wch = 0xFF;
+		if (auto ws = UI::get().get_element<UIWorldSelect>())
+		{
+			if (const World* w = ws->get_selected_world())
+				rs_wname = w->name;
+			rs_wch = ws->get_channelid();
+		}
+		if (rs_wch == 0xFF)
+			rs_wch = Configuration::get().get_channelid();
+		for (char& c : rs_wname)
+			if (c >= 'a' && c <= 'z')
+				c = static_cast<char>(c - 'a' + 'A');
+		rs_world_name = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, rs_wname);
+		rs_channel = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE,
+			"CH." + std::to_string(rs_wch + 1));
+		
+		const Point<int16_t> rs_sidebar = Point<int16_t>(0, 0) - position;
+		
+		LocalPngTexture rs_btva_normal;
+		LocalPngTexture rs_btva_pressed;
+		constexpr size_t RS_ATLAS_BTVA = 0x52534254ull;  // 'RSBT'
+		bool rs_btva_ok = rs_btva_normal.load(RS_ATLAS_BTVA, {
+			"UI/Creation/BtViewAll_normal.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_normal.png" })
+			&& rs_btva_pressed.load(RS_ATLAS_BTVA + 1, {
+			"UI/Creation/BtViewAll_pressed.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_pressed.png" });
+		
+		if (rs_btva_ok)
+			buttons[Buttons::BtPreview] = std::make_unique<LocalTwoSpriteButton>(
+				std::move(rs_btva_normal), std::move(rs_btva_pressed), rs_sidebar + Point<int16_t>(0, 377));
+		else
+			buttons[Buttons::BtPreview] = std::make_unique<MapleButton>(
+				Login["WorldSelect"]["BtViewAll"], rs_sidebar + Point<int16_t>(0, 377));
+		
+		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(Common["BtStart"], rs_sidebar + Point<int16_t>(0, 427));
 
 		// IDA sub_6157C9: CCtrlButton::Create(1003, 530, 422) 是「选择」按钮的**位图左上**，
 		// 与说明板自带白槽（板内 (412,111)、(118,311)+ = (530,422)）完全重合。
@@ -357,6 +401,13 @@ namespace ms
 			// IDA OnCreate canvas blit textGL @ (315, 52).
 			if (classic_text_gl.is_valid())
 				classic_text_gl.draw(position + Point<int16_t>(315, 52));
+
+			// 左侧栏四块：屏幕绝对坐标，draw 传 (0,0) 不叠加相机 position。
+			// 与上面的 if 同级，无条件绘制（避免被误读成 if 的单语句体）。
+			rs_step.draw(Point<int16_t>(0, 0), inter);
+			rs_world_box.draw(Point<int16_t>(0, 0), inter);
+			rs_world_name.draw(Point<int16_t>(99, 111));
+			rs_channel.draw(Point<int16_t>(99, 127));
 
 			UIElement::draw_buttons(inter);
 			return;
@@ -687,6 +738,13 @@ namespace ms
 
 	Button::State UIRaceSelect::button_pressed(uint16_t buttonid)
 	{
+		if (classic_mode && buttonid == Buttons::BtPreview)
+		{
+			// 左侧栏「查看所有角色」：VIEW_ALL_CHAR(13)，与 UIWorldSelect 一致。
+			ViewAllCharPacket().dispatch();
+			return Button::State::NORMAL;
+		}
+		
 		if (buttonid == Buttons::BtStart)
 		{
 			show_worldselect();

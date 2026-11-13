@@ -20,6 +20,7 @@
 #include <fstream>
 
 #include "UILoginNotice.h"
+#include "UILogin.h"
 #include "UIRaceSelect.h"
 #include "UISoftKey.h"
 #include "UIWorldSelect.h"
@@ -31,6 +32,7 @@
 #include "../../Util/Locale.h"
 
 #include "../Components/AreaButton.h"
+#include "../Components/LocalTwoSpriteButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Configuration.h"
@@ -39,6 +41,7 @@
 #include "../../Audio/Audio.h"
 #include "../../Character/Job.h"
 #include "../../Graphics/Geometry.h"
+#include "../../Net/Session.h"
 
 #include "../../Net/Packets/SelectCharPackets.h"
 
@@ -195,6 +198,28 @@ namespace ms
 		world_sprites.emplace_back(selectedWorld["icon"][world]);
 		world_sprites.emplace_back(selectedWorld["name"][world]);
 		world_sprites.emplace_back(selectedWorld["ch"][channel_id]);
+		
+		// 左侧栏四块：照 UICommonCreation.cpp:492-534 已验证 classic 侧栏；
+		// stateargs 用屏幕绝对坐标，draw 传 (0,0) 不叠加相机 position。
+		cs_step = Sprite(Common["step"]["3"], Point<int16_t>(0, 33));
+		cs_world_box = Sprite(Common["selectWorld"], Point<int16_t>(0, 96));
+		
+		std::string cs_wname;
+		uint8_t cs_wch = 0xFF;
+		if (auto ws = UI::get().get_element<UIWorldSelect>())
+		{
+			if (const World* w = ws->get_selected_world())
+				cs_wname = w->name;
+			cs_wch = ws->get_channelid();
+		}
+		if (cs_wch == 0xFF)
+			cs_wch = Configuration::get().get_channelid();
+		for (char& c : cs_wname)
+			if (c >= 'a' && c <= 'z')
+				c = static_cast<char>(c - 'a' + 'A');
+		cs_world_name = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, cs_wname);
+		cs_channel = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE,
+			"CH." + std::to_string(cs_wch + 1));
 
 		// BeiDou 下由 LoginBackground 统一绘制原生登录背景（地图 + 外框），
 		// 这里使用 step=2 的角色选择视角，跳过 GMS 板式背景。
@@ -328,8 +353,28 @@ namespace ms
 		buttons[Buttons::BtPageR] = std::make_unique<MapleButton>(CharSelect["pageR"]);
 		buttons[Buttons::BtChangePIC] = std::make_unique<MapleButton>(Common["BtChangePIC"]);
 		buttons[Buttons::BtResetPIC] = std::make_unique<MapleButton>(Login["WorldSelect"]["BtResetPIC"]);
-		buttons[Buttons::BtCharacter] = std::make_unique<MapleButton>(CharSelect["EditCharList"]["BtCharacter"]);
+		// 左侧栏「查看所有角色 / 回到首页」：屏幕绝对 (0,377)/(0,427)，
+		// 局部坐标 = 绝对 − position（draw_buttons 会再加回 position）。
+		const Point<int16_t> cs_sidebar = Point<int16_t>(0, 0) - position;
+		
+		LocalPngTexture cs_btva_normal;
+		LocalPngTexture cs_btva_pressed;
+		constexpr size_t CS_ATLAS_BTVA = 0x43534254ull;  // 'CSBT'
+		bool cs_btva_ok = cs_btva_normal.load(CS_ATLAS_BTVA, {
+			"UI/Creation/BtViewAll_normal.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_normal.png" })
+			&& cs_btva_pressed.load(CS_ATLAS_BTVA + 1, {
+			"UI/Creation/BtViewAll_pressed.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_pressed.png" });
+		
+		if (cs_btva_ok)
+			buttons[Buttons::BtCharacter] = std::make_unique<LocalTwoSpriteButton>(
+				std::move(cs_btva_normal), std::move(cs_btva_pressed), cs_sidebar + Point<int16_t>(0, 377));
+		else
+			buttons[Buttons::BtCharacter] = std::make_unique<MapleButton>(
+				Login["WorldSelect"]["BtViewAll"], cs_sidebar + Point<int16_t>(0, 377));
 		buttons[Buttons::BtPreview] = std::make_unique<MapleButton>(Common["BtPreview"]);
+		buttons[Buttons::BtHome] = std::make_unique<MapleButton>(Common["BtStart"], cs_sidebar + Point<int16_t>(0, 427));
 
 		nl::node pos = CharSelect["pos"];
 		nl::node avatarPos = pos["avatarPos"];
@@ -430,6 +475,12 @@ namespace ms
 	{
 		UIElement::draw_sprites(inter);
 
+		// 左侧栏四块：屏幕绝对坐标，draw 传 (0,0) 不叠加相机 position。
+		cs_step.draw(Point<int16_t>(0, 0), inter);
+		cs_world_box.draw(Point<int16_t>(0, 0), inter);
+		cs_world_name.draw(Point<int16_t>(99, 111));
+		cs_channel.draw(Point<int16_t>(99, 127));
+		
 		version.draw(position + version_pos - Point<int16_t>(0, 5));
 
 		// BeiDou 无 charSlot/pageNew 布局节点时贴图为空，跳过避免左上角堆叠。
@@ -1303,6 +1354,20 @@ namespace ms
 				std::string url = Configuration::get().get_resetpic();
 
 				SDL_OpenURL(url.c_str());
+				break;
+			}
+			case Buttons::BtHome:
+			{
+				// 左侧栏「回到首页」：与 UIWorldSelect.cpp:1350-1363 BtStart 一致，
+				// 重置会话后回登录页；BtPreview/ESC 仍保持原有「回选世界页」行为。
+				Sound(Sound::Name::SCROLLUP).play();
+				Session::get().reconnect();
+				if (LoginBackground::get().available())
+					LoginBackground::get().set_step(0);
+				UI::get().remove(UIElement::Type::CHARSELECT);
+				UI::get().remove(UIElement::Type::LOGINWAIT);
+				UI::get().remove(UIElement::Type::LOGINNOTICE);
+				UI::get().emplace<UILogin>();
 				break;
 			}
 			case Buttons::BtCharacter:

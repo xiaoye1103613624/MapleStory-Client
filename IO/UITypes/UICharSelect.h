@@ -96,6 +96,7 @@ namespace ms
 			BtResetPIC,
 			BtCharacter,
 			BtPreview,
+			BtHome,          // 左侧栏「回到首页」：reconnect → 登录页（区别于 BtPreview 回选世界页）
 			CHARACTER_SLOT0
 		};
 
@@ -127,6 +128,13 @@ namespace ms
 		Text burning_count;
 		std::vector<Sprite> world_sprites;
 		Texture charinfo;
+		// 左侧栏四块（选角色页 step2）：标题牌 y36-85 / 世界信息条 y99-148 /
+		// 查看所有角色 y377-399 / 回到首页 y427-449；照 UICommonCreation.cpp:492-534。
+		// 本页 position 是相机值，装饰以屏幕绝对坐标单独绘制，按钮局部=绝对−position。
+		Sprite cs_step;
+		Sprite cs_world_box;
+		Text cs_world_name;
+		Text cs_channel;
 	/// 详情卷轴：选中角色后 scroll/2 展开（217x30→193），内容板(charInfo1)绘于卷内。
 	/// scroll/2 是循环动画（Animation::update 永不返回 true），旧实现
 	/// charinfo_scroll_playing 永真 → 卷轴无限循环+内容板永不绘制（闪烁）。

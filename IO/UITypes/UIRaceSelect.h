@@ -171,5 +171,11 @@ namespace ms
 		uint16_t classic_classes[CLASSIC_CLASS_COUNT];
 		// 五职业团卡面下方文字标签（龙神/双刀无专属 RaceSelect 图时用于辨认）
 		Text classic_card_label[CLASSIC_CLASS_COUNT];
+		// 左侧栏四块（职业团页 step3）：与正确端一致，照 UICommonCreation
+		// 已验证 classic 侧栏；本页 position=(240,40)，装饰以屏幕绝对坐标绘制。
+		Sprite rs_step;
+		Sprite rs_world_box;
+		Text rs_world_name;
+		Text rs_channel;
 	};
 }
