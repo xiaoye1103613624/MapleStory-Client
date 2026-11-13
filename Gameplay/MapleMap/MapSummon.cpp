@@ -52,15 +52,22 @@ namespace ms
 		}
 #endif
 
-		// 没有 stand 帧 ⇒ 退化为旧占位（基类 ItemUp 等）。
-		if (animations.count("stand") == 0)
-			return;
+		// 帧集选择（橙子实测规律）：多数召唤物 summoned/stand/attack1/die（± fly/move），
+		// Puppet 用 summoned/stand/hit/die；4341006 纯 effect 型无驻留帧。
+		if (animations.count("stand") > 0)
+			rest_state = "stand";
+		else if (animations.count("move") > 0)
+			rest_state = "move";
+		else if (animations.count("fly") > 0)
+			rest_state = "fly";
+		else
+			return;	// 无驻留帧 ⇒ 基类占位（R6 兼容）
 
-		state = "stand";
+		state = rest_state;
 
 		if (animations.count("summoned") > 0)
 		{
-			// spawnSummon animated ⇒ 入场闪光先播（update 末尾自动回 stand）。
+			// spawnSummon animated ⇒ 入场闪光先播（update 末尾自动回驻留帧）。
 			set_state("summoned");
 		}
 	}
@@ -135,6 +142,16 @@ namespace ms
 			set_state("summoned");
 	}
 
+	void MapSummon::play_attack()
+	{
+		if (dying)
+			return;
+
+		// 多数召唤物有 attack1 攻击帧（橙子实测）；无则保持当前（如 Puppet 只有 hit）。
+		if (animations.count("attack1") > 0)
+			set_state("attack1");
+	}
+
 	void MapSummon::set_stance(int8_t s)
 	{
 		// SUMMON_SKILL 的 newStance（s9 Character.java:4217/4232，beholder 系召唤物）：
@@ -193,8 +210,8 @@ namespace ms
 				return -1;
 			}
 
-			if (state != "stand")
-				set_state("stand");
+			if (state != rest_state)
+				set_state(rest_state);
 		}
 
 		return layer;

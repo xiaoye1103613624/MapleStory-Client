@@ -99,11 +99,16 @@ namespace ms
 	class DropSpawn
 	{
 	public:
-		DropSpawn(int32_t oid, int32_t id, bool meso, int32_t owner, Point<int16_t> position, Point<int16_t> destination, int8_t droptype, int8_t mode, bool playerdrop);
+		// grade：⑥ 掉落品质光环档位（0=普通/不上光环，1..4=Rare..Legendary）。
+		// 来自下行包 DROP_ITEM_FROM_MAPOBJECT 尾部新增的 1 字节
+		// （PacketCreator.java 的 getDropItemGrade；旧服务端不带该字节时
+		// MapObjectHandlers 按 available() 判定并回落为 0）。
+		DropSpawn(int32_t oid, int32_t id, bool meso, int32_t owner, Point<int16_t> position, Point<int16_t> destination, int8_t droptype, int8_t mode, bool playerdrop, int8_t grade = 0);
 
 		bool is_meso() const;
 		int32_t get_itemid() const;
 		int32_t get_oid() const;
+		int8_t get_grade() const;
 		std::unique_ptr<MapObject> instantiate(const Animation& icon) const;
 		std::unique_ptr<MapObject> instantiate(const Texture& icon) const;
 
@@ -117,6 +122,7 @@ namespace ms
 		int8_t droptype;
 		int8_t mode;
 		bool playerdrop;
+		int8_t grade;
 	};
 
 	class CharSpawn

@@ -1,0 +1,103 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "target": "E:/MXD/BeiDou-ClientV17.7/Data/Effect/SetEff.img",
+  "key_spec": "key_gms 65536B (tools/vendor/NoLifeWzToNx-master/Keys.cpp), b64_len=87384, sha256_16=268a8407a47ee76c, IV=TSPHKw==",
+  "exclusive": false,
+  "steps": [
+    {
+      "tag": "pre_unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "markers": [],
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "load_SetEff.img",
+      "tool": "load_files",
+      "verdict": "OK",
+      "markers": [],
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tag": "roots",
+      "tool": "list_loaded_roots",
+      "verdict": "OK",
+      "markers": [],
+      "raw": "{\"roots\":[{\"name\":\"SetEff.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-ClientV17.7\\\\Data\\\\Effect\\\\SetEff.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}],\"rootCount\":1}"
+    },
+    {
+      "tag": "root_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "markers": [],
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tag": "tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "markers": [
+        "IMG",
+        "解析",
+        "失败"
+      ],
+      "raw": "IMG 解析失败: SetEff.img"
+    },
+    {
+      "tag": "find_set63",
+      "tool": "find_node",
+      "verdict": "PARSE_FAIL",
+      "markers": [
+        "IMG",
+        "解析",
+        "失败"
+      ],
+      "raw": "IMG 解析失败: SetEff.img"
+    },
+    {
+      "tag": "search_multipet",
+      "tool": "search_node",
+      "verdict": "PARSE_FAIL",
+      "markers": [
+        "IMG",
+        "解析",
+        "失败"
+      ],
+      "raw": "IMG 解析失败: SetEff.img"
+    },
+    {
+      "tag": "query_petBackgrnd",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "markers": [
+        "IMG",
+        "解析",
+        "失败"
+      ],
+      "raw": "IMG 解析失败: SetEff.img"
+    },
+    {
+      "tag": "set63_children",
+      "tool": "list_children",
+      "verdict": "PARSE_FAIL",
+      "markers": [
+        "IMG",
+        "解析",
+        "失败"
+      ],
+      "raw": "IMG 解析失败: SetEff.img"
+    },
+    {
+      "tag": "final_unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "markers": [],
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    }
+  ],
+  "session_id": "2a355387-bae3-4a67-8aae-c98ea9bfd3e5",
+  "summary": {
+    "OK": 5,
+    "PARSE_FAIL": 5
+  }
+}

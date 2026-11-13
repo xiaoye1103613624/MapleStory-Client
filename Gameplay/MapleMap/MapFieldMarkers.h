@@ -44,6 +44,8 @@ namespace ms
 		// 只经 FieldMarker 基类接口够不到 play_die/play_spawn。
 		void summon_die(int32_t oid);
 		void summon_spawn(int32_t oid);
+		// 攻击动画（SUMMON_ATTACK）：召唤物本体播 attack1（无则忽略）。
+		void summon_attack(int32_t oid);
 		void move(int32_t oid, Point<int16_t> pos);
 		void set_label(int32_t oid, const std::string& label);
 		bool contains(int32_t oid) const;

@@ -85,16 +85,8 @@ namespace ms
 	{
 		if (auto existing = markers.get(oid))
 		{
-			if (auto* sum = dynamic_cast<MapSummon*>(existing.get()))
-			{
-				sum->set_label("S" + std::to_string(skill_id)
-					+ (skill_level > 0 ? (" Lv" + std::to_string(skill_level)) : ""));
-				existing->set_position(pos);
-			}
-			else if (auto* fm = dynamic_cast<FieldMarker*>(existing.get()))
-			{
-				fm->set_label("S" + std::to_string(skill_id));
-			}
+			// 真对象化后召唤兽无头顶名牌：重复下发只刷新位置，不再拼 "S<id>" 技术串。
+			existing->set_position(pos);
 			existing->makeactive();
 			return;
 		}
@@ -241,6 +233,15 @@ namespace ms
 		{
 			if (auto* sum = dynamic_cast<MapSummon*>(existing.get()))
 				sum->play_spawn();
+		}
+	}
+
+	void MapFieldMarkers::summon_attack(int32_t oid)
+	{
+		if (auto existing = markers.get(oid))
+		{
+			if (auto* sum = dynamic_cast<MapSummon*>(existing.get()))
+				sum->play_attack();
 		}
 	}
 

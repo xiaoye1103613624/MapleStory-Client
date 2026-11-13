@@ -1,0 +1,18 @@
+{
+ "CActionMan::LoadFaceLook": {
+  "uuid": "2397dada-1b5c-4cce-98ee-99dda9d5ac2c",
+  "bytes": 88389
+ },
+ "CAvatar::PrepareActionLayer": {
+  "uuid": "b1336708-91bc-4330-9016-fff8ddf28bd5",
+  "bytes": 78934
+ },
+ "CChatBalloon::CreateCanvas": {
+  "uuid": "9bcbca34-bbab-4755-851f-b277be7c61ec",
+  "bytes": 53627
+ },
+ "CChatBalloon::MakeMiniRoomBalloon": {
+  "uuid": "0205d65a-d16e-4155-b45e-a2f6b631e605",
+  "bytes": 82668
+ }
+}

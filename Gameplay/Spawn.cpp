@@ -117,7 +117,7 @@ namespace ms
 		return std::make_unique<Reactor>(oid, rid, state, spawnposition);
 	}
 
-	DropSpawn::DropSpawn(int32_t o, int32_t i, bool ms, int32_t ow, Point<int16_t> p, Point<int16_t> d, int8_t t, int8_t m, bool pd) : oid(o), id(i), meso(ms), owner(ow), start(p), dest(d), droptype(t), mode(m), playerdrop(pd) {}
+	DropSpawn::DropSpawn(int32_t o, int32_t i, bool ms, int32_t ow, Point<int16_t> p, Point<int16_t> d, int8_t t, int8_t m, bool pd, int8_t g) : oid(o), id(i), meso(ms), owner(ow), start(p), dest(d), droptype(t), mode(m), playerdrop(pd), grade(g) {}
 
 	bool DropSpawn::is_meso() const
 	{
@@ -134,14 +134,19 @@ namespace ms
 		return oid;
 	}
 
+	int8_t DropSpawn::get_grade() const
+	{
+		return grade;
+	}
+
 	std::unique_ptr<MapObject> DropSpawn::instantiate(const Animation& icon) const
 	{
-		return std::make_unique<MesoDrop>(oid, owner, start, dest, droptype, mode, playerdrop, icon);
+		return std::make_unique<MesoDrop>(oid, owner, start, dest, droptype, mode, playerdrop, icon, grade);
 	}
 
 	std::unique_ptr<MapObject> DropSpawn::instantiate(const Texture& icon) const
 	{
-		return std::make_unique<ItemDrop>(oid, owner, start, dest, droptype, mode, id, playerdrop, icon);
+		return std::make_unique<ItemDrop>(oid, owner, start, dest, droptype, mode, id, playerdrop, icon, grade);
 	}
 
 	CharSpawn::CharSpawn(int32_t cid, const LookEntry& look, uint16_t level, int16_t job, const std::string& name, int8_t stance, Point<int16_t> position) : cid(cid), look(look), level(level), job(job), name(name), stance(stance), position(position) {}

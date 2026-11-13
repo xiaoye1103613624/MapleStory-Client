@@ -35,6 +35,8 @@ namespace ms
 		void play_die();
 		// 入场闪光（spawnSummon animated=true，s9 Monster.java 接管时补发）。
 		void play_spawn();
+		// 攻击动画（SUMMON_ATTACK）：有 attack1 帧则播，播完回驻留帧。
+		void play_attack();
 
 		void set_stance(int8_t s);
 		void set_flip(bool flip);
@@ -46,6 +48,8 @@ namespace ms
 
 		std::map<std::string, Animation> animations;
 		std::string state = "stand";
+		// 驻留帧（无 stand 时退化为 move/fly，橙子实测浮动召唤物常见）。
+		std::string rest_state = "stand";
 		bool dying = false;
 
 		int32_t owner_cid = 0;
