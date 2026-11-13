@@ -1,0 +1,367 @@
+{
+  "root": "UIWindow.img/MonsterBook",
+  "children": {
+    "backgrnd": {
+      "child_names": [
+        "origin"
+      ],
+      "detail_len": 627980,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"backgrnd\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/backgrnd\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"backgrnd\", \"width\": 475, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAdsAAAFdCAYAAABLk8fxAACAAElEQVR4Xux9TY",
+      "dim_hints": [
+        "\"value\": {\"name\": \"backgrnd\"",
+        "\"width\": 475",
+        "\"height\": 349",
+        "\"value\": {\"name\": \"backgrnd\"",
+        "\"width\": 475",
+        "\"height\": 349",
+        "\"value\":{\"name\":\"backgrnd\"",
+        "\"width\":475",
+        "\"height\":349",
+        "\"value\":{\"name\":\"backgrnd\"",
+        "\"width\":475",
+        "\"height\":349"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/backgrnd/origin\", \"type\": \"VECTOR_PROPERTY\"}], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"Monste"
+    },
+    "cardSlot": {
+      "child_names": [
+        "origin"
+      ],
+      "detail_len": 107196,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"cardSlot\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/cardSlot\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"cardSlot\", \"width\": 174, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAK4AAAEACAYAAAAqbU3EAABMzElEQVR4Xu19y7",
+      "dim_hints": [
+        "\"value\": {\"name\": \"cardSlot\"",
+        "\"width\": 174",
+        "\"height\": 256",
+        "\"value\": {\"name\": \"cardSlot\"",
+        "\"width\": 174",
+        "\"height\": 256",
+        "\"value\":{\"name\":\"cardSlot\"",
+        "\"width\":174",
+        "\"height\":256",
+        "\"value\":{\"name\":\"cardSlot\"",
+        "\"width\":174",
+        "\"height\":256"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/cardSlot/origin\", \"type\": \"VECTOR_PROPERTY\"}], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"Monste"
+    },
+    "infoPage": {
+      "child_names": [
+        "origin"
+      ],
+      "detail_len": 137100,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"infoPage\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/infoPage\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"infoPage\", \"width\": 170, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAKoAAADnCAYAAACOsM0wAABitUlEQVR4Xu19TW",
+      "dim_hints": [
+        "\"value\": {\"name\": \"infoPage\"",
+        "\"width\": 170",
+        "\"height\": 231",
+        "\"value\": {\"name\": \"infoPage\"",
+        "\"width\": 170",
+        "\"height\": 231",
+        "\"value\":{\"name\":\"infoPage\"",
+        "\"width\":170",
+        "\"height\":231",
+        "\"value\":{\"name\":\"infoPage\"",
+        "\"width\":170",
+        "\"height\":231"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/infoPage/origin\", \"type\": \"VECTOR_PROPERTY\"}], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"Monste"
+    },
+    "select": {
+      "child_names": [
+        "origin",
+        "z"
+      ],
+      "detail_len": 3148,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"select\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/select\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"select\", \"width\": 31, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAB8AAAAqCAYAAABLGYAnAAAAoUlEQVR4Xu2YYQqAIAyFP",
+      "dim_hints": [
+        "\"value\": {\"name\": \"select\"",
+        "\"width\": 31",
+        "\"height\": 42",
+        "\"value\": {\"name\": \"select\"",
+        "\"width\": 31",
+        "\"height\": 42",
+        "\"value\":{\"name\":\"select\"",
+        "\"width\":31",
+        "\"height\":42",
+        "\"value\":{\"name\":\"select\"",
+        "\"width\":31",
+        "\"height\":42"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/select/origin\", \"type\": \"VECTOR_PROPERTY\"}, {\"name\": \"z\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"no"
+    },
+    "cover": {
+      "child_names": [
+        "origin",
+        "z"
+      ],
+      "detail_len": 2840,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"cover\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/cover\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"cover\", \"width\": 31, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAB8AAAAqCAYAAABLGYAnAAAAbElEQVR4Xu3OsQ2AMBBD0ezE",
+      "dim_hints": [
+        "\"value\": {\"name\": \"cover\"",
+        "\"width\": 31",
+        "\"height\": 42",
+        "\"value\": {\"name\": \"cover\"",
+        "\"width\": 31",
+        "\"height\": 42",
+        "\"value\":{\"name\":\"cover\"",
+        "\"width\":31",
+        "\"height\":42",
+        "\"value\":{\"name\":\"cover\"",
+        "\"width\":31",
+        "\"height\":42"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/cover/origin\", \"type\": \"VECTOR_PROPERTY\"}, {\"name\": \"z\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nod"
+    },
+    "fullMark": {
+      "child_names": [
+        "origin",
+        "z"
+      ],
+      "detail_len": 2976,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"fullMark\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/fullMark\", \"type\": \"CANVAS_PROPERTY\"}, \"value\": {\"name\": \"fullMark\", \"width\": 7, \"pngFormat\": \"ARGB8888\", \"png\": \"iVBORw0KGgoAAAANSUhEUgAAAAcAAAALCAYAAACzkJeoAAAAeUlEQVR4Xn2OXQ0A",
+      "dim_hints": [
+        "\"value\": {\"name\": \"fullMark\"",
+        "\"width\": 7",
+        "\"height\": 11",
+        "\"value\": {\"name\": \"fullMark\"",
+        "\"width\": 7",
+        "\"height\": 11",
+        "\"value\":{\"name\":\"fullMark\"",
+        "\"width\":7",
+        "\"height\":11",
+        "\"value\":{\"name\":\"fullMark\"",
+        "\"width\":7",
+        "\"height\":11"
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"origin\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/fullMark/origin\", \"type\": \"VECTOR_PROPERTY\"}, {\"name\": \"z\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \""
+    },
+    "arrowLeft": {
+      "child_names": [
+        "normal",
+        "pressed",
+        "disabled",
+        "mouseOver"
+      ],
+      "detail_len": 1788,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"arrowLeft\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/arrowLeft\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"arrowLeft\", \"nodePath\": \"MonsterBook/arrowLeft\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\"",
+      "dim_hints": [
+        "\"value\": {\"name\": \"arrowLeft\"",
+        "\"value\": {\"name\": \"arrowLeft\"",
+        "\"value\":{\"name\":\"arrowLeft\"",
+        "\"value\":{\"name\":\"arrowLeft\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"normal\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/arrowLeft/normal\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"pressed\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.im"
+    },
+    "arrowRight": {
+      "child_names": [
+        "normal",
+        "pressed",
+        "disabled",
+        "mouseOver"
+      ],
+      "detail_len": 1808,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"arrowRight\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/arrowRight\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"arrowRight\", \"nodePath\": \"MonsterBook/arrowRight\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"t",
+      "dim_hints": [
+        "\"value\": {\"name\": \"arrowRight\"",
+        "\"value\": {\"name\": \"arrowRight\"",
+        "\"value\":{\"name\":\"arrowRight\"",
+        "\"value\":{\"name\":\"arrowRight\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"normal\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/arrowRight/normal\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"pressed\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.i"
+    },
+    "icon": {
+      "child_names": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "detail_len": 1688,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"icon\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/icon\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"icon\", \"nodePath\": \"MonsterBook/icon\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"LIST_PROPERTY\"}},",
+      "dim_hints": [
+        "\"value\": {\"name\": \"icon\"",
+        "\"value\": {\"name\": \"icon\"",
+        "\"value\":{\"name\":\"icon\"",
+        "\"value\":{\"name\":\"icon\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/icon/0\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"1\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Mo"
+    },
+    "BtClose": {
+      "child_names": [
+        "normal",
+        "pressed",
+        "disabled",
+        "mouseOver"
+      ],
+      "detail_len": 1748,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"BtClose\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/BtClose\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"BtClose\", \"nodePath\": \"MonsterBook/BtClose\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"LIST_",
+      "dim_hints": [
+        "\"value\": {\"name\": \"BtClose\"",
+        "\"value\": {\"name\": \"BtClose\"",
+        "\"value\":{\"name\":\"BtClose\"",
+        "\"value\":{\"name\":\"BtClose\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"normal\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/BtClose/normal\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"pressed\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\""
+    },
+    "BtSearch": {
+      "child_names": [
+        "normal",
+        "pressed",
+        "disabled",
+        "mouseOver"
+      ],
+      "detail_len": 1768,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"BtSearch\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/BtSearch\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"BtSearch\", \"nodePath\": \"MonsterBook/BtSearch\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"L",
+      "dim_hints": [
+        "\"value\": {\"name\": \"BtSearch\"",
+        "\"value\": {\"name\": \"BtSearch\"",
+        "\"value\":{\"name\":\"BtSearch\"",
+        "\"value\":{\"name\":\"BtSearch\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"normal\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/BtSearch/normal\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"pressed\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img"
+    },
+    "LeftTab": {
+      "child_names": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "detail_len": 1748,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"LeftTab\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/LeftTab\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"LeftTab\", \"nodePath\": \"MonsterBook/LeftTab\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"LIST_",
+      "dim_hints": [
+        "\"value\": {\"name\": \"LeftTab\"",
+        "\"value\": {\"name\": \"LeftTab\"",
+        "\"value\":{\"name\":\"LeftTab\"",
+        "\"value\":{\"name\":\"LeftTab\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/LeftTab/0\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"1\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"M"
+    },
+    "LeftTabInfo": {
+      "child_names": [
+        "0"
+      ],
+      "detail_len": 1828,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"LeftTabInfo\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/LeftTabInfo\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"LeftTabInfo\", \"nodePath\": \"MonsterBook/LeftTabInfo\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\"",
+      "dim_hints": [
+        "\"value\": {\"name\": \"LeftTabInfo\"",
+        "\"value\": {\"name\": \"LeftTabInfo\"",
+        "\"value\":{\"name\":\"LeftTabInfo\"",
+        "\"value\":{\"name\":\"LeftTabInfo\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/LeftTabInfo/0\", \"type\": \"LIST_PROPERTY\"}], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"MonsterBook/Lef"
+    },
+    "RightTab": {
+      "child_names": [
+        "0",
+        "3",
+        "2",
+        "1"
+      ],
+      "detail_len": 1768,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"RightTab\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/RightTab\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"RightTab\", \"nodePath\": \"MonsterBook/RightTab\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"L",
+      "dim_hints": [
+        "\"value\": {\"name\": \"RightTab\"",
+        "\"value\": {\"name\": \"RightTab\"",
+        "\"value\":{\"name\":\"RightTab\"",
+        "\"value\":{\"name\":\"RightTab\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/RightTab/0\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"3\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \""
+    },
+    "ContextMenu": {
+      "child_names": [
+        "t",
+        "c",
+        "s",
+        "BtRegister",
+        "BtRelease"
+      ],
+      "detail_len": 1828,
+      "detail_head": "{\"result\": {\"detail\": {\"node\": {\"name\": \"ContextMenu\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/ContextMenu\", \"type\": \"LIST_PROPERTY\"}, \"value\": {\"name\": \"ContextMenu\", \"nodePath\": \"MonsterBook/ContextMenu\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\"",
+      "dim_hints": [
+        "\"value\": {\"name\": \"ContextMenu\"",
+        "\"value\": {\"name\": \"ContextMenu\"",
+        "\"value\":{\"name\":\"ContextMenu\"",
+        "\"value\":{\"name\":\"ContextMenu\""
+      ],
+      "children_head": "{\"result\": {\"children\": [{\"name\": \"t\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"MonsterBook/ContextMenu/t\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"c\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePat"
+    }
+  },
+  "tree": {
+    "len": 118958,
+    "name_count": 676,
+    "names_head": [
+      "MonsterBook",
+      "origin",
+      "backgrnd",
+      "origin",
+      "cardSlot",
+      "origin",
+      "infoPage",
+      "origin",
+      "z",
+      "select",
+      "origin",
+      "z",
+      "cover",
+      "origin",
+      "z",
+      "fullMark",
+      "arrowLeft",
+      "normal",
+      "0",
+      "pressed",
+      "0",
+      "disabled",
+      "0",
+      "mouseOver",
+      "0",
+      "arrowRight",
+      "normal",
+      "0",
+      "pressed",
+      "0",
+      "disabled",
+      "0",
+      "mouseOver",
+      "0",
+      "icon",
+      "origin",
+      "0",
+      "origin",
+      "1",
+      "origin",
+      "2",
+      "origin",
+      "3",
+      "origin",
+      "4",
+      "origin",
+      "5",
+      "origin",
+      "6",
+      "origin",
+      "7",
+      "BtClose",
+      "normal",
+      "0",
+      "pressed",
+      "0",
+      "disabled",
+      "0",
+      "mouseOver",
+      "0"
+    ],
+    "head": "{\"result\": {\"tree\": {\"name\": \"MonsterBook\", \"nodePath\": \"MonsterBook\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"LIST_PROPERTY\", \"children\": [{\"children\": [{\"children\": [], \"name\": \"origin\", \"x\": 0, \"nodePath\": \"MonsterBook/backgrnd/origin\", \"y\": 0, \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"type\": \"VECTOR_PROPERTY\"}], \"name\": \"backgrnd\", \"wid"
+  }
+}

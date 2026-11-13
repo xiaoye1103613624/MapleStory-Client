@@ -1,0 +1,822 @@
+{
+  "basis": "083/v83 · orange-wz 128B gate · UIWindow.img = E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img (s9 资源包)",
+  "method": "code_buttons = 源码任意 \"Bt*\" 字符串字面量；已覆盖 put()/try_maple_btn()/[\"\"] 三种写法",
+  "note": "img_only=IMG 有 Bt* 本地未引用(未绑/缺实现)；code_only=本地引用但 IMG 无(改名/跨根/版本差)。均需再对 IDA/截图判读，不直接等于缺陷。",
+  "windows": [
+    {
+      "window": "KeyConfig",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "icon",
+        "key",
+        "notice",
+        "BtClose",
+        "BtHelp",
+        "BtOK",
+        "BtCancel",
+        "BtDefault",
+        "BtDelete",
+        "BtQuickSlot",
+        "quickslotConfig"
+      ],
+      "code_buttons": [
+        "BtCancel",
+        "BtClose",
+        "BtDefault",
+        "BtDelete",
+        "BtOK",
+        "BtQuickSlot"
+      ],
+      "img_buttons": [
+        "BtCancel",
+        "BtClose",
+        "BtDefault",
+        "BtDelete",
+        "BtHelp",
+        "BtOK",
+        "BtQuickSlot"
+      ],
+      "matched_buttons": [
+        "BtCancel",
+        "BtClose",
+        "BtDefault",
+        "BtDelete",
+        "BtOK",
+        "BtQuickSlot"
+      ],
+      "img_only_buttons": [
+        "BtHelp"
+      ],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "KeyConfig",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "icon",
+        "key"
+      ]
+    },
+    {
+      "window": "Equip",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "pet",
+        "FullBackgrnd",
+        "BtDetail",
+        "BtPet1",
+        "BtPet2",
+        "BtPet3",
+        "BtPetEquipShow",
+        "BtPetEquipHide",
+        "BtCashshop",
+        "Addon"
+      ],
+      "code_buttons": [
+        "BtCashshop",
+        "BtDetail",
+        "BtPet1",
+        "BtPet2",
+        "BtPet3",
+        "BtPetEquipHide",
+        "BtPetEquipShow"
+      ],
+      "img_buttons": [
+        "BtCashshop",
+        "BtDetail",
+        "BtPet1",
+        "BtPet2",
+        "BtPet3",
+        "BtPetEquipHide",
+        "BtPetEquipShow"
+      ],
+      "matched_buttons": [
+        "BtCashshop",
+        "BtDetail",
+        "BtPet1",
+        "BtPet2",
+        "BtPet3",
+        "BtPetEquipHide",
+        "BtPetEquipShow"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "backgrnd",
+        "disabled",
+        "normal",
+        "pet"
+      ]
+    },
+    {
+      "window": "Item",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "activeIcon",
+        "BtCoin",
+        "Tab",
+        "bossPetIcon",
+        "shadow",
+        "BtGather",
+        "BtSort",
+        "Quality",
+        "FullBackgrnd",
+        "disabled",
+        "BtFull",
+        "BtSmall",
+        "BtCashshop",
+        "New"
+      ],
+      "code_buttons": [
+        "BtCashshop",
+        "BtCoin",
+        "BtFull",
+        "BtGather",
+        "BtSmall",
+        "BtSort"
+      ],
+      "img_buttons": [
+        "BtCashshop",
+        "BtCoin",
+        "BtFull",
+        "BtGather",
+        "BtSmall",
+        "BtSort"
+      ],
+      "matched_buttons": [
+        "BtCashshop",
+        "BtCoin",
+        "BtFull",
+        "BtGather",
+        "BtSmall",
+        "BtSort"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "AutoBuild",
+        "FullAutoBuild",
+        "FullBackgrnd",
+        "FullBackgrnd2",
+        "FullBackgrnd3",
+        "New",
+        "Tab",
+        "Tab0",
+        "Tab1",
+        "activeIcon",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "disabled",
+        "enabled",
+        "inventory",
+        "pos",
+        "productionBackgrnd",
+        "productionBackgrnd2",
+        "productionBackgrnd3",
+        "slot_col",
+        "slot_pos",
+        "slot_row",
+        "slot_space_x",
+        "slot_space_y"
+      ]
+    },
+    {
+      "window": "Stat",
+      "status": "OK",
+      "img_children": [
+        "basicStat",
+        "BtApUp",
+        "BtDetail",
+        "Job",
+        "BtAuto",
+        "BtAuto1",
+        "BtAuto2",
+        "Disabled",
+        "backgrnd2",
+        "backgrnd",
+        "backgrnd4"
+      ],
+      "code_buttons": [
+        "BtApUp",
+        "BtAuto",
+        "BtAutoAP",
+        "BtDetail",
+        "BtDetailOpen",
+        "BtDexUp",
+        "BtHide",
+        "BtHpUp",
+        "BtIntUp",
+        "BtLukUp",
+        "BtMpUp",
+        "BtStrUp"
+      ],
+      "img_buttons": [
+        "BtApUp",
+        "BtAuto",
+        "BtAuto1",
+        "BtAuto2",
+        "BtDetail"
+      ],
+      "matched_buttons": [
+        "BtApUp",
+        "BtAuto",
+        "BtDetail"
+      ],
+      "img_only_buttons": [
+        "BtAuto1",
+        "BtAuto2"
+      ],
+      "code_only_buttons": [
+        "BtAutoAP",
+        "BtDetailOpen",
+        "BtDexUp",
+        "BtHide",
+        "BtHpUp",
+        "BtIntUp",
+        "BtLukUp",
+        "BtMpUp",
+        "BtStrUp"
+      ],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "DEX",
+        "Disabled",
+        "INT",
+        "LUK",
+        "STR",
+        "abilityTitle",
+        "activated",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "backgrnd4",
+        "basicStat",
+        "cover0",
+        "detail",
+        "disabled",
+        "epic",
+        "legendary",
+        "main",
+        "metierLine",
+        "normal",
+        "rare",
+        "unique"
+      ]
+    },
+    {
+      "window": "Skill",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "skill0",
+        "skill1",
+        "line",
+        "BtSpUp",
+        "Tab",
+        "tip0",
+        "tip1",
+        "tip2",
+        "CoolTime",
+        "recommend"
+      ],
+      "code_buttons": [
+        "BtCancle",
+        "BtGuildSkill",
+        "BtHyper",
+        "BtMacro",
+        "BtOK",
+        "BtOkay",
+        "BtRide",
+        "BtSpDown",
+        "BtSpMax",
+        "BtSpUp"
+      ],
+      "img_buttons": [
+        "BtSpUp"
+      ],
+      "matched_buttons": [
+        "BtSpUp"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [
+        "BtCancle",
+        "BtGuildSkill",
+        "BtHyper",
+        "BtMacro",
+        "BtOK",
+        "BtOkay",
+        "BtRide",
+        "BtSpDown",
+        "BtSpMax"
+      ],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "New",
+        "Tab",
+        "Tab0",
+        "Tab1",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "disabled",
+        "enabled",
+        "line",
+        "macro",
+        "main",
+        "num",
+        "skill0",
+        "skill1",
+        "skillBlank",
+        "skillPoint"
+      ]
+    },
+    {
+      "window": "UserList",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "Friend",
+        "Party",
+        "Guild",
+        "Tab",
+        "BlackList",
+        "GuildUnion"
+      ],
+      "code_buttons": [
+        "BtAdd",
+        "BtAddFriend",
+        "BtAddGroup",
+        "BtBlock",
+        "BtBoard",
+        "BtChange",
+        "BtChangeBoss",
+        "BtChat",
+        "BtCreate",
+        "BtDelete",
+        "BtDown",
+        "BtEnter",
+        "BtGroupWhisper",
+        "BtGuildBBS",
+        "BtHP",
+        "BtInfo",
+        "BtInvite",
+        "BtKick",
+        "BtMate",
+        "BtMessage",
+        "BtMessenger",
+        "BtMod",
+        "BtParty",
+        "BtPartyInvite",
+        "BtPartyLevel",
+        "BtPartyMake",
+        "BtPartyOut",
+        "BtPartySettings",
+        "BtPlusFriend",
+        "BtSearch",
+        "BtSheetIClose",
+        "BtShowAll",
+        "BtShowOnline",
+        "BtUnBlock",
+        "BtUp",
+        "BtWhere",
+        "BtWhisper",
+        "BtWithdraw",
+        "Btnotice"
+      ],
+      "img_buttons": [],
+      "matched_buttons": [],
+      "img_only_buttons": [],
+      "code_only_buttons": [
+        "BtAdd",
+        "BtAddFriend",
+        "BtAddGroup",
+        "BtBlock",
+        "BtBoard",
+        "BtChange",
+        "BtChangeBoss",
+        "BtChat",
+        "BtCreate",
+        "BtDelete",
+        "BtDown",
+        "BtEnter",
+        "BtGroupWhisper",
+        "BtGuildBBS",
+        "BtHP",
+        "BtInfo",
+        "BtInvite",
+        "BtKick",
+        "BtMate",
+        "BtMessage",
+        "BtMessenger",
+        "BtMod",
+        "BtParty",
+        "BtPartyInvite",
+        "BtPartyLevel",
+        "BtPartyMake",
+        "BtPartyOut",
+        "BtPartySettings",
+        "BtPlusFriend",
+        "BtSearch",
+        "BtSheetIClose",
+        "BtShowAll",
+        "BtShowOnline",
+        "BtUnBlock",
+        "BtUp",
+        "BtWhere",
+        "BtWhisper",
+        "BtWithdraw",
+        "Btnotice"
+      ],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "BlackList",
+        "CbCondition",
+        "Friend",
+        "Guild",
+        "GuildInfo",
+        "GuildUnion",
+        "Main",
+        "Party",
+        "PartySearch",
+        "Sheet1",
+        "Sheet2",
+        "Sheet6",
+        "Tab",
+        "TapShowAll",
+        "TapShowGuild",
+        "TapShowIndividual",
+        "TapShowOnline",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "base",
+        "disabled",
+        "enabled",
+        "guildinfo0",
+        "guildinfo1",
+        "guildinfo6",
+        "guildinfo7",
+        "line",
+        "partyName",
+        "request",
+        "table",
+        "text",
+        "title"
+      ]
+    },
+    {
+      "window": "Family",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "BtClose",
+        "BtFamilyPrecept",
+        "BtJuniorEntry",
+        "BtTree",
+        "BtLeft",
+        "BtRight",
+        "BtSpecial",
+        "BtOK",
+        "RightIcon"
+      ],
+      "code_buttons": [
+        "BtClose",
+        "BtFamilyPrecept",
+        "BtJuniorEntry",
+        "BtLeft",
+        "BtOK",
+        "BtRight",
+        "BtSpecial",
+        "BtTree"
+      ],
+      "img_buttons": [
+        "BtClose",
+        "BtFamilyPrecept",
+        "BtJuniorEntry",
+        "BtLeft",
+        "BtOK",
+        "BtRight",
+        "BtSpecial",
+        "BtTree"
+      ],
+      "matched_buttons": [
+        "BtClose",
+        "BtFamilyPrecept",
+        "BtJuniorEntry",
+        "BtLeft",
+        "BtOK",
+        "BtRight",
+        "BtSpecial",
+        "BtTree"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": false,
+      "code_nonbutton_refs": [
+        "backgrnd"
+      ]
+    },
+    {
+      "window": "Maker",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "notUse",
+        "randomMake",
+        "randomRecipe",
+        "BtStart",
+        "BtCancel",
+        "GaugeBar",
+        "BtDown",
+        "ComboBox1",
+        "ComboBox2"
+      ],
+      "code_buttons": [],
+      "img_buttons": [
+        "BtCancel",
+        "BtDown",
+        "BtStart"
+      ],
+      "matched_buttons": [],
+      "img_only_buttons": [
+        "BtCancel",
+        "BtDown",
+        "BtStart"
+      ],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "Maker",
+        "backgrnd",
+        "cost",
+        "recipe",
+        "reqLevel",
+        "targetItem"
+      ]
+    },
+    {
+      "window": "MiniMap",
+      "status": "OK",
+      "img_children": [
+        "title",
+        "MinMap",
+        "MaxMap",
+        "Min",
+        "BtMap"
+      ],
+      "code_buttons": [
+        "BtMap",
+        "BtMax",
+        "BtMin"
+      ],
+      "img_buttons": [
+        "BtMap"
+      ],
+      "matched_buttons": [
+        "BtMap"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [
+        "BtMax",
+        "BtMin"
+      ],
+      "uses_generic_close_btn": false,
+      "code_nonbutton_refs": [
+        "DefaultHelper",
+        "ListNpc",
+        "MaxMap",
+        "Min",
+        "MinMap",
+        "MiniMapSimpleMode",
+        "another",
+        "c",
+        "canvas",
+        "centerX",
+        "centerY",
+        "e",
+        "height",
+        "iconNpc",
+        "info",
+        "mag",
+        "mapMark",
+        "mapName",
+        "mark",
+        "miniMap",
+        "minimap",
+        "n",
+        "ne",
+        "npc",
+        "nw",
+        "portal",
+        "pt",
+        "s",
+        "se",
+        "sw",
+        "tm",
+        "user",
+        "w",
+        "width",
+        "x",
+        "y"
+      ]
+    },
+    {
+      "window": "Messenger",
+      "status": "OK",
+      "img_children": [
+        "backgrnd3",
+        "blink",
+        "chatBalloon",
+        "BtEnter",
+        "NameBar",
+        "backgrnd",
+        "backgrnd2"
+      ],
+      "code_buttons": [
+        "BtClose3",
+        "BtEnter"
+      ],
+      "img_buttons": [
+        "BtEnter"
+      ],
+      "matched_buttons": [
+        "BtEnter"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [
+        "BtClose3"
+      ],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "NameBar",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "blink",
+        "chatBalloon",
+        "x",
+        "y"
+      ]
+    },
+    {
+      "window": "WorldMap",
+      "status": "OK",
+      "img_children": [
+        "title",
+        "Border"
+      ],
+      "code_buttons": [
+        "BtAllsearch",
+        "BtAutoFly_1",
+        "BtHide",
+        "BtNaviRegister",
+        "BtSearch"
+      ],
+      "img_buttons": [],
+      "matched_buttons": [],
+      "img_only_buttons": [],
+      "code_only_buttons": [
+        "BtAllsearch",
+        "BtAutoFly_1",
+        "BtHide",
+        "BtNaviRegister",
+        "BtSearch"
+      ],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "BaseImg",
+        "Border",
+        "MapLink",
+        "MapList",
+        "WorldMap",
+        "WorldMapSearch",
+        "backgrnd",
+        "curPos",
+        "desc",
+        "info",
+        "link",
+        "linkImg",
+        "linkMap",
+        "mapImage",
+        "mapNo",
+        "normal",
+        "notice",
+        "parentMap",
+        "path",
+        "spot",
+        "title",
+        "type",
+        "worldMap"
+      ]
+    },
+    {
+      "window": "MonsterBook",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "cardSlot",
+        "infoPage",
+        "select",
+        "cover",
+        "fullMark",
+        "arrowLeft",
+        "arrowRight",
+        "icon",
+        "BtClose",
+        "BtSearch",
+        "LeftTab",
+        "LeftTabInfo",
+        "RightTab",
+        "ContextMenu"
+      ],
+      "code_buttons": [],
+      "img_buttons": [
+        "BtClose",
+        "BtSearch"
+      ],
+      "matched_buttons": [],
+      "img_only_buttons": [
+        "BtClose",
+        "BtSearch"
+      ],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "MonsterBook",
+        "backgrnd",
+        "name"
+      ]
+    },
+    {
+      "window": "PartySearch",
+      "status": "OK",
+      "img_children": [
+        "backgrnd",
+        "check0",
+        "check1",
+        "icon0",
+        "icon1",
+        "Party",
+        "PartyMember",
+        "BtReg",
+        "BtCancel",
+        "BtStart",
+        "BtPause",
+        "BtStop",
+        "Tab"
+      ],
+      "code_buttons": [
+        "BtCancel",
+        "BtPause",
+        "BtReg",
+        "BtStart",
+        "BtStop"
+      ],
+      "img_buttons": [
+        "BtCancel",
+        "BtPause",
+        "BtReg",
+        "BtStart",
+        "BtStop"
+      ],
+      "matched_buttons": [
+        "BtCancel",
+        "BtPause",
+        "BtReg",
+        "BtStart",
+        "BtStop"
+      ],
+      "img_only_buttons": [],
+      "code_only_buttons": [],
+      "uses_generic_close_btn": true,
+      "code_nonbutton_refs": [
+        "backgrnd"
+      ]
+    },
+    {
+      "window": "QuestLog",
+      "status": "NOT_FOUND_IN_IMG"
+    },
+    {
+      "window": "Whisper",
+      "status": "NOT_FOUND_IN_IMG"
+    },
+    {
+      "window": "Medal",
+      "status": "NOT_FOUND_IN_IMG"
+    },
+    {
+      "window": "GuildBBS",
+      "status": "NOT_FOUND_IN_IMG"
+    }
+  ]
+}

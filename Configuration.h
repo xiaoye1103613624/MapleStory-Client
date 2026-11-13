@@ -93,6 +93,11 @@ namespace ms
 		// 仅在 data.format = "img" 时被 ImgFiles 使用。
 		// Get the IMG data directory (used only when the format is "img")
 		std::string get_data_dir() const;
+		// img 后端是否把 .img 派生为 .nxcache 并走内存映射加载（resource.nxcache）。
+		// 默认 false：保持既有堆式按需加载（启动快、无首启全量转换成本）；
+		// 开启后首启会全量转换 ~12 万 .img（数分钟）并占用数 GB 缓存，但加载
+		// 形态变为内存映射、OS 可换出冷根，根治长期内存基线过高 / 低内存机溢出。
+		bool get_resource_nxcache() const;
 		// 密钥来源模式（data.keymode）：auto / builtin / external。
 		ms::res::KeyMode get_keymode() const;
 		// 外部密钥文件路径（data.keyfile），空字符串表示关闭。
@@ -111,6 +116,11 @@ namespace ms
 		int64_t get_damage_cap() const;
 		// 装备悬停时是否显示同部位已装备物品的对比（ui.equip_compare）。
 		bool get_equip_compare() const;
+		// Damage skin id (ui.damage_skin). 0 = default BasicEff. Local cache of
+		// the selected skin; a non-zero server DAMAGE_SKIN(247) value overrides it.
+		int32_t get_damage_skin() const;
+		// Persist the selected skin id into memory (caller decides when to save()).
+		void set_damage_skin(int32_t skin);
 		// UI 语言码（ui.language），默认 zh-CN；可被 xy-config 覆盖，支持热重载。
 		std::string get_ui_language() const;
 		// 运行时切换 UI 语言：写内存项 + 立即生效；落盘由调用方显式 save()
@@ -659,9 +669,8 @@ namespace ms
 		ChatViewY() : ShortEntry("chat.y", "0") {}
 	};
 
-	// 本端聊天窗类型（s9 适配三态，非 083 原生 SetChatType；差异与决策点 D7-A 见
-	// docs/features/development-and-fix-plan-2026-11/notes/wave2-chattype-083-review-20261111.md）。
-	// 1=收起(仅输入行) / 2=紧凑(小历史框) / 3=完整(可拖高历史框)。
+	// Angel 083 SetChatType 持久化键（仅 1/3；2=输入中瞬态不写盘）。
+	// 见 docs/features/chat-angel-calibration-2026-11/。旧值 2 启动时映射为 1。
 	struct ChatType : public Configuration::ShortEntry
 	{
 		ChatType() : ShortEntry("chat.type", "3") {}
@@ -1016,6 +1025,13 @@ namespace ms
 		DamageCap() : StringEntry("damage.cap", "9007199254740992") {}
 	};
 
+	// Damage skin id (ui.damage_skin, default 0 = BasicEff). Local-only cache;
+	// a non-zero server DAMAGE_SKIN(247) value is authoritative and mirrored here.
+	struct DamageSkin : public Configuration::StringEntry
+	{
+		DamageSkin() : StringEntry("ui.damage_skin", "0") {}
+	};
+
 	// 封包调试转储（debug.packet_dump，默认 false）。
 	// 开启后把收/发的每个明文封包按参考端 PacketDump 格式（前缀 "PacketDump : "
 	// + 每字节 "%02x " 小写十六进制；格式重建自 BeiDou.exe 0x6EC7C0：
@@ -1033,6 +1049,15 @@ namespace ms
 	struct PerfLogEnabled : public Configuration::BoolEntry
 	{
 		PerfLogEnabled() : BoolEntry("debug.perf_log", "false") {}
+	};
+
+	// img 后端将 .img 派生为 .nxcache 并走内存映射加载（resource.nxcache，默认 false）。
+	// 关闭时保持既有堆式按需加载（启动快、无首启转换成本）；开启即享 mmap 收益：
+	// 字节在页文件里、OS 可在内存紧张时换出冷根，根治“全量根常驻”的高基线 / 溢出。
+	// 首启会全量转换 ~12 万 .img（数分钟）并占用数 GB 缓存；删除 .nxcache 可强制重转。
+	struct ResourceNxCache : public Configuration::BoolEntry
+	{
+		ResourceNxCache() : BoolEntry("resource.nxcache", "false") {}
 	};
 
 	// 真机冒烟自驱动（debug.gm_smoke，默认 false；仅 GM 号自测用，生产必关）。

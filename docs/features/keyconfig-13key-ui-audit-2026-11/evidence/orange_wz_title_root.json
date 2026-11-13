@@ -1,0 +1,106 @@
+{
+  "load": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "isError": false,
+      "structuredContent": {
+        "loadedCount": 1,
+        "rootCount": 1,
+        "exclusive": false,
+        "generation": 1
+      },
+      "content": [
+        {
+          "text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}",
+          "type": "text"
+        }
+      ]
+    }
+  },
+  "nodes": {
+    "Title": {
+      "children": [
+        "BtGiveup",
+        "BtOK",
+        "Tab",
+        "backgrnd",
+        "backgrnd2",
+        "backgrnd3",
+        "backgrnd4",
+        "backgrnd5",
+        "icon1",
+        "icon2"
+      ],
+      "error": false,
+      "len": 6667
+    },
+    "Title/Tab": {
+      "children": [
+        "Tab",
+        "disabled",
+        "enabled"
+      ],
+      "error": false,
+      "len": 1915
+    },
+    "Title/Tab/enabled": {
+      "children": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "enabled"
+      ],
+      "error": false,
+      "len": 3735
+    },
+    "Title/Tab/disabled": {
+      "children": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "disabled"
+      ],
+      "error": false,
+      "len": 3759
+    },
+    "Title/icon1": {
+      "children": [
+        "icon1",
+        "origin"
+      ],
+      "error": false,
+      "len": 1311
+    },
+    "Title/icon2": {
+      "children": [
+        "0",
+        "1",
+        "2",
+        "icon2"
+      ],
+      "error": false,
+      "len": 2431
+    },
+    "Title/backgrnd2": {
+      "children": [
+        "backgrnd2",
+        "origin"
+      ],
+      "error": false,
+      "len": 1343
+    },
+    "Title/backgrnd4": {
+      "children": [
+        "backgrnd4",
+        "origin"
+      ],
+      "error": false,
+      "len": 1343
+    }
+  }
+}

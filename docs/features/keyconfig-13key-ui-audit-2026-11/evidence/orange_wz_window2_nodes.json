@@ -1,0 +1,161 @@
+{
+  "base": "http://127.0.0.1:10012/mcp",
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY",
+  "imgs": [
+    "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+    "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img"
+  ],
+  "init_keys": [
+    "protocolVersion",
+    "capabilities",
+    "serverInfo"
+  ],
+  "probes": {
+    "UIWindow.img:root": {
+      "len": 653,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 11, \"result\": {\"isError\": false, \"structuredContent\": {\"result\": {\"children\": [], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"\", \"op\": \"list_children\"}, \"results\": [{\"children\": [], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"nodePath\": \"\", \"op\": \"list_children\"}]}, \"content\": [{\"text\": \"{\\\"result\\\":{\\\"children\\\":[],\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\\\",\\\"nodePath\\\":\\\"\\\",\\\"op\\\":\\\"list_children\\\"},\\\"results\\\":[{\\\"children\\\":[],\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\\\",\\\"nodePath\\\":\\\"\\\",\\\"op\\\":\\\"list_children\\\"}]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow.img:search:Medal": {
+      "len": 395,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 12, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"Medal\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\\\",\\\"keyword\\\":\\\"Medal\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow.img:search:Whisper": {
+      "len": 3077,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 13, \"result\": {\"isError\": false, \"structuredContent\": {\"node\": {\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ContextMenu/BtWhisper\", \"type\": \"LIST_PROPERTY\"}, \"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"Whisper\", \"matches\": [{\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ContextMenu/BtWhisper\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Friend/BtWhisper\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"GroupWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Friend/Popup/GroupWhisper\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"BtGroupWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Friend/BtGroupWhisper\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Party/BtWhisper\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild/GuildInfo/BtWhisper\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtWhisper\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow"
+    },
+    "UIWindow.img:search:Quest": {
+      "len": 2481,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 14, \"result\": {\"isError\": false, \"structuredContent\": {\"node\": {\"name\": \"Quest\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest\", \"type\": \"LIST_PROPERTY\"}, \"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"Quest\", \"matches\": [{\"name\": \"Quest\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"TimeQuest\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest/TimeQuest\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"QuestAlarm\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"QuestAlarm\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtQuest\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ShortCut/BtQuest\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"QuestIcon\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"QuestIcon\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"CancelRequests\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"CancelRequests\", \"type\": \"LIST_PROPERTY\"}]}, \"content\": [{\"text\": \"{\\\"node\\\":{\\\"name\\\":\\\"Quest\\\",\\\"rootPath\\\":\\\"E:\\\\\\\\MXD\\\\\\\\BeiDou-Client_S9\\\\\\\\Data\\\\\\\\UI\\\\\\\\UIWindow.img\\\",\\\"nodePath\\\":\\\"Quest\\\",\\\"type\\\":\\\"LIST_PROPERTY\\\"},\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\"
+    },
+    "UIWindow.img:search:Guild": {
+      "len": 12325,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 15, \"result\": {\"isError\": false, \"structuredContent\": {\"node\": {\"name\": \"BtGuild\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ContextMenu/BtGuild\", \"type\": \"LIST_PROPERTY\"}, \"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"Guild\", \"matches\": [{\"name\": \"BtGuild\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ContextMenu/BtGuild\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtGuild\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"ShortCut/BtGuild\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"Guild\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"GuildInfo\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild/GuildInfo\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"guildmark\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild/GuildInfo/guildmark\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"guildinfo0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild/GuildInfo/guildinfo0\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"guildinfo1\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UserList/Guild/GuildInfo"
+    },
+    "UIWindow.img:search:Notice": {
+      "len": 4699,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 16, \"result\": {\"isError\": false, \"structuredContent\": {\"node\": {\"name\": \"notice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx/notice\", \"type\": \"CANVAS_PROPERTY\"}, \"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"Notice\", \"matches\": [{\"name\": \"notice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx/notice\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"FloatNotice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"FloatNotice\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"notice0\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest/notice0\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"notice1\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest/notice1\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"notice2\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest/notice2\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"notice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Quest/notice\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"notice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"KeyConfig/notice\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"Notice\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou"
+    },
+    "UIWindow.img:search:UtilDlg": {
+      "len": 1983,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 17, \"result\": {\"isError\": false, \"structuredContent\": {\"node\": {\"name\": \"UtilDlgEx\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx\", \"type\": \"LIST_PROPERTY\"}, \"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\", \"keyword\": \"UtilDlg\", \"matches\": [{\"name\": \"UtilDlgEx\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"UtilDlgEx_Avatar\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx_Avatar\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"UtilDlgEx_Pet\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx_Pet\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"UtilDlgEx_MultiPetEquip\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"UtilDlgEx_MultiPetEquip\", \"type\": \"LIST_PROPERTY\"}]}, \"content\": [{\"text\": \"{\\\"node\\\":{\\\"name\\\":\\\"UtilDlgEx\\\",\\\"rootPath\\\":\\\"E:\\\\\\\\MXD\\\\\\\\BeiDou-Client_S9\\\\\\\\Data\\\\\\\\UI\\\\\\\\UIWindow.img\\\",\\\"nodePath\\\":\\\"UtilDlgEx\\\",\\\"type\\\":\\\"LIST_PROPERTY\\\"},\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\\\",\\\"keyword\\\":\\\"UtilDlg\\\",\\\"matches\\\":[{\\\"name\\\":\\\"UtilDlgEx\\\",\\\"rootPath\\\":\\\"E:\\\\\\\\MXD\\\\\\\\BeiDou-Client_S9\\\\\\\\Data\\\\\\\\UI\\\\\\\\UIWindow.img\\\",\\\"nodePath\\\""
+    },
+    "UIWindow.img:win:Medal": {
+      "len": 178,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 18, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=Medal\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow.img:win:Whisper": {
+      "len": 180,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 19, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=Whisper\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow.img:win:QuestLog": {
+      "len": 181,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 20, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=QuestLog\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow.img:win:GuildBBS": {
+      "len": 181,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 21, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=GuildBBS\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow.img:win:Family": {
+      "len": 6791,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 22, \"result\": {\"isError\": false, \"structuredContent\": {\"result\": {\"children\": [{\"name\": \"backgrnd\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/backgrnd\", \"type\": \"CANVAS_PROPERTY\"}, {\"name\": \"BtClose\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtClose\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtFamilyPrecept\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtFamilyPrecept\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtJuniorEntry\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtJuniorEntry\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtTree\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtTree\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtLeft\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtLeft\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtRight\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtRight\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtSpecial\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtSpecial\", \"type\": \"LIST_PROPERTY\"}, {\"name\": \"BtOK\", \"rootPath\": \"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\", \"nodePath\": \"Family/BtOK\", \"type\": \"LIST_PROPERTY\"}, {"
+    },
+    "UIWindow.img:win:MedalQuest": {
+      "len": 183,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 23, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=MedalQuest\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow.img:win:MedalList": {
+      "len": 182,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 24, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=MedalList\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:root": {
+      "len": 657,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 25, \"result\": {\"isError\": false, \"structuredContent\": {\"result\": {\"children\": [], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"nodePath\": \"\", \"op\": \"list_children\"}, \"results\": [{\"children\": [], \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"nodePath\": \"\", \"op\": \"list_children\"}]}, \"content\": [{\"text\": \"{\\\"result\\\":{\\\"children\\\":[],\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"nodePath\\\":\\\"\\\",\\\"op\\\":\\\"list_children\\\"},\\\"results\\\":[{\\\"children\\\":[],\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"nodePath\\\":\\\"\\\",\\\"op\\\":\\\"list_children\\\"}]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:Medal": {
+      "len": 397,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 26, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"Medal\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"Medal\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:Whisper": {
+      "len": 401,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 27, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"Whisper\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"Whisper\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:Quest": {
+      "len": 397,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 28, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"Quest\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"Quest\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:Guild": {
+      "len": 397,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 29, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"Guild\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"Guild\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:Notice": {
+      "len": 399,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 30, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"Notice\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"Notice\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:search:UtilDlg": {
+      "len": 401,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 31, \"result\": {\"isError\": false, \"structuredContent\": {\"nodePath\": \"\", \"searchIn\": \"name\", \"rootPath\": \"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\", \"keyword\": \"UtilDlg\", \"matches\": []}, \"content\": [{\"text\": \"{\\\"nodePath\\\":\\\"\\\",\\\"searchIn\\\":\\\"name\\\",\\\"rootPath\\\":\\\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img\\\",\\\"keyword\\\":\\\"UtilDlg\\\",\\\"matches\\\":[]}\", \"type\": \"text\"}]}}"
+    },
+    "UIWindow2.img:win:Medal": {
+      "len": 179,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 32, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=Medal\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:Whisper": {
+      "len": 181,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 33, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=Whisper\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:QuestLog": {
+      "len": 182,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 34, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=QuestLog\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:GuildBBS": {
+      "len": 182,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 35, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=GuildBBS\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:Family": {
+      "len": 180,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 36, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=Family\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:MedalQuest": {
+      "len": 184,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 37, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=MedalQuest\", \"type\": \"text\"}], \"isError\": true}}"
+    },
+    "UIWindow2.img:win:MedalList": {
+      "len": 183,
+      "isError": false,
+      "head": "{\"jsonrpc\": \"2.0\", \"id\": 38, \"result\": {\"content\": [{\"text\": \"节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow2.img, nodePath=MedalList\", \"type\": \"text\"}], \"isError\": true}}"
+    }
+  },
+  "load": {
+    "len": 266,
+    "isError": false,
+    "head": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"result\": {\"isError\": false, \"structuredContent\": {\"loadedCount\": 2, \"rootCount\": 2, \"exclusive\": false, \"generation\": 1}, \"content\": [{\"text\": \"{\\\"loadedCount\\\":2,\\\"rootCount\\\":2,\\\"exclusive\\\":false,\\\"generation\\\":1}\", \"type\": \"text\"}]}}"
+  },
+  "unload": "{\"jsonrpc\": \"2.0\", \"id\": 900, \"result\": {\"isError\": false, \"structuredContent\": {\"rootCount\": 0, \"ok\": true}, \"content\": [{\"text\": \"{\\\"rootCount\\\":0,\\\"ok\\\":true}\", \"type\": \"text\"}]}}"
+}

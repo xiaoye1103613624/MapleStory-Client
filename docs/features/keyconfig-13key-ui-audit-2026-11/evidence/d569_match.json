@@ -1,0 +1,106 @@
+[
+  {
+    "label": "D5 BtHelp full-window",
+    "node": "KeyConfig/BtHelp/normal/0",
+    "tmpl": [
+      12,
+      12
+    ],
+    "frame": [
+      150,
+      64
+    ],
+    "sad": 175.77
+  },
+  {
+    "label": "D6 BtDetail full-window",
+    "node": "Stat/BtDetail/normal/0",
+    "tmpl": [
+      46,
+      19
+    ],
+    "frame": [
+      154,
+      326
+    ],
+    "sad": 0.62
+  },
+  {
+    "label": "D7 BtAuto full-window",
+    "node": "Stat/BtAuto/normal/0",
+    "tmpl": [
+      100,
+      35
+    ],
+    "frame": [
+      266,
+      115
+    ],
+    "sad": 147.56
+  },
+  {
+    "label": "D9 BtOK",
+    "node": "KeyConfig/BtOK/normal/0",
+    "tmpl": [
+      47,
+      19
+    ],
+    "frame": [
+      8,
+      234
+    ],
+    "sad": 0.36
+  },
+  {
+    "label": "D9 BtCancel",
+    "node": "KeyConfig/BtCancel/normal/0",
+    "tmpl": [
+      47,
+      19
+    ],
+    "frame": [
+      58,
+      234
+    ],
+    "sad": 13.54
+  },
+  {
+    "label": "D9 BtDefault",
+    "node": "KeyConfig/BtDefault/normal/0",
+    "tmpl": [
+      65,
+      19
+    ],
+    "frame": [
+      112,
+      234
+    ],
+    "sad": 0.34
+  },
+  {
+    "label": "D9 BtDelete",
+    "node": "KeyConfig/BtDelete/normal/0",
+    "tmpl": [
+      71,
+      19
+    ],
+    "frame": [
+      106,
+      234
+    ],
+    "sad": 97.47
+  },
+  {
+    "label": "D9 BtQuickSlot",
+    "node": "KeyConfig/BtQuickSlot/normal/0",
+    "tmpl": [
+      96,
+      18
+    ],
+    "frame": [
+      260,
+      234
+    ],
+    "sad": 0.0
+  }
+]

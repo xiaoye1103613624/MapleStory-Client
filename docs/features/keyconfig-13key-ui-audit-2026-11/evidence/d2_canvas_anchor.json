@@ -1,0 +1,92 @@
+{
+  "MonsterBook/cardSlot": {
+    "size": [
+      174,
+      256
+    ],
+    "frame_xy": [
+      295,
+      60
+    ],
+    "window_rel": [
+      261,
+      53
+    ],
+    "sad": 43.07
+  },
+  "MonsterBook/infoPage": {
+    "size": [
+      170,
+      231
+    ],
+    "frame_xy": [
+      74,
+      42
+    ],
+    "window_rel": [
+      40,
+      35
+    ],
+    "sad": 36.8
+  },
+  "MonsterBook/select": {
+    "size": [
+      31,
+      42
+    ],
+    "frame_xy": [
+      10,
+      300
+    ],
+    "window_rel": [
+      -24,
+      293
+    ],
+    "sad": 159.33
+  },
+  "MonsterBook/cover": {
+    "size": [
+      31,
+      42
+    ],
+    "frame_xy": [
+      0,
+      29
+    ],
+    "window_rel": [
+      -34,
+      22
+    ],
+    "sad": 116.17
+  },
+  "MonsterBook/fullMark": {
+    "size": [
+      7,
+      11
+    ],
+    "frame_xy": [
+      270,
+      342
+    ],
+    "window_rel": [
+      236,
+      335
+    ],
+    "sad": 0.0
+  },
+  "MonsterBook/icon/0": {
+    "size": [
+      22,
+      27
+    ],
+    "frame_xy": [
+      508,
+      196
+    ],
+    "window_rel": [
+      474,
+      189
+    ],
+    "sad": 124.95
+  }
+}

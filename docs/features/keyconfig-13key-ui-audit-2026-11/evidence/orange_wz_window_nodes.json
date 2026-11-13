@@ -1,0 +1,2124 @@
+{
+  "base": "http://127.0.0.1:10012/mcp",
+  "img": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+  "img_src": "E:/MXD/BeiDou-Client_S9/Data_源文件/UI/UIWindow.img",
+  "key_spec": "128B WzAESConstant.DEFAULT_KEY base64 (tools/_gms_key_128.b64)",
+  "iv": "TSPHKw==",
+  "windows": {
+    "KeyConfig": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 10,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "icon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/icon",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "key",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/key",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "notice",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/notice",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtClose",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtClose",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtHelp",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtHelp",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtOK",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtOK",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtCancel",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtCancel",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtDefault",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtDefault",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtDelete",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtDelete",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtQuickSlot",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/BtQuickSlot",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "quickslotConfig",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "KeyConfig/quickslotConfig",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "KeyConfig",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "icon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/icon",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "key",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/key",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "notice",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/notice",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtClose",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtClose",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtHelp",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtHelp",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtOK",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtOK",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtCancel",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtCancel",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtDefault",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtDefault",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtDelete",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtDelete",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtQuickSlot",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/BtQuickSlot",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "quickslotConfig",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "KeyConfig/quickslotConfig",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "KeyConfig",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"icon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/icon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"key\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/key\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"notice\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/notice\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtHelp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtHelp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtOK\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtOK\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDefault\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtDefault\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDelete\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtDelete\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtQuickSlot\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtQuickSlot\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"quickslotConfig\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/quickslotConfig\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"KeyConfig\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"icon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/icon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"key\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/key\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"notice\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/notice\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtHelp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtHelp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtOK\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtOK\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDefault\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtDefault\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDelete\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtDelete\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtQuickSlot\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/BtQuickSlot\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"quickslotConfig\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"KeyConfig/quickslotConfig\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"KeyConfig\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 8075,
+      "isError": false
+    },
+    "Equip": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 11,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "pet",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/pet",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "FullBackgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/FullBackgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtDetail",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtDetail",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPet1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtPet1",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPet2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtPet2",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPet3",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtPet3",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPetEquipShow",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtPetEquipShow",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPetEquipHide",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtPetEquipHide",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtCashshop",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/BtCashshop",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Addon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Equip/Addon",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Equip",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "pet",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/pet",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "FullBackgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/FullBackgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtDetail",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtDetail",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPet1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtPet1",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPet2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtPet2",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPet3",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtPet3",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPetEquipShow",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtPetEquipShow",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPetEquipHide",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtPetEquipHide",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtCashshop",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/BtCashshop",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Addon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Equip/Addon",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Equip",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"pet\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/pet\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"FullBackgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/FullBackgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtDetail\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtDetail\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet2\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet3\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPetEquipShow\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPetEquipShow\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPetEquipHide\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPetEquipHide\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCashshop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtCashshop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Addon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/Addon\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Equip\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"pet\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/pet\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"FullBackgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/FullBackgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtDetail\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtDetail\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet2\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPet3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPet3\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPetEquipShow\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPetEquipShow\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPetEquipHide\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtPetEquipHide\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCashshop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/BtCashshop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Addon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Equip/Addon\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Equip\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 7367,
+      "isError": false
+    },
+    "Item": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 12,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "activeIcon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/activeIcon",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtCoin",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtCoin",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Tab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/Tab",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "bossPetIcon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/bossPetIcon",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "shadow",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/shadow",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtGather",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtGather",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtSort",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtSort",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Quality",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/Quality",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "FullBackgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/FullBackgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "disabled",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/disabled",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtFull",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtFull",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtSmall",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtSmall",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtCashshop",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/BtCashshop",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "New",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Item/New",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Item",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "activeIcon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/activeIcon",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtCoin",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtCoin",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Tab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/Tab",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "bossPetIcon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/bossPetIcon",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "shadow",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/shadow",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtGather",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtGather",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtSort",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtSort",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Quality",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/Quality",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "FullBackgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/FullBackgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "disabled",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/disabled",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtFull",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtFull",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtSmall",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtSmall",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtCashshop",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/BtCashshop",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "New",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Item/New",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Item",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"activeIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/activeIcon\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtCoin\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtCoin\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"bossPetIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/bossPetIcon\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"shadow\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/shadow\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtGather\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtGather\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSort\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtSort\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Quality\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/Quality\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"FullBackgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/FullBackgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"disabled\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/disabled\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtFull\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtFull\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSmall\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtSmall\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCashshop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtCashshop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"New\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/New\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Item\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"activeIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/activeIcon\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtCoin\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtCoin\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"bossPetIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/bossPetIcon\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"shadow\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/shadow\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtGather\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtGather\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSort\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtSort\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Quality\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/Quality\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"FullBackgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/FullBackgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"disabled\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/disabled\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtFull\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtFull\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSmall\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtSmall\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCashshop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/BtCashshop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"New\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Item/New\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Item\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 9639,
+      "isError": false
+    },
+    "Stat": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 13,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "basicStat",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/basicStat",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtApUp",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/BtApUp",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtDetail",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/BtDetail",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Job",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/Job",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtAuto",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/BtAuto",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtAuto1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/BtAuto1",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtAuto2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/BtAuto2",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Disabled",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/Disabled",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "backgrnd2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/backgrnd2",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "backgrnd4",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Stat/backgrnd4",
+                  "type": "CANVAS_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Stat",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "basicStat",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/basicStat",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtApUp",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/BtApUp",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtDetail",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/BtDetail",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Job",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/Job",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtAuto",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/BtAuto",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtAuto1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/BtAuto1",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtAuto2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/BtAuto2",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Disabled",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/Disabled",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/backgrnd2",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd4",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Stat/backgrnd4",
+                    "type": "CANVAS_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Stat",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"basicStat\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/basicStat\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtApUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtApUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDetail\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtDetail\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Job\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/Job\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto2\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Disabled\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/Disabled\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd4\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd4\",\"type\":\"CANVAS_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Stat\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"basicStat\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/basicStat\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtApUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtApUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDetail\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtDetail\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Job\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/Job\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtAuto2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/BtAuto2\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Disabled\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/Disabled\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd4\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Stat/backgrnd4\",\"type\":\"CANVAS_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Stat\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 7231,
+      "isError": false
+    },
+    "Skill": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 14,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "skill0",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/skill0",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "skill1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/skill1",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "line",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/line",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtSpUp",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/BtSpUp",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Tab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/Tab",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "tip0",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/tip0",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "tip1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/tip1",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "tip2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/tip2",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "CoolTime",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/CoolTime",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "recommend",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Skill/recommend",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Skill",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "skill0",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/skill0",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "skill1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/skill1",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "line",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/line",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtSpUp",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/BtSpUp",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Tab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/Tab",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "tip0",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/tip0",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "tip1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/tip1",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "tip2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/tip2",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "CoolTime",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/CoolTime",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "recommend",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Skill/recommend",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Skill",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"line\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/line\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtSpUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/BtSpUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"tip0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"CoolTime\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/CoolTime\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"recommend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/recommend\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Skill\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"skill1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/skill1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"line\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/line\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtSpUp\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/BtSpUp\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"tip0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"tip2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/tip2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"CoolTime\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/CoolTime\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"recommend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Skill/recommend\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Skill\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 7159,
+      "isError": false
+    },
+    "UserList": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 15,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "backgrnd2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/backgrnd2",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "backgrnd3",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/backgrnd3",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "Friend",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/Friend",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Party",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/Party",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Guild",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/Guild",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Tab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/Tab",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BlackList",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/BlackList",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "GuildUnion",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "UserList/GuildUnion",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "UserList",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/backgrnd2",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd3",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/backgrnd3",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "Friend",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/Friend",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Party",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/Party",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Guild",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/Guild",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Tab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/Tab",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BlackList",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/BlackList",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "GuildUnion",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "UserList/GuildUnion",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "UserList",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd3\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Friend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Friend\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Party\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Party\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Guild\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Guild\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BlackList\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/BlackList\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"GuildUnion\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/GuildUnion\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"UserList\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/backgrnd3\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Friend\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Friend\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Party\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Party\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Guild\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Guild\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/Tab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BlackList\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/BlackList\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"GuildUnion\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"UserList/GuildUnion\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"UserList\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 6183,
+      "isError": false
+    },
+    "Family": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 16,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtClose",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtClose",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtFamilyPrecept",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtFamilyPrecept",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtJuniorEntry",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtJuniorEntry",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtTree",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtTree",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtLeft",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtLeft",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtRight",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtRight",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtSpecial",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtSpecial",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtOK",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/BtOK",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "RightIcon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Family/RightIcon",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Family",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtClose",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtClose",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtFamilyPrecept",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtFamilyPrecept",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtJuniorEntry",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtJuniorEntry",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtTree",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtTree",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtLeft",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtLeft",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtRight",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtRight",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtSpecial",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtSpecial",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtOK",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/BtOK",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "RightIcon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Family/RightIcon",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Family",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtFamilyPrecept\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtFamilyPrecept\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtJuniorEntry\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtJuniorEntry\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtTree\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtTree\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtLeft\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtLeft\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtRight\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtRight\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSpecial\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtSpecial\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtOK\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtOK\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"RightIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/RightIcon\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Family\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtFamilyPrecept\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtFamilyPrecept\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtJuniorEntry\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtJuniorEntry\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtTree\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtTree\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtLeft\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtLeft\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtRight\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtRight\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSpecial\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtSpecial\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtOK\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/BtOK\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"RightIcon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Family/RightIcon\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Family\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 6791,
+      "isError": false
+    },
+    "Maker": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 17,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "notUse",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/notUse",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "randomMake",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/randomMake",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "randomRecipe",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/randomRecipe",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "BtStart",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/BtStart",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtCancel",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/BtCancel",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "GaugeBar",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/GaugeBar",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtDown",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/BtDown",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "ComboBox1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/ComboBox1",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "ComboBox2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Maker/ComboBox2",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Maker",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "notUse",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/notUse",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "randomMake",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/randomMake",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "randomRecipe",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/randomRecipe",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "BtStart",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/BtStart",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtCancel",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/BtCancel",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "GaugeBar",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/GaugeBar",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtDown",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/BtDown",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "ComboBox1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/ComboBox1",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "ComboBox2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Maker/ComboBox2",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Maker",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"notUse\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/notUse\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"randomMake\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/randomMake\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"randomRecipe\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/randomRecipe\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtStart\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtStart\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"GaugeBar\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/GaugeBar\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDown\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtDown\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ComboBox1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/ComboBox1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ComboBox2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/ComboBox2\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Maker\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"notUse\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/notUse\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"randomMake\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/randomMake\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"randomRecipe\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/randomRecipe\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"BtStart\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtStart\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"GaugeBar\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/GaugeBar\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtDown\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/BtDown\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ComboBox1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/ComboBox1\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ComboBox2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Maker/ComboBox2\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Maker\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 6763,
+      "isError": false
+    },
+    "MiniMap": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 18,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "title",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MiniMap/title",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "MinMap",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MiniMap/MinMap",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "MaxMap",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MiniMap/MaxMap",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Min",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MiniMap/Min",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtMap",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MiniMap/BtMap",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "MiniMap",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "title",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MiniMap/title",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "MinMap",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MiniMap/MinMap",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "MaxMap",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MiniMap/MaxMap",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Min",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MiniMap/Min",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtMap",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MiniMap/BtMap",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "MiniMap",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"MinMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/MinMap\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"MaxMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/MaxMap\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Min\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/Min\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/BtMap\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"MiniMap\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"MinMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/MinMap\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"MaxMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/MaxMap\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Min\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/Min\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MiniMap/BtMap\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"MiniMap\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 3623,
+      "isError": false
+    },
+    "Messenger": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 19,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd3",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/backgrnd3",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "blink",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/blink",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "chatBalloon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/chatBalloon",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtEnter",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/BtEnter",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "NameBar",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/NameBar",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "backgrnd2",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "Messenger/backgrnd2",
+                  "type": "CANVAS_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "Messenger",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd3",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/backgrnd3",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "blink",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/blink",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "chatBalloon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/chatBalloon",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtEnter",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/BtEnter",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "NameBar",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/NameBar",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "backgrnd2",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "Messenger/backgrnd2",
+                    "type": "CANVAS_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "Messenger",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd3\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"blink\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/blink\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"chatBalloon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/chatBalloon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtEnter\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/BtEnter\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"NameBar\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/NameBar\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Messenger\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd3\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"blink\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/blink\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"chatBalloon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/chatBalloon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtEnter\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/BtEnter\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"NameBar\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/NameBar\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"backgrnd2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"Messenger/backgrnd2\",\"type\":\"CANVAS_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"Messenger\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 5055,
+      "isError": false
+    },
+    "QuestLog": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 20,
+        "result": {
+          "content": [
+            {
+              "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=QuestLog",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      },
+      "len": 181,
+      "isError": false
+    },
+    "WorldMap": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 21,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "title",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "WorldMap/title",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "Border",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "WorldMap/Border",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "WorldMap",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "title",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "WorldMap/title",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "Border",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "WorldMap/Border",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "WorldMap",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"title\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/title\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Border\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"WorldMap/Border\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"WorldMap\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 1879,
+      "isError": false
+    },
+    "MonsterBook": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 22,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "cardSlot",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/cardSlot",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "infoPage",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/infoPage",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "select",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/select",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "cover",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/cover",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "fullMark",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/fullMark",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "arrowLeft",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/arrowLeft",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "arrowRight",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/arrowRight",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "icon",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/icon",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtClose",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/BtClose",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtSearch",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/BtSearch",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "LeftTab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/LeftTab",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "LeftTabInfo",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/LeftTabInfo",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "RightTab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/RightTab",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "ContextMenu",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "MonsterBook/ContextMenu",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "MonsterBook",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "cardSlot",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/cardSlot",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "infoPage",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/infoPage",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "select",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/select",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "cover",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/cover",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "fullMark",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/fullMark",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "arrowLeft",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/arrowLeft",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "arrowRight",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/arrowRight",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "icon",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/icon",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtClose",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/BtClose",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtSearch",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/BtSearch",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "LeftTab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/LeftTab",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "LeftTabInfo",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/LeftTabInfo",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "RightTab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/RightTab",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "ContextMenu",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "MonsterBook/ContextMenu",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "MonsterBook",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"cardSlot\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/cardSlot\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"infoPage\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/infoPage\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"select\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/select\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"cover\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/cover\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"fullMark\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/fullMark\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"arrowLeft\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/arrowLeft\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"arrowRight\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/arrowRight\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"icon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/icon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSearch\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/BtSearch\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"LeftTab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/LeftTab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"LeftTabInfo\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/LeftTabInfo\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"RightTab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/RightTab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ContextMenu\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/ContextMenu\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"MonsterBook\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"cardSlot\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/cardSlot\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"infoPage\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/infoPage\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"select\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/select\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"cover\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/cover\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"fullMark\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/fullMark\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"arrowLeft\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/arrowLeft\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"arrowRight\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/arrowRight\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"icon\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/icon\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtClose\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/BtClose\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtSearch\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/BtSearch\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"LeftTab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/LeftTab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"LeftTabInfo\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/LeftTabInfo\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"RightTab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/RightTab\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"ContextMenu\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"MonsterBook/ContextMenu\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"MonsterBook\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 10143,
+      "isError": false
+    },
+    "Whisper": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 23,
+        "result": {
+          "content": [
+            {
+              "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=Whisper",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      },
+      "len": 180,
+      "isError": false
+    },
+    "Medal": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 24,
+        "result": {
+          "content": [
+            {
+              "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=Medal",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      },
+      "len": 178,
+      "isError": false
+    },
+    "PartySearch": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 25,
+        "result": {
+          "isError": false,
+          "structuredContent": {
+            "result": {
+              "children": [
+                {
+                  "name": "backgrnd",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/backgrnd",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "check0",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/check0",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "check1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/check1",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "icon0",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/icon0",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "icon1",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/icon1",
+                  "type": "CANVAS_PROPERTY"
+                },
+                {
+                  "name": "Party",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/Party",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "PartyMember",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/PartyMember",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtReg",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/BtReg",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtCancel",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/BtCancel",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtStart",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/BtStart",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtPause",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/BtPause",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "BtStop",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/BtStop",
+                  "type": "LIST_PROPERTY"
+                },
+                {
+                  "name": "Tab",
+                  "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                  "nodePath": "PartySearch/Tab",
+                  "type": "LIST_PROPERTY"
+                }
+              ],
+              "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+              "nodePath": "PartySearch",
+              "op": "list_children"
+            },
+            "results": [
+              {
+                "children": [
+                  {
+                    "name": "backgrnd",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/backgrnd",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "check0",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/check0",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "check1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/check1",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "icon0",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/icon0",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "icon1",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/icon1",
+                    "type": "CANVAS_PROPERTY"
+                  },
+                  {
+                    "name": "Party",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/Party",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "PartyMember",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/PartyMember",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtReg",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/BtReg",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtCancel",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/BtCancel",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtStart",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/BtStart",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtPause",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/BtPause",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "BtStop",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/BtStop",
+                    "type": "LIST_PROPERTY"
+                  },
+                  {
+                    "name": "Tab",
+                    "rootPath": "E:\\MXD\\BeiDou-Client_S9\\Data\\UI\\UIWindow.img",
+                    "nodePath": "PartySearch/Tab",
+                    "type": "LIST_PROPERTY"
+                  }
+                ],
+                "rootPath": "E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img",
+                "nodePath": "PartySearch",
+                "op": "list_children"
+              }
+            ]
+          },
+          "content": [
+            {
+              "text": "{\"result\":{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"check0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/check0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"check1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/check1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"icon0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/icon0\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"icon1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/icon1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Party\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/Party\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"PartyMember\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/PartyMember\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtReg\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtReg\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtStart\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtStart\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPause\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtPause\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtStop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtStop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/Tab\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"PartySearch\",\"op\":\"list_children\"},\"results\":[{\"children\":[{\"name\":\"backgrnd\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/backgrnd\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"check0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/check0\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"check1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/check1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"icon0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/icon0\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"icon1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/icon1\",\"type\":\"CANVAS_PROPERTY\"},{\"name\":\"Party\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/Party\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"PartyMember\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/PartyMember\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtReg\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtReg\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtCancel\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtCancel\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtStart\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtStart\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtPause\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtPause\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"BtStop\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/BtStop\",\"type\":\"LIST_PROPERTY\"},{\"name\":\"Tab\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client_S9\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"PartySearch/Tab\",\"type\":\"LIST_PROPERTY\"}],\"rootPath\":\"E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img\",\"nodePath\":\"PartySearch\",\"op\":\"list_children\"}]}",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "len": 8711,
+      "isError": false
+    },
+    "GuildBBS": {
+      "raw": {
+        "jsonrpc": "2.0",
+        "id": 26,
+        "result": {
+          "content": [
+            {
+              "text": "节点路径不存在: rootPath=E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img, nodePath=GuildBBS",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      },
+      "len": 181,
+      "isError": false
+    }
+  },
+  "load": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "isError": false,
+      "structuredContent": {
+        "loadedCount": 1,
+        "rootCount": 1,
+        "exclusive": false,
+        "generation": 1
+      },
+      "content": [
+        {
+          "text": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":1}",
+          "type": "text"
+        }
+      ]
+    }
+  },
+  "unload": "{\"jsonrpc\": \"2.0\", \"id\": 900, \"result\": {\"isError\": false, \"structuredContent\": {\"rootCount\": 0, \"ok\": true}, \"content\": [{\"text\": \"{\\\"rootCount\\\":0,\\\"ok\\\":true}\", \"type\": \"text\"}]}}"
+}

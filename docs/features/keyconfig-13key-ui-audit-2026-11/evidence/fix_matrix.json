@@ -1,0 +1,160 @@
+{
+  "task": "keyconfig-13key D1-D10 修复（用户 m00325「就按这个修复」）",
+  "date": "2026-11-11",
+  "baseline": "083/v83",
+  "verification": {
+    "build": "tools/build_smoke.bat EXITCODE=0 (GATE OK)",
+    "recompiled_tus": [
+      "IO/UIElement.cpp (build_log.txt:149)",
+      "IO/UITypes/UIMaker.cpp (:1456)",
+      "IO/UITypes/UIMedal.cpp (:1504)",
+      "IO/UITypes/UIMonsterBook.cpp (:1674)"
+    ],
+    "exe": "E:/MXD/BeiDou-Client-xy/MapleStory.exe 18:24",
+    "selfcheck": "tools/_key13_verify.py 扩 D1-D4 断言 ALL PASS",
+    "commit": "0 commit / 0 push（未获指示）"
+  },
+  "fixes": [
+    {
+      "id": "D1",
+      "priority": "P0",
+      "status": "FIXED",
+      "title": "分号键勋章窗整体落地 + 原生模型 + 数据对接 + 排版像素级对齐（turn7-10）",
+      "files": [
+        "IO/UITypes/UIMedal.h (new)",
+        "IO/UITypes/UIMedal.cpp (new)",
+        "IO/KeyAction.h",
+        "IO/UIElement.h",
+        "Net/KeyMapTranslate.h",
+        "IO/UIStateGame.cpp",
+        "MapleStory.vcxproj",
+        "MapleStory.vcxproj.filters",
+        "locale/zh-CN.ini",
+        "locale/en-US.ini",
+        "tools/_medal_frame_measure.py (new)",
+        "evidence/medal_frame_metrics.json (new)",
+        "patches/UIMedal.h.turn10",
+        "patches/UIMedal.cpp.turn10"
+      ],
+      "approach": "turn7 骨架（门禁18 复用件）+ 六链接；turn7-8 升级：真实数据 = QuestInfo.img viewMedalItem≠0（.nx 探针 82 条，无新协议——用户指正翻案）× QuestLog::is_completed；原生模型对齐 ctor 260x374 / Draw 步进 49|23 / clip (7,48)-(230,291) / OnMouseButton 行选中 / SP_5301-5302 状态文本 / tab100 基本=已获得全量；Title 件与 Item 114xxxx 图标探针否定保留 ColorBox/文本态；turn10 按用户 m01261 钉靶「勋章按键 按下后打开的勋章ui」，对 正确客户端截图/勋章框.png 255x372 逐像素量测（tools/_medal_frame_measure.py → evidence/medal_frame_metrics.json）：外沿浅灰/顶深蓝线(85,119,153)/标题下蓝线(119,153,187)/页签带(170,170,170) 5格选中粉红(238,102,136)/计数条白底y46..79/列表面板浅蓝白(238,238,255)y78..350/滚动条槽x239..253+上下钮(221,221,221)/底条蓝灰(153,187,204)y351..371。用 ColorBox 色带逐带复刻（turn8 Title 真素材 SAD=46~214 已否定换素材）。原生 IDA clip(7,48,230,291) 与截帧 LIST 带为不同坐标系，双证据独立编码 CLIP_* 与 LIST_*，不放宽断言。Color(int×4) 重载歧义用 rgb() helper 走 std::array<uint8_t,4> 明确构造；Text 构造只吃 Color::Name → count_label 用 MINESHAFT(51,51,51)。",
+      "evidence": [
+        "evidence/orange_wz_window2_nodes.json (两根 Medal matches:[])",
+        "evidence/ida_UI_Open_Close.json (UI_Open:260 sub_840170)",
+        "evidence/d1b_ida.json",
+        "evidence/d1c_detail.json",
+        "evidence/d1b_title_assets.json",
+        "正确客户端截图/勋章框.png",
+        "tools/_d1_wire.py 6 links + 13 postchecks",
+        "tools/_d1_questnx_probe.py",
+        "tools/_d1_questnx_probe2.py",
+        "tools/_d1b_ida_probe.py",
+        "tools/_d1c_detail_probe.py",
+        "tools/_d1c_item_probe.py"
+      ],
+      "residual": "勋章详情窗 CUIMedalQuestInfoDetail（305x373, ctor @0x83d255）内容未取证 -> 行二次点击显式预留仅保选中；行首勋章图标 Item.nx 无 114xxxx 素材 -> 文本态；IsStateButton 以 meets_requirements 近似（注释标明）",
+      "verification": "build_smoke EXITCODE=0 (exe 21:59, 4982784B; LNK1104 占用经用户裁决选B taskkill pid 59256 后重试); _key13_verify.py D1T8 13 断言 ALL PASS",
+      "verify": "；tools/build_smoke.bat EXITCODE=0；tools/_key13_verify.py ALL PASS（D1T8 双证据 clip + D1T10 7 项排版色带断言）；备份 patches/UIMedal.{h,cpp}.turn10。"
+    },
+    {
+      "id": "D2",
+      "priority": "P0",
+      "status": "FIXED",
+      "title": "怪物手册重写为书本双页 + 15 节点全绑",
+      "files": [
+        "IO/UITypes/UIMonsterBook.h",
+        "IO/UITypes/UIMonsterBook.cpp",
+        "locale/zh-CN.ini",
+        "locale/en-US.ini"
+      ],
+      "approach": "三方对齐坐标：IDA sub_86256D 立即数(BtClose 1000@(429,8)/BtSearch 2000@(175,29)/arrow 2001-2004/(48|185|270|407,285)/header 2005@(49,30)) + orange-wz 15 节点尺寸 + 截帧模板匹配(backgrnd 锚(34,7)/infoPage(40,35)/cardSlot(261,53)/LeftTab y=131+20i SAD0/RightTab(450,30+39i)/fullMark(236,335) SAD0)；5x6 卡片格 31x42；select/cover 按 DrawArgument.h:134 origin 回加；UpdateCheckList 9 便签勾选态复刻；搜索/翻页/点格设封面接线",
+      "evidence": [
+        "evidence/ida_monsterbook_ctor.json",
+        "evidence/orange_wz_monsterbook_facts.json",
+        "evidence/d2_canvas_anchor.json",
+        "evidence/d2_tab_anchor.json"
+      ],
+      "residual": "卡片->怪物名需 String/MonsterBook.img 未接入 -> 信息页显示卡片编号/等级/封面号（数据真实）；RightTab 4 页签内容分类数据缺失 -> tab_reserved 文案；ContextMenu(t/c/s/BtRegister/BtRelease) 素材存在但原生挂载点未取证 -> 不造右键菜单",
+      "notes": "编译修复：usable(Texture)->operator bool；fullMark 270->236 按实测修正"
+    },
+    {
+      "id": "D3",
+      "priority": "P1",
+      "status": "FIXED",
+      "title": "窗口开合淡入（UI_Toggle 视觉层）",
+      "files": [
+        "IO/UIElement.h",
+        "IO/UIElement.cpp",
+        "IO/UITypes/UIMedal.cpp",
+        "IO/UITypes/UIMonsterBook.cpp"
+      ],
+      "approach": "mutable fade_in：ctor/makeactive 归零；draw_sprites+draw_buttons 双推进点（消费即推进，任何链基类的窗都不会卡半透明；双消费窗约4-5帧/单消费约9帧收敛~150ms）；draw_sprites 乘 sprite alpha；自绘窗（UIMedal/UIMonsterBook）DrawArgument+fade 手动乘入；音效层 MENUUP/MENUDOWN 本地 emplace/pre_add 已有（UIStateGame.cpp:822-863）",
+      "evidence": [
+        "evidence/ida_UI_Toggle.json (SP_2302_MENUUP/SP_2303_MENUDOWN)"
+      ],
+      "residual": "淡出不做——UIStateGame::draw 只画 active 元素，改绘制队列影响面过大；关闭反馈由 MENUDOWN 音效承担（注释内已写明）"
+    },
+    {
+      "id": "D4",
+      "priority": "P1",
+      "status": "FIXED",
+      "title": "UIMaker 底部两钮按 IDA 立即数绑定",
+      "files": [
+        "IO/UITypes/UIMaker.h",
+        "IO/UITypes/UIMaker.cpp"
+      ],
+      "approach": "BtStart=20000@(82,356) 制作选中配方(MakerCreatePacket)；BtCancel=20001@(163,356) 关窗；id 沿用原生",
+      "evidence": [
+        "activity-minigame-angel-calibration evidence CUIItemMaker::OnCreate @0x822350 (id30000/40000 ComboBox, id20000/20001 @(82|163,356))"
+      ],
+      "residual": "ComboBox1/2 是 t/c/b/base 切片皮肤非 MapleComboBox 三段件 + 配方分类数据缺失（Data 下无 Maker.img）-> 显式预留；GaugeBar 需制作进度 s2c 流未接入 -> 预留；BtDown/notUse/randomMake/randomRecipe 无数据流 -> 预留（代码注释逐条写明）"
+    },
+    {
+      "id": "D5",
+      "priority": "P1",
+      "status": "NOT-A-DEFECT",
+      "title": "KeyConfig BtHelp 不绑 = 正确原生行为",
+      "evidence": "BtHelp/normal/0 橙「?」全窗匹配最优 SAD=175.77 无落点；(606,5) BtClose SAD=0.00；IDA sub_832834 析构只释放 6 个 CCtrlButton -> v83 根本不建第 7 颗"
+    },
+    {
+      "id": "D6",
+      "priority": "P2",
+      "status": "CONFIRMED-CORRECT",
+      "title": "BtDetail (153,324) 像素级坐实",
+      "evidence": "全窗匹配 frame=(154,326) SAD=0.62；IDA a4:124 是 CreateCtrl 锚点口径非 top-left；注释升级"
+    },
+    {
+      "id": "D7",
+      "priority": "P2",
+      "status": "DOWNGRADED",
+      "title": "BtAuto 原生帧无此件，本地增强保留",
+      "evidence": "BtAuto (100x35) 角色能力.png 全窗最优 SAD=147.56 无可信落点 -> 与 D5 同型；漂移风险降级（原生基准面无此件）"
+    },
+    {
+      "id": "D8",
+      "priority": "P2",
+      "status": "NOT-A-DEFECT",
+      "title": "学院窗 224 = IMG 真身",
+      "evidence": "orange-wz Family/backgrnd = 224x392 origin(0,0)；截帧 227 含 3px 边"
+    },
+    {
+      "id": "D9",
+      "priority": "P2",
+      "status": "CONFIRMED-CORRECT",
+      "title": "KeyConfig 5 钮 y=234 由截图目测升级为 SAD 实测",
+      "evidence": "BtOK=0.22/BtCancel=11.58/BtDefault=0.20/BtDelete=0.20/BtQuickSlot=0.00 全点覆盖；注释升级"
+    },
+    {
+      "id": "D10",
+      "priority": "P2",
+      "status": "RESERVED",
+      "title": "MiniMap BT_SMALL/BT_BIG 显式预留",
+      "evidence": "orange-wz MiniMap kids 无 BtSmall/BtBig 素材；TODO 注释升级为带证据引用"
+    }
+  ],
+  "summary": {
+    "fixed": 4,
+    "not-a-defect": 3,
+    "confirmed-correct": 2,
+    "reserved": 1
+  }
+}

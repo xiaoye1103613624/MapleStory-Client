@@ -1,0 +1,735 @@
+# keyconfig-13key 本地实现 + IMG 节点摘要
+
+基准：083/v83；IMG = E:/MXD/BeiDou-Client_S9/Data/UI/UIWindow.img（orange-wz 128B gate）
+
+## orange-wz UIWindow.img 直接子节点
+
+- **KeyConfig** (12): backgrnd, icon, key, notice, BtClose, BtHelp, BtOK, BtCancel, BtDefault, BtDelete, BtQuickSlot, quickslotConfig
+- **Equip** (11): backgrnd, pet, FullBackgrnd, BtDetail, BtPet1, BtPet2, BtPet3, BtPetEquipShow, BtPetEquipHide, BtCashshop, Addon
+- **Item** (15): backgrnd, activeIcon, BtCoin, Tab, bossPetIcon, shadow, BtGather, BtSort, Quality, FullBackgrnd, disabled, BtFull, BtSmall, BtCashshop, New
+- **Stat** (11): basicStat, BtApUp, BtDetail, Job, BtAuto, BtAuto1, BtAuto2, Disabled, backgrnd2, backgrnd, backgrnd4
+- **Skill** (11): backgrnd, skill0, skill1, line, BtSpUp, Tab, tip0, tip1, tip2, CoolTime, recommend
+- **UserList** (9): backgrnd, backgrnd2, backgrnd3, Friend, Party, Guild, Tab, BlackList, GuildUnion
+- **Family** (10): backgrnd, BtClose, BtFamilyPrecept, BtJuniorEntry, BtTree, BtLeft, BtRight, BtSpecial, BtOK, RightIcon
+- **Maker** (10): backgrnd, notUse, randomMake, randomRecipe, BtStart, BtCancel, GaugeBar, BtDown, ComboBox1, ComboBox2
+- **MiniMap** (5): title, MinMap, MaxMap, Min, BtMap
+- **Messenger** (7): backgrnd3, blink, chatBalloon, BtEnter, NameBar, backgrnd, backgrnd2
+- **QuestLog**: NOT FOUND in UIWindow.img (node_not_found_marker=True)
+- **WorldMap** (2): title, Border
+- **MonsterBook** (15): backgrnd, cardSlot, infoPage, select, cover, fullMark, arrowLeft, arrowRight, icon, BtClose, BtSearch, LeftTab, LeftTabInfo, RightTab, ContextMenu
+- **Whisper**: NOT FOUND in UIWindow.img (node_not_found_marker=True)
+- **Medal**: NOT FOUND in UIWindow.img (node_not_found_marker=True)
+- **PartySearch** (13): backgrnd, check0, check1, icon0, icon1, Party, PartyMember, BtReg, BtCancel, BtStart, BtPause, BtStop, Tab
+- **GuildBBS**: NOT FOUND in UIWindow.img (node_not_found_marker=True)
+
+## 本地窗口实现（ctor 按钮/坐标/动画/资源根）
+
+### UIEquipInventory  keys=E action=EQUIPMENT wz=Equip
+- file: IO/UITypes/UIEquipInventory.cpp / IO/UITypes/UIEquipInventory.h
+- enum Buttons:
+  - 84: enum Buttons : uint16_t
+  - 85: {
+  - 86: BT_CLOSE = 0,
+  - 87: BT_SLOT,
+  - 88: BT_SHOP,
+  - 89: BT_PET_SHOW,
+  - 90: BT_PET_HIDE,
+  - 91: BT_PET_TAB0,
+  - 92: BT_PET_TAB1,
+  - 93: BT_PET_TAB2,
+  - 94: BT_PET_TABE
+  - 95: };
+- button_pressed cases:
+  - 280: case Buttons::BT_CLOSE:
+  - 283: case Buttons::BT_SHOP:
+  - 287: case Buttons::BT_SLOT:
+  - 318: case Buttons::BT_PET_SHOW:
+  - 321: case Buttons::BT_PET_HIDE:
+  - 324: case Buttons::BT_PET_TAB0:
+  - 325: case Buttons::BT_PET_TAB1:
+  - 326: case Buttons::BT_PET_TAB2:
+- 资源根/底图:
+  - 92: nl::node Equip = UiAssetResolve::window4("Equip");
+  - 101: // 槽位格逐格实测（evidence/r27-b3-equip/）：v83 Equip/backgrnd（175x304），
+  - 134: nl::node backgrnd = Equip["backgrnd"];
+  - 136: backgrnd_tex = Texture(backgrnd);
+  - 137: bg_origin = backgrnd_tex.get_origin();
+  - 139: const Point<int16_t> bg_dimensions = backgrnd_tex.get_dimensions();
+  - 141: if (backgrnd)
+  - 142: sprites.emplace_back(backgrnd);
+  - 148: // （对照同截图内实际显示的钮 mae ≤0.8）→ 截图内不存在。坐标按 backgrnd 底栏左段兜底落位，
+  - 162: //   UIWindow.img/Equip 10 真节点全在（backgrnd / pet / FullBackgrnd /
+  - 178: // （窗口原点 = Equip/backgrnd 左上角，见 evidence/w7-equip/coords.md）。
+  - 179: pet_backgrnd = Texture(Equip["pet"]);
+  - 181: if (pet_backgrnd.is_valid())
+  - 188: static_cast<int16_t>(bottom - pet_backgrnd.height()));
+  - 210: const int16_t expanded_x = static_cast<int16_t>(pet_panel_pos.x() + pet_backgrnd.width());
+  - 211: const int16_t expanded_y = static_cast<int16_t>(pet_panel_pos.y() + pet_backgrnd.height());
+  - 232: pet_backgrnd.draw(position + pet_panel_pos);
+  - 236: // 不可用槽：原生没有第二张 disabled 美术，而是对同一张 backgrnd 的该格逐像素
+  - 253: // 与 draw_sprites 里那张 backgrnd 逐像素重合。
+  - 473: // 命中区 = 当前显示尺寸（收起 = backgrnd，展开 = 含宠物面板的并集），
+- 按钮落点 (7 行):
+  - 64: // ms::try_maple_btn 同一口径。缺件 → 不创建 + 一行 diag，绝不静默落 (0,0)。
+  - 82: buttons[id] = std::make_unique<TwoSpriteButton>(unselected, selected,
+  - 145: buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 19, 5));
+  - 150: try_maple_btn(buttons, Buttons::BT_SLOT, Equip["BtDetail"],
+  - 152: try_maple_btn(buttons, Buttons::BT_SHOP, Equip["BtCashshop"],
+  - 190: try_maple_btn(buttons, Buttons::BT_PET_SHOW, Equip["BtPetEquipShow"],
+  - 204: try_maple_btn(buttons, Buttons::BT_PET_HIDE, Equip["BtPetEquipHide"],
+
+### UIItemInventory  keys=I action=ITEMS wz=Item
+- file: IO/UITypes/UIItemInventory.cpp / IO/UITypes/UIItemInventory.h
+- enum Buttons:
+  - 103: enum Buttons
+  - 104: {
+  - 105: BT_CLOSE,
+  - 106: BT_TAB_EQUIP,
+  - 107: BT_TAB_USE,
+  - 108: BT_TAB_ETC,
+  - 109: BT_TAB_SETUP,
+  - 110: BT_TAB_CASH,
+  - 111: BT_TAB_DEC,
+  - 112: BT_COIN,
+  - 113: BT_POINT,
+  - 114: BT_GATHER,
+  - 115: BT_SORT,
+  - 116: BT_FULL,
+  - 117: BT_SMALL,
+  - 118: BT_UPGRADE,
+  - 119: BT_APPRAISE,
+  - 120: BT_EXTRACT,
+  - 121: BT_DISASSEMBLE,
+  - 122: BT_TOAD,
+  - 123: BT_COIN_SM,
+  - 124: BT_POINT_SM,
+  - 125: BT_GATHER_SM,
+  - 126: BT_SORT_SM,
+  - 127: BT_UPGRADE_SM,
+  - 128: BT_APPRAISE_SM,
+  - 129: BT_EXTRACT_SM,
+  - 130: BT_DISASSEMBLE_SM,
+  - 131: BT_TOAD_SM,
+  - 132: BT_CASHSHOP
+  - 133: };
+- button_pressed cases:
+  - 510: case Buttons::BT_CLOSE:
+  - 516: case Buttons::BT_TAB_EQUIP:
+  - 521: case Buttons::BT_TAB_USE:
+  - 526: case Buttons::BT_TAB_SETUP:
+  - 531: case Buttons::BT_TAB_ETC:
+  - 536: case Buttons::BT_TAB_CASH:
+  - 541: case Buttons::BT_TAB_DEC:
+  - 552: case Buttons::BT_GATHER:
+  - 553: case Buttons::BT_GATHER_SM:
+  - 558: case Buttons::BT_SORT:
+  - 559: case Buttons::BT_SORT_SM:
+  - 564: case Buttons::BT_FULL:
+  - 570: case Buttons::BT_SMALL:
+  - 576: case Buttons::BT_COIN:
+  - 577: case Buttons::BT_COIN_SM:
+  - 590: case Buttons::BT_EXTRACT:
+  - 591: case Buttons::BT_EXTRACT_SM:
+  - 601: case Buttons::BT_DISASSEMBLE:
+  - 602: case Buttons::BT_DISASSEMBLE_SM:
+  - 615: case Buttons::BT_POINT:
+  - 616: case Buttons::BT_POINT_SM:
+  - 639: case Buttons::BT_UPGRADE:
+  - 640: case Buttons::BT_UPGRADE_SM:
+  - 679: case Buttons::BT_APPRAISE:
+  - 680: case Buttons::BT_APPRAISE_SM:
+  - 688: case Buttons::BT_TOAD:
+  - 689: case Buttons::BT_TOAD_SM:
+  - 697: case Buttons::BT_CASHSHOP:
+- 资源根/底图:
+  - 133: nl::node Item = UiAssetResolve::window("Item");
+  - 188: backgrnd = Item["productionBackgrnd"] ? Item["productionBackgrnd"] : Item["backgrnd"];
+  - 189: backgrnd2 = Item["productionBackgrnd2"] ? Item["productionBackgrnd2"] : Item["backgrnd2"];
+  - 190: backgrnd3 = Item["productionBackgrnd3"] ? Item["productionBackgrnd3"] : Item["backgrnd3"];
+  - 192: full_backgrnd = Item["FullBackgrnd"];
+  - 193: full_backgrnd2 = Item["FullBackgrnd2"];
+  - 194: full_backgrnd3 = Item["FullBackgrnd3"];
+  - 196: bg_dimensions = backgrnd.get_dimensions();
+  - 197: bg_full_dimensions = full_backgrnd.is_valid() ? full_backgrnd.get_dimensions() : bg_dimensions;
+  - 355: // 以白框上边框为公共基准 —— Item/backgrnd 边框 y266 / FullBackgrnd y266，
+  - 366: full_backgrnd.draw(position);
+  - 367: full_backgrnd2.draw(position);
+  - 368: full_backgrnd3.draw(position);
+  - 374: backgrnd.draw(position);
+  - 375: backgrnd2.draw(position);
+  - 376: backgrnd3.draw(position);
+- 按钮落点 (35 行):
+  - 229: buttons[id] = std::make_unique<TwoSpriteButton>(
+  - 245: try_maple_btn(buttons, Buttons::BT_CLOSE, close, Point<int16_t>(bg_dimensions.x() - 15, 3));
+  - 249: try_maple_btn(buttons, Buttons::BT_COIN, AutoBuild["button:Coin"]);
+  - 250: try_maple_btn(buttons, Buttons::BT_POINT, AutoBuild["button:Point"]);
+  - 251: try_maple_btn(buttons, Buttons::BT_GATHER, AutoBuild["button:Gather"]);
+  - 252: try_maple_btn(buttons, Buttons::BT_SORT, AutoBuild["button:Sort"]);
+  - 253: try_maple_btn(buttons, Buttons::BT_FULL, AutoBuild["button:Full"]);
+  - 254: try_maple_btn(buttons, Buttons::BT_UPGRADE, AutoBuild["button:Upgrade"]);
+  - 255: try_maple_btn(buttons, Buttons::BT_APPRAISE, AutoBuild["button:Appraise"]);
+  - 256: try_maple_btn(buttons, Buttons::BT_EXTRACT, AutoBuild["button:Extract"]);
+  - 257: try_maple_btn(buttons, Buttons::BT_DISASSEMBLE, AutoBuild["button:Disassemble"]);
+  - 258: try_maple_btn(buttons, Buttons::BT_TOAD, AutoBuild["anibutton:Toad"]);
+  - 268: try_maple_btn(buttons, Buttons::BT_COIN, Item["BtCoin"], Point<int16_t>(7, 266));
+  - 269: try_maple_btn(buttons, Buttons::BT_FULL, Item["BtFull"], Point<int16_t>(W - 51, 4));
+  - 270: try_maple_btn(buttons, Buttons::BT_SMALL, Item["BtSmall"], Point<int16_t>(W - 51, 4));
+  - 271: try_maple_btn(buttons, Buttons::BT_GATHER, Item["BtGather"], Point<int16_t>(W - 31, 4));
+  - 272: try_maple_btn(buttons, Buttons::BT_SORT, Item["BtSort"], Point<int16_t>(W - 31, 4));
+  - 273: try_maple_btn(buttons, Buttons::BT_CASHSHOP, Item["BtCashshop"], Point<int16_t>(bg_full_dimensions.x() - 113, 266));
+  - 277: try_maple_btn(buttons, Buttons::BT_COIN, Item["BtCoin"]);
+  - 278: try_maple_btn(buttons, Buttons::BT_GATHER, Item["BtGather"]);
+  - 279: try_maple_btn(buttons, Buttons::BT_SORT, Item["BtSort"]);
+  - 280: try_maple_btn(buttons, Buttons::BT_FULL, Item["BtFull"]);
+  - 281: try_maple_btn(buttons, Buttons::BT_SMALL, Item["BtSmall"]);
+  - 282: try_maple_btn(buttons, Buttons::BT_CASHSHOP, Item["BtCashshop"]);
+  - 287: try_maple_btn(buttons, Buttons::BT_SMALL, FullAutoBuild["button:Small"]);
+  - 288: try_maple_btn(buttons, Buttons::BT_COIN_SM, FullAutoBuild["button:Coin"]);
+  - 289: try_maple_btn(buttons, Buttons::BT_POINT_SM, FullAutoBuild["button:Point"]);
+  - 290: try_maple_btn(buttons, Buttons::BT_GATHER_SM, FullAutoBuild["button:Gather"]);
+  - 291: try_maple_btn(buttons, Buttons::BT_SORT_SM, FullAutoBuild["button:Sort"]);
+  - 292: try_maple_btn(buttons, Buttons::BT_UPGRADE_SM, FullAutoBuild["button:Upgrade"]);
+  - 293: try_maple_btn(buttons, Buttons::BT_APPRAISE_SM, FullAutoBuild["button:Appraise"]);
+  - 294: try_maple_btn(buttons, Buttons::BT_EXTRACT_SM, FullAutoBuild["button:Extract"]);
+  - 295: try_maple_btn(buttons, Buttons::BT_DISASSEMBLE_SM, FullAutoBuild["button:Disassemble"]);
+  - 296: try_maple_btn(buttons, Buttons::BT_TOAD_SM, FullAutoBuild["anibutton:Toad"]);
+  - 297: try_maple_btn(buttons, Buttons::BT_CASHSHOP, FullAutoBuild["button:Cashshop"]);
+
+### UIStatsInfo  keys=S action=STATS wz=Stat
+- file: IO/UITypes/UIStatsInfo.cpp / IO/UITypes/UIStatsInfo.h
+- enum Buttons:
+  - 113: enum Buttons
+  - 114: {
+  - 115: BT_CLOSE,
+  - 116: BT_HP,
+  - 117: BT_MP,
+  - 118: BT_STR,
+  - 119: BT_DEX,
+  - 120: BT_INT,
+  - 121: BT_LUK,
+  - 122: BT_AUTO,
+  - 123: BT_HYPERSTATOPEN,
+  - 124: BT_HYPERSTATCLOSE,
+  - 125: BT_DETAILOPEN,
+  - 126: BT_DETAILCLOSE,
+  - 127: BT_ABILITY,
+  - 128: BT_DETAIL_DETAILCLOSE
+  - 129: };
+- button_pressed cases:
+  - 647: case Buttons::BT_CLOSE:
+  - 652: case Buttons::BT_HP:
+  - 657: case Buttons::BT_MP:
+  - 662: case Buttons::BT_STR:
+  - 667: case Buttons::BT_DEX:
+  - 672: case Buttons::BT_INT:
+  - 677: case Buttons::BT_LUK:
+  - 682: case Buttons::BT_AUTO:
+  - 765: case Buttons::BT_HYPERSTATOPEN:
+  - 769: case Buttons::BT_HYPERSTATCLOSE:
+  - 776: case Buttons::BT_DETAILOPEN:
+  - 782: case Buttons::BT_DETAILCLOSE:
+  - 783: case Buttons::BT_DETAIL_DETAILCLOSE:
+  - 788: case Buttons::BT_ABILITY:
+- 资源根/底图:
+  - 62: nl::node Stat = UiAssetResolve::window4("Stat");
+  - 84: // v83 经典布局：主窗只绘 backgrnd（208x347，标签行烘焙在精灵里）。
+  - 85: // backgrnd2（218x203）是「详细」属性板——仅详细模式绘于窗口右下侧；
+  - 89: if (Stat["backgrnd"])
+  - 90: sprites.emplace_back(Stat["backgrnd"]);
+  - 92: classic_detail = Texture(Stat["backgrnd2"]);
+  - 102: sprites.emplace_back(main["backgrnd"]);
+  - 103: sprites.emplace_back(main["backgrnd2"]);
+  - 104: sprites.emplace_back(main["backgrnd3"]);
+  - 112: textures_detail.emplace_back(detail["backgrnd"]);
+  - 113: textures_detail.emplace_back(detail["backgrnd2"]);
+  - 114: textures_detail.emplace_back(detail["backgrnd3"]);
+  - 115: textures_detail.emplace_back(detail["backgrnd4"]);
+  - 138: // 行带 y 为 Stat/backgrnd 逐像素实测（coords.md 依据 1）。
+  - 176: // （Stat/backgrnd2 218x203，绘于窗相对 (208,144)，行带实测见 coords.md），
+  - 217: // 配准：Stat/backgrnd 的 origin 实测 (0,0)（nx_inspect UI.nx
+  - 251: // value_col_bbox 两个探针直接吐出来的数（锚点 = Stat/backgrnd 左上）：
+  - 319: // v83 backgrnd2 烘焙标签「魔法力/魔法防御/命中率/回避率/手技」专用
+  - 362: if (classic && Texture(Stat["backgrnd"]).is_valid())
+  - 363: dimension = Texture(Stat["backgrnd"]).get_dimensions();
+- 按钮落点 (10 行):
+  - 127: try_maple_btn(buttons, Buttons::BT_CLOSE, close, Point<int16_t>(191, 5), "Stat/close");
+  - 139: try_maple_btn(buttons, Buttons::BT_HP, hp_up, Point<int16_t>(186, 115), "Stat/BtApUp/HP");
+  - 140: try_maple_btn(buttons, Buttons::BT_MP, mp_up, Point<int16_t>(186, 133), "Stat/BtApUp/MP");
+  - 141: try_maple_btn(buttons, Buttons::BT_STR, str_up, Point<int16_t>(186, 245), "Stat/BtApUp/STR");
+  - 142: try_maple_btn(buttons, Buttons::BT_DEX, dex_up, Point<int16_t>(186, 263), "Stat/BtApUp/DEX");
+  - 143: try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(186, 281), "Stat/BtApUp/INT");
+  - 144: try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(186, 299), "Stat/BtApUp/LUK");
+  - 158: try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, Point<int16_t>(106, 198), "Stat/BtAuto");
+  - 162: try_maple_btn(buttons, Buttons::BT_DETAILOPEN, detail_open, Point<int16_t>(153, 324), "Stat/BtDetail");
+  - 167: try_maple_btn(buttons, Buttons::BT_DETAILCLOSE, nl::nx::UI["Basic.img"]["BtHide"], Point<int16_t>(405, 326), "Stat/BtHide");
+- 动画/贴图成员 (1 行):
+  - 824: Texture mainbg = statnode["backgrnd"];
+
+### UISkillBook  keys=K action=SKILLS wz=Skill
+- file: IO/UITypes/UISkillBook.cpp / IO/UITypes/UISkillBook.h
+- enum Buttons:
+  - 134: enum Buttons : uint16_t
+  - 135: {
+  - 136: BT_CLOSE,
+  - 137: BT_HYPER,
+  - 138: BT_GUILDSKILL,
+  - 139: BT_RIDE,
+  - 140: BT_MACRO,
+  - 141: BT_MACRO_OK,
+  - 142: BT_CANCLE,
+  - 143: BT_OKAY,
+  - 144: BT_SPDOWN,
+  - 145: BT_SPMAX,
+  - 146: BT_SPUP,
+  - 147: BT_TAB0,
+  - 148: BT_TAB1,
+  - 149: BT_TAB2,
+  - 150: BT_TAB3,
+  - 151: BT_TAB4,
+  - 152: BT_SPUP0,
+  - 153: BT_SPUP1,
+  - 154: BT_SPUP2,
+  - 155: BT_SPUP3,
+  - 156: BT_SPUP4,
+  - 157: BT_SPUP5,
+  - 158: BT_SPUP6,
+  - 159: BT_SPUP7,
+  - 160: BT_SPUP8,
+  - 161: BT_SPUP9,
+  - 162: BT_SPUP10,
+  - 163: BT_SPUP11
+  - 164: };
+- button_pressed cases:
+  - 521: case Buttons::BT_CLOSE:
+  - 524: case Buttons::BT_MACRO:
+  - 544: case Buttons::BT_CANCLE:
+  - 547: case Buttons::BT_OKAY:
+  - 561: case Buttons::BT_SPDOWN:
+  - 584: case Buttons::BT_SPMAX:
+  - 604: case Buttons::BT_SPUP:
+  - 629: case Buttons::BT_TAB0:
+  - 630: case Buttons::BT_TAB1:
+  - 631: case Buttons::BT_TAB2:
+  - 632: case Buttons::BT_TAB3:
+  - 633: case Buttons::BT_TAB4:
+  - 637: case Buttons::BT_SPUP0:
+  - 638: case Buttons::BT_SPUP1:
+  - 639: case Buttons::BT_SPUP2:
+  - 640: case Buttons::BT_SPUP3:
+  - 641: case Buttons::BT_SPUP4:
+  - 642: case Buttons::BT_SPUP5:
+  - 643: case Buttons::BT_SPUP6:
+  - 644: case Buttons::BT_SPUP7:
+  - 645: case Buttons::BT_SPUP8:
+  - 646: case Buttons::BT_SPUP9:
+  - 647: case Buttons::BT_SPUP10:
+  - 648: case Buttons::BT_SPUP11:
+  - 651: case Buttons::BT_MACRO_OK:
+  - 656: case Buttons::BT_HYPER:
+  - 657: case Buttons::BT_GUILDSKILL:
+  - 658: case Buttons::BT_RIDE:
+- 资源根/底图:
+  - 144: nl::node Skill = UiAssetResolve::window("Skill");
+  - 161: nl::node ui_backgrnd = main["backgrnd"] ? main["backgrnd"] : Skill["backgrnd"];
+  - 163: bg_dimensions = Texture(ui_backgrnd).get_dimensions();
+  - 184: nl::node skillPoint = UiAssetResolve::window4("Skill")["skillPoint"];
+  - 188: sp_backgrnd = skillPoint["backgrnd"];
+  - 189: sp_backgrnd2 = skillPoint["backgrnd2"];
+  - 190: sp_backgrnd3 = skillPoint["backgrnd3"];
+  - 209: if (ui_backgrnd)
+  - 210: sprites.emplace_back(ui_backgrnd, Point<int16_t>(1, 0));
+  - 211: if (main["backgrnd2"])
+  - 212: sprites.emplace_back(main["backgrnd2"]);
+  - 213: if (main["backgrnd3"])
+  - 214: sprites.emplace_back(main["backgrnd3"]);
+  - 220: macro_backgrnd = macro["backgrnd"];
+  - 221: macro_backgrnd2 = macro["backgrnd2"];
+  - 222: macro_backgrnd3 = macro["backgrnd3"];
+  - 246: // backgrnd 已烘焙的「技能」标题。判据：原生帧上粉色页签的黑色外框
+  - 248: nl::node tab_plate = classic ? UiAssetResolve::window("Item")["New"] : nl::node();
+  - 357: // UIWindow.img/Skill/backgrnd 逐像素对齐后 xoff/yoff 均为 0）：
+  - 360: // 「技能」标题、tab 条白底、红下划线、暗栏都在 backgrnd 里烤好了，
+- 按钮落点 (14 行):
+  - 170: try_maple_btn(buttons, Buttons::BT_HYPER, main["BtHyper"]);
+  - 171: try_maple_btn(buttons, Buttons::BT_GUILDSKILL, main["BtGuildSkill"]);
+  - 172: try_maple_btn(buttons, Buttons::BT_RIDE, main["BtRide"]);
+  - 175: try_maple_btn(buttons, Buttons::BT_MACRO, nl::nx::UI["Basic.img"]["BtMacro"], MACRO_BTN_TOPLEFT, "Skill/BtMacro");
+  - 192: try_maple_btn(buttons, Buttons::BT_CANCLE, skillPoint["BtCancle"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 193: try_maple_btn(buttons, Buttons::BT_OKAY, skillPoint["BtOkay"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 194: try_maple_btn(buttons, Buttons::BT_SPDOWN, skillPoint["BtSpDown"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 195: try_maple_btn(buttons, Buttons::BT_SPMAX, skillPoint["BtSpMax"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 196: try_maple_btn(buttons, Buttons::BT_SPUP, skillPoint["BtSpUp"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 224: try_maple_btn(buttons, Buttons::BT_MACRO_OK, macro["BtOK"], Point<int16_t>(bg_dimensions.x(), 0));
+  - 235: buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(bg_dimensions.x() - 23, 6));
+  - 270: buttons[i] = std::make_unique<TwoSpriteButton>(
+  - 275: buttons[i] = std::make_unique<TwoSpriteButton>(disabled[tabid], enabled[tabid], glyph_pos);
+  - 302: buttons[i] = std::make_unique<MapleButton>(bt_spup, spup_position);
+- 动画/贴图成员 (4 行):
+  - 84: Texture ntx = data.get_icon(SkillData::Icon::NORMAL);
+  - 85: Texture dtx = data.get_icon(SkillData::Icon::DISABLED);
+  - 86: Texture motx = data.get_icon(SkillData::Icon::MOUSEOVER);
+  - 485: // Texture 以 origin 为锚点（top-left = 绘制点 - origin），故加回 get_origin()
+
+### UIUserList  keys=R/P/G action=FRIENDS/PARTY/GUILD wz=UserList
+- file: IO/UITypes/UIUserList.cpp / IO/UITypes/UIUserList.h
+- enum Buttons:
+  - 83: enum Buttons
+  - 84: {
+  - 85: BT_TAB_FRIEND,
+  - 86: BT_TAB_PARTY,
+  - 87: BT_TAB_GUILD,
+  - 88: BT_TAB_BLACKLIST,
+  - 89: BT_TAB_PARTY_MINE,
+  - 90: BT_TAB_PARTY_SEARCH,
+  - 91: BT_TAB_FRIEND_ALL,
+  - 92: BT_TAB_FRIEND_ONLINE,
+  - 93: BT_TAB_BLACKLIST_INDIVIDUAL,
+  - 94: BT_TAB_BLACKLIST_GUILD,
+  - 95: BT_CLOSE,
+  - 96: BT_PARTY_CREATE,
+  - 97: BT_PARTY_INVITE,
+  - 98: BT_PARTY_LEAVE,
+  - 99: BT_PARTY_SETTINGS,
+  - 100: BT_PARTY_SEARCH_LEVEL,
+  - 101: BT_PARTY_SEARCH_INVITE,
+  - 102: BT_FRIEND_ADD,
+  - 103: BT_FRIEND_ADD_GROUP,
+  - 104: BT_FRIEND_EXPAND,
+  - 105: BT_FRIEND_MESSENGER,
+  - 106: BT_FRIEND_GROUP_0,
+  - 107: BT_BLACKLIST_ADD,
+  - 108: BT_BLACKLIST_DELETE,
+  - 109: // 家族页钮（GuildInfo 子树烘焙件；路由见 cpp）
+  - 110: BT_GUILD_INVITE,		// BtInvite 邀请
+  - 111: BT_GUILD_WITHDRAW,		// BtWithdraw 出去（离会）
+  - 112: BT_GUILD_KICK,			// BtKick 删除
+  - 113: BT_GUILD_WHO,			// BtWhere 位置
+  - 114: BT_GUILD_WHISPER,		// BtWhisper 悄悄话
+  - 115: BT_GUILD_CHAT,			// BtChat 对话（家族频道）
+  - 116: BT_GUILD_RANKUP,		// BtUp 地位↑
+  - 117: BT_GUILD_RANKDOWN,		// BtDown 地位↓
+  - 118: BT_GUILD_NOTICE,		// Btnotice 通知
+  - 119: BT_GUILD_BBS,			// BtGuildBBS 留言板
+  - 120: BT_GUILD_PARTYINVITE,	// BtPartyInvite 邀请组队
+  - 121: BT_GUILD_INFO,			// BtInfo 资料
+  - 122: // 原生页签条第四格「家族联盟」（Tab3 贴图）：无联盟时画 disabled 态。
+  - 123: BT_TAB_UNION,
+  - 124: // ---- 2026-11-08 追加：按运行时 UIWindow.img/UserList 节点树绑定 ----
+  - 125: // 追加在末尾，保证上面所有既有枚举值不变（旧路由与 BT_TAB_FRIEND + tab 仍可用）。
+  - 126: // 好友页（Friend 子树）
+  - 127: BT_FRIEND_SHOW_ALL, BT_FRIEND_SHOW_ONLINE,
+  - 128: BT_FRIEND_WHISPER, BT_FRIEND_PARTY, BT_FRIEND_WHERE,
+  - 129: BT_FRIEND_MATE, BT_FRIEND_MOD, BT_FRIEND_MESSAGE,
+  - 130: BT_FRIEND_BLOCK, BT_FRIEND_UNBLOCK, BT_FRIEND_DELETE2,
+  - 131: BT_FRIEND_GROUP_WHISPER, BT_FRIEND_GROUP_MOD, BT_FRIEND_ADD2,
+  - 132: // 组员页（Party 子树）
+  - 133: BT_PARTY_CREATE2, BT_PARTY_INVITE2, BT_PARTY_WITHDRAW,
+  - 134: BT_PARTY_KICK, BT_PARTY_CHANGE_BOSS, BT_PARTY_SEARCH2,
+  - 135: BT_PARTY_HP, BT_PARTY_WHISPER, BT_PARTY_CHAT,
+  - 136: // 家族联盟页（GuildUnion 子树，与 Guild/GuildInfo 同名不同父）
+  - 137: BT_UNION_INVITE, BT_UNION_KICK, BT_UNION_CHANGE,
+  - 138: BT_UNION_NOTICE, BT_UNION_WHISPER, BT_UNION_PARTYINVITE,
+  - 139: BT_UNION_WHERE, BT_UNION_CHAT, BT_UNION_INFO,
+  - 140: BT_UNION_UP, BT_UNION_DOWN, BT_UNION_WITHDRAW,
+  - 141: // 家族页补充（GuildInfo 下此前遗漏的节点）
+  - 142: BT_GUILD_BOARD, BT_GUILD_CHANGE,
+- button_pressed cases:
+  - 618: case Buttons::BT_CLOSE:
+  - 621: case Buttons::BT_TAB_FRIEND:
+  - 622: case Buttons::BT_TAB_PARTY:
+  - 623: case Buttons::BT_TAB_GUILD:
+  - 624: case Buttons::BT_TAB_BLACKLIST:
+  - 627: case Buttons::BT_TAB_PARTY_MINE:
+  - 630: case Buttons::BT_TAB_PARTY_SEARCH:
+  - 636: case Buttons::BT_PARTY_SEARCH_LEVEL:
+  - 637: case Buttons::BT_PARTY_SEARCH_INVITE:
+  - 642: case Buttons::BT_TAB_FRIEND_ALL:
+  - 643: case Buttons::BT_TAB_FRIEND_ONLINE:
+  - 646: case Buttons::BT_TAB_BLACKLIST_INDIVIDUAL:
+  - 647: case Buttons::BT_TAB_BLACKLIST_GUILD:
+  - 650: case Buttons::BT_FRIEND_MESSENGER:
+  - 660: case Buttons::BT_FRIEND_ADD:
+  - 677: case Buttons::BT_FRIEND_ADD_GROUP:
+  - 701: case Buttons::BT_PARTY_CREATE:
+  - 705: case Buttons::BT_PARTY_INVITE:
+  - 735: case Buttons::BT_PARTY_LEAVE:
+  - 739: case Buttons::BT_PARTY_SETTINGS:
+  - 775: case Buttons::BT_BLACKLIST_ADD:
+  - 793: case Buttons::BT_BLACKLIST_DELETE:
+  - 810: case Buttons::BT_TAB_UNION:
+  - 813: case Buttons::BT_GUILD_NOTICE:
+  - 823: case Buttons::BT_GUILD_INVITE:
+  - 843: case Buttons::BT_GUILD_WITHDRAW:
+  - 855: case Buttons::BT_GUILD_KICK:
+  - 856: case Buttons::BT_GUILD_WHO:
+  - 857: case Buttons::BT_GUILD_WHISPER:
+  - 858: case Buttons::BT_GUILD_RANKUP:
+  - 859: case Buttons::BT_GUILD_RANKDOWN:
+  - 860: case Buttons::BT_GUILD_PARTYINVITE:
+  - 861: case Buttons::BT_GUILD_INFO:
+  - 873: case Buttons::BT_GUILD_KICK:
+  - 876: case Buttons::BT_GUILD_WHO:
+  - 879: case Buttons::BT_GUILD_WHISPER:
+  - 889: case Buttons::BT_GUILD_RANKUP:
+  - 890: case Buttons::BT_GUILD_RANKDOWN:
+  - 904: case Buttons::BT_GUILD_PARTYINVITE:
+  - 907: case Buttons::BT_GUILD_INFO:
+  - 914: case Buttons::BT_GUILD_CHAT:
+  - 926: case Buttons::BT_GUILD_BBS:
+  - 941: case Buttons::BT_FRIEND_SHOW_ALL:
+  - 942: case Buttons::BT_FRIEND_SHOW_ONLINE:
+  - 946: case Buttons::BT_FRIEND_ADD2:
+  - 947: case Buttons::BT_FRIEND_MATE:
+  - 948: case Buttons::BT_FRIEND_MOD:
+  - 949: case Buttons::BT_FRIEND_GROUP_MOD:
+  - 953: case Buttons::BT_FRIEND_PARTY:
+  - 956: case Buttons::BT_FRIEND_WHISPER:
+  - 957: case Buttons::BT_FRIEND_MESSAGE:
+  - 958: case Buttons::BT_FRIEND_GROUP_WHISPER:
+  - 959: case Buttons::BT_PARTY_WHISPER:
+  - 960: case Buttons::BT_UNION_WHISPER:
+  - 975: case Buttons::BT_FRIEND_WHERE:
+  - 976: case Buttons::BT_FRIEND_BLOCK:
+  - 977: case Buttons::BT_FRIEND_UNBLOCK:
+  - 978: case Buttons::BT_UNION_WHERE:
+  - 988: case Buttons::BT_FRIEND_DELETE2:
+  - 1003: case Buttons::BT_PARTY_CREATE2:
+- 资源根/底图:
+  - 62: UserList = UiAssetResolve::window("UserList");
+  - 65: if (!UiAssetResolve::usable(Main) && !UserList["backgrnd"])
+  - 75: // backgrnd / backgrnd2 / backgrnd3 是三张**互斥**的底：同为 312x389、不透明占比各
+  - 79: // 见 evidence/r27-oracle/README.md）：好友=backgrnd3 11.6、家族联盟=backgrnd2 7.6、
+  - 80: // 组员/拒绝=backgrnd。底改由 change_tab() 单张选画。
+  - 221: msg_btn = UiAssetResolve::window("Messenger")["BtEnter"];
+  - 309: if (Main["backgrnd"])
+  - 311: Point<int16_t> d = Texture(Main["backgrnd"]).get_dimensions();
+  - 633: if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+  - 639: if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+  - 1035: if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+  - 1122: // 好友=backgrnd3(11.59)、家族/联盟=backgrnd2(25.06/7.61)、
+  - 1123: // 组员/拒绝=backgrnd(23.50/11.07)。逐页签只画一张，禁止叠底。
+  - 1125: background = Main["backgrnd3"];
+  - 1127: background = Main["backgrnd2"];
+  - 1129: background = Main["backgrnd"];
+- 按钮落点 (10 行):
+  - 83: buttons[Buttons::BT_CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(288, 4));
+  - 103: buttons[id] = std::make_unique<TwoSpriteButton>(tabdis[index], taben[index], TAB_POS[index]);
+  - 131: buttons[id] = std::make_unique<MapleButton>(src);
+  - 152: buttons[Buttons::BT_TAB_PARTY_MINE] = std::make_unique<TwoSpriteButton>(party_tabdis["0"], party_taben["0"]);
+  - 154: buttons[Buttons::BT_TAB_PARTY_SEARCH] = std::make_unique<TwoSpriteButton>(party_tabdis["1"], party_taben["1"]);
+  - 184: buttons[Buttons::BT_FRIEND_GROUP_0] = std::make_unique<MapleButton>(UserList["BtSheetIClose"], Point<int16_t>(13, 118));
+  - 207: buttons[id] = std::make_unique<MapleButton>(src, pos);
+  - 225: buttons[Buttons::BT_FRIEND_MESSENGER] = std::make_unique<MapleButton>(
+  - 285: buttons[id] = std::make_unique<MapleButton>(GI[name], pos);
+  - 1287: buttons[id] = std::make_unique<MapleButton>(n, pos);
+- 动画/贴图成员 (2 行):
+  - 345: for (Sprite sprite : friend_sprites)
+  - 1276: // 只接受 bitmap：容器节点传进 Texture 会得到空贴图（R5 曾踩过）。
+
+### UIFamily  keys=;/F action=MEDALS(26=FAMILY v83) wz=Family
+- file: IO/UITypes/UIFamily.cpp / IO/UITypes/UIFamily.h
+- enum Buttons:
+  - 62: enum Buttons : uint16_t { BtClose, BtOK, BtTree, BtLeft, BtRight, BtJunior, BtPrecept, BtSpecial };
+  - 63: 
+  - 64: bool has_assets;
+  - 65: Texture backgrnd;
+  - 66: FamilyInfoData info;
+  - 67: // 原生：标题/横幅名是白字（蓝底上）；数值右对齐黑字。
+  - 68: Text banner_label;		// 学院名 / (还没有冒险学院)
+  - 69: Text precept_label;		// 箴言（白行）
+  - 70: Text junior_label;		// 同学 0/2
+  - 71: Text rep_label;			// 名声度 值
+  - 72: Text today_label;		// 今天获得的名声 +值
+  - 73: Text priv_title_label;	// 特权名（计数框行）
+  - 74: Text priv_cost_label;		// 消耗名声 值（右对齐）
+  - 75: Text priv_limit_label;	// 限制次数 值（右对齐）
+  - 76: Text priv_desc_label;		// 描述（多行）
+  - 77: int32_t priv_index = 0;
+  - 78: };
+- 资源根/底图:
+  - 75: nl::node root = UiAssetResolve::window("Family");
+  - 78: if (root["backgrnd"]) {
+  - 79: backgrnd = Texture(root["backgrnd"]);
+  - 80: Point<int16_t> o = backgrnd.get_origin();
+  - 81: if (o.x() || o.y()) backgrnd.shift(o);
+  - 82: dimension = backgrnd.get_dimensions();
+  - 215: if (backgrnd) backgrnd.draw(position);
+- 按钮落点 (1 行):
+  - 86: if (root[name]) buttons[id] = std::make_unique<MapleButton>(root[name], Point<int16_t>(x, y));
+
+### UIMessenger  keys=C action=MAPLECHAT wz=Messenger
+- file: IO/UITypes/UIMessenger.cpp / IO/UITypes/UIMessenger.h
+- enum Buttons:
+  - 54: enum Buttons : uint16_t
+  - 55: {
+  - 56: BtClose,
+  - 57: BtEnter
+  - 58: };
+- button_pressed cases:
+  - 671: case Buttons::BtClose:
+  - 675: case Buttons::BtEnter:
+- 资源根/底图:
+  - 47: // 聊天输入：backgrnd 里烤死的那条黑框输入槽（y317..333），右侧留给 BtEnter
+  - 71: nl::node root = UiAssetResolve::window("Messenger");
+  - 81: if (root["backgrnd"])
+  - 83: backgrnd = Texture(root["backgrnd"]);
+  - 84: Point<int16_t> o = backgrnd.get_origin();
+  - 87: backgrnd.shift(o);
+  - 89: dimension = backgrnd.get_dimensions();
+  - 93: if (root["backgrnd2"])
+  - 95: backgrnd2 = Texture(root["backgrnd2"]);
+  - 96: Point<int16_t> o = backgrnd2.get_origin();
+  - 99: backgrnd2.shift(o);
+  - 102: if (root["backgrnd3"])
+  - 104: backgrnd3 = Texture(root["backgrnd3"]);
+  - 105: Point<int16_t> o = backgrnd3.get_origin();
+  - 108: backgrnd3.shift(o);
+  - 173: // backgrnd 的 295x364），不再按 dimension 反推。
+  - 457: if (backgrnd)
+  - 458: backgrnd.draw(position);
+  - 460: if (backgrnd2)
+  - 461: backgrnd2.draw(position);
+- 按钮落点 (2 行):
+  - 145: buttons[Buttons::BtClose] = std::make_unique<MapleButton>(
+  - 153: buttons[Buttons::BtEnter] = std::make_unique<MapleButton>(
+
+### UIMaker  keys=B action=PROFESSION wz=Maker
+- file: IO/UITypes/UIMaker.cpp / IO/UITypes/UIMaker.h
+- enum Buttons:
+  - 64: enum Buttons : uint16_t
+  - 65: {
+  - 66: BtClose
+  - 67: };
+- button_pressed cases:
+  - 167: case Buttons::BtClose:
+- 资源根/底图:
+  - 47: nl::node panel = nl::nx::UI["UIWindow.img"]["Maker"]["backgrnd"];
+- 按钮落点 (1 行):
+  - 58: buttons[Buttons::BtClose] = std::make_unique<MapleButton>(close, Point<int16_t>(dimension.x() - 21, 6));
+
+### UIMiniMap  keys=M action=MINIMAP wz=MiniMap
+- file: IO/UITypes/UIMiniMap.cpp / IO/UITypes/UIMiniMap.h
+- enum Buttons:
+  - 78: enum Buttons
+  - 79: {
+  - 80: BT_MIN,
+  - 81: BT_MAX,
+  - 82: BT_SMALL,
+  - 83: BT_BIG,
+  - 84: BT_MAP,
+  - 85: BT_NPC
+  - 86: };
+- button_pressed cases:
+  - 492: case BT_MIN:
+  - 502: case BT_MAX:
+  - 512: case BT_SMALL:
+  - 513: case BT_BIG:
+  - 520: case BT_MAP:
+  - 536: case BT_NPC:
+- 资源根/底图:
+  - 63: MiniMap = UiAssetResolve::window(node.c_str());
+  - 66: MiniMap = UiAssetResolve::window("MiniMap");
+  - 68: listNpc = UiAssetResolve::window("MiniMap")["ListNpc"];
+- 按钮落点 (3 行):
+  - 85: buttons[Buttons::BT_MAP] = std::make_unique<MapleButton>(btmap, Point<int16_t>(0, 0));
+  - 97: buttons[Buttons::BT_MIN] = std::make_unique<MapleButton>(basic["BtMin"], Point<int16_t>(0, 0));
+  - 102: buttons[Buttons::BT_MAX] = std::make_unique<MapleButton>(basic["BtMax"], Point<int16_t>(0, 0));
+- 动画/贴图成员 (13 行):
+  - 124: for (Sprite sprite : min_sprites)
+  - 131: for (Sprite sprite : normal_sprites)
+  - 142: Animation portal_marker = Animation(marker["portal"]);
+  - 155: for (Sprite sprite : max_sprites)
+  - 170: Animation portal_marker(marker["portal"]);
+  - 286: for (Sprite sprite : min_sprites)
+  - 291: for (Sprite sprite : normal_sprites)
+  - 296: for (Sprite sprite : max_sprites)
+  - 301: for (Sprite sprite : listNpc_sprites)
+  - 815: Animation marker_sprite;
+  - 853: Animation marker_sprite;
+  - 980: Animation npc_marker = Animation(marker["npc"]);
+  - 982: for (Sprite sprite : listNpc_sprites)
+
+### UIKeyConfig  keys=(self) action=KEYBINDINGS wz=KeyConfig
+- file: IO/UITypes/UIKeyConfig.cpp / IO/UITypes/UIKeyConfig.h
+- enum Buttons:
+  - 81: enum Buttons : uint16_t
+  - 82: {
+  - 83: CLOSE,
+  - 84: CANCEL,
+  - 85: DEFAULT,
+  - 86: DELETE,
+  - 87: KEYSETTING,
+  - 88: OK
+  - 89: };
+- button_pressed cases:
+  - 735: case Buttons::CLOSE:
+  - 736: case Buttons::CANCEL:
+  - 742: case Buttons::DEFAULT:
+  - 773: case Buttons::DELETE:
+  - 787: case Buttons::OK:
+  - 794: case Buttons::KEYSETTING:
+- 资源根/底图:
+  - 74: KeyConfig = UiAssetResolve::window("KeyConfig");
+  - 86: nl::node backgrnd = KeyConfig["backgrnd"];
+  - 87: Texture bg = backgrnd;
+  - 91: // v83 KeyConfig/backgrnd origin 为画布中心 (314,186)。Sprite 按 origin 回减，
+  - 93: if (backgrnd)
+  - 94: sprites.emplace_back(backgrnd, classic ? DrawArgument(bg.get_origin()) : DrawArgument());
+  - 95: if (KeyConfig["backgrnd2"])
+  - 97: Texture bg2 = KeyConfig["backgrnd2"];
+  - 98: sprites.emplace_back(KeyConfig["backgrnd2"], classic ? DrawArgument(bg2.get_origin()) : DrawArgument());
+  - 100: if (KeyConfig["backgrnd3"])
+  - 102: Texture bg3 = KeyConfig["backgrnd3"];
+  - 103: sprites.emplace_back(KeyConfig["backgrnd3"], classic ? DrawArgument(bg3.get_origin()) : DrawArgument());
+  - 124: // .nx 实测 UIWindow.img/KeyConfig 的 12 个直接子节点（backgrnd 629x373 origin(314,186) + 7 颗 Bt* +
+- 按钮落点 (6 行):
+  - 110: try_maple_btn(buttons, Buttons::CLOSE, BtClose, Point<int16_t>(bg_dimensions.x() - 18, 3));
+  - 127: try_maple_btn(buttons, Buttons::OK, first_node(KeyConfig["button:OK"], KeyConfig["BtOK"]), Point<int16_t>(8, 234), "keyconfig ok");
+  - 128: try_maple_btn(buttons, Buttons::CANCEL, first_node(KeyConfig["button:Cancel"], KeyConfig["BtCancel"]), Point<int16_t>(58, 234), "keyconfig cancel");
+  - 129: try_maple_btn(buttons, Buttons::DEFAULT, first_node(KeyConfig["button:Default"], KeyConfig["BtDefault"]), Point<int16_t>(112, 234), "keyconfig default");
+  - 130: try_maple_btn(buttons, Buttons::DELETE, first_node(KeyConfig["button:Delete"], KeyConfig["BtDelete"]), Point<int16_t>(177, 234), "keyconfig delete");
+  - 131: try_maple_btn(buttons, Buttons::KEYSETTING, first_node(KeyConfig["button:keySetting"], KeyConfig["BtQuickSlot"]), Point<int16_t>(260, 234), "keyconfig keysetting");
+- 动画/贴图成员 (8 行):
+  - 87: Texture bg = backgrnd;
+  - 91: // v83 KeyConfig/backgrnd origin 为画布中心 (314,186)。Sprite 按 origin 回减，
+  - 97: Texture bg2 = KeyConfig["backgrnd2"];
+  - 102: Texture bg3 = KeyConfig["backgrnd3"];
+  - 569: Texture keycap = icon[i];
+  - 714: Texture texture = key_texture.second;
+  - 1323: Texture UIKeyConfig::get_item_texture(int32_t item_id) const
+  - 1329: Texture UIKeyConfig::get_skill_texture(int32_t skill_id) const
+
+## H 键 WHISPER
+
+- IO/UITypes/UIChatBar.cpp
+- IO/UITypes/UIMiscShells.cpp
+- UIChatBar.cpp:25: // 悄悄话目标弹层 UIWhisperTargetDlg（它落在已编译的 UIMiscShells TU 里 —— 本工程
+- UIChatBar.cpp:1756: // （UIWhisperTargetDlg）；其余三项选中即生效，不需要再问名字。
+- UIChatBar.cpp:1759: if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
+- UIChatBar.cpp:1764: else if (auto new_dlg = UI::get().emplace<UIWhisperTargetDlg>())
+- UIChatBar.cpp:2082: set_whisper_target(name);
+- UIChatBar.cpp:2113: // （UIWhisperTargetDlg：Notice4 框 + 输入行 + ComboBox 下拉候选 + BtOK/BtNo）。
+- UIChatBar.cpp:2129: if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
+- UIChatBar.cpp:2136: if (auto dlg = UI::get().emplace<UIWhisperTargetDlg>())
+- UIChatBar.cpp:2140: void UIChatBar::set_whisper_target(const std::string& target)
+- UIChatBar.cpp:2147: whisper_target_name = target;
+- UIChatBar.cpp:2653: pending_whisper_target = target;
+- UIChatBar.cpp:2662: if (ok && !pending_whisper_text.empty() && pending_whisper_target == target)
+- UIChatBar.cpp:2664: pending_whisper_target.clear();
+- UIChatBar.cpp:2698: if (whisper_target_name.empty())
+- UIChatBar.cpp:2704: send_whisper(whisper_target_name, text);
+- UIMiscShells.cpp:7506: // UIWhisperTargetDlg —— 悄悄话目标弹层
+- UIMiscShells.cpp:7516: int16_t UIWhisperTargetDlg::frame_height()
+- UIMiscShells.cpp:7521: UIWhisperTargetDlg::UIWhisperTargetDlg()
+- UIMiscShells.cpp:7583: LOG(LOG_DEBUG, "UIWhisperTargetDlg: open assets=" << has_assets
+- UIMiscShells.cpp:7587: int16_t UIWhisperTargetDlg::arrow_x() const
+- UIMiscShells.cpp:7592: bool UIWhisperTargetDlg::in_arrow(Point<int16_t> cursorpos) const
+- UIMiscShells.cpp:7600: bool UIWhisperTargetDlg::in_row(Point<int16_t> cursorpos, size_t row) const
+- UIMiscShells.cpp:7609: std::vector<std::string> UIWhisperTargetDlg::collect_candidates() const
+- UIMiscShells.cpp:7640: void UIWhisperTargetDlg::open()
+- UIMiscShells.cpp:7654: void UIWhisperTargetDlg::refocus_field()
+- UIMiscShells.cpp:7660: void UIWhisperTargetDlg::pick_candidate(size_t row)
+- UIMiscShells.cpp:7671: void UIWhisperTargetDlg::confirm()
+- UIMiscShells.cpp:7682: chat->set_whisper_target(name);
+- UIMiscShells.cpp:7683: LOG(LOG_DEBUG, "UIWhisperTargetDlg: confirm len=" << name.size());
+- UIMiscShells.cpp:7694: void UIWhisperTargetDlg::update()

@@ -1,0 +1,38 @@
+{
+  "frame": [
+    255,
+    372
+  ],
+  "title_bar": {
+    "color": [
+      255,
+      255,
+      255
+    ],
+    "height": 0
+  },
+  "tab_selected_red_bbox": [
+    3,
+    28,
+    254,
+    45
+  ],
+  "count_bar": {
+    "y0": 46,
+    "y1": 79
+  },
+  "list_white_bbox": [
+    4,
+    70,
+    234,
+    340
+  ],
+  "bottom_bar": {
+    "color": [
+      153,
+      170,
+      204
+    ],
+    "height": 0
+  }
+}

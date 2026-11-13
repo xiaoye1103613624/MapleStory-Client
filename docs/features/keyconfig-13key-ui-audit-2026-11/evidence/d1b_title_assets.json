@@ -1,0 +1,212 @@
+{
+  "Title_backgrnd2": {
+    "dim": [
+      254,
+      46
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "best_frame": [
+      0,
+      308
+    ],
+    "best_sad": 93.51
+  },
+  "Title_backgrnd4": {
+    "dim": [
+      227,
+      46
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "best_frame": [
+      12,
+      88
+    ],
+    "best_sad": 46.31
+  },
+  "Title_Tab_enabled_0": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 197.66,
+    "expected": [
+      8,
+      30
+    ]
+  },
+  "Title_Tab_disabled_0": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 214.04,
+    "expected": [
+      8,
+      30
+    ]
+  },
+  "Title_Tab_enabled_1": {
+    "dim": [
+      27,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 137.34,
+    "expected": [
+      57,
+      30
+    ]
+  },
+  "Title_Tab_disabled_1": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 153.78,
+    "expected": [
+      57,
+      30
+    ]
+  },
+  "Title_Tab_enabled_2": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 145.21,
+    "expected": [
+      106,
+      30
+    ]
+  },
+  "Title_Tab_disabled_2": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 175.3,
+    "expected": [
+      106,
+      30
+    ]
+  },
+  "Title_Tab_enabled_3": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 109.38,
+    "expected": [
+      155,
+      30
+    ]
+  },
+  "Title_Tab_disabled_3": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 113.65,
+    "expected": [
+      155,
+      30
+    ]
+  },
+  "Title_Tab_enabled_4": {
+    "dim": [
+      26,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 117.56,
+    "expected": [
+      204,
+      30
+    ]
+  },
+  "Title_Tab_disabled_4": {
+    "dim": [
+      25,
+      14
+    ],
+    "origin": [
+      0,
+      -1
+    ],
+    "sad_at_expected": 132.23,
+    "expected": [
+      204,
+      30
+    ]
+  },
+  "Title_icon1": {
+    "dim": [
+      36,
+      36
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "best_frame": [
+      180,
+      52
+    ],
+    "best_sad": 88.81
+  },
+  "Title_icon2_0": {
+    "dim": [
+      36,
+      36
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "best_frame": [
+      8,
+      28
+    ],
+    "best_sad": 159.18
+  }
+}

@@ -52,8 +52,9 @@ namespace ms
 			ALLIANCECHAT,		// CASHSHOP (v83)
 			//NONE = 24,		// TOALLIANCE (v83)
 			MANAGELEGION = 25,	// PARTYSEARCH (v83)
-			MEDALS,				// FAMILY (v83)
-			BOSSPARTY,			// MEDAL (v83)
+			MEDALS,				// FAMILY (v83) — F 键学院窗
+			BOSSPARTY,			// 枚举占位；KeyConfig P0 不再提供此槽（旧绑兜底→家族页）
+			MEDAL = 28,		// D1/P0 分号键勋章窗（v83 action 27 -> from_server，填 28 空洞）
 			PROFESSION = 29,
 			ITEMPOT,
 			EVENT,

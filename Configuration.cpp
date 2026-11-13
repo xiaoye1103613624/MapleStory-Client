@@ -139,6 +139,7 @@ namespace ms
 		// 界面开关
 		{ "config.section.14",	"ui.buff_timer",			"config.comment.ui.buff_timer" },
 		{ "config.section.14",	"ui.equip_compare",			"config.comment.ui.equip_compare" },
+		{ "config.section.14",	"ui.damage_skin",			"config.comment.ui.damage_skin" },
 		{ "config.section.14",	"ui.language",			"config.comment.ui.language" },
 		{ "config.section.14",	"ui.maplepoints.local",			"config.comment.ui.maplepoints.local" },
 
@@ -211,6 +212,7 @@ namespace ms
 		settings.emplace<ServerIP>();
 		settings.emplace<ServerPort>();
 		settings.emplace<DataFormat>();
+		settings.emplace<ResourceNxCache>();
 		settings.emplace<DataDir>();
 		settings.emplace<KeyMode>();
 		settings.emplace<KeyFile>();
@@ -852,6 +854,11 @@ namespace ms
 		return Setting<DataDir>::get().load();
 	}
 
+	bool Configuration::get_resource_nxcache() const
+	{
+		return Setting<ResourceNxCache>::get().load();
+	}
+
 	ms::res::KeyMode Configuration::get_keymode() const
 	{
 		std::string v = Setting<KeyMode>::get().load();
@@ -894,6 +901,26 @@ namespace ms
 	bool Configuration::get_equip_compare() const
 	{
 		return Setting<EquipCompare>::get().load();
+	}
+
+	int32_t Configuration::get_damage_skin() const
+	{
+		// Invalid / negative / out-of-range config falls back to 0 (BasicEff).
+		const std::string v = Setting<DamageSkin>::get().load();
+		try {
+			size_t pos = 0;
+			long long n = std::stoll(v, &pos);
+			if (pos != v.size() || n < 0 || n > 2147483647LL)
+				return 0;
+			return static_cast<int32_t>(n);
+		} catch (...) {
+			return 0;
+		}
+	}
+
+	void Configuration::set_damage_skin(int32_t skin)
+	{
+		Setting<DamageSkin>::get().save(std::to_string(skin < 0 ? 0 : skin));
 	}
 
 	bool Configuration::get_damage_formula_v2() const

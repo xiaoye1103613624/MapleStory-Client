@@ -1,0 +1,212 @@
+{
+  "dims": {
+    "MonsterBook/backgrnd/origin": [
+      475,
+      349
+    ],
+    "MonsterBook/cardSlot/origin": [
+      174,
+      256
+    ],
+    "MonsterBook/infoPage/origin": [
+      170,
+      231
+    ],
+    "MonsterBook/select/z": [
+      31,
+      42
+    ],
+    "MonsterBook/cover/z": [
+      31,
+      42
+    ],
+    "MonsterBook/fullMark/z": [
+      7,
+      11
+    ],
+    "MonsterBook/arrowLeft/normal": [
+      24,
+      16
+    ],
+    "MonsterBook/arrowLeft/pressed": [
+      22,
+      16
+    ],
+    "MonsterBook/arrowLeft/disabled": [
+      24,
+      17
+    ],
+    "MonsterBook/arrowLeft/mouseOver": [
+      24,
+      16
+    ],
+    "MonsterBook/arrowRight/normal": [
+      23,
+      17
+    ],
+    "MonsterBook/arrowRight/pressed": [
+      23,
+      16
+    ],
+    "MonsterBook/arrowRight/disabled": [
+      23,
+      17
+    ],
+    "MonsterBook/arrowRight/mouseOver": [
+      23,
+      17
+    ],
+    "MonsterBook/icon/0/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/1/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/2/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/3/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/4/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/5/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/6/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/7/origin": [
+      22,
+      27
+    ],
+    "MonsterBook/BtClose/normal": [
+      18,
+      16
+    ],
+    "MonsterBook/BtClose/pressed": [
+      18,
+      16
+    ],
+    "MonsterBook/BtClose/disabled": [
+      18,
+      16
+    ],
+    "MonsterBook/BtClose/mouseOver": [
+      18,
+      16
+    ],
+    "MonsterBook/BtSearch/normal": [
+      34,
+      17
+    ],
+    "MonsterBook/BtSearch/pressed": [
+      34,
+      17
+    ],
+    "MonsterBook/BtSearch/disabled": [
+      34,
+      17
+    ],
+    "MonsterBook/BtSearch/mouseOver": [
+      34,
+      17
+    ],
+    "MonsterBook/ContextMenu/t/z": [
+      80,
+      19
+    ],
+    "MonsterBook/ContextMenu/c/z": [
+      77,
+      13
+    ],
+    "MonsterBook/ContextMenu/s/z": [
+      77,
+      7
+    ],
+    "MonsterBook": [
+      475,
+      349
+    ],
+    "MonsterBook/select/origin": [
+      31,
+      42
+    ],
+    "MonsterBook/cover/origin": [
+      31,
+      42
+    ],
+    "MonsterBook/fullMark/origin": [
+      7,
+      11
+    ],
+    "MonsterBook/arrowLeft": [
+      24,
+      16
+    ],
+    "MonsterBook/arrowRight": [
+      23,
+      17
+    ],
+    "MonsterBook/icon": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/0": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/1": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/2": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/3": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/4": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/5": [
+      22,
+      27
+    ],
+    "MonsterBook/icon/6": [
+      22,
+      27
+    ],
+    "MonsterBook/BtClose": [
+      18,
+      16
+    ],
+    "MonsterBook/BtSearch": [
+      34,
+      17
+    ],
+    "MonsterBook/ContextMenu/t/origin": [
+      80,
+      19
+    ],
+    "MonsterBook/ContextMenu/c/origin": [
+      77,
+      13
+    ],
+    "MonsterBook/ContextMenu/s/origin": [
+      77,
+      7
+    ]
+  }
+}

@@ -1,0 +1,316 @@
+//////////////////////////////////////////////////////////////////////////////////
+//	D1 / 分号键「勋章」窗实现（v83 MEDAL = CUIMedalQuestInfo）。
+//	数据源 = QuestInfo.img viewMedalItem 目录 × QuestLog 已完成态（详见 .h 头注）。
+//////////////////////////////////////////////////////////////////////////////////
+#include "UIMedal.h"
+
+#include "../Components/MapleButton.h"
+#include "../../Character/QuestLog.h"
+#include "../../Data/QuestData.h"
+#include "../../Gameplay/Stage.h"
+#include "../../Graphics/DrawArgument.h"
+#include "../../Util/Locale.h"
+#include "../../Util/UiAssetResolve.h"
+
+#include <algorithm>
+#include <cstdlib>
+
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
+namespace ms
+{
+	UIMedal::UIMedal() :
+		title(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE, Locale::text("uimedal.23")),
+		count_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, ""),
+		active_tab_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::DARKRED, Locale::text("uimedal.25")),
+		empty_hint(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::DARKGREY, "")
+	{
+		dimension = Point<int16_t>(FRAME_W, FRAME_H);
+		center_on_screen();
+
+		frame_edge = ColorBox(FRAME_W, FRAME_H, Color::Name::EMPEROR, 1.0f);
+		frame_back = ColorBox(static_cast<int16_t>(FRAME_W - 4), static_cast<int16_t>(FRAME_H - 4), Color::Name::GALLERY, 1.0f);
+		list_back = ColorBox(static_cast<int16_t>(FRAME_W - 24), static_cast<int16_t>(FRAME_H - 74), Color::Name::DUSTYGRAY, 1.0f);
+		list_inner = ColorBox(static_cast<int16_t>(FRAME_W - 26), static_cast<int16_t>(FRAME_H - 76), Color::Name::PORCELAIN, 1.0f);
+		scroll_track = ColorBox(8, static_cast<int16_t>(FRAME_H - 76), Color::Name::SILVERCHALICE, 1.0f);
+		scroll_thumb = ColorBox(8, 40, Color::Name::EMPEROR, 1.0f);
+
+		std::string names[TAB_COUNT] = { Locale::text("uimedal.25"), Locale::text("uimedal.tab.1"), Locale::text("uimedal.tab.2"), Locale::text("uimedal.tab.3"), Locale::text("uimedal.tab.4") };
+		tab_plate.reserve(TAB_COUNT);
+		tab_label.reserve(TAB_COUNT);
+
+		for (int16_t i = 0; i < TAB_COUNT; ++i)
+		{
+			tab_plate.emplace_back(TAB_W, TAB_H, Color::Name::DUSTYGRAY, 1.0f);
+			tab_label.emplace_back(Text::Font::A11M, Text::Alignment::CENTER,
+				Color::Name::BLACK, names[i]);
+		}
+
+		build_catalog();
+		select_tab(0);
+
+#ifdef USE_NX
+		nl::node close = UiAssetResolve::close_btn();
+
+		if (close)
+			buttons[Buttons::BtClose] = std::make_unique<MapleButton>(
+				close, Point<int16_t>(static_cast<int16_t>(FRAME_W - 21), 5));
+#endif
+	}
+
+	void UIMedal::build_catalog()
+	{
+		// 原生 GetQuestDisplayMedal @0x71df41：QuestInfo.img/<qid>/viewMedalItem。
+		// .nx 探针（tools/_d1_questnx_probe2.py）实测本包 82 条（72×29xxx + 19xxx 等），
+		// 故按字段过滤而非号段假设；条目序 = 目录序（map 语义下 qid 升序稳定）。
+#ifdef USE_NX
+		nl::node info_root = nl::nx::Quest["QuestInfo.img"];
+
+		if (!info_root)
+		{
+			UiAssetResolve::diag_once("medal.catalog", "Quest/QuestInfo.img 缺失 —— 勋章目录为空");
+			return;
+		}
+
+		for (const nl::node& q : info_root)
+		{
+			nl::node vmi = q["viewMedalItem"];
+
+			if (!vmi)
+				continue;
+
+			int32_t item = static_cast<int32_t>(vmi.get_integer());
+
+			if (item == 0)
+				continue;
+
+			MedalEntry e;
+			// nl::node::name()（node.hpp:116）；条目名即 qid 十进制串
+			const std::string& qname = q.name();
+			e.qid = static_cast<int16_t>(qname.empty() ? 0 : std::atoi(qname.c_str()));
+			e.medal_item = item;
+
+			nl::node cat = q["medalCategory"];
+			e.category = cat ? static_cast<int16_t>(cat.get_integer()) : 0;
+
+			if (e.qid > 0)
+				catalog.push_back(e);
+		}
+
+		LOG(LOG_INFO, "UIMedal: catalog entries=" << catalog.size());
+#endif
+	}
+
+	void UIMedal::refresh_view()
+	{
+		// 页签 → medalCategory：0=基本(全量) 1=职业 2=挑战 3=活动；
+		// category 字段缺失(探针 26 条)归「一般」页。映射依据见 .h 头注（探针分布）。
+		const QuestLog& log = Stage::get().get_player().get_quests();
+
+		view_rows.clear();
+		row_labels.clear();
+		obtained_total = 0;
+
+		for (size_t i = 0; i < catalog.size(); ++i)
+		{
+			const MedalEntry& e = catalog[i];
+
+			if (log.is_completed(e.qid))
+				obtained_total++;
+
+			bool match = false;
+
+			switch (active_tab)
+			{
+				case 0: match = true; break;			// 基本 = 全量目录
+				case 1: match = e.category == 1; break;	// 职业
+				case 2: match = e.category == 0; break;	// 一般（字段缺失）
+				case 3: match = e.category == 2; break;	// 挑战
+				case 4: match = e.category == 3; break;	// 活动
+			}
+
+			if (match)
+			{
+				view_rows.push_back(i);
+				row_labels.emplace_back(Text::Font::A11M, Text::Alignment::LEFT,
+					Color::Name::BLACK,
+					QuestData::get(e.qid).get_name());
+			}
+		}
+
+		int16_t visible = static_cast<int16_t>((FRAME_H - LIST_Y - 14) / ROW_H);
+		int32_t maxscroll = static_cast<int32_t>(
+			std::max<int32_t>(0, static_cast<int32_t>(view_rows.size()) * ROW_H - visible * ROW_H));
+		if (scroll > maxscroll)
+			scroll = static_cast<int16_t>(maxscroll);
+		if (scroll < 0)
+			scroll = 0;
+
+		count_label.change_text(Locale::format("uimedal.count", std::to_string(obtained_total)));
+	}
+
+	void UIMedal::select_tab(int16_t index)
+	{
+		if (index < 0 || index >= TAB_COUNT)
+			return;
+
+		active_tab = index;
+		scroll = 0;
+
+		std::string names[TAB_COUNT] = { Locale::text("uimedal.25"), Locale::text("uimedal.tab.1"), Locale::text("uimedal.tab.2"), Locale::text("uimedal.tab.3"), Locale::text("uimedal.tab.4") };
+		active_tab_label.change_text(names[index]);
+
+		for (int16_t i = 0; i < static_cast<int16_t>(tab_plate.size()); ++i)
+			tab_plate[i].set_color(i == active_tab ? Color::Name::WHITE : Color::Name::DUSTYGRAY);
+
+		refresh_view();
+	}
+
+	void UIMedal::toggle_active()
+	{
+		if (!active)
+		{
+			// 重开刷新完成态（勋章=已完成任务集，任务完成事件不单独挂线，开窗即准）。
+			refresh_view();
+			makeactive();
+		}
+		else
+		{
+			deactivate();
+		}
+	}
+
+	void UIMedal::draw(float inter) const
+	{
+		// D3：本窗自绘全走 ColorBox/Text（不走基类 sprites），淡入必须手动乘进
+		// DrawArgument 的 opacity 分量（operator+(float) 乘 color.a()）；
+		// 推进与 buttons 淡入同源（UIElement::draw_buttons 每帧 tick）。
+		const float fade = fade_alpha();
+
+		frame_edge.draw(DrawArgument(position) + fade);
+		frame_back.draw(DrawArgument(position + Point<int16_t>(2, 2)) + fade);
+		title.draw(DrawArgument(position + Point<int16_t>(0, 6)) + fade);
+		count_label.draw(DrawArgument(position + Point<int16_t>(12, 52)) + fade);
+
+		for (int16_t i = 0; i < static_cast<int16_t>(tab_plate.size()); ++i)
+		{
+			const int16_t tx = static_cast<int16_t>(TAB_X0 + i * (TAB_W + TAB_GAP));
+			tab_plate[i].draw(DrawArgument(position + Point<int16_t>(tx, TAB_Y)) + fade);
+			tab_label[i].draw(DrawArgument(position + Point<int16_t>(tx, static_cast<int16_t>(TAB_Y + 2))) + fade);
+		}
+
+		list_back.draw(DrawArgument(position + Point<int16_t>(LIST_X, LIST_Y)) + fade);
+		list_inner.draw(DrawArgument(position + Point<int16_t>(LIST_X + 1, LIST_Y + 1)) + fade);
+		scroll_track.draw(DrawArgument(position + Point<int16_t>(static_cast<int16_t>(FRAME_W - 15), LIST_Y + 1)) + fade);
+		scroll_thumb.draw(DrawArgument(position + Point<int16_t>(static_cast<int16_t>(FRAME_W - 15), LIST_Y + 1)) + fade);
+		active_tab_label.draw(DrawArgument(position + Point<int16_t>(14, 66)) + fade);
+
+		// 行列表：任务名（QuestData 名内含勋章名，如「战斗勋章-XXX勋章」）
+		const int16_t visible = static_cast<int16_t>((FRAME_H - LIST_Y - 14) / ROW_H);
+		const int16_t first = static_cast<int16_t>(scroll / ROW_H);
+
+		for (int16_t r = 0; r < visible; ++r)
+		{
+			size_t idx = static_cast<size_t>(first + r);
+
+			if (idx >= view_rows.size())
+				break;
+
+			const MedalEntry& e = catalog[view_rows[idx]];
+			const QuestLog& log = Stage::get().get_player().get_quests();
+			// 前缀标记：已获得(完成) 打勾位用文本符号，未获得留空 ——
+			// 原生行首是勋章道具图标（Item 114xxxx），图标件走 ItemData 需逐条缓存，
+			// 本轮以文本态呈现「已获得/未获得」，图标列为显式预留（不造半套观感）。
+			std::string line = (log.is_completed(e.qid) ? "[v] " : "[  ] ") +
+				std::string(row_labels[idx].get_text());
+
+			Text(Text::Font::A11M, Text::Alignment::LEFT,
+				log.is_completed(e.qid) ? Color::Name::BLACK : Color::Name::DARKGREY,
+				line)
+				.draw(DrawArgument(position + Point<int16_t>(LIST_X + 4,
+					static_cast<int16_t>(LIST_Y + 2 + r * ROW_H - scroll))) + fade);
+		}
+
+		if (view_rows.empty())
+			empty_hint.draw(DrawArgument(position + Point<int16_t>(0, 200)) + fade);
+
+		UIElement::draw_buttons(inter);
+	}
+
+	void UIMedal::update()
+	{
+		UIElement::update();
+	}
+
+	Button::State UIMedal::button_pressed(uint16_t buttonid)
+	{
+		switch (buttonid)
+		{
+			case Buttons::BtClose:
+				deactivate();
+				break;
+			default:
+				break;
+		}
+
+		return Button::State::NORMAL;
+	}
+
+	Cursor::State UIMedal::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		if (clicked)
+		{
+			const Point<int16_t> rel(
+				static_cast<int16_t>(cursorpos.x() - position.x()),
+				static_cast<int16_t>(cursorpos.y() - position.y()));
+
+			if (rel.y() >= TAB_Y && rel.y() < static_cast<int16_t>(TAB_Y + TAB_H))
+			{
+				for (int16_t i = 0; i < TAB_COUNT; ++i)
+				{
+					const int16_t tx = static_cast<int16_t>(TAB_X0 + i * (TAB_W + TAB_GAP));
+
+					if (rel.x() >= tx && rel.x() < static_cast<int16_t>(tx + TAB_W))
+					{
+						select_tab(i);
+						return Cursor::State::IDLE;
+					}
+				}
+			}
+
+			// 行点击：原生 → CUIMedalQuestInfoDetail（ToggleDetail + StartQuest/
+			// ResignQuest @0x83da76，走 QUEST_ACTION 107 本端已有）。详情窗是独立
+			// UIElement::Type + 布局取证工作，本轮显式预留，不在此半接。
+		}
+
+		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UIMedal::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		(void)keycode;
+
+		if (pressed && escape && active)
+			deactivate();
+	}
+
+	void UIMedal::send_scroll(double yoffset)
+	{
+		scroll = static_cast<int16_t>(scroll + (yoffset > 0 ? ROW_H : -ROW_H));
+		if (scroll < 0)
+			scroll = 0;
+
+		int16_t visible = static_cast<int16_t>((FRAME_H - LIST_Y - 14) / ROW_H);
+		int32_t maxscroll = static_cast<int32_t>(
+			std::max<int32_t>(0, static_cast<int32_t>(view_rows.size()) * ROW_H - visible * ROW_H));
+		if (scroll > maxscroll)
+			scroll = static_cast<int16_t>(maxscroll);
+	}
+
+	UIElement::Type UIMedal::get_type() const
+	{
+		return TYPE;
+	}
+}

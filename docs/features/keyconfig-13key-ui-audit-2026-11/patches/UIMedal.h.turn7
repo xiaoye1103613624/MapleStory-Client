@@ -1,0 +1,104 @@
+////////////////////////////////////////////////////////////////////////////////
+//	D1 / 分号键「勋章」窗（v83 MEDAL = CUIMedalQuestInfo，Angel OnCreate @0x84056b）
+//
+//	数据源（2026-11-11 升级，用户指正"服务端功能是完整的"后以 .nx 探针钉死）：
+//	  Quest/QuestInfo.img 中带 viewMedalItem≠0 的任务 = 勋章任务目录
+//	  （实测 72 个 29xxx + 10 个 19xxx/10328 等非号段条目；原生按字段过滤，
+//	  Angel GetQuestDisplayMedal @0x71df41 逐字同款）。
+//	  获得态 = QuestLog::is_completed(qid)（KEYMAP 同款任务下发链，s9 完整）。
+//	  分类 = medalCategory（探针分布 1:16 / 2:28 / 3:2 / 缺失:26；页签映射
+//	  1=职业 2=挑战 3=活动 缺失=一般，与数量分布一致，为证据内推断；0=基本全量）。
+//
+//	素材：UIWindow.img/UIWindow2.img 均无 Medal 窗体根（orange-wz matches:[]），
+//	→ 窗体框架走门禁 18 复用件路径（ColorBox + close_btn）；版式真源 =
+//	正确客户端截图/勋章框.png（255x372，5 页签 基本/职业/一般/挑战/活动）。
+//	原生 Title 根（Tab/backgrnd2/4/icon1/2，OnCreate SP_5162..5171 引用）存在，
+//	但那是称号窗素材、勋章窗复用其页签件需逐件坐标取证，本轮保留 ColorBox。
+//
+//	预留（不编造）：行点击 → CUIMedalQuestInfoDetail（ToggleDetail/StartQuest
+//	重开链）为独立详情窗，本轮未接，见 cpp 内注释。
+////////////////////////////////////////////////////////////////////////////////
+#pragma once
+
+#include "../UIElement.h"
+
+#include "../../Graphics/Color.h"
+#include "../../Graphics/Geometry.h"
+#include "../../Graphics/Text.h"
+
+#include <cstdint>
+#include <string>
+#include <vector>
+
+namespace ms
+{
+	class UIMedal : public UIElement
+	{
+	public:
+		static constexpr Type TYPE = UIElement::Type::MEDAL;
+		static constexpr bool FOCUSED = false;
+		static constexpr bool TOGGLED = true;
+
+		UIMedal();
+
+		void draw(float inter) const override;
+		void update() override;
+		void toggle_active() override;
+		Button::State button_pressed(uint16_t buttonid) override;
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void send_scroll(double yoffset) override;
+		UIElement::Type get_type() const override;
+
+	private:
+		enum Buttons : uint16_t
+		{
+			BtClose
+		};
+
+		static constexpr int16_t FRAME_W = 255;
+		static constexpr int16_t FRAME_H = 372;
+		static constexpr int16_t TAB_COUNT = 5;
+		static constexpr int16_t TAB_W = 47;
+		static constexpr int16_t TAB_H = 18;
+		static constexpr int16_t TAB_X0 = 8;
+		static constexpr int16_t TAB_Y = 30;
+		static constexpr int16_t TAB_GAP = 2;
+
+		static constexpr int16_t LIST_X = 10;
+		static constexpr int16_t LIST_Y = 62;
+		static constexpr int16_t ROW_H = 16;
+
+		struct MedalEntry
+		{
+			int16_t qid;			// 勋章任务 id（QuestInfo.img/<qid>）
+			int32_t medal_item;		// viewMedalItem（勋章道具 id，114xxxx 段）
+			int16_t category;		// medalCategory；0 = 字段缺失（归「一般」）
+		};
+
+		void build_catalog();		// 扫 QuestInfo.img 取 viewMedalItem≠0 条目
+		void refresh_view();		// 按页签 + 已完成态过滤出显示行
+		void select_tab(int16_t index);
+
+		int16_t active_tab = 0;
+		int16_t scroll = 0;
+		int32_t obtained_total = 0;
+
+		std::vector<MedalEntry> catalog;	// 构造期一次性建好（82 条量级）
+		std::vector<size_t> view_rows;		// catalog 下标，按页签过滤后
+		std::vector<Text> row_labels;		// 与 view_rows 同序（任务名含勋章名）
+
+		ColorBox frame_back;
+		ColorBox frame_edge;
+		ColorBox list_back;
+		ColorBox list_inner;
+		ColorBox scroll_track;
+		ColorBox scroll_thumb;
+		std::vector<ColorBox> tab_plate;
+		std::vector<Text> tab_label;
+		Text title;
+		Text count_label;
+		Text active_tab_label;
+		Text empty_hint;
+	};
+}

@@ -1,0 +1,960 @@
+//////////////////////////////////////////////////////////////////////////////////
+//	This file is part of the continued Journey MMORPG client					//
+//	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
+//																				//
+//	This program is free software: you can redistribute it and/or modify		//
+//	it under the terms of the GNU Affero General Public License as published by	//
+//	the Free Software Foundation, either version 3 of the License, or			//
+//	(at your option) any later version.											//
+//																				//
+//	This program is distributed in the hope that it will be useful,				//
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
+//	GNU Affero General Public License for more details.							//
+//																				//
+//	You should have received a copy of the GNU Affero General Public License	//
+//	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
+//////////////////////////////////////////////////////////////////////////////////
+#include "UIStateGame.h"
+
+#include "UI.h"
+#include "Window.h"
+
+#include "UITypes/UIBuffList.h"
+#include "UITypes/UITemporaryStatView.h"
+#include "UITypes/UIEnergyBar.h"
+#include "UITypes/UIComboCounter.h"
+#include "UITypes/UIBossHP.h"
+#include "UITypes/UIClock.h"
+#include "UITypes/UIChannel.h"
+#include "UITypes/UICharInfo.h"
+#include "UITypes/UIChat.h"
+#include "UITypes/UIChatBar.h"
+#include "UITypes/UIMessenger.h"
+#include "UITypes/UIEquipInventory.h"
+#include "UITypes/UIEvent.h"
+#include "UITypes/UISpecial.h"
+#include "UITypes/UIItemInventory.h"
+#include "UITypes/UIKeyConfig.h"
+#include "UITypes/UIMiniMap.h"
+#include "UITypes/UIQuestLog.h"
+#include "UITypes/UIQuit.h"
+#include "UITypes/UIShop.h"
+#include "UITypes/UISkillBook.h"
+#include "UITypes/UIStatsInfo.h"
+#include "UITypes/UIStatusBar.h"
+#include "UITypes/UIStatusMessenger.h"
+#include "UITypes/UIUserList.h"
+#include "UITypes/UIWorldMap.h"
+#include "UITypes/UIMonsterBook.h"
+#include "UITypes/UIMaker.h"
+#include "UITypes/UIMiscShells.h"
+#include "UITypes/UIGuild.h"
+#include "UITypes/UIFamily.h"
+#include "UITypes/UIPartySearch.h"
+#include "UITypes/UILoginNotice.h"
+#include "../Net/Packets/FamilyPackets.h"
+
+#include "../Net/Packets/GameplayPackets.h"
+#include "../Gameplay/Stage.h"
+
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
+#include "../Util/Misc.h"
+#include "../Util/UiAssetResolve.h"
+
+namespace ms
+{
+	UIStateGame::UIStateGame() : stats(Stage::get().get_player().get_stats()), dragged(nullptr)
+	{
+		focused = UIElement::Type::NONE;
+		tooltipparent = Tooltip::Parent::NONE;
+
+		const CharLook& look = Stage::get().get_player().get_look();
+		const Inventory& inventory = Stage::get().get_player().get_inventory();
+
+		emplace<UIStatusMessenger>();
+
+		// Prefer StatusBar3; otherwise classic StatusBar.img (BeiDou / v83).
+		if (UiAssetResolve::has_game_hud())
+		{
+			emplace<UIStatusBar>(stats);
+			emplace<UIChatBar>();
+		}
+		else
+		{
+			LOG(LOG_WARN, "UIStateGame: no StatusBar3.img or StatusBar.img/base — skipping status/chat HUD");
+		}
+
+		emplace<UIMiniMap>(stats);
+		emplace<UIBuffList>();
+		emplace<UITemporaryStatView>();
+		if (auto tsv = UI::get().get_element<UITemporaryStatView>())
+			tsv->deactivate();
+		emplace<UIEnergyBar>();
+		emplace<UIComboCounter>();
+		emplace<UIBossHP>();
+		emplace<UIClock>();
+
+		// Shop window is inactive until an NPC opens it; still construct only
+		// when shop UI assets exist so missing Shop2 cannot affect enter-game.
+		if (UiAssetResolve::usable(UiAssetResolve::shop_root()))
+			emplace<UIShop>(look, inventory);
+
+		VWIDTH = Constants::Constants::get().get_viewwidth();
+		VHEIGHT = Constants::Constants::get().get_viewheight();
+	}
+
+	void UIStateGame::draw(float inter, Point<int16_t> cursor) const
+	{
+		for (auto& type : elementorder)
+		{
+			auto& element = elements[type];
+
+			if (element && element->is_active())
+				element->draw(inter);
+		}
+
+		if (tooltip)
+			tooltip->draw(cursor + Point<int16_t>(0, 22));
+
+		if (draggedicon)
+			draggedicon->dragdraw(cursor);
+	}
+
+	void UIStateGame::update()
+	{
+		bool update_screen = false;
+		int16_t new_width = Constants::Constants::get().get_viewwidth();
+		int16_t new_height = Constants::Constants::get().get_viewheight();
+
+		if (VWIDTH != new_width || VHEIGHT != new_height)
+		{
+			update_screen = true;
+			VWIDTH = new_width;
+			VHEIGHT = new_height;
+
+			if (UiAssetResolve::has_game_hud())
+			{
+				UI::get().remove(UIElement::Type::STATUSBAR);
+
+				const CharStats& stats = Stage::get().get_player().get_stats();
+				emplace<UIStatusBar>(stats);
+
+				// activate() 里先 STATUSBAR 后 CHATBAR，get_front 从 elementorder 尾部
+				// 反向扫，所以聊天栏本应压住状态栏。视图尺寸一变就把 STATUSBAR 重新
+				// emplace（push_back 到队尾），它反过来吞掉整条底栏 y>=649 的点击 ——
+				// 真机实测「+」展开按钮点了没反应。重排回原生优先级。
+				elementorder.remove(UIElement::Type::CHATBAR);
+				elementorder.push_back(UIElement::Type::CHATBAR);
+			}
+		}
+
+		for (auto& type : elementorder)
+		{
+			auto& element = elements[type];
+
+			if (element && element->is_active())
+			{
+				// 切语言时已开着的窗要立刻换文案：文案代次只在 reload 时变，
+				// 无绑定的窗体在这里是一次空 vector 判断，成本可忽略。
+				element->refresh_localized();
+				element->update();
+
+				if (update_screen)
+					element->update_screen(new_width, new_height);
+			}
+		}
+	}
+
+	bool UIStateGame::drop_icon(const Icon& icon, Point<int16_t> cursor_position)
+	{
+		if (UIElement* front = get_front(cursor_position))
+			return front->send_icon(icon, cursor_position);
+		else
+			icon.drop_on_stage();
+
+		return true;
+	}
+
+	void UIStateGame::remove_icon()
+	{
+		draggedicon->reset();
+		draggedicon = {};
+	}
+
+	void UIStateGame::remove_cursors()
+	{
+		for (auto type : elementorder)
+		{
+			auto element = elements[type].get();
+
+			if (element && element->is_active())
+				element->remove_cursor();
+		}
+	}
+
+	void UIStateGame::remove_cursor(UIElement::Type t)
+	{
+		for (auto type : elementorder)
+		{
+			auto element = elements[type].get();
+
+			if (element && element->is_active() && element->get_type() != t)
+				element->remove_cursor();
+		}
+	}
+
+	void UIStateGame::doubleclick(Point<int16_t> pos)
+	{
+		if (UIElement* front = get_front(pos))
+			front->doubleclick(pos);
+	}
+
+	void UIStateGame::rightclick(Point<int16_t> pos)
+	{
+		if (UIElement* front = get_front(pos))
+		{
+			front->rightclick(pos);
+			return;
+		}
+		// 地图空白右键：打开 ContextMenu（Info / Whisper / Close）
+		auto cm = UI::get().get_element<UIContextMenu>();
+		if (!cm)
+			cm = UI::get().emplace<UIContextMenu>();
+		if (cm)
+			cm->open_at(pos, 0, Stage::get().get_player().get_name());
+	}
+
+	void UIStateGame::send_key(KeyType::Id type, int32_t action, bool pressed, bool escape)
+	{
+		if (UIElement* focusedelement = get(focused))
+		{
+			if (focusedelement->is_active())
+			{
+				return focusedelement->send_key(action, pressed, escape);
+			}
+			// 焦点指向的窗体已经 inactive（最常见：鼠标停在窗体上点了 ✕，窗口关闭但
+			// `focused` 还留着那个 Type）。旧实现在这里 `focused = NONE; return;`
+			// —— 这一次按键既没交给窗体也没交给全局开关，被**静默吞掉**：
+			// 关掉背包后按第一下 `i` 打不开、要按第二下，就是这条。
+			// 正确做法是清掉脏焦点后**继续**往下走全局 dispatch，而不是丢弃按键。
+			focused = UIElement::NONE;
+		}
+
+		// 脏焦点清掉之后，这一键**仍然要**交给下面的全局 dispatch。
+		// 早先这里是 if/else：走进「焦点指向已关闭窗体」这一支就跳出，按键被吞 ——
+		// 表现就是 ESC 要按第二下才开目录（第一下只把脏焦点清掉，相位差一整拍）。
+		{
+			// ESC 兜底：s9 的 KEYMAP 是从库里装载的，该账号没存 ESC 那一格（KeyConfig::Key::ESCAPE = 84）
+			// 时下发的是 type=0/action=0 ⇒ mapping 为 NONE，下面那条 MAINMENU 分支永远进不来，
+			// 这就是用户报的「esc 按键最后不能打开目录」。能走到这里说明没有任何活动窗体接住这一下，
+			// 而原生在这一刻正是开「目录」。只在 classic 底栏下兜，避免改到 StatusBar3 的 ESC 语义。
+			if (escape && pressed && type == KeyType::Id::NONE && UiAssetResolve::is_classic_hud())
+			{
+				type = KeyType::Id::MENU;
+				action = KeyAction::Id::MAINMENU;
+			}
+
+			switch (type)
+			{
+				case KeyType::Id::MENU:
+				{
+					if (pressed)
+					{
+						switch (action)
+						{
+							// ===== §f-keymap 遗留五死键接线（2026-11-06）=====
+							// 本枚举 21+ 段沿用新版编号，v83 的 11/17/25/26 透传后落在
+							// WHISPER/GUILD/MANAGELEGION(MEDALS槽)/MEDALS(FAMILY槽)，
+							// 原先无 case ⇒ 键发了、没反应。窗口本体全部已存在。
+							case KeyAction::Id::WHISPER:
+							{
+								// v83 H(11) = WHISPER：原生「请输入悄悄话的对象」弹层；
+								// 其确认回调 = ChatBar::set_whisper_target（切密语频道+预置 /w）。
+								// 与底栏密语钮、下拉选「悄悄话」同一条路（pick_classic_target）。
+								if (auto dlg = UI::get().get_element<UIWhisperTargetDlg>())
+								{
+									dlg->makeactive();
+									dlg->open();
+								}
+								else if (auto new_dlg = UI::get().emplace<UIWhisperTargetDlg>())
+								{
+									new_dlg->open();
+								}
+								break;
+							}
+							case KeyAction::Id::MANAGELEGION:
+							{
+								// v83 O(25) = PARTYSEARCH 组队搜索窗（枚举名沿用新版军团管理）。
+								if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
+									emplace<UIPartySearch>();
+								break;
+							}
+							case KeyAction::Id::MEDALS:
+							{
+								// v83 F(33 键) action 26 = FAMILY 学院（家族）窗。
+								// KeyAction.h:55 `MEDALS // FAMILY (v83)` 为编号错位实证。
+								// 开窗前照刷新钮语义请求一次（s9 回 95 FAMILY_INFO_RESULT
+								// 回灌活动窗；登录数据层已有，双保险）。
+								OpenFamilyPacket().dispatch();
+								auto fam = UI::get().get_element<UIFamily>();
+								if (!fam)
+									fam = UI::get().emplace<UIFamily>();
+								else if (!fam->is_active())
+									fam->makeactive();
+								break;
+							}
+							case KeyAction::Id::NOTIFIER:
+							{
+								// v83 L(20) = NOTIFIER 通知窗。查证：s9 SendOpcode 无任何 NOTIFIER/
+								// SERVERNOTICE 窗口化下发（18 号在 s9 未使用），原生通知窗内容源
+								// = notifier 列表封包 —— 服务端不存在 ⇒ 按门禁 7 不做假窗。
+								// 通知文案实际全走 serverNotice/chat（已接）。保留灭活并留证。
+								LOG(LOG_DEBUG, "UIStateGame: NOTIFIER key (v83 L) — no s9 notifier backend, intentionally inert");
+								break;
+							}
+							case KeyAction::Id::EQUIPMENT:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window4("Equip")))
+									emplace<UIEquipInventory>(
+										Stage::get().get_player().get_inventory()
+										);
+
+								break;
+							}
+							case KeyAction::Id::ITEMS:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Item")))
+									emplace<UIItemInventory>(
+										Stage::get().get_player().get_inventory()
+										);
+
+								break;
+							}
+							case KeyAction::Id::STATS:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window4("Stat")))
+									emplace<UIStatsInfo>(
+										Stage::get().get_player().get_stats()
+										);
+
+								break;
+							}
+							case KeyAction::Id::SKILLS:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Skill")))
+									emplace<UISkillBook>(
+										Stage::get().get_player().get_stats(),
+										Stage::get().get_player().get_skills()
+										);
+
+								break;
+							}
+							case KeyAction::Id::FRIENDS:
+							case KeyAction::Id::PARTY:
+							case KeyAction::Id::BOSSPARTY:
+							case KeyAction::Id::GUILD:
+							{
+								// v83 G(17) = GUILD「家族」：用户 2026-11-07 指正，原生是
+								// 「好友/组员/家族/家族联盟/拒绝列表」共用窗的第 3 页签，
+								// 不是独立 UIGuild 浮窗（浮窗仍由底栏社区钮保留入口）。
+								UIUserList::Tab tab;
+
+								switch (action)
+								{
+									case KeyAction::Id::FRIENDS:
+										tab = UIUserList::Tab::FRIEND;
+										break;
+									case KeyAction::Id::PARTY:
+										tab = UIUserList::Tab::PARTY;
+										break;
+									case KeyAction::Id::BOSSPARTY:
+									case KeyAction::Id::GUILD:
+										tab = UIUserList::Tab::GUILD;
+										break;
+								}
+
+								auto userlist = UI::get().get_element<UIUserList>();
+
+								if (userlist && userlist->get_tab() != tab && userlist->is_active())
+								{
+									userlist->change_tab(tab);
+								}
+								else
+								{
+									if (UiAssetResolve::usable(UiAssetResolve::window("UserList")))
+										emplace<UIUserList>(tab);
+
+									if (userlist && userlist->get_tab() != tab && userlist->is_active())
+										userlist->change_tab(tab);
+								}
+
+								break;
+							}
+							case KeyAction::Id::WORLDMAP:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("WorldMap")))
+									emplace<UIWorldMap>();
+								break;
+							}
+							case KeyAction::Id::MAPLECHAT:
+							{
+								// Wave A：优先 Messenger；无资源时回退 socialChatEnter/UIChat
+								if (UiAssetResolve::usable(UiAssetResolve::window("Messenger")))
+								{
+									emplace<UIMessenger>();
+
+									if (auto m = UI::get().get_element<UIMessenger>())
+										m->try_create_room();
+
+									break;
+								}
+
+								if (!UiAssetResolve::usable(UiAssetResolve::window("socialChatEnter")))
+									break;
+
+								auto chat = UI::get().get_element<UIChat>();
+
+								if (!chat || !chat->is_active())
+									emplace<UIChat>();
+
+								break;
+							}
+							case KeyAction::Id::MINIMAP:
+							{
+								if (auto minimap = UI::get().get_element<UIMiniMap>())
+									minimap->send_key(action, pressed, escape);
+								else
+									// M 关过窗体后对象可能随换图销毁：重建即回到 MIN 态。
+									emplace<UIMiniMap>(Stage::get().get_player().get_stats());
+
+								break;
+							}
+							case KeyAction::Id::QUESTLOG:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Quest")))
+									emplace<UIQuestLog>(
+										Stage::get().get_player().get_quests()
+										);
+
+								break;
+							}
+							case KeyAction::Id::KEYBINDINGS:
+							{
+								nl::node keycfg = nl::nx::UI["StatusBar3.img"]["KeyConfig"];
+
+								if (!UiAssetResolve::usable(keycfg))
+									keycfg = UiAssetResolve::window("KeyConfig");
+
+								if (!UiAssetResolve::usable(keycfg))
+									break;
+
+								auto keyconfig = UI::get().get_element<UIKeyConfig>();
+
+								if (!keyconfig || !keyconfig->is_active())
+								{
+									emplace<UIKeyConfig>(
+										Stage::get().get_player().get_inventory(),
+										Stage::get().get_player().get_skills()
+										);
+								}
+								else if (keyconfig && keyconfig->is_active())
+								{
+									keyconfig->close();
+								}
+
+								break;
+							}
+							case KeyAction::Id::SAY:
+							case KeyAction::Id::PARTYCHAT:
+							case KeyAction::Id::FRIENDSCHAT:
+							case KeyAction::Id::GUILDCHAT:
+							case KeyAction::Id::ALLIANCECHAT:
+							case KeyAction::Id::TOSPOUSE:
+							{
+								if (auto chatbar = UI::get().get_element<UIChatBar>())
+									chatbar->change_target(action);
+
+								break;
+							}
+							case KeyAction::Id::MENU:
+							{
+								if (auto statusbar = UI::get().get_element<UIStatusBar>())
+									statusbar->toggle_menu();
+
+								break;
+							}
+							case KeyAction::Id::QUICKSLOTS:
+							{
+								if (auto statusbar = UI::get().get_element<UIStatusBar>())
+									statusbar->toggle_qs();
+
+								break;
+							}
+							case KeyAction::Id::TOGGLECHAT:
+							{
+								if (auto chatbar = UI::get().get_element<UIChatBar>())
+								{
+									if (chatbar->has_input())
+										chatbar->send_key(action, pressed, escape);
+									else if (chatbar->is_classic())
+										// classic HUD 没有 BtMax/BtMin，Enter 就是"开输入行"；
+										// 原来这里调 toggle_view() 只翻历史框，收框后再也开不回来。
+										chatbar->toggle_input(true);
+									else
+										chatbar->toggle_view();
+								}
+
+								break;
+							}
+							case KeyAction::Id::CASHSHOP:
+							{
+								EnterCashShopPacket().dispatch();
+								break;
+							}
+							case KeyAction::Id::MONSTERCOLLECTION:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("MonsterBook")))
+									emplace<UIMonsterBook>();
+								break;
+							}
+							case KeyAction::Id::PROFESSION:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Maker")))
+									emplace<UIMaker>();
+								break;
+							}
+							case KeyAction::Id::EVENT:
+							{
+								// 095 自定义中文 UI：暂时复用 EVENT 键打开福利中心（后续补独立 SPECIAL 键位 + 服务端 keymap）。
+								emplace<UISpecial>();
+								break;
+							}
+							case KeyAction::Id::CHARINFO:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("UserInfo")))
+									emplace<UICharInfo>(
+										Stage::get().get_player().get_oid()
+										);
+
+								break;
+							}
+							case KeyAction::Id::CHANGECHANNEL:
+							{
+								if (UiAssetResolve::usable(UiAssetResolve::window("Channel")))
+									emplace<UIChannel>();
+								break;
+							}
+							case KeyAction::Id::MAINMENU:
+							{
+								// ESC → 「目录」。旧实现只把 MAINMENU 转给 UIStatusBar::send_key，
+								// 而那个 send_key 里没有 MAINMENU 分支（它只认 escape/RETURN/上下），
+								// 所以 classic 底栏下 ESC 是条死线：键表绑了、动作发了、什么都没发生。
+								// 底栏「目录」钮走的是 UIGameMenu 开/关，这里复用同一条路。
+								if (UiAssetResolve::is_classic_hud())
+								{
+									auto gm = UI::get().get_element<UIGameMenu>();
+
+									if (!gm)
+										gm = UI::get().emplace<UIGameMenu>();
+									else if (!gm->is_active())
+										gm->makeactive();
+									else
+										gm->deactivate();
+
+									break;
+								}
+
+								if (auto statusbar = UI::get().get_element<UIStatusBar>())
+									statusbar->send_key(action, pressed, escape);
+
+								break;
+							}
+							case KeyAction::Id::SCREENSHOT:
+							{
+								// 「截图保存位置」的触发键（B4-7）。真正的回读/落盘在
+								// Window::end() 里做，这里只挂请求 —— 本帧还没提交。
+								if (pressed)
+									Window::get().request_screenshot();
+
+								break;
+							}
+							default:
+							{
+								LOG(LOG_DEBUG, "Unknown KeyAction::Id action: [" << action << "]");
+								break;
+							}
+						}
+					}
+
+					break;
+				}
+				case KeyType::Id::ACTION:
+				case KeyType::Id::FACE:
+				case KeyType::Id::ITEM:
+				case KeyType::Id::SKILL:
+				{
+					Stage::get().send_key(type, action, pressed);
+					break;
+				}
+			}
+		}
+	}
+
+	Cursor::State UIStateGame::send_cursor(Point<int16_t> cursor_position, Cursor::State cursor_state)
+	{
+		if (draggedicon)
+		{
+			if (cursor_state == Cursor::State::CLICKING)
+			{
+				if (drop_icon(*draggedicon, cursor_position))
+					remove_icon();
+
+				return cursor_state;
+			}
+
+			return Cursor::State::GRABBING;
+		}
+		else
+		{
+			bool clicked = cursor_state == Cursor::State::CLICKING || cursor_state == Cursor::State::VSCROLLIDLE || (dragged && (cursor_state == Cursor::State::CHATBARMOVE || cursor_state == Cursor::State::CHATBARVDRAG || cursor_state == Cursor::State::CHATBARHDRAG || cursor_state == Cursor::State::CHATBARBLTRDRAG || cursor_state == Cursor::State::CHATBARBRTLDRAG));
+
+			if (auto focusedelement = get(focused))
+			{
+				if (focusedelement->is_active())
+				{
+					remove_cursor(focusedelement->get_type());
+
+					return focusedelement->send_cursor(clicked, cursor_position);
+				}
+				else
+				{
+					focused = UIElement::Type::NONE;
+
+					return cursor_state;
+				}
+			}
+			else
+			{
+				if (!clicked)
+				{
+					dragged = nullptr;
+
+					if (auto front = get_front(cursor_position))
+					{
+						UIElement::Type front_type = front->get_type();
+
+						if (tooltipparent != UIElement::Type::NONE)
+							if (front_type != tooltipparent)
+								clear_tooltip(tooltipparent);
+
+						remove_cursor(front_type);
+
+						return front->send_cursor(clicked, cursor_position);
+					}
+					else
+					{
+						remove_cursors();
+
+						return Stage::get().send_cursor(clicked, cursor_position);
+					}
+				}
+				else
+				{
+					if (!dragged)
+					{
+						UIElement::Type drag_element_type = UIElement::Type::NONE;
+
+						for (auto iter = elementorder.rbegin(); iter != elementorder.rend(); ++iter)
+						{
+							auto& element = elements[*iter];
+
+							if (element && element->is_active() && element->is_in_range(cursor_position))
+							{
+								dragged = element.get();
+								drag_element_type = *iter;
+								break;
+							}
+						}
+
+						if (drag_element_type != UIElement::Type::NONE)
+						{
+							elementorder.remove(drag_element_type);
+							elementorder.push_back(drag_element_type);
+						}
+					}
+
+					if (dragged)
+						return dragged->send_cursor(clicked, cursor_position);
+					else
+						return Stage::get().send_cursor(clicked, cursor_position);
+				}
+			}
+		}
+	}
+
+	void UIStateGame::send_scroll(double yoffset)
+	{
+		for (auto& type : elementorder)
+		{
+			auto& element = elements[type];
+
+			if (element && element->is_active())
+				element->send_scroll(yoffset);
+		}
+	}
+
+	void UIStateGame::send_close()
+	{
+		// UIQuit 依赖 UIWindow6.img/askReward（BeiDou 素材缺失）：
+		// 缺失时只画黑色遮罩、没有退出提示（用户实测反馈）。退回退出确认弹窗。
+		if (UiAssetResolve::usable(UiAssetResolve::window("UIWindow6")["askReward"]))
+		{
+			UI::get().emplace<UIQuit>(stats);
+		}
+		else
+		{
+			UI::get().emplace<UIQuitConfirm>();
+		}
+	}
+
+	void UIStateGame::drag_icon(Icon* drgic)
+	{
+		draggedicon = drgic;
+	}
+
+	void UIStateGame::clear_tooltip(Tooltip::Parent parent)
+	{
+		if (parent == tooltipparent)
+		{
+			eqtooltip.set_equip(Tooltip::Parent::NONE, 0);
+			ittooltip.set_item(0);
+			tetooltip.set_text("");
+			matooltip.reset();
+			tooltip = {};
+			tooltipparent = Tooltip::Parent::NONE;
+		}
+	}
+
+	void UIStateGame::show_equip(Tooltip::Parent parent, int16_t slot)
+	{
+		eqtooltip.set_equip(parent, slot);
+
+		if (slot)
+		{
+			tooltip = eqtooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateGame::show_item(Tooltip::Parent parent, int32_t itemid)
+	{
+		ittooltip.set_item(itemid);
+
+		if (itemid)
+		{
+			tooltip = ittooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateGame::show_skill(Tooltip::Parent parent, int32_t skill_id, int32_t level, int32_t masterlevel, int64_t expiration)
+	{
+		sktooltip.set_skill(skill_id, level, masterlevel, expiration);
+
+		if (skill_id)
+		{
+			tooltip = sktooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateGame::show_text(Tooltip::Parent parent, std::string text)
+	{
+		tetooltip.set_text(text);
+
+		if (!text.empty())
+		{
+			tooltip = tetooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateGame::show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal)
+	{
+		matooltip.set_title(parent, title, bolded);
+		matooltip.set_desc(description);
+		matooltip.set_mapid(mapid, portal);
+
+		if (!title.empty())
+		{
+			tooltip = matooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	template <class T, typename...Args>
+	void UIStateGame::emplace(Args&& ...args)
+	{
+		if (auto iter = pre_add(T::TYPE, T::TOGGLED, T::FOCUSED))
+		{
+			(*iter).second = std::make_unique<T>(
+				std::forward<Args>(args)...
+				);
+
+			auto silent_types = {
+				UIElement::Type::STATUSMESSENGER,
+				UIElement::Type::STATUSBAR,
+				UIElement::Type::CHATBAR,
+				UIElement::Type::MINIMAP,
+				UIElement::Type::BUFFLIST,
+				UIElement::Type::ENERGYBAR,
+				UIElement::Type::COMBOCOUNTER,
+				UIElement::Type::BOSSHP,
+				UIElement::Type::CLOCK,
+				UIElement::Type::NPCTALK,
+				UIElement::Type::SHOP
+			};
+
+			if (std::find(silent_types.begin(), silent_types.end(), T::TYPE) == silent_types.end())
+			{
+				if (T::TYPE == UIElement::Type::WORLDMAP)
+					Sound(Sound::Name::WORLDMAPOPEN).play();
+				else
+					Sound(Sound::Name::MENUUP).play();
+
+				UI::get().send_cursor(false);
+			}
+		}
+	}
+
+	UIState::Iterator UIStateGame::pre_add(UIElement::Type type, bool is_toggled, bool is_focused)
+	{
+		auto& element = elements[type];
+
+		if (element && is_toggled)
+		{
+			elementorder.remove(type);
+			elementorder.push_back(type);
+
+			bool active = element->is_active();
+
+			element->toggle_active();
+
+			if (active != element->is_active())
+			{
+				if (element->is_active())
+				{
+					if (type == UIElement::Type::WORLDMAP)
+						Sound(Sound::Name::WORLDMAPOPEN).play();
+					else
+						Sound(Sound::Name::MENUUP).play();
+
+					UI::get().send_cursor(false);
+				}
+				else
+				{
+					if (type == UIElement::Type::WORLDMAP)
+						Sound(Sound::Name::WORLDMAPCLOSE).play();
+					else
+						Sound(Sound::Name::MENUDOWN).play();
+
+					element->remove_cursor();
+
+					if (draggedicon)
+						if (element->get_type() == icon_map[draggedicon.get()->get_type()])
+							remove_icon();
+
+					UI::get().send_cursor(false);
+				}
+			}
+
+			return elements.end();
+		}
+		else
+		{
+			remove(type);
+			elementorder.push_back(type);
+
+			if (is_focused)
+				focused = type;
+
+			return elements.find(type);
+		}
+	}
+
+	void UIStateGame::remove(UIElement::Type type)
+	{
+		if (type == focused)
+			focused = UIElement::Type::NONE;
+
+		if (type == tooltipparent)
+			clear_tooltip(tooltipparent);
+
+		elementorder.remove(type);
+
+		if (auto& element = elements[type])
+		{
+			element->deactivate();
+			element.release();
+		}
+	}
+
+	void UIStateGame::bring_to_front(UIElement::Type type)
+	{
+		// elementorder 尾 = draw() 最后画 = 最上层。已在队尾时直接返回：既省一次重排，
+		// 也避免在按引用遍历 elementorder 的回调里把“当前节点”摘掉（list::remove 会失效该迭代器）。
+		if (elementorder.empty() || elementorder.back() == type)
+			return;
+
+		// 不在层级表里（尚未 emplace / 已 remove）时不能 push_back，否则会留下指向空元素的幽灵条目。
+		if (std::find(elementorder.begin(), elementorder.end(), type) == elementorder.end())
+			return;
+
+		elementorder.remove(type);
+		elementorder.push_back(type);
+	}
+
+	UIElement* UIStateGame::get(UIElement::Type type)
+	{
+		return elements[type].get();
+	}
+
+	UIElement* UIStateGame::get_front(std::list<UIElement::Type> types)
+	{
+		auto begin = elementorder.rbegin();
+		auto end = elementorder.rend();
+
+		for (auto& iter = begin; iter != end; ++iter)
+		{
+			if (std::find(types.begin(), types.end(), *iter) != types.end())
+			{
+				auto& element = elements[*iter];
+
+				if (element && element->is_active())
+					return element.get();
+			}
+		}
+
+		return nullptr;
+	}
+
+	UIElement* UIStateGame::get_front(Point<int16_t> cursor_position)
+	{
+		auto begin = elementorder.rbegin();
+		auto end = elementorder.rend();
+
+		for (auto& iter = begin; iter != end; ++iter)
+		{
+			auto& element = elements[*iter];
+
+			if (element && element->is_active() && element->is_in_range(cursor_position))
+				return element.get();
+		}
+
+		return nullptr;
+	}
+}
