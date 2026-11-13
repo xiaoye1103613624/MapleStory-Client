@@ -37,7 +37,9 @@ namespace ms
 		nl::node na = Gateway["BtButton0"];
 		nl::node eu = Gateway["BtButton1"];
 
-		sprites.emplace_back(Gateway["backgrnd2"]);
+		// 2026-11-11：不再叠 Gateway/backgrnd2。该节点与后续 UIWorldSelect
+		// 卷轴同源，叠绘会在「选择地区」阶段出现双卷轴/偏移（用户录屏）。
+		// 地区钮本身不依赖这张底板。
 
 		int16_t pos_y = 254;
 		Point<int16_t> na_pos = Point<int16_t>(190, pos_y);

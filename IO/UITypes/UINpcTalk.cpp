@@ -18,6 +18,7 @@
 #include "UINpcTalk.h"
 
 #include "UINotice.h"
+#include "UIStatusBar.h"
 
 #include "../UI.h"
 
@@ -343,9 +344,10 @@ namespace ms
 								take = end - pos + 1;
 						}
 						else if (tag == 'b' || tag == 'c' || tag == 'd' || tag == 'e' || tag == 'E'
-							|| tag == 'g' || tag == 'k' || tag == 'n' || tag == 'N'
-							|| tag == 'r' || tag == 'l')
+							|| tag == 'g' || tag == 'k' || tag == 'K' || tag == 'n' || tag == 'N'
+							|| tag == 'r' || tag == 'l' || tag == 'I' || tag == 'S')
 						{
+							// 含 P3 KEY_ANI 大写标签（若剥漏仍原子跳过，不闪字面）
 							take = 2;
 						}
 					}
@@ -439,6 +441,9 @@ namespace ms
 		}
 
 		clear_input_field();
+		// P2/T4：关对话清 KEY_ANI（对齐 OnChildNotify/开子窗清 blink）。
+		if (auto sb = UI::get().get_element<UIStatusBar>())
+			sb->stop_all_guide_blinks();
 		deactivate();
 
 		int8_t lastmsg = wire_msgtype();
@@ -480,6 +485,8 @@ namespace ms
 				switch (buttonid)
 				{
 					case Buttons::CLOSE:
+						if (auto sb = UI::get().get_element<UIStatusBar>())
+							sb->stop_all_guide_blinks();
 						NpcTalkMorePacket(lastmsg, -1).dispatch();
 						break;
 					case Buttons::NEXT:
@@ -497,6 +504,8 @@ namespace ms
 				switch (buttonid)
 				{
 					case Buttons::CLOSE:
+						if (auto sb = UI::get().get_element<UIStatusBar>())
+							sb->stop_all_guide_blinks();
 						NpcTalkMorePacket(lastmsg, -1).dispatch();
 						break;
 					case Buttons::NO:
@@ -1221,6 +1230,36 @@ namespace ms
 		LOG(LOG_DEBUG, "UINpcTalk: skin=" << node << " speaker=" << static_cast<int>(speaker));
 	}
 
+	void UINpcTalk::apply_guide_blinks_from_text(const std::string& tx)
+	{
+		// Angel sub_9A2DE0：`#` + 'E'/'I'/'S'/'K' → tag code 2/3/4/5
+		// → AnalyzeText CT_INFO.type=3、+0x34 = 0/1/2/3 → Draw SetButtonBlink。
+		// 小写 #e/#i/#s/#k 是色/图标令牌，不进 KEY_ANI（与原生大小写分叉一致）。
+		bool seen[4] = {};
+		for (size_t i = 0; i + 1 < tx.size(); ++i)
+		{
+			if (tx[i] != '#')
+				continue;
+			uint8_t idx = 0xFF;
+			switch (tx[i + 1])
+			{
+			case 'E': idx = 0; break; // EquipKey
+			case 'I': idx = 1; break; // InvenKey
+			case 'S': idx = 2; break; // StatKey
+			case 'K': idx = 3; break; // SkillKey
+			default: break;
+			}
+			if (idx < 4 && !seen[idx])
+			{
+				seen[idx] = true;
+				if (auto sb = UI::get().get_element<UIStatusBar>())
+					sb->start_guide_blink(idx);
+				LOG(LOG_DEBUG, "UINpcTalk: KEY_ANI from text tag #"
+					<< tx[i + 1] << " idx=" << static_cast<int>(idx));
+			}
+		}
+	}
+
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx)
 	{
 		change_text(npcid, msgtype, style, speakerbyte, tx, TalkInputParams{});
@@ -1229,6 +1268,10 @@ namespace ms
 	void UINpcTalk::change_text(int32_t npcid, int8_t msgtype, int16_t style, int8_t speakerbyte, const std::string& tx,
 		const TalkInputParams& input)
 	{
+		// P2/T4：上一句对话若启过 KEY_ANI，先清；本句再按证据条件重启。
+		if (auto sb = UI::get().get_element<UIStatusBar>())
+			sb->stop_all_guide_blinks();
+
 		clear_avatar_preview();
 		apply_dlg_skin(speakerbyte);
 		dlg_speaker = speakerbyte;
@@ -1253,6 +1296,20 @@ namespace ms
 		timestep = 0;
 		formatted_text_pos = 0;
 		formatted_text = format_text(tx, npcid);
+		// P3：Angel 把 #E/#I/#S/#K 吃成 CT 指引元，不进可见字；本端剥显式大写标签防字面闪现。
+		{
+			std::string& ft = formatted_text;
+			for (size_t i = 0; i + 1 < ft.size(); )
+			{
+				if (ft[i] == '#' && (ft[i + 1] == 'E' || ft[i + 1] == 'I'
+					|| ft[i + 1] == 'S' || ft[i + 1] == 'K'))
+				{
+					ft.erase(i, 2);
+					continue;
+				}
+				++i;
+			}
+		}
 		// 选项菜单（SENDSIMPLE 且含 choice）关闭打字机：选项命中框是按**全文**布局
 		// 反取的，而打字机期间正文是逐步显现的「前缀」，前缀与全文折行不同 → 可见选项
 		// 与命中框错位、点不到（拍卖行 9900001 等长菜单 / GM 段尤甚）。选项需立即可点，
@@ -1525,6 +1582,20 @@ namespace ms
 			}
 		}
 
+		// P3/T4 · Angel 真链：CTextAnalyzer::AnalyzeText @0x99e4f1..528
+		//   `#E/#I/#S/#K` → CT_INFO.type=3、+0x34=idx0..3 → CUtilDlgEx::Draw @0x9a4256
+		//   → SetButtonBlink(idx,1)。本句正文扫标签启 KEY_ANI；关/换句已 stop_all。
+		// style 高字节 0..3 作次要回退（脚本偶发塞窗号，不发明默认）。
+		apply_guide_blinks_from_text(tx);
+		{
+			const int guide = (style >> 8) & 0xFF;
+			if (guide >= 0 && guide < 4)
+			{
+				if (auto sb = UI::get().get_element<UIStatusBar>())
+					sb->start_guide_blink(static_cast<uint8_t>(guide));
+			}
+		}
+
 		if (avatar_talk && avatar_backgrnd.is_valid())
 		{
 			dimension = Point<int16_t>(avatar_backgrnd.width(), avatar_backgrnd.height());
@@ -1540,8 +1611,8 @@ namespace ms
 			dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
 		}
 
-		// 多分辨率：上面的 (400,240) 是 800×600 时代按中心点记的常量，高分辨率下
-		// 会把对话窗钉在左上。非 1280×720 档位按视口居中；1280×720 零回归。
+		// Center 策略：上面的 (400,240) 是 800×600 时代常量；非 1280×720 视口居中。
+		set_layout_policy(LayoutPolicy::Center);
 		reanchor_talk();
 		if (input_active)
 			setup_input_field();

@@ -343,5 +343,7 @@ namespace ms
 		void cycle_avatar_style(int delta);
 		void dispatch_avatar_ok();
 		void dispatch_avatar_cancel();
+		// P3：扫正文 #E/#I/#S/#K → StatusBar KEY_ANI idx 0..3（Angel AnalyzeText→Draw）。
+		void apply_guide_blinks_from_text(const std::string& tx);
 	};
 }

@@ -1,0 +1,480 @@
+{
+ "source": "13339 Angel v83 (npc face, symbol discovery)",
+ "total_funcs": 71,
+ "total_classes": 15,
+ "classes": {
+  "": [
+   {
+    "ea": "0x6d041e",
+    "method": "CreateNpc",
+    "decorated": "?CreateNpc@@YAPAVCNpc@@PAVCNpcTemplate@@K@Z",
+    "demangled": "class CNpc __near * CreateNpc(class CNpcTemplate __near *,unsigned long)"
+   },
+   {
+    "ea": "0x6d045a",
+    "method": "0CNpc",
+    "decorated": "??0CNpc@@QAE@PAVCNpcTemplate@@K@Z",
+    "demangled": "public: CNpc::CNpc(class CNpcTemplate __near *,unsigned long)"
+   },
+   {
+    "ea": "0x6d065b",
+    "method": "_GCNpc",
+    "decorated": "??_GCNpc@@UAEPAXI@Z",
+    "demangled": "public: virtual void __near * CNpc::`scalar deleting destructor'(unsigned int)"
+   },
+   {
+    "ea": "0x6d067f",
+    "method": "1CNpc",
+    "decorated": "??1CNpc@@UAE@XZ",
+    "demangled": "public: virtual CNpc::~CNpc(void)"
+   }
+  ],
+  "?$ZList": [
+   {
+    "ea": "0x6d9c1a",
+    "method": "AddTail",
+    "decorated": "?AddTail@?$ZList@UNPCENTRY@CNpcPool@@@@QAEAAUNPCENTRY@CNpcPool@@XZ",
+    "demangled": "public: struct CNpcPool::NPCENTRY __near & ZList<struct CNpcPool::NPCENTRY>::AddTail(void)"
+   },
+   {
+    "ea": "0x6d9c48",
+    "method": "RemoveAt",
+    "decorated": "?RemoveAt@?$ZList@UNPCENTRY@CNpcPool@@@@QAEXPAU__POSITION@@@Z",
+    "demangled": "public: void ZList<struct CNpcPool::NPCENTRY>::RemoveAt(struct __POSITION __near *)"
+   }
+  ],
+  "CActionMan": [
+   {
+    "ea": "0x40db31",
+    "method": "LoadNpcAction",
+    "decorated": "?LoadNpcAction@CActionMan@@QAEXPAVCNpcTemplate@@JAAV?$ZList@V?$ZRef@UNPCACTIONFRAMEENTRY@CActionMan@@@@@@J@Z",
+    "demangled": "public: void CActionMan::LoadNpcAction(class CNpcTemplate __near *,long,class ZList<class ZRef<struct CActionMan::NPCACTIONFRAMEENTRY>> __near &,long)"
+   }
+  ],
+  "CAdminShopDlg": [
+   {
+    "ea": "0x426504",
+    "method": "GetCurNPCItem",
+    "decorated": "?GetCurNPCItem@CAdminShopDlg@@IAEAAV?$ZArray@V?$ZRef@UAdminShopCommodity@CAdminShopDlg@@@@@@XZ",
+    "demangled": "protected: class ZArray<class ZRef<struct CAdminShopDlg::AdminShopCommodity>> __near & CAdminShopDlg::GetCurNPCItem(void)"
+   },
+   {
+    "ea": "0x426636",
+    "method": "SetNPC",
+    "decorated": "?SetNPC@CAdminShopDlg@@IAEXXZ",
+    "demangled": "protected: void CAdminShopDlg::SetNPC(void)"
+   }
+  ],
+  "CNpc": [
+   {
+    "ea": "0x6d060a",
+    "method": "GetType",
+    "decorated": "?GetType@CNpc@@UBEJXZ",
+    "demangled": "public: virtual long CNpc::GetType(void)const"
+   },
+   {
+    "ea": "0x6d060e",
+    "method": "GetPos",
+    "decorated": "?GetPos@CNpc@@UBE?BUtagPOINT@@XZ",
+    "demangled": "public: virtual struct tagPOINT const CNpc::GetPos(void)const"
+   },
+   {
+    "ea": "0x6d0615",
+    "method": "GetPosPrev",
+    "decorated": "?GetPosPrev@CNpc@@UBE?BUtagPOINT@@XZ",
+    "demangled": "public: virtual struct tagPOINT const CNpc::GetPosPrev(void)const"
+   },
+   {
+    "ea": "0x6d061c",
+    "method": "GetZMass",
+    "decorated": "?GetZMass@CNpc@@UBEJXZ",
+    "demangled": "public: virtual long CNpc::GetZMass(void)const"
+   },
+   {
+    "ea": "0x6d0634",
+    "method": "GetRTTI",
+    "decorated": "?GetRTTI@CNpc@@UBEPBVCRTTI@@XZ",
+    "demangled": "public: virtual class CRTTI const __near * CNpc::GetRTTI(void)const"
+   },
+   {
+    "ea": "0x6d063a",
+    "method": "IsKindOf",
+    "decorated": "?IsKindOf@CNpc@@UBEHPBVCRTTI@@@Z",
+    "demangled": "public: virtual int CNpc::IsKindOf(class CRTTI const __near *)const"
+   },
+   {
+    "ea": "0x6d089a",
+    "method": "Init",
+    "decorated": "?Init@CNpc@@QAEXKAAVCInPacket@@@Z",
+    "demangled": "public: void CNpc::Init(unsigned long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d1779",
+    "method": "SetQuestList",
+    "decorated": "?SetQuestList@CNpc@@QAEXH@Z",
+    "demangled": "public: void CNpc::SetQuestList(int)"
+   },
+   {
+    "ea": "0x6d1b11",
+    "method": "SetClientActionByQuest",
+    "decorated": "?SetClientActionByQuest@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::SetClientActionByQuest(void)"
+   },
+   {
+    "ea": "0x6d2024",
+    "method": "SetActive",
+    "decorated": "?SetActive@CNpc@@QAEXH@Z",
+    "demangled": "public: void CNpc::SetActive(int)"
+   },
+   {
+    "ea": "0x6d20d5",
+    "method": "SetShoeAttr",
+    "decorated": "?SetShoeAttr@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::SetShoeAttr(void)"
+   },
+   {
+    "ea": "0x6d215e",
+    "method": "SetMoveAction",
+    "decorated": "?SetMoveAction@CNpc@@QAEXJH@Z",
+    "demangled": "public: void CNpc::SetMoveAction(long,int)"
+   },
+   {
+    "ea": "0x6d21cd",
+    "method": "SetImitatedLook",
+    "decorated": "?SetImitatedLook@CNpc@@QAEXAAUAvatarLook@@@Z",
+    "demangled": "public: void CNpc::SetImitatedLook(struct AvatarLook __near &)"
+   },
+   {
+    "ea": "0x6d232a",
+    "method": "PrepareActionLayer",
+    "decorated": "?PrepareActionLayer@CNpc@@IAEXXZ",
+    "demangled": "protected: void CNpc::PrepareActionLayer(void)"
+   },
+   {
+    "ea": "0x6d263e",
+    "method": "GetCurrentAction",
+    "decorated": "?GetCurrentAction@CNpc@@QBEJPAJ@Z",
+    "demangled": "public: long CNpc::GetCurrentAction(long __near *)const"
+   },
+   {
+    "ea": "0x6d267d",
+    "method": "SetLayerZ",
+    "decorated": "?SetLayerZ@CNpc@@IAEXXZ",
+    "demangled": "protected: void CNpc::SetLayerZ(void)"
+   },
+   {
+    "ea": "0x6d2918",
+    "method": "Update",
+    "decorated": "?Update@CNpc@@UAEXXZ",
+    "demangled": "public: virtual void CNpc::Update(void)"
+   },
+   {
+    "ea": "0x6d2d72",
+    "method": "OnResolveMoveAction",
+    "decorated": "?OnResolveMoveAction@CNpc@@UAEJJJJPBVCVecCtrl@@@Z",
+    "demangled": "public: virtual long CNpc::OnResolveMoveAction(long,long,long,class CVecCtrl const __near *)"
+   },
+   {
+    "ea": "0x6d2dbb",
+    "method": "OnLayerZChanged",
+    "decorated": "?OnLayerZChanged@CNpc@@UAEXPBVCVecCtrl@@@Z",
+    "demangled": "public: virtual void CNpc::OnLayerZChanged(class CVecCtrl const __near *)"
+   },
+   {
+    "ea": "0x6d2ddd",
+    "method": "GetShoeAttr",
+    "decorated": "?GetShoeAttr@CNpc@@UBE?BV?$ZRef@VCAttrShoe@@@@XZ",
+    "demangled": "public: virtual class ZRef<class CAttrShoe> const CNpc::GetShoeAttr(void)const"
+   },
+   {
+    "ea": "0x6d2e07",
+    "method": "OnMove",
+    "decorated": "?OnMove@CNpc@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CNpc::OnMove(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d3273",
+    "method": "GenerateMovePath",
+    "decorated": "?GenerateMovePath@CNpc@@IAEXJJ@Z",
+    "demangled": "protected: void CNpc::GenerateMovePath(long,long)"
+   },
+   {
+    "ea": "0x6d3392",
+    "method": "ShowQuestList",
+    "decorated": "?ShowQuestList@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::ShowQuestList(void)"
+   },
+   {
+    "ea": "0x6d3fde",
+    "method": "GetDCRange",
+    "decorated": "?GetDCRange@CNpc@@QAEABUtagRECT@@XZ",
+    "demangled": "public: struct tagRECT const __near & CNpc::GetDCRange(void)"
+   },
+   {
+    "ea": "0x6d4029",
+    "method": "GetQuestDCRange",
+    "decorated": "?GetQuestDCRange@CNpc@@QAEABUtagRECT@@XZ",
+    "demangled": "public: struct tagRECT const __near & CNpc::GetQuestDCRange(void)"
+   },
+   {
+    "ea": "0x6d40dc",
+    "method": "UpdateScript",
+    "decorated": "?UpdateScript@CNpc@@QAEXU_SYSTEMTIME@@@Z",
+    "demangled": "public: void CNpc::UpdateScript(struct _SYSTEMTIME)"
+   },
+   {
+    "ea": "0x6d417e",
+    "method": "SetMapleTVMessage",
+    "decorated": "?SetMapleTVMessage@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::SetMapleTVMessage(void)"
+   },
+   {
+    "ea": "0x6d4ad4",
+    "method": "DrawMapleTVMessage",
+    "decorated": "?DrawMapleTVMessage@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::DrawMapleTVMessage(void)"
+   },
+   {
+    "ea": "0x6d590d",
+    "method": "OnSetSpecialAction",
+    "decorated": "?OnSetSpecialAction@CNpc@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CNpc::OnSetSpecialAction(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d59b0",
+    "method": "OnUpdateLimitedInfo",
+    "decorated": "?OnUpdateLimitedInfo@CNpc@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CNpc::OnUpdateLimitedInfo(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d5c9a",
+    "method": "RestoreLayers",
+    "decorated": "?RestoreLayers@CNpc@@IAEXXZ",
+    "demangled": "protected: void CNpc::RestoreLayers(void)"
+   },
+   {
+    "ea": "0x6d5eeb",
+    "method": "GetActionFrameList",
+    "decorated": "?GetActionFrameList@CNpc@@QAEAAV?$ZList@V?$ZRef@UNPCACTIONFRAMEENTRY@CActionMan@@@@@@J@Z",
+    "demangled": "public: class ZList<class ZRef<struct CActionMan::NPCACTIONFRAMEENTRY>> __near & CNpc::GetActionFrameList(long)"
+   }
+  ],
+  "CNpcPool": [
+   {
+    "ea": "0x6d92d3",
+    "method": "FindNpc",
+    "decorated": "?FindNpc@CNpcPool@@QAEPAVCNpc@@ABUtagPOINT@@@Z",
+    "demangled": "public: class CNpc __near * CNpcPool::FindNpc(struct tagPOINT const __near &)"
+   },
+   {
+    "ea": "0x6d9390",
+    "method": "FindNpc",
+    "decorated": "?FindNpc@CNpcPool@@QAEPAVCNpc@@ABUtagPOINT@@J@Z",
+    "demangled": "public: class CNpc __near * CNpcPool::FindNpc(struct tagPOINT const __near &,long)"
+   },
+   {
+    "ea": "0x6d9549",
+    "method": "SetLocalNpc",
+    "decorated": "?SetLocalNpc@CNpcPool@@IAEXKAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::SetLocalNpc(unsigned long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d95ee",
+    "method": "SetRemoteNpc",
+    "decorated": "?SetRemoteNpc@CNpcPool@@IAEXK@Z",
+    "demangled": "protected: void CNpcPool::SetRemoteNpc(unsigned long)"
+   },
+   {
+    "ea": "0x6d966d",
+    "method": "Update",
+    "decorated": "?Update@CNpcPool@@UAEXXZ",
+    "demangled": "public: virtual void CNpcPool::Update(void)"
+   },
+   {
+    "ea": "0x6d9734",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CNpcPool@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CNpcPool::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d97c6",
+    "method": "OnNpcImitateData",
+    "decorated": "?OnNpcImitateData@CNpcPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcImitateData(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d989c",
+    "method": "OnUpdateLimitedDisableInfo",
+    "decorated": "?OnUpdateLimitedDisableInfo@CNpcPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnUpdateLimitedDisableInfo(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d98de",
+    "method": "OnNpcPacket",
+    "decorated": "?OnNpcPacket@CNpcPool@@IAEXJAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d9927",
+    "method": "GetNpc",
+    "decorated": "?GetNpc@CNpcPool@@IAEPAVCNpc@@K@Z",
+    "demangled": "protected: class CNpc __near * CNpcPool::GetNpc(unsigned long)"
+   },
+   {
+    "ea": "0x6d997c",
+    "method": "OnNpcTemplatePacket",
+    "decorated": "?OnNpcTemplatePacket@CNpcPool@@IAEXJAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcTemplatePacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d9993",
+    "method": "OnNpcEnterField",
+    "decorated": "?OnNpcEnterField@CNpcPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcEnterField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d9a25",
+    "method": "OnNpcLeaveField",
+    "decorated": "?OnNpcLeaveField@CNpcPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcLeaveField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6d9a83",
+    "method": "OnNpcChangeController",
+    "decorated": "?OnNpcChangeController@CNpcPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CNpcPool::OnNpcChangeController(class CInPacket __near &)"
+   }
+  ],
+  "CNpcTemplate": [
+   {
+    "ea": "0x6dcb16",
+    "method": "GetNpcTemplate",
+    "decorated": "?GetNpcTemplate@CNpcTemplate@@SAPAV1@K@Z",
+    "demangled": "public: static class CNpcTemplate __near * CNpcTemplate::GetNpcTemplate(unsigned long)"
+   },
+   {
+    "ea": "0x6dce02",
+    "method": "RegisterNpc",
+    "decorated": "?RegisterNpc@CNpcTemplate@@KAHKV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0@Z",
+    "demangled": "protected: static int CNpcTemplate::RegisterNpc(unsigned long,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x6dedf7",
+    "method": "UpdateScript",
+    "decorated": "?UpdateScript@CNpcTemplate@@QAEXU_SYSTEMTIME@@@Z",
+    "demangled": "public: void CNpcTemplate::UpdateScript(struct _SYSTEMTIME)"
+   },
+   {
+    "ea": "0x6deeb7",
+    "method": "OnSetNpcScript",
+    "decorated": "?OnSetNpcScript@CNpcTemplate@@SAXAAVCInPacket@@@Z",
+    "demangled": "public: static void CNpcTemplate::OnSetNpcScript(class CInPacket __near &)"
+   }
+  ],
+  "CQuestMan": [
+   {
+    "ea": "0x71ddec",
+    "method": "GetQuestByNpc",
+    "decorated": "?GetQuestByNpc@CQuestMan@@QAEHKAAV?$ZArray@G@@@Z",
+    "demangled": "public: int CQuestMan::GetQuestByNpc(unsigned long,class ZArray<unsigned short> __near &)"
+   }
+  ],
+  "CTrunkDlg": [
+   {
+    "ea": "0x7c71af",
+    "method": "SetNPC",
+    "decorated": "?SetNPC@CTrunkDlg@@IAEXXZ",
+    "demangled": "protected: void CTrunkDlg::SetNPC(void)"
+   }
+  ],
+  "CUserLocal": [
+   {
+    "ea": "0x95fe9e",
+    "method": "TalkToNpc",
+    "decorated": "?TalkToNpc@CUserLocal@@QAEXV?$ZRef@VCNpc@@@@@Z",
+    "demangled": "public: void CUserLocal::TalkToNpc(class ZRef<class CNpc>)"
+   }
+  ],
+  "CUtilDlgEx": [
+   {
+    "ea": "0x9a64fc",
+    "method": "SetNPC",
+    "decorated": "?SetNPC@CUtilDlgEx@@IAEXXZ",
+    "demangled": "protected: void CUtilDlgEx::SetNPC(void)"
+   }
+  ],
+  "CVecCtrlNpc": [
+   {
+    "ea": "0x9c1ce6",
+    "method": "CreateInstance",
+    "decorated": "?CreateInstance@CVecCtrlNpc@@SAPAV1@XZ",
+    "demangled": "public: static class CVecCtrlNpc __near * CVecCtrlNpc::CreateInstance(void)"
+   },
+   {
+    "ea": "0x9c1d3b",
+    "method": "Init",
+    "decorated": "?Init@CVecCtrlNpc@@QAEXPAUIVecCtrlOwner@@JPAURANGE@@@Z",
+    "demangled": "public: void CVecCtrlNpc::Init(struct IVecCtrlOwner __near *,long,struct RANGE __near *)"
+   },
+   {
+    "ea": "0x9c1d70",
+    "method": "SetActive",
+    "decorated": "?SetActive@CVecCtrlNpc@@UAEXHJJJJJPAVCStaticFoothold@@@Z",
+    "demangled": "public: virtual void CVecCtrlNpc::SetActive(int,long,long,long,long,long,class CStaticFoothold __near *)"
+   },
+   {
+    "ea": "0x9c1daf",
+    "method": "UpdateActiveInterrupted",
+    "decorated": "?UpdateActiveInterrupted@CVecCtrlNpc@@QAEXJJ@Z",
+    "demangled": "public: void CVecCtrlNpc::UpdateActiveInterrupted(long,long)"
+   },
+   {
+    "ea": "0x9c211e",
+    "method": "WorkUpdateActive",
+    "decorated": "?WorkUpdateActive@CVecCtrlNpc@@MAEHJ@Z",
+    "demangled": "protected: virtual int CVecCtrlNpc::WorkUpdateActive(long)"
+   }
+  ],
+  "CWvsContext": [
+   {
+    "ea": "0xa393d3",
+    "method": "GuildNPCSay",
+    "decorated": "?GuildNPCSay@CWvsContext@@QAEXAAV?$ZArray@V?$ZXString@D@@@@J@Z",
+    "demangled": "public: void CWvsContext::GuildNPCSay(class ZArray<class ZXString<char>> __near &,long)"
+   }
+  ],
+  "PAVCVecCtrlNpc": [
+   {
+    "ea": "0x6d78db",
+    "method": "$_QueryInterface",
+    "decorated": "??$_QueryInterface@PAVCVecCtrlNpc@@@?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@AAEJPAVCVecCtrlNpc@@@Z",
+    "demangled": "private: long _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>::_QueryInterface<class CVecCtrlNpc __near *>(class CVecCtrlNpc __near *)"
+   }
+  ],
+  "VCNpc": [
+   {
+    "ea": "0x6d9ac2",
+    "method": "4?$ZRef",
+    "decorated": "??4?$ZRef@VCNpc@@@@QAEAAV0@PAVCNpc@@@Z",
+    "demangled": "public: class ZRef<class CNpc> __near & ZRef<class CNpc>::operator=(class CNpc __near *)"
+   }
+  ]
+ },
+ "class_summary": {
+  "": 4,
+  "?$ZList": 2,
+  "CActionMan": 1,
+  "CAdminShopDlg": 2,
+  "CNpc": 32,
+  "CNpcPool": 14,
+  "CNpcTemplate": 4,
+  "CQuestMan": 1,
+  "CTrunkDlg": 1,
+  "CUserLocal": 1,
+  "CUtilDlgEx": 1,
+  "CVecCtrlNpc": 5,
+  "CWvsContext": 1,
+  "PAVCVecCtrlNpc": 1,
+  "VCNpc": 1
+ }
+}

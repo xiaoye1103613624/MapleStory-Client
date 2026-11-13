@@ -1,0 +1,583 @@
+{
+ "summary": {
+  "angel_funcs": 71,
+  "beidou_present": 70,
+  "beidou_sub_named": 70,
+  "beidou_real_named": 0,
+  "beidou_missing": 1,
+  "missing_eas": [
+   "0x6d065b"
+  ],
+  "conclusion": "same binary layout (70/71 EAs identical; differences are IDA analysis coverage, not code)"
+ },
+ "table": [
+  {
+   "class": "",
+   "method": "CreateNpc",
+   "ea": "0x6d041e",
+   "beidou_name": "sub_6D041E",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "0CNpc",
+   "ea": "0x6d045a",
+   "beidou_name": "sub_6D045A",
+   "beidou_size": "0x1b0",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "_GCNpc",
+   "ea": "0x6d065b",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "",
+   "method": "1CNpc",
+   "ea": "0x6d067f",
+   "beidou_name": "sub_6D067F",
+   "beidou_size": "0x21b",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZList",
+   "method": "AddTail",
+   "ea": "0x6d9c1a",
+   "beidou_name": "sub_6D9C1A",
+   "beidou_size": "0x2e",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZList",
+   "method": "RemoveAt",
+   "ea": "0x6d9c48",
+   "beidou_name": "sub_6D9C48",
+   "beidou_size": "0x53",
+   "status": "present_sub"
+  },
+  {
+   "class": "CActionMan",
+   "method": "LoadNpcAction",
+   "ea": "0x40db31",
+   "beidou_name": "sub_40DB31",
+   "beidou_size": "0x572",
+   "status": "present_sub"
+  },
+  {
+   "class": "CAdminShopDlg",
+   "method": "GetCurNPCItem",
+   "ea": "0x426504",
+   "beidou_name": "sub_426504",
+   "beidou_size": "0x19",
+   "status": "present_sub"
+  },
+  {
+   "class": "CAdminShopDlg",
+   "method": "SetNPC",
+   "ea": "0x426636",
+   "beidou_name": "sub_426636",
+   "beidou_size": "0x54f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetType",
+   "ea": "0x6d060a",
+   "beidou_name": "sub_6D060A",
+   "beidou_size": "0x4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetPos",
+   "ea": "0x6d060e",
+   "beidou_name": "sub_6D060E",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetPosPrev",
+   "ea": "0x6d0615",
+   "beidou_name": "sub_6D0615",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetZMass",
+   "ea": "0x6d061c",
+   "beidou_name": "sub_6D061C",
+   "beidou_size": "0x18",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetRTTI",
+   "ea": "0x6d0634",
+   "beidou_name": "sub_6D0634",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "IsKindOf",
+   "ea": "0x6d063a",
+   "beidou_name": "sub_6D063A",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "Init",
+   "ea": "0x6d089a",
+   "beidou_name": "sub_6D089A",
+   "beidou_size": "0xeb5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetQuestList",
+   "ea": "0x6d1779",
+   "beidou_name": "sub_6D1779",
+   "beidou_size": "0x398",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetClientActionByQuest",
+   "ea": "0x6d1b11",
+   "beidou_name": "sub_6D1B11",
+   "beidou_size": "0x513",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetActive",
+   "ea": "0x6d2024",
+   "beidou_name": "sub_6D2024",
+   "beidou_size": "0x8d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetShoeAttr",
+   "ea": "0x6d20d5",
+   "beidou_name": "sub_6D20D5",
+   "beidou_size": "0x89",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetMoveAction",
+   "ea": "0x6d215e",
+   "beidou_name": "sub_6D215E",
+   "beidou_size": "0x48",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetImitatedLook",
+   "ea": "0x6d21cd",
+   "beidou_name": "sub_6D21CD",
+   "beidou_size": "0x15d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "PrepareActionLayer",
+   "ea": "0x6d232a",
+   "beidou_name": "sub_6D232A",
+   "beidou_size": "0x314",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetCurrentAction",
+   "ea": "0x6d263e",
+   "beidou_name": "sub_6D263E",
+   "beidou_size": "0x3f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetLayerZ",
+   "ea": "0x6d267d",
+   "beidou_name": "sub_6D267D",
+   "beidou_size": "0xa2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "Update",
+   "ea": "0x6d2918",
+   "beidou_name": "sub_6D2918",
+   "beidou_size": "0x374",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "OnResolveMoveAction",
+   "ea": "0x6d2d72",
+   "beidou_name": "sub_6D2D72",
+   "beidou_size": "0x49",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "OnLayerZChanged",
+   "ea": "0x6d2dbb",
+   "beidou_name": "sub_6D2DBB",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetShoeAttr",
+   "ea": "0x6d2ddd",
+   "beidou_name": "sub_6D2DDD",
+   "beidou_size": "0x2a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "OnMove",
+   "ea": "0x6d2e07",
+   "beidou_name": "sub_6D2E07",
+   "beidou_size": "0x46c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GenerateMovePath",
+   "ea": "0x6d3273",
+   "beidou_name": "sub_6D3273",
+   "beidou_size": "0x11f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "ShowQuestList",
+   "ea": "0x6d3392",
+   "beidou_name": "sub_6D3392",
+   "beidou_size": "0xc4c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetDCRange",
+   "ea": "0x6d3fde",
+   "beidou_name": "sub_6D3FDE",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetQuestDCRange",
+   "ea": "0x6d4029",
+   "beidou_name": "sub_6D4029",
+   "beidou_size": "0xb3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "UpdateScript",
+   "ea": "0x6d40dc",
+   "beidou_name": "sub_6D40DC",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetMapleTVMessage",
+   "ea": "0x6d417e",
+   "beidou_name": "sub_6D417E",
+   "beidou_size": "0x8e4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "DrawMapleTVMessage",
+   "ea": "0x6d4ad4",
+   "beidou_name": "sub_6D4AD4",
+   "beidou_size": "0xd3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "OnSetSpecialAction",
+   "ea": "0x6d590d",
+   "beidou_name": "sub_6D590D",
+   "beidou_size": "0xa3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "OnUpdateLimitedInfo",
+   "ea": "0x6d59b0",
+   "beidou_name": "sub_6D59B0",
+   "beidou_size": "0x2ea",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "RestoreLayers",
+   "ea": "0x6d5c9a",
+   "beidou_name": "sub_6D5C9A",
+   "beidou_size": "0x251",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "GetActionFrameList",
+   "ea": "0x6d5eeb",
+   "beidou_name": "sub_6D5EEB",
+   "beidou_size": "0x94",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "FindNpc",
+   "ea": "0x6d92d3",
+   "beidou_name": "sub_6D92D3",
+   "beidou_size": "0xbd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "FindNpc",
+   "ea": "0x6d9390",
+   "beidou_name": "sub_6D9390",
+   "beidou_size": "0x1b9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "SetLocalNpc",
+   "ea": "0x6d9549",
+   "beidou_name": "sub_6D9549",
+   "beidou_size": "0xa5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "SetRemoteNpc",
+   "ea": "0x6d95ee",
+   "beidou_name": "sub_6D95EE",
+   "beidou_size": "0x6a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "Update",
+   "ea": "0x6d966d",
+   "beidou_name": "sub_6D966D",
+   "beidou_size": "0x88",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnPacket",
+   "ea": "0x6d9734",
+   "beidou_name": "sub_6D9734",
+   "beidou_size": "0x92",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcImitateData",
+   "ea": "0x6d97c6",
+   "beidou_name": "sub_6D97C6",
+   "beidou_size": "0xd6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnUpdateLimitedDisableInfo",
+   "ea": "0x6d989c",
+   "beidou_name": "sub_6D989C",
+   "beidou_size": "0x42",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcPacket",
+   "ea": "0x6d98de",
+   "beidou_name": "sub_6D98DE",
+   "beidou_size": "0x49",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "GetNpc",
+   "ea": "0x6d9927",
+   "beidou_name": "sub_6D9927",
+   "beidou_size": "0x55",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcTemplatePacket",
+   "ea": "0x6d997c",
+   "beidou_name": "sub_6D997C",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcEnterField",
+   "ea": "0x6d9993",
+   "beidou_name": "sub_6D9993",
+   "beidou_size": "0x92",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcLeaveField",
+   "ea": "0x6d9a25",
+   "beidou_name": "sub_6D9A25",
+   "beidou_size": "0x5e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcPool",
+   "method": "OnNpcChangeController",
+   "ea": "0x6d9a83",
+   "beidou_name": "sub_6D9A83",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcTemplate",
+   "method": "GetNpcTemplate",
+   "ea": "0x6dcb16",
+   "beidou_name": "sub_6DCB16",
+   "beidou_size": "0x2ec",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcTemplate",
+   "method": "RegisterNpc",
+   "ea": "0x6dce02",
+   "beidou_name": "sub_6DCE02",
+   "beidou_size": "0x1fe8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcTemplate",
+   "method": "UpdateScript",
+   "ea": "0x6dedf7",
+   "beidou_name": "sub_6DEDF7",
+   "beidou_size": "0xc0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpcTemplate",
+   "method": "OnSetNpcScript",
+   "ea": "0x6deeb7",
+   "beidou_name": "sub_6DEEB7",
+   "beidou_size": "0x9a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuestMan",
+   "method": "GetQuestByNpc",
+   "ea": "0x71ddec",
+   "beidou_name": "sub_71DDEC",
+   "beidou_size": "0x2a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTrunkDlg",
+   "method": "SetNPC",
+   "ea": "0x7c71af",
+   "beidou_name": "sub_7C71AF",
+   "beidou_size": "0x54e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TalkToNpc",
+   "ea": "0x95fe9e",
+   "beidou_name": "sub_95FE9E",
+   "beidou_size": "0xbc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUtilDlgEx",
+   "method": "SetNPC",
+   "ea": "0x9a64fc",
+   "beidou_name": "sub_9A64FC",
+   "beidou_size": "0x178f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrlNpc",
+   "method": "CreateInstance",
+   "ea": "0x9c1ce6",
+   "beidou_name": "sub_9C1CE6",
+   "beidou_size": "0x55",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrlNpc",
+   "method": "Init",
+   "ea": "0x9c1d3b",
+   "beidou_name": "sub_9C1D3B",
+   "beidou_size": "0x35",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrlNpc",
+   "method": "SetActive",
+   "ea": "0x9c1d70",
+   "beidou_name": "sub_9C1D70",
+   "beidou_size": "0x3f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrlNpc",
+   "method": "UpdateActiveInterrupted",
+   "ea": "0x9c1daf",
+   "beidou_name": "sub_9C1DAF",
+   "beidou_size": "0x335",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrlNpc",
+   "method": "WorkUpdateActive",
+   "ea": "0x9c211e",
+   "beidou_name": "sub_9C211E",
+   "beidou_size": "0xf5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "GuildNPCSay",
+   "ea": "0xa393d3",
+   "beidou_name": "sub_A393D3",
+   "beidou_size": "0x19b",
+   "status": "present_sub"
+  },
+  {
+   "class": "PAVCVecCtrlNpc",
+   "method": "$_QueryInterface",
+   "ea": "0x6d78db",
+   "beidou_name": "sub_6D78DB",
+   "beidou_size": "0x64",
+   "status": "present_sub"
+  },
+  {
+   "class": "VCNpc",
+   "method": "4?$ZRef",
+   "ea": "0x6d9ac2",
+   "beidou_name": "sub_6D9AC2",
+   "beidou_size": "0x45",
+   "status": "present_sub"
+  }
+ ]
+}
