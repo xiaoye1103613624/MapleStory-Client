@@ -134,3 +134,18 @@ docs/features/softkey-text-mode/evidence/live-20261106/_verify_stdout.txt
 /_tools/guild_probe/
 /_tools/lt_probe/
 /_tools/opt_probe/
+
+# ===== round 探针脚本与临时构建日志隔离（分区提交追加）=====
+# 根目录临时构建日志 / 反编译 dump（非 tools/ 前缀，会被最终验收 grep 命中，故显式忽略）
+/build_log_*.txt
+/javap_*.txt
+/build_calibration.bat
+/build_verify.bat
+/verify_int/
+
+# tools/ round probes：仅忽略“无被跟踪同类文件”的产物，绝不误伤 tools/vendor/ 与已跟踪 tools/_*.py
+# 说明：tracked tools/ 覆盖 b64/cpp/json/md/txt/png/ps1/py 全扩展名，故除 .img 外任何 /tools/_*.EXT 都危险，只加无冲突项
+/tools/ida_*.py
+/tools/orange_wz_*.py
+/tools/_*.img
+/tools/level999/
