@@ -24,6 +24,7 @@
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
 #include "UICharInfo.h"
+#include "../../Character/BuddyListModel.h"
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/Locale.h"
@@ -35,6 +36,8 @@ namespace ms
 	UIBuddyList::UIBuddyList() : UIElement(Point<int16_t>(740, 20), Point<int16_t>(312, 389)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
+		// P0：浮窗打开时从常驻模型灌入（handler 不再为刷列表强开本窗）。
+		list = BuddyListModel::get().data();
 		// 按 Angel 083 CUIUserList::OnCreate @0x919b73 重修（round68）：
 		// 083 好友/玩家列表共用窗资源根是 UIWindow.img/UserList，背景 backgrnd=312x389（.nx 实测）；
 		// 好友页加好友钮 = UserList/Friend/BtAddFriend（65x18，四态全）。
@@ -132,6 +135,7 @@ namespace ms
 	void UIBuddyList::update_buddies(const BuddyListData& data)
 	{
 		list = data;
+		BuddyListModel::get().set(data);
 		bool still = false;
 		for (const auto& b : list.buddies)
 			if (b.cid == selected_cid) { still = true; break; }
@@ -142,15 +146,17 @@ namespace ms
 	void UIBuddyList::set_capacity(int32_t cap)
 	{
 		list.capacity = cap;
+		BuddyListModel::get().set_capacity(cap);
 	}
 
 	int32_t UIBuddyList::get_capacity() const
 	{
-		return list.capacity;
+		return list.capacity > 0 ? list.capacity : BuddyListModel::get().data().capacity;
 	}
 
 	void UIBuddyList::update_buddy_channel(int32_t cid, int32_t channel)
 	{
+		BuddyListModel::get().update_channel(cid, channel);
 		for (auto& b : list.buddies)
 		{
 			if (b.cid == cid)

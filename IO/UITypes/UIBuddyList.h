@@ -19,6 +19,7 @@
 
 #include "../UIElement.h"
 
+#include "../../Character/BuddyListModel.h"
 #include "../../Graphics/SpecialText.h"
 
 #include <string>
@@ -26,20 +27,7 @@
 
 namespace ms
 {
-	struct Buddy
-	{
-		int32_t cid;
-		std::string name;
-		std::string group;
-		int32_t channel;
-		bool online;
-	};
-
-	struct BuddyListData
-	{
-		int32_t capacity;
-		std::vector<Buddy> buddies;
-	};
+	// Buddy / BuddyListData 已上移到 Character/BuddyListModel.h（P0 UserList 共用）。
 
 	class UIBuddyList : public UIElement
 	{

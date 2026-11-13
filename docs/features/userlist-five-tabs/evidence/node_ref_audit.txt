@@ -1,0 +1,53 @@
+source A: runtime IMG  E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx -> UIWindow.img/UserList (depth 4)
+source B: source       IO/UITypes/UIUserList.cpp  (all ["..."] literal node references)
+IMG distinct node names: 158 | code literal refs: 48 | missing in IMG: 25
+
+--- CODE REFERENCES WITH NO RUNTIME IMG NODE (25) ---
+Boss
+BtEnter
+BtMessenger
+BtPartyLevel
+BtPartyMake
+BtPartyOut
+BtPartySettings
+BtPlusFriend
+BtSheetIClose
+CbCondition
+Main
+PartySearch
+Sheet1
+Sheet2
+Sheet6
+TapShowAll
+TapShowGuild
+TapShowIndividual
+TapShowOnline
+base
+partyName
+request
+table
+text
+title
+
+--- CODE REFERENCES THAT RESOLVE (23) ---
+0, 1, BlackList, BtAdd, BtAddFriend, BtAddGroup, BtChat, BtDelete, BtPartyInvite, Friend, Guild, GuildInfo, Party, Tab, backgrnd, backgrnd3, disabled, enabled, guildinfo0, guildinfo1, guildinfo6, guildinfo7, line
+
+--- Friend: 38 direct children | literal-ref names also present here (rough, may come from another parent): BtAdd, BtAddFriend, BtAddGroup, BtChat, BtDelete, line ---
+BtAdd [null], BtAddFriend [null], BtAddGroup [null], BtBlock [null], BtChat [null], BtDelete [null], BtGroupWhisper [null], BtMate [null], BtMessage [null], BtMod [null], BtParty [null], BtShowAll [null], BtShowOnline [null], BtUnBlock [null], BtWhere [null], BtWhisper [null], GroupMod [null], Popup [null], buttonbg [bitmap] bitmap 21x12, friend0 [bitmap] bitmap 281x27, friend1 [bitmap] bitmap 281x19, friend2 [bitmap] bitmap 281x18, friend3 [bitmap] bitmap 281x6, friend4 [bitmap] bitmap 281x27, friend5 [bitmap] bitmap 281x18, friend6 [bitmap] bitmap 306x1, icon0 [bitmap] bitmap 9x10, icon00 [bitmap] bitmap 7x7, icon01 [bitmap] bitmap 6x6, icon02 [bitmap] bitmap 1x1, icon03 [bitmap] bitmap 7x5, icon04 [bitmap] bitmap 5x7, icon1 [bitmap] bitmap 9x10, icon2 [bitmap] bitmap 9x10, icon3 [bitmap] bitmap 9x10, icon4 [bitmap] bitmap 11x14, icon5 [bitmap] bitmap 11x14, line [bitmap] bitmap 2x37
+
+--- Party: 18 direct children | literal-ref names also present here (rough, may come from another parent): BtChat ---
+BtChangeBoss [null], BtChat [null], BtCreate [null], BtHP [null], BtInvite [null], BtKick [null], BtSearch [null], BtWhisper [null], BtWithdraw [null], PartyHP [null], icon0 [bitmap] bitmap 13x13, icon1 [bitmap] bitmap 17x16, party0 [bitmap] bitmap 281x27, party1 [bitmap] bitmap 279x18, party2 [bitmap] bitmap 279x4, party3 [bitmap] bitmap 278x1, party4 [bitmap] bitmap 281x27, party5 [bitmap] bitmap 279x18
+
+--- BlackList: 5 direct children | literal-ref names also present here (rough, may come from another parent): BtAdd, BtDelete ---
+BtAdd [null], BtDelete [null], blacklist0 [bitmap] bitmap 281x27, blacklist1 [bitmap] bitmap 281x18, blacklist2 [bitmap] bitmap 281x6
+
+--- Guild/GuildInfo: 23 direct children | literal-ref names also present here (rough, may come from another parent): BtChat, BtPartyInvite, guildinfo0, guildinfo1, guildinfo6, guildinfo7 ---
+BtBoard [null], BtChange [null], BtChat [null], BtDown [null], BtGuildBBS [null], BtInfo [null], BtInvite [null], BtKick [null], BtPartyInvite [null], BtUp [null], BtWhere [null], BtWhisper [null], BtWithdraw [null], Btnotice [null], guildinfo0 [bitmap] bitmap 281x27, guildinfo1 [bitmap] bitmap 281x27, guildinfo2 [bitmap] bitmap 281x18, guildinfo3 [bitmap] bitmap 281x18, guildinfo4 [bitmap] bitmap 280x1, guildinfo5 [bitmap] bitmap 2x1, guildinfo6 [bitmap] bitmap 282x20, guildinfo7 [bitmap] bitmap 281x18, guildmark [bitmap] bitmap 20x20
+
+--- GuildUnion: 20 direct children | literal-ref names also present here (rough, may come from another parent): BtChat, BtPartyInvite, backgrnd, guildinfo0, guildinfo6, guildinfo7 ---
+BtChange [null], BtChat [null], BtDown [null], BtInfo [null], BtInvite [null], BtKick [null], BtPartyInvite [null], BtUp [null], BtWhere [null], BtWhisper [null], BtWithdraw [null], Btnotice [null], backgrnd [bitmap] bitmap 233x304, guildinfo0 [bitmap] bitmap 281x27, guildinfo2 [bitmap] bitmap 281x18, guildinfo3 [bitmap] bitmap 281x18, guildinfo4 [bitmap] bitmap 281x1, guildinfo5 [bitmap] bitmap 2x1, guildinfo6 [bitmap] bitmap 282x20, guildinfo7 [bitmap] bitmap 281x18
+
+--- Tab: 2 direct children | literal-ref names also present here (rough, may come from another parent): disabled, enabled ---
+disabled [null], enabled [null]
+
+AUDIT SCOPE NOTE: only ["literal"] node references are counted. Guild-page buttons are bound via gi_btn(id, "BtInvite", ...) string arguments and are NOT counted here; GuildUnion is never actually referenced by the code (the names above are shared with Guild/GuildInfo).

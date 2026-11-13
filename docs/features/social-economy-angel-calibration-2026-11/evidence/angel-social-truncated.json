@@ -1,0 +1,22 @@
+{
+ "CUIUserList::OnCreate": {
+  "uuid": "fd769efe-717f-4993-91b7-bcab0bc42f59",
+  "bytes": 66504
+ },
+ "CTabParty::Draw": {
+  "uuid": "bdf1a87d-2970-4ae3-bc87-f9699db4ecb1",
+  "bytes": 80681
+ },
+ "CTabGuild::Draw": {
+  "uuid": "06d0228c-0186-4f27-a4b2-31254ed3acda",
+  "bytes": 60422
+ },
+ "CChatBalloon::CreateCanvas": {
+  "uuid": "6f7882b9-14c8-4908-99a4-6affc27e6df8",
+  "bytes": 53627
+ },
+ "CChatBalloon::MakeMiniRoomBalloon": {
+  "uuid": "a4901b4c-0204-41aa-ab9e-af935aca0db6",
+  "bytes": 82668
+ }
+}

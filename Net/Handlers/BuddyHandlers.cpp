@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "BuddyHandlers.h"
 
+#include "../../Character/BuddyListModel.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIBuddyList.h"
 #include "../../IO/UITypes/UIChatBar.h"
@@ -42,23 +43,19 @@ namespace ms
 
 		uint8_t mode = recv.read_byte();
 
+		// P0 / T1：仿 GuildModel R28-B2 —— 写 BuddyListModel；浮窗仅已存在时同步，
+		// 不再为 updateBuddylist 强制 emplace（UserList 好友页读模型）。
 		auto uibuddy = UI::get().get_element<UIBuddyList>();
-		auto ensure_buddy = [&]() -> Optional<UIBuddyList> {
-			if (!uibuddy)
-				uibuddy = UI::get().emplace<UIBuddyList>();
-			else if (!uibuddy->is_active())
-				uibuddy->makeactive();
-			return uibuddy;
-		};
 
 		switch (mode)
 		{
-			case 7: // updateBuddylist — 开窗
+			case 7: // updateBuddylist — 写模型，不强开浮窗
 			{
-				if (!ensure_buddy()) return;
 				int16_t count = recv.read_byte();
 				BuddyListData data;
-				data.capacity = uibuddy->get_capacity();
+				data.capacity = BuddyListModel::get().data().capacity;
+				if (data.capacity <= 0)
+					data.capacity = 25;
 				for (int16_t i = 0; i < count; i++)
 				{
 					Buddy b;
@@ -73,10 +70,11 @@ namespace ms
 				}
 				for (int16_t i = 0; i < count; i++)
 					recv.read_int(); // 尾部 mapid 块
-				uibuddy->update_buddies(data);
+				BuddyListModel::get().set(data);
+				if (uibuddy)
+					uibuddy->update_buddies(data);
 				while (recv.available())
 					recv.skip_byte();
-				// 列表已刷，不 tip
 				(void)count;
 				break;
 			}
@@ -96,7 +94,6 @@ namespace ms
 				while (recv.available())
 					recv.skip_byte();
 				std::string msg = nameFrom + " wants to be your buddy. Accept?";
-				// YesNo 已显，不重复 SM
 				UI::get().emplace<UIYesNo>(msg, [chrIdFrom, nameFrom](bool yes)
 				{
 					if (yes)
@@ -106,7 +103,6 @@ namespace ms
 					}
 					else
 					{
-						// 拒绝：s9 常用 delete/deny 同 mode3
 						BuddyDeletePacket(chrIdFrom).dispatch();
 						LOG(LOG_DEBUG, "BuddyHandler: deny from=" << nameFrom);
 					}
@@ -120,9 +116,9 @@ namespace ms
 				int32_t channel = recv.read_int();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_buddy())
+				BuddyListModel::get().update_channel(characterid, channel);
+				if (uibuddy)
 					uibuddy->update_buddy_channel(characterid, channel);
-				// 频道变更过密不 tip
 				(void)characterid; (void)channel;
 				break;
 			}
@@ -131,7 +127,8 @@ namespace ms
 				int32_t capacity = recv.read_byte();
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_buddy())
+				BuddyListModel::get().set_capacity(capacity);
+				if (uibuddy)
 					uibuddy->set_capacity(capacity);
 				else
 					ensure_sm(Color::Name::YELLOW,
@@ -145,7 +142,6 @@ namespace ms
 					<< " rem=" << recv.available());
 				while (recv.available())
 					recv.skip_byte();
-				// 常见失败/结果码：Buddy 已开静默；否则 tip
 				static const char* fails[] = {
 					nullptr, nullptr, nullptr,
 					"Buddy deleted",

@@ -19,6 +19,7 @@
 
 #include "../UIElement.h"
 
+#include "../../Character/PartyModel.h"
 #include "../../Graphics/SpecialText.h"
 #include "../../Graphics/Texture.h"
 
@@ -28,23 +29,7 @@
 
 namespace ms
 {
-	struct PartyMember
-	{
-		int32_t id;
-		std::string name;
-		int32_t job;
-		int32_t level;
-		int32_t channel;
-		int32_t mapid;
-		bool online;
-	};
-
-	struct Party
-	{
-		int32_t id;
-		int32_t leader;
-		std::array<PartyMember, 6> members;
-	};
+	// PartyMember / Party 已上移到 Character/PartyModel.h（P0 UserList 共用）。
 
 	class UIParty : public UIElement
 	{

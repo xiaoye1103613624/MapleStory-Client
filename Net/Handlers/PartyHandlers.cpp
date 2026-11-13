@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "PartyHandlers.h"
 
+#include "../../Character/PartyModel.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIOptionMenu.h"
@@ -47,13 +48,12 @@ namespace ms
 
 		uint8_t mode = recv.read_byte();
 
+		// P0 / T1：写 PartyModel；浮窗仅已存在时同步，不再强制 emplace。
 		auto uiparty = UI::get().get_element<UIParty>();
-		auto ensure_party = [&]() -> Optional<UIParty> {
-			if (!uiparty)
-				uiparty = UI::get().emplace<UIParty>();
-			else if (!uiparty->is_active())
-				uiparty->makeactive();
-			return uiparty;
+		auto sync_party_ui = [&](const Party& party) {
+			PartyModel::get().set(party);
+			if (uiparty)
+				uiparty->update_party(party);
 		};
 
 		switch (mode)
@@ -110,7 +110,7 @@ namespace ms
 				break;
 			}
 			case 0x07: // SILENT_UPDATE / LOG_ONOFF
-			case 0x0F: // JOIN — 开/刷新队伍窗
+			case 0x0F: // JOIN — 写模型 / 已开浮窗则刷新
 			{
 				int32_t partyid = recv.read_int();
 				if (mode == 0x0F)
@@ -121,9 +121,7 @@ namespace ms
 				parse_party_status(recv, party);
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_party())
-					uiparty->update_party(party);
-				// Party UI 已刷，不 SM
+				sync_party_ui(party);
 				break;
 			}
 			case 0x0C: // LEAVE / EXPEL / DISBAND
@@ -136,6 +134,7 @@ namespace ms
 				{
 					while (recv.available())
 						recv.skip_byte();
+					PartyModel::get().clear();
 					// DISBAND：已开窗直接关；未开才 tip
 					if (uiparty && uiparty->is_active())
 						uiparty->deactivate();
@@ -151,9 +150,8 @@ namespace ms
 					parse_party_status(recv, party);
 					while (recv.available())
 						recv.skip_byte();
-					if (ensure_party())
-						uiparty->update_party(party);
-					else if (!tname.empty())
+					sync_party_ui(party);
+					if (!uiparty && !tname.empty())
 						ensure_sm(Color::Name::WHITE, tname + " left");
 				}
 				(void)targetid;
@@ -165,7 +163,8 @@ namespace ms
 				recv.read_byte(); // 0
 				while (recv.available())
 					recv.skip_byte();
-				if (ensure_party())
+				PartyModel::get().set_leader(targetid);
+				if (uiparty)
 					uiparty->set_leader(targetid);
 				else
 					ensure_sm(Color::Name::YELLOW,
@@ -263,14 +262,9 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 
-		auto uiparty = UI::get().get_element<UIParty>();
-		if (!uiparty)
-			uiparty = UI::get().emplace<UIParty>();
-		else if (!uiparty->is_active())
-			uiparty->makeactive();
-		if (uiparty)
+		// P0：血条仅刷新已打开的浮窗，不强开（UserList 组员页本批不绘 HP）。
+		if (auto uiparty = UI::get().get_element<UIParty>())
 			uiparty->update_member_hp(cid, curhp, maxhp);
-		// 血条 UI 已刷，不 tip
 		(void)cid; (void)curhp; (void)maxhp;
 	}
 }

@@ -29,6 +29,7 @@
 #include "UIPartySearch.h"
 #include "UISoftKey.h"
 #include "UICharInfo.h"
+#include "../../Character/PartyModel.h"
 #include "../../Net/Packets/PartyPackets.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -39,6 +40,8 @@ namespace ms
 	UIParty::UIParty() : UIElement(Point<int16_t>(520, 20), Point<int16_t>(312, 389)),
 		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
+		// P0：浮窗打开时从常驻模型灌入（handler 不再为刷列表强开本窗）。
+		party = PartyModel::get().data();
 		// 按 Angel 083 CUIUserList::OnCreate @0x919b73 + CUIPartyHP::Create @0x91f934 重修
 		// （round68）：083 组队/玩家列表共用窗资源根 UIWindow.img/UserList，
 		// 背景 backgrnd=312x389（.nx 实测）；组队页按钮在 UserList/Party/Bt*（四态全）。
@@ -154,6 +157,7 @@ namespace ms
 	void UIParty::update_party(const Party& p)
 	{
 		party = p;
+		PartyModel::get().set(p);
 		bool still = false;
 		for (const auto& m : party.members)
 			if (m.id == selected_cid) { still = true; break; }
@@ -164,6 +168,7 @@ namespace ms
 	void UIParty::set_leader(int32_t cid)
 	{
 		party.leader = cid;
+		PartyModel::get().set_leader(cid);
 	}
 
 	void UIParty::update_member_hp(int32_t cid, int32_t curhp, int32_t maxhp)

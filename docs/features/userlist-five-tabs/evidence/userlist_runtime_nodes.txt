@@ -1,0 +1,802 @@
+===== UIWindow.img/UserList
+UserList [null]
+  BlackList [null]
+    BtAdd [null]
+      disabled [null]
+        0 [bitmap] bitmap 68x17
+      mouseOver [null]
+        0 [bitmap] bitmap 68x17
+      normal [null]
+        0 [bitmap] bitmap 68x17
+      pressed [null]
+        0 [bitmap] bitmap 68x17
+    BtDelete [null]
+      disabled [null]
+        0 [bitmap] bitmap 68x17
+      mouseOver [null]
+        0 [bitmap] bitmap 68x17
+      normal [null]
+        0 [bitmap] bitmap 68x17
+      pressed [null]
+        0 [bitmap] bitmap 68x17
+    blacklist0 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    blacklist1 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+    blacklist2 [bitmap] bitmap 281x6
+      origin [vector] (0, 0)
+  Friend [null]
+    BtAdd [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtAddFriend [null]
+      disabled [null]
+        0 [bitmap] bitmap 65x18
+      mouseOver [null]
+        0 [bitmap] bitmap 65x18
+      normal [null]
+        0 [bitmap] bitmap 65x18
+      pressed [null]
+        0 [bitmap] bitmap 65x18
+    BtAddGroup [null]
+      disabled [null]
+        0 [bitmap] bitmap 65x18
+      mouseOver [null]
+        0 [bitmap] bitmap 65x18
+      normal [null]
+        0 [bitmap] bitmap 65x18
+      pressed [null]
+        0 [bitmap] bitmap 65x18
+    BtBlock [null]
+      disabled [null]
+        0 [bitmap] bitmap 60x18
+      mouseOver [null]
+        0 [bitmap] bitmap 60x18
+      normal [null]
+        0 [bitmap] bitmap 60x18
+      pressed [null]
+        0 [bitmap] bitmap 60x18
+    BtChat [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtDelete [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtGroupWhisper [null]
+      disabled [null]
+        0 [bitmap] bitmap 79x18
+      mouseOver [null]
+        0 [bitmap] bitmap 79x18
+      normal [null]
+        0 [bitmap] bitmap 79x18
+      pressed [null]
+        0 [bitmap] bitmap 79x18
+    BtMate [null]
+      disabled [null]
+        0 [bitmap] bitmap 60x18
+      mouseOver [null]
+        0 [bitmap] bitmap 60x18
+      normal [null]
+        0 [bitmap] bitmap 60x18
+      pressed [null]
+        0 [bitmap] bitmap 60x18
+    BtMessage [null]
+      disabled [null]
+        0 [bitmap] bitmap 48x18
+      mouseOver [null]
+        0 [bitmap] bitmap 48x18
+      normal [null]
+        0 [bitmap] bitmap 48x18
+      pressed [null]
+        0 [bitmap] bitmap 48x18
+    BtMod [null]
+      disabled [null]
+        0 [bitmap] bitmap 38x18
+      mouseOver [null]
+        0 [bitmap] bitmap 38x18
+      normal [null]
+        0 [bitmap] bitmap 38x18
+      pressed [null]
+        0 [bitmap] bitmap 38x18
+    BtParty [null]
+      disabled [null]
+        0 [bitmap] bitmap 71x18
+      mouseOver [null]
+        0 [bitmap] bitmap 71x18
+      normal [null]
+        0 [bitmap] bitmap 71x18
+      pressed [null]
+        0 [bitmap] bitmap 71x18
+    BtShowAll [null]
+      disabled [null]
+        0 [bitmap] bitmap 74x18
+      mouseOver [null]
+        0 [bitmap] bitmap 74x18
+      normal [null]
+        0 [bitmap] bitmap 74x18
+      pressed [null]
+        0 [bitmap] bitmap 74x18
+    BtShowOnline [null]
+      disabled [null]
+        0 [bitmap] bitmap 74x18
+      mouseOver [null]
+        0 [bitmap] bitmap 74x18
+      normal [null]
+        0 [bitmap] bitmap 74x18
+      pressed [null]
+        0 [bitmap] bitmap 74x18
+    BtUnBlock [null]
+      disabled [null]
+        0 [bitmap] bitmap 60x18
+      mouseOver [null]
+        0 [bitmap] bitmap 60x18
+      normal [null]
+        0 [bitmap] bitmap 60x18
+      pressed [null]
+        0 [bitmap] bitmap 60x18
+    BtWhere [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtWhisper [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    GroupMod [null]
+      BtCancel [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtOk [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      backgrnd [bitmap] bitmap 268x364
+        origin [vector] (0, 0)
+    Popup [null]
+      AddFriend [bitmap] bitmap 266x141
+        origin [vector] (133, 70)
+      Base [bitmap] bitmap 286x146
+        origin [vector] (143, 73)
+      GroupDel [bitmap] bitmap 286x146
+        origin [vector] (143, 73)
+      GroupDelDeny [bitmap] bitmap 266x116
+        origin [vector] (133, 58)
+      GroupWhisper [bitmap] bitmap 266x113
+        origin [vector] (133, 56)
+      NeedMessage [bitmap] bitmap 266x116
+        origin [vector] (133, 58)
+    buttonbg [bitmap] bitmap 21x12
+      origin [vector] (0, 0)
+    friend0 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    friend1 [bitmap] bitmap 281x19
+      origin [vector] (0, 0)
+    friend2 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+    friend3 [bitmap] bitmap 281x6
+      origin [vector] (0, 0)
+    friend4 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    friend5 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+    friend6 [bitmap] bitmap 306x1
+      origin [vector] (0, 0)
+    icon0 [bitmap] bitmap 9x10
+      origin [vector] (0, 0)
+    icon00 [bitmap] bitmap 7x7
+      origin [vector] (0, 0)
+    icon01 [bitmap] bitmap 6x6
+      origin [vector] (0, 0)
+    icon02 [bitmap] bitmap 1x1
+      origin [vector] (0, 0)
+    icon03 [bitmap] bitmap 7x5
+      origin [vector] (0, 0)
+    icon04 [bitmap] bitmap 5x7
+      origin [vector] (0, 0)
+    icon1 [bitmap] bitmap 9x10
+      origin [vector] (0, 0)
+    icon2 [bitmap] bitmap 9x10
+      origin [vector] (0, 0)
+    icon3 [bitmap] bitmap 9x10
+      origin [vector] (0, 0)
+    icon4 [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    icon5 [bitmap] bitmap 11x14
+      origin [vector] (0, 0)
+    line [bitmap] bitmap 2x37
+      origin [vector] (1, 18)
+      z [int] 0
+  Guild [null]
+    GuildBoard [null]
+      BtCancel [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtComment [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtDelete [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtList [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtModify [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtSave [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtWrite [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      Loading [null]
+        0 [bitmap] bitmap 69x34
+        1 [bitmap] bitmap 69x34
+        2 [bitmap] bitmap 69x34
+        3 [bitmap] bitmap 69x34
+        4 [bitmap] bitmap 69x34
+      Tab [null]
+        disabled [null]
+        enabled [null]
+      backgrnd [bitmap] bitmap 312x389
+        origin [vector] (2, 2)
+      backgrnd1 [bitmap] bitmap 313x347
+        origin [vector] (3, 3)
+      backgrnd2 [bitmap] bitmap 313x121
+        origin [vector] (0, 0)
+    GuildEdit [null]
+      BtModf [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtSave [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      guildinfo0 [bitmap] bitmap 221x27
+        origin [vector] (0, 0)
+      guildinfo1 [bitmap] bitmap 221x18
+        origin [vector] (0, 0)
+      guildinfo2 [bitmap] bitmap 221x90
+        origin [vector] (0, 0)
+    GuildGrade [null]
+      BtModf [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtSave [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      guildgrade0 [bitmap] bitmap 221x27
+        origin [vector] (0, 0)
+      guildgrade1 [bitmap] bitmap 221x18
+        origin [vector] (0, 0)
+      guildgrade2 [bitmap] bitmap 221x90
+        origin [vector] (0, 0)
+      guildgrade3 [bitmap] bitmap 221x27
+        origin [vector] (0, 0)
+      guildgrade4 [bitmap] bitmap 221x36
+        origin [vector] (0, 0)
+    GuildInfo [null]
+      BtBoard [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtChange [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtChat [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtDown [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtGuildBBS [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtInfo [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtInvite [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtKick [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtPartyInvite [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtUp [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtWhere [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtWhisper [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtWithdraw [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      Btnotice [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      guildinfo0 [bitmap] bitmap 281x27
+        origin [vector] (0, 0)
+      guildinfo1 [bitmap] bitmap 281x27
+        origin [vector] (0, 0)
+      guildinfo2 [bitmap] bitmap 281x18
+        origin [vector] (0, 0)
+      guildinfo3 [bitmap] bitmap 281x18
+        origin [vector] (0, 0)
+      guildinfo4 [bitmap] bitmap 280x1
+        origin [vector] (0, 0)
+      guildinfo5 [bitmap] bitmap 2x1
+        origin [vector] (0, 0)
+      guildinfo6 [bitmap] bitmap 282x20
+        origin [vector] (0, 0)
+      guildinfo7 [bitmap] bitmap 281x18
+        origin [vector] (0, 0)
+        z [int] 0
+      guildmark [bitmap] bitmap 20x20
+        origin [vector] (0, 0)
+    GuildRank [null]
+      BtLeft [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtOK [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtRight [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      IconEff [null]
+        0 [bitmap] bitmap 85x73
+        1 [bitmap] bitmap 84x74
+        2 [bitmap] bitmap 84x75
+        3 [bitmap] bitmap 85x75
+        4 [bitmap] bitmap 84x75
+        5 [bitmap] bitmap 84x74
+      backgrnd [bitmap] bitmap 330x350
+        origin [vector] (0, 0)
+      icon0 [bitmap] bitmap 21x25
+        origin [vector] (0, 0)
+    Make [null]
+      BtAgree [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtDisagree [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      backgrnd [null]
+        0 [bitmap] bitmap 250x60
+        1 [bitmap] bitmap 250x84
+        2 [bitmap] bitmap 250x174
+        3 [bitmap] bitmap 250x307
+        4 [bitmap] bitmap 250x306
+        5 [bitmap] bitmap 250x305
+        6 [bitmap] bitmap 250x305
+        7 [bitmap] bitmap 250x305
+        8 [bitmap] bitmap 250x305
+      message [bitmap] bitmap 165x158
+        origin [vector] (0, 0)
+    MakeMark [null]
+      BtAgree [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtDisagree [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtDown [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtLeft [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      BtRight [null]
+        disabled [null]
+        mouseOver [null]
+        normal [null]
+        pressed [null]
+      backgrnd [null]
+        0 [bitmap] bitmap 250x60
+        1 [bitmap] bitmap 250x84
+        10 [bitmap] bitmap 250x343
+        11 [bitmap] bitmap 250x343
+        12 [bitmap] bitmap 250x343
+        13 [bitmap] bitmap 250x343
+        14 [bitmap] bitmap 250x343
+        2 [bitmap] bitmap 250x153
+        3 [bitmap] bitmap 250x245
+        4 [bitmap] bitmap 250x346
+        5 [bitmap] bitmap 250x348
+        6 [bitmap] bitmap 250x346
+        7 [bitmap] bitmap 250x344
+        8 [bitmap] bitmap 250x343
+        9 [bitmap] bitmap 250x343
+      inner [bitmap] bitmap 91x46
+        origin [vector] (45, 23)
+        z [int] 0
+      message0 [bitmap] bitmap 92x23
+        origin [vector] (0, 0)
+      message1 [bitmap] bitmap 48x17
+        origin [vector] (0, 0)
+      message2 [bitmap] bitmap 47x17
+        origin [vector] (0, 0)
+      message3 [bitmap] bitmap 48x17
+        origin [vector] (0, 0)
+      message4 [bitmap] bitmap 47x17
+        origin [vector] (0, 0)
+    backgrnd [bitmap] bitmap 233x304
+      origin [vector] (0, 0)
+  GuildUnion [null]
+    BtChange [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtChat [null]
+      disabled [null]
+        0 [bitmap] bitmap 46x17
+      mouseOver [null]
+        0 [bitmap] bitmap 45x17
+      normal [null]
+        0 [bitmap] bitmap 46x17
+      pressed [null]
+        0 [bitmap] bitmap 46x17
+    BtDown [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtInfo [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x18
+      mouseOver [null]
+        0 [bitmap] bitmap 47x18
+      normal [null]
+        0 [bitmap] bitmap 47x18
+      pressed [null]
+        0 [bitmap] bitmap 47x18
+    BtInvite [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtKick [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtPartyInvite [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtUp [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtWhere [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    BtWhisper [null]
+      disabled [null]
+        0 [bitmap] bitmap 46x17
+      mouseOver [null]
+        0 [bitmap] bitmap 46x17
+      normal [null]
+        0 [bitmap] bitmap 46x17
+      pressed [null]
+        0 [bitmap] bitmap 46x17
+    BtWithdraw [null]
+      disabled [null]
+        0 [bitmap] bitmap 53x18
+      mouseOver [null]
+        0 [bitmap] bitmap 53x18
+      normal [null]
+        0 [bitmap] bitmap 53x18
+      pressed [null]
+        0 [bitmap] bitmap 53x18
+    Btnotice [null]
+      disabled [null]
+        0 [bitmap] bitmap 20x20
+      mouseOver [null]
+        0 [bitmap] bitmap 20x20
+      normal [null]
+        0 [bitmap] bitmap 20x20
+      pressed [null]
+        0 [bitmap] bitmap 20x20
+    backgrnd [bitmap] bitmap 233x304
+      origin [vector] (0, 0)
+    guildinfo0 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    guildinfo2 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+    guildinfo3 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+    guildinfo4 [bitmap] bitmap 281x1
+      origin [vector] (0, 0)
+    guildinfo5 [bitmap] bitmap 2x1
+      origin [vector] (0, 0)
+    guildinfo6 [bitmap] bitmap 282x20
+      origin [vector] (0, 0)
+    guildinfo7 [bitmap] bitmap 281x18
+      origin [vector] (0, 0)
+      z [int] 0
+  Party [null]
+    BtChangeBoss [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x18
+      mouseOver [null]
+        0 [bitmap] bitmap 47x18
+      normal [null]
+        0 [bitmap] bitmap 47x18
+      pressed [null]
+        0 [bitmap] bitmap 47x18
+    BtChat [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtCreate [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtHP [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x18
+      mouseOver [null]
+        0 [bitmap] bitmap 47x18
+      normal [null]
+        0 [bitmap] bitmap 47x18
+      pressed [null]
+        0 [bitmap] bitmap 47x18
+    BtInvite [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtKick [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtSearch [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x18
+      mouseOver [null]
+        0 [bitmap] bitmap 47x18
+      normal [null]
+        0 [bitmap] bitmap 47x18
+      pressed [null]
+        0 [bitmap] bitmap 47x18
+    BtWhisper [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    BtWithdraw [null]
+      disabled [null]
+        0 [bitmap] bitmap 47x19
+      mouseOver [null]
+        0 [bitmap] bitmap 47x19
+      normal [null]
+        0 [bitmap] bitmap 47x19
+      pressed [null]
+        0 [bitmap] bitmap 47x19
+    PartyHP [null]
+      GaugeBar [null]
+        bar [bitmap] bitmap 63x7
+        gauge [bitmap] bitmap 1x7
+        graduation [bitmap] bitmap 69x13
+      c [bitmap] bitmap 1x1
+        origin [vector] (0, 0)
+      e [bitmap] bitmap 144x1
+        origin [vector] (0, 0)
+      n [bitmap] bitmap 1x7
+        origin [vector] (0, 7)
+      ne [bitmap] bitmap 144x7
+        origin [vector] (0, 7)
+      nw [bitmap] bitmap 5x7
+        origin [vector] (5, 7)
+      s [bitmap] bitmap 1x7
+        origin [vector] (0, 0)
+      se [bitmap] bitmap 144x7
+        origin [vector] (0, 0)
+      sw [bitmap] bitmap 5x7
+        origin [vector] (5, 0)
+      w [bitmap] bitmap 5x1
+        origin [vector] (5, 0)
+    icon0 [bitmap] bitmap 13x13
+      origin [vector] (0, 0)
+    icon1 [bitmap] bitmap 17x16
+      origin [vector] (0, 0)
+    party0 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    party1 [bitmap] bitmap 279x18
+      origin [vector] (0, 0)
+    party2 [bitmap] bitmap 279x4
+      origin [vector] (0, 0)
+    party3 [bitmap] bitmap 278x1
+      origin [vector] (0, 0)
+    party4 [bitmap] bitmap 281x27
+      origin [vector] (0, 0)
+    party5 [bitmap] bitmap 279x18
+      origin [vector] (0, 0)
+  Tab [null]
+    disabled [null]
+      0 [bitmap] bitmap 27x15
+        origin [vector] (0, 0)
+      1 [bitmap] bitmap 27x16
+        origin [vector] (0, 0)
+      2 [bitmap] bitmap 26x14
+        origin [vector] (0, 0)
+      3 [bitmap] bitmap 50x14
+        origin [vector] (0, 0)
+      4 [bitmap] bitmap 50x14
+        origin [vector] (0, 0)
+    enabled [null]
+      0 [bitmap] bitmap 27x15
+        origin [vector] (0, 0)
+      1 [bitmap] bitmap 27x16
+        origin [vector] (0, 0)
+      2 [bitmap] bitmap 27x16
+        origin [vector] (0, 0)
+      3 [bitmap] bitmap 51x14
+        origin [vector] (0, 0)
+      4 [bitmap] bitmap 52x16
+        origin [vector] (0, 0)
+  backgrnd [bitmap] bitmap 312x389
+    origin [vector] (0, 0)
+  backgrnd2 [bitmap] bitmap 312x389
+    origin [vector] (0, 0)
+  backgrnd3 [bitmap] bitmap 312x389
+    origin [vector] (0, 0)
