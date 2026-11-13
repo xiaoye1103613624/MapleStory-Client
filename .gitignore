@@ -118,3 +118,19 @@ docs/features/softkey-text-mode/evidence/native-20261106-*.png
 docs/features/softkey-text-mode/evidence/_zoom_panel.png
 docs/features/softkey-text-mode/evidence/uiwindow-softkeyboard-dump.txt
 docs/features/softkey-text-mode/evidence/live-20261106/_verify_stdout.txt
+
+# ===== round 构建目录与调试产物隔离（2026-11-13 分区提交）=====
+# 注意：/_tools/ 全量忽略会误伤已被跟踪的 _tools/ 工具（DumpItemUi/、_check_pw.py 等），
+#       故仅按未跟踪探针脚本的前缀/目录精确隔离；已跟踪内容不受影响。
+/build-*/
+/nul
+/logs/
+*.dskin_bak_*
+/_tools/_p2_*
+/_tools/_p3_*
+/_tools/_mb_*
+/_tools/_verify_*
+/_tools/dmg_skin_probe/
+/_tools/guild_probe/
+/_tools/lt_probe/
+/_tools/opt_probe/
