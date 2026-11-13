@@ -1,0 +1,497 @@
+{
+  "feature": "map",
+  "p13337": {
+    "class_count": 32,
+    "method_count": 207,
+    "classes": [
+      {
+        "class": "CField",
+        "methods": 67
+      },
+      {
+        "class": "CField_AranTutorial",
+        "methods": 1
+      },
+      {
+        "class": "CField_AriantArena",
+        "methods": 1
+      },
+      {
+        "class": "CField_Balrog",
+        "methods": 1
+      },
+      {
+        "class": "CField_Battlefield",
+        "methods": 9
+      },
+      {
+        "class": "CField_Coconut",
+        "methods": 7
+      },
+      {
+        "class": "CField_ContiMove",
+        "methods": 5
+      },
+      {
+        "class": "CField_CookieHouse",
+        "methods": 1
+      },
+      {
+        "class": "CField_Dojang",
+        "methods": 5
+      },
+      {
+        "class": "CField_GuildBoss",
+        "methods": 3
+      },
+      {
+        "class": "CField_LimitedView",
+        "methods": 4
+      },
+      {
+        "class": "CField_Massacre",
+        "methods": 2
+      },
+      {
+        "class": "CField_MassacreResult",
+        "methods": 4
+      },
+      {
+        "class": "CField_MonsterCarnival",
+        "methods": 10
+      },
+      {
+        "class": "CField_MonsterCarnivalRevive",
+        "methods": 1
+      },
+      {
+        "class": "CField_MonsterCarnivalS2_Game",
+        "methods": 1
+      },
+      {
+        "class": "CField_MonsterCarnivalWaitingRoom",
+        "methods": 1
+      },
+      {
+        "class": "CField_PartyRaid",
+        "methods": 2
+      },
+      {
+        "class": "CField_PartyRaidBoss",
+        "methods": 2
+      },
+      {
+        "class": "CField_PartyRaidResult",
+        "methods": 2
+      },
+      {
+        "class": "CField_ShowaBath",
+        "methods": 1
+      },
+      {
+        "class": "CField_SnowBall",
+        "methods": 2
+      },
+      {
+        "class": "CField_SpaceGAGA",
+        "methods": 2
+      },
+      {
+        "class": "CField_Tournament",
+        "methods": 1
+      },
+      {
+        "class": "CField_Tutorial",
+        "methods": 1
+      },
+      {
+        "class": "CField_Wedding",
+        "methods": 5
+      },
+      {
+        "class": "CField_WeddingPhoto",
+        "methods": 1
+      },
+      {
+        "class": "CField_Witchtower",
+        "methods": 2
+      },
+      {
+        "class": "CLife",
+        "methods": 3
+      },
+      {
+        "class": "CMapLoadable",
+        "methods": 36
+      },
+      {
+        "class": "CPortalList",
+        "methods": 3
+      },
+      {
+        "class": "CWorldMapDlg",
+        "methods": 21
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 32,
+    "method_count": 207,
+    "classes": [
+      {
+        "class": "CField",
+        "methods": 67
+      },
+      {
+        "class": "CField_AranTutorial",
+        "methods": 1
+      },
+      {
+        "class": "CField_AriantArena",
+        "methods": 1
+      },
+      {
+        "class": "CField_Balrog",
+        "methods": 1
+      },
+      {
+        "class": "CField_Battlefield",
+        "methods": 9
+      },
+      {
+        "class": "CField_Coconut",
+        "methods": 7
+      },
+      {
+        "class": "CField_ContiMove",
+        "methods": 5
+      },
+      {
+        "class": "CField_CookieHouse",
+        "methods": 1
+      },
+      {
+        "class": "CField_Dojang",
+        "methods": 5
+      },
+      {
+        "class": "CField_GuildBoss",
+        "methods": 3
+      },
+      {
+        "class": "CField_LimitedView",
+        "methods": 4
+      },
+      {
+        "class": "CField_Massacre",
+        "methods": 2
+      },
+      {
+        "class": "CField_MassacreResult",
+        "methods": 4
+      },
+      {
+        "class": "CField_MonsterCarnival",
+        "methods": 10
+      },
+      {
+        "class": "CField_MonsterCarnivalRevive",
+        "methods": 1
+      },
+      {
+        "class": "CField_MonsterCarnivalS2_Game",
+        "methods": 1
+      },
+      {
+        "class": "CField_MonsterCarnivalWaitingRoom",
+        "methods": 1
+      },
+      {
+        "class": "CField_PartyRaid",
+        "methods": 2
+      },
+      {
+        "class": "CField_PartyRaidBoss",
+        "methods": 2
+      },
+      {
+        "class": "CField_PartyRaidResult",
+        "methods": 2
+      },
+      {
+        "class": "CField_ShowaBath",
+        "methods": 1
+      },
+      {
+        "class": "CField_SnowBall",
+        "methods": 2
+      },
+      {
+        "class": "CField_SpaceGAGA",
+        "methods": 2
+      },
+      {
+        "class": "CField_Tournament",
+        "methods": 1
+      },
+      {
+        "class": "CField_Tutorial",
+        "methods": 1
+      },
+      {
+        "class": "CField_Wedding",
+        "methods": 5
+      },
+      {
+        "class": "CField_WeddingPhoto",
+        "methods": 1
+      },
+      {
+        "class": "CField_Witchtower",
+        "methods": 2
+      },
+      {
+        "class": "CLife",
+        "methods": 3
+      },
+      {
+        "class": "CMapLoadable",
+        "methods": 36
+      },
+      {
+        "class": "CPortalList",
+        "methods": 3
+      },
+      {
+        "class": "CWorldMapDlg",
+        "methods": 21
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "patch.mapleglobal.com": {
+      "ea": "0xaf7ce8",
+      "text": "patch.mapleglobal.com"
+    },
+    "MapleStory_Global:%s": {
+      "ea": "0xb3f2f4",
+      "text": "MapleStory_Global:%s"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CField": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x527913",
+          "name": "?FieldFactory@CField@@SA?AV?$ZRef@VCField@@@@K@Z"
+        },
+        {
+          "ea": "0x528034",
+          "name": "?DecodeFieldSpecificData@CField@@UAEXPAVCUser@@AAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x528dbc",
+          "name": "??0CField@@QAE@XZ"
+        },
+        {
+          "ea": "0x529035",
+          "name": "??1CField@@UAE@XZ"
+        },
+        {
+          "ea": "0x529269",
+          "name": "?Init@CField@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x5294ce",
+          "name": "?Close@CField@@UAEXXZ"
+        },
+        {
+          "ea": "0x52950e",
+          "name": "?GetFieldProp@CField@@SA?AUPROPERTY@1@K@Z"
+        },
+        {
+          "ea": "0x529968",
+          "name": "?OnKey@CField@@UAEXII@Z"
+        },
+        {
+          "ea": "0x5299de",
+          "name": "?OnMouseButton@CField@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x529a09",
+          "name": "?OnMouseMove@CField@@UAEHJJ@Z"
+        },
+        {
+          "ea": "0x529bb4",
+          "name": "?LoadMap@CField@@UAEXK@Z"
+        },
+        {
+          "ea": "0x529ef2",
+          "name": "?RestoreOption@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52a276",
+          "name": "?RestoreAllowedItem@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52a453",
+          "name": "?RestoreHelpMsg@CField@@IAEXK@Z"
+        },
+        {
+          "ea": "0x52a5af",
+          "name": "?RestorePeculiarInfo@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52a5c7",
+          "name": "?RestoreUserInfo@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52b1d8",
+          "name": "?RestoreForbiddenSkill@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52b2b5",
+          "name": "?RestoreSwinArea@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52b754",
+          "name": "?RestoreSeat@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52b93f",
+          "name": "?RestoreWeatherMsg@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52bc72",
+          "name": "?RestoreClock@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52c258",
+          "name": "?RestoreToolTip@CField@@IAEXXZ"
+        },
+        {
+          "ea": "0x52c315",
+          "name": "?SendChatMsg@CField@@QAEXABV?$ZXString@D@@H@Z"
+        },
+        {
+          "ea": "0x52c40c",
+          "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x52fad4",
+          "name": "?SendInviteTradingRoomMsg@CField@@QAEXABV?$ZXString@D@@H@Z"
+        }
+      ]
+    },
+    "CMapLoadable": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x639708",
+          "name": "?Init@CMapLoadable@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x63988a",
+          "name": "?Close@CMapLoadable@@UAEXXZ"
+        },
+        {
+          "ea": "0x6399ef",
+          "name": "?Update@CMapLoadable@@UAEXXZ"
+        },
+        {
+          "ea": "0x639b3d",
+          "name": "?LoadMap@CMapLoadable@@UAEXXZ"
+        },
+        {
+          "ea": "0x63a100",
+          "name": "?RestoreTile@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x63a5c4",
+          "name": "?MakeTile@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0@Z"
+        },
+        {
+          "ea": "0x63aa7e",
+          "name": "?RestoreObj@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x63ad16",
+          "name": "?MakeObj@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z"
+        },
+        {
+          "ea": "0x63c212",
+          "name": "?MakeObjLayer@CMapLoadable@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com"
+        },
+        {
+          "ea": "0x63c741",
+          "name": "?MakeObstacles@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_"
+        },
+        {
+          "ea": "0x63cbba",
+          "name": "?RestoreBack@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x63cd4e",
+          "name": "?MakeBack@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@KHJJJJ@Z"
+        },
+        {
+          "ea": "0x63ef34",
+          "name": "?MakeVectorAnimate@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$"
+        },
+        {
+          "ea": "0x63f671",
+          "name": "?RestoreWeather@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x63f717",
+          "name": "?MakeCloud@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x63fe57",
+          "name": "?TransientLayer_Weather@CMapLoadable@@IAEXABV?$ZXString@G@@JJJ@Z"
+        },
+        {
+          "ea": "0x6419e7",
+          "name": "?TransientLayer_FireCracker@CMapLoadable@@IAEXV?$ZXString@G@@@Z"
+        },
+        {
+          "ea": "0x641aeb",
+          "name": "?WeatherLayer_RemoveAll@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x641b13",
+          "name": "?TransientLayer_NewYear@CMapLoadable@@IAEXV?$ZXString@G@@@Z"
+        },
+        {
+          "ea": "0x641db2",
+          "name": "?PlayNextMusic@CMapLoadable@@QAEXXZ"
+        },
+        {
+          "ea": "0x641ef1",
+          "name": "?RestoreViewRange@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x64211e",
+          "name": "?PlayBGMFromMapInfo@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x642214",
+          "name": "?RestoreBGM@CMapLoadable@@IAEXXZ"
+        },
+        {
+          "ea": "0x642264",
+          "name": "?UpdateObstacleInfo@CMapLoadable@@QAEXXZ"
+        },
+        {
+          "ea": "0x642890",
+          "name": "?SetFieldMagLevel@CMapLoadable@@QAEXXZ"
+        }
+      ]
+    }
+  }
+}

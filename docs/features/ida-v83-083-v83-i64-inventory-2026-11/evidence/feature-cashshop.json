@@ -1,0 +1,148 @@
+{
+  "feature": "cashshop",
+  "p13337": {
+    "class_count": 2,
+    "method_count": 70,
+    "classes": [
+      {
+        "class": "CCashShop",
+        "methods": 67
+      },
+      {
+        "class": "CUICashItemGachapon",
+        "methods": 3
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 2,
+    "method_count": 70,
+    "classes": [
+      {
+        "class": "CCashShop",
+        "methods": 67
+      },
+      {
+        "class": "CUICashItemGachapon",
+        "methods": 3
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "CashShop": {
+      "ea": "0xaf46d4",
+      "text": "CashShop"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CCashShop": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x468223",
+          "name": "??0CCashShop@@QAE@AAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x468f3e",
+          "name": "?Init@CCashShop@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x46959a",
+          "name": "?Close@CCashShop@@UAEXXZ"
+        },
+        {
+          "ea": "0x469626",
+          "name": "?OnKey@CCashShop@@UAEXII@Z"
+        },
+        {
+          "ea": "0x4696b1",
+          "name": "?OnBuyAvatar@CCashShop@@QAEXXZ"
+        },
+        {
+          "ea": "0x46ba55",
+          "name": "?SendBuyAvatarPacket@CCashShop@@QAEXXZ"
+        },
+        {
+          "ea": "0x46bdcb",
+          "name": "?OnDefaultAvatar@CCashShop@@QAEXXZ"
+        },
+        {
+          "ea": "0x46bdd6",
+          "name": "?OnTakeOff@CCashShop@@QAEXXZ"
+        },
+        {
+          "ea": "0x46cafe",
+          "name": "?OnChangedCategory@CCashShop@@QAEXH@Z"
+        },
+        {
+          "ea": "0x46cb2e",
+          "name": "?OnChangedCategorySub@CCashShop@@QAEXH@Z"
+        },
+        {
+          "ea": "0x46cb5e",
+          "name": "?OnChangedPage@CCashShop@@QAEXH@Z"
+        },
+        {
+          "ea": "0x46cb76",
+          "name": "?IsUsableItem@CCashShop@@IAEHJAAV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x46d5e2",
+          "name": "?IsUsableItemGift@CCashShop@@IAEHJAAV?$ZXString@D@@V2@ABVCharacterData@@ABUBasicStat@@@Z"
+        },
+        {
+          "ea": "0x46e121",
+          "name": "?OnBuyPackage@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x46ec85",
+          "name": "?OnGiftMateInfoResult@CCashShop@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x46f940",
+          "name": "?SendGiftsPacket@CCashShop@@QAEXXZ"
+        },
+        {
+          "ea": "0x46fc3b",
+          "name": "?OnGiftPackage@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x470480",
+          "name": "?OnBuyTransferWorldItem@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x470d7d",
+          "name": "?OnSetWish@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x470edd",
+          "name": "?OnRemoveWish@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x470fd0",
+          "name": "?OnWear@CCashShop@@QAEXJJH@Z"
+        },
+        {
+          "ea": "0x470fea",
+          "name": "?SetPet@CCashShop@@QAEXJJH@Z"
+        },
+        {
+          "ea": "0x471004",
+          "name": "?SetEmotion@CCashShop@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x471016",
+          "name": "?SetActiveEffectItem@CCashShop@@QAEXJJ@Z"
+        },
+        {
+          "ea": "0x47102c",
+          "name": "?ShowBullet@CCashShop@@QAEXJ@Z"
+        }
+      ]
+    }
+  }
+}

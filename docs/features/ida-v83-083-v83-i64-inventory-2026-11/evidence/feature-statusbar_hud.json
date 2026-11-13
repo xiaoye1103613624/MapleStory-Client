@@ -1,0 +1,237 @@
+{
+  "feature": "statusbar_hud",
+  "p13337": {
+    "class_count": 7,
+    "method_count": 108,
+    "classes": [
+      {
+        "class": "CNoticeQuestProgress",
+        "methods": 5
+      },
+      {
+        "class": "CUIKeyConfig",
+        "methods": 8
+      },
+      {
+        "class": "CUIMiniMap",
+        "methods": 11
+      },
+      {
+        "class": "CUIStat",
+        "methods": 9
+      },
+      {
+        "class": "CUIStatDetail",
+        "methods": 3
+      },
+      {
+        "class": "CUIStatusBar",
+        "methods": 44
+      },
+      {
+        "class": "CUIToolTip",
+        "methods": 28
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 7,
+    "method_count": 108,
+    "classes": [
+      {
+        "class": "CNoticeQuestProgress",
+        "methods": 5
+      },
+      {
+        "class": "CUIKeyConfig",
+        "methods": 8
+      },
+      {
+        "class": "CUIMiniMap",
+        "methods": 11
+      },
+      {
+        "class": "CUIStat",
+        "methods": 9
+      },
+      {
+        "class": "CUIStatDetail",
+        "methods": 3
+      },
+      {
+        "class": "CUIStatusBar",
+        "methods": 44
+      },
+      {
+        "class": "CUIToolTip",
+        "methods": 28
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "StatusBar": {
+      "ea": "0xaf72e0",
+      "text": "UI/StatusBar.img/base/chatTarget"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUIStatusBar": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x4c6db2",
+          "name": "?GetWhisperTarget@CUIStatusBar@@QBE?AV?$ZXString@D@@XZ"
+        },
+        {
+          "ea": "0x8cfad8",
+          "name": "??0CUIStatusBar@@QAE@XZ"
+        },
+        {
+          "ea": "0x8cfd76",
+          "name": "?OnSetFocus@CUIStatusBar@@UAEHH@Z"
+        },
+        {
+          "ea": "0x8cfd7b",
+          "name": "?ClearToolTip@CUIStatusBar@@UAEXXZ"
+        },
+        {
+          "ea": "0x8cfd83",
+          "name": "?GetRTTI@CUIStatusBar@@UBEPBVCRTTI@@XZ"
+        },
+        {
+          "ea": "0x8cfd89",
+          "name": "?IsKindOf@CUIStatusBar@@UBEHPBVCRTTI@@@Z"
+        },
+        {
+          "ea": "0x8cfdce",
+          "name": "??1CUIStatusBar@@UAE@XZ"
+        },
+        {
+          "ea": "0x8d01b2",
+          "name": "?OnCreate@CUIStatusBar@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x8d419c",
+          "name": "?OnChildNotify@CUIStatusBar@@UAEXIII@Z"
+        },
+        {
+          "ea": "0x8d4225",
+          "name": "?OnMouseEnter@CUIStatusBar@@UAEXH@Z"
+        },
+        {
+          "ea": "0x8d423d",
+          "name": "?OnButtonClicked@CUIStatusBar@@UAEXI@Z"
+        },
+        {
+          "ea": "0x8d4348",
+          "name": "?ConvertWhisperToNormal@CUIStatusBar@@QAE?AV?$ZXString@G@@V2@@Z"
+        },
+        {
+          "ea": "0x8d468d",
+          "name": "?GetChatLog@CUIStatusBar@@QAE?AV?$ZArray@V?$ZXString@D@@@@XZ"
+        },
+        {
+          "ea": "0x8d4a22",
+          "name": "?SendClaim@CUIStatusBar@@IAEXXZ"
+        },
+        {
+          "ea": "0x8d4a6d",
+          "name": "?SetChatType@CUIStatusBar@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x8d4dbf",
+          "name": "?ChangeWhisperTarget@CUIStatusBar@@QAEHXZ"
+        },
+        {
+          "ea": "0x8d536c",
+          "name": "?OnKey@CUIStatusBar@@UAEXII@Z"
+        },
+        {
+          "ea": "0x8d57ca",
+          "name": "?GetEmotionKey@CUIStatusBar@@QAEIAAV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x8d5a4d",
+          "name": "?StartChat@CUIStatusBar@@QAEXPBD@Z"
+        },
+        {
+          "ea": "0x8d5aaf",
+          "name": "?EndChat@CUIStatusBar@@QAEXXZ"
+        },
+        {
+          "ea": "0x8d5acd",
+          "name": "?FloatNotice@CUIStatusBar@@QAEXPBDJK@Z"
+        },
+        {
+          "ea": "0x8d5b2b",
+          "name": "?SetProblem@CUIStatusBar@@QAEXPBD@Z"
+        },
+        {
+          "ea": "0x8d5b5d",
+          "name": "?OnMouseButton@CUIStatusBar@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x8d5bfb",
+          "name": "?TryBeginWhisper@CUIStatusBar@@IAEHJJ@Z"
+        },
+        {
+          "ea": "0x8d616c",
+          "name": "?ChangeChatWndSize@CUIStatusBar@@QAEXJJJ@Z"
+        }
+      ]
+    },
+    "CUIMiniMap": {
+      "count_sampled": 11,
+      "sample": [
+        {
+          "ea": "0x854b8c",
+          "name": "??0CUIMiniMap@@QAE@PAVCWvsContext@@@Z"
+        },
+        {
+          "ea": "0x855d02",
+          "name": "?SetLayer@CUIMiniMap@@QAEXXZ"
+        },
+        {
+          "ea": "0x858344",
+          "name": "?SetCtrl@CUIMiniMap@@QAEXXZ"
+        },
+        {
+          "ea": "0x858603",
+          "name": "?LoadMiniMap@CUIMiniMap@@QAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0K@Z"
+        },
+        {
+          "ea": "0x8590a4",
+          "name": "?ReloadMiniMap@CUIMiniMap@@QAEHXZ"
+        },
+        {
+          "ea": "0x8590df",
+          "name": "?ToggleMap@CUIMiniMap@@QAEXXZ"
+        },
+        {
+          "ea": "0x859122",
+          "name": "?Update@CUIMiniMap@@UAEXXZ"
+        },
+        {
+          "ea": "0x85ace7",
+          "name": "?OnButtonClicked@CUIMiniMap@@UAEXI@Z"
+        },
+        {
+          "ea": "0x85ade2",
+          "name": "?OnMouseMove@CUIMiniMap@@UAEHJJ@Z"
+        },
+        {
+          "ea": "0x85bbe4",
+          "name": "?InsertStalkee@CUIMiniMap@@QAEXKAAV?$ZXString@D@@UtagPOINT@@@Z"
+        },
+        {
+          "ea": "0x85bc51",
+          "name": "?SetShowMiniMap@CUIMiniMap@@QAEXH@Z"
+        }
+      ]
+    }
+  }
+}

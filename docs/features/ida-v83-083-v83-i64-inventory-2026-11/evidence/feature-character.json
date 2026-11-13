@@ -1,0 +1,401 @@
+{
+  "feature": "character",
+  "p13337": {
+    "class_count": 8,
+    "method_count": 285,
+    "classes": [
+      {
+        "class": "CAvatar",
+        "methods": 30
+      },
+      {
+        "class": "CAvatarMegaphone",
+        "methods": 10
+      },
+      {
+        "class": "CUser",
+        "methods": 73
+      },
+      {
+        "class": "CUserLocal",
+        "methods": 121
+      },
+      {
+        "class": "CUserPool",
+        "methods": 21
+      },
+      {
+        "class": "CUserPreview",
+        "methods": 7
+      },
+      {
+        "class": "CUserRemote",
+        "methods": 22
+      },
+      {
+        "class": "VCAvatar",
+        "methods": 1
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 8,
+    "method_count": 285,
+    "classes": [
+      {
+        "class": "CAvatar",
+        "methods": 30
+      },
+      {
+        "class": "CAvatarMegaphone",
+        "methods": 10
+      },
+      {
+        "class": "CUser",
+        "methods": 73
+      },
+      {
+        "class": "CUserLocal",
+        "methods": 121
+      },
+      {
+        "class": "CUserPool",
+        "methods": 21
+      },
+      {
+        "class": "CUserPreview",
+        "methods": 7
+      },
+      {
+        "class": "CUserRemote",
+        "methods": 22
+      },
+      {
+        "class": "VCAvatar",
+        "methods": 1
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUserLocal": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x57502e",
+          "name": "?IsStun@CUserLocal@@QBEHXZ"
+        },
+        {
+          "ea": "0x948ba2",
+          "name": "??0CUserLocal@@QAE@K@Z"
+        },
+        {
+          "ea": "0x949126",
+          "name": "?IsLocalUser@CUserLocal@@UBEHXZ"
+        },
+        {
+          "ea": "0x94912a",
+          "name": "?IsPreview@CUserLocal@@UBEHXZ"
+        },
+        {
+          "ea": "0x94912d",
+          "name": "?IsRemoteUser@CUserLocal@@UBEHXZ"
+        },
+        {
+          "ea": "0x949130",
+          "name": "?IsAdminHide@CUserLocal@@UBEHXZ"
+        },
+        {
+          "ea": "0x949137",
+          "name": "?IsMovingMode@CUserLocal@@UBEHXZ"
+        },
+        {
+          "ea": "0x94913e",
+          "name": "?ResetOneTimeAction@CUserLocal@@UAEXXZ"
+        },
+        {
+          "ea": "0x94915a",
+          "name": "?ClearToolTip@CUserLocal@@UAEXXZ"
+        },
+        {
+          "ea": "0x949165",
+          "name": "?GetRTTI@CUserLocal@@UBEPBVCRTTI@@XZ"
+        },
+        {
+          "ea": "0x94916b",
+          "name": "?IsKindOf@CUserLocal@@UBEHPBVCRTTI@@@Z"
+        },
+        {
+          "ea": "0x949513",
+          "name": "?Init@CUserLocal@@QAEXXZ"
+        },
+        {
+          "ea": "0x949b15",
+          "name": "?GetCharacterLevel@CUserLocal@@UBEEXZ"
+        },
+        {
+          "ea": "0x949b52",
+          "name": "?GetSecondaryStat@CUserLocal@@UBEABUSecondaryStat@@XZ"
+        },
+        {
+          "ea": "0x949b5d",
+          "name": "?GetProperBulletPosition@CUserLocal@@QAEJPBUSKILLENTRY@@JPAJ11@Z"
+        },
+        {
+          "ea": "0x94a10a",
+          "name": "?SetMoveAction@CUserLocal@@UAEXJH@Z"
+        },
+        {
+          "ea": "0x94a144",
+          "name": "?Update@CUserLocal@@UAEXXZ"
+        },
+        {
+          "ea": "0x94be9c",
+          "name": "?IsAttract@CUserLocal@@QBEHXZ"
+        },
+        {
+          "ea": "0x94c383",
+          "name": "?Jump@CUserLocal@@QAEXH@Z"
+        },
+        {
+          "ea": "0x94c4d9",
+          "name": "?IsWeakened@CUserLocal@@QBEHXZ"
+        },
+        {
+          "ea": "0x94c4f8",
+          "name": "?FallDown@CUserLocal@@QAEXXZ"
+        },
+        {
+          "ea": "0x94c856",
+          "name": "?OnKey@CUserLocal@@QAEXII@Z"
+        },
+        {
+          "ea": "0x94cf7a",
+          "name": "?OnMouseButton@CUserLocal@@QAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x94cfc3",
+          "name": "?OnMouseMove@CUserLocal@@QAEHJJ@Z"
+        },
+        {
+          "ea": "0x94d20b",
+          "name": "?OnFeatureChanged@CUserLocal@@QAEXXZ"
+        }
+      ]
+    },
+    "CUser": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x4acd7b",
+          "name": "?IsOnLadderOrRope@CUser@@QBEHXZ"
+        },
+        {
+          "ea": "0x4ad42b",
+          "name": "?GetVecCtrl@CUser@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@XZ"
+        },
+        {
+          "ea": "0x4b2346",
+          "name": "?IsAdminHide@CUser@@UBEHXZ"
+        },
+        {
+          "ea": "0x4b2349",
+          "name": "?IsMovingMode@CUser@@UBEHXZ"
+        },
+        {
+          "ea": "0x4b234c",
+          "name": "?IsEvanJob@CUser@@UBEHXZ"
+        },
+        {
+          "ea": "0x4b237f",
+          "name": "?GetType@CUser@@UBEJXZ"
+        },
+        {
+          "ea": "0x4b2386",
+          "name": "?GetPos@CUser@@UBE?BUtagPOINT@@XZ"
+        },
+        {
+          "ea": "0x4b238d",
+          "name": "?GetPosPrev@CUser@@UBE?BUtagPOINT@@XZ"
+        },
+        {
+          "ea": "0x4b23a5",
+          "name": "?GetZMass@CUser@@UBEJXZ"
+        },
+        {
+          "ea": "0x4f0d45",
+          "name": "?IsDarkSight@CUser@@QBEHXZ"
+        },
+        {
+          "ea": "0x4f0d64",
+          "name": "?IsSneak@CUser@@QBEHXZ"
+        },
+        {
+          "ea": "0x92dcfc",
+          "name": "??0CUser@@QAE@K@Z"
+        },
+        {
+          "ea": "0x92e499",
+          "name": "?Init@CUser@@QAEXABUAvatarLook@@H@Z"
+        },
+        {
+          "ea": "0x92e916",
+          "name": "?OnAvatarModified@CUser@@UAEXXZ"
+        },
+        {
+          "ea": "0x92e964",
+          "name": "?SetAbilityEquip@CUser@@QAEXXZ"
+        },
+        {
+          "ea": "0x92eb37",
+          "name": "?SetActivePet@CUser@@QAEXJPAVCPet@@@Z"
+        },
+        {
+          "ea": "0x92ec12",
+          "name": "?GetActivePetItemSlot@CUser@@QBE?AV?$ZRef@UGW_ItemSlotPet@@@@J@Z"
+        },
+        {
+          "ea": "0x92ec50",
+          "name": "?MakeIncDecHPEffect@CUser@@QAEXJH@Z"
+        },
+        {
+          "ea": "0x92ecd1",
+          "name": "?SetMoveAction@CUser@@UAEXJH@Z"
+        },
+        {
+          "ea": "0x92edb2",
+          "name": "?SetAttackAction@CUser@@QAEHJJPBUSKILLENTRY@@J@Z"
+        },
+        {
+          "ea": "0x92ef56",
+          "name": "?PrepareActionLayer@CUser@@UAEXJJH@Z"
+        },
+        {
+          "ea": "0x92efe9",
+          "name": "?PrepareShadowPartnerActionLayer@CUser@@QAEXXZ"
+        },
+        {
+          "ea": "0x92fb41",
+          "name": "?RegisterAfterimage@CUser@@QAEXJHJVZtl_bstr_t@@JJJ@Z"
+        },
+        {
+          "ea": "0x92fd5a",
+          "name": "?OnSetDead@CUser@@UAEXH@Z"
+        },
+        {
+          "ea": "0x930a13",
+          "name": "?OnRevive@CUser@@UAEXXZ"
+        }
+      ]
+    },
+    "CAvatar": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x44fe6c",
+          "name": "??0CAvatar@@QAE@XZ"
+        },
+        {
+          "ea": "0x44ffe2",
+          "name": "??0ACTIONINFO@CAvatar@@QAE@XZ"
+        },
+        {
+          "ea": "0x450093",
+          "name": "??1ACTIONINFO@CAvatar@@QAE@XZ"
+        },
+        {
+          "ea": "0x4502f8",
+          "name": "?Init@CAvatar@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@JJV?$_com_ptr_t@V?$_com_IIID@UIWzGr2"
+        },
+        {
+          "ea": "0x45149f",
+          "name": "?Init@CAvatar@@QAEXABUAvatarLook@@JV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_co"
+        },
+        {
+          "ea": "0x4515a1",
+          "name": "?SetAvatarLook@CAvatar@@QAEXABUAvatarLook@@@Z"
+        },
+        {
+          "ea": "0x4515bd",
+          "name": "?NotifyAvatarModified@CAvatar@@QAEXH@Z"
+        },
+        {
+          "ea": "0x45183b",
+          "name": "?GetBodyRect@CAvatar@@QBEXAAUtagRECT@@H@Z"
+        },
+        {
+          "ea": "0x4519aa",
+          "name": "?GetHeight@CAvatar@@QBEJXZ"
+        },
+        {
+          "ea": "0x451b0b",
+          "name": "?ForcingAppearance@CAvatar@@QAEXHPAJ@Z"
+        },
+        {
+          "ea": "0x451b6a",
+          "name": "?GetOneTimeAction@CAvatar@@QBEJXZ"
+        },
+        {
+          "ea": "0x451cf6",
+          "name": "?SetEmotion@CAvatar@@QAEXJJ@Z"
+        },
+        {
+          "ea": "0x451e7e",
+          "name": "?GetLayerUnderFace@CAvatar@@QBE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ"
+        },
+        {
+          "ea": "0x451ec8",
+          "name": "?MoveAction2RawAction@CAvatar@@IBEJJPAJ@Z"
+        },
+        {
+          "ea": "0x4520a4",
+          "name": "?IsMonsterMorphed@CAvatar@@QBEHXZ"
+        },
+        {
+          "ea": "0x4520d5",
+          "name": "?IsHideMorphed@CAvatar@@QBEHXZ"
+        },
+        {
+          "ea": "0x4520f1",
+          "name": "?SetMoveAction@CAvatar@@UAEXJH@Z"
+        },
+        {
+          "ea": "0x4521d4",
+          "name": "?GetLayerZ@CAvatar@@QAEJXZ"
+        },
+        {
+          "ea": "0x4521fd",
+          "name": "?SetLayerColor@CAvatar@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x4522a6",
+          "name": "?Update@CAvatar@@QAEXXZ"
+        },
+        {
+          "ea": "0x453696",
+          "name": "?PrepareFaceLayer@CAvatar@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x453a29",
+          "name": "?ClearActionLayer@CAvatar@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x453aa2",
+          "name": "?RegisterNextBlink@CAvatar@@IAEXXZ"
+        },
+        {
+          "ea": "0x453ad1",
+          "name": "?PrepareActionLayer@CAvatar@@MAEXJJH@Z"
+        },
+        {
+          "ea": "0x45674a",
+          "name": "?SetGhostState@CAvatar@@QAEXJ@Z"
+        }
+      ]
+    }
+  }
+}

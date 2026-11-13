@@ -1,0 +1,34 @@
+admin hwnd=14360518 title=XiaoYE MS v0.0.1【1-Admin】【破功值：199999】【FPS:84 延迟:--】【当前时间：2026-11-06 09:50:34】【在线时长：00 00:00:40】
+xy hwnd=4857486 title=XiaoYE MS v0.0.1【2-xiaoye】【破功值：199999】【FPS:79 延迟:--】【当前时间：2026-11-06 09:50:34】【在线时长：00 00:00:39】
+cap admin_baseline -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_baseline.png
+cap admin_open_try0 -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_open_try0.png
+admin open try 0 white=5219 key=c
+cap admin_local -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_local.png
+click empty_namebar1 @(647,197)
+cap admin_softkey -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_softkey.png
+cap admin_typed_invite -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_typed_invite.png
+cap admin_after_invite -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_after_invite.png
+cap xy_invite_dialog -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_invite_dialog.png
+cap xy_after_accept -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_after_accept.png
+cap admin_both -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_both.png
+cap xy_both -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_both.png
+cap xy_open_try0 -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_open_try0.png
+xy open try 0 white=6011 key=c
+xy messenger open=True white=6011
+cap xy_room -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_room.png
+cap admin_room -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_room.png
+click admin_input @(560,405)
+cap xy_typing_balloon -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_typing_balloon.png
+cap admin_typing_self -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_typing_self.png
+cap xy_blink -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_xy_blink.png
+cap admin_after_chat -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_after_chat.png
+cap admin_before_close -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_before_close.png
+click btclose_282_12 @(782,92)
+cap admin_after_close -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_after_close.png
+close white before=4780 after=5603
+cap admin_re_open_try0 -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_re_open_try0.png
+admin_re open try 0 white=77260 key=c
+click btclose_276_6 @(776,86)
+cap admin_after_close2 -> E:\project\MapleStory-Client\docs\features\softkey-tails\evidence\messenger-look\20261106_p4_admin_after_close2.png
+close2 white after=5853
+DONE close_ok=False

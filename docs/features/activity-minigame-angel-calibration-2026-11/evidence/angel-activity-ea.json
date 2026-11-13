@@ -1,0 +1,5217 @@
+{
+ "source": "13339 Angel v83 (activity-minigame face)",
+ "total_funcs": 844,
+ "total_classes": 73,
+ "classes": {
+  "BattlefieldTeamCond": [
+   {
+    "ea": "0x588892",
+    "method": "Parse",
+    "decorated": "?Parse@BattlefieldTeamCond@Field@@SAHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@AAV?$ZList@V?$ZRef@UUserCond@Field@@@@@@@Z",
+    "demangled": "public: static int Field::BattlefieldTeamCond::Parse(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class ZList<class ZRef<struct Field::UserCond>> __near &)"
+   }
+  ],
+  "CAntiRepeat": [
+   {
+    "ea": "0x9536d0",
+    "method": "TryRepeat",
+    "decorated": "?TryRepeat@CAntiRepeat@@QAEHJJ@Z",
+    "demangled": "public: int CAntiRepeat::TryRepeat(long,long)"
+   }
+  ],
+  "CBookDlg": [
+   {
+    "ea": "0x461ca8",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CBookDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CBookDlg::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x4626f6",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CBookDlg@@UAEXI@Z",
+    "demangled": "public: virtual void CBookDlg::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x462738",
+    "method": "OnKey",
+    "decorated": "?OnKey@CBookDlg@@UAEXII@Z",
+    "demangled": "public: virtual void CBookDlg::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x46275b",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CBookDlg@@UAEHJJ@Z",
+    "demangled": "public: virtual int CBookDlg::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x462770",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CBookDlg@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CBookDlg::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x4627b1",
+    "method": "HitTest",
+    "decorated": "?HitTest@CBookDlg@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "demangled": "public: virtual int CBookDlg::HitTest(long,long,class CCtrlWnd __near * __near *)"
+   },
+   {
+    "ea": "0x462cc4",
+    "method": "SetBookItem",
+    "decorated": "?SetBookItem@CBookDlg@@QAEXJ@Z",
+    "demangled": "public: void CBookDlg::SetBookItem(long)"
+   },
+   {
+    "ea": "0x462dab",
+    "method": "SetPage",
+    "decorated": "?SetPage@CBookDlg@@IAEXJ@Z",
+    "demangled": "protected: void CBookDlg::SetPage(long)"
+   },
+   {
+    "ea": "0x46324d",
+    "method": "CheckMousePoint",
+    "decorated": "?CheckMousePoint@CBookDlg@@IAEXJJ@Z",
+    "demangled": "protected: void CBookDlg::CheckMousePoint(long,long)"
+   }
+  ],
+  "CChatBalloon": [
+   {
+    "ea": "0x4890c4",
+    "method": "CreateCanvas",
+    "decorated": "?CreateCanvas@CChatBalloon@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@VZtl_bstr_t@@IV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@JJ@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>> CChatBalloon::CreateCanvas(class Ztl_bstr_t,unsigned int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,long,long)"
+   },
+   {
+    "ea": "0x48a935",
+    "method": "MakeBalloon",
+    "decorated": "?MakeBalloon@CChatBalloon@@QAEXVZtl_bstr_t@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@JJJHJJ@Z",
+    "demangled": "public: void CChatBalloon::MakeBalloon(class Ztl_bstr_t,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>,long,long,long,int,long,long)"
+   },
+   {
+    "ea": "0x48b4ff",
+    "method": "MakeMobBalloon",
+    "decorated": "?MakeMobBalloon@CChatBalloon@@QAEXVZtl_bstr_t@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@JJJJ@Z",
+    "demangled": "public: void CChatBalloon::MakeMobBalloon(class Ztl_bstr_t,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>,long,long,long,long)"
+   },
+   {
+    "ea": "0x48b86a",
+    "method": "MakeScreenBalloon",
+    "decorated": "?MakeScreenBalloon@CChatBalloon@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@VZtl_bstr_t@@JJJ@Z",
+    "demangled": "public: void CChatBalloon::MakeScreenBalloon(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class Ztl_bstr_t,long,long,long)"
+   },
+   {
+    "ea": "0x48bbca",
+    "method": "MakeMiniRoomBalloon",
+    "decorated": "?MakeMiniRoomBalloon@CChatBalloon@@QAEXJVZtl_bstr_t@@JV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@HJJJH@Z",
+    "demangled": "public: void CChatBalloon::MakeMiniRoomBalloon(long,class Ztl_bstr_t,long,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>,int,long,long,long,int)"
+   },
+   {
+    "ea": "0x48e136",
+    "method": "GetMiniRoomBalloonRect",
+    "decorated": "?GetMiniRoomBalloonRect@CChatBalloon@@QAEXAAUtagRECT@@@Z",
+    "demangled": "public: void CChatBalloon::GetMiniRoomBalloonRect(struct tagRECT __near &)"
+   },
+   {
+    "ea": "0x48e298",
+    "method": "MakeADBoardBalloon",
+    "decorated": "?MakeADBoardBalloon@CChatBalloon@@QAEXVZtl_bstr_t@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@H@Z",
+    "demangled": "public: void CChatBalloon::MakeADBoardBalloon(class Ztl_bstr_t,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>,int)"
+   },
+   {
+    "ea": "0x48e51c",
+    "method": "ADBoardMouseDown",
+    "decorated": "?ADBoardMouseDown@CChatBalloon@@QAEXUtagPOINT@@@Z",
+    "demangled": "public: void CChatBalloon::ADBoardMouseDown(struct tagPOINT)"
+   },
+   {
+    "ea": "0x48e631",
+    "method": "ADBoardMouseUp",
+    "decorated": "?ADBoardMouseUp@CChatBalloon@@QAEHUtagPOINT@@@Z",
+    "demangled": "public: int CChatBalloon::ADBoardMouseUp(struct tagPOINT)"
+   },
+   {
+    "ea": "0x48e6d4",
+    "method": "CheckTimeOut",
+    "decorated": "?CheckTimeOut@CChatBalloon@@QAEXH@Z",
+    "demangled": "public: void CChatBalloon::CheckTimeOut(int)"
+   },
+   {
+    "ea": "0x48e85a",
+    "method": "AdjustCoordY",
+    "decorated": "?AdjustCoordY@CChatBalloon@@QAEXJ@Z",
+    "demangled": "public: void CChatBalloon::AdjustCoordY(long)"
+   }
+  ],
+  "CClientSocket": [
+   {
+    "ea": "0x494ed1",
+    "method": "OnConnect",
+    "decorated": "?OnConnect@CClientSocket@@QAEHH@Z",
+    "demangled": "public: int CClientSocket::OnConnect(int)"
+   },
+   {
+    "ea": "0x4960fc",
+    "method": "OnRead",
+    "decorated": "?OnRead@CClientSocket@@QAEXXZ",
+    "demangled": "public: void CClientSocket::OnRead(void)"
+   },
+   {
+    "ea": "0x49626e",
+    "method": "OnError",
+    "decorated": "?OnError@CClientSocket@@QAEXH@Z",
+    "demangled": "public: void CClientSocket::OnError(int)"
+   },
+   {
+    "ea": "0x4962f4",
+    "method": "OnClose",
+    "decorated": "?OnClose@CClientSocket@@QAEXXZ",
+    "demangled": "public: void CClientSocket::OnClose(void)"
+   },
+   {
+    "ea": "0x496369",
+    "method": "Close",
+    "decorated": "?Close@CClientSocket@@QAEXXZ",
+    "demangled": "public: void CClientSocket::Close(void)"
+   },
+   {
+    "ea": "0x49637b",
+    "method": "SendPacket",
+    "decorated": "?SendPacket@CClientSocket@@QAEXABVCOutPacket@@@Z",
+    "demangled": "public: void CClientSocket::SendPacket(class COutPacket const __near &)"
+   },
+   {
+    "ea": "0x496403",
+    "method": "Flush",
+    "decorated": "?Flush@CClientSocket@@QAEXXZ",
+    "demangled": "public: void CClientSocket::Flush(void)"
+   },
+   {
+    "ea": "0x49651d",
+    "method": "ManipulatePacket",
+    "decorated": "?ManipulatePacket@CClientSocket@@QAEXXZ",
+    "demangled": "public: void CClientSocket::ManipulatePacket(void)"
+   },
+   {
+    "ea": "0x4965f1",
+    "method": "ProcessPacket",
+    "decorated": "?ProcessPacket@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::ProcessPacket(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x4966c0",
+    "method": "OnAliveReq",
+    "decorated": "?OnAliveReq@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::OnAliveReq(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x496701",
+    "method": "OnMigrateCommand",
+    "decorated": "?OnMigrateCommand@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::OnMigrateCommand(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x4967f8",
+    "method": "OnAuthenCodeChanged",
+    "decorated": "?OnAuthenCodeChanged@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::OnAuthenCodeChanged(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x496950",
+    "method": "OnAuthenMessage",
+    "decorated": "?OnAuthenMessage@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::OnAuthenMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x4969a6",
+    "method": "OnCheckCrcResult",
+    "decorated": "?OnCheckCrcResult@CClientSocket@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CClientSocket::OnCheckCrcResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x9f6cdd",
+    "method": "GetGuestIDRegistrationURL",
+    "decorated": "?GetGuestIDRegistrationURL@CClientSocket@@QAE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CClientSocket::GetGuestIDRegistrationURL(void)"
+   }
+  ],
+  "CConfig": [
+   {
+    "ea": "0x49c441",
+    "method": "LoadGlobal",
+    "decorated": "?LoadGlobal@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::LoadGlobal(void)"
+   },
+   {
+    "ea": "0x49c8e7",
+    "method": "SaveGlobal",
+    "decorated": "?SaveGlobal@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::SaveGlobal(void)"
+   },
+   {
+    "ea": "0x49d05a",
+    "method": "SaveLastConnectedCharacterID",
+    "decorated": "?SaveLastConnectedCharacterID@CConfig@@QAEXJK@Z",
+    "demangled": "public: void CConfig::SaveLastConnectedCharacterID(long,unsigned long)"
+   },
+   {
+    "ea": "0x49d0b6",
+    "method": "LoadCharacter",
+    "decorated": "?LoadCharacter@CConfig@@QAEXJK@Z",
+    "demangled": "public: void CConfig::LoadCharacter(long,unsigned long)"
+   },
+   {
+    "ea": "0x49d90d",
+    "method": "SaveCharacter",
+    "decorated": "?SaveCharacter@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::SaveCharacter(void)"
+   },
+   {
+    "ea": "0x49df79",
+    "method": "LoadFuncKeyMapped",
+    "decorated": "?LoadFuncKeyMapped@CConfig@@QAEHPAUFUNCKEY_MAPPED@@@Z",
+    "demangled": "public: int CConfig::LoadFuncKeyMapped(struct FUNCKEY_MAPPED __near *)"
+   },
+   {
+    "ea": "0x49dfa1",
+    "method": "LoadBlockFriend",
+    "decorated": "?LoadBlockFriend@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::LoadBlockFriend(void)"
+   },
+   {
+    "ea": "0x49e303",
+    "method": "LoadBlackList",
+    "decorated": "?LoadBlackList@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::LoadBlackList(void)"
+   },
+   {
+    "ea": "0x49e536",
+    "method": "LoadQuestAlarm",
+    "decorated": "?LoadQuestAlarm@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::LoadQuestAlarm(void)"
+   },
+   {
+    "ea": "0x49e6fb",
+    "method": "LoadFriendGroup",
+    "decorated": "?LoadFriendGroup@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::LoadFriendGroup(void)"
+   },
+   {
+    "ea": "0x49ea1c",
+    "method": "ApplyGameOpt",
+    "decorated": "?ApplyGameOpt@CConfig@@QAEXPAUCONFIG_GAMEOPT@@@Z",
+    "demangled": "public: void CConfig::ApplyGameOpt(struct CONFIG_GAMEOPT __near *)"
+   },
+   {
+    "ea": "0x49ea33",
+    "method": "ApplySysOpt",
+    "decorated": "?ApplySysOpt@CConfig@@QAEXPAUCONFIG_SYSOPT@@H@Z",
+    "demangled": "public: void CConfig::ApplySysOpt(struct CONFIG_SYSOPT __near *,int)"
+   },
+   {
+    "ea": "0x49eb5e",
+    "method": "IsBlockedFriend",
+    "decorated": "?IsBlockedFriend@CConfig@@QAEHKJ@Z",
+    "demangled": "public: int CConfig::IsBlockedFriend(unsigned long,long)"
+   },
+   {
+    "ea": "0x49ebbb",
+    "method": "ChangeBlockOption",
+    "decorated": "?ChangeBlockOption@CConfig@@QAEHKJH@Z",
+    "demangled": "public: int CConfig::ChangeBlockOption(unsigned long,long,int)"
+   },
+   {
+    "ea": "0x49ed00",
+    "method": "IsInBlackList",
+    "decorated": "?IsInBlackList@CConfig@@QAEHV?$ZXString@D@@@Z",
+    "demangled": "public: int CConfig::IsInBlackList(class ZXString<char>)"
+   },
+   {
+    "ea": "0x49eddb",
+    "method": "GetOpt_BOOL",
+    "decorated": "?GetOpt_BOOL@CConfig@@IAEHHPBDH@Z",
+    "demangled": "protected: int CConfig::GetOpt_BOOL(int,char const __near *,int)"
+   },
+   {
+    "ea": "0x49ee26",
+    "method": "SetOpt_BOOL",
+    "decorated": "?SetOpt_BOOL@CConfig@@IAEXHPBDH@Z",
+    "demangled": "protected: void CConfig::SetOpt_BOOL(int,char const __near *,int)"
+   },
+   {
+    "ea": "0x49ee54",
+    "method": "GetOpt_String",
+    "decorated": "?GetOpt_String@CConfig@@IAE?AV?$ZXString@D@@HPBD0@Z",
+    "demangled": "protected: class ZXString<char> CConfig::GetOpt_String(int,char const __near *,char const __near *)"
+   },
+   {
+    "ea": "0x49ef65",
+    "method": "GetOpt_Int",
+    "decorated": "?GetOpt_Int@CConfig@@IAEHHPBDHHH@Z",
+    "demangled": "protected: int CConfig::GetOpt_Int(int,char const __near *,int,int,int)"
+   },
+   {
+    "ea": "0x49efb5",
+    "method": "SetOpt_Int",
+    "decorated": "?SetOpt_Int@CConfig@@IAEXHPBDH@Z",
+    "demangled": "protected: void CConfig::SetOpt_Int(int,char const __near *,int)"
+   },
+   {
+    "ea": "0x49f180",
+    "method": "GetOptKey",
+    "decorated": "?GetOptKey@CConfig@@IAEPAUHKEY__@@H@Z",
+    "demangled": "protected: struct HKEY__ __near * CConfig::GetOptKey(int)"
+   },
+   {
+    "ea": "0x49f1ac",
+    "method": "GetShowPartyHP",
+    "decorated": "?GetShowPartyHP@CConfig@@QAEHXZ",
+    "demangled": "public: int CConfig::GetShowPartyHP(void)"
+   },
+   {
+    "ea": "0x49f24f",
+    "method": "ResetSessionInfo",
+    "decorated": "?ResetSessionInfo@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::ResetSessionInfo(void)"
+   },
+   {
+    "ea": "0x49f317",
+    "method": "SaveSessionInfo",
+    "decorated": "?SaveSessionInfo@CConfig@@QAEXXZ",
+    "demangled": "public: void CConfig::SaveSessionInfo(void)"
+   },
+   {
+    "ea": "0x49f417",
+    "method": "SaveSessionInfo_ChannelID",
+    "decorated": "?SaveSessionInfo_ChannelID@CConfig@@QAEXJ@Z",
+    "demangled": "public: void CConfig::SaveSessionInfo_ChannelID(long)"
+   },
+   {
+    "ea": "0x49f5da",
+    "method": "GetInventoryExpanded",
+    "decorated": "?GetInventoryExpanded@CConfig@@QAEHXZ",
+    "demangled": "public: int CConfig::GetInventoryExpanded(void)"
+   },
+   {
+    "ea": "0x5f6cfb",
+    "method": "GetPartnerCode",
+    "decorated": "?GetPartnerCode@CConfig@@QAEJXZ",
+    "demangled": "public: long CConfig::GetPartnerCode(void)"
+   },
+   {
+    "ea": "0x9877b9",
+    "method": "GetSessionCharacterName",
+    "decorated": "?GetSessionCharacterName@CConfig@@QAE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CConfig::GetSessionCharacterName(void)"
+   },
+   {
+    "ea": "0x98781e",
+    "method": "GetSessionWorldID",
+    "decorated": "?GetSessionWorldID@CConfig@@QAEJXZ",
+    "demangled": "public: long CConfig::GetSessionWorldID(void)"
+   },
+   {
+    "ea": "0x98787a",
+    "method": "GetSessionChannelID",
+    "decorated": "?GetSessionChannelID@CConfig@@QAEJXZ",
+    "demangled": "public: long CConfig::GetSessionChannelID(void)"
+   }
+  ],
+  "CField": [
+   {
+    "ea": "0x527913",
+    "method": "FieldFactory",
+    "decorated": "?FieldFactory@CField@@SA?AV?$ZRef@VCField@@@@K@Z",
+    "demangled": "public: static class ZRef<class CField> CField::FieldFactory(unsigned long)"
+   },
+   {
+    "ea": "0x528034",
+    "method": "DecodeFieldSpecificData",
+    "decorated": "?DecodeFieldSpecificData@CField@@UAEXPAVCUser@@AAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField::DecodeFieldSpecificData(class CUser __near *,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x529269",
+    "method": "Init",
+    "decorated": "?Init@CField@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField::Init(void __near *)"
+   },
+   {
+    "ea": "0x5294ce",
+    "method": "Close",
+    "decorated": "?Close@CField@@UAEXXZ",
+    "demangled": "public: virtual void CField::Close(void)"
+   },
+   {
+    "ea": "0x52950e",
+    "method": "GetFieldProp",
+    "decorated": "?GetFieldProp@CField@@SA?AUPROPERTY@1@K@Z",
+    "demangled": "public: static struct CField::PROPERTY CField::GetFieldProp(unsigned long)"
+   },
+   {
+    "ea": "0x529968",
+    "method": "OnKey",
+    "decorated": "?OnKey@CField@@UAEXII@Z",
+    "demangled": "public: virtual void CField::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x5299de",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CField@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CField::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x529a09",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CField@@UAEHJJ@Z",
+    "demangled": "public: virtual int CField::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x529bb4",
+    "method": "LoadMap",
+    "decorated": "?LoadMap@CField@@UAEXK@Z",
+    "demangled": "public: virtual void CField::LoadMap(unsigned long)"
+   },
+   {
+    "ea": "0x529ef2",
+    "method": "RestoreOption",
+    "decorated": "?RestoreOption@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreOption(void)"
+   },
+   {
+    "ea": "0x52a276",
+    "method": "RestoreAllowedItem",
+    "decorated": "?RestoreAllowedItem@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreAllowedItem(void)"
+   },
+   {
+    "ea": "0x52a453",
+    "method": "RestoreHelpMsg",
+    "decorated": "?RestoreHelpMsg@CField@@IAEXK@Z",
+    "demangled": "protected: void CField::RestoreHelpMsg(unsigned long)"
+   },
+   {
+    "ea": "0x52a5af",
+    "method": "RestorePeculiarInfo",
+    "decorated": "?RestorePeculiarInfo@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestorePeculiarInfo(void)"
+   },
+   {
+    "ea": "0x52a5c7",
+    "method": "RestoreUserInfo",
+    "decorated": "?RestoreUserInfo@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreUserInfo(void)"
+   },
+   {
+    "ea": "0x52b1d8",
+    "method": "RestoreForbiddenSkill",
+    "decorated": "?RestoreForbiddenSkill@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreForbiddenSkill(void)"
+   },
+   {
+    "ea": "0x52b2b5",
+    "method": "RestoreSwinArea",
+    "decorated": "?RestoreSwinArea@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreSwinArea(void)"
+   },
+   {
+    "ea": "0x52b754",
+    "method": "RestoreSeat",
+    "decorated": "?RestoreSeat@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreSeat(void)"
+   },
+   {
+    "ea": "0x52b93f",
+    "method": "RestoreWeatherMsg",
+    "decorated": "?RestoreWeatherMsg@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreWeatherMsg(void)"
+   },
+   {
+    "ea": "0x52bc72",
+    "method": "RestoreClock",
+    "decorated": "?RestoreClock@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreClock(void)"
+   },
+   {
+    "ea": "0x52c258",
+    "method": "RestoreToolTip",
+    "decorated": "?RestoreToolTip@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreToolTip(void)"
+   },
+   {
+    "ea": "0x52c315",
+    "method": "SendChatMsg",
+    "decorated": "?SendChatMsg@CField@@QAEXABV?$ZXString@D@@H@Z",
+    "demangled": "public: void CField::SendChatMsg(class ZXString<char> const __near &,int)"
+   },
+   {
+    "ea": "0x52c40c",
+    "method": "SendChatMsgSlash",
+    "decorated": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::SendChatMsgSlash(class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x52fad4",
+    "method": "SendInviteTradingRoomMsg",
+    "decorated": "?SendInviteTradingRoomMsg@CField@@QAEXABV?$ZXString@D@@H@Z",
+    "demangled": "public: void CField::SendInviteTradingRoomMsg(class ZXString<char> const __near &,int)"
+   },
+   {
+    "ea": "0x52fecf",
+    "method": "SendJoinPartyMsg",
+    "decorated": "?SendJoinPartyMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::SendJoinPartyMsg(class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x5300c1",
+    "method": "SendKickPartyMsg",
+    "decorated": "?SendKickPartyMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::SendKickPartyMsg(class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x530226",
+    "method": "SendChangePartyBossMsg",
+    "decorated": "?SendChangePartyBossMsg@CField@@QAEXABV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::SendChangePartyBossMsg(class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x53035d",
+    "method": "SendTransferFieldRequest",
+    "decorated": "?SendTransferFieldRequest@CField@@QAEHKPBDHJJ@Z",
+    "demangled": "public: int CField::SendTransferFieldRequest(unsigned long,char const __near *,int,long,long)"
+   },
+   {
+    "ea": "0x5304af",
+    "method": "SendTransferChannelRequest",
+    "decorated": "?SendTransferChannelRequest@CField@@QAEXJ@Z",
+    "demangled": "public: void CField::SendTransferChannelRequest(long)"
+   },
+   {
+    "ea": "0x5305ae",
+    "method": "InputGuildName",
+    "decorated": "?InputGuildName@CField@@QAEXXZ",
+    "demangled": "public: void CField::InputGuildName(void)"
+   },
+   {
+    "ea": "0x530a0d",
+    "method": "SendKickGuildMsg",
+    "decorated": "?SendKickGuildMsg@CField@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::SendKickGuildMsg(class ZXString<char>)"
+   },
+   {
+    "ea": "0x530f2f",
+    "method": "SendSetGuildMarkMsg",
+    "decorated": "?SendSetGuildMarkMsg@CField@@QAEXGEGE@Z",
+    "demangled": "public: void CField::SendSetGuildMarkMsg(unsigned short,unsigned char,unsigned short,unsigned char)"
+   },
+   {
+    "ea": "0x531021",
+    "method": "SendSetFriendMsg",
+    "decorated": "?SendSetFriendMsg@CField@@QAEXV?$ZXString@D@@V2@H@Z",
+    "demangled": "public: void CField::SendSetFriendMsg(class ZXString<char>,class ZXString<char>,int)"
+   },
+   {
+    "ea": "0x531270",
+    "method": "SendAcceptFriendMsg",
+    "decorated": "?SendAcceptFriendMsg@CField@@QAEXK@Z",
+    "demangled": "public: void CField::SendAcceptFriendMsg(unsigned long)"
+   },
+   {
+    "ea": "0x531325",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x53185c",
+    "method": "OnTransferFieldReqIgnored",
+    "decorated": "?OnTransferFieldReqIgnored@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnTransferFieldReqIgnored(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x531a08",
+    "method": "OnTransferChannelReqIgnored",
+    "decorated": "?OnTransferChannelReqIgnored@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnTransferChannelReqIgnored(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x531b7b",
+    "method": "OnFieldSpecificData",
+    "decorated": "?OnFieldSpecificData@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnFieldSpecificData(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x531b8d",
+    "method": "Update",
+    "decorated": "?Update@CField@@UAEXXZ",
+    "demangled": "public: virtual void CField::Update(void)"
+   },
+   {
+    "ea": "0x531e00",
+    "method": "OnGroupMessage",
+    "decorated": "?OnGroupMessage@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnGroupMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x532087",
+    "method": "OnCoupleMessage",
+    "decorated": "?OnCoupleMessage@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnCoupleMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x53228e",
+    "method": "OnWhisper",
+    "decorated": "?OnWhisper@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnWhisper(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x532fcf",
+    "method": "OnWarnMessage",
+    "decorated": "?OnWarnMessage@CField@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField::OnWarnMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5330f7",
+    "method": "OnFieldEffect",
+    "decorated": "?OnFieldEffect@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnFieldEffect(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x53347c",
+    "method": "OnZakumTimer",
+    "decorated": "?OnZakumTimer@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnZakumTimer(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5335a3",
+    "method": "OnHontailTimer",
+    "decorated": "?OnHontailTimer@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnHontailTimer(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5336ca",
+    "method": "ShowMobHPTag",
+    "decorated": "?ShowMobHPTag@CField@@QAEXKJJJJ@Z",
+    "demangled": "public: void CField::ShowMobHPTag(unsigned long,long,long,long,long)"
+   },
+   {
+    "ea": "0x534a35",
+    "method": "BlowWeather",
+    "decorated": "?BlowWeather@CField@@QAEXJV?$ZXString@D@@@Z",
+    "demangled": "public: void CField::BlowWeather(long,class ZXString<char>)"
+   },
+   {
+    "ea": "0x534a7d",
+    "method": "BlowWeather",
+    "decorated": "?BlowWeather@CField@@QAEXJV?$ZXString@D@@H@Z",
+    "demangled": "public: void CField::BlowWeather(long,class ZXString<char>,int)"
+   },
+   {
+    "ea": "0x534aca",
+    "method": "BlowWeather",
+    "decorated": "?BlowWeather@CField@@QAEXJV?$ZXString@D@@HJ@Z",
+    "demangled": "public: void CField::BlowWeather(long,class ZXString<char>,int,long)"
+   },
+   {
+    "ea": "0x534f92",
+    "method": "ShowScreenEffect",
+    "decorated": "?ShowScreenEffect@CField@@IAEXV?$ZXString@G@@@Z",
+    "demangled": "protected: void CField::ShowScreenEffect(class ZXString<unsigned short>)"
+   },
+   {
+    "ea": "0x535179",
+    "method": "OnBlowWeather",
+    "decorated": "?OnBlowWeather@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnBlowWeather(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5352e9",
+    "method": "OnAdminResult",
+    "decorated": "?OnAdminResult@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnAdminResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x535a57",
+    "method": "OnQuiz",
+    "decorated": "?OnQuiz@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnQuiz(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5360c0",
+    "method": "OnDesc",
+    "decorated": "?OnDesc@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnDesc(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5361bd",
+    "method": "OnClock",
+    "decorated": "?OnClock@CField@@MAEXAAVCInPacket@@@Z",
+    "demangled": "protected: virtual void CField::OnClock(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x536428",
+    "method": "OnMakeTimerParam",
+    "decorated": "?OnMakeTimerParam@CField@@MAEXAAUINITPARAM@CClock@@AAJ1@Z",
+    "demangled": "protected: virtual void CField::OnMakeTimerParam(struct CClock::INITPARAM __near &,long __near &,long __near &)"
+   },
+   {
+    "ea": "0x536517",
+    "method": "FindSeatByPosition",
+    "decorated": "?FindSeatByPosition@CField@@QBEJUtagPOINT@@@Z",
+    "demangled": "public: long CField::FindSeatByPosition(struct tagPOINT)const"
+   },
+   {
+    "ea": "0x5365c8",
+    "method": "OnTownPortalChanged",
+    "decorated": "?OnTownPortalChanged@CField@@QAEXHABUPARTYDATA@@ABVTOWNPORTAL@2@H@Z",
+    "demangled": "public: void CField::OnTownPortalChanged(int,struct PARTYDATA const __near &,class PARTYDATA::TOWNPORTAL const __near &,int)"
+   },
+   {
+    "ea": "0x5377fa",
+    "method": "GetTownPortalPos",
+    "decorated": "?GetTownPortalPos@CField@@QAE?AUtagPOINT@@J@Z",
+    "demangled": "public: struct tagPOINT CField::GetTownPortalPos(long)"
+   },
+   {
+    "ea": "0x53785e",
+    "method": "GetCorrectTime",
+    "decorated": "?GetCorrectTime@CField@@QAE?AU_SYSTEMTIME@@XZ",
+    "demangled": "public: struct _SYSTEMTIME CField::GetCorrectTime(void)"
+   },
+   {
+    "ea": "0x537a6a",
+    "method": "OnStalkResult",
+    "decorated": "?OnStalkResult@CField@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField::OnStalkResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x537bcf",
+    "method": "ApplyUserLook",
+    "decorated": "?ApplyUserLook@CField@@IAEXPAVCUser@@@Z",
+    "demangled": "protected: void CField::ApplyUserLook(class CUser __near *)"
+   },
+   {
+    "ea": "0x537c7f",
+    "method": "IsSkillForbiden",
+    "decorated": "?IsSkillForbiden@CField@@QAEHJ@Z",
+    "demangled": "public: int CField::IsSkillForbiden(long)"
+   },
+   {
+    "ea": "0x537cdc",
+    "method": "UpdateQuestLayer",
+    "decorated": "?UpdateQuestLayer@CField@@QAEXXZ",
+    "demangled": "public: void CField::UpdateQuestLayer(void)"
+   },
+   {
+    "ea": "0x53868d",
+    "method": "DrawFearEffect",
+    "decorated": "?DrawFearEffect@CField@@QAEXXZ",
+    "demangled": "public: void CField::DrawFearEffect(void)"
+   }
+  ],
+  "CField_Battlefield": [
+   {
+    "ea": "0x545b13",
+    "method": "Init",
+    "decorated": "?Init@CField_Battlefield@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_Battlefield::Init(void __near *)"
+   },
+   {
+    "ea": "0x545b2a",
+    "method": "DecodeFieldSpecificData",
+    "decorated": "?DecodeFieldSpecificData@CField_Battlefield@@UAEXPAVCUser@@AAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_Battlefield::DecodeFieldSpecificData(class CUser __near *,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x545b49",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField_Battlefield@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_Battlefield::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x545c1e",
+    "method": "OnScoreUpdate",
+    "decorated": "?OnScoreUpdate@CField_Battlefield@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField_Battlefield::OnScoreUpdate(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x545c52",
+    "method": "OnTeamChanged",
+    "decorated": "?OnTeamChanged@CField_Battlefield@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField_Battlefield::OnTeamChanged(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x545c8b",
+    "method": "OnClock",
+    "decorated": "?OnClock@CField_Battlefield@@MAEXAAVCInPacket@@@Z",
+    "demangled": "protected: virtual void CField_Battlefield::OnClock(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x545d5c",
+    "method": "SetUserTeam",
+    "decorated": "?SetUserTeam@CField_Battlefield@@IAEXPAVCUser@@J@Z",
+    "demangled": "protected: void CField_Battlefield::SetUserTeam(class CUser __near *,long)"
+   },
+   {
+    "ea": "0x545dad",
+    "method": "DrawScore",
+    "decorated": "?DrawScore@CField_Battlefield@@IAEXXZ",
+    "demangled": "protected: void CField_Battlefield::DrawScore(void)"
+   }
+  ],
+  "CField_Coconut": [
+   {
+    "ea": "0x548b77",
+    "method": "Init",
+    "decorated": "?Init@CField_Coconut@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_Coconut::Init(void __near *)"
+   },
+   {
+    "ea": "0x5496c7",
+    "method": "Update",
+    "decorated": "?Update@CField_Coconut@@UAEXXZ",
+    "demangled": "public: virtual void CField_Coconut::Update(void)"
+   },
+   {
+    "ea": "0x549802",
+    "method": "OnCoconutScore",
+    "decorated": "?OnCoconutScore@CField_Coconut@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField_Coconut::OnCoconutScore(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x549902",
+    "method": "BasicActionAttack",
+    "decorated": "?BasicActionAttack@CField_Coconut@@UAEHXZ",
+    "demangled": "public: virtual int CField_Coconut::BasicActionAttack(void)"
+   },
+   {
+    "ea": "0x549a13",
+    "method": "DrawBoard",
+    "decorated": "?DrawBoard@CField_Coconut@@IAEXXZ",
+    "demangled": "protected: void CField_Coconut::DrawBoard(void)"
+   },
+   {
+    "ea": "0x549eb7",
+    "method": "GetObjectName",
+    "decorated": "?GetObjectName@CField_Coconut@@KA?AV?$ZXString@D@@J@Z",
+    "demangled": "protected: static class ZXString<char> CField_Coconut::GetObjectName(long)"
+   }
+  ],
+  "CField_ContiMove": [
+   {
+    "ea": "0x54dc6d",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField_ContiMove@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_ContiMove::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x54dca3",
+    "method": "OnContiMove",
+    "decorated": "?OnContiMove@CField_ContiMove@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_ContiMove::OnContiMove(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x54dd08",
+    "method": "OnContiState",
+    "decorated": "?OnContiState@CField_ContiMove@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_ContiMove::OnContiState(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x54ddeb",
+    "method": "OnEndShipMoveField",
+    "decorated": "?OnEndShipMoveField@CField_ContiMove@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CField_ContiMove::OnEndShipMoveField(class CInPacket __near &)"
+   }
+  ],
+  "CField_Dojang": [
+   {
+    "ea": "0x554792",
+    "method": "Update",
+    "decorated": "?Update@CField_Dojang@@UAEXXZ",
+    "demangled": "public: virtual void CField_Dojang::Update(void)"
+   },
+   {
+    "ea": "0x55522b",
+    "method": "OnClock",
+    "decorated": "?OnClock@CField_Dojang@@MAEXAAVCInPacket@@@Z",
+    "demangled": "protected: virtual void CField_Dojang::OnClock(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x555626",
+    "method": "UpdateTimer",
+    "decorated": "?UpdateTimer@CField_Dojang@@AAEXXZ",
+    "demangled": "private: void CField_Dojang::UpdateTimer(void)"
+   },
+   {
+    "ea": "0x555700",
+    "method": "DrawDigit",
+    "decorated": "?DrawDigit@CField_Dojang@@AAEXJJK@Z",
+    "demangled": "private: void CField_Dojang::DrawDigit(long,long,unsigned long)"
+   }
+  ],
+  "CField_GuildBoss": [
+   {
+    "ea": "0x5587b3",
+    "method": "Init",
+    "decorated": "?Init@CField_GuildBoss@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_GuildBoss::Init(void __near *)"
+   },
+   {
+    "ea": "0x558b45",
+    "method": "BasicActionAttack",
+    "decorated": "?BasicActionAttack@CField_GuildBoss@@UAEHXZ",
+    "demangled": "public: virtual int CField_GuildBoss::BasicActionAttack(void)"
+   }
+  ],
+  "CField_LimitedView": [
+   {
+    "ea": "0x55b752",
+    "method": "Init",
+    "decorated": "?Init@CField_LimitedView@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_LimitedView::Init(void __near *)"
+   },
+   {
+    "ea": "0x55bdde",
+    "method": "Update",
+    "decorated": "?Update@CField_LimitedView@@UAEXXZ",
+    "demangled": "public: virtual void CField_LimitedView::Update(void)"
+   },
+   {
+    "ea": "0x55bdef",
+    "method": "DrawViewRange",
+    "decorated": "?DrawViewRange@CField_LimitedView@@IAEXXZ",
+    "demangled": "protected: void CField_LimitedView::DrawViewRange(void)"
+   }
+  ],
+  "CField_Massacre": [
+   {
+    "ea": "0x55f33f",
+    "method": "Init",
+    "decorated": "?Init@CField_Massacre@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_Massacre::Init(void __near *)"
+   }
+  ],
+  "CField_MassacreResult": [
+   {
+    "ea": "0x5617a1",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField_MassacreResult@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_MassacreResult::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5617c5",
+    "method": "OnMassacreResult",
+    "decorated": "?OnMassacreResult@CField_MassacreResult@@AAEXAAVCInPacket@@@Z",
+    "demangled": "private: void CField_MassacreResult::OnMassacreResult(class CInPacket __near &)"
+   }
+  ],
+  "CField_MonsterCarnival": [
+   {
+    "ea": "0x565156",
+    "method": "CreateUIWindow",
+    "decorated": "?CreateUIWindow@CField_MonsterCarnival@@QAEXXZ",
+    "demangled": "public: void CField_MonsterCarnival::CreateUIWindow(void)"
+   },
+   {
+    "ea": "0x5652ee",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField_MonsterCarnival@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_MonsterCarnival::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x565397",
+    "method": "OnEnter",
+    "decorated": "?OnEnter@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnEnter(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x56550e",
+    "method": "OnPersonalCP",
+    "decorated": "?OnPersonalCP@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnPersonalCP(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x56553e",
+    "method": "OnTeamCP",
+    "decorated": "?OnTeamCP@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnTeamCP(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x56557d",
+    "method": "OnRequestResult",
+    "decorated": "?OnRequestResult@CField_MonsterCarnival@@QAEXHAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnRequestResult(int,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x5657e7",
+    "method": "OnProcessForDeath",
+    "decorated": "?OnProcessForDeath@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnProcessForDeath(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x565962",
+    "method": "OnShowMemberOutMsg",
+    "decorated": "?OnShowMemberOutMsg@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnShowMemberOutMsg(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x565add",
+    "method": "OnShowGameResult",
+    "decorated": "?OnShowGameResult@CField_MonsterCarnival@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_MonsterCarnival::OnShowGameResult(class CInPacket __near &)"
+   }
+  ],
+  "CField_PartyRaid": [
+   {
+    "ea": "0x56bd3c",
+    "method": "Init",
+    "decorated": "?Init@CField_PartyRaid@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_PartyRaid::Init(void __near *)"
+   }
+  ],
+  "CField_PartyRaidBoss": [
+   {
+    "ea": "0x56c9b7",
+    "method": "Init",
+    "decorated": "?Init@CField_PartyRaidBoss@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_PartyRaidBoss::Init(void __near *)"
+   }
+  ],
+  "CField_PartyRaidResult": [
+   {
+    "ea": "0x56d9e9",
+    "method": "Init",
+    "decorated": "?Init@CField_PartyRaidResult@@UAEXPAX@Z",
+    "demangled": "public: virtual void CField_PartyRaidResult::Init(void __near *)"
+   }
+  ],
+  "CField_SnowBall": [
+   {
+    "ea": "0x574df1",
+    "method": "Update",
+    "decorated": "?Update@CField_SnowBall@@UAEXXZ",
+    "demangled": "public: virtual void CField_SnowBall::Update(void)"
+   }
+  ],
+  "CField_SpaceGAGA": [
+   {
+    "ea": "0x578a97",
+    "method": "OnClock",
+    "decorated": "?OnClock@CField_SpaceGAGA@@MAEXAAVCInPacket@@@Z",
+    "demangled": "protected: virtual void CField_SpaceGAGA::OnClock(class CInPacket __near &)"
+   }
+  ],
+  "CField_Wedding": [
+   {
+    "ea": "0x5814fd",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CField_Wedding@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CField_Wedding::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x58153d",
+    "method": "OnWeddingProgress",
+    "decorated": "?OnWeddingProgress@CField_Wedding@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_Wedding::OnWeddingProgress(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x581b49",
+    "method": "OnWeddingCeremonyEnd",
+    "decorated": "?OnWeddingCeremonyEnd@CField_Wedding@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CField_Wedding::OnWeddingCeremonyEnd(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x581b78",
+    "method": "SetBlessEffect",
+    "decorated": "?SetBlessEffect@CField_Wedding@@QAEXH@Z",
+    "demangled": "public: void CField_Wedding::SetBlessEffect(int)"
+   }
+  ],
+  "CField_Witchtower": [
+   {
+    "ea": "0x58523a",
+    "method": "Close",
+    "decorated": "?Close@CField_Witchtower@@UAEXXZ",
+    "demangled": "public: virtual void CField_Witchtower::Close(void)"
+   }
+  ],
+  "CFloatNotice": [
+   {
+    "ea": "0x58c53b",
+    "method": "CreateFloatNotice",
+    "decorated": "?CreateFloatNotice@CFloatNotice@@QAEXPBDJJJ@Z",
+    "demangled": "public: void CFloatNotice::CreateFloatNotice(char const __near *,long,long,long)"
+   },
+   {
+    "ea": "0x58ccb1",
+    "method": "DeleteFloatNotice",
+    "decorated": "?DeleteFloatNotice@CFloatNotice@@QAEXXZ",
+    "demangled": "public: void CFloatNotice::DeleteFloatNotice(void)"
+   }
+  ],
+  "CGrenade": [
+   {
+    "ea": "0x58fba0",
+    "method": "BombAndAttackMob",
+    "decorated": "?BombAndAttackMob@CGrenade@@AAEXXZ",
+    "demangled": "private: void CGrenade::BombAndAttackMob(void)"
+   },
+   {
+    "ea": "0x58fbfc",
+    "method": "JustBomb",
+    "decorated": "?JustBomb@CGrenade@@AAEXXZ",
+    "demangled": "private: void CGrenade::JustBomb(void)"
+   },
+   {
+    "ea": "0x58fc1e",
+    "method": "Update",
+    "decorated": "?Update@CGrenade@@QAEHK@Z",
+    "demangled": "public: int CGrenade::Update(unsigned long)"
+   }
+  ],
+  "CInPacket": [
+   {
+    "ea": "0x4065f3",
+    "method": "Decode1",
+    "decorated": "?Decode1@CInPacket@@QAEEXZ",
+    "demangled": "public: unsigned char CInPacket::Decode1(void)"
+   },
+   {
+    "ea": "0x406629",
+    "method": "Decode4",
+    "decorated": "?Decode4@CInPacket@@QAEKXZ",
+    "demangled": "public: unsigned long CInPacket::Decode4(void)"
+   },
+   {
+    "ea": "0x42470c",
+    "method": "Decode2",
+    "decorated": "?Decode2@CInPacket@@QAEGXZ",
+    "demangled": "public: unsigned short CInPacket::Decode2(void)"
+   },
+   {
+    "ea": "0x432257",
+    "method": "DecodeBuffer",
+    "decorated": "?DecodeBuffer@CInPacket@@QAEXPAXI@Z",
+    "demangled": "public: void CInPacket::DecodeBuffer(void __near *,unsigned int)"
+   },
+   {
+    "ea": "0x46f30c",
+    "method": "DecodeStr",
+    "decorated": "?DecodeStr@CInPacket@@QAE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CInPacket::DecodeStr(void)"
+   },
+   {
+    "ea": "0x6ec424",
+    "method": "AppendBuffer",
+    "decorated": "?AppendBuffer@CInPacket@@QAEJAAV?$ZRef@VZSocketBuffer@@@@PAJH@Z",
+    "demangled": "public: long CInPacket::AppendBuffer(class ZRef<class ZSocketBuffer> __near &,long __near *,int)"
+   },
+   {
+    "ea": "0x6ec52e",
+    "method": "RawAppendBuffer",
+    "decorated": "?RawAppendBuffer@CInPacket@@IAEXPBXI@Z",
+    "demangled": "protected: void CInPacket::RawAppendBuffer(void const __near *,unsigned int)"
+   },
+   {
+    "ea": "0x6ec58b",
+    "method": "DecryptData",
+    "decorated": "?DecryptData@CInPacket@@QAEHK@Z",
+    "demangled": "public: int CInPacket::DecryptData(unsigned long)"
+   },
+   {
+    "ea": "0x6ec85d",
+    "method": "WriteClientLog",
+    "decorated": "?WriteClientLog@CInPacket@@IAEXXZ",
+    "demangled": "protected: void CInPacket::WriteClientLog(void)"
+   }
+  ],
+  "CItemMakerInfo": [
+   {
+    "ea": "0x5e8ada",
+    "method": "GetItemMakeInfo",
+    "decorated": "?GetItemMakeInfo@CItemMakerInfo@@QAE?AV?$ZRef@UITEM_MAKE_INFO@@@@J@Z",
+    "demangled": "public: class ZRef<struct ITEM_MAKE_INFO> CItemMakerInfo::GetItemMakeInfo(long)"
+   }
+  ],
+  "CMapLoadable": [
+   {
+    "ea": "0x639708",
+    "method": "Init",
+    "decorated": "?Init@CMapLoadable@@UAEXPAX@Z",
+    "demangled": "public: virtual void CMapLoadable::Init(void __near *)"
+   },
+   {
+    "ea": "0x63988a",
+    "method": "Close",
+    "decorated": "?Close@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::Close(void)"
+   },
+   {
+    "ea": "0x6399ef",
+    "method": "Update",
+    "decorated": "?Update@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::Update(void)"
+   },
+   {
+    "ea": "0x639b3d",
+    "method": "LoadMap",
+    "decorated": "?LoadMap@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::LoadMap(void)"
+   },
+   {
+    "ea": "0x63a100",
+    "method": "RestoreTile",
+    "decorated": "?RestoreTile@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreTile(void)"
+   },
+   {
+    "ea": "0x63a5c4",
+    "method": "MakeTile",
+    "decorated": "?MakeTile@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0@Z",
+    "demangled": "protected: void CMapLoadable::MakeTile(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x63aa7e",
+    "method": "RestoreObj",
+    "decorated": "?RestoreObj@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreObj(void)"
+   },
+   {
+    "ea": "0x63ad16",
+    "method": "MakeObj",
+    "decorated": "?MakeObj@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeObj(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x63c212",
+    "method": "MakeObjLayer",
+    "decorated": "?MakeObjLayer@CMapLoadable@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@JJJJHJJJJAAJABV?$ZXString@D@@@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>> CMapLoadable::MakeObjLayer(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,long,long,long,long,int,long,long,long,long,long __near &,class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x63c741",
+    "method": "MakeObstacles",
+    "decorated": "?MakeObstacles@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@HABV?$ZXString@D@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeObstacles(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,int,class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x63cbba",
+    "method": "RestoreBack",
+    "decorated": "?RestoreBack@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreBack(void)"
+   },
+   {
+    "ea": "0x63cd4e",
+    "method": "MakeBack",
+    "decorated": "?MakeBack@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@KHJJJJ@Z",
+    "demangled": "protected: void CMapLoadable::MakeBack(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,unsigned long,int,long,long,long,long)"
+   },
+   {
+    "ea": "0x63ef34",
+    "method": "MakeVectorAnimate",
+    "decorated": "?MakeVectorAnimate@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeVectorAnimate(class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>)"
+   },
+   {
+    "ea": "0x63f671",
+    "method": "RestoreWeather",
+    "decorated": "?RestoreWeather@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreWeather(void)"
+   },
+   {
+    "ea": "0x63f717",
+    "method": "MakeCloud",
+    "decorated": "?MakeCloud@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::MakeCloud(void)"
+   },
+   {
+    "ea": "0x63fe57",
+    "method": "TransientLayer_Weather",
+    "decorated": "?TransientLayer_Weather@CMapLoadable@@IAEXABV?$ZXString@G@@JJJ@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_Weather(class ZXString<unsigned short> const __near &,long,long,long)"
+   },
+   {
+    "ea": "0x6419e7",
+    "method": "TransientLayer_FireCracker",
+    "decorated": "?TransientLayer_FireCracker@CMapLoadable@@IAEXV?$ZXString@G@@@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_FireCracker(class ZXString<unsigned short>)"
+   },
+   {
+    "ea": "0x641aeb",
+    "method": "WeatherLayer_RemoveAll",
+    "decorated": "?WeatherLayer_RemoveAll@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::WeatherLayer_RemoveAll(void)"
+   },
+   {
+    "ea": "0x641b13",
+    "method": "TransientLayer_NewYear",
+    "decorated": "?TransientLayer_NewYear@CMapLoadable@@IAEXV?$ZXString@G@@@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_NewYear(class ZXString<unsigned short>)"
+   },
+   {
+    "ea": "0x641db2",
+    "method": "PlayNextMusic",
+    "decorated": "?PlayNextMusic@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::PlayNextMusic(void)"
+   },
+   {
+    "ea": "0x641ef1",
+    "method": "RestoreViewRange",
+    "decorated": "?RestoreViewRange@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreViewRange(void)"
+   },
+   {
+    "ea": "0x64211e",
+    "method": "PlayBGMFromMapInfo",
+    "decorated": "?PlayBGMFromMapInfo@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::PlayBGMFromMapInfo(void)"
+   },
+   {
+    "ea": "0x642214",
+    "method": "RestoreBGM",
+    "decorated": "?RestoreBGM@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreBGM(void)"
+   },
+   {
+    "ea": "0x642264",
+    "method": "UpdateObstacleInfo",
+    "decorated": "?UpdateObstacleInfo@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::UpdateObstacleInfo(void)"
+   },
+   {
+    "ea": "0x642890",
+    "method": "SetFieldMagLevel",
+    "decorated": "?SetFieldMagLevel@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::SetFieldMagLevel(void)"
+   },
+   {
+    "ea": "0x642aca",
+    "method": "SetObjectState",
+    "decorated": "?SetObjectState@CMapLoadable@@QAEHPBDJ@Z",
+    "demangled": "public: int CMapLoadable::SetObjectState(char const __near *,long)"
+   },
+   {
+    "ea": "0x642e87",
+    "method": "GetObjectRect",
+    "decorated": "?GetObjectRect@CMapLoadable@@QBE?AUtagRECT@@PBD@Z",
+    "demangled": "public: struct tagRECT CMapLoadable::GetObjectRect(char const __near *)const"
+   },
+   {
+    "ea": "0x643f7a",
+    "method": "ProcessReflection",
+    "decorated": "?ProcessReflection@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::ProcessReflection(void)"
+   },
+   {
+    "ea": "0x644446",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CMapLoadable@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CMapLoadable::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x644482",
+    "method": "OnLeaveDirectionMode",
+    "decorated": "?OnLeaveDirectionMode@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::OnLeaveDirectionMode(void)"
+   },
+   {
+    "ea": "0x644491",
+    "method": "ReloadBack",
+    "decorated": "?ReloadBack@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::ReloadBack(void)"
+   },
+   {
+    "ea": "0x6445c5",
+    "method": "OnSetBackEffect",
+    "decorated": "?OnSetBackEffect@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnSetBackEffect(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6449ca",
+    "method": "OnClearBackEffect",
+    "decorated": "?OnClearBackEffect@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnClearBackEffect(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6449d2",
+    "method": "OnSetMapObjectVisible",
+    "decorated": "?OnSetMapObjectVisible@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnSetMapObjectVisible(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x644a44",
+    "method": "SetMapObjectVisible",
+    "decorated": "?SetMapObjectVisible@CMapLoadable@@IAEXABV?$ZXString@D@@H@Z",
+    "demangled": "protected: void CMapLoadable::SetMapObjectVisible(class ZXString<char> const __near &,int)"
+   },
+   {
+    "ea": "0x644ac5",
+    "method": "SetLayerListVisible",
+    "decorated": "?SetLayerListVisible@CMapLoadable@@KAXV?$ZRef@V?$ZList@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@@@@@H@Z",
+    "demangled": "protected: static void CMapLoadable::SetLayerListVisible(class ZRef<class ZList<class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>>>,int)"
+   }
+  ],
+  "CMemoryGameDlg": [
+   {
+    "ea": "0x64eeef",
+    "method": "OnKey",
+    "decorated": "?OnKey@CMemoryGameDlg@@UAEXII@Z",
+    "demangled": "public: virtual void CMemoryGameDlg::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "CMiniRoomBaseDlg": [
+   {
+    "ea": "0x484bcf",
+    "method": "GetUserID",
+    "decorated": "?GetUserID@CMiniRoomBaseDlg@@IBE?AV?$ZXString@D@@J@Z",
+    "demangled": "protected: class ZXString<char> CMiniRoomBaseDlg::GetUserID(long)const"
+   },
+   {
+    "ea": "0x65de20",
+    "method": "MiniRoomFactory",
+    "decorated": "?MiniRoomFactory@CMiniRoomBaseDlg@@KAPAV1@J@Z",
+    "demangled": "protected: static class CMiniRoomBaseDlg __near * CMiniRoomBaseDlg::MiniRoomFactory(long)"
+   },
+   {
+    "ea": "0x65df4c",
+    "method": "OnPacketBase",
+    "decorated": "?OnPacketBase@CMiniRoomBaseDlg@@SAXAAVCInPacket@@@Z",
+    "demangled": "public: static void CMiniRoomBaseDlg::OnPacketBase(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65dff3",
+    "method": "OnEnterResultStatic",
+    "decorated": "?OnEnterResultStatic@CMiniRoomBaseDlg@@KAXAAVCInPacket@@@Z",
+    "demangled": "protected: static void CMiniRoomBaseDlg::OnEnterResultStatic(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65e53b",
+    "method": "OnInviteStatic",
+    "decorated": "?OnInviteStatic@CMiniRoomBaseDlg@@KAXAAVCInPacket@@@Z",
+    "demangled": "protected: static void CMiniRoomBaseDlg::OnInviteStatic(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65e66d",
+    "method": "SendInviteResult",
+    "decorated": "?SendInviteResult@CMiniRoomBaseDlg@@SAXKJ@Z",
+    "demangled": "public: static void CMiniRoomBaseDlg::SendInviteResult(unsigned long,long)"
+   },
+   {
+    "ea": "0x65e725",
+    "method": "SendCashInviteResult",
+    "decorated": "?SendCashInviteResult@CMiniRoomBaseDlg@@SAXKJ@Z",
+    "demangled": "public: static void CMiniRoomBaseDlg::SendCashInviteResult(unsigned long,long)"
+   },
+   {
+    "ea": "0x65e848",
+    "method": "OnInviteResultStatic",
+    "decorated": "?OnInviteResultStatic@CMiniRoomBaseDlg@@KAXAAVCInPacket@@@Z",
+    "demangled": "protected: static void CMiniRoomBaseDlg::OnInviteResultStatic(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65e9fa",
+    "method": "OnCheckSSN2Static",
+    "decorated": "?OnCheckSSN2Static@CMiniRoomBaseDlg@@KAXAAVCInPacket@@@Z",
+    "demangled": "protected: static void CMiniRoomBaseDlg::OnCheckSSN2Static(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65ec3d",
+    "method": "OnEnterResultBase",
+    "decorated": "?OnEnterResultBase@CMiniRoomBaseDlg@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMiniRoomBaseDlg::OnEnterResultBase(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65ed1c",
+    "method": "OnEnterBase",
+    "decorated": "?OnEnterBase@CMiniRoomBaseDlg@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMiniRoomBaseDlg::OnEnterBase(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65ee6c",
+    "method": "OnAvatar",
+    "decorated": "?OnAvatar@CMiniRoomBaseDlg@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMiniRoomBaseDlg::OnAvatar(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65f191",
+    "method": "Draw",
+    "decorated": "?Draw@CMiniRoomBaseDlg@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CMiniRoomBaseDlg::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x65f2b1",
+    "method": "DecodeAvatar",
+    "decorated": "?DecodeAvatar@CMiniRoomBaseDlg@@AAEXJAAVCInPacket@@@Z",
+    "demangled": "private: void CMiniRoomBaseDlg::DecodeAvatar(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x65f438",
+    "method": "CheckAndSendChat",
+    "decorated": "?CheckAndSendChat@CMiniRoomBaseDlg@@IAEXV?$ZXString@D@@@Z",
+    "demangled": "protected: void CMiniRoomBaseDlg::CheckAndSendChat(class ZXString<char>)"
+   }
+  ],
+  "CMonsterBookMan": [
+   {
+    "ea": "0x68487c",
+    "method": "LoadBook",
+    "decorated": "?LoadBook@CMonsterBookMan@@QAEHXZ",
+    "demangled": "public: int CMonsterBookMan::LoadBook(void)"
+   },
+   {
+    "ea": "0x6848a6",
+    "method": "LoadCard",
+    "decorated": "?LoadCard@CMonsterBookMan@@IAEHXZ",
+    "demangled": "protected: int CMonsterBookMan::LoadCard(void)"
+   },
+   {
+    "ea": "0x684e30",
+    "method": "GetCard",
+    "decorated": "?GetCard@CMonsterBookMan@@QBE?AV?$ZRef@UMonsterBookCard@@@@J@Z",
+    "demangled": "public: class ZRef<struct MonsterBookCard> CMonsterBookMan::GetCard(long)const"
+   },
+   {
+    "ea": "0x684f23",
+    "method": "LoadStringA",
+    "decorated": "?LoadStringA@CMonsterBookMan@@IAEHXZ",
+    "demangled": "protected: int CMonsterBookMan::LoadStringA(void)"
+   },
+   {
+    "ea": "0x685857",
+    "method": "LoadBookIcon",
+    "decorated": "?LoadBookIcon@CMonsterBookMan@@IAEHXZ",
+    "demangled": "protected: int CMonsterBookMan::LoadBookIcon(void)"
+   },
+   {
+    "ea": "0x685b79",
+    "method": "GetString",
+    "decorated": "?GetString@CMonsterBookMan@@QBE?AV?$ZRef@UMonsterBookStr@@@@J@Z",
+    "demangled": "public: class ZRef<struct MonsterBookStr> CMonsterBookMan::GetString(long)const"
+   }
+  ],
+  "CNewYearCardReceiverSearchResult": [
+   {
+    "ea": "0xa50cf6",
+    "method": "HitTest",
+    "decorated": "?HitTest@CNewYearCardReceiverSearchResult@@IAEHJJ@Z",
+    "demangled": "protected: int CNewYearCardReceiverSearchResult::HitTest(long,long)"
+   },
+   {
+    "ea": "0xa50d7e",
+    "method": "_GetTopItemIndex",
+    "decorated": "?_GetTopItemIndex@CNewYearCardReceiverSearchResult@@IAEJXZ",
+    "demangled": "protected: long CNewYearCardReceiverSearchResult::_GetTopItemIndex(void)"
+   },
+   {
+    "ea": "0xa50da1",
+    "method": "_GetSelection",
+    "decorated": "?_GetSelection@CNewYearCardReceiverSearchResult@@IAEJJJ@Z",
+    "demangled": "protected: long CNewYearCardReceiverSearchResult::_GetSelection(long,long)"
+   },
+   {
+    "ea": "0xa50dfa",
+    "method": "_ClearHighlight",
+    "decorated": "?_ClearHighlight@CNewYearCardReceiverSearchResult@@IAEXXZ",
+    "demangled": "protected: void CNewYearCardReceiverSearchResult::_ClearHighlight(void)"
+   }
+  ],
+  "CNoticeQuestProgress": [
+   {
+    "ea": "0x6cdb4e",
+    "method": "OnQuestProgressUpdated_Item",
+    "decorated": "?OnQuestProgressUpdated_Item@CNoticeQuestProgress@@QAEXGJ@Z",
+    "demangled": "public: void CNoticeQuestProgress::OnQuestProgressUpdated_Item(unsigned short,long)"
+   },
+   {
+    "ea": "0x6cdd82",
+    "method": "OnQuestProgressUpdated_Mob",
+    "decorated": "?OnQuestProgressUpdated_Mob@CNoticeQuestProgress@@QAEXGV?$ZXString@D@@@Z",
+    "demangled": "public: void CNoticeQuestProgress::OnQuestProgressUpdated_Mob(unsigned short,class ZXString<char>)"
+   },
+   {
+    "ea": "0x6ce251",
+    "method": "OnQuestProgressUpdated_Script",
+    "decorated": "?OnQuestProgressUpdated_Script@CNoticeQuestProgress@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CNoticeQuestProgress::OnQuestProgressUpdated_Script(class ZXString<char>)"
+   },
+   {
+    "ea": "0x6ce306",
+    "method": "NoticeProgressChange",
+    "decorated": "?NoticeProgressChange@CNoticeQuestProgress@@IAEXXZ",
+    "demangled": "protected: void CNoticeQuestProgress::NoticeProgressChange(void)"
+   },
+   {
+    "ea": "0x6cec47",
+    "method": "Update",
+    "decorated": "?Update@CNoticeQuestProgress@@UAEXXZ",
+    "demangled": "public: virtual void CNoticeQuestProgress::Update(void)"
+   }
+  ],
+  "COmokDlg": [
+   {
+    "ea": "0x6e4e8b",
+    "method": "OnKey",
+    "decorated": "?OnKey@COmokDlg@@UAEXII@Z",
+    "demangled": "public: virtual void COmokDlg::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "COutPacket": [
+   {
+    "ea": "0x406549",
+    "method": "Encode1",
+    "decorated": "?Encode1@COutPacket@@QAEXE@Z",
+    "demangled": "public: void COutPacket::Encode1(unsigned char)"
+   },
+   {
+    "ea": "0x4065a6",
+    "method": "Encode4",
+    "decorated": "?Encode4@COutPacket@@QAEXK@Z",
+    "demangled": "public: void COutPacket::Encode4(unsigned long)"
+   },
+   {
+    "ea": "0x427f74",
+    "method": "Encode2",
+    "decorated": "?Encode2@COutPacket@@QAEXG@Z",
+    "demangled": "public: void COutPacket::Encode2(unsigned short)"
+   },
+   {
+    "ea": "0x46c00c",
+    "method": "EncodeBuffer",
+    "decorated": "?EncodeBuffer@COutPacket@@QAEXPBXI@Z",
+    "demangled": "public: void COutPacket::EncodeBuffer(void const __near *,unsigned int)"
+   },
+   {
+    "ea": "0x46f3cf",
+    "method": "EncodeStr",
+    "decorated": "?EncodeStr@COutPacket@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void COutPacket::EncodeStr(class ZXString<char>)"
+   },
+   {
+    "ea": "0x6ecaa9",
+    "method": "Init",
+    "decorated": "?Init@COutPacket@@QAEXJ@Z",
+    "demangled": "public: void COutPacket::Init(long)"
+   },
+   {
+    "ea": "0x6ecacb",
+    "method": "Init",
+    "decorated": "?Init@COutPacket@@QAEXJHH@Z",
+    "demangled": "public: void COutPacket::Init(long,int,int)"
+   },
+   {
+    "ea": "0x6ecb07",
+    "method": "InitByte",
+    "decorated": "?InitByte@COutPacket@@QAEXJH@Z",
+    "demangled": "public: void COutPacket::InitByte(long,int)"
+   },
+   {
+    "ea": "0x6ecb27",
+    "method": "MakeBufferList",
+    "decorated": "?MakeBufferList@COutPacket@@QBEXAAV?$ZList@V?$ZRef@VZSocketBuffer@@@@@@GPAKHK@Z",
+    "demangled": "public: void COutPacket::MakeBufferList(class ZList<class ZRef<class ZSocketBuffer>> __near &,unsigned short,unsigned long __near *,int,unsigned long)const"
+   }
+  ],
+  "CQuest": [
+   {
+    "ea": "0x716fe1",
+    "method": "StartQuest",
+    "decorated": "?StartQuest@CQuest@@QAEXH@Z",
+    "demangled": "public: void CQuest::StartQuest(int)"
+   },
+   {
+    "ea": "0x717740",
+    "method": "SayNormal",
+    "decorated": "?SayNormal@CQuest@@IAEHAAV?$ZArray@V?$ZXString@D@@@@@Z",
+    "demangled": "protected: int CQuest::SayNormal(class ZArray<class ZXString<char>> __near &)"
+   },
+   {
+    "ea": "0x718b58",
+    "method": "OnCompleteQuestFailed",
+    "decorated": "?OnCompleteQuestFailed@CQuest@@IAEXJ@Z",
+    "demangled": "protected: void CQuest::OnCompleteQuestFailed(long)"
+   }
+  ],
+  "CQuestMan": [
+   {
+    "ea": "0x6cdd06",
+    "method": "GetCompleteDemand",
+    "decorated": "?GetCompleteDemand@CQuestMan@@QAEPAUQuestDemand@@G@Z",
+    "demangled": "public: struct QuestDemand __near * CQuestMan::GetCompleteDemand(unsigned short)"
+   },
+   {
+    "ea": "0x71d8df",
+    "method": "LoadDemand",
+    "decorated": "?LoadDemand@CQuestMan@@QAEHXZ",
+    "demangled": "public: int CQuestMan::LoadDemand(void)"
+   },
+   {
+    "ea": "0x71ddec",
+    "method": "GetQuestByNpc",
+    "decorated": "?GetQuestByNpc@CQuestMan@@QAEHKAAV?$ZArray@G@@@Z",
+    "demangled": "public: int CQuestMan::GetQuestByNpc(unsigned long,class ZArray<unsigned short> __near &)"
+   },
+   {
+    "ea": "0x71dee4",
+    "method": "SetRecentlyUpdatedQuest",
+    "decorated": "?SetRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z",
+    "demangled": "public: void CQuestMan::SetRecentlyUpdatedQuest(unsigned short)"
+   },
+   {
+    "ea": "0x71df1c",
+    "method": "RemoveRecentlyUpdatedQuest",
+    "decorated": "?RemoveRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z",
+    "demangled": "public: void CQuestMan::RemoveRecentlyUpdatedQuest(unsigned short)"
+   },
+   {
+    "ea": "0x71df41",
+    "method": "GetQuestDisplayMedal",
+    "decorated": "?GetQuestDisplayMedal@CQuestMan@@QAEJG@Z",
+    "demangled": "public: long CQuestMan::GetQuestDisplayMedal(unsigned short)"
+   },
+   {
+    "ea": "0x720e88",
+    "method": "IsStartScriptLinkedQuest",
+    "decorated": "?IsStartScriptLinkedQuest@CQuestMan@@QAEHG@Z",
+    "demangled": "public: int CQuestMan::IsStartScriptLinkedQuest(unsigned short)"
+   },
+   {
+    "ea": "0x720f09",
+    "method": "IsCompleteScriptLinkedQuest",
+    "decorated": "?IsCompleteScriptLinkedQuest@CQuestMan@@QAEHG@Z",
+    "demangled": "public: int CQuestMan::IsCompleteScriptLinkedQuest(unsigned short)"
+   },
+   {
+    "ea": "0x720f8a",
+    "method": "IsAutoStartQuest",
+    "decorated": "?IsAutoStartQuest@CQuestMan@@QAEHG@Z",
+    "demangled": "public: int CQuestMan::IsAutoStartQuest(unsigned short)"
+   },
+   {
+    "ea": "0x720fab",
+    "method": "IsAutoAutoAcceptQuest",
+    "decorated": "?IsAutoAutoAcceptQuest@CQuestMan@@QAEHG@Z",
+    "demangled": "public: int CQuestMan::IsAutoAutoAcceptQuest(unsigned short)"
+   },
+   {
+    "ea": "0x720fcc",
+    "method": "IsAutoCompleteQuest",
+    "decorated": "?IsAutoCompleteQuest@CQuestMan@@QAEHG@Z",
+    "demangled": "public: int CQuestMan::IsAutoCompleteQuest(unsigned short)"
+   },
+   {
+    "ea": "0x721163",
+    "method": "CheckStartDemand",
+    "decorated": "?CheckStartDemand@CQuestMan@@QAEHGKABVCharacterData@@ABUSecondaryStat@@JJHJ@Z",
+    "demangled": "public: int CQuestMan::CheckStartDemand(unsigned short,unsigned long,class CharacterData const __near &,struct SecondaryStat const __near &,long,long,int,long)"
+   },
+   {
+    "ea": "0x721d2c",
+    "method": "CheckCompleteDemand",
+    "decorated": "?CheckCompleteDemand@CQuestMan@@QAEJGKABVCharacterData@@ABUSecondaryStat@@@Z",
+    "demangled": "public: long CQuestMan::CheckCompleteDemand(unsigned short,unsigned long,class CharacterData const __near &,struct SecondaryStat const __near &)"
+   },
+   {
+    "ea": "0x722823",
+    "method": "LoadQuestInfo",
+    "decorated": "?LoadQuestInfo@CQuestMan@@QAEXXZ",
+    "demangled": "public: void CQuestMan::LoadQuestInfo(void)"
+   },
+   {
+    "ea": "0x723341",
+    "method": "LoadPartyQuestInfo",
+    "decorated": "?LoadPartyQuestInfo@CQuestMan@@QAEXXZ",
+    "demangled": "public: void CQuestMan::LoadPartyQuestInfo(void)"
+   },
+   {
+    "ea": "0x7238dd",
+    "method": "LoadPartyQuestRank",
+    "decorated": "?LoadPartyQuestRank@CQuestMan@@AAEXGV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "private: void CQuestMan::LoadPartyQuestRank(unsigned short,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x724722",
+    "method": "GetPartyQuestRankCount",
+    "decorated": "?GetPartyQuestRankCount@CQuestMan@@QAEJAAV?$ZXString@D@@ABVCharacterData@@@Z",
+    "demangled": "public: long CQuestMan::GetPartyQuestRankCount(class ZXString<char> __near &,class CharacterData const __near &)"
+   }
+  ],
+  "CRPSGameDlg": [
+   {
+    "ea": "0x73fff1",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CRPSGameDlg@@SAXAAVCInPacket@@@Z",
+    "demangled": "public: static void CRPSGameDlg::OnPacket(class CInPacket __near &)"
+   }
+  ],
+  "CScriptMan": [
+   {
+    "ea": "0x7465bf",
+    "method": "Init",
+    "decorated": "?Init@CScriptMan@@QAEXXZ",
+    "demangled": "public: void CScriptMan::Init(void)"
+   },
+   {
+    "ea": "0x7465f4",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CScriptMan@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CScriptMan::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x74660a",
+    "method": "OnScriptMessage",
+    "decorated": "?OnScriptMessage@CScriptMan@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnScriptMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x7467ab",
+    "method": "OnSay",
+    "decorated": "?OnSay@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnSay(long,long,class CInPacket __near &,unsigned char)"
+   },
+   {
+    "ea": "0x74692c",
+    "method": "OnAskYesNo",
+    "decorated": "?OnAskYesNo@CScriptMan@@IAEXJJAAVCInPacket@@EHH@Z",
+    "demangled": "protected: void CScriptMan::OnAskYesNo(long,long,class CInPacket __near &,unsigned char,int,int)"
+   },
+   {
+    "ea": "0x746a8b",
+    "method": "OnAskText",
+    "decorated": "?OnAskText@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnAskText(long,long,class CInPacket __near &,unsigned char)"
+   },
+   {
+    "ea": "0x746c46",
+    "method": "OnAskBoxText",
+    "decorated": "?OnAskBoxText@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnAskBoxText(long,long,class CInPacket __near &,unsigned char)"
+   },
+   {
+    "ea": "0x746dff",
+    "method": "OnAskNumber",
+    "decorated": "?OnAskNumber@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnAskNumber(long,long,class CInPacket __near &,unsigned char)"
+   },
+   {
+    "ea": "0x746fad",
+    "method": "OnAskMenu",
+    "decorated": "?OnAskMenu@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnAskMenu(long,long,class CInPacket __near &,unsigned char)"
+   },
+   {
+    "ea": "0x74713d",
+    "method": "OnAskAvatar",
+    "decorated": "?OnAskAvatar@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskAvatar(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x74730b",
+    "method": "OnAskMembershopAvatar",
+    "decorated": "?OnAskMembershopAvatar@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskMembershopAvatar(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x7474a2",
+    "method": "OnAskPet",
+    "decorated": "?OnAskPet@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskPet(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x74775c",
+    "method": "OnAskPetAll",
+    "decorated": "?OnAskPetAll@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskPetAll(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x747a22",
+    "method": "OnAskQuiz",
+    "decorated": "?OnAskQuiz@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskQuiz(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x747a34",
+    "method": "OnAskSpeedQuiz",
+    "decorated": "?OnAskSpeedQuiz@CScriptMan@@IAEXJJAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskSpeedQuiz(long,long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x747a46",
+    "method": "OnAskSlideMenu",
+    "decorated": "?OnAskSlideMenu@CScriptMan@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CScriptMan::OnAskSlideMenu(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x961275",
+    "method": "OnSayImage",
+    "decorated": "?OnSayImage@CScriptMan@@IAEXJJAAVCInPacket@@E@Z",
+    "demangled": "protected: void CScriptMan::OnSayImage(long,long,class CInPacket __near &,unsigned char)"
+   }
+  ],
+  "CShip": [
+   {
+    "ea": "0x54d1c0",
+    "method": "LeaveShipMove",
+    "decorated": "?LeaveShipMove@CShip@@QAEXXZ",
+    "demangled": "public: void CShip::LeaveShipMove(void)"
+   },
+   {
+    "ea": "0x54d32c",
+    "method": "EnterShipMove",
+    "decorated": "?EnterShipMove@CShip@@QAEXXZ",
+    "demangled": "public: void CShip::EnterShipMove(void)"
+   },
+   {
+    "ea": "0x54d498",
+    "method": "AppearShip",
+    "decorated": "?AppearShip@CShip@@QAEXXZ",
+    "demangled": "public: void CShip::AppearShip(void)"
+   }
+  ],
+  "CSlideMenuDlg": [
+   {
+    "ea": "0x76b5c8",
+    "method": "SetSlideMenuDlg",
+    "decorated": "?SetSlideMenuDlg@CSlideMenuDlg@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CSlideMenuDlg::SetSlideMenuDlg(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x76b6d2",
+    "method": "SetButtonInfo",
+    "decorated": "?SetButtonInfo@CSlideMenuDlg@@IAEXV?$ZXString@D@@@Z",
+    "demangled": "protected: void CSlideMenuDlg::SetButtonInfo(class ZXString<char>)"
+   },
+   {
+    "ea": "0x76b9fc",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CSlideMenuDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CSlideMenuDlg::OnCreate(void __near *)"
+   }
+  ],
+  "CSlideNotice": [
+   {
+    "ea": "0x7e1686",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CSlideNotice@@UAEXPAX@Z",
+    "demangled": "public: virtual void CSlideNotice::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x7e16fe",
+    "method": "SetMsg",
+    "decorated": "?SetMsg@CSlideNotice@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CSlideNotice::SetMsg(class ZXString<char>)"
+   }
+  ],
+  "CStage": [
+   {
+    "ea": "0x775fe6",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CStage@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CStage::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x776020",
+    "method": "OnSetField",
+    "decorated": "?OnSetField@CStage@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CStage::OnSetField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x776a4f",
+    "method": "OnSetCashShop",
+    "decorated": "?OnSetCashShop@CStage@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CStage::OnSetCashShop(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x776e65",
+    "method": "FadeIn",
+    "decorated": "?FadeIn@CStage@@QAEJXZ",
+    "demangled": "public: long CStage::FadeIn(void)"
+   },
+   {
+    "ea": "0x7774d1",
+    "method": "OnSetITC",
+    "decorated": "?OnSetITC@CStage@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CStage::OnSetITC(class CInPacket __near &)"
+   }
+  ],
+  "CTutor": [
+   {
+    "ea": "0x7a7b46",
+    "method": "OnMessage",
+    "decorated": "?OnMessage@CTutor@@QAEXAAV?$ZXString@D@@JJ@Z",
+    "demangled": "public: void CTutor::OnMessage(class ZXString<char> __near &,long,long)"
+   },
+   {
+    "ea": "0x7a9283",
+    "method": "OnMessage",
+    "decorated": "?OnMessage@CTutor@@QAEXJJ@Z",
+    "demangled": "public: void CTutor::OnMessage(long,long)"
+   }
+  ],
+  "CUIAntiMacroCharacterName": [
+   {
+    "ea": "0x96d2bc",
+    "method": "GetResult",
+    "decorated": "?GetResult@CUIAntiMacroCharacterName@@QAEXAAV?$ZXString@D@@@Z",
+    "demangled": "public: void CUIAntiMacroCharacterName::GetResult(class ZXString<char> __near &)"
+   }
+  ],
+  "CUICashItemGachapon": [
+   {
+    "ea": "0x999e4d",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUICashItemGachapon@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUICashItemGachapon::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x99a37b",
+    "method": "Update",
+    "decorated": "?Update@CUICashItemGachapon@@UAEXXZ",
+    "demangled": "public: virtual void CUICashItemGachapon::Update(void)"
+   },
+   {
+    "ea": "0x99aa92",
+    "method": "OnCashItemGachaponResult",
+    "decorated": "?OnCashItemGachaponResult@CUICashItemGachapon@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUICashItemGachapon::OnCashItemGachaponResult(class CInPacket __near &)"
+   }
+  ],
+  "CUIEnchantDlg": [
+   {
+    "ea": "0x7f675d",
+    "method": "RefreshToolTip",
+    "decorated": "?RefreshToolTip@CUIEnchantDlg@@QAEXXZ",
+    "demangled": "public: void CUIEnchantDlg::RefreshToolTip(void)"
+   },
+   {
+    "ea": "0x7f6b65",
+    "method": "MakeClone",
+    "decorated": "?MakeClone@CUIEnchantDlg@@AAE?AV?$ZRef@UGW_ItemSlotBase@@@@V2@@Z",
+    "demangled": "private: class ZRef<struct GW_ItemSlotBase> CUIEnchantDlg::MakeClone(class ZRef<struct GW_ItemSlotBase>)"
+   }
+  ],
+  "CUIEnergyBar": [
+   {
+    "ea": "0x7f9bad",
+    "method": "SetEnergy",
+    "decorated": "?SetEnergy@CUIEnergyBar@@QAEXJJ@Z",
+    "demangled": "public: void CUIEnergyBar::SetEnergy(long,long)"
+   },
+   {
+    "ea": "0x7faa49",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUIEnergyBar@@UAEHJJ@Z",
+    "demangled": "public: virtual int CUIEnergyBar::OnMouseMove(long,long)"
+   }
+  ],
+  "CUIEventAlarm": [
+   {
+    "ea": "0x805439",
+    "method": "CreateEventAlarm",
+    "decorated": "?CreateEventAlarm@CUIEventAlarm@@QAEXXZ",
+    "demangled": "public: void CUIEventAlarm::CreateEventAlarm(void)"
+   }
+  ],
+  "CUIGameMenu": [
+   {
+    "ea": "0x84a510",
+    "method": "ResetButtonState",
+    "decorated": "?ResetButtonState@CUIGameMenu@@IAEXXZ",
+    "demangled": "protected: void CUIGameMenu::ResetButtonState(void)"
+   }
+  ],
+  "CUIItemMaker": [
+   {
+    "ea": "0x822350",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIItemMaker@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIItemMaker::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x8229b8",
+    "method": "SetItemSlotRect",
+    "decorated": "?SetItemSlotRect@CUIItemMaker@@IAEXXZ",
+    "demangled": "protected: void CUIItemMaker::SetItemSlotRect(void)"
+   },
+   {
+    "ea": "0x822abb",
+    "method": "DoesSatisfyPreCondition",
+    "decorated": "?DoesSatisfyPreCondition@CUIItemMaker@@IAEHJ@Z",
+    "demangled": "protected: int CUIItemMaker::DoesSatisfyPreCondition(long)"
+   },
+   {
+    "ea": "0x822c66",
+    "method": "IsAbleToMake",
+    "decorated": "?IsAbleToMake@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::IsAbleToMake(void)"
+   },
+   {
+    "ea": "0x822ce1",
+    "method": "IsExistMakableItem",
+    "decorated": "?IsExistMakableItem@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::IsExistMakableItem(void)"
+   },
+   {
+    "ea": "0x822df0",
+    "method": "IsMatched_WithCurrentSetting",
+    "decorated": "?IsMatched_WithCurrentSetting@CUIItemMaker@@IAEHJ@Z",
+    "demangled": "protected: int CUIItemMaker::IsMatched_WithCurrentSetting(long)"
+   },
+   {
+    "ea": "0x8234a3",
+    "method": "SetComboBox_Category",
+    "decorated": "?SetComboBox_Category@CUIItemMaker@@IAEXXZ",
+    "demangled": "protected: void CUIItemMaker::SetComboBox_Category(void)"
+   },
+   {
+    "ea": "0x8248dd",
+    "method": "ClearItemSlot",
+    "decorated": "?ClearItemSlot@CUIItemMaker@@QAEXXZ",
+    "demangled": "public: void CUIItemMaker::ClearItemSlot(void)"
+   },
+   {
+    "ea": "0x824a06",
+    "method": "Update",
+    "decorated": "?Update@CUIItemMaker@@UAEXXZ",
+    "demangled": "public: virtual void CUIItemMaker::Update(void)"
+   },
+   {
+    "ea": "0x824c82",
+    "method": "Draw",
+    "decorated": "?Draw@CUIItemMaker@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIItemMaker::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x824e8d",
+    "method": "GetTotalCostToMake",
+    "decorated": "?GetTotalCostToMake@CUIItemMaker@@IAEJJ@Z",
+    "demangled": "protected: long CUIItemMaker::GetTotalCostToMake(long)"
+   },
+   {
+    "ea": "0x824f9d",
+    "method": "GetTotalCostToDisassemble",
+    "decorated": "?GetTotalCostToDisassemble@CUIItemMaker@@IAEJXZ",
+    "demangled": "protected: long CUIItemMaker::GetTotalCostToDisassemble(void)"
+   },
+   {
+    "ea": "0x82507e",
+    "method": "DrawMeso",
+    "decorated": "?DrawMeso@CUIItemMaker@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CUIItemMaker::DrawMeso(class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>>)"
+   },
+   {
+    "ea": "0x825250",
+    "method": "DrawRecipe",
+    "decorated": "?DrawRecipe@CUIItemMaker@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CUIItemMaker::DrawRecipe(class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>>)"
+   },
+   {
+    "ea": "0x8257b9",
+    "method": "DrawGem",
+    "decorated": "?DrawGem@CUIItemMaker@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CUIItemMaker::DrawGem(class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>>)"
+   },
+   {
+    "ea": "0x826aab",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUIItemMaker@@UAEHJJ@Z",
+    "demangled": "public: virtual int CUIItemMaker::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x826ace",
+    "method": "SetToolTip",
+    "decorated": "?SetToolTip@CUIItemMaker@@IAEXABUtagPOINT@@@Z",
+    "demangled": "protected: void CUIItemMaker::SetToolTip(struct tagPOINT const __near &)"
+   },
+   {
+    "ea": "0x826d02",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIItemMaker@@UAEXI@Z",
+    "demangled": "public: virtual void CUIItemMaker::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x826dbf",
+    "method": "ConfirmMake",
+    "decorated": "?ConfirmMake@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::ConfirmMake(void)"
+   },
+   {
+    "ea": "0x826f25",
+    "method": "StartItemMake",
+    "decorated": "?StartItemMake@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::StartItemMake(void)"
+   },
+   {
+    "ea": "0x826fb3",
+    "method": "IsEnoughMeso",
+    "decorated": "?IsEnoughMeso@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::IsEnoughMeso(void)"
+   },
+   {
+    "ea": "0x827096",
+    "method": "RequestItemMake",
+    "decorated": "?RequestItemMake@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::RequestItemMake(void)"
+   },
+   {
+    "ea": "0x82744f",
+    "method": "IsExistEmptySlot",
+    "decorated": "?IsExistEmptySlot@CUIItemMaker@@IAEHXZ",
+    "demangled": "protected: int CUIItemMaker::IsExistEmptySlot(void)"
+   }
+  ],
+  "CUIMedalQuestInfo": [
+   {
+    "ea": "0x84056b",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIMedalQuestInfo@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIMedalQuestInfo::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x841678",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIMedalQuestInfo@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUIMedalQuestInfo::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x841976",
+    "method": "GetSelect",
+    "decorated": "?GetSelect@CUIMedalQuestInfo@@IAEJJ@Z",
+    "demangled": "protected: long CUIMedalQuestInfo::GetSelect(long)"
+   },
+   {
+    "ea": "0x8423e2",
+    "method": "LoadData",
+    "decorated": "?LoadData@CUIMedalQuestInfo@@IAEXXZ",
+    "demangled": "protected: void CUIMedalQuestInfo::LoadData(void)"
+   },
+   {
+    "ea": "0x8438a6",
+    "method": "IsStateButton",
+    "decorated": "?IsStateButton@CUIMedalQuestInfo@@IAEHV?$ZRef@UMedalQuestInfo@@@@@Z",
+    "demangled": "protected: int CUIMedalQuestInfo::IsStateButton(class ZRef<struct MedalQuestInfo>)"
+   },
+   {
+    "ea": "0x8438df",
+    "method": "ResetInfo",
+    "decorated": "?ResetInfo@CUIMedalQuestInfo@@QAEXH@Z",
+    "demangled": "public: void CUIMedalQuestInfo::ResetInfo(int)"
+   },
+   {
+    "ea": "0x843a93",
+    "method": "SetScrollBar",
+    "decorated": "?SetScrollBar@CUIMedalQuestInfo@@IAEXXZ",
+    "demangled": "protected: void CUIMedalQuestInfo::SetScrollBar(void)"
+   },
+   {
+    "ea": "0x843bf6",
+    "method": "Draw",
+    "decorated": "?Draw@CUIMedalQuestInfo@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIMedalQuestInfo::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x844e1f",
+    "method": "ToggleDetail",
+    "decorated": "?ToggleDetail@CUIMedalQuestInfo@@QAEXH@Z",
+    "demangled": "public: void CUIMedalQuestInfo::ToggleDetail(int)"
+   },
+   {
+    "ea": "0x844eea",
+    "method": "Update",
+    "decorated": "?Update@CUIMedalQuestInfo@@UAEXXZ",
+    "demangled": "public: virtual void CUIMedalQuestInfo::Update(void)"
+   }
+  ],
+  "CUIMedalQuestInfoDetail": [
+   {
+    "ea": "0x83da76",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIMedalQuestInfoDetail@@UAEXI@Z",
+    "demangled": "public: virtual void CUIMedalQuestInfoDetail::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x83e118",
+    "method": "ResetInfo",
+    "decorated": "?ResetInfo@CUIMedalQuestInfoDetail@@QAEXXZ",
+    "demangled": "public: void CUIMedalQuestInfoDetail::ResetInfo(void)"
+   }
+  ],
+  "CUIMonsterBook": [
+   {
+    "ea": "0x862527",
+    "method": "UpdateUI",
+    "decorated": "?UpdateUI@CUIMonsterBook@@QAEXXZ",
+    "demangled": "public: void CUIMonsterBook::UpdateUI(void)"
+   },
+   {
+    "ea": "0x866c2c",
+    "method": "LoadMobInfo",
+    "decorated": "?LoadMobInfo@CUIMonsterBook@@IAEXV?$ZRef@UMonsterBookCard@@@@@Z",
+    "demangled": "protected: void CUIMonsterBook::LoadMobInfo(class ZRef<struct MonsterBookCard>)"
+   },
+   {
+    "ea": "0x8677cc",
+    "method": "LoadMobAction",
+    "decorated": "?LoadMobAction@CUIMonsterBook@@IAEXKJAAV?$ZList@V?$ZRef@UMOBACTIONFRAMEENTRY@CActionMan@@@@@@@Z",
+    "demangled": "protected: void CUIMonsterBook::LoadMobAction(unsigned long,long,class ZList<class ZRef<struct CActionMan::MOBACTIONFRAMEENTRY>> __near &)"
+   },
+   {
+    "ea": "0x867a2f",
+    "method": "GetCard",
+    "decorated": "?GetCard@CUIMonsterBook@@IAE?AV?$ZRef@UMonsterBookCard@@@@XZ",
+    "demangled": "protected: class ZRef<struct MonsterBookCard> CUIMonsterBook::GetCard(void)"
+   },
+   {
+    "ea": "0x867be6",
+    "method": "UpdateCheckList",
+    "decorated": "?UpdateCheckList@CUIMonsterBook@@IAEXXZ",
+    "demangled": "protected: void CUIMonsterBook::UpdateCheckList(void)"
+   }
+  ],
+  "CUIMonsterCarnival": [
+   {
+    "ea": "0x86e047",
+    "method": "SetLayer",
+    "decorated": "?SetLayer@CUIMonsterCarnival@@IAEXXZ",
+    "demangled": "protected: void CUIMonsterCarnival::SetLayer(void)"
+   },
+   {
+    "ea": "0x86e091",
+    "method": "SetLayerSize",
+    "decorated": "?SetLayerSize@CUIMonsterCarnival@@IAEXJJ@Z",
+    "demangled": "protected: void CUIMonsterCarnival::SetLayerSize(long,long)"
+   },
+   {
+    "ea": "0x86e37c",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIMonsterCarnival@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIMonsterCarnival::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x86f2bc",
+    "method": "SetScrollBar",
+    "decorated": "?SetScrollBar@CUIMonsterCarnival@@IAEXXZ",
+    "demangled": "protected: void CUIMonsterCarnival::SetScrollBar(void)"
+   },
+   {
+    "ea": "0x86fdae",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIMonsterCarnival@@UAEXI@Z",
+    "demangled": "public: virtual void CUIMonsterCarnival::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x86fe6f",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUIMonsterCarnival@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUIMonsterCarnival::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x86ff6f",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUIMonsterCarnival@@UAEHJJ@Z",
+    "demangled": "public: virtual int CUIMonsterCarnival::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x86ffbb",
+    "method": "DrawLockTooltip",
+    "decorated": "?DrawLockTooltip@CUIMonsterCarnival@@QAEHJJUtagPOINT@@@Z",
+    "demangled": "public: int CUIMonsterCarnival::DrawLockTooltip(long,long,struct tagPOINT)"
+   },
+   {
+    "ea": "0x8700b4",
+    "method": "DrawCPTooltip",
+    "decorated": "?DrawCPTooltip@CUIMonsterCarnival@@QAEHJJUtagPOINT@@@Z",
+    "demangled": "public: int CUIMonsterCarnival::DrawCPTooltip(long,long,struct tagPOINT)"
+   },
+   {
+    "ea": "0x8703e1",
+    "method": "DrawListTooltip",
+    "decorated": "?DrawListTooltip@CUIMonsterCarnival@@QAEXJJUtagPOINT@@@Z",
+    "demangled": "public: void CUIMonsterCarnival::DrawListTooltip(long,long,struct tagPOINT)"
+   },
+   {
+    "ea": "0x8704e9",
+    "method": "OnTabAutoOpen",
+    "decorated": "?OnTabAutoOpen@CUIMonsterCarnival@@QAEXH@Z",
+    "demangled": "public: void CUIMonsterCarnival::OnTabAutoOpen(int)"
+   },
+   {
+    "ea": "0x870595",
+    "method": "SetButton",
+    "decorated": "?SetButton@CUIMonsterCarnival@@IAEXXZ",
+    "demangled": "protected: void CUIMonsterCarnival::SetButton(void)"
+   },
+   {
+    "ea": "0x8706d3",
+    "method": "RequestSend",
+    "decorated": "?RequestSend@CUIMonsterCarnival@@QAEXXZ",
+    "demangled": "public: void CUIMonsterCarnival::RequestSend(void)"
+   },
+   {
+    "ea": "0x87076c",
+    "method": "FuncKeyProcess",
+    "decorated": "?FuncKeyProcess@CUIMonsterCarnival@@QAEXI@Z",
+    "demangled": "public: void CUIMonsterCarnival::FuncKeyProcess(unsigned int)"
+   },
+   {
+    "ea": "0x8707a3",
+    "method": "ResetUI",
+    "decorated": "?ResetUI@CUIMonsterCarnival@@QAEXXZ",
+    "demangled": "public: void CUIMonsterCarnival::ResetUI(void)"
+   },
+   {
+    "ea": "0x8707c4",
+    "method": "SetUIData",
+    "decorated": "?SetUIData@CUIMonsterCarnival@@QAEXJJV?$ZXString@D@@J0@Z",
+    "demangled": "public: void CUIMonsterCarnival::SetUIData(long,long,class ZXString<char>,long,class ZXString<char>)"
+   }
+  ],
+  "CUINewYearCardSenderDlg": [
+   {
+    "ea": "0xa50eda",
+    "method": "GetRTTI",
+    "decorated": "?GetRTTI@CUINewYearCardSenderDlg@@UBEPBVCRTTI@@XZ",
+    "demangled": "public: virtual class CRTTI const __near * CUINewYearCardSenderDlg::GetRTTI(void)const"
+   },
+   {
+    "ea": "0xa50ee0",
+    "method": "IsKindOf",
+    "decorated": "?IsKindOf@CUINewYearCardSenderDlg@@UBEHPBVCRTTI@@@Z",
+    "demangled": "public: virtual int CUINewYearCardSenderDlg::IsKindOf(class CRTTI const __near *)const"
+   },
+   {
+    "ea": "0xa51058",
+    "method": "Draw",
+    "decorated": "?Draw@CUINewYearCardSenderDlg@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0xa5112a",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUINewYearCardSenderDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0xa51461",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUINewYearCardSenderDlg@@UAEXI@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0xa514b8",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUINewYearCardSenderDlg@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0xa514d7",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUINewYearCardSenderDlg@@UAEHJJ@Z",
+    "demangled": "public: virtual int CUINewYearCardSenderDlg::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0xa514f8",
+    "method": "HitTest",
+    "decorated": "?HitTest@CUINewYearCardSenderDlg@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "demangled": "public: virtual int CUINewYearCardSenderDlg::HitTest(long,long,class CCtrlWnd __near * __near *)"
+   },
+   {
+    "ea": "0xa5159f",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUINewYearCardSenderDlg@@UAEXII@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0xa515c3",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CUINewYearCardSenderDlg@@UAEXIII@Z",
+    "demangled": "public: virtual void CUINewYearCardSenderDlg::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   }
+  ],
+  "CUIQuestAlarm": [
+   {
+    "ea": "0x885df1",
+    "method": "DeleteQuest",
+    "decorated": "?DeleteQuest@CUIQuestAlarm@@QAEXG@Z",
+    "demangled": "public: void CUIQuestAlarm::DeleteQuest(unsigned short)"
+   },
+   {
+    "ea": "0x885e1a",
+    "method": "RemoveQuestByIndex",
+    "decorated": "?RemoveQuestByIndex@CUIQuestAlarm@@AAEXJ@Z",
+    "demangled": "private: void CUIQuestAlarm::RemoveQuestByIndex(long)"
+   },
+   {
+    "ea": "0x885e8b",
+    "method": "DeleteQuestByIndex",
+    "decorated": "?DeleteQuestByIndex@CUIQuestAlarm@@IAEXJ@Z",
+    "demangled": "protected: void CUIQuestAlarm::DeleteQuestByIndex(long)"
+   },
+   {
+    "ea": "0x885eb8",
+    "method": "Draw",
+    "decorated": "?Draw@CUIQuestAlarm@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIQuestAlarm::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x887b5c",
+    "method": "RemoveOldQuest",
+    "decorated": "?RemoveOldQuest@CUIQuestAlarm@@QAEHXZ",
+    "demangled": "public: int CUIQuestAlarm::RemoveOldQuest(void)"
+   },
+   {
+    "ea": "0x8881cb",
+    "method": "Create",
+    "decorated": "?Create@CUIQuestAlarm@@QAEXXZ",
+    "demangled": "public: void CUIQuestAlarm::Create(void)"
+   }
+  ],
+  "CUIQuestInfo": [
+   {
+    "ea": "0x87b921",
+    "method": "GetQuestInfo",
+    "decorated": "?GetQuestInfo@CUIQuestInfo@@QAE?AV?$ZRef@UQuestInfo@@@@XZ",
+    "demangled": "public: class ZRef<struct QuestInfo> CUIQuestInfo::GetQuestInfo(void)"
+   },
+   {
+    "ea": "0x87ec3f",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIQuestInfo@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIQuestInfo::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x87fb2f",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CUIQuestInfo@@UAEXIII@Z",
+    "demangled": "public: virtual void CUIQuestInfo::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x87fd4f",
+    "method": "OnTabChanged",
+    "decorated": "?OnTabChanged@CUIQuestInfo@@IAEXJ@Z",
+    "demangled": "protected: void CUIQuestInfo::OnTabChanged(long)"
+   },
+   {
+    "ea": "0x881b18",
+    "method": "LoadData",
+    "decorated": "?LoadData@CUIQuestInfo@@IAEXXZ",
+    "demangled": "protected: void CUIQuestInfo::LoadData(void)"
+   },
+   {
+    "ea": "0x882932",
+    "method": "TryShowRecentlyUpdatedQuest",
+    "decorated": "?TryShowRecentlyUpdatedQuest@CUIQuestInfo@@QAEHXZ",
+    "demangled": "public: int CUIQuestInfo::TryShowRecentlyUpdatedQuest(void)"
+   },
+   {
+    "ea": "0x88296e",
+    "method": "TryShowRecentlyViewedQuest",
+    "decorated": "?TryShowRecentlyViewedQuest@CUIQuestInfo@@QAEHXZ",
+    "demangled": "public: int CUIQuestInfo::TryShowRecentlyViewedQuest(void)"
+   },
+   {
+    "ea": "0x88297e",
+    "method": "TryShowSuitableLevelQuest",
+    "decorated": "?TryShowSuitableLevelQuest@CUIQuestInfo@@QAEHH@Z",
+    "demangled": "public: int CUIQuestInfo::TryShowSuitableLevelQuest(int)"
+   },
+   {
+    "ea": "0x882a71",
+    "method": "TryShowTopQuest",
+    "decorated": "?TryShowTopQuest@CUIQuestInfo@@QAEHXZ",
+    "demangled": "public: int CUIQuestInfo::TryShowTopQuest(void)"
+   },
+   {
+    "ea": "0x882c8a",
+    "method": "SyncScrollBarWithSelected",
+    "decorated": "?SyncScrollBarWithSelected@CUIQuestInfo@@IAEXXZ",
+    "demangled": "protected: void CUIQuestInfo::SyncScrollBarWithSelected(void)"
+   },
+   {
+    "ea": "0x882f2f",
+    "method": "MarkQuestAsRead",
+    "decorated": "?MarkQuestAsRead@CUIQuestInfo@@QAEXG@Z",
+    "demangled": "public: void CUIQuestInfo::MarkQuestAsRead(unsigned short)"
+   },
+   {
+    "ea": "0x882f88",
+    "method": "ResetInfo",
+    "decorated": "?ResetInfo@CUIQuestInfo@@QAEXH@Z",
+    "demangled": "public: void CUIQuestInfo::ResetInfo(int)"
+   },
+   {
+    "ea": "0x883100",
+    "method": "SetScrollBar",
+    "decorated": "?SetScrollBar@CUIQuestInfo@@IAEXXZ",
+    "demangled": "protected: void CUIQuestInfo::SetScrollBar(void)"
+   },
+   {
+    "ea": "0x88422c",
+    "method": "ToggleDetail",
+    "decorated": "?ToggleDetail@CUIQuestInfo@@QAEXH@Z",
+    "demangled": "public: void CUIQuestInfo::ToggleDetail(int)"
+   },
+   {
+    "ea": "0x8843a4",
+    "method": "OnToggleDetail",
+    "decorated": "?OnToggleDetail@CUIQuestInfo@@IAEXH@Z",
+    "demangled": "protected: void CUIQuestInfo::OnToggleDetail(int)"
+   }
+  ],
+  "CUIQuestInfoDetail": [
+   {
+    "ea": "0x87b3ef",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUIQuestInfoDetail@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUIQuestInfoDetail::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x87b9cf",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIQuestInfoDetail@@UAEXI@Z",
+    "demangled": "public: virtual void CUIQuestInfoDetail::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x87bae7",
+    "method": "Draw",
+    "decorated": "?Draw@CUIQuestInfoDetail@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CUIQuestInfoDetail::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x87c515",
+    "method": "ResetInfo",
+    "decorated": "?ResetInfo@CUIQuestInfoDetail@@QAEXXZ",
+    "demangled": "public: void CUIQuestInfoDetail::ResetInfo(void)"
+   }
+  ],
+  "CUIRevive": [
+   {
+    "ea": "0x8981e1",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIRevive@@UAEXI@Z",
+    "demangled": "public: virtual void CUIRevive::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x898203",
+    "method": "Update",
+    "decorated": "?Update@CUIRevive@@MAEXXZ",
+    "demangled": "protected: virtual void CUIRevive::Update(void)"
+   },
+   {
+    "ea": "0x898224",
+    "method": "Revive",
+    "decorated": "?Revive@CUIRevive@@IAEXH@Z",
+    "demangled": "protected: void CUIRevive::Revive(int)"
+   }
+  ],
+  "CUITitle": [
+   {
+    "ea": "0x62054a",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUITitle@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUITitle::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x620ca5",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUITitle@@UAEXI@Z",
+    "demangled": "public: virtual void CUITitle::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x620e3c",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUITitle@@UAEXJ@Z",
+    "demangled": "public: virtual void CUITitle::SetRet(long)"
+   },
+   {
+    "ea": "0x621156",
+    "method": "IsRequestValid",
+    "decorated": "?IsRequestValid@CUITitle@@IAEHXZ",
+    "demangled": "protected: int CUITitle::IsRequestValid(void)"
+   },
+   {
+    "ea": "0x621175",
+    "method": "EnableLoginCtrl",
+    "decorated": "?EnableLoginCtrl@CUITitle@@QAEXH@Z",
+    "demangled": "public: void CUITitle::EnableLoginCtrl(int)"
+   }
+  ],
+  "CUserLocal": [
+   {
+    "ea": "0x57502e",
+    "method": "IsStun",
+    "decorated": "?IsStun@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsStun(void)const"
+   },
+   {
+    "ea": "0x949126",
+    "method": "IsLocalUser",
+    "decorated": "?IsLocalUser@CUserLocal@@UBEHXZ",
+    "demangled": "public: virtual int CUserLocal::IsLocalUser(void)const"
+   },
+   {
+    "ea": "0x94912a",
+    "method": "IsPreview",
+    "decorated": "?IsPreview@CUserLocal@@UBEHXZ",
+    "demangled": "public: virtual int CUserLocal::IsPreview(void)const"
+   },
+   {
+    "ea": "0x94912d",
+    "method": "IsRemoteUser",
+    "decorated": "?IsRemoteUser@CUserLocal@@UBEHXZ",
+    "demangled": "public: virtual int CUserLocal::IsRemoteUser(void)const"
+   },
+   {
+    "ea": "0x949130",
+    "method": "IsAdminHide",
+    "decorated": "?IsAdminHide@CUserLocal@@UBEHXZ",
+    "demangled": "public: virtual int CUserLocal::IsAdminHide(void)const"
+   },
+   {
+    "ea": "0x949137",
+    "method": "IsMovingMode",
+    "decorated": "?IsMovingMode@CUserLocal@@UBEHXZ",
+    "demangled": "public: virtual int CUserLocal::IsMovingMode(void)const"
+   },
+   {
+    "ea": "0x94913e",
+    "method": "ResetOneTimeAction",
+    "decorated": "?ResetOneTimeAction@CUserLocal@@UAEXXZ",
+    "demangled": "public: virtual void CUserLocal::ResetOneTimeAction(void)"
+   },
+   {
+    "ea": "0x94915a",
+    "method": "ClearToolTip",
+    "decorated": "?ClearToolTip@CUserLocal@@UAEXXZ",
+    "demangled": "public: virtual void CUserLocal::ClearToolTip(void)"
+   },
+   {
+    "ea": "0x949165",
+    "method": "GetRTTI",
+    "decorated": "?GetRTTI@CUserLocal@@UBEPBVCRTTI@@XZ",
+    "demangled": "public: virtual class CRTTI const __near * CUserLocal::GetRTTI(void)const"
+   },
+   {
+    "ea": "0x94916b",
+    "method": "IsKindOf",
+    "decorated": "?IsKindOf@CUserLocal@@UBEHPBVCRTTI@@@Z",
+    "demangled": "public: virtual int CUserLocal::IsKindOf(class CRTTI const __near *)const"
+   },
+   {
+    "ea": "0x949513",
+    "method": "Init",
+    "decorated": "?Init@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::Init(void)"
+   },
+   {
+    "ea": "0x949b15",
+    "method": "GetCharacterLevel",
+    "decorated": "?GetCharacterLevel@CUserLocal@@UBEEXZ",
+    "demangled": "public: virtual unsigned char CUserLocal::GetCharacterLevel(void)const"
+   },
+   {
+    "ea": "0x949b52",
+    "method": "GetSecondaryStat",
+    "decorated": "?GetSecondaryStat@CUserLocal@@UBEABUSecondaryStat@@XZ",
+    "demangled": "public: virtual struct SecondaryStat const __near & CUserLocal::GetSecondaryStat(void)const"
+   },
+   {
+    "ea": "0x949b5d",
+    "method": "GetProperBulletPosition",
+    "decorated": "?GetProperBulletPosition@CUserLocal@@QAEJPBUSKILLENTRY@@JPAJ11@Z",
+    "demangled": "public: long CUserLocal::GetProperBulletPosition(struct SKILLENTRY const __near *,long,long __near *,long __near *,long __near *)"
+   },
+   {
+    "ea": "0x94a10a",
+    "method": "SetMoveAction",
+    "decorated": "?SetMoveAction@CUserLocal@@UAEXJH@Z",
+    "demangled": "public: virtual void CUserLocal::SetMoveAction(long,int)"
+   },
+   {
+    "ea": "0x94a144",
+    "method": "Update",
+    "decorated": "?Update@CUserLocal@@UAEXXZ",
+    "demangled": "public: virtual void CUserLocal::Update(void)"
+   },
+   {
+    "ea": "0x94be9c",
+    "method": "IsAttract",
+    "decorated": "?IsAttract@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsAttract(void)const"
+   },
+   {
+    "ea": "0x94c383",
+    "method": "Jump",
+    "decorated": "?Jump@CUserLocal@@QAEXH@Z",
+    "demangled": "public: void CUserLocal::Jump(int)"
+   },
+   {
+    "ea": "0x94c4d9",
+    "method": "IsWeakened",
+    "decorated": "?IsWeakened@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsWeakened(void)const"
+   },
+   {
+    "ea": "0x94c4f8",
+    "method": "FallDown",
+    "decorated": "?FallDown@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::FallDown(void)"
+   },
+   {
+    "ea": "0x94c856",
+    "method": "OnKey",
+    "decorated": "?OnKey@CUserLocal@@QAEXII@Z",
+    "demangled": "public: void CUserLocal::OnKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x94cf7a",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CUserLocal@@QAEXIIJJ@Z",
+    "demangled": "public: void CUserLocal::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x94cfc3",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUserLocal@@QAEHJJ@Z",
+    "demangled": "public: int CUserLocal::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x94d20b",
+    "method": "OnFeatureChanged",
+    "decorated": "?OnFeatureChanged@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::OnFeatureChanged(void)"
+   },
+   {
+    "ea": "0x94d311",
+    "method": "GetShoeAttr",
+    "decorated": "?GetShoeAttr@CUserLocal@@UBE?BV?$ZRef@VCAttrShoe@@@@XZ",
+    "demangled": "public: virtual class ZRef<class CAttrShoe> const CUserLocal::GetShoeAttr(void)const"
+   },
+   {
+    "ea": "0x94d3d9",
+    "method": "SetShoeAttr",
+    "decorated": "?SetShoeAttr@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::SetShoeAttr(void)"
+   },
+   {
+    "ea": "0x94dac6",
+    "method": "CheckPortal_Collision",
+    "decorated": "?CheckPortal_Collision@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::CheckPortal_Collision(void)"
+   },
+   {
+    "ea": "0x94df67",
+    "method": "CheckReactor_Collision",
+    "decorated": "?CheckReactor_Collision@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::CheckReactor_Collision(void)"
+   },
+   {
+    "ea": "0x94df9b",
+    "method": "HandleUpKeyDown",
+    "decorated": "?HandleUpKeyDown@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleUpKeyDown(void)"
+   },
+   {
+    "ea": "0x94e256",
+    "method": "HandleCtrlKeyDown",
+    "decorated": "?HandleCtrlKeyDown@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleCtrlKeyDown(void)"
+   },
+   {
+    "ea": "0x94e45f",
+    "method": "HandleXKeyDown",
+    "decorated": "?HandleXKeyDown@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleXKeyDown(void)"
+   },
+   {
+    "ea": "0x94e692",
+    "method": "TryDoingFallDown",
+    "decorated": "?TryDoingFallDown@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::TryDoingFallDown(void)"
+   },
+   {
+    "ea": "0x94e6d3",
+    "method": "TryDoingTeleport",
+    "decorated": "?TryDoingTeleport@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::TryDoingTeleport(void)"
+   },
+   {
+    "ea": "0x94eaa9",
+    "method": "ValidateItemSkill",
+    "decorated": "?ValidateItemSkill@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::ValidateItemSkill(void)"
+   },
+   {
+    "ea": "0x94ed77",
+    "method": "ValidateSkillBonus",
+    "decorated": "?ValidateSkillBonus@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::ValidateSkillBonus(void)"
+   },
+   {
+    "ea": "0x94f2ed",
+    "method": "UseFuncKeyMapped",
+    "decorated": "?UseFuncKeyMapped@CUserLocal@@QAEHI@Z",
+    "demangled": "public: int CUserLocal::UseFuncKeyMapped(unsigned int)"
+   },
+   {
+    "ea": "0x94fa45",
+    "method": "IsStopPortion",
+    "decorated": "?IsStopPortion@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsStopPortion(void)const"
+   },
+   {
+    "ea": "0x94fa64",
+    "method": "HandleLButtonDown",
+    "decorated": "?HandleLButtonDown@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleLButtonDown(void)"
+   },
+   {
+    "ea": "0x94fa8e",
+    "method": "HandleLButtonClk",
+    "decorated": "?HandleLButtonClk@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleLButtonClk(void)"
+   },
+   {
+    "ea": "0x94fbbf",
+    "method": "HandleLButtonDblClk",
+    "decorated": "?HandleLButtonDblClk@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleLButtonDblClk(void)"
+   },
+   {
+    "ea": "0x95009a",
+    "method": "HandleRButtonClk",
+    "decorated": "?HandleRButtonClk@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::HandleRButtonClk(void)"
+   },
+   {
+    "ea": "0x950555",
+    "method": "OnResolveMoveAction",
+    "decorated": "?OnResolveMoveAction@CUserLocal@@UAEJJJJPBVCVecCtrl@@@Z",
+    "demangled": "public: virtual long CUserLocal::OnResolveMoveAction(long,long,long,class CVecCtrl const __near *)"
+   },
+   {
+    "ea": "0x950747",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CUserLocal@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x950921",
+    "method": "TryDoingMeleeAttack",
+    "decorated": "?TryDoingMeleeAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JPAJJKJPAVCGrenade@@JHJJJ@Z",
+    "demangled": "protected: int CUserLocal::TryDoingMeleeAttack(struct SKILLENTRY const __near *,long,long __near *,long,unsigned long,long,class CGrenade __near *,long,int,long,long,long)"
+   },
+   {
+    "ea": "0x9537d5",
+    "method": "TryDoingShootAttack",
+    "decorated": "?TryDoingShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJHJI@Z",
+    "demangled": "protected: int CUserLocal::TryDoingShootAttack(struct SKILLENTRY const __near *,long,long,int,long,unsigned int)"
+   },
+   {
+    "ea": "0x95571f",
+    "method": "TryDoingMagicAttack",
+    "decorated": "?TryDoingMagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJJ@Z",
+    "demangled": "protected: int CUserLocal::TryDoingMagicAttack(struct SKILLENTRY const __near *,long,long,long)"
+   },
+   {
+    "ea": "0x95719b",
+    "method": "TryDoingNormalAttack",
+    "decorated": "?TryDoingNormalAttack@CUserLocal@@QAEJABV?$ZArray@UtagRECT@@@@AAJH@Z",
+    "demangled": "public: long CUserLocal::TryDoingNormalAttack(class ZArray<struct tagRECT> const __near &,long __near &,int)"
+   },
+   {
+    "ea": "0x957a1f",
+    "method": "TryDoingWings",
+    "decorated": "?TryDoingWings@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::TryDoingWings(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x957b74",
+    "method": "TryRegisterTeleport",
+    "decorated": "?TryRegisterTeleport@CUserLocal@@IAEHPBUSKILLENTRY@@JPBD1H@Z",
+    "demangled": "protected: int CUserLocal::TryRegisterTeleport(struct SKILLENTRY const __near *,long,char const __near *,char const __near *,int)"
+   },
+   {
+    "ea": "0x9581a9",
+    "method": "SetDamaged",
+    "decorated": "?SetDamaged@CUserLocal@@UAEXJJJKPAVCMob@@JJJHH@Z",
+    "demangled": "public: virtual void CUserLocal::SetDamaged(long,long,long,unsigned long,class CMob __near *,long,long,long,int,int)"
+   },
+   {
+    "ea": "0x959727",
+    "method": "OnTeleport",
+    "decorated": "?OnTeleport@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnTeleport(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x959797",
+    "method": "OnSitResult",
+    "decorated": "?OnSitResult@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnSitResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x9598d4",
+    "method": "GetUpFromPortableChair",
+    "decorated": "?GetUpFromPortableChair@CUserLocal@@UAEXH@Z",
+    "demangled": "public: virtual void CUserLocal::GetUpFromPortableChair(int)"
+   },
+   {
+    "ea": "0x9599bb",
+    "method": "OnMesoGive_Succeeded",
+    "decorated": "?OnMesoGive_Succeeded@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnMesoGive_Succeeded(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x959a47",
+    "method": "OnMesoGive_Failed",
+    "decorated": "?OnMesoGive_Failed@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnMesoGive_Failed(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x959a73",
+    "method": "OnQuestResult",
+    "decorated": "?OnQuestResult@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnQuestResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95a947",
+    "method": "OnPetActivated",
+    "decorated": "?OnPetActivated@CUserLocal@@UAEJAAVCInPacket@@@Z",
+    "demangled": "public: virtual long CUserLocal::OnPetActivated(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95ad6b",
+    "method": "OnPetEvol",
+    "decorated": "?OnPetEvol@CUserLocal@@UAEXAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CUserLocal::OnPetEvol(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95af4e",
+    "method": "OnSetDead",
+    "decorated": "?OnSetDead@CUserLocal@@UAEXH@Z",
+    "demangled": "public: virtual void CUserLocal::OnSetDead(int)"
+   },
+   {
+    "ea": "0x95b015",
+    "method": "OnRevive",
+    "decorated": "?OnRevive@CUserLocal@@UAEXXZ",
+    "demangled": "public: virtual void CUserLocal::OnRevive(void)"
+   },
+   {
+    "ea": "0x95b02c",
+    "method": "SetCarryItemEffectForLocal",
+    "decorated": "?SetCarryItemEffectForLocal@CUserLocal@@QAEXAAVCharacterData@@@Z",
+    "demangled": "public: void CUserLocal::SetCarryItemEffectForLocal(class CharacterData __near &)"
+   },
+   {
+    "ea": "0x95b20d",
+    "method": "SetActiveEffectItemForLocal",
+    "decorated": "?SetActiveEffectItemForLocal@CUserLocal@@QAEXAAVCharacterData@@J@Z",
+    "demangled": "public: void CUserLocal::SetActiveEffectItemForLocal(class CharacterData __near &,long)"
+   },
+   {
+    "ea": "0x95b335",
+    "method": "SetPairCharacterID",
+    "decorated": "?SetPairCharacterID@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::SetPairCharacterID(void)"
+   },
+   {
+    "ea": "0x95b47c",
+    "method": "SetFriendPairCharacterID",
+    "decorated": "?SetFriendPairCharacterID@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::SetFriendPairCharacterID(void)"
+   },
+   {
+    "ea": "0x95b5c8",
+    "method": "SetMarriagePairCharacterID",
+    "decorated": "?SetMarriagePairCharacterID@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::SetMarriagePairCharacterID(void)"
+   },
+   {
+    "ea": "0x95b6b9",
+    "method": "SetNewYearCardPairCharacterID",
+    "decorated": "?SetNewYearCardPairCharacterID@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::SetNewYearCardPairCharacterID(void)"
+   },
+   {
+    "ea": "0x95b7b4",
+    "method": "SetSecondaryStatChangedPoint",
+    "decorated": "?SetSecondaryStatChangedPoint@CUserLocal@@QAEXE@Z",
+    "demangled": "public: void CUserLocal::SetSecondaryStatChangedPoint(unsigned char)"
+   },
+   {
+    "ea": "0x95b7d5",
+    "method": "RedrawGuildNameTag",
+    "decorated": "?RedrawGuildNameTag@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::RedrawGuildNameTag(void)"
+   },
+   {
+    "ea": "0x95b85a",
+    "method": "IsWeaponDisabled",
+    "decorated": "?IsWeaponDisabled@CUserLocal@@QAEHXZ",
+    "demangled": "public: int CUserLocal::IsWeaponDisabled(void)"
+   },
+   {
+    "ea": "0x95b985",
+    "method": "OnNotifyHPDecByField",
+    "decorated": "?OnNotifyHPDecByField@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnNotifyHPDecByField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95b9a4",
+    "method": "TryConsumePetHP",
+    "decorated": "?TryConsumePetHP@CUserLocal@@QAEXJHE@Z",
+    "demangled": "public: void CUserLocal::TryConsumePetHP(long,int,unsigned char)"
+   },
+   {
+    "ea": "0x95bbe0",
+    "method": "TryConsumePetMP",
+    "decorated": "?TryConsumePetMP@CUserLocal@@QAEXJHE@Z",
+    "demangled": "public: void CUserLocal::TryConsumePetMP(long,int,unsigned char)"
+   },
+   {
+    "ea": "0x95be66",
+    "method": "OnSkillCooltimeSet",
+    "decorated": "?OnSkillCooltimeSet@CUserLocal@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CUserLocal::OnSkillCooltimeSet(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95bedf",
+    "method": "OnKeyDownSkillEnd",
+    "decorated": "?OnKeyDownSkillEnd@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::OnKeyDownSkillEnd(void)"
+   },
+   {
+    "ea": "0x95c3e3",
+    "method": "DrawKeyDownBar",
+    "decorated": "?DrawKeyDownBar@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::DrawKeyDownBar(void)"
+   },
+   {
+    "ea": "0x95cd5b",
+    "method": "SetAttractMove",
+    "decorated": "?SetAttractMove@CUserLocal@@QAEXAAJ0@Z",
+    "demangled": "public: void CUserLocal::SetAttractMove(long __near &,long __near &)"
+   },
+   {
+    "ea": "0x95cdc3",
+    "method": "GetAchillesReduce",
+    "decorated": "?GetAchillesReduce@CUserLocal@@IAEJJ@Z",
+    "demangled": "protected: long CUserLocal::GetAchillesReduce(long)"
+   },
+   {
+    "ea": "0x95d260",
+    "method": "ShowAutoStartQuestList",
+    "decorated": "?ShowAutoStartQuestList@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::ShowAutoStartQuestList(void)"
+   },
+   {
+    "ea": "0x95d614",
+    "method": "GetDCRect",
+    "decorated": "?GetDCRect@CUserLocal@@QAEXAAUtagRECT@@@Z",
+    "demangled": "public: void CUserLocal::GetDCRect(struct tagRECT __near &)"
+   },
+   {
+    "ea": "0x95d7b7",
+    "method": "CheckBoobyTrapPickUpRequest",
+    "decorated": "?CheckBoobyTrapPickUpRequest@CUserLocal@@IAEXI@Z",
+    "demangled": "protected: void CUserLocal::CheckBoobyTrapPickUpRequest(unsigned int)"
+   },
+   {
+    "ea": "0x95dad3",
+    "method": "OnMakerResult",
+    "decorated": "?OnMakerResult@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnMakerResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95f065",
+    "method": "OnTemporaryStatChanged",
+    "decorated": "?OnTemporaryStatChanged@CUserLocal@@UAEXVUINT128@@JH@Z",
+    "demangled": "public: virtual void CUserLocal::OnTemporaryStatChanged(class UINT128,long,int)"
+   },
+   {
+    "ea": "0x95f8cf",
+    "method": "CanUseBareHand",
+    "decorated": "?CanUseBareHand@CUserLocal@@UAEHXZ",
+    "demangled": "public: virtual int CUserLocal::CanUseBareHand(void)"
+   },
+   {
+    "ea": "0x95f900",
+    "method": "IsDashing",
+    "decorated": "?IsDashing@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsDashing(void)const"
+   },
+   {
+    "ea": "0x95f914",
+    "method": "IsImmovable",
+    "decorated": "?IsImmovable@CUserLocal@@QBEHXZ",
+    "demangled": "public: int CUserLocal::IsImmovable(void)const"
+   },
+   {
+    "ea": "0x95f9d9",
+    "method": "CheckRidingVehicle",
+    "decorated": "?CheckRidingVehicle@CUserLocal@@QBEHH@Z",
+    "demangled": "public: int CUserLocal::CheckRidingVehicle(int)const"
+   },
+   {
+    "ea": "0x95fa8b",
+    "method": "CalcBuffDefenseAttr",
+    "decorated": "?CalcBuffDefenseAttr@CUserLocal@@AAEJDJ@Z",
+    "demangled": "private: long CUserLocal::CalcBuffDefenseAttr(char,long)"
+   },
+   {
+    "ea": "0x95fe9e",
+    "method": "TalkToNpc",
+    "decorated": "?TalkToNpc@CUserLocal@@QAEXV?$ZRef@VCNpc@@@@@Z",
+    "demangled": "public: void CUserLocal::TalkToNpc(class ZRef<class CNpc>)"
+   },
+   {
+    "ea": "0x95ff5a",
+    "method": "SetDirectionMode",
+    "decorated": "?SetDirectionMode@CUserLocal@@IAEXH@Z",
+    "demangled": "protected: void CUserLocal::SetDirectionMode(int)"
+   },
+   {
+    "ea": "0x95ffc3",
+    "method": "GetJobCode",
+    "decorated": "?GetJobCode@CUserLocal@@UBEJXZ",
+    "demangled": "public: virtual long CUserLocal::GetJobCode(void)const"
+   },
+   {
+    "ea": "0x9600f0",
+    "method": "OnOpenUI",
+    "decorated": "?OnOpenUI@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnOpenUI(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x960111",
+    "method": "RemoveTutor",
+    "decorated": "?RemoveTutor@CUserLocal@@QAEXJ@Z",
+    "demangled": "public: void CUserLocal::RemoveTutor(long)"
+   },
+   {
+    "ea": "0x96014f",
+    "method": "OnHireTutor",
+    "decorated": "?OnHireTutor@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnHireTutor(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x960239",
+    "method": "OnTutorMsg",
+    "decorated": "?OnTutorMsg@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnTutorMsg(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x9602cb",
+    "method": "OnIncComboResponse",
+    "decorated": "?OnIncComboResponse@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnIncComboResponse(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x960342",
+    "method": "DrawCombo",
+    "decorated": "?DrawCombo@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::DrawCombo(void)"
+   },
+   {
+    "ea": "0x960fa4",
+    "method": "HoldCombo",
+    "decorated": "?HoldCombo@CUserLocal@@QAEXH@Z",
+    "demangled": "public: void CUserLocal::HoldCombo(int)"
+   },
+   {
+    "ea": "0x961042",
+    "method": "OnOpenSkillGuide",
+    "decorated": "?OnOpenSkillGuide@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnOpenSkillGuide(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x961120",
+    "method": "OnResignQuestReturn",
+    "decorated": "?OnResignQuestReturn@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnResignQuestReturn(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x9613e0",
+    "method": "GetFieldID",
+    "decorated": "?GetFieldID@CUserLocal@@QBEKXZ",
+    "demangled": "public: unsigned long CUserLocal::GetFieldID(void)const"
+   },
+   {
+    "ea": "0x966f7a",
+    "method": "DoActiveSkill",
+    "decorated": "?DoActiveSkill@CUserLocal@@QAEHJIPAJ@Z",
+    "demangled": "public: int CUserLocal::DoActiveSkill(long,unsigned int,long __near *)"
+   },
+   {
+    "ea": "0x969465",
+    "method": "DoActiveSkill_MeleeAttack",
+    "decorated": "?DoActiveSkill_MeleeAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_MeleeAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x9696a2",
+    "method": "DoActiveSkill_ShootAttack",
+    "decorated": "?DoActiveSkill_ShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_ShootAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969a57",
+    "method": "DoActiveSkill_VehicleShootAttack",
+    "decorated": "?DoActiveSkill_VehicleShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_VehicleShootAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969b10",
+    "method": "DoActiveSkill_MagicAttack",
+    "decorated": "?DoActiveSkill_MagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_MagicAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969bf9",
+    "method": "DoActiveSkill_TownPortal",
+    "decorated": "?DoActiveSkill_TownPortal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_TownPortal(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969e21",
+    "method": "DoActiveSkill_StatChange",
+    "decorated": "?DoActiveSkill_StatChange@CUserLocal@@IAEHPBUSKILLENTRY@@JK@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_StatChange(struct SKILLENTRY const __near *,long,unsigned long)"
+   },
+   {
+    "ea": "0x96a69d",
+    "method": "DoActiveSkill_Heal",
+    "decorated": "?DoActiveSkill_Heal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_Heal(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96a86e",
+    "method": "DoActiveSkill_Prepare",
+    "decorated": "?DoActiveSkill_Prepare@CUserLocal@@IAEHPBUSKILLENTRY@@JI@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_Prepare(struct SKILLENTRY const __near *,long,unsigned int)"
+   },
+   {
+    "ea": "0x96be38",
+    "method": "DoActiveSkill_BoundJump",
+    "decorated": "?DoActiveSkill_BoundJump@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_BoundJump(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96c742",
+    "method": "DoActiveSkill_SmokeShell",
+    "decorated": "?DoActiveSkill_SmokeShell@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_SmokeShell(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96c917",
+    "method": "DoActiveSkill_RecoveryAura",
+    "decorated": "?DoActiveSkill_RecoveryAura@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_RecoveryAura(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96cb93",
+    "method": "IsTeleportSkillAvailable",
+    "decorated": "?IsTeleportSkillAvailable@CUserLocal@@IAEHPBUSKILLENTRY@@JAAUtagPOINT@@@Z",
+    "demangled": "protected: int CUserLocal::IsTeleportSkillAvailable(struct SKILLENTRY const __near *,long,struct tagPOINT __near &)"
+   },
+   {
+    "ea": "0x96cf1d",
+    "method": "TryDoingPreparedSkill",
+    "decorated": "?TryDoingPreparedSkill@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::TryDoingPreparedSkill(void)"
+   },
+   {
+    "ea": "0x96d0d1",
+    "method": "DoAntiMacroSkill",
+    "decorated": "?DoAntiMacroSkill@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoAntiMacroSkill(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96d399",
+    "method": "SendSkillUseRequest",
+    "decorated": "?SendSkillUseRequest@CUserLocal@@QAEHPBUSKILLENTRY@@JKJQAKJJ@Z",
+    "demangled": "public: int CUserLocal::SendSkillUseRequest(struct SKILLENTRY const __near *,long,unsigned long,long,unsigned long __near * const,long,long)"
+   },
+   {
+    "ea": "0x96d873",
+    "method": "SendSkillCancelRequest",
+    "decorated": "?SendSkillCancelRequest@CUserLocal@@QAEXJ@Z",
+    "demangled": "public: void CUserLocal::SendSkillCancelRequest(long)"
+   },
+   {
+    "ea": "0x96d95e",
+    "method": "DoActiveSkill_CombatStep",
+    "decorated": "?DoActiveSkill_CombatStep@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_CombatStep(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96db3f",
+    "method": "FindParty",
+    "decorated": "?FindParty@CUserLocal@@IAEKPBUSKILLENTRY@@JPAJ@Z",
+    "demangled": "protected: unsigned long CUserLocal::FindParty(struct SKILLENTRY const __near *,long,long __near *)"
+   },
+   {
+    "ea": "0xa0fba4",
+    "method": "SitOnPortableChair",
+    "decorated": "?SitOnPortableChair@CUserLocal@@QAEXJ@Z",
+    "demangled": "public: void CUserLocal::SitOnPortableChair(long)"
+   }
+  ],
+  "CUserRemote": [
+   {
+    "ea": "0x9726ae",
+    "method": "OnMove",
+    "decorated": "?OnMove@CUserRemote@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserRemote::OnMove(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x97f437",
+    "method": "GetCharacterLevel",
+    "decorated": "?GetCharacterLevel@CUserRemote@@UBEEXZ",
+    "demangled": "public: virtual unsigned char CUserRemote::GetCharacterLevel(void)const"
+   },
+   {
+    "ea": "0x97f43e",
+    "method": "GetSecondaryStat",
+    "decorated": "?GetSecondaryStat@CUserRemote@@UBEABUSecondaryStat@@XZ",
+    "demangled": "public: virtual struct SecondaryStat const __near & CUserRemote::GetSecondaryStat(void)const"
+   },
+   {
+    "ea": "0x97f445",
+    "method": "IsLocalUser",
+    "decorated": "?IsLocalUser@CUserRemote@@UBEHXZ",
+    "demangled": "public: virtual int CUserRemote::IsLocalUser(void)const"
+   },
+   {
+    "ea": "0x97f448",
+    "method": "IsPreview",
+    "decorated": "?IsPreview@CUserRemote@@UBEHXZ",
+    "demangled": "public: virtual int CUserRemote::IsPreview(void)const"
+   },
+   {
+    "ea": "0x97f44b",
+    "method": "IsRemoteUser",
+    "decorated": "?IsRemoteUser@CUserRemote@@UBEHXZ",
+    "demangled": "public: virtual int CUserRemote::IsRemoteUser(void)const"
+   },
+   {
+    "ea": "0x97f44f",
+    "method": "GetJobCode",
+    "decorated": "?GetJobCode@CUserRemote@@UBEJXZ",
+    "demangled": "public: virtual long CUserRemote::GetJobCode(void)const"
+   },
+   {
+    "ea": "0x97f456",
+    "method": "OnPetEvol",
+    "decorated": "?OnPetEvol@CUserRemote@@UAEXAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CUserRemote::OnPetEvol(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x97f55d",
+    "method": "Init",
+    "decorated": "?Init@CUserRemote@@QAEXAAVCInPacket@@HH@Z",
+    "demangled": "public: void CUserRemote::Init(class CInPacket __near &,int,int)"
+   },
+   {
+    "ea": "0x97fdf8",
+    "method": "Update",
+    "decorated": "?Update@CUserRemote@@UAEXXZ",
+    "demangled": "public: virtual void CUserRemote::Update(void)"
+   },
+   {
+    "ea": "0x9803ab",
+    "method": "OnAttack",
+    "decorated": "?OnAttack@CUserRemote@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CUserRemote::OnAttack(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x980c90",
+    "method": "OnMeleeAttack",
+    "decorated": "?OnMeleeAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@@Z",
+    "demangled": "public: void CUserRemote::OnMeleeAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &)"
+   },
+   {
+    "ea": "0x981211",
+    "method": "OnShootAttack",
+    "decorated": "?OnShootAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJJAAV?$ZArray@UATTACKINFO@@@@UtagPOINT@@KH0J@Z",
+    "demangled": "public: void CUserRemote::OnShootAttack(long,struct SKILLENTRY const __near *,long,long,int,long,long,class ZArray<struct ATTACKINFO> __near &,struct tagPOINT,unsigned long,int,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x98250d",
+    "method": "OnMagicAttack",
+    "decorated": "?OnMagicAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@J@Z",
+    "demangled": "public: void CUserRemote::OnMagicAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &,long)"
+   },
+   {
+    "ea": "0x9830bb",
+    "method": "OnBodyAttack",
+    "decorated": "?OnBodyAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@@Z",
+    "demangled": "public: void CUserRemote::OnBodyAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &)"
+   },
+   {
+    "ea": "0x9832e3",
+    "method": "OnHit",
+    "decorated": "?OnHit@CUserRemote@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserRemote::OnHit(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x98367e",
+    "method": "OnAvatarModified",
+    "decorated": "?OnAvatarModified@CUserRemote@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserRemote::OnAvatarModified(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x9839ea",
+    "method": "OnReceiveHP",
+    "decorated": "?OnReceiveHP@CUserRemote@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserRemote::OnReceiveHP(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x983aff",
+    "method": "OnPetActivated",
+    "decorated": "?OnPetActivated@CUserRemote@@UAEJAAVCInPacket@@@Z",
+    "demangled": "public: virtual long CUserRemote::OnPetActivated(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x983c04",
+    "method": "LoadCompletely",
+    "decorated": "?LoadCompletely@CUserRemote@@QAEXXZ",
+    "demangled": "public: void CUserRemote::LoadCompletely(void)"
+   },
+   {
+    "ea": "0x983e3b",
+    "method": "RedrawGuildNameTag",
+    "decorated": "?RedrawGuildNameTag@CUserRemote@@QAEXXZ",
+    "demangled": "public: void CUserRemote::RedrawGuildNameTag(void)"
+   }
+  ],
+  "CVecCtrlGrenade": [
+   {
+    "ea": "0x9ba95a",
+    "method": "WorkUpdateActive",
+    "decorated": "?WorkUpdateActive@CVecCtrlGrenade@@MAEHJ@Z",
+    "demangled": "protected: virtual int CVecCtrlGrenade::WorkUpdateActive(long)"
+   }
+  ],
+  "CWnd": [
+   {
+    "ea": "0x4243fe",
+    "method": "OnDragDrop",
+    "decorated": "?OnDragDrop@CWnd@@UAEHJAAUDRAGCTX@@JJ@Z",
+    "demangled": "public: virtual int CWnd::OnDragDrop(long,struct DRAGCTX __near &,long,long)"
+   },
+   {
+    "ea": "0x424403",
+    "method": "IsMyAddon",
+    "decorated": "?IsMyAddon@CWnd@@UAEHPAV1@@Z",
+    "demangled": "public: virtual int CWnd::IsMyAddon(class CWnd __near *)"
+   },
+   {
+    "ea": "0x424443",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CWnd@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CWnd::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x424446",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CWnd@@UAEHJJ@Z",
+    "demangled": "public: virtual int CWnd::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x42444e",
+    "method": "OnChildNotify",
+    "decorated": "?OnChildNotify@CWnd@@UAEXIII@Z",
+    "demangled": "public: virtual void CWnd::OnChildNotify(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x4259d9",
+    "method": "OnCreate_unsure",
+    "decorated": "?OnCreate_unsure@CWnd@@UAEXPAX@Z",
+    "demangled": "public: virtual void CWnd::OnCreate_unsure(void __near *)"
+   },
+   {
+    "ea": "0x4259dc",
+    "method": "OnDestroy_unsure",
+    "decorated": "?OnDestroy_unsure@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::OnDestroy_unsure(void)"
+   },
+   {
+    "ea": "0x425c4c",
+    "method": "GetCanvas",
+    "decorated": "?GetCanvas@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>> CWnd::GetCanvas(void)"
+   },
+   {
+    "ea": "0x426604",
+    "method": "GetLayer",
+    "decorated": "?GetLayer@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>> CWnd::GetLayer(void)"
+   },
+   {
+    "ea": "0x45a63c",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CWnd@@UAEXI@Z",
+    "demangled": "public: virtual void CWnd::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x45a63f",
+    "method": "GetRTTI",
+    "decorated": "?GetRTTI@CWnd@@UBEPBVCRTTI@@XZ",
+    "demangled": "public: virtual class CRTTI const __near * CWnd::GetRTTI(void)const"
+   },
+   {
+    "ea": "0x45a645",
+    "method": "IsKindOf",
+    "decorated": "?IsKindOf@CWnd@@UBEHPBVCRTTI@@@Z",
+    "demangled": "public: virtual int CWnd::IsKindOf(class CRTTI const __near *)const"
+   },
+   {
+    "ea": "0x9de4d2",
+    "method": "CreateWnd",
+    "decorated": "?CreateWnd@CWnd@@QAEXJJJJJHPAXHW4UIOrigin@1@@Z",
+    "demangled": "public: void CWnd::CreateWnd(long,long,long,long,long,int,void __near *,int,enum CWnd::UIOrigin)"
+   },
+   {
+    "ea": "0x9de7fb",
+    "method": "PreCreateWnd",
+    "decorated": "?PreCreateWnd@CWnd@@UAEXJJJJJHPAX@Z",
+    "demangled": "public: virtual void CWnd::PreCreateWnd(long,long,long,long,long,int,void __near *)"
+   },
+   {
+    "ea": "0x9deb57",
+    "method": "OnMoveWnd",
+    "decorated": "?OnMoveWnd@CWnd@@UAEXJJ@Z",
+    "demangled": "public: virtual void CWnd::OnMoveWnd(long,long)"
+   },
+   {
+    "ea": "0x9e00a6",
+    "method": "OnEndMoveWnd",
+    "decorated": "?OnEndMoveWnd@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::OnEndMoveWnd(void)"
+   },
+   {
+    "ea": "0x9e00af",
+    "method": "Destroy",
+    "decorated": "?Destroy@CWnd@@QAEXXZ",
+    "demangled": "public: void CWnd::Destroy(void)"
+   },
+   {
+    "ea": "0x9e01c8",
+    "method": "OnMouseEnter",
+    "decorated": "?OnMouseEnter@CWnd@@UAEXH@Z",
+    "demangled": "public: virtual void CWnd::OnMouseEnter(int)"
+   },
+   {
+    "ea": "0x9e01e7",
+    "method": "HitTest",
+    "decorated": "?HitTest@CWnd@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "demangled": "public: virtual int CWnd::HitTest(long,long,class CCtrlWnd __near * __near *)"
+   },
+   {
+    "ea": "0x9e02ae",
+    "method": "OnMouseWheel",
+    "decorated": "?OnMouseWheel@CWnd@@UAEHJJJ@Z",
+    "demangled": "public: virtual int CWnd::OnMouseWheel(long,long,long)"
+   },
+   {
+    "ea": "0x9e0369",
+    "method": "OnSetFocus",
+    "decorated": "?OnSetFocus@CWnd@@UAEHH@Z",
+    "demangled": "public: virtual int CWnd::OnSetFocus(int)"
+   },
+   {
+    "ea": "0x9e03c5",
+    "method": "GetAbsLeft",
+    "decorated": "?GetAbsLeft@CWnd@@UAEJXZ",
+    "demangled": "public: virtual long CWnd::GetAbsLeft(void)"
+   },
+   {
+    "ea": "0x9e0447",
+    "method": "GetAbsTop",
+    "decorated": "?GetAbsTop@CWnd@@UAEJXZ",
+    "demangled": "public: virtual long CWnd::GetAbsTop(void)"
+   },
+   {
+    "ea": "0x9e04c9",
+    "method": "InvalidateRect",
+    "decorated": "?InvalidateRect@CWnd@@QAEXPBUtagRECT@@@Z",
+    "demangled": "public: void CWnd::InvalidateRect(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x9e0502",
+    "method": "Draw",
+    "decorated": "?Draw@CWnd@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CWnd::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x9e067e",
+    "method": "Update",
+    "decorated": "?Update@CWnd@@UAEXXZ",
+    "demangled": "public: virtual void CWnd::Update(void)"
+   },
+   {
+    "ea": "0x9e06c5",
+    "method": "IsFocused",
+    "decorated": "?IsFocused@CWnd@@QBEHXZ",
+    "demangled": "public: int CWnd::IsFocused(void)const"
+   },
+   {
+    "ea": "0x9e06f6",
+    "method": "RemoveChild",
+    "decorated": "?RemoveChild@CWnd@@QAEXPAVCCtrlWnd@@@Z",
+    "demangled": "public: void CWnd::RemoveChild(class CCtrlWnd __near *)"
+   },
+   {
+    "ea": "0x9e0750",
+    "method": "SetAnimationBackgrnd",
+    "decorated": "?SetAnimationBackgrnd@CWnd@@IAEXVZtl_bstr_t@@JJ@Z",
+    "demangled": "protected: void CWnd::SetAnimationBackgrnd(class Ztl_bstr_t,long,long)"
+   },
+   {
+    "ea": "0x9e0ab2",
+    "method": "SetBackgrnd",
+    "decorated": "?SetBackgrnd@CWnd@@IAEXVZtl_bstr_t@@JJHJJ@Z",
+    "demangled": "protected: void CWnd::SetBackgrnd(class Ztl_bstr_t,long,long,int,long,long)"
+   },
+   {
+    "ea": "0x9e0be5",
+    "method": "SetFocusChild",
+    "decorated": "?SetFocusChild@CWnd@@QAEXPAVCCtrlWnd@@@Z",
+    "demangled": "public: void CWnd::SetFocusChild(class CCtrlWnd __near *)"
+   },
+   {
+    "ea": "0x9e0c1f",
+    "method": "ClipRect",
+    "decorated": "?ClipRect@CWnd@@QAE?AVZtl_variant_t@@PBUtagRECT@@@Z",
+    "demangled": "public: class Ztl_variant_t CWnd::ClipRect(struct tagRECT const __near *)"
+   }
+  ],
+  "CWndMan": [
+   {
+    "ea": "0x48bba5",
+    "method": "GetOrgWindow",
+    "decorated": "?GetOrgWindow@CWndMan@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@W4UIOrigin@CWnd@@@Z",
+    "demangled": "public: class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>> CWndMan::GetOrgWindow(enum CWnd::UIOrigin)"
+   },
+   {
+    "ea": "0x9e03a6",
+    "method": "UpdateWindowPosition",
+    "decorated": "?UpdateWindowPosition@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::UpdateWindowPosition(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e2fe0",
+    "method": "PreCreateWnd",
+    "decorated": "?PreCreateWnd@CWndMan@@UAEXJJJJJHPAX@Z",
+    "demangled": "public: virtual void CWndMan::PreCreateWnd(long,long,long,long,long,int,void __near *)"
+   },
+   {
+    "ea": "0x9e2fe3",
+    "method": "OnActivate",
+    "decorated": "?OnActivate@CWndMan@@UAEHH@Z",
+    "demangled": "public: virtual int CWndMan::OnActivate(int)"
+   },
+   {
+    "ea": "0x9e311b",
+    "method": "GetCursorPos",
+    "decorated": "?GetCursorPos@CWndMan@@QAEXPAUtagPOINT@@H@Z",
+    "demangled": "public: void CWndMan::GetCursorPos(struct tagPOINT __near *,int)"
+   },
+   {
+    "ea": "0x9e3180",
+    "method": "SetCursorPos",
+    "decorated": "?SetCursorPos@CWndMan@@QAEXUtagPOINT@@H@Z",
+    "demangled": "public: void CWndMan::SetCursorPos(struct tagPOINT,int)"
+   },
+   {
+    "ea": "0x9e3264",
+    "method": "SetFocus",
+    "decorated": "?SetFocus@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::SetFocus(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e337e",
+    "method": "SetActiveWndImp",
+    "decorated": "?SetActiveWndImp@CWndMan@@AAEHPAVCWnd@@@Z",
+    "demangled": "private: int CWndMan::SetActiveWndImp(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e33fc",
+    "method": "SetCaptureWnd",
+    "decorated": "?SetCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::SetCaptureWnd(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e3432",
+    "method": "ReleaseCaptureWnd",
+    "decorated": "?ReleaseCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::ReleaseCaptureWnd(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e3454",
+    "method": "Unlink",
+    "decorated": "?Unlink@CWndMan@@QAEXPAUIUIMsgHandler@@@Z",
+    "demangled": "public: void CWndMan::Unlink(struct IUIMsgHandler __near *)"
+   },
+   {
+    "ea": "0x9e353d",
+    "method": "BeginDragDrop",
+    "decorated": "?BeginDragDrop@CWndMan@@QAEXPAUIUIMsgHandler@@PAUIDraggable@@H@Z",
+    "demangled": "public: void CWndMan::BeginDragDrop(struct IUIMsgHandler __near *,struct IDraggable __near *,int)"
+   },
+   {
+    "ea": "0x9e37c2",
+    "method": "EndDragDrop",
+    "decorated": "?EndDragDrop@CWndMan@@QAEXJJH@Z",
+    "demangled": "public: void CWndMan::EndDragDrop(long,long,int)"
+   },
+   {
+    "ea": "0x9e3ac0",
+    "method": "ClearDragContext",
+    "decorated": "?ClearDragContext@CWndMan@@QAEXXZ",
+    "demangled": "public: void CWndMan::ClearDragContext(void)"
+   },
+   {
+    "ea": "0x9e3ae6",
+    "method": "ProcessMouse",
+    "decorated": "?ProcessMouse@CWndMan@@QAEJIIJ@Z",
+    "demangled": "public: long CWndMan::ProcessMouse(unsigned int,unsigned int,long)"
+   },
+   {
+    "ea": "0x9e40f1",
+    "method": "ProcessKey",
+    "decorated": "?ProcessKey@CWndMan@@QAEJIIJ@Z",
+    "demangled": "public: long CWndMan::ProcessKey(unsigned int,unsigned int,long)"
+   },
+   {
+    "ea": "0x9e42b2",
+    "method": "GetHandlerFromPoint",
+    "decorated": "?GetHandlerFromPoint@CWndMan@@QAEPAUIUIMsgHandler@@JJ@Z",
+    "demangled": "public: struct IUIMsgHandler __near * CWndMan::GetHandlerFromPoint(long,long)"
+   },
+   {
+    "ea": "0x9e43ff",
+    "method": "InsertWindow",
+    "decorated": "?InsertWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::InsertWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44ba",
+    "method": "RemoveWindow",
+    "decorated": "?RemoveWindow@CWndMan@@KAHPAVCWnd@@@Z",
+    "demangled": "protected: static int CWndMan::RemoveWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44dc",
+    "method": "RemoveUpdateWindow",
+    "decorated": "?RemoveUpdateWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::RemoveUpdateWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e44fe",
+    "method": "InsertInvalidatedWindow",
+    "decorated": "?InsertInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::InsertInvalidatedWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e4525",
+    "method": "RemoveInvalidatedWindow",
+    "decorated": "?RemoveInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z",
+    "demangled": "protected: static void CWndMan::RemoveInvalidatedWindow(class CWnd __near *)"
+   },
+   {
+    "ea": "0x9e4547",
+    "method": "RedrawInvalidatedWindows",
+    "decorated": "?RedrawInvalidatedWindows@CWndMan@@SAXXZ",
+    "demangled": "public: static void CWndMan::RedrawInvalidatedWindows(void)"
+   },
+   {
+    "ea": "0x9e7d77",
+    "method": "TranslateMessage",
+    "decorated": "?TranslateMessage@CWndMan@@QAEHAAI0AAJPAJ@Z",
+    "demangled": "public: int CWndMan::TranslateMessage(unsigned int __near &,unsigned int __near &,long __near &,long __near *)"
+   },
+   {
+    "ea": "0x9e85e7",
+    "method": "ClearComposition",
+    "decorated": "?ClearComposition@CWndMan@@QAEXXZ",
+    "demangled": "public: void CWndMan::ClearComposition(void)"
+   },
+   {
+    "ea": "0x9e85f3",
+    "method": "EnableIME",
+    "decorated": "?EnableIME@CWndMan@@QAEXH@Z",
+    "demangled": "public: void CWndMan::EnableIME(int)"
+   },
+   {
+    "ea": "0x9e8659",
+    "method": "NotifyIME",
+    "decorated": "?NotifyIME@CWndMan@@QAEXKKK@Z",
+    "demangled": "public: void CWndMan::NotifyIME(unsigned long,unsigned long,unsigned long)"
+   }
+  ],
+  "CWvsContext": [
+   {
+    "ea": "0x425d0b",
+    "method": "GetCharacterData",
+    "decorated": "?GetCharacterData@CWvsContext@@QAE?AV?$ZRef@VCharacterData@@@@XZ",
+    "demangled": "public: class ZRef<class CharacterData> CWvsContext::GetCharacterData(void)"
+   },
+   {
+    "ea": "0x485bf7",
+    "method": "CanSendExclRequest",
+    "decorated": "?CanSendExclRequest@CWvsContext@@QBEHJH@Z",
+    "demangled": "public: int CWvsContext::CanSendExclRequest(long,int)const"
+   },
+   {
+    "ea": "0x4ac308",
+    "method": "GetCharacterName",
+    "decorated": "?GetCharacterName@CWvsContext@@QBEPBDXZ",
+    "demangled": "public: char const __near * CWvsContext::GetCharacterName(void)const"
+   },
+   {
+    "ea": "0x520252",
+    "method": "GetGuildName",
+    "decorated": "?GetGuildName@CWvsContext@@QBE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CWvsContext::GetGuildName(void)const"
+   },
+   {
+    "ea": "0x52eff1",
+    "method": "IsAdminAccount",
+    "decorated": "?IsAdminAccount@CWvsContext@@QBEHXZ",
+    "demangled": "public: int CWvsContext::IsAdminAccount(void)const"
+   },
+   {
+    "ea": "0x52f000",
+    "method": "IsSubGMAccount",
+    "decorated": "?IsSubGMAccount@CWvsContext@@QBEHXZ",
+    "demangled": "public: int CWvsContext::IsSubGMAccount(void)const"
+   },
+   {
+    "ea": "0x52f031",
+    "method": "GetAdminLevel",
+    "decorated": "?GetAdminLevel@CWvsContext@@QAEJXZ",
+    "demangled": "public: long CWvsContext::GetAdminLevel(void)"
+   },
+   {
+    "ea": "0x532f73",
+    "method": "GetChannelName",
+    "decorated": "?GetChannelName@CWvsContext@@QBEPBDJ@Z",
+    "demangled": "public: char const __near * CWvsContext::GetChannelName(long)const"
+   },
+   {
+    "ea": "0x5f8dc6",
+    "method": "SetAccountInfo",
+    "decorated": "?SetAccountInfo@CWvsContext@@QAEXKJEEV?$ZXString@D@@EEU_SYSTEMTIME@@EH1J0@Z",
+    "demangled": "public: void CWvsContext::SetAccountInfo(unsigned long,long,unsigned char,unsigned char,class ZXString<char>,unsigned char,unsigned char,struct _SYSTEMTIME,unsigned char,int,struct _SYSTEMTIME,long,class ZXString<char>)"
+   },
+   {
+    "ea": "0x7345e2",
+    "method": "SetActionRndSeed",
+    "decorated": "?SetActionRndSeed@CWvsContext@@QAEXIII@Z",
+    "demangled": "public: void CWvsContext::SetActionRndSeed(unsigned int,unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x777616",
+    "method": "OnSetLogoutGiftConfig",
+    "decorated": "?OnSetLogoutGiftConfig@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSetLogoutGiftConfig(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x7fe499",
+    "method": "RemoveFromStackForTab",
+    "decorated": "?RemoveFromStackForTab@CWvsContext@@QAEXPAVCUIWnd@@@Z",
+    "demangled": "public: void CWvsContext::RemoveFromStackForTab(class CUIWnd __near *)"
+   },
+   {
+    "ea": "0x879ae7",
+    "method": "StartPartyMemberSearch",
+    "decorated": "?StartPartyMemberSearch@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::StartPartyMemberSearch(void)"
+   },
+   {
+    "ea": "0xa02e34",
+    "method": "TryRecovery",
+    "decorated": "?TryRecovery@CWvsContext@@IAEXXZ",
+    "demangled": "protected: void CWvsContext::TryRecovery(void)"
+   },
+   {
+    "ea": "0xa032df",
+    "method": "IssueConnect",
+    "decorated": "?IssueConnect@CWvsContext@@QAEXPBVZInetAddr@@@Z",
+    "demangled": "public: void CWvsContext::IssueConnect(class ZInetAddr const __near *)"
+   },
+   {
+    "ea": "0xa03350",
+    "method": "Update",
+    "decorated": "?Update@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::Update(void)"
+   },
+   {
+    "ea": "0xa03935",
+    "method": "OnEnterGame",
+    "decorated": "?OnEnterGame@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnEnterGame(void)"
+   },
+   {
+    "ea": "0xa03eba",
+    "method": "OnEnterField",
+    "decorated": "?OnEnterField@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnEnterField(void)"
+   },
+   {
+    "ea": "0xa04003",
+    "method": "OnMobDead",
+    "decorated": "?OnMobDead@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnMobDead(void)"
+   },
+   {
+    "ea": "0xa0400e",
+    "method": "OnGameStageChanged",
+    "decorated": "?OnGameStageChanged@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnGameStageChanged(void)"
+   },
+   {
+    "ea": "0xa041ff",
+    "method": "OnLeaveGame",
+    "decorated": "?OnLeaveGame@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnLeaveGame(void)"
+   },
+   {
+    "ea": "0xa04920",
+    "method": "ClearFieldUI",
+    "decorated": "?ClearFieldUI@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::ClearFieldUI(void)"
+   },
+   {
+    "ea": "0xa04dca",
+    "method": "SendMigrateToShopRequest",
+    "decorated": "?SendMigrateToShopRequest@CWvsContext@@QAEXH@Z",
+    "demangled": "public: void CWvsContext::SendMigrateToShopRequest(int)"
+   },
+   {
+    "ea": "0xa04f7a",
+    "method": "UI_Toggle",
+    "decorated": "?UI_Toggle@CWvsContext@@QAEXHH@Z",
+    "demangled": "public: void CWvsContext::UI_Toggle(int,int)"
+   },
+   {
+    "ea": "0xa05ab8",
+    "method": "UI_Open",
+    "decorated": "?UI_Open@CWvsContext@@QAEXHH@Z",
+    "demangled": "public: void CWvsContext::UI_Open(int,int)"
+   },
+   {
+    "ea": "0xa0631b",
+    "method": "UI_Close",
+    "decorated": "?UI_Close@CWvsContext@@QAEXH@Z",
+    "demangled": "public: void CWvsContext::UI_Close(int)"
+   },
+   {
+    "ea": "0xa066f3",
+    "method": "UI_OpenRevive",
+    "decorated": "?UI_OpenRevive@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::UI_OpenRevive(void)"
+   },
+   {
+    "ea": "0xa0670c",
+    "method": "UI_CloseRevive",
+    "decorated": "?UI_CloseRevive@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::UI_CloseRevive(void)"
+   },
+   {
+    "ea": "0xa06735",
+    "method": "UI_Menu",
+    "decorated": "?UI_Menu@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::UI_Menu(void)"
+   },
+   {
+    "ea": "0xa07431",
+    "method": "ProcessBasicUIKey",
+    "decorated": "?ProcessBasicUIKey@CWvsContext@@QAEHII@Z",
+    "demangled": "public: int CWvsContext::ProcessBasicUIKey(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0xa0773d",
+    "method": "UseFuncKeyMapped",
+    "decorated": "?UseFuncKeyMapped@CWvsContext@@QAEHI@Z",
+    "demangled": "public: int CWvsContext::UseFuncKeyMapped(unsigned int)"
+   },
+   {
+    "ea": "0xa07a08",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CWvsContext@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa0831d",
+    "method": "OnNotifyMarriedPartnerMapTransfer",
+    "decorated": "?OnNotifyMarriedPartnerMapTransfer@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnNotifyMarriedPartnerMapTransfer(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa08376",
+    "method": "SetCharacterData",
+    "decorated": "?SetCharacterData@CWvsContext@@QAEXV?$ZRef@VCharacterData@@@@@Z",
+    "demangled": "public: void CWvsContext::SetCharacterData(class ZRef<class CharacterData>)"
+   },
+   {
+    "ea": "0xa0843c",
+    "method": "ValidateStat",
+    "decorated": "?ValidateStat@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::ValidateStat(void)"
+   },
+   {
+    "ea": "0xa086d5",
+    "method": "ResetAutoQuest",
+    "decorated": "?ResetAutoQuest@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::ResetAutoQuest(void)"
+   },
+   {
+    "ea": "0xa08896",
+    "method": "CheckEquipOnAutoStartQuest",
+    "decorated": "?CheckEquipOnAutoStartQuest@CWvsContext@@QAEHJH@Z",
+    "demangled": "public: int CWvsContext::CheckEquipOnAutoStartQuest(long,int)"
+   },
+   {
+    "ea": "0xa0898f",
+    "method": "CheckFieldOnAutoStartQuest",
+    "decorated": "?CheckFieldOnAutoStartQuest@CWvsContext@@QAEHK@Z",
+    "demangled": "public: int CWvsContext::CheckFieldOnAutoStartQuest(unsigned long)"
+   },
+   {
+    "ea": "0xa08a19",
+    "method": "CheckNormalAutoStartQuest",
+    "decorated": "?CheckNormalAutoStartQuest@CWvsContext@@QAEHH@Z",
+    "demangled": "public: int CWvsContext::CheckNormalAutoStartQuest(int)"
+   },
+   {
+    "ea": "0xa08af6",
+    "method": "TryRegisterAutoStartQuest",
+    "decorated": "?TryRegisterAutoStartQuest@CWvsContext@@QAEXGH@Z",
+    "demangled": "public: void CWvsContext::TryRegisterAutoStartQuest(unsigned short,int)"
+   },
+   {
+    "ea": "0xa08d30",
+    "method": "UpdateAutoQuestAlertIcon",
+    "decorated": "?UpdateAutoQuestAlertIcon@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::UpdateAutoQuestAlertIcon(void)"
+   },
+   {
+    "ea": "0xa08e05",
+    "method": "GetSkillLevelUpState",
+    "decorated": "?GetSkillLevelUpState@CWvsContext@@QAEJPBUSKILLENTRY@@@Z",
+    "demangled": "public: long CWvsContext::GetSkillLevelUpState(struct SKILLENTRY const __near *)"
+   },
+   {
+    "ea": "0xa0900a",
+    "method": "SendChangeSlotPositionRequest",
+    "decorated": "?SendChangeSlotPositionRequest@CWvsContext@@QAEXJJJJ@Z",
+    "demangled": "public: void CWvsContext::SendChangeSlotPositionRequest(long,long,long,long)"
+   },
+   {
+    "ea": "0xa092fb",
+    "method": "SendStatChangeItemUseRequest",
+    "decorated": "?SendStatChangeItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendStatChangeItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa096af",
+    "method": "SendStatChangeItemCancelRequest",
+    "decorated": "?SendStatChangeItemCancelRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendStatChangeItemCancelRequest(long)"
+   },
+   {
+    "ea": "0xa0977b",
+    "method": "SendMobSummonItemUseRequest",
+    "decorated": "?SendMobSummonItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendMobSummonItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa09905",
+    "method": "SendPetFoodItemUseRequest",
+    "decorated": "?SendPetFoodItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendPetFoodItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa0a25e",
+    "method": "SendShopScannerItemUseRequest",
+    "decorated": "?SendShopScannerItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendShopScannerItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa0a2dc",
+    "method": "RunShopScanner",
+    "decorated": "?RunShopScanner@CWvsContext@@QAEHAAVCOutPacket@@@Z",
+    "demangled": "public: int CWvsContext::RunShopScanner(class COutPacket __near &)"
+   },
+   {
+    "ea": "0xa0a63f",
+    "method": "SendConsumeCashItemUseRequest",
+    "decorated": "?SendConsumeCashItemUseRequest@CWvsContext@@QAEXJJJV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SendConsumeCashItemUseRequest(long,long,long,class ZXString<char>)"
+   },
+   {
+    "ea": "0xa0f9e2",
+    "method": "SendSitOnPortableChairRequest",
+    "decorated": "?SendSitOnPortableChairRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendSitOnPortableChairRequest(long,long)"
+   },
+   {
+    "ea": "0xa0fbf4",
+    "method": "SendGetUpFromChairRequest",
+    "decorated": "?SendGetUpFromChairRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendGetUpFromChairRequest(long)"
+   },
+   {
+    "ea": "0xa0fef8",
+    "method": "ShowNewYearCard",
+    "decorated": "?ShowNewYearCard@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::ShowNewYearCard(long)"
+   },
+   {
+    "ea": "0xa10579",
+    "method": "IsAbleToConsume",
+    "decorated": "?IsAbleToConsume@CWvsContext@@QAEHJH@Z",
+    "demangled": "public: int CWvsContext::IsAbleToConsume(long,int)"
+   },
+   {
+    "ea": "0xa10617",
+    "method": "OpenBook",
+    "decorated": "?OpenBook@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::OpenBook(long)"
+   },
+   {
+    "ea": "0xa10679",
+    "method": "CloseBook",
+    "decorated": "?CloseBook@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::CloseBook(void)"
+   },
+   {
+    "ea": "0xa11e46",
+    "method": "ClosePartySearch_Remocon",
+    "decorated": "?ClosePartySearch_Remocon@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::ClosePartySearch_Remocon(void)"
+   },
+   {
+    "ea": "0xa120e7",
+    "method": "StopPartySearch",
+    "decorated": "?StopPartySearch@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::StopPartySearch(void)"
+   },
+   {
+    "ea": "0xa122d1",
+    "method": "CloseShopScanner",
+    "decorated": "?CloseShopScanner@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::CloseShopScanner(void)"
+   },
+   {
+    "ea": "0xa1233f",
+    "method": "OnGuildBBSPacket",
+    "decorated": "?OnGuildBBSPacket@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGuildBBSPacket(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa12355",
+    "method": "MonsterCarnivalDlgKeyHook",
+    "decorated": "?MonsterCarnivalDlgKeyHook@CWvsContext@@QAEHI@Z",
+    "demangled": "public: int CWvsContext::MonsterCarnivalDlgKeyHook(unsigned int)"
+   },
+   {
+    "ea": "0xa1238b",
+    "method": "GetCurFieldID",
+    "decorated": "?GetCurFieldID@CWvsContext@@QAEJXZ",
+    "demangled": "public: long CWvsContext::GetCurFieldID(void)"
+   },
+   {
+    "ea": "0xa123a4",
+    "method": "SetSkillCooltimeOver",
+    "decorated": "?SetSkillCooltimeOver@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SetSkillCooltimeOver(long,long)"
+   },
+   {
+    "ea": "0xa1246c",
+    "method": "RemoveSkillCooltimeOver",
+    "decorated": "?RemoveSkillCooltimeOver@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::RemoveSkillCooltimeOver(long)"
+   },
+   {
+    "ea": "0xa12685",
+    "method": "SendExpUpItemUseRequest",
+    "decorated": "?SendExpUpItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendExpUpItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa129ed",
+    "method": "OnMiniMapOnOff",
+    "decorated": "?OnMiniMapOnOff@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMiniMapOnOff(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa12bd6",
+    "method": "OnSessionValue",
+    "decorated": "?OnSessionValue@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSessionValue(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa12fac",
+    "method": "OnFieldSetVariable",
+    "decorated": "?OnFieldSetVariable@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFieldSetVariable(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa13220",
+    "method": "ShowUI",
+    "decorated": "?ShowUI@CWvsContext@@QAEXH@Z",
+    "demangled": "public: void CWvsContext::ShowUI(int)"
+   },
+   {
+    "ea": "0xa137b4",
+    "method": "GetCurrentPrivilege",
+    "decorated": "?GetCurrentPrivilege@CWvsContext@@QAEJXZ",
+    "demangled": "public: long CWvsContext::GetCurrentPrivilege(void)"
+   },
+   {
+    "ea": "0xa137c8",
+    "method": "GetPrivilegeName",
+    "decorated": "?GetPrivilegeName@CWvsContext@@QAE?AV?$ZXString@D@@J@Z",
+    "demangled": "public: class ZXString<char> CWvsContext::GetPrivilegeName(long)"
+   },
+   {
+    "ea": "0xa13f20",
+    "method": "OnScriptProgressMessage",
+    "decorated": "?OnScriptProgressMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnScriptProgressMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1d4d8",
+    "method": "SendCreateMiniGameRequest",
+    "decorated": "?SendCreateMiniGameRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendCreateMiniGameRequest(long,long)"
+   },
+   {
+    "ea": "0xa1dc5b",
+    "method": "SendEtcCashItemUseRequest",
+    "decorated": "?SendEtcCashItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendEtcCashItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa1dce6",
+    "method": "SendWaterOfLife",
+    "decorated": "?SendWaterOfLife@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::SendWaterOfLife(void)"
+   },
+   {
+    "ea": "0xa1dd28",
+    "method": "SendCashSlotItemUseRequest",
+    "decorated": "?SendCashSlotItemUseRequest@CWvsContext@@QAEXJJT_LARGE_INTEGER@@@Z",
+    "demangled": "public: void CWvsContext::SendCashSlotItemUseRequest(long,long,union _LARGE_INTEGER)"
+   },
+   {
+    "ea": "0xa1dd99",
+    "method": "SendOpenShopRequest",
+    "decorated": "?SendOpenShopRequest@CWvsContext@@QAEXJJH@Z",
+    "demangled": "public: void CWvsContext::SendOpenShopRequest(long,long,int)"
+   },
+   {
+    "ea": "0xa1e48c",
+    "method": "OnChangeSkillRecordResult",
+    "decorated": "?OnChangeSkillRecordResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnChangeSkillRecordResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1e943",
+    "method": "OnGatherItemResult",
+    "decorated": "?OnGatherItemResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGatherItemResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1e96d",
+    "method": "OnSortItemResult",
+    "decorated": "?OnSortItemResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSortItemResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1ead9",
+    "method": "OnInventoryOperation",
+    "decorated": "?OnInventoryOperation@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnInventoryOperation(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1f685",
+    "method": "CheckQuestCompleteByMeso",
+    "decorated": "?CheckQuestCompleteByMeso@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::CheckQuestCompleteByMeso(long)"
+   },
+   {
+    "ea": "0xa1f881",
+    "method": "OnInventoryGrow",
+    "decorated": "?OnInventoryGrow@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnInventoryGrow(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa1fb52",
+    "method": "OnStatChanged",
+    "decorated": "?OnStatChanged@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnStatChanged(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa202be",
+    "method": "OnTemporaryStatSet",
+    "decorated": "?OnTemporaryStatSet@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnTemporaryStatSet(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2071f",
+    "method": "OnTemporaryStatReset",
+    "decorated": "?OnTemporaryStatReset@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnTemporaryStatReset(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa208ff",
+    "method": "OnForcedStatSet",
+    "decorated": "?OnForcedStatSet@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnForcedStatSet(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2091c",
+    "method": "OnForcedStatReset",
+    "decorated": "?OnForcedStatReset@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnForcedStatReset(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa209b2",
+    "method": "OnSkillUseResult",
+    "decorated": "?OnSkillUseResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSkillUseResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa209d4",
+    "method": "OnMessage",
+    "decorated": "?OnMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa20ac0",
+    "method": "OnOpenFullClientDownloadLink",
+    "decorated": "?OnOpenFullClientDownloadLink@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnOpenFullClientDownloadLink(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa20ad9",
+    "method": "OnDropPickUpMessage",
+    "decorated": "?OnDropPickUpMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnDropPickUpMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa20f4c",
+    "method": "OnQuestRecordMessage",
+    "decorated": "?OnQuestRecordMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnQuestRecordMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2160b",
+    "method": "OnQuestRecordExMessage",
+    "decorated": "?OnQuestRecordExMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnQuestRecordExMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa216fc",
+    "method": "OnCashItemExpireMessage",
+    "decorated": "?OnCashItemExpireMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnCashItemExpireMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa217a2",
+    "method": "OnGeneralItemExpireMessage",
+    "decorated": "?OnGeneralItemExpireMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGeneralItemExpireMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2187e",
+    "method": "OnItemProtectExpireMessage",
+    "decorated": "?OnItemProtectExpireMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnItemProtectExpireMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2195a",
+    "method": "OnItemExpireReplaceMessage",
+    "decorated": "?OnItemExpireReplaceMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnItemExpireReplaceMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa219be",
+    "method": "OnSkillExpireMessage",
+    "decorated": "?OnSkillExpireMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSkillExpireMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa21a78",
+    "method": "OnSystemMessage",
+    "decorated": "?OnSystemMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSystemMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa21ac5",
+    "method": "OnIncEXPMessage",
+    "decorated": "?OnIncEXPMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnIncEXPMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2212d",
+    "method": "OnIncSPMessage",
+    "decorated": "?OnIncSPMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnIncSPMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa221f3",
+    "method": "OnIncMoneyMessage",
+    "decorated": "?OnIncMoneyMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnIncMoneyMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa222c9",
+    "method": "OnIncGPMessage",
+    "decorated": "?OnIncGPMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnIncGPMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2238f",
+    "method": "OnGiveBuffMessage",
+    "decorated": "?OnGiveBuffMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGiveBuffMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa223dc",
+    "method": "OnGivePopularityResult",
+    "decorated": "?OnGivePopularityResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGivePopularityResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa226a6",
+    "method": "OnTownPortal",
+    "decorated": "?OnTownPortal@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnTownPortal(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa22736",
+    "method": "OnRevive",
+    "decorated": "?OnRevive@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnRevive(void)"
+   },
+   {
+    "ea": "0xa22785",
+    "method": "OnBroadcastMsg",
+    "decorated": "?OnBroadcastMsg@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnBroadcastMsg(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2370b",
+    "method": "OnCharacterInfo",
+    "decorated": "?OnCharacterInfo@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnCharacterInfo(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa239b7",
+    "method": "SendAbilityUpRequest",
+    "decorated": "?SendAbilityUpRequest@CWvsContext@@QAEXK@Z",
+    "demangled": "public: void CWvsContext::SendAbilityUpRequest(unsigned long)"
+   },
+   {
+    "ea": "0xa23cf3",
+    "method": "SendSkillUpRequest",
+    "decorated": "?SendSkillUpRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendSkillUpRequest(long)"
+   },
+   {
+    "ea": "0xa23d79",
+    "method": "OnSetGender",
+    "decorated": "?OnSetGender@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSetGender(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa23d92",
+    "method": "OnTradeMoneyLimit",
+    "decorated": "?OnTradeMoneyLimit@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnTradeMoneyLimit(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa23de5",
+    "method": "SendDropMoneyRequest",
+    "decorated": "?SendDropMoneyRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendDropMoneyRequest(long)"
+   },
+   {
+    "ea": "0xa23eb5",
+    "method": "SendGivePopularityRequest",
+    "decorated": "?SendGivePopularityRequest@CWvsContext@@QAEXPBDH@Z",
+    "demangled": "public: void CWvsContext::SendGivePopularityRequest(char const __near *,int)"
+   },
+   {
+    "ea": "0xa23fba",
+    "method": "SendCharacterInfoRequest",
+    "decorated": "?SendCharacterInfoRequest@CWvsContext@@QAEXKHH@Z",
+    "demangled": "public: void CWvsContext::SendCharacterInfoRequest(unsigned long,int,int)"
+   },
+   {
+    "ea": "0xa240a2",
+    "method": "SendActivatePetRequest",
+    "decorated": "?SendActivatePetRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendActivatePetRequest(long)"
+   },
+   {
+    "ea": "0xa24470",
+    "method": "SendEmotionChange",
+    "decorated": "?SendEmotionChange@CWvsContext@@QAEXJHJ@Z",
+    "demangled": "public: void CWvsContext::SendEmotionChange(long,int,long)"
+   },
+   {
+    "ea": "0xa24530",
+    "method": "SendActiveEffectItemChange",
+    "decorated": "?SendActiveEffectItemChange@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendActiveEffectItemChange(long)"
+   },
+   {
+    "ea": "0xa24606",
+    "method": "SendRemoteShopOpenRequest",
+    "decorated": "?SendRemoteShopOpenRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendRemoteShopOpenRequest(long)"
+   },
+   {
+    "ea": "0xa2465e",
+    "method": "ReturnToTitle",
+    "decorated": "?ReturnToTitle@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::ReturnToTitle(void)"
+   },
+   {
+    "ea": "0xa246e0",
+    "method": "IsExist",
+    "decorated": "?IsExist@CWvsContext@@QBEJJ@Z",
+    "demangled": "public: long CWvsContext::IsExist(long)const"
+   },
+   {
+    "ea": "0xa247cf",
+    "method": "SetNewFadeWnd",
+    "decorated": "?SetNewFadeWnd@CWvsContext@@QAEXPAVCUIFadeYesNo@@@Z",
+    "demangled": "public: void CWvsContext::SetNewFadeWnd(class CUIFadeYesNo __near *)"
+   },
+   {
+    "ea": "0xa248f8",
+    "method": "DeleteFadeWnd",
+    "decorated": "?DeleteFadeWnd@CWvsContext@@QAEXV?$ZRef@VCUIFadeYesNo@@@@@Z",
+    "demangled": "public: void CWvsContext::DeleteFadeWnd(class ZRef<class CUIFadeYesNo>)"
+   },
+   {
+    "ea": "0xa249a0",
+    "method": "DeleteFadeWnd",
+    "decorated": "?DeleteFadeWnd@CWvsContext@@QAEXJJGV?$ZXString@D@@K@Z",
+    "demangled": "public: void CWvsContext::DeleteFadeWnd(long,long,unsigned short,class ZXString<char>,unsigned long)"
+   },
+   {
+    "ea": "0xa24b95",
+    "method": "IsFadeWndExist",
+    "decorated": "?IsFadeWndExist@CWvsContext@@QAEHJKV?$ZXString@D@@@Z",
+    "demangled": "public: int CWvsContext::IsFadeWndExist(long,unsigned long,class ZXString<char>)"
+   },
+   {
+    "ea": "0xa24bc3",
+    "method": "SetTopFadeWnd",
+    "decorated": "?SetTopFadeWnd@CWvsContext@@QAEXV?$ZRef@VCUIFadeYesNo@@@@@Z",
+    "demangled": "public: void CWvsContext::SetTopFadeWnd(class ZRef<class CUIFadeYesNo>)"
+   },
+   {
+    "ea": "0xa24c4b",
+    "method": "IsTopFadeWnd",
+    "decorated": "?IsTopFadeWnd@CWvsContext@@QAEHV?$ZRef@VCUIFadeYesNo@@@@@Z",
+    "demangled": "public: int CWvsContext::IsTopFadeWnd(class ZRef<class CUIFadeYesNo>)"
+   },
+   {
+    "ea": "0xa24c82",
+    "method": "SetEventTimer",
+    "decorated": "?SetEventTimer@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SetEventTimer(long)"
+   },
+   {
+    "ea": "0xa24d4d",
+    "method": "OnEventTimer",
+    "decorated": "?OnEventTimer@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::OnEventTimer(void)"
+   },
+   {
+    "ea": "0xa2508b",
+    "method": "OnMemoResult",
+    "decorated": "?OnMemoResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMemoResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa25268",
+    "method": "OnMapTransferResult",
+    "decorated": "?OnMapTransferResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMapTransferResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa254ab",
+    "method": "LoadCommodity",
+    "decorated": "?LoadCommodity@CWvsContext@@QAEHXZ",
+    "demangled": "public: int CWvsContext::LoadCommodity(void)"
+   },
+   {
+    "ea": "0xa25819",
+    "method": "GetCommodityBySN",
+    "decorated": "?GetCommodityBySN@CWvsContext@@QAE?BV?$ZRef@UCS_COMMODITY@@@@J@Z",
+    "demangled": "public: class ZRef<struct CS_COMMODITY> const CWvsContext::GetCommodityBySN(long)"
+   },
+   {
+    "ea": "0xa262d9",
+    "method": "SendAntiMacroItemUseRequest",
+    "decorated": "?SendAntiMacroItemUseRequest@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SendAntiMacroItemUseRequest(long,long)"
+   },
+   {
+    "ea": "0xa265c2",
+    "method": "OnAntiMacroResult",
+    "decorated": "?OnAntiMacroResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnAntiMacroResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa269c0",
+    "method": "ShowAntiMacroNotice",
+    "decorated": "?ShowAntiMacroNotice@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::ShowAntiMacroNotice(long,long)"
+   },
+   {
+    "ea": "0xa26a41",
+    "method": "SaveAntiMacroScreenShot",
+    "decorated": "?SaveAntiMacroScreenShot@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SaveAntiMacroScreenShot(class ZXString<char>)"
+   },
+   {
+    "ea": "0xa26db3",
+    "method": "OnQuestProgressUpdated",
+    "decorated": "?OnQuestProgressUpdated@CWvsContext@@QAEXGJV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::OnQuestProgressUpdated(unsigned short,long,class ZXString<char>)"
+   },
+   {
+    "ea": "0xa26e31",
+    "method": "StartQuest",
+    "decorated": "?StartQuest@CWvsContext@@QAEXGKH@Z",
+    "demangled": "public: void CWvsContext::StartQuest(unsigned short,unsigned long,int)"
+   },
+   {
+    "ea": "0xa26ea7",
+    "method": "ResignQuest",
+    "decorated": "?ResignQuest@CWvsContext@@QAEXG@Z",
+    "demangled": "public: void CWvsContext::ResignQuest(unsigned short)"
+   },
+   {
+    "ea": "0xa27014",
+    "method": "ShowPremiumArgument",
+    "decorated": "?ShowPremiumArgument@CWvsContext@@QAEXKJ@Z",
+    "demangled": "public: void CWvsContext::ShowPremiumArgument(unsigned long,long)"
+   },
+   {
+    "ea": "0xa2719c",
+    "method": "SendClaimRequest",
+    "decorated": "?SendClaimRequest@CWvsContext@@QAEXAAV?$ZArray@V?$ZXString@D@@@@V?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SendClaimRequest(class ZArray<class ZXString<char>> __near &,class ZXString<char>)"
+   },
+   {
+    "ea": "0xa27b7d",
+    "method": "SendEntrustedShopCheckRequest",
+    "decorated": "?SendEntrustedShopCheckRequest@CWvsContext@@QAEXJJT_LARGE_INTEGER@@@Z",
+    "demangled": "public: void CWvsContext::SendEntrustedShopCheckRequest(long,long,union _LARGE_INTEGER)"
+   },
+   {
+    "ea": "0xa27d75",
+    "method": "OnEntrustedShopCheckResult",
+    "decorated": "?OnEntrustedShopCheckResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnEntrustedShopCheckResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa28298",
+    "method": "OnIncubatorResult",
+    "decorated": "?OnIncubatorResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnIncubatorResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2858c",
+    "method": "GetItemCount",
+    "decorated": "?GetItemCount@CWvsContext@@QAEJJ@Z",
+    "demangled": "public: long CWvsContext::GetItemCount(long)"
+   },
+   {
+    "ea": "0xa2867c",
+    "method": "IsEquipped",
+    "decorated": "?IsEquipped@CWvsContext@@QAEHJ@Z",
+    "demangled": "public: int CWvsContext::IsEquipped(long)"
+   },
+   {
+    "ea": "0xa28c29",
+    "method": "OnShopScannerResult",
+    "decorated": "?OnShopScannerResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnShopScannerResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa29013",
+    "method": "OnShopLinkResult",
+    "decorated": "?OnShopLinkResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnShopLinkResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa29049",
+    "method": "OnCashPetFoodResult",
+    "decorated": "?OnCashPetFoodResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnCashPetFoodResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa292bb",
+    "method": "CheckDarkForce",
+    "decorated": "?CheckDarkForce@CWvsContext@@QAEXH@Z",
+    "demangled": "public: void CWvsContext::CheckDarkForce(int)"
+   },
+   {
+    "ea": "0xa2945a",
+    "method": "CheckDragonFury",
+    "decorated": "?CheckDragonFury@CWvsContext@@QAEXH@Z",
+    "demangled": "public: void CWvsContext::CheckDragonFury(int)"
+   },
+   {
+    "ea": "0xa29739",
+    "method": "OnSueCharacterResult",
+    "decorated": "?OnSueCharacterResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSueCharacterResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa29886",
+    "method": "OnMarriageRequest",
+    "decorated": "?OnMarriageRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMarriageRequest(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa299eb",
+    "method": "OnMarriageResult",
+    "decorated": "?OnMarriageResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMarriageResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2a083",
+    "method": "OnWeddingGiftResult",
+    "decorated": "?OnWeddingGiftResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnWeddingGiftResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2a0be",
+    "method": "ShowQuestInfoDetail",
+    "decorated": "?ShowQuestInfoDetail@CWvsContext@@QAEXJG@Z",
+    "demangled": "public: void CWvsContext::ShowQuestInfoDetail(long,unsigned short)"
+   },
+   {
+    "ea": "0xa2a193",
+    "method": "AddChatMorphedMsg",
+    "decorated": "?AddChatMorphedMsg@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::AddChatMorphedMsg(void)"
+   },
+   {
+    "ea": "0xa2a486",
+    "method": "OnSetAvatarMegaphone",
+    "decorated": "?OnSetAvatarMegaphone@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSetAvatarMegaphone(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2aa49",
+    "method": "OnFakeGMNotice",
+    "decorated": "?OnFakeGMNotice@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFakeGMNotice(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2ad85",
+    "method": "OnNewYearCardRes",
+    "decorated": "?OnNewYearCardRes@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnNewYearCardRes(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa2b49a",
+    "method": "IsValidCommodity",
+    "decorated": "?IsValidCommodity@CWvsContext@@QAEHJ@Z",
+    "demangled": "public: int CWvsContext::IsValidCommodity(long)"
+   },
+   {
+    "ea": "0xa328c2",
+    "method": "SendBoobyTrapAlert",
+    "decorated": "?SendBoobyTrapAlert@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendBoobyTrapAlert(long)"
+   },
+   {
+    "ea": "0xa32914",
+    "method": "CheckBoobyTrapPickUpRequest",
+    "decorated": "?CheckBoobyTrapPickUpRequest@CWvsContext@@QAEXABUtagPOINT@@@Z",
+    "demangled": "public: void CWvsContext::CheckBoobyTrapPickUpRequest(struct tagPOINT const __near &)"
+   },
+   {
+    "ea": "0xa33fb0",
+    "method": "SendFamilyInviteResult",
+    "decorated": "?SendFamilyInviteResult@CWvsContext@@QAEXV?$ZXString@D@@KH@Z",
+    "demangled": "public: void CWvsContext::SendFamilyInviteResult(class ZXString<char>,unsigned long,int)"
+   },
+   {
+    "ea": "0xa340f6",
+    "method": "SendRegisterJunior",
+    "decorated": "?SendRegisterJunior@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SendRegisterJunior(class ZXString<char>)"
+   },
+   {
+    "ea": "0xa3427a",
+    "method": "SendUseFamilyPrivilege",
+    "decorated": "?SendUseFamilyPrivilege@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendUseFamilyPrivilege(long)"
+   },
+   {
+    "ea": "0xa3440f",
+    "method": "SendSetFamilyPrecept",
+    "decorated": "?SendSetFamilyPrecept@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SendSetFamilyPrecept(class ZXString<char>)"
+   },
+   {
+    "ea": "0xa34489",
+    "method": "SendFamilyChartRequest",
+    "decorated": "?SendFamilyChartRequest@CWvsContext@@QAEXV?$ZXString@D@@@Z",
+    "demangled": "public: void CWvsContext::SendFamilyChartRequest(class ZXString<char>)"
+   },
+   {
+    "ea": "0xa3449f",
+    "method": "OnFamilyInfoResult",
+    "decorated": "?OnFamilyInfoResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyInfoResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa345fb",
+    "method": "OnFamilyResult",
+    "decorated": "?OnFamilyResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa349ab",
+    "method": "OnFamilyJoinRequest",
+    "decorated": "?OnFamilyJoinRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyJoinRequest(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34a97",
+    "method": "OnFamilyJoinRequestResult",
+    "decorated": "?OnFamilyJoinRequestResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyJoinRequestResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34b8d",
+    "method": "OnFamilyJoinAccepted",
+    "decorated": "?OnFamilyJoinAccepted@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyJoinAccepted(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34c1b",
+    "method": "OnFamilyPrivilegeList",
+    "decorated": "?OnFamilyPrivilegeList@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyPrivilegeList(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34dd7",
+    "method": "OnFamilyFamousPointIncResult",
+    "decorated": "?OnFamilyFamousPointIncResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyFamousPointIncResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34edb",
+    "method": "OnFamilyNotifyLoginOrLogout",
+    "decorated": "?OnFamilyNotifyLoginOrLogout@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilyNotifyLoginOrLogout(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa34fa4",
+    "method": "OnFamilySetPrivilege",
+    "decorated": "?OnFamilySetPrivilege@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilySetPrivilege(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa350c8",
+    "method": "OnFamilySummonRequest",
+    "decorated": "?OnFamilySummonRequest@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFamilySummonRequest(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa37490",
+    "method": "OnGuildResult",
+    "decorated": "?OnGuildResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnGuildResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa39184",
+    "method": "GetGuildMemberDataByIdx",
+    "decorated": "?GetGuildMemberDataByIdx@CWvsContext@@QAEXJAAJAAUGUILDMEMBER@@@Z",
+    "demangled": "public: void CWvsContext::GetGuildMemberDataByIdx(long,long __near &,struct GUILDMEMBER __near &)"
+   },
+   {
+    "ea": "0xa39282",
+    "method": "GetGuildMemberIDByName",
+    "decorated": "?GetGuildMemberIDByName@CWvsContext@@QAEKV?$ZXString@D@@@Z",
+    "demangled": "public: unsigned long CWvsContext::GetGuildMemberIDByName(class ZXString<char>)"
+   },
+   {
+    "ea": "0xa393d3",
+    "method": "GuildNPCSay",
+    "decorated": "?GuildNPCSay@CWvsContext@@QAEXAAV?$ZArray@V?$ZXString@D@@@@J@Z",
+    "demangled": "public: void CWvsContext::GuildNPCSay(class ZArray<class ZXString<char>> __near &,long)"
+   },
+   {
+    "ea": "0xa39f4e",
+    "method": "OnAllianceResult",
+    "decorated": "?OnAllianceResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnAllianceResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa3ab25",
+    "method": "GetAllianceGradeName",
+    "decorated": "?GetAllianceGradeName@CWvsContext@@QAE?AV?$ZXString@D@@J@Z",
+    "demangled": "public: class ZXString<char> CWvsContext::GetAllianceGradeName(long)"
+   },
+   {
+    "ea": "0xa3e2d7",
+    "method": "SendCancelPartyWanted",
+    "decorated": "?SendCancelPartyWanted@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::SendCancelPartyWanted(void)"
+   },
+   {
+    "ea": "0xa3e31c",
+    "method": "OnPartyResult",
+    "decorated": "?OnPartyResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnPartyResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa3f2e8",
+    "method": "OnFriendResult",
+    "decorated": "?OnFriendResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnFriendResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa3f92e",
+    "method": "FindUser",
+    "decorated": "?FindUser@CWvsContext@@QAEKK@Z",
+    "demangled": "public: unsigned long CWvsContext::FindUser(unsigned long)"
+   },
+   {
+    "ea": "0xa3fa20",
+    "method": "IsPartyMemberID",
+    "decorated": "?IsPartyMemberID@CWvsContext@@QBEHK@Z",
+    "demangled": "public: int CWvsContext::IsPartyMemberID(unsigned long)const"
+   },
+   {
+    "ea": "0xa3fb52",
+    "method": "GetOnlineFriendID",
+    "decorated": "?GetOnlineFriendID@CWvsContext@@QAEXAAV?$ZArray@K@@@Z",
+    "demangled": "public: void CWvsContext::GetOnlineFriendID(class ZArray<unsigned long> __near &)"
+   },
+   {
+    "ea": "0xa3fbc6",
+    "method": "GetOnlineFriendIDByGroup",
+    "decorated": "?GetOnlineFriendIDByGroup@CWvsContext@@QAEXV?$ZXString@D@@AAV?$ZArray@K@@@Z",
+    "demangled": "public: void CWvsContext::GetOnlineFriendIDByGroup(class ZXString<char>,class ZArray<unsigned long> __near &)"
+   },
+   {
+    "ea": "0xa3fdd4",
+    "method": "LoadFriend",
+    "decorated": "?LoadFriend@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::LoadFriend(void)"
+   },
+   {
+    "ea": "0xa3fe77",
+    "method": "ChangeBlockOption",
+    "decorated": "?ChangeBlockOption@CWvsContext@@QAEHKJH@Z",
+    "demangled": "public: int CWvsContext::ChangeBlockOption(unsigned long,long,int)"
+   },
+   {
+    "ea": "0xa3fecf",
+    "method": "CheckReqFriend",
+    "decorated": "?CheckReqFriend@CWvsContext@@QAEXXZ",
+    "demangled": "public: void CWvsContext::CheckReqFriend(void)"
+   }
+  ],
+  "GW_NewYearCardRecord": [
+   {
+    "ea": "0x4e499c",
+    "method": "Decode",
+    "decorated": "?Decode@GW_NewYearCardRecord@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void GW_NewYearCardRecord::Decode(class CInPacket __near &)"
+   }
+  ],
+  "StringPool": [
+   {
+    "ea": "0x406276",
+    "method": "GetStringW",
+    "decorated": "?GetStringW@StringPool@@QAE?AV?$ZXString@G@@I@Z",
+    "demangled": "public: class ZXString<unsigned short> StringPool::GetStringW(unsigned int)"
+   },
+   {
+    "ea": "0x406292",
+    "method": "GetBSTR",
+    "decorated": "?GetBSTR@StringPool@@QAE?AVZtl_bstr_t@@I@Z",
+    "demangled": "public: class Ztl_bstr_t StringPool::GetBSTR(unsigned int)"
+   },
+   {
+    "ea": "0x406455",
+    "method": "GetString",
+    "decorated": "?GetString@StringPool@@QAE?AV?$ZXString@D@@I@Z",
+    "demangled": "public: class ZXString<char> StringPool::GetString(unsigned int)"
+   },
+   {
+    "ea": "0x79e805",
+    "method": "GetInstance",
+    "decorated": "?GetInstance@StringPool@@SAAAV1@XZ",
+    "demangled": "public: static class StringPool __near & StringPool::GetInstance(void)"
+   },
+   {
+    "ea": "0x79e993",
+    "method": "GetString",
+    "decorated": "?GetString@StringPool@@AAE?AV?$ZXString@D@@ID@Z",
+    "demangled": "private: class ZXString<char> StringPool::GetString(unsigned int,char)"
+   },
+   {
+    "ea": "0x79ea63",
+    "method": "GetString",
+    "decorated": "?GetString@StringPool@@AAE?AV?$ZXString@G@@IG@Z",
+    "demangled": "private: class ZXString<unsigned short> StringPool::GetString(unsigned int,unsigned short)"
+   }
+  ],
+  "UMedalQuestInfo": [
+   {
+    "ea": "0x8456bf",
+    "method": "0?$ZRef",
+    "decorated": "??0?$ZRef@UMedalQuestInfo@@@@QAE@ABV0@@Z",
+    "demangled": "public: ZRef<struct MedalQuestInfo>::ZRef<struct MedalQuestInfo>(class ZRef<struct MedalQuestInfo> const __near &)"
+   }
+  ],
+  "VCScoreboard_Battlefield": [
+   {
+    "ea": "0x545e0e",
+    "method": "4?$ZRef",
+    "decorated": "??4?$ZRef@VCScoreboard_Battlefield@@@@QAEAAV0@PAVCScoreboard_Battlefield@@@Z",
+    "demangled": "public: class ZRef<class CScoreboard_Battlefield> __near & ZRef<class CScoreboard_Battlefield>::operator=(class CScoreboard_Battlefield __near *)"
+   }
+  ],
+  "VCTimerboard_SpaceGAGA": [
+   {
+    "ea": "0x578b61",
+    "method": "4?$ZRef",
+    "decorated": "??4?$ZRef@VCTimerboard_SpaceGAGA@@@@QAEAAV0@PAVCTimerboard_SpaceGAGA@@@Z",
+    "demangled": "public: class ZRef<class CTimerboard_SpaceGAGA> __near & ZRef<class CTimerboard_SpaceGAGA>::operator=(class CTimerboard_SpaceGAGA __near *)"
+   }
+  ],
+  "VCTutor": [
+   {
+    "ea": "0x961491",
+    "method": "4?$ZRef",
+    "decorated": "??4?$ZRef@VCTutor@@@@QAEAAV0@PAVCTutor@@@Z",
+    "demangled": "public: class ZRef<class CTutor> __near & ZRef<class CTutor>::operator=(class CTutor __near *)"
+   }
+  ]
+ }
+}

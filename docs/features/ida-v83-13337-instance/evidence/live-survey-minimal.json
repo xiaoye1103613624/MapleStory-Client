@@ -1,0 +1,158 @@
+{
+  "p13337": {
+    "metadata": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+      "module": "`Angel.exe",
+      "arch": "32",
+      "base_address": "0x400000",
+      "image_size": "0xa95000",
+      "md5": "unavailable",
+      "sha256": "unavailable"
+    },
+    "statistics": {
+      "total_functions": 55015,
+      "named_functions": 3338,
+      "library_functions": 523,
+      "unnamed_functions": 51154,
+      "total_strings": 1281,
+      "total_segments": 7
+    },
+    "segments": [
+      {
+        "name": "___",
+        "start": "0x401000",
+        "end": "0xaf0000",
+        "size": "0x6ef000",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".idata",
+        "start": "0xaf0000",
+        "end": "0xaf03f8",
+        "size": "0x3f8",
+        "permissions": "rwx"
+      },
+      {
+        "name": "___",
+        "start": "0xaf03f8",
+        "end": "0xbf9000",
+        "size": "0x108c08",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".idata__",
+        "start": "0xc19000",
+        "end": "0xc1a000",
+        "size": "0x1000",
+        "permissions": "rw"
+      },
+      {
+        "name": "________",
+        "start": "0xc1a000",
+        "end": "0xe92000",
+        "size": "0x278000",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".mackt",
+        "start": "0xe92000",
+        "end": "0xe94000",
+        "size": "0x2000",
+        "permissions": "rwx"
+      },
+      {
+        "name": "seg006",
+        "start": "0xe94000",
+        "end": "0xe95000",
+        "size": "0x1000",
+        "permissions": "rw"
+      }
+    ],
+    "entrypoints": [
+      {
+        "addr": "0xa63ff3",
+        "name": "start",
+        "ordinal": 10895347
+      }
+    ],
+    "_note": "Binary has 55015 functions; xref analysis was limited to the first 10000 for performance."
+  },
+  "p13339": {
+    "metadata": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+      "module": "`Angel.exe",
+      "arch": "32",
+      "base_address": "0x400000",
+      "image_size": "0xa95000",
+      "md5": "unavailable",
+      "sha256": "unavailable"
+    },
+    "statistics": {
+      "total_functions": 55016,
+      "named_functions": 3338,
+      "library_functions": 523,
+      "unnamed_functions": 51155,
+      "total_strings": 1281,
+      "total_segments": 7
+    },
+    "segments": [
+      {
+        "name": "___",
+        "start": "0x401000",
+        "end": "0xaf0000",
+        "size": "0x6ef000",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".idata",
+        "start": "0xaf0000",
+        "end": "0xaf03f8",
+        "size": "0x3f8",
+        "permissions": "rwx"
+      },
+      {
+        "name": "___",
+        "start": "0xaf03f8",
+        "end": "0xbf9000",
+        "size": "0x108c08",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".idata__",
+        "start": "0xc19000",
+        "end": "0xc1a000",
+        "size": "0x1000",
+        "permissions": "rw"
+      },
+      {
+        "name": "________",
+        "start": "0xc1a000",
+        "end": "0xe92000",
+        "size": "0x278000",
+        "permissions": "rwx"
+      },
+      {
+        "name": ".mackt",
+        "start": "0xe92000",
+        "end": "0xe94000",
+        "size": "0x2000",
+        "permissions": "rwx"
+      },
+      {
+        "name": "seg006",
+        "start": "0xe94000",
+        "end": "0xe95000",
+        "size": "0x1000",
+        "permissions": "rw"
+      }
+    ],
+    "entrypoints": [
+      {
+        "addr": "0xa63ff3",
+        "name": "start",
+        "ordinal": 10895347
+      }
+    ],
+    "_note": "Binary has 55016 functions; xref analysis was limited to the first 10000 for performance."
+  }
+}

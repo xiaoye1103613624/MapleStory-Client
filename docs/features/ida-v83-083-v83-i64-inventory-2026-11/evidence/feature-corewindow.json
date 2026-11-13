@@ -1,0 +1,408 @@
+{
+  "feature": "corewindow",
+  "p13337": {
+    "class_count": 22,
+    "method_count": 181,
+    "classes": [
+      {
+        "class": "CCtrlButton",
+        "methods": 10
+      },
+      {
+        "class": "CCtrlCheckBox",
+        "methods": 4
+      },
+      {
+        "class": "CCtrlComboBox",
+        "methods": 5
+      },
+      {
+        "class": "CCtrlEdit",
+        "methods": 10
+      },
+      {
+        "class": "CCtrlMLEdit",
+        "methods": 12
+      },
+      {
+        "class": "CCtrlScrollBar",
+        "methods": 15
+      },
+      {
+        "class": "CCtrlSelector",
+        "methods": 4
+      },
+      {
+        "class": "CCtrlSlider",
+        "methods": 3
+      },
+      {
+        "class": "CCtrlTab",
+        "methods": 6
+      },
+      {
+        "class": "CCtrlWnd",
+        "methods": 5
+      },
+      {
+        "class": "CDraggableItem",
+        "methods": 13
+      },
+      {
+        "class": "CDraggableMenu",
+        "methods": 2
+      },
+      {
+        "class": "CDraggableSkill",
+        "methods": 4
+      },
+      {
+        "class": "CITCWnd_Char",
+        "methods": 7
+      },
+      {
+        "class": "CITCWnd_List",
+        "methods": 2
+      },
+      {
+        "class": "CITCWnd_Tab",
+        "methods": 1
+      },
+      {
+        "class": "CUIWnd",
+        "methods": 7
+      },
+      {
+        "class": "CWnd",
+        "methods": 34
+      },
+      {
+        "class": "CWndAllianceGrade",
+        "methods": 3
+      },
+      {
+        "class": "CWndGuildGrade",
+        "methods": 3
+      },
+      {
+        "class": "CWndMan",
+        "methods": 29
+      },
+      {
+        "class": "CWndSkillGuide",
+        "methods": 2
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 22,
+    "method_count": 181,
+    "classes": [
+      {
+        "class": "CCtrlButton",
+        "methods": 10
+      },
+      {
+        "class": "CCtrlCheckBox",
+        "methods": 4
+      },
+      {
+        "class": "CCtrlComboBox",
+        "methods": 5
+      },
+      {
+        "class": "CCtrlEdit",
+        "methods": 10
+      },
+      {
+        "class": "CCtrlMLEdit",
+        "methods": 12
+      },
+      {
+        "class": "CCtrlScrollBar",
+        "methods": 15
+      },
+      {
+        "class": "CCtrlSelector",
+        "methods": 4
+      },
+      {
+        "class": "CCtrlSlider",
+        "methods": 3
+      },
+      {
+        "class": "CCtrlTab",
+        "methods": 6
+      },
+      {
+        "class": "CCtrlWnd",
+        "methods": 5
+      },
+      {
+        "class": "CDraggableItem",
+        "methods": 13
+      },
+      {
+        "class": "CDraggableMenu",
+        "methods": 2
+      },
+      {
+        "class": "CDraggableSkill",
+        "methods": 4
+      },
+      {
+        "class": "CITCWnd_Char",
+        "methods": 7
+      },
+      {
+        "class": "CITCWnd_List",
+        "methods": 2
+      },
+      {
+        "class": "CITCWnd_Tab",
+        "methods": 1
+      },
+      {
+        "class": "CUIWnd",
+        "methods": 7
+      },
+      {
+        "class": "CWnd",
+        "methods": 34
+      },
+      {
+        "class": "CWndAllianceGrade",
+        "methods": 3
+      },
+      {
+        "class": "CWndGuildGrade",
+        "methods": 3
+      },
+      {
+        "class": "CWndMan",
+        "methods": 29
+      },
+      {
+        "class": "CWndSkillGuide",
+        "methods": 2
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CWnd": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x4243fe",
+          "name": "?OnDragDrop@CWnd@@UAEHJAAUDRAGCTX@@JJ@Z"
+        },
+        {
+          "ea": "0x424403",
+          "name": "?IsMyAddon@CWnd@@UAEHPAV1@@Z"
+        },
+        {
+          "ea": "0x424443",
+          "name": "?OnMouseButton@CWnd@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x424446",
+          "name": "?OnMouseMove@CWnd@@UAEHJJ@Z"
+        },
+        {
+          "ea": "0x42444e",
+          "name": "?OnChildNotify@CWnd@@UAEXIII@Z"
+        },
+        {
+          "ea": "0x4259d9",
+          "name": "?OnCreate_unsure@CWnd@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x4259dc",
+          "name": "?OnDestroy_unsure@CWnd@@UAEXXZ"
+        },
+        {
+          "ea": "0x425c4c",
+          "name": "?GetCanvas@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@XZ"
+        },
+        {
+          "ea": "0x426604",
+          "name": "?GetLayer@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ"
+        },
+        {
+          "ea": "0x45a63c",
+          "name": "?OnButtonClicked@CWnd@@UAEXI@Z"
+        },
+        {
+          "ea": "0x45a63f",
+          "name": "?GetRTTI@CWnd@@UBEPBVCRTTI@@XZ"
+        },
+        {
+          "ea": "0x45a645",
+          "name": "?IsKindOf@CWnd@@UBEHPBVCRTTI@@@Z"
+        },
+        {
+          "ea": "0x48bba5",
+          "name": "?GetOrgWindow@CWndMan@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@W4UIOrigin@CWnd@@@Z"
+        },
+        {
+          "ea": "0x4eda94",
+          "name": "?CreateDlg@CDialog@@QAEXJJJJJHPAXW4UIOrigin@CWnd@@@Z"
+        },
+        {
+          "ea": "0x51f9ad",
+          "name": "?CreateFadeWnd@CFadeWnd@@QAEXJJPBGJHPAXHW4UIOrigin@CWnd@@@Z"
+        },
+        {
+          "ea": "0x9de383",
+          "name": "??0CWnd@@QAE@XZ"
+        },
+        {
+          "ea": "0x9de438",
+          "name": "??1CWnd@@UAE@XZ"
+        },
+        {
+          "ea": "0x9de4d2",
+          "name": "?CreateWnd@CWnd@@QAEXJJJJJHPAXHW4UIOrigin@1@@Z"
+        },
+        {
+          "ea": "0x9de7fb",
+          "name": "?PreCreateWnd@CWnd@@UAEXJJJJJHPAX@Z"
+        },
+        {
+          "ea": "0x9deb57",
+          "name": "?OnMoveWnd@CWnd@@UAEXJJ@Z"
+        },
+        {
+          "ea": "0x9e00a6",
+          "name": "?OnEndMoveWnd@CWnd@@UAEXXZ"
+        },
+        {
+          "ea": "0x9e00af",
+          "name": "?Destroy@CWnd@@QAEXXZ"
+        },
+        {
+          "ea": "0x9e01c8",
+          "name": "?OnMouseEnter@CWnd@@UAEXH@Z"
+        },
+        {
+          "ea": "0x9e01e7",
+          "name": "?HitTest@CWnd@@UAEHJJPAPAVCCtrlWnd@@@Z"
+        },
+        {
+          "ea": "0x9e02ae",
+          "name": "?OnMouseWheel@CWnd@@UAEHJJJ@Z"
+        }
+      ]
+    },
+    "CWndMan": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x9e03a6",
+          "name": "?UpdateWindowPosition@CWndMan@@KAXPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e2c42",
+          "name": "??0CWndMan@@QAE@PAUHWND__@@@Z"
+        },
+        {
+          "ea": "0x9e2fe0",
+          "name": "?PreCreateWnd@CWndMan@@UAEXJJJJJHPAX@Z"
+        },
+        {
+          "ea": "0x9e2fe3",
+          "name": "?OnActivate@CWndMan@@UAEHH@Z"
+        },
+        {
+          "ea": "0x9e3026",
+          "name": "??1CWndMan@@UAE@XZ"
+        },
+        {
+          "ea": "0x9e311b",
+          "name": "?GetCursorPos@CWndMan@@QAEXPAUtagPOINT@@H@Z"
+        },
+        {
+          "ea": "0x9e3180",
+          "name": "?SetCursorPos@CWndMan@@QAEXUtagPOINT@@H@Z"
+        },
+        {
+          "ea": "0x9e3264",
+          "name": "?SetFocus@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+        },
+        {
+          "ea": "0x9e337e",
+          "name": "?SetActiveWndImp@CWndMan@@AAEHPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e33fc",
+          "name": "?SetCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+        },
+        {
+          "ea": "0x9e3432",
+          "name": "?ReleaseCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+        },
+        {
+          "ea": "0x9e3454",
+          "name": "?Unlink@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+        },
+        {
+          "ea": "0x9e353d",
+          "name": "?BeginDragDrop@CWndMan@@QAEXPAUIUIMsgHandler@@PAUIDraggable@@H@Z"
+        },
+        {
+          "ea": "0x9e37c2",
+          "name": "?EndDragDrop@CWndMan@@QAEXJJH@Z"
+        },
+        {
+          "ea": "0x9e3ac0",
+          "name": "?ClearDragContext@CWndMan@@QAEXXZ"
+        },
+        {
+          "ea": "0x9e3ae6",
+          "name": "?ProcessMouse@CWndMan@@QAEJIIJ@Z"
+        },
+        {
+          "ea": "0x9e40f1",
+          "name": "?ProcessKey@CWndMan@@QAEJIIJ@Z"
+        },
+        {
+          "ea": "0x9e42b2",
+          "name": "?GetHandlerFromPoint@CWndMan@@QAEPAUIUIMsgHandler@@JJ@Z"
+        },
+        {
+          "ea": "0x9e43ff",
+          "name": "?InsertWindow@CWndMan@@KAXPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e44ba",
+          "name": "?RemoveWindow@CWndMan@@KAHPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e44dc",
+          "name": "?RemoveUpdateWindow@CWndMan@@KAXPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e44fe",
+          "name": "?InsertInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e4525",
+          "name": "?RemoveInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z"
+        },
+        {
+          "ea": "0x9e4547",
+          "name": "?RedrawInvalidatedWindows@CWndMan@@SAXXZ"
+        },
+        {
+          "ea": "0x9e7d77",
+          "name": "?TranslateMessage@CWndMan@@QAEHAAI0AAJPAJ@Z"
+        }
+      ]
+    }
+  }
+}

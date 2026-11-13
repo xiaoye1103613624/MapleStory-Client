@@ -1,0 +1,9 @@
+cfg xiaoye+auto
+pid=49876
+in game
+click (487,348) macro btn fixed
+cap 01_macro_three_rows
+cap 02_both_closed
+click (812,349) npc nana fixed
+cap 03_npc_click
+cfg restored

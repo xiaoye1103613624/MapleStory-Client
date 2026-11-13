@@ -1,0 +1,6 @@
+cfg xiaoye+auto
+pid=46676
+in game
+cap tv_room -> True
+cap tv_room_b -> True
+cfg restored

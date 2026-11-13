@@ -1,0 +1,115 @@
+{
+ "scope": "activity-minigame face / crosscheck 3 missing EAs root-cause",
+ "source_angel": "13339 E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+ "source_beidou": "13337 E:\\MXD\\BeiDou-ClientV17.7\\BeiDou.exe.i64",
+ "method": "py_eval idc.get_func_attr/get_wide_byte on both IDBs, 8 bytes at each EA",
+ "mechanical_summary": {
+  "angel_funcs": 844,
+  "beidou_present": 841,
+  "beidou_missing": 3,
+  "raw_conclusion": "layout differs (crosscheck threshold present>=len-2)"
+ },
+ "corrected_conclusion": "NOT a binary layout difference: all 3 EAs are Angel function heads with decorated names; BeiDou idc.get_func_attr returns -1 (function NOT defined by auto-analysis) yet the 8 bytes at every EA are byte-identical on both IDBs. Pure IDA analysis-coverage difference, consistent with the previous five faces (login/HUD/corewindow/social/petsummon all 0 missing).",
+ "entries": [
+  {
+   "ea": "0x462738",
+   "angel_symbol": "?OnKey@CBookDlg@@UAEXII@Z",
+   "angel_func": "0x462738..0x46275b",
+   "bytes8": [
+    246,
+    68,
+    36,
+    11,
+    128,
+    117,
+    25,
+    131
+   ],
+   "beidou_func_attr": "0xffffffffffffffff (undefined)",
+   "beidou_bytes8": [
+    246,
+    68,
+    36,
+    11,
+    128,
+    117,
+    25,
+    131
+   ],
+   "bytes_identical": true
+  },
+  {
+   "ea": "0x5617a1",
+   "angel_symbol": "?OnPacket@CField_MassacreResult@@UAEXJAAVCInPacket@@@Z",
+   "angel_func": "0x5617a1..0x5617c5",
+   "bytes8": [
+    129,
+    124,
+    36,
+    4,
+    158,
+    0,
+    0,
+    0
+   ],
+   "beidou_func_attr": "0xffffffffffffffff (undefined)",
+   "beidou_bytes8": [
+    129,
+    124,
+    36,
+    4,
+    158,
+    0,
+    0,
+    0
+   ],
+   "bytes_identical": true
+  },
+  {
+   "ea": "0x6cec47",
+   "angel_symbol": "?Update@CNoticeQuestProgress@@UAEXXZ",
+   "angel_func": "0x6cec47..0x6cec58",
+   "bytes8": [
+    86,
+    139,
+    241,
+    232,
+    47,
+    26,
+    49,
+    0
+   ],
+   "beidou_func_attr": "0xffffffffffffffff (undefined)",
+   "beidou_bytes8": [
+    86,
+    139,
+    241,
+    232,
+    47,
+    26,
+    49,
+    0
+   ],
+   "bytes_identical": true
+  },
+  {
+   "ea": "0x58fbfc",
+   "angel_symbol": "?JustBomb@CGrenade@@AAEXXZ",
+   "angel_func": "0x58fbfc..0x58fc1e",
+   "note": "NOT one of the 3 missing; both IDBs define this as func head (BeiDou sub_58FBFC). Hex-Rays decompile fails at 0x58fc17 -> disasm fallback written to full.json.",
+   "beidou_name": "sub_58FBFC",
+   "beidou_bytes8": [
+    86,
+    139,
+    241,
+    255,
+    118,
+    68,
+    139,
+    13
+   ],
+   "bytes_identical": true
+  }
+ ],
+ "six_face_consistency": "login 327/328, HUD 547/548, corewindow 439/441, social 752/752, petsummon 968/968, activity 844/844 by bytes (841 by IDA function lookup + 3 undefined-but-identical) => Angel & BeiDou remain the SAME v83 binary in different symbol states."
+}

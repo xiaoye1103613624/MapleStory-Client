@@ -1,0 +1,83 @@
+{
+  "feature": "medal",
+  "p13337": {
+    "class_count": 2,
+    "method_count": 13,
+    "classes": [
+      {
+        "class": "CUIMedalQuestInfo",
+        "methods": 10
+      },
+      {
+        "class": "CUIMedalQuestInfoDetail",
+        "methods": 3
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 2,
+    "method_count": 13,
+    "classes": [
+      {
+        "class": "CUIMedalQuestInfo",
+        "methods": 10
+      },
+      {
+        "class": "CUIMedalQuestInfoDetail",
+        "methods": 3
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUIMedalQuestInfo": {
+      "count_sampled": 10,
+      "sample": [
+        {
+          "ea": "0x84056b",
+          "name": "?OnCreate@CUIMedalQuestInfo@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x841678",
+          "name": "?OnMouseButton@CUIMedalQuestInfo@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x841976",
+          "name": "?GetSelect@CUIMedalQuestInfo@@IAEJJ@Z"
+        },
+        {
+          "ea": "0x8423e2",
+          "name": "?LoadData@CUIMedalQuestInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x8438a6",
+          "name": "?IsStateButton@CUIMedalQuestInfo@@IAEHV?$ZRef@UMedalQuestInfo@@@@@Z"
+        },
+        {
+          "ea": "0x8438df",
+          "name": "?ResetInfo@CUIMedalQuestInfo@@QAEXH@Z"
+        },
+        {
+          "ea": "0x843a93",
+          "name": "?SetScrollBar@CUIMedalQuestInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x843bf6",
+          "name": "?Draw@CUIMedalQuestInfo@@UAEXPBUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x844e1f",
+          "name": "?ToggleDetail@CUIMedalQuestInfo@@QAEXH@Z"
+        },
+        {
+          "ea": "0x844eea",
+          "name": "?Update@CUIMedalQuestInfo@@UAEXXZ"
+        }
+      ]
+    }
+  }
+}

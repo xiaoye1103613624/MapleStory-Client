@@ -1,0 +1,5 @@
+click dismiss_a (180,520)
+click dismiss_x (180,520)
+cap a_pre white=5518
+cap x_pre white=76859
+click x_close_existing (782,92)

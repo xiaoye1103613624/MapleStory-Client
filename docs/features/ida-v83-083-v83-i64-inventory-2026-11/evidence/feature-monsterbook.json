@@ -1,0 +1,72 @@
+{
+  "feature": "monsterbook",
+  "p13337": {
+    "class_count": 2,
+    "method_count": 11,
+    "classes": [
+      {
+        "class": "CMonsterBookMan",
+        "methods": 6
+      },
+      {
+        "class": "CUIMonsterBook",
+        "methods": 5
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 2,
+    "method_count": 11,
+    "classes": [
+      {
+        "class": "CMonsterBookMan",
+        "methods": 6
+      },
+      {
+        "class": "CUIMonsterBook",
+        "methods": 5
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "MonsterBook": {
+      "ea": "0xb39e14",
+      "text": "w.img/MonsterBook/ContextMenu/BtRelease"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUIMonsterBook": {
+      "count_sampled": 6,
+      "sample": [
+        {
+          "ea": "0x861ab8",
+          "name": "?Clear@MOBINFO@CUIMonsterBook@@QAEXXZ"
+        },
+        {
+          "ea": "0x862527",
+          "name": "?UpdateUI@CUIMonsterBook@@QAEXXZ"
+        },
+        {
+          "ea": "0x866c2c",
+          "name": "?LoadMobInfo@CUIMonsterBook@@IAEXV?$ZRef@UMonsterBookCard@@@@@Z"
+        },
+        {
+          "ea": "0x8677cc",
+          "name": "?LoadMobAction@CUIMonsterBook@@IAEXKJAAV?$ZList@V?$ZRef@UMOBACTIONFRAMEENTRY@CActionMan@@@@@@@Z"
+        },
+        {
+          "ea": "0x867a2f",
+          "name": "?GetCard@CUIMonsterBook@@IAE?AV?$ZRef@UMonsterBookCard@@@@XZ"
+        },
+        {
+          "ea": "0x867be6",
+          "name": "?UpdateCheckList@CUIMonsterBook@@IAEXXZ"
+        }
+      ]
+    }
+  }
+}

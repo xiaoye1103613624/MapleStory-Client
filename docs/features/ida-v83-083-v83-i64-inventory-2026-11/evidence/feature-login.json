@@ -1,0 +1,233 @@
+{
+  "feature": "login",
+  "p13337": {
+    "class_count": 10,
+    "method_count": 98,
+    "classes": [
+      {
+        "class": "CLogin",
+        "methods": 55
+      },
+      {
+        "class": "CLoginUtilDlg",
+        "methods": 6
+      },
+      {
+        "class": "CPinCodeDlg",
+        "methods": 11
+      },
+      {
+        "class": "CUIAntiMacroCharacterName",
+        "methods": 2
+      },
+      {
+        "class": "CUIChannelSelect",
+        "methods": 1
+      },
+      {
+        "class": "CUIChannelShift",
+        "methods": 5
+      },
+      {
+        "class": "CUICharSelect",
+        "methods": 4
+      },
+      {
+        "class": "CUICharacterSaleDlg",
+        "methods": 4
+      },
+      {
+        "class": "CUILoginStart",
+        "methods": 3
+      },
+      {
+        "class": "CUIRecommendWorld",
+        "methods": 7
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 10,
+    "method_count": 98,
+    "classes": [
+      {
+        "class": "CLogin",
+        "methods": 55
+      },
+      {
+        "class": "CLoginUtilDlg",
+        "methods": 6
+      },
+      {
+        "class": "CPinCodeDlg",
+        "methods": 11
+      },
+      {
+        "class": "CUIAntiMacroCharacterName",
+        "methods": 2
+      },
+      {
+        "class": "CUIChannelSelect",
+        "methods": 1
+      },
+      {
+        "class": "CUIChannelShift",
+        "methods": 5
+      },
+      {
+        "class": "CUICharSelect",
+        "methods": 4
+      },
+      {
+        "class": "CUICharacterSaleDlg",
+        "methods": 4
+      },
+      {
+        "class": "CUILoginStart",
+        "methods": 3
+      },
+      {
+        "class": "CUIRecommendWorld",
+        "methods": 7
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "Guild": {
+      "ea": "0xaf2204",
+      "text": "Guild Master can not transfer worlds."
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CLogin": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x5f3c59",
+          "name": "??0CLogin@@QAE@XZ"
+        },
+        {
+          "ea": "0x5f42cd",
+          "name": "?Init@CLogin@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x5f4c16",
+          "name": "?Update@CLogin@@UAEXXZ"
+        },
+        {
+          "ea": "0x5f5368",
+          "name": "?OnMouseButton@CLogin@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x5f53c0",
+          "name": "?ChangeStep@CLogin@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x5f5962",
+          "name": "?OnStepChanged@CLogin@@QAEXXZ"
+        },
+        {
+          "ea": "0x5f6425",
+          "name": "?OnNewCharStep@CLogin@@QAEXH@Z"
+        },
+        {
+          "ea": "0x5f6482",
+          "name": "?OnSelectedCharChanged@CLogin@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x5f6918",
+          "name": "?OnNewCharCanceled@CLogin@@QAEXXZ"
+        },
+        {
+          "ea": "0x5f6932",
+          "name": "?SendRequest@CLogin@@QAEXAAVCOutPacket@@@Z"
+        },
+        {
+          "ea": "0x5f6952",
+          "name": "?SendCheckPasswordPacket@CLogin@@QAEHPBD0@Z"
+        },
+        {
+          "ea": "0x5f6d6a",
+          "name": "?SendViewAllCharPacket@CLogin@@QAEHXZ"
+        },
+        {
+          "ea": "0x5f726d",
+          "name": "?SendSelectCharPacket@CLogin@@QAEXXZ"
+        },
+        {
+          "ea": "0x5f76ae",
+          "name": "?SendSelectCharPacketByVAC@CLogin@@QAEXXZ"
+        },
+        {
+          "ea": "0x5f7c4a",
+          "name": "?SendDeleteCharPacket@CLogin@@QAEXXZ"
+        },
+        {
+          "ea": "0x5f7fe7",
+          "name": "?SendCheckDuplicateIDPacket@CLogin@@QAEXABV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x5f8078",
+          "name": "?SendCheckUserLimitPacket@CLogin@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x5f80ff",
+          "name": "?OnPacket@CLogin@@UAEXJAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f82f4",
+          "name": "?OnLatestConnectedWorld@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f8340",
+          "name": "?OnRecommendWorldMessage@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f83ee",
+          "name": "?OnCheckPasswordResult@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f8f27",
+          "name": "?OnGuestIDLoginResult@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f92ae",
+          "name": "?OnCheckUserLimitResult@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f92df",
+          "name": "?OnAccountInfoResult@CLogin@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x5f95b7",
+          "name": "?OnWorldInformation@CLogin@@IAEXAAVCInPacket@@@Z"
+        }
+      ]
+    },
+    "CUICharSelect": {
+      "count_sampled": 4,
+      "sample": [
+        {
+          "ea": "0x60135b",
+          "name": "??0CUICharSelect@@QAE@PAVCLogin@@@Z"
+        },
+        {
+          "ea": "0x601667",
+          "name": "?OnButtonClicked@CUICharSelect@@UAEXI@Z"
+        },
+        {
+          "ea": "0x601829",
+          "name": "?SetKeyFocus@CUICharSelect@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x601861",
+          "name": "?IsRequestValid@CUICharSelect@@IAEHXZ"
+        }
+      ]
+    }
+  }
+}

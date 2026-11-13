@@ -1,0 +1,35 @@
+admin=XiaoYE MS v0.0.1【1-Admin】【破功值：199999】【FPS:88 延迟:--】【当前时间：2026-11-06 10:02:26】【在线时长：00 00:04:39】
+xy=XiaoYE MS v0.0.1【2-xiaoye】【破功值：199999】【FPS:84 延迟:--】【当前时间：2026-11-06 10:02:25】【在线时长：00 00:04:40】
+click dismiss_menu (200,500)
+cap admin_pre white=10238
+cap admin_open_c0 white=77106
+cap admin_local white=77131
+click namebar1 (647,197)
+cap admin_softkey white=76652
+click softkey_tf (508,295)
+cap admin_resume white=76856
+click softkey_tf (508,295)
+cap admin_typed white=77136
+click softkey_ok (586,249)
+cap admin_after_invite white=76980
+cap xy_invite white=76737
+cap xy_after_enter white=76732
+click yes_545 (545,400)
+click yes_575 (575,400)
+click yes_605 (605,400)
+click yes_560 (560,380)
+cap xy_after_yes white=76774
+cap admin_both white=77034
+cap xy_both white=76772
+cap xy_pre white=76772
+cap xy_room white=76769
+cap admin_room white=77045
+click input (560,405)
+cap xy_balloon white=76925
+cap admin_typing white=77172
+cap xy_blink white=76949
+cap admin_sent white=77186
+cap admin_preclose white=77179
+click close (782,92)
+cap admin_postclose white=6560
+CLOSE white 77179->6560 ok=True

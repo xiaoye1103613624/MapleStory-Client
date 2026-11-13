@@ -1,0 +1,4 @@
+admin_pid=53492
+xiaoye_pid=26888
+admin_hwnd=46927966
+xiaoye_hwnd=12460276

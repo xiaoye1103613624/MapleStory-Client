@@ -1,0 +1,33 @@
+{
+  "warning": "Do NOT equate port 13337 with historical BeiDou.exe.i64. Port reuse only.",
+  "p13337": {
+    "port": 13337,
+    "idb_path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+    "module": "`Angel.exe",
+    "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+    "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+    "input_sha256": "1108f0f7ee551291273f5df98bc7f7b134b19516686dc7de15f1866b21c4683c",
+    "input_file_size": 9920512,
+    "imagebase": "0x400000",
+    "role": "current instance under analysis (v83.i64 under 083/)"
+  },
+  "p13339": {
+    "port": 13339,
+    "idb_path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+    "module": "`Angel.exe",
+    "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+    "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+    "input_sha256": "1108f0f7ee551291273f5df98bc7f7b134b19516686dc7de15f1866b21c4683c",
+    "input_file_size": 9920512,
+    "imagebase": "0x400000",
+    "role": "Angel IDA instance (`Angel.i64) for side-by-side compare"
+  },
+  "verdict": {
+    "same_input_exe": true,
+    "same_input_path": true,
+    "different_idb_files": true,
+    "image_size_survey": "0xa95000 both (from survey_binary)",
+    "func_delta": 1,
+    "conclusion": "Same Angel.exe (identical MD5/SHA256/size). Two IDA databases of the same binary with near-identical symbol state; NOT BeiDou vs Angel."
+  }
+}

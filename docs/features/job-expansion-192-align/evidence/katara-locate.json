@@ -1,0 +1,12 @@
+{
+  "found": {
+    "01342000.img": "Weapon_000.wz",
+    "01342001.img": "Weapon_000.wz",
+    "01342027.img": "Weapon_000.wz",
+    "01342028.img": "Weapon_000.wz",
+    "01342100.img": "Weapon_000.wz"
+  },
+  "missing": [
+    "01342200.img"
+  ]
+}

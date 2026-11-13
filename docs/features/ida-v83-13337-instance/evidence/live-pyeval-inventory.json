@@ -1,0 +1,12 @@
+{
+  "p13337": {
+    "result": "",
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\11036\\AppData\\Roaming\\Hex-Rays\\IDA Pro\\plugins\\ida_mcp\\api_python.py\", line 185, in py_eval\n    eval(compile(eval_tree, \"<string>\", \"eval\"), exec_globals)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 126, in <module>\n  File \"<string>\", line 78, in _scan\nModuleNotFoundError: No module named 'ida_struct'\n"
+  },
+  "p13339": {
+    "result": "",
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\11036\\AppData\\Roaming\\Hex-Rays\\IDA Pro\\plugins\\ida_mcp\\api_python.py\", line 185, in py_eval\n    eval(compile(eval_tree, \"<string>\", \"eval\"), exec_globals)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 126, in <module>\n  File \"<string>\", line 78, in _scan\nModuleNotFoundError: No module named 'ida_struct'\n"
+  }
+}

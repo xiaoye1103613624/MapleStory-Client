@@ -1,0 +1,20 @@
+pid=50544
+in game
+origin=(640,416)
+cap 00_base
+cap 01_m1
+cap 02_m2
+cap 03_m3
+cap 04_m4_off
+cap 05_m5_back
+cap 06_chat_focus
+click (728,544) npc nana real
+cap 07_npc_click
+click (480,672) player luojie
+cap 08_player_click
+click (29,90) equip tab
+cap 09_equip_tab
+cap 10_equip_hover
+cap 11_macro_open
+cap 12_macro_closed
+config restored

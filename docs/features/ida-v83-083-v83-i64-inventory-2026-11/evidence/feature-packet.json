@@ -1,0 +1,201 @@
+{
+  "feature": "packet",
+  "p13337": {
+    "class_count": 3,
+    "method_count": 35,
+    "classes": [
+      {
+        "class": "CClientSocket",
+        "methods": 15
+      },
+      {
+        "class": "CInPacket",
+        "methods": 10
+      },
+      {
+        "class": "COutPacket",
+        "methods": 10
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 3,
+    "method_count": 35,
+    "classes": [
+      {
+        "class": "CClientSocket",
+        "methods": 15
+      },
+      {
+        "class": "CInPacket",
+        "methods": 10
+      },
+      {
+        "class": "COutPacket",
+        "methods": 10
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "COutPacket": {
+      "count_sampled": 10,
+      "sample": [
+        {
+          "ea": "0x406549",
+          "name": "?Encode1@COutPacket@@QAEXE@Z"
+        },
+        {
+          "ea": "0x4065a6",
+          "name": "?Encode4@COutPacket@@QAEXK@Z"
+        },
+        {
+          "ea": "0x427f74",
+          "name": "?Encode2@COutPacket@@QAEXG@Z"
+        },
+        {
+          "ea": "0x46c00c",
+          "name": "?EncodeBuffer@COutPacket@@QAEXPBXI@Z"
+        },
+        {
+          "ea": "0x46f3cf",
+          "name": "?EncodeStr@COutPacket@@QAEXV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x6ec9ce",
+          "name": "??0COutPacket@@QAE@J@Z"
+        },
+        {
+          "ea": "0x6ecaa9",
+          "name": "?Init@COutPacket@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x6ecacb",
+          "name": "?Init@COutPacket@@QAEXJHH@Z"
+        },
+        {
+          "ea": "0x6ecb07",
+          "name": "?InitByte@COutPacket@@QAEXJH@Z"
+        },
+        {
+          "ea": "0x6ecb27",
+          "name": "?MakeBufferList@COutPacket@@QBEXAAV?$ZList@V?$ZRef@VZSocketBuffer@@@@@@GPAKHK@Z"
+        }
+      ]
+    },
+    "CInPacket": {
+      "count_sampled": 10,
+      "sample": [
+        {
+          "ea": "0x4065f3",
+          "name": "?Decode1@CInPacket@@QAEEXZ"
+        },
+        {
+          "ea": "0x406629",
+          "name": "?Decode4@CInPacket@@QAEKXZ"
+        },
+        {
+          "ea": "0x42470c",
+          "name": "?Decode2@CInPacket@@QAEGXZ"
+        },
+        {
+          "ea": "0x432257",
+          "name": "?DecodeBuffer@CInPacket@@QAEXPAXI@Z"
+        },
+        {
+          "ea": "0x46f30c",
+          "name": "?DecodeStr@CInPacket@@QAE?AV?$ZXString@D@@XZ"
+        },
+        {
+          "ea": "0x6ec39f",
+          "name": "??0CInPacket@@QAE@AAV0@@Z"
+        },
+        {
+          "ea": "0x6ec424",
+          "name": "?AppendBuffer@CInPacket@@QAEJAAV?$ZRef@VZSocketBuffer@@@@PAJH@Z"
+        },
+        {
+          "ea": "0x6ec52e",
+          "name": "?RawAppendBuffer@CInPacket@@IAEXPBXI@Z"
+        },
+        {
+          "ea": "0x6ec58b",
+          "name": "?DecryptData@CInPacket@@QAEHK@Z"
+        },
+        {
+          "ea": "0x6ec85d",
+          "name": "?WriteClientLog@CInPacket@@IAEXXZ"
+        }
+      ]
+    },
+    "CClientSocket": {
+      "count_sampled": 15,
+      "sample": [
+        {
+          "ea": "0x494ed1",
+          "name": "?OnConnect@CClientSocket@@QAEHH@Z"
+        },
+        {
+          "ea": "0x4960fc",
+          "name": "?OnRead@CClientSocket@@QAEXXZ"
+        },
+        {
+          "ea": "0x49626e",
+          "name": "?OnError@CClientSocket@@QAEXH@Z"
+        },
+        {
+          "ea": "0x4962f4",
+          "name": "?OnClose@CClientSocket@@QAEXXZ"
+        },
+        {
+          "ea": "0x496369",
+          "name": "?Close@CClientSocket@@QAEXXZ"
+        },
+        {
+          "ea": "0x49637b",
+          "name": "?SendPacket@CClientSocket@@QAEXABVCOutPacket@@@Z"
+        },
+        {
+          "ea": "0x496403",
+          "name": "?Flush@CClientSocket@@QAEXXZ"
+        },
+        {
+          "ea": "0x49651d",
+          "name": "?ManipulatePacket@CClientSocket@@QAEXXZ"
+        },
+        {
+          "ea": "0x4965f1",
+          "name": "?ProcessPacket@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x4966c0",
+          "name": "?OnAliveReq@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x496701",
+          "name": "?OnMigrateCommand@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x4967f8",
+          "name": "?OnAuthenCodeChanged@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x496950",
+          "name": "?OnAuthenMessage@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x4969a6",
+          "name": "?OnCheckCrcResult@CClientSocket@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x9f6cdd",
+          "name": "?GetGuestIDRegistrationURL@CClientSocket@@QAE?AV?$ZXString@D@@XZ"
+        }
+      ]
+    }
+  }
+}

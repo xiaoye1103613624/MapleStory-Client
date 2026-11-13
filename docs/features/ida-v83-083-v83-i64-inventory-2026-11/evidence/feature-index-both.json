@@ -1,0 +1,32 @@
+{
+  "p13337": null,
+  "p13339": null,
+  "meta37": {
+    "idb_path": null,
+    "input_path": null,
+    "input_md5": null,
+    "input_file_size": null,
+    "func_total": null,
+    "func_real_named": null,
+    "func_mangled_msvc": null,
+    "class_count": null,
+    "class_methods_sum": null,
+    "cui_class_count": null,
+    "segments": null,
+    "string_anchors": null
+  },
+  "meta39": {
+    "idb_path": null,
+    "input_path": null,
+    "input_md5": null,
+    "input_file_size": null,
+    "func_total": null,
+    "func_real_named": null,
+    "func_mangled_msvc": null,
+    "class_count": null,
+    "class_methods_sum": null,
+    "cui_class_count": null,
+    "segments": null,
+    "string_anchors": null
+  }
+}

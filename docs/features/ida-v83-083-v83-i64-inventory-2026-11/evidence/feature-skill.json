@@ -1,0 +1,88 @@
+{
+  "feature": "skill",
+  "p13337": {
+    "class_count": 4,
+    "method_count": 14,
+    "classes": [
+      {
+        "class": "CSkillInfo",
+        "methods": 4
+      },
+      {
+        "class": "CUISkill",
+        "methods": 6
+      },
+      {
+        "class": "CUISkillChangeConfirm",
+        "methods": 1
+      },
+      {
+        "class": "CUISkillEx",
+        "methods": 3
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 4,
+    "method_count": 14,
+    "classes": [
+      {
+        "class": "CSkillInfo",
+        "methods": 4
+      },
+      {
+        "class": "CUISkill",
+        "methods": 6
+      },
+      {
+        "class": "CUISkillChangeConfirm",
+        "methods": 1
+      },
+      {
+        "class": "CUISkillEx",
+        "methods": 3
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "Skill": {
+      "ea": "0xaf4608",
+      "text": "noSkill"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUISkill": {
+      "count_sampled": 6,
+      "sample": [
+        {
+          "ea": "0x8aa4c5",
+          "name": "?CloseSkillGuide@CUISkill@@QAEXXZ"
+        },
+        {
+          "ea": "0x8aa5ad",
+          "name": "??0CUISkill@@QAE@HJ@Z"
+        },
+        {
+          "ea": "0x8aaa88",
+          "name": "?OnCreate@CUISkill@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x8acf1a",
+          "name": "?OnSkillLevelUpButton@CUISkill@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x8bcdfa",
+          "name": "?GetSkillRootVisible@CUISkill@@IAEPBUSKILLROOT@@H@Z"
+        },
+        {
+          "ea": "0x961063",
+          "name": "?OpenCurSkillGuide@CUISkill@@QAEXXZ"
+        }
+      ]
+    }
+  }
+}

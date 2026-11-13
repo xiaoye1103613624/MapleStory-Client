@@ -1,0 +1,11 @@
+pid=23884
+in game
+cap 01_skill
+click (185,497) macro btn
+cap 02_macro_open
+click (185,497) macro btn off
+cap 03_macro_toggled_off
+click (185,497) macro btn on2
+cap 04_macro_reopen
+cap 05_skill_closed
+config restored

@@ -1,0 +1,63 @@
+{
+  "feature": "drop",
+  "p13337": {
+    "class_count": 1,
+    "method_count": 7,
+    "classes": [
+      {
+        "class": "CDropPool",
+        "methods": 7
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 1,
+    "method_count": 7,
+    "classes": [
+      {
+        "class": "CDropPool",
+        "methods": 7
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CDropPool": {
+      "count_sampled": 7,
+      "sample": [
+        {
+          "ea": "0x50463c",
+          "name": "?TryPickUpDrop@CDropPool@@QAEXABUtagPOINT@@@Z"
+        },
+        {
+          "ea": "0x5058db",
+          "name": "?OnPacket@CDropPool@@QAEXJAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x505900",
+          "name": "?OnDropEnterField@CDropPool@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x506590",
+          "name": "?OnDropLeaveField@CDropPool@@IAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x506c26",
+          "name": "?GetMoneyIcon@CDropPool@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JJ@Z"
+        },
+        {
+          "ea": "0x506e62",
+          "name": "?MakeMoneyAnimation@CDropPool@@IAEXV?$ZRef@UDROP@@@@@Z"
+        },
+        {
+          "ea": "0x5081b0",
+          "name": "?BoobyTrapCheckPickupItem@CDropPool@@QAEXABUtagPOINT@@@Z"
+        }
+      ]
+    }
+  }
+}

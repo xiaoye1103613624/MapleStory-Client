@@ -1,0 +1,245 @@
+{
+  "feature": "social",
+  "p13337": {
+    "class_count": 8,
+    "method_count": 77,
+    "classes": [
+      {
+        "class": "CUIFamily",
+        "methods": 6
+      },
+      {
+        "class": "CUIFamilyChart",
+        "methods": 11
+      },
+      {
+        "class": "CUIFriendGroup",
+        "methods": 2
+      },
+      {
+        "class": "CUIGuildBBS",
+        "methods": 18
+      },
+      {
+        "class": "CUIMessenger",
+        "methods": 27
+      },
+      {
+        "class": "CUIPartyHP",
+        "methods": 2
+      },
+      {
+        "class": "CUIPartySearch",
+        "methods": 1
+      },
+      {
+        "class": "CUIUserList",
+        "methods": 10
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 8,
+    "method_count": 77,
+    "classes": [
+      {
+        "class": "CUIFamily",
+        "methods": 6
+      },
+      {
+        "class": "CUIFamilyChart",
+        "methods": 11
+      },
+      {
+        "class": "CUIFriendGroup",
+        "methods": 2
+      },
+      {
+        "class": "CUIGuildBBS",
+        "methods": 18
+      },
+      {
+        "class": "CUIMessenger",
+        "methods": 27
+      },
+      {
+        "class": "CUIPartyHP",
+        "methods": 2
+      },
+      {
+        "class": "CUIPartySearch",
+        "methods": 1
+      },
+      {
+        "class": "CUIUserList",
+        "methods": 10
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "Guild": {
+      "ea": "0xaf2204",
+      "text": "Guild Master can not transfer worlds."
+    },
+    "Party": {
+      "ea": "0xaf2748",
+      "text": "goPartySearch"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CUIUserList": {
+      "count_sampled": 10,
+      "sample": [
+        {
+          "ea": "0x919b73",
+          "name": "?OnCreate@CUIUserList@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x91beab",
+          "name": "?Draw@CUIUserList@@UAEXPBUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x91d515",
+          "name": "?OnMouseButton@CUIUserList@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x91d82f",
+          "name": "?OnMouseMove@CUIUserList@@UAEHJJ@Z"
+        },
+        {
+          "ea": "0x91dfaf",
+          "name": "?ResetInfo@CUIUserList@@QAEXXZ"
+        },
+        {
+          "ea": "0x91e073",
+          "name": "?SetButton@CUIUserList@@IAEXXZ"
+        },
+        {
+          "ea": "0x91e1eb",
+          "name": "?SetScrollBar@CUIUserList@@IAEXH@Z"
+        },
+        {
+          "ea": "0x91eb52",
+          "name": "?DestroyGuildButton@CUIUserList@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x91eba3",
+          "name": "?CreateAllianceButton@CUIUserList@@QAEHJABUSectionData@CTabGuildAlliance@@ABUtagRECT@@J@Z"
+        },
+        {
+          "ea": "0x91ee49",
+          "name": "?DestroyAllianceButton@CUIUserList@@QAEXJ@Z"
+        }
+      ]
+    },
+    "CUIMessenger": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x84d9ea",
+          "name": "??0CUIMessenger@@QAE@K@Z"
+        },
+        {
+          "ea": "0x84db06",
+          "name": "??0CHARACTER@CUIMessenger@@QAE@XZ"
+        },
+        {
+          "ea": "0x84db90",
+          "name": "??1CHARACTER@CUIMessenger@@QAE@XZ"
+        },
+        {
+          "ea": "0x84dd25",
+          "name": "?TryNew@CUIMessenger@@SAHK@Z"
+        },
+        {
+          "ea": "0x84dd83",
+          "name": "?TryDelete@CUIMessenger@@QAEXXZ"
+        },
+        {
+          "ea": "0x84ddb0",
+          "name": "?OnCreate@CUIMessenger@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x84e607",
+          "name": "?OnButtonClicked@CUIMessenger@@UAEXI@Z"
+        },
+        {
+          "ea": "0x84e64e",
+          "name": "?OnKey@CUIMessenger@@UAEXII@Z"
+        },
+        {
+          "ea": "0x84e8a1",
+          "name": "?Draw@CUIMessenger@@UAEXPBUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x84e930",
+          "name": "?Update@CUIMessenger@@UAEXXZ"
+        },
+        {
+          "ea": "0x84eb68",
+          "name": "?SetState@CUIMessenger@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x84ec53",
+          "name": "?AddChatText@CUIMessenger@@IAEXV?$ZXString@G@@J@Z"
+        },
+        {
+          "ea": "0x84ef23",
+          "name": "?SendClaim@CUIMessenger@@IAEXXZ"
+        },
+        {
+          "ea": "0x84f0d6",
+          "name": "?OnEnter@CUIMessenger@@QAEXJABUAvatarLook@@PBDJH@Z"
+        },
+        {
+          "ea": "0x84f281",
+          "name": "?OnSelfEnter@CUIMessenger@@QAEXJH@Z"
+        },
+        {
+          "ea": "0x84f44b",
+          "name": "?SetAvatar@CUIMessenger@@QAEXJABUAvatarLook@@H@Z"
+        },
+        {
+          "ea": "0x84fff8",
+          "name": "?SetShowState@CUIMessenger@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x850264",
+          "name": "?SetLayer@CUIMessenger@@QAEXXZ"
+        },
+        {
+          "ea": "0x8505e2",
+          "name": "?SetCtrl@CUIMessenger@@QAEXXZ"
+        },
+        {
+          "ea": "0x850d42",
+          "name": "?DrawTextA@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z"
+        },
+        {
+          "ea": "0x850ec9",
+          "name": "?DrawStatusBar@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z"
+        },
+        {
+          "ea": "0x8511fc",
+          "name": "?OnPacket@CUIMessenger@@SAXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x851478",
+          "name": "?OnInvite@CUIMessenger@@SAXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x8515d7",
+          "name": "?OnChat@CUIMessenger@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x851ae2",
+          "name": "?HandleSlashCommand@CUIMessenger@@QAEHV?$ZXString@D@@@Z"
+        }
+      ]
+    }
+  }
+}

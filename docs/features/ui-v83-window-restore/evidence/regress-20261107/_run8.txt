@@ -1,0 +1,6 @@
+cfg xiaoye+auto
+pid=20032
+in game
+cap 01_messenger
+cap 02_messenger_chatline
+cfg restored

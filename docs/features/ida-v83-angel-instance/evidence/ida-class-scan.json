@@ -1,0 +1,542 @@
+{
+  "13339": {
+    "total": 55016,
+    "decorated": 3122,
+    "distinct_classes": 361,
+    "demangle_diag": {
+      "dmn0": "public: static void __cdecl CActionFrame::LoadMappers(void)",
+      "dmn1": "public: static void __cdecl CActionFrame::LoadMappers(void)"
+    },
+    "top_class": [
+      [
+        "CWvsContext",
+        197
+      ],
+      [
+        "CUserLocal",
+        120
+      ],
+      [
+        "CVecCtrl",
+        80
+      ],
+      [
+        "CUser",
+        72
+      ],
+      [
+        "CCashShop",
+        66
+      ],
+      [
+        "CField",
+        65
+      ],
+      [
+        "CLogin",
+        54
+      ],
+      [
+        "CMob",
+        51
+      ],
+      [
+        "CItemInfo",
+        47
+      ],
+      [
+        "CUtilDlgEx",
+        43
+      ],
+      [
+        "CUIStatusBar",
+        41
+      ],
+      [
+        "CMapLoadable",
+        36
+      ],
+      [
+        "CWnd",
+        32
+      ],
+      [
+        "CNpc",
+        32
+      ],
+      [
+        "CConfig",
+        30
+      ],
+      [
+        "CAvatar",
+        29
+      ],
+      [
+        "CPet",
+        28
+      ],
+      [
+        "CWndMan",
+        27
+      ],
+      [
+        "CUIToolTip",
+        26
+      ],
+      [
+        "CUIMessenger",
+        26
+      ],
+      [
+        "CUIItemMaker",
+        23
+      ],
+      [
+        "CTrunkDlg",
+        22
+      ],
+      [
+        "CUserPool",
+        21
+      ],
+      [
+        "CUserRemote",
+        21
+      ],
+      [
+        "CAnimationDisplayer",
+        19
+      ],
+      [
+        "CUIFadeYesNo",
+        19
+      ],
+      [
+        "CWorldMapDlg",
+        18
+      ],
+      [
+        "CCSWnd_Char",
+        18
+      ],
+      [
+        "CCSWnd_List",
+        18
+      ],
+      [
+        "CActionMan",
+        17
+      ],
+      [
+        "CTradingRoomDlg",
+        17
+      ],
+      [
+        "CInputSystem",
+        17
+      ],
+      [
+        "CQuestMan",
+        17
+      ],
+      [
+        "CScriptMan",
+        17
+      ],
+      [
+        "CSummoned",
+        17
+      ],
+      [
+        "CUIGuildBBS",
+        17
+      ],
+      [
+        "CUIMonsterCarnival",
+        16
+      ],
+      [
+        "CWvsApp",
+        16
+      ],
+      [
+        "CMiniRoomBaseDlg",
+        15
+      ],
+      [
+        "CClientSocket",
+        15
+      ],
+      [
+        "CUIQuestInfo",
+        15
+      ],
+      [
+        "CAdminShopDlg",
+        14
+      ],
+      [
+        "CCtrlScrollBar",
+        14
+      ],
+      [
+        "CNpcPool",
+        14
+      ],
+      [
+        "CMobPool",
+        13
+      ],
+      [
+        "CDraggableItem",
+        13
+      ],
+      [
+        "CUIAvatarVAC",
+        13
+      ],
+      [
+        "CUIUserInfo",
+        13
+      ],
+      [
+        "CAESCipher",
+        12
+      ],
+      [
+        "CCtrlMLEdit",
+        12
+      ],
+      [
+        "CUIItem",
+        12
+      ],
+      [
+        "CTabFriend",
+        12
+      ],
+      [
+        "CChatBalloon",
+        11
+      ],
+      [
+        "CVecCtrlMob",
+        11
+      ],
+      [
+        "PcCreateObject",
+        10
+      ],
+      [
+        "IWzGr2DLayer",
+        10
+      ],
+      [
+        "CDragon",
+        10
+      ],
+      [
+        "CWvsPhysicalSpace2D",
+        10
+      ],
+      [
+        "CPinCodeDlg",
+        10
+      ],
+      [
+        "CMovePath",
+        10
+      ],
+      [
+        "CPersonalShopDlg",
+        10
+      ],
+      [
+        "CUIMedalQuestInfo",
+        10
+      ],
+      [
+        "CUIMiniMap",
+        10
+      ],
+      [
+        "CTabParty",
+        10
+      ],
+      [
+        "CUIUserList",
+        10
+      ],
+      [
+        "CUINewYearCardSenderDlg",
+        10
+      ],
+      [
+        "CActionFrame",
+        9
+      ],
+      [
+        "COutPacket",
+        9
+      ],
+      [
+        "CInPacket",
+        9
+      ],
+      [
+        "CBookDlg",
+        9
+      ]
+    ],
+    "game_class_hits": {
+      "CUI": 446,
+      "CWnd": 66,
+      "CWvsContext": 197,
+      "CField": 114,
+      "CStage": 5,
+      "CInPacket": 9,
+      "COutPacket": 9,
+      "CClientSocket": 15,
+      "CUser": 241,
+      "CUserLocal": 120,
+      "CMob": 66,
+      "CNpc": 50,
+      "CDrop": 7,
+      "CSkill": 4,
+      "CQuest": 20,
+      "CPet": 30,
+      "CSummoned": 18,
+      "CReactor": 4,
+      "CPortal": 3,
+      "CUtilDlg": 47,
+      "CUIToolTip": 26,
+      "CActionMan": 17,
+      "CActionFrame": 9,
+      "CAnimation": 19,
+      "CConfig": 30,
+      "CLogin": 60,
+      "CShop": 9,
+      "CMonsterBook": 6,
+      "CCashShop": 66,
+      "CMapleTVMan": 3,
+      "CWndMan": 27,
+      "StringPool": 6,
+      "IWz": 29,
+      "ZCom": 1,
+      "PcCreateObject": 10,
+      "CItem": 54,
+      "CMap": 39,
+      "CQuestMan": 17
+    },
+    "interesting_count": 1647,
+    "interesting_sample": [
+      "CActionFrame::LoadMappers",
+      "CActionFrame::ExtractMap",
+      "CActionFrame::MergeGroup",
+      "CActionFrame::UpdateMBR",
+      "CActionFrame::UpdateVisiblity",
+      "CActionFrame::Draw",
+      "CActionFrame::Merge",
+      "COutPacket::Encode1",
+      "COutPacket::Encode4",
+      "CInPacket::Decode1",
+      "CInPacket::Decode4",
+      "CActionMan::Init",
+      "CActionMan::LoadCharacterAction",
+      "CActionMan::LoadFaceLook",
+      "CActionMan::GetCharacterImgEntry",
+      "CActionMan::GetWeaponAfterImage",
+      "CActionMan::LoadMobAction",
+      "CActionMan::LoadNpcAction",
+      "CActionMan::LoadPetAction",
+      "CActionMan::LoadSummonedAction",
+      "CActionMan::GetSummonedProp",
+      "CActionMan::LoadShadowPartnerAction",
+      "CActionMan::MergeCharacterSprite",
+      "CActionMan::MergeTamingMobSprite",
+      "CActionMan::load_character_action",
+      "CActionMan::LoadTamingMobAction",
+      "CActionMan::CreateAfterimageLayer",
+      "CActionMan::GetMeleeAttackRange",
+      "CWorldMapDlg::OnButtonClicked",
+      "CInPacket::Decode2",
+      "CWvsContext::GetCharacterData",
+      "COutPacket::Encode2",
+      "CInPacket::DecodeBuffer",
+      "CItemInfo::GetAreaBuffItem",
+      "CMobPool::GetMob",
+      "CCashShop::Init",
+      "CCashShop::Close",
+      "CCashShop::OnKey",
+      "CCashShop::OnBuyAvatar",
+      "CCashShop::SendBuyAvatarPacket",
+      "CCashShop::OnDefaultAvatar",
+      "CCashShop::OnTakeOff",
+      "COutPacket::EncodeBuffer",
+      "CCashShop::OnChangedCategory",
+      "CCashShop::OnChangedCategorySub",
+      "CCashShop::OnChangedPage",
+      "CCashShop::IsUsableItem",
+      "CCashShop::IsUsableItemGift",
+      "CCashShop::OnBuyPackage",
+      "CCashShop::OnGiftMateInfoResult",
+      "CInPacket::DecodeStr",
+      "COutPacket::EncodeStr",
+      "CCashShop::SendGiftsPacket",
+      "CCashShop::OnGiftPackage",
+      "CCashShop::OnBuyTransferWorldItem",
+      "CCashShop::OnSetWish",
+      "CCashShop::OnRemoveWish",
+      "CCashShop::OnWear",
+      "CCashShop::SetPet",
+      "CCashShop::SetEmotion"
+    ],
+    "version_strings": [
+      "http://ingameweb.nexon.net/maplestory/ad/maple_window_mode_ad.html",
+      "Nexon\\MapleStory\\MapleTV",
+      "patch.mapleglobal.com",
+      "\\Nexon\\MapleStory\\MapleTV",
+      "\\Nexon\\MapleStory",
+      "CNMGetVersionFunc",
+      "CNMExecutePatcherFunc",
+      "CNMExecuteNGMPatcherFunc",
+      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion",
+      "http://ingameweb.nexon.net/maplestory/client/image/banner.html",
+      "MapleStory",
+      "IDispatch error #%d",
+      "Nexon.MapleStory.WebBrowserUI",
+      "http://Ingameweb.nexon.net/maplestory/client/launcher.html",
+      "MapleStory_Global:%s",
+      "MapleStoryGlobal :: MapleStory - Microsoft Internet Explorer",
+      "http://maplestory.nexon.net",
+      "ver.%d\r\n",
+      "ver.%d CharacterName(%s), WorldID(%d), ChID(%d), FieldID(%d)\r\n",
+      "The MapleStory Trading System is not available for the Guest ID Users.",
+      "http://maplestory.nexon.net/WZ.ASPX?PART=/Downloads/GamePatches",
+      "GMMapleStory",
+      ".?AVCMSException@@",
+      ".?AVCPatchException@@",
+      "server.exe",
+      "imgsaver.exe",
+      "%d.%d.%d.%s%d(Build %d)",
+      "C:\\Nexon\\MapleStory",
+      "WinLicenseVersion",
+      "WinLicenseDriverVersion",
+      "Cannot Update oreans.sys driver. Please, make sure that you have\n\radministrator's permits the first time that ",
+      "Cannot open oreans.vxd driver. Make sure that oreans.vxd\n\ris not open by another program.",
+      "NormalMode - MapleStory.exe",
+      "C:\\Nexon\\MapleStory",
+      "MapleStory.exe",
+      "version.dll"
+    ]
+  },
+  "13337": {
+    "total": 55655,
+    "decorated": 50,
+    "distinct_classes": 10,
+    "demangle_diag": {
+      "dmn0": "public: static void __cdecl CActionFrame::LoadMappers(void)",
+      "dmn1": "public: static void __cdecl CActionFrame::LoadMappers(void)"
+    },
+    "top_class": [
+      [
+        "SchedulerBase",
+        3
+      ],
+      [
+        "VirtualProcessor",
+        2
+      ],
+      [
+        "std",
+        2
+      ],
+      [
+        "YGXPAXIHP6EX0",
+        2
+      ],
+      [
+        "U_TaskProcHandle",
+        1
+      ],
+      [
+        "SchedulerProxy",
+        1
+      ],
+      [
+        "UMSSchedulerProxy",
+        1
+      ],
+      [
+        "UMSThreadVirtualProcessor",
+        1
+      ],
+      [
+        "type_info",
+        1
+      ],
+      [
+        "exception",
+        1
+      ]
+    ],
+    "game_class_hits": {},
+    "interesting_count": 0,
+    "interesting_sample": [],
+    "version_strings": [
+      "http://ingameweb.nexon.net/maplestory/ad/maple_window_mode_ad.html",
+      "me.maplestory",
+      "Nexon\\MapleStory\\MapleTV",
+      "patch.mapleglobal.com",
+      "\\Nexon\\MapleStory\\MapleTV",
+      "\\Nexon\\MapleStory",
+      "CNMGetVersionFunc",
+      "CNMExecutePatcherFunc",
+      "CNMExecuteNGMPatcherFunc",
+      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion",
+      "http://ingameweb.nexon.net/maplestory/client/image/banner.html",
+      "MapleStory",
+      "menotice.maplestory",
+      "merank.maplestory",
+      "ildboard.maplestory",
+      "IDispatch error #%d",
+      "Nexon.MapleStory.WebBrowserUI",
+      "http://Ingameweb.nexon.net/maplestory/client/launcher.html",
+      "MapleStory_Global:%s",
+      "MapleStoryGlobal :: MapleStory - Microsoft Internet Explorer",
+      "http://maplestory.nexon.net",
+      "ver.%d\r\n",
+      "ver.%d CharacterName(%s), WorldID(%d), ChID(%d), FieldID(%d)\r\n",
+      "The MapleStory Trading System is not available for the Guest ID Users.",
+      "http://maplestory.nexon.net/WZ.ASPX?PART=/Downloads/GamePatches",
+      "GMMapleStory",
+      ".?AVCMSException@@",
+      ".?AVCPatchException@@",
+      "server.exe",
+      "imgsaver.exe",
+      "%d.%d.%d.%s%d(Build %d)",
+      "VS_VERSION_INFO",
+      "MapleStory",
+      "FileVersion",
+      "MapleStory",
+      "MapleStory.exe",
+      "PrivateBuild",
+      "Wizet MapleStory",
+      "ProductVersion",
+      "SpecialBuild",
+      "MapleStory",
+      "MapleStory",
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" ma",
+      "MapleStory.exe",
+      "GetVersion",
+      "GetVersionExA",
+      "wvsprintfA",
+      "version.dll",
+      "GetFileVersionInfoA",
+      "GetFileVersionInfoSizeA",
+      "NMCO_SetVersionFileUrlA",
+      "NMCO_SetPatchOption"
+    ]
+  }
+}

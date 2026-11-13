@@ -1,0 +1,25 @@
+{
+  "probed_at": "2026-11-12",
+  "endpoint": "http://127.0.0.1:13339/mcp",
+  "client": "tools/_ida_mcp.py",
+  "server_health": {
+    "status": "ok",
+    "idb_path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+    "module": "`Angel.exe",
+    "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+    "imagebase": "0x400000",
+    "auto_analysis_ready": true,
+    "hexrays_ready": true,
+    "strings_cache_ready": true,
+    "strings_cache_size": 1281
+  },
+  "spot_checks": {
+    "CUIMedalQuestInfo::OnCreate": "0x84056b",
+    "CUIFamily::OnCreate": "0x80862b",
+    "CScriptMan::OnSay": "0x7467ab",
+    "CScriptMan::OnAskYesNo": "0x74692c",
+    "CScriptMan::OnAskMenu": "0x746fad",
+    "CUtilDlgEx_family": "list_funcs filter *CUtilDlgEx* count 30 ok"
+  },
+  "note": "Cursor user-ida-pro-mcp defaults to BeiDou:13337; Angel must be reached via 13339 HTTP client."
+}

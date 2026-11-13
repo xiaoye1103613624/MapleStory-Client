@@ -1,0 +1,25 @@
+{
+  "round": "P3",
+  "date": "2026-11-12",
+  "key": "tools/_gms_key_128.b64",
+  "UIWindow.img": {
+    "QuestAlarm": true,
+    "NoticeQuestProgress": false,
+    "Progress_keyword_hits": 0,
+    "Notice_hits_sample": ["UtilDlgEx/notice", "FloatNotice", "Quest/notice0", "Notice"],
+    "QuestAlarm_children": ["backgrndmax", "backgrndcenter", "backgrndbottom", "backgrndmin", "BtAuto", "BtQ"]
+  },
+  "String/MonsterBook.img": {
+    "loaded": true,
+    "role": "mob episode/map/reward strings keyed by mobId — NOT card category table"
+  },
+  "LoadCard_category": {
+    "ea": "0x6848a6",
+    "formula": "(itemId - 2380000) / 1000 == card_suffix / 1000",
+    "store": "*(card+8) = v11; index LeftTab via v22[v11+1]"
+  },
+  "Ignore": {
+    "s9_BuddylistModifyHandler_modes": [1, 2, 3],
+    "verdict": "formal_omit"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "feature": "npc",
+  "p13337": {
+    "class_count": 4,
+    "method_count": 54,
+    "classes": [
+      {
+        "class": "CNpc",
+        "methods": 35
+      },
+      {
+        "class": "CNpcPool",
+        "methods": 14
+      },
+      {
+        "class": "CNpcTemplate",
+        "methods": 4
+      },
+      {
+        "class": "VCNpc",
+        "methods": 1
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 4,
+    "method_count": 54,
+    "classes": [
+      {
+        "class": "CNpc",
+        "methods": 35
+      },
+      {
+        "class": "CNpcPool",
+        "methods": 14
+      },
+      {
+        "class": "CNpcTemplate",
+        "methods": 4
+      },
+      {
+        "class": "VCNpc",
+        "methods": 1
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CNpc": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x6d045a",
+          "name": "??0CNpc@@QAE@PAVCNpcTemplate@@K@Z"
+        },
+        {
+          "ea": "0x6d060a",
+          "name": "?GetType@CNpc@@UBEJXZ"
+        },
+        {
+          "ea": "0x6d060e",
+          "name": "?GetPos@CNpc@@UBE?BUtagPOINT@@XZ"
+        },
+        {
+          "ea": "0x6d0615",
+          "name": "?GetPosPrev@CNpc@@UBE?BUtagPOINT@@XZ"
+        },
+        {
+          "ea": "0x6d061c",
+          "name": "?GetZMass@CNpc@@UBEJXZ"
+        },
+        {
+          "ea": "0x6d0634",
+          "name": "?GetRTTI@CNpc@@UBEPBVCRTTI@@XZ"
+        },
+        {
+          "ea": "0x6d063a",
+          "name": "?IsKindOf@CNpc@@UBEHPBVCRTTI@@@Z"
+        },
+        {
+          "ea": "0x6d067f",
+          "name": "??1CNpc@@UAE@XZ"
+        },
+        {
+          "ea": "0x6d089a",
+          "name": "?Init@CNpc@@QAEXKAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x6d1779",
+          "name": "?SetQuestList@CNpc@@QAEXH@Z"
+        },
+        {
+          "ea": "0x6d1b11",
+          "name": "?SetClientActionByQuest@CNpc@@QAEXXZ"
+        },
+        {
+          "ea": "0x6d2024",
+          "name": "?SetActive@CNpc@@QAEXH@Z"
+        },
+        {
+          "ea": "0x6d20d5",
+          "name": "?SetShoeAttr@CNpc@@QAEXXZ"
+        },
+        {
+          "ea": "0x6d215e",
+          "name": "?SetMoveAction@CNpc@@QAEXJH@Z"
+        },
+        {
+          "ea": "0x6d21cd",
+          "name": "?SetImitatedLook@CNpc@@QAEXAAUAvatarLook@@@Z"
+        },
+        {
+          "ea": "0x6d232a",
+          "name": "?PrepareActionLayer@CNpc@@IAEXXZ"
+        },
+        {
+          "ea": "0x6d263e",
+          "name": "?GetCurrentAction@CNpc@@QBEJPAJ@Z"
+        },
+        {
+          "ea": "0x6d267d",
+          "name": "?SetLayerZ@CNpc@@IAEXXZ"
+        },
+        {
+          "ea": "0x6d2918",
+          "name": "?Update@CNpc@@UAEXXZ"
+        },
+        {
+          "ea": "0x6d2d72",
+          "name": "?OnResolveMoveAction@CNpc@@UAEJJJJPBVCVecCtrl@@@Z"
+        },
+        {
+          "ea": "0x6d2dbb",
+          "name": "?OnLayerZChanged@CNpc@@UAEXPBVCVecCtrl@@@Z"
+        },
+        {
+          "ea": "0x6d2ddd",
+          "name": "?GetShoeAttr@CNpc@@UBE?BV?$ZRef@VCAttrShoe@@@@XZ"
+        },
+        {
+          "ea": "0x6d2e07",
+          "name": "?OnMove@CNpc@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x6d3273",
+          "name": "?GenerateMovePath@CNpc@@IAEXJJ@Z"
+        },
+        {
+          "ea": "0x6d3392",
+          "name": "?ShowQuestList@CNpc@@QAEXXZ"
+        }
+      ]
+    }
+  }
+}

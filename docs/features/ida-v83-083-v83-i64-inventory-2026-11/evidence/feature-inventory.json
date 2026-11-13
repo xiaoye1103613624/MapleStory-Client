@@ -1,0 +1,232 @@
+{
+  "feature": "inventory",
+  "p13337": {
+    "class_count": 6,
+    "method_count": 92,
+    "classes": [
+      {
+        "class": "CItemInfo",
+        "methods": 48
+      },
+      {
+        "class": "CUIEquip",
+        "methods": 5
+      },
+      {
+        "class": "CUIItem",
+        "methods": 13
+      },
+      {
+        "class": "CUIItemMaker",
+        "methods": 24
+      },
+      {
+        "class": "VCUIItem",
+        "methods": 1
+      },
+      {
+        "class": "VCUIItemMaker",
+        "methods": 1
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 6,
+    "method_count": 92,
+    "classes": [
+      {
+        "class": "CItemInfo",
+        "methods": 48
+      },
+      {
+        "class": "CUIEquip",
+        "methods": 5
+      },
+      {
+        "class": "CUIItem",
+        "methods": 13
+      },
+      {
+        "class": "CUIItemMaker",
+        "methods": 24
+      },
+      {
+        "class": "VCUIItem",
+        "methods": 1
+      },
+      {
+        "class": "VCUIItemMaker",
+        "methods": 1
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CItemInfo": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x433008",
+          "name": "?GetAreaBuffItem@CItemInfo@@QAEPBUAREABUFFITEM@1@J@Z"
+        },
+        {
+          "ea": "0x46d39c",
+          "name": "?IsAbleToStickWithWeapon@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+        },
+        {
+          "ea": "0x46d408",
+          "name": "?IsItemSuitedForPet@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+        },
+        {
+          "ea": "0x4b1113",
+          "name": "?IsItemSuitedForTamingMob@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+        },
+        {
+          "ea": "0x4f2cbb",
+          "name": "?IsCashItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+        },
+        {
+          "ea": "0x4f2cee",
+          "name": "?IsAbleToEquip@CItemInfo@@QAEHJJJFJJJJJV?$ZRef@UGW_ItemSlotPet@@@@JJQAV?$ZRef@UGW_ItemSlotBase@@@@@Z"
+        },
+        {
+          "ea": "0x4f2f55",
+          "name": "?GetExclusiveWeaponShieldBodyPart@CItemInfo@@QBEJQAV?$ZRef@UGW_ItemSlotBase@@@@J@Z"
+        },
+        {
+          "ea": "0x4f2fdc",
+          "name": "?GetExclusiveClothesBodyPart@CItemInfo@@QBEJQAV?$ZRef@UGW_ItemSlotBase@@@@J@Z"
+        },
+        {
+          "ea": "0x5ca71c",
+          "name": "?IterateItemInfo@CItemInfo@@QAEHXZ"
+        },
+        {
+          "ea": "0x5ca785",
+          "name": "?GetEquipItem@CItemInfo@@QAEPBUEQUIPITEM@1@J@Z"
+        },
+        {
+          "ea": "0x5cab92",
+          "name": "?GetBundleItem@CItemInfo@@QAEPBUBUNDLEITEM@1@J@Z"
+        },
+        {
+          "ea": "0x5cac3d",
+          "name": "?RegisterEquipItemInfo@CItemInfo@@IAE?AV?$ZRef@UEQUIPITEM@CItemInfo@@@@JPBG@Z"
+        },
+        {
+          "ea": "0x5cf63e",
+          "name": "?GetItemName@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+        },
+        {
+          "ea": "0x5cf69e",
+          "name": "?GetItemDesc@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+        },
+        {
+          "ea": "0x5cf6fe",
+          "name": "?GetItemString@CItemInfo@@QAE?AV?$ZXString@D@@JPBD@Z"
+        },
+        {
+          "ea": "0x5cf792",
+          "name": "?GetMapString@CItemInfo@@QAE?AV?$ZXString@D@@KPBD@Z"
+        },
+        {
+          "ea": "0x5cfa86",
+          "name": "?GetItemTypeName@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+        },
+        {
+          "ea": "0x5cfaf3",
+          "name": "?FindMapByName@CItemInfo@@QAE?AV?$ZList@U?$ZPair@KV?$ZXString@D@@@@@@V?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x5cfe4b",
+          "name": "?IterateItemString@CItemInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x5d0467",
+          "name": "?IterateMapString@CItemInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x5d28ae",
+          "name": "?IsTradeBlockItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+        },
+        {
+          "ea": "0x5d28e3",
+          "name": "?IsAccountSharableItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+        },
+        {
+          "ea": "0x5d3322",
+          "name": "?GetItemProp@CItemInfo@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@J@Z"
+        },
+        {
+          "ea": "0x5d3bd8",
+          "name": "?GetItemIcon@CItemInfo@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JHH@Z"
+        },
+        {
+          "ea": "0x5d3e19",
+          "name": "?GetItemPrice@CItemInfo@@QAEHJAAJAAN@Z"
+        }
+      ]
+    },
+    "CUIItem": {
+      "count_sampled": 13,
+      "sample": [
+        {
+          "ea": "0x81c414",
+          "name": "??0CUIItem@@QAE@XZ"
+        },
+        {
+          "ea": "0x81c6b7",
+          "name": "?ChangeTab@CUIItem@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x81c6c9",
+          "name": "?OnCreate@CUIItem@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x81d01f",
+          "name": "?OnChildNotify@CUIItem@@UAEXIII@Z"
+        },
+        {
+          "ea": "0x81d230",
+          "name": "?OnTabChanged@CUIItem@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x81d42e",
+          "name": "?OnMouseButton@CUIItem@@UAEXIIJJ@Z"
+        },
+        {
+          "ea": "0x81d8ad",
+          "name": "?OnMouseMove@CUIItem@@UAEHJJ@Z"
+        },
+        {
+          "ea": "0x81d996",
+          "name": "?OnDropMoney@CUIItem@@IAEXXZ"
+        },
+        {
+          "ea": "0x81db7e",
+          "name": "?GetSlotPositionFromPoint@CUIItem@@QAEJJJ@Z"
+        },
+        {
+          "ea": "0x81dc20",
+          "name": "?Draw@CUIItem@@UAEXPBUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x81e2c8",
+          "name": "?GetItemSlotRect@CUIItem@@IAEHJPAUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x81e3a6",
+          "name": "?SetArrangeButton@CUIItem@@QAEXJJ@Z"
+        },
+        {
+          "ea": "0x81e5da",
+          "name": "?SetLastestGetItemEffect@CUIItem@@AAEXXZ"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+ "CUIQuestAlarm::Draw": {
+  "uuid": "e0da21e7-b605-41cc-af09-d3ad9ef5f1dc",
+  "bytes": 70304
+ },
+ "CQuest::OnCompleteQuestFailed": {
+  "uuid": "b9dd51f3-1dda-4f2f-8236-548f65bb1df7",
+  "bytes": 52567
+ },
+ "CChatBalloon::MakeMiniRoomBalloon": {
+  "uuid": "bc308c5f-8901-4031-ad32-966cc1989d78",
+  "bytes": 82668
+ }
+}

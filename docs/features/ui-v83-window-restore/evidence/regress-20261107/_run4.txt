@@ -1,0 +1,10 @@
+pid=38520
+in game
+click (248,363) macro btn
+cap 01_macro_open
+cap 02_skill_closed_macro_gone
+click (812,421) npc nana
+cap 03_npc_click
+click (403,539) player luojie
+cap 04_player_click
+config restored

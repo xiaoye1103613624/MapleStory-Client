@@ -1,0 +1,151 @@
+{
+  "feature": "pet",
+  "p13337": {
+    "class_count": 3,
+    "method_count": 33,
+    "classes": [
+      {
+        "class": "CPet",
+        "methods": 29
+      },
+      {
+        "class": "CPetTemplate",
+        "methods": 2
+      },
+      {
+        "class": "CUIPetEquip",
+        "methods": 2
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 3,
+    "method_count": 33,
+    "classes": [
+      {
+        "class": "CPet",
+        "methods": 29
+      },
+      {
+        "class": "CPetTemplate",
+        "methods": 2
+      },
+      {
+        "class": "CUIPetEquip",
+        "methods": 2
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CPet": {
+      "count_sampled": 25,
+      "sample": [
+        {
+          "ea": "0x703314",
+          "name": "?Init@CPet@@QAEXPAVCUser@@AAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x70390c",
+          "name": "?SetShoeAttr@CPet@@QAEXXZ"
+        },
+        {
+          "ea": "0x703af3",
+          "name": "?GetItemSlot@CPet@@QBEPAUGW_ItemSlotPet@@XZ"
+        },
+        {
+          "ea": "0x703b69",
+          "name": "?GetLevel@CPet@@QBEJXZ"
+        },
+        {
+          "ea": "0x703b88",
+          "name": "?SetMoveAction@CPet@@QAEXJH@Z"
+        },
+        {
+          "ea": "0x703bb2",
+          "name": "?GetBodyRect@CPet@@QBEXAAUtagRECT@@@Z"
+        },
+        {
+          "ea": "0x703d15",
+          "name": "?PrepareActionLayer@CPet@@IAEXXZ"
+        },
+        {
+          "ea": "0x70403d",
+          "name": "?Update@CPet@@UAEXXZ"
+        },
+        {
+          "ea": "0x70458c",
+          "name": "?OnResolveMoveAction@CPet@@UAEJJJJPBVCVecCtrl@@@Z"
+        },
+        {
+          "ea": "0x70474d",
+          "name": "?OnMove@CPet@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x70476e",
+          "name": "?OnAction@CPet@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x704801",
+          "name": "?OnNameChanged@CPet@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x7048ab",
+          "name": "?OnActionCommand@CPet@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x704bd8",
+          "name": "?SetPositionContext@CPet@@QAEXJ@Z"
+        },
+        {
+          "ea": "0x704bf3",
+          "name": "?OnAvatarModified@CPet@@QAEXXZ"
+        },
+        {
+          "ea": "0x704c18",
+          "name": "?OnValidateStat@CPet@@QAEXXZ"
+        },
+        {
+          "ea": "0x704d5d",
+          "name": "?ParseCommand@CPet@@QAEHV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x7050be",
+          "name": "?ChatCommand@CPet@@QAEXABV?$ZXString@D@@@Z"
+        },
+        {
+          "ea": "0x705110",
+          "name": "?CursedChatCommand@CPet@@QAEXXZ"
+        },
+        {
+          "ea": "0x7055e2",
+          "name": "?DoAction@CPet@@AAEXJJVZtl_bstr_t@@HHH@Z"
+        },
+        {
+          "ea": "0x705db3",
+          "name": "?GetUpgradePetSkill@CPet@@QAEGXZ"
+        },
+        {
+          "ea": "0x705e2c",
+          "name": "?UpdatePetAbility@CPet@@QAEXXZ"
+        },
+        {
+          "ea": "0x7061a5",
+          "name": "?OnLoadExceptionList@CPet@@QAEXAAVCInPacket@@@Z"
+        },
+        {
+          "ea": "0x70651f",
+          "name": "?GetAdditionalLayer@CPet@@IAEPAUADDITIONALLAYER@1@J@Z"
+        },
+        {
+          "ea": "0x706678",
+          "name": "?SetSetItemEffect@CPet@@QAEXJJ@Z"
+        }
+      ]
+    }
+  }
+}

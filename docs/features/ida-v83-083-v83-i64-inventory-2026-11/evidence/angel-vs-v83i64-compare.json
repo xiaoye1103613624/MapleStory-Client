@@ -1,0 +1,74 @@
+{
+  "metric": {
+    "func_total": {
+      "p13337": 55015,
+      "p13339": 55016,
+      "equal": false
+    },
+    "func_real_named": {
+      "p13337": 3691,
+      "p13339": 3691,
+      "equal": true
+    },
+    "func_mangled_msvc": {
+      "p13337": 3122,
+      "p13339": 3122,
+      "equal": true
+    },
+    "class_count": {
+      "p13337": 399,
+      "p13339": 399,
+      "equal": true
+    },
+    "class_methods_sum": {
+      "p13337": 2984,
+      "p13339": 2984,
+      "equal": true
+    },
+    "cui_class_count": {
+      "p13337": 77,
+      "p13339": 77,
+      "equal": true
+    },
+    "input_md5": {
+      "p13337": "cbe5ccba04cbe2760d8eabc537926bd1",
+      "p13339": "cbe5ccba04cbe2760d8eabc537926bd1",
+      "equal": true
+    },
+    "input_file_size": {
+      "p13337": 9920512,
+      "p13339": 9920512,
+      "equal": true
+    },
+    "strings_iter_count": {
+      "p13337": 1281,
+      "p13339": 1281,
+      "equal": true
+    }
+  },
+  "segments_equal": true,
+  "feature_index_equal": true,
+  "top_classes_equal": true,
+  "disk": {
+    "p13337_i64": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+      "size": 28053268,
+      "mtime": "2026-11-12 10:58:58"
+    },
+    "p13339_i64": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+      "size": 27998358,
+      "mtime": "2026-11-08 00:34:06"
+    },
+    "p13337_id0": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.id0",
+      "size": 109223936,
+      "mtime": "2026-11-12 10:59:00"
+    },
+    "p13339_id0": {
+      "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.id0",
+      "size": 125829120,
+      "mtime": "2026-11-12 10:51:02"
+    }
+  }
+}

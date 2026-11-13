@@ -1,0 +1,2276 @@
+{
+  "CLogin": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x5f3c59",
+        "name": "??0CLogin@@QAE@XZ"
+      },
+      {
+        "ea": "0x5f42cd",
+        "name": "?Init@CLogin@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x5f4c16",
+        "name": "?Update@CLogin@@UAEXXZ"
+      },
+      {
+        "ea": "0x5f5368",
+        "name": "?OnMouseButton@CLogin@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x5f53c0",
+        "name": "?ChangeStep@CLogin@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x5f5962",
+        "name": "?OnStepChanged@CLogin@@QAEXXZ"
+      },
+      {
+        "ea": "0x5f6425",
+        "name": "?OnNewCharStep@CLogin@@QAEXH@Z"
+      },
+      {
+        "ea": "0x5f6482",
+        "name": "?OnSelectedCharChanged@CLogin@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x5f6918",
+        "name": "?OnNewCharCanceled@CLogin@@QAEXXZ"
+      },
+      {
+        "ea": "0x5f6932",
+        "name": "?SendRequest@CLogin@@QAEXAAVCOutPacket@@@Z"
+      },
+      {
+        "ea": "0x5f6952",
+        "name": "?SendCheckPasswordPacket@CLogin@@QAEHPBD0@Z"
+      },
+      {
+        "ea": "0x5f6d6a",
+        "name": "?SendViewAllCharPacket@CLogin@@QAEHXZ"
+      },
+      {
+        "ea": "0x5f726d",
+        "name": "?SendSelectCharPacket@CLogin@@QAEXXZ"
+      },
+      {
+        "ea": "0x5f76ae",
+        "name": "?SendSelectCharPacketByVAC@CLogin@@QAEXXZ"
+      },
+      {
+        "ea": "0x5f7c4a",
+        "name": "?SendDeleteCharPacket@CLogin@@QAEXXZ"
+      },
+      {
+        "ea": "0x5f7fe7",
+        "name": "?SendCheckDuplicateIDPacket@CLogin@@QAEXABV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x5f8078",
+        "name": "?SendCheckUserLimitPacket@CLogin@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x5f80ff",
+        "name": "?OnPacket@CLogin@@UAEXJAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f82f4",
+        "name": "?OnLatestConnectedWorld@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f8340",
+        "name": "?OnRecommendWorldMessage@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f83ee",
+        "name": "?OnCheckPasswordResult@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f8f27",
+        "name": "?OnGuestIDLoginResult@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f92ae",
+        "name": "?OnCheckUserLimitResult@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f92df",
+        "name": "?OnAccountInfoResult@CLogin@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x5f95b7",
+        "name": "?OnWorldInformation@CLogin@@IAEXAAVCInPacket@@@Z"
+      }
+    ]
+  },
+  "CUICharSelect": {
+    "count_sampled": 4,
+    "sample": [
+      {
+        "ea": "0x60135b",
+        "name": "??0CUICharSelect@@QAE@PAVCLogin@@@Z"
+      },
+      {
+        "ea": "0x601667",
+        "name": "?OnButtonClicked@CUICharSelect@@UAEXI@Z"
+      },
+      {
+        "ea": "0x601829",
+        "name": "?SetKeyFocus@CUICharSelect@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x601861",
+        "name": "?IsRequestValid@CUICharSelect@@IAEHXZ"
+      }
+    ]
+  },
+  "CUIStatusBar": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x4c6db2",
+        "name": "?GetWhisperTarget@CUIStatusBar@@QBE?AV?$ZXString@D@@XZ"
+      },
+      {
+        "ea": "0x8cfad8",
+        "name": "??0CUIStatusBar@@QAE@XZ"
+      },
+      {
+        "ea": "0x8cfd76",
+        "name": "?OnSetFocus@CUIStatusBar@@UAEHH@Z"
+      },
+      {
+        "ea": "0x8cfd7b",
+        "name": "?ClearToolTip@CUIStatusBar@@UAEXXZ"
+      },
+      {
+        "ea": "0x8cfd83",
+        "name": "?GetRTTI@CUIStatusBar@@UBEPBVCRTTI@@XZ"
+      },
+      {
+        "ea": "0x8cfd89",
+        "name": "?IsKindOf@CUIStatusBar@@UBEHPBVCRTTI@@@Z"
+      },
+      {
+        "ea": "0x8cfdce",
+        "name": "??1CUIStatusBar@@UAE@XZ"
+      },
+      {
+        "ea": "0x8d01b2",
+        "name": "?OnCreate@CUIStatusBar@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x8d419c",
+        "name": "?OnChildNotify@CUIStatusBar@@UAEXIII@Z"
+      },
+      {
+        "ea": "0x8d4225",
+        "name": "?OnMouseEnter@CUIStatusBar@@UAEXH@Z"
+      },
+      {
+        "ea": "0x8d423d",
+        "name": "?OnButtonClicked@CUIStatusBar@@UAEXI@Z"
+      },
+      {
+        "ea": "0x8d4348",
+        "name": "?ConvertWhisperToNormal@CUIStatusBar@@QAE?AV?$ZXString@G@@V2@@Z"
+      },
+      {
+        "ea": "0x8d468d",
+        "name": "?GetChatLog@CUIStatusBar@@QAE?AV?$ZArray@V?$ZXString@D@@@@XZ"
+      },
+      {
+        "ea": "0x8d4a22",
+        "name": "?SendClaim@CUIStatusBar@@IAEXXZ"
+      },
+      {
+        "ea": "0x8d4a6d",
+        "name": "?SetChatType@CUIStatusBar@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x8d4dbf",
+        "name": "?ChangeWhisperTarget@CUIStatusBar@@QAEHXZ"
+      },
+      {
+        "ea": "0x8d536c",
+        "name": "?OnKey@CUIStatusBar@@UAEXII@Z"
+      },
+      {
+        "ea": "0x8d57ca",
+        "name": "?GetEmotionKey@CUIStatusBar@@QAEIAAV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x8d5a4d",
+        "name": "?StartChat@CUIStatusBar@@QAEXPBD@Z"
+      },
+      {
+        "ea": "0x8d5aaf",
+        "name": "?EndChat@CUIStatusBar@@QAEXXZ"
+      },
+      {
+        "ea": "0x8d5acd",
+        "name": "?FloatNotice@CUIStatusBar@@QAEXPBDJK@Z"
+      },
+      {
+        "ea": "0x8d5b2b",
+        "name": "?SetProblem@CUIStatusBar@@QAEXPBD@Z"
+      },
+      {
+        "ea": "0x8d5b5d",
+        "name": "?OnMouseButton@CUIStatusBar@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x8d5bfb",
+        "name": "?TryBeginWhisper@CUIStatusBar@@IAEHJJ@Z"
+      },
+      {
+        "ea": "0x8d616c",
+        "name": "?ChangeChatWndSize@CUIStatusBar@@QAEXJJJ@Z"
+      }
+    ]
+  },
+  "CUIMiniMap": {
+    "count_sampled": 11,
+    "sample": [
+      {
+        "ea": "0x854b8c",
+        "name": "??0CUIMiniMap@@QAE@PAVCWvsContext@@@Z"
+      },
+      {
+        "ea": "0x855d02",
+        "name": "?SetLayer@CUIMiniMap@@QAEXXZ"
+      },
+      {
+        "ea": "0x858344",
+        "name": "?SetCtrl@CUIMiniMap@@QAEXXZ"
+      },
+      {
+        "ea": "0x858603",
+        "name": "?LoadMiniMap@CUIMiniMap@@QAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0K@Z"
+      },
+      {
+        "ea": "0x8590a4",
+        "name": "?ReloadMiniMap@CUIMiniMap@@QAEHXZ"
+      },
+      {
+        "ea": "0x8590df",
+        "name": "?ToggleMap@CUIMiniMap@@QAEXXZ"
+      },
+      {
+        "ea": "0x859122",
+        "name": "?Update@CUIMiniMap@@UAEXXZ"
+      },
+      {
+        "ea": "0x85ace7",
+        "name": "?OnButtonClicked@CUIMiniMap@@UAEXI@Z"
+      },
+      {
+        "ea": "0x85ade2",
+        "name": "?OnMouseMove@CUIMiniMap@@UAEHJJ@Z"
+      },
+      {
+        "ea": "0x85bbe4",
+        "name": "?InsertStalkee@CUIMiniMap@@QAEXKAAV?$ZXString@D@@UtagPOINT@@@Z"
+      },
+      {
+        "ea": "0x85bc51",
+        "name": "?SetShowMiniMap@CUIMiniMap@@QAEXH@Z"
+      }
+    ]
+  },
+  "CWnd": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x4243fe",
+        "name": "?OnDragDrop@CWnd@@UAEHJAAUDRAGCTX@@JJ@Z"
+      },
+      {
+        "ea": "0x424403",
+        "name": "?IsMyAddon@CWnd@@UAEHPAV1@@Z"
+      },
+      {
+        "ea": "0x424443",
+        "name": "?OnMouseButton@CWnd@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x424446",
+        "name": "?OnMouseMove@CWnd@@UAEHJJ@Z"
+      },
+      {
+        "ea": "0x42444e",
+        "name": "?OnChildNotify@CWnd@@UAEXIII@Z"
+      },
+      {
+        "ea": "0x4259d9",
+        "name": "?OnCreate_unsure@CWnd@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x4259dc",
+        "name": "?OnDestroy_unsure@CWnd@@UAEXXZ"
+      },
+      {
+        "ea": "0x425c4c",
+        "name": "?GetCanvas@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@XZ"
+      },
+      {
+        "ea": "0x426604",
+        "name": "?GetLayer@CWnd@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ"
+      },
+      {
+        "ea": "0x45a63c",
+        "name": "?OnButtonClicked@CWnd@@UAEXI@Z"
+      },
+      {
+        "ea": "0x45a63f",
+        "name": "?GetRTTI@CWnd@@UBEPBVCRTTI@@XZ"
+      },
+      {
+        "ea": "0x45a645",
+        "name": "?IsKindOf@CWnd@@UBEHPBVCRTTI@@@Z"
+      },
+      {
+        "ea": "0x48bba5",
+        "name": "?GetOrgWindow@CWndMan@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@W4UIOrigin@CWnd@@@Z"
+      },
+      {
+        "ea": "0x4eda94",
+        "name": "?CreateDlg@CDialog@@QAEXJJJJJHPAXW4UIOrigin@CWnd@@@Z"
+      },
+      {
+        "ea": "0x51f9ad",
+        "name": "?CreateFadeWnd@CFadeWnd@@QAEXJJPBGJHPAXHW4UIOrigin@CWnd@@@Z"
+      },
+      {
+        "ea": "0x9de383",
+        "name": "??0CWnd@@QAE@XZ"
+      },
+      {
+        "ea": "0x9de438",
+        "name": "??1CWnd@@UAE@XZ"
+      },
+      {
+        "ea": "0x9de4d2",
+        "name": "?CreateWnd@CWnd@@QAEXJJJJJHPAXHW4UIOrigin@1@@Z"
+      },
+      {
+        "ea": "0x9de7fb",
+        "name": "?PreCreateWnd@CWnd@@UAEXJJJJJHPAX@Z"
+      },
+      {
+        "ea": "0x9deb57",
+        "name": "?OnMoveWnd@CWnd@@UAEXJJ@Z"
+      },
+      {
+        "ea": "0x9e00a6",
+        "name": "?OnEndMoveWnd@CWnd@@UAEXXZ"
+      },
+      {
+        "ea": "0x9e00af",
+        "name": "?Destroy@CWnd@@QAEXXZ"
+      },
+      {
+        "ea": "0x9e01c8",
+        "name": "?OnMouseEnter@CWnd@@UAEXH@Z"
+      },
+      {
+        "ea": "0x9e01e7",
+        "name": "?HitTest@CWnd@@UAEHJJPAPAVCCtrlWnd@@@Z"
+      },
+      {
+        "ea": "0x9e02ae",
+        "name": "?OnMouseWheel@CWnd@@UAEHJJJ@Z"
+      }
+    ]
+  },
+  "CWndMan": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x9e03a6",
+        "name": "?UpdateWindowPosition@CWndMan@@KAXPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e2c42",
+        "name": "??0CWndMan@@QAE@PAUHWND__@@@Z"
+      },
+      {
+        "ea": "0x9e2fe0",
+        "name": "?PreCreateWnd@CWndMan@@UAEXJJJJJHPAX@Z"
+      },
+      {
+        "ea": "0x9e2fe3",
+        "name": "?OnActivate@CWndMan@@UAEHH@Z"
+      },
+      {
+        "ea": "0x9e3026",
+        "name": "??1CWndMan@@UAE@XZ"
+      },
+      {
+        "ea": "0x9e311b",
+        "name": "?GetCursorPos@CWndMan@@QAEXPAUtagPOINT@@H@Z"
+      },
+      {
+        "ea": "0x9e3180",
+        "name": "?SetCursorPos@CWndMan@@QAEXUtagPOINT@@H@Z"
+      },
+      {
+        "ea": "0x9e3264",
+        "name": "?SetFocus@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+      },
+      {
+        "ea": "0x9e337e",
+        "name": "?SetActiveWndImp@CWndMan@@AAEHPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e33fc",
+        "name": "?SetCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+      },
+      {
+        "ea": "0x9e3432",
+        "name": "?ReleaseCaptureWnd@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+      },
+      {
+        "ea": "0x9e3454",
+        "name": "?Unlink@CWndMan@@QAEXPAUIUIMsgHandler@@@Z"
+      },
+      {
+        "ea": "0x9e353d",
+        "name": "?BeginDragDrop@CWndMan@@QAEXPAUIUIMsgHandler@@PAUIDraggable@@H@Z"
+      },
+      {
+        "ea": "0x9e37c2",
+        "name": "?EndDragDrop@CWndMan@@QAEXJJH@Z"
+      },
+      {
+        "ea": "0x9e3ac0",
+        "name": "?ClearDragContext@CWndMan@@QAEXXZ"
+      },
+      {
+        "ea": "0x9e3ae6",
+        "name": "?ProcessMouse@CWndMan@@QAEJIIJ@Z"
+      },
+      {
+        "ea": "0x9e40f1",
+        "name": "?ProcessKey@CWndMan@@QAEJIIJ@Z"
+      },
+      {
+        "ea": "0x9e42b2",
+        "name": "?GetHandlerFromPoint@CWndMan@@QAEPAUIUIMsgHandler@@JJ@Z"
+      },
+      {
+        "ea": "0x9e43ff",
+        "name": "?InsertWindow@CWndMan@@KAXPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e44ba",
+        "name": "?RemoveWindow@CWndMan@@KAHPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e44dc",
+        "name": "?RemoveUpdateWindow@CWndMan@@KAXPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e44fe",
+        "name": "?InsertInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e4525",
+        "name": "?RemoveInvalidatedWindow@CWndMan@@KAXPAVCWnd@@@Z"
+      },
+      {
+        "ea": "0x9e4547",
+        "name": "?RedrawInvalidatedWindows@CWndMan@@SAXXZ"
+      },
+      {
+        "ea": "0x9e7d77",
+        "name": "?TranslateMessage@CWndMan@@QAEHAAI0AAJPAJ@Z"
+      }
+    ]
+  },
+  "CUIUserList": {
+    "count_sampled": 10,
+    "sample": [
+      {
+        "ea": "0x919b73",
+        "name": "?OnCreate@CUIUserList@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x91beab",
+        "name": "?Draw@CUIUserList@@UAEXPBUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x91d515",
+        "name": "?OnMouseButton@CUIUserList@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x91d82f",
+        "name": "?OnMouseMove@CUIUserList@@UAEHJJ@Z"
+      },
+      {
+        "ea": "0x91dfaf",
+        "name": "?ResetInfo@CUIUserList@@QAEXXZ"
+      },
+      {
+        "ea": "0x91e073",
+        "name": "?SetButton@CUIUserList@@IAEXXZ"
+      },
+      {
+        "ea": "0x91e1eb",
+        "name": "?SetScrollBar@CUIUserList@@IAEXH@Z"
+      },
+      {
+        "ea": "0x91eb52",
+        "name": "?DestroyGuildButton@CUIUserList@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x91eba3",
+        "name": "?CreateAllianceButton@CUIUserList@@QAEHJABUSectionData@CTabGuildAlliance@@ABUtagRECT@@J@Z"
+      },
+      {
+        "ea": "0x91ee49",
+        "name": "?DestroyAllianceButton@CUIUserList@@QAEXJ@Z"
+      }
+    ]
+  },
+  "CPet": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x703314",
+        "name": "?Init@CPet@@QAEXPAVCUser@@AAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x70390c",
+        "name": "?SetShoeAttr@CPet@@QAEXXZ"
+      },
+      {
+        "ea": "0x703af3",
+        "name": "?GetItemSlot@CPet@@QBEPAUGW_ItemSlotPet@@XZ"
+      },
+      {
+        "ea": "0x703b69",
+        "name": "?GetLevel@CPet@@QBEJXZ"
+      },
+      {
+        "ea": "0x703b88",
+        "name": "?SetMoveAction@CPet@@QAEXJH@Z"
+      },
+      {
+        "ea": "0x703bb2",
+        "name": "?GetBodyRect@CPet@@QBEXAAUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x703d15",
+        "name": "?PrepareActionLayer@CPet@@IAEXXZ"
+      },
+      {
+        "ea": "0x70403d",
+        "name": "?Update@CPet@@UAEXXZ"
+      },
+      {
+        "ea": "0x70458c",
+        "name": "?OnResolveMoveAction@CPet@@UAEJJJJPBVCVecCtrl@@@Z"
+      },
+      {
+        "ea": "0x70474d",
+        "name": "?OnMove@CPet@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x70476e",
+        "name": "?OnAction@CPet@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x704801",
+        "name": "?OnNameChanged@CPet@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x7048ab",
+        "name": "?OnActionCommand@CPet@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x704bd8",
+        "name": "?SetPositionContext@CPet@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x704bf3",
+        "name": "?OnAvatarModified@CPet@@QAEXXZ"
+      },
+      {
+        "ea": "0x704c18",
+        "name": "?OnValidateStat@CPet@@QAEXXZ"
+      },
+      {
+        "ea": "0x704d5d",
+        "name": "?ParseCommand@CPet@@QAEHV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x7050be",
+        "name": "?ChatCommand@CPet@@QAEXABV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x705110",
+        "name": "?CursedChatCommand@CPet@@QAEXXZ"
+      },
+      {
+        "ea": "0x7055e2",
+        "name": "?DoAction@CPet@@AAEXJJVZtl_bstr_t@@HHH@Z"
+      },
+      {
+        "ea": "0x705db3",
+        "name": "?GetUpgradePetSkill@CPet@@QAEGXZ"
+      },
+      {
+        "ea": "0x705e2c",
+        "name": "?UpdatePetAbility@CPet@@QAEXXZ"
+      },
+      {
+        "ea": "0x7061a5",
+        "name": "?OnLoadExceptionList@CPet@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x70651f",
+        "name": "?GetAdditionalLayer@CPet@@IAEPAUADDITIONALLAYER@1@J@Z"
+      },
+      {
+        "ea": "0x706678",
+        "name": "?SetSetItemEffect@CPet@@QAEXJJ@Z"
+      }
+    ]
+  },
+  "CCashShop": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x468223",
+        "name": "??0CCashShop@@QAE@AAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x468f3e",
+        "name": "?Init@CCashShop@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x46959a",
+        "name": "?Close@CCashShop@@UAEXXZ"
+      },
+      {
+        "ea": "0x469626",
+        "name": "?OnKey@CCashShop@@UAEXII@Z"
+      },
+      {
+        "ea": "0x4696b1",
+        "name": "?OnBuyAvatar@CCashShop@@QAEXXZ"
+      },
+      {
+        "ea": "0x46ba55",
+        "name": "?SendBuyAvatarPacket@CCashShop@@QAEXXZ"
+      },
+      {
+        "ea": "0x46bdcb",
+        "name": "?OnDefaultAvatar@CCashShop@@QAEXXZ"
+      },
+      {
+        "ea": "0x46bdd6",
+        "name": "?OnTakeOff@CCashShop@@QAEXXZ"
+      },
+      {
+        "ea": "0x46cafe",
+        "name": "?OnChangedCategory@CCashShop@@QAEXH@Z"
+      },
+      {
+        "ea": "0x46cb2e",
+        "name": "?OnChangedCategorySub@CCashShop@@QAEXH@Z"
+      },
+      {
+        "ea": "0x46cb5e",
+        "name": "?OnChangedPage@CCashShop@@QAEXH@Z"
+      },
+      {
+        "ea": "0x46cb76",
+        "name": "?IsUsableItem@CCashShop@@IAEHJAAV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x46d5e2",
+        "name": "?IsUsableItemGift@CCashShop@@IAEHJAAV?$ZXString@D@@V2@ABVCharacterData@@ABUBasicStat@@@Z"
+      },
+      {
+        "ea": "0x46e121",
+        "name": "?OnBuyPackage@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x46ec85",
+        "name": "?OnGiftMateInfoResult@CCashShop@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x46f940",
+        "name": "?SendGiftsPacket@CCashShop@@QAEXXZ"
+      },
+      {
+        "ea": "0x46fc3b",
+        "name": "?OnGiftPackage@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x470480",
+        "name": "?OnBuyTransferWorldItem@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x470d7d",
+        "name": "?OnSetWish@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x470edd",
+        "name": "?OnRemoveWish@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x470fd0",
+        "name": "?OnWear@CCashShop@@QAEXJJH@Z"
+      },
+      {
+        "ea": "0x470fea",
+        "name": "?SetPet@CCashShop@@QAEXJJH@Z"
+      },
+      {
+        "ea": "0x471004",
+        "name": "?SetEmotion@CCashShop@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x471016",
+        "name": "?SetActiveEffectItem@CCashShop@@QAEXJJ@Z"
+      },
+      {
+        "ea": "0x47102c",
+        "name": "?ShowBullet@CCashShop@@QAEXJ@Z"
+      }
+    ]
+  },
+  "CUISkill": {
+    "count_sampled": 6,
+    "sample": [
+      {
+        "ea": "0x8aa4c5",
+        "name": "?CloseSkillGuide@CUISkill@@QAEXXZ"
+      },
+      {
+        "ea": "0x8aa5ad",
+        "name": "??0CUISkill@@QAE@HJ@Z"
+      },
+      {
+        "ea": "0x8aaa88",
+        "name": "?OnCreate@CUISkill@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x8acf1a",
+        "name": "?OnSkillLevelUpButton@CUISkill@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x8bcdfa",
+        "name": "?GetSkillRootVisible@CUISkill@@IAEPBUSKILLROOT@@H@Z"
+      },
+      {
+        "ea": "0x961063",
+        "name": "?OpenCurSkillGuide@CUISkill@@QAEXXZ"
+      }
+    ]
+  },
+  "CNpc": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x6d045a",
+        "name": "??0CNpc@@QAE@PAVCNpcTemplate@@K@Z"
+      },
+      {
+        "ea": "0x6d060a",
+        "name": "?GetType@CNpc@@UBEJXZ"
+      },
+      {
+        "ea": "0x6d060e",
+        "name": "?GetPos@CNpc@@UBE?BUtagPOINT@@XZ"
+      },
+      {
+        "ea": "0x6d0615",
+        "name": "?GetPosPrev@CNpc@@UBE?BUtagPOINT@@XZ"
+      },
+      {
+        "ea": "0x6d061c",
+        "name": "?GetZMass@CNpc@@UBEJXZ"
+      },
+      {
+        "ea": "0x6d0634",
+        "name": "?GetRTTI@CNpc@@UBEPBVCRTTI@@XZ"
+      },
+      {
+        "ea": "0x6d063a",
+        "name": "?IsKindOf@CNpc@@UBEHPBVCRTTI@@@Z"
+      },
+      {
+        "ea": "0x6d067f",
+        "name": "??1CNpc@@UAE@XZ"
+      },
+      {
+        "ea": "0x6d089a",
+        "name": "?Init@CNpc@@QAEXKAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x6d1779",
+        "name": "?SetQuestList@CNpc@@QAEXH@Z"
+      },
+      {
+        "ea": "0x6d1b11",
+        "name": "?SetClientActionByQuest@CNpc@@QAEXXZ"
+      },
+      {
+        "ea": "0x6d2024",
+        "name": "?SetActive@CNpc@@QAEXH@Z"
+      },
+      {
+        "ea": "0x6d20d5",
+        "name": "?SetShoeAttr@CNpc@@QAEXXZ"
+      },
+      {
+        "ea": "0x6d215e",
+        "name": "?SetMoveAction@CNpc@@QAEXJH@Z"
+      },
+      {
+        "ea": "0x6d21cd",
+        "name": "?SetImitatedLook@CNpc@@QAEXAAUAvatarLook@@@Z"
+      },
+      {
+        "ea": "0x6d232a",
+        "name": "?PrepareActionLayer@CNpc@@IAEXXZ"
+      },
+      {
+        "ea": "0x6d263e",
+        "name": "?GetCurrentAction@CNpc@@QBEJPAJ@Z"
+      },
+      {
+        "ea": "0x6d267d",
+        "name": "?SetLayerZ@CNpc@@IAEXXZ"
+      },
+      {
+        "ea": "0x6d2918",
+        "name": "?Update@CNpc@@UAEXXZ"
+      },
+      {
+        "ea": "0x6d2d72",
+        "name": "?OnResolveMoveAction@CNpc@@UAEJJJJPBVCVecCtrl@@@Z"
+      },
+      {
+        "ea": "0x6d2dbb",
+        "name": "?OnLayerZChanged@CNpc@@UAEXPBVCVecCtrl@@@Z"
+      },
+      {
+        "ea": "0x6d2ddd",
+        "name": "?GetShoeAttr@CNpc@@UBE?BV?$ZRef@VCAttrShoe@@@@XZ"
+      },
+      {
+        "ea": "0x6d2e07",
+        "name": "?OnMove@CNpc@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x6d3273",
+        "name": "?GenerateMovePath@CNpc@@IAEXJJ@Z"
+      },
+      {
+        "ea": "0x6d3392",
+        "name": "?ShowQuestList@CNpc@@QAEXXZ"
+      }
+    ]
+  },
+  "CField": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x527913",
+        "name": "?FieldFactory@CField@@SA?AV?$ZRef@VCField@@@@K@Z"
+      },
+      {
+        "ea": "0x528034",
+        "name": "?DecodeFieldSpecificData@CField@@UAEXPAVCUser@@AAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x528dbc",
+        "name": "??0CField@@QAE@XZ"
+      },
+      {
+        "ea": "0x529035",
+        "name": "??1CField@@UAE@XZ"
+      },
+      {
+        "ea": "0x529269",
+        "name": "?Init@CField@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x5294ce",
+        "name": "?Close@CField@@UAEXXZ"
+      },
+      {
+        "ea": "0x52950e",
+        "name": "?GetFieldProp@CField@@SA?AUPROPERTY@1@K@Z"
+      },
+      {
+        "ea": "0x529968",
+        "name": "?OnKey@CField@@UAEXII@Z"
+      },
+      {
+        "ea": "0x5299de",
+        "name": "?OnMouseButton@CField@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x529a09",
+        "name": "?OnMouseMove@CField@@UAEHJJ@Z"
+      },
+      {
+        "ea": "0x529bb4",
+        "name": "?LoadMap@CField@@UAEXK@Z"
+      },
+      {
+        "ea": "0x529ef2",
+        "name": "?RestoreOption@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52a276",
+        "name": "?RestoreAllowedItem@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52a453",
+        "name": "?RestoreHelpMsg@CField@@IAEXK@Z"
+      },
+      {
+        "ea": "0x52a5af",
+        "name": "?RestorePeculiarInfo@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52a5c7",
+        "name": "?RestoreUserInfo@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52b1d8",
+        "name": "?RestoreForbiddenSkill@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52b2b5",
+        "name": "?RestoreSwinArea@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52b754",
+        "name": "?RestoreSeat@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52b93f",
+        "name": "?RestoreWeatherMsg@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52bc72",
+        "name": "?RestoreClock@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52c258",
+        "name": "?RestoreToolTip@CField@@IAEXXZ"
+      },
+      {
+        "ea": "0x52c315",
+        "name": "?SendChatMsg@CField@@QAEXABV?$ZXString@D@@H@Z"
+      },
+      {
+        "ea": "0x52c40c",
+        "name": "?SendChatMsgSlash@CField@@QAEXABV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x52fad4",
+        "name": "?SendInviteTradingRoomMsg@CField@@QAEXABV?$ZXString@D@@H@Z"
+      }
+    ]
+  },
+  "CMapLoadable": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x639708",
+        "name": "?Init@CMapLoadable@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x63988a",
+        "name": "?Close@CMapLoadable@@UAEXXZ"
+      },
+      {
+        "ea": "0x6399ef",
+        "name": "?Update@CMapLoadable@@UAEXXZ"
+      },
+      {
+        "ea": "0x639b3d",
+        "name": "?LoadMap@CMapLoadable@@UAEXXZ"
+      },
+      {
+        "ea": "0x63a100",
+        "name": "?RestoreTile@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x63a5c4",
+        "name": "?MakeTile@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0@Z"
+      },
+      {
+        "ea": "0x63aa7e",
+        "name": "?RestoreObj@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x63ad16",
+        "name": "?MakeObj@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z"
+      },
+      {
+        "ea": "0x63c212",
+        "name": "?MakeObjLayer@CMapLoadable@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com"
+      },
+      {
+        "ea": "0x63c741",
+        "name": "?MakeObstacles@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_"
+      },
+      {
+        "ea": "0x63cbba",
+        "name": "?RestoreBack@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x63cd4e",
+        "name": "?MakeBack@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@KHJJJJ@Z"
+      },
+      {
+        "ea": "0x63ef34",
+        "name": "?MakeVectorAnimate@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$"
+      },
+      {
+        "ea": "0x63f671",
+        "name": "?RestoreWeather@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x63f717",
+        "name": "?MakeCloud@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x63fe57",
+        "name": "?TransientLayer_Weather@CMapLoadable@@IAEXABV?$ZXString@G@@JJJ@Z"
+      },
+      {
+        "ea": "0x6419e7",
+        "name": "?TransientLayer_FireCracker@CMapLoadable@@IAEXV?$ZXString@G@@@Z"
+      },
+      {
+        "ea": "0x641aeb",
+        "name": "?WeatherLayer_RemoveAll@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x641b13",
+        "name": "?TransientLayer_NewYear@CMapLoadable@@IAEXV?$ZXString@G@@@Z"
+      },
+      {
+        "ea": "0x641db2",
+        "name": "?PlayNextMusic@CMapLoadable@@QAEXXZ"
+      },
+      {
+        "ea": "0x641ef1",
+        "name": "?RestoreViewRange@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x64211e",
+        "name": "?PlayBGMFromMapInfo@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x642214",
+        "name": "?RestoreBGM@CMapLoadable@@IAEXXZ"
+      },
+      {
+        "ea": "0x642264",
+        "name": "?UpdateObstacleInfo@CMapLoadable@@QAEXXZ"
+      },
+      {
+        "ea": "0x642890",
+        "name": "?SetFieldMagLevel@CMapLoadable@@QAEXXZ"
+      }
+    ]
+  },
+  "CDropPool": {
+    "count_sampled": 7,
+    "sample": [
+      {
+        "ea": "0x50463c",
+        "name": "?TryPickUpDrop@CDropPool@@QAEXABUtagPOINT@@@Z"
+      },
+      {
+        "ea": "0x5058db",
+        "name": "?OnPacket@CDropPool@@QAEXJAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x505900",
+        "name": "?OnDropEnterField@CDropPool@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x506590",
+        "name": "?OnDropLeaveField@CDropPool@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x506c26",
+        "name": "?GetMoneyIcon@CDropPool@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JJ@Z"
+      },
+      {
+        "ea": "0x506e62",
+        "name": "?MakeMoneyAnimation@CDropPool@@IAEXV?$ZRef@UDROP@@@@@Z"
+      },
+      {
+        "ea": "0x5081b0",
+        "name": "?BoobyTrapCheckPickupItem@CDropPool@@QAEXABUtagPOINT@@@Z"
+      }
+    ]
+  },
+  "CQuestMan": {
+    "count_sampled": 17,
+    "sample": [
+      {
+        "ea": "0x6cdd06",
+        "name": "?GetCompleteDemand@CQuestMan@@QAEPAUQuestDemand@@G@Z"
+      },
+      {
+        "ea": "0x71d8df",
+        "name": "?LoadDemand@CQuestMan@@QAEHXZ"
+      },
+      {
+        "ea": "0x71ddec",
+        "name": "?GetQuestByNpc@CQuestMan@@QAEHKAAV?$ZArray@G@@@Z"
+      },
+      {
+        "ea": "0x71dee4",
+        "name": "?SetRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z"
+      },
+      {
+        "ea": "0x71df1c",
+        "name": "?RemoveRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z"
+      },
+      {
+        "ea": "0x71df41",
+        "name": "?GetQuestDisplayMedal@CQuestMan@@QAEJG@Z"
+      },
+      {
+        "ea": "0x720e88",
+        "name": "?IsStartScriptLinkedQuest@CQuestMan@@QAEHG@Z"
+      },
+      {
+        "ea": "0x720f09",
+        "name": "?IsCompleteScriptLinkedQuest@CQuestMan@@QAEHG@Z"
+      },
+      {
+        "ea": "0x720f8a",
+        "name": "?IsAutoStartQuest@CQuestMan@@QAEHG@Z"
+      },
+      {
+        "ea": "0x720fab",
+        "name": "?IsAutoAutoAcceptQuest@CQuestMan@@QAEHG@Z"
+      },
+      {
+        "ea": "0x720fcc",
+        "name": "?IsAutoCompleteQuest@CQuestMan@@QAEHG@Z"
+      },
+      {
+        "ea": "0x721163",
+        "name": "?CheckStartDemand@CQuestMan@@QAEHGKABVCharacterData@@ABUSecondaryStat@@JJHJ@Z"
+      },
+      {
+        "ea": "0x721d2c",
+        "name": "?CheckCompleteDemand@CQuestMan@@QAEJGKABVCharacterData@@ABUSecondaryStat@@@Z"
+      },
+      {
+        "ea": "0x722823",
+        "name": "?LoadQuestInfo@CQuestMan@@QAEXXZ"
+      },
+      {
+        "ea": "0x723341",
+        "name": "?LoadPartyQuestInfo@CQuestMan@@QAEXXZ"
+      },
+      {
+        "ea": "0x7238dd",
+        "name": "?LoadPartyQuestRank@CQuestMan@@AAEXGV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z"
+      },
+      {
+        "ea": "0x724722",
+        "name": "?GetPartyQuestRankCount@CQuestMan@@QAEJAAV?$ZXString@D@@ABVCharacterData@@@Z"
+      }
+    ]
+  },
+  "CUIQuestInfo": {
+    "count_sampled": 16,
+    "sample": [
+      {
+        "ea": "0x87b921",
+        "name": "?GetQuestInfo@CUIQuestInfo@@QAE?AV?$ZRef@UQuestInfo@@@@XZ"
+      },
+      {
+        "ea": "0x87e8f3",
+        "name": "??0CUIQuestInfo@@QAE@J@Z"
+      },
+      {
+        "ea": "0x87ec3f",
+        "name": "?OnCreate@CUIQuestInfo@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x87fb2f",
+        "name": "?OnChildNotify@CUIQuestInfo@@UAEXIII@Z"
+      },
+      {
+        "ea": "0x87fd4f",
+        "name": "?OnTabChanged@CUIQuestInfo@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x881b18",
+        "name": "?LoadData@CUIQuestInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x882932",
+        "name": "?TryShowRecentlyUpdatedQuest@CUIQuestInfo@@QAEHXZ"
+      },
+      {
+        "ea": "0x88296e",
+        "name": "?TryShowRecentlyViewedQuest@CUIQuestInfo@@QAEHXZ"
+      },
+      {
+        "ea": "0x88297e",
+        "name": "?TryShowSuitableLevelQuest@CUIQuestInfo@@QAEHH@Z"
+      },
+      {
+        "ea": "0x882a71",
+        "name": "?TryShowTopQuest@CUIQuestInfo@@QAEHXZ"
+      },
+      {
+        "ea": "0x882c8a",
+        "name": "?SyncScrollBarWithSelected@CUIQuestInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x882f2f",
+        "name": "?MarkQuestAsRead@CUIQuestInfo@@QAEXG@Z"
+      },
+      {
+        "ea": "0x882f88",
+        "name": "?ResetInfo@CUIQuestInfo@@QAEXH@Z"
+      },
+      {
+        "ea": "0x883100",
+        "name": "?SetScrollBar@CUIQuestInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x88422c",
+        "name": "?ToggleDetail@CUIQuestInfo@@QAEXH@Z"
+      },
+      {
+        "ea": "0x8843a4",
+        "name": "?OnToggleDetail@CUIQuestInfo@@IAEXH@Z"
+      }
+    ]
+  },
+  "COutPacket": {
+    "count_sampled": 10,
+    "sample": [
+      {
+        "ea": "0x406549",
+        "name": "?Encode1@COutPacket@@QAEXE@Z"
+      },
+      {
+        "ea": "0x4065a6",
+        "name": "?Encode4@COutPacket@@QAEXK@Z"
+      },
+      {
+        "ea": "0x427f74",
+        "name": "?Encode2@COutPacket@@QAEXG@Z"
+      },
+      {
+        "ea": "0x46c00c",
+        "name": "?EncodeBuffer@COutPacket@@QAEXPBXI@Z"
+      },
+      {
+        "ea": "0x46f3cf",
+        "name": "?EncodeStr@COutPacket@@QAEXV?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x6ec9ce",
+        "name": "??0COutPacket@@QAE@J@Z"
+      },
+      {
+        "ea": "0x6ecaa9",
+        "name": "?Init@COutPacket@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x6ecacb",
+        "name": "?Init@COutPacket@@QAEXJHH@Z"
+      },
+      {
+        "ea": "0x6ecb07",
+        "name": "?InitByte@COutPacket@@QAEXJH@Z"
+      },
+      {
+        "ea": "0x6ecb27",
+        "name": "?MakeBufferList@COutPacket@@QBEXAAV?$ZList@V?$ZRef@VZSocketBuffer@@@@@@GPAKHK@Z"
+      }
+    ]
+  },
+  "CInPacket": {
+    "count_sampled": 10,
+    "sample": [
+      {
+        "ea": "0x4065f3",
+        "name": "?Decode1@CInPacket@@QAEEXZ"
+      },
+      {
+        "ea": "0x406629",
+        "name": "?Decode4@CInPacket@@QAEKXZ"
+      },
+      {
+        "ea": "0x42470c",
+        "name": "?Decode2@CInPacket@@QAEGXZ"
+      },
+      {
+        "ea": "0x432257",
+        "name": "?DecodeBuffer@CInPacket@@QAEXPAXI@Z"
+      },
+      {
+        "ea": "0x46f30c",
+        "name": "?DecodeStr@CInPacket@@QAE?AV?$ZXString@D@@XZ"
+      },
+      {
+        "ea": "0x6ec39f",
+        "name": "??0CInPacket@@QAE@AAV0@@Z"
+      },
+      {
+        "ea": "0x6ec424",
+        "name": "?AppendBuffer@CInPacket@@QAEJAAV?$ZRef@VZSocketBuffer@@@@PAJH@Z"
+      },
+      {
+        "ea": "0x6ec52e",
+        "name": "?RawAppendBuffer@CInPacket@@IAEXPBXI@Z"
+      },
+      {
+        "ea": "0x6ec58b",
+        "name": "?DecryptData@CInPacket@@QAEHK@Z"
+      },
+      {
+        "ea": "0x6ec85d",
+        "name": "?WriteClientLog@CInPacket@@IAEXXZ"
+      }
+    ]
+  },
+  "CClientSocket": {
+    "count_sampled": 15,
+    "sample": [
+      {
+        "ea": "0x494ed1",
+        "name": "?OnConnect@CClientSocket@@QAEHH@Z"
+      },
+      {
+        "ea": "0x4960fc",
+        "name": "?OnRead@CClientSocket@@QAEXXZ"
+      },
+      {
+        "ea": "0x49626e",
+        "name": "?OnError@CClientSocket@@QAEXH@Z"
+      },
+      {
+        "ea": "0x4962f4",
+        "name": "?OnClose@CClientSocket@@QAEXXZ"
+      },
+      {
+        "ea": "0x496369",
+        "name": "?Close@CClientSocket@@QAEXXZ"
+      },
+      {
+        "ea": "0x49637b",
+        "name": "?SendPacket@CClientSocket@@QAEXABVCOutPacket@@@Z"
+      },
+      {
+        "ea": "0x496403",
+        "name": "?Flush@CClientSocket@@QAEXXZ"
+      },
+      {
+        "ea": "0x49651d",
+        "name": "?ManipulatePacket@CClientSocket@@QAEXXZ"
+      },
+      {
+        "ea": "0x4965f1",
+        "name": "?ProcessPacket@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x4966c0",
+        "name": "?OnAliveReq@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x496701",
+        "name": "?OnMigrateCommand@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x4967f8",
+        "name": "?OnAuthenCodeChanged@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x496950",
+        "name": "?OnAuthenMessage@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x4969a6",
+        "name": "?OnCheckCrcResult@CClientSocket@@IAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x9f6cdd",
+        "name": "?GetGuestIDRegistrationURL@CClientSocket@@QAE?AV?$ZXString@D@@XZ"
+      }
+    ]
+  },
+  "CAESCipher": {
+    "count_sampled": 12,
+    "sample": [
+      {
+        "ea": "0x42d941",
+        "name": "?Encrypt@CAESCipher@@SAXPAE0HPAK@Z"
+      },
+      {
+        "ea": "0x42d9b7",
+        "name": "?Decrypt@CAESCipher@@SAXPAE0HPAK@Z"
+      },
+      {
+        "ea": "0x42da2d",
+        "name": "?gen_tabs@CAESCipher@@CAXXZ"
+      },
+      {
+        "ea": "0x42dd29",
+        "name": "?AES_EncInit@CAESCipher@@CAXPAUAES_ALG_INFO@1@PAKPAEH@Z"
+      },
+      {
+        "ea": "0x42dd68",
+        "name": "?AES_DecInit@CAESCipher@@CAXPAUAES_ALG_INFO@1@PAKPAEH@Z"
+      },
+      {
+        "ea": "0x42dda7",
+        "name": "?AES_EncKeySchedule@CAESCipher@@CAXPAKPAUAES_ALG_INFO@1@@Z"
+      },
+      {
+        "ea": "0x42e070",
+        "name": "?RIJNDAEL_KeySchedule@CAESCipher@@CAXPAK0@Z"
+      },
+      {
+        "ea": "0x42e19a",
+        "name": "?AES_Encrypt@CAESCipher@@CAXPAXPAE@Z"
+      },
+      {
+        "ea": "0x42fd35",
+        "name": "?OFB_EncUpdate@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEK1PAK@Z"
+      },
+      {
+        "ea": "0x42fe80",
+        "name": "?OFB_EncFinal@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEPAK@Z"
+      },
+      {
+        "ea": "0x42fec2",
+        "name": "?OFB_DecUpdate@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEK1PAK@Z"
+      },
+      {
+        "ea": "0x430018",
+        "name": "?OFB_DecFinal@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEPAK@Z"
+      }
+    ]
+  },
+  "CUserLocal": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x57502e",
+        "name": "?IsStun@CUserLocal@@QBEHXZ"
+      },
+      {
+        "ea": "0x948ba2",
+        "name": "??0CUserLocal@@QAE@K@Z"
+      },
+      {
+        "ea": "0x949126",
+        "name": "?IsLocalUser@CUserLocal@@UBEHXZ"
+      },
+      {
+        "ea": "0x94912a",
+        "name": "?IsPreview@CUserLocal@@UBEHXZ"
+      },
+      {
+        "ea": "0x94912d",
+        "name": "?IsRemoteUser@CUserLocal@@UBEHXZ"
+      },
+      {
+        "ea": "0x949130",
+        "name": "?IsAdminHide@CUserLocal@@UBEHXZ"
+      },
+      {
+        "ea": "0x949137",
+        "name": "?IsMovingMode@CUserLocal@@UBEHXZ"
+      },
+      {
+        "ea": "0x94913e",
+        "name": "?ResetOneTimeAction@CUserLocal@@UAEXXZ"
+      },
+      {
+        "ea": "0x94915a",
+        "name": "?ClearToolTip@CUserLocal@@UAEXXZ"
+      },
+      {
+        "ea": "0x949165",
+        "name": "?GetRTTI@CUserLocal@@UBEPBVCRTTI@@XZ"
+      },
+      {
+        "ea": "0x94916b",
+        "name": "?IsKindOf@CUserLocal@@UBEHPBVCRTTI@@@Z"
+      },
+      {
+        "ea": "0x949513",
+        "name": "?Init@CUserLocal@@QAEXXZ"
+      },
+      {
+        "ea": "0x949b15",
+        "name": "?GetCharacterLevel@CUserLocal@@UBEEXZ"
+      },
+      {
+        "ea": "0x949b52",
+        "name": "?GetSecondaryStat@CUserLocal@@UBEABUSecondaryStat@@XZ"
+      },
+      {
+        "ea": "0x949b5d",
+        "name": "?GetProperBulletPosition@CUserLocal@@QAEJPBUSKILLENTRY@@JPAJ11@Z"
+      },
+      {
+        "ea": "0x94a10a",
+        "name": "?SetMoveAction@CUserLocal@@UAEXJH@Z"
+      },
+      {
+        "ea": "0x94a144",
+        "name": "?Update@CUserLocal@@UAEXXZ"
+      },
+      {
+        "ea": "0x94be9c",
+        "name": "?IsAttract@CUserLocal@@QBEHXZ"
+      },
+      {
+        "ea": "0x94c383",
+        "name": "?Jump@CUserLocal@@QAEXH@Z"
+      },
+      {
+        "ea": "0x94c4d9",
+        "name": "?IsWeakened@CUserLocal@@QBEHXZ"
+      },
+      {
+        "ea": "0x94c4f8",
+        "name": "?FallDown@CUserLocal@@QAEXXZ"
+      },
+      {
+        "ea": "0x94c856",
+        "name": "?OnKey@CUserLocal@@QAEXII@Z"
+      },
+      {
+        "ea": "0x94cf7a",
+        "name": "?OnMouseButton@CUserLocal@@QAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x94cfc3",
+        "name": "?OnMouseMove@CUserLocal@@QAEHJJ@Z"
+      },
+      {
+        "ea": "0x94d20b",
+        "name": "?OnFeatureChanged@CUserLocal@@QAEXXZ"
+      }
+    ]
+  },
+  "CUser": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x4acd7b",
+        "name": "?IsOnLadderOrRope@CUser@@QBEHXZ"
+      },
+      {
+        "ea": "0x4ad42b",
+        "name": "?GetVecCtrl@CUser@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@XZ"
+      },
+      {
+        "ea": "0x4b2346",
+        "name": "?IsAdminHide@CUser@@UBEHXZ"
+      },
+      {
+        "ea": "0x4b2349",
+        "name": "?IsMovingMode@CUser@@UBEHXZ"
+      },
+      {
+        "ea": "0x4b234c",
+        "name": "?IsEvanJob@CUser@@UBEHXZ"
+      },
+      {
+        "ea": "0x4b237f",
+        "name": "?GetType@CUser@@UBEJXZ"
+      },
+      {
+        "ea": "0x4b2386",
+        "name": "?GetPos@CUser@@UBE?BUtagPOINT@@XZ"
+      },
+      {
+        "ea": "0x4b238d",
+        "name": "?GetPosPrev@CUser@@UBE?BUtagPOINT@@XZ"
+      },
+      {
+        "ea": "0x4b23a5",
+        "name": "?GetZMass@CUser@@UBEJXZ"
+      },
+      {
+        "ea": "0x4f0d45",
+        "name": "?IsDarkSight@CUser@@QBEHXZ"
+      },
+      {
+        "ea": "0x4f0d64",
+        "name": "?IsSneak@CUser@@QBEHXZ"
+      },
+      {
+        "ea": "0x92dcfc",
+        "name": "??0CUser@@QAE@K@Z"
+      },
+      {
+        "ea": "0x92e499",
+        "name": "?Init@CUser@@QAEXABUAvatarLook@@H@Z"
+      },
+      {
+        "ea": "0x92e916",
+        "name": "?OnAvatarModified@CUser@@UAEXXZ"
+      },
+      {
+        "ea": "0x92e964",
+        "name": "?SetAbilityEquip@CUser@@QAEXXZ"
+      },
+      {
+        "ea": "0x92eb37",
+        "name": "?SetActivePet@CUser@@QAEXJPAVCPet@@@Z"
+      },
+      {
+        "ea": "0x92ec12",
+        "name": "?GetActivePetItemSlot@CUser@@QBE?AV?$ZRef@UGW_ItemSlotPet@@@@J@Z"
+      },
+      {
+        "ea": "0x92ec50",
+        "name": "?MakeIncDecHPEffect@CUser@@QAEXJH@Z"
+      },
+      {
+        "ea": "0x92ecd1",
+        "name": "?SetMoveAction@CUser@@UAEXJH@Z"
+      },
+      {
+        "ea": "0x92edb2",
+        "name": "?SetAttackAction@CUser@@QAEHJJPBUSKILLENTRY@@J@Z"
+      },
+      {
+        "ea": "0x92ef56",
+        "name": "?PrepareActionLayer@CUser@@UAEXJJH@Z"
+      },
+      {
+        "ea": "0x92efe9",
+        "name": "?PrepareShadowPartnerActionLayer@CUser@@QAEXXZ"
+      },
+      {
+        "ea": "0x92fb41",
+        "name": "?RegisterAfterimage@CUser@@QAEXJHJVZtl_bstr_t@@JJJ@Z"
+      },
+      {
+        "ea": "0x92fd5a",
+        "name": "?OnSetDead@CUser@@UAEXH@Z"
+      },
+      {
+        "ea": "0x930a13",
+        "name": "?OnRevive@CUser@@UAEXXZ"
+      }
+    ]
+  },
+  "CAvatar": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x44fe6c",
+        "name": "??0CAvatar@@QAE@XZ"
+      },
+      {
+        "ea": "0x44ffe2",
+        "name": "??0ACTIONINFO@CAvatar@@QAE@XZ"
+      },
+      {
+        "ea": "0x450093",
+        "name": "??1ACTIONINFO@CAvatar@@QAE@XZ"
+      },
+      {
+        "ea": "0x4502f8",
+        "name": "?Init@CAvatar@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@JJV?$_com_ptr_t@V?$_com_IIID@UIWzGr2"
+      },
+      {
+        "ea": "0x45149f",
+        "name": "?Init@CAvatar@@QAEXABUAvatarLook@@JV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_co"
+      },
+      {
+        "ea": "0x4515a1",
+        "name": "?SetAvatarLook@CAvatar@@QAEXABUAvatarLook@@@Z"
+      },
+      {
+        "ea": "0x4515bd",
+        "name": "?NotifyAvatarModified@CAvatar@@QAEXH@Z"
+      },
+      {
+        "ea": "0x45183b",
+        "name": "?GetBodyRect@CAvatar@@QBEXAAUtagRECT@@H@Z"
+      },
+      {
+        "ea": "0x4519aa",
+        "name": "?GetHeight@CAvatar@@QBEJXZ"
+      },
+      {
+        "ea": "0x451b0b",
+        "name": "?ForcingAppearance@CAvatar@@QAEXHPAJ@Z"
+      },
+      {
+        "ea": "0x451b6a",
+        "name": "?GetOneTimeAction@CAvatar@@QBEJXZ"
+      },
+      {
+        "ea": "0x451cf6",
+        "name": "?SetEmotion@CAvatar@@QAEXJJ@Z"
+      },
+      {
+        "ea": "0x451e7e",
+        "name": "?GetLayerUnderFace@CAvatar@@QBE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@XZ"
+      },
+      {
+        "ea": "0x451ec8",
+        "name": "?MoveAction2RawAction@CAvatar@@IBEJJPAJ@Z"
+      },
+      {
+        "ea": "0x4520a4",
+        "name": "?IsMonsterMorphed@CAvatar@@QBEHXZ"
+      },
+      {
+        "ea": "0x4520d5",
+        "name": "?IsHideMorphed@CAvatar@@QBEHXZ"
+      },
+      {
+        "ea": "0x4520f1",
+        "name": "?SetMoveAction@CAvatar@@UAEXJH@Z"
+      },
+      {
+        "ea": "0x4521d4",
+        "name": "?GetLayerZ@CAvatar@@QAEJXZ"
+      },
+      {
+        "ea": "0x4521fd",
+        "name": "?SetLayerColor@CAvatar@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x4522a6",
+        "name": "?Update@CAvatar@@QAEXXZ"
+      },
+      {
+        "ea": "0x453696",
+        "name": "?PrepareFaceLayer@CAvatar@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x453a29",
+        "name": "?ClearActionLayer@CAvatar@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x453aa2",
+        "name": "?RegisterNextBlink@CAvatar@@IAEXXZ"
+      },
+      {
+        "ea": "0x453ad1",
+        "name": "?PrepareActionLayer@CAvatar@@MAEXJJH@Z"
+      },
+      {
+        "ea": "0x45674a",
+        "name": "?SetGhostState@CAvatar@@QAEXJ@Z"
+      }
+    ]
+  },
+  "CItemInfo": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x433008",
+        "name": "?GetAreaBuffItem@CItemInfo@@QAEPBUAREABUFFITEM@1@J@Z"
+      },
+      {
+        "ea": "0x46d39c",
+        "name": "?IsAbleToStickWithWeapon@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+      },
+      {
+        "ea": "0x46d408",
+        "name": "?IsItemSuitedForPet@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+      },
+      {
+        "ea": "0x4b1113",
+        "name": "?IsItemSuitedForTamingMob@EQUIPITEM@CItemInfo@@QBEHJ@Z"
+      },
+      {
+        "ea": "0x4f2cbb",
+        "name": "?IsCashItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+      },
+      {
+        "ea": "0x4f2cee",
+        "name": "?IsAbleToEquip@CItemInfo@@QAEHJJJFJJJJJV?$ZRef@UGW_ItemSlotPet@@@@JJQAV?$ZRef@UGW_ItemSlotBase@@@@@Z"
+      },
+      {
+        "ea": "0x4f2f55",
+        "name": "?GetExclusiveWeaponShieldBodyPart@CItemInfo@@QBEJQAV?$ZRef@UGW_ItemSlotBase@@@@J@Z"
+      },
+      {
+        "ea": "0x4f2fdc",
+        "name": "?GetExclusiveClothesBodyPart@CItemInfo@@QBEJQAV?$ZRef@UGW_ItemSlotBase@@@@J@Z"
+      },
+      {
+        "ea": "0x5ca71c",
+        "name": "?IterateItemInfo@CItemInfo@@QAEHXZ"
+      },
+      {
+        "ea": "0x5ca785",
+        "name": "?GetEquipItem@CItemInfo@@QAEPBUEQUIPITEM@1@J@Z"
+      },
+      {
+        "ea": "0x5cab92",
+        "name": "?GetBundleItem@CItemInfo@@QAEPBUBUNDLEITEM@1@J@Z"
+      },
+      {
+        "ea": "0x5cac3d",
+        "name": "?RegisterEquipItemInfo@CItemInfo@@IAE?AV?$ZRef@UEQUIPITEM@CItemInfo@@@@JPBG@Z"
+      },
+      {
+        "ea": "0x5cf63e",
+        "name": "?GetItemName@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+      },
+      {
+        "ea": "0x5cf69e",
+        "name": "?GetItemDesc@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+      },
+      {
+        "ea": "0x5cf6fe",
+        "name": "?GetItemString@CItemInfo@@QAE?AV?$ZXString@D@@JPBD@Z"
+      },
+      {
+        "ea": "0x5cf792",
+        "name": "?GetMapString@CItemInfo@@QAE?AV?$ZXString@D@@KPBD@Z"
+      },
+      {
+        "ea": "0x5cfa86",
+        "name": "?GetItemTypeName@CItemInfo@@QAE?AV?$ZXString@D@@J@Z"
+      },
+      {
+        "ea": "0x5cfaf3",
+        "name": "?FindMapByName@CItemInfo@@QAE?AV?$ZList@U?$ZPair@KV?$ZXString@D@@@@@@V?$ZXString@D@@@Z"
+      },
+      {
+        "ea": "0x5cfe4b",
+        "name": "?IterateItemString@CItemInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x5d0467",
+        "name": "?IterateMapString@CItemInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x5d28ae",
+        "name": "?IsTradeBlockItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+      },
+      {
+        "ea": "0x5d28e3",
+        "name": "?IsAccountSharableItem@CItemInfo@@QAEHPAUGW_ItemSlotBase@@@Z"
+      },
+      {
+        "ea": "0x5d3322",
+        "name": "?GetItemProp@CItemInfo@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@J@Z"
+      },
+      {
+        "ea": "0x5d3bd8",
+        "name": "?GetItemIcon@CItemInfo@@QAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JHH@Z"
+      },
+      {
+        "ea": "0x5d3e19",
+        "name": "?GetItemPrice@CItemInfo@@QAEHJAAJAAN@Z"
+      }
+    ]
+  },
+  "CUIItem": {
+    "count_sampled": 13,
+    "sample": [
+      {
+        "ea": "0x81c414",
+        "name": "??0CUIItem@@QAE@XZ"
+      },
+      {
+        "ea": "0x81c6b7",
+        "name": "?ChangeTab@CUIItem@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x81c6c9",
+        "name": "?OnCreate@CUIItem@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x81d01f",
+        "name": "?OnChildNotify@CUIItem@@UAEXIII@Z"
+      },
+      {
+        "ea": "0x81d230",
+        "name": "?OnTabChanged@CUIItem@@IAEXJ@Z"
+      },
+      {
+        "ea": "0x81d42e",
+        "name": "?OnMouseButton@CUIItem@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x81d8ad",
+        "name": "?OnMouseMove@CUIItem@@UAEHJJ@Z"
+      },
+      {
+        "ea": "0x81d996",
+        "name": "?OnDropMoney@CUIItem@@IAEXXZ"
+      },
+      {
+        "ea": "0x81db7e",
+        "name": "?GetSlotPositionFromPoint@CUIItem@@QAEJJJ@Z"
+      },
+      {
+        "ea": "0x81dc20",
+        "name": "?Draw@CUIItem@@UAEXPBUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x81e2c8",
+        "name": "?GetItemSlotRect@CUIItem@@IAEHJPAUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x81e3a6",
+        "name": "?SetArrangeButton@CUIItem@@QAEXJJ@Z"
+      },
+      {
+        "ea": "0x81e5da",
+        "name": "?SetLastestGetItemEffect@CUIItem@@AAEXXZ"
+      }
+    ]
+  },
+  "CUIMonsterBook": {
+    "count_sampled": 6,
+    "sample": [
+      {
+        "ea": "0x861ab8",
+        "name": "?Clear@MOBINFO@CUIMonsterBook@@QAEXXZ"
+      },
+      {
+        "ea": "0x862527",
+        "name": "?UpdateUI@CUIMonsterBook@@QAEXXZ"
+      },
+      {
+        "ea": "0x866c2c",
+        "name": "?LoadMobInfo@CUIMonsterBook@@IAEXV?$ZRef@UMonsterBookCard@@@@@Z"
+      },
+      {
+        "ea": "0x8677cc",
+        "name": "?LoadMobAction@CUIMonsterBook@@IAEXKJAAV?$ZList@V?$ZRef@UMOBACTIONFRAMEENTRY@CActionMan@@@@@@@Z"
+      },
+      {
+        "ea": "0x867a2f",
+        "name": "?GetCard@CUIMonsterBook@@IAE?AV?$ZRef@UMonsterBookCard@@@@XZ"
+      },
+      {
+        "ea": "0x867be6",
+        "name": "?UpdateCheckList@CUIMonsterBook@@IAEXXZ"
+      }
+    ]
+  },
+  "CUIMedalQuestInfo": {
+    "count_sampled": 10,
+    "sample": [
+      {
+        "ea": "0x84056b",
+        "name": "?OnCreate@CUIMedalQuestInfo@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x841678",
+        "name": "?OnMouseButton@CUIMedalQuestInfo@@UAEXIIJJ@Z"
+      },
+      {
+        "ea": "0x841976",
+        "name": "?GetSelect@CUIMedalQuestInfo@@IAEJJ@Z"
+      },
+      {
+        "ea": "0x8423e2",
+        "name": "?LoadData@CUIMedalQuestInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x8438a6",
+        "name": "?IsStateButton@CUIMedalQuestInfo@@IAEHV?$ZRef@UMedalQuestInfo@@@@@Z"
+      },
+      {
+        "ea": "0x8438df",
+        "name": "?ResetInfo@CUIMedalQuestInfo@@QAEXH@Z"
+      },
+      {
+        "ea": "0x843a93",
+        "name": "?SetScrollBar@CUIMedalQuestInfo@@IAEXXZ"
+      },
+      {
+        "ea": "0x843bf6",
+        "name": "?Draw@CUIMedalQuestInfo@@UAEXPBUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x844e1f",
+        "name": "?ToggleDetail@CUIMedalQuestInfo@@QAEXH@Z"
+      },
+      {
+        "ea": "0x844eea",
+        "name": "?Update@CUIMedalQuestInfo@@UAEXXZ"
+      }
+    ]
+  },
+  "CTemporaryStatView": {
+    "count_sampled": 9,
+    "sample": [
+      {
+        "ea": "0x7b24cd",
+        "name": "?Clear@CTemporaryStatView@@QAEXXZ"
+      },
+      {
+        "ea": "0x7b24d5",
+        "name": "?SetTemporary@CTemporaryStatView@@QAEXJJJVUINT128@@V?$ZXString@D@@JJ@Z"
+      },
+      {
+        "ea": "0x7b2679",
+        "name": "?ResetTemporary@CTemporaryStatView@@QAEXJJ@Z"
+      },
+      {
+        "ea": "0x7b2717",
+        "name": "?ResetTemporary@CTemporaryStatView@@QAEXJJVUINT128@@@Z"
+      },
+      {
+        "ea": "0x7b2bb0",
+        "name": "?AdjustPosition@CTemporaryStatView@@IAEXXZ"
+      },
+      {
+        "ea": "0x7b2e58",
+        "name": "?ShowToolTip@CTemporaryStatView@@QAEHAAVCUIToolTip@@ABUtagPOINT@@JJ@Z"
+      },
+      {
+        "ea": "0x7b3055",
+        "name": "?FindIcon@CTemporaryStatView@@QAEXABUtagPOINT@@AAJ1@Z"
+      },
+      {
+        "ea": "0x7b30db",
+        "name": "?UpdatePassively@CTemporaryStatView@@QAEXJJJ@Z"
+      },
+      {
+        "ea": "0x7b4d1d",
+        "name": "?FindIndex@?$ZList@V?$ZRef@VTEMPORARY_STAT@CTemporaryStatView@@@@@@QBEPAU__POSITION@@I@Z"
+      }
+    ]
+  },
+  "CUIMessenger": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x84d9ea",
+        "name": "??0CUIMessenger@@QAE@K@Z"
+      },
+      {
+        "ea": "0x84db06",
+        "name": "??0CHARACTER@CUIMessenger@@QAE@XZ"
+      },
+      {
+        "ea": "0x84db90",
+        "name": "??1CHARACTER@CUIMessenger@@QAE@XZ"
+      },
+      {
+        "ea": "0x84dd25",
+        "name": "?TryNew@CUIMessenger@@SAHK@Z"
+      },
+      {
+        "ea": "0x84dd83",
+        "name": "?TryDelete@CUIMessenger@@QAEXXZ"
+      },
+      {
+        "ea": "0x84ddb0",
+        "name": "?OnCreate@CUIMessenger@@UAEXPAX@Z"
+      },
+      {
+        "ea": "0x84e607",
+        "name": "?OnButtonClicked@CUIMessenger@@UAEXI@Z"
+      },
+      {
+        "ea": "0x84e64e",
+        "name": "?OnKey@CUIMessenger@@UAEXII@Z"
+      },
+      {
+        "ea": "0x84e8a1",
+        "name": "?Draw@CUIMessenger@@UAEXPBUtagRECT@@@Z"
+      },
+      {
+        "ea": "0x84e930",
+        "name": "?Update@CUIMessenger@@UAEXXZ"
+      },
+      {
+        "ea": "0x84eb68",
+        "name": "?SetState@CUIMessenger@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x84ec53",
+        "name": "?AddChatText@CUIMessenger@@IAEXV?$ZXString@G@@J@Z"
+      },
+      {
+        "ea": "0x84ef23",
+        "name": "?SendClaim@CUIMessenger@@IAEXXZ"
+      },
+      {
+        "ea": "0x84f0d6",
+        "name": "?OnEnter@CUIMessenger@@QAEXJABUAvatarLook@@PBDJH@Z"
+      },
+      {
+        "ea": "0x84f281",
+        "name": "?OnSelfEnter@CUIMessenger@@QAEXJH@Z"
+      },
+      {
+        "ea": "0x84f44b",
+        "name": "?SetAvatar@CUIMessenger@@QAEXJABUAvatarLook@@H@Z"
+      },
+      {
+        "ea": "0x84fff8",
+        "name": "?SetShowState@CUIMessenger@@QAEXJ@Z"
+      },
+      {
+        "ea": "0x850264",
+        "name": "?SetLayer@CUIMessenger@@QAEXXZ"
+      },
+      {
+        "ea": "0x8505e2",
+        "name": "?SetCtrl@CUIMessenger@@QAEXXZ"
+      },
+      {
+        "ea": "0x850d42",
+        "name": "?DrawTextA@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z"
+      },
+      {
+        "ea": "0x850ec9",
+        "name": "?DrawStatusBar@CUIMessenger@@QAEXV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@@Z"
+      },
+      {
+        "ea": "0x8511fc",
+        "name": "?OnPacket@CUIMessenger@@SAXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x851478",
+        "name": "?OnInvite@CUIMessenger@@SAXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x8515d7",
+        "name": "?OnChat@CUIMessenger@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x851ae2",
+        "name": "?HandleSlashCommand@CUIMessenger@@QAEHV?$ZXString@D@@@Z"
+      }
+    ]
+  },
+  "CWvsContext": {
+    "count_sampled": 25,
+    "sample": [
+      {
+        "ea": "0x425d0b",
+        "name": "?GetCharacterData@CWvsContext@@QAE?AV?$ZRef@VCharacterData@@@@XZ"
+      },
+      {
+        "ea": "0x485bf7",
+        "name": "?CanSendExclRequest@CWvsContext@@QBEHJH@Z"
+      },
+      {
+        "ea": "0x4ac308",
+        "name": "?GetCharacterName@CWvsContext@@QBEPBDXZ"
+      },
+      {
+        "ea": "0x520252",
+        "name": "?GetGuildName@CWvsContext@@QBE?AV?$ZXString@D@@XZ"
+      },
+      {
+        "ea": "0x52eff1",
+        "name": "?IsAdminAccount@CWvsContext@@QBEHXZ"
+      },
+      {
+        "ea": "0x52f000",
+        "name": "?IsSubGMAccount@CWvsContext@@QBEHXZ"
+      },
+      {
+        "ea": "0x52f031",
+        "name": "?GetAdminLevel@CWvsContext@@QAEJXZ"
+      },
+      {
+        "ea": "0x532f73",
+        "name": "?GetChannelName@CWvsContext@@QBEPBDJ@Z"
+      },
+      {
+        "ea": "0x5f8dc6",
+        "name": "?SetAccountInfo@CWvsContext@@QAEXKJEEV?$ZXString@D@@EEU_SYSTEMTIME@@EH1J0@Z"
+      },
+      {
+        "ea": "0x7345e2",
+        "name": "?SetActionRndSeed@CWvsContext@@QAEXIII@Z"
+      },
+      {
+        "ea": "0x777616",
+        "name": "?OnSetLogoutGiftConfig@CWvsContext@@QAEXAAVCInPacket@@@Z"
+      },
+      {
+        "ea": "0x7fe499",
+        "name": "?RemoveFromStackForTab@CWvsContext@@QAEXPAVCUIWnd@@@Z"
+      },
+      {
+        "ea": "0x879ae7",
+        "name": "?StartPartyMemberSearch@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa01c5b",
+        "name": "??0CWvsContext@@QAE@XZ"
+      },
+      {
+        "ea": "0xa026a7",
+        "name": "??1CWvsContext@@UAE@XZ"
+      },
+      {
+        "ea": "0xa02e34",
+        "name": "?TryRecovery@CWvsContext@@IAEXXZ"
+      },
+      {
+        "ea": "0xa032df",
+        "name": "?IssueConnect@CWvsContext@@QAEXPBVZInetAddr@@@Z"
+      },
+      {
+        "ea": "0xa03350",
+        "name": "?Update@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa03935",
+        "name": "?OnEnterGame@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa03eba",
+        "name": "?OnEnterField@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa04003",
+        "name": "?OnMobDead@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa0400e",
+        "name": "?OnGameStageChanged@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa041ff",
+        "name": "?OnLeaveGame@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa04920",
+        "name": "?ClearFieldUI@CWvsContext@@QAEXXZ"
+      },
+      {
+        "ea": "0xa04dca",
+        "name": "?SendMigrateToShopRequest@CWvsContext@@QAEXH@Z"
+      }
+    ]
+  }
+}

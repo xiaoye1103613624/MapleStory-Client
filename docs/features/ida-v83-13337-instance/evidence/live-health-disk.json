@@ -1,0 +1,114 @@
+{
+  "p13337": {
+    "health": {
+      "status": "ok",
+      "uptime_sec": 182.614,
+      "idb_path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+      "module": "`Angel.exe",
+      "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+      "imagebase": "0x400000",
+      "auto_analysis_ready": true,
+      "hexrays_ready": true,
+      "strings_cache_ready": false,
+      "strings_cache_size": 0
+    },
+    "disk": {
+      ".i64": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+        "size": 28053268,
+        "mtime": "2026-11-12 10:58:58"
+      },
+      ".idb": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.idb",
+        "size": 35644905,
+        "mtime": "2026-11-12 10:58:11"
+      },
+      ".id0": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.id0",
+        "size": 109223936,
+        "mtime": "2026-11-12 10:59:00"
+      },
+      ".id1": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.id1",
+        "size": 39149568,
+        "mtime": "2026-11-12 10:58:58"
+      },
+      ".id2": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.id2",
+        "size": 645,
+        "mtime": "2026-11-12 10:58:53"
+      },
+      ".nam": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.nam",
+        "size": 65536,
+        "mtime": "2026-11-12 10:58:58"
+      },
+      ".til": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.til",
+        "size": 633485,
+        "mtime": "2026-11-12 10:58:53"
+      },
+      "exact": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+        "size": 28053268,
+        "mtime": "2026-11-12 10:58:58"
+      }
+    }
+  },
+  "p13339": {
+    "health": {
+      "status": "ok",
+      "uptime_sec": 383275.028,
+      "idb_path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+      "module": "`Angel.exe",
+      "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+      "imagebase": "0x400000",
+      "auto_analysis_ready": true,
+      "hexrays_ready": true,
+      "strings_cache_ready": true,
+      "strings_cache_size": 1281
+    },
+    "disk": {
+      ".i64": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+        "size": 27998358,
+        "mtime": "2026-11-08 00:34:06"
+      },
+      ".idb": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.idb",
+        "size": 33037843,
+        "mtime": "2020-09-02 11:06:35"
+      },
+      ".id0": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.id0",
+        "size": 125829120,
+        "mtime": "2026-11-12 10:51:02"
+      },
+      ".id1": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.id1",
+        "size": 39149568,
+        "mtime": "2026-11-08 00:34:06"
+      },
+      ".id2": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.id2",
+        "size": 645,
+        "mtime": "2026-11-08 00:34:00"
+      },
+      ".nam": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.nam",
+        "size": 65536,
+        "mtime": "2026-11-08 00:34:06"
+      },
+      ".til": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.til",
+        "size": 633351,
+        "mtime": "2026-11-08 00:34:00"
+      },
+      "exact": {
+        "path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+        "size": 27998358,
+        "mtime": "2026-11-08 00:34:06"
+      }
+    }
+  }
+}

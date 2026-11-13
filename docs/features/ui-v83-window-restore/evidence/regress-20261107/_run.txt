@@ -1,0 +1,17 @@
+config auto=true (bak kept)
+launching second instance from E:\MXD\ms-alt-b53
+pid=47508
+in game, title=XiaoYE MS v0.0.1【2-xiaoye】【破功值：199999】【FPS:228 延迟:--】【当前时间：2026-11-07 08:50:25】【在线时长：00 00:00:00】
+client_origin=(640,416)
+cap 01_game -> True
+cap 02_charinfo -> True
+cap 03_stats -> True
+cap 04_inventory -> True
+cap 06_skill -> True
+cap 06b_macro_open -> True
+cap 06c_macro_after_close -> True
+cap 07a_minimap_1 -> True
+cap 07b_minimap_2 -> True
+cap 07c_minimap_3 -> True
+cap 08_chatbar -> True
+config restored

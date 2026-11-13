@@ -1,0 +1,217 @@
+{
+  "feature": "quest",
+  "p13337": {
+    "class_count": 6,
+    "method_count": 50,
+    "classes": [
+      {
+        "class": "CQuest",
+        "methods": 4
+      },
+      {
+        "class": "CQuestMan",
+        "methods": 17
+      },
+      {
+        "class": "CUIQuestAlarm",
+        "methods": 8
+      },
+      {
+        "class": "CUIQuestDelivery",
+        "methods": 1
+      },
+      {
+        "class": "CUIQuestInfo",
+        "methods": 16
+      },
+      {
+        "class": "CUIQuestInfoDetail",
+        "methods": 4
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 6,
+    "method_count": 50,
+    "classes": [
+      {
+        "class": "CQuest",
+        "methods": 4
+      },
+      {
+        "class": "CQuestMan",
+        "methods": 17
+      },
+      {
+        "class": "CUIQuestAlarm",
+        "methods": 8
+      },
+      {
+        "class": "CUIQuestDelivery",
+        "methods": 1
+      },
+      {
+        "class": "CUIQuestInfo",
+        "methods": 16
+      },
+      {
+        "class": "CUIQuestInfoDetail",
+        "methods": 4
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {
+    "Quest": {
+      "ea": "0xaf6858",
+      "text": "reqQuest"
+    }
+  },
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CQuestMan": {
+      "count_sampled": 17,
+      "sample": [
+        {
+          "ea": "0x6cdd06",
+          "name": "?GetCompleteDemand@CQuestMan@@QAEPAUQuestDemand@@G@Z"
+        },
+        {
+          "ea": "0x71d8df",
+          "name": "?LoadDemand@CQuestMan@@QAEHXZ"
+        },
+        {
+          "ea": "0x71ddec",
+          "name": "?GetQuestByNpc@CQuestMan@@QAEHKAAV?$ZArray@G@@@Z"
+        },
+        {
+          "ea": "0x71dee4",
+          "name": "?SetRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z"
+        },
+        {
+          "ea": "0x71df1c",
+          "name": "?RemoveRecentlyUpdatedQuest@CQuestMan@@QAEXG@Z"
+        },
+        {
+          "ea": "0x71df41",
+          "name": "?GetQuestDisplayMedal@CQuestMan@@QAEJG@Z"
+        },
+        {
+          "ea": "0x720e88",
+          "name": "?IsStartScriptLinkedQuest@CQuestMan@@QAEHG@Z"
+        },
+        {
+          "ea": "0x720f09",
+          "name": "?IsCompleteScriptLinkedQuest@CQuestMan@@QAEHG@Z"
+        },
+        {
+          "ea": "0x720f8a",
+          "name": "?IsAutoStartQuest@CQuestMan@@QAEHG@Z"
+        },
+        {
+          "ea": "0x720fab",
+          "name": "?IsAutoAutoAcceptQuest@CQuestMan@@QAEHG@Z"
+        },
+        {
+          "ea": "0x720fcc",
+          "name": "?IsAutoCompleteQuest@CQuestMan@@QAEHG@Z"
+        },
+        {
+          "ea": "0x721163",
+          "name": "?CheckStartDemand@CQuestMan@@QAEHGKABVCharacterData@@ABUSecondaryStat@@JJHJ@Z"
+        },
+        {
+          "ea": "0x721d2c",
+          "name": "?CheckCompleteDemand@CQuestMan@@QAEJGKABVCharacterData@@ABUSecondaryStat@@@Z"
+        },
+        {
+          "ea": "0x722823",
+          "name": "?LoadQuestInfo@CQuestMan@@QAEXXZ"
+        },
+        {
+          "ea": "0x723341",
+          "name": "?LoadPartyQuestInfo@CQuestMan@@QAEXXZ"
+        },
+        {
+          "ea": "0x7238dd",
+          "name": "?LoadPartyQuestRank@CQuestMan@@AAEXGV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z"
+        },
+        {
+          "ea": "0x724722",
+          "name": "?GetPartyQuestRankCount@CQuestMan@@QAEJAAV?$ZXString@D@@ABVCharacterData@@@Z"
+        }
+      ]
+    },
+    "CUIQuestInfo": {
+      "count_sampled": 16,
+      "sample": [
+        {
+          "ea": "0x87b921",
+          "name": "?GetQuestInfo@CUIQuestInfo@@QAE?AV?$ZRef@UQuestInfo@@@@XZ"
+        },
+        {
+          "ea": "0x87e8f3",
+          "name": "??0CUIQuestInfo@@QAE@J@Z"
+        },
+        {
+          "ea": "0x87ec3f",
+          "name": "?OnCreate@CUIQuestInfo@@UAEXPAX@Z"
+        },
+        {
+          "ea": "0x87fb2f",
+          "name": "?OnChildNotify@CUIQuestInfo@@UAEXIII@Z"
+        },
+        {
+          "ea": "0x87fd4f",
+          "name": "?OnTabChanged@CUIQuestInfo@@IAEXJ@Z"
+        },
+        {
+          "ea": "0x881b18",
+          "name": "?LoadData@CUIQuestInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x882932",
+          "name": "?TryShowRecentlyUpdatedQuest@CUIQuestInfo@@QAEHXZ"
+        },
+        {
+          "ea": "0x88296e",
+          "name": "?TryShowRecentlyViewedQuest@CUIQuestInfo@@QAEHXZ"
+        },
+        {
+          "ea": "0x88297e",
+          "name": "?TryShowSuitableLevelQuest@CUIQuestInfo@@QAEHH@Z"
+        },
+        {
+          "ea": "0x882a71",
+          "name": "?TryShowTopQuest@CUIQuestInfo@@QAEHXZ"
+        },
+        {
+          "ea": "0x882c8a",
+          "name": "?SyncScrollBarWithSelected@CUIQuestInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x882f2f",
+          "name": "?MarkQuestAsRead@CUIQuestInfo@@QAEXG@Z"
+        },
+        {
+          "ea": "0x882f88",
+          "name": "?ResetInfo@CUIQuestInfo@@QAEXH@Z"
+        },
+        {
+          "ea": "0x883100",
+          "name": "?SetScrollBar@CUIQuestInfo@@IAEXXZ"
+        },
+        {
+          "ea": "0x88422c",
+          "name": "?ToggleDetail@CUIQuestInfo@@QAEXH@Z"
+        },
+        {
+          "ea": "0x8843a4",
+          "name": "?OnToggleDetail@CUIQuestInfo@@IAEXH@Z"
+        }
+      ]
+    }
+  }
+}

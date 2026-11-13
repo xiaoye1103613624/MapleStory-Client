@@ -1,0 +1,52 @@
+
+  UINpcTalk.cpp
+E:\project\MapleStory-Client\MapleStory.h(45,9): warning C4005: “USE_NX”: 宏重定义 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+      E:\project\MapleStory-Client\MapleStory.h(45,9):
+      之前在命令行上声明的“USE_NX”
+  
+E:\project\MapleStory-Client\IO\UIElement.h(280,49): warning C4100: 'buttonid': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(281,59): warning C4100: 'cursor_position': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(281,38): warning C4100: 'icon': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(283,43): warning C4100: 'cursorpos': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(284,42): warning C4100: 'cursorpos': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(288,35): warning C4100: 'yoffset': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(289,61): warning C4100: 'escape': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(289,47): warning C4100: 'pressed': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UIElement.h(289,33): warning C4100: 'keycode': 未引用的参数 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  (编译源文件“IO/UITypes/UINpcTalk.cpp”)
+  
+E:\project\MapleStory-Client\IO\UITypes\UINpcTalk.cpp(863,15): warning C4458: “formatted_text”的声明隐藏了类成员 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+      E:\project\MapleStory-Client\IO\UITypes\UINpcTalk.h(274,15):
+      参见“ms::UINpcTalk::formatted_text”的声明
+  
+E:\project\MapleStory-Client\IO\UITypes\UINpcTalk.cpp(1211,40): warning C4458: “speaker”的声明隐藏了类成员 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+      E:\project\MapleStory-Client\IO\UITypes\UINpcTalk.h(245,11):
+      参见“ms::UINpcTalk::speaker”的声明
+  
+  libsquish.lib(squish.obj) : 找到 MSIL .netmodule 或使用 /GL 编译的模块；正在使用 /LTCG 重新启动链接；将 /LTCG 添加到链接命令行以改进链接器性能
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  正在生成代码
+  已完成代码的生成
+glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“E:\MXD\BeiDou-Client-xy\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样 [E:\project\MapleStory-Client\MapleStory.vcxproj]
+  MapleStory.vcxproj -> E:\MXD\BeiDou-Client-xy\MapleStory.exe
+  已复制         1 个文件。
+  已复制         1 个文件。
+  已复制         1 个文件。
+  复制了 0 个文件

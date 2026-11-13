@@ -1,0 +1,99 @@
+{
+  "feature": "crypto",
+  "p13337": {
+    "class_count": 3,
+    "method_count": 18,
+    "classes": [
+      {
+        "class": "CAESCipher",
+        "methods": 12
+      },
+      {
+        "class": "CIGCipher",
+        "methods": 4
+      },
+      {
+        "class": "CSecurityClient",
+        "methods": 2
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 3,
+    "method_count": 18,
+    "classes": [
+      {
+        "class": "CAESCipher",
+        "methods": 12
+      },
+      {
+        "class": "CIGCipher",
+        "methods": 4
+      },
+      {
+        "class": "CSecurityClient",
+        "methods": 2
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CAESCipher": {
+      "count_sampled": 12,
+      "sample": [
+        {
+          "ea": "0x42d941",
+          "name": "?Encrypt@CAESCipher@@SAXPAE0HPAK@Z"
+        },
+        {
+          "ea": "0x42d9b7",
+          "name": "?Decrypt@CAESCipher@@SAXPAE0HPAK@Z"
+        },
+        {
+          "ea": "0x42da2d",
+          "name": "?gen_tabs@CAESCipher@@CAXXZ"
+        },
+        {
+          "ea": "0x42dd29",
+          "name": "?AES_EncInit@CAESCipher@@CAXPAUAES_ALG_INFO@1@PAKPAEH@Z"
+        },
+        {
+          "ea": "0x42dd68",
+          "name": "?AES_DecInit@CAESCipher@@CAXPAUAES_ALG_INFO@1@PAKPAEH@Z"
+        },
+        {
+          "ea": "0x42dda7",
+          "name": "?AES_EncKeySchedule@CAESCipher@@CAXPAKPAUAES_ALG_INFO@1@@Z"
+        },
+        {
+          "ea": "0x42e070",
+          "name": "?RIJNDAEL_KeySchedule@CAESCipher@@CAXPAK0@Z"
+        },
+        {
+          "ea": "0x42e19a",
+          "name": "?AES_Encrypt@CAESCipher@@CAXPAXPAE@Z"
+        },
+        {
+          "ea": "0x42fd35",
+          "name": "?OFB_EncUpdate@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEK1PAK@Z"
+        },
+        {
+          "ea": "0x42fe80",
+          "name": "?OFB_EncFinal@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEPAK@Z"
+        },
+        {
+          "ea": "0x42fec2",
+          "name": "?OFB_DecUpdate@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEK1PAK@Z"
+        },
+        {
+          "ea": "0x430018",
+          "name": "?OFB_DecFinal@CAESCipher@@CAEPAUAES_ALG_INFO@1@PAEPAK@Z"
+        }
+      ]
+    }
+  }
+}

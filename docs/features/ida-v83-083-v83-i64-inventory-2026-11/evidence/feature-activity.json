@@ -1,0 +1,87 @@
+{
+  "feature": "activity",
+  "p13337": {
+    "class_count": 3,
+    "method_count": 12,
+    "classes": [
+      {
+        "class": "CTemporaryStatView",
+        "methods": 8
+      },
+      {
+        "class": "CUIEnergyBar",
+        "methods": 3
+      },
+      {
+        "class": "CUIEventAlarm",
+        "methods": 1
+      }
+    ]
+  },
+  "p13339": {
+    "class_count": 3,
+    "method_count": 12,
+    "classes": [
+      {
+        "class": "CTemporaryStatView",
+        "methods": 8
+      },
+      {
+        "class": "CUIEnergyBar",
+        "methods": 3
+      },
+      {
+        "class": "CUIEventAlarm",
+        "methods": 1
+      }
+    ]
+  },
+  "equal_to_angel_idb": true,
+  "string_anchors_related": {},
+  "source_idb": "E:\\MXD\\反编译IDA\\v83\\083\\v83.i64",
+  "compare_idb": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+  "input_md5": "cbe5ccba04cbe2760d8eabc537926bd1",
+  "key_method_eas": {
+    "CTemporaryStatView": {
+      "count_sampled": 9,
+      "sample": [
+        {
+          "ea": "0x7b24cd",
+          "name": "?Clear@CTemporaryStatView@@QAEXXZ"
+        },
+        {
+          "ea": "0x7b24d5",
+          "name": "?SetTemporary@CTemporaryStatView@@QAEXJJJVUINT128@@V?$ZXString@D@@JJ@Z"
+        },
+        {
+          "ea": "0x7b2679",
+          "name": "?ResetTemporary@CTemporaryStatView@@QAEXJJ@Z"
+        },
+        {
+          "ea": "0x7b2717",
+          "name": "?ResetTemporary@CTemporaryStatView@@QAEXJJVUINT128@@@Z"
+        },
+        {
+          "ea": "0x7b2bb0",
+          "name": "?AdjustPosition@CTemporaryStatView@@IAEXXZ"
+        },
+        {
+          "ea": "0x7b2e58",
+          "name": "?ShowToolTip@CTemporaryStatView@@QAEHAAVCUIToolTip@@ABUtagPOINT@@JJ@Z"
+        },
+        {
+          "ea": "0x7b3055",
+          "name": "?FindIcon@CTemporaryStatView@@QAEXABUtagPOINT@@AAJ1@Z"
+        },
+        {
+          "ea": "0x7b30db",
+          "name": "?UpdatePassively@CTemporaryStatView@@QAEXJJJ@Z"
+        },
+        {
+          "ea": "0x7b4d1d",
+          "name": "?FindIndex@?$ZList@V?$ZRef@VTEMPORARY_STAT@CTemporaryStatView@@@@@@QBEPAU__POSITION@@I@Z"
+        }
+      ]
+    }
+  }
+}

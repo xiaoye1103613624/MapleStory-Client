@@ -1,0 +1,11 @@
+main cfg patched to xiaoye+auto (bak kept)
+pid=7972
+in game
+click (248,363) macro btn
+cap 01_macro_three_rows
+cap 02_both_closed
+click (807,376) npc nana
+cap 03_npc_click
+click (403,545) player luojie
+cap 04_player_click
+main cfg restored
