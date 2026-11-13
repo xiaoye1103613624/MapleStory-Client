@@ -57,10 +57,13 @@ namespace ms
 	{
 		show_weekly = Configuration::get().get_show_weekly();
 
+		// Angel 083 无 socialChatEnter 窗族（社交入口走 CUIMessenger）；本包 UIWindow(2).img
+		// 亦无该节点（orange-wz 2026-11-12 检索 0 命中）。缺资源则 inactive 预留，不造图。
 		nl::node socialChatEnter = UiAssetResolve::window("socialChatEnter");
 
 		if (!UiAssetResolve::usable(socialChatEnter))
 		{
+			LOG(LOG_DEBUG, "UIChat: socialChatEnter missing — inactive (prefer UIMessenger)");
 			active = false;
 			dimension = Point<int16_t>(0, 0);
 			return;

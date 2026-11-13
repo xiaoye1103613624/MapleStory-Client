@@ -48,6 +48,9 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override;
+		// classic：与 StatusBar 共用 hud_content_w / hud_center_x；视口切换时同步输入行落位。
+
+		void update_screen(int16_t new_width, int16_t new_height) override;
 		// 指针离开聊天栏时框架会调这里：必须把滚动条的按压态清掉，否则滑块拖出
 		// 命中区后一直停在 PRESSED，下次进区直接接着滚。
 		void remove_cursor() override;
@@ -131,8 +134,11 @@ namespace ms
 		//   （功能键分支 `v4-10` 链同样只产 0/1/2/3/4/5/7 这些目标号）。
 		// 目标号与 ChatTargetIndex 的 0/1/2 一一对齐；ALLIANCE/SPOUSE 在 083 走
 		// 另一条 SetWhisperTarget 分支，本端按频道名直切（斜杠别名仍保留）。
-		// 修前是空 stub：六个频道快捷键按下完全无反应（只翻历史框都不做）。
 		void change_target(int32_t action);
+
+		// Angel 083 `CUIStatusBar::EndChat` @ 0x8d5aaf / `OnGameStageChanged` @ 0xa04161：
+		// 仅当 nType==2（输入中）时切回 1。切图时清掉瞬态输入态，避免跨图残留白带。
+		void end_chat_if_typing();
 
 	private:
 		static constexpr int16_t INPUT_TEXT_HEIGHT = 18;
@@ -318,17 +324,12 @@ namespace ms
 		//            上箭头高光 y15、下箭头高光 y60 ⇒ 两端各内缩约 11~12；
 		//   半透明底板覆盖 0..565（x549 已被压暗、x565 之外是亮场景）。
 		static constexpr int16_t CLASSIC_LOG_H_DEFAULT = 80;
-		// 083 SetChatType @0x8d4a6d：26..507 只在 nType3「完整」的拖拽高度上有意义，
-		// nType1/2 的 h 恒 24（各 1 行）；从 CConfig 恢复时越界回落默认 70（本端 DEFAULT=80，
-		// 见下方截帧依据，属 s9 适配，不照搬 083）。本端把 26/507 用作 user_view_y 拖拽
-		// clamp（与 ChangeChatWndSize @0x8d616c 同款），与 nType 无关。
-		// 下限按「3 行正文 + 上下呼吸」定；上限 = 视图 720 - 底栏 71 - 顶部 229。
+		// Angel 083 SetChatType @0x8d4a6d / ChangeChatWndSize @0x8d616c：
+		// 26..507 只在 nType3 拖高有意义；nType1/2 的聊天区 h 恒 24。
+		// 从 CConfig 恢复越界时 083 回落 70；本端 DEFAULT=80（截帧依据）。
 		static constexpr int16_t CLASSIC_LOG_H_MIN = 26;
 		static constexpr int16_t CLASSIC_LOG_H_MAX = 507;
-		// 083 没有「紧凑态固定高度」；此 120 是本端 s9 适配自造的三态之一，与 083
-		// nType2「输入中 = 1 行历史 + 输入框（h 恒 24，输入焦点驱动，不持久化）」语义不同。
-		// 行为重修属决策点 D7-A，见 notes/wave2-chattype-083-review-20261111.md。
-		static constexpr int16_t CLASSIC_LOG_H_COMPACT = 120;
+		static constexpr int16_t CLASSIC_LOG_H_STEP = 13;
 		// 滚动条列宽与上下内缩（内缩取自原生：轨道两端到框沿各 11~12px）。
 		static constexpr int16_t SCROLL_W = 15;
 		static constexpr int16_t SCROLL_INSET = 11;
@@ -346,9 +347,9 @@ namespace ms
 		// 从列表里选（原生没有点击循环，用户 2026-11-02 定调）；历史框展开/收起用
 		// Basic.img 的 BtMax(+) / BtMin(-) 真按钮同位互斥显示。
 		bool classic_log_open = false;
-		// 本端 s9 适配三态（非 083 原生 SetChatType）：1=收起 / 2=紧凑 / 3=完整。
-		// 083 真三态 = 1 收起(无输入框) / 2 输入中(1 行历史+输入框, 焦点驱动, 不持久) /
-		// 3 完整(可拖高)；按钮只有 1003→1 与 1004→3，无逐级。差异见 notes 决策点 D7-A。
+		// Angel 083 SetChatType 三态（chat-angel-calibration-2026-11）：
+		// 1=收起(无输入) / 2=输入中(焦点瞬态,不持久) / 3=完整(可拖高)。
+		// BtMax→3、BtMin→1；StartChat:1→2；EndChat/切图:2→1。
 		int8_t chat_type = 3;
 		// 展开态右端竖滚动条（Basic.img/VScr5，Slider::Type::CHATBAR 已兜底到它）。
 		// 坐标约定与 UIItemInventory 一致：vertical/x 是「相对历史框左上角」的局部量，
@@ -462,6 +463,10 @@ namespace ms
 		// 仍有基础过滤）。词全小写，匹配时大小写不敏感、整词打星。
 		static const std::vector<std::string>& curse_words();
 		void set_classic_log(bool open);
+		// Angel SetChatType 语义入口：nType∈{1,2,3}；persist 仅对 1/3 写 chat.type。
+		void set_chat_type(int8_t nType, bool persist);
+		// ChangeChatWndSize：clamp 后若 h%13==0 则 h+=2（可越过名义上下限到 28/509）。
+		static int16_t apply_chat_height_mod13(int16_t h);
 		// 三个贴图按钮（▶ 箭头 / + / −）的可见性只有一个判据：folded = 历史框关
 		// 且输入未激活。toggle_input 与 set_classic_log 两条状态迁移都要重算，
 		// 所以抽成一处，别在两个调用点各写一遍。
@@ -475,7 +480,7 @@ namespace ms
 		// 高度/行数变了都要重算：Slider 的轨道范围、行数和可见性都存在构造时的
 		// 局部量里，不重算就会出现「框拖高了但滚动条还按旧高度命中」。
 		void sync_classic_scrollbar();
-		// 拖顶边改高度（夹到 [MIN, MAX]）并同步滚动条。
+		// 拖顶边改高度（clamp + %13 修正）并同步滚动条；仅 type3。
 		void set_classic_log_height(int16_t height);
 		// 顶边拖拽命中区：整条上沿，但不含滚动条列（那一列优先给滑块）。
 		bool classic_in_grip(Point<int16_t> cursor_position) const;

@@ -1,0 +1,36 @@
+{
+  "when": "2026-11-12",
+  "orange_wz": {
+    "key": "GMS_DEFAULT_128",
+    "ivBase64": "TSPHKw==",
+    "userKeyB64Len": 172,
+    "result": "ok"
+  },
+  "StatusBar.img": {
+    "has_chat_ingame": false,
+    "base_chat": {"path": "base/chat", "w": 566, "h": 5},
+    "base_chatTarget": {"path": "base/chatTarget", "present": true},
+    "BtWhisper": {"path": "BtWhisper", "states": ["normal", "pressed", "mouseOver", "disabled"], "size": "12x19"}
+  },
+  "Basic.img": {
+    "BtMax": {"size": "12x12", "states": 4},
+    "BtMin": {"present": true},
+    "VScr5": {"present": true}
+  },
+  "UIWindow.img": {
+    "Messenger": {
+      "children": ["backgrnd", "backgrnd2", "backgrnd3", "blink", "chatBalloon", "BtEnter", "NameBar"]
+    },
+    "socialChatEnter": {"present": false, "note": "search keyword socialChat = 0 hits under UIWindow.img"}
+  },
+  "ida": {
+    "angel_port": 13339,
+    "idb": "E:/MXD/反编译IDA/v83/`Angel.i64",
+    "SetChatType": "0x8d4a6d",
+    "StartChat": "0x8d5a4d",
+    "EndChat": "0x8d5aaf",
+    "ChangeChatWndSize": "0x8d616c",
+    "AddChatText": "0x84ec53",
+    "SetCtrl": "0x8505e2"
+  }
+}

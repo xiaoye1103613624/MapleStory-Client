@@ -30,6 +30,8 @@ namespace ms
 
 		void draw(float inter) const override;
 		void update() override;
+		// SavedPosClamped：PosMESSENGER 越界夹回视口。
+		void update_screen(int16_t new_width, int16_t new_height) override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		UIElement::Type get_type() const override;
@@ -86,11 +88,12 @@ namespace ms
 		static constexpr int16_t CHAT_LOG_LINE_H = 14;
 		// 4 行 = 字形 241..296，离框底 301 还留 5，第 5 行就会顶出白框
 		static constexpr size_t CHAT_LOG_VISIBLE = 4;
-		// 输入槽是烤在 backgrnd 里的美术（黑边 y317 / y333，x9..245）→ 内沿 y318..332。
-		// Textfield 自己不画框，bounds 只当命中区 + 文字锚点用。
-		static constexpr int16_t CHAT_INPUT_X = 12;
+		// 输入槽：Angel 083 CUIMessenger::SetCtrl @ 0x8505e2（展开态）
+		// CCtrlEdit::Create(..., id=1005, x=9, y=318, w=207, h=15)。
+		// 烤图黑边仍是 y317/y333、x9..245；右侧留给 BtEnter(247,322)。
+		static constexpr int16_t CHAT_INPUT_X = 9;
 		static constexpr int16_t CHAT_INPUT_Y = 318;
-		static constexpr int16_t CHAT_INPUT_W = 228;
+		static constexpr int16_t CHAT_INPUT_W = 207;
 		static constexpr int16_t CHAT_INPUT_H = 15;
 		// 与 UIChatBar 同一套（那边真机验过）：把字形从 bounds 顶 +10 抬回槽内。
 		static constexpr int16_t CHAT_INPUT_TEXT_SHIFT_Y = -9;

@@ -18,6 +18,7 @@
 #include "UIChatBar.h"
 #include "UIChat.h"
 #include "UIBuddyList.h"
+#include "../../Character/BuddyListModel.h"
 #include "UICharInfo.h"
 #include "UIItemInventory.h"
 #include "UISoftKey.h"
@@ -37,6 +38,7 @@
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Net/Packets/PlayerInteractionPackets.h" // CharInfoRequestPacket（名字菜单「查看角色信息」）
 #include "../../Net/Packets/BuddyPackets.h"             // BuddyAddPacket（名字菜单「加好友」）
+#include "../../Util/HudLayout.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -81,18 +83,19 @@ namespace ms
 				user_view_y = CLASSIC_LOG_H_DEFAULT;
 			}
 
-			// D7：聊天类型（原生 SetChatType 三态）持久化恢复。
+			// Angel SetChatType：持久化只有 1/3；旧存档 chat.type==2（已删除的紧凑态）映射为 1。
 			if (const int8_t saved_type = static_cast<int8_t>(Setting<ChatType>::get().load());
-				saved_type >= 1 && saved_type <= 3)
+				saved_type == 1 || saved_type == 3)
 				chat_type = saved_type;
-			if (chat_type == 1)
-				classic_log_open = false;          // 收起：仅输入行
-			else if (chat_type == 2)
+			else
+				chat_type = 1;
+			classic_log_open = (chat_type == 3);
+			if (chat_type == 3)
 			{
-				classic_log_open = true;           // 紧凑：小历史框
-				user_view_y = CLASSIC_LOG_H_COMPACT;
+				if (user_view_y < CLASSIC_LOG_H_MIN || user_view_y > CLASSIC_LOG_H_MAX)
+					user_view_y = CLASSIC_LOG_H_DEFAULT;
+				user_view_y = apply_chat_height_mod13(user_view_y);
 			}
-			// chat_type == 3：保持 classic_log_open=true 与已算高度（完整）
 			min_x = 560;
 			max_x = 560;
 			top_y = 8;
@@ -106,9 +109,12 @@ namespace ms
 			input_origin_y = 0;
 			input_btns_x = 0;
 			// 输入行 = 底栏 backgrnd 自身烘焙的那条白输入带（带顶 = 底栏顶+4、
-			// 带内高 26），不是底栏上方另起的一行。定版依据见 UIChatBar.h 常量注释。
-			position = Point<int16_t>(0, static_cast<int16_t>(vh - CLASSIC_BAR_H + INPUT_BAND_TOP));
+			// 带内高 26）。x 与 StatusBar 共用 hud_content_w / hud_center_x（宽 QS=800+qs）。
+			const int16_t hud_cx = HudLayout::hud_center_x(vw);
+
+			position = Point<int16_t>(hud_cx, static_cast<int16_t>(vh - CLASSIC_BAR_H + INPUT_BAND_TOP));
 			dimension = Point<int16_t>(std::min(vw, MAX_ROW_W), INPUT_ROW_H);
+			set_layout_policy(LayoutPolicy::HudGroup);
 			// 收起态灰带：颜色取原生截帧内区实测平涂值 (119,119,119)，不透明；再补一条
 			// 原生实测 (87,87,95) 的 1px 内沿暗线（evidence/w4-chatbar/coords-fold.md）。
 			// 宽度不是整行：原生收起态截帧（566 宽）里灰带只铺到 x=550，x 551..565 是
@@ -653,18 +659,9 @@ namespace ms
 		{
 			case ms::UIChatBar::BtMax:
 			{
-				// classic 没有 max/min 视图，这对钮翻的是聊天历史框。
-				// 本端展开侧（s9 适配）：收起(1)→完整(3)；紧凑(2)→完整(3)。083 无逐级，见 notes D7-A。
+				// Angel OnButtonClicked 1004 → SetChatType(3)。
 				if (classic_mode)
-				{
-					if (chat_type == 2)
-					{
-						chat_type = 3;
-						if (user_view_y <= CLASSIC_LOG_H_COMPACT)
-							user_view_y = CLASSIC_LOG_H_DEFAULT;
-					}
-					set_classic_log(true);
-				}
+					set_chat_type(3, true);
 				else
 					toggle_view(true, true);
 
@@ -672,20 +669,9 @@ namespace ms
 			}
 			case ms::UIChatBar::BtMin:
 			{
-				// 本端收起侧（s9 适配）：完整(3)→紧凑(2)→收起(1)。083 无逐级，见 notes D7-A。
+				// Angel OnButtonClicked 1003 → SetChatType(1)。
 				if (classic_mode)
-				{
-					if (chat_type == 3)
-					{
-						user_view_y = CLASSIC_LOG_H_COMPACT;
-						chat_type = 2;
-						set_classic_log(true);
-					}
-					else
-					{
-						set_classic_log(false);
-					}
-				}
+					set_chat_type(1, true);
 				else
 					toggle_view(false, true);
 
@@ -981,7 +967,8 @@ namespace ms
 
 			// 顶边拖拽起手：整条上沿 GRIP_H 命中带（不含滚动条列，那列已经先判过）。
 			// 同上方说明：按住期间只能交回 CLICKING 这种已加载状态，拖拽才不断。
-			if (classic_log_open && clicked && classic_in_grip(cursor_position))
+			// Angel ChangeChatWndSize：仅 nType3 可拖高。
+			if (classic_log_open && chat_type == 3 && clicked && classic_in_grip(cursor_position))
 			{
 				classic_resizing = true;
 				classic_resize_h0 = user_view_y;
@@ -1644,6 +1631,28 @@ namespace ms
 		return classic_mode;
 	}
 
+	void UIChatBar::update_screen(int16_t new_width, int16_t new_height)
+	{
+		if (!classic_mode)
+			return;
+
+		const int16_t hud_cx = HudLayout::hud_center_x(new_width);
+		position = Point<int16_t>(
+			hud_cx,
+			static_cast<int16_t>(new_height - CLASSIC_BAR_H + INPUT_BAND_TOP));
+		dimension = Point<int16_t>(std::min(new_width, MAX_ROW_W), INPUT_ROW_H);
+		min_view_y = static_cast<int16_t>(position.y() - user_view_y);
+
+		const int16_t fold_w = static_cast<int16_t>(dimension.x() - SCROLL_W);
+		classic_fold_panel = ColorBox(fold_w, FOLD_PANEL_H, Color(0x777777FF), 1.0f);
+		classic_fold_edge = ColorBox(fold_w, 1, Color(0x57575FFF), 1.0f);
+
+		sync_classic_scrollbar();
+
+		LOG(LOG_DEBUG, "[MR] ChatBar classic HudGroup cx=" << hud_cx
+			<< " vw=" << new_width << " vh=" << new_height);
+	}
+
 	void UIChatBar::toggle_view()
 	{
 		// classic 没有 max/min 视图，对外语义就是翻聊天历史框。
@@ -1807,28 +1816,78 @@ namespace ms
 
 	void UIChatBar::set_classic_log(bool open)
 	{
-		classic_log_open = open;
+		set_chat_type(open ? static_cast<int8_t>(3) : static_cast<int8_t>(1), true);
+	}
 
-		// 关框即回到最新一条：偏移留着的话，下次只开输入行（不展框）也会从
-		// 半路的旧消息开始画，看起来像「消息记录停在奇怪的地方」。
-		if (!open)
+	int16_t UIChatBar::apply_chat_height_mod13(int16_t h)
+	{
+		if (h % CLASSIC_LOG_H_STEP == 0)
+			h = static_cast<int16_t>(h + 2);
+		return h;
+	}
+
+	void UIChatBar::set_chat_type(int8_t nType, bool persist)
+	{
+		if (!classic_mode)
+			return;
+		if (nType < 1 || nType > 3)
+			return;
+		if (nType == chat_type)
+		{
+			// 同态仍要同步输入焦点（StartChat 在 type3 时只聚焦编辑框）。
+			if (nType == 2 || (nType == 3 && view_input))
+				input_text.set_state(Textfield::State::FOCUSED);
+			else if (nType == 1)
+				input_text.set_state(Textfield::State::DISABLED);
+			sync_classic_buttons();
+			sync_classic_scrollbar();
+			return;
+		}
+
+		chat_type = nType;
+
+		if (nType == 1)
+		{
+			classic_log_open = false;
+			view_input = false;
 			classic_scroll_offset = 0;
-
-		// 本端聊天类型持久化（1=收起 / 2=紧凑 / 3=完整，s9 适配；083 的 nType2 是
-		// 输入焦点瞬态、不持久化，见 notes 决策点 D7-A）。展开且当前是收起态时
-		// 升级为完整(3)；紧凑(2)展开态保持不变。
-		if (!open)
-			chat_type = 1;
-		else if (chat_type == 1)
-			chat_type = 3;
-		Setting<ChatType>::get().save(chat_type);
-
-		// 高度/状态变了，重算历史框顶（min_view_y 是展开态几何唯一真源）。
-		if (open)
+			classic_resizing = false;
+			input_text.change_text("");
+			input_text.set_state(Textfield::State::DISABLED);
+		}
+		else if (nType == 2)
+		{
+			// 输入中：无大历史框；白输入带 + 焦点（h 语义对齐 083 的 24 行区）。
+			classic_log_open = false;
+			view_input = true;
+			classic_resizing = false;
+			input_text.set_state(Textfield::State::FOCUSED);
+		}
+		else
+		{
+			classic_log_open = true;
+			if (user_view_y < CLASSIC_LOG_H_MIN || user_view_y > CLASSIC_LOG_H_MAX)
+				user_view_y = CLASSIC_LOG_H_DEFAULT;
+			user_view_y = apply_chat_height_mod13(user_view_y);
 			min_view_y = static_cast<int16_t>(position.y() - user_view_y);
+			if (view_input)
+				input_text.set_state(Textfield::State::FOCUSED);
+		}
+
+		// 083 只把 nType 1/3 写入 CConfig+21；type2 不持久。
+		if (persist && (nType == 1 || nType == 3))
+			Setting<ChatType>::get().save(nType);
 
 		sync_classic_buttons();
 		sync_classic_scrollbar();
+		LOG(LOG_DEBUG, "UIChatBar: set_chat_type nType=" << static_cast<int>(nType)
+			<< " persist=" << (persist ? 1 : 0));
+	}
+
+	void UIChatBar::end_chat_if_typing()
+	{
+		if (classic_mode && chat_type == 2)
+			set_chat_type(1, true);
 	}
 
 	Point<int16_t> UIChatBar::classic_log_position() const
@@ -1898,6 +1957,10 @@ namespace ms
 
 	void UIChatBar::set_classic_log_height(int16_t height)
 	{
+		// Angel ChangeChatWndSize：仅完整态可拖；clamp 后再做 h%13==0 → +2。
+		if (!classic_mode || chat_type != 3)
+			return;
+
 		int16_t h = height;
 
 		if (h < CLASSIC_LOG_H_MIN)
@@ -1905,17 +1968,13 @@ namespace ms
 		else if (h > CLASSIC_LOG_H_MAX)
 			h = CLASSIC_LOG_H_MAX;
 
+		h = apply_chat_height_mod13(h);
+
 		if (h == user_view_y)
 			return;
 
 		user_view_y = h;
-
-		// 这个不变式在 modern 分支才读得到，但构造函数就是按它写的，改高度后不更新
-		// 会留下「同一名词两种值」的坑。
 		min_view_y = static_cast<int16_t>(position.y() - user_view_y);
-
-		// 高度变了，原来的偏移可能已经超出新的可滚范围，也可能整框都是正文
-		// （offset 归 0 才看得到最新一条）。交给 sync 统一夹。
 		sync_classic_scrollbar();
 	}
 
@@ -2279,6 +2338,36 @@ namespace ms
 
 	void UIChatBar::toggle_input(bool enabled)
 	{
+		if (classic_mode)
+		{
+			// Angel StartChat：type1→2 再聚焦；已在 2/3 则只开输入焦点。
+			// EndChat：type2→1；type3 只关输入行、保留完整历史框。
+			if (enabled)
+			{
+				if (chat_type == 1)
+					set_chat_type(2, false);
+				else
+				{
+					view_input = true;
+					input_text.set_state(Textfield::State::FOCUSED);
+					sync_classic_buttons();
+				}
+			}
+			else
+			{
+				if (chat_type == 2)
+					set_chat_type(1, true);
+				else
+				{
+					view_input = false;
+					input_text.change_text("");
+					input_text.set_state(Textfield::State::DISABLED);
+					sync_classic_buttons();
+				}
+			}
+			return;
+		}
+
 		view_input = enabled;
 
 		if (view_input && !view_max)
@@ -2299,12 +2388,6 @@ namespace ms
 			{
 				update_view(true);
 			}
-		}
-
-		if (classic_mode)
-		{
-			sync_classic_buttons();
-			return;
 		}
 
 		buttons[Buttons::BtChat]->set_active(view_input);
@@ -2623,23 +2706,25 @@ namespace ms
 
 	void UIChatBar::keep_input_focus()
 	{
+		// 发送后保持输入态（Q0）；若仍在 type1（不应发生）则按 StartChat 升到 type2。
+		if (classic_mode && chat_type == 1)
+			set_chat_type(2, false);
+		view_input = true;
 		input_text.change_text("");
 		input_text.set_state(Textfield::State::FOCUSED);
 		user_message_history_index = user_message_history.size();
+		if (classic_mode)
+			sync_classic_buttons();
 	}
 
-	// Q5: 好友频道收件人 = UIBuddyList 里的在线好友 cid。
-	// 数据边界（已核实 BuddyHandlers.cpp case 7）：好友名单只在服务端推送
-	// updateBuddylist 时写进 UIBuddyList；窗没开过就是空表 ⇒ 发出 0 收件人，
-	// 服务端循环不命中任何人（buddyChat 按 cid 查人），等价于静默失败 ——
-	// 与原生「没开过好友列表发 /b 无人收到」一致，不假装能发。
+	// Q5 / P0：好友频道收件人 = BuddyListModel 在线 cid（不依赖 UIBuddyList 是否开过）。
+	// handler 写模型后，即使未开浮窗也能发 /b；模型仍空时发 0 收件人（与无名单一致）。
 	std::list<int32_t> UIChatBar::collect_online_buddy_cids() const
 	{
 		std::list<int32_t> recips;
-		if (auto bl = UI::get().get_element<UIBuddyList>())
-			for (const auto& b : bl->get_buddies())
-				if (b.online && b.cid > 0)
-					recips.push_back(b.cid);
+		for (const auto& b : BuddyListModel::get().data().buddies)
+			if (b.online && b.cid > 0)
+				recips.push_back(b.cid);
 		return recips;
 	}
 

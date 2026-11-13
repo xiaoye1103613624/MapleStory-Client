@@ -23,6 +23,9 @@
 
 namespace ms
 {
+	// 社交聊天入口窗（资源 UIWindow*.img/socialChatEnter）。
+	// Angel 083 无此窗（走 CUIMessenger）；本包缺资源时构造即 inactive，由 UIStateGame
+	// 优先开 Messenger。见 docs/features/chat-angel-calibration-2026-11/。
 	class UIChat : public UIDragElement<PosMAPLECHAT>
 	{
 	public:

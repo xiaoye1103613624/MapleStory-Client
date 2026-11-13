@@ -10,6 +10,7 @@
 #include "../Components/MapleButton.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/MessengerPackets.h"
+#include "../../Util/HudLayout.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -33,6 +34,11 @@ namespace ms
 		position = Point<int16_t>(500, 80);
 		dimension = Point<int16_t>(295, 364);
 		dragarea = Point<int16_t>(295, 20);
+		set_layout_policy(LayoutPolicy::SavedPosClamped);
+		position = HudLayout::clamp_to_view(
+			position, dimension,
+			Constants::Constants::get().get_viewwidth(),
+			Constants::Constants::get().get_viewheight());
 
 		namebar_pos[0] = Point<int16_t>(14, 108);
 		namebar_pos[1] = Point<int16_t>(103, 108);
@@ -664,6 +670,11 @@ namespace ms
 	UIElement::Type UIMessenger::get_type() const
 	{
 		return TYPE;
+	}
+
+	void UIMessenger::update_screen(int16_t new_width, int16_t new_height)
+	{
+		UIElement::update_screen(new_width, new_height);
 	}
 
 	Button::State UIMessenger::button_pressed(uint16_t buttonid)
