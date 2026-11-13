@@ -128,8 +128,12 @@ namespace ms
 		// 姿态、队伍和淡入状态套到已有对象上；只 makeactive() 会把新坐标整包丢掉。
 		void refresh(int8_t mode, int8_t stance, uint16_t fh, int8_t tm, bool newspawn, Point<int16_t> position,
 			int8_t spawn_effect = 0, bool parent = false, int32_t parent_oid = 0);
-		// Send movement to the mob
-		void send_movement(Point<int16_t> start, std::vector<Movement>&& movements);
+		// Send movement to the mob. The optional skill header (s9 moveMonster) makes
+		// the mob play the corresponding skill{n} animation locally and remembers
+		// skillId/level for the next upstream update_movement.
+		// poption carries the s9 moveMonster short pOption; no client behaviour yet (P-D, reserved).
+		void send_movement(Point<int16_t> start, std::vector<Movement>&& movements,
+			uint8_t skillbyte = 0, int8_t skillid = 0, int8_t skilllevel = 0, int16_t poption = 0);
 		// Kill the mob with the appropriate type:
 		// 0 - make inactive 1 - death animation 2 - fade out
 		void kill(int8_t killtype);
@@ -151,6 +155,11 @@ namespace ms
 		bool is_in_range(const Rectangle<int16_t>& range) const;
 		// Check if this mob is still alive
 		bool is_alive() const;
+		// Check if the death sequence has finished (used by MapMobs for explicit removal)
+		bool is_dead() const;
+		// noRevive 守卫（P-A）：WZ info/noRevive 标记该怪不参与服务端驱动的通用复活。
+		// 本版只作预留，分裂怪雪藏唤醒不依赖此值。
+		bool can_revive() const;
 		// Return the head position
 		Point<int16_t> get_head_position() const;
 
@@ -173,6 +182,9 @@ namespace ms
 		void next_move();
 		// Send the current position and state to the server
 		void update_movement();
+		// P-C：施法侧特效（GetEffectUOL 等价）。查 MobSkill.img[id]/level[lv] 的
+		// effect/hit/tile 节点；节点缺失（BeiDou 精简 img 常态）则优雅跳过（R6）。
+		void play_mob_skill_effect(int8_t id, int8_t lv);
 
 		// Calculate the hit chance
 		float calculate_hitchance(int16_t leveldelta, int32_t accuracy) const;
@@ -249,5 +261,14 @@ namespace ms
 		bool fading;
 		bool fadein;
 		Linear<float> opacity;
+		// —— parity 缺口补齐字段（对齐 Angel，全走缺失默认/跳过，维系 R6 精简 img 兼容）——
+		// P-A：WZ info/noRevive（守卫，本版预留）、info/regena（复活淡入动画名，预留）。
+		bool noRevive_ = false;
+		std::string regena_;
+		// P-E：per-mob 血条颜色（WZ info/hpTagColor）与隐藏开关（WZ info/HPgaugeHide）。
+		Color hptagcolor_ = Color::Name::LIGHTGREEN;
+		bool hpgauguehide_ = false;
+		// P-D：s9 moveMonster 透传的 pOption，当前仅存储（无对应表现，预留）。
+		int16_t mob_poption_ = 0;
 	};
 }

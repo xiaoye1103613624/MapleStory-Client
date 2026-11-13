@@ -25,6 +25,7 @@
 #include "../Combat/SpecialMove.h"
 
 #include <queue>
+#include <vector>
 
 namespace ms
 {
@@ -50,8 +51,9 @@ namespace ms
 		void set_next_skill(int32_t oid, bool use, int8_t skill, int8_t level);
 		// Update a mob's hp display.
 		void send_mobhp(int32_t oid, int8_t percent, uint16_t playerlevel);
-		// Update a mob's movements.
-		void send_movement(int32_t oid, Point<int16_t> start, std::vector<Movement>&& movements);
+		// Update a mob's movements (s9 moveMonster carries an optional skill header + pOption).
+		void send_movement(int32_t oid, Point<int16_t> start, std::vector<Movement>&& movements,
+			uint8_t skillbyte = 0, int8_t skillid = 0, int8_t skilllevel = 0, int16_t poption = 0);
 
 		// Calculate the results of an attack.
 		void send_attack(AttackResult& result, const Attack& attack, const std::vector<int32_t>& targets, uint8_t mobcount);
@@ -73,6 +75,13 @@ namespace ms
 
 	private:
 		MapObjects mobs;
+
+		// 显式回收队列（对齐 Angel CMobPool::OnMobLeaveField 的 ZMap::RemoveKey）：
+		// 收 kill 包即登记 {oid, 剩余帧数}，update() 中按死亡表现结束/兜底帧数
+		// 调 mobs.remove(oid) 显式删除，死亡表现与对象回收彻底解耦。
+		// 兜底帧数 ≈ 3 秒（60fps×3），足够播完 die 动画；动画提前结束则立即回收。
+		static constexpr uint16_t MOB_REMOVAL_FRAMES = 180;
+		std::vector<std::pair<int32_t, uint16_t>> removal;
 
 		std::queue<MobSpawn> spawns;
 	};

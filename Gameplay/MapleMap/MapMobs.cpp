@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <vector>
 
 namespace ms
 {
@@ -49,6 +50,32 @@ namespace ms
 			}
 		}
 
+		// 显式回收：对齐 Angel CMobPool::OnMobLeaveField 的 ZMap::RemoveKey。
+		// 死亡表现与对象回收解耦——此处按动画结束 / 兜底帧数从池显式删除死体，
+		// 不再依赖 Mob::update() 返回 -1 作为唯一删除路径。
+		for (auto iter = removal.begin(); iter != removal.end();)
+		{
+			int32_t oid = iter->first;
+			uint16_t& frames = iter->second;
+
+			bool done = false;
+
+			if (Optional<Mob> mob = mobs.get(oid))
+				done = mob->is_dead() || --frames == 0;
+			else
+				done = true; // 已被别处（换图/重置）移除
+
+			if (done)
+			{
+				mobs.remove(oid);
+				iter = removal.erase(iter);
+			}
+			else
+			{
+				++iter;
+			}
+		}
+
 		mobs.update(physics);
 	}
 
@@ -60,7 +87,22 @@ namespace ms
 	void MapMobs::remove(int32_t oid, int8_t animation)
 	{
 		if (Optional<Mob> mob = mobs.get(oid))
+		{
+			// 收包即改变活体语义：kill() 立即停用移动/攻击/受伤/碰撞并启动死亡表现；
+			// is_alive() 随后返回 false，怪不再移动/攻击/显示血条。死体回收交池层显式完成。
 			mob->kill(animation);
+
+			if (animation == 0)
+			{
+				// 立即消失（无动画可播）：直接显式从池删除，对齐 Angel OnMobLeaveField。
+				mobs.remove(oid);
+			}
+			else
+			{
+				// 有死亡表现（die/fade）：登记到显式回收队列，等动画结束或兜底帧数再删。
+				removal.emplace_back(oid, MOB_REMOVAL_FRAMES);
+			}
+		}
 
 		// 分裂怪跟随父怪（spawn 尾段 effect==-3 雪藏）：父怪在这里被击杀 ⇒ 唤醒子怪。
 		// 服务端对 -3 怪不再补发 SPAWN_MOB（s9 spawnMonsterInternal:1554-1558 只写
@@ -99,10 +141,11 @@ namespace ms
 			mob->show_hp(percent, playerlevel);
 	}
 
-	void MapMobs::send_movement(int32_t oid, Point<int16_t> start, std::vector<Movement>&& movements)
+	void MapMobs::send_movement(int32_t oid, Point<int16_t> start, std::vector<Movement>&& movements,
+		uint8_t skillbyte, int8_t skillid, int8_t skilllevel, int16_t poption)
 	{
 		if (Optional<Mob> mob = mobs.get(oid))
-			mob->send_movement(start, std::move(movements));
+			mob->send_movement(start, std::move(movements), skillbyte, skillid, skilllevel, poption);
 	}
 
 	void MapMobs::send_attack(AttackResult& result, const Attack& attack, const std::vector<int32_t>& targets, uint8_t mobcount)

@@ -53,6 +53,12 @@ namespace ms
 		boss = info["boss"].get_bool();
 		noflip = info["noFlip"].get_bool();
 		notattack = info["notAttack"].get_bool();
+		// P-A/P-E：WZ info 属性读取（缺失即默认，维系 R6 精简 img 兼容）。
+		noRevive_ = info["noRevive"].get_bool();
+		regena_ = info["regena"].get_string();
+		hpgauguehide_ = info["HPgaugeHide"].get_bool();
+		int32_t hpc = static_cast<int32_t>(info["hpTagColor"].get_integer());
+		hptagcolor_ = (hpc != 0) ? Color(static_cast<uint32_t>(hpc)) : Color::Name::LIGHTGREEN;
 		canjump = src["jump"].size() > 0;
 		canfly = src["fly"].size() > 0;
 		canmove = src["move"].size() > 0 || canfly;
@@ -185,6 +191,15 @@ namespace ms
 
 		if (control && stance == Stance::STAND)
 			next_move();
+
+		// P-B 出生特效：spawn_effect>0 播 Mob/SpecialEff.img 对应节点（出生时一次性）。
+		// 节点缺失则跳过（R6）；dormant 怪（effect==-3 雪藏）尚未出现，不播。
+		if (effect > 0 && !dormant)
+		{
+			nl::node effnode = nl::nx::Mob["SpecialEff.img"][std::to_string(effect)];
+			if (effnode)
+				show_effect(Animation(effnode), 0, 0, flip);
+		}
 	}
 
 	void Mob::set_stance(uint8_t stancebyte)
@@ -220,7 +235,12 @@ namespace ms
 	int8_t Mob::update(const Physics& physics)
 	{
 		if (!active)
+		{
+			// 回收由 MapMobs 显式驱动（对齐 Angel CMobPool::OnMobLeaveField 的
+			// ZMap::RemoveKey），不再让 update() 返回 -1 成为唯一删除路径。停用
+			// 对象留在当前图层，等 MapMobs 的待回收计时到时 mobs.remove(oid)。
 			return phobj.fhlayer;
+		}
 
 		bool aniend = animations.at(stance).update();
 
@@ -251,10 +271,15 @@ namespace ms
 
 		if (dead)
 		{
+			// 死亡表现已结束：停止绘制/逻辑，但不直接删对象——回收交 MapMobs
+			// 显式完成（避免「update 返回 -1」与「池层显式 remove」双路径竞态）。
 			deactivate();
 
-			return -1;
+			return phobj.fhlayer;
 		}
+
+		// 死亡兜底计时已迁移到 MapMobs（removal 队列的 MOB_REMOVAL_FRAMES），
+		// 由池层显式回收，避免怪永久残留。此处不再持有兜底逻辑。
 
 		effects.update();
 		showhp.update();
@@ -460,6 +485,8 @@ namespace ms
 			skillid = next_skill_id;
 			skilllv = next_skill_level;
 			skill_pending = false;
+			// P-C 施法侧特效（GetEffectUOL 等价），节点缺失则跳过。
+			play_mob_skill_effect(skillid, skilllv);
 		}
 
 		MoveMobPacket(
@@ -467,6 +494,23 @@ namespace ms
 			get_position(),
 			Movement(phobj, activity)
 		).dispatch();
+	}
+
+	void Mob::play_mob_skill_effect(int8_t id, int8_t lv)
+	{
+		// Angel TryDoingSkill 用 GetEffectUOL 取技能特效；对应客户端资源为
+		// Skill/MobSkill.img（BeiDou 部署实测在 Skill 命名空间，非 Mob，orange-wz 已验证层级）
+		// 下 [id]/level[lv] 的 effect/hit/tile 节点。节点缺失则 if(node) 守卫跳过（R6）。
+		nl::node skillnode = nl::nx::Skill["MobSkill.img"][std::to_string(id)]["level"][std::to_string(lv)];
+		if (!skillnode)
+			return;
+
+		if (nl::node e = skillnode["effect"])
+			show_effect(Animation(e), 0, 0, flip);
+		if (nl::node h = skillnode["hit"])
+			show_effect(Animation(h), 0, 0, flip);
+		if (nl::node t = skillnode["tile"])
+			show_effect(Animation(t), 0, 0, flip);
 	}
 
 	void Mob::set_next_skill(bool use, int8_t id, int8_t level)
@@ -502,6 +546,11 @@ namespace ms
 	bool Mob::is_dormant() const
 	{
 		return dormant;
+	}
+
+	bool Mob::can_revive() const
+	{
+		return !noRevive_;
 	}
 
 	void Mob::wake()
@@ -571,8 +620,8 @@ namespace ms
 			if (tier.name)
 				namelabel.draw(absp);
 
-			if (tier.hp && showhp && !dying && hppercent > 0)
-				hpbar.draw(headpos, hppercent);
+			if (tier.hp && showhp && !dying && !hpgauguehide_ && hppercent > 0)
+				hpbar.draw(headpos, hppercent, hptagcolor_);
 		}
 
 		effects.drawabove(absp, alpha);
@@ -625,10 +674,15 @@ namespace ms
 			next_move();
 	}
 
-	void Mob::send_movement(Point<int16_t> start, std::vector<Movement>&& in_movements)
+	void Mob::send_movement(Point<int16_t> start, std::vector<Movement>&& in_movements,
+		uint8_t skillbyte, int8_t skillid, int8_t skilllevel, int16_t poption)
 	{
+		// 受控怪才会带 movement 列表；非受控怪走 set_position 后立即返回，不会触发下方。
 		if (control)
 			return;
+
+		// P-D：透传 s9 moveMonster 的 pOption，当前无对应客户端表现，仅存储预留。
+		mob_poption_ = poption;
 
 		set_position(start);
 
@@ -640,7 +694,30 @@ namespace ms
 		const Movement& lastmove = movements.front();
 
 		uint8_t laststance = lastmove.newstate;
-		set_stance(laststance);
+
+		// 服务端在移动包里显式指定了技能段（42..59）：把对应 skill{n} 动画槽当作当前
+		// 姿态播放（帧缺失时 set_stance 会钳回 move/stand，安全），并暂存 skillId/level
+		// 供 update_movement 上行回传，使服务端扩展字段在客户端生效。
+		if (skillbyte >= static_cast<uint8_t>(Stance::SKILL)
+			&& skillbyte < static_cast<uint8_t>(Stance::SKILL) + 2 * SKILL_SLOTS)
+		{
+			Stance skillstance = static_cast<Stance>(skillbyte);
+
+			if (animations.find(skillstance) != animations.end())
+			{
+				set_stance(skillstance);
+				next_skill_id = skillid;
+				next_skill_level = skilllevel;
+			}
+			else
+			{
+				set_stance(laststance);
+			}
+		}
+		else
+		{
+			set_stance(laststance);
+		}
 
 		phobj.fhid = lastmove.fh;
 	}
@@ -657,21 +734,31 @@ namespace ms
 
 	void Mob::kill(int8_t animation)
 	{
+		// Angel 083 CMobPool::OnMobLeaveField @0x67961d：Decode1==0 只停用（立即消失），
+		// 非 0 才进入死亡表现。s9 killMonster 默认 animation=1；2 为淡出；3 走备选
+		// 死亡动画（die2/dieF）。其余非 0 字节统一走死亡，避免不认识的动画字节让
+		// 怪永久留在碰撞里。死体回收不在此处做——交 MapMobs 显式完成。
 		switch (animation)
 		{
-		case 0:
-			deactivate();
-			break;
-		case 1:
-			dying = true;
-
-			apply_death();
-			break;
-		case 2:
-			fading = true;
-			dying = true;
-			break;
+			case 0:
+				// 立即消失：停用 + 标记 dead，由 MapMobs 显式从池删除。
+				deactivate();
+				dead = true;
+				return;
+			case 2:
+				fading = true;
+				break;
+			case 3:
+				// 备选死亡动画：set_stance(DIE) 内置 die/die2/dieF 回退链，帧缺失安全。
+				set_stance(Stance::DIE);
+				diesound.play();
+				break;
+			default:
+				apply_death();
+				break;
 		}
+
+		dying = true;
 	}
 
 	void Mob::show_hp(int8_t percent, uint16_t playerlevel)
@@ -899,7 +986,8 @@ namespace ms
 
 	MobAttack Mob::create_touch_attack() const
 	{
-		if (!touchdamage)
+		// 死亡/失效的怪不再造成接触伤害：否则击杀后残留的精灵仍会咬人。
+		if (!is_alive() || !touchdamage)
 			return MobAttack();
 
 		int32_t minattack = static_cast<int32_t>(watk * 0.8f);
@@ -919,6 +1007,11 @@ namespace ms
 	bool Mob::is_alive() const
 	{
 		return active && !dying;
+	}
+
+	bool Mob::is_dead() const
+	{
+		return dead;
 	}
 
 	bool Mob::is_in_range(const Rectangle<int16_t>& range) const

@@ -1,0 +1,226 @@
+[
+  {
+    "name": "OnPacket_CMobPool",
+    "addr": "0x67930e",
+    "file": "ida/OnPacket_CMobPool.c",
+    "bytes": 503,
+    "ok": true
+  },
+  {
+    "name": "OnMobPacket_CMobPool",
+    "addr": "0x67936d",
+    "file": "ida/OnMobPacket_CMobPool.c",
+    "bytes": 1244,
+    "ok": true
+  },
+  {
+    "name": "OnMobEnterField_CMobPool",
+    "addr": "0x67945a",
+    "file": "ida/OnMobEnterField_CMobPool.c",
+    "bytes": 1615,
+    "ok": true
+  },
+  {
+    "name": "OnMobLeaveField_CMobPool",
+    "addr": "0x67961d",
+    "file": "ida/OnMobLeaveField_CMobPool.c",
+    "bytes": 1613,
+    "ok": true
+  },
+  {
+    "name": "OnMobChangeController_CMobPool",
+    "addr": "0x679777",
+    "file": "ida/OnMobChangeController_CMobPool.c",
+    "bytes": 441,
+    "ok": true
+  },
+  {
+    "name": "Update_CMobPool",
+    "addr": "0x679138",
+    "file": "ida/Update_CMobPool.c",
+    "bytes": 2305,
+    "ok": true
+  },
+  {
+    "name": "SetLocalMob_CMobPool",
+    "addr": "0x678308",
+    "file": "ida/SetLocalMob_CMobPool.c",
+    "bytes": 1296,
+    "ok": true
+  },
+  {
+    "name": "FindBodyAttackMob_CMobPool",
+    "addr": "0x678c77",
+    "file": "ida/FindBodyAttackMob_CMobPool.c",
+    "bytes": 2342,
+    "ok": true
+  },
+  {
+    "name": "FindHitMobInRect_CMobPool",
+    "addr": "0x678476",
+    "file": "ida/FindHitMobInRect_CMobPool.c",
+    "bytes": 1765,
+    "ok": true
+  },
+  {
+    "name": "Init_CMob",
+    "addr": "0x662884",
+    "file": "ida/Init_CMob.c",
+    "bytes": 19770,
+    "ok": true
+  },
+  {
+    "name": "OnDie_CMob",
+    "addr": "0x663995",
+    "file": "ida/OnDie_CMob.c",
+    "bytes": 6741,
+    "ok": true
+  },
+  {
+    "name": "OnRevive_CMob",
+    "addr": "0x664182",
+    "file": "ida/OnRevive_CMob.c",
+    "bytes": 1656,
+    "ok": true
+  },
+  {
+    "name": "SetActive_CMob",
+    "addr": "0x6637ec",
+    "file": "ida/SetActive_CMob.c",
+    "bytes": 1842,
+    "ok": true
+  },
+  {
+    "name": "IsActive_CMob",
+    "addr": "0x663922",
+    "file": "ida/IsActive_CMob.c",
+    "bytes": 108,
+    "ok": true
+  },
+  {
+    "name": "Update_CMob",
+    "addr": "0x6675a8",
+    "file": "ida/Update_CMob.c",
+    "bytes": 28964,
+    "ok": true
+  },
+  {
+    "name": "ProcessAction_CMob",
+    "addr": "0x666205",
+    "file": "ida/ProcessAction_CMob.c",
+    "bytes": 1727,
+    "ok": true
+  },
+  {
+    "name": "DoAttack_CMob",
+    "addr": "0x66d9c0",
+    "file": "ida/DoAttack_CMob.c",
+    "bytes": 9982,
+    "ok": true
+  },
+  {
+    "name": "TryDoingSkill_CMob",
+    "addr": "0x66e7af",
+    "file": "ida/TryDoingSkill_CMob.c",
+    "bytes": 1500,
+    "ok": true
+  },
+  {
+    "name": "IsTargetInAttackRange_CMob",
+    "addr": "0x66a517",
+    "file": "ida/IsTargetInAttackRange_CMob.c",
+    "bytes": 11772,
+    "ok": true
+  },
+  {
+    "name": "GenerateMovePath_CMob",
+    "addr": "0x66b6fc",
+    "file": "ida/GenerateMovePath_CMob.c",
+    "bytes": 8879,
+    "ok": true
+  },
+  {
+    "name": "OnMove_CMob",
+    "addr": "0x66be61",
+    "file": "ida/OnMove_CMob.c",
+    "bytes": 5452,
+    "ok": true
+  },
+  {
+    "name": "OnCtrlAck_CMob",
+    "addr": "0x66c23b",
+    "file": "ida/OnCtrlAck_CMob.c",
+    "bytes": 864,
+    "ok": true
+  },
+  {
+    "name": "SetMoveAction_CMob",
+    "addr": "0x6644f3",
+    "file": "ida/SetMoveAction_CMob.c",
+    "bytes": 631,
+    "ok": true
+  },
+  {
+    "name": "OnDamaged_CMob",
+    "addr": "0x66c6c2",
+    "file": "ida/OnDamaged_CMob.c",
+    "bytes": 664,
+    "ok": true
+  },
+  {
+    "name": "OnHit_CMob",
+    "addr": "0x668b83",
+    "file": "ida/OnHit_CMob.c",
+    "bytes": 7608,
+    "ok": true
+  },
+  {
+    "name": "ShowDamage_CMob",
+    "addr": "0x6691d3",
+    "file": "ida/ShowDamage_CMob.c",
+    "bytes": 812,
+    "ok": true
+  },
+  {
+    "name": "ShowHitEffect_CMob",
+    "addr": "0x66fb4d",
+    "file": "ida/ShowHitEffect_CMob.c",
+    "bytes": 1778,
+    "ok": true
+  },
+  {
+    "name": "ShowHPIndicator_CMob",
+    "addr": "0x6635ed",
+    "file": "ida/ShowHPIndicator_CMob.c",
+    "bytes": 2443,
+    "ok": true
+  },
+  {
+    "name": "CreateHPIndicator_CMob",
+    "addr": "0x66fded",
+    "file": "ida/CreateHPIndicator_CMob.c",
+    "bytes": 4546,
+    "ok": true
+  },
+  {
+    "name": "OnDoomed_CMob",
+    "addr": "0x66d6d4",
+    "file": "ida/OnDoomed_CMob.c",
+    "bytes": 2011,
+    "ok": true
+  },
+  {
+    "name": "OnStatSet_CMob",
+    "addr": "0x66c301",
+    "file": "ida/OnStatSet_CMob.c",
+    "bytes": 1223,
+    "ok": true
+  },
+  {
+    "name": "OnStatReset_CMob",
+    "addr": "0x66c424",
+    "file": "ida/OnStatReset_CMob.c",
+    "bytes": 1227,
+    "ok": true
+  }
+]
