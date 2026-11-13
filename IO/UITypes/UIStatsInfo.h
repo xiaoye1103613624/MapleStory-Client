@@ -154,6 +154,9 @@ namespace ms
 		// AP=0 不可加点时盖住烘焙绿格。坐标依据见
 		// docs/features/ui-v83-window-restore/evidence/w6-stats/coords.md。
 		bool classic;
+		/// char-stats-ui-ps v4：主栏 300×392 + 详情 352×392，底对齐（DETAIL_OY=0）。
+		/// 与原生 208×347 classic 互斥；检测 backgrnd 宽高 ≥290×380。
+		bool custom_v4 = false;
 		Texture classic_detail;
 		Texture classic_help;
 		Texture disabled_labels[4];

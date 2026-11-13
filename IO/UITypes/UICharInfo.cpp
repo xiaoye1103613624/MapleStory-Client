@@ -45,6 +45,7 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include "../../Configuration.h"
 #endif
 
 namespace ms
@@ -456,14 +457,15 @@ namespace ms
 				}
 				UI::get().emplace<UISoftKey>([](const std::string& tip) {
 					try {
-						int32_t itemid = std::stoi(tip);
-						if (itemid <= 0) return;
-						const Inventory& inv = Stage::get().get_player().get_inventory();
-						int16_t slot = inv.find_item(InventoryType::Id::CASH, itemid);
-						if (slot > 0) {
-							UseCashItemBasicPacket(slot, itemid).dispatch();
-							LOG(LOG_DEBUG, "UICharInfo: BtRegist cash id=" << itemid);
-						}
+						int32_t skin = std::stoi(tip);
+						if (skin < 0) return;
+						// Select a damage skin id directly: apply now and persist locally.
+						// 0 = default BasicEff. A non-zero server DAMAGE_SKIN(247) value
+						// stays authoritative and is mirrored into Settings by its handler.
+						Stage::get().get_player().set_damage_skin(skin);
+						Configuration::get().set_damage_skin(skin);
+						Configuration::get().save();
+						LOG(LOG_DEBUG, "UICharInfo: damage skin selected=" << skin);
 					} catch (...) {}
 				}, []() {}, "Damage skin id");
 				// 伤害皮肤：s9 现已支持——characters.damage_skin 列 + 登录 DAMAGE_SKIN(247)

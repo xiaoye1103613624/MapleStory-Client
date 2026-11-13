@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStatsInfo.h"
+#include "UIStatsLayoutV4.h"
 #include "UISoftKey.h"
 #include "UISkillBook.h"
 #include "UIMiscShells.h"
@@ -69,10 +70,11 @@ namespace ms
 		}
 
 		nl::node main = Stat["main"];
-		bool classic = !UiAssetResolve::usable(main);
-		this->classic = classic;
+		const bool is_classic = !UiAssetResolve::usable(main);
+		this->classic = is_classic;
+		this->custom_v4 = false;
 
-		if (classic)
+		if (is_classic)
 			main = Stat;
 
 		nl::node detail = Stat["detail"];
@@ -86,6 +88,9 @@ namespace ms
 			// basicStat（159x121）是窗内「基本属性点」蓝头信息板——始终绘于窗内
 			// (8,195)，盖住 AP/属性区（原生即如此，参考截图 SAD=0.0）。
 			// 全部坐标依据见 docs/features/ui-v83-window-restore/evidence/w6-stats/coords.md。
+			//
+			// char-stats-ui-ps v4：live Stat/backgrnd 300×392 + backgrnd2 352×392
+			// （orange-wz 实测）；与原生 208×347 分支分流，走 UIStatsLayoutV4。
 			if (Stat["backgrnd"])
 				sprites.emplace_back(Stat["backgrnd"]);
 
@@ -96,6 +101,13 @@ namespace ms
 			disabled_labels[1] = Texture(Stat["Disabled"]["DEX"]);
 			disabled_labels[2] = Texture(Stat["Disabled"]["INT"]);
 			disabled_labels[3] = Texture(Stat["Disabled"]["LUK"]);
+
+			Texture bg_probe(Stat["backgrnd"]);
+			if (bg_probe.is_valid())
+			{
+				const Point<int16_t> bg_dim = bg_probe.get_dimensions();
+				custom_v4 = bg_dim.x() >= 290 && bg_dim.y() >= 380;
+			}
 		}
 		else
 		{
@@ -124,7 +136,9 @@ namespace ms
 			inner_ability[false] = metierLine["disabled"]["0"];
 		}
 
-		try_maple_btn(buttons, Buttons::BT_CLOSE, close, Point<int16_t>(191, 5), "Stat/close");
+		const int16_t close_x = custom_v4 ? UIStatsLayoutV4::BTN_CLOSE_X : static_cast<int16_t>(191);
+		const int16_t close_y = custom_v4 ? UIStatsLayoutV4::BTN_CLOSE_Y : static_cast<int16_t>(5);
+		try_maple_btn(buttons, Buttons::BT_CLOSE, close, Point<int16_t>(close_x, close_y), "Stat/close");
 
 		nl::node ap_up = main["BtApUp"] ? main["BtApUp"] : Stat["BtApUp"];
 		nl::node hp_up = main["BtHpUp"] ? main["BtHpUp"] : ap_up;
@@ -134,14 +148,26 @@ namespace ms
 		nl::node int_up = main["BtIntUp"] ? main["BtIntUp"] : ap_up;
 		nl::node luk_up = main["BtLukUp"] ? main["BtLukUp"] : ap_up;
 
-		// BtApUp 12x12：数值框右缘 x=200 留 2px → x=186；行带高 16 → 上下各嵌 2。
-		// 行带 y 为 Stat/backgrnd 逐像素实测（coords.md 依据 1）。
-		try_maple_btn(buttons, Buttons::BT_HP, hp_up, Point<int16_t>(186, 115), "Stat/BtApUp/HP");
-		try_maple_btn(buttons, Buttons::BT_MP, mp_up, Point<int16_t>(186, 133), "Stat/BtApUp/MP");
-		try_maple_btn(buttons, Buttons::BT_STR, str_up, Point<int16_t>(186, 245), "Stat/BtApUp/STR");
-		try_maple_btn(buttons, Buttons::BT_DEX, dex_up, Point<int16_t>(186, 263), "Stat/BtApUp/DEX");
-		try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(186, 281), "Stat/BtApUp/INT");
-		try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(186, 299), "Stat/BtApUp/LUK");
+		// BtApUp：原生 classic 数值框右缘 x=186；v4 用 UIStatsLayoutV4::BTN_APUP_X。
+		const int16_t apup_x = custom_v4 ? UIStatsLayoutV4::BTN_APUP_X : static_cast<int16_t>(186);
+		if (custom_v4)
+		{
+			try_maple_btn(buttons, Buttons::BT_HP, hp_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_HP), "Stat/BtApUp/HP");
+			try_maple_btn(buttons, Buttons::BT_MP, mp_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_MP), "Stat/BtApUp/MP");
+			try_maple_btn(buttons, Buttons::BT_STR, str_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_STR), "Stat/BtApUp/STR");
+			try_maple_btn(buttons, Buttons::BT_DEX, dex_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_DEX), "Stat/BtApUp/DEX");
+			try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_INT), "Stat/BtApUp/INT");
+			try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(apup_x, UIStatsLayoutV4::MAIN_Y_LUK), "Stat/BtApUp/LUK");
+		}
+		else
+		{
+			try_maple_btn(buttons, Buttons::BT_HP, hp_up, Point<int16_t>(186, 115), "Stat/BtApUp/HP");
+			try_maple_btn(buttons, Buttons::BT_MP, mp_up, Point<int16_t>(186, 133), "Stat/BtApUp/MP");
+			try_maple_btn(buttons, Buttons::BT_STR, str_up, Point<int16_t>(186, 245), "Stat/BtApUp/STR");
+			try_maple_btn(buttons, Buttons::BT_DEX, dex_up, Point<int16_t>(186, 263), "Stat/BtApUp/DEX");
+			try_maple_btn(buttons, Buttons::BT_INT, int_up, Point<int16_t>(186, 281), "Stat/BtApUp/INT");
+			try_maple_btn(buttons, Buttons::BT_LUK, luk_up, Point<int16_t>(186, 299), "Stat/BtApUp/LUK");
+		}
 
 		// BtAuto 落点依据（083/08v83 口径）：
 		//  - Angel 083 `CUIStat::OnCreate` @ 0x8c4c7f 逐字只创建 2006/(124,324) 的 BtDetail，
@@ -160,20 +186,26 @@ namespace ms
 		//    客户端不建，与 D5 BtHelp 同型）。本地绑定保留为增强（新手态熄灭 +
 		//    转职门控），漂移风险降级：原生基准面无此件，不存在「与原生不一致」。
 		nl::node bt_auto = main["BtAuto"] ? main["BtAuto"] : (Stat["BtAuto"] ? Stat["BtAuto"] : Stat["BtAutoAP"]);
-		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto, Point<int16_t>(106, 198), "Stat/BtAuto");
+		try_maple_btn(buttons, Buttons::BT_AUTO, bt_auto,
+			custom_v4
+				? Point<int16_t>(UIStatsLayoutV4::BTN_AUTO_X, UIStatsLayoutV4::BTN_AUTO_Y)
+				: Point<int16_t>(106, 198),
+			"Stat/BtAuto");
 
-		// BtDetail 46x19 右下角锚算：x=208-46-9、y=347-19-4（k 截图实测 SAD=0.25）。
-		// D6 复核（2026-11-11，evidence/d569_match.json）：BtDetail/normal/0 全窗模板
-		// 匹配最优 frame=(154,326) SAD=0.62 —— 本地 (153,324) 与原生帧差 1~2px，
-		// 像素级坐实。IDA CUIStat::OnCreate @0x8c4c97 的 a4:124 是 CreateCtrl 锚点
-		// 参数口径（非 top-left），与 SAD 实测不矛盾；坐标以 SAD 为准不改。
+		// BtDetail：原生 classic SAD≈(153,324)；v4 右下角 UIStatsLayoutV4::BTN_DETAIL_*。
 		nl::node detail_open = main["BtDetailOpen"] ? main["BtDetailOpen"] : (Stat["BtDetail"] ? Stat["BtDetail"] : main["BtDetail"]);
-		try_maple_btn(buttons, Buttons::BT_DETAILOPEN, detail_open, Point<int16_t>(153, 324), "Stat/BtDetail");
+		try_maple_btn(buttons, Buttons::BT_DETAILOPEN, detail_open,
+			custom_v4
+				? Point<int16_t>(UIStatsLayoutV4::BTN_DETAIL_X, UIStatsLayoutV4::BTN_DETAIL_Y)
+				: Point<int16_t>(153, 324),
+			"Stat/BtDetail");
 
-		// PLAN §6-Q2 定案：包内无 BtDetailClose/BtApDown；参考截图中详情板右下角
-		// 收起件与 Basic.img/BtHide（13x12 黄绿底白色左箭头）像素全等（SAD=0.0），
-		// 语义（hide）也最贴近 → 近似复刻接此件。窗口相对 = 面板(208,144)+(197,182)。
-		try_maple_btn(buttons, Buttons::BT_DETAILCLOSE, nl::nx::UI["Basic.img"]["BtHide"], Point<int16_t>(405, 326), "Stat/BtHide");
+		// 详情收起：原生贴 (405,326)；v4 贴整窗右下 BTN_HIDE_*（底对齐详情板）。
+		try_maple_btn(buttons, Buttons::BT_DETAILCLOSE, nl::nx::UI["Basic.img"]["BtHide"],
+			custom_v4
+				? Point<int16_t>(UIStatsLayoutV4::BTN_HIDE_X, UIStatsLayoutV4::BTN_HIDE_Y)
+				: Point<int16_t>(405, 326),
+			"Stat/BtHide");
 
 		// BtHyperStatOpen/Close、detail/BtAbility、detail/BtHpUp 均为本包不存在的
 		// 现代 UI 节点（nx_inspect 全量核对），原调用点连同旧语义坐标一并删除。
@@ -213,7 +245,10 @@ namespace ms
 		for (size_t i = StatLabel::NAME; i <= LUK; i++)
 			statlabels[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, value_color);
 
-		statlabels[StatLabel::AP] = Text(Text::Font::A11M, Text::Alignment::RIGHT, value_color);
+		statlabels[StatLabel::AP] = Text(
+			Text::Font::A11M,
+			custom_v4 ? Text::Alignment::LEFT : Text::Alignment::RIGHT,
+			value_color);
 
 		for (size_t i = 0; i < StatLabel::NUM_LABELS; i++)
 			statinktops[i] = INK_TOP_NONE;
@@ -221,54 +256,79 @@ namespace ms
 		Point<int16_t> statoffset = Point<int16_t>(73, 29);
 		int16_t statoffset_y = 18;
 
-		if (classic)
+		if (classic && custom_v4)
+		{
+			using namespace UIStatsLayoutV4;
+			const int16_t vx = MAIN_VAL_X;
+			auto v4_row = [&](StatLabel label, int16_t box_y)
+			{
+				statoffsets[label] = Point<int16_t>(vx, box_y);
+				statinktops[label] = static_cast<int16_t>(box_y + INK_PAD_Y);
+			};
+			v4_row(StatLabel::NAME, MAIN_Y_NAME);
+			v4_row(StatLabel::JOB, MAIN_Y_JOB);
+			v4_row(StatLabel::LEVEL, MAIN_Y_LEVEL);
+			v4_row(StatLabel::GUILD, MAIN_Y_GUILD);
+			v4_row(StatLabel::FAME, MAIN_Y_FAME);
+			v4_row(StatLabel::MIN_DAMAGE, MAIN_Y_DAMAGE);
+			v4_row(StatLabel::HP, MAIN_Y_HP);
+			v4_row(StatLabel::MP, MAIN_Y_MP);
+			v4_row(StatLabel::AP, MAIN_Y_AP);
+			v4_row(StatLabel::EXP, MAIN_Y_EXP);
+			v4_row(StatLabel::STR, MAIN_Y_STR);
+			v4_row(StatLabel::DEX, MAIN_Y_DEX);
+			v4_row(StatLabel::INT, MAIN_Y_INT);
+			v4_row(StatLabel::LUK, MAIN_Y_LUK);
+			// 详情：通栏物攻 + 双列（相对详情板原点；draw 时 + DETAIL_OX）
+			statoffsets[StatLabel::MIN_DAMAGE_DETAILED] = Point<int16_t>(DETAIL_ATK_X, DET_Y_ATK);
+			statinktops[StatLabel::MIN_DAMAGE_DETAILED] = static_cast<int16_t>(DET_Y_ATK + INK_PAD_Y);
+			statoffsets[StatLabel::MAX_DAMAGE_DETAILED] = Point<int16_t>(DETAIL_ATK_X + 80, DET_Y_ATK);
+			statinktops[StatLabel::MAX_DAMAGE_DETAILED] = static_cast<int16_t>(DET_Y_ATK + INK_PAD_Y);
+			struct V4Det { StatLabel L; StatLabel R; int row; };
+			static const V4Det dets[] = {
+				{ StatLabel::DAMAGE_BONUS, StatLabel::BOSS_DAMAGE, 0 },
+				{ StatLabel::FINAL_DAMAGE, StatLabel::BUFF_DURATION, 1 },
+				{ StatLabel::IGNORE_DEFENSE, StatLabel::ITEM_DROP_RATE, 2 },
+				{ StatLabel::CRITICAL_RATE, StatLabel::MESOS_OBTAINED, 3 },
+				{ StatLabel::CRITICAL_DAMAGE, StatLabel::STATUS_RESISTANCE, 4 },
+				{ StatLabel::DEFENSE, StatLabel::KNOCKBACK_RESISTANCE, 5 },
+				{ StatLabel::SPEED, StatLabel::JUMP, 6 },
+				{ StatLabel::MAGIC_D, StatLabel::MDEF_D, 7 },
+				{ StatLabel::ACC_D, StatLabel::AVOID_D, 8 },
+				{ StatLabel::HANDS_D, StatLabel::HONOR, 9 },
+			};
+			for (const V4Det& d : dets)
+			{
+				const int16_t y = det_y(d.row);
+				statoffsets[d.L] = Point<int16_t>(DETAIL_VAL_LX, y);
+				statinktops[d.L] = static_cast<int16_t>(y + INK_PAD_Y);
+				statoffsets[d.R] = Point<int16_t>(DETAIL_VAL_RX, y);
+				statinktops[d.R] = static_cast<int16_t>(y + INK_PAD_Y);
+			}
+		}
+		else if (classic)
 		{
 			// 配准：Stat/backgrnd 的 origin 实测 (0,0)（nx_inspect UI.nx
-			// UIWindow.img/Stat），整块对 9f1b69f5 做 SAD ⇒ (0,0) 处 1.13/像素、
-			// 次优 (0,1) 3.14 ⇒ **截图坐标 == 窗口坐标**，不需要再加标题行偏移。
-			//
-			// 落位：下表只记「参考截图上逐行量到的墨迹顶 y」，绘制点在 draw 里交给
-			// 该行 Text 自己的度量反解（R27-B1b 唯一真源）。墨迹顶 = 基线 - 本行最高
-			// 字形的 bitmap_top，而 SimHei 11px 的 CJK 分 9/10 两档（170 字抽样：
-			// 126 字 9、42 字 10）——「新手」的顶是「新」= 10，「50 / 50」的顶是
-			// '/' = 9。按「行类别」挑常量必然错 1px，只有按串精算才对。
-			// （上面那组 9/10 是 SimHei 的读数，R28-B5 换成思源宋体后数值变了，
-			//  但结论不变：正因为逐字不齐，才不能按行类别抄常量。）
-			//
-			// r27 更正 r15：r15 手抄的 bitmap_top「数字 8、'/' 11、CJK 11」里后两个
-			// 是 PIL 口径，FreeType 的 glyph.bitmap_top 实测 9~10 ⇒ 那几行一直画低
-			// 2px，正是用户看到的「基础信息数值偏下、不在框内」。
 			struct ClassicRow
 			{
 				StatLabel label;
 				int16_t x;
-				int16_t ink_top;	// 量到的墨迹顶；INK_TOP_NONE = 该行无墨可解
-				int16_t raw_y;		// 仅 INK_TOP_NONE 行使用（r15 遗留绘制点）
+				int16_t ink_top;
+				int16_t raw_y;
 			};
 
 			static const ClassicRow classic_ink_rows[] {
-				{ StatLabel::NAME,  61,  36, 0 },	// 「Admin」
-				{ StatLabel::JOB,   61,  53, 0 },	// 「新手」
-				{ StatLabel::LEVEL, 61,  82, 0 },	// 「1」
-				{ StatLabel::HP,    61, 118, 0 },	// 「50 / 50」
-				{ StatLabel::MP,    61, 136, 0 },	// 「5 / 5」
-				{ StatLabel::EXP,   61, 154, 0 },	// 「0 (0%)」
-				{ StatLabel::FAME,  61, 172, 0 },	// 「0」
-				{ StatLabel::GUILD, 61, 104, 0 },	// 「-」：整行只有 3 个墨点（rel x61..63 y104）
+				{ StatLabel::NAME,  61,  36, 0 },
+				{ StatLabel::JOB,   61,  53, 0 },
+				{ StatLabel::LEVEL, 61,  82, 0 },
+				{ StatLabel::HP,    61, 118, 0 },
+				{ StatLabel::MP,    61, 136, 0 },
+				{ StatLabel::EXP,   61, 154, 0 },
+				{ StatLabel::FAME,  61, 172, 0 },
+				{ StatLabel::GUILD, 61, 104, 0 },
 			};
-			// 上表 7 行 = `layout.py mark Stat.json 角色能力.png` 的 value_ink_tops /
-			// value_col_bbox 两个探针直接吐出来的数（锚点 = Stat/backgrnd 左上）：
-			// 墨迹顶 36/53/82/118/136/154/172、值列左缘 x=61。r27 复核时同一套探针
-			// 在客户帧上量到 41/59/123/141/159/176 与 x=67 ⇒ r15 那批「40/58/87/…/176、
-			// x=67」不是原生值，而是**照着我们自己的渲染结果抄的**（一致偏低 4~6px、
-			// 偏右 6px），这正是用户报「数值偏下、不在框内」还没修掉的原因。
-			// 同一帧的 chip_grid（粉色标签块行网格，烘焙位图）两端 Δ=0 ⇒ 底板对齐，
-			// 偏差全部在文字侧，可以安全地按原生值重定。
-			// AP/力量/敏捷/智力/运气在两张参考截图里都被「基本属性点」浮层盖住
-			// （浮层占 x8..170 y172..330）⇒ 无墨可解，保持 r15 的绘制点不猜，
-			// 只跟着值列左缘把 x 一起改到 61；y 等 B8 关掉浮层后真机抓帧再量。
 			static const ClassicRow classic_raw_rows[] {
-				{ StatLabel::AP,  84, INK_TOP_NONE, 212 },	// 右对齐到数值框右缘，另算
+				{ StatLabel::AP,  84, INK_TOP_NONE, 212 },
 				{ StatLabel::STR, 61, INK_TOP_NONE, 243 },
 				{ StatLabel::DEX, 61, INK_TOP_NONE, 261 },
 				{ StatLabel::INT, 61, INK_TOP_NONE, 279 },
@@ -304,7 +364,7 @@ namespace ms
 			statoffsets[StatLabel::LUK] = statoffset + Point<int16_t>(1, 250);
 		}
 
-		// Detailed（classic 详情板数值左对齐于 x=76，参考截图实测；现代面板保持右对齐）
+		// Detailed（classic/v4 左对齐；现代面板右对齐）
 		const Text::Alignment detail_align = classic ? Text::Alignment::LEFT : Text::Alignment::RIGHT;
 
 		statlabels[StatLabel::MIN_DAMAGE_DETAILED] = Text(Text::Font::A11M, detail_align, value_color);
@@ -325,43 +385,45 @@ namespace ms
 		statlabels[StatLabel::JUMP] = Text(Text::Font::A11M, detail_align, value_color);
 		statlabels[StatLabel::HONOR] = Text(Text::Font::A11M, Text::Alignment::LEFT, value_color);
 
-		// v83 backgrnd2 烘焙标签「魔法力/魔法防御/命中率/回避率/手技」专用
 		statlabels[StatLabel::MAGIC_D] = Text(Text::Font::A11M, detail_align, value_color);
 		statlabels[StatLabel::MDEF_D] = Text(Text::Font::A11M, detail_align, value_color);
 		statlabels[StatLabel::ACC_D] = Text(Text::Font::A11M, detail_align, value_color);
 		statlabels[StatLabel::AVOID_D] = Text(Text::Font::A11M, detail_align, value_color);
 		statlabels[StatLabel::HANDS_D] = Text(Text::Font::A11M, detail_align, value_color);
 
-		Point<int16_t> statoffset_detailed = Point<int16_t>(0, 77);
-		int16_t statoffset_detailed_lx = 116;
-		int16_t statoffset_detailed_rx = 227;
+		if (!custom_v4)
+		{
+			Point<int16_t> statoffset_detailed = Point<int16_t>(0, 77);
+			int16_t statoffset_detailed_lx = 116;
+			int16_t statoffset_detailed_rx = 227;
 
-		statoffsets[StatLabel::MIN_DAMAGE_DETAILED] = Point<int16_t>(94, 41);
-		statoffsets[StatLabel::MAX_DAMAGE_DETAILED] = Point<int16_t>(105, 59);
+			statoffsets[StatLabel::MIN_DAMAGE_DETAILED] = Point<int16_t>(94, 41);
+			statoffsets[StatLabel::MAX_DAMAGE_DETAILED] = Point<int16_t>(105, 59);
 
-		statoffsets[StatLabel::DAMAGE_BONUS] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 0);
-		statoffsets[StatLabel::BOSS_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 0);
+			statoffsets[StatLabel::DAMAGE_BONUS] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 0);
+			statoffsets[StatLabel::BOSS_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 0);
 
-		statoffsets[StatLabel::FINAL_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 1);
-		statoffsets[StatLabel::BUFF_DURATION] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 1);
+			statoffsets[StatLabel::FINAL_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 1);
+			statoffsets[StatLabel::BUFF_DURATION] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 1);
 
-		statoffsets[StatLabel::IGNORE_DEFENSE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 2);
-		statoffsets[StatLabel::ITEM_DROP_RATE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 2);
+			statoffsets[StatLabel::IGNORE_DEFENSE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 2);
+			statoffsets[StatLabel::ITEM_DROP_RATE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 2);
 
-		statoffsets[StatLabel::CRITICAL_RATE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 3);
-		statoffsets[StatLabel::MESOS_OBTAINED] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 3);
+			statoffsets[StatLabel::CRITICAL_RATE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 3);
+			statoffsets[StatLabel::MESOS_OBTAINED] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 3);
 
-		statoffsets[StatLabel::CRITICAL_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx + 3, statoffset_y * 4);
+			statoffsets[StatLabel::CRITICAL_DAMAGE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx + 3, statoffset_y * 4);
 
-		statoffsets[StatLabel::STATUS_RESISTANCE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 5);
-		statoffsets[StatLabel::KNOCKBACK_RESISTANCE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 5);
+			statoffsets[StatLabel::STATUS_RESISTANCE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 5);
+			statoffsets[StatLabel::KNOCKBACK_RESISTANCE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_rx, statoffset_y * 5);
 
-		statoffsets[StatLabel::DEFENSE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 6);
+			statoffsets[StatLabel::DEFENSE] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 6);
 
-		statoffsets[StatLabel::SPEED] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 7);
-		statoffsets[StatLabel::JUMP] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 8);
+			statoffsets[StatLabel::SPEED] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 7);
+			statoffsets[StatLabel::JUMP] = statoffset_detailed + Point<int16_t>(statoffset_detailed_lx, statoffset_y * 8);
 
-		statoffsets[StatLabel::HONOR] = statoffset_detailed + Point<int16_t>(73, 263);
+			statoffsets[StatLabel::HONOR] = statoffset_detailed + Point<int16_t>(73, 263);
+		}
 
 		update_all_stats();
 		update_stat(MapleStat::Id::JOB);
@@ -370,6 +432,10 @@ namespace ms
 		dimension = Point<int16_t>(212, 318);
 		if (classic && Texture(Stat["backgrnd"]).is_valid())
 			dimension = Texture(Stat["backgrnd"]).get_dimensions();
+		if (custom_v4)
+			dimension = Point<int16_t>(UIStatsLayoutV4::MAIN_W, UIStatsLayoutV4::MAIN_H);
+		// ctor 末尾 dimension 已定：再夹一次，避免 SavedPos 旧坐标把自定 v4 窗拖出屏。
+		clamp_drag_position();
 		showdetail = false;
 	}
 
@@ -379,8 +445,7 @@ namespace ms
 
 		if (classic)
 		{
-			// v83 八信息行 + AP + 四属性（行带实测见 coords.md；静态贴图不带插值
-			// alpha，防闪烁——沿用 2026-10-29 修复结论）。
+			// v83 八信息行 + AP + 四属性；v4 额外含伤害行（MIN_DAMAGE）。
 			static const StatLabel classic_rows[] = {
 				StatLabel::NAME, StatLabel::JOB, StatLabel::LEVEL, StatLabel::GUILD,
 				StatLabel::HP, StatLabel::MP, StatLabel::EXP, StatLabel::FAME,
@@ -390,8 +455,6 @@ namespace ms
 
 			for (StatLabel label : classic_rows)
 			{
-				// 量到墨迹顶的行：绘制点 = 墨迹顶 - 本行文字自己的 (linespace -
-				// max bitmap_top)（R27-B1b）。量不到的行：沿用 r15 原始 y。
 				const int16_t ink_top = statinktops[label];
 				const int16_t y = ink_top == INK_TOP_NONE
 					? statoffsets[label].y()
@@ -400,9 +463,18 @@ namespace ms
 				statlabels[label].draw(position + Point<int16_t>(statoffsets[label].x(), y));
 			}
 
-			// 不可加点（AP=0）：灰标签条 Stat/Disabled{STR,DEX,INT,LUK}（48x16）
-			// 盖住烘焙绿格（绿格 x7..54，行带顶 y=243/261/279/297）。
-			if (!hasap)
+			if (custom_v4)
+			{
+				const int16_t ink_top = statinktops[StatLabel::MIN_DAMAGE];
+				const int16_t y = ink_top == INK_TOP_NONE
+					? statoffsets[StatLabel::MIN_DAMAGE].y()
+					: statlabels[StatLabel::MIN_DAMAGE].y_for_ink_top(ink_top);
+				statlabels[StatLabel::MIN_DAMAGE].draw(
+					position + Point<int16_t>(statoffsets[StatLabel::MIN_DAMAGE].x(), y));
+			}
+
+			// 不可加点灰标签：仅原生 208 布局；v4 底板自带框，不叠 Disabled 条。
+			if (!hasap && !custom_v4)
 			{
 				static const Point<int16_t> disabled_pos[4] = {
 					Point<int16_t>(7, 243), Point<int16_t>(7, 261),
@@ -414,31 +486,66 @@ namespace ms
 						disabled_labels[i].draw(DrawArgument(position + disabled_pos[i]));
 			}
 
-			// 「详细」属性板 backgrnd2（218x203）：贴主窗右缘、底对齐 (208,144)
-			// （参考截图 角色能力.png 模板匹配 SAD=46 的最优解，347-203=144）。
-			// 9 行数值左对齐 x=76、首行 y=6、pitch 18（截图实测行顶 11/29/47…）。
+			// 「详细」属性板：
+			//   · 原生 classic：backgrnd2 218×203 贴主窗右缘底对齐 (208,144)
+			//   · custom_v4：352×392 贴主窗右侧 DETAIL_OX，DETAIL_OY=0（与主栏同高 → 底对齐）
 			if (showdetail && classic_detail.is_valid())
 			{
-				Point<int16_t> dp = position + Point<int16_t>(208, 144);
+				if (custom_v4)
+				{
+					using namespace UIStatsLayoutV4;
+					Point<int16_t> dp = position + Point<int16_t>(DETAIL_OX, DETAIL_OY);
+					classic_detail.draw(DrawArgument(dp));
 
-				classic_detail.draw(DrawArgument(dp));
+					auto draw_v4 = [&](StatLabel label)
+					{
+						const int16_t ink_top = statinktops[label];
+						const int16_t y = ink_top == INK_TOP_NONE
+							? statoffsets[label].y()
+							: statlabels[label].y_for_ink_top(ink_top);
+						statlabels[label].draw(dp + Point<int16_t>(statoffsets[label].x(), y));
+					};
 
-				statlabels[StatLabel::MIN_DAMAGE_DETAILED].draw(dp + Point<int16_t>(76, 6));
-				statlabels[StatLabel::MAX_DAMAGE_DETAILED].draw(dp + Point<int16_t>(76 + statlabels[StatLabel::MIN_DAMAGE_DETAILED].width(), 6));
+					draw_v4(StatLabel::MIN_DAMAGE_DETAILED);
+					draw_v4(StatLabel::MAX_DAMAGE_DETAILED);
+					static const StatLabel v4_detail_rows[] = {
+						StatLabel::DAMAGE_BONUS, StatLabel::BOSS_DAMAGE,
+						StatLabel::FINAL_DAMAGE, StatLabel::BUFF_DURATION,
+						StatLabel::IGNORE_DEFENSE, StatLabel::ITEM_DROP_RATE,
+						StatLabel::CRITICAL_RATE, StatLabel::MESOS_OBTAINED,
+						StatLabel::CRITICAL_DAMAGE, StatLabel::STATUS_RESISTANCE,
+						StatLabel::DEFENSE, StatLabel::KNOCKBACK_RESISTANCE,
+						StatLabel::SPEED, StatLabel::JUMP,
+						StatLabel::MAGIC_D, StatLabel::MDEF_D,
+						StatLabel::ACC_D, StatLabel::AVOID_D,
+						StatLabel::HANDS_D, StatLabel::HONOR
+					};
+					for (StatLabel label : v4_detail_rows)
+						draw_v4(label);
+				}
+				else
+				{
+					Point<int16_t> dp = position + Point<int16_t>(208, 144);
 
-				static const StatLabel detail_rows[8] = {
-					StatLabel::DEFENSE,
-					StatLabel::MAGIC_D,
-					StatLabel::MDEF_D,
-					StatLabel::ACC_D,
-					StatLabel::AVOID_D,
-					StatLabel::HANDS_D,
-					StatLabel::SPEED,
-					StatLabel::JUMP
-				};
+					classic_detail.draw(DrawArgument(dp));
 
-				for (int16_t i = 0; i < 8; i++)
-					statlabels[detail_rows[i]].draw(dp + Point<int16_t>(76, static_cast<int16_t>(24 + i * 18)));
+					statlabels[StatLabel::MIN_DAMAGE_DETAILED].draw(dp + Point<int16_t>(76, 6));
+					statlabels[StatLabel::MAX_DAMAGE_DETAILED].draw(dp + Point<int16_t>(76 + statlabels[StatLabel::MIN_DAMAGE_DETAILED].width(), 6));
+
+					static const StatLabel detail_rows[8] = {
+						StatLabel::DEFENSE,
+						StatLabel::MAGIC_D,
+						StatLabel::MDEF_D,
+						StatLabel::ACC_D,
+						StatLabel::AVOID_D,
+						StatLabel::HANDS_D,
+						StatLabel::SPEED,
+						StatLabel::JUMP
+					};
+
+					for (int16_t i = 0; i < 8; i++)
+						statlabels[detail_rows[i]].draw(dp + Point<int16_t>(76, static_cast<int16_t>(24 + i * 18)));
+				}
 			}
 
 			// 窗内蓝头信息板 basicStat（159x121，origin=(78,0)）：绘制于窗内
@@ -447,7 +554,7 @@ namespace ms
 			// 该板讲的是「所有新手玩家的属性点由本职业特性自动分配」，
 			// 只对未转职（BEGINNER）成立；1 转后必须撤掉，否则会盖住下方
 			// AP 加点区（用户 2026-11-11 第 4 条）。判定与 :620 的 show_ap 同源。
-			if (classic_help.is_valid() && jobId == Job::Level::BEGINNER)
+			if (!custom_v4 && classic_help.is_valid() && jobId == Job::Level::BEGINNER)
 				classic_help.draw(DrawArgument(position + Point<int16_t>(8, 195) + classic_help.get_origin()));
 		}
 		else if (showdetail && textures_detail.size() >= 4)
@@ -536,9 +643,17 @@ namespace ms
 		Point<int16_t> pos_adj;
 
 		if (showdetail)
-			pos_adj = Point<int16_t>(218, 0);
+		{
+			if (custom_v4)
+				pos_adj = Point<int16_t>(
+					static_cast<int16_t>(UIStatsLayoutV4::GAP + UIStatsLayoutV4::DETAIL_W), 0);
+			else
+				pos_adj = Point<int16_t>(218, 0);
+		}
 		else
+		{
 			pos_adj = Point<int16_t>(0, 0);
+		}
 
 		auto bounds = Rectangle<int16_t>(position, position + dimension + pos_adj);
 		return bounds.contains(cursorpos);
@@ -569,18 +684,29 @@ namespace ms
 		update_basevstotal(StatLabel::INT, MapleStat::Id::INT, EquipStat::Id::INT);
 		update_basevstotal(StatLabel::LUK, MapleStat::Id::LUK, EquipStat::Id::LUK);
 
-		statlabels[StatLabel::MIN_DAMAGE].change_text(std::to_string(stats.get_mindamage()));
-		statlabels[StatLabel::MAX_DAMAGE].change_text(" ~ " + std::to_string(stats.get_maxdamage()));
+		if (custom_v4)
+		{
+			// 主栏「伤害」单框：min ~ max
+			statlabels[StatLabel::MIN_DAMAGE].change_text(
+				std::to_string(stats.get_mindamage()) + " ~ " + std::to_string(stats.get_maxdamage()));
+			statlabels[StatLabel::MAX_DAMAGE].change_text("");
+		}
+		else
+		{
+			statlabels[StatLabel::MIN_DAMAGE].change_text(std::to_string(stats.get_mindamage()));
+			statlabels[StatLabel::MAX_DAMAGE].change_text(" ~ " + std::to_string(stats.get_maxdamage()));
+		}
 
 		if (stats.is_damage_buffed())
 		{
 			statlabels[StatLabel::MIN_DAMAGE].change_color(Color::Name::RED);
-			statlabels[StatLabel::MIN_DAMAGE].change_color(Color::Name::RED);
+			statlabels[StatLabel::MAX_DAMAGE].change_color(Color::Name::RED);
 		}
 		else
 		{
-			statlabels[StatLabel::MAX_DAMAGE].change_color(Color::Name::EMPEROR);
-			statlabels[StatLabel::MAX_DAMAGE].change_color(Color::Name::EMPEROR);
+			const Color::Name dmg_color = classic ? Color::Name::BLACK : Color::Name::EMPEROR;
+			statlabels[StatLabel::MIN_DAMAGE].change_color(dmg_color);
+			statlabels[StatLabel::MAX_DAMAGE].change_color(dmg_color);
 		}
 
 		statlabels[StatLabel::MIN_DAMAGE_DETAILED].change_text(std::to_string(stats.get_mindamage()));

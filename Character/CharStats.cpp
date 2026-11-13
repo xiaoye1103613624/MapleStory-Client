@@ -199,6 +199,24 @@ namespace ms
 		damagepercent = d;
 	}
 
+	// ⑤ 套装加成增量注入（2026-11-12）。set_damagepercent 是覆盖式，
+	// 若多个套装/档位同时生效必须走 add_*；close_totalstats() 会连同
+	// 这些字段一起收口到 maxdamage/mindamage（CharStats.cpp:77-82）。
+	void CharStats::add_damagepercent(float delta)
+	{
+		damagepercent += delta;
+	}
+
+	void CharStats::add_bossdmg(float delta)
+	{
+		bossdmg += delta;
+	}
+
+	void CharStats::add_ignoredef(float delta)
+	{
+		ignoredef += delta;
+	}
+
 	void CharStats::set_reducedamage(float r)
 	{
 		reducedamage = r;
@@ -279,8 +297,9 @@ namespace ms
 		return name;
 	}
 
-	const std::string& CharStats::get_jobname() const
+	std::string CharStats::get_jobname() const
 	{
+		// Job::get_name() 产出的临时串在此按值延续生命周期，禁止改成引用返回。
 		return job.get_name();
 	}
 

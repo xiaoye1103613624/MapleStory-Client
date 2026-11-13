@@ -17,7 +17,7 @@
 | values | EMPTY |
 | buttons | NOT baked |
 | 样板 | 附图 mockup + UIStatsInfo.h detailed |
-| 入库 | 未入库 WZ（本版仅 UI 图产物） |
+| 入库 | 已入库 live `UIWindow.img/Stat`：`backgrnd`/`backgrnd2`（CN）+ `backgrnd_en`/`backgrnd2_en`（EN）；见 notes/field-mapping-v4.md |
 
 ## 组件清单（拼装）
 

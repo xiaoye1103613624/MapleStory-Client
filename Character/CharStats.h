@@ -43,6 +43,10 @@ namespace ms
 		void set_portal(uint8_t portal);
 		void set_mastery(float mastery);
 		void set_damagepercent(float damagepercent);
+		// ⑤ 套装/强化加成：增量语义（set_damagepercent 是覆盖式，多来源累加会互相吃掉）。
+		void add_damagepercent(float delta);
+		void add_bossdmg(float delta);
+		void add_ignoredef(float delta);
 		void set_reducedamage(float reducedamage);
 
 		void change_job(uint16_t id);
@@ -60,7 +64,9 @@ namespace ms
 		uint8_t get_portal() const;
 		int64_t get_exp() const;
 		const std::string& get_name() const;
-		const std::string& get_jobname() const;
+		// 必须按值：Job::get_name() 返回 Locale::text(...) 的临时 std::string。
+		// 用 const std::string& 转发会让调用方拿到悬空引用（进图即 AV）。
+		std::string get_jobname() const;
 		Weapon::Type get_weapontype() const;
 		float get_mastery() const;
 		float get_critical() const;
