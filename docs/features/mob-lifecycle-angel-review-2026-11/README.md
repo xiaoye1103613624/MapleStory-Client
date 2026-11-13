@@ -216,3 +216,28 @@
 - 两轮临时 `OutDir` 构建均 `EXITCODE=0`（`verify_out/MapleStory.exe`）。
 - 部署 exe 同步仍需关闭提权客户端后跑 `tools\build_smoke.bat`（本轮未强关占用进程）。
 - 实机端到端验证（召唤 spawn→move→attack→die、buff 图标/属性）待服务端 + 客户端运行环境，代码层已闭环。
+
+## 9. 第四轮：状态特效视觉（2026-11-13）
+
+按计划 `char-status-effect-visuals` 执行，纯表现层（不改协议），由 BuffStat 生命周期驱动，orange-wz 实测资源后落地。
+
+### 9.1 受击闪红（hitflash）
+- `Char` 新增 `TimedBool hitflash`，`show_damage()` 时 `set_for(300)`（在既有 `invincible` 2000ms 灰度闪烁之外叠加）。
+- `Char::draw` 在 `look.draw` 时若 `hitflash` 用红色 tint（`Color(1, hf, hf, 1)`，hf=0.35+0.4*alpha 渐变）；`Char::update` 驱动 `hitflash.update()`。
+
+### 9.2 分身残影（SHADOWPARTNER）
+- `Char` 新增 `bool shadowpartner` + `set_shadowpartner(bool)`；`Player::give_buff/cancel_buff` 对 `SHADOWPARTNER` 开关。
+- `Char::draw` 在身后侧（`facing_right ? -45 : 45`）绘制半透明深色复制体 `look.draw(DrawArgument(pos, Color(0.3,0.3,0.3,0.6)))`，无额外资源、零节点依赖（R6）。
+
+### 9.3 护盾（MAGIC_GUARD/HOLY_SHIELD）
+- orange-wz 实测：`Skill/200.img/skill/2001002`（Magic Guard）、`232.img/skill/2321009`、`231.img/skill/2311003` 均含 `effect`（LIST_PROPERTY）。
+- `Char` 新增 `std::map<int, Animation> shields` + `set_shield(stat, skill_id)`（用 `string_format::skill_namespace` + `extend_id` 从 Buff 下发的 skillid 动态定位 `Skill/<ns>.img/skill/<strid>/effect`，缺失跳过 R6）+ `clear_shield`。
+- `Char::draw` 循环绘制护盾动画（居中 absp），`Char::update` 逐帧 `update()`；`Player::give_buff/cancel_buff` 对 `MAGIC_GUARD/HOLY_SHIELD` 注入。
+
+### 9.4 骑乘（MONSTER_RIDING）— 显式预留
+- orange-wz 实测 `TamingMob/0001.img`、`0002.img` **仅含 `info`（speed/jump/fs/swim/fatigue），无任何骑兽外观帧**（BeiDou 精简版）。
+- 故骑乘渲染**无资源可实现**，按 R6 显式预留（待补充 TamingMob 外观资源后再做）。
+
+### 9.5 构建
+- 临时 `OutDir` 构建 `EXITCODE=0`（`verify_out/MapleStory.exe`），仅既有 warning。
+- 部署 exe 同步仍需关闭提权客户端后跑 `tools\build_smoke.bat`。

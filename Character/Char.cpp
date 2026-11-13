@@ -19,6 +19,7 @@
 
 #include "../Data/WeaponData.h"
 #include "../Configuration.h"
+#include "../Util/Misc.h"
 
 #include <fstream>
 
@@ -50,7 +51,25 @@ namespace ms
 			color = Color::Code::CWHITE;
 		}
 
+		// 受击瞬时红闪（300ms，叠加/覆盖 invincible 灰度）。
+		if (hitflash)
+		{
+			float hf = 0.35f + 0.4f * hitflash.alpha();
+			color = Color(1.0f, hf, hf, 1.0f);
+		}
+
 		look.draw(DrawArgument(absp, color), alpha);
+
+		// 分身残影（SHADOWPARTNER）：身后侧绘制半透明深色复制体（无额外资源，R6）。
+		if (shadowpartner && state != State::DIED)
+		{
+			Point<int16_t> shadow_pos = absp + Point<int16_t>(facing_right ? -45 : 45, 0);
+			look.draw(DrawArgument(shadow_pos, Color(0.3f, 0.3f, 0.3f, 0.6f)), alpha);
+		}
+
+		// 护盾特效（MAGIC_GUARD/HOLY_SHIELD）：循环动画居中绘制。
+		for (auto& shield : shields)
+			shield.second.draw(DrawArgument(absp), alpha);
 
 		afterimage.draw(look.get_frame(), DrawArgument(absp, facing_right), alpha);
 
@@ -95,6 +114,10 @@ namespace ms
 		chatballoon.update();
 		invincible.update();
 		ironbody.update();
+		hitflash.update();
+
+		for (auto& shield : shields)
+			shield.second.update();
 
 		for (auto& pet : pets)
 		{
@@ -208,6 +231,36 @@ namespace ms
 
 		look.set_alerted(5000);
 		invincible.set_for(2000);
+		hitflash.set_for(300);
+	}
+
+	void Char::set_shadowpartner(bool on)
+	{
+		shadowpartner = on;
+	}
+
+	void Char::set_shield(int stat, int32_t skill_id)
+	{
+		// 护盾特效：从 Buff 下发的技能 id 动态定位 Skill/<ns>.img/skill/<strid>/effect；
+		// 节点缺失（BeiDou 精简 img 常态）则跳过，不影响主流程（R6）。
+		if (skill_id <= 0)
+			return;
+
+		std::string ns = string_format::skill_namespace(skill_id);
+		std::string strid = (skill_id < 10000000)
+			? string_format::extend_id(skill_id, 7)
+			: std::to_string(skill_id);
+		nl::node eff = nl::nx::Skill[ns + ".img"]["skill"][strid]["effect"];
+
+		if (!eff)
+			return;
+
+		shields[stat] = Animation(eff);
+	}
+
+	void Char::clear_shield(int stat)
+	{
+		shields.erase(stat);
 	}
 
 	void Char::speak(const std::string& line)

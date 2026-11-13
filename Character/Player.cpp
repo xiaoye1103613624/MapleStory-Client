@@ -577,11 +577,25 @@ namespace ms
 	void Player::give_buff(Buff buff)
 	{
 		buffs[buff.stat] = buff;
+
+		// 视觉开关（纯表现层）：分身残影随 SHADOWPARTNER 生效。
+		if (buff.stat == Buffstat::Id::SHADOWPARTNER)
+			set_shadowpartner(true);
+
+		// 护盾特效（MAGIC_GUARD/HOLY_SHIELD）：按技能 id 加载环绕动画。
+		if (buff.stat == Buffstat::Id::MAGIC_GUARD || buff.stat == Buffstat::Id::HOLY_SHIELD)
+			set_shield(static_cast<int>(buff.stat), buff.skillid);
 	}
 
 	void Player::cancel_buff(Buffstat::Id stat)
 	{
 		buffs[stat] = {};
+
+		if (stat == Buffstat::Id::SHADOWPARTNER)
+			set_shadowpartner(false);
+
+		if (stat == Buffstat::Id::MAGIC_GUARD || stat == Buffstat::Id::HOLY_SHIELD)
+			clear_shield(static_cast<int>(stat));
 	}
 
 	bool Player::has_buff(Buffstat::Id stat) const

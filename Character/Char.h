@@ -30,6 +30,8 @@
 #include "../Gameplay/MapleMap/MapObject.h"
 #include "../IO/Components/ChatBalloon.h"
 
+#include <map>
+
 namespace ms
 {
 	// Base for characters, e.g. the player and other clients on the same map.
@@ -112,6 +114,14 @@ namespace ms
 		// Change the character's face expression by id
 		void set_expression(int32_t expression);
 
+		// 分身残影开关（SHADOWPARTNER buff 驱动，纯表现层）。
+		void set_shadowpartner(bool on);
+
+		// 护盾特效开关（MAGIC_GUARD/HOLY_SHIELD）：按 Buff 下发的技能 id 动态加载
+		// Skill/<ns>.img/skill/<strid>/effect 循环动画；clear 时移除。
+		void set_shield(int stat, int32_t skill_id);
+		void clear_shield(int stat);
+
 		// Add a pet with the specified stats
 		void add_pet(uint8_t index, int32_t iid, const std::string& name, int32_t uniqueid, Point<int16_t> pos, uint8_t stance, int32_t fhid);
 		// Remove a pet with the specified index and reason
@@ -172,7 +182,13 @@ namespace ms
 		Afterimage afterimage;
 		TimedBool invincible;
 		TimedBool ironbody;
+		// 受击瞬时红闪（show_damage 触发 300ms，盖过 invincible 灰度）。
+		TimedBool hitflash;
 		std::list<DamageNumber> damagenumbers;
+		// 分身残影开关（SHADOWPARTNER），绘制滞后半透明复制体。
+		bool shadowpartner = false;
+		// 护盾特效动画表（key = Buffstat::Id 的 int 值）。
+		std::map<int, Animation> shields;
 
 		static EnumMap<CharEffect::Id, Animation> chareffects;
 	};
