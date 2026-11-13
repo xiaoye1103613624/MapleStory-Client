@@ -34,6 +34,7 @@
 #include "../../IO/Window.h"
 #include "../../Graphics/Color.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 
 #include <algorithm>
 #include <string>
@@ -61,6 +62,27 @@ namespace ms
 			{
 				chatbar->show_message(tip.c_str(), UIChatBar::MessageType::YELLOW);
 				return;
+			}
+		}
+
+		// Angel NoticeFailReason 子集 → locale；未知码走 generic。
+		std::string cs_fail_text(uint8_t code)
+		{
+			switch (code)
+			{
+				case 0x01: return Locale::text("cashshop.fail.timeout");
+				case 0x02: return Locale::text("cashshop.fail.cash");
+				case 0x04: return Locale::text("cashshop.fail.age");
+				case 0x05: return Locale::text("cashshop.fail.limit");
+				case 0x06: return Locale::text("cashshop.fail.same_account");
+				case 0x07: return Locale::text("cashshop.fail.name");
+				case 0x08: return Locale::text("cashshop.fail.gender");
+				case 0x09: return Locale::text("cashshop.fail.inventory");
+				case 0x0A: return Locale::text("cashshop.fail.coupon_expired");
+				case 0x0B: return Locale::text("cashshop.fail.coupon_used");
+				case 0x0C: return Locale::text("cashshop.fail.coupon_pcbang");
+				case 0x0D: return Locale::text("cashshop.fail.stock");
+				default: return Locale::format("cashshop.fail.generic", std::to_string(code));
 			}
 		}
 	}
@@ -201,17 +223,16 @@ namespace ms
 				LOG(LOG_DEBUG, "CashShopOp: bought item=" << e.itemid << " sn=" << e.sn);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("Bought #" + std::to_string(e.itemid));
+				cs_tip(Locale::format("cashshop.bought", std::to_string(e.itemid)));
 				break;
 			}
-			case 0x5C: // showCashShopMessage
+			case 0x5C: // showCashShopMessage（失败/提示码）
 			{
-				int8_t msg = recv.read_byte();
-				LOG(LOG_DEBUG, "CashShopOp: message=0x" << std::hex << (int)(uint8_t)msg);
+				uint8_t msg = static_cast<uint8_t>(recv.read_byte());
+				LOG(LOG_DEBUG, "CashShopOp: message=0x" << std::hex << (int)msg);
 				while (recv.available())
 					recv.skip_byte();
-				// 已开 CS 时 cs_tip 会 refresh；未开才 SM
-				cs_tip("CS msg 0x" + std::to_string(static_cast<int>(static_cast<uint8_t>(msg))));
+				cs_tip(cs_fail_text(msg));
 				break;
 			}
 			case 0x5E: // showGiftSucceed：string to + itemId + short count + int price
@@ -232,7 +253,7 @@ namespace ms
 					UIStateCashShop::cash_gifts.push_back(g);
 				}
 				(void)count; (void)price;
-				cs_tip("Gift → " + to + " #" + std::to_string(itemid));
+				cs_tip(Locale::format_all("cashshop.gift_ok", { to, std::to_string(itemid) }));
 				break;
 			}
 			case 0x60: // bought inv slots：byte type + short slots
@@ -253,7 +274,7 @@ namespace ms
 						break; // 背包已开：格子自显，不 tip
 					}
 				}
-				cs_tip("Inv slots → " + std::to_string(slots));
+				cs_tip(Locale::format("cashshop.inv_slots", std::to_string(slots)));
 				break;
 			}
 			case 0x62: // bought storage slots
@@ -268,7 +289,7 @@ namespace ms
 					if (st->is_active())
 						break; // 仓库已开：格数自显，不 tip
 				}
-				cs_tip("Storage slots → " + std::to_string(slots));
+				cs_tip(Locale::format("cashshop.storage_slots", std::to_string(slots)));
 				break;
 			}
 			case 0x64: // bought char slots（s9 showBoughtCharacterSlot）
@@ -278,7 +299,7 @@ namespace ms
 				LOG(LOG_DEBUG, "CashShopOp: charSlots=" << slots);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("Char slots → " + std::to_string(slots));
+				cs_tip(Locale::format("cashshop.char_slots", std::to_string(slots)));
 				break;
 			}
 			case 0x68: // takeFromCashInventory — short pos + cashItemInfo
@@ -362,7 +383,7 @@ namespace ms
 					<< " bal=" << UIStateCashShop::cash_maple_point);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("CS refund +" + std::to_string(pts));
+				cs_tip(Locale::format("cashshop.refund", std::to_string(pts)));
 				break;
 			}
 			case 0x87: // showBoughtCashRing：cashItemInfo + string + itemId + short qty
@@ -384,7 +405,7 @@ namespace ms
 					<< " item=" << itemid << " x" << qty);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("Ring → " + recipient);
+				cs_tip(Locale::format("cashshop.ring", recipient));
 				break;
 			}
 			case 0x89: // showBoughtCashPackage：byte size + N×cashItemInfo + short 0
@@ -410,7 +431,7 @@ namespace ms
 				LOG(LOG_DEBUG, "CashShopOp: package items=" << (int)n);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("CS package x" + std::to_string(n));
+				cs_tip(Locale::format("cashshop.package", std::to_string(n)));
 				break;
 			}
 			case 0x8D: // showBoughtQuestItem
@@ -427,7 +448,7 @@ namespace ms
 				LOG(LOG_DEBUG, "CashShopOp: questItem=" << itemid);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip("Quest item #" + std::to_string(itemid));
+				cs_tip(Locale::format("cashshop.quest_item", std::to_string(itemid)));
 				break;
 			}
 			case 0x9E: // showNameChangeSuccess
@@ -447,7 +468,9 @@ namespace ms
 					<< std::dec << " item=" << e.itemid);
 				while (recv.available())
 					recv.skip_byte();
-				cs_tip(mode == static_cast<int8_t>(0x9E) ? "Name change ok" : "World transfer ok");
+				cs_tip(mode == static_cast<int8_t>(0x9E)
+					? Locale::text("cashshop.name_change_ok")
+					: Locale::text("cashshop.world_transfer_ok"));
 				break;
 			}
 			default:
@@ -456,8 +479,8 @@ namespace ms
 					<< std::dec << " rem=" << recv.available());
 				while (recv.available())
 					recv.skip_byte();
-				// 未知 CS 模式：已开刷 meta；否则 tip
-				cs_tip("CS mode 0x" + std::to_string(static_cast<int>(static_cast<uint8_t>(mode))));
+				cs_tip(Locale::format("cashshop.mode_unhandled",
+					std::to_string(static_cast<int>(static_cast<uint8_t>(mode)))));
 				break;
 			}
 		}
@@ -470,7 +493,9 @@ namespace ms
 		LOG(LOG_DEBUG, "CashShopCheckName: name=" << name << " inUse=" << in_use);
 		while (recv.available())
 			recv.skip_byte();
-		cs_tip(in_use ? (name + " in use") : (name + " available"));
+		cs_tip(in_use
+			? Locale::format("cashshop.name_in_use", name)
+			: Locale::format("cashshop.name_available", name));
 	}
 
 	void CashShopNameChangePossibleHandler::handle(InPacket& recv) const

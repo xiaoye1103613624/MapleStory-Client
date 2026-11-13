@@ -49,10 +49,15 @@ namespace ms
 
 		void exit_cashshop();
 		void refresh_cs_meta();
+		/// 用进店角色职业/名字刷新顶栏（替换 stub 文案）。
+		void refresh_identity();
 
 	private:
 		void update_items();
 
+		// Angel CCSWnd_* 七面板在本端映射为 CashShop.img 子树（不拆 C++ 类）：
+		// Char→CSChar / List→CSList / Inventory→BtInventory / Locker→cash_inventory
+		// Tab→CSTab / Best→BestNew / Status→CSStatus
 		static constexpr uint8_t MAX_ITEMS = 7u * 2u + 1u;
 
 		class Item
@@ -136,7 +141,9 @@ namespace ms
 			BtInventory,
 			BtSaveAvatar,
 			BtTakeoffAvatar,
-			BtBuy
+			BtBuy,
+			// CSList/BtGift：与 BtBuy 同槽位偏移，枚举从 BtBuy+MAX_ITEMS 起
+			BtGift = BtBuy + MAX_ITEMS
 		};
 
 		Point<int16_t> BestNew_dim;
@@ -154,9 +161,11 @@ namespace ms
 		std::vector<Sprite> promotion_sprites;
 		Point<int16_t> promotion_pos;
 		int8_t promotion_index;
+		bool has_promotion = false;
 
 		Sprite mvp_sprites[7];
 		Point<int16_t> mvp_pos;
+		bool has_mvp = false;
 		uint8_t mvp_grade;
 		Gauge mvp_gauge;
 		float_t mvp_exp;

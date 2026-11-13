@@ -1,0 +1,10 @@
+{
+ "CCSWnd_Char::TransientLayer_Weather": {
+  "uuid": "78d48da5-a6e8-4a40-938d-5caa70aebf51",
+  "bytes": 55545
+ },
+ "CCSWnd_List::Draw": {
+  "uuid": "2c04d093-27b4-42e0-9fe2-e8e51256227a",
+  "bytes": 79035
+ }
+}

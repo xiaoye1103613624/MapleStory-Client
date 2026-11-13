@@ -30,6 +30,9 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/Stage.h"
+#include "../../Character/Player.h"
+#include "../../Character/CharStats.h"
+#include "../../Util/UiAssetResolve.h"
 
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/LoginPackets.h"
@@ -59,7 +62,10 @@ namespace ms
 		nl::node BestNew = Base["BestNew"];
 		nl::node Preview = Base["Preview"];
 		nl::node CSTab = CashShop["CSTab"];
-		nl::node CSGLChargeNX = CSTab["CSGLChargeNX"];
+		// 本包无 CSGLChargeNX；充值/查询走 CSStatus（Angel CCSWnd_Status）。
+		nl::node CSGLChargeNX = CashShop["CSGLChargeNX"];
+		if (!CSGLChargeNX)
+			CSGLChargeNX = CSTab["CSGLChargeNX"];
 		nl::node CSStatus = CashShop["CSStatus"];
 		nl::node CSPromotionBanner = CashShop["CSPromotionBanner"];
 		nl::node CSMVPBanner = CashShop["CSMVPBanner"];
@@ -79,39 +85,51 @@ namespace ms
 		for (size_t i = 0; i < 3; i++)
 			preview_sprites[i] = Preview[i];
 
+		// Preview Tab：贴在预览区上方（Base/backgrnd=800 宽，旧坐标 957 越界）。
 		for (size_t i = 0; i < 3; i++)
-			buttons[Buttons::BtPreview1 + i] = std::make_unique<TwoSpriteButton>(Base["Tab"]["Disable"][i], Base["Tab"]["Enable"][i], Point<int16_t>(957 + (i * 17), 46));
+		{
+			nl::node dis = Base["Tab"]["Disable"][i];
+			nl::node en = Base["Tab"]["Enable"][i];
+			if (dis && en)
+				buttons[Buttons::BtPreview1 + i] = std::make_unique<TwoSpriteButton>(
+					dis, en, Point<int16_t>(568 + static_cast<int16_t>(i * 17), 46));
+		}
+		if (auto it = buttons.find(Buttons::BtPreview1); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::PRESSED);
 
-		buttons[Buttons::BtPreview1]->set_state(Button::State::PRESSED);
-
-		buttons[Buttons::BtExit] = std::make_unique<MapleButton>(CSTab["BtExit"], Point<int16_t>(5, 728));
-		// [R6] CSGLChargeNX 在精简/定制部署数据中可能缺失；缺失时跳过其按钮创建。
+		// CSStatus = Angel BtCharge/BtCheck/BtCoupon/BtExit（orange-wz 实测；无 Wish/Mileage/Help 节点）。
+		try_maple_btn(buttons, Buttons::BtChargeNX, CSStatus["BtCharge"], Point<int16_t>(248, 13), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtChargeRefresh, CSStatus["BtCheck"], Point<int16_t>(289, 13), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtCoupon, CSStatus["BtCoupon"], Point<int16_t>(330, 13), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtExit, CSStatus["BtExit"], Point<int16_t>(371, 13), "UICashShop");
 		if (CSGLChargeNX)
 		{
-			buttons[Buttons::BtChargeNX] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeNX"], Point<int16_t>(5, 554));
-			buttons[Buttons::BtChargeRefresh] = std::make_unique<MapleButton>(CSGLChargeNX["BtChargeRefresh"], Point<int16_t>(92, 554));
+			if (!buttons.count(Buttons::BtChargeNX) || !buttons[Buttons::BtChargeNX])
+				try_maple_btn(buttons, Buttons::BtChargeNX, CSGLChargeNX["BtChargeNX"], Point<int16_t>(5, 554), "UICashShop");
+			if (!buttons.count(Buttons::BtChargeRefresh) || !buttons[Buttons::BtChargeRefresh])
+				try_maple_btn(buttons, Buttons::BtChargeRefresh, CSGLChargeNX["BtChargeRefresh"], Point<int16_t>(92, 554), "UICashShop");
 		}
+		// 可选扩展钮：节点缺失则仅保留 SoftKey（W/M/H）。
+		try_maple_btn(buttons, Buttons::BtWish, CSStatus["BtWish"], Point<int16_t>(226, 6), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtMileage, CSStatus["BtMileage"], Point<int16_t>(869, 4), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtHelp, CSStatus["BtHelp"], Point<int16_t>(997, 4), "UICashShop");
 
+		// CSTab/Tab 子键为 "1".."9"（非 0..8）。
 		for (size_t i = 0; i < 9; i++)
-			menu_tabs[i] = CSTab["Tab"][i];
-
-		buttons[Buttons::BtWish] = std::make_unique<MapleButton>(CSStatus["BtWish"], Point<int16_t>(226, 6));
-		buttons[Buttons::BtMileage] = std::make_unique<MapleButton>(CSStatus["BtMileage"], Point<int16_t>(869, 4));
-		buttons[Buttons::BtHelp] = std::make_unique<MapleButton>(CSStatus["BtHelp"], Point<int16_t>(997, 4));
-		buttons[Buttons::BtCoupon] = std::make_unique<MapleButton>(CSStatus["BtCoupon"], Point<int16_t>(950, 4));
+			menu_tabs[i] = CSTab["Tab"][i + 1];
 
 		Charset tab;
 
-		job_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::SUPERNOVA);
-		bind_text(job_label, "cashshop.stub_job");
-		name_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE);
-		bind_text(name_label, "cashshop.stub_name");
+		job_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::SUPERNOVA, "");
+		name_label = Text(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE, "");
 		cs_meta_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, "");
+		refresh_identity();
 		refresh_cs_meta();
 
 		// [R6] CSPromotionBanner 在精简/定制部署数据中可能缺失；缺失时跳过创建，避免引用空节点。
 		if (CSPromotionBanner)
 		{
+			has_promotion = true;
 			promotion_pos = Point<int16_t>(138, 40);
 			sprites.emplace_back(CSPromotionBanner["shadow"], promotion_pos);
 
@@ -125,6 +143,7 @@ namespace ms
 		// 缺失时跳过创建，避免引用空节点；空 Gauge/Texture 渲染为 no-op，与 R6 裁剪一致。
 		if (CSMVPBanner)
 		{
+			has_mvp = true;
 			for (size_t i = 0; i < 7; i++)
 				mvp_sprites[i] = CSMVPBanner["grade"][i];
 
@@ -146,20 +165,29 @@ namespace ms
 		}
 
 		Point<int16_t> search_pos = Point<int16_t>(0, 36);
-		sprites.emplace_back(CSItemSearch["backgrnd"], search_pos);
-		sprites.emplace_back(CSItemSearch["search"], search_pos + Point<int16_t>(35, 8));
+		if (CSItemSearch["backgrnd"])
+			sprites.emplace_back(CSItemSearch["backgrnd"], search_pos);
+		if (CSItemSearch["search"])
+			sprites.emplace_back(CSItemSearch["search"], search_pos + Point<int16_t>(35, 8));
 
-		buttons[Buttons::BtBuyAvatar] = std::make_unique<MapleButton>(CSChar["BtBuyAvatar"], Point<int16_t>(642, 305));
-		buttons[Buttons::BtDefaultAvatar] = std::make_unique<MapleButton>(CSChar["BtDefaultAvatar"], Point<int16_t>(716, 305));
-		buttons[Buttons::BtInventory] = std::make_unique<MapleButton>(CSChar["BtInventory"], Point<int16_t>(938, 305));
-		buttons[Buttons::BtSaveAvatar] = std::make_unique<MapleButton>(CSChar["BtSaveAvatar"], Point<int16_t>(864, 305));
-		buttons[Buttons::BtTakeoffAvatar] = std::make_unique<MapleButton>(CSChar["BtTakeoffAvatar"], Point<int16_t>(790, 305));
+		// CSChar 本包仅 BtBuyAvatar/BtDefaultAvatar/BtTakeoffAvatar（无 Save/Inventory）。
+		try_maple_btn(buttons, Buttons::BtBuyAvatar, CSChar["BtBuyAvatar"], Point<int16_t>(568, 280), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtDefaultAvatar, CSChar["BtDefaultAvatar"], Point<int16_t>(642, 280), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtTakeoffAvatar, CSChar["BtTakeoffAvatar"], Point<int16_t>(716, 280), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtSaveAvatar, CSChar["BtSaveAvatar"], Point<int16_t>(790, 280), "UICashShop");
+		try_maple_btn(buttons, Buttons::BtInventory, CSChar["BtInventory"], Point<int16_t>(750, 280), "UICashShop");
 
-		if (CSGLChargeNX) charge_charset = Charset(CSGLChargeNX["Number"], Charset::Alignment::RIGHT);
+		if (CSGLChargeNX && CSGLChargeNX["Number"])
+			charge_charset = Charset(CSGLChargeNX["Number"], Charset::Alignment::RIGHT);
+		else if (CSStatus["Number"])
+			charge_charset = Charset(CSStatus["Number"], Charset::Alignment::RIGHT);
 
 		item_base = CSList["Base"];
 		item_line = Base["line"];
-		item_none = Base["noItem"];
+		if (Base["noItem"])
+			item_none = Base["noItem"];
+		else if (CashShop["PicturePlate"]["NoItem"])
+			item_none = CashShop["PicturePlate"]["NoItem"];
 
 		for (nl::node item_label : CSEffect)
 			item_labels.emplace_back(item_label);
@@ -174,9 +202,12 @@ namespace ms
 
 		for (size_t i = 0; i < MAX_ITEMS; i++)
 		{
-			div_t div = std::div(i, 7);
-
-			buttons[Buttons::BtBuy + i] = std::make_unique<MapleButton>(CSList["BtBuy"], Point<int16_t>(146, 523) + Point<int16_t>(124 * div.rem, 205 * div.quot));
+			div_t div = std::div(static_cast<int>(i), 7);
+			Point<int16_t> cell = Point<int16_t>(146, 523) + Point<int16_t>(124 * div.rem, 205 * div.quot);
+			try_maple_btn(buttons, Buttons::BtBuy + static_cast<uint16_t>(i), CSList["BtBuy"], cell, "UICashShop");
+			// 赠礼钮叠在购买钮右侧（CSList/BtGift 四态齐全）。
+			try_maple_btn(buttons, Buttons::BtGift + static_cast<uint16_t>(i), CSList["BtGift"],
+				cell + Point<int16_t>(64, 0), "UICashShop");
 
 			item_name[i] = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::MINESHAFT);
 			item_price[i] = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::GRAY);
@@ -217,7 +248,9 @@ namespace ms
 
 	void UICashShop::draw(float inter) const
 	{
-		preview_sprites[preview_index].draw(position + Point<int16_t>(644, 65), inter);
+		// Preview 212×165；贴在 800 宽底板右侧内。
+		if (preview_index < 3)
+			preview_sprites[preview_index].draw(position + Point<int16_t>(568, 65), inter);
 
 		UIElement::draw_sprites(inter);
 
@@ -231,10 +264,14 @@ namespace ms
 		if (!cs_meta_label.empty())
 			cs_meta_label.draw(label_pos + Point<int16_t>(0, 16));
 
-		promotion_sprites[promotion_index].draw(position + promotion_pos, inter);
+		if (has_promotion && !promotion_sprites.empty())
+			promotion_sprites[promotion_index].draw(position + promotion_pos, inter);
 
-		mvp_sprites[mvp_grade].draw(position + mvp_pos, inter);
-		mvp_gauge.draw(position + mvp_pos);
+		if (has_mvp)
+		{
+			mvp_sprites[mvp_grade].draw(position + mvp_pos, inter);
+			mvp_gauge.draw(position + mvp_pos);
+		}
 
 		Point<int16_t> charge_pos = position + Point<int16_t>(107, 388);
 
@@ -276,7 +313,11 @@ namespace ms
 				item.draw(DrawArgument(position + Point<int16_t>(164, 473) + Point<int16_t>(124 * div.rem, 205 * div.quot), 2.0f, 2.0f));
 
 				if (item.label != Item::Label::NONE)
-					item_labels[item.label + 1].draw(position + Point<int16_t>(152, 372) + Point<int16_t>(124 * div.rem, 205 * div.quot), inter);
+				{
+					size_t li = static_cast<size_t>(item.label) + 1;
+					if (li < item_labels.size())
+						item_labels[li].draw(position + Point<int16_t>(152, 372) + Point<int16_t>(124 * div.rem, 205 * div.quot), inter);
+				}
 
 				item_name[i].draw(position + Point<int16_t>(192, 480) + Point<int16_t>(124 * div.rem, 205 * div.quot));
 
@@ -345,6 +386,9 @@ namespace ms
 		}
 		case Buttons::BtNext:
 		{
+			if (!has_promotion || promotion_sprites.empty())
+				return Button::State::NORMAL;
+
 			size_t size = promotion_sprites.size() - 1;
 
 			promotion_index++;
@@ -356,6 +400,9 @@ namespace ms
 		}
 		case Buttons::BtPrev:
 		{
+			if (!has_promotion || promotion_sprites.empty())
+				return Button::State::NORMAL;
+
 			size_t size = promotion_sprites.size() - 1;
 
 			promotion_index--;
@@ -616,15 +663,60 @@ namespace ms
 			break;
 		}
 
-		if (buttonid >= Buttons::BtBuy)
+		if (buttonid >= Buttons::BtGift && buttonid < Buttons::BtGift + MAX_ITEMS)
 		{
-			int16_t index = buttonid - Buttons::BtBuy + list_offset;
+			int16_t index = static_cast<int16_t>(buttonid - Buttons::BtGift) + list_offset;
+			if (index < 0 || index >= static_cast<int16_t>(items.size()))
+				return Button::State::NORMAL;
+			int32_t sn = items[index].get_sn();
+			std::string pre;
+			if (auto ci = UI::get().get_element<UICharInfo>())
+				pre = ci->get_target_name();
+			UI::get().emplace<UISoftKey>([sn, pre](const std::string& tip) {
+				if (tip.empty()) return;
+				size_t c1 = tip.find(',');
+				size_t c2 = (c1 == std::string::npos) ? std::string::npos : tip.find(',', c1 + 1);
+				size_t c3 = (c2 == std::string::npos) ? std::string::npos : tip.find(',', c2 + 1);
+				try {
+					int32_t birthday = 0;
+					std::string name = pre;
+					std::string msg;
+					int32_t gift_sn = sn;
+					if (c1 == std::string::npos) {
+						if (!pre.empty()) name = pre;
+						else return;
+						birthday = std::stoi(tip);
+					} else if (c2 == std::string::npos) {
+						birthday = std::stoi(tip.substr(0, c1));
+						if (pre.empty()) name = tip.substr(c1 + 1);
+						else { gift_sn = std::stoi(tip.substr(c1 + 1)); name = pre; }
+					} else if (c3 == std::string::npos) {
+						birthday = std::stoi(tip.substr(0, c1));
+						name = tip.substr(c1 + 1, c2 - c1 - 1);
+						msg = tip.substr(c2 + 1);
+					} else {
+						birthday = std::stoi(tip.substr(0, c1));
+						gift_sn = std::stoi(tip.substr(c1 + 1, c2 - c1 - 1));
+						name = tip.substr(c2 + 1, c3 - c2 - 1);
+						msg = tip.substr(c3 + 1);
+					}
+					if (gift_sn > 0 && !name.empty()) {
+						CashShopGiftPacket(birthday, gift_sn, name, msg).dispatch();
+						LOG(LOG_DEBUG, "UICashShop: BtGift sn=" << gift_sn << " to=" << name);
+					}
+				} catch (...) {}
+			}, []() {}, pre.empty() ? "bday,name[,msg]" : "bday[,sn][,msg]");
+			return Button::State::NORMAL;
+		}
+
+		if (buttonid >= Buttons::BtBuy && buttonid < Buttons::BtBuy + MAX_ITEMS)
+		{
+			int16_t index = static_cast<int16_t>(buttonid - Buttons::BtBuy) + list_offset;
 
 			if (index < 0 || index >= static_cast<int16_t>(items.size()))
 				return Button::State::NORMAL;
 
-			Item item = items[index];
-			int32_t sn = item.get_sn();
+			int32_t sn = items[index].get_sn();
 
 			// SoftKey 确认：空/仅数字 useNX → 默认 useNX=1；useNX,sn 可改 SN
 			UI::get().emplace<UISoftKey>([sn](const std::string& s) {
@@ -882,8 +974,31 @@ namespace ms
 		return TYPE;
 	}
 
+	void UICashShop::refresh_identity()
+	{
+		// Angel CCashShop 顶栏用本角色职业名 + 角色名；禁止 stub 占位。
+		try
+		{
+			const CharStats& st = Stage::get().get_player().get_stats();
+			std::string job = st.get_jobname();
+			std::string name = st.get_name();
+			if (job.empty())
+				job = Locale::text("cashshop.job_unknown");
+			if (name.empty())
+				name = Locale::text("cashshop.name_unknown");
+			job_label.change_text(job);
+			name_label.change_text(name);
+		}
+		catch (...)
+		{
+			job_label.change_text(Locale::text("cashshop.job_unknown"));
+			name_label.change_text(Locale::text("cashshop.name_unknown"));
+		}
+	}
+
 	void UICashShop::refresh_cs_meta()
 	{
+		refresh_identity();
 		int wish_n = 0;
 		for (int32_t sn : UIStateCashShop::cash_wishlist)
 			if (sn != 0)
@@ -924,7 +1039,10 @@ namespace ms
 			int16_t index = i + list_offset;
 			bool found_item = index < items.size();
 
-			buttons[Buttons::BtBuy + i]->set_active(found_item);
+			if (auto it = buttons.find(Buttons::BtBuy + static_cast<uint16_t>(i)); it != buttons.end() && it->second)
+				it->second->set_active(found_item);
+			if (auto it = buttons.find(Buttons::BtGift + static_cast<uint16_t>(i)); it != buttons.end() && it->second)
+				it->second->set_active(found_item);
 
 			std::string name = "";
 			std::string price_text = "";
