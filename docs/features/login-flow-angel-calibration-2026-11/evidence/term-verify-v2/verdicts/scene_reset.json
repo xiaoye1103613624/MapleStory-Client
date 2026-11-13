@@ -1,0 +1,84 @@
+{
+  "method": "current running exe 47be00b37d093d21 (01:19:05 full-worktree build incl. fix + concurrent edits) + single-instance + protocol-anchor + BitBlt; 607f789811db25ed (01:14:48) was deterministic fix-only build, overwritten before capture",
+  "ts": "2026-11-14 01:22:23",
+  "pavilion_roi": [
+    520,
+    100,
+    760,
+    300
+  ],
+  "config_head_before": "b'# M'",
+  "fix_under_test": "UICommonCreation.cpp 5x reset_creation_scene() + UIStateLogin::remove clear_scene()",
+  "pid": 63224,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "field_input": {
+    "account": {
+      "text": "admin",
+      "sent_ok": true
+    },
+    "password": {
+      "text": "admin",
+      "sent_ok": true
+    }
+  },
+  "serverlist_anchor_hit": true,
+  "charlist_hit": true,
+  "frames": {
+    "scene_reset_1_race_before": {
+      "file": "scene_reset_1_race_before.png",
+      "mean": 137.12,
+      "std": 76.43,
+      "uniq": 1102,
+      "orange_ratio": 0.02602,
+      "real_gl_frame": true
+    },
+    "scene_reset_2_creation": {
+      "file": "scene_reset_2_creation.png",
+      "mean": 121.74,
+      "std": 81.12,
+      "uniq": 923,
+      "orange_ratio": 0.16642,
+      "real_gl_frame": true
+    },
+    "scene_reset_3_race_return": {
+      "file": "scene_reset_3_race_return.png",
+      "mean": 136.23,
+      "std": 76.77,
+      "uniq": 1119,
+      "orange_ratio": 0.02602,
+      "real_gl_frame": true
+    }
+  },
+  "enter_retry_used": false,
+  "esc_retry_used": false,
+  "metrics": {
+    "full_ncc_before_vs_return": 0.967601,
+    "full_ncc_before_vs_creation": 0.656041,
+    "pavilion_roi_ncc_creation_vs_return": 0.203337,
+    "orange_before": 0.02602,
+    "orange_creation": 0.16642,
+    "orange_return": 0.02602
+  },
+  "verdict": {
+    "entered_creation_page": true,
+    "scene_cleared_on_return": true,
+    "return_is_same_forest_screen": true,
+    "overall": "FIX_VERIFIED"
+  },
+  "send_nonheartbeat": [
+    "[SEND] PacketDump : 01 00 05 00 61 64 6d 69 6e 05 00 61 64 6d 69 6e 00 00 00 00 ",
+    "[SEND] PacketDump : 0b 00 ",
+    "[SEND] PacketDump : 06 00 00 00 ",
+    "[SEND] PacketDump : 05 00 00 00 00 "
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-14 01:22:46】",
+  "config_head_after": "b'# M'",
+  "exe_loaded_at_capture": "47be00b37d093d214d9a / 2026-11-14 01:19:05 / 5100544 B",
+  "exe_note": "TS of capture=01:22:23; method label written pre-run named 607f789811db25ed but running dir was overwritten at 01:19:05 by concurrent build-popup-audit (sha256 identical). Verdict still valid on loaded binary."
+}

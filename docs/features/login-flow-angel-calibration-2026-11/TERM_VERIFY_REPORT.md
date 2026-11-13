@@ -1,6 +1,8 @@
 > 归档说明：本报告由「补终验」(2026-11-13) 生成，并于 2026-11-14 00:2x 按用户体感驳回（m01143）**整体重写**。运行侧原始证据（本端渲染帧 PNG / 各层 verdict JSON / packet_dump 片段 / 可复现脚本）已归档到 [`evidence/term-verify-v2/`](evidence/term-verify-v2/)，全部关键数值内联可独立复核。
 >
 > **本报告取代 2026-11-13 23:00 版**：那一版所有帧来自旧 exe `b406cac6`(21:11:58)，**不含用户 21:53 的「30」改动与 21:24 的核心窗口提交**，属于口径污染，已作废。
+>
+> **2026-11-14 01:3x 增补 §9**：用户提供桌面 78 张目标帧（`C:\Users\11036\Desktop\正确客户端截图\`，含 6 张创建角色链路帧），推翻「缺创建角色目标帧」口径；并按 m01638 补齐左侧木牌栏清单 / 点击逻辑 / 切页变化，修复且真机验收「取消回职业团把亭子背景带过来」的 bug（当前 exe `607f789811db25ed`）。
 
 ---
 
@@ -12,8 +14,10 @@
 
 ## 0. 口径声明（先钉死，不事后放宽）
 
-- **当前二进制**：`E:\MXD\BeiDou-Client-xy\MapleStory.exe` = sha256 前缀 `aa0aea67` / 23:39:37 / 5 107 200 B，`build_calibration.log` 零 error（构建命令 `MSYS_NO_PATHCONV=1 cmd.exe /c "E:\project\MapleStory-Client\build_calibration.bat"`，`BUILD_EXITCODE=0`）。它是当前 HEAD `46419e4f` 的确定性全量编译产物，**含 21:53 `806ae254`(CHANNEL_PAGE_SIZE=30U) 与 21:24 `886ce2c9`**。
-- **作废口径**：上一版报告的 `b406cac6`(21:11:58 / 5 104 128 B) 早于上述两提交，用它签「CELL_W=94 双向像素闭环」不能回答「当前代码对齐了没」。本轮全部帧来自 `aa0aea67`，CELL_W 已在该二进制上复测（§2）。
+- **当前二进制（§9 修复后）**：`E:\MXD\BeiDou-Client-xy\MapleStory.exe` = sha256 前缀 `607f789811db25ed` / 2026-11-14 01:14:48 / 5 100 544 B，`build_calibration.log` 全量 708 TU 重编、零 error（构建命令 `MSYS_NO_PATHCONV=1 cmd.exe /c "E:\project\MapleStory-Client\build_calibration.bat"`，`BUILD_EXITCODE=0`）。它是 §9 亭子残留修复（`IO/UITypes/UICommonCreation.cpp` + `IO/UIStateLogin.cpp`）落工作树后的确定性全量编译产物，**含 21:53 `806ae254`(CHANNEL_PAGE_SIZE=30U) 与 21:24 `886ce2c9`**。首跑 `LNK1104 无法打开 MapleStory.exe` 是运行中客户端锁住输出文件（编译阶段零 error），`taskkill /IM MapleStory.exe`（保留 java 8484 服务端 pid 37592）释放锁后重建通过。
+- **蓝军自查翻案（必读）**：01:14:48 的确定性产物是 `607f789811db25ed` / 5 100 544 B；但 01:19:05 运行目录 exe 被**另一会话从同一根工作树全量重编后覆盖**，实测 `build-popup-audit/MapleStory.exe` 与 `E:\MXD\BeiDou-Client-xy\MapleStory.exe` sha256 逐字节 identical = `47be00b37d093d214d9a` / 5 100 544 B。**§9 真机验收脚本运行于 01:22:23，实际加载的是 `47be00b37d093d21`**（含本修复 + 别会话 8 项并发改动），不是 `607f789811db25ed`。`scene_reset_verdict.json` 的 `FIX_VERIFIED` 结论仍成立（数值在该二进制上跑出），但报告原先把验收帧挂到 `607f…` 属口径错配，此处纠正：**§9 验收 = 全量工作树产物，非「只编修复」的纯净二进制**；`607f…` 仅证明修复可确定性编成、编译阶段零 error。
+- **§2–§8 帧口径**：来自 `aa0aea67`(23:39:37 / 5 107 200 B)，仍是对 `806ae254`/`886ce2c9` 的有效证据；CELL_W=94 已在该二进制上复测（§2）。§9 的亭子残留验收帧与创建链路两端对账帧来自 `47be00b37d093d21`（01:19:05）。
+- **作废口径**：最早一版报告的 `b406cac6`(21:11:58 / 5 104 128 B) 早于上述两提交，用它签「CELL_W=94 双向像素闭环」不能回答「当前代码对齐了没」。
 - **仍是全量工作树**：exe 含 160+ 其它特性改动，非「只编 a90fda3 校准」的纯净二进制；像素证据语义 =「当前全量工作树渲染出来的画面」。
 - **窗口标题进图 ≠ 取到游戏画面**；遮挡白页帧一律作废。入证据帧全部过 `real_gl_frame`（std>8、采样色>40）且经 `read_image` 目视确认。
 - **日志单实例口径**：`recapture_all_v2.py` 记 `packet_dump.log` 起始 offset=2011574，只读本实例新增 3564 B；`serverlist_anchor_hit=true` / `charlist_hit=true`，`send_nonheartbeat` 完整链 `01`(登录 admin/admin) → `0b`(SERVERLIST_REQUEST) → `06`(ServerStatusRequest) → `05`(CHARLIST_REQUEST)。config 全程 head3=`b'# M'`（无 BOM）、`login.auto=false`。
@@ -73,7 +77,7 @@
 - **功能可达**：`BtNew` WZ 真值 NCC=1.0 定位 (865,263) + 时序修正（等清晰选角色页 settle 再点）→ [`shots/racecreate_click_f06.png`](evidence/term-verify-v2/shots/racecreate_click_f06.png) = UIRaceSelect 落地（5 职业卡横排、冒险家介绍、700×460 窗框、BtSelect 木牌）。`racecreate_click` 7 帧全 real，mean 145.42→131.91（点击后显著切屏）→136.38→135.52（[`verdicts/racecreate_click.json`](evidence/term-verify-v2/verdicts/racecreate_click.json)）。`fg_match=true`、config 前后 `b'# M'`。
 - 状态机源码：`UICharSelect.cpp:1164-1177` `case Buttons::BtNew:` → `deactivate(); tab_index=0; UI::get().emplace<UIRaceSelect>()`；`UIStateLogin.cpp:303-315 is_step_window` 含 RACESELECT/CLASSCREATION。
 - **目标端缺失**：`correct_shots/` 7 张（login/channel_select/channel_selected/char_select/ingame/keymap/seik）**无创建角色目标帧**；审计文档 `create-char-classic-dual-path/notes/native-step4-layout.md` 自标「step4 屏幕绝对落点置信度低，推导值，明确标为决策点」。`806ae254` 只改 UIRaceSelect(88 行)，未碰 UILogin/UICharSelect/UICommonCreation。
-- **判词**：**可签「创建角色页本端渲染帧到手 / 功能可达」，不可签「创建角色 UI 已像素对齐 Angel」**——缺目标端帧属外部阻塞（用户未提供），须披露而非脑补。
+- **判词（§9 更新）**：桌面 6 张创建链路目标帧到位后，「缺目标帧」口径已作废 → 有目标帧、实测未对齐：建角页 `scene_reset_2_creation.png` vs `desktop_racecreate_adventurer.png` gray **0.846614**（blocks 0.8535 / 15 热区）、职业团页 `scene_reset_1_race_before.png` vs `desktop_racecreate_race.png` gray **0.718647**（blocks 0.6762 / 26 热区），见 [`verdicts/ncc_creation.json`](evidence/term-verify-v2/verdicts/ncc_creation.json) / [`verdicts/ncc_race.json`](evidence/term-verify-v2/verdicts/ncc_race.json)。**可签「功能可达 + 两端帧到手」，不可签「像素对齐」**——证据从「外部阻塞」升级为「实测未对齐」。
 
 ### 2.5 其余两屏（对账留证，不混入四问结论）
 
@@ -109,16 +113,17 @@
 
 ## 6. 不能签的（candidate / 完成分离）
 
-1. **「登录四屏像素级修复完成」不签**：登录页品牌/版本残留（§2.2）、角色属性板内容不一致（§2.3）、创建角色页无目标帧（§2.4）三处明确未对齐。
+1. **「登录四屏像素级修复完成」不签**：登录页品牌/版本残留（§2.2）、角色属性板内容不一致（§2.3）、创建角色链路两端实测未对齐（§2.4 / §9.5）、选角色页左侧木牌整栏缺失（§9.1）四处明确未对齐。
 2. **CELL_H=32 本端渲染实证缺失**：服务端只发 3 频道 1 行。
 3. **选角色页 18px 行距像素侧**：两种自动检测器两端均不收敛，硬凑当铁证踩事实红线；逻辑层常量对账已覆盖。
 4. **纯净校准二进制**：exe 是全量增量编译含 160+ 特性，未做「只编 a90fda3」的隔离构建。
-5. **创建角色页像素对齐**：缺 Angel 目标帧，属外部阻塞（用户未提供），披露不脑补。
+5. **创建角色页像素对齐**：桌面目标帧已到位（不再属外部阻塞），但两端实测 gray 0.8466 / 0.7186（§9.5），明确未对齐，不签。
 6. **真值源口径未完全统一**：`notes/authority-switch-2026-11-12.md` 记「后续以 Angel 反编译为准，不以截图为准」，但频道 94/32 用截图 NCC 量出、选角色页用 Angel 字面量；本轮把「本端渲染帧 ↔ 目标帧」拉到同一张桌上，历史口径分裂的事实仍在。
 
 ## 7. 遗留与收尾
 
-- **待实机叠图项**：README.md:386-391「实机五屏截图比对」可**部分销**（登录/选世界/选频道/选角色/创建角色五屏本端帧均到手并叠图），不能全销（进图需与目标帧同场景同弹窗态重取；创建角色需补目标端帧）。
+- **待实机叠图项**：README.md:386-391「实机五屏截图比对」可**部分销**（登录/选世界/选频道/选角色/创建角色五屏本端帧均到手并叠图；桌面目标帧到位后创建链路两端已对账），不能全销（进图需与目标帧同场景同弹窗态重取）。
+- **§9 亭子残留 bug 已修并真机验收**（`verdicts/scene_reset.json` = FIX_VERIFIED），非遗留。
 - **git 卫生已收口**：分区 subagent `537bb49d` 自报「干净」不实（独立核 281 行 `??`），已用 `9684e7ea 🔧 chore(gitignore)` 二进制 ASCII 尾部追加 31 行规则覆盖，`git status --short` → 0；373 个已跟踪 `tools/_*` 未丢。本轮归档后再次核验 `git status` 干净。
 - 分支 `feature/dev_0.0.1`、`a90fda3` 是 HEAD 祖先、分区 28 commits 核验通过（见上一版报告 §7，事实未变）。
 
@@ -133,4 +138,103 @@
 
 ### 给用户 m01143 四问的一句话答案
 
-> **没有全部对齐。** 频道「30」是容量/分页常量（已进当前 exe），但服务端只给 3 频道、画面只 3 格，列步长 94 当前代码实测仍对齐、行步长缺数据实证；登录页「还有问题」坐实（LOGO/版本号/字色品牌残留，位置不漂）；角色属性 UI「不对」坐实（板宽一致、内容不一致）；创建角色页本端能进、帧已抓到，但**没有 Angel 目标帧，无法签对齐**。四层里动画/逻辑/功能三层签，UI 层逐屏按上表分别签或不签——体感是输入，证据链才是交付，口径不拿来当修复。
+> **没有全部对齐。** 频道「30」是容量/分页常量（已进当前 exe），但服务端只给 3 频道、画面只 3 格，列步长 94 当前代码实测仍对齐、行步长缺数据实证；登录页「还有问题」坐实（LOGO/版本号/字色品牌残留，位置不漂）；角色属性 UI「不对」坐实（板宽一致、内容不一致）；创建角色页本端能进、桌面目标帧也已到位，但两端实测 0.8466 / 0.7186 未对齐（§9.5）。**另补 m01638：左侧木牌栏目标端统一 4 块、本端选角色页整栏没实现（§9.1）；「职业团→角色设置→取消把亭子带回来」的 bug 已定位到 `~UICommonCreation` 析构死代码 + 四条离开路径漏清场，修复后真机验收 FIX_VERIFIED（§9.4）。** 四层里动画/逻辑/功能三层签，UI 层逐屏按上表分别签或不签——体感是输入，证据链才是交付，口径不拿来当修复。
+
+
+---
+
+## 9. 左侧木牌栏 / 页面切换 / 亭子残留修复（用户 m01638）
+
+> 体感（m01638）：「这几个页面如果左侧有木牌，就要注意有几个 是哪几个 点击木牌后的逻辑是什么 如果涉及到几个页面的切换 点击后页面的变化也要清楚，现在就存在选择职业团进入角色设置页后 取消回到职业团选择页会把之前页面背景亭子也带过来」
+> 味道：📌 体感是输入，证据链才是交付。四类问题（几个 / 哪几个 / 点击逻辑 / 切页变化与背景归位）逐一钉源码行 + 目标帧 + 真机验收，不靠注释、不靠猜。
+
+**数据源补充**：`C:\Users\11036\Desktop\正确客户端截图\` = 78 张目标帧（登录链路 12 + 创建角色链路 6 + 60 余张游戏内 UI）；`scripts/ingest_desktop_targets.py` 归拢 12 张到 `targets_desktop\`（11 张 1280×720 + `频道变更.png` 428×122 局部弹窗）。登录/选频道/选角色/进图 5 张与旧 `correct_shots/` **sha256 逐字节 identical**（同一套基准，不推翻既有 NCC）。
+
+### 9.1 左侧木牌栏：几个 / 哪几个（目标端逐张 read_image 定死）
+
+统一是**跨页导航组件 = 4 块**（[`verdicts/left_plank_audit.json`](evidence/term-verify-v2/verdicts/left_plank_audit.json) / [`verdicts/plank_segments.json`](evidence/term-verify-v2/verdicts/plank_segments.json) / [`shots/planks_cmp_char_select.png`](evidence/term-verify-v2/shots/planks_cmp_char_select.png)）：
+
+| # | 元素 | y 区段 | 类型 | 出现页 |
+| --- | --- | --- | --- | --- |
+| 1 | `✓<页标题>` 深红牌（选择频道 / 选择角色 / 创建角色） | 36–85 | 标题牌（非按钮） | 全部 |
+| 2 | **因页而异，见下** | 99–148 / 127–156 | 信息条 或 按钮 | 全部 |
+| 3 | `查看所有角色▶` | 377–399 | 按钮 | 全部 |
+| 4 | `回到首页◀` | 427–449 | 按钮 | 全部 |
+
+**第 2 块是用户问「哪几个」的关键区分**：
+- **频道页**（`desktop_channel_expanded.png` 目视）：`查看世界地图▶` **按钮**（y≈127–156），对应 `UIWorldSelect.cpp:160 WS_SIDEBAR_Y0=127 BtViewChoice`。频道页能点的侧栏 = 3 个按钮（查看世界地图 / 查看所有角色 / 回到首页）。
+- **选角色 / 职业团 / 建角页**：`选择的世界 SCANIA Ch.1` **信息条**（y99–148，非按钮，`desktop_char_select.png` / `desktop_racecreate_race.png` / `desktop_racecreate_adventurer.png` 目视）。这些页能点的侧栏 = 2 个按钮（查看所有角色 / 回到首页）。
+
+**本端落地审计**（左侧栏 ROI(0,0,160,470) gray NCC）：登录 **0.9995** / 频道收起+展开 **0.8717**(edge 0.7436) / 选角色 **0.4192**(edge 0.3757) / 创建页 **0.5156**(edge 0.4132)。逐行暗像素密度木牌 y 区段：选角色页本端 `[]`（**整栏没渲染**）vs 目标 `[[36,85],[88,94],[99,148],[377,399],[427,449]]`；创建页本端仅 `[[151,168],[387,413],[445,469]]`（缺顶部标题牌+世界信息条）。源码坐实：`UIWorldSelect.cpp:158-163,306-324` 用 `WorldSelect/BtViewChoice`+`BtViewAll`+`Common/BtStart` 真资产；**`UICharSelect.cpp` 搜侧栏按钮 0 命中**（只有 `BtCharacter`(:1308) / `BtPreview`(:1316)，无 `BtStart`、无标题牌、无世界信息条）→ 选角色页整栏缺失是**本端没实现，不是位置漂**。`UIRaceSelect.cpp:156` / `UICommonCreation.cpp:456` 只构造了 `BtStart`（回到首页）这一块。
+
+### 9.2 点击逻辑表（全部源码行锚）
+
+| 页 | 按钮 | 源码 | 点击后 |
+| --- | --- | --- | --- |
+| 频道 | `BtViewChoice` 查看世界地图 | `UIWorldSelect.cpp:1369-1375` | `emplace<UIRecommendWorld>` 推荐世界弹窗 |
+| 频道 | `BtViewAll` 查看所有角色 | `:1364-1368` | `ViewAllCharPacket().dispatch()`（VIEW_ALL_CHAR） |
+| 频道 | `BtStart` 回到首页 | `:1350-1362` | `Session::reconnect()` + `set_step(0)` + remove WORLDSELECT/LOGINWAIT/LOGINNOTICE + `emplace<UILogin>()` |
+| 选角色 | `BtCharacter` 查看所有角色 | `UICharSelect.cpp:1308-1314` | `ViewAllCharPacket().dispatch()` |
+| 选角色 | `BtNew` 创建角色 | `:1164-1177` | `deactivate()` + `emplace<UIRaceSelect>()` |
+| 选角色 | `BtPreview` 回到选世界 | `:1316-1328` | `set_step(1)` + `activate_after_transition(WORLDSELECT)` |
+| 职业团 | `BtStart` 回到首页 | `UIRaceSelect.cpp:156` → `show_worldselect():876-887` | `set_step(1)` + remove RACESELECT/CHARSELECT + `activate_after_transition(WORLDSELECT)` |
+| 职业团 | `BtMake` 选择 | `:698-703` → `enter_creation():651-668` | 按 selected_class `emplace<UIExplorerCreation/UICygnusCreation/UIAranCreation/UIEvanCreation/UIDualBladeCreation>()` |
+| 建角 | `BtStart` 回到首页 | `UICommonCreation.cpp:1304-1317` | `reset_creation_scene()` + remove CLASSCREATION/RACESELECT/CHARSELECT + `worldselect->makeactive()` |
+| 建角 | `BtPreview` 预览 | `:1318-1328` | `reset_creation_scene()` + remove CLASSCREATION + `emplace<UIRaceSelect>()` |
+| 建角 | `BtNo` 取消 | `:1436-1456` | `reset_creation_scene()` + remove CLASSCREATION + `emplace<UIRaceSelect>()`（回职业团，即用户报 bug 的路径） |
+| 建角 | `BtYes` 确定 | `:1329-…` | 校验名字 → NameCharPacket → `onok` 延迟回调（`:1250-1261`，含 `reset_creation_scene()`） |
+| 建角 | ESC（输入框焦点） | `:484 newCharName.set_key_callback(ESCAPE→BtNo)` | 等价「取消」 |
+
+### 9.3 切页变化表（背景 scene）
+
+6 张创建链路帧（[`shots/race_targets_grid.png`](evidence/term-verify-v2/shots/race_targets_grid.png)）逐张目视：
+
+| # | 目标帧 | 页 | 背景 |
+| --- | --- | --- | --- |
+| 0 | `desktop_racecreate_race` | 职业团选择（冒险家高亮） | 绿色大森林 |
+| 1 | `desktop_racecreate_adventurer` | 冒险家角色设置 | **蘑菇屋 + 亭子** |
+| 2 | `desktop_racecreate_knight` | 职业团选择（骑士团） | 森林 |
+| 3 | `desktop_racecreate_knight2` | 骑士团角色设置 | **机械飞艇 / 亭台** |
+| 4 | `desktop_racecreate_aran` | 职业团选择（战神） | 森林 |
+| 5 | `desktop_racecreate_aran2` | 战神角色设置 | **雪景 + 雪亭** |
+
+**规律**：职业团选择页一律森林；角色设置页各有职业专属亭子（scene_no 16/30/33）。切页必须换背景 → 用户报的「取消回来把亭子带过来」正是背景 scene 状态没在返回时 reset。
+
+### 9.4 亭子残留 bug：根因 → 修复 → 真机验收（本轮闭环）
+
+**根因链**（源码行锚）：
+- `UICommonCreation.cpp:522-566` 构造期按 className 取 `scene_no` `"16"`(冒险家 (-3,-26)) / `"30"`(骑士团 (-33,-32)) / `"33"`(战神 (-3,-25)) → `Map001["Back"]["login.img"]["back"][scene_no]` → `LoginBackground::get().set_scene(scene, scene_pos)`。
+- `LoginBackground.cpp:234-247 set_scene()` 置 `has_scene_flag=true`；`:249-253 clear_scene()` 置 false；`:298-300 draw()` `if (has_scene_flag) scene_sprite.draw(scene_pos, alpha)`。
+- `UICommonCreation.cpp:2393-2396 ~UICommonCreation()` 原有 `if (available() && has_scene()) clear_scene()` **是死代码**：`UIStateLogin.cpp:328-341 remove()` 用 `element.release()`（旧 `:339`）**只放弃所有权、不调用析构** → scene_sprite(亭子) 继续被 draw。同写法见 `UIStateGame.cpp:972` / `UIStateCashShop.cpp:119`（项目规避回调内自删的既定设计，**不能全局换 `reset()`**，会在 `button_pressed()` 栈上自删 this → UAF）。
+- 四条离开创建页路径全漏清场：`onok :1250-1261` / `BtStart :1289-1300` / `BtPreview :1302-1310` / `BtNo :1419-1437`。
+- `set_step(3)` 再进还是 3 → `LoginBackground.cpp:91 if (value==step) return` 早退，step 切换救不了残留。
+
+**修复**（工作树；01:14:48 确定性产物 `607f789811db25ed` 编译零 error，01:19:05 被全量工作树 `47be00b37d093d21` 覆盖，后者为验收实际二进制）：
+- `UICommonCreation.cpp:50-66` 匿名 namespace 自由函数 `void reset_creation_scene()`（`available() && has_scene()` 守卫 → `clear_scene()`）——刻意**不依赖 this**，因 `onok` 是 `[&]` 延迟回调，调成员函数有生命周期隐患（曾先加成员函数再蓝军自检推翻并删除头文件声明）。
+- 四条路径 + 析构各插一行（现 grep：`:1270` onok / `:1308` BtStart / `:1322` BtPreview / `:1450` BtNo / `:2413` 析构）。
+- `UIStateLogin.cpp:336-342` 在 `remove()` 加**单点兜底**：`type==CLASSCREATION && …has_scene()` → `clear_scene()`，覆盖未来新增离开路径；`LoginBackground.h:31` 已 include，无新增依赖。
+- `git diff --stat`：`IO/UIStateLogin.cpp 8+` / `IO/UITypes/UICommonCreation.cpp 21+2-`，共 **27 insertions / 2 deletions**。决策：不动 `release()`（改 `reset` 会 UAF），双保险=四条显式清场 + remove 单点兜底，均幂等。
+
+**真机验收**（`scripts/verify_scene_reset.py` / [`verdicts/scene_reset.json`](evidence/term-verify-v2/verdicts/scene_reset.json)，**实际 exe `47be00b37d093d21` / 01:19:05 / 全量工作树含并发改动**，单实例+协议锚点+BitBlt；脚本内 `method` 字段仍写 `607f789811db25ed`，是运行前写的标签、非实测加载值，以 §0 蓝军自查为准）：
+
+| 帧 | 亭子 ROI(520,100,760,300) 橙色占比 | 判定 |
+| --- | --- | --- |
+| [`scene_reset_1_race_before.png`](evidence/term-verify-v2/shots/scene_reset_1_race_before.png) | 0.02602 | 森林职业团页，无亭 |
+| [`scene_reset_2_creation.png`](evidence/term-verify-v2/shots/scene_reset_2_creation.png) | **0.16642** | 升 6.4×，真进带亭子的建角页 |
+| [`scene_reset_3_race_return.png`](evidence/term-verify-v2/shots/scene_reset_3_race_return.png) | **0.02602** | 精确回原值，亭子一像素没带回 |
+
+- `full_ncc(before,return)=0.967601`（同屏重绘）/ `full_ncc(before,creation)=0.656041`（两屏确实不同）/ `pavilion_roi_ncc(creation,return)=0.203337`（亭子消失）。
+- `verdict = FIX_VERIFIED`（entered_creation_page / scene_cleared_on_return / return_is_same_forest_screen 全 true）；两个兜底重试（ENTER 进页 / ESC 返回）**都没触发**，点击路径干净；`scene_reset_3_race_return.png` 经 `read_image` 目视 = 森林职业团页（5 卡 + 冒险家板 + 选择按钮），无蘑菇亭；config head3 前后 `b'# M'`。
+
+### 9.5 创建链路两端像素对账（桌面目标帧到位后，§6.5 口径升级）
+
+| 页 | 本端帧 | 目标帧 | gray NCC | blocks mean | 热区 |
+| --- | --- | --- | --- | --- | --- |
+| 建角（冒险家） | `scene_reset_2_creation.png` | `desktop_racecreate_adventurer.png` | **0.846614** | 0.8535 | 15 |
+| 职业团选择 | `scene_reset_1_race_before.png` | `desktop_racecreate_race.png` | **0.718647** | 0.6762 | 26 |
+
+证据 [`verdicts/ncc_creation.json`](evidence/term-verify-v2/verdicts/ncc_creation.json) / [`verdicts/ncc_race.json`](evidence/term-verify-v2/verdicts/ncc_race.json) + `ui_creation_page/diff.png`、`ui_race_page/diff.png`。**判词**：目标帧到位使「外部阻塞」作废，改判「实测未对齐」；左栏 4 块本端缺 3、亭子场景虽有但布局/内容有差，均不签像素对齐。
+
+### 9.6 本节判词（给用户 m01638 四问的一句话答案）
+
+> **木牌 = 目标端统一 4 块**（标题牌 1 + 第 2 块因页而异 + 查看所有角色 + 回到首页）；频道页第 2 块是「查看世界地图」按钮、其余页是「选择的世界 SCANIA Ch.1」信息条，能点的按钮数频道页 3 个 / 其它页 2 个（§9.1）。**点击逻辑与切页变化已逐条钉到源码行**（§9.2/§9.3）：频道 3 钮分别开推荐世界弹窗 / 发 VIEW_ALL_CHAR / 重连回登录；选角色页整栏本端没实现（只有主区木牌与 BtCharacter/BtPreview）；职业团「选择」进各职业建角页并换专属亭子背景，「回到首页」滚回选世界。**「取消把亭子带回来」坐实并已修复**：真因是 `~UICommonCreation` 析构是死代码（`remove()` 用 `release()` 不析构）+ 四条离开路径漏 `clear_scene()`，改法 = 四条显式清场 + `UIStateLogin::remove` 单点兜底，当前运行 exe `47be00b37d093d21`（01:19:05 全量工作树产物，含本修复）真机三帧数值闭环 `FIX_VERIFIED`（橙色占比 0.026→0.166→0.026）；01:14:48 的 `607f789811db25ed` 是修复的确定性编译证据，二者关系见 §0，验收帧以 `47be…` 为准。体感是输入，源码行 + 数值 + 目视三证才是交付。
