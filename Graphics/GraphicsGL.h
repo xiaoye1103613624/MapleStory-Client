@@ -97,6 +97,13 @@ namespace ms
 		// Clear the buffer contents
 		void clearscene();
 
+		// 长跑内存治理：图集占用百分比（最近一次 clear()/unload_atlas 计算），
+		// 供 ResourceService::sample_memory 观测 GPU 纹理压力（图集固定 8192²，有界）。
+		double atlas_usage_percent() const noexcept;
+		// 空闲帧收缩：quads 批缓冲容量远大于当前大小时 shrink_to_fit，
+		// 避免长跑后残留的超大容量占用（不丢当前帧数据）。
+		void trim();
+
 		/// 回读当前帧缓冲（RGBA，自下而上）。截图用（B4-7）：由 Window::end() 在
 		/// SwapWindow 之前调用，此时读到的就是刚画完的那一帧。
 		void read_pixels(int16_t width, int16_t height, uint8_t* out) const;
@@ -348,6 +355,9 @@ namespace ms
 		GLint uniform_screensize;
 		GLint uniform_yoffset;
 		GLint uniform_fontregion;
+
+		// 图集最近占用百分比（clear()/unload_atlas 刷新），供采样观测。
+		double atlas_used_percent = 0.0;
 
 		std::unordered_map<size_t, Offset> offsets;
 		Offset nulloffset;

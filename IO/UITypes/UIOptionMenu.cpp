@@ -837,6 +837,7 @@ namespace ms
 		sysopt_res_tier = static_cast<uint8_t>(shown);
 		sysopt_res_open = false;
 		sysopt_pending_apply = false;
+		ResolutionTiers::clear_deferred_viewsize();
 	}
 
 	void UISysOpt::mute_state(uint8_t& stash, SettingsSlider& slider)
@@ -933,10 +934,10 @@ namespace ms
 
 		arrow.draw(lp);
 
-		// 当前项文字限制在盒体内部（左内边距 6px，右预留箭头 18px + 4px），
-		// 避免长文案（如「MapleStory文件夹」）溢出选择框。
+		// 当前项文字限制在盒体内部（左内边距 6px，右预留箭头）；formatted=false
+		// 禁止按 maxwidth 折行，否则「MapleStory文件夹」会拆成两行飘到窗体中部。
 		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-			option, COMBO_W - 5)
+			option, COMBO_W - 5, false)
 			.draw(Point<int16_t>(position.x() + COMBO_X + 6, position.y() + y + 1));
 	}
 
@@ -1008,7 +1009,7 @@ namespace ms
 
 		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
 			Locale::text(std::string("sysopt.combo.resolution.") + std::to_string(sysopt_res_tier)),
-			RES_COMBO_W - 24)
+			RES_COMBO_W - 24, false)
 			.draw(position + Point<int16_t>(RES_COMBO_X + 6, RES_COMBO_Y + 2));
 	}
 
@@ -1098,13 +1099,14 @@ namespace ms
 
 	void UISysOpt::update()
 	{
-		// OK 的下一帧才改 Constants：按钮回调已结束、设置窗随后 deactivate，
-		// 再下一帧 Window::check_events 完成 initwindow → reinit → UI 重锚全链。
+		// 插件口径：先销毁/关闭模态，下一帧再切视口（见 ResolutionTiers::queue_viewsize）。
+		// 禁止在本窗仍 active 时 apply_viewsize —— 否则下一帧 StatusBar recreate
+		// 与 SysOpt 残留态叠在一起，真机表现为切档后卡死再 0xC0000374。
 		if (sysopt_pending_apply)
 		{
 			sysopt_pending_apply = false;
-			ResolutionTiers::apply_viewsize(sysopt_pending_w, sysopt_pending_h);
-			LOG(LOG_INFO, "[MR] applied game viewport " << sysopt_pending_w
+			ResolutionTiers::queue_viewsize(sysopt_pending_w, sysopt_pending_h);
+			LOG(LOG_INFO, "[MR] queued game viewport " << sysopt_pending_w
 				<< "x" << sysopt_pending_h << " tier=" << unsigned(sysopt_res_tier));
 			deactivate();
 		}
@@ -1203,15 +1205,15 @@ namespace ms
 			return Button::State::IDENTITY;
 		case Buttons::OK:
 			commit();
-			// 不在此处 deactivate：分辨率改 Constants 延迟到下一帧 update()，
-			// 规避模态窗 UI 回调内触发 UIStatusBar 重建竞态（插件 rs.cpp 实测坑）。
-			// commit() 已完成落盘，取消/ESC 通过 sysopt_pending_apply=false 回滚。
+			// 不在此处 deactivate：commit 只排队；下一帧 update 先关窗，再由
+			// UIStateGame 应用视口（插件「先销毁模态再切档」）。
 			return Button::State::IDENTITY;
 		case Buttons::CANCEL:
 			load_values();
 			sysopt_res_open = false;
 			set_res_rows(false);
 			sysopt_pending_apply = false;
+			ResolutionTiers::clear_deferred_viewsize();
 			deactivate();
 			return Button::State::NORMAL;
 		default:
@@ -1372,6 +1374,7 @@ namespace ms
 		{
 			// ESC 与「取消」同义：未落盘的分辨率排队必须清掉，不能下一帧偷偷生效。
 			sysopt_pending_apply = false;
+			ResolutionTiers::clear_deferred_viewsize();
 			sysopt_res_open = false;
 			set_res_rows(false);
 			deactivate();

@@ -8,7 +8,7 @@
     2560,
     1600
   ],
-  "duration_s": 42.0,
+  "duration_s": 50.0,
   "samples": [
     {
       "t": 1.5,
@@ -82,8 +82,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -93,8 +93,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -104,8 +104,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -115,8 +115,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -126,8 +126,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -137,8 +137,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -148,8 +148,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1440,
+          900
         ]
       ]
     },
@@ -308,7 +308,73 @@
       ]
     },
     {
-      "t": 42.0,
+      "t": 42.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 43.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 45.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 46.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 48.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 49.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1440,
+          900
+        ]
+      ]
+    },
+    {
+      "t": 51.1,
       "alive": true,
       "exitcode": null,
       "sizes": [

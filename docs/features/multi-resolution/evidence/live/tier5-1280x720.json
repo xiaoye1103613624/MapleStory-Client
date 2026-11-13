@@ -8,7 +8,7 @@
     2560,
     1600
   ],
-  "duration_s": 42.0,
+  "duration_s": 55.0,
   "samples": [
     {
       "t": 1.5,
@@ -309,6 +309,105 @@
     },
     {
       "t": 42.0,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 43.5,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 45.0,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 46.5,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 48.0,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 49.5,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 51.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 52.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 54.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1280,
+          720
+        ]
+      ]
+    },
+    {
+      "t": 55.6,
       "alive": true,
       "exitcode": null,
       "sizes": [

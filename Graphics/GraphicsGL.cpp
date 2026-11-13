@@ -41,6 +41,10 @@ namespace ms
 		locked = false;
 		atlas_clear_pending = false;
 
+		// 长跑治理：批渲染 quad 缓冲预留容量，避免每帧 push_back 触发的
+		// 反复 realloc（首帧后容量稳定，消除分配抖动 → 帧率更稳）。
+		quads.reserve(4096);
+
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
 		SCREEN = Rectangle<int16_t>(0, VWIDTH, 0, VHEIGHT);
@@ -585,6 +589,7 @@ namespace ms
 	{
 		size_t used = ATLASW * border.y() + border.x() * yrange.second();
 		double usedpercent = static_cast<double>(used) / (ATLASW * ATLASH);
+		atlas_used_percent = usedpercent;
 
 		// Soft threshold: reclaim atlas when packing pressure is high.
 		// Coarse eviction (full reset) doubles as LRU under atlas packing constraints.
@@ -604,6 +609,20 @@ namespace ms
 		leftovers.clear();
 		rlid = 1;
 		wasted = 0;
+		atlas_used_percent = 0.0;
+	}
+
+	double GraphicsGL::atlas_usage_percent() const noexcept
+	{
+		return atlas_used_percent;
+	}
+
+	void GraphicsGL::trim()
+	{
+		// 长跑治理：quads 批缓冲容量远大于当前用量时收缩，释放残留容量。
+		// 不丢当前帧数据（仅 shrink_to_fit 空闲容量）。阈值留余量避免抖动。
+		if (quads.capacity() > quads.size() + 4096)
+			quads.shrink_to_fit();
 	}
 
 	void GraphicsGL::addbitmap(const nl::bitmap& bmp)

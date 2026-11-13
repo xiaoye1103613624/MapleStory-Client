@@ -1,0 +1,58 @@
+{
+  "dump": "C:\\Users\\11036\\AppData\\Local\\CrashDumps\\MapleStory.exe.13172.dmp",
+  "exception": {
+    "tid": 51696,
+    "code": "0xC0000374",
+    "address": 140725452898453
+  },
+  "main_module": {
+    "base": 140700064088064,
+    "size": 5443584,
+    "name": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe"
+  },
+  "module_count": 125,
+  "streams": [
+    0,
+    3,
+    4,
+    5,
+    6,
+    7,
+    13,
+    14,
+    15,
+    21,
+    22,
+    24
+  ],
+  "stack_symbols": [
+    {
+      "address": "0x7FF749A0CBB0",
+      "rva": "0x49CBB0",
+      "symbol": "ms::NotifyMarriageHandler `RTTI Type Descriptor'",
+      "displacement": 32,
+      "stack_offset": 5096
+    },
+    {
+      "address": "0x7FF7497F4554",
+      "rva": "0x284554",
+      "symbol": "ms::UIWorldSelect::draw_world",
+      "displacement": 2436,
+      "stack_offset": 5552
+    },
+    {
+      "address": "0x7FF74957E1F0",
+      "rva": "0xE1F0",
+      "symbol": "ms::Animation::~Animation",
+      "displacement": 0,
+      "stack_offset": 5584
+    },
+    {
+      "address": "0x7FF7498AC840",
+      "rva": "0x33C840",
+      "symbol": "inflate",
+      "displacement": 3552,
+      "stack_offset": 6000
+    }
+  ]
+}

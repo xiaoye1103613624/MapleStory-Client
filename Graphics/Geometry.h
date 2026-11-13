@@ -77,7 +77,8 @@ namespace ms
 	class MobHpBar : public Geometry
 	{
 	public:
-		void draw(Point<int16_t> position, int16_t hppercent) const;
+		// fill 为血条主填充色，默认保持原绿；per-mob 由 Mob 传入 WZ hpTagColor（P-E）。
+		void draw(Point<int16_t> position, int16_t hppercent, const Color& fill = Color::Name::LIGHTGREEN) const;
 
 	private:
 		static const int16_t WIDTH = 50;

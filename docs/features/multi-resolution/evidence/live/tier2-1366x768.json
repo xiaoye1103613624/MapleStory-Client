@@ -8,7 +8,7 @@
     2560,
     1600
   ],
-  "duration_s": 42.0,
+  "duration_s": 50.0,
   "samples": [
     {
       "t": 1.5,
@@ -82,8 +82,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1366,
+          768
         ]
       ]
     },
@@ -93,8 +93,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1366,
+          768
         ]
       ]
     },
@@ -104,8 +104,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1366,
+          768
         ]
       ]
     },
@@ -115,8 +115,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1366,
+          768
         ]
       ]
     },
@@ -126,8 +126,8 @@
       "exitcode": null,
       "sizes": [
         [
-          1280,
-          720
+          1366,
+          768
         ]
       ]
     },
@@ -309,6 +309,72 @@
     },
     {
       "t": 42.0,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 43.5,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 45.0,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 46.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 48.1,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 49.6,
+      "alive": true,
+      "exitcode": null,
+      "sizes": [
+        [
+          1366,
+          768
+        ]
+      ]
+    },
+    {
+      "t": 51.1,
       "alive": true,
       "exitcode": null,
       "sizes": [

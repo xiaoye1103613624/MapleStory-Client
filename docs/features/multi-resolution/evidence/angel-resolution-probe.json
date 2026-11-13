@@ -1,0 +1,409 @@
+{
+  "session": "b84a856b-2b47-4050-82d4-8521e9bf79cb",
+  "server_health": {
+    "status": "ok",
+    "uptime_sec": 379334.505,
+    "idb_path": "E:\\MXD\\反编译IDA\\v83\\`Angel.i64",
+    "module": "`Angel.exe",
+    "input_path": "C:\\Users\\Admin\\Desktop\\v83 Server\\`Angel.exe",
+    "imagebase": "0x400000",
+    "auto_analysis_ready": true,
+    "hexrays_ready": true,
+    "strings_cache_ready": true,
+    "strings_cache_size": 1281
+  },
+  "lookup": {
+    "result": [
+      {
+        "query": "CUIStatusBar::OnCreate",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CUIStatusBar::ToggleQuickSlot",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CUIStatusBar::Draw",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CUIStatusBar::OnMoveWnd",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CQuickSlot::OnCreate",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CQuickSlot::CreateWnd",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CWvsApp::InitializeGr2D",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "IWzGr2D::Initialize",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CWnd::CreateWnd",
+        "fn": null,
+        "error": "Not found"
+      },
+      {
+        "query": "CSlideNotice::OnCreate",
+        "fn": null,
+        "error": "Not found"
+      }
+    ]
+  },
+  "func_query_statusbar": {
+    "result": [
+      {
+        "data": [
+          {
+            "addr": "0x4c6db2",
+            "name": "?GetWhisperTarget@CUIStatusBar@@QBE?AV?$ZXString@D@@XZ",
+            "size": "0x24",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfad8",
+            "name": "??0CUIStatusBar@@QAE@XZ",
+            "size": "0x29e",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfd76",
+            "name": "?OnSetFocus@CUIStatusBar@@UAEHH@Z",
+            "size": "0x5",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfd7b",
+            "name": "?ClearToolTip@CUIStatusBar@@UAEXXZ",
+            "size": "0x8",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfd83",
+            "name": "?GetRTTI@CUIStatusBar@@UBEPBVCRTTI@@XZ",
+            "size": "0x6",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfd89",
+            "name": "?IsKindOf@CUIStatusBar@@UBEHPBVCRTTI@@@Z",
+            "size": "0x21",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfdaa",
+            "name": "??_ECUIStatusBar@@UAEPAXI@Z",
+            "size": "0x24",
+            "has_type": true
+          },
+          {
+            "addr": "0x8cfdce",
+            "name": "??1CUIStatusBar@@UAE@XZ",
+            "size": "0x3e4",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d01b2",
+            "name": "?OnCreate@CUIStatusBar@@UAEXPAX@Z",
+            "size": "0x392d",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d419c",
+            "name": "?OnChildNotify@CUIStatusBar@@UAEXIII@Z",
+            "size": "0x89",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d4225",
+            "name": "?OnMouseEnter@CUIStatusBar@@UAEXH@Z",
+            "size": "0x18",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d423d",
+            "name": "?OnButtonClicked@CUIStatusBar@@UAEXI@Z",
+            "size": "0xe3",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d4348",
+            "name": "?ConvertWhisperToNormal@CUIStatusBar@@QAE?AV?$ZXString@G@@V2@@Z",
+            "size": "0x345",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d468d",
+            "name": "?GetChatLog@CUIStatusBar@@QAE?AV?$ZArray@V?$ZXString@D@@@@XZ",
+            "size": "0x395",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d4a22",
+            "name": "?SendClaim@CUIStatusBar@@IAEXXZ",
+            "size": "0x4b",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d4a6d",
+            "name": "?SetChatType@CUIStatusBar@@QAEXJ@Z",
+            "size": "0x2d6",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d4dbf",
+            "name": "?ChangeWhisperTarget@CUIStatusBar@@QAEHXZ",
+            "size": "0x22f",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d536c",
+            "name": "?OnKey@CUIStatusBar@@UAEXII@Z",
+            "size": "0x43e",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d57ca",
+            "name": "?GetEmotionKey@CUIStatusBar@@QAEIAAV?$ZXString@D@@@Z",
+            "size": "0x283",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5a4d",
+            "name": "?StartChat@CUIStatusBar@@QAEXPBD@Z",
+            "size": "0x62",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5aaf",
+            "name": "?EndChat@CUIStatusBar@@QAEXXZ",
+            "size": "0x1e",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5acd",
+            "name": "?FloatNotice@CUIStatusBar@@QAEXPBDJK@Z",
+            "size": "0x5e",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5b2b",
+            "name": "?SetProblem@CUIStatusBar@@QAEXPBD@Z",
+            "size": "0x32",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5b5d",
+            "name": "?OnMouseButton@CUIStatusBar@@UAEXIIJJ@Z",
+            "size": "0x9e",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d5bfb",
+            "name": "?TryBeginWhisper@CUIStatusBar@@IAEHJJ@Z",
+            "size": "0x352",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d616c",
+            "name": "?ChangeChatWndSize@CUIStatusBar@@QAEXJJJ@Z",
+            "size": "0x22f",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d76d7",
+            "name": "?ProcessToolTip@CUIStatusBar@@IAEXJJ@Z",
+            "size": "0x283",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d795a",
+            "name": "?OnMouseMove@CUIStatusBar@@UAEHJJ@Z",
+            "size": "0x74a",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d80a4",
+            "name": "?Draw@CUIStatusBar@@UAEXPBUtagRECT@@@Z",
+            "size": "0x1cd",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d82a7",
+            "name": "?ReDrawQuickslot@CUIStatusBar@@QAEXXZ",
+            "size": "0x11",
+            "has_type": true
+          },
+          {
+            "addr": "0x8d82b8",
+            "name": "?SetStatusValue@CUIStatusBar@@IAEXJJV?$ZXString@D@@@Z",
+            "size": "0x253",
+            "has_type": true
+          },
+          {
+            "addr": "0x8db01c",
+            "name": "?SetWhisperTarget@CUIStatusBar@@QAEXV?$ZXString@D@@H@Z",
+            "size": "0x54",
+            "has_type": true
+          },
+          {
+            "addr": "0x8db070",
+            "name": "?ChatLogAdd@CUIStatusBar@@QAEXPBDJJHV?$ZRef@UGW_ItemSlotBase@@@@@Z",
+            "size": "0x3ed",
+            "has_type": true
+          },
+          {
+            "addr": "0x8db485",
+            "name": "??0CChatLog@CUIStatusBar@@QAE@V?$ZXString@G@@JJJHHV?$ZRef@UGW_ItemSlotBase@@@@@Z",
+            "size": "0xa9",
+            "has_type": true
+          },
+          {
+            "addr": "0x8dbb93",
+            "name": "?ChatLogDraw@CUIStatusBar@@IAEXXZ",
+            "size": "0x1ccd",
+            "has_type": true
+          },
+          {
+            "addr": "0x8de7da",
+            "name": "?HitTest@CUIStatusBar@@UAEHJJPAPAVCCtrlWnd@@@Z",
+            "size": "0xfb",
+            "has_type": true
+          },
+          {
+            "addr": "0x8de8d5",
+            "name": "?GetShortCutIndexByPos@CUIStatusBar@@QAEJJJ@Z",
+            "size": "0x68",
+            "has_type": true
+          },
+          {
+            "addr": "0x8de964",
+            "name": "?Update@CUIStatusBar@@UAEXXZ",
+            "size": "0x112",
+            "has_type": false
+          },
+          {
+            "addr": "0x8defae",
+            "name": "?ResetButtonToolTip@CUIStatusBar@@QAEXXZ",
+            "size": "0x51",
+            "has_type": true
+          },
+          {
+            "addr": "0x8df155",
+            "name": "?SendGroupMessage@CUIStatusBar@@IAEXJABV?$ZXString@D@@@Z",
+            "size": "0x35c",
+            "has_type": true
+          },
+          {
+            "addr": "0x8df4b1",
+            "name": "?ToggleQuickSlot@CUIStatusBar@@IAEXXZ",
+            "size": "0x511",
+            "has_type": true
+          },
+          {
+            "addr": "0x8dfb36",
+            "name": "?MakeCtrlEdit@CUIStatusBar@@IAEXH@Z",
+            "size": "0x2eb",
+            "has_type": true
+          },
+          {
+            "addr": "0x8dfe21",
+            "name": "?SetButtonBlink@CUIStatusBar@@QAEXJH@Z",
+            "size": "0x5d0",
+            "has_type": true
+          },
+          {
+            "addr": "0x8e03f1",
+            "name": "?SetShortcutTooltip@CUIStatusBar@@QAEXJD@Z",
+            "size": "0x243",
+            "has_type": true
+          },
+          {
+            "addr": "0xa14ab7",
+            "name": "?CreateInstance@?$TSingleton@VCUIStatusBar@@@@SAPAVCUIStatusBar@@XZ",
+            "size": "0x45",
+            "has_type": true
+          }
+        ],
+        "next_offset": null
+      }
+    ]
+  },
+  "func_query_quickslot": {
+    "result": [
+      {
+        "data": [
+          {
+            "addr": "0x8df4b1",
+            "name": "?ToggleQuickSlot@CUIStatusBar@@IAEXXZ",
+            "size": "0x511",
+            "has_type": true
+          }
+        ],
+        "next_offset": null
+      }
+    ]
+  },
+  "func_query_resolution": {
+    "result": [
+      {
+        "data": [],
+        "next_offset": null
+      }
+    ]
+  },
+  "find_regex": {
+    "n": 2,
+    "matches": [
+      {
+        "addr": "0xaf72e0",
+        "string": "UI/StatusBar.img/base/chatTarget"
+      },
+      {
+        "addr": "0xb3bab4",
+        "string": "UI/StatusBar.img/BtNPT"
+      }
+    ],
+    "cursor": {
+      "done": true
+    }
+  },
+  "decompiles": {
+    "CUIStatusBar::OnCreate": {
+      "addr": "0x8d01b2",
+      "code_head": "void __userpurge CUIStatusBar::OnCreate(_DWORD *a1@<ecx>, int ebp0@<ebp>, int a3)\n{\n  int *basic_font; // eax\n  int *v6; // eax\n  _DWORD *Instance; // eax\n  wchar_t *v8; // eax\n  int v9; // eax\n  int v10; // ecx\n  _DWORD *v11; // eax\n  int v12; // eax\n  _DWORD *v13; // eax\n  wchar_t *v14; // eax\n  int v15; // eax\n  int v16; // ecx\n  _DWORD *v17; // eax\n  int v18; // eax\n  _DWORD *v19; // eax\n  wchar_t *v20; // eax\n  int v21; // eax\n  int v22; // ecx\n  _DWORD *v23; // eax\n  int v24; // eax\n  _DWORD *v25; // eax\n  wchar_t *v26; // eax\n  int v27; // eax\n  int v28; // ecx\n  _DWORD *v29; // eax\n  int v30; // eax\n  _DWORD *v31; // eax\n  wchar_t *v32; // eax\n  int v33; // eax\n  int v34; // ecx\n  _DWORD *v35; // eax\n  int v36; // eax\n  _DWORD *v37; // eax\n  wchar_t *v38; // eax\n  int v39; // eax\n  int v40; // ecx\n  _DWORD *v41; // eax\n  int v42; // eax\n  _DWORD *v43; // eax\n  wchar_t *v44; // eax\n  int v45; // eax\n  int v46; // ecx\n  _DWORD *v47; // eax\n  int v48; // eax\n  _DWORD *v49; // eax\n... [126188 chars total]",
+      "code_len": 1024
+    },
+    "CUIStatusBar::ToggleQuickSlot": {
+      "addr": "0x8df4b1",
+      "code_head": "int __thiscall CUIStatusBar::ToggleQuickSlot(CUIStatusBar *this)\n{\n  BOOL v2; // eax\n  _DWORD *LT; // eax\n  bool v4; // zf\n  int v5; // eax\n  _DWORD *v6; // eax\n  int v7; // eax\n  _DWORD *v8; // eax\n  _DWORD *v9; // eax\n  int v10; // ecx\n  int v11; // eax\n  int **v12; // eax\n  int v13; // ecx\n  int v14; // eax\n  int **v15; // eax\n  int *v16; // eax\n  int v17; // ecx\n  int v18; // edi\n  int v19; // eax\n  int v20; // eax\n  int v21; // eax\n  int v22; // esi\n  int v23; // edi\n  int v24; // eax\n  int v25; // eax\n  int v26; // eax\n  int v27; // ecx\n  _DWORD *v28; // eax\n  int StringW; // eax\n  _DWORD *Instance; // eax\n  _DWORD *v31; // eax\n  _DWORD *v32; // eax\n  _DWORD *v33; // eax\n  wchar_t *v34; // eax\n  _DWORD *v35; // eax\n  int result; // eax\n  VARIANTARG v37; // [esp+10h] [ebp-50h] BYREF\n  VARIANTARG pvargDest; // [esp+20h] [ebp-40h] BYREF\n  VARIANTARG pvarg; // [esp+30h] [ebp-30h] BYREF\n  _DWORD *v40; // [esp+40h] [ebp-20h] BYREF\n  int v41; // [esp+44h] [ebp-1Ch]\n  int *v42; // [esp+48h] [ebp-18h] BYREF\n  _DWORD *v43; // [esp+4Ch] [ebp-14h] BYREF\n  char v44[4]; // [esp+50h] [ebp-10h] BYREF\n  int v45; // [esp+5Ch] [ebp-4h]\n\n  v2 = *(this + 836) == 0; /*0x8df4cd*/\n  *(this + 836) = v2; /*0x8df4d0*/\n  *(TSingleton<CConfig>::ms_pInstance + 22) = v2; /*0x8df4dc*/\n  if ( *(this + 817) == 0 ) /*0x8df4e5*/\n    _com_issue_error(a1: -2147467261); /*0x8df4ec*/\n  LT = IWzGr2DLayer::GetLT(a1: v44); /*0x8df4fb*/\n  v4 = *LT == 0; /*0x8df502*/\n  v45 = 0; /*0x8df504*/\n  if ( v4 ) /*0x8df507*/\n    _com_issue_error(a1: -2147467261); /*0x8df50e*/\n  v5 = sub_425AEF(a1: *LT); /*0x8df515*/\n  v45 = -1; /*0x8df51a*/\n  v40 = v5; /*0x8df521*/\n  sub_41569E(a1: v44); /*0x8df524*/\n  if ( *(this + 817) == 0 ) /*0x8df52f*/\n    _com_issue_error(a1: -2147467261); /*0x8df536*/\n  v6 = IWzGr2DLayer::GetLT(a1: v44); /*0x8df545*/\n  v4 = *v6 == 0; /*0x8df54c*/\n  v45 = 1; /*0x8df54e*/\n  if ( v4 ) /*0x8df555*/\n    _com_issue_error(a1: -2147467261); /*0x8df55c*/\n  v7 = sub_425B16(a1: *v6); /*0x8df563*/\n  v45 = -1; /*0x8df568*/\n  v41 = v7; /*0x8df56f*/\n  sub_41569E(a1: v44); /*0x8df572*/\n  if ( *(this + 817) == 0 ) /*0x8df57d*/\n    _com_issue_error(a1: -2147467261); /*0x8df584*/\n  v4 = *IWzGr2DLayer::GetLT(a1: v44) == 0; /*0x8df59a*/\n  v45 = 2; /*0x8df59c*/\n  if ( v4 ) /*0x8df5a3*/\n    _com_issue_error(a1: -2147467261); /*0x8df5aa*/\n  IWzVector2D::GetOrigin(pvargDest: &v37); /*0x8df5b5*/\n  LOBYTE(v45) = 4; /*0x8df5bd*/\n  sub_41569E(a1: v44); /*0x8df5c1*/\n  if ( *(this + 817) == 0 ) /*0x8df5cc*/\n    _com_issue_error(a1: -2147467261); /*0x8df5d3*/\n  v8 = IWzGr2DLayer::GetLT(a1: &v42); /*0x8df5e2*/\n  v4 = *v8 == 0; /*0x8df5e9*/\n  LOBYTE(v45) = 5; /*0x8df5eb*/\n  if ( v4 ) /*0x8df5ef*/\n    _com_issue_error(a1: -2147467261); /*0x8df5f6*/\n  v9 = *v8; /*0x8df5fb*/\n  *&pvargDest.vt = *&::pvarg.vt; /*0x8df605*/\n  pvargDest.decVal.Hi32 = ::pvarg.decVal.Hi32; /*0x8df606*/\n  v10 = *v9; /*0x8df607*/\n  pvargDest.cyVal.int64 = ::pvarg.cyVal.int64; /*0x8df609*/\n  v43 = v9; /*0x8df617*/\n  v11 = (*(v10 + 100))(a1: v9, a2: *&::pvarg.vt, a3: pvargDest.decVal.Hi32, a4: pvargDest.lVal, a5: pvargDest.cyVal.Hi); /*0x8df61b*/\n  if ( v11 < 0 ) /*0x8df620*/\n    _com_issue_errorex(a1: v11, a2: v43, a3: dword_BD8348); /*0x8df62b*/\n  LOBYTE(v45) = 4; /*0x8df633*/\n  sub_41569E(a1: &v42); /*0x8df637*/\n  if ( *(this + 817) == 0 ) /*0x8df643*/\n    _com_issue_error(a1: -2147467261); /*0x8df64a*/\n  v12 = IWzGr2DLayer::GetLT(a1: &v43); /*0x8df659*/\n  v4 = *v12 == 0; /*0x8df660*/\n  LOBYTE(v45) = 6; /*0x8df663*/\n  if ( v4 ) /*0x8df667*/\n    _com_issue_error(a1: -2147467261); /*0x8df66e*/\n  v13 = **v12; /*0x8df675*/\n  v42 = *v12; /*0x8df683*/\n  v14 = (*(v13 + 100))(a1: v42, a2: *&v37.vt, a3: v37.decVal.Hi32, a4: v37.lVal, a5: v37.cyVal.Hi); /*0x8df687*/\n  if ( v14 < 0 ) /*0x8df68c*/\n    _com_issue_errorex(a1: v14, a2: v42, a3: dword_BD8348); /*0x8df697*/\n  LOBYTE(v45) = 4; /*0x8df69f*/\n  sub_41569E(a1: &v43); /*0x8df6a3*/\n  sub_402F85(&pvargDest, pvargSrc: &pvargSrc); /*0x8df6b1*/\n  LOBYTE(v45) = 7; /*0x8df6ba*/\n  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x8df6be*/\n  v4 = *(this + 817) == 0; /*0x8df6c3*/\n  LOBYTE(v45) = 8; /*0x8df6ca*/\n  if ( v4 ) /*0x8df6ce*/\n    _com_issue_error(a1: -2147467261); /*0x8df6d5*/\n  v15 = IWzGr2DLayer::GetLT(a1: &v43); /*0x8df6e4*/\n  v4 = *v15 == 0; /*0x8df6eb*/\n  LOBYTE(v45) = 9; /*0x8df6ee*/\n  if ( v4 ) /*0x8df6f2*/\n    _com_issue_error(a1: -2147467261); /*0x8df6f9*/\n  v16 = *v15; /*0x8df6fe*/\n  v17 = *v16; /*0x8df70c*/\n  v18 = v41; /*0x8df71a*/\n  v42 = v16; /*0x8df721*/\n  v19 = (*(v17 + 144))( /*0x8df725*/\n          a1: v16,\n          a2: v40,\n          a3: v41,\n          a4: *&pvarg.vt,\n          a5: pvarg.decVal.Hi32,\n          a6: pvarg.lVal,\n          a7: pvarg.cyVal.Hi,\n          a8: *&pvargDest.vt,\n          a9: pvargDest.decVal.Hi32,\n          a10: pvargDest.lVal,\n          a11: pvargDest.cyVal.Hi);\n  if ( v19 < 0 ) /*0x8df72d*/\n    _com_issue_errorex(a1: v19, a2: v42, a3: dword_BD8348); /*0x8df738*/\n  sub_41569E(a1: &v43); /*0x8df740*/\n  LOBYTE(v45) = 7; /*0x8df749*/\n  v20 = ZComAPI::ZComVariantCopy(&pvarg); /*0x8df74d*/\n  if ( v20 < 0 ) /*0x8df755*/\n    _com_issue_error(a1: v20); /*0x8df758*/\n  LOBYTE(v45) = 4; /*0x8df761*/\n  v21 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x8df765*/\n  if ( v21 < 0 ) /*0x8df76d*/\n    _com_issue_error(a1: v21); /*0x8df770*/\n  v22 = *(this + 836) != 0 ? 453 : 533;\n  v23 = 5 * abs(a1: v18 - v22); /*0x8df793*/\n  sub_402F85(pvargDest: &pvarg, pvargSrc: &pvargSrc); /*0x8df79d*/\n  v4 = *(this + 817) == 0; /*0x8df7a2*/\n  LOBYTE(v45) = 10; /*0x8df7a9*/\n  if ( v4 ) /*0x8df7ad*/\n    _com_issue_error(a1: -2147467261); /*0x8df7b4*/\n  v24 = sub_437476(a1: *(this + 817)); /*0x8df7c1*/\n  sub_424B91(a1: v23 + v24, a2: 3); /*0x8df7cc*/\n  v4 = *(this + 817) == 0; /*0x8df7d3*/\n  LOBYTE(v45) = 11; /*0x8df7d9*/\n  if ( v4 ) /*0x8df7dd*/\n    _com_issue_error(a1: -2147467261); /*0x8df7e4*/\n  sub_432C2D(a1: 647, a2: v22, a3: &pvargDest, a4: &pvarg); /*0x8df7fd*/\n  LOBYTE(v45) = 10; /*0x8df806*/\n  v25 = ZComAPI::ZComVariantCopy(pvarg: &pvargDest); /*0x8df80a*/\n  if ( v25 < 0 ) /*0x8df812*/\n    _com_issue_error(a1: v25); /*0x8df815*/\n  LOBYTE(v45) = 4; /*0x8df81e*/\n  v26 = ZComAPI::ZComVariantCopy(&pvarg); /*0x8df822*/\n  if ( v26 < 0 ) /*0x8df82a*/\n    _com_issue_error(a1: v26); /*0x8df82d*/\n  sub_89B76F(a1: dword_BEDCD0); /*0x8df838*/\n  v27 = *(this + 694); /*0x8df83d*/\n  if ( v27 != 0 ) /*0x8df845*/\n  {\n    (*(*v27 + 12))(a1: v27); /*0x8df84d*/\n    sub_5AAF23(a1: &pvarg); /*0x8df853*/\n    v4 = *(this + 836) == 0; /*0x8df858*/\n    LOBYTE(v45) = 12; /*0x8df85e*/\n    *&pvarg.vt = 0; /*0x8df862*/\n    if ( v4 ) /*0x8df865*/\n    {\n      Instance = StringPool::GetInstance(); /*0x8df89b*/\n      StringW = StringPool::GetStringW(this: Instance, a2: &v40, a3: SP_1984_UI_STATUSBARIMG_QUICKSLOT); /*0x8df8a2*/\n      LOBYTE(v45) = 14; /*0x8df8ab*/\n    }\n    else\n    {\n      v28 = StringPool::GetInstance(); /*0x8df870*/\n      StringW = StringPool::GetStringW(this: v28, a2: &v40, a3: SP_1985_UI_STATUSBARIMG_QUICKSLOTD); /*0x8df877*/\n      LOBYTE(v45) = 13; /*0x8df880*/\n    }\n    ZXString<unsigned short>::operator=(a1: StringW); /*0x8df884*/\n    LOBYTE(v45) = 12; /*0x8df889*/\n    ZXString<unsigned short>::_Release(a1: &v40); /*0x8df8bb*/\n    v31 = ZAllocEx<ZAllocAnonSelector>::Alloc(a1: 1444); /*0x8df8ca*/\n    v40 = v31; /*0x8df8cf*/\n    LOBYTE(v45) = 15; /*0x8df8d4*/\n    if ( v31 != 0 ) /*0x8df8d8*/\n      v32 = CCtrlButton::CCtrlButton(this: v31); /*0x8df8dc*/\n    else\n      v32 = 0; /*0x8df8e3*/\n    LOBYTE(v45) = 12; /*0x8df8ec*/\n    sub_4284FF(a1: v32); /*0x8df8f0*/\n    (*(**(this + 694) + 32))(a1: *(this + 694), a2: this, a3: 1006, a4: 768, a5: 515, a6: 2, a7: &pvarg); /*0x8df913*/\n    if ( *(this + 836) != 0 ) /*0x8df91c*/\n    {\n      v33 = StringPool::GetInstance(); /*0x8df927*/\n      v34 = *StringPool::GetStringW(this: v33, a2: &v40, a3: SP_2000_STRING_TOOLTIPHELPIMG_GAME_BUTTON_QUICKSLOTD); /*0x8df933*/\n      LOBYTE(v45) = 16; /*0x8df93f*/\n    }\n    else\n    {\n      v35 = StringPool::GetInstance(); /*0x8df95a*/\n      v34 = *StringPool::GetStringW(this: v35, a2: &v40, a3: SP_1999_STRING_TOOLTIPHELPIMG_GAME_BUTTON_QUICKSLOT); /*0x8df966*/\n      LOBYTE(v45) = 17; /*0x8df972*/\n    }\n    sub_4C10F7(a1: v34, a2: 1, a3: 0); /*0x8df943*/\n    LOBYTE(v45) = 12; /*0x8df948*/\n    ZXString<unsigned short>::_Release(a1: &v40); /*0x8df982*/\n    CWnd::InvalidateRect(this, a2: 0); /*0x8df98a*/\n    LOBYTE(v45) = 4; /*0x8df992*/\n    ZXString<unsigned short>::_Release(a1: &pvarg.decVal.Lo64 + 4); /*0x8df996*/\n  }\n  v45 = -1; /*0x8df99b*/\n  result = ZComAPI::ZComVariantCopy(pvarg: &v37); /*0x8df9a3*/\n  if ( result < 0 ) /*0x8df9ab*/\n    _com_issue_error(a1: result); /*0x8df9ae*/\n  return result; /*0x8df9b3*/\n}",
+      "code_len": 8731
+    },
+    "CSlideNotice::OnCreate": {
+      "addr": "0x7e1686",
+      "code_head": "int __thiscall CSlideNotice::OnCreate(CSlideNotice *this, void *a2)\n{\n  _DWORD *Canvas; // eax\n  int v3; // esi\n  int v4; // eax\n  int result; // eax\n  int v6; // [esp+4h] [ebp-10h] BYREF\n  int v7; // [esp+10h] [ebp-4h]\n\n  Canvas = CWnd::GetCanvas(a1: &v6); /*0x7e1696*/\n  v7 = 0; /*0x7e169d*/\n  if ( *Canvas == 0 ) /*0x7e16a4*/\n    _com_issue_error(a1: -2147467261); /*0x7e16ab*/\n  v3 = *Canvas; /*0x7e16b0*/\n  v4 = (*(**Canvas + 140))(a1: *Canvas, a2: 0, a3: 0, a4: 800, a5: 600, a6: 0x80000000); /*0x7e16c8*/\n  if ( v4 < 0 ) /*0x7e16d0*/\n    _com_issue_errorex(a1: v4, a2: v3, a3: _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e); /*0x7e16d9*/\n  result = v6; /*0x7e16de*/\n  v7 = -1; /*0x7e16e1*/\n  if ( v6 != 0 ) /*0x7e16e8*/\n    return (*(*v6 + 8))(a1: v6); /*0x7e16ed*/\n  return result; /*0x7e16e7*/\n}",
+      "code_len": 801
+    }
+  },
+  "py_constants": {
+    "result": "",
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\11036\\AppData\\Roaming\\Hex-Rays\\IDA Pro\\plugins\\ida_mcp\\api_python.py\", line 189, in py_eval\n    exec(code, exec_globals, exec_locals)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 4, in <module>\nNameError: name 'ida_idaapi' is not defined. Did you mean: 'ida_ida'?\n"
+  }
+}

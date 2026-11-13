@@ -282,50 +282,41 @@ namespace ms
 		// 运行时切换语言：写 ui.language + 落盘 + Locale::reload() + 通知服务器 changel。
 		void apply_language(uint8_t ordinal);
 
-		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值。
+		// 轨道左右端与滑钮行：均为 _settings_map2.txt 的实测值（原生 299×365 SAD=0.00）。
 		// TRACK_X1 取参考图滑条轨道右端 x≈229；滑块右沿 = 229+1 = 230，
 		// 须严格小于右侧「大」字左缘 x≈231，避免滑块压住文字。
 		static constexpr int16_t TRACK_X0 = 99;
 		static constexpr int16_t TRACK_X1 = 229;
-		// 6 条滑条的滑钮顶边行。原值 40/70/100/160/190/220 取自旧 365 布局（_settings_map2.txt，
-		// 原生逐格 SAD=0.00）；新 299x396 底图＝旧布局整体下移 +28px（10 行中心 40→68 … 310→338，
-		// 等距 30px），故统一 +28 对齐到新底图行中心 68/98/128/188/218/248。
-		// 083 CUISysOpt::OnCreate 的 6 条滑条原值 40/70/100/160/190/220（无 +28）。
-		// 本端 +28 与 CHECK_BOX/COMBO 的 +28/+30 来自「旧 299x365 底图 → 新 299x396 底图整体下移」
-		// 的截图推断；但 round71 运行时 open_merge 探针实测 SysOpt/backgrnd 是 299x396，
-		// 与旧 .nx 缓存的 299x365 是**两张完全不同的图**（逐像素 0/365 命中），不能用行偏移推算对齐。
-		// 浅色内容带 y27..307 对 083 与当前端两组 y 都 6/6 命中、无区分度 ⇒ 是否回退 083 常量
-		// 属决策点 D-B（待用户裁决 + 五屏实机截图），本轮不改任何行为字面量。
-		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 68, 98, 128, 188, 218, 248 };
-		// 5 个勾选框的画布落位（x, y）。y 随底图整体下移 +28 对齐（x 不变）。
+		// 6 条滑条 / 勾选 / 两个原生下拉：与 083 CUISysOpt::OnCreate 及 _settings_map2.txt 同源。
+		// 运行时 UIWindow.img/SysOpt/backgrnd 现为 299×396（orange-wz 实测），相对旧 365 底板
+		// **不是**整板 +28 下移：洋红行带中心仍约 45/75/…/315，仅在底部多出「窗口大小」行
+		// （中心≈346）与 OK 区。先前误用 +28 把控件压到下一行 → 叠字 / 勾选偏左 / 下拉错行。
+		// SCROLL LOCK 键帽图是底板烘焙的截图热键示意，不是错贴图。
+		static constexpr int16_t SLIDER_ROW[SL_COUNT] = { 40, 70, 100, 160, 190, 220 };
 		static constexpr int16_t CHECK_BOX[5][2] = {
-			{ 241, 99 },	// 背景音乐 · 静音
-			{ 241, 129 },	// 效果音响 · 静音
-			{ 64, 279 },	// 画面效果
-			{ 64, 332 },	// 画面模式 · 窗口化
-			{ 64, 343 }		// 画面模式 · ALT+回车可切换
+			{ 241, 71 },	// 背景音乐 · 静音
+			{ 241, 101 },	// 效果音响 · 静音
+			{ 64, 251 },	// 画面效果
+			{ 64, 304 },	// 画面模式 · 窗口化
+			{ 64, 315 }		// 画面模式 · ALT+回车可切换
 		};
 		// 下拉框：盒体左上 + 中段宽度（右端箭头 18x17 实测落在 x=222）。
 		static constexpr int16_t COMBO_X = 157;
 		static constexpr int16_t COMBO_W = 60;
-		// 两个原生下拉盒体顶边 y：随底图整体下移 +28（127→155 截图保存位置；278→306 怪物情报）。
-		static constexpr int16_t COMBO_Y_PATH = 155;
-		static constexpr int16_t COMBO_Y_MOB = 306;
+		static constexpr int16_t COMBO_Y_PATH = 127;	// 截图保存位置
+		static constexpr int16_t COMBO_Y_MOB = 278;	// 怪物情报
 		// 盒体高 = ComboBox 三段贴图的公共高（5x17 / 5x17 / 18x17）；列表行同宽同高。
 		static constexpr int16_t COMBO_H = 17;
 		static constexpr int16_t COMBO_TOTAL_W = 5 + COMBO_W + 18;
 		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
 		static constexpr uint8_t MOB_INFO_COUNT = 4;
 		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
-		// 语言切换：运行时自绘文案 + 无贴图 AreaButton 命中区（底板标签烘焙进位图、版面较满，
-		// 故不新开下拉，直接做成「点一下在 zh-CN/en-US 间切换」的开关项）。
-		static constexpr int16_t LANG_Y = 259;		// 夹在末条滑条(248)与「画面效果」勾选(279)之间的空档；实机核对底图
+		// 语言切换：底板无独立行；落在 396 底板底部按钮条左侧（OK 左），避免叠到滑条/勾选行。
+		static constexpr int16_t LANG_Y = 366;
 		static constexpr int16_t LANG_W = 150;
 		static constexpr uint8_t LANG_COUNT = 2;
 		static constexpr const char* LANGUAGE_KEY = "sysopt.combo.language.";
-		// 多分辨率新增行（窗口大小）：插件 rs.cpp 参考 Combo(76,338,166,18)，9 档见 rs_tier_dims。
-		// 实测新底图：该行被夹在「画面模式」(row10, y≈338) 与 OK/Cancel 分隔线(y≈369)之间，
-		// 盒体顶边取 343（18px 高 → 343~361，上不压 row10、下不压分隔线/OK_Cancel）。
+		// 多分辨率新增行（窗口大小）：洋红带 y333..360（中心≈346）；盒体 18px 顶边 343。
 		// 列表向上展开（9*18=162px，从 y=181 到 343，完整落在 299x396 底板内）。
 		static constexpr int16_t RES_COMBO_X = 76;
 		static constexpr int16_t RES_COMBO_Y = 343;
@@ -334,11 +325,7 @@ namespace ms
 		static constexpr uint8_t RES_COUNT = 9;
 		static constexpr int16_t RES_LIST_Y =
 			static_cast<int16_t>(RES_COMBO_Y - RES_COUNT * RES_COMBO_H);
-		// 底部两颗橙色钮（47x19）：插件 rs.cpp L3313 把 OK/Cancel 从 342 下移到 372，
-		// 给新增的「窗口大小」行腾出空间。
-		// 083 CUISysOpt::OnCreate OK/CANCEL 在 y=342（194,342）/(244,342)。
-		// 本端 372（OK_X=194/CANCEL_X=244）落在运行时 299x396 底板底部深色空白条
-		// （浅色占比 y370..395=0.00），为「窗口大小」行让位的本端扩展，见决策点 D-B。
+		// 底部两颗橙色钮：插件 rs.cpp 把 OK/Cancel 从原生 342 下移到 372，给「窗口大小」腾位。
 		static constexpr int16_t BTN_Y = 372;
 		static constexpr int16_t OK_X = 194;
 		static constexpr int16_t CANCEL_X = 244;

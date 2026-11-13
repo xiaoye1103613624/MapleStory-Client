@@ -1,0 +1,128 @@
+{
+  "dump": "C:\\Users\\11036\\AppData\\Local\\CrashDumps\\MapleStory.exe.23560.dmp",
+  "exception": {
+    "tid": 15540,
+    "code": "0xC0000374",
+    "address": 140725452898453
+  },
+  "main_module": {
+    "base": 140696417927168,
+    "size": 5595136,
+    "name": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe"
+  },
+  "module_count": 125,
+  "streams": [
+    0,
+    3,
+    4,
+    5,
+    6,
+    7,
+    13,
+    14,
+    15,
+    21,
+    22,
+    24
+  ],
+  "stack_symbols": [
+    {
+      "address": "0x7FF6700937F8",
+      "rva": "0x637F8",
+      "symbol": "ms::MapFieldMarkers::report_owned_c2s",
+      "displacement": 1064,
+      "stack_offset": 4976
+    },
+    {
+      "address": "0x7FF6700B3DA7",
+      "rva": "0x83DA7",
+      "symbol": "ms::Player::operator=",
+      "displacement": 807,
+      "stack_offset": 5120
+    },
+    {
+      "address": "0x7FF6700E6631",
+      "rva": "0xB6631",
+      "symbol": "ms::UI::send_key",
+      "displacement": 305,
+      "stack_offset": 5168
+    },
+    {
+      "address": "0x7FF6700E985C",
+      "rva": "0xB985C",
+      "symbol": "ms::UIStateCashShop::draw",
+      "displacement": 12,
+      "stack_offset": 5216
+    },
+    {
+      "address": "0x7FF6704EED60",
+      "rva": "0x4BED60",
+      "symbol": "ms::Singleton<ms::Session>::instance",
+      "displacement": 36192,
+      "stack_offset": 5224
+    },
+    {
+      "address": "0x7FF6702D3FB2",
+      "rva": "0x2A3FB2",
+      "symbol": "ms::SetCashShopHandler::handle",
+      "displacement": 642,
+      "stack_offset": 5376
+    },
+    {
+      "address": "0x7FF6702D2FE8",
+      "rva": "0x2A2FE8",
+      "symbol": "ms::CashShopOperationHandler::handle",
+      "displacement": 3688,
+      "stack_offset": 5872
+    },
+    {
+      "address": "0x7FF6703341D5",
+      "rva": "0x3041D5",
+      "symbol": "std::filesystem::_Recursive_dir_enum_impl::_Advance_and_reset_if_no_more_files",
+      "displacement": 405,
+      "stack_offset": 5888
+    },
+    {
+      "address": "0x7FF6704F4320",
+      "rva": "0x4C4320",
+      "symbol": "ms::Singleton<ms::Session>::instance",
+      "displacement": 58144,
+      "stack_offset": 5904
+    },
+    {
+      "address": "0x7FF670505160",
+      "rva": "0x4D5160",
+      "symbol": "ms::Singleton<ms::Session>::instance",
+      "displacement": 127328,
+      "stack_offset": 5912
+    },
+    {
+      "address": "0x7FF6702E8185",
+      "rva": "0x2B8185",
+      "symbol": "<lambda_e078f9d9f64ffd96416732629c8318cb>::operator()",
+      "displacement": 437,
+      "stack_offset": 5936
+    },
+    {
+      "address": "0x7FF6703B059B",
+      "rva": "0x38059B",
+      "symbol": "`string'",
+      "displacement": 3,
+      "stack_offset": 6008
+    },
+    {
+      "address": "0x7FF6702E8334",
+      "rva": "0x2B8334",
+      "symbol": "std::vector<int,std::allocator<int> >::_Reallocate_exactly",
+      "displacement": 4,
+      "stack_offset": 6112
+    },
+    {
+      "address": "0x7FF67038DBFA",
+      "rva": "0x35DBFA",
+      "symbol": "ms::single_console::`dynamic atexit destructor for 'log_history''",
+      "displacement": 170,
+      "stack_offset": 6224
+    }
+  ]
+}

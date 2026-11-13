@@ -1,6 +1,6 @@
 # 多分辨率实时切换 · 分析结果与实施方案
 
-> 状态：**已实现**（分析 / 方案 / 代码 / 构建门禁 / 9 档实机矩阵均闭环；最终实现逻辑、偏差与未跑项见 [§8](#8-实现结果最终实现逻辑)）。
+> 状态：**已实现**（档位切换闭环见 [§8](#8-实现结果最终实现逻辑)；HUD 800 居中 + 自适应 LayoutPolicy 见 [§9](#9-hud-800-居中--自适应布局第二轮已确认)）。
 > 适用范围：`e:/project/MapleStory-Client`（C++ / SDL3 / OpenGL / nlnx），部署目录 `E:/MXD/BeiDou-Client-xy`。
 
 ## 1. 需求与已确认决策
@@ -149,3 +149,55 @@ docs/features/multi-resolution/
 ### 8.8 提交状态
 
 **未提交**。工作区存在与本功能无关的并发改动（`ImgSource.*`、`MapleStory.vcxproj`、perf 仪器等），按规范只在用户授权后做单功能原子提交，不擅自 `git add/commit/push`。
+
+## 9. HUD 800 居中 + 自适应布局（第二轮，已确认）
+
+### 9.1 Angel 证据：无原生多分辨率
+
+证据见 [evidence/](evidence/)（`angel-resolution-probe.json` / `angel-resolution-immediates.json` / `angel-resolution-analysis.json`）：
+
+- `Resolution|UpdateResolution|ScreenWidth` 空命中。
+- `CUIStatusBar::OnCreate @ 0x8d01b2` 固定 `CreateLayer 800×578` + QS 层 `151×80`；CreateCtrl / `GetShortCutIndexByPos(a1-647)` / `ToggleQuickSlot RelMove(647,…)` 全在 **800 设计网格**。
+- 宽屏语义来自插件 Origin，不是 Angel 原生；本端走源码 helper，**不 patch** Angel/ijl15。
+
+### 9.2 锁定布局公式
+
+| 项 | 值 |
+| --- | --- |
+| `HUD_DESIGN_W` | **800**（左 chrome / Angel 网格；非登录 `LOGIN_W=1280`） |
+| `content_w` | 宽 QS：`800 + qs_panel_w`；QS08：`800`。**禁止**把 QS26/32 塞进 800 |
+| 居中 | `hud_center_x=(vw>content_w)?(vw-content_w)/2:0`；ChatBar / MiscShells 气球同式 |
+| QS 选型 | **仅当** `VWIDTH >= 800 + qs26_w`（1266；qs32 时 1371）才用 `quickSlot26/32`；否则 **回退 `quickSlot08`**。旧阈值 `≥1024` 在 1024 仍选 QS26 并 `qs_x=vw-qs_w`，会盖住商城/目录钮（用户截图） |
+| QS 落位 | 宽 QS：`qs_x=HUD_DESIGN_W`（贴 800 条右侧）；QS08：`qs_x=hud_grid_w-qs08_w`（Angel 右上） |
+| backgrnd | **暂不画** classic `base/backgrnd`（用户要求先注释）；保留 `backgrnd2` / gauge / chrome |
+| 有意变更 | 宽格门槛改为「装得下 800+QS」；信息栏通栏底条可一键恢复 |
+| 主路径 | classic `StatusBar.img`；**停扩** modern `StatusBar3` 分宽坐标表 |
+
+实现头：[`Util/HudLayout.h`](../../../Util/HudLayout.h)（全 inline，不动 vcxproj）。
+
+### 9.3 自适应架构（新档零改 UI）
+
+```text
+ResolutionTiers 加档 → Constants 视口 → UIStateGame 对全部已构造元素广播 update_screen
+  → UIElement::LayoutPolicy（Edge / Center / HudGroup / SavedPosClamped）按公式重锚
+```
+
+硬要求：后续任意新宽高 **禁止** `switch(VWIDTH==1920)` / 按档枚举坐标。
+
+**新增分辨率档只需改：**
+
+1. `Util/ResolutionTiers.h` 的 `TIERS[]` / `LABELS[]` / `TIER_COUNT`
+2. SysOpt 下拉文案（`locale/*.ini` 若有独立键）
+
+UI 策略代码零改。代表窗接线：BuffList/StatusMessenger/BossHP → Edge；WorldMap/QuestLog/Notice/NpcTalk → Center；StatusBar/ChatBar classic → HudGroup；MiniMap/Messenger → SavedPosClamped。
+
+### 9.4 本轮验证残留（需用户实机）
+
+至少覆盖 `800×600` / `1024×768` / `1280×720` / `1920×1080`，再加一档极端（如 `2560×1440`）证明公式而非 switch：
+
+- HUD 组水平居中量 = `max(0,(vw-content_w)/2)`；宽 QS 时 `content_w=800+qs`
+- QS：`<1266`（装不下 800+QS26）为 08 且在 800 内右上；`≥1266` 为 26 且在 800 条**右侧**
+- 1024：必须 QS08，功能钮不被快捷栏盖住；1280/1920：组合居中且条/QS 无水平重叠
+- classic `backgrnd` 暂不画；`backgrnd2`/chrome/Chat/气球与同一 `content_w` 对齐
+- Edge 贴边、Center 居中、SavedPos 不越界；切档无崩；登录仍 1280×720
+- SysOpt：滑条/勾选/下拉对齐洋红行；无中部叠字；OK 切档仍走延迟 `queue_viewsize`

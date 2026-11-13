@@ -136,6 +136,37 @@ namespace ms
 			Constants::Constants::get().set_viewsize(width, height);
 		}
 
+		// SysOpt OK：必须先关掉模态，再在下一帧 UIStateGame 里 apply。
+		// 插件 rs.cpp Destructor_hook 注释「switch-under-modal + StatusBar recreate hung」；
+		// 旧实现在 SysOpt::update 里同帧 apply_viewsize + deactivate，仍可能让
+		// 下一帧 initwindow/StatusBar 重建撞上未销毁的模态状态 → 卡死后 0xC0000374。
+		inline int16_t deferred_w = 0;
+		inline int16_t deferred_h = 0;
+		inline bool deferred_pending = false;
+
+		inline void queue_viewsize(int16_t width, int16_t height)
+		{
+			deferred_w = width;
+			deferred_h = height;
+			deferred_pending = true;
+		}
+
+		inline void clear_deferred_viewsize()
+		{
+			deferred_pending = false;
+		}
+
+		// 若有排队视口则写入 Constants；返回是否刚应用（供调用方拆掉已关闭的 SysOpt）。
+		inline bool apply_deferred_viewsize()
+		{
+			if (!deferred_pending)
+				return false;
+
+			deferred_pending = false;
+			apply_viewsize(deferred_w, deferred_h);
+			return true;
+		}
+
 		// 从配置项解析进图视口：tier 合法时以档位表为准，否则用 fallback 宽高
 		// （window.game_width/height，缺键时已由 Configuration::load 规整为登录尺寸）。
 		// 超桌面时回落到「不超过桌面的最大可用档」，不自动切全屏（用户决策 D2）。
