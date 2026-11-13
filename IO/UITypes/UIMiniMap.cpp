@@ -28,6 +28,7 @@
 #include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/GameplayPackets.h"
+#include "../../Util/HudLayout.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Configuration.h"
@@ -43,6 +44,8 @@ namespace ms
 {
 	UIMiniMap::UIMiniMap(const CharStats& stats) : UIDragElement<PosMINIMAP>(Point<int16_t>(128, 20)), stats(stats)
 	{
+		set_layout_policy(LayoutPolicy::SavedPosClamped);
+
 		big_map = true;
 		has_map = false;
 		listNpc_enabled = false;
@@ -513,7 +516,10 @@ namespace ms
 			case BT_BIG:
 			{
 				big_map = !big_map;
-				// TODO: Toggle scrolling map
+				// D10（2026-11-11 仲裁，notes/d5-d10-arbitration.md）：orange-wz 实测
+				// UIWindow.img/MiniMap 只有 BtMap/MaxMap/Min/MinMap/title 五子，
+				// 无 BtSmall/BtBig 素材 → 滚动地图无件无据，显式预留（与
+				// ui-v83-window-restore/README.md:101 口径一致），不编造滚动排版。
 				toggle_buttons();
 				break;
 			}
@@ -546,6 +552,11 @@ namespace ms
 	UIElement::Type UIMiniMap::get_type() const
 	{
 		return TYPE;
+	}
+
+	void UIMiniMap::update_screen(int16_t new_width, int16_t new_height)
+	{
+		UIElement::update_screen(new_width, new_height);
 	}
 
 	void UIMiniMap::update_buttons()

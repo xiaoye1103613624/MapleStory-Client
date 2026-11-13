@@ -37,6 +37,8 @@ namespace ms
 
 		void draw(float alpha) const override;
 		void update() override;
+		// SavedPosClamped：保留 PosMINIMAP，切档时夹回视口。
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		void remove_cursor() override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> pos) override;

@@ -1,0 +1,225 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "key_gms 65536B from tools/vendor/NoLifeWzToNx-master/Keys.cpp",
+  "key_b64_len": 87384,
+  "iv_b64": "TSPHKw==",
+  "probe_path": "E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img",
+  "steps": [
+    {
+      "tag": "key.name=GMS:unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "key.name=GMS:load",
+      "tool": "load_files",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tag": "key.name=GMS:children_autoTrue",
+      "tool": "list_children",
+      "verdict": "OK_EMPTY_NODES",
+      "marker": "",
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tag": "key.name=GMS:find_autoTrue",
+      "tool": "find_node",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"node\":{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+    },
+    {
+      "tag": "key.name=GMS:tree_autoTrue",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=GMS:search_keyword",
+      "tool": "search_node",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=GMS:query_search_autoTrue",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=gms:unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "key.name=gms:load",
+      "tool": "load_files",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":4}"
+    },
+    {
+      "tag": "key.name=gms:children_autoTrue",
+      "tool": "list_children",
+      "verdict": "OK_EMPTY_NODES",
+      "marker": "",
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tag": "key.name=gms:find_autoTrue",
+      "tool": "find_node",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"node\":{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+    },
+    {
+      "tag": "key.name=gms:tree_autoTrue",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=gms:search_keyword",
+      "tool": "search_node",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=gms:query_search_autoTrue",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=BMS:unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "key.name=BMS:load",
+      "tool": "load_files",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":6}"
+    },
+    {
+      "tag": "key.name=BMS:children_autoTrue",
+      "tool": "list_children",
+      "verdict": "OK_EMPTY_NODES",
+      "marker": "",
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tag": "key.name=BMS:find_autoTrue",
+      "tool": "find_node",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"node\":{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+    },
+    {
+      "tag": "key.name=BMS:tree_autoTrue",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=BMS:search_keyword",
+      "tool": "search_node",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=BMS:query_search_autoTrue",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "key.name=<empty>:unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "key.name=<empty>:load",
+      "tool": "load_files",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "参数为空: name"
+    },
+    {
+      "tag": "key.name=<empty>:children_autoTrue",
+      "tool": "list_children",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+    },
+    {
+      "tag": "key.name=<empty>:find_autoTrue",
+      "tool": "find_node",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+    },
+    {
+      "tag": "key.name=<empty>:tree_autoTrue",
+      "tool": "get_node_tree_json",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+    },
+    {
+      "tag": "key.name=<empty>:search_keyword",
+      "tool": "search_node",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+    },
+    {
+      "tag": "key.name=<empty>:query_search_autoTrue",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+    },
+    {
+      "tag": "final_unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "final_roots",
+      "tool": "list_loaded_roots",
+      "verdict": "OK_EMPTY_NODES",
+      "marker": "",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "session_id": "2390db9e-9a41-4d6f-9f98-c6d9186d8b32",
+  "summary": {
+    "OK": 17,
+    "PARSE_FAIL": 9,
+    "OK_EMPTY_NODES": 4
+  }
+}

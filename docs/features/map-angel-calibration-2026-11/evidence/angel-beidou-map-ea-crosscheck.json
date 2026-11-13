@@ -1,0 +1,1080 @@
+{
+ "summary": {
+  "angel_funcs": 133,
+  "beidou_present": 131,
+  "beidou_sub_named": 129,
+  "beidou_real_named": 2,
+  "beidou_missing": 2,
+  "missing_eas": [
+   "0x9e98c2",
+   "0x58e12b"
+  ],
+  "conclusion": "same binary layout (131/133 EAs identical; differences are IDA analysis coverage, not code)"
+ },
+ "table": [
+  {
+   "class": "",
+   "method": "_g_apfnPCOMAPIs",
+   "ea": "0x40387e",
+   "beidou_name": "sub_40387E",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_able_to_map_macrosys_skill",
+   "ea": "0x4fb292",
+   "beidou_name": "sub_4FB292",
+   "beidou_size": "0x7a",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "0CUIMiniMap",
+   "ea": "0x854b8c",
+   "beidou_name": "sub_854B8C",
+   "beidou_size": "0xd98",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "0CWorldMapDlg",
+   "ea": "0x9e9823",
+   "beidou_name": "sub_9E9823",
+   "beidou_size": "0x94",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "_GCWorldMapDlg",
+   "ea": "0x9e98c2",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "",
+   "method": "1CWorldMapDlg",
+   "ea": "0x9e98e6",
+   "beidou_name": "sub_9E98E6",
+   "beidou_size": "0xcb",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "_GetRangeOfTrysToCheck",
+   "ea": "0xa60a2a",
+   "beidou_name": "?_GetRangeOfTrysToCheck@@YAPBU_s_TryBlockMapEntry@@PBU_s_FuncInfo@@HHPAI1@Z",
+   "beidou_size": "0x7b",
+   "status": "present_named"
+  },
+  {
+   "class": "",
+   "method": "CatchIt",
+   "ea": "0xa64fdd",
+   "beidou_name": "?CatchIt@@YAXPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAU_CONTEXT@@PAXPBU_s_FuncInfo@@PBU_s_HandlerType@@PBU_s_CatchableType@@PBU_s_TryBlockMapEntry@@H1E@Z",
+   "beidou_size": "0x7b",
+   "status": "present_named"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x447ef0",
+   "beidou_name": "sub_447EF0",
+   "beidou_size": "0x50",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x4a9ccb",
+   "beidou_name": "sub_4A9CCB",
+   "beidou_size": "0x13",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x4a9ce4",
+   "beidou_name": "sub_4A9CE4",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x4a9d38",
+   "beidou_name": "sub_4A9D38",
+   "beidou_size": "0xc8",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x4e86a0",
+   "beidou_name": "sub_4E86A0",
+   "beidou_size": "0x50",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x4e86f0",
+   "beidou_name": "sub_4E86F0",
+   "beidou_size": "0xac",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x50dea0",
+   "beidou_name": "sub_50DEA0",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x511138",
+   "beidou_name": "sub_511138",
+   "beidou_size": "0xac",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "RemoveKey",
+   "ea": "0x511206",
+   "beidou_name": "sub_511206",
+   "beidou_size": "0x6e",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x5dd4ae",
+   "beidou_name": "sub_5DD4AE",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "RemoveKey",
+   "ea": "0x672948",
+   "beidou_name": "sub_672948",
+   "beidou_size": "0x6e",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x6736a8",
+   "beidou_name": "sub_6736A8",
+   "beidou_size": "0xd4",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "ResizeHashTable",
+   "ea": "0x675a77",
+   "beidou_name": "sub_675A77",
+   "beidou_size": "0xab",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x6864e4",
+   "beidou_name": "sub_6864E4",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x6d9d15",
+   "beidou_name": "sub_6D9D15",
+   "beidou_size": "0xac",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "RemoveAll",
+   "ea": "0x6d9de3",
+   "beidou_name": "sub_6D9DE3",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x725a4e",
+   "beidou_name": "sub_725A4E",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "GetAt",
+   "ea": "0x72631a",
+   "beidou_name": "sub_72631A",
+   "beidou_size": "0x53",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "Insert",
+   "ea": "0x72636d",
+   "beidou_name": "sub_72636D",
+   "beidou_size": "0xb1",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZMap",
+   "method": "RemoveAll",
+   "ea": "0x726440",
+   "beidou_name": "sub_726440",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZRef",
+   "method": "_Alloc",
+   "ea": "0x4028aa",
+   "beidou_name": "sub_4028AA",
+   "beidou_size": "0x33",
+   "status": "present_sub"
+  },
+  {
+   "class": "CActionFrame",
+   "method": "LoadMappers",
+   "ea": "0x4011c6",
+   "beidou_name": "sub_4011C6",
+   "beidou_size": "0x4df",
+   "status": "present_sub"
+  },
+  {
+   "class": "CActionFrame",
+   "method": "ExtractMap",
+   "ea": "0x4016a5",
+   "beidou_name": "sub_4016A5",
+   "beidou_size": "0x2d8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CActionFrame",
+   "method": "GetZMapper",
+   "ea": "0x774b51",
+   "beidou_name": "sub_774B51",
+   "beidou_size": "0x30",
+   "status": "present_sub"
+  },
+  {
+   "class": "CActionFrame",
+   "method": "GetSMapper",
+   "ea": "0x774b81",
+   "beidou_name": "sub_774B81",
+   "beidou_size": "0x30",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadFuncKeyMapped",
+   "ea": "0x49df79",
+   "beidou_name": "sub_49DF79",
+   "beidou_size": "0x28",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableItem",
+   "method": "MapFuncKey",
+   "ea": "0x4f38f4",
+   "beidou_name": "sub_4F38F4",
+   "beidou_size": "0x303",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableItem",
+   "method": "UnmapFuncKey",
+   "ea": "0x4f3bf7",
+   "beidou_name": "sub_4F3BF7",
+   "beidou_size": "0x1c6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableMenu",
+   "method": "MapFuncKey",
+   "ea": "0x4f9386",
+   "beidou_name": "sub_4F9386",
+   "beidou_size": "0x16d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "MapMacro",
+   "ea": "0x4fb112",
+   "beidou_name": "sub_4FB112",
+   "beidou_size": "0x180",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "MapFuncKey",
+   "ea": "0x4fb32c",
+   "beidou_name": "sub_4FB32C",
+   "beidou_size": "0x17a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CField",
+   "method": "LoadMap",
+   "ea": "0x529bb4",
+   "beidou_name": "sub_529BB4",
+   "beidou_size": "0x2c7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFuncKeyMappedMan",
+   "method": "OnInit",
+   "ea": "0x58ddb4",
+   "beidou_name": "sub_58DDB4",
+   "beidou_size": "0x79",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFuncKeyMappedMan",
+   "method": "AdaptVirtualKey",
+   "ea": "0x58deac",
+   "beidou_name": "sub_58DEAC",
+   "beidou_size": "0x83",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFuncKeyMappedMan",
+   "method": "SaveFuncKeyMap",
+   "ea": "0x58df2f",
+   "beidou_name": "sub_58DF2F",
+   "beidou_size": "0x10d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFuncKeyMappedMan",
+   "method": "DefaultFuncKeyMap",
+   "ea": "0x58e114",
+   "beidou_name": "sub_58E114",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFuncKeyMappedMan",
+   "method": "FuncKeyMapped",
+   "ea": "0x58e12b",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "CItemInfo",
+   "method": "GetMapString",
+   "ea": "0x5cf792",
+   "beidou_name": "sub_5CF792",
+   "beidou_size": "0x2f4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CItemInfo",
+   "method": "FindMapByName",
+   "ea": "0x5cfaf3",
+   "beidou_name": "sub_5CFAF3",
+   "beidou_size": "0x358",
+   "status": "present_sub"
+  },
+  {
+   "class": "CItemInfo",
+   "method": "IterateMapString",
+   "ea": "0x5d0467",
+   "beidou_name": "sub_5D0467",
+   "beidou_size": "0x33e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMacroSysMan",
+   "method": "Map",
+   "ea": "0x631b26",
+   "beidou_name": "sub_631B26",
+   "beidou_size": "0x27",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "Init",
+   "ea": "0x639708",
+   "beidou_name": "sub_639708",
+   "beidou_size": "0x182",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "Close",
+   "ea": "0x63988a",
+   "beidou_name": "sub_63988A",
+   "beidou_size": "0x165",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "Update",
+   "ea": "0x6399ef",
+   "beidou_name": "sub_6399EF",
+   "beidou_size": "0x14e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "LoadMap",
+   "ea": "0x639b3d",
+   "beidou_name": "sub_639B3D",
+   "beidou_size": "0x5c3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreTile",
+   "ea": "0x63a100",
+   "beidou_name": "sub_63A100",
+   "beidou_size": "0x4c4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeTile",
+   "ea": "0x63a5c4",
+   "beidou_name": "sub_63A5C4",
+   "beidou_size": "0x448",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreObj",
+   "ea": "0x63aa7e",
+   "beidou_name": "sub_63AA7E",
+   "beidou_size": "0x298",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeObj",
+   "ea": "0x63ad16",
+   "beidou_name": "sub_63AD16",
+   "beidou_size": "0x14fc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeObjLayer",
+   "ea": "0x63c212",
+   "beidou_name": "sub_63C212",
+   "beidou_size": "0x52f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeObstacles",
+   "ea": "0x63c741",
+   "beidou_name": "sub_63C741",
+   "beidou_size": "0x3ed",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreBack",
+   "ea": "0x63cbba",
+   "beidou_name": "sub_63CBBA",
+   "beidou_size": "0x194",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeBack",
+   "ea": "0x63cd4e",
+   "beidou_name": "sub_63CD4E",
+   "beidou_size": "0x153e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeVectorAnimate",
+   "ea": "0x63ef34",
+   "beidou_name": "sub_63EF34",
+   "beidou_size": "0x73d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreWeather",
+   "ea": "0x63f671",
+   "beidou_name": "sub_63F671",
+   "beidou_size": "0xa6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "MakeCloud",
+   "ea": "0x63f717",
+   "beidou_name": "sub_63F717",
+   "beidou_size": "0x740",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "TransientLayer_Weather",
+   "ea": "0x63fe57",
+   "beidou_name": "sub_63FE57",
+   "beidou_size": "0x1b90",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "TransientLayer_FireCracker",
+   "ea": "0x6419e7",
+   "beidou_name": "sub_6419E7",
+   "beidou_size": "0x104",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "WeatherLayer_RemoveAll",
+   "ea": "0x641aeb",
+   "beidou_name": "sub_641AEB",
+   "beidou_size": "0x28",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "TransientLayer_NewYear",
+   "ea": "0x641b13",
+   "beidou_name": "sub_641B13",
+   "beidou_size": "0x115",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "PlayNextMusic",
+   "ea": "0x641db2",
+   "beidou_name": "sub_641DB2",
+   "beidou_size": "0x11a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreViewRange",
+   "ea": "0x641ef1",
+   "beidou_name": "sub_641EF1",
+   "beidou_size": "0x22d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "PlayBGMFromMapInfo",
+   "ea": "0x64211e",
+   "beidou_name": "sub_64211E",
+   "beidou_size": "0xf6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "RestoreBGM",
+   "ea": "0x642214",
+   "beidou_name": "sub_642214",
+   "beidou_size": "0x50",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "UpdateObstacleInfo",
+   "ea": "0x642264",
+   "beidou_name": "sub_642264",
+   "beidou_size": "0x4ac",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "SetFieldMagLevel",
+   "ea": "0x642890",
+   "beidou_name": "sub_642890",
+   "beidou_size": "0x21a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "SetObjectState",
+   "ea": "0x642aca",
+   "beidou_name": "sub_642ACA",
+   "beidou_size": "0x3bd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "GetObjectRect",
+   "ea": "0x642e87",
+   "beidou_name": "sub_642E87",
+   "beidou_size": "0x35c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "ProcessReflection",
+   "ea": "0x643f7a",
+   "beidou_name": "sub_643F7A",
+   "beidou_size": "0x490",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "OnPacket",
+   "ea": "0x644446",
+   "beidou_name": "sub_644446",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "OnLeaveDirectionMode",
+   "ea": "0x644482",
+   "beidou_name": "sub_644482",
+   "beidou_size": "0xf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "ReloadBack",
+   "ea": "0x644491",
+   "beidou_name": "sub_644491",
+   "beidou_size": "0x134",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "OnSetBackEffect",
+   "ea": "0x6445c5",
+   "beidou_name": "sub_6445C5",
+   "beidou_size": "0x35a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "OnClearBackEffect",
+   "ea": "0x6449ca",
+   "beidou_name": "sub_6449CA",
+   "beidou_size": "0x8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "OnSetMapObjectVisible",
+   "ea": "0x6449d2",
+   "beidou_name": "sub_6449D2",
+   "beidou_size": "0x72",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "SetMapObjectVisible",
+   "ea": "0x644a44",
+   "beidou_name": "sub_644A44",
+   "beidou_size": "0x81",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapLoadable",
+   "method": "SetLayerListVisible",
+   "ea": "0x644ac5",
+   "beidou_name": "sub_644AC5",
+   "beidou_size": "0xb5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapleTVMan",
+   "method": "IsLoadFlash",
+   "ea": "0x63764c",
+   "beidou_name": "sub_63764C",
+   "beidou_size": "0x19",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapleTVMan",
+   "method": "GetSenderName",
+   "ea": "0x6d5811",
+   "beidou_name": "sub_6D5811",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMapleTVMan",
+   "method": "GetReceivername",
+   "ea": "0x6d5835",
+   "beidou_name": "sub_6D5835",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "SetMapleTVMessage",
+   "ea": "0x6d417e",
+   "beidou_name": "sub_6D417E",
+   "beidou_size": "0x8e4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNpc",
+   "method": "DrawMapleTVMessage",
+   "ea": "0x6d4ad4",
+   "beidou_name": "sub_6D4AD4",
+   "beidou_size": "0xd3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "OnInit",
+   "ea": "0x72b82a",
+   "beidou_name": "sub_72B82A",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "SaveQuickslotKeyMap",
+   "ea": "0x72b87e",
+   "beidou_name": "sub_72B87E",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "DefaultQuickslotKeyMap",
+   "ea": "0x72b8e6",
+   "beidou_name": "sub_72B8E6",
+   "beidou_size": "0x14",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "TryBeginDragFuncKeyMappedIcon",
+   "ea": "0x83550d",
+   "beidou_name": "sub_83550D",
+   "beidou_size": "0x1040",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMapTransfer",
+   "method": "SetRet",
+   "ea": "0x83a3c2",
+   "beidou_name": "sub_83A3C2",
+   "beidou_size": "0x2a6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMapleTV",
+   "method": "GetText",
+   "ea": "0x7f0dc9",
+   "beidou_name": "sub_7F0DC9",
+   "beidou_size": "0x273",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetLayer",
+   "ea": "0x855d02",
+   "beidou_name": "sub_855D02",
+   "beidou_size": "0x2609",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetCtrl",
+   "ea": "0x858344",
+   "beidou_name": "sub_858344",
+   "beidou_size": "0x2bf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "LoadMiniMap",
+   "ea": "0x858603",
+   "beidou_name": "sub_858603",
+   "beidou_size": "0x97c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "ReloadMiniMap",
+   "ea": "0x8590a4",
+   "beidou_name": "sub_8590A4",
+   "beidou_size": "0x3b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "ToggleMap",
+   "ea": "0x8590df",
+   "beidou_name": "sub_8590DF",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "Update",
+   "ea": "0x859122",
+   "beidou_name": "sub_859122",
+   "beidou_size": "0x1909",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "OnButtonClicked",
+   "ea": "0x85ace7",
+   "beidou_name": "sub_85ACE7",
+   "beidou_size": "0xfb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "OnMouseMove",
+   "ea": "0x85ade2",
+   "beidou_name": "sub_85ADE2",
+   "beidou_size": "0xcf6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "InsertStalkee",
+   "ea": "0x85bbe4",
+   "beidou_name": "sub_85BBE4",
+   "beidou_size": "0x46",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetShowMiniMap",
+   "ea": "0x85bc51",
+   "beidou_name": "sub_85BC51",
+   "beidou_size": "0xd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_WorldMap",
+   "ea": "0x8e7434",
+   "beidou_name": "sub_8E7434",
+   "beidou_size": "0x402",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "SetMapSpecificEffect",
+   "ea": "0x93cc16",
+   "beidou_name": "sub_93CC16",
+   "beidou_size": "0x182",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "UseFuncKeyMapped",
+   "ea": "0x94f2ed",
+   "beidou_name": "sub_94F2ED",
+   "beidou_size": "0x758",
+   "status": "present_sub"
+  },
+  {
+   "class": "CVecCtrl",
+   "method": "BoundPosMapRange",
+   "ea": "0x9b45c1",
+   "beidou_name": "sub_9B45C1",
+   "beidou_size": "0x1e9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnButtonClicked",
+   "ea": "0x424492",
+   "beidou_name": "sub_424492",
+   "beidou_size": "0x1e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "ClearToolTip",
+   "ea": "0x9e98b7",
+   "beidou_name": "sub_9E98B7",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMap",
+   "ea": "0x9ea93b",
+   "beidou_name": "sub_9EA93B",
+   "beidou_size": "0xa2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CreateWorldMapDlg",
+   "ea": "0x9eb366",
+   "beidou_name": "sub_9EB366",
+   "beidou_size": "0x3f5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnCreate",
+   "ea": "0x9eb75b",
+   "beidou_name": "sub_9EB75B",
+   "beidou_size": "0x1ef",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnDestroy",
+   "ea": "0x9eb94a",
+   "beidou_name": "sub_9EB94A",
+   "beidou_size": "0x44",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "HitTest",
+   "ea": "0x9eb98e",
+   "beidou_name": "sub_9EB98E",
+   "beidou_size": "0x38",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "Draw",
+   "ea": "0x9eb9c6",
+   "beidou_name": "sub_9EB9C6",
+   "beidou_size": "0x5fd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "MakeBorder",
+   "ea": "0x9ebfc3",
+   "beidou_name": "sub_9EBFC3",
+   "beidou_size": "0xc87",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "LoadMapList",
+   "ea": "0x9ed38b",
+   "beidou_name": "sub_9ED38B",
+   "beidou_size": "0x9b3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CheckSpotInfo",
+   "ea": "0x9edd67",
+   "beidou_name": "sub_9EDD67",
+   "beidou_size": "0x2a7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CheckLinkInfo",
+   "ea": "0x9ee00e",
+   "beidou_name": "sub_9EE00E",
+   "beidou_size": "0x2a5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseMove",
+   "ea": "0x9ee2b3",
+   "beidou_name": "sub_9EE2B3",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseEnter",
+   "ea": "0x9ee2ec",
+   "beidou_name": "sub_9EE2EC",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMapDeeper",
+   "ea": "0x9ee30e",
+   "beidou_name": "sub_9EE30E",
+   "beidou_size": "0x1f9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMapShallower",
+   "ea": "0x9ee507",
+   "beidou_name": "sub_9EE507",
+   "beidou_size": "0x1de",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseButton",
+   "ea": "0x9ee6e5",
+   "beidou_name": "sub_9EE6E5",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnKey",
+   "ea": "0x9ee717",
+   "beidou_name": "sub_9EE717",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "UseFuncKeyMapped",
+   "ea": "0xa0773d",
+   "beidou_name": "sub_A0773D",
+   "beidou_size": "0x25b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnNotifyMarriedPartnerMapTransfer",
+   "ea": "0xa0831d",
+   "beidou_name": "sub_A0831D",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnMiniMapOnOff",
+   "ea": "0xa129ed",
+   "beidou_name": "sub_A129ED",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnMapTransferResult",
+   "ea": "0xa25268",
+   "beidou_name": "sub_A25268",
+   "beidou_size": "0x21b",
+   "status": "present_sub"
+  },
+  {
+   "class": "FUNCKEY_MAPPED",
+   "method": "Decode",
+   "ea": "0x4e4409",
+   "beidou_name": "sub_4E4409",
+   "beidou_size": "0xf",
+   "status": "present_sub"
+  }
+ ]
+}

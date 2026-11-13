@@ -1,0 +1,149 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "GMS full 65536B table, b64_len=87384, sha256_16=268a8407a47ee76c, IV=TSPHKw==",
+  "dir_root": "E:/MXD/BeiDou-Client-xy/Data/UI",
+  "exclusive": false,
+  "steps": [
+    {
+      "tool": "unload_all",
+      "tag": "pre_unload",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "load_files",
+      "tag": "load_UI_dir",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"roots\":[{\"name\":\"UI\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "dir_children",
+      "verdict": "NODES",
+      "marker": "children=20",
+      "raw": "{\"children\":[{\"name\":\"Basic.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Basic.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"BuffIcon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\BuffIcon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShop.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShop.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShopPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShopPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ChatBalloon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ChatBalloon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"DialogImage.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\DialogImage.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildBBS.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildBBS.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildMark.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildMark.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITC.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITC.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITCPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITCPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Login.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Login.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Logo.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Logo.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleEzorsiaV2wzfiles.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapleEzorsiaV2wzfiles.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleTV.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapleTV.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapLogin.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapLogin.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"NameTag.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\NameTag.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Npt_GuideLine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Npt_GuideLine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"tutorial.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\tutorial.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"UIWindow.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "find_node",
+      "tag": "child_as_rootpath:find",
+      "verdict": "PARSE_FAIL",
+      "marker": "找不到根节点",
+      "raw": "找不到根节点: E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img"
+    },
+    {
+      "tool": "list_children",
+      "tag": "child_as_rootpath:children",
+      "verdict": "PARSE_FAIL",
+      "marker": "找不到根节点",
+      "raw": "找不到根节点: E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "child_as_rootpath:tree",
+      "verdict": "PARSE_FAIL",
+      "marker": "找不到根节点",
+      "raw": "找不到根节点: E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img"
+    },
+    {
+      "tool": "query_nodes",
+      "tag": "child_as_rootpath:query_search",
+      "verdict": "PARSE_FAIL",
+      "marker": "找不到根节点",
+      "raw": "找不到根节点: E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img"
+    },
+    {
+      "tool": "find_node",
+      "tag": "child_as_nodepath:find",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"node\":{\"name\":\"Basic.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Basic.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "child_as_nodepath:children",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "child_as_nodepath:tree",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: Basic.img"
+    },
+    {
+      "tool": "query_nodes",
+      "tag": "child_as_nodepath:query_search",
+      "verdict": "PARSE_FAIL",
+      "marker": "IMG 解析失败",
+      "raw": "IMG 解析失败: Basic.img"
+    },
+    {
+      "tool": "find_node",
+      "tag": "child_as_nodepath_noext:find",
+      "verdict": "TEXT",
+      "marker": "",
+      "raw": "节点路径不存在: rootPath=E:\\MXD\\BeiDou-Client-xy\\Data\\UI, nodePath=Basic"
+    },
+    {
+      "tool": "list_children",
+      "tag": "child_as_nodepath_noext:children",
+      "verdict": "TEXT",
+      "marker": "",
+      "raw": "节点路径不存在: rootPath=E:\\MXD\\BeiDou-Client-xy\\Data\\UI, nodePath=Basic"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "child_as_nodepath_noext:tree",
+      "verdict": "TEXT",
+      "marker": "",
+      "raw": "节点路径不存在: rootPath=E:\\MXD\\BeiDou-Client-xy\\Data\\UI, nodePath=Basic"
+    },
+    {
+      "tool": "query_nodes",
+      "tag": "child_as_nodepath_noext:query_search",
+      "verdict": "TEXT",
+      "marker": "",
+      "raw": "节点路径不存在: rootPath=E:\\MXD\\BeiDou-Client-xy\\Data\\UI, nodePath=Basic"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "verdict": "OK",
+      "marker": "",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "session_id": "c719edc2-a0b6-4d14-8631-3bfc724bf103",
+  "root_path": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI",
+  "drill_child": {
+    "name": "Basic.img",
+    "rootPath": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img",
+    "nodePath": "",
+    "type": "IMAGE"
+  },
+  "child_root": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img",
+  "summary": {
+    "OK": 7,
+    "NODES": 1,
+    "PARSE_FAIL": 6,
+    "TEXT": 4
+  }
+}

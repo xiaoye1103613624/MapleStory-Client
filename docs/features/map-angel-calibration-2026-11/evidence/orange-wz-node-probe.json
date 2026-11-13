@@ -1,0 +1,183 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "key_gms 65536B from tools/vendor/NoLifeWzToNx-master/Keys.cpp",
+  "key_b64_len": 87384,
+  "iv_b64": "TSPHKw==",
+  "exclusive": false,
+  "steps": [
+    {
+      "tag": "load",
+      "tool": "load_files",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"loadedCount\":5,\"rootCount\":5,\"exclusive\":false,\"generation\":1}"
+    },
+    {
+      "tag": "roots",
+      "tool": "list_loaded_roots",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"roots\":[{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapLogin.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapLogin.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"UIWindow.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\UIWindow.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"smap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\smap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"zmap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\zmap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}],\"rootCount\":5}"
+    },
+    {
+      "tag": "StatusBar.img:list_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tag": "StatusBar.img:query_list",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"result\":{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img\",\"nodePath\":\"\",\"op\":\"list_children\"},\"results\":[{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img\",\"nodePath\":\"\",\"op\":\"list_children\"}]}"
+    },
+    {
+      "tag": "StatusBar.img:tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "StatusBar.img:search_map",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: StatusBar.img"
+    },
+    {
+      "tag": "MapLogin.img:list_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tag": "MapLogin.img:query_list",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"result\":{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/MapLogin.img\",\"nodePath\":\"\",\"op\":\"list_children\"},\"results\":[{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/MapLogin.img\",\"nodePath\":\"\",\"op\":\"list_children\"}]}"
+    },
+    {
+      "tag": "MapLogin.img:tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: MapLogin.img"
+    },
+    {
+      "tag": "MapLogin.img:search_map",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: MapLogin.img"
+    },
+    {
+      "tag": "UIWindow.img:list_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tag": "UIWindow.img:query_list",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"result\":{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"\",\"op\":\"list_children\"},\"results\":[{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/UI/UIWindow.img\",\"nodePath\":\"\",\"op\":\"list_children\"}]}"
+    },
+    {
+      "tag": "UIWindow.img:tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: UIWindow.img"
+    },
+    {
+      "tag": "UIWindow.img:search_map",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: UIWindow.img"
+    },
+    {
+      "tag": "smap.img:list_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tag": "smap.img:query_list",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"result\":{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/smap.img\",\"nodePath\":\"\",\"op\":\"list_children\"},\"results\":[{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/smap.img\",\"nodePath\":\"\",\"op\":\"list_children\"}]}"
+    },
+    {
+      "tag": "smap.img:tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: smap.img"
+    },
+    {
+      "tag": "smap.img:search_map",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: smap.img"
+    },
+    {
+      "tag": "zmap.img:list_children",
+      "tool": "list_children",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tag": "zmap.img:query_list",
+      "tool": "query_nodes",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"result\":{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/zmap.img\",\"nodePath\":\"\",\"op\":\"list_children\"},\"results\":[{\"children\":[],\"rootPath\":\"E:/MXD/BeiDou-Client-xy/Data/zmap.img\",\"nodePath\":\"\",\"op\":\"list_children\"}]}"
+    },
+    {
+      "tag": "zmap.img:tree_d1",
+      "tool": "get_node_tree_json",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: zmap.img"
+    },
+    {
+      "tag": "zmap.img:search_map",
+      "tool": "query_nodes",
+      "verdict": "PARSE_FAIL",
+      "err_marker": "IMG 解析失败",
+      "result_head": "IMG 解析失败: zmap.img"
+    },
+    {
+      "tag": "unload",
+      "tool": "unload_all",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tag": "roots_after",
+      "tool": "list_loaded_roots",
+      "verdict": "OK",
+      "err_marker": "",
+      "result_head": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "session_id": "91bfa0c8-5aed-4e8f-aabb-381013b4f538",
+  "summary": {
+    "ok": 14,
+    "parse_fail": 10,
+    "total": 24
+  }
+}

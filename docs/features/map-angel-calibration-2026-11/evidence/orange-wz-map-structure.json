@@ -1,0 +1,175 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "exclusive": false,
+  "orange_wz_calls": [
+    {
+      "tool": "load_files",
+      "tag": "load_Data_Map",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "raw": "{\"roots\":[{\"name\":\"Map\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map_top_children",
+      "raw": "{\"children\":[{\"name\":\"Back\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Obj\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Tile\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"WorldMap\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Effect.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Effect.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapHelper.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\MapHelper.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Physics.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Physics.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/Back",
+      "raw": "{\"children\":[{\"name\":\"Amoria.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\Amoria.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ancientForest.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\ancientForest.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"aquaCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\aquaCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"aquarium.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\aquarium.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"aquaRoad.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\aquaRoad.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"aquaRoad2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\aquaRoad2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"aquaRoad3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\aquaRoad3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ariantCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\ariantCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"backcho.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\backcho.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blueCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\blueCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blueCave2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\blueCave2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"boatquay1SG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\boatquay1SG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"boatquay2SG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\boatquay2SG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"boatquay3SG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\boatquay3SG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CBDfieldSG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\CBDfieldSG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"changiAirSG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\changiAirSG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Christmas.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\Christmas.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"citySG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\citySG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\darkCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkMountain.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\darkMountain.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkSwamp.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\darkSwamp.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkWood.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\darkWood.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"deepMine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\deepMine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"department.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\department.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"desert.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\desert.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dragonRoad.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\dragonRoad.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dragonValley.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\dragonValley.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dryRock.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\dryRock.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dryRock2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\dryRock2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ereb.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\ereb.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"event.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\event.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"event2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\event2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"EventCN.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\EventCN.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"eventEU.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\eventEU.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"eventGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\eventGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"folkvillige.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\folkvillige.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ghostShip.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\ghostShip.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"globalJP.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\globalJP.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"globalJP2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\globalJP2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"globalJP3_ghost.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\globalJP3_ghost.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grassySoil.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\grassySoil.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrickTower.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\grayBrickTower.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrickTower2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\grayBrickTower2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrickTower3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\grayBrickTower3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"greenCrystalCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\greenCrystalCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloween.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\halloween.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"HalloweenBack.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Back\\\\HalloweenBack.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"highLand_MY.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/Map",
+      "raw": "{\"children\":[{\"name\":\"Map0\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map0\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map1\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map1\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map2\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map2\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map3\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map3\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map5\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map5\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map6\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map6\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map7\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map7\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map8\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map8\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map9\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\Map9\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"AreaCode.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Map\\\\AreaCode.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/Obj",
+      "raw": "{\"children\":[{\"name\":\"acc1.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc1.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc10.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc10.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc11.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc11.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc12.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc12.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc4.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc4.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc5.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc5.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc6.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc6.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc7.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc7.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc8.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc8.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"acc9.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\acc9.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"AmoriaGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\AmoriaGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Christmas.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\Christmas.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"citySG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\citySG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"connect.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\connect.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"connectGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\connectGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"door.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\door.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dungeon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\dungeon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dungeon2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\dungeon2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dungeon3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\dungeon3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dungeon4.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\dungeon4.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"effect.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\effect.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"EnSchoolCN.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\EnSchoolCN.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"etc.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\etc.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"event.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\event.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"EventCN.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\EventCN.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"eventEU.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\eventEU.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"eventGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\eventGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"globalhouseJP.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\globalhouseJP.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"globalJP.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\globalJP.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"guide.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\guide.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"guild.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\guild.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloween.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\halloween.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloweenGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\halloweenGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloweenGLR.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\halloweenGLR.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"hotel.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\hotel.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"house.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\house.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseAA.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseAA.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseAR.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseAR.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseBC.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseBC.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseCT.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseCT.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseDR.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseDR.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseDW.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseDW.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseEL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseEL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseER.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseER.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseFV.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseFV.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseGL.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseGL.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseGS.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseGS.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseLF.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Obj\\\\houseLF.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"houseMC.img\",\"rootPath\":"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/Tile",
+      "raw": "{\"children\":[{\"name\":\"allblackTile.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\allblackTile.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ancientForest.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\ancientForest.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blackTile.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\blackTile.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blankTower.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\blankTower.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blueCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\blueCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blueCave2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\blueCave2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"blueToyCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\blueToyCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"brownBrick.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\brownBrick.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"cakeVillageTW.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\cakeVillageTW.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"christmas.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\christmas.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"citySG.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\citySG.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"citySG2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\citySG2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"classicBlock.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\classicBlock.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"coalMine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\coalMine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"cokeTown.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\cokeTown.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkblueToyCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkblueToyCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkDeepMine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkDeepMine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkGrassySoil.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkGrassySoil.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkGrassySoil_ghost.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkGrassySoil_ghost.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkgreenToyCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkgreenToyCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkMountain.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkMountain.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkpurpleToyCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkpurpleToyCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"darkWood.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\darkWood.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dayDesert.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\dayDesert.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"deepCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\deepCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"deepMine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\deepMine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"deepSeeCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\deepSeeCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"deepSeeFloor.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\deepSeeFloor.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dirtMine.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\dirtMine.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dragonRoad.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\dragonRoad.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dryRock.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\dryRock.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"dryRock2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\dryRock2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"fallenLeaves.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\fallenLeaves.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"folkvillige.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\folkvillige.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"goldRich.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\goldRich.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grassySoil.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\grassySoil.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrick1.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\grayBrick1.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrick2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\grayBrick2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"grayBrick3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\grayBrick3.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"graySubway.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\graySubway.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"greenCrystalCave.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\greenCrystalCave.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"greensandySeaFloor.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\greensandySeaFloor.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"greenToyCastle.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\greenToyCastle.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloween1.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\halloween1.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloween2.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\Tile\\\\halloween2.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"halloween3.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Cl"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/WorldMap",
+      "raw": "{\"children\":[{\"name\":\"WorldMap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap000.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap000.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap010.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap010.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap011.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap011.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap012.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap012.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap013.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap013.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap014.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap014.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap020.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap020.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap021.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap021.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap030.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap030.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap031.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap031.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap032.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap032.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap040.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap040.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap050.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap050.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap051.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap051.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap060.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap060.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap070.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap070.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap080.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap080.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap090.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap090.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap100.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap100.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap140.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap140.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap141.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap141.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap142.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap142.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap143.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap143.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap210.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap210.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap211.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap211.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap220.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap220.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"WorldMap230.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\\\\WorldMap\\\\WorldMap230.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Map/Effect.img",
+      "raw": "{\"children\":[]}"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "map_top_child_count": 8,
+  "map_top_child_names": [
+    "Back",
+    "Map",
+    "Obj",
+    "Tile",
+    "WorldMap",
+    "Effect.img",
+    "MapHelper.img",
+    "Physics.img"
+  ],
+  "subfolders": {
+    "Back": {
+      "count": 111,
+      "sample": [
+        "Amoria.img",
+        "ancientForest.img",
+        "aquaCave.img",
+        "aquarium.img",
+        "aquaRoad.img",
+        "aquaRoad2.img",
+        "aquaRoad3.img",
+        "ariantCastle.img",
+        "backcho.img",
+        "blueCave.img",
+        "blueCave2.img",
+        "boatquay1SG.img",
+        "boatquay2SG.img",
+        "boatquay3SG.img",
+        "CBDfieldSG.img"
+      ]
+    },
+    "Map": {
+      "count": 10,
+      "sample": [
+        "Map0",
+        "Map1",
+        "Map2",
+        "Map3",
+        "Map5",
+        "Map6",
+        "Map7",
+        "Map8",
+        "Map9",
+        "AreaCode.img"
+      ]
+    },
+    "Obj": {
+      "count": 111,
+      "sample": [
+        "acc1.img",
+        "acc10.img",
+        "acc11.img",
+        "acc12.img",
+        "acc2.img",
+        "acc3.img",
+        "acc4.img",
+        "acc5.img",
+        "acc6.img",
+        "acc7.img",
+        "acc8.img",
+        "acc9.img",
+        "AmoriaGL.img",
+        "Christmas.img",
+        "citySG.img"
+      ]
+    },
+    "Tile": {
+      "count": 108,
+      "sample": [
+        "allblackTile.img",
+        "ancientForest.img",
+        "blackTile.img",
+        "blankTower.img",
+        "blueCave.img",
+        "blueCave2.img",
+        "blueToyCastle.img",
+        "brownBrick.img",
+        "cakeVillageTW.img",
+        "christmas.img",
+        "citySG.img",
+        "citySG2.img",
+        "classicBlock.img",
+        "coalMine.img",
+        "cokeTown.img"
+      ]
+    },
+    "WorldMap": {
+      "count": 28,
+      "sample": [
+        "WorldMap.img",
+        "WorldMap000.img",
+        "WorldMap010.img",
+        "WorldMap011.img",
+        "WorldMap012.img",
+        "WorldMap013.img",
+        "WorldMap014.img",
+        "WorldMap020.img",
+        "WorldMap021.img",
+        "WorldMap030.img",
+        "WorldMap031.img",
+        "WorldMap032.img",
+        "WorldMap040.img",
+        "WorldMap050.img",
+        "WorldMap051.img"
+      ]
+    },
+    "Effect.img": {
+      "count": 0,
+      "sample": []
+    }
+  },
+  "final_roots": "{\"roots\":[],\"rootCount\":0}"
+}

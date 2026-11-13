@@ -1,0 +1,48 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "key_gms 65536B from tools/vendor/NoLifeWzToNx-master/Keys.cpp",
+  "key_b64_len": 87384,
+  "key_sha256_16": "268a8407a47ee76c",
+  "iv_b64": "TSPHKw==",
+  "exclusive": false,
+  "steps": [
+    {
+      "tool": "load_files",
+      "ok": true,
+      "result_head": "{\"loadedCount\":3,\"rootCount\":3,\"exclusive\":false,\"generation\":1}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "ok": true,
+      "result_head": "{\"roots\":[{\"name\":\"smap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\smap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"zmap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\zmap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}],\"rootCount\":3}"
+    },
+    {
+      "tool": "list_children",
+      "ok": true,
+      "result_head": "{\"children\":[]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "ok": true,
+      "result_head": "IMG 解析失败: smap.img"
+    },
+    {
+      "tool": "unload_all",
+      "ok": true,
+      "result_head": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "ok": true,
+      "result_head": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "session_id": "904cf756-61ba-43a1-aaf8-d07220b8bc1a",
+  "initialize": "{'jsonrpc': '2.0', 'id': 1, 'result': {'protocolVersion': '2025-03-26', 'capabilities': {'tools': {}, 'prompts': {}, 'resources': {}}, 'serverInfo': {'name': 'orange-wz-http-mcp', 'version': 'v1.157.49'}}}",
+  "paths": [
+    "E:/MXD/BeiDou-Client-xy/Data/smap.img",
+    "E:/MXD/BeiDou-Client-xy/Data/zmap.img",
+    "E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+  ],
+  "roots_after_unload": "{\"roots\":[],\"rootCount\":0}"
+}

@@ -23,6 +23,7 @@
 #include "../IO/UI.h"
 
 #include "../IO/UITypes/UIStatusBar.h"
+#include "../IO/UITypes/UIChatBar.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Net/Packets/PetPackets.h"
@@ -76,6 +77,10 @@ namespace ms
 		// respawn 的异常继续冒泡给 SetFieldHandlers（那边已落盘 ex.what()），
 		// 但不再拖住 ACTIVE 状态：至少地图/瓦片可绘制，GL 也已由上层解锁。
 		state = State::ACTIVE;
+
+		// Angel OnGameStageChanged：聊天 type2（输入中）切回 type1，避免跨图残留输入带。
+		if (auto chatbar = UI::get().get_element<UIChatBar>())
+			chatbar->end_chat_if_typing();
 
 		respawn(portalid);
 	}

@@ -1,0 +1,49 @@
+{
+  "rule": "AGENTS.md YG 2026-11-09: orange-wz MCP first; .nx fallback only on parse failure; record raw error + key spec",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "connection": "custom-orange_wz (global, streamable-http, 29 tools)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "phases": [
+    {
+      "id": "P1",
+      "script": "tools/orange_wz_node_probe.py",
+      "evidence": "orange-wz-node-probe.json",
+      "result": "5 standalone .img loaded; list_children empty; tree/search -> IMG 解析失败 (10 PARSE_FAIL)"
+    },
+    {
+      "id": "P2",
+      "script": "tools/orange_wz_autoparse_probe.py",
+      "evidence": "orange-wz-autoparse-probe.json",
+      "result": "autoParse:true + 4 key.name (GMS/gms/BMS/empty) + 5 tools; find_node returns only type:IMAGE shell; tree/search -> IMG 解析失败 (9 PARSE_FAIL)"
+    },
+    {
+      "id": "P3",
+      "script": "tools/orange_wz_dir_nx_probe.py",
+      "evidence": "orange-wz-dir-nx-probe.json",
+      "result": "DIRECTORY load Data/UI -> NODES children=20, Data -> children=19 (structure layer WORKS); BMS full table on single .img still IMG 解析失败; .nx rejected by load_files (仅支持加载目录或 .wz/.img/.xml)"
+    },
+    {
+      "id": "P4",
+      "script": "tools/orange_wz_drilldown_probe.py",
+      "evidence": "orange-wz-drilldown-probe.json",
+      "result": "after dir load, 3 rootPath/nodePath drilldown shapes; child_as_nodepath find=IMAGE shell, children=[], tree/search -> IMG 解析失败: Basic.img (6 PARSE_FAIL)"
+    }
+  ],
+  "raw_error_texts_verbatim": [
+    "IMG 解析失败: StatusBar.img",
+    "IMG 解析失败: Basic.img",
+    "IMG 解析失败: 01010000.img",
+    "IMG 解析失败: smap.img",
+    "仅支持加载目录或 .wz/.img/.xml 文件: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx",
+    "参数为空: name",
+    "找不到根节点: E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\Basic.img"
+  ],
+  "conclusion": {
+    "orange_wz_structure_layer": "WORKS — directory-level enumeration returns real child nodes (WZ/FOLDER tree)",
+    "orange_wz_content_layer": "FAILS — any internal .img node tree/search returns IMG 解析失败 even with full 65536B key + autoParse:true",
+    "fallback_condition_met": true,
+    "fallback_source": ".nxcache/*.nx (PKG4) via tools/nx_inspect.py + runtime probe",
+    "fallback_recorded": "raw error text + key spec captured above (AGENTS.md §2)",
+    "no_fake_green": "gate-smoke v1 counted 'IMG 解析失败' as OK; corrected — strict classify in node_probe/autoparse/drilldown"
+  }
+}

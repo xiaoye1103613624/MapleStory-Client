@@ -189,17 +189,16 @@ namespace ms
 
 		dragarea = Point<int16_t>(bg_dimensions_x, 20);
 
-		// 多分辨率：PosMAP(313,64) 是 1280×720 基准下的居中读数；其它档位按新视口居中。
-		// 1280×720 保持原生绝对位置，不覆盖用户拖拽后保存的 Setting<PosMAP>。
+		// Center 策略：1280×720 保留 PosMAP 绝对读数；其它档位视口居中。
+		set_layout_policy(LayoutPolicy::Center);
 		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
 			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
 			center_on_screen();
 	}
 
-	void UIWorldMap::update_screen(int16_t, int16_t)
+	void UIWorldMap::update_screen(int16_t new_width, int16_t new_height)
 	{
-		// 分辨率实时切换：UIState 只对 active 元素广播，故这里只重锚不缩放（1x 原生像素）。
-		center_on_screen();
+		UIElement::update_screen(new_width, new_height);
 		ensure_panels_on_screen();
 	}
 

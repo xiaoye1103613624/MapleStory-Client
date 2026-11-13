@@ -1,0 +1,888 @@
+{
+ "source": "13339 Angel v83 (map face, symbol discovery)",
+ "total_funcs": 133,
+ "total_classes": 27,
+ "classes": {
+  "": [
+   {
+    "ea": "0x40387e",
+    "method": "_g_apfnPCOMAPIs",
+    "decorated": "?_g_apfnPCOMAPIs@@3PAP6GHXZA",
+    "demangled": "int (*__near * _g_apfnPCOMAPIs)(void)"
+   },
+   {
+    "ea": "0x4fb292",
+    "method": "is_able_to_map_macrosys_skill",
+    "decorated": "?is_able_to_map_macrosys_skill@@YAHJ@Z",
+    "demangled": "int is_able_to_map_macrosys_skill(long)"
+   },
+   {
+    "ea": "0x854b8c",
+    "method": "0CUIMiniMap",
+    "decorated": "??0CUIMiniMap@@QAE@PAVCWvsContext@@@Z",
+    "demangled": "public: CUIMiniMap::CUIMiniMap(class CWvsContext __near *)"
+   },
+   {
+    "ea": "0x9e9823",
+    "method": "0CWorldMapDlg",
+    "decorated": "??0CWorldMapDlg@@QAE@XZ",
+    "demangled": "public: CWorldMapDlg::CWorldMapDlg(void)"
+   },
+   {
+    "ea": "0x9e98c2",
+    "method": "_GCWorldMapDlg",
+    "decorated": "??_GCWorldMapDlg@@UAEPAXI@Z",
+    "demangled": "public: virtual void __near * CWorldMapDlg::`scalar deleting destructor'(unsigned int)"
+   },
+   {
+    "ea": "0x9e98e6",
+    "method": "1CWorldMapDlg",
+    "decorated": "??1CWorldMapDlg@@UAE@XZ",
+    "demangled": "public: virtual CWorldMapDlg::~CWorldMapDlg(void)"
+   },
+   {
+    "ea": "0xa60a2a",
+    "method": "_GetRangeOfTrysToCheck",
+    "decorated": "?_GetRangeOfTrysToCheck@@YAPBU_s_TryBlockMapEntry@@PBU_s_FuncInfo@@HHPAI1@Z",
+    "demangled": "struct _s_TryBlockMapEntry const __near * _GetRangeOfTrysToCheck(struct _s_FuncInfo const __near *,int,int,unsigned int __near *,unsigned int __near *)"
+   },
+   {
+    "ea": "0xa64fdd",
+    "method": "CatchIt",
+    "decorated": "?CatchIt@@YAXPAUEHExceptionRecord@@PAUEHRegistrationNode@@PAU_CONTEXT@@PAXPBU_s_FuncInfo@@PBU_s_HandlerType@@PBU_s_CatchableType@@PBU_s_TryBlockMapEntry@@H1E@Z",
+    "demangled": "void CatchIt(struct EHExceptionRecord __near *,struct EHRegistrationNode __near *,struct _CONTEXT __near *,void __near *,struct _s_FuncInfo const __near *,struct _s_HandlerType const __near *,struct _s_CatchableType const __near *,struct _s_TryBlockMapEntry const __near *,int,struct EHRegistrationNode __near *,unsigned char)"
+   }
+  ],
+  "?$ZMap": [
+   {
+    "ea": "0x447ef0",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@KPAU__POSITION@@K@@QAEPAPAU__POSITION@@ABKAAPAU2@@Z",
+    "demangled": "public: struct __POSITION __near * __near * ZMap<unsigned long,struct __POSITION __near *,unsigned long>::GetAt(unsigned long const __near &,struct __POSITION __near * __near &)"
+   },
+   {
+    "ea": "0x4a9ccb",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@JV?$ZXString@D@@J@@QAEPAU__POSITION@@ABJABV?$ZXString@D@@@Z_0",
+    "demangled": ""
+   },
+   {
+    "ea": "0x4a9ce4",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@JV?$ZXString@D@@J@@QAEPAV?$ZXString@D@@ABJAAV2@@Z",
+    "demangled": "public: class ZXString<char> __near * ZMap<long,class ZXString<char>,long>::GetAt(long const __near &,class ZXString<char> __near &)"
+   },
+   {
+    "ea": "0x4a9d38",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@JV?$ZXString@D@@J@@QAEPAU__POSITION@@ABJABV?$ZXString@D@@@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<long,class ZXString<char>,long>::Insert(long const __near &,class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x4e86a0",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@JJJ@@QAEPAJABJAAJ@Z",
+    "demangled": "public: long __near * ZMap<long,long,long>::GetAt(long const __near &,long __near &)"
+   },
+   {
+    "ea": "0x4e86f0",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@JJJ@@QAEPAU__POSITION@@ABJ0@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<long,long,long>::Insert(long const __near &,long const __near &)"
+   },
+   {
+    "ea": "0x50dea0",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@KV?$ZRef@VCStaticFoothold@@@@K@@QAEPAV?$ZRef@VCStaticFoothold@@@@ABKAAV2@@Z",
+    "demangled": "public: class ZRef<class CStaticFoothold> __near * ZMap<unsigned long,class ZRef<class CStaticFoothold>,unsigned long>::GetAt(unsigned long const __near &,class ZRef<class CStaticFoothold> __near &)"
+   },
+   {
+    "ea": "0x511138",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@KPAU__POSITION@@K@@QAEPAU__POSITION@@ABKABQAU2@@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<unsigned long,struct __POSITION __near *,unsigned long>::Insert(unsigned long const __near &,struct __POSITION __near * const __near &)"
+   },
+   {
+    "ea": "0x511206",
+    "method": "RemoveKey",
+    "decorated": "?RemoveKey@?$ZMap@KPAU__POSITION@@K@@QAEHABK@Z",
+    "demangled": "public: int ZMap<unsigned long,struct __POSITION __near *,unsigned long>::RemoveKey(unsigned long const __near &)"
+   },
+   {
+    "ea": "0x5dd4ae",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@JV?$ZRef@UEQUIPITEM@CItemInfo@@@@J@@QAEPAV?$ZRef@UEQUIPITEM@CItemInfo@@@@ABJAAV2@@Z",
+    "demangled": "public: class ZRef<struct CItemInfo::EQUIPITEM> __near * ZMap<long,class ZRef<struct CItemInfo::EQUIPITEM>,long>::GetAt(long const __near &,class ZRef<struct CItemInfo::EQUIPITEM> __near &)"
+   },
+   {
+    "ea": "0x672948",
+    "method": "RemoveKey",
+    "decorated": "?RemoveKey@?$ZMap@JJJ@@QAEHABJ@Z",
+    "demangled": "public: int ZMap<long,long,long>::RemoveKey(long const __near &)"
+   },
+   {
+    "ea": "0x6736a8",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@JV?$ZMap@JJJ@@J@@QAEPAU__POSITION@@ABJABV?$ZMap@JJJ@@@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<long,class ZMap<long,long,long>,long>::Insert(long const __near &,class ZMap<long,long,long> const __near &)"
+   },
+   {
+    "ea": "0x675a77",
+    "method": "ResizeHashTable",
+    "decorated": "?ResizeHashTable@?$ZMap@JV?$ZMap@JJJ@@J@@QAEXII@Z",
+    "demangled": "public: void ZMap<long,class ZMap<long,long,long>,long>::ResizeHashTable(unsigned int,unsigned int)"
+   },
+   {
+    "ea": "0x6864e4",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@JV?$ZRef@UMonsterBookStr@@@@J@@QAEPAV?$ZRef@UMonsterBookStr@@@@ABJAAV2@@Z",
+    "demangled": "public: class ZRef<struct MonsterBookStr> __near * ZMap<long,class ZRef<struct MonsterBookStr>,long>::GetAt(long const __near &,class ZRef<struct MonsterBookStr> __near &)"
+   },
+   {
+    "ea": "0x6d9d15",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@KHK@@QAEPAU__POSITION@@ABKABH@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<unsigned long,int,unsigned long>::Insert(unsigned long const __near &,int const __near &)"
+   },
+   {
+    "ea": "0x6d9de3",
+    "method": "RemoveAll",
+    "decorated": "?RemoveAll@?$ZMap@KHK@@QAEXXZ",
+    "demangled": "public: void ZMap<unsigned long,int,unsigned long>::RemoveAll(void)"
+   },
+   {
+    "ea": "0x725a4e",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@KV?$ZArray@G@@K@@QAEPAV?$ZArray@G@@ABKAAV2@@Z",
+    "demangled": "public: class ZArray<unsigned short> __near * ZMap<unsigned long,class ZArray<unsigned short>,unsigned long>::GetAt(unsigned long const __near &,class ZArray<unsigned short> __near &)"
+   },
+   {
+    "ea": "0x72631a",
+    "method": "GetAt",
+    "decorated": "?GetAt@?$ZMap@GHG@@QAEPAHABGAAH@Z",
+    "demangled": "public: int __near * ZMap<unsigned short,int,unsigned short>::GetAt(unsigned short const __near &,int __near &)"
+   },
+   {
+    "ea": "0x72636d",
+    "method": "Insert",
+    "decorated": "?Insert@?$ZMap@GHG@@QAEPAU__POSITION@@ABGABH@Z",
+    "demangled": "public: struct __POSITION __near * ZMap<unsigned short,int,unsigned short>::Insert(unsigned short const __near &,int const __near &)"
+   },
+   {
+    "ea": "0x726440",
+    "method": "RemoveAll",
+    "decorated": "?RemoveAll@?$ZMap@GHG@@QAEXXZ",
+    "demangled": "public: void ZMap<unsigned short,int,unsigned short>::RemoveAll(void)"
+   }
+  ],
+  "?$ZRef": [
+   {
+    "ea": "0x4028aa",
+    "method": "_Alloc",
+    "decorated": "?_Alloc@?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@AAEXXZ",
+    "demangled": "private: void ZRef<class ZList<struct CActionFrame::MAPINFO>>::_Alloc(void)"
+   }
+  ],
+  "CActionFrame": [
+   {
+    "ea": "0x4011c6",
+    "method": "LoadMappers",
+    "decorated": "?LoadMappers@CActionFrame@@SAXXZ",
+    "demangled": "public: static void CActionFrame::LoadMappers(void)"
+   },
+   {
+    "ea": "0x4016a5",
+    "method": "ExtractMap",
+    "decorated": "?ExtractMap@CActionFrame@@KA?AV?$ZRef@V?$ZList@UMAPINFO@CActionFrame@@@@@@PAUIWzCanvas@@@Z",
+    "demangled": "protected: static class ZRef<class ZList<struct CActionFrame::MAPINFO>> CActionFrame::ExtractMap(struct IWzCanvas __near *)"
+   },
+   {
+    "ea": "0x774b51",
+    "method": "GetZMapper",
+    "decorated": "?GetZMapper@CActionFrame@@SA?AV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: static class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>> CActionFrame::GetZMapper(void)"
+   },
+   {
+    "ea": "0x774b81",
+    "method": "GetSMapper",
+    "decorated": "?GetSMapper@CActionFrame@@SA?AV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@XZ",
+    "demangled": "public: static class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>> CActionFrame::GetSMapper(void)"
+   }
+  ],
+  "CConfig": [
+   {
+    "ea": "0x49df79",
+    "method": "LoadFuncKeyMapped",
+    "decorated": "?LoadFuncKeyMapped@CConfig@@QAEHPAUFUNCKEY_MAPPED@@@Z",
+    "demangled": "public: int CConfig::LoadFuncKeyMapped(struct FUNCKEY_MAPPED __near *)"
+   }
+  ],
+  "CDraggableItem": [
+   {
+    "ea": "0x4f38f4",
+    "method": "MapFuncKey",
+    "decorated": "?MapFuncKey@CDraggableItem@@IAEHJJH@Z",
+    "demangled": "protected: int CDraggableItem::MapFuncKey(long,long,int)"
+   },
+   {
+    "ea": "0x4f3bf7",
+    "method": "UnmapFuncKey",
+    "decorated": "?UnmapFuncKey@CDraggableItem@@IAEHH@Z",
+    "demangled": "protected: int CDraggableItem::UnmapFuncKey(int)"
+   }
+  ],
+  "CDraggableMenu": [
+   {
+    "ea": "0x4f9386",
+    "method": "MapFuncKey",
+    "decorated": "?MapFuncKey@CDraggableMenu@@IAEHJJH@Z",
+    "demangled": "protected: int CDraggableMenu::MapFuncKey(long,long,int)"
+   }
+  ],
+  "CDraggableSkill": [
+   {
+    "ea": "0x4fb112",
+    "method": "MapMacro",
+    "decorated": "?MapMacro@CDraggableSkill@@IAEHJJHH@Z",
+    "demangled": "protected: int CDraggableSkill::MapMacro(long,long,int,int)"
+   },
+   {
+    "ea": "0x4fb32c",
+    "method": "MapFuncKey",
+    "decorated": "?MapFuncKey@CDraggableSkill@@IAEHJJH@Z",
+    "demangled": "protected: int CDraggableSkill::MapFuncKey(long,long,int)"
+   }
+  ],
+  "CField": [
+   {
+    "ea": "0x529bb4",
+    "method": "LoadMap",
+    "decorated": "?LoadMap@CField@@UAEXK@Z",
+    "demangled": "public: virtual void CField::LoadMap(unsigned long)"
+   }
+  ],
+  "CFuncKeyMappedMan": [
+   {
+    "ea": "0x58ddb4",
+    "method": "OnInit",
+    "decorated": "?OnInit@CFuncKeyMappedMan@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CFuncKeyMappedMan::OnInit(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x58deac",
+    "method": "AdaptVirtualKey",
+    "decorated": "?AdaptVirtualKey@CFuncKeyMappedMan@@QAEXXZ",
+    "demangled": "public: void CFuncKeyMappedMan::AdaptVirtualKey(void)"
+   },
+   {
+    "ea": "0x58df2f",
+    "method": "SaveFuncKeyMap",
+    "decorated": "?SaveFuncKeyMap@CFuncKeyMappedMan@@QAEXXZ",
+    "demangled": "public: void CFuncKeyMappedMan::SaveFuncKeyMap(void)"
+   },
+   {
+    "ea": "0x58e114",
+    "method": "DefaultFuncKeyMap",
+    "decorated": "?DefaultFuncKeyMap@CFuncKeyMappedMan@@QAEXXZ",
+    "demangled": "public: void CFuncKeyMappedMan::DefaultFuncKeyMap(void)"
+   },
+   {
+    "ea": "0x58e12b",
+    "method": "FuncKeyMapped",
+    "decorated": "?FuncKeyMapped@CFuncKeyMappedMan@@QAEAAUFUNCKEY_MAPPED@@J@Z",
+    "demangled": "public: struct FUNCKEY_MAPPED __near & CFuncKeyMappedMan::FuncKeyMapped(long)"
+   }
+  ],
+  "CItemInfo": [
+   {
+    "ea": "0x5cf792",
+    "method": "GetMapString",
+    "decorated": "?GetMapString@CItemInfo@@QAE?AV?$ZXString@D@@KPBD@Z",
+    "demangled": "public: class ZXString<char> CItemInfo::GetMapString(unsigned long,char const __near *)"
+   },
+   {
+    "ea": "0x5cfaf3",
+    "method": "FindMapByName",
+    "decorated": "?FindMapByName@CItemInfo@@QAE?AV?$ZList@U?$ZPair@KV?$ZXString@D@@@@@@V?$ZXString@D@@@Z",
+    "demangled": "public: class ZList<struct ZPair<unsigned long,class ZXString<char>>> CItemInfo::FindMapByName(class ZXString<char>)"
+   },
+   {
+    "ea": "0x5d0467",
+    "method": "IterateMapString",
+    "decorated": "?IterateMapString@CItemInfo@@IAEXXZ",
+    "demangled": "protected: void CItemInfo::IterateMapString(void)"
+   }
+  ],
+  "CMacroSysMan": [
+   {
+    "ea": "0x631b26",
+    "method": "Map",
+    "decorated": "?Map@CMacroSysMan@@QAEXJJJ@Z",
+    "demangled": "public: void CMacroSysMan::Map(long,long,long)"
+   }
+  ],
+  "CMapLoadable": [
+   {
+    "ea": "0x639708",
+    "method": "Init",
+    "decorated": "?Init@CMapLoadable@@UAEXPAX@Z",
+    "demangled": "public: virtual void CMapLoadable::Init(void __near *)"
+   },
+   {
+    "ea": "0x63988a",
+    "method": "Close",
+    "decorated": "?Close@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::Close(void)"
+   },
+   {
+    "ea": "0x6399ef",
+    "method": "Update",
+    "decorated": "?Update@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::Update(void)"
+   },
+   {
+    "ea": "0x639b3d",
+    "method": "LoadMap",
+    "decorated": "?LoadMap@CMapLoadable@@UAEXXZ",
+    "demangled": "public: virtual void CMapLoadable::LoadMap(void)"
+   },
+   {
+    "ea": "0x63a100",
+    "method": "RestoreTile",
+    "decorated": "?RestoreTile@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreTile(void)"
+   },
+   {
+    "ea": "0x63a5c4",
+    "method": "MakeTile",
+    "decorated": "?MakeTile@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0@Z",
+    "demangled": "protected: void CMapLoadable::MakeTile(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x63aa7e",
+    "method": "RestoreObj",
+    "decorated": "?RestoreObj@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreObj(void)"
+   },
+   {
+    "ea": "0x63ad16",
+    "method": "MakeObj",
+    "decorated": "?MakeObj@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeObj(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x63c212",
+    "method": "MakeObjLayer",
+    "decorated": "?MakeObjLayer@CMapLoadable@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@JJJJHJJJJAAJABV?$ZXString@D@@@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>> CMapLoadable::MakeObjLayer(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,long,long,long,long,int,long,long,long,long,long __near &,class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x63c741",
+    "method": "MakeObstacles",
+    "decorated": "?MakeObstacles@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@HABV?$ZXString@D@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeObstacles(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,int,class ZXString<char> const __near &)"
+   },
+   {
+    "ea": "0x63cbba",
+    "method": "RestoreBack",
+    "decorated": "?RestoreBack@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreBack(void)"
+   },
+   {
+    "ea": "0x63cd4e",
+    "method": "MakeBack",
+    "decorated": "?MakeBack@CMapLoadable@@IAEXHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@KHJJJJ@Z",
+    "demangled": "protected: void CMapLoadable::MakeBack(int,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,unsigned long,int,long,long,long,long)"
+   },
+   {
+    "ea": "0x63ef34",
+    "method": "MakeVectorAnimate",
+    "decorated": "?MakeVectorAnimate@CMapLoadable@@IAEXV?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: void CMapLoadable::MakeVectorAnimate(class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>)"
+   },
+   {
+    "ea": "0x63f671",
+    "method": "RestoreWeather",
+    "decorated": "?RestoreWeather@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreWeather(void)"
+   },
+   {
+    "ea": "0x63f717",
+    "method": "MakeCloud",
+    "decorated": "?MakeCloud@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::MakeCloud(void)"
+   },
+   {
+    "ea": "0x63fe57",
+    "method": "TransientLayer_Weather",
+    "decorated": "?TransientLayer_Weather@CMapLoadable@@IAEXABV?$ZXString@G@@JJJ@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_Weather(class ZXString<unsigned short> const __near &,long,long,long)"
+   },
+   {
+    "ea": "0x6419e7",
+    "method": "TransientLayer_FireCracker",
+    "decorated": "?TransientLayer_FireCracker@CMapLoadable@@IAEXV?$ZXString@G@@@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_FireCracker(class ZXString<unsigned short>)"
+   },
+   {
+    "ea": "0x641aeb",
+    "method": "WeatherLayer_RemoveAll",
+    "decorated": "?WeatherLayer_RemoveAll@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::WeatherLayer_RemoveAll(void)"
+   },
+   {
+    "ea": "0x641b13",
+    "method": "TransientLayer_NewYear",
+    "decorated": "?TransientLayer_NewYear@CMapLoadable@@IAEXV?$ZXString@G@@@Z",
+    "demangled": "protected: void CMapLoadable::TransientLayer_NewYear(class ZXString<unsigned short>)"
+   },
+   {
+    "ea": "0x641db2",
+    "method": "PlayNextMusic",
+    "decorated": "?PlayNextMusic@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::PlayNextMusic(void)"
+   },
+   {
+    "ea": "0x641ef1",
+    "method": "RestoreViewRange",
+    "decorated": "?RestoreViewRange@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreViewRange(void)"
+   },
+   {
+    "ea": "0x64211e",
+    "method": "PlayBGMFromMapInfo",
+    "decorated": "?PlayBGMFromMapInfo@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::PlayBGMFromMapInfo(void)"
+   },
+   {
+    "ea": "0x642214",
+    "method": "RestoreBGM",
+    "decorated": "?RestoreBGM@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::RestoreBGM(void)"
+   },
+   {
+    "ea": "0x642264",
+    "method": "UpdateObstacleInfo",
+    "decorated": "?UpdateObstacleInfo@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::UpdateObstacleInfo(void)"
+   },
+   {
+    "ea": "0x642890",
+    "method": "SetFieldMagLevel",
+    "decorated": "?SetFieldMagLevel@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::SetFieldMagLevel(void)"
+   },
+   {
+    "ea": "0x642aca",
+    "method": "SetObjectState",
+    "decorated": "?SetObjectState@CMapLoadable@@QAEHPBDJ@Z",
+    "demangled": "public: int CMapLoadable::SetObjectState(char const __near *,long)"
+   },
+   {
+    "ea": "0x642e87",
+    "method": "GetObjectRect",
+    "decorated": "?GetObjectRect@CMapLoadable@@QBE?AUtagRECT@@PBD@Z",
+    "demangled": "public: struct tagRECT CMapLoadable::GetObjectRect(char const __near *)const"
+   },
+   {
+    "ea": "0x643f7a",
+    "method": "ProcessReflection",
+    "decorated": "?ProcessReflection@CMapLoadable@@IAEXXZ",
+    "demangled": "protected: void CMapLoadable::ProcessReflection(void)"
+   },
+   {
+    "ea": "0x644446",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CMapLoadable@@UAEXJAAVCInPacket@@@Z",
+    "demangled": "public: virtual void CMapLoadable::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x644482",
+    "method": "OnLeaveDirectionMode",
+    "decorated": "?OnLeaveDirectionMode@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::OnLeaveDirectionMode(void)"
+   },
+   {
+    "ea": "0x644491",
+    "method": "ReloadBack",
+    "decorated": "?ReloadBack@CMapLoadable@@QAEXXZ",
+    "demangled": "public: void CMapLoadable::ReloadBack(void)"
+   },
+   {
+    "ea": "0x6445c5",
+    "method": "OnSetBackEffect",
+    "decorated": "?OnSetBackEffect@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnSetBackEffect(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6449ca",
+    "method": "OnClearBackEffect",
+    "decorated": "?OnClearBackEffect@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnClearBackEffect(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x6449d2",
+    "method": "OnSetMapObjectVisible",
+    "decorated": "?OnSetMapObjectVisible@CMapLoadable@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CMapLoadable::OnSetMapObjectVisible(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x644a44",
+    "method": "SetMapObjectVisible",
+    "decorated": "?SetMapObjectVisible@CMapLoadable@@IAEXABV?$ZXString@D@@H@Z",
+    "demangled": "protected: void CMapLoadable::SetMapObjectVisible(class ZXString<char> const __near &,int)"
+   },
+   {
+    "ea": "0x644ac5",
+    "method": "SetLayerListVisible",
+    "decorated": "?SetLayerListVisible@CMapLoadable@@KAXV?$ZRef@V?$ZList@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@@@@@H@Z",
+    "demangled": "protected: static void CMapLoadable::SetLayerListVisible(class ZRef<class ZList<class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>>>,int)"
+   }
+  ],
+  "CMapleTVMan": [
+   {
+    "ea": "0x63764c",
+    "method": "IsLoadFlash",
+    "decorated": "?IsLoadFlash@CMapleTVMan@@QAEHXZ",
+    "demangled": "public: int CMapleTVMan::IsLoadFlash(void)"
+   },
+   {
+    "ea": "0x6d5811",
+    "method": "GetSenderName",
+    "decorated": "?GetSenderName@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CMapleTVMan::GetSenderName(void)"
+   },
+   {
+    "ea": "0x6d5835",
+    "method": "GetReceivername",
+    "decorated": "?GetReceivername@CMapleTVMan@@QAE?AV?$ZXString@D@@XZ",
+    "demangled": "public: class ZXString<char> CMapleTVMan::GetReceivername(void)"
+   }
+  ],
+  "CNpc": [
+   {
+    "ea": "0x6d417e",
+    "method": "SetMapleTVMessage",
+    "decorated": "?SetMapleTVMessage@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::SetMapleTVMessage(void)"
+   },
+   {
+    "ea": "0x6d4ad4",
+    "method": "DrawMapleTVMessage",
+    "decorated": "?DrawMapleTVMessage@CNpc@@QAEXXZ",
+    "demangled": "public: void CNpc::DrawMapleTVMessage(void)"
+   }
+  ],
+  "CQuickslotKeyMappedMan": [
+   {
+    "ea": "0x72b82a",
+    "method": "OnInit",
+    "decorated": "?OnInit@CQuickslotKeyMappedMan@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CQuickslotKeyMappedMan::OnInit(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x72b87e",
+    "method": "SaveQuickslotKeyMap",
+    "decorated": "?SaveQuickslotKeyMap@CQuickslotKeyMappedMan@@QAEXXZ",
+    "demangled": "public: void CQuickslotKeyMappedMan::SaveQuickslotKeyMap(void)"
+   },
+   {
+    "ea": "0x72b8e6",
+    "method": "DefaultQuickslotKeyMap",
+    "decorated": "?DefaultQuickslotKeyMap@CQuickslotKeyMappedMan@@QAEXXZ",
+    "demangled": "public: void CQuickslotKeyMappedMan::DefaultQuickslotKeyMap(void)"
+   }
+  ],
+  "CUIKeyConfig": [
+   {
+    "ea": "0x83550d",
+    "method": "TryBeginDragFuncKeyMappedIcon",
+    "decorated": "?TryBeginDragFuncKeyMappedIcon@CUIKeyConfig@@IAEXJJ@Z",
+    "demangled": "protected: void CUIKeyConfig::TryBeginDragFuncKeyMappedIcon(long,long)"
+   }
+  ],
+  "CUIMapTransfer": [
+   {
+    "ea": "0x83a3c2",
+    "method": "SetRet",
+    "decorated": "?SetRet@CUIMapTransfer@@UAEXJ@Z",
+    "demangled": "public: virtual void CUIMapTransfer::SetRet(long)"
+   }
+  ],
+  "CUIMapleTV": [
+   {
+    "ea": "0x7f0dc9",
+    "method": "GetText",
+    "decorated": "?GetText@CUIMapleTV@@QAEXAAV?$ZXString@D@@00000@Z",
+    "demangled": "public: void CUIMapleTV::GetText(class ZXString<char> __near &,class ZXString<char> __near &,class ZXString<char> __near &,class ZXString<char> __near &,class ZXString<char> __near &,class ZXString<char> __near &)"
+   }
+  ],
+  "CUIMiniMap": [
+   {
+    "ea": "0x855d02",
+    "method": "SetLayer",
+    "decorated": "?SetLayer@CUIMiniMap@@QAEXXZ",
+    "demangled": "public: void CUIMiniMap::SetLayer(void)"
+   },
+   {
+    "ea": "0x858344",
+    "method": "SetCtrl",
+    "decorated": "?SetCtrl@CUIMiniMap@@QAEXXZ",
+    "demangled": "public: void CUIMiniMap::SetCtrl(void)"
+   },
+   {
+    "ea": "0x858603",
+    "method": "LoadMiniMap",
+    "decorated": "?LoadMiniMap@CUIMiniMap@@QAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@0K@Z",
+    "demangled": "public: int CUIMiniMap::LoadMiniMap(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>,unsigned long)"
+   },
+   {
+    "ea": "0x8590a4",
+    "method": "ReloadMiniMap",
+    "decorated": "?ReloadMiniMap@CUIMiniMap@@QAEHXZ",
+    "demangled": "public: int CUIMiniMap::ReloadMiniMap(void)"
+   },
+   {
+    "ea": "0x8590df",
+    "method": "ToggleMap",
+    "decorated": "?ToggleMap@CUIMiniMap@@QAEXXZ",
+    "demangled": "public: void CUIMiniMap::ToggleMap(void)"
+   },
+   {
+    "ea": "0x859122",
+    "method": "Update",
+    "decorated": "?Update@CUIMiniMap@@UAEXXZ",
+    "demangled": "public: virtual void CUIMiniMap::Update(void)"
+   },
+   {
+    "ea": "0x85ace7",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUIMiniMap@@UAEXI@Z",
+    "demangled": "public: virtual void CUIMiniMap::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x85ade2",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CUIMiniMap@@UAEHJJ@Z",
+    "demangled": "public: virtual int CUIMiniMap::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x85bbe4",
+    "method": "InsertStalkee",
+    "decorated": "?InsertStalkee@CUIMiniMap@@QAEXKAAV?$ZXString@D@@UtagPOINT@@@Z",
+    "demangled": "public: void CUIMiniMap::InsertStalkee(unsigned long,class ZXString<char> __near &,struct tagPOINT)"
+   },
+   {
+    "ea": "0x85bc51",
+    "method": "SetShowMiniMap",
+    "decorated": "?SetShowMiniMap@CUIMiniMap@@QAEXH@Z",
+    "demangled": "public: void CUIMiniMap::SetShowMiniMap(int)"
+   }
+  ],
+  "CUIToolTip": [
+   {
+    "ea": "0x8e7434",
+    "method": "SetToolTip_WorldMap",
+    "decorated": "?SetToolTip_WorldMap@CUIToolTip@@QAEXJJAAUWORLDMAP_ITEM@@AAV?$ZArray@UWORLDMAP_USERINFO@@@@@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_WorldMap(long,long,struct WORLDMAP_ITEM __near &,class ZArray<struct WORLDMAP_USERINFO> __near &)"
+   }
+  ],
+  "CUser": [
+   {
+    "ea": "0x93cc16",
+    "method": "SetMapSpecificEffect",
+    "decorated": "?SetMapSpecificEffect@CUser@@QAEXXZ",
+    "demangled": "public: void CUser::SetMapSpecificEffect(void)"
+   }
+  ],
+  "CUserLocal": [
+   {
+    "ea": "0x94f2ed",
+    "method": "UseFuncKeyMapped",
+    "decorated": "?UseFuncKeyMapped@CUserLocal@@QAEHI@Z",
+    "demangled": "public: int CUserLocal::UseFuncKeyMapped(unsigned int)"
+   }
+  ],
+  "CVecCtrl": [
+   {
+    "ea": "0x9b45c1",
+    "method": "BoundPosMapRange",
+    "decorated": "?BoundPosMapRange@CVecCtrl@@IAEJABUAbsPos@@J@Z",
+    "demangled": "protected: long CVecCtrl::BoundPosMapRange(struct AbsPos const __near &,long)"
+   }
+  ],
+  "CWorldMapDlg": [
+   {
+    "ea": "0x424492",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CWorldMapDlg@@MAEXI@Z",
+    "demangled": "protected: virtual void CWorldMapDlg::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x9e98b7",
+    "method": "ClearToolTip",
+    "decorated": "?ClearToolTip@CWorldMapDlg@@UAEXXZ",
+    "demangled": "public: virtual void CWorldMapDlg::ClearToolTip(void)"
+   },
+   {
+    "ea": "0x9ea93b",
+    "method": "SetWorldMap",
+    "decorated": "?SetWorldMap@CWorldMapDlg@@IAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: int CWorldMapDlg::SetWorldMap(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x9eb366",
+    "method": "CreateWorldMapDlg",
+    "decorated": "?CreateWorldMapDlg@CWorldMapDlg@@QAEHKKH@Z",
+    "demangled": "public: int CWorldMapDlg::CreateWorldMapDlg(unsigned long,unsigned long,int)"
+   },
+   {
+    "ea": "0x9eb75b",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CWorldMapDlg@@UAEXPAX@Z",
+    "demangled": "public: virtual void CWorldMapDlg::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x9eb94a",
+    "method": "OnDestroy",
+    "decorated": "?OnDestroy@CWorldMapDlg@@UAEXXZ",
+    "demangled": "public: virtual void CWorldMapDlg::OnDestroy(void)"
+   },
+   {
+    "ea": "0x9eb98e",
+    "method": "HitTest",
+    "decorated": "?HitTest@CWorldMapDlg@@UAEHJJPAPAVCCtrlWnd@@@Z",
+    "demangled": "public: virtual int CWorldMapDlg::HitTest(long,long,class CCtrlWnd __near * __near *)"
+   },
+   {
+    "ea": "0x9eb9c6",
+    "method": "Draw",
+    "decorated": "?Draw@CWorldMapDlg@@UAEXPBUtagRECT@@@Z",
+    "demangled": "public: virtual void CWorldMapDlg::Draw(struct tagRECT const __near *)"
+   },
+   {
+    "ea": "0x9ebfc3",
+    "method": "MakeBorder",
+    "decorated": "?MakeBorder@CWorldMapDlg@@IAEXXZ",
+    "demangled": "protected: void CWorldMapDlg::MakeBorder(void)"
+   },
+   {
+    "ea": "0x9ed38b",
+    "method": "LoadMapList",
+    "decorated": "?LoadMapList@CWorldMapDlg@@IAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "protected: int CWorldMapDlg::LoadMapList(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   },
+   {
+    "ea": "0x9edd67",
+    "method": "CheckSpotInfo",
+    "decorated": "?CheckSpotInfo@CWorldMapDlg@@IAEHJJ@Z",
+    "demangled": "protected: int CWorldMapDlg::CheckSpotInfo(long,long)"
+   },
+   {
+    "ea": "0x9ee00e",
+    "method": "CheckLinkInfo",
+    "decorated": "?CheckLinkInfo@CWorldMapDlg@@IAEHJJ@Z",
+    "demangled": "protected: int CWorldMapDlg::CheckLinkInfo(long,long)"
+   },
+   {
+    "ea": "0x9ee2b3",
+    "method": "OnMouseMove",
+    "decorated": "?OnMouseMove@CWorldMapDlg@@UAEHJJ@Z",
+    "demangled": "public: virtual int CWorldMapDlg::OnMouseMove(long,long)"
+   },
+   {
+    "ea": "0x9ee2ec",
+    "method": "OnMouseEnter",
+    "decorated": "?OnMouseEnter@CWorldMapDlg@@UAEXH@Z",
+    "demangled": "public: virtual void CWorldMapDlg::OnMouseEnter(int)"
+   },
+   {
+    "ea": "0x9ee30e",
+    "method": "SetWorldMapDeeper",
+    "decorated": "?SetWorldMapDeeper@CWorldMapDlg@@IAEXXZ",
+    "demangled": "protected: void CWorldMapDlg::SetWorldMapDeeper(void)"
+   },
+   {
+    "ea": "0x9ee507",
+    "method": "SetWorldMapShallower",
+    "decorated": "?SetWorldMapShallower@CWorldMapDlg@@IAEXXZ",
+    "demangled": "protected: void CWorldMapDlg::SetWorldMapShallower(void)"
+   },
+   {
+    "ea": "0x9ee6e5",
+    "method": "OnMouseButton",
+    "decorated": "?OnMouseButton@CWorldMapDlg@@UAEXIIJJ@Z",
+    "demangled": "public: virtual void CWorldMapDlg::OnMouseButton(unsigned int,unsigned int,long,long)"
+   },
+   {
+    "ea": "0x9ee717",
+    "method": "OnKey",
+    "decorated": "?OnKey@CWorldMapDlg@@UAEXII@Z",
+    "demangled": "public: virtual void CWorldMapDlg::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "CWvsContext": [
+   {
+    "ea": "0xa0773d",
+    "method": "UseFuncKeyMapped",
+    "decorated": "?UseFuncKeyMapped@CWvsContext@@QAEHI@Z",
+    "demangled": "public: int CWvsContext::UseFuncKeyMapped(unsigned int)"
+   },
+   {
+    "ea": "0xa0831d",
+    "method": "OnNotifyMarriedPartnerMapTransfer",
+    "decorated": "?OnNotifyMarriedPartnerMapTransfer@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnNotifyMarriedPartnerMapTransfer(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa129ed",
+    "method": "OnMiniMapOnOff",
+    "decorated": "?OnMiniMapOnOff@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMiniMapOnOff(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa25268",
+    "method": "OnMapTransferResult",
+    "decorated": "?OnMapTransferResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnMapTransferResult(class CInPacket __near &)"
+   }
+  ],
+  "FUNCKEY_MAPPED": [
+   {
+    "ea": "0x4e4409",
+    "method": "Decode",
+    "decorated": "?Decode@FUNCKEY_MAPPED@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void FUNCKEY_MAPPED::Decode(class CInPacket __near &)"
+   }
+  ]
+ },
+ "class_summary": {
+  "": 8,
+  "?$ZMap": 20,
+  "?$ZRef": 1,
+  "CActionFrame": 4,
+  "CConfig": 1,
+  "CDraggableItem": 2,
+  "CDraggableMenu": 1,
+  "CDraggableSkill": 2,
+  "CField": 1,
+  "CFuncKeyMappedMan": 5,
+  "CItemInfo": 3,
+  "CMacroSysMan": 1,
+  "CMapLoadable": 36,
+  "CMapleTVMan": 3,
+  "CNpc": 2,
+  "CQuickslotKeyMappedMan": 3,
+  "CUIKeyConfig": 1,
+  "CUIMapTransfer": 1,
+  "CUIMapleTV": 1,
+  "CUIMiniMap": 10,
+  "CUIToolTip": 1,
+  "CUser": 1,
+  "CUserLocal": 1,
+  "CVecCtrl": 1,
+  "CWorldMapDlg": 18,
+  "CWvsContext": 4,
+  "FUNCKEY_MAPPED": 1
+ }
+}

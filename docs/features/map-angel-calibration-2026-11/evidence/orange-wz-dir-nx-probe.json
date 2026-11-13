@@ -1,0 +1,430 @@
+{
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "key_spec": "65536B full tables from tools/vendor/NoLifeWzToNx-master/Keys.cpp; GMS=b64_len 87384 sha256_16 268a8407a47ee76c ; BMS=b64_len 87384 sha256_16 de2f256064a0af79 ; IV=TSPHKw==",
+  "exclusive": false,
+  "scenarios": [
+    {
+      "name": "P3a-dir-DataUI-GMS",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/UI"
+      ],
+      "key_name": "GMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[{\"name\":\"UI\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"node\":{\"name\":\"UI\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"nodePath\":\"\",\"type\":\"FOLDER\"}}"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "NODES",
+          "marker": "children=20",
+          "raw": "{\"children\":[{\"name\":\"Basic.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Basic.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"BuffIcon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\BuffIcon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShop.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShop.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"CashShopPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShopPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ChatBalloon.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ChatBalloon.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"DialogImage.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\DialogImage.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildBBS.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildBBS.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"GuildMark.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildMark.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITC.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITC.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"ITCPreview.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITCPreview.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Login.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Login.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Logo.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Logo.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleEzorsiaV2wzfiles.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\MapleEzorsiaV2wzfiles.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MapleTV.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-C"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"tree\":{\"name\":\"UI\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"type\":\"FOLDER\",\"children\":[{\"name\":\"Basic.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Basic.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"BuffIcon.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\BuffIcon.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"CashShop.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShop.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"CashShopPreview.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\CashShopPreview.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"ChatBalloon.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ChatBalloon.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"DialogImage.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\DialogImage.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"GuildBBS.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildBBS.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"GuildMark.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\GuildMark.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"ITC.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITC.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"ITCPreview.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\ITCPreview.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"Login.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\Login.img\",\"type\":\"IMAGE\",\"children\":[]},{\"name\":\"Logo.img\",\"nodePath\":\"\",\"rootPath\":\"E:\\"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: Basic.img"
+        }
+      ],
+      "probed_root": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI"
+    },
+    {
+      "name": "P3a-dir-DataFull-GMS",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data"
+      ],
+      "key_name": "GMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":4}"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[{\"name\":\"Data\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"node\":{\"name\":\"Data\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\",\"nodePath\":\"\",\"type\":\"FOLDER\"}}"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "NODES",
+          "marker": "children=19",
+          "raw": "{\"children\":[{\"name\":\".nxcache\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\.nxcache\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Character\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Character\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Effect\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Etc\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Etc\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Item\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Map\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Mob\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Mob\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Morph\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Morph\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Npc\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Quest\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Reactor\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Reactor\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Skill\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"Sound\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Sound\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"String\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\String\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"TamingMob\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\TamingMob\",\"nodePath\":\"\",\"type\":\"FOLDER\"},{\"name\":\"UI\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\",\"nodePath\":\"\",\"type\":\"FOLDER"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"tree\":{\"name\":\"Data\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\",\"type\":\"FOLDER\",\"children\":[{\"name\":\".nxcache\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\.nxcache\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Character\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Character\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Effect\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Effect\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Etc\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Etc\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Item\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Map\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Map\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Mob\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Mob\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Morph\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Morph\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Npc\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Npc\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Quest\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Reactor\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Reactor\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Skill\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Skill\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"Sound\",\"nodePath\":\"\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Sound\",\"type\":\"FOLDER\",\"children\":[]},{\"name\":\"String\",\"n"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: 01010000.img"
+        }
+      ],
+      "probed_root": "E:\\MXD\\BeiDou-Client-xy\\Data"
+    },
+    {
+      "name": "P3b-BMStable-StatusBar",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/UI/StatusBar.img"
+      ],
+      "key_name": "BMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":6}"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}],\"rootCount\":1}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"node\":{\"name\":\"StatusBar.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\UI\\\\StatusBar.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"children\":[]}"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: StatusBar.img"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: StatusBar.img"
+        }
+      ],
+      "probed_root": "E:\\MXD\\BeiDou-Client-xy\\Data\\UI\\StatusBar.img"
+    },
+    {
+      "name": "P3b-BMStable-smap",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/smap.img"
+      ],
+      "key_name": "BMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":8}"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[{\"name\":\"smap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\smap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}],\"rootCount\":1}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"node\":{\"name\":\"smap.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\smap.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}}"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"children\":[]}"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: smap.img"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "IMG 解析失败",
+          "raw": "IMG 解析失败: smap.img"
+        }
+      ],
+      "probed_root": "E:\\MXD\\BeiDou-Client-xy\\Data\\smap.img"
+    },
+    {
+      "name": "P3c-nx-smap",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+      ],
+      "key_name": "GMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "TEXT",
+          "marker": "",
+          "raw": "仅支持加载目录或 .wz/.img/.xml 文件: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[],\"rootCount\":0}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+        }
+      ],
+      "probed_root": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/smap.nx"
+    },
+    {
+      "name": "P3c-nx-zmap",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+      ],
+      "key_name": "GMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "TEXT",
+          "marker": "",
+          "raw": "仅支持加载目录或 .wz/.img/.xml 文件: E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[],\"rootCount\":0}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+        }
+      ],
+      "probed_root": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/zmap.nx"
+    },
+    {
+      "name": "P3c-nx-UI",
+      "paths": [
+        "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+      ],
+      "key_name": "GMS",
+      "key_b64_len": 87384,
+      "steps": [
+        {
+          "tool": "unload_all",
+          "tag": "pre",
+          "verdict": "OK",
+          "raw": ""
+        },
+        {
+          "tool": "load_files",
+          "tag": "load",
+          "verdict": "TEXT",
+          "marker": "",
+          "raw": "仅支持加载目录或 .wz/.img/.xml 文件: E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+        },
+        {
+          "tool": "list_loaded_roots",
+          "tag": "roots",
+          "verdict": "OK",
+          "marker": "",
+          "raw": "{\"roots\":[],\"rootCount\":0}"
+        },
+        {
+          "tool": "find_node",
+          "tag": "find",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+        },
+        {
+          "tool": "list_children",
+          "tag": "children",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+        },
+        {
+          "tool": "get_node_tree_json",
+          "tag": "tree",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+        },
+        {
+          "tool": "search_node",
+          "tag": "search",
+          "verdict": "FAIL",
+          "marker": "找不到根节点",
+          "raw": "找不到根节点: E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+        }
+      ],
+      "probed_root": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/UI.nx"
+    }
+  ],
+  "session_id": "92dd48fa-eb7e-4b29-bf83-4b606dea7e6b",
+  "final_roots": "{\"roots\":[],\"rootCount\":0}",
+  "summary": {
+    "NODES": 2,
+    "FAIL": 18,
+    "OK": 26,
+    "EMPTY": 0,
+    "TEXT": 3,
+    "EXCEPTION": 0
+  }
+}

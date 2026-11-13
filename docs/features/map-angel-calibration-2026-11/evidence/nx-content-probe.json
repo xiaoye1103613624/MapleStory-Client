@@ -1,0 +1,818 @@
+{
+  "fallback_reason": "orange-wz content-layer IMG 解析失败 (see verdict)",
+  "tool": "tools/nx_inspect.py (Nx/PKG4 reader)",
+  "files": {
+    "smap.nx": {
+      "root_child_count": 147,
+      "top": [
+        {
+          "name": "Ae",
+          "type": "int",
+          "value": "139",
+          "child_count": 0
+        },
+        {
+          "name": "Af",
+          "type": "int",
+          "value": "141",
+          "child_count": 0
+        },
+        {
+          "name": "Am",
+          "type": "int",
+          "value": "140",
+          "child_count": 0
+        },
+        {
+          "name": "As",
+          "type": "int",
+          "value": "138",
+          "child_count": 0
+        },
+        {
+          "name": "At",
+          "type": "int",
+          "value": "142",
+          "child_count": 0
+        },
+        {
+          "name": "Ay",
+          "type": "int",
+          "value": "137",
+          "child_count": 0
+        },
+        {
+          "name": "Bd",
+          "type": "int",
+          "value": "146",
+          "child_count": 0
+        },
+        {
+          "name": "Cp",
+          "type": "int",
+          "value": "136",
+          "child_count": 0
+        },
+        {
+          "name": "Fc",
+          "type": "int",
+          "value": "143",
+          "child_count": 0
+        },
+        {
+          "name": "Gv",
+          "type": "int",
+          "value": "134",
+          "child_count": 0
+        },
+        {
+          "name": "Hd",
+          "type": "int",
+          "value": "145",
+          "child_count": 0
+        },
+        {
+          "name": "Hr",
+          "type": "int",
+          "value": "144",
+          "child_count": 0
+        },
+        {
+          "name": "Ma",
+          "type": "int",
+          "value": "128",
+          "child_count": 0
+        },
+        {
+          "name": "Pn",
+          "type": "int",
+          "value": "130",
+          "child_count": 0
+        },
+        {
+          "name": "Ri",
+          "type": "int",
+          "value": "135",
+          "child_count": 0
+        },
+        {
+          "name": "Sd",
+          "type": "int",
+          "value": "124",
+          "child_count": 0
+        },
+        {
+          "name": "Si",
+          "type": "int",
+          "value": "132",
+          "child_count": 0
+        },
+        {
+          "name": "So",
+          "type": "int",
+          "value": "131",
+          "child_count": 0
+        },
+        {
+          "name": "Sr",
+          "type": "int",
+          "value": "126",
+          "child_count": 0
+        },
+        {
+          "name": "Tm",
+          "type": "int",
+          "value": "125",
+          "child_count": 0
+        },
+        {
+          "name": "Wg",
+          "type": "int",
+          "value": "127",
+          "child_count": 0
+        },
+        {
+          "name": "Wp",
+          "type": "int",
+          "value": "133",
+          "child_count": 0
+        },
+        {
+          "name": "Ws",
+          "type": "int",
+          "value": "129",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEar",
+          "type": "string",
+          "value": "'Ae'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEye",
+          "type": "string",
+          "value": "'Ay'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEyeOverCap",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEyeShadow",
+          "type": "string",
+          "value": "'As'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFace",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFaceBelowFace",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFaceOverFaceBelowCap",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "arm",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "armBelowHead",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "armBelowHeadOverMailChest",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "armOverHair",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "armOverHairBelowWeapon",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryEar",
+          "type": "string",
+          "value": "'Ae'",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryFace",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryFaceOverHead",
+          "type": "string",
+          "value": "'Af'",
+          "child_count": 0
+        },
+        {
+          "name": "backBody",
+          "type": "string",
+          "value": "'Bd'",
+          "child_count": 0
+        },
+        {
+          "name": "backCap",
+          "type": "string",
+          "value": "'CpHdH1H2H3H4H5H6HsHfHbAfAyAsAe'",
+          "child_count": 0
+        }
+      ],
+      "node_count": 148,
+      "depth2_sample": {
+        "Ae": [],
+        "Af": [],
+        "Am": [],
+        "As": [],
+        "At": [],
+        "Ay": [],
+        "Bd": [],
+        "Cp": []
+      }
+    },
+    "zmap.nx": {
+      "root_child_count": 151,
+      "top": [
+        {
+          "name": "Ae",
+          "type": "int",
+          "value": "143",
+          "child_count": 0
+        },
+        {
+          "name": "Af",
+          "type": "int",
+          "value": "145",
+          "child_count": 0
+        },
+        {
+          "name": "Am",
+          "type": "int",
+          "value": "144",
+          "child_count": 0
+        },
+        {
+          "name": "As",
+          "type": "int",
+          "value": "142",
+          "child_count": 0
+        },
+        {
+          "name": "At",
+          "type": "int",
+          "value": "146",
+          "child_count": 0
+        },
+        {
+          "name": "Ay",
+          "type": "int",
+          "value": "141",
+          "child_count": 0
+        },
+        {
+          "name": "Bd",
+          "type": "int",
+          "value": "150",
+          "child_count": 0
+        },
+        {
+          "name": "Cp",
+          "type": "int",
+          "value": "140",
+          "child_count": 0
+        },
+        {
+          "name": "Fc",
+          "type": "int",
+          "value": "147",
+          "child_count": 0
+        },
+        {
+          "name": "Gv",
+          "type": "int",
+          "value": "138",
+          "child_count": 0
+        },
+        {
+          "name": "Hd",
+          "type": "int",
+          "value": "149",
+          "child_count": 0
+        },
+        {
+          "name": "Hr",
+          "type": "int",
+          "value": "148",
+          "child_count": 0
+        },
+        {
+          "name": "Ma",
+          "type": "int",
+          "value": "132",
+          "child_count": 0
+        },
+        {
+          "name": "Pn",
+          "type": "int",
+          "value": "134",
+          "child_count": 0
+        },
+        {
+          "name": "Ri",
+          "type": "int",
+          "value": "139",
+          "child_count": 0
+        },
+        {
+          "name": "Sd",
+          "type": "int",
+          "value": "128",
+          "child_count": 0
+        },
+        {
+          "name": "Si",
+          "type": "int",
+          "value": "136",
+          "child_count": 0
+        },
+        {
+          "name": "So",
+          "type": "int",
+          "value": "135",
+          "child_count": 0
+        },
+        {
+          "name": "Sr",
+          "type": "int",
+          "value": "130",
+          "child_count": 0
+        },
+        {
+          "name": "Tm",
+          "type": "int",
+          "value": "129",
+          "child_count": 0
+        },
+        {
+          "name": "Wg",
+          "type": "int",
+          "value": "131",
+          "child_count": 0
+        },
+        {
+          "name": "Wp",
+          "type": "int",
+          "value": "137",
+          "child_count": 0
+        },
+        {
+          "name": "Ws",
+          "type": "int",
+          "value": "133",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEar",
+          "type": "int",
+          "value": "39",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEye",
+          "type": "int",
+          "value": "35",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEyeOverCap",
+          "type": "int",
+          "value": "31",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryEyeShadow",
+          "type": "int",
+          "value": "36",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFace",
+          "type": "int",
+          "value": "37",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFaceBelowFace",
+          "type": "int",
+          "value": "43",
+          "child_count": 0
+        },
+        {
+          "name": "accessoryFaceOverFaceBelowCap",
+          "type": "int",
+          "value": "41",
+          "child_count": 0
+        },
+        {
+          "name": "arm",
+          "type": "int",
+          "value": "51",
+          "child_count": 0
+        },
+        {
+          "name": "armBelowHead",
+          "type": "int",
+          "value": "60",
+          "child_count": 0
+        },
+        {
+          "name": "armBelowHeadOverMailChest",
+          "type": "int",
+          "value": "58",
+          "child_count": 0
+        },
+        {
+          "name": "armOverHair",
+          "type": "int",
+          "value": "25",
+          "child_count": 0
+        },
+        {
+          "name": "armOverHairBelowWeapon",
+          "type": "int",
+          "value": "27",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryEar",
+          "type": "int",
+          "value": "111",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryFace",
+          "type": "int",
+          "value": "112",
+          "child_count": 0
+        },
+        {
+          "name": "backAccessoryFaceOverHead",
+          "type": "int",
+          "value": "96",
+          "child_count": 0
+        },
+        {
+          "name": "backBody",
+          "type": "int",
+          "value": "110",
+          "child_count": 0
+        },
+        {
+          "name": "backCap",
+          "type": "int",
+          "value": "90",
+          "child_count": 0
+        }
+      ],
+      "node_count": 152,
+      "depth2_sample": {
+        "Ae": [],
+        "Af": [],
+        "Am": [],
+        "As": [],
+        "At": [],
+        "Ay": [],
+        "Bd": [],
+        "Cp": []
+      }
+    },
+    "Map.nx": {
+      "root_child_count": 7,
+      "top": [
+        {
+          "name": "Back",
+          "type": "null",
+          "value": "",
+          "child_count": 111
+        },
+        {
+          "name": "Effect.img",
+          "type": "null",
+          "value": "",
+          "child_count": 11
+        },
+        {
+          "name": "MapHelper.img",
+          "type": "null",
+          "value": "",
+          "child_count": 6
+        },
+        {
+          "name": "Obj",
+          "type": "null",
+          "value": "",
+          "child_count": 111
+        },
+        {
+          "name": "Physics.img",
+          "type": "null",
+          "value": "",
+          "child_count": 19
+        },
+        {
+          "name": "Tile",
+          "type": "null",
+          "value": "",
+          "child_count": 108
+        },
+        {
+          "name": "WorldMap",
+          "type": "null",
+          "value": "",
+          "child_count": 28
+        }
+      ],
+      "node_count": 179819
+    },
+    "UI.nx": {
+      "root_child_count": 20,
+      "top": [
+        {
+          "name": "Basic.img",
+          "type": "null",
+          "value": "",
+          "child_count": 75
+        },
+        {
+          "name": "BuffIcon.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "CashShop.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "CashShopPreview.img",
+          "type": "null",
+          "value": "",
+          "child_count": 15
+        },
+        {
+          "name": "ChatBalloon.img",
+          "type": "null",
+          "value": "",
+          "child_count": 95
+        },
+        {
+          "name": "DialogImage.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "GuildBBS.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "GuildMark.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "ITC.img",
+          "type": "null",
+          "value": "",
+          "child_count": 14
+        },
+        {
+          "name": "ITCPreview.img",
+          "type": "null",
+          "value": "",
+          "child_count": 15
+        },
+        {
+          "name": "Login.img",
+          "type": "null",
+          "value": "",
+          "child_count": 19
+        },
+        {
+          "name": "Logo.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "MapLogin.img",
+          "type": "null",
+          "value": "",
+          "child_count": 16
+        },
+        {
+          "name": "MapleEzorsiaV2wzfiles.img",
+          "type": "null",
+          "value": "",
+          "child_count": 3
+        },
+        {
+          "name": "MapleTV.img",
+          "type": "null",
+          "value": "",
+          "child_count": 7
+        },
+        {
+          "name": "NameTag.img",
+          "type": "null",
+          "value": "",
+          "child_count": 94
+        },
+        {
+          "name": "Npt_GuideLine.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "StatusBar.img",
+          "type": "null",
+          "value": "",
+          "child_count": 18
+        },
+        {
+          "name": "UIWindow.img",
+          "type": "null",
+          "value": "",
+          "child_count": 112
+        },
+        {
+          "name": "tutorial.img",
+          "type": "null",
+          "value": "",
+          "child_count": 32
+        }
+      ],
+      "node_count": 43859
+    },
+    "String.nx": {
+      "root_child_count": 20,
+      "top": [
+        {
+          "name": "Cash.img",
+          "type": "null",
+          "value": "",
+          "child_count": 549
+        },
+        {
+          "name": "Consume.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2301
+        },
+        {
+          "name": "EULA.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "Eqp.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "Etc.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "GLcloneC.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "GuestEULA.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "Ins.img",
+          "type": "null",
+          "value": "",
+          "child_count": 294
+        },
+        {
+          "name": "Map.img",
+          "type": "null",
+          "value": "",
+          "child_count": 14
+        },
+        {
+          "name": "Mob.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1735
+        },
+        {
+          "name": "MonsterBook.img",
+          "type": "null",
+          "value": "",
+          "child_count": 344
+        },
+        {
+          "name": "NameChange.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "Npc.img",
+          "type": "null",
+          "value": "",
+          "child_count": 7123
+        },
+        {
+          "name": "Pet.img",
+          "type": "null",
+          "value": "",
+          "child_count": 849
+        },
+        {
+          "name": "PetDialog.img",
+          "type": "null",
+          "value": "",
+          "child_count": 590
+        },
+        {
+          "name": "Skill.img",
+          "type": "null",
+          "value": "",
+          "child_count": 613
+        },
+        {
+          "name": "TestEULA.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "ToolTipHelp.img",
+          "type": "null",
+          "value": "",
+          "child_count": 5
+        },
+        {
+          "name": "TransferWorld.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "TrialEULA.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        }
+      ],
+      "node_count": 214123
+    }
+  }
+}
