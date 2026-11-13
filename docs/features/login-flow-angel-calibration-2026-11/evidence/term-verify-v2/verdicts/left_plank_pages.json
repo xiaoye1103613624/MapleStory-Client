@@ -1,0 +1,85 @@
+{
+  "method": "left strip ROI(0,0,160,470) zero-mean NCC gray + 4 y-blocks; each page paired with its OWN frame/target",
+  "exe": "47be00b37d093d21 / 2026-11-14 01:19:05 (scene_reset_* frames); v2_* frames from aa0aea67",
+  "correction": "previous left_plank_audit.json labeled UIRaceSelect frame racecreate_click_f06 as 创建页 and read only UICommonCreation.cpp:456; classic branch :492-534 in fact builds all 4 planks",
+  "pages": [
+    {
+      "page": "login",
+      "class": "UILogin",
+      "shot": "v2_login_typed.png",
+      "target": "desktop_login.png",
+      "strip_ncc": 0.9995,
+      "blocks": {
+        "title_y36_85": 1.0,
+        "worldbar_y96_148": 1.0,
+        "viewall_y377_399": 1.0,
+        "home_y427_449": 1.0
+      },
+      "blocks_present_gt0_5": 4
+    },
+    {
+      "page": "channel_expanded",
+      "class": "UIWorldSelect",
+      "shot": "v2_channel_grid.png",
+      "target": "desktop_channel_expanded.png",
+      "strip_ncc": 0.8717,
+      "blocks": {
+        "title_y36_85": 0.9997,
+        "worldbar_y96_148": 0.8953,
+        "viewall_y377_399": 0.5931,
+        "home_y427_449": 0.8915
+      },
+      "blocks_present_gt0_5": 4
+    },
+    {
+      "page": "char_select",
+      "class": "UICharSelect",
+      "shot": "v2_racecreate_settled.png",
+      "target": "desktop_char_select.png",
+      "strip_ncc": 0.4192,
+      "blocks": {
+        "title_y36_85": -0.266,
+        "worldbar_y96_148": -0.2012,
+        "viewall_y377_399": -0.2077,
+        "home_y427_449": -0.4495
+      },
+      "blocks_present_gt0_5": 0
+    },
+    {
+      "page": "race_select",
+      "class": "UIRaceSelect",
+      "shot": "scene_reset_1_race_before.png",
+      "target": "desktop_racecreate_race.png",
+      "strip_ncc": 0.5156,
+      "blocks": {
+        "title_y36_85": -0.1799,
+        "worldbar_y96_148": -0.2069,
+        "viewall_y377_399": -0.1535,
+        "home_y427_449": -0.048
+      },
+      "blocks_present_gt0_5": 0
+    },
+    {
+      "page": "creation",
+      "class": "UICommonCreation(classic)",
+      "shot": "scene_reset_2_creation.png",
+      "target": "desktop_racecreate_adventurer.png",
+      "strip_ncc": 0.9575,
+      "blocks": {
+        "title_y36_85": 1.0,
+        "worldbar_y96_148": 0.8062,
+        "viewall_y377_399": 1.0,
+        "home_y427_449": 0.6501
+      },
+      "blocks_present_gt0_5": 4
+    }
+  ],
+  "source": {
+    "UIWorldSelect.cpp": "158-163 / 306-324 : step + BtViewChoice + BtViewAll + BtStart (3 buttons + title)",
+    "UICharSelect.cpp": "grep sidebar buttons = 0 hits; only BtCharacter:1308 / BtPreview:1316 -> whole strip missing",
+    "UIRaceSelect.cpp": "156 / 314 : only BtStart -> 3 planks missing",
+    "UICommonCreation.cpp": "456 BtStart(0,427) + 490 version_pos=(1061,9) + 492 step_create + 493 selworld_box + 511-513 world/channel_text + 530-534 BtViewAll + 960-963 draw(); blame 6d835880 (xiaoye 11-05 15:33) -> all 4 planks present in classic mode",
+    "classic_mode_gate": "UICommonCreation.cpp:79 if(LoginUiAssets::use_classic_creation()) -> Util/LoginUiAssets.cpp:71-74 return !has_customize_char(); runtime frames show classic active"
+  },
+  "verdict": "建角页(UICommonCreation classic)左侧栏 4 块已基本对齐 strip>=0.95；职业团页(UIRaceSelect)与选角色页(UICharSelect)侧栏本端未实现，逐块 NCC 全负；上一轮报告 §9.1「创建页缺顶部标题牌+世界条」= 帧错配 + 漏读 classic 分支，作废。"
+}
