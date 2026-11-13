@@ -1,0 +1,711 @@
+{
+ "source": "13339 Angel v83 (skill face, symbol discovery)",
+ "total_funcs": 106,
+ "total_classes": 22,
+ "classes": {
+  "": [
+   {
+    "ea": "0x4a8c4f",
+    "method": "get_skill_root_from_job",
+    "decorated": "?get_skill_root_from_job@@YAXJAAV?$ZArray@J@@@Z",
+    "demangled": "void get_skill_root_from_job(long,class ZArray<long> __near &)"
+   },
+   {
+    "ea": "0x4e8f04",
+    "method": "is_skill_need_master_level",
+    "decorated": "?is_skill_need_master_level@@YAHJ@Z",
+    "demangled": "int is_skill_need_master_level(long)"
+   },
+   {
+    "ea": "0x4fb08f",
+    "method": "is_keydown_skill",
+    "decorated": "?is_keydown_skill@@YAHJ@Z",
+    "demangled": "int is_keydown_skill(long)"
+   },
+   {
+    "ea": "0x4fb292",
+    "method": "is_able_to_map_macrosys_skill",
+    "decorated": "?is_able_to_map_macrosys_skill@@YAHJ@Z",
+    "demangled": "int is_able_to_map_macrosys_skill(long)"
+   },
+   {
+    "ea": "0x765e2d",
+    "method": "is_heros_will_skill",
+    "decorated": "?is_heros_will_skill@@YAHJ@Z",
+    "demangled": "int is_heros_will_skill(long)"
+   },
+   {
+    "ea": "0x765e9e",
+    "method": "get_novice_skill_point",
+    "decorated": "?get_novice_skill_point@@YAJABVCharacterData@@@Z",
+    "demangled": "long get_novice_skill_point(class CharacterData const __near &)"
+   },
+   {
+    "ea": "0x766031",
+    "method": "get_random_melee_attack_action",
+    "decorated": "?get_random_melee_attack_action@@YAJJJPBUSKILLENTRY@@JI@Z",
+    "demangled": "long get_random_melee_attack_action(long,long,struct SKILLENTRY const __near *,long,unsigned int)"
+   },
+   {
+    "ea": "0x766272",
+    "method": "get_random_shoot_attack_action",
+    "decorated": "?get_random_shoot_attack_action@@YAJJJPBUSKILLENTRY@@JI@Z",
+    "demangled": "long get_random_shoot_attack_action(long,long,struct SKILLENTRY const __near *,long,unsigned int)"
+   },
+   {
+    "ea": "0x7662f5",
+    "method": "get_random_magic_attack_action",
+    "decorated": "?get_random_magic_attack_action@@YAJJJPBUSKILLENTRY@@JI@Z",
+    "demangled": "long get_random_magic_attack_action(long,long,struct SKILLENTRY const __near *,long,unsigned int)"
+   },
+   {
+    "ea": "0x766379",
+    "method": "is_correct_melee_attack",
+    "decorated": "?is_correct_melee_attack@@YAHJJJPBUSKILLENTRY@@J@Z",
+    "demangled": "int is_correct_melee_attack(long,long,long,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x76649c",
+    "method": "is_correct_shoot_attack",
+    "decorated": "?is_correct_shoot_attack@@YAHJJJPBUSKILLENTRY@@J@Z",
+    "demangled": "int is_correct_shoot_attack(long,long,long,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x766525",
+    "method": "is_correct_magic_attack",
+    "decorated": "?is_correct_magic_attack@@YAHJJJPBUSKILLENTRY@@J@Z",
+    "demangled": "int is_correct_magic_attack(long,long,long,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x7665b1",
+    "method": "is_correct_normal_attack",
+    "decorated": "?is_correct_normal_attack@@YAHJJJPBUSKILLENTRY@@J@Z",
+    "demangled": "int is_correct_normal_attack(long,long,long,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x7669dd",
+    "method": "is_correct_job_for_skill_root",
+    "decorated": "?is_correct_job_for_skill_root@@YAHJJ@Z",
+    "demangled": "int is_correct_job_for_skill_root(long,long)"
+   },
+   {
+    "ea": "0x8aa243",
+    "method": "0CWndSkillGuide",
+    "decorated": "??0CWndSkillGuide@@QAE@J@Z",
+    "demangled": "public: CWndSkillGuide::CWndSkillGuide(long)"
+   },
+   {
+    "ea": "0x8aa5ad",
+    "method": "0CUISkill",
+    "decorated": "??0CUISkill@@QAE@HJ@Z",
+    "demangled": "public: CUISkill::CUISkill(int,long)"
+   },
+   {
+    "ea": "0x96d6ca",
+    "method": "is_antirepeat_buff_skill",
+    "decorated": "?is_antirepeat_buff_skill@@YAHJ@Z",
+    "demangled": "int is_antirepeat_buff_skill(long)"
+   },
+   {
+    "ea": "0x989729",
+    "method": "play_skill_sound",
+    "decorated": "?play_skill_sound@@YAIJW4SE_TYPE@@J@Z",
+    "demangled": "unsigned int play_skill_sound(long,enum SE_TYPE,long)"
+   },
+   {
+    "ea": "0x98999f",
+    "method": "stop_skill_sound",
+    "decorated": "?stop_skill_sound@@YAXI@Z",
+    "demangled": "void stop_skill_sound(unsigned int)"
+   }
+  ],
+  "?$ZList": [
+   {
+    "ea": "0x672ca1",
+    "method": "RemoveAll",
+    "decorated": "?RemoveAll@?$ZList@UAFFECTEDSKILLENTRY@CMob@@@@QAEXXZ",
+    "demangled": "public: void ZList<struct CMob::AFFECTEDSKILLENTRY>::RemoveAll(void)"
+   }
+  ],
+  "CAnimationDisplayer": [
+   {
+    "ea": "0x43d72a",
+    "method": "Effect_SkillUse",
+    "decorated": "?Effect_SkillUse@CAnimationDisplayer@@QAEXPBGHV?$_com_ptr_t@V?$_com_IIID@UIWzVector2D@@$1?_GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4@@3U__s_GUID@@B@@@@V?$_com_ptr_t@V?$_com_IIID@UIWzGr2DLayer@@$1?_GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf@@3U__s_GUID@@B@@@@JJJJJH@Z",
+    "demangled": "public: void CAnimationDisplayer::Effect_SkillUse(unsigned short const __near *,int,class _com_ptr_t<class _com_IIID<struct IWzVector2D,&struct __s_GUID const _GUID_f28bd1ed_3deb_4f92_9eec_10ef5a1c3fb4>>,class _com_ptr_t<class _com_IIID<struct IWzGr2DLayer,&struct __s_GUID const _GUID_6dc8c7ce_8e81_4420_b4f6_4b60b7d5fcdf>>,long,long,long,long,long,int)"
+   }
+  ],
+  "CDraggableSkill": [
+   {
+    "ea": "0x4faa22",
+    "method": "OnDropped",
+    "decorated": "?OnDropped@CDraggableSkill@@UAEHPAUIUIMsgHandler@@0JJ@Z",
+    "demangled": "public: virtual int CDraggableSkill::OnDropped(struct IUIMsgHandler __near *,struct IUIMsgHandler __near *,long,long)"
+   },
+   {
+    "ea": "0x4fb001",
+    "method": "OnDoubleClicked",
+    "decorated": "?OnDoubleClicked@CDraggableSkill@@UAEHXZ",
+    "demangled": "public: virtual int CDraggableSkill::OnDoubleClicked(void)"
+   },
+   {
+    "ea": "0x4fb112",
+    "method": "MapMacro",
+    "decorated": "?MapMacro@CDraggableSkill@@IAEHJJHH@Z",
+    "demangled": "protected: int CDraggableSkill::MapMacro(long,long,int,int)"
+   },
+   {
+    "ea": "0x4fb32c",
+    "method": "MapFuncKey",
+    "decorated": "?MapFuncKey@CDraggableSkill@@IAEHJJH@Z",
+    "demangled": "protected: int CDraggableSkill::MapFuncKey(long,long,int)"
+   }
+  ],
+  "CField": [
+   {
+    "ea": "0x52b1d8",
+    "method": "RestoreForbiddenSkill",
+    "decorated": "?RestoreForbiddenSkill@CField@@IAEXXZ",
+    "demangled": "protected: void CField::RestoreForbiddenSkill(void)"
+   },
+   {
+    "ea": "0x537c7f",
+    "method": "IsSkillForbiden",
+    "decorated": "?IsSkillForbiden@CField@@QAEHJ@Z",
+    "demangled": "public: int CField::IsSkillForbiden(long)"
+   }
+  ],
+  "CMob": [
+   {
+    "ea": "0x665cfd",
+    "method": "UpdateAffectedSkillList",
+    "decorated": "?UpdateAffectedSkillList@CMob@@IAEXJ@Z",
+    "demangled": "protected: void CMob::UpdateAffectedSkillList(long)"
+   },
+   {
+    "ea": "0x66e7af",
+    "method": "TryDoingSkill",
+    "decorated": "?TryDoingSkill@CMob@@IAEHAAJAAHAAUTARGETINFO@1@@Z",
+    "demangled": "protected: int CMob::TryDoingSkill(long __near &,int __near &,struct CMob::TARGETINFO __near &)"
+   }
+  ],
+  "CPet": [
+   {
+    "ea": "0x705db3",
+    "method": "GetUpgradePetSkill",
+    "decorated": "?GetUpgradePetSkill@CPet@@QAEGXZ",
+    "demangled": "public: unsigned short CPet::GetUpgradePetSkill(void)"
+   }
+  ],
+  "CSkillInfo": [
+   {
+    "ea": "0x75c755",
+    "method": "GetSkill",
+    "decorated": "?GetSkill@CSkillInfo@@QAEPBUSKILLENTRY@@J@Z",
+    "demangled": "public: struct SKILLENTRY const __near * CSkillInfo::GetSkill(long)"
+   },
+   {
+    "ea": "0x75c7c5",
+    "method": "GetSkillRootVisible",
+    "decorated": "?GetSkillRootVisible@CSkillInfo@@QAEXJABVCharacterData@@AAUSKILLROOT@@@Z",
+    "demangled": "public: void CSkillInfo::GetSkillRootVisible(long,class CharacterData const __near &,struct SKILLROOT __near &)"
+   },
+   {
+    "ea": "0x7616f6",
+    "method": "GetSkillLevel",
+    "decorated": "?GetSkillLevel@CSkillInfo@@QAEJABVCharacterData@@JPAPBUSKILLENTRY@@@Z",
+    "demangled": "public: long CSkillInfo::GetSkillLevel(class CharacterData const __near &,long,struct SKILLENTRY const __near * __near *)"
+   },
+   {
+    "ea": "0x764256",
+    "method": "CheckConsumeForActiveSkill",
+    "decorated": "?CheckConsumeForActiveSkill@CSkillInfo@@QAEJAAVCharacterData@@ABUBasicStat@@ABUSecondaryStat@@JPAJ3@Z",
+    "demangled": "public: long CSkillInfo::CheckConsumeForActiveSkill(class CharacterData __near &,struct BasicStat const __near &,struct SecondaryStat const __near &,long,long __near *,long __near *)"
+   }
+  ],
+  "CUISkill": [
+   {
+    "ea": "0x8aa4c5",
+    "method": "CloseSkillGuide",
+    "decorated": "?CloseSkillGuide@CUISkill@@QAEXXZ",
+    "demangled": "public: void CUISkill::CloseSkillGuide(void)"
+   },
+   {
+    "ea": "0x8aaa88",
+    "method": "OnCreate",
+    "decorated": "?OnCreate@CUISkill@@UAEXPAX@Z",
+    "demangled": "public: virtual void CUISkill::OnCreate(void __near *)"
+   },
+   {
+    "ea": "0x8acf1a",
+    "method": "OnSkillLevelUpButton",
+    "decorated": "?OnSkillLevelUpButton@CUISkill@@IAEXJ@Z",
+    "demangled": "protected: void CUISkill::OnSkillLevelUpButton(long)"
+   },
+   {
+    "ea": "0x8bcdfa",
+    "method": "GetSkillRootVisible",
+    "decorated": "?GetSkillRootVisible@CUISkill@@IAEPBUSKILLROOT@@H@Z",
+    "demangled": "protected: struct SKILLROOT const __near * CUISkill::GetSkillRootVisible(int)"
+   },
+   {
+    "ea": "0x961063",
+    "method": "OpenCurSkillGuide",
+    "decorated": "?OpenCurSkillGuide@CUISkill@@QAEXXZ",
+    "demangled": "public: void CUISkill::OpenCurSkillGuide(void)"
+   }
+  ],
+  "CUISkillChangeConfirm": [
+   {
+    "ea": "0xa0f8c8",
+    "method": "GetResult",
+    "decorated": "?GetResult@CUISkillChangeConfirm@@QAEXAAJ0@Z",
+    "demangled": "public: void CUISkillChangeConfirm::GetResult(long __near &,long __near &)"
+   }
+  ],
+  "CUISkillEx": [
+   {
+    "ea": "0x8bad5a",
+    "method": "ShiftMacroUIState",
+    "decorated": "?ShiftMacroUIState@CUISkillEx@@QAEXXZ",
+    "demangled": "public: void CUISkillEx::ShiftMacroUIState(void)"
+   },
+   {
+    "ea": "0x8bb2bf",
+    "method": "OnButtonClicked",
+    "decorated": "?OnButtonClicked@CUISkillEx@@UAEXI@Z",
+    "demangled": "public: virtual void CUISkillEx::OnButtonClicked(unsigned int)"
+   },
+   {
+    "ea": "0x8bc62f",
+    "method": "OnSkillLevelUpButton",
+    "decorated": "?OnSkillLevelUpButton@CUISkillEx@@IAEXJ@Z",
+    "demangled": "protected: void CUISkillEx::OnSkillLevelUpButton(long)"
+   }
+  ],
+  "CUIToolTip": [
+   {
+    "ea": "0x8f2276",
+    "method": "SetToolTip_MacroSysSkill",
+    "decorated": "?SetToolTip_MacroSysSkill@CUIToolTip@@QAEXJJJ@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_MacroSysSkill(long,long,long)"
+   },
+   {
+    "ea": "0x8f25d0",
+    "method": "SetToolTip_Skill",
+    "decorated": "?SetToolTip_Skill@CUIToolTip@@QAEXJJPBUSKILLENTRY@@H@Z",
+    "demangled": "public: void CUIToolTip::SetToolTip_Skill(long,long,struct SKILLENTRY const __near *,int)"
+   }
+  ],
+  "CUser": [
+   {
+    "ea": "0x92edb2",
+    "method": "SetAttackAction",
+    "decorated": "?SetAttackAction@CUser@@QAEHJJPBUSKILLENTRY@@J@Z",
+    "demangled": "public: int CUser::SetAttackAction(long,long,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x933990",
+    "method": "ShowSkillEffect",
+    "decorated": "?ShowSkillEffect@CUser@@QAEXPBUSKILLENTRY@@JJHJPAUtagPOINT@@@Z",
+    "demangled": "public: void CUser::ShowSkillEffect(struct SKILLENTRY const __near *,long,long,int,long,struct tagPOINT __near *)"
+   },
+   {
+    "ea": "0x93640b",
+    "method": "ShowSkillPrepare",
+    "decorated": "?ShowSkillPrepare@CUser@@QAEXPBUSKILLENTRY@@JHH@Z",
+    "demangled": "public: void CUser::ShowSkillPrepare(struct SKILLENTRY const __near *,long,int,int)"
+   },
+   {
+    "ea": "0x936528",
+    "method": "ShowSkillSpecialEffect",
+    "decorated": "?ShowSkillSpecialEffect@CUser@@QAEXPBUSKILLENTRY@@JPAVCGrenade@@JJJ@Z",
+    "demangled": "public: void CUser::ShowSkillSpecialEffect(struct SKILLENTRY const __near *,long,class CGrenade __near *,long,long,long)"
+   },
+   {
+    "ea": "0x9433a2",
+    "method": "GetDashingSkill",
+    "decorated": "?GetDashingSkill@CUser@@QBEJXZ",
+    "demangled": "public: long CUser::GetDashingSkill(void)const"
+   }
+  ],
+  "CUserLocal": [
+   {
+    "ea": "0x949b5d",
+    "method": "GetProperBulletPosition",
+    "decorated": "?GetProperBulletPosition@CUserLocal@@QAEJPBUSKILLENTRY@@JPAJ11@Z",
+    "demangled": "public: long CUserLocal::GetProperBulletPosition(struct SKILLENTRY const __near *,long,long __near *,long __near *,long __near *)"
+   },
+   {
+    "ea": "0x94eaa9",
+    "method": "ValidateItemSkill",
+    "decorated": "?ValidateItemSkill@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::ValidateItemSkill(void)"
+   },
+   {
+    "ea": "0x94ed77",
+    "method": "ValidateSkillBonus",
+    "decorated": "?ValidateSkillBonus@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::ValidateSkillBonus(void)"
+   },
+   {
+    "ea": "0x950921",
+    "method": "TryDoingMeleeAttack",
+    "decorated": "?TryDoingMeleeAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JPAJJKJPAVCGrenade@@JHJJJ@Z",
+    "demangled": "protected: int CUserLocal::TryDoingMeleeAttack(struct SKILLENTRY const __near *,long,long __near *,long,unsigned long,long,class CGrenade __near *,long,int,long,long,long)"
+   },
+   {
+    "ea": "0x9537d5",
+    "method": "TryDoingShootAttack",
+    "decorated": "?TryDoingShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJHJI@Z",
+    "demangled": "protected: int CUserLocal::TryDoingShootAttack(struct SKILLENTRY const __near *,long,long,int,long,unsigned int)"
+   },
+   {
+    "ea": "0x95571f",
+    "method": "TryDoingMagicAttack",
+    "decorated": "?TryDoingMagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@JJJ@Z",
+    "demangled": "protected: int CUserLocal::TryDoingMagicAttack(struct SKILLENTRY const __near *,long,long,long)"
+   },
+   {
+    "ea": "0x957a1f",
+    "method": "TryDoingWings",
+    "decorated": "?TryDoingWings@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::TryDoingWings(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x957b74",
+    "method": "TryRegisterTeleport",
+    "decorated": "?TryRegisterTeleport@CUserLocal@@IAEHPBUSKILLENTRY@@JPBD1H@Z",
+    "demangled": "protected: int CUserLocal::TryRegisterTeleport(struct SKILLENTRY const __near *,long,char const __near *,char const __near *,int)"
+   },
+   {
+    "ea": "0x95be66",
+    "method": "OnSkillCooltimeSet",
+    "decorated": "?OnSkillCooltimeSet@CUserLocal@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CUserLocal::OnSkillCooltimeSet(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x95bedf",
+    "method": "OnKeyDownSkillEnd",
+    "decorated": "?OnKeyDownSkillEnd@CUserLocal@@QAEXXZ",
+    "demangled": "public: void CUserLocal::OnKeyDownSkillEnd(void)"
+   },
+   {
+    "ea": "0x961042",
+    "method": "OnOpenSkillGuide",
+    "decorated": "?OnOpenSkillGuide@CUserLocal@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CUserLocal::OnOpenSkillGuide(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x966f7a",
+    "method": "DoActiveSkill",
+    "decorated": "?DoActiveSkill@CUserLocal@@QAEHJIPAJ@Z",
+    "demangled": "public: int CUserLocal::DoActiveSkill(long,unsigned int,long __near *)"
+   },
+   {
+    "ea": "0x969465",
+    "method": "DoActiveSkill_MeleeAttack",
+    "decorated": "?DoActiveSkill_MeleeAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_MeleeAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x9696a2",
+    "method": "DoActiveSkill_ShootAttack",
+    "decorated": "?DoActiveSkill_ShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_ShootAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969a57",
+    "method": "DoActiveSkill_VehicleShootAttack",
+    "decorated": "?DoActiveSkill_VehicleShootAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_VehicleShootAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969b10",
+    "method": "DoActiveSkill_MagicAttack",
+    "decorated": "?DoActiveSkill_MagicAttack@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_MagicAttack(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969bf9",
+    "method": "DoActiveSkill_TownPortal",
+    "decorated": "?DoActiveSkill_TownPortal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_TownPortal(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x969e21",
+    "method": "DoActiveSkill_StatChange",
+    "decorated": "?DoActiveSkill_StatChange@CUserLocal@@IAEHPBUSKILLENTRY@@JK@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_StatChange(struct SKILLENTRY const __near *,long,unsigned long)"
+   },
+   {
+    "ea": "0x96a69d",
+    "method": "DoActiveSkill_Heal",
+    "decorated": "?DoActiveSkill_Heal@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_Heal(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96a86e",
+    "method": "DoActiveSkill_Prepare",
+    "decorated": "?DoActiveSkill_Prepare@CUserLocal@@IAEHPBUSKILLENTRY@@JI@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_Prepare(struct SKILLENTRY const __near *,long,unsigned int)"
+   },
+   {
+    "ea": "0x96be38",
+    "method": "DoActiveSkill_BoundJump",
+    "decorated": "?DoActiveSkill_BoundJump@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_BoundJump(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96c742",
+    "method": "DoActiveSkill_SmokeShell",
+    "decorated": "?DoActiveSkill_SmokeShell@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_SmokeShell(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96c917",
+    "method": "DoActiveSkill_RecoveryAura",
+    "decorated": "?DoActiveSkill_RecoveryAura@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_RecoveryAura(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96cb93",
+    "method": "IsTeleportSkillAvailable",
+    "decorated": "?IsTeleportSkillAvailable@CUserLocal@@IAEHPBUSKILLENTRY@@JAAUtagPOINT@@@Z",
+    "demangled": "protected: int CUserLocal::IsTeleportSkillAvailable(struct SKILLENTRY const __near *,long,struct tagPOINT __near &)"
+   },
+   {
+    "ea": "0x96cf1d",
+    "method": "TryDoingPreparedSkill",
+    "decorated": "?TryDoingPreparedSkill@CUserLocal@@IAEXXZ",
+    "demangled": "protected: void CUserLocal::TryDoingPreparedSkill(void)"
+   },
+   {
+    "ea": "0x96d0d1",
+    "method": "DoAntiMacroSkill",
+    "decorated": "?DoAntiMacroSkill@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoAntiMacroSkill(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96d399",
+    "method": "SendSkillUseRequest",
+    "decorated": "?SendSkillUseRequest@CUserLocal@@QAEHPBUSKILLENTRY@@JKJQAKJJ@Z",
+    "demangled": "public: int CUserLocal::SendSkillUseRequest(struct SKILLENTRY const __near *,long,unsigned long,long,unsigned long __near * const,long,long)"
+   },
+   {
+    "ea": "0x96d873",
+    "method": "SendSkillCancelRequest",
+    "decorated": "?SendSkillCancelRequest@CUserLocal@@QAEXJ@Z",
+    "demangled": "public: void CUserLocal::SendSkillCancelRequest(long)"
+   },
+   {
+    "ea": "0x96d95e",
+    "method": "DoActiveSkill_CombatStep",
+    "decorated": "?DoActiveSkill_CombatStep@CUserLocal@@IAEHPBUSKILLENTRY@@J@Z",
+    "demangled": "protected: int CUserLocal::DoActiveSkill_CombatStep(struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x96db3f",
+    "method": "FindParty",
+    "decorated": "?FindParty@CUserLocal@@IAEKPBUSKILLENTRY@@JPAJ@Z",
+    "demangled": "protected: unsigned long CUserLocal::FindParty(struct SKILLENTRY const __near *,long,long __near *)"
+   }
+  ],
+  "CUserRemote": [
+   {
+    "ea": "0x980c90",
+    "method": "OnMeleeAttack",
+    "decorated": "?OnMeleeAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@@Z",
+    "demangled": "public: void CUserRemote::OnMeleeAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &)"
+   },
+   {
+    "ea": "0x981211",
+    "method": "OnShootAttack",
+    "decorated": "?OnShootAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJJAAV?$ZArray@UATTACKINFO@@@@UtagPOINT@@KH0J@Z",
+    "demangled": "public: void CUserRemote::OnShootAttack(long,struct SKILLENTRY const __near *,long,long,int,long,long,class ZArray<struct ATTACKINFO> __near &,struct tagPOINT,unsigned long,int,struct SKILLENTRY const __near *,long)"
+   },
+   {
+    "ea": "0x98250d",
+    "method": "OnMagicAttack",
+    "decorated": "?OnMagicAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@J@Z",
+    "demangled": "public: void CUserRemote::OnMagicAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &,long)"
+   },
+   {
+    "ea": "0x9830bb",
+    "method": "OnBodyAttack",
+    "decorated": "?OnBodyAttack@CUserRemote@@QAEXJPBUSKILLENTRY@@JJHJAAV?$ZArray@UATTACKINFO@@@@@Z",
+    "demangled": "public: void CUserRemote::OnBodyAttack(long,struct SKILLENTRY const __near *,long,long,int,long,class ZArray<struct ATTACKINFO> __near &)"
+   }
+  ],
+  "CWndSkillGuide": [
+   {
+    "ea": "0x8aa4e4",
+    "method": "OnKey",
+    "decorated": "?OnKey@CWndSkillGuide@@UAEXII@Z",
+    "demangled": "public: virtual void CWndSkillGuide::OnKey(unsigned int,unsigned int)"
+   }
+  ],
+  "CWvsContext": [
+   {
+    "ea": "0xa08e05",
+    "method": "GetSkillLevelUpState",
+    "decorated": "?GetSkillLevelUpState@CWvsContext@@QAEJPBUSKILLENTRY@@@Z",
+    "demangled": "public: long CWvsContext::GetSkillLevelUpState(struct SKILLENTRY const __near *)"
+   },
+   {
+    "ea": "0xa123a4",
+    "method": "SetSkillCooltimeOver",
+    "decorated": "?SetSkillCooltimeOver@CWvsContext@@QAEXJJ@Z",
+    "demangled": "public: void CWvsContext::SetSkillCooltimeOver(long,long)"
+   },
+   {
+    "ea": "0xa1246c",
+    "method": "RemoveSkillCooltimeOver",
+    "decorated": "?RemoveSkillCooltimeOver@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::RemoveSkillCooltimeOver(long)"
+   },
+   {
+    "ea": "0xa1e48c",
+    "method": "OnChangeSkillRecordResult",
+    "decorated": "?OnChangeSkillRecordResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnChangeSkillRecordResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa209b2",
+    "method": "OnSkillUseResult",
+    "decorated": "?OnSkillUseResult@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSkillUseResult(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa219be",
+    "method": "OnSkillExpireMessage",
+    "decorated": "?OnSkillExpireMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnSkillExpireMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa23cf3",
+    "method": "SendSkillUpRequest",
+    "decorated": "?SendSkillUpRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendSkillUpRequest(long)"
+   }
+  ],
+  "CalcDamage": [
+   {
+    "ea": "0x78df87",
+    "method": "PDamage",
+    "decorated": "?PDamage@CalcDamage@@QAEXABVCharacterData@@ABUBasicStat@@ABUSecondaryStat@@KABUMobStat@@PBVCMobTemplate@@V?$ZRef@UPassiveSkillData@@@@AAHJJJJJJHPBUSKILLENTRY@@JQAJQAHJJJJJJJJJJH@Z",
+    "demangled": "public: void CalcDamage::PDamage(class CharacterData const __near &,struct BasicStat const __near &,struct SecondaryStat const __near &,unsigned long,struct MobStat const __near &,class CMobTemplate const __near *,class ZRef<struct PassiveSkillData>,int __near &,long,long,long,long,long,long,int,struct SKILLENTRY const __near *,long,long __near * const,int __near * const,long,long,long,long,long,long,long,long,long,long,int)"
+   },
+   {
+    "ea": "0x791617",
+    "method": "MDamage",
+    "decorated": "?MDamage@CalcDamage@@QAEXABVCharacterData@@ABUBasicStat@@ABUSecondaryStat@@KABUMobStat@@PBVCMobTemplate@@V?$ZRef@UPassiveSkillData@@@@AAHJJJPBUSKILLENTRY@@JQAJQAHJJJJJJJJJ@Z",
+    "demangled": "public: void CalcDamage::MDamage(class CharacterData const __near &,struct BasicStat const __near &,struct SecondaryStat const __near &,unsigned long,struct MobStat const __near &,class CMobTemplate const __near *,class ZRef<struct PassiveSkillData>,int __near &,long,long,long,struct SKILLENTRY const __near *,long,long __near * const,int __near * const,long,long,long,long,long,long,long,long,long)"
+   }
+  ],
+  "MOBSKILLLEVELDATA": [
+   {
+    "ea": "0x66c215",
+    "method": "GetEffectUOL",
+    "decorated": "?GetEffectUOL@MOBSKILLLEVELDATA@@QBE?AVZtl_bstr_t@@XZ",
+    "demangled": "public: class Ztl_bstr_t MOBSKILLLEVELDATA::GetEffectUOL(void)const"
+   }
+  ],
+  "SKILLENTRY": [
+   {
+    "ea": "0x411256",
+    "method": "GetSpecialUOL",
+    "decorated": "?GetSpecialUOL@SKILLENTRY@@QBE?AVZtl_bstr_t@@J@Z",
+    "demangled": "public: class Ztl_bstr_t SKILLENTRY::GetSpecialUOL(long)const"
+   },
+   {
+    "ea": "0x760f23",
+    "method": "GetLevelData",
+    "decorated": "?GetLevelData@SKILLENTRY@@QBEABUSKILLLEVELDATA@@J@Z",
+    "demangled": "public: struct SKILLLEVELDATA const __near & SKILLENTRY::GetLevelData(long)const"
+   },
+   {
+    "ea": "0x7660b6",
+    "method": "GetRandomAppointedAction",
+    "decorated": "?GetRandomAppointedAction@SKILLENTRY@@QBEJJI@Z",
+    "demangled": "public: long SKILLENTRY::GetRandomAppointedAction(long,unsigned int)const"
+   },
+   {
+    "ea": "0x76611c",
+    "method": "IsActionAppointed",
+    "decorated": "?IsActionAppointed@SKILLENTRY@@QBEHJ@Z",
+    "demangled": "public: int SKILLENTRY::IsActionAppointed(long)const"
+   },
+   {
+    "ea": "0x766157",
+    "method": "IsCorrectWeaponType",
+    "decorated": "?IsCorrectWeaponType@SKILLENTRY@@QBEHJJ@Z",
+    "demangled": "public: int SKILLENTRY::IsCorrectWeaponType(long,long)const"
+   },
+   {
+    "ea": "0x766418",
+    "method": "IsCorrectAppointedAction",
+    "decorated": "?IsCorrectAppointedAction@SKILLENTRY@@QBEHJJ@Z",
+    "demangled": "public: int SKILLENTRY::IsCorrectAppointedAction(long,long)const"
+   },
+   {
+    "ea": "0x932d40",
+    "method": "GetEffectUOL",
+    "decorated": "?GetEffectUOL@SKILLENTRY@@QBE?AVZtl_bstr_t@@E@Z",
+    "demangled": "public: class Ztl_bstr_t SKILLENTRY::GetEffectUOL(unsigned char)const"
+   },
+   {
+    "ea": "0x936304",
+    "method": "GetScreenEffectUOL",
+    "decorated": "?GetScreenEffectUOL@SKILLENTRY@@QBE?AVZtl_bstr_t@@XZ",
+    "demangled": "public: class Ztl_bstr_t SKILLENTRY::GetScreenEffectUOL(void)const"
+   }
+  ],
+  "SecondaryStat": [
+   {
+    "ea": "0x8c46ab",
+    "method": "IsRidingSkillVehicle",
+    "decorated": "?IsRidingSkillVehicle@SecondaryStat@@QBEHXZ",
+    "demangled": "public: int SecondaryStat::IsRidingSkillVehicle(void)const"
+   }
+  ],
+  "SkillInfo": [
+   {
+    "ea": "0x587f55",
+    "method": "SetFieldType",
+    "decorated": "?SetFieldType@SkillInfo@Field@@QAEXJ@Z",
+    "demangled": "public: void Field::SkillInfo::SetFieldType(long)"
+   },
+   {
+    "ea": "0x5880bf",
+    "method": "Parse",
+    "decorated": "?Parse@SkillInfo@Field@@QAEHV?$_com_ptr_t@V?$_com_IIID@UIWzProperty@@$1?_GUID_986515d9_0a0b_4929_8b4f_718682177b92@@3U__s_GUID@@B@@@@@Z",
+    "demangled": "public: int Field::SkillInfo::Parse(class _com_ptr_t<class _com_IIID<struct IWzProperty,&struct __s_GUID const _GUID_986515d9_0a0b_4929_8b4f_718682177b92>>)"
+   }
+  ]
+ },
+ "class_summary": {
+  "": 19,
+  "?$ZList": 1,
+  "CAnimationDisplayer": 1,
+  "CDraggableSkill": 4,
+  "CField": 2,
+  "CMob": 2,
+  "CPet": 1,
+  "CSkillInfo": 4,
+  "CUISkill": 5,
+  "CUISkillChangeConfirm": 1,
+  "CUISkillEx": 3,
+  "CUIToolTip": 2,
+  "CUser": 5,
+  "CUserLocal": 30,
+  "CUserRemote": 4,
+  "CWndSkillGuide": 1,
+  "CWvsContext": 7,
+  "CalcDamage": 2,
+  "MOBSKILLLEVELDATA": 1,
+  "SKILLENTRY": 8,
+  "SecondaryStat": 1,
+  "SkillInfo": 2
+ }
+}

@@ -62,6 +62,12 @@ namespace ms
 		buffs[Buffstat::Id::JUMP] = std::make_unique<SimpleStatBuff<EquipStat::Id::JUMP>>();
 		buffs[Buffstat::Id::HYPERBODYHP] = std::make_unique<PercentageStatBuff<EquipStat::Id::HP>>();
 		buffs[Buffstat::Id::HYPERBODYMP] = std::make_unique<PercentageStatBuff<EquipStat::Id::MP>>();
+		// #17 补全的属性型 buff（CharStats 可表达者）：命中/回避/手速、圣体(HP%)、英雄回声(全属性%)。
+		buffs[Buffstat::Id::ACC] = std::make_unique<SimpleStatBuff<EquipStat::Id::ACC>>();
+		buffs[Buffstat::Id::AVOID] = std::make_unique<SimpleStatBuff<EquipStat::Id::AVOID>>();
+		buffs[Buffstat::Id::HANDS] = std::make_unique<SimpleStatBuff<EquipStat::Id::HANDS>>();
+		buffs[Buffstat::Id::DIVINE_BODY] = std::make_unique<PercentageStatBuff<EquipStat::Id::HP>>();
+		buffs[Buffstat::Id::ECHO_OF_HERO] = std::make_unique<MapleWarriorBuff>();
 	}
 
 	void ActiveBuffs::apply_buff(CharStats& stats, Buffstat::Id stat, int32_t value) const

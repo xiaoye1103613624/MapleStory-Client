@@ -169,50 +169,32 @@ namespace ms
 		static constexpr int16_t ROW_HEIGHT = 40;
 		static constexpr int16_t ROW_WIDTH = 143;
 		static constexpr Point<int16_t> SKILL_OFFSET = Point<int16_t>(11, 93);
-		// 原生（BeiDou V17.7）经典窗单列技能行基准：列表区顶 y=87..257（170px），
-		// 行高 40 → 可见 4 行；行左缘 x=10。UIWindow.img/Skill/backgrnd 逐行扫描实测
-		// （标题 0..22 / tab 23..54 / 书封暗栏 55..86 / 列表 87..257）。
-		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(10, 87);
-		// 原生经典窗列表区 y=87..257（170px），行高 40 → 可见 4 行。
+		// Wave3 2026-11-13：以 evidence/w9-skill/coords-r15.md 为准（skill1 模板匹配）。
+		// 行底 Skill/skill1 @ 窗口 (7,99)，行距 40；SP「+」框绝对 (132,119)
+		// ⇒ CLASSIC_SKILL+(125,20)=(132,119)。旧值 (10,87)+(130,20)=(140,107) 与
+		// 注释里的 (132,119) 自相矛盾，会把四行列表整体上移 12px、右移 3px。
+		static constexpr Point<int16_t> CLASSIC_SKILL_OFFSET = Point<int16_t>(7, 99);
 		static constexpr int16_t CLASSIC_ROWS = 4;
-		// 行内 SP 升级「+」钮相对行起点的偏移：实测 + 号框左上角 (132,119)。
-		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(130, 20);
-		// ---- 坐标口径（本轮实测钉死）------------------------------------------
-		// oracle = 技能展开宏指令.png；它与 UIWindow.img/Skill/backgrnd 逐像素对齐
-		// 后 xoff/yoff 均为 0（真机同口径复测：烘焙红下划线 ours 帧 x3..171 ==
-		// backgrnd 帧 x3..171）。backgrnd 以 Sprite 偏移 (1,0) 绘制，故
-		//     position == 帧原点 - (1,0)  ⇒  绘制点 Q = 帧坐标 + (1,0)。
-		// 这条换算不是推演：Q=(2,23) 的底板真机落在帧 (1,23)、Q=(9,57) 的书页落在
-		// 帧 (8,57)，两处都恰好比帧目标左 1px，与上式一致。
+		static constexpr Point<int16_t> CLASSIC_SPUP_OFFSET = Point<int16_t>(125, 20);
+		// ---- 坐标口径（Wave3：backgrnd 无 Sprite 偏移，Q == 帧坐标）--------------
+		// oracle = 技能展开宏指令.png；Skill/backgrnd 模板匹配 best=(0,0)。
 		// ----------------------------------------------------------------------
-		// 底板 = UIWindow.img/Item/New/Tab0|Tab1/<页号>（34x19，灰=未选、粉=选中）：
-		// 原生黑色轮廓外框落在帧 x3..36 / y23..41，与底板位图不透明外框 (0..33,0..18)
-		// 同尺寸 ⇒ 底板左上 = 帧 (3,23) ⇒ Q (4,23)。页距 34（与背包窗同款底板的
-		// UIItemInventory::tab_plate_pos 同一把尺）。
-		static constexpr Point<int16_t> TAB_PLATE_TOPLEFT = Point<int16_t>(4, 23);
+		// 底板 = Item/New/Tab0|Tab1（34x19）：帧外框 x3..36 / y23..41 ⇒ 左上 (3,23)。
+		static constexpr Point<int16_t> TAB_PLATE_TOPLEFT = Point<int16_t>(3, 23);
 		static constexpr int16_t TAB_PLATE_PITCH = 34;
-		// 页码点图标 Skill/Tab/enabled|disabled{0-4}（10x11 … 15x12）叠在底板中央：
-		// 新手页的白色圆点墨迹 = 帧 x16..23 / y30..37，位图内白心 = 位图 x1..8 / y1..8
-		// ⇒ 位图左上 = 帧 (15,29) ⇒ Q (16,29)。底板中心 x = 3+17 = 20 ⇒ 槽0中心 Q=21。
-		// （10x11 的圆点：21 - 10/2 = 16 ✓）
-		static constexpr int16_t TAB_SLOT0_CENTER = 21;
+		// 页码点居中：底板中心 x = 3+17 = 20。
+		static constexpr int16_t TAB_SLOT0_CENTER = 20;
 		static constexpr int16_t TAB_CENTER_Y = 34;
-		// 书页图标 = Skill/<job>.img/info/icon（26x30，origin (-4,30)）。原生黑色
-		// 轮廓落在帧 x10..35 / y57..84，位图内轮廓起点 (0,0) ⇒ 位图左上 = 帧 (10,57)
-		// ⇒ Q (11,57) —— 也就是书名那条暗栏的左端，不是顶部 tab 条。
-		static constexpr Point<int16_t> BOOK_TOPLEFT = Point<int16_t>(11, 57);
-		// 书名在暗栏内水平居中：原生墨迹 = 帧 x76..133 / y67..78 ⇒ 中心 帧 104.5。
-		// GraphicsGL::LayoutBuilder::add_line 里 CENTER 是「绘制点即文字中心」
-		// （line_x -= ax/2，与 maxwidth 无关），故 Q.x = 104.5 + 1 ≈ 105。
-		// 旧值 28 是按「150px 盒内居中」算的，那个语义在本引擎里不存在，于是整串
-		// 文字压到书页图标上（真机实测 ours 墨迹中心 帧 17）。y 由 y_for_ink_top 反解。
-		static constexpr int16_t BOOK_TEXT_CENTER_X = 105;
+		// 书页图标：帧轮廓 x10..35 / y57..84 ⇒ 左上 (10,57)。
+		static constexpr Point<int16_t> BOOK_TOPLEFT = Point<int16_t>(10, 57);
+		// 书名墨迹中心 ≈ 帧 104.5；CENTER 绘制点即中心。
+		static constexpr int16_t BOOK_TEXT_CENTER_X = 104;
 		static constexpr int16_t BOOK_TEXT_INK_TOP = 68;
-		// 宏指令钮（Basic.img/BtMacro 48x18）：实测左上角 (121,265)。
-		static constexpr Point<int16_t> MACRO_BTN_TOPLEFT = Point<int16_t>(121, 265);
-		// 滚动条：Basic.img/VScr（宽12）prev/next 钮实测左上角 x=156、顶 y=100、底 y=242。
-		static constexpr int16_t CLASSIC_SLIDER_X = 158;
-		static constexpr int16_t CLASSIC_SLIDER_TOP = 87;
+		// 宏指令钮：原 Q(121,265) 含 +1 假偏移 ⇒ 帧 (120,265)。
+		static constexpr Point<int16_t> MACRO_BTN_TOPLEFT = Point<int16_t>(120, 265);
+		// 滚动条：轨道贴列表区 y=99..258（与 CLASSIC_SKILL_OFFSET / 4×40 行同源）。
+		static constexpr int16_t CLASSIC_SLIDER_X = 157;
+		static constexpr int16_t CLASSIC_SLIDER_TOP = 99;
 		static constexpr int16_t CLASSIC_SLIDER_BOTTOM = 258;
 		static constexpr Point<int16_t> SKILL_META_OFFSET = Point<int16_t>(2, 2);
 		static constexpr Point<int16_t> LINE_OFFSET = Point<int16_t>(0, 37);

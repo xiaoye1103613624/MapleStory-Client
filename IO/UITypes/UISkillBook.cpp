@@ -217,8 +217,11 @@ namespace ms
 		sp_remaining = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::SUPERNOVA);
 		sp_name = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE);
 
+		// Wave3：去掉 (1,0) 假偏移。旧偏移让底图相对 position 右移 1px，组合栏
+		// anchor_right_of(gap=-3) 按 dimension=175 对接时实际重叠变成 4px，且与
+		// 「技能展开宏指令.png」里 Skill/backgrnd @ (0,0) 的逐像素对齐矛盾。
 		if (ui_backgrnd)
-			sprites.emplace_back(ui_backgrnd, Point<int16_t>(1, 0));
+			sprites.emplace_back(ui_backgrnd);
 		if (main["backgrnd2"])
 			sprites.emplace_back(main["backgrnd2"]);
 		if (main["backgrnd3"])
@@ -396,7 +399,7 @@ namespace ms
 
 		if (classic)
 		{
-			// 单列技能行：起点 (10,87)（列表区顶 y=87..257），行距 40，可见 4 行；
+			// 单列技能行：起点 CLASSIC_SKILL_OFFSET=(7,99)，行距 40，可见 4 行；
 			// 现代双列布局（第二列 x=153 已越出 175 宽窗口）仅现代窗使用。
 			for (int16_t i = 0; i < rows; i++)
 			{
@@ -1112,15 +1115,16 @@ namespace ms
 		// L3 + L2：资源缺失直接扣点时，先做 SP 前置校验与 500ms 本地节流（不动 wire）。
 		if (!find_btn(buttons, Buttons::BT_OKAY))
 		{
-			if (can_raise(id))
+			if (!can_raise(id))
+				return;
+
+			// L2：083 CanSendExclRequest(500,0)。
+			auto now = std::chrono::steady_clock::now();
+			if (last_sp_send.time_since_epoch().count() == 0 ||
+				std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sp_send).count() >= 500)
 			{
-				auto now = std::chrono::steady_clock::now();
-				if (last_sp_send.time_since_epoch().count() == 0 ||
-					std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sp_send).count() >= 500)
-				{
-					last_sp_send = now;
-					SpendSpPacket(id).dispatch();
-				}
+				last_sp_send = now;
+				SpendSpPacket(id).dispatch();
 			}
 			return;
 		}
@@ -1130,6 +1134,10 @@ namespace ms
 			set_skillpoint(false);
 			return;
 		}
+
+		// L3：打开确认板前拦截。已打开时再点同一「+」仍可收起（上面的分支）。
+		if (!can_raise(id))
+			return;
 
 		int32_t level = skills[row].get_level();
 		int32_t used = 1;

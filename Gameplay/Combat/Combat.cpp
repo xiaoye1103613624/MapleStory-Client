@@ -204,7 +204,15 @@ namespace ms
 
 			if (reactor_targets.size())
 				if (Optional<Reactor> reactor = reactor_objs->get(reactor_targets.at(0)))
-					DamageReactorPacket(reactor->get_oid(), player.get_position(), 0, 0).dispatch();
+				{
+					// s9 ReactorHitHandler：oid + charPos + stance + pad4 + skillid。
+					// stance/skill 取本次 AttackResult（旧恒 0 会使姿态/技能敏感脚本偏）。
+					DamageReactorPacket(
+						reactor->get_oid(),
+						player.get_position(),
+						static_cast<int16_t>(result.stance),
+						result.skill).dispatch();
+				}
 		}
 		else
 		{

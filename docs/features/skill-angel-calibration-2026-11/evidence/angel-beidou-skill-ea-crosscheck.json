@@ -1,0 +1,863 @@
+{
+ "summary": {
+  "angel_funcs": 106,
+  "beidou_present": 105,
+  "beidou_sub_named": 105,
+  "beidou_real_named": 0,
+  "beidou_missing": 1,
+  "missing_eas": [
+   "0x8aa4e4"
+  ],
+  "conclusion": "same binary layout (105/106 EAs identical; differences are IDA analysis coverage, not code)"
+ },
+ "table": [
+  {
+   "class": "",
+   "method": "get_skill_root_from_job",
+   "ea": "0x4a8c4f",
+   "beidou_name": "sub_4A8C4F",
+   "beidou_size": "0x97",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_skill_need_master_level",
+   "ea": "0x4e8f04",
+   "beidou_name": "sub_4E8F04",
+   "beidou_size": "0x62",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_keydown_skill",
+   "ea": "0x4fb08f",
+   "beidou_name": "sub_4FB08F",
+   "beidou_size": "0x83",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_able_to_map_macrosys_skill",
+   "ea": "0x4fb292",
+   "beidou_name": "sub_4FB292",
+   "beidou_size": "0x7a",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_heros_will_skill",
+   "ea": "0x765e2d",
+   "beidou_name": "sub_765E2D",
+   "beidou_size": "0x71",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "get_novice_skill_point",
+   "ea": "0x765e9e",
+   "beidou_name": "sub_765E9E",
+   "beidou_size": "0x193",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "get_random_melee_attack_action",
+   "ea": "0x766031",
+   "beidou_name": "sub_766031",
+   "beidou_size": "0x85",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "get_random_shoot_attack_action",
+   "ea": "0x766272",
+   "beidou_name": "sub_766272",
+   "beidou_size": "0x83",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "get_random_magic_attack_action",
+   "ea": "0x7662f5",
+   "beidou_name": "sub_7662F5",
+   "beidou_size": "0x84",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_correct_melee_attack",
+   "ea": "0x766379",
+   "beidou_name": "sub_766379",
+   "beidou_size": "0x9f",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_correct_shoot_attack",
+   "ea": "0x76649c",
+   "beidou_name": "sub_76649C",
+   "beidou_size": "0x89",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_correct_magic_attack",
+   "ea": "0x766525",
+   "beidou_name": "sub_766525",
+   "beidou_size": "0x8c",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_correct_normal_attack",
+   "ea": "0x7665b1",
+   "beidou_name": "sub_7665B1",
+   "beidou_size": "0x40",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_correct_job_for_skill_root",
+   "ea": "0x7669dd",
+   "beidou_name": "sub_7669DD",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "0CWndSkillGuide",
+   "ea": "0x8aa243",
+   "beidou_name": "sub_8AA243",
+   "beidou_size": "0x222",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "0CUISkill",
+   "ea": "0x8aa5ad",
+   "beidou_name": "sub_8AA5AD",
+   "beidou_size": "0x2ec",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "is_antirepeat_buff_skill",
+   "ea": "0x96d6ca",
+   "beidou_name": "sub_96D6CA",
+   "beidou_size": "0x1a9",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "play_skill_sound",
+   "ea": "0x989729",
+   "beidou_name": "sub_989729",
+   "beidou_size": "0x252",
+   "status": "present_sub"
+  },
+  {
+   "class": "",
+   "method": "stop_skill_sound",
+   "ea": "0x98999f",
+   "beidou_name": "sub_98999F",
+   "beidou_size": "0x12",
+   "status": "present_sub"
+  },
+  {
+   "class": "?$ZList",
+   "method": "RemoveAll",
+   "ea": "0x672ca1",
+   "beidou_name": "sub_672CA1",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CAnimationDisplayer",
+   "method": "Effect_SkillUse",
+   "ea": "0x43d72a",
+   "beidou_name": "sub_43D72A",
+   "beidou_size": "0x212",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "OnDropped",
+   "ea": "0x4faa22",
+   "beidou_name": "sub_4FAA22",
+   "beidou_size": "0x5df",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "OnDoubleClicked",
+   "ea": "0x4fb001",
+   "beidou_name": "sub_4FB001",
+   "beidou_size": "0x8e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "MapMacro",
+   "ea": "0x4fb112",
+   "beidou_name": "sub_4FB112",
+   "beidou_size": "0x180",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "MapFuncKey",
+   "ea": "0x4fb32c",
+   "beidou_name": "sub_4FB32C",
+   "beidou_size": "0x17a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CField",
+   "method": "RestoreForbiddenSkill",
+   "ea": "0x52b1d8",
+   "beidou_name": "sub_52B1D8",
+   "beidou_size": "0xdd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CField",
+   "method": "IsSkillForbiden",
+   "ea": "0x537c7f",
+   "beidou_name": "sub_537C7F",
+   "beidou_size": "0x18",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMob",
+   "method": "UpdateAffectedSkillList",
+   "ea": "0x665cfd",
+   "beidou_name": "sub_665CFD",
+   "beidou_size": "0x508",
+   "status": "present_sub"
+  },
+  {
+   "class": "CMob",
+   "method": "TryDoingSkill",
+   "ea": "0x66e7af",
+   "beidou_name": "sub_66E7AF",
+   "beidou_size": "0x170",
+   "status": "present_sub"
+  },
+  {
+   "class": "CPet",
+   "method": "GetUpgradePetSkill",
+   "ea": "0x705db3",
+   "beidou_name": "sub_705DB3",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSkillInfo",
+   "method": "GetSkill",
+   "ea": "0x75c755",
+   "beidou_name": "sub_75C755",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSkillInfo",
+   "method": "GetSkillRootVisible",
+   "ea": "0x75c7c5",
+   "beidou_name": "sub_75C7C5",
+   "beidou_size": "0x93",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSkillInfo",
+   "method": "GetSkillLevel",
+   "ea": "0x7616f6",
+   "beidou_name": "sub_7616F6",
+   "beidou_size": "0x14f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSkillInfo",
+   "method": "CheckConsumeForActiveSkill",
+   "ea": "0x764256",
+   "beidou_name": "sub_764256",
+   "beidou_size": "0x4cb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "CloseSkillGuide",
+   "ea": "0x8aa4c5",
+   "beidou_name": "sub_8AA4C5",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OnCreate",
+   "ea": "0x8aaa88",
+   "beidou_name": "sub_8AAA88",
+   "beidou_size": "0x82d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OnSkillLevelUpButton",
+   "ea": "0x8acf1a",
+   "beidou_name": "sub_8ACF1A",
+   "beidou_size": "0x31e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "GetSkillRootVisible",
+   "ea": "0x8bcdfa",
+   "beidou_name": "sub_8BCDFA",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OpenCurSkillGuide",
+   "ea": "0x961063",
+   "beidou_name": "sub_961063",
+   "beidou_size": "0x6c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkillChangeConfirm",
+   "method": "GetResult",
+   "ea": "0xa0f8c8",
+   "beidou_name": "sub_A0F8C8",
+   "beidou_size": "0x1b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkillEx",
+   "method": "ShiftMacroUIState",
+   "ea": "0x8bad5a",
+   "beidou_name": "sub_8BAD5A",
+   "beidou_size": "0x516",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkillEx",
+   "method": "OnButtonClicked",
+   "ea": "0x8bb2bf",
+   "beidou_name": "sub_8BB2BF",
+   "beidou_size": "0x91",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkillEx",
+   "method": "OnSkillLevelUpButton",
+   "ea": "0x8bc62f",
+   "beidou_name": "sub_8BC62F",
+   "beidou_size": "0xcf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_MacroSysSkill",
+   "ea": "0x8f2276",
+   "beidou_name": "sub_8F2276",
+   "beidou_size": "0x35a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Skill",
+   "ea": "0x8f25d0",
+   "beidou_name": "sub_8F25D0",
+   "beidou_size": "0x661",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "SetAttackAction",
+   "ea": "0x92edb2",
+   "beidou_name": "sub_92EDB2",
+   "beidou_size": "0x1a4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "ShowSkillEffect",
+   "ea": "0x933990",
+   "beidou_name": "sub_933990",
+   "beidou_size": "0x295f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "ShowSkillPrepare",
+   "ea": "0x93640b",
+   "beidou_name": "sub_93640B",
+   "beidou_size": "0x11d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "ShowSkillSpecialEffect",
+   "ea": "0x936528",
+   "beidou_name": "sub_936528",
+   "beidou_size": "0x250",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUser",
+   "method": "GetDashingSkill",
+   "ea": "0x9433a2",
+   "beidou_name": "sub_9433A2",
+   "beidou_size": "0x59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetProperBulletPosition",
+   "ea": "0x949b5d",
+   "beidou_name": "sub_949B5D",
+   "beidou_size": "0x3ff",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ValidateItemSkill",
+   "ea": "0x94eaa9",
+   "beidou_name": "sub_94EAA9",
+   "beidou_size": "0x2ce",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ValidateSkillBonus",
+   "ea": "0x94ed77",
+   "beidou_name": "sub_94ED77",
+   "beidou_size": "0x576",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingMeleeAttack",
+   "ea": "0x950921",
+   "beidou_name": "sub_950921",
+   "beidou_size": "0x2c3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingShootAttack",
+   "ea": "0x9537d5",
+   "beidou_name": "sub_9537D5",
+   "beidou_size": "0x1ed6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingMagicAttack",
+   "ea": "0x95571f",
+   "beidou_name": "sub_95571F",
+   "beidou_size": "0x1a59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingWings",
+   "ea": "0x957a1f",
+   "beidou_name": "sub_957A1F",
+   "beidou_size": "0x155",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryRegisterTeleport",
+   "ea": "0x957b74",
+   "beidou_name": "sub_957B74",
+   "beidou_size": "0x5cf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnSkillCooltimeSet",
+   "ea": "0x95be66",
+   "beidou_name": "sub_95BE66",
+   "beidou_size": "0x79",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnKeyDownSkillEnd",
+   "ea": "0x95bedf",
+   "beidou_name": "sub_95BEDF",
+   "beidou_size": "0x29c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnOpenSkillGuide",
+   "ea": "0x961042",
+   "beidou_name": "sub_961042",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill",
+   "ea": "0x966f7a",
+   "beidou_name": "sub_966F7A",
+   "beidou_size": "0x2497",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_MeleeAttack",
+   "ea": "0x969465",
+   "beidou_name": "sub_969465",
+   "beidou_size": "0x23d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_ShootAttack",
+   "ea": "0x9696a2",
+   "beidou_name": "sub_9696A2",
+   "beidou_size": "0x3b5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_VehicleShootAttack",
+   "ea": "0x969a57",
+   "beidou_name": "sub_969A57",
+   "beidou_size": "0xb9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_MagicAttack",
+   "ea": "0x969b10",
+   "beidou_name": "sub_969B10",
+   "beidou_size": "0x45",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_TownPortal",
+   "ea": "0x969bf9",
+   "beidou_name": "sub_969BF9",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_StatChange",
+   "ea": "0x969e21",
+   "beidou_name": "sub_969E21",
+   "beidou_size": "0x519",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_Heal",
+   "ea": "0x96a69d",
+   "beidou_name": "sub_96A69D",
+   "beidou_size": "0x1d1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_Prepare",
+   "ea": "0x96a86e",
+   "beidou_name": "sub_96A86E",
+   "beidou_size": "0x8d2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_BoundJump",
+   "ea": "0x96be38",
+   "beidou_name": "sub_96BE38",
+   "beidou_size": "0x372",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_SmokeShell",
+   "ea": "0x96c742",
+   "beidou_name": "sub_96C742",
+   "beidou_size": "0x1d5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_RecoveryAura",
+   "ea": "0x96c917",
+   "beidou_name": "sub_96C917",
+   "beidou_size": "0x245",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsTeleportSkillAvailable",
+   "ea": "0x96cb93",
+   "beidou_name": "sub_96CB93",
+   "beidou_size": "0x1ab",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingPreparedSkill",
+   "ea": "0x96cf1d",
+   "beidou_name": "sub_96CF1D",
+   "beidou_size": "0x168",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoAntiMacroSkill",
+   "ea": "0x96d0d1",
+   "beidou_name": "sub_96D0D1",
+   "beidou_size": "0x162",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SendSkillUseRequest",
+   "ea": "0x96d399",
+   "beidou_name": "sub_96D399",
+   "beidou_size": "0x331",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SendSkillCancelRequest",
+   "ea": "0x96d873",
+   "beidou_name": "sub_96D873",
+   "beidou_size": "0xeb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_CombatStep",
+   "ea": "0x96d95e",
+   "beidou_name": "sub_96D95E",
+   "beidou_size": "0x1e1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "FindParty",
+   "ea": "0x96db3f",
+   "beidou_name": "sub_96DB3F",
+   "beidou_size": "0x14a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnMeleeAttack",
+   "ea": "0x980c90",
+   "beidou_name": "sub_980C90",
+   "beidou_size": "0x581",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnShootAttack",
+   "ea": "0x981211",
+   "beidou_name": "sub_981211",
+   "beidou_size": "0x12fc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnMagicAttack",
+   "ea": "0x98250d",
+   "beidou_name": "sub_98250D",
+   "beidou_size": "0xbae",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnBodyAttack",
+   "ea": "0x9830bb",
+   "beidou_name": "sub_9830BB",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndSkillGuide",
+   "method": "OnKey",
+   "ea": "0x8aa4e4",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "GetSkillLevelUpState",
+   "ea": "0xa08e05",
+   "beidou_name": "sub_A08E05",
+   "beidou_size": "0xe1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "SetSkillCooltimeOver",
+   "ea": "0xa123a4",
+   "beidou_name": "sub_A123A4",
+   "beidou_size": "0xc8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "RemoveSkillCooltimeOver",
+   "ea": "0xa1246c",
+   "beidou_name": "sub_A1246C",
+   "beidou_size": "0x33",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnChangeSkillRecordResult",
+   "ea": "0xa1e48c",
+   "beidou_name": "sub_A1E48C",
+   "beidou_size": "0x123",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnSkillUseResult",
+   "ea": "0xa209b2",
+   "beidou_name": "sub_A209B2",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnSkillExpireMessage",
+   "ea": "0xa219be",
+   "beidou_name": "sub_A219BE",
+   "beidou_size": "0xba",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "SendSkillUpRequest",
+   "ea": "0xa23cf3",
+   "beidou_name": "sub_A23CF3",
+   "beidou_size": "0x86",
+   "status": "present_sub"
+  },
+  {
+   "class": "CalcDamage",
+   "method": "PDamage",
+   "ea": "0x78df87",
+   "beidou_name": "sub_78DF87",
+   "beidou_size": "0x2689",
+   "status": "present_sub"
+  },
+  {
+   "class": "CalcDamage",
+   "method": "MDamage",
+   "ea": "0x791617",
+   "beidou_name": "sub_791617",
+   "beidou_size": "0x9a5",
+   "status": "present_sub"
+  },
+  {
+   "class": "MOBSKILLLEVELDATA",
+   "method": "GetEffectUOL",
+   "ea": "0x66c215",
+   "beidou_name": "sub_66C215",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "GetSpecialUOL",
+   "ea": "0x411256",
+   "beidou_name": "sub_411256",
+   "beidou_size": "0x29",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "GetLevelData",
+   "ea": "0x760f23",
+   "beidou_name": "sub_760F23",
+   "beidou_size": "0x268",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "GetRandomAppointedAction",
+   "ea": "0x7660b6",
+   "beidou_name": "sub_7660B6",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "IsActionAppointed",
+   "ea": "0x76611c",
+   "beidou_name": "sub_76611C",
+   "beidou_size": "0x3b",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "IsCorrectWeaponType",
+   "ea": "0x766157",
+   "beidou_name": "sub_766157",
+   "beidou_size": "0x11b",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "IsCorrectAppointedAction",
+   "ea": "0x766418",
+   "beidou_name": "sub_766418",
+   "beidou_size": "0x84",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "GetEffectUOL",
+   "ea": "0x932d40",
+   "beidou_name": "sub_932D40",
+   "beidou_size": "0x3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "SKILLENTRY",
+   "method": "GetScreenEffectUOL",
+   "ea": "0x936304",
+   "beidou_name": "sub_936304",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "SecondaryStat",
+   "method": "IsRidingSkillVehicle",
+   "ea": "0x8c46ab",
+   "beidou_name": "sub_8C46AB",
+   "beidou_size": "0x33",
+   "status": "present_sub"
+  },
+  {
+   "class": "SkillInfo",
+   "method": "SetFieldType",
+   "ea": "0x587f55",
+   "beidou_name": "sub_587F55",
+   "beidou_size": "0xa",
+   "status": "present_sub"
+  },
+  {
+   "class": "SkillInfo",
+   "method": "Parse",
+   "ea": "0x5880bf",
+   "beidou_name": "sub_5880BF",
+   "beidou_size": "0x273",
+   "status": "present_sub"
+  }
+ ]
+}

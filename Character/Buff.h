@@ -99,6 +99,11 @@ namespace ms
 			// 追加在 LENGTH 之前，既有枚举编号不受影响（表按名字键入）。
 			MAGIC_SHIELD,
 			MAGIC_RESISTANCE,
+			// #17 补全的 s9 功能位（coupon/怪物卡位滞后）：回复率/经验/地图保护。
+			HPREC,
+			MPREC,
+			EXP_INCREASE,
+			MAP_PROTECTION,
 			LENGTH
 		};
 
