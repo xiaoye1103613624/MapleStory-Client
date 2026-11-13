@@ -1,0 +1,6 @@
+技能展开宏指令.png <- Skill/backgrnd: best=(0,0) mae=27.087 tmpl=(175, 289)
+技能框+技能组合框.png <- Skill/backgrnd: best=(-1,-1) mae=1000000000.000 tmpl=(175, 289)
+角色装备.png <- Equip/BtPetEquipShow/normal/0: best=(102,280) mae=0.070 tmpl=(67, 18)
+角色装备.png <- Equip/BtPet1/disabled/0: best=(182,274) mae=0.000 tmpl=(30, 27)
+背包栏（折叠）.png <- Item/backgrnd: best=(3,0) mae=20.021 tmpl=(175, 289)
+背包栏展开.png <- Item/FullBackgrnd: best=(-1,-1) mae=1000000000.000 tmpl=(603, 289)

@@ -1,0 +1,8 @@
+{
+  "window": "Login / CUITitle（1280x720）",
+  "native_frame": "docs/features/pixel-ui-angel-restore-2026-11/evidence/screens/login.png",
+  "anchor_tmpl": null,
+  "tol": 1,
+  "note": "Wave1 骨架：登录页无单一 backgrnd 锚（木牌来自 Map Obj signboard）。先以全帧色块/按钮探针标定；oracle 待 mark。Angel CUITitle::OnCreate @0x62054a：BtLogin(213,-5) BtLoginIDSave(37,74) BtLoginIDLost(144,73) BtPasswdLost(226,74) BtNew(14,122) BtHomePage(114,120) BtQuit(214,120)；Edit 1007(67,12,132,15) 1008(67,40,120,15)。TITLE_WINDOW_OFFSET(58,16) 为截图反推。",
+  "probes": []
+}

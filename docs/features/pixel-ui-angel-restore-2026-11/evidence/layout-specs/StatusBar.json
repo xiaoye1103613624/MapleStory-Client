@@ -1,0 +1,7 @@
+{
+  "window": "StatusBar classic HUD（1280x720）",
+  "native_frame": "docs/features/pixel-ui-angel-restore-2026-11/evidence/screens/statusbar-hud.png",
+  "tol": 1,
+  "note": "HudLayout：HUD_DESIGN_W=800；宽 QS 门槛 800+qs；1280 为像素 oracle。骨架待 mark。",
+  "probes": []
+}

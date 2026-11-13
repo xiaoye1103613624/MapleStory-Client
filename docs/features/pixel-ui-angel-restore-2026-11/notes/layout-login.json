@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source": "screenshot-fallback",
+  "client": { "version": "v083", "scale": "1x", "window": "CUITitle" },
+  "image": {
+    "path": "evidence/screens/login.png",
+    "source_dir": "C:\\Users\\11036\\Desktop\\正确客户端截图\\登录界面.png",
+    "width_px": 1280,
+    "height_px": 720
+  },
+  "parser": { "tool": "pending-omniparser", "refined_by": null },
+  "why_fallback": "Wave0 骨架：主路径以 Angel CUITitle::OnCreate @0x62054a 为准；OmniParser 后端安装完成后可 parse_screen 覆写 elements。",
+  "elements": []
+}

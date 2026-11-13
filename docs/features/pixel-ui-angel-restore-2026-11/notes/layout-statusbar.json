@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source": "screenshot-fallback",
+  "client": { "version": "v083", "scale": "1x", "window": "CUIStatusBar" },
+  "image": {
+    "path": "evidence/screens/statusbar-hud.png",
+    "source_dir": "C:\\Users\\11036\\Desktop\\正确客户端截图\\底部信息栏、按钮、快捷键窗.png",
+    "width_px": 1280,
+    "height_px": 720
+  },
+  "parser": { "tool": "pending-omniparser", "refined_by": null },
+  "why_fallback": "1280 oracle；主路径 HudLayout + Angel OnCreate。OmniParser 后端就绪后补 elements。",
+  "elements": []
+}

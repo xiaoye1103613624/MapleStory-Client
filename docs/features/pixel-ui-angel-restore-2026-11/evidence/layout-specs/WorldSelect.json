@@ -1,0 +1,7 @@
+{
+  "window": "WorldSelect / Channel（1280x720）",
+  "native_frame": "docs/features/pixel-ui-angel-restore-2026-11/evidence/screens/channel-selected.png",
+  "tol": 1,
+  "note": "Angel 频道窗局部 (-176,-688)；卷轴 Login.img/WorldSelect/scroll/0 相对频道窗 (-38,-141)。骨架待 mark。",
+  "probes": []
+}

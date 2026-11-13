@@ -1,25 +1,34 @@
 ////////////////////////////////////////////////////////////////////////////////
-//	This file is part of the continued Journey MMORPG client					//
-//	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
-//																				//
-//	This program is free software: you can redistribute it and/or modify		//
-//	it under the terms of the GNU Affero General Public License as published by	//
-//	the Free Software Foundation, either version 3 of the License, or			//
-//	(at your option) any later version.											//
-//																				//
-//	This program is distributed in the hope that it will be useful,				//
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
-//	GNU Affero General Public License for more details.							//
-//																				//
-//	You should have received a copy of the GNU Affero General Public License	//
-//	along with this program.  If not, see <https://www.gnu.org/licenses/>.	//
+//	怪物图鉴窗口：v83 书本双页版式（D2 修复，2026-11-11）。
+//
+//	证据链（三份对齐，非截图猜）：
+//	  · orange-wz MCP 128B gate：UIWindow.img/MonsterBook 15 直接子节点 + 尺寸
+//	    backgrnd 475x349 / cardSlot 174x256 / infoPage 170x231 / select·cover
+//	    31x42 / fullMark 7x11 / icon 0..7 22x27 / LeftTab 0..8 20x20 /
+//	    RightTab 0..3 52x38 / BtClose 18x16 / BtSearch 34x17 / arrow* 23~24x16
+//	    （evidence/orange_wz_monsterbook_facts.json）
+//	  · Angel 083 IDA：sub_86256D 建钮立即数 —— BtClose id1000 (429,8)、
+//	    BtSearch id2000 (175,29)、arrowLeft id2001 (48,285)、arrowRight id2002
+//	    (185,285)、arrowLeft id2003 (270,285)、arrowRight id2004 (407,285)、
+//	    控件 2005 (49,30,120x15)；UpdateCheckList @0x867be6 逐 i<9 设勾选态
+//	    （evidence/ida_monsterbook_ctor.json）
+//	  · 正确客户端截图/怪物手册.png 540x357：backgrnd 模板匹配 meanSAD 57
+//	    定窗锚 (34,7)，infoPage 窗相对 (40,35) SAD 36.8、cardSlot (261,53)
+//	    SAD 43.1、LeftTab y=131+20i SAD 0.0、RightTab y=30+39i
+//	    （evidence/d2_canvas_anchor.json、d2_tab_anchor.json）
+//
+//	数据面：Character/MonsterBook 存 cardid%10000 → level（与 s9 addMonsterBookInfo
+//	一致）。卡片道具 238xxxx 的 %10000 与 String/MonsterBook.img 的 mob 键无直接
+//	相等关系；P1 用各条目 reward 中的 238xxxx 建 reverse map（suffix→mobId），
+//	再读 Mob.img 名与 MonsterBook episode/map/reward。便签套筛选仍预留。
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 #include "../UIElement.h"
 
 #include "../../Character/MonsterBook.h"
+#include "../../Graphics/Geometry.h"
+#include "../../Graphics/Texture.h"
 #include "../../Graphics/Text.h"
 
 #include <map>
@@ -31,8 +40,9 @@
 
 namespace ms
 {
-	// 怪物图鉴窗口：展示已收集卡片（封面 + 卡片列表），点击卡片可设封面。
-	// 数据来自 Stage::get_player().get_monsterbook()（登录时已随角色包下发）。
+	// 怪物图鉴：左页 = 选中卡片情报（infoPage），右页 = 卡片格（cardSlot 5x6），
+	// 左列 9 张便签 = 卡片套筛选（原生 UpdateCheckList 勾选态），右列 4 页签 =
+	// 情报分类，底部两组箭头 = 左页换卡 / 右页换页，BtSearch = 按编号/名称检索。
 	class UIMonsterBook : public UIElement
 	{
 	public:
@@ -43,9 +53,11 @@ namespace ms
 		UIMonsterBook();
 
 		void draw(float inter) const override;
+		void update() override;
 		Button::State button_pressed(uint16_t buttonid) override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void send_scroll(double yoffset) override;
 		UIElement::Type get_type() const override;
 
 		// 封面/卡片数据变化后由 handler 调用刷新
@@ -60,21 +72,72 @@ namespace ms
 		};
 
 		void load_cards();
+		void apply_note_filter();
+		void sync_note_indicators();	// UpdateCheckList：有卡的便签亮
+		void select_card_by_index(int32_t index);	// 全局序号（含跨页，相对当前 view）
+		void page_cards(int8_t delta);
+		int32_t page_count() const;
+		int32_t cell_at(Point<int16_t> cursorpos) const;	// -> 全局序号，-1 无
+		void refresh_info();
+		void set_note(int16_t index, bool on);
+		// card_suffix(cardid%10000) → Mob.img / MonsterBook.img 的 mobId；0=未命中
+		static int32_t mob_id_for_card(int16_t card_suffix);
+		static std::string mob_name_of(int32_t mob_id);
+		static std::string truncate_utf8(const std::string& s, size_t max_chars);
+		// P3：Angel LoadCard @0x6848a6 — category=(itemId-2380000)/1000 ≡ card_suffix/1000，钳到 0..8。
+		static int16_t note_category_of(int16_t card_suffix);
 
+		// 按钮 id：1000/2000..2004 沿用原生 id，页签/便签另起段避免撞号
 		enum Buttons : uint16_t
 		{
-			BtClose
+			BtClose = 1000,
+			BtSearch = 2000,
+			BtPrevCard = 2001,
+			BtNextCard = 2002,
+			BtPrevPage = 2003,
+			BtNextPage = 2004,
+			BtNote0 = 3000,			// 3000..3008 = LeftTab 0..8
+			BtInfoTab0 = 3100		// 3100..3103 = RightTab 0..3
 		};
 
-		Sprite background;
-		bool has_background = false;
-		Text title;
-		Text cover_label;
-		Text total_label;
-		std::vector<CardEntry> cards;
-		std::vector<Text> card_labels;
-		Point<int16_t> list_origin;
-		int16_t row_h = 18;
+		// 右页卡片格：cardSlot(261,53) 174x256，单元 31x42（= select/cover 尺寸），
+		// 5 列 x 6 行 = 30 张/页；格原点 = (261+9, 53+2)（居中留边推导）
+		static constexpr int16_t GRID_X = 270;
+		static constexpr int16_t GRID_Y = 55;
+		static constexpr int16_t CELL_W = 31;
+		static constexpr int16_t CELL_H = 42;
+		static constexpr int16_t GRID_COLS = 5;
+		static constexpr int16_t GRID_ROWS = 6;
+		static constexpr int16_t CARDS_PER_PAGE = GRID_COLS * GRID_ROWS;
+
+		static constexpr int16_t NOTE_COUNT = 9;
+		static constexpr int16_t INFOTAB_COUNT = 4;
+
+		bool has_assets = false;
+		bool has_grid = false;
+
+		// 原生画布件（13 节点全绑）
+		Texture backgrnd;
+		Texture infoPage;
+		Texture cardSlot;
+		Texture selectOv;
+		Texture coverOv;
+		Texture fullMark;
+		std::vector<Texture> note_icon;		// LeftTab 0..8（画布态由按钮件承担）
+		std::vector<Texture> cell_icon;		// icon 0..7 卡片占位图
+
+		std::vector<CardEntry> all_cards;		// 玩家持有全量
+		std::vector<CardEntry> cards;			// 当前便签筛选视图
+		int32_t card_page = 0;
+		int32_t selected_index = -1;			// 相对 cards 的全局序号
 		int16_t selected_card_id = 0;
+		int16_t active_note = -1;				// 便签筛选（-1 = 全部）
+		int16_t active_infotab = 0;
+		std::vector<bool> note_checked;			// UpdateCheckList：该分类是否有卡
+
+		Text header;			// 原生控件 2005 (49,30) 120x15
+		Text info_line[6];
+		Text page_label;
+		Text status_line;
 	};
 }

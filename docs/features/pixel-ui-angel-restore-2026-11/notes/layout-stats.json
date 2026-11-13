@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source": "screenshot-fallback",
+  "client": { "version": "v083-custom-v4", "scale": "1x", "window": "UIStatsInfo" },
+  "image": {
+    "path": "evidence/screens/stats.png",
+    "source_dir": "C:\\Users\\11036\\Desktop\\正确客户端截图\\角色能力.png",
+    "width_px": 0,
+    "height_px": 0
+  },
+  "parser": { "tool": "manual-v4", "refined_by": "UIStatsLayoutV4" },
+  "why_fallback": "S 窗为自定义 UI（非原生像素契约）；验收=值进框+主/详情底对齐。",
+  "elements": [
+    { "id": "main", "name": "backgrnd", "type": "panel", "bbox_px": [0, 0, 300, 392], "wz_hint": "UIWindow.img/Stat/backgrnd" },
+    { "id": "detail", "name": "backgrnd2", "type": "panel", "bbox_px": [306, 0, 352, 392], "wz_hint": "UIWindow.img/Stat/backgrnd2" }
+  ]
+}
