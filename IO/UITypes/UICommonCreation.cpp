@@ -49,6 +49,20 @@
 
 namespace ms
 {
+	namespace
+	{
+		// 离开创建页时清除 LoginBackground 的建角场景 overlay（亭子）。
+		// 不能依赖 ~UICommonCreation：UIStateLogin::remove() 用 unique_ptr::release()
+		// 只放弃所有权、不触发析构，析构里的清理是死代码。四条离开路径
+		// （BtNo 取消 / BtPreview / BtStart 回到首页 / 建角成功 onok）统一显式调用。
+		// 定义成不依赖 this 的自由函数，供 [&] 延迟回调安全使用。
+		void reset_creation_scene()
+		{
+			if (LoginBackground::get().available() && LoginBackground::get().has_scene())
+				LoginBackground::get().clear_scene();
+		}
+	}
+
 	UICommonCreation::UICommonCreation(const std::string& c) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
 		classic_mode(false), classic_look_stage(false), classic_creation_sent(false), classic_dice_frame(0),
 		classic_dice_elapsed(0), classic_dice_playing(false),
@@ -1253,6 +1267,7 @@ namespace ms
 
 						UI::get().remove(UIElement::Type::LOGINNOTICE_CONFIRM);
 						UI::get().remove(UIElement::Type::LOGINNOTICE);
+						reset_creation_scene();
 						UI::get().remove(UIElement::Type::CLASSCREATION);
 						UI::get().remove(UIElement::Type::RACESELECT);
 
@@ -1290,6 +1305,7 @@ namespace ms
 		{
 			Sound(Sound::Name::SCROLLUP).play();
 
+			reset_creation_scene();
 			UI::get().remove(UIElement::Type::CLASSCREATION);
 			UI::get().remove(UIElement::Type::RACESELECT);
 			UI::get().remove(UIElement::Type::CHARSELECT);
@@ -1303,6 +1319,7 @@ namespace ms
 		{
 			Sound(Sound::Name::SCROLLUP).play();
 
+			reset_creation_scene();
 			UI::get().remove(UIElement::Type::CLASSCREATION);
 
 			UI::get().emplace<UIRaceSelect>();
@@ -1430,6 +1447,7 @@ namespace ms
 				// 原生 classic 命名态取消直接回职业团选择页。
 				Sound(Sound::Name::SCROLLUP).play();
 
+				reset_creation_scene();
 				UI::get().remove(UIElement::Type::CLASSCREATION);
 
 				UI::get().emplace<UIRaceSelect>();
@@ -2392,7 +2410,6 @@ namespace ms
 
 	UICommonCreation::~UICommonCreation()
 	{
-		if (LoginBackground::get().available() && LoginBackground::get().has_scene())
-			LoginBackground::get().clear_scene();
+		reset_creation_scene();
 	}
 }

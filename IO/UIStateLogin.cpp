@@ -333,6 +333,14 @@ namespace ms
 		if (pending_activation == type)
 			pending_activation = UIElement::Type::NONE;
 
+		// CLASSCREATION 用 LoginBackground 的建角场景 overlay（蘑菇屋/凉亭/雪原）。
+		// 这里用 release() 放弃所有权、不调用析构，~UICommonCreation 里的清场是
+		// 死代码；不在此兜底，取消回职业团选择页会把上一页的亭子背景带过来。
+		// 单点收口覆盖所有离开路径（含未来新增），has_scene 守卫保证幂等。
+		if (type == UIElement::Type::CLASSCREATION
+			&& LoginBackground::get().available() && LoginBackground::get().has_scene())
+			LoginBackground::get().clear_scene();
+
 		if (auto& element = elements[type])
 		{
 			element->deactivate();
