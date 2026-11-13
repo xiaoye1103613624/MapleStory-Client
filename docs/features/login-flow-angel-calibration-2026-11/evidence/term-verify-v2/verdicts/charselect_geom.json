@@ -1,0 +1,77 @@
+{
+  "shot": "charselect_clean_f05.png",
+  "target": "char_select.png",
+  "state_caveat": "shot=3角色(选中中间 aaaaaa), target=1角色(Admin); X绝对坐标不可比",
+  "angel_truth": "CS_DETAIL_* 主文字行 Y=1,19,37,55 间距18; 排行99(与55差44)",
+  "panel_edges": {
+    "shot": [
+      521,
+      736
+    ],
+    "target": [
+      364,
+      579
+    ],
+    "width_shot": 215,
+    "width_target": 215
+  },
+  "text_rows": {
+    "shot": [
+      178,
+      224,
+      247,
+      259,
+      272,
+      283,
+      293,
+      312,
+      329
+    ],
+    "target": [
+      196,
+      211,
+      223,
+      234,
+      280,
+      295,
+      321,
+      332
+    ],
+    "shot_spacings": [
+      46,
+      23,
+      12,
+      13,
+      11,
+      10,
+      19,
+      17
+    ],
+    "target_spacings": [
+      15,
+      12,
+      11,
+      46,
+      15,
+      26,
+      11
+    ]
+  },
+  "angel_row_pitch": {
+    "shot_has_18x2": true,
+    "target_has_18x2": false,
+    "note": "连续两段18px 对应 1→19→37→55 三行主属性"
+  },
+  "roi_ncc": {
+    "sign_buttons": 0.557,
+    "scene_bg": 0.9199,
+    "bridge": 0.7585,
+    "sky_right": 0.4924
+  },
+  "verdict": {
+    "panel_width_close_le12": true,
+    "angel_18px_pitch_verified": false,
+    "scene_structure_aligned": true,
+    "overall": "GEOMETRY_INCONCLUSIVE"
+  }
+}

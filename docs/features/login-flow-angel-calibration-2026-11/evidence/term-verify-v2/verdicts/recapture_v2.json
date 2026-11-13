@@ -1,0 +1,105 @@
+{
+  "method": "current-HEAD exe aa0aea67 + single-instance + protocol-anchor + BitBlt",
+  "ts": "2026-11-13 23:53:31",
+  "config_head_before": "b'# M'",
+  "packet_dump_start_offset": 2011574,
+  "pid": 46928,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "screens": {
+    "v2_login": {
+      "file": "v2_login.png",
+      "mean": 130.39,
+      "std": 69.38,
+      "uniq": 2177,
+      "real_gl_frame": true
+    },
+    "v2_login_typed": {
+      "file": "v2_login_typed.png",
+      "mean": 129.53,
+      "std": 68.83,
+      "uniq": 2176,
+      "real_gl_frame": true
+    },
+    "v2_world_collapsed": {
+      "file": "v2_world_collapsed.png",
+      "mean": 144.6,
+      "std": 78.2,
+      "uniq": 1380,
+      "real_gl_frame": true
+    },
+    "v2_channel_grid": {
+      "file": "v2_channel_grid.png",
+      "mean": 152.04,
+      "std": 77.25,
+      "uniq": 1288,
+      "real_gl_frame": true
+    },
+    "v2_channel_selected": {
+      "file": "v2_channel_selected.png",
+      "mean": 151.83,
+      "std": 77.27,
+      "uniq": 1283,
+      "real_gl_frame": true
+    },
+    "v2_charselect": {
+      "file": "v2_charselect.png",
+      "mean": 139.55,
+      "std": 76.0,
+      "uniq": 1316,
+      "real_gl_frame": true
+    },
+    "v2_racecreate": {
+      "file": "v2_racecreate.png",
+      "mean": 143.92,
+      "std": 76.26,
+      "uniq": 1349,
+      "real_gl_frame": true
+    },
+    "v2_racecreate_settled": {
+      "file": "v2_racecreate_settled.png",
+      "mean": 144.35,
+      "std": 76.45,
+      "uniq": 1349,
+      "real_gl_frame": true
+    }
+  },
+  "field_input": {
+    "account": {
+      "text": "admin",
+      "sent_ok": true
+    },
+    "password": {
+      "text": "admin",
+      "sent_ok": true
+    }
+  },
+  "serverlist_anchor_hit": true,
+  "anchors": [
+    [
+      "login_send",
+      0.0
+    ],
+    [
+      "serverlist_world",
+      1.085
+    ],
+    [
+      "serverlist_end",
+      1.085
+    ]
+  ],
+  "charlist_hit": true,
+  "send_nonheartbeat": [
+    "[SEND] PacketDump : 01 00 05 00 61 64 6d 69 6e 05 00 61 64 6d 69 6e 00 00 00 00 00 00 28 2",
+    "[SEND] PacketDump : 0b 00 ",
+    "[SEND] PacketDump : 06 00 00 00 ",
+    "[SEND] PacketDump : 05 00 00 00 00 "
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-13 23:53:51】",
+  "config_head_after": "b'# M'"
+}

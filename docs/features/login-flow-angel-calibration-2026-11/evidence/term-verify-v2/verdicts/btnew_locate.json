@@ -1,0 +1,67 @@
+{
+  "method": "alpha-mask zero-mean NCC, WZ CharSelect/BtNew/normal/0 101x35",
+  "shot": "raceselect_f00_baseline.png",
+  "template": "tmpl_BtNew_normal.png",
+  "roi": [
+    700,
+    120,
+    1000,
+    420
+  ],
+  "peaks": [
+    {
+      "ncc": 1.0,
+      "x": 815,
+      "y": 246,
+      "center": [
+        865,
+        263
+      ]
+    },
+    {
+      "ncc": 0.2077,
+      "x": 814,
+      "y": 303,
+      "center": [
+        864,
+        320
+      ]
+    },
+    {
+      "ncc": 0.1998,
+      "x": 746,
+      "y": 333,
+      "center": [
+        796,
+        350
+      ]
+    },
+    {
+      "ncc": 0.1871,
+      "x": 811,
+      "y": 204,
+      "center": [
+        861,
+        221
+      ]
+    },
+    {
+      "ncc": 0.1711,
+      "x": 770,
+      "y": 178,
+      "center": [
+        820,
+        195
+      ]
+    },
+    {
+      "ncc": 0.1633,
+      "x": 722,
+      "y": 248,
+      "center": [
+        772,
+        265
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "board_bbox_measured": {
+    "shot": [
+      467,
+      140,
+      736,
+      363
+    ],
+    "target": [
+      316,
+      140,
+      579,
+      394
+    ],
+    "width_shot": 269,
+    "width_target": 263,
+    "note": "先量真实边界, 不用手猜的 (521,165,736,345)/(364,165,579,345)"
+  },
+  "board_aligned_CORRECT_BBOX": {
+    "full": 0.2292,
+    "rows_0_33pct": 0.2545,
+    "rows_33_66pct": 0.4323,
+    "rows_66_100pct": 0.0244
+  },
+  "login_board_projection": {
+    "row_edge_proj_ncc": 0.957,
+    "col_std_proj_ncc": 0.8905,
+    "interpret": "投影高=结构同位(位置对), 全图NCC低=字色/文字/LOGO内容差; 投影低=位置真漂",
+    "roi": [
+      620,
+      270,
+      940,
+      465
+    ]
+  }
+}

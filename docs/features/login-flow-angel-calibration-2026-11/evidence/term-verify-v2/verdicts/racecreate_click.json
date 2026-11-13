@@ -1,0 +1,74 @@
+{
+  "method": "attach settled charselect + WZ-NCC BtNew center click → UIRaceSelect + BitBlt",
+  "ts": "2026-11-14 00:17:05",
+  "btnew_center": [
+    865,
+    263
+  ],
+  "config_head_before": "b'# M'",
+  "pid": 46928,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "frames": {
+    "racecreate_click_f00_baseline": {
+      "file": "racecreate_click_f00_baseline.png",
+      "mean": 145.42,
+      "std": 76.58,
+      "uniq": 1306,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f01": {
+      "file": "racecreate_click_f01.png",
+      "mean": 131.91,
+      "std": 76.59,
+      "uniq": 1344,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f02": {
+      "file": "racecreate_click_f02.png",
+      "mean": 136.38,
+      "std": 76.21,
+      "uniq": 1098,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f03": {
+      "file": "racecreate_click_f03.png",
+      "mean": 136.16,
+      "std": 76.26,
+      "uniq": 1089,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f04": {
+      "file": "racecreate_click_f04.png",
+      "mean": 135.93,
+      "std": 76.32,
+      "uniq": 1090,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f05": {
+      "file": "racecreate_click_f05.png",
+      "mean": 135.69,
+      "std": 76.39,
+      "uniq": 1088,
+      "real_gl_frame": true
+    },
+    "racecreate_click_f06": {
+      "file": "racecreate_click_f06.png",
+      "mean": 135.52,
+      "std": 76.5,
+      "uniq": 1083,
+      "real_gl_frame": true
+    }
+  },
+  "clicked": [
+    865,
+    263
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-14 00:17:11】",
+  "config_head_after": "b'# M'"
+}

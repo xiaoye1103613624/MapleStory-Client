@@ -1,0 +1,46 @@
+{
+  "shot": "v2_world_collapsed.png",
+  "target": "channel_select.png",
+  "size": [
+    1280,
+    720
+  ],
+  "global": {
+    "gray": 0.975993,
+    "R": 0.973456,
+    "G": 0.97447,
+    "B": 0.991384,
+    "gray_valid_only": 0.975993,
+    "valid_px": 921600
+  },
+  "blocks": {
+    "grid": 8,
+    "thresh": 0.8,
+    "hot_count": 2,
+    "hot": [
+      {
+        "r": 0,
+        "c": 6,
+        "box": [
+          960,
+          0,
+          1120,
+          90
+        ],
+        "ncc": 0.7399
+      },
+      {
+        "r": 0,
+        "c": 0,
+        "box": [
+          0,
+          0,
+          160,
+          90
+        ],
+        "ncc": 0.757
+      }
+    ],
+    "mean": 0.9739
+  }
+}

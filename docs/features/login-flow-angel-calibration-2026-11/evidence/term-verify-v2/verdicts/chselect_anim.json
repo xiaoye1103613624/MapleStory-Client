@@ -1,0 +1,61 @@
+{
+  "frames": [
+    "chselect_anim_f00.png",
+    "chselect_anim_f01.png",
+    "chselect_anim_f02.png"
+  ],
+  "truth": "chSelect /0 d100 /1 d50 /2 d50 /3 no-delay(last-frame-persist)",
+  "code": "UIWorldSelect.cpp:497-518 stop at size()-1; :720-721 draws last frame when !playing",
+  "frame_diff": {
+    "global_mean_abs": [
+      0.0645,
+      0.0614
+    ],
+    "bg_sky_mean_abs": [
+      0.0,
+      0.0
+    ],
+    "capture_alive": true
+  },
+  "ch1_red": {
+    "roi": [
+      430,
+      305,
+      570,
+      380
+    ],
+    "red_pixel_counts": [
+      744,
+      744,
+      744
+    ],
+    "red_centroids": [
+      [
+        482.1,
+        337.5
+      ],
+      [
+        482.1,
+        337.5
+      ],
+      [
+        482.1,
+        337.5
+      ]
+    ],
+    "roi_ncc_vs_f00": [
+      1.0,
+      1.0
+    ]
+  },
+  "verdict": {
+    "red_pixel_stable": true,
+    "ch1_roi_static_ncc_gt_0995": true,
+    "bg_animation_alive": false,
+    "red_centroid_in_ch1": true,
+    "red_centroid_no_drift_px": 0.0,
+    "centroid_no_drift": true,
+    "overall": "LAST_FRAME_PERSIST_VERIFIED",
+    "note": "3 frames captured 0.5s after CH.1 click; truth 100+50+50ms => all 3 should be last frame"
+  }
+}

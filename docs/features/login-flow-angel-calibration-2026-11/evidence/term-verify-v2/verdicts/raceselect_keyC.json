@@ -1,0 +1,73 @@
+{
+  "method": "attach live pid + 'C' send_key state machine → UIRaceSelect + BitBlt",
+  "ts": "2026-11-14 00:12:42",
+  "config_head_before": "b'# M'",
+  "maplestory_pids": [
+    46928
+  ],
+  "pid": 46928,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "frames": {
+    "raceselect_f00_baseline": {
+      "file": "raceselect_f00_baseline.png",
+      "mean": 144.27,
+      "std": 76.31,
+      "uniq": 1271,
+      "real_gl_frame": true
+    },
+    "raceselect_f01": {
+      "file": "raceselect_f01.png",
+      "mean": 143.05,
+      "std": 76.1,
+      "uniq": 1261,
+      "real_gl_frame": true
+    },
+    "raceselect_f02": {
+      "file": "raceselect_f02.png",
+      "mean": 142.7,
+      "std": 75.9,
+      "uniq": 1258,
+      "real_gl_frame": true
+    },
+    "raceselect_f03": {
+      "file": "raceselect_f03.png",
+      "mean": 142.15,
+      "std": 75.79,
+      "uniq": 1247,
+      "real_gl_frame": true
+    },
+    "raceselect_f04": {
+      "file": "raceselect_f04.png",
+      "mean": 141.87,
+      "std": 75.79,
+      "uniq": 1250,
+      "real_gl_frame": true
+    },
+    "raceselect_f05": {
+      "file": "raceselect_f05.png",
+      "mean": 141.97,
+      "std": 75.85,
+      "uniq": 1246,
+      "real_gl_frame": true
+    },
+    "raceselect_f06": {
+      "file": "raceselect_f06.png",
+      "mean": 142.42,
+      "std": 75.95,
+      "uniq": 1252,
+      "real_gl_frame": true
+    }
+  },
+  "key_C": {
+    "unicode_sent_ok": true,
+    "vk_0x43_sent": true
+  },
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-14 00:12:48】",
+  "config_head_after": "b'# M'"
+}

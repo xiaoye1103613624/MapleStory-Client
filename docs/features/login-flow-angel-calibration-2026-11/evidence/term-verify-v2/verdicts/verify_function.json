@@ -1,0 +1,199 @@
+{
+  "ts": "2026-11-13 21:33:39",
+  "config": {
+    "head3": "b'# M'",
+    "login_auto": "false",
+    "account": "admin",
+    "packet_dump": true,
+    "perf_log": false
+  },
+  "A_packet": {
+    "log": {
+      "exists": true,
+      "path": "E:\\MXD\\BeiDou-Client-xy\\packet_dump.log",
+      "bytes": 1966482,
+      "mtime": "2026-11-13 21:33:29",
+      "head3": "b'[SE'"
+    },
+    "line_count": 14595,
+    "send_count": 9371,
+    "recv_count": 5224,
+    "send_opcode_top": [
+      [
+        "29",
+        7122
+      ],
+      [
+        "BC",
+        1534
+      ],
+      [
+        "18",
+        322
+      ],
+      [
+        "CA",
+        67
+      ],
+      [
+        "01",
+        49
+      ],
+      [
+        "0B",
+        49
+      ],
+      [
+        "05",
+        49
+      ],
+      [
+        "14",
+        46
+      ],
+      [
+        "13",
+        45
+      ],
+      [
+        "5A",
+        43
+      ]
+    ],
+    "recv_opcode_top": [
+      [
+        "EC",
+        1598
+      ],
+      [
+        "F0",
+        1490
+      ],
+      [
+        "11",
+        322
+      ],
+      [
+        "EE",
+        223
+      ],
+      [
+        "1F",
+        125
+      ],
+      [
+        "0A",
+        98
+      ],
+      [
+        "3F",
+        92
+      ],
+      [
+        "90",
+        91
+      ],
+      [
+        "24",
+        89
+      ],
+      [
+        "0C",
+        58
+      ]
+    ],
+    "send_first3": [
+      "01 00",
+      "0B 00",
+      "05 00"
+    ],
+    "has_auth_traffic": true,
+    "verdict": "TRAFFIC_OK"
+  },
+  "B_setfield": {
+    "log": {
+      "exists": true,
+      "path": "E:\\MXD\\BeiDou-Client-xy\\setfield_trace.log",
+      "bytes": 15138,
+      "mtime": "2026-11-13 20:18:56",
+      "head3": "b'[Se'"
+    },
+    "stage_load_count": 11,
+    "fade_done_count": 11,
+    "maps_seen": [
+      "104000200",
+      "104000300",
+      "104000400",
+      "914000000"
+    ],
+    "tail": [
+      "[SetField] HANDLE EXIT",
+      "[SetField] fade done map=104000400 portal=6 enter_game=0",
+      "[SetField] unload_atlas (map transfer)",
+      "[SetField] ensure_map_roots ok",
+      "[SetField] Stage::load ok",
+      "[SetField] GraphicsGL unlocked",
+      "[SetField] transfer_player ok",
+      "[SetField] fadeprocedure done locked=0"
+    ],
+    "reached_game": true,
+    "verdict": "REACHED_GAME"
+  },
+  "C_logic": {
+    "checks": [
+      {
+        "name": "channel_cell_step",
+        "pass": true,
+        "detail": "CELL_W=94 CELL_H=32 (NCC truth 94/32)"
+      },
+      {
+        "name": "cell_offset_formula",
+        "pass": true,
+        "detail": "22+CELL_W*rem / 56+CELL_H*quot present=True"
+      },
+      {
+        "name": "charselect_angel_coords",
+        "pass": true,
+        "detail": "{\"JOB\": [46, 1], \"LEVEL\": [46, 19], \"FAME\": [136, 19], \"STR\": [46, 37], \"INT\": [136, 37], \"DEX\": [46, 55], \"LUK\": [136, 55]}"
+      },
+      {
+        "name": "charselect_rank_y99",
+        "pass": true,
+        "detail": "CS_DETAIL_RANK_NA/RANK y=99 present=True"
+      },
+      {
+        "name": "charselect_black_text",
+        "pass": true,
+        "detail": "BLACK occurrences=8"
+      },
+      {
+        "name": "scroll_frame_origin",
+        "pass": true,
+        "detail": "scroll_frame.get_origin() present=True"
+      },
+      {
+        "name": "animation_update_loops",
+        "pass": true,
+        "detail": "Animation::update frame==lastframe→0 (loop, NOT 末帧常驻): True"
+      },
+      {
+        "name": "charselect_lastframe_persist",
+        "pass": true,
+        "detail": "调用方取 size()-1 末帧绘制(实现『末帧常驻』) present=True"
+      },
+      {
+        "name": "login_ime_unicode",
+        "pass": true,
+        "detail": "account/password set_accept_unicode(true) present=True"
+      },
+      {
+        "name": "global_screenshot_keys",
+        "pass": true,
+        "detail": "UI.cpp scroll_lock||print_screen → request_screenshot present=True"
+      }
+    ],
+    "passed": 10,
+    "total": 10,
+    "verdict": "ALL_PASS"
+  }
+}

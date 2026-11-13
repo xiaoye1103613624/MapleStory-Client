@@ -1,0 +1,88 @@
+{
+  "note": "本端服务端只发 3 频道 → 只实测列步长; 行步长 CELL_H=32 以目标帧+代码常量对账",
+  "template": "E:\\project\\MapleStory-Client\\docs\\features\\login-flow-angel-calibration-2026-11\\evidence\\r29-pxalign\\tmpl_channel0_normal.png",
+  "shot_period": {
+    "best_lag": 94,
+    "best_corr": 0.8177,
+    "top5": [
+      [
+        94,
+        0.8177
+      ],
+      [
+        95,
+        0.7143
+      ],
+      [
+        93,
+        0.6697
+      ],
+      [
+        97,
+        0.6542
+      ],
+      [
+        96,
+        0.6496
+      ]
+    ]
+  },
+  "target_period": {
+    "best_lag": 94,
+    "best_corr": 0.7396,
+    "top5": [
+      [
+        94,
+        0.7396
+      ],
+      [
+        95,
+        0.6793
+      ],
+      [
+        93,
+        0.6471
+      ],
+      [
+        96,
+        0.6392
+      ],
+      [
+        97,
+        0.6339
+      ]
+    ]
+  },
+  "template_size": [
+    92,
+    30
+  ],
+  "shot_ncc_peaks": [
+    {
+      "x": 458,
+      "y": 336,
+      "ncc": 0.9998
+    },
+    {
+      "x": 552,
+      "y": 336,
+      "ncc": 0.9343
+    },
+    {
+      "x": 646,
+      "y": 336,
+      "ncc": 0.9305
+    }
+  ],
+  "shot_ncc_steps": [
+    94,
+    94
+  ],
+  "verdict": {
+    "shot_col_step_is_94": true,
+    "target_col_step_is_94": true,
+    "shot_ncc_steps_are_94": true,
+    "overall": "PIXEL_CLOSED_CELL_W",
+    "row_step_caveat": "本端仅 3 频道 1 行, CELL_H=32 无法在本端渲染实证; 以目标帧 y=[337,369,401,433,465] + 代码常量对账"
+  }
+}
