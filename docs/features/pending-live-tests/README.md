@@ -44,6 +44,11 @@
 | 34 | 组队/家族 R28 回归抓帧 | ⏳ 待测 | s2c 62/95/96… | 冷启动登录链全程抓帧：UIParty/UIFamily/UIGuild/UIAlliance/UIWedding 不得出现在未主动打开的帧 |
 | 35 | 五死键接线（F 学院/H 密语/G 家族共用窗/O 组队搜索） | ⏳ 待测 | — | 默认键位逐键按：`F`→学院(家族)窗开+自动刷新；`H`→「请输入悄悄话的对象」弹层；`G`→**「玩家列表 & 家族」共用窗第 3 页签「家族」**（2026-11-08 起，不再是独立 `UIGuild` 浮窗；浮窗仍由底栏社区钮打开）；`O`→组队搜索窗；`L`→无反应属预期（NOTIFIER 灭活留证）。证据见 ui-v83-window-restore/notes/f-keymap-action-translate.md 补记 + [userlist-five-tabs/notes/diagnosis-and-plan.md](../userlist-five-tabs/notes/diagnosis-and-plan.md)；exe 2026-11-08 01:41 已部署 |
 | 36 | 玩家列表 & 家族五页签共用窗还原 | ⏳ 待测 | c2s BUDDYLIST(130) / PARTY_OPERATION(124) / GUILD_OPERATION / ALLIANCE_OPERATION(143) | 按 `G` 开窗后逐页复拍：好友（0/25 + 分组行 + 底部 12 钮）/ 组员（在线离线 0/0 + 9 钮）/ 家族（[0/0] 计数 + none 行 + 4x3 钮 + 滚动条）/ 家族联盟（还未加入联盟。+ 12 钮）/ 拒绝列表（0/26 + 增加删除）；TAB 循环五格；三张互斥底图不得叠底；按钮发包后对 s9 回包。oracle 帧见 `userlist-five-tabs/evidence/frames/`；exe 2026-11-08 01:41 已部署 |
+| 37 | Angel 全流程 P0（KeyConfig 勋章 + UserList 灌数据） | ⏳ 待测 | BUDDYLIST / PARTY_OPERATION / keymap | 见 [angel-flow-audit-2026-11/PLAN.md](../angel-flow-audit-2026-11/PLAN.md) 验证门禁：① KeyConfig 有勋章无 BossParty 误导槽；分号键开 UIMedal；② F 仍开学院；③ FRIENDS 页有名单非永久 none；④ PARTY 页有成员且变更刷新；⑤ 好友更新不强弹 UIBuddyList；⑥ 图鉴(b)/商城(`)/G 家族页回归 |
+| 38 | Angel 全流程 P1（BossHP 多 oid / 图鉴 String / 勋章 Detail / T4 降级 / UserList 行选） | ⏳ 待测 | FIELD_EFFECT5 / UPDATE_QUEST_INFO / String.nx | 见 [angel-flow-audit-2026-11/P1.md](../angel-flow-audit-2026-11/P1.md)：① 双段 Boss 叠两条血条；② 图鉴左页 Mob 名非永久 stub；③ 勋章再点开文本 Detail；④ 任务进度 tip+菜单任务 blink；⑤ 好友/组员点行后 Whisper 直达；⑥ 拒绝列表仍为 FindPlayer 代理 |
+| 39 | Angel 全流程 P2（KEY_ANI 指引 / Progress 槽 / 便签筛选 / 114 图标） | ⏳ 待测 | — | 见 [angel-flow-audit-2026-11/P2.md](../angel-flow-audit-2026-11/P2.md)：① style 高字节 0..3 启 KEY_ANI；② 进度多槽 3s；③ LeftTab 筛选；④ 勋章行首 114 icon；⑤ Ignore 仍代理 |
+| 40 | Angel 全流程 P3 闭环（标签 KEY_ANI / NQP 替代 / 真卡表 / Ignore ⊘） | ⏳ 待测 | — | 见 [angel-flow-audit-2026-11/P3.md](../angel-flow-audit-2026-11/P3.md)：① 正文 `#E/#I/#S/#K` 启对应 KEY_ANI、关对话停；② 进度 tip→QuestAlarm≤5×3s（无独立 NQP 窗）；③ 图鉴 238nxxx 归便签 n；④ 拉黑仍 FindPlayer；⑤ P0–P2 不回归 |
+| 41 | 喇叭收端 + 装备 Tip 排版（r08） | ⏳ 待测 | SERVER_MESSAGE 68 / SET_AVATAR_MEGAPHONE | 见 [angel-flow-audit-2026-11/notes/r08-megaphone-tooltip-fix.md](../angel-flow-audit-2026-11/notes/r08-megaphone-tooltip-fix.md)：① 道具/三段喇叭 Chat+FloatNotice+[Ch.N]；② Avatar 文案可读；③ 装备 tip 分隔线下 inc 冒号居中且全白、现金标、不可交易橙字；④ 需求 Can/Cannot 仍在图标旁 |
 
 ---
 
@@ -58,7 +63,7 @@
 | --- | --- | --- | --- | --- |
 | 37 | D8 组队血条渲染 | ⏳ 待测 | s2c UPDATE_PARTYMEMBER_HP(0xC9) | s9 已下发同图组队成员 HP；客户端 `UIParty::draw` 新增血条（暗底+比例填充，≤30% 转红）；需两人+同图组队核验 |
 | 38 | D9 主窗 4 钮闪烁 | ⏳ 待测 | — | `UIStatusBar` 切装备/背包/属性/技能时脉冲高亮（7.5Hz 半透明白块；原生 SP_1986..1989 KEY_ANI 无资源）；需真机看节奏 |
-| 39 | D7 聊天三态 | ⏳ 待测 | — | `chat.type` 1/2/3 持久化 + 钳制 26..507；`BtMin` 完整→紧凑→收起、`BtMax` 逐级展开；需五屏核对三态 |
+| 39 | D7 聊天三态（Angel SetChatType） | ⏳ 待测 | — | 2026-11-12 已改回 083：1 收起 / 2 输入瞬态 / 3 完整；BtMin→1、BtMax→3；无紧凑 120；五屏回归 |
 | 40 | D2 聊天规则联测 | ⏳ 待测 | c2s GENERAL_CHAT | 客户端 2000ms 限流 + 连续 4 同句 + 脏词脱敏；服务端 `chat_curse_words` 配置键（逗号分隔）+ `!mute`/`!unmute`(gm3)；需配词库 + 真机 |
 | 41 | 字段伤害数字 + 伤害皮肤（A+B） | 🟡 已构建，真机待测 | s2c 246 / 247 | 同图他人/环境对怪伤害数字弹出（接回被丢弃的 DAMAGE_MONSTER damage，服务端零改）；伤害皮肤按 id 切 DamageSkin.img 字形，缺失回退 BasicEff；本地玩家皮肤由 DAMAGE_SKIN(247) 登录下发并用于自身攻击数字 |
 
@@ -926,19 +931,18 @@
 
 已知限制（非缺陷，登记 backlog）：083 独立可拖拽 CUIPartyHP 悬浮窗、五页签 CUIUserList 共用窗、SP_4433_SHOWPARTYHP 配置开关(默认1)、SP_2116_PARTY_BTHP 血条开关钮、组队页完整 9 钮、CUtilDlgEx 任务指引链均属架构级决策点，本轮未复刻（不新增 UIElement::Type 枚举、不动 s9 协议）；血条与队伍行像素级对齐需真机截图核。
 
-## 35. round69 · D7 聊天三态按 Angel 083 SetChatType 只读取证复核（#devfix-chattype-083-review，需用户一起测 / 含决策点 D7-A）
+## 35. D7-A · 聊天三态已按 Angel SetChatType 实施（chat-angel-calibration-2026-11，需真机五屏回归）
 
-> 本面按 roundNN 编号沿用「用户 m09859 硬指令：ui 布局、动画一定要确认是否按 Angel 布局修复过，不是则重新修复」。外部程序 d6bdce97 资源根 Basic.img/BtMax|BtMin 用对了（.nx 实测），但把「nType 1/2/3 拖高 26..507」「紧凑态固定高度 120」「BtMin/BtMax 逐级 3→2→1 + chat.type 持久化」整套 s9 适配状态机套到 083 名下 —— 第 5 例同族病，错法=语义套壳。本轮依据校准 README:288 决策点只做只读取证+对照+纠错注释，不改行为，是否整体改回 083 交用户裁决（D7-A）。
+> 2026-11-12：用户抉择 **A+②** 后已改源码（删 COMPACT / 去逐级 / type2 瞬态 / 切图清 type2 / Messenger 输入槽 9,318,207×15）。下列为真机回归项。
 
 | # | 项 | 观察点 | 预期 |
 | --- | --- | --- | --- |
-| 35-1 | 五屏截图（D7-A 前置） | 收起 / 输入中 / 完整最小 / 完整默认 / 完整拖高 五态逐屏截图 | 确认三态可见差异，作为是否整体改回 083 状态机的裁决依据 |
-| 35-2 | 紧凑态观感 | 点击 BtMin 从完整→紧凑 | 本端显示 120 高固定紧凑框；083 输入中态是 1 行历史 + 输入框（h 恒 24），两者观感差异记录 |
-| 35-3 | 拖拽边界 | 历史框拖到最小/最大 | 本端 clamp 26..507；083 ChangeChatWndSize 在 clamp 后 `h%13==0→+2` 会到 28/509，记录视觉表现差异 |
-| 35-4 | 按钮键位 | BtMax/BtMin 同位互斥点击 + 功能键切换 | 本端逐级 3→2→1；083 只有 1003→1 / 1004→3、功能键 case16 3↔1，记录对应差异 |
-| 35-5 | D2 聊天规则真机 | 启 s9 服务端：2000ms 限流 / 连续 4 同句 / 脏词 / !mute !unmute(gm3) | 服务端已双改，联机回归限流与禁言文案，与 D7 三态互不干扰 |
-
-已知限制（非缺陷，登记 backlog）：本轮**不改任何行为字面量**（chat_type 赋值 / CLASSIC_LOG_H_* 常量 / button_pressed 分支 / Setting key），harness A4 逐条守卫「仍在」；只纠正 3 文件错误依据注释。083 三态整体改回（删紧凑态、nType2 改焦点瞬态不持久、去逐级、chat.type 持久化键语义、滚动条 id 1010、MakeCtrlEdit(0/1) 输入行有无）属 **决策点 D7-A**，须用户裁决 + 五屏截图后再按一次性 Plan 实施；校准≠改回原生，s9 协议优先。
+| 35-1 | 五屏截图 | 收起 / 输入中(Enter) / 完整最小 / 完整默认 / 完整拖高 | 无「紧凑 120」中间态；type2 为白输入带；type3 可拖 |
+| 35-2 | BtMin/BtMax | 完整点 − → 直接收起；收起点 + → 完整 | 无 3→2→1 逐级 |
+| 35-3 | 拖拽边界 | 拖到上下界 | clamp 后 `%13==0→+2` 可到 28/509 |
+| 35-4 | 切图清输入 | type2 输入中切图 | 回到 type1（灰带），无残留白带焦点 |
+| 35-5 | Messenger 输入行 | 开 Messenger 打字 | 输入落在 (9,318) 207×15 槽内，不压 BtEnter |
+| 35-6 | D2 聊天规则 | 限流/同句/脏词/禁言 | 与新三态互不干扰 |
 
 ## 36. round70 · 伤害数字 / 伤害皮肤按 Angel 083 CAnimationDisplayer 只读取证复核（#devfix-damagenumber-083-review，需用户一起测 / 含决策点 D-A）
 
@@ -1267,3 +1271,11 @@
 57-5 `social-economy/D9` 三族：`FriendGroup` 维持不做；**`guildmark` 有新发现**——083 有 `CField::SendSetGuildMarkMsg @0x530f2f`（`126/15` + 7B 定长）与本端**无出站封装**，IMG 真节点在 `UserList/Guild/GuildInfo/guildmark`；`MapleTV` 壳层已对齐（`UIMapleTV.h` 类在），播放栈属 F 维。真机项：公会窗里改徽章若无反应，即此缺出站包所致（登记，不在本轮实施）。
 
 57-6 本轮 **0 wire / 0 协议 / 0 WZ / 0 源码行为改动**；算术 168 与 reopen 17 条分流全不动；构建门禁只做回归，**不声称真重编覆盖**。
+
+## 58. Angel 本地行为对齐（1B + Q3）
+
+- **58-1** 技能窗：没点时点「+」应没反应；有点时连续点不应在 500ms 内发出第二包。
+- **58-2** 背包：鼠标停在整理、聚集、展开、收起上应出中文提示。槽位合并没有按钮。
+- **58-3** 自己捡起掉落物时聊天框有一行「获得了道具。」别人捡起时自己这边不写这行。
+- **58-4** 怪物被击杀后应消失；不认识的死亡动画字节也不应留下会撞人的怪。
+- **58-5** 勋章详情、图鉴名字筛选、60 频道翻页、上次世界高亮本轮没做，真机上保持原样即可。

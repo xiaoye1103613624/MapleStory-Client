@@ -1,0 +1,2577 @@
+{
+  "taken_at": "2026-11-05T18:53:25.769825",
+  "database": "beidou",
+  "characters": {
+    "sql": "SELECT * FROM `characters` WHERE id = 1 LIMIT 500",
+    "rows": [
+      {
+        "id": 1,
+        "accountid": 1,
+        "world": 0,
+        "name": "Admin",
+        "level": 1,
+        "exp": 0,
+        "gachaexp": 0,
+        "str": 12,
+        "dex": 5,
+        "luk": 4,
+        "int": 4,
+        "hp": 50,
+        "mp": 5,
+        "maxhp": 50,
+        "maxmp": 5,
+        "meso": 0,
+        "hpMpUsed": 0,
+        "job": 0,
+        "skincolor": 0,
+        "gender": 0,
+        "fame": 0,
+        "fquest": 0,
+        "hair": 30030,
+        "face": 20000,
+        "ap": 0,
+        "sp": "0,0,0,0,0,0,0,0,0,0",
+        "map": 910000000,
+        "spawnpoint": 1,
+        "gm": 6,
+        "party": -1,
+        "buddyCapacity": 25,
+        "createdate": "2021-05-24 00:00:03",
+        "rank": 1,
+        "rankMove": 0,
+        "jobRank": 1,
+        "jobRankMove": 0,
+        "guildid": 0,
+        "guildrank": 5,
+        "messengerid": 0,
+        "messengerposition": 4,
+        "mountlevel": 1,
+        "mountexp": 0,
+        "mounttiredness": 0,
+        "omokwins": 0,
+        "omoklosses": 0,
+        "omokties": 0,
+        "matchcardwins": 0,
+        "matchcardlosses": 0,
+        "matchcardties": 0,
+        "MerchantMesos": 0,
+        "HasMerchant": 0,
+        "equipslots": 24,
+        "useslots": 24,
+        "setupslots": 24,
+        "etcslots": 24,
+        "familyId": -1,
+        "monsterbookcover": 0,
+        "allianceRank": 5,
+        "vanquisherStage": 0,
+        "ariantPoints": 0,
+        "dojoPoints": 0,
+        "lastDojoStage": 0,
+        "finishedDojoTutorial": 0,
+        "vanquisherKills": 0,
+        "summonValue": 0,
+        "partnerId": 0,
+        "marriageItemId": 0,
+        "reborns": 0,
+        "PQPoints": 0,
+        "dataString": "",
+        "lastLogoutTime": "2026-11-05 18:49:55",
+        "lastExpGainTime": "2015-01-01 05:00:00",
+        "partySearch": 1,
+        "jailexpire": 0,
+        "limitBreak": 199999
+      }
+    ]
+  },
+  "inventoryitems": {
+    "sql": "SELECT * FROM `inventoryitems` WHERE characterid = 1 LIMIT 500",
+    "rows": [
+      {
+        "inventoryitemid": 2075,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1060002,
+        "inventorytype": 1,
+        "position": 1,
+        "quantity": 1,
+        "owner": "",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2076,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1302013,
+        "inventorytype": 1,
+        "position": 2,
+        "quantity": 1,
+        "owner": "Admin",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2077,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1302002,
+        "inventorytype": 1,
+        "position": 3,
+        "quantity": 1,
+        "owner": "Admin",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2078,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 2040002,
+        "inventorytype": 2,
+        "position": 1,
+        "quantity": 1,
+        "owner": "Admin",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2079,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 4161001,
+        "inventorytype": 4,
+        "position": 1,
+        "quantity": 1,
+        "owner": "",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2080,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1302000,
+        "inventorytype": -1,
+        "position": -11,
+        "quantity": 1,
+        "owner": "",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2081,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1040002,
+        "inventorytype": -1,
+        "position": -5,
+        "quantity": 1,
+        "owner": "",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      },
+      {
+        "inventoryitemid": 2082,
+        "type": 1,
+        "characterid": 1,
+        "accountid": null,
+        "itemid": 1072001,
+        "inventorytype": -1,
+        "position": -7,
+        "quantity": 1,
+        "owner": "",
+        "petid": -1,
+        "flag": 0,
+        "expiration": -1,
+        "giftFrom": ""
+      }
+    ]
+  },
+  "keymap": {
+    "sql": "SELECT * FROM `keymap` WHERE characterid = 1 LIMIT 500",
+    "rows": [
+      {
+        "id": 15639,
+        "characterid": 1,
+        "key": 2,
+        "type": 4,
+        "action": 10
+      },
+      {
+        "id": 15640,
+        "characterid": 1,
+        "key": 3,
+        "type": 4,
+        "action": 12
+      },
+      {
+        "id": 15641,
+        "characterid": 1,
+        "key": 4,
+        "type": 4,
+        "action": 13
+      },
+      {
+        "id": 15642,
+        "characterid": 1,
+        "key": 5,
+        "type": 4,
+        "action": 18
+      },
+      {
+        "id": 15643,
+        "characterid": 1,
+        "key": 6,
+        "type": 4,
+        "action": 24
+      },
+      {
+        "id": 15644,
+        "characterid": 1,
+        "key": 7,
+        "type": 4,
+        "action": 21
+      },
+      {
+        "id": 15645,
+        "characterid": 1,
+        "key": 16,
+        "type": 4,
+        "action": 8
+      },
+      {
+        "id": 15646,
+        "characterid": 1,
+        "key": 17,
+        "type": 4,
+        "action": 5
+      },
+      {
+        "id": 15647,
+        "characterid": 1,
+        "key": 18,
+        "type": 4,
+        "action": 0
+      },
+      {
+        "id": 15648,
+        "characterid": 1,
+        "key": 19,
+        "type": 4,
+        "action": 4
+      },
+      {
+        "id": 15649,
+        "characterid": 1,
+        "key": 23,
+        "type": 4,
+        "action": 1
+      },
+      {
+        "id": 15650,
+        "characterid": 1,
+        "key": 24,
+        "type": 4,
+        "action": 25
+      },
+      {
+        "id": 15651,
+        "characterid": 1,
+        "key": 25,
+        "type": 4,
+        "action": 19
+      },
+      {
+        "id": 15652,
+        "characterid": 1,
+        "key": 26,
+        "type": 4,
+        "action": 14
+      },
+      {
+        "id": 15653,
+        "characterid": 1,
+        "key": 27,
+        "type": 4,
+        "action": 15
+      },
+      {
+        "id": 15654,
+        "characterid": 1,
+        "key": 29,
+        "type": 5,
+        "action": 52
+      },
+      {
+        "id": 15655,
+        "characterid": 1,
+        "key": 31,
+        "type": 4,
+        "action": 2
+      },
+      {
+        "id": 15656,
+        "characterid": 1,
+        "key": 33,
+        "type": 4,
+        "action": 26
+      },
+      {
+        "id": 15657,
+        "characterid": 1,
+        "key": 34,
+        "type": 4,
+        "action": 17
+      },
+      {
+        "id": 15658,
+        "characterid": 1,
+        "key": 35,
+        "type": 4,
+        "action": 11
+      },
+      {
+        "id": 15659,
+        "characterid": 1,
+        "key": 37,
+        "type": 4,
+        "action": 3
+      },
+      {
+        "id": 15660,
+        "characterid": 1,
+        "key": 38,
+        "type": 4,
+        "action": 20
+      },
+      {
+        "id": 15661,
+        "characterid": 1,
+        "key": 39,
+        "type": 4,
+        "action": 27
+      },
+      {
+        "id": 15662,
+        "characterid": 1,
+        "key": 40,
+        "type": 4,
+        "action": 16
+      },
+      {
+        "id": 15663,
+        "characterid": 1,
+        "key": 41,
+        "type": 4,
+        "action": 23
+      },
+      {
+        "id": 15664,
+        "characterid": 1,
+        "key": 43,
+        "type": 4,
+        "action": 9
+      },
+      {
+        "id": 15665,
+        "characterid": 1,
+        "key": 44,
+        "type": 5,
+        "action": 50
+      },
+      {
+        "id": 15666,
+        "characterid": 1,
+        "key": 45,
+        "type": 5,
+        "action": 51
+      },
+      {
+        "id": 15667,
+        "characterid": 1,
+        "key": 46,
+        "type": 4,
+        "action": 6
+      },
+      {
+        "id": 15668,
+        "characterid": 1,
+        "key": 48,
+        "type": 4,
+        "action": 22
+      },
+      {
+        "id": 15669,
+        "characterid": 1,
+        "key": 50,
+        "type": 4,
+        "action": 7
+      },
+      {
+        "id": 15670,
+        "characterid": 1,
+        "key": 56,
+        "type": 5,
+        "action": 53
+      },
+      {
+        "id": 15671,
+        "characterid": 1,
+        "key": 57,
+        "type": 5,
+        "action": 54
+      },
+      {
+        "id": 15672,
+        "characterid": 1,
+        "key": 59,
+        "type": 6,
+        "action": 100
+      },
+      {
+        "id": 15673,
+        "characterid": 1,
+        "key": 60,
+        "type": 6,
+        "action": 101
+      },
+      {
+        "id": 15674,
+        "characterid": 1,
+        "key": 61,
+        "type": 6,
+        "action": 102
+      },
+      {
+        "id": 15675,
+        "characterid": 1,
+        "key": 62,
+        "type": 6,
+        "action": 103
+      },
+      {
+        "id": 15676,
+        "characterid": 1,
+        "key": 63,
+        "type": 6,
+        "action": 104
+      },
+      {
+        "id": 15677,
+        "characterid": 1,
+        "key": 64,
+        "type": 6,
+        "action": 105
+      },
+      {
+        "id": 15678,
+        "characterid": 1,
+        "key": 65,
+        "type": 6,
+        "action": 106
+      },
+      {
+        "id": 15679,
+        "characterid": 1,
+        "key": 91,
+        "type": 7,
+        "action": 0
+      },
+      {
+        "id": 15680,
+        "characterid": 1,
+        "key": 92,
+        "type": 7,
+        "action": 0
+      }
+    ]
+  },
+  "skills": {
+    "sql": "SELECT * FROM `skills` WHERE characterid = 1 LIMIT 500",
+    "rows": [
+      {
+        "id": 377,
+        "skillid": 12,
+        "characterid": 1,
+        "skilllevel": 0,
+        "masterlevel": 20,
+        "expiration": -1
+      }
+    ]
+  },
+  "queststatus": {
+    "sql": "SELECT * FROM `queststatus` WHERE characterid = 1 LIMIT 500",
+    "rows": [
+      {
+        "queststatusid": 931,
+        "characterid": 1,
+        "quest": 29508,
+        "status": 0,
+        "time": 1790167437,
+        "expires": 0,
+        "forfeited": 0,
+        "completed": 0,
+        "info": 0
+      },
+      {
+        "queststatusid": 932,
+        "characterid": 1,
+        "quest": 29580,
+        "status": 0,
+        "time": 1790167437,
+        "expires": 0,
+        "forfeited": 0,
+        "completed": 0,
+        "info": 0
+      },
+      {
+        "queststatusid": 933,
+        "characterid": 1,
+        "quest": 29005,
+        "status": 1,
+        "time": 1793784597,
+        "expires": 0,
+        "forfeited": 0,
+        "completed": 0,
+        "info": 0
+      },
+      {
+        "queststatusid": 934,
+        "characterid": 1,
+        "quest": 27010,
+        "status": 0,
+        "time": 1793784597,
+        "expires": 0,
+        "forfeited": 0,
+        "completed": 0,
+        "info": 0
+      }
+    ]
+  },
+  "game_config": {
+    "sql": "SELECT * FROM `game_config`  LIMIT 200",
+    "rows": [
+      {
+        "id": 1,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "flag",
+        "config_value": "0",
+        "config_desc": "flag",
+        "update_time": null
+      },
+      {
+        "id": 2,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.String",
+        "config_code": "server_message",
+        "config_value": "Welcome to Scania!",
+        "config_desc": "server_message",
+        "update_time": null
+      },
+      {
+        "id": 3,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.String",
+        "config_code": "event_message",
+        "config_value": "Scania",
+        "config_desc": "event_message",
+        "update_time": null
+      },
+      {
+        "id": 4,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.String",
+        "config_code": "recommend_message",
+        "config_value": "Welcome to Scania!",
+        "config_desc": "recommend_message",
+        "update_time": null
+      },
+      {
+        "id": 5,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "channel_size",
+        "config_value": "3",
+        "config_desc": "channel_size",
+        "update_time": null
+      },
+      {
+        "id": 6,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "exp_rate",
+        "config_value": "1.0",
+        "config_desc": "exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 7,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "meso_rate",
+        "config_value": "1.0",
+        "config_desc": "meso_rate",
+        "update_time": null
+      },
+      {
+        "id": 8,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "drop_rate",
+        "config_value": "1.0",
+        "config_desc": "drop_rate",
+        "update_time": null
+      },
+      {
+        "id": 9,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "boss_drop_rate",
+        "config_value": "1.0",
+        "config_desc": "boss_drop_rate",
+        "update_time": null
+      },
+      {
+        "id": 10,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "quest_rate",
+        "config_value": "1.0",
+        "config_desc": "quest_rate",
+        "update_time": null
+      },
+      {
+        "id": 11,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "fishing_rate",
+        "config_value": "1.0",
+        "config_desc": "fishing_rate",
+        "update_time": null
+      },
+      {
+        "id": 12,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "travel_rate",
+        "config_value": "1.0",
+        "config_desc": "travel_rate",
+        "update_time": null
+      },
+      {
+        "id": 13,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "level_exp_rate",
+        "config_value": "0",
+        "config_desc": "level_exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 14,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "quick_level",
+        "config_value": "0",
+        "config_desc": "quick_level",
+        "update_time": null
+      },
+      {
+        "id": 15,
+        "config_type": "world",
+        "config_sub_type": "0",
+        "config_clazz": "java.lang.Float",
+        "config_code": "quick_level_rate",
+        "config_value": "0",
+        "config_desc": "quick_level_rate",
+        "update_time": null
+      },
+      {
+        "id": 16,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_world_size",
+        "config_value": "21",
+        "config_desc": "max_world_size",
+        "update_time": null
+      },
+      {
+        "id": 17,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "channel_locks",
+        "config_value": "20",
+        "config_desc": "channel_locks",
+        "update_time": null
+      },
+      {
+        "id": 18,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Long",
+        "config_code": "update_interval",
+        "config_value": "777",
+        "config_desc": "update_interval",
+        "update_time": null
+      },
+      {
+        "id": 19,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_max_range",
+        "config_value": "true",
+        "config_desc": "use_max_range",
+        "update_time": null
+      },
+      {
+        "id": 20,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_max_range_echo_of_hero",
+        "config_value": "true",
+        "config_desc": "use_max_range_echo_of_hero",
+        "update_time": null
+      },
+      {
+        "id": 21,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_autosave",
+        "config_value": "true",
+        "config_desc": "use_autosave",
+        "update_time": null
+      },
+      {
+        "id": 22,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_channel_size",
+        "config_value": "20",
+        "config_desc": "max_channel_size",
+        "update_time": null
+      },
+      {
+        "id": 23,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "channel_capacity",
+        "config_value": "100",
+        "config_desc": "channel_capacity",
+        "update_time": null
+      },
+      {
+        "id": 24,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.String",
+        "config_code": "timezone",
+        "config_value": "GMT+8",
+        "config_desc": "timezone",
+        "update_time": null
+      },
+      {
+        "id": 25,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_unit_price_with_comma",
+        "config_value": "true",
+        "config_desc": "use_unit_price_with_comma",
+        "update_time": null
+      },
+      {
+        "id": 26,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Long",
+        "config_code": "item_monitor_time",
+        "config_value": "300000",
+        "config_desc": "item_monitor_time",
+        "update_time": null
+      },
+      {
+        "id": 27,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Long",
+        "config_code": "item_expire_check",
+        "config_value": "10000",
+        "config_desc": "item_expire_check",
+        "update_time": null
+      },
+      {
+        "id": 28,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "item_limit_on_map",
+        "config_value": "200",
+        "config_desc": "item_limit_on_map",
+        "update_time": null
+      },
+      {
+        "id": 29,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "map_visited_size",
+        "config_value": "5",
+        "config_desc": "map_visited_size",
+        "update_time": null
+      },
+      {
+        "id": 30,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Long",
+        "config_code": "mob_status_monitor_proc",
+        "config_value": "200",
+        "config_desc": "mob_status_monitor_proc",
+        "update_time": null
+      },
+      {
+        "id": 31,
+        "config_type": "server",
+        "config_sub_type": "Core",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "mob_status_monitor_idle",
+        "config_value": "84",
+        "config_desc": "mob_status_monitor_idle",
+        "update_time": null
+      },
+      {
+        "id": 32,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "collective_chr_slot",
+        "config_value": "false",
+        "config_desc": "collective_chr_slot",
+        "update_time": null
+      },
+      {
+        "id": 33,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_custom_keyset",
+        "config_value": "false",
+        "config_desc": "use_custom_keyset",
+        "update_time": null
+      },
+      {
+        "id": 34,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_supply_rate_coupons",
+        "config_value": "true",
+        "config_desc": "use_supply_rate_coupons",
+        "update_time": null
+      },
+      {
+        "id": 35,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_mts",
+        "config_value": "false",
+        "config_desc": "use_mts",
+        "update_time": null
+      },
+      {
+        "id": 36,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_cpq",
+        "config_value": "true",
+        "config_desc": "use_cpq",
+        "update_time": null
+      },
+      {
+        "id": 37,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_fixed_ratio_hpmp_update",
+        "config_value": "false",
+        "config_desc": "use_fixed_ratio_hpmp_update",
+        "update_time": null
+      },
+      {
+        "id": 38,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_duey",
+        "config_value": "true",
+        "config_desc": "use_duey",
+        "update_time": null
+      },
+      {
+        "id": 39,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_randomize_hpmp_gain",
+        "config_value": "true",
+        "config_desc": "use_randomize_hpmp_gain",
+        "update_time": null
+      },
+      {
+        "id": 40,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_hpmp_swap",
+        "config_value": "false",
+        "config_desc": "use_enforce_hpmp_swap",
+        "update_time": null
+      },
+      {
+        "id": 41,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_storage_item_sort",
+        "config_value": "true",
+        "config_desc": "use_storage_item_sort",
+        "update_time": null
+      },
+      {
+        "id": 42,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_item_sort",
+        "config_value": "true",
+        "config_desc": "use_item_sort",
+        "update_time": null
+      },
+      {
+        "id": 43,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_item_sort_by_name",
+        "config_value": "false",
+        "config_desc": "use_item_sort_by_name",
+        "update_time": null
+      },
+      {
+        "id": 44,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_party_for_starters",
+        "config_value": "false",
+        "config_desc": "use_party_for_starters",
+        "update_time": null
+      },
+      {
+        "id": 45,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_auto_assign_starters_ap",
+        "config_value": "true",
+        "config_desc": "use_auto_assign_starters_ap",
+        "update_time": null
+      },
+      {
+        "id": 46,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_auto_assign_secondary_cap",
+        "config_value": "true",
+        "config_desc": "use_auto_assign_secondary_cap",
+        "update_time": null
+      },
+      {
+        "id": 47,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_server_auto_assigner",
+        "config_value": "false",
+        "config_desc": "use_server_auto_assigner",
+        "update_time": null
+      },
+      {
+        "id": 48,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_starting_ap_4",
+        "config_value": "false",
+        "config_desc": "use_starting_ap_4",
+        "update_time": null
+      },
+      {
+        "id": 49,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_refresh_rank_move",
+        "config_value": "true",
+        "config_desc": "use_refresh_rank_move",
+        "update_time": null
+      },
+      {
+        "id": 50,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_novice_exp_rate",
+        "config_value": "true",
+        "config_desc": "use_enforce_novice_exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 51,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_mob_level_range",
+        "config_value": "true",
+        "config_desc": "use_enforce_mob_level_range",
+        "update_time": null
+      },
+      {
+        "id": 52,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_job_level_range",
+        "config_value": "false",
+        "config_desc": "use_enforce_job_level_range",
+        "update_time": null
+      },
+      {
+        "id": 53,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_job_sp_range",
+        "config_value": "false",
+        "config_desc": "use_enforce_job_sp_range",
+        "update_time": null
+      },
+      {
+        "id": 54,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_item_suggestion",
+        "config_value": "false",
+        "config_desc": "use_enforce_item_suggestion",
+        "update_time": null
+      },
+      {
+        "id": 55,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_unmerchable_cash",
+        "config_value": "true",
+        "config_desc": "use_enforce_unmerchable_cash",
+        "update_time": null
+      },
+      {
+        "id": 56,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_unmerchable_pet",
+        "config_value": "true",
+        "config_desc": "use_enforce_unmerchable_pet",
+        "update_time": null
+      },
+      {
+        "id": 57,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_merchant_save",
+        "config_value": "true",
+        "config_desc": "use_enforce_merchant_save",
+        "update_time": null
+      },
+      {
+        "id": 58,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enforce_mystic_door_position",
+        "config_value": "false",
+        "config_desc": "use_enforce_mystic_door_position",
+        "update_time": null
+      },
+      {
+        "id": 59,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_spawn_loot_on_animation",
+        "config_value": "false",
+        "config_desc": "use_spawn_loot_on_animation",
+        "update_time": null
+      },
+      {
+        "id": 60,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_spawn_relevant_loot",
+        "config_value": "true",
+        "config_desc": "use_spawn_relevant_loot",
+        "update_time": null
+      },
+      {
+        "id": 61,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_erase_permit_on_open_shop",
+        "config_value": "true",
+        "config_desc": "use_erase_permit_on_open_shop",
+        "update_time": null
+      },
+      {
+        "id": 62,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_erase_untradeable_drop",
+        "config_value": "true",
+        "config_desc": "use_erase_untradeable_drop",
+        "update_time": null
+      },
+      {
+        "id": 63,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_erase_pet_on_expiration",
+        "config_value": "false",
+        "config_desc": "use_erase_pet_on_expiration",
+        "update_time": null
+      },
+      {
+        "id": 64,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_buff_most_significant",
+        "config_value": "true",
+        "config_desc": "use_buff_most_significant",
+        "update_time": null
+      },
+      {
+        "id": 65,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_buff_everlasting",
+        "config_value": "false",
+        "config_desc": "use_buff_everlasting",
+        "update_time": null
+      },
+      {
+        "id": 66,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_multiple_same_equip_drop",
+        "config_value": "true",
+        "config_desc": "use_multiple_same_equip_drop",
+        "update_time": null
+      },
+      {
+        "id": 67,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_banishable_town_scroll",
+        "config_value": "false",
+        "config_desc": "use_banishable_town_scroll",
+        "update_time": null
+      },
+      {
+        "id": 68,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_full_respawn",
+        "config_value": "false",
+        "config_desc": "use_enable_full_respawn",
+        "update_time": null
+      },
+      {
+        "id": 69,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_chat_log",
+        "config_value": "false",
+        "config_desc": "use_enable_chat_log",
+        "update_time": null
+      },
+      {
+        "id": 70,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_map_ownership_system",
+        "config_value": "false",
+        "config_desc": "use_map_ownership_system",
+        "update_time": null
+      },
+      {
+        "id": 71,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_fishing_system",
+        "config_value": "false",
+        "config_desc": "use_fishing_system",
+        "update_time": null
+      },
+      {
+        "id": 72,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_old_gms_styled_pq_npcs",
+        "config_value": "true",
+        "config_desc": "use_old_gms_styled_pq_npcs",
+        "update_time": null
+      },
+      {
+        "id": 73,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_solo_expeditions",
+        "config_value": "false",
+        "config_desc": "use_enable_solo_expeditions",
+        "update_time": null
+      },
+      {
+        "id": 74,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_daily_expeditions",
+        "config_value": "false",
+        "config_desc": "use_enable_daily_expeditions",
+        "update_time": null
+      },
+      {
+        "id": 75,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_recall_event",
+        "config_value": "false",
+        "config_desc": "use_enable_recall_event",
+        "update_time": null
+      },
+      {
+        "id": 76,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "respawn_interval",
+        "config_value": "10000",
+        "config_desc": "respawn_interval",
+        "update_time": null
+      },
+      {
+        "id": 77,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_login_notification",
+        "config_value": "false",
+        "config_desc": "use_login_notification",
+        "update_time": null
+      },
+      {
+        "id": 78,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_beidou_beginner_map",
+        "config_value": "false",
+        "config_desc": "use_beidou_beginner_map",
+        "update_time": null
+      },
+      {
+        "id": 79,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_announce_shop_item_sold",
+        "config_value": "false",
+        "config_desc": "use_announce_shop_item_sold",
+        "update_time": null
+      },
+      {
+        "id": 80,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_announce_change_job",
+        "config_value": "false",
+        "config_desc": "use_announce_change_job",
+        "update_time": null
+      },
+      {
+        "id": 81,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_announce_nx_coupon_loot",
+        "config_value": "false",
+        "config_desc": "use_announce_nx_coupon_loot",
+        "update_time": null
+      },
+      {
+        "id": 82,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_announce_global_level_up",
+        "config_value": "false",
+        "config_desc": "use_announce_global_level_up",
+        "update_time": null
+      },
+      {
+        "id": 83,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_joint_cash_shop_inventory",
+        "config_value": "false",
+        "config_desc": "use_joint_cash_shop_inventory",
+        "update_time": null
+      },
+      {
+        "id": 84,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_maker_permissive_atk_up",
+        "config_value": "false",
+        "config_desc": "use_maker_permissive_atk_up",
+        "update_time": null
+      },
+      {
+        "id": 85,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_maker_fee_heuristics",
+        "config_value": "true",
+        "config_desc": "use_maker_fee_heuristics",
+        "update_time": null
+      },
+      {
+        "id": 86,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enable_custom_npc_script",
+        "config_value": "false",
+        "config_desc": "use_enable_custom_npc_script",
+        "update_time": null
+      },
+      {
+        "id": 87,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_starter_merge",
+        "config_value": "false",
+        "config_desc": "use_starter_merge",
+        "update_time": null
+      },
+      {
+        "id": 88,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "block_generate_cash_item",
+        "config_value": "false",
+        "config_desc": "block_generate_cash_item",
+        "update_time": null
+      },
+      {
+        "id": 89,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_whole_server_ranking",
+        "config_value": "false",
+        "config_desc": "use_whole_server_ranking",
+        "update_time": null
+      },
+      {
+        "id": 90,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "equip_exp_rate",
+        "config_value": "1.0",
+        "config_desc": "equip_exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 91,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "pq_bonus_exp_rate",
+        "config_value": "0.5",
+        "config_desc": "pq_bonus_exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 92,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "exp_split_level_interval",
+        "config_value": "5",
+        "config_desc": "exp_split_level_interval",
+        "update_time": null
+      },
+      {
+        "id": 93,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "exp_split_leech_interval",
+        "config_value": "5",
+        "config_desc": "exp_split_leech_interval",
+        "update_time": null
+      },
+      {
+        "id": 94,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "exp_split_mvp_mod",
+        "config_value": "0.2",
+        "config_desc": "exp_split_mvp_mod",
+        "update_time": null
+      },
+      {
+        "id": 95,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "exp_split_common_mod",
+        "config_value": "0.8",
+        "config_desc": "exp_split_common_mod",
+        "update_time": null
+      },
+      {
+        "id": 96,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "party_bonus_exp_rate",
+        "config_value": "1.0",
+        "config_desc": "party_bonus_exp_rate",
+        "update_time": null
+      },
+      {
+        "id": 97,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Byte",
+        "config_code": "max_monitored_buff_stats",
+        "config_value": "5",
+        "config_desc": "max_monitored_buff_stats",
+        "update_time": null
+      },
+      {
+        "id": 98,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_ap",
+        "config_value": "32767",
+        "config_desc": "max_ap",
+        "update_time": null
+      },
+      {
+        "id": 99,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_event_levels",
+        "config_value": "8",
+        "config_desc": "max_event_levels",
+        "update_time": null
+      },
+      {
+        "id": 100,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "block_npc_race_condition",
+        "config_value": "500",
+        "config_desc": "block_npc_race_condition",
+        "update_time": null
+      },
+      {
+        "id": 101,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "tot_mob_quest_requirement",
+        "config_value": "0",
+        "config_desc": "tot_mob_quest_requirement",
+        "update_time": null
+      },
+      {
+        "id": 102,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "party_search_reentry_limit",
+        "config_value": "10",
+        "config_desc": "party_search_reentry_limit",
+        "update_time": null
+      },
+      {
+        "id": 103,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "allow_cash_shop_name_change",
+        "config_value": "true",
+        "config_desc": "allow_cash_shop_name_change",
+        "update_time": null
+      },
+      {
+        "id": 104,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "allow_cash_shop_world_transfer",
+        "config_value": "true",
+        "config_desc": "allow_cash_shop_world_transfer",
+        "update_time": null
+      },
+      {
+        "id": 105,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "name_change_cooldown",
+        "config_value": "2592000000",
+        "config_desc": "name_change_cooldown",
+        "update_time": null
+      },
+      {
+        "id": 106,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "world_transfer_cooldown",
+        "config_value": "2592000000",
+        "config_desc": "world_transfer_cooldown",
+        "update_time": null
+      },
+      {
+        "id": 107,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "instant_name_change",
+        "config_value": "false",
+        "config_desc": "instant_name_change",
+        "update_time": null
+      },
+      {
+        "id": 108,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_rebirth_system",
+        "config_value": "false",
+        "config_desc": "use_rebirth_system",
+        "update_time": null
+      },
+      {
+        "id": 109,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "rebirth_npc_id",
+        "config_value": "9010021",
+        "config_desc": "rebirth_npc_id",
+        "update_time": null
+      },
+      {
+        "id": 110,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "item_expire_time",
+        "config_value": "180000",
+        "config_desc": "item_expire_time",
+        "update_time": null
+      },
+      {
+        "id": 111,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "kite_expire_time",
+        "config_value": "3600000",
+        "config_desc": "kite_expire_time",
+        "update_time": null
+      },
+      {
+        "id": 112,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "map_damage_overtime_interval",
+        "config_value": "2500",
+        "config_desc": "map_damage_overtime_interval",
+        "update_time": null
+      },
+      {
+        "id": 113,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "map_damage_overtime_count",
+        "config_value": "2",
+        "config_desc": "map_damage_overtime_count",
+        "update_time": null
+      },
+      {
+        "id": 114,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "mob_status_aggro_persistence",
+        "config_value": "2",
+        "config_desc": "mob_status_aggro_persistence",
+        "update_time": null
+      },
+      {
+        "id": 115,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "mob_status_aggro_interval",
+        "config_value": "5000",
+        "config_desc": "mob_status_aggro_interval",
+        "update_time": null
+      },
+      {
+        "id": 116,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_auto_aggro_nearby",
+        "config_value": "false",
+        "config_desc": "use_auto_aggro_nearby",
+        "update_time": null
+      },
+      {
+        "id": 117,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_perfect_scrolling",
+        "config_value": "false",
+        "config_desc": "use_perfect_scrolling",
+        "update_time": null
+      },
+      {
+        "id": 118,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enhanced_chaos_scroll",
+        "config_value": "false",
+        "config_desc": "use_enhanced_chaos_scroll",
+        "update_time": null
+      },
+      {
+        "id": 119,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_enhanced_crafting",
+        "config_value": "false",
+        "config_desc": "use_enhanced_crafting",
+        "update_time": null
+      },
+      {
+        "id": 120,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "scroll_chance_rolls",
+        "config_value": "1",
+        "config_desc": "scroll_chance_rolls",
+        "update_time": null
+      },
+      {
+        "id": 121,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "chaos_scroll_stat_rate",
+        "config_value": "1",
+        "config_desc": "chaos_scroll_stat_rate",
+        "update_time": null
+      },
+      {
+        "id": 122,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "chaos_scroll_stat_range",
+        "config_value": "5",
+        "config_desc": "chaos_scroll_stat_range",
+        "update_time": null
+      },
+      {
+        "id": 123,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_spikes_avoid_banish",
+        "config_value": "false",
+        "config_desc": "use_spikes_avoid_banish",
+        "update_time": null
+      },
+      {
+        "id": 124,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_ultra_nimble_feet",
+        "config_value": "false",
+        "config_desc": "use_ultra_nimble_feet",
+        "update_time": null
+      },
+      {
+        "id": 125,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_ultra_recovery",
+        "config_value": "false",
+        "config_desc": "use_ultra_recovery",
+        "update_time": null
+      },
+      {
+        "id": 126,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_ultra_three_snails",
+        "config_value": "false",
+        "config_desc": "use_ultra_three_snails",
+        "update_time": null
+      },
+      {
+        "id": 127,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_full_aran_skill_set",
+        "config_value": "true",
+        "config_desc": "use_full_aran_skill_set",
+        "update_time": null
+      },
+      {
+        "id": 128,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_fast_reuse_hero_will",
+        "config_value": "false",
+        "config_desc": "use_fast_reuse_hero_will",
+        "update_time": null
+      },
+      {
+        "id": 129,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_anti_immunity_crash",
+        "config_value": "false",
+        "config_desc": "use_anti_immunity_crash",
+        "update_time": null
+      },
+      {
+        "id": 130,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_undispel_holy_shield",
+        "config_value": "false",
+        "config_desc": "use_undispel_holy_shield",
+        "update_time": null
+      },
+      {
+        "id": 131,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_full_holy_symbol",
+        "config_value": "false",
+        "config_desc": "use_full_holy_symbol",
+        "update_time": null
+      },
+      {
+        "id": 132,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_add_slots_by_level",
+        "config_value": "false",
+        "config_desc": "use_add_slots_by_level",
+        "update_time": null
+      },
+      {
+        "id": 133,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_add_rates_by_level",
+        "config_value": "false",
+        "config_desc": "use_add_rates_by_level",
+        "update_time": null
+      },
+      {
+        "id": 134,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_stack_coupon_rates",
+        "config_value": "false",
+        "config_desc": "use_stack_coupon_rates",
+        "update_time": null
+      },
+      {
+        "id": 135,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_perfect_pitch",
+        "config_value": "false",
+        "config_desc": "use_perfect_pitch",
+        "update_time": null
+      },
+      {
+        "id": 136,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_level_up_protect",
+        "config_value": "true",
+        "config_desc": "use_level_up_protect",
+        "update_time": null
+      },
+      {
+        "id": 137,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_quest_rate",
+        "config_value": "false",
+        "config_desc": "use_quest_rate",
+        "update_time": null
+      },
+      {
+        "id": 138,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "quest_point_repeatable_interval",
+        "config_value": "25",
+        "config_desc": "quest_point_repeatable_interval",
+        "update_time": null
+      },
+      {
+        "id": 139,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "quest_point_requirement",
+        "config_value": "0",
+        "config_desc": "quest_point_requirement",
+        "update_time": null
+      },
+      {
+        "id": 140,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "quest_point_per_quest_complete",
+        "config_value": "0",
+        "config_desc": "quest_point_per_quest_complete",
+        "update_time": null
+      },
+      {
+        "id": 141,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "quest_point_per_event_clear",
+        "config_value": "0",
+        "config_desc": "quest_point_per_event_clear",
+        "update_time": null
+      },
+      {
+        "id": 142,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "create_guild_min_partners",
+        "config_value": "6",
+        "config_desc": "create_guild_min_partners",
+        "update_time": null
+      },
+      {
+        "id": 143,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "create_guild_cost",
+        "config_value": "1500000",
+        "config_desc": "create_guild_cost",
+        "update_time": null
+      },
+      {
+        "id": 144,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "change_emblem_cost",
+        "config_value": "5000000",
+        "config_desc": "change_emblem_cost",
+        "update_time": null
+      },
+      {
+        "id": 145,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "expand_guild_base_cost",
+        "config_value": "500000",
+        "config_desc": "expand_guild_base_cost",
+        "update_time": null
+      },
+      {
+        "id": 146,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "expand_guild_tier_cost",
+        "config_value": "1000000",
+        "config_desc": "expand_guild_tier_cost",
+        "update_time": null
+      },
+      {
+        "id": 147,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "expand_guild_max_cost",
+        "config_value": "5000000",
+        "config_desc": "expand_guild_max_cost",
+        "update_time": null
+      },
+      {
+        "id": 148,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "event_max_guild_queue",
+        "config_value": "10",
+        "config_desc": "event_max_guild_queue",
+        "update_time": null
+      },
+      {
+        "id": 149,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "event_lobby_delay",
+        "config_value": "10",
+        "config_desc": "event_lobby_delay",
+        "update_time": null
+      },
+      {
+        "id": 150,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_family_system",
+        "config_value": "true",
+        "config_desc": "use_family_system",
+        "update_time": null
+      },
+      {
+        "id": 151,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "family_rep_per_kill",
+        "config_value": "4",
+        "config_desc": "family_rep_per_kill",
+        "update_time": null
+      },
+      {
+        "id": 152,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "family_rep_per_boss_kill",
+        "config_value": "20",
+        "config_desc": "family_rep_per_boss_kill",
+        "update_time": null
+      },
+      {
+        "id": 153,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "family_rep_per_level_up",
+        "config_value": "200",
+        "config_desc": "family_rep_per_level_up",
+        "update_time": null
+      },
+      {
+        "id": 154,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "family_max_generations",
+        "config_value": "1000",
+        "config_desc": "family_max_generations",
+        "update_time": null
+      },
+      {
+        "id": 155,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "use_equipment_level_up",
+        "config_value": "1",
+        "config_desc": "use_equipment_level_up",
+        "update_time": null
+      },
+      {
+        "id": 156,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_equipment_level_up_slots",
+        "config_value": "false",
+        "config_desc": "use_equipment_level_up_slots",
+        "update_time": null
+      },
+      {
+        "id": 157,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_equipment_level_up_power",
+        "config_value": "false",
+        "config_desc": "use_equipment_level_up_power",
+        "update_time": null
+      },
+      {
+        "id": 158,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_equipment_level_up_cash",
+        "config_value": "false",
+        "config_desc": "use_equipment_level_up_cash",
+        "update_time": null
+      },
+      {
+        "id": 159,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_equipment_level_up_stat_up",
+        "config_value": "10000",
+        "config_desc": "max_equipment_level_up_stat_up",
+        "update_time": null
+      },
+      {
+        "id": 160,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "max_equipment_stat",
+        "config_value": "32767",
+        "config_desc": "max_equipment_stat",
+        "update_time": null
+      },
+      {
+        "id": 161,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_chair_extra_heal",
+        "config_value": "false",
+        "config_desc": "use_chair_extra_heal",
+        "update_time": null
+      },
+      {
+        "id": 162,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "playernpc_initial_x",
+        "config_value": "262",
+        "config_desc": "playernpc_initial_x",
+        "update_time": null
+      },
+      {
+        "id": 163,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "playernpc_initial_y",
+        "config_value": "262",
+        "config_desc": "playernpc_initial_y",
+        "update_time": null
+      },
+      {
+        "id": 164,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "playernpc_area_x",
+        "config_value": "320",
+        "config_desc": "playernpc_area_x",
+        "update_time": null
+      },
+      {
+        "id": 165,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "playernpc_area_y",
+        "config_value": "160",
+        "config_desc": "playernpc_area_y",
+        "update_time": null
+      },
+      {
+        "id": 166,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "playernpc_area_steps",
+        "config_value": "4",
+        "config_desc": "playernpc_area_steps",
+        "update_time": null
+      },
+      {
+        "id": 167,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "playernpc_organize_area",
+        "config_value": "true",
+        "config_desc": "playernpc_organize_area",
+        "update_time": null
+      },
+      {
+        "id": 168,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "playernpc_auto_deploy",
+        "config_value": "false",
+        "config_desc": "playernpc_auto_deploy",
+        "update_time": null
+      },
+      {
+        "id": 169,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_server_auto_pot",
+        "config_value": "false",
+        "config_desc": "use_server_auto_pot",
+        "update_time": null
+      },
+      {
+        "id": 170,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_compulsory_auto_pot",
+        "config_value": "false",
+        "config_desc": "use_compulsory_auto_pot",
+        "update_time": null
+      },
+      {
+        "id": 171,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "pet_auto_hp_ratio",
+        "config_value": "0.99",
+        "config_desc": "pet_auto_hp_ratio",
+        "update_time": null
+      },
+      {
+        "id": 172,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "pet_auto_mp_ratio",
+        "config_value": "0.99",
+        "config_desc": "pet_auto_mp_ratio",
+        "update_time": null
+      },
+      {
+        "id": 173,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "pet_exhaust_count",
+        "config_value": "3",
+        "config_desc": "pet_exhaust_count",
+        "update_time": null
+      },
+      {
+        "id": 174,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "mount_exhaust_count",
+        "config_value": "1",
+        "config_desc": "mount_exhaust_count",
+        "update_time": null
+      },
+      {
+        "id": 175,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "pets_never_hungry",
+        "config_value": "false",
+        "config_desc": "pets_never_hungry",
+        "update_time": null
+      },
+      {
+        "id": 176,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_fast_dojo_upgrade",
+        "config_value": "false",
+        "config_desc": "use_fast_dojo_upgrade",
+        "update_time": null
+      },
+      {
+        "id": 177,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_deadly_dojo",
+        "config_value": "true",
+        "config_desc": "use_deadly_dojo",
+        "update_time": null
+      },
+      {
+        "id": 178,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "dojo_energy_atk",
+        "config_value": "100",
+        "config_desc": "dojo_energy_atk",
+        "update_time": null
+      },
+      {
+        "id": 179,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "dojo_energy_dmg",
+        "config_value": "20",
+        "config_desc": "dojo_energy_dmg",
+        "update_time": null
+      },
+      {
+        "id": 180,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "wedding_reservation_delay",
+        "config_value": "3",
+        "config_desc": "wedding_reservation_delay",
+        "update_time": null
+      },
+      {
+        "id": 181,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "wedding_reservation_timeout",
+        "config_value": "10",
+        "config_desc": "wedding_reservation_timeout",
+        "update_time": null
+      },
+      {
+        "id": 182,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Long",
+        "config_code": "wedding_reservation_interval",
+        "config_value": "60",
+        "config_desc": "wedding_reservation_interval",
+        "update_time": null
+      },
+      {
+        "id": 183,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "wedding_bless_exp",
+        "config_value": "30000",
+        "config_desc": "wedding_bless_exp",
+        "update_time": null
+      },
+      {
+        "id": 184,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "wedding_gift_limit",
+        "config_value": "1",
+        "config_desc": "wedding_gift_limit",
+        "update_time": null
+      },
+      {
+        "id": 185,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "wedding_blesser_showfx",
+        "config_value": "true",
+        "config_desc": "wedding_blesser_showfx",
+        "update_time": null
+      },
+      {
+        "id": 186,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "enable_adventurers",
+        "config_value": "true",
+        "config_desc": "enable_adventurers",
+        "update_time": null
+      },
+      {
+        "id": 187,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "enable_knights_of_cygnus",
+        "config_value": "true",
+        "config_desc": "enable_knights_of_cygnus",
+        "update_time": null
+      },
+      {
+        "id": 188,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "enable_the_lord_of_war",
+        "config_value": "true",
+        "config_desc": "enable_the_lord_of_war",
+        "update_time": null
+      },
+      {
+        "id": 189,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "use_npcs_scriptable",
+        "config_value": "true",
+        "config_desc": "use_npcs_scriptable",
+        "update_time": null
+      },
+      {
+        "id": 190,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.util.Map",
+        "config_code": "npcs_scriptable",
+        "config_value": "{9001105:\"Rescue Gaga!\",1300005:\"蘑菇王国\"}",
+        "config_desc": "npcs_scriptable",
+        "update_time": null
+      },
+      {
+        "id": 191,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "change_channel_force_return",
+        "config_value": "false",
+        "config_desc": "change_channel_force_return",
+        "update_time": null
+      },
+      {
+        "id": 192,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "mob_respawn_rate",
+        "config_value": "1",
+        "config_desc": "mob_respawn_rate",
+        "update_time": null
+      },
+      {
+        "id": 193,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Float",
+        "config_code": "boss_respawn_mob_time_rate",
+        "config_value": "1.0",
+        "config_desc": "boss_respawn_mob_time_rate",
+        "update_time": null
+      },
+      {
+        "id": 194,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Short",
+        "config_code": "item_slot_max",
+        "config_value": "0",
+        "config_desc": "item_slot_max",
+        "update_time": null
+      },
+      {
+        "id": 195,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "level_up_ap_gain",
+        "config_value": "5",
+        "config_desc": "level_up_ap_gain",
+        "update_time": null
+      },
+      {
+        "id": 196,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "level_up_sp_gain",
+        "config_value": "3",
+        "config_desc": "level_up_sp_gain",
+        "update_time": null
+      },
+      {
+        "id": 197,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "trade_limit_meso_under_level",
+        "config_value": "15",
+        "config_desc": "trade_limit_meso_under_level",
+        "update_time": null
+      },
+      {
+        "id": 198,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Integer",
+        "config_code": "trade_limit_meso_max",
+        "config_value": "1000000",
+        "config_desc": "trade_limit_meso_max",
+        "update_time": null
+      },
+      {
+        "id": 199,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "trade_limit_item_cash",
+        "config_value": "false",
+        "config_desc": "trade_limit_item_cash",
+        "update_time": null
+      },
+      {
+        "id": 200,
+        "config_type": "server",
+        "config_sub_type": "Game Mechanics",
+        "config_clazz": "java.lang.Boolean",
+        "config_code": "trade_limit_item_nodrop",
+        "config_value": "false",
+        "config_desc": "trade_limit_item_nodrop",
+        "update_time": null
+      }
+    ]
+  }
+}
