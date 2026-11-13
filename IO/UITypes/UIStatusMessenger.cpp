@@ -21,6 +21,8 @@
 
 #include "../UI.h"
 #include "../../Constants.h"
+#include "../../Util/HudLayout.h"
+
 namespace ms
 {
 	StatusInfo::StatusInfo(const std::string& str, Color::Name color)
@@ -49,6 +51,9 @@ namespace ms
 
 	UIStatusMessenger::UIStatusMessenger()
 	{
+		// Edge 右下：右对齐状态飘字锚点（文字 Alignment::RIGHT）。
+		set_layout_edge(LayoutEdge::BottomRight, Point<int16_t>(6, 145));
+
 		int16_t height = Constants::Constants::get().get_viewheight();
 		int16_t width = Constants::Constants::get().get_viewwidth();
 
@@ -74,9 +79,12 @@ namespace ms
 
 	void UIStatusMessenger::update_screen(int16_t new_width, int16_t new_height)
 	{
-		int16_t y_adj = (new_width > 800) ? 37 : 0;
-
-		position = Point<int16_t>(new_width - 6, new_height - 145 + y_adj);
+		// 宽屏底栏更高时上抬 37px，避免压住 classic HUD；公式不跟档位 id。
+		const int16_t y_adj = (new_width > HudLayout::HUD_DESIGN_W) ? 37 : 0;
+		position = Point<int16_t>(
+			HudLayout::edge_right(new_width, 0, layout_margin.x()),
+			static_cast<int16_t>(
+				HudLayout::edge_bottom(new_height, 0, layout_margin.y()) + y_adj));
 	}
 
 	UIElement::Type UIStatusMessenger::get_type() const

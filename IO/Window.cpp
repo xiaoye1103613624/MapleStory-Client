@@ -545,46 +545,53 @@ namespace ms
 		SDL_GetMouseState(&xpos, &ypos);
 		send_cursor_position(xpos, ypos);
 
-		// Window icon, loaded from the executable's directory.
-		const char* basepath = SDL_GetBasePath();
+		// 窗口图标只装一次。切分辨率会反复走 initwindow；旧实现每帧 stbi_load
+		// Icon.png，一旦与 Constants 回写形成自反馈就会高频分配 → 0xC0000374
+		//（见 docs/features/multi-resolution/evidence/crash-resize-feedback.md）。
+		static bool icon_applied = false;
 
-		std::string iconpath = basepath ? std::string(basepath) : std::string();
-		SDL_free(const_cast<char*>(basepath));
-
-		iconpath += "Icon.png";
-
-		int32_t icon_width = 0;
-		int32_t icon_height = 0;
-
-		auto stbi = stbi_load(iconpath.c_str(), &icon_width, &icon_height, 0, 4);
-
-		if (stbi == NULL)
+		if (!icon_applied)
 		{
-#ifdef __ANDROID__
-			// APK assets are not on the filesystem at the base path, so the
-			// window icon is simply skipped on Android (it is not fatal).
-			LOG(LOG_WARN, "Icon not found, skipping on Android: " << iconpath);
-#else
-			return Error(Error::Code::MISSING_ICON, stbi_failure_reason());
-#endif
-		}
-		else
-		{
-			SDL_Surface* icon = SDL_CreateSurfaceFrom(
-				icon_width,
-				icon_height,
-				SDL_PIXELFORMAT_RGBA32,
-				stbi,
-				icon_width * 4
-				);
+			const char* basepath = SDL_GetBasePath();
 
-			if (icon)
+			std::string iconpath = basepath ? std::string(basepath) : std::string();
+			SDL_free(const_cast<char*>(basepath));
+
+			iconpath += "Icon.png";
+
+			int32_t icon_width = 0;
+			int32_t icon_height = 0;
+
+			auto stbi = stbi_load(iconpath.c_str(), &icon_width, &icon_height, 0, 4);
+
+			if (stbi == NULL)
 			{
-				SDL_SetWindowIcon(glwnd, icon);
-				SDL_DestroySurface(icon);
+#ifdef __ANDROID__
+				LOG(LOG_WARN, "Icon not found, skipping on Android: " << iconpath);
+				icon_applied = true;
+#else
+				return Error(Error::Code::MISSING_ICON, stbi_failure_reason());
+#endif
 			}
+			else
+			{
+				SDL_Surface* icon = SDL_CreateSurfaceFrom(
+					icon_width,
+					icon_height,
+					SDL_PIXELFORMAT_RGBA32,
+					stbi,
+					icon_width * 4
+					);
 
-			stbi_image_free(stbi);
+				if (icon)
+				{
+					SDL_SetWindowIcon(glwnd, icon);
+					SDL_DestroySurface(icon);
+				}
+
+				stbi_image_free(stbi);
+				icon_applied = true;
+			}
 		}
 
 		GraphicsGL::get().reinit();
@@ -948,6 +955,15 @@ namespace ms
 
 	void Window::check_events()
 	{
+		// SysOpt 排队的视口必须在这里落 Constants：本函数早于 UI::update，
+		// 这样 initwindow/reinit（清 atlas）发生在 StatusBar 重建之前。
+		if (ResolutionTiers::apply_deferred_viewsize())
+		{
+			LOG(LOG_INFO, "[MR] Window applied deferred viewport "
+				<< Constants::Constants::get().get_viewwidth() << "x"
+				<< Constants::Constants::get().get_viewheight());
+		}
+
 		const int16_t new_width = Constants::Constants::get().get_viewwidth();
 		const int16_t new_height = Constants::Constants::get().get_viewheight();
 

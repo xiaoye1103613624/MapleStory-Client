@@ -77,6 +77,8 @@ namespace ms
 		/// 累计的"用户主动输入"事件数（按下任意键 / 鼠标左中右键按下 / 触屏按下）。
 		/// 启动动画等 pre-UI 阶段用它判断"用户想跳过"，不依赖 UI 是否已初始化。
 		uint32_t get_input_events() const { return input_events; }
+		// 实时 FPS（窗口标题采样，500ms 节流窗折算），供内存/性能采样观测。
+		int get_perf_fps() const { return perf_fps; }
 
 		/// Desktop ASCII textfields: disable system IME so physical keys reach
 		/// KEY_DOWN (Chinese IME would otherwise swallow letters / commit UTF-8).

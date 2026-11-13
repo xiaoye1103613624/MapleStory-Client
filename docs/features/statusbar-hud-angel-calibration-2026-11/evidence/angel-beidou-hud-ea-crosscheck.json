@@ -1,0 +1,4399 @@
+{
+ "summary": {
+  "angel_funcs": 548,
+  "beidou_present": 547,
+  "beidou_sub_named": 542,
+  "beidou_real_named": 5,
+  "beidou_missing": 1,
+  "missing_eas": [
+   "0x6cec47"
+  ],
+  "conclusion": "same binary layout (547/548 EAs identical; differences are IDA analysis coverage, not code)"
+ },
+ "table": [
+  {
+   "class": "CChatBalloon",
+   "method": "CreateCanvas",
+   "ea": "0x4890c4",
+   "beidou_name": "sub_4890C4",
+   "beidou_size": "0x1871",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "MakeBalloon",
+   "ea": "0x48a935",
+   "beidou_name": "sub_48A935",
+   "beidou_size": "0xbca",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "MakeMobBalloon",
+   "ea": "0x48b4ff",
+   "beidou_name": "sub_48B4FF",
+   "beidou_size": "0x36b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "MakeScreenBalloon",
+   "ea": "0x48b86a",
+   "beidou_name": "sub_48B86A",
+   "beidou_size": "0x33b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "MakeMiniRoomBalloon",
+   "ea": "0x48bbca",
+   "beidou_name": "sub_48BBCA",
+   "beidou_size": "0x253b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "GetMiniRoomBalloonRect",
+   "ea": "0x48e136",
+   "beidou_name": "sub_48E136",
+   "beidou_size": "0x162",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "MakeADBoardBalloon",
+   "ea": "0x48e298",
+   "beidou_name": "sub_48E298",
+   "beidou_size": "0xad",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "ADBoardMouseDown",
+   "ea": "0x48e51c",
+   "beidou_name": "sub_48E51C",
+   "beidou_size": "0x115",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "ADBoardMouseUp",
+   "ea": "0x48e631",
+   "beidou_name": "sub_48E631",
+   "beidou_size": "0x23",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "CheckTimeOut",
+   "ea": "0x48e6d4",
+   "beidou_name": "sub_48E6D4",
+   "beidou_size": "0x172",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatBalloon",
+   "method": "AdjustCoordY",
+   "ea": "0x48e85a",
+   "beidou_name": "sub_48E85A",
+   "beidou_size": "0x372",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatHelper",
+   "method": "TryChat",
+   "ea": "0x4904be",
+   "beidou_name": "sub_4904BE",
+   "beidou_size": "0x1f7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatHelper",
+   "method": "HistoryAdd",
+   "ea": "0x490701",
+   "beidou_name": "sub_490701",
+   "beidou_size": "0xd4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatHelper",
+   "method": "HistoryAddforCommand",
+   "ea": "0x4907d5",
+   "beidou_name": "sub_4907D5",
+   "beidou_size": "0x46",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatHelper",
+   "method": "HistoryUp",
+   "ea": "0x49081b",
+   "beidou_name": "sub_49081B",
+   "beidou_size": "0x89",
+   "status": "present_sub"
+  },
+  {
+   "class": "CChatHelper",
+   "method": "HistoryDown",
+   "ea": "0x4908a4",
+   "beidou_name": "sub_4908A4",
+   "beidou_size": "0x83",
+   "status": "present_sub"
+  },
+  {
+   "class": "CClock",
+   "method": "SetTimer",
+   "ea": "0x49ae6a",
+   "beidou_name": "sub_49AE6A",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CClock",
+   "method": "Start",
+   "ea": "0x49aeee",
+   "beidou_name": "sub_49AEEE",
+   "beidou_size": "0x2f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CClock",
+   "method": "0INITPARAM",
+   "ea": "0x52bf42",
+   "beidou_name": "sub_52BF42",
+   "beidou_size": "0xcc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadGlobal",
+   "ea": "0x49c441",
+   "beidou_name": "sub_49C441",
+   "beidou_size": "0x4a6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SaveGlobal",
+   "ea": "0x49c8e7",
+   "beidou_name": "sub_49C8E7",
+   "beidou_size": "0x40c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SaveLastConnectedCharacterID",
+   "ea": "0x49d05a",
+   "beidou_name": "sub_49D05A",
+   "beidou_size": "0x5c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadCharacter",
+   "ea": "0x49d0b6",
+   "beidou_name": "sub_49D0B6",
+   "beidou_size": "0x833",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SaveCharacter",
+   "ea": "0x49d90d",
+   "beidou_name": "sub_49D90D",
+   "beidou_size": "0x66c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadFuncKeyMapped",
+   "ea": "0x49df79",
+   "beidou_name": "sub_49DF79",
+   "beidou_size": "0x28",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadBlockFriend",
+   "ea": "0x49dfa1",
+   "beidou_name": "sub_49DFA1",
+   "beidou_size": "0x1b7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadBlackList",
+   "ea": "0x49e303",
+   "beidou_name": "sub_49E303",
+   "beidou_size": "0x169",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadQuestAlarm",
+   "ea": "0x49e536",
+   "beidou_name": "sub_49E536",
+   "beidou_size": "0xfb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "LoadFriendGroup",
+   "ea": "0x49e6fb",
+   "beidou_name": "sub_49E6FB",
+   "beidou_size": "0x120",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "ApplyGameOpt",
+   "ea": "0x49ea1c",
+   "beidou_name": "sub_49EA1C",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "ApplySysOpt",
+   "ea": "0x49ea33",
+   "beidou_name": "sub_49EA33",
+   "beidou_size": "0x12b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "IsBlockedFriend",
+   "ea": "0x49eb5e",
+   "beidou_name": "sub_49EB5E",
+   "beidou_size": "0x34",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "ChangeBlockOption",
+   "ea": "0x49ebbb",
+   "beidou_name": "sub_49EBBB",
+   "beidou_size": "0x6c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "IsInBlackList",
+   "ea": "0x49ed00",
+   "beidou_name": "sub_49ED00",
+   "beidou_size": "0x6a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetOpt_BOOL",
+   "ea": "0x49eddb",
+   "beidou_name": "sub_49EDDB",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SetOpt_BOOL",
+   "ea": "0x49ee26",
+   "beidou_name": "sub_49EE26",
+   "beidou_size": "0x2e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetOpt_String",
+   "ea": "0x49ee54",
+   "beidou_name": "sub_49EE54",
+   "beidou_size": "0xb9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetOpt_Int",
+   "ea": "0x49ef65",
+   "beidou_name": "sub_49EF65",
+   "beidou_size": "0x50",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SetOpt_Int",
+   "ea": "0x49efb5",
+   "beidou_name": "sub_49EFB5",
+   "beidou_size": "0x29",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetOptKey",
+   "ea": "0x49f180",
+   "beidou_name": "sub_49F180",
+   "beidou_size": "0x2c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetShowPartyHP",
+   "ea": "0x49f1ac",
+   "beidou_name": "sub_49F1AC",
+   "beidou_size": "0x52",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "ResetSessionInfo",
+   "ea": "0x49f24f",
+   "beidou_name": "sub_49F24F",
+   "beidou_size": "0xc8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SaveSessionInfo",
+   "ea": "0x49f317",
+   "beidou_name": "sub_49F317",
+   "beidou_size": "0x100",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "SaveSessionInfo_ChannelID",
+   "ea": "0x49f417",
+   "beidou_name": "sub_49F417",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetInventoryExpanded",
+   "ea": "0x49f5da",
+   "beidou_name": "sub_49F5DA",
+   "beidou_size": "0x52",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetPartnerCode",
+   "ea": "0x5f6cfb",
+   "beidou_name": "sub_5F6CFB",
+   "beidou_size": "0x5b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetSessionCharacterName",
+   "ea": "0x9877b9",
+   "beidou_name": "sub_9877B9",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetSessionWorldID",
+   "ea": "0x98781e",
+   "beidou_name": "sub_98781E",
+   "beidou_size": "0x5c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CConfig",
+   "method": "GetSessionChannelID",
+   "ea": "0x98787a",
+   "beidou_name": "sub_98787A",
+   "beidou_size": "0x5c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "Destroy",
+   "ea": "0x4c0554",
+   "beidou_name": "sub_4C0554",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "OnMouseButton",
+   "ea": "0x4c09e3",
+   "beidou_name": "sub_4C09E3",
+   "beidou_size": "0x8f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "OnMouseMove",
+   "ea": "0x4c0a72",
+   "beidou_name": "sub_4C0A72",
+   "beidou_size": "0x4f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "OnMouseEnter",
+   "ea": "0x4c0ac1",
+   "beidou_name": "sub_4C0AC1",
+   "beidou_size": "0x18",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "MouseEnter",
+   "ea": "0x4c0ad9",
+   "beidou_name": "sub_4C0AD9",
+   "beidou_size": "0x114",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "ChangeDisplayState",
+   "ea": "0x4c0bed",
+   "beidou_name": "sub_4C0BED",
+   "beidou_size": "0x132",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "SetKeyFocus",
+   "ea": "0x4c0e3f",
+   "beidou_name": "sub_4C0E3F",
+   "beidou_size": "0x21a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "MouseDown",
+   "ea": "0x4c1059",
+   "beidou_name": "sub_4C1059",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlButton",
+   "method": "MouseUp",
+   "ea": "0x4c107d",
+   "beidou_name": "sub_4C107D",
+   "beidou_size": "0x7a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlComboBox",
+   "method": "SetSelect",
+   "ea": "0x4c3a0d",
+   "beidou_name": "sub_4C3A0D",
+   "beidou_size": "0x603",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlComboBox",
+   "method": "GetComboBoxUOL",
+   "ea": "0x4c4552",
+   "beidou_name": "sub_4C4552",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlComboBox",
+   "method": "OnCreate",
+   "ea": "0x4c45c2",
+   "beidou_name": "sub_4C45C2",
+   "beidou_size": "0x19f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlComboBox",
+   "method": "Draw",
+   "ea": "0x4c5fb9",
+   "beidou_name": "sub_4C5FB9",
+   "beidou_size": "0xdd9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlComboBox",
+   "method": "AddItem",
+   "ea": "0x4c6dd6",
+   "beidou_name": "sub_4C6DD6",
+   "beidou_size": "0x31",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "GetText",
+   "ea": "0x471353",
+   "beidou_name": "sub_471353",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "1CREATEPARAM",
+   "ea": "0x471b56",
+   "beidou_name": "sub_471B56",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "0CREATEPARAM",
+   "ea": "0x4c8d5f",
+   "beidou_name": "sub_4C8D5F",
+   "beidou_size": "0x9a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "OnSetFocus",
+   "ea": "0x4ca043",
+   "beidou_name": "sub_4CA043",
+   "beidou_size": "0x6b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "OnCreate",
+   "ea": "0x4ca25d",
+   "beidou_name": "sub_4CA25D",
+   "beidou_size": "0x3b8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "InsertString",
+   "ea": "0x4ca89e",
+   "beidou_name": "sub_4CA89E",
+   "beidou_size": "0x29a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "SetClipboard",
+   "ea": "0x4caef1",
+   "beidou_name": "sub_4CAEF1",
+   "beidou_size": "0xa2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "AdjustHorz",
+   "ea": "0x4cb829",
+   "beidou_name": "sub_4CB829",
+   "beidou_size": "0x475",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlEdit",
+   "method": "SetText",
+   "ea": "0x4cc512",
+   "beidou_name": "sub_4CC512",
+   "beidou_size": "0x47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "OnKey",
+   "ea": "0x4d3159",
+   "beidou_name": "sub_4D3159",
+   "beidou_size": "0x152",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "OnSetFocus",
+   "ea": "0x4d32ab",
+   "beidou_name": "sub_4D32AB",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "OnIMEComp",
+   "ea": "0x4d33c2",
+   "beidou_name": "sub_4D33C2",
+   "beidou_size": "0xac",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "OnCreate",
+   "ea": "0x4d349e",
+   "beidou_name": "sub_4D349E",
+   "beidou_size": "0x3af",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "InsertString",
+   "ea": "0x4d3b02",
+   "beidou_name": "sub_4D3B02",
+   "beidou_size": "0x284",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "ExtractSelection",
+   "ea": "0x4d3f2e",
+   "beidou_name": "sub_4D3F2E",
+   "beidou_size": "0x120",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "GetClipboard",
+   "ea": "0x4d404e",
+   "beidou_name": "sub_4D404E",
+   "beidou_size": "0x1d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "SetClipboard",
+   "ea": "0x4d406b",
+   "beidou_name": "sub_4D406B",
+   "beidou_size": "0xa2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "MoveCaret",
+   "ea": "0x4d4aa8",
+   "beidou_name": "sub_4D4AA8",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "CreateIMECandWnd",
+   "ea": "0x4d56b4",
+   "beidou_name": "sub_4D56B4",
+   "beidou_size": "0x3ef",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "DestroyIMECandWnd",
+   "ea": "0x4d5be0",
+   "beidou_name": "sub_4D5BE0",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlMLEdit",
+   "method": "GetText",
+   "ea": "0x6f2084",
+   "beidou_name": "sub_6F2084",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "GetScrollBarBaseUOL",
+   "ea": "0x4d6d96",
+   "beidou_name": "sub_4D6D96",
+   "beidou_size": "0xe4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "GetScrollBarSize",
+   "ea": "0x4d6e7a",
+   "beidou_name": "sub_4D6E7A",
+   "beidou_size": "0x1bd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "CreateCtrl",
+   "ea": "0x4d7037",
+   "beidou_name": "sub_4D7037",
+   "beidou_size": "0x10e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "GetScrollBarCanvas",
+   "ea": "0x4d7145",
+   "beidou_name": "sub_4D7145",
+   "beidou_size": "0x377",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "Draw",
+   "ea": "0x4d74e4",
+   "beidou_name": "sub_4D74E4",
+   "beidou_size": "0x87c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "SetCurPos",
+   "ea": "0x4d7d92",
+   "beidou_name": "sub_4D7D92",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "SetScrollRange",
+   "ea": "0x4d7dac",
+   "beidou_name": "sub_4D7DAC",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "ValidatePosAndRange",
+   "ea": "0x4d7dc6",
+   "beidou_name": "sub_4D7DC6",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "OnMouseMove",
+   "ea": "0x4d7de7",
+   "beidou_name": "sub_4D7DE7",
+   "beidou_size": "0x2c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "MouseUp",
+   "ea": "0x4d7ed8",
+   "beidou_name": "sub_4D7ED8",
+   "beidou_size": "0x81",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "DoPrevNext",
+   "ea": "0x4d8145",
+   "beidou_name": "sub_4D8145",
+   "beidou_size": "0x44",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "DoPrevNextBar",
+   "ea": "0x4d8189",
+   "beidou_name": "sub_4D8189",
+   "beidou_size": "0x58",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "DoThumbMove",
+   "ea": "0x4d8203",
+   "beidou_name": "sub_4D8203",
+   "beidou_size": "0x7c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CCtrlScrollBar",
+   "method": "DoThumbEnd",
+   "ea": "0x4d827f",
+   "beidou_name": "sub_4D827F",
+   "beidou_size": "0x7c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "SetOption",
+   "ea": "0x51f93d",
+   "beidou_name": "sub_51F93D",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "CreateFadeWnd",
+   "ea": "0x51f9ad",
+   "beidou_name": "sub_51F9AD",
+   "beidou_size": "0x184",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "Close",
+   "ea": "0x51fb4e",
+   "beidou_name": "sub_51FB4E",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFadeWnd",
+   "method": "SendCloseMessage",
+   "ea": "0x51fff5",
+   "beidou_name": "sub_51FFF5",
+   "beidou_size": "0x25d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFloatNotice",
+   "method": "CreateFloatNotice",
+   "ea": "0x58c53b",
+   "beidou_name": "sub_58C53B",
+   "beidou_size": "0x776",
+   "status": "present_sub"
+  },
+  {
+   "class": "CFloatNotice",
+   "method": "DeleteFloatNotice",
+   "ea": "0x58ccb1",
+   "beidou_name": "sub_58CCB1",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNoticeQuestProgress",
+   "method": "OnQuestProgressUpdated_Item",
+   "ea": "0x6cdb4e",
+   "beidou_name": "sub_6CDB4E",
+   "beidou_size": "0x1b8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNoticeQuestProgress",
+   "method": "OnQuestProgressUpdated_Mob",
+   "ea": "0x6cdd82",
+   "beidou_name": "sub_6CDD82",
+   "beidou_size": "0x4cf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNoticeQuestProgress",
+   "method": "OnQuestProgressUpdated_Script",
+   "ea": "0x6ce251",
+   "beidou_name": "sub_6CE251",
+   "beidou_size": "0xb5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNoticeQuestProgress",
+   "method": "NoticeProgressChange",
+   "ea": "0x6ce306",
+   "beidou_name": "sub_6CE306",
+   "beidou_size": "0x941",
+   "status": "present_sub"
+  },
+  {
+   "class": "CNoticeQuestProgress",
+   "method": "Update",
+   "ea": "0x6cec47",
+   "beidou_name": null,
+   "beidou_size": null,
+   "status": "missing"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "OnInit",
+   "ea": "0x72b82a",
+   "beidou_name": "sub_72B82A",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "SaveQuickslotKeyMap",
+   "ea": "0x72b87e",
+   "beidou_name": "sub_72B87E",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CQuickslotKeyMappedMan",
+   "method": "DefaultQuickslotKeyMap",
+   "ea": "0x72b8e6",
+   "beidou_name": "sub_72B8E6",
+   "beidou_size": "0x14",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSlideNotice",
+   "method": "OnCreate",
+   "ea": "0x7e1686",
+   "beidou_name": "sub_7E1686",
+   "beidou_size": "0x78",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSlideNotice",
+   "method": "SetMsg",
+   "ea": "0x7e16fe",
+   "beidou_name": "sub_7E16FE",
+   "beidou_size": "0x793",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSoftKeyboardDlg",
+   "method": "GetResult",
+   "ea": "0x5f7691",
+   "beidou_name": "sub_5F7691",
+   "beidou_size": "0x1d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSoftKeyboardDlg",
+   "method": "OnCreate",
+   "ea": "0x76f739",
+   "beidou_name": "sub_76F739",
+   "beidou_size": "0x6a2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CSoftKeyboardDlg",
+   "method": "InitializeSecondaryPassword",
+   "ea": "0x7704c7",
+   "beidou_name": "sub_7704C7",
+   "beidou_size": "0x233",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "Clear",
+   "ea": "0x7b24cd",
+   "beidou_name": "sub_7B24CD",
+   "beidou_size": "0x8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "SetTemporary",
+   "ea": "0x7b24d5",
+   "beidou_name": "sub_7B24D5",
+   "beidou_size": "0x1a4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "ResetTemporary",
+   "ea": "0x7b2679",
+   "beidou_name": "sub_7B2679",
+   "beidou_size": "0x9e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "ResetTemporary",
+   "ea": "0x7b2717",
+   "beidou_name": "sub_7B2717",
+   "beidou_size": "0x112",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "AdjustPosition",
+   "ea": "0x7b2bb0",
+   "beidou_name": "sub_7B2BB0",
+   "beidou_size": "0x2a8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "ShowToolTip",
+   "ea": "0x7b2e58",
+   "beidou_name": "sub_7B2E58",
+   "beidou_size": "0x1fd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "FindIcon",
+   "ea": "0x7b3055",
+   "beidou_name": "sub_7B3055",
+   "beidou_size": "0x86",
+   "status": "present_sub"
+  },
+  {
+   "class": "CTemporaryStatView",
+   "method": "UpdatePassively",
+   "ea": "0x7b30db",
+   "beidou_name": "sub_7B30DB",
+   "beidou_size": "0x9b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIAntiMacroCharacterName",
+   "method": "GetResult",
+   "ea": "0x96d2bc",
+   "beidou_name": "sub_96D2BC",
+   "beidou_size": "0x52",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "OnCreate",
+   "ea": "0x994da4",
+   "beidou_name": "sub_994DA4",
+   "beidou_size": "0xa53",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "OnKey",
+   "ea": "0x995863",
+   "beidou_name": "sub_995863",
+   "beidou_size": "0x158",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "SetRet",
+   "ea": "0x9959bb",
+   "beidou_name": "sub_9959BB",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIChannelShift",
+   "method": "Draw",
+   "ea": "0x995a35",
+   "beidou_name": "sub_995A35",
+   "beidou_size": "0xaa5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIContextMenu",
+   "method": "OnCreate",
+   "ea": "0x9967fb",
+   "beidou_name": "sub_9967FB",
+   "beidou_size": "0x999",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIEnergyBar",
+   "method": "SetEnergy",
+   "ea": "0x7f9bad",
+   "beidou_name": "sub_7F9BAD",
+   "beidou_size": "0xe60",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIEnergyBar",
+   "method": "OnMouseMove",
+   "ea": "0x7faa49",
+   "beidou_name": "sub_7FAA49",
+   "beidou_size": "0x69",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIEventAlarm",
+   "method": "CreateEventAlarm",
+   "ea": "0x805439",
+   "beidou_name": "sub_805439",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnCreate",
+   "ea": "0x5203bb",
+   "beidou_name": "sub_5203BB",
+   "beidou_size": "0x2a2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "Draw",
+   "ea": "0x52065d",
+   "beidou_name": "sub_52065D",
+   "beidou_size": "0x1e59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnButtonClicked",
+   "ea": "0x522585",
+   "beidou_name": "sub_522585",
+   "beidou_size": "0x388",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "OnMouseButton",
+   "ea": "0x522945",
+   "beidou_name": "sub_522945",
+   "beidou_size": "0xe4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "Delete",
+   "ea": "0x522a4d",
+   "beidou_name": "sub_522A4D",
+   "beidou_size": "0x8d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "SendCloseMessage",
+   "ea": "0x522ada",
+   "beidou_name": "sub_522ADA",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateMSMInvite",
+   "ea": "0x522b2b",
+   "beidou_name": "sub_522B2B",
+   "beidou_size": "0x1f7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateFriendReg",
+   "ea": "0x522d22",
+   "beidou_name": "sub_522D22",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateTradeInvite",
+   "ea": "0x522f14",
+   "beidou_name": "sub_522F14",
+   "beidou_size": "0x226",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreatePartyInvite",
+   "ea": "0x52320d",
+   "beidou_name": "sub_52320D",
+   "beidou_size": "0x1fb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateQuestClear",
+   "ea": "0x523408",
+   "beidou_name": "sub_523408",
+   "beidou_size": "0x237",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateGuildInvite",
+   "ea": "0x52363f",
+   "beidou_name": "sub_52363F",
+   "beidou_size": "0x1fb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateAllianceInvite",
+   "ea": "0x52383a",
+   "beidou_name": "sub_52383A",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateUserAlarm",
+   "ea": "0x523a2c",
+   "beidou_name": "sub_523A2C",
+   "beidou_size": "0x234",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateParcelAlarm",
+   "ea": "0x523c60",
+   "beidou_name": "sub_523C60",
+   "beidou_size": "0x200",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateNewYearCardArrived",
+   "ea": "0x523e60",
+   "beidou_name": "sub_523E60",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "CreateFamilyInvite",
+   "ea": "0x524298",
+   "beidou_name": "sub_524298",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "TryShowMemoListDlg",
+   "ea": "0x52448a",
+   "beidou_name": "sub_52448A",
+   "beidou_size": "0x112",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIFadeYesNo",
+   "method": "MoveWndPosition",
+   "ea": "0x52459c",
+   "beidou_name": "sub_52459C",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameMenu",
+   "method": "ResetButtonState",
+   "ea": "0x84a510",
+   "beidou_name": "sub_84A510",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "OnCreate",
+   "ea": "0x993a30",
+   "beidou_name": "sub_993A30",
+   "beidou_size": "0x4fc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "OnChildNotify",
+   "ea": "0x993f2c",
+   "beidou_name": "sub_993F2C",
+   "beidou_size": "0x3e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "SetRet",
+   "ea": "0x993f99",
+   "beidou_name": "sub_993F99",
+   "beidou_size": "0x64",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIGameOpt",
+   "method": "GetSysOptFromCtrl",
+   "ea": "0x9940bd",
+   "beidou_name": "sub_9940BD",
+   "beidou_size": "0xa6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnButtonClicked",
+   "ea": "0x8335d0",
+   "beidou_name": "sub_8335D0",
+   "beidou_size": "0x15c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnMouseButton",
+   "ea": "0x83372c",
+   "beidou_name": "sub_83372C",
+   "beidou_size": "0x1d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnDestroy",
+   "ea": "0x833749",
+   "beidou_name": "sub_833749",
+   "beidou_size": "0x132",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "OnMouseMove",
+   "ea": "0x8338f9",
+   "beidou_name": "sub_8338F9",
+   "beidou_size": "0x16c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "GetShortCutIndexByPos",
+   "ea": "0x833a65",
+   "beidou_name": "sub_833A65",
+   "beidou_size": "0x99",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "TryBeginDragFuncKeyMappedIcon",
+   "ea": "0x83550d",
+   "beidou_name": "sub_83550D",
+   "beidou_size": "0x1040",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIKeyConfig",
+   "method": "0CNoticeDlg",
+   "ea": "0x83665b",
+   "beidou_name": "sub_83665B",
+   "beidou_size": "0x18e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "OnCreate",
+   "ea": "0x84056b",
+   "beidou_name": "sub_84056B",
+   "beidou_size": "0x10b6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "OnMouseButton",
+   "ea": "0x841678",
+   "beidou_name": "sub_841678",
+   "beidou_size": "0x174",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "GetSelect",
+   "ea": "0x841976",
+   "beidou_name": "sub_841976",
+   "beidou_size": "0xd7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "LoadData",
+   "ea": "0x8423e2",
+   "beidou_name": "sub_8423E2",
+   "beidou_size": "0x11bf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "IsStateButton",
+   "ea": "0x8438a6",
+   "beidou_name": "sub_8438A6",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "ResetInfo",
+   "ea": "0x8438df",
+   "beidou_name": "sub_8438DF",
+   "beidou_size": "0x1b4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "SetScrollBar",
+   "ea": "0x843a93",
+   "beidou_name": "sub_843A93",
+   "beidou_size": "0x7b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "Draw",
+   "ea": "0x843bf6",
+   "beidou_name": "sub_843BF6",
+   "beidou_size": "0x11b7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "ToggleDetail",
+   "ea": "0x844e1f",
+   "beidou_name": "sub_844E1F",
+   "beidou_size": "0xcb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMedalQuestInfo",
+   "method": "Update",
+   "ea": "0x844eea",
+   "beidou_name": "sub_844EEA",
+   "beidou_size": "0x6f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "0CHARACTER",
+   "ea": "0x84db06",
+   "beidou_name": "sub_84DB06",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "1CHARACTER",
+   "ea": "0x84db90",
+   "beidou_name": "sub_84DB90",
+   "beidou_size": "0x69",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "TryNew",
+   "ea": "0x84dd25",
+   "beidou_name": "sub_84DD25",
+   "beidou_size": "0x5e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "TryDelete",
+   "ea": "0x84dd83",
+   "beidou_name": "sub_84DD83",
+   "beidou_size": "0x2d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnCreate",
+   "ea": "0x84ddb0",
+   "beidou_name": "sub_84DDB0",
+   "beidou_size": "0x56e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnButtonClicked",
+   "ea": "0x84e607",
+   "beidou_name": "sub_84E607",
+   "beidou_size": "0x47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnKey",
+   "ea": "0x84e64e",
+   "beidou_name": "sub_84E64E",
+   "beidou_size": "0x253",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "Draw",
+   "ea": "0x84e8a1",
+   "beidou_name": "sub_84E8A1",
+   "beidou_size": "0x8f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "Update",
+   "ea": "0x84e930",
+   "beidou_name": "sub_84E930",
+   "beidou_size": "0x238",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SetState",
+   "ea": "0x84eb68",
+   "beidou_name": "sub_84EB68",
+   "beidou_size": "0x28",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "AddChatText",
+   "ea": "0x84ec53",
+   "beidou_name": "sub_84EC53",
+   "beidou_size": "0x2d0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SendClaim",
+   "ea": "0x84ef23",
+   "beidou_name": "sub_84EF23",
+   "beidou_size": "0xfc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnEnter",
+   "ea": "0x84f0d6",
+   "beidou_name": "sub_84F0D6",
+   "beidou_size": "0x18e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnSelfEnter",
+   "ea": "0x84f281",
+   "beidou_name": "sub_84F281",
+   "beidou_size": "0xd0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SetAvatar",
+   "ea": "0x84f44b",
+   "beidou_name": "sub_84F44B",
+   "beidou_size": "0xbad",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SetShowState",
+   "ea": "0x84fff8",
+   "beidou_name": "sub_84FFF8",
+   "beidou_size": "0x26c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SetLayer",
+   "ea": "0x850264",
+   "beidou_name": "sub_850264",
+   "beidou_size": "0x37e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SetCtrl",
+   "ea": "0x8505e2",
+   "beidou_name": "sub_8505E2",
+   "beidou_size": "0x760",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "DrawTextA",
+   "ea": "0x850d42",
+   "beidou_name": "sub_850D42",
+   "beidou_size": "0x187",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "DrawStatusBar",
+   "ea": "0x850ec9",
+   "beidou_name": "sub_850EC9",
+   "beidou_size": "0x333",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnPacket",
+   "ea": "0x8511fc",
+   "beidou_name": "sub_8511FC",
+   "beidou_size": "0x73",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnInvite",
+   "ea": "0x851478",
+   "beidou_name": "sub_851478",
+   "beidou_size": "0x15f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "OnChat",
+   "ea": "0x8515d7",
+   "beidou_name": "sub_8515D7",
+   "beidou_size": "0x378",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "HandleSlashCommand",
+   "ea": "0x851ae2",
+   "beidou_name": "sub_851AE2",
+   "beidou_size": "0x14c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "SendInviteMsg",
+   "ea": "0x851c2e",
+   "beidou_name": "sub_851C2E",
+   "beidou_size": "0x10d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMessenger",
+   "method": "ProcessChat",
+   "ea": "0x851d3b",
+   "beidou_name": "sub_851D3B",
+   "beidou_size": "0x1cd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetLayer",
+   "ea": "0x855d02",
+   "beidou_name": "sub_855D02",
+   "beidou_size": "0x2609",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetCtrl",
+   "ea": "0x858344",
+   "beidou_name": "sub_858344",
+   "beidou_size": "0x2bf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "LoadMiniMap",
+   "ea": "0x858603",
+   "beidou_name": "sub_858603",
+   "beidou_size": "0x97c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "ReloadMiniMap",
+   "ea": "0x8590a4",
+   "beidou_name": "sub_8590A4",
+   "beidou_size": "0x3b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "ToggleMap",
+   "ea": "0x8590df",
+   "beidou_name": "sub_8590DF",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "Update",
+   "ea": "0x859122",
+   "beidou_name": "sub_859122",
+   "beidou_size": "0x1909",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "OnButtonClicked",
+   "ea": "0x85ace7",
+   "beidou_name": "sub_85ACE7",
+   "beidou_size": "0xfb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "OnMouseMove",
+   "ea": "0x85ade2",
+   "beidou_name": "sub_85ADE2",
+   "beidou_size": "0xcf6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "InsertStalkee",
+   "ea": "0x85bbe4",
+   "beidou_name": "sub_85BBE4",
+   "beidou_size": "0x46",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIMiniMap",
+   "method": "SetShowMiniMap",
+   "ea": "0x85bc51",
+   "beidou_name": "sub_85BC51",
+   "beidou_size": "0xd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIPartyHP",
+   "method": "Create",
+   "ea": "0x91f934",
+   "beidou_name": "sub_91F934",
+   "beidou_size": "0x1a6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "DeleteQuest",
+   "ea": "0x885df1",
+   "beidou_name": "sub_885DF1",
+   "beidou_size": "0x29",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "RemoveQuestByIndex",
+   "ea": "0x885e1a",
+   "beidou_name": "sub_885E1A",
+   "beidou_size": "0x71",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "DeleteQuestByIndex",
+   "ea": "0x885e8b",
+   "beidou_name": "sub_885E8B",
+   "beidou_size": "0x2d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "Draw",
+   "ea": "0x885eb8",
+   "beidou_name": "sub_885EB8",
+   "beidou_size": "0x1c1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "RemoveOldQuest",
+   "ea": "0x887b5c",
+   "beidou_name": "sub_887B5C",
+   "beidou_size": "0x71",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIQuestAlarm",
+   "method": "Create",
+   "ea": "0x8881cb",
+   "beidou_name": "sub_8881CB",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRevive",
+   "method": "OnButtonClicked",
+   "ea": "0x8981e1",
+   "beidou_name": "sub_8981E1",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRevive",
+   "method": "Update",
+   "ea": "0x898203",
+   "beidou_name": "sub_898203",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIRevive",
+   "method": "Revive",
+   "ea": "0x898224",
+   "beidou_name": "sub_898224",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIShortCutMenu",
+   "method": "OnCreate",
+   "ea": "0x84a6bc",
+   "beidou_name": "sub_84A6BC",
+   "beidou_size": "0x67e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIShortCutMenu",
+   "method": "ResetButtonState",
+   "ea": "0x84af14",
+   "beidou_name": "sub_84AF14",
+   "beidou_size": "0x3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "CloseSkillGuide",
+   "ea": "0x8aa4c5",
+   "beidou_name": "sub_8AA4C5",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OnCreate",
+   "ea": "0x8aaa88",
+   "beidou_name": "sub_8AAA88",
+   "beidou_size": "0x82d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OnSkillLevelUpButton",
+   "ea": "0x8acf1a",
+   "beidou_name": "sub_8ACF1A",
+   "beidou_size": "0x31e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "GetSkillRootVisible",
+   "ea": "0x8bcdfa",
+   "beidou_name": "sub_8BCDFA",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISkill",
+   "method": "OpenCurSkillGuide",
+   "ea": "0x961063",
+   "beidou_name": "sub_961063",
+   "beidou_size": "0x6c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISoftKeyboard",
+   "method": "OnCreate",
+   "ea": "0x832979",
+   "beidou_name": "sub_832979",
+   "beidou_size": "0xc57",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "OnCreate",
+   "ea": "0x8c4c7f",
+   "beidou_name": "sub_8C4C7F",
+   "beidou_size": "0x435",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "OnButtonClicked",
+   "ea": "0x8c522f",
+   "beidou_name": "sub_8C522F",
+   "beidou_size": "0x6b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "ToggleDetail",
+   "ea": "0x8c545d",
+   "beidou_name": "sub_8C545D",
+   "beidou_size": "0x95",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "EnableApUpButton",
+   "ea": "0x8c5845",
+   "beidou_name": "sub_8C5845",
+   "beidou_size": "0x18f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "ResetInfo",
+   "ea": "0x8c59d4",
+   "beidou_name": "sub_8C59D4",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "Draw",
+   "ea": "0x8c59ff",
+   "beidou_name": "sub_8C59FF",
+   "beidou_size": "0x11f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "RestoreButtons",
+   "ea": "0x8c79f5",
+   "beidou_name": "sub_8C79F5",
+   "beidou_size": "0x547",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStat",
+   "method": "AutoApUp",
+   "ea": "0x8c8692",
+   "beidou_name": "sub_8C8692",
+   "beidou_size": "0x1f4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "GetWhisperTarget",
+   "ea": "0x4c6db2",
+   "beidou_name": "sub_4C6DB2",
+   "beidou_size": "0x24",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnSetFocus",
+   "ea": "0x8cfd76",
+   "beidou_name": "sub_8CFD76",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ClearToolTip",
+   "ea": "0x8cfd7b",
+   "beidou_name": "sub_8CFD7B",
+   "beidou_size": "0x8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "GetRTTI",
+   "ea": "0x8cfd83",
+   "beidou_name": "sub_8CFD83",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "IsKindOf",
+   "ea": "0x8cfd89",
+   "beidou_name": "sub_8CFD89",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnCreate",
+   "ea": "0x8d01b2",
+   "beidou_name": "sub_8D01B2",
+   "beidou_size": "0x392d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnChildNotify",
+   "ea": "0x8d419c",
+   "beidou_name": "sub_8D419C",
+   "beidou_size": "0x89",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnMouseEnter",
+   "ea": "0x8d4225",
+   "beidou_name": "sub_8D4225",
+   "beidou_size": "0x18",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnButtonClicked",
+   "ea": "0x8d423d",
+   "beidou_name": "sub_8D423D",
+   "beidou_size": "0xe3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ConvertWhisperToNormal",
+   "ea": "0x8d4348",
+   "beidou_name": "sub_8D4348",
+   "beidou_size": "0x345",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "GetChatLog",
+   "ea": "0x8d468d",
+   "beidou_name": "sub_8D468D",
+   "beidou_size": "0x395",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SendClaim",
+   "ea": "0x8d4a22",
+   "beidou_name": "sub_8D4A22",
+   "beidou_size": "0x4b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetChatType",
+   "ea": "0x8d4a6d",
+   "beidou_name": "sub_8D4A6D",
+   "beidou_size": "0x2d6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ChangeWhisperTarget",
+   "ea": "0x8d4dbf",
+   "beidou_name": "sub_8D4DBF",
+   "beidou_size": "0x22f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnKey",
+   "ea": "0x8d536c",
+   "beidou_name": "sub_8D536C",
+   "beidou_size": "0x43e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "GetEmotionKey",
+   "ea": "0x8d57ca",
+   "beidou_name": "sub_8D57CA",
+   "beidou_size": "0x283",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "StartChat",
+   "ea": "0x8d5a4d",
+   "beidou_name": "sub_8D5A4D",
+   "beidou_size": "0x62",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "EndChat",
+   "ea": "0x8d5aaf",
+   "beidou_name": "sub_8D5AAF",
+   "beidou_size": "0x1e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "FloatNotice",
+   "ea": "0x8d5acd",
+   "beidou_name": "sub_8D5ACD",
+   "beidou_size": "0x5e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetProblem",
+   "ea": "0x8d5b2b",
+   "beidou_name": "sub_8D5B2B",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnMouseButton",
+   "ea": "0x8d5b5d",
+   "beidou_name": "sub_8D5B5D",
+   "beidou_size": "0x9e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "TryBeginWhisper",
+   "ea": "0x8d5bfb",
+   "beidou_name": "sub_8D5BFB",
+   "beidou_size": "0x352",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ChangeChatWndSize",
+   "ea": "0x8d616c",
+   "beidou_name": "sub_8D616C",
+   "beidou_size": "0x22f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ProcessToolTip",
+   "ea": "0x8d76d7",
+   "beidou_name": "sub_8D76D7",
+   "beidou_size": "0x283",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "OnMouseMove",
+   "ea": "0x8d795a",
+   "beidou_name": "sub_8D795A",
+   "beidou_size": "0x74a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "Draw",
+   "ea": "0x8d80a4",
+   "beidou_name": "sub_8D80A4",
+   "beidou_size": "0x1cd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ReDrawQuickslot",
+   "ea": "0x8d82a7",
+   "beidou_name": "sub_8D82A7",
+   "beidou_size": "0x11",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetStatusValue",
+   "ea": "0x8d82b8",
+   "beidou_name": "sub_8D82B8",
+   "beidou_size": "0x253",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetWhisperTarget",
+   "ea": "0x8db01c",
+   "beidou_name": "sub_8DB01C",
+   "beidou_size": "0x54",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ChatLogAdd",
+   "ea": "0x8db070",
+   "beidou_name": "sub_8DB070",
+   "beidou_size": "0x3ed",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "0CChatLog",
+   "ea": "0x8db485",
+   "beidou_name": "sub_8DB485",
+   "beidou_size": "0xa9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ChatLogDraw",
+   "ea": "0x8dbb93",
+   "beidou_name": "sub_8DBB93",
+   "beidou_size": "0x1ccd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "HitTest",
+   "ea": "0x8de7da",
+   "beidou_name": "sub_8DE7DA",
+   "beidou_size": "0xfb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "GetShortCutIndexByPos",
+   "ea": "0x8de8d5",
+   "beidou_name": "sub_8DE8D5",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "Update",
+   "ea": "0x8de964",
+   "beidou_name": "sub_8DE964",
+   "beidou_size": "0x112",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ResetButtonToolTip",
+   "ea": "0x8defae",
+   "beidou_name": "sub_8DEFAE",
+   "beidou_size": "0x51",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SendGroupMessage",
+   "ea": "0x8df155",
+   "beidou_name": "sub_8DF155",
+   "beidou_size": "0x35c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "ToggleQuickSlot",
+   "ea": "0x8df4b1",
+   "beidou_name": "sub_8DF4B1",
+   "beidou_size": "0x511",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "MakeCtrlEdit",
+   "ea": "0x8dfb36",
+   "beidou_name": "sub_8DFB36",
+   "beidou_size": "0x2eb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetButtonBlink",
+   "ea": "0x8dfe21",
+   "beidou_name": "sub_8DFE21",
+   "beidou_size": "0x5d0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIStatusBar",
+   "method": "SetShortcutTooltip",
+   "ea": "0x8e03f1",
+   "beidou_name": "sub_8E03F1",
+   "beidou_size": "0x243",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "OnCreate",
+   "ea": "0x994163",
+   "beidou_name": "sub_994163",
+   "beidou_size": "0x789",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "OnChildNotify",
+   "ea": "0x9948ec",
+   "beidou_name": "sub_9948EC",
+   "beidou_size": "0xc6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "SetRet",
+   "ea": "0x9949e1",
+   "beidou_name": "sub_9949E1",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUISysOpt",
+   "method": "GetSysOptFromCtrl",
+   "ea": "0x994b1a",
+   "beidou_name": "sub_994B1A",
+   "beidou_size": "0xb5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "0ItemToolTipParam",
+   "ea": "0x483eed",
+   "beidou_name": "sub_483EED",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "1ItemToolTipParam",
+   "ea": "0x483f18",
+   "beidou_name": "sub_483F18",
+   "beidou_size": "0x19",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "ClearToolTip",
+   "ea": "0x8e6e23",
+   "beidou_name": "sub_8E6E23",
+   "beidou_size": "0x2f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetBasicInfo",
+   "ea": "0x8e6e52",
+   "beidou_name": "sub_8E6E52",
+   "beidou_size": "0x2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String",
+   "ea": "0x8e6e7d",
+   "beidou_name": "sub_8E6E7D",
+   "beidou_size": "0x1ab",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String_MultiLine",
+   "ea": "0x8e7028",
+   "beidou_name": "sub_8E7028",
+   "beidou_size": "0x128",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_String2",
+   "ea": "0x8e7150",
+   "beidou_name": "sub_8E7150",
+   "beidou_size": "0x2e4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_WorldMap",
+   "ea": "0x8e7434",
+   "beidou_name": "sub_8E7434",
+   "beidou_size": "0x402",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "PrintValue",
+   "ea": "0x8e7836",
+   "beidou_name": "sub_8E7836",
+   "beidou_size": "0x13f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Ring",
+   "ea": "0x8e7975",
+   "beidou_name": "sub_8E7975",
+   "beidou_size": "0x8dd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip",
+   "ea": "0x8e8252",
+   "beidou_name": "sub_8E8252",
+   "beidou_size": "0x1e47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip2",
+   "ea": "0x8eba5b",
+   "beidou_name": "sub_8EBA5B",
+   "beidou_size": "0x3a9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Equip_Basic",
+   "ea": "0x8eca0c",
+   "beidou_name": "sub_8ECA0C",
+   "beidou_size": "0x5ca",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "DrawToolTip_Equip",
+   "ea": "0x8ed0d2",
+   "beidou_name": "sub_8ED0D2",
+   "beidou_size": "0x80e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Pet",
+   "ea": "0x8ed8f5",
+   "beidou_name": "sub_8ED8F5",
+   "beidou_size": "0x6d2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Bundle",
+   "ea": "0x8edfc7",
+   "beidou_name": "sub_8EDFC7",
+   "beidou_size": "0x165c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Package",
+   "ea": "0x8efcb7",
+   "beidou_name": "sub_8EFCB7",
+   "beidou_size": "0x1cf1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_SlotInc",
+   "ea": "0x8f19a8",
+   "beidou_name": "sub_8F19A8",
+   "beidou_size": "0x502",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_EquipExt",
+   "ea": "0x8f1eaa",
+   "beidou_name": "sub_8F1EAA",
+   "beidou_size": "0x3cc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_MacroSysSkill",
+   "ea": "0x8f2276",
+   "beidou_name": "sub_8F2276",
+   "beidou_size": "0x35a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "SetToolTip_Skill",
+   "ea": "0x8f25d0",
+   "beidou_name": "sub_8F25D0",
+   "beidou_size": "0x661",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "MakeLayer",
+   "ea": "0x8f3141",
+   "beidou_name": "sub_8F3141",
+   "beidou_size": "0x560",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "GetFontByType",
+   "ea": "0x8f36a1",
+   "beidou_name": "sub_8F36A1",
+   "beidou_size": "0xdc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "AddInfoEx",
+   "ea": "0x8f39e1",
+   "beidou_name": "sub_8F39E1",
+   "beidou_size": "0x1e2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "DrawItemIcon",
+   "ea": "0x8f421e",
+   "beidou_name": "sub_8F421E",
+   "beidou_size": "0x129",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIToolTip",
+   "method": "ShowItemToolTip",
+   "ea": "0x8f5b20",
+   "beidou_name": "sub_8F5B20",
+   "beidou_size": "0x284",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "OnCreate",
+   "ea": "0x8fecb1",
+   "beidou_name": "sub_8FECB1",
+   "beidou_size": "0x616",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "OnButtonClicked",
+   "ea": "0x8ff5b0",
+   "beidou_name": "sub_8FF5B0",
+   "beidou_size": "0x200",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetState",
+   "ea": "0x8ff7fa",
+   "beidou_name": "sub_8FF7FA",
+   "beidou_size": "0x69",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetLayer",
+   "ea": "0x8ff863",
+   "beidou_name": "sub_8FF863",
+   "beidou_size": "0x5d8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "Update",
+   "ea": "0x9010ba",
+   "beidou_name": "sub_9010BA",
+   "beidou_size": "0xcb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "Draw",
+   "ea": "0x901185",
+   "beidou_name": "sub_901185",
+   "beidou_size": "0x25c2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetPetInfo",
+   "ea": "0x903c50",
+   "beidou_name": "sub_903C50",
+   "beidou_size": "0x97",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetMultiPetInfo",
+   "ea": "0x903ce7",
+   "beidou_name": "sub_903CE7",
+   "beidou_size": "0xd0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetAvatarInfo",
+   "ea": "0x903e24",
+   "beidou_name": "sub_903E24",
+   "beidou_size": "0x3a4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetWishItemInfo",
+   "ea": "0x9041c8",
+   "beidou_name": "sub_9041C8",
+   "beidou_size": "0xae",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "CreatePetAvatar",
+   "ea": "0x90433a",
+   "beidou_name": "sub_90433A",
+   "beidou_size": "0x60a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "ResetInfo_Pet",
+   "ea": "0x904967",
+   "beidou_name": "sub_904967",
+   "beidou_size": "0x128",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfo",
+   "method": "SetPetItemList",
+   "ea": "0x904aea",
+   "beidou_name": "sub_904AEA",
+   "beidou_size": "0x123",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfoDetail",
+   "method": "Draw",
+   "ea": "0x8fd4c0",
+   "beidou_name": "sub_8FD4C0",
+   "beidou_size": "0x5b6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfoDetail",
+   "method": "OnCreate",
+   "ea": "0x8ff2c7",
+   "beidou_name": "sub_8FF2C7",
+   "beidou_size": "0x7e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfoWishList",
+   "method": "Draw",
+   "ea": "0x8fde08",
+   "beidou_name": "sub_8FDE08",
+   "beidou_size": "0x4e1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIUserInfoWishList",
+   "method": "OnCreate",
+   "ea": "0x8ff3ce",
+   "beidou_name": "sub_8FF3CE",
+   "beidou_size": "0xa8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "CreateUIWndPosSaved",
+   "ea": "0x49f0b5",
+   "beidou_name": "sub_49F0B5",
+   "beidou_size": "0x30",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnCreate",
+   "ea": "0x92c2e8",
+   "beidou_name": "sub_92C2E8",
+   "beidou_size": "0x25c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnDestroy",
+   "ea": "0x92c544",
+   "beidou_name": "sub_92C544",
+   "beidou_size": "0x6a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnButtonClicked",
+   "ea": "0x92c5ae",
+   "beidou_name": "sub_92C5AE",
+   "beidou_size": "0x1e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIWnd",
+   "method": "OnKey",
+   "ea": "0x92c6ee",
+   "beidou_name": "sub_92C6EE",
+   "beidou_size": "0x1a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsStun",
+   "ea": "0x57502e",
+   "beidou_name": "sub_57502E",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsLocalUser",
+   "ea": "0x949126",
+   "beidou_name": "sub_949126",
+   "beidou_size": "0x4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsPreview",
+   "ea": "0x94912a",
+   "beidou_name": "sub_94912A",
+   "beidou_size": "0x3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsRemoteUser",
+   "ea": "0x94912d",
+   "beidou_name": "sub_94912D",
+   "beidou_size": "0x3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsAdminHide",
+   "ea": "0x949130",
+   "beidou_name": "sub_949130",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsMovingMode",
+   "ea": "0x949137",
+   "beidou_name": "sub_949137",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ResetOneTimeAction",
+   "ea": "0x94913e",
+   "beidou_name": "sub_94913E",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ClearToolTip",
+   "ea": "0x94915a",
+   "beidou_name": "sub_94915A",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetRTTI",
+   "ea": "0x949165",
+   "beidou_name": "sub_949165",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsKindOf",
+   "ea": "0x94916b",
+   "beidou_name": "sub_94916B",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "Init",
+   "ea": "0x949513",
+   "beidou_name": "sub_949513",
+   "beidou_size": "0x5de",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetCharacterLevel",
+   "ea": "0x949b15",
+   "beidou_name": "sub_949B15",
+   "beidou_size": "0x3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetSecondaryStat",
+   "ea": "0x949b52",
+   "beidou_name": "sub_949B52",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetProperBulletPosition",
+   "ea": "0x949b5d",
+   "beidou_name": "sub_949B5D",
+   "beidou_size": "0x3ff",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetMoveAction",
+   "ea": "0x94a10a",
+   "beidou_name": "sub_94A10A",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "Update",
+   "ea": "0x94a144",
+   "beidou_name": "sub_94A144",
+   "beidou_size": "0x1ce0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsAttract",
+   "ea": "0x94be9c",
+   "beidou_name": "sub_94BE9C",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "Jump",
+   "ea": "0x94c383",
+   "beidou_name": "sub_94C383",
+   "beidou_size": "0x156",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsWeakened",
+   "ea": "0x94c4d9",
+   "beidou_name": "sub_94C4D9",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "FallDown",
+   "ea": "0x94c4f8",
+   "beidou_name": "sub_94C4F8",
+   "beidou_size": "0x24c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnKey",
+   "ea": "0x94c856",
+   "beidou_name": "sub_94C856",
+   "beidou_size": "0x5b0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnMouseButton",
+   "ea": "0x94cf7a",
+   "beidou_name": "sub_94CF7A",
+   "beidou_size": "0x49",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnMouseMove",
+   "ea": "0x94cfc3",
+   "beidou_name": "sub_94CFC3",
+   "beidou_size": "0x224",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnFeatureChanged",
+   "ea": "0x94d20b",
+   "beidou_name": "sub_94D20B",
+   "beidou_size": "0x106",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetShoeAttr",
+   "ea": "0x94d311",
+   "beidou_name": "sub_94D311",
+   "beidou_size": "0xc8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetShoeAttr",
+   "ea": "0x94d3d9",
+   "beidou_name": "sub_94D3D9",
+   "beidou_size": "0x6ed",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CheckPortal_Collision",
+   "ea": "0x94dac6",
+   "beidou_name": "sub_94DAC6",
+   "beidou_size": "0x35c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CheckReactor_Collision",
+   "ea": "0x94df67",
+   "beidou_name": "sub_94DF67",
+   "beidou_size": "0x34",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleUpKeyDown",
+   "ea": "0x94df9b",
+   "beidou_name": "sub_94DF9B",
+   "beidou_size": "0x2bb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleCtrlKeyDown",
+   "ea": "0x94e256",
+   "beidou_name": "sub_94E256",
+   "beidou_size": "0x209",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleXKeyDown",
+   "ea": "0x94e45f",
+   "beidou_name": "sub_94E45F",
+   "beidou_size": "0x153",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingFallDown",
+   "ea": "0x94e692",
+   "beidou_name": "sub_94E692",
+   "beidou_size": "0x41",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingTeleport",
+   "ea": "0x94e6d3",
+   "beidou_name": "sub_94E6D3",
+   "beidou_size": "0x1b9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ValidateItemSkill",
+   "ea": "0x94eaa9",
+   "beidou_name": "sub_94EAA9",
+   "beidou_size": "0x2ce",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ValidateSkillBonus",
+   "ea": "0x94ed77",
+   "beidou_name": "sub_94ED77",
+   "beidou_size": "0x576",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "UseFuncKeyMapped",
+   "ea": "0x94f2ed",
+   "beidou_name": "sub_94F2ED",
+   "beidou_size": "0x758",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsStopPortion",
+   "ea": "0x94fa45",
+   "beidou_name": "sub_94FA45",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleLButtonDown",
+   "ea": "0x94fa64",
+   "beidou_name": "sub_94FA64",
+   "beidou_size": "0x2a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleLButtonClk",
+   "ea": "0x94fa8e",
+   "beidou_name": "sub_94FA8E",
+   "beidou_size": "0x131",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleLButtonDblClk",
+   "ea": "0x94fbbf",
+   "beidou_name": "sub_94FBBF",
+   "beidou_size": "0x4db",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HandleRButtonClk",
+   "ea": "0x95009a",
+   "beidou_name": "sub_95009A",
+   "beidou_size": "0x497",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnResolveMoveAction",
+   "ea": "0x950555",
+   "beidou_name": "sub_950555",
+   "beidou_size": "0x1f2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnPacket",
+   "ea": "0x950747",
+   "beidou_name": "sub_950747",
+   "beidou_size": "0x162",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingMeleeAttack",
+   "ea": "0x950921",
+   "beidou_name": "sub_950921",
+   "beidou_size": "0x2c3c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingShootAttack",
+   "ea": "0x9537d5",
+   "beidou_name": "sub_9537D5",
+   "beidou_size": "0x1ed6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingMagicAttack",
+   "ea": "0x95571f",
+   "beidou_name": "sub_95571F",
+   "beidou_size": "0x1a59",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingNormalAttack",
+   "ea": "0x95719b",
+   "beidou_name": "sub_95719B",
+   "beidou_size": "0x695",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingWings",
+   "ea": "0x957a1f",
+   "beidou_name": "sub_957A1F",
+   "beidou_size": "0x155",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryRegisterTeleport",
+   "ea": "0x957b74",
+   "beidou_name": "sub_957B74",
+   "beidou_size": "0x5cf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetDamaged",
+   "ea": "0x9581a9",
+   "beidou_name": "sub_9581A9",
+   "beidou_size": "0x155f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnTeleport",
+   "ea": "0x959727",
+   "beidou_name": "sub_959727",
+   "beidou_size": "0x70",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnSitResult",
+   "ea": "0x959797",
+   "beidou_name": "sub_959797",
+   "beidou_size": "0x13d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetUpFromPortableChair",
+   "ea": "0x9598d4",
+   "beidou_name": "sub_9598D4",
+   "beidou_size": "0x6d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnMesoGive_Succeeded",
+   "ea": "0x9599bb",
+   "beidou_name": "sub_9599BB",
+   "beidou_size": "0x8c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnMesoGive_Failed",
+   "ea": "0x959a47",
+   "beidou_name": "sub_959A47",
+   "beidou_size": "0x2c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnQuestResult",
+   "ea": "0x959a73",
+   "beidou_name": "sub_959A73",
+   "beidou_size": "0xea8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnPetActivated",
+   "ea": "0x95a947",
+   "beidou_name": "sub_95A947",
+   "beidou_size": "0x424",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnPetEvol",
+   "ea": "0x95ad6b",
+   "beidou_name": "sub_95AD6B",
+   "beidou_size": "0x81",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnSetDead",
+   "ea": "0x95af4e",
+   "beidou_name": "sub_95AF4E",
+   "beidou_size": "0x40",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnRevive",
+   "ea": "0x95b015",
+   "beidou_name": "sub_95B015",
+   "beidou_size": "0x17",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetCarryItemEffectForLocal",
+   "ea": "0x95b02c",
+   "beidou_name": "sub_95B02C",
+   "beidou_size": "0x9a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetActiveEffectItemForLocal",
+   "ea": "0x95b20d",
+   "beidou_name": "sub_95B20D",
+   "beidou_size": "0x128",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetPairCharacterID",
+   "ea": "0x95b335",
+   "beidou_name": "sub_95B335",
+   "beidou_size": "0x147",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetFriendPairCharacterID",
+   "ea": "0x95b47c",
+   "beidou_name": "sub_95B47C",
+   "beidou_size": "0x14c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetMarriagePairCharacterID",
+   "ea": "0x95b5c8",
+   "beidou_name": "sub_95B5C8",
+   "beidou_size": "0xf1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetNewYearCardPairCharacterID",
+   "ea": "0x95b6b9",
+   "beidou_name": "sub_95B6B9",
+   "beidou_size": "0x7b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetSecondaryStatChangedPoint",
+   "ea": "0x95b7b4",
+   "beidou_name": "sub_95B7B4",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "RedrawGuildNameTag",
+   "ea": "0x95b7d5",
+   "beidou_name": "sub_95B7D5",
+   "beidou_size": "0x85",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsWeaponDisabled",
+   "ea": "0x95b85a",
+   "beidou_name": "sub_95B85A",
+   "beidou_size": "0x12b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnNotifyHPDecByField",
+   "ea": "0x95b985",
+   "beidou_name": "sub_95B985",
+   "beidou_size": "0x1c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryConsumePetHP",
+   "ea": "0x95b9a4",
+   "beidou_name": "sub_95B9A4",
+   "beidou_size": "0x23c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryConsumePetMP",
+   "ea": "0x95bbe0",
+   "beidou_name": "sub_95BBE0",
+   "beidou_size": "0x21f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnSkillCooltimeSet",
+   "ea": "0x95be66",
+   "beidou_name": "sub_95BE66",
+   "beidou_size": "0x79",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnKeyDownSkillEnd",
+   "ea": "0x95bedf",
+   "beidou_name": "sub_95BEDF",
+   "beidou_size": "0x29c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DrawKeyDownBar",
+   "ea": "0x95c3e3",
+   "beidou_name": "sub_95C3E3",
+   "beidou_size": "0x978",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetAttractMove",
+   "ea": "0x95cd5b",
+   "beidou_name": "sub_95CD5B",
+   "beidou_size": "0x68",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetAchillesReduce",
+   "ea": "0x95cdc3",
+   "beidou_name": "sub_95CDC3",
+   "beidou_size": "0xc7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "ShowAutoStartQuestList",
+   "ea": "0x95d260",
+   "beidou_name": "sub_95D260",
+   "beidou_size": "0x3b4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetDCRect",
+   "ea": "0x95d614",
+   "beidou_name": "sub_95D614",
+   "beidou_size": "0x1a3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CheckBoobyTrapPickUpRequest",
+   "ea": "0x95d7b7",
+   "beidou_name": "sub_95D7B7",
+   "beidou_size": "0xd4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnMakerResult",
+   "ea": "0x95dad3",
+   "beidou_name": "sub_95DAD3",
+   "beidou_size": "0x6df",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnTemporaryStatChanged",
+   "ea": "0x95f065",
+   "beidou_name": "sub_95F065",
+   "beidou_size": "0xd0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CanUseBareHand",
+   "ea": "0x95f8cf",
+   "beidou_name": "sub_95F8CF",
+   "beidou_size": "0x31",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsDashing",
+   "ea": "0x95f900",
+   "beidou_name": "sub_95F900",
+   "beidou_size": "0x14",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsImmovable",
+   "ea": "0x95f914",
+   "beidou_name": "sub_95F914",
+   "beidou_size": "0x5b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CheckRidingVehicle",
+   "ea": "0x95f9d9",
+   "beidou_name": "sub_95F9D9",
+   "beidou_size": "0xb2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CalcBuffDefenseAttr",
+   "ea": "0x95fa8b",
+   "beidou_name": "sub_95FA8B",
+   "beidou_size": "0xb3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TalkToNpc",
+   "ea": "0x95fe9e",
+   "beidou_name": "sub_95FE9E",
+   "beidou_size": "0xbc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SetDirectionMode",
+   "ea": "0x95ff5a",
+   "beidou_name": "sub_95FF5A",
+   "beidou_size": "0x48",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetJobCode",
+   "ea": "0x95ffc3",
+   "beidou_name": "sub_95FFC3",
+   "beidou_size": "0x64",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnOpenUI",
+   "ea": "0x9600f0",
+   "beidou_name": "sub_9600F0",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "RemoveTutor",
+   "ea": "0x960111",
+   "beidou_name": "sub_960111",
+   "beidou_size": "0x3e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnHireTutor",
+   "ea": "0x96014f",
+   "beidou_name": "sub_96014F",
+   "beidou_size": "0xea",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnTutorMsg",
+   "ea": "0x960239",
+   "beidou_name": "sub_960239",
+   "beidou_size": "0x92",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnIncComboResponse",
+   "ea": "0x9602cb",
+   "beidou_name": "sub_9602CB",
+   "beidou_size": "0x28",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DrawCombo",
+   "ea": "0x960342",
+   "beidou_name": "sub_960342",
+   "beidou_size": "0xbdf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "HoldCombo",
+   "ea": "0x960fa4",
+   "beidou_name": "sub_960FA4",
+   "beidou_size": "0x31",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnOpenSkillGuide",
+   "ea": "0x961042",
+   "beidou_name": "sub_961042",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "OnResignQuestReturn",
+   "ea": "0x961120",
+   "beidou_name": "sub_961120",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "GetFieldID",
+   "ea": "0x9613e0",
+   "beidou_name": "sub_9613E0",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill",
+   "ea": "0x966f7a",
+   "beidou_name": "sub_966F7A",
+   "beidou_size": "0x2497",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_MeleeAttack",
+   "ea": "0x969465",
+   "beidou_name": "sub_969465",
+   "beidou_size": "0x23d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_ShootAttack",
+   "ea": "0x9696a2",
+   "beidou_name": "sub_9696A2",
+   "beidou_size": "0x3b5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_VehicleShootAttack",
+   "ea": "0x969a57",
+   "beidou_name": "sub_969A57",
+   "beidou_size": "0xb9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_MagicAttack",
+   "ea": "0x969b10",
+   "beidou_name": "sub_969B10",
+   "beidou_size": "0x45",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_TownPortal",
+   "ea": "0x969bf9",
+   "beidou_name": "sub_969BF9",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_StatChange",
+   "ea": "0x969e21",
+   "beidou_name": "sub_969E21",
+   "beidou_size": "0x519",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_Heal",
+   "ea": "0x96a69d",
+   "beidou_name": "sub_96A69D",
+   "beidou_size": "0x1d1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_Prepare",
+   "ea": "0x96a86e",
+   "beidou_name": "sub_96A86E",
+   "beidou_size": "0x8d2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_BoundJump",
+   "ea": "0x96be38",
+   "beidou_name": "sub_96BE38",
+   "beidou_size": "0x372",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_SmokeShell",
+   "ea": "0x96c742",
+   "beidou_name": "sub_96C742",
+   "beidou_size": "0x1d5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_RecoveryAura",
+   "ea": "0x96c917",
+   "beidou_name": "sub_96C917",
+   "beidou_size": "0x245",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "IsTeleportSkillAvailable",
+   "ea": "0x96cb93",
+   "beidou_name": "sub_96CB93",
+   "beidou_size": "0x1ab",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "TryDoingPreparedSkill",
+   "ea": "0x96cf1d",
+   "beidou_name": "sub_96CF1D",
+   "beidou_size": "0x168",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoAntiMacroSkill",
+   "ea": "0x96d0d1",
+   "beidou_name": "sub_96D0D1",
+   "beidou_size": "0x162",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SendSkillUseRequest",
+   "ea": "0x96d399",
+   "beidou_name": "sub_96D399",
+   "beidou_size": "0x331",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SendSkillCancelRequest",
+   "ea": "0x96d873",
+   "beidou_name": "sub_96D873",
+   "beidou_size": "0xeb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "DoActiveSkill_CombatStep",
+   "ea": "0x96d95e",
+   "beidou_name": "sub_96D95E",
+   "beidou_size": "0x1e1",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "FindParty",
+   "ea": "0x96db3f",
+   "beidou_name": "sub_96DB3F",
+   "beidou_size": "0x14a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "SitOnPortableChair",
+   "ea": "0xa0fba4",
+   "beidou_name": "sub_A0FBA4",
+   "beidou_size": "0x50",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnMove",
+   "ea": "0x9726ae",
+   "beidou_name": "sub_9726AE",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "GetCharacterLevel",
+   "ea": "0x97f437",
+   "beidou_name": "sub_97F437",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "GetSecondaryStat",
+   "ea": "0x97f43e",
+   "beidou_name": "sub_97F43E",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "IsLocalUser",
+   "ea": "0x97f445",
+   "beidou_name": "sub_97F445",
+   "beidou_size": "0x3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "IsPreview",
+   "ea": "0x97f448",
+   "beidou_name": "sub_97F448",
+   "beidou_size": "0x3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "IsRemoteUser",
+   "ea": "0x97f44b",
+   "beidou_name": "sub_97F44B",
+   "beidou_size": "0x4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "GetJobCode",
+   "ea": "0x97f44f",
+   "beidou_name": "sub_97F44F",
+   "beidou_size": "0x7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnPetEvol",
+   "ea": "0x97f456",
+   "beidou_name": "sub_97F456",
+   "beidou_size": "0xc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "Init",
+   "ea": "0x97f55d",
+   "beidou_name": "sub_97F55D",
+   "beidou_size": "0x876",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "Update",
+   "ea": "0x97fdf8",
+   "beidou_name": "sub_97FDF8",
+   "beidou_size": "0x5b3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnAttack",
+   "ea": "0x9803ab",
+   "beidou_name": "sub_9803AB",
+   "beidou_size": "0x6d6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnMeleeAttack",
+   "ea": "0x980c90",
+   "beidou_name": "sub_980C90",
+   "beidou_size": "0x581",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnShootAttack",
+   "ea": "0x981211",
+   "beidou_name": "sub_981211",
+   "beidou_size": "0x12fc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnMagicAttack",
+   "ea": "0x98250d",
+   "beidou_name": "sub_98250D",
+   "beidou_size": "0xbae",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnBodyAttack",
+   "ea": "0x9830bb",
+   "beidou_name": "sub_9830BB",
+   "beidou_size": "0x228",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnHit",
+   "ea": "0x9832e3",
+   "beidou_name": "sub_9832E3",
+   "beidou_size": "0x39b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnAvatarModified",
+   "ea": "0x98367e",
+   "beidou_name": "sub_98367E",
+   "beidou_size": "0x1df",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnReceiveHP",
+   "ea": "0x9839ea",
+   "beidou_name": "sub_9839EA",
+   "beidou_size": "0x80",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "OnPetActivated",
+   "ea": "0x983aff",
+   "beidou_name": "sub_983AFF",
+   "beidou_size": "0xc2",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "LoadCompletely",
+   "ea": "0x983c04",
+   "beidou_name": "sub_983C04",
+   "beidou_size": "0x237",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserRemote",
+   "method": "RedrawGuildNameTag",
+   "ea": "0x983e3b",
+   "beidou_name": "sub_983E3B",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnDragDrop",
+   "ea": "0x4243fe",
+   "beidou_name": "sub_4243FE",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsMyAddon",
+   "ea": "0x424403",
+   "beidou_name": "sub_424403",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseButton",
+   "ea": "0x424443",
+   "beidou_name": "nullsub_43",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseMove",
+   "ea": "0x424446",
+   "beidou_name": "sub_424446",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnChildNotify",
+   "ea": "0x42444e",
+   "beidou_name": "sub_42444E",
+   "beidou_size": "0x13",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnCreate_unsure",
+   "ea": "0x4259d9",
+   "beidou_name": "nullsub_46",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnDestroy_unsure",
+   "ea": "0x4259dc",
+   "beidou_name": "nullsub_47",
+   "beidou_size": "0x1",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetCanvas",
+   "ea": "0x425c4c",
+   "beidou_name": "sub_425C4C",
+   "beidou_size": "0xbf",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetLayer",
+   "ea": "0x426604",
+   "beidou_name": "sub_426604",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnButtonClicked",
+   "ea": "0x45a63c",
+   "beidou_name": "nullsub_57",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetRTTI",
+   "ea": "0x45a63f",
+   "beidou_name": "sub_45A63F",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsKindOf",
+   "ea": "0x45a645",
+   "beidou_name": "sub_45A645",
+   "beidou_size": "0x21",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "CreateWnd",
+   "ea": "0x9de4d2",
+   "beidou_name": "sub_9DE4D2",
+   "beidou_size": "0x329",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "PreCreateWnd",
+   "ea": "0x9de7fb",
+   "beidou_name": "sub_9DE7FB",
+   "beidou_size": "0x35c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMoveWnd",
+   "ea": "0x9deb57",
+   "beidou_name": "sub_9DEB57",
+   "beidou_size": "0x154f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnEndMoveWnd",
+   "ea": "0x9e00a6",
+   "beidou_name": "sub_9E00A6",
+   "beidou_size": "0x9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Destroy",
+   "ea": "0x9e00af",
+   "beidou_name": "sub_9E00AF",
+   "beidou_size": "0x119",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseEnter",
+   "ea": "0x9e01c8",
+   "beidou_name": "sub_9E01C8",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "HitTest",
+   "ea": "0x9e01e7",
+   "beidou_name": "sub_9E01E7",
+   "beidou_size": "0xc7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnMouseWheel",
+   "ea": "0x9e02ae",
+   "beidou_name": "sub_9E02AE",
+   "beidou_size": "0xbb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnSetFocus",
+   "ea": "0x9e0369",
+   "beidou_name": "sub_9E0369",
+   "beidou_size": "0x3d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetAbsLeft",
+   "ea": "0x9e03c5",
+   "beidou_name": "sub_9E03C5",
+   "beidou_size": "0x82",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "GetAbsTop",
+   "ea": "0x9e0447",
+   "beidou_name": "sub_9E0447",
+   "beidou_size": "0x82",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "InvalidateRect",
+   "ea": "0x9e04c9",
+   "beidou_name": "sub_9E04C9",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Draw",
+   "ea": "0x9e0502",
+   "beidou_name": "sub_9E0502",
+   "beidou_size": "0x17c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "Update",
+   "ea": "0x9e067e",
+   "beidou_name": "sub_9E067E",
+   "beidou_size": "0x47",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "IsFocused",
+   "ea": "0x9e06c5",
+   "beidou_name": "sub_9E06C5",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "RemoveChild",
+   "ea": "0x9e06f6",
+   "beidou_name": "sub_9E06F6",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetAnimationBackgrnd",
+   "ea": "0x9e0750",
+   "beidou_name": "sub_9E0750",
+   "beidou_size": "0x362",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetBackgrnd",
+   "ea": "0x9e0ab2",
+   "beidou_name": "sub_9E0AB2",
+   "beidou_size": "0x133",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "SetFocusChild",
+   "ea": "0x9e0be5",
+   "beidou_name": "sub_9E0BE5",
+   "beidou_size": "0x3a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "ClipRect",
+   "ea": "0x9e0c1f",
+   "beidou_name": "sub_9E0C1F",
+   "beidou_size": "0x10d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetOrgWindow",
+   "ea": "0x48bba5",
+   "beidou_name": "sub_48BBA5",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "UpdateWindowPosition",
+   "ea": "0x9e03a6",
+   "beidou_name": "sub_9E03A6",
+   "beidou_size": "0x1f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "PreCreateWnd",
+   "ea": "0x9e2fe0",
+   "beidou_name": "nullsub_254",
+   "beidou_size": "0x3",
+   "status": "present_named"
+  },
+  {
+   "class": "CWndMan",
+   "method": "OnActivate",
+   "ea": "0x9e2fe3",
+   "beidou_name": "sub_9E2FE3",
+   "beidou_size": "0x6",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetCursorPos",
+   "ea": "0x9e311b",
+   "beidou_name": "sub_9E311B",
+   "beidou_size": "0x65",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetCursorPos",
+   "ea": "0x9e3180",
+   "beidou_name": "sub_9E3180",
+   "beidou_size": "0x6c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetFocus",
+   "ea": "0x9e3264",
+   "beidou_name": "sub_9E3264",
+   "beidou_size": "0x11a",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetActiveWndImp",
+   "ea": "0x9e337e",
+   "beidou_name": "sub_9E337E",
+   "beidou_size": "0x7e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "SetCaptureWnd",
+   "ea": "0x9e33fc",
+   "beidou_name": "sub_9E33FC",
+   "beidou_size": "0x36",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ReleaseCaptureWnd",
+   "ea": "0x9e3432",
+   "beidou_name": "sub_9E3432",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "Unlink",
+   "ea": "0x9e3454",
+   "beidou_name": "sub_9E3454",
+   "beidou_size": "0xe9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "BeginDragDrop",
+   "ea": "0x9e353d",
+   "beidou_name": "sub_9E353D",
+   "beidou_size": "0x285",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "EndDragDrop",
+   "ea": "0x9e37c2",
+   "beidou_name": "sub_9E37C2",
+   "beidou_size": "0x2fe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ClearDragContext",
+   "ea": "0x9e3ac0",
+   "beidou_name": "sub_9E3AC0",
+   "beidou_size": "0x26",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ProcessMouse",
+   "ea": "0x9e3ae6",
+   "beidou_name": "sub_9E3AE6",
+   "beidou_size": "0x4ef",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ProcessKey",
+   "ea": "0x9e40f1",
+   "beidou_name": "sub_9E40F1",
+   "beidou_size": "0x1a0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "GetHandlerFromPoint",
+   "ea": "0x9e42b2",
+   "beidou_name": "sub_9E42B2",
+   "beidou_size": "0x14d",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "InsertWindow",
+   "ea": "0x9e43ff",
+   "beidou_name": "sub_9E43FF",
+   "beidou_size": "0xbb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveWindow",
+   "ea": "0x9e44ba",
+   "beidou_name": "sub_9E44BA",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveUpdateWindow",
+   "ea": "0x9e44dc",
+   "beidou_name": "sub_9E44DC",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "InsertInvalidatedWindow",
+   "ea": "0x9e44fe",
+   "beidou_name": "sub_9E44FE",
+   "beidou_size": "0x27",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RemoveInvalidatedWindow",
+   "ea": "0x9e4525",
+   "beidou_name": "sub_9E4525",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "RedrawInvalidatedWindows",
+   "ea": "0x9e4547",
+   "beidou_name": "sub_9E4547",
+   "beidou_size": "0x27c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "TranslateMessage",
+   "ea": "0x9e7d77",
+   "beidou_name": "sub_9E7D77",
+   "beidou_size": "0x389",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "ClearComposition",
+   "ea": "0x9e85e7",
+   "beidou_name": "sub_9E85E7",
+   "beidou_size": "0xc",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "EnableIME",
+   "ea": "0x9e85f3",
+   "beidou_name": "sub_9E85F3",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "NotifyIME",
+   "ea": "0x9e8659",
+   "beidou_name": "sub_9E8659",
+   "beidou_size": "0x37",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnButtonClicked",
+   "ea": "0x424492",
+   "beidou_name": "sub_424492",
+   "beidou_size": "0x1e",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "ClearToolTip",
+   "ea": "0x9e98b7",
+   "beidou_name": "sub_9E98B7",
+   "beidou_size": "0xb",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMap",
+   "ea": "0x9ea93b",
+   "beidou_name": "sub_9EA93B",
+   "beidou_size": "0xa2b",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CreateWorldMapDlg",
+   "ea": "0x9eb366",
+   "beidou_name": "sub_9EB366",
+   "beidou_size": "0x3f5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnCreate",
+   "ea": "0x9eb75b",
+   "beidou_name": "sub_9EB75B",
+   "beidou_size": "0x1ef",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnDestroy",
+   "ea": "0x9eb94a",
+   "beidou_name": "sub_9EB94A",
+   "beidou_size": "0x44",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "HitTest",
+   "ea": "0x9eb98e",
+   "beidou_name": "sub_9EB98E",
+   "beidou_size": "0x38",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "Draw",
+   "ea": "0x9eb9c6",
+   "beidou_name": "sub_9EB9C6",
+   "beidou_size": "0x5fd",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "MakeBorder",
+   "ea": "0x9ebfc3",
+   "beidou_name": "sub_9EBFC3",
+   "beidou_size": "0xc87",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "LoadMapList",
+   "ea": "0x9ed38b",
+   "beidou_name": "sub_9ED38B",
+   "beidou_size": "0x9b3",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CheckSpotInfo",
+   "ea": "0x9edd67",
+   "beidou_name": "sub_9EDD67",
+   "beidou_size": "0x2a7",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "CheckLinkInfo",
+   "ea": "0x9ee00e",
+   "beidou_name": "sub_9EE00E",
+   "beidou_size": "0x2a5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseMove",
+   "ea": "0x9ee2b3",
+   "beidou_name": "sub_9EE2B3",
+   "beidou_size": "0x39",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseEnter",
+   "ea": "0x9ee2ec",
+   "beidou_name": "sub_9EE2EC",
+   "beidou_size": "0x22",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMapDeeper",
+   "ea": "0x9ee30e",
+   "beidou_name": "sub_9EE30E",
+   "beidou_size": "0x1f9",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "SetWorldMapShallower",
+   "ea": "0x9ee507",
+   "beidou_name": "sub_9EE507",
+   "beidou_size": "0x1de",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnMouseButton",
+   "ea": "0x9ee6e5",
+   "beidou_name": "sub_9EE6E5",
+   "beidou_size": "0x32",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWorldMapDlg",
+   "method": "OnKey",
+   "ea": "0x9ee717",
+   "beidou_name": "sub_9EE717",
+   "beidou_size": "0x66",
+   "status": "present_sub"
+  }
+ ]
+}

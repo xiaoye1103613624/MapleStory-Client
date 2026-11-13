@@ -54,6 +54,8 @@ namespace ms
 
 		void draw(float alpha) const override;
 		void update() override;
+		// classic：同 QS 档切分辨率只重锚；宽/窄档翻转由 UIStateGame 整窗重建。
+		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		bool is_in_range(Point<int16_t> cursor_position) const override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
@@ -68,6 +70,13 @@ namespace ms
 		bool is_classic() const { return classic_mode; }
 		// L5：KeyConfig 保存/恢复默认/清空后强制刷新快捷栏图标（083 ReDrawQuickslot / InvalidateRect 等价）。
 		void redraw_quickslots() { refresh_classic_qs_icons(); }
+		// P1/T4：任务进度更新时点亮菜单「任务」钮（非 UtilDlgEx KEY_ANI 四主窗指引链）。
+		void blink_menu_quest() { start_button_blink(BT_MENU_QUEST); }
+		// P2/T4：对齐 Angel CUtilDlgEx::Draw @0x9a4256 → SetButtonBlink(idx,1)，
+		// idx∈[0,3] = Equip/Inv/Stat/Skill KEY_ANI；越界忽略。
+		void start_guide_blink(uint8_t idx);
+		void stop_guide_blink(uint8_t idx);
+		void stop_all_guide_blinks();
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;

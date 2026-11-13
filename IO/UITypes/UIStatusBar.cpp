@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStatusBar.h"
 
+#include "../../Util/HudLayout.h"
 #include "../../Util/ResolutionTiers.h"
 
 #include "UIAdmin.h"
@@ -196,6 +197,60 @@ namespace ms
 		}
 
 		init_modern();
+	}
+
+	void UIStatusBar::update_screen(int16_t new_width, int16_t new_height)
+	{
+		if (!classic_mode)
+			return;
+
+		// QS 宽/窄翻转：禁止在本函数半切换贴图（会一帧双绘/钮空洞）。
+		// 交由 UIStateGame 卸 STATUSBAR 再 emplace（先卸命中再换纹理），见
+		// UIStateGame.cpp qs_flip 分支；此处仅同档重锚。
+		if (HudLayout::is_qs_wide(new_width, CLASSIC_QS_SLOTS == 32) != classic_qs_wide)
+			return;
+
+		VWIDTH = new_width;
+		VHEIGHT = new_height;
+
+		const bool slots32 = (CLASSIC_QS_SLOTS == 32);
+		const int16_t content_w = HudLayout::hud_content_w(VWIDTH, slots32);
+		const int16_t hud_cx = HudLayout::hud_center_x(VWIDTH, content_w);
+
+		quickslot_pos = Point<int16_t>(
+			HudLayout::qs_x_in_group(VWIDTH, slots32),
+			-8);
+		const int16_t group_x = static_cast<int16_t>(
+			quickslot_pos.x() - HudLayout::qs_group_gap(VWIDTH));
+
+		auto move_btn = [this](Buttons id, int16_t x, int16_t y)
+		{
+			if (Button* b = button_at(id))
+				b->set_position(Point<int16_t>(x, y));
+		};
+
+		move_btn(Buttons::BT_CLASSIC_SHOP, group_x + 0, 36);
+		move_btn(Buttons::BT_CLASSIC_NPT, group_x + 56, 36);
+		move_btn(Buttons::BT_CLASSIC_MENU, group_x + 112, 36);
+		move_btn(Buttons::BT_CLASSIC_SHORT, group_x + 168, 36);
+		move_btn(Buttons::BT_CLASSIC_EQUIP, group_x + 45, 8);
+		move_btn(Buttons::BT_CLASSIC_INV, group_x + 75, 8);
+		move_btn(Buttons::BT_CLASSIC_STAT, group_x + 105, 8);
+		move_btn(Buttons::BT_CLASSIC_SKILL, group_x + 135, 8);
+		move_btn(Buttons::BT_CLASSIC_KEYSET, group_x + 165, 8);
+		move_btn(Buttons::BT_CLASSIC_QS, group_x + 195, 8);
+		move_btn(Buttons::BT_CLASSIC_QSD, group_x + 195, 8);
+		move_btn(Buttons::BT_CLASSIC_CLAIM, group_x - 15, 8);
+		move_btn(Buttons::BT_CLASSIC_WHISPER, group_x + 15, 8);
+
+		position = Point<int16_t>(hud_cx, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
+		position_x = position.x();
+		position_y = static_cast<int16_t>(position.y() - 9);
+		dimension = Point<int16_t>(VWIDTH, 80);
+
+		LOG(LOG_DEBUG, "[MR] StatusBar classic reanchor cx=" << hud_cx
+			<< " content_w=" << content_w << " qs_x=" << quickslot_pos.x()
+			<< " group_x=" << group_x << " vw=" << VWIDTH << " vh=" << VHEIGHT);
 	}
 
 	void UIStatusBar::init_modern()
@@ -1717,6 +1772,35 @@ namespace ms
 		blink_ani[idx].reset();
 	}
 
+	void UIStatusBar::start_guide_blink(uint8_t idx)
+	{
+		static constexpr uint16_t kGuideBtns[4] = {
+			Buttons::BT_CLASSIC_EQUIP, Buttons::BT_CLASSIC_INV,
+			Buttons::BT_CLASSIC_STAT, Buttons::BT_CLASSIC_SKILL
+		};
+		if (idx >= 4)
+			return;
+		start_button_blink(kGuideBtns[idx]);
+		LOG(LOG_DEBUG, "UIStatusBar: guide KEY_ANI start idx=" << static_cast<int>(idx));
+	}
+
+	void UIStatusBar::stop_guide_blink(uint8_t idx)
+	{
+		static constexpr uint16_t kGuideBtns[4] = {
+			Buttons::BT_CLASSIC_EQUIP, Buttons::BT_CLASSIC_INV,
+			Buttons::BT_CLASSIC_STAT, Buttons::BT_CLASSIC_SKILL
+		};
+		if (idx >= 4)
+			return;
+		stop_button_blink(kGuideBtns[idx]);
+	}
+
+	void UIStatusBar::stop_all_guide_blinks()
+	{
+		for (uint8_t i = 0; i < 4; ++i)
+			stop_guide_blink(i);
+	}
+
 	// 083 a3==0（清除）：OnButtonClicked 2000-2003 开子窗 / OnChildNotify a3==100 /
 	// Update 的 +90000ms 超时。-1 对齐 083 的 v8 = -1（未启动）。
 	void UIStatusBar::stop_button_blink(uint16_t id)
@@ -1956,35 +2040,19 @@ namespace ms
 		zero_origin(classic_gauge_bar);
 		zero_origin(classic_gauge_gray);
 
-		// ============ 经典底条布局（左贴边 + 右侧面板贴右缘）============
+		// ============ 经典底条布局（800 设计网格 + 可选水平居中）============
 		// 权威来源：
 		//  a) Angel 083 CUIStatusBar::OnCreate @ 0x8d01b2 逐字 CreateCtrl(caller, this, id, x, y, type)：
 		//       BtShop=1000/(573,543)  1001/(629,543)  BtMenu=1002/(685,543)
 		//       BtShort=1007/(741,543) EquipKey=2000/(618,515) InvenKey=2001/(648,515)
 		//       StatKey=2002/(678,515) SkillKey=2003/(708,515) KeySet=1005/(738,515)
 		//       QuickSlot=1006/(768,515) （1009/(573,515) = BtClaim，见 SP_1976_UI_STATUSBARIMG_BTCLAIM）
-		//     注：旧注释把 KeySet/QuickSlot/BtClaim 记成 2004/2005/2006，与 0x8d01b2 逐字不符；
-		//     1005/1006/1009 在 OnCreate 里紧接 2003 依次创建，节点名分别取自
-		//     SP_1983_..KEYSET / SP_1984_..QUICKSLOT / SP_1976_..BTCLAIM。
 		//     创建窗体高 578、top≈22 → 底条相对 y = CreateY - 507：543→36、515→8。
-		//     x 末端 741+54=795 / 768+28=796，证明设计网格宽 800（而非右移贴边）。
-		//  b) StatusBar.img 节点实测（nx_inspect，origin 全部 (0,0)）：
-		//       base/backgrnd  817x71  ← 固定尺寸精灵，旧代码拉伸到 VWIDTH 会失真
-		//       base/backgrnd2 570x71  ← 叠加层：上带亮板 y6..29（名字）；
-		//                                下带深色量表面板 y36..69 x0..562，LV 盒 x0..84
-		//                                「LV.」字样已烘焙在 x10..29 / y47..59 → 不重画
-		//       gauge/bar & gauge/graduation 340x31 三联图集（同行排列，非上下叠放）：
-		//         填充 HP 红 x2..106 / MP 蓝 x110..214 / EXP 绿 x223..337，均 y15..28
-		//         边框 HP x0..107  / MP x109..215  / EXP x222..339，均 y13..30
-		//       gauge/hpFlash|mpFlash 109x18（5 帧闪光覆盖层）
-		//       number 字符集 0-9(5x7)+Lbracket/Rbracket(2x9)+slash/percent(7x7)，无 '.' 字形
-		//       FontMemo 0-9(6x7，'1' 为 3x7) 位图数字
-		//       key/0..6 = 28x11 / 18x11 / 19x11 / 22x13 / 24x11 / 19x11 / 21x11 键名贴纸
-		//       base/quickSlot08 151x80、quickSlot26 466x80、quickSlot32 571x80
-		//         （格 28x28、首格 (9,9)、列距 35、行距 34 —— 见文件顶部 QS_* 推导）
-		//  c) 正确端截图：底栏左贴边、右快捷格贴右边，backgrnd 横向铺满。
-		//     「800 设计网格 + right_adj」是旧版整体居中的产物，已废弃：左侧贴边、
-		//     右侧面板贴 VWIDTH 右缘即可，无需再算右偏移量。
+		//     x 末端 741+54=795 / 768+28=796，证明设计网格宽 HUD_DESIGN_W=800。
+		//  b) StatusBar.img 节点实测：base/backgrnd 817x71、quickSlot08/26/32 = 151/466/571。
+		//  c) Angel 无多分辨率（左贴边）。本端用户锁定：按 content_w 居中——
+		//     宽 QS 时 content_w=800+qs（QS 在 800 条右侧，禁止塞进 800）；QS08 仍 800 内右上；
+		//     backgrnd 仍通栏。公式见 Util/HudLayout.h，禁止再扩 modern 分宽坐标表。
 
 		// 参考截图（进入游戏页.png，1280x720，底栏 position 顶 = 649）逐像素判定：
 		//   graduation 暗边框整幅跨 x218..557（= 340，与图集同宽）→ GAUGE_X=218、
@@ -2077,17 +2145,16 @@ namespace ms
 			);
 		};
 
-		// 快捷栏面板按格数选型（W3/RC14）：32 格=quickSlot32(571x80,16 列)、26 格=quickSlot26(466x80,13 列)、
-		// 窄屏 8 格=quickSlot08(151x80,4 列)。键位表现为 26 键 → 宽屏取 quickSlot26；
-		// 表扩到 32 时自动切 quickSlot32。quickSlot 与 quickSlot26 像素全同（已 diff 证实），
-		// 故这里不再回退到 quickSlot。注意：quickSlot* 在 StatusBar.img/base/ 下（不是顶层）。
-		const bool wide = VWIDTH >= 1024;
+		// 快捷栏选型：仅当 VWIDTH >= 800+qs_panel 才用 26/32，否则 quickSlot08。
+		// 宽 QS 落在 800 条右侧（content_w=800+qs）；QS08 仍在 800 内右上。
+		const bool slots32 = (CLASSIC_QS_SLOTS == 32);
+		const bool wide = HudLayout::is_qs_wide(VWIDTH, slots32);
 		classic_qs_wide = wide;
 		if (wide)
 		{
 			classic_qs_count = CLASSIC_QS_SLOTS;
 			classic_qs_cols = classic_qs_count == 32 ? 16 : 13;
-			classic_quickslot = Texture(base[classic_qs_count == 32 ? "quickSlot32" : "quickSlot26"]);
+			classic_quickslot = Texture(base[slots32 ? "quickSlot32" : "quickSlot26"]);
 		}
 		else
 		{
@@ -2097,22 +2164,19 @@ namespace ms
 		}
 		zero_origin(classic_quickslot);
 
-		const int16_t qs_panel_w = classic_quickslot.get_dimensions().x();
-		// 多分辨率（用户决策，明确偏离原生）：原生是底栏左贴边 + 快捷格贴 VWIDTH
-		// 右缘（见本函数上方注释 c）。分辨率过宽时把「1280 设计网格」整组水平居中；
-		// 1280 及以下保持原生布局。底栏背景仍通栏铺满，不随内容组偏移。
-		const int16_t hud_center_x = VWIDTH > ResolutionTiers::LOGIN_W
-			? static_cast<int16_t>((VWIDTH - ResolutionTiers::LOGIN_W) / 2)
-			: 0;
-		const int16_t hud_grid_w = hud_center_x > 0 ? ResolutionTiers::LOGIN_W : VWIDTH;
+		const int16_t qs_panel_w = classic_quickslot.is_valid()
+			? classic_quickslot.get_dimensions().x()
+			: HudLayout::qs_panel_w(VWIDTH, slots32);
+		const int16_t content_w = HudLayout::hud_content_w(VWIDTH, slots32);
+		const int16_t hud_cx = HudLayout::hud_center_x(VWIDTH, content_w);
 
-		// 参考端：面板贴底条右缘（1280 屏 x=814=1280-466，实测与 quickSlot26 宽一致）；
-		// 面板自身 y2 是 1px 高亮线，参考截图该线在 y643 → 面板顶 y=641 = 底条 649 - 8。
+		// QS 组内 x：宽屏 = 800（或紧视口 vw-qs_w）；窄屏 = grid-qs08。y=-8 见历史截图取证。
 		quickslot_pos = Point<int16_t>(
-			static_cast<int16_t>(hud_grid_w - qs_panel_w),
+			HudLayout::qs_x_in_group(VWIDTH, slots32),
 			-8
 		);
-		const int16_t group_x = static_cast<int16_t>(quickslot_pos.x() - (wide ? 241 : 75));
+		const int16_t group_x = static_cast<int16_t>(
+			quickslot_pos.x() - HudLayout::qs_group_gap(VWIDTH));
 
 		// IDA CreateCtrl：y=543 → 底条 36；y=515 → 底条 8。按钮簇整体定位于 group_x。
 		add_btn(Buttons::BT_CLASSIC_SHOP, sb["BtShop"], group_x + 0, 36);
@@ -2165,12 +2229,16 @@ namespace ms
 		quickslot_active = true;
 		quickslot_adj = Point<int16_t>(0, 0);
 
-		// 1280 及以下：原生「左贴边 + 底贴边」；过宽：整组按 1280 设计网格水平居中
-		// （用户决策，唯一明确偏离原生定位处）。按钮命中基于 position，自动跟随偏移。
-		position = Point<int16_t>(hud_center_x, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
+		// HudGroup：x = hud_center_x(vw, content_w)；y 贴底。宽 QS 时 content_w=800+qs。
+		position = Point<int16_t>(hud_cx, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
 		position_x = position.x();
 		position_y = static_cast<int16_t>(position.y() - 9);
 		dimension = Point<int16_t>(VWIDTH, 80);
+
+		LOG(LOG_DEBUG, "[MR] StatusBar classic HudGroup cx=" << hud_cx
+			<< " content_w=" << content_w << " qs_x=" << quickslot_pos.x()
+			<< " qs_w=" << qs_panel_w << " group_x=" << group_x
+			<< " vw=" << VWIDTH << " vh=" << VHEIGHT);
 
 		refresh_classic_qs_icons();
 	}
@@ -2304,12 +2372,13 @@ namespace ms
 
 	void UIStatusBar::draw_classic(float alpha) const
 	{
-		// backgrnd：通栏横向平铺铺满 VWIDTH，消除左右黑边（正确端截图为通栏）。
-		// 多分辨率：内容组过宽居中后，通栏背景仍必须从 x=0 起画，不能跟着 position.x
-		// 右移（否则左侧留黑边、右侧溢出）。backgrnd2 等内容层继续按 position 绘制。
-		if (classic_backgrnd)
-			classic_backgrnd.draw(DrawArgument(
-				Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
+		// [用户暂关] classic StatusBar base/backgrnd 通栏底条。
+		// 原先：横向平铺铺满 VWIDTH，消除左右黑边；内容组居中后仍从 x=0 起画。
+		// 现按需求先不画，保留 backgrnd2 / gauge / chrome；恢复时取消下面注释即可。
+		// if (classic_backgrnd)
+		// 	classic_backgrnd.draw(DrawArgument(
+		// 		Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
+		(void)classic_backgrnd;
 
 		if (classic_backgrnd2)
 			classic_backgrnd2.draw(position);

@@ -409,6 +409,7 @@ namespace ms
 					types.emplace_back(UIElement::Type::STATSINFO);
 					types.emplace_back(UIElement::Type::ITEMINVENTORY);
 					types.emplace_back(UIElement::Type::EQUIPINVENTORY);
+					types.emplace_back(UIElement::Type::ADDONEQUIP);
 					types.emplace_back(UIElement::Type::SKILLBOOK);
 					types.emplace_back(UIElement::Type::QUESTLOG);
 					types.emplace_back(UIElement::Type::USERLIST);
@@ -434,6 +435,7 @@ namespace ms
 					// Game
 					types.emplace_back(UIElement::Type::ITEMINVENTORY);
 					types.emplace_back(UIElement::Type::EQUIPINVENTORY);
+					types.emplace_back(UIElement::Type::ADDONEQUIP);
 					types.emplace_back(UIElement::Type::SKILLBOOK);
 					types.emplace_back(UIElement::Type::QUESTLOG);
 					types.emplace_back(UIElement::Type::USERLIST);

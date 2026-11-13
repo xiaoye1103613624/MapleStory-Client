@@ -313,7 +313,7 @@ Angel 是 GMS v83 原生；当前端联机对象是 s9 服务端。**编号对�
    - 客户端 `UIChatBar::try_chat()`：刷屏 2000ms 限流 + 连续 4 同句拦截 + 脏词脱敏（`curse_words()` 为客户端兜底，真词库以服务端为准）。
    - 服务端 `GeneralChatHandler`：`isMuted()` 玩家禁言拦截（SP_893 等价）+ `filterCurseWords()` 可配置脏词过滤（配置键 `chat_curse_words`，逗号分隔）。
    - 服务端新增 GM 命令 `!mute <玩家> [分钟]` / `!unmute <玩家>`（gm3），及 `Character.muteUntil` 字段。
-7. **D7 聊天三态** ✅ 已实施：钳制范围对齐原生 `SetChatType`（26..507，行高 13）；新增 `chat.type`(1/2/3) 持久化；`BtMin` 逐级收起（完整 3→紧凑 2→收起 1）、`BtMax` 逐级展开；滚动条沿用原生 id 1010（内部 Slider）。
+7. **D7 / D7-A 聊天三态** ✅ 2026-11-12 按 Angel `SetChatType` 翻案实施（见 `docs/features/chat-angel-calibration-2026-11/`）：删紧凑 120 与 BtMin/BtMax 逐级；type2=输入焦点瞬态不持久；BtMax→3 / BtMin→1；拖高 clamp 后 `%13==0→+2`；切图 `end_chat_if_typing`。此前「s9 紧凑三态」为语义套壳，已废。
 8. **D8 组队血条** ✅ 已实施（关键纠正）：**s9 早已通过 `UPDATE_PARTYMEMBER_HP(0xC9)` 向同图组队成员下发血量**（此前文档误判「不下发」系检索漏匹配）。客户端补齐 `UIParty::draw` 渲染成员血条（背景暗条 + 按比例填充，≤30% 转红）；收包端 `PartyMemberHPHandler` + `update_member_hp` 原已就位。
 9. **D9 按钮闪烁** ✅ 已实施：`UIStatusBar` 主窗 4 钮（装备/背包/属性/技能）切换时脉冲高亮叠层（原生 `SetButtonBlink` 用 SP_1986..1989 KEY_ANI，本包无资源，用 7.5Hz 半透明白块替代）。
 

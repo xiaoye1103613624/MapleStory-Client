@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStateGame.h"
 
+
 #include "UI.h"
 #include "Window.h"
 
@@ -32,6 +33,7 @@
 #include "UITypes/UIChatBar.h"
 #include "UITypes/UIMessenger.h"
 #include "UITypes/UIEquipInventory.h"
+#include "UITypes/UIAddonEquip.h"
 #include "UITypes/UIEvent.h"
 #include "UITypes/UISpecial.h"
 #include "UITypes/UIItemInventory.h"
@@ -48,6 +50,7 @@
 #include "UITypes/UIWorldMap.h"
 #include "UITypes/UIMonsterBook.h"
 #include "UITypes/UIMaker.h"
+#include "UITypes/UIMedal.h"
 #include "UITypes/UIMiscShells.h"
 #include "UITypes/UIGuild.h"
 #include "UITypes/UIFamily.h"
@@ -62,7 +65,9 @@
 #include <nlnx/nx.hpp>
 #endif
 
+#include "../Util/HudLayout.h"
 #include "../Util/Misc.h"
+#include "../Util/ResolutionTiers.h"
 #include "../Util/UiAssetResolve.h"
 
 namespace ms
@@ -126,30 +131,76 @@ namespace ms
 
 	void UIStateGame::update()
 	{
+		// SysOpt 仍 active 时绝不能重建 StatusBar（模态下切档会挂死）。
+		// 视口 Constants 已由 Window::check_events 在本帧更早落盘（queue → apply）。
+		const bool sysopt_live = [&]() {
+			const auto& e = elements[UIElement::Type::SYSOPT];
+			return e && e->is_active();
+		}();
+
+		// 模态已关且视口排队已消费：拆掉残留，避免 TOGGLED SysOpt 占槽。
+		// OK 当帧仍 deferred_pending=true，留给下一帧 check_events 先 apply。
+		if (!sysopt_live && elements[UIElement::Type::SYSOPT]
+			&& !ResolutionTiers::deferred_pending)
+		{
+			remove(UIElement::Type::SYSOPT);
+		}
+
 		bool update_screen = false;
 		int16_t new_width = Constants::Constants::get().get_viewwidth();
 		int16_t new_height = Constants::Constants::get().get_viewheight();
 
-		if (VWIDTH != new_width || VHEIGHT != new_height)
+		if (!sysopt_live && (VWIDTH != new_width || VHEIGHT != new_height))
 		{
+			const int16_t old_width = VWIDTH;
 			update_screen = true;
 			VWIDTH = new_width;
 			VHEIGHT = new_height;
 
 			if (UiAssetResolve::has_game_hud())
 			{
-				UI::get().remove(UIElement::Type::STATUSBAR);
+				// classic：仅当 QS 宽/窄档翻转才整窗重建（换 quickSlot08↔26 纹理）；
+				// 同档切分辨率只走 update_screen 重锚，避开 initwindow 同帧的重型 ctor。
+				// 与 UIStatusBar::CLASSIC_QS_SLOTS=26 同源（slots32=false）。
+				const bool qs_flip = HudLayout::is_qs_wide(old_width, false)
+					!= HudLayout::is_qs_wide(new_width, false);
+				auto* sb = elements[UIElement::Type::STATUSBAR].get();
+				const bool classic_reanchor = sb
+					&& static_cast<UIStatusBar*>(sb)->is_classic()
+					&& !qs_flip;
 
-				const CharStats& stats = Stage::get().get_player().get_stats();
-				emplace<UIStatusBar>(stats);
+				if (!classic_reanchor)
+				{
+					UI::get().remove(UIElement::Type::STATUSBAR);
 
-				// activate() 里先 STATUSBAR 后 CHATBAR，get_front 从 elementorder 尾部
-				// 反向扫，所以聊天栏本应压住状态栏。视图尺寸一变就把 STATUSBAR 重新
-				// emplace（push_back 到队尾），它反过来吞掉整条底栏 y>=649 的点击 ——
-				// 真机实测「+」展开按钮点了没反应。重排回原生优先级。
-				elementorder.remove(UIElement::Type::CHATBAR);
-				elementorder.push_back(UIElement::Type::CHATBAR);
+					const CharStats& stats = Stage::get().get_player().get_stats();
+					emplace<UIStatusBar>(stats);
+
+					// activate() 里先 STATUSBAR 后 CHATBAR，get_front 从 elementorder 尾部
+					// 反向扫，所以聊天栏本应压住状态栏。视图尺寸一变就把 STATUSBAR 重新
+					// emplace（push_back 到队尾），它反过来吞掉整条底栏 y>=649 的点击 ——
+					// 真机实测「+」展开按钮点了没反应。重排回原生优先级。
+					elementorder.remove(UIElement::Type::CHATBAR);
+					elementorder.push_back(UIElement::Type::CHATBAR);
+				}
 			}
+		}
+
+		// 视口差分：广播给已构造元素（含 inactive）。跳过仍 active 的 SYSOPT。
+		// update / locale 仍只跑 active。
+		if (update_screen)
+		{
+			for (auto iter : elements)
+			{
+				if (!iter.second)
+					continue;
+				if (iter.first == UIElement::Type::SYSOPT)
+					continue;
+				iter.second->update_screen(new_width, new_height);
+			}
+
+			LOG(LOG_DEBUG, "[MR] UIStateGame broadcast update_screen "
+				<< new_width << "x" << new_height);
 		}
 
 		for (auto& type : elementorder)
@@ -162,9 +213,6 @@ namespace ms
 				// 无绑定的窗体在这里是一次空 vector 判断，成本可忽略。
 				element->refresh_localized();
 				element->update();
-
-				if (update_screen)
-					element->update_screen(new_width, new_height);
 			}
 		}
 	}
@@ -323,6 +371,14 @@ namespace ms
 										Stage::get().get_player().get_inventory()
 										);
 
+								// ④ 扩展（辅助）装备独立子窗：与主装备窗同按键开合。
+								// 底板 UIWindow.img/AddonEquip/backgrnd（v5 PNG 经 MCP 入库）；
+								// 节点缺失时 ctor 自行降级为 inactive，不弹空壳。
+								if (UiAssetResolve::usable(UiAssetResolve::window4("AddonEquip")))
+									emplace<UIAddonEquip>(
+										Stage::get().get_player().get_inventory()
+										);
+
 								break;
 							}
 							case KeyAction::Id::ITEMS:
@@ -372,6 +428,8 @@ namespace ms
 										tab = UIUserList::Tab::PARTY;
 										break;
 									case KeyAction::Id::BOSSPARTY:
+										// P0：KeyConfig 已不再提供 BOSSPARTY 槽；残留绑定兜底进家族页
+										//（v83 action27 经 from_server 已映射为 MEDAL，不走此分支）。
 									case KeyAction::Id::GUILD:
 										tab = UIUserList::Tab::GUILD;
 										break;
@@ -582,6 +640,18 @@ namespace ms
 
 								break;
 							}
+							case KeyAction::Id::MEDAL:
+							{
+								// D1 / 分号键「勋章」窗：v83 action 27 -> from_server -> MEDAL(28)。
+								// D1 / 分号键「勋章」窗（v83 action 27 -> from_server -> MEDAL(28)）。
+								// 原生 = CUIMedalQuestInfo（ctor @0x840170，260x374）：
+								// 数据源 QuestInfo.img viewMedalItem × QuestLog 完成态。
+								// 窗体框架走门禁 18 复用件（Title 件 SAD 探针否定，见 UIMedal.h）。
+								if (pressed)
+									emplace<UIMedal>();
+								break;
+							}
+
 							default:
 							{
 								LOG(LOG_DEBUG, "Unknown KeyAction::Id action: [" << action << "]");

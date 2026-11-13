@@ -1,0 +1,30 @@
+{
+ "CUIQuestAlarm::Draw": {
+  "uuid": "b109eb1f-45b0-4862-a1c5-4c13b584d385",
+  "bytes": 70304
+ },
+ "CQuest::OnCompleteQuestFailed": {
+  "uuid": "5834a1cc-1fc8-45d4-a691-768d2f939308",
+  "bytes": 52567
+ },
+ "CUIToolTip::SetToolTip_Equip": {
+  "uuid": "05c457fe-2c15-432d-badd-575f709ca807",
+  "bytes": 66630
+ },
+ "CUIToolTip::SetToolTip_Package": {
+  "uuid": "51dc0002-6851-43a1-8514-81825bf95423",
+  "bytes": 70175
+ },
+ "CUIStatDetail::Draw": {
+  "uuid": "8311bbb3-c80a-42a4-b25d-006f59185769",
+  "bytes": 61443
+ },
+ "CUIUserInfo::Draw": {
+  "uuid": "2bc540fc-e2e5-4c81-9d10-20904e097c39",
+  "bytes": 94111
+ },
+ "CUIFadeYesNo::Draw": {
+  "uuid": "b6b20919-ab84-49ad-9651-c237d1d2d569",
+  "bytes": 76724
+ }
+}
