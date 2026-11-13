@@ -1,0 +1,111 @@
+{
+  "rule": "AGENTS.md YG 2026-11-09: orange-wz MCP first; .nx fallback only on parse failure; record raw error + key spec",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "connection": "custom-orange_wz (global, streamable-http, 29 tools)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "exclusive": false,
+  "orange_wz_calls": [
+    {
+      "tool": "load_files",
+      "tag": "load_Data_Item_Special",
+      "class": "OK",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "class": "OK",
+      "raw": "{\"roots\":[{\"name\":\"Special\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\\\\Special\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Drop_top_children",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"0900.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\\\\Special\\\\0900.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0910.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\\\\Special\\\\0910.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"0911.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\\\\Special\\\\0911.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"MaplePoint.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Item\\\\Special\\\\MaplePoint.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_0900.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0900.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_0900.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0900.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_0910.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0910.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_0910.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0910.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_0911.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0911.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_0911.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: 0911.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_MaplePoint.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: MaplePoint.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_MaplePoint.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: MaplePoint.img"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "class": "OK",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "class": "OK",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "raw_error_texts_verbatim": [
+    "IMG 解析失败: 0900.img",
+    "IMG 解析失败: 0910.img",
+    "IMG 解析失败: 0911.img",
+    "IMG 解析失败: MaplePoint.img"
+  ],
+  "root_path": "E:\\MXD\\BeiDou-Client-xy\\Data\\Item\\Special",
+  "drop_top_child_count": 4,
+  "drop_top_child_names": [
+    "0900.img",
+    "0910.img",
+    "0911.img",
+    "MaplePoint.img"
+  ],
+  "final_roots": "{\"roots\":[],\"rootCount\":0}",
+  "parse_fail_count": 8,
+  "conclusion": {
+    "orange_wz_structure_layer": "WORKS — Data/Item/Special directory enumeration returns real .img child nodes",
+    "orange_wz_content_layer": "FAILS — any internal .img node tree/search returns IMG 解析失败 with full 65536B key + autoParse:true",
+    "fallback_condition_met": true,
+    "fallback_source": ".nxcache/Item.nx (PKG4) via tools/nx_inspect.py + runtime probe",
+    "fallback_recorded": "raw error text + key spec captured above (AGENTS.md section 2)",
+    "no_fake_green": "PARSE_FAIL classified separately; 'IMG 解析失败' never counted as OK"
+  }
+}

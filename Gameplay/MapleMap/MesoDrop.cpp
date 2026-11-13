@@ -19,7 +19,7 @@
 
 namespace ms
 {
-	MesoDrop::MesoDrop(int32_t oid, int32_t owner, Point<int16_t> start, Point<int16_t> dest, int8_t type, int8_t mode, bool pd, const Animation& icn) : Drop(oid, owner, start, dest, type, mode, pd), icon(icn) {}
+	MesoDrop::MesoDrop(int32_t oid, int32_t owner, Point<int16_t> start, Point<int16_t> dest, int8_t type, int8_t mode, bool pd, const Animation& icn, int8_t grade) : Drop(oid, owner, start, dest, type, mode, pd, grade), icon(icn) {}
 
 	void MesoDrop::draw(double viewx, double viewy, float alpha) const
 	{
@@ -27,6 +27,12 @@ namespace ms
 			return;
 
 		Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
+
+		// 金币的服务端 grade 恒为 0（getDropItemGrade 里 meso 直接 return 0），
+		// 因此这里的两层绘制实际是空操作；保留调用是为了与 ItemDrop 同构，
+		// 将来若要给金币加「大额闪光」不必再改结构。
+		draw_aura_back(absp, alpha);
 		icon.draw({ angle.get(alpha), absp, opacity.get(alpha) }, alpha);
+		draw_aura_front(absp, alpha);
 	}
 }

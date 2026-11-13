@@ -1,0 +1,582 @@
+{
+  "fallback_reason": "orange-wz content-layer IMG 解析失败 (see orange-wz-drop-structure.json)",
+  "tool": "tools/nx_inspect.py (Nx/PKG4 reader)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "file": "E:/MXD/BeiDou-Client-xy/Data/.nxcache/Item.nx",
+  "sections": {
+    "Cash": {
+      "count": 49,
+      "sample": [
+        {
+          "name": "0501.img",
+          "type": "null",
+          "value": "",
+          "child_count": 65
+        },
+        {
+          "name": "0502.img",
+          "type": "null",
+          "value": "",
+          "child_count": 26
+        },
+        {
+          "name": "0503.img",
+          "type": "null",
+          "value": "",
+          "child_count": 12
+        },
+        {
+          "name": "0504.img",
+          "type": "null",
+          "value": "",
+          "child_count": 3
+        },
+        {
+          "name": "0505.img",
+          "type": "null",
+          "value": "",
+          "child_count": 5
+        },
+        {
+          "name": "0506.img",
+          "type": "null",
+          "value": "",
+          "child_count": 7
+        },
+        {
+          "name": "0507.img",
+          "type": "null",
+          "value": "",
+          "child_count": 13
+        },
+        {
+          "name": "0508.img",
+          "type": "null",
+          "value": "",
+          "child_count": 4
+        },
+        {
+          "name": "0509.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0510.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0511.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0512.img",
+          "type": "null",
+          "value": "",
+          "child_count": 53
+        },
+        {
+          "name": "0513.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0514.img",
+          "type": "null",
+          "value": "",
+          "child_count": 6
+        },
+        {
+          "name": "0515.img",
+          "type": "null",
+          "value": "",
+          "child_count": 110
+        },
+        {
+          "name": "0516.img",
+          "type": "null",
+          "value": "",
+          "child_count": 15
+        },
+        {
+          "name": "0517.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0518.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0519.img",
+          "type": "null",
+          "value": "",
+          "child_count": 14
+        },
+        {
+          "name": "0520.img",
+          "type": "null",
+          "value": "",
+          "child_count": 3
+        }
+      ]
+    },
+    "Consume": {
+      "count": 28,
+      "sample": [
+        {
+          "name": "0200.img",
+          "type": "null",
+          "value": "",
+          "child_count": 55
+        },
+        {
+          "name": "0201.img",
+          "type": "null",
+          "value": "",
+          "child_count": 17
+        },
+        {
+          "name": "0202.img",
+          "type": "null",
+          "value": "",
+          "child_count": 505
+        },
+        {
+          "name": "0203.img",
+          "type": "null",
+          "value": "",
+          "child_count": 25
+        },
+        {
+          "name": "0204.img",
+          "type": "null",
+          "value": "",
+          "child_count": 754
+        },
+        {
+          "name": "0205.img",
+          "type": "null",
+          "value": "",
+          "child_count": 9
+        },
+        {
+          "name": "0206.img",
+          "type": "null",
+          "value": "",
+          "child_count": 12
+        },
+        {
+          "name": "0207.img",
+          "type": "null",
+          "value": "",
+          "child_count": 17
+        },
+        {
+          "name": "0210.img",
+          "type": "null",
+          "value": "",
+          "child_count": 283
+        },
+        {
+          "name": "0212.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "0216.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0219.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0221.img",
+          "type": "null",
+          "value": "",
+          "child_count": 30
+        },
+        {
+          "name": "0224.img",
+          "type": "null",
+          "value": "",
+          "child_count": 4
+        },
+        {
+          "name": "0226.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0227.img",
+          "type": "null",
+          "value": "",
+          "child_count": 13
+        },
+        {
+          "name": "0228.img",
+          "type": "null",
+          "value": "",
+          "child_count": 26
+        },
+        {
+          "name": "0229.img",
+          "type": "null",
+          "value": "",
+          "child_count": 139
+        },
+        {
+          "name": "0231.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        },
+        {
+          "name": "0232.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        }
+      ]
+    },
+    "Etc": {
+      "count": 18,
+      "sample": [
+        {
+          "name": "0400.img",
+          "type": "null",
+          "value": "",
+          "child_count": 825
+        },
+        {
+          "name": "0401.img",
+          "type": "null",
+          "value": "",
+          "child_count": 17
+        },
+        {
+          "name": "0402.img",
+          "type": "null",
+          "value": "",
+          "child_count": 21
+        },
+        {
+          "name": "0403.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1165
+        },
+        {
+          "name": "0405.img",
+          "type": "null",
+          "value": "",
+          "child_count": 4
+        },
+        {
+          "name": "0408.img",
+          "type": "null",
+          "value": "",
+          "child_count": 13
+        },
+        {
+          "name": "0413.img",
+          "type": "null",
+          "value": "",
+          "child_count": 39
+        },
+        {
+          "name": "0414.img",
+          "type": "null",
+          "value": "",
+          "child_count": 14
+        },
+        {
+          "name": "0416.img",
+          "type": "null",
+          "value": "",
+          "child_count": 91
+        },
+        {
+          "name": "0417.img",
+          "type": "null",
+          "value": "",
+          "child_count": 10
+        },
+        {
+          "name": "0421.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "0422.img",
+          "type": "null",
+          "value": "",
+          "child_count": 88
+        },
+        {
+          "name": "0425.img",
+          "type": "null",
+          "value": "",
+          "child_count": 45
+        },
+        {
+          "name": "0426.img",
+          "type": "null",
+          "value": "",
+          "child_count": 9
+        },
+        {
+          "name": "0428.img",
+          "type": "null",
+          "value": "",
+          "child_count": 4
+        },
+        {
+          "name": "0429.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "0430.img",
+          "type": "null",
+          "value": "",
+          "child_count": 2
+        },
+        {
+          "name": "0431.img",
+          "type": "null",
+          "value": "",
+          "child_count": 1
+        }
+      ]
+    },
+    "Install": {
+      "count": 2,
+      "sample": [
+        {
+          "name": "0301.img",
+          "type": "null",
+          "value": "",
+          "child_count": 63
+        },
+        {
+          "name": "0399.img",
+          "type": "null",
+          "value": "",
+          "child_count": 231
+        }
+      ]
+    },
+    "Pet": {
+      "count": 54,
+      "sample": [
+        {
+          "name": "5000000.img",
+          "type": "null",
+          "value": "",
+          "child_count": 21
+        },
+        {
+          "name": "5000001.img",
+          "type": "null",
+          "value": "",
+          "child_count": 20
+        },
+        {
+          "name": "5000002.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000003.img",
+          "type": "null",
+          "value": "",
+          "child_count": 25
+        },
+        {
+          "name": "5000004.img",
+          "type": "null",
+          "value": "",
+          "child_count": 21
+        },
+        {
+          "name": "5000005.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000006.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000007.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "5000008.img",
+          "type": "null",
+          "value": "",
+          "child_count": 24
+        },
+        {
+          "name": "5000009.img",
+          "type": "null",
+          "value": "",
+          "child_count": 21
+        },
+        {
+          "name": "5000010.img",
+          "type": "null",
+          "value": "",
+          "child_count": 21
+        },
+        {
+          "name": "5000011.img",
+          "type": "null",
+          "value": "",
+          "child_count": 25
+        },
+        {
+          "name": "5000012.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "5000013.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000014.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000015.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000017.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "5000018.img",
+          "type": "null",
+          "value": "",
+          "child_count": 22
+        },
+        {
+          "name": "5000020.img",
+          "type": "null",
+          "value": "",
+          "child_count": 23
+        },
+        {
+          "name": "5000021.img",
+          "type": "null",
+          "value": "",
+          "child_count": 25
+        }
+      ]
+    },
+    "Special": {
+      "count": 4,
+      "sample": [
+        {
+          "name": "0900.img",
+          "type": "null",
+          "value": "",
+          "child_count": 4
+        },
+        {
+          "name": "0910.img",
+          "type": "null",
+          "value": "",
+          "child_count": 538
+        },
+        {
+          "name": "0911.img",
+          "type": "null",
+          "value": "",
+          "child_count": 5
+        },
+        {
+          "name": "MaplePoint.img",
+          "type": "null",
+          "value": "",
+          "child_count": 37
+        }
+      ]
+    }
+  },
+  "node_count": 148295,
+  "root_child_count": 6,
+  "root_children": [
+    {
+      "name": "Cash",
+      "type": "null",
+      "value": "",
+      "child_count": 49
+    },
+    {
+      "name": "Consume",
+      "type": "null",
+      "value": "",
+      "child_count": 28
+    },
+    {
+      "name": "Etc",
+      "type": "null",
+      "value": "",
+      "child_count": 18
+    },
+    {
+      "name": "Install",
+      "type": "null",
+      "value": "",
+      "child_count": 2
+    },
+    {
+      "name": "Pet",
+      "type": "null",
+      "value": "",
+      "child_count": 54
+    },
+    {
+      "name": "Special",
+      "type": "null",
+      "value": "",
+      "child_count": 4
+    }
+  ]
+}

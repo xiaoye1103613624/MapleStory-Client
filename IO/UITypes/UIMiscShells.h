@@ -462,6 +462,7 @@ public:
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
+/// 兼容壳：构造时委托 [`UITrade`]（Angel CTradingRoomDlg 唯一真窗）。
 class UITradingRoom : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::TRADINGROOM;
@@ -485,6 +486,7 @@ public:
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
+/// 兼容壳：Angel CCashTradingRoomDlg 出站仍走 PLAYER_INTERACTION(123)，委托 UITrade。
 class UICashTradingRoom : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::CASHTRADINGROOM;
@@ -573,18 +575,28 @@ public:
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
+// P3：兼作 Angel CNoticeQuestProgress 完整替代（IMG 无独立 NoticeQuestProgress 节点；
+// UIWindow.img 仅有 QuestAlarm）。最多 5 条、单条 ~3000ms；等价边界见 angel-flow-audit P3。
+// 不新开 UIElement::Type；独立窗族美术未绑时以此降级。
 class UIQuestAlarm : public UIElement {
 public:
 	static constexpr Type TYPE = UIElement::Type::QUESTALARM;
 	static constexpr bool FOCUSED = false; static constexpr bool TOGGLED = false;
 	UIQuestAlarm();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	void update_screen(int16_t new_width, int16_t new_height) override;
 	UIElement::Type get_type() const override;
 	void set_tip(const std::string& tip);
+	// 对齐 OnQuestProgressUpdated_*：入队一条进度浮层（满 5 挤掉最旧）。
+	void push_progress(const std::string& tip);
 private:
+	static constexpr size_t MAX_SLOTS = 5;
+	static constexpr int32_t SLOT_MS = 3000;
+	struct Slot { Text label; int32_t remain_ms = 0; };
 	bool has_assets = false; Texture backgrnd; Text tip_label;
+	std::vector<Slot> progress_slots;
 };
 class UIMateMessage : public UIDragElement<PosNOTICE> {
 public:
@@ -653,7 +665,12 @@ public:
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
 	UIElement::Type get_type() const override;
+	/// 从技能窗拖入技能：命中组合栏则写入当前选中宏的空格。
+	bool drop_skill(int32_t skill_id, Point<int16_t> cursor_position);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
+	enum Buttons : uint16_t { BT_OK = 0, BT_SHOUT };
 	bool has_assets = false;
 	// true = UIWindow.img/SkillMacro 原生拼装外壳；false = 退到 SkillMacroEx 整块底衬。
 	bool shell_ok = false;
@@ -663,10 +680,9 @@ private:
 	mutable Slider slider;	// 宏条数随封包变化，draw() 里同步 setrows（同 name_label 的先例）
 	int16_t offset = 0;		// 首个可见宏
 	int16_t selected = 0;	// 正在编辑的宏
-	// 底部白框里的宏名。draw 是 const，所以照 UIStatusBar::classic_qs_label 的先例
-	// 用 mutable + 变更检测。
-	mutable Text name_label;
-	mutable std::string shown_name;
+	Textfield name_field;
+	bool shout_checked = false;
+	void commit_name();
 };
 class UICharacterClone : public UIDragElement<PosNOTICE> {
 public:

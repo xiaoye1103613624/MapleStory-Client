@@ -1,0 +1,157 @@
+{
+ "summary": {
+  "angel_funcs": 18,
+  "beidou_present": 18,
+  "beidou_sub_named": 18,
+  "beidou_real_named": 0,
+  "beidou_missing": 0,
+  "missing_eas": [],
+  "conclusion": "same binary layout (18/18 EAs identical; differences are IDA analysis coverage, not code)"
+ },
+ "table": [
+  {
+   "class": "CDraggableItem",
+   "method": "OnDropped",
+   "ea": "0x4ef140",
+   "beidou_name": "sub_4EF140",
+   "beidou_size": "0xbe5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableMenu",
+   "method": "OnDropped",
+   "ea": "0x4f91e4",
+   "beidou_name": "sub_4F91E4",
+   "beidou_size": "0x19f",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDraggableSkill",
+   "method": "OnDropped",
+   "ea": "0x4faa22",
+   "beidou_name": "sub_4FAA22",
+   "beidou_size": "0x5df",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "TryPickUpDrop",
+   "ea": "0x50463c",
+   "beidou_name": "sub_50463C",
+   "beidou_size": "0x1fe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "OnPacket",
+   "ea": "0x5058db",
+   "beidou_name": "sub_5058DB",
+   "beidou_size": "0x25",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "OnDropEnterField",
+   "ea": "0x505900",
+   "beidou_name": "sub_505900",
+   "beidou_size": "0xb15",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "OnDropLeaveField",
+   "ea": "0x506590",
+   "beidou_name": "sub_506590",
+   "beidou_size": "0x610",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "GetMoneyIcon",
+   "ea": "0x506c26",
+   "beidou_name": "sub_506C26",
+   "beidou_size": "0x23c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "MakeMoneyAnimation",
+   "ea": "0x506e62",
+   "beidou_name": "sub_506E62",
+   "beidou_size": "0x1313",
+   "status": "present_sub"
+  },
+  {
+   "class": "CDropPool",
+   "method": "BoobyTrapCheckPickupItem",
+   "ea": "0x5081b0",
+   "beidou_name": "sub_5081B0",
+   "beidou_size": "0xb8",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUIItem",
+   "method": "OnDropMoney",
+   "ea": "0x81d996",
+   "beidou_name": "sub_81D996",
+   "beidou_size": "0x18c",
+   "status": "present_sub"
+  },
+  {
+   "class": "CUserLocal",
+   "method": "CheckBoobyTrapPickUpRequest",
+   "ea": "0x95d7b7",
+   "beidou_name": "sub_95D7B7",
+   "beidou_size": "0xd4",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWnd",
+   "method": "OnDragDrop",
+   "ea": "0x4243fe",
+   "beidou_name": "sub_4243FE",
+   "beidou_size": "0x5",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "BeginDragDrop",
+   "ea": "0x9e353d",
+   "beidou_name": "sub_9E353D",
+   "beidou_size": "0x285",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWndMan",
+   "method": "EndDragDrop",
+   "ea": "0x9e37c2",
+   "beidou_name": "sub_9E37C2",
+   "beidou_size": "0x2fe",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "OnDropPickUpMessage",
+   "ea": "0xa20ad9",
+   "beidou_name": "sub_A20AD9",
+   "beidou_size": "0x473",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "SendDropMoneyRequest",
+   "ea": "0xa23de5",
+   "beidou_name": "sub_A23DE5",
+   "beidou_size": "0xd0",
+   "status": "present_sub"
+  },
+  {
+   "class": "CWvsContext",
+   "method": "CheckBoobyTrapPickUpRequest",
+   "ea": "0xa32914",
+   "beidou_name": "sub_A32914",
+   "beidou_size": "0x12",
+   "status": "present_sub"
+  }
+ ]
+}

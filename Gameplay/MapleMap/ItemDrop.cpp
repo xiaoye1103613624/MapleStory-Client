@@ -19,7 +19,7 @@
 
 namespace ms
 {
-	ItemDrop::ItemDrop(int32_t oid, int32_t owner, Point<int16_t> start, Point<int16_t> dest, int8_t type, int8_t mode, int32_t iid, bool pd, const Texture& icn) : Drop(oid, owner, start, dest, type, mode, pd), icon(icn), itemid(iid) {}
+	ItemDrop::ItemDrop(int32_t oid, int32_t owner, Point<int16_t> start, Point<int16_t> dest, int8_t type, int8_t mode, int32_t iid, bool pd, const Texture& icn, int8_t grade) : Drop(oid, owner, start, dest, type, mode, pd, grade), icon(icn), itemid(iid) {}
 
 	void ItemDrop::draw(double viewx, double viewy, float alpha) const
 	{
@@ -27,6 +27,10 @@ namespace ms
 			return;
 
 		Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
+
+		// ⑥ 顺序：光柱/back 在图标下，front 在图标上（参考实现的双层语义）。
+		draw_aura_back(absp, alpha);
 		icon.draw({ angle.get(alpha), absp, opacity.get(alpha) });
+		draw_aura_front(absp, alpha);
 	}
 }

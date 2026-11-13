@@ -43,6 +43,8 @@
 #include "UIUserList.h"
 #include "UIBuddyList.h"
 #include "UIParty.h"
+#include "../../Character/BuddyListModel.h"
+#include "../../Character/PartyModel.h"
 #include "../Components/Textfield.h"
 #include "../../Audio/Audio.h"
 #include "../../Util/Locale.h"
@@ -52,6 +54,7 @@
 #include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Net/Packets/TradePackets.h"
 #include "UITrade.h"
+#include "UIMerchant.h"
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/CashItemPackets.h"
 #include "../../Net/Packets/PetPackets.h"
@@ -80,6 +83,7 @@
 #include "UIQuit.h"
 #include "../../Template/Rectangle.h"
 // MinigameOmokPlacePacket / MatchCardSelectPacket
+#include "../../Util/HudLayout.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 #ifdef USE_NX
@@ -2833,7 +2837,11 @@ void UIPersonalShop::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'O' || keycode == 'o') {
 		HiredMerchantOpenPacket().dispatch();
 		tip_label.change_text(Locale::text("common.open_store"));
-		LOG(LOG_DEBUG, "UIPersonalShop: Open");
+		// Angel CPersonalShopDlg 货架由 ROOM 刷新；主动拉起 UIMerchant 作原生货架面。
+		auto merch = UI::get().get_element<UIMerchant>();
+		if (!merch) merch = UI::get().emplace<UIMerchant>();
+		else if (!merch->is_active()) merch->makeactive();
+		LOG(LOG_DEBUG, "UIPersonalShop: Open + UIMerchant");
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
@@ -2904,6 +2912,9 @@ void UIMemberShop::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'O' || keycode == 'o') {
 		HiredMerchantOpenPacket().dispatch();
 		tip_label.change_text(Locale::text("common.open_store"));
+		auto merch = UI::get().get_element<UIMerchant>();
+		if (!merch) merch = UI::get().emplace<UIMerchant>();
+		else if (!merch->is_active()) merch->makeactive();
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
@@ -2927,33 +2938,19 @@ void UIMemberShop::send_key(int32_t keycode, bool pressed, bool escape)
 UIElement::Type UIMemberShop::get_type() const { return TYPE; }
 
 UITradingRoom::UITradingRoom()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("tradingroom.trade_softkey_meso_chat_c_x"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("trade.shell_redirect"))
 {
-	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 280); dragarea = Point<int16_t>(320, 20);
-	has_assets = load_window_bg("TradingRoom", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UITradingRoom: missing");
+	// 收敛双入口：Angel CTradingRoomDlg 唯一真窗 = UITrade；本壳仅兼容旧 Type::TRADINGROOM 入口。
+	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 80); dragarea = Point<int16_t>(320, 20);
+	has_assets = false;
 	center_on_screen();
-	// SoftKey：纯数字 → TradeSetMeso；否则 TradeChat
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		bool all_digit = !msg.empty();
-		for (char c : msg) { if (c < '0' || c > '9') { all_digit = false; break; } }
-		if (all_digit) {
-			try {
-				int32_t meso = std::stoi(msg);
-				if (meso >= 0) {
-					TradeSetMesoPacket(meso).dispatch();
-					tip_label.change_text(Locale::format("common.meso", msg));
-					LOG(LOG_DEBUG, "UITradingRoom: TradeSetMeso=" << meso);
-					return;
-				}
-			} catch (...) {}
-		}
-		TradeChatPacket(msg).dispatch();
-		tip_label.change_text(Locale::text("common.chat_sent"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeChat len=" << msg.size());
-	}, []() {}, "Trade meso/chat");
+	auto trade = UI::get().get_element<UITrade>();
+	if (!trade)
+		trade = UI::get().emplace<UITrade>();
+	else if (!trade->is_active())
+		trade->makeactive();
+	LOG(LOG_DEBUG, "UITradingRoom: redirect → UITrade");
+	deactivate();
 }
 void UITradingRoom::draw(float) const
 {
@@ -2962,101 +2959,15 @@ void UITradingRoom::draw(float) const
 }
 void UITradingRoom::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) {
-		TradeExitPacket().dispatch();
-		deactivate();
-		return;
-	}
-	if (!pressed) return;
-	if (keycode == 'C' || keycode == 'c') {
-		TradeConfirmPacket().dispatch();
-		tip_label.change_text(Locale::text("common.confirm"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeConfirm");
-	} else if (keycode == 'T' || keycode == 't') {
-		// s9 Action 枚举虽留 TRANSACTION(0x14)，但 handler 没有 0x14 分支：
-		// 成交只能由双方各发一次 CONFIRM(0x11) 完成握手。
-		TradeConfirmPacket().dispatch();
-		tip_label.change_text(Locale::text("common.confirm"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeConfirm");
-	} else if (keycode == 'V' || keycode == 'v') {
-		TradeVisitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.visit"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeVisit");
-	} else if (keycode == 'A' || keycode == 'a') {
-		int16_t inv_slot = 0;
-		uint8_t inv_type = 0;
-		if (auto inv = UI::get().get_element<UIItemInventory>()) {
-			inv_slot = inv->get_selected_slot();
-			if (inv_slot > 0)
-				inv_type = static_cast<uint8_t>(inv->get_tab());
-		}
-		if (inv_slot > 0 && inv_type > 0) {
-			uint8_t iv = inv_type;
-			int16_t pos = inv_slot;
-			UI::get().emplace<UISoftKey>([this, iv, pos](const std::string& s) {
-				int16_t qty = 1;
-				uint8_t trade_slot = 0;
-				if (!s.empty()) {
-					size_t c = s.find(',');
-					try {
-						qty = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
-						if (c != std::string::npos)
-							trade_slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
-					} catch (...) { return; }
-				}
-				if (qty < 1) return;
-				TradeAddItemPacket(iv, pos, qty, trade_slot).dispatch();
-				tip_label.change_text(Locale::format("common.additem", std::to_string(pos)));
-				LOG(LOG_DEBUG, "UITradingRoom: TradeAddItem from inv");
-			}, []() {}, "qty[,tradeSlot]");
-		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-				int vals[4] = { 2, 1, 1, 0 };
-				size_t start = 0; int vi = 0;
-				while (vi < 4 && start <= spec.size()) {
-					size_t c = spec.find(',', start);
-					std::string part = (c == std::string::npos) ? spec.substr(start) : spec.substr(start, c - start);
-					try { vals[vi] = std::stoi(part); } catch (...) {}
-					++vi;
-					if (c == std::string::npos) break;
-					start = c + 1;
-				}
-				TradeAddItemPacket(
-					static_cast<uint8_t>(vals[0]), static_cast<int16_t>(vals[1]),
-					static_cast<int16_t>(vals[2]), static_cast<uint8_t>(vals[3])
-				).dispatch();
-				tip_label.change_text(Locale::format("cashtradingroom.additem", spec));
-				LOG(LOG_DEBUG, "UITradingRoom: TradeAddItem " << spec);
-			}, []() {}, "iv,pos,qty,slot");
-		}
-	} else if (keycode == 'S' || keycode == 's' || keycode == 'M' || keycode == 'm') {
-		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-			if (msg.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-			bool all_digit = true;
-			for (char c : msg) { if (c < '0' || c > '9') { all_digit = false; break; } }
-			if (all_digit) {
-				try {
-					int32_t meso = std::stoi(msg);
-					if (meso >= 0) {
-						TradeSetMesoPacket(meso).dispatch();
-						tip_label.change_text(Locale::format("common.meso", msg));
-						return;
-					}
-				} catch (...) {}
-			}
-			TradeChatPacket(msg).dispatch();
-			tip_label.change_text(Locale::text("common.chat_sent"));
-		}, []() {}, "Trade meso/chat");
-	} else if (keycode == 'X' || keycode == 'x') {
-		TradeExitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.exit"));
-		LOG(LOG_DEBUG, "UITradingRoom: TradeExit");
-		deactivate();
-	} else if (keycode == 'R' || keycode == 'r') {
-		auto ui = UI::get().get_element<UICashTradingRoom>();
-		if (!ui) ui = UI::get().emplace<UICashTradingRoom>();
-		else if (!ui->is_active()) ui->makeactive();
-	}
+	// 若壳被再次激活，把输入交给 UITrade。
+	auto trade = UI::get().get_element<UITrade>();
+	if (!trade)
+		trade = UI::get().emplace<UITrade>();
+	else if (!trade->is_active())
+		trade->makeactive();
+	if (trade)
+		trade->send_key(keycode, pressed, escape);
+	deactivate();
 }
 UIElement::Type UITradingRoom::get_type() const { return TYPE; }
 
@@ -3097,6 +3008,10 @@ void UIEntrustedShop::send_key(int32_t keycode, bool pressed, bool escape)
 	if (keycode == 'O' || keycode == 'o') {
 		HiredMerchantOpenPacket().dispatch();
 		tip_label.change_text(Locale::text("common.open_store"));
+		auto merch = UI::get().get_element<UIMerchant>();
+		if (!merch) merch = UI::get().emplace<UIMerchant>();
+		else if (!merch->is_active()) merch->makeactive();
+		LOG(LOG_DEBUG, "UIEntrustedShop: Open + UIMerchant");
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
@@ -3126,32 +3041,24 @@ UIElement::Type UIEntrustedShop::get_type() const { return TYPE; }
 void UIEntrustedShop::set_tip(const std::string& tip) { tip_label.change_text(tip); }
 
 UICashTradingRoom::UICashTradingRoom()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("cashtradingroom.cashtrade_softkey_meso_chat_c_x"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("trade.shell_redirect"))
 {
-	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 280); dragarea = Point<int16_t>(320, 20);
+	// Angel CCashTradingRoomDlg::Trade 出站仍是 COutPacket(123)+Encode1(17)=CONFIRM，
+	// 与 s9 PLAYER_INTERACTION / UITrade 同通道；无独立 CashTradingRoom 资源时复用 UITrade。
+	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 80); dragarea = Point<int16_t>(320, 20);
 	has_assets = load_window_bg("CashTradingRoom", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UICashTradingRoom: missing");
+	if (!has_assets)
+		has_assets = load_window_bg("TradingRoom", backgrnd, dimension);
+	if (has_assets)
+		dragarea = Point<int16_t>(dimension.x(), 20);
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		bool all_digit = true;
-		for (char c : msg) { if (c < '0' || c > '9') { all_digit = false; break; } }
-		if (all_digit) {
-			try {
-				int32_t meso = std::stoi(msg);
-				if (meso >= 0) {
-					TradeSetMesoPacket(meso).dispatch();
-					tip_label.change_text(Locale::format("common.meso", msg));
-					LOG(LOG_DEBUG, "UICashTradingRoom: TradeSetMeso=" << meso);
-					return;
-				}
-			} catch (...) {}
-		}
-		TradeChatPacket(msg).dispatch();
-		tip_label.change_text(Locale::text("common.chat_sent"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeChat len=" << msg.size());
-	}, []() {}, "CashTrade meso/chat");
+	auto trade = UI::get().get_element<UITrade>();
+	if (!trade)
+		trade = UI::get().emplace<UITrade>();
+	else if (!trade->is_active())
+		trade->makeactive();
+	LOG(LOG_DEBUG, "UICashTradingRoom: redirect → UITrade (opcode 123)");
+	deactivate();
 }
 void UICashTradingRoom::draw(float) const
 {
@@ -3160,95 +3067,14 @@ void UICashTradingRoom::draw(float) const
 }
 void UICashTradingRoom::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) {
-		TradeExitPacket().dispatch();
-		deactivate();
-		return;
-	}
-	if (!pressed) return;
-	if (keycode == 'C' || keycode == 'c') {
-		TradeConfirmPacket().dispatch();
-		tip_label.change_text(Locale::text("common.confirm"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeConfirm");
-	} else if (keycode == 'T' || keycode == 't') {
-		// 同上：0x14 是死链路，成交统一用 CONFIRM(0x11)。
-		TradeConfirmPacket().dispatch();
-		tip_label.change_text(Locale::text("common.confirm"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeConfirm");
-	} else if (keycode == 'V' || keycode == 'v') {
-		TradeVisitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.visit"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeVisit");
-	} else if (keycode == 'A' || keycode == 'a') {
-		int16_t inv_slot = 0;
-		uint8_t inv_type = 0;
-		if (auto inv = UI::get().get_element<UIItemInventory>()) {
-			inv_slot = inv->get_selected_slot();
-			if (inv_slot > 0)
-				inv_type = static_cast<uint8_t>(inv->get_tab());
-		}
-		if (inv_slot > 0 && inv_type > 0) {
-			uint8_t iv = inv_type;
-			int16_t pos = inv_slot;
-			UI::get().emplace<UISoftKey>([this, iv, pos](const std::string& s) {
-				int16_t qty = 1;
-				uint8_t trade_slot = 0;
-				if (!s.empty()) {
-					size_t c = s.find(',');
-					try {
-						qty = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
-						if (c != std::string::npos)
-							trade_slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
-					} catch (...) { return; }
-				}
-				if (qty < 1) return;
-				TradeAddItemPacket(iv, pos, qty, trade_slot).dispatch();
-				tip_label.change_text(Locale::format("common.additem", std::to_string(pos)));
-			}, []() {}, "qty[,tradeSlot]");
-		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-				int vals[4] = { 2, 1, 1, 0 };
-				size_t start = 0; int vi = 0;
-				while (vi < 4 && start <= spec.size()) {
-					size_t c = spec.find(',', start);
-					std::string part = (c == std::string::npos) ? spec.substr(start) : spec.substr(start, c - start);
-					try { vals[vi] = std::stoi(part); } catch (...) {}
-					++vi;
-					if (c == std::string::npos) break;
-					start = c + 1;
-				}
-				TradeAddItemPacket(
-					static_cast<uint8_t>(vals[0]), static_cast<int16_t>(vals[1]),
-					static_cast<int16_t>(vals[2]), static_cast<uint8_t>(vals[3])
-				).dispatch();
-				tip_label.change_text(Locale::format("cashtradingroom.additem", spec));
-				LOG(LOG_DEBUG, "UICashTradingRoom: TradeAddItem " << spec);
-			}, []() {}, "iv,pos,qty,slot");
-		}
-	} else if (keycode == 'S' || keycode == 's' || keycode == 'M' || keycode == 'm') {
-		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-			if (msg.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-			bool all_digit = true;
-			for (char c : msg) { if (c < '0' || c > '9') { all_digit = false; break; } }
-			if (all_digit) {
-				try {
-					int32_t meso = std::stoi(msg);
-					if (meso >= 0) {
-						TradeSetMesoPacket(meso).dispatch();
-						tip_label.change_text(Locale::format("common.meso", msg));
-						return;
-					}
-				} catch (...) {}
-			}
-			TradeChatPacket(msg).dispatch();
-			tip_label.change_text(Locale::text("common.chat_sent"));
-		}, []() {}, "CashTrade meso/chat");
-	} else if (keycode == 'X' || keycode == 'x') {
-		TradeExitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.exit"));
-		LOG(LOG_DEBUG, "UICashTradingRoom: TradeExit");
-		deactivate();
-	}
+	auto trade = UI::get().get_element<UITrade>();
+	if (!trade)
+		trade = UI::get().emplace<UITrade>();
+	else if (!trade->is_active())
+		trade->makeactive();
+	if (trade)
+		trade->send_key(keycode, pressed, escape);
+	deactivate();
 }
 UIElement::Type UICashTradingRoom::get_type() const { return TYPE; }
 
@@ -3683,14 +3509,48 @@ UIQuestAlarm::UIQuestAlarm()
 	if (has_assets) dimension = backgrnd.get_dimensions();
 }
 void UIQuestAlarm::set_tip(const std::string& tip) { tip_label.change_text(tip); }
+void UIQuestAlarm::push_progress(const std::string& tip)
+{
+	if (tip.empty())
+		return;
+	if (!is_active())
+		makeactive();
+	// Angel：满 5 槽找 remain+3000 < now 的空位；此处 FIFO 挤最旧。
+	if (progress_slots.size() >= MAX_SLOTS)
+		progress_slots.erase(progress_slots.begin());
+	Slot s;
+	s.label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, tip);
+	s.remain_ms = SLOT_MS;
+	progress_slots.push_back(std::move(s));
+	LOG(LOG_DEBUG, "UIQuestAlarm: push_progress slots=" << progress_slots.size());
+}
+void UIQuestAlarm::update()
+{
+	UIElement::update();
+	for (auto it = progress_slots.begin(); it != progress_slots.end(); )
+	{
+		it->remain_ms -= Constants::TIMESTEP;
+		if (it->remain_ms <= 0)
+			it = progress_slots.erase(it);
+		else
+			++it;
+	}
+}
 void UIQuestAlarm::draw(float) const {
 	if (has_assets && backgrnd) backgrnd.draw(position);
 	tip_label.draw(position + Point<int16_t>(8, 8));
+	// P3：无独立 NoticeQuestProgress 窗资源 → QuestAlarm 内叠画进度槽（完整替代）。
+	int16_t y = 28;
+	for (const auto& s : progress_slots)
+	{
+		s.label.draw(position + Point<int16_t>(8, y));
+		y = static_cast<int16_t>(y + 16);
+	}
 }
 void UIQuestAlarm::send_key(int32_t keycode, bool pressed, bool escape)
 {
 	if (!pressed) return;
-	if (escape) { tip_label.change_text(""); return; }
+	if (escape) { tip_label.change_text(""); progress_slots.clear(); return; }
 	if (keycode == 'S' || keycode == 's' || keycode == 'Q' || keycode == 'q'
 		|| keycode == 'T' || keycode == 't')
 	{
@@ -4656,10 +4516,9 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 }
 namespace
 {
-	// 底栏（classic HUD）气球锚定的公共几何。group_x 与 UIStatusBar 的按钮簇同源
-	// （quickslot 面板左缘 - group_gap，UIStatusBar.cpp:1993）。
-	// button_top = 触发钮上沿的绝对 y：底条顶 = 屏高 - 71（CLASSIC_BAR_H），4 颗功能钮
-	// 画在底条 rel y=36（IDA CreateCtrl y=543，底条顶 507）⇒ 屏高 - 35。
+	// 底栏（classic HUD）气球锚定的公共几何。group_x 与 UIStatusBar / HudLayout 同源：
+	// hud_center_x(content_w) + qs_x_in_group - group_gap；宽 QS 时 content_w=800+qs。
+	// button_top = 触发钮上沿绝对 y：底条顶 = 屏高 - 71，功能钮 rel y=36 ⇒ 屏高 - 35。
 	struct ClassicBarAnchor
 	{
 		int16_t group_x;
@@ -4670,12 +4529,11 @@ namespace
 	{
 		constexpr int16_t BAR_H = 71;
 		constexpr int16_t BTN_Y = 36;
-		const bool wide = new_width >= 1024;
-		const int16_t qs_w = wide ? 466 : 151;		// StatusBar.img/base/quickSlot26 / 08
-		const int16_t group_gap = wide ? 241 : 75;
+		// CLASSIC_QS_SLOTS 当前 26 → slots32=false；与 StatusBar 选型一致。
+		constexpr bool slots32 = false;
 
 		return ClassicBarAnchor{
-			static_cast<int16_t>(new_width - qs_w - group_gap),
+			HudLayout::classic_group_x(new_width, slots32),
 			static_cast<int16_t>(new_height - BAR_H + BTN_Y)
 		};
 	}
@@ -4756,7 +4614,6 @@ namespace
 }
 
 UISkillMacroEx::UISkillMacroEx()
-	: name_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "")
 {
 #ifdef USE_NX
 	nl::node shell = nl::nx::UI["UIWindow.img"]["SkillMacro"];
@@ -4781,6 +4638,41 @@ UISkillMacroEx::UISkillMacroEx()
 		dimension = backgrnd.get_dimensions();
 		dragarea = Point<int16_t>(dimension.x(), 20);
 		has_assets = true;
+
+		// 个性技能名输入框（对照「技能框+技能组合框.png」白输入区）。
+		name_field = Textfield(
+			Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Rectangle<int16_t>(
+				Point<int16_t>(SM_NAME_X, SM_NAME_Y),
+				Point<int16_t>(SM_NAME_X + 120, SM_NAME_Y + 16)),
+			12);
+		name_field.set_accept_unicode(true);
+		name_field.set_state(Textfield::State::NORMAL);
+		name_field.set_enter_callback([this](std::string)
+		{
+			commit_name();
+		});
+
+		const SkillMacroSlot& cur = SkillMacros::get().get_slot(static_cast<size_t>(selected));
+		if (!cur.name.empty())
+			name_field.change_text(cur.name);
+		shout_checked = cur.shout != 0;
+
+		// 确定钮：优先 SkillMacro/BtOK，否则 Basic BtOK。
+		nl::node btok = shell["BtOK"] ? shell["BtOK"] : nl::nx::UI["Basic.img"]["BtOK"];
+		try_maple_btn(buttons, Buttons::BT_OK, btok,
+			Point<int16_t>(static_cast<int16_t>(dimension.x() - 56), static_cast<int16_t>(dimension.y() - 28)),
+			"SkillMacro/BtOK");
+
+		// 「显示个性技能名」勾选：资源有 BtCheck / CheckBox0 时接上。
+		nl::node check = shell["BtCheck"];
+		if (!check)
+			check = nl::nx::UI["Basic.img"]["CheckBox0"];
+		if (!check)
+			check = nl::nx::UI["Basic.img"]["CheckBox"];
+		try_maple_btn(buttons, Buttons::BT_SHOUT, check,
+			Point<int16_t>(SM_MACRONAME_X, static_cast<int16_t>(SM_MACRONAME_Y + 38)),
+			"SkillMacro/BtCheck");
 	}
 	else
 	{
@@ -4795,25 +4687,26 @@ UISkillMacroEx::UISkillMacroEx()
 		Range<int16_t>(SM_SLIDER_TOP, SM_SLIDER_BOTTOM), SM_SLIDER_X, VISIBLE_ROWS, 1,
 		[this](bool upwards)
 		{
-			const int16_t total = static_cast<int16_t>(SkillMacros::get().size());
+			const int16_t total = static_cast<int16_t>(SkillMacros::MAX_SLOTS);
 			const int16_t shift = upwards ? -1 : 1;
 
 			if (offset + shift >= 0 && offset + VISIBLE_ROWS + shift <= total)
 				offset = static_cast<int16_t>(offset + shift);
 		});
 
-	// 构造时不再自动弹安全键盘（UISoftKey，148x278 的二级密码底板）：旧代码在这里
-	// emplace，导致「宏指令」一按就多出一张密码键盘。改名改由 S/R 分支按需唤起。
-	center_on_screen();
+	// 构造时不再自动弹安全键盘；改名走输入框 + 确定钮。
+	// Wave3：不再 center_on_screen——由 UISkillBook::BT_MACRO 的
+	// anchor_right_of(*this, -3) 贴技能窗右侧；居中会先闪一帧再跳到右侧。
 #endif
 }
 
-void UISkillMacroEx::draw(float) const
+void UISkillMacroEx::draw(float alpha) const
 {
 	if (!has_assets)
 		return;
 
 	backgrnd.draw(position);
+	UIElement::draw_buttons(alpha);
 
 	if (!shell_ok)
 		return;
@@ -4822,15 +4715,9 @@ void UISkillMacroEx::draw(float) const
 	macroname.draw(position + Point<int16_t>(SM_MACRONAME_X, SM_MACRONAME_Y));
 
 	const auto& macros = SkillMacros::get();
-	const int16_t total = static_cast<int16_t>(macros.size());
+	slider.setrows(VISIBLE_ROWS, static_cast<int16_t>(SkillMacros::MAX_SLOTS));
 
-	slider.setrows(VISIBLE_ROWS, total);
-
-	// 宏条数为 0（新角色 / 服务端没存过宏）时也必须画满 **三行空槽**：原生版式
-	// （参考截图 技能框+技能组合框.png）里空角色就是三行空格 + 行尾选择钮，
-	// 这三行既是「正在编辑哪一条」的可视指示，也是点到选择钮创建第一条宏的唯一入口。
-	// 旧写法 rows=total>0?total:1 让空角色只剩一行 —— 就是用户报的「组合栏只有一行」。
-	// idx 上限收在 MACRO_COUNT（macro_icon[] 只有这么多贴图，get_slot 越界会读脏）。
+	// 宏条数为 0 时也必须画满三行空槽（参考截图 技能框+技能组合框.png）。
 	const int16_t rows = MACRO_COUNT;
 
 	for (int16_t r = 0; r < VISIBLE_ROWS; r++)
@@ -4856,7 +4743,6 @@ void UISkillMacroEx::draw(float) const
 			if (!icon)
 				continue;
 
-			// Texture 的绘制点是「原点锚」：可见左上角 = 绘制点 - origin，故加回 origin。
 			const Point<int16_t> dim = icon.get_dimensions();
 			const Point<int16_t> org = icon.get_origin();
 			const Point<int16_t> center(SM_ROW_X + SM_CELL_CX[c], row_y + SM_CELL_CY);
@@ -4866,7 +4752,6 @@ void UISkillMacroEx::draw(float) const
 				static_cast<int16_t>(center.y() - dim.y() / 2 + org.y())));
 		}
 
-		// 行尾的宏选择钮（Macroicon 的位图 origin 是 (0,32)，所以绘制点要再加 origin）。
 		const Texture& sel = idx == selected ? macro_icon_sel[idx] : macro_icon[idx];
 		const Point<int16_t> sel_org = sel.get_origin();
 
@@ -4875,17 +4760,69 @@ void UISkillMacroEx::draw(float) const
 			static_cast<int16_t>(SM_SEL_Y0 + r * SM_ROW_PITCH + sel_org.y())));
 	}
 
-	const std::string& macro_name = macros.get_slot(selected).name;
+	name_field.draw(position);
 
-	if (macro_name != shown_name)
+	if (name_field.empty())
 	{
-		shown_name = macro_name;
-		name_label.change_text(macro_name);
+		Text hint(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY,
+			Locale::text("skill.macro.name_hint"));
+		hint.draw(position + Point<int16_t>(SM_NAME_X, SM_NAME_Y));
 	}
 
-	name_label.draw(position + Point<int16_t>(SM_NAME_X, SM_NAME_Y));
+	Text shout_lbl(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Locale::text("skill.macro.show_name"));
+	shout_lbl.draw(position + Point<int16_t>(SM_MACRONAME_X + 18, SM_MACRONAME_Y + 40));
 
 	slider.draw(position);
+}
+
+void UISkillMacroEx::commit_name()
+{
+	auto& macros = SkillMacros::get();
+	SkillMacroSlot slot = macros.get_slot(static_cast<size_t>(selected));
+	slot.name = name_field.get_text();
+	slot.shout = shout_checked ? 1 : 0;
+	macros.set_slot(static_cast<size_t>(selected), std::move(slot));
+	ChangeSkillMacroPacket().dispatch();
+	LOG(LOG_INFO, "UISkillMacroEx: macro " << (selected + 1) << " renamed -> " << name_field.get_text());
+}
+
+bool UISkillMacroEx::drop_skill(int32_t skill_id, Point<int16_t> cursor_position)
+{
+	if (!shell_ok || skill_id <= 0)
+		return false;
+
+	const Point<int16_t> relative = cursor_position - position;
+	const Rectangle<int16_t> panel(0, 0, dimension.x(), dimension.y());
+
+	if (!panel.contains(relative))
+		return false;
+
+	if (assign_skill_to(static_cast<size_t>(selected), skill_id))
+	{
+		ChangeSkillMacroPacket().dispatch();
+		return true;
+	}
+
+	return false;
+}
+
+Button::State UISkillMacroEx::button_pressed(uint16_t buttonid)
+{
+	switch (buttonid)
+	{
+	case Buttons::BT_OK:
+		commit_name();
+		deactivate();
+		break;
+	case Buttons::BT_SHOUT:
+		shout_checked = !shout_checked;
+		break;
+	default:
+		break;
+	}
+
+	return Button::State::NORMAL;
 }
 
 Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_position)
@@ -4894,6 +4831,10 @@ Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_po
 
 	if (!shell_ok || dragged)
 		return dstate;
+
+	Cursor::State field_st = name_field.send_cursor(cursor_position - position, clicked);
+	if (field_st != Cursor::State::IDLE)
+		return field_st;
 
 	const Point<int16_t> relative = cursor_position - position;
 
@@ -4906,16 +4847,12 @@ Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_po
 	if (!clicked)
 		return Cursor::State::IDLE;
 
-	// 命中范围与 draw() 一致：只有真正画出来的那一行才能被选中，否则 total=1 时
-	// 点第 3 行会把 selected 抬到不存在的宏上（assign 会跳过前两条直接建第 3 条）。
-	const int16_t total = static_cast<int16_t>(SkillMacros::get().size());
-	const int16_t rows = total > 0 ? total : 1;
-
+	// 空角色也画满三行选择钮；点行即切换编辑目标并同步输入框。
 	for (int16_t r = 0; r < VISIBLE_ROWS; r++)
 	{
 		const int16_t idx = static_cast<int16_t>(offset + r);
 
-		if (idx >= rows || idx >= static_cast<int16_t>(MACRO_COUNT))
+		if (idx >= static_cast<int16_t>(MACRO_COUNT))
 			break;
 
 		const int16_t top = static_cast<int16_t>(SM_SEL_Y0 + r * SM_ROW_PITCH);
@@ -4925,6 +4862,9 @@ Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_po
 		if (hit.contains(relative))
 		{
 			selected = idx;
+			const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(selected));
+			name_field.change_text(slot.name);
+			shout_checked = slot.shout != 0;
 			return Cursor::State::CANCLICK;
 		}
 	}
@@ -4937,45 +4877,28 @@ void UISkillMacroEx::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 
+	if (name_field.get_state() == Textfield::State::FOCUSED)
+	{
+		name_field.send_key(KeyType::Id::ACTION, keycode, pressed);
+		return;
+	}
+
 	const size_t sel = static_cast<size_t>(selected);
 
-	if (keycode == 'S' || keycode == 's' || keycode == 'R' || keycode == 'r') {
-		UI::get().emplace<UISoftKey>([this, sel](const std::string& name) {
-			if (name.empty()) return;
-			auto& macros = SkillMacros::get();
-			SkillMacroSlot slot = macros.get_slot(sel);
-			slot.name = name;
-			macros.set_slot(sel, std::move(slot));
-			ChangeSkillMacroPacket().dispatch();
-			LOG(LOG_INFO, "UISkillMacroEx: macro " << (sel + 1) << " renamed -> " << name);
-		}, []() {}, "MacroEx");
-	} else if (keycode == 'A' || keycode == 'a') {
+	if (keycode == 'A' || keycode == 'a')
+	{
 		int32_t sid = 0;
 		if (auto sb = UI::get().get_element<UISkillBook>())
 			sid = sb->get_selected_skill_id();
-		if (sid > 0) {
-			if (assign_skill_to(sel, sid)) {
-				ChangeSkillMacroPacket().dispatch();
-				LOG(LOG_INFO, "UISkillMacroEx: macro " << (sel + 1) << " assigned skill " << sid);
-			} else {
-				LOG(LOG_WARN, "UISkillMacroEx: macro " << (sel + 1) << " full, skill " << sid << " dropped");
-			}
-		} else {
-			UI::get().emplace<UISoftKey>([this, sel](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id <= 0) return;
-					if (assign_skill_to(sel, id)) {
-						ChangeSkillMacroPacket().dispatch();
-						LOG(LOG_INFO, "UISkillMacroEx: macro " << (sel + 1) << " assigned skill " << id);
-					} else {
-						LOG(LOG_WARN, "UISkillMacroEx: macro " << (sel + 1) << " full, skill " << id << " dropped");
-					}
-				} catch (...) {}
-			}, []() {}, "Skill id");
-		}
+		if (sid > 0 && assign_skill_to(sel, sid))
+			ChangeSkillMacroPacket().dispatch();
 	}
-	if (keycode == 'X' || keycode == 'x') {
+	else if (keycode == KeyAction::Id::RETURN)
+	{
+		commit_name();
+	}
+	else if (keycode == 'X' || keycode == 'x')
+	{
 		deactivate();
 	}
 }
@@ -5883,9 +5806,15 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == 'A' || keycode == 'a') {
-		auto ui = UI::get().get_element<UIAlliance>();
-		if (!ui) ui = UI::get().emplace<UIAlliance>();
+		// 2026-11-11：A 键收敛到 083 UIUserList 第 4 页签「家族联盟」，
+		// 不再弹独立 UIAlliance 浮窗（与 G/U → GUILD 同口径）。
+		auto ui = UI::get().get_element<UIUserList>();
+		if (!ui) ui = UI::get().emplace<UIUserList>(UIUserList::Tab::UNION);
 		else if (!ui->is_active()) ui->makeactive();
+		if (ui) {
+			if (ui->get_tab() != UIUserList::Tab::UNION)
+				ui->change_tab(UIUserList::Tab::UNION);
+		}
 		deactivate();
 	} else if (keycode == 'M' || keycode == 'm') {
 		auto ui = UI::get().get_element<UIMaker>();
@@ -7624,15 +7553,14 @@ std::vector<std::string> UIWhisperTargetDlg::collect_candidates() const
 		names.push_back(n);
 	};
 
-	if (auto party = UI::get().get_element<UIParty>())
-		for (const auto& m : party->get_party().members)
-			if (m.id)
-				push(m.name);
+	// P0：候选读常驻模型，不依赖浮窗是否开过。
+	for (const auto& m : PartyModel::get().data().members)
+		if (m.id)
+			push(m.name);
 
-	if (auto buddy = UI::get().get_element<UIBuddyList>())
-		for (const auto& b : buddy->get_buddies())
-			if (b.online)
-				push(b.name);
+	for (const auto& b : BuddyListModel::get().data().buddies)
+		if (b.online)
+			push(b.name);
 
 	return names;
 }

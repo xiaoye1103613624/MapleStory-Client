@@ -18,6 +18,7 @@
 #include "MapDrops.h"
 
 #include "Drop.h"
+#include "DropAuras.h"
 
 #include "../../Data/ItemData.h"
 
@@ -38,6 +39,11 @@ namespace ms
 
 	void MapDrops::init()
 	{
+		// ⑥ 掉落品质光环素材预热（Effect/DropAuraEff.img 独立文件）。
+		// 放在这里而不是只在 Drop 构造里 lazy init：进图前一次加载，
+		// 避免首次掉落时在 update 路径上做 WZ 解析。
+		DropAuras::get().init();
+
 		nl::node src = nl::nx::Item["Special"]["0900.img"];
 
 		if (!src)  // 资源缺失时优雅降级，避免后续访问空节点

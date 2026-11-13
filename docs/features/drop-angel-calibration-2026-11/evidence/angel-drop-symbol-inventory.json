@@ -1,0 +1,144 @@
+{
+ "source": "13339 Angel v83 (drop face, symbol discovery)",
+ "total_funcs": 18,
+ "total_classes": 9,
+ "classes": {
+  "CDraggableItem": [
+   {
+    "ea": "0x4ef140",
+    "method": "OnDropped",
+    "decorated": "?OnDropped@CDraggableItem@@UAEHPAUIUIMsgHandler@@0JJ@Z",
+    "demangled": "public: virtual int CDraggableItem::OnDropped(struct IUIMsgHandler __near *,struct IUIMsgHandler __near *,long,long)"
+   }
+  ],
+  "CDraggableMenu": [
+   {
+    "ea": "0x4f91e4",
+    "method": "OnDropped",
+    "decorated": "?OnDropped@CDraggableMenu@@UAEHPAUIUIMsgHandler@@0JJ@Z",
+    "demangled": "public: virtual int CDraggableMenu::OnDropped(struct IUIMsgHandler __near *,struct IUIMsgHandler __near *,long,long)"
+   }
+  ],
+  "CDraggableSkill": [
+   {
+    "ea": "0x4faa22",
+    "method": "OnDropped",
+    "decorated": "?OnDropped@CDraggableSkill@@UAEHPAUIUIMsgHandler@@0JJ@Z",
+    "demangled": "public: virtual int CDraggableSkill::OnDropped(struct IUIMsgHandler __near *,struct IUIMsgHandler __near *,long,long)"
+   }
+  ],
+  "CDropPool": [
+   {
+    "ea": "0x50463c",
+    "method": "TryPickUpDrop",
+    "decorated": "?TryPickUpDrop@CDropPool@@QAEXABUtagPOINT@@@Z",
+    "demangled": "public: void CDropPool::TryPickUpDrop(struct tagPOINT const __near &)"
+   },
+   {
+    "ea": "0x5058db",
+    "method": "OnPacket",
+    "decorated": "?OnPacket@CDropPool@@QAEXJAAVCInPacket@@@Z",
+    "demangled": "public: void CDropPool::OnPacket(long,class CInPacket __near &)"
+   },
+   {
+    "ea": "0x505900",
+    "method": "OnDropEnterField",
+    "decorated": "?OnDropEnterField@CDropPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CDropPool::OnDropEnterField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x506590",
+    "method": "OnDropLeaveField",
+    "decorated": "?OnDropLeaveField@CDropPool@@IAEXAAVCInPacket@@@Z",
+    "demangled": "protected: void CDropPool::OnDropLeaveField(class CInPacket __near &)"
+   },
+   {
+    "ea": "0x506c26",
+    "method": "GetMoneyIcon",
+    "decorated": "?GetMoneyIcon@CDropPool@@IAE?AV?$_com_ptr_t@V?$_com_IIID@UIWzCanvas@@$1?_GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e@@3U__s_GUID@@B@@@@JJ@Z",
+    "demangled": "protected: class _com_ptr_t<class _com_IIID<struct IWzCanvas,&struct __s_GUID const _GUID_7600dc6c_9328_4bff_9624_5b0f5c01179e>> CDropPool::GetMoneyIcon(long,long)"
+   },
+   {
+    "ea": "0x506e62",
+    "method": "MakeMoneyAnimation",
+    "decorated": "?MakeMoneyAnimation@CDropPool@@IAEXV?$ZRef@UDROP@@@@@Z",
+    "demangled": "protected: void CDropPool::MakeMoneyAnimation(class ZRef<struct DROP>)"
+   },
+   {
+    "ea": "0x5081b0",
+    "method": "BoobyTrapCheckPickupItem",
+    "decorated": "?BoobyTrapCheckPickupItem@CDropPool@@QAEXABUtagPOINT@@@Z",
+    "demangled": "public: void CDropPool::BoobyTrapCheckPickupItem(struct tagPOINT const __near &)"
+   }
+  ],
+  "CUIItem": [
+   {
+    "ea": "0x81d996",
+    "method": "OnDropMoney",
+    "decorated": "?OnDropMoney@CUIItem@@IAEXXZ",
+    "demangled": "protected: void CUIItem::OnDropMoney(void)"
+   }
+  ],
+  "CUserLocal": [
+   {
+    "ea": "0x95d7b7",
+    "method": "CheckBoobyTrapPickUpRequest",
+    "decorated": "?CheckBoobyTrapPickUpRequest@CUserLocal@@IAEXI@Z",
+    "demangled": "protected: void CUserLocal::CheckBoobyTrapPickUpRequest(unsigned int)"
+   }
+  ],
+  "CWnd": [
+   {
+    "ea": "0x4243fe",
+    "method": "OnDragDrop",
+    "decorated": "?OnDragDrop@CWnd@@UAEHJAAUDRAGCTX@@JJ@Z",
+    "demangled": "public: virtual int CWnd::OnDragDrop(long,struct DRAGCTX __near &,long,long)"
+   }
+  ],
+  "CWndMan": [
+   {
+    "ea": "0x9e353d",
+    "method": "BeginDragDrop",
+    "decorated": "?BeginDragDrop@CWndMan@@QAEXPAUIUIMsgHandler@@PAUIDraggable@@H@Z",
+    "demangled": "public: void CWndMan::BeginDragDrop(struct IUIMsgHandler __near *,struct IDraggable __near *,int)"
+   },
+   {
+    "ea": "0x9e37c2",
+    "method": "EndDragDrop",
+    "decorated": "?EndDragDrop@CWndMan@@QAEXJJH@Z",
+    "demangled": "public: void CWndMan::EndDragDrop(long,long,int)"
+   }
+  ],
+  "CWvsContext": [
+   {
+    "ea": "0xa20ad9",
+    "method": "OnDropPickUpMessage",
+    "decorated": "?OnDropPickUpMessage@CWvsContext@@QAEXAAVCInPacket@@@Z",
+    "demangled": "public: void CWvsContext::OnDropPickUpMessage(class CInPacket __near &)"
+   },
+   {
+    "ea": "0xa23de5",
+    "method": "SendDropMoneyRequest",
+    "decorated": "?SendDropMoneyRequest@CWvsContext@@QAEXJ@Z",
+    "demangled": "public: void CWvsContext::SendDropMoneyRequest(long)"
+   },
+   {
+    "ea": "0xa32914",
+    "method": "CheckBoobyTrapPickUpRequest",
+    "decorated": "?CheckBoobyTrapPickUpRequest@CWvsContext@@QAEXABUtagPOINT@@@Z",
+    "demangled": "public: void CWvsContext::CheckBoobyTrapPickUpRequest(struct tagPOINT const __near &)"
+   }
+  ]
+ },
+ "class_summary": {
+  "CDraggableItem": 1,
+  "CDraggableMenu": 1,
+  "CDraggableSkill": 1,
+  "CDropPool": 7,
+  "CUIItem": 1,
+  "CUserLocal": 1,
+  "CWnd": 1,
+  "CWndMan": 2,
+  "CWvsContext": 3
+ }
+}

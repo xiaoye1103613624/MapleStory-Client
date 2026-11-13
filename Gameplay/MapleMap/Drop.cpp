@@ -17,15 +17,44 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Drop.h"
 
+#include "DropAuras.h"
+
 namespace ms
 {
-	Drop::Drop(int32_t id, int32_t own, Point<int16_t> start, Point<int16_t> dst, int8_t type, int8_t mode, bool pldrp) : MapObject(id)
+	Drop::Drop(int32_t id, int32_t own, Point<int16_t> start, Point<int16_t> dst, int8_t type, int8_t mode, bool pldrp, int8_t grd) : MapObject(id)
 	{
 		owner = own;
 		set_position(start.x(), start.y() - 4);
 		dest = dst;
 		pickuptype = type;
 		playerdrop = pldrp;
+		grade = grd;
+
+		// ⑥ 光环：按档位取素材。素材缺失时三组都保持 invalid，
+		// draw_aura_* 直接早退，掉落物照常显示（优雅降级）。
+		DropAuras& auras = DropAuras::get();
+		auras.init();
+
+		if (auras.has_grade(grade))
+		{
+			aura_front = auras.front(grade);
+			aura_front_ok = true;
+			aura_front.reset();
+		}
+
+		if (auras.has_back(grade))
+		{
+			aura_back = auras.back(grade);
+			aura_back_ok = true;
+			aura_back.reset();
+		}
+
+		if (auras.has_pillar())
+		{
+			aura_pillar = auras.pillar();
+			aura_pillar_ok = true;
+			aura_pillar.reset();
+		}
 
 		angle.set(0.0f);
 		opacity.set(1.0f);
@@ -67,6 +96,9 @@ namespace ms
 	int8_t Drop::update(const Physics& physics)
 	{
 		physics.move_object(phobj);
+
+		// ⑥ 光环推进（与掉落物状态机解耦：光环只是视觉层，不参与物理/拾取）。
+		update_aura();
 
 		if (state == Drop::State::DROPPED)
 		{
@@ -153,6 +185,52 @@ namespace ms
 			deactivate();
 			break;
 		}
+	}
+
+	// ---------------------------------------------------------------
+	// ⑥ 装备掉落品质光环
+	// 参考实现 dropitemaura.cpp:133-134 用 front/back 双层 + 120ms 定时器切换到
+	// 下一帧；本端 Animation 自带 delay（素材实测 90ms），各自持有即可，
+	// 不需要定时器（Animation::update 走固定 TIMESTEP 推进）。
+	// 光柱 dropItemEffect 只播一次：Animation::update() 在末帧返回 true 后
+	// 会回绕到 0（Audio/Animation.cpp:320-323 的非 zigzag 分支），所以本端
+	// 用 pillar_done 记住「已播完」，之后不再绘制也不再 update。
+	// ---------------------------------------------------------------
+
+	void Drop::update_aura()
+	{
+		if (aura_front_ok)
+			aura_front.update();
+
+		if (aura_back_ok)
+			aura_back.update();
+
+		if (aura_pillar_ok && !pillar_done)
+		{
+			// 打开始光柱：只在掉落物还是「掉落中/静止」时播，
+			// 被捡起（PICKEDUP）后不再播，避免拾取动画上叠光柱。
+			if (state == State::PICKEDUP)
+				pillar_done = true;
+			else if (aura_pillar.update())
+				pillar_done = true;
+		}
+	}
+
+	void Drop::draw_aura_back(Point<int16_t> absp, float alpha) const
+	{
+		// back 层画在图标之下；光柱最先画（参考实现里它是 z 更低的一层，
+		// 且 y 上移 16px，见 dropitemaura.cpp:148 的 effY = dropY - 16）。
+		if (aura_pillar_ok && !pillar_done)
+			aura_pillar.draw(DrawArgument(absp - Point<int16_t>(0, 16), 1.0f), alpha);
+
+		if (aura_back_ok)
+			aura_back.draw(DrawArgument(absp, 1.0f), alpha);
+	}
+
+	void Drop::draw_aura_front(Point<int16_t> absp, float alpha) const
+	{
+		if (aura_front_ok)
+			aura_front.draw(DrawArgument(absp, 1.0f), alpha);
 	}
 
 	Rectangle<int16_t> Drop::bounds() const
