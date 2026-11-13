@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Gameplay/Stage.h"
+#include "Data/SetItemData.h"
 #include "IO/LoginBackground.h"
 #include "IO/UI.h"
 #include "IO/Window.h"
@@ -31,6 +32,7 @@
 #include "Util/Patch/PatchUpdater.h"
 #include "Util/Resource/ResourceProbe.h"
 #include "Util/Resource/ResourceService.h"
+#include "Graphics/GraphicsGL.h"
 
 #include <chrono>
 #include <cstdlib>
@@ -152,8 +154,14 @@ namespace ms
 		dbginit("damagenumber:ok");
 		MapPortals::init();
 		dbginit("mapportals:ok");
+		// ⑤ 套装花名册：Data/SetItem.txt 可选，缺失时优雅降级为「无套装」。
+		SetItemData::load("");
+		dbginit("setitem:ok");
 		Stage::get().init();
 		dbginit("stage:ok");
+		// Seed the locally selected damage skin before any damage number is drawn.
+		// The login DAMAGE_SKIN(247) packet remains authoritative when non-zero.
+		Stage::get().get_player().set_damage_skin(Configuration::get().get_damage_skin());
 		BootSplash::get().pump("Preparing...");
 
 		// 登录背景（地图 + 书框）必须先于 UI 初始化：
@@ -232,6 +240,9 @@ namespace ms
 
 		bool show_fps = Configuration::get().get_show_fps();
 
+		// 长跑内存/性能采样节拍：每 5s 采一次（见循环体内）。
+		auto mem_sample_tp = std::chrono::steady_clock::now();
+
 		while (running())
 		{
 			// xy-config 热重载通道（含 ui.language -> Locale::reload）。此前
@@ -274,6 +285,18 @@ namespace ms
 					period = 0;
 					samples = 0;
 				}
+			}
+
+			// 长跑内存治理：每 5s 采样一次 Private Bytes / 图集占用 / 常驻根诊断 /
+			// FPS（debug.perf_log 开启时落盘 boot_perf.log），用于验证内存稳定
+			// 不溢出、波动收敛；并触发 quads 批缓冲空闲收缩（trim）。
+			const auto mem_now = std::chrono::steady_clock::now();
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(
+				mem_now - mem_sample_tp).count() >= 5000)
+			{
+				mem_sample_tp = mem_now;
+				ms::res::ResourceService::get().sample_memory();
+				GraphicsGL::get().trim();
 			}
 		}
 

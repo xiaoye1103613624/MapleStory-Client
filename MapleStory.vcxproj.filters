@@ -90,6 +90,9 @@
     <ClCompile Include="Character\CharStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Character\CombatPanelStats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\EquipStat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -111,7 +114,13 @@
     <ClCompile Include="Character\PassiveBuffs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Character\PartyModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\BuddyListModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Character\PlayerStates.cpp">
@@ -466,6 +475,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIFamily.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIMedal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIFamilyTree.cpp">
@@ -858,6 +870,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Character\Job.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\BuddyListModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\PartyModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Character\MapleStat.h">
@@ -1268,6 +1286,9 @@
     <ClInclude Include="IO\UITypes\UIFamily.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\UITypes\UIMedal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\UITypes\UIFamilyTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1308,6 +1329,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIExplorerCreation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIEvanCreation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIDualBladeCreation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIGender.h">

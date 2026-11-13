@@ -19,6 +19,8 @@
 #include "bitmap.hpp"
 #include "wz.hpp"
 #include <lz4.h>
+#include <climits>
+#include <cstring>
 #include <vector>
 
 namespace nl {
@@ -45,11 +47,39 @@ namespace nl {
         }
         if (!m_data)
             return nullptr;
+
         auto const l = length();
+        if (l == 0 || l > static_cast<uint32_t>(INT_MAX))
+            return nullptr;
+
         if (l + 0x20 > bitmap_buf.size())
             bitmap_buf.resize(l + 0x20);
-        ::LZ4_decompress_fast(4 + reinterpret_cast<char const *>(m_data),
-            bitmap_buf.data(), static_cast<int>(l));
+
+        // .nx layout is [uint32 compressed length][LZ4 block].  Read the
+        // length prefix and use the bounded LZ4_decompress_safe so a truncated
+        // / corrupt cache (e.g. an interrupted conversion) can never read past
+        // the mapped file end.  LZ4_decompress_fast took no source size, which
+        // caused an access violation inside liblz4.dll on such data.
+        uint32_t compressed = 0;
+        std::memcpy(&compressed, m_data, sizeof(compressed));
+
+        uint64_t bound = static_cast<uint64_t>(l) + l / 255u + 16u;
+        if (compressed == 0 || compressed > bound
+            || compressed > static_cast<uint32_t>(INT_MAX))
+        {
+            std::memset(bitmap_buf.data(), 0, l);
+            return bitmap_buf.data();
+        }
+
+        int const written = ::LZ4_decompress_safe(
+            4 + reinterpret_cast<char const *>(m_data),
+            bitmap_buf.data(),
+            static_cast<int>(compressed),
+            static_cast<int>(l));
+
+        if (written != static_cast<int>(l))
+            std::memset(bitmap_buf.data(), 0, l);
+
         return bitmap_buf.data();
     }
     uint16_t bitmap::width() const {

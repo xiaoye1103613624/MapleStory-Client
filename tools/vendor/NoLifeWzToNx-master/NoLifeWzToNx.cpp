@@ -1132,7 +1132,14 @@ struct wztonx {
         for (auto index = 0u; index < bitmaps.size(); ++index) {
             auto & b = bitmaps[index];
             out.write<uint64_t>(bitmap_offset);
+            // Merged .img archives each own a separate buffer, but parse_file()
+            // leaves `in` pointing at the LAST one. Rebinding base without
+            // rebinding end makes every earlier archive look out of bounds:
+            // reader::read() then throws "img buffer overrun" on the very
+            // first bitmap, so Character.nx never converted successfully.
+            // Mirrors WzRuntime.cpp::wz_file::decode_bitmap.
             in.base = b.base;
+            in.end = nullptr;
             in.seek(b.data);
             auto width = in.read_cint();
             auto height = in.read_cint();
@@ -1157,8 +1164,22 @@ struct wztonx {
                     << n2 << " at bitmap " << std::dec << index << std::endl;
                 throw std::runtime_error("non-zero n2 in bitmap " + std::to_string(index));
             }
-            auto size = width * height * 4;
-            auto biggest = std::max(static_cast<uint32_t>(size), length);
+            // width/height come straight from the .img. The old 32-bit
+            // `width * height * 4` could overflow for a malformed canvas,
+            // undersizing input/output and letting the blank-fill / LZ4
+            // writes run past the heap buffers (0xc0000374 while rebuilding
+            // Character.nx). Validate in 64-bit and degrade a broken canvas
+            // to a 1x1 transparent bitmap instead of aborting the conversion.
+            uint64_t const size64 = static_cast<uint64_t>(width)
+                * static_cast<uint64_t>(height) * 4u;
+            bool const bad_canvas = size64 == 0 || size64 > 0x7FFFFFFFu;
+            if (bad_canvas) {
+                width = 1;
+                height = 1;
+                length = 0;
+            }
+            auto const size = bad_canvas ? 4u : static_cast<uint32_t>(size64);
+            auto biggest = std::max(size, length);
             input.resize(biggest);
             output.resize(biggest);
             auto original = reinterpret_cast<uint8_t const *>(in.offset);
@@ -1182,17 +1203,37 @@ struct wztonx {
                 return true;
             };
             auto decrypt = [&] {
-                auto p = 0u;
-                for (auto i = 0u; i <= length - 4;) {
-                    auto blen = *reinterpret_cast<uint32_t const *>(original + i);
-                    i += 4;
-                    if (i + blen > length) return false;
-                    for (auto j = 0u; j < blen; ++j)
-                        input[p + j] = static_cast<uint8_t>(original[i + j] ^ key[j]);
-                    i += blen;
-                    p += blen;
+                if (length < 4)
+                    return false;
+                uint64_t source = 0;
+                uint64_t target = 0;
+                uint64_t const total = length;
+                while (source + 4 <= total) {
+                    uint32_t const blen = static_cast<uint32_t>(original[source])
+                        | (static_cast<uint32_t>(original[source + 1]) << 8)
+                        | (static_cast<uint32_t>(original[source + 2]) << 16)
+                        | (static_cast<uint32_t>(original[source + 3]) << 24);
+                    source += 4;
+                    if (blen == 0)
+                        break;
+                    // The old 32-bit `i + blen > length` check could wrap for a
+                    // garbage block length, then `input[p + j]` wrote far past
+                    // the vector (heap corruption, 0xc0000374). Bound both
+                    // source and destination in 64-bit and keep key[j] inside
+                    // the 64 KiB key tables.
+                    if (source + static_cast<uint64_t>(blen) > total
+                        || target + blen > input.size()
+                        || blen > 0x10000u)
+                        return false;
+                    for (uint32_t j = 0; j < blen; ++j)
+                        input[static_cast<size_t>(target + j)] =
+                            static_cast<uint8_t>(original[source + j] ^ key[j]);
+                    source += blen;
+                    target += blen;
                 }
-                length = p;
+                if (target == 0)
+                    return false;
+                length = static_cast<uint32_t>(target);
                 return true;
             };
             std::copy(original, original + length, input.begin());
