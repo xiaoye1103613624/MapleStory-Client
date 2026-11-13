@@ -81,6 +81,10 @@ namespace ms
 		// verbose 时额外列出每一个缺失的根名字。
 		std::string diagnostics(bool verbose) const;
 
+		// 长跑内存/性能采样（debug.perf_log 开启时落盘）：Private Bytes、图集占用、
+		// 常驻根诊断（ImgSource::memory_diagnostics）、FPS。由主循环每数秒空闲帧调用。
+		void sample_memory();
+
 		// 释放当前后端（数据源切换前调用）。
 		void close();
 

@@ -22,6 +22,7 @@
 #include "LocaleBindings.h"
 
 #include "../Graphics/Sprite.h"
+#include "../Template/Point.h"
 
 #include <cstdint>
 #include <string>
@@ -31,6 +32,29 @@ namespace ms
 {
 	class Text;
 	struct OutlinedText;
+
+	// 多分辨率自适应布局策略：新档位只扩 ResolutionTiers，UI 用公式重锚，禁止
+	// switch(VWIDTH==…) 坐标表。子类 ctor 声明一种；基类 update_screen 默认套用。
+	enum class LayoutPolicy : uint8_t
+	{
+		None = 0,           // 不自动重锚（子类自管 / 登录固定）
+		Edge,               // 贴边 + margin
+		Center,             // 视口居中
+		HudGroup,           // classic HUD：x=hud_center_x(content_w)，y 由子类贴底公式
+		SavedPosClamped     // 保留用户拖拽坐标，越界夹回视口
+	};
+
+	enum class LayoutEdge : uint8_t
+	{
+		Left = 0,
+		Right,
+		Top,
+		Bottom,
+		TopLeft,
+		TopRight,
+		BottomLeft,
+		BottomRight
+	};
 
 	// Base class for all types of user interfaces on screen.
 	class UIElement
@@ -207,6 +231,12 @@ namespace ms
 			GAMEOPT,
 			SYSOPT,
 			SPECIALUI,
+			MEDAL,			// D1 分号键勋章窗（两根 IMG 均无 Medal 根 -> 门禁 18 复用件）
+			/// ④ 扩展（辅助）装备独立子窗（UIWindow.img/AddonEquip/backgrnd，
+			/// 8 格 = 图腾×4 + 纹章/机器人/心脏/徽章；2026-11-12 装备槽位扩展）。
+			/// 新增项会改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild，
+			/// 增量编译会留下按旧尺寸编译的目标文件（见上方 GAMEOPT/SYSOPT 注释）。
+			ADDONEQUIP,
 			NUM_TYPES
 		};
 
@@ -214,12 +244,20 @@ namespace ms
 
 		virtual void draw(float inter) const;
 		virtual void update();
-		// 视口变化时由 UIState 广播；登录模态默认可 override 为 center_on_screen()。
-		virtual void update_screen(int16_t new_width, int16_t new_height) {}
+		// 视口变化时由 UIState 广播（含 inactive）；默认按 layout_policy 套用 HudLayout。
+		virtual void update_screen(int16_t new_width, int16_t new_height);
 
 		void makeactive();
 		void deactivate();
 		bool is_active() const;
+
+		/// D3 窗口开合淡入系数（083 CWvsContext::UI_Toggle 的视觉层）。
+		/// 音效层（MENUUP/MENUDOWN）本地 emplace/pre_add 早已播（UIStateGame.cpp:822-863），
+		/// 这里补的是透明度推进：makeactive 置 0，update() 每帧向 1 收敛。
+		/// 淡出不可行 —— UIStateGame::draw 只画 active 元素，关闭反馈由 MENUDOWN 音效承担。
+		/// 子类 draw 若自绘 backgrnd（不走 draw_sprites），应把 fade_alpha() 乘进
+		/// DrawArgument 的 opacity 才能吃到淡入（见 UIMedal/UIMonsterBook）。
+		float fade_alpha() const { return fade_in; }
 
 		// 把本窗体贴到宿主窗体右侧（原生「技能组合栏」相对技能窗的位置关系）：
 		// 右侧放不下翻到左侧，最后夹回视口。调用前 dimension 必须已是位图真身尺寸。
@@ -269,11 +307,22 @@ namespace ms
 		// 登录弹窗：子控件用面板局部坐标，禁止再写死屏幕绝对坐标。
 		void center_on_screen();
 
+		// 声明布局策略（ctor / 资源加载完 dimension 后调用）。
+		void set_layout_policy(LayoutPolicy policy);
+		void set_layout_edge(LayoutEdge edge, Point<int16_t> margin = Point<int16_t>(0, 0));
+
 		std::map<uint16_t, std::unique_ptr<Button>> buttons;
 		std::vector<Sprite> sprites;
 		Point<int16_t> position;
 		Point<int16_t> dimension;
 		bool active;
+		LayoutPolicy layout_policy = LayoutPolicy::None;
+		LayoutEdge layout_edge = LayoutEdge::TopLeft;
+		Point<int16_t> layout_margin;
+		// D3：开窗淡入进度 0→1。推进点在 draw_sprites（const 路径，故 mutable）——
+		// 放这里而非 update() 是有意的：本仓大量子类 override update() 不链基类版，
+		// 但所有走基类绘制的窗都会过 draw_sprites，推进与消费同点，不会卡在半透明。
+		mutable float fade_in = 1.0f;
 
 	private:
 		// 绑定表本体在 LocaleBindings（世界地图那三块非 UIElement 的吸附面板共用同一份

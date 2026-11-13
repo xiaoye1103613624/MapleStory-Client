@@ -31,6 +31,13 @@
 #include <thread>
 #include <vector>
 
+#include <windows.h>
+#include <psapi.h>
+
+#include "../../Graphics/GraphicsGL.h"
+#include "../../IO/Window.h"
+#include "../../Util/PerfLog.h"
+
 namespace ms
 {
 	namespace res
@@ -132,16 +139,19 @@ namespace ms
 		if (!backend_)
 			return;
 
-		// Only the img backend boots with a partial root set; wz/nx bind all at open.
-		if (backend_->format() != Format::Img)
-			return;
+		// 仅堆式 ImgSource 需要显式装载选角根；mmap / wz / nx 在 open() 已绑好
+		// 全部根。注意：这里只门控“装根”，下面的 CharLook::init() 必须无条件执行。
+		if (backend_->requires_preload())
+		{
+			// 选角只需外观相关根；全量 ensure_remaining 会卡登录半分钟级。
+			ImgSource::ensure_char_select();
+			LOG(LOG_INFO, "[RES] ensure_game_roots (char-select) " << diagnostics(false));
+		}
 
-		// 选角只需外观相关根；全量 ensure_remaining 会卡登录半分钟级。
-		ImgSource::ensure_char_select();
-		LOG(LOG_INFO, "[RES] ensure_game_roots (char-select) " << diagnostics(false));
-
-		// Boot 时 Character 未绑，BodyDrawInfo 会是空表 → 选角头身脚叠在一起。
-		// Character 就绪后重建锚点。
+		// 关键：无论何种后端，Character 就绪后都必须重建 BodyDrawInfo 并清空空
+		// 锚点缓存。此前把整段用 requires_preload 门控，导致 mmap 后端下
+		// CharLook::init() 被跳过 → BodyDrawInfo 空表 → 选角头/身/脚叠在一起、
+		// 进图渲染异常（2026-11-13 回归修复）。
 		CharLook::init();
 	}
 
@@ -150,7 +160,9 @@ namespace ms
 		if (prewarm_started_.exchange(true))
 			return;
 
-		if (!backend_ || backend_->format() != Format::Img)
+		// 预绑定后端（wz / nx / .nxcache mmap）已在 open() 绑好全部根，直接放行；
+		// 仅堆式 ImgSource 需要后台 ensure_remaining。
+		if (!backend_ || !backend_->requires_preload())
 		{
 			game_roots_ready_.store(true);
 			return;
@@ -190,7 +202,8 @@ namespace ms
 		if (!backend_)
 			return;
 
-		if (backend_->format() != Format::Img)
+		// 预绑定后端（wz / nx / .nxcache）已在 open() 绑好全部根，无需全量 ensure_remaining。
+		if (!backend_->requires_preload())
 			return;
 
 		ImgSource::ensure_remaining();
@@ -202,7 +215,9 @@ namespace ms
 		if (!backend_)
 			return;
 
-		if (backend_->format() != Format::Img)
+		// 预绑定后端（wz / nx / .nxcache）已在 open() 把全部地图绑入 Map002 根，
+		// 无需逐图 ensure_map（堆式 ImgSource 才需要按需装载单图）。
+		if (!backend_->requires_preload())
 			return;
 
 		ImgSource::ensure_map(mapid);
@@ -287,5 +302,42 @@ namespace ms
 			backend_.reset();
 		}
 	}
+
+	void ResourceService::sample_memory()
+	{
+		// 仅当 debug.perf_log 开启时落盘（Release 下 LOG 为 no-op，perf 通道独立）。
+		// 复用 PerfLog 的开关类型，避免新增配置项；perf::mark 内部另有 2s 缓存门控。
+		if (!Setting<PerfLogEnabled>::get().load())
+			return;
+
+		// 进程私有提交内存（Private Bytes）。用扩展结构 PROCESS_MEMORY_COUNTERS_EX
+		// 取 PrivateUsage；动态取 psapi，避免链接 Psapi.lib。
+		SIZE_T private_bytes = 0;
+		HMODULE hpsapi = LoadLibraryA("psapi.dll");
+		if (hpsapi)
+		{
+			using Fn = BOOL(WINAPI*)(HANDLE, PPROCESS_MEMORY_COUNTERS_EX, DWORD);
+			Fn fn = reinterpret_cast<Fn>(GetProcAddress(hpsapi, "GetProcessMemoryInfo"));
+			if (fn)
+			{
+				PROCESS_MEMORY_COUNTERS_EX pmc;
+				pmc.cb = sizeof(pmc);
+				if (fn(GetCurrentProcess(), &pmc, sizeof(pmc)))
+					private_bytes = pmc.PrivateUsage;
+			}
+			FreeLibrary(hpsapi);
+		}
+
+		const double atlas = GraphicsGL::get().atlas_usage_percent();
+		const int fps = Window::get().get_perf_fps();
+		const std::string roots = ImgSource::memory_diagnostics();
+
+		std::ostringstream oss;
+		oss << "privateMB=" << (static_cast<double>(private_bytes) / (1024.0 * 1024.0))
+			<< " atlas%=" << (atlas * 100.0)
+			<< " fps=" << fps
+			<< " " << roots;
+		perf::mark("MEM", oss.str());
 	}
-}
+	}
+	}

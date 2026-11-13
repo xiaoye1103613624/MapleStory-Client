@@ -8,6 +8,7 @@
 #include "IDataSource.h"
 
 #include <atomic>
+#include <chrono>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -64,8 +65,15 @@ namespace ms
 			// ResourceService 预热线程在装载任务首尾设置）。
 			static void set_bg_loading(bool loading);
 
+			// 内存治理（长跑稳定）：返回各已加载根的最后访问时间（毫秒，相对进程起点）
+			// 与常驻根清单，供 ResourceService::sample_memory 诊断基线/冷热分布。
+			static std::string memory_diagnostics();
+
 		private:
 			// 持久持有 img_file 实例，直到 close()，避免 node 引用的缓冲悬垂。
+			// 故本后端不支持“卸载已加载根”——释放即 node 悬垂（架构限制）。
+			// 长跑内存稳定靠：① 单图有界 LRU（s_map_files/MAP_KEEP）② 低频根
+			// 按需延迟（ensure_remaining 跳过 s_lazy）③ GPU 图集整体有界 + 回收。
 			static std::vector<std::unique_ptr<nl::img_file>> s_files;
 			// 换图单图 file 专用队列（2026-11-04 长跑内存治理）：与标准根分离，
 			// 只保留最近 MAP_KEEP 张，超出从最老端销毁——连续换图内存有界。
@@ -94,6 +102,14 @@ namespace ms
 			// 后台装载在途标志：close()（退出/切后端）先等它落定再清表，
 			// 防 detached 线程正在写 s_files 时被主线程 clear（UB）。
 			static std::atomic<bool> s_bg_loading;
+
+			// 低频根：prewarm（ensure_remaining）跳过，首次 ensure() 访问时再加载。
+			// 这些根（Effect/Etc/Quest/Reactor）不参与登录/选角/进图即时依赖，
+			// 延后可降低启动与预热的内存/CPU 峰值，被实际用到时再按需装载。
+			static bool is_lazy(RootId id);
+			// 每根最后访问时间（相对进程起点的毫秒），用于冷热分布诊断。
+			// 注：本后端不卸载已加载根（释放=node 悬垂），该表仅观测、不驱逐。
+			static std::map<int, long long> s_last_access;
 
 			// 递归收集目录下所有 .img 字节，relpath 相对 dir。
 			static std::vector<std::pair<std::string, std::vector<char>>> gather(const std::string& dir);

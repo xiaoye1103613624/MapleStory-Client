@@ -27,15 +27,24 @@
 
 namespace ms
 {
-	// TODO: Add blue dot next to name
+	namespace
+	{
+		constexpr int16_t ICON_BOX_SIZE = 32;
+		constexpr float ICON_BOX_SCALE = 2.0f;
+		constexpr int16_t ICON_BOX_X = 6;
+		constexpr int16_t ICON_BOX_Y = 70;
+		constexpr int16_t ICON_OFF_X = 2;
+		constexpr int16_t ICON_OFF_Y = 2;
+		constexpr GLfloat ICON_BOX_R = 74.0f / 255.0f;
+		constexpr GLfloat ICON_BOX_G = 74.0f / 255.0f;
+		constexpr GLfloat ICON_BOX_B = 94.0f / 255.0f;
+	}
+
 	ItemTooltip::ItemTooltip()
 	{
 		itemid = 0;
-		// 2026-11-09 R28 预留项③：IconBase/0 灰底板，2x 垫在道具图标下（与 EquipTooltip 同源）。
-		nl::node iconbase_node = nl::nx::UI["UIWindow.img"]["IconBase"]["0"];
-
-		if (iconbase_node)
-			iconbase = Texture(iconbase_node);
+		iconbase_box = ColorBox(ICON_BOX_SIZE, ICON_BOX_SIZE,
+			Color(ICON_BOX_R, ICON_BOX_G, ICON_BOX_B, 1.0f), 1.0f);
 	}
 
 	bool ItemTooltip::set_item(int32_t iid)
@@ -66,7 +75,8 @@ namespace ms
 			quality = "";
 
 		name = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, idata.get_name(), 240);
-		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, idata.get_desc(), 185);
+		// 与装备 tip 正文色对齐 TOOLTIPBODY（奶油色）。
+		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::TOOLTIPBODY, idata.get_desc(), 185);
 		qual = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::ORANGE, quality, 185);
 
 		fillwidth = 264;
@@ -77,6 +87,24 @@ namespace ms
 			fillheight += descdelta;
 
 		return true;
+	}
+
+	void ItemTooltip::draw_item_icon(Point<int16_t> pos) const
+	{
+		const Point<int16_t> boxpos = pos + Point<int16_t>(ICON_BOX_X, ICON_BOX_Y);
+		iconbase_box.draw(boxpos);
+
+		if (!itemicon.is_valid())
+			return;
+
+		// 与 EquipTooltip 同口径：2x 绘制时把 origin*2 加回，使图标左上角落在底板 (2,2)。
+		const Point<int16_t> ivorg = itemicon.get_origin();
+		const Point<int16_t> iconpos(
+			boxpos.x() + ICON_OFF_X + static_cast<int16_t>(ivorg.x() * ICON_BOX_SCALE),
+			boxpos.y() + ICON_OFF_Y + static_cast<int16_t>(ivorg.y() * ICON_BOX_SCALE)
+		);
+
+		itemicon.draw(DrawArgument(iconpos, ICON_BOX_SCALE, ICON_BOX_SCALE));
 	}
 
 	void ItemTooltip::draw(Point<int16_t> pos) const
@@ -110,10 +138,7 @@ namespace ms
 
 		pos.shift(14, 18 + name.height() + adj_t);
 
-		if (iconbase.is_valid())
-			iconbase.draw(DrawArgument(pos + Point<int16_t>(6, 70), 2.0f, 2.0f));
-
-		itemicon.draw(DrawArgument(pos + Point<int16_t>(8, 72), 2.0f, 2.0f));
+		draw_item_icon(pos);
 		desc.draw(pos + Point<int16_t>(90, -6));
 	}
 }

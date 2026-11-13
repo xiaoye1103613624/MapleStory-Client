@@ -39,7 +39,6 @@ namespace ms
 	private:
 		BootSplash();
 
-		void draw_procedural(const char* message);
 		// 画第 index 帧 Logo（黑底 + 居中），message 非空时在底部加状态字。
 		void draw_logo(std::size_t index, const char* message);
 		void advance_clock();

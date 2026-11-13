@@ -103,6 +103,16 @@ namespace ms
 		}
 
 		void close() override;
+
+		// 是否要求门面主动触发逐根预装载（ensure_char_select / ensure_remaining /
+		// ensure_map）。true = 堆式 ImgSource（依赖门面显式调用）；false = 走
+		// .nxcache mmap 时所有根已在 open() 绑定，无需门面干预。
+		bool requires_preload() const noexcept override;
+
+	private:
+		// 走 .nxcache mmap 时为 true（open() 已绑全部根，门面无需预装载）；
+		// 回退堆式 ImgSource 时为 false（依赖门面显式 ensure_*）。
+		mutable bool via_cache_ = false;
 	};
 	}
 }

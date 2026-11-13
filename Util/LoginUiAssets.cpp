@@ -57,6 +57,14 @@ namespace ms
 
 		bool use_classic_race_select()
 		{
+			// Prefer classic RaceSelect (5-card: 骑士团/冒险家/战神/龙神/双刀) whenever
+			// Login.img/RaceSelect exists. RaceSelect_new book UI leaves Dual/Evan disabled
+			// and was the reason they did not appear beside the three race cards.
+#ifdef USE_NX
+			nl::node classic = nl::nx::UI["Login.img"]["RaceSelect"];
+			if (static_cast<bool>(classic) && classic.size() > 0)
+				return true;
+#endif
 			return !has_race_select_new();
 		}
 

@@ -20,6 +20,8 @@
 #include "UIElement.h"
 
 #include "../Configuration.h"
+#include "../Constants.h"
+#include "../Util/HudLayout.h"
 
 namespace ms
 {
@@ -35,7 +37,7 @@ namespace ms
 			if (dragged)
 			{
 				dragged = false;
-
+				clamp_drag_position();
 				Setting<T>::get().save(position);
 			}
 		}
@@ -47,6 +49,7 @@ namespace ms
 				if (dragged)
 				{
 					position = cursorpos - cursoroffset;
+					clamp_drag_position();
 
 					return Cursor::State::CLICKING;
 				}
@@ -63,7 +66,7 @@ namespace ms
 				if (dragged)
 				{
 					dragged = false;
-
+					clamp_drag_position();
 					Setting<T>::get().save(position);
 				}
 			}
@@ -76,7 +79,25 @@ namespace ms
 
 		UIDragElement(Point<int16_t> d) : dragarea(d)
 		{
+			// 可拖窗：分辨率变化时夹回视口，拖曳中亦不允许出客户区。
+			set_layout_policy(LayoutPolicy::SavedPosClamped);
 			position = Setting<T>::get().load();
+			clamp_drag_position();
+		}
+
+		void clamp_drag_position()
+		{
+			const int16_t vw = Constants::Constants::get().get_viewwidth();
+			const int16_t vh = Constants::Constants::get().get_viewheight();
+			Point<int16_t> dim = dimension;
+
+			// ctor 早期 dimension 可能仍为 0；用 dragarea 兜底避免误夹到 (0,0)。
+			if (dim.x() <= 0)
+				dim = Point<int16_t>(dragarea.x() > 0 ? dragarea.x() : static_cast<int16_t>(1), dim.y());
+			if (dim.y() <= 0)
+				dim = Point<int16_t>(dim.x(), dragarea.y() > 0 ? dragarea.y() : static_cast<int16_t>(1));
+
+			position = HudLayout::clamp_to_view(position, dim, vw, vh);
 		}
 
 		bool dragged = false;

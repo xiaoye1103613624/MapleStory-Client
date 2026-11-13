@@ -19,6 +19,7 @@
 
 #include "TextTooltip.h"
 
+#include "../../Graphics/Geometry.h"
 #include "../../Graphics/Text.h"
 #include "../../Graphics/Texture.h"
 
@@ -34,13 +35,15 @@ namespace ms
 		bool set_item(int32_t itemid);
 
 	private:
+		void draw_item_icon(Point<int16_t> pos) const;
+
 		int32_t itemid;
 		int16_t fillwidth;
 		int16_t fillheight;
 		int16_t descdelta;
 		Texture itemicon;
-		// 2026-11-09 R28 预留项③：IconBase/0 灰底板，2x 垫在道具图标下（与 EquipTooltip 同源）。
-		Texture iconbase;
+		// 2026-11-11：与 EquipTooltip 同源，程序自绘灰底，不再依赖 IconBase/0 白底黑框位图。
+		ColorBox iconbase_box;
 
 		Text name;
 		Text desc;

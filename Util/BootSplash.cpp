@@ -24,20 +24,17 @@
 
 #include <SDL3/SDL.h>
 
-#ifdef USE_NX
+// nl::nx 命名空间在两种后端下都可用（img 后端经 RootTable 绑定 UI 等根），
+// 故无条件包含，使 Logo.img/Nexon 片头在 img 后端也能正常解析播放。
 #include <nlnx/nx.hpp>
-#endif
 
 namespace ms
 {
 	// Logo.img/Nexon 节点；资源未就绪或缺失时返回空节点。
+	// 不再依赖 USE_NX：img 后端同样把 UI 根绑定到 nl::nx::UI，可直接取片头。
 	static nl::node logo_source()
 	{
-#ifdef USE_NX
 		return nl::nx::UI["Logo.img"]["Nexon"];
-#else
-		return nl::node();
-#endif
 	}
 
 	BootSplash& BootSplash::get()
@@ -184,57 +181,25 @@ namespace ms
 		}
 	}
 
-	void BootSplash::draw_procedural(const char* message)
+	void BootSplash::pump(const char* message)
 	{
-		GraphicsGL& gl = GraphicsGL::get();
-		const int16_t vw = Constants::Constants::get().get_viewwidth();
-		const int16_t vh = Constants::Constants::get().get_viewheight();
-		const int16_t cx = vw / 2;
-		const int16_t cy = vh / 2;
+		if (message)
+			last_message = message;
 
-		gl.drawscreenfill(0.05f, 0.05f, 0.07f, 1.0f);
+		advance_clock();
 
-		spin_phase += pending_ms * 0.012f;
-		if (spin_phase > 6.2831853f)
-			spin_phase -= 6.2831853f;
+		Window::get().check_events();
+		Window::get().begin();
 
-		constexpr int kArms = 12;
-		constexpr float kRadius = 28.0f;
+		// 启动阶段不再显示“黑屏 Loading…”转圈页：Logo 资源一旦就绪（UI 根
+		// 绑定后即可），铺首帧静态 Logo 作为启动垫屏（无文字）；未就绪时仅
+		// 清黑底。真正的片头动画由 play_logo() 在登录前播放。
+		if (logo_frames > 0)
+			draw_logo(0, nullptr);
+		else
+			GraphicsGL::get().drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
 
-		for (int i = 0; i < kArms; ++i)
-		{
-			const float t = spin_phase + (6.2831853f * i) / kArms;
-			const float fade = 0.25f + 0.75f * (static_cast<float>(i) / kArms);
-			const int16_t x0 = static_cast<int16_t>(cx + std::cos(t) * (kRadius - 6.0f));
-			const int16_t y0 = static_cast<int16_t>(cy + std::sin(t) * (kRadius - 6.0f) - 24);
-			const int16_t x1 = static_cast<int16_t>(cx + std::cos(t) * (kRadius + 8.0f));
-			const int16_t y1 = static_cast<int16_t>(cy + std::sin(t) * (kRadius + 8.0f) - 24);
-
-			const int16_t left = std::min(x0, x1);
-			const int16_t top = std::min(y0, y1);
-			const int16_t w = static_cast<int16_t>(std::max(3, std::abs(x1 - x0)));
-			const int16_t h = static_cast<int16_t>(std::max(3, std::abs(y1 - y0)));
-
-			gl.drawrectangle(left, top, w, h, 0.55f, 0.75f, 1.0f, fade);
-		}
-
-		// Thin progress shimmer under the spinner (indeterminate).
-		const int16_t bar_w = 180;
-		const int16_t bar_h = 4;
-		const int16_t bar_x = cx - bar_w / 2;
-		const int16_t bar_y = cy + 20;
-		gl.drawrectangle(bar_x, bar_y, bar_w, bar_h, 0.18f, 0.20f, 0.24f, 1.0f);
-
-		const float pulse = 0.5f + 0.5f * std::sin(spin_phase * 2.0f);
-		const int16_t fill_w = static_cast<int16_t>(40 + pulse * (bar_w - 40));
-		const int16_t fill_x = bar_x + static_cast<int16_t>((bar_w - fill_w) * (0.5f + 0.5f * std::sin(spin_phase)));
-		gl.drawrectangle(fill_x, bar_y, fill_w, bar_h, 0.45f, 0.70f, 1.0f, 0.9f);
-
-		if (message && message[0])
-		{
-			Text label(Text::Font::A18M, Text::Alignment::CENTER, Color::Name::WHITE, message);
-			label.draw(DrawArgument(cx, static_cast<int16_t>(cy + 48)));
-		}
+		Window::get().end();
 	}
 
 	bool BootSplash::play_logo()
@@ -298,23 +263,5 @@ namespace ms
 			<< " total=" << total << "ms" << (skipped ? " (skipped)" : ""));
 
 		return shown > 0;
-	}
-
-	void BootSplash::pump(const char* message)
-	{
-		if (message)
-			last_message = message;
-
-		advance_clock();
-
-		Window::get().check_events();
-		Window::get().begin();
-
-		if (logo_frames > 0)
-			draw_logo(0, last_message.c_str());
-		else
-			draw_procedural(last_message.c_str());
-
-		Window::get().end();
 	}
 }

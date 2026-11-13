@@ -159,20 +159,53 @@ namespace ms
 
 	Error ImgBackend::open(const OpenParams& params)
 	{
+		// 优先走 .nxcache：把 .img 派生为 .nx 并以内存映射加载（字节在页文件里、
+		// OS 可换出冷根，根治“全量根常驻”的高基线 / 低内存机溢出）。受
+		// resource.nxcache 开关控制（默认关：避免首启全量转换 ~12 万 .img 的
+		// 数分钟成本 + 数 GB 缓存；开启即享 mmap 收益）。任何失败（转换异常 /
+		// 资源缺失）自动回退到既有堆式 ImgSource，保证现有 img 运行不受影响。
+		via_cache_ = false;
+
+		if (Configuration::get().get_resource_nxcache())
+		{
+			if (Error err = ms::ImgFiles::init(params.base))
+			{
+				LOG(LOG_WARN, "[IMG] nxcache conversion failed ("
+					<< err.get_message() << "), falling back to heap img backend");
+			}
+			else
+			{
+				via_cache_ = true;
+			}
+		}
+
+		if (via_cache_)
+			return Error::Code::NONE;
+
 		// params.base 为空时由 ImgSource 回退到配置中的 data.dir（零转换 IMG 后端）。
 		return ImgSource::init(params.base);
 	}
 
 	nl::node ImgBackend::root(RootId id) const
 	{
-		// 惰性装载：首次访问某根时才解析该根（I2 零转换的 per-root 惰性）。
-		ImgSource::ensure(id);
+		// 走 .nxcache mmap 时，所有根已在 open() 经 nl::nx::load_all 绑定；
+		// 无需（也不应）再触发 ImgSource 的逐根 ensure。
+		if (!via_cache_)
+			ImgSource::ensure(id);
 		return RootTable::root(id);
 	}
 
 	void ImgBackend::close()
 	{
-		ImgSource::close();
+		if (via_cache_)
+			RootTable::clear();
+		else
+			ImgSource::close();
+	}
+
+	bool ImgBackend::requires_preload() const noexcept
+	{
+		return !via_cache_;
 	}
 	}
 }

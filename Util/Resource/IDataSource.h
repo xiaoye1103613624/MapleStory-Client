@@ -148,6 +148,12 @@ namespace ms
 
 		virtual Capabilities caps() const noexcept = 0;
 
+		// 是否需要门面主动触发逐根预装载（ensure_char_select / ensure_remaining /
+		// ensure_map）。返回 true 的后端（堆式 ImgSource）依赖 ResourceService 显式
+		// 调用这些加载；返回 false 的后端（wz / nx / 走 .nxcache mmap 的 img）在
+		// open() 已绑定全部根，无需门面干预。默认 false。
+		virtual bool requires_preload() const noexcept { return false; }
+
 		virtual void close() = 0;
 	};
 

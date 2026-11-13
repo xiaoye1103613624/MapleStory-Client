@@ -39,6 +39,23 @@ namespace ms
 		std::atomic<bool> ImgSource::s_pump_enabled{ true };
 		std::mutex ImgSource::s_load_mtx;
 		std::atomic<bool> ImgSource::s_bg_loading{ false };
+		std::map<int, long long> ImgSource::s_last_access;
+
+		bool ImgSource::is_lazy(RootId id)
+		{
+			// 低频根：不参与登录/选角/进图即时依赖，prewarm 跳过，按需加载。
+			// Effect/Etc：角色创建与游戏内特效/伤害皮肤；Quest/Reactor：任务/反应器。
+			switch (id)
+			{
+				case RootId::Effect:
+				case RootId::Etc:
+				case RootId::Quest:
+				case RootId::Reactor:
+					return true;
+				default:
+					return false;
+			}
+		}
 
 		void ImgSource::set_pump_enabled(bool enabled)
 		{
@@ -67,6 +84,23 @@ namespace ms
 					std::tolower(static_cast<unsigned char>(b[i])))
 					return false;
 			return true;
+		}
+
+		// 整文件批量读入（替代逐字节 istreambuf_iterator）：先取大小再一次性
+		// read，去掉迭代器虚拟调用开销。失败 / 空文件返回空 vector（调用方跳过）。
+		static std::vector<char> read_file_bulk(const fs::path& p)
+		{
+			std::error_code ec;
+			const uintmax_t sz = fs::file_size(p, ec);
+			if (ec || sz == 0 || sz > (1ull << 30))
+				return {};
+			std::ifstream f(p, std::ios::binary);
+			if (!f)
+				return {};
+			std::vector<char> buf(static_cast<size_t>(sz));
+			if (!f.read(buf.data(), static_cast<std::streamsize>(sz)))
+				return {};
+			return buf;
 		}
 
 		Error ImgSource::init(const std::string& base_dir)
@@ -126,14 +160,15 @@ namespace ms
 			// （LoginBackground.cpp:168、UILogin.cpp:96-98、UICharSelect.cpp:214），
 			// 木牌 = Map["Obj"]["login.img"]（UILogin:140 等）。曾试移除，
 			// 会造成登录页空纹理，已撤销；启动占比问题改由 gather 剪枝解决。
+			// Boot 仅装登录页立即需要的根（UI/Map/Map001/Sound/String）。
+			// Effect/Etc 仅用于角色创建与游戏内特效/伤害皮肤等，登录页绘制
+			// 不依赖，移入 prewarm 后台装载，缩短启动到登录页的时间。
 			static const RootId kBootRoots[] = {
 				RootId::UI,
 				RootId::Map,
 				RootId::Map001,
 				RootId::Sound,
-				RootId::String,
-				RootId::Effect,
-				RootId::Etc
+				RootId::String
 			};
 
 			for (RootId id : kBootRoots)
@@ -155,6 +190,10 @@ namespace ms
 				// Map002 按需 ensure_map，禁止扫全图目录。
 				if (id == RootId::Map002)
 					continue;
+				// 低频根（Effect/Etc/Quest/Reactor）延后到首次访问再装载，
+				// 降低预热内存/CPU 峰值；用到时 ensure() 自动按需加载。
+				if (is_lazy(id))
+					continue;
 				ensure(id);
 				// 本函数可在后台线程跑（prewarm 第二阶段）：SDL 事件泵只许
 				// 主线程，pump 关闭时跳过（与 ensure_char_select 同规）。
@@ -164,6 +203,46 @@ namespace ms
 
 			LOG(LOG_INFO, "[IMG] ensure_remaining bound_roots="
 				<< RootTable::bound_count() << "/" << RootTable::SIZE);
+		}
+
+		std::string ImgSource::memory_diagnostics()
+		{
+			std::ostringstream out;
+			const long long now =
+				std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::steady_clock::now().time_since_epoch()).count();
+
+			out << "roots=" << RootTable::bound_count() << "/" << RootTable::SIZE;
+
+			// 低频根里尚未被实际访问、仍在延迟态的数量（预热未装载、按需才装）。
+			int lazy_pending = 0;
+			for (size_t i = 0; i < RootTable::SIZE; ++i)
+			{
+				RootId id = static_cast<RootId>(i);
+				if (is_lazy(id) && !s_loaded.count(root_filename(id)))
+					++lazy_pending;
+			}
+			if (lazy_pending)
+				out << " lazy_pending=" << lazy_pending;
+
+			out << " files=" << s_files.size() << " maps=" << s_map_files.size();
+
+			// 最久未访问的已加载根（仅观测冷热分布；本后端不据此驱逐）。
+			long long oldest = -1;
+			std::string oldest_name;
+			for (const auto& kv : s_last_access)
+			{
+				const long long age = now - kv.second;
+				if (oldest < 0 || age > oldest)
+				{
+					oldest = age;
+					oldest_name = root_filename(static_cast<RootId>(kv.first));
+				}
+			}
+			if (oldest >= 0)
+				out << " oldest=" << oldest_name << ":" << (oldest / 1000) << "s";
+
+			return out.str();
 		}
 
 		void ImgSource::ensure_char_select()
@@ -257,7 +336,9 @@ namespace ms
 			// ==1 永不命中（复测 Map=5733ms 无变化才暴露），已纠。
 			const bool prune_map_subtree = (directory.filename() == "Map");
 
-			size_t n = 0;
+			// 阶段 1：单线程枚举（递归遍历 + Map 子树剪枝），收集 (rel, abs)。
+			struct entry { std::string rel; fs::path abs; };
+			std::vector<entry> files;
 			for (auto it = fs::recursive_directory_iterator(directory,
 				fs::directory_options::skip_permission_denied, ec);
 				it != fs::recursive_directory_iterator(); ++it)
@@ -273,24 +354,68 @@ namespace ms
 					continue;
 				if (!iequals(it->path().extension().string(), ".img"))
 					continue;
-
-				// 读入 .img 字节（零转换：直接在内存交给 img_file 解析）。
-				std::ifstream f(it->path(), std::ios::binary);
-				if (!f)
-					continue;
-				std::vector<char> all((std::istreambuf_iterator<char>(f)),
-					std::istreambuf_iterator<char>());
-				if (all.empty())
-					continue;
-
 				std::string rel = it->path().lexically_relative(directory).generic_string();
-				out.emplace_back(std::move(rel), std::move(all));
-
-				// Character/Item 等大目录扫描时泵消息，避免“未响应”。
-				// （后台线程装载时跳过：SDL 事件只允许主线程泵，主循环照常泵。）
-				if (s_pump_enabled.load() && (++n % 64) == 0)
-					Window::get().poll_events();
+				files.push_back({ std::move(rel), it->path() });
 			}
+
+			if (files.empty())
+				return out;
+
+			// 阶段 2：多线程批量读（IO 密集，文件数增长时收益明显）。
+			// 限制线程数（≤8）避免句柄 / 上下文爆炸；每线程负责一段索引区间，
+			// 写入互不重叠的 out[i]，无锁竞争。解析（open_merge）保持主线程单
+			// 线程，仅把"读文件"这一步并行化，规避对解析器的侵入式改造。
+			out.resize(files.size());
+			const unsigned hw = std::thread::hardware_concurrency();
+			const unsigned threads = std::max(1u, std::min(hw == 0 ? 4u : hw, 8u));
+			const size_t n = files.size();
+			const size_t per = (n + threads - 1) / threads;
+
+			auto reader = [&](size_t start, size_t end)
+			{
+				for (size_t i = start; i < end && i < n; ++i)
+				{
+					std::vector<char> buf = read_file_bulk(files[i].abs);
+					if (buf.empty())
+						continue;
+					out[i].first = std::move(files[i].rel);
+					out[i].second = std::move(buf);
+				}
+			};
+
+			if (threads <= 1 || n < 64)
+			{
+				reader(0, n);
+			}
+			else
+			{
+				std::vector<std::thread> pool;
+				pool.reserve(threads);
+				for (unsigned t = 0; t < threads; ++t)
+				{
+					const size_t start = t * per;
+					const size_t end = std::min(start + per, n);
+					if (start >= end)
+						break;
+					pool.emplace_back(reader, start, end);
+				}
+				for (auto& th : pool)
+					th.join();
+			}
+
+			// 过滤读取失败的条目（out[i].first 为空 = 未成功读取）。
+			std::vector<std::pair<std::string, std::vector<char>>> cleaned;
+			cleaned.reserve(out.size());
+			for (auto& kv : out)
+				if (!kv.first.empty())
+					cleaned.push_back(std::move(kv));
+			out = std::move(cleaned);
+
+			// 大目录扫描后主线程泵消息，避免“未响应”。
+			// （后台线程装载时跳过：SDL 事件只允许主线程泵，主循环照常泵。）
+			if (s_pump_enabled.load())
+				Window::get().poll_events();
+
 			return out;
 		}
 
@@ -428,6 +553,13 @@ namespace ms
 
 		void ImgSource::ensure(RootId id)
 		{
+			// 访问计时（内存诊断）：每次 ensure 都刷新该根最后访问时间，
+			// 用于观测常驻根的冷热分布。本后端不驱逐已加载根（释放=node 悬垂），
+			// 该计时仅诊断用。
+			s_last_access[static_cast<int>(id)] =
+				std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::steady_clock::now().time_since_epoch()).count();
+
 			// 并行预热改造：ensure_remaining 现在跑在后台线程，主线程的
 			// ensure_char_select()/ensure_map(→ensure(Map)) 与之并发。
 			// s_loaded/s_files/RootTable 是裸容器：判重必须与解析、绑定同罩
