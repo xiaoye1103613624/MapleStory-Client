@@ -1,0 +1,16 @@
+﻿live Character .img total=34933 distinct_prefix=86
+  new prefix 115: 214 imgs (nonempty), candidates=['Accessory'], outside=0, transient_zero=0
+  new prefix 118: 268 imgs (nonempty), candidates=['Accessory'], outside=0, transient_zero=0
+  new prefix 119: 126 imgs (nonempty), candidates=['Accessory', 'Shield'], outside=0, transient_zero=0
+  new prefix 120: 594 imgs (nonempty), candidates=['Accessory', 'Totem'], outside=0, transient_zero=0
+  new prefix 166: 312 imgs (nonempty), candidates=['Android', 'Weapon'], outside=0, transient_zero=0
+  new prefix 167: 212 imgs (nonempty), candidates=['Heart', 'Weapon', 'Android'], outside=0, transient_zero=0
+  guard prefix 134 (原始武器): 111 nonempty / 111 total imgs
+  [info] 19 个 itemid 在多目录有多个版本，但候选首位那份完整，读取确定
+client EquipData override prefixes = [115, 118, 119, 120, 166, 167]
+server provider override prefixes = [115, 118, 119, 120, 166, 167]
+enum entries with explicit value = 35, wire whitelist = 30
+  SHOULDER=20 PENDANT2=51 MEDAL=49 RING3=15 TOTEM1=55 SUBWEAPON=10/SHIELD=10
+原始分类逻辑零删改（HEAD 146 行代码逐序保留，新增 36 行）
+
+=== PASS: 新增号段零资源冲突 / 宠物 BP 零占用 / 原始装备路径零改动 ===

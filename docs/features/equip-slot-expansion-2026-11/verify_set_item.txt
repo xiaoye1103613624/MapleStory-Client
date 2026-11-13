@@ -1,0 +1,10 @@
+﻿sets=2 item_mappings=7
+  set 101 新手套装: items=3 tiers=4 complete=3
+  set 102 首领套装: items=4 tiers=5 complete=4
+  set101 equip2 -> count=2 active=[('STR', 3), ('DEX', 2)]
+  set101 equip3 -> count=3 active=[('STR', 3), ('DEX', 2), ('WATK', 5), ('ALLSTAT', 2)]
+  set102 equip4 -> count=4 active=[('HP', 100), ('WATK', 8), ('DAMAGE', 5), ('BOSS', 10), ('IGNOREDEF', 5)]
+  set102 equip3 -> count=3 active=[('HP', 100), ('WATK', 8), ('DAMAGE', 5)]
+  set101 duplicate equip -> count=2
+
+=== PASS: 5) set roster / tier activation / dedup logic all consistent ===

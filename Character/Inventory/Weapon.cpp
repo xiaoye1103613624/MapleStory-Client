@@ -25,7 +25,8 @@ namespace ms
 {
 	Weapon::Type Weapon::by_value(int32_t value)
 	{
-		if (value < 130 || (value > 133 && value < 137) || value == 139 || (value > 149 && value < 170) || value > 170)
+		// 134 = Katara（双刀副手）；原先缺口会把 134xxxx 判成 NONE。
+		if (value < 130 || (value > 134 && value < 137) || value == 139 || (value > 149 && value < 170) || value > 170)
 		{
 			if (value != 100)
 				LOG(LOG_DEBUG, "Unknown Weapon::Type value: [" << value << "]");

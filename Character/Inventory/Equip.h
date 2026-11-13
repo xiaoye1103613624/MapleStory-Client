@@ -37,7 +37,10 @@ namespace ms
 			LENGTH
 		};
 
-		Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2);
+		// 095 强化（Round 15）：火花 / 宝珠 / 星之力。
+		// 新增参数带默认值 → 既有 add_equip 调用点无需改动，旧服务端不下发时全 0。
+		Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2,
+			int16_t spark_id = 0, int16_t soul_id = 0, uint8_t star_force = 0);
 
 		int32_t get_item_id() const;
 		int64_t get_expiration() const;
@@ -56,6 +59,14 @@ namespace ms
 		int16_t get_potential(size_t index) const;
 		int16_t get_bonus_potential(size_t index) const;
 
+		// ⑦ 095 强化三件套（Round 15）。值语义与潜能一致 = 词条/条目 id，0 = 无。
+		// 火花（AdditionalOption）：额外属性词条 id。
+		int16_t get_spark() const;
+		// 宝珠（Soul / 灵魂武器）：灵魂技能条目 id。
+		int16_t get_soul() const;
+		// 星之力（StarForce）：强化星数 0..25，非词条 id。
+		uint8_t get_starforce() const;
+
 	private:
 		EnumMap<EquipStat::Id, uint16_t> stats;
 		int32_t item_id;
@@ -72,6 +83,10 @@ namespace ms
 		int16_t potential3;
 		int16_t bonusPotential1;
 		int16_t bonusPotential2;
+		// ⑦ 095 强化（Round 15）
+		int16_t spark;
+		int16_t soul;
+		uint8_t starforce;
 		Potential potrank;
 		EquipQuality::Id quality;
 	};

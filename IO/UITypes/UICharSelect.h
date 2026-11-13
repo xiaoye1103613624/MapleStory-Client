@@ -111,6 +111,10 @@ namespace ms
 		uint8_t selected_page;
 		uint8_t page_count;
 		bool request_pending = false;
+		/// 一路回车：进页默认未确认（即使 ctor 预载 DefaultCharacter 视觉选中）。
+		/// 首次回车选第 1 角色并置 true；再次回车 BtSelect 进游戏。
+		/// 鼠标点槽/双击进游戏路径同步置 true，避免「已点选仍多按一次」。
+		bool selection_confirmed = false;
 		Texture tab;
 		uint8_t tab_index;
 		bool tab_active;

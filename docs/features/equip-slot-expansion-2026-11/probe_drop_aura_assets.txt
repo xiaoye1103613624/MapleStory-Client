@@ -1,0 +1,257 @@
+﻿===== BasicEff.img/dropItemAura =====
+dropItemAura [LIST_PROPERTY] kids=4
+  Rare [LIST_PROPERTY] kids=2
+    front [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=73 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=63 h=37 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=71 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=61 h=38 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+    back [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=58 h=46 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=53 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=56 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=62 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=61 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=60 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+  Epic [LIST_PROPERTY] kids=2
+    front [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=73 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=63 h=37 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=71 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=61 h=38 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+    back [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=58 h=46 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=53 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=56 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=62 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=61 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=60 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+  Unique [LIST_PROPERTY] kids=2
+    front [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=73 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=63 h=37 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=71 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=61 h=38 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+    back [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=3 w=58 h=46 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=3 w=53 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=3 w=56 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=3 w=62 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=3 w=61 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=3 w=60 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+  Legendary [LIST_PROPERTY] kids=2
+    front [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=73 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=63 h=37 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=71 h=34 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=72 h=33 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=61 h=38 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+    back [LIST_PROPERTY] kids=6
+      0 [CANVAS_PROPERTY] kids=4 w=58 h=46 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      1 [CANVAS_PROPERTY] kids=4 w=53 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      2 [CANVAS_PROPERTY] kids=4 w=56 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      3 [CANVAS_PROPERTY] kids=4 w=62 h=48 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      4 [CANVAS_PROPERTY] kids=4 w=61 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+      5 [CANVAS_PROPERTY] kids=4 w=60 h=47 fmt=ARGB8888
+        origin [VECTOR_PROPERTY] kids=0
+        z [INT_PROPERTY] kids=0
+        delay [INT_PROPERTY] kids=0
+        _hash [STRING_PROPERTY] kids=0
+===== BasicEff.img/dropItemEffect =====
+dropItemEffect [LIST_PROPERTY] kids=6
+  0 [CANVAS_PROPERTY] kids=0 w=192 h=165 fmt=ARGB8888
+  1 [CANVAS_PROPERTY] kids=0 w=192 h=169 fmt=ARGB8888
+  2 [CANVAS_PROPERTY] kids=0 w=187 h=153 fmt=ARGB8888
+  3 [CANVAS_PROPERTY] kids=0 w=177 h=145 fmt=ARGB8888
+  4 [CANVAS_PROPERTY] kids=0 w=115 h=128 fmt=ARGB8888
+  5 [CANVAS_PROPERTY] kids=0 w=31 h=130 fmt=ARGB8888
+unload_all -> {'ok': True, 'rootCount': 0}

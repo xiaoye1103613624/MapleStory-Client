@@ -1,0 +1,10 @@
+﻿parsed islot groups = ['Ae', 'Af', 'Ay', 'Ba', 'Be', 'Cp', 'Dr', 'Em', 'GlGw', 'Gv', 'HrCp', 'Ht', 'Ma', 'MaPn', 'Me', 'Pe', 'Pn', 'Ri', 'Sd', 'Sh', 'Si', 'So', 'Sr', 'Tm', 'To', 'Wp', 'WpSi', 'WpSp']
+BP doc ACTIVE rows = 21
+[A] v083 槽位校验 21 组：正常位 + cash 镜像位（按号段查指定 islot）
+[B] 新增槽位（护肩/第二项链/徽章/图腾×4/纹章/机器人/心脏）校验完成
+[C] 畸形组合拒绝检查 7 组
+[D] 删除 catch-all 后新增拒绝的 (islot, cash slot) 组合 = 3794
+    其中属于「合法 cash 镜像位」(slot == allow-100) 的 = 0
+    宠物座位 cash 位（bp∈21..48 → -121..-148）共 29 个，全部 28 个 islot 均被拒 = 812 组
+
+=== PASS: 删 catch-all 未误拒任何合法正常位/cash 镜像位；畸形组合全部被拒 ===

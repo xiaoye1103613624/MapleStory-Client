@@ -1,0 +1,66 @@
+﻿client wire entries: 30
+server enum entries: 28
+
+=== client wire_bodypart ===
+  HAT              -> -1
+  FACE             -> -2
+  EYEACC           -> -3
+  EARACC           -> -4
+  TOP              -> -5
+  BOTTOM           -> -6
+  SHOES            -> -7
+  GLOVES           -> -8
+  CAPE             -> -9
+  SHIELD           -> -10
+  WEAPON           -> -11
+  RING1            -> -12
+  RING2            -> -13
+  RING3            -> -15
+  RING4            -> -16
+  PENDANT1         -> -17
+  TAMEDMOB         -> -18
+  SADDLE           -> -19
+  SHOULDER         -> -20
+  MEDAL            -> -49
+  BELT             -> -50
+  PENDANT2         -> -51
+  BADGE            -> -54
+  TOTEM1           -> -55
+  TOTEM2           -> -56
+  TOTEM3           -> -57
+  TOTEM4           -> -58
+  EMBLEM           -> -59
+  ANDROID_SLOT     -> -60
+  HEART            -> -61
+
+=== server allowed (first values) ===
+  ANDROID          -> [-60, -160]
+  BADGE            -> [-54, -154]
+  BELT             -> [-50]
+  CAPE             -> [-9, -109]
+  CASH_GLOVES      -> [-8]
+  EARRINGS         -> [-4]
+  EMBLEM           -> [-59, -159]
+  EYE_ACCESSORY    -> [-3]
+  FACE_ACCESSORY   -> [-2]
+  GLOVES           -> [-8]
+  HAT              -> [-1]
+  HEART            -> [-61, -161]
+  LOW_WEAPON       -> [-11]
+  MEDAL            -> [-49]
+  OVERALL          -> [-5]
+  PANTS            -> [-6]
+  PENDANT          -> [-17, -51]
+  RING             -> [-12, -13, -15, -16]
+  SADDLE           -> [-19]
+  SHIELD           -> [-10]
+  SHOES            -> [-7]
+  SHOULDER         -> [-20]
+  SPECIAL_HAT      -> [-1]
+  TAMED_MOB        -> [-18]
+  TOP              -> [-5]
+  TOTEM            -> [-55, -56, -57, -58, -155, -156, -157, -158]
+  WEAPON           -> [-11]
+  WEAPON_2         -> [-11]
+
+=== PASS: client wire_bodypart() 与 s9 EquipSlot.java 官方编号逐项一致 ===

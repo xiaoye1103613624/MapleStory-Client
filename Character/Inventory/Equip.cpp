@@ -19,7 +19,7 @@
 
 namespace ms
 {
-	Equip::Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2) : item_id(item_id), expiration(expiration), owner(owner), flags(flags), slots(slots), level(level), stats(stats), itemlevel(itemlevel), itemexp(itemexp), vicious(vicious), potential1(p1), potential2(p2), potential3(p3), bonusPotential1(bp1), bonusPotential2(bp2)
+	Equip::Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2, int16_t spark_id, int16_t soul_id, uint8_t star_force) : item_id(item_id), expiration(expiration), owner(owner), flags(flags), slots(slots), level(level), stats(stats), itemlevel(itemlevel), itemexp(itemexp), vicious(vicious), potential1(p1), potential2(p2), potential3(p3), bonusPotential1(bp1), bonusPotential2(bp2), spark(spark_id), soul(soul_id), starforce(star_force)
 	{
 		// 095 潜能/魔方：无显式 tier 字段时，按主潜能是否存在推导展示等级（POT_RARE 占位，后续可由 Potential.img 细分级）。
 		potrank = (p1 != 0 || p2 != 0 || p3 != 0) ? Equip::Potential::POT_RARE : Equip::Potential::POT_NONE;
@@ -100,6 +100,21 @@ namespace ms
 			case 1: return bonusPotential2;
 			default: return 0;
 		}
+	}
+
+	int16_t Equip::get_spark() const
+	{
+		return spark;
+	}
+
+	int16_t Equip::get_soul() const
+	{
+		return soul;
+	}
+
+	uint8_t Equip::get_starforce() const
+	{
+		return starforce;
 	}
 
 	EquipQuality::Id Equip::get_quality() const

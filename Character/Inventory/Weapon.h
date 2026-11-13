@@ -30,6 +30,7 @@ namespace ms
 			AXE_1H = 131,
 			MACE_1H = 132,
 			DAGGER = 133,
+			KATARA = 134,
 			WAND = 137,
 			STAFF = 138,
 			SWORD_2H = 140,

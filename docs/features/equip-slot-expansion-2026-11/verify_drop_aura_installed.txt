@@ -1,0 +1,11 @@
+﻿file exists=True size=116221
+magic = b's\xf8lw' (expect b'\x00\x00\x01\x00' IMG dir header)
+load_files OK: {"rootCount": 1, "exclusive": false, "generation": 1, "loadedCount": 1}
+  <root>: 0 kids -> []
+  dropItemAura: 4 kids -> ['Rare', 'Epic', 'Unique', 'Legendary']
+  dropItemAura/Rare/front: 6 kids -> ['0', '1', '2', '3', '4', '5']
+  dropItemAura/Legendary/back: 6 kids -> ['0', '1', '2', '3', '4', '5']
+  dropItemEffect: 6 kids -> ['0', '1', '2', '3', '4', '5']
+  Rare/front/0 png_len=0 w=None
+=== FAIL: CANVAS 无像素数据（空壳） ===
+unload: {"ok": true, "rootCount": 0}

@@ -121,7 +121,8 @@ namespace ms
 		iconpositions[EquipSlot::Id::PENDANT1] = Point<int16_t>(71, 131);
 		iconpositions[EquipSlot::Id::WEAPON] = Point<int16_t>(104, 131);
 		iconpositions[EquipSlot::Id::SHIELD] = Point<int16_t>(137, 131);
-		iconpositions[EquipSlot::Id::SUBWEAPON] = Point<int16_t>(137, 131);
+		// SUBWEAPON == SHIELD（同值别名，双手武器与盾牌共用这一格，原生语义），
+		// 不再单独写一次坐标；旧值 58 已被 TOTEM4 正式占用，绝不能同 key 覆盖。
 		iconpositions[EquipSlot::Id::GLOVES] = Point<int16_t>(5, 164);
 		iconpositions[EquipSlot::Id::BOTTOM] = Point<int16_t>(38, 164);
 		iconpositions[EquipSlot::Id::BELT] = Point<int16_t>(71, 164);
@@ -130,6 +131,12 @@ namespace ms
 		iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(71, 197);
 		iconpositions[EquipSlot::Id::TAMEDMOB] = Point<int16_t>(5, 230);
 		iconpositions[EquipSlot::Id::SADDLE] = Point<int16_t>(38, 230);
+
+		// 2026-11-12 装备槽位扩展（用户裁决：②③ 塞主窗空格，④ 用 v5 独立子窗）。
+		// ③ 第二项链：眼饰 (71,98) 左侧空格 (38,98) ——「眼饰左边」逐字对齐需求。
+		// ② 护肩：行7 剩余空格 (71,230)；与 ④ 独立子窗不冲突。
+		iconpositions[EquipSlot::Id::PENDANT2] = Point<int16_t>(38, 98);
+		iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(71, 230);
 
 		nl::node backgrnd = Equip["backgrnd"];
 
@@ -190,11 +197,12 @@ namespace ms
 			try_maple_btn(buttons, Buttons::BT_PET_SHOW, Equip["BtPetEquipShow"],
 				Point<int16_t>(static_cast<int16_t>(right - 73), static_cast<int16_t>(bottom - 24)), "equip BtPetEquipShow");
 
-			// 实测 BtPet1/2/3 四态 origin 都是 (15,13)（不是旧注释写的 (15,0)，见
-			// evidence/r27-b3-equip/README.md §1）。这三格在现有原生帧上 agree 仅 .322
-			// —— 那张帧没画宠物页签，落位没有尺，故本轮**只记不改**：按 (15,0) 推出来的
-			// 现有 y 可能整体高 13px，等一张展开宠物面板的原生帧再定（列入用户取证）。
-			// 间距 34 沿用 evidence/w7-equip/coords.md 的模板匹配结果。
+			// Wave3 复测：正确客户端截图/角色装备.png 上 BtPet1/disabled mae=0.000 @
+			// (182,274)；try_pet_tab_btn 入参是贴图左上角，内部 +origin 成 anchor，
+			// 与 origin 是 (15,0) 还是 (15,13) 无关（绘制时再减回）。间距 34 沿用
+			// evidence/w7-equip/coords.md。Angel CUIPetEquip CreateWnd 177×181、
+			// TogglePetEquip 用父窗 GetTop()+123（同 Y），X 走独立子窗；本端内嵌右侧
+			// 面板 (right-3, bottom-h) 与正确截图 348 宽合图一致，不改架构。
 			static const char* const pet_tabs[3] = { "BtPet1", "BtPet2", "BtPet3" };
 
 			for (uint16_t i = 0; i < 3; i++)
@@ -494,8 +502,11 @@ namespace ms
 
 	void UIEquipInventory::modify(int16_t pos, int8_t mode, int16_t arg)
 	{
-		EquipSlot::Id eqpos = EquipSlot::by_id(pos);
-		EquipSlot::Id eqarg = EquipSlot::by_id(arg);
+		// 2026-11-12：EquipSlot::Id 的枚举值就是官方 BodyPart 绝对值，
+		// 但 InventoryHandlers 传进来的是 wire 原值（负）或绝对值（正）两套口径，
+		// 必须经 from_wire_bodypart() 归一化后再用；直接 by_id() 收到负数会越界。
+		EquipSlot::Id eqpos = EquipSlot::from_wire_bodypart(pos);
+		EquipSlot::Id eqarg = EquipSlot::from_wire_bodypart(arg);
 
 		switch (mode)
 		{
@@ -639,7 +650,7 @@ namespace ms
 		// 预留：BtPet1/2/3 三页宠物装备槽的穿戴/卸下（Equip/pet 下无 Slots 子节点，槽位数据待协议批次）
 	}
 
-	UIEquipInventory::EquipIcon::EquipIcon(int16_t s)
+	UIEquipInventory::EquipIcon::EquipIcon(EquipSlot::Id s)
 	{
 		source = s;
 	}

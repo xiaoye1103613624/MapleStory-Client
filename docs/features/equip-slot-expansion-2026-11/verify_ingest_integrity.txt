@@ -1,0 +1,29 @@
+﻿LIVE top nodes = 41   OUT top nodes = 2
+missing=41 extra=['dropItemAura', 'dropItemEffect']
+  dropItemAura: 4 子节点 OK
+  dropItemEffect: 6 子节点 OK
+unload: {'ok': True, 'rootCount': 0}
+python.exe : Traceback (most recent call last):
+所在位置 行:1 字符: 343
++ ... 'utf-8'; $o=& python 'E:\project\MapleStory-Client\docs\features\equi ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "E:\project\MapleStory-Client\docs\features\equip-slot-expansion-2026-11\verify_ingest_integrity.py", line 161, 
+in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "E:\project\MapleStory-Client\docs\features\equip-slot-expansion-2026-11\verify_ingest_integrity.py", line 125, 
+in main
+    la, lb = canvas_shape(LIVE, name), canvas_shape(OUT, name)
+                                       ~~~~~~~~~~~~^^^^^^^^^^^
+  File "E:\project\MapleStory-Client\docs\features\equip-slot-expansion-2026-11\verify_ingest_integrity.py", line 80, i
+n canvas_shape
+    t = call("get_node_tree_json", {"rootPath": root, "nodePath": path,
+                                    "maxDepth": 1, "autoParse": True, "includePng": False})
+  File "E:\project\MapleStory-Client\docs\features\equip-slot-expansion-2026-11\verify_ingest_integrity.py", line 58, i
+n call
+    raise RuntimeError(f"{name} isError: {(r.get('content') or [{}])[0].get('text', '')}")
+RuntimeError: get_node_tree_json isError: 节点路径不存在: rootPath=E:\project\MapleStory-Client\tools\_staging\BasicEff_aura_o
+ut.img, nodePath=AranGetSkill

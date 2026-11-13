@@ -68,7 +68,7 @@ namespace ms
 		class EquipIcon : public Icon::Type
 		{
 		public:
-			EquipIcon(int16_t source);
+			EquipIcon(EquipSlot::Id source);
 
 			void drop_on_stage() const override;
 			void drop_on_equips(EquipSlot::Id slot) const override;
@@ -78,7 +78,7 @@ namespace ms
 			Icon::IconType get_type() override;
 
 		private:
-			int16_t source;
+			EquipSlot::Id source;
 		};
 
 		enum Buttons : uint16_t

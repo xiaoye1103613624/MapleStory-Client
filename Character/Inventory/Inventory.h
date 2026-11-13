@@ -74,7 +74,12 @@ namespace ms
 		// 按服务端 uniqueId 反查现金宠（AskPet dlgType=6）
 		Optional<const Pet> find_pet_by_unique_id(int64_t unique_id) const;
 		// Add an equip item
-		void add_equip(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t itemlevel, uint16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2);
+		// ⑦ 095 强化（Round 15）：末尾 3 个参数带默认值，旧服务端不下发时全 0。
+		void add_equip(InventoryType::Id type, int16_t slot, int32_t itemid, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t itemlevel, uint16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2, int16_t spark_id = 0, int16_t soul_id = 0, uint8_t star_force = 0);
+
+		// ⑤ 套装系统：当前已穿戴装备的 itemid 列表（供 SetItemData::count_equipped 统计件数）。
+		// 与 recalc_stats() 遍历同一份 EQUIPPED 容器，不新增状态。
+		std::vector<int32_t> equipped_item_ids() const;
 
 		// Check if the use inventory contains at least one projectile
 		bool has_projectile() const;

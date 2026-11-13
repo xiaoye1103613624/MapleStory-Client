@@ -1,0 +1,13 @@
+﻿SLOTS=8 CELLS=8 wire_entries=30
+  [0] TOTEM1         cell=(11, 32) wire=-55 islot=To server=OK
+  [1] TOTEM2         cell=(44, 32) wire=-56 islot=To server=OK
+  [2] TOTEM3         cell=(77, 32) wire=-57 islot=To server=OK
+  [3] TOTEM4         cell=(110, 32) wire=-58 islot=To server=OK
+  [4] EMBLEM         cell=(11, 65) wire=-59 islot=Em server=OK
+  [5] ANDROID_SLOT   cell=(44, 65) wire=-60 islot=Dr server=OK
+  [6] HEART          cell=(77, 65) wire=-61 islot=Ht server=OK
+  [7] BADGE          cell=(110, 65) wire=-54 islot=Ba server=OK
+v5 PNG = 152x105
+live UIWindow.img size = 11807564
+
+=== PASS: 4) 8 slots / bitmap cells / wire bodypart / server islot all aligned ===

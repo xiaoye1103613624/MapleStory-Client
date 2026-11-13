@@ -71,6 +71,8 @@ namespace ms
 		ItemData(int32_t itemid);
 
 		std::string get_eqcategory(int32_t itemid) const;
+		// 高版本扩展号段跨目录回退：按候选顺序探测 Character 节点是否存在。
+		std::string probe_eqcategory(int32_t itemid, const std::vector<const char*>& candidates) const;
 		int32_t get_prefix(int32_t itemid) const;
 		int32_t get_item_prefix(int32_t itemid) const;
 		int8_t get_item_gender(int32_t itemid) const;

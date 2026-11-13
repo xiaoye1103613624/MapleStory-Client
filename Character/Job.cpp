@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Job.h"
 #include "../Util/Locale.h"
+
 namespace ms
 {
 	Job::Job(uint16_t i)
@@ -34,11 +35,34 @@ namespace ms
 		id = i;
 		name = get_name(id);
 
-		if (id == 0 || id == 1000 || id == 2000)
-			// 三个家族的初心者：冒险家 0、骑士团 1000、战神 2000。
-			// 证据：BeiDou-Server_s9 client/Character.java:5920 isBeginnerJob()
-			// 原来只看 id % 100 == 0，把 1000/2000 当成一转，家族共享技能因此判定不可用。
+		if (id == 0 || id == 1000 || id == 2000 || id == 2001)
+			// 初心者：冒险家 0、骑士团 1000、战神 2000、龙神 2001。
+			// 证据：BeiDou-Server_s9 client/Character.java isBeginnerJob()
 			level = Level::BEGINNER;
+		else if (id >= 430 && id <= 434)
+		{
+			// 双刀：430 一转 → 431/432 二转段 → 433 三转 → 434 四转
+			if (id == 430)
+				level = Level::FIRST;
+			else if (id == 431 || id == 432)
+				level = Level::SECOND;
+			else if (id == 433)
+				level = Level::THIRD;
+			else
+				level = Level::FOURTH;
+		}
+		else if (id >= 2200 && id <= 2218)
+		{
+			// 龙神：2200 一转，其后 2210–2218 逐级推进（映射到 2–4 以驱动 HUD/技能书层级）
+			if (id == 2200)
+				level = Level::FIRST;
+			else if (id <= 2212)
+				level = Level::SECOND;
+			else if (id <= 2215)
+				level = Level::THIRD;
+			else
+				level = Level::FOURTH;
+		}
 		else if (id % 100 == 0)
 			level = Level::FIRST;
 		else if (id % 10 == 0)
@@ -65,6 +89,29 @@ namespace ms
 	bool Job::can_use(int32_t skill_id) const
 	{
 		uint16_t required = static_cast<uint16_t>(skill_id / 10000);
+
+		// 双刀：允许 0 新手 + 已走过的 430–434 号段技能
+		if (id >= 430 && id <= 434)
+		{
+			if (required == 0)
+				return true;
+			return required >= 430 && required <= id;
+		}
+
+		// 龙神：允许 2001 初心 + 2200/2210–2218 已走过号段
+		if (id == 2001 || (id >= 2200 && id <= 2218))
+		{
+			if (required == 2001)
+				return true;
+			if (id == 2001)
+				return false;
+			if (required == 2200)
+				return id >= 2200;
+			if (required >= 2210 && required <= 2218)
+				return required <= id;
+			return false;
+		}
+
 		return is_sub_job(required);
 	}
 
@@ -99,6 +146,8 @@ namespace ms
 
 	std::string Job::get_name() const
 	{
+		// name 是 locale 键（"job.132"），不查表会直接把键名画到 HUD 上。
+		// 按值返回，配合 CharStats::get_jobname() 的按值转发，生命周期安全。
 		return Locale::text(name);
 	}
 
@@ -197,6 +246,16 @@ namespace ms
 				return "job.421";
 			case 422:
 				return "job.422";
+			case 430:
+				return "job.430";
+			case 431:
+				return "job.431";
+			case 432:
+				return "job.432";
+			case 433:
+				return "job.433";
+			case 434:
+				return "job.434";
 			case 500:
 				return "job.500";
 			case 510:
@@ -265,6 +324,26 @@ namespace ms
 				return "job.2111";
 			case 2112:
 				return "job.2112";
+			case 2200:
+				return "job.2200";
+			case 2210:
+				return "job.2210";
+			case 2211:
+				return "job.2211";
+			case 2212:
+				return "job.2212";
+			case 2213:
+				return "job.2213";
+			case 2214:
+				return "job.2214";
+			case 2215:
+				return "job.2215";
+			case 2216:
+				return "job.2216";
+			case 2217:
+				return "job.2217";
+			case 2218:
+				return "job.2218";
 			case 800:
 			case 900:
 			case 910:

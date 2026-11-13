@@ -32,6 +32,19 @@ namespace ms
 		slotmaxima[InventoryType::Id::EQUIPPED] = EquipSlot::Id::LENGTH;
 	}
 
+	std::vector<int32_t> Inventory::equipped_item_ids() const
+	{
+		std::vector<int32_t> ids;
+
+		// 与 recalc_stats() 同一口径：EnumMap 的迭代器是自定义 node，
+		// 用 iter.second（不是 ->second，find() 也不返回 std::map::iterator）。
+		for (const auto& iter : inventories[InventoryType::Id::EQUIPPED])
+			if (iter.second.item_id > 0)
+				ids.push_back(iter.second.item_id);
+
+		return ids;
+	}
+
 	void Inventory::recalc_stats(Weapon::Type type)
 	{
 		totalstats.clear();
@@ -131,12 +144,12 @@ namespace ms
 		return {};
 	}
 
-	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2)
+	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2, int16_t spark_id, int16_t soul_id, uint8_t star_force)
 	{
 		equips.emplace(
 			std::piecewise_construct,
 			std::forward_as_tuple(add_slot(invtype, slot, item_id, 1, cash)),
-			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious, p1, p2, p3, bp1, bp2)
+			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force)
 			);
 	}
 

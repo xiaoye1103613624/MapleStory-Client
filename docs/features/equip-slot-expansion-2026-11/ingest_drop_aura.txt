@@ -1,0 +1,14 @@
+﻿create_img_file -> {'node': {'name': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': '', 'type': 'IMAGE'}}
+copy_paste -> {'results': [{'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': '', 'pasted': [{'name': 'dropItemAura', 'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': 'dropItemAura', 'type': 'LIST_PROPERTY'}, {'name': 'dropItemEffect', 'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': 'dropItemEffect', 'type': 'LIST_PROPERTY'}]}, {'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': '', 'pasted': [{'name': 'dropItemAura', 'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': 'dropItemAura', 'type': 'LIST_PROPERTY'}, {'name': 'dropItemEffect', 'rootPath': 'E:\\project\\MapleStory-Client\\tools\\_staging\\DropAuraEff.img', 'nodePath': 'dropItemEffect', 'type': 'LIST_PROPERTY'}]}], 'sourceCount': 2, 'targetCount': 2, 'generation': 2, 'ok': True}
+dropItemAura grades = ['Rare', 'Epic', 'Unique', 'Legendary']
+  Rare: front=6f, back=6f
+  Epic: front=6f, back=6f
+  Unique: front=6f, back=6f
+  Legendary: front=6f, back=6f
+dropItemEffect frames = 6 sizes = 192x165, 192x169, 187x153, 177x145, 115x128, 31x130
+save_node -> {'unloadAfterSave': True, 'clearCache': True, 'rootCount': 1, 'ok': True}
+unload: {'ok': True, 'rootCount': 0}
+
+NEW_STG size = 116221
+installed E:\MXD\BeiDou-Client-xy\Data\Effect\DropAuraEff.img size=116221
+=== PASS: 掉落光环素材以独立 .img 入库，BasicEff.img 未被触碰 ===

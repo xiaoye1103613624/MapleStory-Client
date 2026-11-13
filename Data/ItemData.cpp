@@ -95,6 +95,26 @@ namespace ms
 		}
 	}
 
+	std::string ItemData::probe_eqcategory(int32_t id, const std::vector<const char*>& candidates) const
+	{
+		// 逐个候选目录探测 Character 节点是否真有这件装备。
+		// 为什么必须探测而不是硬编码单一目录：live 实测同一号段会散落在
+		// 多个目录（见 get_eqcategory 里的分布注释），硬编码必然漏一半，
+		// 漏掉的那半会表现成「图标能显示但属性/需求等级/可升级次数全是 0」。
+		std::string strid = "0" + std::to_string(id);
+
+		for (const char* cand : candidates)
+		{
+			nl::node node = nl::nx::Character[cand][strid + ".img"];
+
+			if (node)
+				return cand;
+		}
+
+		// 全都没命中：回退到语义首选目录，让上层按「资源缺失」走既有降级路径。
+		return candidates.empty() ? std::string() : std::string(candidates.front());
+	}
+
 	std::string ItemData::get_eqcategory(int32_t id) const
 	{
 		constexpr const char* categorynames[15] =
@@ -117,6 +137,34 @@ namespace ms
 		};
 
 		int32_t index = get_item_prefix(id) - 100;
+
+		// 2026-11-12 装备槽位扩展 ②③④：高版本扩展号段 → 实际目录名。
+		// 这里是**客户端读装备数据的目录解析器**（ItemData.cpp:46-47 →
+		// Character[category][strid+".img"] 与 String/Eqp[category]），
+		// 与 EquipData.cpp 的 eqslot 映射是两件事：只改那边不改这里，
+		// 会出现「能穿上但属性/islot 读不到」。
+		//
+		// ⚠️ 不能写成「一个前缀 = 一个目录」：Round 6 实测 live 里
+		//   120xxxx 分散在 Accessory(28)/Totem(20)
+		//   166xxxx 分散在 Weapon(6)/Android(2)
+		//   167xxxx 分散在 Heart(9)/Weapon(3)/Android(1)
+		// 因此按候选顺序**逐个探测节点是否真的存在**，命中即用。
+		// 候选首位 = 语义目录（与 WZ islot 一致：To/Dr/Ht），其余为实际散落目录。
+		switch (index)
+		{
+		case 15:	// 115xxxx 护肩 Sh
+		case 18:	// 118xxxx 徽章 Ba
+		case 19:	// 119xxxx 纹章 Em
+			return "Accessory";
+		case 20:	// 120xxxx 图腾 To —— 实测 Accessory / Totem 两处都有
+			return probe_eqcategory(id, { "Accessory", "Totem" });
+		case 66:	// 166xxxx 机器人 Dr —— 实测 Weapon / Android
+			return probe_eqcategory(id, { "Android", "Weapon" });
+		case 67:	// 167xxxx 心脏 Ht —— 实测 Heart / Weapon / Android
+			return probe_eqcategory(id, { "Heart", "Weapon", "Android" });
+		default:
+			break;
+		}
 
 		if (index < 15)
 			return categorynames[index];

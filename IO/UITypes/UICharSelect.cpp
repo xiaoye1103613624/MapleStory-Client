@@ -349,11 +349,15 @@ namespace ms
 		statINTPos = CS_DETAIL_INT;
 		statLUKPos = CS_DETAIL_LUK;
 
-		// 命中区覆盖整页 3 槽（桥面统一 Y）；高度用占用槽外框。
+		// 人偶命中：脚点绘制、身体在脚点上方。框须盖住人偶外观，但不得吞右侧木牌
+		// （Angel 靠 CUICharSelect/CUIAvatar 分窗；本端单窗须用更窄身体框）。
 		for (size_t i = 0; i < PAGESIZE; i++)
+		{
+			const Point<int16_t> foot = get_character_slot_pos(i, true);
 			buttons[Buttons::CHARACTER_SLOT0 + i] = std::make_unique<AreaButton>(
-				get_character_slot_pos(i, true),
-				Point<int16_t>(CS_SLOT_W, CS_SLOT_H_OCCUPIED));
+				foot + Point<int16_t>(CS_DOLL_HIT_OFF_X, CS_DOLL_HIT_OFF_Y),
+				Point<int16_t>(CS_DOLL_HIT_W, CS_DOLL_HIT_H));
+		}
 
 		if (require_pic == 0 || !show_pic_btns)
 		{
@@ -660,25 +664,23 @@ namespace ms
 	void UICharSelect::doubleclick(Point<int16_t> cursorpos)
 	{
 		// 双击任意角色槽位：先选中该槽位（若尚未选中），再走「开始游戏」路径。
-		// 旧实现只认「当前已选中槽位」的按钮状态，双击另一个角色时无效果
-		// （用户实测反馈「双击角色不能直接进入游戏」）。
+		// 命中与单击 AreaButton 同一人偶身体框（不得用旧大框盖住木牌）。
 		for (uint16_t slot = 0; slot < PAGESIZE; slot++)
 		{
 			uint16_t button_index = Buttons::CHARACTER_SLOT0 + slot;
 			auto& btit = buttons[button_index];
 
-			// 命中判定：优先 AreaButton（与单击一致），兜底用覆盖整身的命中框。
-			// 角色以脚点 charpos 绘制、身体在脚点上方，而 AreaButton 框在脚点下方
-			// 空地 → 点角色身体会漏掉 AreaButton，故用大框覆盖头到脚，确保双击
-			// 「点角色」必命中（无论角色是脚锚点还是顶锚点）。
 			bool hit = btit && btit->is_active()
 				&& btit->bounds(position).contains(cursorpos);
 
 			if (!hit)
 			{
 				Point<int16_t> charpos = position + get_character_slot_pos(slot, true);
+				const Point<int16_t> body_lt(
+					charpos.x() + CS_DOLL_HIT_OFF_X, charpos.y() + CS_DOLL_HIT_OFF_Y);
 				Rectangle<int16_t> body_rect(
-					charpos.x() - 25, charpos.y() - 220, charpos.x() + 158, charpos.y() + 30);
+					body_lt,
+					body_lt + Point<int16_t>(CS_DOLL_HIT_W, CS_DOLL_HIT_H));
 
 				hit = body_rect.contains(cursorpos);
 			}
@@ -696,6 +698,7 @@ namespace ms
 						update_buttons();
 					}
 
+					selection_confirmed = true;
 					button_pressed(Buttons::BtSelect);
 				}
 
@@ -719,41 +722,104 @@ namespace ms
 
 		Cursor::State ret = clicked ? Cursor::State::CLICKING : Cursor::State::IDLE;
 
-		for (auto& btit : buttons)
+		// Angel：木牌在 CUICharSelect 独立窗、人偶在 CUIAvatar/Detail，WndMan 不会双触发。
+		// 本端单窗：MapleButton（木牌/翻页等）优先于 CHARACTER_SLOT*，且单击只处理一个命中。
+		auto clear_hover_except = [&](uint16_t keep_id)
 		{
-			if (btit.second->is_active() && btit.second->bounds(position).contains(cursorpos))
+			for (auto& btit : buttons)
 			{
-				if (btit.second->get_state() == Button::State::NORMAL)
+				if (!btit.second)
+					continue;
+
+				if (btit.first == keep_id)
+					continue;
+
+				if (btit.second->get_state() == Button::State::MOUSEOVER
+					&& (!tab_active || btit.first != tab_map[tab_index]))
 				{
-					Sound(Sound::Name::BUTTONOVER).play();
-
-					btit.second->set_state(Button::State::MOUSEOVER);
-					ret = Cursor::State::CANCLICK;
-				}
-				else if (btit.second->get_state() == Button::State::MOUSEOVER)
-				{
-					if (clicked)
-					{
-						Sound(Sound::Name::BUTTONCLICK).play();
-
-						btit.second->set_state(button_pressed(btit.first));
-
-						if (tab_active && btit.first == tab_map[tab_index])
-							btit.second->set_state(Button::State::MOUSEOVER);
-
-						ret = Cursor::State::IDLE;
-					}
-					else
-					{
-						if (!tab_active || btit.first != tab_map[tab_index])
-							ret = Cursor::State::CANCLICK;
-					}
+					btit.second->set_state(Button::State::NORMAL);
 				}
 			}
-			else if (btit.second->get_state() == Button::State::MOUSEOVER)
+		};
+
+		auto handle_button = [&](uint16_t id, Button& btn) -> bool
+		{
+			if (!btn.is_active() || !btn.bounds(position).contains(cursorpos))
+				return false;
+
+			clear_hover_except(id);
+
+			if (btn.get_state() == Button::State::NORMAL)
 			{
-				if (!tab_active || btit.first != tab_map[tab_index])
+				Sound(Sound::Name::BUTTONOVER).play();
+				btn.set_state(Button::State::MOUSEOVER);
+				ret = Cursor::State::CANCLICK;
+			}
+			else if (btn.get_state() == Button::State::MOUSEOVER)
+			{
+				if (clicked)
+				{
+					Sound(Sound::Name::BUTTONCLICK).play();
+					btn.set_state(button_pressed(id));
+
+					if (tab_active && id == tab_map[tab_index])
+						btn.set_state(Button::State::MOUSEOVER);
+
+					ret = Cursor::State::IDLE;
+				}
+				else if (!tab_active || id != tab_map[tab_index])
+				{
+					ret = Cursor::State::CANCLICK;
+				}
+			}
+
+			return true;
+		};
+
+		bool hit = false;
+
+		for (auto& btit : buttons)
+		{
+			if (!btit.second || btit.first >= Buttons::CHARACTER_SLOT0)
+				continue;
+
+			if (handle_button(btit.first, *btit.second))
+			{
+				hit = true;
+				break;
+			}
+		}
+
+		if (!hit)
+		{
+			for (uint16_t slot = 0; slot < PAGESIZE; slot++)
+			{
+				uint16_t id = static_cast<uint16_t>(Buttons::CHARACTER_SLOT0 + slot);
+				auto it = buttons.find(id);
+
+				if (it == buttons.end() || !it->second)
+					continue;
+
+				if (handle_button(id, *it->second))
+				{
+					hit = true;
+					break;
+				}
+			}
+		}
+
+		if (!hit)
+		{
+			for (auto& btit : buttons)
+			{
+				if (!btit.second)
+					continue;
+
+				if (btit.second->get_state() == Button::State::MOUSEOVER
+					&& (!tab_active || btit.first != tab_map[tab_index]))
+				{
 					btit.second->set_state(Button::State::NORMAL);
+				}
 			}
 		}
 
@@ -782,7 +848,25 @@ namespace ms
 				}
 				else
 				{
-					button_pressed(Buttons::BtSelect);
+					// 一路回车：先确认选中第 1 角色，再进游戏。
+					if (characters_count <= 0)
+						return;
+
+					if (!selection_confirmed)
+					{
+						if (selected_page != 0)
+						{
+							selected_page = 0;
+							update_buttons();
+						}
+
+						button_pressed(Buttons::CHARACTER_SLOT0);
+						selection_confirmed = true;
+					}
+					else
+					{
+						button_pressed(Buttons::BtSelect);
+					}
 				}
 			}
 			else
@@ -1141,8 +1225,27 @@ namespace ms
 					}
 					case 2:
 					{
-						request_pending = true;
-						DeleteCharPacket(id).dispatch();
+						// 无 PIC 账号也要先确认删除；旧逻辑直接发包，服务端常回
+						// 「未知错误，不能连接」类提示（用户 2026-11-11 实报）。
+						std::function<void()> oncancel = [&]()
+						{
+							charslotlabel.change_text(get_slot_text());
+						};
+
+						std::function<void()> onok = [&, id]()
+						{
+							request_pending = true;
+							DeleteCharPacket(id).dispatch();
+						};
+
+						const StatsEntry& character_stats = characters[selected_character].stats;
+						uint16_t cjob = character_stats.stats[MapleStat::Id::JOB];
+
+						if (cjob < 1000)
+							UI::get().emplace<UILoginNotice>(UILoginNotice::Message::DELETE_CONFIRMATION, onok, oncancel);
+						else
+							UI::get().emplace<UILoginNotice>(UILoginNotice::Message::CASH_ITEMS_CONFIRM_DELETION, onok, oncancel);
+
 						break;
 					}
 				}
@@ -1231,6 +1334,10 @@ namespace ms
 					uint8_t previous_character = selected_character;
 					selected_character = buttonid - Buttons::CHARACTER_SLOT0 + selected_page * PAGESIZE;
 
+					// 鼠标/方向键选槽即确认，后续回车可直接 BtSelect 进游戏。
+					if (selected_character < static_cast<uint8_t>(characters_count))
+						selection_confirmed = true;
+
 					if (previous_character != selected_character)
 					{
 						if (previous_character < characters_count)
@@ -1293,7 +1400,9 @@ namespace ms
 		// 详情卷轴展开（参考端选中角色后卷轴自顶部展开）。
 		// 仅在选中项变化时重播：同一角色的重复调用（如 Charlist 重发触发
 		// post_add_character）不再重置动画，否则面板会一直闪烁（用户实测反馈）。
-		const int16_t detail_key = static_cast<int16_t>(selected_page * PAGESIZE + selected_character);
+		// selected_character 已是绝对槽位（含页偏移），勿再加 selected_page*PAGESIZE，
+		// 否则翻页后 detail_key 错位，卷轴/属性板重播错位（2026-11-11）。
+		const int16_t detail_key = static_cast<int16_t>(selected_character);
 		if (charinfo_has_scroll && detail_key != last_detail_key)
 		{
 			last_detail_key = detail_key;

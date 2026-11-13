@@ -113,16 +113,48 @@ namespace ms
 				slot = -slot;
 			}
 
-			// 095 潜能/魔方：s9 在 equip 包尾部（writeInt(-1) 之后）追加 5 个 int16 潜能行。
-		// 与 s9 PacketCreator.addItem 的 equip 序列化严格对齐；旧 s9 不发时本协议会少读 10 字节，
-		// 故必须与 s9 同步上线。
-		int16_t p1 = recv.read_short();
-		int16_t p2 = recv.read_short();
-		int16_t p3 = recv.read_short();
-		int16_t bp1 = recv.read_short();
-		int16_t bp2 = recv.read_short();
+			// 095 潜能/魔方：s9 在 equip 包尾部（writeInt(-1) 之后）追加 5 个 int16 潜能行
+			//（3 条主潜能 + 2 条 bonus）。
+			//
+			// ⚠️ P0（Round 8）：这里原本是 5 个裸 read_short()，没有任何可用性保护。
+			// 旧 s9（未迁移 V1.11.7__add_inventoryequipment_potential.sql）不发这 10 字节，
+			// 于是会把「下一个包的包头」当成潜能耗掉 —— 表现为登录/进图/开背包时
+			// 随机错位甚至断联。必须按剩余字节数做版本门控：
+			//   剩余 >= 10 → 新服务端，读 5 个 short
+			//   否则       → 旧服务端，全部置 0（无潜能）
+			// 这里不能复用 recv.available() 判断「包尾」——equip 解析可能处在一个
+			// 复合包（如 inventory 批量下发）中间，只要求「够读 10 字节」。
+			int16_t p1 = 0, p2 = 0, p3 = 0, bp1 = 0, bp2 = 0;
 
-		inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious, p1, p2, p3, bp1, bp2);
+			// ⚠️ 关键修复：InPacket::available() 返回的是 bool（length()>0），
+			// 原 `available() >= 10` 恒为 false，导致 s9 发的 10 字节潜能段被永远跳过，
+			// 每件装备少读 10 字节 → SET_FIELD 整段错位 → ring2 误读友谊戒指数/越界。
+			// 必须用 length()（剩余字节数）做版本门控。
+			if (recv.length() >= 10)
+			{
+				p1 = recv.read_short();
+				p2 = recv.read_short();
+				p3 = recv.read_short();
+				bp1 = recv.read_short();
+				bp2 = recv.read_short();
+			}
+
+			// ⑦ 095 强化三件套（Round 15）：火花(2B) + 宝珠(2B) + 星之力(1B) = 5B，
+			// 紧跟在潜能 10B 之后。同样按剩余字节数门控 ——
+			// 只发了潜能 10B 的旧服务端不会被多读；完全不发强化段的老服全 0。
+			int16_t spark_id = 0, soul_id = 0;
+			uint8_t star_force = 0;
+
+			// ⚠️ 同上加_equip：available() 返回 bool，原 `available() >= 5` 恒为 false，
+			// 必须改 length() 才能正确读取 s9 发的 5 字节强化三件套（火花+宝珠+星之力）。
+			if (recv.length() >= 5)
+			{
+				spark_id = recv.read_short();
+				soul_id = recv.read_short();
+				star_force = static_cast<uint8_t>(recv.read_byte());
+			}
+
+			inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force);
 		}
 
 		void parse_item(InPacket& recv, InventoryType::Id invtype, int16_t slot, Inventory& inventory)

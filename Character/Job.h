@@ -61,6 +61,12 @@ namespace ms
 		uint16_t get_id() const;
 		uint16_t get_subjob(Level level) const;
 		Level get_level() const;
+		// name 存的是 get_name(uint16_t) 产出的 locale 键（如 "job.132"），
+		// 必须经 Locale::text 解析成展示名（"黑骑士"）。按值返回临时串，
+		// 转发方 CharStats::get_jobname() 也必须按值，否则引用会悬空。
+		// 历史闪退：旧链路用 const std::string& 转发这个临时串，进图后
+		// UIStatusBar::draw_classic 拿悬空引用构造 Text，memcpy 从被复用的
+		// SSO 缓冲区读取（源指针被踩成 UTF-8 中文名片段）→ 0xC0000005。
 		std::string get_name() const;
 		EquipStat::Id get_primary(Weapon::Type weapontype) const;
 		EquipStat::Id get_secondary(Weapon::Type weapontype) const;

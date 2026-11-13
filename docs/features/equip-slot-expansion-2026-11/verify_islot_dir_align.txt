@@ -1,0 +1,17 @@
+﻿非空 itemid 命名 .img 共 63371 个
+涉及的 (目录,号段) 组合 13 个，抽样解析 islot：
+  Accessory  prefix 115: n=214 islot=['Sh', 'Sh'] -> OK
+  Accessory  prefix 118: n=268 islot=['Ba', 'Ba'] -> OK
+  Accessory  prefix 119: n=124 islot=['Si', 'Si'] -> OK
+  Accessory  prefix 120: n=297 islot=['To', 'To'] -> OK
+  Android    prefix 166: n=156 islot=['Dr', 'Dr'] -> OK
+  Android    prefix 167: n= 57 islot=['Ht', 'Ht'] -> OK
+  Character  prefix 120: n=  9 islot=['Hd', 'Hd'] -> UNKNOWN(跳过)
+  Heart      prefix 167: n= 80 islot=['Ht', 'Ht'] -> OK
+  Shield     prefix 119: n=  2 islot=['Si', 'Si'] -> OK
+  Totem      prefix 120: n=297 islot=['To', 'To'] -> OK
+  Weapon     prefix 120: n=  9 islot=['Hd', 'Hd'] -> UNKNOWN(跳过)
+  Weapon     prefix 166: n=156 islot=['Dr', 'Dr'] -> OK
+  Weapon     prefix 167: n= 75 islot=['Ht', 'Ht'] -> OK
+
+=== PASS: 13 个 (目录,号段) 组合的 islot 与所在目录一致 ===
