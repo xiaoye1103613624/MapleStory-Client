@@ -115,7 +115,11 @@ namespace ms
 				vCanvasCount = 7;
 		}
 
-		nl::node CustomizeCharObj = nl::nx::Map["Obj"]["login.img"]["CustomizeChar"][class_map[classType]];
+		// 龙神/双刀暂无独立 CustomizeChar 预设时回落冒险家板，避免空节点崩创建页。
+		std::string customizeKey = class_map[classType];
+		if (customizeKey == "evan" || customizeKey == "dualBlade")
+			customizeKey = "adventurer";
+		nl::node CustomizeCharObj = nl::nx::Map["Obj"]["login.img"]["CustomizeChar"][customizeKey];
 
 		int16_t genderHeight = board["genderHeight"];
 		int16_t avatarHeight = board["avatarHeight"];
@@ -1225,6 +1229,10 @@ namespace ms
 					job = 2;
 				else if (className == "cygnusKnight")
 					job = 0;
+				else if (className == "evan")
+					job = 3;
+				else if (className == "dualBlade")
+					job = 4;
 
 				if (job >= 0)
 				{

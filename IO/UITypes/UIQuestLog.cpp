@@ -83,11 +83,11 @@ namespace ms
 		// 分组行标记 = Quest/icon4（参考截图里那本蓝书，不是箭头）。
 		icon_header = load_tex(quest["icon4"]);
 
-		// 行底色没有对应位图（backgrnd 里只有空白列表区），按参考截图实测自绘。
-		// 右缘必须收在 list_area.right()=226 之内，否则会从滚动条底下透出来：
-		// 选中行 x25 起、宽 199（到 224）；分组行占满列表宽 x7 起、宽 219（到 226）。
-		row_highlight = ColorBox(199, 19, Color(0x336699FF), 1.0f);
-		header_highlight = ColorBox(219, 19, Color(0x99BBCCFF), 1.0f);
+		// 行底色无位图：按 任务栏.png / w10 coords 自绘。
+		// 分组头 (9,) 宽 224→233；选中行 (27,) 宽 204→231（右缘仍 < list_area.right=226 的
+		// 旧注释已过时——实测选中带到 x218..234，以截图为准）。
+		row_highlight = ColorBox(204, 19, Color(0x336699FF), 1.0f);
+		header_highlight = ColorBox(224, 19, Color(0x99BBCCFF), 1.0f);
 
 		for (uint16_t i = 0; i < 3; i++)
 		{
@@ -221,17 +221,16 @@ namespace ms
 		activate_buttons();
 		rebuild_list();
 
-		// 多分辨率：PosQUEST 是 1280×720 基准下的绝对读数；其它档位按新视口居中。
-		// 1280×720 保持原生绝对位置，不覆盖用户拖拽后保存的 Setting<PosQUEST>。
+		// Center 策略：1280×720 保留 PosQUEST；其它档位视口居中。
+		set_layout_policy(LayoutPolicy::Center);
 		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
 			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
 			center_on_screen();
 	}
 
-	void UIQuestLog::update_screen(int16_t, int16_t)
+	void UIQuestLog::update_screen(int16_t new_width, int16_t new_height)
 	{
-		// 分辨率实时切换：重锚到视口中心，窗内控件相对偏移与 1x 位图尺寸保持不变。
-		center_on_screen();
+		UIElement::update_screen(new_width, new_height);
 	}
 
 	void UIQuestLog::draw(float inter) const
@@ -260,10 +259,10 @@ namespace ms
 
 			if (r.header)
 			{
-				header_highlight.draw(position + Point<int16_t>(7, row_top));
+				header_highlight.draw(position + Point<int16_t>(9, row_top));
 
 				if (icon_header)
-					icon_header->draw(position + Point<int16_t>(9, row_top + 2));
+					icon_header->draw(position + Point<int16_t>(11, row_top + 2));
 
 				Text header(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE, r.label);
 				header.draw(position + Point<int16_t>(29, row_top + 4));
@@ -271,7 +270,7 @@ namespace ms
 			else
 			{
 				if (r.id == selected_id)
-					row_highlight.draw(position + Point<int16_t>(25, row_top));
+					row_highlight.draw(position + Point<int16_t>(27, row_top));
 
 				if (icon)
 					icon->draw(position + Point<int16_t>(12, row_top + 3));

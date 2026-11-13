@@ -1,0 +1,139 @@
+{
+  "rule": "AGENTS.md YG 2026-11-09: orange-wz MCP first; .nx fallback only on parse failure; record raw error + key spec",
+  "endpoint": "http://127.0.0.1:10012/mcp",
+  "connection": "custom-orange_wz (global, streamable-http, 29 tools)",
+  "key_spec": "GMS full 65536B key table (tools/vendor/NoLifeWzToNx-master/Keys.cpp key_gms), b64_len=87384, sha256_16=268a8407a47ee76c, IV=GMS[0x4D,0x23,0xC7,0x2B]=TSPHKw==",
+  "exclusive": false,
+  "orange_wz_calls": [
+    {
+      "tool": "load_files",
+      "tag": "load_Data_Quest",
+      "class": "OK",
+      "raw": "{\"loadedCount\":1,\"rootCount\":1,\"exclusive\":false,\"generation\":2}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "roots",
+      "class": "OK",
+      "raw": "{\"roots\":[{\"name\":\"Quest\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\",\"nodePath\":\"\",\"type\":\"FOLDER\"}],\"rootCount\":1}"
+    },
+    {
+      "tool": "list_children",
+      "tag": "Quest_top_children",
+      "class": "OK",
+      "raw": "{\"children\":[{\"name\":\"Act.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\Act.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Check.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\Check.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Exclusive.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\Exclusive.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"PQuest.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\PQuest.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"QuestInfo.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\QuestInfo.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"},{\"name\":\"Say.img\",\"rootPath\":\"E:\\\\MXD\\\\BeiDou-Client-xy\\\\Data\\\\Quest\\\\Say.img\",\"nodePath\":\"\",\"type\":\"IMAGE\"}]}"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Act.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Act.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Act.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Act.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Check.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Check.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Check.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Check.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Exclusive.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Exclusive.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Exclusive.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Exclusive.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_PQuest.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: PQuest.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_PQuest.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: PQuest.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_QuestInfo.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: QuestInfo.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_QuestInfo.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: QuestInfo.img"
+    },
+    {
+      "tool": "get_node_tree_json",
+      "tag": "descend_Say.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Say.img"
+    },
+    {
+      "tool": "search_node",
+      "tag": "search_Say.img",
+      "class": "PARSE_FAIL",
+      "raw": "IMG 解析失败: Say.img"
+    },
+    {
+      "tool": "unload_all",
+      "tag": "final_unload",
+      "class": "OK",
+      "raw": "{\"rootCount\":0,\"ok\":true}"
+    },
+    {
+      "tool": "list_loaded_roots",
+      "tag": "final_roots",
+      "class": "OK",
+      "raw": "{\"roots\":[],\"rootCount\":0}"
+    }
+  ],
+  "raw_error_texts_verbatim": [
+    "IMG 解析失败: Act.img",
+    "IMG 解析失败: Check.img",
+    "IMG 解析失败: Exclusive.img",
+    "IMG 解析失败: PQuest.img",
+    "IMG 解析失败: QuestInfo.img",
+    "IMG 解析失败: Say.img"
+  ],
+  "root_path": "E:\\MXD\\BeiDou-Client-xy\\Data\\Quest",
+  "quest_top_child_count": 6,
+  "quest_top_child_names": [
+    "Act.img",
+    "Check.img",
+    "Exclusive.img",
+    "PQuest.img",
+    "QuestInfo.img",
+    "Say.img"
+  ],
+  "final_roots": "{\"roots\":[],\"rootCount\":0}",
+  "parse_fail_count": 12,
+  "conclusion": {
+    "orange_wz_structure_layer": "WORKS — Data/Quest directory enumeration returns real .img child nodes",
+    "orange_wz_content_layer": "FAILS — any internal .img node tree/search returns IMG 解析失败 with full 65536B key + autoParse:true",
+    "fallback_condition_met": true,
+    "fallback_source": ".nxcache/Quest.nx (PKG4) via tools/nx_inspect.py + runtime probe",
+    "fallback_recorded": "raw error text + key spec captured above (AGENTS.md section 2)",
+    "no_fake_green": "PARSE_FAIL classified separately; 'IMG 解析失败' never counted as OK"
+  }
+}

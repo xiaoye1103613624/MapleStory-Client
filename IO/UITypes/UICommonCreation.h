@@ -138,7 +138,9 @@ namespace ms
 		{
 			{ "000",	"adventurer"	},
 			{ "1000",	"cygnusKnight"	},
-			{ "2000",	"aran"			}
+			{ "2000",	"aran"			},
+			{ "2001",	"evan"			},
+			{ "0004",	"dualBlade"		}
 		};
 
 		Text version;
