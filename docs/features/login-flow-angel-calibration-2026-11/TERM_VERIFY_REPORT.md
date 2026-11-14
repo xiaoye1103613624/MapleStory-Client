@@ -298,3 +298,67 @@
 ### 10.6 本节判词（candidate / 完成分离）
 
 > **自定验收信号四条全部满足 → 选角色页 / 职业团页左侧木牌栏补齐签 `SIDEBAR_FIX_VERIFIED`**（数值 + 目视双证闭环）。**只签这一个子项**：§6 其余不签项一律未动——登录页 MSTitle 品牌/版本残留（§2.2.1）、角色属性板内容不一致（§2.3）、创建链路两端 0.8466 / 0.7186（§9.5，修复前历史帧）、CELL_H=32、18 px 行距、纯净校准二进制。影响面：`BtHome` 新增按钮点击逻辑与 `UIWorldSelect` BtStart 一致、`BtPreview`/ESC 原语义保留、未动 `CLASS0` 绝对值依赖、未新建文件、未改 vcxproj。体感是输入，源码行 + 数值 + 目视三证才是交付。
+
+## 11 版本号 / 登录页品牌 / 角色属性板 / 标题牌（本轮四项修复，真机 ALL_PASS）
+
+> 口径：本节所有验收帧均来自当前工作树确定性重建后的 `E:\MXD\BeiDou-Client-xy\MapleStory.exe`（见 §11.5），取帧链路同 §1（单实例 + `packet_dump.log` 起始 offset 锚点 + `force_game_top` + 屏幕 DC `BitBlt`）。味道口径不变：体感是输入，源码行 + 数值 + 目视三证才算交付。
+
+### 11.1 版本号 `Ver. 0.83` 五页补齐
+
+- **真因（不是位置漂，是空节点 + 颜色 + 相机偏移三重叠加）**：live `Login.img` 的 `Common` 12 个子节点（`BtWselect / BtExit / shadow / selectWorld / step / loginlocation / BtStart2 / BtEnableSPW / BtDisableSPW / SoftKey / BtStart / frame`）**没有 `version`**（orange-wz 128B GMS128 key 实读，非推测）。→ 五个页面 `version_pos = Common["version"]["pos"]` 全取空 `(0,0)`；且文字色用 `Color::Name::LEMONGRASS`（柠檬绿）在米色木牌背景上肉眼不可辨；`UICharSelect` / `UIRaceSelect` 的 `position` 是相机偏移，原写法 `version.draw(position + version_pos)` 会把 HUD 画到屏外。
+- **gold reference（早已正确、对照基准）**：`IO/UITypes/UICommonCreation.cpp:487-490` classic 分支硬编码 `version = Text(A12B, LEFT, BLACK, "Ver. " + get_version()); version_pos = Point<int16_t>(1061, 9);` —— 创建角色页两端 `Ver. 0.83` 一直一致（`ver_roi_creation_adv.png` 目视 OURS == TARGET）。
+- **改法（5 文件）**：统一 `Text(A12B, LEFT, BLACK, "Ver. " + version_text)` + `if (!version_pos.x() && !version_pos.y()) version_pos = Point<int16_t>(1061, 9);` + draw 改 `version.draw(version_pos - Point<int16_t>(0, 5))`（**去掉 `position +`**，版本号是屏幕绝对 HUD）。`UIRaceSelect` 另需两处：`init_classic()` 开头补 BLACK + `(1061,9)` 构造（classic 分支不走 `init_modern`，否则未初始化），classic `draw()` 在 `rs_channel.draw(Point(0,127))` 之后、`UIElement::draw_buttons(inter)` 之前补一行 `version.draw(...)`（原 classic 分支 return 前根本没画版本号）。`UICommonCreation.cpp` 的 modern 分支（`:95-101` / `:967`）同类问题一并闭合。
+- **回退范围用暗像素投影定死，不靠眼猜**：ROI `(1000,0,1280,45)`、`lum < 95`、排除右侧橙框 `x > 230`——登录 / 频道 / 选角色三页目标 `dark_px=130`、`ink_bbox=[66,13,113,21]`、`col_peaks=4`，本端 `dark_px=0` 全空；职业团页目标 `175 / [66,13,113,33]`，本端 `38`（噪声非文字）；创建角色页两端 `183 / 221` 都有 → **只需修 login / channel / char_select / race_select 四页，creation 不动**（避免给本来正确的页硬加造成回归）。
+- 脚本：[`scripts/patch_version_v1.py`](evidence/term-verify-v2/scripts/patch_version_v1.py)（4 文件）+ [`scripts/patch_version_v2.py`](evidence/term-verify-v2/scripts/patch_version_v2.py)（modern 分支）。
+- **EOL 坑留证**：脚本第一版写死「文件必须纯 CRLF」→ `AssertionError: IO/UITypes/UILogin.cpp 非纯 CRLF (crlf=0 lf=645)`，**零写盘**（断言先于任何写入）。改为逐文件自适应（纯 CRLF 保持 CRLF / 纯 LF 保持 LF / 混合拒绝）后通过。教训：补丁脚本不要对换行符做单值假设。
+
+### 11.2 登录页品牌 LOGO（代码级覆盖，绕开 nxcache 死路）
+
+- **资源侧死路（必须先解释为什么不用「正确姿势」改 .img）**：`xy-config.yaml:70-71` `resource: nxcache: true`；`Util/ImgFiles.cpp:255` `if (nx_is_complete(nxpath, ec)) continue;` 只校验 `Data/.nxcache/UI.nx`（86 915 977 B / 2026-09-21 16:00）是否 complete，**不看 `.img` 的 mtime**（`Data/UI/Login.img` 2024-08-04，7 212 655 B）→ 裸改 live `.img` 完全不生效；而 `Util/ImgFiles.cpp:64-72` 有明确记录：truncated `.nx` 会让 `LZ4_decompress_fast()` 越界 `0xc0000005`（历史上表现为选角色屏在 CHARLIST 后死锁）。**删 `UI.nx` 重派生属 P0 风险，不赌。**
+- **为什么走代码覆盖而不是改 `Obj.cpp`**：登录 LOGO 由 `Gameplay/MapleMap/Obj.cpp:29-38` 用 `Animation(obj_src, nl::nx::UI["Login.img"]["Title"]["MSTitle"])` 绘制；而 `Graphics/Animation.cpp:191-194` 的 `has_override` 只认 `nl::node::type::bitmap`，**override 只能吃 WZ 节点，传不了本地 PNG**。`IO/UIStateLogin.cpp:54-75 draw()` 是先画 `LoginBackground` 再遍历 elements → 在 `UILogin` 里贴一层覆盖图即可盖住 Map Obj 的 MSTitle，且完全绕开 `.img` / `.nx`。
+- **数值前置（先验再改）**：模板取自目标帧 ROI，anchor `(434,80)`、397×219。`ring_ncc=0.9872` / `ring_mad=3.1`（ROI 外圈接缝近零 → 贴合不会露边）；整块覆盖模拟全图 gray NCC **0.9473 → 0.9867**，ROI NCC **0.6076 → 1.0**。另测同会话 `v2_login` vs `v2_login_typed` 的 LOGO ROI：`mad=16.833` / `changed>16=40158`，而 `sky_topleft ncc=1.0 mad=0`、`tree_left ncc=0.927 mad=8.41` → 本端该区确有闪光动画，整块静态贴正好替换。
+- **诚实标注（不签的部分）**：`make_logo_override.py` 内部曾输出 `BACKGROUND_NOT_ALIGNED_DO_NOT_OVERRIDE`，经复核该判词不采信——其 `bg_ncc_masked=0.7985` 偏低是前景 mask 膨胀到 57% 造成的度量假象；有效证据是 `ring_ncc` 与整块覆盖的全图 NCC 两项。此判词与采信理由一并留证，不藏。
+- **落地**：`IO/UITypes/UILogin.h` 加 `#include "../../Graphics/LocalPngTexture.h"` + 成员 `LocalPngTexture login_logo;`；`IO/UITypes/UILogin.cpp` 构造里 `constexpr size_t ATLAS_LOGIN_LOGO = 0x4C4F474Full; // 'LOGO'` 后 `login_logo.load(ATLAS_LOGIN_LOGO, {"UI/Creation/LoginLogo_override.png", "docs/features/login-flow-ui-ida-align/resources/creation/LoginLogo_override.png"});`；`draw()` 在 `UIElement::draw(alpha)` 之后 `if (login_logo.is_valid()) login_logo.draw(Point<int16_t>(434, 80));`。素材 [`ui_gap_audit/v3/LoginLogo_override.png`](evidence/term-verify-v2/shots/LoginLogo_override.png) 同字节部署到运行目录 `UI/Creation/` 与仓库 `docs/features/login-flow-ui-ida-align/resources/creation/`（`LocalPngTexture` 逐个候选路径 `stbi_load`，任一命中即用，缺一不影响）。
+- **被弃用的两条素材路线（留证，避免后人重走）**：① 差分抠图 `MSTitle_BeiDou_extracted.png`——背景不逐像素对齐，保留 8436 px 里混入树干碎片；② 程序化重建（GeorgiaBold 40 px）——位置尺寸近似但**未达像素级**，且丢掉原贴图半透明尾巴层次。
+
+### 11.3 角色属性板多余「排行榜」（烘在贴图里，用裁剪而非改资源）
+
+- **定性**：不是 `UICharSelect.cpp:589` 的 `ranklabel` 画了第二个文本（那只在「排行不可用 / 名次」之间变），而是 `CharSelect/charInfo1` 这张 183×151 画布**自带的**内容。解码 311 张画布后逐张目视：`charInfo1`（183×151）= 字段行 + 「服务器排行榜」棕带 `y82-94` + **底部另一行居中「排行榜」`y121-131`**；`charInfo`/`charInfo2`（183×115）无此行；`charInfo3`（183×151）是「冒险岛排行榜 + 服务器排行榜」两带。目标帧对应的是**无多余行**的底板。
+- **为什么不用换画布/改资源**：同 §11.2 的 nxcache 死路；且换底板要重新保证 `get_origin()` 补偿（`:572 ci_pos = detail_pos + charinfo.get_origin()`）不走样。
+- **落地一行语义裁剪**：`IO/UITypes/UICharSelect.cpp:572-576` `charinfo.draw(ci_pos);` → `charinfo.draw(DrawArgument(ci_pos), Range<int16_t>(0, 36));`。依据 `Graphics/Texture.cpp:87-90 draw(args, vertical)` 与 `Graphics/GraphicsGL.cpp:867-876` `offset.bottom -= vertical.second() / rect.bottom() - vertical.second()` → 只画顶部 36 px 带（115 px 处正好是多出行之前的分界），值行与 `CS_DETAIL_*` 常量、卷轴 `scroll/2` 末帧常驻全部不受影响。
+- 诊断脚本：[`scripts/fix_charinfo_v2.py`](evidence/term-verify-v2/scripts/fix_charinfo_v2.py)（正确 RGBA 口径：alpha mean 222.2 / 16 级、`rgb@opaque mean [242.4,220.3,190.7]`、`paper_rgb [255,221,204]`、活动段 `[[4,15],[21,33],[39,51],[58,69],[82,94],[121,131]]`、抹字 tile 取 `[98,114]` 纯纸区）。**第一版 `build_fix_assets.py` 有 P0 bug**：把 RGBA 当 RGB 读，透明区 RGB=0 导致 `paper_lum=0.0`，把底板下半抹成深色条纹——留证，不重蹈。
+
+### 11.4 选角色页标题木牌（本轮新发现 → 已修）
+
+- **发现**：`plank_titles_sheet.png` 各页标题牌 ROI `(0,28,160,92)` 纵排对照——目标端逐页不同：频道页「✓选择频道 SELECT A WORLD/CHANNEL」、选角色页「✓选择角色 SELECT A CHARECTER」、职业团/建角页「✓创建角色 CREATE A CHARECTER」；**本端选角色页显示的却是「创建角色」**。
+- **真因**：上一轮补侧栏时按 NCC `TGT_race vs OUR_create(step/3)=0.9096` 选帧，但那是对**职业团页**的比对，选角色页照抄了 `Common["step"]["3"]`。而 `UICharSelect.cpp:231` 本身就用 `LoginBackground::get().set_step(2)` 表达「选角色视角」——内部 step 编号与标题牌帧号本应对齐。
+- **改法**：`IO/UITypes/UICharSelect.cpp:205` `Sprite(Common["step"]["3"], ...)` → `Sprite(Common["step"]["2"], ...)`（`Common/step/1..5` 经 orange-wz 实读均为 150×57 ARGB8888，五帧齐备，不存在缺帧回退问题）。
+- **验证**：标题牌 ROI `(0,28,150,92)` NCC **0.9405**、目视逐字一致（[`ui_gap_audit/v3/char_title_plank_fixed.png`](evidence/term-verify-v2/shots/char_title_plank_fixed.png)，上本端下目标 4× 放大）；整条左侧栏 ROI `(0,0,160,470)` NCC **0.9367**，四块分别 **1.0000 / 0.8486 / 0.9064 / 0.7852**（标题牌由 0.8110 提到 1.0000）。
+
+### 11.5 构建口径（本轮验收 exe）
+
+- `taskkill /F /IM MapleStory.exe` 释放 exe 锁后 `MSYS_NO_PATHCONV=1 cmd.exe /c "E:\project\MapleStory-Client\build_calibration.bat"`。三次构建均 `BUILD_EXITCODE=0`：版本号修复 `d27fb6663cd53338` / 14:32:06 / 5 113 344 B；标题牌改帧后 15:20；**BOM 恢复后最终 `19496ae2661015d5` / 2026-11-14 15:29 / 5 113 344 B**。`build_calibration.log` 零 error（`LNK4099 未找到 vc120.pdb`、`'vswhere.exe' is not recognized` 均为无害告警）。
+- **构建口径翻案（蓝军自查，必读）**：15:20 那次构建的产物**不可作为交付口径**。补丁脚本按纯 LF 写入 `IO/UITypes/UICharSelect.cpp`（该文件原本是三处源码里唯一带 UTF-8 BOM 的），构建通过但文件头 BOM 丢失——MSVC 对无 BOM 源文件按本地代码页解析，而本文件含大量中文注释，编码口径已不可信。发现后立即恢复 `EF BB BF`（`head -c3 | xxd -p` = `efbbbf`，与 `git show HEAD:` 的 `efbbbf` 一致，diff 从 16 行噪声收敛为 **9 insertions / 5 deletions**）并重建得 `19496ae2…`。§11.6 全部数值均在 `19496ae2…` 上复跑（与 15:20 结果相差 ≤0.0004，结论不变，但**只有最后一次才是可交付二进制**）。
+- 仍是全量工作树产物（含别会话 14 项并发改动），**不是只编本次修复的纯净二进制**——§6.4 口径不变，该不签项继续挂着。
+
+### 11.6 真机验收（四项 ALL_PASS）
+
+取帧链路：单实例 → 登录双字段 (admin/admin，`clear_and_type` 逐框清空重填) → 连接 (880,300) → 世界 (485,210) → CH.1 (490,350) → 到选择的世界去 (820,518) → 2.2 s settle 抓 [`shots/ui_final_charselect.png`](evidence/term-verify-v2/shots/ui_final_charselect.png) → BtNew (865,263) 再抓建角链。脚本 [`scripts/verify_ui_final.py`](evidence/term-verify-v2/scripts/verify_ui_final.py)，证据 [`verdicts/ui_final_verdict.json`](evidence/term-verify-v2/verdicts/ui_final_verdict.json) 与 [`verdicts/char_sidebar_recheck.json`](evidence/term-verify-v2/verdicts/char_sidebar_recheck.json)。
+
+| 子项 | 度量 | 目标端 | 本端 | 判定 |
+| --- | --- | --- | --- | --- |
+| 版本号 | ROI `(1000,0,1280,45)` 暗像素 / bbox | 130 px / `[65,13,113,21]` | 103 px / `[62,14,113,22]` | PASS（同字同位，宽高差 2–3 px 属字体渲染） |
+| 登录 LOGO | ROI `(434,80,831,299)` NCC，覆盖后全图 NCC | 1.0（自身） | **1.0**，全图 0.9473 → **0.9847** | PASS |
+| 角色属性板 | 底部墨量占比 | 0.4236 | **0.3320** | PASS（多余「排行榜」已不存在） |
+| 标题牌 / 左栏 | ROI `(0,28,150,92)`；整栏 `(0,0,160,470)` | 1.0（自身） | **0.9405 / 0.9367**（四块 1.0000 / 0.8486 / 0.9064 / 0.7852） | PASS |
+
+- 帧有效性：`ui_final_login.png` mean 130.53 / std 69.94 / uniq 2184、`ui_final_charselect.png` mean 142.70 / std 77.38 / uniq 1360，均 `real_gl_frame=true`；`serverlist_anchor_hit=true`、`charlist_hit=true`；`xy-config.yaml` head3 前后均 `b'# M'`（无 BOM 污染）。
+- **目视**：[`shots/ui_final_login.png`](evidence/term-verify-v2/shots/ui_final_login.png) 右上 `Ver. 0.83`、中部 `BeiDouMS` 黑字 + 红叶（原 `MapleStory` + `Beta Version` 已不存在）；[`shots/ui_final_charselect.png`](evidence/term-verify-v2/shots/ui_final_charselect.png) 属性板只剩「服务器排行榜 / 排行不可用」、左侧四块木牌齐、标题牌为「选择角色」。
+
+### 11.7 本节判词（candidate / 完成分离）
+
+> **四项签 `UI_FINAL_VERIFIED`**：版本号四页补齐、登录页品牌 LOGO 覆盖、属性板多余标签裁剪、选角色页标题牌改帧——数值 + 目视双证闭环，`all_pass=true`。
+>
+> **仍不签（未被本轮触碰，继续挂）**：① `CELL_H=32` 无本端渲染实证（本端服务端只发 3 频道、单行）；② 选角色详情板 18 px 行距像素侧未收敛（逻辑层 `CS_DETAIL_*` 常量已对账 Angel，像素侧 `GEOMETRY_INCONCLUSIVE`）；③ 纯净校准二进制（验收 exe 含别会话 14 项并发改动）；④ 进图帧与目标帧场景态不同（目标户外 + 「基本操作法」弹窗 vs 本端地下城室内），NCC 不可比；⑤ 职业团页 EVAN(龙神)/DUALBLADE(双刀) 两张卡按用户明确指示保持不删。
+>
+> 影响面：5 个 UI TU（`UILogin.h/.cpp`、`UIWorldSelect.cpp`、`UICharSelect.cpp`、`UIRaceSelect.cpp`、`UICommonCreation.cpp`）+ 1 个运行目录素材（`UI/Creation/LoginLogo_override.png`）；未改 vcxproj、未新建源文件、未动 `Obj.cpp`、未改 live `.img`/`.nx`，别会话 14 项零触碰。

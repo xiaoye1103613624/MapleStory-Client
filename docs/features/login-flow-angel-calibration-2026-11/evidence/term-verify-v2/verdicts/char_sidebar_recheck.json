@@ -1,0 +1,15 @@
+{
+  "exe_sha16": "19496ae2661015d5",
+  "shot": "shots/ui_final_charselect.png",
+  "target": "targets_desktop/desktop_char_select.png",
+  "strip_ncc": 0.9368,
+  "title_ncc": 0.9405,
+  "bands": {
+    "title": 1.0,
+    "world": 0.8486,
+    "viewall": 0.9063,
+    "home": 0.7848
+  },
+  "pass": true,
+  "bom_restored": true
+}

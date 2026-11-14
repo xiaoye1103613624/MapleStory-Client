@@ -1,0 +1,19 @@
+{
+  "anchor": [
+    434,
+    80
+  ],
+  "size": [
+    397,
+    219
+  ],
+  "bg_ncc_masked": 0.7985,
+  "bg_fg_frac": 0.574,
+  "ring_ncc": 0.9872,
+  "ring_mad": 3.1,
+  "full_gray_ncc_before": 0.9473,
+  "full_gray_ncc_after_sim": 0.9867,
+  "roi_ncc_before": 0.6076,
+  "roi_ncc_after_exact": 1.0,
+  "verdict": "BACKGROUND_NOT_ALIGNED_DO_NOT_OVERRIDE"
+}

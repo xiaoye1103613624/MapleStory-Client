@@ -1,0 +1,83 @@
+{
+  "ts": "2026-11-14 15:29:44",
+  "cfg_before": "b'# M'",
+  "pid": 69656,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "field_input": {
+    "account": {
+      "text": "admin",
+      "sent_ok": true
+    },
+    "password": {
+      "text": "admin",
+      "sent_ok": true
+    }
+  },
+  "screens": {
+    "ui_final_login": {
+      "file": "ui_final_login.png",
+      "mean": 130.87,
+      "std": 70.31,
+      "uniq": 2182,
+      "real_gl_frame": true
+    },
+    "ui_final_charselect": {
+      "file": "ui_final_charselect.png",
+      "mean": 143.1,
+      "std": 77.48,
+      "uniq": 1367,
+      "real_gl_frame": true
+    }
+  },
+  "login_shot": {
+    "file": "ui_final_login.png",
+    "mean": 130.87,
+    "std": 70.31,
+    "uniq": 2182,
+    "real_gl_frame": true
+  },
+  "serverlist_anchor_hit": true,
+  "charlist_hit": true,
+  "char_shot": {
+    "file": "ui_final_charselect.png",
+    "mean": 143.1,
+    "std": 77.48,
+    "uniq": 1367,
+    "real_gl_frame": true
+  },
+  "cfg_after": "b'# M'",
+  "version": {
+    "ours_dark": 103,
+    "ours_bbox": [
+      62,
+      14,
+      113,
+      22
+    ],
+    "target_dark": 130,
+    "target_bbox": [
+      65,
+      13,
+      113,
+      21
+    ],
+    "pass": true
+  },
+  "logo": {
+    "roi_ncc_vs_target": 1.0,
+    "full_ncc": 0.9845,
+    "pass": true
+  },
+  "charboard": {
+    "ours_bottom_ink": 0.3323,
+    "target_bottom_ink": 0.4236,
+    "pass": true
+  },
+  "all_pass": true
+}
