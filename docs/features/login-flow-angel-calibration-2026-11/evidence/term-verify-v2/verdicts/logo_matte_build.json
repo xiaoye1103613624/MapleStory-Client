@@ -1,0 +1,29 @@
+{
+  "box": [
+    434,
+    80,
+    831,
+    299
+  ],
+  "alpha_mean": 0.3968,
+  "alpha_ge90_frac": 0.276,
+  "alpha_zero_frac": 0.4517,
+  "ncc_vs_target": 0.9826,
+  "mean_abs": 5.24,
+  "resid_gt40_px": 3603,
+  "frame_diff_mean_before": 3.238,
+  "frame_diff_mean_after": 0.758,
+  "frame_diff_retention": 0.234,
+  "seam_p90": {
+    "top": 17.0,
+    "bottom": 17.0,
+    "left": 34.0,
+    "right": 17.0
+  },
+  "corners": [
+    0.0,
+    0.0,
+    0.067,
+    0.043
+  ]
+}

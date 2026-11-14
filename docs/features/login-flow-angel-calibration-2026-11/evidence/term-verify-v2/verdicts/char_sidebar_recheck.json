@@ -1,15 +1,15 @@
 {
-  "exe_sha16": "19496ae2661015d5",
-  "shot": "shots/ui_final_charselect.png",
-  "target": "targets_desktop/desktop_char_select.png",
+  "exe_note": "masked-logo rebuild 16:41",
   "strip_ncc": 0.9368,
-  "title_ncc": 0.9405,
-  "bands": {
+  "title_ncc": 0.9209,
+  "blocks": {
     "title": 1.0,
-    "world": 0.8486,
-    "viewall": 0.9063,
-    "home": 0.7848
+    "world": 0.7422,
+    "viewall": 0.9613,
+    "home": 0.7201
   },
-  "pass": true,
-  "bom_restored": true
+  "frame": {
+    "mean": 141.47,
+    "std": 77.01
+  }
 }

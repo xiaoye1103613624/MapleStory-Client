@@ -1,0 +1,70 @@
+{
+  "exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe",
+  "exe_mtime": "2026-11-14 16:41:09",
+  "exe_bytes": 5116928,
+  "pid": 22820,
+  "force_game_top": [
+    [
+      25694896,
+      131360
+    ],
+    true
+  ],
+  "frames": 10,
+  "A_text_fit": {
+    "ncc_best": 0.9838,
+    "best_frame": 7,
+    "ncc_all": [
+      0.9816,
+      0.983,
+      0.9822,
+      0.9807,
+      0.981,
+      0.9818,
+      0.9818,
+      0.9838,
+      0.9797,
+      0.9824
+    ],
+    "pass": true
+  },
+  "B_background_animates": {
+    "changed_frac_per_pair": [
+      0.0124,
+      0.0018,
+      0.007,
+      0.0102,
+      0.0021,
+      0.0042,
+      0.0153,
+      0.029,
+      0.0186
+    ],
+    "diff_mean_per_pair": [
+      1.69,
+      1.258,
+      1.257,
+      1.354,
+      1.158,
+      1.245,
+      1.645,
+      1.9,
+      1.501
+    ],
+    "max_changed_frac": 0.029,
+    "core_std_mean": 0.79,
+    "halo_std_mean": 3.25,
+    "pass": true
+  },
+  "C_no_hard_seam": {
+    "seam_p90": {
+      "top": 17.0,
+      "bottom": 17.0,
+      "left": 34.0,
+      "right": 17.2
+    },
+    "inner_mean_abs": 8.93,
+    "pass": true
+  },
+  "verdict": "LOGO_MATTE_VERIFIED"
+}

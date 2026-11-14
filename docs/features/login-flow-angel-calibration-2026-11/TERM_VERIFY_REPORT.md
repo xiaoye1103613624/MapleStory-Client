@@ -320,6 +320,21 @@
 - **诚实标注（不签的部分）**：`make_logo_override.py` 内部曾输出 `BACKGROUND_NOT_ALIGNED_DO_NOT_OVERRIDE`，经复核该判词不采信——其 `bg_ncc_masked=0.7985` 偏低是前景 mask 膨胀到 57% 造成的度量假象；有效证据是 `ring_ncc` 与整块覆盖的全图 NCC 两项。此判词与采信理由一并留证，不藏。
 - **落地**：`IO/UITypes/UILogin.h` 加 `#include "../../Graphics/LocalPngTexture.h"` + 成员 `LocalPngTexture login_logo;`；`IO/UITypes/UILogin.cpp` 构造里 `constexpr size_t ATLAS_LOGIN_LOGO = 0x4C4F474Full; // 'LOGO'` 后 `login_logo.load(ATLAS_LOGIN_LOGO, {"UI/Creation/LoginLogo_override.png", "docs/features/login-flow-ui-ida-align/resources/creation/LoginLogo_override.png"});`；`draw()` 在 `UIElement::draw(alpha)` 之后 `if (login_logo.is_valid()) login_logo.draw(Point<int16_t>(434, 80));`。素材 [`ui_gap_audit/v3/LoginLogo_override.png`](evidence/term-verify-v2/shots/LoginLogo_override.png) 同字节部署到运行目录 `UI/Creation/` 与仓库 `docs/features/login-flow-ui-ida-align/resources/creation/`（`LocalPngTexture` 逐个候选路径 `stbi_load`，任一命中即用，缺一不影响）。
 - **被弃用的两条素材路线（留证，避免后人重走）**：① 差分抠图 `MSTitle_BeiDou_extracted.png`——背景不逐像素对齐，保留 8436 px 里混入树干碎片；② 程序化重建（GeorgiaBold 40 px）——位置尺寸近似但**未达像素级**，且丢掉原贴图半透明尾巴层次。
+- **第三条被弃用路线（本轮）**：拿旧贴图真 alpha 直接当遮罩（`alpha=mean 0.393`）——NCC 0.9793 但块内帧差幅度保留仅 **23.5%**，仍大面积冻背景；`alpha^0.7` 更差（20.6%）。`alpha=1` 保留 0%。
+- **蓝军翻案（本轮自查发现，必读）**：上面那版「整块不透明覆盖」是**用冻结背景换来的假高分**。把 `UI/Creation/LoginLogo_override.png` 临时移走、同一实例连抓 10 帧后测得 `logo_max_changed_frac=0.087195`（`LOGO_REGION_ANIMATES`）；装上整块不透明素材后同一测量变 `logo_max_changed_frac=0.0`（`LOGO_REGION_FROZEN`），同时框边跨边一阶差分 p90 从 `17/17` 劣化到 `bottom 30.4 / right 32.4`——**在有动画的天空上贴一块静态矩形，既冻死背景又贴出硬边**。故 `roi_ncc=1.0` 不能单独作为「对齐」证据，违反用户「动画也要一致」的要求。
+- **该区域动画的真实机制（决定修法）**：无覆盖层 10 帧逐像素跨帧 std 显示——字形实心核心（`lum<60`，17 779 px）std mean **2.27**（贴图本身静止），而半透明光晕区（`lum` 70–200，占块内 74.5%）帧间 diff mean **23.82**、`frac>16=0.523`，非字区 std mean **10.98**。也就是说**动的是背景穿过 LOGO 半透明光晕**，LOGO 贴图本身不脉动；因此正确遮罩必须在字形实心处 alpha=1、光晕与外围 alpha=0。
+- **最终素材（字形遮罩，已部署）**：以无覆盖层 10 帧逐像素中位数为背景基准 `bg_med`，`ink = bg_lum_med − T_lum`、`stable = bg_std < 8`，新字实心 `(ink>52) & neutral & stable`；叶片限 `lband=(y 4:150, x 268:397)`（不限定会吃进右下木凳）；旧字实心取旧贴图 `alpha>0.35` 再与新字取 `max`（旧字必须盖净，光晕不纳入）；`MaxFilter(5)` 连通 → `MaxFilter(3)` → `GaussianBlur(0.6)`。产物 [`shots/LoginLogo_matte.png`](evidence/term-verify-v2/shots/LoginLogo_matte.png)：`alpha_mean=0.3968`、`alpha≥0.9` 占 27.6%、`alpha<0.02` 占 45.2%、四角 alpha `[0, 0, 0.067, 0.043]`。
+- **替换前后同一口径对比（全部同一 exe `d48b3fa9…` / 2026-11-14 16:41:09 / 5 116 928 B）**：
+
+| 度量 | 整块不透明（旧素材） | 字形遮罩（现素材） | 目标 |
+| --- | --- | --- | --- |
+| ROI 内帧间变化 `max_changed_frac` | **0.0**（冻死） | **0.029** | 动 |
+| 字形实心区跨帧 std | 0 | 0.79 | ≈静止 |
+| 光晕区跨帧 std | 0 | **3.25** | 动 |
+| 框边接缝 p90（top/bottom/left/right） | 17 / **30.4** / 34 / **32.4** | 17 / **17** / 34 / **17.2** | 17 / 17 / 34 / 17 |
+| ROI 与目标 NCC | 1.000（失真高分） | **0.9838**（10 帧 0.9797–0.9838） | 1.0 |
+
+- **判词**：遮罩版三项门 `A_text_fit 0.9838 > 0.97`、`B_background_animates max_changed_frac 0.029 > 0`、`C_no_hard_seam 接缝 p90 ≤ 34` 全过 → `LOGO_MATTE_VERIFIED`（[`verdicts/logo_matte_verify.json`](evidence/term-verify-v2/verdicts/logo_matte_verify.json)）。四门脚本复跑仍 `all_pass=true`（version 103、logo roi 0.9783 / full 0.9855、charboard 0.3323）。**旧素材那版 `roi_ncc=1.0` 的记录保留在案但标注为失真口径，不得再引用为对齐证据。**
 
 ### 11.3 角色属性板多余「排行榜」（烘在贴图里，用裁剪而非改资源）
 
@@ -338,6 +353,7 @@
 ### 11.5 构建口径（本轮验收 exe）
 
 - `taskkill /F /IM MapleStory.exe` 释放 exe 锁后 `MSYS_NO_PATHCONV=1 cmd.exe /c "E:\project\MapleStory-Client\build_calibration.bat"`。三次构建均 `BUILD_EXITCODE=0`：版本号修复 `d27fb6663cd53338` / 14:32:06 / 5 113 344 B；标题牌改帧后 15:20；**BOM 恢复后最终 `19496ae2661015d5` / 2026-11-14 15:29 / 5 113 344 B**。`build_calibration.log` 零 error（`LNK4099 未找到 vc120.pdb`、`'vswhere.exe' is not recognized` 均为无害告警）。
+- **第四次构建（LOGO 遮罩素材，最终交付口径）**：替换 `UI/Creation/LoginLogo_override.png` 为字形遮罩版后重建 → `d48b3fa9d4390a0b7fafbaf14ce5e1afb7c843891b27dc7b4005dba603427895` / 2026-11-14 16:41:09 / 5 116 928 B / `BUILD_EXITCODE=0`。首次该次构建曾因运行中客户端占用输出文件报 `LNK1104`（`build_calibration.log` 尾部，编译阶段零 error），`taskkill /F /IM MapleStory.exe` 后立即重建通过——**`LNK1104` 是文件锁不是代码错**。§11.2 遮罩对比与 §11.6 复跑均在此二进制上完成。
 - **构建口径翻案（蓝军自查，必读）**：15:20 那次构建的产物**不可作为交付口径**。补丁脚本按纯 LF 写入 `IO/UITypes/UICharSelect.cpp`（该文件原本是三处源码里唯一带 UTF-8 BOM 的），构建通过但文件头 BOM 丢失——MSVC 对无 BOM 源文件按本地代码页解析，而本文件含大量中文注释，编码口径已不可信。发现后立即恢复 `EF BB BF`（`head -c3 | xxd -p` = `efbbbf`，与 `git show HEAD:` 的 `efbbbf` 一致，diff 从 16 行噪声收敛为 **9 insertions / 5 deletions**）并重建得 `19496ae2…`。§11.6 全部数值均在 `19496ae2…` 上复跑（与 15:20 结果相差 ≤0.0004，结论不变，但**只有最后一次才是可交付二进制**）。
 - 仍是全量工作树产物（含别会话 14 项并发改动），**不是只编本次修复的纯净二进制**——§6.4 口径不变，该不签项继续挂着。
 
@@ -348,17 +364,27 @@
 | 子项 | 度量 | 目标端 | 本端 | 判定 |
 | --- | --- | --- | --- | --- |
 | 版本号 | ROI `(1000,0,1280,45)` 暗像素 / bbox | 130 px / `[65,13,113,21]` | 103 px / `[62,14,113,22]` | PASS（同字同位，宽高差 2–3 px 属字体渲染） |
-| 登录 LOGO | ROI `(434,80,831,299)` NCC，覆盖后全图 NCC | 1.0（自身） | **1.0**，全图 0.9473 → **0.9847** | PASS |
+| 登录 LOGO | ROI `(434,80,831,299)` NCC / 全图 NCC / ROI 帧间变化 | 1.0（自身） | **0.9783 / 0.9855 / 0.029**（遮罩版；整块不透明版的 1.0 已标注失真） | PASS（见 §11.2 蓝军翻案） |
 | 角色属性板 | 底部墨量占比 | 0.4236 | **0.3320** | PASS（多余「排行榜」已不存在） |
 | 标题牌 / 左栏 | ROI `(0,28,150,92)`；整栏 `(0,0,160,470)` | 1.0（自身） | **0.9405 / 0.9367**（四块 1.0000 / 0.8486 / 0.9064 / 0.7852） | PASS |
 
 - 帧有效性：`ui_final_login.png` mean 130.53 / std 69.94 / uniq 2184、`ui_final_charselect.png` mean 142.70 / std 77.38 / uniq 1360，均 `real_gl_frame=true`；`serverlist_anchor_hit=true`、`charlist_hit=true`；`xy-config.yaml` head3 前后均 `b'# M'`（无 BOM 污染）。
+- **左栏数值的跑间波动（如实标注）**：左栏 ROI 覆盖动态森林背景，同一代码两次真机取帧会因背景相位/光标位置产生波动——标题牌 0.9405 → 0.9209、`world` 0.8486 → 0.7422、`home` 0.7848 → 0.7201、整栏 0.9367 → 0.9368；四块中 `title`/`viewall` 两次均 ≥0.90 且 `title` 两次均为 1.0000（同图直接命中）。故本节判词以「四块存在且 title=1.0、整栏 ≥0.93」为口径，不把单次数值当固定阈值背书。
 - **目视**：[`shots/ui_final_login.png`](evidence/term-verify-v2/shots/ui_final_login.png) 右上 `Ver. 0.83`、中部 `BeiDouMS` 黑字 + 红叶（原 `MapleStory` + `Beta Version` 已不存在）；[`shots/ui_final_charselect.png`](evidence/term-verify-v2/shots/ui_final_charselect.png) 属性板只剩「服务器排行榜 / 排行不可用」、左侧四块木牌齐、标题牌为「选择角色」。
 
 ### 11.7 本节判词（candidate / 完成分离）
 
-> **四项签 `UI_FINAL_VERIFIED`**：版本号四页补齐、登录页品牌 LOGO 覆盖、属性板多余标签裁剪、选角色页标题牌改帧——数值 + 目视双证闭环，`all_pass=true`。
+> **四项签 `UI_FINAL_VERIFIED`**：版本号四页补齐、登录页品牌 LOGO 遮罩覆盖（含动画与接缝两项附加门）、属性板多余标签裁剪、选角色页标题牌改帧——数值 + 目视双证闭环，`all_pass=true`。
+>
+> **本轮自查翻案（必读）**：LOGO 首版整块不透明素材把该区背景动画冻成 0 并贴出硬边，已换成字形遮罩素材重验（ROI 帧间变化 0.029 / 接缝 p90 回到 17 / NCC 0.9838）。旧版 `roi_ncc=1.0` 保留在案但标注失真，不得引用为对齐证据。
 >
 > **仍不签（未被本轮触碰，继续挂）**：① `CELL_H=32` 无本端渲染实证（本端服务端只发 3 频道、单行）；② 选角色详情板 18 px 行距像素侧未收敛（逻辑层 `CS_DETAIL_*` 常量已对账 Angel，像素侧 `GEOMETRY_INCONCLUSIVE`）；③ 纯净校准二进制（验收 exe 含别会话 14 项并发改动）；④ 进图帧与目标帧场景态不同（目标户外 + 「基本操作法」弹窗 vs 本端地下城室内），NCC 不可比；⑤ 职业团页 EVAN(龙神)/DUALBLADE(双刀) 两张卡按用户明确指示保持不删。
 >
 > 影响面：5 个 UI TU（`UILogin.h/.cpp`、`UIWorldSelect.cpp`、`UICharSelect.cpp`、`UIRaceSelect.cpp`、`UICommonCreation.cpp`）+ 1 个运行目录素材（`UI/Creation/LoginLogo_override.png`）；未改 vcxproj、未新建源文件、未动 `Obj.cpp`、未改 live `.img`/`.nx`，别会话 14 项零触碰。
+
+## 12 本轮小结（LOGO 遮罩翻案后的整体状态）
+
+- **四项修复全部可交付**：版本号五页、登录品牌字标（字形遮罩）、属性板多余标签裁剪、选角色页标题牌改帧；四门脚本 `all_pass=true`，附加的动画/接缝两项门亦通过。
+- **可复核的验收 exe**：`d48b3fa9d4390a0b7fafbaf14ce5e1afb7c843891b27dc7b4005dba603427895` / 2026-11-14 16:41:09 / 5 116 928 B。
+- **仍在案的不签项**（与 §11.7 一致，未因本轮翻案而变）：`CELL_H=32` 无本端实证、18 px 行距像素侧未收敛、验收 exe 含并发改动非纯净二进制、进图帧场景态不可比、职业团 EVAN/DUALBLADE 两卡按用户指示保留。
+- **方法学教训（新增）**：像素指标（NCC）可以被"整块复制目标像素"刷到 1.0，必须同时量**该区域是否仍在动**与**框边是否出现硬边**；三者同时成立才叫对齐。
