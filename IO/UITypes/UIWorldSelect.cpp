@@ -216,8 +216,10 @@ namespace ms
 		scroll_playing(false), scroll_has_anim(false), world_status(0), status_notified_world(-1)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS, "Ver. " + version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
 		version_pos = nl::nx::UI["Login.img"]["Common"]["version"]["pos"];
+		if (!version_pos.x() && !version_pos.y())
+			version_pos = Point<int16_t>(1061, 9);
 
 		int16_t vieww = Constants::Constants::get().get_viewwidth();
 		int16_t viewh = Constants::Constants::get().get_viewheight();
@@ -752,7 +754,7 @@ namespace ms
 			}
 		}
 
-		version.draw(position + version_pos - Point<int16_t>(0, 5));
+		version.draw(version_pos - Point<int16_t>(0, 5));
 		// BeiDou 用左侧「公告」气球；旧版英文 chatballoon 再画会变成两个提示框。
 		if (!LoginBackground::get().available())
 			chatballoon.draw(position + Point<int16_t>(747, 105));

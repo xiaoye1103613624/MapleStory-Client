@@ -19,6 +19,8 @@
 
 #include "../UIElement.h"
 
+#include "../../Graphics/LocalPngTexture.h"
+
 #include "../Components/Textfield.h"
 
 #include "../../Graphics/Geometry.h"
@@ -67,6 +69,9 @@ namespace ms
 		};
 
 		Text version;
+		// 登录页品牌字标覆盖层：绕开 nxcache=true（改 live .img 不生效），
+		// 用目标端参考帧 ROI 整块盖住本端 Title/MSTitle 的 MapleStory/Beta Version。
+		LocalPngTexture login_logo;
 		Point<int16_t> version_pos;
 		Textfield account;
 		Point<int16_t> account_src_dim;

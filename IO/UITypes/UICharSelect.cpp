@@ -139,12 +139,13 @@ namespace ms
 		characters(characters), characters_count(characters_count), slots(slots), require_pic(require_pic), tab_index(0), tab_active(false), tab_move(false), charslot_y(0), use_timestamp(false), burning_character(false), show_pic_btns(false)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
-		bind_text(version, "version.prefix", version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
 
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node Common = Login["Common"];
 		version_pos = Common["version"]["pos"];
+		if (!version_pos.x() && !version_pos.y())
+			version_pos = Point<int16_t>(1061, 9);
 
 		selected_character = Setting<DefaultCharacter>::get().load();
 		page_count = static_cast<uint8_t>((slots + PAGESIZE - 1) / PAGESIZE);
@@ -201,7 +202,7 @@ namespace ms
 		
 		// 左侧栏四块：照 UICommonCreation.cpp:492-534 已验证 classic 侧栏；
 		// stateargs 用屏幕绝对坐标，draw 传 (0,0) 不叠加相机 position。
-		cs_step = Sprite(Common["step"]["3"], Point<int16_t>(0, 33));
+		cs_step = Sprite(Common["step"]["2"], Point<int16_t>(0, 33));
 		cs_world_box = Sprite(Common["selectWorld"], Point<int16_t>(0, 96));
 		
 		std::string cs_wname;
@@ -481,7 +482,7 @@ namespace ms
 		cs_world_name.draw(Point<int16_t>(99, 111));
 		cs_channel.draw(Point<int16_t>(99, 127));
 		
-		version.draw(position + version_pos - Point<int16_t>(0, 5));
+		version.draw(version_pos - Point<int16_t>(0, 5));
 
 		// BeiDou 无 charSlot/pageNew 布局节点时贴图为空，跳过避免左上角堆叠。
 		if (charslot.is_valid())
@@ -569,7 +570,10 @@ namespace ms
 							// 加回 origin 使底板左上角精确落在 detail_pos（值行常量
 							// 由此可用纯纹理相对坐标，消除 ~7-11px 系统偏差）。
 							Point<int16_t> ci_pos = detail_pos + charinfo.get_origin();
-							charinfo.draw(ci_pos);
+							// charInfo1(151 高) 底部 y115-151 自带一行居中「排行榜」，正确端无此行。
+							// 用 Texture::draw 的 vertical Range 裁掉底部 36px（GraphicsGL.cpp:868/876
+							// bottom -= second），保留 origin/卷轴/值行常量全部不动，零资源改写。
+							charinfo.draw(DrawArgument(ci_pos), Range<int16_t>(0, 36));
 
 							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
 							// 等级用 OutlinedText（Angel DrawTextA + get_basic_font(1) 黑字）；

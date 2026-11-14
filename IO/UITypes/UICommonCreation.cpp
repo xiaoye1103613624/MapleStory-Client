@@ -95,10 +95,11 @@ namespace ms
 	void UICommonCreation::init_modern(nl::node Login, nl::node Common)
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
-		bind_text(version, "version.prefix", version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
 
 		version_pos = Common["version"]["pos"];
+		if (!version_pos.x() && !version_pos.y())
+			version_pos = Point<int16_t>(1061, 9);
 
 		nl::node createLimit = Login["NewChar"]["createLimit"];
 		nl::node CustomizeChar = Login["CustomizeChar"][classType];
@@ -964,7 +965,7 @@ namespace ms
 		}
 
 		if (version_pos.x() || version_pos.y() || !classic_mode)
-			version.draw(position + version_pos - Point<int16_t>(0, 5));
+			version.draw(version_pos - Point<int16_t>(0, 5));
 	}
 
 	void UICommonCreation::update()

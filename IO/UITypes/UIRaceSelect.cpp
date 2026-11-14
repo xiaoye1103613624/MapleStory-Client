@@ -78,6 +78,10 @@ namespace ms
 
 	void UIRaceSelect::init_classic()
 	{
+		std::string version_text = Configuration::get().get_version();
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
+		version_pos = Point<int16_t>(1061, 9);
+
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node Common = Login["Common"];
 		nl::node RaceSelect = Login["RaceSelect"];
@@ -233,9 +237,10 @@ namespace ms
 	void UIRaceSelect::init_modern()
 	{
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
-		bind_text(version, "version.prefix", version_text);
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
 		version_pos = nl::nx::UI["Login.img"]["Common"]["version"]["pos"];
+		if (!version_pos.x() && !version_pos.y())
+			version_pos = Point<int16_t>(1061, 9);
 
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node Common = Login["Common"];
@@ -408,6 +413,7 @@ namespace ms
 			rs_world_box.draw(Point<int16_t>(0, 0), inter);
 			rs_world_name.draw(Point<int16_t>(99, 111));
 			rs_channel.draw(Point<int16_t>(99, 127));
+			version.draw(version_pos - Point<int16_t>(0, 5));
 
 			UIElement::draw_buttons(inter);
 			return;
@@ -422,7 +428,7 @@ namespace ms
 
 		UIElement::draw_sprites(inter);
 
-		version.draw(position + version_pos - Point<int16_t>(0, 5));
+		version.draw(version_pos - Point<int16_t>(0, 5));
 
 		class_background[corrected_index].draw(position);
 

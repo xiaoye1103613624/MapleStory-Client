@@ -71,13 +71,20 @@ namespace ms
 		Music(login_bgm).play();
 
 		std::string version_text = Configuration::get().get_version();
-		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::LEMONGRASS);
-		// 前缀进绑定表：版本号在会话内恒定，「Ver. 」才是会被语言切换换掉的那半截。
-		bind_text(version, "version.prefix", version_text);
-		version_pos = nl::nx::UI["Login.img"]["Common"]["version"]["pos"];
+		version = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::BLACK, "Ver. " + version_text);
 
 		nl::node Login = nl::nx::UI["Login.img"];
 		version_pos = Login["Common"]["version"]["pos"];
+		// BeiDou live 端缺 Common/version 节点；正确端「Ver. 0.83」是屏幕右上角固定 HUD。
+		if (!version_pos.x() && !version_pos.y())
+			version_pos = Point<int16_t>(1061, 9);
+
+		// 品牌字标：本地 PNG 覆盖层（atlas id 避开 nlnx bitmap id 空间）。
+		// 缺素材时 login_logo.is_valid()==false，draw 自动 no-op，保持原行为。
+		constexpr size_t ATLAS_LOGIN_LOGO = 0x4C4F474Full;	// 'LOGO'
+		login_logo.load(ATLAS_LOGIN_LOGO, {
+			"UI/Creation/LoginLogo_override.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/LoginLogo_override.png" });
 
 		// 兼容数据命名：部分 v83 私服（如 BeiDou)把登录面板放在 Login.img/Title 而非 Title_new
 		nl::node Title_new = Login["Title_new"];
@@ -379,7 +386,11 @@ namespace ms
 
 		UIElement::draw(alpha);
 
-		version.draw(position + version_pos - Point<int16_t>(0, 5));
+		// 背景（LoginBackground/Map Obj LOGO）已先画；此处整块覆盖品牌字标。
+		if (login_logo.is_valid())
+			login_logo.draw(Point<int16_t>(434, 80));
+
+		version.draw(version_pos - Point<int16_t>(0, 5));
 
 		if (bedou)
 		{
