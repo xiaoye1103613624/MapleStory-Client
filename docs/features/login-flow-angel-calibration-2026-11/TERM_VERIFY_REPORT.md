@@ -513,3 +513,80 @@
 - 归档目录 [`evidence/term-verify-v2/channel-20page/`](evidence/term-verify-v2/channel-20page/)：7 脚本 + 6 JSON + 16 帧/对照图 + 3 before_pager 文件，共 32 文件。
 - **明确披露**：① 翻页左右箭头是本服 30/60 频道扩展，原生 20 格目标帧没有，非原生、不签像素一致；② 次页 CH.21–60 标签是代码 `ColorBox+OutlinedText` 重绘（WZ 只有 `channel/0..19` 烘焙 CH.1–20），第 1 页保留原生烘焙；③ 角色页 R3 三组件本轮无可比输入帧（旧帧是登录弹窗），未做像素复算；④ §13.6 的「服务端仅发 3 频道」旧口径作废，30 频道已由 SERVERLIST 实证；⑤ §11.7 五项不签继续挂（CELL_H=32、18px 行距像素侧、纯净校准二进制、进图场景态不可比、职业团 EVAN/DUALBLADE 按用户指示保留）；⑥ §13.6 公告 ne +4 / se -8 / 正文 +3.39 三残差未被本轮触碰，继续在案。
 - 影响面仅 2 个 UI TU（`UIWorldSelect.h/.cpp`）+ 1 份报告 + `channel-20page/` 证据目录；未改 vcxproj、未新建源 TU、未动 `Obj.cpp`/`ChatBalloon.cpp`/`UICharSelect.cpp`、未改 live `.img`/`.nx`/`MapleStory.exe`，别会话 65+ M 文件零触碰。
+
+
+---
+
+## 15 频道页四点原生差异修复（m08208，真机 `R4_CHANNEL_FIX_VERIFIED`）
+
+### 15.1 目标与范围
+
+- 用户 m08208 附两张 1280×720 帧（本端 `XiaoYe_2026-11-15_20-23-37.png` / 正确端「选中频道页.png」）指出四点：① 公告内容偏下；② 区域图标和频道列表偏左；③ 频道列表底部应有勾起来的羊皮纸 UI /「到选择的世界去」按钮下还应有背景图，现缺失；④ 选中地区后地区木牌列表下的卷轴应为打开态。
+- 本轮 goal `goal-51ef6ca8-e348-42e5-abb9-4a9d1ae87f8d` 唯一范围 = 上述四点。按 Angel 083 + orange-wz `Login.img` 真节点 + 正确截图逐项原生还原，独立编译 `BUILD_EXITCODE=0`、真机像素/目视复验、名牌行/旗标不退化、归档并精确 add 原子提交。
+- m08338「选中角色属性板整体偏下/字体/颜色/不加粗/居中不一样」证据已闭合（`ui_r5/measure_r5_charinfo.json`），但**不在本 goal、本轮无有效选角色稳态帧，禁止空口签，拆到下一轮**。味道 📌 钉内/钉外，不评分不问卷。
+
+### 15.2 WZ 真节点（orange-wz 128B GMS128 key，须 `autoParse:true`）
+
+- 根 `E:\MXD\BeiDou-Client-xy\Data\UI\Login.img`，key `tools/_gms_key_128.b64`（172B b64 head `EwAAAFIAAAAqAAAAWwAAAAgA`）/ iv `TSPHKw==` / name `GMS128` / `exclusive:false`。工具坑：`list_children(根)` 返回 `children:[]`、`get_node_tree_json` 不带 `autoParse` 报「节点路径不存在」。
+- `WorldSelect/scroll/0` 展开四帧：`0=513×152 delay250 / 1=513×416 delay50 / 2=513×408 delay50 / 3=513×401 无delay`，各帧 `origin(0,0)`；`scroll/1/0`=513×401 同为「卷轴打开态」 = 顶部木轴 + 羊皮纸主体 + 底部卷起木轴。`WorldSelect/chBackgrn` 449×233 是**无上下卷边的平板**（③④ 根因）；`BtGoworld/normal/0` 140×41；`channel/0/normal` 92×30（左上角烘焙 `CH.1`）；`WorldNotice/BalloonForLoginProcess` `Title 170×18`、`nw 22×40 origin(22,40)`、`se 22×24`；`NoticeScroll1/0`、`NoticeScroll2/0` 444×38 顶卷边。导出见 [`wz/`](evidence/term-verify-v2/channel-r4/wz/) 10 张 PNG + `_sheet.png`。
+
+### 15.3 两端像素对账（修复前，同一套 WZ 模板/ROI/阈值）
+
+- 三源 = TARGET `targets_desktop/desktop_channel_expanded.png` / USER_CURRENT `m08207-15d4d79d.webp` / OURS `shots/ch20_home_f05.png`；[`verdicts/measure_r4.json`](evidence/term-verify-v2/channel-r4/verdicts/measure_r4.json)。
+- `channel0` T 0.933@(659,369) / O 0.95@(646,368)；`notice_title` T 0.9995@(293,313) / O 1.0@(293,313)（标题已对齐，禁整体移公告框）；`notice_nw` T 0.9916@(280,296) / O 0.9917@(280,295)；`notice_se` T 0.9651@(450,353) / O 0.9644@(450,345)（se −8 旧残差）；`btgoworld` T 0.9037@(756,497) / O 0.9598@(756,497)（GoWorld 绝对位已对齐）。
+- `scroll_open_bottom`（`scroll/0/3` 底部 40 行 513×40）T **0.8816@(398,500)** / O 0.4656@(398,479)；`noticescroll1/2_top` T 0.6346@(410,506) / O 0.4992@(418,483)。
+- `balloon_body_ink`（ROI 300,320,450,360 thr115）T weighted 14.23 bbox[353,320,390,346] 两墨带 y320..326 + y337..345 / O weighted 16.93 bbox[356,320,397,350] y341..350 → **正文比目标低约 4~5px**。
+- 全帧 alpha-NCC [`verdicts/measure_r4_scroll_full.json`](evidence/term-verify-v2/channel-r4/verdicts/measure_r4_scroll_full.json)（ROI(340,90,950,560) 粗4细1）：TARGET `scroll_0_3_open` **0.7546@(398,139)** / `scroll_1_0_open` 同 / collapsed 0.4337@(401,393)；OURS `scroll_0_3` 0.6004@(398,134)。→ 打开态目标落点 **(398,139)**、底缘 y=540；本端平板/木轴 y≈479/483 差约 21~23px。
+
+### 15.4 蓝军翻案：名牌行不连坐（落刀后、重编前撤销自造回归）
+
+- 补丁初版把 `WS_WORLD_DLG_MAP(-140,-804)→(-127,-804)` 一并 +13。生成 [`compare/cmp_world_row_r4.png`](evidence/term-verify-v2/channel-r4/compare/cmp_world_row_r4.png) 目视两端木牌行（横杆绳结 / 第一牌「1 蓝蜗牛」竖条 / 空牌间隔）几乎逐像素一致，x 方向零均值 NCC 定量：`WORLD_PLANK_ROW`(y215..250,x430..870) **0.8704@shift=0**、`FLAG_SPRITES`(470,120,860,170) **0.9873@shift=0**、`CHANNEL_GRID`(y330..490,x450..900) **0.4977@shift=-13**。
+- 结论：名牌行/旗标两端本已对齐，`+13` 是**自造回归**；用户说的偏左项只锁定频道格。已把常量改回 `WS_WORLD_DLG_MAP(-140, -804)` 并写明依据。`WORLD_NAME_BIG` 大字带 NCC 0.2676@-25 判为文本差异噪声（本端「XiaoYE」vs 目标「Scania」+ 用户红框），不作位置证据。
+
+### 15.5 源码落刀（3 文件，8 处编辑）
+
+- `IO/Components/ChatBalloon.cpp`：① `LoginProcessNotice::draw` `:307 text_y = ct + (cb - ct - textlabel.height()) / 2 - 4`（正文上移 4px，不动 Title/九宫/`box_h_ref=74`，保 `noticeTitle` NCC=1.0）。
+- `IO/UITypes/UIWorldSelect.cpp`：② `channel_cell_offset(i)` 基准 `(22,56)→(35,57)`（频道格/量规/红圈/次页标签 +13/+1；`panel_topleft=(436,280)` 不动，故 notice/GoWorld/翻页/卷轴绝对位保住）；③④ 构造 `channels_scroll_open = WorldSelect["scroll"]["0"]["3"]`(:361)、`draw()` 选中世界且动画播完后 `else if (channels_scroll_open.is_valid())` 用同一 `scroll_tl` 常驻 `scroll/0/3`（保留 `panel_expand` 纵向揭示 + 无资源回退 chBackgrn，:679-716）、`send_cursor` 命中框改用 `scroll_tl..scroll_tl+513×401`(:853-861)、`button_pressed(BtWorld*)` 注释改「转交 scroll/0/3 常驻」(:1532-1534)。
+- `IO/UITypes/UIWorldSelect.h`：加 `Texture channels_scroll_open;` 字段。
+- 补丁脚本 [`scripts/patch_r4_channel_charinfo.py`](evidence/term-verify-v2/channel-r4/scripts/patch_r4_channel_charinfo.py)：PRECHECK 每条 old 唯一命中 + 花括号净平衡 + 零写盘保护 + 保 head3/CRLF；前三轮因 `.h` 成员两 tab、`send_cursor` 收尾三 tab 猜错而零写盘，第三轮 8/8 PRECHECK OK + `PATCHED 3 files ALL_OK`；三文件 head3 `2f2f2f`/CRLF0/花括号+0、`DIFF_CHECK_MY_FILES=0`。
+
+### 15.6 独立干净编译（撤销回归后重编，锁 sha）
+
+- [`scripts/build_r4_isolated.bat`](evidence/term-verify-v2/channel-r4/scripts/build_r4_isolated.bat)：worktree `channel-20page-verify`（HEAD `5614564f`，与 main `28164297` 源码差异仅 `UIWorldSelect.cpp/.h` 的 20 格翻页特性），`/p:OutDir /p:IntDir /p:PostBuildEventUseInBuild=false` 三隔离 + `rmdir /s /q OUT` 强制失效增量缓存；三文件按字节 cp 同步得 SHA MATCH。
+- 第一份 `BUILD_EXITCODE=0` 产物含已撤销的 `+13` 回归，**作废**；撤销后重新 cp + 干净重编得最终 exe **`cf973d94238fca3300c3d23907ee97e04c8a0f6e2536eba44042174f2d855d2a` / 5,119,488 B / 2026-11-15 22:20:07**，`build_r4.log` 全量 `error C|error LNK|fatal error|error MSB` 计数 0。`live E:\MXD\BeiDou-Client-xy\MapleStory.exe` 全程未覆盖；验证用独立 `MapleStory_r4.exe`。
+
+### 15.7 真机两次翻案（配置漂移 + 判据被证伪，均非补丁缺陷）
+
+- **翻案 1 · 16 帧全抓成选角色页**：首跑 `anchor_hit=true` 但 `r4_after_audit` 十项全 false、`x_shift` 跑到 ±30 边界、帧均值 140.92→138.10 单调漂移。查 `packet_dump.log` 从 8139311 起增量包：首包 `[SEND] 01 00 08 00 "tostest1" 05 00 admin` 用配置账号（脚本敲的 admin/admin 没进框）+ `[SEND] 05 00 00 00 00` = `UIWorldSelect.cpp:419-439` auto 分支构造期 `CharlistRequestPacket(world0,ch0)` 直跳选角页。真源 `Configuration.cpp:381-385`（xy-config 优先于 Settings）/ `:793-796 get_auto_login()→Setting<AutoLogin>::load()`、`UILogin.cpp:370-377/:438-441`。16 帧对 `desktop_char_select.png` mean_abs 12.4~15.8 vs 频道页 44.9~46.2 坐实。**物证整目录留档 [`auto_login_trap/`](evidence/term-verify-v2/channel-r4/auto_login_trap/)**。
+- 修法 = [`scripts/auto_login_guard.py`](evidence/term-verify-v2/channel-r4/scripts/auto_login_guard.py) + [`scripts/run_r4_guarded.py`](evidence/term-verify-v2/channel-r4/scripts/run_r4_guarded.py)：**先收敛所有 MapleStory 进程让退出写盘落定 → 字节级临时翻转 `xy-config.yaml`+`Settings` 的 `login.auto` → 原 `verify_r4_channel.py` 一字不改 → 收敛 r4 实例 → finally 字节级恢复 → 同一 `r4_after_audit.py` 复算**。护栏三态幂等（`true→false` / 已 `false` 幂等 / 其余零写盘报错），因 22:23 别的会话已把高优先级 `xy-config.yaml:55` 翻成 `false` 而 `Settings:102` 仍 `true`。实测 `restore_ok=True`、两文件 sha 与 pre-guard 完全一致（`xy-config.yaml afd30756…` / `Settings 5379eca1…`）、head3 前后 `b'# M'`。
+- 护栏后真机 [`verdicts/channel_r4_verdict.json`](evidence/term-verify-v2/channel-r4/verdicts/channel_r4_verdict.json)：`anchor_hit=true`、`deployed_sha256=cf973d94…`、`frames_home 150.46→150.27`、`frames_page2 150.59→150.87`、`frames_back 150.65→150.54` 全 `real_gl_frame`、title `XiaoYE MS v0.0.1...FPS:85...2026-11-15 22:45:00`。
+- **翻案 2 · 一条判据被证伪**：复算 15/16 true，唯一 false 是我自己写的 `a.channel0.xy == t.channel0.xy`。数据：`channel0` target 峰 (659,369)/0.933、before (646,368)/0.95、**after (471,337)/0.9843**——目标「选中频道页」首格被 `chSelect` 红圈末帧 (469,328) 覆盖，模板峰漂到第三列；本端修复后无红圈，峰回到真首格 (471,337)。两峰相等物理上不可能，是**判据被证伪**，不是修复失败。恢复修复前既定的整带 `x_shift` 口径（`before=-13 → after=0`）+「after 峰回真首格 (471,337)」双硬证；改前快照 [`verdicts/r4_after_audit_before_criterion_fix.json`](evidence/term-verify-v2/channel-r4/verdicts/r4_after_audit_before_criterion_fix.json) 一并归档，本节主动披露，绝不放宽阈值。
+
+### 15.8 判词与最终数值（16/16 全 true）
+
+- 整合 [`verdicts/r4_after_audit.json`](evidence/term-verify-v2/channel-r4/verdicts/r4_after_audit.json)：**`R4_CHANNEL_FIX_VERIFIED` / `all_checks_pass=true` / `failed=[]`**。
+- ② 网格：`CHANNEL_GRID` 整带 x_shift **before −13 → after 0**、NCC **0.4977→0.8265**；`channel0` after 峰 (471,337)/0.9843。名牌行 `WORLD_PLANK_ROW 0.8613@0`、旗标 `FLAG_SPRITES 1.0@0` 不退化。
+- ① 正文：`balloon_body_ink` weighted **before 16.93 → after 14.46**（target 14.23），墨带上提；`noticeTitle` NCC 1.0@(293,313)、`notice_nw` 不变、`btgoworld` NCC 0.9875@(756,497) 不退化。
+- ③④ 卷轴：`scroll_open_bottom` NCC **0.4656 → 0.8003**（target 0.8816）；`scroll_0_3_full` NCC **0.6004 → 0.7661**、峰 **(398,134) → (398,139)** 与 target 完全重合。
+- 目视 [`compare/cmp_r4_bottom_before_after.png`](evidence/term-verify-v2/channel-r4/compare/cmp_r4_bottom_before_after.png) / [`compare/cmp_r4_notice_before_after.png`](evidence/term-verify-v2/channel-r4/compare/cmp_r4_notice_before_after.png) 三栏（TARGET / BEFORE_CH20 / AFTER_R4）：底部从「平板直边」恢复成「卷起木轴 + GoWorld 压卷边」，公告正文从贴底边上提到居中，频道格整列右移对齐。
+- 其余 checks：`anchor_hit` / `frames_real` / `deployed_exe_matches_build` / `live_exe_untouched` / `config_bom_intact` 全 true。
+
+### 15.9 残差与影响面（如实披露）
+
+- `notice_se` 目标 y=353 vs 本端 y=345 的 −8px 旧残差：九宫几何未改，按 §13.6/R3 口径继续在案。
+- 扩展翻页箭头 `(646,497)/(686,497)` 是本服 30/60 频道功能件，原生 20 格目标帧无此组件，不伪装原生像素一致（§14.8 口径延续）。
+- `WORLD_NAME_BIG` 世界名文本不同（XiaoYE vs Scania）+ 用户红框标注，不作位置证据；名牌行/旗标已用 NCC@0 证对齐。
+- scroll/0/3 全帧 NCC 受登录背景动态帧影响，用「峰位置收敛 + 底裁 NCC + 相对 before 提升」三重共同作证，不单点定生死。
+- ① 正文只改 `ChatBalloon.cpp:307` 的 `text_y`，不动 Title/九宫/`box_h_ref=74`（§13.6「box_h 增大会把正文再下推」旧结论保持）。
+- §11.7 五项不签继续挂（CELL_H=32 本端实证、18px 行距像素侧、纯净校准二进制、进图场景态不可比、职业团 EVAN/DUALBLADE 按用户指示保留）；m08338 属性板整轮拆出。
+- 影响面仅 3 个 TU（`IO/Components/ChatBalloon.cpp`、`IO/UITypes/UIWorldSelect.h/.cpp`）+ 1 份报告 + [`channel-r4/`](evidence/term-verify-v2/channel-r4/) 49 个证据文件；未改 vcxproj、未新建源 TU、未动 `UICharSelect.cpp`/`Obj.cpp`、未改 live `.img`/`.nx`/`MapleStory.exe`，别会话 65+ M 文件零触碰。
+
+### 15.10 追加项：「结束游戏」木牌归属取证与移除（m08836，真机复验 R4b）
+
+- 用户问：频道页左上角的「结束游戏」木牌原生到底在哪个页面。**78 张正确端截图全量扫描**（左上 (9,8,160,36) 暗块 frac）：登录界面 0.029 / 选择频道页 0.032 / 选择角色页 0.046 / 职业团·建角页族 0.044~0.050 —— 登录链路全部**无**此牌；进入游戏页 0.592 / 商城 1.000 / S-E-I-K 0.603 / 番茄田三帧 0.593 / 射手村地图 0.591 —— **in-game 页面全部有**。结论：`Common/BtExit` 木牌是**进图后页面专属组件**，频道页不该画它。
+- 本端旧代码 `UIWorldSelect.cpp:305` `MapleButton(Common["BtExit"], WS_EXIT_POS(8,8))`，:163 注释自称出自正确端截图——实测该截图左上角 frac 仅 0.032，**注释系错引，证伪**。R4 后帧该区 frac 0.546 vs 目标 0.350，多出的暗块 bbox x9..159 y10..35 即木牌本体（`compare/cmp_topleft_exit_plank.png` 目视锁定）。
+- 落刀：删构造行与 `WS_EXIT_POS` 常量（均留注释记因）；**ESC→退出确认键位行为保留**——`send_key` escape 分支 `button_pressed(Buttons::BtExit)`（:1139）与 `button_pressed` 的 `BtExit→emplace<UIQuitConfirm>`（:1470）是纯 id 分发，不解引用按钮实例，删除绘制不影响键位。
+- 重编 R4b：worktree 三隔离干净构建 → **exe `a1d405eab0fe8776cf448d4197a1c388d528d8b2dc2d497c4203833688c36696` / 5,119,488 B / 2026-11-15 23:35:04**，`ERROR_COUNT=0`；live exe 未覆盖（别会话 23:30 产物保持原样）。
+- 真机复验（同一护栏链）：`VERIFY_RC=0`、`AUTO_LOGIN_RESTORE_OK=True`、`R4_CHANNEL_FIX_VERIFIED` **16/16**，R4 四点数值不退化（`scroll_bottom 0.8006 / scroll_full 0.7662 / body_weighted 14.46`，三带 x_shift 全 0）。
+- **专项收敛**：左上角 (0,0,150,60) frac **0.546 → 0.381**（目标 0.381，精确同值）；plank 带 (9,8,160,36) **0.546 前值的牌区 → 0.032 = 目标 0.032**，千分位精确同分；`compare/cmp_topleft_exit_plank_after.png` 目视两端只剩标题牌本体、无残影。
+- 残差口径不变：扩展翻页箭头仍为本服功能件；§11.7 五项不签继续挂；m08338 属性板整轮拆出。

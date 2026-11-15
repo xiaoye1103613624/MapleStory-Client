@@ -1,0 +1,176 @@
+{
+  "method": "R4 isolated-exe single-instance protocol-anchor + world click + pager click + BitBlt",
+  "ts": "2026-11-15 22:21:16",
+  "src_exe_sha256": "cf973d94238fca3300c3d23907ee97e04c8a0f6e2536eba44042174f2d855d2a",
+  "config_head_before": "b'# M'",
+  "pager_prev_click": [
+    660,
+    512
+  ],
+  "pager_next_click": [
+    700,
+    512
+  ],
+  "deployed_exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory_r4.exe",
+  "deployed_sha256": "cf973d94238fca3300c3d23907ee97e04c8a0f6e2536eba44042174f2d855d2a",
+  "live_exe_untouched_sha256": "2dabd931f02b2369ff1ea190c53d05edf5241acd176b1758d7460b37e3264458",
+  "packet_dump_start_offset": 8139311,
+  "pid": 9964,
+  "client_size": [
+    1280,
+    720
+  ],
+  "unicode_account_ok": true,
+  "unicode_password_ok": true,
+  "anchors": [
+    [
+      "login",
+      0.0
+    ],
+    [
+      "world",
+      1.208
+    ],
+    [
+      "end",
+      1.208
+    ]
+  ],
+  "anchor_hit": true,
+  "frames_home": [
+    {
+      "i": 0,
+      "file": "r4_home_f00.png",
+      "mean": 140.92,
+      "std": 76.8,
+      "uniq": 1349,
+      "real_gl_frame": true
+    },
+    {
+      "i": 1,
+      "file": "r4_home_f01.png",
+      "mean": 140.64,
+      "std": 76.73,
+      "uniq": 1352,
+      "real_gl_frame": true
+    },
+    {
+      "i": 2,
+      "file": "r4_home_f02.png",
+      "mean": 140.06,
+      "std": 76.55,
+      "uniq": 1343,
+      "real_gl_frame": true
+    },
+    {
+      "i": 3,
+      "file": "r4_home_f03.png",
+      "mean": 139.39,
+      "std": 76.33,
+      "uniq": 1342,
+      "real_gl_frame": true
+    },
+    {
+      "i": 4,
+      "file": "r4_home_f04.png",
+      "mean": 138.65,
+      "std": 76.07,
+      "uniq": 1333,
+      "real_gl_frame": true
+    },
+    {
+      "i": 5,
+      "file": "r4_home_f05.png",
+      "mean": 138.1,
+      "std": 75.98,
+      "uniq": 1324,
+      "real_gl_frame": true
+    }
+  ],
+  "frames_page2": [
+    {
+      "i": 0,
+      "file": "r4_page2_f00.png",
+      "mean": 138.38,
+      "std": 76.18,
+      "uniq": 1330,
+      "real_gl_frame": true
+    },
+    {
+      "i": 1,
+      "file": "r4_page2_f01.png",
+      "mean": 139.04,
+      "std": 76.37,
+      "uniq": 1331,
+      "real_gl_frame": true
+    },
+    {
+      "i": 2,
+      "file": "r4_page2_f02.png",
+      "mean": 139.85,
+      "std": 76.67,
+      "uniq": 1328,
+      "real_gl_frame": true
+    },
+    {
+      "i": 3,
+      "file": "r4_page2_f03.png",
+      "mean": 140.41,
+      "std": 76.84,
+      "uniq": 1326,
+      "real_gl_frame": true
+    },
+    {
+      "i": 4,
+      "file": "r4_page2_f04.png",
+      "mean": 140.66,
+      "std": 76.81,
+      "uniq": 1332,
+      "real_gl_frame": true
+    },
+    {
+      "i": 5,
+      "file": "r4_page2_f05.png",
+      "mean": 140.62,
+      "std": 76.81,
+      "uniq": 1322,
+      "real_gl_frame": true
+    }
+  ],
+  "frames_back": [
+    {
+      "i": 0,
+      "file": "r4_back_f00.png",
+      "mean": 140.13,
+      "std": 76.69,
+      "uniq": 1292,
+      "real_gl_frame": true
+    },
+    {
+      "i": 1,
+      "file": "r4_back_f01.png",
+      "mean": 139.85,
+      "std": 76.62,
+      "uniq": 1289,
+      "real_gl_frame": true
+    },
+    {
+      "i": 2,
+      "file": "r4_back_f02.png",
+      "mean": 139.61,
+      "std": 76.51,
+      "uniq": 1273,
+      "real_gl_frame": true
+    },
+    {
+      "i": 3,
+      "file": "r4_back_f03.png",
+      "mean": 139.43,
+      "std": 76.43,
+      "uniq": 1263,
+      "real_gl_frame": true
+    }
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:232延迟:--】【当前时间：2026-11-15 22:21:44】",
+  "config_head_after": "b'# M'"
+}

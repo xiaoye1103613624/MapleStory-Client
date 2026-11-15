@@ -1,0 +1,28 @@
+{
+  "ts_disable": "2026-11-15 23:36:13",
+  "files": {
+    "xy-config.yaml": {
+      "state": "already_false",
+      "before_sha256": "b39529dd4f0eacec9fc1e3548f87c798923b1e37ccb7422c103f4a40a3d30756",
+      "after_sha256": "b39529dd4f0eacec9fc1e3548f87c798923b1e37ccb7422c103f4a40a3d30756",
+      "head3_before": "b'# M'",
+      "head3_after": "b'# M'",
+      "restored_sha256": "b39529dd4f0eacec9fc1e3548f87c798923b1e37ccb7422c103f4a40a3d30756",
+      "restored_byte_exact": true,
+      "head3_final": "b'# M'"
+    },
+    "Settings": {
+      "state": "already_false",
+      "before_sha256": "85b04050e46d740f2b3998891c5c1f0370ffbb6f37c5171652b3438a2f86e4ff",
+      "after_sha256": "85b04050e46d740f2b3998891c5c1f0370ffbb6f37c5171652b3438a2f86e4ff",
+      "head3_before": "b'# M'",
+      "head3_after": "b'# M'",
+      "restored_sha256": "85b04050e46d740f2b3998891c5c1f0370ffbb6f37c5171652b3438a2f86e4ff",
+      "restored_byte_exact": true,
+      "head3_final": "b'# M'"
+    }
+  },
+  "disabled": true,
+  "restore_ok": true,
+  "ts_restore": "2026-11-15 23:36:47"
+}

@@ -1,0 +1,900 @@
+{
+  "sources": {
+    "target": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\targets_desktop\\desktop_channel_expanded.png",
+    "user_current": "C:\\Users\\11036\\.local\\state\\billion-context\\retrieve\\img\\session-8943caa6-a38f-405b-a307-55370c5ccf7f\\m08207-15d4d79d.webp",
+    "ours_before": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\ch20_home_f05.png",
+    "ours_after": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\r4_home_f05.png"
+  },
+  "measurements": {
+    "target": {
+      "channel0": {
+        "ncc": 0.933,
+        "xy": [
+          659,
+          369
+        ],
+        "size": [
+          92,
+          30
+        ]
+      },
+      "notice_title": {
+        "ncc": 0.9995,
+        "xy": [
+          293,
+          313
+        ],
+        "size": [
+          170,
+          18
+        ]
+      },
+      "notice_nw": {
+        "ncc": 0.9916,
+        "xy": [
+          280,
+          296
+        ],
+        "size": [
+          22,
+          40
+        ]
+      },
+      "notice_se": {
+        "ncc": 0.9651,
+        "xy": [
+          450,
+          353
+        ],
+        "size": [
+          22,
+          24
+        ]
+      },
+      "noticescroll1_top": {
+        "ncc": 0.6346,
+        "xy": [
+          410,
+          506
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "noticescroll2_top": {
+        "ncc": 0.6346,
+        "xy": [
+          410,
+          506
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "scroll_open_bottom": {
+        "ncc": 0.8816,
+        "xy": [
+          398,
+          500
+        ],
+        "size": [
+          513,
+          40
+        ]
+      },
+      "btgoworld": {
+        "ncc": 0.9037,
+        "xy": [
+          756,
+          497
+        ],
+        "size": [
+          140,
+          41
+        ]
+      },
+      "balloon_body_ink": {
+        "rows": [
+          4,
+          11,
+          9,
+          8,
+          10,
+          20,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          2,
+          15,
+          10,
+          10,
+          12,
+          10,
+          11,
+          20,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          353,
+          320,
+          390,
+          346
+        ],
+        "weighted": 14.23,
+        "peak": [
+          325,
+          20
+        ]
+      },
+      "balloon_title_ink": {
+        "rows": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          8,
+          15,
+          9,
+          8,
+          21,
+          4,
+          11,
+          9,
+          8,
+          10,
+          20,
+          3,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          363,
+          314,
+          390,
+          327
+        ],
+        "weighted": 20.22,
+        "peak": [
+          319,
+          21
+        ]
+      },
+      "scroll_0_3_full": {
+        "ncc": 0.7546,
+        "xy": [
+          398,
+          139
+        ],
+        "size": [
+          513,
+          401
+        ]
+      }
+    },
+    "user_current": {
+      "channel0": {
+        "ncc": 0.947,
+        "xy": [
+          646,
+          368
+        ],
+        "size": [
+          92,
+          30
+        ]
+      },
+      "notice_title": {
+        "ncc": 0.9984,
+        "xy": [
+          293,
+          313
+        ],
+        "size": [
+          170,
+          18
+        ]
+      },
+      "notice_nw": {
+        "ncc": 0.9915,
+        "xy": [
+          280,
+          295
+        ],
+        "size": [
+          22,
+          40
+        ]
+      },
+      "notice_se": {
+        "ncc": 0.9641,
+        "xy": [
+          450,
+          345
+        ],
+        "size": [
+          22,
+          24
+        ]
+      },
+      "noticescroll1_top": {
+        "ncc": 0.5145,
+        "xy": [
+          417,
+          483
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "noticescroll2_top": {
+        "ncc": 0.5145,
+        "xy": [
+          417,
+          483
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "scroll_open_bottom": {
+        "ncc": 0.3859,
+        "xy": [
+          397,
+          479
+        ],
+        "size": [
+          513,
+          40
+        ]
+      },
+      "btgoworld": {
+        "ncc": 0.9025,
+        "xy": [
+          756,
+          497
+        ],
+        "size": [
+          140,
+          41
+        ]
+      },
+      "balloon_body_ink": {
+        "rows": [
+          4,
+          11,
+          9,
+          8,
+          11,
+          21,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          12,
+          7,
+          10,
+          13,
+          14,
+          12,
+          12,
+          12,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          356,
+          320,
+          397,
+          350
+        ],
+        "weighted": 16.95,
+        "peak": [
+          325,
+          21
+        ]
+      },
+      "balloon_title_ink": {
+        "rows": [
+          0,
+          0,
+          0,
+          0,
+          84,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          8,
+          15,
+          9,
+          8,
+          21,
+          4,
+          11,
+          9,
+          8,
+          11,
+          21,
+          3,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          330,
+          304,
+          420,
+          327
+        ],
+        "weighted": 13.93,
+        "peak": [
+          304,
+          84
+        ]
+      },
+      "scroll_0_3_full": {
+        "ncc": 0.5886,
+        "xy": [
+          398,
+          135
+        ],
+        "size": [
+          513,
+          401
+        ]
+      }
+    },
+    "ours_before": {
+      "channel0": {
+        "ncc": 0.95,
+        "xy": [
+          646,
+          368
+        ],
+        "size": [
+          92,
+          30
+        ]
+      },
+      "notice_title": {
+        "ncc": 1.0,
+        "xy": [
+          293,
+          313
+        ],
+        "size": [
+          170,
+          18
+        ]
+      },
+      "notice_nw": {
+        "ncc": 0.9917,
+        "xy": [
+          280,
+          295
+        ],
+        "size": [
+          22,
+          40
+        ]
+      },
+      "notice_se": {
+        "ncc": 0.9644,
+        "xy": [
+          450,
+          345
+        ],
+        "size": [
+          22,
+          24
+        ]
+      },
+      "noticescroll1_top": {
+        "ncc": 0.4992,
+        "xy": [
+          418,
+          483
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "noticescroll2_top": {
+        "ncc": 0.4992,
+        "xy": [
+          418,
+          483
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "scroll_open_bottom": {
+        "ncc": 0.4656,
+        "xy": [
+          398,
+          479
+        ],
+        "size": [
+          513,
+          40
+        ]
+      },
+      "btgoworld": {
+        "ncc": 0.9598,
+        "xy": [
+          756,
+          497
+        ],
+        "size": [
+          140,
+          41
+        ]
+      },
+      "balloon_body_ink": {
+        "rows": [
+          5,
+          11,
+          9,
+          8,
+          10,
+          21,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          11,
+          6,
+          10,
+          13,
+          14,
+          13,
+          12,
+          12,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          356,
+          320,
+          397,
+          350
+        ],
+        "weighted": 16.93,
+        "peak": [
+          325,
+          21
+        ]
+      },
+      "balloon_title_ink": {
+        "rows": [
+          0,
+          0,
+          0,
+          0,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          8,
+          15,
+          9,
+          8,
+          21,
+          5,
+          11,
+          9,
+          8,
+          10,
+          21,
+          3,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          330,
+          304,
+          420,
+          327
+        ],
+        "weighted": 15.03,
+        "peak": [
+          304,
+          62
+        ]
+      },
+      "scroll_0_3_full": {
+        "ncc": 0.6004,
+        "xy": [
+          398,
+          134
+        ],
+        "size": [
+          513,
+          401
+        ]
+      }
+    },
+    "ours_after": {
+      "channel0": {
+        "ncc": 0.9843,
+        "xy": [
+          471,
+          337
+        ],
+        "size": [
+          92,
+          30
+        ]
+      },
+      "notice_title": {
+        "ncc": 1.0,
+        "xy": [
+          293,
+          313
+        ],
+        "size": [
+          170,
+          18
+        ]
+      },
+      "notice_nw": {
+        "ncc": 0.9917,
+        "xy": [
+          280,
+          295
+        ],
+        "size": [
+          22,
+          40
+        ]
+      },
+      "notice_se": {
+        "ncc": 0.9647,
+        "xy": [
+          450,
+          345
+        ],
+        "size": [
+          22,
+          24
+        ]
+      },
+      "noticescroll1_top": {
+        "ncc": 0.5769,
+        "xy": [
+          409,
+          506
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "noticescroll2_top": {
+        "ncc": 0.5769,
+        "xy": [
+          409,
+          506
+        ],
+        "size": [
+          444,
+          38
+        ]
+      },
+      "scroll_open_bottom": {
+        "ncc": 0.8003,
+        "xy": [
+          398,
+          500
+        ],
+        "size": [
+          513,
+          40
+        ]
+      },
+      "btgoworld": {
+        "ncc": 0.9875,
+        "xy": [
+          756,
+          497
+        ],
+        "size": [
+          140,
+          41
+        ]
+      },
+      "balloon_body_ink": {
+        "rows": [
+          5,
+          11,
+          9,
+          8,
+          10,
+          21,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          11,
+          6,
+          10,
+          13,
+          14,
+          13,
+          12,
+          12,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          356,
+          320,
+          397,
+          346
+        ],
+        "weighted": 14.46,
+        "peak": [
+          325,
+          21
+        ]
+      },
+      "balloon_title_ink": {
+        "rows": [
+          0,
+          0,
+          0,
+          0,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          8,
+          15,
+          9,
+          8,
+          21,
+          5,
+          11,
+          9,
+          8,
+          10,
+          21,
+          3,
+          0,
+          0,
+          0
+        ],
+        "bbox": [
+          330,
+          304,
+          420,
+          327
+        ],
+        "weighted": 15.03,
+        "peak": [
+          304,
+          62
+        ]
+      },
+      "scroll_0_3_full": {
+        "ncc": 0.7661,
+        "xy": [
+          398,
+          139
+        ],
+        "size": [
+          513,
+          401
+        ]
+      }
+    }
+  },
+  "x_shift": {
+    "ours_before": {
+      "WORLD_PLANK_ROW": {
+        "ncc": 0.8704,
+        "shift": 0
+      },
+      "FLAG_SPRITES": {
+        "ncc": 0.9873,
+        "shift": 0
+      },
+      "CHANNEL_GRID": {
+        "ncc": 0.4977,
+        "shift": -13
+      }
+    },
+    "ours_after": {
+      "WORLD_PLANK_ROW": {
+        "ncc": 0.8613,
+        "shift": 0
+      },
+      "FLAG_SPRITES": {
+        "ncc": 1.0,
+        "shift": 0
+      },
+      "CHANNEL_GRID": {
+        "ncc": 0.8265,
+        "shift": 0
+      }
+    }
+  },
+  "checks": {
+    "world_plank_row_not_regressed": true,
+    "flag_sprites_not_regressed": true,
+    "channel_grid_shift_converged": false,
+    "notice_title_unchanged": true,
+    "notice_nw_unchanged": true,
+    "btgoworld_unchanged": true,
+    "notice_body_raised": true,
+    "scroll_bottom_restored": true,
+    "scroll_full_peak_converged": true,
+    "scroll_full_improved": true,
+    "anchor_hit": true,
+    "frames_real": true,
+    "deployed_exe_matches_build": true,
+    "live_exe_untouched": true,
+    "config_bom_intact": true
+  },
+  "excluded": [
+    "m08338 角色属性板（字体/颜色/字重/居中/整体 Y）：证据已闭合但不在 goal-51ef6ca8 范围，且本轮无有效选角色稳态帧，禁止空口签。"
+  ],
+  "disclosures": [
+    "notice_se 目标 y=353 vs 本端 y=345 的 -8px 旧残差：九宫几何未改，按 R3 口径继续披露。",
+    "扩展翻页箭头 (646,497)/(686,497) 是 30/60 频道功能件，原生 20 频道目标帧无此组件，不伪装原生。",
+    "WORLD_NAME_BIG NCC 0.2676@-25 系世界名文本不同（XiaoYE vs Scania）+ 用户红框标注，不作位置证据。",
+    "scroll/0/3 全帧 NCC 受登录背景动态帧影响，允许低于目标 0.7546；底裁 NCC 与 full 相对 before 提升共同作证。",
+    "正文上移 4px 只改 ChatBalloon.cpp:307 text_y，不动 Title/九宫/box_h_ref=74。"
+  ],
+  "all_checks_pass": false,
+  "verdict": "R4_CHANNEL_FIX_NOT_VERIFIED",
+  "frame_summary": {
+    "frames_home": [
+      150.46,
+      150.41,
+      150.35,
+      150.29,
+      150.25,
+      150.27
+    ],
+    "frames_page2": [
+      150.59,
+      150.7,
+      150.81,
+      150.88,
+      150.89,
+      150.87
+    ],
+    "frames_back": [
+      150.65,
+      150.6,
+      150.57,
+      150.54
+    ]
+  },
+  "deployed_sha256": "cf973d94238fca3300c3d23907ee97e04c8a0f6e2536eba44042174f2d855d2a",
+  "build_r4_sha256": "cf973d94238fca3300c3d23907ee97e04c8a0f6e2536eba44042174f2d855d2a",
+  "live_exe_sha256": "2dabd931f02b2369ff1ea190c53d05edf5241acd176b1758d7460b37e3264458"
+}

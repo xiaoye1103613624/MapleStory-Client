@@ -1,0 +1,168 @@
+{
+  "sources": {
+    "target": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\targets_desktop\\desktop_channel_expanded.png",
+    "user_current": "C:\\Users\\11036\\.local\\state\\billion-context\\retrieve\\img\\session-8943caa6-a38f-405b-a307-55370c5ccf7f\\m08207-15d4d79d.webp",
+    "ours_ch20": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\ch20_home_f05.png"
+  },
+  "full_frame_ncc": {
+    "target": {
+      "scroll_0_3_open": {
+        "ncc": 0.7546,
+        "xy": [
+          398,
+          139
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_1_0_open": {
+        "ncc": 0.7546,
+        "xy": [
+          398,
+          139
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_0_0_collapsed": {
+        "ncc": 0.4337,
+        "xy": [
+          401,
+          393
+        ],
+        "size": [
+          513,
+          152
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          408
+        ]
+      }
+    },
+    "user_current": {
+      "scroll_0_3_open": {
+        "ncc": 0.5886,
+        "xy": [
+          398,
+          135
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_1_0_open": {
+        "ncc": 0.5886,
+        "xy": [
+          398,
+          135
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_0_0_collapsed": {
+        "ncc": 0.3514,
+        "xy": [
+          401,
+          397
+        ],
+        "size": [
+          513,
+          152
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          408
+        ]
+      }
+    },
+    "ours_ch20": {
+      "scroll_0_3_open": {
+        "ncc": 0.6004,
+        "xy": [
+          398,
+          134
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_1_0_open": {
+        "ncc": 0.6004,
+        "xy": [
+          398,
+          134
+        ],
+        "size": [
+          513,
+          401
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          159
+        ]
+      },
+      "scroll_0_0_collapsed": {
+        "ncc": 0.3107,
+        "xy": [
+          404,
+          384
+        ],
+        "size": [
+          513,
+          152
+        ],
+        "roi": [
+          340,
+          90,
+          437,
+          408
+        ]
+      }
+    }
+  }
+}
