@@ -671,7 +671,7 @@ namespace ms
 
 		if (item.is_valid())
 		{
-			icon = item.get_icon(false);
+			icon = item.get_icon(item.get_id() / 10000 == 238);
 			namelabel.change_text(item.get_name());
 		}
 
@@ -702,7 +702,7 @@ namespace ms
 	{
 		const ItemData& idata = ItemData::get(item_id);
 
-		icon = idata.get_icon(false);
+		icon = idata.get_icon(idata.get_id() / 10000 == 238);
 		id = item_id;
 		sellable = count;
 		slot = s;

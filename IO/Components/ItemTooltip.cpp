@@ -59,7 +59,7 @@ namespace ms
 
 		const ItemData& idata = ItemData::get(itemid);
 
-		itemicon = idata.get_icon(false);
+		itemicon = idata.get_icon(idata.get_id() / 10000 == 238);
 		untradable = idata.is_untradable();
 		unique = idata.is_unique();
 

@@ -476,7 +476,7 @@ namespace ms
 
 			const bool untradable = ItemData::get(item_id).is_untradable();
 			const bool cashitem = ItemData::get(item_id).is_cashitem();
-			const Texture& texture = ItemData::get(item_id).get_icon(false);
+			const Texture& texture = ItemData::get(item_id).get_icon(item_id / 10000 == 238);
 			EquipSlot::Id eqslot = inventory.find_equipslot(item_id);
 
 			icons[slot] = std::make_unique<Icon>(

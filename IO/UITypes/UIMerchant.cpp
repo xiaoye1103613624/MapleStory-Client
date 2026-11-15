@@ -71,7 +71,7 @@ namespace ms
 			const MerchItem& mi = merch_items[i];
 			Point<int16_t> base = position + Point<int16_t>(20, 40 + static_cast<int16_t>(i) * 30);
 
-			ItemData::get(mi.itemid).get_icon(false).draw(DrawArgument(base, 1.0f, 1.0f));
+			ItemData::get(mi.itemid).get_icon(mi.itemid / 10000 == 238).draw(DrawArgument(base, 1.0f, 1.0f));
 			price_labels[i].draw(base + Point<int16_t>(40, 4));
 		}
 

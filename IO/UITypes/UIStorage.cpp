@@ -71,7 +71,7 @@ namespace ms
 		for (const auto& si : stored)
 		{
 			Point<int16_t> pos = position + slot_pos(si.slot);
-			const Texture& icon = ItemData::get(si.itemid).get_icon(false);
+			const Texture& icon = ItemData::get(si.itemid).get_icon(si.itemid / 10000 == 238);
 
 			if (icon)
 				icon.draw(pos);
