@@ -1,0 +1,35 @@
+{
+  "verdict": "R5_ATTRBOARD_VERIFIED",
+  "failed": [],
+  "checks": {
+    "board_aligned": true,
+    "outline_removed": true,
+    "rank_centered": true,
+    "rank_not_bolder": true
+  },
+  "metrics": {
+    "board_xcorr": [
+      0.6806,
+      1,
+      0
+    ],
+    "job_dark_ours_vs_tgt": [
+      35,
+      19
+    ],
+    "job_ratio_before": "51/6=8.5",
+    "rank_center": [
+      464,
+      466
+    ],
+    "rank_dark": [
+      801,
+      1238
+    ]
+  },
+  "disclosures": [
+    "rank 文案 Rank Unavailable vs 排行不可用：string 资源层差异，非 UICharSelect 布局",
+    "值字内容不同（黑骑士350 vs 新手1）导致逐带 darkpx 天然差异，判据改用比值/居中/结构"
+  ],
+  "ts": "2026-11-16 00:47"
+}

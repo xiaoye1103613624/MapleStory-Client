@@ -1,0 +1,11 @@
+{
+  "method": "R5 isolated-exe charselect attribute board capture",
+  "ts": "2026-11-16 00:27:58",
+  "src_exe_sha256": "cfe140ba68cc8f8396a78799fbdd5ae263be94eca9b9a0badbe48c90a3e182a2",
+  "config_head_before": "b'# M'",
+  "deployed_exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory_r5.exe",
+  "deployed_sha256": "cfe140ba68cc8f8396a78799fbdd5ae263be94eca9b9a0badbe48c90a3e182a2",
+  "live_exe_untouched_sha256": "aa90b6ec1ea35d40fab00fc76740a834a4c35c29f4c39883361c29d520915e6e",
+  "packet_dump_start_offset": 8552915,
+  "config_head_after": "b'# M'"
+}
