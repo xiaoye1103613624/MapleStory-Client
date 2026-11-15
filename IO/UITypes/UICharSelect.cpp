@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -430,11 +430,13 @@ namespace ms
 		namelabel = OutlinedText(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, Color::Name::IRISHCOFFEE);
 
 		// Angel `get_basic_font(1)` → CreateFont 色 `#000000`（`0xFF000000` @`0x98A83A`）。
-		// 填充=描边同色 BLACK，等效无描边（避免旧 WHITE 描边在米色面板洗白）。
+		// m08338（2026-11-16）：值行原本用 OutlinedText 内外同色 BLACK —— SpecialText.h
+		// draw 固定画四向 ±1px 副本，同色描边=视觉加粗（本端值字 stroke_ratio 0.174
+		// vs 目标 0.06）。Angel 是单层细黑字，改为纯 Text，去四向副本。
 		for (size_t i = 0; i < InfoLabel::NUM_LABELS; i++)
-			infolabels[i] = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
+			infolabels[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 
-		ranklabel = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
+		ranklabel = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 		// 开局先亮「取不到排行」。这一行**不进绑定表**：它会被 update_selected_character()
 		// 按数据改写，而那个函数是事件驱动的（选中变化 / Charlist 到达），不是每帧。
 		// 绑上来的后果是「切语言那一刻，已经显示真排行的行被刷回『排行不可用』，
@@ -581,10 +583,9 @@ namespace ms
 							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
 							// 等级用 OutlinedText（Angel DrawTextA + get_basic_font(1) 黑字）；
 							// BeiDou 缺 StatusBar number Charset 时不能再走白精灵。
-							OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
+							Text lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 							lvltext.change_text(levelstr);
 							lvltext.draw(detail_pos + levelPos);
-
 							// Angel CUICharDetail::Draw 只绘职业/等级/人气/四维；名在脚下 nametag。
 							for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
 							{
@@ -592,14 +593,20 @@ namespace ms
 								infolabels[li].draw(labelpos);
 							}
 
-							// 排行带：有 rank → 名次；否则「排行不可用」（Angel nTop=99）。
-							ranklabel.draw(detail_pos + (character_stats.has_rank ? CS_DETAIL_RANK : CS_DETAIL_RANK_NA));
+							// 排行带：有 rank → 名次右对齐到 x=115（Angel DrawTextA (115-w,99)）；
+							// 否则「排行不可用」保持 (36,99)（Angel nTop=99）。
+							if (character_stats.has_rank)
+								ranklabel.draw(detail_pos + Point<int16_t>(
+									static_cast<int16_t>(CS_DETAIL_RANK.x() - ranklabel.width()),
+									CS_DETAIL_RANK.y()));
+							else
+								ranklabel.draw(detail_pos + CS_DETAIL_RANK_NA);
 						}
 					}
 					else if (LoginBackground::get().available())
 					{
 						std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-						OutlinedText lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Color::Name::BLACK);
+						Text lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 						lvltext.change_text(levelstr);
 						lvltext.draw(charpos + Point<int16_t>(0, -72));
 					}
@@ -1394,6 +1401,11 @@ namespace ms
 				// 参考端回到 step 1：背景先滚回选世界页，窗口在补间结束后再显示。
 				if (LoginBackground::get().available())
 					LoginBackground::get().set_step(1);
+
+				// 复位世界选择残留态（频道展开/卷轴动画），否则从选角页返回时
+				// 直接落在「频道选择页」而非世界列表态（与建角页 BtStart 同口径）。
+				if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+					worldselect->remove_selected();
 
 				UI::get().activate_after_transition(UIElement::Type::WORLDSELECT);
 

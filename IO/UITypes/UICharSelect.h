@@ -195,8 +195,9 @@ namespace ms
 			NUM_LABELS
 		};
 
-		OutlinedText infolabels[UICharSelect::InfoLabel::NUM_LABELS];
+		/// m08338：Angel get_basic_font(1) 单层细黑字，去 OutlinedText 四向描边副本。
+		Text infolabels[UICharSelect::InfoLabel::NUM_LABELS];
 		/// 选中角色详情排行带（有排行绘名次，否则「排行不可用」）。
-		OutlinedText ranklabel;
+		Text ranklabel;
 	};
 }
