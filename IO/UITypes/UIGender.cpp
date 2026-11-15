@@ -35,7 +35,7 @@
 
 namespace ms
 {
-	UIGender::UIGender(std::function<void()> oh) : UIElement(Point<int16_t>(0, 15), Point<int16_t>(0, 0)), okhandler(oh)
+	UIGender::UIGender(std::function<void()> oh) : okhandler(oh)
 	{
 		CUR_TIMESTEP = 0;
 
@@ -44,24 +44,46 @@ namespace ms
 		for (size_t i = 0; i < 3; i++)
 			gender_sprites[i] = Gender["scroll"]["0"][i];
 
-		sprites.emplace_back(Gender["text"]["0"], Point<int16_t>(601, 326));
+		// 卷轴三帧是分时展开动画（354x46 → 354x200 → 354x196，origin 均 (0,0)），
+		// 非垂直拼接。以最终稳定帧尺寸 354x196 作为面板 dimension。
+		// 原实现 position=(0,15) + 一堆 800x600 时代的绝对坐标（卷轴锚 (355,185)、
+		// 按钮 (578/650,349)、下拉 (510,283)），在 1280x720 下整体偏左上。
+		// 现改为：position 由 center_on_screen 居中，元素全部用相对卷轴左上的局部坐标
+		// （局部 = 原绝对 - 原卷轴锚 (355,185)），保持内部相对关系不变。
+		dimension = Texture(gender_sprites[2]).get_dimensions();
+		center_on_screen();
 
+		constexpr int16_t BT_YES_X = 223;
+		constexpr int16_t BT_NO_X = 295;
+		constexpr int16_t BT_Y = 164;
+		constexpr int16_t COMBO_X = 155;
+		constexpr int16_t COMBO_Y = 98;
+
+		// 提示语恢复 WZ 原生位图 Gender/text/0（298x100，origin=(224,116)）：
+		// 一张图烘焙完整三行文案 + ✳性别标签 + 下拉框底座（参考端原样）。
+		// 上一轮 Text+Locale 单行方案把它退化成「欢迎光临！请选择您的性别。」，
+		// 丢掉了后半句与性别标签——R1/R6：数据即真相，恢复位图。
+		// 视觉落点：目标 = position+(22,25)（原版绝对 (601,326) 减卷轴锚 (355,185)
+		// = (246,141)，其中 origin 已含在内）；Sprite::draw 的 left=pos-origin，
+		// 故 stateargs 传 Point(246,141) → left=(246-224,141-116)=(22,25)。
+		sprites.emplace_back(Gender["text"]["0"], Point<int16_t>(246, 141));
+
+		// 下拉框选项走 locale：uigender.131=男 / uigender.129=女（已有 key）。
 		std::vector<std::string> options;
-		options.push_back("Male");
-		options.push_back("Female");
+		options.push_back(Locale::text("uigender.131"));
+		options.push_back(Locale::text("uigender.129"));
 
 		uint16_t default_option = 0;
 
-		buttons[Buttons::NO] = std::make_unique<MapleButton>(Gender["BtNo"], Point<int16_t>(650, 349));
-		buttons[Buttons::YES] = std::make_unique<MapleButton>(Gender["BtYes"], Point<int16_t>(578, 349));
-		buttons[Buttons::SELECT] = std::make_unique<MapleComboBox>(MapleComboBox::Type::DEFAULT, options, default_option, position, Point<int16_t>(510, 283), 65);
-
-		dimension = Texture(gender_sprites[2]).get_dimensions();
+		buttons[Buttons::NO] = std::make_unique<MapleButton>(Gender["BtNo"], Point<int16_t>(BT_NO_X, BT_Y));
+		buttons[Buttons::YES] = std::make_unique<MapleButton>(Gender["BtYes"], Point<int16_t>(BT_YES_X, BT_Y));
+		buttons[Buttons::SELECT] = std::make_unique<MapleComboBox>(MapleComboBox::Type::DEFAULT, options, default_option, position, Point<int16_t>(COMBO_X, COMBO_Y), 65);
 	}
 
 	void UIGender::draw(float inter) const
 	{
-		Point<int16_t> gender_pos = Point<int16_t>(355, 185);
+		// 卷轴 origin=(0,0)，锚点即面板 position；局部偏移改为 0（原 355,185 是绝对坐标）。
+		Point<int16_t> gender_pos = Point<int16_t>(0, 0);
 
 		if (CUR_TIMESTEP == 0)
 		{
@@ -75,8 +97,15 @@ namespace ms
 		{
 			gender_sprites[2].draw(position + gender_pos);
 
+			// 展开完成后才画 text/0 位图（在 sprites 中）与按钮/下拉框（原生时序）。
+			// UIElement::draw 内部先 sprites 后 buttons，保证下拉框底座在控件下层。
 			UIElement::draw(inter);
 		}
+	}
+
+	void UIGender::update_screen(int16_t, int16_t)
+	{
+		center_on_screen();
 	}
 
 	void UIGender::update()

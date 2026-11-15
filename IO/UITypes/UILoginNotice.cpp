@@ -31,6 +31,8 @@
 #include "../../Util/UiAssetResolve.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <vector>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -38,7 +40,7 @@
 
 namespace ms
 {
-	UILoginNotice::UILoginNotice(uint16_t message, std::function<void()> okhandler, std::function<void()> cancelhandler) : okhandler(okhandler), cancelhandler(cancelhandler)
+	UILoginNotice::UILoginNotice(uint16_t message, std::function<void()> okhandler, std::function<void()> cancelhandler) : okhandler(okhandler), cancelhandler(cancelhandler), use_localized_text(false)
 	{
 		multiple = false;
 
@@ -60,27 +62,129 @@ namespace ms
 
 		Texture bg_tex(backgrnd);
 
-		// 参考端渲染 = 羊皮纸 backgrnd(362×219，左上角烘焙蘑菇印章) + 文案板。
-		// 原生布局（上游 continued-journey 权威坐标，写死于原生客户端）：
-		//   文案板 text/N(221×109) 固定贴 (17,13)；
-		//   单按钮 BtYes(75×32) 在 (100,106)，双按钮 BtYes(70,106)/BtNo(130,106)。
-		// 旧改法把文案板水平居中 + y=68、按钮贴底计算（y≈163）——文案板盖住印章、
-		// 按钮坠到卷角上，整体错位（密码错误弹窗 UI 不对的根因）。
+		// 羊皮纸 backgrnd(运行时 362×219，左上角烘焙蘑菇印章) + 文案板 + 按钮。
+		// 修复（2026-11-15）：原硬编码文案 (17,13)/按钮 (100,106) 相对背景板整体偏左
+		// （文案偏左 53px、按钮偏左 43px，与实机"文案和按钮都偏左"吻合）。
+		// 改为按背景板尺寸动态计算水平居中坐标，坐标由已部署 img 几何推导
+		// （backgrnd=362×219、text=221×109、BtYes/BtNo=75×32），不写死偏移。
 		dimension = bg_tex.get_dimensions();
+		const int16_t bg_w = dimension.x();
+		const int16_t bg_h = dimension.y();
 
 		sprites.emplace_back(backgrnd);
-		sprites.emplace_back(Notice["text"][message], Point<int16_t>(17, 13));
+
+		// 文案位图内的墨迹并非居中——各 text/N 都是左对齐排版（墨迹起点 x≈2-6），
+		// 宽度随文案长短变化（实测 cx 52~110 不等），整块画布居中后文字依然偏左
+		// 且压到左上角蘑菇印章。改为运行时解压位图扫描墨迹包围盒（暗色像素，
+		// 阈值 max(R,G,B)<140，列/行 ≥2 个墨迹点滤除孤立抗锯齿噪点），
+		// 把墨迹中心水平对齐到背景板中心；y 维持顶部 13（避开左下卷角）。
+		// 密码错误/未知错误：原 WZ 位图是英文字图，改 Text+Locale 渲染中文。
+		// 参照同文件 UIQuitConfirm 的范式；文案走 locale，缺键由 Locale::tr 回退。
+		const bool localized = (message == Message::WRONG_PASSWORD) || (message == Message::UNKNOWN_ERROR);
+
+		if (localized)
+		{
+			const std::string key = (message == Message::WRONG_PASSWORD)
+				? "login.err_wrong_password"
+				: "login.err_unknown_error";
+
+			// A12M/12 号字，居中，深灰；宽 300 与 UIQuitConfirm 一致，适配 362 宽背景板。
+			notice_text = Text(
+				Text::Font::A12M,
+				Text::Alignment::CENTER,
+				Color::Name::DARKGREY,
+				Locale::text(key),
+				300
+			);
+			notice_text_pos = Point<int16_t>(
+				static_cast<int16_t>(bg_w / 2),
+				static_cast<int16_t>((bg_h - notice_text.height()) / 2 - 22)
+			);
+			use_localized_text = true;
+		}
+
+		const Texture text_tex(Notice["text"][message]);
+		int16_t text_x = static_cast<int16_t>((bg_w - text_tex.get_dimensions().x()) / 2);
+
+		// 中文分支不需要位图墨迹扫描（文案由 Text 渲染）；仅其它 message 走原扫描逻辑。
+		if (!localized)
+		{
+		if (const nl::bitmap tbmp = Notice["text"][message])
+		{
+			if (const uint8_t* pixels = static_cast<const uint8_t*>(tbmp.data()))
+			{
+				const int32_t tw = tbmp.width();
+				const int32_t th = tbmp.height();
+
+				std::vector<int32_t> colcount(tw, 0);
+				std::vector<int32_t> rowcount(th, 0);
+
+				for (int32_t y = 0; y < th; ++y)
+				{
+					const uint8_t* row = pixels + static_cast<size_t>(y) * tw * 4;
+
+					for (int32_t x = 0; x < tw; ++x)
+					{
+						const uint8_t* bgra = row + static_cast<size_t>(x) * 4;
+						const uint8_t b = bgra[0];
+						const uint8_t g = bgra[1];
+						const uint8_t r = bgra[2];
+						const uint8_t bright = (b > g) ? ((b > r) ? b : r) : ((g > r) ? g : r);
+
+						if (bright < 140)
+						{
+							++colcount[x];
+							++rowcount[y];
+						}
+					}
+				}
+
+				int32_t minx = -1;
+				int32_t maxx = -1;
+
+				for (int32_t x = 0; x < tw; ++x)
+				{
+					if (colcount[x] >= 2)
+					{
+						if (minx < 0)
+							minx = x;
+
+						maxx = x;
+					}
+				}
+
+				if (minx >= 0 && maxx > minx)
+				{
+					const int32_t ink_w = maxx - minx + 1;
+					text_x = static_cast<int16_t>((bg_w - ink_w) / 2 - minx);
+				}
+			}
+		}
+		}
+
+		// 中文分支不叠加 WZ 英文字图，避免中英双语重叠。
+		if (!localized)
+			sprites.emplace_back(Notice["text"][message], Point<int16_t>(text_x, 13));
 
 		if (message == Message::DELETE_CONFIRMATION || message == Message::CASH_ITEMS_CONFIRM_DELETION)
 		{
 			multiple = true;
 
-			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(70, 106));
-			buttons[Buttons::NO] = std::make_unique<MapleButton>(Notice["BtNo"], Point<int16_t>(130, 106));
+			// 双按钮：两键各 75 宽、间距 13，整体居中。
+			constexpr int16_t dbtn_w = 75;
+			constexpr int16_t dbtn_gap = 13;
+			const int16_t dstart = static_cast<int16_t>((bg_w - (dbtn_w * 2 + dbtn_gap)) / 2);
+
+			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(dstart, 106));
+			buttons[Buttons::NO] = std::make_unique<MapleButton>(Notice["BtNo"], Point<int16_t>(static_cast<int16_t>(dstart + dbtn_w + dbtn_gap), 106));
 		}
 		else
 		{
-			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(100, 106));
+			// 单按钮"确定"：相对背景板水平居中（75×32）。
+			constexpr int16_t sbtn_w = 75;
+			const int16_t sbtn_x = static_cast<int16_t>((bg_w - sbtn_w) / 2);
+
+			buttons[Buttons::YES] = std::make_unique<MapleButton>(Notice["BtYes"], Point<int16_t>(sbtn_x, 106));
 		}
 
 		center_on_screen();
@@ -88,6 +192,14 @@ namespace ms
 
 	UILoginNotice::UILoginNotice(uint16_t message, std::function<void()> okhandler) : UILoginNotice(message, okhandler, []() {}) {}
 	UILoginNotice::UILoginNotice(uint16_t message) : UILoginNotice(message, []() {}) {}
+
+	void UILoginNotice::draw(float alpha) const
+	{
+		UIElement::draw(alpha);
+
+		if (use_localized_text)
+			notice_text.draw(position + notice_text_pos);
+	}
 
 	void UILoginNotice::update_screen(int16_t, int16_t)
 	{
@@ -261,11 +373,27 @@ namespace ms
 			backgrnd = notice["backgrnd"]["0"];
 			sprites.emplace_back(backgrnd);
 
-			buttons[Buttons::OK] = std::make_unique<MapleButton>(notice["BtYes"], Point<int16_t>(68, 106));
-			if (!unavailable)
-				buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(notice["BtNo"], Point<int16_t>(129, 106));
-
+			// 与 UILoginNotice 一致：按钮相对背景板水平居中（BtYes/BtNo 各 75×32）。
 			dimension = Texture(backgrnd).get_dimensions();
+			const int16_t cbg_w = dimension.x();
+
+			if (unavailable)
+			{
+				constexpr int16_t cbtn_w = 75;
+				const int16_t cbtn_x = static_cast<int16_t>((cbg_w - cbtn_w) / 2);
+
+				buttons[Buttons::OK] = std::make_unique<MapleButton>(notice["BtYes"], Point<int16_t>(cbtn_x, 106));
+			}
+			else
+			{
+				constexpr int16_t cbtn_w = 75;
+				constexpr int16_t cbtn_gap = 13;
+				const int16_t cstart = static_cast<int16_t>((cbg_w - (cbtn_w * 2 + cbtn_gap)) / 2);
+
+				buttons[Buttons::OK] = std::make_unique<MapleButton>(notice["BtYes"], Point<int16_t>(cstart, 106));
+				buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(notice["BtNo"], Point<int16_t>(static_cast<int16_t>(cstart + cbtn_w + cbtn_gap), 106));
+			}
+
 			center_on_screen();
 			return;
 		}

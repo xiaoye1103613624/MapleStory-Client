@@ -79,6 +79,13 @@ namespace ms
 						UI::get().emplace<UILoginNotice>(UILoginNotice::Message::BLOCKED_ID, okhandler);
 						break;
 					}
+					case 4:
+					{
+						// 密码错误：s9/server v83 实测 reason=4（packet_dump: admin/admin1 → 04）。
+						// 原未映射导致落 default 显示 UNKNOWN_ERROR（"未知错误"），与用户反馈吻合。
+						UI::get().emplace<UILoginNotice>(UILoginNotice::Message::WRONG_PASSWORD, okhandler);
+						break;
+					}
 					case 5:
 					{
 						UI::get().emplace<UILoginNotice>(UILoginNotice::Message::NOT_REGISTERED, okhandler);
@@ -104,7 +111,7 @@ namespace ms
 						// 未穷举的 reason：统一展示通用错误，避免 int8 截断回绕。
 						// 原 static_cast<int8_t>(reason - 1) 在 reason > 128 时会回绕成负
 						// 值，再隐式转 uint16_t 当 Message id → 错乱文案。v83 登录失败
-						// reason 是固定小集合（case 2/5/7/13/23 已覆盖），其余归一到通用错误。
+						// reason 固定小集合（case 2/4/5/7/13/23 已覆盖），其余归一到通用错误。
 						UI::get().emplace<UILoginNotice>(UILoginNotice::Message::UNKNOWN_ERROR, okhandler);
 
 						break;

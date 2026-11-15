@@ -275,6 +275,7 @@ namespace ms
 		UILoginNotice(uint16_t message, std::function<void()> okhandler);
 		UILoginNotice(uint16_t message);
 
+		void draw(float alpha) const override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		void update_screen(int16_t new_width, int16_t new_height) override;
 
@@ -289,6 +290,12 @@ namespace ms
 			YES,
 			NO
 		};
+
+		// 密码错误/未知错误：用 Text+Locale 渲染中文，替代 WZ 预烘焙位图。
+		// use_localized_text 为真时绘制 notice_text，否则沿用 sprites 中的位图。
+		bool use_localized_text;
+		Text notice_text;
+		Point<int16_t> notice_text_pos;
 
 		bool saveid;
 		bool multiple;
