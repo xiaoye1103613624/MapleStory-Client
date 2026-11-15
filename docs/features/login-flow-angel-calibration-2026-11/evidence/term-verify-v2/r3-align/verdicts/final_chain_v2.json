@@ -1,0 +1,243 @@
+{
+  "ts": "2026-11-15 15:18:14",
+  "mode": "capture+eval, no rebuild",
+  "exe_start": "ba3240618741ae9e28d7aa363d0dad4147966b25af1ca4c449aca72797ed72a4",
+  "patched_timeouts": {
+    "capture_channel_grid.py": 1,
+    "capture_charselect_clean.py": 3
+  },
+  "captures": {
+    "channel": {
+      "rc": 0,
+      "ts": "2026-11-15 15:18:18",
+      "frames": 12,
+      "anchor_hit": false,
+      "charlist_hit": null,
+      "error": null,
+      "snapshots": [
+        {
+          "file": "channel_grid_f00.png",
+          "sha": "2c4677cf95af6dd4123c08750ca3fae47b615873dd9be8fa87e1bc5a462c51ae",
+          "mean": 137.03,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f01.png",
+          "sha": "6cbbfcd10c751293157bc905d43bea5a16c3d5e9c02019dfb4e0ac03ce6fcf2c",
+          "mean": 137.13,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f02.png",
+          "sha": "9b1dc2ae1573072020e1a2311fe917ce7298521d80e580a1daaaf59de3379b70",
+          "mean": 136.95,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f03.png",
+          "sha": "c6f324bc4fd69bf3e00302a608710da1042d2713ef9cf2edc0eeb7f31f7f1687",
+          "mean": 136.89,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f04.png",
+          "sha": "9348d81452b261b11e80020dd76f781dfeacb1c2cd9e24472c7a51df256ab219",
+          "mean": 136.65,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f05.png",
+          "sha": "a152f073703537802b017bf859ac21402c1a8315d5f5839a645461640812a0b5",
+          "mean": 136.35,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f06.png",
+          "sha": "849f99d52426246c8b6dfc039303f7ba7b0664f756d976d8fb31c81852a19f50",
+          "mean": 136.21,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f07.png",
+          "sha": "5e189f1a66433a3c1c9aa0bc6716228e52d8c8535e567ad7e3db24bb84ba7765",
+          "mean": 136.14,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f08.png",
+          "sha": "ea20037f0245d297a1e8485330ec7dee8602463caf514fe5954d4d614d4c8bc9",
+          "mean": 136.1,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f09.png",
+          "sha": "b50593b7a2fbae5b7974d0ca5b84ff981fe2b3fe61f7d88eaee0f07a10679005",
+          "mean": 136.08,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f10.png",
+          "sha": "71346c9dd02729def0631dd58c5ffb745e7ede8a41b1f2ed0e2a6eb50ca61a78",
+          "mean": 136.13,
+          "real": true
+        },
+        {
+          "file": "channel_grid_f11.png",
+          "sha": "4dc6567a16f7fd8b4f3e7e4e62c1308e0f3ff1f94c331cd21d562033aacd4caa",
+          "mean": 136.32,
+          "real": true
+        }
+      ]
+    },
+    "charselect": {
+      "rc": 0,
+      "ts": "2026-11-15 15:19:01",
+      "frames": 10,
+      "anchor_hit": false,
+      "charlist_hit": false,
+      "error": null,
+      "snapshots": [
+        {
+          "file": "charselect_clean_f00.png",
+          "sha": "029742a7fd422894659ae61f8a3155735b53f9c8eb23b4383897975fc15755d4",
+          "mean": 136.05,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f01.png",
+          "sha": "1de1b4d277844c6a880a90873a0214d2f9484edd7e2ad95f10b3d57ae6ded377",
+          "mean": 135.97,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f02.png",
+          "sha": "ddd3e8fdcd17eac98a891dab0787e646b1501b3f5140db42f265132acb2edef8",
+          "mean": 136.0,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f03.png",
+          "sha": "def93e59a57cad4728bb9a4bac21001d74908e96de2c03634bb6b9f4a98b3816",
+          "mean": 135.96,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f04.png",
+          "sha": "0f51586784c49b34ba180d4060fbbb65d74dfc6d0bb32e640185845ed1bae4a5",
+          "mean": 136.14,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f05.png",
+          "sha": "07efb3a71c6f4bbb66bea33cd96a4016b1b10921c7c78207387b2feb63aa06a5",
+          "mean": 136.49,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f06.png",
+          "sha": "245acdbc4213c2dc0ccdaec30074bf2932a9dd859bf849b735e019fcd1b18f0d",
+          "mean": 136.58,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f07.png",
+          "sha": "c16ec24c9b85a9a60d1b02be6a0da924e189a27ee2f4357a386786fd58b07e42",
+          "mean": 136.73,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f08.png",
+          "sha": "36e691c395c6c621777f62b06319da5ba12d88106c274c8b2dfc1e9a1c4da07c",
+          "mean": 136.96,
+          "real": true
+        },
+        {
+          "file": "charselect_clean_f09.png",
+          "sha": "ef1f80ec63477ed2c1dd243fa6bf535afecedc713f447c64820ad71444d5756d",
+          "mean": 137.03,
+          "real": true
+        }
+      ]
+    }
+  },
+  "frame_quality": {
+    "channel_grid_f05.png": {
+      "mean": 136.35,
+      "std": 70.13,
+      "sha": "a152f073703537802b017bf859ac21402c1a8315d5f5839a645461640812a0b5"
+    },
+    "charselect_clean_f09.png": {
+      "mean": 137.03,
+      "std": 70.43,
+      "sha": "ef1f80ec63477ed2c1dd243fa6bf535afecedc713f447c64820ad71444d5756d"
+    }
+  },
+  "evals": {
+    "verify_r3_align": {
+      "rc": 0,
+      "tail": "charInfo     before=[-1, -23, -1, -23]         after=[446, 263, 629, 378]       shift=[54, 43, 54, 43]       steady=True pass=False\nscroll       before=[2, -3, 2, -3]             after=[362, 198, 579, 391]       shift=[-10, 37, -10, 37]     steady=True pass=False\nnameTagL     before=[5, 8, 5, 8]               after=[466, 427, 474, 449]       shift=[-3, -3, -3, -3]       steady=True pass=False\nnoticeTitle  before=(-23 etc, see json)        after=[380, 269, 550, 287]       shift=[87, -44, 87, -44]     steady=True pass=False\nnoticeNw     before=(-23 etc, see json)        after=[471, 339, 493, 379]       shift=[191, 43, 191, 43]     steady=True pass=False\nALL_PASS False ALL_STEADY True JSON C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\verify_r3_align.json\n\n"
+    },
+    "real_corners": {
+      "rc": 0,
+      "tail": "TPL SIZES: {'ne': (22, 40), 'se': (22, 24), 'nw': (22, 40)}\nTARGET {\"nw\": {\"ncc\": 0.9862, \"pos\": [280, 296]}, \"ne\": {\"ncc\": 0.9387, \"pos\": [450, 296]}, \"se\": {\"ncc\": 0.9474, \"pos\": [450, 352]}, \"span_nw_ne\": 170}\nOURS_V1 {\"nw\": {\"ncc\": 0.4002, \"pos\": [262, 317]}, \"ne\": {\"ncc\": 0.6367, \"pos\": [453, 285]}, \"se\": {\"ncc\": 0.6874, \"pos\": [450, 384]}, \"span_nw_ne\": 191}\n\nSPAN TARGET=170 OURS_V1=191 DIFF=-21\nVERDICT BOX_WIDTH_DIFF_-21_UNKNOWN\nSAVED real_corners_settle.json\n\n"
+    }
+  },
+  "summary": {
+    "all_pass": false,
+    "all_steady": true,
+    "shifts": {
+      "charInfo": [
+        54,
+        43,
+        54,
+        43
+      ],
+      "scroll": [
+        -10,
+        37,
+        -10,
+        37
+      ],
+      "nameTagL": [
+        -3,
+        -3,
+        -3,
+        -3
+      ],
+      "noticeTitle": [
+        87,
+        -44,
+        87,
+        -44
+      ],
+      "noticeNw": [
+        191,
+        43,
+        191,
+        43
+      ]
+    },
+    "ncc": {
+      "charInfo": 0.5109,
+      "scroll": 0.2562,
+      "nameTagL": 0.4581,
+      "noticeTitle": 0.516,
+      "noticeNw": 0.5826
+    },
+    "corner_span": {
+      "target": 170,
+      "ours": 191
+    },
+    "corner_ne_x": {
+      "target": 450,
+      "ours": 453
+    },
+    "corner_se_y": {
+      "target": 352,
+      "ours": 384
+    }
+  },
+  "exe_end": "ba3240618741ae9e28d7aa363d0dad4147966b25af1ca4c449aca72797ed72a4",
+  "exe_unchanged": true,
+  "verdict": "PARTIAL_DISCLOSURE"
+}

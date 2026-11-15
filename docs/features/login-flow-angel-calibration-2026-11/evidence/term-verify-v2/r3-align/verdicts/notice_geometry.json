@@ -1,0 +1,119 @@
+{
+  "target": {
+    "warm_row_runs_ge110": [
+      [
+        297,
+        302
+      ],
+      [
+        304,
+        304
+      ],
+      [
+        308,
+        367
+      ]
+    ],
+    "warm_col_runs_ge40": [
+      [
+        285,
+        467
+      ],
+      [
+        471,
+        489
+      ]
+    ],
+    "ink_runs_ge12": [
+      [
+        260,
+        296
+      ],
+      [
+        305,
+        306
+      ],
+      [
+        315,
+        316
+      ],
+      [
+        319,
+        319
+      ],
+      [
+        321,
+        322
+      ],
+      [
+        324,
+        325
+      ],
+      [
+        369,
+        375
+      ]
+    ],
+    "frame_top": 297,
+    "frame_bottom": 367,
+    "frame_left": 285,
+    "frame_right": 489,
+    "title_ink_run": [
+      260,
+      296
+    ]
+  },
+  "ours": {
+    "warm_row_runs_ge110": [
+      [
+        296,
+        359
+      ]
+    ],
+    "warm_col_runs_ge40": [
+      [
+        257,
+        431
+      ],
+      [
+        437,
+        489
+      ]
+    ],
+    "ink_runs_ge12": [
+      [
+        260,
+        295
+      ],
+      [
+        297,
+        298
+      ],
+      [
+        300,
+        313
+      ],
+      [
+        361,
+        364
+      ]
+    ],
+    "frame_top": 296,
+    "frame_bottom": 359,
+    "frame_left": 257,
+    "frame_right": 489,
+    "title_ink_run": [
+      260,
+      295
+    ]
+  },
+  "edge_shift": {
+    "frame_top": -1,
+    "frame_bottom": -8,
+    "frame_left": -28,
+    "frame_right": 0
+  },
+  "verdict": "NONUNIFORM_GEOMETRY",
+  "crop": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\notice_geometry.png",
+  "note": "If edges shift uniformly, +15/+WS_NOTICE_GAP patch is right. If nonuniform (top vs bottom differ), frame SIZE differs and translation alone over-corrects."
+}

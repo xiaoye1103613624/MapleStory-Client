@@ -1,0 +1,50 @@
+{
+  "char_detail": {
+    "ncc": 0.5115,
+    "ours_ref_topleft": [
+      391,
+      195
+    ],
+    "target_ref_topleft": [
+      392,
+      218
+    ],
+    "shift_ours_minus_target": [
+      -1,
+      -23
+    ],
+    "overlay": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\shift_char_detail.png"
+  },
+  "notice": {
+    "ncc": 0.4759,
+    "ours_ref_topleft": [
+      251,
+      285
+    ],
+    "target_ref_topleft": [
+      285,
+      297
+    ],
+    "shift_ours_minus_target": [
+      -34,
+      -12
+    ],
+    "overlay": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\shift_notice.png"
+  },
+  "name_tag": {
+    "ncc": 0.3946,
+    "ours_ref_topleft": [
+      455,
+      424
+    ],
+    "target_ref_topleft": [
+      455,
+      424
+    ],
+    "shift_ours_minus_target": [
+      0,
+      0
+    ],
+    "overlay": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\shift_name_tag.png"
+  }
+}

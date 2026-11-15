@@ -85,13 +85,16 @@ namespace ms
 	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 99);
 	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 99);
 	// charInfo1（183×151）相对脚点。2026-10-24 按正确端截图（选择角色页.png）
-	// 重新实测：内容板（职业行）顶边在屏幕 (391,197)，槽 0 脚点 (485,428)
-	// ⇒ 偏移 (-94,-231)。旧值 (-93,-208) 把整板上移 23px（此前误将卷轴顶边
-	// 当作内容板顶边测量），表现为属性板偏高、与角色头部分离。
-	static constexpr Point<int16_t> CS_CHARINFO_OFF(-94, -231);
-	// 内容板在卷轴（CharSelect/scroll/2 末帧 217×193）内的偏移：卷轴顶边在屏幕
-	// ≈158，内容板顶边 197 ⇒ 纵向 39；横向居中 (217-183)/2=17。
-	static constexpr Point<int16_t> CS_SCROLL_CONTENT_OFF(17, 39);
+	// R3 目标帧「选择角色页.png」逐像素定标（2026-11-15）：内容板（职业行）
+	// 顶边在屏幕 (392,220)，槽 0 脚点 (485,428) ⇒ 偏移 (-94,-208)。
+	// 旧值 (-94,-231) 把整板上移 23px（此前误把本端旧帧的内容板顶 197
+	// 当成目标值），表现为属性板偏高、与角色头部分离。
+	static constexpr Point<int16_t> CS_CHARINFO_OFF(-94, -208);
+	// 内容板在卷轴（CharSelect/scroll/2 末帧 217×193）内的偏移：目标帧卷轴
+	// 顶边 ≈161、内容板顶边 220 ⇒ 纵向 59；横向居中 (217-183)/2=17。
+	// 旧值 39 来自本端旧帧 197-158。本端卷轴只差 3px，故两常量须联动：
+	// CHARINFO +23 且 SCROLL_CONTENT +20 ⇒ 内容板 +23、卷轴仅 +3。
+	static constexpr Point<int16_t> CS_SCROLL_CONTENT_OFF(17, 59);
 
 	// 角色槽：占用与空槽共用同一桥面 Y。
 	// 站位校准（依据桥面贴片像素实测，2026-09-25）：
@@ -514,7 +517,7 @@ namespace ms
 				Point<int16_t> charpos = position + get_character_slot_pos(i, true);
 				DrawArgument chararg = DrawArgument(charpos, flip_character);
 
-				nametags[index].draw(charpos + Point<int16_t>(2, 25));
+				nametags[index].draw(charpos + Point<int16_t>(2, 17));
 
 				const StatsEntry& character_stats = characters[index].stats;
 

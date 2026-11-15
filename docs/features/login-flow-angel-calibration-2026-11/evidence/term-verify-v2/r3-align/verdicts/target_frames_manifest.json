@@ -1,0 +1,17 @@
+{
+  "desktop_channel_expanded.png": {
+    "sha256": "01d332c7515049971697e59910c9be8f6539b8dbba864460909e8e6295705f05",
+    "bytes": 1762806,
+    "source_path": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\targets_desktop\\desktop_channel_expanded.png"
+  },
+  "desktop_channel_collapsed.png": {
+    "sha256": "d12b9abe511d6fd87aaae02d7122824547542d96f04d52bcaee05227bda0fa08",
+    "bytes": 1759442,
+    "source_path": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\targets_desktop\\desktop_channel_collapsed.png"
+  },
+  "desktop_char_select.png": {
+    "sha256": "355d401b836abe0ad76b4dfdbf1c9197fa6c4efc636152e0ce3cff933d2a3f3f",
+    "bytes": 1750901,
+    "source_path": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\targets_desktop\\desktop_char_select.png"
+  }
+}

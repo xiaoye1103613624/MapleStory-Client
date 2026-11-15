@@ -1,0 +1,329 @@
+{
+  "templates": {
+    "charInfo": {
+      "size": [
+        183,
+        115
+      ],
+      "wz": [
+        183,
+        115
+      ]
+    },
+    "scroll": {
+      "size": [
+        217,
+        193
+      ],
+      "wz": [
+        217,
+        193
+      ]
+    },
+    "nameTagL": {
+      "size": [
+        8,
+        22
+      ],
+      "wz": [
+        8,
+        22
+      ]
+    },
+    "noticeTitle": {
+      "size": [
+        170,
+        18
+      ],
+      "wz": [
+        170,
+        18
+      ]
+    },
+    "noticeNw": {
+      "size": [
+        22,
+        40
+      ],
+      "wz": [
+        22,
+        40
+      ]
+    }
+  },
+  "frames": {
+    "char": {
+      "target": "desktop_char_select.png",
+      "ours": "ui_final_charselect.png"
+    },
+    "chan": {
+      "target": "desktop_channel_expanded.png",
+      "ours": "channel_grid_f05.png"
+    },
+    "coll": {
+      "target": "desktop_channel_collapsed.png",
+      "ours": "world_f03.png"
+    }
+  },
+  "locate": {
+    "charInfo": {
+      "target": {
+        "ncc": 0.6982,
+        "bbox": [
+          392,
+          220,
+          575,
+          335
+        ]
+      },
+      "ours": {
+        "ncc": 0.5731,
+        "bbox": [
+          391,
+          197,
+          574,
+          312
+        ]
+      },
+      "shift": [
+        -1,
+        -23,
+        -1,
+        -23
+      ]
+    },
+    "scroll": {
+      "target": {
+        "ncc": 0.5216,
+        "bbox": [
+          372,
+          161,
+          589,
+          354
+        ]
+      },
+      "ours": {
+        "ncc": 0.6793,
+        "bbox": [
+          374,
+          158,
+          591,
+          351
+        ]
+      },
+      "shift": [
+        2,
+        -3,
+        2,
+        -3
+      ]
+    },
+    "nameTagL": {
+      "target": {
+        "ncc": 0.9978,
+        "bbox": [
+          469,
+          430,
+          477,
+          452
+        ]
+      },
+      "ours": {
+        "ncc": 0.4481,
+        "bbox": [
+          474,
+          438,
+          482,
+          460
+        ]
+      },
+      "shift": [
+        5,
+        8,
+        5,
+        8
+      ]
+    },
+    "noticeTitle": {
+      "target": {
+        "ncc": 0.9994,
+        "bbox": [
+          293,
+          313,
+          463,
+          331
+        ]
+      },
+      "ours": {
+        "ncc": 1.0,
+        "bbox": [
+          259,
+          301,
+          429,
+          319
+        ]
+      },
+      "shift": [
+        -34,
+        -12,
+        -34,
+        -12
+      ]
+    },
+    "noticeNw": {
+      "target": {
+        "ncc": 0.9894,
+        "bbox": [
+          280,
+          296,
+          302,
+          336
+        ]
+      },
+      "ours": {
+        "ncc": 0.744,
+        "bbox": [
+          252,
+          295,
+          274,
+          335
+        ]
+      },
+      "shift": [
+        -28,
+        -1,
+        -28,
+        -1
+      ]
+    }
+  },
+  "ink_rows": {
+    "char_detail": {
+      "target": [
+        [
+          190,
+          195
+        ],
+        [
+          210,
+          210
+        ],
+        [
+          224,
+          224
+        ],
+        [
+          227,
+          228
+        ],
+        [
+          230,
+          230
+        ],
+        [
+          232,
+          233
+        ],
+        [
+          243,
+          243
+        ],
+        [
+          261,
+          262
+        ],
+        [
+          266,
+          266
+        ],
+        [
+          268,
+          268
+        ],
+        [
+          278,
+          278
+        ],
+        [
+          281,
+          282
+        ],
+        [
+          284,
+          284
+        ],
+        [
+          286,
+          286
+        ],
+        [
+          303,
+          310
+        ],
+        [
+          312,
+          312
+        ],
+        [
+          322,
+          332
+        ]
+      ],
+      "ours": [
+        [
+          205,
+          215
+        ],
+        [
+          220,
+          220
+        ],
+        [
+          225,
+          232
+        ],
+        [
+          243,
+          251
+        ],
+        [
+          259,
+          259
+        ],
+        [
+          261,
+          268
+        ],
+        [
+          280,
+          289
+        ],
+        [
+          303,
+          314
+        ],
+        [
+          316,
+          321
+        ],
+        [
+          324,
+          324
+        ],
+        [
+          331,
+          331
+        ],
+        [
+          333,
+          339
+        ]
+      ]
+    }
+  },
+  "crops": {
+    "char_detail": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\zoom_char_detail.png",
+    "name_tag": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\zoom_name_tag.png",
+    "notice": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\ui_r3\\zoom_notice.png"
+  }
+}

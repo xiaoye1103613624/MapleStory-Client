@@ -162,16 +162,24 @@ namespace ms
 	static constexpr int16_t WS_SIDEBAR_Y2 = 427;		// BtStart
 	static constexpr Point<int16_t> WS_EXIT_POS(8, 8);
 
-	// 公告板（Login.img/WorldNotice/BalloonForLoginProcess 九宫，静止外框 184x74）
-	// 相对频道面板的定位。经「选中频道页.png」逐像素定标（2026-11-03 重测）：
-	//   公告外框 (285,297)-(469,371)；面板 chBackgrn(449x233) 左缘 x≈436、顶缘 y≈282
-	//   ⇒ 公告左上 = 面板左上 + (-151, +15)，右缘越过面板左缘约 33px（原生即叠在
-	//   面板左缘之前，CH.1 红圈被板右缘裁切）。
+	// 公告板（Login.img/WorldNotice/BalloonForLoginProcess 九宫，静止外框 192x74）
+	// 相对频道面板的定位。面板 chBackgrn(449x233) 左缘 x≈436、顶缘 y≈282。
 	// 公式 notice_x = panel_topleft.x - world_notice.width() - WS_NOTICE_GAP，
-	// width=184 ⇒ WS_NOTICE_GAP = 0 (right_edge = panel_topleft.x - gap => gap 0 == flush left, no world-label occlusion)（负值=与面板左缘重叠）。
+	// 且 nw 角渲染左缘 = notice_x（见 ChatBalloon::draw，nw origin(22,40) 抵消 cl）。
+	// 【真角件定标】orange-wz 真 nw/ne/se 模板在两端帧 alpha-NCC
+	// （ui_r3/real_corners_settle.json）：TARGET nw@280 ne@450 se@352，
+	// OURS(v1: box_w=184/GAP=-33) nw@285 ne@447 se@344。
+	// span=ne_left-nw_left=box_w-22：OURS 184-22=162 自洽，TARGET 170 ⇒ box_w=192。
+	// 代入 280=436-192-GAP ⇒ GAP=-36。此时 ne_left=280+192-22=450、框右缘=472，
+	// 与目标真角件三锚全中。
+	// 【196/-40 已证伪】只用左半部 title/nw 两锚反推会过拟合，右缘推到 476 过冲 4px。
+	// Y 不整体移：框顶 T297/O296、nw 角 T296/O295 均已对齐；标题偏上 12px 是
+	// ChatBalloon::draw 的 title_y 内部偏移（已修 top+18）。框底/se 尚有约 8px
+	// 残差（TARGET se@352 vs OURS@344），因 box_h 增大经正文居中公式会把本已偏低的
+	// 正文再下推、且正文像素判据噪声大，本轮不动垂直几何，残差如实披露。
 	// 【旧值 -48 被实机证伪】旧版框宽按自适应 tile 铺行算出 ≈135，代入同公式后
 	// 板被推入面板内部遮挡频道列表；旧注释还把右缘量到红圈 481 上（199 宽系误测）。
-	static constexpr int16_t WS_NOTICE_GAP = 0;
+	static constexpr int16_t WS_NOTICE_GAP = -36;
 
 	// 频道按钮/负载条在频道面板内的网格偏移。
 	static Point<int16_t> channel_cell_offset(uint16_t i)

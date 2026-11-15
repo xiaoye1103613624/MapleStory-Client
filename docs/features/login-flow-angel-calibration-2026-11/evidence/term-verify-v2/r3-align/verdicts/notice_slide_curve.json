@@ -1,0 +1,243 @@
+{
+  "target": {
+    "title_xy": [
+      293,
+      313
+    ],
+    "title_ncc": 0.9994,
+    "nw_xy": [
+      280,
+      296
+    ],
+    "roller_bottom": 367
+  },
+  "seq": [
+    {
+      "i": 0,
+      "mean": 146.61,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        277
+      ],
+      "title_dy_vs_target": -36,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        271
+      ],
+      "nw_dy_vs_target": -25,
+      "roller_bottom": 335,
+      "roller_dy_vs_target": -32
+    },
+    {
+      "i": 1,
+      "mean": 151.43,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 2,
+      "mean": 152.16,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 3,
+      "mean": 152.14,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 4,
+      "mean": 152.13,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 5,
+      "mean": 152.12,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 6,
+      "mean": 152.11,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 7,
+      "mean": 152.1,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 8,
+      "mean": 152.09,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 9,
+      "mean": 152.07,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 10,
+      "mean": 152.06,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    },
+    {
+      "i": 11,
+      "mean": 152.04,
+      "title_ncc": 1.0,
+      "title_xy": [
+        259,
+        301
+      ],
+      "title_dy_vs_target": -12,
+      "nw_ncc": 0.744,
+      "nw_xy": [
+        252,
+        295
+      ],
+      "nw_dy_vs_target": -1,
+      "roller_bottom": 359,
+      "roller_dy_vs_target": -8
+    }
+  ],
+  "tail_y": [
+    301,
+    301,
+    301,
+    301,
+    301,
+    301
+  ],
+  "tail_stable": true,
+  "verdict": "STEADY_CONSTANT_OFFSET",
+  "note": "CH_SLIDE_MS=180ms; frames sleep 0.18s; f05≈t0.9s. If tail y stable and offset≠0 → constant bug, safe to patch +15→+27. If y keeps drifting → f05 was transient, do NOT patch y."
+}

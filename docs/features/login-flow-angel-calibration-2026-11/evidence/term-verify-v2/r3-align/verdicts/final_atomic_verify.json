@@ -1,0 +1,49 @@
+{
+  "ts": "2026-11-15 14:47:05",
+  "steps": [
+    {
+      "step": "unlock_live_path",
+      "held": "E:\\MXD\\BeiDou-Client-xy\\MapleStory.exe.held_final_144707",
+      "held_sha": "cb1d9751680f2f7993e4198b9025fb8919c77051494db50fa64da20cd2edb364"
+    },
+    {
+      "step": "quarantine",
+      "files": {
+        "IO/Components/ItemTooltip.cpp": {
+          "orig_sha": "abdd065db844e01f19368cec0492dad1824cc2091db84eb82a4e8924ccc84a06",
+          "orig_bytes": 4710,
+          "head_sha": "243e861340547029dc9e1087565f8b9f044d53ba0a7c86f3498556b054f70047"
+        },
+        "IO/UITypes/UIShop.cpp": {
+          "orig_sha": "859c94e0c1bdd2c75f51e7a17e887edf44db79eb5368e9d0c6596eaa5c3d36c2",
+          "orig_bytes": 25831,
+          "head_sha": "082b71b4aaf017a58999e557a891230e88ac56709d926469438c82e2e4845ca8"
+        }
+      }
+    }
+  ],
+  "python": "3.14.4",
+  "pre": {
+    "live_exists": true,
+    "live_sha": "cb1d9751680f2f7993e4198b9025fb8919c77051494db50fa64da20cd2edb364"
+  },
+  "build_exitcode": "1",
+  "exe": {
+    "sha256": null,
+    "size": null,
+    "mtime": null
+  },
+  "restore": {
+    "IO/Components/ItemTooltip.cpp": {
+      "status": "RESTORED",
+      "sha_now": "abdd065db844e01f19368cec0492dad1824cc2091db84eb82a4e8924ccc84a06",
+      "equals_orig": true
+    },
+    "IO/UITypes/UIShop.cpp": {
+      "status": "RESTORED",
+      "sha_now": "859c94e0c1bdd2c75f51e7a17e887edf44db79eb5368e9d0c6596eaa5c3d36c2",
+      "equals_orig": true
+    }
+  },
+  "verdict": "BUILD_FAILED"
+}

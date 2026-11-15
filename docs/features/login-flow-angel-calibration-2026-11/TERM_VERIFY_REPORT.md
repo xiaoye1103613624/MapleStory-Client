@@ -388,3 +388,68 @@
 - **可复核的验收 exe**：`d48b3fa9d4390a0b7fafbaf14ce5e1afb7c843891b27dc7b4005dba603427895` / 2026-11-14 16:41:09 / 5 116 928 B。
 - **仍在案的不签项**（与 §11.7 一致，未因本轮翻案而变）：`CELL_H=32` 无本端实证、18 px 行距像素侧未收敛、验收 exe 含并发改动非纯净二进制、进图帧场景态不可比、职业团 EVAN/DUALBLADE 两卡按用户指示保留。
 - **方法学教训（新增）**：像素指标（NCC）可以被"整块复制目标像素"刷到 1.0，必须同时量**该区域是否仍在动**与**框边是否出现硬边**；三者同时成立才叫对齐。
+
+
+## 13 频道页 / 角色列表页逐组件对齐（R3，2026-11-15）
+
+> 用户三连体感（输入）：「频道页的所有 ui、动画都是一样的嘛？角色页选择角色后的属性 ui 是不是也是错误的？羊皮纸而且也靠下了，都校验 angel 了？」「频道页和角色列表页需要和原生客户端一样，请全部对照 angel 和 img 节点查看到底是什么样的逻辑」「角色选择页 属性值有点偏了，而且角色的名字名片是不是也靠下了？频道页的公告 ui 检查一下」。
+>
+> 交付口径：**逐组件差异表 → 源码落点 → 真机验收 → 残差披露**，不答「一样/不一样」的印象判断。
+
+### 13.1 真值来源（两条线，互不替代）
+
+- **Angel 083 IDA**：[`CUICharDetail_ctor_0x60292f.txt:20-23`](../login-flow-ui-ida-align/evidence/CUICharDetail_ctor_0x60292f.txt) `CFadeWnd::CreateFadeWnd(a2:183, a3:a1[57]!=0?151:115)`；`CUICharDetail_Draw_0x602adc.txt` 的 DrawTextA 坐标 职业(46,1)/等级(46,19)/人气(136,19)/力量(46,37)/智力(136,37)/敏捷(46,55)/运气(136,55)/排行(36,99)/(115-w,99)；[`CUIChannelSelect_ctor_0x62b2cf.json`](../login-flow-ui-ida-align/evidence/CUIChannelSelect_ctor_0x62b2cf.json) `CreateDlg(a4:0x21C=540, a5:167, a6:211)`。
+- **orange-wz MCP 只读**：`E:\MXD\BeiDou-Client-xy\Data\UI\Login.img`，128B GMS128 key（`tools/_gms_key_128.b64`，head `EwAAAFIAAAAqAAAAWwAAAAgA`）+ iv `TSPHKw==` + `exclusive:false`。服务 10012 曾未监听，后台起 Tomcat + `mcp_connector_reconnect` 恢复；会话重载后发现加载的是 `UIWindow.img`，重新 `load_files` Login.img 才拿到真 `ne/se/e/n` 角件。全程不 mutate/save。
+- WZ 节点真值：`CharSelect/scroll/2` 217×30 d250 → 217×196 d50 → 217×195 d50 → **217×193 末帧常驻**；`charInfo` 183×115 origin(45,57)、`charInfo1` 183×151（底部多一行居中「排行榜」，本端 `Range(0,36)` 裁掉）；`nameTag/1/0` 8×22；`WorldSelect/alert/backgrd` 540×167（与 Angel 0x21C/167 对上）；`channel/N/normal` 92×30；`chBackgrn` 449×233 origin(224,116)；`chSelect` 23×11 d100 → 38×21 d50 → 42×33 d50 → 59×33；`chgauge` 73×9；`scroll/0` 513×152 d250 → 513×416 d50 → 513×408 d50 → 513×401；`WorldNotice/BalloonForLoginProcess` 九宫 nw/ne 22×40、sw/se 22×24、n/s 12×40/24、w/e 19/22×9、c 12×9、Title 170×18。
+
+### 13.2 逐组件差异表（本端 − 目标，常态帧）
+
+帧口径翻案：`v2_channel_grid.png` mean=59.2 是**暗过场帧**，据此得出的「公告没画」是假结论；常态帧为 `channel_grid_f05.png` mean=152.12 / `world_f03.png` mean=144.67。
+
+| 组件 | 目标 bbox | 本端修复前 bbox | shift | 用户体感 |
+| --- | --- | --- | --- | --- |
+| `charInfo` 内容板 | [392,220,575,335] | [391,197,574,312] | **[-1,-23]** | 「羊皮纸/属性板靠下」实为整板上移 23 |
+| `charInfo1` | [392,220,575,371] | [391,197,574,348] | [-1,-23] | 同上 |
+| `scroll/2` 卷轴 | [372,161,589,354] | [374,158,591,351] | [2,-3] | 卷轴几乎没动 |
+| `nameTagL` 名牌 | [469,430,477,452] | [474,438,482,460] | **[5,+8]** | 「名字名片靠下」坐实 |
+| `noticeTitle` 公告标题 | [293,313,463,331] | [259,301,429,319] | **[-34,-12]** | 「公告 ui 检查一下」坐实 |
+| `noticeNw` 公告左上角 | [280,296,302,336] | [252,295,274,335] | [-28,-1] | 同上 |
+
+联动反推：目标内容板顶 220 − 卷轴顶 161 = **59**，本端 197 − 158 = **39**，差 20 正是 `CS_SCROLL_CONTENT_OFF.y=39` 与真值 59 的缺口。故「内容板下移 23 + 卷轴只下移 3」必须**联动改两个常量**，整体挪会破坏卷轴。
+
+### 13.3 源码落点（7 处常量，仅 3 个 TU）
+
+- [`IO/UITypes/UICharSelect.cpp`](../../../IO/UITypes/UICharSelect.cpp)：`CS_CHARINFO_OFF(-94,-231)→(-94,-208)`（+23）、`CS_SCROLL_CONTENT_OFF(17,39)→(17,59)`（+20）、`nametags[index].draw(charpos + Point<int16_t>(2,25))→(2,17)`（-8）。
+- [`IO/UITypes/UIWorldSelect.cpp`](../../../IO/UITypes/UIWorldSelect.cpp)：`WS_NOTICE_GAP 0→-36`（公告右移，目标 `nw_left=280 = 436-192-(-36)`）。**不改 `notice_y`**：12 帧曲线 [`notice_slide_curve.json`](evidence/term-verify-v2/r3-align/verdicts/notice_slide_curve.json) 证明 f01..f11 恒稳（title@259,301），是稳态常量偏移而非过场态；框顶 T297/O296 已对齐，整体下移会过冲 11px。
+- [`IO/Components/ChatBalloon.cpp`](../../../IO/Components/ChatBalloon.cpp)：`box_w_ref 184→192`、`title.draw(top+6)→(top+18)`、`title_x = left+(box_w-170)/2 → left+13`、`box_h_ref` 保持 74。
+
+### 13.4 真角件翻案：196 → 192（本节最有价值的一次自我否定）
+
+- 首版按「目标 `title_left−nw_left=13` ⇒ `(box_w−170)/2=13` ⇒ **box_w=196**」落刀，配套 `WS_NOTICE_GAP=-40`。该推导用同一组居中公式既造目标又验目标，属自证；`predict_box_w_fix.py` 的 `PRECHECK_ALL_WITHIN_1PX True` 同样是自证，不能当独立证据。
+- 重连 orange-wz 取得**真 `ne`(22×40)/`se`(22×24)**模板后，[`settle_frame_real_corners.py`](evidence/term-verify-v2/r3-align/scripts/settle_frame_real_corners.py) 用 alpha-NCC 独立定位：TARGET nw@280 / ne@450 / se@352，**span(ne−nw)=170**；OURS(box_w=184) nw@285 / ne@447 / se@344，span=162。`span = box_w − 22`（184−22=162 精确自洽）⇒ **box_w=192**，框右缘 `ne+22=472`。196 只拟合了两个左锚点，右缘会推到 476 过冲 4px。
+- 原生标题并非严格居中：目标 `title−nw=13` ≠ `(192−170)/2=11`，故 `title_x` 改为独立常量 `left+13`，与框宽解耦。
+- `box_h` 不动：正文暗字带实测本端中心 345.22 vs 目标 341.83（已偏低 3.39px），`text_y=ct+(cb−ct−h)/2` 在 `box_h` 增大时会把正文再下推 3px；正文像素判据本身噪声较大，本轮不动已验证的垂直内部位置。
+
+### 13.5 真机验收与口径限制（candidate / 完成分离）
+
+- **14:38 同代码验收**（隔离编译 `BUILD_EXITCODE=0`，exe `768c6e22…` / 14:32:41 / 5 137 408 B；频道帧 `channel_grid_f05.png` 14:33:49 mean151.2、选角色帧 `charselect_clean_f09.png` 13:32:16）：`verify_r3_align.py` 终端逐项 `charInfo [-1,0] / scroll [2,0] / nameTagL [4,0] / noticeTitle [0,0] / noticeNw [0,-1]`，**`ALL_PASS True ALL_STEADY True`**。名牌 x=4 系名字长度导致 CENTER 左片漂移（非 bug）；宽 ROI 曾把 8×22 模板误配到另一槽 `[459,448]`，收紧 `(465,418,492,462)` 后复算 `[4,0]`，是测量 bug 非代码 bug。
+- **15:03 隔离编译**（`final_atomic_verify.py`）：exe `ba324061…` / 15:03:36 / 5 120 512 B，`BUILD_EXITCODE=0`，别会话 `ItemTooltip.cpp`/`UIShop.cpp` 两文件 sha 全等恢复（`RESTORE_ALL_OK True`）。证明**当前 192/-36/+13 源码可确定性构建**；首尾 exe sha 绑定 `unchanged=True`。
+- **口径限制（必须读）**：14:33 干净帧 PNG 与 14:38 `verify_r3_align.json` 原件已被 15:04 / 15:13 / 15:22 三次重抓覆盖，仅终端逐项数值在案；15:03 之后三次抓帧均停在登录页（mean≈136.7、`anchor_hit=False`），**未产出可用 UI 帧**。故本轮签 `R3_ALIGNED_WITH_DISCLOSED_RESIDUALS`（候选完成 + 证据链 + 剩余风险），**不签「纯净校准二进制复跑通过」**；完整自洽记录见 [`r3_acceptance_record.json`](evidence/term-verify-v2/r3-align/verdicts/r3_acceptance_record.json)。
+- 环境噪声归因（不作退化证据）：别会话 13:53 起反复改 `ItemTooltip.cpp`/`UIShop.cpp` 引入 `error C2248: "ms::ItemData::itemid": 无法访问 private 成员` 并跑并发构建；14:54 `LINK : fatal error LNK1104: 无法打开文件"x64\obj-Release\UIWorldMap.obj"` 时 `MSBuild.exe`/`cl.exe` 正被占用；live exe 被反复替换（ed03d4ef → dc6e7be4 → 5390ef8d → 768c6e22 → cb1d9751 → f707f37c → ba324061）。packet_dump 15:13 段有 `[SEND] 01 00 ...admin` / `[RECV] 0a 00 00 ...Scania` / `[RECV] 0a 00 ff`，说明协议登录成功，是共享 dump 起点被并发写入污染导致 `wait_anchor` 超时、脚本在登录页点空坐标。
+
+### 13.6 明确披露的残差（不藏）
+
+| 残差 | 实测 | 为何本轮不动 |
+| --- | --- | --- |
+| 公告框右缘 `ne` | OURS x454 vs TARGET x450，**+4px** | 真角件 NCC 干净单峰（OURS peak 0.9364 / x450 仅 0.4662），是真实残差；192 由 span 定案后未再调 |
+| 公告框底 `se` | OURS y344 vs TARGET y352，**-8px** | 增大 `box_h` 经正文居中公式会把已偏低正文再下推，正文判据噪声大 |
+| 公告正文中心 | OURS 345.22 vs TARGET 341.83，**+3.39px** | 同上，与框底残差同源 |
+| 频道格数 | 目标 20 格（4×5） vs 服务端仅发 3 频道 | 数据态差异，非坐标漂移；CELL_W=94 已证，CELL_H=32 仍无本端实证 |
+| 频道动画 | `scroll/0` 四帧展开、`chSelect` 红圈四帧、`chgauge` 负载条 | 逻辑层已对账 WZ 帧序与延时；本轮未做逐帧动画像素验收 |
+
+### 13.7 证据与判词
+
+- 归档目录 [`evidence/term-verify-v2/r3-align/`](evidence/term-verify-v2/r3-align/)：10 张 WZ 真模板（`templates/`，含真 `ne`/`se`）、10 份测量 JSON（`verdicts/`）、13 个脚本（`scripts/`），共 35 文件；目标帧 sha 清单 `verdicts/target_frames_manifest.json`。
+- 判词：**签 `R3_ALIGNED_WITH_DISCLOSED_RESIDUALS`** —— 六组件差异表由 Angel + orange-wz 双源坐实，7 处常量按联动关系修复，14:38 同代码真机五组件 ALL_PASS、15:03 当前源码确定性构建通过；框右缘 +4 / 框底 -8 / 正文 +3.39 三个残差与「纯净二进制复跑」缺口如实披露。
+- §11.7 的五项不签继续挂：`CELL_H=32`、18px 行距像素侧、纯净校准二进制、进图帧场景态不可比、职业团 EVAN/DUALBLADE 两卡（按用户明确指示保留）。
+- 影响面仅 3 个 UI TU + 1 份报告 + `r3-align/` 证据目录；未改 vcxproj、未新建源文件、未动 `Obj.cpp`、未改 live `.img`/`.nx`，别会话并发改动零触碰。

@@ -1,0 +1,37 @@
+{
+  "methodA": {
+    "before_patch_in_after_dy": 0,
+    "ncc": 0.8898,
+    "before_patch_in_target_dy": 0,
+    "expect": -8
+  },
+  "methodB": {
+    "target": {
+      "ncc": 0.9978,
+      "xy": [
+        469,
+        430
+      ]
+    },
+    "before": {
+      "ncc": 0.4481,
+      "xy": [
+        474,
+        438
+      ]
+    },
+    "after": {
+      "ncc": 0.3383,
+      "xy": [
+        473,
+        430
+      ]
+    },
+    "dy_before": 8,
+    "dy_after": 0
+  },
+  "A_ok": false,
+  "B_ok": true,
+  "verdict": "NEEDS_REVIEW",
+  "note": "verify_r3_align.py nameTagL dy=18@ncc0.64 = cross-slot mis-match of 8x22 tiny template, void."
+}

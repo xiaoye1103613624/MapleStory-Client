@@ -206,13 +206,21 @@ namespace ms
 		// 九宫语义（运行时 Login.img 取证）：每块 tile 的 origin 是其「内角」，
 		// 绘制时 tile 从内容区角点向外延展——nw/ne 上带 40px（容纳标题），
 		// sw/se 下带 24px（容纳正文），左右带 22px。box_w/box_h 为**外框**尺寸。
-		// 原生公告板为固定小板：参考「选中频道页.png」逐像素实测外框
-		// (284,297)-(468,371) ≈ 184x74（计划写的 199x68 系旧测量把右缘量到了
-		// 红圈 481 上；实机截图为最高 ground truth）。内容区 = 外框 - 边框
-		// = 140x10，恰好容纳一行 A12B 正文——与原生一致。
-		// 旧实现按 west 条高 9px 自适应铺行、把内容宽当外宽 → 实机 135x73
-		// 小方盒，且 UIWorldSelect 用 width() 反推位置时被撑偏进面板内部。
-		constexpr int16_t box_w_ref = 184;
+		// 原生公告板为固定板：orange-wz 真角件（WorldNotice/BalloonForLoginProcess
+		// nw/ne/se，128B GMS128 key 重载 Login.img 取得）在两端帧做 alpha-NCC
+		// 独立定位（ui_r3/real_corners_settle.json）：
+		//   TARGET nw@280 ne@450 se@352 / OURS(v1) nw@285 ne@447 se@344
+		//   span(ne-nw) = box_w-22（OURS 184-22=162 精确自洽；ne_left+22=472 即框右缘）
+		//   ⇒ TARGET span=170 ⇒ box_w=192。
+		// 【196 已证伪】曾按 title(170) 居中反推 (box_w-170)/2=13 得 196，但真 ne
+		// 模板给出右缘 472，196 会推到 476 过冲 4px——只用两个左锚点拟合全局框宽
+		// 属过拟合。原生 title 并非严格居中：目标 title293-nw280 inset=13 ≠
+		// (192-170)/2=11，故 title_x 改独立常量 left+13（见 draw()），与框宽解耦。
+		// 框高：真 se 显示目标约 80 / 本端 74，但 box_h 增大会经正文居中公式把
+		// 已偏低 3.4px 的正文再下推，正文像素判据不可靠 → 本轮保持 74，
+		// 框底(se)/正文 ~8px / ~3px 残差如实披露，不动已验证的垂直内部位置。
+		// 内容区 = 外框 - 左右边框44 = 148x10，容纳一行 A12B 正文。
+		constexpr int16_t box_w_ref = 192;
 		constexpr int16_t box_h_ref = 74;
 
 		box_w = box_w_ref;
@@ -281,10 +289,19 @@ namespace ms
 			center.draw(DrawArgument(Point<int16_t>(cl, ct), Point<int16_t>(cr - cl, cb - ct)));
 		}
 
-		// 标题「公告」(170x18, origin 0) 居中于顶带；正文居中于内容区。
-		// 参考图实测：标题行 y≈305-315（顶带内），正文「Scania」y≈339-350（内容区）。
-		const int16_t title_x = static_cast<int16_t>(left + (box_w - title.width()) / 2);
-		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 6)));
+		// 标题「公告」(170x18, origin 0) 画在顶带；正文居中于内容区。
+		// R3 十二帧稳态实测（ui_r3/notice_slide_curve.json）：本端 f01..f11
+		// title 模板顶恒为 301（ncc=1.0），目标帧「选中频道页.png」为 313
+		// ⇒ 偏上 12px。title.draw 的模板顶即 top+K，K=6 时 301 ⇒ top=295，
+		// 故 K=18 才落到 313。外框两端框顶仅差 1px（nw 角 T296/O295），
+		// 不是整体平移 bug，是标题在框内的内部偏移；切勿改 notice_y。
+		// 旧注释「标题行 y≈305-315」系过场帧误量，作废。
+		// 正文「Scania」y≈339-350（内容区）。
+		// 原生 title 非严格居中：目标 title_left=293、nw_left=280 ⇒ inset=13，
+		// 而 (box_w_ref-title.width())/2=(192-170)/2=11 ≠ 13。沿用居中公式会
+		// 让标题左偏 2px；用真角件定框宽后必须把 title inset 与框宽解耦。
+		const int16_t title_x = static_cast<int16_t>(left + 13);
+		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 18)));
 
 		const int16_t text_x = static_cast<int16_t>(cl + (cr - cl) / 2);
 		const int16_t text_y = static_cast<int16_t>(ct + (cb - ct - textlabel.height()) / 2);
