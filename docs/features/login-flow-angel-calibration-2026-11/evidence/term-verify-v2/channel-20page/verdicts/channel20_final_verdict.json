@@ -1,0 +1,135 @@
+{
+  "verdict": "CHANNEL20_PAGER_FIX_VERIFIED",
+  "scope": "channel page 20/page + 30-channel pager + pager relocation + R3 channel components only",
+  "build": {
+    "exit0": true,
+    "errors": [],
+    "exe_sha256": "fc690d3b54622e1b883478fa71b3ad16ebd64057d10084d91eda3fb570e357ef",
+    "exe_size": 5118976
+  },
+  "deployed_sha256": "fc690d3b54622e1b883478fa71b3ad16ebd64057d10084d91eda3fb570e357ef",
+  "live_exe_untouched_sha256": "295932c5202340f42fb691f522faf3ba6377939d49a9c5fc247e68934202c639",
+  "real_device": {
+    "anchor_hit": true,
+    "home_mean_range": [
+      151.31,
+      151.13
+    ],
+    "page2_mean_range": [
+      151.1,
+      151.37
+    ],
+    "back_mean_range": [
+      151.48,
+      151.48
+    ],
+    "pager_clicks": [
+      [
+        660,
+        512
+      ],
+      [
+        700,
+        512
+      ]
+    ]
+  },
+  "occlusion": {
+    "gauge_peer_gap_before": 5.79,
+    "gauge_peer_gap_after": -0.43,
+    "ch17_occlusion_resolved": true,
+    "old_pager_inside_CH17": true,
+    "new_pager_inside_CH17": false
+  },
+  "label_override": {
+    "roi": [
+      458,
+      336,
+      498,
+      351
+    ],
+    "home_vs_page2_mean_abs": 26.02,
+    "changed_pixels_gt35": 206
+  },
+  "r3_channel_components_applicable": {
+    "noticeTitle": {
+      "ncc": 1.0,
+      "shift": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pass": true
+    },
+    "noticeNw": {
+      "ncc": 0.9892,
+      "shift": [
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "pass": true
+    }
+  },
+  "r3_char_components_excluded": {
+    "charInfo": {
+      "applicable": false,
+      "reason": "input frame charselect_clean_f09.png is login WRONG_PASSWORD dialog, not char-select page; UICharSelect.cpp unchanged vs HEAD this round",
+      "raw_shift": [
+        54,
+        43,
+        54,
+        43
+      ],
+      "raw_pass": false
+    },
+    "scroll": {
+      "applicable": false,
+      "reason": "input frame charselect_clean_f09.png is login WRONG_PASSWORD dialog, not char-select page; UICharSelect.cpp unchanged vs HEAD this round",
+      "raw_shift": [
+        -10,
+        37,
+        -10,
+        37
+      ],
+      "raw_pass": false
+    },
+    "nameTagL": {
+      "applicable": false,
+      "reason": "input frame charselect_clean_f09.png is login WRONG_PASSWORD dialog, not char-select page; UICharSelect.cpp unchanged vs HEAD this round",
+      "raw_shift": [
+        -3,
+        -3,
+        -3,
+        -3
+      ],
+      "raw_pass": false
+    }
+  },
+  "char_page_source": {
+    "file": "IO/UITypes/UICharSelect.cpp",
+    "worktree_sha256": "efca4007bd1b88ae33115368c519eced18292667a18585b6a47336d5dea155bd",
+    "note": "not modified this round; no pixel re-verify (input frame invalid)"
+  },
+  "disclosed_residuals": [
+    "翻页左右箭头是本服 30/60 频道扩展，原生 20 格目标帧没有；新落点仍在木轴上与目标 mean_abs=54.59，非原生、不签像素一致。",
+    "角色页 R3 三组件本轮无可比输入帧（历史 charselect_clean_f09.png 是登录弹窗），不做像素复算；源码零改动，无退化路径但未复验。",
+    "CELL_H=32 / 18px 行距 / 纯净校准二进制 / 进图场景态不可比 / 职业团 EVAN+DUALBLADE 按用户指示不删，均沿用历史不签项。"
+  ],
+  "checks": {
+    "build_exit0": true,
+    "exe_sha_locked": true,
+    "live_exe_untouched": true,
+    "config_bom_intact": true,
+    "serverlist_anchor": true,
+    "home_frames_real": true,
+    "page2_frames_real": true,
+    "back_frames_real": true,
+    "ch17_occlusion_resolved": true,
+    "label_override_active": true,
+    "r3_channel_not_regress": true
+  },
+  "all_checks_pass": true
+}

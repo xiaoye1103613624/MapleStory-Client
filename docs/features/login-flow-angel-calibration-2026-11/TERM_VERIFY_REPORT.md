@@ -453,3 +453,63 @@
 - 判词：**签 `R3_ALIGNED_WITH_DISCLOSED_RESIDUALS`** —— 六组件差异表由 Angel + orange-wz 双源坐实，7 处常量按联动关系修复，14:38 同代码真机五组件 ALL_PASS、15:03 当前源码确定性构建通过；框右缘 +4 / 框底 -8 / 正文 +3.39 三个残差与「纯净二进制复跑」缺口如实披露。
 - §11.7 的五项不签继续挂：`CELL_H=32`、18px 行距像素侧、纯净校准二进制、进图帧场景态不可比、职业团 EVAN/DUALBLADE 两卡（按用户明确指示保留）。
 - 影响面仅 3 个 UI TU + 1 份报告 + `r3-align/` 证据目录；未改 vcxproj、未新建源文件、未动 `Obj.cpp`、未改 live `.img`/`.nx`，别会话并发改动零触碰。
+
+## 14 频道页 20 格/页 + 30/60 频道翻页（m07417 收口，独立 worktree 编译 + 真机三态验收）
+
+### 14.1 用户目标与口径翻案
+
+- 用户 m07417：「验证你自己验证即可，并发会话我没有让他们改登录那块的ui；另外服务端频道数量我改成了30才对的啊？是不是应该有翻页?其他有问题的一并解决」→ 自行验证 30 频道下必须有翻页，按 Angel 083 + orange-wz IMG 节点 + 原生目标帧把可定位问题一并解决。
+- **§13.6「服务端仅发 3 频道、目标 20 格属数据态差异」在本节作废**：本轮 `packet_dump.log` SERVERLIST 实测 `... 1e 08 00 53 63 61 6e 69 61 2d 31 ...` 到 `Scania-30`（`1e`=30），紧接 `[RECV] : 0a 00 ff`；`Net/Handlers/Helpers/LoginParser.cpp:90-120 parse_world` 把 30 个 capacity 全解进 `channel_capacities`，`UIWorldSelect.cpp:1246-1259 change_world` 夹到 30。旧 3 频道是当时服务端配置态，不是客户端上限。
+- **旧 `CHANNEL_PAGE_SIZE=30` 是真因**：`UIWorldSelect.h:44` 原本把「可视槽」写成 30（旧文档 `angel-full-replicate-plan-2026-11/notes/w01-login.md:16` 把 Angel `sub_5FDD2D(60)` / 服务端 `channel_size=30` 逻辑容量错当物理格数）；`UIWorldSelect.cpp:596 const bool multi = pending_channel_limit > CHANNEL_PAGE_SIZE;` 在 30 频道时 `30>30=false`，翻页钮永不激活；`:340-359` 还循环构造 30 个 `TwoSpriteButton(channelsrc[std::to_string(i)]["normal"])`，i=20..29 读空节点、30 格溢出 `chBackgrn`(449×233)。
+
+### 14.2 WZ / Angel 双源证据（频道页到底几格）
+
+- orange-wz（128B GMS128 key，`tools/_gms_key_128.b64`）实读 `E:\MXD\BeiDou-Client-xy\Data\UI\Login.img` 的 `WorldSelect/channel`：**仅 `0..19` + `chSelect/chgauge/chEvent`**，`channel/20/normal` 不存在；`channel/{0,1,19}/normal` 均 92×30 ARGB8888，左上角**烘焙 `CH.N` 字样**（标签区约 x0..35/y0..15，纸色 `(238,204,153)`），不是通用底板。
+- 目标帧 `desktop_channel_expanded.png`（sha `01d332c7…`）4 列×5 行 = 20 格 CH.1–CH.20；底栏 `channel_bottom_strip.png` 目视 = 第 5 行 + 纯木轴 + 右下「到选择的世界去」，**原生没有翻页箭头**。
+- `CUIChannelSelect_ctor` 的 540×167 是 `alert/backgrd` 不是频道窗格数；`CUIWorldSelect_DrawWorldItems_0x624e13.txt:271-277` 是 15 世界名牌 27px step；Angel `CLogin_ChangeStep` 的 `sub_5FDD2D(60)` 是逻辑容量。**结论：原生 20 固定槽，30/60 频道翻页是本服扩展，不伪装 Angel 原生。**
+- 翻页箭头复用 WZ 真资产 `WorldSelect/alert/BtArrowL/R`（orange-wz 实读 `normal/0` 28×30 ARGB8888、origin(0,0)、delay=80；mouseOver 31×33、pressed/disabled 28×30）。
+
+### 14.3 源码改动（主工作树 2 文件，精确 add）
+
+- [`IO/UITypes/UIWorldSelect.h`](../../../IO/UITypes/UIWorldSelect.h)：`CHANNEL_PAGE_SIZE 30U→20U` + 注释改「WZ 只有 channel/0..19，目标帧 4×5，>20 翻页，逻辑容量仍 60」；`CHANNEL_BUTTON_COUNT = CHANNEL_PAGE_SIZE` 随动；`channel_page` 注释改 `0=CH.1..20 / 1=CH.21..40 / 2=CH.41..60`。
+- [`IO/UITypes/UIWorldSelect.cpp`](../../../IO/UITypes/UIWorldSelect.cpp) 六组编辑：
+  1. include 增 `Graphics/Geometry.h` + `Graphics/SpecialText.h`；
+  2. `WS_NOTICE_GAP` 注释 -33→-36（R3 真值口径，不改数值）；
+  3. `change_world` 注释改「可视槽 20 / 逻辑容量 60」；
+  4. `draw()` 在 `UIElement::draw_buttons(alpha)` 之后、`page_vis` gauge 之前插入 `if (page_base != 0 && page_vis > 0)` 的次页标签覆盖：`ColorBox label_mask(40,15,Color(238,204,153),1)` + `OutlinedText label(A11B,LEFT,CREAM,JAMBALAYA)` + `label.change_text("CH."+std::to_string(logical+1))` + `label_pos = cell + Point(8,label.y_for_ink_top(4))` + l/r/t/b/inner 五次 `DrawArgument(..., content_alpha)`；**第 1 页不覆盖**，保住 WZ 原生烘焙 CH.1–20；
+  5. `send_key()` 改为「本页导航」：`page_vis=channel_page_visible()`、`rows=(page_vis-1)/COLUMNS+1`、UP/DOWN 在本页网格 wrap、`press_logical_channel` 加 `logical >= pending_channel_limit` 守卫、RETURN 未选时按 `page_base`；
+  6. **翻页钮落点自查修复（§14.6）**：新增 `CH_PAGER_OFF(210,217)`，构造 `:294-315` 与 `layout_channel_controls():447-451` 两处从旧 `(12,CH_PANEL_H-28)=(12,205)` 同步改为 `+CH_PAGER_OFF`（绝对 `(646,497)/(686,497)`）。
+- 全量引用 `ops_grep` 闭合：`CHANNEL_PAGE_SIZE|CHANNEL_BUTTON_COUNT|CHANNEL_CAPACITY|Buttons::BtChannel0|Buttons::BtGoWorld` 50 命中全在 `UIWorldSelect.h/.cpp`，`Buttons` 是 private enum，改 20 不外溢到别 TU。`UICharSelect.cpp` 本轮 HEAD vs 工作树 sha 均 `efca4007…`（零改动）。
+
+### 14.4 独立 worktree 编译（不碰 live exe、不碰别会话 65+ M 文件）
+
+- `create_worktree(name="channel-20page-verify", from="5614564f")` → `E:\project\MapleStory-Client\.agents\worktrees\channel-20page-verify`；把主工作树两文件按字节 cp 进去；编译脚本 [`scripts/build_channel20_isolated.bat`](evidence/term-verify-v2/channel-20page/scripts/build_channel20_isolated.bat) 用 `/p:OutDir=%OUT%\ /p:IntDir=%INT%\ /p:PostBuildEventUseInBuild=false` 三隔离，避开别会话 `MSBuild.exe/cl.exe` 占锁与共享 `x64/obj-Release`。
+- 首跑 `BUILD_EXITCODE=1` 是命令解析事故：`/p:OutDir="%OUT%"` 里 `%OUT%` 尾随反斜杠把 cmd 引号转义，后续参数被吞进 OutDir 值 → `error MSB4184: 路径中具有非法字符`；改无引号写法后过。这不是方案失败，留证。
+- **两次编译零 error**：首版 exe `a0a3ff74a0c52f2211193558c7cbd7043b744eff12027b9e1895d350ee840509` / 18:54:53；**最终（含翻页落点修复）`fc690d3b54622e1b883478fa71b3ad16ebd64057d10084d91eda3fb570e357ef` / 19:41:47 / 5 118 976 B**。`build_channel20.log` 全量 `error C|error LNK|fatal error|error MSB` 计数 0。`live E:\MXD\BeiDou-Client-xy\MapleStory.exe` 全程未覆盖（仍 `295932c5…`）；验证用 `MapleStory_ch20.exe` 独立部署，不覆盖 live。
+
+### 14.5 真机验收（登录链路两次翻案后 anchor_hit=true）
+
+- 脚本 [`scripts/verify_channel20.py`](evidence/term-verify-v2/channel-20page/scripts/verify_channel20.py)：单实例 → 登录 → SERVERLIST end 锚点 → 点世界名牌 (485,210) → 抓首页稳态 → NEXT → 抓次页 → PREV → 抓回首页。`xy-config.yaml` head3 前后均 `b'# M'`（无 BOM 污染）。
+- **登录链路翻案 1（密码空）**：首跑 `anchor_hit=false`、帧 mean 136.x 是登录页「密码错误！请确认！」弹窗；`UILogin.cpp:450-486 login()` 有 `password_text.length() <= 4` 拦截，`login.auto=false` 且 Settings 0 字节不预填密码 → 改双框 `admin / TAB / admin / Enter`。
+- **登录链路翻案 2（预填账号 + 前台遮挡）**：改后仍 `anchor_hit=false`、帧 mean 235 是白底文档窗口；本实例增量包逐字 `[SEND] 01 00 0c 00 "tostest1admi" 05 00 admin` + `[RECV] 00 00 17`（登录被拒）= `DefaultAccount` 预填 `tostest1` 后脚本 `admin` 追加；`BitBlt` 又被别会话大文档窗口抢前台 → 两框先 20× BACKSPACE 清空、每帧 `mc.force_game_top(hwnd)` 重抢。
+- **最终三态（新二进制 `fc690d3b…`）**：`anchor_hit=true`；`frames_home` mean 151.31→151.13、`frames_page2` 151.10→151.37、`frames_back` 151.48→151.48，全 `real_gl_frame=true`、1280×720；标题 `XiaoYE MS v0.0.1...FPS:234...2026-11-15 19:56:05`。目视 [`shots/ch20_home_f05.png`](evidence/term-verify-v2/channel-20page/shots/ch20_home_f05.png) = 4×5 CH.1–CH.20，[`shots/ch20_page2_f05.png`](evidence/term-verify-v2/channel-20page/shots/ch20_page2_f05.png) = 10 格 CH.21–CH.30（前两行满、第三行 2 格），[`shots/ch20_back_f03.png`](evidence/term-verify-v2/channel-20page/shots/ch20_back_f03.png) 回首页；[`shots/labels20_page2.png`](evidence/term-verify-v2/channel-20page/shots/labels20_page2.png) 证次页 CH.21–30 标签重绘生效（`home_vs_page2_mean_abs=26.02`、标签 ROI 变化像素 206）。
+
+### 14.6 翻页 PREV 压住 CH.17：自查发现 → 落点收敛（本节最有价值的二次自我否定）
+
+- 首版翻页功能过了，但底栏三栏对照 [`shots/bottom_strip_before_after.png`](evidence/term-verify-v2/channel-20page/shots/bottom_strip_before_after.png) 目视：TARGET 的 CH.17 负载条完整 → BEFORE 两个箭头压在 CH.17 负载条上 → AFTER 负载条完整、箭头落到第 5 行之下/GoWorld 左侧木轴空白段。
+- 数值 [`verdicts/channel20_pixel_audit.json`](evidence/term-verify-v2/channel-20page/verdicts/channel20_pixel_audit.json)：旧落点 CH.17 `gauge_band_mean_abs=16.1` 而同排 CH.18/19/20 = 10.26/10.19/10.47，超同排 +5.79；`pager_region` target vs home mean_abs 45.85（目标底栏无箭头）。
+- 机制：旧 `panel_topleft+(12,205)=(448,485)`，贴图 28×30 origin(0,0)，与 CH.17 格子 `(458..550,464..494)` 的 `chgauge` 负载条 `(465..538,482..491)` 相交；`MapleButton.cpp:76-82 draw()` 用 `position+parentpos`、`:91-108 bounds()` 用 `lt=parentpos+position-get_origin()`，`Texture.cpp:92-105` 按 `args.get_rectangle(origin,dimensions)` 画 → 遮挡是真实像素覆盖不是命中框错觉。
+- 新 `CH_PAGER_OFF(210,217)`：绝对 `(646,497)/(686,497)`，y=497 > 第 5 行底 494、x=646..714 < GoWorld(756..915)，不压任何格子/负载条/红圈/公告/进入按钮。
+- 收敛证据 [`verdicts/channel20_final_audit.json`](evidence/term-verify-v2/channel-20page/verdicts/channel20_final_audit.json)：`gauge_peer_gap_before=5.79 → after=-0.43`、`CH.17 after_g=9.88` 与 CH.18/19/20 的 10.26/10.19/10.47 同量级、`old_pager_inside_CH17=true / new_pager_inside_CH17=false`、`ch17_occlusion_resolved=true`。**`new_region_vs_target=54.59` 高于旧 45.85 不是退化**：扩展箭头本就不在原生帧里，从「压内容」改到「压空白木轴」才是收敛口径，如实披露仍非原生像素一致。
+
+### 14.7 R3 组件不退化（诚实剔除坏帧，不放宽判据）
+
+- [`scripts/verify_r3_noregress.py`](evidence/term-verify-v2/channel-20page/scripts/verify_r3_noregress.py) 直接 import `verify_r3_align.py` 的既有 `TPLS/TARGET_BBOX/ncc_best`，不新建判据、不放宽阈值。频道页用新帧 `ch20_home_f05.png`：`noticeTitle ncc=1.0 shift[0,0,0,0]`、`noticeNw ncc=0.9892 shift[0,-1,0,-1]`，**两项 pass=true、无退化**。
+- 角色页三组件判定 `INVALID_INPUT / applicable=false` 而非 fail：输入帧 `shots/charselect_clean_f09.png` `read_image` 目视是登录页「密码错误！请确认！」弹窗，历史 `ui_r3/verify_r3_align.json` 本就 `all_pass=False / charInfo shift[54,43]`；本轮 `UICharSelect.cpp` 对 HEAD 零改动（sha `efca4007…`==`efca4007…`），**逻辑上无退化路径，但不用坏帧伪造通过，也不改评分器**。如需重新签角色页三组件，须另抓真实选角色稳态帧。
+
+### 14.8 判词、残差与影响面
+
+- 整合 verdict [`verdicts/channel20_final_verdict.json`](evidence/term-verify-v2/channel-20page/verdicts/channel20_final_verdict.json)：**`CHANNEL20_PAGER_FIX_VERIFIED`**，11 项 `checks` 全 true（build_exit0 / exe_sha_locked / live_exe_untouched / config_bom_intact / serverlist_anchor / home|page2|back_frames_real / ch17_occlusion_resolved / label_override_active / r3_channel_not_regress）。
+- 归档目录 [`evidence/term-verify-v2/channel-20page/`](evidence/term-verify-v2/channel-20page/)：7 脚本 + 6 JSON + 16 帧/对照图 + 3 before_pager 文件，共 32 文件。
+- **明确披露**：① 翻页左右箭头是本服 30/60 频道扩展，原生 20 格目标帧没有，非原生、不签像素一致；② 次页 CH.21–60 标签是代码 `ColorBox+OutlinedText` 重绘（WZ 只有 `channel/0..19` 烘焙 CH.1–20），第 1 页保留原生烘焙；③ 角色页 R3 三组件本轮无可比输入帧（旧帧是登录弹窗），未做像素复算；④ §13.6 的「服务端仅发 3 频道」旧口径作废，30 频道已由 SERVERLIST 实证；⑤ §11.7 五项不签继续挂（CELL_H=32、18px 行距像素侧、纯净校准二进制、进图场景态不可比、职业团 EVAN/DUALBLADE 按用户指示保留）；⑥ §13.6 公告 ne +4 / se -8 / 正文 +3.39 三残差未被本轮触碰，继续在案。
+- 影响面仅 2 个 UI TU（`UIWorldSelect.h/.cpp`）+ 1 份报告 + `channel-20page/` 证据目录；未改 vcxproj、未新建源 TU、未动 `Obj.cpp`/`ChatBalloon.cpp`/`UICharSelect.cpp`、未改 live `.img`/`.nx`/`MapleStory.exe`，别会话 65+ M 文件零触碰。

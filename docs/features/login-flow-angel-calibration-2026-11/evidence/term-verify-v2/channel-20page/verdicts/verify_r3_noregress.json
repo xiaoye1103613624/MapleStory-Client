@@ -1,0 +1,160 @@
+{
+  "chan_frame_new": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\ch20_home_f05.png",
+  "chan_frame_before": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\channel_grid_f05.png",
+  "char_frame": "C:\\Users\\11036\\AppData\\Local\\Temp\\term_verify\\shots\\charselect_clean_f09.png",
+  "target_bbox": {
+    "charInfo": [
+      392,
+      220,
+      575,
+      335
+    ],
+    "scroll": [
+      372,
+      161,
+      589,
+      354
+    ],
+    "nameTagL": [
+      469,
+      430,
+      477,
+      452
+    ],
+    "noticeTitle": [
+      293,
+      313,
+      463,
+      331
+    ],
+    "noticeNw": [
+      280,
+      296,
+      302,
+      336
+    ]
+  },
+  "components": {
+    "charInfo": {
+      "frame": "charselect_clean_f09.png",
+      "ncc": 0.5109,
+      "bbox": [
+        446,
+        263,
+        629,
+        378
+      ],
+      "before_ncc": 0.5109,
+      "before_bbox": [
+        446,
+        263,
+        629,
+        378
+      ],
+      "shift": [
+        54,
+        43,
+        54,
+        43
+      ],
+      "pass": false
+    },
+    "scroll": {
+      "frame": "charselect_clean_f09.png",
+      "ncc": 0.2562,
+      "bbox": [
+        362,
+        198,
+        579,
+        391
+      ],
+      "before_ncc": 0.2562,
+      "before_bbox": [
+        362,
+        198,
+        579,
+        391
+      ],
+      "shift": [
+        -10,
+        37,
+        -10,
+        37
+      ],
+      "pass": false
+    },
+    "nameTagL": {
+      "frame": "charselect_clean_f09.png",
+      "ncc": 0.4581,
+      "bbox": [
+        466,
+        427,
+        474,
+        449
+      ],
+      "before_ncc": 0.4581,
+      "before_bbox": [
+        466,
+        427,
+        474,
+        449
+      ],
+      "shift": [
+        -3,
+        -3,
+        -3,
+        -3
+      ],
+      "pass": false
+    },
+    "noticeTitle": {
+      "frame": "ch20_home_f05.png",
+      "ncc": 1.0,
+      "bbox": [
+        293,
+        313,
+        463,
+        331
+      ],
+      "before_ncc": 0.516,
+      "before_bbox": [
+        380,
+        269,
+        550,
+        287
+      ],
+      "shift": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pass": true
+    },
+    "noticeNw": {
+      "frame": "ch20_home_f05.png",
+      "ncc": 0.9892,
+      "bbox": [
+        280,
+        295,
+        302,
+        335
+      ],
+      "before_ncc": 0.5826,
+      "before_bbox": [
+        471,
+        339,
+        493,
+        379
+      ],
+      "shift": [
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "pass": true
+    }
+  },
+  "all_pass": false
+}

@@ -1,0 +1,31 @@
+{
+  "roi": "cell 92x30 + gauge band",
+  "cells": {
+    "CH.17": {
+      "full_mean_abs": 18.31,
+      "gauge_band_mean_abs": 16.1
+    },
+    "CH.18": {
+      "full_mean_abs": 14.56,
+      "gauge_band_mean_abs": 10.26
+    },
+    "CH.19": {
+      "full_mean_abs": 14.57,
+      "gauge_band_mean_abs": 10.19
+    },
+    "CH.20": {
+      "full_mean_abs": 15.0,
+      "gauge_band_mean_abs": 10.47
+    }
+  },
+  "pager_region": {
+    "target_vs_home_mean_abs": 45.85,
+    "target_mean": 207.32,
+    "home_mean": 163.11
+  },
+  "label_override": {
+    "home_vs_page2_mean_abs": 26.02,
+    "home_vs_target_mean_abs": 34.54,
+    "page2_vs_page1_pixels_changed": 252
+  }
+}
