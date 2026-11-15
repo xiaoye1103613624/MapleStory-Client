@@ -125,6 +125,10 @@ namespace ms
 
 	// ---- Angel 083 权威锚点（2026-11-12；废弃 BeiDou 截图 / signboard 经验 Δ）----
 	// CUIWorldSelect ctor 0x6246CE：CreateDlg(-140,-804,400,100)。
+	// m08208 ②：木牌行/旗标经两端 x 互相关定为已对齐
+	// （WORLD_PLANK_ROW NCC 0.8704@shift=0、FLAG_SPRITES 0.9873@shift=0），
+	// 本常量保持 Angel 083 权威 -140 不动；偏左项实测只有频道格
+	// （CHANNEL_GRID NCC 0.4977@shift=-13），由 channel_cell_offset 单独 +13/+1。
 	static constexpr Point<int16_t> WS_WORLD_DLG_MAP(-140, -804);
 	// CUIChannelSelect ctor 0x628501：窗位 (-176,-688)，448×253。
 	static constexpr Point<int16_t> WS_CHANNEL_WND_MAP(-176, -688);
@@ -162,7 +166,8 @@ namespace ms
 	static constexpr int16_t WS_SIDEBAR_Y0 = 127;		// BtViewChoice
 	static constexpr int16_t WS_SIDEBAR_Y1 = 377;		// BtViewAll
 	static constexpr int16_t WS_SIDEBAR_Y2 = 427;		// BtStart
-	static constexpr Point<int16_t> WS_EXIT_POS(8, 8);
+	// WS_EXIT_POS(8,8) 已删：正确端登录链路无「结束游戏」木牌（m08836 实测），
+	// Common/BtExit 是进图后页面组件；ESC→退出确认走 id 分发不需按钮实例。
 
 	// 公告板（Login.img/WorldNotice/BalloonForLoginProcess 九宫，静止外框 192x74）
 	// 相对频道面板的定位。面板 chBackgrn(449x233) 左缘 x≈436、顶缘 y≈282。
@@ -192,7 +197,10 @@ namespace ms
 
 		div_t d = std::div(static_cast<int>(i), static_cast<int>(COLS));
 
-		return Point<int16_t>(22 + CELL_W * d.rem, 56 + CELL_H * d.quot);
+		// m08208 ②：channel/0 模板 NCC TARGET@(659,369) vs OURS@(646,368)，
+		// 目标首格 (471,337) vs 本端 (458,336) => +13/+1。Gauge/红圈/次页标签
+		// 覆盖均走本函数，联动收敛；panel_topleft=(436,280) 保持不变。
+		return Point<int16_t>(35 + CELL_W * d.rem, 57 + CELL_H * d.quot);
 	}
 
 	// 负载条（chgauge 73x9 彩虹条）相对单元格原点的落点：负载槽烘焙在单元
@@ -295,7 +303,11 @@ namespace ms
 		// 禁止再挂静态 WorldSelect/scroll/0/0（双卷轴）。展开仅由 scroll_open
 		// 播于 Angel 频道窗局部 (-38,-141)；地图 signboard 装饰不叠 UI 静态帧。
 
-		buttons[Buttons::BtExit] = std::make_unique<MapleButton>(Common["BtExit"], WS_EXIT_POS);
+		// m08208 追加：正确端「选择频道页.png」左上角 (9..160,8..36) darkfrac=0.032
+		// —— 原生登录链路（登录/频道/选角/建角）都无「结束游戏」木牌；它是进图后
+		// 页面专属组件（进入游戏页等 in-game 帧 frac≈0.59）。此牌原钉 (8,8) 系
+		// :163 旧注释错引截图，实测证伪后移除绘制；ESC→退出确认走
+		// button_pressed(BtExit) 的 id 分发，不依赖按钮实例，键位行为保留。
 		buttons[Buttons::BtGoWorld] = std::make_unique<MapleButton>(
 			WorldSelect["BtGoworld"],
 			channelsrc_pos + WS_GOWORLD_OFF
@@ -347,6 +359,11 @@ namespace ms
 		);
 
 		channels_background = WorldSelect["chBackgrn"];
+		// m08208 ③④：orange-wz 真节点 WorldSelect/scroll/0/3 = 513x401「卷轴打开态」
+		// （顶部木轴 + 羊皮纸主体 + 底部卷起木轴）。目标帧全帧 alpha-NCC=0.7546@
+		// (398,139)（ui_r4/measure_r4_scroll_full.json）。播完常驻此帧即补上底部卷起
+		// 羊皮纸 UI 与「到选择的世界去」按钮下背景，且保持卷轴为打开态。
+		channels_scroll_open = WorldSelect["scroll"]["0"]["3"];
 
 		for (uint16_t i = 0; i < Buttons::BtGoWorld - Buttons::BtChannel0; i++)
 		{
@@ -664,10 +681,30 @@ namespace ms
 					panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2) + WS_SCROLL_LOCAL;
 				scroll_open.draw(position + scroll_tl, alpha);
 			}
+			else if (channels_scroll_open.is_valid())
+			{
+				// m08208 ③④：真帧 scroll/0/3 打开态在目标帧 alpha-NCC=0.7546@(398,139)。
+				// 选中世界动画播完后常驻此帧（不再切回 chBackgrn 平板），落点与展开
+				// 动画共用同一 scroll_tl；稳态 panel_expand=1 => 整帧绘制，无跳变。
+				const Point<int16_t> scroll_tl =
+					panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2) + WS_SCROLL_LOCAL;
+				const int16_t full_h = channels_scroll_open.get_dimensions().y();
+				int16_t reveal = static_cast<int16_t>(full_h * panel_expand);
+
+				if (reveal < 1)
+					reveal = 1;
+
+				if (reveal < full_h)
+					channels_scroll_open.draw(
+						DrawArgument(position + scroll_tl),
+						Range<int16_t>(0, static_cast<int16_t>(full_h - reveal))
+					);
+				else
+					channels_scroll_open.draw(position + scroll_tl);
+			}
 			else
 			{
-				// 卷轴展开：按进度自上而下纵向揭示底板。源裁剪（露出顶部 reveal 行）
-				// 与目标高度同步收缩，保持 1:1 不拉伸；未用贴图拉伸是因为木框会被压扁。
+				// 无 scroll/0/3 资源时保留原 chBackgrn 纵向揭示，保证不崩、不黑屏。
 				const int16_t full_h = channels_background.get_dimensions().y();
 				int16_t reveal = static_cast<int16_t>(full_h * panel_expand);
 
@@ -675,22 +712,12 @@ namespace ms
 					reveal = 1;
 
 				if (reveal < full_h)
-				{
-					// 自上而下卷轴展开：目标矩形必须是「完整面板矩形」(左上角 panel_c)，
-					// 由 Range 同时裁剪源与目标底边。源取顶部 reveal 行、目标高度亦为
-					// reveal，1:1 纵向揭示。若把 reveal 当作 DrawArgument 的 stretch 高度，
-					// 目标矩形先被压成 reveal 高、再被 Range 二次裁掉 (full_h-reveal)，
-					// 实际目标高度 = 2*reveal - full_h（中段为负/零）→ 整段动画不绘制，
-					// 仅 panel_expand 到 1 时整板瞬现，表现为「卷轴不滚动」。
 					channels_background.draw(
 						DrawArgument(position + panel_c),
 						Range<int16_t>(0, static_cast<int16_t>(full_h - reveal))
 					);
-				}
 				else
-				{
 					channels_background.draw(position + panel_c);
-				}
 			}
 		}
 
@@ -825,10 +852,18 @@ namespace ms
 		Point<int16_t> panel_c = channel_panel_visual_center();
 		Point<int16_t> panel_topleft = panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
 
-		Rectangle<int16_t> channels_bounds = Rectangle<int16_t>(
-			position + panel_topleft,
-			position + panel_topleft + channels_background.get_dimensions()
-			);
+		// m08208：卷轴打开态 513x401 从 scroll_tl=(398,139) 覆盖到 (911,540)，完全
+		// 包含 chBackgrn 面板 (436,280)..(885,513)；用它做命中框，点顶轴/底卷边
+		// 不会误判为「面板外取消选中」。无资源时回退原面板矩形。
+		const Point<int16_t> scroll_tl =
+			panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2) + WS_SCROLL_LOCAL;
+		Rectangle<int16_t> channels_bounds = channels_scroll_open.is_valid()
+			? Rectangle<int16_t>(
+				position + scroll_tl,
+				position + scroll_tl + channels_scroll_open.get_dimensions())
+			: Rectangle<int16_t>(
+				position + panel_topleft,
+				position + panel_topleft + channels_background.get_dimensions());
 
 		// 「到选择的世界去」在卷内右下，仍单独并入命中，避免点按钮边缘被当成面板外取消选中。
 		bool inside_goworld = false;
@@ -1500,7 +1535,8 @@ namespace ms
 			panel_expand = 0.0f;
 			pending_channel_limit = 0;
 			// Angel 0x629348：Login.img/WorldSelect/scroll/0 四帧展开，锚在频道窗
-			// 局部 (-38,-141)；播完由 update() 置 scroll_playing=false 转交 chBackgrn。
+			// 局部 (-38,-141)；播完由 update() 置 scroll_playing=false 转交
+			// scroll/0/3 打开态常驻（m08208 ③④，不再切回 chBackgrn 平板）。
 			if (nl::node open = nl::nx::UI["Login.img"]["WorldSelect"]["scroll"]["0"])
 			{
 				scroll_open = Animation(open);

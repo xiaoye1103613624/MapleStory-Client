@@ -215,6 +215,9 @@ namespace ms
 		// （NCC 0.61 vs 参考端截图；旧的本地假 PNG 覆盖 NCC 仅 0.33，已删）。
 		Texture worlds_background;
 		Texture channels_background;
+		/// m08208 ③④：Login.img/WorldSelect/scroll/0/3（513x401，origin(0,0)）打开态末帧，
+		/// 选中世界且展开动画播完后常驻，替代无卷边的 chBackgrn 平板。
+		Texture channels_scroll_open;
 		Point<int16_t> worldsrc_pos;
 		Point<int16_t> channelsrc_pos;
 		ChatBalloonHorizontal chatballoon;

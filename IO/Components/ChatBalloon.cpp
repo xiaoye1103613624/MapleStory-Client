@@ -304,7 +304,10 @@ namespace ms
 		title.draw(Point<int16_t>(title_x, static_cast<int16_t>(top + 18)));
 
 		const int16_t text_x = static_cast<int16_t>(cl + (cr - cl) / 2);
-		const int16_t text_y = static_cast<int16_t>(ct + (cb - ct - textlabel.height()) / 2);
+		// m08208 ①：measure_r4.json balloon_body_ink 目标墨带 y337..345，本端
+		// y341..350（weighted 14.23 vs 16.93）=> 正文比目标低约 4~5px。
+		// 只上移正文 text_y，不动 Title(:304)/九宫/notice_y，保 noticeTitle NCC=1.0。
+		const int16_t text_y = static_cast<int16_t>(ct + (cb - ct - textlabel.height()) / 2 - 4);
 		textlabel.draw(Point<int16_t>(text_x, text_y));
 	}
 }
