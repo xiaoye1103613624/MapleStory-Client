@@ -39,9 +39,11 @@ namespace ms
 		// 避免历史上「BtChannel0 隐式=5、BtGoWorld 硬编码=35」这种与枚举顺序
 		// 彼此独立写死的耦合——一旦增删世界按钮就会静默错位到频道按钮段。
 		// 取值对齐 Angel CLogin::ChangeStep step1：`sub_5FDD2D(15)` / `sub_5FDD2D(60)`。
-		// 面板可视槽仍为 30（与 chBackgrn 449×233 网格一致）；>30 时翻页。
+		// 可视槽以 WZ 真值为准：Login.img/WorldSelect/channel 只有 0..19 共 20 张
+		// 自带 CH.N 标签的按钮贴图，目标帧也是 4 列×5 行；>20 个逻辑频道时翻页，
+		// 逻辑容量仍为 CHANNEL_CAPACITY=60（服务端 channel_size=30 / max=60）。
 		static constexpr uint16_t WORLD_BUTTON_COUNT = 15U;
-		static constexpr uint16_t CHANNEL_PAGE_SIZE = 30U;
+		static constexpr uint16_t CHANNEL_PAGE_SIZE = 20U;
 		static constexpr uint16_t CHANNEL_CAPACITY = 60U;
 		static constexpr uint16_t CHANNEL_BUTTON_COUNT = CHANNEL_PAGE_SIZE;
 
@@ -236,7 +238,7 @@ namespace ms
 		uint16_t pending_channel_limit = 0;
 		/// 已选世界频道负载快照（逻辑下标 0..total-1）；翻页只读本页切片。
 		std::vector<int32_t> channel_loads;
-		/// 频道翻页：0 = CH.1..30，1 = CH.31..60。
+		/// 频道翻页：0 = CH.1..20，1 = CH.21..40，2 = CH.41..60。
 		uint8_t channel_page = 0;
 
 		/// Login.img/WorldSelect/scroll/0 卷轴打开动画。

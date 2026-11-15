@@ -45,7 +45,9 @@
 #include "../../Net/Packets/SelectCharPackets.h"
 #include "../../Net/Session.h"
 
+#include "../../Graphics/Geometry.h"
 #include "../../Graphics/LocalPngTexture.h"
+#include "../../Graphics/SpecialText.h"
 #include "../../Graphics/Text.h"
 
 // 卷轴展开动画用 Range<int16_t> 做底板源裁剪。
@@ -199,6 +201,17 @@ namespace ms
 	// （选中频道页.png 逐像素取证 2026-11-02）。
 	static constexpr Point<int16_t> CH_GAUGE_OFFSET(7, 18);
 
+	// 频道翻页箭头（alert/BtArrowL/R，28x30，origin(0,0)）相对面板左上。
+	// 旧值 (12, CH_PANEL_H-28)=(12,205) 把 PREV/NEXT 画进第 5 行 CH.17
+	// 格子 (458..550, 464..494) 的负载条 (465..538, 482..491)：真机
+	// channel20_pixel_audit.json 记 CH.17 gauge_band_mean_abs=16.1，
+	// 而同排 CH.18/19/20 只有 10.2x，差 5.9 全是按钮遮挡。
+	// 新落点 y=217（绝对 497）在第 5 行格子底缘 494 之下、x=210（绝对 646）
+	// 在 GoWorld(756..915) 左侧，两块箭头 646..714/497..527 不压任何
+	// 原生格子、负载条、红圈、公告或进入按钮。30/60 频道才由 refresh
+	// 激活；20 频道态不画，仍与目标帧逐像素一致（扩展 UI 如实披露）。
+	static constexpr Point<int16_t> CH_PAGER_OFF(210, 217);
+
 	// 选中频道红圈（chSelect 末帧 59x33）相对单元格原点的落点 (-2,-9)。
 	// 依据（选中频道页.png 逐像素定标 2026-11-02）：
 	//   · CH.1 文字核在单元位图内 x10..27/y5..11，与参照图 x481..498/y342..348
@@ -295,7 +308,7 @@ namespace ms
 			nl::node alert = WorldSelect["alert"];
 			Point<int16_t> page_base = channelsrc_pos
 				- Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2)
-				+ Point<int16_t>(12, CH_PANEL_H - 28);
+				+ CH_PAGER_OFF;
 			if (alert["BtArrowL"])
 				buttons[Buttons::BtChPagePrev] = std::make_unique<MapleButton>(
 					alert["BtArrowL"], page_base);
@@ -442,7 +455,7 @@ namespace ms
 				ch->set_position(panel_topleft + channel_cell_offset(i));
 		}
 
-		const Point<int16_t> page_pos = panel_topleft + Point<int16_t>(12, CH_PANEL_H - 28);
+		const Point<int16_t> page_pos = panel_topleft + CH_PAGER_OFF;
 		if (auto it = buttons.find(Buttons::BtChPagePrev); it != buttons.end() && it->second)
 			it->second->set_position(page_pos);
 		if (auto it = buttons.find(Buttons::BtChPageNext); it != buttons.end() && it->second)
@@ -703,6 +716,45 @@ namespace ms
 
 				Point<int16_t> panel_topleft = panel_c - Point<int16_t>(CH_PANEL_W / 2, CH_PANEL_H / 2);
 
+				// 第 2/3 页复用 WZ 的 channel/0..19 按钮贴图；这些贴图左上角烘焙了
+				// CH.1..CH.20，若直接复用会把逻辑频道 CH.21..CH.60 显示成旧标签。
+				// 用 WZ 标签区实测底色 (238,204,153) 盖掉 40×15，再叠 A11B 描边字。
+				// 第 1 页保持原生烘焙标签不动，避免破坏已验收的 20 格 NCC。
+				if (page_base != 0 && page_vis > 0)
+				{
+					const ColorBox label_mask(
+						40, 15,
+						Color(238.0f / 255.0f, 204.0f / 255.0f, 153.0f / 255.0f, 1.0f),
+						1.0f
+					);
+					OutlinedText label(
+						Text::Font::A11B,
+						Text::Alignment::LEFT,
+						Color::Name::CREAM,
+						Color::Name::JAMBALAYA
+					);
+
+					for (uint16_t i = 0; i < page_vis; i++)
+					{
+						const uint16_t logical = static_cast<uint16_t>(page_base + i);
+						const Point<int16_t> cell =
+							position + panel_topleft + channel_cell_offset(i);
+
+						label_mask.draw(DrawArgument(cell, content_alpha));
+						label.change_text("CH." + std::to_string(logical + 1));
+
+						const Point<int16_t> label_pos = cell + Point<int16_t>(
+							8, label.y_for_ink_top(4));
+						const DrawArgument label_args(label_pos, content_alpha);
+
+						label.l.draw(DrawArgument(label_pos + Point<int16_t>(-1, 0), content_alpha));
+						label.r.draw(DrawArgument(label_pos + Point<int16_t>(1, 0), content_alpha));
+						label.t.draw(DrawArgument(label_pos + Point<int16_t>(0, -1), content_alpha));
+						label.b.draw(DrawArgument(label_pos + Point<int16_t>(0, 1), content_alpha));
+						label.inner.draw(label_args);
+					}
+				}
+
 				for (uint16_t i = 0; i < page_vis; i++)
 				{
 					channel_gauge[i].draw(
@@ -748,7 +800,7 @@ namespace ms
 					// 公告随 channel_slide 自上方滑入（与卷轴展开同步）。
 					// LoginProcessNotice::draw 只接受坐标，无 alpha 通道，故不参与淡入。
 					const int16_t notice_dy = static_cast<int16_t>((1.0f - notice_slide) * (-40));
-					// 公告板：右缘越过面板左缘 33px（WS_NOTICE_GAP=-33，原生叠在面板前，
+					// 公告板：右缘越过面板左缘 36px（WS_NOTICE_GAP=-36，原生叠在面板前，
 					// 且绘制顺序在本块——板右缘裁切 CH.1 红圈，与参考图一致）；
 					// 顶缘 = panel_topleft.y + 15（选中频道页.png 实测 297-282=15）。
 					const int16_t notice_x = static_cast<int16_t>(
@@ -861,9 +913,9 @@ namespace ms
 				if (worldid >= worlds.size())
 					return;
 
-				// 键盘导航按**逻辑频道**（跨页）；可视页不足时先翻页再点槽。
-				uint16_t channel_total = pending_channel_limit;
-				uint16_t selected_channel = (channelid == 0xFF) ? 0 : static_cast<uint16_t>(channelid);
+				// 键盘导航按**逻辑频道**（跨页）；方向键只在当前可视页 4 列网格内走，
+				// SoftKey / 历史自动选线仍可跨页翻到对应 logical。
+				const uint16_t channel_total = pending_channel_limit;
 
 				// 服务端偶发下发 0 频道的畸形世界：columns=0 会让 std::div 除零(UB)，
 				// 行数与上下导航随之失真。该世界没有可导航的频道网格，仅保留退出逃生键。
@@ -880,11 +932,27 @@ namespace ms
 					return;
 				}
 
-				if (selected_channel >= channel_total)
-					selected_channel = 0;
+				const uint16_t page_base = channel_page_base();
+				const uint16_t page_vis = channel_page_visible();
+
+				if (page_vis == 0)
+					return;
+
+				uint16_t selected_channel =
+					(channelid == 0xFF) ? page_base : static_cast<uint16_t>(channelid);
+
+				if (selected_channel >= channel_total
+					|| selected_channel < page_base
+					|| selected_channel >= page_base + page_vis)
+				{
+					selected_channel = page_base;
+				}
 
 				auto press_logical_channel = [this](uint16_t logical)
 				{
+					if (logical >= pending_channel_limit)
+						return;
+
 					const uint8_t pg = static_cast<uint8_t>(logical / CHANNEL_PAGE_SIZE);
 					if (pg != channel_page)
 						set_channel_page(pg);
@@ -892,49 +960,62 @@ namespace ms
 					button_pressed(static_cast<uint16_t>(Buttons::BtChannel0 + slot));
 				};
 
-				uint8_t columns = static_cast<uint8_t>(std::min<uint16_t>(channel_total, COLUMNS));
-				uint8_t rows = static_cast<uint8_t>((channel_total - 1) / COLUMNS + 1);
+				auto press_current_page_slot = [this, page_base, &press_logical_channel](uint16_t page_slot)
+				{
+					press_logical_channel(static_cast<uint16_t>(page_base + page_slot));
+				};
 
-				div_t div = std::div(static_cast<int>(selected_channel), static_cast<int>(columns));
+				const uint16_t slot = static_cast<uint16_t>(selected_channel - page_base);
+				const uint8_t columns = COLUMNS;
+				const uint8_t rows =
+					static_cast<uint8_t>((page_vis - 1) / columns + 1);
+
+				div_t div = std::div(static_cast<int>(slot), static_cast<int>(columns));
 				int32_t current_col = div.rem;
+				const int32_t current_row = static_cast<int32_t>(slot / columns);
+
+				auto move_vertical = [&](int32_t delta_row)
+				{
+					int32_t row = current_row;
+
+					for (int32_t tries = 0; tries < rows; ++tries)
+					{
+						row = (row + delta_row + rows) % rows;
+						const int32_t candidate = row * columns + current_col;
+
+						if (candidate >= 0 && candidate < page_vis)
+						{
+							press_current_page_slot(static_cast<uint16_t>(candidate));
+							return;
+						}
+					}
+				};
 
 				if (keycode == KeyAction::Id::UP)
 				{
-					int next_channel = static_cast<int>(selected_channel) - COLUMNS;
-					if (next_channel < 0)
-						next_channel += rows * COLUMNS;
-					if (static_cast<uint16_t>(next_channel) >= channel_total)
-						next_channel = current_col;
-					if (static_cast<uint16_t>(next_channel) == selected_channel)
-						return;
-					press_logical_channel(static_cast<uint16_t>(next_channel));
+					move_vertical(-1);
 				}
 				else if (keycode == KeyAction::Id::DOWN)
 				{
-					uint16_t next_channel = static_cast<uint16_t>(selected_channel + COLUMNS);
-					if (next_channel >= channel_total)
-						next_channel = static_cast<uint16_t>(current_col);
-					if (next_channel == selected_channel)
-						return;
-					press_logical_channel(next_channel);
+					move_vertical(1);
 				}
 				else if (keycode == KeyAction::Id::LEFT || keycode == KeyAction::Id::TAB)
 				{
-					if (selected_channel != 0)
-						selected_channel--;
-					else
-						selected_channel = static_cast<uint16_t>(channel_total - 1);
+					int32_t next_slot = static_cast<int32_t>(slot) - 1;
 
-					press_logical_channel(selected_channel);
+					if (next_slot < 0)
+						next_slot = static_cast<int32_t>(page_vis - 1);
+
+					press_current_page_slot(static_cast<uint16_t>(next_slot));
 				}
 				else if (keycode == KeyAction::Id::RIGHT)
 				{
-					if (selected_channel != channel_total - 1)
-						selected_channel++;
-					else
-						selected_channel = 0;
+					uint16_t next_slot = static_cast<uint16_t>(slot + 1);
 
-					press_logical_channel(selected_channel);
+					if (next_slot >= page_vis)
+						next_slot = 0;
+
+					press_current_page_slot(next_slot);
 				}
 				else if (escape)
 				{
@@ -951,7 +1032,7 @@ namespace ms
 					{
 						if (pending_channel_limit == 0)
 							return;
-						press_logical_channel(0);
+						press_logical_channel(page_base);
 					}
 					else
 					{
@@ -1241,8 +1322,8 @@ namespace ms
 		// 频道相关数据全部来自服务端，且三者长度未必一致：
 		//   - channel_count：包里的频道数（uint8_t）；
 		//   - channel_capacities：变长 vector，越界读属未定义行为；
-		//   - 可视槽 CHANNEL_PAGE_SIZE；逻辑容量 CHANNEL_CAPACITY（Angel ChangeStep 60）。
-		// 故按容量上限收敛，多余频道忽略并限频告警；>PAGE_SIZE 走翻页。
+		//   - 可视槽 CHANNEL_PAGE_SIZE=20（WZ channel/0..19 与目标帧 4×5）；逻辑容量 CHANNEL_CAPACITY=60。
+		// 故按容量上限收敛，多余频道忽略并限频告警；>20 走翻页。
 		uint16_t limit = static_cast<uint16_t>(selectedWorld.channel_count);
 
 		if (limit > CHANNEL_CAPACITY)
