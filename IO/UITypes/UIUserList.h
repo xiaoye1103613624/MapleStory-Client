@@ -59,6 +59,11 @@ namespace ms
 
 		void change_tab(uint8_t tabid);
 		uint16_t get_tab();
+		// r3（2026-11-16）：handler 收包后的统一刷新入口（按当前页签重算按钮态）。
+		void refresh_from_models();
+		// 悄悄话收件人（UIChat/UIChatBar 消费；旧 UIBuddyList::get_selected_cid 退役替代）。
+		int32_t get_friend_selected_cid() const { return friend_selected_cid; }
+		int32_t get_party_selected_cid() const { return party_selected_cid; }
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
 
@@ -70,6 +75,8 @@ namespace ms
 		// 家族页（2026-11-07）：绘制 / 行命中 / 行操作路由
 		void draw_guild_tab(float alpha) const;
 		int32_t guild_row_at(Point<int16_t> cursorpos, bool* online_list = nullptr) const;
+		// r3：灰显语义（DISABLED 贴图仍在绘制，不响应光标）——Angel SetButton
+		// 「页签整组 enable/disable」的对位实现。on=false → DISABLED，不再隐藏。
 		void set_guild_buttons(bool on);
 		// 2026-11-08 五页签运行时节点还原（evidence/userlist_runtime_nodes.txt 为权威）
 		void bind_runtime_assets();
@@ -77,7 +84,12 @@ namespace ms
 		void draw_party_tab(float alpha) const;
 		void draw_blacklist_tab(float alpha) const;
 		void draw_union_tab(float alpha) const;
+		// r3：数据驱动按钮态（Angel CTabFriend::OnClick 行级规则 / 空态整组灰）
 		void set_page_buttons(uint8_t page);
+		void update_friend_button_states();
+		void update_party_button_states();
+		void update_union_button_states();
+		void update_blacklist_button_states();
 		static uint16_t tab_button(uint8_t page);
 
 		enum Buttons
@@ -140,6 +152,8 @@ namespace ms
 			BT_UNION_UP, BT_UNION_DOWN, BT_UNION_WITHDRAW,
 			// 家族页补充（GuildInfo 下此前遗漏的节点）
 			BT_GUILD_BOARD, BT_GUILD_CHANGE,
+			// r3：好友底栏 BtChat（Angel 2016 (99,341)），此前底栏 12 钮无此 id。
+			BT_FRIEND_CHAT,
 			BT_PAGE_LAST
 		};
 
@@ -173,6 +187,14 @@ namespace ms
 		Texture blacklist_title;
 		Texture blacklist_grid[3];
 		Text blacklist_name;
+		// r3：本地拒绝列表（s9 无黑名单协议，Angel OnAdd 是客户端本地列表+广播包，
+		// 这里只做本地闭环：增加/删除/选中/行渲染；FindPlayer 仍作检索代理）。
+		std::vector<std::string> blacklist_names;
+		int32_t blacklist_selected = 0;		// 行号（1 基），0 = 无
+		static constexpr int16_t BLACKLIST_ROW_Y = 86;	// r3 oracle：none 文本顶 y86
+		static constexpr int16_t BLACKLIST_ROW_H = 17;
+		static constexpr size_t BLACKLIST_CAPACITY = 26;
+		int32_t blacklist_row_at(Point<int16_t> cursorpos) const;
 
 		// Guild tab（家族页 = 083 原版「玩家列表 & 家族」共用窗第 3 页签，
 		// 2026-11-07 切片；数据源 GuildModel，非 UIGuild 浮窗实例）
@@ -238,5 +260,9 @@ namespace ms
 		Slider guild_slider;
 		// 当前页签选中行（好友/组队/拒绝/联盟空态下仅占位，行数据待真机联调）
 		int32_t page_selected_row = -1;
+		// r3：组员页血条（083 CUIPartyHP 画法并入共用窗；资源 GaugeBar bar+graduation）
+		Texture partyhp_bar;
+		Texture partyhp_graduation;
+		bool party_hp_visible = false;
 	};
 }

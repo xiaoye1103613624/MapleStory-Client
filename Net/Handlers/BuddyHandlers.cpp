@@ -19,7 +19,7 @@
 
 #include "../../Character/BuddyListModel.h"
 #include "../../IO/UI.h"
-#include "../../IO/UITypes/UIBuddyList.h"
+#include "../../IO/UITypes/UIUserList.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
@@ -43,9 +43,13 @@ namespace ms
 
 		uint8_t mode = recv.read_byte();
 
-		// P0 / T1：仿 GuildModel R28-B2 —— 写 BuddyListModel；浮窗仅已存在时同步，
-		// 不再为 updateBuddylist 强制 emplace（UserList 好友页读模型）。
-		auto uibuddy = UI::get().get_element<UIBuddyList>();
+		// P0 / T1：仿 GuildModel R28-B2 —— 写 BuddyListModel；r3 后 UIUserList
+		// 每帧 update() 直读模型，handler 只在收包后触发一次按钮态刷新。
+		auto refresh_userlist = []()
+		{
+			if (auto ul = UI::get().get_element<UIUserList>())
+				ul->refresh_from_models();
+		};
 
 		switch (mode)
 		{
@@ -71,8 +75,7 @@ namespace ms
 				for (int16_t i = 0; i < count; i++)
 					recv.read_int(); // 尾部 mapid 块
 				BuddyListModel::get().set(data);
-				if (uibuddy)
-					uibuddy->update_buddies(data);
+				refresh_userlist();
 				while (recv.available())
 					recv.skip_byte();
 				(void)count;
@@ -117,8 +120,7 @@ namespace ms
 				while (recv.available())
 					recv.skip_byte();
 				BuddyListModel::get().update_channel(characterid, channel);
-				if (uibuddy)
-					uibuddy->update_buddy_channel(characterid, channel);
+				refresh_userlist();
 				(void)characterid; (void)channel;
 				break;
 			}
@@ -128,11 +130,9 @@ namespace ms
 				while (recv.available())
 					recv.skip_byte();
 				BuddyListModel::get().set_capacity(capacity);
-				if (uibuddy)
-					uibuddy->set_capacity(capacity);
-				else
-					ensure_sm(Color::Name::YELLOW,
-						"Buddy slots -> " + std::to_string(capacity));
+				refresh_userlist();
+				ensure_sm(Color::Name::YELLOW,
+					"Buddy slots -> " + std::to_string(capacity));
 				(void)capacity;
 				break;
 			}
@@ -156,8 +156,6 @@ namespace ms
 				};
 				const char* msg = (mode < 15) ? fails[mode] : nullptr;
 				std::string tip = msg ? msg : ("Buddy mode " + std::to_string(mode));
-				if (uibuddy && uibuddy->is_active())
-					break;
 				if (msg)
 					ensure_sm(Color::Name::YELLOW, tip);
 				else if (mode != 0)

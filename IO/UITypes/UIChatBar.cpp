@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChatBar.h"
 #include "UIChat.h"
-#include "UIBuddyList.h"
+#include "UIUserList.h"
 #include "../../Character/BuddyListModel.h"
 #include "UICharInfo.h"
 #include "UIItemInventory.h"
@@ -1558,8 +1558,8 @@ namespace ms
 			if (keycode == 'B' || keycode == 'b')
 			{
 				int32_t cid = 0;
-				if (auto bl = UI::get().get_element<UIBuddyList>())
-					cid = bl->get_selected_cid();
+				if (auto ul = UI::get().get_element<UIUserList>())
+					cid = ul->get_friend_selected_cid();
 				if (cid <= 0)
 					if (auto ci = UI::get().get_element<UICharInfo>())
 						cid = ci->get_target_cid();

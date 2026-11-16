@@ -35,7 +35,7 @@
 #include "../../IO/UITypes/UISkillBook.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/UITypes/UIStatusBar.h"
-#include "../../IO/UITypes/UIBuddyList.h"
+#include "../../IO/UITypes/UIUserList.h"
 #include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatsInfo.h"
 #include "../../IO/UITypes/UIWedding.h"
@@ -862,8 +862,8 @@ namespace ms
 				+ " @" + std::to_string(field_or_ch);
 			while (recv.available())
 				recv.skip_byte();
-			// BuddyList 无 find tip API：始终 ChatBar 显结果
-			if (auto buddy = UI::get().get_element<UIBuddyList>())
+			// r3：Find 结果激活五页签共用窗好友页（UIBuddyList 退役）；结果走 ChatBar。
+			if (auto buddy = UI::get().get_element<UIUserList>())
 			{
 				if (!buddy->is_active())
 					buddy->makeactive();

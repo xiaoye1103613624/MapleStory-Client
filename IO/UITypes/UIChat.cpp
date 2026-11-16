@@ -16,7 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChat.h"
-#include "UIBuddyList.h"
+#include "UIUserList.h"
 #include "UICharInfo.h"
 #include "UIChatBar.h"        // Q6: 社交聊天窗各 MultiChat 出口补本地回显（同 Q5 矩阵）
 #include "UIMessenger.h"
@@ -127,8 +127,8 @@ namespace ms
 		if (keycode == 'F' || keycode == 'f' || keycode == 'B' || keycode == 'b')
 		{
 			int32_t cid = 0;
-			if (auto bl = UI::get().get_element<UIBuddyList>())
-				cid = bl->get_selected_cid();
+			if (auto ul = UI::get().get_element<UIUserList>())
+				cid = ul->get_friend_selected_cid();
 			if (cid <= 0)
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					cid = ci->get_target_cid();
@@ -224,8 +224,8 @@ namespace ms
 		case Buttons::CHAT_FRIEND:
 		{
 			int32_t cid = 0;
-			if (auto bl = UI::get().get_element<UIBuddyList>())
-				cid = bl->get_selected_cid();
+			if (auto ul = UI::get().get_element<UIUserList>())
+				cid = ul->get_friend_selected_cid();
 			if (cid <= 0)
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					cid = ci->get_target_cid();

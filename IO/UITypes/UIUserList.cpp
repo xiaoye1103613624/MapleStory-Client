@@ -48,11 +48,11 @@
 namespace ms
 {
 	// P0 好友/组员行区（相对 UserList 窗；复用家族页行高经验，像素精修挂后续）。
-	static constexpr int16_t FRIEND_ROW_Y = 150;
+	static constexpr int16_t FRIEND_ROW_Y = 130;	// r3 oracle：分组行 112 + 行距 → 首行 130
 	static constexpr int16_t FRIEND_ROW_H = 18;
 	static constexpr int16_t FRIEND_MAX_ROWS = 7;
-	static constexpr int16_t PARTY_ONLINE_Y = 100;
-	static constexpr int16_t PARTY_OFFLINE_Y = 190;
+	static constexpr int16_t PARTY_ONLINE_Y = 106;	// r3 oracle：none 文本顶 y106
+	static constexpr int16_t PARTY_OFFLINE_Y = 187;	// r3 oracle：none 文本顶 y187
 	static constexpr int16_t PARTY_ROW_H = 18;
 	static constexpr int16_t PARTY_ONLINE_ROWS = 3;
 	static constexpr int16_t PARTY_OFFLINE_ROWS = 5;
@@ -192,8 +192,8 @@ namespace ms
 		if (UserList["line"])
 			friend_sprites.emplace_back(UserList["line"], DrawArgument(Point<int16_t>(132, 115), Point<int16_t>(230, 0)));
 
-		if (UserList["BtSheetIClose"])
-			buttons[Buttons::BT_FRIEND_GROUP_0] = std::make_unique<MapleButton>(UserList["BtSheetIClose"], Point<int16_t>(13, 118));
+		// r3：Angel 083 好友页没有组折叠按钮控件（OnCreate 无创建；组展开/收起
+		// 在 CTabFriend::OnClick 里翻 CTabFriend+20 标志位），不再绑定 img 残留节点。
 		deactivate(Buttons::BT_FRIEND_GROUP_0);
 
 		for (size_t i = 0; i <= 3; i++)
@@ -222,32 +222,12 @@ namespace ms
 		// oracle / 好友列表框.png：BtAddFriend mae=0 @(1,77)，BtAddGroup @(68,77)。
 		try_btn_at(Buttons::BT_FRIEND_ADD, Friend["BtAddFriend"], Point<int16_t>(1, 77));
 		try_btn_at(Buttons::BT_FRIEND_ADD_GROUP, Friend["BtAddGroup"], Point<int16_t>(68, 77));
-		try_btn(Buttons::BT_FRIEND_EXPAND, Friend["BtPlusFriend"]);
-		// Friend 页无专用 Messenger 钮时：复用 UIWindow.img/Messenger/BtEnter 作开窗入口。
-		{
-			nl::node msg_btn = Friend["BtMessenger"];
-
-			if (!msg_btn)
-				msg_btn = Friend["BtChat"];
-
-			if (!msg_btn)
-				msg_btn = UiAssetResolve::window("Messenger")["BtEnter"];
-
-			if (msg_btn)
-			{
-				buttons[Buttons::BT_FRIEND_MESSENGER] = std::make_unique<MapleButton>(
-					msg_btn,
-					Point<int16_t>(208, 85)
-				);
-			}
-		}
-		deactivate(Buttons::BT_FRIEND_ADD);
-		deactivate(Buttons::BT_FRIEND_ADD_GROUP);
+		// r3：Angel 083 好友页仅 11 钮（OnCreate 立即数 @0x919b73）：顶部
+		// BtAddFriend(5,81)/BtAddGroup(72,81)/BtShowOnline(232,81) + 底栏 8 钮。
+		// BtPlusFriend/BtMessenger/BtSheetIClose/TapShowAll/TapShowOnline 均为
+		// img 残留节点、原生不创建（R6：节点存在 ≠ 原生使用），一律不绑定。
 		deactivate(Buttons::BT_FRIEND_EXPAND);
 		deactivate(Buttons::BT_FRIEND_MESSENGER);
-
-		try_btn(Buttons::BT_TAB_FRIEND_ALL, Friend["TapShowAll"]);
-		try_btn(Buttons::BT_TAB_FRIEND_ONLINE, Friend["TapShowOnline"]);
 		deactivate(Buttons::BT_TAB_FRIEND_ALL);
 		deactivate(Buttons::BT_TAB_FRIEND_ONLINE);
 
@@ -325,6 +305,7 @@ namespace ms
 			if (d.x() > 0 && d.y() > 0)
 				dimension = d;
 		}
+
 	}
 
 	void UIUserList::draw(float alpha) const
@@ -407,12 +388,23 @@ namespace ms
 			if (guild_notice_text.get_text() != notice)
 				guild_notice_text.change_text(notice);
 		}
+		else if (tab == Tab::BLACKLIST)
+		{
+			// r3：拒绝列表计数（容量 26，oracle 帧「0/26」）。
+			const std::string cnt =
+				std::to_string(blacklist_names.size()) + "/26";
+			if (blacklist_count_text.get_text() != cnt)
+				blacklist_count_text.change_text(cnt);
+		}
 	}
 
 	void UIUserList::set_guild_buttons(bool on)
 	{
+		// r3：Angel 家族页空态是「4×3 按钮整组灰显仍可见」（oracle 家族帧），
+		// 旧实现 set_active(false) 直接消失。灰显 = DISABLED（img 四态 disabled/0
+		// 贴图齐全，UIElement::send_cursor 对 DISABLED 不派发 hover/click = 不可操作）。
+		// Btnotice（右上笔形钮）不在灰显组 —— oracle 家族/联盟帧上常亮。
 		static const uint16_t all[] = {
-			Buttons::BT_GUILD_NOTICE,
 			Buttons::BT_GUILD_INVITE, Buttons::BT_GUILD_WITHDRAW, Buttons::BT_GUILD_KICK,
 			Buttons::BT_GUILD_WHO, Buttons::BT_GUILD_WHISPER, Buttons::BT_GUILD_CHAT,
 			Buttons::BT_GUILD_RANKUP, Buttons::BT_GUILD_RANKDOWN,
@@ -423,8 +415,11 @@ namespace ms
 		{
 			auto it = buttons.find(id);
 			if (it != buttons.end() && it->second)
-				it->second->set_active(on);
+				it->second->set_state(on ? Button::State::NORMAL : Button::State::DISABLED);
 		}
+
+		if (auto it = buttons.find(Buttons::BT_GUILD_NOTICE); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::NORMAL);
 	}
 
 	int32_t UIUserList::guild_row_at(Point<int16_t> cursorpos, bool* online_list) const
@@ -569,7 +564,12 @@ namespace ms
 				{
 					friend_selected_cid = cid;
 					page_selected_row = cid;
+					// 「对群」用当前选中好友的分组名（Angel StatusBar+3180）。
+					if (const Buddy* b = BuddyListModel::get().find(cid))
+						BuddyListModel::get().set_active_group(b->group);
 					LOG(LOG_DEBUG, "UIUserList: friend select cid=" << cid);
+					// r3：行选中变化 → 立即重算底栏行操作钮（Angel OnClick 同款联动）。
+					update_friend_button_states();
 				}
 			}
 			else if (tab == Buttons::BT_TAB_PARTY || tab == Tab::PARTY_MINE)
@@ -579,6 +579,14 @@ namespace ms
 					party_selected_cid = cid;
 					page_selected_row = cid;
 					LOG(LOG_DEBUG, "UIUserList: party select cid=" << cid);
+				}
+			}
+			else if (tab == Buttons::BT_TAB_BLACKLIST)
+			{
+				if (int32_t row = blacklist_row_at(cursorpos))
+				{
+					blacklist_selected = (row == blacklist_selected) ? 0 : row;
+					update_blacklist_button_states();
 				}
 			}
 		}
@@ -592,7 +600,7 @@ namespace ms
 
 		// 米色标题条烘焙在底图上，未入会时原生在其上写「没有参加的家族」。
 		if (!g.in_guild())
-			guild_none_text.draw(position + Point<int16_t>(96, 58));
+			guild_none_text.draw(position + Point<int16_t>(115, 58));	// r3 oracle：文字起点 x115
 		else
 		{
 			if (guild_notice_bar)
@@ -649,7 +657,8 @@ namespace ms
 				guild_none_row_text.draw(position + Point<int16_t>(27, rows_y));
 		};
 
-		draw_group(true, guild_online_banner, 111, GUILD_ONLINE_Y, GUILD_ONLINE_ROWS,
+		// r3 oracle：在线家族横幅顶 y103（像素扫描 blue rows 103-130）。
+		draw_group(true, guild_online_banner, 103, GUILD_ONLINE_Y, GUILD_ONLINE_ROWS,
 			guild_online_count_text);
 		draw_group(false, guild_offline_banner, 189, GUILD_OFFLINE_Y, GUILD_OFFLINE_ROWS,
 			guild_offline_count_text);
@@ -914,36 +923,69 @@ namespace ms
 			}
 			case Buttons::BT_BLACKLIST_ADD:
 			{
-				// P3 ⊘：s9 无 Ignore 包 → FindPlayer 检索代理（见 BuddylistModifyHandler mode∈{1,2,3}）。
+				// r3：按 Angel CTabBlackList::OnAdd 全流程做本地闭环——输入(≤12) →
+				// 非自己 → 非重复 → 按名排序插入（容量 26）→ 计数联动。s9 无黑名单
+				// 协议（BuddylistModifyHandler 仅 mode 1/2/3），FindPlayer 仍作检索
+				// 代理（P3 红线：禁止发明拉黑包）。
+				auto add_local = [this](const std::string& name)
+				{
+					if (name.empty() || name.size() > 12)
+						return;
+
+					if (name == Stage::get().get_player().get_name())
+					{
+						// Angel SP_726「YOU MAY NOT ENTER YOURSELF IN THE BLACKLIST」
+						if (auto chatbar = UI::get().get_element<UIChatBar>())
+							chatbar->show_message("Blacklist: cannot add yourself.", UIChatBar::MessageType::YELLOW);
+						return;
+					}
+
+					for (const auto& existing : blacklist_names)
+						if (_stricmp(existing.c_str(), name.c_str()) == 0)
+						{
+							// Angel SP_728「THIS NAME HAS ALREADY BEEN REGISTERED」
+							if (auto chatbar = UI::get().get_element<UIChatBar>())
+								chatbar->show_message(("Blacklist: " + name + " already registered.").c_str(),
+									UIChatBar::MessageType::YELLOW);
+							return;
+						}
+
+					if (blacklist_names.size() >= BLACKLIST_CAPACITY)
+						return;
+
+					auto pos = std::lower_bound(blacklist_names.begin(), blacklist_names.end(), name,
+						[](const std::string& a, const std::string& b) { return _stricmp(a.c_str(), b.c_str()) < 0; });
+					blacklist_names.insert(pos, name);
+
+					if (auto chatbar = UI::get().get_element<UIChatBar>())
+						chatbar->show_message(("Blacklist: " + name).c_str(), UIChatBar::MessageType::YELLOW);
+				};
+
 				std::string pre;
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					pre = ci->get_target_name();
 				if (!pre.empty()) {
+					add_local(pre);
 					FindPlayerPacket(pre).dispatch();
-					LOG(LOG_DEBUG, "UIUserList: Blacklist FindPlayer=" << pre);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& name) {
+					UI::get().emplace<UISoftKey>([add_local](const std::string& name) {
 						if (name.empty()) return;
+						add_local(name);
 						FindPlayerPacket(name).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: Blacklist FindPlayer=" << name);
+						LOG(LOG_DEBUG, "UIUserList: Blacklist add FindPlayer=" << name);
 					}, []() {}, "Find name");
 				}
 				break;
 			}
 			case Buttons::BT_BLACKLIST_DELETE:
 			{
-				std::string pre;
-				if (auto ci = UI::get().get_element<UICharInfo>())
-					pre = ci->get_target_name();
-				if (!pre.empty()) {
-					FindPlayerPacket(pre).dispatch();
-					LOG(LOG_DEBUG, "UIUserList: Blacklist delete FindPlayer=" << pre);
-				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& name) {
-						if (name.empty()) return;
-						FindPlayerPacket(name).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: Blacklist delete FindPlayer=" << name);
-					}, []() {}, "Find name");
+				// r3：本地删除选中行（1 基行号 → 0 基下标）。
+				if (blacklist_selected > 0
+					&& static_cast<size_t>(blacklist_selected) <= blacklist_names.size())
+				{
+					blacklist_names.erase(blacklist_names.begin() + (blacklist_selected - 1));
+					blacklist_selected = 0;
+					update_blacklist_button_states();
 				}
 				break;
 			}
@@ -1080,7 +1122,8 @@ namespace ms
 			// ---- 2026-11-08 五页签新增按钮：一律复用已与 s9 核对过的协议包 ----
 			case Buttons::BT_FRIEND_SHOW_ALL:
 			case Buttons::BT_FRIEND_SHOW_ONLINE:
-				change_friend_tab(buttonid == Buttons::BT_FRIEND_SHOW_ONLINE
+				// r3：Angel BtShowOnline（2013）是单钮 toggle（全部↔仅在线），非双页签。
+				change_friend_tab(friend_tab == Tab::FRIEND_ALL
 					? Tab::FRIEND_ONLINE : Tab::FRIEND_ALL);
 				return Button::State::PRESSED;
 			case Buttons::BT_FRIEND_ADD2:
@@ -1226,6 +1269,12 @@ namespace ms
 				break;
 			}
 			case Buttons::BT_PARTY_HP:
+			{
+				// r3：BtHP（Angel 2207 sub_90E51C）＝组员页血条显示开关（CUIPartyHP
+				// 独立悬浮窗的共用窗内实现）。
+				party_hp_visible = !party_hp_visible;
+				break;
+			}
 			case Buttons::BT_GUILD_CHANGE:
 				guild_hint("userlist.need_data");
 				break;
@@ -1486,25 +1535,35 @@ namespace ms
 		// 旧 (14/80/150/215, 80) 使 65px 宽钮横向重叠 9px，且整体偏下 3px。
 		bind_btn(BT_FRIEND_ADD, Friend, "BtAddFriend", Point<int16_t>(1, 77));
 		bind_btn(BT_FRIEND_ADD_GROUP, Friend, "BtAddGroup", Point<int16_t>(68, 77));
-		bind_btn(BT_FRIEND_SHOW_ALL, Friend, "BtShowAll", Point<int16_t>(150, 77));
+		// r3 live 实测补绑：BtShowOnline（2013）在线筛选单钮 toggle，
+		// Angel oracle 好友帧 @228,77（与 BtAddFriend/BtAddGroup 同排）。
 		bind_btn(BT_FRIEND_SHOW_ONLINE, Friend, "BtShowOnline", Point<int16_t>(228, 77));
-		// 好友底栏：截图为「上排若干 + 下排一排」而非家族同款 4×3；仍按家族格落位作
-		// 可点热区（残差：个别钮与彩色截图列不完全重合，见 notes）。
-		static const NodeBtn friend_btns[] = {
-			{ BT_FRIEND_WHISPER, "BtWhisper" },
-			{ BT_FRIEND_MATE, "BtMate" },
-			{ BT_FRIEND_MOD, "BtMod" },
-			{ BT_FRIEND_MESSAGE, "BtMessage" },
-			{ BT_FRIEND_BLOCK, "BtBlock" },
-			{ BT_FRIEND_UNBLOCK, "BtUnBlock" },
-			{ BT_FRIEND_DELETE2, "BtDelete" },
-			{ BT_FRIEND_PARTY, "BtParty" },
-			{ BT_FRIEND_WHERE, "BtWhere" },
-			{ BT_FRIEND_GROUP_WHISPER, "BtGroupWhisper" },
-			{ BT_FRIEND_GROUP_MOD, "GroupMod" },
-			{ BT_FRIEND_ADD2, "BtAdd" }
+		// r3：Angel 083 好友页无 BtShowAll（OnCreate 只创建 BtShowOnline 2013，
+		// 在线筛选是单钮 toggle），img 的 BtShowAll 节点为残留、不再绑定。
+		// 好友底栏（Angel OnCreate 立即数 + oracle 帧基准平移 (-4,-4)，同组员/黑名单页）：
+		//   上排 y=337：BtGroupWhisper(8,341)→(4,337) BtChat(99,341)→(95,337) BtWhisper(254,341)→(250,337)
+		//   下排 y=358：BtMod(8,362)→(4,358) BtDelete(49,362)→(45,358) BtParty(99,362)→(95,358)
+		//              BtBlock(182,362)→(178,358) BtMessage(254,362)→(250,358)
+		// BtMate/BtWhere/BtAdd/GroupMod 是 img 残留（原生好友页不创建），不绑定。
+		struct FriendPos { uint16_t id; const char* node; Point<int16_t> pos; };
+		static const FriendPos friend_btns[] = {
+			{ BT_FRIEND_GROUP_WHISPER, "BtGroupWhisper", Point<int16_t>(4, 337) },
+			{ BT_FRIEND_CHAT, "BtChat", Point<int16_t>(95, 337) },
+			{ BT_FRIEND_WHISPER, "BtWhisper", Point<int16_t>(250, 337) },
+			{ BT_FRIEND_MOD, "BtMod", Point<int16_t>(4, 358) },
+			{ BT_FRIEND_DELETE2, "BtDelete", Point<int16_t>(45, 358) },
+			{ BT_FRIEND_PARTY, "BtParty", Point<int16_t>(95, 358) },
+			{ BT_FRIEND_BLOCK, "BtBlock", Point<int16_t>(178, 358) },
+			{ BT_FRIEND_MESSAGE, "BtMessage", Point<int16_t>(250, 358) }
 		};
-		bind_grid(Friend, friend_btns, 12, guild_grid);
+		for (const auto& fb : friend_btns)
+			bind_btn(fb.id, Friend, fb.node, fb.pos);
+		// BtUnBlock 与 BtBlock 同位（Angel SP_2103/SP_2104 贴图切换），创建但默认不显示：
+		// 本地无 buddy block 位数据（s9 BuddylistModifyHandler 无 Ignore opcode），
+		// BtBlock 走检索代理，BtUnBlock 仅在拿到 block 态时接管（update_friend_button_states）。
+		bind_btn(BT_FRIEND_UNBLOCK, Friend, "BtUnBlock", Point<int16_t>(178, 358));
+		if (auto it = buttons.find(BT_FRIEND_UNBLOCK); it != buttons.end() && it->second)
+			it->second->set_active(false);
 
 		// 组员页：组员列表框.png（Tab0 对齐）模板 mae≈0 ——
 		// Create(9,351)；2×4 格 Search/HP/Kick/Whisper @ y344、Invite/Boss/Withdraw/Chat @ y361，
@@ -1529,12 +1588,21 @@ namespace ms
 		for (const auto& pb : party_btns)
 			bind_btn(pb.id, Party, pb.node, pb.pos);
 
+		// r3：组员页血条（083 CUIPartyHP 画法并入共用窗，资源与 UIParty 同源）：
+		// GaugeBar { bar 63x7（origin -3,-3 自动内缩）/ graduation 69x13 刻度外框 }。
+		{
+			nl::node gaugebar = Party["PartyHP"]["GaugeBar"];
+			partyhp_bar = Texture(gaugebar["bar"]);
+			partyhp_graduation = Texture(gaugebar["graduation"]);
+		}
+
 		// 拒绝列表：BtAdd mae=0 @(56,351)；Delete 同高约 @(175,350)（旧 60/160,352）。
 		blacklist_banner = bitmap(BlackList, "blacklist0");
 		blacklist_col_header = bitmap(BlackList, "blacklist1");
 		blacklist_separator = bitmap(BlackList, "blacklist2");
-		bind_btn(BT_BLACKLIST_ADD, BlackList, "BtAdd", Point<int16_t>(56, 351));
-		bind_btn(BT_BLACKLIST_DELETE, BlackList, "BtDelete", Point<int16_t>(175, 350));
+		// r3 oracle：增加(61,356)、删除(180,356)（黄/灰钮像素扫描）。
+		bind_btn(BT_BLACKLIST_ADD, BlackList, "BtAdd", Point<int16_t>(61, 356));
+		bind_btn(BT_BLACKLIST_DELETE, BlackList, "BtDelete", Point<int16_t>(180, 356));
 
 		// 家族联盟 GuildUnion（20 个直接子节点，旧代码 0 个）
 		union_notice_bar = bitmap(GU, "guildinfo6");
@@ -1542,26 +1610,32 @@ namespace ms
 		union_col_header = bitmap(GU, "guildinfo2");
 		union_col_header2 = bitmap(GU, "guildinfo3");
 		union_separator = bitmap(GU, "guildinfo4");
+		// r3 oracle：联盟底栏 row1 = 邀请/出去/联盟长/悄悄话，row2 = 地位/地位/退出/对话，
+		// row3 = 邀请组队@156 / 资料@226（首两槽空）；BtWhere 原生不摆、不绑定；
+		// Btnotice 笔形钮 @(287,78)（与家族页 BtNotice 同位），不占 grid 格。
 		static const NodeBtn union_btns[] = {
 			{ BT_UNION_INVITE, "BtInvite" },
 			{ BT_UNION_WITHDRAW, "BtWithdraw" },
-			{ BT_UNION_WHERE, "BtWhere" },
+			{ BT_UNION_CHANGE, "BtChange" },
 			{ BT_UNION_WHISPER, "BtWhisper" },
 			{ BT_UNION_UP, "BtUp" },
 			{ BT_UNION_DOWN, "BtDown" },
 			{ BT_UNION_KICK, "BtKick" },
 			{ BT_UNION_CHAT, "BtChat" },
-			{ BT_UNION_NOTICE, "Btnotice" },
+			{ BT_UNION_WHERE, "BtWhereX" },
 			{ BT_UNION_PARTYINVITE, "BtPartyInvite" },
 			{ BT_UNION_INFO, "BtInfo" },
-			{ BT_UNION_CHANGE, "BtChange" }
+			{ BT_UNION_NOTICE, "BtnoticeX" }
 		};
 		bind_grid(GU, union_btns, 12, guild_grid);
+		bind_btn(BT_UNION_NOTICE, GU, "Btnotice", Point<int16_t>(287, 78));
 
 		// 家族页补齐 + 12 按钮 4×3（列/行见 guild_grid）
 		guild_col_header2 = bitmap(GI, "guildinfo3");
 		guild_separator = bitmap(GI, "guildinfo4");
 		guild_mark = bitmap(GI, "guildmark");
+		// r3 oracle：第三行 = 留言板@77 / 邀请组队@156 / 资料@226，首槽 (6,360) 空
+		//（BtBoard 原生不摆，不绑定；grid 序用 BOARD 占位会被 bind_btn 跳过）。
 		static const NodeBtn guild_btns[] = {
 			{ BT_GUILD_INVITE, "BtInvite" },
 			{ BT_GUILD_WITHDRAW, "BtWithdraw" },
@@ -1571,10 +1645,11 @@ namespace ms
 			{ BT_GUILD_RANKDOWN, "BtDown" },
 			{ BT_GUILD_KICK, "BtKick" },
 			{ BT_GUILD_CHAT, "BtChat" },
+			// BtBoard 占位槽 (6,360)：oracle 该格为空，用不存在节点名使其跳过绑定。
+			{ BT_GUILD_BOARD, "BtBoardX" },
 			{ BT_GUILD_BBS, "BtGuildBBS" },
 			{ BT_GUILD_PARTYINVITE, "BtPartyInvite" },
-			{ BT_GUILD_INFO, "BtInfo" },
-			{ BT_GUILD_BOARD, "BtBoard" }
+			{ BT_GUILD_INFO, "BtInfo" }
 		};
 		bind_grid(GI, guild_btns, 12, guild_grid);
 
@@ -1583,7 +1658,7 @@ namespace ms
 			return Text(Text::Font::A11M, Text::Alignment::LEFT, c, "");
 		};
 		friend_count_text = label(Color::Name::WHITE);
-		friend_group_text = label(Color::Name::BLACK);
+		friend_group_text = label(Color::Name::MEDIUMBLUE);	// r3 oracle：分组头蓝字
 		friend_none_text = label(Color::Name::BLACK);
 		friend_location_text = label(Color::Name::BLACK);
 		party_online_count_text = label(Color::Name::WHITE);
@@ -1640,40 +1715,249 @@ namespace ms
 
 	void UIUserList::set_page_buttons(uint8_t page)
 	{
-		auto act = [&](uint16_t id, bool on)
+		// r3：按页签整组切换（Angel CUIUserList::SetButton @0x91e073 的对位实现）。
+		// r3 live 实测修正（2026-11-16 真机截图）：底栏按钮分属五页，必须先整组
+		// 隐藏、再按当前页显示+置态 —— 旧实现只改状态不切 active，五页按钮同屏叠绘。
+		static const uint16_t friend_bottom[] = {
+			BT_FRIEND_GROUP_WHISPER, BT_FRIEND_CHAT, BT_FRIEND_WHISPER,
+			BT_FRIEND_MOD, BT_FRIEND_DELETE2, BT_FRIEND_PARTY,
+			BT_FRIEND_BLOCK, BT_FRIEND_MESSAGE
+		};
+		static const uint16_t friend_top[] = { BT_FRIEND_SHOW_ONLINE };
+		static const uint16_t party_btns[] = {
+			BT_PARTY_CREATE2, BT_PARTY_INVITE2, BT_PARTY_WITHDRAW,
+			BT_PARTY_KICK, BT_PARTY_CHANGE_BOSS, BT_PARTY_SEARCH2,
+			BT_PARTY_HP, BT_PARTY_WHISPER, BT_PARTY_CHAT
+		};
+		static const uint16_t union_btns[] = {
+			BT_UNION_INVITE, BT_UNION_WITHDRAW, BT_UNION_WHERE, BT_UNION_WHISPER,
+			BT_UNION_UP, BT_UNION_DOWN, BT_UNION_KICK, BT_UNION_CHAT,
+			BT_UNION_PARTYINVITE, BT_UNION_INFO, BT_UNION_CHANGE, BT_UNION_NOTICE
+		};
+		static const uint16_t guild_btns[] = {
+			BT_GUILD_INVITE, BT_GUILD_WITHDRAW, BT_GUILD_WHO, BT_GUILD_WHISPER,
+			BT_GUILD_RANKUP, BT_GUILD_RANKDOWN, BT_GUILD_KICK, BT_GUILD_CHAT,
+			BT_GUILD_BBS, BT_GUILD_PARTYINVITE, BT_GUILD_INFO, BT_GUILD_BOARD
+		};
+		static const uint16_t blacklist_btns[] = { BT_BLACKLIST_ADD, BT_BLACKLIST_DELETE };
+
+		auto st = [&](uint16_t id, Button::State s)
 		{
 			auto it = buttons.find(id);
 			if (it != buttons.end() && it->second)
-				it->second->set_active(on);
+				it->second->set_state(s);
 		};
-		struct Group { uint16_t first; uint16_t last; uint8_t page; };
-		static const Group groups[] = {
-			{ BT_FRIEND_SHOW_ALL, BT_FRIEND_ADD2, Tab::FRIEND },
-			{ BT_PARTY_CREATE2, BT_PARTY_CHAT, Tab::PARTY },
-			{ BT_UNION_INVITE, BT_UNION_WITHDRAW, Tab::UNION },
-			{ BT_GUILD_BOARD, BT_GUILD_CHANGE, Tab::GUILD }
+		auto act = [&](uint16_t id, bool a)
+		{
+			auto it = buttons.find(id);
+			if (it != buttons.end() && it->second)
+				it->second->set_active(a);
+		};
+		auto group = [&](const uint16_t* ids, size_t n, bool visible, Button::State s)
+		{
+			for (size_t i = 0; i < n; i++)
+			{
+				act(ids[i], visible);
+				st(ids[i], s);
+			}
 		};
 
-		for (const auto& g : groups)
-			for (uint16_t id = g.first; id <= g.last; id++)
-				act(id, page == g.page);
+		// 1) 五页底栏全隐藏并复位 NORMAL（重显示时由下方按页重置态）。
+		group(friend_bottom, std::size(friend_bottom), false, Button::State::NORMAL);
+		group(friend_top, std::size(friend_top), false, Button::State::NORMAL);
+		group(party_btns, std::size(party_btns), false, Button::State::NORMAL);
+		group(union_btns, std::size(union_btns), false, Button::State::NORMAL);
+		group(guild_btns, std::size(guild_btns), false, Button::State::NORMAL);
+		group(blacklist_btns, std::size(blacklist_btns), false, Button::State::NORMAL);
+
+		// 2) 当前页显示 + 置态（行级规则由 update_*_button_states 收窄）。
+		switch (page)
+		{
+			case Tab::FRIEND:
+				group(friend_top, std::size(friend_top), true, Button::State::NORMAL);
+				group(friend_bottom, std::size(friend_bottom), true, Button::State::NORMAL);
+				// 顶部钮常亮（Angel SetButton 空态下 BtAddFriend/BtAddGroup/BtShowOnline 可点）。
+				// 底栏 8 钮：无选中行 → 整组 DISABLED（CTabFriend::OnClick 规则）。
+				update_friend_button_states();
+				break;
+			case Tab::PARTY:
+				// Angel 组员页无行级 disable 函数 → SetButton 语义 = 整组 enable。
+				group(party_btns, std::size(party_btns), true, Button::State::NORMAL);
+				break;
+			case Tab::GUILD:
+			{
+				// 未入会整组灰（oracle 家族帧），Btnotice 常亮（set_guild_buttons 处理）。
+				const bool in_guild = !GuildModel::get().data().name.empty();
+				group(guild_btns, std::size(guild_btns), true,
+					in_guild ? Button::State::NORMAL : Button::State::DISABLED);
+				set_guild_buttons(in_guild);
+				break;
+			}
+			case Tab::UNION:
+				group(union_btns, std::size(union_btns), true, Button::State::NORMAL);
+				update_union_button_states();
+				break;
+			case Tab::BLACKLIST:
+				group(blacklist_btns, std::size(blacklist_btns), true, Button::State::NORMAL);
+				update_blacklist_button_states();
+				break;
+		}
+	}
+
+	void UIUserList::update_friend_button_states()
+	{
+		// r3：Angel CTabFriend::OnClick @0x91dba9 行级 disabled 规则
+		// （好友数组 index：[4]Mod [5]Delete [6]Chat [7]Whisper [8]Message [9]Party [10]Block）：
+		//   在线    → 7 行钮全亮
+		//   离线    → {Chat,Whisper,Party} 亮（Angel {6,7,9}），其余灰
+		//   被屏蔽  → 只 {Message} 亮 + BtBlock→BtUnBlock 贴图切换（本地无 block 位，
+		//             此分支仅当模型携带 block 态时生效；当前无数据，不触发）
+		//   无选中  → 7 行钮全灰（oracle 好友帧空态）
+		const Buddy* b = friend_selected_cid > 0
+			? BuddyListModel::get().find(friend_selected_cid) : nullptr;
+
+		auto st = [&](uint16_t id, Button::State s)
+		{
+			auto it = buttons.find(id);
+			if (it != buttons.end() && it->second)
+				it->second->set_state(s);
+		};
+
+		if (!b)
+		{
+			static const uint16_t rowbtns[] = {
+				BT_FRIEND_MOD, BT_FRIEND_DELETE2, BT_FRIEND_CHAT, BT_FRIEND_WHISPER,
+				BT_FRIEND_MESSAGE, BT_FRIEND_PARTY, BT_FRIEND_BLOCK
+			};
+			for (uint16_t id : rowbtns)
+				st(id, Button::State::DISABLED);
+			return;
+		}
+
+		const bool blocked = false;	// s9 无 buddy block 数据位（见 notes r1 §7-4）
+		st(BT_FRIEND_UNBLOCK, Button::State::NORMAL);
+
+		if (blocked)
+		{
+			st(BT_FRIEND_MESSAGE, Button::State::NORMAL);
+			st(BT_FRIEND_MOD, Button::State::DISABLED);
+			st(BT_FRIEND_DELETE2, Button::State::DISABLED);
+			st(BT_FRIEND_CHAT, Button::State::DISABLED);
+			st(BT_FRIEND_WHISPER, Button::State::DISABLED);
+			st(BT_FRIEND_PARTY, Button::State::DISABLED);
+			st(BT_FRIEND_BLOCK, Button::State::DISABLED);
+			if (auto it = buttons.find(BT_FRIEND_UNBLOCK); it != buttons.end() && it->second)
+			{
+				it->second->set_active(true);
+				it->second->set_state(Button::State::NORMAL);
+			}
+			if (auto it = buttons.find(BT_FRIEND_BLOCK); it != buttons.end() && it->second)
+				it->second->set_active(false);
+			return;
+		}
+
+		if (auto it = buttons.find(BT_FRIEND_UNBLOCK); it != buttons.end() && it->second)
+			it->second->set_active(false);
+		if (auto it = buttons.find(BT_FRIEND_BLOCK); it != buttons.end() && it->second)
+			it->second->set_active(true);
+
+		if (b->online)
+		{
+			st(BT_FRIEND_MOD, Button::State::NORMAL);
+			st(BT_FRIEND_DELETE2, Button::State::NORMAL);
+			st(BT_FRIEND_CHAT, Button::State::NORMAL);
+			st(BT_FRIEND_WHISPER, Button::State::NORMAL);
+			st(BT_FRIEND_MESSAGE, Button::State::NORMAL);
+			st(BT_FRIEND_PARTY, Button::State::NORMAL);
+			st(BT_FRIEND_BLOCK, Button::State::NORMAL);
+		}
+		else
+		{
+			// 离线（Angel {6,7,9} = Chat/Whisper/Party 仍亮）
+			st(BT_FRIEND_CHAT, Button::State::NORMAL);
+			st(BT_FRIEND_WHISPER, Button::State::NORMAL);
+			st(BT_FRIEND_PARTY, Button::State::NORMAL);
+			st(BT_FRIEND_MOD, Button::State::DISABLED);
+			st(BT_FRIEND_DELETE2, Button::State::DISABLED);
+			st(BT_FRIEND_MESSAGE, Button::State::DISABLED);
+			st(BT_FRIEND_BLOCK, Button::State::DISABLED);
+		}
+	}
+
+	void UIUserList::update_party_button_states()
+	{
+		// Angel 组员页无行级规则（CTabParty 无 SetButton 更新函数）→ 整组亮。
+		// BtCreate 在已有队伍时置灰（创建无意义），其余保持可点（服务端校验权限）。
+		const Party& p = PartyModel::get().data();
+
+		static const uint16_t all[] = {
+			BT_PARTY_INVITE2, BT_PARTY_WITHDRAW, BT_PARTY_KICK, BT_PARTY_CHANGE_BOSS,
+			BT_PARTY_SEARCH2, BT_PARTY_HP, BT_PARTY_WHISPER, BT_PARTY_CHAT
+		};
+		for (uint16_t id : all)
+		{
+			auto it = buttons.find(id);
+			if (it != buttons.end() && it->second)
+				it->second->set_state(Button::State::NORMAL);
+		}
+
+		if (auto it = buttons.find(BT_PARTY_CREATE2); it != buttons.end() && it->second)
+			it->second->set_state(p.in_party() ? Button::State::DISABLED : Button::State::NORMAL);
+	}
+
+	void UIUserList::update_union_button_states()
+	{
+		// r3：oracle 联盟帧——未入盟 4×3 全灰 + 右上笔形钮常亮。
+		// 联盟成员列表数据模型未建（s9 Alliance 下发链路待真机验证），入盟态
+		// 按钮点亮与行渲染留待 alliance 数据流轮次（notes r1 §7-8）。
+		static const uint16_t all[] = {
+			BT_UNION_INVITE, BT_UNION_WITHDRAW, BT_UNION_WHERE, BT_UNION_WHISPER,
+			BT_UNION_UP, BT_UNION_DOWN, BT_UNION_KICK, BT_UNION_CHAT,
+			BT_UNION_PARTYINVITE, BT_UNION_INFO, BT_UNION_CHANGE
+		};
+		for (uint16_t id : all)
+		{
+			auto it = buttons.find(id);
+			if (it != buttons.end() && it->second)
+				it->second->set_state(Button::State::DISABLED);
+		}
+
+		if (auto it = buttons.find(BT_UNION_NOTICE); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::NORMAL);
+	}
+
+	void UIUserList::update_blacklist_button_states()
+	{
+		// r3：oracle 拒绝列表帧——「增加」常亮（黄绿态），「删除」无选中行灰。
+		if (auto it = buttons.find(BT_BLACKLIST_ADD); it != buttons.end() && it->second)
+			it->second->set_state(Button::State::NORMAL);
+		if (auto it = buttons.find(BT_BLACKLIST_DELETE); it != buttons.end() && it->second)
+			it->second->set_state(blacklist_selected > 0
+				? Button::State::NORMAL : Button::State::DISABLED);
+	}
+
+	void UIUserList::refresh_from_models()
+	{
+		// handler 收包后的统一刷新入口：按钮态按当前页签重算。
+		set_page_buttons(tab);
 	}
 
 	void UIUserList::draw_friend_tab(float) const
 	{
 		const BuddyListData& bl = BuddyListModel::get().data();
 
+		// r3 live 实测对齐 oracle（native_friend_tab.png 像素扫描）：
+		//   横幅 (12,50)、计数 (261,59)、分组蓝字 (16,112)、虚线 (102,112) 宽123、
+		//   none (16,130)、目前位置 (12,313)。
+		//   friend4（离线好友横幅）是筛选态顶横幅素材，不再当分组条画在 y=100
+		//   （旧实现与 Default Group 文本叠死，真机截图确认）。
+		//   friend1/friend3（相同频道/不同频道列头+分隔）oracle 空态不绘制。
 		if (friend_banner)
-			friend_banner.draw(position + Point<int16_t>(12, 52));
-		friend_count_text.draw(position + Point<int16_t>(243, 56));
-		if (friend_group_bar)
-			friend_group_bar.draw(position + Point<int16_t>(12, 100));
-		friend_group_text.draw(position + Point<int16_t>(22, 104));
-		// 只保留一张列头；friend5 第二列头叠绘会造成「多画一层」。
-		if (friend_col_header)
-			friend_col_header.draw(position + Point<int16_t>(12, 119));
-		if (friend_separator)
-			friend_separator.draw(position + Point<int16_t>(12, 138));
+			friend_banner.draw(position + Point<int16_t>(12, 50));
+		friend_count_text.draw(position + Point<int16_t>(261, 59));
+		friend_group_text.draw(position + Point<int16_t>(16, 112));
+		if (friend_line)
+			friend_line.draw(DrawArgument(position + Point<int16_t>(102, 112), Point<int16_t>(123, 0)));
 
 		// P0：从 BuddyListModel 绘成员行；空列表才显示 none。
 		int16_t y = FRIEND_ROW_Y;
@@ -1703,9 +1987,9 @@ namespace ms
 		}
 
 		if (drawn == 0)
-			friend_none_text.draw(position + Point<int16_t>(24, FRIEND_ROW_Y));
+			friend_none_text.draw(position + Point<int16_t>(16, FRIEND_ROW_Y));
 
-		friend_location_text.draw(position + Point<int16_t>(12, 292));
+		friend_location_text.draw(position + Point<int16_t>(12, 313));
 		friends_slider.draw(position);
 	}
 
@@ -1714,8 +1998,8 @@ namespace ms
 		const Party& p = PartyModel::get().data();
 
 		if (party_online_banner)
-			party_online_banner.draw(position + Point<int16_t>(12, 52));
-		party_online_count_text.draw(position + Point<int16_t>(250, 56));
+			party_online_banner.draw(position + Point<int16_t>(12, 50));
+		party_online_count_text.draw(position + Point<int16_t>(261, 59));
 		if (party_col_header)
 			party_col_header.draw(position + Point<int16_t>(12, 80));
 
@@ -1742,7 +2026,28 @@ namespace ms
 					? Color::Name::MEDIUMBLUE : Color::Name::BLACK;
 				Text row(Text::Font::A11M, Text::Alignment::LEFT, cname, info);
 				row.draw(position + Point<int16_t>(24, y));
-				y += PARTY_ROW_H;
+
+				// r3：血条（BtHP 开关开启且模型持有该成员血量时，083 CUIPartyHP 画法：
+				// graduation 69x13 外框 + bar 63x7 裁右填充，与 UIParty 浮窗同源同法）。
+				if (party_hp_visible && partyhp_bar && partyhp_graduation)
+					if (const auto* hp = PartyModel::get().member_hp(m.id))
+					{
+						int32_t cur = hp->first;
+						int32_t max = hp->second;
+
+						const int16_t BAR_W = partyhp_bar.width();
+						int16_t fill_w = static_cast<int16_t>(
+							BAR_W * (max > 0 ? static_cast<double>(cur) / max : 0.0));
+						if (fill_w < 0) fill_w = 0;
+						if (fill_w > BAR_W) fill_w = BAR_W;
+
+						Point<int16_t> at = position + Point<int16_t>(24, y + 16);
+						partyhp_graduation.draw(DrawArgument(at));
+						Range<int16_t> crop_right(0, static_cast<int16_t>(BAR_W - fill_w));
+						partyhp_bar.draw(DrawArgument(at), {}, crop_right);
+					}
+
+				y += PARTY_ROW_H + (party_hp_visible ? 14 : 0);
 				drawn++;
 			}
 
@@ -1754,12 +2059,10 @@ namespace ms
 			party_none_text.draw(position + Point<int16_t>(24, PARTY_ONLINE_Y));
 
 		if (party_offline_banner)
-			party_offline_banner.draw(position + Point<int16_t>(12, 140));
-		party_offline_count_text.draw(position + Point<int16_t>(250, 144));
+			party_offline_banner.draw(position + Point<int16_t>(12, 131));
+		party_offline_count_text.draw(position + Point<int16_t>(261, 140));
 		if (party_col_header2)
-			party_col_header2.draw(position + Point<int16_t>(12, 168));
-		if (party_separator)
-			party_separator.draw(position + Point<int16_t>(12, 186));
+			party_col_header2.draw(position + Point<int16_t>(12, 161));
 
 		draw_party_rows(false, PARTY_OFFLINE_Y, PARTY_OFFLINE_ROWS);
 		party_slider.draw(position);
@@ -1768,14 +2071,56 @@ namespace ms
 	void UIUserList::draw_blacklist_tab(float) const
 	{
 		if (blacklist_banner)
-			blacklist_banner.draw(position + Point<int16_t>(12, 52));
-		blacklist_count_text.draw(position + Point<int16_t>(250, 56));
+			blacklist_banner.draw(position + Point<int16_t>(12, 55));
+		// 计数文案在 update() 同步（const 方法不重建布局），容量 26（oracle 帧「0/26」）。
+		blacklist_count_text.draw(position + Point<int16_t>(233, 65));
 		if (blacklist_col_header)
-			blacklist_col_header.draw(position + Point<int16_t>(12, 80));
+			blacklist_col_header.draw(position + Point<int16_t>(12, 83));
 		if (blacklist_separator)
-			blacklist_separator.draw(position + Point<int16_t>(12, 98));
-		blacklist_none_text.draw(position + Point<int16_t>(24, 105));
+			blacklist_separator.draw(position + Point<int16_t>(12, 101));
+
+		if (blacklist_names.empty())
+		{
+			blacklist_none_text.draw(position + Point<int16_t>(18, BLACKLIST_ROW_Y));
+		}
+		else
+		{
+			// r3：本地拒绝列表行渲染（Angel 列表按名字排序；选中行深蓝高亮，
+			// 与好友/组员页同款）。
+			int16_t y = BLACKLIST_ROW_Y;
+
+			for (size_t i = 0; i < blacklist_names.size() && i < 13; i++)
+			{
+				const Color::Name cname =
+					(static_cast<int32_t>(i) + 1 == blacklist_selected)
+					? Color::Name::MEDIUMBLUE : Color::Name::BLACK;
+				Text row(Text::Font::A11M, Text::Alignment::LEFT,
+					cname, blacklist_names[i]);
+				row.draw(position + Point<int16_t>(24, y));
+				y += BLACKLIST_ROW_H;
+			}
+		}
+
 		blacklist_slider.draw(position);
+	}
+
+	int32_t UIUserList::blacklist_row_at(Point<int16_t> cursorpos) const
+	{
+		const Point<int16_t> rel(
+			static_cast<int16_t>(cursorpos.x() - position.x()),
+			static_cast<int16_t>(cursorpos.y() - position.y()));
+
+		if (rel.x() < 12 || rel.x() > 280)
+			return 0;
+
+		const int16_t visible =
+			static_cast<int16_t>(blacklist_names.size() < 13 ? blacklist_names.size() : 13);
+
+		if (rel.y() < BLACKLIST_ROW_Y
+			|| rel.y() >= BLACKLIST_ROW_Y + visible * BLACKLIST_ROW_H)
+			return 0;
+
+		return (rel.y() - BLACKLIST_ROW_Y) / BLACKLIST_ROW_H + 1;
 	}
 
 	void UIUserList::draw_union_tab(float) const
@@ -1784,7 +2129,7 @@ namespace ms
 		// 不再无条件叠 guildinfo0/2/3/4 四件家族页烘焙件（2026-11-11）。
 		if (union_notice_bar)
 			union_notice_bar.draw(position + Point<int16_t>(12, 52));
-		union_none_text.draw(position + Point<int16_t>(96, 56));
+		union_none_text.draw(position + Point<int16_t>(104, 58));	// r3 oracle：文字起点 x104
 		union_slider.draw(position);
 	}
 

@@ -208,8 +208,6 @@ namespace ms
 			CHARINFO,
 			CASHSHOP,
 			STORAGE,
-			PARTY,
-			BUDDYLIST,
 			TRADE,
 			GUILD,
 			/// 公会公告板独立窗（UI/GuildBBS.img）；与 GUILD 成员窗分型，避免互相抢焦点。

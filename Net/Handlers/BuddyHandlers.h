@@ -19,8 +19,6 @@
 
 #include "../PacketHandler.h"
 
-#include "../../IO/UITypes/UIBuddyList.h"
-
 namespace ms
 {
 	// 解析服务端下发的友链表包（BUDDYLIST=63）。

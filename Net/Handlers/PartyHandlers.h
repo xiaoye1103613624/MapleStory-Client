@@ -19,7 +19,7 @@
 
 #include "../PacketHandler.h"
 
-#include "../../IO/UITypes/UIParty.h"
+#include "../../Character/PartyModel.h"
 
 namespace ms
 {

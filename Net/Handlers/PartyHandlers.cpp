@@ -21,8 +21,8 @@
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UIOptionMenu.h"
-#include "../../IO/UITypes/UIParty.h"
 #include "../../IO/UITypes/UIPartySearch.h"
+#include "../../IO/UITypes/UIUserList.h"
 #include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Net/Packets/PartyPackets.h"
@@ -48,12 +48,16 @@ namespace ms
 
 		uint8_t mode = recv.read_byte();
 
-		// P0 / T1：写 PartyModel；浮窗仅已存在时同步，不再强制 emplace。
-		auto uiparty = UI::get().get_element<UIParty>();
+		// P0 / T1：写 PartyModel；r3 后 UIUserList 每帧直读模型，收包后触发
+		// 一次按钮态/绘制刷新。UIParty 浮窗退役（本文件不再引用）。
+		auto refresh_userlist = []()
+		{
+			if (auto ul = UI::get().get_element<UIUserList>())
+				ul->refresh_from_models();
+		};
 		auto sync_party_ui = [&](const Party& party) {
 			PartyModel::get().set(party);
-			if (uiparty)
-				uiparty->update_party(party);
+			refresh_userlist();
 		};
 
 		switch (mode)
@@ -135,11 +139,8 @@ namespace ms
 					while (recv.available())
 						recv.skip_byte();
 					PartyModel::get().clear();
-					// DISBAND：已开窗直接关；未开才 tip
-					if (uiparty && uiparty->is_active())
-						uiparty->deactivate();
-					else
-						ensure_sm(Color::Name::WHITE, "Party disbanded");
+					refresh_userlist();
+					ensure_sm(Color::Name::WHITE, "Party disbanded");
 				}
 				else
 				{
@@ -151,7 +152,7 @@ namespace ms
 					while (recv.available())
 						recv.skip_byte();
 					sync_party_ui(party);
-					if (!uiparty && !tname.empty())
+					if (!tname.empty())
 						ensure_sm(Color::Name::WHITE, tname + " left");
 				}
 				(void)targetid;
@@ -164,11 +165,9 @@ namespace ms
 				while (recv.available())
 					recv.skip_byte();
 				PartyModel::get().set_leader(targetid);
-				if (uiparty)
-					uiparty->set_leader(targetid);
-				else
-					ensure_sm(Color::Name::YELLOW,
-						"Party leader -> #" + std::to_string(targetid));
+				refresh_userlist();
+				ensure_sm(Color::Name::YELLOW,
+					"Party leader -> #" + std::to_string(targetid));
 				(void)targetid;
 				break;
 			}
@@ -194,8 +193,6 @@ namespace ms
 				};
 				const char* msg = (mode < 11) ? fails[mode] : nullptr;
 				std::string tip = msg ? msg : ("Party mode " + std::to_string(mode));
-				if (uiparty && uiparty->is_active())
-					break;
 				if (msg || mode != 0)
 					ensure_sm(Color::Name::YELLOW, tip);
 				break;
@@ -262,9 +259,12 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 
-		// P0：血条仅刷新已打开的浮窗，不强开（UserList 组员页本批不绘 HP）。
-		if (auto uiparty = UI::get().get_element<UIParty>())
-			uiparty->update_member_hp(cid, curhp, maxhp);
-		(void)cid; (void)curhp; (void)maxhp;
+		// r3（2026-11-16）：血量改写常驻模型（修复「先收血包后开窗丢失」——
+		// 旧路径只在 UIParty 浮窗活着时存浮窗成员 map）。UIUserList 组员页血条
+		// 读模型；收包后触发一次按钮态/绘制刷新。
+		PartyModel::get().set_member_hp(cid, curhp, maxhp);
+
+		if (auto userlist = UI::get().get_element<UIUserList>())
+			userlist->refresh_from_models();
 	}
 }

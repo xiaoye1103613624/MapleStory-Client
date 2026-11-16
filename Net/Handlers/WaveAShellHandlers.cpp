@@ -52,8 +52,7 @@
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/UITypes/UICharInfo.h"
 #include "../../IO/UITypes/UIPartySearch.h"
-#include "../../IO/UITypes/UIParty.h"
-#include "../../IO/UITypes/UIBuddyList.h"
+#include "../../IO/UITypes/UIUserList.h"
 #include "../../IO/UITypes/UIMessenger.h"
 #include "../../IO/UITypes/UIStorage.h"
 #include "../../IO/UITypes/UIDelivery.h"
@@ -1329,17 +1328,17 @@ namespace ms
 				else if (!g->is_active()) g->makeactive();
 				break;
 			}
-			case 0x0C: // Party
+			case 0x0C: // Party → 五页签共用窗组员页（UIParty 浮窗退役 r3）
 			{
-				auto p = UI::get().get_element<UIParty>();
-				if (!p) UI::get().emplace<UIParty>();
+				auto p = UI::get().get_element<UIUserList>();
+				if (!p) UI::get().emplace<UIUserList>(static_cast<uint16_t>(UIUserList::Tab::PARTY));
 				else if (!p->is_active()) p->makeactive();
 				break;
 			}
-			case 0x0D: // Buddy
+			case 0x0D: // Buddy → 五页签共用窗好友页（UIBuddyList 浮窗退役 r3）
 			{
-				auto b = UI::get().get_element<UIBuddyList>();
-				if (!b) UI::get().emplace<UIBuddyList>();
+				auto b = UI::get().get_element<UIUserList>();
+				if (!b) UI::get().emplace<UIUserList>(static_cast<uint16_t>(UIUserList::Tab::FRIEND));
 				else if (!b->is_active()) b->makeactive();
 				break;
 			}
@@ -4059,8 +4058,9 @@ namespace ms
 		while (recv.available())
 			recv.skip_byte();
 		std::string tip = "Party " + key + "=" + val;
-		auto party = UI::get().get_element<UIParty>();
-		if (!party) party = UI::get().emplace<UIParty>();
+		// r3：UIParty 浮窗退役，调试展示落到五页签共用窗组员页。
+		auto party = UI::get().get_element<UIUserList>();
+		if (!party) party = UI::get().emplace<UIUserList>(static_cast<uint16_t>(UIUserList::Tab::PARTY));
 		else if (!party->is_active()) party->makeactive();
 		if (auto ps = UI::get().get_element<UIPartySearch>())
 		{

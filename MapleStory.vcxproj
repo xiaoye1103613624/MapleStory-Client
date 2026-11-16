@@ -383,8 +383,6 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UICharSelect.cpp" />
     <ClCompile Include="IO\UITypes\UIViewAllChar.cpp" />
     <ClCompile Include="IO\UITypes\UIStorage.cpp" />
-    <ClCompile Include="IO\UITypes\UIParty.cpp" />
-    <ClCompile Include="IO\UITypes\UIBuddyList.cpp" />
     <ClCompile Include="IO\UITypes\UITrade.cpp" />
     <ClCompile Include="IO\UITypes\UIGuild.cpp" />
     <ClCompile Include="IO\UITypes\UIGuildBBS.cpp" />
