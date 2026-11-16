@@ -1,0 +1,2 @@
+R6 rod dy=-34 ncc=0.989 tag dy=+38 ncc=0.319
+R7 rod dy=+0 ncc=0.989 tag dy=+0 ncc=0.362

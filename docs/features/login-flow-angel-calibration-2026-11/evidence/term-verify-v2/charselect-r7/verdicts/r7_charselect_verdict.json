@@ -1,0 +1,87 @@
+{
+  "method": "R7 isolated-exe charselect attribute board capture",
+  "ts": "2026-11-16 15:05:13",
+  "src_exe_sha256": "42958837cd63dac4324ff3a071bc70bc1f0a2609e5e4ab7574d1cb0a0e04c9a2",
+  "config_head_before": "b'# M'",
+  "deployed_exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory_r4.exe",
+  "deployed_sha256": "42958837cd63dac4324ff3a071bc70bc1f0a2609e5e4ab7574d1cb0a0e04c9a2",
+  "live_exe_untouched_sha256": "f36fe6d232e36f3dcd094d0acaf4b0143d41c0ef6436377e5f8e98bbf835e165",
+  "packet_dump_start_offset": 208185,
+  "pid": 39896,
+  "client_size": [
+    1280,
+    720
+  ],
+  "unicode_account_ok": true,
+  "unicode_password_ok": true,
+  "anchors": [],
+  "anchor_hit": false,
+  "frames_charselect": [
+    {
+      "i": 0,
+      "file": "r7_charselect_f00.png",
+      "mean": 108.94,
+      "std": 84.57,
+      "uniq": 722,
+      "real_gl_frame": true
+    },
+    {
+      "i": 1,
+      "file": "r7_charselect_f01.png",
+      "mean": 142.16,
+      "std": 77.21,
+      "uniq": 1316,
+      "real_gl_frame": true
+    },
+    {
+      "i": 2,
+      "file": "r7_charselect_f02.png",
+      "mean": 141.62,
+      "std": 77.04,
+      "uniq": 1332,
+      "real_gl_frame": true
+    },
+    {
+      "i": 3,
+      "file": "r7_charselect_f03.png",
+      "mean": 141.14,
+      "std": 77.01,
+      "uniq": 1346,
+      "real_gl_frame": true
+    },
+    {
+      "i": 4,
+      "file": "r7_charselect_f04.png",
+      "mean": 141.21,
+      "std": 77.09,
+      "uniq": 1336,
+      "real_gl_frame": true
+    },
+    {
+      "i": 5,
+      "file": "r7_charselect_f05.png",
+      "mean": 141.54,
+      "std": 77.16,
+      "uniq": 1354,
+      "real_gl_frame": true
+    },
+    {
+      "i": 6,
+      "file": "r7_charselect_f06.png",
+      "mean": 142.21,
+      "std": 77.32,
+      "uniq": 1358,
+      "real_gl_frame": true
+    },
+    {
+      "i": 7,
+      "file": "r7_charselect_f07.png",
+      "mean": 142.73,
+      "std": 77.45,
+      "uniq": 1369,
+      "real_gl_frame": true
+    }
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:142延迟:--】【当前时间：2026-11-16 15:06:21】",
+  "config_head_after": "b'# M'"
+}

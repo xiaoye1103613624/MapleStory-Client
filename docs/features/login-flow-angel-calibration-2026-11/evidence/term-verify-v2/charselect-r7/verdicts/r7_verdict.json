@@ -1,0 +1,33 @@
+{
+  "verdict": "R7_SCROLL_NAMETAG_VERIFIED",
+  "build_sha256": "42958837cd63dac4324ff3a071bc70bc1f0a2609e5e4ab7574d1cb0a0e04c9a2",
+  "fixes": {
+    "scroll": {
+      "target_rod_dy_baseline": "R6 dy=-34 ncc=0.989 (画高34px)",
+      "after": "R7 dy=+0 ncc=0.989",
+      "const": "CS_SCROLL_CONTENT_OFF (17,59)->(17,25)"
+    },
+    "nametag": {
+      "target_frame_edges": [
+        430,
+        449
+      ],
+      "R6": [
+        449,
+        468
+      ],
+      "R7": [
+        430,
+        449
+      ],
+      "const": "nametags draw (2,17)->(2,-2)"
+    }
+  },
+  "channel_bottom_scroll": {
+    "verdict": "NOT_MISSING",
+    "rod_body_y536_545_mean_abs": "~0.0",
+    "left_region_x440_640_dark": "target=ours (0/0)",
+    "difference_region": "x720-920 GoWorld/pager, not scroll edge"
+  },
+  "ts": "2026-11-16 15:08"
+}
