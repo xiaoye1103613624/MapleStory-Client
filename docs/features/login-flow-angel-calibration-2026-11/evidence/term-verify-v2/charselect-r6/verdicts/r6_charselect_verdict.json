@@ -1,0 +1,96 @@
+{
+  "method": "R6 isolated-exe charselect attribute board capture",
+  "ts": "2026-11-16 08:21:22",
+  "src_exe_sha256": "0a8266182e7898242c1cd081a44f0181731aed57d3263c26d9f5839495cb7e8e",
+  "config_head_before": "b'# M'",
+  "deployed_exe": "E:\\MXD\\BeiDou-Client-xy\\MapleStory_r4.exe",
+  "deployed_sha256": "0a8266182e7898242c1cd081a44f0181731aed57d3263c26d9f5839495cb7e8e",
+  "live_exe_untouched_sha256": "a4236fb0a5947b47c455f4678b7646e7ca39b52ad52268a5da963d6e087d6693",
+  "packet_dump_start_offset": 8682633,
+  "pid": 26900,
+  "client_size": [
+    1280,
+    720
+  ],
+  "unicode_account_ok": true,
+  "unicode_password_ok": true,
+  "anchors": [
+    [
+      "login",
+      0.121
+    ],
+    [
+      "end",
+      1.207
+    ]
+  ],
+  "anchor_hit": true,
+  "frames_charselect": [
+    {
+      "i": 0,
+      "file": "r6_charselect_f00.png",
+      "mean": 140.93,
+      "std": 76.9,
+      "uniq": 1336,
+      "real_gl_frame": true
+    },
+    {
+      "i": 1,
+      "file": "r6_charselect_f01.png",
+      "mean": 141.14,
+      "std": 76.95,
+      "uniq": 1337,
+      "real_gl_frame": true
+    },
+    {
+      "i": 2,
+      "file": "r6_charselect_f02.png",
+      "mean": 141.79,
+      "std": 77.1,
+      "uniq": 1349,
+      "real_gl_frame": true
+    },
+    {
+      "i": 3,
+      "file": "r6_charselect_f03.png",
+      "mean": 142.39,
+      "std": 77.3,
+      "uniq": 1353,
+      "real_gl_frame": true
+    },
+    {
+      "i": 4,
+      "file": "r6_charselect_f04.png",
+      "mean": 143.22,
+      "std": 77.52,
+      "uniq": 1338,
+      "real_gl_frame": true
+    },
+    {
+      "i": 5,
+      "file": "r6_charselect_f05.png",
+      "mean": 143.49,
+      "std": 77.45,
+      "uniq": 1340,
+      "real_gl_frame": true
+    },
+    {
+      "i": 6,
+      "file": "r6_charselect_f06.png",
+      "mean": 143.47,
+      "std": 77.45,
+      "uniq": 1342,
+      "real_gl_frame": true
+    },
+    {
+      "i": 7,
+      "file": "r6_charselect_f07.png",
+      "mean": 143.28,
+      "std": 77.46,
+      "uniq": 1331,
+      "real_gl_frame": true
+    }
+  ],
+  "title": "XiaoYE MS v0.0.1【FPS:144延迟:--】【当前时间：2026-11-16 08:21:45】",
+  "config_head_after": "b'# M'"
+}

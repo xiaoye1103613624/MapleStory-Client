@@ -590,3 +590,25 @@
 - 真机复验（同一护栏链）：`VERIFY_RC=0`、`AUTO_LOGIN_RESTORE_OK=True`、`R4_CHANNEL_FIX_VERIFIED` **16/16**，R4 四点数值不退化（`scroll_bottom 0.8006 / scroll_full 0.7662 / body_weighted 14.46`，三带 x_shift 全 0）。
 - **专项收敛**：左上角 (0,0,150,60) frac **0.546 → 0.381**（目标 0.381，精确同值）；plank 带 (9,8,160,36) **0.546 前值的牌区 → 0.032 = 目标 0.032**，千分位精确同分；`compare/cmp_topleft_exit_plank_after.png` 目视两端只剩标题牌本体、无残影。
 - 残差口径不变：扩展翻页箭头仍为本服功能件；§11.7 五项不签继续挂；m08338 属性板整轮拆出。
+
+## 17 选角色属性值垂直居中（R6，真机 VERIFIED）
+
+### 17.1 用户输入
+- m09240：「英文状态下 选择角色后的属性值是不是偏下了？没有背景格子垂直居中」。
+
+### 17.2 测量
+- 左列（job/level/str/dex）+ 右列（fame/int/luk）逐行墨带剖面（thr90/130，窄列窗）+ 整列墨量曲线互相关：修复前（R5 二进制）左列低 7px、右列低 5px、rank 低 6px。
+- 蓝军翻案：第一次定标按「top-left 语义」把常量 y +3/+4，真机复测墨带不降反升（job 峰 231 vs 目标 223）→ 复读 `GraphicsGL.cpp:1876` 发现 `char_y = y + ay - ch.bt`，**Text::draw 的 y 是 baseline 语义**（字形顶 = y − bt），与 Angel GDI DrawTextA rect-top 完全不同。
+
+### 17.3 定标（二次落刀）
+- 本端字形 bearing-top 实测（R6 帧，thr130）：数字 9、大写英文 7、中文≈8。
+- 目标帧墨带顶：job 223 / level 243 / str 260 / dex 278 / fame 242 / int 260 / luk 278 / rank 321。
+- 常量 = 目标墨顶 − detail_pos.y(220) − bt：job(46,−4) / level(46,14) / fame(136,13) / str(46,31) / int(136,31) / dex(46,49) / luk(136,49) / rank_na(36,93) / rank(115,93)。
+
+### 17.4 真机验收（build 0a826618…）
+- 8 行墨带顶 dy：job+1 / level+1 / str 0 / dex+1 / fame+1 / int 0 / luk 0 / rank −1 —— **全部 |dy|≤1px**。
+- `R6_ROWALIGN_VERIFIED`。目视 `cmp_r6_final_3x.png`：值行与标签行格位对齐，与目标一致。
+
+### 17.5 披露
+- 两次落刀方向翻案入档：第一次定标方向错误（top/baseline 语义混淆），二次真机才收敛——Angel 反编译常量不能直接当本引擎坐标用，必须按绘制语义换算。
+- job 行按「英文状态下大写开头 bt=7」定标；中文 job 名（黑骑士）目视 dy 同样 ≤1px（bt 差 ≤1px）。
