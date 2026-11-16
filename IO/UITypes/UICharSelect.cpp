@@ -98,11 +98,14 @@ namespace ms
 	// 旧值 (-94,-231) 把整板上移 23px（此前误把本端旧帧的内容板顶 197
 	// 当成目标值），表现为属性板偏高、与角色头部分离。
 	static constexpr Point<int16_t> CS_CHARINFO_OFF(-94, -208);
-	// 内容板在卷轴（CharSelect/scroll/2 末帧 217×193）内的偏移：目标帧卷轴
-	// 顶边 ≈161、内容板顶边 220 ⇒ 纵向 59；横向居中 (217-183)/2=17。
-	// 旧值 39 来自本端旧帧 197-158。本端卷轴只差 3px，故两常量须联动：
-	// CHARINFO +23 且 SCROLL_CONTENT +20 ⇒ 内容板 +23、卷轴仅 +3。
-	static constexpr Point<int16_t> CS_SCROLL_CONTENT_OFF(17, 59);
+	// 内容板在卷轴（CharSelect/scroll/2 末帧 217×193，origin(0,0) 已由 orange-wz 复核）
+	// 内的纵向偏移。m09240-R7 定标（2026-11-16，真帧 + 双端截图同口径）：
+	//   真帧顶杆暗带 = 帧内 rows 0..18；截图杆带 TARGET y195..212 / OURS y161..178
+	//   ⇒ TARGET 卷轴 TL y=195、本端 161，本端高 34px；detail_pos.y=220 不动
+	//   ⇒ OFFY = 220 - 195 = 25（旧值 59 系误把挂绳/上一帧当杆顶，多出 41px 空白纸带）。
+	// 横向：两端杆右缘均到 x≈592 ⇒ 卷轴 TL x≈376、detail_pos.x=391 ⇒ OFFX 15~17，
+	// 现值 17 在 ±2 噪声内保持不动（只改纵向；数值行/底板/排行常量全部不动）。
+	static constexpr Point<int16_t> CS_SCROLL_CONTENT_OFF(17, 25);
 
 	// 角色槽：占用与空槽共用同一桥面 Y。
 	// 站位校准（依据桥面贴片像素实测，2026-09-25）：
@@ -527,7 +530,9 @@ namespace ms
 				Point<int16_t> charpos = position + get_character_slot_pos(i, true);
 				DrawArgument chararg = DrawArgument(charpos, flip_character);
 
-				nametags[index].draw(charpos + Point<int16_t>(2, 17));
+				// m09240-R7（2026-11-16）：名牌白框顶 TARGET=430（脚点 428 +2），本端旧值
+				// (2,17) 实测框顶 449，整体下坠 19px ⇒ Y 17 → -2。X 两端中心差 ≤5px 不动。
+				nametags[index].draw(charpos + Point<int16_t>(2, -2));
 
 				const StatsEntry& character_stats = characters[index].stats;
 
