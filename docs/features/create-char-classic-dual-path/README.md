@@ -275,3 +275,86 @@ img 只到节点层（尺寸 / 类型 / 缺失清单），**没有导出位图�
 3. `statTb` 具体落点、`charAlert` 显示时机无 xref。
 4. 本轮不提交 git；modern 路径、服务端、协议、`CreateCharPacket` 字段、
    `UIWorldSelect` 木牌数量与位置均零改动。
+
+---
+
+## 13. 2026-11-16 第八轮闭环：step4 假按钮修复 + 三职业命名页/属性页真机逐页验收
+
+本轮闭合 §12.4 遗留的「step4 外观页三职业叠图实机确认」未跑项（Angel 083 逐页检查要求）。
+
+### 13.1 代码改动（唯一文件 `IO/UITypes/UICommonCreation.cpp`，sha `3b13c60a`）
+
+step4 外观页三处可定位偏差已落刀修复，diffstat `50 insertions(+), 33 deletions(-)`：
+
+| 页面 | 偏差 | 修复 |
+| --- | --- | --- |
+| step4 属性/皮肤/装备页 | 底部三块「重复检测」贴图是假按钮（`BtCheck`，点击无响应） | 删除三个 `BtCheck` 假按钮，落为纯装饰空木板+骰子 |
+| step4 属性页 | 性别行缺左右箭头 | 改 `try_maple_btn`：`BtGenderMale`→`NewChar["BtLeft"]`、`BtGenderFemale`→`NewChar["BtRight"]` |
+| step4 皮肤页 | 发色无可视化色板 | 8 格 `classic_hair_swatches`（x=charset+38+i*20, y=charset+100+2*18），`hairSelectSize=8` |
+| step4 属性页 | 骰子热区不透明遮挡 | 改透明 `AreaButton(55,45)` @ charset+(150,285) |
+| step4 全页 | 九行顺序与贴图标签错配 | 按 avatarSel 重排：脸/发型/发色/肤/上衣/裤子/鞋子/武器/性别 |
+| 命名→step4 切换 | `enable_char_look()`/`disable_char_look()` 漏新 id | 覆盖 `BtDice`/`BtGenderMale`/`BtGenderFemale`/`BtBottom*`/`BtCape*` |
+
+### 13.2 干净重建与产物
+
+- 编译脚本：`.agents/worktrees/channel-20page-verify` 隔离构建，`vcvarsall amd64` → MSBuild Release x64
+  `/p:OutDir=build_r4 /p:IntDir=build_r4\obj /p:PostBuildEventUseInBuild=false`。
+- 静态门禁：`git diff --check` RC=0 / 花括号 235:235 平衡 / 无 BOM / CRLF 2434:2434 一致。
+- 新产物 `build_r4/MapleStory.exe` sha `f4a23b5e5ea49e967f1356fd66a3c76eee581d067de2159d3ae47653cc1ea6a8`
+  / 5,117,440 B（旧 `42958837` / 5,117,952 B）。所有验收帧的 capture JSON 均记 `deployed_sha256=f4a23b5e`，
+  确认跑的是新包，未踩增量编译假通过陷阱。
+- 真机护栏 `run_create_step4_guarded.py`：每次 kill 残留实例 → `guard.disable()`（翻 `login.auto=false`）
+  → 跑 `verify_create_step4.py` → kill → `guard.restore()` 字节恢复。三次重跑
+  `VERIFY_RC=0` / `AUTO_LOGIN_RESTORE_OK=True` / config head `b'# M'` 前后不变。
+
+### 13.3 三职业逐页差异表（数值化 NCC 分类，当前模型不支持图像输入，判定不靠目视）
+
+分类器 `scripts/classify_step4.py`：整帧 resize 320×180，以各页正确帧为模板做 NCC，取最大相似页。
+`scripts/region_gradient_step4.py` 用「九行 UI 区梯度 / 命名输入框区梯度」比值区分 step4（>4）与命名页（≈1）。
+
+| 阶段 | 冒险家 | 骑士团(cygnus) | 战神(aran) |
+| --- | --- | --- | --- |
+| 00 选角页 | charselect cs=1.000 | charselect cs=1.000 | charselect cs=1.000 |
+| 01 职业团页 | raceselect rs=1.000 | raceselect rs=1.000 | raceselect rs=1.000 |
+| 02 选卡 | raceselect rs=0.982 | raceselect rs=0.957 | naming nm=0.976 |
+| 03 命名页 | naming nm=1.000 | naming nm=0.860 | naming nm=0.996 |
+| 04 命名后 | naming nm=0.985 | naming nm=0.848 | naming nm=0.984 |
+| 05 step4 f00 | step4 s4=1.000 | step4 s4=0.874 | step4 s4=0.997 |
+| 05 step4 f09 | step4 s4=0.953 | step4 s4=0.828 | step4 s4=0.952 |
+| step4 梯度比 | 6.95 | 4.08 | 6.95 |
+
+三职业均真实走到命名页→step4 属性/皮肤/装备页，九行 UI（脸/发型/发色/肤/上衣/裤子/鞋子/武器/性别）
+与发色板/骰子/性别箭头全部在位，假按钮已消失（`s4_panel_fixed_3x.png`）。
+
+### 13.4 抓帧脚本两处确定性修复（脚本问题，非产品 bug）
+
+1. **写死锚点**：旧 `verify_create_step4.py` 把冒险家的 `NAME_FIELD=(824,271)`/`YES_BTN=(788,353)` 写死，
+   骑士团/战神按源码 `yes_pos=(750,304)` 推导会点空。骑士团实测 `(828,271)/(796,356)` 通过；
+   战神源码推导 `(819,274)/(790,324)` 仍失败（帧停在命名页），改用 `locate_aran_yes.py`
+   模板匹配实测 `(821,270)/(788,352)` 后通过。根因：`yes_pos` 是窗口内逻辑坐标，`try_maple_btn` 有 origin 补偿，
+   不能线性换算成屏幕点击点。
+2. **固定 sleep 竞态**：旧战报 cygnus/aran 的 `deployed_sha256=42958837`（旧包），
+   「三职业只成功一条」是拿旧包战报当新结论的假象。本次三条全部用新包 `f4a23b5e` 重跑闭环。
+
+### 13.5 f02 覆盖悬案定性（历史 18:11 战报，不复现）
+
+- 旧现象：冒险家 f00/f01 NCC≈0.99、f02 突降到 0.727、f02–f09 缓降到 0.707，
+  分块 NCC 面板区色调大变但梯度保留 72%，判为「背景 tween 中间态」而非 UI 被抹/窗口覆盖。
+- 复跑验证：19:28 用同一新包同一脚本重跑冒险家，f00=1.000→f02=0.982→f09=0.953 **平滑缓降，无 f02 陡降**；
+  面板区梯度比=1.000（UI 结构完全保留），全屏 0.992。
+- 结论：旧 f02 陡降是一次性抓帧踩到 `LoginBackground::set_step` tween 中间态（`tween_duration=300*|step差|+500ms`），
+  非功能 bug、非窗口覆盖、非抓帧落错页。**不需改产品代码**。
+
+### 13.6 证据归档
+
+`docs/features/create-char-classic-dual-path/evidence/term-verify-r8/`：
+- `shots/`：三职业各 00/01/02/03/04 页 + step4 f00/f01/f02/f05/f09（38 文件）。
+- `verdicts/create_step4_capture_{adventurer,cygnus,aran}.json`：三次捕获元数据（新包 sha / pid / 输入锚点 / 帧 mean）。
+- `scripts/`：捕获护栏、逐页分类器、f02 梯度判定、战神锚点模板匹配、区域梯度脚本。
+- `s4_panel_fixed_3x.png`：修复后面板放大图（假按钮消失、性别箭头在位）。
+
+### 13.7 本轮未做（如实记录）
+
+- 未点 step4 的「确定」发包建角：脚本设计为只抓帧，`_create_char.log` 无本轮 `CREATE_CHAR` 属预期，非 bug。
+- 未跑原生 Angel 二进制叠图（本端只有源码+WZ，Angel 行为真源无法逐像素对齐，按项目既有口径保留）。
+- 服务端 / 协议 / `CreateCharPacket` 字段 / modern 建角路径零改动。

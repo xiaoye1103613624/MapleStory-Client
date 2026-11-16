@@ -638,9 +638,7 @@ namespace ms
 			}
 		}
 
-		// 9 行行序：sub_5FCF8A 的 9 类外观池 + 运行时 avatarSel/0..8。
-		// 0 肤色 / 1 脸型 / 2 发型 / 3 发色(色板, 无左右箭头) / 4 上衣 /
-		// 5 裤裙 / 6 披风 / 7 鞋 / 8 武器；与现有 Buttons 枚举一一对应。
+		// 九行箭头绑定见下方按 avatarSel 贴图标签的重排注释。
 		auto add_look_pair = [&](uint16_t left_id, uint16_t right_id, size_t row)
 		{
 			int16_t y = classic_charset_pos.y() + 100 + static_cast<int16_t>(row * 18);
@@ -651,14 +649,26 @@ namespace ms
 				Point<int16_t>(classic_charset_pos.x() + 185, y), "Creation/step4/BtRight");
 		};
 
-		add_look_pair(Buttons::BtSkinLeft, Buttons::BtSkinRight, 0);
-		add_look_pair(Buttons::BtFaceLeft, Buttons::BtFaceRight, 1);
-		add_look_pair(Buttons::BtHairLeft, Buttons::BtHairRight, 2);
+		// 原生 avatarSel 贴图自带行标签；真机帧 + 原生 IMG 位图双证行序：
+		// 0脸 1发型 2发色(色板) 3肤 4上衣 5裤子 6鞋子 7武器 8性别。
+		// 之前按 modern MakeCharInfo 池序(肤/脸/发型/发色/…/披风)摆箭头，导致
+		// 「点脸改肤色、点发色改发型、色板压在肤行」的整体错行 bug，此处按贴图标签重排。
+		add_look_pair(Buttons::BtFaceLeft, Buttons::BtFaceRight, 0);
+		add_look_pair(Buttons::BtHairLeft, Buttons::BtHairRight, 1);
+		// row2 = 发色：由下方 8 格色板接管，不放左右箭头。
+		add_look_pair(Buttons::BtSkinLeft, Buttons::BtSkinRight, 3);
 		add_look_pair(Buttons::BtTopLeft, Buttons::BtTopRight, 4);
 		add_look_pair(Buttons::BtBottomLeft, Buttons::BtBottomRight, 5);
-		add_look_pair(Buttons::BtCapeLeft, Buttons::BtCapeRight, 6);
-		add_look_pair(Buttons::BtShoesLeft, Buttons::BtShoesRight, 7);
-		add_look_pair(Buttons::BtWeaponLeft, Buttons::BtWeaponRight, 8);
+		add_look_pair(Buttons::BtShoesLeft, Buttons::BtShoesRight, 6);
+		add_look_pair(Buttons::BtWeaponLeft, Buttons::BtWeaponRight, 7);
+		// row8 = 性别：左右箭头复用性别 id（点左切男/点右切女），底部假按钮撤销。
+		try_maple_btn(buttons, Buttons::BtGenderMale, NewChar["BtLeft"],
+			Point<int16_t>(classic_charset_pos.x() + 168, classic_charset_pos.y() + 100 + 8 * 18),
+			"Creation/step4/GenderLeft");
+		try_maple_btn(buttons, Buttons::BtGenderFemale, NewChar["BtRight"],
+			Point<int16_t>(classic_charset_pos.x() + 185, classic_charset_pos.y() + 100 + 8 * 18),
+			"Creation/step4/GenderRight");
+		// capes 池不占原生 9 行（原生无披风行），仍参与随机化但不画箭头。
 
 		// 发色色板：运行时无 hairSelect 专属资产（R6 精简包），
 		// 用 BtLeft 15x16 作热区 + ColorBox 色块作颜色呈现。
@@ -673,22 +683,20 @@ namespace ms
 		for (size_t i = 0; i < 8; i++)
 		{
 			Point<int16_t> swatch(classic_charset_pos.x() + 38 + static_cast<int16_t>(i * 20),
-				classic_charset_pos.y() + 100 + 3 * 18);
+				classic_charset_pos.y() + 100 + 2 * 18);
 
 			try_maple_btn(buttons, static_cast<uint16_t>(Buttons::BtHairSelect0 + i),
 				NewChar["BtLeft"], swatch, "Creation/step4/BtHairSelect");
 			classic_hair_swatches.emplace_back(12, 12, hair_swatch_colors[i], 1.0f);
 		}
 
-		// 底部小板：性别切换 ×2 + 骰子随机（BtCheck 50x24 兜底资产）。
-		int16_t bottom_y = classic_charset_pos.y() + 330;
-
-		try_maple_btn(buttons, Buttons::BtGenderMale, NewChar["BtCheck"],
-			Point<int16_t>(classic_charset_pos.x() + 30, bottom_y), "Creation/step4/BtGenderMale");
-		try_maple_btn(buttons, Buttons::BtGenderFemale, NewChar["BtCheck"],
-			Point<int16_t>(classic_charset_pos.x() + 85, bottom_y), "Creation/step4/BtGenderFemale");
-		try_maple_btn(buttons, Buttons::BtDice, NewChar["BtCheck"],
-			Point<int16_t>(classic_charset_pos.x() + 140, bottom_y), "Creation/step4/BtDice");
+		// 原生 charSet 底部小板是空木板、无烘焙按钮；运行时精简包也无性别/骰子专属资产。
+		// 之前复用 BtCheck(贴图逐字「重复检测」) 当性别/骰子按钮，画出 3 个假按钮——功能 UI 双重 bug。
+		// 性别已挪到 row8 左右箭头；骰子用透明热区盖在 classic_dice_frames 绘制位，
+		// 用户看到的就是骰子动画本身，不再出现「重复检测」字样。
+		buttons[Buttons::BtDice] = std::make_unique<AreaButton>(
+			Point<int16_t>(classic_charset_pos.x() + 150, classic_charset_pos.y() + 285),
+			Point<int16_t>(55, 45));
 
 		// 首屏仍是命名态，step4 控件全部先隐藏。
 		disable_char_look();
@@ -1062,26 +1070,26 @@ namespace ms
 	{
 		UIElement::draw_sprites(inter);
 
-		// 命名态的吊牌与已确认名字保持可见（缺陷 3），角色继续站在平台上。
-		nameboard.draw(charNameOrigin);
-		confirmed_name.draw(position + newCharNamePos + classic_name_shift);
-
+		// 原生 step4 是与命名态互斥的独立阶段（CLogin::ChangeStep step3→step4，
+		// sub_5F5962 复用既有窗口单例显隐）。6 张原生截图中命名页与外观页从不同屏，
+		// 故此处不再回画命名吊牌 / 已确认名字，消除「属性面板与名称吊牌同屏」的叠屏。
 		if (classic_charset.is_valid())
 			classic_charset.draw(classic_charset_pos);
 
 		// 9 行条件：avatarSel/disabled 的深棕底色表示该行当前无可切换项，
 		// 与 enable_char_look() 的池大小判断一致（R5 资产语义核验）。
+		// 顺序与 avatarSel 贴图行标签一致（脸/发型/发色/肤/上衣/裤子/鞋子/武器/性别）。
 		const bool row_enabled[9] =
 		{
-			skinColors.size() > 1,
-			faces[female].size() > 1,
-			hairStyles[female].size() > 1,
-			hairColorEnabled,
-			tops[female].size() > 1,
-			bottomEnabled && bottoms[female].size() > 1,
-			capeEnabled && capes[female].size() > 1,
-			shoes[female].size() > 1,
-			weapons[female].size() > 1
+			faces[female].size() > 1,          // 0 脸
+			hairStyles[female].size() > 1,     // 1 发型
+			hairColorEnabled,                  // 2 发色
+			skinColors.size() > 1,             // 3 肤
+			tops[female].size() > 1,           // 4 上衣
+			bottomEnabled && bottoms[female].size() > 1, // 5 裤子
+			shoes[female].size() > 1,          // 6 鞋子
+			weapons[female].size() > 1,        // 7 武器
+			choosableGender                    // 8 性别
 		};
 
 		for (size_t i = 0; i < 9; i++)
@@ -1097,7 +1105,7 @@ namespace ms
 		for (size_t i = 0; hairColorEnabled && i < classic_hair_swatches.size(); i++)
 		{
 			Point<int16_t> swatch(classic_charset_pos.x() + 38 + static_cast<int16_t>(i * 20),
-				classic_charset_pos.y() + 100 + 3 * 18);
+				classic_charset_pos.y() + 100 + 2 * 18);
 
 			classic_hair_swatches[i].draw(swatch + Point<int16_t>(1, 1));
 		}
@@ -1311,8 +1319,17 @@ namespace ms
 			UI::get().remove(UIElement::Type::RACESELECT);
 			UI::get().remove(UIElement::Type::CHARSELECT);
 
+			// 原生「回到首页」落在世界列表态（step1），不是频道展开态：
+			// 之前只 makeactive 不复位 UIWorldSelect 的 world_selected/卷轴展开态，
+			// 用户点过世界(SCANIA CH.2)后再回首页会直接落「频道选择页」(缺陷 m00176)。
+			// remove_selected() 是 UIWorldSelect 自带的幂等复位（deactivate +
+			// world_selected=false + 滑入/展开态归位 + clear_selected_world），
+			// 与 UICharSelect BtPreview / UIRaceSelect show_worldselect 同口径。
 			if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+			{
+				worldselect->remove_selected();
 				worldselect->makeactive();
+			}
 
 			return Button::State::NORMAL;
 		}

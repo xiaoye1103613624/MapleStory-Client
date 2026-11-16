@@ -1,0 +1,152 @@
+{
+  "method": "step4 capture adventurer",
+  "ts": "2026-11-16 19:28:43",
+  "class": "adventurer",
+  "char_name": "s4probe10",
+  "src_exe_sha256": "f4a23b5e5ea49e967f1356fd66a3c76eee581d067de2159d3ae47653cc1ea6a8",
+  "config_head_before": "b'# M'",
+  "deployed_sha256": "f4a23b5e5ea49e967f1356fd66a3c76eee581d067de2159d3ae47653cc1ea6a8",
+  "pid": 11460,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "inputs": {
+    "account": {
+      "text": "admin",
+      "ok": true
+    },
+    "password": {
+      "text": "admin",
+      "ok": true
+    },
+    "charname": {
+      "text": "s4probe10",
+      "ok": true
+    }
+  },
+  "server_anchor": false,
+  "charlist": false,
+  "frames": {
+    "create_s4_00_charselect": {
+      "file": "create_s4_00_charselect.png",
+      "mean": 142.83,
+      "std": 77.39,
+      "uniq": 1307,
+      "real_gl_frame": true
+    },
+    "create_s4_01_raceselect": {
+      "file": "create_s4_01_raceselect.png",
+      "mean": 135.18,
+      "std": 76.82,
+      "uniq": 1105,
+      "real_gl_frame": true
+    },
+    "create_s4_02_card_adventurer": {
+      "file": "create_s4_02_card_adventurer.png",
+      "mean": 135.72,
+      "std": 76.93,
+      "uniq": 1128,
+      "real_gl_frame": true
+    },
+    "create_s4_03_naming_adventurer": {
+      "file": "create_s4_03_naming_adventurer.png",
+      "mean": 122.54,
+      "std": 81.28,
+      "uniq": 924,
+      "real_gl_frame": true
+    },
+    "create_s4_04_named_adventurer": {
+      "file": "create_s4_04_named_adventurer.png",
+      "mean": 122.41,
+      "std": 81.42,
+      "uniq": 922,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f00": {
+      "file": "create_s4_05_step4_adventurer_f00.png",
+      "mean": 130.25,
+      "std": 83.04,
+      "uniq": 835,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f01": {
+      "file": "create_s4_05_step4_adventurer_f01.png",
+      "mean": 129.98,
+      "std": 83.04,
+      "uniq": 834,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f02": {
+      "file": "create_s4_05_step4_adventurer_f02.png",
+      "mean": 129.67,
+      "std": 83.0,
+      "uniq": 824,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f03": {
+      "file": "create_s4_05_step4_adventurer_f03.png",
+      "mean": 129.4,
+      "std": 83.02,
+      "uniq": 819,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f04": {
+      "file": "create_s4_05_step4_adventurer_f04.png",
+      "mean": 129.14,
+      "std": 83.02,
+      "uniq": 821,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f05": {
+      "file": "create_s4_05_step4_adventurer_f05.png",
+      "mean": 128.88,
+      "std": 83.02,
+      "uniq": 815,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f06": {
+      "file": "create_s4_05_step4_adventurer_f06.png",
+      "mean": 128.72,
+      "std": 83.04,
+      "uniq": 817,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f07": {
+      "file": "create_s4_05_step4_adventurer_f07.png",
+      "mean": 128.8,
+      "std": 83.08,
+      "uniq": 818,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f08": {
+      "file": "create_s4_05_step4_adventurer_f08.png",
+      "mean": 128.98,
+      "std": 83.15,
+      "uniq": 815,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_adventurer_f09": {
+      "file": "create_s4_05_step4_adventurer_f09.png",
+      "mean": 129.13,
+      "std": 83.15,
+      "uniq": 825,
+      "real_gl_frame": true
+    }
+  },
+  "input_anchors": {
+    "name": [
+      824,
+      271
+    ],
+    "yes": [
+      788,
+      353
+    ]
+  },
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-16 19:30:11】",
+  "config_head_after": "b'# M'"
+}

@@ -1,0 +1,152 @@
+{
+  "method": "step4 capture aran",
+  "ts": "2026-11-16 19:26:32",
+  "class": "aran",
+  "char_name": "s4probe4",
+  "src_exe_sha256": "f4a23b5e5ea49e967f1356fd66a3c76eee581d067de2159d3ae47653cc1ea6a8",
+  "config_head_before": "b'# M'",
+  "deployed_sha256": "f4a23b5e5ea49e967f1356fd66a3c76eee581d067de2159d3ae47653cc1ea6a8",
+  "pid": 18664,
+  "fg_match": true,
+  "client_origin": [
+    640,
+    424,
+    1280,
+    720
+  ],
+  "inputs": {
+    "account": {
+      "text": "admin",
+      "ok": true
+    },
+    "password": {
+      "text": "admin",
+      "ok": true
+    },
+    "charname": {
+      "text": "s4probe4",
+      "ok": true
+    }
+  },
+  "server_anchor": false,
+  "charlist": false,
+  "frames": {
+    "create_s4_00_charselect": {
+      "file": "create_s4_00_charselect.png",
+      "mean": 142.98,
+      "std": 77.42,
+      "uniq": 1317,
+      "real_gl_frame": true
+    },
+    "create_s4_01_raceselect": {
+      "file": "create_s4_01_raceselect.png",
+      "mean": 135.16,
+      "std": 76.88,
+      "uniq": 1108,
+      "real_gl_frame": true
+    },
+    "create_s4_02_card_aran": {
+      "file": "create_s4_02_card_aran.png",
+      "mean": 123.16,
+      "std": 81.49,
+      "uniq": 919,
+      "real_gl_frame": true
+    },
+    "create_s4_03_naming_aran": {
+      "file": "create_s4_03_naming_aran.png",
+      "mean": 122.74,
+      "std": 81.35,
+      "uniq": 925,
+      "real_gl_frame": true
+    },
+    "create_s4_04_named_aran": {
+      "file": "create_s4_04_named_aran.png",
+      "mean": 122.4,
+      "std": 81.34,
+      "uniq": 925,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f00": {
+      "file": "create_s4_05_step4_aran_f00.png",
+      "mean": 130.34,
+      "std": 83.0,
+      "uniq": 836,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f01": {
+      "file": "create_s4_05_step4_aran_f01.png",
+      "mean": 130.19,
+      "std": 83.05,
+      "uniq": 835,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f02": {
+      "file": "create_s4_05_step4_aran_f02.png",
+      "mean": 129.93,
+      "std": 83.05,
+      "uniq": 832,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f03": {
+      "file": "create_s4_05_step4_aran_f03.png",
+      "mean": 129.62,
+      "std": 83.01,
+      "uniq": 822,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f04": {
+      "file": "create_s4_05_step4_aran_f04.png",
+      "mean": 129.36,
+      "std": 83.02,
+      "uniq": 821,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f05": {
+      "file": "create_s4_05_step4_aran_f05.png",
+      "mean": 129.12,
+      "std": 83.03,
+      "uniq": 817,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f06": {
+      "file": "create_s4_05_step4_aran_f06.png",
+      "mean": 128.86,
+      "std": 83.03,
+      "uniq": 814,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f07": {
+      "file": "create_s4_05_step4_aran_f07.png",
+      "mean": 128.66,
+      "std": 83.04,
+      "uniq": 814,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f08": {
+      "file": "create_s4_05_step4_aran_f08.png",
+      "mean": 128.73,
+      "std": 83.08,
+      "uniq": 814,
+      "real_gl_frame": true
+    },
+    "create_s4_05_step4_aran_f09": {
+      "file": "create_s4_05_step4_aran_f09.png",
+      "mean": 128.92,
+      "std": 83.16,
+      "uniq": 814,
+      "real_gl_frame": true
+    }
+  },
+  "input_anchors": {
+    "name": [
+      821,
+      270
+    ],
+    "yes": [
+      788,
+      352
+    ]
+  },
+  "title": "XiaoYE MS v0.0.1【FPS:240延迟:--】【当前时间：2026-11-16 19:27:59】",
+  "config_head_after": "b'# M'"
+}
