@@ -73,17 +73,25 @@ namespace ms
 	//   力量 (46,37)  智力 (136,37)
 	//   敏捷 (46,55)  运气 (136,55)
 	//   排行不可用 (36,99) / 排行数字 (115-w,99)
-	static constexpr Point<int16_t> CS_DETAIL_JOB(46, 1);
-	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 19);
-	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 19);
-	static constexpr Point<int16_t> CS_DETAIL_STR(46, 37);
-	static constexpr Point<int16_t> CS_DETAIL_INT(136, 37);
-	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 55);
-	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 55);
+	// m09240（2026-11-16）：值行 y 二次定标——Text::draw 的 y 是 **baseline** 语义
+	// （GraphicsGL.cpp:1876 char_y = y - ch.bt，字形顶 = y - bt），不是 Angel DrawTextA
+	// 的 rect-top。第一次定标(m08338 后误按 top 语义 +3/+4)方向反了，墨带反而更低。
+	// 本端实测字形 bearing-top（R6 帧，thr130）：数字 9、大写英文 7、中文≈8。
+	// 目标帧墨带顶（同口径）：job223/level243/str260/dex278/fame242/int260/luk278/rank321。
+	// 常量 = 目标墨顶 - detail_pos.y(220) - bt：job-4(英文大写bt7)/level14/str31/dex49/
+	// fame13/int31/luk49（数字bt9）/rank93（中文bt8）。Angel 原始 y(1/19/37/55/99) 是
+	// GDI rect-top 语义，不能直接沿用。
+	static constexpr Point<int16_t> CS_DETAIL_JOB(46, -4);
+	static constexpr Point<int16_t> CS_DETAIL_LEVEL(46, 14);
+	static constexpr Point<int16_t> CS_DETAIL_FAME(136, 13);
+	static constexpr Point<int16_t> CS_DETAIL_STR(46, 31);
+	static constexpr Point<int16_t> CS_DETAIL_INT(136, 31);
+	static constexpr Point<int16_t> CS_DETAIL_DEX(46, 49);
+	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 49);
 	// Angel 详情板不绘角色名（脚下 nametag）；保留默认点仅用于 NX 缺省判定。
 	static constexpr Point<int16_t> CS_DETAIL_NAME(153, 1);
-	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 99);
-	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 99);
+	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 93);
+	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 93);
 	// charInfo1（183×151）相对脚点。2026-10-24 按正确端截图（选择角色页.png）
 	// R3 目标帧「选择角色页.png」逐像素定标（2026-11-15）：内容板（职业行）
 	// 顶边在屏幕 (392,220)，槽 0 脚点 (485,428) ⇒ 偏移 (-94,-208)。
