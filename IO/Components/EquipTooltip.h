@@ -195,6 +195,15 @@ namespace ms
 		Text soul_line;
 		Text star_line;
 
+		// 对比预览窗侧的 095 强化三件套（镜像主窗，数据源为已装备物品 eequip）。
+		// 主窗 spark/soul/star 画悬停物品，预览侧画已穿戴物品，两者不可混用。
+		bool has_spark_line_preview = false;
+		bool has_soul_line_preview = false;
+		bool has_star_line_preview = false;
+		Text spark_line_preview;
+		Text soul_line_preview;
+		Text star_line_preview;
+
 		std::vector<MapleStat::Id> requirements;
 		EnumMap<MapleStat::Id, BoolPair<Texture>> reqstattextures;
 		EnumMap<MapleStat::Id, bool> canequip;

@@ -561,6 +561,83 @@ namespace ms
 					statlabels_preview.clear();
 					statdeltas_preview.clear();
 
+					// 095 潜能行（对比窗侧）：镜像主窗 set_equip 的 :852-888 口径，
+					// 数据源为已装备物品 equip（:352），文案走 locale equip.potline.*，
+					// 缺键回退带编号占位（Locale::text_or，Util/Locale.h:55-57）。
+					{
+						int16_t pot_height_preview = 0;
+
+						for (size_t i = 0; i < 5; ++i)
+						{
+							haspotlines_preview[i] = false;
+
+							int16_t pot_id = (i < 3) ? equip.get_potential(i) : equip.get_bonus_potential(i - 3);
+
+							if (pot_id <= 0)
+								continue;
+
+							const std::string key = "equip.potline." + std::to_string(pot_id);
+							std::string content = Locale::text_or(key, "潜能 " + std::to_string(pot_id));
+
+							if (i >= 3)
+								content = "(B) " + content;
+
+							potlines_preview[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+								content, FRAME_WIDTH - 20);
+							haspotlines_preview[i] = true;
+							pot_height_preview += 15;
+						}
+
+						if (pot_height_preview > 0)
+							height_preview += pot_height_preview + 6;
+					}
+
+					// 095 强化三件套（对比窗侧）：镜像主窗 :890-941，火花/宝珠 WHITE、
+					// 星之力 YELLOW；星之力是星数不是词条 id，按「星之力 N ★×」显示。
+					{
+						int16_t extra_height_preview = 0;
+
+						has_spark_line_preview = false;
+						has_soul_line_preview = false;
+						has_star_line_preview = false;
+
+						if (int16_t sid = equip.get_spark(); sid > 0)
+						{
+							const std::string content = Locale::text_or(
+								"equip.spark." + std::to_string(sid),
+								"火花 " + std::to_string(sid));
+							spark_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+								content, FRAME_WIDTH - 20);
+							has_spark_line_preview = true;
+							extra_height_preview += 15;
+						}
+
+						if (int16_t slid = equip.get_soul(); slid > 0)
+						{
+							const std::string content = Locale::text_or(
+								"equip.soul." + std::to_string(slid),
+								"宝珠 " + std::to_string(slid));
+							soul_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+								content, FRAME_WIDTH - 20);
+							has_soul_line_preview = true;
+							extra_height_preview += 15;
+						}
+
+						if (uint8_t sf = equip.get_starforce(); sf > 0)
+						{
+							std::string stars;
+							for (uint8_t i = 0; i < sf && i < 25; ++i)
+								stars += "*";
+							star_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW,
+								"星之力 " + std::to_string(sf) + " " + stars, FRAME_WIDTH - 20);
+							has_star_line_preview = true;
+							extra_height_preview += 15;
+						}
+
+						if (extra_height_preview > 0)
+							height_preview += extra_height_preview + 6;
+					}
+
 					for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 					{
 						const uint16_t equipped_value = equip.get_stat(es);
@@ -1349,6 +1426,50 @@ namespace ms
 			pos.shift_y(stat_y);
 			hammers_preview.draw(pos);
 			pos.shift_y(stat_y);
+		}
+
+		// 095 潜能行（对比窗侧）：镜像主窗 :1163-1184 的顺序与配色，
+		// 画在 slots/hammers 之后、描述之前，数据源为已装备物品。
+		{
+			bool any_preview = false;
+			for (bool h : haspotlines_preview)
+				any_preview = any_preview || h;
+
+			if (any_preview)
+			{
+				pos.shift_y(6);
+				for (size_t i = 0; i < 5; ++i)
+				{
+					if (!haspotlines_preview[i])
+						continue;
+					potlines_preview[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+					pos.shift_y(15);
+				}
+			}
+		}
+
+		// 095 强化三件套（对比窗侧）：镜像主窗 :1186-1208，缺项跳过不留空行。
+		if (has_spark_line_preview || has_soul_line_preview || has_star_line_preview)
+		{
+			pos.shift_y(6);
+
+			if (has_spark_line_preview)
+			{
+				spark_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+				pos.shift_y(15);
+			}
+
+			if (has_soul_line_preview)
+			{
+				soul_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+				pos.shift_y(15);
+			}
+
+			if (has_star_line_preview)
+			{
+				star_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+				pos.shift_y(15);
+			}
 		}
 
 		if (hasdesc_preview)
