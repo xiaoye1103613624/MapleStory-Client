@@ -657,6 +657,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Gameplay\Stage.h" />
     <ClInclude Include="Graphics\Animation.h" />
     <ClInclude Include="Graphics\Color.h" />
+    <ClInclude Include="Graphics\EquipStarPixels.h" />
     <ClInclude Include="Graphics\DrawArgument.h" />
     <ClInclude Include="Graphics\EffectLayer.h" />
     <ClInclude Include="Graphics\Geometry.h" />

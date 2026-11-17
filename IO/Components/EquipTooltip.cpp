@@ -20,6 +20,7 @@
 #include "../../Configuration.h"
 #include "../../Data/WeaponData.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Graphics/EquipStarPixels.h"
 #include "../../Util/Locale.h"
 
 #ifdef USE_NX
@@ -273,6 +274,13 @@ namespace ms
 			jobs[false][i] = EquipCannot[jobnames[i]];
 			jobs[true][i] = EquipCan[jobnames[i]];
 		}
+
+		// 095 星之力图标：黄/灰两态 BGRA 源自 095 原生黄星 canvas（EquipStarPixels.h），
+		// 上传共享 atlas 后按星数在名称上方绘制；不改任何 WZ/IMG 资源。
+		star_yellow.set(equipstar::ID_YELLOW, equipstar::W, equipstar::H,
+			std::vector<uint8_t>(equipstar::YELLOW_BGRA, equipstar::YELLOW_BGRA + equipstar::W * equipstar::H * 4));
+		star_gray.set(equipstar::ID_GRAY, equipstar::W, equipstar::H,
+			std::vector<uint8_t>(equipstar::GRAY_BGRA, equipstar::GRAY_BGRA + equipstar::W * equipstar::H * 4));
 
 		invpos = 0;
 		invpos_preview = 0;
@@ -652,7 +660,8 @@ namespace ms
 							extra_height_preview += 15;
 						}
 
-						if (uint8_t sf = equip.get_starforce(); sf > 0)
+						starforce_preview = equip.get_starforce();
+						if (uint8_t sf = starforce_preview; sf > 0)
 						{
 							std::string stars;
 							for (uint8_t i = 0; i < sf && i < 25; ++i)
@@ -1040,7 +1049,8 @@ namespace ms
 				extra_height += 15;
 			}
 
-			if (uint8_t sf = equip.get_starforce(); sf > 0)
+			starforce = equip.get_starforce();
+			if (uint8_t sf = starforce; sf > 0)
 			{
 				// 星之力是「星数」不是词条 id，直接按原生「★ × N」显示。
 				std::string stars;
@@ -1129,6 +1139,34 @@ namespace ms
 		}
 	}
 
+	int16_t EquipTooltip::draw_stars(Point<int16_t> pos, uint8_t sf_value) const
+	{
+		// 095 星之力：名称上方一整排星。满格 STAR_SLOTS=10，前 sf 颗黄（激活），
+		// 其余灰（未激活占位）；sf=0 不画。两态均为 13x13 原生星缩放绘制。
+		constexpr uint8_t STAR_SLOTS = 10;
+		constexpr int16_t STAR_STEP = 15;   // 星间距（含 2px 间隙）
+		constexpr int16_t STAR_W = 13;
+		constexpr int16_t STAR_H = 13;
+
+		if (sf_value == 0 || !star_yellow.is_valid() || !star_gray.is_valid())
+			return 0;
+
+		uint8_t sf = sf_value > STAR_SLOTS ? STAR_SLOTS : sf_value;
+		int16_t total_w = static_cast<int16_t>((STAR_SLOTS - 1) * STAR_STEP + STAR_W);
+		int16_t start_x = static_cast<int16_t>((FRAME_WIDTH - total_w) / 2);
+
+		for (uint8_t i = 0; i < STAR_SLOTS; ++i)
+		{
+			Point<int16_t> sp = pos + Point<int16_t>(start_x + i * STAR_STEP, 0);
+			if (i < sf)
+				star_yellow.draw(sp, STAR_W, STAR_H);
+			else
+				star_gray.draw(sp, STAR_W, STAR_H);
+		}
+
+		return STAR_H;
+	}
+
 	void EquipTooltip::draw(Point<int16_t> pos) const
 	{
 		if (invpos == 0)
@@ -1170,6 +1208,9 @@ namespace ms
 
 		// 图2/装备tip参照帧定案：装备 tooltip 带原生十字织纹背板
 		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height + 32);
+
+		// 095 星之力：名称上方一整排星（黄=激活/灰=未激活），画在背板顶沿。
+		draw_stars(pos + Point<int16_t>(0, -6), starforce);
 
 		name.draw(pos + Point<int16_t>(BODY_CENTER_X, 7));
 
@@ -1390,6 +1431,9 @@ namespace ms
 
 		// 装备 tooltip 预览层同带织纹背板
 		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height_preview + 32);
+
+		// 095 星之力（对比窗侧）：已装备物品星数，画在背板顶沿。
+		draw_stars(pos + Point<int16_t>(0, -6), starforce_preview);
 
 		name_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, 7));
 

@@ -25,6 +25,7 @@
 #include "../../Character/MapleStat.h"
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/Color.h"
+#include "../../Graphics/MemoryTexture.h"
 #include "../../Graphics/Text.h"
 #include "../../Template/BoolPair.h"
 
@@ -47,6 +48,9 @@ namespace ms
 		void draw_item_icon(Point<int16_t> pos, const Texture& icon) const;
 		// 079/Angel：6 张职业名恒画，逐职业 Can(白)/Cannot(红)。
 		void draw_job_line(Point<int16_t> pos, const std::vector<uint8_t>& allowedjobs) const;
+		// 095 星之力：名称上方一整排星（激活黄 / 未激活灰），sf>0 才画。
+		// pos = 名称绘制原点；返回该行占用的高度（供名称/头部下移避让）。
+		int16_t draw_stars(Point<int16_t> pos, uint8_t starforce) const;
 
 		// 内容右界 ≈261（reqset 177+54+数字位宽），框宽取 264，兼作对比窗横向间距。
 		static constexpr int16_t FRAME_WIDTH = 264;
@@ -145,6 +149,12 @@ namespace ms
 
 		Text name;
 		Text name_preview;
+		// 095 星之力图标（黄=激活/灰=未激活），源自 095 原生黄星 canvas 的 BGRA，
+		// 运行期上传 GraphicsGL atlas，不改 WZ/IMG。每个 tooltip 实例各持一份。
+		MemoryTexture star_yellow;
+		MemoryTexture star_gray;
+		uint8_t starforce = 0;         // 主窗（悬停物品）星数
+		uint8_t starforce_preview = 0; // 对比窗（已装备物品）星数
 		Text desc;
 		Text desc_preview;
 		Text potflag;
