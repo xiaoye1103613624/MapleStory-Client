@@ -24,6 +24,7 @@
 
 #include "../../Character/MapleStat.h"
 #include "../../Graphics/Geometry.h"
+#include "../../Graphics/Color.h"
 #include "../../Graphics/Text.h"
 #include "../../Template/BoolPair.h"
 
@@ -41,24 +42,32 @@ namespace ms
 		void draw_preview(Point<int16_t> position) const;
 
 	private:
-		// 道具图标 + 灰底板（底板先画、图标叠上去，两者同屏幕锚点）。
+		// 道具图标 + 原生 IconBase/0 底板（同为 2x，底板先画、图标叠上去）。
 		// pos = 分隔线原点，与原生 tip 的 (16,80)/(2,2) 偏移一致。
 		void draw_item_icon(Point<int16_t> pos, const Texture& icon) const;
-		// 图标旁 cash/mesos 徽标（前置块，不参与分隔线以下居中）。
-		void draw_cash_badge(Point<int16_t> pos, bool cash) const;
+		// 079/Angel：6 张职业名恒画，逐职业 Can(白)/Cannot(红)。
+		void draw_job_line(Point<int16_t> pos, const std::vector<uint8_t>& allowedjobs) const;
 
 		// 内容右界 ≈261（reqset 177+54+数字位宽），框宽取 264，兼作对比窗横向间距。
 		static constexpr int16_t FRAME_WIDTH = 264;
 
-		// 2026-11-09 R28 预留项②：装备 Tooltip 正文行前的橙色菱形项目符（ToolTip/Equip/Dot/0）。
-		static constexpr float DOT_SCALE = 2.0f;   // 与 itemicon/iconbase 同 2x 渲染
-		static constexpr int16_t DOT_GAP = 4;      // 项目符右缘到文本左缘间距
-		static constexpr int16_t DOT_W = 5;        // 位图原生尺寸 5x5
-		static constexpr int16_t DOT_H = 5;
+		// 用户 m00832「两个 tooltip 交叉」：主窗背板 draw(pos+(-6,-6), FRAME_WIDTH+12)
+		// 右缘 = X+FRAME_WIDTH+6；旧 draw_preview 只 shift_x(FRAME_WIDTH=264) ⇒
+		// 对比窗背板左缘 = X+258，与主窗重叠 12px，两片不透明背板连成一整块。
+		// 取 FRAME_WIDTH+12+6=282 ⇒ 两窗之间留 6px 场景缝隙，1px 亮边各自完整。
+		static constexpr int16_t PREVIEW_OFFSET = FRAME_WIDTH + 12 + 6;
 
-		// 职业名横排的固定步长（2026-11-11 用户实拍：按位图宽度 +2 排开时，
-		// 「新手」40px 与「战士/魔法师」38px 交替，肉眼看出间距不一致）。
-		static constexpr int16_t JOB_STEP = 41;
+		// 2026-11-17 布局 [悬停][套装][对比]：套装面板插在主窗与对比窗之间时，
+		// 对比窗需整体右移「套装面板宽 + 缝隙」。set 无效时原样返回 PREVIEW_OFFSET，
+		// 与 m00832 既有「两窗不重叠」修复完全一致（非套装物品零影响）。
+		int16_t set_aware_preview_offset() const;
+
+	// 079 原生 1:1 (m00303/m00751) 职业带成员间空隙 ≈11px 恒定。
+	// m00754 ⑦ 翻案：R4 的 JOB_STEP 六等分让「墨迹左沿」等距，但六张
+	// 位图墨宽 23/23/35/34/23/23 不等 ⇒ 空隙 19/19/7/8/19 忽大忽小。
+	// draw_job_line 改为按墨宽累计（ink_x += ink_w[i] + JOB_GAP），
+	// 空隙由实现里的 JOB_GAP=11 钉死；这里只保留起始边距 JOB_SIDE。
+	static constexpr int16_t JOB_SIDE = 4;
 
 		// 正文行「标签：数值」的一半。原生把冒号固定在正文中线：标签右对齐到中线、
 		// 数值从中线起左对齐，多行叠起来冒号成一条竖线（2026-11-11 用户实拍要求）。
@@ -105,18 +114,14 @@ namespace ms
 		Texture itemicon;
 		Texture itemicon_preview;
 
-		// 2026-11-08 原生 tooltip 复校新增（evidence/r28-tooltip-native/）：
-		// IconBase/0 = 32x32 位图。但部署包里的 IconBase/0 是「白底黑框 + 蓝角」，
-		// 直接 2x 垫在图标下就变成用户截图里那块「白框掉在图标下方」的错图。
-		// 2026-11-11 改为程序自绘灰底板（ColorBox），不依赖该位图。
-		ColorBox iconbase_box;
-		// IMG ToolTip/Equip/{cash,mesos}：现金/金币徽标，画在图标区（前置块，不居中整块）。
-		Texture cash_badge;
-		Texture mesos_badge;
-		bool show_cash = false;
-		bool show_cash_preview = false;
-		// 2026-11-09 R28 预留项②：ToolTip/Equip/Dot/0 = 5x5 橙色菱形项目符，逐行画在正文左缘前。
-		Texture dot;
+		// 2026-11-15 按 079 参照帧还原：IconBase/0（32x32 白底 + 黑描边 + 蓝角）
+		// 与道具图标同为 2x 绘制。旧 ColorBox 是 32px 未缩放，只有图标一半大。
+		Texture iconbase;
+		// m00754 ③：ToolTip/Equip/{cash,mesos} 徽标属误加（Angel 上游 draw
+		// 无此物），且 30x5 的 mesos 位图压在 REQ_LABEL_X=97 的「要求等级」上；
+		// 字段 / ctor 加载 / 绘制调用已整段移除，不留死代码。
+		// 用户 m00832：名称前圆点、正文行前「加号」一律不显示，
+		// Texture 字段 / ctor 加载 / 绘制调用同步移除，不留死代码。
 		// GrowthEnabled/GrowthDisabled 提供成长两行的标签、数字字模与 percent 位图；
 		// fame_none 为 Can/none（5x1 短横），用于原生「要求人气」行。
 		BoolPair<Charset> growthset;
@@ -152,11 +157,18 @@ namespace ms
 		BodyLine slots_preview;
 		BodyLine hammers;
 		BodyLine hammers_preview;
-		// 交易限制行（分隔线以下居中区；对照 ItemTooltip untradable/unique）。
+		// 交易限制行：079 原生在名称区下方叠高展示（m00304 ④），
+		// 不属于分隔线以下属性块；对照 Angel 上游 ItemTooltip 名称下 quality 行。
 		BodyLine trade_line;
 		BodyLine trade_line_preview;
 		bool has_trade = false;
 		bool has_trade_preview = false;
+		// 所有者行（095/服务端 owner 字段）：镜像交易行，画在名称区下方独立词条行。
+		// 数据读 Equip::get_owner()，owner 为空不显示；与交易行同为橙色彩蛋。
+		BodyLine owner_line;
+		BodyLine owner_line_preview;
+		bool has_owner = false;
+		bool has_owner_preview = false;
 		// 2026-11-11 用户实拍：右上「攻击力增加」是历史误接的 equip.label_atkinc
 		// （`攻击力增加` 只是「攻击力」这个属性名 + 「增加」二字的本地化词条，
 		// 原生 tip 里没有这一行），已整段移除，不再保留绘制字段。
