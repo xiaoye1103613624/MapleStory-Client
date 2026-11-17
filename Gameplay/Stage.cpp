@@ -89,12 +89,26 @@ namespace ms
 	{
 		player = entry;
 		playable = player;
+		store_char_entry(entry);
 
 		start = ContinuousTimer::get().start();
 
 		CharStats stats = player.get_stats();
 		levelBefore = stats.get_stat(MapleStat::Id::LEVEL);
 		expBefore = stats.get_exp();
+	}
+
+	void Stage::store_char_entry(const CharEntry& entry)
+	{
+		char_entry = entry;
+	}
+	const CharEntry& Stage::get_char_entry() const
+	{
+		return char_entry;
+	}
+	bool Stage::has_char_entry(int32_t cid) const
+	{
+		return char_entry.id != 0 && char_entry.id == cid;
 	}
 
 	void Stage::clear()

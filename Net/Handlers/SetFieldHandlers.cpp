@@ -279,29 +279,49 @@ namespace ms
 
 		int32_t cid = recv.read_int();
 		enter_game_log("[SetField] set_field cid=" + std::to_string(cid));
-		auto charselect = UI::get().get_element<UICharSelect>();
 
-		if (!charselect)
+		// 选角进游戏时 UICharSelect 还在，从它取 entry；游戏内换频道重连后
+		// UICharSelect 已销毁，改从 Stage 的登录期快照重建（对齐 MinMS
+		// SetfieldHandlers::set_field 的 charselect / has_char_entry 双分支）。
+		// 旧实现只认 UICharSelect，换频道后进来的 SET_FIELD 被直接 return，
+		// 人/地图/其他玩家/怪物全落不了地。
+		const CharEntry* playerentry = nullptr;
+		bool was_ingame = false;
+
+		if (auto charselect = UI::get().get_element<UICharSelect>())
 		{
-			enter_game_log("[SetField] set_field aborted: UICharSelect missing");
-			LOG(LOG_ERROR, "[SetField] enter-game without UICharSelect; reconnect required");
+			playerentry = &charselect->get_character(cid);
+		}
+		else if (Stage::get().has_char_entry(cid))
+		{
+			enter_game_log("[SetField] set_field reusing Stage char snapshot (channel hop)");
+			playerentry = &Stage::get().get_char_entry();
+			was_ingame = true;
+		}
+		else
+		{
+			enter_game_log("[SetField] set_field aborted: no UICharSelect and no matching Stage snapshot");
+			LOG(LOG_ERROR, "[SetField] enter-game without CharEntry source; reconnect required");
 			return;
 		}
 
-		const CharEntry& playerentry = charselect->get_character(cid);
-
-		if (playerentry.id != cid)
+		if (playerentry->id != cid)
 		{
 			enter_game_log(std::string("[SetField] set_field aborted: cid mismatch want=")
-				+ std::to_string(cid) + " got=" + std::to_string(playerentry.id));
+				+ std::to_string(cid) + " got=" + std::to_string(playerentry->id));
 			LOG(LOG_ERROR, "[SetField] character id mismatch cid=" << cid);
 			return;
 		}
 
-		enter_game_log("[SetField] set_field get_character ok id=" + std::to_string(playerentry.id));
+		// 换频道后 loadplayer 会重建 Player，GAME 态下的状态栏/商城等引用
+		// 需要重新锚定（对齐 MinMS：was_ingame 时 change_state(GAME)）。
+		if (was_ingame)
+			UI::get().change_state(UI::State::GAME);
+
+		enter_game_log("[SetField] set_field get_character ok id=" + std::to_string(playerentry->id));
 		try
 		{
-		Stage::get().loadplayer(playerentry);
+		Stage::get().loadplayer(*playerentry);
 		enter_game_log("[SetField] loadplayer done");
 
 		// SET_FIELD 携带服务端刚从 DB 装载并修正过的权威角色状态；CHARLIST 的

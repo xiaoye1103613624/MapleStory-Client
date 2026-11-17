@@ -51,6 +51,13 @@ namespace ms
 		// Construct the player from a character entry
 		void loadplayer(const CharEntry& entry);
 
+		// Character-select snapshot for in-game CHANGE_CHANNEL rejoin: UICharSelect
+		// is destroyed once the game state is entered, so SET_FIELD after a channel
+		// hop must rebuild the player from this snapshot (mirrors MinMS Stage API).
+		void store_char_entry(const CharEntry& entry);
+		const CharEntry& get_char_entry() const;
+		bool has_char_entry(int32_t cid) const;
+
 		// Call 'draw()' of all objects on stage
 		void draw(float alpha) const;
 		// Calls 'update()' of all objects on stage
@@ -133,6 +140,9 @@ namespace ms
 		Camera camera;
 		Physics physics;
 		Player player;
+		// Snapshot of the login-time CharEntry, kept across map/channel changes so
+		// SET_FIELD after an in-game channel switch can rebuild the player without UICharSelect.
+		CharEntry char_entry{ {}, {}, 0 };
 
 		Optional<Playable> playable;
 		State state;

@@ -126,10 +126,23 @@ namespace ms
 
 		FD_SET(sock, &sockset);
 
+		// 最小改动 FIN 检测：保持原版 result 变量与控制流结构，只在 recv() 返回 0
+		// （select 报可读但对端已关闭）时标记断线。分离变量/重构分支会改变栈与
+		// 代码布局，实测触发标题画面的布局敏感堆损坏，故刻意保持与原版同构。
 		int result = select(0, &sockset, 0, 0, &timeout);
 
 		if (result > 0)
+		{
 			result = recv(sock, (char*)buffer, MAX_PACKET_LENGTH, 0);
+
+			if (result == 0)
+			{
+				// 对端正常关闭（FIN）：服务端停止后必须让 connected 变 false，
+				// 否则 running() 恒 true，客户端"停服仍在线"。
+				*success = false;
+				return 0;
+			}
+		}
 
 		if (result == SOCKET_ERROR)
 		{

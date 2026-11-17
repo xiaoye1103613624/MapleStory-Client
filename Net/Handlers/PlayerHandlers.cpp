@@ -46,6 +46,29 @@ namespace ms
 {
 	void ChangeChannelHandler::handle(InPacket& recv) const
 	{
+		// s9 getChannelChange = writeByte(1) + 4B IP + 2B port，首字节是成功码
+		// (1=成功)。parse_login 的第一个 skip_byte() 跳的正是这个字节，所以这里
+		// 用 inspect_bool() 只读不推进游标，校验后再交给 parse_login，避免二次读
+		// 把 IP/端口整体错位。对齐 MinMS ChangeChannelHandler 的 success!=1 分支。
+		if (recv.available() && !recv.inspect_bool())
+		{
+			LoginParser::clear_channel_reentry();
+
+			if (auto ch = UI::get().get_element<UIChannel>())
+				ch->makeactive();
+
+			if (auto chatbar = UI::get().get_element<UIChatBar>())
+				chatbar->show_message("换频道失败，请稍后再试。", UIChatBar::MessageType::RED);
+
+			return;
+		}
+
+		// 换线回包不带 charId，PLAYER_LOGIN 要由 parse_login 补发。旧实现依赖
+		// ServerIPHandler 留下的静态 channel_entry_cid（换线时不 note），一旦该
+		// 残留在跨会话重置或异常路径下为 0，补发被跳过 -> 换线后卡死。这里用当前
+		// 角色 oid 显式 note（Player(const CharEntry&) 令 oid == entry.id == cid）。
+		LoginParser::note_channel_entry_cid(Stage::get().get_player().get_oid());
+
 		LoginParser::parse_login(recv);
 
 		auto cashshop = UI::get().get_element<UICashShop>();

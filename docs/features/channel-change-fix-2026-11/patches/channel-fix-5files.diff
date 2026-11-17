@@ -1,0 +1,283 @@
+diff --git a/Gameplay/Stage.cpp b/Gameplay/Stage.cpp
+index 7c8df95d..10266c94 100644
+--- a/Gameplay/Stage.cpp
++++ b/Gameplay/Stage.cpp
+@@ -19,6 +19,7 @@
+ 
+ #include "../Configuration.h"
+ #include "../MapleStory.h"
++#include "../Character/SkillMacros.h"
+ 
+ #include "../IO/UI.h"
+ 
+@@ -26,6 +27,7 @@
+ #include "../IO/UITypes/UIChatBar.h"
+ #include "../Net/Packets/AttackAndSkillPackets.h"
+ #include "../Net/Packets/GameplayPackets.h"
++#include "../Net/Packets/MessagingPackets.h"
+ #include "../Net/Packets/PetPackets.h"
+ #include "../Net/Packets/PlayerPackets.h"
+ #include "../Net/Packets/SummonDragonPackets.h"
+@@ -89,6 +91,7 @@ namespace ms
+ 	{
+ 		player = entry;
+ 		playable = player;
++		store_char_entry(entry);
+ 
+ 		start = ContinuousTimer::get().start();
+ 
+@@ -97,6 +100,21 @@ namespace ms
+ 		expBefore = stats.get_exp();
+ 	}
+ 
++	void Stage::store_char_entry(const CharEntry& entry)
++	{
++		char_entry = entry;
++	}
++
++	const CharEntry& Stage::get_char_entry() const
++	{
++		return char_entry;
++	}
++
++	bool Stage::has_char_entry(int32_t cid) const
++	{
++		return char_entry.id != 0 && char_entry.id == cid;
++	}
++
+ 	void Stage::clear()
+ 	{
+ 		state = State::INACTIVE;
+@@ -545,8 +563,21 @@ namespace ms
+ 			case KeyType::Id::SKILL:
+ 				combat.use_move(action);
+ 				break;
+-			case KeyType::Id::ITEM:
+-				player.use_item(action);
++			case KeyType::Id::MACRO:
++				// Angel v43[7]=1 + CMacroSysMan::Update：整行宏绑到键位后，按键
++				// 把该行三个技能入队、按硬直逐个释放（H1，2026-11-16 补齐；
++				// 旧实现同帧三次 use_move 被 can_attack 吞掉后两个）。
++				// H2：勾选「显示个性技能名」(slot.shout) 时，原生 IsShoutMacro
++				// 路径先把宏名喊到普通聊天，再释放技能。
++				if (down)
++				{
++					const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(action));
++
++					if (slot.shout != 0 && !slot.name.empty())
++						GeneralChatPacket(slot.name, false).dispatch();
++
++					combat.use_macro(slot.skill1, slot.skill2, slot.skill3);
++				}
+ 				break;
+ 			case KeyType::Id::FACE:
+ 				player.set_expression(action);
+diff --git a/Gameplay/Stage.h b/Gameplay/Stage.h
+index fc284f92..ef8e753d 100644
+--- a/Gameplay/Stage.h
++++ b/Gameplay/Stage.h
+@@ -51,6 +51,13 @@ namespace ms
+ 		// Construct the player from a character entry
+ 		void loadplayer(const CharEntry& entry);
+ 
++		// Character-select snapshot for in-game CHANGE_CHANNEL rejoin: UICharSelect
++		// is destroyed once the game state is entered, so SET_FIELD after a channel
++		// hop must rebuild the player from this snapshot (mirrors MinMS Stage API).
++		void store_char_entry(const CharEntry& entry);
++		const CharEntry& get_char_entry() const;
++		bool has_char_entry(int32_t cid) const;
++
+ 		// Call 'draw()' of all objects on stage
+ 		void draw(float alpha) const;
+ 		// Calls 'update()' of all objects on stage
+@@ -133,6 +140,9 @@ namespace ms
+ 		Camera camera;
+ 		Physics physics;
+ 		Player player;
++		// Snapshot of the login-time CharEntry, kept across map/channel changes so
++		// SET_FIELD after an in-game channel switch can rebuild the player without UICharSelect.
++		CharEntry char_entry{ {}, {}, 0 };
+ 
+ 		Optional<Playable> playable;
+ 		State state;
+diff --git a/Net/Handlers/PlayerHandlers.cpp b/Net/Handlers/PlayerHandlers.cpp
+index 189a89d4..e337f246 100644
+--- a/Net/Handlers/PlayerHandlers.cpp
++++ b/Net/Handlers/PlayerHandlers.cpp
+@@ -25,6 +25,7 @@
+ #include "../KeyMapTranslate.h"
+ 
+ #include "../../IO/UITypes/UIBuffList.h"
++#include "../../IO/UITypes/UICooldownList.h"
+ #include "../../IO/UITypes/UICashShop.h"
+ #include "../../IO/UITypes/UIChannel.h"
+ #include "../../IO/UITypes/UICharInfo.h"
+@@ -46,6 +47,29 @@ namespace ms
+ {
+ 	void ChangeChannelHandler::handle(InPacket& recv) const
+ 	{
++		// s9 getChannelChange = writeByte(1) + 4B IP + 2B port，首字节是成功码
++		// (1=成功)。parse_login 的第一个 skip_byte() 跳的正是这个字节，所以这里
++		// 用 inspect_bool() 只读不推进游标，校验后再交给 parse_login，避免二次读
++		// 把 IP/端口整体错位。对齐 MinMS ChangeChannelHandler 的 success!=1 分支。
++		if (recv.available() && !recv.inspect_bool())
++		{
++			LoginParser::clear_channel_reentry();
++
++			if (auto ch = UI::get().get_element<UIChannel>())
++				ch->makeactive();
++
++			if (auto chatbar = UI::get().get_element<UIChatBar>())
++				chatbar->show_message("换频道失败，请稍后再试。", UIChatBar::MessageType::RED);
++
++			return;
++		}
++
++		// 换线回包不带 charId，PLAYER_LOGIN 要由 parse_login 补发。旧实现依赖
++		// ServerIPHandler 留下的静态 channel_entry_cid（换线时不 note），一旦该
++		// 残留在跨会话重置或异常路径下为 0，补发被跳过 -> 换线后卡死。这里用当前
++		// 角色 oid 显式 note（Player(const CharEntry&) 令 oid == entry.id == cid）。
++		LoginParser::note_channel_entry_cid(Stage::get().get_player().get_oid());
++
+ 		LoginParser::parse_login(recv);
+ 
+ 		auto cashshop = UI::get().get_element<UICashShop>();
+@@ -371,8 +395,9 @@ namespace ms
+ 			recv.skip_byte();
+ 
+ 		Stage::get().get_player().add_cooldown(skill_id, cooltime);
+-		(void)skill_id; (void)cooltime;
+-		// CD 图标自显示，不 tip
++		// cooltime 秒 → UI 毫秒条（与 Player::add_cooldown 一致）
++		if (auto cd = UI::get().get_element<UICooldownList>())
++			cd->add_cooldown(skill_id, cooltime > 0 ? cooltime * 1000 : 0);
+ 	}
+ 
+ 	void KeymapHandler::handle(InPacket& recv) const
+@@ -404,11 +429,14 @@ namespace ms
+ 			recv.skip_byte();
+ 		Setting<AutoHpPotItem>::get().save(itemid);
+ 		LOG(LOG_DEBUG, "AutoHpPot item=" << itemid);
++		// 仅在键位窗已开时刷新；绝不在收包时擅自弹出（换频道重连会重发此包）。
+ 		if (auto kc = UI::get().get_element<UIKeyConfig>())
+ 		{
+-			if (!kc->is_active())
++			if (kc->is_active())
++			{
+ 				kc->makeactive();
+-			return;
++				return;
++			}
+ 		}
+ 		if (auto chatbar = UI::get().get_element<UIChatBar>())
+ 			chatbar->show_message(("Auto HP pot #" + std::to_string(itemid)).c_str(),
+@@ -422,11 +450,14 @@ namespace ms
+ 			recv.skip_byte();
+ 		Setting<AutoMpPotItem>::get().save(itemid);
+ 		LOG(LOG_DEBUG, "AutoMpPot item=" << itemid);
++		// 仅在键位窗已开时刷新；绝不在收包时擅自弹出（换频道重连会重发此包）。
+ 		if (auto kc = UI::get().get_element<UIKeyConfig>())
+ 		{
+-			if (!kc->is_active())
++			if (kc->is_active())
++			{
+ 				kc->makeactive();
+-			return;
++				return;
++			}
+ 		}
+ 		if (auto chatbar = UI::get().get_element<UIChatBar>())
+ 			chatbar->show_message(("Auto MP pot #" + std::to_string(itemid)).c_str(),
+diff --git a/Net/Handlers/SetFieldHandlers.cpp b/Net/Handlers/SetFieldHandlers.cpp
+index 7562f1cc..df248449 100644
+--- a/Net/Handlers/SetFieldHandlers.cpp
++++ b/Net/Handlers/SetFieldHandlers.cpp
+@@ -279,29 +279,49 @@ namespace ms
+ 
+ 		int32_t cid = recv.read_int();
+ 		enter_game_log("[SetField] set_field cid=" + std::to_string(cid));
+-		auto charselect = UI::get().get_element<UICharSelect>();
+ 
+-		if (!charselect)
++		// 选角进游戏时 UICharSelect 还在，从它取 entry；游戏内换频道重连后
++		// UICharSelect 已销毁，改从 Stage 的登录期快照重建（对齐 MinMS
++		// SetfieldHandlers::set_field 的 charselect / has_char_entry 双分支）。
++		// 旧实现只认 UICharSelect，换频道后进来的 SET_FIELD 被直接 return，
++		// 人/地图/其他玩家/怪物全落不了地。
++		const CharEntry* playerentry = nullptr;
++		bool was_ingame = false;
++
++		if (auto charselect = UI::get().get_element<UICharSelect>())
++		{
++			playerentry = &charselect->get_character(cid);
++		}
++		else if (Stage::get().has_char_entry(cid))
++		{
++			enter_game_log("[SetField] set_field reusing Stage char snapshot (channel hop)");
++			playerentry = &Stage::get().get_char_entry();
++			was_ingame = true;
++		}
++		else
+ 		{
+-			enter_game_log("[SetField] set_field aborted: UICharSelect missing");
+-			LOG(LOG_ERROR, "[SetField] enter-game without UICharSelect; reconnect required");
++			enter_game_log("[SetField] set_field aborted: no UICharSelect and no matching Stage snapshot");
++			LOG(LOG_ERROR, "[SetField] enter-game without CharEntry source; reconnect required");
+ 			return;
+ 		}
+ 
+-		const CharEntry& playerentry = charselect->get_character(cid);
+-
+-		if (playerentry.id != cid)
++		if (playerentry->id != cid)
+ 		{
+ 			enter_game_log(std::string("[SetField] set_field aborted: cid mismatch want=")
+-				+ std::to_string(cid) + " got=" + std::to_string(playerentry.id));
++				+ std::to_string(cid) + " got=" + std::to_string(playerentry->id));
+ 			LOG(LOG_ERROR, "[SetField] character id mismatch cid=" << cid);
+ 			return;
+ 		}
+ 
+-		enter_game_log("[SetField] set_field get_character ok id=" + std::to_string(playerentry.id));
++		// 换频道后 loadplayer 会重建 Player，GAME 态下的状态栏/商城等引用
++		// 需要重新锚定（对齐 MinMS：was_ingame 时 change_state(GAME)）。
++		if (was_ingame)
++			UI::get().change_state(UI::State::GAME);
++
++		enter_game_log("[SetField] set_field get_character ok id=" + std::to_string(playerentry->id));
+ 		try
+ 		{
+-		Stage::get().loadplayer(playerentry);
++		Stage::get().loadplayer(*playerentry);
+ 		enter_game_log("[SetField] loadplayer done");
+ 
+ 		// SET_FIELD 携带服务端刚从 DB 装载并修正过的权威角色状态；CHARLIST 的
+diff --git a/Net/SocketWinsock.cpp b/Net/SocketWinsock.cpp
+index 5782fbf9..fafe40b9 100644
+--- a/Net/SocketWinsock.cpp
++++ b/Net/SocketWinsock.cpp
+@@ -126,11 +126,24 @@ namespace ms
+ 
+ 		FD_SET(sock, &sockset);
+ 
++		// 最小改动 FIN 检测：保持原版 result 变量与控制流结构，只在 recv() 返回 0
++		// （select 报可读但对端已关闭）时标记断线。分离变量/重构分支会改变栈与
++		// 代码布局，实测触发标题画面的布局敏感堆损坏，故刻意保持与原版同构。
+ 		int result = select(0, &sockset, 0, 0, &timeout);
+ 
+ 		if (result > 0)
++		{
+ 			result = recv(sock, (char*)buffer, MAX_PACKET_LENGTH, 0);
+ 
++			if (result == 0)
++			{
++				// 对端正常关闭（FIN）：服务端停止后必须让 connected 变 false，
++				// 否则 running() 恒 true，客户端"停服仍在线"。
++				*success = false;
++				return 0;
++			}
++		}
++
+ 		if (result == SOCKET_ERROR)
+ 		{
+ 			*success = false;

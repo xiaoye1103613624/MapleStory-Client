@@ -1,0 +1,110 @@
+[SetField] channel=1
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] HANDLE ENTER
+[SetField] channel=0
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] HANDLE ENTER
+[SetField] channel=3
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] HANDLE ENTER
+[SetField] channel=4
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] HANDLE ENTER
+[SetField] channel=5
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] HANDLE ENTER
+[SetField] channel=11
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field aborted: UICharSelect missing
+[SetField] HANDLE EXIT
+[SetField] channel=1
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field reusing Stage char snapshot (channel hop)
+[SetField] set_field get_character ok id=1
+[SetField] loadplayer done
+[SetField] parse_stats done
+[cp] inventory-start remain=3069
+[SetField] parse_inventory done
+[cp] skillbook-start remain=502
+[cp] skillbook-framed-marker remain=107
+[SetField] parse_skillbook done
+[cp] cooldowns-start remain=107
+[SetField] parse_cooldowns done
+[cp] questlog-start remain=105
+[SetField] parse_questlog done
+[cp] ring1-start remain=90
+[SetField] parse_ring1 done
+[cp] ring2-start remain=88
+[cp] ring2-rsize remain=0
+[SetField] parse_ring2 done
+[cp] ring3-start remain=86
+[SetField] parse_ring3 done
+[cp] teleportrock-start remain=84
+[SetField] parse_teleportrock done
+[cp] monsterbook-start remain=24
+[SetField] parse_monsterbook done
+[cp] nyinfo-start remain=14
+[SetField] parse_nyinfo done
+[cp] areainfo-start remain=12
+[SetField] parse_areainfo done
+[SetField] all parse_* done
+[SetField] recalc_stats done
+[SetField] PlayerUpdatePacket done
+[SetField] before transition mapid=100050000 portal=6
+[SetField] transition returned
+[SetField] HANDLE EXIT
+[SetField] fade done map=100050000 portal=6 enter_game=1
+[SetField] channel=2
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field reusing Stage char snapshot (channel hop)
+[SetField] set_field get_character ok id=1
+[SetField] channel=1
+[SetField] mode1=1 mode2=1
+[SetField] -> set_field
+[SetField] set_field ENTRY avail=1
+[SetField] set_field after_skip avail=1
+[SetField] set_field cid=1
+[SetField] set_field reusing Stage char snapshot (channel hop)
+[SetField] set_field get_character ok id=1
