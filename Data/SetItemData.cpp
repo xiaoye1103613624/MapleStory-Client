@@ -290,4 +290,46 @@ namespace ms
 	{
 		return definitions.size();
 	}
+
+	// ---- 服务端下发缓存（0x176，服务端权威优先）----
+	std::unordered_map<int32_t, std::string> SetItemData::server_text;
+
+	void SetItemData::set_server_text(int32_t set_id, const std::string& text)
+	{
+		server_text[set_id] = text;
+	}
+
+	std::string SetItemData::get_server_text(int32_t set_id)
+	{
+		auto it = server_text.find(set_id);
+		return it == server_text.end() ? std::string() : it->second;
+	}
+
+	bool SetItemData::has_server_text(int32_t set_id)
+	{
+		auto it = server_text.find(set_id);
+		return it != server_text.end() && !it->second.empty();
+	}
+
+	void SetItemData::set_server_mapping(int32_t set_id, const std::vector<int32_t>& item_ids)
+	{
+		// 服务端权威：直接覆盖本地 item→set（本地 WZ 取不到 SetItemInfo.img 时靠这条）
+		for (int32_t id : item_ids)
+			if (id > 0)
+				item_to_set[id] = set_id;
+		// 同时确保 definitions 里有一份最小定义，供 SetTooltip 取 name/complete_count
+		auto it = definitions.find(set_id);
+		if (it == definitions.end())
+		{
+			Definition def{};
+			def.set_id = set_id;
+			def.complete_count = static_cast<int16_t>(item_ids.size());
+			def.item_ids = item_ids;
+			definitions[set_id] = std::move(def);
+		}
+		else
+		{
+			it->second.item_ids = item_ids;
+		}
+	}
 }

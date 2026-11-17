@@ -119,6 +119,44 @@ namespace ms
 			tier_lines.push_back(std::move(line));
 		}
 
+		// 2026-11-18 服务端权威：若收到服务端文案（0x176），用它覆盖本地构建。
+		// 服务端文本首行 = 标题「套装名 (n/N)」，其后每行 = 一条属性，按 \r\n 拆分。
+		if (SetItemData::has_server_text(set_id))
+		{
+			tier_lines.clear();
+			const std::string server_text = SetItemData::get_server_text(set_id);
+			std::vector<std::string> rows;
+			size_t start = 0;
+			while (start <= server_text.size())
+			{
+				size_t nl = server_text.find_first_of("\r\n", start);
+				std::string row = server_text.substr(start, nl == std::string::npos ? std::string::npos : nl - start);
+				if (!row.empty())
+					rows.push_back(row);
+				if (nl == std::string::npos)
+					break;
+				start = nl + 1;
+				while (start < server_text.size() && (server_text[start] == '\r' || server_text[start] == '\n'))
+					++start;
+			}
+
+			if (!rows.empty())
+			{
+				// 首行作为标题（服务端已带 套装名(n/N)，不再本地拼）
+				title = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE,
+					rows[0], FRAME_WIDTH - PAD_X * 2);
+				// 其余行作为档位/属性行
+				for (size_t r = 1; r < rows.size(); ++r)
+				{
+					Line line;
+					line.active = true;
+					line.text = Text(Text::Font::A11M, Text::Alignment::LEFT,
+						Color::Name::YELLOW, rows[r], FRAME_WIDTH - PAD_X * 2);
+					tier_lines.push_back(std::move(line));
+				}
+			}
+		}
+
 		panel_height = static_cast<int16_t>(
 			PAD_TOP + TITLE_H + SEP_H
 			+ static_cast<int16_t>(tier_lines.size()) * LINE_H

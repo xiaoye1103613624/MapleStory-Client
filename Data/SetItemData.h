@@ -68,9 +68,18 @@ namespace ms
 
 		static size_t definition_count();
 
+		/// 服务端下发的套装展示文案缓存（0x176，服务端权威优先）。
+		static void set_server_text(int32_t set_id, const std::string& text);
+		static std::string get_server_text(int32_t set_id);
+		static bool has_server_text(int32_t set_id);
+
+		/// 服务端下发的 item→set 映射（0x176 带 itemIds，覆盖本地 WZ/txt）。
+		static void set_server_mapping(int32_t set_id, const std::vector<int32_t>& item_ids);
+
 	private:
 		static std::unordered_map<int32_t, Definition> definitions;
 		static std::unordered_map<int32_t, int32_t> item_to_set;
+		static std::unordered_map<int32_t, std::string> server_text;
 		static bool loaded;
 	};
 }

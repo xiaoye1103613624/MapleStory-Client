@@ -414,7 +414,9 @@ namespace ms
 
 		LIMIT_BREAK_SYNC = 0x3730,
 		/// BeiDou SendOpcode.SET_ITEM_FINAL_DAMAGE — 战斗面板显示同步
-		SET_ITEM_FINAL_DAMAGE = 0x175
+		SET_ITEM_FINAL_DAMAGE = 0x175,
+		/// BeiDou SendOpcode.SET_ITEM_SKILL_BONUS = 0x176 — 套装展示文案/映射（服务端权威）
+		SET_ITEM_SKILL_BONUS = 0x176
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -782,6 +784,8 @@ namespace ms
 
 		// 套装/战斗面板属性显示同步（0x175）
 		emplace<SET_ITEM_FINAL_DAMAGE, SetItemFinalDamageHandler>();
+		// 套装展示文案/映射下发（0x176，服务端权威）
+		emplace<SET_ITEM_SKILL_BONUS, SetItemSkillBonusHandler>();
 
 		// 世界地图掉落查询回复
 		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();

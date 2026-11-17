@@ -27,9 +27,11 @@
 #include "../../Graphics/Color.h"
 #include "../../Gameplay/Combat/Damage.h"
 #include "../../Character/CombatPanelStats.h"
+#include "../../Data/SetItemData.h"
 #include "../../Util/PerfLog.h"
 
 #include <string>
+#include <vector>
 
 namespace ms
 {
@@ -99,5 +101,42 @@ namespace ms
 		LOG(LOG_DEBUG, "CombatPanel 0x175 synced damR=" << s.dam_r
 			<< " fdR=" << s.final_damage_percent
 			<< " bdR=" << s.boss_dam_r);
+	}
+
+	void SetItemSkillBonusHandler::handle(InPacket& recv) const
+	{
+		// 布局（对接 s9 PacketCreator.setItemSkillBonusAll/Single）：
+		//   short count + { int setId, byte enabled, string text, short itemCount, int itemId×N } × count
+		const int16_t count = recv.read_short();
+
+		for (int16_t i = 0; i < count; ++i)
+		{
+			if (recv.available() < 4)
+				break;
+
+			const int32_t set_id = recv.read_int();
+			const uint8_t enabled = static_cast<uint8_t>(recv.read_byte());
+			const std::string text = recv.read_string();
+			const int16_t item_count = recv.read_short();
+
+			std::vector<int32_t> item_ids;
+			item_ids.reserve(item_count > 0 ? item_count : 0);
+
+			for (int16_t j = 0; j < item_count; ++j)
+			{
+				if (recv.available() < 4)
+					break;
+				item_ids.push_back(recv.read_int());
+			}
+
+			if (set_id <= 0)
+				continue;
+
+			// 服务端权威：建映射 + 文案。enabled=0 表示禁用，跳过展示但仍建映射。
+			if (!item_ids.empty())
+				SetItemData::set_server_mapping(set_id, item_ids);
+			if (enabled && !text.empty())
+				SetItemData::set_server_text(set_id, text);
+		}
 	}
 }

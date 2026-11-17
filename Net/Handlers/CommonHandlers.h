@@ -40,4 +40,11 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// 套装展示文案/映射下发（SendOpcode.SET_ITEM_SKILL_BONUS = 0x176，2026-11-18）
+	// 服务端权威：填 SetItemData 文案缓存 + item→set 映射，SetTooltip 优先取此。
+	class SetItemSkillBonusHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }
