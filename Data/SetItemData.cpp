@@ -5,8 +5,13 @@
 
 #include "../Configuration.h"
 #include "../MapleStory.h"
+#include "../Util/Resource/ResourceService.h"
+
+#include <nlnx/nx.hpp>
 
 #include <algorithm>
+#include <cctype>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 
@@ -28,6 +33,136 @@ namespace ms
 			size_t b = s.find_last_not_of(" \t\r\n");
 			return s.substr(a, b - a + 1);
 		}
+	}
+
+	bool SetItemData::load_from_wz()
+	{
+		definitions.clear();
+		item_to_set.clear();
+		loaded = false;
+
+		// 必须经资源门面取 Etc 根，不能直接读 nl::nx::Etc：
+		// 堆式 ImgBackend 下 Etc 是 lazy 根，门面 root() 会按需 ensure() 装载；
+		// 裸读全局变量在未绑定时为空 → 静默降级 txt（WZ 改造形同虚设）。
+		// wz/nx/.nxcache mmap 后端 open() 已绑全部根，门面同样返回有效节点。
+		nl::node etc_root = res::ResourceService::get().root(res::RootId::Etc);
+		nl::node root = etc_root ? etc_root["SetItemInfo.img"] : nl::node{};
+
+		if (!root)
+		{
+			LOG(LOG_DEBUG, "SetItemData: Etc/SetItemInfo.img not available -> txt fallback");
+			return false;
+		}
+
+		// WZ Effect 属性键 → 本端 EquipStat/stat_key 白名单。
+		// 未列出的键（activeSkill/Option/incMHPr/incMMPr/nbdR/incPQEXPr 等）按
+		// 用户裁决跳过：本端 EquipStat 模型不支持，强导会乱码/丢属性。
+		static const struct { const char* wz; const char* key; } kMap[] = {
+			{ "incSTR",     "STR"     },
+			{ "incDEX",     "DEX"     },
+			{ "incINT",     "INT"     },
+			{ "incLUK",     "LUK"     },
+			{ "incMHP",     "HP"      },
+			{ "incMMP",     "MP"      },
+			{ "incPAD",     "WATK"    },
+			{ "incMAD",     "MAGIC"   },
+			{ "incPDD",     "WDEF"    },
+			{ "incMDD",     "MDEF"    },
+			{ "incACC",     "ACC"     },
+			{ "incEVA",     "AVOID"   },
+			{ "incSpeed",   "SPEED"   },
+			{ "incSPEED",   "SPEED"   },
+			{ "incJump",    "JUMP"    },
+			{ "incJUMP",    "JUMP"    },
+			{ "incAllStat", "ALLSTAT" },
+			{ "damR",       "DAMAGE"  },
+		};
+
+		auto map_key = [](const std::string& wz) -> const char* {
+			for (const auto& m : kMap)
+				if (wz == m.wz)
+					return m.key;
+			return nullptr;
+		};
+
+		int mapped = 0;
+		int skipped = 0;
+
+		for (const auto& setnode : root)
+		{
+			std::string nodename = setnode.name();
+
+			if (nodename.empty())
+				continue;
+
+			// set 名为数字（含 "-1" 特殊套装）；其余结构节点跳过。
+			char c0 = nodename[0];
+
+			if (!std::isdigit(static_cast<unsigned char>(c0)) && c0 != '-')
+				continue;
+
+			int32_t set_id = std::atoi(nodename.c_str());
+
+			if (set_id == 0)
+				continue;
+
+			Definition def{};
+			def.set_id = set_id;
+			def.name = setnode["setItemName"].get_string();
+			def.complete_count = static_cast<int16_t>(setnode["completeCount"].get_integer());
+
+			// ItemID 是 LIST，子节点 1..N，值为 itemId（get_integer 自动处理 SHORT/INT）。
+			for (const auto& itemnode : setnode["ItemID"])
+			{
+				int32_t item_id = static_cast<int32_t>(itemnode.get_integer());
+
+				if (item_id > 0)
+				{
+					def.item_ids.push_back(item_id);
+					item_to_set[item_id] = set_id;
+				}
+			}
+
+			// Effect 是 LIST，子节点名为件套数（"2"/"4"…），其下为 inc* 属性。
+			for (const auto& tiernode : setnode["Effect"])
+			{
+				std::string cnt = tiernode.name();
+
+				if (cnt.empty() || !std::isdigit(static_cast<unsigned char>(cnt[0])))
+					continue;
+
+				int16_t count = static_cast<int16_t>(std::atoi(cnt.c_str()));
+
+				if (count <= 0)
+					continue;
+
+				for (const auto& prop : tiernode)
+				{
+					const char* key = map_key(prop.name());
+
+					if (!key)
+					{
+						++skipped;
+						continue;
+					}
+
+					Tier tier{};
+					tier.count = count;
+					tier.stat_key = key;
+					tier.value = static_cast<int32_t>(prop.get_integer());
+					def.tiers.push_back(tier);
+					++mapped;
+				}
+			}
+
+			definitions[set_id] = std::move(def);
+		}
+
+		loaded = !definitions.empty();
+		LOG(LOG_DEBUG, "SetItemData: WZ loaded " << definitions.size() << " sets, "
+			<< item_to_set.size() << " item mappings, " << mapped
+			<< " supported tiers, " << skipped << " unsupported keys skipped");
+		return loaded;
 	}
 
 	bool SetItemData::load(const std::string& data_dir)

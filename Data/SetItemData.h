@@ -1,13 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	SetItemData — 套装花名册（2026-11-12 装备槽位扩展 ⑤）
 //
-//	数据源：Data/SetItem.txt（极简行格式，零新依赖）。
-//	为什么不是 WZ SetItemInfo.img：live Etc/ 目录实测无该节点（MCP 取证），
-//	且 s9 服务端无 xy 分支的 combat.stat 框架；本端按「本地花名册 + 已穿戴
-//	件数」独立结算，参考 E:\MXD\扩展改动\套装系统\README.md 的数据契约
-//	（setItemName / completeCount / ItemID / Effect/{n} 档位）。
+//	数据源（2026-11-17 用户裁决升级）：
+//	  ① 主源 = live WZ Etc/SetItemInfo.img（真实存在，orange-wz MCP 取证；
+//	     233KB / 625 个 set 节点）——load_from_wz() 运行时经 nlnx 读取，
+//	     setItemName 由 nlnx 后端按 GBK→UTF-8 解析为中文。
+//	  ② 兜底 = Data/SetItem.txt（load()），仅当 WZ 根不可用时降级。
+//	只映射本端 EquipStat 支持属性子集的 Effect 键，其余（activeSkill/Option/
+//	incMHPr/incMMPr/nbdR 等）按用户裁决跳过并在可行性文档标注。
+//	加成权威仍在客户端本地结算（Player::apply_set_item_bonuses），不做协议。
 //
-//	行格式（# 注释，空行忽略）：
+//	txt 行格式（# 注释，空行忽略）：
 //	  SET <setId> <name> <completeCount>
 //	  ITEM <itemId>                  → 归属最近的 SET
 //	  TIER <count> <statKey> <value>  → 达到 count 件时生效；可重复
@@ -44,7 +47,11 @@ namespace ms
 			std::vector<Tier> tiers;
 		};
 
-		/// 从 Data/SetItem.txt 加载；文件缺失时保持空表（优雅降级，不崩）。
+		/// 从 live WZ Etc/SetItemInfo.img 加载（主源）。只映射本端支持的
+		/// Effect 属性键，其余跳过。成功返回 true（至少 1 个 set）。
+		static bool load_from_wz();
+
+		/// 从 Data/SetItem.txt 加载（兜底）；文件缺失时保持空表（优雅降级）。
 		static bool load(const std::string& data_dir);
 
 		/// itemId → setId（0 = 不属于任何套装）。

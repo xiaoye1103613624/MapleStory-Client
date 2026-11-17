@@ -154,8 +154,12 @@ namespace ms
 		dbginit("damagenumber:ok");
 		MapPortals::init();
 		dbginit("mapportals:ok");
-		// ⑤ 套装花名册：Data/SetItem.txt 可选，缺失时优雅降级为「无套装」。
-		SetItemData::load("");
+		// ⑤ 套装花名册（2026-11-17 升级）：主源 = live WZ Etc/SetItemInfo.img；
+		//    WZ 不可用（lazy 根未装载/缺节点）时降级 Data/SetItem.txt；
+		//    两者都失败则按「无套装」运行，不影响正常游戏。
+		//    Etc 是 lazy 根，此处经 nlnx 门面访问（与 QuestData 读 Quest/ 同范式）。
+		if (!SetItemData::load_from_wz())
+			SetItemData::load("");
 		dbginit("setitem:ok");
 		Stage::get().init();
 		dbginit("stage:ok");
