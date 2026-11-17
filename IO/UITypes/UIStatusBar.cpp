@@ -61,6 +61,7 @@
 
 #include "../../Data/ItemData.h"
 #include "../../Data/SkillData.h"
+#include "../../Character/SkillMacros.h"
 #include "../../Net/Packets/GameplayPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Net/Packets/MiscOutPackets.h"
@@ -240,8 +241,7 @@ namespace ms
 		move_btn(Buttons::BT_CLASSIC_KEYSET, group_x + 165, 8);
 		move_btn(Buttons::BT_CLASSIC_QS, group_x + 195, 8);
 		move_btn(Buttons::BT_CLASSIC_QSD, group_x + 195, 8);
-		move_btn(Buttons::BT_CLASSIC_CLAIM, group_x - 15, 8);
-		move_btn(Buttons::BT_CLASSIC_WHISPER, group_x + 15, 8);
+		move_btn(Buttons::BT_CLASSIC_CLAIM, group_x + 0, 8);
 
 		position = Point<int16_t>(hud_cx, static_cast<int16_t>(VHEIGHT - CLASSIC_BAR_H));
 		position_x = position.x();
@@ -824,11 +824,18 @@ namespace ms
 					// BtMenu（目录）：只开主菜单（UIGameMenu）。
 					// 旧行为同时弹 UIOptionMenu（游戏设置），与参考端不符（用户实测反馈）；
 					// 游戏设置由系统按键/主菜单内入口打开。
+					// 互斥：开主菜单时先收起界面列表（UIShortCut）。
+					if (auto sc = UI::get().get_element<UIShortCut>(); sc && sc->is_active())
+						sc->deactivate();
+
 					auto gm = UI::get().get_element<UIGameMenu>();
 					if (!gm)
 						gm = UI::get().emplace<UIGameMenu>();
 					else if (!gm->is_active())
+					{
+						gm->reset_selection();
 						gm->makeactive();
+					}
 					else
 						gm->deactivate();
 					break;
@@ -910,11 +917,18 @@ namespace ms
 				// BtShort「界面」= 只开 UIShortCut 面板（UIWindow.img/ShortCut 的 11 钮气球）。
 				// 旧行为同时 emplace UIKeyConfig，导致点一次弹两窗（键盘设定另有
 				// BT_CLASSIC_KEYSET 独立入口，见上）。
+				// 互斥：开界面列表时先收起主菜单（UIGameMenu）。
+				if (auto gm = UI::get().get_element<UIGameMenu>(); gm && gm->is_active())
+					gm->deactivate();
+
 				auto sc = UI::get().get_element<UIShortCut>();
 				if (!sc)
 					sc = UI::get().emplace<UIShortCut>();
 				else if (!sc->is_active())
+				{
+					sc->reset_selection();
 					sc->makeactive();
+				}
 				else
 					// 再点一次「界面」必须收起。旧实现在这里什么都不做，
 					// 于是气球展开后只能靠 Esc/X 关，鼠标点同一颗按钮关不掉。
@@ -1956,11 +1970,16 @@ namespace ms
 			return (it != buttons.end()) ? it->second.get() : nullptr;
 		};
 
+		// 方向语义（用户实测正确端 + WZ 解码双证）：StatusBar.img/QuickSlot = ▲ 上箭头，
+		// QuickSlotD = ▼ 下箭头。功能框「隐藏」(quickslot_active=false) 时显示 ▲
+		// （点击向上展开）；「显示」(true) 时显示 ▼（点击向下收起）。
+		// 旧实现把两颗按钮的 active 条件整体写反，导致展开态显示 ▲、收起态显示 ▼；
+		// 源码 :2215 的注释语义本是对的，注释与实现矛盾，以正确端实测为准。
 		if (Button* b = btn_at(Buttons::BT_CLASSIC_QS))
-			b->set_active(quickslot_active);
+			b->set_active(!quickslot_active);
 
 		if (Button* b = btn_at(Buttons::BT_CLASSIC_QSD))
-			b->set_active(!quickslot_active);
+			b->set_active(quickslot_active);
 	}
 
 	Point<int16_t> UIStatusBar::get_quickslot_pos() const
@@ -2016,6 +2035,7 @@ namespace ms
 
 		classic_backgrnd = Texture(base["backgrnd"]);
 		classic_backgrnd2 = Texture(base["backgrnd2"]);
+		classic_icon_memo = Texture(base["iconMemo"]);
 		classic_graduation = Texture(gauge["graduation"]);
 		classic_gauge_bar = Texture(gauge["bar"]);
 		classic_gauge_gray = Texture(gauge["gray"]);
@@ -2036,6 +2056,7 @@ namespace ms
 
 		zero_origin(classic_backgrnd);
 		zero_origin(classic_backgrnd2);
+		zero_origin(classic_icon_memo);
 		zero_origin(classic_graduation);
 		zero_origin(classic_gauge_bar);
 		zero_origin(classic_gauge_gray);
@@ -2202,11 +2223,14 @@ namespace ms
 		add_btn(Buttons::BT_CLASSIC_QS, sb["QuickSlot"], group_x + 195, 8);
 		add_btn(Buttons::BT_CLASSIC_QSD, sb["QuickSlotD"], group_x + 195, 8);
 
-		// 举报/密语：参考端在按钮簇首两格（y=8）。
+		// 举报钮 BtClaim：Angel 083 CUIStatusBar::OnCreate 的 1009/(573,515)，与
+		// BtShop 1000/(573,543) 同 x 不同 y（参考全幅图 1x 模板匹配 BtClaim x576 /
+		// BtShop x576 双证）。旧值 group_x-15 把它挪到屏幕 x558，与 ChatBar 的
+		// BtMin(x543) 叠成「红头盔压蓝方块」。按 IDA 真值改回 group_x+0。
+		// 参考端该簇没有第二颗深蓝 ▶ —— 密语箭头是 ChatBar 在 chatTarget 框左端
+		// 画的 BtWhisper(0,4)，故不再建 StatusBar 的 BT_CLASSIC_WHISPER，避免多一颗。
 		if (sb["BtClaim"])
-			add_btn(Buttons::BT_CLASSIC_CLAIM, sb["BtClaim"], group_x - 15, 8);
-		if (sb["BtWhisper"])
-			add_btn(Buttons::BT_CLASSIC_WHISPER, sb["BtWhisper"], group_x + 15, 8);
+			add_btn(Buttons::BT_CLASSIC_CLAIM, sb["BtClaim"], group_x + 0, 8);
 
 		// 量规数值改画 number 位图字库（W1）；标签 HP/MP/EXP 用 gauge/bar 图集烘焙，不建 Text。
 		classic_exp_dot = ColorBox(1, 1, Color::Name::WHITE, 1.0f);
@@ -2214,15 +2238,33 @@ namespace ms
 		joblabel = OutlinedText(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 		classic_exp_text = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 
-		// 键帽层（W3）：key/0..6 = Shift/Ins/Hm/Pup/Ctrl/Del/End 贴纸（key/7 本包为红箭头，非 Pdn）；
-		// 字母键名用描边文字回退，中文名称走 Text maxwidth（T12b 度量换行）。
+		// 键帽层：原生 Angel 在每格左上角画 UIWindow.img/KeyConfig/quickslotConfig/key
+		// 的淡蓝斜体白框切图（用户 m01201 指定路径）。底板 base/quickSlot26 是空白格，
+		// 键帽单独画；UIQuickslotConfig.cpp:41-78 已用同一资源做「变更快捷键」窗。
+		// 取证：orange-wz 解出 68 张 key/* 位图（tools/_qs_montage_white.png），正确端
+		// 图2 逐格 masked 模板 SAD 4.5~18.8，旧 StatusBar.img/key 灰贴纸 + 描边文字
+		// SAD 96~108 ⇒ 不是同一套绘制。W3 coords.md §2.3「Basic.img 无字母位图⇒
+		// 只能文字回退」只约束 Basic.img，不能外推到 UIWindow.img 这套资源。
+		// 节点号与 KeyConfig::Key 枚举逐字相等，故按 maple key 编号直接索引。
+#ifdef USE_NX
+		nl::node qskey = nl::nx::UI["UIWindow.img"]["KeyConfig"]["quickslotConfig"]["key"];
+		if (!qskey)
+			qskey = nl::nx::UI["UIWindow2.img"]["KeyConfig"]["quickslotConfig"]["key"];
+		if (qskey)
+		{
+			for (int id = 2; id <= 88; ++id)
+			{
+				nl::node n = qskey[std::to_string(id)];
+				if (n)
+					classic_qs_cap[id] = Texture(n);
+			}
+		}
+#endif
+
+		// 缺切图时的回退：旧 StatusBar.img/key/0..6 灰贴纸 + 描边文字（中文名仍走 Text）。
 		for (size_t i = 0; i < 7; i++)
 			classic_key_label[i] = Texture(sb["key"][static_cast<int16_t>(i)]);
-		// 参考截图逐像素取证：原生键帽字（数字/字母）字身 = #AABBCC + 1px 白描边，
-		// 数字字形与 StatusBar.img/FontMemo 位图完全同形（6x7，笔画 2px）。本包只有
-		// FontMemo 的 0-9、无字母，且 Texture 通道不支持着色，故数字也改走同一套
-		// 描边文字，至少保证颜色/描边/字号一致，不再出现白字压白格看不见。
-		classic_qs_keytext = OutlinedText(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::KEYCAPBLUE, Color::Name::WHITE);
+		classic_qs_keytext = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 		classic_qs_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "", 28);
 
 		quickslot[0] = classic_quickslot;
@@ -2241,6 +2283,9 @@ namespace ms
 			<< " vw=" << VWIDTH << " vh=" << VHEIGHT);
 
 		refresh_classic_qs_icons();
+		// init 时两颗箭头刚 add_btn 完都还是 MapleButton 默认态，必须按当前
+		// quickslot_active 同步一次，否则进图首帧方向错 / 两颗箭头重叠双显。
+		sync_classic_qs_buttons();
 	}
 
 	void UIStatusBar::refresh_classic_qs_icons()
@@ -2285,6 +2330,18 @@ namespace ms
 				}
 			}
 #ifdef USE_NX
+			else if (mapping.type == KeyType::Id::MACRO)
+			{
+				// V2：整行宏绑到快捷格时画 Macroicon/<idx>/icon，与键位窗同一素材。
+				nl::node mi = nl::nx::UI["UIWindow.img"]["SkillMacro"]["Macroicon"][mapping.action];
+				if (mi["icon"])
+				{
+					Texture mtex = mi["icon"];
+					mtex.shift(mtex.get_origin());
+					classic_qs_icons[i] = mtex;
+				}
+				classic_qs_names[i] = SkillMacros::get().get_slot(static_cast<size_t>(mapping.action)).name;
+			}
 			else if (mapping.type == KeyType::Id::MENU || mapping.type == KeyType::Id::ACTION
 				|| mapping.type == KeyType::Id::FACE)
 			{
@@ -2352,6 +2409,54 @@ namespace ms
 		Stage::get().send_key(mapping.type, mapping.action, true);
 	}
 
+	// turn13：宏/技能图标拖到底部快捷格 = 直接绑定该格键位（原生 KeyConfig 语义）。
+	// 基类 send_icon 返回 true 会把图标无声吞掉 —— 状态栏永远 active，get_front
+	// 反向扫描先命中它，拖到快捷格的图标从此再也到不了 UIKeyConfig。
+	bool UIStatusBar::send_icon(const Icon& icon, Point<int16_t> cursor_position)
+	{
+		if (!classic_mode || !quickslot_active)
+			return false;
+
+		int16_t slot = classic_qs_slot_at(cursor_position);
+
+		if (slot < 0)
+			return false;
+
+		// 组装等价 Keyboard::Mapping：技能图标走 (SKILL, sid)；
+		// 整行宏图标（KEY 型 + get_macro_index>=0）走 (MACRO, idx)。
+		KeyType::Id btype = KeyType::Id::NONE;
+		int32_t baction = 0;
+
+		if (icon.get_type() == Icon::IconType::SKILL && icon.get_skill_id() > 0)
+		{
+			btype = KeyType::Id::SKILL;
+			baction = icon.get_skill_id();
+		}
+		else if (icon.get_macro_index() >= 0)
+		{
+			btype = KeyType::Id::MACRO;
+			baction = icon.get_macro_index();
+		}
+		else
+		{
+			return false;
+		}
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
+			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+			: CLASSIC_QS_KEYS[slot];
+
+		// 本地立即生效 + 上行 CHANGE_KEYMAP(135) 持久化 + 快捷栏图标刷新。
+		UI::get().get_keyboard().assign(maple_key, btype, baction);
+		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> updated;
+		updated.emplace_back(static_cast<KeyConfig::Key>(maple_key), btype, baction);
+		ChangeKeyMapPacket(updated).dispatch();
+		redraw_quickslots();
+		Sound(Sound::Name::BUTTONCLICK).play();
+		return true;
+	}
+
 	Cursor::State UIStatusBar::send_cursor(bool clicked, Point<int16_t> cursor_position)
 	{
 		if (classic_mode && quickslot_active)
@@ -2372,13 +2477,15 @@ namespace ms
 
 	void UIStatusBar::draw_classic(float alpha) const
 	{
-		// [用户暂关] classic StatusBar base/backgrnd 通栏底条。
-		// 原先：横向平铺铺满 VWIDTH，消除左右黑边；内容组居中后仍从 x=0 起画。
-		// 现按需求先不画，保留 backgrnd2 / gauge / chrome；恢复时取消下面注释即可。
-		// if (classic_backgrnd)
-		// 	classic_backgrnd.draw(DrawArgument(
-		// 		Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
-		(void)classic_backgrnd;
+		// R16 定版（docs/features/ui-v83-window-restore/evidence/w4-chatbar/coords.md §1'）：
+		// base/backgrnd(817x71) 通栏铺满 VWIDTH，落点 (0, vh-71)；白色输入带是它
+		// 自身烘焙的一条（带顶 = 底栏顶+4、内高 26、x3..820 通栏）。内容/按钮组按
+		// hud_cx 居中，但底条贴图本身不居中。此前 [用户暂关] 注释掉后底栏只剩
+		// backgrnd2 的 570 宽半透明带 → 白带只到 x≈548、chatTarget 失去底衬
+		// （真机 2026-11-15 图2）。按截图/IMG 还原，恢复通栏绘制。
+		if (classic_backgrnd)
+			classic_backgrnd.draw(DrawArgument(
+				Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
 
 		if (classic_backgrnd2)
 			classic_backgrnd2.draw(position);
@@ -2541,16 +2648,40 @@ namespace ms
 				const Point<int16_t> cell_pos = classic_qs_cell_at(i, cols);
 
 				if (classic_qs_icons[i])
-					classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, QS_ICON_SHIFT_Y));
+				{
+					// 图标锚点按每张贴图自身 origin 自适应：Texture::draw → get_rectangle
+					// 会减去 origin，要让绘制顶落在格顶，绘制点必须 = cell_top + origin.y。
+					// KeyConfig/icon（MENU/ACTION/FACE）origin.y=32（底边锚点，orange-wz 实测）；
+					// SkillData 构造里已 icon.shift(get_origin()) 把 origin 清零、ItemData 图标同理。
+					// 旧实现统一 +QS_ICON_SHIFT_Y(32) 只适用于前者，把技能/道具图标整体下移
+					// 32px 画到格外面板之外 —— 真机表现为「绑定了枪连击的 Z 格只剩键帽数字、
+					// 看不到技能图标」。按自身 origin 自适应后，26/32 宽格与 8 槽窄格一并修正。
+					const int16_t icon_dy = classic_qs_icons[i].get_origin().y();
+					classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, icon_dy));
+				}
 
-				// 键帽层（W3/RC14）：宽窄面板都画，且画在图标之上（贴纸高 11，占格顶带）。
-				// 8 槽模式跟 quickslots 触发键；宽格仍用 CLASSIC_QS_* 固定表。
+				// 键帽层：原生切图 quickslotConfig/key/<mapleKey> 画在图标之上（占格顶带）。
+				// 切图 7~28x11、origin=(0,0)，与旧 StatusBar.img/key 灰贴纸同尺寸族；
+				// 用户只反馈键帽「样式」不符、未反馈位置偏移，故保持旧贴纸的 cell_pos
+				// 零偏移同位替换，不擅自挪动落点。8 槽跟 quickslots，宽格用固定表。
+				// 键帽优先走原生切图：26 格固定表与 8 槽动态键位统一按 maple key 取图，
+				// RIGHT_* 归一到左键节点（RIGHT_SHIFT=86→42 / RIGHT_CONTROL=85→29 / RIGHT_ALT=87→56）。
+				uint8_t mk = (classic_qs_count == 8 && i < 8)
+					? static_cast<uint8_t>(UI::get().get_keyboard().get_quickslot_key(static_cast<uint8_t>(i)))
+					: CLASSIC_QS_KEYS[i];
+				int16_t cap_id = static_cast<int16_t>(mk);
+				switch (mk)
+				{
+				case KeyConfig::Key::RIGHT_CONTROL: cap_id = KeyConfig::Key::LEFT_CONTROL; break;
+				case KeyConfig::Key::RIGHT_SHIFT: cap_id = KeyConfig::Key::LEFT_SHIFT; break;
+				case KeyConfig::Key::RIGHT_ALT: cap_id = KeyConfig::Key::LEFT_ALT; break;
+				default: break;
+				}
+
 				int8_t cap = -1;
 				std::string keyname;
 				if (classic_qs_count == 8 && i < 8)
 				{
-					uint8_t mk = static_cast<uint8_t>(
-						UI::get().get_keyboard().get_quickslot_key(static_cast<uint8_t>(i)));
 					switch (mk)
 					{
 						case KeyConfig::Key::LEFT_SHIFT: case KeyConfig::Key::RIGHT_SHIFT: cap = 0; break;
@@ -2588,14 +2719,20 @@ namespace ms
 					keyname = CLASSIC_QS_KEYNAME[i];
 				}
 
-				if (cap >= 0 && classic_key_label[cap])
+				// 原生切图优先：淡蓝斜体白框（正确端图2 同款）。
+				if (cap_id >= 0 && cap_id < static_cast<int16_t>(classic_qs_cap.size())
+					&& classic_qs_cap[cap_id])
 				{
+					classic_qs_cap[cap_id].draw(cell_pos);
+				}
+				else if (cap >= 0 && classic_key_label[cap])
+				{
+					// 缺切图回退：StatusBar.img/key/0..6 灰贴纸。
 					classic_key_label[cap].draw(cell_pos);
 				}
 				else if (!keyname.empty())
 				{
-					// 原生键帽字身左上角 = 格左上角 + (4,4)（参考截图 FontMemo 同形量得），
-					// OutlinedText 的 inner 即字身，故直接按该偏移落笔。
+					// 最后回退：描边文字（保持旧行为，避免缺素材包时空白）。
 					classic_qs_keytext.change_text(keyname);
 					classic_qs_keytext.draw(cell_pos + Point<int16_t>(QS_CAP_X, QS_CAP_Y));
 				}
@@ -2608,6 +2745,19 @@ namespace ms
 					classic_qs_label.draw(DrawArgument(cell_pos + Point<int16_t>(0, QS_LABEL_Y)));
 				}
 			}
+		}
+
+		// 按钮簇第 3 颗「双人物+星」= StatusBar.img/base/iconMemo (14x11)，纯 bitmap
+		// 无 normal/pressed/... 四态子节点，不能走 MapleButton，只能按 Texture 直画。
+		// 参考全幅图 1x 模板匹配 SAD=0.0 @x602 y82；BtClaim x576 → 相对 +26，
+		// 比按钮行 (y78) 低 4px ⇒ 落 (group_x+26, 12)。本端旧代码从未绘制该节点。
+		if (classic_icon_memo)
+		{
+			const int16_t memo_group_x = static_cast<int16_t>(
+				quickslot_pos.x() - HudLayout::qs_group_gap(VWIDTH));
+
+			classic_icon_memo.draw(position + Point<int16_t>(
+				static_cast<int16_t>(memo_group_x + 26), 12));
 		}
 
 		UIElement::draw_buttons(alpha);

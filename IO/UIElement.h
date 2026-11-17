@@ -183,6 +183,9 @@ namespace ms
 			STATUSBAR,
 			CHATBAR,
 			BUFFLIST,
+			/// 技能冷却图标条（buff 行下方；Angel/MinMS UICooldownList）。
+			/// 新增 Type 会增大 EnumMap → 须整工程 Rebuild。
+			COOLDOWNLIST,
 			TEMPORARYSTATVIEW,
 			NOTICE,
 			NPCTALK,
@@ -290,6 +293,12 @@ namespace ms
 		virtual Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position);
 		virtual void send_scroll(double yoffset) {}
 		virtual void send_key(int32_t keycode, bool pressed, bool escape) {}
+
+		/// 焦点窗（FOCUSED）active 时，UIStateGame::send_cursor 把**所有**点击
+		/// 无条件派发给它 —— 光标落在范围外的点击也被它吞掉，状态栏按钮收不到。
+		/// 返回 true 的轻量气球（目录 UIGameMenu / 界面 UIShortCut）：范围外点击
+		/// 改为「收起自己 + 把点击交还下层普通派发」，这样点另一颗钮能一键切换。
+		virtual bool closes_on_outside_click() const { return false; }
 
 		virtual UIElement::Type get_type() const = 0;
 

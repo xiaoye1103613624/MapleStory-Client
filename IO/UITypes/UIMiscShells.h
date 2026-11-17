@@ -2,6 +2,7 @@
 #include "../UIDragElement.h"
 #include "../Components/Slider.h"
 #include "../Components/Textfield.h"
+#include "../Components/Icon.h"
 #include "../../Audio/Audio.h"
 #include "../../Graphics/Animation.h"
 #include "../../Graphics/Geometry.h"
@@ -14,13 +15,22 @@ public:
 	static constexpr Type TYPE = UIElement::Type::REPORT;
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIReport();
+	explicit UIReport(const std::string& target) : UIReport() { set_target(target); }
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
 	void set_target(const std::string& name);
+	// 服务端回执：mode 0=成功 1=找不到用户 2=次数用尽 3=被别人举报 4=未知失败
+	void on_report_result(int8_t mode);
 private:
-	bool has_assets = false; Texture backgrnd; Text tip_label;
+	void submit();               // 仅用户明确确认时调用，发一次包
+	bool has_assets = false; Texture backgrnd;
+	Text target_label;           // 目标名（画在背景 relY 48-70 的米色输入框）
+	Text status_label;           // 选中理由/提交/回执状态（画在底部蓝条）
 	std::string preset_target;
+	std::string description;
+	int8_t reason = 0;           // 举报理由 0..3（1-4 键选，背景不烘焙理由行）
+	bool submitted = false;      // 防重复提交
 };
 class UICoupon : public UIDragElement<PosNOTICE> {
 public:
@@ -94,19 +104,76 @@ private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 	int16_t equip_slot = 0;
 };
+// 匠人之魂窗（Angel CUIEnchantDlg / UIWindow.img/EnchantSkill）。
+// IMG：backgrnd 178×206 + say0/1/2 + Effect/0..25；布局对齐 MinMS+Angel OnCreate。
+// 发包：背包正槽走 ScrollEquipPacket::dispatch_bag_equip；已穿戴路径不经本窗。
+// 结果：Angel CUIEnchantDlg::RefreshToolTip @0x7f675d（文案/音效/毁物关窗/MakeClone）。
 class UIEnchantSkill : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::ENCHANTSKILL;
 	static constexpr bool FOCUSED = false; static constexpr bool TOGGLED = true;
 	UIEnchantSkill();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	bool send_icon(const Icon& icon, Point<int16_t> cursor_position) override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	UIElement::Type get_type() const override;
+	// SCROLL_RESULT → RefreshToolTip 语义（success / destroyed / 白卷分支）。
+	void on_scroll_result(bool success, bool destroyed);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture effect; Text tip_label;
+	enum Buttons : uint16_t { BT_CANCEL, BT_CLOSE, BT_WHITE };
+	static constexpr int16_t PANEL_W = 178;
+	static constexpr int16_t PANEL_H = 206;
+	static constexpr int16_t BT_CANCEL_X = 65;
+	static constexpr int16_t BT_CANCEL_Y = 180;
+	static constexpr int16_t BT_CLOSE_X = 158;
+	static constexpr int16_t BT_CLOSE_Y = 8;
+	static constexpr int16_t SAY_X = 46;
+	static constexpr int16_t SAY_Y = 26;
+	static constexpr int16_t WHITE_LABEL_X = 30;
+	static constexpr int16_t WHITE_LABEL_Y = 150;
+	static constexpr int16_t CHECK_X = 10;
+	static constexpr int16_t CHECK_Y = 153;
+	static constexpr int16_t CHECK_W = 150;
+	static constexpr int16_t CHECK_H = 18;
+	static constexpr int16_t SLOT_X = 75;
+	static constexpr int16_t SLOT_Y = 100;
+	static constexpr int16_t EFFECT_X = 0;
+	static constexpr int16_t EFFECT_Y = 0;
+	static constexpr int16_t ICON_CELL = 32;
+	static constexpr int32_t WHITE_SCROLL = 2340000;
+
+	bool place_equip(int16_t slot, int32_t item_id, bool tell);
+	void apply_scroll(int16_t scroll_slot, int32_t scroll_id);
+	void clear_equip();
+	void refresh_equip();
+	void refresh_white_scroll();
+	void tip(const std::string& line);
+	void close_enchant();
+	void play_effect();
+	uint8_t white_scroll_flag(int32_t scroll_id) const;
+
+	bool has_assets = false;
+	Texture background;
+	Texture say_empty;
+	Texture say_filled;
+	Texture white_label;
+	Texture checkbox[2];
+	Animation effect_ani;
+	bool effect_playing = false;
+	Texture equip_icon;
+	Text tip_label;
 	int16_t equip_slot = 0;
+	int32_t equip_item = 0;
 	int16_t scroll_slot = 0;
+	bool white_checked = false;
+	bool white_available = false;
+	bool pending = false;
+	// 发包瞬间是否带白卷旗（Angel sub_7F63E8 == 2）。
+	bool last_used_white = false;
 };
 class UIItemProtector : public UIDragElement<PosNOTICE> {
 public:
@@ -642,6 +709,9 @@ public:
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	void update_screen(int16_t new_width, int16_t new_height) override;
 	UIElement::Type get_type() const override;
+	void reset_selection() { selected = 0; }
+	// 界面气球：点击范围外（如状态栏「目录」钮）= 收起 + 交还下层点击。
+	bool closes_on_outside_click() const override { return true; }
 protected:
 	// UIWindow.img/ShortCut 的 8 颗真按钮（此前一个都没实例化 → 「图标缺失」）。
 	Button::State button_pressed(uint16_t buttonid) override;
@@ -650,6 +720,13 @@ private:
 		BT_ITEM, BT_EQUIP, BT_STAT, BT_SKILL, BT_COMM, BT_QUEST,
 		BT_MOBBOOK, BT_MESSENGER
 	};
+	// 键盘上下选择 + 回车激活：列表顺序与 ctor 中按钮创建顺序一致。
+	static constexpr uint16_t MENU_IDS[] = {
+		BT_ITEM, BT_EQUIP, BT_STAT, BT_SKILL, BT_COMM, BT_QUEST,
+		BT_MOBBOOK, BT_MESSENGER
+	};
+	static constexpr size_t MENU_COUNT = 8;
+	int16_t selected = 0;
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
 class UISkillMacroEx : public UIDragElement<PosNOTICE> {
@@ -665,8 +742,18 @@ public:
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
 	UIElement::Type get_type() const override;
+	void send_scroll(double yoffset) override;
+	// H3：窗口收口（关窗 / 随技能窗消失）时若图标还挂在光标上，把源格写回。
+	void remove_cursor() override;
+	/// 每帧持续锚定到技能窗右侧；技能窗关闭则随之收起。
+	/// 原生 CUISkillEx::ShiftMacroUIState 里宏面板是同一张窗的内嵌画布，天然跟随 /
+	/// 随父窗关闭；本端拆成独立 UISkillMacroEx 后须用 update() 等价补回联动。
+	void update() override;
 	/// 从技能窗拖入技能：命中组合栏则写入当前选中宏的空格。
 	bool drop_skill(int32_t skill_id, Point<int16_t> cursor_position);
+		// drop_icon 的 get_front 命中本窗，必须自己接 send_icon —— 基类默认
+		// return true 会静默吞掉拖放，技能图标凭空消失却写不进宏。
+		bool send_icon(const Icon& icon, Point<int16_t> cursor_position) override;
 protected:
 	Button::State button_pressed(uint16_t buttonid) override;
 private:
@@ -675,6 +762,24 @@ private:
 	// true = UIWindow.img/SkillMacro 原生拼装外壳；false = 退到 SkillMacroEx 整块底衬。
 	bool shell_ok = false;
 	Texture backgrnd, macroslot, macroname, line02;
+	// 选中态由 Macroicon/N/iconMouseOver 表达（R15：原生帧三行像素全等，无整行高亮底）。
+	// Angel 共用控件：确定钮走 Basic.img/BtOK2 真四态 MapleButton（buttons[BT_OK]），
+	// 勾选框是运行期 CCtrlCheckBox 等价物（AreaButton 命中 + CheckBox/0|1 贴图）。
+	Texture check_off, check_on;
+	bool ok_enabled = false;
+	void set_ok_enabled(bool enabled);
+	/// Angel GetIndexByPos 等价：由光标局部坐标反算 (真实宏 index, 列)。
+	bool index_by_pos(Point<int16_t> relative, int16_t& idx, int16_t& col) const;
+	// Angel BeginDragDrop 等价：组合栏内部拖放源。地址必须稳定，
+	// UIStateGame::drag_icon 存的是裸指针；成员随窗口对象存活。
+	Icon drag_skill_icon, drag_macro_icon;
+	// H3（2026-11-16）：抓取即清源格的回滚记录。原生 BeginDragDrop 载荷带
+	// (row, col)，拖拽中途 ESC/关窗时把源格写回；旧实现清完就不管，
+	// 技能直接丢失。仅当图标仍挂在光标上（get_drag()==true）时回滚。
+	int16_t grab_idx = -1;
+	int16_t grab_col = -1;
+	int32_t grab_sid = 0;
+	void clear_cell(int16_t idx, int16_t col);
 	Texture macro_icon[MACRO_COUNT];
 	Texture macro_icon_sel[MACRO_COUNT];
 	mutable Slider slider;	// 宏条数随封包变化，draw() 里同步 setrows（同 name_label 的先例）
@@ -682,7 +787,12 @@ private:
 	int16_t selected = 0;	// 正在编辑的宏
 	Textfield name_field;
 	bool shout_checked = false;
-	void commit_name();
+	// V4/V5：notify=true（确定钮 / Enter）才走脏话校验 + 「已保存」提示；
+	// 勾选框切换复用同一写入但不弹提示（Angel 只在 id3000 分支 Notice）。
+	// 返回 false = 宏名被脏话校验拦下，未写入、未上行。
+	bool commit_name(bool notify = false);
+	/// H3：把 skill_id 写回指定 (行,列)；与 clear_cell 对称，用于拖拽取消回滚。
+	void set_cell(int16_t idx, int16_t col, int32_t skill_id);
 };
 class UICharacterClone : public UIDragElement<PosNOTICE> {
 public:
@@ -750,18 +860,24 @@ public:
 	void draw(float inter) const override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
 	UIElement::Type get_type() const override;
-	// 在光标处打开；cid=0 表示空白地右键（仅系统项）
+	// 在光标处打开；命中其他角色传其 cid/name，空白地传自己。
 	void open_at(Point<int16_t> screen_pos, int32_t cid, const std::string& name);
 	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 protected:
 	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	enum Buttons : uint16_t { BtInfo, BtWhisper, BtClose };
-	bool has_assets = false; Texture backgrnd;
+	// Angel CUIContextMenu::OnCreate：BtInfo/Save/Trade/Whisper/(Party)/(Guild)/Claim/(Family)
+	enum Buttons : uint16_t {
+		BtInfo = 0, BtSave, BtTrade, BtWhisper, BtParty, BtGuild, BtClaim, BtFamily, BtCount
+	};
+	bool has_assets = false;
+	Texture tile_t, tile_c, tile_s;
 	int32_t target_cid = 0;
 	std::string target_name;
-	Text title_label;
-	void activate_row(int row);
+	Text title_label;           // Alignment::CENTER，锚点在标题栏中点（窗口水平居中）
+	int16_t mid_rows = 5;
+	void rebuild_buttons();
+	void layout_dimension();
 };
 class UIEventWindow : public UIDragElement<PosNOTICE> {
 public:
@@ -825,6 +941,9 @@ public:
 	// 气球挂在底栏「目录」钮正上方（下摆尖端对准钮中心），替掉屏幕居中。
 	void update_screen(int16_t new_width, int16_t new_height) override;
 	UIElement::Type get_type() const override;
+	void reset_selection() { selected = 0; }
+	// 目录气球：点击范围外（如状态栏「界面」钮）= 收起 + 交还下层点击。
+	bool closes_on_outside_click() const override { return true; }
 protected:
 	// UIWindow.img/GameMenu 的 4 颗真按钮（频道变更/游戏设置/系统设置/游戏结束）。
 	// 此前只画底板 + 一行英文按键提示，等于把开发用的调试壳暴露给了玩家。
@@ -833,6 +952,10 @@ private:
 	enum Buttons : uint16_t {
 		BT_CHANNEL, BT_GAMEOPT, BT_SYSOPT, BT_QUIT
 	};
+	// 键盘上下选择 + 回车激活：列表顺序与 ctor 中按钮创建顺序一致。
+	static constexpr uint16_t MENU_IDS[] = { BT_CHANNEL, BT_GAMEOPT, BT_SYSOPT, BT_QUIT };
+	static constexpr size_t MENU_COUNT = 4;
+	int16_t selected = 0;
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
 class UIMacro : public UIDragElement<PosNOTICE> {

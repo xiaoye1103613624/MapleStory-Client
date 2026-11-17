@@ -60,6 +60,10 @@ namespace ms
 		bool is_in_range(Point<int16_t> cursor_position) const override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		// turn13：宏/技能图标拖到底部快捷格 = 直接绑定该格键位（原生 KeyConfig 语义）。
+		// 基类 send_icon 返回 true 会把图标无声吞掉 —— 用户「组合技能图标无法拖拽到
+		// 快捷按键」的根因之一：状态栏永远 active，get_front 先命中它。
+		bool send_icon(const Icon& icon, Point<int16_t> cursor_position) override;
 
 		UIElement::Type get_type() const override;
 
@@ -199,8 +203,13 @@ namespace ms
 		Texture classic_showlevel_bracket;	// ShowLevel/Bracket/right 2x12
 		ColorBox classic_exp_dot;			// number 无 '.' 字模：EXP 小数点用 1x1 白点
 		ColorBox classic_exp_pct_dot;		// 经验值百分比位图 tint（蓝紫，独立于血量白字）
-		Texture classic_key_label[7];		// key/0..6：Shift/Ins/Hm/Pup/Ctrl/Del/End 键名贴纸（key/7 本包为红箭头，非 Pdn）
-		mutable OutlinedText classic_qs_keytext;	// 数字/字母/Pdn 键帽：#AABBCC 字身 + 白描边（原生位图字母缺失，描边文字统一回退）
+		Texture classic_key_label[7];		// StatusBar.img/key/0..6 灰贴纸：缺切图时的回退（key/7 本包为红箭头，非 Pdn）
+		// 原生键帽切图：UIWindow.img/KeyConfig/quickslotConfig/key/<mapleKey>。
+		// 节点号 = KeyConfig::Key 枚举值（NUM1=2 / A=30 / LEFT_SHIFT=42 / INSERT=82 /
+		// HOME=71 / PAGE_UP=73 / DELETE=83 / END=79 / PAGE_DOWN=81 / Z=44 …），
+		// orange-wz 实读 68 张淡蓝斜体白框位图；用户 m01201 指定此路径。
+		std::array<Texture, 128> classic_qs_cap{};	// 按 maple key 编号索引，> 88 节点号上限
+		mutable OutlinedText classic_qs_keytext;	// 切图缺失时的描边文字回退（WHITE 字身 + DARKGREY 描边）
 		mutable Text classic_qs_label;		// 快捷格中文名称：Text maxwidth（T12b 度量换行路径）
 		Point<int16_t> lvbadge_pos;
 
@@ -212,6 +221,7 @@ namespace ms
 		// Classic StatusBar.img chrome
 		Texture classic_backgrnd;
 		Texture classic_backgrnd2;
+		Texture classic_icon_memo;			// base/iconMemo 14x11：按钮簇第3颗「双人物+星」，纯 bitmap 无四态，按 Texture 直画
 		Texture classic_quickslot;
 		Texture classic_graduation;
 		Texture classic_gauge_bar;

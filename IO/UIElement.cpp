@@ -309,6 +309,19 @@ namespace ms
 
 					btit.second->set_state(Button::State::MOUSEOVER);
 					ret = Cursor::State::CANCLICK;
+
+					// 修复"点一次打不开、第二次才开"：鼠标瞬移/刚切回窗口/快速点击时，
+					// click 事件直接落在 NORMAL 态按钮上，缺少前置 MOUSEOVER 的 move 事件。
+					// 旧逻辑此时只建立 hover 就返回，要点第二下才走 MOUSEOVER 分支触发
+					// button_pressed（用户真机反复反馈 + 自动化脚本 hover-trick 佐证）。
+					// 这里在 NORMAL+clicked 的同一次事件里补上触发，行为与 MOUSEOVER+clicked
+					// 完全一致；正常"先 hover 再点"流程不经过此分支，交互零变化。
+					if (clicked)
+					{
+						Sound(Sound::Name::BUTTONCLICK).play();
+						btit.second->set_state(button_pressed(btit.first));
+						ret = Cursor::State::IDLE;
+					}
 				}
 				else if (btit.second->get_state() == Button::State::MOUSEOVER)
 				{

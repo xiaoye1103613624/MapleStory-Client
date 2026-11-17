@@ -1,6 +1,8 @@
 #include "UIMiscShells.h"
 #include "../UI.h"
 #include "../Components/MapleButton.h"
+#include "../Components/AreaButton.h"
+#include "../Components/Icon.h"
 #include "UIAdmin.h"
 #include "UICharInfo.h"
 #include "UIChatBar.h"
@@ -41,10 +43,11 @@
 #include "UINotice.h"
 #include "UIStatsInfo.h"
 #include "UIUserList.h"
-#include "UIBuddyList.h"
-#include "UIParty.h"
 #include "../../Character/BuddyListModel.h"
 #include "../../Character/PartyModel.h"
+#include "../../Character/GuildModel.h"
+#include "../../Character/FamilyModel.h"
+#include "../Window.h"
 #include "../Components/Textfield.h"
 #include "../../Audio/Audio.h"
 #include "../../Util/Locale.h"
@@ -75,12 +78,16 @@
 #include "UIRpsGame.h"
 #include "../../Character/SkillMacros.h"
 #include "../../Data/SkillData.h"
+#include "../../Character/SkillBook.h"
+#include "../../Character/SkillId.h"
+#include "../Components/Tooltip.h"
 #include "../../Data/ItemData.h"
 #include "UIJoypad.h"
 #include "UIKeyConfig.h"
 #include "UIMessenger.h"
 #include "UIOptionMenu.h"
 #include "UIQuit.h"
+#include "UILoginNotice.h"	// UIQuitConfirm — quit fall back when UIWindow6.img/askReward is absent
 #include "../../Template/Rectangle.h"
 // MinigameOmokPlacePacket / MatchCardSelectPacket
 #include "../../Util/HudLayout.h"
@@ -93,6 +100,63 @@
 #include <cstdio>
 namespace ms {
 namespace {
+	// Angel CUIMacroSysEx::OnMouseButton(0x8a98fe) 全文 328 行反编译坐实：
+	// 左键 513 → GetIndexByPos → OnSelected(row) → IWzGr2D::CreateLayer +
+	// CWndMan::BeginDragDrop(v43)，其中 v43[6]=技能id/宏图标、v43[7]=1(宏图标标志)、
+	// v43[8]=row、v43[9]=col、v43[10]=parent、*v43=&off_B39810(Draggable 回调表)。
+	// 即：组合栏里已放好的技能，以及右侧那列宏图标（红叉/书/盾），都能再抓起来拖走。
+	// 当前端旧实现只有 send_icon（外部拖入），整条内部拖放源缺失 —— 这正是用户 m00941
+	// 「技能放置上去以后不能拖拽移除走，后面技能红图标也不能拖拽使用」的根因。
+	class MacroCellIcon : public Icon::Type
+	{
+	public:
+		explicit MacroCellIcon(int32_t sid) : skill_id(sid) {}
+		void drop_on_stage() const override {}
+		void drop_on_equips(EquipSlot::Id) const override {}
+		bool drop_on_items(InventoryType::Id, EquipSlot::Id, int16_t, bool) const override { return true; }
+		void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const override
+		{
+			if (auto kc = UI::get().get_element<UIKeyConfig>())
+			{
+				Keyboard::Mapping mapping(KeyType::SKILL, skill_id);
+				if (remove) kc->unstage_mapping(mapping);
+				else kc->stage_mapping(cursorposition, mapping);
+			}
+		}
+		void set_count(int16_t) override {}
+		Icon::IconType get_type() override { return Icon::IconType::SKILL; }
+		int32_t get_skill_id() const override { return skill_id; }
+		bool is_macro_source() const override { return true; }
+	private:
+		int32_t skill_id;
+	};
+
+	class MacroRowIcon : public Icon::Type
+	{
+	public:
+		explicit MacroRowIcon(int16_t idx) : macro_index(idx) {}
+		void drop_on_stage() const override {}
+		void drop_on_equips(EquipSlot::Id) const override {}
+		bool drop_on_items(InventoryType::Id, EquipSlot::Id, int16_t, bool) const override { return true; }
+		void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const override
+		{
+			if (auto kc = UI::get().get_element<UIKeyConfig>())
+			{
+				// Angel v43[7]=1：整行宏绑到键位（KeyType::MACRO + 宏 index），
+				// 按键后由 Stage::send_key 顺序释放该行三个技能。
+				Keyboard::Mapping mapping(KeyType::MACRO, macro_index);
+				if (remove) kc->unstage_mapping(mapping);
+				else kc->stage_mapping(cursorposition, mapping);
+			}
+		}
+		void set_count(int16_t) override {}
+		Icon::IconType get_type() override { return Icon::IconType::KEY; }
+		int32_t get_macro_index() const override { return macro_index; }
+		bool is_macro_source() const override { return true; }
+	private:
+		int16_t macro_index;
+	};
+
 int32_t nearest_map_oid(MapObjects* objs)
 {
 	if (!objs || objs->size() == 0)
@@ -160,13 +224,16 @@ void softkey_or_inv_set_item(TipFn tip_fn)
 bool load_window_bg(const char* name, Texture& out, Point<int16_t>& dim) {
 #ifdef USE_NX
 	nl::node root = UiAssetResolve::window(name);
-	if (!root) return false;
-	// 多数窗用 backgrnd；UtilDlgEx* / QuestIcon 等用 t 顶片或 Cover。
+	if (!UiAssetResolve::usable(root)) return false;
+	// 多数窗用 backgrnd；UtilDlgEx* / QuestIcon 等用 t 顶片或 Cover；
+	// QuestAlarm 族用 backgrndmin/max（无单一 backgrnd）。
 	nl::node bg = root["backgrnd"] ? root["backgrnd"] : root["backgrd"];
+	if (!bg) bg = root["backgrndmin"];
+	if (!bg) bg = root["backgrndmax"];
 	if (!bg) bg = root["t"];
 	if (!bg) bg = root["Cover"];
 	if (!bg && root["0"]) bg = root["0"]["Cover"] ? root["0"]["Cover"] : root["0"]["backgrnd"];
-	if (!bg) return false;
+	if (!UiAssetResolve::usable(bg)) return false;
 	out = Texture(bg);
 	Point<int16_t> o = out.get_origin();
 	if (o.x() || o.y()) out.shift(o);
@@ -242,73 +309,106 @@ void dispatch_shop_create_or_open(const std::string& title, bool prefer_player_s
 }
 
 UIReport::UIReport()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("report.report_softkey_name"))
+	: target_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR)
+	, status_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR)
 {
 	position = Point<int16_t>(320, 180); dimension = Point<int16_t>(154, 166); dragarea = Point<int16_t>(154, 20);
 	has_assets = load_window_bg("Report", backgrnd, dimension);
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIReport: missing");
 	center_on_screen();
-	{
-		std::string pre = preset_target;
-		if (pre.empty()) {
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				pre = ci->get_target_name();
-		}
-		if (!pre.empty()) {
-			ReportPlayerPacket(pre, "client report").dispatch();
-			tip_label.change_text(Locale::format("report.reported", pre));
-			LOG(LOG_DEBUG, "UIReport: REPORT " << pre);
-		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& victim) {
-				std::string name = victim.empty() ? preset_target : victim;
-				if (name.empty()) { tip_label.change_text(Locale::text("common.empty_name")); return; }
-				ReportPlayerPacket(name, "client report").dispatch();
-				tip_label.change_text(Locale::format("report.reported", name));
-				LOG(LOG_DEBUG, "UIReport: REPORT " << name);
-			}, []() {}, "Report target");
-		}
-	}
+
+	// Report 背景 backgrnd(154x166) 已烘焙完整原生举报 UI：
+	// 标题「Alert BG」、说明「Please only file reports in game...」、
+	// 理由 1/2/3 行与「INCLUDE CHAT LOG」复选框。
+	// 因此不重复程序化画理由文字（旧版双重文字重叠），只叠加动态元素：
+	// 目标名 + 选中理由标记 + 提交/回执状态。
+	status_label.change_text(Locale::text("report.choose_reason"));
 }
+
 void UIReport::set_target(const std::string& name)
 {
+	if (name.empty())
+	{
+		UI::get().emplace<UISoftKey>([this](const std::string& victim) {
+			if (victim.empty()) { deactivate(); return; }
+			set_target(victim);
+		}, [this]() { deactivate(); }, Locale::text("report.report_softkey_name"));
+		return;
+	}
 	preset_target = name;
-	if (!name.empty())
-		tip_label.change_text(Locale::format("report.target_softkey_enter", name));
+	target_label.change_text(Locale::format("report.target_prefix", name));
 }
-void UIReport::draw(float) const
+
+void UIReport::submit()
+{
+	if (submitted || preset_target.empty()) return;   // 防重复提交
+	submitted = true;
+	std::string desc = description.empty() ? Locale::text("report.desc_none") : description;
+	ReportPlayerPacket(preset_target, desc, static_cast<int8_t>(0), reason).dispatch();
+	status_label.change_text(Locale::text("report.ok"));
+	LOG(LOG_DEBUG, "UIReport: submit target=" << preset_target << " reason=" << (int)reason);
+}
+
+void UIReport::on_report_result(int8_t mode)
+{
+	if (mode == 0)
+		status_label.change_text(Locale::text("report.result.success"));
+	else
+	{
+		const char* key = mode == 1 ? "report.fail.1" : mode == 2 ? "report.fail.2"
+			: mode == 3 ? "report.fail.3" : "report.fail.4";
+		status_label.change_text(Locale::text(key));
+	}
+	LOG(LOG_DEBUG, "UIReport: result mode=" << (int)mode);
+}
+
+void UIReport::draw(float inter) const
 {
 	if (has_assets && backgrnd) backgrnd.draw(position);
-	tip_label.draw(position + Point<int16_t>(8, 36));
+	// 背景 Report/backgrnd(154x166) 烘焙了：标题(relY 10-14)、粉色 "YOU ARE REPORTING"
+	// 条(relY 30-42)、"FOR" 标签(74-78)、三行警告文字(90-114)、"INCLUDE CHAT LOG"(124-130)。
+	// relY 48-70 是米色空白输入框，专放目标名；画在别处必与烘焙文字重叠。
+	target_label.draw(position + Point<int16_t>(10, 51));
+	// 背景没有烘焙理由列表（理由靠 1-4 键选、底部蓝条显示状态），故不再画「>」标记——
+	// 该标记原画在 relY 60/76/92，会压住 "FOR" 与警告文字。
+	// 状态文本画在底部蓝条（relY 138-163），短文案避免换行。
+	status_label.draw(position + Point<int16_t>(6, 140));
 }
+
 void UIReport::send_key(int32_t keycode, bool pressed, bool escape)
 {
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
-	if (keycode == 13 && !preset_target.empty()) {
-		ReportPlayerPacket(preset_target, "client report").dispatch();
-		tip_label.change_text(Locale::format("report.reported", preset_target));
+	if (keycode == 'X' || keycode == 'x') { deactivate(); return; }
+	if (submitted) return;   // 已提交，等回执
+
+	// 1-4 选理由（locale report.reason.0..3：非法程序/骚扰/诈骗/其它）
+	if (keycode >= '1' && keycode <= '4')
+	{
+		reason = static_cast<int8_t>(keycode - '1');
+		status_label.change_text(Locale::text(std::string("report.reason.") + std::to_string(reason)));
 		return;
 	}
-	if (keycode == 'S' || keycode == 's' || keycode == 'R' || keycode == 'r') {
-		std::string pre = preset_target;
-		if (pre.empty()) {
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				pre = ci->get_target_name();
-		}
-		if (!pre.empty()) {
-			ReportPlayerPacket(pre, "client report").dispatch();
-			tip_label.change_text(Locale::format("report.reported", pre));
-		} else {
+	// D 输入描述（SoftKey）
+	if (keycode == 'D' || keycode == 'd')
+	{
+		UI::get().emplace<UISoftKey>([this](const std::string& text) {
+			description = text;
+		}, []() {}, Locale::text("report.hint_enter_desc"));
+		return;
+	}
+	// Enter 确认提交
+	if (keycode == 13)
+	{
+		if (preset_target.empty())
+		{
 			UI::get().emplace<UISoftKey>([this](const std::string& victim) {
-				std::string name = victim.empty() ? preset_target : victim;
-				if (name.empty()) { tip_label.change_text(Locale::text("common.empty_name")); return; }
-				ReportPlayerPacket(name, "client report").dispatch();
-				tip_label.change_text(Locale::format("report.reported", name));
-			}, []() {}, "Report target");
+				if (!victim.empty()) { set_target(victim); submit(); }
+			}, []() {}, Locale::text("report.report_softkey_name"));
 		}
-	} else if (keycode == 'X' || keycode == 'x') {
-		deactivate();
+		else submit();
+		return;
 	}
 }
 UIElement::Type UIReport::get_type() const { return TYPE; }
@@ -714,117 +814,313 @@ Button::State UIKarmaScissors::button_pressed(uint16_t)
 }
 
 UIEnchantSkill::UIEnchantSkill()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, Locale::text("enchantskill.e_equip_s_scroll_enter"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW, "")
 {
-	position = Point<int16_t>(300, 200); dimension = Point<int16_t>(172, 86); dragarea = Point<int16_t>(172, 20);
+	dimension = Point<int16_t>(PANEL_W, PANEL_H);
+	dragarea = Point<int16_t>(PANEL_W, 22);
 #ifdef USE_NX
 	nl::node root = UiAssetResolve::window("EnchantSkill");
-	if (!root || !root["Effect"]["0"]) { LOG(LOG_WARN, "UIEnchantSkill: missing"); return; }
+	nl::node basic = nl::nx::UI["Basic.img"];
+	if (!root || !root["backgrnd"]) {
+		LOG(LOG_WARN, "UIEnchantSkill: missing EnchantSkill/backgrnd");
+		position = Point<int16_t>(300, 200);
+		return;
+	}
 	has_assets = true;
-	effect = Texture(root["Effect"]["0"]);
-	Point<int16_t> o = effect.get_origin();
-	if (o.x() || o.y()) effect.shift(o);
-	dimension = effect.get_dimensions();
-	dragarea = Point<int16_t>(dimension.x(), 20);
-	center_on_screen();
+	background = Texture(root["backgrnd"]);
+	say_empty = Texture(root["say0"]);
+	say_filled = Texture(root["say1"]);
+	white_label = Texture(root["say2"]);
+	// Effect/0..25：整棵根交给 Animation（多帧才建序列）。
+	if (root["Effect"])
+		effect_ani = Animation(root["Effect"]);
+	nl::node checks = basic["CheckBox"];
+	if (checks) {
+		checkbox[0] = Texture(checks["0"]);
+		checkbox[1] = Texture(checks["1"]);
+	}
+	try_maple_btn(buttons, BT_CANCEL, basic["BtCancel2"],
+		Point<int16_t>(BT_CANCEL_X, BT_CANCEL_Y), "UIEnchantSkill");
+	try_maple_btn(buttons, BT_CLOSE, basic["BtClose"],
+		Point<int16_t>(BT_CLOSE_X, BT_CLOSE_Y), "UIEnchantSkill");
+	buttons[BT_WHITE] = std::make_unique<AreaButton>(
+		Point<int16_t>(CHECK_X, CHECK_Y),
+		Point<int16_t>(CHECK_W, CHECK_H));
+	const int16_t view_w = Constants::Constants::get().get_viewwidth();
+	position = Point<int16_t>(
+		static_cast<int16_t>(std::max<int32_t>(0, view_w - PANEL_W - 16)), 12);
+	refresh_white_scroll();
+	white_checked = white_available;
 #endif
 }
+
+void UIEnchantSkill::draw(float inter) const
+{
+	if (has_assets && background)
+		background.draw(position);
+	else
+		return;
+
+	const Texture& say = (equip_item > 0 && say_filled) ? say_filled : say_empty;
+	if (say)
+		say.draw(position + Point<int16_t>(SAY_X, SAY_Y));
+	if (white_label)
+		white_label.draw(position + Point<int16_t>(WHITE_LABEL_X, WHITE_LABEL_Y));
+	const Texture& cb = checkbox[white_checked ? 1 : 0];
+	if (cb) {
+		float opc = white_available ? 1.0f : 0.45f;
+		cb.draw(DrawArgument(position + Point<int16_t>(CHECK_X, CHECK_Y), opc));
+	}
+	if (equip_icon)
+		equip_icon.draw(position + Point<int16_t>(SLOT_X, SLOT_Y));
+	if (effect_playing)
+		effect_ani.draw(position + Point<int16_t>(EFFECT_X, EFFECT_Y), inter);
+	UIElement::draw(inter);
+	if (!tip_label.empty())
+		tip_label.draw(position + Point<int16_t>(8, PANEL_H + 4));
+}
+
+void UIEnchantSkill::update()
+{
+	UIElement::update();
+	refresh_equip();
+	refresh_white_scroll();
+	if (effect_playing && effect_ani.update())
+		effect_playing = false;
+}
+
+void UIEnchantSkill::play_effect()
+{
+	effect_ani.reset();
+	effect_playing = true;
+}
+
 bool UIEnchantSkill::send_icon(const Icon& icon, Point<int16_t> cursor)
 {
 	Rectangle<int16_t> win{ position, position + dimension };
-	if (!win.contains(cursor)) return true;
-	if (icon.get_inventory_tab() != InventoryType::Id::EQUIP) {
-		tip_label.change_text(Locale::text("common.need_equip"));
+	if (!win.contains(cursor) || pending)
+		return true;
+
+	const InventoryType::Id tab = icon.get_inventory_tab();
+	const int16_t slot = icon.get_inventory_slot();
+	const int32_t item_id = icon.get_item_id();
+	if (slot <= 0 || item_id <= 0)
+		return true;
+
+	if (tab == InventoryType::Id::EQUIP) {
+		place_equip(slot, item_id, true);
 		return true;
 	}
-	equip_slot = icon.get_inventory_slot();
-	tip_label.change_text(Locale::format("enchantskill.enchant_slot", std::to_string(equip_slot)));
+	if (tab == InventoryType::Id::USE && item_id / 10000 == 204) {
+		apply_scroll(slot, item_id);
+		return true;
+	}
+	if (tab == InventoryType::Id::EQUIPPED) {
+		tip(Locale::text("enchantskill.need_bag_equip"));
+		return true;
+	}
+	tip(Locale::text("enchantskill.drop_hint"));
 	return true;
 }
-void UIEnchantSkill::draw(float) const
+
+Cursor::State UIEnchantSkill::send_cursor(bool clicked, Point<int16_t> cursorpos)
 {
-	if (has_assets && effect) effect.draw(position);
-	tip_label.draw(position + Point<int16_t>(8, 8));
+	return UIDragElement::send_cursor(clicked, cursorpos);
 }
+
 void UIEnchantSkill::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) { deactivate(); return; }
+	if (pressed && escape) { close_enchant(); return; }
 	if (!pressed) return;
-	if (keycode == 13) {
-		if (scroll_slot > 0 && equip_slot > 0) {
-			ScrollEquipPacket(scroll_slot, static_cast<EquipSlot::Id>(equip_slot)).dispatch();
-			tip_label.change_text(Locale::format_all("enchantskill.scroll", {std::to_string(scroll_slot), std::to_string(equip_slot)}));
-			LOG(LOG_DEBUG, "UIEnchantSkill: ScrollEquip src=" << scroll_slot << " dst=" << equip_slot);
+	// SoftKey 兜底保留：E=背包装备槽 / S=卷轴槽 / Enter|R=发包（正槽）。
+	if (keycode == 13 || keycode == 'R' || keycode == 'r') {
+		if (scroll_slot > 0 && equip_slot > 0 && equip_item > 0) {
+			const Inventory& inv = Stage::get().get_player().get_inventory();
+			apply_scroll(scroll_slot, inv.get_item_id(InventoryType::Id::USE, scroll_slot));
 		} else {
-			tip_label.change_text(Locale::text("enchantskill.need_scroll_equip"));
+			tip(Locale::text("enchantskill.need_scroll_equip"));
 		}
 		return;
 	}
 	if (keycode == 'E' || keycode == 'e') {
 		int16_t from_inv = 0;
-		if (auto inv = UI::get().get_element<UIItemInventory>()) {
-			if (inv->get_tab() == InventoryType::Id::EQUIP)
-				from_inv = inv->get_selected_slot();
+		if (auto invui = UI::get().get_element<UIItemInventory>()) {
+			if (invui->get_tab() == InventoryType::Id::EQUIP)
+				from_inv = invui->get_selected_slot();
 		}
 		if (from_inv > 0) {
-			equip_slot = from_inv;
-			tip_label.change_text(Locale::format("enchantskill.equip", std::to_string(from_inv)));
+			const int32_t id = Stage::get().get_player().get_inventory()
+				.get_item_id(InventoryType::Id::EQUIP, from_inv);
+			place_equip(from_inv, id, true);
 		} else {
 			UI::get().emplace<UISoftKey>([this](const std::string& s) {
 				try {
 					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						equip_slot = slot;
-						tip_label.change_text(Locale::format("enchantskill.equip", s));
-					}
+					if (slot <= 0) return;
+					const int32_t id = Stage::get().get_player().get_inventory()
+						.get_item_id(InventoryType::Id::EQUIP, slot);
+					place_equip(slot, id, true);
 				} catch (...) {}
-			}, []() {}, "Equip slot id");
+			}, []() {}, "Equip bag slot");
 		}
 	} else if (keycode == 'S' || keycode == 's') {
 		int16_t from_inv = 0;
-		if (auto inv = UI::get().get_element<UIItemInventory>()) {
-			if (inv->get_tab() == InventoryType::Id::USE)
-				from_inv = inv->get_selected_slot();
+		if (auto invui = UI::get().get_element<UIItemInventory>()) {
+			if (invui->get_tab() == InventoryType::Id::USE)
+				from_inv = invui->get_selected_slot();
 		}
-		if (from_inv > 0) {
+		if (from_inv > 0)
 			scroll_slot = from_inv;
-			tip_label.change_text(Locale::format("enchantskill.scroll_2", std::to_string(from_inv)));
-		} else {
+		else {
 			UI::get().emplace<UISoftKey>([this](const std::string& s) {
 				try {
 					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						scroll_slot = slot;
-						tip_label.change_text(Locale::format("enchantskill.scroll_2", s));
-					}
+					if (slot > 0) scroll_slot = slot;
 				} catch (...) {}
 			}, []() {}, "Scroll USE slot");
 		}
-	} else if (keycode == 'R' || keycode == 'r') {
-		if (scroll_slot > 0 && equip_slot > 0) {
-			ScrollEquipPacket(scroll_slot, static_cast<EquipSlot::Id>(equip_slot)).dispatch();
-			tip_label.change_text(Locale::format_all("enchantskill.scroll", {std::to_string(scroll_slot), std::to_string(equip_slot)}));
-		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-				size_t c = spec.find(',');
-				if (c == std::string::npos) return;
-				try {
-					int16_t src = static_cast<int16_t>(std::stoi(spec.substr(0, c)));
-					int16_t dst = static_cast<int16_t>(std::stoi(spec.substr(c + 1)));
-					if (src > 0 && dst > 0) {
-						scroll_slot = src;
-						equip_slot = dst;
-						ScrollEquipPacket(src, static_cast<EquipSlot::Id>(dst)).dispatch();
-						tip_label.change_text(Locale::format("enchantskill.scroll_3", spec));
-					}
-				} catch (...) {}
-			}, []() {}, "scroll,equip");
-		}
-	}
-	if (keycode == 'X' || keycode == 'x') {
-		deactivate();
+	} else if (keycode == 'X' || keycode == 'x') {
+		close_enchant();
 	}
 }
+
+Button::State UIEnchantSkill::button_pressed(uint16_t buttonid)
+{
+	if (buttonid == BT_WHITE) {
+		if (white_available && !pending)
+			white_checked = !white_checked;
+		return Button::State::NORMAL;
+	}
+	close_enchant();
+	return Button::State::NORMAL;
+}
+
+bool UIEnchantSkill::place_equip(int16_t slot, int32_t item_id, bool tell)
+{
+	if (item_id <= 0) {
+		if (tell) tip(Locale::text("common.need_equip"));
+		return false;
+	}
+	const ItemData& data = ItemData::get(item_id);
+	if (data.is_cashitem() && item_id / 10000 != 180) {
+		if (tell) tip(Locale::text("enchantskill.cannot_scroll"));
+		return false;
+	}
+	equip_slot = slot;
+	equip_item = item_id;
+	equip_icon = data.get_icon(false);
+	tip_label.change_text("");
+	return true;
+}
+
+uint8_t UIEnchantSkill::white_scroll_flag(int32_t scroll_id) const
+{
+	if (!white_checked || !white_available)
+		return ScrollEquipPacket::NONE;
+	// 白卷本体不消耗自己；其它 204* 才带 WHITESCROLL 旗。
+	if (scroll_id == WHITE_SCROLL)
+		return ScrollEquipPacket::NONE;
+	return ScrollEquipPacket::WHITESCROLL;
+}
+
+void UIEnchantSkill::apply_scroll(int16_t use_slot, int32_t scroll_id)
+{
+	if (pending) return;
+	if (equip_slot <= 0 || equip_item <= 0) {
+		tip(Locale::text("enchantskill.need_scroll_equip"));
+		return;
+	}
+	if (use_slot <= 0 || scroll_id / 10000 != 204) {
+		tip(Locale::text("enchantskill.need_scroll_equip"));
+		return;
+	}
+	if (Stage::get().get_player().get_skilllevel(SkillId::LEGENDARY_SPIRIT) <= 0) {
+		tip(Locale::text("enchantskill.need_spirit"));
+		return;
+	}
+	scroll_slot = use_slot;
+	const uint8_t flags = white_scroll_flag(scroll_id);
+	last_used_white = (flags == ScrollEquipPacket::WHITESCROLL);
+	ScrollEquipPacket::dispatch_bag_equip(use_slot, equip_slot, flags);
+	pending = true;
+	play_effect();
+	LOG(LOG_DEBUG, "UIEnchantSkill: bag ScrollEquip scroll=" << use_slot
+		<< " equip=" << equip_slot << " flags=" << static_cast<int>(flags)
+		<< " white=" << (last_used_white ? 1 : 0));
+	refresh_white_scroll();
+}
+
+void UIEnchantSkill::on_scroll_result(bool success, bool destroyed)
+{
+	pending = false;
+	// Angel RefreshToolTip：CHATLOG + EnchantSuccess/Failure；毁物且失败则 Destroy 窗。
+	const char* msg_key = success
+		? (last_used_white ? "enchantskill.result.ok_white" : "enchantskill.result.ok")
+		: (destroyed ? "enchantskill.result.destroy"
+			: (last_used_white ? "enchantskill.result.fail_white" : "enchantskill.result.fail"));
+	tip(Locale::text(msg_key));
+	if (auto chat = UI::get().get_element<UIChatBar>())
+		chat->show_message(Locale::text(msg_key).c_str(), UIChatBar::MessageType::RED);
+
+#ifdef USE_NX
+	nl::node gamesnd = nl::nx::Sound["Game.img"];
+	nl::node snd = gamesnd[success ? "EnchantSuccess" : "EnchantFailure"];
+	if (snd)
+		Sound(snd).play();
+#endif
+
+	if (destroyed && !success)
+	{
+		clear_equip();
+		close_enchant();
+		return;
+	}
+
+	refresh_equip();
+	refresh_white_scroll();
+	last_used_white = false;
+}
+
+void UIEnchantSkill::close_enchant()
+{
+	pending = false;
+	deactivate();
+}
+
+void UIEnchantSkill::clear_equip()
+{
+	equip_slot = 0;
+	equip_item = 0;
+	equip_icon = Texture();
+}
+
+void UIEnchantSkill::refresh_equip()
+{
+	if (equip_slot <= 0) return;
+	const int32_t now = Stage::get().get_player().get_inventory()
+		.get_item_id(InventoryType::Id::EQUIP, equip_slot);
+	if (now == equip_item) return;
+	if (now <= 0 || !place_equip(equip_slot, now, false))
+		clear_equip();
+}
+
+void UIEnchantSkill::refresh_white_scroll()
+{
+	white_available = Stage::get().get_player().get_inventory()
+		.find_item(InventoryType::Id::USE, WHITE_SCROLL) != 0;
+	if (!white_available)
+		white_checked = false;
+	if (auto it = buttons.find(BT_WHITE); it != buttons.end() && it->second)
+		it->second->set_state(white_available && !pending
+			? Button::State::NORMAL : Button::State::DISABLED);
+}
+
+void UIEnchantSkill::tip(const std::string& line)
+{
+	tip_label.change_text(line);
+	LOG(LOG_DEBUG, "UIEnchantSkill: " << line);
+}
+
 UIElement::Type UIEnchantSkill::get_type() const { return TYPE; }
 
 UIItemProtector::UIItemProtector()
@@ -1207,7 +1503,7 @@ void UISpeedQuiz::load_tip(int32_t type, int32_t answer)
 	}
 	else
 	{
-		const Texture& icon = ItemData::get(answer).get_icon(false);
+		const Texture& icon = ItemData::get(answer).get_icon(answer / 10000 == 238);
 		if (icon)
 		{
 			tip_tex = icon;
@@ -3596,8 +3892,11 @@ UIMateMessage::UIMateMessage() {
 	center_on_screen();
 	UI::get().emplace<UISoftKey>([](const std::string& msg) {
 		if (msg.empty()) return;
-		SpouseChatPacket(msg).dispatch();
-		LOG(LOG_DEBUG, "UIMateMessage: SPOUSE_CHAT len=" << msg.size());
+		if (auto bar = UI::get().get_element<UIChatBar>())
+		{
+			if (bar->send_spouse_chat(msg))
+				LOG(LOG_DEBUG, "UIMateMessage: SPOUSE_CHAT len=" << msg.size());
+		}
 	}, []() {}, "Mate message");
 }
 void UIMateMessage::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
@@ -3608,7 +3907,8 @@ void UIMateMessage::send_key(int32_t keycode, bool pressed, bool escape)
 	if (keycode == 'S' || keycode == 's' || keycode == 'M' || keycode == 'm') {
 		UI::get().emplace<UISoftKey>([](const std::string& msg) {
 			if (msg.empty()) return;
-			SpouseChatPacket(msg).dispatch();
+			if (auto bar = UI::get().get_element<UIChatBar>())
+				bar->send_spouse_chat(msg);
 		}, []() {}, "Mate message");
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -3744,8 +4044,10 @@ UIShortCut::UIShortCut()
 		};
 
 		for (size_t i = 0; i < sizeof(ids) / sizeof(ids[0]); ++i)
+			// x=6：底板 93 宽、钮 81 宽，(93-81)/2=6 左右对称。原生素材是
+			// 左 8 右 4（参考端完整帧实测，本身不对称），按用户反馈改为居中。
 			try_maple_btn(buttons, ids[i], root[names[i]],
-				Point<int16_t>(8, static_cast<int16_t>(22 + i * 26)), "shortcut btn");
+				Point<int16_t>(6, static_cast<int16_t>(22 + i * 26)), "shortcut btn");
 	}
 #endif
 
@@ -3754,7 +4056,29 @@ UIShortCut::UIShortCut()
 void UIShortCut::draw(float inter) const
 {
 	if (has_assets && backgrnd) backgrnd.draw(position);
+
 	UIElement::draw(inter);
+	// 键盘选中的当前项高亮：v83 原生没有独立 selected 素材，焦点态就是按钮自身的
+	// mouseOver 亮蓝贴图（orange-wz MCP 实查 UIWindow.img/ShortCut/Bt* 只有
+	// normal/pressed/disabled/mouseOver 四态；像素实测 normal RGB(64,171,224) →
+	// mouseOver(28,172,240)，更亮更蓝）。旧版自凑 ColorBox(GRAYOLIVE,0.5f) 半透明块
+	// 盖在蓝钮上混出灰蓝（B-R 140→62）就是用户说的「发虚」，非原生，已弃用。
+	// 画法：临时把选中钮切到 MOUSEOVER 态单独重画，画完立刻恢复原 state——
+	// MapleButton::send_cursor 是空实现，按钮 state 由 UIElement::send_cursor 管，
+	// 不恢复会和鼠标 hover 抢同一 state 字段导致两颗同时亮。必须画在 UIElement::draw
+	// （draw_buttons 先画了所有 NORMAL 态钮）之后，才能盖住选中项那一颗。
+	if (has_assets && selected >= 0 && static_cast<size_t>(selected) < MENU_COUNT)
+	{
+		auto it = buttons.find(MENU_IDS[selected]);
+		if (it != buttons.end() && it->second)
+		{
+			Button* btn = it->second.get();
+			Button::State saved = btn->get_state();
+			btn->set_state(Button::State::MOUSEOVER);
+			btn->draw(position);
+			btn->set_state(saved);
+		}
+	}
 	// 有素材时 8 颗钮自带中英双语标签（烘焙在贴图里），黄色提示行会盖住气球，只在回退壳里保留。
 	if (!has_assets) tip_label.draw(position + Point<int16_t>(4, 4));
 }
@@ -3783,8 +4107,10 @@ Button::State UIShortCut::button_pressed(uint16_t id)
 			UI::get().emplace<UIMonsterBook>();
 			break;
 		case Buttons::BT_COMM:
+		{
 			UI::get().emplace<UIUserList>(UIUserList::Tab::FRIEND);
 			break;
+		}
 		case Buttons::BT_MESSENGER:
 			UI::get().emplace<UIMessenger>();
 			break;
@@ -3798,6 +4124,29 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 {
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
+
+	// 原生「界面」气球：上下方向键移动高亮、回车激活当前高亮项。
+	// 三套键码兼容：GLFW（未绑定键 UI::send_key 直传真实键码 265/264/257/335）、
+	// VK（历史通路 38/40/13）、KeyAction（KEYMAP 绑定态下发枚举值）。
+	// 旧实现只比 KeyAction::Id 枚举值（UP≈1004/RETURN≈1008），与真实键码永不相等
+	// → 方向键/回车全部无效（用户实测复现）。
+	if (keycode == 265 || keycode == 38 || keycode == KeyAction::Id::UP)
+	{
+		selected = static_cast<int16_t>((selected - 1 + static_cast<int>(MENU_COUNT)) % static_cast<int>(MENU_COUNT));
+		return;
+	}
+	if (keycode == 264 || keycode == 40 || keycode == KeyAction::Id::DOWN)
+	{
+		selected = static_cast<int16_t>((selected + 1) % static_cast<int>(MENU_COUNT));
+		return;
+	}
+	if (keycode == 257 || keycode == 335 || keycode == 13 || keycode == '\r'
+		|| keycode == KeyAction::Id::RETURN)
+	{
+		button_pressed(MENU_IDS[selected]);
+		return;
+	}
+
 	if (keycode == 'X' || keycode == 'x') { deactivate(); return; }
 	auto& player = Stage::get().get_player();
 	switch (keycode) {
@@ -4582,15 +4931,90 @@ namespace
 	constexpr int16_t SM_LINE02_Y = 188;
 	constexpr int16_t SM_MACRONAME_X = 18;
 	constexpr int16_t SM_MACRONAME_Y = 195;
-	// 宏名落在 macroname 灰板的下半（原生那块白输入框是运行期描的，资源里没有位图）。
-	constexpr int16_t SM_NAME_X = 68;
-	constexpr int16_t SM_NAME_Y = 211;
+	// macroname 位图（164x57）本身已烘焙「取个性技能名」与「显示个性技能名」两行
+	// 文字（macroname_evidence.png 放大亲验）；白输入框不在位图里（位图 y=20 全为
+	// 238 灰），是运行期描的。因此 draw() 只描白框 + 画 name_field 文字，绝不能再
+	// 用 Text 重画这两行 —— 上一轮重画导致图1 的双行文字与重叠乱码。
+	// 白框实测（fig2 正确帧裁图）：(60,212)-(176,227)，116x15。
+	constexpr int16_t SM_NAME_X = 60;
+	constexpr int16_t SM_NAME_Y = 212;
+	constexpr int16_t SM_NAME_W = 116;
+	constexpr int16_t SM_NAME_H = 15;
+	// fig2 实测：灰「确定」47x19 @ (155,262) = Basic.img/BtOK2/disabled/0；
+	// 12x12 勾选框 @ (169,239) = Basic.img/CheckBox/0|1。
+	constexpr int16_t SM_OK_X = 155;
+	constexpr int16_t SM_OK_Y = 262;
+	constexpr int16_t SM_CHECK_X = 169;
+	constexpr int16_t SM_CHECK_Y = 239;
+	constexpr int16_t SM_CHECK_SIZE = 12;
 	constexpr int16_t SM_SLIDER_X = 186;
 	constexpr int16_t SM_SLIDER_TOP = 67;
 	constexpr int16_t SM_SLIDER_BOTTOM = 165;
 
-	// 组合栏一次只编辑「选中的那一行」，所以技能写进该行的第一个空格；
-	// 旧实现走全局 SkillMacros::assign_skill，会把技能塞进别的宏。
+	// 技能能否放进宏：Angel CDraggableSkill::OnDropped@0x4faa22 要求 GetSkillLevel>0；
+	// MinMS SkillMacros.cpp:96-130 is_able_to_map_macrosys_skill 排除
+	// (id/1000)%10∈{0,9}、keydown 持续技、9 个传送/闪现类黑名单。
+	// 本端 assign_skill_at 原本只判 id>0，被动/按住/传送技都能塞进宏 —— 此处补齐。
+	bool is_able_to_map_macrosys_skill(int32_t skill_id)
+	{
+		if (skill_id <= 0)
+			return false;
+
+		if (Stage::get().get_player().get_skills().get_level(skill_id) <= 0)
+			return false;
+
+		const int32_t digit = (skill_id / 1000) % 10;
+		if (digit == 0 || digit == 9)
+			return false;
+
+		// MinMS is_keydown_skill 硬编码表（本端 SkillData 无 has_keydown 接口）。
+		switch (skill_id)
+		{
+		case 1121001: case 1221001: case 1321001:
+		case 2121001: case 2221001: case 2321001:
+		case 3121004: case 3221001:
+		case 5101004: case 5201002: case 5221004:
+		case 13111002: case 14111006: case 15101003:
+		case 22121000: case 22151001:
+			return false;
+		default:
+			break;
+		}
+
+		// MinMS 黑名单：传送 / 闪现 / 金钱爆炸等。
+		switch (skill_id)
+		{
+		case 2101002: case 2201002: case 2301001:
+		case 12101003: case 22101001:
+		case 4111006: case 4211006:
+		case 11101005: case 14101004:
+			return false;
+		default:
+			break;
+		}
+
+		return true;
+	}
+
+	// Angel CUIMacroSysEx::GetIndexByPos(0x8a97c4) → CMacroSysMan::Map(idx, col, skill)：
+	// 投放写进「光标命中的那一格」并覆盖原值，绝不做「找第一个空格」。
+	// 旧实现 assign_skill_to(selected, sid) + 技能窗兜底 assign_skill() 全局顺序填格，
+	// 合起来正是用户实机「必须先填满上面几格才能放下一行」的根因。
+	bool assign_skill_at(size_t idx, size_t col, int32_t skill_id)
+	{
+		if (skill_id <= 0 || idx >= SkillMacros::MAX_SLOTS || col >= 3)
+			return false;
+
+		auto& macros = SkillMacros::get();
+		SkillMacroSlot slot = macros.get_slot(idx);
+		int32_t* cells[3] = { &slot.skill1, &slot.skill2, &slot.skill3 };
+		*cells[col] = skill_id;
+		macros.set_slot(idx, std::move(slot));
+		return true;
+	}
+
+	// 键盘 'A' 调试入口（Angel OnKey 仅处理 ESC 27，无此键）没有投放坐标，
+	// 仍写选中行第一个空格；拖放路径一律走上面的 assign_skill_at。
 	bool assign_skill_to(size_t idx, int32_t skill_id)
 	{
 		if (skill_id <= 0 || idx >= SkillMacros::MAX_SLOTS)
@@ -4640,17 +5064,30 @@ UISkillMacroEx::UISkillMacroEx()
 		has_assets = true;
 
 		// 个性技能名输入框（对照「技能框+技能组合框.png」白输入区）。
+		// bounds 必须用【绝对坐标】：UI::send_cursor(bool) 尾部对已聚焦的
+		// focusedtextfield 会用绝对 cursorpos 再判一次命中（UI.cpp:168-177），
+		// 若 bounds 是窗口相对坐标，第二次点击必然失配 → 焦点被清 = 用户
+		// 「输入技能名不好选择输入框」。与 UISpeedQuiz/UIInitialQuiz 的成熟做法同源。
+		// text_shift 同理：FreeType 以 y 为基线，text_shift(0,0) 会让文字贴框顶/溢出，
+		// 全仓矮输入框统一 (1,11)，这里漏了 → 「内容和输入框位置有偏差」。
 		name_field = Textfield(
 			Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
 			Rectangle<int16_t>(
-				Point<int16_t>(SM_NAME_X, SM_NAME_Y),
-				Point<int16_t>(SM_NAME_X + 120, SM_NAME_Y + 16)),
+				position + Point<int16_t>(SM_NAME_X, SM_NAME_Y),
+				position + Point<int16_t>(SM_NAME_X + SM_NAME_W, SM_NAME_Y + SM_NAME_H)),
 			12);
+		// turn13 实测修正：A11M linespace = 11*1.35+1 = 15，布局基线在文字原点下方 15px，
+		// 墨迹顶 = 原点y + 15 - bt(数字≈10) = 原点y+5。旧 shift(1,11) 让墨迹顶落在框顶+16，
+		// 正好在 15px 高的框底外（真机截图实测文字 y241..246 vs 框 y221..235）。
+		// 要墨迹顶贴框顶+2：shift_y = 2 - 5 = -3。竖杠 marker 的 text_pos 同步受益。
+		name_field.set_text_shift(Point<int16_t>(1, -3));
 		name_field.set_accept_unicode(true);
 		name_field.set_state(Textfield::State::NORMAL);
 		name_field.set_enter_callback([this](std::string)
 		{
-			commit_name();
+			// V4/V5：Enter 与确定钮同路径（校验 + 保存反馈），成功才关窗。
+			if (commit_name(true))
+				deactivate();
 		});
 
 		const SkillMacroSlot& cur = SkillMacros::get().get_slot(static_cast<size_t>(selected));
@@ -4658,21 +5095,30 @@ UISkillMacroEx::UISkillMacroEx()
 			name_field.change_text(cur.name);
 		shout_checked = cur.shout != 0;
 
-		// 确定钮：优先 SkillMacro/BtOK，否则 Basic BtOK。
-		nl::node btok = shell["BtOK"] ? shell["BtOK"] : nl::nx::UI["Basic.img"]["BtOK"];
-		try_maple_btn(buttons, Buttons::BT_OK, btok,
-			Point<int16_t>(static_cast<int16_t>(dimension.x() - 56), static_cast<int16_t>(dimension.y() - 28)),
-			"SkillMacro/BtOK");
+		// Angel CUIMacroSys::OnCreate(0x8a8504) 逐行反编译坐实「不是素材缺项，是共用控件」：
+		//   :67 v31 = SP_1257_UI_BASICIMG_BTOK2；:78-87 CCtrlButton id3000 @(154,265)
+		//   :98-114 CCtrlCheckBox id3011 @(166,241) SetChecked(0)
+		//   :115-138 CCtrlEdit id3012 @(59,215,117,16)
+		// 因此确定钮是 Basic.img/BtOK2 **四态按钮**（无选中宏时 OnCreate 里置灰 disabled），
+		// 勾选框是运行期 CCtrlCheckBox + Basic.img/CheckBox/0|1，输入框是运行期 CCtrlEdit。
+		// 上一轮「SkillMacro/BtOK、BtCheck 素材缺项」结论推翻：它们从来不在 SkillMacro 节点下。
+		nl::node basic = nl::nx::UI["Basic.img"];
+		check_off = Texture(basic["CheckBox"]["0"]);
+		check_on = Texture(basic["CheckBox"]["1"]);
 
-		// 「显示个性技能名」勾选：资源有 BtCheck / CheckBox0 时接上。
-		nl::node check = shell["BtCheck"];
-		if (!check)
-			check = nl::nx::UI["Basic.img"]["CheckBox0"];
-		if (!check)
-			check = nl::nx::UI["Basic.img"]["CheckBox"];
-		try_maple_btn(buttons, Buttons::BT_SHOUT, check,
-			Point<int16_t>(SM_MACRONAME_X, static_cast<int16_t>(SM_MACRONAME_Y + 38)),
-			"SkillMacro/BtCheck");
+		// 真四态 MapleButton：必须传按钮根节点（不是 ["normal"]["0"] 叶子，见 UIOptionMenu.cpp:558）；
+		// try_maple_btn 把 normal 态 origin 加回 position，故 (SM_OK_X, SM_OK_Y) 即贴图左上角。
+		if (!try_maple_btn(buttons, Buttons::BT_OK, basic["BtOK2"],
+			Point<int16_t>(SM_OK_X, SM_OK_Y), "skillmacro ok"))
+			UiAssetResolve::diag_once("skillmacro ok", "Basic.img/BtOK2 missing");
+
+		// CCtrlCheckBox 等价：不可见 AreaButton 命中 + 由 shout_checked 现算贴图状态。
+		buttons[Buttons::BT_SHOUT] = std::make_unique<AreaButton>(
+			Point<int16_t>(SM_CHECK_X, SM_CHECK_Y),
+			Point<int16_t>(SM_CHECK_SIZE, SM_CHECK_SIZE));
+
+		// Angel OnCreate 里 *(this+361) = -1 ⇒ 未选中宏时确定钮 disabled（fig2 灰底灰字）。
+		set_ok_enabled(false);
 	}
 	else
 	{
@@ -4715,7 +5161,11 @@ void UISkillMacroEx::draw(float alpha) const
 	macroname.draw(position + Point<int16_t>(SM_MACRONAME_X, SM_MACRONAME_Y));
 
 	const auto& macros = SkillMacros::get();
-	slider.setrows(VISIBLE_ROWS, static_cast<int16_t>(SkillMacros::MAX_SLOTS));
+	// 2 参 setrows 每帧把 Slider 内部 row 归零（Slider.cpp:138-141），会抹掉
+	// 滚轮 send_scroll 刚推进的 row、且 getthumbpos() 用 row 定位 thumb 会跳回顶。
+	// 宏窗 onmoved 里 row 与 offset 同源（offset±1，范围 0..MAX_SLOTS-VISIBLE_ROWS），
+	// 用 3 参把 row 同步回 offset，滚轮 / 点击拖动才都稳得住。
+	slider.setrows(offset, VISIBLE_ROWS, static_cast<int16_t>(SkillMacros::MAX_SLOTS));
 
 	// 宏条数为 0 时也必须画满三行空槽（参考截图 技能框+技能组合框.png）。
 	const int16_t rows = MACRO_COUNT;
@@ -4729,6 +5179,11 @@ void UISkillMacroEx::draw(float alpha) const
 
 		const int16_t row_y = static_cast<int16_t>(SM_ROW_Y0 + r * SM_ROW_PITCH);
 
+		// 原生帧（技能展开宏指令.png 379x291）三行像素逐点全等
+		// （row0/1/2 meanAbsDiff=0），不存在整行选中高亮底。macroslot2
+		// （实测 meanLum≈100 的深色板）在该帧最优 SAD=228，R15 判其「未画、位置无从
+		// 校准」。故所有行统一画 macroslot，选中态仅由 Macroicon/N/iconMouseOver
+		// 表达（见下方 sel.draw），不再用深色整行底。
 		macroslot.draw(position + Point<int16_t>(SM_ROW_X, row_y));
 
 		const SkillMacroSlot& slot = macros.get_slot(idx);
@@ -4760,31 +5215,147 @@ void UISkillMacroEx::draw(float alpha) const
 			static_cast<int16_t>(SM_SEL_Y0 + r * SM_ROW_PITCH + sel_org.y())));
 	}
 
-	name_field.draw(position);
+	// 白输入框是运行期描的（macroname 位图只有灰板 + 两行烘焙文字，没有白框）。
+	// 1px 浅灰边(238) + 白色填充；name_field 命中区与框同源，不产生错位。
+	// 注意：提示文字与「显示个性技能名」标签已烘焙在 macroname 位图里，此处
+	// 绝不能再画 Text —— 上一轮重画造成图1 的双行文字与重叠乱码。
+	const Point<int16_t> name_tl(SM_NAME_X, SM_NAME_Y);
+	ColorBox name_frame(SM_NAME_W + 2, SM_NAME_H + 2, Color(238.0f / 255.0f, 238.0f / 255.0f, 238.0f / 255.0f, 1.0f), 1.0f);
+	name_frame.draw(position + name_tl + Point<int16_t>(-1, -1));
+	ColorBox name_fill(SM_NAME_W, SM_NAME_H, Color::Name::WHITE, 1.0f);
+	name_fill.draw(position + name_tl);
 
-	if (name_field.empty())
-	{
-		Text hint(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY,
-			Locale::text("skill.macro.name_hint"));
-		hint.draw(position + Point<int16_t>(SM_NAME_X, SM_NAME_Y));
-	}
+	// bounds 已含窗口绝对 position，draw 传 (0,0) 不再二次偏移。
+	name_field.draw(Point<int16_t>(0, 0));
 
-	Text shout_lbl(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
-		Locale::text("skill.macro.show_name"));
-	shout_lbl.draw(position + Point<int16_t>(SM_MACRONAME_X + 18, SM_MACRONAME_Y + 40));
+	// 确定钮由 UIElement::draw_buttons 画真四态 MapleButton（含 disabled 灰帧）；
+	// 勾选框的 CCtrlCheckBox 等价物由 AreaButton 判命中、这里按状态画 CheckBox/0|1。
+	(shout_checked ? check_on : check_off)
+		.draw(position + Point<int16_t>(SM_CHECK_X, SM_CHECK_Y));
 
 	slider.draw(position);
 }
 
-void UISkillMacroEx::commit_name()
+bool UISkillMacroEx::commit_name(bool notify)
 {
+	const std::string name = name_field.get_text();
+
+	// V5（2026-11-16）：Angel CUIMacroSys::OnButtonClicked(0x8b9766) id3000 分支里，
+	// SetMacroInfo 之前先过 CCurseProcess::ProcessString，命中脏词 →
+	// SP_272_CURSING_IS_NOT_ALLOWED 提示并**不**保存。词表与聊天同源
+	// （UIChatBar::curse_words，服务端 CURSE 下发时填充）；本包词表为空时
+	// 机制在、不拦截，与聊天侧同口径（不另立第二份词库）。
+	if (notify)
+	{
+		const std::vector<std::string>& words = UIChatBar::curse_words();
+
+		if (!words.empty())
+		{
+			std::string lower;
+			lower.reserve(name.size());
+			for (char c : name)
+				lower.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c))));
+
+			for (const std::string& w : words)
+			{
+				if (!w.empty() && lower.find(w) != std::string::npos)
+				{
+					UI::get().emplace<UIOk>(Locale::text("skill.macro.cursing"), [](bool) {});
+					LOG(LOG_INFO, "UISkillMacroEx: macro name rejected by curse check");
+					return false;
+				}
+			}
+		}
+	}
+
 	auto& macros = SkillMacros::get();
 	SkillMacroSlot slot = macros.get_slot(static_cast<size_t>(selected));
-	slot.name = name_field.get_text();
+	slot.name = name;
 	slot.shout = shout_checked ? 1 : 0;
 	macros.set_slot(static_cast<size_t>(selected), std::move(slot));
 	ChangeSkillMacroPacket().dispatch();
-	LOG(LOG_INFO, "UISkillMacroEx: macro " << (selected + 1) << " renamed -> " << name_field.get_text());
+	LOG(LOG_INFO, "UISkillMacroEx: macro " << (selected + 1) << " renamed -> " << name);
+
+	// V4：Angel 同分支 CUtilDlg::Notice(SP_3296_IT_IS_SAVED) —— 保存成功要有反馈。
+	if (notify)
+		UI::get().emplace<UIOk>(Locale::text("skill.macro.saved"), [](bool) {});
+
+	return true;
+}
+
+void UISkillMacroEx::set_cell(int16_t idx, int16_t col, int32_t skill_id)
+{
+	if (idx < 0 || idx >= static_cast<int16_t>(MACRO_COUNT) || col < 0 || col >= 3)
+		return;
+
+	auto& macros = SkillMacros::get();
+	SkillMacroSlot slot = macros.get_slot(static_cast<size_t>(idx));
+	int32_t* cells[3] = { &slot.skill1, &slot.skill2, &slot.skill3 };
+	*cells[col] = skill_id;
+	macros.set_slot(static_cast<size_t>(idx), std::move(slot));
+	ChangeSkillMacroPacket().dispatch();
+}
+
+void UISkillMacroEx::set_ok_enabled(bool enabled)
+{
+	ok_enabled = enabled;
+
+	auto it = buttons.find(Buttons::BT_OK);
+
+	if (it != buttons.end() && it->second)
+		it->second->set_state(enabled ? Button::State::NORMAL : Button::State::DISABLED);
+}
+
+void UISkillMacroEx::clear_cell(int16_t idx, int16_t col)
+{
+	if (idx < 0 || idx >= static_cast<int16_t>(MACRO_COUNT) || col < 0 || col >= 3)
+		return;
+
+	auto& macros = SkillMacros::get();
+	SkillMacroSlot slot = macros.get_slot(static_cast<size_t>(idx));
+	int32_t* cells[3] = { &slot.skill1, &slot.skill2, &slot.skill3 };
+	*cells[col] = 0;
+	macros.set_slot(static_cast<size_t>(idx), std::move(slot));
+	ChangeSkillMacroPacket().dispatch();
+}
+
+bool UISkillMacroEx::index_by_pos(Point<int16_t> relative, int16_t& idx, int16_t& col) const
+{
+	// Angel CUIMacroSysEx::GetIndexByPos(0x8a97c4) / CUIMacroSys::GetIndexByPos(0x8b8de3)：
+	//   行 v6 由 y 反算、行 pitch 45，*a5 = v6 + v7（v7 = 滚动条偏移）⇒ 真实宏 index；
+	//   列 v9 由 x 反算、列 pitch 37；第 4 列 (x146..178) 是宏图标，不是技能格。
+	// 反汇编命中带 [center-32, center] 的坐标含 +16 画布偏移（OnMouseButton 里
+	// a1 = a1 - v38 + 16 / a2 = a5 - v39 - 16）；本端 draw() 的格几何已按 IMG 逐像素
+	// 对齐，故直接用同一套常量算「可见格矩形」，保证拖到哪个可见格就写哪个格。
+	for (int16_t r = 0; r < VISIBLE_ROWS; r++)
+	{
+		const int16_t real = static_cast<int16_t>(offset + r);
+
+		if (real >= static_cast<int16_t>(MACRO_COUNT))
+			break;
+
+		const int16_t row_y = static_cast<int16_t>(SM_ROW_Y0 + r * SM_ROW_PITCH);
+
+		if (relative.y() < row_y || relative.y() > row_y + 2 * SM_CELL_CY)
+			continue;
+
+		for (int16_t c = 0; c < 3; c++)
+		{
+			const int16_t cx = static_cast<int16_t>(SM_ROW_X + SM_CELL_CX[c]);
+
+			if (relative.x() >= cx - 18 && relative.x() <= cx + 18)
+			{
+				idx = real;
+				col = c;
+				return true;
+			}
+		}
+
+		// 命中行却落在非技能格区（宏图标列 / 行内空隙）⇒ 不投放。
+		return false;
+	}
+
+	return false;
 }
 
 bool UISkillMacroEx::drop_skill(int32_t skill_id, Point<int16_t> cursor_position)
@@ -4792,31 +5363,69 @@ bool UISkillMacroEx::drop_skill(int32_t skill_id, Point<int16_t> cursor_position
 	if (!shell_ok || skill_id <= 0)
 		return false;
 
-	const Point<int16_t> relative = cursor_position - position;
-	const Rectangle<int16_t> panel(0, 0, dimension.x(), dimension.y());
-
-	if (!panel.contains(relative))
+	// Angel/MinMS 原生限制：等级<=0、被动/持续技、传送黑名单不得放进宏。
+	if (!is_able_to_map_macrosys_skill(skill_id))
 		return false;
 
-	if (assign_skill_to(static_cast<size_t>(selected), skill_id))
+	const Point<int16_t> relative = cursor_position - position;
+
+	// Angel CUIMacroSysEx::GetIndexByPos(0x8a97c4)：投放目标 = 光标命中的那一格，
+	// 行号 = 可见行 + 滚动条偏移 v7。旧实现只判整窗 panel.contains() 就往
+	// 「选中行第一个空格」写 ⇒ 必须先填满上面几格才能放下一行（本轮用户实机症状）。
+	int16_t idx = -1;
+	int16_t col = -1;
+
+	if (!index_by_pos(relative, idx, col))
+		return false;
+
+	if (!assign_skill_at(static_cast<size_t>(idx), static_cast<size_t>(col), skill_id))
+		return false;
+
+	// Angel OnSelected(row)：命中行成为编辑目标，同步名称 / 显示名勾选，启用确定钮。
+	selected = idx;
+	const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(selected));
+	name_field.change_text(slot.name);
+	shout_checked = slot.shout != 0;
+	set_ok_enabled(true);
+
+	ChangeSkillMacroPacket().dispatch();
+	return true;
+}
+
+	bool UISkillMacroEx::send_icon(const Icon& icon, Point<int16_t> cursor_position)
 	{
-		ChangeSkillMacroPacket().dispatch();
+		const int32_t skill_id = icon.get_skill_id();
+
+		// Angel BeginDragDrop 的宏图标(v43[7]=1)不是技能图标：get_skill_id()==0，
+		// 但松手落在组合栏内也必须消费掉，否则 draggedicon 永远挂在鼠标上。
+		if (skill_id <= 0)
+			return icon.is_macro_source() && is_in_range(cursor_position);
+
+		// 窗外交给别的元素 / 保持拖拽；窗内投放一律消费图标（Angel 拖放结束即收起图标）。
+		// 是否写入由 drop_skill 按 (行,列) 决定：命中格才写，没命中不写、也不全局顺序填格。
+		if (!is_in_range(cursor_position))
+			return false;
+
+		drop_skill(skill_id, cursor_position);
 		return true;
 	}
-
-	return false;
-}
 
 Button::State UISkillMacroEx::button_pressed(uint16_t buttonid)
 {
 	switch (buttonid)
 	{
 	case Buttons::BT_OK:
-		commit_name();
-		deactivate();
+		// Angel OnCreate 未选中宏时该钮 disabled，点击不会到这里；双保险。
+		if (!ok_enabled)
+			return Button::State::DISABLED;
+		// V5：脏话命中时不关窗（原生只弹提示、留在编辑态）。
+		if (commit_name(true))
+			deactivate();
 		break;
 	case Buttons::BT_SHOUT:
 		shout_checked = !shout_checked;
+		commit_name();
+		set_ok_enabled(true);
 		break;
 	default:
 		break;
@@ -4827,12 +5436,17 @@ Button::State UISkillMacroEx::button_pressed(uint16_t buttonid)
 
 Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_position)
 {
-	const Cursor::State dstate = UIDragElement::send_cursor(clicked, cursor_position);
+	// 原生组合栏是技能窗内嵌画布（CUISkillEx::ShiftMacroUIState），不能独立拖动。
+	// 跳过 UIDragElement 的标题栏拖拽：否则 dragged 会把 position 拖走、update() 每帧
+	// 又锚回技能窗右侧，一边拖一边拉回 = 抖动，并向 Setting<PosNOTICE> 写无用位置。
+	// 名字/滑块/选择行/确定钮/勾选框的命中仍走下面各自的判定。
+	const Cursor::State dstate = UIElement::send_cursor(clicked, cursor_position);
 
-	if (!shell_ok || dragged)
+	if (!shell_ok)
 		return dstate;
 
-	Cursor::State field_st = name_field.send_cursor(cursor_position - position, clicked);
+	// 与 bounds 同为绝对坐标；否则点击永远命中不了（见 ctor 注释）。
+	Cursor::State field_st = name_field.send_cursor(cursor_position, clicked);
 	if (field_st != Cursor::State::IDLE)
 		return field_st;
 
@@ -4844,10 +5458,94 @@ Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_po
 			return new_state;
 	}
 
+	// 确定钮 / 勾选框已由 UIElement::send_cursor 的四态按钮状态机处理，
+	// 保留 dstate 才能把悬浮态 CANCLICK 传出去；按钮按下后 dstate==IDLE，
+	// 直接收口，避免同一次点击再跑到下面的选择行判定。
 	if (!clicked)
+	{
+		// V3（2026-11-16）：Angel CUIMacroSysEx::OnMouseMove(0x8a9f57) 在悬浮
+		// 技能格时挂 CUIToolTip（与技能窗同一个 tooltip 实例，Parent::SKILLBOOK）。
+		// 旧实现组合栏格内 hover 什么都不弹 —— 「鼠标移到宏技能上没有说明」。
+		int16_t hv_idx = -1;
+		int16_t hv_col = -1;
+		int32_t hv_sid = 0;
+
+		if (index_by_pos(relative, hv_idx, hv_col))
+		{
+			const SkillMacroSlot& hslot = SkillMacros::get().get_slot(static_cast<size_t>(hv_idx));
+			const int32_t hids[3] = { hslot.skill1, hslot.skill2, hslot.skill3 };
+			hv_sid = hids[hv_col];
+		}
+
+		if (hv_sid > 0)
+		{
+			const SkillBook& book = Stage::get().get_player().get_skills();
+			UI::get().show_skill(Tooltip::Parent::SKILLBOOK, hv_sid,
+				book.get_level(hv_sid), book.get_masterlevel(hv_sid),
+				book.get_expiration(hv_sid));
+		}
+		else
+		{
+			UI::get().clear_tooltip(Tooltip::Parent::SKILLBOOK);
+		}
+
+		return dstate;
+	}
+
+	if (dstate == Cursor::State::IDLE)
 		return Cursor::State::IDLE;
 
-	// 空角色也画满三行选择钮；点行即切换编辑目标并同步输入框。
+
+	// Angel CUIMacroSysEx::OnMouseButton(0x8a98fe) 逐行反编译：左键 513 →
+	// GetIndexByPos → OnSelected(row) → BeginDragDrop 载荷带 (row, col, parent)。
+	// 即「组合栏里已放好的技能」和「右侧宏图标」都能再抓起来拖走：
+	//   · 技能格 → 拖到别的格=移动、拖到键位=绑技能、拖到舞台/窗外=移除；
+	//   · 宏图标列(v43[7]=1) → 拖到键位=绑定整个宏(KeyType::MACRO)。
+	// 抓取即清源格：drop 写新格=移动，不写=移除，绑键=外加键位，三条都自洽；
+	// 代价是拖到半路取消(ESC)不会回滚源格（见交付披露）。
+	int16_t drag_idx = -1;
+	int16_t drag_col = -1;
+
+	if (index_by_pos(relative, drag_idx, drag_col))
+	{
+		const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(drag_idx));
+		const int32_t ids[3] = { slot.skill1, slot.skill2, slot.skill3 };
+		const int32_t sid = ids[drag_col];
+
+		// OnSelected(row)：命中行成为编辑目标（Angel 每次 down 都先调一次）。
+		selected = drag_idx;
+		set_ok_enabled(true);
+		name_field.change_text(slot.name);
+		shout_checked = slot.shout != 0;
+
+		if (sid > 0)
+		{
+			const int16_t row_y = static_cast<int16_t>(SM_ROW_Y0 + (drag_idx - offset) * SM_ROW_PITCH);
+			const Point<int16_t> cell(
+				static_cast<int16_t>(SM_ROW_X + SM_CELL_CX[drag_col] - 16),
+				static_cast<int16_t>(row_y + SM_CELL_CY - 16));
+
+			clear_cell(drag_idx, drag_col);
+
+			// H3：记下被清的源格，拖拽中途取消（关窗 / remove_cursor）时写回。
+			grab_idx = drag_idx;
+			grab_col = drag_col;
+			grab_sid = sid;
+
+			drag_skill_icon = Icon(
+				std::make_unique<MacroCellIcon>(sid),
+				SkillData::get(sid).get_icon(SkillData::Icon::NORMAL), -1);
+			drag_skill_icon.set_cell(cell);
+			drag_skill_icon.start_drag_at(position, cursor_position);
+			UI::get().drag_icon(&drag_skill_icon);
+
+			return Cursor::State::GRABBING;
+		}
+
+		return Cursor::State::CANCLICK;
+	}
+
+	// 第 4 列：宏图标（Angel GetIndexByPos 里 x146..178 命中 col=3）。
 	for (int16_t r = 0; r < VISIBLE_ROWS; r++)
 	{
 		const int16_t idx = static_cast<int16_t>(offset + r);
@@ -4856,19 +5554,35 @@ Cursor::State UISkillMacroEx::send_cursor(bool clicked, Point<int16_t> cursor_po
 			break;
 
 		const int16_t top = static_cast<int16_t>(SM_SEL_Y0 + r * SM_ROW_PITCH);
-		const Rectangle<int16_t> hit(SM_SEL_X, static_cast<int16_t>(SM_SEL_X + SM_SEL_SIZE),
-			top, static_cast<int16_t>(top + SM_SEL_SIZE));
+		const Rectangle<int16_t> hit(
+			Point<int16_t>(SM_SEL_X, top),
+			Point<int16_t>(SM_SEL_X + SM_SEL_SIZE, top + SM_SEL_SIZE));
 
-		if (hit.contains(relative))
-		{
-			selected = idx;
-			const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(selected));
-			name_field.change_text(slot.name);
-			shout_checked = slot.shout != 0;
-			return Cursor::State::CANCLICK;
-		}
+		if (!hit.contains(relative))
+			continue;
+
+		selected = idx;
+		set_ok_enabled(true);
+		const SkillMacroSlot& slot2 = SkillMacros::get().get_slot(static_cast<size_t>(selected));
+		name_field.change_text(slot2.name);
+		shout_checked = slot2.shout != 0;
+
+		const Texture& mi = macro_icon[idx];
+		const Point<int16_t> cell(
+			static_cast<int16_t>(SM_SEL_X + mi.get_origin().x()),
+			static_cast<int16_t>(top + mi.get_origin().y()));
+
+		drag_macro_icon = Icon(std::make_unique<MacroRowIcon>(idx), mi, -1);
+		drag_macro_icon.set_cell(cell);
+		drag_macro_icon.start_drag_at(position, cursor_position);
+		UI::get().drag_icon(&drag_macro_icon);
+
+		return Cursor::State::GRABBING;
 	}
 
+
+	// 确定钮 / 勾选框走 buttons[] 四态状态机（见 ctor 的 try_maple_btn / AreaButton），
+	// 不再用手写命中矩形：Angel 是 CCtrlButton + CCtrlCheckBox 运行期控件。
 	return Cursor::State::IDLE;
 }
 
@@ -4902,6 +5616,74 @@ void UISkillMacroEx::send_key(int32_t keycode, bool pressed, bool escape)
 		deactivate();
 	}
 }
+	void UISkillMacroEx::remove_cursor()
+{
+	UIElement::remove_cursor();
+
+	// H3（2026-11-16）：Angel BeginDragDrop 载荷带 (row,col)，拖拽中途取消时
+	// 原生把源格恢复。本端抓取即清源格（drop 写新格=移动），若图标此刻仍挂
+	// 在光标上（get_drag()==true，即没有走任何 drop 结算），把原技能写回源格，
+	// 技能不再凭空丢失。落点覆盖：✕ 关窗、ESC、随技能窗 deactivate ——
+	// UIStateGame::toggle 收口路径都会先调 remove_cursor（UIStateGame.cpp:1111）。
+	if (grab_sid > 0 && drag_skill_icon.get_drag())
+		set_cell(grab_idx, grab_col, grab_sid);
+
+	grab_idx = grab_col = -1;
+	grab_sid = 0;
+}
+
+void UISkillMacroEx::send_scroll(double yoffset)
+	{
+		// 与技能窗贴靠同屏：广播滚轮须先按光标门控，避免两个列表一起滚。
+		if (!is_in_range(UI::get().get_cursor_position()))
+			return;
+
+		slider.send_scroll(yoffset);
+	}
+
+	void UISkillMacroEx::update()
+	{
+		UIElement::update();
+
+		// 原生（Angel 083 CUISkillEx::ShiftMacroUIState @0x8bad5a，243 行反编译）：
+		// 「技能组合栏」不是独立窗 —— 它是 CUISkillEx 内嵌的 CUIMacroSys 画布
+		// （this+403），展开/收起只切 IWzGr2DLayer 的 Alpha/LT（sub_432C2D）与
+		// CUIMacroSys::ResetInfo，没有 CreateWindow / SetParent / 独立位置。
+		// 因此它天然：(a) 紧贴技能窗右侧（同一张窗画布被拉宽）、
+		// (b) 技能窗被拖动时画布一起走、相对位置不变、
+		// (c) 技能窗关闭时画布随之消失。
+		// 本端拆成独立 UISkillMacroEx（UIDragElement<PosNOTICE>，独立 Setting 存位置），
+		// 这三条不会自动成立。orange-wz 实查 UIWindow.img/SkillMacro 只有位图零件
+		// （backgrnd/macroslot/macroslot1/macroslot2/macroname/line01/line02/Macroicon，
+		// 无 BtOK/BtCheck、无任何父窗/锚点节点；SkillMacroEx/BtMacroOut 只是展开按钮）
+		// => 联动属于 Angel 窗逻辑层，img 里没有对应物，不能靠资源补。
+		// 等价机制：update() 每帧由 UIStateGame 对所有 active 元素派发
+		// （UIStateGame.cpp:243-254，主循环 MapleStory.cpp:208），持续重算贴靠位置 =
+		// 原生的「同一画布天然跟随」；技能窗非 active 即收起 = 原生随父窗关闭，
+		// 并兜住 UIStateGame::remove(SKILLBOOK) 与 UIMacro 'E' 键独立 emplace 的漏口。
+		// 保留 close()/toggle_active()/set_macro(false) 三处即时 deactivate（幂等）。
+		if (auto sb = UI::get().get_element<UISkillBook>())
+		{
+			if (sb->is_active())
+				anchor_right_of(*sb, -3);
+			else
+				deactivate();
+		}
+		else
+		{
+			// 技能窗元素已被 UIStateGame::remove(SKILLBOOK) 析构（elements[type].reset()，
+			// UIStateGame.cpp:1068-1074）或压根没创建：get_element 返回空 Optional。
+			// 此时组合栏同样是孤儿窗，必须收掉 —— 否则「技能栏关闭后组合栏还在」。
+			deactivate();
+		}
+
+		// 输入框 bounds 用绝对坐标，组合栏每帧锚定到技能窗右侧后同步，
+		// 避免拖动技能窗后输入框命中区滞后一帧（与 UI::focusedtextfield 绝对判定同源）。
+		name_field.update(
+			position + Point<int16_t>(SM_NAME_X, SM_NAME_Y),
+			Point<int16_t>(SM_NAME_W, SM_NAME_H));
+	}
+
 UIElement::Type UISkillMacroEx::get_type() const { return TYPE; }
 
 UICharacterClone::UICharacterClone() {
@@ -5198,195 +5980,229 @@ void UIFadeYesNo::send_key(int32_t keycode, bool pressed, bool escape)
 UIElement::Type UIFadeYesNo::get_type() const { return TYPE; }
 
 UIContextMenu::UIContextMenu()
-	: title_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "")
+	: title_label(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, "")
 {
-	position = Point<int16_t>(320, 200); dimension = Point<int16_t>(120, 72); dragarea = Point<int16_t>(120, 20);
-	has_assets = load_window_bg("ContextMenu", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UIContextMenu: missing bg — text menu only");
+	position = Point<int16_t>(320, 200);
+	dimension = Point<int16_t>(100, 105);
+	dragarea = Point<int16_t>(100, 20);
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("ContextMenu");
+	tile_t = Texture(root["t"]);
+	tile_c = Texture(root["c"]);
+	tile_s = Texture(root["s"]);
+	has_assets = tile_t && tile_c && tile_s;
+	if (!has_assets)
+		LOG(LOG_WARN, "UIContextMenu: missing t/c/s — shell degraded");
+#else
+	has_assets = false;
+#endif
+	mid_rows = 5;
+	layout_dimension();
+	rebuild_buttons();
 }
+
+void UIContextMenu::layout_dimension()
+{
+	// Angel CreateDlg：宽 100，高 15*(mid_rows+2)；t=23、每行 c=15、s 贴底。
+	const int16_t th = tile_t ? tile_t.height() : 23;
+	const int16_t ch = tile_c ? tile_c.height() : 15;
+	const int16_t sh = tile_s ? tile_s.height() : 7;
+	const int16_t tw = tile_t ? tile_t.width() : 100;
+	dimension = Point<int16_t>(tw, static_cast<int16_t>(th + mid_rows * ch + sh));
+	dragarea = Point<int16_t>(dimension.x(), th);
+}
+
+void UIContextMenu::rebuild_buttons()
+{
+	buttons.clear();
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("ContextMenu");
+	if (!root)
+		return;
+
+	// Angel CUIContextMenu::OnCreate @0x9967fb（逐字反编译，见 evidence）：
+	//   固定 5 项 Info/Save/Trade/Whisper/Claim；可选 Party/Guild/Family 由玩家自身状态标志决定：
+	//     +52 Party  = 未组队(或同频道)  → PartyModel::in_party()==false
+	//     +53 Guild  = 有公会           → GuildModel::in_guild()
+	//     +54 Family = 有家族           → FamilyModel::info().has_family()
+	//   基础行数 5，每个可选 +1；height = 15*(rows+2)。按钮 x=9、首钮 y=24、行距 15。
+	//   注意：Angel 条件基于「自己社交状态」而非目标 cid；但「邀请自己入队/入会/收徒」无意义，
+	//   故本端附加 other 门闩（仅对他人显示邀请类），这是工程保护，非 Angel 原始分支。
+	const bool other = target_cid > 0 && target_cid != Stage::get().get_player().get_oid();
+	const bool show_party = other && !PartyModel::get().data().in_party();
+	const bool show_guild = other && GuildModel::get().data().in_guild();
+	const bool show_family = other && FamilyModel::get().info().has_family();
+
+	// 按钮位图 85px（evidence/img_ContextMenu_tree.txt），窗口宽取 t 板宽（100）。
+	// 旧值 x=9 使左留白 9、右留白 6 → 视觉偏右；按 (窗口宽-按钮宽)/2 水平居中。
+	const int16_t win_w = tile_t ? tile_t.width() : 100;
+	const int16_t btn_w = 85;
+	const int16_t btn_x = static_cast<int16_t>((win_w - btn_w) / 2);
+
+	struct Entry { uint16_t id; const char* node; };
+	const Entry fixed[] = {
+		{ Buttons::BtInfo, "BtInfo" },
+		{ Buttons::BtSave, "BtSave" },
+		{ Buttons::BtTrade, "BtTrade" },
+		{ Buttons::BtWhisper, "BtWhisper" },
+	};
+	int16_t y = 24;
+	for (const Entry& e : fixed)
+	{
+		try_maple_btn(buttons, e.id, root[e.node], Point<int16_t>(btn_x, y), "contextmenu");
+		y = static_cast<int16_t>(y + 15);
+	}
+
+	if (show_party)
+	{
+		try_maple_btn(buttons, Buttons::BtParty, root["BtParty"], Point<int16_t>(btn_x, y), "contextmenu");
+		y = static_cast<int16_t>(y + 15);
+	}
+	if (show_guild)
+	{
+		try_maple_btn(buttons, Buttons::BtGuild, root["BtGuild"], Point<int16_t>(btn_x, y), "contextmenu");
+		y = static_cast<int16_t>(y + 15);
+	}
+
+	try_maple_btn(buttons, Buttons::BtClaim, root["BtClaim"], Point<int16_t>(btn_x, y), "contextmenu");
+	y = static_cast<int16_t>(y + 15);
+
+	if (show_family)
+		try_maple_btn(buttons, Buttons::BtFamily, root["BtFamily"], Point<int16_t>(btn_x, y), "contextmenu");
+
+	mid_rows = static_cast<int16_t>(5 + (show_party ? 1 : 0) + (show_guild ? 1 : 0) + (show_family ? 1 : 0));
+	layout_dimension();
+#endif
+}
+
 void UIContextMenu::open_at(Point<int16_t> screen_pos, int32_t cid, const std::string& name)
 {
 	target_cid = cid;
 	target_name = name;
 	title_label.change_text(name.empty() ? Locale::text("contextmenu.title_fallback") : name);
-	position = screen_pos;
-	dimension = Point<int16_t>(120, 202);
+	rebuild_buttons();
+
+	const int16_t vw = Constants::Constants::get().get_viewwidth();
+	const int16_t vh = Constants::Constants::get().get_viewheight();
+	int16_t x = screen_pos.x();
+	int16_t y = screen_pos.y();
+	if (x + dimension.x() > vw)
+		x = static_cast<int16_t>(vw - dimension.x());
+	if (y + dimension.y() > vh)
+		y = static_cast<int16_t>(vh - dimension.y());
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
+	position = Point<int16_t>(x, y);
 	makeactive();
-	LOG(LOG_DEBUG, "UIContextMenu: open cid=" << cid);
+	LOG(LOG_DEBUG, "UIContextMenu: open cid=" << cid << " rows=" << mid_rows);
 }
-void UIContextMenu::activate_row(int row)
-{
-	switch (row) {
-		case 0:
-			if (target_cid > 0)
-				CharInfoRequestPacket(target_cid).dispatch();
-			else
-				UI::get().emplace<UICharInfo>(Stage::get().get_player().get_oid());
-			deactivate();
-			break;
-		case 1: {
-			std::string n = target_name;
-			if (auto chat = UI::get().get_element<UIChatBar>())
-				chat->focus_whisper(n);
-			else if (!n.empty()) {
-				UI::get().emplace<UISoftKey>([n](const std::string& msg) {
-					if (!msg.empty())
-						WhisperPacket(n, msg).dispatch();
-				}, []() {}, "Whisper msg");
-			}
-			deactivate();
-			break;
-		}
-		case 2:
-			if (!target_name.empty())
-				PartyInvitePacket(target_name).dispatch();
-			deactivate();
-			break;
-		case 3: {
-			auto rep = UI::get().get_element<UIReport>();
-			if (!rep) rep = UI::get().emplace<UIReport>();
-			else if (!rep->is_active()) rep->makeactive();
-			if (rep) rep->set_target(target_name);
-			deactivate();
-			break;
-		}
-		case 4:
-			if (target_cid > 0) {
-				dispatch_trade_invite(target_cid);
-				LOG(LOG_DEBUG, "UIContextMenu: TradeInvite cid=" << target_cid);
-			}
-			deactivate();
-			break;
-		case 5:
-			if (!target_name.empty()) {
-				BuddyAddPacket(target_name, "Default Group").dispatch();
-				LOG(LOG_DEBUG, "UIContextMenu: BuddyAdd name=" << target_name);
-			}
-			deactivate();
-			break;
-		case 6:
-			if (!target_name.empty()) {
-				MessengerInvitePacket(target_name).dispatch();
-				LOG(LOG_DEBUG, "UIContextMenu: MessengerInvite name=" << target_name);
-			}
-			deactivate();
-			break;
-		case 7:
-			if (!target_name.empty()) {
-				GuildInvitePacket(target_name).dispatch();
-				LOG(LOG_DEBUG, "UIContextMenu: GuildInvite name=" << target_name);
-			}
-			deactivate();
-			break;
-		case 8:
-			if (!target_name.empty()) {
-				FamilyAddPacket(target_name).dispatch();
-				LOG(LOG_DEBUG, "UIContextMenu: FamilyAdd name=" << target_name);
-			}
-			deactivate();
-			break;
-		case 9:
-			if (target_cid > 0) {
-				GiveFamePacket(target_cid, true).dispatch();
-				LOG(LOG_DEBUG, "UIContextMenu: GiveFame cid=" << target_cid);
-			}
-			deactivate();
-			break;
-		default:
-			deactivate();
-			break;
-	}
-}
+
 Cursor::State UIContextMenu::send_cursor(bool clicked, Point<int16_t> cursorpos)
 {
-	Cursor::State st = UIDragElement<PosNOTICE>::send_cursor(clicked, cursorpos);
-	if (!clicked || !active) return st;
-	Point<int16_t> rel = cursorpos - position;
-	if (rel.x() < 0 || rel.x() > dimension.x()) return st;
-	if (rel.y() >= 22 && rel.y() < 40) activate_row(0);
-	else if (rel.y() >= 40 && rel.y() < 58) activate_row(1);
-	else if (rel.y() >= 58 && rel.y() < 76) activate_row(2);
-	else if (rel.y() >= 76 && rel.y() < 94) activate_row(3);
-	else if (rel.y() >= 94 && rel.y() < 112) activate_row(4);
-	else if (rel.y() >= 112 && rel.y() < 130) activate_row(5);
-	else if (rel.y() >= 130 && rel.y() < 148) activate_row(6);
-	else if (rel.y() >= 148 && rel.y() < 166) activate_row(7);
-	else if (rel.y() >= 166 && rel.y() < 184) activate_row(8);
-	else if (rel.y() >= 184 && rel.y() < 202) activate_row(9);
-	return st;
+	return UIDragElement<PosNOTICE>::send_cursor(clicked, cursorpos);
 }
-void UIContextMenu::draw(float) const
+
+void UIContextMenu::draw(float inter) const
 {
-	if (has_assets && backgrnd) backgrnd.draw(position);
-	title_label.draw(position + Point<int16_t>(8, 4));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.info")).draw(position + Point<int16_t>(8, 22));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.whisper")).draw(position + Point<int16_t>(8, 40));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.party")).draw(position + Point<int16_t>(8, 58));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.report")).draw(position + Point<int16_t>(8, 76));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.trade")).draw(position + Point<int16_t>(8, 94));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.buddy")).draw(position + Point<int16_t>(8, 112));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.messenger")).draw(position + Point<int16_t>(8, 130));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.guild")).draw(position + Point<int16_t>(8, 148));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.family")).draw(position + Point<int16_t>(8, 166));
-	Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Locale::text("contextmenu.fame")).draw(position + Point<int16_t>(8, 184));
+	if (has_assets)
+	{
+		Point<int16_t> p = position;
+		tile_t.draw(p);
+		p = p + Point<int16_t>(0, tile_t.height());
+		const int16_t ch = tile_c.height() > 0 ? tile_c.height() : 15;
+		for (int16_t i = 0; i < mid_rows; ++i)
+		{
+			tile_c.draw(p);
+			p = p + Point<int16_t>(0, ch);
+		}
+		tile_s.draw(p);
+	}
+
+	// 标题在标题栏内水平+垂直居中（旧锚点 (8,4) + LEFT 对齐导致偏左上/左下）。
+	// Text 单行锚点会再加 font.linespace()≈12（GraphicsGL::LayoutBuilder::ay），
+	// 标题栏仅 23px 高，故锚点 y 取 1 而非 title_h/2，否则文字基线落到 23 被蓝板顶住截断。
+	title_label.draw(position + Point<int16_t>(dimension.x() / 2, 1));
+	UIElement::draw(inter);
 }
+
 void UIContextMenu::send_key(int32_t keycode, bool pressed, bool escape)
 {
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'X' || keycode == 'x') { deactivate(); return; }
-	if (keycode == 'W' || keycode == 'w') {
-		std::string n = target_name;
-		if (n.empty()) {
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				n = ci->get_target_name();
-		}
-		if (n.empty()) {
-			UI::get().emplace<UISoftKey>([](const std::string& name) {
-				if (name.empty()) return;
-				UI::get().emplace<UISoftKey>([name](const std::string& msg) {
-					if (!msg.empty()) WhisperPacket(name, msg).dispatch();
-				}, []() {}, "Whisper msg");
-			}, []() {}, "Whisper name");
-		} else if (auto chat = UI::get().get_element<UIChatBar>()) {
-			chat->focus_whisper(n);
-		} else {
-			UI::get().emplace<UISoftKey>([n](const std::string& msg) {
-				if (!msg.empty()) WhisperPacket(n, msg).dispatch();
-			}, []() {}, "Whisper msg");
-		}
-		deactivate();
-		return;
-	}
-	if (keycode == 'I' || keycode == 'i') {
-		if (target_cid > 0) {
-			CharInfoRequestPacket(target_cid).dispatch();
-			deactivate();
-			return;
-		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t cid = static_cast<int32_t>(std::stoi(s));
-				if (cid > 0) CharInfoRequestPacket(cid).dispatch();
-			} catch (...) {}
-		}, []() {}, "Char cid");
-		deactivate();
-		return;
-	}
-	if (keycode == '1') activate_row(0);
-	else if (keycode == '2') activate_row(1);
-	else if (keycode == '3') activate_row(2);
-	else if (keycode == '4') activate_row(3);
-	else if (keycode == '5') activate_row(4);
-	else if (keycode == '6') activate_row(5);
-	else if (keycode == '7') activate_row(6);
-	else if (keycode == '8') activate_row(7);
-	else if (keycode == '9') activate_row(8);
-	else if (keycode == '0') activate_row(9);
 }
+
 UIElement::Type UIContextMenu::get_type() const { return TYPE; }
-Button::State UIContextMenu::button_pressed(uint16_t) { return Button::State::NORMAL; }
+
+Button::State UIContextMenu::button_pressed(uint16_t buttonid)
+{
+	switch (buttonid)
+	{
+	case Buttons::BtInfo:
+		if (target_cid > 0)
+			CharInfoRequestPacket(target_cid).dispatch();
+		else
+			UI::get().emplace<UICharInfo>(Stage::get().get_player().get_oid());
+		break;
+	case Buttons::BtSave:
+		// Angel HandleRButtonClk case 1：SetClipboardText(name) + CUIStatusBar::StartChat(0)。
+		// 复制目标角色名到剪贴板并拉起聊天输入行（不是加好友；旧实现 BuddyAddPacket 是错配）。
+		if (!target_name.empty())
+		{
+			Window::get().setclipboard(target_name);
+			if (auto chat = UI::get().get_element<UIChatBar>())
+				chat->toggle_input(true);
+		}
+		break;
+	case Buttons::BtTrade:
+		if (target_cid > 0)
+		{
+			dispatch_trade_invite(target_cid);
+			LOG(LOG_DEBUG, "UIContextMenu: TradeInvite cid=" << target_cid);
+		}
+		break;
+	case Buttons::BtWhisper:
+		// Angel HandleRButtonClk case 4：CUIStatusBar::SetWhisperTarget(name, 1) ——
+		// 切到密语频道 + 预置 "/w <名字> "，焦点留给玩家输入正文（不是一次性 SoftKey 发包）。
+		if (!target_name.empty())
+		{
+			if (auto chat = UI::get().get_element<UIChatBar>())
+				chat->set_whisper_target(target_name);
+			else
+				UI::get().emplace<UIChatBar>()->set_whisper_target(target_name);
+		}
+		break;
+	case Buttons::BtParty:
+		if (!target_name.empty())
+			PartyInvitePacket(target_name).dispatch();
+		break;
+	case Buttons::BtGuild:
+		if (!target_name.empty())
+			GuildInvitePacket(target_name).dispatch();
+		break;
+	case Buttons::BtClaim:
+	{
+		// 先把目标交给构造，避免旧实现"emplace 后才 set_target"导致构造期
+		// 从 UICharInfo 兜底取名即刻发包（打开窗口=已举报）的顺序 bug。
+		auto rep = UI::get().get_element<UIReport>();
+		if (!rep && !target_name.empty())
+			rep = UI::get().emplace<UIReport>(target_name);
+		else if (!rep)
+			rep = UI::get().emplace<UIReport>();
+		else if (!rep->is_active()) rep->makeactive();
+		if (rep && target_name.empty()) rep->set_target("");
+		break;
+	}
+	case Buttons::BtFamily:
+		if (!target_name.empty())
+			FamilyAddPacket(target_name).dispatch();
+		break;
+	default:
+		break;
+	}
+	deactivate();
+	return Button::State::NORMAL;
+}
 
 UIEventWindow::UIEventWindow()
 	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("eventwindow.event_softkey_note_e_uievent"))
@@ -5697,7 +6513,9 @@ UIGameMenu::UIGameMenu()
 		};
 
 		for (size_t i = 0; i < sizeof(ids) / sizeof(ids[0]); ++i)
-			try_maple_btn(buttons, ids[i], root[names[i]], Point<int16_t>(8, static_cast<int16_t>(22 + i * 26)), "gamemenu btn");
+			// x=6：底板 93 宽、钮 81 宽，(93-81)/2=6 左右对称（与 UIShortCut 同口径；
+			// 原生素材左 8 右 4 不对称，按用户反馈改居中）。
+			try_maple_btn(buttons, ids[i], root[names[i]], Point<int16_t>(6, static_cast<int16_t>(22 + i * 26)), "gamemenu btn");
 #endif
 	}
 	else LOG(LOG_WARN, "UIGameMenu: missing");
@@ -5712,7 +6530,23 @@ UIGameMenu::UIGameMenu()
 void UIGameMenu::draw(float inter) const
 {
 	if (has_assets && backgrnd) backgrnd.draw(position);
+
 	UIElement::draw(inter);
+	// 键盘选中项高亮：与 UIShortCut::draw 同口径——原生无独立 selected 素材，
+	// 焦点态 = 按钮自身 mouseOver 亮蓝贴图（见上方 UIShortCut::draw 的 MCP 证据）。
+	// 临时切 MOUSEOVER 重画选中钮、画完恢复 state，避免污染鼠标 hover 状态机。
+	if (has_assets && selected >= 0 && static_cast<size_t>(selected) < MENU_COUNT)
+	{
+		auto it = buttons.find(MENU_IDS[selected]);
+		if (it != buttons.end() && it->second)
+		{
+			Button* btn = it->second.get();
+			Button::State saved = btn->get_state();
+			btn->set_state(Button::State::MOUSEOVER);
+			btn->draw(position);
+			btn->set_state(saved);
+		}
+	}
 	// 原生版式里没有这行英文；按键调试壳只在缺素材的回退窗体上可见。
 	if (!has_assets) tip_label.draw(position + Point<int16_t>(12, 40));
 }
@@ -5737,7 +6571,13 @@ Button::State UIGameMenu::button_pressed(uint16_t id)
 			deactivate();
 			break;
 		case Buttons::BT_QUIT:
-			UI::get().emplace<UIQuit>(Stage::get().get_player().get_stats());
+			// 与 ESC/关闭路径同一 gate：BeiDou 无 UIWindow6.img/askReward，
+			// 直接进 UIQuit 只会画黑色蒙版 + 在线时长数字（用户实测「弹窗没加载」）。
+			// 缺失时退回 UIQuitConfirm（Login.img/Notice 退出确认板）。
+			if (UiAssetResolve::has_quit_reward_dialog())
+				UI::get().emplace<UIQuit>(Stage::get().get_player().get_stats());
+			else
+				UI::get().emplace<UIQuitConfirm>();
 			deactivate();
 			break;
 	}
@@ -5748,6 +6588,27 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 {
 	if (pressed && escape) deactivate();
 	if (!pressed) return;
+
+	// 原生主菜单气球：上下方向键移动高亮、回车激活当前高亮项。
+	// 键码兼容口径与 UIShortCut::send_key 相同（GLFW/VK/KeyAction 三套），
+	// 旧实现只比 KeyAction 枚举值 → 方向键/回车全部无效（用户实测复现）。
+	if (keycode == 265 || keycode == 38 || keycode == KeyAction::Id::UP)
+	{
+		selected = static_cast<int16_t>((selected - 1 + static_cast<int>(MENU_COUNT)) % static_cast<int>(MENU_COUNT));
+		return;
+	}
+	if (keycode == 264 || keycode == 40 || keycode == KeyAction::Id::DOWN)
+	{
+		selected = static_cast<int16_t>((selected + 1) % static_cast<int>(MENU_COUNT));
+		return;
+	}
+	if (keycode == 257 || keycode == 335 || keycode == 13 || keycode == '\r'
+		|| keycode == KeyAction::Id::RETURN)
+	{
+		button_pressed(MENU_IDS[selected]);
+		return;
+	}
+
 	if (keycode == '1') {
 		auto ui = UI::get().get_element<UIRanking>();
 		if (!ui) ui = UI::get().emplace<UIRanking>();
@@ -6494,9 +7355,16 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		deactivate();
 	} else if (keycode == 116) {
 		// F5 → ShortCut bar
+		// 互斥：开界面列表时先收起主菜单（UIGameMenu）。
+		if (auto gm = UI::get().get_element<UIGameMenu>(); gm && gm->is_active())
+			gm->deactivate();
 		auto ui = UI::get().get_element<UIShortCut>();
 		if (!ui) ui = UI::get().emplace<UIShortCut>();
-		else if (!ui->is_active()) ui->makeactive();
+		else if (!ui->is_active())
+		{
+			ui->reset_selection();
+			ui->makeactive();
+		}
 		deactivate();
 	} else if (keycode == 117) {
 		// F6 → SlideMenu
@@ -6671,6 +7539,12 @@ void UIMacro::send_key(int32_t keycode, bool pressed, bool escape)
 		auto ui = UI::get().get_element<UISkillMacroEx>();
 		if (!ui) ui = UI::get().emplace<UISkillMacroEx>();
 		else if (!ui->is_active()) ui->makeactive();
+		// 与 UISkillBook::BT_MACRO 同源：组合栏依附技能窗右侧，另一个打开入口
+		// 也必须立即贴靠（update() 每帧锚定会兜住后续帧，这里消除首帧闪位）。
+		if (ui)
+			if (auto sb = UI::get().get_element<UISkillBook>())
+				if (sb->is_active())
+					ui->anchor_right_of(*sb, -3);
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -7785,3 +8659,4 @@ Button::State UIWhisperTargetDlg::button_pressed(uint16_t buttonid)
 
 UIElement::Type UIWhisperTargetDlg::get_type() const { return TYPE; }
 }
+
