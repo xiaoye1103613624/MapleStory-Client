@@ -20,6 +20,8 @@
 #include "../../Util/HudLayout.h"
 #include "../../Util/ResolutionTiers.h"
 
+#include <cstdlib>
+
 #include "UIAdmin.h"
 #include "UIChannel.h"
 #include "UICharInfo.h"
@@ -118,6 +120,8 @@ namespace ms
 	constexpr int16_t QS_CAP_Y = 4;
 	// 中文绑定名落在格下半带（A11M 行高约 11，14 + 11 ≤ 28）。
 	constexpr int16_t QS_LABEL_Y = 14;
+	// 快捷格拖拽换位阈值：光标离开起点超过该像素数才起拖，否则按单击使用。
+	constexpr int16_t QS_DRAG_THRESHOLD = 8;
 
 	// classic 快捷格键位表（13 列 x2 行，参考端 KeyConfig 槽序）。
 	constexpr uint8_t CLASSIC_QS_KEYS[26] = {
@@ -255,18 +259,42 @@ namespace ms
 
 	void UIStatusBar::init_modern()
 	{
+		// ThemePack / multi-res: snap layout constants to nearest StatusBar3 enum width
+		// so non-enumerated view sizes (1440/1600/…) keep chrome aligned with the
+		// EXPBar asset we actually load (instead of pos_adj=0 + 1280 textures).
+		static constexpr int16_t kModernW[] = { 800, 1024, 1280, 1366, 1920 };
+		auto nearest_modern_w = [](int16_t vw) -> int16_t
+		{
+			int16_t best = kModernW[0];
+			int32_t best_d = std::abs(static_cast<int32_t>(vw) - kModernW[0]);
+
+			for (int16_t cand : kModernW)
+			{
+				const int32_t d = std::abs(static_cast<int32_t>(vw) - cand);
+
+				if (d < best_d)
+				{
+					best_d = d;
+					best = cand;
+				}
+			}
+
+			return best;
+		};
+
+		const int16_t layout_w = nearest_modern_w(VWIDTH);
+
 		std::string stat = "status";
 
-		if (VWIDTH == 800)
+		if (layout_w == 800)
 			stat += "800";
 
 		nl::node mainBar = UiAssetResolve::status_bar_root()["mainBar"];
 		nl::node status = mainBar[stat];
 		nl::node EXPBar = mainBar["EXPBar"];
-		nl::node EXPBarRes = EXPBar[VWIDTH];
+		nl::node EXPBarRes = EXPBar[layout_w];
 
-		// 多分辨率兜底：modern HUD 的 EXPBar 只有 800/1024/1280/1366/1920 五套分件，
-		// 非枚举宽度（1600/1440/1680/2560）取不到时回退 1280 那套，避免空节点。
+		// 多分辨率兜底：modern HUD 的 EXPBar 只有五套分件。
 		if (!UiAssetResolve::usable(EXPBarRes))
 			EXPBarRes = EXPBar[1280];
 		nl::node menu = mainBar["menu"];
@@ -290,19 +318,19 @@ namespace ms
 
 		int16_t pos_adj = 0;
 
-		if (VWIDTH == 1280)
+		if (layout_w == 1280)
 			pos_adj = 87;
-		else if (VWIDTH == 1366)
+		else if (layout_w == 1366)
 			pos_adj = 171;
-		else if (VWIDTH == 1920)
+		else if (layout_w == 1920)
 			pos_adj = 448;
 
-		if (VWIDTH == 1024)
+		if (layout_w == 1024)
 			quickslot_min = 1;
 		else
 			quickslot_min = 0;
 
-		if (VWIDTH == 800)
+		if (layout_w == 800)
 		{
 			hpmp_pos = Point<int16_t>(412, 40);
 			hpset_pos = Point<int16_t>(530, 70);
@@ -337,7 +365,7 @@ namespace ms
 			event_pos = menu_pos + Point<int16_t>(-94, 252);
 		}
 
-		if (VWIDTH == 1280)
+		if (layout_w == 1280)
 		{
 			statset_pos = Point<int16_t>(580 + pos_adj, 111);
 			quickslot_pos = Point<int16_t>(622 + pos_adj, 37);
@@ -349,7 +377,7 @@ namespace ms
 			character_pos += Point<int16_t>(-7, 0);
 			event_pos += Point<int16_t>(-7, 0);
 		}
-		else if (VWIDTH == 1366)
+		else if (layout_w == 1366)
 		{
 			quickslot_pos = Point<int16_t>(623 + pos_adj, 37);
 
@@ -360,7 +388,7 @@ namespace ms
 			character_pos += Point<int16_t>(-5, 0);
 			event_pos += Point<int16_t>(-5, 0);
 		}
-		else if (VWIDTH == 1920)
+		else if (layout_w == 1920)
 		{
 			quickslot_pos = Point<int16_t>(900 + pos_adj, 37);
 
@@ -375,14 +403,14 @@ namespace ms
 		hpmp_sprites.emplace_back(status["backgrnd"], hpmp_pos - Point<int16_t>(1, 0));
 		hpmp_sprites.emplace_back(status["layer:cover"], hpmp_pos - Point<int16_t>(1, 0));
 
-		if (VWIDTH == 800)
+		if (layout_w == 800)
 			hpmp_sprites.emplace_back(status["layer:Lv"], hpmp_pos);
 		else
 			hpmp_sprites.emplace_back(status["layer:Lv"], hpmp_pos - Point<int16_t>(1, 0));
 
 		int16_t hpmp_max = 139;
 
-		if (VWIDTH > 800)
+		if (layout_w > 800)
 			hpmp_max += 30;
 
 		hpbar = Gauge(Gauge::Type::DEFAULT, status.resolve("gauge/hp/layer:0"), hpmp_max, 0.0f);
@@ -399,13 +427,13 @@ namespace ms
 
 		Point<int16_t> buttonPos = Point<int16_t>(591 + pos_adj, 73);
 
-		if (VWIDTH == 1024)
+		if (layout_w == 1024)
 			buttonPos += Point<int16_t>(38, 0);
-		else if (VWIDTH == 1280)
+		else if (layout_w == 1280)
 			buttonPos += Point<int16_t>(31, 0);
-		else if (VWIDTH == 1366)
+		else if (layout_w == 1366)
 			buttonPos += Point<int16_t>(33, 0);
-		else if (VWIDTH == 1920)
+		else if (layout_w == 1920)
 			buttonPos += Point<int16_t>(310, 0);
 
 		buttons[Buttons::BT_CASHSHOP] = std::make_unique<MapleButton>(menu["button:CashShop"], buttonPos);
@@ -415,7 +443,7 @@ namespace ms
 		buttons[Buttons::BT_COMMUNITY] = std::make_unique<MapleButton>(menu["button:Community"], buttonPos);
 		buttons[Buttons::BT_EVENT] = std::make_unique<MapleButton>(menu["button:Event"], buttonPos);
 
-		if (quickslot_active && VWIDTH > 800)
+		if (quickslot_active && layout_w > 800)
 		{
 			buttons[Buttons::BT_CASHSHOP]->set_active(false);
 			buttons[Buttons::BT_MENU]->set_active(false);
@@ -428,58 +456,48 @@ namespace ms
 		std::string fold = "button:Fold";
 		std::string extend = "button:Extend";
 
-		if (VWIDTH == 800)
+		if (layout_w == 800)
 		{
 			fold += "800";
 			extend += "800";
 		}
 
-		if (VWIDTH == 1366)
+		if (layout_w == 1366)
 			quickslot_qs_adj = Point<int16_t>(213, 0);
 		else
 			quickslot_qs_adj = Point<int16_t>(211, 0);
 
-		if (VWIDTH == 800)
+		if (layout_w == 800)
 		{
 			Point<int16_t> quickslot_qs = Point<int16_t>(579, 0);
 
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
-		else if (VWIDTH == 1024)
+		else if (layout_w == 1024)
 		{
 			Point<int16_t> quickslot_qs = Point<int16_t>(627 + pos_adj, 37);
 
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
-		else if (VWIDTH == 1280)
+		else if (layout_w == 1280)
 		{
 			Point<int16_t> quickslot_qs = Point<int16_t>(621 + pos_adj, 37);
 
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
-		else if (VWIDTH == 1366)
+		else if (layout_w == 1366)
 		{
 			Point<int16_t> quickslot_qs = Point<int16_t>(623 + pos_adj, 37);
 
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
-		else if (VWIDTH == 1920)
+		else // layout_w == 1920 (and nearest-snap fallbacks)
 		{
 			Point<int16_t> quickslot_qs = Point<int16_t>(900 + pos_adj, 37);
-
-			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
-			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
-		}
-		else
-		{
-			// 多分辨率兜底：1600/1440/1680/2560 等非枚举宽度按 1280 基准的快捷栏
-			// 相对位置建钮，否则下面 set_active 与 draw 里的 at() 会空指针/抛异常。
-			Point<int16_t> quickslot_qs = Point<int16_t>(
-				static_cast<int16_t>(621 + (VWIDTH - 1280) / 2), 37);
 
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
@@ -540,52 +558,46 @@ namespace ms
 		menutitle[4] = submenu["title"]["setting"];
 #pragma endregion
 
-		if (VWIDTH == 800)
+		// Y/chrome use layout_w (nearest enum); width still follows real VWIDTH.
+		if (layout_w == 800)
 		{
-			position = Point<int16_t>(0, 480);
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
 			position_x = 410;
 			position_y = position.y();
 			dimension = Point<int16_t>(VWIDTH - position_x, 140);
 		}
-		else if (VWIDTH == 1024)
+		else if (layout_w == 1024)
 		{
-			position = Point<int16_t>(0, 648);
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
 			position_x = 410;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
-		else if (VWIDTH == 1280)
+		else if (layout_w == 1280)
 		{
-			position = Point<int16_t>(0, 600);
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
 			position_x = 500;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
-		else if (VWIDTH == 1366)
+		else if (layout_w == 1366)
 		{
-			position = Point<int16_t>(0, 648);
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
 			position_x = 585;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
-		else if (VWIDTH == 1920)
+		else // 1920
 		{
-			position = Point<int16_t>(0, 960 + (VHEIGHT - 1080));
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
 			position_x = 860;
 			position_y = position.y() + 40;
 			dimension = Point<int16_t>(VWIDTH - position_x, 80);
 		}
-		else
-		{
-			// 多分辨率兜底：1600/1440/1680/2560 等非枚举宽度不能落到默认的
-			// position=(0,0)/dimension=(0,0)（菜单命中与量表会整体崩坏）。
-			// 按 1280 基准的「右侧 610 宽菜单区」推导，保持底栏贴底、菜单右区不越界。
-			LOG(LOG_WARN, "[MR] StatusBar modern fallback for VWIDTH=" << VWIDTH);
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 75));
-			position_x = static_cast<int16_t>(VWIDTH - 610);
-			position_y = static_cast<int16_t>(position.y() + 42);
-			dimension = Point<int16_t>(610, 75);
-		}
+
+		if (layout_w != VWIDTH)
+			LOG(LOG_INFO, "[MR] StatusBar modern layout_w=" << layout_w
+				<< " for VWIDTH=" << VWIDTH);
 	}
 
 	void UIStatusBar::draw(float alpha) const
@@ -1371,52 +1383,22 @@ namespace ms
 					pre = ci->get_target_name();
 				if (!pre.empty()) {
 					std::string to = pre;
-					UI::get().emplace<UISoftKey>([to](const std::string& msg) {
-						if (msg.empty()) return;
-						WhisperPacket(to, msg).dispatch();
-						LOG(LOG_DEBUG, "UIStatusBar: SoftKey whisper to=" << to);
-					}, []() {}, "Whisper msg");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& to) {
-						if (to.empty()) return;
-						UI::get().emplace<UISoftKey>([to](const std::string& msg) {
-							if (msg.empty()) return;
-							WhisperPacket(to, msg).dispatch();
-							LOG(LOG_DEBUG, "UIStatusBar: SoftKey whisper to=" << to);
-						}, []() {}, "Whisper msg");
-					}, []() {}, "Whisper to");
+					
 				}
 			}
 			else if (keycode == 'S' || keycode == 's')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					GeneralChatPacket(msg, true).dispatch();
-				}, []() {}, "Chat");
+				
 			}
 			else if (keycode == 'E' || keycode == 'e')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t emote = std::stoi(s);
-						if (emote >= 0) {
-							FaceExpressionPacket(emote).dispatch();
-							LOG(LOG_DEBUG, "UIStatusBar: SoftKey emote=" << emote);
-						}
-					} catch (...) {}
-				}, []() {}, "Emote id");
+				
 			}
 			else if (keycode == 'C' || keycode == 'c')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int ch = std::stoi(s);
-						if (ch >= 0 && ch < 256) {
-							ChangeChannelPacket(static_cast<uint8_t>(ch)).dispatch();
-							LOG(LOG_DEBUG, "UIStatusBar: SoftKey channel=" << ch);
-						}
-					} catch (...) {}
-				}, []() {}, "Channel #");
+				
 			}
 			else if (keycode == 'H' || keycode == 'h')
 			{
@@ -1431,15 +1413,7 @@ namespace ms
 					UseChairPacket(from_inv).dispatch();
 					LOG(LOG_DEBUG, "UIStatusBar: SoftKey chair=" << from_inv);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						try {
-							int32_t id = std::stoi(s);
-							if (id > 0) {
-								UseChairPacket(id).dispatch();
-								LOG(LOG_DEBUG, "UIStatusBar: SoftKey chair=" << id);
-							}
-						} catch (...) {}
-					}, []() {}, "Chair itemid");
+					
 				}
 			}
 			else if (keycode == 'X' || keycode == 'x')
@@ -1451,15 +1425,7 @@ namespace ms
 			{
 				// USE_DOOR 语义修正（同 UIGameMenu 'O'）：真门踩线自动上行走
 				// MapFieldMarkers::check_doors；本键 SoftKey 输 ownerid 调试兜底。
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t owner = std::stoi(s);
-						if (owner > 0) {
-							UseDoorPacket(owner).dispatch();
-							LOG(LOG_DEBUG, "UIStatusBar: UseDoor owner=" << owner);
-						}
-					} catch (...) {}
-				}, []() {}, "Door owner cid");
+				
 				LOG(LOG_DEBUG, "UIStatusBar: UseDoor prompt");
 			}
 			else if (keycode == 'K' || keycode == 'k')
@@ -1470,16 +1436,7 @@ namespace ms
 					PickupItemPacket(loot.first, loot.second).dispatch();
 					LOG(LOG_DEBUG, "UIStatusBar: Pickup nearest oid=" << loot.first);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						try {
-							int32_t oid = std::stoi(s);
-							if (oid > 0) {
-								Point<int16_t> p = Stage::get().get_player().get_position();
-								PickupItemPacket(oid, p).dispatch();
-								LOG(LOG_DEBUG, "UIStatusBar: SoftKey pickup oid=" << oid);
-							}
-						} catch (...) {}
-					}, []() {}, "Pickup oid");
+					
 				}
 			}
 			else if (keycode == 'R' || keycode == 'r')
@@ -1502,16 +1459,7 @@ namespace ms
 					DamageReactorPacket(near, pos, 0, 0).dispatch();
 					LOG(LOG_DEBUG, "UIStatusBar: DamageReactor nearest oid=" << near);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						try {
-							int32_t oid = std::stoi(s);
-							if (oid > 0) {
-								Point<int16_t> p = Stage::get().get_player().get_position();
-								DamageReactorPacket(oid, p, 0, 0).dispatch();
-								LOG(LOG_DEBUG, "UIStatusBar: SoftKey reactor oid=" << oid);
-							}
-						} catch (...) {}
-					}, []() {}, "Reactor oid");
+					
 				}
 			}
 			else if (keycode == 'I' || keycode == 'i')
@@ -1526,15 +1474,7 @@ namespace ms
 					UseItemEffectPacket(from_inv).dispatch();
 					LOG(LOG_DEBUG, "UIStatusBar: effect id=" << from_inv);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						try {
-							int32_t id = std::stoi(s);
-							if (id > 0) {
-								UseItemEffectPacket(id).dispatch();
-								LOG(LOG_DEBUG, "UIStatusBar: SoftKey effect id=" << id);
-							}
-						} catch (...) {}
-					}, []() {}, "Effect itemid");
+					
 				}
 			}
 			else if (keycode == 'B' || keycode == 'b')
@@ -1561,14 +1501,7 @@ namespace ms
 					TalkToNPCPacket(near).dispatch();
 					LOG(LOG_DEBUG, "UIStatusBar: TalkToNPC nearest oid=" << near);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						try {
-							int32_t oid = std::stoi(s);
-							if (oid <= 0) return;
-							TalkToNPCPacket(oid).dispatch();
-							LOG(LOG_DEBUG, "UIStatusBar: SoftKey TalkToNPC oid=" << oid);
-						} catch (...) {}
-					}, []() {}, "NPC oid");
+					
 				}
 			}
 			else if (keycode == 'T' || keycode == 't')
@@ -2266,6 +2199,15 @@ namespace ms
 			classic_key_label[i] = Texture(sb["key"][static_cast<int16_t>(i)]);
 		classic_qs_keytext = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
 		classic_qs_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "", 28);
+		// 道具数量字模：与背包 Icon::draw 同源（Basic.img/ItemNo），原生药水格右下显示叠数。
+		{
+			nl::node itemno = nl::nx::UI["Basic.img"]["ItemNo"];
+			if (itemno)
+			{
+				classic_qs_itemno = Charset(itemno, Charset::Alignment::LEFT);
+				classic_qs_itemno_ok = true;
+			}
+		}
 
 		quickslot[0] = classic_quickslot;
 		quickslot_active = true;
@@ -2302,6 +2244,7 @@ namespace ms
 		{
 			classic_qs_icons[i] = Texture();
 			classic_qs_names[i].clear();
+			classic_qs_counts[i].clear();
 			// 8 槽快捷栏：触发键走 Keyboard::quickslots（可被 CHANGE_QUICKSLOT 改）。
 			// 26/32 宽格仍用 CLASSIC_QS_KEYS 固定表。
 			uint8_t maple_key = (classic_qs_count == 8 && i < 8)
@@ -2326,7 +2269,11 @@ namespace ms
 				if (item)
 				{
 					classic_qs_icons[i] = item.get_icon(false);
-					classic_qs_names[i] = item.get_name();
+					// 原生快捷格道具显示「数量」而非名称（用户 bug 2）：
+					// 名称走 classic_qs_names（中文 Text 会溢出/错位），数量走 classic_qs_counts + ItemNo 字模。
+					int16_t qty = Stage::get().get_player().get_inventory().get_total_item_count(mapping.action);
+					if (qty > 1)
+						classic_qs_counts[i] = std::to_string(qty);
 				}
 			}
 #ifdef USE_NX
@@ -2409,6 +2356,64 @@ namespace ms
 		Stage::get().send_key(mapping.type, mapping.action, true);
 	}
 
+	void UIStatusBar::setup_qs_drag_icon(size_t slot, Point<int16_t> cursor_position)
+	{
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
+			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+			: CLASSIC_QS_KEYS[slot];
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
+
+		qs_icon_type = std::make_unique<QsIconType>();
+		qs_icon_type->bind_type = mapping.type;
+		qs_icon_type->bind_action = mapping.action;
+
+		Texture tex;
+		int16_t count = -1;
+		if (mapping.type == KeyType::Id::ITEM)
+		{
+			count = Stage::get().get_player().get_inventory().get_total_item_count(mapping.action);
+			tex = ItemData::get(mapping.action).get_icon(mapping.action / 10000 == 238);
+		}
+		else if (mapping.type == KeyType::Id::SKILL)
+		{
+			tex = SkillData::get(mapping.action).get_icon(SkillData::Icon::NORMAL);
+		}
+		else if (mapping.type == KeyType::Id::MACRO)
+		{
+#ifdef USE_NX
+			nl::node mi = nl::nx::UI["UIWindow.img"]["SkillMacro"]["Macroicon"][mapping.action];
+			if (mi["icon"])
+				tex = Texture(mi["icon"]);
+#endif
+		}
+
+		qs_drag_icon = Icon(std::move(qs_icon_type), tex, count);
+		// 拖拽偏移 = 光标相对起点格左上角；drag_icon 后图标跟手，不会跳格。
+		qs_drag_icon.start_drag(cursor_position - classic_qs_cell_at(slot, classic_qs_cols));
+		UI::get().drag_icon(&qs_drag_icon);
+	}
+
+	void UIStatusBar::release_classic_qs_slot(size_t slot)
+	{
+		if (slot >= CLASSIC_QS_SLOTS)
+			return;
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
+			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+			: CLASSIC_QS_KEYS[slot];
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
+
+		if (mapping.type == KeyType::Id::NONE)
+			return;
+
+		// 补发 keyup：Stage 每帧读 is_key_down(ATTACK) 驱动连击（Stage.cpp:324），
+		// 若快捷栏单击只 keydown 不 keyup，keysdown[ATTACK] 永久为 true → 无限攻击。
+		// 松手（或移出槽）时发 false，使按住=连击、松开=停止，符合原生键盘语义。
+		Stage::get().send_key(mapping.type, mapping.action, false);
+	}
+
 	// turn13：宏/技能图标拖到底部快捷格 = 直接绑定该格键位（原生 KeyConfig 语义）。
 	// 基类 send_icon 返回 true 会把图标无声吞掉 —— 状态栏永远 active，get_front
 	// 反向扫描先命中它，拖到快捷格的图标从此再也到不了 UIKeyConfig。
@@ -2423,11 +2428,15 @@ namespace ms
 			return false;
 
 		// 组装等价 Keyboard::Mapping：技能图标走 (SKILL, sid)；
-		// 整行宏图标（KEY 型 + get_macro_index>=0）走 (MACRO, idx)。
+		// 整行宏图标走 (MACRO, idx)；道具图标走 (ITEM, itemid)。
+		// RCA：原实现只有 SKILL/MACRO 两支，ITEM 落到 else → return false，
+		// 于是背包里的药水拖到右下角快捷格时被状态栏无声拒绝（用户 bug 1）。
+		// 判定改用「实质 id getter」而非 get_type()：快捷栏自身拖出的 QsIconType
+		// 恒为 KEY 型，但同样携带 item/skill/macro id，须能被这里识别以完成换位。
 		KeyType::Id btype = KeyType::Id::NONE;
 		int32_t baction = 0;
 
-		if (icon.get_type() == Icon::IconType::SKILL && icon.get_skill_id() > 0)
+		if (icon.get_skill_id() > 0)
 		{
 			btype = KeyType::Id::SKILL;
 			baction = icon.get_skill_id();
@@ -2436,6 +2445,11 @@ namespace ms
 		{
 			btype = KeyType::Id::MACRO;
 			baction = icon.get_macro_index();
+		}
+		else if (icon.get_item_id() > 0)
+		{
+			btype = KeyType::Id::ITEM;
+			baction = icon.get_item_id();
 		}
 		else
 		{
@@ -2447,9 +2461,30 @@ namespace ms
 			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
 			: CLASSIC_QS_KEYS[slot];
 
+		// 同一物品/技能拖到多个快捷格时不应出现多份：原位置若有相同绑定则先清空
+		//（语义＝移动，与 UIKeyConfig::stage_mapping 的去重一致）。否则旧格仍显示同一图标。
+		Keyboard& kb = UI::get().get_keyboard();
+		const size_t scan_count = std::min(classic_qs_count, CLASSIC_QS_SLOTS);
+		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> clears;
+		for (size_t i = 0; i < scan_count; ++i)
+		{
+			if (i == slot)
+				continue;
+			uint8_t other_key = (classic_qs_count == 8 && i < 8)
+				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(i)))
+				: CLASSIC_QS_KEYS[i];
+			if (other_key == maple_key)
+				continue;
+			Keyboard::Mapping om = keyboard.get_maple_mapping(other_key);
+			if (om.type == btype && om.action == baction)
+				clears.emplace_back(static_cast<KeyConfig::Key>(other_key), KeyType::Id::NONE, KeyAction::Id::LENGTH);
+		}
+
 		// 本地立即生效 + 上行 CHANGE_KEYMAP(135) 持久化 + 快捷栏图标刷新。
-		UI::get().get_keyboard().assign(maple_key, btype, baction);
-		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> updated;
+		for (const auto& c : clears)
+			kb.remove(static_cast<uint8_t>(std::get<0>(c)));
+		kb.assign(maple_key, btype, baction);
+		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> updated = clears;
 		updated.emplace_back(static_cast<KeyConfig::Key>(maple_key), btype, baction);
 		ChangeKeyMapPacket(updated).dispatch();
 		redraw_quickslots();
@@ -2463,13 +2498,57 @@ namespace ms
 		{
 			int16_t slot = classic_qs_slot_at(cursor_position);
 
-			if (slot >= 0)
+			if (clicked)
 			{
-				if (clicked)
-					activate_classic_qs_slot(static_cast<size_t>(slot));
-
-				return clicked ? Cursor::State::CLICKING : Cursor::State::CANCLICK;
+				// 按下：先记候选起点，暂不触发使用——待松开时按「是否移动」区分单击/拖拽。
+				if (slot >= 0)
+				{
+					qs_drag_slot = static_cast<int16_t>(slot);
+					qs_press_pos = cursor_position;
+					qs_dragging = false;
+					return Cursor::State::CLICKING;
+				}
+				return UIElement::send_cursor(clicked, cursor_position);
 			}
+
+			// 移动/松开阶段。
+			if (qs_drag_slot >= 0 && !qs_dragging)
+			{
+				// 超过阈值且已离开起点格 → 起拖换位（图标交给 UI 拖系统，drop 到目标格由 send_icon 处理）。
+				Point<int16_t> delta = cursor_position - qs_press_pos;
+				int16_t adx = delta.x() < 0 ? static_cast<int16_t>(-delta.x()) : delta.x();
+				int16_t ady = delta.y() < 0 ? static_cast<int16_t>(-delta.y()) : delta.y();
+				if ((adx > QS_DRAG_THRESHOLD || ady > QS_DRAG_THRESHOLD)
+					&& slot != qs_drag_slot)
+				{
+					setup_qs_drag_icon(static_cast<size_t>(qs_drag_slot), cursor_position);
+					qs_dragging = true;
+				}
+			}
+
+			if (!qs_dragging && qs_drag_slot >= 0 && slot == qs_drag_slot)
+			{
+				// 未拖动且仍在原格松开 = 单击使用：keydown → keyup 一次，避免连击残留。
+				activate_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
+				release_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
+				qs_drag_slot = -1;
+			}
+			else if (!qs_dragging && qs_drag_slot >= 0)
+			{
+				// 松开时不在原格但未达阈值：视为取消，清状态（无 keyup，因为没 keydown）。
+				qs_drag_slot = -1;
+			}
+
+			// 起拖后 qs_dragging 保持，直到下一次按下（新交互）时重置；
+			// 落点结算由 UIStateGame::drop_icon → 目标格 send_icon 完成。
+
+			if (slot >= 0)
+				return Cursor::State::CANCLICK;
+		}
+		else if (qs_drag_slot >= 0)
+		{
+			qs_drag_slot = -1;
+			qs_dragging = false;
 		}
 
 		return UIElement::send_cursor(clicked, cursor_position);
@@ -2738,11 +2817,34 @@ namespace ms
 				}
 
 				// 绑定中文名：Text(A11M, maxwidth=28) —— 复用 T12b 的 CJK 字宽度量做
-				// 断行，不在本批重写换行；落在格下半带。
+				// 断行，不在本批重写换行；落在格下半带。（道具不再走这里，改走下方数量。）
 				if (!classic_qs_names[i].empty())
 				{
 					classic_qs_label.change_text(classic_qs_names[i]);
 					classic_qs_label.draw(DrawArgument(cell_pos + Point<int16_t>(0, QS_LABEL_Y)));
+				}
+
+				// 道具数量：原生快捷格在格右下叠数量（与背包 Icon::draw 的 Basic.img/ItemNo 同源）。
+				// 用 ItemNo 字模而非中文 Text：数字位宽固定、不会因 maxwidth=28 断行而错位（用户 bug 2）。
+				if (!classic_qs_counts[i].empty())
+				{
+					const std::string& qty = classic_qs_counts[i];
+					if (classic_qs_itemno_ok)
+					{
+						int16_t qw = 0;
+						for (char ch : qty)
+							qw += classic_qs_itemno.getw(static_cast<int8_t>(ch));
+						classic_qs_itemno.draw(qty, DrawArgument(
+							cell_pos + Point<int16_t>(static_cast<int16_t>(QS_SLOT - qw - 1),
+								static_cast<int16_t>(QS_SLOT - 12))));
+					}
+					else
+					{
+						// 缺 ItemNo 字模回退：仍用 Text 画数字，落点同为格右下。
+						classic_qs_label.change_text(qty);
+						classic_qs_label.draw(DrawArgument(
+							cell_pos + Point<int16_t>(QS_SLOT - 16, QS_LABEL_Y)));
+					}
 				}
 			}
 		}
@@ -2838,28 +2940,46 @@ namespace ms
 		const bool hp_low = hp_warn > 0 && hp <= static_cast<float>(hp_warn) / 100.0f;
 		const bool mp_low = mp_warn > 0 && mp <= static_cast<float>(mp_warn) / 100.0f;
 
+		// 报警节拍修复（2026-11-17）：旧代码 `flash==0 && low → flash=5` 在 flash
+		// 归零的同一帧就重启动画，5 帧放完立刻重放，没有静默间隔 → 持续 ~10Hz 狂闪，
+		// 与注释「5 帧闪 + 1 帧间隔」及「报警」语义都不符，低血 0 时尤其刺眼。
+		// 复用 classic_last_hp/mp（公共头布局冻结，不能加成员）作静默倒计时（单位：帧）：
+		//   -1 = 尚未报警过；>0 = 静默中逐帧递减；<=0 = 允许启动下一轮。
+		// 血回到阈值以上时把倒计时清零，下次再低血可立即报警一次。
+		// 静默 60 帧 ≈ 1 秒（60fps），闪一次后歇一秒，而非连续闪。
+		constexpr float ALERT_COOLDOWN_FRAMES = 60.0f;
+
 		if (classic_hp_flash > 0)
 		{
 			--classic_hp_flash;
+			if (classic_hp_flash == 0)
+				classic_last_hp = ALERT_COOLDOWN_FRAMES;  // 本轮播完，进入静默
 		}
-		else if (classic_hp_flash == 0 && hp_low)
+		else
 		{
-			classic_hp_flash = 5;
+			if (classic_last_hp > 0.0f)
+				classic_last_hp -= 1.0f;                  // 静默期倒计时
+			if (hp_low && classic_last_hp <= 0.0f)
+				classic_hp_flash = 5;                     // 静默结束才允许重启
 		}
+		if (!hp_low)
+			classic_last_hp = 0.0f;                        // 血量恢复，清除静默
 
 		if (classic_mp_flash > 0)
 		{
 			--classic_mp_flash;
+			if (classic_mp_flash == 0)
+				classic_last_mp = ALERT_COOLDOWN_FRAMES;
 		}
-		else if (classic_mp_flash == 0 && mp_low)
+		else
 		{
-			classic_mp_flash = 5;
+			if (classic_last_mp > 0.0f)
+				classic_last_mp -= 1.0f;
+			if (mp_low && classic_last_mp <= 0.0f)
+				classic_mp_flash = 5;
 		}
-
-		// classic_last_hp/mp 原为「数值一变就闪」的比对基准，现语义已被阈值取代；
-		// 成员保留（公共头布局冻结），仅作最近一次读数的 bookkeeping。
-		classic_last_hp = hp;
-		classic_last_mp = mp;
+		if (!mp_low)
+			classic_last_mp = 0.0f;
 
 		hpbar.update(hp);
 		mpbar.update(mp);

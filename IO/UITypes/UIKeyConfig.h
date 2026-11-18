@@ -72,6 +72,8 @@ namespace ms
 
 		Texture get_item_texture(int32_t item_id) const;
 		Texture get_skill_texture(int32_t skill_id) const;
+		/// V2：整行宏绑定的键帽图（UIWindow.img/SkillMacro/Macroicon/&lt;idx&gt;/icon）。
+		Texture get_macro_texture(int32_t macro_index) const;
 		KeyConfig::Key key_by_position(Point<int16_t> position) const;
 		KeyAction::Id unbound_action_by_position(Point<int16_t> position) const;
 		Keyboard::Mapping get_staged_mapping(int32_t keycode) const;
@@ -124,6 +126,10 @@ namespace ms
 
 		std::map<int32_t, std::unique_ptr<Icon>> item_icons;
 		std::map<int32_t, std::unique_ptr<Icon>> skill_icons;
+		// V2（2026-11-16）：KeyType::MACRO 绑定的键帽图标，key = 宏行号。
+		// Angel CUIKeyConfig 用 SkillMacro/Macroicon/<n>/icon 表达「整行宏」绑定；
+		// 旧实现无此分支 → 绑了宏的键位空白、且抓不下来解绑。
+		std::map<int32_t, std::unique_ptr<Icon>> macro_icons;
 
 		// Used to determine if mapping belongs to predefined action, e.g. attack, pick up, faces, etc.
 		std::vector<Keyboard::Mapping> action_mappings;
@@ -167,7 +173,8 @@ namespace ms
 		   { KeyConfig::Key::X,				Keyboard::Mapping(get_keytype(KeyAction::Id::SIT),				KeyAction::Id::SIT)					},
 		   { KeyConfig::Key::C,				Keyboard::Mapping(get_keytype(KeyAction::Id::STATS),			KeyAction::Id::STATS)				},
 		   { KeyConfig::Key::V,				Keyboard::Mapping(get_keytype(KeyAction::Id::EVENT),			KeyAction::Id::EVENT)				},
-		   { KeyConfig::Key::B,				Keyboard::Mapping(get_keytype(KeyAction::Id::PROFESSION),		KeyAction::Id::PROFESSION)			},
+		   // v83 B=MONSTERBOOK：本枚举走 MONSTERCOLLECTION（KeyMapTranslate 22↔42）
+		   { KeyConfig::Key::B,				Keyboard::Mapping(get_keytype(KeyAction::Id::MONSTERCOLLECTION),	KeyAction::Id::MONSTERCOLLECTION)	},
 		   { KeyConfig::Key::N,				Keyboard::Mapping(get_keytype(KeyAction::Id::WORLDMAP),			KeyAction::Id::WORLDMAP)			},
 		   { KeyConfig::Key::M,				Keyboard::Mapping(get_keytype(KeyAction::Id::MINIMAP),			KeyAction::Id::MINIMAP)				},
 		   { KeyConfig::Key::PERIOD,		Keyboard::Mapping(get_keytype(KeyAction::Id::FRIENDS),			KeyAction::Id::FRIENDS)				},
@@ -219,7 +226,8 @@ namespace ms
 		   { KeyConfig::Key::X,				Keyboard::Mapping(get_keytype(KeyAction::Id::SIT),				KeyAction::Id::SIT)					},
 		   { KeyConfig::Key::C,				Keyboard::Mapping(get_keytype(KeyAction::Id::MAPLECHAT),		KeyAction::Id::MAPLECHAT)			},
 		   { KeyConfig::Key::V,				Keyboard::Mapping(get_keytype(KeyAction::Id::EVENT),			KeyAction::Id::EVENT)				},
-		   { KeyConfig::Key::B,				Keyboard::Mapping(get_keytype(KeyAction::Id::PROFESSION),		KeyAction::Id::PROFESSION)			},
+		   // v83 B=MONSTERBOOK：本枚举走 MONSTERCOLLECTION（KeyMapTranslate 22↔42）
+		   { KeyConfig::Key::B,				Keyboard::Mapping(get_keytype(KeyAction::Id::MONSTERCOLLECTION),	KeyAction::Id::MONSTERCOLLECTION)	},
 		   { KeyConfig::Key::M,				Keyboard::Mapping(get_keytype(KeyAction::Id::MINIMAP),			KeyAction::Id::MINIMAP)				},
 		   { KeyConfig::Key::LEFT_CONTROL,	Keyboard::Mapping(get_keytype(KeyAction::Id::ATTACK),			KeyAction::Id::ATTACK)				},
 		   { KeyConfig::Key::LEFT_ALT,		Keyboard::Mapping(get_keytype(KeyAction::Id::JUMP),				KeyAction::Id::JUMP)				},

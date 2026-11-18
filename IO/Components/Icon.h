@@ -55,6 +55,12 @@ namespace ms
 			virtual int32_t get_item_id() const { return 0; }
 			virtual InventoryType::Id get_inventory_tab() const { return InventoryType::Id::NONE; }
 			virtual int32_t get_skill_id() const { return 0; }
+			// Angel CUIMacroSysEx::OnMouseButton v43[8]=row：整行宏图标携带宏下标，
+			// 拖到快捷格/键位窗时据此构造 KeyType::MACRO 绑定（get_skill_id()==0 的 KEY 型图标）。
+			virtual int32_t get_macro_index() const { return -1; }
+			// Angel CUIMacroSysEx::OnMouseButton 的 BeginDragDrop 载荷带源坐标；
+			// 组合栏内部抓起的图标需要让 UIStateGame 在松手时无条件结算（移动/移除/绑键）。
+			virtual bool is_macro_source() const { return false; }
 		};
 
 		class NullType : public Type
@@ -75,11 +81,13 @@ namespace ms
 		bool drop_on_items(InventoryType::Id tab, EquipSlot::Id eqslot, int16_t slot, bool equip) const;
 		void drop_on_bindings(Point<int16_t> cursorposition, bool remove) const;
 		void set_count(int16_t count);
-		IconType get_type();
+		IconType get_type() const;
 		int16_t get_inventory_slot() const;
 		int32_t get_item_id() const;
 		InventoryType::Id get_inventory_tab() const;
 		int32_t get_skill_id() const;
+		int32_t get_macro_index() const { return type ? type->get_macro_index() : -1; }
+		bool is_macro_source() const { return type && type->is_macro_source(); }
 
 		void draw(Point<int16_t> position) const;
 		void dragdraw(Point<int16_t> cursorpos) const;
@@ -122,5 +130,8 @@ namespace ms
 		bool dragged;
 		Point<int16_t> cursoroffset;
 		Point<int16_t> cell;
+		// 大尺寸贴图（怪物卡 238 的 iconRaw）按格子自适应缩小，渲染时缩放绘制，不改 raw 源。
+		// 正常 32x32 图标保持 1.0，行为不变；R27-B3-4 的 cell 几何不受影响。
+		float draw_scale = 1.0f;
 	};
 }

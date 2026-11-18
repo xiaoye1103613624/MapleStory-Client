@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIKeyConfig.h"
 #include "../../Net/Packets/SkillMacroPackets.h"
+#include "../../Character/SkillMacros.h"
 
 #include "UICharInfo.h"
 #include "UIJoypad.h"
@@ -42,6 +43,8 @@
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Locale.h"
+
+#include <algorithm>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -355,13 +358,15 @@ namespace ms
 			constexpr int16_t slot = 34;
 			constexpr int16_t cols = 17;
 
+			// v83 icon[22]=怪物手册、icon[23]=商城。未绑定条必须挂 MONSTERCOLLECTION
+			//（非 CASHSHOP）：否则拖「手册图标」却绑到 EnterCashShopPacket。
 			static const KeyAction::Id kClassicActions[] = {
 				KeyAction::Id::EQUIPMENT, KeyAction::Id::ITEMS, KeyAction::Id::STATS, KeyAction::Id::SKILLS,
 				KeyAction::Id::FRIENDS, KeyAction::Id::WORLDMAP, KeyAction::Id::MAPLECHAT, KeyAction::Id::MINIMAP,
 				KeyAction::Id::QUESTLOG, KeyAction::Id::KEYBINDINGS, KeyAction::Id::SAY, KeyAction::Id::WHISPER,
 				KeyAction::Id::PARTYCHAT, KeyAction::Id::FRIENDSCHAT, KeyAction::Id::MENU, KeyAction::Id::QUICKSLOTS,
 				KeyAction::Id::TOGGLECHAT, KeyAction::Id::GUILD, KeyAction::Id::GUILDCHAT, KeyAction::Id::PARTY,
-				KeyAction::Id::NOTIFIER, KeyAction::Id::MAPLENEWS, KeyAction::Id::CASHSHOP, KeyAction::Id::ALLIANCECHAT,
+				KeyAction::Id::NOTIFIER, KeyAction::Id::MAPLENEWS, KeyAction::Id::MONSTERCOLLECTION, KeyAction::Id::CASHSHOP,
 				// P0 / T2：未绑定条挂 MEDAL(28)（v83 action27 勋章）；不再提供 BOSSPARTY 误导槽。
 				KeyAction::Id::MANAGELEGION, KeyAction::Id::MEDALS, KeyAction::Id::MEDAL,
 				KeyAction::Id::PICKUP, KeyAction::Id::SIT, KeyAction::Id::ATTACK, KeyAction::Id::JUMP,
@@ -584,6 +589,27 @@ namespace ms
 					);
 			}
 		}
+
+		// KeyMapTranslate：v83 icon 下标 22/23 ≠ 本枚举 CASHSHOP/MONSTERCOLLECTION。
+		// 用 to_server 双射把手册图标挂到 MONSTERCOLLECTION、商城图标挂到 CASHSHOP，
+		// 避免拖「手册帽」却触发 EnterCashShopPacket。
+		auto bind_icon = [&](KeyAction::Id action, int32_t icon_id)
+		{
+			if (!icon[icon_id])
+				return;
+			Texture keycap = icon[icon_id];
+			keycap.shift(keycap.get_origin());
+			action_icons[action] = std::make_unique<Icon>(
+				std::make_unique<KeyIcon>(action),
+				keycap,
+				-1
+				);
+			Keyboard::Mapping m(get_keytype(action), action);
+			if (std::find(action_mappings.begin(), action_mappings.end(), m) == action_mappings.end())
+				action_mappings.push_back(m);
+		};
+		bind_icon(KeyAction::Id::MONSTERCOLLECTION, 22);
+		bind_icon(KeyAction::Id::CASHSHOP, 23);
 	}
 
 	void UIKeyConfig::load_icons()
@@ -613,6 +639,17 @@ namespace ms
 					count
 					);
 			}
+			else if (mapping.type == KeyType::Id::MACRO)
+			{
+				// V2：整行宏绑定的键帽图标（load_icons 重建时同样要建）。
+				int16_t count = -1;
+
+				macro_icons[id] = std::make_unique<Icon>(
+					std::make_unique<KeyIcon>(mapping, count),
+					get_macro_texture(id),
+					count
+					);
+			}
 		}
 	}
 
@@ -638,6 +675,13 @@ namespace ms
 				else if (mapping.type == KeyType::Id::SKILL)
 				{
 					icon = skill_icons.at(id).get();
+				}
+				else if (mapping.type == KeyType::Id::MACRO)
+				{
+					// V2：绑了宏的键位画 Macroicon/<idx>/icon 键帽。
+					auto mit = macro_icons.find(id);
+					if (mit != macro_icons.end())
+						icon = mit->second.get();
 				}
 				else if (is_action_mapping(mapping))
 				{
@@ -863,6 +907,13 @@ namespace ms
 					{
 						icon = skill_icons[id].get();
 					}
+					else if (mapping.type == KeyType::Id::MACRO)
+					{
+						// V2：绑了宏的键位可再抓起来（改绑 / 拖出解绑）。
+						auto mit = macro_icons.find(id);
+						if (mit != macro_icons.end())
+							icon = mit->second.get();
+					}
 					else if (is_action_mapping(mapping))
 					{
 						KeyAction::Id action = KeyAction::actionbyid(mapping.action);
@@ -938,18 +989,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "save" || t == "ok" || t == "y" || t == "1") {
-					save_staged_mappings();
-					close();
-					LOG(LOG_DEBUG, "UIKeyConfig: SoftKey save");
-				} else if (t == "close" || t == "n" || t == "0" || t == "cancel") {
-					close();
-				}
-			}, []() {}, "save|close");
+			
 		}
 		else if (keycode == 'H' || keycode == 'h' || keycode == 'M' || keycode == 'm')
 		{
@@ -977,14 +1017,7 @@ namespace ms
 			if (from_inv > 0) {
 				apply(from_inv);
 			} else {
-				UI::get().emplace<UISoftKey>([hp, apply](const std::string& tip) {
-					try {
-						int32_t itemid = tip.empty()
-							? (hp ? Setting<AutoHpPotItem>::get().load() : Setting<AutoMpPotItem>::get().load())
-							: std::stoi(tip);
-						apply(itemid);
-					} catch (...) {}
-				}, []() {}, hp ? "AutoHP itemId|empty=show" : "AutoMP itemId|empty=show");
+				
 			}
 		}
 		else if (keycode == 'L' || keycode == 'l')
@@ -997,11 +1030,7 @@ namespace ms
 				UseMapleLifePacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIKeyConfig: UseMapleLife name=" << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					UseMapleLifePacket(name).dispatch();
-					LOG(LOG_DEBUG, "UIKeyConfig: UseMapleLife name=" << name);
-				}, []() {}, "MapleLife name");
+				
 			}
 		}
 		else if (keycode == 'K' || keycode == 'k')
@@ -1167,6 +1196,20 @@ namespace ms
 					);
 			}
 		}
+		else if (mapping.type == KeyType::Id::MACRO)
+		{
+			// V2：拖整行宏到键位后立刻有键帽图标（同 ITEM/SKILL 的 staged 建图）。
+			if (macro_icons.find(id) == macro_icons.end())
+			{
+				int16_t count = -1;
+
+				macro_icons[id] = std::make_unique<Icon>(
+					std::make_unique<KeyIcon>(mapping, count),
+					get_macro_texture(id),
+					count
+					);
+			}
+		}
 
 		dirty = true;
 	}
@@ -1217,6 +1260,11 @@ namespace ms
 				{
 					int32_t skill_id = staged_mapping.action;
 					skill_icons.erase(skill_id);
+				}
+				else if (staged_mapping.type == KeyType::Id::MACRO)
+				{
+					// V2：解绑宏行时同步清键帽图标。
+					macro_icons.erase(staged_mapping.action);
 				}
 
 				dirty = true;
@@ -1339,13 +1387,35 @@ namespace ms
 	Texture UIKeyConfig::get_item_texture(int32_t item_id) const
 	{
 		const ItemData& data = ItemData::get(item_id);
-		return data.get_icon(false);
+		Texture tex = data.get_icon(item_id / 10000 == 238);
+		// 图标/数量错位修复（用户 bug 2）：背包 ItemIcon::get_type()==ITEM，Icon 构造会对
+		// ITEM 纹理 shift(0,32) 让图标下移一格与 Basic.img/ItemNo 数量字模对齐；本窗 KeyIcon
+		// 为保证 drop 路由恒返回 KEY，不会触发那段 shift，导致道具图标比数量上移 32px。
+		// 在这里对道具纹理补做同样的 shift，两窗口渲染即一致（不动全局 Icon / KeyIcon 类型）。
+		tex.shift(Point<int16_t>(0, 32));
+		return tex;
 	}
 
 	Texture UIKeyConfig::get_skill_texture(int32_t skill_id) const
 	{
 		const SkillData& data = SkillData::get(skill_id);
 		return data.get_icon(SkillData::Icon::NORMAL);
+	}
+
+	// V2：与组合栏同一素材（TwoSpriteButton 契约的 icon 帧 = 未选中态）。
+	Texture UIKeyConfig::get_macro_texture(int32_t macro_index) const
+	{
+		if (macro_index < 0 || macro_index >= static_cast<int32_t>(SkillMacros::MAX_SLOTS))
+			return Texture();
+
+		nl::node mi = nl::nx::UI["UIWindow.img"]["SkillMacro"]["Macroicon"][macro_index];
+		if (!mi["icon"])
+			return Texture();
+
+		Texture tex = mi["icon"];
+		// 键帽按左上角落点，同 load_actions 的 icon/&lt;n&gt; 处理：抹平 origin。
+		tex.shift(tex.get_origin());
+		return tex;
 	}
 
 	KeyConfig::Key UIKeyConfig::key_by_position(Point<int16_t> cursorpos) const
@@ -1441,7 +1511,9 @@ namespace ms
 
 	void UIKeyConfig::KeyIcon::drop_on_stage() const
 	{
-		if (mapping.type == KeyType::Id::ITEM || mapping.type == KeyType::Id::SKILL)
+		// V2：宏键帽拖出窗外 = 解绑整行宏绑定。
+		if (mapping.type == KeyType::Id::ITEM || mapping.type == KeyType::Id::SKILL
+			|| mapping.type == KeyType::Id::MACRO)
 		{
 			auto keyconfig = UI::get().get_element<UIKeyConfig>();
 			keyconfig->unstage_mapping(mapping);

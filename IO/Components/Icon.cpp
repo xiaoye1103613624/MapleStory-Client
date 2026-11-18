@@ -39,6 +39,16 @@ namespace ms
 		if (this->type && (this->type->get_type() == IconType::ITEM || this->type->get_type() == IconType::EQUIP))
 			texture.shift(Point<int16_t>(0, 32));
 
+		// 怪物卡(238) iconRaw 原始尺寸大于 32x32 格子，按实际贴图尺寸等比缩小，
+		// 保证绘制落在格内。只缩小不放大：取 sx/sy 较小者保持比例，上限 1.0。
+		if (texture.is_valid())
+		{
+			float sx = static_cast<float>(cell_width) / static_cast<float>(texture.width());
+			float sy = static_cast<float>(cell_height) / static_cast<float>(texture.height());
+			float s = sx < sy ? sx : sy;
+			draw_scale = s < 1.0f ? s : 1.0f;
+		}
+
 		showcount = count > -1;
 		dragged = false;
 	}
@@ -46,7 +56,21 @@ namespace ms
 	void Icon::draw(Point<int16_t> position) const
 	{
 		float opacity = dragged ? 0.5f : 1.0f;
-		texture.draw(DrawArgument(position, opacity));
+
+		// 卡片/大图（draw_scale<1）等比缩小后，把缩放后的贴图视觉矩形对齐到 32x32 格正中。
+		// get_rectangle 中 pos==center==position，故视觉左上角 = position - draw_scale*origin，
+		// 视觉尺寸 = draw_scale*(width,height)。反推平移量 delta=(格-视觉尺寸)/2 + draw_scale*origin，
+		// 使视觉矩形正好落入以 position 为左上角的格内；origin 取 shift(0,32) 后的当前值，避免重复偏移。
+		Point<int16_t> offset(0, 0);
+		if (texture.is_valid() && draw_scale < 1.0f)
+		{
+			Point<int16_t> origin = texture.get_origin();
+			offset = Point<int16_t>(
+				static_cast<int16_t>((cell_width  - texture.width()  * draw_scale) / 2.0f + draw_scale * origin.x()),
+				static_cast<int16_t>((cell_height - texture.height() * draw_scale) / 2.0f + draw_scale * origin.y())
+			);
+		}
+		texture.draw(DrawArgument(position + offset, draw_scale, draw_scale, opacity));
 
 		if (showcount)
 		{
@@ -58,7 +82,7 @@ namespace ms
 	void Icon::dragdraw(Point<int16_t> cursorpos) const
 	{
 		if (dragged)
-			texture.draw(DrawArgument(cursorpos - cursoroffset, 0.5f));
+			texture.draw(DrawArgument(cursorpos - cursoroffset, draw_scale, draw_scale, 0.5f));
 	}
 
 	void Icon::drop_on_stage() const
@@ -139,9 +163,9 @@ namespace ms
 		type->set_count(count);
 	}
 
-	Icon::IconType Icon::get_type()
+	Icon::IconType Icon::get_type() const
 	{
-		return type->get_type();
+		return type ? type->get_type() : IconType::NONE;
 	}
 
 	int16_t Icon::get_inventory_slot() const

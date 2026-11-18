@@ -18,6 +18,8 @@
 #pragma once
 
 #include "../UIElement.h"
+#include "../Keyboard.h"		// KeyType::Id / Keyboard::Mapping（快捷格拖拽身份）
+#include "../Components/Icon.h"		// Icon::Type（快捷格拖拽载荷）
 
 #include "../Components/Charset.h"
 #include "../Components/Gauge.h"
@@ -104,6 +106,38 @@ namespace ms
 		int16_t classic_qs_slot_at(Point<int16_t> cursor_position) const;
 		/// 点击快捷格：按 KeyConfig 映射释放技能/使用道具（对齐参考端 OnButton 快捷栏）。
 		void activate_classic_qs_slot(size_t slot);
+		/// 松开快捷格：补发 keyup，避免 keysdown[ATTACK] 残留导致无限连击。
+		void release_classic_qs_slot(size_t slot);
+		/// 按当前绑定配置拖拽图标并交给 UI 拖拽系统（供快捷格换位）。
+		void setup_qs_drag_icon(size_t slot, Point<int16_t> cursor_position);
+
+		// 快捷格拖拽换位：按下记起点，超阈值起拖（不触发使用），松开未动则单击使用。
+		int16_t qs_drag_slot = -1;			// 按住的快捷格（-1=无）
+		Point<int16_t> qs_press_pos;			// 按下时光标位置（判阈值）
+		bool qs_dragging = false;			// 已起拖（拖图标换位）
+		Icon qs_drag_icon;					// 拖拽载荷（由 UI 拖系统持有指针，必须是持久成员）
+
+		// 快捷格拖拽图标身份：按绑定类型填标准 getter，让 send_icon 现有 SKILL/ITEM/MACRO
+		// 分支直接识别（get_type 用 KEY，避免被当成背包道具走 drop_on_items）。
+		class QsIconType : public Icon::Type
+		{
+		public:
+			KeyType::Id bind_type = KeyType::Id::NONE;
+			int32_t bind_action = 0;
+			void drop_on_stage() const override {}
+			void drop_on_equips(EquipSlot::Id) const override {}
+			bool drop_on_items(InventoryType::Id, EquipSlot::Id, int16_t, bool) const override { return true; }
+			void drop_on_bindings(Point<int16_t>, bool) const override {}
+			void set_count(int16_t) override {}
+			Icon::IconType get_type() override { return Icon::IconType::KEY; }
+			// 走黏住态（macro_sticky）：起拖松手后图标仍挂光标，下一次点击目标格才落点，
+			// 绕开 UIStateGame 对普通 Icon「松手在快捷栏不结算」的既有缺口（:853-867）。
+			bool is_macro_source() const override { return true; }
+			int32_t get_item_id() const override { return bind_type == KeyType::Id::ITEM ? bind_action : 0; }
+			int32_t get_skill_id() const override { return bind_type == KeyType::Id::SKILL ? bind_action : 0; }
+			int32_t get_macro_index() const override { return bind_type == KeyType::Id::MACRO ? bind_action : -1; }
+		};
+		std::unique_ptr<QsIconType> qs_icon_type;
 
 		void toggle_qs(bool quick_slot_active);
 		/// classic：按 quickslot_active 同步 QS(上箭头)/QSD(下箭头) 按钮可见性。
@@ -211,10 +245,13 @@ namespace ms
 		std::array<Texture, 128> classic_qs_cap{};	// 按 maple key 编号索引，> 88 节点号上限
 		mutable OutlinedText classic_qs_keytext;	// 切图缺失时的描边文字回退（WHITE 字身 + DARKGREY 描边）
 		mutable Text classic_qs_label;		// 快捷格中文名称：Text maxwidth（T12b 度量换行路径）
+		Charset classic_qs_itemno;			// 道具数量字模：Basic.img/ItemNo
+		bool classic_qs_itemno_ok = false;
 		Point<int16_t> lvbadge_pos;
 
 		static constexpr size_t CLASSIC_QS_SLOTS = 26;
-		std::string classic_qs_names[CLASSIC_QS_SLOTS];	// SKILL/ITEM 绑定名（随图标刷新）
+		std::string classic_qs_names[CLASSIC_QS_SLOTS];	// SKILL/MACRO 绑定名（随图标刷新）
+		std::string classic_qs_counts[CLASSIC_QS_SLOTS];	// ITEM 绑定数量字符串（ItemNo 字模绘制，替代名称）
 		int16_t classic_qs_cols = 13;		// 面板列数：32 格=16 / 26 格=13 / 8 格=4
 		size_t classic_qs_count = CLASSIC_QS_SLOTS;
 
