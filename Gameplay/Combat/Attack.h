@@ -47,14 +47,17 @@ namespace ms
 		double mindamage = 1.0;
 		double maxdamage = 1.0;
 		float critical = 0.0f;
-		// v2：暴击倍率区间（原生 mincrit/maxcrit），默认保持旧的固定 ×1.5。
-		float critical_min = 1.5f;
+		// 官方暴击倍率区间：系数 = 1 + (20~50 + 面板暴伤%)/100，区间内随机。
+		// 由 Player::get_attack / Skill 按角色暴伤属性填充；这里给官方无暴伤装备的默认值。
+		float critical_min = 1.2f;
 		float critical_max = 1.5f;
-		// v2：无视防御比例 0..1；作用于怪物 wdef/mdef。
+		// 无视防御比例 0..1；作用于怪物 wdef/mdef。
 		float ignoredef = 0.0f;
-		// v2：BOSS 增伤比例，0.2 = +20%；仅对 boss 生效。
+		// BOSS 增伤比例，0.2 = +20%；仅对 boss 生效。
 		float bossdamage = 0.0f;
-		// v2：魔法基础伤害（MAD 钳到 1999 后），DMG_MAGIC 时替代武器 min/max。
+		// 最终伤害比例，0.2 = +20%；各来源独立连乘后由 0x175 折算下发。
+		float finaldamage = 0.0f;
+		// 魔法基础伤害（MAD 钳到 1999 后），DMG_MAGIC 时替代武器 min/max。
 		double magicdamage = 0.0;
 		int32_t matk = 0;
 		int32_t accuracy = 0;

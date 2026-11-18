@@ -41,6 +41,9 @@ namespace ms
 
 		// Make the player use a special move
 		void use_move(int32_t move_id);
+		// Angel CMacroSysMan::Update 语义：宏的三个技能入队，每个等前一个
+		// 真正可攻击（动画硬直结束）后再放，间隔 MACRO_GAP 帧防同帧连发。
+		void use_macro(int32_t skill1, int32_t skill2, int32_t skill3);
 
 		// Add an attack to the attack queue
 		void push_attack(const AttackResult& attack);
@@ -97,5 +100,11 @@ namespace ms
 
 		std::list<BulletEffect> bullets;
 		std::list<DamageNumber> damagenumbers;
+
+		// H1（2026-11-16）：宏释放队列。旧 Stage MACRO 分支同帧连调三次
+		// use_move，第一行 if(!can_attack) return 把第 2、3 个技能全吞掉 ——
+		// 「组合技能」实际只出一个。这里按帧泵出，等硬直结束再放下一个。
+		std::vector<int32_t> macro_pending;
+		uint16_t macro_cooldown = 0;
 	};
 }

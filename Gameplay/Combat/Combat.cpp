@@ -61,6 +61,23 @@ namespace ms
 
 	void Combat::update()
 	{
+		// H1 宏释放队列泵：每帧最多尝试放一个待释放的宏技能；
+		// player.can_attack()（动画硬直）没结束就原地等，间隔至少
+		// MACRO_GAP=8ms 一帧，避免同 tick 连发被服务端合并。
+		if (!macro_pending.empty())
+		{
+			if (macro_cooldown > 0)
+				--macro_cooldown;
+			else if (player.can_attack())
+			{
+				int32_t next = macro_pending.front();
+				macro_pending.erase(macro_pending.begin());
+				use_move(next);
+				// 放完一个后至少隔 2 帧再试下一个，让动画/服务端时序分开。
+				macro_cooldown = 2;
+			}
+		}
+
 		attackresults.update();
 		bulleteffects.update();
 		damageeffects.update();
@@ -93,6 +110,17 @@ namespace ms
 				return dn.update();
 			}
 		);
+	}
+
+	void Combat::use_macro(int32_t skill1, int32_t skill2, int32_t skill3)
+	{
+		// Angel CMacroSysMan::Update：整行宏按 1→2→3 顺序入队，不跳过空位后
+		// 提前收口（空位 = 该槽无技能，直接不入队）。
+		macro_pending.clear();
+		for (int32_t sid : { skill1, skill2, skill3 })
+			if (sid > 0)
+				macro_pending.push_back(sid);
+		macro_cooldown = 1;
 	}
 
 	void Combat::use_move(int32_t move_id)
