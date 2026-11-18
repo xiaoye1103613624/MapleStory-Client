@@ -104,12 +104,14 @@ namespace ms
 		std::string get_keyfile() const;
 		// Buff 图标剩余时间文本是否开启（ui.buff_timer）。
 		bool get_buff_timer() const;
+		// 裸字母热键是否弹 PIC 软键盘（ui.softkey.hotkeys）。
+		// 默认 false：原生 v83 不启用软键盘，按键弹窗是本端历史过度实现；
+		// 关闭后普通按键不再弹软键盘，选角 PIC/二次密码链路不受影响。
+		bool get_softkey_hotkeys() const;
 		// 启动原生启动动画是否开启（boot.logo）。
 		bool get_boot_logo() const;
 		// 启动动画单帧时长，毫秒（boot.logo.frame_ms，取值已限幅到 10~1000）。
 		uint16_t get_boot_logo_frame_ms() const;
-		// 伤害公式 v2（damage.formula_v2）：启用原生取证补齐的魔法/无视防御/暴击区间分支。
-		bool get_damage_formula_v2() const;
 		// 伤害行 12 字节模式（damage.long_lines）：必须与 s9 服务端成对开启。
 		bool get_damage_long_lines() const;
 		// 单段伤害上限（damage.cap）：默认 2^53，与 double 精确整数上限一致。
@@ -125,6 +127,9 @@ namespace ms
 		std::string get_ui_language() const;
 		// 运行时切换 UI 语言：写内存项 + 立即生效；落盘由调用方显式 save()
 		void set_ui_language(const std::string& lang);
+		// HUD ThemePack（ui.theme）：auto / classic / modern。
+		std::string get_hud_theme() const;
+		void set_hud_theme(const std::string& theme);
 		// HTTP 补丁：是否启用（patch.enabled）。
 		bool get_patch_enabled() const;
 		// HTTP 补丁：manifest URL（patch.url）。
@@ -541,6 +546,19 @@ namespace ms
 		BuffTimer() : BoolEntry("ui.buff_timer", "true") {}
 	};
 
+	// 裸字母热键弹软键盘总闸（ui.softkey.hotkeys），默认关闭。
+	// 依据：原生 v83 BeiDou.exe 零引用软键盘资产（REA 证据见
+	// docs/features/softkey-hotkey-native-restore/evidence/native-softkey-rea.md），
+	// 软键盘原生唯一场景是选角 PIC/二次密码；按键弹窗是本端历史 SoftKey 波次过度实现。
+	// 关闭后 IO::send_key 不再把未绑定的可打印字母当作 action 下传给各窗口热键分支，
+	// 从而普通按键（S/E/C/H/W/D/X/Z/T/F/M 等）不再弹出 PIC 软键盘；
+	// 方向键/回车/ESC/Tab 的兜底路径不受影响，选角 PIC 路径也不受此开关控制。
+	// 打开则恢复旧行为（保留可回滚性）。
+	struct SoftkeyHotkeys : public Configuration::BoolEntry
+	{
+		SoftkeyHotkeys() : BoolEntry("ui.softkey.hotkeys", "false") {}
+	};
+
 	// Whether to show the equipped item of the same slot next to the hovered one
 	// 装备悬停对比（ui.equip_compare）：在物品栏/商店悬停装备时，右侧显示同部位已装备物品。
 	// 关闭后只显示悬停物品自身的 tooltip。
@@ -554,6 +572,14 @@ namespace ms
 	struct UiLanguage : public Configuration::StringEntry
 	{
 		UiLanguage() : StringEntry("ui.language", "zh-CN") {}
+	};
+
+	// HUD ThemePack preference (ui.theme): auto | classic | modern
+	// auto = probe StatusBar3 then StatusBar.img (legacy); classic/modern force layout
+	// when that pack exists. Runtime switch rebuilds StatusBar+ChatBar (ThemePack).
+	struct HudTheme : public Configuration::StringEntry
+	{
+		HudTheme() : StringEntry("ui.theme", "auto") {}
 	};
 
 	// The normal font which will be used
@@ -673,7 +699,10 @@ namespace ms
 	// 见 docs/features/chat-angel-calibration-2026-11/。旧值 2 启动时映射为 1。
 	struct ChatType : public Configuration::ShortEntry
 	{
-		ChatType() : ShortEntry("chat.type", "3") {}
+		// 默认 1=收起：原生静息态；3 展开态只在用户点过 +（persist）后出现。
+		// 旧默认 3 导致新装/无 chat.type 键存档启动即 classic_log_open=true，
+		// BtMax(+) 休眠 BtMin(-) 活跃，与原生相反（chat-angel-calibration-2026-11）。
+		ChatType() : ShortEntry("chat.type", "1") {}
 	};
 
 	// The default position of UIStatsInfo
@@ -918,6 +947,12 @@ namespace ms
 		PosMESSENGER() : PointEntry("ui.position.messenger", "(500, 80)") {}
 	};
 
+	// 怪物图鉴（UIMonsterBook）窗默认位置；首次打开按视口居中，拖动后持久化。
+	struct PosMONSTERBOOK : public Configuration::PointEntry
+	{
+		PosMONSTERBOOK() : PointEntry("ui.position.monsterbook", "(200, 100)") {}
+	};
+
 	// PartySearch（组队搜索）窗默认位置。
 	struct PosPARTYSEARCH : public Configuration::PointEntry
 	{
@@ -999,15 +1034,6 @@ namespace ms
 	struct MiniMapDefaultHelpers : public Configuration::BoolEntry
 	{
 		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
-	};
-
-	// 伤害公式补齐开关（damage.formula_v2，2026-11-18 默认改为 true）。
-	// 开启后 Skill/Mob/CharStats 走原生取证补齐的魔法攻击、无视防御、暴击区间、
-	// PAD/MAD 1999 钳制与玩家受伤公式；套装的 BOSS%/无视防御% 依赖此开关生效。
-	// 关掉时伤害结果与改造前一致，便于回滚（配置 damage.formula_v2=false）。
-	struct DamageFormulaV2 : public Configuration::BoolEntry
-	{
-		DamageFormulaV2() : BoolEntry("damage.formula_v2", "true") {}
 	};
 
 	// 12 字节/行伤害封包开关（damage.long_lines，默认 false = legacy 4 字节/行）。

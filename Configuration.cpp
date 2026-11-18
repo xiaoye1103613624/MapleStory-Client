@@ -138,6 +138,7 @@ namespace ms
 
 		// 界面开关
 		{ "config.section.14",	"ui.buff_timer",			"config.comment.ui.buff_timer" },
+		{ "config.section.14",	"ui.softkey.hotkeys",		"config.comment.ui.softkey.hotkeys" },
 		{ "config.section.14",	"ui.equip_compare",			"config.comment.ui.equip_compare" },
 		{ "config.section.14",	"ui.damage_skin",			"config.comment.ui.damage_skin" },
 		{ "config.section.14",	"ui.language",			"config.comment.ui.language" },
@@ -179,7 +180,6 @@ namespace ms
 		{ "config.section.15",	"ui.position.partyrace",			"config.comment.ui.position.partyrace" },
 
 		// 伤害
-		{ "config.section.16",	"damage.formula_v2",			"config.comment.damage.formula_v2" },
 		{ "config.section.16",	"damage.long_lines",			"config.comment.damage.long_lines" },
 		{ "config.section.16",	"damage.cap",			"config.comment.damage.cap" },
 
@@ -231,12 +231,13 @@ namespace ms
 		settings.emplace<VSync>();
 		settings.emplace<BootLogo>();
 		settings.emplace<BootLogoFrameMs>();
-		settings.emplace<DamageFormulaV2>();
 		settings.emplace<DamageLongLines>();
 		settings.emplace<DamageCap>();
 		settings.emplace<BuffTimer>();
+		settings.emplace<SoftkeyHotkeys>();
 		settings.emplace<EquipCompare>();
 		settings.emplace<UiLanguage>();
+		settings.emplace<HudTheme>();
 		settings.emplace<FontPathNormal>();
 		settings.emplace<FontPathBold>();
 		settings.emplace<BGMVolume>();
@@ -879,6 +880,11 @@ namespace ms
 		return Setting<BuffTimer>::get().load();
 	}
 
+	bool Configuration::get_softkey_hotkeys() const
+	{
+		return Setting<SoftkeyHotkeys>::get().load();
+	}
+
 	bool Configuration::get_boot_logo() const
 	{
 		return Setting<BootLogo>::get().load();
@@ -923,11 +929,6 @@ namespace ms
 		Setting<DamageSkin>::get().save(std::to_string(skin < 0 ? 0 : skin));
 	}
 
-	bool Configuration::get_damage_formula_v2() const
-	{
-		return Setting<DamageFormulaV2>::get().load();
-	}
-
 	bool Configuration::get_damage_long_lines() const
 	{
 		return Setting<DamageLongLines>::get().load();
@@ -963,6 +964,17 @@ namespace ms
 	void Configuration::set_ui_language(const std::string& lang)
 	{
 		Setting<UiLanguage>::get().save(lang);
+	}
+
+	std::string Configuration::get_hud_theme() const
+	{
+		std::string theme = Setting<HudTheme>::get().load();
+		return theme.empty() ? std::string("auto") : theme;
+	}
+
+	void Configuration::set_hud_theme(const std::string& theme)
+	{
+		Setting<HudTheme>::get().save(theme.empty() ? "auto" : theme);
 	}
 
 	bool Configuration::get_patch_enabled() const
