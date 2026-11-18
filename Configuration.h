@@ -1001,12 +1001,13 @@ namespace ms
 		MiniMapDefaultHelpers() : BoolEntry("minimap.default_helpers", "false") {}
 	};
 
-	// 伤害公式补齐开关（damage.formula_v2，默认 false = 保持原 Fyms085 公式）。
+	// 伤害公式补齐开关（damage.formula_v2，2026-11-18 默认改为 true）。
 	// 开启后 Skill/Mob/CharStats 走原生取证补齐的魔法攻击、无视防御、暴击区间、
-	// PAD/MAD 1999 钳制与玩家受伤公式；关闭时伤害结果与改造前一致，便于回滚。
+	// PAD/MAD 1999 钳制与玩家受伤公式；套装的 BOSS%/无视防御% 依赖此开关生效。
+	// 关掉时伤害结果与改造前一致，便于回滚（配置 damage.formula_v2=false）。
 	struct DamageFormulaV2 : public Configuration::BoolEntry
 	{
-		DamageFormulaV2() : BoolEntry("damage.formula_v2", "false") {}
+		DamageFormulaV2() : BoolEntry("damage.formula_v2", "true") {}
 	};
 
 	// 12 字节/行伤害封包开关（damage.long_lines，默认 false = legacy 4 字节/行）。
