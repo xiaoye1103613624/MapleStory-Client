@@ -59,7 +59,12 @@ namespace ms
 
 		std::string descstr = data.get_desc();
 
-		if (masterlevel > 0)
+		// 本地化 desc 已自带「[最高等级：N]」时不再注入英文 "[Master Level: N]"，
+		// 旧逻辑 find("Master Level") 落空 → else 分支插一行英文，与中文标签叠成两行，
+		// 正是实机「[Master Level: 20] + [最高等级: 20]」重复、行距松散的根因。
+		const bool has_local_level_tag = descstr.find("\xe6\x9c\x80\xe9\xab\x98\xe7\xad\x89\xe7\xba\xa7") != std::string::npos;
+
+		if (masterlevel > 0 && !has_local_level_tag)
 		{
 			const std::string mltag = "Master Level";
 			const std::string mlstr = std::to_string(masterlevel);
@@ -122,10 +127,11 @@ namespace ms
 		if (next)
 			levelstr += "[Next Level: " + std::to_string(level + 1) + "]\\n" + data.get_level_desc(level + 1);
 
+		width = 292;
 		icon = data.get_icon(SkillData::Icon::NORMAL);
-		name = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, data.get_name(), 185);
-		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, descstr, 210);
-		leveldesc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, levelstr, 290);
+		name = Text(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, data.get_name(), width);
+		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, descstr, 196);
+		leveldesc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, levelstr, 265);
 
 		int16_t desc_height = desc.height() + 11;
 
@@ -134,9 +140,11 @@ namespace ms
 		height = icon_offset + level_offset + leveldesc.height();
 
 		int16_t icon_width = (icon.get_dimensions().x() * 2) + 4;
-		width = 292;
 
-		line = ColorLine(width + 16, Color::Name::WHITE, 1.0f, false);
+		// 分隔线：框体 backdrop 横向是 [-6, width+24]；旧 line 是 width+16 却从 x=22
+		// 起画，右端 22+308=330 越出 316 的框右沿 14px，且整条偏右 —— 实机「有点偏移」。
+		// 改成几乎满框：x=-2 起、宽 width+20，左右各留 4/6px。
+		line = ColorLine(width + 20, Color::Name::WHITE, 1.0f, false);
 		box = ColorBox(icon_width, icon_width, Color::Name::WHITE, 0.65f);
 	}
 
@@ -175,7 +183,7 @@ namespace ms
 
 		pos.shift_y(level_offset);
 
-		line.draw(pos + Point<int16_t>(22, 10));
+		line.draw(pos + Point<int16_t>(-2, 10));
 		leveldesc.draw(pos + Point<int16_t>(25, 11));
 	}
 }

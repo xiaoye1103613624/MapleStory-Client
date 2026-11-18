@@ -1,25 +1,15 @@
+
 //////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
-//																				//
-//	This program is free software: you can redistribute it and/or modify		//
-//	it under the terms of the GNU Affero General Public License as published by	//
-//	the Free Software Foundation, either version 3 of the License, or			//
-//	(at your option) any later version.											//
-//																				//
-//	This program is distributed in the hope that it will be useful,				//
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
-//	GNU Affero General Public License for more details.							//
-//																				//
-//	You should have received a copy of the GNU Affero General Public License	//
-//	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "ItemTooltip.h"
 
 #include "../../Constants.h"
 
 #include "../../Data/ItemData.h"
+
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -29,15 +19,24 @@ namespace ms
 {
 	namespace
 	{
-		constexpr int16_t ICON_BOX_SIZE = 32;
+		// 2026-11-16 ͼ2 �����ض��꣨frame 290x116����
+		// ͼ���� 68x68 ǳ��(194,194,206) @ ����(10,32)��ͼ�� 2x �޷� 64 ���С�
+		constexpr int16_t ICON_BOX_SIZE = 68;
+		constexpr int16_t ICON_MAX = 64;
 		constexpr float ICON_BOX_SCALE = 2.0f;
-		constexpr int16_t ICON_BOX_X = 6;
-		constexpr int16_t ICON_BOX_Y = 70;
-		constexpr int16_t ICON_OFF_X = 2;
-		constexpr int16_t ICON_OFF_Y = 2;
-		constexpr GLfloat ICON_BOX_R = 74.0f / 255.0f;
-		constexpr GLfloat ICON_BOX_G = 74.0f / 255.0f;
-		constexpr GLfloat ICON_BOX_B = 94.0f / 255.0f;
+		constexpr GLfloat ICON_BOX_R = 194.0f / 255.0f;
+		constexpr GLfloat ICON_BOX_G = 194.0f / 255.0f;
+		constexpr GLfloat ICON_BOX_B = 206.0f / 255.0f;
+		constexpr int16_t NAME_X = 8;
+		constexpr int16_t NAME_Y = 8;
+		constexpr int16_t QUAL_Y = 24;
+		constexpr int16_t BOX_X = 4;
+		constexpr int16_t BOX_Y = 26;
+		constexpr int16_t DESC_DX = 82;
+		constexpr int16_t DESC_DY = 3;
+		constexpr int16_t FRAME_W = 262;
+		// ����ê�㣺����� pos+(-6) ��� fillwidth+28������ = FRAME_W/2+8��
+		constexpr int16_t NAME_CENTER_X = FRAME_W / 2 + 8;
 	}
 
 	ItemTooltip::ItemTooltip()
@@ -66,21 +65,19 @@ namespace ms
 		std::string quality = "";
 
 		if (unique && untradable)
-			quality = "One-of-a-kind Item, Untradable";
-		else if (unique && !untradable)
-			quality = "One-of-a-kind Item";
-		else if (!unique && untradable)
-			quality = "Untradable";
-		else
-			quality = "";
+			quality = Locale::text("equip.trade.both");
+		else if (unique)
+			quality = Locale::text("equip.trade.unique");
+		else if (untradable)
+			quality = Locale::text("equip.trade.untradable");
 
-		name = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, idata.get_name(), 240);
-		// 与装备 tip 正文色对齐 TOOLTIPBODY（奶油色）。
-		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::TOOLTIPBODY, idata.get_desc(), 185);
-		qual = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::ORANGE, quality, 185);
+		// ���ƾ��У��û� 2026-11-16 ָ�������������֣�ͼ2 ʵ�⣩��
+		name = Text(Text::Font::A14B, Text::Alignment::CENTER, Color::Name::WHITE, idata.get_name(), FRAME_W);
+		desc = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, idata.get_desc(), 185);
+		qual = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::ORANGE, quality, FRAME_W);
 
-		fillwidth = 264;
-		fillheight = 83 + name.height();
+		fillwidth = FRAME_W;
+		fillheight = 86 + name.height();
 		descdelta = desc.height() - 80;
 
 		if (descdelta > 0)
@@ -91,20 +88,29 @@ namespace ms
 
 	void ItemTooltip::draw_item_icon(Point<int16_t> pos) const
 	{
-		const Point<int16_t> boxpos = pos + Point<int16_t>(ICON_BOX_X, ICON_BOX_Y);
-		iconbase_box.draw(boxpos);
+		iconbase_box.draw(pos);
 
 		if (!itemicon.is_valid())
 			return;
 
-		// 与 EquipTooltip 同口径：2x 绘制时把 origin*2 加回，使图标左上角落在底板 (2,2)。
+		float s = ICON_BOX_SCALE;
+		{
+			float sx = static_cast<float>(ICON_MAX) / static_cast<float>(itemicon.width());
+			float sy = static_cast<float>(ICON_MAX) / static_cast<float>(itemicon.height());
+			float m = sx < sy ? sx : sy;
+			float fit = m < 1.0f ? m : 1.0f;
+			s = s * fit;
+		}
+
 		const Point<int16_t> ivorg = itemicon.get_origin();
+		const int16_t hw = static_cast<int16_t>(itemicon.width() * s) / 2;
+		const int16_t hh = static_cast<int16_t>(itemicon.height() * s) / 2;
 		const Point<int16_t> iconpos(
-			boxpos.x() + ICON_OFF_X + static_cast<int16_t>(ivorg.x() * ICON_BOX_SCALE),
-			boxpos.y() + ICON_OFF_Y + static_cast<int16_t>(ivorg.y() * ICON_BOX_SCALE)
+			pos.x() + ICON_BOX_SIZE / 2 + static_cast<int16_t>(ivorg.x() * s) - hw,
+			pos.y() + ICON_BOX_SIZE / 2 + static_cast<int16_t>(ivorg.y() * s) - hh
 		);
 
-		itemicon.draw(DrawArgument(iconpos, ICON_BOX_SCALE, ICON_BOX_SCALE));
+		itemicon.draw(DrawArgument(iconpos, s, s));
 	}
 
 	void ItemTooltip::draw(Point<int16_t> pos) const
@@ -129,16 +135,16 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		// 框体 = 内容包围盒外扩 6px（Q1：程序描边，见 TextTooltip.h TooltipBackdrop）
-		backdrop.draw(pos + Point<int16_t>(-6, -6), fillwidth + 28, fillheight + adj_t + adj_d + 18);
-		name.draw(pos + Point<int16_t>(22, 8));
+		// �û� m01377 �ڣ���ʮ��֯�ƣ���װ�� tooltip ���ȱ���ھ�
+		backdrop.draw(pos + Point<int16_t>(-6, -6), fillwidth + 28, fillheight + adj_t + adj_d + 18, false);
+		name.draw(pos + Point<int16_t>(NAME_CENTER_X, NAME_Y));
 
 		if (untradable || unique)
-			qual.draw(pos + Point<int16_t>(148, 27));
+			qual.draw(pos + Point<int16_t>(NAME_CENTER_X, QUAL_Y));
 
-		pos.shift(14, 18 + name.height() + adj_t);
+		pos.shift(BOX_X, BOX_Y + adj_t);
 
 		draw_item_icon(pos);
-		desc.draw(pos + Point<int16_t>(90, -6));
+		desc.draw(pos + Point<int16_t>(DESC_DX, DESC_DY));
 	}
 }

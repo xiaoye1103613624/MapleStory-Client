@@ -94,11 +94,12 @@ namespace ms
 
 		const size_t pos = last_colon(full);
 
-		// 079 参照帧：正文各行（含 inc 属性与元信息）均为纯白 + 冒号压中轴，
-		// 名/冒号/值同色；非居中行（历史路径）同样取白，仅值用 valuecolor。
-		// 079 原生 1:1 (m00303)：正文标签奶油(255,238,204)、数值纯白；
-		// 旧实现让居中行标签跟随 valuecolor，一刀切 WHITE / 奶油都不对。
-		const Color::Name namecolor = Color::Name::TOOLTIPBODY;
+		// 正文行（含 inc 属性与元信息）统一纯白，与顶部职业/需求位图字模(255,255,255)同色。
+		// 旧实现标签用 TOOLTIPBODY 奶油(255,238,204)，实测最亮仅(250,233,200)，
+		// 比职业行纯白暗一档、红框属性区观感偏灰（用户 2026-11-17 反馈）。
+		// 数值本就是 WHITE，但走 Text::A11M 抗锯齿后最亮(233,233,233)；
+		// 标签一并改纯白后整行观感与职业行对齐。
+		const Color::Name namecolor = Color::Name::WHITE;
 
 		if (pos == std::string::npos)
 		{
@@ -177,6 +178,15 @@ namespace ms
 		// 旧 30 把 req 压到名称脚边（m00304 ③）；52 同时给名称区两行隐藏词条
 		//（潜能 y24 / 交易 y38）留出不重叠空间。
 		constexpr int16_t HEADER_SHIFT = 52;  // m00304 ③：名称→req/图标 30px 间距
+
+		// 名称区上下词条统一间距体系（2026-11-18 用户要求：名称上下词条间距一致）。
+		// 名称绘制点、上方星顶、下方首行词条、词条行距全部由这一组常量推导，
+		// 改一处即全联动，避免「星 -6 / 名称 7 / 词条 24 / 行距 14」散落硬编码导致不齐。
+		constexpr int16_t NAME_Y = 7;                 // 名称文字绘制 y（相对 pos）
+		constexpr int16_t NAME_INK_H = 15;            // A14B 名称墨高
+		constexpr int16_t STAR_TOP = -6;              // 星排顶（背板顶沿），星 13px 高，底=STAR_TOP+13=7 正好贴名称顶
+		constexpr int16_t SUBLINE_STEP = 18;          // 名称下方各词条（潜能等级/交易/所有者）统一行距
+		constexpr int16_t SUBLINE_FIRST = NAME_Y + NAME_INK_H + 2; // 首行词条 = 名称墨底 + 2px = 24
 	}
 
 	// 道具图标底板（2026-11-15 按 079 参照帧还原）：UIWindow.img/IconBase/0 是
@@ -1210,35 +1220,37 @@ namespace ms
 		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height + 32);
 
 		// 095 星之力：名称上方一整排星（黄=激活/灰=未激活），画在背板顶沿。
-		draw_stars(pos + Point<int16_t>(0, -6), starforce);
+		draw_stars(pos + Point<int16_t>(0, STAR_TOP), starforce);
 
-		name.draw(pos + Point<int16_t>(BODY_CENTER_X, 7));
+		name.draw(pos + Point<int16_t>(BODY_CENTER_X, NAME_Y));
 
 		// 名称区隐藏词条：潜能等级、交易限制（唯一道具 / 不可交易）逐行叠高，
 		// 都画在名称下方、图标上方，不侵占分隔线以下属性区（m00304 ②④）。
-		int16_t sub_y = 24;
+		int16_t sub_y = SUBLINE_FIRST;
 
 		if (prank != Equip::Potential::POT_NONE)
 		{
 			potflag.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
 		if (has_trade)
 		{
 			trade_line.draw(pos + Point<int16_t>(0, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
 		// 所有者行：与交易行同区叠高；owner 为空时 has_owner=false 不占行。
 		if (has_owner)
 		{
 			owner_line.draw(pos + Point<int16_t>(0, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
-		// 词条 ≤2 行时 sub_y ≤52，仍用 HEADER_SHIFT 保持原有间距不变；
-		// 仅当 3 条词条全满才按 sub_y 下压，避免 owner 行压住图标。
+		// 词条相互间距与末行到需求块间距统一为 SUBLINE_STEP（18px），同类词条保持等距：
+		// 2 词条时 sub_y=60>52 下压，owner(y42, 墨底≈54)到需求首行(y60)留白 6px，
+		// 消除旧 14px 步长下 owner(y38)墨底紧贴需求(y52)的叠字；
+		// 无词条/单词条 sub_y≤42 仍走 HEADER_SHIFT，视觉零变化。
 		pos.shift_y((sub_y > HEADER_SHIFT) ? sub_y : HEADER_SHIFT);
 
 		draw_item_icon(pos, itemicon);
@@ -1433,33 +1445,33 @@ namespace ms
 		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height_preview + 32);
 
 		// 095 星之力（对比窗侧）：已装备物品星数，画在背板顶沿。
-		draw_stars(pos + Point<int16_t>(0, -6), starforce_preview);
+		draw_stars(pos + Point<int16_t>(0, STAR_TOP), starforce_preview);
 
-		name_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, 7));
+		name_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, NAME_Y));
 
 		// 名称区隐藏词条：潜能等级、交易限制逐行叠高（m00304 ②④）。
-		int16_t sub_y = 24;
+		int16_t sub_y = SUBLINE_FIRST;
 
 		if (prank_preview != Equip::Potential::POT_NONE)
 		{
 			potflag_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
 		if (has_trade_preview)
 		{
 			trade_line_preview.draw(pos + Point<int16_t>(0, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
 		// 所有者行（对比窗侧）：与交易行同区叠高，owner 为空不占行。
 		if (has_owner_preview)
 		{
 			owner_line_preview.draw(pos + Point<int16_t>(0, sub_y));
-			sub_y += 14;
+			sub_y += SUBLINE_STEP;
 		}
 
-		// 词条 ≤2 行保持 HEADER_SHIFT，3 条全满才下压防压图标。
+		// 与主窗同一 SUBLINE_STEP：末行到需求块、词条相互间距完全一致。
 		pos.shift_y((sub_y > HEADER_SHIFT) ? sub_y : HEADER_SHIFT);
 
 		// 2026-11-11：攻击力增加行（equip.label_atkinc）属历史误接，原生 tip 无此行，

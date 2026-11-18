@@ -85,11 +85,26 @@ namespace ms
 		// 依据：实测 119xxxx 混有 islot=Si（盾/副武器）、120xxxx 混有 islot=Hd（帽），
 		// 按号段一刀切会把它们判错槽（穿不上或穿错位）。
 		// islot 是装备自身的权威字段，官方 getEquipmentSlot 也是先读它。
+		bool islot_weapon = false;
 		if (const EquipSlot::Id islot_slot = EquipSlot::from_islot(src["islot"].get_string()); islot_slot != EquipSlot::Id::NONE)
 		{
 			eqslot = islot_slot;
+			islot_weapon = islot_slot == EquipSlot::Id::WEAPON;
+			// 装备分类 BUG 修复（equip-tooltip-audit）：islot=Wp/WpSi/WpSp 只确定"武器槽"，
+			// 不能据此把 type 写成单一值。EquipSlot::type_name(WEAPON) 硬编码为
+			// "ONE-HANDED SWORD"，会让长枪/双手剑等所有武器 tooltip 都显示"单手剑"。
+			// 官方 getWeaponType 按号段细分（140=双手剑/143=长枪，见 s9
+			// ItemInformationProvider.java:659-666），号段表（本文件 :177-204）已含正确映射。
+			// 因此武器只设 eqslot、不提前 return，让下方号段分支继续填 type；
+			// 其它 islot 槽位（如 Si/Hd）维持原"命中即返回"语义不动。
+			if (islot_slot != EquipSlot::Id::WEAPON)
+			{
+				type = EquipSlot::type_name(islot_slot);
+				return;
+			}
+			// 武器先给兜底分类名（与旧行为一致），正常号段会在 :177-204 覆盖为
+			// 双手剑/长枪等正确值；号段异常的武器则保留此兜底，不至于显示空串。
 			type = EquipSlot::type_name(islot_slot);
-			return;
 		}
 
 		// ⚠️ Round 7 修正：号段 → 槽位**不是 1:1**。
@@ -202,11 +217,13 @@ namespace ms
 			type = types[weaponindex];
 			eqslot = EquipSlot::Id::WEAPON;
 		}
-		else
+		else if (!islot_weapon)
 		{
 			type = "CASH";
 			eqslot = EquipSlot::Id::NONE;
 		}
+		// islot=Wp 但号段落在武器表外（高版本/异常号段）：保留上方 islot 分支
+		// 已写入的 eqslot=WEAPON 与 type_name(WEAPON) 兜底，不覆盖成 CASH/NONE。
 	}
 
 	bool EquipData::is_valid() const
