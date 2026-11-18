@@ -162,19 +162,10 @@ namespace ms
 				deactivate();
 				return Button::State::NORMAL;
 			case Buttons::BtInvite:
-				UI::get().emplace<UISoftKey>([](const std::string& guild) {
-					if (guild.empty()) return;
-					AllianceInvitePacket(guild).dispatch();
-					LOG(LOG_DEBUG, "UIAlliance: BtInvite guild=" << guild);
-				}, []() {}, "Invite guild");
+				
 				return Button::State::NORMAL;
 			case Buttons::BtNotice:
-				UI::get().emplace<UISoftKey>([this](const std::string& notice) {
-					if (notice.empty()) return;
-					AllianceNoticePacket(notice).dispatch();
-					set_notice(notice);
-					LOG(LOG_DEBUG, "UIAlliance: BtNotice len=" << notice.size());
-				}, []() {}, "Alliance notice");
+				
 				return Button::State::NORMAL;
 		}
 
@@ -187,18 +178,9 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'N' || keycode == 'n') {
 			std::string cur = get_notice();
-			UI::get().emplace<UISoftKey>([this](const std::string& notice) {
-				if (notice.empty()) return;
-				AllianceNoticePacket(notice).dispatch();
-				set_notice(notice);
-				LOG(LOG_DEBUG, "UIAlliance: notice len=" << notice.size());
-			}, []() {}, cur.empty() ? "Alliance notice" : ("Notice (cur=" + cur.substr(0, 24) + ")"));
+			
 		} else if (keycode == 'I' || keycode == 'i') {
-			UI::get().emplace<UISoftKey>([](const std::string& guild) {
-				if (guild.empty()) return;
-				AllianceInvitePacket(guild).dispatch();
-				LOG(LOG_DEBUG, "UIAlliance: invite guild=" << guild);
-			}, []() {}, "Invite guild");
+			
 		} else if (keycode == 'D' || keycode == 'd') {
 			// DENY_ALLIANCE_REQUEST：CharInfo 名作 inviter → 只问 guild
 			std::string pre;
@@ -206,22 +188,9 @@ namespace ms
 				pre = ci->get_target_name();
 			if (!pre.empty()) {
 				std::string inviter = pre;
-				UI::get().emplace<UISoftKey>([inviter](const std::string& guild) {
-					if (guild.empty()) return;
-					DenyAllianceRequestPacket(inviter, guild).dispatch();
-					LOG(LOG_DEBUG, "UIAlliance: Deny inviter=" << inviter << " guild=" << guild);
-				}, []() {}, "Alliance deny guild");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& spec) {
-					if (spec.empty()) return;
-					size_t c = spec.find(',');
-					if (c == std::string::npos) return;
-					std::string inviter = spec.substr(0, c);
-					std::string guild = spec.substr(c + 1);
-					if (inviter.empty() || guild.empty()) return;
-					DenyAllianceRequestPacket(inviter, guild).dispatch();
-					LOG(LOG_DEBUG, "UIAlliance: Deny inviter=" << inviter << " guild=" << guild);
-				}, []() {}, "inviter,guild");
+				
 			}
 		} else if (keycode == 'R' || keycode == 'r') {
 			AllianceActionPacket(0x01).dispatch();

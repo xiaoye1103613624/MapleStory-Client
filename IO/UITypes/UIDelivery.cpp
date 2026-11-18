@@ -143,20 +143,12 @@ namespace ms
 			pre = ci->get_target_name();
 		auto ask_meso = [this, invent, slot, qty](const std::string& name) {
 			if (name.empty()) return;
-			UI::get().emplace<UISoftKey>([this, name, invent, slot, qty](const std::string& meso_s) {
-				int64_t mesos = 0;
-				try { mesos = std::stoll(meso_s); } catch (...) { mesos = 0; }
-				int16_t amount = (invent > 0 && slot > 0) ? qty : 0;
-				DueySendPacket(invent, slot, amount, mesos, name, false, "").dispatch();
-				show_notice(Locale::format("delivery.sending_to", name));
-				LOG(LOG_DEBUG, "UIDelivery: Send name=" << name << " inv=" << (int)invent
-					<< " slot=" << slot << " meso=" << mesos);
-			}, []() {}, "Mesos");
+			
 		};
 		if (!pre.empty())
 			ask_meso(pre);
 		else
-			UI::get().emplace<UISoftKey>(ask_meso, []() {}, "Recipient");
+			;
 	}
 
 	void UIDelivery::draw(float inter) const
@@ -246,18 +238,9 @@ namespace ms
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
 				if (!pre.empty()) {
-					UI::get().emplace<UISoftKey>([send_spec, pre](const std::string& rest) {
-						send_spec(pre, rest);
-					}, []() {}, "meso[,qty]");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([send_spec](const std::string& spec) {
-						if (spec.empty()) return;
-						size_t p1 = spec.find(',');
-						if (p1 == std::string::npos)
-							send_spec(spec, "");
-						else
-							send_spec(spec.substr(0, p1), spec.substr(p1 + 1));
-					}, []() {}, "name,meso[,qty]");
+					
 				}
 			} else {
 				std::string pre;
@@ -296,18 +279,9 @@ namespace ms
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
 				if (!pre.empty()) {
-					UI::get().emplace<UISoftKey>([parse_rest, pre](const std::string& rest) {
-						parse_rest(pre, rest);
-					}, []() {}, "meso[,iv,slot,qty]");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([parse_rest](const std::string& spec) {
-						if (spec.empty()) return;
-						size_t p1 = spec.find(',');
-						if (p1 == std::string::npos)
-							parse_rest(spec, "");
-						else
-							parse_rest(spec.substr(0, p1), spec.substr(p1 + 1));
-					}, []() {}, "name,meso[,iv,slot,qty]");
+					
 				}
 			}
 		}
@@ -315,31 +289,13 @@ namespace ms
 			if (selected >= 0 && selected < static_cast<int16_t>(packages.size()))
 				discard_selected();
 			else {
-				UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
-					try {
-						int32_t id = std::stoi(id_s);
-						if (id > 0) {
-							DueyDiscardPacket(id).dispatch();
-							show_notice(Locale::format("delivery.discard_id", id_s));
-							LOG(LOG_DEBUG, "UIDelivery: SoftKey Discard id=" << id);
-						}
-					} catch (...) {}
-				}, []() {}, "Package id");
+				
 			}
 		} else if (keycode == 'K' || keycode == 'k') {
 			if (selected >= 0 && selected < static_cast<int16_t>(packages.size()))
 				claim_selected();
 			else {
-				UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
-					try {
-						int32_t id = std::stoi(id_s);
-						if (id > 0) {
-							DueyClaimPacket(id).dispatch();
-							show_notice(Locale::format("delivery.claim_id", id_s));
-							LOG(LOG_DEBUG, "UIDelivery: SoftKey Claim id=" << id);
-						}
-					} catch (...) {}
-				}, []() {}, "Claim pkg id");
+				
 			}
 		} else if (keycode == 'F' || keycode == 'f') {
 			DueyOpenRecvPacket().dispatch();
@@ -367,21 +323,7 @@ namespace ms
 				break;
 			case TabTax:
 				tab = TAX;
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) {
-						show_notice(Locale::text("delivery.fee_help"));
-						return;
-					}
-					try {
-						int64_t m = std::stoll(tip);
-						if (m < 0) m = 0;
-						int64_t fee = m + 5000;
-						show_notice(Locale::format_all("delivery.fee_calc", { tip, std::to_string(fee) }));
-						LOG(LOG_DEBUG, "UIDelivery: TabTax SoftKey fee=" << fee);
-					} catch (...) {
-						show_notice(Locale::text("delivery.fee_help"));
-					}
-				}, []() {}, "mesos|empty=help");
+				
 				break;
 			default:
 				break;

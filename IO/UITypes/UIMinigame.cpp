@@ -88,46 +88,13 @@ namespace ms
 			MinigameExitPacket().dispatch();
 			deactivate();
 		} else if (keycode == 'T' || keycode == 't' || keycode == 'C' || keycode == 'c') {
-			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-				if (msg.empty()) return;
-				TradeChatPacket(msg).dispatch();
-				tip_label.change_text(msg);
-				LOG(LOG_DEBUG, "UIMinigame: SoftKey TradeChat len=" << msg.size());
-			}, []() {}, "Minigame chat");
+			
 		} else if (keycode == 'O' || keycode == 'o') {
 			// SoftKey x,y[,piece] → Omok place
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				int vals[3] = { 0, 0, 1 };
-				size_t start = 0; int vi = 0;
-				while (vi < 3 && start <= s.size()) {
-					size_t c = s.find(',', start);
-					std::string part = (c == std::string::npos) ? s.substr(start) : s.substr(start, c - start);
-					try { vals[vi] = std::stoi(part); } catch (...) {}
-					++vi;
-					if (c == std::string::npos) break;
-					start = c + 1;
-				}
-				MinigameOmokPlacePacket(
-					static_cast<uint8_t>(vals[0]),
-					static_cast<uint8_t>(vals[1]),
-					static_cast<uint8_t>(vals[2])
-				).dispatch();
-				tip_label.change_text(Locale::format("minigame.omok", s));
-				LOG(LOG_DEBUG, "UIMinigame: OmokPlace " << s);
-			}, []() {}, "x,y[,piece]");
+			
 		} else if (keycode == 'M' || keycode == 'm') {
 			// SoftKey turn,slot → MatchCard select
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				size_t c = s.find(',');
-				if (c == std::string::npos) return;
-				try {
-					uint8_t turn = static_cast<uint8_t>(std::stoi(s.substr(0, c)));
-					uint8_t slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
-					MinigameMatchCardSelectPacket(turn, slot).dispatch();
-					tip_label.change_text(Locale::format("minigame.card", s));
-					LOG(LOG_DEBUG, "UIMinigame: MatchCard " << s);
-				} catch (...) {}
-			}, []() {}, "turn,slot");
+			
 		} else if (keycode == 'L' || keycode == 'l') {
 			auto ui = UI::get().get_element<UIMuruengRaid>();
 			if (!ui) ui = UI::get().emplace<UIMuruengRaid>();

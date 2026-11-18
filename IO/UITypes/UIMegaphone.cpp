@@ -68,16 +68,7 @@ UIElement::Type UIArtMegaphone::get_type() const { return TYPE; }
 Button::State UIArtMegaphone::button_pressed(uint16_t id) {
 	if (id == BtEx) deactivate();
 	if (id == BtPreView) {
-		UI::get().emplace<UISoftKey>([](const std::string& msg) {
-			if (msg.empty()) return;
-			int16_t slot = 0; int32_t itemid = 0;
-			if (!find_art_mega(slot, itemid)) {
-				LOG(LOG_DEBUG, "UIArtMegaphone: no 5073/5077");
-				return;
-			}
-			UseMegaphonePacket(slot, itemid, msg, false).dispatch();
-			LOG(LOG_DEBUG, "UIArtMegaphone: USE_CASH id=" << itemid);
-		}, []() {}, "Art Megaphone");
+		
 	}
 	return Button::State::NORMAL;
 }
@@ -119,17 +110,7 @@ void UIAvatarMegaphone::send_key(int32_t keycode, bool pressed, bool escape)
 UIElement::Type UIAvatarMegaphone::get_type() const { return TYPE; }
 Button::State UIAvatarMegaphone::button_pressed(uint16_t id) {
 	if (id == BtCancel) { deactivate(); return Button::State::NORMAL; }
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) { tip_label.change_text(Locale::text("megaphone.empty")); return; }
-		int16_t slot = 0; int32_t itemid = 0;
-		if (!find_cash_prefix(539, slot, itemid)) {
-			tip_label.change_text(Locale::text("megaphone.no_539"));
-			return;
-		}
-		UseAvatarMegaphonePacket(slot, itemid, msg, false).dispatch();
-		tip_label.change_text(Locale::text("megaphone.sent"));
-		LOG(LOG_DEBUG, "UIAvatarMegaphone: USE_CASH id=" << itemid);
-	}, []() {}, "Avatar Mega");
+	
 	return Button::State::NORMAL;
 }
 }

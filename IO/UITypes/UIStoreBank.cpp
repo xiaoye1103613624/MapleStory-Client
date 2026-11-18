@@ -57,24 +57,7 @@ namespace ms
 			buttons[Buttons::BtGetAll] = std::make_unique<MapleButton>(root["BtGetAll"], Point<int16_t>(70, static_cast<int16_t>(dimension.y() - 40)));
 
 		mesolabel.change_text(Locale::format("storebank.mesos", "0"));
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			std::string t = tip;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "all" || t == "get" || t == "getall") {
-				FredrickGetAllPacket().dispatch();
-				show_notice(Locale::text("storebank.getall_sent"));
-				LOG(LOG_DEBUG, "UIStoreBank: SoftKey FredrickGetAll");
-				return;
-			}
-			if (t == "exit" || t == "x" || t == "close") {
-				send_exit();
-				LOG(LOG_DEBUG, "UIStoreBank: SoftKey FredrickExit");
-				return;
-			}
-			if (!tip.empty())
-				show_notice(tip);
-			LOG(LOG_DEBUG, "UIStoreBank: SoftKey tip len=" << tip.size());
-		}, []() {}, "all|exit|tip");
+		
 		LOG(LOG_DEBUG, "UIStoreBank: open");
 #endif
 	}
@@ -155,21 +138,7 @@ namespace ms
 			show_notice(Locale::text("storebank.getall_sent"));
 			LOG(LOG_DEBUG, "UIStoreBank: GetAll");
 		} else if (keycode == 'S' || keycode == 's') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "all" || t == "get" || t == "getall") {
-					FredrickGetAllPacket().dispatch();
-					show_notice(Locale::text("storebank.getall_sent"));
-					return;
-				}
-				if (t == "exit" || t == "x" || t == "close") {
-					send_exit();
-					return;
-				}
-				if (!tip.empty())
-					show_notice(tip);
-			}, []() {}, "all|exit|tip");
+			
 		} else if (keycode == 'R' || keycode == 'r') {
 			RemoteStorePacket().dispatch();
 			show_notice("RemoteStore");

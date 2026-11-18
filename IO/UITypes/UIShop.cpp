@@ -435,62 +435,18 @@ namespace ms
 		{
 			if (buystate.selection >= 0 && buystate.selection < buystate.lastslot) {
 				int16_t slot = buystate.selection;
-				UI::get().emplace<UISoftKey>([this, slot](const std::string& s) {
-					int16_t qty = 1;
-					if (!s.empty()) {
-						try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-					}
-					if (qty < 1 || slot < 0 || slot >= buystate.lastslot) return;
-					const BuyItem& item = buystate.items[slot];
-					NpcShopActionPacket(slot, item.get_id(), qty, true).dispatch();
-					LOG(LOG_DEBUG, "UIShop: SoftKey buy slot=" << slot << " qty=" << qty);
-				}, []() {}, "Buy qty (selected)");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					if (s.empty()) return;
-					try {
-						size_t comma = s.find(',');
-						int16_t slot = static_cast<int16_t>(std::stoi(comma == std::string::npos ? s : s.substr(0, comma)));
-						int16_t qty = 1;
-						if (comma != std::string::npos)
-							qty = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
-						if (slot < 0 || slot >= buystate.lastslot || qty < 1) return;
-						const BuyItem& item = buystate.items[slot];
-						NpcShopActionPacket(slot, item.get_id(), qty, true).dispatch();
-						LOG(LOG_DEBUG, "UIShop: SoftKey buy slot=" << slot << " qty=" << qty);
-					} catch (...) {}
-				}, []() {}, "Buy slot,qty");
+				
 			}
 		}
 		else if (keycode == 'S' || keycode == 's')
 		{
 			if (sellstate.selection >= 0 && sellstate.selection < sellstate.lastslot) {
 				int16_t idx = sellstate.selection;
-				UI::get().emplace<UISoftKey>([this, idx](const std::string& s) {
-					int16_t qty = 1;
-					if (!s.empty()) {
-						try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-					}
-					if (qty < 1 || idx < 0 || idx >= sellstate.lastslot) return;
-					const SellItem& item = sellstate.items[idx];
-					NpcShopActionPacket(item.get_slot(), item.get_id(), qty, false).dispatch();
-					LOG(LOG_DEBUG, "UIShop: SoftKey sell idx=" << idx << " qty=" << qty);
-				}, []() {}, "Sell qty (selected)");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					if (s.empty()) return;
-					try {
-						size_t comma = s.find(',');
-						int16_t idx = static_cast<int16_t>(std::stoi(comma == std::string::npos ? s : s.substr(0, comma)));
-						int16_t qty = 1;
-						if (comma != std::string::npos)
-							qty = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
-						if (idx < 0 || idx >= sellstate.lastslot || qty < 1) return;
-						const SellItem& item = sellstate.items[idx];
-						NpcShopActionPacket(item.get_slot(), item.get_id(), qty, false).dispatch();
-						LOG(LOG_DEBUG, "UIShop: SoftKey sell idx=" << idx << " qty=" << qty);
-					} catch (...) {}
-				}, []() {}, "Sell idx,qty");
+				
 			}
 		}
 		else if (keycode == 'R' || keycode == 'r')
@@ -503,14 +459,7 @@ namespace ms
 					return;
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot < 0) return;
-					NpcShopActionPacket(slot).dispatch();
-					LOG(LOG_DEBUG, "UIShop: SoftKey recharge slot=" << slot);
-				} catch (...) {}
-			}, []() {}, "Recharge slot");
+			
 		}
 		else if (keycode == 'T' || keycode == 't')
 		{

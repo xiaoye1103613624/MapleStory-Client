@@ -130,12 +130,7 @@ namespace ms
 				FamilyAddPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamilyTree: SoftKey Add " << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (!name.empty()) {
-						FamilyAddPacket(name).dispatch();
-						LOG(LOG_DEBUG, "UIFamilyTree: SoftKey Add " << name);
-					}
-				}, []() {}, "Junior name");
+				
 			}
 		} else if (keycode == 'X' || keycode == 'x') {
 			if (const FamilyTreeEntry* e = selected_entry()) {
@@ -157,23 +152,7 @@ namespace ms
 						LOG(LOG_DEBUG, "UIFamilyTree: Separate cid=" << from_ci);
 					});
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
-						if (id_s.empty()) {
-							UI::get().emplace<UIYesNo>(Locale::text("family.ask_leave"), [](bool yes) {
-								if (!yes) return;
-								FamilySeparateJuniorPacket().dispatch();
-							});
-							return;
-						}
-						try {
-							int32_t id = std::stoi(id_s);
-							if (id > 0) {
-								selected_cid = id;
-								FamilySeparateSeniorPacket(id).dispatch();
-								LOG(LOG_DEBUG, "UIFamilyTree: Separate cid=" << id);
-							}
-						} catch (...) {}
-					}, []() {}, "junior cid (empty=leave)");
+					
 				}
 			}
 		} else if (keycode == 'U' || keycode == 'u' || keycode == 'S' || keycode == 's') {
@@ -188,11 +167,7 @@ namespace ms
 					FamilyUsePacket(1, pre).dispatch();
 					LOG(LOG_DEBUG, "UIFamilyTree: Summon " << pre);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& name) {
-						if (name.empty()) return;
-						FamilyUsePacket(1, name).dispatch();
-						LOG(LOG_DEBUG, "UIFamilyTree: Summon " << name);
-					}, []() {}, "Summon name");
+					
 				}
 			}
 		} else if (keycode == 'O' || keycode == 'o' || keycode == 'R' || keycode == 'r') {
@@ -219,10 +194,7 @@ namespace ms
 				FamilyAddPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamilyTree: BtJunior Add " << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (!name.empty())
-						FamilyAddPacket(name).dispatch();
-				}, []() {}, "Junior name");
+				
 			}
 		} else if (id == BtLeft || id == BtRight) {
 			OpenFamilyPedigreePacket().dispatch();

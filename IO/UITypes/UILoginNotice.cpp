@@ -227,15 +227,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "1")
-						button_pressed(Buttons::YES);
-					else if (t == "n" || t == "no" || t == "0")
-						button_pressed(Buttons::NO);
-				}, []() {}, "y|n");
+				
 			}
 		}
 	}
@@ -330,15 +322,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "1" || t == "quit")
-						button_pressed(BT_OK);
-					else if (t == "n" || t == "no" || t == "0" || t == "cancel")
-						deactivate();
-				}, []() {}, "quit|cancel");
+				
 			}
 		}
 	}
@@ -469,15 +453,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "1")
-						button_pressed(Buttons::OK);
-					else if (t == "n" || t == "no" || t == "0")
-						deactivate();
-				}, []() {}, "y|n");
+				
 			}
 		}
 	}
@@ -542,15 +518,7 @@ namespace ms
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 			|| keycode == 'A' || keycode == 'a' || keycode == 'B' || keycode == 'b')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "a" || t == "typea" || t == "0" || t == "default")
-					button_pressed(Buttons::TYPEA);
-				else if (t == "b" || t == "typeb" || t == "1" || t == "alternate")
-					button_pressed(Buttons::TYPEB);
-			}, []() {}, "a|b");
+			
 		}
 	}
 
@@ -640,13 +608,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'Y' || keycode == 'y')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "1")
-						confirm();
-				}, []() {}, "y|ok");
+				
 			}
 		}
 	}

@@ -195,11 +195,7 @@ namespace ms
 				FamilyUsePacket(1, pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamily: Use summon target=" << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& name) {
-					if (name.empty()) return;
-					FamilyUsePacket(1, name).dispatch();
-					LOG(LOG_DEBUG, "UIFamily: Use summon target=" << name);
-				}, []() {}, Locale::text("family.softkey_member"));
+				
 			}
 			return;
 		}
@@ -239,33 +235,14 @@ namespace ms
 				pre_name = ci->get_target_name();
 			}
 			auto ask_yn = [](int32_t id, const std::string& name) {
-				UI::get().emplace<UISoftKey>([id, name](const std::string& yn) {
-					bool ok = !yn.empty() && (yn[0] == 'y' || yn[0] == 'Y' || yn[0] == '1');
-					FamilyAcceptPacket(id, name, ok).dispatch();
-					LOG(LOG_DEBUG, "UIFamily: Accept id=" << id << " ok=" << ok);
-				}, []() {}, "y/n");
+				
 			};
 			if (pre_id > 0 && !pre_name.empty()) {
 				ask_yn(pre_id, pre_name);
 			} else if (pre_id > 0) {
-				UI::get().emplace<UISoftKey>([ask_yn, pre_id](const std::string& name) {
-					if (name.empty()) return;
-					ask_yn(pre_id, name);
-				}, []() {}, Locale::text("family.softkey_inviter_name"));
+				
 			} else {
-				UI::get().emplace<UISoftKey>([ask_yn, pre_name](const std::string& id_s) {
-					int32_t id = 0;
-					try { id = std::stoi(id_s); } catch (...) { return; }
-					if (id <= 0) return;
-					if (!pre_name.empty()) {
-						ask_yn(id, pre_name);
-					} else {
-						UI::get().emplace<UISoftKey>([ask_yn, id](const std::string& name) {
-							if (name.empty()) return;
-							ask_yn(id, name);
-						}, []() {}, Locale::text("family.softkey_inviter_name"));
-					}
-				}, []() {}, Locale::text("family.softkey_inviter_cid"));
+				
 			}
 		} else if (keycode == 'J' || keycode == 'j') {
 			std::string pre;
@@ -275,20 +252,10 @@ namespace ms
 				FamilyAddPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamily: Add junior=" << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (!name.empty()) {
-						FamilyAddPacket(name).dispatch();
-						LOG(LOG_DEBUG, "UIFamily: Add junior=" << name);
-					}
-				}, []() {}, Locale::text("family.softkey_junior"));
+				
 			}
 		} else if (keycode == 'P' || keycode == 'p') {
-			UI::get().emplace<UISoftKey>([](const std::string& msg) {
-				if (!msg.empty()) {
-					FamilyPreceptPacket(msg).dispatch();
-					LOG(LOG_DEBUG, "UIFamily: Precept len=" << msg.size());
-				}
-			}, []() {}, Locale::text("family.softkey_precept"));
+			
 		} else if (keycode == 'T' || keycode == 't') {
 			OpenFamilyPedigreePacket().dispatch();
 			UI::get().emplace<UIFamilyTree>();
@@ -326,24 +293,7 @@ namespace ms
 					LOG(LOG_DEBUG, "UIFamily: Separate junior cid=" << from_tree);
 				});
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& id_s) {
-					if (id_s.empty()) {
-						UI::get().emplace<UIYesNo>(Locale::text("family.ask_leave"), [](bool yes) {
-							if (!yes) return;
-							FamilySeparateJuniorPacket().dispatch();
-							LOG(LOG_DEBUG, "UIFamily: Separate as junior");
-						});
-						return;
-					}
-					int32_t id = 0;
-					try { id = std::stoi(id_s); } catch (...) { return; }
-					if (id <= 0) return;
-					UI::get().emplace<UIYesNo>(Locale::format("family.ask_separate_cid", std::to_string(id)), [id](bool yes) {
-						if (!yes) return;
-						FamilySeparateSeniorPacket(id).dispatch();
-						LOG(LOG_DEBUG, "UIFamily: Separate junior cid=" << id);
-					});
-				}, []() {}, Locale::text("family.softkey_junior_cid"));
+				
 			}
 		}
 	}
@@ -366,16 +316,10 @@ namespace ms
 			if (!pre.empty()) {
 				FamilyAddPacket(pre).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (!name.empty())
-						FamilyAddPacket(name).dispatch();
-				}, []() {}, Locale::text("family.softkey_junior"));
+				
 			}
 		} else if (id == BtPrecept) {
-			UI::get().emplace<UISoftKey>([](const std::string& msg) {
-				if (!msg.empty())
-					FamilyPreceptPacket(msg).dispatch();
-			}, []() {}, Locale::text("family.softkey_precept"));
+			
 		} else if (id == BtSpecial) {
 			use_selected();
 		} else if (id == BtLeft) {

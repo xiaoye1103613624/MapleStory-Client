@@ -151,22 +151,7 @@ namespace ms
 		}
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				bool female = false;
-				if (t == "f" || t == "female" || t == "1" || t == Locale::text("uigender.129"))
-					female = true;
-				else if (t == "m" || t == "male" || t == "0" || t == Locale::text("uigender.131"))
-					female = false;
-				else
-					return;
-				UI::get().emplace<UILoginWait>();
-				GenderPacket(female).dispatch();
-				this->deactivate();	// lambda 内需显式 this->（C4573：基类成员查找）
-				LOG(LOG_DEBUG, "UIGender: SoftKey female=" << female);
-			}, []() {}, "m|f");
+			
 		}
 	}
 

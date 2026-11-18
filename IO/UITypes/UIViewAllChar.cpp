@@ -156,16 +156,7 @@ namespace ms
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
 			// SoftKey 仅输入 cid：world 填 0（s9 读后丢弃，按 charId 定世界）。
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int32_t cid = std::stoi(tip);
-					if (cid > 0) {
-						PickAllCharPacket(cid, 0).dispatch();
-						LOG(LOG_DEBUG, "UIViewAllChar: SoftKey PickAllChar cid=" << cid);
-					}
-				} catch (...) {}
-			}, []() {}, "Char cid");
+			
 		}
 		else if (keycode == 'E' || keycode == 'e')
 		{
@@ -200,7 +191,7 @@ namespace ms
 								if (!pic.empty())
 									PickAllCharPicPacket(pic, cid, wid).dispatch();
 							},
-							[]() {}, "PIC");
+							[]() {}, "PIC", UISoftKey::Mode::Pic);
 					}
 					else
 					{
@@ -212,14 +203,7 @@ namespace ms
 				}
 				else
 				{
-					UI::get().emplace<UISoftKey>([](const std::string& tip) {
-						if (tip.empty()) return;
-						try {
-							int32_t cid = std::stoi(tip);
-							if (cid > 0)
-								PickAllCharPacket(cid, 0).dispatch();
-						} catch (...) {}
-					}, []() {}, "Char cid");
+					
 				}
 				break;
 			}

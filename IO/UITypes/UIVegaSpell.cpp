@@ -127,18 +127,7 @@ namespace ms
 				equip_icon = ItemData::get(equip_itemid).get_icon(false);
 				status.change_text(Locale::format("vegaspell.slot_equip_num", std::to_string(from_inv)));
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					try {
-						int16_t slot = static_cast<int16_t>(std::stoi(s));
-						if (slot > 0) {
-							equip_slot = slot;
-							equip_itemid = Stage::get().get_player().get_inventory()
-								.get_item_id(InventoryType::Id::EQUIP, slot);
-							equip_icon = ItemData::get(equip_itemid).get_icon(false);
-							status.change_text(Locale::format("vegaspell.slot_equip_num", s));
-						}
-					} catch (...) {}
-				}, []() {}, Locale::text("vegaspell.prompt_equip_slot"));
+				
 			}
 		} else if (keycode == 'S' || keycode == 's') {
 			int16_t from_inv = 0;
@@ -153,18 +142,7 @@ namespace ms
 				scroll_icon = ItemData::get(scroll_itemid).get_icon(false);
 				status.change_text(Locale::format("vegaspell.slot_scroll_num", std::to_string(from_inv)));
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					try {
-						int16_t slot = static_cast<int16_t>(std::stoi(s));
-						if (slot > 0) {
-							scroll_slot = slot;
-							scroll_itemid = Stage::get().get_player().get_inventory()
-								.get_item_id(InventoryType::Id::USE, slot);
-							scroll_icon = ItemData::get(scroll_itemid).get_icon(false);
-							status.change_text(Locale::format("vegaspell.slot_scroll_num", s));
-						}
-					} catch (...) {}
-				}, []() {}, Locale::text("vegaspell.prompt_scroll_slot"));
+				
 			}
 		} else if (keycode == 'G' || keycode == 'g') {
 			button_pressed(Buttons::BtStart);

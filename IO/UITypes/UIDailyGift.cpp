@@ -500,14 +500,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t day = static_cast<int16_t>(std::stoi(s));
-					if (day < 0 || day >= kTotalDays) return;
-					fake_claim_slot(day);
-					LOG(LOG_DEBUG, "UIDailyGift: SoftKey claim day=" << day);
-				} catch (...) {}
-			}, []() {}, "Gift day");
+			
 		}
 	}
 

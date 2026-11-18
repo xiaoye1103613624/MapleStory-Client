@@ -114,11 +114,7 @@ namespace ms
 		if (escape) { visible = false; deactivate(); return; }
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				set_status(tip);
-				NpcTalkMorePacket(tip).dispatch();
-			}, []() {}, "MTS|tip");
+			
 		}
 		else if (keycode == 'R' || keycode == 'r')
 		{
@@ -132,17 +128,7 @@ namespace ms
 		}
 		else if (keycode == 'I' || keycode == 'i')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					size_t c = s.find(',');
-					int32_t id = std::stoi(c == std::string::npos ? s : s.substr(0, c));
-					int32_t price = c == std::string::npos ? 0 : std::stoi(s.substr(c + 1));
-					if (id <= 0) return;
-					std::vector<std::pair<int32_t, int32_t>> one = { { id, price } };
-					set_items(one);
-					set_status("Item " + std::to_string(id) + " @" + std::to_string(price));
-				} catch (...) {}
-			}, []() {}, "itemid[,price]");
+			
 		}
 		else if (keycode == 'E' || keycode == 'e')
 		{
@@ -158,18 +144,7 @@ namespace ms
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					size_t c = s.find(',');
-					if (c == std::string::npos) return;
-					int32_t owner = std::stoi(s.substr(0, c));
-					int32_t mapid = std::stoi(s.substr(c + 1));
-					if (owner <= 0 || mapid <= 0) return;
-					OwlWarpPacket(owner, mapid).dispatch();
-					set_status("OwlWarp " + std::to_string(owner) + "@" + std::to_string(mapid));
-					LOG(LOG_DEBUG, "UIMTS: OwlWarp owner=" << owner << " map=" << mapid);
-				} catch (...) {}
-			}, []() {}, "ownerid,mapid");
+			
 		}
 	}
 

@@ -229,19 +229,7 @@ namespace ms
 				StorageTakePacket(si->type, si->slot).dispatch();
 				LOG(LOG_DEBUG, "UIStorage: Take selected slot=" << si->slot);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					size_t c = s.find(',');
-					if (c == std::string::npos) return;
-					try {
-						int type = std::stoi(s.substr(0, c));
-						int16_t slot = static_cast<int16_t>(std::stoi(s.substr(c + 1)));
-						if (type >= 1 && type <= 5 && slot >= 0) {
-							selected_slot = slot;
-							StorageTakePacket(static_cast<InventoryType::Id>(type), slot).dispatch();
-							LOG(LOG_DEBUG, "UIStorage: SoftKey Take type=" << type << " slot=" << slot);
-						}
-					} catch (...) {}
-				}, []() {}, "type,slot");
+				
 			}
 		} else if (keycode == 'P' || keycode == 'p') {
 			int16_t inv_slot = 0;
@@ -256,35 +244,9 @@ namespace ms
 			if (inv_slot > 0 && itemid > 0) {
 				int16_t slot = inv_slot;
 				int32_t id = itemid;
-				UI::get().emplace<UISoftKey>([slot, id](const std::string& s) {
-					int16_t qty = 1;
-					if (!s.empty()) {
-						try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-					}
-					if (qty < 1) return;
-					StorageStorePacket(slot, id, qty).dispatch();
-					LOG(LOG_DEBUG, "UIStorage: Store from inv slot=" << slot << " id=" << id << " qty=" << qty);
-				}, []() {}, "Store qty (selected)");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					int vals[3] = { 0, 0, 1 };
-					size_t start = 0; int vi = 0;
-					while (vi < 3 && start <= s.size()) {
-						size_t c = s.find(',', start);
-						std::string part = (c == std::string::npos) ? s.substr(start) : s.substr(start, c - start);
-						try { vals[vi] = std::stoi(part); } catch (...) {}
-						++vi;
-						if (c == std::string::npos) break;
-						start = c + 1;
-					}
-					if (vals[0] > 0 && vals[1] > 0) {
-						StorageStorePacket(
-							static_cast<int16_t>(vals[0]), vals[1],
-							static_cast<int16_t>(vals[2])
-						).dispatch();
-						LOG(LOG_DEBUG, "UIStorage: SoftKey Store " << s);
-					}
-				}, []() {}, "slot,itemid,qty");
+				
 			}
 		} else if (keycode == 'D' || keycode == 'd') {
 			auto ui = UI::get().get_element<UIDelivery>();
@@ -300,17 +262,6 @@ namespace ms
 	void UIStorage::prompt_meso(bool deposit)
 	{
 		bool d = deposit;
-		UI::get().emplace<UISoftKey>([d](const std::string& s)
-		{
-			try
-			{
-				int32_t amt = std::stoi(s);
-				if (amt > 0)
-					StorageMesoPacket(d ? -amt : amt).dispatch();
-			}
-			catch (...)
-			{
-			}
-		});
+		
 	}
 }

@@ -38,15 +38,15 @@ namespace ms
 
 		enum class Mode : uint8_t
 		{
-			Pic,  // 二级密码（默认，保持登录链路行为）
-			Text  // 自由文本（Messenger / 密语 / Admin 命令等）
+			Text,  // 自由文本（默认）：明文/最短 1/允许键盘输入。普通热键软键盘一律走此模式。
+			Pic    // 二级密码：密文掩码/最短 6/check_pic/仅鼠标点键。所有 PIC 调用方须显式传此值。
 		};
 
 		static constexpr Type TYPE = UIElement::Type::SOFTKEYBOARD;
 		static constexpr bool FOCUSED = true;
 		static constexpr bool TOGGLED = false;
 
-		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos, Mode mode = Mode::Pic);
+		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Point<int16_t> tooltip_pos, Mode mode = Mode::Text);
 		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Mode mode);
 		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text);
 		UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback);

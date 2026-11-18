@@ -80,21 +80,7 @@ namespace ms
 
 		list_origin = Point<int16_t>(24, 86);
 		load_recipes();
-		UI::get().emplace<UISoftKey>([this](const std::string& idstr) {
-			if (idstr.empty()) return;
-			int32_t want = static_cast<int32_t>(std::strtol(idstr.c_str(), nullptr, 10));
-			if (want <= 0) { status.change_text(Locale::text("maker.bad_item_id")); return; }
-			for (size_t i = 0; i < recipes.size(); ++i) {
-				if (recipes[i].itemId == want) {
-					scroll = static_cast<int16_t>(i * row_h);
-					MakerCreatePacket(want).dispatch();
-					status.change_text(Locale::format("maker.craft", idstr));
-					LOG(LOG_DEBUG, "UIMaker: SoftKey craft id=" << want);
-					return;
-				}
-			}
-			status.change_text(Locale::format("maker.no_recipe", idstr));
-		}, []() {}, "Maker itemId");
+		
 	}
 
 	void UIMaker::load_recipes()
@@ -142,7 +128,7 @@ namespace ms
 		for (const Recipe& r : recipes)
 		{
 			const ItemData& id = ItemData::get(r.itemId);
-			icons.push_back(id.get_icon(false));
+			icons.push_back(id.get_icon(r.itemId / 10000 == 238));
 			names.push_back(Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, id.get_name()));
 
 			std::string coststr = Locale::format("maker.cost_meso", std::to_string(r.meso));
@@ -258,16 +244,7 @@ namespace ms
 				MakerCreatePacket(selected_item_id).dispatch();
 				LOG(LOG_DEBUG, "UIMaker: craft selected id=" << selected_item_id);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& idstr) {
-					try {
-						int32_t want = std::stoi(idstr);
-						if (want > 0) {
-							selected_item_id = want;
-							MakerCreatePacket(want).dispatch();
-							LOG(LOG_DEBUG, "UIMaker: SoftKey craft id=" << want);
-						}
-					} catch (...) {}
-				}, []() {}, "Maker itemId");
+				
 			}
 		}
 		else if (keycode == 'R' || keycode == 'r')
@@ -278,10 +255,7 @@ namespace ms
 		}
 		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (!tip.empty())
-					set_status(tip);
-			}, []() {}, "Maker status");
+			
 		}
 	}
 

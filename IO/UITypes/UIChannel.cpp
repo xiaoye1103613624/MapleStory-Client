@@ -113,6 +113,9 @@ namespace ms
 
 		dimension = Point<int16_t>(436, bottom_strip_y() + STRIP_HEIGHT);
 		dragarea = Point<int16_t>(dimension.x(), 20);
+
+		// 首次打开（未拖动过）按视口居中，避免固定默认坐标在大窗口下偏左上。
+		center_if_position_unset(dimension);
 	}
 
 	int16_t UIChannel::slot_x(uint8_t i)
@@ -236,16 +239,7 @@ namespace ms
 			else if (keycode == 'C' || keycode == 'c')
 			{
 				// SoftKey 频道号（1-based 显示 → 0-based packet）
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					try {
-						int ch = std::stoi(s);
-						if (ch >= 1 && ch <= static_cast<int>(channel_count)) {
-							selected_channel = static_cast<uint8_t>(ch - 1);
-							change_channel();
-							LOG(LOG_DEBUG, "UIChannel: SoftKey ch=" << ch);
-						}
-					} catch (...) {}
-				}, []() {}, "Channel 1-N");
+				
 			}
 			else if (keycode == 'G' || keycode == 'g' || keycode == 13)
 			{

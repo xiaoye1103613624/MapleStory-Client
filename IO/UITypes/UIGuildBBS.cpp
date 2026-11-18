@@ -388,35 +388,7 @@ namespace ms
 			}
 		}
 		set_page(Page::Write);
-		UI::get().emplace<UISoftKey>([this](const std::string& title)
-		{
-			if (title.empty())
-			{
-				set_page(Page::List);
-				return;
-			}
-			UI::get().emplace<UISoftKey>([this, title](const std::string& body)
-			{
-				if (body.empty())
-				{
-					set_page(Page::List);
-					return;
-				}
-				if (write_edit)
-				{
-					BbsEditPacket(edit_local_id, write_as_notice, title, body, write_icon).dispatch();
-					LOG(LOG_INFO, "[GuildBBS] edit id=" << edit_local_id);
-				}
-				else
-				{
-					BbsPostPacket(write_as_notice, title, body, write_icon).dispatch();
-					LOG(LOG_INFO, "[GuildBBS] post notice=" << (write_as_notice ? 1 : 0)
-						<< " icon=" << write_icon);
-				}
-				request_list(page_index);
-				set_page(Page::List);
-			}, [this]() { set_page(Page::List); }, "BBS body");
-		}, [this]() { set_page(Page::List); }, "BBS title");
+		
 	}
 
 	void UIGuildBBS::prompt_reply()
@@ -427,14 +399,7 @@ namespace ms
 			tip_label.change_text(Locale::text("guildbbs.none_selected"));
 			return;
 		}
-		UI::get().emplace<UISoftKey>([this, tid](const std::string& text)
-		{
-			if (text.empty())
-				return;
-			BbsReplyPacket(tid, text).dispatch();
-			BbsOpenPacket(tid).dispatch();
-			LOG(LOG_INFO, "[GuildBBS] reply id=" << tid);
-		}, []() {}, "BBS reply");
+		
 	}
 
 	void UIGuildBBS::dispatch_delete_selected()

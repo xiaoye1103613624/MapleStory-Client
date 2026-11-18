@@ -118,20 +118,9 @@ namespace ms
 				pre = ci->get_target_name();
 			if (!pre.empty()) {
 				std::string to = pre;
-				UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-					if (msg.empty()) return;
-					NoteSendPacket(to, msg).dispatch();
-					tip_label.change_text(Locale::format("memo.sent_to", to));
-				}, []() {}, "Memo message");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& to) {
-					if (to.empty()) return;
-					UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-						if (msg.empty()) return;
-						NoteSendPacket(to, msg).dispatch();
-						tip_label.change_text(Locale::format("memo.sent_to", to));
-					}, []() {}, "Memo message");
-				}, []() {}, "Memo to");
+				
 			}
 		} else if (keycode == 'X' || keycode == 'x') {
 			if (selected >= 0 && selected < static_cast<int>(notes.size())) {
@@ -140,17 +129,7 @@ namespace ms
 				tip_label.change_text(Locale::format("memo.discard_id", std::to_string(ids[0])));
 				LOG(LOG_DEBUG, "UIMemo: SoftKey Discard id=" << ids[0]);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& id_s) {
-					try {
-						int32_t id = std::stoi(id_s);
-						if (id > 0) {
-							std::vector<int32_t> ids{ id };
-							NoteDiscardPacket(ids).dispatch();
-							tip_label.change_text(Locale::format("memo.discard_id", id_s));
-							LOG(LOG_DEBUG, "UIMemo: SoftKey Discard id=" << id);
-						}
-					} catch (...) {}
-				}, []() {}, "Note id");
+				
 			}
 		} else if (keycode == 'R' || keycode == 'r') {
 			tip_label.change_text(Locale::format("memo.notes_count", std::to_string(notes.size())));
@@ -190,20 +169,9 @@ namespace ms
 					pre = ci->get_target_name();
 				if (!pre.empty()) {
 					std::string to = pre;
-					UI::get().emplace<UISoftKey>([to](const std::string& msg) {
-						if (msg.empty()) return;
-						NoteSendPacket(to, msg).dispatch();
-						LOG(LOG_DEBUG, "UIMemo: NoteSend to=" << to << " len=" << msg.size());
-					}, []() {}, "Memo message");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& to) {
-						if (to.empty()) return;
-						UI::get().emplace<UISoftKey>([to](const std::string& msg) {
-							if (msg.empty()) return;
-							NoteSendPacket(to, msg).dispatch();
-							LOG(LOG_DEBUG, "UIMemo: NoteSend to=" << to << " len=" << msg.size());
-						}, []() {}, "Memo message");
-					}, []() {}, "Memo to");
+					
 				}
 				break;
 			}

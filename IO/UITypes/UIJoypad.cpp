@@ -94,22 +94,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "y" || t == "yes" || t == "ok" || t == "save" || t == "1")
-						save();
-					else if (t == "n" || t == "no" || t == "0" || t == "cancel")
-						cancel();
-					else if (t == "alt" || t == "alternative") {
-						alternative_settings = true;
-						if (backgrnd[true]) dimension = backgrnd[true].get_dimensions();
-					} else if (t == "classic" || t == "c") {
-						alternative_settings = false;
-						if (backgrnd[false]) dimension = backgrnd[false].get_dimensions();
-					}
-				}, []() {}, "save|cancel|alt|classic");
+				
 			}
 		}
 	}

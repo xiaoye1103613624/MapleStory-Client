@@ -134,33 +134,9 @@ namespace ms
 		if (keycode == 'B' || keycode == 'b') {
 			if (selected_slot >= 0 && static_cast<size_t>(selected_slot) < merch_items.size()) {
 				int8_t slot = selected_slot;
-				UI::get().emplace<UISoftKey>([slot](const std::string& s) {
-					int qty = 1;
-					if (!s.empty()) {
-						try { qty = std::stoi(s); } catch (...) { return; }
-					}
-					if (qty > 0) {
-						HiredMerchantBuyPacket(slot, static_cast<int16_t>(qty)).dispatch();
-						LOG(LOG_DEBUG, "UIMerchant: SoftKey Buy slot=" << static_cast<int>(slot) << " qty=" << qty);
-					}
-				}, []() {}, "Buy qty (selected)");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					int slot = 0, qty = 1;
-					size_t c = s.find(',');
-					try {
-						if (c == std::string::npos) slot = std::stoi(s);
-						else {
-							slot = std::stoi(s.substr(0, c));
-							qty = std::stoi(s.substr(c + 1));
-						}
-					} catch (...) { return; }
-					if (slot >= 0 && qty > 0) {
-						selected_slot = static_cast<int8_t>(slot);
-						HiredMerchantBuyPacket(static_cast<int8_t>(slot), static_cast<int16_t>(qty)).dispatch();
-						LOG(LOG_DEBUG, "UIMerchant: SoftKey Buy slot=" << slot << " qty=" << qty);
-					}
-				}, []() {}, "slot[,qty]");
+				
 			}
 		} else if (keycode == 'A' || keycode == 'a') {
 			// SoftKey：背包选中格时 qty[,merchSlot]；否则 iv,pos,qty,slot
@@ -174,40 +150,9 @@ namespace ms
 			if (inv_slot > 0 && inv_type > 0) {
 				int8_t iv = inv_type;
 				int16_t pos = inv_slot;
-				UI::get().emplace<UISoftKey>([iv, pos](const std::string& s) {
-					int16_t qty = 1;
-					int8_t mslot = 0;
-					if (!s.empty()) {
-						size_t c = s.find(',');
-						try {
-							qty = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
-							if (c != std::string::npos)
-								mslot = static_cast<int8_t>(std::stoi(s.substr(c + 1)));
-						} catch (...) { return; }
-					}
-					if (qty < 1) return;
-					HiredMerchantSetItemPacket(iv, pos, qty, mslot).dispatch();
-					LOG(LOG_DEBUG, "UIMerchant: SetItem from inv iv=" << (int)iv
-						<< " pos=" << pos << " qty=" << qty);
-				}, []() {}, "qty[,merchSlot]");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& spec) {
-					int vals[4] = { 2, 1, 1, 0 };
-					size_t start = 0; int vi = 0;
-					while (vi < 4 && start <= spec.size()) {
-						size_t c = spec.find(',', start);
-						std::string part = (c == std::string::npos) ? spec.substr(start) : spec.substr(start, c - start);
-						try { vals[vi] = std::stoi(part); } catch (...) {}
-						++vi;
-						if (c == std::string::npos) break;
-						start = c + 1;
-					}
-					HiredMerchantSetItemPacket(
-						static_cast<int8_t>(vals[0]), static_cast<int16_t>(vals[1]),
-						static_cast<int16_t>(vals[2]), static_cast<int8_t>(vals[3])
-					).dispatch();
-					LOG(LOG_DEBUG, "UIMerchant: SoftKey SetItem " << spec);
-				}, []() {}, "iv,pos,qty,slot");
+				
 			}
 		} else if (keycode == 'T' || keycode == 't') {
 			std::string pre;
@@ -217,11 +162,7 @@ namespace ms
 				set_owner(pre);
 				LOG(LOG_DEBUG, "UIMerchant: owner from CharInfo len=" << pre.size());
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					set_owner(tip);
-					LOG(LOG_DEBUG, "UIMerchant: SoftKey owner len=" << tip.size());
-				}, []() {}, "Owner name");
+				
 			}
 		} else if (keycode == 'O' || keycode == 'o') {
 			HiredMerchantOpenPacket().dispatch();

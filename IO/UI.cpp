@@ -23,6 +23,7 @@
 #include "Window.h"
 
 #include "../Configuration.h"
+#include "../Util/Misc.h"
 #include "../Util/PerfLog.h"
 #include "../Util/ResolutionTiers.h"
 
@@ -132,6 +133,10 @@ namespace ms
 
 	void UI::send_focus(int focused)
 	{
+		// 失焦时收不到 mouse-up：强制清按住态，避免长按连升卡在按下态。
+		if (!focused)
+			primary_down = false;
+
 		if (focused)
 		{
 			// The window gained input focus
@@ -161,6 +166,10 @@ namespace ms
 
 	void UI::send_cursor(bool pressed)
 	{
+		// 物理主键按住态：down(true) 置位、up(false) 清位。长按连升等 per-frame
+		// 逻辑读 is_primary_down()；失焦在 send_focus(false) 里强制清。
+		primary_down = pressed;
+
 		Cursor::State cursorstate = (pressed && enabled) ? Cursor::State::CLICKING : Cursor::State::IDLE;
 		Point<int16_t> cursorpos = cursor.get_position();
 		send_cursor(cursorpos, cursorstate);
@@ -304,10 +313,26 @@ namespace ms
 			// 用 ASCII 比较 'A'/'S'/'D'/'4'。未绑定键 get_mapping → NONE/0，捷径永不触发。
 			// GLFW 可打印键码与 ASCII 同值（A=65…Z=90，'4'=52），未绑定时把 keycode
 			// 当作 action 下传；已绑定键仍走 KEYMAP，不受影响。
+			//
+			// 软键盘总闸（ui.softkey.hotkeys，默认 false）：原生 v83 不启用软键盘，
+			// 这些"裸字母 → action → 各窗口 emplace<UISoftKey>"是历史过度实现。
+			// 关闭时不再把可打印字母当 action 下传，从源头掐断所有裸键软键盘捷径；
+			// 方向键/回车/小键盘回车仍单独兜底（焦点气球目录/列表依赖），不受影响。
+			// 选角 PIC 软键盘走 UICharSelect/UIViewAllChar 的服务端状态驱动分支，
+			// 不经这里的 ASCII 兜底，故完全不受此开关影响。
+			// 静态缓存：send_key 为高频路径，配置只在首帧读取一次。
+			static const bool softkey_hotkeys = Configuration::get().get_softkey_hotkeys();
+			const bool printable = keycode >= GLFW_KEY_SPACE && keycode <= GLFW_KEY_Z;
 			KeyType::Id map_type = mapping.type;
 			int32_t map_action = mapping.action;
 			if (map_type == KeyType::Id::NONE
-				&& keycode >= GLFW_KEY_SPACE && keycode <= GLFW_KEY_Z)
+				&& ((softkey_hotkeys && printable)
+					// 方向键 / 回车默认不在 KEYMAP 里（get_mapping → NONE,0），
+					// 不兜底传真实键码的话，焦点气球（目录/界面列表）的
+					// send_key 收到的 action 恒为 0 → 上下键/回车永远无效。
+					|| keycode == GLFW_KEY_UP || keycode == GLFW_KEY_DOWN
+					|| keycode == GLFW_KEY_LEFT || keycode == GLFW_KEY_RIGHT
+					|| keycode == GLFW_KEY_ENTER || keycode == GLFW_KEY_KP_ENTER))
 			{
 				map_action = keycode;
 			}
@@ -381,8 +406,12 @@ namespace ms
 			}
 			else
 			{
+				// X 键：举报窗/右键菜单的 send_key 用 'X'/'x' 关闭。
+				// 归入 get_front 层级派发，SoftKey 打开时先关 SoftKey 再关宿主窗。
+				bool close_x = keycode == GLFW_KEY_X;
+
 				// All
-				if (escape || tab || enter || arrows)
+				if (escape || tab || enter || arrows || close_x)
 				{
 					// Login
 					types.emplace_back(UIElement::Type::WORLDSELECT);
@@ -399,7 +428,13 @@ namespace ms
 					// Login
 					types.emplace_back(UIElement::Type::SOFTKEYBOARD);
 
-					// Game
+					// Game — 举报窗/右键菜单同样支持 Esc 关闭。
+					// 二者 FOCUSED=true 且 send_key 已实现 escape→deactivate，
+					// 但此前不在白名单，Esc 直接落到全局兜底去开目录（关不掉）。
+					// get_front 按层级从后往前取：SoftKey 由 Report 打开时位于更上层，
+					// 会先收到 Esc 关闭，下一次 Esc 才轮到 Report —— 天然层级优先。
+					types.emplace_back(UIElement::Type::CONTEXTMENU);
+					types.emplace_back(UIElement::Type::REPORT);
 					types.emplace_back(UIElement::Type::NOTICE);
 					types.emplace_back(UIElement::Type::QUICKSLOTCONFIG);
 					types.emplace_back(UIElement::Type::KEYCONFIG);
@@ -440,6 +475,13 @@ namespace ms
 					types.emplace_back(UIElement::Type::QUESTLOG);
 					types.emplace_back(UIElement::Type::USERLIST);
 				}
+				else if (close_x)
+				{
+					// X 键关闭：SoftKey 在最上层，先关它；否则关举报窗/右键菜单。
+					types.emplace_back(UIElement::Type::SOFTKEYBOARD);
+					types.emplace_back(UIElement::Type::CONTEXTMENU);
+					types.emplace_back(UIElement::Type::REPORT);
+				}
 
 				if (types.size() > 0)
 				{
@@ -455,27 +497,23 @@ namespace ms
 
 			if (!sent)
 			{
-				// SoftKey D：TemporaryStatView 开关。UIBuffList SoftKey D 因 FOCUSED=false
-				// 键进不去；未绑定 D 时在此兜底（与 BuffList::send_key SoftKey D 同语义）。
-				if (pressed && !escape && map_type == KeyType::Id::NONE
-					&& (map_action == 'D' || map_action == 'd'))
-				{
-					auto tsv = UI::get().get_element<UITemporaryStatView>();
-					if (!tsv)
-						tsv = UI::get().emplace<UITemporaryStatView>();
-					else if (!tsv->is_active())
-						tsv->makeactive();
-					else
-						tsv->deactivate();
-					sent = true;
-				}
-				else if (escape)
+				// 临时属性明细板（UITemporaryStatView）默认隐藏，仅在 UIStateGame 建窗时
+				// deactivate()。旧实现在这里加了一条全局 D 兜底开关：只要 D 未绑键，
+				// 每次按 D（冲刺/走位/连带 buff 的高频键）都会 toggle 出「临时属性」黑底
+				// 面板，并吞掉这次按键 —— 正是用户报的「用 buffer 后会弹临时属性」真因。
+				// 该兜底还是一条调试/管理入口，不该出现在正常游戏链路，整块移除：
+				// 面板保持隐藏态，需要时仍可由管理面板/专门入口显式打开。
+				if (escape)
 				{
 					state->send_key(map_type, map_action, pressed, escape);
 				}
 				else if (enter)
 				{
-					if (auto chatbar = UI::get().get_element<UIChatBar>())
+					// 回车优先派发给 active 的焦点窗（目录/界面气球的「回车激活当前项」）；
+					// chatbar 先拦截会让气球永远收不到回车（用户实测「回车没效果」根因）。
+					if (state && state->has_active_focused())
+						state->send_key(map_type, map_action, pressed, escape);
+					else if (auto chatbar = UI::get().get_element<UIChatBar>())
 						chatbar->send_key(map_action, pressed, escape);
 					else
 						state->send_key(map_type, map_action, pressed, escape);
@@ -498,6 +536,19 @@ namespace ms
 	void UI::send_text(const std::string& text)
 	{
 		if (!focusedtextfield || text.empty())
+			return;
+
+		// 空格双写修复（!item 命令因双空格解析失败，2026-11-18 实机）：
+		// 聊天框 set_accept_unicode(true) → focus 时 begin_ascii_text_input，
+		// 按空格键有两条插入路径同时命中：
+		//   ① SDL_EVENT_TEXT_INPUT → send_text(" ") → add_string（本函数）
+		//   ② KEY_DOWN 空格在 textactions 里映射成 ACTION/SPACE，UI::send_key
+		//      的 TEXT_INPUT 跳过条件只覆盖 KeyType::TEXT、不覆盖 ACTION，
+		//      于是 Textfield::send_key(ACTION,SPACE) 又 add_string 一次。
+		// ASCII 空格由 ② 无条件可靠插入（输入法/宿主即便不发 TEXT_INPUT 也有），
+		// 因此这里过滤"纯 ASCII 空格"的 TEXT_INPUT，保留 ② 单次插入。
+		// 中文 IME 选字/上屏是汉字而非纯空格，不受影响；全角空格 U+3000 亦不命中。
+		if (text.size() == 1 && text[0] == ' ')
 			return;
 
 		// Composed text (IME / clipboard) may be UTF-8 (CJK). The Textfield
@@ -596,5 +647,13 @@ namespace ms
 	void UI::bring_to_front(UIElement::Type type)
 	{
 		state->bring_to_front(type);
+	}
+
+	void UI::apply_hud_theme()
+	{
+		if (auto* game = dynamic_cast<UIStateGame*>(state.get()))
+			game->apply_hud_theme();
+		else
+			LOG(LOG_WARN, "UI::apply_hud_theme: not in GAME state");
 	}
 }

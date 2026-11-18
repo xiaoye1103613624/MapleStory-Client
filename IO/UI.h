@@ -48,6 +48,14 @@ namespace ms
 		bool not_quitted() const;
 		bool has_capslocks() const;
 
+		/// 只读光标位置：供各 UIElement::send_scroll 做「光标落在本窗内」门控。
+		/// UIStateGame::send_scroll 广播给所有 active 元素，不门控会一次滚多个窗。
+		Point<int16_t> get_cursor_position() const { return cursor.get_position(); }
+
+		/// 物理主键（左键）当前是否按住。供「+」长按连升等需要持续按住态的 UI 读取；
+		/// 由 send_cursor(bool) 的 down/up 维护，窗口失焦时强制清。
+		bool is_primary_down() const { return primary_down; }
+
 		void send_cursor(Point<int16_t> cursor_position);
 		void send_cursor(bool pressed);
 		void send_cursor(Point<int16_t> cursor_position, Cursor::State cursor_state);
@@ -106,6 +114,8 @@ namespace ms
 		void activate_after_transition(UIElement::Type type);
 		// 把窗口移到绘制队列末尾（= 最上层）。由 UIElement::makeactive() 在 false→true 跃迁时调用。
 		void bring_to_front(UIElement::Type type);
+		/// ThemePack runtime switch (GAME state only): rebuild StatusBar + ChatBar.
+		void apply_hud_theme();
 
 	private:
 		std::unique_ptr<UIState> state;
@@ -119,5 +129,6 @@ namespace ms
 		bool enabled;
 		bool quitted;
 		bool caps_lock_enabled;
+		bool primary_down = false;
 	};
 }

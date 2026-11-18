@@ -74,15 +74,7 @@ namespace ms
 			if (to.empty()) { tip_label.change_text(Locale::text("nycard.need_receiver")); return; }
 			pending_receiver = to;
 			tip_label.change_text(Locale::format("nycard.to", to));
-			UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-				int16_t slot = 0; int32_t itemid = 0;
-				if (!find_card(slot, itemid)) {
-					tip_label.change_text(Locale::text("nycard.no_card"));
-					return;
-				}
-				NewYearCardSendPacket(slot, itemid, pending_receiver, msg).dispatch();
-				tip_label.change_text(Locale::format("nycard.sent_to", pending_receiver));
-			}, []() {}, "NY message");
+			
 		};
 		std::string pre;
 		if (auto ci = UI::get().get_element<UICharInfo>())
@@ -90,7 +82,7 @@ namespace ms
 		if (!pre.empty())
 			ask_msg(pre);
 		else
-			UI::get().emplace<UISoftKey>(ask_msg, []() {}, "NY receiver");
+			;
 	}
 
 	void UINewYearsCard::set_tip(const std::string& tip)

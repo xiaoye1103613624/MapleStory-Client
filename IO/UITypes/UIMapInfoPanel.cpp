@@ -706,7 +706,7 @@ namespace ms
 			const ItemData& item = ItemData::get(d.item_id);
 
 			if (item.is_valid())
-				cell.icon = item.get_icon(false);
+				cell.icon = item.get_icon(d.item_id / 10000 == 238);
 
 			normalize_icon_origin(cell.icon);
 

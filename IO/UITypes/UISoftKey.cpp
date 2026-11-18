@@ -163,7 +163,7 @@ namespace ms
 	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text, Mode mode)
 		: UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0), mode) {}
 	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback, std::string tooltip_text)
-		: UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0), Mode::Pic) {}
+		: UISoftKey(ok_callback, cancel_callback, tooltip_text, Point<int16_t>(0, 0), Mode::Text) {}
 	UISoftKey::UISoftKey(OkCallback ok_callback, CancelCallback cancel_callback)
 		: UISoftKey(ok_callback, cancel_callback, "") {}
 	UISoftKey::UISoftKey(OkCallback ok_callback)
@@ -225,6 +225,10 @@ namespace ms
 		if (pressed)
 		{
 			if (escape)
+				button_pressed(Buttons::BtClose);
+			// X 键与 Esc 同义关闭（举报窗/右键菜单的 UI.cpp X 派发分支把
+			// SOFTKEYBOARD 一并放入 types，SoftKey 在最上层需能响应 X）。
+			else if (keycode == 'X' || keycode == 'x')
 				button_pressed(Buttons::BtClose);
 			else if (keycode == KeyAction::Id::RETURN)
 				button_pressed(Buttons::BtEnter);

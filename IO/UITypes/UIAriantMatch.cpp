@@ -33,19 +33,7 @@ namespace ms
 		show_result_frame(0);
 		score_label.change_text(Locale::text("ariants.title"));
 		center_on_screen();
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			try {
-				int idx = std::stoi(tip);
-				show_result_frame(idx);
-				score_label.change_text(Locale::format("ariants.result", tip));
-				LOG(LOG_DEBUG, "UIAriantMatch: SoftKey result=" << idx);
-				return;
-			} catch (...) {}
-			NpcTalkMorePacket(tip).dispatch();
-			score_label.change_text(tip);
-			LOG(LOG_DEBUG, "UIAriantMatch: SoftKey NpcTalkMore len=" << tip.size());
-		}, []() {}, "result idx|tip");
+		
 		LOG(LOG_DEBUG, "UIAriantMatch: open");
 #endif
 	}
@@ -88,17 +76,7 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int idx = std::stoi(tip);
-					show_result_frame(idx);
-					score_label.change_text(Locale::format("ariants.result", tip));
-					return;
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				score_label.change_text(tip);
-			}, []() {}, "result idx|tip");
+			
 		}
 		else if (keycode == 'R' || keycode == 'r')
 		{

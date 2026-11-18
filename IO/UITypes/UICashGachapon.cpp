@@ -73,16 +73,7 @@ UIElement::Type UICashGachapon::get_type() const { return TYPE; }
 Button::State UICashGachapon::button_pressed(uint16_t id) {
 	if (id == BtClose) deactivate();
 	else if (id == BtOpen) {
-		UI::get().emplace<UISoftKey>([](const std::string& tip) {
-			(void)tip;
-			int16_t slot = 0; int32_t itemid = 0;
-			if (!find_gacha_ticket(slot, itemid)) {
-				LOG(LOG_DEBUG, "UICashGachapon: no 522* ticket");
-				return;
-			}
-			UseCashItemBasicPacket(slot, itemid).dispatch();
-			LOG(LOG_DEBUG, "UICashGachapon: USE_CASH basic id=" << itemid);
-		}, []() {}, "Gacha OK");
+		
 	}
 	return Button::State::NORMAL;
 }

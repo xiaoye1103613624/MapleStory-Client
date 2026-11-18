@@ -77,15 +77,7 @@ namespace ms
 		if (keycode == 'E' || keycode == 'e') { button_pressed(Buttons::EU); return; }
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "na" || t == "5")
-					button_pressed(Buttons::NA);
-				else if (t == "eu" || t == "6")
-					button_pressed(Buttons::EU);
-			}, []() {}, "na|eu");
+			
 		}
 	}
 

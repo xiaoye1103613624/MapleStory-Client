@@ -74,15 +74,7 @@ void UIRemoteGachapon::send_key(int32_t keycode, bool pressed, bool escape)
 		uint16_t town = static_cast<uint16_t>(keycode - '0');
 		button_pressed(static_cast<uint16_t>(Bt0 + town));
 	} else if (keycode == 'G' || keycode == 'g') {
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			int town = 0;
-			try { town = std::stoi(s); } catch (...) { return; }
-			if (town < 0 || town > 9) return;
-			int16_t slot = 0; int32_t itemid = 0;
-			if (!find_remote_gacha(slot, itemid)) return;
-			UseRemoteGachaponPacket(itemid, town).dispatch();
-			LOG(LOG_DEBUG, "UIRemoteGachapon: SoftKey USE_REMOTE town=" << town << " id=" << itemid);
-		}, []() {}, "Town 0-9");
+		
 	} else if (keycode == 'X' || keycode == 'x' || keycode == 'C' || keycode == 'c') {
 		deactivate();
 	}

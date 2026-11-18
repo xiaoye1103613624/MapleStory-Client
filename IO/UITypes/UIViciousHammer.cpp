@@ -127,18 +127,7 @@ namespace ms
 				status.change_text(Locale::format("hammer.equip_num", std::to_string(from_inv)));
 				LOG(LOG_DEBUG, "UIViciousHammer: SoftKey equip slot=" << from_inv);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					try {
-						int16_t slot = static_cast<int16_t>(std::stoi(s));
-						if (slot > 0) {
-							equip_slot = slot;
-							equip_itemid = Stage::get().get_player().get_inventory()
-								.get_item_id(InventoryType::Id::EQUIP, slot);
-							status.change_text(Locale::format("hammer.equip_num", s));
-							LOG(LOG_DEBUG, "UIViciousHammer: SoftKey equip slot=" << slot);
-						}
-					} catch (...) {}
-				}, []() {}, Locale::text("hammer.softkey_equip_slot"));
+				
 			}
 		} else if (keycode == 'G' || keycode == 'g' || keycode == 'S' || keycode == 's') {
 			button_pressed(Buttons::BtStart);

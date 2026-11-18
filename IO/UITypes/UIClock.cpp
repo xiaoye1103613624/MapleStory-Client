@@ -93,16 +93,7 @@ namespace ms
 		if (escape) { stop(); return; }
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int32_t n = std::stoi(tip);
-					set_clock(2, "", n);
-				} catch (...) {
-					NpcTalkMorePacket(tip).dispatch();
-					set_clock(1, tip, 0);
-				}
-			}, []() {}, "Clock|sec|tip");
+			
 		}
 		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
 		{
@@ -110,10 +101,7 @@ namespace ms
 		}
 		else if (keycode == 'R' || keycode == 'r')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				set_clock(1, tip, 0);
-			}, []() {}, "Clock text");
+			
 		}
 	}
 

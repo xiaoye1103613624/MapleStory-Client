@@ -247,8 +247,13 @@ namespace ms
 		if (it == icons.end())
 			return;	// 快照滞后一帧（项刚过期）：静默丢弃
 
-		// 技能 buff → CANCEL_BUFF；道具效果（itemid 量级）→ CANCEL_ITEM_EFFECT(W3)
-		if (skillid >= 1000000)
+		// icons 的 key 编码见 BuffIcon::BuffIcon：正数=技能id，负数=-itemid。
+		// 旧判据 `skillid >= 1000000` 把 7 位技能 id 误当道具 → 发 0x49，
+		// 服务端 CancelItemEffectHandler 取负得 -skillid，getItemEffect(-skillid)
+		// 为 null → cancelEffect(null) → extractCurrentBuffStats 空指针崩溃
+		// （out1.log 自 23:20:28 起 37 次 CancelItemEffectHandler 出错， CancelBuffHandler 0 次）。
+		// 正确判据按**正负号**：负数 key 本身就是 -itemid，服务端会再取负还原道具id。
+		if (skillid < 0)
 			CancelItemEffectPacket(skillid).dispatch();
 		else
 			CancelBuffPacket(skillid).dispatch();
@@ -266,31 +271,11 @@ namespace ms
 		if (escape) return;
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id != 0)
-						add_buff(id, 60000);
-				} catch (...) {
-					if (!s.empty()) {
-						NpcTalkMorePacket(s).dispatch();
-						LOG(LOG_DEBUG, "UIBuffList: SoftKey NpcTalkMore len=" << s.size());
-					}
-				}
-			}, []() {}, "Buff id");
+			
 		}
 		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					auto it = icons.find(id);
-					if (it != icons.end()) {
-						icons.erase(it);
-						LOG(LOG_DEBUG, "UIBuffList: SoftKey clear id=" << id);
-					}
-				} catch (...) {}
-			}, []() {}, "Clear buff id");
+			
 		}
 		else if (keycode == 'D' || keycode == 'd')
 		{

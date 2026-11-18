@@ -109,27 +109,7 @@ namespace ms
 			RpsActionPacket(4).dispatch();
 			deactivate();
 		} else if (keycode == 'T' || keycode == 't') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "rock" || t == "r" || t == "0") {
-					RpsActionPacket(1, 0).dispatch();
-					status.change_text(Locale::text("rps.pick_rock"));
-				} else if (t == "paper" || t == "p" || t == "1") {
-					RpsActionPacket(1, 1).dispatch();
-					status.change_text(Locale::text("rps.pick_paper"));
-				} else if (t == "scissor" || t == "s" || t == "2") {
-					RpsActionPacket(1, 2).dispatch();
-					status.change_text(Locale::text("rps.pick_scissor"));
-				} else if (t == "start") {
-					RpsActionPacket(0).dispatch();
-					status.change_text(Locale::text("rps.started"));
-				} else if (t == "exit" || t == "x") {
-					RpsActionPacket(4).dispatch();
-					deactivate();
-				}
-			}, []() {}, Locale::text("rps.softkey_choices"));
+			
 		}
 	}
 

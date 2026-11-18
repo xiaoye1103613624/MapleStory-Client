@@ -166,15 +166,7 @@ namespace ms
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 			|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "y" || t == "yes" || t == "ok" || t == "1" || t == "agree")
-					button_pressed(Buttons::OK);
-				else if (t == "n" || t == "no" || t == "0" || t == "cancel")
-					button_pressed(Buttons::CANCEL);
-			}, []() {}, "ok|cancel");
+			
 		}
 	}
 

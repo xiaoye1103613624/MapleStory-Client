@@ -245,50 +245,11 @@ namespace ms
 				GuildLeavePacket(self, selfname).dispatch();
 				LOG(LOG_DEBUG, "UIGuild: Leave self cid=" << self);
 			} else {
-				UI::get().emplace<UISoftKey>([self, selfname](const std::string& s) {
-					int32_t cid = self;
-					std::string name = selfname;
-					if (!s.empty()) {
-						size_t c = s.find(',');
-						if (c != std::string::npos) {
-							try { cid = std::stoi(s.substr(0, c)); } catch (...) {}
-							name = s.substr(c + 1);
-						} else {
-							name = s;
-						}
-					}
-					if (!name.empty()) {
-						GuildLeavePacket(cid, name).dispatch();
-						LOG(LOG_DEBUG, "UIGuild: Leave cid=" << cid << " name=" << name);
-					}
-				}, []() {}, "cid,name|name (self)");
+				
 			}
 		} else if (keycode == 'J' || keycode == 'j') {
 			// SoftKey guild id → char id（CharInfo/self 可跳过第二步）
-			UI::get().emplace<UISoftKey>([](const std::string& gid_s) {
-				int32_t gid = 0;
-				try { gid = std::stoi(gid_s); } catch (...) { return; }
-				if (gid <= 0) return;
-				int32_t cid = 0;
-				if (auto ci = UI::get().get_element<UICharInfo>())
-					cid = ci->get_target_cid();
-				if (cid <= 0)
-					cid = Stage::get().get_player().get_oid();
-				if (cid > 0) {
-					GuildJoinPacket(gid, cid).dispatch();
-					LOG(LOG_DEBUG, "UIGuild: Join gid=" << gid << " cid=" << cid);
-				} else {
-					UI::get().emplace<UISoftKey>([gid](const std::string& cid_s) {
-						try {
-							int32_t id = std::stoi(cid_s);
-							if (id > 0) {
-								GuildJoinPacket(gid, id).dispatch();
-								LOG(LOG_DEBUG, "UIGuild: Join gid=" << gid << " cid=" << id);
-							}
-						} catch (...) {}
-					}, []() {}, "Char id");
-				}
-			}, []() {}, "Guild id");
+			
 		} else if (keycode == 'C' || keycode == 'c') {
 			prompt_create();
 		} else if (keycode == 'I' || keycode == 'i') {
@@ -300,21 +261,7 @@ namespace ms
 				GuildExpelPacket(m->id, m->name).dispatch();
 				LOG(LOG_DEBUG, "UIGuild: Expel cid=" << m->id << " name=" << m->name);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					if (s.empty()) return;
-					size_t c = s.find(',');
-					int32_t cid = 0;
-					std::string name = s;
-					if (c != std::string::npos) {
-						try { cid = std::stoi(s.substr(0, c)); } catch (...) {}
-						name = s.substr(c + 1);
-					}
-					if (!name.empty()) {
-						selected_cid = cid;
-						GuildExpelPacket(cid, name).dispatch();
-						LOG(LOG_DEBUG, "UIGuild: Expel cid=" << cid << " name=" << name);
-					}
-				}, []() {}, "cid,name|name");
+				
 			}
 		} else if (keycode == 'A' || keycode == 'a') {
 			auto ui = UI::get().get_element<UIAlliance>();
@@ -339,11 +286,7 @@ namespace ms
 
 	void UIGuild::prompt_create()
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
-		{
-			if (s.length() >= 3 && s.length() <= 12)
-				GuildCreatePacket(s).dispatch();
-		});
+		
 	}
 
 	void UIGuild::prompt_invite()
@@ -356,20 +299,12 @@ namespace ms
 			LOG(LOG_DEBUG, "UIGuild: Invite target=" << pre);
 			return;
 		}
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
-		{
-			if (!s.empty())
-				GuildInvitePacket(s).dispatch();
-		});
+		
 	}
 
 	void UIGuild::prompt_notice()
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
-		{
-			if (!s.empty() && s.length() <= 100)
-				GuildNoticePacket(s).dispatch();
-		});
+		
 	}
 
 	void UIGuild::prompt_deny()
@@ -382,11 +317,6 @@ namespace ms
 			LOG(LOG_DEBUG, "UIGuild: DenyGuild from=" << pre);
 			return;
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& from)
-		{
-			if (from.empty()) return;
-			DenyGuildRequestPacket(from).dispatch();
-			LOG(LOG_DEBUG, "UIGuild: DenyGuild from=" << from);
-		}, []() {}, "Deny guild from");
+		
 	}
 }

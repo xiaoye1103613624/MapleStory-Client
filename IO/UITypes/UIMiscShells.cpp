@@ -200,26 +200,7 @@ void softkey_or_inv_set_item(TipFn tip_fn)
 			return;
 		}
 	}
-	UI::get().emplace<UISoftKey>([tip_fn](const std::string& spec) {
-		int vals[4] = { 2, 1, 1, 0 };
-		size_t start = 0; int vi = 0;
-		while (vi < 4 && start <= spec.size()) {
-			size_t c = spec.find(',', start);
-			std::string part = (c == std::string::npos) ? spec.substr(start) : spec.substr(start, c - start);
-			try { vals[vi] = std::stoi(part); } catch (...) {}
-			++vi;
-			if (c == std::string::npos) break;
-			start = c + 1;
-		}
-		HiredMerchantSetItemPacket(
-			static_cast<int8_t>(vals[0]),
-			static_cast<int16_t>(vals[1]),
-			static_cast<int16_t>(vals[2]),
-			static_cast<int8_t>(vals[3])
-		).dispatch();
-		tip_fn(Locale::format("shop.setitem", spec));
-		LOG(LOG_DEBUG, "Shop: SoftKey SetItem " << spec);
-	}, []() {}, "iv,pos,qty,slot");
+	
 }
 bool load_window_bg(const char* name, Texture& out, Point<int16_t>& dim) {
 #ifdef USE_NX
@@ -330,10 +311,7 @@ void UIReport::set_target(const std::string& name)
 {
 	if (name.empty())
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& victim) {
-			if (victim.empty()) { deactivate(); return; }
-			set_target(victim);
-		}, [this]() { deactivate(); }, Locale::text("report.report_softkey_name"));
+		
 		return;
 	}
 	preset_target = name;
@@ -393,9 +371,7 @@ void UIReport::send_key(int32_t keycode, bool pressed, bool escape)
 	// D 输入描述（SoftKey）
 	if (keycode == 'D' || keycode == 'd')
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& text) {
-			description = text;
-		}, []() {}, Locale::text("report.hint_enter_desc"));
+		
 		return;
 	}
 	// Enter 确认提交
@@ -403,9 +379,7 @@ void UIReport::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		if (preset_target.empty())
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& victim) {
-				if (!victim.empty()) { set_target(victim); submit(); }
-			}, []() {}, Locale::text("report.report_softkey_name"));
+			
 		}
 		else submit();
 		return;
@@ -420,15 +394,7 @@ UICoupon::UICoupon() : tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color:
 	else LOG(LOG_WARN, "UICoupon: missing");
 	center_on_screen();
 	// SoftKey → s9 CouponCodeHandler (RecvOpcode.COUPON_CODE=0xE6)
-	UI::get().emplace<UISoftKey>([this](const std::string& code) {
-		if (code.empty()) {
-			tip_label.change_text(Locale::text("coupon.empty_code"));
-			return;
-		}
-		CouponCodePacket(code).dispatch();
-		tip_label.change_text(Locale::text("common.sent"));
-		LOG(LOG_DEBUG, "UICoupon: COUPON_CODE len=" << code.size());
-	}, []() {}, "Coupon code");
+	
 }
 void UICoupon::set_tip(const std::string& tip) { tip_label.change_text(tip); }
 void UICoupon::draw(float) const {
@@ -441,11 +407,7 @@ void UICoupon::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 13) {
-		UI::get().emplace<UISoftKey>([this](const std::string& code) {
-			if (code.empty()) return;
-			CouponCodePacket(code).dispatch();
-			tip_label.change_text(Locale::text("common.sent"));
-		}, []() {}, "Coupon code");
+		
 	} else if (keycode == 'X' || keycode == 'x') {
 		deactivate();
 	}
@@ -462,10 +424,7 @@ UIClaim::UIClaim() : tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::N
 	{
 		auto ask_msg = [this](const std::string& to) {
 			if (to.empty()) { tip_label.change_text(Locale::text("claim.need_name")); return; }
-			UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-				NoteSendPacket(to, msg).dispatch();
-				tip_label.change_text(Locale::format("common.note", to));
-			}, []() {}, "Claim msg");
+			
 		};
 		std::string pre;
 		if (auto ci = UI::get().get_element<UICharInfo>())
@@ -473,7 +432,7 @@ UIClaim::UIClaim() : tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::N
 		if (!pre.empty())
 			ask_msg(pre);
 		else
-			UI::get().emplace<UISoftKey>(ask_msg, []() {}, "Claim to");
+			;
 	}
 }
 void UIClaim::set_tip(const std::string& tip) { tip_label.change_text(tip); }
@@ -492,18 +451,9 @@ void UIClaim::send_key(int32_t keycode, bool pressed, bool escape)
 			pre = ci->get_target_name();
 		if (!pre.empty()) {
 			std::string to = pre;
-			UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-				NoteSendPacket(to, msg).dispatch();
-				tip_label.change_text(Locale::format("common.note", to));
-			}, []() {}, "Claim msg");
+			
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& to) {
-				if (to.empty()) return;
-				UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-					NoteSendPacket(to, msg).dispatch();
-					tip_label.change_text(Locale::format("common.note", to));
-				}, []() {}, "Claim msg");
-			}, []() {}, "Claim to");
+			
 		}
 	} else if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -531,17 +481,7 @@ UIIncubator::UIIncubator() : tip_label(Text::Font::A11M, Text::Alignment::LEFT, 
 			tip_label.change_text(Locale::format("incubator.egg_enter", std::to_string(from_inv)));
 			LOG(LOG_DEBUG, "UIIncubator: SoftKey egg slot=" << from_inv);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						egg_inv = static_cast<int8_t>(InventoryType::Id::USE);
-						egg_slot = slot;
-						tip_label.change_text(Locale::format("incubator.egg_enter", s));
-						LOG(LOG_DEBUG, "UIIncubator: SoftKey egg slot=" << slot);
-					}
-				} catch (...) {}
-			}, []() {}, "Egg USE slot");
+			
 		}
 	}
 }
@@ -591,16 +531,7 @@ void UIIncubator::send_key(int32_t keycode, bool pressed, bool escape)
 			egg_slot = from_inv;
 			tip_label.change_text(Locale::format("incubator.egg_enter", std::to_string(from_inv)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						egg_inv = static_cast<int8_t>(InventoryType::Id::USE);
-						egg_slot = slot;
-						tip_label.change_text(Locale::format("incubator.egg_enter", s));
-					}
-				} catch (...) {}
-			}, []() {}, "Egg USE slot");
+			
 		}
 	} else if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -651,20 +582,7 @@ Cursor::State UIRadio::send_cursor(bool clicked, Point<int16_t> cursorpos)
 			on = !on;
 			LOG(LOG_DEBUG, "UIRadio: toggle on=" << on);
 			if (on) {
-				UI::get().emplace<UISoftKey>([](const std::string& ch) {
-					if (ch.empty()) return;
-					try {
-						int n = std::stoi(ch);
-						if (n >= 1 && n <= 20) {
-							ChangeChannelPacket(static_cast<uint8_t>(n - 1)).dispatch();
-							LOG(LOG_DEBUG, "UIRadio: ChangeChannel ch=" << n);
-							return;
-						}
-					} catch (...) {}
-					auto ui = UI::get().get_element<UIChannel>();
-					if (!ui) ui = UI::get().emplace<UIChannel>();
-					else if (!ui->is_active()) ui->makeactive();
-				}, []() {}, "Channel 1-N");
+				
 			}
 		}
 		return Cursor::State::CANCLICK;
@@ -679,34 +597,10 @@ void UIRadio::send_key(int32_t keycode, bool pressed, bool escape)
 		on = !on;
 		LOG(LOG_DEBUG, "UIRadio: key toggle on=" << on);
 		if (on) {
-			UI::get().emplace<UISoftKey>([](const std::string& ch) {
-				if (ch.empty()) return;
-				try {
-					int n = std::stoi(ch);
-					if (n >= 1 && n <= 20) {
-						ChangeChannelPacket(static_cast<uint8_t>(n - 1)).dispatch();
-						return;
-					}
-				} catch (...) {}
-				auto ui = UI::get().get_element<UIChannel>();
-				if (!ui) ui = UI::get().emplace<UIChannel>();
-				else if (!ui->is_active()) ui->makeactive();
-			}, []() {}, "Channel 1-N");
+			
 		}
 	} else if (keycode == 'S' || keycode == 's' || keycode == 'C' || keycode == 'c') {
-		UI::get().emplace<UISoftKey>([](const std::string& ch) {
-			if (ch.empty()) return;
-			try {
-				int n = std::stoi(ch);
-				if (n >= 1 && n <= 20) {
-					ChangeChannelPacket(static_cast<uint8_t>(n - 1)).dispatch();
-					return;
-				}
-			} catch (...) {}
-			auto ui = UI::get().get_element<UIChannel>();
-			if (!ui) ui = UI::get().emplace<UIChannel>();
-			else if (!ui->is_active()) ui->makeactive();
-		}, []() {}, "Channel 1-N");
+		
 	} else if (keycode == 'X' || keycode == 'x') {
 		deactivate();
 	}
@@ -731,15 +625,7 @@ UIKarmaScissors::UIKarmaScissors()
 			equip_slot = from_inv;
 			tip_label.change_text(Locale::format("common.equip_enter", std::to_string(from_inv)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						equip_slot = slot;
-						tip_label.change_text(Locale::format("common.equip_enter", s));
-					}
-				} catch (...) {}
-			}, []() {}, "Equip slot");
+			
 		}
 	}
 }
@@ -775,15 +661,7 @@ void UIKarmaScissors::send_key(int32_t keycode, bool pressed, bool escape)
 			equip_slot = from_inv;
 			tip_label.change_text(Locale::format("common.equip_enter", std::to_string(from_inv)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						equip_slot = slot;
-						tip_label.change_text(Locale::format("common.equip_enter", s));
-					}
-				} catch (...) {}
-			}, []() {}, "Equip slot");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -953,15 +831,7 @@ void UIEnchantSkill::send_key(int32_t keycode, bool pressed, bool escape)
 				.get_item_id(InventoryType::Id::EQUIP, from_inv);
 			place_equip(from_inv, id, true);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot <= 0) return;
-					const int32_t id = Stage::get().get_player().get_inventory()
-						.get_item_id(InventoryType::Id::EQUIP, slot);
-					place_equip(slot, id, true);
-				} catch (...) {}
-			}, []() {}, "Equip bag slot");
+			
 		}
 	} else if (keycode == 'S' || keycode == 's') {
 		int16_t from_inv = 0;
@@ -972,12 +842,7 @@ void UIEnchantSkill::send_key(int32_t keycode, bool pressed, bool escape)
 		if (from_inv > 0)
 			scroll_slot = from_inv;
 		else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) scroll_slot = slot;
-				} catch (...) {}
-			}, []() {}, "Scroll USE slot");
+			
 		}
 	} else if (keycode == 'X' || keycode == 'x') {
 		close_enchant();
@@ -1141,15 +1006,7 @@ UIItemProtector::UIItemProtector()
 			equip_slot = from_inv;
 			tip_label.change_text(Locale::format("common.equip_enter", std::to_string(from_inv)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						equip_slot = slot;
-						tip_label.change_text(Locale::format("common.equip_enter", s));
-					}
-				} catch (...) {}
-			}, []() {}, "Equip slot");
+			
 		}
 	}
 }
@@ -1185,15 +1042,7 @@ void UIItemProtector::send_key(int32_t keycode, bool pressed, bool escape)
 			equip_slot = from_inv;
 			tip_label.change_text(Locale::format("common.equip_enter", std::to_string(from_inv)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot > 0) {
-						equip_slot = slot;
-						tip_label.change_text(Locale::format("common.equip_enter", s));
-					}
-				} catch (...) {}
-			}, []() {}, "Equip slot");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -1263,7 +1112,7 @@ UITeleport::UITeleport()
 		if (!pre.empty())
 			do_warp(pre);
 		else
-			UI::get().emplace<UISoftKey>(do_warp, []() {}, "Map ID / player");
+			;
 	}
 }
 void UITeleport::refresh_tip()
@@ -1349,7 +1198,7 @@ void UITeleport::send_key(int32_t keycode, bool pressed, bool escape)
 		if (!pre.empty())
 			do_warp(pre);
 		else
-			UI::get().emplace<UISoftKey>(do_warp, []() {}, "Map ID / player|empty=WMap");
+			;
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -2743,12 +2592,7 @@ UIRanking::UIRanking()
 			tip_label.change_text(Locale::format("ranking.find", pre));
 			LOG(LOG_DEBUG, "UIRanking: FindPlayer name=" << pre);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& name) {
-				if (name.empty()) { tip_label.change_text(Locale::text("common.empty_name")); return; }
-				FindPlayerPacket(name).dispatch();
-				tip_label.change_text(Locale::format("ranking.find", name));
-				LOG(LOG_DEBUG, "UIRanking: FindPlayer name=" << name);
-			}, []() {}, "Rank name");
+			
 		}
 	}
 }
@@ -2769,11 +2613,7 @@ void UIRanking::send_key(int32_t keycode, bool pressed, bool escape)
 			FindPlayerPacket(pre).dispatch();
 			tip_label.change_text(Locale::format("ranking.find", pre));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& name) {
-				if (name.empty()) return;
-				FindPlayerPacket(name).dispatch();
-				tip_label.change_text(Locale::format("ranking.find", name));
-			}, []() {}, "Rank name");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -2829,16 +2669,7 @@ bool UIItemMegaphone::send_icon(const Icon& icon, Point<int16_t> cursor)
 }
 void UIItemMegaphone::open_softkey()
 {
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) { tip_label.change_text(Locale::text("common.empty_msg")); return; }
-		int16_t slot = 0; int32_t itemid = 0;
-		if (!find_item_mega(slot, itemid)) {
-			tip_label.change_text(Locale::text("itemmegaphone.no_item_megaphone"));
-			return;
-		}
-		UseItemMegaphonePacket(slot, itemid, msg, false, has_attach, attach_inv, attach_slot).dispatch();
-		tip_label.change_text(Locale::text("common.sent"));
-	}, []() {}, "Item Megaphone");
+	
 }
 void UIItemMegaphone::draw(float) const
 {
@@ -2871,20 +2702,12 @@ UICounsel::UICounsel()
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			pre = ci->get_target_name();
 		auto ask_msg = [this](const std::string& to) {
-			UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-				if (msg.empty()) return;
-				WhisperPacket(to, msg).dispatch();
-				tip_label.change_text(Locale::format("counsel.whisper", to));
-				LOG(LOG_DEBUG, "UICounsel: Whisper to=" << to << " len=" << msg.size());
-			}, []() {}, "Counsel msg");
+			
 		};
 		if (!pre.empty()) {
 			ask_msg(pre);
 		} else {
-			UI::get().emplace<UISoftKey>([ask_msg](const std::string& to) {
-				if (to.empty()) return;
-				ask_msg(to);
-			}, []() {}, "Counsel to");
+			
 		}
 	}
 }
@@ -2902,39 +2725,24 @@ void UICounsel::send_key(int32_t keycode, bool pressed, bool escape)
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			pre = ci->get_target_name();
 		auto ask_msg = [this](const std::string& to) {
-			UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-				if (msg.empty()) return;
-				WhisperPacket(to, msg).dispatch();
-				tip_label.change_text(Locale::format("counsel.whisper", to));
-			}, []() {}, "Counsel msg");
+			
 		};
 		if (!pre.empty()) {
 			ask_msg(pre);
 		} else {
-			UI::get().emplace<UISoftKey>([ask_msg](const std::string& to) {
-				if (to.empty()) return;
-				ask_msg(to);
-			}, []() {}, "Counsel to");
+			
 		}
 	} else if (keycode == 'N' || keycode == 'n') {
 		std::string pre;
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			pre = ci->get_target_name();
 		auto ask_msg = [this](const std::string& to) {
-			UI::get().emplace<UISoftKey>([this, to](const std::string& msg) {
-				if (msg.empty()) return;
-				NoteSendPacket(to, msg).dispatch();
-				tip_label.change_text(Locale::format("common.note", to));
-				LOG(LOG_DEBUG, "UICounsel: NoteSend to=" << to);
-			}, []() {}, "Note msg");
+			
 		};
 		if (!pre.empty()) {
 			ask_msg(pre);
 		} else {
-			UI::get().emplace<UISoftKey>([ask_msg](const std::string& to) {
-				if (to.empty()) return;
-				ask_msg(to);
-			}, []() {}, "Note to");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -2951,12 +2759,7 @@ UIMuruengRaid::UIMuruengRaid()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMuruengRaid: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& note) {
-		if (note.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		tip_label.change_text(Locale::format("muruengraid.note", note));
-		NpcTalkMorePacket(note).dispatch();
-		LOG(LOG_DEBUG, "UIMuruengRaid: SoftKey NpcTalkMore len=" << note.size());
-	}, []() {}, "Raid note");
+	
 }
 void UIMuruengRaid::draw(float) const
 {
@@ -2968,11 +2771,7 @@ void UIMuruengRaid::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& note) {
-			if (note.empty()) return;
-			tip_label.change_text(Locale::format("muruengraid.note", note));
-			NpcTalkMorePacket(note).dispatch();
-		}, []() {}, "Raid note");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -2988,16 +2787,7 @@ UICreateCygnus::UICreateCygnus()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UICreateCygnus: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& name) {
-		if (name.empty()) { tip_label.change_text(Locale::text("common.empty_name")); return; }
-		tip_label.change_text(Locale::format("createcygnus.name", name));
-		auto creation = UI::get().get_element<UICygnusCreation>();
-		if (!creation)
-			creation = UI::get().emplace<UICygnusCreation>();
-		else if (!creation->is_active())
-			creation->makeactive();
-		LOG(LOG_DEBUG, "UICreateCygnus: SoftKey name=" << name << " → UICygnusCreation");
-	}, []() {}, "Cygnus name");
+	
 }
 void UICreateCygnus::draw(float) const
 {
@@ -3009,15 +2799,7 @@ void UICreateCygnus::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& name) {
-			if (name.empty()) return;
-			tip_label.change_text(Locale::format("createcygnus.name", name));
-			auto creation = UI::get().get_element<UICygnusCreation>();
-			if (!creation)
-				creation = UI::get().emplace<UICygnusCreation>();
-			else if (!creation->is_active())
-				creation->makeactive();
-		}, []() {}, "Cygnus name");
+		
 	} else if (keycode == 'C' || keycode == 'c') {
 		auto creation = UI::get().get_element<UICygnusCreation>();
 		if (!creation)
@@ -3058,20 +2840,7 @@ bool UIMegaphoneBasic::find_megaphone(int16_t& slot, int32_t& itemid) const
 }
 void UIMegaphoneBasic::open_softkey()
 {
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) {
-			tip_label.change_text(Locale::text("common.empty_msg"));
-			return;
-		}
-		int16_t slot = 0; int32_t itemid = 0;
-		if (!find_megaphone(slot, itemid)) {
-			tip_label.change_text(Locale::text("megaphonebasic.no_megaphone"));
-			return;
-		}
-		UseMegaphonePacket(slot, itemid, msg, false).dispatch();
-		tip_label.change_text(Locale::text("common.sent"));
-		LOG(LOG_DEBUG, "UIMegaphoneBasic: USE_CASH id=" << itemid);
-	}, []() {}, "Megaphone");
+	
 }
 void UIMegaphoneBasic::draw(float) const
 {
@@ -3098,11 +2867,7 @@ UIPersonalShop::UIPersonalShop()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIPersonalShop: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& title) {
-		dispatch_shop_create_or_open(title, true, tip_label);
-		LOG(LOG_DEBUG, "UIPersonalShop: SoftKey titleLen=" << title.size());
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	}, []() {}, "Shop title");
+	
 }
 void UIPersonalShop::draw(float) const
 {
@@ -3126,10 +2891,7 @@ void UIPersonalShop::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 	if (keycode == 'C' || keycode == 'c') {
 		// 再开店：SoftKey 店名 → CREATE（514 优先）
-		UI::get().emplace<UISoftKey>([this](const std::string& title) {
-			dispatch_shop_create_or_open(title, true, tip_label);
-			LOG(LOG_DEBUG, "UIPersonalShop: SoftKey CREATE titleLen=" << title.size());
-		}, []() {}, "Shop title");
+		
 	} else if (keycode == 'O' || keycode == 'o') {
 		HiredMerchantOpenPacket().dispatch();
 		tip_label.change_text(Locale::text("common.open_store"));
@@ -3141,22 +2903,7 @@ void UIPersonalShop::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
-		UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-			int slot = 1, qty = 1;
-			size_t c = spec.find(',');
-			try {
-				if (c == std::string::npos) slot = std::stoi(spec);
-				else {
-					slot = std::stoi(spec.substr(0, c));
-					qty = std::stoi(spec.substr(c + 1));
-				}
-			} catch (...) { return; }
-			if (slot > 0 && qty > 0) {
-				HiredMerchantBuyPacket(static_cast<int8_t>(slot), static_cast<int16_t>(qty)).dispatch();
-				tip_label.change_text(Locale::format("common.buy", spec));
-				LOG(LOG_DEBUG, "UIPersonalShop: Buy slot=" << slot << " qty=" << qty);
-			}
-			}, []() {}, "slot,qty");
+		
 	} else if (keycode == 'M' || keycode == 'm') {
 		auto ui = UI::get().get_element<UIMemberShop>();
 		if (!ui) ui = UI::get().emplace<UIMemberShop>();
@@ -3174,11 +2921,7 @@ UIMemberShop::UIMemberShop()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMemberShop: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& title) {
-		dispatch_shop_create_or_open(title, true, tip_label);
-		LOG(LOG_DEBUG, "UIMemberShop: SoftKey titleLen=" << title.size());
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	}, []() {}, "Member title");
+	
 }
 void UIMemberShop::draw(float) const
 {
@@ -3201,10 +2944,7 @@ void UIMemberShop::send_key(int32_t keycode, bool pressed, bool escape)
 		return;
 	}
 	if (keycode == 'C' || keycode == 'c') {
-		UI::get().emplace<UISoftKey>([this](const std::string& title) {
-			dispatch_shop_create_or_open(title, true, tip_label);
-			LOG(LOG_DEBUG, "UIMemberShop: SoftKey CREATE titleLen=" << title.size());
-		}, []() {}, "Member title");
+		
 	} else if (keycode == 'O' || keycode == 'o') {
 		HiredMerchantOpenPacket().dispatch();
 		tip_label.change_text(Locale::text("common.open_store"));
@@ -3214,21 +2954,7 @@ void UIMemberShop::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
-		UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-			int slot = 1, qty = 1;
-			size_t c = spec.find(',');
-			try {
-				if (c == std::string::npos) slot = std::stoi(spec);
-				else {
-					slot = std::stoi(spec.substr(0, c));
-					qty = std::stoi(spec.substr(c + 1));
-				}
-			} catch (...) { return; }
-			if (slot > 0 && qty > 0) {
-				HiredMerchantBuyPacket(static_cast<int8_t>(slot), static_cast<int16_t>(qty)).dispatch();
-				tip_label.change_text(Locale::format("common.buy", spec));
-			}
-		}, []() {}, "slot,qty");
+		
 	}
 }
 UIElement::Type UIMemberShop::get_type() const { return TYPE; }
@@ -3275,11 +3001,7 @@ UIEntrustedShop::UIEntrustedShop()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIEntrustedShop: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& title) {
-		dispatch_shop_create_or_open(title, false, tip_label);
-		LOG(LOG_DEBUG, "UIEntrustedShop: SoftKey titleLen=" << title.size());
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	}, []() {}, "Entrusted");
+	
 }
 void UIEntrustedShop::draw(float) const
 {
@@ -3311,26 +3033,9 @@ void UIEntrustedShop::send_key(int32_t keycode, bool pressed, bool escape)
 	} else if (keycode == 'A' || keycode == 'a') {
 		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
 	} else if (keycode == 'B' || keycode == 'b') {
-		UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-			int slot = 1, qty = 1;
-			size_t c = spec.find(',');
-			try {
-				if (c == std::string::npos) slot = std::stoi(spec);
-				else {
-					slot = std::stoi(spec.substr(0, c));
-					qty = std::stoi(spec.substr(c + 1));
-				}
-			} catch (...) { return; }
-			if (slot > 0 && qty > 0) {
-				HiredMerchantBuyPacket(static_cast<int8_t>(slot), static_cast<int16_t>(qty)).dispatch();
-				tip_label.change_text(Locale::format("common.buy", spec));
-				LOG(LOG_DEBUG, "UIEntrustedShop: Buy slot=" << slot << " qty=" << qty);
-			}
-		}, []() {}, "slot,qty");
+		
 	} else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't') {
-		UI::get().emplace<UISoftKey>([this](const std::string& title) {
-			dispatch_shop_create_or_open(title, false, tip_label);
-		}, []() {}, "Entrusted title");
+		
 	}
 }
 UIElement::Type UIEntrustedShop::get_type() const { return TYPE; }
@@ -3395,12 +3100,7 @@ UIItemSearch::UIItemSearch()
 			FindPlayerPacket(pre).dispatch();
 			LOG(LOG_DEBUG, "UIItemSearch: FindPlayer q=" << pre);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& q) {
-				if (q.empty()) { tip_label.change_text(Locale::text("common.empty_query")); return; }
-				tip_label.change_text(Locale::format("common.q", q));
-				FindPlayerPacket(q).dispatch();
-				LOG(LOG_DEBUG, "UIItemSearch: SoftKey FindPlayer q=" << q);
-			}, []() {}, "Find name");
+			
 		}
 	}
 }
@@ -3421,11 +3121,7 @@ void UIItemSearch::send_key(int32_t keycode, bool pressed, bool escape)
 			tip_label.change_text(Locale::format("common.q", pre));
 			FindPlayerPacket(pre).dispatch();
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& q) {
-				if (q.empty()) return;
-				tip_label.change_text(Locale::format("common.q", q));
-				FindPlayerPacket(q).dispatch();
-			}, []() {}, "Find name");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -3465,11 +3161,7 @@ UIAranSkillGuide::UIAranSkillGuide()
 		if (from_sb > 0) {
 			use_or_tip(from_sb, "");
 		} else {
-			UI::get().emplace<UISoftKey>([use_or_tip](const std::string& tip) {
-				int32_t id = 0;
-				try { id = std::stoi(tip); } catch (...) {}
-				use_or_tip(id, tip);
-			}, []() {}, "Aran skillid");
+			
 		}
 	}
 }
@@ -3495,24 +3187,7 @@ void UIAranSkillGuide::send_key(int32_t keycode, bool pressed, bool escape)
 			UseSkillPacket(from_sb, lv).dispatch();
 			tip_label.change_text(Locale::format("aranskillguide.skill", std::to_string(from_sb)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int32_t id = std::stoi(tip);
-					if (id > 0) {
-						int32_t lv = 1;
-						try {
-							lv = Stage::get().get_player().get_skills().get_level(id);
-							if (lv <= 0) lv = 1;
-						} catch (...) {}
-						UseSkillPacket(id, lv).dispatch();
-						tip_label.change_text(Locale::format("aranskillguide.skill", tip));
-						return;
-					}
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-			}, []() {}, "Aran skillid|tip");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -3527,24 +3202,7 @@ UITransform::UITransform() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UITransform: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& tip) {
-		if (tip.empty()) return;
-		try {
-			int32_t id = std::stoi(tip);
-			if (id > 0) {
-				int32_t lv = 1;
-				try {
-					lv = Stage::get().get_player().get_skills().get_level(id);
-					if (lv <= 0) lv = 1;
-				} catch (...) {}
-				UseSkillPacket(id, lv).dispatch();
-				LOG(LOG_DEBUG, "UITransform: UseSkill id=" << id << " lv=" << lv);
-				return;
-			}
-		} catch (...) {}
-		NpcTalkMorePacket(tip).dispatch();
-		LOG(LOG_DEBUG, "UITransform: SoftKey NpcTalkMore len=" << tip.size());
-	}, []() {}, "Transform skillid|tip");
+	
 }
 void UITransform::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UITransform::send_key(int32_t keycode, bool pressed, bool escape)
@@ -3552,22 +3210,7 @@ void UITransform::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'U' || keycode == 'u' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& tip) {
-			if (tip.empty()) return;
-			try {
-				int32_t id = std::stoi(tip);
-				if (id > 0) {
-					int32_t lv = 1;
-					try {
-						lv = Stage::get().get_player().get_skills().get_level(id);
-						if (lv <= 0) lv = 1;
-					} catch (...) {}
-					UseSkillPacket(id, lv).dispatch();
-					return;
-				}
-			} catch (...) {}
-			NpcTalkMorePacket(tip).dispatch();
-		}, []() {}, "Transform skillid|tip");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -3583,12 +3226,7 @@ UIMonsterKilling::UIMonsterKilling()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMonsterKilling: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-		if (tip.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		tip_label.change_text(tip);
-		NpcTalkMorePacket(tip).dispatch();
-		LOG(LOG_DEBUG, "UIMonsterKilling: SoftKey NpcTalkMore len=" << tip.size());
-	}, []() {}, "MobKill chat");
+	
 }
 void UIMonsterKilling::draw(float) const
 {
@@ -3600,11 +3238,7 @@ void UIMonsterKilling::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			tip_label.change_text(tip);
-			NpcTalkMorePacket(tip).dispatch();
-		}, []() {}, "MobKill chat");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -3618,11 +3252,7 @@ UIMapleEvent::UIMapleEvent() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMapleEvent: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& tip) {
-		if (tip.empty()) return;
-		NpcTalkMorePacket(tip).dispatch();
-		LOG(LOG_DEBUG, "UIMapleEvent: SoftKey NpcTalkMore len=" << tip.size());
-	}, []() {}, "MapleEvent");
+	
 }
 void UIMapleEvent::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UIMapleEvent::send_key(int32_t keycode, bool pressed, bool escape)
@@ -3630,10 +3260,7 @@ void UIMapleEvent::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& tip) {
-			if (tip.empty()) return;
-			NpcTalkMorePacket(tip).dispatch();
-		}, []() {}, "Event chat");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -3692,19 +3319,7 @@ void UISkillEx::send_key(int32_t keycode, bool pressed, bool escape)
 			UseSkillPacket(from_sb, lv).dispatch();
 			tip_label.change_text(Locale::format("skillex.use", std::to_string(from_sb)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id <= 0) return;
-					int32_t lv = 1;
-					try {
-						lv = Stage::get().get_player().get_skills().get_level(id);
-						if (lv <= 0) lv = 1;
-					} catch (...) {}
-					UseSkillPacket(id, lv).dispatch();
-					tip_label.change_text(Locale::format("skillex.use", s));
-				} catch (...) {}
-			}, []() {}, "SkillEx id");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -3738,21 +3353,7 @@ UIBook::UIBook()
 			tip_label.change_text(Locale::format("book.cover", std::to_string(cover)));
 			LOG(LOG_DEBUG, "UIBook: MonsterBookCover id=" << cover);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& page) {
-				if (page.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-				try {
-					int32_t id = std::stoi(page);
-					if (id > 0) {
-						MonsterBookSetCoverPacket(id).dispatch();
-						tip_label.change_text(Locale::format("book.cover", page));
-						LOG(LOG_DEBUG, "UIBook: MonsterBookCover id=" << id);
-						return;
-					}
-				} catch (...) {}
-				tip_label.change_text(Locale::format("book.page", page));
-				NpcTalkMorePacket(page).dispatch();
-				LOG(LOG_DEBUG, "UIBook: SoftKey NpcTalkMore page tip=" << page);
-			}, []() {}, "Book cover/page");
+			
 		}
 	}
 }
@@ -3780,16 +3381,7 @@ void UIBook::send_key(int32_t keycode, bool pressed, bool escape)
 			MonsterBookSetCoverPacket(cover).dispatch();
 			tip_label.change_text(Locale::format("book.cover", std::to_string(cover)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& page) {
-				try {
-					int32_t id = std::stoi(page);
-					if (id > 0) {
-						MonsterBookSetCoverPacket(id).dispatch();
-						tip_label.change_text(Locale::format("book.cover", page));
-						LOG(LOG_DEBUG, "UIBook: SoftKey cover=" << id);
-					}
-				} catch (...) {}
-			}, []() {}, "Book cover id");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -3858,21 +3450,7 @@ void UIQuestAlarm::send_key(int32_t keycode, bool pressed, bool escape)
 			tip_label.change_text(Locale::format("questalarm.start", std::to_string(from_ql)));
 			LOG(LOG_DEBUG, "UIQuestAlarm: start qid=" << from_ql);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int16_t qid = static_cast<int16_t>(std::stoi(tip));
-					if (qid > 0) {
-						QuestActionPacket(1, qid).dispatch();
-						tip_label.change_text(Locale::format("questalarm.start", tip));
-						LOG(LOG_DEBUG, "UIQuestAlarm: SoftKey start qid=" << qid);
-						return;
-					}
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-				LOG(LOG_DEBUG, "UIQuestAlarm: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, "Quest id|tip");
+			
 		}
 	} else if (keycode == 'X' || keycode == 'x' || keycode == 'C' || keycode == 'c') {
 		tip_label.change_text("");
@@ -3890,14 +3468,7 @@ UIMateMessage::UIMateMessage() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMateMessage: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& msg) {
-		if (msg.empty()) return;
-		if (auto bar = UI::get().get_element<UIChatBar>())
-		{
-			if (bar->send_spouse_chat(msg))
-				LOG(LOG_DEBUG, "UIMateMessage: SPOUSE_CHAT len=" << msg.size());
-		}
-	}, []() {}, "Mate message");
+	
 }
 void UIMateMessage::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UIMateMessage::send_key(int32_t keycode, bool pressed, bool escape)
@@ -3905,11 +3476,7 @@ void UIMateMessage::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'M' || keycode == 'm') {
-		UI::get().emplace<UISoftKey>([](const std::string& msg) {
-			if (msg.empty()) return;
-			if (auto bar = UI::get().get_element<UIChatBar>())
-				bar->send_spouse_chat(msg);
-		}, []() {}, "Mate message");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -3923,11 +3490,7 @@ UIBetaEdition::UIBetaEdition() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIBetaEdition: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& code) {
-		if (!code.empty())
-			CouponCodePacket(code).dispatch();
-		LOG(LOG_DEBUG, "UIBetaEdition: code len=" << code.size());
-	}, []() {}, "Beta code");
+	
 }
 void UIBetaEdition::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UIBetaEdition::send_key(int32_t keycode, bool pressed, bool escape)
@@ -3935,10 +3498,7 @@ void UIBetaEdition::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'C' || keycode == 'c') {
-		UI::get().emplace<UISoftKey>([](const std::string& code) {
-			if (!code.empty())
-				CouponCodePacket(code).dispatch();
-		}, []() {}, "Beta code");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -3954,24 +3514,7 @@ UIGMBoard::UIGMBoard()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIGMBoard: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-		if (msg.empty()) return;
-		std::string t = msg;
-		for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-		if (t == "users" || t == "show") {
-			AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-			tip_label.change_text(Locale::text("gmboard.showusers"));
-			return;
-		}
-		if (t == "alert") {
-			AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-			tip_label.change_text(Locale::text("gmboard.alertadmins"));
-			return;
-		}
-		GeneralChatPacket(msg, true).dispatch();
-		tip_label.change_text(msg);
-		LOG(LOG_DEBUG, "UIGMBoard: SoftKey GeneralChat len=" << msg.size());
-	}, []() {}, "users|alert|msg");
+	
 }
 void UIGMBoard::draw(float) const
 {
@@ -3983,23 +3526,7 @@ void UIGMBoard::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'A' || keycode == 'a' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-			if (msg.empty()) return;
-			std::string t = msg;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "users" || t == "show") {
-				AdminEnterMapPacket(AdminEnterMapPacket::Operation::SHOW_USERS).dispatch();
-				tip_label.change_text(Locale::text("gmboard.showusers"));
-				return;
-			}
-			if (t == "alert") {
-				AdminEnterMapPacket(AdminEnterMapPacket::Operation::ALERT_ADMINS).dispatch();
-				tip_label.change_text(Locale::text("gmboard.alertadmins"));
-				return;
-			}
-			GeneralChatPacket(msg, true).dispatch();
-			tip_label.change_text(msg);
-		}, []() {}, "users|alert|msg");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -4196,19 +3723,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				UseSkillPacket(from_sb, lv).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: UseSkill id=" << from_sb);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t id = std::stoi(s);
-						if (id <= 0) return;
-						int32_t lv = 1;
-						try {
-							lv = Stage::get().get_player().get_skills().get_level(id);
-							if (lv <= 0) lv = 1;
-						} catch (...) {}
-						UseSkillPacket(id, lv).dispatch();
-						LOG(LOG_DEBUG, "UIShortCut: UseSkill id=" << id);
-					} catch (...) {}
-				}, []() {}, "Skill id");
+				
 			}
 			break;
 		}
@@ -4222,15 +3737,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				ChangeMapPacket(false, mid, "", false).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: ChangeMap id=" << mid);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t mapid = std::stoi(s);
-						if (mapid > 0) {
-							ChangeMapPacket(false, mapid, "", false).dispatch();
-							LOG(LOG_DEBUG, "UIShortCut: ChangeMap id=" << mapid);
-						}
-					} catch (...) {}
-				}, []() {}, "Map id");
+				
 			}
 			break;
 		}
@@ -4434,22 +3941,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				dispatch_trade_invite(from_ci);
 				LOG(LOG_DEBUG, "UIShortCut: TradeInvite cid=" << from_ci);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					std::string t = s;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t.empty() || t == "v" || t == "visit") {
-						TradeVisitPacket().dispatch();
-						LOG(LOG_DEBUG, "UIShortCut: TradeVisit");
-						return;
-					}
-					try {
-						int32_t cid = std::stoi(s);
-						if (cid > 0) {
-							dispatch_trade_invite(cid);
-							LOG(LOG_DEBUG, "UIShortCut: TradeInvite cid=" << cid);
-						}
-					} catch (...) {}
-				}, []() {}, "Trade cid|v");
+				
 			}
 			break;
 		}
@@ -4460,15 +3952,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				TalkToNPCPacket(near).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: TalkToNPC nearest oid=" << near);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t oid = std::stoi(s);
-						if (oid > 0) {
-							TalkToNPCPacket(oid).dispatch();
-							LOG(LOG_DEBUG, "UIShortCut: TalkToNPC oid=" << oid);
-						}
-					} catch (...) {}
-				}, []() {}, "NPC oid");
+				
 			}
 			break;
 		}
@@ -4500,18 +3984,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 					}
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t itemid = std::stoi(s);
-					if (itemid <= 0) return;
-					const Inventory& inv = Stage::get().get_player().get_inventory();
-					int16_t slot = inv.find_item(InventoryType::Id::CASH, itemid);
-					if (slot > 0) {
-						UseCashItemBasicPacket(slot, itemid).dispatch();
-						LOG(LOG_DEBUG, "UIShortCut: UseCashItem id=" << itemid << " slot=" << slot);
-					}
-				} catch (...) {}
-			}, []() {}, "Cash itemid");
+			
 			break;
 		}
 		case '%':
@@ -4529,45 +4002,11 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 					}
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				bool sell = false;
-				std::string body = s;
-				if (!body.empty() && (body[0] == 's' || body[0] == 'S')) {
-					sell = true;
-					body = body.substr(1);
-					if (!body.empty() && body[0] == ',') body = body.substr(1);
-				}
-				int vals[3] = { 0, 0, 1 };
-				size_t start = 0; int vi = 0;
-				while (vi < 3 && start <= body.size()) {
-					size_t c = body.find(',', start);
-					std::string part = (c == std::string::npos) ? body.substr(start) : body.substr(start, c - start);
-					try { vals[vi] = std::stoi(part); } catch (...) {}
-					++vi;
-					if (c == std::string::npos) break;
-					start = c + 1;
-				}
-				if (vals[0] >= 0 && vals[1] > 0) {
-					NpcShopActionPacket(
-						static_cast<int16_t>(vals[0]), vals[1],
-						static_cast<int16_t>(vals[2]), !sell
-					).dispatch();
-					LOG(LOG_DEBUG, "UIShortCut: NpcShop " << (sell ? "Sell " : "Buy ") << body);
-				}
-			}, []() {}, "slot,id,qty|s,…");
+			
 			break;
 		}
 		case '&':
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				if (s.empty()) return;
-				bool all_digit = true;
-				for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
-				if (all_digit) {
-					try { NpcTalkMorePacket(std::stoi(s)).dispatch(); } catch (...) {}
-				} else {
-					NpcTalkMorePacket(s).dispatch();
-				}
-			}, []() {}, "NPC reply|sel");
+			
 			break;
 		case '*':
 		{
@@ -4577,12 +4016,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (from_ci > 0) {
 				CharInfoRequestPacket(from_ci).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t cid = std::stoi(s);
-						if (cid > 0) CharInfoRequestPacket(cid).dispatch();
-					} catch (...) {}
-				}, []() {}, "Char cid");
+				
 			}
 			break;
 		}
@@ -4596,12 +4030,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 					break;
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int16_t slot = static_cast<int16_t>(std::stoi(s));
-					if (slot >= 0) NpcShopActionPacket(slot).dispatch();
-				} catch (...) {}
-			}, []() {}, "Recharge slot");
+			
 			break;
 		}
 		case ')':
@@ -4617,12 +4046,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				SpendSpPacket(from_sb).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: SpendSp id=" << from_sb);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t sid = std::stoi(s);
-						if (sid > 0) SpendSpPacket(sid).dispatch();
-					} catch (...) {}
-				}, []() {}, "Skill id SP");
+				
 			}
 			break;
 		}
@@ -4634,12 +4058,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (from_ci > 0) {
 				CharInfoRequestPacket(from_ci).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t cid = std::stoi(s);
-						if (cid > 0) CharInfoRequestPacket(cid).dispatch();
-					} catch (...) {}
-				}, []() {}, "CharInfo cid");
+				
 			}
 			break;
 		}
@@ -4653,12 +4072,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				ChangeMapPacket(false, mid, "", false).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: ChangeMap id=" << mid);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t mapid = std::stoi(s);
-						if (mapid > 0) ChangeMapPacket(false, mapid, "", false).dispatch();
-					} catch (...) {}
-				}, []() {}, "Map id");
+				
 			}
 			break;
 		}
@@ -4670,15 +4084,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (loot.first > 0) {
 				PickupItemPacket(loot.first, loot.second).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t oid = std::stoi(s);
-						if (oid > 0) {
-							Point<int16_t> p = Stage::get().get_player().get_position();
-							PickupItemPacket(oid, p).dispatch();
-						}
-					} catch (...) {}
-				}, []() {}, "Pickup oid");
+				
 			}
 			break;
 		}
@@ -4689,32 +4095,13 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (near > 0) {
 				DamageReactorPacket(near, pos, 0, 0).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t oid = std::stoi(s);
-						if (oid > 0) {
-							Point<int16_t> p = Stage::get().get_player().get_position();
-							DamageReactorPacket(oid, p, 0, 0).dispatch();
-						}
-					} catch (...) {}
-				}, []() {}, "Reactor oid");
+				
 			}
 			break;
 		}
 		case '=':
 		case '+':
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				MapleStat::Id st = MapleStat::Id::STR;
-				bool ok = false;
-				if (t == "str") { st = MapleStat::Id::STR; ok = true; }
-				else if (t == "dex") { st = MapleStat::Id::DEX; ok = true; }
-				else if (t == "int") { st = MapleStat::Id::INT; ok = true; }
-				else if (t == "luk") { st = MapleStat::Id::LUK; ok = true; }
-				if (ok) SpendApPacket(st).dispatch();
-			}, []() {}, "AP str|dex|int|luk");
+			
 			break;
 		case '[':
 		{
@@ -4725,12 +4112,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				GatherItemsPacket(static_cast<InventoryType::Id>(tab)).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: Gather tab=" << tab);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					int t = 2;
-					try { t = std::stoi(s); } catch (...) {}
-					if (t < 1 || t > 5) t = 2;
-					GatherItemsPacket(static_cast<InventoryType::Id>(t)).dispatch();
-				}, []() {}, "Gather tab 1-5");
+				
 			}
 			break;
 		}
@@ -4743,12 +4125,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				SortItemsPacket(static_cast<InventoryType::Id>(tab)).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: Sort tab=" << tab);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					int t = 2;
-					try { t = std::stoi(s); } catch (...) {}
-					if (t < 1 || t > 5) t = 2;
-					SortItemsPacket(static_cast<InventoryType::Id>(t)).dispatch();
-				}, []() {}, "Sort tab 1-5");
+				
 			}
 			break;
 		}
@@ -4762,10 +4139,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				DenyGuildRequestPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: DenyGuild from=" << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& from) {
-					if (from.empty()) return;
-					DenyGuildRequestPacket(from).dispatch();
-				}, []() {}, "Deny guild from");
+				
 			}
 			break;
 		}
@@ -4779,12 +4153,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 				QuestActionPacket(3, from_ql).dispatch();
 				LOG(LOG_DEBUG, "UIShortCut: Forfeit qid=" << from_ql);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int16_t qid = static_cast<int16_t>(std::stoi(s));
-						if (qid > 0) QuestActionPacket(3, qid).dispatch();
-					} catch (...) {}
-				}, []() {}, "Forfeit quest id");
+				
 			}
 			break;
 		}
@@ -4804,23 +4173,12 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 						return;
 					}
 				}
-				UI::get().emplace<UISoftKey>([src](const std::string& dst_s) {
-					try {
-						int16_t dst = static_cast<int16_t>(std::stoi(dst_s));
-						if (dst > 0)
-							ScrollEquipPacket(src, static_cast<EquipSlot::Id>(dst)).dispatch();
-					} catch (...) {}
-				}, []() {}, "Equip slot id");
+				
 			};
 			if (scroll > 0) {
 				ask_equip(scroll);
 			} else {
-				UI::get().emplace<UISoftKey>([ask_equip](const std::string& src_s) {
-					int16_t src = 0;
-					try { src = static_cast<int16_t>(std::stoi(src_s)); } catch (...) { return; }
-					if (src <= 0) return;
-					ask_equip(src);
-				}, []() {}, "Scroll slot");
+				
 			}
 			break;
 		}
@@ -4844,19 +4202,7 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 					}
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t itemid = std::stoi(s);
-					if (itemid <= 0) return;
-					const Inventory& inv = Stage::get().get_player().get_inventory();
-					int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-					if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-					if (slot > 0) {
-						UseItemPacket(slot, itemid).dispatch();
-						LOG(LOG_DEBUG, "UIShortCut: UseItem id=" << itemid << " slot=" << slot);
-					}
-				} catch (...) {}
-			}, []() {}, "Use itemid");
+			
 			break;
 		}
 		default:
@@ -5692,11 +5038,7 @@ UICharacterClone::UICharacterClone() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UICharacterClone: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& note) {
-		if (note.empty()) return;
-		NpcTalkMorePacket(note).dispatch();
-		LOG(LOG_DEBUG, "UICharacterClone: SoftKey NpcTalkMore len=" << note.size());
-	}, []() {}, "Clone note");
+	
 }
 void UICharacterClone::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UICharacterClone::send_key(int32_t keycode, bool pressed, bool escape)
@@ -5704,11 +5046,7 @@ void UICharacterClone::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& note) {
-			if (note.empty()) return;
-			NpcTalkMorePacket(note).dispatch();
-			LOG(LOG_DEBUG, "UICharacterClone: SoftKey NpcTalkMore len=" << note.size());
-		}, []() {}, "Clone note");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -5740,21 +5078,7 @@ void UICancelRequests::send_key(int32_t keycode, bool pressed, bool escape)
 		deactivate();
 	} else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 		|| keycode == 'Y' || keycode == 'y' || keycode == 'N' || keycode == 'n') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			std::string t = tip;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "y" || t == "yes" || t == "ok" || t == "1" || t == "cancel") {
-				NpcTalkMorePacket(1, 0).dispatch();
-				tip_label.change_text(Locale::text("cancelrequests.cancelled"));
-				deactivate();
-			} else if (t == "n" || t == "no" || t == "0") {
-				deactivate();
-			} else {
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-			}
-		}, []() {}, "y|n|tip");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -5777,31 +5101,7 @@ UIReset::UIReset() {
 			SpendSpPacket(from_sb).dispatch();
 			LOG(LOG_DEBUG, "UIReset: SpendSp id=" << from_sb);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				MapleStat::Id st = MapleStat::Id::STR;
-				bool ap = false;
-				if (t == "str") { st = MapleStat::Id::STR; ap = true; }
-				else if (t == "dex") { st = MapleStat::Id::DEX; ap = true; }
-				else if (t == "int") { st = MapleStat::Id::INT; ap = true; }
-				else if (t == "luk") { st = MapleStat::Id::LUK; ap = true; }
-				if (ap) {
-					SpendApPacket(st).dispatch();
-					LOG(LOG_DEBUG, "UIReset: SpendAp " << tip);
-					return;
-				}
-				try {
-					int32_t sid = std::stoi(tip);
-					if (sid > 0) {
-						SpendSpPacket(sid).dispatch();
-						LOG(LOG_DEBUG, "UIReset: SpendSp id=" << sid);
-					}
-				} catch (...) {
-					LOG(LOG_DEBUG, "UIReset: SoftKey ignored tip=" << tip);
-				}
-			}, []() {}, "AP str|SP id");
+			
 		}
 	}
 }
@@ -5817,22 +5117,7 @@ void UIReset::send_key(int32_t keycode, bool pressed, bool escape)
 		if (from_sb > 0 && (keycode == 'S' || keycode == 's')) {
 			SpendSpPacket(from_sb).dispatch();
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				MapleStat::Id st = MapleStat::Id::STR;
-				bool ap = false;
-				if (t == "str") { st = MapleStat::Id::STR; ap = true; }
-				else if (t == "dex") { st = MapleStat::Id::DEX; ap = true; }
-				else if (t == "int") { st = MapleStat::Id::INT; ap = true; }
-				else if (t == "luk") { st = MapleStat::Id::LUK; ap = true; }
-				if (ap) { SpendApPacket(st).dispatch(); return; }
-				try {
-					int32_t sid = std::stoi(tip);
-					if (sid > 0) SpendSpPacket(sid).dispatch();
-				} catch (...) {}
-			}, []() {}, "AP str|SP id");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -5857,15 +5142,7 @@ bool UIItemMove::send_icon(const Icon& icon, Point<int16_t> cursor)
 	src_inv = static_cast<int8_t>(icon.get_inventory_tab());
 	src_slot = icon.get_inventory_slot();
 	tip_label.change_text(Locale::format_all("itemmove.marked_tab_softkey_dst", {std::to_string(src_inv), std::to_string(src_slot)}));
-	UI::get().emplace<UISoftKey>([this](const std::string& dst_s) {
-		try {
-			int16_t dst = static_cast<int16_t>(std::stoi(dst_s));
-			if (dst == 0 || src_slot <= 0) return;
-			MoveItemPacket(static_cast<InventoryType::Id>(src_inv), src_slot, dst, 1).dispatch();
-			tip_label.change_text(Locale::format_all("itemmove.moved", {std::to_string(src_slot), dst_s}));
-			LOG(LOG_DEBUG, "UIItemMove: MoveItem tab=" << (int)src_inv << " " << src_slot << "→" << dst);
-		} catch (...) {}
-	}, []() {}, "Dest slot");
+	
 	return true;
 }
 void UIItemMove::draw(float) const
@@ -5888,39 +5165,10 @@ void UIItemMove::send_key(int32_t keycode, bool pressed, bool escape)
 				}
 			}
 		}
-		UI::get().emplace<UISoftKey>([this](const std::string& dst_s) {
-			try {
-				int16_t dst = static_cast<int16_t>(std::stoi(dst_s));
-				if (dst == 0 || src_slot <= 0) return;
-				MoveItemPacket(static_cast<InventoryType::Id>(src_inv), src_slot, dst, 1).dispatch();
-				tip_label.change_text(Locale::format("itemmove.moved_2", dst_s));
-			} catch (...) {}
-		}, []() {}, "Dest slot");
+		
 	} else if (keycode == 'S' || keycode == 's') {
 		// SoftKey inv,src,dst[,qty] → MoveItem
-		UI::get().emplace<UISoftKey>([this](const std::string& spec) {
-			int vals[4] = { 2, 1, 2, 1 };
-			size_t start = 0; int vi = 0;
-			while (vi < 4 && start <= spec.size()) {
-				size_t c = spec.find(',', start);
-				std::string part = (c == std::string::npos) ? spec.substr(start) : spec.substr(start, c - start);
-				try { vals[vi] = std::stoi(part); } catch (...) {}
-				++vi;
-				if (c == std::string::npos) break;
-				start = c + 1;
-			}
-			if (vals[1] <= 0 || vals[2] == 0) return;
-			src_inv = static_cast<int8_t>(vals[0]);
-			src_slot = static_cast<int16_t>(vals[1]);
-			MoveItemPacket(
-				static_cast<InventoryType::Id>(vals[0]),
-				static_cast<int16_t>(vals[1]),
-				static_cast<int16_t>(vals[2]),
-				static_cast<int16_t>(vals[3])
-			).dispatch();
-			tip_label.change_text(Locale::format("itemmove.move", spec));
-			LOG(LOG_DEBUG, "UIItemMove: SoftKey MoveItem " << spec);
-		}, []() {}, "iv,src,dst[,qty]");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -5957,21 +5205,7 @@ void UIFadeYesNo::send_key(int32_t keycode, bool pressed, bool escape)
 		return;
 	}
 	if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			std::string t = tip;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "y" || t == "yes" || t == "ok" || t == "1") {
-				NpcTalkMorePacket(1, 1).dispatch();
-				deactivate();
-			} else if (t == "n" || t == "no" || t == "0") {
-				NpcTalkMorePacket(1, 0).dispatch();
-				deactivate();
-			} else {
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-			}
-		}, []() {}, "y|n|tip");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -6033,11 +5267,13 @@ void UIContextMenu::rebuild_buttons()
 	const bool show_guild = other && GuildModel::get().data().in_guild();
 	const bool show_family = other && FamilyModel::get().info().has_family();
 
-	// 按钮位图 85px（evidence/img_ContextMenu_tree.txt），窗口宽取 t 板宽（100）。
-	// 旧值 x=9 使左留白 9、右留白 6 → 视觉偏右；按 (窗口宽-按钮宽)/2 水平居中。
-	const int16_t win_w = tile_t ? tile_t.width() : 100;
+	// 按钮位图 85px；列表主体板 c/s 宽 97，标题板 t 宽 100（orange-wz 实测，2026-11-17 复核）。
+	// 居中基准必须用「列表主体宽 97」而非标题板宽 100：
+	//   用 100 → btn_x=7，落在 97 宽 c 板上左留白 7 / 右留白 5 → 左右不对称（用户实机反馈）。
+	//   用 97  → btn_x=6，左留白 6 / 右留白 6 → 对称。
+	const int16_t body_w = tile_c ? tile_c.width() : 97;   // 列表主体（c/s）宽，居中基准
 	const int16_t btn_w = 85;
-	const int16_t btn_x = static_cast<int16_t>((win_w - btn_w) / 2);
+	const int16_t btn_x = static_cast<int16_t>((body_w - btn_w) / 2);
 
 	struct Entry { uint16_t id; const char* node; };
 	const Entry fixed[] = {
@@ -6106,8 +5342,13 @@ void UIContextMenu::draw(float inter) const
 {
 	if (has_assets)
 	{
+		// 标题板 t=100 宽（含左右装饰括号），列表板 c/s=97 宽（orange-wz 实测 2026-11-17）。
+		// t 蓝条可视 x=4..96（中心 50）、c 蓝条 x=3..93（中心 48）→ 标题相对列表右偏 2px，
+		// 这正是用户反馈「名称上半部分/名称边框比下面列表偏右、应往左」。将 t 板左移该差值对齐。
+		const int16_t body_w = tile_c ? tile_c.width() : 97;
+		const int16_t title_shift = static_cast<int16_t>((tile_t ? tile_t.width() : 100) / 2 - body_w / 2);
 		Point<int16_t> p = position;
-		tile_t.draw(p);
+		tile_t.draw(p + Point<int16_t>(-title_shift, 0));
 		p = p + Point<int16_t>(0, tile_t.height());
 		const int16_t ch = tile_c.height() > 0 ? tile_c.height() : 15;
 		for (int16_t i = 0; i < mid_rows; ++i)
@@ -6118,10 +5359,10 @@ void UIContextMenu::draw(float inter) const
 		tile_s.draw(p);
 	}
 
-	// 标题在标题栏内水平+垂直居中（旧锚点 (8,4) + LEFT 对齐导致偏左上/左下）。
+	// 标题文字锚点与「列表主体中心」(body_w/2=48) 对齐，不再用标题板中心(50)，否则随标题板一起右偏。
 	// Text 单行锚点会再加 font.linespace()≈12（GraphicsGL::LayoutBuilder::ay），
 	// 标题栏仅 23px 高，故锚点 y 取 1 而非 title_h/2，否则文字基线落到 23 被蓝板顶住截断。
-	title_label.draw(position + Point<int16_t>(dimension.x() / 2, 1));
+	title_label.draw(position + Point<int16_t>((tile_c ? tile_c.width() : 97) / 2, 1));
 	UIElement::draw(inter);
 }
 
@@ -6212,12 +5453,7 @@ UIEventWindow::UIEventWindow()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIEventWindow: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& note) {
-		if (note.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		tip_label.change_text(note);
-		NpcTalkMorePacket(note).dispatch();
-		LOG(LOG_DEBUG, "UIEventWindow: SoftKey NpcTalkMore len=" << note.size());
-	}, []() {}, "Event note");
+	
 }
 void UIEventWindow::draw(float) const
 {
@@ -6231,11 +5467,7 @@ void UIEventWindow::send_key(int32_t keycode, bool pressed, bool escape)
 	if (keycode == 'E' || keycode == 'e') {
 		UI::get().emplace<UIEvent>();
 	} else if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([this](const std::string& note) {
-			if (note.empty()) return;
-			tip_label.change_text(note);
-			NpcTalkMorePacket(note).dispatch();
-		}, []() {}, "Event note");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -6312,26 +5544,12 @@ void UISlideMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		if (!pre.empty()) {
 			FindPlayerPacket(pre).dispatch();
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& name) {
-				if (!name.empty()) FindPlayerPacket(name).dispatch();
-			}, []() {}, "Find name");
+			
 		}
 		return;
 	}
 	if (keycode == 'C' || keycode == 'c') {
-		UI::get().emplace<UISoftKey>([](const std::string& ch) {
-			if (ch.empty()) return;
-			try {
-				int n = std::stoi(ch);
-				if (n >= 1 && n <= 20) {
-					ChangeChannelPacket(static_cast<uint8_t>(n - 1)).dispatch();
-					return;
-				}
-			} catch (...) {}
-			auto ui = UI::get().get_element<UIChannel>();
-			if (!ui) ui = UI::get().emplace<UIChannel>();
-			else if (!ui->is_active()) ui->makeactive();
-		}, []() {}, "Channel 1-N");
+		
 		return;
 	}
 	if (keycode == 'S' || keycode == 's') {
@@ -6381,11 +5599,7 @@ UIUtilDlgEx::UIUtilDlgEx() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIUtilDlgEx: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& text) {
-		if (text.empty()) return;
-		NpcTalkMorePacket(text).dispatch();
-		LOG(LOG_DEBUG, "UIUtilDlgEx: NPC text len=" << text.size());
-	}, []() {}, "UtilDlg text");
+	
 }
 void UIUtilDlgEx::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UIUtilDlgEx::send_key(int32_t keycode, bool pressed, bool escape)
@@ -6393,10 +5607,7 @@ void UIUtilDlgEx::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'T' || keycode == 't' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& text) {
-			if (text.empty()) return;
-			NpcTalkMorePacket(text).dispatch();
-		}, []() {}, "UtilDlg text");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -6412,33 +5623,7 @@ UIMultiLine::UIMultiLine()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMultiLine: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& text) {
-		if (text.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		tip_label.change_text(text);
-		const Inventory& inv = Stage::get().get_player().get_inventory();
-		int16_t cash_slot = 0;
-		int32_t cash_id = 0;
-		int16_t max = inv.get_slotmax(InventoryType::Id::CASH);
-		for (int16_t s = 1; s <= max; ++s) {
-			int32_t id = inv.get_item_id(InventoryType::Id::CASH, s);
-			if (id / 10000 == 537) { cash_slot = s; cash_id = id; break; }
-		}
-		if (cash_slot <= 0) {
-			for (int16_t s = 1; s <= max; ++s) {
-				int32_t id = inv.get_item_id(InventoryType::Id::CASH, s);
-				if (id / 10000 == 508) { cash_slot = s; cash_id = id; break; }
-			}
-		}
-		if (cash_slot > 0) {
-			if (cash_id / 10000 == 537)
-				UseChalkboardPacket(cash_slot, cash_id, text).dispatch();
-			else
-				UseKitePacket(cash_slot, cash_id, text).dispatch();
-			LOG(LOG_DEBUG, "UIMultiLine: chalk/kite id=" << cash_id);
-		} else {
-			tip_label.change_text(Locale::text("multiline.no_chalk_kite"));
-		}
-	}, []() {}, "MultiLine");
+	
 }
 void UIMultiLine::draw(float) const
 {
@@ -6450,32 +5635,7 @@ void UIMultiLine::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'C' || keycode == 'c') {
-		UI::get().emplace<UISoftKey>([this](const std::string& text) {
-			if (text.empty()) return;
-			tip_label.change_text(text);
-			const Inventory& inv = Stage::get().get_player().get_inventory();
-			int16_t cash_slot = 0;
-			int32_t cash_id = 0;
-			int16_t max = inv.get_slotmax(InventoryType::Id::CASH);
-			for (int16_t s = 1; s <= max; ++s) {
-				int32_t id = inv.get_item_id(InventoryType::Id::CASH, s);
-				if (id / 10000 == 537) { cash_slot = s; cash_id = id; break; }
-			}
-			if (cash_slot <= 0) {
-				for (int16_t s = 1; s <= max; ++s) {
-					int32_t id = inv.get_item_id(InventoryType::Id::CASH, s);
-					if (id / 10000 == 508) { cash_slot = s; cash_id = id; break; }
-				}
-			}
-			if (cash_slot > 0) {
-				if (cash_id / 10000 == 537)
-					UseChalkboardPacket(cash_slot, cash_id, text).dispatch();
-				else
-					UseKitePacket(cash_slot, cash_id, text).dispatch();
-			} else {
-				tip_label.change_text(Locale::text("multiline.no_chalk_kite"));
-			}
-		}, []() {}, "MultiLine");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -6724,15 +5884,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		else if (!ui->is_active()) ui->makeactive();
 		deactivate();
 	} else if (keycode == 'D' || keycode == 'd') {
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t amt = std::stoi(s);
-				if (amt > 0) {
-					MesoDropPacket(amt).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: MesoDrop amt=" << amt);
-				}
-			} catch (...) {}
-		}, []() {}, "Drop meso");
+		
 		deactivate();
 	} else if (keycode == 'Q' || keycode == 'q') {
 		auto& player = Stage::get().get_player();
@@ -6760,24 +5912,10 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		}
 		deactivate();
 	} else if (keycode == 'X' || keycode == 'x') {
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t emote = std::stoi(s);
-				FaceExpressionPacket(emote).dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: FaceExpression id=" << emote);
-			} catch (...) {}
-		}, []() {}, "Emote id");
+		
 		deactivate();
 	} else if (keycode == 'Z' || keycode == 'z') {
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t id = std::stoi(s);
-				if (id > 0) {
-					UseChairPacket(id).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: UseChair id=" << id);
-				}
-			} catch (...) {}
-		}, []() {}, "Chair itemid");
+		
 		deactivate();
 	} else if (keycode == 'Y' || keycode == 'y') {
 		CancelChairPacket().dispatch();
@@ -6814,30 +5952,14 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			UseItemEffectPacket(from_inv).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: UseItemEffect id=" << from_inv);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id > 0) {
-						UseItemEffectPacket(id).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: UseItemEffect id=" << id);
-					}
-				} catch (...) {}
-			}, []() {}, "ItemEffect id");
+			
 		}
 		deactivate();
 	} else if (keycode == 'O' || keycode == 'o') {
 		// USE_DOOR 语义修正（s9 DoorHandler 读 int ownerid）：真门踩线自动上行
 		// 已由 MapFieldMarkers::check_doors 接管；本键为调试兜底——SoftKey 输
 		// ownerid（放门者角色 cid）。修前 byte+byte 布局服务端永远匹配不到门。
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t owner = std::stoi(s);
-				if (owner > 0) {
-					UseDoorPacket(owner).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: UseDoor owner=" << owner);
-				}
-			} catch (...) {}
-		}, []() {}, "Door owner cid");
+		
 		LOG(LOG_DEBUG, "UIGameMenu: UseDoor prompt");
 		deactivate();
 	} else if (keycode == 'F' || keycode == 'f') {
@@ -6854,51 +5976,17 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			UseSkillPacket(from_sb, lv).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: UseSkill id=" << from_sb << " lv=" << lv);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id <= 0) return;
-					int32_t lv = 1;
-					try {
-						lv = Stage::get().get_player().get_skills().get_level(id);
-						if (lv <= 0) lv = 1;
-					} catch (...) {}
-					UseSkillPacket(id, lv).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: UseSkill id=" << id << " lv=" << lv);
-				} catch (...) {}
-			}, []() {}, "Skill id");
+			
 		}
 		deactivate();
 	} else if (keycode == '`') {
 		// MonsterBook cover SoftKey（~ 留给 CharInfoRequest）
 		// MONSTER_BOOK_COVER(57)：SoftKey cardid
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t id = std::stoi(s);
-				if (id > 0) {
-					MonsterBookSetCoverPacket(id).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: MonsterBookCover id=" << id);
-				}
-			} catch (...) {}
-		}, []() {}, "Book cover id");
+		
 		deactivate();
 	} else if (keycode == '=' || keycode == '+') {
 		// SPEND_AP：SoftKey str|dex|int|luk
-		UI::get().emplace<UISoftKey>([](const std::string& tip) {
-			if (tip.empty()) return;
-			std::string t = tip;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			MapleStat::Id st = MapleStat::Id::STR;
-			bool ok = false;
-			if (t == "str") { st = MapleStat::Id::STR; ok = true; }
-			else if (t == "dex") { st = MapleStat::Id::DEX; ok = true; }
-			else if (t == "int") { st = MapleStat::Id::INT; ok = true; }
-			else if (t == "luk") { st = MapleStat::Id::LUK; ok = true; }
-			if (ok) {
-				SpendApPacket(st).dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: SpendAp " << tip);
-			}
-		}, []() {}, "AP str|dex|int|luk");
+		
 		deactivate();
 	} else if (keycode == '[') {
 		// SoftKey tab：1=equip 2=use 3=setup 4=etc 5=cash → GATHER_ITEMS
@@ -6910,13 +5998,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				GatherItemsPacket(static_cast<InventoryType::Id>(tab)).dispatch();
 				LOG(LOG_DEBUG, "UIGameMenu: GatherItems tab=" << tab);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					int t = 2;
-					try { t = std::stoi(s); } catch (...) {}
-					if (t < 1 || t > 5) t = 2;
-					GatherItemsPacket(static_cast<InventoryType::Id>(t)).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: GatherItems tab=" << t);
-				}, []() {}, "Gather tab 1-5");
+				
 			}
 		}
 		deactivate();
@@ -6929,13 +6011,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				SortItemsPacket(static_cast<InventoryType::Id>(tab)).dispatch();
 				LOG(LOG_DEBUG, "UIGameMenu: SortItems tab=" << tab);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					int t = 2;
-					try { t = std::stoi(s); } catch (...) {}
-					if (t < 1 || t > 5) t = 2;
-					SortItemsPacket(static_cast<InventoryType::Id>(t)).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: SortItems tab=" << t);
-				}, []() {}, "Sort tab 1-5");
+				
 			}
 		}
 		deactivate();
@@ -6952,11 +6028,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			DenyGuildRequestPacket(pre).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: DenyGuild from=" << pre);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& from) {
-				if (from.empty()) return;
-				DenyGuildRequestPacket(from).dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: DenyGuild from=" << from);
-			}, []() {}, "Deny guild from");
+			
 		}
 		deactivate();
 	} else if (keycode == '-' || keycode == '_') {
@@ -6967,15 +6039,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			QuestActionPacket(3, from_ql).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: Quest forfeit id=" << from_ql);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int16_t qid = static_cast<int16_t>(std::stoi(s));
-					if (qid > 0) {
-						QuestActionPacket(3, qid).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: Quest forfeit id=" << qid);
-					}
-				} catch (...) {}
-			}, []() {}, "Forfeit quest id");
+			
 		}
 		deactivate();
 	} else if (keycode == ',' || keycode == '<') {
@@ -6993,25 +6057,12 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 					return;
 				}
 			}
-			UI::get().emplace<UISoftKey>([src](const std::string& dst_s) {
-				try {
-					int16_t dst = static_cast<int16_t>(std::stoi(dst_s));
-					if (dst > 0) {
-						ScrollEquipPacket(src, static_cast<EquipSlot::Id>(dst)).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: ScrollEquip src=" << src << " dst=" << dst);
-					}
-				} catch (...) {}
-			}, []() {}, "Equip slot id");
+			
 		};
 		if (scroll > 0) {
 			ask_equip(scroll);
 		} else {
-			UI::get().emplace<UISoftKey>([ask_equip](const std::string& src_s) {
-				int16_t src = 0;
-				try { src = static_cast<int16_t>(std::stoi(src_s)); } catch (...) { return; }
-				if (src <= 0) return;
-				ask_equip(src);
-			}, []() {}, "Scroll slot");
+			
 		}
 		deactivate();
 	} else if (keycode == '.' || keycode == '>') {
@@ -7033,19 +6084,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				}
 			}
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t itemid = std::stoi(s);
-				if (itemid <= 0) return;
-				const Inventory& inv = Stage::get().get_player().get_inventory();
-				int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-				if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-				if (slot > 0) {
-					UseItemPacket(slot, itemid).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: UseItem id=" << itemid << " slot=" << slot);
-				}
-			} catch (...) {}
-		}, []() {}, "Use itemid");
+		
 		deactivate();
 	} else if (keycode == '/' || keycode == '?') {
 		int32_t mid = 0;
@@ -7055,15 +6094,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			ChangeMapPacket(false, mid, "", false).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: ChangeMap id=" << mid);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t mapid = std::stoi(s);
-					if (mapid > 0) {
-						ChangeMapPacket(false, mapid, "", false).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: ChangeMap id=" << mapid);
-					}
-				} catch (...) {}
-			}, []() {}, "Map id");
+			
 		}
 		deactivate();
 	} else if (keycode == '\'' || keycode == '"') {
@@ -7073,16 +6104,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			PickupItemPacket(loot.first, loot.second).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: Pickup nearest oid=" << loot.first);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t oid = std::stoi(s);
-					if (oid > 0) {
-						Point<int16_t> p = Stage::get().get_player().get_position();
-						PickupItemPacket(oid, p).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: Pickup oid=" << oid);
-					}
-				} catch (...) {}
-			}, []() {}, "Pickup oid");
+			
 		}
 		deactivate();
 	} else if (keycode == '}') {
@@ -7092,16 +6114,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			DamageReactorPacket(near, pos, 0, 0).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: DamageReactor nearest oid=" << near);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t oid = std::stoi(s);
-					if (oid > 0) {
-						Point<int16_t> p = Stage::get().get_player().get_position();
-						DamageReactorPacket(oid, p, 0, 0).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: DamageReactor oid=" << oid);
-					}
-				} catch (...) {}
-			}, []() {}, "Reactor oid");
+			
 		}
 		deactivate();
 	} else if (keycode == '@') {
@@ -7114,15 +6127,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			TalkToNPCPacket(near).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: TalkToNPC nearest oid=" << near);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t oid = std::stoi(s);
-					if (oid > 0) {
-						TalkToNPCPacket(oid).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: TalkToNPC oid=" << oid);
-					}
-				} catch (...) {}
-			}, []() {}, "NPC oid");
+			
 		}
 		deactivate();
 	} else if (keycode == '%') {
@@ -7141,49 +6146,11 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				}
 			}
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			bool sell = false;
-			std::string body = s;
-			if (!body.empty() && (body[0] == 's' || body[0] == 'S')) {
-				sell = true;
-				body = body.substr(1);
-				if (!body.empty() && body[0] == ',') body = body.substr(1);
-			}
-			int vals[3] = { 0, 0, 1 };
-			size_t start = 0; int vi = 0;
-			while (vi < 3 && start <= body.size()) {
-				size_t c = body.find(',', start);
-				std::string part = (c == std::string::npos) ? body.substr(start) : body.substr(start, c - start);
-				try { vals[vi] = std::stoi(part); } catch (...) {}
-				++vi;
-				if (c == std::string::npos) break;
-				start = c + 1;
-			}
-			if (vals[0] >= 0 && vals[1] > 0) {
-				NpcShopActionPacket(
-					static_cast<int16_t>(vals[0]), vals[1],
-					static_cast<int16_t>(vals[2]), !sell
-				).dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: NpcShop " << (sell ? "Sell " : "Buy ") << body);
-			}
-		}, []() {}, "slot,id,qty|s,slot,id,qty");
+		
 		deactivate();
 	} else if (keycode == '&') {
 		// NPC_TALK_MORE：SoftKey 文本回复 或 纯数字 selection
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			if (s.empty()) return;
-			bool all_digit = true;
-			for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
-			if (all_digit) {
-				try {
-					NpcTalkMorePacket(std::stoi(s)).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: NpcTalkMore sel=" << s);
-				} catch (...) {}
-			} else {
-				NpcTalkMorePacket(s).dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: NpcTalkMore text len=" << s.size());
-			}
-		}, []() {}, "NPC reply|sel");
+		
 		deactivate();
 	} else if (keycode == '*') {
 		int32_t from_ci = 0;
@@ -7193,15 +6160,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			CharInfoRequestPacket(from_ci).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: CharInfo cid=" << from_ci);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t cid = std::stoi(s);
-					if (cid > 0) {
-						CharInfoRequestPacket(cid).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: CharInfo cid=" << cid);
-					}
-				} catch (...) {}
-			}, []() {}, "Char cid");
+			
 		}
 		deactivate();
 	} else if (keycode == '(') {
@@ -7214,15 +6173,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				return;
 			}
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int16_t slot = static_cast<int16_t>(std::stoi(s));
-				if (slot >= 0) {
-					NpcShopActionPacket(slot).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: NpcShopRecharge slot=" << slot);
-				}
-			} catch (...) {}
-		}, []() {}, "Recharge slot");
+		
 		deactivate();
 	} else if (keycode == ')') {
 		NpcShopActionPacket().dispatch();
@@ -7244,18 +6195,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 				}
 			}
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			try {
-				int32_t itemid = std::stoi(s);
-				if (itemid <= 0) return;
-				const Inventory& inv = Stage::get().get_player().get_inventory();
-				int16_t slot = inv.find_item(InventoryType::Id::CASH, itemid);
-				if (slot > 0) {
-					UseCashItemBasicPacket(slot, itemid).dispatch();
-					LOG(LOG_DEBUG, "UIGameMenu: UseCashItem id=" << itemid << " slot=" << slot);
-				}
-			} catch (...) {}
-		}, []() {}, "Cash itemid");
+		
 		deactivate();
 	} else if (keycode == '{') {
 		int32_t from_sb = 0;
@@ -7265,15 +6205,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			SpendSpPacket(from_sb).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: SpendSp id=" << from_sb);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t sid = std::stoi(s);
-					if (sid > 0) {
-						SpendSpPacket(sid).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: SpendSp id=" << sid);
-					}
-				} catch (...) {}
-			}, []() {}, "Skill id SP");
+			
 		}
 		deactivate();
 	} else if (keycode == '#') {
@@ -7286,22 +6218,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			deactivate();
 			return;
 		}
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			std::string t = s;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t.empty() || t == "v" || t == "visit") {
-				TradeVisitPacket().dispatch();
-				LOG(LOG_DEBUG, "UIGameMenu: TradeVisit");
-				return;
-			}
-			try {
-				int32_t cid = std::stoi(s);
-				if (cid > 0) {
-					dispatch_trade_invite(cid);
-					LOG(LOG_DEBUG, "UIGameMenu: TradeInvite cid=" << cid);
-				}
-			} catch (...) {}
-		}, []() {}, "Trade cid|v");
+		
 		deactivate();
 	} else if (keycode == '~') {
 		// CharInfoRequest：CharInfo 已有 cid 则直接发（与 * 一致；与 ` BookCover 分离）
@@ -7312,15 +6229,7 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 			CharInfoRequestPacket(from_ci).dispatch();
 			LOG(LOG_DEBUG, "UIGameMenu: CharInfoRequest cid=" << from_ci);
 		} else {
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					int32_t cid = std::stoi(s);
-					if (cid > 0) {
-						CharInfoRequestPacket(cid).dispatch();
-						LOG(LOG_DEBUG, "UIGameMenu: CharInfoRequest cid=" << cid);
-					}
-				} catch (...) {}
-			}, []() {}, "CharInfo cid");
+			
 		}
 		deactivate();
 	} else if (keycode == 9) {
@@ -7496,15 +6405,7 @@ void UIMacro::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'R' || keycode == 'r') {
-		UI::get().emplace<UISoftKey>([this](const std::string& name) {
-			if (name.empty()) return;
-			auto& macros = SkillMacros::get();
-			SkillMacroSlot slot = macros.get_slot(0);
-			slot.name = name;
-			macros.set_slot(0, std::move(slot));
-			ChangeSkillMacroPacket().dispatch();
-			tip_label.change_text(Locale::format("common.saved", name));
-		}, []() {}, "Macro");
+		
 	} else if (keycode == 'A' || keycode == 'a') {
 		int32_t sid = 0;
 		if (auto sb = UI::get().get_element<UISkillBook>())
@@ -7518,18 +6419,7 @@ void UIMacro::send_key(int32_t keycode, bool pressed, bool escape)
 				tip_label.change_text(Locale::text("common.macro_full"));
 			}
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id <= 0) return;
-					if (SkillMacros::get().assign_skill(id)) {
-						ChangeSkillMacroPacket().dispatch();
-						tip_label.change_text(Locale::format("common.assigned", s));
-					} else {
-						tip_label.change_text(Locale::text("common.macro_full"));
-					}
-				} catch (...) {}
-			}, []() {}, "Skill id");
+			
 		}
 	} else if (keycode == 'K' || keycode == 'k') {
 		auto ui = UI::get().get_element<UIMacroSkill>();
@@ -7560,21 +6450,7 @@ UIUtilDlgExAvatar::UIUtilDlgExAvatar()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIUtilDlgExAvatar: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-		if (tip.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		try {
-			int32_t emote = std::stoi(tip);
-			if (emote >= 0) {
-				FaceExpressionPacket(emote).dispatch();
-				tip_label.change_text(Locale::format("utildlgexavatar.emote", tip));
-				LOG(LOG_DEBUG, "UIUtilDlgExAvatar: FaceExpression id=" << emote);
-				return;
-			}
-		} catch (...) {}
-		NpcTalkMorePacket(tip).dispatch();
-		tip_label.change_text(tip);
-		LOG(LOG_DEBUG, "UIUtilDlgExAvatar: SoftKey NpcTalkMore len=" << tip.size());
-	}, []() {}, "Emote id|tip");
+	
 }
 void UIUtilDlgExAvatar::draw(float) const
 {
@@ -7586,19 +6462,7 @@ void UIUtilDlgExAvatar::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'E' || keycode == 'e') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			try {
-				int32_t emote = std::stoi(tip);
-				if (emote >= 0) {
-					FaceExpressionPacket(emote).dispatch();
-					tip_label.change_text(Locale::format("utildlgexavatar.emote", tip));
-					return;
-				}
-			} catch (...) {}
-			NpcTalkMorePacket(tip).dispatch();
-			tip_label.change_text(tip);
-		}, []() {}, "Emote id|tip");
+		
 	} else if (keycode == 'U' || keycode == 'u') {
 		auto ui = UI::get().get_element<UIUtilDlgEx>();
 		if (!ui) ui = UI::get().emplace<UIUtilDlgEx>();
@@ -7616,21 +6480,7 @@ UIUtilDlgExPet::UIUtilDlgExPet() {
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIUtilDlgExPet: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& name) {
-		if (name.empty()) return;
-		const Inventory& inv = Stage::get().get_player().get_inventory();
-		int16_t slot = 0; int32_t itemid = 0;
-		for (int16_t i = 1; i <= 96; ++i) {
-			int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
-			if (id / 10000 == 517) { slot = i; itemid = id; break; }
-		}
-		if (slot <= 0) {
-			LOG(LOG_DEBUG, "UIUtilDlgExPet: no 517* name tag");
-			return;
-		}
-		UsePetNameTagPacket(slot, itemid, name).dispatch();
-		LOG(LOG_DEBUG, "UIUtilDlgExPet: rename via " << itemid);
-	}, []() {}, "Pet name");
+	
 }
 void UIUtilDlgExPet::draw(float) const { if (has_assets && backgrnd) backgrnd.draw(position); }
 void UIUtilDlgExPet::send_key(int32_t keycode, bool pressed, bool escape)
@@ -7638,86 +6488,23 @@ void UIUtilDlgExPet::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'R' || keycode == 'r' || keycode == 'N' || keycode == 'n') {
-		UI::get().emplace<UISoftKey>([](const std::string& name) {
-			if (name.empty()) return;
-			const Inventory& inv = Stage::get().get_player().get_inventory();
-			int16_t slot = 0; int32_t itemid = 0;
-			for (int16_t i = 1; i <= 96; ++i) {
-				int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
-				if (id / 10000 == 517) { slot = i; itemid = id; break; }
-			}
-			if (slot > 0)
-				UsePetNameTagPacket(slot, itemid, name).dispatch();
-		}, []() {}, "Pet name");
+		
 	} else if (keycode == 'M' || keycode == 'm') {
 		auto ui = UI::get().get_element<UIUtilDlgExMultiPet>();
 		if (!ui) ui = UI::get().emplace<UIUtilDlgExMultiPet>();
 		else if (!ui->is_active()) ui->makeactive();
 	} else if (keycode == 'C' || keycode == 'c') {
 		// W1：PET_COMMAND — SoftKey 输入命令号 0..9
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			if (s.empty()) return;
-			int cmd = 0;
-			try { cmd = std::stoi(s); } catch (...) { return; }
-			if (cmd < 0 || cmd > 9) return;
-			const Player& pl = Stage::get().get_player();
-			for (uint8_t i = 0; i < 3; ++i) {
-				const PetLook& pet = pl.get_pet(i);
-				if (pet.get_uniqueid() > 0) {
-					PetCommandPacket(pet.get_uniqueid(), static_cast<int8_t>(cmd)).dispatch();
-					return;
-				}
-			}
-		}, []() {}, "cmd 0-9");
+		
 	} else if (keycode == 'T' || keycode == 't') {
 		// W1：PET_CHAT — SoftKey 文本
-		UI::get().emplace<UISoftKey>([](const std::string& text) {
-			if (text.empty()) return;
-			const Player& pl = Stage::get().get_player();
-			for (uint8_t i = 0; i < 3; ++i) {
-				const PetLook& pet = pl.get_pet(i);
-				if (pet.get_uniqueid() > 0) {
-					PetChatPacket(pet.get_uniqueid(), 0, text).dispatch();
-					return;
-				}
-			}
-		}, []() {}, "pet chat");
+		
 	} else if (keycode == 'E' || keycode == 'e') {
 		// W1：PET_EXCLUDE_ITEMS — SoftKey 逗号分隔 itemId 列表
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			const Player& pl = Stage::get().get_player();
-			int32_t uid = 0;
-			for (uint8_t i = 0; i < 3; ++i) {
-				const PetLook& pet = pl.get_pet(i);
-				if (pet.get_uniqueid() > 0) { uid = pet.get_uniqueid(); break; }
-			}
-			if (uid <= 0) return;
-			std::vector<int32_t> ids;
-			std::string token;
-			for (size_t i = 0; i <= s.size(); ++i) {
-				if (i == s.size() || s[i] == ',') {
-					if (!token.empty()) {
-						try { ids.push_back(std::stoi(token)); } catch (...) {}
-						token.clear();
-					}
-				} else if (s[i] != ' ') {
-					token.push_back(s[i]);
-				}
-			}
-			PetExcludeItemsPacket(uid, ids).dispatch();
-		}, []() {}, "exclude ids");
+		
 	} else if (keycode == 'P' || keycode == 'p') {
 		// W1：PET_AUTO_POT — SoftKey useSlot,itemId
-		UI::get().emplace<UISoftKey>([](const std::string& s) {
-			auto comma = s.find(',');
-			if (comma == std::string::npos) return;
-			try {
-				int16_t use_slot = static_cast<int16_t>(std::stoi(s.substr(0, comma)));
-				int32_t itemid = std::stoi(s.substr(comma + 1));
-				if (use_slot > 0 && itemid > 0)
-					PetAutoPotPacket(use_slot, itemid).dispatch();
-			} catch (...) {}
-		}, []() {}, "slot,itemId");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -7733,22 +6520,7 @@ UIUtilDlgExMultiPet::UIUtilDlgExMultiPet()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIUtilDlgExMultiPet: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& name) {
-		if (name.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		const Inventory& inv = Stage::get().get_player().get_inventory();
-		int16_t slot = 0; int32_t itemid = 0;
-		for (int16_t i = 1; i <= 96; ++i) {
-			int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
-			if (id / 10000 == 517) { slot = i; itemid = id; break; }
-		}
-		if (slot <= 0) {
-			tip_label.change_text(Locale::text("utildlgexmultipet.no_517_tag"));
-			return;
-		}
-		UsePetNameTagPacket(slot, itemid, name).dispatch();
-		tip_label.change_text(Locale::format("utildlgexmultipet.rename", name));
-		LOG(LOG_DEBUG, "UIUtilDlgExMultiPet: rename via " << itemid);
-	}, []() {}, "MultiPet name");
+	
 }
 void UIUtilDlgExMultiPet::draw(float) const
 {
@@ -7760,18 +6532,7 @@ void UIUtilDlgExMultiPet::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'R' || keycode == 'r' || keycode == 'N' || keycode == 'n') {
-		UI::get().emplace<UISoftKey>([this](const std::string& name) {
-			if (name.empty()) return;
-			const Inventory& inv = Stage::get().get_player().get_inventory();
-			int16_t slot = 0; int32_t itemid = 0;
-			for (int16_t i = 1; i <= 96; ++i) {
-				int32_t id = inv.get_item_id(InventoryType::Id::CASH, i);
-				if (id / 10000 == 517) { slot = i; itemid = id; break; }
-			}
-			if (slot <= 0) { tip_label.change_text(Locale::text("utildlgexmultipet.no_517_tag")); return; }
-			UsePetNameTagPacket(slot, itemid, name).dispatch();
-			tip_label.change_text(Locale::format("utildlgexmultipet.rename", name));
-		}, []() {}, "MultiPet name");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -7796,12 +6557,7 @@ UIExceptionItemSearch::UIExceptionItemSearch()
 			FindPlayerPacket(pre).dispatch();
 			LOG(LOG_DEBUG, "UIExceptionItemSearch: FindPlayer q=" << pre);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& q) {
-				if (q.empty()) { tip_label.change_text(Locale::text("common.empty_query")); return; }
-				tip_label.change_text(Locale::format("common.q", q));
-				FindPlayerPacket(q).dispatch();
-				LOG(LOG_DEBUG, "UIExceptionItemSearch: SoftKey FindPlayer q=" << q);
-			}, []() {}, "ExSearch name");
+			
 		}
 	}
 }
@@ -7822,11 +6578,7 @@ void UIExceptionItemSearch::send_key(int32_t keycode, bool pressed, bool escape)
 			tip_label.change_text(Locale::format("common.q", pre));
 			FindPlayerPacket(pre).dispatch();
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& q) {
-				if (q.empty()) return;
-				tip_label.change_text(Locale::format("common.q", q));
-				FindPlayerPacket(q).dispatch();
-			}, []() {}, "ExSearch name");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -7852,33 +6604,7 @@ void UIMobGage::send_key(int32_t keycode, bool pressed, bool escape)
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 		|| keycode == 'H' || keycode == 'h') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			try {
-				size_t c = tip.find(',');
-				if (c != std::string::npos) {
-					int32_t cur = std::stoi(tip.substr(0, c));
-					int32_t maxv = std::stoi(tip.substr(c + 1));
-					auto boss = UI::get().get_element<UIBossHP>();
-					if (!boss) boss = UI::get().emplace<UIBossHP>();
-					else if (!boss->is_active()) boss->makeactive();
-					boss->set_hp(1, cur, maxv, 0, 0);
-					tip_label.change_text(tip);
-					LOG(LOG_DEBUG, "UIMobGage: SoftKey → BossHP " << tip);
-					return;
-				}
-				int pct = std::stoi(tip);
-				tip_label.change_text(Locale::format("mobgage.txt", std::to_string(pct)));
-				auto boss = UI::get().get_element<UIBossHP>();
-				if (!boss) boss = UI::get().emplace<UIBossHP>();
-				else if (!boss->is_active()) boss->makeactive();
-				boss->set_hp(1, pct, 100, 0, 0);
-			} catch (...) {
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-				LOG(LOG_DEBUG, "UIMobGage: SoftKey NpcTalkMore len=" << tip.size());
-			}
-		}, []() {}, "cur,max|pct|tip");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();
@@ -7901,16 +6627,7 @@ UISkillUp::UISkillUp() : tip_label(Text::Font::A11M, Text::Alignment::CENTER, Co
 			tip_label.change_text(Locale::format("skillup.sp", std::to_string(from_sb)));
 			LOG(LOG_DEBUG, "UISkillUp: SpendSp id=" << from_sb);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id > 0) {
-						SpendSpPacket(id).dispatch();
-						tip_label.change_text(Locale::format("skillup.sp", s));
-						LOG(LOG_DEBUG, "UISkillUp: SpendSp id=" << id);
-					}
-				} catch (...) {}
-			}, []() {}, "SkillUp id");
+			
 		}
 	}
 }
@@ -7931,15 +6648,7 @@ void UISkillUp::send_key(int32_t keycode, bool pressed, bool escape)
 			SpendSpPacket(from_sb).dispatch();
 			tip_label.change_text(Locale::format("skillup.sp", std::to_string(from_sb)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id > 0) {
-						SpendSpPacket(id).dispatch();
-						tip_label.change_text(Locale::format("skillup.sp", s));
-					}
-				} catch (...) {}
-			}, []() {}, "SkillUp id");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -7957,16 +6666,7 @@ UIMacroSkill::UIMacroSkill()
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMacroSkill: missing");
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([this](const std::string& name) {
-		if (name.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
-		auto& macros = SkillMacros::get();
-		SkillMacroSlot slot = macros.get_slot(0);
-		slot.name = name;
-		macros.set_slot(0, std::move(slot));
-		ChangeSkillMacroPacket().dispatch();
-		tip_label.change_text(Locale::format("common.saved", name));
-		LOG(LOG_DEBUG, "UIMacroSkill: SoftKey rename+save name=" << name);
-	}, []() {}, "MacroSkill");
+	
 }
 void UIMacroSkill::draw(float) const
 {
@@ -7978,15 +6678,7 @@ void UIMacroSkill::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'R' || keycode == 'r') {
-		UI::get().emplace<UISoftKey>([this](const std::string& name) {
-			if (name.empty()) return;
-			auto& macros = SkillMacros::get();
-			SkillMacroSlot slot = macros.get_slot(0);
-			slot.name = name;
-			macros.set_slot(0, std::move(slot));
-			ChangeSkillMacroPacket().dispatch();
-			tip_label.change_text(Locale::format("common.saved", name));
-		}, []() {}, "MacroSkill");
+		
 	} else if (keycode == 'A' || keycode == 'a') {
 		int32_t sid = 0;
 		if (auto sb = UI::get().get_element<UISkillBook>())
@@ -7999,18 +6691,7 @@ void UIMacroSkill::send_key(int32_t keycode, bool pressed, bool escape)
 				tip_label.change_text(Locale::text("common.macro_full"));
 			}
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				try {
-					int32_t id = std::stoi(s);
-					if (id <= 0) return;
-					if (SkillMacros::get().assign_skill(id)) {
-						ChangeSkillMacroPacket().dispatch();
-						tip_label.change_text(Locale::format("common.assigned", s));
-					} else {
-						tip_label.change_text(Locale::text("common.macro_full"));
-					}
-				} catch (...) {}
-			}, []() {}, "Skill id");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -8035,21 +6716,7 @@ UIQuestIcon::UIQuestIcon()
 			tip_label.change_text(Locale::format("questicon.q", std::to_string(from_ql)));
 			LOG(LOG_DEBUG, "UIQuestIcon: QuestAction start id=" << from_ql);
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int16_t qid = static_cast<int16_t>(std::stoi(tip));
-					if (qid > 0) {
-						QuestActionPacket(1, qid).dispatch(); // start
-						tip_label.change_text(Locale::format("questicon.q", tip));
-						LOG(LOG_DEBUG, "UIQuestIcon: QuestAction start id=" << qid);
-						return;
-					}
-				} catch (...) {}
-				tip_label.change_text(tip);
-				NpcTalkMorePacket(tip).dispatch();
-				LOG(LOG_DEBUG, "UIQuestIcon: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, "Quest id");
+			
 		}
 	}
 }
@@ -8070,19 +6737,7 @@ void UIQuestIcon::send_key(int32_t keycode, bool pressed, bool escape)
 			QuestActionPacket(1, from_ql).dispatch();
 			tip_label.change_text(Locale::format("questicon.q", std::to_string(from_ql)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int16_t qid = static_cast<int16_t>(std::stoi(tip));
-					if (qid > 0) {
-						QuestActionPacket(1, qid).dispatch();
-						tip_label.change_text(Locale::format("questicon.q", tip));
-						return;
-					}
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-			}, []() {}, "Quest id|tip");
+			
 		}
 	} else if (keycode == 'C' || keycode == 'c') {
 		int16_t from_ql = 0;
@@ -8092,19 +6747,7 @@ void UIQuestIcon::send_key(int32_t keycode, bool pressed, bool escape)
 			QuestActionPacket(2, from_ql, 0).dispatch();
 			tip_label.change_text(Locale::format("questicon.done", std::to_string(from_ql)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				try {
-					size_t comma = tip.find(',');
-					int16_t qid = static_cast<int16_t>(std::stoi(comma == std::string::npos ? tip : tip.substr(0, comma)));
-					int32_t npcid = 0;
-					if (comma != std::string::npos)
-						npcid = static_cast<int32_t>(std::stoi(tip.substr(comma + 1)));
-					if (qid > 0) {
-						QuestActionPacket(2, qid, npcid).dispatch();
-						tip_label.change_text(Locale::format("questicon.done", tip));
-					}
-				} catch (...) {}
-			}, []() {}, "qid or qid,npc");
+			
 		}
 	} else if (keycode == 'F' || keycode == 'f') {
 		int16_t from_ql = 0;
@@ -8114,15 +6757,7 @@ void UIQuestIcon::send_key(int32_t keycode, bool pressed, bool escape)
 			QuestActionPacket(3, from_ql).dispatch();
 			tip_label.change_text(Locale::format("questicon.forfeit", std::to_string(from_ql)));
 		} else {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				try {
-					int16_t qid = static_cast<int16_t>(std::stoi(tip));
-					if (qid > 0) {
-						QuestActionPacket(3, qid).dispatch();
-						tip_label.change_text(Locale::format("questicon.forfeit", tip));
-					}
-				} catch (...) {}
-			}, []() {}, "Forfeit qid");
+			
 		}
 	}
 	if (keycode == 'X' || keycode == 'x') {
@@ -8214,30 +6849,7 @@ void UIMinigameTable::send_key(int32_t keycode, bool pressed, bool escape)
 	}
 	if (keycode == 'O' || keycode == 'o') {
 		// SoftKey "x,y" → Omok place；MatchCard 用纯数字 slot
-		UI::get().emplace<UISoftKey>([this](const std::string& s) {
-			if (s.empty()) return;
-			if (game_kind == 2) {
-				try {
-					uint8_t slot = static_cast<uint8_t>(std::stoi(s));
-					MinigameMatchCardSelectPacket(0, slot).dispatch();
-					tip_label.change_text(Locale::format("minigametable.card", s));
-				} catch (...) {}
-				return;
-			}
-			size_t comma = s.find(',');
-			if (comma == std::string::npos) return;
-			try {
-				uint8_t x = static_cast<uint8_t>(std::stoi(s.substr(0, comma)));
-				uint8_t y = static_cast<uint8_t>(std::stoi(s.substr(comma + 1)));
-				if (x > 14) x = 14;
-				if (y > 14) y = 14;
-				MinigameOmokPlacePacket(x, y, next_piece).dispatch();
-				note_place(x, y, next_piece);
-				next_piece = (next_piece == 1) ? 2 : 1;
-				tip_label.change_text(Locale::format("minigametable.omok", s));
-				LOG(LOG_DEBUG, "UIMinigameTable: SoftKey Omok " << (int)x << "," << (int)y);
-			} catch (...) {}
-		}, []() {}, game_kind == 2 ? "Card slot" : "Omok x,y");
+		
 	}
 }
 UIElement::Type UIMinigameTable::get_type() const { return TYPE; }
@@ -8289,15 +6901,7 @@ void UIFloatNotice::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't') {
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			tip_label.change_text(tip);
-			auto sm = UI::get().get_element<UIStatusMessenger>();
-			if (!sm) sm = UI::get().emplace<UIStatusMessenger>();
-			else if (!sm->is_active()) sm->makeactive();
-			sm->show_status(Color::Name::YELLOW, tip);
-			LOG(LOG_DEBUG, "UIFloatNotice: SoftKey → StatusMessenger len=" << tip.size());
-		}, []() {}, "FloatNotice tip");
+		
 	}
 	if (keycode == 'X' || keycode == 'x') {
 		deactivate();

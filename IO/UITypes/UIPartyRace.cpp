@@ -48,28 +48,7 @@ namespace ms
 
 		stage_label.change_text(Locale::text("partyrace.stage_initial"));
 		score_label.change_text(Locale::text("partyrace.score_initial"));
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			std::string t = tip;
-			for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-			if (t == "win") { show_result(true); return; }
-			if (t == "lose") { show_result(false); return; }
-			size_t colon = tip.find(':');
-			if (colon != std::string::npos) {
-				try {
-					set_score(std::stoi(tip.substr(0, colon)), std::stoi(tip.substr(colon + 1)));
-					LOG(LOG_DEBUG, "UIPartyRace: SoftKey score " << tip);
-					return;
-				} catch (...) {}
-			}
-			try {
-				set_stage(std::stoi(tip));
-				return;
-			} catch (...) {}
-			NpcTalkMorePacket(tip).dispatch();
-			score_label.change_text(tip);
-			LOG(LOG_DEBUG, "UIPartyRace: SoftKey NpcTalkMore len=" << tip.size());
-		}, []() {}, "r:b|win|stage|tip");
+		
 		LOG(LOG_DEBUG, "UIPartyRace: shell open");
 #endif
 	}
@@ -116,26 +95,7 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "win") { show_result(true); return; }
-				if (t == "lose") { show_result(false); return; }
-				size_t colon = tip.find(':');
-				if (colon != std::string::npos) {
-					try {
-						set_score(std::stoi(tip.substr(0, colon)), std::stoi(tip.substr(colon + 1)));
-						return;
-					} catch (...) {}
-				}
-				try {
-					set_stage(std::stoi(tip));
-				} catch (...) {
-					NpcTalkMorePacket(tip).dispatch();
-					score_label.change_text(tip);
-				}
-			}, []() {}, "r:b|win|stage|tip");
+			
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{

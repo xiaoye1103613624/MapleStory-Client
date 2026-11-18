@@ -92,20 +92,7 @@ namespace ms
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 			|| keycode == 'U' || keycode == 'u')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					int32_t id = std::stoi(tip);
-					if (id <= 0) return;
-					int32_t lv = 1;
-					try {
-						lv = Stage::get().get_player().get_skills().get_level(id);
-						if (lv <= 0) lv = 1;
-					} catch (...) {}
-					UseSkillPacket(id, lv).dispatch();
-					LOG(LOG_DEBUG, "UIEnergyBar: SoftKey UseSkill id=" << id);
-				} catch (...) {}
-			}, []() {}, "Energy skillid");
+			
 		}
 		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
 		{

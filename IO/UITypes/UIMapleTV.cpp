@@ -58,24 +58,7 @@ UIElement::Type UIMapleTV::get_type() const { return TYPE; }
 Button::State UIMapleTV::button_pressed(uint16_t id)
 {
 	if (id == BtOk) {
-		UI::get().emplace<UISoftKey>([this](const std::string& msg) {
-			if (msg.empty()) return;
-			tip_label.change_text(msg);
-			const Inventory& inv = Stage::get().get_player().get_inventory();
-			int16_t cash_slot = 0;
-			int32_t cash_id = 0;
-			int16_t max = inv.get_slotmax(InventoryType::Id::CASH);
-			for (int16_t s = 1; s <= max; ++s) {
-				int32_t id = inv.get_item_id(InventoryType::Id::CASH, s);
-				if (id / 10000 == 512) { cash_slot = s; cash_id = id; break; }
-			}
-			if (cash_slot > 0) {
-				UseMapEffectPacket(cash_slot, cash_id, msg).dispatch();
-				LOG(LOG_DEBUG, "UIMapleTV: UseMapEffect id=" << cash_id);
-			} else {
-				tip_label.change_text(Locale::text("mapletv.no_512"));
-			}
-		}, []() {}, "MapleTV msg");
+		
 		return Button::State::NORMAL;
 	}
 	deactivate();
@@ -122,19 +105,12 @@ Button::State UIAdminClaim::button_pressed(uint16_t id)
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			pre = ci->get_target_name();
 		auto ask_desc = [](const std::string& victim) {
-			UI::get().emplace<UISoftKey>([victim](const std::string& desc) {
-				if (desc.empty()) return;
-				ReportPlayerPacket(victim, desc).dispatch();
-				LOG(LOG_DEBUG, "UIAdminClaim: Report " << victim);
-			}, []() {}, "Claim desc");
+			
 		};
 		if (!pre.empty()) {
 			ask_desc(pre);
 		} else {
-			UI::get().emplace<UISoftKey>([ask_desc](const std::string& victim) {
-				if (victim.empty()) return;
-				ask_desc(victim);
-			}, []() {}, "Claim victim");
+			
 		}
 		return Button::State::NORMAL;
 	}
@@ -158,11 +134,7 @@ UIClassMatch::UIClassMatch() {
 	if (root["BtOK"])
 		buttons[BtOK] = std::make_unique<MapleButton>(root["BtOK"], Point<int16_t>(120, static_cast<int16_t>(dimension.y()-40)));
 	center_on_screen();
-	UI::get().emplace<UISoftKey>([](const std::string& tip) {
-		if (tip.empty()) return;
-		NpcTalkMorePacket(tip).dispatch();
-		LOG(LOG_DEBUG, "UIClassMatch: SoftKey NpcTalkMore len=" << tip.size());
-	}, []() {}, "ClassMatch");
+	
 #endif
 }
 void UIClassMatch::draw(float inter) const {
@@ -175,10 +147,7 @@ void UIClassMatch::send_key(int32_t keycode, bool pressed, bool escape)
 	if (pressed && escape) { deactivate(); return; }
 	if (!pressed) return;
 	if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-		UI::get().emplace<UISoftKey>([](const std::string& tip) {
-			if (tip.empty()) return;
-			NpcTalkMorePacket(tip).dispatch();
-		}, []() {}, "ClassMatch");
+		
 	}
 }
 UIElement::Type UIClassMatch::get_type() const { return TYPE; }

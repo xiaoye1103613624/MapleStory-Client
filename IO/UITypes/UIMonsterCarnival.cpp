@@ -42,22 +42,7 @@ namespace ms
 		cp_label.change_text(Locale::text("carnival.cp_initial"));
 		enemy_label.change_text(Locale::text("carnival.enemy_initial"));
 		msg_label.change_text(Locale::text("carnival.title"));
-		UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-			if (tip.empty()) return;
-			size_t slash = tip.find('/');
-			if (slash != std::string::npos) {
-				try {
-					int16_t avail = static_cast<int16_t>(std::stoi(tip.substr(0, slash)));
-					int16_t total = static_cast<int16_t>(std::stoi(tip.substr(slash + 1)));
-					set_cp(0, total, avail);
-					LOG(LOG_DEBUG, "UIMonsterCarnival: SoftKey CP " << avail << "/" << total);
-					return;
-				} catch (...) {}
-			}
-			NpcTalkMorePacket(tip).dispatch();
-			msg_label.change_text(tip);
-			LOG(LOG_DEBUG, "UIMonsterCarnival: SoftKey NpcTalkMore len=" << tip.size());
-		}, []() {}, "avail/total|tip");
+		
 		LOG(LOG_DEBUG, "UIMonsterCarnival: open");
 #endif
 	}
@@ -99,40 +84,15 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				size_t slash = tip.find('/');
-				if (slash != std::string::npos) {
-					try {
-						int16_t avail = static_cast<int16_t>(std::stoi(tip.substr(0, slash)));
-						int16_t total = static_cast<int16_t>(std::stoi(tip.substr(slash + 1)));
-						set_cp(0, total, avail);
-						return;
-					} catch (...) {}
-				}
-				NpcTalkMorePacket(tip).dispatch();
-				msg_label.change_text(tip);
-			}, []() {}, "avail/total|tip");
+			
 		}
 		else if (keycode == 'E' || keycode == 'e')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				size_t slash = tip.find('/');
-				if (slash == std::string::npos) return;
-				try {
-					int16_t avail = static_cast<int16_t>(std::stoi(tip.substr(0, slash)));
-					int16_t total = static_cast<int16_t>(std::stoi(tip.substr(slash + 1)));
-					set_enemy_cp(total, avail);
-				} catch (...) {}
-			}, []() {}, "enemy avail/total");
+			
 		}
 		else if (keycode == 'M' || keycode == 'm')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (!tip.empty())
-					set_message(tip);
-			}, []() {}, "CPQ msg");
+			
 		}
 	}
 

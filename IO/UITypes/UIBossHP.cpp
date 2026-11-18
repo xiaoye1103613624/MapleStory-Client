@@ -190,26 +190,7 @@ namespace ms
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 			|| keycode == 'H' || keycode == 'h')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				try {
-					size_t c = tip.find(',');
-					if (c != std::string::npos) {
-						int32_t cur = std::stoi(tip.substr(0, c));
-						int32_t maxv = std::stoi(tip.substr(c + 1));
-						int32_t id = order.empty() ? 1 : order.back();
-						set_hp(id, cur, maxv, 0, 0);
-						return;
-					}
-					int pct = std::stoi(tip);
-					if (pct < 0) pct = 0;
-					if (pct > 100) pct = 100;
-					int32_t id = order.empty() ? 1 : order.back();
-					set_hp(id, pct, 100, 0, 0);
-				} catch (...) {
-					NpcTalkMorePacket(tip).dispatch();
-				}
-			}, []() {}, "cur,max|pct|tip");
+			
 		}
 		else if (keycode == 'C' || keycode == 'c')
 		{

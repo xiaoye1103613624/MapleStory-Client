@@ -79,26 +79,7 @@ namespace ms
 			LOG(LOG_WARN, "UIPlant: missing");
 		center_on_screen();
 		if (!try_use_selected_inv(tip_label, "UIPlant")) {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) { tip_label.change_text(Locale::text("plant.title")); return; }
-				try {
-					int32_t itemid = std::stoi(tip);
-					if (itemid > 0) {
-						const Inventory& inv = Stage::get().get_player().get_inventory();
-						int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-						if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-						if (slot > 0) {
-							UseItemPacket(slot, itemid).dispatch();
-							tip_label.change_text(Locale::format("plant.use_item", tip));
-							LOG(LOG_DEBUG, "UIPlant: UseItem id=" << itemid << " slot=" << slot);
-							return;
-						}
-					}
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-				LOG(LOG_DEBUG, "UIPlant: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, Locale::text("plant.softkey_hint"));
+			
 		}
 	}
 
@@ -117,24 +98,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'U' || keycode == 'u') {
 			if (!try_use_selected_inv(tip_label, "UIPlant")) {
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					try {
-						int32_t itemid = std::stoi(tip);
-						if (itemid > 0) {
-							const Inventory& inv = Stage::get().get_player().get_inventory();
-							int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-							if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-							if (slot > 0) {
-								UseItemPacket(slot, itemid).dispatch();
-								tip_label.change_text(Locale::format("plant.use_item", tip));
-								return;
-							}
-						}
-					} catch (...) {}
-					NpcTalkMorePacket(tip).dispatch();
-					tip_label.change_text(tip);
-				}, []() {}, Locale::text("plant.softkey_hint"));
+				
 			}
 		}
 		else if (keycode == 'R' || keycode == 'r')
@@ -145,13 +109,7 @@ namespace ms
 		}
 		else if (keycode == 'O' || keycode == 'o')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				int16_t info = 0;
-				try { if (!s.empty()) info = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-				OpenItemUiPacket(info).dispatch();
-				tip_label.change_text(Locale::format("plant.open_item_ui", std::to_string(info)));
-				LOG(LOG_DEBUG, "UIPlant: OpenItemUI info=" << info);
-			}, []() {}, Locale::text("plant.info_number"));
+			
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
@@ -180,26 +138,7 @@ namespace ms
 			LOG(LOG_WARN, "UIRaise: missing");
 		center_on_screen();
 		if (!try_use_selected_inv(tip_label, "UIRaise")) {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) { tip_label.change_text(Locale::text("raise.title")); return; }
-				try {
-					int32_t itemid = std::stoi(tip);
-					if (itemid > 0) {
-						const Inventory& inv = Stage::get().get_player().get_inventory();
-						int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-						if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-						if (slot > 0) {
-							UseItemPacket(slot, itemid).dispatch();
-							tip_label.change_text(Locale::format("plant.use_item", tip));
-							LOG(LOG_DEBUG, "UIRaise: UseItem id=" << itemid << " slot=" << slot);
-							return;
-						}
-					}
-				} catch (...) {}
-				NpcTalkMorePacket(tip).dispatch();
-				tip_label.change_text(tip);
-				LOG(LOG_DEBUG, "UIRaise: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, Locale::text("raise.softkey_hint"));
+			
 		}
 	}
 
@@ -218,24 +157,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'U' || keycode == 'u') {
 			if (!try_use_selected_inv(tip_label, "UIRaise")) {
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					try {
-						int32_t itemid = std::stoi(tip);
-						if (itemid > 0) {
-							const Inventory& inv = Stage::get().get_player().get_inventory();
-							int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-							if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-							if (slot > 0) {
-								UseItemPacket(slot, itemid).dispatch();
-								tip_label.change_text(Locale::format("plant.use_item", tip));
-								return;
-							}
-						}
-					} catch (...) {}
-					NpcTalkMorePacket(tip).dispatch();
-					tip_label.change_text(tip);
-				}, []() {}, Locale::text("raise.softkey_hint"));
+				
 			}
 		}
 		else if (keycode == 'P' || keycode == 'p')
@@ -246,13 +168,7 @@ namespace ms
 		}
 		else if (keycode == 'O' || keycode == 'o')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				int16_t info = 0;
-				try { if (!s.empty()) info = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-				OpenItemUiPacket(info).dispatch();
-				tip_label.change_text(Locale::format("plant.open_item_ui", std::to_string(info)));
-				LOG(LOG_DEBUG, "UIRaise: OpenItemUI info=" << info);
-			}, []() {}, Locale::text("plant.info_number"));
+			
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{

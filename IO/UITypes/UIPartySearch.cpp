@@ -95,26 +95,7 @@ namespace ms
 		if (max_level - min_level > 30)
 			min_level = max_level - 30;
 
-		UI::get().emplace<UISoftKey>([this](const std::string& range) {
-			// SoftKey："min-max" 或单数字作 max
-			if (range.empty()) return;
-			int32_t a = 0, b = 0;
-			size_t dash = range.find('-');
-			if (dash != std::string::npos) {
-				a = static_cast<int32_t>(std::strtol(range.c_str(), nullptr, 10));
-				b = static_cast<int32_t>(std::strtol(range.c_str() + dash + 1, nullptr, 10));
-			} else {
-				b = static_cast<int32_t>(std::strtol(range.c_str(), nullptr, 10));
-				a = (b > 15) ? b - 15 : 1;
-			}
-			if (a < 1) a = 1;
-			if (b < a) b = a;
-			if (b - a > 30) a = b - 30;
-			min_level = a;
-			max_level = b;
-			status_label.change_text(Locale::format("partysearch.range", std::to_string(a) + "-" + std::to_string(b)));
-			LOG(LOG_DEBUG, "UIPartySearch: SoftKey range=" << a << "-" << b);
-		}, []() {}, "Lv min-max");
+		
 #endif
 	}
 
@@ -186,37 +167,9 @@ namespace ms
 		} else if (keycode == 'X' || keycode == 'x' || keycode == 'P' || keycode == 'p') {
 			stop_search();
 		} else if (keycode == 'R' || keycode == 'r') {
-			UI::get().emplace<UISoftKey>([this](const std::string& range) {
-				if (range.empty()) return;
-				int32_t a = 0, b = 0;
-				size_t dash = range.find('-');
-				if (dash != std::string::npos) {
-					a = static_cast<int32_t>(std::strtol(range.c_str(), nullptr, 10));
-					b = static_cast<int32_t>(std::strtol(range.c_str() + dash + 1, nullptr, 10));
-				} else {
-					b = static_cast<int32_t>(std::strtol(range.c_str(), nullptr, 10));
-					a = (b > 15) ? b - 15 : 1;
-				}
-				if (a < 1) a = 1;
-				if (b < a) b = a;
-				if (b - a > 30) a = b - 30;
-				min_level = a;
-				max_level = b;
-				status_label.change_text(Locale::format("partysearch.range", std::to_string(a) + "-" + std::to_string(b)));
-				LOG(LOG_DEBUG, "UIPartySearch: SoftKey range=" << a << "-" << b);
-			}, []() {}, "Lv min-max");
+			
 		} else if (keycode == 'J' || keycode == 'j') {
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				char* end = nullptr;
-				long v = std::strtol(tip.c_str(), &end, 0); // 支持 0x… / 十进制
-				if (end == tip.c_str()) return;
-				jobs_mask = static_cast<int32_t>(v);
-				if (jobs_mask == 0)
-					jobs_mask = 0x7FFFFFFF;
-				status_label.change_text(Locale::format("partysearch.jobs_mask", std::to_string(jobs_mask)));
-				LOG(LOG_DEBUG, "UIPartySearch: SoftKey jobs_mask=" << jobs_mask);
-			}, []() {}, "Jobs mask");
+			
 		}
 	}
 

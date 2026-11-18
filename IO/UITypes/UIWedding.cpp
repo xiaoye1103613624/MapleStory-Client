@@ -205,36 +205,18 @@ namespace ms
 			if (!guest_pre.empty()) {
 				invite_guest(guest_pre);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& guest) {
-					invite_guest(guest);
-				}, []() {}, Locale::text("wedding.softkey_guest"));
+				
 			}
 		}
 		else if (keycode == 'T' || keycode == 't')
 		{
 			// 取礼：输入 gifts 下标（0 起）。
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				if (s.empty()) return;
-				try { take_gift(static_cast<size_t>(std::stoi(s))); } catch (...) {}
-			}, []() {}, Locale::text("wedding.softkey_take"));
+			
 		}
 		else if (keycode == 'S' || keycode == 's')
 		{
 			// 送礼：输入 "slot[,qty]"，默认 qty=1；道具须确为 ETC 栏该槽位。
-			UI::get().emplace<UISoftKey>([this](const std::string& s) {
-				if (s.empty()) return;
-				int16_t slot = 0; int16_t qty = 1;
-				size_t c = s.find(',');
-				try {
-					slot = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
-					if (c != std::string::npos) qty = static_cast<int16_t>(std::stoi(s.substr(c + 1)));
-				} catch (...) { return; }
-				if (slot <= 0 || qty < 1) return;
-				const Inventory& inv = Stage::get().get_player().get_inventory();
-				int32_t itemid = inv.get_item_id(InventoryType::Id::ETC, slot);
-				if (itemid <= 0) return;
-				send_gift(slot, itemid, qty);
-			}, []() {}, Locale::text("wedding.softkey_send"));
+			
 		}
 		else if (keycode == 'X' || keycode == 'x')
 		{
@@ -317,11 +299,7 @@ namespace ms
 			}
 			else
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& guest) {
-					if (guest.empty()) { deactivate(); return; }
-					invite_guest(guest);
-					deactivate();
-				}, [this]() { deactivate(); }, Locale::text("wedding.softkey_guest"));
+				
 			}
 		}
 		return Button::State::NORMAL;
