@@ -30,6 +30,7 @@
 #include "../../Character/CombatPanelStats.h"
 #include "../../Character/Player.h"
 #include "../../Data/SetItemData.h"
+#include "../../Weather/WeatherState.h"
 #include "../../Util/PerfLog.h"
 
 #include <string>
@@ -162,5 +163,75 @@ namespace ms
 
 		// 套装 tier 注入后重算玩家属性，让伤害/属性即时生效（与换装同口径）
 		Stage::get().get_player().recalc_stats(true);
+	}
+
+	void WeatherSyncHandler::handle(InPacket& recv) const
+	{
+		// wire 逐字段对齐 BeiDou WeatherPackets.java:82-109（opcode 已被 PacketSwitch 读掉）：
+		//   short minute | int msPerMin | byte sky | byte flags | int skyElapsedSec(legacy)
+		//   byte tintR/G/B | short rainbowSecs | byte palette | int skyElapsedMs | int skyToken
+		// 宽容解码：头 8 字节必读，其余用 available() 逐段判定，兼容老 19B 服务端包。
+		if (recv.available() < 8)
+			return;  // 短包直接丢弃，绝不猜字段（避免错位静默渲染错天空）
+
+		const int minute = recv.read_short();
+		const int ms_per_min = recv.read_int();
+		const uint8_t sky = static_cast<uint8_t>(recv.read_byte());
+		const uint8_t flags = static_cast<uint8_t>(recv.read_byte());
+
+		// legacy skyElapsedSec 4B 占位：本端不消费，但必须读掉，否则 tint 之后全偏移。
+		int sky_elapsed_sec = 0;
+		if (recv.available() >= 4)
+			sky_elapsed_sec = recv.read_int();
+
+		uint8_t tint_r = 0x4A, tint_g = 0x5A, tint_b = 0x8C;
+		if (recv.available() >= 3)
+		{
+			tint_r = static_cast<uint8_t>(recv.read_byte());
+			tint_g = static_cast<uint8_t>(recv.read_byte());
+			tint_b = static_cast<uint8_t>(recv.read_byte());
+		}
+
+		int rainbow_secs = 0;
+		if (recv.available() >= 2)
+			rainbow_secs = recv.read_short();
+
+		uint8_t palette = static_cast<uint8_t>(weather::PaletteId::DEFAULT);
+		if (recv.available() >= 1)
+			palette = static_cast<uint8_t>(recv.read_byte());
+
+		int sky_elapsed_ms = sky_elapsed_sec * 1000;
+		if (recv.available() >= 4)
+			sky_elapsed_ms = recv.read_int();
+
+		uint32_t token = 0;
+		if (recv.available() >= 4)
+			token = static_cast<uint32_t>(recv.read_int());
+
+		weather::State::get().apply(minute, ms_per_min, sky, flags, sky_elapsed_sec,
+			rainbow_secs, tint_r, tint_g, tint_b, palette, sky_elapsed_ms, token);
+
+		LOG(LOG_DEBUG, "[Weather] 0x373D minute=" << minute
+			<< " sky=" << static_cast<int>(sky) << " palette=" << static_cast<int>(palette)
+			<< " flags=" << static_cast<int>(flags)
+			<< " tint=" << static_cast<int>(tint_r) << ',' << static_cast<int>(tint_g) << ',' << static_cast<int>(tint_b));
+	}
+
+	void LampPreviewHandler::handle(InPacket& recv) const
+	{
+		// wire: byte mode(0 place/1 clear) | byte lampId | int mapId | int x | int y
+		// 16 字节含 opcode，opcode 已读掉 → 这里 14 字节定长。
+		// D1 核心闭环只解析并缓存；实际灯 sprite 渲染在 WeatherLamps（后续层）。
+		if (recv.available() < 14)
+			return;
+		const uint8_t mode = static_cast<uint8_t>(recv.read_byte());
+		const uint8_t lamp_id = static_cast<uint8_t>(recv.read_byte());
+		const int32_t map_id = recv.read_int();
+		const int32_t x = recv.read_int();
+		const int32_t y = recv.read_int();
+
+		(void)mode; (void)lamp_id; (void)map_id; (void)x; (void)y;  // 预留给 WeatherLamps
+		LOG(LOG_DEBUG, "[Weather] 0x373F lamp preview mode=" << static_cast<int>(mode)
+			<< " lamp=" << static_cast<int>(lamp_id) << " map=" << map_id << " @(" << x << ',' << y << ')');
 	}
 }

@@ -93,6 +93,15 @@
     <ClCompile Include="Character\CombatPanelStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Weather\WeatherConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weather\WeatherState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weather\WeatherFx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\EquipStat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -873,6 +882,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Character\CharStats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherFx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Character\EquipStat.h">

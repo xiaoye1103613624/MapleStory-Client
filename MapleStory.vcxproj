@@ -211,6 +211,9 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Character\CharEffect.cpp" />
     <ClCompile Include="Character\CharStats.cpp" />
     <ClCompile Include="Character\CombatPanelStats.cpp" />
+    <ClCompile Include="Weather\WeatherConfig.cpp" />
+    <ClCompile Include="Weather\WeatherState.cpp" />
+    <ClCompile Include="Weather\WeatherFx.cpp" />
     <ClCompile Include="Character\EquipStat.cpp" />
     <ClCompile Include="Character\ExpTable.cpp" />
     <ClCompile Include="Character\Inventory\Equip.cpp" />
@@ -560,6 +563,10 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Character\CharEffect.h" />
     <ClInclude Include="Character\CharStats.h" />
     <ClInclude Include="Character\CombatPanelStats.h" />
+    <ClInclude Include="Weather\WeatherTypes.h" />
+    <ClInclude Include="Weather\WeatherConfig.h" />
+    <ClInclude Include="Weather\WeatherState.h" />
+    <ClInclude Include="Weather\WeatherFx.h" />
     <ClInclude Include="IO\UITypes\UIStatsLayoutV4.h" />
     <ClInclude Include="Character\EquipStat.h" />
     <ClInclude Include="Character\ExpTable.h" />

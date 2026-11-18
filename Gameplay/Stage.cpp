@@ -20,6 +20,8 @@
 #include "../Configuration.h"
 #include "../MapleStory.h"
 #include "../Character/SkillMacros.h"
+#include "../Weather/WeatherFx.h"
+#include "../Weather/WeatherState.h"
 
 #include "../IO/UI.h"
 
@@ -135,6 +137,10 @@ namespace ms
 		touch_atk_sent.clear();
 		hot_accum_ms = 0;
 		touching_reactor_oid = 0;
+
+		// 天气系统：换线/断线回 stock，等服务端进图补发 0x373D 重新同步。
+		weather::State::get().clear();
+		weather::Fx::get().reset();
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -208,6 +214,10 @@ namespace ms
 		guild_boss.draw(viewpos, alpha);
 		backgrounds.drawforegrounds(viewx, viewy, alpha);
 		effect.draw();
+
+		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
+		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。
+		weather::Fx::get().draw();
 	}
 
 	void Stage::update()
@@ -394,6 +404,10 @@ namespace ms
 				TakeDamagePacket(result, TakeDamagePacket::From::TOUCH).dispatch();
 			}
 		}
+
+		// 天气系统：固定逻辑步长推进本地时钟与夜色趋近（与 MapleStory 主循环 timestep 同口径）。
+		// 未收到 0x373D 时 Fx::update 内部零开销返回，不影响 stock 表现。
+		weather::Fx::get().update(static_cast<int64_t>(Constants::TIMESTEP) * 1000);
 	}
 
 	void Stage::try_heal_over_time()

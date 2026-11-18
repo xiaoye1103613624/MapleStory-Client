@@ -47,4 +47,18 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// 天气世界状态同步（SendOpcode.WEATHER_SYNC = 0x373D，2026-11-18）
+	// 服务端权威时钟/天空：落地到 weather::State；宽容解码兼容老 19B 包。
+	class WeatherSyncHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 路灯预览（SendOpcode.LAMP_PREVIEW = 0x373F）：GM !lamp 本地放置/清除。
+	// D1 核心闭环暂只落地解析与状态缓存，实际灯渲染走 WeatherLamps（后续层）。
+	class LampPreviewHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

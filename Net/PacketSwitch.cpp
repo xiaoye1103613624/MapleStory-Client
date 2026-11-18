@@ -416,7 +416,10 @@ namespace ms
 		/// BeiDou SendOpcode.SET_ITEM_FINAL_DAMAGE — 战斗面板显示同步
 		SET_ITEM_FINAL_DAMAGE = 0x175,
 		/// BeiDou SendOpcode.SET_ITEM_SKILL_BONUS = 0x176 — 套装展示文案/映射（服务端权威）
-		SET_ITEM_SKILL_BONUS = 0x176
+		SET_ITEM_SKILL_BONUS = 0x176,
+		/// 天气系统：世界时钟/天空同步（0x373D）与路灯预览（0x373F），双端实测无占用
+		WEATHER_SYNC = 0x373D,
+		LAMP_PREVIEW = 0x373F
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -786,6 +789,10 @@ namespace ms
 		emplace<SET_ITEM_FINAL_DAMAGE, SetItemFinalDamageHandler>();
 		// 套装展示文案/映射下发（0x176，服务端权威）
 		emplace<SET_ITEM_SKILL_BONUS, SetItemSkillBonusHandler>();
+
+		// 天气系统：世界状态同步 + 路灯预览（走 0x37xx 稀疏表）
+		emplace<WEATHER_SYNC, WeatherSyncHandler>();
+		emplace<LAMP_PREVIEW, LampPreviewHandler>();
 
 		// 世界地图掉落查询回复
 		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();
@@ -1169,6 +1176,9 @@ namespace ms
 			case 358: opcode_msg = "VEGA_SCROLL"; break;
 			case 0x3730: opcode_msg = "LIMIT_BREAK_SYNC"; break;
 			case 0x175: opcode_msg = "SET_ITEM_FINAL_DAMAGE"; break;
+			case 0x176: opcode_msg = "SET_ITEM_SKILL_BONUS"; break;
+			case 0x373D: opcode_msg = "WEATHER_SYNC"; break;
+			case 0x373F: opcode_msg = "LAMP_PREVIEW"; break;
 			default: break;
 		}
 
