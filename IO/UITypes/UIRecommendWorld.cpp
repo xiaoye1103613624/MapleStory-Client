@@ -21,6 +21,7 @@
 #include "../UI.h"
 
 #include "../Components/MapleButton.h"
+#include "../Components/TwoSpriteButton.h"
 
 #include "../../Graphics/DrawArgument.h"
 #include "../../Graphics/Sprite.h"
@@ -72,7 +73,33 @@ namespace ms
 		// 内部会加回 normal 态 origin，故 083 立即数可直接落。
 		try_maple_btn(buttons, BT_MOVE_LEFT, alert["BtArrowL"], Point<int16_t>(45, 70), "UIRecommendWorld");
 		try_maple_btn(buttons, BT_MOVE_RIGHT, alert["BtArrowR"], Point<int16_t>(215, 70), "UIRecommendWorld");
-		try_maple_btn(buttons, BT_SELECT, alert["BtChoice"], Point<int16_t>(113, 114), "UIRecommendWorld");
+
+		// 【2026-11-16 悬浮抖动修复】orange-wz 核验运行时 Login.img/WorldSelect/alert/BtChoice：
+		// normal/0 原点=(0,0)，而 mouseOver/pressed/disabled 的 0 帧原点均为 (31,13)。
+		// MapleButton 把 position 固定为「左上角+normal 原点」，绘制时各状态又各扣自身
+		// 原点：NORMAL 画在 (113,114)，MOUSEOVER 却画在 (82,101)，命中框同步左上跳
+		// 31x13 → 光标离开 → 状态回落 NORMAL → 跳回 → 循环，即用户所见悬浮抖动。
+		// 改用 TwoSpriteButton 并按各态原点反补偿 npos/spos，使两态实际绘制左上角
+		// 同为按钮设计锚点 (113,114)、命中框稳定；BtArrowL/R 四态原点一致，不动。
+		nl::node btchoice = alert["BtChoice"];
+		Point<int16_t> btsel_anchor(113, 114);
+		nl::node btsel_normal = btchoice["normal"]["0"];
+		nl::node btsel_over = btchoice["mouseOver"]["0"];
+		if (btsel_normal && btsel_over)
+		{
+			Point<int16_t> norigin = Texture(btsel_normal).get_origin();
+			Point<int16_t> sorigin = Texture(btsel_over).get_origin();
+			buttons[BT_SELECT] = std::make_unique<TwoSpriteButton>(
+				btsel_normal, btsel_over,
+				Point<int16_t>(
+					static_cast<int16_t>(btsel_anchor.x() + norigin.x()),
+					static_cast<int16_t>(btsel_anchor.y() + norigin.y())),
+				Point<int16_t>(
+					static_cast<int16_t>(btsel_anchor.x() + sorigin.x()),
+					static_cast<int16_t>(btsel_anchor.y() + sorigin.y())));
+		}
+		else
+			try_maple_btn(buttons, BT_SELECT, btchoice, btsel_anchor, "UIRecommendWorld/BtChoice");
 
 		uint16_t wc = worldselect ? worldselect->get_world_count() : 0;
 		has_worlds = wc > 0;

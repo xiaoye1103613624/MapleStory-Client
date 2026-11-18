@@ -345,13 +345,15 @@ namespace ms
 		account.set_accept_unicode(true);
 		password.set_accept_unicode(true);
 
-		// BeiDou 槽高 15：Text 布局已自带 linespace 基线，勿再 +11，否则字形落在槽外只剩竖线伪影。
-		// 纵向补偿从 -3 收到 -1：-3 会把 11px 字形整体压到槽上沿，配合 1.0 白字在木纹上
-		// 糊成一团；字形本身居中即可，横向 +2 保留（左内边距）。
+		// BeiDou 木牌内嵌槽高 15px、A11M 数字墨迹高约 8px。FreeType 以 linespace(15)
+		// 为基线起点，drawtext 中 char_y = y + linespace - bitmap_top(≈8~9)，
+		// 即墨迹顶约在绘制原点下方 6~7px。要让字形在 15px 槽内垂直居中（墨迹顶≈槽顶+3），
+		// 绘制原点须比槽顶上移约 3px，故 text_shift.y = -3。此前 -1 会把字形压到槽
+		// 下半部（用户实测「偏下、没在输入框里居中」）。横向 +2 保留左内边距。
 		if (bedou)
 		{
-			account.set_text_shift(Point<int16_t>(2, -1));
-			password.set_text_shift(Point<int16_t>(2, -1));
+			account.set_text_shift(Point<int16_t>(2, -3));
+			password.set_text_shift(Point<int16_t>(2, -3));
 		}
 #pragma endregion
 

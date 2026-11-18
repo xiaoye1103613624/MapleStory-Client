@@ -621,28 +621,7 @@ namespace ms
 		}
 		else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				if (t == "make" || t == "ok" || t == "select" || t == "y") {
-					button_pressed(Buttons::BtMake);
-					return;
-				}
-				try {
-					int idx = std::stoi(tip);
-					if (idx < 0) return;
-					if (classic_mode) {
-						if (idx < CLASSIC_CLASS_COUNT)
-							select_classic_class(static_cast<uint16_t>(idx));
-					} else if (idx >= index_shift
-							&& idx < static_cast<int>(index_shift) + INDEX_COUNT
-							&& idx < static_cast<int>(order.size())) {
-						// 仅当前可见窗口的职业按钮可经 SoftKey 触发；越界 idx 会误触功能按钮或越界读 class_index[]。
-						button_pressed(static_cast<uint16_t>(Buttons::CLASS0 + idx - index_shift));
-					}
-				} catch (...) {}
-			}, []() {}, "idx|make");
+			
 		}
 		else if (keycode == 'M' || keycode == 'm')
 		{
@@ -943,6 +922,11 @@ namespace ms
 
 		if (LoginBackground::get().available())
 			LoginBackground::get().set_step(1);
+
+		// 复位世界选择残留态（频道展开/卷轴动画），否则从职业团页返回时
+		// 直接落在「频道选择页」而非世界列表态（与建角页 BtStart 同口径）。
+		if (auto worldselect = UI::get().get_element<UIWorldSelect>())
+			worldselect->remove_selected();
 
 		UI::get().remove(UIElement::Type::RACESELECT);
 		UI::get().remove(UIElement::Type::CHARSELECT);

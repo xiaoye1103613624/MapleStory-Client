@@ -39,12 +39,17 @@ namespace ms
 
 	private:
 		static constexpr uint8_t MAX_LIFE = 10u;
+		// MinMS 重写版的对称 padding 口径（MinMS MapTooltip.cpp:68-69）：
+		// 底板宽 = fillwidth + PAD_X*2、高 = 内容高 + PAD_Y*2，左右严格等宽。
+		static constexpr int16_t MINIMAP_PAD_X = 8;
+		static constexpr int16_t MINIMAP_PAD_Y = 5;
 		static constexpr Point<int16_t> SEPARATOR_ADJ = Point<int16_t>(1, 10);
 		static constexpr Point<int16_t> LIFE_LABEL_ADJ = Point<int16_t>(16, 3);
 		static constexpr Point<int16_t> LIFE_ICON_ADJ = Point<int16_t>(1, 9);
 
 		void draw_worldmap(Point<int16_t> position) const;
 		void draw_minimap(Point<int16_t> position) const;
+		void rebuild_minimap_layout();
 
 		void set_worldmap_title(bool bolded);
 		void set_minimap_title(bool bolded);

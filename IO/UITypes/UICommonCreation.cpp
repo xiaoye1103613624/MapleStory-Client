@@ -61,6 +61,32 @@ namespace ms
 			if (LoginBackground::get().available() && LoginBackground::get().has_scene())
 				LoginBackground::get().clear_scene();
 		}
+
+		// 按 UTF-8 码点（而非字节）统计名字长度，与服务端 canCreateChar 的
+		// [a-zA-Z0-9\u4e00-\u9fa5]{2,12} 口径对齐：中文每字 3 字节，若用
+		// std::string::size() 会把「1 个汉字 + 1 字节」误判为合法、把 2~3 个
+		// ASCII 字符误判为非法。非法首字节按 1 处理，避免越界。
+		size_t utf8_codepoint_count(const std::string& s)
+		{
+			size_t count = 0;
+			size_t i = 0;
+			while (i < s.size())
+			{
+				unsigned char lead = static_cast<unsigned char>(s[i]);
+				size_t cl = 1;
+				if (lead < 0x80)
+					cl = 1;
+				else if ((lead & 0xE0) == 0xC0)
+					cl = 2;
+				else if ((lead & 0xF0) == 0xE0)
+					cl = 3;
+				else if ((lead & 0xF8) == 0xF0)
+					cl = 4;
+				i += cl;
+				count++;
+			}
+			return count;
+		}
 	}
 
 	UICommonCreation::UICommonCreation(const std::string& c) : UIElement(Point<int16_t>(0, 0), Point<int16_t>(800, 600)),
@@ -1042,12 +1068,7 @@ namespace ms
 				button_pressed(Buttons::BtYes);
 			else if (keycode == 'N' || keycode == 'n' || keycode == 'S' || keycode == 's')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& name) {
-					if (name.empty()) return;
-					newCharName.change_text(name);
-					newCharNameDisabled = false;
-					LOG(LOG_DEBUG, "UICommonCreation: SoftKey name=" << name);
-				}, []() {}, "Char name");
+				
 			}
 			else if (keycode == 'Y' || keycode == 'y')
 			{
@@ -1390,12 +1411,16 @@ namespace ms
 					if (!charNameSelected)
 					{
 						std::string name = newCharName.get_text();
+						size_t nameLen = utf8_codepoint_count(name);
 
-						if (name.size() <= 0)
+						// 空名静默返回；长度按 UTF-8 码点计 2~12，与服务端
+						// canCreateChar 的 2-12 字符正则对齐（原字节数 >=4 会
+						// 误拒 2~3 字符 ASCII 名并放宽中文名门槛）。
+						if (nameLen == 0)
 						{
 							return Button::State::NORMAL;
 						}
-						else if (name.size() >= 4)
+						else if (nameLen >= 2 && nameLen <= 12)
 						{
 							newCharNameDisabled = true;
 

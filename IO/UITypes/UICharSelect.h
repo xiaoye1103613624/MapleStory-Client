@@ -135,8 +135,9 @@ namespace ms
 		Sprite cs_world_box;
 		Text cs_world_name;
 		Text cs_channel;
-	/// 详情卷轴：选中角色后 scroll/2 展开（217x30→193），内容板(charInfo1)绘于卷内。
-	/// scroll/2 是循环动画（Animation::update 永不返回 true），旧实现
+	/// 详情卷轴：选中角色后 scroll/0 展开（217x30→158），内容板(charInfo1)绘于卷内。
+	/// 2026-11-16：帧源由 scroll/2(193高) 改为与正确端吻合的 scroll/0(158高)。
+	/// scroll 帧组是循环动画（Animation::update 永不返回 true），旧实现
 	/// charinfo_scroll_playing 永真 → 卷轴无限循环+内容板永不绘制（闪烁）。
 	/// 改为手动帧播放：播完定格末帧（完全展开的卷轴）。
 	std::vector<Frame> charinfo_scroll_frames;

@@ -33,6 +33,7 @@
 
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
+#include "../Components/LocalTwoSpriteButton.h"
 
 #include "../../Graphics/Texture.h"
 #include "../../Audio/Audio.h"
@@ -147,7 +148,12 @@ namespace ms
 	static constexpr float CH_EXPAND_MS = 220.0f;
 
 	// 选中世界后 world/[id]（图标+名）相对 chBackgrn 中心。
-	static constexpr Point<int16_t> WS_WORLD_NAME_ON_PANEL(-222, -114);
+	// 【2026-11-16 右移】旧值 -222 让名牌左缘≈panel_c.x-222≈439，整体压在公告板
+	// （右缘≈472，WS_NOTICE_GAP=-36 使其越过面板左缘 36px）之内被遮挡；正确端
+	// 截图（选中频道页.png 1280x720 逐像素）名牌左缘≈474、公告右缘≈472，即名牌
+	// 自面板左缘内侧约 38px 起画。面板左缘=panel_c.x-224.5≈436，故 x=-186
+	// （436+38≈474），y 不动（旧 y=-114 → 顶缘≈284，与目标≈282 仅差 2px）。
+	static constexpr Point<int16_t> WS_WORLD_NAME_ON_PANEL(-186, -114);
 
 	// BtGoWorld：窗内 TL → 相对面板中心。
 	static constexpr Point<int16_t> WS_GOWORLD_OFF(
@@ -345,13 +351,30 @@ namespace ms
 			Point<int16_t>(WS_SIDEBAR_X, WS_SIDEBAR_Y0)
 		);
 
-		buttons[Buttons::BtViewAll] = std::make_unique<MapleButton>(
-			WorldSelect["BtViewAll"],
-			Point<int16_t>(WS_SIDEBAR_X, WS_SIDEBAR_Y1)
-		);
-		// BtViewAll 直接用真资产：与正确端截图（选择频道页.png）NCC=0.61 吻合，
-		// 文案就是「查看所有角色」。此前 r20 误判 WZ 文案错误、生成了本地假 PNG
-		// 覆盖（NCC=0.33、边框样式不对），已删除。
+		// 【2026-11-16 资产去重】orange-wz 核验运行时 Login.img/WorldSelect 证实
+		// BtViewAll/normal/0 与 BtViewChoice/normal/0 的 PNG 逐字节完全相同（均为
+		// 「查看世界地图」99x35），直接用真资产会让侧栏出现两块同文案木牌。
+		// 改用参考端裁出的真「查看所有角色」PNG（UICharSelect/UIRaceSelect 已用），
+		// 缺失时回退原 img，保证不崩且维持既有兜底语义。
+		LocalPngTexture ws_btva_normal;
+		LocalPngTexture ws_btva_pressed;
+		constexpr size_t WS_ATLAS_BTVA = 0x57534254ull;	// 'WSBT'
+		bool ws_btva_ok = ws_btva_normal.load(WS_ATLAS_BTVA, {
+			"UI/Creation/BtViewAll_normal.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_normal.png" })
+			&& ws_btva_pressed.load(WS_ATLAS_BTVA + 1, {
+			"UI/Creation/BtViewAll_pressed.png",
+			"docs/features/login-flow-ui-ida-align/resources/creation/BtViewAll_pressed.png" });
+
+		if (ws_btva_ok)
+			buttons[Buttons::BtViewAll] = std::make_unique<LocalTwoSpriteButton>(
+				std::move(ws_btva_normal), std::move(ws_btva_pressed),
+				Point<int16_t>(WS_SIDEBAR_X, WS_SIDEBAR_Y1));
+		else
+			buttons[Buttons::BtViewAll] = std::make_unique<MapleButton>(
+				WorldSelect["BtViewAll"],
+				Point<int16_t>(WS_SIDEBAR_X, WS_SIDEBAR_Y1)
+			);
 
 		buttons[Buttons::BtStart] = std::make_unique<MapleButton>(
 			Common["BtStart"],
@@ -1076,23 +1099,7 @@ namespace ms
 				}
 				else if (keycode == 'S' || keycode == 's' || keycode == 'C' || keycode == 'c')
 				{
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int ch = std::stoi(s);
-							if (ch < 0) return;
-							// SoftKey 填**逻辑频道**（0 起，可跨页）；延迟回调时 worlds 可能已空。
-							if (pending_channel_limit == 0) return;
-							if (static_cast<uint16_t>(ch) >= pending_channel_limit) return;
-							const uint8_t pg = static_cast<uint8_t>(
-								static_cast<uint16_t>(ch) / CHANNEL_PAGE_SIZE);
-							if (pg != channel_page)
-								set_channel_page(pg);
-							const uint16_t slot = static_cast<uint16_t>(
-								static_cast<uint16_t>(ch) - channel_page_base());
-							button_pressed(static_cast<uint16_t>(Buttons::BtChannel0 + slot));
-							LOG(LOG_DEBUG, "UIWorldSelect: SoftKey channel=" << ch);
-						} catch (...) {}
-					}, []() {}, "Channel #");
+					
 				}
 				else if (keycode == 'G' || keycode == 'g')
 				{
@@ -1155,15 +1162,7 @@ namespace ms
 				}
 				else if (keycode == 'W' || keycode == 'w' || keycode == 'S' || keycode == 's')
 				{
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int wid = std::stoi(s);
-							const uint16_t nav = navigable_world_count();
-							if (wid < 0 || static_cast<uint16_t>(wid) >= nav) return;
-							button_pressed(static_cast<uint16_t>(wid) + Buttons::BtWorld0);
-							LOG(LOG_DEBUG, "UIWorldSelect: SoftKey world=" << wid);
-						} catch (...) {}
-					}, []() {}, "World #");
+					
 				}
 			}
 		}

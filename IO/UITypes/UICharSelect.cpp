@@ -90,8 +90,12 @@ namespace ms
 	static constexpr Point<int16_t> CS_DETAIL_LUK(136, 49);
 	// Angel 详情板不绘角色名（脚下 nametag）；保留默认点仅用于 NX 缺省判定。
 	static constexpr Point<int16_t> CS_DETAIL_NAME(153, 1);
-	static constexpr Point<int16_t> CS_DETAIL_RANK_NA(36, 93);
-	static constexpr Point<int16_t> CS_DETAIL_RANK(115, 93);
+	// 排行带 y=93（baseline 语义，见上方定标注释）。x 改为按内容板中线居中：
+	// 正确端《选择角色页.png》实测「排行不可用」文字中心 x≈481，内容板米黄区
+	// x391~577 中心 x≈484 —— 值居中于板。charInfo1 宽 183 ⇒ 板中线 x≈91(相对 detail_pos)。
+	// 旧值 CS_DETAIL_RANK_NA(36) 左对齐 / CS_DETAIL_RANK(115) 右对齐均偏一侧，2026-11-16 统一居中。
+	static constexpr int16_t CS_DETAIL_RANK_X = 91;   // 内容板水平中线（charInfo1 宽 183 / 2）
+	static constexpr int16_t CS_DETAIL_RANK_Y = 93;   // 原 CS_DETAIL_RANK*.y()，值行 baseline
 	// charInfo1（183×151）相对脚点。2026-10-24 按正确端截图（选择角色页.png）
 	// R3 目标帧「选择角色页.png」逐像素定标（2026-11-15）：内容板（职业行）
 	// 顶边在屏幕 (392,220)，槽 0 脚点 (485,428) ⇒ 偏移 (-94,-208)。
@@ -280,11 +284,20 @@ namespace ms
 
 		charinfo = CharSelect["charInfo1"];
 
-		// 详情卷轴（展开动画）：Login.img/CharSelect/scroll/2 = 30→196→195→193 高。
-		// scroll/2 为循环动画，Animation 无法定格 → 逐帧取 Frame 手动播放。
-		if (nl::node scroll2 = CharSelect["scroll"]["2"])
+		// 详情卷轴（展开动画）：Login.img/CharSelect 下有 4 组 scroll：
+		//   0 = 展开 30→161→160→158 高（delay 250/50/50，末帧定格）
+		//   1 = 收起 158→…→30   2 = 展开 30→196→195→193 高   3 = 收起 193→…→30
+		// 正确端《选择角色页.png》量取：卷轴顶杆 y≈195、底卷边 y347~352，总高≈158。
+		// 故静止态应使用 158 高的 scroll/0 末帧；scroll/2(193 高)纸面长 35px，
+		// 会在「排行不可用」下方多出一大段红框空白（2026-11-16 修复）。
+		// 两组帧结构相同（木杆 y1、底卷边 6px 渐暗），仅纸面长度不同，换组零形变。
+		// scroll/0 为循环动画，Animation 无法定格 → 逐帧取 Frame 手动播放。
+		nl::node scroll_src = CharSelect["scroll"]["0"];
+		if (!scroll_src)
+			scroll_src = CharSelect["scroll"]["2"];  // 运行时节点缺失兜底
+		if (scroll_src)
 		{
-			for (const nl::node& f : scroll2)
+			for (const nl::node& f : scroll_src)
 			{
 				Frame frame(f);
 
@@ -565,22 +578,45 @@ namespace ms
 						Point<int16_t> detail_pos = charpos + CS_CHARINFO_OFF;
 
 						// 卷轴（2026-11-04 正确端视频 12s 帧 +《选择角色页.png》取证）：
-						// 原生静止态 = scroll/2 末帧 217x193 常驻（顶部小卷筒+垂纸+底卷边），
+						// 原生静止态 = scroll/0 末帧 217x158 常驻（顶部小卷筒+垂纸+底卷边），
 						// charInfo 内容画在纸内 —— 原生并不隐藏卷轴。旧实现「播完定格后
 						// 不再绘制」是反向修复；正确做法是末帧常驻打底 + 内容叠加，两者
 						// 共用 detail_pos 锚点即天然对齐（纸面即原生底色，无需 ColorBox）。
-						if (charinfo_has_scroll)
+						// 2026-11-16：帧源由 scroll/2(193 高) 改为 scroll/0(158 高)，
+						// 消除排行下方 35px 多余空白；见构造函数帧源选择注释与取证文档。
+						const Frame* scroll_frame = nullptr;
 						{
-							const Frame& scroll_frame = charinfo_scroll_frames[
-								charinfo_scroll_playing
-									? static_cast<size_t>(charinfo_scroll_frame)
-									: charinfo_scroll_frames.size() - 1
-							];
+							if (charinfo_has_scroll)
+							{
+								scroll_frame = &charinfo_scroll_frames[
+									charinfo_scroll_playing
+										? static_cast<size_t>(charinfo_scroll_frame)
+										: charinfo_scroll_frames.size() - 1
+								];
 
-							// 与 charinfo 同口径：加回 frame origin，避免卷轴与羊皮纸错位。
-							const Point<int16_t> scroll_pos =
-								detail_pos - CS_SCROLL_CONTENT_OFF + scroll_frame.get_origin();
-							scroll_frame.draw(DrawArgument(scroll_pos));
+								// 与 charinfo 同口径：加回 frame origin，避免卷轴与羊皮纸错位。
+								const Point<int16_t> scroll_pos =
+									detail_pos - CS_SCROLL_CONTENT_OFF + scroll_frame->get_origin();
+								scroll_frame->draw(DrawArgument(scroll_pos));
+							}
+						}
+
+						// 内容随纸面自上而下渐显（2026-11-16 修复展开期间格子裸露）：
+						// 卷轴帧顶 = detail_pos.y - CS_SCROLL_CONTENT_OFF.y(25)；内容板顶 = 帧内 y25；
+						// 纸面底 ≈ 帧高 - 18（逐帧像素实测，见取证文档）。有效内容高度
+						//   content_h = 贴图高 - 36（原 Range(0,36) 裁掉自带「排行榜」行后的高度）
+						//   vis = clamp(帧高 - 43, 0, content_h)
+						// frame0(30 卷起木杆)→vis=0（内容全藏）；frame1+(161/160/158)→vis=content_h。
+						// 定格态（未播放）强制 vis=content_h，使 Range(0, board_h-vis)=Range(0,36)，
+						// 与旧实现逐字节一致、零回归。
+						const int16_t board_h = static_cast<int16_t>(charinfo.get_dimensions().y());
+						const int16_t content_h = static_cast<int16_t>(board_h - 36);
+						int16_t vis = content_h;
+						if (charinfo_has_scroll && scroll_frame && charinfo_scroll_playing)
+						{
+							int16_t frame_h = static_cast<int16_t>(scroll_frame->get_dimensions().y());
+							int16_t shown = static_cast<int16_t>(frame_h - 43);
+							vis = shown < 0 ? 0 : (shown > content_h ? content_h : shown);
 						}
 
 						{
@@ -588,32 +624,47 @@ namespace ms
 							// 加回 origin 使底板左上角精确落在 detail_pos（值行常量
 							// 由此可用纯纹理相对坐标，消除 ~7-11px 系统偏差）。
 							Point<int16_t> ci_pos = detail_pos + charinfo.get_origin();
-							// charInfo1(151 高) 底部 y115-151 自带一行居中「排行榜」，正确端无此行。
-							// 用 Texture::draw 的 vertical Range 裁掉底部 36px（GraphicsGL.cpp:868/876
-							// bottom -= second），保留 origin/卷轴/值行常量全部不动，零资源改写。
-							charinfo.draw(DrawArgument(ci_pos), Range<int16_t>(0, 36));
+							// charInfo1 底部自带一行居中「排行榜」，正确端无此行：定格态裁掉底部
+							// 36px（board_h - vis = 151-115）。展开期间 vis 变小 → 裁掉更多底部，
+							// 底板随纸面自上而下显现；vis=0（卷起态）整块跳过，避免 UV 反转。
+							// 用 Texture::draw 的 vertical Range（GraphicsGL.cpp:867-876）零资源改写。
+							if (vis > 0)
+								charinfo.draw(DrawArgument(ci_pos), Range<int16_t>(0, board_h - vis));
 
-							std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
-							// 等级用 OutlinedText（Angel DrawTextA + get_basic_font(1) 黑字）；
-							// BeiDou 缺 StatusBar number Charset 时不能再走白精灵。
-							Text lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
-							lvltext.change_text(levelstr);
-							lvltext.draw(detail_pos + levelPos);
+							// 各行文字随纸面渐显：label y（相对 detail_pos，baseline 语义）的
+							// 字形底约 y+4；仅当字形底落在可见高度 vis 内才绘制，避免文字
+							// 半截浮在纸面外的蓝天上。定格态 vis=content_h 时全部绘制（零回归）。
+							auto row_visible = [vis](int16_t baseline_y) {
+								return vis > 0 && baseline_y + 4 <= vis;
+							};
+
+							if (row_visible(static_cast<int16_t>(levelPos.y())))
+							{
+								std::string levelstr = std::to_string(character_stats.stats[MapleStat::Id::LEVEL]);
+								// 等级用 OutlinedText（Angel DrawTextA + get_basic_font(1) 黑字）；
+								// BeiDou 缺 StatusBar number Charset 时不能再走白精灵。
+								Text lvltext(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+								lvltext.change_text(levelstr);
+								lvltext.draw(detail_pos + levelPos);
+							}
 							// Angel CUICharDetail::Draw 只绘职业/等级/人气/四维；名在脚下 nametag。
 							for (size_t li = 0; li < InfoLabel::NUM_LABELS; li++)
 							{
-								Point<int16_t> labelpos = detail_pos + get_infolabel_pos(li);
-								infolabels[li].draw(labelpos);
+								Point<int16_t> ipos = get_infolabel_pos(li);
+								if (!row_visible(static_cast<int16_t>(ipos.y())))
+									continue;
+								infolabels[li].draw(detail_pos + ipos);
 							}
 
-							// 排行带：有 rank → 名次右对齐到 x=115（Angel DrawTextA (115-w,99)）；
-							// 否则「排行不可用」保持 (36,99)（Angel nTop=99）。
-							if (character_stats.has_rank)
+							// 排行带：按内容板中线居中（正确端实测值中心≈板中心，见常量注释）。
+							// 名次 / 「排行不可用」统一居中，避免有 rank 与无 rank 位置跳变。
+							// 2026-11-16：替换旧 Angel 右对齐(115)/左对齐(36)口径。
+							if (row_visible(CS_DETAIL_RANK_Y))
+							{
 								ranklabel.draw(detail_pos + Point<int16_t>(
-									static_cast<int16_t>(CS_DETAIL_RANK.x() - ranklabel.width()),
-									CS_DETAIL_RANK.y()));
-							else
-								ranklabel.draw(detail_pos + CS_DETAIL_RANK_NA);
+									static_cast<int16_t>(CS_DETAIL_RANK_X - ranklabel.width() / 2),
+									CS_DETAIL_RANK_Y));
+							}
 						}
 					}
 					else if (LoginBackground::get().available())
@@ -711,7 +762,7 @@ namespace ms
 		emptyslot_effect.update();
 
 		// 详情卷轴展开推进（手动帧计时）：播完定格末帧，不再循环
-		// （scroll/2 是循环动画，Animation::update 永不 true → 旧实现闪烁）。
+		// （scroll 帧组是循环动画，Animation::update 永不 true → 旧实现闪烁）。
 		if (charinfo_scroll_playing)
 		{
 			charinfo_scroll_elapsed = static_cast<uint16_t>(charinfo_scroll_elapsed + Constants::TIMESTEP);
@@ -1072,14 +1123,7 @@ namespace ms
 					}
 					else if (keycode == 'S' || keycode == 's' || keycode == 'N' || keycode == 'n')
 					{
-						UI::get().emplace<UISoftKey>([this](const std::string& s) {
-							try {
-								int idx = std::stoi(s);
-								if (idx < 0 || idx >= characters_count) return;
-								button_pressed(static_cast<uint16_t>(idx + Buttons::CHARACTER_SLOT0));
-								LOG(LOG_DEBUG, "UICharSelect: SoftKey slot=" << idx);
-							} catch (...) {}
-						}, []() {}, "Char slot #");
+						
 					}
 					else if (keycode == 'C' || keycode == 'c')
 					{
@@ -1216,7 +1260,9 @@ namespace ms
 								SelectCharPicPacket(pic, id).dispatch();
 							};
 
-							UI::get().emplace<UISoftKey>(onok);
+							// PIC 二级密码：显式 Mode::Pic（密文掩码/最短 6/check_pic）。
+							// UISoftKey 默认模式已改为 Text，此处必须显式指定 Pic 以免破坏二次密码。
+							UI::get().emplace<UISoftKey>(onok, []() {}, "PIC", UISoftKey::Mode::Pic);
 							break;
 						}
 						case 2:
@@ -1288,7 +1334,8 @@ namespace ms
 								DeleteCharPicPacket(pic, id).dispatch();
 							};
 
-							UI::get().emplace<UISoftKey>(onok, oncancel);
+							// 删除角色 PIC 校验：显式 Mode::Pic。
+						UI::get().emplace<UISoftKey>(onok, oncancel, "PIC", UISoftKey::Mode::Pic);
 						};
 
 						const StatsEntry& character_stats = characters[selected_character].stats;
@@ -1679,9 +1726,9 @@ namespace ms
 				}
 			};
 
-			UI::get().emplace<UISoftKey>(verifypic, []() {}, "Please re-enter your new PIC.", Point<int16_t>(24, 0));
-		};
+			UI::get().emplace<UISoftKey>(verifypic, []() {}, "Please re-enter your new PIC.", Point<int16_t>(24, 0), UISoftKey::Mode::Pic);
+			};
 
-		UI::get().emplace<UISoftKey>(enterpic, []() {}, "Your new PIC must at least be 6 characters long.", Point<int16_t>(24, 0));
+			UI::get().emplace<UISoftKey>(enterpic, []() {}, "Your new PIC must at least be 6 characters long.", Point<int16_t>(24, 0), UISoftKey::Mode::Pic);
 	}
 }
