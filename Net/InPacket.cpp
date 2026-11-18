@@ -27,9 +27,9 @@ namespace ms
 		pos = 0;
 	}
 
-	bool InPacket::available() const
+	size_t InPacket::available() const
 	{
-		return length() > 0;
+		return length();
 	}
 
 	size_t InPacket::length() const

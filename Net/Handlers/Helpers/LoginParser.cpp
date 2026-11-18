@@ -291,15 +291,16 @@ namespace ms
 		// PLAYER_LOGIN 得由我们自己补（PlayerLoggedinHandler.validateState 要求
 		// !isLoggedIn()，新连接正好满足）。正常登录时 ServerIPHandler 紧接着会发
 		// 同一个包，所以只在 UIChannel 挂过标记时补，避免重复入场。
+		// 注意：与正常登录（ServerIPHandler 无条件发 PLAYER_LOGIN）保持一致，
+		// 不可在此判 is_connected()——reconnect 已同步建连，瞬时判据会误杀换频道重入。
 		if (channel_reentry_pending)
 		{
 			channel_reentry_pending = false;
 
-			if (channel_entry_cid != 0 && Session::get().is_connected())
+			if (channel_entry_cid != 0)
 				PlayerLoginPacket(channel_entry_cid).dispatch();
 			else
-				LOG(LOG_NETWORK, "channel reentry skipped: cid=" << channel_entry_cid
-					<< " connected=" << Session::get().is_connected());
+				LOG(LOG_NETWORK, "channel reentry skipped: cid=0");
 		}
 	}
 

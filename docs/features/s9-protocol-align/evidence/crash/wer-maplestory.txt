@@ -1,202 +1,795 @@
-﻿MapleStory crash events (14 days): 75
-2026-10-30 22:32:53 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae497c6 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+﻿MapleStory crash events (14 days): 319
+2026-11-17 04:19:26 Id=1001 Windows Error Reporting
+   P1=MapleStory_bs_noplayer.exe P2=0.0.0.0 P3=6afb6540 P4=StackHash_4c68 P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-17 04:19:22 Id=1000 Application Error
+   hex1=6afb6540 0x0000000000112fc5
+2026-11-17 03:25:43 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f67 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 03:25:39 Id=1000 Application Error
+   app-line hex1=6afb2f67 0x0000000000112fc5
+2026-11-17 03:23:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f67 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 03:23:39 Id=1000 Application Error
+   app-line hex1=6afb2f67 0x0000000000112fc5
+2026-11-17 03:19:13 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f67 P4=MapleStory.exe P5=0.0.0.0 P6=6afb2f67 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 03:19:09 Id=1000 Application Error
+   app-line hex1=6afb2f67 0xc0000005 0x00000000000061b6
+2026-11-17 03:18:32 Id=1001 Windows Error Reporting
+   P1=MapleStory_channel_fixed_22c3dbeb.exe P2=0.0.0.0 P3=6afb2450 P4=StackHash_03b0 P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-17 03:18:28 Id=1000 Application Error
+   hex1=6afb2450 0x0000000000112fc5
+2026-11-17 03:18:05 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f67 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 03:18:01 Id=1000 Application Error
+   app-line hex1=6afb2f67 0x0000000000112fc5
+2026-11-17 03:15:48 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f67 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 03:15:43 Id=1000 Application Error
+   app-line hex1=6afb2f67 0x0000000000112fc5
+2026-11-17 03:06:52 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb4875 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 03:06:47 Id=1000 Application Error
+   app-line hex1=6afb4875 0x0000000000112fc5
+2026-11-17 02:17:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb4875 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 02:17:33 Id=1000 Application Error
+   app-line hex1=6afb4875 0x0000000000112fc5
+2026-11-17 02:17:03 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb4875 P4=MapleStory.exe P5=0.0.0.0 P6=6afb4875 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 02:16:59 Id=1000 Application Error
+   app-line hex1=6afb4875 0xc0000005 0x00000000000061b6
+2026-11-17 01:43:55 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb240e P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 01:43:52 Id=1000 Application Error
+   app-line hex1=6afb240e 0x0000000000112fc5
+2026-11-17 01:43:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2524 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 01:43:41 Id=1000 Application Error
+   app-line hex1=6afb2524 0x0000000000112fc5
+2026-11-17 01:38:40 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=MapleStory.exe P5=0.0.0.0 P6=6afb2f6d P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 01:38:36 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0xc0000005 0x00000000000061b6
+2026-11-17 01:37:15 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=MapleStory.exe P5=0.0.0.0 P6=6afb2f6d P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 01:37:12 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0xc0000005 0x00000000000061b6
+2026-11-17 01:37:05 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=MapleStory.exe P5=0.0.0.0 P6=6afb2f6d P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 01:37:01 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0xc0000005 0x00000000000061b6
+2026-11-17 01:36:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 01:36:33 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0x0000000000112fc5
+2026-11-17 01:36:00 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 01:35:56 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0x0000000000112fc5
+2026-11-17 01:35:08 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 01:35:04 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0x0000000000112fc5
+2026-11-17 01:34:07 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2f6d P4=MapleStory.exe P5=0.0.0.0 P6=6afb2f6d P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-17 01:34:03 Id=1000 Application Error
+   app-line hex1=6afb2f6d 0xc0000005 0x00000000000061b6
+2026-11-17 00:23:48 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb2b70 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 00:23:43 Id=1000 Application Error
+   app-line hex1=6afb2b70 0x0000000000112fc5
+2026-11-17 00:05:08 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb24e0 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 00:05:01 Id=1000 Application Error
+   app-line hex1=6afb24e0 0x0000000000112fc5
+2026-11-17 00:03:58 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb24e0 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-17 00:03:53 Id=1000 Application Error
+   app-line hex1=6afb24e0 0x0000000000112fc5
+2026-11-16 23:56:27 Id=1001 Windows Error Reporting
+   P1=MapleStory_pua23.exe P2=0.0.0.0 P3=6afb24e0 P4=StackHash_a492 P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-16 23:56:23 Id=1000 Application Error
+   hex1=6afb24e0 0x0000000000112fc5
+2026-11-16 23:53:04 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb24e0 P4=MapleStory.exe P5=0.0.0.0 P6=6afb24e0 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-16 23:52:57 Id=1000 Application Error
+   app-line hex1=6afb24e0 0xc0000005 0x00000000000061b6
+2026-11-16 23:50:12 Id=1001 Windows Error Reporting
+   P1=MapleStory_pua21oldcheck.exe P2=0.0.0.0 P3=6afb1be8 P4=StackHash_b426 P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-16 23:50:07 Id=1000 Application Error
+   hex1=6afb1be8 0x0000000000112fc5
+2026-11-16 23:47:10 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb24e0 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-16 23:47:06 Id=1000 Application Error
+   app-line hex1=6afb24e0 0x0000000000112fc5
+2026-11-16 23:38:20 Id=1001 Windows Error Reporting
+   P1=MapleStory_balloon.exe P2=0.0.0.0 P3=10.0.26200.2.0.0 P4=P5: P5=P6: P6=P7: P7=P8: P8=P9:
+2026-11-16 23:26:08 Id=1001 Windows Error Reporting
+   P1=MapleStory_pua22.exe P2=0.0.0.0 P3=6afb1d75 P4=MapleStory_pua22.exe P5=0.0.0.0 P6=6afb1d75 P7=c0000005 P8=00000000000061b6
+2026-11-16 23:25:59 Id=1000 Application Error
+   hex1=6afb1d75 0xc0000005 0x00000000000061b6
+2026-11-16 23:21:11 Id=1001 Windows Error Reporting
+   P1=MapleStory_balloon.exe P2=0.0.0.0 P3=6afb1ea6 P4=StackHash_15d8 P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-16 23:21:05 Id=1000 Application Error
+   hex1=6afb1ea6 0x0000000000112fc5
+2026-11-16 23:05:28 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb19fb P4=MapleStory.exe P5=0.0.0.0 P6=6afb19fb P7=c0000005 P8=0000000000028ea9
+   app-line
+2026-11-16 23:05:21 Id=1000 Application Error
+   app-line hex1=6afb19fb 0xc0000005 0x0000000000028ea9
+2026-11-16 22:24:29 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb1160 P4=MapleStory.exe P5=0.0.0.0 P6=6afb1160 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-16 22:24:25 Id=1000 Application Error
+   app-line hex1=6afb1160 0xc0000005 0x00000000000061b6
+2026-11-16 22:05:40 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb0d17 P4=MapleStory.exe P5=0.0.0.0 P6=6afb0d17 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-16 22:05:35 Id=1000 Application Error
+   app-line hex1=6afb0d17 0xc0000005 0x00000000000061b6
+2026-11-16 22:00:11 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb07b0 P4=MapleStory.exe P5=0.0.0.0 P6=6afb07b0 P7=c0000005 P8=00000000000061b6
+   app-line
+2026-11-16 22:00:07 Id=1000 Application Error
+   app-line hex1=6afb07b0 0xc0000005 0x00000000000061b6
+2026-11-16 21:56:11 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afb07b0 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-16 21:56:06 Id=1000 Application Error
+   app-line hex1=6afb07b0 0x0000000000112fc5
+2026-11-16 08:26:54 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6afa45f2 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-16 08:26:50 Id=1000 Application Error
+   app-line hex1=6afa45f2 0x0000000000112fc5
+2026-11-16 07:40:16 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9e30c P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-16 07:40:10 Id=1000 Application Error
+   app-line hex1=6af9e30c 0x0000000000112fc5
+2026-11-15 23:28:32 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9cdf8 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 23:28:24 Id=1000 Application Error
+   app-line hex1=6af9cdf8 0x0000000000112fc5
+2026-11-15 23:00:26 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c797 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 23:00:22 Id=1000 Application Error
+   app-line hex1=6af9c797 0x0000000000112fc5
+2026-11-15 22:59:35 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c797 P4=MapleStory.exe P5=0.0.0.0 P6=6af9c797 P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 22:59:29 Id=1000 Application Error
+   app-line hex1=6af9c797 0xc0000005 0x00000000000061d6
+2026-11-15 22:59:27 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c797 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 22:59:22 Id=1000 Application Error
+   app-line hex1=6af9c797 0x0000000000112fc5
+2026-11-15 22:58:46 Id=1001 Windows Error Reporting
+   P1=MapleStory_pua10b.exe P2=0.0.0.0 P3=6af9c797 P4=StackHash_b4bc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   hex1=00000000 0x0000000000166F34
+2026-11-15 22:58:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c797 P4=MapleStory.exe P5=0.0.0.0 P6=6af9c797 P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 22:58:43 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c797 P4=MapleStory.exe P5=0.0.0.0 P6=6af9c797 P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 22:58:41 Id=1000 Application Error
+   hex1=6af9c797 0x0000000000112fc5
+2026-11-15 22:58:39 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af9c7f7 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 22:58:39 Id=1000 Application Error
+   app-line hex1=6af9c797 0xc0000005 0x00000000000061d6
+2026-11-15 22:58:36 Id=1000 Application Error
+   app-line hex1=6af9c797 0xc0000005 0x00000000000061d6
+2026-11-15 22:58:33 Id=1000 Application Error
+   app-line hex1=6af9c7f7 0x0000000000112fc5
+2026-11-15 21:39:58 Id=1001 Windows Error Reporting
+   P1=MapleStory_pua9.exe P2=0.0.0.0 P3=6af9b1f9 P4=MapleStory_pua9.exe P5=0.0.0.0 P6=6af9b1f9 P7=c0000005 P8=00000000000061d6
+2026-11-15 21:39:52 Id=1000 Application Error
+   hex1=6af9b1f9 0xc0000005 0x00000000000061d6
+2026-11-15 19:45:28 Id=1001 Windows Error Reporting
+   P1=MapleStory_ch20.exe P2=0.0.0.0 P3=6af99a79 P4=MapleStory_ch20.exe P5=0.0.0.0 P6=6af99a79 P7=c0000005 P8=0000000000006581
+2026-11-15 19:45:22 Id=1000 Application Error
+   hex1=6af99a79 0xc0000005 0x0000000000006581
+2026-11-15 19:44:47 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af98bb1 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 19:44:39 Id=1000 Application Error
+   app-line hex1=6af98bb1 0x0000000000112fc5
+2026-11-15 18:09:52 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af97ea8 P4=MapleStory.exe P5=0.0.0.0 P6=6af97ea8 P7=c0000005 P8=00000000000ab989
+   app-line
+2026-11-15 18:09:45 Id=1000 Application Error
+   app-line hex1=6af97ea8 0xc0000005 0x00000000000ab989
+2026-11-15 17:00:38 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af970cb P4=MapleStory.exe P5=0.0.0.0 P6=6af970cb P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 17:00:30 Id=1000 Application Error
+   app-line hex1=6af970cb 0xc0000005 0x00000000000061d6
+2026-11-15 16:46:41 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af970cb P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 16:46:35 Id=1000 Application Error
+   app-line hex1=6af970cb 0x0000000000112fc5
+2026-11-15 16:26:56 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af968c3 P4=MapleStory.exe P5=0.0.0.0 P6=6af968c3 P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 16:26:49 Id=1000 Application Error
+   app-line hex1=6af968c3 0xc0000005 0x00000000000061d6
+2026-11-15 16:26:19 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af968c3 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 16:26:13 Id=1000 Application Error
+   app-line hex1=6af968c3 0x0000000000112fc5
+2026-11-15 16:19:20 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af968c3 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 16:19:14 Id=1000 Application Error
+   app-line hex1=6af968c3 0x0000000000112fc5
+2026-11-15 13:35:16 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af94384 P4=MapleStory.exe P5=0.0.0.0 P6=6af94384 P7=c0000005 P8=0000000000006581
+   app-line
+2026-11-15 13:35:10 Id=1000 Application Error
+   app-line hex1=6af94384 0xc0000005 0x0000000000006581
+2026-11-15 13:28:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af83110 P4=StackHash_fbcc P5=10.0.26100.9974 P6=a2b84216 P7=c0000374 P8=PCH_5F_FROM_ntdll+0x0000000000166F34
+   app-line hex1=00000000 0x0000000000166F34
+2026-11-15 13:28:38 Id=1000 Application Error
+   app-line hex1=6af83110 0x0000000000112fc5
+2026-11-15 11:50:18 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af83110 P4=MapleStory.exe P5=0.0.0.0 P6=6af83110 P7=c0000005 P8=00000000000061d6
+   app-line
+2026-11-15 11:50:13 Id=1000 Application Error
+   app-line hex1=6af83110 0xc0000005 0x00000000000061d6
+2026-11-14 02:10:10 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af74687 P4=MapleStory.exe P5=0.0.0.0 P6=6af74687 P7=c0000005 P8=0000000000006581
+   app-line
+2026-11-14 02:10:06 Id=1000 Application Error
+   app-line hex1=6af74687 0xc0000005 0x0000000000006581
+2026-11-13 23:29:16 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af70c9c P4=MapleStory.exe P5=0.0.0.0 P6=6af70c9c P7=c0000005 P8=0000000000006581
+   app-line
+2026-11-13 23:29:12 Id=1000 Application Error
+   app-line hex1=6af70c9c 0xc0000005 0x0000000000006581
+2026-11-13 22:22:05 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af70c9c P4=MapleStory.exe P5=0.0.0.0 P6=6af70c9c P7=c0000005 P8=0000000000006581
+   app-line
+2026-11-13 22:22:00 Id=1000 Application Error
+   app-line hex1=6af70c9c 0xc0000005 0x0000000000006581
+2026-11-13 22:21:55 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af70c9c P4=MapleStory.exe P5=0.0.0.0 P6=6af70c9c P7=c0000005 P8=0000000000006581
+   app-line
+2026-11-13 22:21:50 Id=1000 Application Error
+   app-line hex1=6af70c9c 0xc0000005 0x0000000000006581
+2026-11-13 20:09:22 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af6fb16 P4=MapleStory.exe P5=0.0.0.0 P6=6af6fb16 P7=c0000005 P8=0000000000006521
+   app-line
+2026-11-13 20:09:18 Id=1000 Application Error
+   app-line hex1=6af6fb16 0xc0000005 0x0000000000006521
+2026-11-13 16:41:39 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af6cbfc P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-30 22:32:49 Id=1000 Application Error
-   app-line hex1=6ae497c6 0x0000000000118095
-2026-10-30 20:59:31 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae488a0 P4=MapleStory.exe P5=0.0.0.0 P6=6ae488a0 P7=c0000005 P8=000000000007fb70
-   app-line
-2026-10-30 20:59:27 Id=1000 Application Error
-   app-line hex1=6ae488a0 0xc0000005 0x000000000007fb70
-2026-10-30 20:29:44 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae488a0 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+2026-11-13 16:41:33 Id=1000 Application Error
+   app-line hex1=6af6cbfc 0x0000000000118095
+2026-11-13 15:08:57 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af6b24e P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-30 20:29:40 Id=1000 Application Error
-   app-line hex1=6ae488a0 0x0000000000118095
-2026-10-30 07:42:13 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae35f5b P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 15:08:53 Id=1000 Application Error
+   app-line hex1=6af6b24e 0x0000000000118095
+2026-11-13 14:35:49 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af6af1f P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-30 07:42:11 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae35f5b P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 14:35:44 Id=1000 Application Error
+   app-line hex1=6af6af1f 0x0000000000118095
+2026-11-13 14:12:30 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af6a8ae P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-30 07:42:07 Id=1000 Application Error
-   app-line hex1=6ae35f5b 0x0000000000118095
-2026-10-29 16:14:29 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2fa88 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 14:12:17 Id=1000 Application Error
+   app-line hex1=6af6a8ae 0x0000000000118095
+2026-11-13 13:58:40 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af69f70 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 16:14:27 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2fa88 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 13:58:14 Id=1000 Application Error
+   app-line hex1=6af69f70 0x0000000000118095
+2026-11-13 13:31:31 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af69f70 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 16:14:24 Id=1000 Application Error
-   app-line hex1=6ae2fa88 0x0000000000118095
-2026-10-29 14:46:07 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2e980 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 13:31:25 Id=1000 Application Error
+   app-line hex1=6af69f70 0x0000000000118095
+2026-11-13 13:00:22 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af69061 P4=MapleStory.exe P5=0.0.0.0 P6=6af69061 P7=c0000005 P8=0000000000006521
+   app-line
+2026-11-13 12:59:56 Id=1000 Application Error
+   app-line hex1=6af69061 0xc0000005 0x0000000000006521
+2026-11-13 12:29:24 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af69061 P4=liblz4.dll P5=0.0.0.0 P6=5af0d5ea P7=c0000005 P8=0000000000017d2a
+   app-line
+2026-11-13 12:29:21 Id=1000 Application Error
+   app-line hex1=6af69061 0xc0000005 0x0000000000017d2a
+2026-11-13 12:26:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af69061 P4=liblz4.dll P5=0.0.0.0 P6=5af0d5ea P7=c0000005 P8=0000000000017d2a
+   app-line
+2026-11-13 12:26:13 Id=1000 Application Error
+   app-line hex1=6af69061 0xc0000005 0x0000000000017d2a
+2026-11-13 12:20:50 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af68b5b P4=liblz4.dll P5=0.0.0.0 P6=5af0d5ea P7=c0000005 P8=0000000000017d2a
+   app-line
+2026-11-13 12:20:46 Id=1000 Application Error
+   app-line hex1=6af68b5b 0xc0000005 0x0000000000017d2a
+2026-11-13 11:22:31 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af68254 P4=liblz4.dll P5=0.0.0.0 P6=5af0d5ea P7=c0000005 P8=0000000000017d2a
+   app-line
+2026-11-13 11:22:26 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af68254 P4=liblz4.dll P5=0.0.0.0 P6=5af0d5ea P7=c0000005 P8=0000000000017d2a
+   app-line
+2026-11-13 11:22:16 Id=1000 Application Error
+   app-line hex1=6af68254 0xc0000005 0x0000000000017d2a
+2026-11-13 11:21:39 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af67ff7 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 14:46:05 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2e980 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 11:21:26 Id=1000 Application Error
+   app-line hex1=6af67ff7 0x0000000000118095
+2026-11-13 10:54:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af675b9 P4=MapleStory.exe P5=0.0.0.0 P6=6af675b9 P7=c0000005 P8=0000000000006176
+   app-line
+2026-11-13 10:54:12 Id=1000 Application Error
+   app-line hex1=6af675b9 0xc0000005 0x0000000000006176
+2026-11-13 10:04:14 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af66a0b P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 14:46:02 Id=1000 Application Error
-   app-line hex1=6ae2e980 0x0000000000118095
-2026-10-29 13:53:17 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2dc6c P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 10:04:09 Id=1000 Application Error
+   app-line hex1=6af66a0b 0x0000000000118095
+2026-11-13 00:30:56 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5dbf9 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 13:53:15 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2dc6c P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_DB_FROM_ntdll+0x00000000001628A4
+2026-11-13 00:30:48 Id=1000 Application Error
+   app-line hex1=6af5dbf9 0x0000000000118095
+2026-11-12 23:37:01 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5d663 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
    app-line hex1=00000000 0x00000000001628A4
-2026-10-29 13:53:12 Id=1000 Application Error
-   app-line hex1=6ae2dc6c 0x0000000000118095
-2026-10-29 13:06:48 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2b55a P4=MapleStory.exe P5=0.0.0.0 P6=6ae2b55a P7=c0000005 P8=00000000001ec372
+2026-11-12 23:36:55 Id=1000 Application Error
+   app-line hex1=6af5d663 0x0000000000118095
+2026-11-12 22:59:46 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5d3cf P4=MapleStory.exe P5=0.0.0.0 P6=6af5d3cf P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-29 13:06:46 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2b55a P4=MapleStory.exe P5=0.0.0.0 P6=6ae2b55a P7=c0000005 P8=00000000001ec372
+2026-11-12 22:59:40 Id=1000 Application Error
+   app-line hex1=6af5d3cf 0xc0000005 0x00000000000064e1
+2026-11-12 22:47:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5d0f7 P4=MapleStory.exe P5=0.0.0.0 P6=6af5d0f7 P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-29 13:06:43 Id=1000 Application Error
-   app-line hex1=6ae2b55a 0xc0000005 0x00000000001ec372
-2026-10-29 11:57:26 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2b55a P4=MapleStory.exe P5=0.0.0.0 P6=6ae2b55a P7=c0000005 P8=00000000001ec372
+2026-11-12 22:47:11 Id=1000 Application Error
+   app-line hex1=6af5d0f7 0xc0000005 0x00000000000064e1
+2026-11-12 22:12:12 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5c0f8 P4=MapleStory.exe P5=0.0.0.0 P6=6af5c0f8 P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-29 11:57:23 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ae2b55a P4=MapleStory.exe P5=0.0.0.0 P6=6ae2b55a P7=c0000005 P8=00000000001ec372
+2026-11-12 22:12:04 Id=1000 Application Error
+   app-line hex1=6af5c0f8 0xc0000005 0x00000000000064e1
+2026-11-12 21:41:28 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5c0f8 P4=MapleStory.exe P5=0.0.0.0 P6=6af5c0f8 P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-29 11:57:20 Id=1000 Application Error
-   app-line hex1=6ae2b55a 0xc0000005 0x00000000001ec372
-2026-10-27 09:03:47 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adff84d P4=ucrtbase.dll P5=10.0.26100.9711 P6=3f426c5b P7=00000000000a527e P8=c0000409
+2026-11-12 21:41:22 Id=1000 Application Error
+   app-line hex1=6af5c0f8 0xc0000005 0x00000000000064e1
+2026-11-12 21:10:31 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5ba5b P4=MapleStory.exe P5=0.0.0.0 P6=6af5ba5b P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-27 09:03:44 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adff84d P4=ucrtbase.dll P5=10.0.26100.9711 P6=3f426c5b P7=00000000000a527e P8=c0000409
+2026-11-12 21:10:24 Id=1000 Application Error
+   app-line hex1=6af5ba5b 0xc0000005 0x00000000000064e1
+2026-11-12 21:07:53 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5acea P4=MapleStory.exe P5=0.0.0.0 P6=6af5acea P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-27 09:03:42 Id=1000 Application Error
-   app-line hex1=6adff84d 0x00000000000a527e
-2026-10-26 20:29:42 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ade7ef5 P4=MapleStory.exe P5=0.0.0.0 P6=6ade7ef5 P7=c0000005 P8=000000000007f580
+2026-11-12 21:07:46 Id=1000 Application Error
+   app-line hex1=6af5acea 0xc0000005 0x00000000000064e1
+2026-11-12 21:05:18 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5b75e P4=MapleStory.exe P5=0.0.0.0 P6=6af5b75e P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-26 20:29:39 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ade7ef5 P4=MapleStory.exe P5=0.0.0.0 P6=6ade7ef5 P7=c0000005 P8=000000000007f580
+2026-11-12 21:05:12 Id=1000 Application Error
+   app-line hex1=6af5b75e 0xc0000005 0x00000000000064e1
+2026-11-12 21:03:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5acea P4=MapleStory.exe P5=0.0.0.0 P6=6af5acea P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-26 20:29:35 Id=1000 Application Error
-   app-line hex1=6ade7ef5 0xc0000005 0x000000000007f580
-2026-10-24 13:10:13 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adc0740 P4=MapleStory.exe P5=0.0.0.0 P6=6adc0740 P7=c0000005 P8=000000000007ded0
+2026-11-12 21:03:29 Id=1000 Application Error
+   app-line hex1=6af5acea 0xc0000005 0x00000000000064e1
+2026-11-12 21:00:48 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5b75e P4=MapleStory.exe P5=0.0.0.0 P6=6af5b75e P7=c0000005 P8=00000000000064e1
    app-line
-2026-10-24 13:10:09 Id=1000 Application Error
-   app-line hex1=6adc0740 0xc0000005 0x000000000007ded0
-2026-10-24 00:18:14 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adb7cea P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 21:00:41 Id=1000 Application Error
+   app-line hex1=6af5b75e 0xc0000005 0x00000000000064e1
+2026-11-12 18:25:56 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=MapleStory.exe P5=0.0.0.0 P6=6af57fb9 P7=c0000005 P8=0000000000098cf4
    app-line
-2026-10-24 00:18:12 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adb7cea P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 18:25:50 Id=1000 Application Error
+   app-line hex1=6af57fb9 0xc0000005 0x0000000000098cf4
+2026-11-12 18:22:08 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-12 18:22:03 Id=1000 Application Error
+   app-line hex1=6af57fb9 0x0000000000118095
+2026-11-12 18:21:25 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-12 18:21:19 Id=1000 Application Error
+   app-line hex1=6af57fb9 0x0000000000118095
+2026-11-12 18:12:21 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=MapleStory.exe P5=0.0.0.0 P6=6af57fb9 P7=c0000005 P8=0000000000098cf4
    app-line
-2026-10-23 08:21:30 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6adaa83f P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-23 08:21:26 Id=1000 Application Error
-   app-line hex1=6adaa83f 0x0000000000117eb5
-2026-10-22 21:54:55 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ada1448 P4=5931 P5=134217728 P6=P7: P7=P8: P8=P9:
+2026-11-12 18:12:15 Id=1000 Application Error
+   app-line hex1=6af57fb9 0xc0000005 0x0000000000098cf4
+2026-11-12 18:05:34 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5792a P4=MapleStory.exe P5=0.0.0.0 P6=6af5792a P7=c0000005 P8=0000000000006351
    app-line
-2026-10-22 17:42:55 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad9d7f8 P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-22 17:42:52 Id=1000 Application Error
-   app-line hex1=6ad9d7f8 0x0000000000117eb5
-2026-10-22 14:49:08 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad9b190 P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-22 14:49:04 Id=1000 Application Error
-   app-line hex1=6ad9b190 0x0000000000117eb5
-2026-10-22 07:39:53 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad94a34 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 18:05:29 Id=1000 Application Error
+   app-line hex1=6af5792a 0xc0000005 0x0000000000006351
+2026-11-12 17:59:49 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=MapleStory.exe P5=0.0.0.0 P6=6af57fb9 P7=c0000005 P8=0000000000005fd6
    app-line
-2026-10-22 07:39:50 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad94a34 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 17:59:45 Id=1000 Application Error
+   app-line hex1=6af57fb9 0xc0000005 0x0000000000005fd6
+2026-11-12 17:57:39 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5792a P4=MapleStory.exe P5=0.0.0.0 P6=6af5792a P7=c0000005 P8=0000000000006351
    app-line
-2026-10-22 00:11:16 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8d523 P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-22 00:11:12 Id=1000 Application Error
-   app-line hex1=6ad8d523 0x0000000000117eb5
-2026-10-21 22:50:36 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8c540 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 17:57:34 Id=1000 Application Error
+   app-line hex1=6af5792a 0xc0000005 0x0000000000006351
+2026-11-12 17:56:55 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5792a P4=MapleStory.exe P5=0.0.0.0 P6=6af5792a P7=c0000005 P8=0000000000006351
    app-line
-2026-10-21 22:50:35 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8c540 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 17:56:50 Id=1000 Application Error
+   app-line hex1=6af5792a 0xc0000005 0x0000000000006351
+2026-11-12 17:53:10 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af5792a P4=MapleStory.exe P5=0.0.0.0 P6=6af5792a P7=c0000005 P8=0000000000006351
    app-line
-2026-10-21 22:08:52 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8c540 P4=MapleStory.exe P5=0.0.0.0 P6=6ad8c540 P7=c0000005 P8=00000000000791f0
+2026-11-12 17:53:06 Id=1000 Application Error
+   app-line hex1=6af5792a 0xc0000005 0x0000000000006351
+2026-11-12 16:59:53 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57fb9 P4=MapleStory.exe P5=0.0.0.0 P6=6af57fb9 P7=c0000005 P8=0000000000098cf4
    app-line
-2026-10-21 22:08:47 Id=1000 Application Error
-   app-line hex1=6ad8c540 0xc0000005 0x00000000000791f0
-2026-10-21 21:04:50 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8af23 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 16:59:47 Id=1000 Application Error
+   app-line hex1=6af57fb9 0xc0000005 0x0000000000098cf4
+2026-11-12 16:57:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af57d21 P4=MapleStory.exe P5=0.0.0.0 P6=6af57d21 P7=c0000005 P8=0000000000098cf4
    app-line
-2026-10-21 21:04:48 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad8af23 P4=772f P5=67246080 P6=P7: P7=P8: P8=P9:
+2026-11-12 16:57:31 Id=1000 Application Error
+   app-line hex1=6af57d21 0xc0000005 0x0000000000098cf4
+2026-11-12 12:15:33 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af53c81 P4=MapleStory.exe P5=0.0.0.0 P6=6af53c81 P7=c0000005 P8=0000000000005f76
    app-line
-2026-10-21 16:39:44 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad86cea P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-21 16:39:41 Id=1000 Application Error
-   app-line hex1=6ad86cea 0x0000000000117eb5
-2026-10-21 16:01:41 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=10.0.26200.2.0.0 P4=P5: P5=P6: P6=P7: P7=P8: P8=P9:
+2026-11-12 12:15:22 Id=1000 Application Error
+   app-line hex1=6af53c81 0xc0000005 0x0000000000005f76
+2026-11-12 11:24:19 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af52fc9 P4=StackHash_3f21 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-12 11:24:12 Id=1000 Application Error
+   app-line hex1=6af52fc9 0x0000000000118095
+2026-11-12 10:28:57 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af522d2 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-12 10:28:52 Id=1000 Application Error
+   app-line hex1=6af522d2 0x0000000000118095
+2026-11-12 09:00:42 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af4a1b7 P4=VCRUNTIME140.dll P5=14.51.36247.0 P6=c35ddc74 P7=c0000005 P8=000000000001cca7
    app-line
-2026-10-21 13:09:35 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad82b74 P4=unknown P5=unknown P6=unknown P7=unknown P8=P9:
+2026-11-12 09:00:39 Id=1000 Application Error
+   app-line hex1=6af4a1b7 0xc0000005 0x000000000001cca7
+2026-11-12 07:39:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af4a1b7 P4=VCRUNTIME140.dll P5=14.51.36247.0 P6=c35ddc74 P7=c0000005 P8=000000000001cca7
    app-line
-2026-10-21 13:05:00 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad82b74 P4=025a P5=134217728 P6=P7: P7=P8: P8=P9:
+2026-11-12 07:39:33 Id=1000 Application Error
+   app-line hex1=6af4a1b7 0xc0000005 0x000000000001cca7
+2026-11-12 01:16:56 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af4a1b7 P4=VCRUNTIME140.dll P5=14.51.36247.0 P6=c35ddc74 P7=c0000005 P8=000000000001cca7
    app-line
-2026-10-21 11:51:38 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad82b74 P4=unknown P5=unknown P6=unknown P7=unknown P8=P9:
+2026-11-12 01:16:52 Id=1000 Application Error
+   app-line hex1=6af4a1b7 0xc0000005 0x000000000001cca7
+2026-11-12 01:16:06 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af4a1b7 P4=VCRUNTIME140.dll P5=14.51.36247.0 P6=c35ddc74 P7=c0000005 P8=000000000001cca7
    app-line
-2026-10-21 10:38:35 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad81a8a P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-21 10:38:31 Id=1000 Application Error
-   app-line hex1=6ad81a8a 0x0000000000117eb5
-2026-10-20 23:26:06 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad77ddf P4=98b8 P5=134217728 P6=P7: P7=P8: P8=P9:
+2026-11-12 01:16:01 Id=1000 Application Error
+   app-line hex1=6af4a1b7 0xc0000005 0x000000000001cca7
+2026-11-11 22:30:43 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af474d9 P4=MapleStory.exe P5=0.0.0.0 P6=6af474d9 P7=c0000005 P8=0000000000097d54
    app-line
-2026-10-20 22:41:34 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad77cc1 P4=unknown P5=unknown P6=unknown P7=unknown P8=P9:
+2026-11-11 22:30:37 Id=1000 Application Error
+   app-line hex1=6af474d9 0xc0000005 0x0000000000097d54
+2026-11-11 21:25:38 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af462e6 P4=StackHash_6848 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-11 21:25:33 Id=1000 Application Error
+   app-line hex1=6af462e6 0x0000000000118095
+2026-11-11 07:23:30 Id=1000 Application Error
+   hex1=6a890000 0xc0000005 0x00000000000c408a
+2026-11-11 07:22:26 Id=1000 Application Error
+   hex1=6a890000 0xc0000005 0x00000000000c408a
+2026-11-10 21:55:28 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af321bc P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-10 21:55:23 Id=1000 Application Error
+   app-line hex1=6af321bc 0x0000000000118095
+2026-11-10 21:39:16 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af3082b P4=MapleStory.exe P5=0.0.0.0 P6=6af3082b P7=c0000005 P8=0000000000097934
    app-line
-2026-10-20 21:23:55 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad76819 P4=unknown P5=unknown P6=unknown P7=unknown P8=P9:
-   app-line
-2026-10-20 20:39:09 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad73bf4 P4=unknown P5=unknown P6=unknown P7=unknown P8=P9:
-   app-line
-2026-10-20 16:56:06 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad7170b P4=MapleStory.exe P5=0.0.0.0 P6=6ad7170b P7=c0000005 P8=0000000000062d30
-   app-line
-2026-10-20 16:56:02 Id=1000 Application Error
-   app-line hex1=6ad7170b 0xc0000005 0x0000000000062d30
-2026-10-20 15:24:49 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad7170b P4=MapleStory.exe P5=0.0.0.0 P6=6ad7170b P7=c0000005 P8=0000000000062d30
-   app-line
-2026-10-20 15:24:45 Id=1000 Application Error
-   app-line hex1=6ad7170b 0xc0000005 0x0000000000062d30
-2026-10-20 14:44:48 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad703f7 P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-20 14:44:44 Id=1000 Application Error
-   app-line hex1=6ad703f7 0x0000000000117eb5
-2026-10-20 13:08:25 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad62532 P4=f3bd P5=67246080 P6=P7: P7=P8: P8=P9:
-   app-line
-2026-10-20 13:08:23 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad62532 P4=f3bd P5=67246080 P6=P7: P7=P8: P8=P9:
-   app-line
-2026-10-20 09:38:24 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6ad62532 P4=StackHash_fbcc P5=10.0.26100.9444 P6=6bdf03ca P7=c0000374 P8=PCH_A8_FROM_ntdll+0x0000000000161914
-   app-line hex1=00000000 0x0000000000161914
-2026-10-20 09:38:20 Id=1000 Application Error
-   app-line hex1=6ad62532 0x0000000000117eb5
-2026-10-19 21:44:05 Id=1001 Windows Error Reporting
-   P1=MapleStory.exe P2=0.0.0.0 P3=6abc8f5c P4=MapleStory.exe P5=0.0.0.0 P6=6abc8f5c P7=c0000005 P8=00000000000601a0
-   app-line
-2026-10-19 21:44:00 Id=1000 Application Error
-   app-line hex1=6abc8f5c 0xc0000005 0x00000000000601a0
+2026-11-10 21:39:11 Id=1000 Application Error
+   app-line hex1=6af3082b 0xc0000005 0x0000000000097934
+2026-11-10 19:26:18 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af2ea31 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-10 19:26:14 Id=1000 Application Error
+   app-line hex1=6af2ea31 0x0000000000118095
+2026-11-10 14:37:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af2b94c P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-10 14:37:33 Id=1000 Application Error
+   app-line hex1=6af2b94c 0x0000000000118095
+2026-11-10 14:34:33 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af2b94c P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-10 14:34:29 Id=1000 Application Error
+   app-line hex1=6af2b94c 0x0000000000118095
+2026-11-09 18:01:40 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af14b31 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-09 18:01:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af14b31 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-09 18:01:34 Id=1000 Application Error
+   app-line hex1=6af14b31 0x0000000000118095
+2026-11-09 18:01:31 Id=1000 Application Error
+   app-line hex1=6af14b31 0x0000000000118095
+2026-11-09 09:50:10 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6af00532 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-09 09:50:05 Id=1000 Application Error
+   app-line hex1=6af00532 0x0000000000118095
+2026-11-08 01:44:37 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aef62e9 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-08 01:44:32 Id=1000 Application Error
+   app-line hex1=6aef62e9 0x0000000000118095
+2026-11-07 20:24:04 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeee974 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 20:23:57 Id=1000 Application Error
+   app-line hex1=6aeee974 0x0000000000118095
+2026-11-07 20:14:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeee974 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 20:14:34 Id=1000 Application Error
+   app-line hex1=6aeee974 0x0000000000118095
+2026-11-07 14:35:51 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeec651 P4=StackHash_8396 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 14:35:44 Id=1000 Application Error
+   app-line hex1=6aeec651 0x0000000000118095
+2026-11-07 13:04:27 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee91b8 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 13:04:20 Id=1000 Application Error
+   app-line hex1=6aee91b8 0x0000000000118095
+2026-11-07 09:32:09 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee7915 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 09:32:05 Id=1000 Application Error
+   app-line hex1=6aee7915 0x0000000000118095
+2026-11-07 09:26:09 Id=1001 Windows Error Reporting
+   P1=MapleStoryTest.exe P2=0.0.0.0 P3=6aee7a2e P4=StackHash_689a P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   hex1=00000000 0x00000000001628A4
+2026-11-07 09:26:05 Id=1000 Application Error
+   hex1=6aee7a2e 0x0000000000118095
+2026-11-07 09:25:33 Id=1001 Windows Error Reporting
+   P1=MapleStoryTest.exe P2=0.0.0.0 P3=6aee7a2e P4=StackHash_689a P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   hex1=00000000 0x00000000001628A4
+2026-11-07 09:25:29 Id=1000 Application Error
+   hex1=6aee7a2e 0x0000000000118095
+2026-11-07 09:23:34 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee7a2e P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 09:23:30 Id=1000 Application Error
+   app-line hex1=6aee7a2e 0x0000000000118095
+2026-11-07 09:21:42 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee7a2e P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 09:21:38 Id=1000 Application Error
+   app-line hex1=6aee7a2e 0x0000000000118095
+2026-11-07 09:16:50 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee7a2e P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 09:16:47 Id=1000 Application Error
+   app-line hex1=6aee7a2e 0x0000000000118095
+2026-11-07 08:41:31 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aee0085 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-07 08:41:26 Id=1000 Application Error
+   app-line hex1=6aee0085 0x0000000000118095
+2026-11-06 23:44:29 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aedf042 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-06 23:44:18 Id=1000 Application Error
+   app-line hex1=6aedf042 0x0000000000118095
+2026-11-06 23:34:44 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aedef49 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-06 23:34:36 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aedef49 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-06 23:33:31 Id=1000 Application Error
+   app-line hex1=6aedef49 0x0000000000118095
+2026-11-05 23:27:31 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aec9f87 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 23:27:26 Id=1000 Application Error
+   app-line hex1=6aec9f87 0x0000000000118095
+2026-11-05 22:02:26 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aec8b08 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 22:02:21 Id=1000 Application Error
+   app-line hex1=6aec8b08 0x0000000000118095
+2026-11-05 14:16:10 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aec1a54 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 14:16:05 Id=1000 Application Error
+   app-line hex1=6aec1a54 0x0000000000118095
+2026-11-05 11:27:19 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aebf5b7 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 11:27:15 Id=1000 Application Error
+   app-line hex1=6aebf5b7 0x0000000000118095
+2026-11-05 10:20:23 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aebe4a2 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 10:20:18 Id=1000 Application Error
+   app-line hex1=6aebe4a2 0x0000000000118095
+2026-11-05 00:32:50 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb5c4a P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-05 00:32:45 Id=1000 Application Error
+   app-line hex1=6aeb5c4a 0x0000000000118095
+2026-11-04 23:40:46 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb42a7 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 23:40:42 Id=1000 Application Error
+   app-line hex1=6aeb42a7 0x0000000000118095
+2026-11-04 22:47:19 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb453d P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 22:47:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb42a7 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 22:47:16 Id=1000 Application Error
+   app-line hex1=6aeb453d 0x0000000000118095
+2026-11-04 22:47:13 Id=1000 Application Error
+   app-line hex1=6aeb42a7 0x0000000000118095
+2026-11-04 22:40:21 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb42a7 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 22:40:16 Id=1000 Application Error
+   app-line hex1=6aeb42a7 0x0000000000118095
+2026-11-04 22:34:58 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb3ffb P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 22:34:54 Id=1000 Application Error
+   app-line hex1=6aeb3ffb 0x0000000000118095
+2026-11-04 22:34:52 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb3988 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 22:34:48 Id=1000 Application Error
+   app-line hex1=6aeb3988 0x0000000000118095
+2026-11-04 21:59:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb3988 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:59:13 Id=1000 Application Error
+   app-line hex1=6aeb3988 0x0000000000118095
+2026-11-04 21:44:53 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb35ff P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:44:49 Id=1000 Application Error
+   app-line hex1=6aeb35ff 0x0000000000118095
+2026-11-04 21:43:43 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb35ff P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:43:38 Id=1000 Application Error
+   app-line hex1=6aeb35ff 0x0000000000118095
+2026-11-04 21:32:41 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb3378 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:32:37 Id=1000 Application Error
+   app-line hex1=6aeb3378 0x0000000000118095
+2026-11-04 21:17:58 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb2886 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:17:55 Id=1000 Application Error
+   app-line hex1=6aeb2886 0x0000000000118095
+2026-11-04 21:15:51 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb2886 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:15:46 Id=1000 Application Error
+   app-line hex1=6aeb2886 0x0000000000118095
+2026-11-04 21:15:22 Id=1001 Windows Error Reporting
+   P1=MapleStoryBuild.exe P2=0.0.0.0 P3=6ae73088 P4=StackHash_f36a P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   hex1=00000000 0x00000000001628A4
+2026-11-04 21:15:19 Id=1000 Application Error
+   hex1=6ae73088 0x0000000000118095
+2026-11-04 21:12:55 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb2886 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:12:51 Id=1000 Application Error
+   app-line hex1=6aeb2886 0x0000000000118095
+2026-11-04 21:08:27 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb2886 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 21:08:23 Id=1000 Application Error
+   app-line hex1=6aeb2886 0x0000000000118095
+2026-11-04 19:00:15 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeb0dc6 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 19:00:11 Id=1000 Application Error
+   app-line hex1=6aeb0dc6 0x0000000000118095
+2026-11-04 17:14:41 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeaf70b P4=StackHash_6848 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 17:14:37 Id=1000 Application Error
+   app-line hex1=6aeaf70b 0x0000000000118095
+2026-11-04 16:57:29 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeaf21e P4=StackHash_6848 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 16:57:25 Id=1000 Application Error
+   app-line hex1=6aeaf21e 0x0000000000118095
+2026-11-04 16:53:54 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aeaf21e P4=StackHash_6848 P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 16:53:49 Id=1000 Application Error
+   app-line hex1=6aeaf21e 0x0000000000118095
+2026-11-04 15:07:34 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6aead8da P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-04 15:07:30 Id=1000 Application Error
+   app-line hex1=6aead8da 0x0000000000118095
+2026-11-03 22:28:36 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6ae9c5ac P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-03 22:28:26 Id=1000 Application Error
+   app-line hex1=6ae9c5ac 0x0000000000118095
+2026-11-03 15:56:13 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6ae985d4 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-03 15:56:07 Id=1000 Application Error
+   app-line hex1=6ae985d4 0x0000000000118095
+2026-11-03 15:49:04 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6ae985d4 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-03 15:48:59 Id=1000 Application Error
+   app-line hex1=6ae985d4 0x0000000000118095
+2026-11-03 12:30:17 Id=1001 Windows Error Reporting
+   P1=MapleStory.exe P2=0.0.0.0 P3=6ae962c4 P4=StackHash_fbcc P5=10.0.26100.9711 P6=5fd39a05 P7=c0000374 P8=PCH_74_FROM_ntdll+0x00000000001628A4
+   app-line hex1=00000000 0x00000000001628A4
+2026-11-03 12:30:11 Id=1000 Application Error
+   app-line hex1=6ae962c4 0x0000000000118095

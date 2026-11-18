@@ -5,7 +5,7 @@
   ],
   "client_source_hashes": {
    "Net/OutPacket.h": "be70cbca216f9e587a88baffd490d0f65f9a76520ca0397d7e7e5d5d7d085ac7",
-   "Net/PacketSwitch.cpp": "fee663394897d9a79eedcf01cca86b56b149eea4b6460da045c06c2be2ba5696"
+   "Net/PacketSwitch.cpp": "0d399b3d8cb0f6c6d56eda343203769af8b493fd0a9327547548b2b8434d9939"
   },
   "collisions": {
    "client_in": {
@@ -24,21 +24,21 @@
    "s9_send": {}
   },
   "counts": {
-   "client_in_constants": 308,
-   "client_in_registrations": 307,
+   "client_in_constants": 309,
+   "client_in_registrations": 308,
    "client_out_constants": 148,
    "client_out_sent": 148,
-   "s9_recv_constants": 182,
-   "s9_recv_distinct_values": 181,
+   "s9_recv_constants": 183,
+   "s9_recv_distinct_values": 182,
    "s9_registered_handlers": 174,
    "s9_registration_sites": 175,
    "s9_send_constants": 317,
    "s9_send_distinct_values": 317,
-   "s9_send_emitted": 253
+   "s9_send_emitted": 255
   },
-  "generated_at": "2026-11-13T11:28:55",
+  "generated_at": "2026-11-18T10:25:37",
   "generated_by": "tools/gen_opcode_matrix.py",
-  "s9_git_head": "72816391cb8ca2a14394f8bd640ce658baa86e65",
+  "s9_git_head": "d09cc96d7b2f89fc7b7cffa7dbba0d829d05028b",
   "s9_shadowed_registrations": {
    "CHECK_CHAR_NAME": {
     "effective": "TransferNameResultHandler",
@@ -52,8 +52,8 @@
    }
   },
   "source_hashes": {
-   "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "6e5ecd14aa334a2573156ce73736b222cadeb4d46f271f1d31ae6204416ab91d",
-   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "22ca7e0f574d257f1bc2c24fea39686c6956c7303e5f51c5c6f9eed936f1dd41",
+   "gms-server\\src\\main\\java\\org\\gms\\net\\PacketProcessor.java": "5c37f5ca7b00592426af482861e000c81a1fa7c16adf8940d1e9556d4d00ed07",
+   "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\RecvOpcode.java": "ece5b33069f486e091a5a8ea7badc48124e310cb234dca722d54bb3dd7d9ac6b",
    "gms-server\\src\\main\\java\\org\\gms\\net\\opcodes\\SendOpcode.java": "f9d064b9b216d6388fc0478fdb0eb4908392e62c11e5f98d3f3f1a0f6640adcb"
   }
  },
@@ -66,11 +66,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 31
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 31
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 1,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "LoginPasswordHandler",
@@ -90,11 +94,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 62
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 62
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 3,
    "s9_group": null,
    "s9_handler": null,
@@ -114,11 +122,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 93
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 93
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 5,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "CharlistRequestHandler",
@@ -138,11 +150,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 106
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 106
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 6,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "ServerStatusRequestHandler",
@@ -162,11 +178,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 117
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 117
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 7,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "AcceptToSHandler",
@@ -186,11 +206,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 128
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 128
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 8,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "SetGenderHandler",
@@ -210,11 +234,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 140
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 140
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 11,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "ServerlistRequestHandler",
@@ -234,11 +262,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 29
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 29
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 19,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "CharSelectedHandler",
@@ -258,11 +290,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/LoginPackets.h",
+     "line": 148
+    },
+    {
      "file": "Net/Packets/LoginPackets.h",
      "line": 148
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 20,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PlayerLoggedinHandler",
@@ -282,11 +318,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CharCreationPackets.h",
+     "line": 29
+    },
+    {
      "file": "Net/Packets/CharCreationPackets.h",
      "line": 29
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 21,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "TransferNameResultHandler",
@@ -308,11 +348,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CharCreationPackets.h",
+     "line": 48
+    },
+    {
      "file": "Net/Packets/CharCreationPackets.h",
      "line": 48
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 22,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "CreateCharHandler",
@@ -332,6 +376,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 109
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 121
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 109
     },
@@ -340,7 +392,7 @@
      "line": 121
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 23,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "DeleteCharHandler",
@@ -360,11 +412,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/OutPacket.cpp",
+     "line": 42
+    },
+    {
      "file": "Net/OutPacket.cpp",
      "line": 42
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 24,
    "s9_group": "registerCommonHandlers",
    "s9_handler": "KeepAliveHandler",
@@ -384,11 +440,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 81
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 81
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 29,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "RegisterPicHandler",
@@ -408,11 +468,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 96
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 96
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 30,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "CharSelectedWithPicHandler",
@@ -432,11 +496,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 73
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 73
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 13,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "ViewAllCharHandler",
@@ -461,11 +529,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 43
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 43
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 14,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "ViewAllCharSelectedHandler",
@@ -490,11 +562,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SelectCharPackets.h",
+     "line": 58
+    },
+    {
      "file": "Net/Packets/SelectCharPackets.h",
      "line": 58
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 32,
    "s9_group": "registerLoginHandlers",
    "s9_handler": "ViewAllCharSelectedWithPicHandler",
@@ -514,6 +590,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 29
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 39
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 29
     },
@@ -522,7 +606,7 @@
      "line": 39
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 38,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ChangeMapHandler",
@@ -547,11 +631,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 69
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 69
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 39,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ChangeChannelHandler",
@@ -571,11 +659,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 47
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 47
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 40,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "EnterCashShopHandler",
@@ -595,11 +687,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 81
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 81
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 41,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MovePlayerHandler",
@@ -619,11 +715,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 175
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 175
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 44,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CloseRangeDamageHandler",
@@ -643,11 +743,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 177
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 177
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 45,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RangedAttackHandler",
@@ -667,11 +771,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 179
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 179
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 46,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MagicDamageHandler",
@@ -696,11 +804,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Gameplay/Stage.cpp",
+     "file": ".agents/worktrees/channel-20page-verify/Gameplay/Stage.cpp",
      "line": 361
+    },
+    {
+     "file": "Gameplay/Stage.cpp",
+     "line": 384
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 47,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "TouchMonsterDamageHandler",
@@ -720,11 +832,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 230
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 230
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 48,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "TakeDamageHandler",
@@ -749,11 +865,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 170
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 170
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 42,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CancelChairHandler",
@@ -773,11 +893,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 160
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 160
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 43,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseChairHandler",
@@ -802,11 +926,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 177
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 177
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 50,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CloseChalkboardHandler",
@@ -831,11 +959,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 150
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 150
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 51,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FaceExpressionHandler",
@@ -860,11 +992,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 184
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 184
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 52,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseItemEffectHandler",
@@ -889,11 +1025,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/ItemAClassPackets.h",
+     "line": 43
+    },
+    {
      "file": "Net/Packets/ItemAClassPackets.h",
      "line": 43
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 53,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseDeathItemHandler",
@@ -913,11 +1053,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessagingPackets.h",
+     "line": 29
+    },
+    {
      "file": "Net/Packets/MessagingPackets.h",
      "line": 29
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 49,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "GeneralChatHandler",
@@ -937,11 +1081,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessagingPackets.h",
+     "line": 49
+    },
+    {
      "file": "Net/Packets/MessagingPackets.h",
      "line": 49
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 119,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MultiChatHandler",
@@ -966,15 +1114,23 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/MessagingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessagingPackets.h",
      "line": 77
     },
     {
-     "file": "Net/Packets/MessagingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessagingPackets.h",
      "line": 88
+    },
+    {
+     "file": "Net/Packets/MessagingPackets.h",
+     "line": 80
+    },
+    {
+     "file": "Net/Packets/MessagingPackets.h",
+     "line": 91
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 120,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "WhisperHandler",
@@ -994,11 +1150,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/MessagingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessagingPackets.h",
      "line": 66
+    },
+    {
+     "file": "Net/Packets/MessagingPackets.h",
+     "line": 68
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 121,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SpouseChatHandler",
@@ -1018,11 +1178,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
+     "line": 66
+    },
+    {
      "file": "Net/Packets/NpcInteractionPackets.h",
      "line": 66
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 58,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCTalkHandler",
@@ -1042,31 +1206,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 86
     },
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 105
     },
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 115
     },
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 125
     },
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 135
     },
     {
-     "file": "Net/Packets/NpcInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
      "line": 144
     }
    ],
-   "client_sent_count": 8,
+   "client_sent_count": 16,
    "client_value": 60,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCMoreTalkHandler",
@@ -1086,11 +1250,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
+     "line": 200
+    },
+    {
      "file": "Net/Packets/NpcInteractionPackets.h",
      "line": 200
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 61,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCShopHandler",
@@ -1110,11 +1278,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
+     "line": 29
+    },
+    {
      "file": "Net/Packets/PlayerInteractionPackets.h",
      "line": 29
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 97,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CharInfoRequestHandler",
@@ -1134,11 +1306,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 32
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 32
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 69,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "InventoryMergeHandler",
@@ -1158,11 +1334,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 44
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 44
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 70,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "InventorySortHandler",
@@ -1182,11 +1362,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 56
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 56
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 71,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ItemMoveHandler",
@@ -1206,11 +1390,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 152
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 152
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 72,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseItemHandler",
@@ -1235,11 +1423,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 146
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 146
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 75,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseSummonBagHandler",
@@ -1264,6 +1456,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 148
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 34
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 148
     },
@@ -1272,7 +1472,7 @@
      "line": 34
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 76,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetFoodHandler",
@@ -1297,6 +1497,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 149
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 48
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 149
     },
@@ -1305,7 +1513,7 @@
      "line": 48
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 77,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseMountFoodHandler",
@@ -1330,6 +1538,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 150
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/ItemAClassPackets.h",
+     "line": 15
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 150
     },
@@ -1338,7 +1554,7 @@
      "line": 15
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 78,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ScriptedItemHandler",
@@ -1363,11 +1579,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/ItemAClassPackets.h",
+     "line": 29
+    },
+    {
      "file": "Net/Packets/ItemAClassPackets.h",
      "line": 29
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 81,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseCatchItemHandler",
@@ -1392,11 +1612,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/ItemAClassPackets.h",
+     "line": 54
+    },
+    {
      "file": "Net/Packets/ItemAClassPackets.h",
      "line": 54
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 73,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CancelItemEffectHandler",
@@ -1421,11 +1645,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/ItemAClassPackets.h",
+     "line": 65
+    },
+    {
      "file": "Net/Packets/ItemAClassPackets.h",
      "line": 65
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 116,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RemoteGachaponHandler",
@@ -1450,11 +1678,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 264
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 264
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 109,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "GrenadeEffectHandler",
@@ -1474,31 +1706,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 17
     },
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 32
     },
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 48
     },
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 60
     },
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 73
     },
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 86
     }
    ],
-   "client_sent_count": 15,
+   "client_sent_count": 30,
    "client_value": 79,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseCashItemHandler",
@@ -1523,11 +1755,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 19
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 19
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 98,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SpawnPetHandler",
@@ -1552,11 +1788,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 151
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 151
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 85,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseItemHandler",
@@ -1576,11 +1816,19 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/InventoryPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
      "line": 175
+    },
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 178
+    },
+    {
+     "file": "Net/Packets/InventoryPackets.h",
+     "line": 196
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 3,
    "client_value": 86,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ScrollHandler",
@@ -1600,11 +1848,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 35
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 35
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 87,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DistributeAPHandler",
@@ -1624,11 +1876,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 94
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 94
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 90,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DistributeSPHandler",
@@ -1653,11 +1909,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CommonPackets.h",
+     "line": 39
+    },
+    {
      "file": "Net/Packets/CommonPackets.h",
      "line": 39
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 92,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CancelBuffHandler",
@@ -1682,11 +1942,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 81
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 81
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 89,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "HealOvertimeHandler",
@@ -1711,11 +1975,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CommonPackets.h",
+     "line": 51
+    },
+    {
      "file": "Net/Packets/CommonPackets.h",
      "line": 51
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 99,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CancelDebuffHandler",
@@ -1740,11 +2008,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 63
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 63
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 88,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AutoAssignHandler",
@@ -1769,11 +2041,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 279
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 279
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 189,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AutoAggroHandler",
@@ -1798,11 +2074,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/InventoryPackets.h",
+     "line": 147
+    },
+    {
      "file": "Net/Packets/InventoryPackets.h",
      "line": 147
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 82,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SkillBookHandler",
@@ -1827,11 +2107,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 139
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 139
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 94,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MesoDropHandler",
@@ -1856,11 +2140,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 128
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 128
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 95,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "GiveFameHandler",
@@ -1880,11 +2168,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 106
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 106
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 135,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "KeymapChangeHandler",
@@ -1909,11 +2201,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerPackets.h",
+     "line": 198
+    },
+    {
      "file": "Net/Packets/PlayerPackets.h",
      "line": 198
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 133,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DoorHandler",
@@ -1933,11 +2229,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MapInteractPackets.h",
+     "line": 18
+    },
+    {
      "file": "Net/Packets/MapInteractPackets.h",
      "line": 18
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 100,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ChangeMapSpecialHandler",
@@ -1957,11 +2257,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MapInteractPackets.h",
+     "line": 32
+    },
+    {
      "file": "Net/Packets/MapInteractPackets.h",
      "line": 32
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 101,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "InnerPortalHandler",
@@ -1981,11 +2285,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MapInteractPackets.h",
+     "line": 71
+    },
+    {
      "file": "Net/Packets/MapInteractPackets.h",
      "line": 71
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 112,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ItemRewardHandler",
@@ -2005,11 +2313,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MapInteractPackets.h",
+     "line": 58
+    },
+    {
      "file": "Net/Packets/MapInteractPackets.h",
      "line": 58
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 115,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseTreasureChestHandler",
@@ -2029,11 +2341,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MapInteractPackets.h",
+     "line": 45
+    },
+    {
      "file": "Net/Packets/MapInteractPackets.h",
      "line": 45
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 206,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "TouchReactorHandler",
@@ -2053,11 +2369,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 290
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 290
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 91,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SpecialMoveHandler",
@@ -2082,11 +2402,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AttackAndSkillPackets.h",
+     "line": 343
+    },
+    {
      "file": "Net/Packets/AttackAndSkillPackets.h",
      "line": 343
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 93,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SkillEffectHandler",
@@ -2106,11 +2430,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SkillMacroPackets.h",
+     "line": 16
+    },
+    {
      "file": "Net/Packets/SkillMacroPackets.h",
      "line": 16
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 110,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SkillMacroHandler",
@@ -2130,6 +2458,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/RpsPackets.h",
+     "line": 13
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/RpsPackets.h",
+     "line": 18
+    },
+    {
      "file": "Net/Packets/RpsPackets.h",
      "line": 13
     },
@@ -2138,7 +2474,7 @@
      "line": 18
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 136,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RPSActionHandler",
@@ -2163,11 +2499,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
+     "line": 78
+    },
+    {
      "file": "Net/Packets/NpcInteractionPackets.h",
      "line": 78
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 162,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ClickGuideHandler",
@@ -2192,6 +2532,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
+     "line": 33
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NpcInteractionPackets.h",
+     "line": 51
+    },
+    {
      "file": "Net/Packets/NpcInteractionPackets.h",
      "line": 33
     },
@@ -2200,7 +2548,7 @@
      "line": 51
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 197,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NPCAnimationHandler",
@@ -2220,11 +2568,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/QuestPackets.h",
+     "line": 15
+    },
+    {
      "file": "Net/Packets/QuestPackets.h",
      "line": 15
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 107,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "QuestActionHandler",
@@ -2249,27 +2601,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/MessengerPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessengerPackets.h",
      "line": 16
     },
     {
-     "file": "Net/Packets/MessengerPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessengerPackets.h",
      "line": 27
     },
     {
-     "file": "Net/Packets/MessengerPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessengerPackets.h",
      "line": 37
     },
     {
-     "file": "Net/Packets/MessengerPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessengerPackets.h",
      "line": 48
     },
     {
-     "file": "Net/Packets/MessengerPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MessengerPackets.h",
      "line": 59
+    },
+    {
+     "file": "Net/Packets/MessengerPackets.h",
+     "line": 16
     }
    ],
-   "client_sent_count": 5,
+   "client_sent_count": 10,
    "client_value": 122,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MessengerHandler",
@@ -2289,31 +2645,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/GameplayPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
      "line": 104
     },
     {
-     "file": "Net/Packets/PartyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartyPackets.h",
      "line": 30
     },
     {
-     "file": "Net/Packets/PartyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartyPackets.h",
      "line": 39
     },
     {
-     "file": "Net/Packets/PartyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartyPackets.h",
      "line": 48
     },
     {
-     "file": "Net/Packets/PartyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartyPackets.h",
      "line": 58
     },
     {
-     "file": "Net/Packets/PartyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartyPackets.h",
      "line": 68
     }
    ],
-   "client_sent_count": 7,
+   "client_sent_count": 14,
    "client_value": 124,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PartyOperationHandler",
@@ -2333,11 +2689,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 187
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 187
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 128,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AdminCommandHandler",
@@ -2357,11 +2717,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 239
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 239
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 188,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MoveLifeHandler",
@@ -2386,11 +2750,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SkillMacroPackets.h",
+     "line": 44
+    },
+    {
      "file": "Net/Packets/SkillMacroPackets.h",
      "line": 44
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 183,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "QuickslotKeyMappedModifiedHandler",
@@ -2410,11 +2778,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 62
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 62
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 167,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MovePetHandler",
@@ -2434,11 +2806,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 77
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 77
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 168,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetChatHandler",
@@ -2458,11 +2834,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 93
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 93
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 169,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetCommandHandler",
@@ -2482,11 +2862,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 108
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 108
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 170,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetLootHandler",
@@ -2506,11 +2890,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 123
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 123
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 171,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetAutoPotHandler",
@@ -2530,11 +2918,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PetPackets.h",
+     "line": 139
+    },
+    {
      "file": "Net/Packets/PetPackets.h",
      "line": 139
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 172,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PetExcludeItemsHandler",
@@ -2554,11 +2946,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SummonDragonPackets.h",
+     "line": 19
+    },
+    {
      "file": "Net/Packets/SummonDragonPackets.h",
      "line": 19
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 175,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MoveSummonHandler",
@@ -2578,11 +2974,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SummonDragonPackets.h",
+     "line": 42
+    },
+    {
      "file": "Net/Packets/SummonDragonPackets.h",
      "line": 42
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 176,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SummonDamageHandler",
@@ -2602,11 +3002,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SummonDragonPackets.h",
+     "line": 66
+    },
+    {
      "file": "Net/Packets/SummonDragonPackets.h",
      "line": 66
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 177,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DamageSummonHandler",
@@ -2626,11 +3030,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SummonDragonPackets.h",
+     "line": 81
+    },
+    {
      "file": "Net/Packets/SummonDragonPackets.h",
      "line": 81
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 178,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "BeholderHandler",
@@ -2650,11 +3058,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SummonDragonPackets.h",
+     "line": 96
+    },
+    {
      "file": "Net/Packets/SummonDragonPackets.h",
      "line": 96
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 181,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MoveDragonHandler",
@@ -2674,11 +3086,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 264
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 264
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 202,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ItemPickupHandler",
@@ -2698,11 +3114,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 278
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 278
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 205,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ReactorHitHandler",
@@ -2722,11 +3142,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GameplayPackets.h",
+     "line": 293
+    },
+    {
      "file": "Net/Packets/GameplayPackets.h",
      "line": 293
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 207,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PlayerMapTransitionHandler",
@@ -2746,11 +3170,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartySearchPackets.h",
+     "line": 15
+    },
+    {
      "file": "Net/Packets/PartySearchPackets.h",
      "line": 15
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 222,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PartySearchStartHandler",
@@ -2770,11 +3198,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartySearchPackets.h",
+     "line": 28
+    },
+    {
      "file": "Net/Packets/PartySearchPackets.h",
      "line": 28
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 223,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PartySearchUpdateHandler",
@@ -2794,11 +3226,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PartySearchPackets.h",
+     "line": 35
+    },
+    {
      "file": "Net/Packets/PartySearchPackets.h",
      "line": 35
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 125,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DenyPartyRequestHandler",
@@ -2823,11 +3259,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
+     "line": 107
+    },
+    {
      "file": "Net/Packets/GuildPackets.h",
      "line": 107
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 127,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DenyGuildRequestHandler",
@@ -2852,11 +3292,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/StoragePackets.h",
+     "line": 31
+    },
+    {
      "file": "Net/Packets/StoragePackets.h",
      "line": 31
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 62,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "StorageHandler",
@@ -2881,6 +3325,18 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BuddyPackets.h",
+     "line": 32
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BuddyPackets.h",
+     "line": 43
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BuddyPackets.h",
+     "line": 53
+    },
+    {
      "file": "Net/Packets/BuddyPackets.h",
      "line": 32
     },
@@ -2893,7 +3349,7 @@
      "line": 53
     }
    ],
-   "client_sent_count": 3,
+   "client_sent_count": 6,
    "client_value": 130,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "BuddylistModifyHandler",
@@ -2913,6 +3369,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FredrickPackets.h",
+     "line": 13
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FredrickPackets.h",
+     "line": 22
+    },
+    {
      "file": "Net/Packets/FredrickPackets.h",
      "line": 13
     },
@@ -2921,7 +3385,7 @@
      "line": 22
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 64,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FredrickHandler",
@@ -2946,11 +3410,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/OwlPackets.h",
+     "line": 14
+    },
+    {
      "file": "Net/Packets/OwlPackets.h",
      "line": 14
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 66,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseOwlOfMinervaHandler",
@@ -2975,11 +3443,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/OwlPackets.h",
+     "line": 23
+    },
+    {
      "file": "Net/Packets/OwlPackets.h",
      "line": 23
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 67,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "OwlWarpHandler",
@@ -3004,11 +3476,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/HammerPackets.h",
+     "line": 13
+    },
+    {
      "file": "Net/Packets/HammerPackets.h",
      "line": 13
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 260,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseHammerHandler",
@@ -3028,6 +3504,14 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NotePackets.h",
+     "line": 16
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NotePackets.h",
+     "line": 35
+    },
+    {
      "file": "Net/Packets/NotePackets.h",
      "line": 16
     },
@@ -3036,7 +3520,7 @@
      "line": 35
     }
    ],
-   "client_sent_count": 2,
+   "client_sent_count": 4,
    "client_value": 131,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NoteActionHandler",
@@ -3056,11 +3540,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 19
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 19
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 145,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "OpenFamilyPedigreeHandler",
@@ -3080,11 +3568,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 13
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 13
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 146,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "OpenFamilyHandler",
@@ -3104,11 +3596,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 25
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 25
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 147,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilyAddHandler",
@@ -3128,11 +3624,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 84
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 84
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 148,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilySeparateHandler",
@@ -3152,11 +3652,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 95
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 95
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 149,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilySeparateHandler",
@@ -3176,11 +3680,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 35
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 35
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 150,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AcceptFamilyHandler",
@@ -3200,11 +3708,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 71
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 71
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 151,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilyUseHandler",
@@ -3224,11 +3736,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 47
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 47
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 152,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilyPreceptsHandler",
@@ -3253,11 +3769,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/FamilyPackets.h",
+     "line": 58
+    },
+    {
      "file": "Net/Packets/FamilyPackets.h",
      "line": 58
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 153,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "FamilySummonResponseHandler",
@@ -3277,27 +3797,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/DueyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/DueyPackets.h",
      "line": 14
     },
     {
-     "file": "Net/Packets/DueyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/DueyPackets.h",
      "line": 25
     },
     {
-     "file": "Net/Packets/DueyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/DueyPackets.h",
      "line": 42
     },
     {
-     "file": "Net/Packets/DueyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/DueyPackets.h",
      "line": 52
     },
     {
-     "file": "Net/Packets/DueyPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/DueyPackets.h",
      "line": 62
+    },
+    {
+     "file": "Net/Packets/DueyPackets.h",
+     "line": 14
     }
    ],
-   "client_sent_count": 5,
+   "client_sent_count": 10,
    "client_value": 65,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DueyHandler",
@@ -3317,31 +3841,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 30
     },
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 40
     },
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 50
     },
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 61
     },
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 72
     },
     {
-     "file": "Net/Packets/GuildPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/GuildPackets.h",
      "line": 83
     }
    ],
-   "client_sent_count": 7,
+   "client_sent_count": 14,
    "client_value": 126,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "GuildOperationHandler",
@@ -3366,31 +3890,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 42
     },
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 55
     },
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 71
     },
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 85
     },
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 97
     },
     {
-     "file": "Net/Packets/PlayerInteractionPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/PlayerInteractionPackets.h",
      "line": 106
     }
    ],
-   "client_sent_count": 18,
+   "client_sent_count": 36,
    "client_value": 123,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "PlayerInteractionHandler",
@@ -3415,11 +3939,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
+     "line": 148
+    },
+    {
      "file": "Net/Packets/CashItemPackets.h",
      "line": 148
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 256,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseMapleLifeHandler",
@@ -3444,11 +3972,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
+     "line": 179
+    },
+    {
      "file": "Net/Packets/CashShopPackets.h",
      "line": 179
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 228,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "TouchingCashShopHandler",
@@ -3473,31 +4005,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 33
     },
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 47
     },
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 62
     },
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 76
     },
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 87
     },
     {
-     "file": "Net/Packets/CashShopPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashShopPackets.h",
      "line": 100
     }
    ],
-   "client_sent_count": 13,
+   "client_sent_count": 26,
    "client_value": 229,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CashOperationHandler",
@@ -3522,11 +4054,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
+     "line": 136
+    },
+    {
      "file": "Net/Packets/CashItemPackets.h",
      "line": 136
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 230,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "CouponCodeHandler",
@@ -3551,11 +4087,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
+     "line": 159
+    },
+    {
      "file": "Net/Packets/CashItemPackets.h",
      "line": 159
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 102,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "TrockAddMapHandler",
@@ -3580,11 +4120,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/CashItemPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/CashItemPackets.h",
      "line": 171
+    },
+    {
+     "file": "Net/Packets/CashItemPackets.h",
+     "line": 177
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 106,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "ReportHandler",
@@ -3609,11 +4153,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/NotePackets.h",
+     "line": 48
+    },
+    {
      "file": "Net/Packets/NotePackets.h",
      "line": 48
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 159,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "NewYearCardHandler",
@@ -3633,11 +4181,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MonsterBookPackets.h",
+     "line": 30
+    },
+    {
      "file": "Net/Packets/MonsterBookPackets.h",
      "line": 30
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 57,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MonsterBookCoverHandler",
@@ -3662,11 +4214,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 20
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 20
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 59,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RemoteStoreHandler",
@@ -3686,11 +4242,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MakerPackets.h",
+     "line": 30
+    },
+    {
      "file": "Net/Packets/MakerPackets.h",
      "line": 30
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 113,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "MakerSkillHandler",
@@ -3715,11 +4275,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 26
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 26
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 117,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseWaterOfLifeHandler",
@@ -3739,23 +4303,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AlliancePackets.h",
+     "line": 30
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AlliancePackets.h",
+     "line": 40
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AlliancePackets.h",
+     "line": 51
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AlliancePackets.h",
+     "line": 65
+    },
+    {
      "file": "Net/Packets/AlliancePackets.h",
      "line": 30
     },
     {
      "file": "Net/Packets/AlliancePackets.h",
      "line": 40
-    },
-    {
-     "file": "Net/Packets/AlliancePackets.h",
-     "line": 51
-    },
-    {
-     "file": "Net/Packets/AlliancePackets.h",
-     "line": 65
     }
    ],
-   "client_sent_count": 4,
+   "client_sent_count": 8,
    "client_value": 143,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AllianceOperationHandler",
@@ -3780,11 +4352,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AlliancePackets.h",
+     "line": 77
+    },
+    {
      "file": "Net/Packets/AlliancePackets.h",
      "line": 77
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 144,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "DenyAllianceRequestHandler",
@@ -3809,31 +4385,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 16
     },
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 27
     },
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 38
     },
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 50
     },
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 63
     },
     {
-     "file": "Net/Packets/BbsPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/BbsPackets.h",
      "line": 80
     }
    ],
-   "client_sent_count": 7,
+   "client_sent_count": 14,
    "client_value": 155,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "BBSOperationHandler",
@@ -3858,11 +4434,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 14
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 14
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 156,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "EnterMTSHandler",
@@ -3887,11 +4467,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SolomonPackets.h",
+     "line": 14
+    },
+    {
      "file": "Net/Packets/SolomonPackets.h",
      "line": 14
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 157,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseSolomonHandler",
@@ -3916,11 +4500,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/SolomonPackets.h",
+     "line": 26
+    },
+    {
      "file": "Net/Packets/SolomonPackets.h",
      "line": 26
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 158,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "UseGachaExpHandler",
@@ -3945,11 +4533,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/AranPackets.h",
+     "line": 18
+    },
+    {
      "file": "Net/Packets/AranPackets.h",
      "line": 18
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 163,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "AranComboHandler",
@@ -3974,11 +4566,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 32
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 32
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 236,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RaiseUIStateHandler",
@@ -4003,11 +4599,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 41
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 41
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 277,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "WorldMapPlayersHandler",
@@ -4032,11 +4632,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 51
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 51
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 278,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "WorldMapDropRequestHandler",
@@ -4061,15 +4665,19 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/MiscOutPackets.h",
+     "line": 66
+    },
+    {
      "file": "Net/Packets/MiscOutPackets.h",
      "line": 66
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 4096,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "SetHpMpAlertHandler",
-   "s9_line": 210,
+   "s9_line": 211,
    "s9_name": "SET_HPMPALERT",
    "s9_names_at_value": [],
    "s9_reg_line": 317,
@@ -4090,31 +4698,31 @@
    "client_sent": true,
    "client_sent_at": [
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 67
     },
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 79
     },
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 92
     },
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 107
     },
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 121
     },
     {
-     "file": "Net/Packets/WeddingPackets.h",
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
      "line": 137
     }
    ],
-   "client_sent_count": 7,
+   "client_sent_count": 14,
    "client_value": 137,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "RingActionHandler",
@@ -4139,6 +4747,18 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
+     "line": 169
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
+     "line": 184
+    },
+    {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
+     "line": 196
+    },
+    {
      "file": "Net/Packets/WeddingPackets.h",
      "line": 169
     },
@@ -4151,7 +4771,7 @@
      "line": 196
     }
    ],
-   "client_sent_count": 3,
+   "client_sent_count": 6,
    "client_value": 138,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "WeddingHandler",
@@ -4176,11 +4796,15 @@
    "client_sent": true,
    "client_sent_at": [
     {
+     "file": ".agents/worktrees/channel-20page-verify/Net/Packets/WeddingPackets.h",
+     "line": 210
+    },
+    {
      "file": "Net/Packets/WeddingPackets.h",
      "line": 210
     }
    ],
-   "client_sent_count": 1,
+   "client_sent_count": 2,
    "client_value": 139,
    "s9_group": "registerChannelHandlers",
    "s9_handler": "WeddingTalkMoreHandler",
@@ -8851,22 +9475,26 @@
     "SET_ITEM_FINAL_DAMAGE"
    ],
    "client_shadowed_handlers": [],
-   "s9_emitted": false,
+   "s9_emitted": true,
    "s9_line": 367,
    "s9_name": "SET_ITEM_FINAL_DAMAGE",
    "s9_value": 373,
    "status": "HANDLED"
   },
   {
-   "client_handler_wins": null,
-   "client_handlers": [],
-   "client_names": [],
+   "client_handler_wins": "SetItemSkillBonusHandler",
+   "client_handlers": [
+    "SetItemSkillBonusHandler"
+   ],
+   "client_names": [
+    "SET_ITEM_SKILL_BONUS"
+   ],
    "client_shadowed_handlers": [],
-   "s9_emitted": false,
+   "s9_emitted": true,
    "s9_line": 368,
    "s9_name": "SET_ITEM_SKILL_BONUS",
    "s9_value": 374,
-   "status": "DEFINED_NOT_EMITTED"
+   "status": "HANDLED"
   },
   {
    "client_handler_wins": null,

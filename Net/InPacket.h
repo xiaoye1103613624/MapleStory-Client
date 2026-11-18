@@ -33,8 +33,8 @@ namespace ms
 		// Construct a packet from an array of bytes
 		InPacket(const int8_t* bytes, size_t length);
 
-		// Check if there are more bytes available
-		bool available() const;
+		// Remaining bytes available (was bool: caused available() >= N to be always false)
+		size_t available() const;
 		// Return the remaining length in bytes
 		size_t length() const;
 		// Absolute read cursor (bytes from packet start)

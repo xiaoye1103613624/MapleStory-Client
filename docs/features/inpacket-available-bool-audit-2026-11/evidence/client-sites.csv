@@ -1,0 +1,330 @@
+file,line,N,function,form,source
+Net/Handlers/AllianceHandlers.cpp,166,4,UI::get,if,if (recv.available() >= 4)
+Net/Handlers/AllianceHandlers.cpp,197,4,UI::get,if,if (recv.available() >= 4)
+Net/Handlers/AllianceHandlers.cpp,251,2,UI::get,if,if (recv.available() >= 2)
+Net/Handlers/CommonHandlers.cpp,87,6,SetItemFinalDamageHandler::handle,if,if (recv.available() >= 6)
+Net/Handlers/FredrickHandlers.cpp,94,3,FredrickHandler::handle,if,if (recv.available() >= 3)
+Net/Handlers/InventoryHandlers.cpp,268,4,SkillLearnItemResultHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/InventoryHandlers.cpp,271,4,SkillLearnItemResultHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/InventoryHandlers.cpp,272,4,SkillLearnItemResultHandler::handle,ternary,int32_t maxlevel = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,860,2,DropLootHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,963,4,ChalkboardHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,994,4,FacialExpressionHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,995,4,FacialExpressionHandler::handle,ternary,int32_t expression = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1006,4,ShowChairHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1007,4,ShowChairHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1018,4,SkillEffectHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1019,4,SkillEffectHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1041,4,CancelSkillEffectHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1042,4,CancelSkillEffectHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1058,4,DamagePlayerHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1060,4,DamagePlayerHandler::handle,if,if (skill == -3 && recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1062,4,DamagePlayerHandler::handle,ternary,int32_t damage = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1078,4,GiveForeignBuffHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1086,16,GiveForeignBuffHandler::handle,if,if (recv.available() >= 16)
+Net/Handlers/MapObjectHandlers.cpp,1099,2,GiveForeignBuffHandler::handle,loop,for (int i = 0; i < bits && recv.available() >= 2; ++i)
+Net/Handlers/MapObjectHandlers.cpp,1101,4,GiveForeignBuffHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1103,2,GiveForeignBuffHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1150,4,CancelForeignBuffHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1152,16,CancelForeignBuffHandler::handle,if,if (recv.available() >= 16)
+Net/Handlers/MapObjectHandlers.cpp,1171,4,CatchMonsterHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1194,4,CatchMonsterWithItemHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1195,4,CatchMonsterWithItemHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1219,4,PetChatHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1240,4,PetNameChangeHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1256,4,PetCommandHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1273,4,RemoveNpcHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1287,4,SpawnMistHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1288,4,SpawnMistHandler::handle,ternary,int32_t mist_type = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1289,4,SpawnMistHandler::handle,ternary,int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1290,4,SpawnMistHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1296,2,SpawnMistHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1302,16,SpawnMistHandler::handle,if,bool havebox = recv.available() >= 16;
+Net/Handlers/MapObjectHandlers.cpp,1346,4,RemoveMistHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1359,4,SpawnDoorHandler::handle,ternary,int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1360,4,SpawnDoorHandler::handle,ternary,"Point<int16_t> pos = recv.available() >= 4 ? recv.read_point() : Point<int16_t>(0, 0);"
+Net/Handlers/MapObjectHandlers.cpp,1374,4,RemoveDoorHandler::handle,ternary,int32_t owner = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1388,4,SpawnSummonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1389,4,SpawnSummonHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1390,4,SpawnSummonHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1399,4,SpawnSummonHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1406,2,SpawnSummonHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1436,4,RemoveSummonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1437,4,RemoveSummonHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1453,4,DamageMonsterHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1456,4,DamageMonsterHandler::handle,ternary,int32_t damage = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1457,4,DamageMonsterHandler::handle,ternary,int32_t curhp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1458,4,DamageMonsterHandler::handle,ternary,int32_t maxhp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1459,4,DamageMonsterHandler::handle,ternary,int32_t skin = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1482,4,DamageSkinHandler::handle,ternary,int32_t skin = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1496,4,ShowItemEffectHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1497,4,ShowItemEffectHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1516,4,UpdateCharBoxHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1554,4,SpawnDragonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1555,2,SpawnDragonHandler::handle,ternary,int16_t x = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1556,2,SpawnDragonHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1558,2,SpawnDragonHandler::handle,ternary,int16_t y = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1559,2,SpawnDragonHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1565,2,SpawnDragonHandler::handle,ternary,int16_t job = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1583,4,MoveDragonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1585,4,MoveDragonHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1593,2,MoveDragonHandler::handle,if,else if (recv.available() >= 2)
+Net/Handlers/MapObjectHandlers.cpp,1604,4,RemoveDragonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1613,4,SummonSkillHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1614,4,SummonSkillHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1630,4,MoveSummonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1631,4,MoveSummonHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1633,4,MoveSummonHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1645,4,SummonAttackHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1646,4,SummonAttackHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1657,9,SummonAttackHandler::handle,loop,for (int8_t i = 0; i < count && recv.available() >= 9; ++i)
+Net/Handlers/MapObjectHandlers.cpp,1683,4,DamageSummonHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1684,4,DamageSummonHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1687,4,DamageSummonHandler::handle,ternary,int32_t damage = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1688,4,DamageSummonHandler::handle,ternary,int32_t from = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1706,4,ApplyMonsterStatusHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1707,8,ApplyMonsterStatusHandler::handle,if,if (recv.available() >= 8)
+Net/Handlers/MapObjectHandlers.cpp,1709,4,ApplyMonsterStatusHandler::handle,ternary,const uint32_t mask0 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+Net/Handlers/MapObjectHandlers.cpp,1710,4,ApplyMonsterStatusHandler::handle,ternary,const uint32_t mask1 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+Net/Handlers/MapObjectHandlers.cpp,1722,8,ApplyMonsterStatusHandler::handle,loop,for (int i = 0; i < bits && recv.available() >= 8; ++i)
+Net/Handlers/MapObjectHandlers.cpp,1734,5,ApplyMonsterStatusHandler::handle,if,if (recv.available() >= 5)
+Net/Handlers/MapObjectHandlers.cpp,1767,4,CancelMonsterStatusHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1768,8,CancelMonsterStatusHandler::handle,if,if (recv.available() >= 8)
+Net/Handlers/MapObjectHandlers.cpp,1770,4,CancelMonsterStatusHandler::handle,ternary,const uint32_t mask0 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+Net/Handlers/MapObjectHandlers.cpp,1771,4,CancelMonsterStatusHandler::handle,ternary,const uint32_t mask1 = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+Net/Handlers/MapObjectHandlers.cpp,1786,4,MovePetHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MapObjectHandlers.cpp,1788,4,MovePetHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/MapObjectHandlers.cpp,1804,4,PetExceptionListHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MessagingHandlers.cpp,212,5,UI::get,if,if (recv.available() >= 5)
+Net/Handlers/MessagingHandlers.cpp,348,4,UI::get,ternary,int32_t gp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MessagingHandlers.cpp,734,4,ShowItemGainInChatHandler::handle,ternary,int32_t extra = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MessagingHandlers.cpp,864,4,WhisperResultHandler::handle,ternary,int32_t field_or_ch = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MessagingHandlers.cpp,865,8,WhisperResultHandler::handle,if,if (type == 1 && recv.available() >= 8)
+Net/Handlers/MessagingHandlers.cpp,956,2,FameResponseHandler::handle,ternary,int16_t newfame = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/MessagingHandlers.cpp,997,4,NotifyLevelUpHandler::handle,ternary,int32_t level = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/MessagingHandlers.cpp,1050,4,NotifyJobChangeHandler::handle,ternary,int32_t job = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerHandlers.cpp,377,4,ShowComboHandler::handle,ternary,int32_t count = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,55,4,CharInfoHandler::handle,loop,while (pet_present != 0 && data.pets.size() < 3 && recv.available() >= 4)
+Net/Handlers/PlayerInteractionHandlers.cpp,63,2,CharInfoHandler::handle,if,if (recv.available() >= 2) recv.skip_short(); // 固定 0
+Net/Handlers/PlayerInteractionHandlers.cpp,64,4,CharInfoHandler::handle,ternary,pet.equipItemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,71,12,CharInfoHandler::handle,if,if (mount != 0 && recv.available() >= 12)
+Net/Handlers/PlayerInteractionHandlers.cpp,81,4,CharInfoHandler::handle,loop,for (uint8_t sn = 0; sn < wishlist_size && recv.available() >= 4; sn++)
+Net/Handlers/PlayerInteractionHandlers.cpp,85,4,CharInfoHandler::handle,ternary,data.book.level = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,86,4,CharInfoHandler::handle,ternary,data.book.normal = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,87,4,CharInfoHandler::handle,ternary,data.book.special = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,88,4,CharInfoHandler::handle,ternary,int32_t book_cards = recv.available() >= 4 ? recv.read_int() : 0; // total
+Net/Handlers/PlayerInteractionHandlers.cpp,90,4,CharInfoHandler::handle,ternary,data.book.cover = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,93,4,CharInfoHandler::handle,ternary,data.medalId = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,94,2,CharInfoHandler::handle,ternary,int16_t medal_quests_size = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/PlayerInteractionHandlers.cpp,95,2,CharInfoHandler::handle,loop,for (int16_t s = 0; s < medal_quests_size && s < 12 && recv.available() >= 2; s++)
+Net/Handlers/QuestHandlers.cpp,96,4,UpdateQuestInfoHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/QuestHandlers.cpp,98,2,UpdateQuestInfoHandler::handle,if,else if (recv.available() >= 2)
+Net/Handlers/TestingHandlers.cpp,83,4,FieldEffectHandler::handle,ternary,int32_t delay = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/TradeHandlers.cpp,179,10,UI::get,if,if (recv.available() >= 10)
+Net/Handlers/TradeHandlers.cpp,181,2,UI::get,if,if (recv.available() >= 2) {
+Net/Handlers/TradeHandlers.cpp,192,4,UI::get,loop,for (int i = 0; i < 4 && recv.available() >= 4; i++)
+Net/Handlers/TradeHandlers.cpp,240,10,UI::get,if,if (recv.available() >= 10)
+Net/Handlers/TradeHandlers.cpp,242,2,UI::get,if,if (recv.available() >= 2)
+Net/Handlers/TradeHandlers.cpp,251,2,UI::get,if,if (recv.available() >= 2)
+Net/Handlers/TradeHandlers.cpp,411,10,UI::get,if,if (recv.available() >= 10)
+Net/Handlers/TradeHandlers.cpp,413,2,UI::get,if,if (recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,128,8,UI::get,if,if (isCash && recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,130,8,UI::get,if,if (recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,140,2,UI::get,if,if (recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,144,10,UI::get,if,if (recv.available() >= 10) recv.skip(10);
+Net/Handlers/WaveAShellHandlers.cpp,146,18,UI::get,if,else if (recv.available() >= 18)
+Net/Handlers/WaveAShellHandlers.cpp,148,8,UI::get,if,if (recv.available() >= 8) recv.skip(8);
+Net/Handlers/WaveAShellHandlers.cpp,149,4,UI::get,if,if (recv.available() >= 4) recv.skip(4);
+Net/Handlers/WaveAShellHandlers.cpp,153,37,UI::get,if,if (recv.available() >= 37)
+Net/Handlers/WaveAShellHandlers.cpp,158,2,UI::get,if,if (recv.available() >= 2) recv.skip_short();
+Net/Handlers/WaveAShellHandlers.cpp,160,2,UI::get,if,if (recv.available() >= 2) recv.skip_short();
+Net/Handlers/WaveAShellHandlers.cpp,163,8,UI::get,if,if (recv.available() >= 8) recv.skip(8);
+Net/Handlers/WaveAShellHandlers.cpp,198,8,UI::get,if,if (recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,210,4,UI::get,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,254,4,GachaponBoxHandler::handle,ternary,const int32_t item_id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,268,12,FamilyInfoHandler::handle,if,if (recv.available() >= 12) {
+Net/Handlers/WaveAShellHandlers.cpp,273,6,FamilyInfoHandler::handle,if,if (recv.available() >= 6) {
+Net/Handlers/WaveAShellHandlers.cpp,278,4,FamilyInfoHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,286,4,FamilyInfoHandler::handle,if,if (recv.available() >= 4) {
+Net/Handlers/WaveAShellHandlers.cpp,291,8,FamilyInfoHandler::handle,loop,for (int32_t i = 0; i < n && recv.available() >= 8; i++) {
+Net/Handlers/WaveAShellHandlers.cpp,328,8,FamilyChartHandler::handle,loop,for (int32_t i = 0; i < entry_count && recv.available() >= 8; i++) {
+Net/Handlers/WaveAShellHandlers.cpp,332,2,FamilyChartHandler::handle,if,if (recv.available() >= 2) e.job = recv.read_short();
+Net/Handlers/WaveAShellHandlers.cpp,333,2,FamilyChartHandler::handle,if,if (recv.available() >= 2) e.level = static_cast<uint16_t>(recv.read_short());
+Net/Handlers/WaveAShellHandlers.cpp,335,20,FamilyChartHandler::handle,if,if (recv.available() >= 20) {
+Net/Handlers/WaveAShellHandlers.cpp,342,4,FamilyChartHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,351,4,FamilyChartHandler::handle,if,if (recv.available() >= 4) {
+Net/Handlers/WaveAShellHandlers.cpp,353,8,FamilyChartHandler::handle,loop,for (int32_t i = 0; i < info_n && recv.available() >= 8; i++) {
+Net/Handlers/WaveAShellHandlers.cpp,360,4,FamilyChartHandler::handle,if,if (recv.available() >= 4) {
+Net/Handlers/WaveAShellHandlers.cpp,367,8,FamilyChartHandler::handle,loop,for (int32_t i = 0; i < ent_n && recv.available() >= 8; i++) {
+Net/Handlers/WaveAShellHandlers.cpp,375,2,FamilyChartHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,493,4,WeddingProgressHandler::handle,ternary,int32_t groom = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,494,4,WeddingProgressHandler::handle,ternary,int32_t bride = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,536,8,WeddingGiftResultHandler::handle,if,if (recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,549,8,WeddingGiftResultHandler::handle,if,if (recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,623,2,MonsterCarnivalStartHandler::handle,ternary,int16_t self_avail = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,624,2,MonsterCarnivalStartHandler::handle,ternary,int16_t self_total = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,625,2,MonsterCarnivalStartHandler::handle,ternary,int16_t enemy_avail = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,626,2,MonsterCarnivalStartHandler::handle,ternary,int16_t enemy_total = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,627,2,MonsterCarnivalStartHandler::handle,ternary,int16_t obstacl = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,648,2,MonsterCarnivalObtainedCPHandler::handle,ternary,int16_t total = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,649,2,MonsterCarnivalObtainedCPHandler::handle,ternary,int16_t avail = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,664,2,MonsterCarnivalPartyCPHandler::handle,ternary,int16_t total = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,665,2,MonsterCarnivalPartyCPHandler::handle,ternary,int16_t avail = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,728,4,UI::get,if,if (recv.available() >= 4) recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,733,4,UI::get,if,std::string tip = recv.available() >= 4
+Net/Handlers/WaveAShellHandlers.cpp,790,3,AriantScoreHandler::handle,loop,while (recv.available() >= 3 && count < 8) {
+Net/Handlers/WaveAShellHandlers.cpp,813,4,NewYearCardResHandler::handle,if,if (recv.available() >= 4) {
+Net/Handlers/WaveAShellHandlers.cpp,817,2,NewYearCardResHandler::handle,if,if (recv.available() >= 2) {
+Net/Handlers/WaveAShellHandlers.cpp,985,5,MapleLifeResultHandler::handle,if,if (code == 2 && recv.available() >= 5)
+Net/Handlers/WaveAShellHandlers.cpp,1031,4,AvatarMegaphoneHandler::handle,ternary,const int32_t item_id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1044,4,AvatarMegaphoneHandler::handle,ternary,const int32_t channel = recv.available() >= 4 ? recv.read_int() : -1;
+Net/Handlers/WaveAShellHandlers.cpp,1088,4,IncubatorResultHandler::handle,ternary,int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1121,8,UI::get,if,if (recv.available() >= 8) recv.read_long();
+Net/Handlers/WaveAShellHandlers.cpp,1158,2,CoconutScoreHandler::handle,ternary,int16_t maple = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1159,2,CoconutScoreHandler::handle,ternary,int16_t story = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1171,4,HitSnowballHandler::handle,ternary,int32_t dmg = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1183,4,SnowballMessageHandler::handle,ternary,int32_t msg = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1194,2,CoconutHitHandler::handle,ternary,int16_t id = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1195,2,CoconutHitHandler::handle,ternary,int16_t delay = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1225,4,SnowballStateHandler::handle,ternary,int32_t hp0 = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1226,4,SnowballStateHandler::handle,ternary,int32_t hp1 = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1227,2,SnowballStateHandler::handle,ternary,int16_t pos0 = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1229,2,SnowballStateHandler::handle,ternary,int16_t pos1 = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1248,2,OxQuizHandler::handle,ternary,int16_t qid = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1530,2,PlayerHintHandler::handle,ternary,int16_t width = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1531,2,PlayerHintHandler::handle,ternary,int16_t height = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1599,4,UI::get,ternary,int32_t hint = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1600,4,UI::get,if,if (recv.available() >= 4) recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,1634,2,CancelChairResultHandler::handle,if,if (mode != 0 && recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,1671,4,SheepRanchClothesHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1686,4,PyramidGaugeHandler::handle,ternary,int32_t gauge = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1705,4,PyramidScoreHandler::handle,ternary,int32_t exp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1735,4,ClockHandler::handle,ternary,seconds = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1743,4,ClockHandler::handle,ternary,int32_t ts = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1785,4,BlowWeatherHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1884,4,ThrowGrenadeHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1885,4,ThrowGrenadeHandler::handle,ternary,int32_t x = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1886,4,ThrowGrenadeHandler::handle,ternary,int32_t y = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1887,4,ThrowGrenadeHandler::handle,ternary,int32_t keyDown = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1888,4,ThrowGrenadeHandler::handle,ternary,int32_t skillId = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1889,4,ThrowGrenadeHandler::handle,ternary,int32_t skillLevel = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1903,4,FieldObstacleOnOffHandler::handle,ternary,int32_t mode = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1932,4,FieldObstacleOnOffListHandler::handle,ternary,int32_t count = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,1938,4,Stage::get,ternary,int32_t mode = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2142,4,FamilyJoinAcceptedHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2167,2,QuestClearHandler::handle,ternary,int16_t qid = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2200,4,BridleMobCatchFailHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2202,4,BridleMobCatchFailHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2254,4,SpawnPortalHandler::handle,ternary,int32_t town = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2255,4,SpawnPortalHandler::handle,ternary,int32_t target = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2256,4,SpawnPortalHandler::handle,ternary,"Point<int16_t> pos = recv.available() >= 4 ? recv.read_point() : Point<int16_t>(0, 0);"
+Net/Handlers/WaveAShellHandlers.cpp,2296,4,Stage::get,loop,for (int i = 0; i < count && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,2451,4,SetTamingMobInfoHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2452,4,SetTamingMobInfoHandler::handle,ternary,int32_t level = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2453,4,SetTamingMobInfoHandler::handle,ternary,int32_t exp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2454,4,SetTamingMobInfoHandler::handle,ternary,int32_t tired = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2663,4,ImitatedNpcDataHandler::handle,ternary,int32_t id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2694,4,ShopScannerResultHandler::handle,loop,for (int8_t i = 0; i < n && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,2703,4,ShopScannerResultHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2705,4,ShopScannerResultHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2706,4,ShopScannerResultHandler::handle,ternary,int32_t count = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2708,8,ShopScannerResultHandler::handle,loop,for (int32_t i = 0; i < count && i < 12 && recv.available() >= 8; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,2711,4,ShopScannerResultHandler::handle,ternary,int32_t qty = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2713,4,ShopScannerResultHandler::handle,ternary,int32_t map = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2765,4,LastConnectedWorldHandler::handle,ternary,int32_t world = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2781,4,RecommendedWorldMessageHandler::handle,ternary,int32_t wid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2806,4,ForcedStatSetHandler::handle,ternary,uint32_t mask = recv.available() >= 4 ? static_cast<uint32_t>(recv.read_int()) : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2823,2,ForcedStatSetHandler::handle,ternary,int32_t v = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2872,4,MakerResultHandler::handle,ternary,int32_t result = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2873,4,MakerResultHandler::handle,ternary,int32_t mode = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2903,4,FamilyPrivilegeListHandler::handle,ternary,int32_t n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2915,4,FamilyPrivilegeListHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2917,4,FamilyPrivilegeListHandler::handle,if,if (recv.available() >= 4)
+Net/Handlers/WaveAShellHandlers.cpp,2936,4,FamilyRepGainHandler::handle,ternary,int32_t gain = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,2978,4,FamilySetPrivilegeHandler::handle,if,if (recv.available() >= 4) buffnr = recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,2979,4,FamilySetPrivilegeHandler::handle,if,if (recv.available() >= 4) a1 = recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,2980,4,FamilySetPrivilegeHandler::handle,if,if (recv.available() >= 4) a2 = recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,2982,4,FamilySetPrivilegeHandler::handle,if,if (recv.available() >= 4) time_ms = recv.read_int();
+Net/Handlers/WaveAShellHandlers.cpp,3002,2,GuildBossHealerMoveHandler::handle,ternary,const int16_t ny = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3111,4,SpawnKiteHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3112,4,SpawnKiteHandler::handle,ternary,int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3118,2,SpawnKiteHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,3120,2,SpawnKiteHandler::handle,if,if (recv.available() >= 2)
+Net/Handlers/WaveAShellHandlers.cpp,3145,4,RemoveKiteHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3196,4,QuickslotInitHandler::handle,loop,for (int i = 0; i < 8 && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,3243,4,NotifyHpDecByFieldHandler::handle,ternary,int32_t dmg = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3263,4,SetNpcScriptableHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3282,4,MoveMonsterResponseHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3283,2,MoveMonsterResponseHandler::handle,ternary,int16_t moveid = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3285,2,MoveMonsterResponseHandler::handle,ternary,int16_t mp = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3315,4,DptTrackerHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3316,4,DptTrackerHandler::handle,ternary,int32_t job = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3319,8,DptTrackerHandler::handle,if,if (recv.available() >= 8)
+Net/Handlers/WaveAShellHandlers.cpp,3328,4,DptTrackerHandler::handle,ternary,int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3456,4,MtsOperationHandler::handle,ternary,int32_t pageslots = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3457,4,MtsOperationHandler::handle,ternary,int32_t count = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3458,4,MtsOperationHandler::handle,ternary,int32_t tab = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3459,4,MtsOperationHandler::handle,ternary,int32_t type = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3460,4,MtsOperationHandler::handle,ternary,int32_t page = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3467,5,MtsOperationHandler::handle,loop,for (int32_t i = 0; i < count && recv.available() >= 5; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,3483,28,MtsOperationHandler::handle,if,if (recv.available() >= 28)
+Net/Handlers/WaveAShellHandlers.cpp,3503,4,MtsOperationHandler::handle,ternary,int32_t n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3507,5,MtsOperationHandler::handle,loop,for (int32_t i = 0; i < n && recv.available() >= 5; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,3529,4,MtsOperationHandler::handle,ternary,int32_t n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3533,5,MtsOperationHandler::handle,loop,for (int32_t i = 0; i < n && recv.available() >= 5; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,3548,28,MtsOperationHandler::handle,if,if (recv.available() >= 28)
+Net/Handlers/WaveAShellHandlers.cpp,3566,4,MtsOperationHandler::handle,ternary,int32_t qty = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3567,4,MtsOperationHandler::handle,ternary,int32_t pos = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3575,4,MtsOperationHandler::handle,ternary,int32_t nx = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3576,4,MtsOperationHandler::handle,ternary,int32_t items = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3599,4,MtsOperation2Handler::handle,ternary,int32_t nx = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3600,4,MtsOperation2Handler::handle,ternary,int32_t mp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3622,4,NpcActionHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3693,2,GuestIdLoginHandler::handle,ternary,int16_t flag = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3705,2,HourChangedHandler::handle,ternary,int16_t oldh = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3706,2,HourChangedHandler::handle,ternary,int16_t newh = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3737,4,BonusExpChangedHandler::handle,ternary,int32_t exp = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3772,4,PlayJukeboxHandler::handle,ternary,int32_t map = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3793,4,MarriageRequestHandler::handle,ternary,int32_t pid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3879,2,UI::get,ternary,int16_t wt = recv.available() >= 2 ? recv.read_short() : 1;
+Net/Handlers/WaveAShellHandlers.cpp,3900,4,NotifyMarriedPartnerMapTransferHandler::handle,ternary,int32_t mapid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3901,4,NotifyMarriedPartnerMapTransferHandler::handle,ternary,int32_t partner = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,3992,4,RandomMorphResHandler::handle,ternary,int32_t morph = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4029,4,ImitatedNpcResultHandler::handle,ternary,int32_t npcid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4051,4,LimitedNpcDisableInfoHandler::handle,ternary,int32_t n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4053,4,LimitedNpcDisableInfoHandler::handle,loop,for (int32_t i = 0; i < n && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,4178,4,UI::get,ternary,row.local_id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4179,4,UI::get,ternary,row.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4181,8,UI::get,ternary,row.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4182,4,UI::get,ternary,row.icon = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4183,4,UI::get,ternary,row.reply_count = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4194,4,UI::get,ternary,const int32_t total = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4195,4,UI::get,ternary,const int32_t page_n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4198,4,UI::get,loop,for (int32_t i = 0; i < page_n && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,4213,4,UI::get,ternary,detail.local_id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4214,4,UI::get,ternary,detail.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4215,8,UI::get,ternary,detail.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4218,4,UI::get,ternary,detail.icon = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4219,4,UI::get,ternary,const int32_t reply_n = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4220,4,UI::get,loop,for (int32_t i = 0; i < reply_n && recv.available() >= 4; ++i)
+Net/Handlers/WaveAShellHandlers.cpp,4224,4,UI::get,ternary,r.poster_cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4225,8,UI::get,ternary,r.timestamp = recv.available() >= 8 ? recv.read_long() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4256,4,SetQuestClearHandler::handle,ternary,int32_t qid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4288,4,SetQuestTimeHandler::handle,ternary,int32_t start = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4289,4,SetQuestTimeHandler::handle,ternary,int32_t end = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4323,4,SetObjectStateHandler::handle,ternary,int32_t state = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4344,4,ShowConsumeEffectHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4345,4,ShowConsumeEffectHandler::handle,ternary,int32_t itemid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4370,4,ChatText1Handler::handle,ternary,int32_t charid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4494,4,ClaimAvailableTimeHandler::handle,ternary,int32_t minutes = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4533,4,GuildNameChangedHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4561,4,GuildMarkChangedHandler::handle,ternary,int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4562,2,GuildMarkChangedHandler::handle,ternary,int16_t bg = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4564,2,GuildMarkChangedHandler::handle,ternary,int16_t logo = recv.available() >= 2 ? recv.read_short() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4594,4,LucksackPassHandler::handle,ternary,int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4655,4,MesoBagMessageHandler::handle,ternary,int32_t meso = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4697,4,ShowMagnetHandler::handle,ternary,int32_t moboid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4732,4,ResetMonsterAnimationHandler::handle,ternary,int32_t oid = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4742,4,AriantThingHandler::handle,ternary,int32_t item = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4760,4,AccountInfoHandler::handle,ternary,int32_t id = recv.available() >= 4 ? recv.read_int() : 0;
+Net/Handlers/WaveAShellHandlers.cpp,4780,4,ChannelSelectedHandler::handle,ternary,int32_t ch = recv.available() >= 4 ? recv.read_int() : 0;
