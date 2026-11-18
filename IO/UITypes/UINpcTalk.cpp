@@ -812,6 +812,16 @@ namespace ms
 		}
 	}
 
+	void UINpcTalk::send_scroll(double yoffset)
+	{
+		if (!is_in_range(UI::get().get_cursor_position()))
+			return;
+
+		// 无极滚动只在内容超出行数时出现，与 draw():673 / send_cursor():673 同源。
+		if (show_slider && slider.isenabled())
+			slider.send_scroll(yoffset);
+	}
+
 	UIElement::Type UINpcTalk::get_type() const
 	{
 		return TYPE;
@@ -1085,6 +1095,22 @@ namespace ms
 		});
 
 		// #i/#v/#s/#f/#B 保留给 LayoutBuilder（IDA type1/2 行内 icon/bar）；#L 仍在下方剥除。
+		// P3：Angel 把大写 #E/#I/#S/#K 吃成 CT 指引元，不进可见字（小写 #e/#i/#s/#k 是
+		// 色标/图标令牌，不在此列）。必须在 strip_simple_choices 之前剥除——选项的
+		// c.first/c.last 记的是本串的字节偏移，正文也用本串布局；若等到 change_text
+		// 之后再剥，指引标签出现在选项之前时偏移全部前移，命中框/标签子串整体错位
+		// （悬停选中错行）。KEY_ANI 检测另走 apply_guide_blinks_from_text(原始 tx)，不受影响。
+		for (size_t i = 0; i + 1 < formatted_text.size(); )
+		{
+			if (formatted_text[i] == '#' && (formatted_text[i + 1] == 'E'
+				|| formatted_text[i + 1] == 'I' || formatted_text[i + 1] == 'S'
+				|| formatted_text[i + 1] == 'K'))
+			{
+				formatted_text.erase(i, 2);
+				continue;
+			}
+			++i;
+		}
 		return strip_simple_choices(formatted_text);
 	}
 
@@ -1296,20 +1322,8 @@ namespace ms
 		timestep = 0;
 		formatted_text_pos = 0;
 		formatted_text = format_text(tx, npcid);
-		// P3：Angel 把 #E/#I/#S/#K 吃成 CT 指引元，不进可见字；本端剥显式大写标签防字面闪现。
-		{
-			std::string& ft = formatted_text;
-			for (size_t i = 0; i + 1 < ft.size(); )
-			{
-				if (ft[i] == '#' && (ft[i + 1] == 'E' || ft[i + 1] == 'I'
-					|| ft[i + 1] == 'S' || ft[i + 1] == 'K'))
-				{
-					ft.erase(i, 2);
-					continue;
-				}
-				++i;
-			}
-		}
+		// 大写 #E/#I/#S/#K 已在 format_text 内、strip_simple_choices 之前剥除，
+		// 保证选项字节偏移与布局字符串同源（此处不可再 erase，否则偏移错位）。
 		// 选项菜单（SENDSIMPLE 且含 choice）关闭打字机：选项命中框是按**全文**布局
 		// 反取的，而打字机期间正文是逐步显现的「前缀」，前缀与全文折行不同 → 可见选项
 		// 与命中框错位、点不到（拍卖行 9900001 等长菜单 / GM 段尤甚）。选项需立即可点，
@@ -1517,16 +1531,18 @@ namespace ms
 			}
 			case TalkType::SENDACCEPTDECLINE:
 			{
-				Point<int16_t> yes_position = Point<int16_t>(x_pair_wide, y_bottom);
-				activate(Buttons::QYES, yes_position);
-				activate(Buttons::QNO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
+				// Angel 无独立 ACCEPT OnCreate；AcceptDecline 复用 OnCreate_YESNO 槽：
+				// BtYes @ W-(2*44+20)、BtNo @ W-44-10（正确截图「接受/拒绝」）。
+				// 勿优先 QYes/QNo（任务态 this+42），否则会偏离截图橙/粉钮。
+				const int16_t x_no_ad = x_ok;
+				const int16_t x_yes_ad = static_cast<int16_t>(dlg_w - (2 * 44 + 20));
+				activate(Buttons::YES, Point<int16_t>(x_yes_ad, y_bottom));
+				activate(Buttons::NO, Point<int16_t>(x_no_ad, y_bottom));
 
-				if (!buttons.count(Buttons::QYES))
-					activate(Buttons::QSTART, yes_position);
-				if (!buttons.count(Buttons::QYES) && !buttons.count(Buttons::QSTART))
-					activate(Buttons::QCYES, yes_position);
-				if (!buttons.count(Buttons::QNO))
-					activate(Buttons::QCNO, yes_position + Point<int16_t>(BTN_PAIR_PITCH, 0));
+				if (!buttons.count(Buttons::YES))
+					activate(Buttons::QYES, Point<int16_t>(x_pair_wide, y_bottom));
+				if (!buttons.count(Buttons::NO))
+					activate(Buttons::QNO, Point<int16_t>(BTN_X_RIGHT_WIDE, y_bottom));
 				break;
 			}
 			case TalkType::SENDGETNUMBER:
@@ -1633,20 +1649,10 @@ namespace ms
 		if (!is_avatar_talk() && top.width() <= 0)
 			return;
 
-		const int16_t vieww = Constants::Constants::get().get_viewwidth();
-		const int16_t viewh = Constants::Constants::get().get_viewheight();
-
-		if (vieww == ResolutionTiers::LOGIN_W && viewh == ResolutionTiers::LOGIN_H)
-		{
-			// 切回 1280×720 时也要恢复原生绝对定位（不能沿用上一次的居中坐标）。
-			const int16_t anchor_w = is_avatar_talk() ? dimension.x() : top.width();
-			const int16_t anchor_h = is_avatar_talk() ? dimension.y() : height;
-			position = Point<int16_t>(
-				static_cast<int16_t>(400 - anchor_w / 2),
-				static_cast<int16_t>(240 - anchor_h / 2));
-			return;
-		}
-
+		// 按当前视口居中。原先 1280×720 走 (400,240) 硬编码，那是 800×600 时代的
+		// 中心（真中心应为 vieww/2,viewh/2），在大窗口下必然偏左上；且纵向只用
+		// height（正文块）忽略了 top/bottom 边条，进一步偏上。统一改为按视口中心，
+		// 覆盖所有档位，切回 1280×720 时也重算而非沿用旧坐标。
 		center_on_screen();
 	}
 

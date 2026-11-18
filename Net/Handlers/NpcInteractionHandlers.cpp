@@ -392,12 +392,20 @@ namespace ms
 			return;
 		}
 
-		UI::get().emplace<UINpcTalk>();
+		// 复用已有 NpcTalk 槽：反复 emplace + 旧 remove(release) 会泄漏幽灵窗，
+		// 正确截图里的多层对话叠层即此路径。先取再造，只更新 change_text。
+		auto npctalk = UI::get().get_element<UINpcTalk>();
+		if (!npctalk)
+			npctalk = UI::get().emplace<UINpcTalk>();
+		else if (!npctalk->is_active())
+			npctalk->makeactive();
+		else
+			UI::get().bring_to_front(UIElement::Type::NPCTALK);
+
 		UI::get().enable();
 
-		if (auto npctalk = UI::get().get_element<UINpcTalk>())
+		if (npctalk)
 			npctalk->change_text(npcid, msgtype, style, speaker, text, input);
-		// NpcTalk 已显，不重复 tip
 	}
 
 	void OpenNpcShopHandler::handle(InPacket& recv) const
