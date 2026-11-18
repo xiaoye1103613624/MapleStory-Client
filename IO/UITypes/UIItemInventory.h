@@ -20,6 +20,8 @@
 #include "../UIDragElement.h"
 
 #include "../Components/Slider.h"
+#include "../Components/Textfield.h"
+#include "../../Graphics/Geometry.h"
 
 namespace ms
 {
@@ -42,6 +44,7 @@ namespace ms
 		void remove_cursor() override;
 		Cursor::State send_cursor(bool pressed, Point<int16_t> position) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void send_scroll(double yoffset) override;
 
 		UIElement::Type get_type() const override;
 
@@ -73,6 +76,12 @@ namespace ms
 		Point<int16_t> get_tabpos(InventoryType::Id tab) const;
 		Icon* get_icon(int16_t slot);
 		void set_full(bool enabled);
+
+		// 展开态翻页（上限×2，格区几何零改动）：rel=1..96 相对格，abs=offset+rel 绝对槽。
+		int16_t page_count() const;          // ceil(slotmax(tab)/96)
+		void apply_page(int16_t p);          // 唯一改页入口：clamp→offset→输入框→按钮态
+		void change_page(int16_t delta);     // 上一页/下一页/滚轮
+		void sync_page_chrome();             // 刷新 prev/next 按钮 enabled 态
 
 		class ItemIcon : public Icon::Type
 		{
@@ -129,7 +138,9 @@ namespace ms
 			BT_EXTRACT_SM,
 			BT_DISASSEMBLE_SM,
 			BT_TOAD_SM,
-			BT_CASHSHOP
+			BT_CASHSHOP,
+			BT_PAGE_PREV,
+			BT_PAGE_NEXT
 		};
 
 		const Inventory& inventory;
@@ -168,6 +179,13 @@ namespace ms
 		bool arrange_bt_state[InventoryType::Id::LENGTH];
 		bool sort_enabled; // 当前 tab 的 arrange_bt_state 缓存，供 set_full 重排
 		bool full_enabled;
+
+		// 展开态翻页：当前页首格偏移（0/96/192...），默认第 1 页。
+		int16_t full_page_offset = 0;
+		Textfield page_input;    // 页码输入框（兼作页码显示，仅数字）
+		Point<int16_t> page_input_pos;   // 输入框左上角（窗口相对）
+		Point<int16_t> page_input_dim;   // 输入框尺寸
+		ColorBox page_input_frame;       // 输入框可见底板（Release 也画）
 		Texture backgrnd;
 		Texture backgrnd2;
 		Texture backgrnd3;

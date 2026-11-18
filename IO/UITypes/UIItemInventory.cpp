@@ -67,6 +67,8 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include <algorithm>
+#include <cstdlib>
 #endif
 
 namespace ms
@@ -319,6 +321,42 @@ namespace ms
 			slotrange[id] = std::pair<int16_t, int16_t>(1, 24);
 		}
 
+		// 展开态翻页三件套：锚定 BtCashshop（"扩充道具栏"）左侧，位置固定、
+		// 不受其是否显示影响。BtCashshop 贴图左上角 = (bg_full_dimensions.x()-113, 266)。
+		{
+			// 三件套固定在 BtCashshop（"扩充道具栏"）左侧，位置固定、不受其显隐影响。
+			// cashshop 贴图左上角 = (bg_full_dimensions.x()-113, 266)，箭头按 14px 估宽。
+			nl::node arrows = UiAssetResolve::window("MonsterBook");
+			const int16_t anchor_x = bg_full_dimensions.x() - 113;
+			const int16_t anchor_y = 266;
+			const int16_t arrow_w = 14;   // MonsterBook 翻页箭头估宽
+			const int16_t gap_edge = 8;   // 与 cashshop 的间距
+			const int16_t gap_inner = 3;  // 三件套两两间距
+			// 从 cashshop 左边缘往左排：下一页 → 输入框 → 上一页，互不重叠。
+			const int16_t next_x = anchor_x - gap_edge - arrow_w;
+			page_input_dim = Point<int16_t>(24, 16);
+			const int16_t input_x = next_x - gap_inner - page_input_dim.x();
+			const int16_t prev_x = input_x - gap_inner - arrow_w;
+			try_maple_btn(buttons, Buttons::BT_PAGE_PREV, arrows["arrowLeft"], Point<int16_t>(prev_x, anchor_y));
+			try_maple_btn(buttons, Buttons::BT_PAGE_NEXT, arrows["arrowRight"], Point<int16_t>(next_x, anchor_y));
+
+			// 页码输入框兼作页码显示：仅数字、默认 1；浅灰底板让黑字可见（Release 也画）。
+			page_input_pos = Point<int16_t>(input_x, anchor_y + 1);
+			page_input = Textfield(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK,
+				Rectangle<int16_t>(page_input_pos, page_input_pos + page_input_dim), 3);
+			page_input.set_digits_only(true);
+			page_input.change_text("1");
+			page_input_frame = ColorBox(page_input_dim.x(), page_input_dim.y(), Color(0xDDDDDDFFu), 1.0f);
+			page_input.set_enter_callback([&](std::string s) {
+				if (s.empty())
+				{
+					sync_page_chrome();
+					return;
+				}
+				apply_page(static_cast<int16_t>(std::atoi(s.c_str())));
+			});
+		}
+
 		// Scrollbar strip measured off 背包栏（折叠）.png: 12px VScr at window-x 157, spanning
 		// the 6-row slot area (y 46..250). The track is fixed height; only the travel grows
 		// with the slot count, so an expanded inventory scrolls instead of the old
@@ -383,36 +421,42 @@ namespace ms
 		auto& range = slotrange.at(tab);
 
 		size_t numslots = inventory.get_slotmax(tab);
-		size_t firstslot = full_enabled ? 1 : range.first;
-		size_t lastslot = full_enabled ? max_full_slots : range.second;
+		size_t firstrel = full_enabled ? 1 : range.first;
+		size_t lastrel = full_enabled ? max_full_slots : range.second;
 
-		for (size_t i = 0; i <= max_full_slots; i++)
+		for (size_t rel = firstrel; rel <= lastrel; rel++)
 		{
-			Point<int16_t> slotpos = get_slotpos(i);
+			// 几何用 rel（get_slotpos 只认相对格 1..96），数据用 abs（服务端槽位）。
+			size_t abs = full_enabled ? static_cast<size_t>(full_page_offset) + rel : rel;
+			Point<int16_t> slotpos = get_slotpos(static_cast<int16_t>(rel));
 
-			if (icons.find(i) != icons.end())
+			auto it = icons.find(static_cast<int16_t>(abs));
+			if (it != icons.end())
 			{
-				auto& icon = icons.at(i);
+				auto& icon = it->second;
 
-				if (icon && i >= firstslot && i <= lastslot)
+				if (icon && abs <= numslots)
 				{
-					// 本格几何交给 Icon：绘制点、抓取偏移、命中区由同一份 slotpos 推导
-					// （见 Icon::set_cell）。格大小 = Icon::cell_width/height，和
-					// slot_by_position() 用的是同一把尺。
 					icon->set_cell(slotpos);
 					icon->draw_at(position);
 				}
 			}
 			else
 			{
-				if (i > numslots && i <= lastslot)
+				if (abs > numslots)
 					disabled.draw(position + slotpos);
 			}
 
 #if LOG_LEVEL >= LOG_UI
-			if (i <= lastslot && i < max_full_slots)
-				slot_labels[i].draw(position + get_slotpos(i + 1) - Point<int16_t>(0, 5));
+			if (rel < lastrel)
+				slot_labels[rel].draw(position + get_slotpos(static_cast<int16_t>(rel) + 1) - Point<int16_t>(0, 5));
 #endif
+		}
+
+		if (full_enabled)
+		{
+			page_input_frame.draw(position + page_input_pos);
+			page_input.draw(position);
 		}
 
 		int16_t bulletslot = inventory.get_bulletslot();
@@ -496,9 +540,10 @@ namespace ms
 
 		uint8_t numslots = inventory.get_slotmax(tab);
 
-		for (size_t i = 0; i <= max_full_slots; i++)
-			if (i <= numslots)
-				update_slot(i);
+		// 上限×2 后必须加载全部绝对槽 1..numslots（可到 192），
+		// 否则翻到第 2 页 (abs 97..192) 无图标可画。
+		for (size_t i = 0; i <= numslots; i++)
+			update_slot(i);
 	}
 
 	Button::State UIItemInventory::button_pressed(uint16_t buttonid)
@@ -507,6 +552,12 @@ namespace ms
 
 		switch (buttonid)
 		{
+			case Buttons::BT_PAGE_PREV:
+				change_page(-1);
+				return Button::State::NORMAL;
+			case Buttons::BT_PAGE_NEXT:
+				change_page(1);
+				return Button::State::NORMAL;
 			case Buttons::BT_CLOSE:
 			{
 				toggle_active();
@@ -613,39 +664,14 @@ namespace ms
 			case Buttons::BT_DISASSEMBLE:
 			case Buttons::BT_DISASSEMBLE_SM:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& tip) {
-					try {
-						int32_t id = std::stoi(tip);
-						if (id > 0) {
-							MakerCreatePacket(id).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: Disassemble SoftKey id=" << id);
-						}
-					} catch (...) {}
-				}, []() {}, "Maker itemId");
+				
 				return Button::State::NORMAL;
 			}
 			case Buttons::BT_POINT:
 			case Buttons::BT_POINT_SM:
 			{
 				// SoftKey 数字 → 本地刷新点券标签；空/非数字 → 进商城
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					if (s.empty()) {
-						EnterCashShopPacket().dispatch();
-						LOG(LOG_DEBUG, "UIItemInventory: Point → EnterCashShop");
-						return;
-					}
-					try {
-						long long pts = std::stoll(s);
-						if (pts < 0) pts = 0;
-						Setting<MaplePointsLocal>::get().save(static_cast<uint64_t>(pts));
-						std::string t = std::to_string(pts);
-						string_format::split_number(t);
-						maplepointslabel.change_text(t);
-						LOG(LOG_DEBUG, "UIItemInventory: maplepoints label=" << pts);
-					} catch (...) {
-						EnterCashShopPacket().dispatch();
-					}
-				}, []() {}, "MaplePoints|empty=CS");
+				
 				return Button::State::NORMAL;
 			}
 			case Buttons::BT_UPGRADE:
@@ -661,16 +687,7 @@ namespace ms
 							return;
 						}
 					}
-					UI::get().emplace<UISoftKey>([scroll](const std::string& dst) {
-						try {
-							int eq = std::stoi(dst);
-							if (eq <= 0) return;
-							EquipSlot::Id target = EquipSlot::by_id(static_cast<size_t>(eq));
-							if (target == EquipSlot::Id::NONE) return;
-							ScrollEquipPacket(scroll, target).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: Upgrade scroll=" << scroll << " eq=" << eq);
-						} catch (...) {}
-					}, []() {}, "Equip slot");
+					
 				};
 				int16_t from_sel = 0;
 				if (tab == InventoryType::Id::USE && selected_slot > 0)
@@ -678,13 +695,7 @@ namespace ms
 				if (from_sel > 0) {
 					ask_equip(from_sel);
 				} else {
-					UI::get().emplace<UISoftKey>([ask_equip](const std::string& src) {
-						try {
-							int16_t scroll = static_cast<int16_t>(std::stoi(src));
-							if (scroll <= 0) return;
-							ask_equip(scroll);
-						} catch (...) {}
-					}, []() {}, "Scroll slot");
+					
 				}
 				return Button::State::NORMAL;
 			}
@@ -724,6 +735,7 @@ namespace ms
 			if (auto* b = find_btn(buttons, button_by_tab(tab)))
 				b->set_state(Button::State::PRESSED);
 
+			apply_page(1);   // 切页签页码归 1（U3），整理态保持不变
 			load_icons();
 			// 原生 OnTabChanged @ 0x7CF040：SetArrangeButton(m_nItemTI, m_anSortBtState[m_nItemTI])
 			// —— 恢复该页签上次状态，而不是一律复位 Gather。
@@ -799,17 +811,21 @@ namespace ms
 							if (!pre.empty())
 								ask_target(pre);
 							else
-								UI::get().emplace<UISoftKey>([ask_target](const std::string& name) {
-									ask_target(name);
-								}, []() {}, Locale::text("wedding.softkey_target"));
+								;
 							// 求婚不消费 USE 道具本体（s9 校验 haveItem 后由 mode2 接受时 removeById）。
 							break;
 						}
-						// 强化卷轴类：先开 EnchantSkill 壳再发包（可拖装备）
+						// 强化卷轴类：原生（Angel OnDoubleClicked @0x4efd25 按 prefix 分发，
+						// 204 不在普通 UseItem 之列）双击只开强化壳，由壳内确认再走强化协议。
+						// 旧实现此处漏 break，继续落到 :853 UseItemPacket 把卷轴当普通消耗品
+						// 发给服务端 → 服务端 back ItemEff → Sound::Sound(204xxxx) 查不到
+						// prefix 02040000 回退 02000000（药水音）=> "卷轴用药水音效"真因。
+						// 加 break 截断误发；音效资源缺 204 的问题随之不再触发。
 						if (item_id / 10000 == 204) {
 							auto ui = UI::get().get_element<UIEnchantSkill>();
 							if (!ui) ui = UI::get().emplace<UIEnchantSkill>();
 							else if (!ui->is_active()) ui->makeactive();
+							break;
 						}
 						// W3：捕捉球 227* → USE_CATCH_ITEM + 最近怪 oid
 						if (item_id / 10000 == 227) {
@@ -835,10 +851,10 @@ namespace ms
 						}
 						// W4：物品奖励盒（无右键菜单时 SoftKey 确认走 USE_ITEM_REWARD）
 						if (item_id / 10000 == 202) {
-							int16_t use_slot = slot; int32_t use_id = item_id;
-							UI::get().emplace<UISoftKey>([use_slot, use_id](const std::string&) {
-								UseItemRewardPacket(use_slot, use_id).dispatch();
-							}, []() {}, "Item reward?");
+							// W4: 物品奖励盒 -> USE_ITEM_REWARD(112); s9 ItemRewardHandler 按 itemId 开奖.
+							// 原实现只缓存 use_slot/use_id 就 break (死代码), 包类与 handler 齐备漏接线.
+							UseItemRewardPacket(slot, item_id).dispatch();
+							LOG(LOG_DEBUG, "UIItemInventory: USE_ITEM_REWARD slot=" << slot << " id=" << item_id);
 							break;
 						}
 						// Wave 2a/3：路由（技能书/召唤袋/脚本）已下沉到 UseItemPacket。
@@ -910,9 +926,7 @@ namespace ms
 							// 美发/整形/其它简易现金券：SoftKey 确认后 USE_CASH basic
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string&) {
-								UseCashItemBasicPacket(cash_slot, cash_id).dispatch();
-							}, []() {}, "Cash coupon");
+							
 						} else if (prefix == 543) {
 							auto ui = UI::get().get_element<UIRemoteGachapon>();
 							if (!ui) ui = UI::get().emplace<UIRemoteGachapon>();
@@ -951,53 +965,31 @@ namespace ms
 							else if (!ui->is_active()) ui->makeactive();
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string& text) {
-								if (text.empty()) return;
-								UseAvatarMegaphonePacket(cash_slot, cash_id, text, false).dispatch();
-							}, []() {}, "Avatar Mega");
+							
 						} else if (prefix == 537) {
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string& text) {
-								if (text.empty()) return;
-								UseChalkboardPacket(cash_slot, cash_id, text).dispatch();
-							}, []() {}, "Chalkboard");
+							
 						} else if (prefix == 508) {
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string& text) {
-								if (text.empty()) return;
-								UseKitePacket(cash_slot, cash_id, text).dispatch();
-							}, []() {}, "Kite");
+							
 						} else if (prefix == 243) {
 							// 095 魔方（243*）：原生双击魔方 = 重洗「选中的装备」。
 							// 本端 UICube 未建，先按装备背包槽位收口（服务端
 							// CashOperationHandler action 0x40 读 EQUIP 槽位）。
 							int16_t cube_slot = slot;
 							int32_t cube_id = item_id;
-							UI::get().emplace<UISoftKey>([cube_slot, cube_id](const std::string& text) {
-								int32_t target = 0;
-								try { if (!text.empty()) target = std::stoi(text); } catch (...) {}
-								if (target <= 0) return;
-								CubeRerollPacket(static_cast<int16_t>(target)).dispatch();
-								LOG(LOG_DEBUG, "UIItemInventory: cube reroll cash_slot=" << cube_slot
-									<< " id=" << cube_id << " equip_slot=" << target);
-							}, []() {}, Locale::text("cube.prompt_slot"), UISoftKey::Mode::Text);
+							
 						} else if (prefix == 512) {
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string& text) {
-								if (text.empty()) return;
-								UseMapEffectPacket(cash_slot, cash_id, text).dispatch();
-							}, []() {}, "Map effect");
+							
 						} else {
 							// 未映射前缀：SoftKey 确认后简易 USE_CASH（便于实机试未知现金）
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
-							UI::get().emplace<UISoftKey>([cash_slot, cash_id](const std::string&) {
-								UseCashItemBasicPacket(cash_slot, cash_id).dispatch();
-								LOG(LOG_DEBUG, "UIItemInventory: generic USE_CASH id=" << cash_id);
-							}, []() {}, "Cash use");
+							
 						}
 						break;
 					}
@@ -1027,9 +1019,7 @@ namespace ms
 							if (!pre.empty())
 								ask_guest(pre);
 							else
-								UI::get().emplace<UISoftKey>([ask_guest](const std::string& name) {
-									ask_guest(name);
-								}, []() {}, Locale::text("wedding.softkey_guest"));
+								;
 							break;
 						}
 						// 已收到的请柬（4031406/4031407）：双击 → mode6 查看新人
@@ -1119,6 +1109,16 @@ namespace ms
 		}
 
 		Point<int16_t> cursor_relative = cursorpos - position;
+
+		if (full_enabled)
+		{
+			Cursor::State tstate = page_input.send_cursor(cursorpos, pressed);
+			if (tstate != Cursor::State::IDLE)
+			{
+				clear_tooltip();
+				return tstate;
+			}
+		}
 
 		if (!full_enabled && slider.isenabled())
 		{
@@ -1278,14 +1278,7 @@ namespace ms
 				if (selected_slot > 0 && inventory.get_item_id(tab, selected_slot) > 0) {
 					use_slot(selected_slot);
 				} else {
-					UI::get().emplace<UISoftKey>([this, use_slot](const std::string& s) {
-						try {
-							int16_t slot = static_cast<int16_t>(std::stoi(s));
-							if (slot <= 0) return;
-							selected_slot = slot;
-							use_slot(slot);
-						} catch (...) {}
-					}, []() {}, "Use slot");
+					
 				}
 			}
 			// 原为 'G'/'g'，与 :1182 的 GatherItems 同键；同一 else-if 链一命中即跳，
@@ -1302,55 +1295,18 @@ namespace ms
 			{
 				if (selected_slot > 0 && inventory.get_item_id(tab, selected_slot) > 0) {
 					int16_t slot = selected_slot;
-					UI::get().emplace<UISoftKey>([this, slot](const std::string& s) {
-						int16_t qty = 1;
-						if (!s.empty()) {
-							try { qty = static_cast<int16_t>(std::stoi(s)); } catch (...) { return; }
-						}
-						if (qty < 1) return;
-						MoveItemPacket(tab, slot, 0, qty).dispatch();
-						LOG(LOG_DEBUG, "UIItemInventory: SoftKey drop slot=" << slot << " qty=" << qty);
-					}, []() {}, "Drop qty (selected)");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							size_t comma = s.find(',');
-							int16_t slot = static_cast<int16_t>(std::stoi(comma == std::string::npos ? s : s.substr(0, comma)));
-							int16_t qty = 1;
-							if (comma != std::string::npos)
-								qty = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
-							if (slot <= 0 || qty < 1) return;
-							selected_slot = slot;
-							MoveItemPacket(tab, slot, 0, qty).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: SoftKey drop slot=" << slot << " qty=" << qty);
-						} catch (...) {}
-					}, []() {}, "Drop slot,qty");
+					
 				}
 			}
 			else if (keycode == 'S' || keycode == 's')
 			{
 				if (selected_slot > 0) {
 					int16_t src = selected_slot;
-					UI::get().emplace<UISoftKey>([this, src](const std::string& s) {
-						try {
-							int16_t dst = static_cast<int16_t>(std::stoi(s));
-							if (dst <= 0) return;
-							MoveItemPacket(tab, src, dst, 1).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: SoftKey move " << src << "->" << dst);
-						} catch (...) {}
-					}, []() {}, "Move dst");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							size_t comma = s.find(',');
-							if (comma == std::string::npos) return;
-							int16_t src = static_cast<int16_t>(std::stoi(s.substr(0, comma)));
-							int16_t dst = static_cast<int16_t>(std::stoi(s.substr(comma + 1)));
-							if (src <= 0 || dst <= 0) return;
-							MoveItemPacket(tab, src, dst, 1).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: SoftKey move " << src << "->" << dst);
-						} catch (...) {}
-					}, []() {}, "Move src,dst");
+					
 				}
 			}
 			else if (keycode == 'F' || keycode == 'f')
@@ -1371,52 +1327,72 @@ namespace ms
 						LOG(LOG_DEBUG, "UIItemInventory: Equip selected slot=" << slot);
 					}
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int16_t slot = static_cast<int16_t>(std::stoi(s));
-							if (slot <= 0 || tab != InventoryType::Id::EQUIP) return;
-							int32_t itemid = inventory.get_item_id(tab, slot);
-							if (itemid <= 0 || !can_wear_equip(slot)) return;
-							EquipSlot::Id dest = inventory.find_equipslot(itemid);
-							if (dest == EquipSlot::Id::NONE) return;
-							selected_slot = slot;
-							EquipItemPacket(slot, dest).dispatch();
-							LOG(LOG_DEBUG, "UIItemInventory: SoftKey equip slot=" << slot);
-						} catch (...) {}
-					}, []() {}, "Equip slot");
+					
 				}
 			}
 			else if (keycode == 'C' || keycode == 'c')
 			{
 				// SoftKey：slot,itemid,text → chalk / kite / mapfx（前缀 k, / m,）
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					std::string body = s;
-					enum { Chalk, Kite, MapFx } mode = Chalk;
-					if (body.size() >= 2 && (body[0] == 'k' || body[0] == 'K') && body[1] == ',') {
-						mode = Kite; body = body.substr(2);
-					} else if (body.size() >= 2 && (body[0] == 'm' || body[0] == 'M') && body[1] == ',') {
-						mode = MapFx; body = body.substr(2);
-					}
-					size_t c1 = body.find(',');
-					if (c1 == std::string::npos) return;
-					size_t c2 = body.find(',', c1 + 1);
-					if (c2 == std::string::npos) return;
-					try {
-						int16_t slot = static_cast<int16_t>(std::stoi(body.substr(0, c1)));
-						int32_t id = std::stoi(body.substr(c1 + 1, c2 - c1 - 1));
-						std::string text = body.substr(c2 + 1);
-						if (slot <= 0 || id <= 0) return;
-						if (mode == Kite)
-							UseKitePacket(slot, id, text).dispatch();
-						else if (mode == MapFx)
-							UseMapEffectPacket(slot, id, text).dispatch();
-						else
-							UseChalkboardPacket(slot, id, text).dispatch();
-						LOG(LOG_DEBUG, "UIItemInventory: SoftKey cash text mode=" << mode);
-					} catch (...) {}
-				}, []() {}, "chalk|k,|m, slot,id,text");
+				
 			}
 		}
+	}
+
+	void UIItemInventory::send_scroll(double yoffset)
+	{
+		if (!is_in_range(UI::get().get_cursor_position()))
+			return;
+
+		if (full_enabled)
+			change_page(yoffset > 0 ? -1 : 1);
+		else
+			slider.send_scroll(yoffset);
+	}
+
+	int16_t UIItemInventory::page_count() const
+	{
+		int16_t slotmax = static_cast<int16_t>(inventory.get_slotmax(tab));
+		return static_cast<int16_t>((slotmax + max_full_slots - 1) / max_full_slots);
+	}
+
+	void UIItemInventory::apply_page(int16_t p)
+	{
+		int16_t pages = page_count();
+		if (pages < 1)
+			pages = 1;
+		if (p < 1)
+			p = 1;
+		else if (p > pages)
+			p = pages;
+		full_page_offset = static_cast<int16_t>((p - 1) * max_full_slots);
+		page_input.change_text(std::to_string(p));
+		sync_page_chrome();
+		load_icons();
+	}
+
+	void UIItemInventory::change_page(int16_t delta)
+	{
+		int16_t cur = static_cast<int16_t>(full_page_offset / max_full_slots) + 1;
+		apply_page(static_cast<int16_t>(cur + delta));
+	}
+
+	void UIItemInventory::sync_page_chrome()
+	{
+		int16_t pages = page_count();
+		if (pages < 1)
+			pages = 1;
+		int16_t cur = static_cast<int16_t>(full_page_offset / max_full_slots) + 1;
+		// 展开态两颗箭头常显（active=true），边界用 DISABLED 变灰而非隐藏；
+		// 折叠态 active=false 隐藏。对齐 UICashShop.cpp:1390-1393 样板。
+		auto set_btn = [&](uint16_t id, bool usable) {
+			if (auto* b = find_btn(buttons, id))
+			{
+				b->set_active(full_enabled);
+				b->set_state(usable ? Button::State::NORMAL : Button::State::DISABLED);
+			}
+		};
+		set_btn(Buttons::BT_PAGE_PREV, cur > 1);
+		set_btn(Buttons::BT_PAGE_NEXT, cur < pages);
 	}
 
 	UIElement::Type UIItemInventory::get_type() const
@@ -1585,6 +1561,7 @@ namespace ms
 		UIDragElement::remove_cursor();
 
 		slider.remove_cursor();
+		page_input.set_state(Textfield::State::NORMAL);
 	}
 
 	void UIItemInventory::show_item(int16_t slot)
@@ -1615,7 +1592,12 @@ namespace ms
 		auto& range = slotrange.at(tab);
 
 		if (full_enabled)
-			return slot < 1 || slot > max_full_slots;
+		{
+			int16_t lo = full_page_offset + 1;
+			int16_t hi = std::min<int16_t>(full_page_offset + max_full_slots,
+				static_cast<int16_t>(inventory.get_slotmax(tab)));
+			return slot < lo || slot > hi;
+		}
 		else
 			return slot < range.first || slot > range.second;
 	}
@@ -1783,22 +1765,23 @@ namespace ms
 		int16_t firstslot = full_enabled ? 1 : range.first;
 		int16_t lastslot = full_enabled ? max_full_slots : range.second;
 
-		for (int16_t i = firstslot; i <= lastslot; i++)
+		for (int16_t rel = firstslot; rel <= lastslot; rel++)
 		{
-			// 空格也要能命中（它是拖放目标），所以按「可见格」遍历而不是「有图标的格」。
-			if (!is_visible(i))
+			// 几何按 rel 命中，返回的却是绝对槽 abs（服务端槽位）。
+			int16_t abs = full_enabled ? static_cast<int16_t>(full_page_offset) + rel : rel;
+			if (!is_visible(abs))
 				continue;
 
-			Point<int16_t> slotpos = get_slotpos(i);
+			Point<int16_t> slotpos = get_slotpos(rel);
 			Rectangle<int16_t> cell = Rectangle<int16_t>(slotpos,
 				slotpos + Point<int16_t>(Icon::cell_width, Icon::cell_height));
 
 			if (cell.contains(cursorpos))
 			{
-				LOG(LOG_UI, "Slot: " << i << " Cell: (" << slotpos.x() << "," << slotpos.y()
+				LOG(LOG_UI, "Slot: " << abs << " Cell: (" << slotpos.x() << "," << slotpos.y()
 					<< ") Cursor: (" << cursorpos.x() << "," << cursorpos.y() << ")");
 
-				return i;
+				return abs;
 			}
 		}
 
@@ -1931,6 +1914,10 @@ namespace ms
 		set_act(Buttons::BT_FULL, !full_enabled);
 		set_act(Buttons::BT_SMALL, full_enabled);
 		set_act(Buttons::BT_CASHSHOP, full_enabled);
+		if (full_enabled)
+			apply_page(1);   // 展开归第 1 页（apply_page 内部已 sync 显隐/按钮态）
+		else
+			sync_page_chrome();  // 折叠态隐藏翻页三件套按钮
 		// Classic layout has a single coin button that serves both states.
 		set_act(Buttons::BT_COIN, true);
 
@@ -1978,9 +1965,10 @@ namespace ms
 
 	void UIItemInventory::ItemIcon::drop_on_stage() const
 	{
-		constexpr const char* dropmessage = "How many will you drop?";
-		constexpr const char* untradablemessage = "This item can't be taken back once thrown away.\\nWill you still drop it?";
-		constexpr const char* cashmessage = "You can't drop this item.";
+		// 丢弃弹窗文案走 i18n（原硬编码英文，中文客户端下不跟随语言设置）。
+		const std::string dropmessage = Locale::text("inventory.drop_quantity");
+		const std::string untradablemessage = Locale::text("inventory.drop_untradable");
+		const std::string cashmessage = Locale::text("inventory.drop_cash");
 
 		if (cashitem)
 		{

@@ -32,6 +32,10 @@ namespace ms
 		void expire(int8_t, const PhysicsObject*);
 
 		Rectangle<int16_t> bounds() const;
+	// 只有非拾取中且仍 active 的掉落物才能成为拾取目标。PICKEDUP 态要淡出
+	// 48 帧才 deactivate，期间 bounds 仍在玩家脚下；不过滤会让 find_loot_at
+	// 一直选中正在消失的旧卡、对已移除 oid 反复发包，挡住真正的新掉落。
+	bool is_pickable() const { return state != State::PICKEDUP && is_active(); }
 
 	protected:
 		// grade：⑥ 掉落品质（0=不上光环，1..4=Rare..Legendary）。

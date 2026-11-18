@@ -101,7 +101,7 @@ namespace ms
 
 		// 骑兽技能：String.nx/Skill.img/0001004 = 「骑兽技能」（evidence §7）。
 		static constexpr int32_t TAMING_SKILL = 1004;
-		// 本包拿得出运行期判据的槽位；其余（宠物面板 4 格、POCKET 等）无判据 → 不改色，
+		// 本包拿得出运行期判据的槽位；POCKET 等无判据 → 不改色，
 		// 判据缺口记在 evidence/r27-b3-equip/README.md §7。
 		static constexpr std::array<EquipSlot::Id, 3> TINTABLE_SLOTS = {
 			EquipSlot::Id::TAMEDMOB, EquipSlot::Id::SADDLE, EquipSlot::Id::SHIELD };
@@ -111,6 +111,19 @@ namespace ms
 		Texture backgrnd_tex;
 		Point<int16_t> bg_origin;
 		std::vector<MemoryTexture> disabled_cells;
+
+		// 宠物面板（Equip/pet）的不可用格：orange-wz 取出的 WZ 底图 5 个目标格全是
+		// 蓝底 (187,204,221)，原生截图里对应的粉格 (204,153,170) 是运行期按格逐像素
+		// 改色（与主窗 disabled 完全同构，见 tools/_pet_boundary.py / _pet_exact_rects.py）。
+		// 坐标是 canvas 局部像素（origin=(0,0)），step 33、格 32x32：
+		// 宠物HP(46,11) / 宠物MP(112,11) / 宠物装备(112,77) / 宠物戒指1(79,110) / 宠物戒指2(112,110)。
+		static constexpr std::array<TintedRect, 5> PET_TINT_CELLS = {{
+			{ 46, 11, 32, 32 }, { 112, 11, 32, 32 }, { 112, 77, 32, 32 },
+			{ 79, 110, 32, 32 }, { 112, 110, 32, 32 } }};
+		std::vector<MemoryTexture> pet_disabled_cells;
+		void build_pet_disabled_cells();
+		// 当前宠物页是否召唤了宠物；未召唤 → 该页宠物相关格不可用（原生截图即此态）。
+		bool pet_slot_available() const;
 
 		EquipSlot::Id selected_eqslot = EquipSlot::Id::NONE;
 

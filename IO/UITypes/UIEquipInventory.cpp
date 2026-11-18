@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
 //																				//
@@ -134,9 +134,13 @@ namespace ms
 
 		// 2026-11-12 装备槽位扩展（用户裁决：②③ 塞主窗空格，④ 用 v5 独立子窗）。
 		// ③ 第二项链：眼饰 (71,98) 左侧空格 (38,98) ——「眼饰左边」逐字对齐需求。
-		// ② 护肩：行7 剩余空格 (71,230)；与 ④ 独立子窗不冲突。
+		// ② 护肩：见下方 m00717 裁决，已移到盾牌上方 (137,98)。
 		iconpositions[EquipSlot::Id::PENDANT2] = Point<int16_t>(38, 98);
-		iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(71, 230);
+		// 2026-11-16 用户再裁决 m00717：护肩是「可用槽」，不做不可用改色；位置从
+		// 行7 (71,230) 移到「盾牌上方」(137,98) —— SHIELD 在 (137,131)，(137,98) 是
+		// backgrnd 上合法空格（实测 978/1024 白底蓝边），与 RING4(137,65) 同列。
+		// 护肩不在 TINTABLE_SLOTS，恒保持底图原样（可用态）。
+		iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(137, 98);
 
 		nl::node backgrnd = Equip["backgrnd"];
 
@@ -228,6 +232,7 @@ namespace ms
 		dragarea = Point<int16_t>(bg_dimensions.x(), 20);
 
 		build_disabled_cells();
+		build_pet_disabled_cells();
 		load_icons();
 	}
 
@@ -237,7 +242,25 @@ namespace ms
 
 		// 宠物装备面板底图（Equip/pet，槽名已烤进贴图，不再用 Text 重画）
 		if (pet_panel_open)
+		{
 			pet_backgrnd.draw(position + pet_panel_pos);
+
+			// 不可用宠物格：与主窗 disabled 同构 —— 对同一张 Equip/pet 底图的该格
+			// 逐像素改色（不是平涂、不是另一张图）。判据来自运行期「当前页是否召唤
+			// 了宠物」：未召唤时宠物 HP/MP/装备/戒指×2 五格转粉，与 Angel 原生
+			// 未召唤帧逐像素一致。裁片落位 = 画布落点 + 格在 canvas 内的局部偏移。
+			if (!pet_slot_available())
+			{
+				for (size_t i = 0; i < pet_disabled_cells.size(); i++)
+				{
+					if (!pet_disabled_cells[i].is_valid())
+						continue;
+
+					const TintedRect& r = PET_TINT_CELLS[i];
+					pet_disabled_cells[i].draw(position + pet_panel_pos + Point<int16_t>(r.x, r.y));
+				}
+			}
+		}
 
 		draw_buttons(alpha);
 
@@ -308,19 +331,7 @@ namespace ms
 					}
 				}
 			}
-			UI::get().emplace<UISoftKey>([](const std::string& s) {
-				try {
-					// cash_slot,itemid — 扩展栏现金道具
-					auto comma = s.find(',');
-					if (comma == std::string::npos) return;
-					int16_t cash_slot = static_cast<int16_t>(std::stoi(s.substr(0, comma)));
-					int32_t itemid = std::stoi(s.substr(comma + 1));
-					if (cash_slot > 0 && itemid > 0) {
-						UseCashItemBasicPacket(cash_slot, itemid).dispatch();
-						LOG(LOG_DEBUG, "UIEquipInventory: Slot expand cash=" << cash_slot << " id=" << itemid);
-					}
-				} catch (...) {}
-			}, []() {}, "cashSlot,itemId");
+			
 			return Button::State::NORMAL;
 		}
 		case Buttons::BT_PET_SHOW:
@@ -345,7 +356,7 @@ namespace ms
 	{
 		if (int32_t item_id = inventory.get_item_id(InventoryType::Id::EQUIPPED, slot))
 		{
-			const Texture& texture = ItemData::get(item_id).get_icon(false);
+			const Texture& texture = ItemData::get(item_id).get_icon(item_id / 10000 == 238);
 
 			icons[slot] = std::make_unique<Icon>(
 				std::make_unique<EquipIcon>(slot),
@@ -429,20 +440,7 @@ namespace ms
 							<< static_cast<int>(selected_eqslot));
 					}
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int16_t slot = static_cast<int16_t>(std::stoi(s));
-							if (slot <= 0) return;
-							EquipSlot::Id eq = EquipSlot::by_id(static_cast<size_t>(slot));
-							if (eq == EquipSlot::Id::NONE) return;
-							selected_eqslot = eq;
-							if (int16_t freeslot = inventory.find_free_slot(InventoryType::Id::EQUIP))
-							{
-								UnequipItemPacket(eq, freeslot).dispatch();
-								LOG(LOG_DEBUG, "UIEquipInventory: SoftKey unequip slot=" << slot);
-							}
-						} catch (...) {}
-					}, []() {}, "Unequip slot");
+					
 				}
 			}
 			else if (keycode == 'I' || keycode == 'i')
@@ -587,6 +585,38 @@ namespace ms
 			disabled_cells.clear();
 			UiAssetResolve::diag_once("equip tint cells", "Equip/backgrnd pixel copy failed -> tint disabled");
 		}
+	}
+
+	void UIEquipInventory::build_pet_disabled_cells()
+	{
+		if (!pet_backgrnd.is_valid())
+			return;
+
+		// 复用与主窗完全相同的调色核（build_tinted_regions → tint_disabled_rect），
+		// 保证 (187,204,221) → (204,153,170) 逐像素一致，不另写一份颜色表。
+		std::vector<TintedRect> rects(PET_TINT_CELLS.begin(), PET_TINT_CELLS.end());
+
+		if (!build_tinted_regions(pet_backgrnd, rects, pet_disabled_cells))
+		{
+			pet_disabled_cells.clear();
+			UiAssetResolve::diag_once("equip pet tint cells", "Equip/pet pixel copy failed -> tint disabled");
+		}
+	}
+
+	bool UIEquipInventory::pet_slot_available() const
+	{
+		// Angel 083：CUIPetEquip::OnMouseMove 用 GetItem(...,-100-v6) 取宠物装备、
+		// dword_BED5A0+960/+964 判宠物数量；本端等价数据 = Player→Char::get_pet(tab)
+		// 的 itemid（0 = 该页未召唤）。当前页没有宠物 → 该页所有宠物格不可用转粉。
+		// pet_tab 为 0xFFFF（从未点过页签）时，若角色一只宠物都没有也视为不可用态。
+		const auto& player = Stage::get().get_player();
+
+		if (pet_tab < Buttons::BT_PET_TAB0 || pet_tab >= Buttons::BT_PET_TABE)
+			return player.has_pet();
+
+		uint8_t index = static_cast<uint8_t>(pet_tab - Buttons::BT_PET_TAB0);
+
+		return player.get_pet(index).get_itemid() > 0;
 	}
 
 	bool UIEquipInventory::slot_available(EquipSlot::Id slot) const

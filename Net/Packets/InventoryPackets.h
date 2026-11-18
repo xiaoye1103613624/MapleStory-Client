@@ -162,6 +162,8 @@ namespace ms
 
 	// Requests using a scroll on an equip 
 	// Opcode: SCROLL_EQUIP(86)
+	// wire target：负值 = -bodypart（已穿戴）；正值 = 背包装备槽（匠人之魂 / CUIEnchantDlg）。
+	// 正槽路径须角色已学 LEGENDARY_SPIRIT(1003)，否则 s9 ScrollHandler 会空引用装备。
 	class ScrollEquipPacket : public OutPacket
 	{
 	public:
@@ -172,6 +174,7 @@ namespace ms
 			WHITESCROLL = 0x02
 		};
 
+		// 已穿戴装备：写 -wire_bodypart（既有闭环，不可改语义）。
 		ScrollEquipPacket(int16_t source, EquipSlot::Id target, uint8_t flags) : OutPacket(OutPacket::Opcode::SCROLL_EQUIP)
 		{
 			write_time();
@@ -181,5 +184,21 @@ namespace ms
 		}
 
 		ScrollEquipPacket(int16_t source, EquipSlot::Id target) : ScrollEquipPacket(source, target, 0) {}
+
+		// 背包正槽（Angel/MinMS CUIEnchantDlg）。独立入口避免与 EquipSlot::Id 重载歧义。
+		static void dispatch_bag_equip(int16_t source, int16_t bag_equip_slot, uint8_t flags = NONE)
+		{
+			ScrollEquipPacket pkt(source, bag_equip_slot, flags, true);
+			pkt.dispatch();
+		}
+
+	private:
+		ScrollEquipPacket(int16_t source, int16_t bag_equip_slot, uint8_t flags, bool) : OutPacket(OutPacket::Opcode::SCROLL_EQUIP)
+		{
+			write_time();
+			write_short(source);
+			write_short(bag_equip_slot);
+			write_short(flags);
+		}
 	};
 }

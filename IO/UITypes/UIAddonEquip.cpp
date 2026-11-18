@@ -91,7 +91,7 @@ namespace ms
 
 		if (int32_t item_id = inventory.get_item_id(InventoryType::Id::EQUIPPED, slot))
 		{
-			const Texture& texture = ItemData::get(item_id).get_icon(false);
+			const Texture& texture = ItemData::get(item_id).get_icon(item_id / 10000 == 238);
 
 			icons[index] = std::make_unique<Icon>(
 				std::make_unique<AddonIcon>(slot),
