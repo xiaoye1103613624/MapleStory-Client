@@ -25,12 +25,15 @@
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../IO/Window.h"
 #include "../../Graphics/Color.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Gameplay/Combat/Damage.h"
 #include "../../Character/CombatPanelStats.h"
+#include "../../Character/Player.h"
 #include "../../Data/SetItemData.h"
 #include "../../Util/PerfLog.h"
 
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace ms
@@ -129,14 +132,35 @@ namespace ms
 				item_ids.push_back(recv.read_int());
 			}
 
+			// tier 列表：short tierCount + {short need, string statKey, int value}×N
+			std::vector<std::tuple<int16_t, std::string, int32_t>> tiers;
+			if (recv.available() >= 2)
+			{
+				const int16_t tier_count = recv.read_short();
+				for (int16_t k = 0; k < tier_count; ++k)
+				{
+					if (recv.available() < 2)
+						break;
+					const int16_t need = recv.read_short();
+					const std::string stat_key = recv.read_string();
+					const int32_t value = recv.read_int();
+					tiers.emplace_back(need, stat_key, value);
+				}
+			}
+
 			if (set_id <= 0)
 				continue;
 
-			// 服务端权威：建映射 + 文案。enabled=0 表示禁用，跳过展示但仍建映射。
+			// 服务端权威：建映射 + 文案 + tier（tier 让本地 Player 注入链路复活）。
 			if (!item_ids.empty())
 				SetItemData::set_server_mapping(set_id, item_ids);
+			for (const auto& t : tiers)
+				SetItemData::set_server_tier(set_id, std::get<0>(t), std::get<1>(t), std::get<2>(t));
 			if (enabled && !text.empty())
 				SetItemData::set_server_text(set_id, text);
 		}
+
+		// 套装 tier 注入后重算玩家属性，让伤害/属性即时生效（与换装同口径）
+		Stage::get().get_player().recalc_stats(true);
 	}
 }

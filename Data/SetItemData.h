@@ -76,6 +76,9 @@ namespace ms
 		/// 服务端下发的 item→set 映射（0x176 带 itemIds，覆盖本地 WZ/txt）。
 		static void set_server_mapping(int32_t set_id, const std::vector<int32_t>& item_ids);
 
+		/// 服务端下发的套装档位加成（0x176 tier 列表），供 Player 本地注入复活。
+		static void set_server_tier(int32_t set_id, int16_t count, const std::string& stat_key, int32_t value);
+
 	private:
 		static std::unordered_map<int32_t, Definition> definitions;
 		static std::unordered_map<int32_t, int32_t> item_to_set;

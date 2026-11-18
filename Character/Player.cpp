@@ -158,6 +158,31 @@ namespace ms
 					{
 						stats.add_ignoredef(tier.value / 100.0f);
 					}
+					// 基础百分比（按裸属性，服务端 0x176 tier 下发）：走 add_percent。
+					else if (key == "HP_RATE")
+					{
+						stats.add_percent(EquipStat::Id::HP, tier.value / 100.0f);
+					}
+					else if (key == "MP_RATE")
+					{
+						stats.add_percent(EquipStat::Id::MP, tier.value / 100.0f);
+					}
+					else if (key == "STR_RATE")
+					{
+						stats.add_percent(EquipStat::Id::STR, tier.value / 100.0f);
+					}
+					else if (key == "DEX_RATE")
+					{
+						stats.add_percent(EquipStat::Id::DEX, tier.value / 100.0f);
+					}
+					else if (key == "INT_RATE")
+					{
+						stats.add_percent(EquipStat::Id::INT, tier.value / 100.0f);
+					}
+					else if (key == "LUK_RATE")
+					{
+						stats.add_percent(EquipStat::Id::LUK, tier.value / 100.0f);
+					}
 					else if (EquipStat::Id id = set_stat_id(key); id != EquipStat::Id::LENGTH)
 					{
 						stats.add_value(id, tier.value);

@@ -332,4 +332,23 @@ namespace ms
 			it->second.item_ids = item_ids;
 		}
 	}
+
+	void SetItemData::set_server_tier(int32_t set_id, int16_t count, const std::string& stat_key, int32_t value)
+	{
+		auto it = definitions.find(set_id);
+		if (it == definitions.end())
+			return; // set_server_mapping 应先建好 Definition
+
+		// 服务端权威 tier：避免重复（同一 count+key 覆盖），保证可热更
+		std::vector<Tier>& tiers = it->second.tiers;
+		for (Tier& t : tiers)
+		{
+			if (t.count == count && t.stat_key == stat_key)
+			{
+				t.value = value;
+				return;
+			}
+		}
+		tiers.push_back(Tier{ count, stat_key, value });
+	}
 }
