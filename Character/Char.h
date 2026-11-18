@@ -117,6 +117,11 @@ namespace ms
 		// 分身残影开关（SHADOWPARTNER buff 驱动，纯表现层）。
 		void set_shadowpartner(bool on);
 
+		// GM 隐身本地视觉提示开关：本地玩家 !hide 后置 true，自身角色半透明渲染。
+		void set_hidden(bool h);
+		// 返回角色是否处于本地隐身视觉状态。
+		bool is_hidden() const;
+
 		// 护盾特效开关（MAGIC_GUARD/HOLY_SHIELD）：按 Buff 下发的技能 id 动态加载
 		// Skill/<ns>.img/skill/<strid>/effect 循环动画；clear 时移除。
 		void set_shield(int stat, int32_t skill_id);
@@ -140,6 +145,8 @@ namespace ms
 		bool is_sitting() const;
 		// Return if the char is in the Char::State::LADDER or Char::State::ROPE state
 		bool is_climbing() const;
+		// 当前移动状态（商城预览沙盒跟帧用）
+		State get_char_state() const { return state; }
 		// Return whether the character sprite uses stances for two-handed weapons
 		bool is_twohanded() const;
 		// Return the type of the currently equipped weapon
@@ -187,6 +194,8 @@ namespace ms
 		std::list<DamageNumber> damagenumbers;
 		// 分身残影开关（SHADOWPARTNER），绘制滞后半透明复制体。
 		bool shadowpartner = false;
+		// GM 隐身本地视觉状态：仅本地玩家置位，远端角色恒 false。
+		bool hidden = false;
 		// 护盾特效动画表（key = Buffstat::Id 的 int 值）。
 		std::map<int, Animation> shields;
 

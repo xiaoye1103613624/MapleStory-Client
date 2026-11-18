@@ -66,6 +66,7 @@
 #include "../../IO/UITypes/UIStoreBank.h"
 #include "../../Character/EquipStat.h"
 #include "../../Character/MapleStat.h"
+#include "../../Character/Player.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Net/Packets/FamilyPackets.h"
@@ -830,17 +831,26 @@ namespace ms
 
 	void AdminResultHandler::handle(InPacket& recv) const
 	{
+		// 服务端 PacketCreator.getGMEffect(type, mode) 写两字节：type + mode。
+		// type=0x10 为 GM 隐身（mode 1=开 / 0=关）；其余 type 为各类 GM 提示。
+		uint8_t type = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
 		uint8_t mode = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
-		std::string payload = recv.available() ? recv.read_string() : "";
-		LOG(LOG_DEBUG, "AdminResult: mode=" << static_cast<int>(mode)
-			<< " len=" << payload.size());
+		// 其余类型可能带附加负载，统一跳过避免后续包错位（原实现误按 byte+string 解析已废弃）。
 		while (recv.available())
 			recv.skip_byte();
+
+		// GM 隐身状态：仅本地玩家置位，作为自身半透明视觉提示（不影响其他角色渲染）。
+		if (type == 0x10)
+		{
+			Stage::get().get_player().set_hidden(mode != 0);
+		}
+
 		const char* msg = "Admin result";
-		switch (mode)
+		switch (type)
 		{
 			case 0x04: msg = "Admin hide"; break;
 			case 0x0F: msg = "Admin enter"; break;
+			case 0x10: msg = (mode != 0) ? "隐身已开启" : "隐身已取消"; break;
 			case 0x1A: msg = "Admin alert"; break;
 			case 0x1C: msg = "Admin notice"; break;
 			case 0x11: msg = "Admin ban"; break;
@@ -848,14 +858,13 @@ namespace ms
 			case 0x15: msg = "Admin mute"; break;
 			default: break;
 		}
-		std::string tip = payload.empty()
-			? (std::string(msg) + " m" + std::to_string(mode))
-			: payload;
-		auto ui = UI::get().get_element<UIAdmin>();
-		if (!ui) ui = UI::get().emplace<UIAdmin>();
-		else if (!ui->is_active()) ui->makeactive();
-		if (ui)
-			ui->set_message(tip);
+		std::string tip = std::string(msg) + " t" + std::to_string(type) + " m" + std::to_string(mode);
+		// 仅在 GM 工具窗已开时记录；绝不在收包时擅自弹出（换频道重连会重发 GM 效果包）。
+		if (auto ui = UI::get().get_element<UIAdmin>())
+		{
+			if (ui->is_active())
+				ui->set_message(tip);
+		}
 		// note
 	}
 
@@ -2592,7 +2601,10 @@ namespace ms
 		LOG(LOG_DEBUG, "SueCharacter mode=" << (int)mode);
 		while (recv.available())
 			recv.skip_byte();
-		// note
+		// 举报回执统一通知 UIReport（mode 0=成功, 1..4=各类失败）；
+		// 旧实现只在 UIAdmin active 时写一句 "Report failed"，成功静默、举报窗无反馈。
+		if (auto report = UI::get().get_element<UIReport>())
+			report->on_report_result(mode);
 		if (mode != 0)
 		{
 			if (auto ui = UI::get().get_element<UIAdmin>())
@@ -2600,7 +2612,6 @@ namespace ms
 				if (ui->is_active())
 					ui->set_message("Report failed");
 			}
-			// note
 		}
 	}
 
@@ -3795,28 +3806,7 @@ namespace ms
 			// = 服务端（NPC 9201010 createMarriageWishlist）请新人录心愿单；
 			// 客户端收齐 ≤10 条道具名后回 RING_ACTION mode9。
 			LOG(LOG_DEBUG, "MarriageRequest: wishlist prompt");
-			UI::get().emplace<UISoftKey>([](const std::string& line) {
-				if (line.empty()) return;
-				// 逗号分隔多条（软键盘单行输入限制）；服务端截到 10 条。
-				std::vector<std::string> items;
-				size_t start = 0;
-				while (start <= line.size() && items.size() < 10)
-				{
-					size_t c = line.find(',', start);
-					if (c == std::string::npos)
-					{
-						items.push_back(line.substr(start));
-						break;
-					}
-					items.push_back(line.substr(start, c - start));
-					start = c + 1;
-				}
-				if (!items.empty())
-				{
-					WeddingWishlistPacket(items).dispatch();
-					LOG(LOG_DEBUG, "MarriageRequest: wishlist sent n=" << items.size());
-				}
-			}, []() {}, Locale::text("wedding.softkey_wishlist"));
+			
 		}
 		else
 		{

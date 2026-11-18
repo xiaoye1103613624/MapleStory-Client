@@ -39,6 +39,9 @@ namespace ms
 		// 请求角色信息窗 CharInfoRequestPacket，与点击「查看角色信息」同一包)。
 		Cursor::State send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos);
 
+		// 屏幕坐标命中其他玩家：成功写 cid/name 并返回 true（右键 ContextMenu / 双击情报用）。
+		bool find_char_at(Point<int16_t> position, Point<int16_t> viewpos, int32_t& cid, std::string& name) const;
+
 		// Spawn a new character, if it has not been spawned yet.
 		void spawn(CharSpawn&& spawn);
 		// Remove a character

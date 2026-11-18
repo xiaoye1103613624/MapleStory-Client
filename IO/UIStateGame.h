@@ -45,6 +45,8 @@ namespace ms
 		void send_close() override;
 
 		void drag_icon(Icon* icon) override;
+		/// ThemePack: rebuild StatusBar + ChatBar for the active ui.theme (runtime, no restart).
+		void apply_hud_theme();
 		void clear_tooltip(Tooltip::Parent parent) override;
 		void show_equip(Tooltip::Parent parent, int16_t slot) override;
 		void show_item(Tooltip::Parent parent, int32_t itemid) override;
@@ -58,9 +60,18 @@ namespace ms
 		UIElement* get(UIElement::Type type) override;
 		UIElement* get_front(std::list<UIElement::Type> types) override;
 		UIElement* get_front(Point<int16_t> cursor_position) override;
+		/// 当前焦点窗存在且 active（目录/界面气球等）。UI::send_key 的回车分支
+		/// 用它做「焦点窗优先于 chatbar」的判断。
+		bool has_active_focused();
 
 	private:
 		const CharStats& stats;
+
+		/// 焦点自愈：目录/界面气球关闭后再次打开走 `makeactive()` 复用实例，
+		/// 不经过 pre_add，focused 标志丢失 —— 方向键随 KeyType::Id::ACTION
+		/// 绑定穿透成玩家动作（按上下键角色趴下）。focused 已空但气球 active
+		/// 时恢复指向；has_active_focused 与 send_key 开头都要调。
+		void heal_balloon_focus();
 
 		bool drop_icon(const Icon& icon, Point<int16_t> cursor_position);
 		void remove_icon();
@@ -84,6 +95,12 @@ namespace ms
 		Tooltip::Parent tooltipparent;
 
 		Optional<Icon> draggedicon;
+
+		// 点击式抓取（用户 m02404/m02463）：宏源图标抓起后黏在光标上，松手不结算，
+		// 下一次点击才落点。pending=刚抓起、即将到来的 IDLE 是抓取那一下的松手；
+		// sticky=已黏住等待点击落下。非宏源（背包/装备/技能窗）不启用，保持原生按住拖。
+		bool macro_sticky_pending = false;
+		bool macro_sticky = false;
 
 		std::map<Icon::IconType, UIElement::Type> icon_map =
 		{

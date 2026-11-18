@@ -29,6 +29,9 @@
 
 namespace ms
 {
+	// GM 隐身本地视觉提示：自身角色半透明渲染的不透明度（0=全透，1=不透明）。
+	constexpr float HIDDEN_ALPHA = 0.4f;
+
 	Char::Char(int32_t o, const CharLook& lk, const std::string& name) : MapObject(o), look(lk), look_preview(lk), namelabel(Text(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NAMETAG, name)) {}
 
 	void Char::draw(double viewx, double viewy, float alpha) const
@@ -56,6 +59,12 @@ namespace ms
 		{
 			float hf = 0.35f + 0.4f * hitflash.alpha();
 			color = Color(1.0f, hf, hf, 1.0f);
+		}
+
+		// GM 隐身本地视觉提示：隐身时自身角色整体半透明渲染（远端角色 hidden 恒 false）。
+		if (hidden)
+		{
+			color = Color(1.0f, 1.0f, 1.0f, HIDDEN_ALPHA);
 		}
 
 		look.draw(DrawArgument(absp, color), alpha);
@@ -237,6 +246,16 @@ namespace ms
 	void Char::set_shadowpartner(bool on)
 	{
 		shadowpartner = on;
+	}
+
+	void Char::set_hidden(bool h)
+	{
+		hidden = h;
+	}
+
+	bool Char::is_hidden() const
+	{
+		return hidden;
 	}
 
 	void Char::set_shield(int stat, int32_t skill_id)

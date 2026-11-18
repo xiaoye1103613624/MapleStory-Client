@@ -22,6 +22,7 @@
 #include "Window.h"
 
 #include "UITypes/UIBuffList.h"
+#include "UITypes/UICooldownList.h"
 #include "UITypes/UITemporaryStatView.h"
 #include "UITypes/UIEnergyBar.h"
 #include "UITypes/UIComboCounter.h"
@@ -59,7 +60,9 @@
 #include "../Net/Packets/FamilyPackets.h"
 
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Net/Packets/PlayerInteractionPackets.h"
 #include "../Gameplay/Stage.h"
+#include "../Template/Rectangle.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -69,6 +72,7 @@
 #include "../Util/Misc.h"
 #include "../Util/ResolutionTiers.h"
 #include "../Util/UiAssetResolve.h"
+#include "../Util/UiTheme.h"
 
 namespace ms
 {
@@ -95,6 +99,7 @@ namespace ms
 
 		emplace<UIMiniMap>(stats);
 		emplace<UIBuffList>();
+		emplace<UICooldownList>();
 		emplace<UITemporaryStatView>();
 		if (auto tsv = UI::get().get_element<UITemporaryStatView>())
 			tsv->deactivate();
@@ -114,12 +119,47 @@ namespace ms
 
 	void UIStateGame::draw(float inter, Point<int16_t> cursor) const
 	{
+		bool chat_drawn = false;
+
 		for (auto& type : elementorder)
 		{
 			auto& element = elements[type];
 
+			// W4-chatbar / 2026-11-15 真机还原：状态栏底条的 base/backgrnd2 是
+			// 570 宽半透明白带（局部 y4..28、α204..255），一旦它后画就会把聊天栏
+			// base/chatTarget 的深蓝框 (51,85,119) 稀释成浅灰白 (241,244,246) ——
+			// 正是用户「图2」里「对所有人」白字压白底看不见的真因（真机帧全帧
+			// 深蓝 0 命中）。原生 Angel 里底栏与 chatTarget 同属 CUIStatusBar 一次
+			// Draw，天然 chatTarget 最后画；本端拆成 STATUSBAR / CHATBAR 两个 element
+			// 后引入了 elementorder 依赖，视口重建 / bring_to_front 任一路径把
+			// STATUSBAR 甩到队尾都会翻层级。这里把 CHATBAR 从正序遍历摘出，紧贴
+			// STATUSBAR 之后补画，锁死「聊天栏压状态栏」；弹窗（后 emplace）仍在
+			// CHATBAR 之后画，层级不变。
+			if (type == UIElement::Type::CHATBAR)
+				continue;
+
 			if (element && element->is_active())
 				element->draw(inter);
+
+			if (type == UIElement::Type::STATUSBAR)
+			{
+				if (auto& chat = elements[UIElement::Type::CHATBAR])
+				{
+					if (chat->is_active())
+						chat->draw(inter);
+				}
+				chat_drawn = true;
+			}
+		}
+
+		// elementorder 里没有 STATUSBAR（异常/未建）时兜底，避免聊天栏整块不画。
+		if (!chat_drawn)
+		{
+			if (auto& chat = elements[UIElement::Type::CHATBAR])
+			{
+				if (chat->is_active())
+					chat->draw(inter);
+			}
 		}
 
 		if (tooltip)
@@ -231,6 +271,7 @@ namespace ms
 	{
 		draggedicon->reset();
 		draggedicon = {};
+		macro_sticky = macro_sticky_pending = false;
 	}
 
 	void UIStateGame::remove_cursors()
@@ -257,8 +298,43 @@ namespace ms
 
 	void UIStateGame::doubleclick(Point<int16_t> pos)
 	{
-		if (UIElement* front = get_front(pos))
-			front->doubleclick(pos);
+		// #2 drag-release misfire fix (RCA: Window.cpp:371-374): on left-button up,
+		// the double-click detector (down/up time window) fires here BEFORE
+		// send_cursor(false). During a drag-to-swap, mouse-down already grabbed the
+		// icon into draggedicon and there is NO second down to drop_icon+remove_icon,
+		// so it is still set here; forwarding to the front inventory would let
+		// UIItemInventory::doubleclick issue an unconditional UseItemPacket ->
+		// unintended item consumption / crash. Skip front-UI doubleclick while dragging.
+		// Normal two-click双击: the second down already did drop_icon+remove_icon, so
+		// draggedicon is empty here and 双击使用道具 is unaffected. 地图双击保留。
+		if (!draggedicon)
+		{
+			if (UIElement* front = get_front(pos))
+			{
+				front->doubleclick(pos);
+				return;
+			}
+		}
+
+		// 双击地图角色 → 个人情报（Angel / 正确截图：双击开 UserInfo）。
+		Stage& stage = Stage::get();
+		const Point<int16_t> view = stage.get_camera().position();
+		int32_t cid = 0;
+		std::string name;
+
+		if (stage.get_chars().find_char_at(pos, view, cid, name))
+		{
+			CharInfoRequestPacket(cid).dispatch();
+			return;
+		}
+
+		// 双击自己也开个人情报。
+		Player& self = stage.get_player();
+		Point<int16_t> absp = self.get_position() + view;
+		Rectangle<int16_t> bounds(absp.x() - 36, absp.x() + 36, absp.y() - 110, absp.y());
+
+		if (bounds.contains(pos))
+			UI::get().emplace<UICharInfo>(self.get_oid());
 	}
 
 	void UIStateGame::rightclick(Point<int16_t> pos)
@@ -268,16 +344,63 @@ namespace ms
 			front->rightclick(pos);
 			return;
 		}
-		// 地图空白右键：打开 ContextMenu（Info / Whisper / Close）
+
+		// Angel CUserLocal::HandleRButtonClk: 仅当光标命中玩家角色身体矩形才弹 ContextMenu
+		// （sub_9726EA 遍历 CAvatar::GetBodyRect 做点-in-rect，未命中返回 0 → 不弹窗）。
+		// 空地 / 怪物 / NPC 一律不弹；其他玩家走 MapChars::find_char_at，自己也按同尺寸身体框判定。
+		Stage& stage = Stage::get();
+		const Point<int16_t> view = stage.get_camera().position();
+		int32_t cid = 0;
+		std::string name;
+
+		if (!stage.get_chars().find_char_at(pos, view, cid, name))
+		{
+			Player& self = stage.get_player();
+			Point<int16_t> absp = self.get_position() + view;
+			Rectangle<int16_t> bounds(absp.x() - 36, absp.x() + 36, absp.y() - 110, absp.y());
+			if (!bounds.contains(pos))
+				return;
+			cid = self.get_oid();
+			name = self.get_name();
+		}
+
 		auto cm = UI::get().get_element<UIContextMenu>();
 		if (!cm)
 			cm = UI::get().emplace<UIContextMenu>();
 		if (cm)
-			cm->open_at(pos, 0, Stage::get().get_player().get_name());
+			cm->open_at(pos, cid, name);
+	}
+
+	bool UIStateGame::has_active_focused()
+	{
+		heal_balloon_focus();
+
+		if (auto element = get(focused))
+			return element->is_active();
+
+		return false;
+	}
+
+	void UIStateGame::heal_balloon_focus()
+	{
+		// 焦点自愈：目录/界面气球关闭后再次打开走 `makeactive()` 复用实例，
+		// 不经过 pre_add，focused 标志丢失 —— 方向键随 KeyType::Id::ACTION
+		// 绑定（Keyboard.cpp 把 DOWN 绑成玩家动作）穿透到 Stage::send_key，
+		// 表现成「按上下键角色趴下」（用户实测复现）。发现焦点已空但有 active
+		// 的气球时恢复指向，让 focused 分支接住按键。
+		if (focused != UIElement::Type::NONE)
+			return;
+
+		if (auto gm = get(UIElement::Type::GAMEMENU); gm && gm->is_active())
+			focused = UIElement::Type::GAMEMENU;
+		else if (auto sc = get(UIElement::Type::SHORTCUTUI); sc && sc->is_active())
+			focused = UIElement::Type::SHORTCUTUI;
 	}
 
 	void UIStateGame::send_key(KeyType::Id type, int32_t action, bool pressed, bool escape)
 	{
+		heal_balloon_focus();
+
 		if (UIElement* focusedelement = get(focused))
 		{
 			if (focusedelement->is_active())
@@ -614,12 +737,19 @@ namespace ms
 								// 底栏「目录」钮走的是 UIGameMenu 开/关，这里复用同一条路。
 								if (UiAssetResolve::is_classic_hud())
 								{
+									// 互斥：开主菜单时先收起界面列表（UIShortCut）。
+									if (auto sc = UI::get().get_element<UIShortCut>(); sc && sc->is_active())
+										sc->deactivate();
+
 									auto gm = UI::get().get_element<UIGameMenu>();
 
 									if (!gm)
 										gm = UI::get().emplace<UIGameMenu>();
 									else if (!gm->is_active())
+									{
+										gm->reset_selection();
 										gm->makeactive();
+									}
 									else
 										gm->deactivate();
 
@@ -666,6 +796,7 @@ namespace ms
 				case KeyType::Id::FACE:
 				case KeyType::Id::ITEM:
 				case KeyType::Id::SKILL:
+				case KeyType::Id::MACRO:
 				{
 					Stage::get().send_key(type, action, pressed);
 					break;
@@ -680,10 +811,58 @@ namespace ms
 		{
 			if (cursor_state == Cursor::State::CLICKING)
 			{
+				// 黏住态的点击=落点手势：按下帧不结算，留到松手(IDLE)帧，
+				// 让 Window.cpp 的 doubleclick（在 send_cursor(false) 之前触发）
+				// 仍看到 draggedicon，被 doubleclick 的守卫吞掉，避免误触前窗双击。
+				if (macro_sticky)
+					return Cursor::State::GRABBING;
+
 				if (drop_icon(*draggedicon, cursor_position))
 					remove_icon();
 
 				return cursor_state;
+			}
+
+			// 松手投放：SDL3 的「按住拖到组合栏再松开」= MOUSEBUTTONUP → send_cursor(false)
+			// → IDLE（UI.cpp:162-166）；旧引擎只在 CLICKING 才 drop_icon（两击模型），
+			// 松手一律 GRABBING ⇒ 图标永远挂在鼠标上。这是前两轮「拖拽不到」的漏根因。
+			// Angel BeginDragDrop 的 Draggable 回调（off_B39810）：从组合栏内部
+			// 抓起的图标，松手一律结算（落回格=移动 / 落键位=绑定 / 落空白=移除）。
+			// 旧逻辑只在「光标仍在组合栏内」才 drop_icon，拖出窗外就恒 GRABBING，
+			// 图标永远挂在鼠标上 —— 正是「技能放上去以后不能拖拽移除走」的死路。
+			// 松手(IDLE)才结算；MOUSE_MOTION 的 GRABBING 必须保持拖拽。
+			// 旧代码不判 cursor_state，按下抓图标后移动第一像素即 drop+remove，
+			// 图标永远拖不出组合栏 —— 真机「抓不起来/拖不走」的真正根因。
+			if (cursor_state == Cursor::State::IDLE && draggedicon->is_macro_source())
+			{
+				// 抓取那一下的松手：进入黏住态，图标继续挂在光标上，不下落。
+				if (macro_sticky_pending)
+				{
+					macro_sticky_pending = false;
+					macro_sticky = true;
+					return Cursor::State::GRABBING;
+				}
+
+				// 黏住态落点：松手帧结算（按下帧已 defer）。
+				if (drop_icon(*draggedicon, cursor_position))
+					remove_icon();
+
+				macro_sticky = false;
+				return Cursor::State::IDLE;
+			}
+
+			if (cursor_state == Cursor::State::IDLE)
+			{
+				if (auto* macro = get(UIElement::Type::SKILLMACROEX))
+				{
+					if (macro->is_active() && macro->is_in_range(cursor_position))
+					{
+						if (drop_icon(*draggedicon, cursor_position))
+							remove_icon();
+
+						return Cursor::State::IDLE;
+					}
+				}
 			}
 
 			return Cursor::State::GRABBING;
@@ -692,10 +871,29 @@ namespace ms
 		{
 			bool clicked = cursor_state == Cursor::State::CLICKING || cursor_state == Cursor::State::VSCROLLIDLE || (dragged && (cursor_state == Cursor::State::CHATBARMOVE || cursor_state == Cursor::State::CHATBARVDRAG || cursor_state == Cursor::State::CHATBARHDRAG || cursor_state == Cursor::State::CHATBARBLTRDRAG || cursor_state == Cursor::State::CHATBARBRTLDRAG));
 
-			if (auto focusedelement = get(focused))
+			// 焦点窗独占点击的例外：轻量气球（目录/界面列表，closes_on_outside_click）
+			// 在光标落到自身范围外时收起自己，并把这次点击交还下面的普通派发 ——
+			// 否则状态栏「目录/界面」钮在气球打开期间永远收不到点击，
+			// 两个气球也就无法互相切换（用户实测「点目录没反应」的根因）。
+			UIElement* focusedelement = get(focused);
+
+			if (focusedelement && focusedelement->is_active()
+				&& !focusedelement->is_in_range(cursor_position)
+				&& focusedelement->closes_on_outside_click())
+			{
+				focused = UIElement::Type::NONE;
+				focusedelement->deactivate();
+				focusedelement = nullptr;
+			}
+
+			if (focusedelement)
 			{
 				if (focusedelement->is_active())
 				{
+					// 与下方普通派发同口径：tooltip 每帧派发入口先清，on-entry 同帧重挂。
+					if (tooltipparent != Tooltip::Parent::NONE)
+						clear_tooltip(tooltipparent);
+
 					remove_cursor(focusedelement->get_type());
 
 					return focusedelement->send_cursor(clicked, cursor_position);
@@ -717,9 +915,13 @@ namespace ms
 					{
 						UIElement::Type front_type = front->get_type();
 
-						if (tooltipparent != UIElement::Type::NONE)
-							if (front_type != tooltipparent)
-								clear_tooltip(tooltipparent);
+						// 2026-11-16 修复：tooltip 移出即消失。旧逻辑只在悬停到「另一个元素」时清
+						// tooltip——光标落回空白处（get_front 为空）或仍在本窗但离开条目区时，
+						// tooltip 永远挂着跟鼠标跑。现在每帧派发入口先清，on-slot 的
+						// send_cursor 同帧内重新 show_item/show_equip，无闪烁；equip/item/
+						// skill/map/text 全部 tooltip 父类型统一生效（共用修复）。
+						if (tooltipparent != Tooltip::Parent::NONE)
+							clear_tooltip(tooltipparent);
 
 						remove_cursor(front_type);
 
@@ -781,7 +983,9 @@ namespace ms
 	{
 		// UIQuit 依赖 UIWindow6.img/askReward（BeiDou 素材缺失）：
 		// 缺失时只画黑色遮罩、没有退出提示（用户实测反馈）。退回退出确认弹窗。
-		if (UiAssetResolve::usable(UiAssetResolve::window("UIWindow6")["askReward"]))
+		// 用统一 gate 直接查 UIWindow6.img —— 旧的 window("UIWindow6") 只查
+		// UIWindow2/img，永远取不到，导致这条判断恒为 false。
+		if (UiAssetResolve::has_quit_reward_dialog())
 		{
 			UI::get().emplace<UIQuit>(stats);
 		}
@@ -794,6 +998,11 @@ namespace ms
 	void UIStateGame::drag_icon(Icon* drgic)
 	{
 		draggedicon = drgic;
+
+		// 宏源（组合栏技能格 / 行尾宏选择图标）默认进入点击式黏住：
+		// 抓起那一下的松手不结算，等下一次点击再落点；非宏源维持原生按住拖。
+		macro_sticky_pending = drgic && drgic->is_macro_source();
+		macro_sticky = false;
 	}
 
 	void UIStateGame::clear_tooltip(Tooltip::Parent parent)
@@ -935,8 +1144,15 @@ namespace ms
 					element->remove_cursor();
 
 					if (draggedicon)
-						if (element->get_type() == icon_map[draggedicon.get()->get_type()])
+					{
+						if (element->get_type() == icon_map[draggedicon.get()->get_type()]
+							|| (macro_sticky && element->get_type() == UIElement::Type::SKILLMACROEX))
+						{
+							// 组合栏关闭时若有黏住的宏图标：remove_cursor 已按 H3 写回源格，
+							// 这里收掉光标上的副本，防止残留幽灵图标。
 							remove_icon();
+						}
+					}
 
 					UI::get().send_cursor(false);
 				}
@@ -956,6 +1172,36 @@ namespace ms
 		}
 	}
 
+	void UIStateGame::apply_hud_theme()
+	{
+		if (!UiAssetResolve::has_game_hud())
+		{
+			LOG(LOG_WARN, "UIStateGame::apply_hud_theme: no StatusBar pack available");
+			return;
+		}
+
+		// Close classic/modern menus that would dangle after StatusBar rebuild.
+		if (auto* sb = dynamic_cast<UIStatusBar*>(elements[UIElement::Type::STATUSBAR].get()))
+		{
+			if (sb->is_menu_active())
+				sb->remove_menus();
+		}
+
+		UI::get().remove(UIElement::Type::STATUSBAR);
+		UI::get().remove(UIElement::Type::CHATBAR);
+
+		emplace<UIStatusBar>(stats);
+		emplace<UIChatBar>();
+
+		// Keep chat above statusbar for hit-testing (same as resolution rebuild path).
+		elementorder.remove(UIElement::Type::CHATBAR);
+		elementorder.push_back(UIElement::Type::CHATBAR);
+
+		LOG(LOG_INFO, "UIStateGame::apply_hud_theme applied="
+			<< UiTheme::to_config(UiTheme::resolve())
+			<< " classic=" << (UiTheme::is_classic_layout() ? 1 : 0));
+	}
+
 	void UIStateGame::remove(UIElement::Type type)
 	{
 		if (type == focused)
@@ -969,7 +1215,9 @@ namespace ms
 		if (auto& element = elements[type])
 		{
 			element->deactivate();
-			element.release();
+			// 必须 reset 析构：release() 会泄漏旧窗实例；NpcTalk 等 FOCUSED 窗
+			// 每次 ScriptMessage emplace 时若只 release，叠层残影/幽灵按钮会挂在屏上。
+			element.reset();
 		}
 	}
 
@@ -1014,6 +1262,18 @@ namespace ms
 
 	UIElement* UIStateGame::get_front(Point<int16_t> cursor_position)
 	{
+		// 聊天栏输入行锁定（2026-11-15 用户真机反馈）：点快捷键展开/收缩钮等任意
+		// 路径把 STATUSBAR 提升到 elementorder 尾部后，get_front 反向扫描先命中
+		// 状态栏（其命中区 = 整条底栏 dimension (VWIDTH,80)），聊天栏的「+」/
+		// chatTarget/输入行就再也收不到点击 —— 「聊天区加号点不开」。
+		// 绘制侧早已锁死 CHATBAR 紧贴 STATUSBAR 之后（draw() 同批），命中侧在此
+		// 对齐同一优先级：光标落在聊天栏命中区内且聊天栏 active 时，聊天栏必胜。
+		if (auto& chat = elements[UIElement::Type::CHATBAR])
+		{
+			if (chat->is_active() && chat->is_in_range(cursor_position))
+				return chat.get();
+		}
+
 		auto begin = elementorder.rbegin();
 		auto end = elementorder.rend();
 

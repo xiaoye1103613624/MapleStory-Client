@@ -21,10 +21,17 @@
 
 namespace ms
 {
-	Cursor::State MapChars::send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos)
+	namespace
 	{
-		// 命中框：以角色脚底为锚，宽约 72、高约 110（站立角色大致体型）。
-		// 与服务端 CHAR_INFO_REQUEST(97) 一致，点一下即开角色信息窗。
+		Rectangle<int16_t> char_hit_bounds(Point<int16_t> absp)
+		{
+			// 命中框：脚底为锚，宽约 72、高约 110（站立体型）。
+			return Rectangle<int16_t>(absp.x() - 36, absp.x() + 36, absp.y() - 110, absp.y());
+		}
+	}
+
+	bool MapChars::find_char_at(Point<int16_t> position, Point<int16_t> viewpos, int32_t& cid, std::string& name) const
+	{
 		for (const auto& kv : chars)
 		{
 			const MapObject* mo = kv.second.get();
@@ -32,24 +39,38 @@ namespace ms
 			if (!mo || !mo->is_active())
 				continue;
 
-			Point<int16_t> absp = mo->get_position() + viewpos;
-			Rectangle<int16_t> bounds(absp.x() - 36, absp.x() + 36, absp.y() - 110, absp.y());
+			if (!char_hit_bounds(mo->get_position() + viewpos).contains(position))
+				continue;
 
-			if (bounds.contains(position))
-			{
-				if (pressed)
-				{
-					CharInfoRequestPacket(kv.first).dispatch();
-					return Cursor::State::IDLE;
-				}
-				else
-				{
-					return Cursor::State::CANCLICK;
-				}
-			}
+			cid = kv.first;
+
+			if (const OtherChar* oc = dynamic_cast<const OtherChar*>(mo))
+				name = oc->get_name();
+			else
+				name.clear();
+
+			return true;
 		}
 
-		return Cursor::State::IDLE;
+		return false;
+	}
+
+	Cursor::State MapChars::send_cursor(bool pressed, Point<int16_t> position, Point<int16_t> viewpos)
+	{
+		// 与服务端 CHAR_INFO_REQUEST 一致：左键单击即请求角色信息窗。
+		int32_t cid = 0;
+		std::string name;
+
+		if (!find_char_at(position, viewpos, cid, name))
+			return Cursor::State::IDLE;
+
+		if (pressed)
+		{
+			CharInfoRequestPacket(cid).dispatch();
+			return Cursor::State::IDLE;
+		}
+
+		return Cursor::State::CANCLICK;
 	}
 
 	void MapChars::draw(Layer::Id layer, double viewx, double viewy, float alpha) const

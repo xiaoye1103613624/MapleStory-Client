@@ -25,6 +25,7 @@
 #include "../KeyMapTranslate.h"
 
 #include "../../IO/UITypes/UIBuffList.h"
+#include "../../IO/UITypes/UICooldownList.h"
 #include "../../IO/UITypes/UICashShop.h"
 #include "../../IO/UITypes/UIChannel.h"
 #include "../../IO/UITypes/UICharInfo.h"
@@ -109,6 +110,12 @@ namespace ms
 			if (auto statsinfo = UI::get().get_element<UIStatsInfo>())
 				statsinfo->update_all_stats();
 		}
+
+		// 服务端权威 HP=0 → 强制切死亡态（DIED + dead stance）。此前客户端只把 HP
+		// 存进 basestats、没有任何状态转换，表现为「血0仍站立、技能照放」。
+		// 复活走既有 ChangeMapPacket(true,...) 协议，由死亡态输入触发（见 UIStateGame）。
+		if (Stage::get().get_player().get_stats().get_stat(MapleStat::Id::HP) <= 0)
+			Stage::get().get_player().die();
 
 		UI::get().enable();
 	}
@@ -394,8 +401,9 @@ namespace ms
 			recv.skip_byte();
 
 		Stage::get().get_player().add_cooldown(skill_id, cooltime);
-		(void)skill_id; (void)cooltime;
-		// CD 图标自显示，不 tip
+		// cooltime 秒 → UI 毫秒条（与 Player::add_cooldown 一致）
+		if (auto cd = UI::get().get_element<UICooldownList>())
+			cd->add_cooldown(skill_id, cooltime > 0 ? cooltime * 1000 : 0);
 	}
 
 	void KeymapHandler::handle(InPacket& recv) const
@@ -427,11 +435,14 @@ namespace ms
 			recv.skip_byte();
 		Setting<AutoHpPotItem>::get().save(itemid);
 		LOG(LOG_DEBUG, "AutoHpPot item=" << itemid);
+		// 仅在键位窗已开时刷新；绝不在收包时擅自弹出（换频道重连会重发此包）。
 		if (auto kc = UI::get().get_element<UIKeyConfig>())
 		{
-			if (!kc->is_active())
+			if (kc->is_active())
+			{
 				kc->makeactive();
-			return;
+				return;
+			}
 		}
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(("Auto HP pot #" + std::to_string(itemid)).c_str(),
@@ -445,11 +456,14 @@ namespace ms
 			recv.skip_byte();
 		Setting<AutoMpPotItem>::get().save(itemid);
 		LOG(LOG_DEBUG, "AutoMpPot item=" << itemid);
+		// 仅在键位窗已开时刷新；绝不在收包时擅自弹出（换频道重连会重发此包）。
 		if (auto kc = UI::get().get_element<UIKeyConfig>())
 		{
-			if (!kc->is_active())
+			if (kc->is_active())
+			{
 				kc->makeactive();
-			return;
+				return;
+			}
 		}
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
 			chatbar->show_message(("Auto MP pot #" + std::to_string(itemid)).c_str(),
