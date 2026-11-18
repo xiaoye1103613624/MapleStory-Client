@@ -64,6 +64,12 @@ namespace ms
 
 	void CharLook::draw(const DrawArgument& args, Stance::Id interstance, Expression::Id interexpression, uint8_t interframe, uint8_t interexpframe) const
 	{
+		// 默认构造的 CharLook（如商城无玩家上下文时的预览 look）body/hair/face
+		// 裸指针全为 nullptr；下方 body->draw/hair->draw/face->draw 任一都会
+		// 解引用空指针闪退。三者缺一即跳过立绘绘制（正常角色三者恒有效）。
+		if (!body || !hair || !face)
+			return;
+
 		Point<int16_t> faceshift = drawinfo.getfacepos(interstance, interframe);
 		DrawArgument faceargs = args + DrawArgument{ faceshift, false, Point<int16_t>(0, 0) };
 
@@ -305,31 +311,42 @@ namespace ms
 			}
 		}
 
-		uint16_t expdelay = face->get_delay(expression.get(), expframe.get());
-		uint16_t expdelta = expdelay - expelapsed;
-
-		if (timestep >= expdelta)
+		// 商城预览沙盒等默认构造的 CharLook，其 face 为 nullptr（裸指针，
+		// 只有 set_face 才会指向 facetypes 静态元素）。空 face 下必须跳过
+		// 表情动画，否则 face->get_delay() 解引用空指针 → 0xc0000005 闪退。
+		if (face)
 		{
-			expelapsed = timestep - expdelta;
+			uint16_t expdelay = face->get_delay(expression.get(), expframe.get());
+			uint16_t expdelta = expdelay - expelapsed;
 
-			uint8_t nextexpframe = face->nextframe(expression.get(), expframe.get());
-			float fcthreshold = static_cast<float>(expdelta) / timestep;
-			expframe.next(nextexpframe, fcthreshold);
-
-			if (expframe == 0)
+			if (timestep >= expdelta)
 			{
-				if (expression == Expression::Id::DEFAULT)
-					expression.next(Expression::Id::BLINK, fcthreshold);
-				else
-					expression.next(Expression::Id::DEFAULT, fcthreshold);
+				expelapsed = timestep - expdelta;
+
+				uint8_t nextexpframe = face->nextframe(expression.get(), expframe.get());
+				float fcthreshold = static_cast<float>(expdelta) / timestep;
+				expframe.next(nextexpframe, fcthreshold);
+
+				if (expframe == 0)
+				{
+					if (expression == Expression::Id::DEFAULT)
+						expression.next(Expression::Id::BLINK, fcthreshold);
+					else
+						expression.next(Expression::Id::DEFAULT, fcthreshold);
+				}
+			}
+			else
+			{
+				expression.normalize();
+				expframe.normalize();
+
+				expelapsed += timestep;
 			}
 		}
 		else
 		{
 			expression.normalize();
 			expframe.normalize();
-
-			expelapsed += timestep;
 		}
 
 		return aniend;

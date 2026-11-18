@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UiAssetResolve.h"
 
+#include "UiTheme.h"
+
 #include <fstream>
 #include <mutex>
 #include <unordered_set>
@@ -76,9 +78,18 @@ namespace ms
 
 		nl::node status_bar_root()
 		{
-			if (nl::nx::UI["StatusBar3.img"])
-				return nl::nx::UI["StatusBar3.img"];
+			// ThemePack: layout family picks the resource root when both packs exist.
+			if (UiTheme::is_classic_layout())
+			{
+				if (has_statusbar_classic())
+					return nl::nx::UI["StatusBar.img"];
+				if (has_statusbar3())
+					return nl::nx::UI["StatusBar3.img"];
+				return nl::nx::UI["StatusBar.img"];
+			}
 
+			if (has_statusbar3())
+				return nl::nx::UI["StatusBar3.img"];
 			return nl::nx::UI["StatusBar.img"];
 		}
 
@@ -99,7 +110,8 @@ namespace ms
 
 		bool is_classic_hud()
 		{
-			return !has_statusbar3() && has_statusbar_classic();
+			// Theme-aware: when both packs ship, ui.theme selects the layout family.
+			return UiTheme::is_classic_layout();
 		}
 
 		nl::node shop_root()
@@ -128,6 +140,22 @@ namespace ms
 
 			diag_once("close_btn", "no usable Basic.img/BtClose* button");
 			return nl::node();
+		}
+
+		bool has_quit_reward_dialog()
+		{
+			// UIQuit loads nl::nx::UI["UIWindow6.img"]["askReward"]["userLog"].
+			// The BeiDou v83 pack has no UIWindow6.img at all, so this is always
+			// false there and callers must fall back to UIQuitConfirm (Notice board).
+			// NOTE: window() deliberately does not probe UIWindow6.img; query the
+			// image directly so a pack that DOES ship it can still use UIQuit.
+			nl::node reward = nl::nx::UI["UIWindow6.img"]["askReward"];
+			bool ok = usable(reward) && usable(reward["userLog"]);
+
+			if (!ok)
+				diag_once("quit_reward_missing", "UIWindow6.img/askReward/userLog unavailable; use UIQuitConfirm");
+
+			return ok;
 		}
 
 		bool usable(nl::node n)

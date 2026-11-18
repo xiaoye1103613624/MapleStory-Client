@@ -18,17 +18,18 @@ namespace ms
 	namespace UiAssetResolve
 	{
 		// Prefer UIWindow2.img[name], else UIWindow.img[name].
+		// Whole-UI ThemePack: keep using these resolvers — do not raw-index nl::nx::UI roots.
 		nl::node window(const char* name);
 
 		// Prefer UIWindow4.img[name], else UIWindow2, else UIWindow.
 		nl::node window4(const char* name);
 
-		// Prefer StatusBar3.img, else StatusBar.img.
+		// ThemePack-aware StatusBar root (classic StatusBar.img vs StatusBar3.img).
 		nl::node status_bar_root();
 		bool has_statusbar3();
 		bool has_statusbar_classic();
 		bool has_game_hud();
-		// True when only classic StatusBar.img is present (BeiDou v83).
+		// True when active ThemePack layout family is ClassicV83 (ui.theme + pack probe).
 		// Shared gate for KeyConfig / StatusBar / Equip / Cursor classic layout tables.
 		bool is_classic_hud();
 
@@ -41,6 +42,12 @@ namespace ms
 		// black outline X over a transparent interior, which reads as a blank white box;
 		// it stays as a fallback for packs that ship BtClose without bitmaps.
 		nl::node close_btn();
+
+		// True when UIWindow6.img/askReward is actually present. UIQuit draws its
+		// reward panel from that node; the BeiDou v83 pack ships no UIWindow6.img,
+		// so emplace<UIQuit> there leaves only a black mask + the uptime digits.
+		// Shared gate for both quit entry points (ESC/close and 目录→游戏结束).
+		bool has_quit_reward_dialog();
 
 		// True if node exists and has at least one child or is a canvas/bitmap-bearing node.
 		bool usable(nl::node n);

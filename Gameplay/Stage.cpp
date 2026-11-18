@@ -19,6 +19,7 @@
 
 #include "../Configuration.h"
 #include "../MapleStory.h"
+#include "../Character/SkillMacros.h"
 
 #include "../IO/UI.h"
 
@@ -26,6 +27,7 @@
 #include "../IO/UITypes/UIChatBar.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
+#include "../Net/Packets/MessagingPackets.h"
 #include "../Net/Packets/PetPackets.h"
 #include "../Net/Packets/PlayerPackets.h"
 #include "../Net/Packets/SummonDragonPackets.h"
@@ -59,14 +61,19 @@ namespace ms
 
 	void Stage::load(int32_t mapid, int8_t portalid)
 	{
-		switch (state)
-		{
-			case State::INACTIVE:
-				load_map(mapid);   // 抛异常 = 真失败（map data missing），交给上层记录
-				break;
-			case State::TRANSITION:
-				break;
-		}
+		// 2026-11-18 退出商城黑屏根治：旧实现只认 state==INACTIVE 才 load_map，
+		// 而进商城由 SetCashShopHandler::transition 走 clear()->load(-1,0) 把 Stage
+		// 留在 ACTIVE + CashShopPreview；退出商城的 exit_cashshop 若没先 clear()，
+		// load(真实 mapid) 就落进 TRANSITION 分支变空操作 —— 世界仍是商城预览，
+		// 游戏视角全黑、BGM 仍是预览曲（_audio.log 末行 GoPicnic 铁证）。
+		// 不变量：只要请求的 mapid 与当前不一致，就必须真正换图；无论外部 clear()
+		// 是否漏调。这样三个调用点（SetField/CashShop/exit_cashshop）同源安全。
+		// 注：TRANSITION 是历史遗留枚举，全仓无任何赋值点，实际只有 INACTIVE/ACTIVE。
+		// 注意 mapid 成员未在构造期初始化，必须用 || 短路：
+		// INACTIVE 时直接 load_map，不读取可能未初始化的 this->mapid。
+		// ACTIVE 时 mapid 必已被某次 load_map 赋值，比较才安全。
+		if (state == State::INACTIVE || this->mapid != mapid)
+			load_map(mapid);   // 抛异常 = 真失败（map data missing），交给上层记录
 
 		// 地图数据一就绪就激活，不要等 respawn。
 		// 旧实现把 state=ACTIVE 放在 respawn() 之后：respawn 里任一步
@@ -102,10 +109,12 @@ namespace ms
 	{
 		char_entry = entry;
 	}
+
 	const CharEntry& Stage::get_char_entry() const
 	{
 		return char_entry;
 	}
+
 	bool Stage::has_char_entry(int32_t cid) const
 	{
 		return char_entry.id != 0 && char_entry.id == cid;
@@ -389,7 +398,11 @@ namespace ms
 
 	void Stage::try_heal_over_time()
 	{
-		// 死亡或未进图不报。
+		// 死亡或未进图不报。死亡态一律不回血，避免与服务端权威 HP 反复覆盖
+		// （真机曾出现 110↔1110 跳变以及 autopot 触发后的异常高值）。
+		if (player.get_char_state() == Char::State::DIED)
+			return;
+
 		const int32_t hp = player.get_stats().get_stat(MapleStat::Id::HP);
 		if (hp == 0)
 			return;
@@ -551,6 +564,19 @@ namespace ms
 		if (state != State::ACTIVE || !playable)
 			return;
 
+		// 死亡态复活（原生 v83 逻辑，走既有 s9 ChangeMapPacket(died=true) 协议）：
+		// 角色 HP=0 切 DIED 后，按 JUMP 键（松开沿）向服务端请求复活。
+		// s9 ChangeMapHandler:98-115 收到 died=1 且 !isAlive() 时按 wheel/respawn
+		// 回村或原地复活，再由 SetField 回灌新地图 —— 客户端无需猜复活结果。
+		// 死亡态吞掉所有其它按键，避免倒地后还能放技能/开窗。
+		if (player.get_char_state() == Char::State::DIED)
+		{
+			if (down && type == KeyType::Id::ACTION && KeyAction::actionbyid(action) == KeyAction::Id::JUMP)
+				ChangeMapPacket(true, -1, "", false).dispatch();
+
+			return;
+		}
+
 		switch (type)
 		{
 			case KeyType::Id::ACTION:
@@ -559,8 +585,21 @@ namespace ms
 			case KeyType::Id::SKILL:
 				combat.use_move(action);
 				break;
-			case KeyType::Id::ITEM:
-				player.use_item(action);
+			case KeyType::Id::MACRO:
+				// Angel v43[7]=1 + CMacroSysMan::Update：整行宏绑到键位后，按键
+				// 把该行三个技能入队、按硬直逐个释放（H1，2026-11-16 补齐；
+				// 旧实现同帧三次 use_move 被 can_attack 吞掉后两个）。
+				// H2：勾选「显示个性技能名」(slot.shout) 时，原生 IsShoutMacro
+				// 路径先把宏名喊到普通聊天，再释放技能。
+				if (down)
+				{
+					const SkillMacroSlot& slot = SkillMacros::get().get_slot(static_cast<size_t>(action));
+
+					if (slot.shout != 0 && !slot.name.empty())
+						GeneralChatPacket(slot.name, false).dispatch();
+
+					combat.use_macro(slot.skill1, slot.skill2, slot.skill3);
+				}
 				break;
 			case KeyType::Id::FACE:
 				player.set_expression(action);

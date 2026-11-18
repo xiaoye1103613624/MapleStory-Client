@@ -82,10 +82,16 @@ namespace ms
 		void change_list_page(int16_t delta);
 		/// 按当前页签重建 items（目录 → 过滤/排序 → 展示序列）。
 		void rebuild_items();
+		/// 用服务端榜单 SN 回查目录，重建右侧热销榜 5 个道具图标。
+		/// 数据在进店后由 openCashShop 包异步落到 cash_best_sellers，
+		/// 故不可只在构造期取一次，须随 rebuild_items 一起刷新。
+		void refresh_best_icons();
 		// 二级分类（MinMS 移植）
 		int8_t active_sub_count() const;
 		void draw_category_sub_tabs() const;
 		int8_t hit_category_sub_tab(Point<int16_t> cursor_relative) const;
+		/// 背包类型切换页签命中（Base/Tab2 0..4，竖排 5 个）。-1 表示未命中。
+		int8_t hit_bag_tab(Point<int16_t> cursor_relative) const;
 		bool matches_sub(const CashCommodity& c) const;
 
 		/// 预览试穿（MinMS apply_try_on 子集：脸/发/装备；无宠物/特效沙盒）。
@@ -137,9 +143,44 @@ namespace ms
 		static constexpr int16_t PLATE_H = 80;
 		static constexpr int16_t PLATE_DX = 206;
 		static constexpr int16_t PLATE_DY = 81;
-		// 二级分类栏布局（主页签下方、商品列表上方）
-		static constexpr int16_t SUB_ROW_Y = 62;
-		static constexpr int16_t SUB_ROW_H = 22;
+		// 二级分类栏布局（2026-11-18 按 live CSTab/Tab/N 508x78 像素实测重定）
+		// 贴图下半部 y=42..65 是烘焙的绿/粉/紫色带，二级分类标签必须落在这条带上。
+		// 旧值 SUB_ROW_Y=62 / 宽 412 导致标签压在带下沿且窄 96px —— 即"偏上且不在背景中"。
+		static constexpr int16_t SUB_ROW_Y = 42;   // 贴图局部 y（相对 CSTab 原点）
+		static constexpr int16_t SUB_ROW_H = 24;   // 与 MinMS SUB_ROW_H 一致
+		static constexpr int16_t SUB_STRIP_W = 508; // 与 CSTab/Tab 贴图同宽（非旧的 412）
+		static constexpr int16_t SUB_HIT_PAD_Y = 4; // 命中区上下各扩 4px（MinMS 同口径）
+
+		// 右侧热销榜（2026-11-18 按 backgrnd.png 实测）：
+		// 标题"热销榜" y≈130；五个名次行 y=157..189/227..259/295..327/365..397/433..465。
+		// 每行右侧浅色物品槽 x=742..773 (32px)，数字在左侧。数字已烘焙在 backgrnd，
+		// 本端只需往浅色槽里画道具 icon。
+		static constexpr int16_t BEST_ITEM_X = 742;
+		static constexpr int16_t BEST_ITEM_Y0 = 157;
+		static constexpr int16_t BEST_ITEM_DY = 69;   // 行距
+		static constexpr int16_t BEST_ITEM_SLOT = 32;
+		static constexpr uint8_t BEST_ROWS = 5;
+
+		// 左侧面板格子（2026-11-18 按 backgrnd.png 像素实测）：
+		// 已购道具：2 行 x 6 列，白格 31x31，x=21..191 (dx=35)，y=349..379 (dy=35)。
+		// 背包：3 行 x 4 列，白格 31x31，x=23..158 (dx=35)，y=481..581 (dy=35)。
+		static constexpr int16_t PURCH_X0 = 21;
+		static constexpr int16_t PURCH_Y0 = 349;
+		static constexpr int16_t PURCH_DX = 35;
+		static constexpr int16_t PURCH_DY = 35;
+		static constexpr uint8_t PURCH_COLS = 6;
+		static constexpr uint8_t PURCH_ROWS = 2;
+		static constexpr int16_t BACKPACK_X0 = 23;
+		static constexpr int16_t BACKPACK_Y0 = 481;
+		static constexpr uint8_t BACKPACK_COLS = 4;
+		static constexpr uint8_t BACKPACK_ROWS = 3;
+		// 背包类型切换页签：Base/Tab2/Enable|Disable/0..4（5 类）。
+		// 实测位于背包格右侧 x≈176 起、竖排 5 个，高约 22。
+		static constexpr int16_t BAG_TAB_X = 176;
+		static constexpr int16_t BAG_TAB_Y0 = 470;
+		static constexpr int16_t BAG_TAB_W = 56;
+		static constexpr int16_t BAG_TAB_H = 22;
+		static constexpr int16_t BAG_TAB_DY = 25;
 
 		// CSTab/Tab 1..9 命中区（相对 CSTab 子窗原点，实测自图元亮块边界）：
 		// 首页 热卖 装备 消耗 设置 其他 宠物 礼包 | 购物车
@@ -275,6 +316,20 @@ namespace ms
 
 		uint8_t category_sub;
 
+		/// 背包类型切换页签（Base/Tab2/Enable|Disable/0..4）与当前选中类。
+		Sprite bag_tab_enable[5];
+		Sprite bag_tab_disable[5];
+		uint8_t backpack_tab = 0;
+
+		/// 右侧热销榜的道具图标：下标 i 对应名次 i+1，空 SN 为 invalid Texture。
+		/// 数据来自 UIStateCashShop::cash_best_sellers（服务端 openCashShop 榜单）。
+		Texture best_icons[BEST_ROWS];
+
+		/// 把一张道具图标等比缩放居中填进给定矩形槽（复用于货板/热销榜/已购/背包）。
+		/// DrawArgument 以 origin*scale 为锚，必须补 origin 抵消贴图原点漂移。
+		static void draw_icon_in_slot(const Texture& icon, Point<int16_t> slot_pos,
+		                              int16_t slot_size);
+
 		Text job_label;
 		Text name_label;
 		Text cs_meta_label;
@@ -304,7 +359,6 @@ namespace ms
 		Text item_percent[MAX_ITEMS];
 		Text item_empty_notice;
 
-		Slider list_slider;
 		int16_t list_offset;
 		Text page_label;
 	};

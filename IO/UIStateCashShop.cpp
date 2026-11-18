@@ -26,6 +26,7 @@ namespace ms
 	int32_t UIStateCashShop::cash_nx_credit = 0;
 	int32_t UIStateCashShop::cash_maple_point = 0;
 	int32_t UIStateCashShop::cash_nx_prepaid = 0;
+	std::vector<int32_t> UIStateCashShop::cash_best_sellers;
 	std::vector<CashInvEntry> UIStateCashShop::cash_inventory;
 	std::vector<CashGiftEntry> UIStateCashShop::cash_gifts;
 	std::array<int32_t, 10> UIStateCashShop::cash_wishlist{};
@@ -41,13 +42,26 @@ namespace ms
 
 	void UIStateCashShop::draw(float inter, Point<int16_t> cursor) const
 	{
+		// EnumMap 按 Type 升序：NOTICE/SOFTKEYBOARD < CASHSHOP，若整表顺序绘
+		// 会把购买确认 / SoftKey 盖在商城底板下（可见光标点得到、窗体看不见）。
+		// 先画非焦点，最后画 focused（UICashBuyConfirm / SoftKey 均 FOCUSED）。
+		UIElement* focused_el = nullptr;
+
 		for (auto iter : elements)
 		{
 			UIElement* element = iter.second.get();
 
-			if (element && element->is_active())
+			if (!element || !element->is_active())
+				continue;
+
+			if (iter.first == focused)
+				focused_el = element;
+			else
 				element->draw(inter);
 		}
+
+		if (focused_el)
+			focused_el->draw(inter);
 	}
 
 	void UIStateCashShop::update()
@@ -61,6 +75,27 @@ namespace ms
 				element->refresh_localized();
 				element->update();
 			}
+		}
+	}
+
+	void UIStateCashShop::send_key(KeyType::Id, int32_t action, bool pressed, bool escape)
+	{
+		// 须转发 key-up：预览沙盒 send_action(..., false) 依赖松开。
+		if (auto focusedelement = get(focused))
+		{
+			if (focusedelement->is_active())
+			{
+				focusedelement->send_key(action, pressed, escape);
+				return;
+			}
+
+			focused = UIElement::Type::NONE;
+		}
+
+		if (auto cs = get(UIElement::Type::CASHSHOP))
+		{
+			if (cs->is_active())
+				cs->send_key(action, pressed, escape);
 		}
 	}
 
@@ -127,6 +162,12 @@ namespace ms
 
 	UIElement* UIStateCashShop::get_front()
 	{
+		if (auto focusedelement = get(focused))
+		{
+			if (focusedelement->is_active())
+				return focusedelement;
+		}
+
 		UIElement* front = nullptr;
 
 		for (auto iter : elements)
@@ -138,6 +179,14 @@ namespace ms
 		}
 
 		return front;
+	}
+
+	bool UIStateCashShop::has_active_focused()
+	{
+		if (auto focusedelement = get(focused))
+			return focusedelement->is_active();
+
+		return false;
 	}
 
 	void UIStateCashShop::remove_cursor(UIElement::Type type)

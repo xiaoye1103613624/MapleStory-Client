@@ -26,13 +26,21 @@
 
 namespace ms
 {
-	// 现金商城商品（来自服务端 getCSPacket 主商品列表），供 UICashShop 消费。
+	// 现金商城商品。在售目录基表 = 客户端本地 Etc/Commodity.img 的 OnSale==1
+	// 行；服务端 s9 openCashShop 下发的是 modified_cash_item「改价/上下架覆盖表」
+	// （表空时 count=0 属正常语义），按 SN 覆盖进来。供 UICashShop 消费。
 	struct CashCommodity
 	{
-		int32_t sn;
-		int32_t itemid;
-		int32_t price;
-		int16_t count;
+		int32_t sn = 0;
+		int32_t itemid = 0;
+		int32_t price = 0;
+		int32_t period = 0;
+		int32_t priority = 0;
+		int16_t gender = 2;
+		int16_t count = 1;
+		bool onsale = true;
+		// 仅服务端覆盖条目使用：CommodityFlag 未带 ON_SALE 位时不得改本地上下架态。
+		bool has_onsale = false;
 		std::string name;
 	};
 
@@ -62,7 +70,7 @@ namespace ms
 
 		void doubleclick(Point<int16_t>) override {}
 		void rightclick(Point<int16_t>) override {}
-		void send_key(KeyType::Id, int32_t, bool, bool) override {}
+		void send_key(KeyType::Id type, int32_t action, bool pressed, bool escape) override;
 		Cursor::State send_cursor(Point<int16_t> cursor_position, Cursor::State cursor_state) override;
 		void send_scroll(double yoffset) override {}
 		void send_close() override {}
@@ -81,6 +89,7 @@ namespace ms
 		UIElement* get_front();
 		UIElement* get_front(std::list<UIElement::Type>) override { return nullptr; }
 		UIElement* get_front(Point<int16_t>) override { return nullptr; }
+		bool has_active_focused() override;
 
 	private:
 		void remove_cursor(UIElement::Type type);
@@ -94,6 +103,10 @@ namespace ms
 	public:
 		// 由 SetCashShopHandler 解析 getCSPacket 后填充，UICashShop 构造时消费。
 		static std::vector<CashCommodity> cashshop_commodities;
+
+		// 由 SetCashShopHandler 解析 s9 openCashShop 热卖网格（8 类 × 2 性别 × 前 5）。
+		// 顺序即服务端写入顺序，UI「热卖」页签直接按此序列取条目。
+		static std::vector<int32_t> cash_best_sellers;
 
 		// 由 QueryCashResultHandler 解析 s9 showCash（QUERY_CASH_RESULT=324）：
 		// int NX_CREDIT / int MAPLE_POINT / int NX_PREPAID。

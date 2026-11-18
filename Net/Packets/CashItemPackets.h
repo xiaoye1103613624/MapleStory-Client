@@ -168,12 +168,20 @@ namespace ms
 	{
 	public:
 		ReportPlayerPacket(const std::string& victim, const std::string& description)
+			: ReportPlayerPacket(victim, description, 0, 0) {}
+
+		// type: 0=非法程序举报(走 type==0 分支, 扣次数/300金币), 1=对话举报(+chatlog)
+		// reason: 0..N 举报理由；chatlog: type==1 时附带的聊天记录
+		ReportPlayerPacket(const std::string& victim, const std::string& description,
+			int8_t type, int8_t reason, const std::string& chatlog = "")
 			: OutPacket(OutPacket::Opcode::REPORT)
 		{
-			write_byte(0); // illegal program / 通用
+			write_byte(type);
 			write_string(victim);
-			write_byte(0); // reason
+			write_byte(reason);
 			write_string(description);
+			if (type == 1)
+				write_string(chatlog);
 		}
 	};
 
