@@ -24,6 +24,7 @@
 #include "../../Audio/Audio.h"
 #include "../../Util/Misc.h"
 #include "../../Util/ResolutionTiers.h"
+#include "../../Util/UiAssetResolve.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -33,15 +34,21 @@ namespace ms
 {
 	UINotice::UINotice(std::string message, NoticeType t, Text::Alignment a) : UIDragElement<PosNOTICE>(), type(t), alignment(a)
 	{
-		nl::node src = nl::nx::UI["Basic.img"]["Notice6"];
+		// 2026-11-16 弹窗全不显示根因修复：
+		// 原实现照抄 Angel 083 的 Basic.img/Notice6（子键 t/c/c_box/box/box2/s_box），
+		// 但 live（BeiDou/095）Basic.img 只有 Notice~Notice5，按钮只有 BtOK/2/3 与
+		// BtCancel/2/3 —— Notice6 / BtOK4 / BtCancel4 全部缺失，背景与按钮纹理为空，
+		// dimension 退化为 0，弹窗不可见。改用 live 存在的 Notice3（提示）/ Notice4
+		// （数字输入，含 s_line 白框）三段式 t + N×c + s，口径与 MinMS 一致。
+		nl::node basic = nl::nx::UI["Basic.img"];
+		nl::node src = basic[type == NoticeType::ENTERNUMBER ? "Notice4" : "Notice3"];
 
 		top = src["t"];
 		center = src["c"];
-		centerbox = src["c_box"];
-		box = src["box"];
-		box2 = src["box2"];
-		bottom = src["s"];
-		bottombox = src["s_box"];
+		if (type == NoticeType::ENTERNUMBER && src["s_line"])
+			bottom = src["s_line"];
+		else
+			bottom = src["s"];
 
 		if (type == NoticeType::YESNO)
 		{
@@ -78,18 +85,27 @@ namespace ms
 		}
 
 		height = question.height();
-		dimension = Point<int16_t>(top.width(), top.height() + height + bottom.height());
+		if (height < 1)
+			height = 1;
+		int16_t tile_h = center.height() > 0 ? center.height() : 20;
+		center_tiles = (height + tile_h - 1) / tile_h;
+		if (center_tiles < 1)
+			center_tiles = 1;
+		int16_t panel_w = top.width() > 0 ? top.width() : 266;
+		int16_t panel_h = top.height() + center_tiles * tile_h + bottom.height();
+		dimension = Point<int16_t>(panel_w, panel_h);
 		position = Point<int16_t>(position.x() - dimension.x() / 2, position.y() - dimension.y() / 2);
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		if (type != NoticeType::ENTERNUMBER)
 			Sound(Sound::Name::DLGNOTICE).play();
 
-		// Center 策略：非 1280×720 视口居中；1280×720 保留 PosNOTICE 绝对位置。
+		// 居中策略：弹窗一律按当前视口居中（不再依赖 PosNOTICE 的绝对锚点）。
+		// 旧实现仅非 1280×720 才 center_on_screen，1280×720 落到 :97 的手动减半 +
+		// ENTERNUMBER 的 shift_y(-16) 偏移 → 弹窗偏上、不在正中（用户「弹窗没居中」）。
+		// center_on_screen 会用 dimension 重算 position，覆盖上述偏移，四类弹窗统一归位。
 		set_layout_policy(LayoutPolicy::Center);
-		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
-			|| Constants::Constants::get().get_viewheight() != ResolutionTiers::LOGIN_H)
-			center_on_screen();
+		center_on_screen();
 	}
 
 	UINotice::UINotice(std::string message, NoticeType t) : UINotice(message, t, Text::Alignment::CENTER) {}
@@ -106,62 +122,66 @@ namespace ms
 		top.draw(start);
 		start.shift_y(top.height());
 
-		if (textfield)
+		// Notice3/4 三段式：t + N×c + s，替代缺失的 Notice6 专有子键。
+		const int16_t tile_h = center.height() > 0 ? center.height() : 20;
+		for (int16_t i = 0; i < center_tiles; ++i)
 		{
 			center.draw(start);
-			start.shift_y(center.height());
-			centerbox.draw(start);
-			start.shift_y(centerbox.height() - 1);
-			box2.draw(start);
-			start.shift_y(box2.height());
-			box.draw(DrawArgument(start, Point<int16_t>(0, 29)));
-			start.shift_y(29);
-
-			question.draw(position + Point<int16_t>(13, 13));
+			start.shift_y(tile_h);
 		}
+
+		// 文字在 c 平铺区垂直居中；水平沿用原坐标（面板同为 266 宽）。
+		// 保留本端 OK 描边字（tip_question）与 LEFT/CENTER 对齐分支，不照搬 MinMS 缩放。
+		int16_t text_y = top.height() + (center_tiles * tile_h - height) / 2;
+		if (text_y < top.height())
+			text_y = top.height();
+
+		if (textfield)
+			question.draw(position + Point<int16_t>(13, text_y));
+		else if (type == NoticeType::OK)
+			tip_question.draw(position + Point<int16_t>(131, text_y));
+		else if (type == NoticeType::YESNO && alignment == Text::Alignment::LEFT)
+			question.draw(position + Point<int16_t>(31, text_y));
 		else
-		{
-			int16_t pos_y = height >= 32 ? height : 32;
+			question.draw(position + Point<int16_t>(131, text_y));
 
-			center.draw(DrawArgument(start, Point<int16_t>(0, pos_y)));
-			start.shift_y(pos_y);
-			centerbox.draw(start);
-			start.shift_y(centerbox.height());
-			box.draw(start);
-			start.shift_y(box.height());
-
-			if (type == NoticeType::OK)
-				tip_question.draw(position + Point<int16_t>(131, 14));
-			else if (type == NoticeType::YESNO && alignment == Text::Alignment::LEFT)
-				question.draw(position + Point<int16_t>(31, 14));
-			else
-				question.draw(position + Point<int16_t>(131, 14));
-		}
-
-		bottombox.draw(start);
+		bottom.draw(start);
 	}
 
-	int16_t UINotice::box2offset(bool textfield) const
+	int16_t UINotice::panel_bottom() const
 	{
-		int16_t offset = top.height() + centerbox.height() + box.height() + height - (textfield ? 0 : 16);
+		const int16_t tile_h = center.height() > 0 ? center.height() : 20;
+		return static_cast<int16_t>(top.height() + center_tiles * tile_h);
+	}
 
-		if (type == NoticeType::OK)
-			if (height < 34)
-				offset += 15;
+	int16_t UINotice::button_row_y() const
+	{
+		// BtOK2 / BtCancel2 原始高度 19px；在 s 段内垂直居中。
+		constexpr int16_t BTN_H = 19;
+		const int16_t band = bottom.height() > BTN_H ? bottom.height() : BTN_H;
+		return static_cast<int16_t>(panel_bottom() + (band - BTN_H) / 2);
+	}
 
-		return offset;
+	int16_t UINotice::box_width() const
+	{
+		return dimension.x();
 	}
 
 	UIYesNo::UIYesNo(std::string message, std::function<void(bool yes)> yh, Text::Alignment alignment) : UINotice(message, NoticeType::YESNO, alignment)
 	{
 		yesnohandler = yh;
 
-		int16_t belowtext = box2offset(false);
+		nl::node basic = nl::nx::UI["Basic.img"];
+		const int16_t by = button_row_y();
+		const int16_t btns_w = 47;   // BtOK2 / BtCancel2 normal 帧宽
+		const int16_t right_margin = 21;
+		const int16_t gap = 10;
+		const int16_t cancel_x = static_cast<int16_t>(box_width() - right_margin - btns_w);
+		const int16_t ok_x = static_cast<int16_t>(cancel_x - gap - btns_w);
 
-		nl::node src = nl::nx::UI["Basic.img"];
-
-		buttons[Buttons::YES] = std::make_unique<MapleButton>(src["BtOK4"], Point<int16_t>(156, belowtext));
-		buttons[Buttons::NO] = std::make_unique<MapleButton>(src["BtCancel4"], Point<int16_t>(198, belowtext));
+		// 用 live 存在的 BtOK2 / BtCancel2 替换缺失的 BtOK4 / BtCancel4。
+		buttons[Buttons::YES] = std::make_unique<MapleButton>(basic["BtOK2"], Point<int16_t>(ok_x, by));
+		buttons[Buttons::NO] = std::make_unique<MapleButton>(basic["BtCancel2"], Point<int16_t>(cancel_x, by));
 	}
 
 	UIYesNo::UIYesNo(std::string message, std::function<void(bool yes)> yesnohandler) : UIYesNo(message, yesnohandler, Text::Alignment::CENTER) {}
@@ -216,21 +236,27 @@ namespace ms
 		numhandler = nh;
 		max = m;
 
-		int16_t belowtext = box2offset(true) - 21;
-		int16_t pos_y = belowtext + 35;
+		nl::node basic = nl::nx::UI["Basic.img"];
+		const int16_t by = button_row_y();
+		const int16_t btns_w = 47;
+		const int16_t right_margin = 21;
+		const int16_t gap = 10;
+		const int16_t cancel_x = static_cast<int16_t>(box_width() - right_margin - btns_w);
+		const int16_t ok_x = static_cast<int16_t>(cancel_x - gap - btns_w);
 
-		nl::node src = nl::nx::UI["Basic.img"];
+		buttons[Buttons::OK] = std::make_unique<MapleButton>(basic["BtOK2"], Point<int16_t>(ok_x, by));
+		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(basic["BtCancel2"], Point<int16_t>(cancel_x, by));
 
-		buttons[Buttons::OK] = std::make_unique<MapleButton>(src["BtOK4"], 156, pos_y);
-		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(src["BtCancel4"], 198, pos_y);
-
-		Point<int16_t> numfield_pos = position + Point<int16_t>(22, belowtext + 5);
-		Point<int16_t> numfield_dim = Point<int16_t>(217, 16);
+		// Notice4/s_line 白色输入框：bottom 画在 panel_bottom() 起的水平台，白框内区约 (7,9)-(259,28)。
+		// numfield 用「相对弹窗左上角」的局部坐标，draw() 时统一加 position，避免 center_on_screen
+		// 重算 position 后 bounds 仍停在旧位置（弹窗居中后输入框飘走/数量不可见的根因）。
+		Point<int16_t> numfield_pos = Point<int16_t>(10, panel_bottom() + 10);
+		Point<int16_t> numfield_dim = Point<int16_t>(240, 16);
 
 		int16_t numfield_limit = 10;
 
-		numfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LIGHTGREY, Rectangle<int16_t>(numfield_pos, numfield_pos + numfield_dim), numfield_limit);
-		numfield.change_text(std::to_string(quantity));
+		numfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Rectangle<int16_t>(numfield_pos, numfield_pos + numfield_dim), numfield_limit);
+		numfield.set_digits_only(true);
 
 		numfield.set_enter_callback(
 			[&](std::string numstr)
@@ -248,6 +274,9 @@ namespace ms
 		);
 
 		numfield.set_state(Textfield::State::FOCUSED);
+		// 初值在 set_state(FOCUSED) 之后设置：focus_textfield 只切 IME 状态不清文本，
+		// 但放在最后确保不被任何焦点切换路径覆盖（用户「数量没显示」加固）。
+		numfield.change_text(std::to_string(quantity));
 	}
 
 	void UIEnterNumber::draw(float alpha) const
@@ -255,7 +284,8 @@ namespace ms
 		UINotice::draw(true);
 		UIElement::draw(alpha);
 
-		numfield.draw(Point<int16_t>(2, -4));
+		// numfield bounds 是相对弹窗的局部坐标，绘制基准统一加 position（与居中/拖动后位置一致）。
+		numfield.draw(position);
 	}
 
 	void UIEnterNumber::update()
@@ -269,7 +299,8 @@ namespace ms
 	{
 		if (numfield.get_state() == Textfield::State::NORMAL)
 		{
-			Cursor::State nstate = numfield.send_cursor(cursorpos, clicked);
+			// numfield bounds 为相对弹窗局部坐标，命中判定换算到局部系。
+			Cursor::State nstate = numfield.send_cursor(cursorpos - position, clicked);
 
 			if (nstate != Cursor::State::IDLE)
 				return nstate;
@@ -375,9 +406,10 @@ namespace ms
 	{
 		okhandler = oh;
 
-		nl::node src = nl::nx::UI["Basic.img"];
+		nl::node basic = nl::nx::UI["Basic.img"];
 
-		buttons[Buttons::OK] = std::make_unique<MapleButton>(src["BtOK4"], 197, box2offset(false));
+		buttons[Buttons::OK] = std::make_unique<MapleButton>(basic["BtOK2"],
+			Point<int16_t>(box_width() - 21 - 47, button_row_y()));
 	}
 
 	void UIOk::draw(float alpha) const

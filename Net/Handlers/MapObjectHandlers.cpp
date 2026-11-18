@@ -25,9 +25,8 @@
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIMiscShells.h"
-#include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UICharInfo.h"
 #include "../../IO/UITypes/UIItemInventory.h"
-#include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Graphics/Color.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -37,18 +36,6 @@
 namespace ms
 {
 	namespace {
-		void map_tip(const std::string& tip, Color::Name color = Color::Name::YELLOW)
-		{
-			// chat 优先；无 ChatBar 才 SM；不强制 FloatNotice
-			auto mt = (color == Color::Name::RED) ? UIChatBar::MessageType::RED
-				: (color == Color::Name::WHITE) ? UIChatBar::MessageType::WHITE
-				: UIChatBar::MessageType::YELLOW;
-			if (auto chatbar = UI::get().get_element<UIChatBar>())
-			{
-				chatbar->show_message(tip.c_str(), mt);
-				return;
-			}
-		}
 
 		////////////////////////////////////////////////////////////////////////////////
 		// SPAWN_MONSTER / SPAWN_MONSTER_CONTROL 共用可变段解析。
@@ -876,7 +863,7 @@ namespace ms
 			grade = recv.read_byte();
 			playerdrop = !recv.read_bool();
 		}
-		else if (recv.available() == 1)
+		else if (recv.length() == 1)
 		{
 			// 旧服务端包体：无 grade 字节，按普通掉落处理（不画光环）。
 			playerdrop = !recv.read_bool();
@@ -911,10 +898,9 @@ namespace ms
 			if (auto character = Stage::get().get_character(cid))
 				looter = character->get_phobj(); // 宠物贴附在主人处，飞向其位置
 
-			// 083 拾取走 CHATLOG_ADD。只记自己的拾取，避免别人捡东西刷屏。
-			if (Stage::get().is_player(cid))
-				map_tip(Locale::text("drop.picked_up"), Color::Name::WHITE);
-
+			// 拾取反馈由服务端 SHOW_STATUS_INFO / SHOW_ITEM_GAIN_IN_CHAT 驱动，
+			// 右侧状态飘字已经显示道具名；客户端不再自发往 ChatBar 灌
+			// 「获得了道具。」，避免同一件事在聊天框重复刷屏。
 			Sound(Sound::Name::PICKUP).play();
 		}
 		while (recv.available())
@@ -1748,7 +1734,7 @@ namespace ms
 		// 尾部固定 byte(size)+int(0)，前面是 0 或多个 int(reflection)（s9 反射计数）。
 		if (recv.available() >= 5)
 		{
-			recv.skip(recv.available() - 5);
+			recv.skip(recv.length() - 5);
 			recv.read_byte(); // size（含 reflection/2 的语义，展示不用）
 			recv.read_int(); // 0
 		}
@@ -1816,12 +1802,20 @@ namespace ms
 
 	void PetExceptionListHandler::handle(InPacket& recv) const
 	{
+		// s9 PacketCreator.loadExceptionList：int cid / byte petIdx / long petId / byte count / int itemid*
 		int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
 		int8_t idx = recv.available() ? recv.read_byte() : 0;
-		LOG(LOG_DEBUG, "PetExceptionList cid=" << cid << " idx=" << (int)idx
-			<< " rem=" << recv.available());
+		if (recv.available() >= 8) recv.skip(8);          // petId (long)
+		uint8_t count = recv.available() ? static_cast<uint8_t>(recv.read_byte()) : 0;
+		std::vector<int32_t> items;
+		for (uint8_t i = 0; i < count && recv.available() >= 4; i++)
+			items.push_back(recv.read_int());
 		while (recv.available())
 			recv.skip_byte();
-		(void)cid; (void)idx;
+
+		// 2026-11-18：不再丢弃——写入 UICharInfo 排除道具子窗数据源。
+		UICharInfo::store_excluded_items(cid, items);
+		LOG(LOG_DEBUG, "PetExceptionList cid=" << cid << " idx=" << (int)idx
+			<< " count=" << (int)count);
 	}
 }

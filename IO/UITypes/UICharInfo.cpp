@@ -19,7 +19,9 @@
 
 #include "../Components/MapleButton.h"
 
+#include "../../Data/ItemData.h"
 #include "../../Gameplay/Stage.h"
+#include "../../Graphics/Geometry.h"
 
 #include "../../Net/Packets/BuddyPackets.h"
 #include "../../Net/Packets/CashItemPackets.h"
@@ -42,6 +44,7 @@
 #include "../../Util/Locale.h"
 #include "UIMonsterBook.h"
 #include "UISoftKey.h"
+#include "UIChatBar.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -66,11 +69,10 @@ namespace ms
 		}
 
 		/// Main Window
+		// 正确端个人情报框默认态 = 仅 backgrnd(275x199)。backgrnd2/5/7 是"子窗全展开"
+		// 大背景板（含种类/亲密度空槽），旧代码无条件叠加导致默认态出现空框/空白面板；
+		// 这些板由 show_*_window 的子窗 sprite 各自负责，主窗只画 backgrnd。
 		sprites.emplace_back(backgrnd);
-		if (character["backgrnd2"])
-			sprites.emplace_back(character["backgrnd2"]);
-		if (character["name"])
-			sprites.emplace_back(character["name"]);
 
 		Point<int16_t> backgrnd_dim = Texture(backgrnd).get_dimensions();
 		Point<int16_t> close_dimensions = Point<int16_t>(backgrnd_dim.x() - 21, 6);
@@ -81,32 +83,38 @@ namespace ms
 				buttons[id] = std::make_unique<MapleButton>(src, pos);
 		};
 
+		// 坐标以正确端截图（个人请报框.png）逐像素量取，相对主窗左上角。
+		// 关闭钮
 		try_btn(Buttons::BtClose, close, close_dimensions);
-		try_btn(Buttons::BtCollect, character["BtCollect"]);
+		// 顶部功能按钮区：学院(40x37) / 组队邀请(59x17) / 道具(60x19) / 交易邀请(59x17) / 想买的(60x19)
+		try_btn(Buttons::BtFamily, character["BtFamily"] ? character["BtFamily"] : UserInfo["BtFamily"], Point<int16_t>(100, 20));
+		try_btn(Buttons::BtParty, character["BtParty"] ? character["BtParty"] : UserInfo["BtParty"], Point<int16_t>(148, 22));
+		try_btn(Buttons::BtItem, character["BtItem"] ? character["BtItem"] : UserInfo["BtItem"], Point<int16_t>(209, 22));
+		try_btn(Buttons::BtTrad, character["BtTrade"] ? character["BtTrade"] : UserInfo["BtTrade"], Point<int16_t>(148, 44));
+		try_btn(Buttons::BtWish, character["BtWish"] ? character["BtWish"] : UserInfo["BtWish"], Point<int16_t>(209, 44));
+		// 底部按钮区：骑宠(47x17) / 宠物(49x17) / 收藏(49x17) / 排除道具(71x17)
+		try_btn(Buttons::BtRide, character["BtTamingShow"] ? character["BtTamingShow"] : UserInfo["BtTamingShow"], Point<int16_t>(5, 173));
+		try_btn(Buttons::BtPet, character["BtPetShow"] ? character["BtPetShow"] : UserInfo["BtPetShow"], Point<int16_t>(93, 173));
+		try_btn(Buttons::BtCollect, character["BtCollectionShow"] ? character["BtCollectionShow"] : UserInfo["BtCollectionShow"], Point<int16_t>(147, 173));
+		try_btn(Buttons::BtException, character["BtExceptionShow"] ? character["BtExceptionShow"] : UserInfo["BtExceptionShow"], Point<int16_t>(198, 173));
+		// 兼容保留：旧子窗/调试按钮（运行时扁平 UserInfo 多不存在，try_btn guard 跳过），不给定坐标。
 		try_btn(Buttons::BtDamage, character["BtDamage"]);
-		try_btn(Buttons::BtFamily, character["BtFamily"]);
-		try_btn(Buttons::BtItem, character["BtItem"]);
-		try_btn(Buttons::BtParty, character["BtParty"]);
 		try_btn(Buttons::BtPersonality, character["BtPersonality"]);
-		try_btn(Buttons::BtPet, character["BtPet"]);
 		try_btn(Buttons::BtPopDown, character["BtPopDown"]);
 		try_btn(Buttons::BtPopUp, character["BtPopUp"]);
-		try_btn(Buttons::BtRide, character["BtRide"]);
-		try_btn(Buttons::BtTrad, character["BtTrad"]);
-		try_btn(Buttons::BtBook, character["BtBook"], Point<int16_t>(backgrnd_dim.x() - 40, 40));
+		// 不加载 BtBook：正确端主窗无此按钮（「道具/想买的」已占右上区域）。
 
+		// 正确端个人情报框字段值：深色黑字、A11M 字重，与粉底标签同一行基线。
+		// 旧代码用 EMPEROR 灰字 + 值起点 y=65 → 观感「字体不对/位置偏上」（实测值字 y≈60，标签 y≈75）。
 		name = Text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE);
-		job = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
-		level = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
-		fame = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
-		guild = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
-		alliance = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		job = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		level = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		fame = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		guild = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
+		alliance = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 
-		// 坐骑外观未暴露：Ride 保持禁用；Pet 在 load_target 后按 has_pet 切换
-		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
-			it->second->set_state(Button::State::DISABLED);
-		if (auto it = buttons.find(Buttons::BtRide); it != buttons.end() && it->second)
-			it->second->set_state(Button::State::DISABLED);
+		// 正确端底部按钮（骑宠/宠物/收藏/排除道具）normal 态贴图本身即带文字，
+		// 不再强制 DISABLED——旧代码把 BtPet/BtRide 设为禁用导致渲染成灰空框。
 
 		/// Farm
 		nl::node farm = UserInfo["farm"];
@@ -114,7 +122,7 @@ namespace ms
 
 		loading = farm["loading"];
 
-		farm_dim = Texture(farm_backgrnd).get_dimensions();
+		farm_dim = farm_backgrnd ? Texture(farm_backgrnd).get_dimensions() : Point<int16_t>(0, 0);
 		farm_adj = Point<int16_t>(-farm_dim.x(), 0);
 
 		if (farm_backgrnd)
@@ -206,15 +214,38 @@ namespace ms
 		item_dimensions = Texture(item_backgrnd).get_dimensions();
 #pragma endregion
 
+		/// Full-fill 子窗背景板（运行时 UserInfo.img 独立 canvas）
+		// 右侧浮层板（240x162/159x147）挂在 right_window_adj；整窗展开板（275宽）挂 (0,0)。
+		panel_offset = right_window_adj;
+		if (UserInfo["backgrnd2"]) panel_bg_pet = Sprite(UserInfo["backgrnd2"], Point<int16_t>(0, 0));
+		if (UserInfo["backgrnd5"]) panel_bg_mount = Sprite(UserInfo["backgrnd5"], Point<int16_t>(0, 0));
+		if (UserInfo["backgrnd7"]) panel_bg_medal = Sprite(UserInfo["backgrnd7"], Point<int16_t>(0, 0));
+		if (UserInfo["backgrnd3"]) panel_bg_wish = Sprite(UserInfo["backgrnd3"], panel_offset);
+		if (UserInfo["backgrnd4"]) panel_bg_item = Sprite(UserInfo["backgrnd4"], panel_offset);
+		if (UserInfo["backgrnd6"]) panel_bg_exclude = Sprite(UserInfo["backgrnd6"], panel_offset);
+
+		// 子窗数据文本（A11M/LEFT/EMPEROR 与字段区风格一致）
+		for (int i = 0; i < 3; i++)
+		{
+			pet_name_texts.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
+			pet_level_texts.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		}
+		mount_info_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		mount_exinfo_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		for (int i = 0; i < 6; i++)
+		{
+			wish_item_texts.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+			item_slot_texts.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		}
+		book_info_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		medal_info_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR);
+		for (int i = 0; i < 12; i++)
+			medal_quest_texts.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
 
 		dimension = backgrnd_dim;
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		target_character = Stage::get().get_character(cid).get();
-		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
-			it->second->set_state(
-				(target_character && target_character->has_pet())
-					? Button::State::NORMAL : Button::State::DISABLED);
 
 		CharInfoRequestPacket(cid).dispatch();
 	}
@@ -229,24 +260,37 @@ namespace ms
 			if (it != buttons.end() && it->second)
 				it->second->draw(position);
 		}
+		// 正确端顶部「想买的」/ 底部「排除道具」按钮（追加枚举值，不落在旧循环范围）
+		for (uint16_t id : { static_cast<uint16_t>(Buttons::BtWish), static_cast<uint16_t>(Buttons::BtException) })
+		{
+			auto it = buttons.find(id);
+			if (it != buttons.end() && it->second)
+				it->second->draw(position);
+		}
 
 		/// Main Window
+		// 正确端（个人请报框.png，r04 量取）：粉底标签 x=102 起、y=75/93/111/129/147（行距18）；
+		// 值起点 x≈155，与标签同一基线。旧值 text_pos=(153,65) 使值字 y≈60，比标签偏上约19px。
+		// 修正为 y=75 首行，与标签齐平；字体 A11M 深黑（构造函数已改）。
 		int16_t row_height = 18;
-		Point<int16_t> text_pos = position + Point<int16_t>(153, 65);
+		Point<int16_t> text_pos = position + Point<int16_t>(155, 75);
 
-		target_character->draw_preview(position + Point<int16_t>(63, 129), inter);
+		// 目标可能已离图：禁止裸解引用（双击开窗后角色瞬移会空指针崩绘）。
+		if (target_character)
+			target_character->draw_preview(position + Point<int16_t>(63, 129), inter);
 
-		name.draw(position + Point<int16_t>(59, 131));
+		// 名字条：正确端 y=147..162，居中文字基线取 y=150（旧值 131 偏上约16px）。
+		name.draw(position + Point<int16_t>(59, 150));
 		level.draw(text_pos + Point<int16_t>(0, row_height * 0));
 		job.draw(text_pos + Point<int16_t>(0, row_height * 1));
 		fame.draw(text_pos + Point<int16_t>(0, row_height * 2));
-		guild.draw(text_pos + Point<int16_t>(0, row_height * 3) + Point<int16_t>(0, 1));
+		guild.draw(text_pos + Point<int16_t>(0, row_height * 3));
 		alliance.draw(text_pos + Point<int16_t>(0, row_height * 4));
 
-		/// Farm
+		/// Farm（v83 扁平面常无 farm 节点；invalid Texture 跳过）
 		Point<int16_t> farm_pos = position + farm_adj;
 
-		if (is_loading)
+		if (is_loading && farm_dim.x() > 0)
 			loading.draw(farm_pos, inter);
 
 		farm_name.draw(farm_pos + Point<int16_t>(136, 51));
@@ -258,7 +302,7 @@ namespace ms
 			for (Sprite sprite : personality_sprites)
 				sprite.draw(position, inter);
 
-			bool show_personality = (target_character->get_level() >= 30);
+			bool show_personality = target_character && (target_character->get_level() >= 30);
 
 			for (Sprite sprite : personality_sprites_enabled[show_personality])
 				sprite.draw(position, inter);
@@ -314,9 +358,14 @@ namespace ms
 			for (Sprite sprite : item_sprites)
 				sprite.draw(position, inter);
 
-		/// Monster Book button (always visible)
-		if (auto it = buttons.find(Buttons::BtBook); it != buttons.end() && it->second)
-			it->second->draw(position);
+		// 正确端主窗无独立 BOOK INFO 按钮：顶部「道具/想买的」已占该区域；
+		// 旧的 BtBook @(backgrnd_dim.x()-40,40) 会压在「想买的」上，故不加载也不绘制。
+
+		// 全功能子窗（宠物/坐骑/心愿/道具/勋章/排除道具）叠加绘制
+		draw_subpanel(inter);
+		// 人气 ± 箭头（默认态显示；子窗展开时随整窗板覆盖）
+		if (active_panel == SubPanel::NONE)
+			draw_fame_arrows();
 	}
 
 	void UICharInfo::update()
@@ -367,7 +416,7 @@ namespace ms
 			}
 			case Buttons::BtItem:
 			{
-				show_right_window(buttonid);
+				show_subpanel(SubPanel::ITEM);
 
 				return Button::State::NORMAL;
 			}
@@ -377,10 +426,36 @@ namespace ms
 
 				return Button::State::NORMAL;
 			}
-			case Buttons::BtCollect:
-			case Buttons::BtPersonality:
+			case Buttons::BtWish:
+			{
+				// 「想买的」= 心愿单子窗（UserInfo/backgrnd3），数据来自 CHAR_INFO wishlist。
+				show_subpanel(SubPanel::WISH);
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtException:
+			{
+				// 「排除道具」子窗（UserInfo/backgrnd6）。列表数据由 PET_EXCEPTION_LIST(173)
+				// 提供，当前 handler 仅记录日志；子窗面板先展示原生背景 + 已有数据占位。
+				show_subpanel(SubPanel::EXCLUDE);
+				return Button::State::NORMAL;
+			}
 			case Buttons::BtRide:
+			{
+				show_subpanel(SubPanel::MOUNT);
+				return Button::State::NORMAL;
+			}
 			case Buttons::BtPet:
+			{
+				show_subpanel(SubPanel::PET);
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtCollect:
+			{
+				// 收藏 → 勋章/图鉴子窗（UserInfo/backgrnd7）
+				show_subpanel(SubPanel::MEDAL);
+				return Button::State::NORMAL;
+			}
+			case Buttons::BtPersonality:
 			case Buttons::BtDamage:
 			{
 				show_bottom_window(buttonid);
@@ -406,13 +481,17 @@ namespace ms
 			}
 			case Buttons::BtVisit:
 			{
+				// Angel CUIUserInfo 私聊入口 = CUIStatusBar::SetWhisperTarget（切密语频道 +
+				// 预置 "/w <名字> "，焦点留给玩家输入），与右键菜单 BtWhisper 同语义。
 				std::string n = target_character ? target_character->get_name() : name.get_text();
+				if (n.empty())
+					n = get_target_name();
 				if (!n.empty()) {
-					UI::get().emplace<UISoftKey>([n](const std::string& msg) {
-						if (msg.empty()) return;
-						WhisperPacket(n, msg).dispatch();
-						LOG(LOG_DEBUG, "UICharInfo: Whisper to=" << n << " len=" << msg.size());
-					}, []() {}, "Whisper");
+					if (auto chat = UI::get().get_element<UIChatBar>())
+						chat->set_whisper_target(n);
+					else
+						UI::get().emplace<UIChatBar>()->set_whisper_target(n);
+					deactivate();
 				}
 				return Button::State::NORMAL;
 			}
@@ -455,19 +534,7 @@ namespace ms
 						}
 					}
 				}
-				UI::get().emplace<UISoftKey>([](const std::string& tip) {
-					try {
-						int32_t skin = std::stoi(tip);
-						if (skin < 0) return;
-						// Select a damage skin id directly: apply now and persist locally.
-						// 0 = default BasicEff. A non-zero server DAMAGE_SKIN(247) value
-						// stays authoritative and is mirrored into Settings by its handler.
-						Stage::get().get_player().set_damage_skin(skin);
-						Configuration::get().set_damage_skin(skin);
-						Configuration::get().save();
-						LOG(LOG_DEBUG, "UICharInfo: damage skin selected=" << skin);
-					} catch (...) {}
-				}, []() {}, "Damage skin id");
+				
 				// 伤害皮肤：s9 现已支持——characters.damage_skin 列 + 登录 DAMAGE_SKIN(247)
 				// 包下发 + DAMAGE_MONSTER 包附带 skin id；客户端 Data/Effect/DamageSkin.img
 				// 已移植 60+ 套皮肤，DamageNumber 按 id 切换字形、缺失回退 BasicEff。
@@ -485,11 +552,7 @@ namespace ms
 					FindPlayerPacket(n).dispatch();
 					LOG(LOG_DEBUG, "UICharInfo: Array FindPlayer=" << n);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& tip) {
-						if (tip.empty()) return;
-						FindPlayerPacket(tip).dispatch();
-						LOG(LOG_DEBUG, "UICharInfo: Array SoftKey FindPlayer=" << tip);
-					}, []() {}, "Find name");
+					
 				}
 				return Button::State::NORMAL;
 			}
@@ -542,68 +605,105 @@ namespace ms
 		return bounds.contains(cursorpos) || farm_bounds.contains(cursorpos) || bottom_bounds.contains(cursorpos) || right_bounds.contains(cursorpos);
 	}
 
+	Cursor::State UICharInfo::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		Cursor::State state = UIDragElement<PosCHARINFO>::send_cursor(clicked, cursorpos);
+
+		// 道具/想买的 子窗：悬浮到含装备的槽位弹 item tooltip（含装备属性）；移开清除。
+		// 命中矩形按当前展开的面板与 panel_offset 平移，避免与主窗其它按钮冲突。
+		int16_t new_hover = -1;
+		if (active_panel == SubPanel::ITEM || active_panel == SubPanel::WISH)
+		{
+			const std::vector<ItemSlotView>& views = (active_panel == SubPanel::ITEM) ? item_views : wish_views;
+			Point<int16_t> org = position + panel_offset;  // 道具/想买的同为 240x162 右侧浮层
+			for (size_t i = 0; i < views.size(); i++)
+			{
+				if (!views[i].itemid)
+					continue;
+				Rectangle<int16_t> hit = views[i].hit;
+				hit.shift(org);
+				if (hit.contains(cursorpos))
+				{
+					new_hover = (active_panel == SubPanel::ITEM)
+						? static_cast<int16_t>(i)
+						: static_cast<int16_t>(100 + i);
+					break;
+				}
+			}
+		}
+		if (new_hover != hovered_slot)
+		{
+			hovered_slot = new_hover;
+			if (hovered_slot >= 0)
+			{
+				int32_t iid = (hovered_slot < 100)
+					? (hovered_slot < static_cast<int16_t>(item_views.size()) ? item_views[hovered_slot].itemid : 0)
+					: ((hovered_slot - 100) < static_cast<int16_t>(wish_views.size()) ? wish_views[hovered_slot - 100].itemid : 0);
+				if (iid)
+					UI::get().show_item(Tooltip::Parent::ITEMINVENTORY, iid);
+				else
+					UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
+			}
+			else
+				UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
+		}
+		return state;
+	}
+
 	void UICharInfo::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
+		// 快捷键须尊重按钮禁用态（如「看自己」时禁用组队/交易/好友），避免绕过门禁。
+		auto enabled = [&](uint16_t id) {
+			auto it = buttons.find(id);
+			return it == buttons.end() || !it->second || it->second->get_state() != Button::State::DISABLED;
+		};
 		if (keycode == '+' || keycode == '=')
-			button_pressed(Buttons::BtPopUp);
+		{
+			if (enabled(Buttons::BtPopUp)) button_pressed(Buttons::BtPopUp);
+		}
 		else if (keycode == '-' || keycode == '_')
-			button_pressed(Buttons::BtPopDown);
+		{
+			if (enabled(Buttons::BtPopDown)) button_pressed(Buttons::BtPopDown);
+		}
 		else if (keycode == 'W' || keycode == 'w')
 			button_pressed(Buttons::BtVisit);
 		else if (keycode == 'T' || keycode == 't')
-			button_pressed(Buttons::BtTrad);
+		{
+			if (enabled(Buttons::BtTrad)) button_pressed(Buttons::BtTrad);
+		}
 		else if (keycode == 'B' || keycode == 'b')
-			button_pressed(Buttons::BtFriend);
+		{
+			if (enabled(Buttons::BtFriend)) button_pressed(Buttons::BtFriend);
+		}
 		else if (keycode == 'P' || keycode == 'p')
-			button_pressed(Buttons::BtParty);
+		{
+			if (enabled(Buttons::BtParty)) button_pressed(Buttons::BtParty);
+		}
 		else if (keycode == 'F' || keycode == 'f')
 		{
 			if (target_cid > 0) {
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					bool up = true;
-					if (!tip.empty() && (tip[0] == 'd' || tip[0] == 'D' || tip[0] == '0' || tip[0] == '-'))
-						up = false;
-					GiveFamePacket(target_cid, up).dispatch();
-					LOG(LOG_DEBUG, "UICharInfo: SoftKey fame cid=" << target_cid << " up=" << up);
-				}, []() {}, "Fame up|d (target)");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						size_t comma = s.find(',');
-						int32_t cid = std::stoi(comma == std::string::npos ? s : s.substr(0, comma));
-						bool up = true;
-						if (comma != std::string::npos) {
-							std::string m = s.substr(comma + 1);
-							if (!m.empty() && (m[0] == 'd' || m[0] == 'D' || m[0] == '0' || m[0] == '-'))
-								up = false;
-						}
-						if (cid > 0) {
-							GiveFamePacket(cid, up).dispatch();
-							LOG(LOG_DEBUG, "UICharInfo: SoftKey fame cid=" << cid << " up=" << up);
-						}
-					} catch (...) {}
-				}, []() {}, "Fame cid[,d]");
+				
 			}
 		}
 		else if (keycode == 'S' || keycode == 's')
 		{
 			std::string n = target_character ? target_character->get_name() : name.get_text();
+			auto do_whisper = [](const std::string& to, const std::string& msg) {
+				if (msg.empty()) return;
+				// 统一走 send_whisper_external 以暂存正文，WhisperResult 成功时回显。
+				if (auto chat = UI::get().get_element<UIChatBar>())
+					chat->send_whisper_external(to, msg);
+				else
+					WhisperPacket(to, msg).dispatch();
+			};
 			if (!n.empty()) {
-				UI::get().emplace<UISoftKey>([n](const std::string& msg) {
-					if (msg.empty()) return;
-					WhisperPacket(n, msg).dispatch();
-					LOG(LOG_DEBUG, "UICharInfo: SoftKey whisper to=" << n);
-				}, []() {}, "Whisper msg");
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					UI::get().emplace<UISoftKey>([name](const std::string& msg) {
-						if (msg.empty()) return;
-						WhisperPacket(name, msg).dispatch();
-					}, []() {}, "Whisper msg");
-				}, []() {}, "Whisper to");
+				
 			}
 		}
 		else if (keycode == 'M' || keycode == 'm')
@@ -622,25 +722,19 @@ namespace ms
 			if (n.empty())
 				n = get_target_name();
 			if (!n.empty()) {
-				UI::get().emplace<UISoftKey>([n](const std::string& msg) {
-					if (msg.empty()) return;
-					NoteSendPacket(n, msg).dispatch();
-					LOG(LOG_DEBUG, "UICharInfo: NoteSend to=" << n << " len=" << msg.size());
-				}, []() {}, Locale::text("charinfo.prompt_note"));
+				
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& to) {
-					if (to.empty()) return;
-					UI::get().emplace<UISoftKey>([to](const std::string& msg) {
-						if (msg.empty()) return;
-						NoteSendPacket(to, msg).dispatch();
-						LOG(LOG_DEBUG, "UICharInfo: NoteSend to=" << to << " len=" << msg.size());
-					}, []() {}, Locale::text("charinfo.prompt_note"));
-				}, []() {}, Locale::text("charinfo.prompt_note_to"));
+				
 			}
 		}
 		else if (keycode == 'Y' || keycode == 'y')
 		{
 			button_pressed(Buttons::BtFamily);
+		}
+		else if (keycode == 'O' || keycode == 'o')
+		{
+			// 怪物图鉴入口（正确端主窗无独立 BtBook 按钮，改用快捷键 O）
+			button_pressed(Buttons::BtBook);
 		}
 		else if (keycode == 'C' || keycode == 'c')
 		{
@@ -705,7 +799,10 @@ namespace ms
 				if (it != buttons.end() && it->second)
 					it->second->set_state(Button::State::DISABLED);
 			};
+			// 正确端「看自己」态：组队邀请 / 交易邀请为灰禁用（对自己无意义）；
+			// 道具/想买的保持粉红正常态。
 			disable(Buttons::BtParty);
+			disable(Buttons::BtTrad);
 			disable(Buttons::BtPopDown);
 			disable(Buttons::BtPopUp);
 			disable(Buttons::BtFriend);
@@ -713,7 +810,12 @@ namespace ms
 
 		Job character_job = Job(job_id);
 
-		name.change_text(target_character->get_name());
+		// 目标可能已离图 / 跨频道（CHAR_INFO 回包到达时 Stage 里查不到角色）：
+		// target_character 为 nullptr，不得裸解引用。名字优先用现场对象，回退 name 当前值/占位。
+		std::string target_name = target_character ? target_character->get_name() : name.get_text();
+		if (target_name.empty())
+			target_name = "-";
+		name.change_text(target_name);
 		job.change_text(character_job.get_name());
 		level.change_text(std::to_string(lv));
 		fame.change_text(std::to_string(f));
@@ -724,10 +826,6 @@ namespace ms
 			guild.change_text(g);
 
 		alliance.change_text(a);
-
-		if (auto it = buttons.find(Buttons::BtPet); it != buttons.end() && it->second)
-			it->second->set_state(
-				target_character->has_pet() ? Button::State::NORMAL : Button::State::DISABLED);
 
 		farm_name.change_text("");
 		farm_level_text = "1";
@@ -772,6 +870,270 @@ namespace ms
 			case Buttons::BtItem:
 				item_enabled = true;
 				break;
+		}
+	}
+
+	void UICharInfo::update_full(const CharInfoData& data)
+	{
+		full_data = data;
+		has_full_data = true;
+
+		// 宠物：名字 + Lv，亲密/饱清拼在名字下（backgrnd2 每只一栏）
+		for (size_t i = 0; i < pet_name_texts.size(); i++)
+		{
+			if (i < data.pets.size())
+			{
+				const auto& p = data.pets[i];
+				pet_name_texts[i].change_text(p.name.empty() ? "-" : p.name);
+				pet_level_texts[i].change_text("Lv." + std::to_string(p.level)
+					+ "  Tame:" + std::to_string(p.tameness)
+					+ "  Full:" + std::to_string(p.fullness));
+			}
+			else
+			{
+				pet_name_texts[i].change_text("");
+				pet_level_texts[i].change_text("");
+			}
+		}
+
+		// 坐骑（backgrnd5 下半：种类/等级/经验值/疲劳度 标签由资源烘焙，值画右侧）
+		// 旧代码 "Mount:.../EXP:/Tired:" 打印在背景上（用户图6 "Mount:" 裸字即此），改为纯值/空态。
+		if (data.mount.id != 0)
+		{
+			const ItemData& mount_item = ItemData::get(data.mount.id);
+			mount_info_text.change_text(std::to_string(data.mount.id)
+				+ (mount_item ? (" " + mount_item.get_name()) : "")
+				+ "  Lv." + std::to_string(data.mount.level));
+			mount_exinfo_text.change_text(std::to_string(data.mount.exp)
+				+ " / " + std::to_string(data.mount.tiredness));
+		}
+		else
+		{
+			mount_info_text.change_text("-");
+			mount_exinfo_text.change_text("-");
+		}
+
+		// 心愿单（backgrnd3 三空槽）：itemid → 道具名 + 图标；空槽显示占位。
+		auto build_view = [](int32_t itemid, int16_t left, int16_t top) -> ItemSlotView
+		{
+			ItemSlotView v;
+			if (itemid != 0)
+			{
+				const ItemData& idata = ItemData::get(itemid);
+				v.itemid = itemid;
+				if (idata)
+				{
+					v.icon = idata.get_icon(idata.get_id() / 10000 == 238);
+					v.name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, idata.get_name());
+				}
+				else
+				{
+					v.name = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, std::to_string(itemid));
+				}
+			}
+			// 命中矩形：图标框 x≈5..45、整行 y=top..top+40（相对面板左上角）
+			v.hit = Rectangle<int16_t>(left, static_cast<int16_t>(left + 230),
+				top, static_cast<int16_t>(top + 40));
+			return v;
+		};
+
+		wish_views.clear();
+		for (size_t i = 0; i < 3; i++)
+		{
+			int32_t iid = i < data.wishlist.size() ? data.wishlist[i] : 0;
+			wish_views.push_back(build_view(iid, 5, static_cast<int16_t>(24 + i * 44)));
+			// 兼容旧文本成员（draw 仍可能用到）
+			wish_item_texts[i].change_text(iid ? (std::to_string(iid)) : "");
+		}
+
+		// 道具子窗（backgrnd4 三空槽）：他人装备 itemid → 图标 + 名称 + tooltip
+		item_views.clear();
+		for (size_t i = 0; i < 3; i++)
+		{
+			int32_t iid = i < data.equips.size() ? data.equips[i].itemid : 0;
+			item_views.push_back(build_view(iid, 5, static_cast<int16_t>(24 + i * 44)));
+			item_slot_texts[i].change_text(iid ? std::to_string(iid) : "");
+		}
+
+		// 图鉴 / 勋章（backgrnd7：标签由资源烘焙，这里只填数值，避免英文串压在中文标签上）
+		book_info_text.change_text(std::to_string(data.book.level) + " / "
+			+ std::to_string(data.book.normal) + " / " + std::to_string(data.book.special)
+			+ " / " + std::to_string(data.book.total));
+		medal_info_text.change_text((data.medalId ? std::to_string(data.medalId) : std::string("-")));
+		for (size_t i = 0; i < medal_quest_texts.size(); i++)
+		{
+			if (i < data.medalQuests.size())
+				medal_quest_texts[i].change_text(std::to_string(data.medalQuests[i]));
+			else
+				medal_quest_texts[i].change_text("");
+		}
+	}
+
+	void UICharInfo::show_subpanel(SubPanel panel)
+	{
+		// toggle：点当前已开的子窗则收起
+		active_panel = (active_panel == panel) ? SubPanel::NONE : panel;
+		hovered_slot = -1;
+		UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
+	}
+
+	void UICharInfo::draw_pet_panel(float inter) const
+	{
+		if (panel_bg_pet.width() > 0) panel_bg_pet.draw(position, inter);
+		// backgrnd2(275x399) 下半：左侧头像框 x≈5..100，右侧三行信息 x≈110、y≈205/240/275；
+		// 底部「种类/等级/亲密度/饱清感」标签由资源烘焙，值画在右侧对应空栏。
+		for (size_t i = 0; i < 3 && i < pet_name_texts.size(); i++)
+		{
+			Point<int16_t> base = position + Point<int16_t>(110, static_cast<int16_t>(205 + i * 35));
+			pet_name_texts[i].draw(base);
+			pet_level_texts[i].draw(base + Point<int16_t>(0, 15));
+		}
+		// 空态提示（Admin 无宠物）：避免整片空白被误判为「没实现」
+		if (full_data.pets.empty())
+		{
+			Text empty(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::DARKGREY, "-");
+			empty.draw(position + Point<int16_t>(110, 205));
+		}
+	}
+
+	void UICharInfo::draw_mount_panel(float inter) const
+	{
+		if (panel_bg_mount.width() > 0) panel_bg_mount.draw(position, inter);
+		// backgrnd5(275x361) 下半：「种类/等级/经验值/疲劳度」标签烘焙在 y≈290/310，
+		// 值画右侧空栏：种类值 x≈110,y≈290；经验值 x≈270,y≈290；等级值 x≈110,y≈310；疲劳度 x≈270,y≈310。
+		mount_info_text.draw(position + Point<int16_t>(110, 288));   // 种类 + Lv
+		mount_exinfo_text.draw(position + Point<int16_t>(270, 288)); // 经验 / 疲劳
+	}
+
+	void UICharInfo::draw_wish_panel(float inter) const
+	{
+		Point<int16_t> org = position + panel_offset;
+		if (panel_bg_wish.width() > 0) panel_bg_wish.draw(org, inter);
+		// backgrnd3 三空槽：图标(x≈8) + 名称(x≈52)；悬浮由 send_cursor 弹 tooltip。
+		for (size_t i = 0; i < wish_views.size(); i++)
+		{
+			const ItemSlotView& v = wish_views[i];
+			int16_t y = static_cast<int16_t>(24 + i * 44);
+			if (v.itemid)
+			{
+				if (v.icon.width() > 0) v.icon.draw(DrawArgument(org + Point<int16_t>(8, y)));
+				v.name.draw(org + Point<int16_t>(52, y + 2));
+			}
+		}
+	}
+
+	void UICharInfo::draw_item_panel(float inter) const
+	{
+		Point<int16_t> org = position + panel_offset;
+		if (panel_bg_item.width() > 0) panel_bg_item.draw(org, inter);
+		// backgrnd4 三空槽：他人装备图标(x≈8) + 名称(x≈52)；悬浮弹 item tooltip。
+		for (size_t i = 0; i < item_views.size(); i++)
+		{
+			const ItemSlotView& v = item_views[i];
+			int16_t y = static_cast<int16_t>(24 + i * 44);
+			if (v.itemid)
+			{
+				if (v.icon.width() > 0) v.icon.draw(DrawArgument(org + Point<int16_t>(8, y)));
+				v.name.draw(org + Point<int16_t>(52, y + 2));
+			}
+		}
+	}
+
+	void UICharInfo::draw_medal_panel(float inter) const
+	{
+		if (panel_bg_medal.width() > 0) panel_bg_medal.draw(position, inter);
+		// backgrnd7(275x404) 下半：「手册名/总卡片/一般/特殊/佩戴中/总勋章数/获得过的勋章」标签由资源烘焙。
+		// 旧值 book_info_text@(150,205) 压在中文标签上（用户图5「一般 .I Nor 特殊 Special」重叠即此）→
+		// 改为把数值画在标签右侧空栏：手册名/总卡片值 x≈150,y≈210/225；佩戴中/总勋章数 x≈150,y≈310/330。
+		book_info_text.draw(position + Point<int16_t>(150, 210));
+		medal_info_text.draw(position + Point<int16_t>(150, 330));
+		for (size_t i = 0; i < medal_quest_texts.size() && i < 12; i++)
+			medal_quest_texts[i].draw(position + Point<int16_t>(110, static_cast<int16_t>(350 + i * 15)));
+		// 空态（Admin 无勋章任务）：避免列表整片空白
+		if (full_data.medalQuests.empty())
+		{
+			Text empty(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::DARKGREY, "-");
+			empty.draw(position + Point<int16_t>(110, 350));
+		}
+	}
+
+	void UICharInfo::draw_fame_arrows() const
+	{
+		// 运行时 IMG 无独立人气箭头节点，程序化绘制两个灰框按钮（↑加人气/↓减人气）。
+		// 正确端（个人请报框.png，r04 量取权威）：按钮 x=232..246 / x=249..263，人气行 y=113..127（14×14）。
+		// 旧值 x=158 偏左约 74px；上轮 x=239 又与参照左边界差 7px。本轮对齐 r04 权威值 232/249。
+		// 浅灰底 + 深灰描边 + 黑色 ▲/▼ 字形，保证浅色字段底上清晰可见且语义正确（非纯色块）。
+		const int16_t ay = 113;
+		Point<int16_t> b1 = position + Point<int16_t>(232, ay);
+		Point<int16_t> b2 = position + Point<int16_t>(249, ay);
+		// 边框（深灰）+ 内底（浅灰）
+		ColorBox(14, 14, Color(0x808080FFu), 1.0f).draw(DrawArgument(b1));
+		ColorBox(14, 14, Color(0x808080FFu), 1.0f).draw(DrawArgument(b2));
+		ColorBox(12, 12, Color(0xE8E8E8FFu), 1.0f).draw(DrawArgument(b1 + Point<int16_t>(1, 1)));
+		ColorBox(12, 12, Color(0xE8E8E8FFu), 1.0f).draw(DrawArgument(b2 + Point<int16_t>(1, 1)));
+		// ▲ / ▼ 三角（程序化像素三角，居中于按钮）
+		Text up(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK, "^");
+		Text dn(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK, "v");
+		up.draw(position + Point<int16_t>(232 + 7, ay + 1));
+		dn.draw(position + Point<int16_t>(249 + 7, ay + 1));
+	}
+
+	void UICharInfo::draw_subpanel(float inter) const
+	{
+		if (!has_full_data) return;
+		switch (active_panel)
+		{
+			case SubPanel::PET:    draw_pet_panel(inter); break;
+			case SubPanel::MOUNT:  draw_mount_panel(inter); break;
+			case SubPanel::WISH:   draw_wish_panel(inter); break;
+			case SubPanel::ITEM:   draw_item_panel(inter); break;
+			case SubPanel::MEDAL:  draw_medal_panel(inter); break;
+			case SubPanel::EXCLUDE:
+				draw_exclude_panel(inter);
+				break;
+			default: break;
+		}
+	}
+
+	void UICharInfo::store_excluded_items(int32_t cid, const std::vector<int32_t>& itemids)
+	{
+		// 按 cid 覆盖暂存（同一角色的多只宠物列表累积）。
+		auto& store = excluded_store();
+		auto& dst = store[cid];
+		dst.insert(dst.end(), itemids.begin(), itemids.end());
+	}
+
+	std::vector<int32_t> UICharInfo::excluded_items(int32_t cid)
+	{
+		auto& store = excluded_store();
+		auto it = store.find(cid);
+		return it == store.end() ? std::vector<int32_t>() : it->second;
+	}
+
+	std::unordered_map<int32_t, std::vector<int32_t>>& UICharInfo::excluded_store()
+	{
+		static std::unordered_map<int32_t, std::vector<int32_t>> s_store;
+		return s_store;
+	}
+
+	void UICharInfo::draw_exclude_panel(float inter) const
+	{
+		if (panel_bg_exclude.width() > 0) panel_bg_exclude.draw(position + panel_offset, inter);
+		// 排除道具列表（backgrnd6 159x147 仅标题+空框）：动态行，每行显示 itemid/名称；无数据显示空态。
+		Point<int16_t> org = position + panel_offset;
+		std::vector<int32_t> items = excluded_items(target_cid);
+		if (items.empty())
+		{
+			Text empty(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::DARKGREY, "无排除道具");
+			empty.draw(org + Point<int16_t>(12, 30));
+			return;
+		}
+		for (size_t i = 0; i < items.size() && i < 6; i++)
+		{
+			const ItemData& idata = ItemData::get(items[i]);
+			Text line(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+				idata ? idata.get_name() : std::to_string(items[i]));
+			line.draw(org + Point<int16_t>(12, static_cast<int16_t>(24 + i * 18)));
 		}
 	}
 }

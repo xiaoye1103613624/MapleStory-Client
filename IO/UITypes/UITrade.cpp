@@ -49,7 +49,8 @@ namespace ms
 	UITrade::UITrade() : UIElement(Point<int16_t>(260, 120), Point<int16_t>(565, 474)),
 		started(false), self_locked(false), partner_locked(false), my_number(0),
 		my_meso(0), partner_meso(0),
-		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
+		title(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK),
+		result_text(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::YELLOW, Color::Name::BLACK)
 	{
 		// WZ 里 MapleButton 节点不带坐标，必须显式传 Point（见 MapleButton.h）。
 		nl::node trade = UiAssetResolve::window("TradingRoom");
@@ -144,6 +145,35 @@ namespace ms
 
 	void UITrade::update()
 	{
+		if (result_timer > 0 && --result_timer == 0)
+			result_text.change_text("");
+	}
+
+	bool UITrade::send_icon(const Icon& icon, Point<int16_t> cursorpos)
+	{
+		if (!started || self_locked)
+			return false; // 未开始或已锁定，不接收物品，图标留在鼠标上
+		Point<int16_t> rel = cursorpos - position;
+		// 自己报价区左列 3x3：SLOT_X[0]={6,45,84}, SLOT_Y={129,166,203}，每格约 39x37
+		for (uint8_t row = 0; row < 3; row++)
+		{
+			for (uint8_t col = 0; col < 3; col++)
+			{
+				int16_t sx = SLOT_X[0][col];
+				int16_t sy = SLOT_Y[row];
+				if (rel.x() >= sx && rel.x() < sx + 39 && rel.y() >= sy && rel.y() < sy + 37)
+				{
+					uint8_t target_slot = static_cast<uint8_t>(row * 3 + col + 1);
+					uint8_t iv = static_cast<uint8_t>(icon.get_inventory_tab());
+					int16_t pos = icon.get_inventory_slot();
+					if (iv < 1 || iv > 5 || pos <= 0)
+						return false; // 非背包物品（如技能/快捷图标）不接收
+					TradeAddItemPacket(iv, pos, 1, target_slot).dispatch();
+					return true; // 消费图标
+				}
+			}
+		}
+		return false; // 落在报价区外，图标保留
 	}
 
 	UIElement::Type UITrade::get_type() const
@@ -177,6 +207,9 @@ namespace ms
 
 	void UITrade::add_item(uint8_t number, uint8_t slot, int32_t itemid, int16_t quantity)
 	{
+		// 非法交易槽（服务端 s9 也校验 1..9）直接忽略，避免污染 next_slot() 占位判断
+		if (slot < 1 || slot > 9)
+			return;
 		std::vector<TradeSlot>& list = (number == my_number) ? my_items : partner_items;
 		for (auto& s : list)
 		{
@@ -286,29 +319,12 @@ namespace ms
 
 	void UITrade::prompt_meso()
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
-		{
-			if (self_locked)
-				return;
-			try
-			{
-				int64_t amt = std::stoll(s);
-				if (amt > 0)
-					TradeSetMesoPacket(amt).dispatch();
-			}
-			catch (...)
-			{
-			}
-		});
+		
 	}
 
 	void UITrade::prompt_chat()
 	{
-		UI::get().emplace<UISoftKey>([this](const std::string& s)
-		{
-			if (!s.empty())
-				TradeChatPacket(s).dispatch();
-		});
+		
 	}
 
 	void UITrade::send_key(int32_t keycode, bool pressed, bool escape)
@@ -355,54 +371,11 @@ namespace ms
 			{
 				uint8_t iv = inv_type;
 				int16_t pos = inv_slot;
-				UI::get().emplace<UISoftKey>([iv, pos, auto_slot](const std::string& s)
-				{
-					int16_t qty = 1;
-					uint8_t trade_slot = auto_slot;
-					if (!s.empty())
-					{
-						size_t c = s.find(',');
-						try
-						{
-							qty = static_cast<int16_t>(std::stoi(c == std::string::npos ? s : s.substr(0, c)));
-							if (c != std::string::npos)
-								trade_slot = static_cast<uint8_t>(std::stoi(s.substr(c + 1)));
-						}
-						catch (...)
-						{
-							return;
-						}
-					}
-					if (qty < 1 || trade_slot < 1 || trade_slot > 9)
-						return;
-					TradeAddItemPacket(iv, pos, qty, trade_slot).dispatch();
-				}, []() {}, "qty[,tradeSlot]");
+				
 			}
 			else
 			{
-				UI::get().emplace<UISoftKey>([auto_slot](const std::string& s)
-				{
-					int vals[4] = { 1, 1, 1, auto_slot };
-					size_t start = 0;
-					int vi = 0;
-					while (vi < 4 && start <= s.size())
-					{
-						size_t c = s.find(',', start);
-						std::string part = (c == std::string::npos) ? s.substr(start) : s.substr(start, c - start);
-						try { vals[vi] = std::stoi(part); } catch (...) {}
-						++vi;
-						if (c == std::string::npos)
-							break;
-						start = c + 1;
-					}
-					if (vals[1] > 0 && vals[2] > 0 && vals[3] >= 1 && vals[3] <= 9)
-					{
-						TradeAddItemPacket(
-							static_cast<uint8_t>(vals[0]), static_cast<int16_t>(vals[1]),
-							static_cast<int16_t>(vals[2]), static_cast<uint8_t>(vals[3])
-						).dispatch();
-					}
-				}, []() {}, "iv,pos,qty,slot");
+				
 			}
 		}
 	}

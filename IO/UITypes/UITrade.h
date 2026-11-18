@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../UIElement.h"
+#include "../Components/Icon.h"
 
 #include "../../Graphics/SpecialText.h"
 
@@ -49,6 +50,8 @@ namespace ms
 		void draw(float alpha) const override;
 		void update() override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		// 背包物品拖入交易槽：反解 SLOT_X/SLOT_Y → TradeAddItemPacket。
+		bool send_icon(const Icon& icon, Point<int16_t> cursorpos) override;
 		UIElement::Type get_type() const override;
 
 		// getTradeStart(ROOM/3)：number=0 发起人 / 1 被邀请人；partner 名可为空。
@@ -94,5 +97,7 @@ namespace ms
 		std::string partner_name;
 		std::vector<std::string> chat_log;
 		mutable OutlinedText title;
+		OutlinedText result_text;   // 交易结果提示（成功/取消/失败）
+		int32_t result_timer = 0;   // 结果提示剩余帧数，update 递减
 	};
 }

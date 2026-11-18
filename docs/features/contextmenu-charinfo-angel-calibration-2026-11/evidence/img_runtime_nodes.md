@@ -1,0 +1,475 @@
+# 运行时 UIWindow.img 节点摘要（orange-wz 128B key, exclusive=false）
+
+## ContextMenu
+- ContextMenu [LIST_PROPERTY]
+  - t [CANVAS_PROPERTY] 100x23 png=ARGB8888
+    - origin [VECTOR_PROPERTY] (0,0)
+  - c [CANVAS_PROPERTY] 97x15 png=ARGB8888
+    - origin [VECTOR_PROPERTY] (0,0)
+  - s [CANVAS_PROPERTY] 97x7 png=ARGB8888
+    - origin [VECTOR_PROPERTY] (0,0)
+  - BtInfo [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtSave [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtWhisper [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtParty [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtGuild [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtAlertGM [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtBlock [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x14 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtClaim [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtTrade [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtFamily [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtCashTrade [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 85x15 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+
+## UserInfo
+- UserInfo [LIST_PROPERTY]
+  - backgrnd [CANVAS_PROPERTY] 275x199 png=ARGB8888
+  - backgrnd2 [CANVAS_PROPERTY] 275x399 png=ARGB8888
+  - backgrnd3 [CANVAS_PROPERTY] 240x162 png=ARGB8888
+  - backgrnd4 [CANVAS_PROPERTY] 240x162 png=ARGB8888
+  - backgrnd5 [CANVAS_PROPERTY] 275x361 png=ARGB8888
+  - backgrnd6 [CANVAS_PROPERTY] 159x147 png=ARGB8888
+  - backgrnd7 [CANVAS_PROPERTY] 275x404 png=ARGB8888
+  - ReqLv [CANVAS_PROPERTY] 31x10 png=ARGB8888
+    - origin [VECTOR_PROPERTY] (0,0)
+  - BtParty [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtTrade [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 59x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtItem [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtWish [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 60x19 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtPresent [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 45x13 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 45x13 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 45x13 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 45x13 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtPetHide [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtPetShow [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtTamingHide [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtTamingShow [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 47x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - Marry [LIST_PROPERTY]
+    - married [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 20x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+        - z [INT_PROPERTY]
+    - unmarried [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 20x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+        - z [INT_PROPERTY]
+  - bossPetCrown [CANVAS_PROPERTY] 18x12 png=ARGB8888
+    - origin [VECTOR_PROPERTY] (9,6)
+  - BtPet1 [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+  - BtPet2 [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+  - BtPet3 [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 30x27 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (15,13)
+  - BtBookHide [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtBookShow [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 48x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtExceptionShow [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 71x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 71x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 71x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 71x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtExceptionHide [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 12x12 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 12x12 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 12x12 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 12x12 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtMeso [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtRegister [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtDelete [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 31x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtSearch [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 38x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 38x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 38x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 38x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtFamily [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 40x37 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 40x37 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 40x37 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 40x37 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtCollectionHide [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+  - BtCollectionShow [LIST_PROPERTY]
+    - normal [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - pressed [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - disabled [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)
+    - mouseOver [LIST_PROPERTY]
+      - 0 [CANVAS_PROPERTY] 49x17 png=ARGB8888
+        - origin [VECTOR_PROPERTY] (0,0)

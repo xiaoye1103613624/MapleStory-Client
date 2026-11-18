@@ -26,6 +26,7 @@
 
 #include "../../IO/UITypes/UINotice.h"
 #include "../../Net/Packets/GuildPackets.h"
+#include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../Util/Misc.h"
 
 namespace ms
@@ -108,6 +109,14 @@ namespace ms
 				std::string gname = recv.read_string();
 				while (recv.available())
 					recv.skip_byte();
+				// GameOpt 拒绝门禁：原生 12 行选项无"公会邀请"专位，借用 GAME_INVITE
+				// （与交易 TRADE_APPLY / 组队 PARTY_APPLY / 家族 FAMILY_APPLY 一致）。
+				if (!UIGameOpt::accepts(UIGameOpt::GAME_INVITE))
+				{
+					DenyGuildRequestPacket(gname).dispatch();
+					LOG(LOG_DEBUG, "GuildHandler: GameOpt refuse guild invite from=" << gname);
+					break;
+				}
 				std::string msg = "Join guild [" + gname + "]?";
 				// YesNo 已显，不重复 SM
 				UI::get().emplace<UIYesNo>(msg, [gid, gname](bool yes)

@@ -48,16 +48,18 @@ namespace ms
 		// 多分辨率：视口变化时按新屏幕居中重锚（弹窗族 UINotice/UIYesNo/UIEnterNumber/UIOk）。
 		void update_screen(int16_t new_width, int16_t new_height) override;
 
-		int16_t box2offset(bool textfield) const;
+	protected:
+		// Notice3/4 三段式（t + N×c + s）布局辅助，供派生类定位按钮/输入框。
+		// 用三段式替换原来缺失于 live 的 Notice6（c_box/box/box2/s_box）。
+		int16_t panel_bottom() const;
+		int16_t button_row_y() const;
+		int16_t box_width() const;
 
 	private:
 		Texture top;
 		Texture center;
-		Texture centerbox;
-		Texture box;
-		Texture box2;
 		Texture bottom;
-		Texture bottombox;
+		int16_t center_tiles;
 		Text question;
 		// OK tip：IDA sub_9929DD→Draw sub_99311B duration=1000 用 font style 19 白字 + style 20 描边 #355A84（A12）。
 		OutlinedText tip_question;
