@@ -116,9 +116,17 @@ namespace ms
 		}
 	}
 
+	void MapMobs::clear_spawns()
+	{
+		// 与 MapDrops/MapNpcs 同理，待生成 mob spawn 队列必须清空，否则旧图
+		// 怪物包在新图 foothold 上重播 movepath，视觉残留/越界。
+		std::queue<MobSpawn>().swap(spawns);
+	}
+
 	void MapMobs::clear()
 	{
 		mobs.clear();
+		clear_spawns();
 	}
 
 	void MapMobs::set_control(int32_t oid, bool control)

@@ -36,6 +36,8 @@ namespace ms
 		Point<int16_t> get_spawn_point(Point<int16_t> position, uint16_t fhid) const;
 		// Return a reference to the collection of platforms
 		const FootholdTree& get_fht() const;
+		// 商城预览沙盒：装独立地板（转发 FootholdTree::install_floor）。
+		void install_floor(int16_t x1, int16_t x2, int16_t y);
 
 	private:
 		void move_normal(PhysicsObject&) const;

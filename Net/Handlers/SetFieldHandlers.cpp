@@ -154,6 +154,18 @@ namespace ms
 				{
 					Stage::get().load(mapid, portalid);
 					enter_game_log("[SetField] Stage::load ok");
+
+					// 切图残留二次清理：transition 入口 clear()(:222) 与新图 load()
+					// 之间隔着一个 fadeout 异步窗口，期间 :145 的 poll_events 可能把
+					// 上一张图的 drop/NPC/mob spawn 包重新入队；load() 只重建地图数据，
+					// 不清这些队列。若不清，淡入后旧包在新图 foothold 上实例化 →
+					// NPC 用旧 fh 坐标找不到落脚点被重力拉下 / drop 重播下落动画。
+					// 此处（load 后、下面的 poll_events 前）清一次，与入口 clear() 闭环。
+					Stage::get().get_npcs().clear_spawns();
+					Stage::get().get_mobs().clear_spawns();
+					Stage::get().get_drops().clear_spawns();
+					enter_game_log("[SetField] clear_spawns after load done");
+
 					Window::get().poll_events();
 					seg("after_stage_load");
 				}

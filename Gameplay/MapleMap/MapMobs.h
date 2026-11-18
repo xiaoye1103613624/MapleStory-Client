@@ -44,6 +44,7 @@ namespace ms
 		void remove(int32_t oid, int8_t effect);
 		// Remove all mobs.
 		void clear();
+		void clear_spawns();	// 切图窗口期残留 spawn 队列清理（不动场上对象）
 
 		// Update who a mob is controlled by.
 		void set_control(int32_t oid, bool control);

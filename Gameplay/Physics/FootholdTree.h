@@ -32,6 +32,9 @@ namespace ms
 		FootholdTree(nl::node source);
 		FootholdTree();
 
+		// 商城预览沙盒：清空并装一条水平地板（MinMS install_floor）。
+		void install_floor(int16_t x1, int16_t x2, int16_t y);
+
 		// Takes an accelerated PhysicsObject and limits its movement based on the platforms in this tree
 		void limit_movement(PhysicsObject& touse) const;
 		// Updates a PhysicsObject's fhid based on it's position

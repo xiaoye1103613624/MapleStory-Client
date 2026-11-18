@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Player.h"
 
+#include "CombatPanelStats.h"
 #include "PlayerStates.h"
 
 #include "../Data/WeaponData.h"
@@ -237,6 +238,11 @@ namespace ms
 
 	Player::Player() : Char(0, {}, "") {}
 
+	void Player::use_sandbox_fht(const FootholdTree* tree)
+	{
+		sandbox_fht = tree;
+	}
+
 	void Player::respawn(Point<int16_t> pos, bool uw)
 	{
 		set_position(pos.x(), pos.y());
@@ -350,32 +356,46 @@ namespace ms
 			}
 		}
 
-		uint8_t stancebyte = facing_right ? state : state + 1;
-		Movement newmove(phobj, stancebyte);
-		bool needupdate = lastmove.hasmoved(newmove);
-
-		if (needupdate)
+		// 商城预览沙盒：本地井内位移，禁止上报 Move*（MinMS sandbox_fht）。
+		if (!sandbox_fht)
 		{
-			MovePlayerPacket(newmove).dispatch();
-			lastmove = newmove;
-		}
+			uint8_t stancebyte = facing_right ? state : state + 1;
+			Movement newmove(phobj, stancebyte);
+			bool needupdate = lastmove.hasmoved(newmove);
 
-		// W1：宠物跟随位移上报（对账 MovePetHandler）
-		for (uint8_t i = 0; i < 3; ++i)
-		{
-			const PetLook& pet = get_pet(i);
-			if (pet.get_itemid() <= 0 || pet.get_uniqueid() <= 0)
-				continue;
-			uint8_t petstance = static_cast<uint8_t>(pet.get_stance()) * 2;
-			Movement petmove(pet.get_phobj(), petstance);
-			if (lastpetmove[i].hasmoved(petmove))
+			if (needupdate)
 			{
-				MovePetPacket(pet.get_uniqueid(), petmove).dispatch();
-				lastpetmove[i] = petmove;
+				MovePlayerPacket(newmove).dispatch();
+				lastmove = newmove;
+			}
+
+			// W1：宠物跟随位移上报（对账 MovePetHandler）
+			for (uint8_t i = 0; i < 3; ++i)
+			{
+				const PetLook& pet = get_pet(i);
+				if (pet.get_itemid() <= 0 || pet.get_uniqueid() <= 0)
+					continue;
+				uint8_t petstance = static_cast<uint8_t>(pet.get_stance()) * 2;
+				Movement petmove(pet.get_phobj(), petstance);
+				if (lastpetmove[i].hasmoved(petmove))
+				{
+					MovePetPacket(pet.get_uniqueid(), petmove).dispatch();
+					lastpetmove[i] = petmove;
+				}
 			}
 		}
 
 		climb_cooldown.update();
+
+		// 技能 CD 毫秒递减（供 has_cooldown / UICooldownList）。
+		for (auto it = cooldowns.begin(); it != cooldowns.end();)
+		{
+			it->second -= Constants::TIMESTEP;
+			if (it->second <= 0)
+				it = cooldowns.erase(it);
+			else
+				++it;
+		}
 
 		// CANCEL_DEBUFF(99)：疾病类临时状态本地倒计时到期后发空包。
 		// s9 RecvOpcode.CANCEL_DEBUFF(99) 协议对齐；083 IDB 该临时状态到期检查符号 0 命中，
@@ -442,6 +462,18 @@ namespace ms
 		}
 	}
 
+	void Player::die()
+	{
+		// HP 归零强制死亡：attacking 时不阻碍，先清攻击态再切 DIED。
+		// 走 Char::set_state 直接落状态 + dead stance（Stance.cpp names[DIED]="dead"），
+		// 不经过 Player::set_state 的 attacking 门禁，避免血0还站着放完攻击。
+		if (state == Char::State::DIED)
+			return;
+
+		attacking = false;
+		Char::set_state(Char::State::DIED);
+	}
+
 	bool Player::is_attacking() const
 	{
 		return attacking;
@@ -454,6 +486,10 @@ namespace ms
 
 	SpecialMove::ForbidReason Player::can_use(const SpecialMove& move) const
 	{
+		// 死亡态禁止一切技能/攻击（含龙咆哮）：此前只拦 PRONE，血0死亡后仍能放技能。
+		if (state == Char::State::DIED)
+			return SpecialMove::ForbidReason::FBR_OTHER;
+
 		if (move.is_skill() && state == Char::State::PRONE)
 			return SpecialMove::ForbidReason::FBR_OTHER;
 
@@ -470,7 +506,35 @@ namespace ms
 		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		uint16_t bullets = inventory.get_bulletcount();
 
-		return move.can_use(level, weapon, job, hp, mp, bullets);
+		SpecialMove::ForbidReason reason = move.can_use(level, weapon, job, hp, mp, bullets);
+		if (reason != SpecialMove::ForbidReason::FBR_NONE)
+			return reason;
+
+		// 龙咆哮(1311006)原生 HP 门禁（Angel CSkillInfo::CheckConsumeForActiveSkill@0x764256,
+		// if(nSkillID==1311006) @0x7643de）：要求当前 HP > 最大HP × x/100 才可按。
+		// 服务端权威：StatEffect.java:772 hpR=-x/100、:1439 hpchange += maxHP*hpR，
+		// 即自损 = 最大HP×x/100；applyHpMpChange 在 nextHp<=0 且非GM时拒施（:8481）。
+		// cdd=maxHP 已由服务端 getCurrentMaxHp() 坐实。
+		// x 随技能等级线性递减，值来自 live Data/Skill/131.img skill/1311006/level/N/x
+		// 全 30 级实测（orange-wz，2026-11-17）：x = 60 - level（1级59 … 30级30）。
+		// 按等级取真实 x，避免用固定 59% 在高等级误拦本可释放的低血施放。
+		if (move.get_id() == 1311006)
+		{
+			// 索引 0 留空，1..30 对应 WZ level 1..30 的 x 值（59..30）。
+			static constexpr int32_t DRAGON_ROAR_X[31] = {
+				0, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50,
+				49, 48, 47, 46, 45, 44, 43, 42, 41, 40,
+				39, 38, 37, 36, 35, 34, 33, 32, 31, 30
+			};
+			int32_t idx = level < 1 ? 1 : (level > 30 ? 30 : level);
+			int32_t gate = DRAGON_ROAR_X[idx];
+			int32_t maxhp = stats.get_total(EquipStat::Id::HP);
+
+			if (maxhp > 0 && hp <= static_cast<int32_t>(static_cast<int64_t>(maxhp) * gate / 100))
+				return SpecialMove::ForbidReason::FBR_HPCOST;
+		}
+
+		return SpecialMove::ForbidReason::FBR_NONE;
 	}
 
 	Attack Player::prepare_attack(bool skill) const
@@ -527,23 +591,29 @@ namespace ms
 		}
 
 		attack.critical = stats.get_critical();
-		attack.ignoredef = stats.get_ignoredef();
+		// 无视防御：装备来源以服务端 0x175 下发的官方连乘值为权威（属性驱动，无 synced 时回退本端累加）。
+		// 技能自身的无视防御在 Skill.cpp 里另行 +=（近似加法，s9 无独立技能无视数据源）。
+		if (CombatPanelStats::get().synced)
+			attack.ignoredef = CombatPanelStats::get().ignore_pdr / 100.0f;
+		else
+			attack.ignoredef = stats.get_ignoredef();
 
-		if (Configuration::get().get_damage_formula_v2())
-		{
-			// 原生 MDamage 的 MAD 输入钳到 1999（IDA sub_791617）。
-			// 魔法基础值沿用 v83 的 (INT*4 + LUK)/100 * MAD 结构，与
-			// 物理 calculateMaxBaseDamage 的武器倍率 4.0 同构。
-			int32_t mad = std::min<int32_t>(stats.get_total(EquipStat::Id::MAGIC), 1999);
-			int32_t int_ = stats.get_total(EquipStat::Id::INT);
-			int32_t luk = stats.get_total(EquipStat::Id::LUK);
-			attack.magicdamage = (int_ * 4.0 + luk) / 100.0 * mad;
+		// 官方完整公式：魔法基础/暴击区间/BOSS 增伤/最终伤害统一生效，无配置开关。
+		// 原生 MDamage 的 MAD 输入钳到 1999（IDA sub_791617）。
+		// 魔法基础值沿用 (INT*4 + LUK)/100 * MAD，与物理 calculateMaxBaseDamage 的武器倍率 4.0 同构。
+		int32_t mad = std::min<int32_t>(stats.get_total(EquipStat::Id::MAGIC), 1999);
+		int32_t int_ = stats.get_total(EquipStat::Id::INT);
+		int32_t luk = stats.get_total(EquipStat::Id::LUK);
+		attack.magicdamage = (int_ * 4.0 + luk) / 100.0 * mad;
 
-			// CharStats 的 mincrit/maxcrit 是额外倍率，转成 1+x 的暴击区间。
-			attack.critical_min = 1.0f + stats.get_mincrit();
-			attack.critical_max = 1.0f + stats.get_maxcrit();
-			attack.bossdamage = stats.get_bossdmg();
-		}
+		// 官方暴击区间：系数 = 1 + (20~50 + 面板暴伤%)/100。
+		// CharStats 的 mincrit/maxcrit 即暴伤%小数（v83 默认 0.5/0.75），故直接 1+x。
+		// 下一行再叠加技能/潜能的 criticaldamage 增量（Skill.cpp 中处理）。
+		attack.critical_min = 1.0f + stats.get_mincrit();
+		attack.critical_max = 1.0f + stats.get_maxcrit();
+		attack.bossdamage = stats.get_bossdmg();
+		// 最终伤害：服务端 0x175 折算下发的连乘结果（属性驱动：无来源时服务端发 0）。
+		attack.finaldamage = CombatPanelStats::get().final_damage_percent / 100.0f;
 
 		attack.accuracy = stats.get_total(EquipStat::Id::ACC);
 		attack.playerlevel = stats.get_stat(MapleStat::Id::LEVEL);
@@ -654,7 +724,13 @@ namespace ms
 
 	void Player::add_cooldown(int32_t skill_id, int32_t cooltime)
 	{
-		cooldowns[skill_id] = cooltime;
+		// s9/Angel：cooltime 为秒；本地存毫秒并在 update 递减（对齐 MinMS）。
+		if (cooltime <= 0)
+		{
+			cooldowns.erase(skill_id);
+			return;
+		}
+		cooldowns[skill_id] = cooltime * 1000;
 	}
 
 	bool Player::has_cooldown(int32_t skill_id) const

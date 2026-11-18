@@ -241,3 +241,82 @@
 ### 9.5 构建
 - 临时 `OutDir` 构建 `EXITCODE=0`（`verify_out/MapleStory.exe`），仅既有 warning。
 - 部署 exe 同步仍需关闭提权客户端后跑 `tools\build_smoke.bat`。
+
+## 10. 第五轮：CMob 逐函数还原（2026-11-14）
+
+目标：怪物移动/受击/死亡/状态**全部按 Angel v83 `CMob` 还原**，修「怪物越出平台」与「受击/死亡状态异常」。
+
+### 10.1 根因与改动
+
+| 现象 | 根因（修前） | 修法（对齐 Angel） |
+| --- | --- | --- |
+| 非控制怪越出平台 | `Mob::update` 用 `physics.move_object()` 本地自由推进；`send_movement` 只 `set_position(start)` 记录段，**从不回放路径**；`MobMovedHandler` 又独立设位置，双驱动冲突 | 新增 `Gameplay/MapleMap/MovePath.{h,cpp}`（等价 `CMovePath::OnMovePacket`）。`Mob` 持 `movepath_`，`update()` 在 `movepath_.is_active()` 时**只**按段回放（`apply()` 推进 xpos/ypos、段 `newstate` 驱动 `set_stance`、段 `fh` 写 `phobj.fhid`），路径走完才回落 `STAND` + `fht.update_fh()`；不再调 `move_object` 自由推进 |
+| 控制怪自己乱打 | `next_move()` 内 `randomizer.above(0.82f)` 分支随机遍历 `animations` 取 `ATTACK..SKILL` 切姿态 | 删除该分支。攻击/技能只由服务端 `MOVE_MONSTER_RESPONSE`（`skill_pending` / `canUseAttack` / `canUseSkill`）驱动，与服务端 `castPos` 一致 |
+| 受击后「被打飞」/多发移动包 | `apply_damage` 置 `counter=170` 并立刻 `update_movement()`：30 帧后强制反向行走 + 受击瞬间上行移动包 | 对齐 `OnHit`：`counter=0`、`set_stance(HIT)`、`flip=toleft`，**不发移动包**（位置仍由服务端路径决定） |
+| 死亡表现不齐 | 仅 `Stance::DIE + aniend→dead`，`animation` 字节语义未分支 | `kill()` 按 `CMobPool::OnMobLeaveField` 分支：`0` 立即 `deactivate()` + 池层 `remove`；`2` 淡出；`3` 备选死亡动画；其余走 `apply_death()`（`die1` 动画 + `diesound`）。`DIE` 播完置 `dead`，回收由 `MapMobs` 显式完成 |
+
+### 10.2 `Mob/` 节点校验（orange-wz，128B GMS key，运行时 `Data/Mob`）
+
+| 抽样 mob | 实际节点 | 结论 |
+| --- | --- | --- |
+| `0100100.img`（蜗牛） | `info / move / stand / hit1 / die1` | 无 `jump`、无 `attack*`/`skill*` → `canjump=false`、攻击段不加载，正确 |
+| `2300100.img` | `info / fly / hit1 / die1`（**无 stand/move**） | `canfly=true` → `STAND`/`MOVE` 均绑 `fly`，代码分支正确 |
+| `1110900.img` | `stand / move / attack1 / attack2 / hit1 / die1 / skill1 / skill2 / skillAfter2` | `attack{i}`→`ATTACK+2(i-1)`、`skill{i}`→`SKILL+2(i-1)` 装载正确 |
+| `1210100 / 2100100 / 2230100 / 2400000 / 2400400 / 0130100` | `info / move / stand / hit1 / die1`（部分含 `jump`） | 与 `canjump/canmove` 判定一致 |
+
+- `attack1` 在数百个 img 中存在（`search_node` 命中），`die2` 在 **96** 个 img 中存在（`8240011`、`8900000`、`9700000` 等），`die`/`dieF` 少量；代码的 `hit1→hit`、`die1→die→die2→dieF` 回退链覆盖这些变体（R6）。
+- `0100100.img/info` 实测仅含 `bodyAttack/level/maxHP/maxMP/speed/PADamage/PDDamage/MADamage/MDDamage/acc/eva/exp/undead/pushed/fs/summonType/mobType`：**没有** `hpTagColor`、`link`、`boss`、`notAttack`、`noFlip`、`HPgaugeHide`、`noRevive`、`flySpeed` → 全部落到代码默认值（R6 兜底成立）。
+- `Data/Mob` 下除 7 位编号 img 只有 `QuestCountGroup`，**无 `SpecialEff.img`** → `spawn_effect>0` 的出生特效路径在本部署恒不触发（`if (effnode)` 已守卫，不崩）。
+- `skillAfter{n}`（部分 mob 有）在 Angel v83 的 `SetMoveAction`/`PrepareActionLayer` 中没有对应段位，**保持不加载**，避免错帧。
+
+### 10.3 未闭环 / 存疑（2026-11-14 第六轮已收口，见 §10.5）
+
+- **死亡动画随机**：`OnDie` 中 `v6 = *(template+548)`（死亡动画套数），`action = rand()%v6+9`（doomed==3 时固定 21）。Angel 在多套 die 帧里随机挑一套。原客户端恒播 `die1`。
+  → **已收口（降级：WZ 枚举）**：构造期按 `die1..die7` 加载所有存在的死亡帧进 `animations` 与 `death_stances`，`apply_death()` 在其中随机选一套；精确「action→die 偏移」需 REA 反编译 `PrepareActionLayer`（`rea-decompile` 本会话被卡，见 §10.5）。
+- **死亡震屏**：`OnDie` 末尾对特定 mobid 调 `Effect_Tremble`。
+  → **已收口（降级：boss-only）**：`Mob` 经 `Stage::get().get_camera().tremble(1,4000)` 在 `kill()` 中对 `boss` 怪触发；精确明文 mob id 列表待 REA 解出 `OnDie` 后改为指定 id 集合。
+- **控制怪 GenerateMovePath**：原 `next_move()` 仅选 `STAND/MOVE/JUMP`。
+  → **已收口（适配移植）**：重命名为 `generate_move_path()`，动作选择对齐 `GenerateMovePath` 的 move/jump/stand + 服务端驱动 attack/skill 分支与 foothold 边界（`TURNATEDGES`）；9KB `CVecCtrlMob` 多段物理/逐 foothold 采样在本引擎无等价体且无法实机验证，用「动作选择 + foothold 边界」适配版替代，单段上报沿用 `update_movement`（服务端 `MOVE_MONSTER` opcode=188，同 Angel `COutPacket(188)`）。
+- `Counter`/`aniend` 阈值（`counter > 200`）仍为经验值，非 Angel 常量（存疑项，未动）。
+
+### 10.4 构建
+
+- 临时 `OutDir`/`IntDir`（`verify_out/`、`verify_obj/`）编译 `EXITCODE=0`，仅既有 warning；`Mob.cpp` 新增注释与 `MovePath` 无新增诊断。
+- 部署 exe 覆盖需先关闭运行中的客户端（否则 `LNK1104` 且 `build_smoke.bat` 仍打印 `EXITCODE=0`）。
+
+### 10.5 第六轮：未闭环三项收口（2026-11-14）
+
+目标：收口 §10.3 三项。精度决策（用户确认）：死亡随机 + Tremble 选「尽量精确还原」、控制怪路径选「逐字节移植 Gen­erateMovePath」。执行中 REA/IDA 被卡（见下），①② 走降级、③ 走适配移植，均编译通过。
+
+#### 10.5.1 REA 取证被卡（已解除）
+- 原阻塞：本会话 `rea` server 可用，但**无独立 `ida` server**；`rea` 的 headless ida provider **拒绝 `.i64`**（`unsupported binary format`），本地**无原始 exe**。
+- **已解除（2026-11-14 晚）**：用户一直开着的 Angel IDA（ida-pro-mcp HTTP，端口 **13339**，`idb_path=E:\MXD\反编译IDA\v83\`Angel.i64`，hexrays/auto_analysis/strings 缓存均就绪）直连可用。取证改为只读调 `decompile`/`search_text`/`get_bytes`（禁 patch/rename/idb_save 等写工具），反编译出 `PrepareActionLayer@CMob`(0x664990)/`GetFineMoveDirAction@CMob`(0x671aff)/`GetCurrentAction@CMob`(0x664ce0)/`OnDie@CMob`(0x663995) 等。详见 §10.5.6。
+
+#### 10.5.2 死亡随机 die 变体（降级：WZ 枚举）
+- `Mob.h`：`Stance` 增 `DIE2=12..DIE7=22`（`< ATTACK=24`，不冲突）；新增 `is_death_stance()` 与 `std::vector<Stance> death_stances`。
+- `Mob.cpp` 构造期：按 `die1..die7` 顺序加载所有存在帧入 `animations` 并 `death_stances.push_back`；全缺时回退 `die`/`dieF` 单帧。`nameof()` 增 die 分支（`"die"+(stance-DIE)/2+1`）。
+- `apply_death()`：`set_stance(death_stances[random])` 随机选；`update()` 死亡结束判定由 `stance==DIE` 改为 `is_death_stance(stance)`（否则 die2+ 永不置 dead）。`kill()` case 3 也走 `apply_death()`（统一随机）。
+- orange-wz 已验（§10.2）：die1 在 1608/2053 img 存在，die2 11、dieF 9，命名一致。
+
+#### 10.5.3 死亡 Tremble（降级：boss-only）
+- `Mob.cpp` 增 `#include "../Stage.h"`；新增 `trigger_death_tremble()` 调 `Stage::get().get_camera().tremble(1,4000)`。`kill()` 对 `boss` 怪（`info/boss`，已加载）在 `dying=true` 前触发。
+- `Stage::get()`/`get_camera()`/`tremble(int8_t,int32_t)` 均已在 `Stage.cpp:450` 等处验证可用。
+- **精修（2026-11-14 晚，ida-pro-mcp@13339 取证）**：`OnDie@CMob` 末尾 `Effect_Tremble` 触发条件经 `_ZtlSecureFuse` 加固，反编译仅稳定提取到明文 mob id **8810018**（Tremble 3000ms / mode1），其余比较值被加密渲染为代码地址不可读。`trigger_death_tremble()` 已改为 `boss` 统一震屏（4000ms/mode1，覆盖「特殊怪」语义）+ 显式补回 `id == 8810018`（3000ms/mode1）。完整明文 id 集合因加固无法全解，boss-only 仍为语义兜底。
+
+#### 10.5.4 控制怪 GenerateMovePath（适配移植）
+- `next_move()` 重命名为 `generate_move_path()`（声明/定义/三处调用点 + 注释同步）。动作选择注释对齐 `GenerateMovePath` 的 move/jump/stand + 服务端驱动 attack/skill（attack 由 s9 `DoAttack` 下发、skill 由 `skill_pending` 授权）与 foothold 边界（`TURNATEDGES` 平台边缘翻转）。
+- **未做**逐字节复刻 9KB `CVecCtrlMob` 多段路径/逐 foothold 采样：本引擎无 `CVecCtrlMob` 等价体，且 `MoveMobPacket` 当前仅写**单段** `Movement`（与 s9 `MoveLifeHandler` 单段契约一致），多段路径需改包格式并验证服务端，风险高且当前无法实机验证。发包 opcode 仍为 `MOVE_MONSTER=188`，与 Angel `COutPacket(188)` 一致。
+- 精确多段物理待 REA + 引擎层 `CVecCtrlMob` 等价体后精修。
+
+#### 10.5.5 构建
+- 临时 `OutDir`/`IntDir` 编译 `EXITCODE=0`，仅既有 warning（`WaveAShellHandlers` C4804 等，与本轮无关）；`Mob.{h,cpp}` 无新增诊断。
+- 部署 exe 覆盖需先关闭运行中的客户端（本会话占用，待用户关闭后 `build_smoke.bat`）。
+
+#### 10.5.6 第七轮精修（2026-11-14 晚）：ida-pro-mcp@13339 反编译取证
+- **阻断解除**：用户一直开着的 Angel IDA（ida-pro-mcp HTTP，端口 **13339**，加载 `E:\MXD\反编译IDA\v83\`Angel.i64``，hexrays/auto_analysis/strings 缓存均就绪）直连可用。只读调 `decompile`/`search_text`/`get_bytes`（禁 patch/rename/idb_save 等写工具），反编译出 `PrepareActionLayer@CMob`(0x664990)/`GetFineMoveDirAction@CMob`(0x671aff)/`GetCurrentAction@CMob`(0x664ce0)/`OnDie@CMob`(0x663995) 等，落盘 `evidence/ida/`。
+- **Stance 枚举对齐**：`GetFineMoveDirAction` 把 fine-action 映射为 `nMoveDirAction & 1 | 2 * v10`，其中 fine 0→2(MOVE)、1→4(STAND)、2→6(JUMP)、3→12(DIE2)、35→32。本客户端 `Stance` 枚举（MOVE=2/STAND=4/JUMP=6/DIE2=12…）与 Angel fine-action 编码**完全一致**，无需改枚举。
+- **die 变体：行为等价确认（无代码改动）**：`OnDie@CMob` 中 `v6=*(template+548)`（死亡动画套数），`doomed==3` 固定 `action=21`，否则 `action=rand()%v6+9`（**base 9 顺序**）；`PrepareActionLayer` 经 `GetCurrentAction→MoveAction2RawAction→GetFineAction` 索引 `*(this+269)` 的 20 字节 `MOACTIONFRAMEENTRY` 动作表（经 `dword_BEDB10` 的 `MobActionErrata` ZMap 做 raw→frame 重映射）。结论：`rand()%v6+9` 在 v6 套死亡动画里**均匀随机选**（顺序 9=die1/10=die2/…），与本客户端 `death_stances` 随机选**观感等价**（均匀随机与顺序无关）；base9 顺序也恰与 WZ `die1/die2/…` 顺序一致。故不再改 `apply_death`，维持降级实现。
+- **Tremble 精修（已改代码）**：原 boss-only。经 13339 反编译 `OnDie` 末尾 `Effect_Tremble`——触发条件以 `_ZtlSecureFuse` 解密 mob 模板 id 与若干常量比较；反编译仅稳定提取到明文 mob id **8810018**（Tremble 3000ms / mode1），其余比较值被加密渲染为代码地址（`get_bytes` 在那些地址取到的是 x86 代码字节，非 4 字节常量）**无法读取**。`trigger_death_tremble()` 现改为：`boss` 统一震屏（4000ms/mode1，覆盖「特殊怪」语义兜底）+ 显式补回 `id == 8810018`（3000ms/mode1）。完整明文 id 集因加固不可全解，boss-only 仍为语义兜底。
+- **generate_move_path 一致性复核（无代码改动）**：对照 `GenerateMovePath_CMob.c` 与 13339 反编译，确认当前适配移植覆盖 move/jump/stand + 服务端驱动 attack/skill，`update_movement` 单段上报（opcode 188，同 Angel `COutPacket(188)`）。Angel 9KB 多段 `CVecCtrlMob` 路径在本引擎无等价体且 `MoveMobPacket` 仅单段契约，逐字节多段复刻需改包格式且无法实机验证，属有意不复制项。无行为关键缺口。
+- **构建**：`taskkill` 后 MSBuild Release/x64（OutDir=部署目录）`EXITCODE=0`，部署 exe 刷新至 `2026/11/14 17:59:46`。4 个提权 `MapleStory.exe` 进程仍占旧镜像，需用户重启客户端加载新构建。
+

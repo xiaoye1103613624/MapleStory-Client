@@ -33,6 +33,7 @@
 #include "../Gameplay/Combat/Skill.h"
 #include "../Gameplay/MapleMap/Layer.h"
 #include "../Gameplay/MapleMap/MapInfo.h"
+#include "../Gameplay/Physics/FootholdTree.h"
 
 namespace ms
 {
@@ -51,6 +52,10 @@ namespace ms
 		void set_direction(bool flipped) override;
 		// Set state ignore if attacking
 		void set_state(State stance) override;
+		// Force the player into the dead state (HP reached 0). 服务端权威 HP=0 时由
+		// ChangeStatsHandler 调用：清攻击态后强制切 DIED 并播 dead stance，避免
+		// set_state 在 attacking 时拒切导致「血0仍站立」。
+		void die();
 
 		// Respawn the player at the given position
 		void respawn(Point<int16_t> position, bool underwater);
@@ -137,6 +142,10 @@ namespace ms
 		// Checks if the player can climb
 		bool can_climb();
 
+		// 商城预览沙盒：改用本地 FootholdTree，且 update 时不发 MovePlayer/MovePet。
+		void use_sandbox_fht(const FootholdTree* tree);
+		bool is_sandbox() const { return sandbox_fht != nullptr; }
+
 		// Obtain a reference to the player's stats
 		CharStats& get_stats();
 		// Obtain a reference to the player's stats
@@ -189,5 +198,7 @@ namespace ms
 		bool underwater;
 
 		int32_t damageSkin = 0;
+
+		const FootholdTree* sandbox_fht = nullptr;
 	};
 }

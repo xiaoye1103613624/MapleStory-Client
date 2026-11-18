@@ -134,6 +134,10 @@ namespace ms
 		ladder = src["l"].get_bool();
 	}
 
+	Ladder::Ladder(int16_t x_, int16_t y1_, int16_t y2_, bool is_ladder)
+		: x(x_), y1(y1_), y2(y2_), ladder(is_ladder)
+	{}
+
 	bool Ladder::is_ladder() const
 	{
 		return ladder;

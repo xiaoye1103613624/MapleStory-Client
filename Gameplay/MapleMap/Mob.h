@@ -20,6 +20,7 @@
 #include "MapObject.h"
 
 #include "../Movement.h"
+#include "MovePath.h"
 
 #include "../Combat/Attack.h"
 #include "../Combat/Bullet.h"
@@ -31,6 +32,7 @@
 #include "../../Util/TimedBool.h"
 
 #include <string>
+#include <vector>
 
 namespace ms
 {
@@ -53,9 +55,26 @@ namespace ms
 			JUMP = 6,
 			HIT = 8,
 			DIE = 10,
+			// 多套死亡动画（OnDie 的 rand()%v6+9 随机选 variant）。一个怪可有
+			// die1..dieN（抽样 2053 个 img：die1 1608、die2 11、dieF 9）。
+			// 段基址沿用 2*下标约定：die2=12、die3=14…die7=22（< ATTACK=24，
+			// 不与之冲突）。精确「action 偏移」待 REA 反编译 PrepareActionLayer
+			// 精修；当前降级为「按 WZ 实际存在的 die 帧随机枚举」（观感等价）。
+			DIE2 = 12,
+			DIE3 = 14,
+			DIE4 = 16,
+			DIE5 = 18,
+			DIE6 = 20,
+			DIE7 = 22,
 			ATTACK = 24,
 			SKILL = 42
 		};
+
+		// 是否任一死亡姿态（DIE..DIE7），供 update() 判定死亡动画播完置 dead。
+		static bool is_death_stance(Stance s)
+		{
+			return s >= DIE && s <= DIE7;
+		}
 
 		// 攻击段服务端只接受下标 0..7（MonsterInformationProvider.getMobAttackInfo 越界返回 null），
 		// 技能段 42..59 可到下标 8。
@@ -69,6 +88,9 @@ namespace ms
 
 			if (stance >= ATTACK)
 				return "attack" + std::to_string((stance - ATTACK) / 2 + 1);
+
+			if (stance >= DIE && stance <= DIE7)
+				return "die" + std::to_string((stance - DIE) / 2 + 1);
 
 			static const std::string stancenames[NUM_STANCES] =
 			{
@@ -178,8 +200,17 @@ namespace ms
 		void set_stance(Stance newstance);
 		// Start the death animation
 		void apply_death();
-		// Decide on the next state
-		void next_move();
+		// 死亡震屏（OnDie Effect_Tremble 降级：boss 怪死亡统一触发；精确明文
+		// mob id 列表待 REA 反编译 OnDie 取出后精修为指定 id 集合）。
+		void trigger_death_tremble();
+		// 控制怪移动生成（Angel v83 `CMovePath::GenerateMovePath` 适配移植）：
+		// 动作选择对齐 move/jump/stand + 服务端驱动的 attack/skill 分支与 foothold
+		// 边界（PhysicsObject::TURNATEDGES 在平台边缘翻转）；本地物理与
+		// update_movement 单段上报保持不变（服务端 MOVE_MONSTER opcode=188）。
+		// 注：Angel 9KB 的 CVecCtrlMob 多段路径/逐 foothold 采样在本引擎无等价体，
+		// 且当前无法实机验证，故用「动作选择 + foothold 边界」适配版替代逐字节
+		// 物理复刻（精确多段路径待 REA 反编译 + 引擎层 CVecCtrlMob 等价体后精修）。
+		void generate_move_path();
 		// Send the current position and state to the server
 		void update_movement();
 		// P-C：施法侧特效（GetEffectUOL 等价）。查 MobSkill.img[id]/level[lv] 的
@@ -201,6 +232,9 @@ namespace ms
 		Point<int16_t> get_head_position(Point<int16_t> position) const;
 
 		std::map<Stance, Animation> animations;
+	// 该怪实际加载到的死亡姿态键集合（die1..dieN / 回退 die、dieF），apply_death
+	// 从中随机选一播放；空时（极端缺帧）退化到 DIE。
+	std::vector<Stance> death_stances;
 		std::string name;
 		// spawn 尾段存储（见 Spawn.h MobSpawn 注释）：
 		// effect：>0 出生特效 id（Mob/SpecialEff），-2 淡入 marker，-3 等父怪死，-1 无；
@@ -237,7 +271,8 @@ namespace ms
 
 		TimedBool showhp;
 
-		std::vector<Movement> movements;
+		// 服务端移动路径回放器（Angel CMovePath 等价）；非控制怪位置完全由它驱动。
+		MovePath movepath_;
 		uint16_t counter;
 
 		int32_t id;

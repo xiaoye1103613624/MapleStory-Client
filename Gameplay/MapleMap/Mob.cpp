@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Mob.h"
 
+#include "../Stage.h"
 #include "../../Util/Misc.h"
 #include "../../Configuration.h"
 
@@ -91,20 +92,38 @@ namespace ms
 
 		animations[Stance::HIT] = hit;
 
-		nl::node die = link["die1"];
+		// 死亡动画：按 die1..die7 顺序加载所有存在的死亡帧（OnDie 的
+		// rand()%v6+9 随机选 variant）。精确「action 偏移」待 REA 反编译
+		// PrepareActionLayer 精修；当前降级为「按 WZ 实际存在的 die 帧随机枚举」。
+		death_stances.clear();
 
-		if (die.size() == 0)
+		for (int32_t i = 0; i < 7; i++)
 		{
-			for (auto& alt : { "die", "die2", "dieF" })
-			{
-				if (die.size() > 0)
-					break;
+			nl::node d = link["die" + std::to_string(i + 1)];
 
-				die = link[alt];
+			if (d.size() > 0)
+			{
+				Stance ds = static_cast<Stance>(Stance::DIE + 2 * i);
+				animations[ds] = d;
+				death_stances.push_back(ds);
 			}
 		}
 
-		animations[Stance::DIE] = die;
+		// 没有任何 dieN 帧（极个别 img）：回退到 die / dieF 单帧。
+		if (death_stances.empty())
+		{
+			for (auto& alt : { "die", "dieF" })
+			{
+				nl::node d = link[alt];
+
+				if (d.size() > 0)
+				{
+					animations[Stance::DIE] = d;
+					death_stances.push_back(Stance::DIE);
+					break;
+				}
+			}
+		}
 
 		// 攻击/技能动作帧：状态字节按段基址 + 2*下标入表（下标即服务端 castPos）。
 		// 抽样 Mob.nx 2053 个 img：attack1 有 897 个、attack2 375、attack3 183，最深到 attack8；
@@ -190,7 +209,7 @@ namespace ms
 		}
 
 		if (control && stance == Stance::STAND)
-			next_move();
+			generate_move_path();
 
 		// P-B 出生特效：spawn_effect>0 播 Mob/SpecialEff.img 对应节点（出生时一次性）。
 		// 节点缺失则跳过（R6）；dormant 怪（effect==-3 雪藏）尚未出现，不播。
@@ -244,7 +263,7 @@ namespace ms
 
 		bool aniend = animations.at(stance).update();
 
-		if (aniend && stance == Stance::DIE)
+		if (aniend && is_death_stance(stance))
 			dead = true;
 
 		if (fading)
@@ -286,58 +305,61 @@ namespace ms
 
 		if (!dying)
 		{
-			if (!canfly)
-			{
-				if (phobj.is_flag_not_set(PhysicsObject::Flag::TURNATEDGES))
-				{
-					flip = !flip;
-					phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
-
-					if (stance == Stance::HIT)
-						set_stance(Stance::STAND);
-				}
-			}
-
-			switch (stance)
-			{
-			case Stance::MOVE:
-				if (canfly)
-				{
-					phobj.hforce = flip ? flyspeed : -flyspeed;
-
-					switch (flydirection)
-					{
-					case FlyDirection::UPWARDS:
-						phobj.vforce = -flyspeed;
-						break;
-					case FlyDirection::DOWNWARDS:
-						phobj.vforce = flyspeed;
-						break;
-					}
-				}
-				else
-				{
-					phobj.hforce = flip ? speed : -speed;
-				}
-
-				break;
-			case Stance::HIT:
-				if (canmove)
-				{
-					double KBFORCE = phobj.onground ? 0.2 : 0.1;
-					phobj.hforce = flip ? -KBFORCE : KBFORCE;
-				}
-
-				break;
-			case Stance::JUMP:
-				phobj.vforce = -5.0;
-				break;
-			}
-
-			physics.move_object(phobj);
-
 			if (control)
 			{
+				// 控制怪：本地动作驱动（generate_move_path = Angel GenerateMovePath
+				// 适配移植：只选 STAND/MOVE/JUMP + 服务端驱动 attack/skill；位移交给
+				// foothold 物理并用 update_movement 上报）。
+				if (!canfly)
+				{
+					if (phobj.is_flag_not_set(PhysicsObject::Flag::TURNATEDGES))
+					{
+						flip = !flip;
+						phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
+
+						if (stance == Stance::HIT)
+							set_stance(Stance::STAND);
+					}
+				}
+
+				switch (stance)
+				{
+				case Stance::MOVE:
+					if (canfly)
+					{
+						phobj.hforce = flip ? flyspeed : -flyspeed;
+
+						switch (flydirection)
+						{
+						case FlyDirection::UPWARDS:
+							phobj.vforce = -flyspeed;
+							break;
+						case FlyDirection::DOWNWARDS:
+							phobj.vforce = flyspeed;
+							break;
+						}
+					}
+					else
+					{
+						phobj.hforce = flip ? speed : -speed;
+					}
+
+					break;
+				case Stance::HIT:
+					if (canmove)
+					{
+						double KBFORCE = phobj.onground ? 0.2 : 0.1;
+						phobj.hforce = flip ? -KBFORCE : KBFORCE;
+					}
+
+					break;
+				case Stance::JUMP:
+					phobj.vforce = -5.0;
+					break;
+				}
+
+				physics.move_object(phobj);
+
 				counter++;
 
 				bool next;
@@ -357,9 +379,44 @@ namespace ms
 
 				if (next)
 				{
-					next_move();
+					generate_move_path();
 					update_movement();
 					counter = 0;
+				}
+			}
+			else
+			{
+				// 非控制怪：完全由服务端 MovePath 回放（Angel CMovePath），
+				// 不做本地物理自由推进——这是「怪物越出平台」的根因修复点。
+				if (movepath_.is_active())
+				{
+					bool ongoing = movepath_.apply(phobj);
+
+					if (ongoing)
+					{
+						uint8_t ms = movepath_.get_stance();
+
+						if (ms != 0 && static_cast<Stance>(ms) != stance)
+							set_stance(static_cast<Stance>(ms));
+
+						phobj.fhid = movepath_.get_fh();
+					}
+					else
+					{
+						if (stance != Stance::STAND && stance != Stance::HIT && stance != Stance::DIE)
+							set_stance(Stance::STAND);
+
+						phobj.normalize();
+						physics.get_fht().update_fh(phobj);
+					}
+				}
+				else
+				{
+					if (stance != Stance::STAND && stance != Stance::HIT && stance != Stance::DIE)
+						set_stance(Stance::STAND);
+
+					phobj.normalize();
+					physics.get_fht().update_fh(phobj);
 				}
 			}
 		}
@@ -372,7 +429,15 @@ namespace ms
 		return phobj.fhlayer;
 	}
 
-	void Mob::next_move()
+	// Angel v83 `CMob::GenerateMovePath` 适配移植（控制怪）：
+	// 动作选择对齐 GenerateMovePath 的分支——movement（STAND/MOVE/JUMP，
+	// foothold 边界由 TURNATEDGES 在平台边缘翻转）、服务端驱动的 attack/skill
+	// （attack 由 s9 DoAttack 结算后下发，不再本地随机出招；skill 由 MOVE_MONSTER_
+	// RESPONSE 的 skill_pending 授权）。位移由 foothold 物理约束，选完由
+	// update_movement() 单段上报（服务端 MOVE_MONSTER opcode=188，同 Angel
+	// COutPacket(188)）。Angel 9KB 的 CVecCtrlMob 多段路径/逐 foothold 采样在
+	// 本引擎无等价体，且当前无法实机验证，故用「动作选择 + foothold 边界」适配版。
+	void Mob::generate_move_path()
 	{
 		if (canmove)
 		{
@@ -396,24 +461,10 @@ namespace ms
 				skill_pending = false;
 			}
 
-			// 出招优先级二：本地随机 attack（v83 控制器职责；服务端 canUseAttack
-			// 冷却不过时会把 rawActivity 打成 -1 回放，表现为怪只走不打，安全）。
-			// notAttack 怪（info.notAttack）与被动态（HIT/JUMP 中）不出招。
-			// 【2026-11-03 构建修复】above() 是 Randomizer 成员，前序未提交代码
-			// 漏了 randomizer. 前缀 → C3861 找不到标识符，阻塞全工程构建。
-			if (control && !notattack && randomizer.above(0.82f))
-			{
-				std::vector<Stance> slots;
-				for (auto& kv : animations)
-					if (kv.first >= Stance::ATTACK && kv.first < Stance::SKILL)
-						slots.push_back(kv.first);
-
-				if (!slots.empty())
-				{
-					set_stance(slots[randomizer.next_int<size_t>(slots.size())]);
-					return;
-				}
-			}
+			// 攻击/技能改由服务端 MOVE_MONSTER_RESPONSE 驱动（Angel CMob 无本地随机出招，
+			// 攻击由服务端 DoAttack 结算后下发），移除本地 randomizer 随机 attack 分支，
+			// 避免「怪自己乱打」与服务端 castPos 不一致。
+			// notAttack 怪（info.notAttack）在被动态（HIT/JUMP）中也自然不出招。
 
 			// 攻击/技能是临时动作段，不是循环状态：播完必须回基础姿态。
 			// 否则下面的 switch 匹配不到任何 case，控制器会把同一个攻击状态字节
@@ -671,33 +722,30 @@ namespace ms
 		}
 
 		if (control && stance == Stance::STAND)
-			next_move();
+			generate_move_path();
 	}
 
 	void Mob::send_movement(Point<int16_t> start, std::vector<Movement>&& in_movements,
 		uint8_t skillbyte, int8_t skillid, int8_t skilllevel, int16_t poption)
 	{
-		// 受控怪才会带 movement 列表；非受控怪走 set_position 后立即返回，不会触发下方。
+		// 受控怪才会带 movement 列表；非受控怪走 MovePath 回放，不会触发下方。
 		if (control)
 			return;
 
 		// P-D：透传 s9 moveMonster 的 pOption，当前无对应客户端表现，仅存储预留。
 		mob_poption_ = poption;
 
-		set_position(start);
-
-		movements = std::forward<decltype(in_movements)>(in_movements);
-
-		if (movements.empty())
+		if (in_movements.empty())
 			return;
 
-		const Movement& lastmove = movements.front();
-
+		// 非控制怪：完全由服务端下发路径回放（Angel CMovePath::OnMovePacket）。
+		// 不再「只 set_position 后交给物理推进」——那是怪物越出平台的根因。
+		const Movement& lastmove = in_movements.back();
 		uint8_t laststance = lastmove.newstate;
 
 		// 服务端在移动包里显式指定了技能段（42..59）：把对应 skill{n} 动画槽当作当前
 		// 姿态播放（帧缺失时 set_stance 会钳回 move/stand，安全），并暂存 skillId/level
-		// 供 update_movement 上行回传，使服务端扩展字段在客户端生效。
+		// 供 update_movement 上行回传。
 		if (skillbyte >= static_cast<uint8_t>(Stance::SKILL)
 			&& skillbyte < static_cast<uint8_t>(Stance::SKILL) + 2 * SKILL_SLOTS)
 		{
@@ -711,15 +759,17 @@ namespace ms
 			}
 			else
 			{
-				set_stance(laststance);
+				set_stance(static_cast<Stance>(laststance));
 			}
 		}
 		else
 		{
-			set_stance(laststance);
+			set_stance(static_cast<Stance>(laststance));
 		}
 
-		phobj.fhid = lastmove.fh;
+		set_position(start);
+		movepath_.push(start, std::move(in_movements));
+		phobj.fhid = movepath_.get_fh();
 	}
 
 	Point<int16_t> Mob::get_head_position(Point<int16_t> position) const
@@ -749,14 +799,19 @@ namespace ms
 				fading = true;
 				break;
 			case 3:
-				// 备选死亡动画：set_stance(DIE) 内置 die/die2/dieF 回退链，帧缺失安全。
-				set_stance(Stance::DIE);
-				diesound.play();
+				// 备选死亡动画（die2/dieF 等）：走 apply_death 的随机 variant 选取，
+				// 帧缺失安全（death_stances 为空时退化到 DIE）。
+				apply_death();
 				break;
 			default:
 				apply_death();
 				break;
 		}
+
+		// boss 怪死亡震屏（OnDie Effect_Tremble 降级：boss-only；精确明文
+		// mob id 列表待 REA 反编译 OnDie 取出后改为指定 id 集合）。
+		if (boss)
+			trigger_death_tremble();
 
 		dying = true;
 	}
@@ -845,9 +900,7 @@ namespace ms
 
 	damage::DamageLines Mob::calculate_damage(const Attack& attack)
 	{
-		// damage.formula_v2 = false 时完全保持旧 Fyms085 公式与数值，便于一键回滚。
-		const bool v2 = Configuration::get().get_damage_formula_v2();
-
+		// 官方完整伤害公式（无配置开关）：属性驱动——没有来源的属性不产生乘区。
 		double mindamage = 1.0;
 		double maxdamage = 1.0;
 		float hitchance = 1.0f;
@@ -876,31 +929,36 @@ namespace ms
 			break;
 		}
 
-		if (v2)
+		// 无视防御：把防御减免中被忽略的比例加回。原生 CalcDamage 的 PDD/MDD
+		// 分支见 notes/r001，这里按 0..1 比例线性还原，避免改动防御函数的既有语义。
+		if (attack.ignoredef > 0.0f)
 		{
-			// 无视防御：把防御减免中被忽略的比例加回。原生 CalcDamage 的 PDD/MDD
-			// 分支见 notes/r001，这里按 0..1 比例线性还原，避免改动防御函数的既有语义。
-			if (attack.ignoredef > 0.0f)
-			{
-				float ignored = std::min<float>(std::max<float>(attack.ignoredef, 0.0f), 1.0f);
-				double defmin = magic
-					? (1 + 0.01 * leveldelta) * mdef * 0.6
-					: wdef * 0.6;
-				double defmax = magic
-					? (1 + 0.01 * leveldelta) * mdef * 0.5
-					: wdef * 0.5;
+			float ignored = std::min<float>(std::max<float>(attack.ignoredef, 0.0f), 1.0f);
+			double defmin = magic
+				? (1 + 0.01 * leveldelta) * mdef * 0.6
+				: wdef * 0.6;
+			double defmax = magic
+				? (1 + 0.01 * leveldelta) * mdef * 0.5
+				: wdef * 0.5;
 
-				mindamage += defmin * ignored;
-				maxdamage += defmax * ignored;
-			}
+			mindamage += defmin * ignored;
+			maxdamage += defmax * ignored;
+		}
 
-			// BOSS 增伤：WZ info/boss 标记（构造时读取）。
-			if (boss && attack.bossdamage > 0.0f)
-			{
-				double factor = 1.0 + attack.bossdamage;
-				mindamage *= factor;
-				maxdamage *= factor;
-			}
+		// BOSS 增伤：WZ info/boss 标记（构造时读取）。
+		if (boss && attack.bossdamage > 0.0f)
+		{
+			double factor = 1.0 + attack.bossdamage;
+			mindamage *= factor;
+			maxdamage *= factor;
+		}
+
+		// 最终伤害乘区：各来源独立连乘后由 0x175 折算下发（属性驱动，无来源时 finaldamage=0 → ×1）。
+		if (attack.finaldamage > 0.0f)
+		{
+			double factor = 1.0 + attack.finaldamage;
+			mindamage *= factor;
+			maxdamage *= factor;
 		}
 
 		if (mindamage < 1.0)
@@ -909,10 +967,9 @@ namespace ms
 		if (maxdamage < mindamage)
 			maxdamage = mindamage;
 
-		// 暴击倍率区间：CharStats 的 mincrit/maxcrit 是「额外倍率」，故 1+x。
-		// 开关关闭时固定 ×1.5，与改造前一致。
-		float critical_min = v2 ? attack.critical_min : 1.5f;
-		float critical_max = v2 ? attack.critical_max : 1.5f;
+		// 官方暴击倍率区间（基准 1.35 + cd%），由 Player/Skill 填充，无开关。
+		float critical_min = attack.critical_min;
+		float critical_max = attack.critical_max;
 
 		damage::DamageLines result(attack.hitcount);
 
@@ -976,11 +1033,14 @@ namespace ms
 		}
 		else if (control && is_alive() && damage >= knockback)
 		{
+			// 对齐 Angel OnHit：控制怪本地受击进 HIT，但不提前触发 generate_move_path
+			//（原 counter=170 会让 30 帧后立即反向行走，观感像「被打飞出」）。
+			// 非控制怪的受击 HIT 由服务端 MOB_MOVED 的 HIT 段驱动，不在此强切。
 			flip = toleft;
-			counter = 170;
+			counter = 0;
 			set_stance(Stance::HIT);
 
-			update_movement();
+			// 受击不主动发移动包（Angel 命中只 ShowHitEffect，位置仍由服务端路径决定）。
 		}
 	}
 
@@ -999,9 +1059,29 @@ namespace ms
 
 	void Mob::apply_death()
 	{
-		set_stance(Stance::DIE);
+		// 对齐 Angel OnDie 的 rand()%v6+9：在「实际加载到的死亡帧」里随机选一套。
+		// 精确 action→die 偏移待 REA 反编译 PrepareActionLayer 精修；当前按 WZ
+		// 枚举（death_stances）随机，观感等价。
+		if (!death_stances.empty())
+			set_stance(death_stances[randomizer.next_int<size_t>(death_stances.size())]);
+		else
+			set_stance(Stance::DIE);
+
 		diesound.play();
 		dying = true;
+	}
+
+	void Mob::trigger_death_tremble()
+	{
+		// 对齐 Angel OnDie 末尾 Effect_Tremble。OnDie 用 _ZtlSecureFuse 解密 mob
+		// 模板 id 后与若干常量比较触发；经 13339 反编译取证：仅 mob id 8810018 为
+		// 明文可提取（Tremble 3000ms / mode1），其余比较值被加密渲染为代码地址无法
+		// 读取。降级策略：boss 怪（WZ info/boss）统一震屏（语义覆盖「特殊怪」），
+		// 并显式补回已确定的 8810018；参数：boss 分支 4000ms/mode1、8810018 3000ms/mode1。
+		if (boss)
+			Stage::get().get_camera().tremble(1, 4000);
+		else if (id == 8810018)
+			Stage::get().get_camera().tremble(1, 3000);
 	}
 
 	bool Mob::is_alive() const

@@ -58,9 +58,18 @@ namespace ms
 			npc->deactivate();
 	}
 
+	void MapNpcs::clear_spawns()
+	{
+		// 旧图 NPC spawn 包若已入队未实例化，挺过 clear() 后会用旧 fh 坐标在
+		// 新图找不到 foothold → onground=false → 被 GRAVFORCE 拉着坠落
+		// （"切图时 NPC 掉落"）。待生成队列必须清空。
+		std::queue<NpcSpawn>().swap(spawns);
+	}
+
 	void MapNpcs::clear()
 	{
 		npcs.clear();
+		clear_spawns();
 	}
 
 	MapObjects * MapNpcs::get_npcs()

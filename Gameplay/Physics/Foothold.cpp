@@ -32,6 +32,18 @@ namespace ms
 		m_forbidFallDown(src["forbidFallDown"].get_bool())
 	{}
 
+	Foothold::Foothold(uint16_t id, uint8_t ly, int16_t x1, int16_t y1,
+		int16_t x2, int16_t y2, uint16_t prev, uint16_t next)
+		: m_id(id),
+		  m_prev(prev),
+		  m_next(next),
+		  m_layer(ly),
+		  m_force(0),
+		  m_forbidFallDown(false),
+		  m_horizontal(x1, x2),
+		  m_vertical(y1, y2)
+	{}
+
 	uint16_t Foothold::id() const
 	{
 		return m_id;

@@ -34,6 +34,11 @@ namespace ms
 
 	Physics::Physics() {}
 
+	void Physics::install_floor(int16_t x1, int16_t x2, int16_t y)
+	{
+		fht.install_floor(x1, x2, y);
+	}
+
 	void Physics::move_object(PhysicsObject& phobj) const
 	{
 		// Determine which platform the object is currently on

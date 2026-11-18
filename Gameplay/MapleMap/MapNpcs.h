@@ -41,6 +41,7 @@ namespace ms
 		void remove(int32_t oid);
 		// Remove all NPCs
 		void clear();
+		void clear_spawns();	// 切图窗口期残留 spawn 队列清理（不动场上对象）
 
 		// Returns a reference to the MapObject's object
 		MapObjects* get_npcs();

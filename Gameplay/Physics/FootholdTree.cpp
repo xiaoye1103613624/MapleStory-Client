@@ -96,6 +96,30 @@ namespace ms
 
 	FootholdTree::FootholdTree() {}
 
+	void FootholdTree::install_floor(int16_t x1, int16_t x2, int16_t y)
+	{
+		footholds.clear();
+		footholdsbyx.clear();
+
+		if (x2 < x1)
+		{
+			const int16_t tmp = x1;
+			x1 = x2;
+			x2 = tmp;
+		}
+
+		constexpr uint16_t id = 1;
+		footholds.emplace(
+			id,
+			Foothold(id, 0, x1, y, x2, y, 0, 0));
+
+		for (int32_t i = x1; i <= x2; ++i)
+			footholdsbyx.emplace(static_cast<int16_t>(i), id);
+
+		walls = { static_cast<int16_t>(x1 + 25), static_cast<int16_t>(x2 - 25) };
+		borders = { static_cast<int16_t>(y - 300), static_cast<int16_t>(y + 100) };
+	}
+
 	void FootholdTree::limit_movement(PhysicsObject& phobj) const
 	{
 		if (phobj.hmobile())

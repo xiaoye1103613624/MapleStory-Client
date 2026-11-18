@@ -121,9 +121,18 @@ namespace ms
 			drop->expire(mode, looter);
 	}
 
+	void MapDrops::clear_spawns()
+	{
+		// spawn handler 只把包入 spawns 队列，实例化延迟到下一帧 update。
+		// 若旧图 drop 包已入队未实例化，它会挺过 clear() 并在新图 foothold 上
+		// 重播下落动画（切图时看到的"掉落"）。队列必须清空。
+		std::queue<DropSpawn>().swap(spawns);
+	}
+
 	void MapDrops::clear()
 	{
 		drops.clear();
+		clear_spawns();
 	}
 
 	MapDrops::Loot MapDrops::find_loot_at(Point<int16_t> playerpos)
@@ -135,7 +144,7 @@ namespace ms
 		{
 			Optional<const Drop> drop = mmo.second.get();
 
-			if (drop && drop->bounds().contains(playerpos))
+			if (drop && drop->is_pickable() && drop->bounds().contains(playerpos))
 			{
 				lootenabled = false;
 

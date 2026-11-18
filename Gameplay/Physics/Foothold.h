@@ -35,6 +35,9 @@ namespace ms
 	public:
 		Foothold();
 		Foothold(nl::node src, uint16_t id, uint8_t layer);
+		// 商城预览沙盒等：无 WZ 节点时程序化建板。
+		Foothold(uint16_t id, uint8_t layer, int16_t x1, int16_t y1,
+			int16_t x2, int16_t y2, uint16_t prev, uint16_t next);
 
 		// Returns the foothold id aka the identifier in game data of this platform
 		uint16_t id() const;

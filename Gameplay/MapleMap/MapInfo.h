@@ -40,18 +40,23 @@ namespace ms
 	class Ladder
 	{
 	public:
+		Ladder() = default;
 		Ladder(nl::node source);
+		// 商城预览沙盒：无 WZ ladderRope 时手工建梯。
+		Ladder(int16_t x, int16_t y1, int16_t y2, bool is_ladder);
 
 		bool is_ladder() const;
 		bool inrange(Point<int16_t> position, bool upwards) const;
 		bool felloff(int16_t y, bool downwards) const;
 		int16_t get_x() const;
+		int16_t get_y1() const { return y1; }
+		int16_t get_y2() const { return y2; }
 
 	private:
-		int16_t x;
-		int16_t y1;
-		int16_t y2;
-		bool ladder;
+		int16_t x = 0;
+		int16_t y1 = 0;
+		int16_t y2 = 0;
+		bool ladder = true;
 	};
 
 	class MapInfo
