@@ -36,9 +36,12 @@ namespace ms
 		UIStatsInfo(const CharStats& stats);
 
 		void draw(float alpha) const override;
+		void update() override;
 
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		bool is_in_range(Point<int16_t> cursorpos) const override;
+		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
+		void remove_cursor() override;
 
 		UIElement::Type get_type() const override;
 
@@ -109,7 +112,9 @@ namespace ms
 		void update_simple(StatLabel label, MapleStat::Id stat);
 		void update_basevstotal(StatLabel label, MapleStat::Id bstat, EquipStat::Id tstat);
 		void update_buffed(StatLabel label, EquipStat::Id stat);
-		void send_apup(MapleStat::Id stat) const;
+		void send_apup(MapleStat::Id stat, bool hold = false) const;
+		void update_ap_hold();
+		void clear_apup_pressed();
 		void set_detail(bool enabled);
 
 		enum Buttons
@@ -174,5 +179,12 @@ namespace ms
 		// L2：083 SendAbilityUpRequest 前 CanSendExclRequest(500,0) 等价本地节流。
 		// mutable 因 send_apup 为 const 方法（仅更新节流时间戳，不改逻辑状态）。
 		mutable std::chrono::steady_clock::time_point last_ap_send{};
+		// 长按连发独立节流（≈70ms / 14 点每秒）：与单击 500ms 分开，互不抬速。
+		mutable std::chrono::steady_clock::time_point last_ap_hold_send{};
+
+		// 「+」长按快速加点：按下帧记录 stat/时刻，真松手或窗口移除时清零。
+		// 平移自 UISkillBook 的 SP 长按范式（同一套三层数据安全）。
+		MapleStat::Id ap_hold_stat = MapleStat::Id::LENGTH;	// LENGTH = 无效哨兵
+		std::chrono::steady_clock::time_point ap_hold_start{};
 	};
 }

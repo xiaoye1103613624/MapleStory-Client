@@ -291,7 +291,7 @@ namespace ms
 			{
 				const ItemData& idata = ItemData::get(e.medal_item);
 				if (idata)
-					icon = idata.get_icon(false);
+					icon = idata.get_icon(e.medal_item / 10000 == 238);
 			}
 			row_icons.push_back(icon);
 

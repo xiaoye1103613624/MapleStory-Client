@@ -327,12 +327,18 @@ namespace ms
 				{ StatLabel::FAME,  61, 172, 0 },
 				{ StatLabel::GUILD, 61, 104, 0 },
 			};
+			// 四属性行同样要按墨迹顶锚定才能落在白框垂直中间。白框上边框实测
+			// y=242/260/278/296（classic_backgrnd.png，行距 18px），沿用上方信息行
+			// 的统一口径 ink_top = 框顶 + 6 ⇒ 248/266/284/302。
+			// r27 时这四行被「基本属性点」浮层盖住量不到，才留 INK_TOP_NONE 走裸基线，
+			// 结果墨迹顶 = draw_y+9 落到了框底（243+9=252 vs 框内 244..259）——正是
+			// 用户报的「偏下」。现按同一把尺补齐，绘制点交给 y_for_ink_top 现场反解。
 			static const ClassicRow classic_raw_rows[] {
-				{ StatLabel::AP,  84, INK_TOP_NONE, 212 },
-				{ StatLabel::STR, 61, INK_TOP_NONE, 243 },
-				{ StatLabel::DEX, 61, INK_TOP_NONE, 261 },
-				{ StatLabel::INT, 61, INK_TOP_NONE, 279 },
-				{ StatLabel::LUK, 61, INK_TOP_NONE, 297 },
+				{ StatLabel::AP,  84, 218, 212 },	// AP 实心白框 y216..228（13px），ink_top=218 使墨迹上下各留 2px 居中
+				{ StatLabel::STR, 61, 248, 243 },
+				{ StatLabel::DEX, 61, 266, 261 },
+				{ StatLabel::INT, 61, 284, 279 },
+				{ StatLabel::LUK, 61, 302, 297 },
 			};
 
 			for (const ClassicRow& row : classic_ink_rows)
@@ -344,7 +350,7 @@ namespace ms
 			for (const ClassicRow& row : classic_raw_rows)
 			{
 				statoffsets[row.label] = Point<int16_t>(row.x, row.raw_y);
-				statinktops[row.label] = INK_TOP_NONE;
+				statinktops[row.label] = row.ink_top;
 			}
 		}
 		else
@@ -604,21 +610,7 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'A' || keycode == 'a') {
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				std::string t = tip;
-				for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-				MapleStat::Id st = MapleStat::Id::STR;
-				bool ok = false;
-				if (t == "str" || t == "1") { st = MapleStat::Id::STR; ok = true; }
-				else if (t == "dex" || t == "2") { st = MapleStat::Id::DEX; ok = true; }
-				else if (t == "int" || t == "3") { st = MapleStat::Id::INT; ok = true; }
-				else if (t == "luk" || t == "4") { st = MapleStat::Id::LUK; ok = true; }
-				if (ok) {
-					SpendApPacket(st).dispatch();
-					LOG(LOG_DEBUG, "UIStatsInfo: SoftKey SpendAp " << tip);
-				}
-			}, []() {}, "AP str|dex|int|luk|1-4");
+			
 		}
 		else if (keycode == 'P' || keycode == 'p')
 		{
@@ -776,6 +768,71 @@ namespace ms
 			}
 	}
 
+	void UIStatsInfo::clear_apup_pressed()
+	{
+		for (uint16_t i = Buttons::BT_HP; i <= Buttons::BT_LUK; ++i)
+			if (auto* b = find_btn(buttons, i))
+				if (b->get_state() == Button::State::PRESSED)
+					b->set_state(Button::State::NORMAL);
+	}
+
+	Cursor::State UIStatsInfo::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		// 松手/移出收回 AP「+」钮 PRESSED：基类状态机只清 MOUSEOVER，
+		// 不清 PRESSED（同 UISkillBook::clear_spup_pressed 的根因）。
+		if (!clicked)
+			clear_apup_pressed();
+
+		// 长按快速加点：motion 帧也走 !clicked，但主键仍按住 —— 只在真松手清。
+		// 平移自 UISkillBook::send_cursor，避免按键松开后还在连发。
+		if (!clicked && !UI::get().is_primary_down())
+		{
+			ap_hold_stat = MapleStat::Id::LENGTH;
+			ap_hold_start = {};
+		}
+
+		return UIDragElement<PosSTATS>::send_cursor(clicked, cursorpos);
+	}
+
+	void UIStatsInfo::remove_cursor()
+	{
+		UIDragElement<PosSTATS>::remove_cursor();
+		clear_apup_pressed();
+		ap_hold_stat = MapleStat::Id::LENGTH;
+		ap_hold_start = {};
+	}
+
+	void UIStatsInfo::update()
+	{
+		UIDragElement<PosSTATS>::update();
+		update_ap_hold();
+	}
+
+	void UIStatsInfo::update_ap_hold()
+	{
+		// 三道门：记过按下 stat + 物理主键仍按住 + 仍有可分配 AP。
+		// 任一不满足即清状态 —— 松手时 primary_down=false，motion 不影响。
+		// （数据源安全①：AP 从 stats 实时读，服务端回包刷新，客户端不自减。）
+		if (ap_hold_stat == MapleStat::Id::LENGTH || !UI::get().is_primary_down() ||
+			stats.get_stat(MapleStat::Id::AP) <= 0)
+		{
+			ap_hold_stat = MapleStat::Id::LENGTH;
+			ap_hold_start = {};
+			return;
+		}
+
+		auto now = std::chrono::steady_clock::now();
+
+		// 2s 延迟：短按仍只加一次（原生单击），到点才开始连发。
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(now - ap_hold_start).count() < 2000)
+			return;
+
+		// 数据源安全②：长按走独立 70ms 节流（last_ap_hold_send），与单击 500ms 分开。
+		// 数据源安全③：send_apup 只 dispatch SpendApPacket(stat)，不自改点数；
+		// 服务端权威扣点，AP 耗尽时 door①立刻停，多余包也被服务端拒绝。
+		send_apup(ap_hold_stat, true);
+	}
+
 	Button::State UIStatsInfo::button_pressed(uint16_t id)
 	{
 		const Player& player = Stage::get().get_player();
@@ -789,33 +846,63 @@ namespace ms
 			}
 			case Buttons::BT_HP:
 			{
+				ap_hold_stat = MapleStat::Id::HP;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::HP);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_MP:
 			{
+				ap_hold_stat = MapleStat::Id::MP;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::MP);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_STR:
 			{
+				ap_hold_stat = MapleStat::Id::STR;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::STR);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_DEX:
 			{
+				ap_hold_stat = MapleStat::Id::DEX;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::DEX);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_INT:
 			{
+				ap_hold_stat = MapleStat::Id::INT;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::INT);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_LUK:
 			{
+				ap_hold_stat = MapleStat::Id::LUK;
+				ap_hold_start = std::chrono::steady_clock::now();
 				send_apup(MapleStat::Id::LUK);
-				break;
+
+				// BtApUp 四态齐全（orange-wz 实查与 Skill/BtSpUp 逐字节一致，
+				// normal/pressed 差 226/576B）；break 落到末尾 return NORMAL 会吞帧。
+				return Button::State::PRESSED;
 			}
 			case Buttons::BT_AUTO:
 			{
@@ -940,15 +1027,19 @@ namespace ms
 		return Button::State::NORMAL;
 	}
 
-	void UIStatsInfo::send_apup(MapleStat::Id stat) const
+	void UIStatsInfo::send_apup(MapleStat::Id stat, bool hold) const
 	{
-		// L2：083 SendAbilityUpRequest 前 CanSendExclRequest(500,0) 等价本地节流，
-		// 防连点刷 AP 包（纯本地，不动 wire/opcode）。
+		// L2：083 SendAbilityUpRequest 前 CanSendExclRequest 等价本地节流（纯本地，不动 wire）。
+		// 单击 500ms 防连点；长按走独立 70ms（≈14 点/秒）快速连发，两套时间戳互不抬速。
+		// 服务端 AssignAPProcessor.APAssignAction 无冷却（lock→addStat→unlock），
+		// 三层数据安全由调用方保证：实时查 AP 余额 + 本节流 + 只发包不自减。
 		auto now = std::chrono::steady_clock::now();
-		if (last_ap_send.time_since_epoch().count() != 0 &&
-			std::chrono::duration_cast<std::chrono::milliseconds>(now - last_ap_send).count() < 500)
+		auto& last = hold ? last_ap_hold_send : last_ap_send;
+		const int64_t interval = hold ? 70 : 500;
+		if (last.time_since_epoch().count() != 0 &&
+			std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < interval)
 			return;
-		last_ap_send = now;
+		last = now;
 
 		SpendApPacket(stat).dispatch();
 		UI::get().disable();

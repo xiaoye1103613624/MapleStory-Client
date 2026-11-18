@@ -652,8 +652,14 @@ namespace ms
 		case Buttons::BT_SPUP9:
 		case Buttons::BT_SPUP10:
 		case Buttons::BT_SPUP11:
+			// 长按连升起点：与单击同一按下帧记录 row/时刻。
+			sp_hold_row = static_cast<int16_t>(id - Buttons::BT_SPUP0 + offset);
+			sp_hold_start = std::chrono::steady_clock::now();
 			send_spup(id - Buttons::BT_SPUP0 + offset);
-			break;
+
+			// 原生 BtSpUp 四态齐全（orange-wz 实查 normal/pressed 逐像素差 226/576B，
+			// maxDelta 102）。旧实现 break 后落到函数末尾 return NORMAL，按下帧一帧都画不出来。
+			return Button::State::PRESSED;
 		case Buttons::BT_MACRO_OK:
 			ChangeSkillMacroPacket().dispatch();
 			LOG(LOG_DEBUG, "UISkillBook: SKILL_MACRO saved slots=" << SkillMacros::get().size());
@@ -715,6 +721,15 @@ namespace ms
 		UIDragElement::remove_cursor();
 
 		slider.remove_cursor();
+		clear_spup_pressed();
+	}
+
+	void UISkillBook::clear_spup_pressed()
+	{
+		for (uint16_t i = Buttons::BT_SPUP0; i <= Buttons::BT_SPUP11; ++i)
+			if (auto* b = find_btn(buttons, i))
+				if (b->get_state() == Button::State::PRESSED)
+					b->set_state(Button::State::NORMAL);
 	}
 
 	Cursor::State UISkillBook::send_cursor(bool clicked, Point<int16_t> cursorpos)
@@ -797,6 +812,18 @@ namespace ms
 			grabbing = false;
 		}
 
+		// 松开/移出时收回「+」钮的 PRESSED：UIElement::remove_cursor 只清 MOUSEOVER，
+		// 不处理 PRESSED，不收会永久卡在按下帧。
+		if (!clicked)
+			clear_spup_pressed();
+
+		// 长按连升：motion 帧也走 !clicked，但 primary_down 仍为 true —— 只在真松手清。
+		if (!clicked && !UI::get().is_primary_down())
+		{
+			sp_hold_row = -1;
+			sp_hold_start = {};
+		}
+
 		return UIElement::send_cursor(clicked, cursorpos);
 	}
 
@@ -832,16 +859,7 @@ namespace ms
 					SpendSpPacket(selected_skill_id).dispatch();
 					LOG(LOG_DEBUG, "UISkillBook: SpendSp selected id=" << selected_skill_id);
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int32_t sid = std::stoi(s);
-							if (sid > 0) {
-								selected_skill_id = sid;
-								SpendSpPacket(sid).dispatch();
-								LOG(LOG_DEBUG, "UISkillBook: SoftKey SpendSp id=" << sid);
-							}
-						} catch (...) {}
-					}, []() {}, "Skill id SP");
+					
 				}
 			}
 			else if (keycode == 'U' || keycode == 'u' || keycode == 'F' || keycode == 'f')
@@ -856,20 +874,7 @@ namespace ms
 					UseSkillPacket(id, lv).dispatch();
 					LOG(LOG_DEBUG, "UISkillBook: UseSkill selected id=" << id << " lv=" << lv);
 				} else {
-					UI::get().emplace<UISoftKey>([this](const std::string& s) {
-						try {
-							int32_t id = std::stoi(s);
-							if (id <= 0) return;
-							selected_skill_id = id;
-							int32_t lv = 1;
-							try {
-								lv = Stage::get().get_player().get_skills().get_level(id);
-								if (lv <= 0) lv = 1;
-							} catch (...) {}
-							UseSkillPacket(id, lv).dispatch();
-							LOG(LOG_DEBUG, "UISkillBook: SoftKey UseSkill id=" << id << " lv=" << lv);
-						} catch (...) {}
-					}, []() {}, "Skill id use");
+					
 				}
 			}
 			else if (keycode == 'T' || keycode == 't')
@@ -885,6 +890,16 @@ namespace ms
 				else if (!ui->is_active()) ui->makeactive();
 			}
 		}
+	}
+
+	void UISkillBook::send_scroll(double yoffset)
+	{
+		// UIStateGame::send_scroll 广播给所有 active 元素；只处理光标落在本窗的情况，
+		// 否则技能窗与组合栏（同屏贴靠）会被一次滚轮同时滚动。
+		if (!is_in_range(UI::get().get_cursor_position()))
+			return;
+
+		slider.send_scroll(yoffset);
 	}
 
 	UIElement::Type UISkillBook::get_type() const
@@ -907,7 +922,29 @@ namespace ms
 
 	void UISkillBook::update_skills(int32_t skill_id)
 	{
+		(void)skill_id;
+
+		// 旧实现直接 change_tab(tab) 重建整表，尾部 setrows + change_offset(0)
+		// 把滑块 row 与列表 offset 一起归零 —— 用户报「底部升级后跳回顶部」。
+		// 保留重建（新学会的技能也要进表），但把滚动位置钳回新表有效范围。
+		const uint16_t old_offset = offset;
+
 		change_tab(tab);
+
+		const int16_t rows = visible_rows();
+		int16_t max_offset = static_cast<int16_t>(skillcount) - rows;
+
+		if (max_offset < 0)
+			max_offset = 0;
+
+		uint16_t keep = old_offset;
+
+		if (keep > static_cast<uint16_t>(max_offset))
+			keep = static_cast<uint16_t>(max_offset);
+
+		change_offset(keep);
+		// 2 参 setrows 会把 Slider 内部 row 归零，这里用 3 参同步回同一位置。
+		slider.setrows(static_cast<int16_t>(keep), rows, static_cast<int16_t>(skillcount));
 	}
 
 	void UISkillBook::change_job(uint16_t id)
@@ -1172,6 +1209,55 @@ namespace ms
 			set_skillpoint(true);
 	}
 
+	void UISkillBook::update()
+	{
+		UIElement::update();
+		update_sp_hold();
+	}
+
+	void UISkillBook::update_sp_hold()
+	{
+		// 三道门：记过按下 row + 物理主键仍按住 + 无确认面板（资源缺失客户端）。
+		// 任一不满足即清状态 —— 松手时 primary_down=false，motion 不影响。
+		if (sp_hold_row < 0 || sp_enabled || !UI::get().is_primary_down())
+		{
+			sp_hold_row = -1;
+			sp_hold_start = {};
+			return;
+		}
+
+		auto now = std::chrono::steady_clock::now();
+		if (sp_hold_start.time_since_epoch().count() == 0)
+			sp_hold_start = now;
+
+		// 2s 延迟：短按仍只升一级（原生单击），到点才开始连发。
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(now - sp_hold_start).count() < 2000)
+			return;
+
+		uint16_t row = static_cast<uint16_t>(sp_hold_row);
+		if (row >= skills.size())
+			return;
+
+		int32_t skill_id = skills[row].get_id();
+
+		// 数据安全①：每发前实时 can_raise —— sp/beginner_sp 来自 stats（回包刷新），
+		// 等级/上限来自 skillbook，前置来自 check_required；点数不足/满级立即停。
+		if (!can_raise(skill_id))
+			return;
+
+		// 数据安全②：长按走独立 70ms 节流（last_sp_hold_send），与单击 500ms 分开。
+		// 服务端 DistributeSPHandler 无额外冷却；每帧仍经 can_raise 实时校验。
+		if (last_sp_hold_send.time_since_epoch().count() != 0 &&
+			std::chrono::duration_cast<std::chrono::milliseconds>(now - last_sp_hold_send).count() < 70)
+			return;
+
+		last_sp_hold_send = now;
+
+		// 数据安全③：客户端只发 skill id，不自改点数（无 sp--/splabel 自减）；
+		// 服务端权威扣点，点数耗尽时多余的包由服务端拒绝。
+		SpendSpPacket(skill_id).dispatch();
+	}
+
 	void UISkillBook::spend_sp(int32_t skill_id)
 	{
 		// L3：SP 前置校验（与 send_spup 同源门控）。
@@ -1305,14 +1391,12 @@ namespace ms
 
 	bool UISkillBook::send_icon(const Icon& icon, Point<int16_t> cursor_position)
 	{
-		if (!macro_enabled)
-			return true;
-
 		int32_t sid = icon.get_skill_id();
 		if (sid <= 0)
 			return true;
 
-		// 拖到独立组合栏：交给 UISkillMacroEx 命中判定；否则写入当前选中宏。
+		// 组合栏开着就优先交给它判定（命中格才写入，不受 macro_enabled 门槛）
+		// 静默吞图标：两窗重叠 3px 时 get_front 可能命中技能窗，这条转发是双保险。
 		if (auto mex = UI::get().get_element<UISkillMacroEx>())
 		{
 			if (mex->is_active() && mex->drop_skill(sid, cursor_position))
@@ -1322,9 +1406,10 @@ namespace ms
 			}
 		}
 
-		if (SkillMacros::get().assign_skill(sid))
-			LOG(LOG_DEBUG, "UISkillBook: macro assign skill=" << sid);
-
+		// 旧兜底 SkillMacros::assign_skill(sid) 是「全局找第一个空格」顺序填格，
+		// 与 drop_skill 的「选中行第一个空格」合起来正是「先填满上面才能放下一行」。
+		// Angel 没有这条路径（GetIndexByPos → Map(idx,col,skill)），彻底删除；
+		// 拖到组合栏格以外不产生任何宏写入，图标按两击模型正常收起。
 		return true;
 	}
 

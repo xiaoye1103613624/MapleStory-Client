@@ -23,6 +23,7 @@
 #include "../UI.h"
 #include "../KeyAction.h"   // M 键循环：KeyAction::Id::MINIMAP 由 UIStateGame 转发进来
 
+#include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/MapleMap/Npc.h"
@@ -31,8 +32,11 @@
 #include "../../Util/HudLayout.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/UiTheme.h"
 #include "../../Configuration.h"
 #include "../../Constants.h"
+#include "../../Graphics/Geometry.h"
+#include "../../Graphics/Text.h"
 
 #include <cmath>
 
@@ -52,6 +56,8 @@ namespace ms
 		listNpc_dimensions = Point<int16_t>(150, 170);
 		listNpc_offset = 0;
 		selected = -1;
+		bt_theme_width = 25;
+		bt_theme_x = 0;
 
 		type = Setting<MiniMapType>::get().load();
 		user_type = type;
@@ -105,6 +111,10 @@ namespace ms
 				buttons[Buttons::BT_MAX] = std::make_unique<MapleButton>(basic["BtMax"], Point<int16_t>(0, 0));
 			else
 				UiAssetResolve::diag_once("minimap btmax", "Basic.img/BtMax missing");
+
+			// ThemePack 先验入口：标题栏缩放钮左侧 24x12 热区（自绘「UI」标签）。
+			buttons[Buttons::BT_THEME] = std::make_unique<AreaButton>(
+				Point<int16_t>(0, 0), Point<int16_t>(24, 12));
 		}
 
 		region_text = OutlinedText(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
@@ -134,6 +144,23 @@ namespace ms
 			for (Sprite sprite : normal_sprites)
 				sprite.draw(position, inter);
 
+			// 内容区深蓝灰实底：MinMap/c 中心切片是 47% 半透明白（orange-wz 实测
+			// RGBA=(254,254,254,0x77)），miniMap canvas 近半像素 alpha=0，不垫实底
+			// 会把游戏场景透进来、与区域颜色混在一起。原生参考帧（refcrops/minimap.png
+			// 逐行扫描 + 用户原生截图）内容区天幕是独立深蓝灰，实测 (38,68,91) 同族。
+			// 画序：九切片 -> 底衬 -> canvas -> 文字/标记。
+			// 守卫：has_map=false 退化分支 dims=(128,23) 推不出正文区，跳过。
+			// 43 = n_top(29) + n_bot(14)，与 update_canvas 的展开框常量一致。
+			if (normal_dimensions.x() > 12 && normal_dimensions.y() > 43)
+			{
+				ColorBox(normal_dimensions.x() - 12, normal_dimensions.y() - 43,
+					Color(0x26445BFFu), 0.5f).draw(DrawArgument(position + Point<int16_t>(6, 29)));
+
+				if (has_map)
+					map_sprite.draw(DrawArgument(position
+						+ Point<int16_t>(map_draw_origin_x, map_draw_origin_y)));
+			}
+
 			// 29px 顶带里「小地图」是 MinMap/nw 烤死的艺术字（60x29 装饰帽），只占到 local y≈20；
 			// 参考帧 native-refs-r14/d15f70a2 显示它下面还有一行街道名「彩虹岛」，
 			// 墨迹在 local x14..47 / y25..32，画布从 y28 起 —— 两行不重叠。
@@ -157,6 +184,19 @@ namespace ms
 		{
 			for (Sprite sprite : max_sprites)
 				sprite.draw(position, inter);
+
+			// 同 NORMAL：MaxMap/c 也是 47% 半透明白，内容区垫深蓝灰实底后再画 canvas
+			//（canvas y 叠加 MAX_ADJ=43 落到 72px 顶带之下，与原 sprites 内位置逐像素等价）。
+			// 87 = m_top(72) + m_bot(15)，与 update_canvas 的城镇框常量一致。
+			if (max_dimensions.x() > 12 && max_dimensions.y() > 87)
+			{
+				ColorBox(max_dimensions.x() - 12, max_dimensions.y() - 87,
+					Color(0x26445BFFu), 0.5f).draw(DrawArgument(position + Point<int16_t>(6, 72)));
+
+				if (has_map)
+					map_sprite.draw(DrawArgument(position
+						+ Point<int16_t>(map_draw_origin_x, map_draw_origin_y + MAX_ADJ)));
+			}
 
 			// 72px 顶带（MaxMap/nw 逐行实测）：y0..4 黑框、**y5..18 白色标题条**、
 			// y19 分隔、**y20..65 浅蓝信息带 (153,187,204)**、y66..69 深蓝、y70..71 亮边。
@@ -183,6 +223,17 @@ namespace ms
 		}
 
 		UIElement::draw(inter);
+
+		// ThemePack 快捷钮标签（AreaButton 无贴图）。
+		auto theme_it = buttons.find(Buttons::BT_THEME);
+
+		if (theme_it != buttons.end() && theme_it->second && theme_it->second->is_active())
+		{
+			ColorBox(24, 12, Color::Name::BLACK, 0.55f)
+				.draw(position + Point<int16_t>(bt_theme_x, BTN_MIN_Y));
+			Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::YELLOW, "UI")
+				.draw(position + Point<int16_t>(static_cast<int16_t>(bt_theme_x + 12), BTN_MIN_Y - 1));
+		}
 	}
 
 	void UIMiniMap::update()
@@ -453,19 +504,7 @@ namespace ms
 		}
 		if (pressed && (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'))
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				int32_t mid = 0;
-				if (tip.empty()) {
-					if (auto wm = UI::get().get_element<UIWorldMap>())
-						mid = wm->get_selected_map_id();
-				} else {
-					try { mid = std::stoi(tip); } catch (...) { return; }
-				}
-				if (mid > 0) {
-					ChangeMapPacket(false, mid, "", false).dispatch();
-					LOG(LOG_DEBUG, "UIMiniMap: SoftKey ChangeMap id=" << mid);
-				}
-			}, []() {}, "Map id|empty=WMap sel");
+			
 			return;
 		}
 		if (pressed && (keycode == 'W' || keycode == 'w'))
@@ -544,6 +583,15 @@ namespace ms
 				set_npclist_active(!listNpc_enabled);
 				break;
 			}
+			case BT_THEME:
+			{
+				const UiTheme::ThemeId applied = UiTheme::toggle(true);
+				Configuration::get().save();
+				UI::get().apply_hud_theme();
+				LOG(LOG_INFO, "UIMiniMap: HUD theme toggle -> "
+					<< UiTheme::to_config(applied));
+				return Button::State::NORMAL;
+			}
 		}
 
 		return Button::State::NORMAL;
@@ -573,6 +621,9 @@ namespace ms
 		bt_min_width = btn_width(Buttons::BT_MIN);
 		bt_max_width = btn_width(Buttons::BT_MAX);
 		bt_map_width = btn_width(Buttons::BT_MAP);
+		bt_theme_width = btn_width(Buttons::BT_THEME);
+		if (bt_theme_width <= 0)
+			bt_theme_width = 25; // AreaButton 24 + gap
 
 		combined_text_width = combined_text.width();
 	}
@@ -592,6 +643,7 @@ namespace ms
 			if (Button* b = btn(Buttons::BT_MAP)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_MAX)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_MIN)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_THEME)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_NPC)) b->set_active(false);
 			if (Button* b = btn(Buttons::BT_SMALL)) b->set_active(false);
 			if (Button* b = btn(Buttons::BT_BIG)) b->set_active(false);
@@ -603,6 +655,11 @@ namespace ms
 				b->set_state(has_map ? Button::State::NORMAL : Button::State::DISABLED);
 
 			bt_min_x = combined_text_width + 11;
+
+			bt_theme_x = bt_min_x;
+			if (Button* b = btn(Buttons::BT_THEME))
+				b->set_position(Point<int16_t>(bt_theme_x, BTN_MIN_Y));
+			bt_min_x += bt_theme_width;
 
 			if (Button* b = btn(Buttons::BT_MIN))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
@@ -632,6 +689,7 @@ namespace ms
 			if (Button* b = btn(Buttons::BT_MAP)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_MAX)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_MIN)) b->set_active(true);
+			if (Button* b = btn(Buttons::BT_THEME)) b->set_active(true);
 			if (Button* b = btn(Buttons::BT_NPC)) b->set_active(has_npcs);
 
 			if (big_map)
@@ -657,7 +715,14 @@ namespace ms
 			int16_t small_w = btn_at(Buttons::BT_SMALL) ? btn_at(Buttons::BT_SMALL)->width() + 1 : 0;
 			int16_t npc_w = (has_npcs && btn_at(Buttons::BT_NPC)) ? btn_at(Buttons::BT_NPC)->width() : 0;
 
-			bt_min_x = middle_right_x - (bt_min_width + small_w + bt_max_width + bt_map_width + npc_w);
+			// 右对齐留 6px 右内边距；Theme 钮排在 BT_MIN 左侧。
+			bt_min_x = middle_right_x
+				- (bt_theme_width + bt_min_width + small_w + bt_max_width + bt_map_width + npc_w) - 6;
+
+			bt_theme_x = bt_min_x;
+			if (Button* b = btn(Buttons::BT_THEME))
+				b->set_position(Point<int16_t>(bt_theme_x, BTN_MIN_Y));
+			bt_min_x += bt_theme_width;
 
 			if (Button* b = btn(Buttons::BT_MIN))
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
@@ -675,8 +740,7 @@ namespace ms
 				b->set_position(Point<int16_t>(bt_min_x, BTN_MIN_Y));
 
 			// SMALL/BIG 未注册（本包无件，显式预留）时 small_w=0，不推进；
-			// 与 :588 起点 middle_right_x - (bt_min+small+bt_max+bt_map+npc) 对称，
-			// 保证 BT_MAP 精确右对齐、不溢出。原笔误 += bt_max_width 会右移 13px。
+			// 与起点对称，保证 BT_MAP 精确右对齐、不溢出。
 			bt_min_x += small_w;
 
 			if (Button* b = btn(Buttons::BT_MAP))
@@ -699,8 +763,14 @@ namespace ms
 	void UIMiniMap::update_text()
 	{
 		NxHelper::Map::MapInfo map_info = NxHelper::Map::get_map_info_by_id(mapid);
-		combined_text.change_text(map_info.full_name);
-		region_text.change_text(map_info.name);
+
+		// 地图名后缀追加地图 id（用户 2026-11-16 要求）：MIN 条完整名与
+		// MAX 地图名行（region_text = mapName）均展示；NORMAL 顶带那行是
+		// 街道名（town_text = streetName），按字面语义不带 id。
+		std::string map_id_suffix = "（" + std::to_string(mapid) + "）";
+
+		combined_text.change_text(map_info.full_name + map_id_suffix);
+		region_text.change_text(map_info.name + map_id_suffix);
 		town_text.change_text(map_info.street_name);
 	}
 
@@ -797,19 +867,16 @@ namespace ms
 		min_sprites.emplace_back(slice(Min["e"], 8 + body_w_min, 0, 0, 0));
 		min_dimensions = Point<int16_t>(W_min, 20);
 
-		// Normal 展开框（MinMap 九切片）+ 地图画布。
+		// Normal 展开框（MinMap 九切片）。canvas 不再进 sprites：内容区需要
+		// 「九切片 -> 深色底衬 -> canvas」的画序，底衬是 ColorBox 不是 Sprite，
+		// canvas 统一由 map_sprite 成员在 draw() 里画（@ (map_draw_origin_x, map_draw_origin_y)）。
 		build_frame(normal_sprites, Normal, W, H_normal, n_top, n_bot, n_cap);
-
-		if (has_map)
-			normal_sprites.emplace_back(Sprite(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y))));
 
 		normal_dimensions = Point<int16_t>(W, H_normal);
 
-		// Max 城镇框（MaxMap 九切片）+ 地图画布 + 地图标记。
+		// Max 城镇框（MaxMap 九切片）+ 地图标记；canvas 同样由 draw() 独立画
+		//（y 再叠加 MAX_ADJ 补偿 72px 顶带）。
 		build_frame(max_sprites, Max, W, H_max, m_top, m_bot, n_cap);
-
-		if (has_map)
-			max_sprites.emplace_back(Sprite(Map["miniMap"]["canvas"], DrawArgument(Point<int16_t>(map_draw_origin_x, map_draw_origin_y + MAX_ADJ))));
 
 		// 地图标记（MapHelper.img/mark/*，全量 38x38）落在 72 顶带的浅蓝信息带内：
 		// 带 = y20..65（MaxMap/nw 逐行实测），38 高垂直居中 -> y=24；左内缩 8。

@@ -3,6 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIQuestLog.h"
 
+#include "../UI.h"
+
 #include "../../Gameplay/Stage.h"
 #include "../../Data/QuestData.h"
 #include "../../Net/Packets/QuestPackets.h"
@@ -441,6 +443,24 @@ namespace ms
 
 	void UIQuestLog::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+	}
+
+	void UIQuestLog::send_scroll(double yoffset)
+	{
+		// 详情板在 dimension 之外，不能用基类 is_in_range；按光标落在左列表
+		// 还是右详情区选对应 Slider（与 send_cursor():972/999 同源）。
+		const Point<int16_t> local = UI::get().get_cursor_position() - position;
+
+		if (!collapsed && detail_area.contains(local))
+		{
+			if (detail_slider.isenabled())
+				detail_slider.send_scroll(yoffset);
+		}
+		else if (list_area.contains(local))
+		{
+			if (slider.isenabled())
+				slider.send_scroll(yoffset);
+		}
 	}
 
 	UIElement::Type UIQuestLog::get_type() const

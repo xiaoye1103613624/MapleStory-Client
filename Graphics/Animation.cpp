@@ -74,6 +74,8 @@ namespace ms
 		bounds = src;
 		head = src["head"];
 		read_frame_timing(src, delay, opacities, scales);
+		has_explicit_a0 = src["a0"].data_type() == nl::node::type::integer;
+		has_explicit_a1 = src["a1"].data_type() == nl::node::type::integer;
 	}
 
 	Frame::Frame(nl::node meta, nl::node bitmap_src)
@@ -82,6 +84,8 @@ namespace ms
 		bounds = meta;
 		head = meta["head"];
 		read_frame_timing(meta, delay, opacities, scales);
+		has_explicit_a0 = meta["a0"].data_type() == nl::node::type::integer;
+		has_explicit_a1 = meta["a1"].data_type() == nl::node::type::integer;
 
 		// Keep map-object anchor from the original frame, not the override bitmap.
 		if (meta["origin"].data_type() == nl::node::type::vector)
@@ -97,6 +101,26 @@ namespace ms
 		delay = 0;
 		opacities = { 0, 0 };
 		scales = { 0, 0 };
+		has_explicit_a0 = false;
+		has_explicit_a1 = false;
+	}
+
+	void Frame::freeze_opacity_if_static()
+	{
+		// 单帧节点且只有显式 a0（无 a1 配对端点）时，read_frame_timing 生成的
+		// {a0, 255-a0} 是给多帧交叉淡化用的互补端点；单帧没有下一帧接手，
+		// 于是每一轮 delay 到点 opacity 都从 255-a0 骤回 a0，形成 ~1/delay
+		// 的呼吸频闪（shineWood back/16: a0=235 -> 20 -> 235, ~100ms/9.4Hz）。
+		//
+		// 【收紧】只压平落在人眼敏感频闪带的高速 ramp（delay<=150ms，约 >=6.7Hz）。
+		// delay 更长的单帧 a0 是设计好的缓慢发光/明暗呼吸（如 moltenRock
+		// ani/1/10 a0=0 delay=1900ms 的 0.5Hz 岩浆渐亮渐暗），必须原样保留，
+		// 否则会把官方特效压成恒定透明——那就是误杀。
+		if (has_explicit_a0 && !has_explicit_a1 && delay <= 150)
+		{
+			uint8_t a0 = opacities.first;
+			opacities = { a0, a0 };
+		}
 	}
 
 	void Frame::draw(const DrawArgument& args) const
@@ -183,6 +207,14 @@ namespace ms
 		}
 
 		animated = frames.size() > 1;
+
+		// 单帧静态背景：把「仅 a0」的互补 ramp 压平成恒定 alpha，
+		// 消除 shineWood 类背景每 ~100ms 呼吸一次的频闪。
+		if (frames.size() == 1)
+		{
+			frames[0].freeze_opacity_if_static();
+		}
+
 		zigzag = src["zigzag"].get_bool();
 
 		reset();
@@ -230,6 +262,12 @@ namespace ms
 		}
 
 		animated = frames.size() > 1;
+
+		if (frames.size() == 1)
+		{
+			frames[0].freeze_opacity_if_static();
+		}
+
 		zigzag = src["zigzag"].get_bool();
 
 		reset();

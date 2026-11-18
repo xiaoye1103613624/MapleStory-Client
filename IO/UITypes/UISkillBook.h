@@ -44,12 +44,14 @@ namespace ms
 
 		void draw(float alpha) const override;
 		bool send_icon(const Icon& icon, Point<int16_t> cursor_position) override;
+		void update() override;
 
 		void toggle_active() override;
 		void doubleclick(Point<int16_t> cursorpos) override;
 		void remove_cursor() override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		void send_scroll(double yoffset) override;
 
 		UIElement::Type get_type() const override;
 
@@ -108,6 +110,8 @@ namespace ms
 		void change_sp();
 		void change_tab(uint16_t new_tab);
 		void change_offset(uint16_t new_offset);
+		// 「+」钮按下态收尾：UIElement 状态机不会自己把 PRESSED 清回 NORMAL。
+		void clear_spup_pressed();
 
 		// 当前布局下窗口内实际可见的行数（经典单列 4 行 / 现代双列 12 行）。
 		int16_t visible_rows() const;
@@ -123,6 +127,9 @@ namespace ms
 		bool can_raise(int32_t skill_id) const;
 		void send_spup(uint16_t row);
 		void spend_sp(int32_t skill_id);
+		// 「+」长按 2s 后连升：按下帧记录 row/时刻，per-frame 只认物理按住态，
+		// 每发复用 can_raise + last_sp_send(500ms) 门控，点数不足立即停。
+		void update_sp_hold();
 
 		Job::Level joblevel_by_tab(uint16_t tab) const;
 		const UISkillBook::SkillDisplayMeta* skill_by_position(Point<int16_t> cursorpos) const;
@@ -260,5 +267,10 @@ namespace ms
 
 		// L2：083 OnSkillLevelUpButton 前 CanSendExclRequest(500,0) 等价本地节流（不动 wire）。
 		std::chrono::steady_clock::time_point last_sp_send{};
+		// 长按连发独立节流（≈70ms / 14 点每秒）：与单击 500ms 分开，互不抬速。
+		std::chrono::steady_clock::time_point last_sp_hold_send{};
+		// 「+」长按状态：按下帧记录 row/时刻；真松手或窗口移除时清零。
+		int16_t sp_hold_row = -1;
+		std::chrono::steady_clock::time_point sp_hold_start{};
 	};
 }

@@ -40,6 +40,7 @@
 #include "../../Util/PerfLog.h"
 #include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/UiTheme.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -307,56 +308,7 @@ namespace ms
 			else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't'
 				|| keycode == 'O' || keycode == 'o')
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-					if (tip.empty()) return;
-					std::string t = tip;
-					for (auto& c : t) if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
-					if (t == "ok" || t == "save" || t == "y" || t == "1")
-						button_pressed(Buttons::OK);
-					else if (t == "cancel" || t == "n" || t == "0")
-						button_pressed(Buttons::CANCEL);
-					else if (t.rfind("buff ", 0) == 0 || t == "buffon" || t == "buffoff") {
-						bool on = (t.find("off") == std::string::npos);
-						if (t.rfind("buff ", 0) == 0) {
-							std::string v = t.substr(5);
-							on = (v == "on" || v == "1" || v == "true");
-						}
-						Setting<BuffTimer>::get().save(on);
-						LOG(LOG_DEBUG, "UIOptionMenu: BuffTimer=" << on);
-					} else if (t.rfind("equip ", 0) == 0 || t == "equipon" || t == "equipoff") {
-						bool on = (t.find("off") == std::string::npos);
-						if (t.rfind("equip ", 0) == 0) {
-							std::string v = t.substr(6);
-							on = (v == "on" || v == "1" || v == "true");
-						}
-						Setting<EquipCompare>::get().save(on);
-						LOG(LOG_DEBUG, "UIOptionMenu: EquipCompare=" << on);
-					} else if (t.rfind("mpoints ", 0) == 0 || t.rfind("mp ", 0) == 0) {
-						size_t sp = t.find(' ');
-						try {
-							int64_t pts = std::stoll(t.substr(sp + 1));
-							if (pts >= 0) {
-								Setting<MaplePointsLocal>::get().save(static_cast<uint64_t>(pts));
-								LOG(LOG_DEBUG, "UIOptionMenu: MaplePointsLocal=" << pts);
-							}
-						} catch (...) {}
-					} else if (t.find('x') != std::string::npos) {
-						// WxH → 写分辨率并 OK
-						size_t x = t.find('x');
-						try {
-							int16_t w = static_cast<int16_t>(std::stoi(t.substr(0, x)));
-							int16_t h = static_cast<int16_t>(std::stoi(t.substr(x + 1)));
-							if (w >= 640 && h >= 480) {
-								Setting<Width>::get().save(w);
-								Setting<Height>::get().save(h);
-								Constants::Constants::get().set_viewwidth(w);
-								Constants::Constants::get().set_viewheight(h);
-								deactivate();
-								LOG(LOG_DEBUG, "UIOptionMenu: SoftKey res " << w << "x" << h);
-							}
-						} catch (...) {}
-					}
-				}, []() {}, "ok|WxH|buff on|equip on|mp N");
+				
 			}
 		}
 	}
@@ -533,6 +485,9 @@ namespace ms
 		dimension = backgrnd.get_dimensions();
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
+		// 首次打开（未拖动过）按视口居中，避免固定默认坐标在大窗口下偏左上。
+		center_if_position_unset(dimension);
+
 		nl::node Basic = nl::nx::UI["Basic.img"];
 		nl::node checkbox = Basic["CheckBox"];
 
@@ -705,6 +660,11 @@ namespace ms
 		bool sysopt_pending_apply = false;
 		int16_t sysopt_pending_w = 0;
 		int16_t sysopt_pending_h = 0;
+		// 普通「确定」（无分辨率变更）落盘后也要关窗；commit 只排队，本窗下一帧
+		// update 见到此标记即销毁（与分辨率变更走同一「先关窗再切档」口径）。
+		bool sysopt_committed = false;
+		// HUD ThemePack：0=classic，1=modern（与 UiTheme::ThemeId 对齐；文件作用域避免改头布局）。
+		uint8_t sysopt_hud_theme = 0;
 	}
 
 	UISysOpt::UISysOpt()
@@ -725,7 +685,17 @@ namespace ms
 		backgrnd = Texture(SysOpt["backgrnd"]);
 		dimension = backgrnd.get_dimensions();
 
+		// SysOpt/backgrnd 实测 299×365，但确定/取消（BTN_Y=372）与语言切换
+		// （LANG_Y=366）落在底板之外；若窗口命中区按底板高 365 收口，这两个
+		// 命中区永远收不到光标事件 → 「确定/取消点击无效果」。把窗口高度撑到
+		// 容纳底部按钮，使它们真正可点（底板之下是透明区，按钮照常绘制）。
+		if (dimension.y() < BTN_Y + 26)
+			dimension = Point<int16_t>(dimension.x(), BTN_Y + 26);
+
 		dragarea = Point<int16_t>(dimension.x(), 20);
+
+		// 首次打开（未拖动过）按视口居中，避免固定默认坐标在大窗口下偏左上。
+		center_if_position_unset(dimension);
 
 		nl::node Basic = nl::nx::UI["Basic.img"];
 		nl::node checkbox = Basic["CheckBox"];
@@ -762,6 +732,7 @@ namespace ms
 
 		// 展开后的条目命中区，行顶 = 盒体下沿 + 行高*i；收起时整排置灰不激活。
 		sysopt_open = 0;
+		sysopt_committed = false;
 
 		for (uint8_t i = 0; i < SCREENSHOT_PATH_COUNT; i++)
 			buttons[PATH_OPT0 + i] = std::make_unique<AreaButton>(
@@ -790,6 +761,10 @@ namespace ms
 		// 语言切换命中区（无贴图，运行时自绘「语言：xxx」，点一下在 zh-CN/en-US 间切换）。
 		buttons[LANGUAGE] = std::make_unique<AreaButton>(
 			Point<int16_t>(COMBO_X, LANG_Y), Point<int16_t>(LANG_W, COMBO_H));
+
+		// HUD ThemePack：主题项（自绘「主题：083 Classic/Modern」），点一下切换并即时重建底栏。
+		buttons[HUD_THEME] = std::make_unique<AreaButton>(
+			Point<int16_t>(THEME_X, THEME_Y), Point<int16_t>(THEME_W, COMBO_H));
 
 		// 同 UIGameOpt：传按钮根节点，不是 ["normal"][0] 叶子。
 		nl::node bt_ok = Basic["BtOK2"];
@@ -825,6 +800,8 @@ namespace ms
 		// 当前语言序号：ui.language 是 zh-CN（默认）/ en-US。
 		language = (Configuration::get().get_ui_language() == "en-US") ? 1 : 0;
 
+		sysopt_hud_theme = (UiTheme::resolve() == UiTheme::ThemeId::Classic083) ? 0 : 1;
+
 		// 多分辨率：显示真实当前档，不能恒显示 0 档（rs.cpp L1988-1996 的坑）。
 		// game_tier=255 表示旧配置未显式选档，按 window.game_width/height 反查。
 		const uint8_t tier = Setting<GameTier>::get().load();
@@ -858,7 +835,21 @@ namespace ms
 		backgrnd.draw(position);
 
 		for (uint8_t i = 0; i < SL_COUNT; i++)
+		{
 			sliders[i].draw(position);
+
+			// 仅背景音乐 / 效果音响两条音量滑条有「小 / 大」端点标记（原生烘焙在
+			// 轨道端、会被满值时的滑钮压住）；按用户要求绘到轨道上方（y = 行顶 - 12），
+			// 保证不被遮挡。其余滑条无此标记，不画。
+			if (i == SL_BGM || i == SL_SFX)
+			{
+				const int16_t ry = SLIDER_ROW[i] - 12;
+				Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "小")
+					.draw(position + Point<int16_t>(TRACK_X0, ry));
+				Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "大")
+					.draw(position + Point<int16_t>(TRACK_X1, ry));
+			}
+		}
 
 		// 勾选态与 CHECK_BOX 表同序：背景音乐静音 / 效果音响静音 / 画面效果 /
 		// 画面模式（窗口化）/ 画面模式（ALT+回车可切换）。
@@ -891,6 +882,17 @@ namespace ms
 			LANG_W - 6)
 			.draw(position + Point<int16_t>(COMBO_X + 6, LANG_Y + 1));
 
+		// HUD ThemePack 主题项（先验/正式入口共用 apply）。
+		{
+			const char* theme_name = (sysopt_hud_theme == 0)
+				? UiTheme::display_name(UiTheme::ThemeId::Classic083)
+				: UiTheme::display_name(UiTheme::ThemeId::ModernStatusBar3);
+			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+				std::string("主题：") + theme_name,
+				THEME_W - 6)
+				.draw(position + Point<int16_t>(THEME_X + 2, THEME_Y + 1));
+		}
+
 		UIElement::draw_buttons(inter);
 
 		// 展开的列表压在窗体（含底部确定/取消钮）之上，故排在 draw_buttons 之后。
@@ -900,6 +902,23 @@ namespace ms
 			draw_combo_list(COMBO_Y_MOB, MOB_INFO_COUNT, MOB_INFO_KEY, mob_info);
 		else if (sysopt_open == SCREENSHOT_PATH)
 			draw_combo_list(COMBO_Y_PATH, SCREENSHOT_PATH_COUNT, SCREENSHOT_PATH_KEY, screenshot_path);
+	}
+
+	// 下拉项文字裁剪到 maxw 像素内，超出加省略号（避免「MapleStory文件夹」等长项溢出盒体）。
+	static std::string fit_combo_text(const std::string& s, Text::Font font, int16_t maxw)
+	{
+		Text full(font, Text::Alignment::LEFT, Color::Name::BLACK, s, 0, false);
+		if (full.width() <= maxw)
+			return s;
+		std::string out = s;
+		while (out.size() > 0)
+		{
+			out.pop_back();
+			Text meas(font, Text::Alignment::LEFT, Color::Name::BLACK, out + "…", 0, false);
+			if (meas.width() <= maxw)
+				return out + "…";
+		}
+		return "…";
 	}
 
 	void UISysOpt::draw_combo(int16_t y, const std::string& option) const
@@ -934,10 +953,10 @@ namespace ms
 
 		arrow.draw(lp);
 
-		// 当前项文字限制在盒体内部（左内边距 6px，右预留箭头）；formatted=false
-		// 禁止按 maxwidth 折行，否则「MapleStory文件夹」会拆成两行飘到窗体中部。
+		// 当前项文字限制在盒体内部（左内边距 6px，右预留箭头）；fit_combo_text
+		// 先把超长项裁剪加省略号，避免「MapleStory文件夹」溢出盒体或折行飘到中部。
 		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-			option, COMBO_W - 5, false)
+			fit_combo_text(option, Text::Font::A12M, COMBO_W - 5), COMBO_W - 5, false)
 			.draw(Point<int16_t>(position.x() + COMBO_X + 6, position.y() + y + 1));
 	}
 
@@ -964,7 +983,7 @@ namespace ms
 		for (uint8_t i = 0; i < count; i++)
 		{
 			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-				combo_item(key_prefix, i))
+				fit_combo_text(combo_item(key_prefix, i), Text::Font::A12M, COMBO_TOTAL_W - 8))
 				.draw(lt + Point<int16_t>(6, COMBO_H * i + 1));
 		}
 	}
@@ -1053,6 +1072,18 @@ namespace ms
 		}
 	}
 
+	void UISysOpt::apply_hud_theme_pref(uint8_t ordinal)
+	{
+		const UiTheme::ThemeId want = ordinal
+			? UiTheme::ThemeId::ModernStatusBar3
+			: UiTheme::ThemeId::Classic083;
+		const UiTheme::ThemeId applied = UiTheme::set_theme(want, true);
+		Configuration::get().save();
+		UI::get().apply_hud_theme();
+		sysopt_hud_theme = (applied == UiTheme::ThemeId::Classic083) ? 0 : 1;
+		LOG(LOG_INFO, "UISysOpt: HUD theme -> " << UiTheme::to_config(applied));
+	}
+
 	void UISysOpt::apply_language(uint8_t ordinal)
 	{
 		const std::string lang_tag = (ordinal == 0) ? "zh-CN" : "en-US";
@@ -1110,6 +1141,12 @@ namespace ms
 				<< "x" << sysopt_pending_h << " tier=" << unsigned(sysopt_res_tier));
 			deactivate();
 		}
+		else if (sysopt_committed)
+		{
+			// 普通「确定」：落盘后关窗（不切分辨率）。
+			sysopt_committed = false;
+			deactivate();
+		}
 
 		UIElement::update();
 	}
@@ -1152,6 +1189,25 @@ namespace ms
 			language = language ? 0 : 1;
 			apply_language(language);
 			return Button::State::IDENTITY;
+		case Buttons::HUD_THEME:
+		{
+			// Prefer the other pack when both exist; otherwise keep current.
+			const uint8_t next = sysopt_hud_theme ? 0 : 1;
+			const UiTheme::ThemeId want = next
+				? UiTheme::ThemeId::ModernStatusBar3
+				: UiTheme::ThemeId::Classic083;
+
+			if (!UiTheme::can_use(want))
+			{
+				LOG(LOG_WARN, "UISysOpt: HUD theme pack missing for "
+					<< UiTheme::to_config(want));
+				return Button::State::IDENTITY;
+			}
+
+			sysopt_hud_theme = next;
+			apply_hud_theme_pref(sysopt_hud_theme);
+			return Button::State::IDENTITY;
+		}
 		case Buttons::MOB_OPT0:
 		case Buttons::MOB_OPT1:
 		case Buttons::MOB_OPT2:
@@ -1205,8 +1261,9 @@ namespace ms
 			return Button::State::IDENTITY;
 		case Buttons::OK:
 			commit();
-			// 不在此处 deactivate：commit 只排队；下一帧 update 先关窗，再由
-			// UIStateGame 应用视口（插件「先销毁模态再切档」）。
+			// 落盘后由下一帧 update 关窗（无分辨率变更走 sysopt_committed；
+			// 有分辨率变更走 sysopt_pending_apply，二者都先关窗再切档）。
+			sysopt_committed = true;
 			return Button::State::IDENTITY;
 		case Buttons::CANCEL:
 			load_values();

@@ -46,6 +46,10 @@ namespace ms
 		Rectangle<int16_t> get_bounds() const;
 		float opcstep(uint16_t timestep) const;
 		float scalestep(uint16_t timestep) const;
+		// 单帧节点里 a0 是静态 alpha；没有 a1 作为配对端点时，把
+		// read_frame_timing 生成的 {a0, 255-a0} 互补 ramp 压平成 {a0, a0}，
+		// 避免静态背景每 ~100ms 呼吸一次造成 ~9-10Hz 频闪（如 shineWood back/16）。
+		void freeze_opacity_if_static();
 
 	private:
 		Texture texture;
@@ -54,6 +58,8 @@ namespace ms
 		std::pair<int16_t, int16_t> scales;
 		Rectangle<int16_t> bounds;
 		Point<int16_t> head;
+		bool has_explicit_a0;
+		bool has_explicit_a1;
 	};
 
 	// Class which consists of multiple textures to make an Animation.

@@ -189,6 +189,9 @@ namespace ms
 
 		dragarea = Point<int16_t>(bg_dimensions_x, 20);
 
+		// 首次打开（未拖动过）按视口居中，避免固定默认坐标在大窗口下偏左上。
+		center_if_position_unset(bg_dimensions);
+
 		// Center 策略：1280×720 保留 PosMAP 绝对读数；其它档位视口居中。
 		set_layout_policy(LayoutPolicy::Center);
 		if (Constants::Constants::get().get_viewwidth() != ResolutionTiers::LOGIN_W
@@ -424,20 +427,7 @@ namespace ms
 				request_teleport(selected_map_id);
 				LOG(LOG_DEBUG, "UIWorldMap: SoftKey teleport selected=" << selected_map_id);
 			} else {
-				UI::get().emplace<UISoftKey>([this](const std::string& q) {
-					if (q.empty()) return;
-					try {
-						int32_t mapid = std::stoi(q);
-						if (mapid > 0) {
-							select_map_spot(mapid);
-							request_teleport(mapid);
-							LOG(LOG_DEBUG, "UIWorldMap: SoftKey teleport map=" << mapid);
-							return;
-						}
-					} catch (...) {}
-					search_text.change_text(q);
-					LOG(LOG_DEBUG, "UIWorldMap: SoftKey search=" << q);
-				}, []() {}, "mapid|search");
+				
 			}
 		}
 		else if (keycode == 'T' || keycode == 't' || keycode == 13)
@@ -474,15 +464,7 @@ namespace ms
 				WorldMapPlayersPacket(mid).dispatch();
 				LOG(LOG_DEBUG, "UIWorldMap: Players map=" << mid);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t id = std::stoi(s);
-						if (id > 0) {
-							WorldMapPlayersPacket(id).dispatch();
-							LOG(LOG_DEBUG, "UIWorldMap: SoftKey Players map=" << id);
-						}
-					} catch (...) {}
-				}, []() {}, "Players mapid");
+				
 			}
 		}
 	}

@@ -222,11 +222,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& tip) {
-				if (tip.empty()) return;
-				NpcTalkMorePacket(tip).dispatch();
-				LOG(LOG_DEBUG, "UIEvent: SoftKey NpcTalkMore len=" << tip.size());
-			}, []() {}, "Event reply");
+			
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
@@ -252,6 +248,14 @@ namespace ms
 			if (!ui) ui = UI::get().emplace<UIRaise>();
 			else if (!ui->is_active()) ui->makeactive();
 		}
+	}
+
+	void UIEvent::send_scroll(double yoffset)
+	{
+		if (!is_in_range(UI::get().get_cursor_position()))
+			return;
+
+		slider.send_scroll(yoffset);
 	}
 
 	UIElement::Type UIEvent::get_type() const
