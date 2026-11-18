@@ -21,11 +21,13 @@
 
 #include "../UI.h"
 #include "../../Constants.h"
+#include "../../Data/ItemData.h"
 #include "../../Util/HudLayout.h"
 
 namespace ms
 {
-	StatusInfo::StatusInfo(const std::string& str, Color::Name color)
+	StatusInfo::StatusInfo(const std::string& str, Color::Name color, int32_t id)
+		: itemid(id)
 	{
 		text = Text(Text::Font::A12M, Text::Alignment::RIGHT, color, str);
 		shadow = Text(Text::Font::A12M, Text::Alignment::RIGHT, Color::Name::BLACK, str);
@@ -36,6 +38,35 @@ namespace ms
 	void StatusInfo::draw(Point<int16_t> position, float alpha) const
 	{
 		float interopc = opacity.get(alpha);
+
+		// 道具飘字左侧小图标：仅道具获得/丢失消息（itemid>0）绘制。纹理来自
+		// ItemData 进程级缓存，缩放到约 21px（用户要求的 1.5 倍），与文字同一透明度淡出。
+		if (itemid > 0)
+		{
+			const ItemData& idata = ItemData::get(itemid);
+			if (idata.is_valid())
+			{
+				const Texture& icon = idata.get_icon(false);
+				if (icon)
+				{
+					constexpr int16_t ICON_PX = 21;      // 14 * 1.5：按用户实机反馈放大
+					constexpr int16_t ICON_GAP = 3;      // 图标与文字左缘间距
+					constexpr int16_t INK_CENTER = 9;    // A12M 文字墨迹中心相对 position.y() 的下移量
+					const float scale = static_cast<float>(ICON_PX) / icon.height();
+
+					// 文字右对齐：右缘在 position.x()，左缘 = 右缘 - text.width()。
+					// 图标视觉矩形贴文字左缘；垂直按墨迹中心对齐（原贴 position.y() 偏上约 2px）。
+					const int16_t iconw = static_cast<int16_t>(icon.width() * scale);
+					const int16_t icon_left = position.x() - text.width() - ICON_GAP - iconw;
+					const int16_t icon_top = static_cast<int16_t>(position.y() + INK_CENTER - ICON_PX / 2);
+					// Texture::draw 视觉左上角 = pos - scale * origin，故传入 pos 需补回 origin 偏移。
+					const Point<int16_t> iconpos(
+						static_cast<int16_t>(icon_left + scale * icon.get_origin().x()),
+						static_cast<int16_t>(icon_top + scale * icon.get_origin().y()));
+					icon.draw(DrawArgument(iconpos, scale, scale, interopc));
+				}
+			}
+		}
 
 		shadow.draw(DrawArgument(position + Point<int16_t>(1, 1), interopc));
 		text.draw(DrawArgument(position, interopc));
@@ -98,10 +129,7 @@ namespace ms
 		if (escape) { statusinfos.clear(); return; }
 		if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (tip.empty()) return;
-				show_status(Color::Name::YELLOW, tip);
-			}, []() {}, "Status tip");
+			
 		}
 		else if (keycode == 'C' || keycode == 'c' || keycode == 'X' || keycode == 'x')
 		{
@@ -110,23 +138,17 @@ namespace ms
 		}
 		else if (keycode == 'R' || keycode == 'r')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (!tip.empty())
-					show_status(Color::Name::RED, tip);
-			}, []() {}, "Red tip");
+			
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
-			UI::get().emplace<UISoftKey>([this](const std::string& tip) {
-				if (!tip.empty())
-					show_status(Color::Name::WHITE, tip);
-			}, []() {}, "White tip");
+			
 		}
 	}
 
-	void UIStatusMessenger::show_status(Color::Name color, const std::string& message)
+	void UIStatusMessenger::show_status(Color::Name color, const std::string& message, int32_t itemid)
 	{
-		statusinfos.push_front(StatusInfo(message, color));
+		statusinfos.push_front(StatusInfo(message, color, itemid));
 
 		if (statusinfos.size() > MAX_MESSAGES)
 			statusinfos.pop_back();

@@ -59,12 +59,15 @@ namespace ms
 	};
 
 	// Packet which sends a message to a spouse
-	// Opcode: SPOUSE_CHAT(121)
+	// Opcode: SPOUSE_CHAT(121) — Angel sub_8DEFFF / s9 SpouseChatHandler：
+	// EncodeStr(配偶名) + EncodeStr(正文)；服务端先 readString 收件人再正文。
 	class SpouseChatPacket : public OutPacket
 	{
 	public:
-		SpouseChatPacket(const std::string& message) : OutPacket(OutPacket::Opcode::SPOUSE_CHAT)
+		SpouseChatPacket(const std::string& partner, const std::string& message)
+			: OutPacket(OutPacket::Opcode::SPOUSE_CHAT)
 		{
+			write_string(partner);
 			write_string(message);
 		}
 	};

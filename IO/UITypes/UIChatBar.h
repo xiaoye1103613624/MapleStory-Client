@@ -84,7 +84,7 @@ namespace ms
 			RED,
 			BLUE,
 			YELLOW,
-			GM // GM 账号本地回显自己输入的 !命令（服务端当指令吃掉不广播）
+			GM // GM 账号本地回显自己输入的 !命令（服务端当指令吃掉不广播）；WHITE 显示
 		};
 
 		// 频道/对象枚举：与收包 handler（GeneralChat/Whisper/MultiChat/SpouseChat/
@@ -114,9 +114,17 @@ namespace ms
 		// Q2: 带可点击玩家名的聊天消息。显示串 = prefix + speaker + " : " + message；
 		// speaker 非空即可点击，点击弹出名字菜单（密语/查角色/加好友）。
 		void show_message(const std::string& prefix, const std::string& speaker, const std::string& message, ChatChannel ch);
+		// D2：客户端本地脏词表（与服务端 CURSE 双保险，缺服务端下发的词表时
+		// 仍有基础过滤）。词全小写，匹配时大小写不敏感、整词打星。
+		// V5（2026-11-16）：从 private 提到 public —— 组合栏宏名保存要复用同一张表
+		// （Angel CCurseProcess::ProcessString + SP_272_CURSING_IS_NOT_ALLOWED），
+		// 不再另立第二份词库。
+		static const std::vector<std::string>& curse_words();
 		static Color::Name channel_color(ChatChannel ch);
 		void focus_whisper();
 		void focus_whisper(const std::string& target);
+		// 夫妻频道发包（配偶名+正文）；供 MateMessage / SoftKey 复用。
+		bool send_spouse_chat(const std::string& text);
 		// 悄悄话目标弹层（UIWhisperTargetDlg）确认后的回填入口：目标切到「密语」、
 		// 展开输入行并预置 "/w <名字> "，键盘焦点留给玩家补正文。
 		void set_whisper_target(const std::string& target);
@@ -125,6 +133,10 @@ namespace ms
 		// WhisperResultHandler（Net/Handlers/MessagingHandlers）成功分支回调：
 		// 把 Q5 暂存的自说悄悄话正文回显成 "(To X) 我 : 正文"。ok=false 时只清暂存。
 		void on_whisper_result(const std::string& target, bool ok);
+		// 统一私聊出口：非聊天栏入口（UISoftKey、个人情报 S 键）也经此发包，
+		// 以便暂存 pending_whisper_text 让 WhisperResult 成功时正确回显。
+		void send_whisper_external(const std::string& target, const std::string& text)
+		{ send_whisper(target, text); }
 
 		// 频道快捷键入口（SAY / PARTYCHAT / FRIENDSCHAT / GUILDCHAT / ALLIANCECHAT /
 		// TOSPOUSE，见 IO/UIStateGame.cpp:471-482）：切目标频道 + 开输入行。
@@ -246,7 +258,8 @@ namespace ms
 
 		std::vector<Message> message_history;
 		std::vector<std::string> user_message_history;
-		size_t user_message_history_index;
+		// 0-based 回溯游标：[0, size]，size=新行（空输入）；发送/裁剪/keep_focus 处同步为 size。
+		size_t user_message_history_index = 0;
 
 		// D2：聊天业务规则本地状态。刷屏限流用稳定时钟（与帧率无关）；
 		// 连续同句检测保留最近 4 条发送串。
@@ -370,7 +383,8 @@ namespace ms
 		// 灰带顶的 1px 内沿暗线，见 FOLD_EDGE_TOP 的实测依据。
 		ColorBox classic_fold_edge;
 		Text classic_target_text;
-		uint8_t classic_chat_target_id = 0;
+		// Angel 默认 TO_ALL；字面 7 = TARGET_ALL（枚举定义在下方）。
+		uint8_t classic_chat_target_id = 7;
 		// Q5: 当前悄悄话对象名（下拉选「悄悄话」→ UIWhisperTargetDlg 确认后回填；
 		// 名字菜单「密语」也会带出它）。send_to_target_channel 的 WHISPER 分支用它；
 		// 为空时不发送、先弹对象层。切换其它频道不清（原生同样保留最后一次对象）。
@@ -382,27 +396,23 @@ namespace ms
 		std::string pending_whisper_text;
 
 		// 目标列表（点开 chatTarget 框 / ▶ 箭头后向上展开）。
-		// 样式定版依据 = 原生截帧「聊天选择对话的类型.png」逐像素实测
-		// （evidence/w4-chatbar/coords-targetlist.md，用户 2026-11-07 指定按此图）：
+		// 样式定版依据 = 原生截帧「聊天选择对话的类型.png」+ 视频抽帧 chat-vid-11/12
+		// （evidence/w4-chatbar/coords-targetlist.md）：
 		//   面板 = 1px 灰沿 (153,153,153) + 蓝内区 (51,85,119)，行距 16，
-		//   选中/悬浮行 = 整行贯通的亮蓝条 (85,153,187)，正文白字、墨迹左沿
-		//   = 面板左 + 6、首行墨顶 = 面板顶 + 2。
-		// 位置只能向上 —— 底栏贴屏幕下沿，向下没有空间。
-		// Q5: 频道下拉补全。原生 v83 的 chatTarget 列表就是全频道选择器；本端
-		// 此前只有 4 项，且发送完全不读它（只认斜杠命令）。扩到 8 项后，
-		// input_text_enter_callback 按 classic_chat_target_id 路由，斜杠命令保留为别名。
-		// 顺序与斜杠命令别名一致：/w /p /g /a /b /s；喇叭无斜杠命令，走道具流程。
+		//   选中/悬浮行 = 整行贯通的亮蓝条 (85,153,187)，正文白字。
+		// 下标顺序对齐 Angel MakeCtrlEdit @0x8dfb36 AddItem a3=0..7：
+		//   对好友 / 对群 / 对组队 / 对家族 / 对联盟 / 对夫妻 / 悄悄话 / 对所有人。
 		enum ChatTargetIndex : uint8_t
 		{
-			TARGET_ALL,
-			TARGET_WHISPER,
-			TARGET_PARTY,
-			TARGET_GUILD,
-			TARGET_BUDDY,
-			TARGET_ALLIANCE,
-			TARGET_SPOUSE,
-			TARGET_MEGAPHONE,
-			TARGET_COUNT
+			TARGET_BUDDY = 0,
+			TARGET_GROUP = 1,
+			TARGET_PARTY = 2,
+			TARGET_GUILD = 3,
+			TARGET_ALLIANCE = 4,
+			TARGET_SPOUSE = 5,
+			TARGET_WHISPER = 6,
+			TARGET_ALL = 7,
+			TARGET_COUNT = 8
 		};
 
 		static constexpr int16_t TARGET_LIST_ROW_H = 16;
@@ -448,6 +458,8 @@ namespace ms
 		// Q5: 好友频道收件人 = UIBuddyList 中在线好友的 cid（详见 cpp 注释：
 		// 名单只来自 updateBuddylist 推送，窗没开过就是空表，等价原生静默失败）。
 		std::list<int32_t> collect_online_buddy_cids() const;
+		// Angel GetOnlineFriendIDByGroup：按 BuddyListModel::active_group 过滤在线好友。
+		std::list<int32_t> collect_online_buddy_cids_by_group() const;
 		// Q5: 发一条悄悄话并暂存正文 —— WhisperResult 成功时才回显
 		// 「(To X) 自己 : 正文」（失败服务端会给红色提示，这里不出正文，
 		// 避免原生没有的「发了但对方不在」的白字）。
@@ -459,9 +471,6 @@ namespace ms
 		// 连续 4 条同句 / 脏词替换）。返回 false = 拦截（已弹提示），调用方不发。
 		// message 可能被就地替换为脱敏串（脏词打星）。
 		bool try_chat(std::string& message);
-		// D2：客户端本地脏词表（与服务端 CURSE 双保险，缺服务端下发的词表时
-		// 仍有基础过滤）。词全小写，匹配时大小写不敏感、整词打星。
-		static const std::vector<std::string>& curse_words();
 		void set_classic_log(bool open);
 		// Angel SetChatType 语义入口：nType∈{1,2,3}；persist 仅对 1/3 写 chat.type。
 		void set_chat_type(int8_t nType, bool persist);

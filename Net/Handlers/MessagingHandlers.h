@@ -30,7 +30,8 @@ namespace ms
 	public:
 		void handle(InPacket& recv) const override;
 	private:
-		void show_status(Color::Name color, const std::string& message) const;
+		// itemid>0 时飘字附道具小图标；其他消息默认无图标。
+		void show_status(Color::Name color, const std::string& message, int32_t itemid = 0) const;
 	};
 
 	// Show a server message

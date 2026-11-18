@@ -38,6 +38,8 @@
 #include "../../Net/Packets/GuildPackets.h"
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Util/Locale.h"
+
+#include <algorithm>
 #include "../../Util/UiAssetResolve.h"
 #include "../../Util/Misc.h"
 
@@ -355,6 +357,16 @@ namespace ms
 				+ "(" + std::to_string(online_n) + "/" + std::to_string(bl.buddies.size()) + ")";
 			if (friend_group_text.get_text() != grp)
 				friend_group_text.change_text(grp);
+
+			// 「目前位置 - <地图名>」随换图刷新（仅 mapid 变化时查一次 String.nx）。
+			const int32_t mapid = Stage::get().get_mapid();
+			if (mapid != friend_location_mapid)
+			{
+				friend_location_mapid = mapid;
+				const std::string loc = Locale::text("userlist.location") + " - " + get_cur_location();
+				if (friend_location_text.get_text() != loc)
+					friend_location_text.change_text(loc);
+			}
 		}
 		else if (tab == Tab::PARTY)
 		{
@@ -728,20 +740,9 @@ namespace ms
 					pre = ci->get_target_name();
 				if (!pre.empty()) {
 					std::string name = pre;
-					UI::get().emplace<UISoftKey>([name](const std::string& msg) {
-						if (msg.empty()) return;
-						WhisperPacket(name, msg).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: Whisper to=" << name);
-					}, []() {}, "Whisper msg");
+					
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& name) {
-						if (name.empty()) return;
-						UI::get().emplace<UISoftKey>([name](const std::string& msg) {
-							if (msg.empty()) return;
-							WhisperPacket(name, msg).dispatch();
-							LOG(LOG_DEBUG, "UIUserList: Whisper to=" << name);
-						}, []() {}, "Whisper msg");
-					}, []() {}, "Whisper to");
+					
 				}
 			}
 		}
@@ -815,11 +816,7 @@ namespace ms
 					BuddyAddPacket(pre, "Default Group").dispatch();
 					LOG(LOG_DEBUG, "UIUserList: BuddyAdd target=" << pre);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& name) {
-						if (name.empty()) return;
-						BuddyAddPacket(name, "Default Group").dispatch();
-						LOG(LOG_DEBUG, "UIUserList: BuddyAdd name=" << name);
-					}, []() {}, "Add friend");
+					
 				}
 				break;
 			}
@@ -830,21 +827,10 @@ namespace ms
 					pre = ci->get_target_name();
 				if (!pre.empty()) {
 					std::string name = pre;
-					UI::get().emplace<UISoftKey>([name](const std::string& group) {
-						if (group.empty()) return;
-						BuddyAddPacket(name, group).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: BuddyChangeGroup name=" << name << " group=" << group);
-					}, []() {}, "Friend group");
+					
 					break;
 				}
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					UI::get().emplace<UISoftKey>([name](const std::string& group) {
-						if (group.empty()) return;
-						BuddyAddPacket(name, group).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: BuddyChangeGroup name=" << name << " group=" << group);
-					}, []() {}, "Friend group");
-				}, []() {}, "Friend name");
+				
 				break;
 			}
 			case Buttons::BT_PARTY_CREATE:
@@ -862,23 +848,7 @@ namespace ms
 					break;
 				}
 				// SoftKey：纯数字 → PartyJoin(partyid)；否则 → PartyInvite(name)
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					if (s.empty()) return;
-					bool all_digit = true;
-					for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
-					if (all_digit) {
-						try {
-							int32_t pid = std::stoi(s);
-							if (pid > 0) {
-								PartyJoinPacket(pid).dispatch();
-								LOG(LOG_DEBUG, "UIUserList: PartyJoin id=" << pid);
-							}
-						} catch (...) {}
-					} else {
-						PartyInvitePacket(s).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: PartyInvite name=" << s);
-					}
-				}, []() {}, "Invite name|Join id");
+				
 				break;
 			}
 			case Buttons::BT_PARTY_LEAVE:
@@ -901,23 +871,7 @@ namespace ms
 					DenyPartyRequestPacket(from_name).dispatch();
 					LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << from_name);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& s) {
-						if (s.empty()) return;
-						bool all_digit = true;
-						for (char c : s) if (c < '0' || c > '9') { all_digit = false; break; }
-						if (all_digit) {
-							try {
-								int32_t cid = std::stoi(s);
-								if (cid > 0) {
-									PartyExpelPacket(cid).dispatch();
-									LOG(LOG_DEBUG, "UIUserList: PartyExpel cid=" << cid);
-								}
-							} catch (...) {}
-						} else {
-							DenyPartyRequestPacket(s).dispatch();
-							LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << s);
-						}
-					}, []() {}, "Expel cid|Deny name");
+					
 				}
 				break;
 			}
@@ -968,12 +922,7 @@ namespace ms
 					add_local(pre);
 					FindPlayerPacket(pre).dispatch();
 				} else {
-					UI::get().emplace<UISoftKey>([add_local](const std::string& name) {
-						if (name.empty()) return;
-						add_local(name);
-						FindPlayerPacket(name).dispatch();
-						LOG(LOG_DEBUG, "UIUserList: Blacklist add FindPlayer=" << name);
-					}, []() {}, "Find name");
+					
 				}
 				break;
 			}
@@ -995,11 +944,7 @@ namespace ms
 			case Buttons::BT_GUILD_NOTICE:
 			{
 				// s9 GuildOperationHandler case 0x10：0x10 + string（限 100 字）。
-				UI::get().emplace<UISoftKey>([](const std::string& notice)
-				{
-					if (!notice.empty())
-						GuildNoticePacket(notice).dispatch();
-				}, []() {}, Locale::text("guild.notice_prompt"));
+				
 				break;
 			}
 			case Buttons::BT_GUILD_INVITE:
@@ -1015,11 +960,7 @@ namespace ms
 					break;
 				}
 
-				UI::get().emplace<UISoftKey>([](const std::string& name)
-				{
-					if (!name.empty())
-						GuildInvitePacket(name).dispatch();
-				}, []() {}, Locale::text("guild.invite_prompt"));
+				
 				break;
 			}
 			case Buttons::BT_GUILD_WITHDRAW:
@@ -1061,11 +1002,7 @@ namespace ms
 					case Buttons::BT_GUILD_WHISPER:
 					{
 						const std::string name = m->name;
-						UI::get().emplace<UISoftKey>([name](const std::string& msg)
-						{
-							if (!msg.empty())
-								WhisperPacket(name, msg).dispatch();
-						}, []() {}, Locale::text("guild.whisper_prompt"));
+						
 						break;
 					}
 					case Buttons::BT_GUILD_RANKUP:
@@ -1156,25 +1093,11 @@ namespace ms
 
 				if (!pre.empty())
 				{
-					UI::get().emplace<UISoftKey>([pre](const std::string& msg)
-					{
-						if (!msg.empty())
-							WhisperPacket(pre, msg).dispatch();
-					}, []() {}, Locale::text("guild.whisper_prompt"));
+					
 					break;
 				}
 
-				UI::get().emplace<UISoftKey>([](const std::string& name)
-				{
-					if (name.empty())
-						return;
-
-					UI::get().emplace<UISoftKey>([name](const std::string& msg)
-					{
-						if (!msg.empty())
-							WhisperPacket(name, msg).dispatch();
-					}, []() {}, "Whisper msg");
-				}, []() {}, "Whisper to");
+				
 				break;
 			}
 			case Buttons::BT_FRIEND_WHERE:
@@ -1193,11 +1116,7 @@ namespace ms
 					}
 				}
 
-				UI::get().emplace<UISoftKey>([](const std::string& name)
-				{
-					if (!name.empty())
-						FindPlayerPacket(name).dispatch();
-				}, []() {}, "Find name");
+				
 				break;
 			}
 			case Buttons::BT_FRIEND_DELETE2:
@@ -1209,17 +1128,7 @@ namespace ms
 					break;
 				}
 
-				UI::get().emplace<UISoftKey>([](const std::string& s)
-				{
-					try
-					{
-						int32_t cid = std::stoi(s);
-
-						if (cid > 0)
-							BuddyDeletePacket(cid).dispatch();
-					}
-					catch (...) {}
-				}, []() {}, "Friend cid");
+				
 				break;
 			}
 			case Buttons::BT_PARTY_CREATE2:
@@ -1235,22 +1144,7 @@ namespace ms
 			case Buttons::BT_PARTY_CHANGE_BOSS:
 			{
 				const bool leader = buttonid == Buttons::BT_PARTY_CHANGE_BOSS;
-				UI::get().emplace<UISoftKey>([leader](const std::string& s)
-				{
-					try
-					{
-						int32_t cid = std::stoi(s);
-
-						if (cid <= 0)
-							return;
-
-						if (leader)
-							PartyChangeLeaderPacket(cid).dispatch();
-						else
-							PartyExpelPacket(cid).dispatch();
-					}
-					catch (...) {}
-				}, []() {}, "Member cid");
+				
 				break;
 			}
 			case Buttons::BT_PARTY_SEARCH2:
@@ -1280,20 +1174,12 @@ namespace ms
 				break;
 			case Buttons::BT_UNION_INVITE:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& name)
-				{
-					if (!name.empty())
-						AllianceInvitePacket(name).dispatch();
-				}, []() {}, "Guild name");
+				
 				break;
 			}
 			case Buttons::BT_UNION_NOTICE:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& notice)
-				{
-					if (!notice.empty())
-						AllianceNoticePacket(notice).dispatch();
-				}, []() {}, "Alliance notice");
+				
 				break;
 			}
 			case Buttons::BT_UNION_WITHDRAW:
@@ -2027,20 +1913,25 @@ namespace ms
 				Text row(Text::Font::A11M, Text::Alignment::LEFT, cname, info);
 				row.draw(position + Point<int16_t>(24, y));
 
-				// r3：血条（BtHP 开关开启且模型持有该成员血量时，083 CUIPartyHP 画法：
-				// graduation 69x13 外框 + bar 63x7 裁右填充，与 UIParty 浮窗同源同法）。
+				// r3：血条（BtHP 开关；083 CUIPartyHP / MinMS GAUGE_FILL_W=63）。
+				// 保持 UserList 内嵌，不拆独立窗（round68 + 计划 W-M4）。
 				if (party_hp_visible && partyhp_bar && partyhp_graduation)
 					if (const auto* hp = PartyModel::get().member_hp(m.id))
 					{
 						int32_t cur = hp->first;
 						int32_t max = hp->second;
 
-						const int16_t BAR_W = partyhp_bar.width();
+						// IMG GaugeBar/bar 实测宽 63；勿用大于 63 的外框宽当填充上限。
+						constexpr int16_t GAUGE_FILL_W = 63;
+						const int16_t BAR_W = partyhp_bar.width() > 0
+							? std::min<int16_t>(partyhp_bar.width(), GAUGE_FILL_W)
+							: GAUGE_FILL_W;
 						int16_t fill_w = static_cast<int16_t>(
 							BAR_W * (max > 0 ? static_cast<double>(cur) / max : 0.0));
 						if (fill_w < 0) fill_w = 0;
 						if (fill_w > BAR_W) fill_w = BAR_W;
 
+						// MinMS：NAME_DX=8 文本区旁；本窗行文案锚点 24，血条同列下移。
 						Point<int16_t> at = position + Point<int16_t>(24, y + 16);
 						partyhp_graduation.draw(DrawArgument(at));
 						Range<int16_t> crop_right(0, static_cast<int16_t>(BAR_W - fill_w));
@@ -2135,6 +2026,11 @@ namespace ms
 
 	std::string UIUserList::get_cur_location()
 	{
-		return "Henesys Market";
+		// 好友页「目前位置 - <地图名>」：动态取当前地图名（与 UIMiniMap/UIWorldMap
+		// 同款 NxHelper::Map 入口），不再写死 "Henesys Market"（旧硬编码换图后不刷新）。
+		// 未加载 String.nx / node 缺失时回退为空串，由调用方文案「目前位置 - 」兜底。
+		const int32_t mapid = Stage::get().get_mapid();
+		const std::string name = NxHelper::Map::get_map_info_by_id(mapid).name;
+		return name.empty() ? std::to_string(mapid) : name;
 	}
 }

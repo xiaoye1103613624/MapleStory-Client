@@ -226,6 +226,7 @@ namespace ms
 		Text friend_group_text;			// Default Group(0/0)
 		Text friend_none_text;			// none
 		Text friend_location_text;		// 目前位置 - xx
+		int32_t friend_location_mapid = -1;	// 上次写入位置文案的 mapid，换图才重算（避免逐帧 String.nx 查询）
 		// 组员页：Party/party0..5、icon0/1
 		Texture party_online_banner;	// party0 281x27
 		Texture party_offline_banner;	// party4 281x27

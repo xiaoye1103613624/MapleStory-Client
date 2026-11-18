@@ -29,6 +29,16 @@ namespace ms
 	TwoSpriteButton::TwoSpriteButton(nl::node nsrc, nl::node ssrc) : TwoSpriteButton(nsrc, ssrc, Point<int16_t>()) {}
 	TwoSpriteButton::TwoSpriteButton() : textures({}, {}) {}
 
+	void TwoSpriteButton::set_position(Point<int16_t> pos)
+	{
+		// 同步基类字段（其它代码可能读 Button::position）与本类绘制/命中实际使用的
+		// npos/spos。Slider::setvertical 调它把上下箭头搬到新轨道端点，之前只搬了基类
+		// 字段，draw 读 npos/spos 纹丝不动 → 箭头钉死在旧位置。
+		Button::set_position(pos);
+		npos = pos;
+		spos = pos;
+	}
+
 	void TwoSpriteButton::draw(Point<int16_t> parentpos) const
 	{
 		if (active)

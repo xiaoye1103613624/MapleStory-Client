@@ -36,13 +36,18 @@ namespace ms
 		const BuddyListData& data() const { return list; }
 		BuddyListData& mutable_data() { return list; }
 		void set(const BuddyListData& d) { list = d; }
-		void clear() { list = BuddyListData{}; }
+		void clear() { list = BuddyListData{}; active_group.clear(); }
 
 		void set_capacity(int32_t cap);
 		void update_channel(int32_t cid, int32_t channel);
 		const Buddy* find(int32_t cid) const;
 
+		// Angel StatusBar+3180 当前好友分组名；空串匹配未分组好友（strcmp 空组）。
+		const std::string& get_active_group() const { return active_group; }
+		void set_active_group(const std::string& g) { active_group = g; }
+
 	private:
 		BuddyListData list;
+		std::string active_group;
 	};
 }

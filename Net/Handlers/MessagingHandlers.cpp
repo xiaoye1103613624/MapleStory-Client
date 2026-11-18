@@ -122,12 +122,12 @@ namespace ms
 					std::string tip = lost == 1
 						? Locale::format_all("status.item.lost_one", { tab_label, name })
 						: Locale::format_all("status.item.lost_many", { tab_label, name, std::to_string(lost) });
-					show_status(Color::Name::RED, tip);
+					show_status(Color::Name::RED, tip, itemid);
 				}
 				else if (qty == 1)
-					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_one", { tab_label, name }));
+					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_one", { tab_label, name }), itemid);
 				else
-					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_many", { tab_label, name, std::to_string(qty) }));
+					show_status(Color::Name::WHITE, Locale::format_all("status.item.gained_many", { tab_label, name, std::to_string(qty) }), itemid);
 			}
 			else if (mode2 == 1)
 			{
@@ -370,13 +370,13 @@ namespace ms
 		}
 	}
 
-	void ShowStatusInfoHandler::show_status(Color::Name color, const std::string& message) const
+	void ShowStatusInfoHandler::show_status(Color::Name color, const std::string& message, int32_t itemid) const
 	{
 		auto messenger = UI::get().get_element<UIStatusMessenger>();
 		if (!messenger)
 			messenger = UI::get().emplace<UIStatusMessenger>();
 		if (messenger)
-			messenger->show_status(color, message);
+			messenger->show_status(color, message, itemid);
 	}
 
 	void ServerMessageHandler::handle(InPacket& recv) const
@@ -590,7 +590,8 @@ namespace ms
 			character->speak(message);
 		}
 
-		// Q1: 普通聊天走 ALL 频道（白字）；GM 账号发言按 GM 频道（紫字）。
+		// Q1: 普通聊天走 ALL 频道（白字）；GM 账号发言仍走 GM 频道，但按 MinMS
+		// 参考（GM 标志只控白气泡、聊天行 WHITE）收敛为白字，非紫字。
 		// 'type' 字节服务端仅下发 whiteChat(0/1)，无频道语义，故不按 type 着色；
 		// 旧逻辑 static_cast<MessageType>(type) 在 type==0 时误用 UNK0→RED，反而错色。
 		UIChatBar::ChatChannel ch = gm ? UIChatBar::ChatChannel::GM : UIChatBar::ChatChannel::ALL;
@@ -637,11 +638,19 @@ namespace ms
 
 		if (Stage::get().is_player(cid))
 		{
-			// 装备栏已开：卷轴结果特效自显，不叠 tip
+			// 匠人之魂窗：RefreshToolTip 语义（文案/音效/毁物关窗/克隆刷新）
+			bool enchant_open = false;
+			if (auto ench = UI::get().get_element<UIEnchantSkill>())
+			{
+				enchant_open = ench->is_active();
+				ench->on_scroll_result(success, destroyed);
+			}
+
+			// 装备栏或匠人窗已处理 tip 时不叠默认英文 Messages
 			bool equip_open = false;
 			if (auto eq = UI::get().get_element<UIEquipInventory>())
 				equip_open = eq->is_active();
-			if (!equip_open)
+			if (!equip_open && !enchant_open)
 			{
 				const char* tip = Messages::messages[message];
 				if (auto chatbar = UI::get().get_element<UIChatBar>())

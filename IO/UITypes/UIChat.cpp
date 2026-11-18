@@ -133,23 +133,12 @@ namespace ms
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					cid = ci->get_target_cid();
 			auto ask_msg = [](int32_t buddy_cid) {
-				UI::get().emplace<UISoftKey>([buddy_cid](const std::string& text) {
-					if (text.empty()) return;
-					std::list<int32_t> recips;
-					if (buddy_cid > 0) recips.push_back(buddy_cid);
-					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
-					// Q6: 同回显矩阵，BUDDY 服务端不回发送者 ⇒ 本地补一行。
-					echo_to_chatbar("[Buddy] ", text, UIChatBar::ChatChannel::BUDDY);
-				}, []() {}, "Buddy msg");
+				
 			};
 			if (cid > 0)
 				ask_msg(cid);
 			else
-				UI::get().emplace<UISoftKey>([ask_msg](const std::string& cid_s) {
-					int32_t id = 0;
-					try { if (!cid_s.empty()) id = std::stoi(cid_s); } catch (...) {}
-					ask_msg(id);
-				}, []() {}, "Buddy cid");
+				;
 		}
 		else if (keycode == 'R' || keycode == 'r' || keycode == 'S' || keycode == 's')
 		{
@@ -159,10 +148,7 @@ namespace ms
 			if (!pre.empty()) {
 				FindPlayerPacket(pre).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					FindPlayerPacket(name).dispatch();
-				}, []() {}, "Find player");
+				
 			}
 		}
 		else if (keycode == 'D' || keycode == 'd')
@@ -173,30 +159,15 @@ namespace ms
 		}
 		else if (keycode == 'P' || keycode == 'p')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& text) {
-				if (text.empty()) return;
-				std::list<int32_t> empty;
-				MultiChatPacket(MultiChatPacket::Type::PARTY, empty, text).dispatch();
-				echo_to_chatbar("[Party] ", text, UIChatBar::ChatChannel::PARTY);
-			}, []() {}, "Party msg");
+			
 		}
 		else if (keycode == 'G' || keycode == 'g')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& text) {
-				if (text.empty()) return;
-				std::list<int32_t> empty;
-				MultiChatPacket(MultiChatPacket::Type::GUILD, empty, text).dispatch();
-				echo_to_chatbar("[Guild] ", text, UIChatBar::ChatChannel::GUILD);
-			}, []() {}, "Guild msg");
+			
 		}
 		else if (keycode == 'A' || keycode == 'a')
 		{
-			UI::get().emplace<UISoftKey>([](const std::string& text) {
-				if (text.empty()) return;
-				std::list<int32_t> empty;
-				MultiChatPacket(MultiChatPacket::Type::ALLIANCE, empty, text).dispatch();
-				echo_to_chatbar("[Alliance] ", text, UIChatBar::ChatChannel::ALLIANCE);
-			}, []() {}, "Alliance msg");
+			
 		}
 	}
 
@@ -230,24 +201,12 @@ namespace ms
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					cid = ci->get_target_cid();
 			auto ask_msg = [](int32_t buddy_cid) {
-				UI::get().emplace<UISoftKey>([buddy_cid](const std::string& text) {
-					if (text.empty()) return;
-					std::list<int32_t> recips;
-					if (buddy_cid > 0) recips.push_back(buddy_cid);
-					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
-					LOG(LOG_DEBUG, "UIChat: Friend MultiChat cid=" << buddy_cid << " len=" << text.size());
-					// Q6: 同回显矩阵（按钮路径与 F/B 键路径一致）。
-					echo_to_chatbar("[Buddy] ", text, UIChatBar::ChatChannel::BUDDY);
-				}, []() {}, "Buddy msg");
+				
 			};
 			if (cid > 0)
 				ask_msg(cid);
 			else
-				UI::get().emplace<UISoftKey>([ask_msg](const std::string& cid_s) {
-					int32_t id = 0;
-					try { if (!cid_s.empty()) id = std::stoi(cid_s); } catch (...) {}
-					ask_msg(id);
-				}, []() {}, "Buddy cid");
+				;
 			break;
 		}
 		case Buttons::CHAT_RANDOM:
@@ -259,11 +218,7 @@ namespace ms
 				FindPlayerPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIChat: Random → FindPlayer name=" << pre);
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					FindPlayerPacket(name).dispatch();
-					LOG(LOG_DEBUG, "UIChat: Random → FindPlayer name=" << name);
-				}, []() {}, "Find player");
+				
 			}
 			break;
 		}
@@ -347,10 +302,7 @@ namespace ms
 			if (!pre.empty()) {
 				FindPlayerPacket(pre).dispatch();
 			} else {
-				UI::get().emplace<UISoftKey>([](const std::string& name) {
-					if (name.empty()) return;
-					FindPlayerPacket(name).dispatch();
-				}, []() {}, "Rank find");
+				
 			}
 		}
 	}

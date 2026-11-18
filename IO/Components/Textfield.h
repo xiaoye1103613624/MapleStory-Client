@@ -54,6 +54,8 @@ namespace ms
 		void set_text_shift(Point<int16_t> shift) { text_shift = shift; }
 		/// 允许接收 UTF-8（IME/剪贴板中文）。默认 false（账号/密码等仍限 ASCII）。
 		void set_accept_unicode(bool accept) { accept_unicode = accept; }
+		/// 仅接收 0-9 数字（背包页码输入框）。默认 false。
+		void set_digits_only(bool digits) { digits_only = digits; }
 		/// UI::focus_textfield 据此决定开/关系统 IME 文本输入。
 		bool accepts_unicode() const { return accept_unicode; }
 
@@ -82,6 +84,7 @@ namespace ms
 		size_t limit;
 		int8_t crypt;
 		bool accept_unicode = false;
+		bool digits_only = false;
 		State state;
 		Point<int16_t> text_shift;
 

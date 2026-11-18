@@ -332,7 +332,8 @@ namespace ms
 
 			// 过滤以「首字节」为单位判定（多字节字符的续字节恒 >= 0x80，不会单独出现）：
 			// Unicode 字段仅丢控制符（<32）；ASCII 字段保留 32..127，其余（含 CJK）丢弃。
-			bool keep = accept_unicode ? (lead >= 32) : (lead >= 32 && lead < 128);
+			bool keep = digits_only ? (lead >= '0' && lead <= '9')
+				: (accept_unicode ? (lead >= 32) : (lead >= 32 && lead < 128));
 
 			if (keep)
 			{

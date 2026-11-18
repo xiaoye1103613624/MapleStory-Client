@@ -28,7 +28,8 @@ namespace ms
 	class StatusInfo
 	{
 	public:
-		StatusInfo(const std::string& str, Color::Name color);
+		// itemid>0 时在文字左侧画一枚与字体尺寸相当的小道具图标（仅道具获得/丢失消息传入）。
+		StatusInfo(const std::string& str, Color::Name color, int32_t itemid = 0);
 
 		void draw(Point<int16_t> position, float alpha) const;
 		bool update();
@@ -37,6 +38,7 @@ namespace ms
 		Text text;
 		Text shadow;
 		Linear<float> opacity;
+		int32_t itemid;
 
 		// 8 seconds
 		static constexpr int64_t FADE_DURATION = 8'000;
@@ -59,7 +61,8 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
-		void show_status(Color::Name color, const std::string& message);
+		// itemid>0 表示道具消息，附一枚与字体尺寸相当的小图标；其他消息保持无图标。
+		void show_status(Color::Name color, const std::string& message, int32_t itemid = 0);
 
 	private:
 		static constexpr size_t MAX_MESSAGES = 6;

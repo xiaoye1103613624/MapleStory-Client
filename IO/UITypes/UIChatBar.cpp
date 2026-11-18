@@ -32,7 +32,9 @@
 #include "../Components/MapleButton.h"
 
 #include "../../Gameplay/Stage.h"
+#include "../../Net/Packets/GameplayPackets.h"    // EnterCashShopPacket（/shop 商城入口）
 #include "../../Net/Packets/InventoryPackets.h"
+#include "../../Net/Packets/PetPackets.h"    // 宠物命令 c2s（PET_COMMAND / PET_CHAT）
 #include "../../Net/Packets/MessagingPackets.h"
 #include "../../Net/Packets/MiscOutPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
@@ -53,6 +55,64 @@
 
 namespace ms
 {
+	namespace
+	{
+		// 宠物命令 c2s（Angel CPet::ParseCommand 语义）：玩家在聊天栏输入宠物互动命令文本
+		//（如 c1/c2，来自 Item/Pet/<id>.img/interact/N/command），本端查当前召唤宠物的
+		// interact 表把文本翻成 command 序号，发 PET_COMMAND(169)。概率/亲密度由服务端
+		// PetCommandHandler 权威判定并广播，本端 s2c PetCommandHandler(174) 已驱动动作反馈。
+		// 返回 true 表示已作为宠物命令消费（不再当普通聊天发送）。
+		bool try_pet_command(const std::string& message)
+		{
+#ifdef USE_NX
+			if (message.empty() || message[0] == '/' || message[0] == '@' || message[0] == '!')
+				return false;
+
+			const Player& player = Stage::get().get_player();
+			for (uint8_t i = 0; i < 3; ++i)
+			{
+				const PetLook& pet = player.get_pet(i);
+				int32_t iid = pet.get_itemid();
+				int32_t uid = pet.get_uniqueid();
+				if (iid <= 0 || uid <= 0)
+					continue;
+
+				nl::node interact = nl::nx::Item["Pet"][std::to_string(iid) + ".img"]["interact"];
+				if (!interact)
+					continue;
+
+				// 原生支持「宠物名 + 空格 + 命令」与纯命令两种（CPet::IsNamedPet 分支）。
+				std::string command = message;
+				const std::string& petname = pet.get_name();
+				if (!petname.empty() && message.size() > petname.size()
+					&& message.compare(0, petname.size(), petname) == 0
+					&& message[petname.size()] == ' ')
+				{
+					command = message.substr(petname.size() + 1);
+				}
+
+				for (size_t n = 0; n < 100; ++n)
+				{
+					nl::node entry = interact[std::to_string(n)];
+					if (!entry)
+						break;
+					std::string cmd = entry["command"];
+					if (!cmd.empty() && cmd == command)
+					{
+						// command 是 int8_t（wire byte），超出 127 跳过避免符号翻转。
+						if (n > 127)
+							break;
+						PetCommandPacket(uid, static_cast<int8_t>(n)).dispatch();
+						LOG(LOG_DEBUG, "UIChatBar: PET_COMMAND uid=" << uid << " cmd=" << n << " text=" << command);
+						return true;
+					}
+				}
+			}
+#endif
+			return false;
+		}
+	}
+
 	UIChatBar::UIChatBar() : temp_view_x(0), temp_view_y(0), drag_direction(DragDirection::NONE), view_input(false), view_adjusted(false), position_adjusted(false), classic_mode(false)
 	{
 		classic_mode = UiAssetResolve::is_classic_hud();
@@ -166,9 +226,14 @@ namespace ms
 				70, 11
 			);
 
-			// 字形顶部比 Textfield 的 bounds 顶低约 10px（FreeType 基线），本行只有
-			// 24px 且下沿就是那条 5px 下划线，不上移的话打出来的字整个压在状态面板上。
-			input_text.set_text_shift(Point<int16_t>(0, -9));
+			// 输入文字在白带内垂直居中：白带内区 = position.y()..+INPUT_ROW_H(26)，
+			// 目标文字「对所有人」墨迹顶定版在 position.y()+TARGET_TEXT_INK_TOP(8)。
+			// A11M 的墨迹顶 = draw_y + 6（linespace17 − SimHei bitmap_top11，见
+			// evidence/w4-chatbar/coords.md §2），而 draw() 传 (1,-2)、bounds 顶
+			// = position.y()+6 ⇒ draw_y = position.y()+4+shift。要让墨迹顶落到 +8，
+			// shift 取 -2（+4-2+6=8）；旧值 -9 把墨迹顶压到 +1，整行贴白带顶沿。
+			// marker 的 mpos 由 text_pos 推导，会随之下移，光标与文字同步居中。
+			input_text.set_text_shift(Point<int16_t>(0, -2));
 
 			// 聊天输入框接收中文：启用系统 IME（SDL_EVENT_TEXT_INPUT 通路），UTF-8 直接进
 			// 字图缓存（思源宋体含 CJK）。不启用时 Textfield::add_string 会丢弃全部 >=128
@@ -192,6 +257,25 @@ namespace ms
 				}
 			);
 
+			// 已发送输入历史回溯：modern 分支在下面注册了 UP/DOWN，但 classic 分支
+			// 漏注册，导致输入态按 ↑/↓ 完全无反应（用户 2026-11-16 反馈）。键盘映射
+			// 见 Keyboard.cpp:84-85（GLFW_KEY_UP/DOWN → KeyAction::Id::UP/DOWN），
+			// Textfield::send_key 的 default 分支会调 callbacks.at(action)。
+			input_text.set_key_callback(
+				KeyAction::Id::UP,
+				[&]()
+				{
+					change_message(true);
+				}
+			);
+			input_text.set_key_callback(
+				KeyAction::Id::DOWN,
+				[&]()
+				{
+					change_message(false);
+				}
+			);
+
 			show_message("[Welcome] Welcome to MapleStory!!", MessageType::YELLOW);
 
 			// 目标对象行：base/chatTarget(81x20) 作底（draw() 里画在行内 (0,4)），
@@ -202,8 +286,12 @@ namespace ms
 			nl::node sbroot = UiAssetResolve::status_bar_root();
 			nl::node basic = nl::nx::UI["Basic.img"];
 
+			// 原生对齐（orange-wz 逐像素）：BtWhisper/normal/0 的深色边框在局部行
+			// 0/17，base/chatTarget 在行 1/18。同 y 叠画会在框左上/左下各多出一条
+			// 9~12px 暗线（当前帧 y84/85 与 y101/102 双线；原生只有 y80/97 单线）。
+			// +1 让两切图边框精确重合：离线合成 borderSAD 24.62→1.31、darkIoU 0.594→0.778。
 			try_maple_btn(buttons, Buttons::BtWhisper, sbroot["BtWhisper"],
-				Point<int16_t>(0, TARGET_BOX_Y),
+				Point<int16_t>(0, TARGET_BOX_Y + 1),
 				"chatbar.classic.BtWhisper");
 
 			const Point<int16_t> log_btn_pos(LOG_BT_X, LOG_BT_Y);
@@ -221,11 +309,11 @@ namespace ms
 				classic_target_list_texts.emplace_back(Text::Font::A11M,
 					Text::Alignment::LEFT, Color::Name::WHITE, chat_target_name(i));
 
-			classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color(153.0f, 153.0f, 153.0f, 255.0f), 1.0f);
-			classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color(51.0f, 85.0f, 119.0f, 255.0f), 1.0f);
-			// 原生选中条 = 亮蓝 (85,153,187)，整行贯通内区、高 15（行距 16 的帧
-			// 「聊天选择对话的类型.png」实测，见 coords-targetlist.md）。
-			classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 1, Color(85.0f, 153.0f, 187.0f, 255.0f), 1.0f);
+			// Color 浮点 ctor 吃 [0,1]；写成 153.0f 会在 GL 里饱和成白块（真机白幕盖列表）。
+			classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color(0x999999FFu), 1.0f);
+			classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color(0x335577FFu), 1.0f);
+			// 原生选中条 = 亮蓝 (85,153,187)，整行贯通内区、高 15（行距 16）。
+			classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 1, Color(0x5599BBFFu), 1.0f);
 
 			set_classic_log(classic_log_open);
 
@@ -404,55 +492,59 @@ namespace ms
 				return;
 				}
 
-			// 聊天历史框（展开时，输入行上方）：半透明压暗底板（用户 2026-11-07 裁决有透明度）。
-			// 实测「聊天框展开时候.png」col y0:场景 (51,51,17)→(24,24,8)、(102,102,34)→(48,40,16)
-			// 三通道比一致≈0.47~0.53 ⇒ 黑色 α≈0.5 平涂，无边；宽=566 全行，高=user_view_y。
-			// **先画底板**，再画消息/滚动条；目标列表在底板之上（draw() 里稍后画）。
+			// 历史框：先底板 + 滚动条 + 消息；目标列表必须最后压在历史之上（真机白幕/层级反馈）。
 			if (classic_log_open)
 			{
-				// 底边与白带顶齐平：min_view_y == position.y - user_view_y，
-				// 框就是 input_pos - (0, user_view_y) 起、高 user_view_y。
 				Point<int16_t> log_pos = classic_log_position();
 
-				ColorBox(566, user_view_y, Color(0, 0, 0, 0.5f), 1.0f)
+				ColorBox(566, user_view_y, Color(0.0f, 0.0f, 0.0f, 0.5f), 1.0f)
 					.draw(DrawArgument(log_pos));
 
-				// 右端竖滚动条：原生那列灰轨 x 551..564、行 4..70（历史框内），
-				// 拖拽改高度后由 sync_classic_scrollbar 同步轨道长度与可见性。
 				classic_scrollbar.draw(log_pos);
-			}
 
-			// 输入行（26px 白带）：聊天目标对话框（对谁聊天）+ 带下细条 + 输入文本。
-			if (classic_chat_target)
+				int16_t message_y = LOG_FIRST_Y;
+				const int first_visible = static_cast<int>(message_history.size()) - 1 - classic_scroll_offset;
+
+				for (int i = first_visible; i >= 0; i--)
+				{
+					if (message_y > user_view_y + LOG_LINE_SLACK)
+						break;
+
+					message_history[i].text.draw(
+						input_pos + Point<int16_t>(LOG_TEXT_X, -message_y));
+					message_y += LOG_LINE_H;
+				}
+			}
+			else if (view_input)
 			{
-				classic_chat_target.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+				// 输入态（Angel SetChatType nType=2：只有白输入带、无大历史框）过去完全
+				// 不画 message_history —— 服务端 GM 命令回包（SERVERMESSAGE type5 →
+				// show_message）和本地 !/@ 紫字回显都进了历史数组却看不见，表现成
+				// 「!item 服务端执行了却没结果」。这里在白带上方补一小块半透明历史，
+				// 画最近几条，行距/墨迹算法与展开态同源，保持视觉一致。
+				// 目标列表在下面后画，打开时会盖住这块（与展开态同层级语义）。
+				constexpr int16_t INPUT_LOG_LINES = 4;
+				constexpr int16_t INPUT_LOG_H = LOG_FIRST_Y + INPUT_LOG_LINES * LOG_LINE_H;
+
+				Point<int16_t> log_pos(input_pos.x(), static_cast<int16_t>(input_pos.y() - INPUT_LOG_H));
+
+				ColorBox(dimension.x(), INPUT_LOG_H, Color(0.0f, 0.0f, 0.0f, 0.5f), 1.0f)
+					.draw(DrawArgument(log_pos));
+
+				int16_t message_y = LOG_FIRST_Y;
+				const int first_visible = std::max<int>(
+					0, static_cast<int>(message_history.size()) - INPUT_LOG_LINES);
+
+				for (int i = static_cast<int>(message_history.size()) - 1; i >= first_visible; i--)
+				{
+					message_history[i].text.draw(
+						input_pos + Point<int16_t>(LOG_TEXT_X, -message_y));
+					message_y += LOG_LINE_H;
+				}
 			}
-			else
-			{
-				// R6：base/chatTarget 缺失时仍要保证下面的 WHITE 目标文字可读。
-				// 底栏 backgrnd 自带白色输入带，不铺深色框就是白字压白底（用户报的
-				// 「聊天类型不显示 / 聊天 UI 变白底」）。深色取原生 chatTarget 内区色。
-				ColorBox(CHAT_TARGET_W, CHAT_TARGET_H, Color(0x1B3159FF), 1.0f)
-					.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
-			}
 
-			// 目标文字：行内墨迹顶 TARGET_TEXT_INK_TOP，绘制点按 classic_target_text
-			// 当前内容（密语对象名，可能是中文也可能是拉丁）自己的度量反解
-			// （R27-B1b 唯一真源，定版模型见 evidence/w0-common/text-metrics.md）。
-			// 参考端是左对齐紧跟箭头右侧（框内 x≈6），不居中。
-			int16_t target_x = TARGET_TEXT_X;
-			// 密语对象名可能长过框宽：整体左移贴框左沿，不溢出到输入区。
-			if (const int16_t target_w = classic_target_text.width(); target_w > CHAT_TARGET_W - TARGET_TEXT_X)
-				target_x = std::max<int16_t>(0, CHAT_TARGET_W - target_w);
-
-			classic_target_text.draw(
-				DrawArgument(input_pos + Point<int16_t>(target_x, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP)))
-			);
-
-			// 目标列表（点开框/箭头后向上展开）：后画，压在历史框底板与历史消息之上。
-			// 样式 = 原生截帧「聊天选择对话的类型.png」实测：1px 灰沿 (153,153,153) +
-			// 蓝内区 (51,85,119)，行距 16；选中条整行贯通亮蓝 (85,153,187)、高 15，
-			// 正文白字左沿 = 面板左 + 4，墨迹顶 = 面板顶 + 2。hover 初始化为已选中的行。
+			// 目标列表：压在历史之上，但必须整块停在 chatTarget 顶边之上（底=TARGET_BOX_Y-1），
+			// 再画触发钮——否则末行「对所有人」与钮双重叠字（真机 2026-11-14 反馈）。
 			if (classic_target_list_open)
 			{
 				const Point<int16_t> list_pos = classic_target_list_position();
@@ -460,7 +552,7 @@ namespace ms
 
 				classic_target_list_back.setheight(list_h);
 				classic_target_list_inner.setheight(list_h - 2);
-				classic_target_list_mark.setheight(TARGET_LIST_ROW_H - 1); // 选中条高 15（row16）
+				classic_target_list_mark.setheight(TARGET_LIST_ROW_H - 1);
 
 				classic_target_list_back.draw(list_pos);
 				classic_target_list_inner.draw(list_pos + Point<int16_t>(1, 1));
@@ -470,42 +562,50 @@ namespace ms
 						+ static_cast<int16_t>(classic_target_hover * TARGET_LIST_ROW_H)));
 
 				for (size_t i = 0; i < classic_target_list_texts.size(); ++i)
-					classic_target_list_texts[i].draw(list_pos
-						+ Point<int16_t>(4, static_cast<int16_t>(i * TARGET_LIST_ROW_H) + 2));
+				{
+					const int16_t row_ink = static_cast<int16_t>(
+						list_pos.y() + static_cast<int16_t>(i * TARGET_LIST_ROW_H) + 2);
+
+					classic_target_list_texts[i].draw(DrawArgument(Point<int16_t>(
+						static_cast<int16_t>(list_pos.x() + 4),
+						classic_target_list_texts[i].y_for_ink_top(row_ink))));
+				}
 			}
+
+			// 触发钮在列表下方单独画，永不被末行盖住。
+			if (classic_chat_target)
+			{
+				classic_chat_target.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+			}
+			else
+			{
+				ColorBox(CHAT_TARGET_W, CHAT_TARGET_H, Color(0x1B3159FFu), 1.0f)
+					.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+			}
+
+			int16_t target_x = TARGET_TEXT_X;
+			if (const int16_t target_w = classic_target_text.width(); target_w > CHAT_TARGET_W - TARGET_TEXT_X)
+				target_x = std::max<int16_t>(TARGET_BT_W, CHAT_TARGET_W - target_w);
+
+			classic_target_text.draw(
+				DrawArgument(input_pos + Point<int16_t>(target_x, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP)))
+			);
 
 			if (classic_input_bg)
 				classic_input_bg.draw(
 					DrawArgument(input_pos + Point<int16_t>(0, UNDERLINE_Y), Point<int16_t>(dimension.x(), 0))
 				);
 
-			// 历史框展开/缩放钮（输入行右端）：Basic.img/BtMax(+) 收起态 / BtMin(-)
-			// 展开态，同位互斥，由 set_classic_log 切 active，UIElement::draw 画。
+			// 竖杠垂直居中：Textfield::draw 里 mpos.y = text_pos.y + marker_y(2) +
+			// marker_adjust.y；classic 的 text_pos.y = position.y()+2（bounds +6、
+			// draw -2、text_shift -2）。旧 adjust.y=8 得 mpos.y=+12，11px 竖杠占
+			// [12,23]，比文字墨迹 [8,19] 低 4px 且贴槽底；改 4 后竖杠落 [8,19]，
+			// 与文字墨迹完全重合、在 26px 白带内居中。modern 分支另一套几何不动。
+			input_text.draw(Point<int16_t>(1, -2), Point<int16_t>(1, 4));
+			UIElement::draw(inter);
 
-			// 历史消息：自输入行上方自下而上排布（最新在最下）。首行留 23px =
-			// 字形带（请求 y 之下约 10px）贴住输入行顶；上限按历史框顶算，
-			// 框现在是 input_pos.y - user_view_y 起、高 user_view_y。
-			// 滚动条向上翻时从 classic_scroll_offset 起算（0 = 贴最新一条）。
-			int16_t message_y = LOG_FIRST_Y;
-
-			const int first_visible = static_cast<int>(message_history.size()) - 1 - classic_scroll_offset;
-
-			for (int i = first_visible; i >= 0; i--)
-			{
-				if (message_y > user_view_y + LOG_LINE_SLACK)
-					break;
-
-				message_history[i].text.draw(
-					input_pos + Point<int16_t>(LOG_TEXT_X, -message_y));
-				message_y += LOG_LINE_H;
-			}
-
-			// marker_adjust 与 ctor 的 set_text_shift(0,-9) 配套：文字带落在
-			// input_pos.y+5..+16（蓝框可见区内、下划线上方），光标取同一条带。
-			input_text.draw(Point<int16_t>(1, -2), Point<int16_t>(1, 8));
 			if (name_menu_open)
 				draw_name_menu();
-			UIElement::draw(inter);
 			return;
 		}
 
@@ -679,22 +779,12 @@ namespace ms
 			}
 			case ms::UIChatBar::BtChatEmoticon:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& s) {
-					try {
-						int32_t emote = std::stoi(s);
-						FaceExpressionPacket(emote).dispatch();
-						LOG(LOG_DEBUG, "UIChatBar: FaceExpression id=" << emote);
-					} catch (...) {}
-				}, []() {}, "Emote id");
+				
 				return Button::State::NORMAL;
 			}
 			case ms::UIChatBar::BtChat:
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					SpouseChatPacket(msg).dispatch();
-					LOG(LOG_DEBUG, "UIChatBar: SpouseChat len=" << msg.size());
-				}, []() {}, "Spouse chat");
+				
 				return Button::State::NORMAL;
 			}
 			case ms::UIChatBar::BtHelp:
@@ -733,24 +823,7 @@ namespace ms
 						}
 					}
 				}
-				UI::get().emplace<UISoftKey>([](const std::string& tip) {
-					if (tip.empty()) return;
-					try {
-						int32_t itemid = std::stoi(tip);
-						if (itemid > 0) {
-							const Inventory& inv = Stage::get().get_player().get_inventory();
-							int16_t slot = inv.find_item(InventoryType::Id::USE, itemid);
-							if (slot <= 0) slot = inv.find_item(InventoryType::Id::ETC, itemid);
-							if (slot > 0) {
-								UseItemPacket(slot, itemid).dispatch();
-								LOG(LOG_DEBUG, "UIChatBar: ItemLink UseItem id=" << itemid);
-								return;
-							}
-						}
-					} catch (...) {}
-					GeneralChatPacket("[item] " + tip, false).dispatch();
-					LOG(LOG_DEBUG, "UIChatBar: ItemLink tip len=" << tip.size());
-				}, []() {}, "itemid|link");
+				
 				return Button::State::NORMAL;
 			}
 			default:
@@ -869,31 +942,41 @@ namespace ms
 			}
 			else if (!classic_log_open && !view_input)
 			{
-				// Q3-①：收起态（历史框关 + 输入未激活）点灰带展开历史框，
-				// 给出「未展开也能看历史」的入口；右侧按钮簇仍走各自 button_pressed。
-				if (clicked && cursor_position.x() < dimension.x() - 80)
+				// 收起态（灰带）：点左段 = StartChat，激活输入行并聚焦（原生 083
+				// nType1→2）。旧代码误调 set_classic_log(true) 展开历史，正是用户
+				// 报的「点聊天输入框内容区域只切出 - 号、输入框却无法激活输入」——
+				// 展开历史是 BtMax(+) 的职责，不是点灰带的职责。
+				// 坐标系修正：cursor_position 是屏幕坐标（UIStateGame::get_front
+				// / send_cursor 传入），旧代码拿裸宽度 dimension.x()-80(=486) 去比
+				// 屏幕 x —— classic HUD 居中 position.x()>0 时，按钮屏幕 x≈cx+536
+				// 恒 >486 被当成灰带左段，+ 号那一列被抢先吃掉/分界错位，正是
+				// 「+ 号点了没反应」。分界必须以本栏屏幕左沿 position.x() 为基准。
+				const int16_t log_bt_screen_x = static_cast<int16_t>(position.x() + LOG_BT_X);
+				if (cursor_position.x() < log_bt_screen_x)
 				{
-					set_classic_log(true);
-					return Cursor::State::CLICKING;
-				}
-				if (cursor_position.x() < dimension.x() - 80)
+					if (clicked)
+					{
+						toggle_input(true);
+						return Cursor::State::CLICKING;
+					}
 					return Cursor::State::CANCLICK;
-				return Cursor::State::IDLE;
+				}
+				// 右段：落到下方 UIElement::send_cursor 命中 BtMax(+)。
 			}
 
 			// B5-1：拖历史框顶边改高度（原生「按住上沿上下拖」），松手把高度写进
 			// chat.y。拖拽中优先处理 —— 一旦进拖拽态，光标跑出台阶也得继续跟。
 			//
-			// 返回值不能是 CHATBARVDRAG：Cursor::set_state (IO/Cursor.cpp:137) 会把
-			// 「没绑定素材的状态」一律降级成 IDLE，而 Cursor::init 在 classic 包里
-			// 刻意不绑 kModernExtra（误绑会把数字字形画成光标）。状态一旦变 IDLE，
-			// UIStateGame 的 clicked 判据（CLICKING / VSCROLLIDLE / dragged+拖动态）
-			// 全落空，按住后的每个 motion 帧都被当成松手。真机追踪是铁证：
-			//   grip start y=576 h0=80 → sc pt=300,570 clicked=0 → resize end h=80
-			// 所以按住期间返回 CLICKING（kClassicStates 里必定加载），松手帧交回
-			// IDLE —— 交回 CHATBARVDRAG 会被降成 IDLE，等于白说，但更重要的是
-			// 松手帧绝不能留 CLICKING：那会让下一个 hover 帧被认成按住，贴着
-			// 顶边再次触发 grip start。
+			// 返回值用 VSCROLLIDLE（上下箭头）：它是 classic 包 kClassicStates 里
+			// 已绑定的 v83 光标（Cursor.cpp:45-49），又在 UIStateGame 的 clicked 判据
+			// 里（UIStateGame.cpp:854 把 VSCROLLIDLE 直接算 clicked，不依赖 dragged）。
+			// 所以既能显示用户期望的上下箭头，又能保住「按住→每个 motion 帧都算拖动」。
+			// 绝不能用 CHATBARVDRAG：Cursor::set_state (IO/Cursor.cpp:137) 会把没绑素材的
+			// 状态一律降级成 IDLE，而 classic 包刻意不绑 kModernExtra（误绑会把数字字形
+			// 画成光标）。真机追踪旧铁证：返回未绑状态 → clicked 判据全落空 → 拖不动
+			// （grip start y=576 h0=80 → sc pt=300,570 clicked=0 → resize end h=80）。
+			// 松手帧必须交回 IDLE：留着 VSCROLLIDLE 会让下一个 hover 帧被认成按住，
+			// 贴着顶边再次触发 grip start。
 			if (classic_resizing)
 			{
 				if (clicked)
@@ -903,7 +986,7 @@ namespace ms
 
 					set_classic_log_height(nh);
 
-					return Cursor::State::CLICKING;
+					return Cursor::State::VSCROLLIDLE;
 				}
 
 				classic_resizing = false;
@@ -974,7 +1057,7 @@ namespace ms
 				classic_resize_h0 = user_view_y;
 				classic_resize_y0 = cursor_position.y();
 
-				return Cursor::State::CLICKING;
+				return Cursor::State::VSCROLLIDLE;
 			}
 
 			// 展开/缩放已改真按钮（Basic.img/BtMax|BtMin），手搓 12x12 命中区撤掉，
@@ -992,6 +1075,33 @@ namespace ms
 				}
 
 				return Cursor::State::CANCLICK;
+			}
+
+			// 鼠标点输入正文区激活输入：type3（历史框开着、右侧已显示 -）但
+			// view_input=false 时，白色输入带可见却点不进去 —— 正是用户报的
+			// 「点输入框内容区域切出 - 号、却无法激活并输入」。命中矩形与
+			// update() 里 input_text.update 的 rect 严格同源（左沿 chatTarget
+			// 右缘 +2、右沿留 34px 给按钮、上下 = position.y()+6..+24）。
+			// 收起态灰带的同类点击已在上面的 !log_open && !view_input 分支
+			// 处理（展开历史），且该区 x 恒 < position.x()+LOG_BT_X，不会落到这里。
+			if (!view_input)
+			{
+				const Point<int16_t> input_lt(
+					static_cast<int16_t>(position.x() + CHAT_TARGET_W + 2),
+					static_cast<int16_t>(position.y() + 6));
+				const Point<int16_t> input_rb(
+					static_cast<int16_t>(position.x() + dimension.x() - 34),
+					static_cast<int16_t>(position.y() + 6 + INPUT_TEXT_HEIGHT));
+
+				if (Rectangle<int16_t>(input_lt, input_rb).contains(cursor_position))
+				{
+					if (clicked)
+					{
+						toggle_input(true);
+						return Cursor::State::CLICKING;
+					}
+					return Cursor::State::CANCLICK;
+				}
 			}
 
 			// classic 分支必须在这里收尾。下面的 modern 机器（八向拖拽缩放、intoprange/
@@ -1514,45 +1624,27 @@ namespace ms
 			}
 			if (keycode == 'S' || keycode == 's')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					GeneralChatPacket(msg, true).dispatch();
-				}, []() {}, "Chat");
+				
 				return;
 			}
 			if (keycode == 'P' || keycode == 'p')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					SpouseChatPacket(msg).dispatch();
-				}, []() {}, "Spouse chat");
+				
 				return;
 			}
 			if (keycode == 'Y' || keycode == 'y')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					std::list<int32_t> empty;
-					MultiChatPacket(MultiChatPacket::Type::PARTY, empty, msg).dispatch();
-				}, []() {}, "Party chat");
+				
 				return;
 			}
 			if (keycode == 'G' || keycode == 'g')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					std::list<int32_t> empty;
-					MultiChatPacket(MultiChatPacket::Type::GUILD, empty, msg).dispatch();
-				}, []() {}, "Guild chat");
+				
 				return;
 			}
 			if (keycode == 'L' || keycode == 'l')
 			{
-				UI::get().emplace<UISoftKey>([](const std::string& msg) {
-					if (msg.empty()) return;
-					std::list<int32_t> empty;
-					MultiChatPacket(MultiChatPacket::Type::ALLIANCE, empty, msg).dispatch();
-				}, []() {}, "Alliance chat");
+				
 				return;
 			}
 			if (keycode == 'B' || keycode == 'b')
@@ -1563,12 +1655,7 @@ namespace ms
 				if (cid <= 0)
 					if (auto ci = UI::get().get_element<UICharInfo>())
 						cid = ci->get_target_cid();
-				UI::get().emplace<UISoftKey>([cid](const std::string& msg) {
-					if (msg.empty()) return;
-					std::list<int32_t> recips;
-					if (cid > 0) recips.push_back(cid);
-					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, msg).dispatch();
-				}, []() {}, "Buddy chat");
+				
 				return;
 			}
 			if (keycode == 'F' || keycode == 'f')
@@ -1580,11 +1667,7 @@ namespace ms
 					FindPlayerPacket(pre).dispatch();
 					LOG(LOG_DEBUG, "UIChatBar: SoftKey find=" << pre);
 				} else {
-					UI::get().emplace<UISoftKey>([](const std::string& to) {
-						if (to.empty()) return;
-						FindPlayerPacket(to).dispatch();
-						LOG(LOG_DEBUG, "UIChatBar: SoftKey find=" << to);
-					}, []() {}, "Find name");
+					
 				}
 				return;
 			}
@@ -1667,19 +1750,17 @@ namespace ms
 
 	std::string UIChatBar::chat_target_name(uint8_t target_id) const
 	{
-		// Q5: 八键与 ChatTargetIndex 一一对应（前四项为原生 v83 文案，
-		// 后四项 NO-NATIVE，见 locale/*.ini 注释）。缺键时 Locale::text
-		// 回落键名本身，不会崩，但下拉会显示原始键 —— 上线前双侧都已补齐。
+		// Angel MakeCtrlEdit AddItem 下标 0..7 与 ChatTargetIndex 一一对应。
 		static constexpr const char* KEYS[] =
 		{
-			"chat.target.all",
-			"chat.target.whisper",
+			"chat.target.buddy",
+			"chat.target.group",
 			"chat.target.party",
 			"chat.target.guild",
-			"chat.target.buddy",
 			"chat.target.alliance",
 			"chat.target.spouse",
-			"chat.target.megaphone"
+			"chat.target.whisper",
+			"chat.target.all"
 		};
 
 		return target_id < TARGET_COUNT ? Locale::text(KEYS[target_id]) : std::string();
@@ -1779,11 +1860,11 @@ namespace ms
 
 	Point<int16_t> UIChatBar::classic_target_list_position() const
 	{
-		// 向上展开：列表底边贴在 chatTarget 框顶（行内 TARGET_BOX_Y）。底栏贴屏幕
-		// 下沿，向下没有空间。input_pos 与 draw() 同源，就是 position。
+		// 向上展开：列表底边 = chatTarget 顶边上方 1px（TARGET_BOX_Y - 1），
+		// 末行与触发钮互不遮挡；原生视频帧 HL→箭头 gap≈2。
 		const int16_t list_h = static_cast<int16_t>(TARGET_COUNT * TARGET_LIST_ROW_H);
 
-		return Point<int16_t>(position.x(), position.y() + TARGET_BOX_Y - list_h);
+		return Point<int16_t>(position.x(), position.y() + TARGET_BOX_Y - 1 - list_h);
 	}
 
 	bool UIChatBar::in_classic_target_row(Point<int16_t> cursor_position, size_t row) const
@@ -1832,18 +1913,13 @@ namespace ms
 			return;
 		if (nType < 1 || nType > 3)
 			return;
-		if (nType == chat_type)
-		{
-			// 同态仍要同步输入焦点（StartChat 在 type3 时只聚焦编辑框）。
-			if (nType == 2 || (nType == 3 && view_input))
-				input_text.set_state(Textfield::State::FOCUSED);
-			else if (nType == 1)
-				input_text.set_state(Textfield::State::DISABLED);
-			sync_classic_buttons();
-			sync_classic_scrollbar();
-			return;
-		}
 
+		// 三态强不变量：classic_log_open / view_input / input_text 状态一律由
+		// nType 唯一推导。旧代码在同态时走早退分支只同步焦点、不重算
+		// classic_log_open，造成 chat_type=3 但 log_open=false 的脱钩态 —— 正是
+		// 「+ 号点不动」「历史展开了符号还是 +」「点输入框只切 - 却打不了字」
+		// 三个症状的共同根因。统一走完整路径；type3 同态不会误清输入文本
+		// （只有 type1 分支清），对正常流程零回归。
 		chat_type = nType;
 
 		if (nType == 1)
@@ -1936,7 +2012,22 @@ namespace ms
 
 	void UIChatBar::send_scroll(double yoffset)
 	{
-		if (!classic_mode || !classic_log_open)
+		if (!classic_mode)
+			return;
+
+		// 输入态（type2，历史框关）滚轮 = 回溯已发送输入，与 ↑/↓ 同一条 change_message。
+		// 过去这里直接 return，玩家在白色输入带里滚轮没有任何反应（2026-11-16 反馈）。
+		// yoffset>0 = 向上滚 = 看更早一条 = change_message(true)。
+		if (view_input && !classic_log_open)
+		{
+			if (yoffset > 0.0)
+				change_message(true);
+			else if (yoffset < 0.0)
+				change_message(false);
+			return;
+		}
+
+		if (!classic_log_open)
 			return;
 
 		const int16_t visible = classic_visible_lines();
@@ -2010,7 +2101,11 @@ namespace ms
 		else if (type == MessageType::RED)
 			color = Color::Name::RED;
 		else if (type == MessageType::GM)
-			color = Color::Name::VIOLET;
+			// GM 本地 !/@ 回显：MinMS 源码里 GM 标志只管头顶白气泡，聊天行固定 WHITE
+			// （MessagingHandlers.cpp:850/866-867），无 GM 专属色；Angel AddChatText
+			// 也无 GM 索引（nIdx 仅 -1/0/1/2 → 颜色索引 1/6/11/13）。旧值 VIOLET 是
+			// 本端自定，2026-11-16 按参考收敛为 WHITE。
+			color = Color::Name::WHITE;
 		else
 			LOG(LOG_DEBUG, "[UIChatBar::show_message]: " << type << " not supported.");
 
@@ -2036,18 +2131,24 @@ namespace ms
 
 	Color::Name UIChatBar::channel_color(ChatChannel ch)
 	{
+		// 2026-11-16 对照 MinMS 收敛（详见 docs/features/ui-v83-window-restore/
+		// evidence/w4-chatbar/chat-color-parity-2026-11-16.md）：MinMS 只有 6 种
+		// LineType（WHITE/RED/BLUE/YELLOW/GREY），BLUE=MEDIUMBLUE(#00BFFF)。
+		// Angel AddChatText 只确认 nIdx→颜色索引（1/6/11/13），无 RGB 权威解码。
+		// 频道色按入站语义对齐：全体/家族/联盟/系统普通通知/夫妻/密语自显=WHITE，
+		// 组队/好友入站=BLUE(MEDIUMBLUE)；喇叭 MinMS 不产生聊天行，保留原有自定色。
 		switch (ch)
 		{
 			case ChatChannel::ALL:       return Color::Name::WHITE;
-			case ChatChannel::WHISPER:   return Color::Name::BLUE;
-			case ChatChannel::PARTY:     return Color::Name::GREEN;
-			case ChatChannel::GUILD:     return Color::Name::ORANGE;
-			case ChatChannel::BUDDY:     return Color::Name::LIGHTBLUE;
-			case ChatChannel::ALLIANCE:  return Color::Name::MALIBU;
-			case ChatChannel::SPOUSE:    return Color::Name::PINK;
+			case ChatChannel::WHISPER:   return Color::Name::WHITE;
+			case ChatChannel::PARTY:     return Color::Name::MEDIUMBLUE;
+			case ChatChannel::GUILD:     return Color::Name::WHITE;
+			case ChatChannel::BUDDY:     return Color::Name::MEDIUMBLUE;
+			case ChatChannel::ALLIANCE:  return Color::Name::WHITE;
+			case ChatChannel::SPOUSE:    return Color::Name::WHITE;
 			case ChatChannel::MEGAPHONE: return Color::Name::SUPERNOVA;
-			case ChatChannel::SYSTEM:    return Color::Name::YELLOW;
-			case ChatChannel::GM:        return Color::Name::VIOLET;
+			case ChatChannel::SYSTEM:    return Color::Name::WHITE;
+			case ChatChannel::GM:        return Color::Name::WHITE;
 		}
 		return Color::Name::WHITE;
 	}
@@ -2177,11 +2278,7 @@ namespace ms
 		}
 		if (!t.empty())
 		{
-			UI::get().emplace<UISoftKey>([t](const std::string& text) {
-				if (text.empty()) return;
-				WhisperPacket(t, text).dispatch();
-				LOG(LOG_DEBUG, "UIChatBar: Whisper to=" << t << " len=" << text.size());
-			}, []() {}, "Whisper msg");
+			
 			return;
 		}
 
@@ -2513,6 +2610,15 @@ namespace ms
 
 			user_message_history.push_back(message);
 			user_message_history_index = user_message_history.size();
+
+			// 宠物互动命令：聊天栏文本匹配召唤宠物 WZ interact command → PET_COMMAND(169)。
+			// 命中即消费，不走普通聊天；未命中继续下方频道路由。
+			if (try_pet_command(message))
+			{
+				keep_input_focus();
+				return;
+			}
+
 			// Q4: 输入历史（↑/↓ 回溯）同样夹到 200 条，从最旧裁。
 			if (user_message_history.size() > MESSAGE_HISTORY_CAP)
 			{
@@ -2592,10 +2698,34 @@ namespace ms
 				}
 				else if ((verb == "s" || verb == "spouse" || verb == "mate") && !rest.empty())
 				{
-					SpouseChatPacket(rest).dispatch();
-					// 回显矩阵：SpouseChatHandler 对发送者本人也 sendPacket
-					// （c.sendPacket(OnCoupleMessage)）⇒ 禁止本地回显，否则双份。
-					LOG(LOG_DEBUG, "UIChatBar: /s SpouseChat");
+					if (send_spouse_chat(rest))
+						LOG(LOG_DEBUG, "UIChatBar: /s SpouseChat");
+					keep_input_focus();
+					return;
+				}
+				else if (verb == "shop" || verb == "cashshop")
+				{
+					// 现金商城入口：ENTER_CASHSHOP(0x28) → s9 EnterCashShopHandler
+					// → openCashShop + showCashInventory + showGifts + showWishList + showCash。
+					// 服务端对已在商城/活动中/迷你副本地图会回 enableActions 或 serverNotice，
+					// 客户端无需预判。
+					EnterCashShopPacket().dispatch();
+					LOG(LOG_DEBUG, "UIChatBar: /shop EnterCashShop");
+					keep_input_focus();
+					return;
+				}
+				else if ((verb == "group" || verb == "gr") && !rest.empty())
+				{
+					std::list<int32_t> recips = collect_online_buddy_cids_by_group();
+					if (recips.empty())
+					{
+						show_message(Locale::text("chat.buddy.none_online"), ChatChannel::SYSTEM);
+						keep_input_focus();
+						return;
+					}
+					MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, rest).dispatch();
+					echo_own_message(rest, ChatChannel::BUDDY, "[Group] ");
+					LOG(LOG_DEBUG, "UIChatBar: /group MultiChat n=" << recips.size());
 					keep_input_focus();
 					return;
 				}
@@ -2728,6 +2858,54 @@ namespace ms
 		return recips;
 	}
 
+	std::list<int32_t> UIChatBar::collect_online_buddy_cids_by_group() const
+	{
+		// Angel GetOnlineFriendIDByGroup：strcmp(active_group, buddy.group)==0。
+		// active_group 空时回落到第一个在线好友的组名（UserList 未切组时的默认行为）。
+		std::string group = BuddyListModel::get().get_active_group();
+		const auto& buddies = BuddyListModel::get().data().buddies;
+		if (group.empty())
+		{
+			for (const auto& b : buddies)
+			{
+				if (b.online && b.cid > 0 && !b.group.empty())
+				{
+					group = b.group;
+					break;
+				}
+			}
+		}
+		std::list<int32_t> recips;
+		for (const auto& b : buddies)
+		{
+			if (!b.online || b.cid <= 0)
+				continue;
+			if (b.group == group)
+				recips.push_back(b.cid);
+		}
+		return recips;
+	}
+
+	bool UIChatBar::send_spouse_chat(const std::string& text)
+	{
+		const auto& player = Stage::get().get_player();
+		const int32_t self_cid = player.get_oid();
+		const auto& marriage = player.get_marriage();
+		if (!marriage.is_married())
+		{
+			show_message(Locale::text("chat.spouse.unavailable"), ChatChannel::SYSTEM);
+			return false;
+		}
+		const std::string partner = marriage.partner_name(self_cid);
+		if (partner.empty())
+		{
+			show_message(Locale::text("chat.spouse.unavailable"), ChatChannel::SYSTEM);
+			return false;
+		}
+		SpouseChatPacket(partner, text).dispatch();
+		return true;
+	}
+
 	// Q5: 密语统一出口。s9 WhisperHandler 只给发送者回 WhisperResult 标志、
 	// 不回正文（handleWhisper: target.sendPacket(recv) + user.sendPacket(result)），
 	// 所以正文暂存，收到 ok=true 才由 on_whisper_result 回显 —— 目标不存在时
@@ -2772,21 +2950,34 @@ namespace ms
 		show_message(prefix, self, text, ch);
 	}
 
-	// Q5: 按聊天栏选中频道路由非命令文本。返回值语义见 header。
-	// TARGET_ALL 不在这里处理（调用方保留 GeneralChat 兜底路径，行为不变）。
+	// 按聊天栏选中频道路由非命令文本（Angel OnKey Enter → SendGroupMessage 矩阵）。
+	// TARGET_ALL 不在这里处理（调用方走 GeneralChat）。
 	uint8_t UIChatBar::send_to_target_channel(const std::string& text)
 	{
 		switch (classic_chat_target_id)
 		{
-			case TARGET_WHISPER:
+			case TARGET_BUDDY:
 			{
-				if (whisper_target_name.empty())
+				std::list<int32_t> recips = collect_online_buddy_cids();
+				if (recips.empty())
 				{
-					// 原生此处弹「请输入悄悄话的对象。」层；文本留在输入行。
-					focus_whisper();
+					show_message(Locale::text("chat.buddy.none_online"), ChatChannel::SYSTEM);
 					return CHANNEL_HELD;
 				}
-				send_whisper(whisper_target_name, text);
+				MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
+				echo_own_message(text, ChatChannel::BUDDY);
+				return CHANNEL_SENT;
+			}
+			case TARGET_GROUP:
+			{
+				std::list<int32_t> recips = collect_online_buddy_cids_by_group();
+				if (recips.empty())
+				{
+					show_message(Locale::text("chat.buddy.none_online"), ChatChannel::SYSTEM);
+					return CHANNEL_HELD;
+				}
+				MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
+				echo_own_message(text, ChatChannel::BUDDY, "[Group] ");
 				return CHANNEL_SENT;
 			}
 			case TARGET_PARTY:
@@ -2810,29 +3001,22 @@ namespace ms
 				echo_own_message(text, ChatChannel::ALLIANCE);
 				return CHANNEL_SENT;
 			}
-			case TARGET_BUDDY:
-			{
-				std::list<int32_t> recips = collect_online_buddy_cids();
-				MultiChatPacket(MultiChatPacket::Type::BUDDY, recips, text).dispatch();
-				echo_own_message(text, ChatChannel::BUDDY);
-				return CHANNEL_SENT;
-			}
 			case TARGET_SPOUSE:
 			{
-				// 服务端对本人也回包（SpouseChatHandler c.sendPacket）⇒ 不回显。
-				SpouseChatPacket(text).dispatch();
+				// 服务端对本人也回包 ⇒ 成功发包则不本地回显。
+				if (!send_spouse_chat(text))
+					return CHANNEL_HELD;
 				return CHANNEL_SENT;
 			}
-			case TARGET_MEGAPHONE:
+			case TARGET_WHISPER:
 			{
-				// 喇叭走道具协议（UseCashItemHandler case 2/5/6：从背包定位
-				// 507xxxx 道具 + 单独正文），不消费聊天输入行的文本：打开喇叭窗，
-				// 由它自己的 SoftKey 收正文。输入行文本保留（HELD）——
-				// 显式预留：v83 下拉里没有「喇叭」项，原生喇叭入口是道具使用；
-				// 本端把它收进下拉是 Q5 范围扩张，正文移交点即 UIMegaphoneBasic。
-				if (!UI::get().get_element<UIMegaphoneBasic>())
-					UI::get().emplace<UIMegaphoneBasic>();
-				return CHANNEL_HELD;
+				if (whisper_target_name.empty())
+				{
+					focus_whisper();
+					return CHANNEL_HELD;
+				}
+				send_whisper(whisper_target_name, text);
+				return CHANNEL_SENT;
 			}
 			default:
 				return CHANNEL_FALLBACK;
@@ -2908,23 +3092,40 @@ namespace ms
 
 	void UIChatBar::change_message(bool up)
 	{
-		size_t size = user_message_history.size();
-		size_t message_history_min = 1;
-		size_t message_history_max = size;
-		size_t max = 7;
+		const size_t size = user_message_history.size();
 
-		if (size > max)
-			message_history_min = size - max;
+		if (size == 0)
+			return;
 
-		if (user_message_history.size() > 0)
+		// 0-based 语义：index ∈ [0, size]，index == size 表示「新行/空输入」。
+		// 三个写入点（发送后 two 处、keep_input_focus）都置为 size，与之一致。
+		// 旧实现按 1-based 取 history[index-1]：首次 ↑（index 从 size 减到 size-1）
+		// 取到 history[size-2] 漏掉最近一条；index 为 0 时还会 size_t 下溢越界。
+		if (user_message_history_index > size)
+			user_message_history_index = size;
+
+		constexpr size_t max = 7;
+		const size_t min_index = (size > max) ? (size - max) : 0;
+
+		if (up)
 		{
-			if (up && user_message_history_index > message_history_min)
-				user_message_history_index--;
+			// 已到最早一条时保持现状，不覆盖当前行。
+			if (user_message_history_index <= min_index)
+				return;
 
-			if (!up && user_message_history_index < message_history_max)
-				user_message_history_index++;
+			--user_message_history_index;
+			input_text.change_text(user_message_history[user_message_history_index]);
+		}
+		else
+		{
+			// 已在新行（index==size）时不改文本，保留玩家正在打的字。
+			if (user_message_history_index >= size)
+				return;
 
-			input_text.change_text(user_message_history[user_message_history_index - 1]);
+			++user_message_history_index;
+			// 下滚到 size = 回到空的新行，而非停在最近一条。
+			input_text.change_text(
+				user_message_history_index == size ? "" : user_message_history[user_message_history_index]);
 		}
 	}
 }

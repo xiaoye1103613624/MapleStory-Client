@@ -31,6 +31,11 @@ namespace ms
 		TwoSpriteButton(nl::node nsrc, nl::node ssrc);
 		TwoSpriteButton();
 
+		// Slider::setvertical 改轨道两端时用本方法挪上下箭头。基类 Button::set_position
+		// 只改 Button::position，而本类 draw()/bounds() 读的是 npos/spos —— 必须覆盖同步，
+		// 否则箭头永远钉在构造时的旧 y（拖高聊天框后与滑块/轨道分家，见 UIChatBar B5-1）。
+		// 注意 base 非 virtual，但 Slider 的 prev/next 是本类型值对象，静态派发即命中此处。
+		void set_position(Point<int16_t> position);
 		void draw(Point<int16_t> position) const;
 		void update() {}
 		Rectangle<int16_t> bounds(Point<int16_t> position) const;

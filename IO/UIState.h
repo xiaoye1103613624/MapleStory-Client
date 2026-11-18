@@ -58,6 +58,11 @@ namespace ms
 		virtual void activate_after_transition(UIElement::Type) {}
 		// 把窗口移到绘制队列末尾（最上层）。登录态没有层级表，默认空实现。
 		virtual void bring_to_front(UIElement::Type) {}
+		// 回车派发：当前焦点窗存在且 active。登录态无层级表，默认 false；
+		// UIStateGame 重写为真实判断（UI::send_key 的「焦点窗优先于 chatbar」）。
+		// 22:20 并发会话在 UI.cpp:486 用 state->has_active_focused() 调此方法，
+		// 但只在派生类声明，基类缺失导致整树 C2039 编译断链，此处补齐。
+		virtual bool has_active_focused() { return false; }
 		virtual void remove(UIElement::Type type) = 0;
 		virtual UIElement* get(UIElement::Type type) = 0;
 		virtual UIElement* get_front(std::list<UIElement::Type> types) = 0;
