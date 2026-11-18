@@ -84,7 +84,8 @@ namespace ms
 			BT_SMALL,
 			BT_BIG,
 			BT_MAP,
-			BT_NPC
+			BT_NPC,
+			BT_THEME		// ThemePack quick toggle (left of BT_MIN)
 		};
 
 		enum Type
@@ -112,6 +113,8 @@ namespace ms
 		int16_t bt_min_width;
 		int16_t bt_max_width;
 		int16_t bt_map_width;
+		int16_t bt_theme_width;
+		int16_t bt_theme_x;
 		std::vector<Sprite> min_sprites;
 		std::vector<Sprite> normal_sprites;
 		std::vector<Sprite> max_sprites;

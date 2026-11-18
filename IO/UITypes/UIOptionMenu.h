@@ -231,6 +231,7 @@ namespace ms
 			MOB_INFO,
 			SCREENSHOT_PATH,
 			LANGUAGE,
+			HUD_THEME,	// ThemePack: classic ↔ modern (runtime apply)
 			CANCEL,
 			OK,
 			// 两个下拉展开后的条目钮；后缀数字就是原生注册表里存的那个序号。
@@ -316,6 +317,11 @@ namespace ms
 		static constexpr int16_t LANG_W = 150;
 		static constexpr uint8_t LANG_COUNT = 2;
 		static constexpr const char* LANGUAGE_KEY = "sysopt.combo.language.";
+		// HUD ThemePack：语言项左侧；点击在 classic/modern 间切换并即时 apply。
+		static constexpr int16_t THEME_X = 6;
+		static constexpr int16_t THEME_Y = 366;
+		static constexpr int16_t THEME_W = 145;
+		void apply_hud_theme_pref(uint8_t ordinal);
 		// 多分辨率新增行（窗口大小）：洋红带 y333..360（中心≈346）；盒体 18px 顶边 343。
 		// 列表向上展开（9*18=162px，从 y=181 到 343，完整落在 299x396 底板内）。
 		static constexpr int16_t RES_COMBO_X = 76;
