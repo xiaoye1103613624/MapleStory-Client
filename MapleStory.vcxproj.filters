@@ -333,6 +333,9 @@
     <ClCompile Include="IO\Components\ItemTooltip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\Components\TooltipLattice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\Components\MapleButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -374,6 +377,9 @@
     </ClCompile>
     <ClCompile Include="IO\Components\TwoSpriteButton.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UICooldownList.cpp">
+      <Filter>IO\UITypes</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIBuffList.cpp">
       <Filter>Source Files</Filter>
@@ -442,6 +448,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UICashShop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UICashBuyConfirm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIChannel.cpp">
@@ -724,6 +733,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\LoginUiAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\UiTheme.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\UiAssetResolve.cpp">
@@ -1136,6 +1148,9 @@
     <ClInclude Include="IO\Components\ItemTooltip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\Components\TooltipLattice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\Components\MapleButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1181,10 +1196,16 @@
     <ClInclude Include="IO\UITypes\UIAranCreation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\UITypes\UICooldownList.h">
+      <Filter>IO\UITypes</Filter>
+    </ClInclude>
     <ClInclude Include="IO\UITypes\UIBuffList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UICashShop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UICashBuyConfirm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIChannel.h">
@@ -1647,6 +1668,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\UiAssetResolve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\UiTheme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\QuadTree.h">

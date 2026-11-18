@@ -106,7 +106,7 @@ _tools/summon_probe/*.dll
 !docs/features/multi-resolution/builds/build.log
 !docs/features/multi-resolution/patches/make_sysopt_bg.log
 
-# ±¾»úÂ·¾¶Ó²±àÂëµÄÁÙÊ±¹¹½¨½Å±¾
+# ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½
 /build_portal_fix.bat
 
 /build_compile_check.txt
@@ -180,3 +180,43 @@ docs/features/softkey-text-mode/evidence/live-20261106/_verify_stdout.txt
 /tools/_*.dll
 /tools/face1*_*.py
 /tools/test_*.py
+*.log
+.agents
+.cursor
+_*
+p0*
+*_verify*
+verify*
+*.obj
+.dsh-acl-recovery
+cc_*
+# ===== unrelated build/screenshot/probe outputs (append only) =====
+/%SystemDrive%/
+/monsterbook_int/
+/monsterbook_out/
+/build_cancel_fix.bat
+/build_flicker_fix.bat
+/build_loginquit_fix.bat
+/deploy_monsterbook.bat
+/evidence/
+/tools/FontMemo*.png
+/tools/cur_*.png
+/tools/ref_*.png
+/tools/build_wsreset*.bat
+/tools/graalcheck/
+/tools/charinfo_btn_sheet.py
+/tools/check_encoding.py
+/tools/export_userinfo_bg.py
+/tools/measure_charinfo.py
+/tools/wz_query_contextmenu.py
+/tools/wz_query_userinfo_origins.py
+/tools/wz_summarize_contextmenu.py
+/tools/ctxmenu_capture.ps1
+/tools/flicker_new.npz
+docs/features/**/*.png
+docs/features/**/*.txt
+docs/features/**/*.json
+docs/features/**/*.py
+docs/features/**/*.orig
+docs/features/**/*.js
+docs/features/**/*.diff

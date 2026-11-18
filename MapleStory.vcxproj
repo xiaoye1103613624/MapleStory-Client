@@ -281,6 +281,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Gameplay\MapleMap\MapDragon.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapInfo.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapMobs.cpp" />
+    <ClCompile Include="Gameplay\MapleMap\MovePath.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapNpcs.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapObject.cpp" />
     <ClCompile Include="Gameplay\MapleMap\MapObjects.cpp" />
@@ -318,6 +319,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\Components\Icon.cpp" />
     <ClCompile Include="IO\Components\IconCover.cpp" />
     <ClCompile Include="IO\Components\ItemTooltip.cpp" />
+    <ClCompile Include="IO\Components\TooltipLattice.cpp" />
     <ClCompile Include="IO\Components\MapleButton.cpp" />
     <ClCompile Include="IO\Components\MapleComboBox.cpp" />
     <ClCompile Include="IO\Components\MapleFrame.cpp" />
@@ -343,6 +345,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UIStateGame.cpp" />
     <ClCompile Include="IO\UIStateLogin.cpp" />
     <ClCompile Include="IO\UITypes\UIBuffList.cpp" />
+    <ClCompile Include="IO\UITypes\UICooldownList.cpp" />
     <ClCompile Include="IO\UITypes\UITemporaryStatView.cpp" />
     <ClCompile Include="IO\UITypes\UIEnergyBar.cpp" />
     <ClCompile Include="IO\UITypes\UIComboCounter.cpp" />
@@ -364,6 +367,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIMegaphone.cpp" />
     <ClCompile Include="IO\UITypes\UIMiscShells.cpp" />
     <ClCompile Include="IO\UITypes\UICashShop.cpp" />
+    <ClCompile Include="IO\UITypes\UICashBuyConfirm.cpp" />
     <ClCompile Include="IO\UITypes\UIChannel.cpp" />
     <ClCompile Include="IO\UITypes\UICharInfo.cpp" />
     <ClCompile Include="IO\UITypes\UIMessenger.cpp" />
@@ -477,6 +481,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Util\LoginUiAssets.cpp" />
     <ClCompile Include="Util\NxFiles.cpp" />
     <ClCompile Include="Util\UiAssetResolve.cpp" />
+    <ClCompile Include="Util\UiTheme.cpp" />
     <ClCompile Include="includes\NoLifeNx\nlnx\nx.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -689,6 +694,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\Components\StatefulIcon.h" />
     <ClInclude Include="IO\Components\Textfield.h" />
     <ClInclude Include="IO\Components\TextTooltip.h" />
+    <ClInclude Include="IO\Components\TooltipLattice.h" />
     <ClInclude Include="IO\Components\SetTooltip.h" />
     <ClInclude Include="IO\Components\Tooltip.h" />
     <ClInclude Include="IO\Components\LocalTwoSpriteButton.h" />
@@ -711,6 +717,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIBuffList.h" />
     <ClInclude Include="IO\UITypes\UITemporaryStatView.h" />
     <ClInclude Include="IO\UITypes\UICashShop.h" />
+    <ClInclude Include="IO\UITypes\UICashBuyConfirm.h" />
     <ClInclude Include="IO\UITypes\UIChannel.h" />
     <ClInclude Include="IO\UITypes\UICharInfo.h" />
     <ClInclude Include="IO\UITypes\UIMessenger.h" />
@@ -862,6 +869,7 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Util\LoginUiAssets.h" />
     <ClInclude Include="Util\NxFiles.h" />
     <ClInclude Include="Util\UiAssetResolve.h" />
+    <ClInclude Include="Util\UiTheme.h" />
     <ClInclude Include="Util\Resource\ResourceProbe.h" />
     <ClInclude Include="Util\Resource\IDataSource.h" />
     <ClInclude Include="Util\Resource\RootTable.h" />

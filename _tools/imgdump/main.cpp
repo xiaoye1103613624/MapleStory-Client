@@ -1,4 +1,4 @@
-﻿#include <nlnx/wz.hpp>
+#include <nlnx/wz.hpp>
 #include <nlnx/nx.hpp>
 #include <fstream>
 #include <iostream>
