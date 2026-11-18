@@ -31,11 +31,14 @@ namespace ms
 	namespace {
 		void refresh_book_if_open()
 		{
-			// 已打开时刷新；不因入站强制弹出图鉴窗
+			// 图鉴是 UIState 缓存的 TOGGLED 单例：pre_add 在实例已存在时只
+			// toggle_active()、不重建也不重跑 ctor 的 load_cards()（UIStateGame.cpp:1030）。
+			// 仅面板 active 时 reload 会让关窗期间拾取的卡灌不进单例缓存的 all_cards，
+			// 重开图鉴仍是旧列表 —— 即「拾取后不显示」真因。实例存在即 reload：
+			// load_cards() 只读模型重建列表，不弹窗、不改 active，零副作用。
 			if (auto ui = UI::get().get_element<UIMonsterBook>())
 			{
-				if (ui->is_active())
-					ui->reload();
+				ui->reload();
 			}
 		}
 

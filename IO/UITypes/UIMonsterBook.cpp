@@ -118,9 +118,14 @@ namespace ms
 		status_line(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "")
 	{
 		dimension = Point<int16_t>(516, 349);
+		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		for (uint8_t i = 0; i < 6; ++i)
 			info_line[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "");
+
+		// 基本情报页数值列：RIGHT 对齐，填在 infoPage 印死标签右侧。
+		for (uint8_t i = 0; i < 5; ++i)
+			stats_value[i] = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "");
 
 		for (uint8_t i = 0; i < NOTE_COUNT; ++i)
 			note_checked.push_back(false);
@@ -151,11 +156,12 @@ namespace ms
 				cell_icon.push_back(Texture(root["icon"][i]));	// 卡片占位 22x27
 		}
 
-		// 按钮：id 沿用 Angel sub_86256D 立即数（1000/2000..2004），坐标 = 原生
+		// 按钮：id 沿用 Angel sub_86256D 立即数；搜索/翻页落左页（卡片格下方）。
 		const Point<int16_t> BtClose_pos(429, 8);
 		const Point<int16_t> BtSearch_pos(175, 29);
 		const Point<int16_t> arrow_prev_card(48, 285);
 		const Point<int16_t> arrow_next_card(185, 285);
+		// 右页翻页箭头（Angel 仍建；卡片页主翻页用左组）
 		const Point<int16_t> arrow_prev_page(270, 285);
 		const Point<int16_t> arrow_next_page(407, 285);
 
@@ -189,7 +195,17 @@ namespace ms
 		}
 #endif
 
+		// 首次打开（用户尚未拖动过）按当前视口居中；拖动后由基类 save(position)
+		// 写入 Setting<PosMONSTERBOOK>，再次打开时 center_if_position_unset 不再干预。
+		center_if_position_unset(dimension);
+
 		load_cards();
+		sync_infotab_indicators();	// 右标签初始激活态（默认 tab 0 = 基本情报）
+		// 有卡则默认选中首张，进入图3/5 卡片页；无卡保持图4 基本情报。
+		if (!cards.empty())
+			select_card_by_index(0);
+		else
+			refresh_info();
 	}
 
 	int16_t UIMonsterBook::note_category_of(int16_t card_suffix)
@@ -235,8 +251,32 @@ namespace ms
 			auto it = buttons.find(bid);
 			if (it == buttons.end() || !it->second)
 				continue;
-			it->second->set_state(note_checked[static_cast<size_t>(i)]
-				? Button::State::PRESSED : Button::State::NORMAL);
+			// 三态（对齐 Angel UpdateCheckList @0x867be6 的勾选/禁用）：
+			// 当前筛选签 PRESSED 常驻；其余有卡 NORMAL、无卡 DISABLED。
+			// 常驻态不会被框架冲掉——UIElement 只重置 MOUSEOVER（:290/:342），不碰 PRESSED/DISABLED。
+			Button::State st;
+			if (active_note == i)
+				st = Button::State::PRESSED;
+			else if (note_checked[static_cast<size_t>(i)])
+				st = Button::State::NORMAL;
+			else
+				st = Button::State::DISABLED;
+			it->second->set_state(st);
+		}
+	}
+
+	void UIMonsterBook::sync_infotab_indicators()
+	{
+		// 右标签常驻激活态（Angel UpdateUI @0x862527 开头 for(i=3){*(this+2836+2i)=1}
+		// 明确设 3 个状态标志）。照 UISkillBook::change_tab（:998-1004）范式：
+		// 旧签 NORMAL + active_infotab PRESSED，按钮视觉态直接由 IMG normal/pressed 帧表达。
+		for (int16_t i = 0; i < INFOTAB_COUNT; ++i)
+		{
+			const uint16_t bid = static_cast<uint16_t>(Buttons::BtInfoTab0 + i);
+			auto it = buttons.find(bid);
+			if (it != buttons.end() && it->second)
+				it->second->set_state(i == active_infotab
+					? Button::State::PRESSED : Button::State::NORMAL);
 		}
 	}
 
@@ -258,6 +298,11 @@ namespace ms
 
 		if (selected_index >= static_cast<int32_t>(cards.size()))
 			selected_index = cards.empty() ? -1 : static_cast<int32_t>(cards.size()) - 1;
+		// 从基本情报页（selected_index=-1）点左标签筛出卡时，自动选中首张进入
+		// 卡片页，否则重开仍停在统计页，观感就是"标签点了没反应"。
+		// active_note>=0 限定为用户主动筛选，避免无卡初始态被误选中。
+		if (selected_index < 0 && !cards.empty() && active_note >= 0)
+			selected_index = 0;
 		if (selected_index >= 0)
 			selected_card_id = cards[static_cast<size_t>(selected_index)].id;
 
@@ -279,17 +324,58 @@ namespace ms
 
 	void UIMonsterBook::refresh_info()
 	{
+		// 分页箭头激活/禁用态（第 4 点）：首页禁"上一页"、末页禁"下一页"，
+		// 中间两态可点。page_count 固定 >=1（见 :317），单页时两侧都禁用。
+		{
+			const int32_t pc = page_count();
+			auto set_arrow = [this](uint16_t bid, Button::State st) {
+				auto it = buttons.find(bid);
+				if (it != buttons.end() && it->second)
+					it->second->set_state(st);
+			};
+			set_arrow(Buttons::BtPrevCard, card_page <= 0 ? Button::State::DISABLED : Button::State::NORMAL);
+			set_arrow(Buttons::BtNextCard, card_page >= pc - 1 ? Button::State::DISABLED : Button::State::NORMAL);
+			set_arrow(Buttons::BtPrevPage, card_page <= 0 ? Button::State::DISABLED : Button::State::NORMAL);
+			set_arrow(Buttons::BtNextPage, card_page >= pc - 1 ? Button::State::DISABLED : Button::State::NORMAL);
+		}
+
 		const MonsterBook& mb = Stage::get().get_player().get_monsterbook();
 
-		// 原生控件 2005 @(49,30) 120x15 = 左页标题行
 		header.change_text(Locale::format("monsterbook.label_cards", std::to_string(cards.size())));
 
 		for (int i = 0; i < 6; ++i)
+		{
 			info_line[i].change_text("");
+			// 从卡片页切回基本情报页时复位配色（卡片页会把 1/2 行染成 HP/MP 色）。
+			info_line[i].change_color(Color::Name::BLACK);
+		}
 
+		// 无选中卡：图4 基本情报书级统计。infoPage.png 背景已印死 5 个原生标签
+		// （手册等级/总登记/特殊/一般/书签），此处只填数值，RIGHT 对齐落在标签右侧，
+		// 不再重复画 label——这正是截图里标签与数值叠成"乱码"的根因。
 		if (selected_index < 0 || selected_index >= static_cast<int32_t>(cards.size()))
 		{
-			info_line[0].change_text(Locale::text("monsterbook.no_selection"));
+			int32_t total = static_cast<int32_t>(all_cards.size());
+			int32_t special = 0;
+			for (const auto& c : all_cards)
+				if (c.level >= 2)
+					++special;
+
+			// 手册等级：复刻服务端 MonsterBook.calculateLevel 的 collectionExp 公式，
+			// 只是本地现算（手册包不含 bookLevel；读服务端 charInfo 会动公共协议）。
+			int32_t level = 0;
+			int32_t exp_to_next = 1;
+			do {
+				++level;
+				exp_to_next += level * 10;
+			} while (total >= exp_to_next);
+
+			stats_value[0].change_text(std::to_string(level));
+			stats_value[1].change_text(std::to_string(total));
+			stats_value[2].change_text(std::to_string(special));
+			stats_value[3].change_text(std::to_string(total - special));
+			stats_value[4].change_text(mb.get_cover() > 0
+				? std::to_string(mb.get_cover()) : std::string("-"));
 			page_label.change_text(std::to_string(card_page + 1) + "/" + std::to_string(page_count()));
 			return;
 		}
@@ -298,81 +384,61 @@ namespace ms
 		const int32_t mobid = mob_id_for_card(c.id);
 		const std::string mname = mob_name_of(mobid);
 
-		// 行 0：怪物名（命中 String）或 stub；行 1：卡片等级；行 2：封面
-		if (!mname.empty())
-			info_line[0].change_text(mname);
-		else
-			info_line[0].change_text(Locale::format("monsterbook.stub_mob", std::to_string(c.id)));
-
-		info_line[1].change_text(Locale::format("monsterbook.info_level",
-			std::to_string(static_cast<int>(c.level))));
-		info_line[2].change_text(Locale::format("monsterbook.cover_id",
-			mb.get_cover() > 0 ? std::to_string(mb.get_cover()) : std::string("-")));
+		// 右页：怪名 + HP/MP。原生卡片页（怪物手册2.png）无论是否收集都固定显示
+		// HP/MP ???（HP 玫红 PINK、MP 蓝 BLUE），本端无 Mob 数值源，恒 ??? 对齐原生。
+		info_line[0].change_text(!mname.empty()
+			? mname
+			: Locale::format("monsterbook.stub_mob", std::to_string(c.id)));
+		info_line[1].change_text("HP : ???");
+		info_line[1].change_color(Color::Name::PINK);
+		info_line[2].change_text("MP : ???");
+		info_line[2].change_color(Color::Name::BLUE);
 
 #ifdef USE_NX
 		nl::node mbnode = mobid > 0
 			? nl::nx::String["MonsterBook.img"][std::to_string(mobid)]
 			: nl::node{};
 
-		// RightTab：0=简介 episode / 1=出没地图 / 2=掉落道具号 / 3=卡片号兜底
-		if (active_infotab == 0)
-		{
-			std::string ep = mbnode ? mbnode["episode"].get_string() : std::string{};
-			// episode 含换行或字面 "\\n"；左页只抽首行缩略，避免撑破 infoPage。
-			size_t nlpos = ep.find('\n');
-			if (nlpos == std::string::npos)
-				nlpos = ep.find("\\n");
-			if (nlpos != std::string::npos)
-				ep = ep.substr(0, nlpos);
-			info_line[3].change_text(truncate_utf8(ep, 48));
-		}
-		else if (active_infotab == 1 && mbnode)
+		// RightTab 1..3 附加情报写入 status_line，避免挤占右页 HP/MP 行
+		if (active_infotab == 1 && mbnode)
 		{
 			std::string maps;
-			nl::node mapn = mbnode["map"];
 			int shown = 0;
-			for (const nl::node& m : mapn)
+			for (const nl::node& m : mbnode["map"])
 			{
-				if (shown >= 3)
-					break;
-				if (!maps.empty())
-					maps += ",";
+				if (shown >= 3) break;
+				if (!maps.empty()) maps += ",";
 				maps += std::to_string(static_cast<int32_t>(m.get_integer()));
 				++shown;
 			}
-			info_line[3].change_text(maps.empty()
+			status_line.change_text(maps.empty()
 				? Locale::text("monsterbook.tab_empty")
 				: Locale::format("monsterbook.maps", maps));
 		}
 		else if (active_infotab == 2 && mbnode)
 		{
 			std::string drops;
-			nl::node rew = mbnode["reward"];
 			int shown = 0;
-			for (const nl::node& r : rew)
+			for (const nl::node& r : mbnode["reward"])
 			{
-				if (shown >= 4)
-					break;
-				if (!drops.empty())
-					drops += ",";
+				if (shown >= 4) break;
+				if (!drops.empty()) drops += ",";
 				drops += std::to_string(static_cast<int32_t>(r.get_integer()));
 				++shown;
 			}
-			info_line[3].change_text(drops.empty()
+			status_line.change_text(drops.empty()
 				? Locale::text("monsterbook.tab_empty")
 				: Locale::format("monsterbook.rewards", drops));
 		}
+		else if (active_infotab == 3)
+		{
+			status_line.change_text(Locale::format("monsterbook.info_id", std::to_string(c.id)));
+		}
 		else
 		{
-			info_line[3].change_text(Locale::format("monsterbook.info_id", std::to_string(c.id)));
+			status_line.change_text("");
 		}
-#else
-		info_line[3].change_text(Locale::format("monsterbook.info_id", std::to_string(c.id)));
 #endif
-
-		info_line[4].change_text(mobid > 0
-			? Locale::format("monsterbook.mob_id", std::to_string(mobid))
-			: Locale::format("monsterbook.info_id", std::to_string(c.id)));
 
 		page_label.change_text(std::to_string(card_page + 1) + "/" + std::to_string(page_count()));
 	}
@@ -415,9 +481,9 @@ namespace ms
 			static_cast<int16_t>(cursorpos.x() - position.x() - ORG_X),
 			static_cast<int16_t>(cursorpos.y() - position.y() - ORG_Y));
 
-		// 网格原点：cardSlot(261,53) 174x256 内容 5x6 格 31x42，居中留边
-		const int16_t gx = static_cast<int16_t>(rel.x() - 270);
-		const int16_t gy = static_cast<int16_t>(rel.y() - 55);
+		// 左页卡片格 GRID_X/Y（5×5）
+		const int16_t gx = static_cast<int16_t>(rel.x() - GRID_X);
+		const int16_t gy = static_cast<int16_t>(rel.y() - GRID_Y);
 		if (gx < 0 || gy < 0)
 			return -1;
 
@@ -437,7 +503,8 @@ namespace ms
 		if (index < 0 || index >= NOTE_COUNT)
 			return;
 		// P2：LeftTab 作分类筛选（Angel sub_8603DF 切 tab）；再点同签取消 → 全量。
-		// 指示灯仍由 sync_note_indicators 按持有分类点亮，不跟 click 翻转。
+		// 视觉态由 button_pressed 调 sync_note_indicators 统一设：
+		// 当前签 PRESSED、有卡签 NORMAL、无卡签 DISABLED（对齐 Angel UpdateCheckList）。
 		active_note = on ? index : -1;
 		card_page = 0;
 		apply_note_filter();
@@ -455,48 +522,63 @@ namespace ms
 
 		backgrnd.draw(DrawArgument(org) + fade);
 
-		// 左页：infoPage @(40,35)，文本行按怪物手册.png 墨迹行带 y=113/166/197/218/254
-		infoPage.draw(DrawArgument(org + Point<int16_t>(40, 35)) + fade);
-		header.draw(DrawArgument(org + Point<int16_t>(49, 30)) + fade);
-		info_line[0].draw(DrawArgument(org + Point<int16_t>(50, 113)) + fade);
-		info_line[1].draw(DrawArgument(org + Point<int16_t>(50, 166)) + fade);
-		info_line[2].draw(DrawArgument(org + Point<int16_t>(50, 197)) + fade);
-		info_line[3].draw(DrawArgument(org + Point<int16_t>(50, 218)) + fade);
-		info_line[4].draw(DrawArgument(org + Point<int16_t>(50, 254)) + fade);
+		// 便签筛选态（active_note>=0）即便筛出 0 张也留在卡片页（空 5×5 格），
+		// 不跳基本情报页——否则切到没有卡的分类就以为卡片丢了。只有"未筛选且无选中卡"
+		// 才显示书级统计页。
+		const bool book_stats_mode = (selected_index < 0 && active_note < 0 && active_infotab == 0);
 
-		// 选中卡片占位图（原生红卡位 x151..170 y55..78 帧 → rel(117,48)）
-		if (!cell_icon.empty())
-			cell_icon[0].draw(DrawArgument(org + Point<int16_t>(117, 48)) + fade);
-
-		// 右页：cardSlot @(261,53) 5x6 格
-		if (has_grid)
+		if (book_stats_mode)
 		{
-			cardSlot.draw(DrawArgument(org + Point<int16_t>(261, 53)) + fade);
-
-			int32_t first = card_page * CARDS_PER_PAGE;
-			for (int32_t i = first; i < first + CARDS_PER_PAGE && i < static_cast<int32_t>(cards.size()); ++i)
-			{
-				int32_t k = i - first;
-				const Point<int16_t> cell = org + Point<int16_t>(
-					static_cast<int16_t>(270 + (k % GRID_COLS) * CELL_W),
-					static_cast<int16_t>(55 + (k / GRID_COLS) * CELL_H));
-
-				if (!cell_icon.empty())
-					cell_icon[static_cast<size_t>(i % cell_icon.size())].draw(
-						DrawArgument(cell + Point<int16_t>(4, 7)) + fade);
-
-				// Texture::draw 的 top-left = pos - origin（DrawArgument.h:134），
-				// select/cover origin=(2,40)（orange-wz 实测）⇒ 传 cell + origin
-				// 才让覆盖件顶部落在格子左上角。
-				if (i == selected_index && selectOv)
-					selectOv.draw(DrawArgument(cell + selectOv.get_origin()) + fade);
-				if (cards[static_cast<size_t>(i)].id == Stage::get().get_player().get_monsterbook().get_cover()
-					&& coverOv)
-					coverOv.draw(DrawArgument(cell + coverOv.get_origin()) + fade);
-			}
+			// 图4 基本情报：左页书级统计（infoPage），右页空白。
+			// infoPage 背景已印死 5 个原生标签，数值用 RIGHT 对齐填在标签右侧
+			// 同一行（标签 canvas x≈8..115，数值右缘 canvas x≈158 → 窗内 x=org+198）。
+			// y 沿用对齐背景标签的窗内行位，避免重复 label 造成叠字。
+			infoPage.draw(DrawArgument(org + Point<int16_t>(40, 35)) + fade);
+			header.draw(DrawArgument(org + Point<int16_t>(49, 30)) + fade);
+			stats_value[0].draw(DrawArgument(org + Point<int16_t>(198, 113)) + fade);
+			stats_value[1].draw(DrawArgument(org + Point<int16_t>(198, 166)) + fade);
+			stats_value[2].draw(DrawArgument(org + Point<int16_t>(198, 197)) + fade);
+			stats_value[3].draw(DrawArgument(org + Point<int16_t>(198, 218)) + fade);
+			stats_value[4].draw(DrawArgument(org + Point<int16_t>(198, 254)) + fade);
 		}
+		else
+		{
+			// 图3/5 卡片页：左 5×5 格，右怪名 + HP/MP。
+			if (has_grid)
+			{
+				cardSlot.draw(DrawArgument(org + Point<int16_t>(GRID_X - 8, GRID_Y - 2)) + fade);
 
-		page_label.draw(DrawArgument(org + Point<int16_t>(330, 288)) + fade);
+				int32_t first = card_page * CARDS_PER_PAGE;
+				for (int32_t i = first; i < first + CARDS_PER_PAGE && i < static_cast<int32_t>(cards.size()); ++i)
+				{
+					int32_t k = i - first;
+					const Point<int16_t> cell = org + Point<int16_t>(
+						static_cast<int16_t>(GRID_X + (k % GRID_COLS) * CELL_W),
+						static_cast<int16_t>(GRID_Y + (k / GRID_COLS) * CELL_H));
+
+					if (!cell_icon.empty())
+						cell_icon[static_cast<size_t>(i % cell_icon.size())].draw(
+							DrawArgument(cell + Point<int16_t>(4, 7)) + fade);
+
+					if (i == selected_index && selectOv)
+						selectOv.draw(DrawArgument(cell + selectOv.get_origin()) + fade);
+					if (cards[static_cast<size_t>(i)].id == Stage::get().get_player().get_monsterbook().get_cover()
+						&& coverOv)
+						coverOv.draw(DrawArgument(cell + coverOv.get_origin()) + fade);
+					// 收集完成（level>=5，服务端 addCard 上限 5）的卡画满级角标：
+					// 复用 fullMark 7x11，落在格子右上角。原生 LoadBookIcon/LoadMobInfo
+					// 对满级卡有专门标记，本端以现有 IMG fullMark 表达，不新增资源。
+					if (cards[static_cast<size_t>(i)].level >= 5 && fullMark)
+						fullMark.draw(DrawArgument(cell + Point<int16_t>(CELL_W - 9, 0)) + fade);
+				}
+			}
+
+			// 右页详情：怪名居中，HP/MP 底栏（未收集显示 ???）
+			info_line[0].draw(DrawArgument(org + Point<int16_t>(DETAIL_X + 40, DETAIL_NAME_Y)) + fade);
+			info_line[1].draw(DrawArgument(org + Point<int16_t>(DETAIL_X + 40, DETAIL_HP_Y)) + fade);
+			info_line[2].draw(DrawArgument(org + Point<int16_t>(DETAIL_X + 40, DETAIL_MP_Y)) + fade);
+			page_label.draw(DrawArgument(org + Point<int16_t>(GRID_X + 70, 288)) + fade);
+		}
 
 		// 全套标记：右页底。d2_canvas_anchor 实测 win_rel=(236,335) SAD=0.0，
 		// win_rel 即 backgrnd 左上为原点（org），故直接 org+(236,335)。
@@ -522,31 +604,10 @@ namespace ms
 				return Button::State::NORMAL;
 			case Buttons::BtSearch:
 			{
-				UI::get().emplace<UISoftKey>([this](const std::string& s) {
-					if (s.empty()) return;
-					for (int32_t i = 0; i < static_cast<int32_t>(cards.size()); ++i)
-					{
-						const CardEntry& ce = cards[static_cast<size_t>(i)];
-						if (std::to_string(ce.id) == s)
-						{
-							select_card_by_index(i);
-							status_line.change_text(Locale::format("monsterbook.info_id", s));
-							LOG(LOG_DEBUG, "UIMonsterBook: search hit card=" << s);
-							return;
-						}
-
-						const int32_t mid = mob_id_for_card(ce.id);
-						const std::string nm = mob_name_of(mid);
-						if (!nm.empty() && nm.find(s) != std::string::npos)
-						{
-							select_card_by_index(i);
-							status_line.change_text(nm);
-							LOG(LOG_DEBUG, "UIMonsterBook: search hit name=" << nm);
-							return;
-						}
-					}
-					status_line.change_text(Locale::text("monsterbook.not_found"));
-				}, []() {}, "card id");
+				// IDA 核对（13337，input MD5 同 Angel）：CUIMonsterBook/CMonsterBookMan
+				// 全部具名方法无 Search handler、无软键盘调用；find_regex 全库仅
+				// NewYearsCard/BtSearch，MonsterBook 无搜索字符串。故 BtSearch 在原生
+				// 无独立逻辑（或走基类未具名 handler），本端不再自创软键盘搜索。
 				return Button::State::NORMAL;
 			}
 			case Buttons::BtPrevCard:
@@ -571,21 +632,26 @@ namespace ms
 			const bool turn_on = (active_note != i);
 			set_note(i, turn_on);
 			sync_note_indicators();
-			// 当前筛选签额外保持 PRESSED 观感
-			if (turn_on)
-			{
-				auto it = buttons.find(buttonid);
-				if (it != buttons.end() && it->second)
-					it->second->set_state(Button::State::PRESSED);
-			}
-			return Button::State::NORMAL;
+			// 常驻 PRESSED 由 sync_note_indicators 统一设（当前筛选签），
+			// 返回 PRESSED 让框架 send_cursor 不把它打回 NORMAL（UISkillBook 范式）。
+			return Button::State::PRESSED;
 		}
 
 		if (buttonid >= Buttons::BtInfoTab0 && buttonid < static_cast<uint16_t>(Buttons::BtInfoTab0 + INFOTAB_COUNT))
 		{
 			active_infotab = static_cast<int16_t>(buttonid - Buttons::BtInfoTab0);
+			// 点"基本情报"(tab 0)回首页：清便签筛选 + 清选中卡 → 走统计页。
+			if (active_infotab == 0)
+			{
+				active_note = -1;
+				selected_index = -1;
+				selected_card_id = 0;
+				card_page = 0;
+				apply_note_filter();
+			}
+			sync_infotab_indicators();
 			refresh_info();
-			return Button::State::NORMAL;
+			return Button::State::PRESSED;
 		}
 
 		return Button::State::DISABLED;
@@ -603,7 +669,9 @@ namespace ms
 			}
 		}
 
-		return UIElement::send_cursor(clicked, cursorpos);
+		// 交给 UIDragElement：标题条（dragarea 顶 20px）命中时进入拖动，
+		// 落点保存由基类 remove_cursor/send_cursor 完成。卡片格点击在上方已截获。
+		return UIDragElement<PosMONSTERBOOK>::send_cursor(clicked, cursorpos);
 	}
 
 	void UIMonsterBook::send_key(int32_t keycode, bool pressed, bool escape)

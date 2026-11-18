@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../UIElement.h"
+#include "../UIDragElement.h"
 
 #include "../../Character/MonsterBook.h"
 #include "../../Graphics/Geometry.h"
@@ -40,10 +40,10 @@
 
 namespace ms
 {
-	// 怪物图鉴：左页 = 选中卡片情报（infoPage），右页 = 卡片格（cardSlot 5x6），
-	// 左列 9 张便签 = 卡片套筛选（原生 UpdateCheckList 勾选态），右列 4 页签 =
-	// 情报分类，底部两组箭头 = 左页换卡 / 右页换页，BtSearch = 按编号/名称检索。
-	class UIMonsterBook : public UIElement
+	// 怪物图鉴：左页 = 搜索 + 5×5 卡片格（cardSlot），右页 = 选中怪名/HP/MP +
+	// RightTab 四页签；左列 LeftTab = 分类筛选，BtSearch = 编号/名称检索。
+	// 「基本情报」书级统计（等级/卡片数）走 infoPage 左页（无选中卡时）。
+	class UIMonsterBook : public UIDragElement<PosMONSTERBOOK>
 	{
 	public:
 		static constexpr Type TYPE = UIElement::Type::MONSTERBOOK;
@@ -74,6 +74,7 @@ namespace ms
 		void load_cards();
 		void apply_note_filter();
 		void sync_note_indicators();	// UpdateCheckList：有卡的便签亮
+		void sync_infotab_indicators();	// 右标签常驻激活态：旧签 NORMAL + 当前 PRESSED（UISkillBook::change_tab 范式）
 		void select_card_by_index(int32_t index);	// 全局序号（含跨页，相对当前 view）
 		void page_cards(int8_t delta);
 		int32_t page_count() const;
@@ -100,15 +101,20 @@ namespace ms
 			BtInfoTab0 = 3100		// 3100..3103 = RightTab 0..3
 		};
 
-		// 右页卡片格：cardSlot(261,53) 174x256，单元 31x42（= select/cover 尺寸），
-		// 5 列 x 6 行 = 30 张/页；格原点 = (261+9, 53+2)（居中留边推导）
-		static constexpr int16_t GRID_X = 270;
+		// 正确截图（怪物手册2/卡片页）：左页 = 搜索+5×5 卡片格，右页 = 怪名/HP/MP。
+		// cardSlot 174×256 落左页；单元 31×42（= select/cover）；旧「右页格」系
+		// 对基本情报截图的误匹配，已翻案。
+		static constexpr int16_t GRID_X = 48;
 		static constexpr int16_t GRID_Y = 55;
 		static constexpr int16_t CELL_W = 31;
 		static constexpr int16_t CELL_H = 42;
 		static constexpr int16_t GRID_COLS = 5;
-		static constexpr int16_t GRID_ROWS = 6;
+		static constexpr int16_t GRID_ROWS = 5;
 		static constexpr int16_t CARDS_PER_PAGE = GRID_COLS * GRID_ROWS;
+		static constexpr int16_t DETAIL_X = 270;
+		static constexpr int16_t DETAIL_NAME_Y = 40;
+		static constexpr int16_t DETAIL_HP_Y = 280;
+		static constexpr int16_t DETAIL_MP_Y = 300;
 
 		static constexpr int16_t NOTE_COUNT = 9;
 		static constexpr int16_t INFOTAB_COUNT = 4;
@@ -137,6 +143,10 @@ namespace ms
 
 		Text header;			// 原生控件 2005 (49,30) 120x15
 		Text info_line[6];
+		// 基本情报页数值列：infoPage.png 已印死 5 个原生标签，数值按 Angel
+		// DrawTextA nTop=5/56/89/108/146（canvas 相对，右对齐 nLeft=140-w）
+		// 填在标签右侧同一行。独立 RIGHT 对齐 Text，避免与卡片页 info_line 混用。
+		Text stats_value[5];
 		Text page_label;
 		Text status_line;
 	};

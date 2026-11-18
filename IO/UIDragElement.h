@@ -100,6 +100,24 @@ namespace ms
 			position = HudLayout::clamp_to_view(position, dim, vw, vh);
 		}
 
+		// 弹出窗（大地图/频道/游戏设置等）首次打开、用户尚未拖动过时按当前视口居中。
+		// 判定口径：保存坐标 == 该类型的默认坐标 ⇒ 视为未拖动。用户一旦拖动，
+		// save(position) 写入新坐标，此后 load()!=默认，本函数不再干预，尊重用户位置。
+		// dim 由调用方在尺寸就绪后传入（ctor 中 dimension 可能尚未赋值）。
+		void center_if_position_unset(Point<int16_t> dim)
+		{
+			T defaults;
+			const Point<int16_t> def = defaults.load();
+			const Point<int16_t> cur = Setting<T>::get().load();
+
+			if (cur.x() != def.x() || cur.y() != def.y())
+				return;
+
+			const int16_t vw = Constants::Constants::get().get_viewwidth();
+			const int16_t vh = Constants::Constants::get().get_viewheight();
+			position = HudLayout::center_on_screen(vw, vh, dim);
+		}
+
 		bool dragged = false;
 		Point<int16_t> dragarea;
 		Point<int16_t> cursoroffset;
