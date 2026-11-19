@@ -173,7 +173,7 @@ namespace ms
 
 		tilesobjs = MapTilesObjs(src);
 		backgrounds = MapBackgrounds(src["back"]);
-		// 天气注入层：若世界状态包已到则立即灌入；否则由 BackLayers::update 惰性补灌。
+		// 天气前景素材：解析雨/雾/雪动画（不改原生背景）；状态包未到则 update 惰性补解析。
 		weather::BackLayers::get().on_map_loaded();
 		weather::Ground::get().on_map_loaded();
 		physics = Physics(src["foothold"]);
@@ -219,10 +219,14 @@ namespace ms
 		}
 
 		combat.draw(viewx, viewy, alpha);
+		// Kaentake 动态聊天表情：头顶动画按角色屏幕位置绘制（viewpos 同 chars 口径）。
 		portals.draw(viewpos, alpha);
 		guild_boss.draw(viewpos, alpha);
 		backgrounds.drawforegrounds(viewx, viewy, alpha);
 		effect.draw();
+
+		// 天气前景素材（雨/雾/雪）：自绘，严格在角色之后、夜色蒙版之前；不动原生背景。
+		weather::BackLayers::get().draw(viewpos, viewx, viewy, alpha);
 
 		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
 		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。
@@ -422,8 +426,10 @@ namespace ms
 		// 天气系统：固定逻辑步长推进本地时钟与夜色趋近（与 MapleStory 主循环 timestep 同口径）。
 		// 未收到 0x373D 时 Fx::update 内部零开销返回，不影响 stock 表现。
 		weather::Fx::get().update(static_cast<int64_t>(Constants::TIMESTEP) * 1000);
-		// 天气背景注入层：每帧按天空/时钟驱动各层 alpha；flags 带 SNAP 时（进图包）直接到位。
-		weather::BackLayers::get().update((weather::State::get().flags() & weather::FLAG_SNAP) != 0);
+		// 天气前景素材层：每帧按天空/时钟驱动雨/雾/雪 alpha + 动画；不改原生背景逻辑。
+		// flags 带 SNAP 时（进图包）直接到位。
+		weather::BackLayers::get().update((weather::State::get().flags() & weather::FLAG_SNAP) != 0,
+			static_cast<uint16_t>(Constants::TIMESTEP));
 		// 天气路灯：按当前夜色强度推进光晕 fade。
 		weather::Lamps::get().update(weather::Fx::get().night_level());
 		// 天气地面层：推进积雪/水坑/溅射动画 + 环境音状态桩。

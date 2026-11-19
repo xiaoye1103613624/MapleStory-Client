@@ -25,50 +25,12 @@
 
 namespace ms
 {
-	void Background::init_common()
+	Background::Background(nl::node src)
 	{
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
 		WOFFSET = VWIDTH / 2;
 		HOFFSET = VHEIGHT / 2;
-	}
-
-	// 天气注入层构造：数值来自 bundle weatherfx.cpp 的 BACKENTRY，不读地图 back 节点。
-	Background::Background(const Params& p)
-	{
-		init_common();
-
-		nl::node backsrc = nl::nx::Map001["Back"];
-		if (!backsrc)
-			backsrc = nl::nx::Map["Back"];
-		nl::node sheet = backsrc[p.bs + ".img"];
-		if (!sheet)
-			sheet = backsrc[p.bs];
-
-		animated = p.ani;
-		animation = sheet[p.ani ? "ani" : "back"][p.no];
-		opacity = p.a;
-		flipped = false;
-		cx = static_cast<int16_t>(p.cx);
-		cy = static_cast<int16_t>(p.cy);
-		rx = p.rx;
-		ry = p.ry;
-		moveobj.set_x(p.x);
-		moveobj.set_y(p.y);
-		settype(typebyid(p.type));
-	}
-
-	void Background::set_opacity(float ratio01)
-	{
-		// ratio01 ∈ [0,1] → opacity 字节 0..255（draw 里用 opacity/255）。
-		if (ratio01 < 0.0f) ratio01 = 0.0f;
-		if (ratio01 > 1.0f) ratio01 = 1.0f;
-		opacity = ratio01 * 255.0f;
-	}
-
-	Background::Background(nl::node src)
-	{
-		init_common();
 
 		nl::node backsrc = nl::nx::Map001["Back"];
 
@@ -233,43 +195,6 @@ namespace ms
 	// 读到未定义值，drawbackgrounds 的铺底判断随机失效 → 露白清屏。
 	MapBackgrounds::MapBackgrounds() : black(true) {}
 
-	void MapBackgrounds::set_injected(const std::vector<Background::Params>& back, const std::vector<Background::Params>& front)
-	{
-		injected_backgrounds.clear();
-		injected_foregrounds.clear();
-		injected_backgrounds.reserve(back.size());
-		injected_foregrounds.reserve(front.size());
-		for (const auto& p : back)
-			injected_backgrounds.emplace_back(p);
-		for (const auto& p : front)
-			injected_foregrounds.emplace_back(p);
-	}
-
-	void MapBackgrounds::clear_injected()
-	{
-		injected_backgrounds.clear();
-		injected_foregrounds.clear();
-	}
-
-	size_t MapBackgrounds::injected_count(bool foreground) const
-	{
-		return foreground ? injected_foregrounds.size() : injected_backgrounds.size();
-	}
-
-	void MapBackgrounds::set_injected_opacity(bool foreground, size_t index, float ratio01)
-	{
-		auto& v = foreground ? injected_foregrounds : injected_backgrounds;
-		if (index < v.size())
-			v[index].set_opacity(ratio01);
-	}
-
-	float MapBackgrounds::get_injected_opacity(bool foreground, size_t index) const
-	{
-		const auto& v = foreground ? injected_foregrounds : injected_backgrounds;
-		// Background 内部 opacity 存的是 0..255，转回 0..1 给调用方 fade。
-		return index < v.size() ? v[index].get_opacity_ratio() : 0.0f;
-	}
-
 	void MapBackgrounds::drawbackgrounds(double viewx, double viewy, float alpha) const
 	{
 		// 背景列表为空（img 包缺 back 层、或装图竞态尚未填充）时强制铺一层
@@ -279,18 +204,12 @@ namespace ms
 
 		for (auto& background : backgrounds)
 			background.draw(viewx, viewy, alpha);
-		// 天气注入背景层（在地图自身背景之上）
-		for (auto& layer : injected_backgrounds)
-			layer.draw(viewx, viewy, alpha);
 	}
 
 	void MapBackgrounds::drawforegrounds(double viewx, double viewy, float alpha) const
 	{
 		for (auto& foreground : foregrounds)
 			foreground.draw(viewx, viewy, alpha);
-		// 天气注入前景层（雨/雪/雾盖在角色之前，bundle front=1）
-		for (auto& layer : injected_foregrounds)
-			layer.draw(viewx, viewy, alpha);
 	}
 
 	void MapBackgrounds::update()
@@ -300,10 +219,5 @@ namespace ms
 
 		for (auto& foreground : foregrounds)
 			foreground.update();
-
-		for (auto& layer : injected_backgrounds)
-			layer.update();
-		for (auto& layer : injected_foregrounds)
-			layer.update();
 	}
 }

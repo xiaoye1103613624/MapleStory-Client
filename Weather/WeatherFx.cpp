@@ -9,45 +9,11 @@
 #include "../Graphics/GraphicsGL.h"
 
 #include <cmath>
-#include <chrono>
-#include <fstream>
-#include <string>
-#include <windows.h>
 
 namespace ms
 {
 	namespace weather
 	{
-		// [DBG-weather] 真机诊断垫片：Release 下 LOG 是 no-op，只能写文件。
-		// 每 5s 或状态突变写一行；验收完删除。路径落在客户端根，便于用户回传。
-		static void trace_state(const State& st, float night, float r, float g, float b)
-		{
-			using namespace std::chrono;
-			static auto last = steady_clock::time_point();
-			static int last_minute = -1;
-			const auto now = steady_clock::now();
-			const bool minute_changed = st.minute_of_day() != last_minute;
-			if (!minute_changed && duration_cast<seconds>(now - last).count() < 5)
-				return;
-			last = now;
-			last_minute = st.minute_of_day();
-			// 写到 exe 所在目录，不依赖进程 cwd（登录器启动 cwd 可能是别处）。
-			char exepath[MAX_PATH] = {};
-			GetModuleFileNameA(nullptr, exepath, MAX_PATH);
-			std::string logpath(exepath);
-			const size_t slash = logpath.find_last_of("\\/");
-			logpath = (slash == std::string::npos ? std::string() : logpath.substr(0, slash + 1)) + "weather_fx_trace.log";
-			std::ofstream f(logpath, std::ios::app);
-			if (!f.is_open())
-				return;
-			f << "minute=" << st.minute_of_day()
-			  << " night=" << night
-			  << " tint=" << r << ',' << g << ',' << b
-			  << " sky=" << static_cast<int>(st.sky())
-			  << " flags=" << static_cast<int>(st.flags())
-			  << " has=" << (st.has_state() ? 1 : 0)
-			  << '\n';
-		}
 
 		// 与 bundle weather.cpp:363-366 一致。
 		static constexpr int DAWN_START = 5 * 60;
@@ -177,8 +143,6 @@ namespace ms
 				lightning_ = lightning_pulse(static_cast<uint32_t>(st.sky_elapsed_ms()), st.sky_token());
 			else
 				lightning_ = 0.0f;
-
-			trace_state(st, night_level_, tint_r_, tint_g_, tint_b_);
 		}
 
 		void Fx::draw() const
