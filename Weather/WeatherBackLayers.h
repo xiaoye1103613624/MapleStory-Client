@@ -66,11 +66,6 @@ namespace ms
 			std::vector<Layer> sky_;    // 背景天空层
 			std::vector<Layer> front_;  // 前景层
 			bool active_ = false;
-			// 月亮呼吸（新增效果；参考实现 weatherfx.cpp:1098-1104 明确无呼吸，本项为
-			// 用户 2026-11-20 明确要求新增）。周期 7s，亮度 0.82..1.00。
-			static constexpr uint32_t kMoonBreatheMs = 7000;
-			uint32_t moon_breathe_ms_ = 0;
-			float moon_breathe_ = 1.0f;
 
 			void build(std::vector<Layer>& out, bool front);
 			void draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha) const;

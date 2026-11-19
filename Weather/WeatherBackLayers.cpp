@@ -201,30 +201,10 @@ namespace ms
 			drive(sky_);
 			drive(front_);
 
-			// 月亮呼吸相位（三角波 0.82..1.0，周期 7s）。只作用于月亮层绘制。
-			moon_breathe_ms_ += timestep;
-			if (moon_breathe_ms_ >= kMoonBreatheMs)
-				moon_breathe_ms_ -= kMoonBreatheMs;
-			{
-				const float p = static_cast<float>(moon_breathe_ms_) / static_cast<float>(kMoonBreatheMs);
-				const float tri = p < 0.5f ? p * 2.0f : (1.0f - p) * 2.0f;
-				moon_breathe_ = 0.82f + 0.18f * tri;
-			}
+
 		}
 
-		// 自绘月面：中心 (cx,cy)，三层同心方块近似（外圈微光 + 本体 + 亮核）。
-	// nightDesert back/3 的 312x312 画布真机上 valid=1 但画面看不到月面，
-	// 这里补一层保证「夜里能看见月亮」（用户 2026-11-20 反馈）。
-	static void draw_moon_disc(int16_t cx, int16_t cy, float a)
-	{
-		if (a <= 0.02f)
-			return;
-		GraphicsGL::get().drawrectangle(cx - 26, cy - 26, 52, 52, 0.90f, 0.92f, 1.00f, a * 0.16f);
-		GraphicsGL::get().drawrectangle(cx - 20, cy - 20, 40, 40, 0.96f, 0.96f, 0.86f, a * 0.55f);
-		GraphicsGL::get().drawrectangle(cx - 14, cy - 14, 28, 28, 1.00f, 0.99f, 0.88f, a * 0.92f);
-	}
-
-	void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha) const
+		void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha) const
 		{
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int16_t vh = Constants::Constants::get().get_viewheight();
@@ -240,13 +220,25 @@ namespace ms
 				// HMOVE 层用累计位移 + viewx（viewx 本身是屏幕偏移，Char.cpp:44 同口径）；
 				// 静态层用视差 shift 公式。
 				double x, y;
+				const bool is_moon_layer = (l.kind == 0 && l.type == 0);
 				const bool hmove = (l.type == 4 || l.type == 6 || l.type == 7);
 				const bool vmove = (l.type == 5 || l.type == 6 || l.type == 7);
-				if (hmove)
+				if (is_moon_layer)
+				{
+					// 月亮固定屏幕坐标：不参与视差。走视差时相机每帧微动会让圆盘
+					// 取整挪 1px，高对比月面读作"一直在闪"（真机 2026-11-20 坐实：
+					// 月盘核心区两帧差异 96.35%）。参考 weatherfx.cpp:1101-1103 亦为
+					// "整晚停在作者坐标"。
+					x = l.base_x + woff;
+					y = l.base_y + hoff;
+				}
+				else if (hmove)
 					x = l.base_x + l.acc_x + viewx;
 				else
 					x = l.base_x + l.rx * (woff - viewx) / 100.0 + woff;
-				if (vmove)
+				if (is_moon_layer)
+					;   // y 已定
+				else if (vmove)
 					y = l.base_y + l.acc_y + viewy;
 				else
 					y = l.base_y + l.ry * (hoff - viewy) / 100.0 + hoff;
@@ -267,11 +259,12 @@ namespace ms
 				const int16_t iy = static_cast<int16_t>(std::round(y));
 				const int tw = l.cx * l.htile;
 				const int th = l.cy * l.vtile;
-			// 月亮（kind==K_NIGHT 且 type==0）：纹理之外补自绘月面，并叠加呼吸明暗。
+			// 月亮（kind==K_NIGHT 且 type==0）：只用 nightDesert back/3 的真实月盘。
+			// ① 曾用 drawrectangle 叠"自绘月面"→ 真机是月心一个方块（用户 2026-11-20 截图）；
+			// ② 曾加 7s 呼吸 → 用户反馈"月亮一直在闪"。参考 weatherfx.cpp:1098-1104 明确
+			//    "ride the CLOCK… take no night tint"，本版回归：无呼吸、固定位置、只随时钟淡入淡出。
 			const bool is_moon = (l.kind == 0 && l.type == 0);
-			const float moon_a = is_moon ? (l.current * moon_breathe_) : l.current;
-			if (is_moon)
-				draw_moon_disc(ix, iy, moon_a);
+			const float moon_a = l.current;
 			// Texture::draw 只认 DrawArgument 的 color.alpha（DrawArgument.h:45）。
 			for (int tx = 0; tx < tw; tx += l.cx)
 				for (int ty = 0; ty < th; ty += l.cy)
