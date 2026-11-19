@@ -9,6 +9,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "WeatherGround.h"
 #include "WeatherFx.h"
+
+#include <cmath>
+#include <cstdlib>
 #include "../Gameplay/Physics/FootholdTree.h"
 
 #include "WeatherState.h"
@@ -51,6 +54,18 @@ namespace ms
 		// 增加 get_y_below(x) 公开查询（Stage::respawn 已在用 physics.get_y_below，见 Stage.cpp:187），
 		// 再由 Stage::draw 传入逐落点地面 y。此为本版最大观感风险，真机对照后调 kGroundDropPx。
 		static const int16_t kGroundDropPx = 4;
+		// 参考 weatheraccum.cpp:59-61/76-77
+		static const int ACCUM_SLOT_W = 26;
+		static const int ACCUM_STACK_MAX = 3;
+		static const int ACCUM_STACK_LIFT = 2;
+		static const int ACCUM_EDGE_PROBE = 14;
+		static const int ACCUM_EDGE_STEP = 10;
+		// 参考 weatherpuddle.cpp:60-61/78-79/63
+		static const int PUDDLE_MIN_GAP = 56;
+		static const int PUDDLE_SAME_FLOOR_DY = 24;
+		static const int PUDDLE_PROBE_DX = 12;
+		static const int PUDDLE_MAX_SLOPE = 3;
+		static const int PUDDLE_MARGIN = 80;
 		static const int SPLASH_MARGIN = 64;         // 参考 :35
 		static const int SPLASH_SURFACE_DROP = 4;    // 参考 :45
 
@@ -155,17 +170,9 @@ namespace ms
 				accum_carry_ += ACCUM_PLACE_PER_S * (static_cast<float>(timestep) / 1000.0f);
 				int want = static_cast<int>(accum_carry_);
 				accum_carry_ -= static_cast<float>(want);
-				while (want-- > 0 && static_cast<int>(accum_patches_.size()) < target)
-				{
-					Patch p;
-					size_t idx = next_rand() % accum_nodes_.size();
-					p.anim = accum_nodes_[idx];
-					// 槽位：以相机宽度近似视图，落点在视图内伪随机（bundle SLOT_W=26 网格近似）。
-					const int vieww = Constants::Constants::get().get_viewwidth();
-					p.wx = static_cast<int16_t>((next_rand() % static_cast<uint32_t>(vieww)) - vieww / 2);
-					p.wy = static_cast<int16_t>(kGroundDropPx);
-					accum_patches_.push_back(p);
-				}
+				// 只累计待放置数：真实落点要读 foothold 表面，统一在 draw()（有 fht）里做。
+				// 参考 weatheraccum.cpp:27-28 "Placement is by SLOT, not by random x"。
+				accum_pending_ += want;
 			}
 			else if (static_cast<int>(accum_patches_.size()) > target)
 			{
@@ -195,18 +202,7 @@ namespace ms
 				puddle_carry_ += PUDDLE_PLACE_PER_S * (static_cast<float>(timestep) / 1000.0f);
 				int want = static_cast<int>(puddle_carry_);
 				puddle_carry_ -= static_cast<float>(want);
-				while (want-- > 0 && static_cast<int>(puddles_.size()) < target)
-				{
-					Patch p;
-					int tier = static_cast<int>(puddle_level_ * PUDDLE_TIERS);
-					if (tier >= PUDDLE_TIERS) tier = PUDDLE_TIERS - 1;
-					p.tier = static_cast<uint8_t>(tier);
-					p.anim = puddle_nodes_[static_cast<size_t>(tier) % puddle_nodes_.size()];
-					const int vieww = Constants::Constants::get().get_viewwidth();
-					p.wx = static_cast<int16_t>((next_rand() % static_cast<uint32_t>(vieww)) - vieww / 2);
-					p.wy = static_cast<int16_t>(kGroundDropPx);
-					puddles_.push_back(p);
-				}
+				puddle_pending_ += want;   // 落点同样在 draw 里按 foothold + 坡度/间距规则求
 			}
 			else if (static_cast<int>(puddles_.size()) > target)
 			{
@@ -292,12 +288,97 @@ namespace ms
 				return;
 
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
-			const int base_x = player_world.x() + viewpos.getpos().x();
-			const int base_y = player_world.y() + viewpos.getpos().y();
+			// 世界坐标 = 屏幕坐标 - viewpos（screen = world + viewpos）。
+			const int world_left = -viewpos.getpos().x();
+			const int world_top = -viewpos.getpos().y();
+			const int base_x = viewpos.getpos().x();
+			const int base_y = viewpos.getpos().y();
+			(void)player_world;   // 落点不再依赖角色 y（用户 2026-11-20 指出）
 
 			// 溅射生成：逐列在 foothold 上找表面（对齐 weathersplash.cpp:238
 			// GetFootholdUnderneath(x, camY-halfH, &ySurface)），而不是画在玩家脚下。
 			// 世界坐标 = 屏幕坐标 - viewpos（screen = world + viewpos）。
+			if (fht != nullptr)
+			{
+				// 积雪：26px 槽位 + ±14 边缘探针（Δy≤10）+ 每槽最多 3 层、每层抬 2px。
+				// 参考 weatheraccum.cpp:59-61/76-77/292-295/345-351。
+				while (accum_pending_ > 0 && !accum_nodes_.empty()
+					&& static_cast<int>(accum_patches_.size()) < ACCUM_MAX)
+				{
+					--accum_pending_;
+					const int slots = vw / ACCUM_SLOT_W + 2;
+					const int slot = world_left / ACCUM_SLOT_W + static_cast<int>(next_rand() % static_cast<uint32_t>(slots));
+					const int wx = slot * ACCUM_SLOT_W + static_cast<int>(next_rand() % ACCUM_SLOT_W);
+					const int16_t ysurf = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx), static_cast<int16_t>(world_top)));
+					// 边缘探针：平台边缘外 Δy 会突然变大，落在那里会悬空。
+					const int16_t yl = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx - ACCUM_EDGE_PROBE), static_cast<int16_t>(world_top)));
+					const int16_t yr = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx + ACCUM_EDGE_PROBE), static_cast<int16_t>(world_top)));
+					if (std::abs(static_cast<int>(yl) - ysurf) > ACCUM_EDGE_STEP
+						|| std::abs(static_cast<int>(yr) - ysurf) > ACCUM_EDGE_STEP)
+						continue;
+
+					// 同槽叠层：已在该槽的层数决定抬升
+					int depth = 0;
+					for (const Patch& q : accum_patches_)
+						if (q.slot == slot) ++depth;
+					if (depth >= ACCUM_STACK_MAX)
+						continue;
+
+					Patch p;
+					p.anim = accum_nodes_[next_rand() % accum_nodes_.size()];
+					p.wx = static_cast<int16_t>(wx);
+					p.wy = static_cast<int16_t>(ysurf - ACCUM_SURFACE_DROP - depth * ACCUM_STACK_LIFT);
+					p.slot = static_cast<int16_t>(slot);
+					accum_patches_.push_back(p);
+				}
+
+				// 水坑：间距 ≥56、同层 dy<24、左右 ±12 坡度 ≤3px。
+				// 参考 weatherpuddle.cpp:60-61/78-79/290-324。
+				while (puddle_pending_ > 0 && !puddle_nodes_.empty()
+					&& static_cast<int>(puddles_.size()) < PUDDLE_MAX)
+				{
+					--puddle_pending_;
+					const int wx = world_left - PUDDLE_MARGIN
+						+ static_cast<int>(next_rand() % static_cast<uint32_t>(vw + PUDDLE_MARGIN * 2));
+					const int16_t ysurf = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx), static_cast<int16_t>(world_top)));
+					// 坡度探针
+					const int16_t yl = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx - PUDDLE_PROBE_DX), static_cast<int16_t>(world_top)));
+					const int16_t yr = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx + PUDDLE_PROBE_DX), static_cast<int16_t>(world_top)));
+					if (std::abs(static_cast<int>(yl) - ysurf) > PUDDLE_MAX_SLOPE
+						|| std::abs(static_cast<int>(yr) - ysurf) > PUDDLE_MAX_SLOPE)
+						continue;
+					// 间距/同层检查
+					bool tooClose = false;
+					for (const Patch& q : puddles_)
+					{
+						if (std::abs(static_cast<int>(q.wx) - wx) < PUDDLE_MIN_GAP
+							&& std::abs(static_cast<int>(q.wy) - ysurf) < PUDDLE_SAME_FLOOR_DY)
+						{
+							tooClose = true;
+							break;
+						}
+					}
+					if (tooClose)
+						continue;
+
+					Patch p;
+					int tier = static_cast<int>(puddle_level_ * PUDDLE_TIERS);
+					if (tier >= PUDDLE_TIERS) tier = PUDDLE_TIERS - 1;
+					if (tier < 0) tier = 0;
+					p.tier = static_cast<uint8_t>(tier);
+					p.anim = puddle_nodes_[static_cast<size_t>(tier)];
+					p.wx = static_cast<int16_t>(wx);
+					p.wy = static_cast<int16_t>(ysurf);
+					puddles_.push_back(p);
+				}
+			}
+
 			if (splash_pending_ > 0 && fht != nullptr && !splash_nodes_.empty())
 			{
 				const int world_left = -viewpos.getpos().x();
@@ -315,10 +396,13 @@ namespace ms
 			}
 
 			// 先堆积、再水坑、最后溅射（溅射在最上层，符合参考的层序）。
+			// 世界坐标 → 屏幕（不再加玩家偏移：这是用户指出的"按角色 y 轴"问题的根因）。
 			for (const Patch& p : accum_patches_)
-				p.anim.draw(DrawArgument(static_cast<int16_t>(base_x + p.wx), static_cast<int16_t>(base_y + p.wy)), 1.0f);
+				p.anim.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(p.wx + base_x),
+					static_cast<int16_t>(p.wy + base_y))), 1.0f);
 			for (const Patch& p : puddles_)
-				p.anim.draw(DrawArgument(static_cast<int16_t>(base_x + p.wx), static_cast<int16_t>(base_y + p.wy)), 1.0f);
+				p.anim.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(p.wx + base_x),
+					static_cast<int16_t>(p.wy + base_y))), 1.0f);
 			// 溅射是"世界坐标"落点，不能加玩家偏移（此前错误地用了 base_y）。
 			for (const Splash& sp : splashes_)
 				sp.anim.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(sp.wx + viewpos.getpos().x()),

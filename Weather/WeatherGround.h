@@ -64,9 +64,10 @@ namespace ms
 			struct Patch
 			{
 				Animation anim;
-				int16_t wx = 0;
-				int16_t wy = 0;
+				int16_t wx = 0;     // 世界坐标（不再相对玩家）
+				int16_t wy = 0;     // foothold 表面 y - SURFACE_DROP
 				uint8_t tier = 0;   // 水坑宽窄级别 0..2；堆积恒 0
+				int16_t slot = -1;  // 积雪槽位（-1=非槽位物件）
 			};
 
 			// 短命溅射（雨滴撞地），带剩余寿命。
@@ -86,6 +87,8 @@ namespace ms
 			float puddle_level_ = 0.0f;  // 水坑 0..1
 			float splash_carry_ = 0.0f;  // 溅射生成速率的帧间小数累加
 			int splash_pending_ = 0;     // 待生成数（draw 里按 foothold 落点实际生成）
+			int accum_pending_ = 0;      // 积雪待放置数（draw 里按槽位+边缘探针放置）
+			int puddle_pending_ = 0;     // 水坑待放置数（draw 里按坡度+间距规则放置）
 			float accum_carry_ = 0.0f;
 			float puddle_carry_ = 0.0f;
 			int64_t elapsed_ms_ = 0;     // 本地累计，仅用于伪随机相位，不参与 wire 权威
