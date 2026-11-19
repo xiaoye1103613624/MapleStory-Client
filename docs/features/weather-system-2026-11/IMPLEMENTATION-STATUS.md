@@ -33,6 +33,22 @@
 
 **orange-wz 调用要点（可复用）**：本 harness 未注入 `mcp__orange_wz__*` 前缀，但服务 streamable-http 在 10012 可用——直接 HTTP POST `/mcp`：`initialize`（拿 `Mcp-Session-Id` 头）→ `tools/call`（`params.name`=工具名，`params.arguments.key` **必须是对象且含 `name`/`ivBase64`/`userKeyBase64` 三字段**，见 ToolParamHelper.java:154-165）。不要以"工具没暴露"回退 .nx dump。
 
+## 083 背景还原纠错（2026-11-19 15:00，提交 `13510bd2`）
+
+**用户真机反馈**：昼夜/天气切换时魔法密林背景树与光线消失；要求还原 083 原生背景渲染逻辑，天气改用"蒙版/素材/切换"（对齐历史插件事件方式：服务端权威 0x373D 广播 = 切换，客户端只渲染）。
+
+**根因（行号坐实）**：上一版 `WeatherBackLayers` 把 8 组注入层追加到 `MapBackgrounds.backgrounds`/`foregrounds` 向量末尾（旧 `MapBackgrounds.cpp:279-282`），其中天空填充层 `nightDesert back/0`（type=3 全屏平铺，alpha=night）画在**所有原生背景之后**，天一黑就盖住魔法密林背景树/光线。bundle 原始做法靠 DLL hook `MakeBack` 把地图 back/0-1（天空）留在注入层后、back/2+（山/树）提到注入层前（weatherfx.cpp:153-157）——我此前用"追加向量末尾"偷换了正确分层。
+
+**修复（一次成型）**：
+- `MapBackgrounds.h/.cpp` 还原到 083 原状（与 `abee2d1b^` 逐字节一致，忽略换行）：删 `Params` 构造、`set_opacity`、`injected_*` 向量、`Stage::get_backgrounds()`。
+- `WeatherBackLayers` 重写为**独立自绘前景素材层**：只保留原本 front=1 的雨×4/雾×4/雪近×1，自持 `Animation`，在 `Stage::draw` 角色之后自绘；**不碰 MapBackgrounds**。
+- 天空类素材（渐变/月/星/沙暴/云/雪远）全部移除——其层级须在树后，原生单通道无法在 drawbackgrounds 内部插层，昼夜统一由 `WeatherFx` 全屏蒙版表达。
+- 删除临时诊断垫片 `weather_fx_trace.log`（Release 交付不留调试日志）。
+
+**验证**：v142 隔离编译 4 单元零 error；整工程链接产物 exe SHA `a1c5c3ac56143398`（延迟 8s 未回滚）；`MapBackgrounds.h/.cpp` 与 083 父版本逻辑逐字节一致；天气代码对注入 API 零引用；hunk 级剔除 UIChatEmoticon 并行 WIP。
+
+**语义定性**：天气 = 服务端权威时钟/天空（切换）+ 客户端全屏蒙版（昼夜）+ 独立前景素材（雨/雾/雪）；**绝不修改 083 原生地图背景渲染**。LNK1104（exe 占用竞态）但产物正确写出，非代码错误。
+
 ## 提交记录（2026-11-18）
 - 服务端 `BeiDou-Server_s9` @ `feature/integration_client`：`:sparkles: feat(weather)` — 30 文件 / 3169 行（含 V1.9.9 migration、GM 写库、数据卫生修复）。提交哈希以 `git log --grep=feat(weather)` 实时查询为准（本文不硬编码，避免 amend 后失配）。
 - 客户端 `MapleStory-Client` @ `feature/dev_0.0.1`：`:sparkles: feat(weather)` — 16 文件 / 976 行。哈希同上，实时查询。
