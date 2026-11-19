@@ -158,6 +158,37 @@
 - 户外判定 D1 先用"有 world state 才 tint"保守策略，未做 bundle 的 backmost (bS,no) 白名单（264 手工排除 + 57 sky bases），避免误压室内。完整判定 + skytable 双端一致留后续。
 - 天空注入（云/月/雨雪 sheet）、地面堆积、路灯 sprite、音效、sway 均属 D1 预留项，接口未启用。
 
+## 独占真机验收（2026-11-20 07:37–07:48，用户给 1 分钟独占窗口）
+
+### 月亮"方块"与"一直闪"——用户 01:36 本端截图反馈的三项，逐条闭环
+
+| 用户反馈 | 真因（行号级） | 修复 | 真机证据 |
+|---|---|---|---|
+| 月中间有方块 | 我上轮加的 `draw_moon_disc`（三层 `drawrectangle` 52/40/28px）叠在真实月盘上 | 整段删除，只用 `nightDesert back/3` 真图 | [P1](evidence/P1_night_moon.png)/[R1](evidence/R1_moon_a.png)：干净圆盘、环形山可见，无方块 |
+| 月亮一直闪 | 月亮走视差 `x=base+rx*(woff-viewx)/100+woff`，相机每帧微动+取整→挪 1px（月盘核心区两帧差 96.35%、均值差 9.9）| 月亮层改**固定屏幕坐标** `(base_x+woff, base_y+hoff)`，不参与视差；对齐参考 `weatherfx.cpp:1101-1103` | 月亮中心固定 5 点 8 帧序列同步升降（frame1 全高 / frame5 全低）=**云层整体飘过遮挡**，非月亮位移；月亮位置代码层面已固定，数学上不可能动 |
+| 月亮呼吸 | 我上轮加的 7s 呼吸幅度 18% | 整段删除（参考 `weatherfx.cpp:1098-1104` 本就"ride the CLOCK"无呼吸） | 同上 |
+
+### 路灯为什么没有实际素材——探针坐实
+
+```
+lamp id=6 tex=0 dim=0x0 at=349,691 level=1
+```
+
+- 服务端/夜色链路正常（level=1），**纹理在所有路径都加载失败**：
+  ① 合并根 `nl::nx::Map["Obj"][bank+".img"]` 取不到后加的 img（与 Effect 根同类问题）；
+  ② 改单文件 `nl::img_file::open_single` 后 `_wz.py` 实测层数为 `MapleMoonLamp2.img/street/gaslamp/0/0`（canvas 在 `<no>/0` 多一层），代码已补 `n["0"]`；
+  ③ 但真机 `tex=0` 仍在，判定本端 img 解析器对该 canvas（96x259 / origin 48,129）加载失败——**core dump 风险已由 open_single 的 try/catch 兜住**。
+- 当前画面显示的是**自绘兜底灯**（铸铁灯柱 6×84 + 暖白灯球 20×22 + 两层加色光晕 + 地面光池 184×68，乘 level×breathe），不是真 sprite。
+- 运行时计数曾证 `lamps_drawn=1`（屏内 1 盏在画）、呼吸 0.851→0.970 波动 → **灯在画、在呼吸，只是不是原素材**。
+- 要用真素材需资源侧工作：重新导入 `MapleMoonLamp2.img` 或修 link 解析（AGENTS.md 跨客户端密钥转换门禁），**未做、如实预留**。
+
+### 产物状态
+
+- 提交链：`06a37ff3`（FROZEN 相位修复）→ `cf827c1b`（粒子真实美术）→ `a9659501`（加色光池/灯呼吸/溅射复活）→ `6513a8da`（A/B/C 收口）→ `11112bba`（foothold 落点）→ `39f19b13`（路灯兜底）→ `e8789231`（月方块/固定位置/art 层级）。
+- 干净版 `BUILD=0`，live `E:\MXD\BeiDou-Client-xy\MapleStory.exe` SHA256 `5c7b093cd4e3a63d…`（即时+8s 两次一致无回滚），四个临时日志串（_lp/_wg/_wl3/_bl）二进制内 0 命中。
+- 并行会话多次覆盖 live exe（8fef0b56→497d8780），已等其空闲后从干净源码重编部署并核对。
+- 如实边界：真 sprite 路灯未解决（走兜底）、月亮"闪"是原生云遮挡（参考实现云本在月前）、F4/F5/F6 像素级校准仍未做（map-angel ⏳）。
+
 ## 产物与证据文件
 - PLAN.md（8 阶段完整计划）、notes/p0-preflight.md（接入前复核）、本文件。
 - 编译日志：_weather_compile.log / _weather_compile2-4.log、_weather_build/obj/Weather*.obj（隔离编译硬证据）。
