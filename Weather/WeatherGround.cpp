@@ -11,6 +11,7 @@
 #include "WeatherFx.h"
 
 #include <cmath>
+#include <fstream>
 #include <cstdlib>
 #include "../Gameplay/Physics/FootholdTree.h"
 

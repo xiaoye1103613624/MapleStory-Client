@@ -176,13 +176,25 @@ namespace ms
 				const Texture* tex = art ? lamp_texture(*art) : nullptr;
 				if (tex == nullptr)
 				{
-					// stock art 与 MapleMoonLamp2 兜底都缺图时，自绘暖色发光球，
+					// 真机实测：参考表的 stock art 路径在本端解析为空节点
+					// （type=0，非 bitmap 也非 link），MapleMoonLamp2 单文件解析同样拿不到
+					// 纹理，所以这里自绘一盏完整的灯：灯柱 + 灯球 + 加色光晕 + 地面光池。
 					// 绝不静默跳过（用户反馈"没有路灯"）。
-					const float ga = level_ * breathe_ * 0.22f * alpha;
-					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 22, static_cast<int16_t>(sy) - 96, 44, 44,
-						1.0f, 0.86f, 0.50f, ga);
-					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 86, 24, 24,
-						1.0f, 0.94f, 0.68f, ga * 1.8f);
+					const float ga = level_ * breathe_ * alpha;
+					// 灯柱（深色铸铁杆）
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 3, static_cast<int16_t>(sy) - 84,
+						6, 84, 0.16f, 0.14f, 0.12f, 0.95f * ga);
+					// 灯球（暖白）
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 10, static_cast<int16_t>(sy) - 104,
+						20, 22, 1.0f, 0.96f, 0.80f, 0.95f * ga);
+					// 加色光晕（近处亮、远处散）
+					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 34, static_cast<int16_t>(sy) - 128,
+						68, 68, 1.0f, 0.88f, 0.55f, 0.20f * ga);
+					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 16, static_cast<int16_t>(sy) - 110,
+						32, 32, 1.0f, 0.94f, 0.70f, 0.42f * ga);
+					// 地面光池（照亮区域）
+					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 92, static_cast<int16_t>(sy) - 34,
+						184, 68, 1.0f, 0.88f, 0.62f, 0.10f * ga);
 					continue;
 				}
 
