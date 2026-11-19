@@ -1,7 +1,37 @@
 # 天气系统实现状态（2026-11-18 开工轮）
 
-> 状态：**双端核心闭环代码已落地、编译级验证通过、已原子提交；WZ 资源入库与真机未闭环（外部阻塞）**。
+> 状态：**双端核心闭环已提交；完整版扩展轮（批次1-4 + web 前端 + 服务端 timing）代码已落地、编译级验证通过，待整工程链接 + 真机验收**。
 > 本文件是"候选完成 + 证据链 + 剩余风险"，不是最终验收。
+
+## 完整版扩展轮（2026-11-18 晚 ~ 11-19，用户"全都做"）
+
+用户拍板全批次 + 一次成型。_client 未提交改动如下（均以 v142 隔离编译 CL_EXIT=0 验证）：
+
+| 批次 | 产物 | 验证 |
+| --- | --- | --- |
+| 1 天空/背景注入层 | `WeatherBackLayers.h/.cpp` + `MapBackgrounds` 加 Params 构造/注入向量/逐帧 alpha + `Stage` 接入。8 组层数值逐条锚定 bundle weatherfx.cpp:122-273（夜空渐变/月/星×2/沙暴×2/彩虹/云×3/雪远；前景雨×4/雾×4/雪近） | v142 隔离编译 8 单元零 error |
+| 2 闪电光照 | `WeatherFx` 加 lightning（hash+脉冲，token/age 同步，STORM+rain≥0.7 触发）+ `draw_lightning()` + Stage 绘制。粒子 BlowWeather 需 0512 节点（live 05120994-999 实测缺失，留新会话 orange-wz 补） | 编译零 error |
+| 3 地面层 | `WeatherGround.h/.cpp`：积雪/水坑/溅射（Animation 从 Effect root 解析 + 世界坐标绘制）；foothold 精确地面 y 留 TODO（真机校准点）；打滑只留接口桩不改 Physics；环境音因原生 Audio 无 loop API 不发声（接口桩，已如实标注）；**已接 Stage**（update/draw/clear/load_map） | 编译零 error（修子代理臆造的 `Sound::start_ambient`/`ensure_remaining`/`Constants::get()` 三类 API） |
+| 4 路灯 | `WeatherLamps.h/.cpp`：40 条手工放置表（bundle lamps.cpp:581-661）+ 暖色光晕圆随 night 淡入；sprite 精确 emitter 对齐留 TODO | 编译零 error |
+| 5 web 前端 | `gms-ui/src/views/game/weather/`（index + 5 tab + 2 locale）、`api/weather.ts`、`game.ts` 路由（/game/weather）、全局 locale 接入 | `npx vite build` exit 0；vue-tsc weather 相关 0 错误（3 条既有 file/index.vue 遗留） |
+| 服务端 timing | V1.9.10 `weather_timing_config` 表 + DO/Mapper + WeatherService 三参数 volatile 可配（day/roll/broadcast）+ Manager reload 灌入 + Controller timing 2 接口 + 校验 | `mvn -pl gms-server compile` exit 0 |
+| wire 蓝军 | 服务端 WeatherPackets:71-83 12 字段序未变，与客户端 WeatherSyncHandler 逐字段对齐 | 实测 grep 通过 |
+
+**额外修复（Owner）**：整工程链接曾因 `TintContext.cpp/.h` 漏注册进 vcxproj 报 LNK2001（装备染色并行 WIP 的缺口，非天气代码），已补齐编译单元注册。
+
+## 完整版收口（2026-11-19 09:45，全部批次闭环）
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 客户端批次1-4 提交 | ✅ | `abee2d1b` `:sparkles: feat(weather): 天气系统完整版渲染` — 14 文件 / 1047 行；hunk 级剔除 UIChatEmoticon 等 WIP |
+| 服务端 timing + web 前端提交 | ✅ | 服务端 `683a98fae9` `:sparkles: feat(weather): 天气频率web可配+gms-ui天气管理前端` — 21 文件；mvn compile exit 0；排除签到/染色 WIP |
+| v142 编译链接 | ✅ | 8 单元隔离编译零 error + MSBuild 增量 Build exit 0；live exe SHA `d17df6db6452fa71`（09:45 实时核对未回滚） |
+| wire 蓝军 | ✅ | 服务端 WeatherPackets:71-83 12 字段序未变 |
+| 0512 天气节点（批次2 粒子） | ✅ | orange-wz HTTP 直连（MCP session 握手 + `load_files`→`create_child_node`×30→`save_as`→`unload_all`），5 节点 `05120995-999` 追加；`_wz.py` 独立复核 path/type/speed/cash 全对；live 0512.img SHA `66c401af`→`c621e574` 实时核对，备份 `_weather_staging/0512.img.livebak` |
+| 真机截图 | ⏳ 外部依赖 | 用户本端复核（本端截图，不得用参考端） |
+| sway | ⏳ 可选未做 | 排最后，按用户"全都做"语义本版未纳入；原生 Texture shear 硬骨头 |
+
+**orange-wz 调用要点（可复用）**：本 harness 未注入 `mcp__orange_wz__*` 前缀，但服务 streamable-http 在 10012 可用——直接 HTTP POST `/mcp`：`initialize`（拿 `Mcp-Session-Id` 头）→ `tools/call`（`params.name`=工具名，`params.arguments.key` **必须是对象且含 `name`/`ivBase64`/`userKeyBase64` 三字段**，见 ToolParamHelper.java:154-165）。不要以"工具没暴露"回退 .nx dump。
 
 ## 提交记录（2026-11-18）
 - 服务端 `BeiDou-Server_s9` @ `feature/integration_client`：`:sparkles: feat(weather)` — 30 文件 / 3169 行（含 V1.9.9 migration、GM 写库、数据卫生修复）。提交哈希以 `git log --grep=feat(weather)` 实时查询为准（本文不硬编码，避免 amend 后失配）。
