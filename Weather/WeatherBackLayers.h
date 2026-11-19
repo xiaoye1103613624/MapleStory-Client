@@ -1,17 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////
-// 天气前景素材层（独立自绘，不碰 083 原生 MapBackgrounds）
+// 天气前景/天空素材层（独立自绘，不改 MapBackgrounds 类与 083 地图数据）
 //
-// 2026-11-19 用户纠错：昼夜/天气不得修改 083 原生地图背景渲染逻辑（魔法密林背景树/光线
-// 曾被注入到 backgrounds 末尾的天空层盖住）。本版按用户要求还原 MapBackgrounds 到 083
-// 原状，天气只用两种方式：①WeatherFx 全屏蒙版表现昼夜；②本类自绘"前景素材"（雨/雾/雪），
-// 严格画在角色之后，不改原生背景向量。天空素材（渐变/月/星/沙暴/云）不再注入——它们的
-// 层级必须在树后，原生单通道无法在 drawbackgrounds 内部插层，故统一由蒙版表达。
+// 坐标契约（本引擎实测）：Camera.cpp:108 viewx = VWIDTH/2 - 玩家世界x（偏移量），
+// Char.cpp:44 世界→屏幕 = world + viewx。视差与滚动完全照抄 083 Background::draw
+// （MapBackgrounds.cpp:112-165）：HMOVE 层 x = 累计位移 + viewx；静态层
+// shift = rx*(WOFFSET-viewx)/100 + WOFFSET 再 + 基准x。
 //
-// 服务端权威不变：服务端 0x373D 广播天空/时钟（切换），客户端只渲染。
+// 分层契约（bundle weatherfx.cpp:153-157）：天空类素材（渐变/月/星/云/沙暴/彩虹/雪远）
+// 画在 Stage::draw 的 drawbackgrounds 之前——盖住地图原天空(back/0-1)，随后地图全部
+// 背景（含山树 back/2+）画在其上，树永不被盖。前景素材（雨/雾/雪近）画在角色之后。
+// 与 bundle 的差异：bundle 只保留 back/0-1 在注入层后，本版天空素材垫在所有背景后，
+// 地图若自带不透明天空则渐变被其盖住（保守、绝不遮树）。
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../Graphics/Animation.h"
+#include "../Graphics/Texture.h"
 #include "../Graphics/DrawArgument.h"
 
 #include <cstddef>
@@ -26,15 +29,13 @@ namespace ms
 		public:
 			static BackLayers& get();
 
-			// 进图时从资源根解析前景素材动画（雨/雾/雪）；无资源则本层静默。
 			void on_map_loaded();
-
-			// 每帧按 State 天空/时钟推进素材 alpha 与动画；Stage::update 调用。
 			void update(bool snap, uint16_t timestep);
 
-			// 自绘前景素材（角色之后、夜色蒙版之前）；Stage::draw 调用。
-			// viewpos=camera.position(alpha)，viewx/viewy=camera.realposition(alpha)。
-			void draw(const DrawArgument& viewpos, double viewx, double viewy, float alpha) const;
+			// 天空类：drawbackgrounds 之前（树在其上）。
+			void draw_sky(double viewx, double viewy, float alpha) const;
+			// 前景类：角色之后、夜色蒙版之前。
+			void draw_front(double viewx, double viewy, float alpha) const;
 
 			void clear();
 
@@ -43,16 +44,26 @@ namespace ms
 
 			struct Layer
 			{
-				Animation anim;
-				int x = 0, y = 0;     // 世界坐标（视差基准）
+				// 用 Texture 而非 Animation：Animation::draw 会把其自身 opacity linear
+				// （单帧 canvas 缺省 a0 常为 0）经 operator+ 乘进 alpha，导致素材全透明。
+				// Texture::draw 只认 DrawArgument 的 color.alpha，直接受控。
+				Texture texture;
+				int16_t base_x = 0, base_y = 0;   // 083 back 节点 x/y 语义
 				double rx = 0, ry = 0;
-				float target = 0.0f;  // 目标 alpha（由天空驱动）
-				float current = 0.0f; // 当前 alpha（fade）
-				bool rain = false, fog = false, snow = false;
+				int type = 0;                     // 083 Background::Type 同编码
+				int16_t cx = 0, cy = 0;           // 平铺间距（0=用画布尺寸）
+				int htile = 1, vtile = 1;
+				double acc_x = 0, acc_y = 0;      // HMOVE/VMOVE 累计位移
+				float current = 0.0f;
+				int kind = 0;                     // K_* 驱动源
 			};
 
-			std::vector<Layer> layers_;
+			std::vector<Layer> sky_;    // 背景天空层
+			std::vector<Layer> front_;  // 前景层
 			bool active_ = false;
+
+			void build(std::vector<Layer>& out, bool front);
+			static void draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha);
 		};
 	}
 }

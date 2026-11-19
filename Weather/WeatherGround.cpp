@@ -286,12 +286,11 @@ namespace ms
 		{
 			if (!active_)
 				return;
-			// 世界 -> 屏幕：屏幕 x = wx - viewpos.x()，地面 y = 视口底部 - 视口高/2 + player_world 近似。
-			// TODO(真机校准): 此处 y 仅用玩家脚下高度近似逐落点地面，台阶/坡道会偏移（见顶部说明）。
-			const int viewh = Constants::Constants::get().get_viewheight();
-			const int16_t ground_y = static_cast<int16_t>(player_world.y() + viewh / 2 - viewh / 2);
-			const int base_x = viewpos.getpos().x();
-			const int base_y = ground_y - viewpos.getpos().y();
+			// 世界→屏幕照 Char.cpp:44：screen = world + viewpos（viewpos 是相机偏移量）。
+			// 此前 base_y = ground_y - viewpos.y() 符号反了，地面素材全画到屏外。
+			// wx/wy 是相对玩家脚下的偏移（step_* 生成），地面 y 用玩家脚下近似（真机校准 TODO）。
+			const int base_x = player_world.x() + viewpos.getpos().x();
+			const int base_y = player_world.y() + viewpos.getpos().y();
 
 			// 先堆积、再水坑、最后溅射（溅射在最上层，符合 bundle 的层序）。
 			for (const Patch& p : accum_patches_)

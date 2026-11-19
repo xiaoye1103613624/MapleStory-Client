@@ -7,6 +7,7 @@
 #include "WeatherState.h"
 #include "WeatherConfig.h"
 #include "../Graphics/GraphicsGL.h"
+#include "../Constants.h"
 
 #include <cmath>
 
@@ -162,6 +163,64 @@ namespace ms
 				return;
 			const float alpha = strength * 0.55f;  // 上限 0.55，避免把场景压成纯黑
 			GraphicsGL::get().drawscreenfill(tint_r_, tint_g_, tint_b_, alpha);
+		}
+
+		// 自绘天气粒子：固定 64 槽位伪随机分布，按 elapsed 下落循环。
+		// 用 GraphicsGL::drawrectangle 画高对比雨丝/雪花——原生 Sprite/WZ canvas 在
+		// 暗色素材 + 无 multiply 通道下不可见（真机 2026-11-19 坐实），自绘是 A 方案。
+		void Fx::draw_particles(double viewx, double viewy) const
+		{
+			const State& st = State::get();
+			if (!st.has_state())
+				return;
+			const Sky sky = st.sky();
+			const Profile& prof = Config::get().profile(sky);
+			const bool rain = (sky == Sky::RAIN || sky == Sky::STORM);
+			const bool snow = (sky == Sky::SNOW || sky == Sky::BLIZZARD);
+			const bool leaves = (sky == Sky::LEAVES || sky == Sky::BLOSSOM);
+			const bool dust = (sky == Sky::SANDSTORM);
+			if (!rain && !snow && !leaves && !dust)
+				return;
+
+			const int16_t vw = Constants::Constants::get().get_viewwidth();
+			const int16_t vh = Constants::Constants::get().get_viewheight();
+			const float base_alpha = rain ? (0.25f + 0.5f * prof.rain) : 0.55f;
+
+			// 时间相位（毫秒）：服务端权威 age + 本地累计，按 slot 分相位。
+			const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
+			for (int i = 0; i < 64; ++i)
+			{
+				// 固定散列分布（不依赖全局 RNG，画面稳定可复现）
+				const uint32_t h = lightning_hash(static_cast<uint32_t>(i) * 2654435761u);
+				const int sx = static_cast<int16_t>(h % static_cast<uint32_t>(vw));
+				const uint32_t h2 = lightning_hash(h ^ 0x5bf03635u);
+				const int speed = rain ? 700 : (snow ? 130 : 180);   // px/s
+				const float fall = static_cast<float>((phase * speed / 1000u + h2) % static_cast<uint32_t>(vh));
+				const int sy = static_cast<int16_t>(fall);
+				// 视差：粒子随相机缓慢平移（viewx 是屏幕偏移，取模避免漂移）
+				const int px = sx + (static_cast<int>(viewx) / 4 + static_cast<int>(h2 % 37)) % vw;
+				const int drawx = px >= vw ? px - vw : px;
+
+				if (rain || dust)
+				{
+					// 雨丝/沙尘：细长竖线，偏白蓝/暖黄
+					const float r = dust ? 0.90f : 0.75f;
+					const float g = dust ? 0.75f : 0.85f;
+					const float b = dust ? 0.45f : 1.0f;
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(drawx), static_cast<int16_t>(sy),
+						1, rain ? 14 : 6, r, g, b, base_alpha);
+				}
+				else
+				{
+					// 雪/花瓣：小方点，白/粉
+					const float r = leaves ? 1.0f : 0.95f;
+					const float g = leaves ? 0.75f : 0.97f;
+					const float b = leaves ? 0.85f : 1.0f;
+					const int sz = (h2 % 3) + 2;
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(drawx), static_cast<int16_t>(sy),
+						static_cast<int16_t>(sz), static_cast<int16_t>(sz), r, g, b, base_alpha);
+				}
+			}
 		}
 
 		// 闪电独立绘制：即使白天(bundle 要求 rain>=0.7 才闪，通常夜色>0)，也必须画在 tint 之后。

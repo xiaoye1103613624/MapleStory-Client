@@ -5,7 +5,12 @@
 
 #include "../Gameplay/Stage.h"
 #include "../Graphics/GraphicsGL.h"
+#include "../Graphics/Animation.h"
 #include "../Constants.h"
+
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
 
 namespace ms
 {
@@ -15,6 +20,26 @@ namespace ms
 		{
 			static Lamps instance;
 			return instance;
+		}
+
+		// bundle MapleMoonLamp.img/glow/{large,medium,small}/0 光晕 sprite（替代矩形近似）。
+		static Animation& glow_anim()
+		{
+			static Animation anim;
+			static bool loaded = false;
+			if (!loaded)
+			{
+				loaded = true;
+#ifdef USE_NX
+				nl::node obj = nl::nx::Map001["Obj"];
+				if (!obj)
+					obj = nl::nx::Map["Obj"];
+				nl::node n = obj["MapleMoonLamp.img"]["glow"]["large"]["0"];
+				if (n)
+					anim = Animation(n);
+#endif
+			}
+			return anim;
 		}
 
 		struct ManualLamp { int map_id; int x; int y; int lamp_id; };
@@ -71,19 +96,36 @@ namespace ms
 			{
 				if (lamp.map_id != map_id)
 					continue;
-				// 世界坐标 → 屏幕坐标（与 Background 视差口径一致：视口中心为原点）。
-				const double sx = static_cast<double>(lamp.x) - viewx + vw / 2.0;
-				const double sy = static_cast<double>(lamp.y) - viewy + vh / 2.0;
+				// 世界→屏幕照 Char.cpp:44（viewx 是相机偏移量 = vw/2 - 玩家世界x）：
+				// screen = world + viewx。此前"- viewx + vw/2"符号反了导致灯画到屏外。
+				const double sx = static_cast<double>(lamp.x) + viewx;
+				const double sy = static_cast<double>(lamp.y) + viewy;
 				if (sx < -80 || sx > vw + 80 || sy < -80 || sy > vh + 80)
 					continue;
-				// 暖色光晕：三层由大到小的半透明矩形近似径向渐变（bundle 用光晕 sprite）。
-				const float a = level_ * 0.16f;
-				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 60, static_cast<int16_t>(sy) - 110, 120, 120,
-					1.0f, 0.85f, 0.45f, a);
-				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 35, static_cast<int16_t>(sy) - 90, 70, 70,
-					1.0f, 0.92f, 0.60f, a * 1.4f);
-				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 75, 24, 24,
-					1.0f, 0.98f, 0.82f, a * 2.0f);
+				// 灯柱实体：暖色竖条（夜里可见的发光体），画在光晕之前。
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 3, static_cast<int16_t>(sy) - 78,
+					6, 76, 0.55f, 0.42f, 0.22f, level_ * alpha);
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 8, static_cast<int16_t>(sy) - 84,
+					16, 10, 1.0f, 0.88f, 0.55f, level_ * 0.9f * alpha);
+				// bundle 用光晕 sprite（MapleMoonLamp.img/glow/large/0）；加载失败退矩形近似。
+				Animation& glow = glow_anim();
+				if (glow.get_dimensions().x() > 0)
+				{
+					// emitter 在灯柱上部：bundle lamptable 行 emitter dy≈-60..-110，取 -80 近似。
+					glow.draw(DrawArgument(Point<int16_t>(
+						static_cast<int16_t>(sx), static_cast<int16_t>(sy) - 80)),
+						level_ * 0.9f * alpha);
+				}
+				else
+				{
+					const float a = level_ * 0.16f;
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 60, static_cast<int16_t>(sy) - 110, 120, 120,
+						1.0f, 0.85f, 0.45f, a);
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 35, static_cast<int16_t>(sy) - 90, 70, 70,
+						1.0f, 0.92f, 0.60f, a * 1.4f);
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 75, 24, 24,
+						1.0f, 0.98f, 0.82f, a * 2.0f);
+				}
 			}
 		}
 

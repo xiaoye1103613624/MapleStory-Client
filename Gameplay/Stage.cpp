@@ -204,6 +204,9 @@ namespace ms
 		double viewx = viewrpos.x();
 		double viewy = viewrpos.y();
 
+		// 天气天空素材（渐变/月/星/云/沙暴/彩虹/雪远）：画在地图全部背景之前——
+		// 盖住原天空、山树画其上（bundle weatherfx.cpp:153-157 分层，树永不被盖）。
+		weather::BackLayers::get().draw_sky(viewx, viewy, alpha);
 		backgrounds.drawbackgrounds(viewx, viewy, alpha);
 
 		for (auto id : Layer::IDs)
@@ -225,8 +228,10 @@ namespace ms
 		backgrounds.drawforegrounds(viewx, viewy, alpha);
 		effect.draw();
 
-		// 天气前景素材（雨/雾/雪）：自绘，严格在角色之后、夜色蒙版之前；不动原生背景。
-		weather::BackLayers::get().draw(viewpos, viewx, viewy, alpha);
+		// 天气前景素材（雨/雾/雪近）：自绘，严格在角色之后、夜色蒙版之前；不动原生背景。
+		weather::BackLayers::get().draw_front(viewx, viewy, alpha);
+		// 自绘雨雪/花瓣/沙尘粒子（A 方案：GraphicsGL 直接画，真机可见）。
+		weather::Fx::get().draw_particles(viewx, viewy);
 
 		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
 		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。

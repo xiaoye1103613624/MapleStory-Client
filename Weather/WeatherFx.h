@@ -30,6 +30,9 @@ namespace ms
 			void draw() const;
 			// 风暴闪电全屏脉冲，须在 draw() 之后调用（盖在夜色之上）。
 			void draw_lightning() const;
+			// 自绘天气粒子（雨丝/雪花）：GraphicsGL 直接画，不依赖 WZ canvas。
+			// 在角色之后、夜色蒙版之前调用；密度/alpha 由 sky 与 profile 驱动。
+			void draw_particles(double viewx, double viewy) const;
 			float night_level() const { return night_level_; }
 
 			void reset();  // 换线/断线
