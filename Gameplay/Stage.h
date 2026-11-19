@@ -88,6 +88,8 @@ namespace ms
 		MapFieldMarkers& get_field_markers();
 		/// 公会 PQ healer/pulley 物件（有地图属性时才加载）
 		MapGuildBoss& get_guild_boss();
+		// 天气注入层需要访问背景集合（灌入/逐帧驱动 alpha）
+		MapBackgrounds& get_backgrounds() { return backgrounds; }
 		// Returns a reference to the Player
 		Player& get_player();
 		// Return a reference to the attack and buff component

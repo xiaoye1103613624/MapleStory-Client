@@ -22,6 +22,9 @@
 #include "../Character/SkillMacros.h"
 #include "../Weather/WeatherFx.h"
 #include "../Weather/WeatherState.h"
+#include "../Weather/WeatherBackLayers.h"
+#include "../Weather/WeatherLamps.h"
+#include "../Weather/WeatherGround.h"
 
 #include "../IO/UI.h"
 
@@ -141,6 +144,9 @@ namespace ms
 		// 天气系统：换线/断线回 stock，等服务端进图补发 0x373D 重新同步。
 		weather::State::get().clear();
 		weather::Fx::get().reset();
+		weather::BackLayers::get().clear();
+		weather::Lamps::get().clear();
+		weather::Ground::get().clear();
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -167,6 +173,9 @@ namespace ms
 
 		tilesobjs = MapTilesObjs(src);
 		backgrounds = MapBackgrounds(src["back"]);
+		// 天气注入层：若世界状态包已到则立即灌入；否则由 BackLayers::update 惰性补灌。
+		weather::BackLayers::get().on_map_loaded();
+		weather::Ground::get().on_map_loaded();
 		physics = Physics(src["foothold"]);
 		mapinfo = MapInfo(src, physics.get_fht().get_walls(), physics.get_fht().get_borders());
 		portals = MapPortals(src["portal"], mapid);
@@ -217,7 +226,12 @@ namespace ms
 
 		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
 		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。
+		// 天气地面层（水坑/积雪/溅射）：角色之后、夜色叠加之前。
+		weather::Ground::get().draw(viewpos, player.get_position());
 		weather::Fx::get().draw();
+		weather::Fx::get().draw_lightning();
+		// 路灯暖色光晕（世界坐标按 viewx/viewy 换算），盖在场景之上、UI 之下。
+		weather::Lamps::get().draw(viewx, viewy, alpha);
 	}
 
 	void Stage::update()
@@ -408,6 +422,13 @@ namespace ms
 		// 天气系统：固定逻辑步长推进本地时钟与夜色趋近（与 MapleStory 主循环 timestep 同口径）。
 		// 未收到 0x373D 时 Fx::update 内部零开销返回，不影响 stock 表现。
 		weather::Fx::get().update(static_cast<int64_t>(Constants::TIMESTEP) * 1000);
+		// 天气背景注入层：每帧按天空/时钟驱动各层 alpha；flags 带 SNAP 时（进图包）直接到位。
+		weather::BackLayers::get().update((weather::State::get().flags() & weather::FLAG_SNAP) != 0);
+		// 天气路灯：按当前夜色强度推进光晕 fade。
+		weather::Lamps::get().update(weather::Fx::get().night_level());
+		// 天气地面层：推进积雪/水坑/溅射动画 + 环境音状态桩。
+		weather::Ground::get().update(static_cast<uint16_t>(Constants::TIMESTEP));
+		weather::Ground::get().update_ambient();
 	}
 
 	void Stage::try_heal_over_time()

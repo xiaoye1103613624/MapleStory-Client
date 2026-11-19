@@ -11,6 +11,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <cstdint>
+
 namespace ms
 {
 	namespace weather
@@ -26,13 +28,19 @@ namespace ms
 			// 由 Stage::draw 在场景绘制完成后、UI 之前调用：叠加夜色。
 			// active 为 false（非游戏态或未收到 0x373D）时零绘制。
 			void draw() const;
+			// 风暴闪电全屏脉冲，须在 draw() 之后调用（盖在夜色之上）。
+			void draw_lightning() const;
+			float night_level() const { return night_level_; }
 
 			void reset();  // 换线/断线
 
 		private:
 			Fx() = default;
 			float night_level_ = 0.0f;   // 0 白天 1 深夜
-			float tint_r_ = 1.0f, tint_g_ = 1.0f, tint_b_ = 1.0f;  // 当前趋近的夜色倍率
+			// 叠加色是"要给场景盖上的暗色"，初值必须是区域默认夜色而非白(1.0)——
+			// 白色叠加在 alpha>0 时会形成灰白蒙版（真机 2026-11-18 已复现），从根上消除白路径。
+			float tint_r_ = 0x4A / 255.0f, tint_g_ = 0x5A / 255.0f, tint_b_ = 0x8C / 255.0f;
+			float lightning_ = 0.0f;     // 风暴闪电全屏脉冲 0..1（bundle WeatherFx::TickLightning）
 		};
 	}
 }

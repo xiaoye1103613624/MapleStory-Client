@@ -9,11 +9,46 @@
 #include "../Graphics/GraphicsGL.h"
 
 #include <cmath>
+#include <chrono>
+#include <fstream>
+#include <string>
+#include <windows.h>
 
 namespace ms
 {
 	namespace weather
 	{
+		// [DBG-weather] 真机诊断垫片：Release 下 LOG 是 no-op，只能写文件。
+		// 每 5s 或状态突变写一行；验收完删除。路径落在客户端根，便于用户回传。
+		static void trace_state(const State& st, float night, float r, float g, float b)
+		{
+			using namespace std::chrono;
+			static auto last = steady_clock::time_point();
+			static int last_minute = -1;
+			const auto now = steady_clock::now();
+			const bool minute_changed = st.minute_of_day() != last_minute;
+			if (!minute_changed && duration_cast<seconds>(now - last).count() < 5)
+				return;
+			last = now;
+			last_minute = st.minute_of_day();
+			// 写到 exe 所在目录，不依赖进程 cwd（登录器启动 cwd 可能是别处）。
+			char exepath[MAX_PATH] = {};
+			GetModuleFileNameA(nullptr, exepath, MAX_PATH);
+			std::string logpath(exepath);
+			const size_t slash = logpath.find_last_of("\\/");
+			logpath = (slash == std::string::npos ? std::string() : logpath.substr(0, slash + 1)) + "weather_fx_trace.log";
+			std::ofstream f(logpath, std::ios::app);
+			if (!f.is_open())
+				return;
+			f << "minute=" << st.minute_of_day()
+			  << " night=" << night
+			  << " tint=" << r << ',' << g << ',' << b
+			  << " sky=" << static_cast<int>(st.sky())
+			  << " flags=" << static_cast<int>(st.flags())
+			  << " has=" << (st.has_state() ? 1 : 0)
+			  << '\n';
+		}
+
 		// 与 bundle weather.cpp:363-366 一致。
 		static constexpr int DAWN_START = 5 * 60;
 		static constexpr int DAWN_END = 7 * 60;
@@ -51,6 +86,32 @@ namespace ms
 			if (current > target)
 				return current - step > target ? current - step : target;
 			return current;
+		}
+
+		// 风暴闪电：bundle weatherfx.cpp:1042-1069 的同步脉冲简化版。
+		// 用服务端下发的 skyToken + skyElapsedMs 保证全客户端同步；统一 cadence，
+		// 不再逐 palette 27 种 pattern（差异对观感影响小，注释记录简化）。
+		static uint32_t lightning_hash(uint32_t x)
+		{
+			x ^= x >> 16; x *= 0x7FEB352Du;
+			x ^= x >> 15; x *= 0x846CA68Bu;
+			x ^= x >> 16;
+			return x;
+		}
+
+		static float lightning_pulse(uint32_t age_ms, uint32_t seed)
+		{
+			const uint32_t window_ms = 12000u; // 12s 一个窗口
+			const uint32_t window = age_ms / window_ms;
+			const uint32_t h = lightning_hash(seed ^ (window * 0x9E3779B9u));
+			if (h % 5u == 0u) return 0.0f;     // 静默窗
+			const uint32_t within = age_ms % window_ms;
+			const uint32_t earliest = 700u, pulse = 900u;
+			if (within < earliest || within >= earliest + pulse) return 0.0f;
+			const float t = static_cast<float>(within - earliest) / static_cast<float>(pulse);
+			// 双闪 envelope：起-落-再起-落（bundle LightningEnvelope 的简化）
+			const float env = std::sin(t * 3.14159265f) * (0.6f + 0.4f * ((h >> 8) & 7u) / 7.0f);
+			return env > 0.0f ? env : 0.0f;
 		}
 
 		Fx& Fx::get()
@@ -110,6 +171,14 @@ namespace ms
 			tint_g_ = step_toward(tint_g_, tg, step);
 			tint_b_ = step_toward(tint_b_, tb, step);
 			night_level_ = step_toward(night_level_, target_night, step);
+
+			// 风暴闪电（bundle :1062-1069）：仅 STORM 且雨强足够时按 token/age 同步脉冲。
+			if (st.sky() == Sky::STORM && prof.rain >= 0.70f && st.sky_elapsed_ms() > 0)
+				lightning_ = lightning_pulse(static_cast<uint32_t>(st.sky_elapsed_ms()), st.sky_token());
+			else
+				lightning_ = 0.0f;
+
+			trace_state(st, night_level_, tint_r_, tint_g_, tint_b_);
 		}
 
 		void Fx::draw() const
@@ -118,19 +187,36 @@ namespace ms
 			if (!st.has_state())
 				return;
 
-			// 全屏夜色叠加：目标色是 tint_r/g/b，透明度随夜色强度。
-			// 白天（night≈0）叠加接近 0，观感 stock；深夜叠加深蓝半透明层。
+			// 全屏夜色叠加：叠加色是"盖上去的暗色"(tint_*)，透明度随夜色强度。
+			// 真机 2026-11-18 灰白蒙版根因：初值 tint=白(1.0) 且 fade_step 慢，
+			// 白天/过渡期用白色叠加 alpha>0 → 灰白。修法=初值改暗(Fx.h) + 双重硬门。
 			const float strength = night_level_;
-			if (strength <= 0.001f)
+			if (strength <= 0.03f)   // 白天完全不画（原 0.001 太小，微小夜色也叠一层）
+				return;
+			// 保险：任一通道异常偏白(>0.75)说明状态污染，本帧跳过绝不画白蒙版。
+			if (tint_r_ > 0.75f || tint_g_ > 0.75f || tint_b_ > 0.75f)
 				return;
 			const float alpha = strength * 0.55f;  // 上限 0.55，避免把场景压成纯黑
 			GraphicsGL::get().drawscreenfill(tint_r_, tint_g_, tint_b_, alpha);
 		}
 
+		// 闪电独立绘制：即使白天(bundle 要求 rain>=0.7 才闪，通常夜色>0)，也必须画在 tint 之后。
+		void Fx::draw_lightning() const
+		{
+			if (lightning_ <= 0.01f)
+				return;
+			// 白蓝闪光，alpha 随脉冲；上限 0.55 避免瞬间全白刺眼。
+			GraphicsGL::get().drawscreenfill(0.85f, 0.90f, 1.0f, lightning_ * 0.55f);
+		}
+
 		void Fx::reset()
 		{
 			night_level_ = 0.0f;
-			tint_r_ = tint_g_ = tint_b_ = 1.0f;
+			lightning_ = 0.0f;
+			// 与 Fx.h 初值一致：暗色，不是白。
+			tint_r_ = 0x4A / 255.0f;
+			tint_g_ = 0x5A / 255.0f;
+			tint_b_ = 0x8C / 255.0f;
 		}
 	}
 }

@@ -214,6 +214,9 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Weather\WeatherConfig.cpp" />
     <ClCompile Include="Weather\WeatherState.cpp" />
     <ClCompile Include="Weather\WeatherFx.cpp" />
+    <ClCompile Include="Weather\WeatherBackLayers.cpp" />
+    <ClCompile Include="Weather\WeatherLamps.cpp" />
+    <ClCompile Include="Weather\WeatherGround.cpp" />
     <ClCompile Include="Character\EquipStat.cpp" />
     <ClCompile Include="Character\ExpTable.cpp" />
     <ClCompile Include="Character\Inventory\Equip.cpp" />
@@ -567,6 +570,9 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Weather\WeatherConfig.h" />
     <ClInclude Include="Weather\WeatherState.h" />
     <ClInclude Include="Weather\WeatherFx.h" />
+    <ClInclude Include="Weather\WeatherBackLayers.h" />
+    <ClInclude Include="Weather\WeatherLamps.h" />
+    <ClInclude Include="Weather\WeatherGround.h" />
     <ClInclude Include="IO\UITypes\UIStatsLayoutV4.h" />
     <ClInclude Include="Character\EquipStat.h" />
     <ClInclude Include="Character\ExpTable.h" />

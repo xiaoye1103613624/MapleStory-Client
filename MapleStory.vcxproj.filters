@@ -102,6 +102,9 @@
     <ClCompile Include="Weather\WeatherFx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Weather\WeatherBackLayers.cpp">
+    <ClCompile Include="Weather\WeatherLamps.cpp">
+    <ClCompile Include="Weather\WeatherGround.cpp">
     <ClCompile Include="Character\EquipStat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -896,6 +899,9 @@
     <ClInclude Include="Weather\WeatherFx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Weather\WeatherBackLayers.h">
+    <ClInclude Include="Weather\WeatherLamps.h">
+    <ClInclude Include="Weather\WeatherGround.h">
     <ClInclude Include="Character\EquipStat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
