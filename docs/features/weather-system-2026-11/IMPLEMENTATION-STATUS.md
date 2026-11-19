@@ -33,6 +33,29 @@
 
 **orange-wz 调用要点（可复用）**：本 harness 未注入 `mcp__orange_wz__*` 前缀，但服务 streamable-http 在 10012 可用——直接 HTTP POST `/mcp`：`initialize`（拿 `Mcp-Session-Id` 头）→ `tools/call`（`params.name`=工具名，`params.arguments.key` **必须是对象且含 `name`/`ivBase64`/`userKeyBase64` 三字段**，见 ToolParamHelper.java:154-165）。不要以"工具没暴露"回退 .nx dump。
 
+## 天空层 z 序注入（2026-11-19 23:35，提交 `477be646`）
+
+**Angel IDA 证据（本面权威离线源）**：`docs/features/ida-v83-angel-instance/evidence/angel-idb-msvc-class-index.json` 中 `CMapLoadable` **36 个方法**，含 `LoadMap / MakeBack / MakeCloud / MakeObj / MakeObjLayer / MakeTile / RestoreBack / RestoreObj / RestoreTile / RestoreViewRange / RestoreWeather / ReloadBack / ProcessReflection / OnSetBackEffect / OnClearBackEffect / TransientLayer_Weather / WeatherLayer_RemoveAll`。当前端对这批方法名 **grep 命中 0 处** → 本端是 Journey 重写版，083 原生的"天气层/云/背景特效/反射"子系统**不存在**（不是未校准，是不同源未实现），因此 v83 实现只能等价扩展，不能照搬。
+
+**插件实现（ijl15，逐行）**：
+- 注册 `ModRegistry.cpp:284-291` → `Weather_RegisterPacketHandlers()`（`WeatherBridge.cpp:20-32`，0x373D/0x373F）+ `AttachWeatherMod()`（`weather.cpp:2294-2304`）+ `AttachWeatherWindMod()`。
+- 8 个 hook：`LoadMap_hook:2073`（引擎 LoadMap 前注入 `WeatherFx::Inject:544` / `Lamps_Inject:2109`）、`MakeBack_hook:1898`、`RestoreBack_hook:1869`、`RestoreTile:1171`、`RestoreObj:1186`、`MakeObj_hook`(lamps.cpp:1491)、`CNpcPool::OnNpcEnterField:1962`、`IWzGr2D__CreateLayer:1079`、`Update_hook:2176`。
+- **天空位置靠 z 序重写**（`MakeBack_hook:1916-1924`）：`front==0` → z=`1000*idx-0x4001F400`；`front!=0` → z=`1000*idx-0x3FFBDCA0`（更近相机 399,200 单位）。即天空插在 back/0-1 之后、山树 back/2+ 之前。
+- **不 gate 世界状态**（`LoadMap_hook:2079-2084`）：0x373D 在进图之后才到，gate 会让会话首图恒白天；注入层 alpha=0 + 白天 tint 为单位乘 → 不发状态即原版。
+- 注入门禁 `FieldHasSky`（`:2073-2100`）：先查 excluded map，再取 back/0 的 `(bS,no)` 比对 `weather_skytable.inc`（59 行）。
+
+**本端实现（扩展，不改原生每层算法）**：
+- `MapBackgrounds` 纯新增：`drawbackgrounds(vx,vy,alpha,begin,end)` 区间重载、`get_backmost_bs/no()`、`size()`；单参版本转调 `(0,size)`，`Background::draw` 一行未动。
+- `Stage::draw` 三段式：`back/0-1` → 天气天空 → `back/2+`（树永不被盖）。
+- 新增 `Weather/WeatherSkyTable.h`：插件 skytable 59 行原样移植 + `is_sky_base()`。
+- `BackLayers::on_map_loaded(bs,no)`：装图即构建（不等状态）、ani 取首帧、无效纹理不入层、平铺封顶 64。
+- **停用 WZ 雨/雾/雪/云 sheet 层**：原生 Sprite 无加色混合，直画呈现淡色矩形块（以晴天基线截图对照定位）；雨雪/花瓣/沙尘统一走 `Fx::draw_particles` 自绘。
+- 路灯改自绘柔和光晕 + 灯柱（去掉 glow sprite 色块）。
+
+**真机自验收（本端）**：`W1_sky_rain_night.png`（雨夜）、`W3_sky_storm_night.png`（风暴夜）——夜色蒙版生效、雨丝可见、**魔法密林树/光线完整未被盖**、无淡色方块。live exe `7a8ad12087d4f029`（23:29），构建 `BUILD=0`。
+
+**如实边界**：① WZ 云/沙暴/彩虹/雪远 sheet 在无加色混合下会成色块，已停用而非伪装实现；② 逐层 multiply 夜色未做（仍全屏 tint 近似）；③ 灯的 foothold 自动落地未移植（仍用插件手工 40 位表）；④ angel 原生 `TransientLayer_Weather / MakeCloud / ProcessReflection` 未实现，属显式缺口。
+
 ## A 方案真机闭环（2026-11-19 18:55，提交 `586fa556`）
 
 用户选 A（承认原生 Sprite 无 multiply，改用可见性优先）+ 要求确认 083 背景逻辑原样 + 借鉴 ijl15 事件方式。
