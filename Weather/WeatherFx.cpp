@@ -9,6 +9,16 @@
 #include "../Graphics/GraphicsGL.h"
 #include "../Constants.h"
 
+#include "../Graphics/Texture.h"
+
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
+#include <map>
+#include <string>
+#include <vector>
+
 #include <cmath>
 
 namespace ms
@@ -165,61 +175,115 @@ namespace ms
 			GraphicsGL::get().drawscreenfill(tint_r_, tint_g_, tint_b_, alpha);
 		}
 
-		// 自绘天气粒子：固定 64 槽位伪随机分布，按 elapsed 下落循环。
-		// 用 GraphicsGL::drawrectangle 画高对比雨丝/雪花——原生 Sprite/WZ canvas 在
-		// 暗色素材 + 无 multiply 通道下不可见（真机 2026-11-19 坐实），自绘是 A 方案。
+		// 天气粒子：使用 live 真实美术 Effect/WeatherParticles.img
+		// （snowFall / blizzardSnow / leafMix / blossomMix / sandGrit；节点与画布尺寸经 _wz 实测：
+		//  5x9 / 4x9 / 19x23 / 13x13 / 6x5）。参考实现 weatherfx.cpp:23-43 用"原生粒子 +
+		//  密度区分天气"；雨丝无对应美术，仍用自绘细线。
+		static const std::vector<Texture>& particle_frames(const char* name)
+		{
+			static std::map<std::string, std::vector<Texture>> cache;
+			auto it = cache.find(name);
+			if (it != cache.end())
+				return it->second;
+
+			std::vector<Texture> frames;
+#ifdef USE_NX
+			nl::node root = nl::nx::Effect["WeatherParticles.img"];
+			if (!root)
+				root = nl::nx::Effect["WeatherParticles"];
+			nl::node node = root[name];
+			for (auto sub : node)
+			{
+				if (sub.data_type() != nl::node::type::bitmap)
+					continue;
+				Texture t(sub);
+				if (t.is_valid())
+					frames.push_back(t);
+			}
+#endif
+			return cache.emplace(name, std::move(frames)).first->second;
+		}
+
+		// 各天气的粒子参数：groups 用真实美术；雨/风暴用自绘雨丝（无对应美术）。
+		// 速度按参考实现"雪慢/暴雪快/沙暴密"的区分，并把雨速从 700 降到 380 px/s
+		// （用户反馈"雨天水滴很快"）。
 		void Fx::draw_particles(double viewx, double viewy) const
 		{
 			const State& st = State::get();
 			if (!st.has_state())
 				return;
+
 			const Sky sky = st.sky();
 			const Profile& prof = Config::get().profile(sky);
-			const bool rain = (sky == Sky::RAIN || sky == Sky::STORM);
-			const bool snow = (sky == Sky::SNOW || sky == Sky::BLIZZARD);
-			const bool leaves = (sky == Sky::LEAVES || sky == Sky::BLOSSOM);
-			const bool dust = (sky == Sky::SANDSTORM);
-			if (!rain && !snow && !leaves && !dust)
-				return;
 
+			const bool rain = (sky == Sky::RAIN || sky == Sky::STORM);
+			if (!rain)
+			{
+				const char* group = nullptr;
+				int count = 0;
+				int speed = 0;       // px/s
+				float drift = 0.0f;
+				switch (sky)
+				{
+				case Sky::SNOW:      group = "snowFall";     count = 120; speed = 130; break;
+				case Sky::BLIZZARD:  group = "blizzardSnow"; count = 260; speed = 300; drift = 60.0f; break;
+				case Sky::LEAVES:    group = "leafMix";      count = 64;  speed = 140; drift = 45.0f; break;
+				case Sky::BLOSSOM:   group = "blossomMix";   count = 64;  speed = 110; drift = 35.0f; break;
+				case Sky::SANDSTORM: group = "sandGrit";     count = 220; speed = 320; drift = 120.0f; break;
+				default: break;
+				}
+				if (group == nullptr)
+					return;
+
+				const std::vector<Texture>& frames = particle_frames(group);
+				if (frames.empty())
+					return;
+
+				const int16_t vw = Constants::Constants::get().get_viewwidth();
+				const int16_t vh = Constants::Constants::get().get_viewheight();
+				const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
+
+				for (int i = 0; i < count; ++i)
+				{
+					const uint32_t h = lightning_hash(static_cast<uint32_t>(i) * 2246822519u + 0x9E3779B9u);
+					const uint32_t h2 = lightning_hash(h ^ 0x85EBCA6Bu);
+					const uint32_t h3 = lightning_hash(h2 ^ 0xC2B2AE35u);
+
+					const Texture& tex = frames[h % frames.size()];
+					const int sw = tex.width();
+					const int sh = tex.height();
+					const int span = vh + sh * 2 + 40;
+					const int fall = static_cast<int>((phase * static_cast<uint32_t>(speed) / 1000u + h2 % span) % span) - sh - 20;
+
+					const float sway = drift > 0.0f
+						? std::sin((phase + h3 % 2000) / 700.0f) * drift
+						: 0.0f;
+					const int x = static_cast<int>((h3 % static_cast<uint32_t>(vw)) + sway);
+					const int px = x < 0 ? x + vw : (x >= vw ? x - vw : x);
+
+					tex.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(px), static_cast<int16_t>(fall)),
+						0.55f + 0.35f * ((h2 >> 8 & 7) / 7.0f)));
+				}
+				return;
+			}
+
+			// 雨/风暴：自绘细长雨丝。速度 380（风暴 470）px/s，比之前 700 慢约一半。
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int16_t vh = Constants::Constants::get().get_viewheight();
-			const float base_alpha = rain ? (0.25f + 0.5f * prof.rain) : 0.55f;
-
-			// 时间相位（毫秒）：服务端权威 age + 本地累计，按 slot 分相位。
 			const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
-			for (int i = 0; i < 64; ++i)
-			{
-				// 固定散列分布（不依赖全局 RNG，画面稳定可复现）
-				const uint32_t h = lightning_hash(static_cast<uint32_t>(i) * 2654435761u);
-				const int sx = static_cast<int16_t>(h % static_cast<uint32_t>(vw));
-				const uint32_t h2 = lightning_hash(h ^ 0x5bf03635u);
-				const int speed = rain ? 700 : (snow ? 130 : 180);   // px/s
-				const float fall = static_cast<float>((phase * speed / 1000u + h2) % static_cast<uint32_t>(vh));
-				const int sy = static_cast<int16_t>(fall);
-				// 视差：粒子随相机缓慢平移（viewx 是屏幕偏移，取模避免漂移）
-				const int px = sx + (static_cast<int>(viewx) / 4 + static_cast<int>(h2 % 37)) % vw;
-				const int drawx = px >= vw ? px - vw : px;
+			const int speed = (sky == Sky::STORM) ? 470 : 380;
+			const int count = (sky == Sky::STORM) ? 96 : 72;
+			const float base_alpha = 0.22f + 0.34f * prof.rain;
 
-				if (rain || dust)
-				{
-					// 雨丝/沙尘：细长竖线，偏白蓝/暖黄
-					const float r = dust ? 0.90f : 0.75f;
-					const float g = dust ? 0.75f : 0.85f;
-					const float b = dust ? 0.45f : 1.0f;
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(drawx), static_cast<int16_t>(sy),
-						1, rain ? 14 : 6, r, g, b, base_alpha);
-				}
-				else
-				{
-					// 雪/花瓣：小方点，白/粉
-					const float r = leaves ? 1.0f : 0.95f;
-					const float g = leaves ? 0.75f : 0.97f;
-					const float b = leaves ? 0.85f : 1.0f;
-					const int sz = (h2 % 3) + 2;
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(drawx), static_cast<int16_t>(sy),
-						static_cast<int16_t>(sz), static_cast<int16_t>(sz), r, g, b, base_alpha);
-				}
+			for (int i = 0; i < count; ++i)
+			{
+				const uint32_t h = lightning_hash(static_cast<uint32_t>(i) * 2654435761u);
+				const uint32_t h2 = lightning_hash(h ^ 0x5bf03635u);
+				const int sx = static_cast<int>(h % static_cast<uint32_t>(vw));
+				const int span = vh + 32;
+				const int sy = static_cast<int>((phase * static_cast<uint32_t>(speed) / 1000u + h2 % span) % span) - 16;
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx), static_cast<int16_t>(sy),
+					1, 12, 0.72f, 0.84f, 1.0f, base_alpha);
 			}
 		}
 

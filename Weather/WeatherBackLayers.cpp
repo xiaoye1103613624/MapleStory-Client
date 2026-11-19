@@ -29,8 +29,6 @@ namespace ms
 
 		// 天空类（bundle front=0；画在地图背景之前，山树盖其上）
 		static const Def kSkyDefs[] = {
-			// 天空渐变填充 nightDesert back/0（bundle :122，SKY_DY=-100 折进 y=204；H+V tile）
-			{ "nightDesert", 0, false, 162, 204, -10, -90, 3, 50, 50, K_NIGHT },
 			// 夜空渐变 MapleMoonSky back/0（bundle :138；H tile）
 			{ "MapleMoonSky", 0, false, 162, -241, -10, -15, 1, 50, 0, K_NIGHT },
 			// 月（静态）。插件另有 nightDesert ani/0-1 星星闪烁 + 云/沙暴/彩虹/雨雾雪 sheet，
