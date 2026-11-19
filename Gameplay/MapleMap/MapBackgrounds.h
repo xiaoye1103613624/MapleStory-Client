@@ -22,6 +22,8 @@
 #include "../../Graphics/Animation.h"
 
 #include <iostream>
+#include <string>
+#include <cstddef>
 
 namespace ms
 {
@@ -87,9 +89,25 @@ namespace ms
 		void drawforegrounds(double viewx, double viewy, float alpha) const;
 		void update();
 
+		// ---- 天气扩展（纯新增，不改动上面任何既有方法的行为）----
+		// 只画 backgrounds[begin,end) 区间：让调用方能把天气天空素材插在
+		// 「地图自有天空层之后、山树层之前」，等价于插件在 DLL 侧做的 z 序重写
+		// （BeiDou-ijl15 weather.cpp:1916-1924：front==0 的 z 带与 front!=0 的近相机带）。
+		// 单参版本等价于 (0, backgrounds.size())，原生逐层绘制算法一行未改。
+		void drawbackgrounds(double viewx, double viewy, float alpha, size_t begin, size_t end) const;
+
+		// back/0 的 (bS,no)：天气天空门禁用（对齐插件 FieldHasSky 的 ReadBackmostBase，
+		// weather.cpp:2073-2100）。bS 为空表示该图无背景基座（black）。
+		const std::string& get_backmost_bs() const { return backmost_bs; }
+		int32_t get_backmost_no() const { return backmost_no; }
+		// 背景层数（供天气分层切片）
+		size_t size() const { return backgrounds.size(); }
+
 	private:
 		std::vector<Background> backgrounds;
 		std::vector<Background> foregrounds;
 		bool black;
+		std::string backmost_bs;
+		int32_t backmost_no = -1;
 	};
 }

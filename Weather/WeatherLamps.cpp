@@ -5,12 +5,7 @@
 
 #include "../Gameplay/Stage.h"
 #include "../Graphics/GraphicsGL.h"
-#include "../Graphics/Animation.h"
 #include "../Constants.h"
-
-#ifdef USE_NX
-#include <nlnx/nx.hpp>
-#endif
 
 namespace ms
 {
@@ -20,26 +15,6 @@ namespace ms
 		{
 			static Lamps instance;
 			return instance;
-		}
-
-		// bundle MapleMoonLamp.img/glow/{large,medium,small}/0 光晕 sprite（替代矩形近似）。
-		static Animation& glow_anim()
-		{
-			static Animation anim;
-			static bool loaded = false;
-			if (!loaded)
-			{
-				loaded = true;
-#ifdef USE_NX
-				nl::node obj = nl::nx::Map001["Obj"];
-				if (!obj)
-					obj = nl::nx::Map["Obj"];
-				nl::node n = obj["MapleMoonLamp.img"]["glow"]["large"]["0"];
-				if (n)
-					anim = Animation(n);
-#endif
-			}
-			return anim;
 		}
 
 		struct ManualLamp { int map_id; int x; int y; int lamp_id; };
@@ -102,30 +77,19 @@ namespace ms
 				const double sy = static_cast<double>(lamp.y) + viewy;
 				if (sx < -80 || sx > vw + 80 || sy < -80 || sy > vh + 80)
 					continue;
-				// 灯柱实体：暖色竖条（夜里可见的发光体），画在光晕之前。
-				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 3, static_cast<int16_t>(sy) - 78,
-					6, 76, 0.55f, 0.42f, 0.22f, level_ * alpha);
-				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 8, static_cast<int16_t>(sy) - 84,
-					16, 10, 1.0f, 0.88f, 0.55f, level_ * 0.9f * alpha);
-				// bundle 用光晕 sprite（MapleMoonLamp.img/glow/large/0）；加载失败退矩形近似。
-				Animation& glow = glow_anim();
-				if (glow.get_dimensions().x() > 0)
-				{
-					// emitter 在灯柱上部：bundle lamptable 行 emitter dy≈-60..-110，取 -80 近似。
-					glow.draw(DrawArgument(Point<int16_t>(
-						static_cast<int16_t>(sx), static_cast<int16_t>(sy) - 80)),
-						level_ * 0.9f * alpha);
-				}
-				else
-				{
-					const float a = level_ * 0.16f;
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 60, static_cast<int16_t>(sy) - 110, 120, 120,
-						1.0f, 0.85f, 0.45f, a);
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 35, static_cast<int16_t>(sy) - 90, 70, 70,
-						1.0f, 0.92f, 0.60f, a * 1.4f);
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 75, 24, 24,
-						1.0f, 0.98f, 0.82f, a * 2.0f);
-				}
+				// 灯柱实体：细长暖色柱 + 灯头，夜里可见的发光体。
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 2, static_cast<int16_t>(sy) - 74,
+					4, 72, 0.42f, 0.32f, 0.16f, level_ * alpha);
+				// 光晕：三层由大到小的低透明度矩形近似径向衰减。
+				// 不能用 MapleMoonLamp.img/glow sprite——原生 Sprite 无加色混合，
+				// 直画会得到一个淡色方框（真机 2026-11-19 实测），所以自绘柔和光斑。
+				const float a = level_ * 0.10f * alpha;
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 28, static_cast<int16_t>(sy) - 108,
+					56, 56, 1.0f, 0.86f, 0.52f, a);
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 16, static_cast<int16_t>(sy) - 96,
+					32, 32, 1.0f, 0.92f, 0.64f, a * 1.5f);
+				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 7, static_cast<int16_t>(sy) - 87,
+					14, 14, 1.0f, 0.98f, 0.84f, a * 2.2f);
 			}
 		}
 

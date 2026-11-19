@@ -6,6 +6,7 @@
 
 #include "WeatherState.h"
 #include "WeatherConfig.h"
+#include "WeatherSkyTable.h"
 #include "../Constants.h"
 #include "../Gameplay/Stage.h"
 
@@ -15,7 +16,6 @@
 
 #include <cmath>
 #include <string>
-#include <fstream>
 
 namespace ms
 {
@@ -29,41 +29,23 @@ namespace ms
 
 		// 天空类（bundle front=0；画在地图背景之前，山树盖其上）
 		static const Def kSkyDefs[] = {
-			// 天空填充 nightDesert back/0（bundle :122，SKY_DY=-100 折进 y=204；H+V tile）
+			// 天空渐变填充 nightDesert back/0（bundle :122，SKY_DY=-100 折进 y=204；H+V tile）
 			{ "nightDesert", 0, false, 162, 204, -10, -90, 3, 50, 50, K_NIGHT },
 			// 夜空渐变 MapleMoonSky back/0（bundle :138；H tile）
 			{ "MapleMoonSky", 0, false, 162, -241, -10, -15, 1, 50, 0, K_NIGHT },
-			// 月+星（bundle :145-149，随时钟）
+			// 月（静态）。插件另有 nightDesert ani/0-1 星星闪烁 + 云/沙暴/彩虹/雨雾雪 sheet，
+			// 这些在 DLL 侧依赖加色/特殊混合；原生 Sprite 直画会变成淡色矩形色块
+			// （真机 2026-11-19 实测），故只保留纯渐变与静态月，其余改由自绘粒子实现。
 			{ "nightDesert", 3, false, 346, -275, -5, -5, 0, 0, 0, K_NIGHT },
-			{ "nightDesert", 0, true, 0, 0, 0, 0, 3, 440, 360, K_NIGHT },
-			{ "nightDesert", 1, true, 150, -120, 0, 0, 3, 500, 400, K_NIGHT },
-			// 沙暴两行（bundle :171-174，y=90 相接不重叠）
-			{ "nightDesert", 19, false, 0, -260, -6, -12, 1, 0, 0, K_DUST },
-			{ "nightDesert", 19, false, 0, 90, -6, -12, 1, 0, 0, K_DUST },
-			// 彩虹（bundle :186）
-			{ "WeatherRainbow", 0, false, 0, -150, -5, -5, 0, 0, 0, K_RAINBOW },
-			// 云×3（bundle :196-200，type4=HMOVEA 横向滚动 rx/16 每帧）
-			{ "nightDesert", 8, false, -454, -340, -2, -50, 4, 0, 0, K_CLOUD },
-			{ "nightDesert", 8, false, 120, -420, -3, -50, 4, 0, 0, K_CLOUD },
-			{ "nightDesert", 8, false, -700, -270, -4, -50, 4, 0, 0, K_CLOUD },
-			// 雪远（bundle :264，type7=VMOVEB；cx/cy 是 pitch 大于画布，防壁纸感）
-			{ "WeatherSnow", 0, true, -21, -212, -20, 5, 7, 1000, 300, K_SNOW },
 		};
 
 		// 前景类（bundle front=1；画在角色之后）
+		// 前景 WZ sheet 层全部停用：ancientForest 雨 / WeatherFog / WeatherSnow 的画布是
+		// 半透明整幅 sheet，插件靠 DLL 特殊混合才成雨丝雪点；原生直画是可见矩形色块。
+		// 雨/雪/花瓣/沙尘统一走 WeatherFx::draw_particles 自绘（真机已验证可见）。
 		static const Def kFrontDefs[] = {
-			// 雨×4（bundle :268-273，type7=VMOVEB 垂直下落）
-			{ "ancientForest", 28, false, -330, -435, -100, 207, 7, 700, 400, K_RAIN },
-			{ "ancientForest", 29, false, 136, -195, -100, 205, 7, 500, 500, K_RAIN },
-			{ "ancientForest", 30, false, 165, -26, -100, 195, 7, 750, 450, K_RAIN },
-			{ "ancientForest", 31, false, -623, -52, -100, 200, 7, 500, 1200, K_RAIN },
-			// 雾×4（bundle :235-240，type4=HMOVEA，rx 绝不为 0）
-			{ "WeatherFog", 0, false, 0, -40, -22, -6, 4, 0, 0, K_FOG },
-			{ "WeatherFog", 1, false, 0, 90, -37, -4, 4, 0, 0, K_FOG },
-			{ "WeatherFog", 2, false, 0, -10, -61, -8, 4, 0, 0, K_FOG },
-			{ "WeatherFog", 3, false, 0, -150, -13, -3, 4, 0, 0, K_FOG },
-			// 雪近（bundle :265）
-			{ "WeatherSnow", 1, true, -270, -249, 0, 10, 7, 900, 500, K_SNOW },
+			// 占位（bank 为空 → build() 直接跳过），仅为避免零长数组。
+			{ "", 0, false, 0, 0, 0, 0, 0, 0, 0, K_RAIN },
 		};
 
 		static float step_toward(float cur, float target, float step)
@@ -104,6 +86,8 @@ namespace ms
 			for (size_t i = 0; i < count; ++i)
 			{
 				const Def& d = defs[i];
+				if (d.bank == nullptr || d.bank[0] == '\0')
+					continue;   // 占位行
 				nl::node sheet = backsrc[std::string(d.bank) + ".img"];
 				if (!sheet)
 					sheet = backsrc[d.bank];
@@ -111,8 +95,22 @@ namespace ms
 				if (!src)
 					continue;
 
+				// ani 节点是多帧属性（{"0":canvas,"1":canvas,...}），不是单张 bitmap。
+				// 直接 Texture(src) 会得到 0x0 无效纹理 → cx 回退 1 → htile/vtile 爆炸
+				// （真机实测 1283x723 ≈ 92 万次绘制，触发 0xC0000005）。取首帧。
+				if (src.data_type() != nl::node::type::bitmap)
+				{
+					nl::node first = src["0"];
+					if (first.data_type() == nl::node::type::bitmap)
+						src = first;
+					else
+						continue;
+				}
+
 				Layer l;
 				l.texture = Texture(src);
+				if (!l.texture.is_valid())
+					continue;   // 保险：无效纹理绝不入层（否则 draw 段直接 AV）
 				l.base_x = static_cast<int16_t>(d.x);
 				l.base_y = static_cast<int16_t>(d.y);
 				l.rx = d.rx; l.ry = d.ry;
@@ -138,6 +136,11 @@ namespace ms
 					l.vtile = vh / l.cy + 3;
 					break;
 				}
+				// 封顶：单层最多 64x64 块，防止异常尺寸导致百万级绘制循环
+				if (l.htile > 64) l.htile = 64;
+				if (l.vtile > 64) l.vtile = 64;
+				if (l.htile < 1) l.htile = 1;
+				if (l.vtile < 1) l.vtile = 1;
 				out.push_back(std::move(l));
 			}
 #endif
@@ -145,8 +148,15 @@ namespace ms
 
 		void BackLayers::on_map_loaded()
 		{
+			on_map_loaded(std::string(), -1);
+		}
+
+		void BackLayers::on_map_loaded(const std::string& bs, int32_t no)
+		{
 			clear();
-			if (!State::get().has_state())
+			// 天空门禁：对齐插件 FieldHasSky（weather.cpp:2073-2100）。
+			// 不在天空表内的图（室内/树洞/Kerning Square）不注入任何素材，避免盖住原生背景。
+			if (!is_sky_base(bs.c_str(), no))
 				return;
 			build(sky_, false);
 			build(front_, true);
@@ -156,12 +166,7 @@ namespace ms
 		void BackLayers::update(bool snap, uint16_t timestep)
 		{
 			if (!active_)
-			{
-				if (State::get().has_state())
-					on_map_loaded();
-				else
-					return;
-			}
+				return;   // 装图时已按天空门禁判定；未通过（室内图）就不需要每帧重建
 			const State& st = State::get();
 			if (!st.has_state())
 			{
@@ -206,6 +211,7 @@ namespace ms
 			const double woff = vw / 2.0;
 			const double hoff = vh / 2.0;
 
+			int _li = 0;
 			for (const Layer& l : list)
 			{
 				if (l.current <= 0.004f)

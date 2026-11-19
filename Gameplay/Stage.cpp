@@ -173,8 +173,9 @@ namespace ms
 
 		tilesobjs = MapTilesObjs(src);
 		backgrounds = MapBackgrounds(src["back"]);
-		// 天气前景素材：解析雨/雾/雪动画（不改原生背景）；状态包未到则 update 惰性补解析。
-		weather::BackLayers::get().on_map_loaded();
+		// 天气素材层：按 back/0 的 (bS,no) 天空门禁决定是否注入（对齐插件 FieldHasSky）。
+		// 不 gate 服务端状态——0x373D 在进图之后才到，gate 会让会话首图恒白天。
+		weather::BackLayers::get().on_map_loaded(backgrounds.get_backmost_bs(), backgrounds.get_backmost_no());
 		weather::Ground::get().on_map_loaded();
 		physics = Physics(src["foothold"]);
 		mapinfo = MapInfo(src, physics.get_fht().get_walls(), physics.get_fht().get_borders());
@@ -204,10 +205,15 @@ namespace ms
 		double viewx = viewrpos.x();
 		double viewy = viewrpos.y();
 
-		// 天气天空素材（渐变/月/星/云/沙暴/彩虹/雪远）：画在地图全部背景之前——
-		// 盖住原天空、山树画其上（bundle weatherfx.cpp:153-157 分层，树永不被盖）。
+		// 天气分层（对齐插件 MakeBack 的 z 序语义，weather.cpp:1916-1924）：
+		//   1) 地图自有天空 back/0-1
+		//   2) 注入的天空素材（渐变/月/星/云/沙暴/彩虹/雪远）
+		//   3) 地图山树 back/2+ —— 永远盖在天气之上，树不会被天气吞掉
+		// 三段都走 MapBackgrounds 的区间重载，原生逐层绘制算法一行未改。
+		const size_t sky_end = backgrounds.size() < 2 ? backgrounds.size() : 2;
+		backgrounds.drawbackgrounds(viewx, viewy, alpha, 0, sky_end);
 		weather::BackLayers::get().draw_sky(viewx, viewy, alpha);
-		backgrounds.drawbackgrounds(viewx, viewy, alpha);
+		backgrounds.drawbackgrounds(viewx, viewy, alpha, sky_end, backgrounds.size());
 
 		for (auto id : Layer::IDs)
 		{

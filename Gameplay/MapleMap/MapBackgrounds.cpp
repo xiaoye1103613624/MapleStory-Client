@@ -189,6 +189,22 @@ namespace ms
 		}
 
 		black = src["0"]["bS"].get_string() == "";
+		// 天气天空门禁：back/0 的 (bS,no)，对齐插件 FieldHasSky 的 ReadBackmostBase。
+		// 必须做类型守卫：无 back 的地图/登录图上 src["0"] 是空节点，
+		// 直接 operator int32_t() 会抛异常（曾导致客户端起窗阶段直接退进程）。
+		{
+			nl::node b0 = src["0"];
+			if (b0)
+			{
+				nl::node bs_node = b0["bS"];
+				if (bs_node.data_type() == nl::node::type::string)
+					backmost_bs = bs_node.get_string();
+
+				nl::node no_node = b0["no"];
+				if (no_node.data_type() == nl::node::type::integer)
+					backmost_no = no_node;
+			}
+		}
 	}
 
 	// black 是 bool 成员，默认构造必须初始化；否则换图重建 MapBackgrounds 时
@@ -197,13 +213,21 @@ namespace ms
 
 	void MapBackgrounds::drawbackgrounds(double viewx, double viewy, float alpha) const
 	{
-		// 背景列表为空（img 包缺 back 层、或装图竞态尚未填充）时强制铺一层
-		// 不透明底，保证 Stage 层永远有覆盖全屏的 quad，不会露出清屏色。
-		if (black || backgrounds.empty())
+		drawbackgrounds(viewx, viewy, alpha, 0, backgrounds.size());
+	}
+
+	// 天气扩展：区间绘制（纯新增）。begin==0 时保留原黑底铺底语义，
+	// 后续区间调用不再重复铺底，避免把已画好的天空/山树盖掉。
+	void MapBackgrounds::drawbackgrounds(double viewx, double viewy, float alpha, size_t begin, size_t end) const
+	{
+		if (begin == 0 && (black || backgrounds.empty()))
 			GraphicsGL::get().drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
 
-		for (auto& background : backgrounds)
-			background.draw(viewx, viewy, alpha);
+		if (begin >= backgrounds.size())
+			return;
+		const size_t stop = end > backgrounds.size() ? backgrounds.size() : end;
+		for (size_t i = begin; i < stop; ++i)
+			backgrounds[i].draw(viewx, viewy, alpha);
 	}
 
 	void MapBackgrounds::drawforegrounds(double viewx, double viewy, float alpha) const

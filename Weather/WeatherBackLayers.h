@@ -29,6 +29,11 @@ namespace ms
 		public:
 			static BackLayers& get();
 
+			// bs/no = 地图 back/0 的基座（来自 MapBackgrounds::get_backmost_bs/no）。
+			// 对齐插件 FieldHasSky：仅当 (bs,no) 命中天空表才注入天空/雨层；
+			// 且**不要求 has_state()**——服务端 0x373D 在进图之后才到，
+			// 若在此处 gate 状态，每个会话首图会恒为白天（weather.cpp:2079-2084）。
+			void on_map_loaded(const std::string& bs, int32_t no);
 			void on_map_loaded();
 			void update(bool snap, uint16_t timestep);
 
