@@ -116,6 +116,15 @@ namespace ms
 #ifdef USE_NX
 			nl::node n = nl::nx::Map["Obj"][std::string(a.bank) + ".img"][a.dir][a.name][a.no];
 			Texture t = n ? Texture(n) : Texture();
+			if (!t.is_valid())
+			{
+				// 兜底：stock bank 在 live 缺该 art 时（真机实测 arcana 等 tex=0），
+				// 改用 live 里确实存在的 MapleMoonLamp2 街灯
+				// （weather_lamptable2.inc 首行 {MapleMoonLamp2, street, gaslamp, 0}）。
+				nl::node fb = nl::nx::Map["Obj"]["MapleMoonLamp2.img"]["street"]["gaslamp"]["0"];
+				if (fb)
+					t = Texture(fb);
+			}
 			auto res = cache.emplace(key, t);
 			return res.first->second.is_valid() ? &res.first->second : nullptr;
 #else
@@ -155,7 +164,16 @@ namespace ms
 				const LampArt* art = art_for(lamp.lamp_id);
 				const Texture* tex = art ? lamp_texture(*art) : nullptr;
 				if (tex == nullptr)
+				{
+					// stock art 与 MapleMoonLamp2 兜底都缺图时，自绘暖色发光球，
+					// 绝不静默跳过（用户反馈"没有路灯"）。
+					const float ga = level_ * 0.22f * alpha;
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 22, static_cast<int16_t>(sy) - 96, 44, 44,
+						1.0f, 0.86f, 0.50f, ga);
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 86, 24, 24,
+						1.0f, 0.94f, 0.68f, ga * 1.8f);
 					continue;
+				}
 
 				// 真实 sprite：sprite 原点在 bitmap 内，DrawArgument 位置即灯座世界点 + emitter 偏移。
 				tex->draw(DrawArgument(Point<int16_t>(

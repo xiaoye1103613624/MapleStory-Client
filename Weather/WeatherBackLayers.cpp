@@ -9,6 +9,7 @@
 #include "WeatherSkyTable.h"
 #include "../Constants.h"
 #include "../Gameplay/Stage.h"
+#include "../Graphics/GraphicsGL.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -31,10 +32,6 @@ namespace ms
 		static const Def kSkyDefs[] = {
 			// 夜空渐变 MapleMoonSky back/0（bundle :138；H tile）
 			{ "MapleMoonSky", 0, false, 162, -241, -10, -15, 1, 50, 0, K_NIGHT },
-			// 月（静态）。插件另有 nightDesert ani/0-1 星星闪烁 + 云/沙暴/彩虹/雨雾雪 sheet，
-			// 这些在 DLL 侧依赖加色/特殊混合；原生 Sprite 直画会变成淡色矩形色块
-			// （真机 2026-11-19 实测），故只保留纯渐变与静态月，其余改由自绘粒子实现。
-			{ "nightDesert", 3, false, 346, -275, -5, -5, 0, 0, 0, K_NIGHT },
 		};
 
 		// 前景类（bundle front=1；画在角色之后）
@@ -42,6 +39,9 @@ namespace ms
 		// 半透明整幅 sheet，插件靠 DLL 特殊混合才成雨丝雪点；原生直画是可见矩形色块。
 		// 雨/雪/花瓣/沙尘统一走 WeatherFx::draw_particles 自绘（真机已验证可见）。
 		static const Def kFrontDefs[] = {
+			// 月（静态 nightDesert back/3，312x312）：放在前景层，因为魔法密林等地图的
+			// back/2+ 树冠会把天空层整片盖住，月亮在天空层等于看不见（真机 2026-11-20 实测）。
+			{ "nightDesert", 3, false, 346, -275, -5, -5, 0, 0, 0, K_NIGHT },
 			// 占位（bank 为空 → build() 直接跳过），仅为避免零长数组。
 			{ "", 0, false, 0, 0, 0, 0, 0, 0, 0, K_RAIN },
 		};
@@ -202,7 +202,19 @@ namespace ms
 			drive(front_);
 		}
 
-		void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha)
+		// 自绘月面：中心 (cx,cy)，三层同心方块近似（外圈微光 + 本体 + 亮核）。
+	// nightDesert back/3 的 312x312 画布真机上 valid=1 但画面看不到月面，
+	// 这里补一层保证「夜里能看见月亮」（用户 2026-11-20 反馈）。
+	static void draw_moon_disc(int16_t cx, int16_t cy, float a)
+	{
+		if (a <= 0.02f)
+			return;
+		GraphicsGL::get().drawrectangle(cx - 26, cy - 26, 52, 52, 0.90f, 0.92f, 1.00f, a * 0.16f);
+		GraphicsGL::get().drawrectangle(cx - 20, cy - 20, 40, 40, 0.96f, 0.96f, 0.86f, a * 0.55f);
+		GraphicsGL::get().drawrectangle(cx - 14, cy - 14, 28, 28, 1.00f, 0.99f, 0.88f, a * 0.92f);
+	}
+
+	void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha)
 		{
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int16_t vh = Constants::Constants::get().get_viewheight();
@@ -246,6 +258,9 @@ namespace ms
 				const int16_t iy = static_cast<int16_t>(std::round(y));
 				const int tw = l.cx * l.htile;
 				const int th = l.cy * l.vtile;
+			// 月亮（kind==K_NIGHT 且 type==0）：纹理之外补自绘月面，保证可见。
+			if (l.kind == 0 && l.type == 0)
+				draw_moon_disc(ix, iy, l.current);
 			// Texture::draw 只认 DrawArgument 的 color.alpha（DrawArgument.h:45）。
 			for (int tx = 0; tx < tw; tx += l.cx)
 				for (int ty = 0; ty < th; ty += l.cy)

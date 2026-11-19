@@ -13,11 +13,17 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include <nlnx/wz.hpp>
 #endif
 
 #include <map>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <memory>
+#include <iterator>
+
+#include "../Util/Resource/ResourceService.h"
 
 #include <cmath>
 
@@ -179,6 +185,38 @@ namespace ms
 		// （snowFall / blizzardSnow / leafMix / blossomMix / sandGrit；节点与画布尺寸经 _wz 实测：
 		//  5x9 / 4x9 / 19x23 / 13x13 / 6x5）。参考实现 weatherfx.cpp:23-43 用"原生粒子 +
 		//  密度区分天气"；雨丝无对应美术，仍用自绘细线。
+		// Effect 根只绑了 17 项（实测 rootChildren=17、首项 BasicEff.img），
+		// WeatherParticles.img 不在其中 → 必须单独加载这一张（用户要求"用客户端资源"）。
+		// 与 ImgSource::load_standard 同后端：nl::img_file::open_single + root()。
+		static nl::node weather_particles_root()
+		{
+			static std::unique_ptr<nl::img_file> file;
+			static nl::node root;
+			if (!file)
+			{
+				const std::string& base = res::ResourceService::get().base();
+				std::string path = base + "/Effect/WeatherParticles.img";
+				std::ifstream in(path, std::ios::binary);
+				if (in)
+				{
+					std::vector<char> buf((std::istreambuf_iterator<char>(in)),
+						std::istreambuf_iterator<char>());
+					try
+					{
+						auto f = std::make_unique<nl::img_file>();
+						f->open_single(std::move(buf));
+						root = f->root();
+						file = std::move(f);
+					}
+					catch (...)
+					{
+						file.reset();
+					}
+				}
+			}
+			return root;
+		}
+
 		static const std::vector<Texture>& particle_frames(const char* name)
 		{
 			static std::map<std::string, std::vector<Texture>> cache;
@@ -188,9 +226,15 @@ namespace ms
 
 			std::vector<Texture> frames;
 #ifdef USE_NX
-			nl::node root = nl::nx::Effect["WeatherParticles.img"];
+			nl::node root = weather_particles_root();
 			if (!root)
-				root = nl::nx::Effect["WeatherParticles"];
+			{
+				// 退路：若 Effect 根将来包含该 img，则直接用已绑定的根。
+				nl::node eff = nl::nx::Effect["WeatherParticles.img"];
+				if (!eff)
+					eff = nl::nx::Effect["WeatherParticles"];
+				root = eff;
+			}
 			nl::node node = root[name];
 			for (auto sub : node)
 			{
@@ -223,13 +267,14 @@ namespace ms
 				int count = 0;
 				int speed = 0;       // px/s
 				float drift = 0.0f;
+				float scale = 2.0f;   // 真实美术很小(5x9/6x5)，按 2x 放大才看清
 				switch (sky)
 				{
-				case Sky::SNOW:      group = "snowFall";     count = 120; speed = 130; break;
-				case Sky::BLIZZARD:  group = "blizzardSnow"; count = 260; speed = 300; drift = 60.0f; break;
-				case Sky::LEAVES:    group = "leafMix";      count = 64;  speed = 140; drift = 45.0f; break;
-				case Sky::BLOSSOM:   group = "blossomMix";   count = 64;  speed = 110; drift = 35.0f; break;
-				case Sky::SANDSTORM: group = "sandGrit";     count = 220; speed = 320; drift = 120.0f; break;
+				case Sky::SNOW:      group = "snowFall";     count = 220; speed = 130; scale = 2.2f; break;
+				case Sky::BLIZZARD:  group = "blizzardSnow"; count = 420; speed = 300; drift = 60.0f; scale = 2.4f; break;
+				case Sky::LEAVES:    group = "leafMix";      count = 120; speed = 140; drift = 45.0f; scale = 1.6f; break;
+				case Sky::BLOSSOM:   group = "blossomMix";   count = 140; speed = 110; drift = 35.0f; scale = 1.6f; break;
+				case Sky::SANDSTORM: group = "sandGrit";     count = 600; speed = 320; drift = 120.0f; scale = 2.2f; break;
 				default: break;
 				}
 				if (group == nullptr)
@@ -262,7 +307,7 @@ namespace ms
 					const int px = x < 0 ? x + vw : (x >= vw ? x - vw : x);
 
 					tex.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(px), static_cast<int16_t>(fall)),
-						0.55f + 0.35f * ((h2 >> 8 & 7) / 7.0f)));
+						scale, scale, 0.80f + 0.20f * ((h2 >> 8 & 7) / 7.0f)));
 				}
 				return;
 			}
@@ -272,8 +317,8 @@ namespace ms
 			const int16_t vh = Constants::Constants::get().get_viewheight();
 			const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
 			const int speed = (sky == Sky::STORM) ? 470 : 380;
-			const int count = (sky == Sky::STORM) ? 96 : 72;
-			const float base_alpha = 0.22f + 0.34f * prof.rain;
+			const int count = (sky == Sky::STORM) ? 140 : 110;
+			const float base_alpha = 0.40f + 0.35f * prof.rain;
 
 			for (int i = 0; i < count; ++i)
 			{
@@ -283,7 +328,7 @@ namespace ms
 				const int span = vh + 32;
 				const int sy = static_cast<int>((phase * static_cast<uint32_t>(speed) / 1000u + h2 % span) % span) - 16;
 				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx), static_cast<int16_t>(sy),
-					1, 12, 0.72f, 0.84f, 1.0f, base_alpha);
+					2, 18, 0.74f, 0.86f, 1.0f, base_alpha);
 			}
 		}
 
