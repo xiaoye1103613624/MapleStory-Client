@@ -39,7 +39,16 @@ namespace ms
 
 		void State::tick(int64_t dt_ms)
 		{
-			if (!has_state_ || (flags_ & FLAG_FROZEN) || ms_per_game_minute_ <= 0)
+			if (!has_state_)
+				return;
+			// 粒子/闪电相位必须始终推进。
+			// FLAG_FROZEN（GM 用 !weather HH:MM 或 web override 冻结时钟时服务端会带）
+			// 只应冻结"游戏时钟"，绝不能冻结天气动画——否则雨雪粒子相位恒定、
+			// 整屏粒子静止不动（用户 2026-11-20 反馈"粒子是不是不是动态的"，实测复现）。
+			// sky_elapsed_ms 语义 = 当前天空已持续时长，冻结时钟时它照样在走。
+			if (sky_elapsed_ms_ >= 0)
+				sky_elapsed_ms_ += static_cast<int>(dt_ms);
+			if ((flags_ & FLAG_FROZEN) || ms_per_game_minute_ <= 0)
 				return;
 			// dt_ms 累加到分钟：以浮点累计避免小 dt 被整除丢弃。
 			static double carry = 0.0;
@@ -50,8 +59,6 @@ namespace ms
 				minute_ = (minute_ + whole) % 1440;
 				carry -= whole;
 			}
-			if (sky_elapsed_ms_ >= 0)
-				sky_elapsed_ms_ += static_cast<int>(dt_ms);
 			if (rainbow_secs_ > 0)
 				rainbow_secs_ -= static_cast<int>(dt_ms / 1000);
 			if (rainbow_secs_ < 0)
