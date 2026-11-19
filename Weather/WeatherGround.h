@@ -29,6 +29,8 @@
 
 namespace ms
 {
+	class FootholdTree;
+
 	namespace weather
 	{
 		class Ground
@@ -41,8 +43,10 @@ namespace ms
 			// 每帧（Stage::update 尾部）推进积累/水坑/溅射状态与动画。
 			void update(uint16_t timestep);
 			// 每帧（Stage::draw，角色之后、前景层）绘制地面层。
-			// viewpos 为 camera.position(alpha)，玩家世界坐标由 Stage 传入以近似地面高度。
-			void draw(const DrawArgument& viewpos, const Point<int16_t>& player_world) const;
+			// fht 用于溅射落点：逐列求 foothold 表面（对齐 weathersplash.cpp:238），
+			// 传 nullptr 时只画已有溅射、不新生成。
+			void draw(const DrawArgument& viewpos, const Point<int16_t>& player_world,
+				const FootholdTree* fht);
 			// 换线/断线：释放所有 Animation（node 是 lazy 根引用，跨图需重解析）。
 			void clear();
 
@@ -81,6 +85,7 @@ namespace ms
 			float accum_level_ = 0.0f;   // 雪/叶/花瓣 0..1
 			float puddle_level_ = 0.0f;  // 水坑 0..1
 			float splash_carry_ = 0.0f;  // 溅射生成速率的帧间小数累加
+			int splash_pending_ = 0;     // 待生成数（draw 里按 foothold 落点实际生成）
 			float accum_carry_ = 0.0f;
 			float puddle_carry_ = 0.0f;
 			int64_t elapsed_ms_ = 0;     // 本地累计，仅用于伪随机相位，不参与 wire 权威

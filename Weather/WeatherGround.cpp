@@ -9,6 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "WeatherGround.h"
 #include "WeatherFx.h"
+#include "../Gameplay/Physics/FootholdTree.h"
 
 #include "WeatherState.h"
 #include "WeatherConfig.h"
@@ -26,21 +27,21 @@ namespace ms
 	namespace weather
 	{
 		// ==== 可调常量（bundle 锚定 + 原生近似集中处） ====
-		static const int ACCUM_MAX = 40;        // bundle :56 =70；原生端降密度避免过多 draw call
-		static const int ACCUM_RISE_MS = 90000; // bundle :57
-		static const int ACCUM_MELT_MS = 25000; // bundle :58
-		static const float ACCUM_PLACE_PER_S = 14.0f; // bundle :70
-		static const int ACCUM_SURFACE_DROP = 5;      // bundle :69（沉降像素）
+		static const int ACCUM_MAX = 70;        // 参考 weatheraccum.cpp:56
+		static const int ACCUM_RISE_MS = 90000; // 参考 :57
+		static const int ACCUM_MELT_MS = 25000; // 参考 :58
+		static const float ACCUM_PLACE_PER_S = 14.0f; // 参考 :70
+		static const int ACCUM_SURFACE_DROP = 5;      // 参考 :69
 
-		static const int PUDDLE_MAX = 16;       // bundle :58 =26；原生端降密度
+		static const int PUDDLE_MAX = 26;       // 参考 weatherpuddle.cpp:42
 		static const int PUDDLE_TIERS = 3;      // bundle :39/%d/%d 三级
-		static const int PUDDLE_RISE_MS = 90000;
-		static const int PUDDLE_DRY_MS = 40000;
-		static const float PUDDLE_PLACE_PER_S = 3.0f;
+		static const int PUDDLE_RISE_MS = 75000;  // 参考 :43
+		static const int PUDDLE_DRY_MS = 40000;   // 参考 :44
+		static const float PUDDLE_PLACE_PER_S = 3.0f; // 参考 :62
 
-		static const int SPLASH_MAX = 32;
-		static const float SPLASH_PER_SEC = 8.0f;
-		static const int SPLASH_LIFETIME_MS = 900;
+		static const int SPLASH_MAX = 40;            // 参考 weathersplash.cpp:29
+		static const float SPLASH_PER_SEC = 22.4f;   // 参考 :34
+		static const int SPLASH_LIFETIME_MS = 520;    // 参考 :28 (5帧x80ms)
 
 		// TODO(真机校准): 地面层 y 的近似口径。
 		// bundle 通过 ReadPhysSpace/GetFHUnderneath 逐落点测量真实地面 z/y（weatheraccum.cpp:51-52）。
@@ -50,6 +51,8 @@ namespace ms
 		// 增加 get_y_below(x) 公开查询（Stage::respawn 已在用 physics.get_y_below，见 Stage.cpp:187），
 		// 再由 Stage::draw 传入逐落点地面 y。此为本版最大观感风险，真机对照后调 kGroundDropPx。
 		static const int16_t kGroundDropPx = 4;
+		static const int SPLASH_MARGIN = 64;         // 参考 :35
+		static const int SPLASH_SURFACE_DROP = 4;    // 参考 :45
 
 		Ground& Ground::get()
 		{
@@ -248,14 +251,11 @@ namespace ms
 			if (intensity <= 0.0f || static_cast<int>(splashes_.size()) >= SPLASH_MAX)
 				return;
 			splash_carry_ += (SPLASH_PER_SEC * intensity) * (static_cast<float>(timestep) / 1000.0f);
-			int want = static_cast<int>(splash_carry_);
+			const int want = static_cast<int>(splash_carry_);
 			splash_carry_ -= static_cast<float>(want);
-			while (want-- > 0 && static_cast<int>(splashes_.size()) < SPLASH_MAX)
-			{
-				const int vieww = Constants::Constants::get().get_viewwidth();
-				int16_t wx = static_cast<int16_t>((next_rand() % static_cast<uint32_t>(vieww)) - vieww / 2);
-				spawn_splash(wx, static_cast<int16_t>(kGroundDropPx));
-			}
+			// 参考实现（weathersplash.cpp:38 注释）：生成与落点校正都在"渲染帧"里做，
+			// 不在逻辑 tick 里。这里只累计待生成数，真正落点由 draw() 用 foothold 求。
+			splash_pending_ += want;
 		}
 
 		void Ground::update(uint16_t timestep)
@@ -285,23 +285,44 @@ namespace ms
 			const_cast<Ground*>(this)->last_ambient_sky_ = loaded_sky_;
 		}
 
-		void Ground::draw(const DrawArgument& viewpos, const Point<int16_t>& player_world) const
+		void Ground::draw(const DrawArgument& viewpos, const Point<int16_t>& player_world,
+			const FootholdTree* fht)
 		{
 			if (!active_)
 				return;
-			// 世界→屏幕照 Char.cpp:44：screen = world + viewpos（viewpos 是相机偏移量）。
-			// 此前 base_y = ground_y - viewpos.y() 符号反了，地面素材全画到屏外。
-			// wx/wy 是相对玩家脚下的偏移（step_* 生成），地面 y 用玩家脚下近似（真机校准 TODO）。
+
+			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int base_x = player_world.x() + viewpos.getpos().x();
 			const int base_y = player_world.y() + viewpos.getpos().y();
 
-			// 先堆积、再水坑、最后溅射（溅射在最上层，符合 bundle 的层序）。
+			// 溅射生成：逐列在 foothold 上找表面（对齐 weathersplash.cpp:238
+			// GetFootholdUnderneath(x, camY-halfH, &ySurface)），而不是画在玩家脚下。
+			// 世界坐标 = 屏幕坐标 - viewpos（screen = world + viewpos）。
+			if (splash_pending_ > 0 && fht != nullptr && !splash_nodes_.empty())
+			{
+				const int world_left = -viewpos.getpos().x();
+				const int world_top = -viewpos.getpos().y();
+				while (splash_pending_ > 0 && static_cast<int>(splashes_.size()) < SPLASH_MAX)
+				{
+					--splash_pending_;
+					const int span = vw + SPLASH_MARGIN * 2;
+					const int wx = world_left - SPLASH_MARGIN + static_cast<int>(next_rand() % static_cast<uint32_t>(span));
+					const int16_t surface = fht->get_y_below(
+						Point<int16_t>(static_cast<int16_t>(wx), static_cast<int16_t>(world_top)));
+					spawn_splash(static_cast<int16_t>(wx),
+						static_cast<int16_t>(surface - SPLASH_SURFACE_DROP));
+				}
+			}
+
+			// 先堆积、再水坑、最后溅射（溅射在最上层，符合参考的层序）。
 			for (const Patch& p : accum_patches_)
 				p.anim.draw(DrawArgument(static_cast<int16_t>(base_x + p.wx), static_cast<int16_t>(base_y + p.wy)), 1.0f);
 			for (const Patch& p : puddles_)
 				p.anim.draw(DrawArgument(static_cast<int16_t>(base_x + p.wx), static_cast<int16_t>(base_y + p.wy)), 1.0f);
-			for (const Splash& s : splashes_)
-				s.anim.draw(DrawArgument(static_cast<int16_t>(base_x + s.wx), static_cast<int16_t>(base_y + s.wy)), 1.0f);
+			// 溅射是"世界坐标"落点，不能加玩家偏移（此前错误地用了 base_y）。
+			for (const Splash& sp : splashes_)
+				sp.anim.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(sp.wx + viewpos.getpos().x()),
+					static_cast<int16_t>(sp.wy + viewpos.getpos().y()))), 1.0f);
 		}
 
 		float Ground::snow_slip_factor() const

@@ -30,6 +30,7 @@
 
 #include "../IO/UITypes/UIStatusBar.h"
 #include "../IO/UITypes/UIChatBar.h"
+#include "../IO/UITypes/UIChatEmoticon.h"
 #include "../Net/Packets/AttackAndSkillPackets.h"
 #include "../Net/Packets/GameplayPackets.h"
 #include "../Net/Packets/MessagingPackets.h"
@@ -229,6 +230,7 @@ namespace ms
 
 		combat.draw(viewx, viewy, alpha);
 		// Kaentake 动态聊天表情：头顶动画按角色屏幕位置绘制（viewpos 同 chars 口径）。
+		UIChatEmoticon::draw_overhead(viewpos, alpha);
 		portals.draw(viewpos, alpha);
 		guild_boss.draw(viewpos, alpha);
 		backgrounds.drawforegrounds(viewx, viewy, alpha);
@@ -242,7 +244,7 @@ namespace ms
 		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
 		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。
 		// 天气地面层（水坑/积雪/溅射）：角色之后、夜色叠加之前。
-		weather::Ground::get().draw(viewpos, player.get_position());
+		weather::Ground::get().draw(viewpos, player.get_position(), &physics.get_fht());
 		weather::Fx::get().draw();
 		weather::Fx::get().draw_lightning();
 		// 路灯暖色光晕（世界坐标按 viewx/viewy 换算），盖在场景之上、UI 之下。
@@ -330,6 +332,7 @@ namespace ms
 		npcs.update(physics);
 		mobs.update(physics);
 		chars.update(physics);
+		UIChatEmoticon::update_overhead();
 		drops.update(physics);
 		field_markers.update(physics);
 		player.update(physics);
@@ -691,6 +694,11 @@ namespace ms
 	bool Stage::is_player(int32_t cid) const
 	{
 		return cid == player.get_oid();
+	}
+
+	const Physics& Stage::get_physics() const
+	{
+		return physics;
 	}
 
 	MapNpcs& Stage::get_npcs()

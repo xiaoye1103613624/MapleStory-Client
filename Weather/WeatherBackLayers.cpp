@@ -200,6 +200,16 @@ namespace ms
 			};
 			drive(sky_);
 			drive(front_);
+
+			// 月亮呼吸相位（三角波 0.82..1.0，周期 7s）。只作用于月亮层绘制。
+			moon_breathe_ms_ += timestep;
+			if (moon_breathe_ms_ >= kMoonBreatheMs)
+				moon_breathe_ms_ -= kMoonBreatheMs;
+			{
+				const float p = static_cast<float>(moon_breathe_ms_) / static_cast<float>(kMoonBreatheMs);
+				const float tri = p < 0.5f ? p * 2.0f : (1.0f - p) * 2.0f;
+				moon_breathe_ = 0.82f + 0.18f * tri;
+			}
 		}
 
 		// 自绘月面：中心 (cx,cy)，三层同心方块近似（外圈微光 + 本体 + 亮核）。
@@ -214,14 +224,13 @@ namespace ms
 		GraphicsGL::get().drawrectangle(cx - 14, cy - 14, 28, 28, 1.00f, 0.99f, 0.88f, a * 0.92f);
 	}
 
-	void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha)
+	void BackLayers::draw_list(const std::vector<Layer>& list, double viewx, double viewy, float alpha) const
 		{
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int16_t vh = Constants::Constants::get().get_viewheight();
 			const double woff = vw / 2.0;
 			const double hoff = vh / 2.0;
 
-			int _li = 0;
 			for (const Layer& l : list)
 			{
 				if (l.current <= 0.004f)
@@ -258,9 +267,11 @@ namespace ms
 				const int16_t iy = static_cast<int16_t>(std::round(y));
 				const int tw = l.cx * l.htile;
 				const int th = l.cy * l.vtile;
-			// 月亮（kind==K_NIGHT 且 type==0）：纹理之外补自绘月面，保证可见。
-			if (l.kind == 0 && l.type == 0)
-				draw_moon_disc(ix, iy, l.current);
+			// 月亮（kind==K_NIGHT 且 type==0）：纹理之外补自绘月面，并叠加呼吸明暗。
+			const bool is_moon = (l.kind == 0 && l.type == 0);
+			const float moon_a = is_moon ? (l.current * moon_breathe_) : l.current;
+			if (is_moon)
+				draw_moon_disc(ix, iy, moon_a);
 			// Texture::draw 只认 DrawArgument 的 color.alpha（DrawArgument.h:45）。
 			for (int tx = 0; tx < tw; tx += l.cx)
 				for (int ty = 0; ty < th; ty += l.cy)
