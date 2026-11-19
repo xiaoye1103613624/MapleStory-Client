@@ -33,6 +33,26 @@
 
 **orange-wz 调用要点（可复用）**：本 harness 未注入 `mcp__orange_wz__*` 前缀，但服务 streamable-http 在 10012 可用——直接 HTTP POST `/mcp`：`initialize`（拿 `Mcp-Session-Id` 头）→ `tools/call`（`params.name`=工具名，`params.arguments.key` **必须是对象且含 `name`/`ivBase64`/`userKeyBase64` 三字段**，见 ToolParamHelper.java:154-165）。不要以"工具没暴露"回退 .nx dump。
 
+## A 方案真机闭环（2026-11-19 18:55，提交 `586fa556`）
+
+用户选 A（承认原生 Sprite 无 multiply，改用可见性优先）+ 要求确认 083 背景逻辑原样 + 借鉴 ijl15 事件方式。
+
+**083 一致性（行号级确认）**：`diff abee2d1b^` 对 MapBackgrounds.h/.cpp 逐字节比对 → **与 083 原版完全一致**，git status 不含这两文件。全部天气改动在 Stage 现有扩展点（clear/load_map/update/draw）+ CommonHandlers 收包，对齐 ijl15 `WeatherBridge.cpp:20-32`（只注册 0x373D/0x373F 包处理 + ModRegistry onTick 驱动，不改原生背景类）。
+
+**A 方案实现**：
+- `WeatherFx::draw_particles`（WeatherFx.cpp）：64 槽位伪随机雨丝/雪点/花瓣/沙尘，按 sky + profile + 服务端 skyElapsedMs 同步下落；GraphicsGL::drawrectangle 直画，高对比可见。
+- `WeatherLamps`：灯柱实体（暖色方块）+ 光晕 sprite（MapleMoonLamp.img/glow/large/0）+ 矩形回退；坐标 world+viewx 对齐 `Char.cpp:44`（此前符号反导致画到屏外）。
+- `WeatherBackLayers`：Texture 直画（绕开 `Animation::draw:295-308` 的 a0=0 全透明）、cx/cy 用真实纹理尺寸（对齐 weatherfx.cpp:118-120）、alpha 不乘 UI 插值 alpha。
+- `WeatherGround` 坐标 world+viewpos 修复。
+
+**真机自验收（本端，用户授权 GUI 自测）**：
+- `V1_snow_day.png`：白天雪天，白色雪花点清晰可见（树干/房屋/角色周围）。
+- `V2_night_rain.png`：夜晚雨天，雨丝清晰 + 夜色蒙版 + **背景树/光线完整保留**（未被盖）。
+- 0x373D 收包垫片曾证 `sky=4 flags=2 tint=61,102,108`（storm+午夜），链路端到端通；垫片验收后已全部删除。
+- exe 最终重编 `ad3df846481be204`（2026-11-19 18:57:41，BUILD=0）；过程中登录器曾覆盖为 9ccbbe00，已重新部署核对。
+
+**时间参数答复**：已参照 bundle 文档——4 现实小时=一整天（README "four-real-hour day" / DAY_LENGTH_MS=4h，10 秒/游戏分钟）是原值，已做成 web 可配（`/game/weather` 频率 tab），可调 720/1440 分钟。
+
 ## 083 背景还原纠错（2026-11-19 15:00，提交 `13510bd2`）
 
 **用户真机反馈**：昼夜/天气切换时魔法密林背景树与光线消失；要求还原 083 原生背景渲染逻辑，天气改用"蒙版/素材/切换"（对齐历史插件事件方式：服务端权威 0x373D 广播 = 切换，客户端只渲染）。
