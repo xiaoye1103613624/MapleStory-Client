@@ -67,6 +67,9 @@ namespace ms
 		// Local PNG / raw BGRA upload into the shared atlas (ids should avoid nlnx collisions).
 		void ensure_raw(size_t id, int16_t width, int16_t height, const uint8_t* bgra);
 		void draw_raw(size_t id, int16_t x, int16_t y, int16_t width, int16_t height, float alpha = 1.0f);
+		// Raw-atlas counterpart of draw(nl::bitmap,...): same clip/rotate semantics, raw id UV.
+		void draw_raw_ex(size_t id, const Rectangle<int16_t>& rect, const Range<int16_t>& vertical,
+			const Range<int16_t>& horizontal, const Color& color, float angle);
 
 		// Create a layout for the text with the parameters specified
 		Text::Layout createlayout(const std::string& text, Text::Font font, Text::Alignment alignment, Color::Name color, int16_t maxwidth, bool formatted, int16_t line_adj);
@@ -83,6 +86,10 @@ namespace ms
 
 		// Draw a rectangle filled with the specified color
 		void drawrectangle(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue, float alpha);
+		// 加色混合矩形（LB_ADD 语义）：结果 = dst + src*alpha，用于灯光/光晕/光池。
+		// 与普通 alpha 批次分开收集，flush 时用 GL_SRC_ALPHA/GL_ONE 单独画一批，
+		// 因此不影响任何既有 drawrectangle 的混合语义。
+		void drawrectangle_add(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue, float alpha);
 		// Fill the screen with the specified color
 		void drawscreenfill(float red, float green, float blue, float alpha);
 
@@ -343,6 +350,9 @@ namespace ms
 		bool atlas_clear_pending;
 
 		std::vector<Quad> quads;
+		// 加色批次（灯光专用）：flush 时在主批次之后单独一次 draw，混合模式
+		// 临时切到 GL_SRC_ALPHA/GL_ONE 再还原。
+		std::vector<Quad> quads_add;
 		GLuint VBO;
 		GLuint EBO;
 		GLuint atlas;

@@ -141,6 +141,17 @@ namespace ms
 			const float step = 0.02f;
 			if (level_ < target) level_ = level_ + step < target ? level_ + step : target;
 			else if (level_ > target) level_ = level_ - step > target ? level_ - step : target;
+
+			// 灯芯呼吸（参考 lamps.cpp:84-86：2500ms 升 / 2500ms 降 ≈ 5 秒一个周期）。
+			// 只调制亮度 0.85..1.0，不改变"是否点亮"，避免整天闪。
+			breathe_ms_ += 16;
+			if (breathe_ms_ >= kBreathePeriodMs)
+				breathe_ms_ -= kBreathePeriodMs;
+
+			const float phase = static_cast<float>(breathe_ms_) / static_cast<float>(kBreathePeriodMs);
+			// 三角波：0→1→0，比 sin 更贴近参考的线性升/降
+			const float tri = phase < 0.5f ? phase * 2.0f : (1.0f - phase) * 2.0f;
+			breathe_ = 0.85f + 0.15f * tri;
 		}
 
 		void Lamps::draw(double viewx, double viewy, float alpha) const
@@ -167,10 +178,10 @@ namespace ms
 				{
 					// stock art 与 MapleMoonLamp2 兜底都缺图时，自绘暖色发光球，
 					// 绝不静默跳过（用户反馈"没有路灯"）。
-					const float ga = level_ * 0.22f * alpha;
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 22, static_cast<int16_t>(sy) - 96, 44, 44,
+					const float ga = level_ * breathe_ * 0.22f * alpha;
+					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 22, static_cast<int16_t>(sy) - 96, 44, 44,
 						1.0f, 0.86f, 0.50f, ga);
-					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 86, 24, 24,
+					GraphicsGL::get().drawrectangle_add(static_cast<int16_t>(sx) - 12, static_cast<int16_t>(sy) - 86, 24, 24,
 						1.0f, 0.94f, 0.68f, ga * 1.8f);
 					continue;
 				}
@@ -181,13 +192,24 @@ namespace ms
 					static_cast<int16_t>(sy) + art->oy),
 					level_ * alpha));
 
-				// 光晕用 MapleMoonLamp.img/glow 的真实美术（暖色大光斑），仍按夜色渐亮。
+				// 光池（照亮区域）：参考 lamps.cpp:136-138 的 light POOL，半径实测。
+				// 用加色批次画，叠在地面上把地"照亮"，不是盖一层灰。
+				const float lit = level_ * breathe_ * alpha;
+				GraphicsGL::get().drawrectangle_add(
+					static_cast<int16_t>(sx) - 96, static_cast<int16_t>(sy) - 40, 192, 80,
+					1.0f, 0.88f, 0.62f, lit * 0.10f);
+				GraphicsGL::get().drawrectangle_add(
+					static_cast<int16_t>(sx) - 60, static_cast<int16_t>(sy) - 24, 120, 48,
+					1.0f, 0.90f, 0.66f, lit * 0.16f);
+
+				// 光晕：MapleMoonLamp.img/glow 真实美术 + 加色混合（参考 lamps.cpp:19
+				// "light is a separate additive sprite"）。普通 alpha 会成灰块。
 				if (const Texture* glow = glow_texture())
 				{
 					glow->draw(DrawArgument(Point<int16_t>(
 						static_cast<int16_t>(sx) + art->ox,
 						static_cast<int16_t>(sy) + art->oy),
-						level_ * 0.55f * alpha));
+						level_ * breathe_ * 0.55f * alpha));
 				}
 			}
 		}

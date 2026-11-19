@@ -13,10 +13,21 @@
 
 #include <cstdint>
 
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
 namespace ms
 {
 	namespace weather
 	{
+		// 单独加载 Data/Effect 下的某个 img（Effect 根只绑了 17 项，Weather* 系列
+		// 都不在其中；实测 rootChildren=17/首项 BasicEff.img）。返回空 node 表示失败。
+		// 结果按文件名缓存，进程内只解析一次。
+#ifdef USE_NX
+		nl::node effect_img(const char* filename);
+#endif
+
 		class Fx
 		{
 		public:

@@ -8,6 +8,7 @@
 // 原生端无 COM layer/z，地面高度用玩家脚下近似（真机校准 TODO 集中在本文件顶部）。
 //////////////////////////////////////////////////////////////////////////////////
 #include "WeatherGround.h"
+#include "WeatherFx.h"
 
 #include "WeatherState.h"
 #include "WeatherConfig.h"
@@ -84,8 +85,10 @@ namespace ms
 			//   weatheraccum.cpp:55  Effect/WeatherAccum.img/%s/%d  -> snow/leaf/petal
 			//   weatherpuddle.cpp:39 Effect/WeatherPuddle.img/%d/%d -> 0/1/2 tier
 			//   weathersplash.cpp:26 Effect/WeatherSplash.img/rain/%d
-			const nl::node effect_root = ms::res::ResourceService::get().root(ms::res::RootId::Effect);
-			nl::node acc = effect_root["WeatherAccum.img"];
+			// 注意：不能再用 ResService::root(RootId::Effect)——实测该根只绑 17 项、
+			// WeatherAccum/Puddle/Splash/Particles 都不在其中，取到的 node 全空，
+			// 导致积雪/水坑/溅射三件套静默失效。改为按文件独立加载。
+			nl::node acc = weather::effect_img("WeatherAccum.img");
 			const char* kinds[] = { "snow", "leaf", "petal" };
 			for (const char* kind : kinds)
 			{
@@ -97,7 +100,7 @@ namespace ms
 				}
 			}
 
-			nl::node pud = effect_root["WeatherPuddle.img"];
+			nl::node pud = weather::effect_img("WeatherPuddle.img");
 			for (int t = 0; t < PUDDLE_TIERS; ++t)
 			{
 				nl::node n = pud[std::to_string(t)]["0"];
@@ -105,7 +108,7 @@ namespace ms
 					puddle_nodes_.emplace_back(n);
 			}
 
-			nl::node spl = effect_root["WeatherSplash.img"]["rain"];
+			nl::node spl = weather::effect_img("WeatherSplash.img")["rain"];
 			for (int i = 0; i < 3; ++i)
 			{
 				nl::node n = spl[std::to_string(i)];

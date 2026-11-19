@@ -1921,6 +1921,14 @@ namespace ms
 		quads.emplace_back(x, x + width, y, y + height, nulloffset, Color(red, green, blue, alpha), 0.0f);
 	}
 
+	void GraphicsGL::drawrectangle_add(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue, float alpha)
+	{
+		if (locked)
+			return;
+
+		quads_add.emplace_back(x, x + width, y, y + height, nulloffset, Color(red, green, blue, alpha), 0.0f);
+	}
+
 	void GraphicsGL::drawscreenfill(float red, float green, float blue, float alpha)
 	{
 		drawrectangle(0, 0, VWIDTH, VHEIGHT, red, green, blue, alpha);
@@ -1994,6 +2002,48 @@ namespace ms
 		glDisableVertexAttribArray(attribute_coord);
 		glDisableVertexAttribArray(attribute_color);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		// 加色批次（灯光/光晕/光池）：主批次画完后单独一次 draw。
+		// 混合切到 GL_SRC_ALPHA/GL_ONE（dst + src*alpha），画完立即还原，
+		// 既有 quad 的 alpha 混合语义不受影响。
+		if (!quads_add.empty())
+		{
+			const GLsizeiptr asize = quads_add.size() * sizeof(Quad);
+			const GLsizeiptr afsize = quads_add.size() * Quad::LENGTH;
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			glEnableVertexAttribArray(attribute_coord);
+			glEnableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, asize, quads_add.data(), GL_STREAM_DRAW);
+#ifdef USE_OPENGL_ES
+			{
+				const size_t icount = quads_add.size() * 6;
+				std::vector<GLushort> indices(icount);
+				for (size_t i = 0; i < quads_add.size(); ++i)
+				{
+					GLushort b = static_cast<GLushort>(i * 4);
+					indices[i * 6 + 0] = b;
+					indices[i * 6 + 1] = b + 1;
+					indices[i * 6 + 2] = b + 2;
+					indices[i * 6 + 3] = b;
+					indices[i * 6 + 4] = b + 2;
+					indices[i * 6 + 5] = b + 3;
+				}
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(), GL_STREAM_DRAW);
+				glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(icount), GL_UNSIGNED_SHORT, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			}
+#else
+			glDrawArrays(GL_QUADS, 0, afsize);
+#endif
+			glDisableVertexAttribArray(attribute_coord);
+			glDisableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			quads_add.clear();
+		}
 
 		if (coverscene)
 			quads.pop_back();
@@ -2148,6 +2198,28 @@ namespace ms
 #endif
 
 		offsets.emplace(id, Offset(x, y, width, height));
+	}
+
+	void GraphicsGL::draw_raw_ex(size_t id, const Rectangle<int16_t>& rect, const Range<int16_t>& vertical,
+		const Range<int16_t>& horizontal, const Color& color, float angle)
+	{
+		if (locked || color.invisible() || !rect.overlaps(SCREEN))
+			return;
+		auto it = offsets.find(id);
+		if (it == offsets.end())
+			return;
+		Offset offset = it->second;
+		offset.top += vertical.first();
+		offset.bottom -= vertical.second();
+		offset.left += horizontal.first();
+		offset.right -= horizontal.second();
+		quads.emplace_back(
+			rect.left() + horizontal.first(),
+			rect.right() - horizontal.second(),
+			rect.top() + vertical.first(),
+			rect.bottom() - vertical.second(),
+			offset, color, angle
+		);
 	}
 
 	void GraphicsGL::draw_raw(size_t id, int16_t x, int16_t y, int16_t width, int16_t height, float alpha)

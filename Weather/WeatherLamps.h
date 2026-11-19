@@ -28,6 +28,11 @@ namespace ms
 		private:
 			Lamps() = default;
 			float level_ = 0.0f;   // 当前光晕强度（趋近 night_level）
+
+			// 灯芯呼吸：参考 lamps.cpp:84-86，约 5 秒一个周期（2500ms 升 / 2500ms 降）。
+			static constexpr uint32_t kBreathePeriodMs = 5000;
+			uint32_t breathe_ms_ = 0;   // 呼吸相位
+			float breathe_ = 1.0f;      // 呼吸亮度系数 0.85..1.0
 		};
 	}
 }

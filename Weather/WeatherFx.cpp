@@ -2,6 +2,11 @@
 // 天气渲染实现：昼夜曲线逐字移植自 bundle weather.cpp:363-431（与服务端
 // WeatherService.nightLevel() 成对，两端必须一致）；叠加走 GraphicsGL::drawscreenfill。
 //////////////////////////////////////////////////////////////////////////////////
+// 2026-11-20 修复编译破损：WeatherFx.h 的 nl::node 声明需要 USE_NX + nlnx。
+// 必须先包含 MapleStory.h（它 #define USE_NX 并带入 nlnx），否则 WeatherFx.h
+// 首次被包含时 USE_NX 未定义/或宏重定义顺序错乱 → "nl 不是类或命名空间"。
+#include "../MapleStory.h"
+
 #include "WeatherFx.h"
 
 #include "WeatherState.h"
@@ -188,32 +193,36 @@ namespace ms
 		// Effect 根只绑了 17 项（实测 rootChildren=17、首项 BasicEff.img），
 		// WeatherParticles.img 不在其中 → 必须单独加载这一张（用户要求"用客户端资源"）。
 		// 与 ImgSource::load_standard 同后端：nl::img_file::open_single + root()。
-		static nl::node weather_particles_root()
+		nl::node effect_img(const char* filename)
 		{
-			static std::unique_ptr<nl::img_file> file;
-			static nl::node root;
-			if (!file)
+			static std::map<std::string, nl::node> cache;
+			static std::map<std::string, std::unique_ptr<nl::img_file>> files;
+
+			auto it = cache.find(filename);
+			if (it != cache.end())
+				return it->second;
+
+			nl::node root;
+			const std::string& base = res::ResourceService::get().base();
+			std::string path = base + "/Effect/" + filename;
+			std::ifstream in(path, std::ios::binary);
+			if (in)
 			{
-				const std::string& base = res::ResourceService::get().base();
-				std::string path = base + "/Effect/WeatherParticles.img";
-				std::ifstream in(path, std::ios::binary);
-				if (in)
+				std::vector<char> buf((std::istreambuf_iterator<char>(in)),
+					std::istreambuf_iterator<char>());
+				try
 				{
-					std::vector<char> buf((std::istreambuf_iterator<char>(in)),
-						std::istreambuf_iterator<char>());
-					try
-					{
-						auto f = std::make_unique<nl::img_file>();
-						f->open_single(std::move(buf));
-						root = f->root();
-						file = std::move(f);
-					}
-					catch (...)
-					{
-						file.reset();
-					}
+					auto f = std::make_unique<nl::img_file>();
+					f->open_single(std::move(buf));
+					root = f->root();
+					files.emplace(filename, std::move(f));
+				}
+				catch (...)
+				{
+					root = nl::node();
 				}
 			}
+			cache.emplace(filename, root);
 			return root;
 		}
 
@@ -226,7 +235,7 @@ namespace ms
 
 			std::vector<Texture> frames;
 #ifdef USE_NX
-			nl::node root = weather_particles_root();
+			nl::node root = effect_img("WeatherParticles.img");
 			if (!root)
 			{
 				// 退路：若 Effect 根将来包含该 img，则直接用已绑定的根。
@@ -270,7 +279,7 @@ namespace ms
 				float scale = 2.0f;   // 真实美术很小(5x9/6x5)，按 2x 放大才看清
 				switch (sky)
 				{
-				case Sky::SNOW:      group = "snowFall";     count = 220; speed = 130; scale = 2.2f; break;
+				case Sky::SNOW:      group = "snowFall";     count = static_cast<int>(220 * (0.55f + 0.45f * prof.cloud)); speed = 130; scale = 2.2f; break;
 				case Sky::BLIZZARD:  group = "blizzardSnow"; count = 420; speed = 300; drift = 60.0f; scale = 2.4f; break;
 				case Sky::LEAVES:    group = "leafMix";      count = 120; speed = 140; drift = 45.0f; scale = 1.6f; break;
 				case Sky::BLOSSOM:   group = "blossomMix";   count = 140; speed = 110; drift = 35.0f; scale = 1.6f; break;
@@ -316,9 +325,13 @@ namespace ms
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
 			const int16_t vh = Constants::Constants::get().get_viewheight();
 			const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
-			const int speed = (sky == Sky::STORM) ? 470 : 380;
-			const int count = (sky == Sky::STORM) ? 140 : 110;
-			const float base_alpha = 0.40f + 0.35f * prof.rain;
+			// 强度分级：参考实现 weather_profiles.inc 的 rain 是连续 0..1（无三级枚举），
+			// 这里同样用 profile.rain 连续缩放密度与速度，而不是造假的三档。
+			// 小雨(rain≈0.5)：约 55 根、速度 300；大雨(rain=1.0)：约 110~140 根、380/470。
+			const float ri = prof.rain < 0.0f ? 0.0f : (prof.rain > 1.0f ? 1.0f : prof.rain);
+			const int speed = static_cast<int>((sky == Sky::STORM ? 470.0f : 380.0f) * (0.78f + 0.22f * ri));
+			const int count = static_cast<int>(((sky == Sky::STORM ? 140.0f : 110.0f) * (0.5f + 0.5f * ri)));
+			const float base_alpha = 0.40f + 0.35f * ri;
 
 			for (int i = 0; i < count; ++i)
 			{
