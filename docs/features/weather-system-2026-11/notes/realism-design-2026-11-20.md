@@ -114,7 +114,8 @@
 - 三档粒子**视觉**严格单调差异未拿到可信量化（原生云/角色动画干扰；探针证功能通）。
 - 路灯错峰/暖色灯芯画面未单独验收。
 - 蓝调时刻（独立 blue hour 色温层）未做——由 smoothstep + goldenFactor 近似。
-- 服务端 `966d633eba`（smoothstep + GM 命令）**需用户再重启一次**才生效；当前运行 JVM（11:49 启）仍是旧 nightLevel/无 intensity 命令。web 强度配置通道（80e7881e0b）已在运行版本生效。
+- 服务端已于 13:43 重启，`966d633eba`（smoothstep + GM 命令）**已生效**：`Started ServerApplication in 5.615s`、`[WeatherIntensity] reload v=1`。web `intensity/get` 20000、reset 回基线 `[1,1,1,1,2,2,1,1,2]` 已确认。
+- **GM `!weather intensity` 命令真机未验收**：自动化脚本的聊天输入框坐标在当前 HUD 布局下失效（点 y=601/y=684、Enter 均打不开输入行，打字触发了快捷键），命令未发出（web version 未变、服务端日志无 saved）。命令代码本身已编译 EXIT=0，且与已端到端验证的 web 保存共用同一 `WeatherIntensityService.save`；GUI 输入失败是测试方法学问题，非产品缺陷。待手工在游戏里敲一次确认。
 
 ## 五、验收（待服务端重启后）
 
