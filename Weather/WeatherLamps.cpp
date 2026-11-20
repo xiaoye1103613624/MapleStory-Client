@@ -9,10 +9,16 @@
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include <nlnx/wz.hpp>
 #endif
 
 #include <map>
 #include <string>
+#include "../Util/Resource/ResourceService.h"
+#include <fstream>
+#include <iterator>
+#include <memory>
+#include <vector>
 
 namespace ms
 {
@@ -105,7 +111,60 @@ namespace ms
 			}
 		}
 
-		// 按 art 懒加载真实 sprite（Texture 走 Map/Obj 根，与 Obj.cpp:28 同口径）。
+		// 热点：本端 Map 合并根不含后加的 Obj img（真机三路探针实证：
+		// A merged=type0 / B single=type5(bitmap) / C 合并根取不到）。
+		// 因此所有灯 art 一律按文件独立加载：base()/Map/Obj/<bank>.img，
+		// 与已成功的粒子 effect_img() 同为 nl::img_file::open_single。
+		static nl::node obj_img(const char* bank)
+		{
+			static std::map<std::string, nl::node> cache;
+			static std::map<std::string, std::unique_ptr<nl::img_file>> files;
+			auto it = cache.find(bank);
+			if (it != cache.end())
+				return it->second;
+
+			nl::node root;
+#ifdef USE_NX
+			const std::string& base = res::ResourceService::get().base();
+			std::string path = base + "/Map/Obj/" + bank + ".img";
+			std::ifstream in(path, std::ios::binary);
+			if (in)
+			{
+				std::vector<char> buf((std::istreambuf_iterator<char>(in)),
+					std::istreambuf_iterator<char>());
+				try
+				{
+					auto f = std::make_unique<nl::img_file>();
+					f->open_single(std::move(buf));
+					root = f->root();
+					files.emplace(bank, std::move(f));
+				}
+				catch (...)
+				{
+					root = nl::node();
+				}
+			}
+#endif
+			cache.emplace(bank, root);
+			return root;
+		}
+
+		// 取 canvas：Obj art 的 bitmap 在 <dir>/<name>/<no>/0（实测 gaslamp/0/0=96x259）。
+		// 若 <no> 本身已是 bitmap 则直接用（兼容其他结构）。
+		static nl::node art_node(nl::node root, const char* dir, const char* name, const char* no)
+		{
+			if (!root)
+				return nl::node();
+			nl::node n = root[dir][name][no];
+			if (!n)
+				return nl::node();
+			if (n.data_type() == nl::node::type::bitmap)
+				return n;
+			nl::node first = n["0"];
+			return first.data_type() == nl::node::type::bitmap ? first : nl::node();
+		}
+
+		// 按 art 懒加载真实 sprite。
 		static const Texture* lamp_texture(const LampArt& a)
 		{
 			static std::map<std::string, Texture> cache;
@@ -113,25 +172,18 @@ namespace ms
 			auto it = cache.find(key);
 			if (it != cache.end())
 				return it->second.is_valid() ? &it->second : nullptr;
+
+			Texture t;
 #ifdef USE_NX
-			nl::node n = nl::nx::Map["Obj"][std::string(a.bank) + ".img"][a.dir][a.name][a.no];
-			Texture t = n ? Texture(n) : Texture();
-			if (!t.is_valid())
-			{
-				// 兜底：stock bank 在 live 缺该 art 时（真机实测 arcana 等 tex=0），
-				// 改用 live 里确实存在的 MapleMoonLamp2 街灯
-				// （weather_lamptable2.inc 首行 {MapleMoonLamp2, street, gaslamp, 0}）。
-				nl::node fb = nl::nx::Map["Obj"]["MapleMoonLamp2.img"]["street"]["gaslamp"]["0"];
-				if (fb)
-					t = Texture(fb);
-			}
+			// 首选参考表的 art；失败则兜底到本端确实存在的街灯（gaslamp 96x259）。
+			nl::node n = art_node(obj_img(a.bank), a.dir, a.name, a.no);
+			if (!n)
+				n = art_node(obj_img("MapleMoonLamp2"), "street", "gaslamp", "0");
+			if (n)
+				t = Texture(n);
+#endif
 			auto res = cache.emplace(key, t);
 			return res.first->second.is_valid() ? &res.first->second : nullptr;
-#else
-			static Texture none;
-			cache.emplace(key, none);
-			return nullptr;
-#endif
 		}
 
 		void Lamps::update(float night_level)
@@ -176,10 +228,8 @@ namespace ms
 				const Texture* tex = art ? lamp_texture(*art) : nullptr;
 				if (tex == nullptr)
 				{
-					// 真机实测：参考表的 stock art 路径在本端解析为空节点
-					// （type=0，非 bitmap 也非 link），MapleMoonLamp2 单文件解析同样拿不到
-					// 纹理，所以这里自绘一盏完整的灯：灯柱 + 灯球 + 加色光晕 + 地面光池。
-					// 绝不静默跳过（用户反馈"没有路灯"）。
+					// 真素材按文件独立加载失败时的最后兜底（正常不会走到）：
+					// 自绘完整灯具 —— 灯柱 + 灯球 + 加色光晕 + 地面光池，绝不静默跳过。
 					const float ga = level_ * breathe_ * alpha;
 					// 灯柱（深色铸铁杆）
 					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 3, static_cast<int16_t>(sy) - 84,
