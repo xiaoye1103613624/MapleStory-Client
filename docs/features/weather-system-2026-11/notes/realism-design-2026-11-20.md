@@ -114,6 +114,13 @@
 - 三档粒子**视觉**严格单调差异未拿到可信量化（原生云/角色动画干扰；探针证功能通）。
 - 路灯错峰/暖色灯芯画面未单独验收。
 - 蓝调时刻（独立 blue hour 色温层）未做——由 smoothstep + goldenFactor 近似。
+**路灯闪烁修复（2026-11-20 14:14，用户反馈"灯光哪有一直闪烁的"）**：
+- 行号级真因：`WeatherLamps.cpp:242-244` stagger 做成 `(tick+phase)%1300` 的 **1.3s 周期 45% 幅度循环**（主因）；`:219-224` + `WeatherLamps.h:46` breathe 5s 周期 15% 幅度（次因）。
+- 参考实证：`lamps.cpp:430 LAMP_STAGGER_MS=2600` 是"点亮那一刻"的一次性错峰（"a street lighting up one lamp at a time reads as a town waking up"），点亮后应稳定；`lamps.cpp:212-224` 明确指出路灯自身 brightness ramp 是故障，参考用 `LampKeepFrame/LampStaticFrame` 停掉 art 自带呼吸。
+- 修复（提交 `df2083ad`）：删 breathe 全部成员/相位/乘数；stagger 改为 `lit_since_ms - lamp_seq*2600` 的一次性 0→1（1200ms warmup），到位后恒 1。`grep` 确认源码零 `%1300/%5000/sin` 周期逻辑；隔离编译+整工程 BUILD=0；live SHA `0ec62b437f1c335c`。
+- 月亮：源码早已无 `moon_breathe/draw_moon_disc` 残留；用户看到的明暗是地图原生云层飘过遮挡（5 点同步升降实测、参考 `weatherfx.cpp:1101-1103` 云本在月前），非天气层缺陷。
+
+**服务端重启确认**：
 - 服务端已于 13:43 重启，`966d633eba`（smoothstep + GM 命令）**已生效**：`Started ServerApplication in 5.615s`、`[WeatherIntensity] reload v=1`。web `intensity/get` 20000、reset 回基线 `[1,1,1,1,2,2,1,1,2]` 已确认。
 - **GM `!weather intensity` 命令真机未验收**：自动化脚本的聊天输入框坐标在当前 HUD 布局下失效（点 y=601/y=684、Enter 均打不开输入行，打字触发了快捷键），命令未发出（web version 未变、服务端日志无 saved）。命令代码本身已编译 EXIT=0，且与已端到端验证的 web 保存共用同一 `WeatherIntensityService.save`；GUI 输入失败是测试方法学问题，非产品缺陷。待手工在游戏里敲一次确认。
 
