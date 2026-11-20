@@ -56,15 +56,28 @@ namespace ms
 			return std::sin(t * 3.14159265f);
 		}
 
+		// smoothstep(t)=t²(3-2t)：两端导数 0、中段陡，取代线性，使黄昏/黎明暗变化
+		// 更接近真实太阳高度角。必须与服务端 WeatherService.nightLevel() 逐字同步
+		// （端到端不变量：包里只发分钟，两端各自用同一函数算 night level）。
+		static float smoothstep(float t)
+		{
+			const float c = t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t);
+			return c * c * (3.0f - 2.0f * c);
+		}
+
 		static float night_from_minute(float minute)
 		{
 			if (minute < DAWN_START || minute >= DUSK_END)
 				return 1.0f;
 			if (minute < DAWN_END)
-				return 1.0f - (minute - DAWN_START) / static_cast<float>(DAWN_END - DAWN_START);
+			{
+				const float t = (minute - DAWN_START) / static_cast<float>(DAWN_END - DAWN_START);
+				return 1.0f - smoothstep(t);   // 夜→昼
+			}
 			if (minute < DUSK_START)
 				return 0.0f;
-			return (minute - DUSK_START) / static_cast<float>(DUSK_END - DUSK_START);
+			const float t = (minute - DUSK_START) / static_cast<float>(DUSK_END - DUSK_START);
+			return smoothstep(t);             // 昼→夜
 		}
 
 		static float step_toward(float current, float target, float step)
