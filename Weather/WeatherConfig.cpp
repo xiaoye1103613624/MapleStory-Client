@@ -103,6 +103,15 @@ namespace ms
 			tint_ramp_version_ = version;
 		}
 
+		void Config::apply_intensities(uint32_t version, const uint8_t* rows, size_t count)
+		{
+			if (!rows || version == 0)
+				return;
+			for (size_t i = 0; i < count && i < static_cast<size_t>(Sky::COUNT); ++i)
+				intensities_[i] = rows[i] > 2 ? 1 : rows[i];
+			intensity_version_ = version;
+		}
+
 		void Config::reset()
 		{
 			std::memcpy(profiles_, kDefaultProfiles, sizeof(kDefaultProfiles));
@@ -111,6 +120,12 @@ namespace ms
 			tint_ramps_overridden_ = false;
 			profile_version_ = 0;
 			tint_ramp_version_ = 0;
+			// 强度恢复参考语义默认（不因断线/重连停留在上一次服务端的 DB 配置）
+			{
+				const uint8_t def[static_cast<size_t>(Sky::COUNT)] = {1, 1, 1, 1, 2, 2, 1, 1, 2};
+				std::memcpy(intensities_, def, sizeof(def));
+			}
+			intensity_version_ = 0;
 		}
 	}
 }

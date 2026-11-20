@@ -61,4 +61,11 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// 天气强度档（SendOpcode.WEATHER_INTENSITY = 0x3741）：
+	// wire = short version | byte[9] intensities(0轻/1中/2强)，落地到 weather::Config。
+	class WeatherIntensityHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

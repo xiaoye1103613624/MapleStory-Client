@@ -258,8 +258,8 @@ namespace ms
 		}
 
 		// 各天气的粒子参数：groups 用真实美术；雨/风暴用自绘雨丝（无对应美术）。
-		// 速度按参考实现"雪慢/暴雪快/沙暴密"的区分，并把雨速从 700 降到 380 px/s
-		// （用户反馈"雨天水滴很快"）。
+		// 现实化强度（0轻/1中/2强，0x3741 下发）：密度、速度、大小、alpha、风偏、
+		// 雨丝长度/斜度同时变化——真实天气的强弱是多维联动，不是只改一个数。
 		void Fx::draw_particles(double viewx, double viewy) const
 		{
 			const State& st = State::get();
@@ -268,6 +268,13 @@ namespace ms
 
 			const Sky sky = st.sky();
 			const Profile& prof = Config::get().profile(sky);
+			// 强度档 → 乘数。轻档稀疏慢小、强档密集快大且风偏明显。
+			const uint8_t lvl = Config::get().intensity(sky);
+			const float densityMul = (lvl == 0) ? 0.35f : (lvl == 2 ? 1.60f : 1.0f);
+			const float speedMul   = (lvl == 0) ? 0.70f : (lvl == 2 ? 1.35f : 1.0f);
+			const float scaleMul   = (lvl == 0) ? 0.85f : (lvl == 2 ? 1.15f : 1.0f);
+			const float alphaMul   = (lvl == 0) ? 0.70f : (lvl == 2 ? 1.0f : 0.90f);
+			const float driftMul   = (lvl == 0) ? 0.55f : (lvl == 2 ? 1.40f : 1.0f);
 
 			const bool rain = (sky == Sky::RAIN || sky == Sky::STORM);
 			if (!rain)
@@ -288,6 +295,12 @@ namespace ms
 				}
 				if (group == nullptr)
 					return;
+
+				// 强度档统一作用于密度/速度/尺寸/风偏（现实感来自多维联动）。
+				count = static_cast<int>(count * densityMul);
+				speed = static_cast<int>(speed * speedMul);
+				scale *= scaleMul;
+				drift *= driftMul;
 
 				const std::vector<Texture>& frames = particle_frames(group);
 				if (frames.empty())
@@ -316,7 +329,7 @@ namespace ms
 					const int px = x < 0 ? x + vw : (x >= vw ? x - vw : x);
 
 					tex.draw(DrawArgument(Point<int16_t>(static_cast<int16_t>(px), static_cast<int16_t>(fall)),
-						scale, scale, 0.80f + 0.20f * ((h2 >> 8 & 7) / 7.0f)));
+						scale, scale, (0.80f + 0.20f * ((h2 >> 8 & 7) / 7.0f)) * alphaMul));
 				}
 				return;
 			}
@@ -329,9 +342,13 @@ namespace ms
 			// 这里同样用 profile.rain 连续缩放密度与速度，而不是造假的三档。
 			// 小雨(rain≈0.5)：约 55 根、速度 300；大雨(rain=1.0)：约 110~140 根、380/470。
 			const float ri = prof.rain < 0.0f ? 0.0f : (prof.rain > 1.0f ? 1.0f : prof.rain);
-			const int speed = static_cast<int>((sky == Sky::STORM ? 470.0f : 380.0f) * (0.78f + 0.22f * ri));
-			const int count = static_cast<int>(((sky == Sky::STORM ? 140.0f : 110.0f) * (0.5f + 0.5f * ri)));
-			const float base_alpha = 0.40f + 0.35f * ri;
+			const int speed = static_cast<int>((sky == Sky::STORM ? 470.0f : 380.0f) * (0.78f + 0.22f * ri) * speedMul);
+			const int count = static_cast<int>(((sky == Sky::STORM ? 140.0f : 110.0f) * (0.5f + 0.5f * ri)) * densityMul);
+			const float base_alpha = (0.40f + 0.35f * ri) * alphaMul;
+			// 现实感：雨丝长度随强度增加（小雨短滴、大雨长线），强档加斜度（风驱）。
+			const int drop_h = static_cast<int>(14 * scaleMul) + lvl * 4;
+			const int drop_w = (lvl == 2) ? 3 : 2;
+			const int slant = (lvl == 2) ? 6 : (lvl == 1 ? 2 : 0);
 
 			for (int i = 0; i < count; ++i)
 			{
@@ -340,8 +357,14 @@ namespace ms
 				const int sx = static_cast<int>(h % static_cast<uint32_t>(vw));
 				const int span = vh + 32;
 				const int sy = static_cast<int>((phase * static_cast<uint32_t>(speed) / 1000u + h2 % span) % span) - 16;
+				// 斜雨：用两层错位小矩形近似（强档向右倾），不做旋转避免开销。
 				GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx), static_cast<int16_t>(sy),
-					2, 18, 0.74f, 0.86f, 1.0f, base_alpha);
+					static_cast<int16_t>(drop_w), static_cast<int16_t>(drop_h),
+					0.74f, 0.86f, 1.0f, base_alpha);
+				if (slant > 0)
+					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx + slant), static_cast<int16_t>(sy + drop_h / 2),
+						static_cast<int16_t>(drop_w), static_cast<int16_t>(drop_h / 2),
+						0.74f, 0.86f, 1.0f, base_alpha * 0.6f);
 			}
 		}
 

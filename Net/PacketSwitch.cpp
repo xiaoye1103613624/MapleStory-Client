@@ -419,7 +419,8 @@ namespace ms
 		SET_ITEM_SKILL_BONUS = 0x176,
 		/// 天气系统：世界时钟/天空同步（0x373D）与路灯预览（0x373F），双端实测无占用
 		WEATHER_SYNC = 0x373D,
-		LAMP_PREVIEW = 0x373F
+		/// 天气现实化：强度档下发（0x3741），0x3740 保留 recv twin 未用
+		WEATHER_INTENSITY = 0x3741
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -793,6 +794,7 @@ namespace ms
 		// 天气系统：世界状态同步 + 路灯预览（走 0x37xx 稀疏表）
 		emplace<WEATHER_SYNC, WeatherSyncHandler>();
 		emplace<LAMP_PREVIEW, LampPreviewHandler>();
+		emplace<WEATHER_INTENSITY, WeatherIntensityHandler>();
 
 		// 世界地图掉落查询回复
 		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();
@@ -1179,6 +1181,7 @@ namespace ms
 			case 0x176: opcode_msg = "SET_ITEM_SKILL_BONUS"; break;
 			case 0x373D: opcode_msg = "WEATHER_SYNC"; break;
 			case 0x373F: opcode_msg = "LAMP_PREVIEW"; break;
+			case 0x3741: opcode_msg = "WEATHER_INTENSITY"; break;
 			default: break;
 		}
 

@@ -31,6 +31,7 @@
 #include "../../Character/Player.h"
 #include "../../Data/SetItemData.h"
 #include "../../Weather/WeatherState.h"
+#include "../../Weather/WeatherConfig.h"
 #include "../../Util/PerfLog.h"
 
 #include <string>
@@ -215,6 +216,21 @@ namespace ms
 			<< " sky=" << static_cast<int>(sky) << " palette=" << static_cast<int>(palette)
 			<< " flags=" << static_cast<int>(flags)
 			<< " tint=" << static_cast<int>(tint_r) << ',' << static_cast<int>(tint_g) << ',' << static_cast<int>(tint_b));
+	}
+
+	void WeatherIntensityHandler::handle(InPacket& recv) const
+	{
+		// wire: short version | byte[9] intensity(0轻/1中/2强)，共 11 字节（opcode 已读）。
+		if (recv.available() < 10)
+			return;
+		const uint16_t version = static_cast<uint16_t>(recv.read_short());
+		uint8_t rows[9] = {1, 1, 1, 1, 2, 2, 1, 1, 2};
+		for (int i = 0; i < 9; ++i)
+			rows[i] = static_cast<uint8_t>(recv.read_byte());
+		weather::Config::get().apply_intensities(version, rows, 9);
+		LOG(LOG_DEBUG, "[Weather] 0x3741 intensity v=" << version
+			<< " rows=" << static_cast<int>(rows[1]) << ',' << static_cast<int>(rows[2])
+			<< ',' << static_cast<int>(rows[4]) << ',' << static_cast<int>(rows[5]));
 	}
 
 	void LampPreviewHandler::handle(InPacket& recv) const

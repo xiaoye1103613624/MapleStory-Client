@@ -50,14 +50,24 @@ namespace ms
 			uint32_t profile_version() const { return profile_version_; }
 			uint32_t tint_ramp_version() const { return tint_ramp_version_; }
 
+			// 现实化强度档（0=轻/1=中/2=强），由 0x3741 下发。
+			// 未收到包时用参考 sky 语义默认（rain/snow=中，storm/blizzard/sandstorm=强）。
+			uint8_t intensity(Sky sky) const { return intensities_[static_cast<size_t>(sky)]; }
+			void apply_intensities(uint32_t version, const uint8_t* rows, size_t count);
+			uint32_t intensity_version() const { return intensity_version_; }
+
 			void reset();
 
 		private:
 			Config();
 			Profile profiles_[static_cast<size_t>(Sky::COUNT)];
 			TintRamp tint_ramps_[static_cast<size_t>(PaletteId::COUNT)];
+			// 参考语义默认：CLEAR/Rain/SNOW/OVERCAST/LEAVES/BLOSSOM=中(1)，
+			// STORM/BLIZZARD/SANDSTORM=强(2)。
+			uint8_t intensities_[static_cast<size_t>(Sky::COUNT)] = {1, 1, 1, 1, 2, 2, 1, 1, 2};
 			uint32_t profile_version_ = 0;
 			uint32_t tint_ramp_version_ = 0;
+			uint32_t intensity_version_ = 0;
 			bool profiles_overridden_ = false;
 			bool tint_ramps_overridden_ = false;
 		};
