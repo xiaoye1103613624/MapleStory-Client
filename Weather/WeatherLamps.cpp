@@ -24,6 +24,10 @@ namespace ms
 {
 	namespace weather
 	{
+		// 前置声明（定义在下方）：Obj art 的 single-file 加载与 canvas 取节点。
+		static nl::node obj_img(const char* bank);
+		static nl::node art_node(nl::node root, const char* dir, const char* name, const char* no);
+
 		Lamps& Lamps::get()
 		{
 			static Lamps instance;
@@ -39,7 +43,9 @@ namespace ms
 			{
 				tried = true;
 #ifdef USE_NX
-				nl::node n = nl::nx::Map["Obj"]["MapleMoonLamp.img"]["glow"]["large"]["0"];
+				// 与路灯同因：合并根 nl::nx::Map["Obj"] 取不到后加的 img（实测 type=0）。
+				// 改走 single-file obj_img() + art_node()（<no>/0 canvas 层级）。
+				nl::node n = art_node(obj_img("MapleMoonLamp"), "glow", "large", "0");
 				if (n)
 					tex = Texture(n);
 #endif
