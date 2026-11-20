@@ -97,11 +97,18 @@
 | 管理端 | `d6bd8b5e7c` | `intensityTab.vue`（8 类天气三档单选）、api 三函数、index tab、zh-CN/en-US 19 键。`type:check` 仅剩 file/index.vue 既有 3 错 |
 | 客户端 | `ee058099` | 0x3741 收包（12 字段零改）、强度默认表、粒子 5 维联动分级、雨丝长度/斜度随档、路灯 photo 迟滞/暮色/warmup/stagger/暖色灯芯 LB_NORMAL+光晕 LB_ADD。隔离编译 5 单元零 error + 整工程 BUILD=0 |
 
+**服务端重启与真机验收（2026-11-20 11:49–12:12）**：
+- 用户 11:49 重启服务端：首启 11:28 失败（`@AllArgsConstructor` 把 `int[]/int` 当 bean 注入，日志 "No qualifying bean of type 'int'"，提交 `889bb55b69` 修复为手写构造器）；11:49:31 `Started ServerApplication`，日志 `[WeatherIntensity] reload v=1 intensities=[1,1,1,1,2,2,1,1,2]`。
+- 端口 8484/7575/8686 全监听、`/weather/v1/intensity/get` 返回 20000、Flyway 建表 `weather_intensity_config`（config id=1）。
+- **0x3741 端到端探针铁证**（`_wi.log`，验收后已删）：`v=6 rows=...,rain=2 applied=2`（save 强档）→ `v=7 applied=2`（进图补发）→ `v=8 rain=1 applied=1`（reset 回默认）。即：web 保存 → 服务端广播 → 客户端收包 → `Config::apply_intensities` 落地 → `Config::intensity(RAIN)` 返回新档，**全链路成立**。
+- 真 bug 修复：前端 `WeatherIntensityRecord`/tab 用下划线字段 → `intensity/save` 40000（Jackson 强类型 DO 需驼峰）；实测下划线=40000/驼峰=20000，改驼峰后修复（服务端提交 `226c419f9b`）。
+- 三档雨夜截图 `V_{light,medium,heavy}_rain_night_{a,b}.png` 已留存；但我用的"帧差移动像素"口径（7556/7420/7989）被原生云层/角色动画淹没，**不能作为粒子强度递增的证据**——探针才是证据，视觉量化口径待改进（如固定相机、隐藏 NPC 的纯背景帧）。
+
 **未闭环（如实）**：
-- 服务端为 IntelliJ 启动的常驻 JVM（PID 37580，9:09 启动，早于新代码），**尚未重启** → 新 bean / V1.9.11 migration / 0x3741 广播未生效；DB 表 `weather_intensity_config` 当前不存在，需服务端重启后 Flyway 建表。
-- 真机三档强度对比截图、路灯错峰/暖芯画面**未验收**（未重启服务端，客户端收不到 0x3741，当前仍走参考默认档）。
-- 昼夜曲线 smoothstep/蓝调时刻（设计 §2.2）**未实现**——参考实现本就是线性，属纯新增，用户未单独拍板，本轮聚焦强度与路灯。
-- GM 命令 `!weather intensity`**未做**（web 可配已闭环，临时调可用 web）。
+- 三档粒子**视觉**差异未拿到可信量化（探针证功能通，截图受云/角色干扰）。
+- 路灯错峰/暖色灯芯画面未验收（本轮聚焦强度协议闭环）。
+- 昼夜曲线 smoothstep/蓝调时刻（设计 §2.2）**未实现**——参考实现本就是线性，属纯新增，用户未单独拍板。
+- GM 命令 `!weather intensity`**未做**（web 可配已闭环）。
 
 ## 五、验收（待服务端重启后）
 
