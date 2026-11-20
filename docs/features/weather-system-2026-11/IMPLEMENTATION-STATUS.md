@@ -158,6 +158,29 @@
 - 户外判定 D1 先用"有 world state 才 tint"保守策略，未做 bundle 的 backmost (bS,no) 白名单（264 手工排除 + 57 sky bases），避免误压室内。完整判定 + skytable 双端一致留后续。
 - 天空注入（云/月/雨雪 sheet）、地面堆积、路灯 sprite、音效、sway 均属 D1 预留项，接口未启用。
 
+## 素材同步全（2026-11-20 08:21–08:45，提交 `1685ae58` / `cead4a20`）
+
+用户："天气系统要做就把素材同步全"。逐条取证闭环：
+
+**物理清单**：bundle `weather-time-systems/wz/client` 10 个 img，live `Data` 全部存在（另多 `MapleMoonLamp2.img` 1.54MB）；SHA 8/10 不同 = 历史导入的不同打包版本，**不是缺素材**。
+
+**orange-wz MCP（128B key，端点 10012）实测**：bundle/live 的 `MapleMoonLamp.img` 内容层都能解析（`glow` 等节点在，`get_node_tree_json` 成功）→ **素材健康，不是资源坏**。
+
+**本端三路加载探针（终结诊断）**：
+```
+A  nl::nx::Map["Obj"]["MapleMoonLamp2.img"]...   → type=0（合并根取不到后加 img）
+B  nl::img_file::open_single(...)["street"]["gaslamp"]["0"]["0"] → type=5(bitmap) 有效 ✓
+C  旧兜底 acc1/space/21 → 本端 img 无该编号 → tex=0
+```
+
+**修复**：`WeatherLamps.cpp` 新增 `obj_img(bank)`（single-file `open_single` + `base()/Map/Obj/<bank>.img`，与已成功的粒子 `effect_img()` 同机制）+ `art_node()`（取 `<dir>/<name>/<no>/0` canvas 层级，实测 `gaslamp/0/0 = 96×259`）。`lamp_texture()` 与 `glow_texture()` 都改走它（光晕原本也走合并根、同因遗漏）。
+
+**真机验证**：`lamp id=6 tex=1 dim=77x153`（改前 `tex=0 dim=0x0`）→ **真实素材已加载，不再自绘兜底**。
+
+**全套 11 素材可解析核对**（本端 `_wz.py`）：`WeatherParticles / WeatherSplash / WeatherPuddle / WeatherAccum / WeatherFog / WeatherRainbow / WeatherSnow / MapleMoonSky / MapleMoonLamp / MapleMoonLamp2 / Weather 音效` 全部在 live 且节点可解析。粒子/溅射/水坑走 `effect_img` single-file，路灯/光晕走 `obj_img` single-file → 素材同步全闭环。
+
+**产物**：live `E:\MXD\BeiDou-Client-xy\MapleStory.exe` SHA `d368183acda405cf…`（即时+8s 一致），四个临时日志串二进制内 0 命中。
+
 ## 独占真机验收（2026-11-20 07:37–07:48，用户给 1 分钟独占窗口）
 
 ### 月亮"方块"与"一直闪"——用户 01:36 本端截图反馈的三项，逐条闭环
