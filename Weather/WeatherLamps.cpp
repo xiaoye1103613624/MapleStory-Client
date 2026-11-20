@@ -194,14 +194,17 @@ namespace ms
 
 		void Lamps::update(float night_level)
 		{
-			tick_ms_ += 16;
-
 			// 光敏迟滞（参考 lamps.cpp:415-450）：进入 0.35 开、回落到 0.28 才关。
 			// OFF 必须 >0——夜色归零后调用方停止推进，OFF=0 会让灯在白天常亮。
 			if (!on_ && night_level >= kOnLevel)
+			{
 				on_ = true;
+				lit_since_ms_ = 0;   // 点亮时刻，之后每帧累加
+			}
 			else if (on_ && night_level <= kOffLevel)
 				on_ = false;
+			if (on_)
+				lit_since_ms_ += 16;   // 点亮后经过的毫秒（16ms/帧）
 
 			// 目标亮度：光敏全开=1；否则暮色段给一点弱光（下限 0.14 以下没有）。
 			float target = 0.0f;
@@ -211,17 +214,11 @@ namespace ms
 				target = (night_level - kDimFrom) / (kDimMax - kDimFrom) * 0.35f;
 
 			// warmup 1200ms（参考 LAMP_WARMUP_MS）：约 75 帧线性升到目标。
+			// 到位后保持恒定——无周期性呼吸/闪烁（参考 lamps.cpp:212-224 明确
+			// 路灯自身不应有 brightness ramp）。
 			const float step = 1.0f / 75.0f;
 			if (level_ < target) level_ = level_ + step < target ? level_ + step : target;
 			else if (level_ > target) level_ = level_ - step > target ? level_ - step : target;
-
-			// 灯芯呼吸（5 秒三角波 0.85..1.0，只调亮度不改开关）。
-			breathe_ms_ += 16;
-			if (breathe_ms_ >= kBreathePeriodMs)
-				breathe_ms_ -= kBreathePeriodMs;
-			const float phase = static_cast<float>(breathe_ms_) / static_cast<float>(kBreathePeriodMs);
-			const float tri = phase < 0.5f ? phase * 2.0f : (1.0f - phase) * 2.0f;
-			breathe_ = 0.85f + 0.15f * tri;
 		}
 
 		void Lamps::draw(double viewx, double viewy, float alpha) const
@@ -237,11 +234,12 @@ namespace ms
 			{
 				if (lamp.map_id != map_id)
 					continue;
-				// 逐灯错峰（参考 LAMP_STAGGER_MS=2600ms/灯）：按灯序取相位，
-				// 让同一 town 的灯在 ~1 秒内先后亮起，而不是齐刷刷。
-				const uint32_t stagger_phase = (lamp_seq++ * 2600u) % 13000u;
-				const float stagger = 0.55f + 0.45f * (
-					static_cast<float>((tick_ms_ + stagger_phase) % 1300u) / 1300.0f);
+				// 逐灯错峰（参考 lamps.cpp:430 LAMP_STAGGER_MS=2600ms/灯）：
+				// 点亮那一刻按灯序依次延迟，每盏 warmup 1200ms 后恒定常亮。
+				// 这是"一次性点亮过程"，不是周期闪烁（之前 1.3s 循环 45% 幅度是错误实现）。
+				const uint32_t delay = lamp_seq++ * kStaggerStepMs;
+				const int diff = static_cast<int>(lit_since_ms_) - static_cast<int>(delay);
+				const float stagger = diff <= 0 ? 0.0f : (diff >= 1200 ? 1.0f : diff / 1200.0f);
 				// 世界→屏幕照 Char.cpp:44（viewx 是相机偏移量 = vw/2 - 玩家世界x）：
 				// screen = world + viewx。此前"- viewx + vw/2"符号反了导致灯画到屏外。
 				const double sx = static_cast<double>(lamp.x) + viewx;
@@ -254,7 +252,7 @@ namespace ms
 				{
 					// 真素材按文件独立加载失败时的最后兜底（正常不会走到）：
 					// 自绘完整灯具 —— 灯柱 + 灯球 + 加色光晕 + 地面光池，绝不静默跳过。
-					const float ga = level_ * stagger * breathe_ * alpha;
+					const float ga = level_ * stagger * alpha;
 					// 灯柱（深色铸铁杆）
 					GraphicsGL::get().drawrectangle(static_cast<int16_t>(sx) - 3, static_cast<int16_t>(sy) - 84,
 						6, 84, 0.16f, 0.14f, 0.12f, 0.95f * ga);
@@ -287,7 +285,7 @@ namespace ms
 
 				// 光池（照亮区域）：参考 lamps.cpp:136-138 的 light POOL，半径实测。
 				// 用加色批次画，叠在地面上把地"照亮"，不是盖一层灰。
-				const float lit = level_ * stagger * breathe_ * alpha;
+				const float lit = level_ * stagger * alpha;
 				GraphicsGL::get().drawrectangle_add(
 					static_cast<int16_t>(sx) - 96, static_cast<int16_t>(sy) - 40, 192, 80,
 					1.0f, 0.88f, 0.62f, lit * 0.10f);
@@ -302,7 +300,7 @@ namespace ms
 					glow->draw(DrawArgument(Point<int16_t>(
 						static_cast<int16_t>(sx) + art->ox,
 						static_cast<int16_t>(sy) + art->oy),
-						level_ * breathe_ * 0.55f * alpha));
+						level_ * stagger * 0.55f * alpha));
 				}
 			}
 		}

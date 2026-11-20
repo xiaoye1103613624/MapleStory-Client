@@ -40,12 +40,13 @@ namespace ms
 
 			bool on_ = false;         // 光敏开关（带迟滞）
 			float level_ = 0.0f;      // 每盏灯共用的点亮强度（0暗..1全亮）
-			uint32_t tick_ms_ = 0;    // 累计时间，用于 warmup / stagger
 
-			// 灯芯呼吸：约 5 秒一个周期（2500ms 升 / 2500ms 降）。
-			static constexpr uint32_t kBreathePeriodMs = 5000;
-			uint32_t breathe_ms_ = 0;
-			float breathe_ = 1.0f;
+			// 参考 lamps.cpp:212-224 明确：路灯自身不应有周期性明暗动画
+			// （art 自带的 ramp 是故障，参考用 LampKeepFrame/LampStaticFrame 停掉）。
+			// 之前实现的 5s breathe + 1.3s stagger 循环让灯一直闪，已全部删除：
+			// 点亮后恒定常亮，只有"点亮那一刻"按灯序一次性错峰。
+			static constexpr uint32_t kStaggerStepMs = 2600;   // 参考 LAMP_STAGGER_MS
+			uint32_t lit_since_ms_ = 0;   // 光敏触发时刻，用于一次性错峰计时
 		};
 	}
 }
