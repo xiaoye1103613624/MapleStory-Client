@@ -19,6 +19,9 @@
 
 #include "../../Character/Char.h"
 
+#include <memory>
+#include <vector>
+
 namespace ms
 {
 	// Interface for skill effects
@@ -69,6 +72,24 @@ namespace ms
 		Effect effect;
 	};
 
+	// 从 Effect/BasicEff.img 直接按节点名加载施放特效。
+	// Angel 原生：TryRegisterTeleport@0x957b74 播 BasicEff.img/Teleport，
+	// DoActiveSkill_BoundJump@0x96be38 播 BasicEff.img/Flying —— 两者都不在
+	// Skill.img 的 effect 节点里，故不能复用 SingleUseEffect（它取 src["effect"]）。
+	// 沿用 Effect 基类：apply 走 Char::show_attack_effect，天然尊重
+	// SysOptSkillEffects「技能使用时允许画面效果」画面开关，与原生一致。
+	class BasicEffUseEffect : public SkillUseEffect
+	{
+	public:
+		// path: BasicEff.img 下的节点名（如 "Teleport" / "Flying"）
+		BasicEffUseEffect(const std::string& path);
+
+		void apply(Char& target) const override;
+
+	private:
+		Effect effect;
+	};
+
 	// An effect which displays an animation over the character's position
 	// The effect changes based on whether the character uses a two-handed weapon
 	class TwoHandedUseEffect : public SkillUseEffect
@@ -104,6 +125,32 @@ namespace ms
 
 	private:
 		std::map<uint16_t, Effect> effects;
+	};
+
+	// 第二轮补齐：技能 WZ 中除 effect/hit 外还有 prepare/keydown/keydownend/
+	// screen/special/tile 六类特效节点（orange-wz 跨 img 实证：1412/1510/000/2211.img
+	// 的对应节点是 CANVAS 帧动画，可 Animation(src) 直接播放）。本类把这些节点
+	// 作为「角色锚点施放特效」播，复用 Effect 基类 → Char::show_attack_effect，
+	// 天然受 SysOptSkillEffects 画面开关约束。receiver/finish 两类全库无源，不接。
+	// 注意：MinMS 的 special 雨滴/tile 落点需 EffectLayer delay/粒子系统（本端无），
+	// 这里只做「原地逐帧播放」的可见近似，不做位移/延时物理，属诚实降级。
+	class ExtraNodeUseEffect : public SkillUseEffect
+	{
+	public:
+		ExtraNodeUseEffect(nl::node src);
+		void apply(Char& target) const override;
+	private:
+		Effect effect;
+	};
+
+	// 一次施放需要同时播多个额外节点（如 14121004 的 prepare+keydown+tile）。
+	class CompositeUseEffect : public SkillUseEffect
+	{
+	public:
+		void add(std::unique_ptr<SkillUseEffect> e);
+		void apply(Char& target) const override;
+	private:
+		std::vector<std::unique_ptr<SkillUseEffect>> effects;
 	};
 
 	// Use effect for Iron Body

@@ -82,6 +82,8 @@ namespace ms
 
 		// Execute a rush movement
 		void rush(double targetx);
+		// 激退射杀(5201006)：施放时向后跳，MinMS Player::recoil_hop 同源纯客户端位移。
+		void apply_recoil(int32_t skill_level);
 
 		// 2026-11-22：脚本/四转职业技能的本地位移（MinMS Combat::apply_use_movement/
 		// apply_teleport 同源）。服务端仍权威结算 MP 与位置回包，这里只补原生手感。

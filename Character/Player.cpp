@@ -708,6 +708,25 @@ namespace ms
 		}
 	}
 
+	void Player::apply_recoil(int32_t skill_level)
+	{
+		// MinMS Player.cpp:1552-1572 / Angel CUserLocal::TryDoingShootAttack@0x955537：
+		// hx=±(250+40*(lv/4))、vy=-(250+20*(lv/4)) px/s，方向背离朝向；
+		// WZ range 是攻击距离，不是后跃距离。服务端不产位移，纯本地表现。
+		const double scale = static_cast<double>(Constants::TIMESTEP) / 1000.0;
+		const int32_t q = (skill_level > 0 ? skill_level : 1) / 4;
+		const double hx = (getflip() ? -1.0 : 1.0) * (250.0 + 40.0 * static_cast<double>(q));
+		const double vy = -(250.0 + 20.0 * static_cast<double>(q));
+		phobj.hspeed = hx * scale;
+		phobj.vspeed = vy * scale;
+		phobj.hforce = 0.0;
+		phobj.vforce = 0.0;
+		phobj.onground = false;
+		phobj.fhid = 0;
+		phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
+		Sound(Sound::Name::JUMP).play();
+	}
+
 	bool Player::apply_flash_jump(int32_t skillid, int32_t level)
 	{
 		// MinMS Combat::apply_use_movement :1691-1718 同源：

@@ -256,6 +256,8 @@ namespace ms
 			prompt_invite();
 		} else if (keycode == 'N' || keycode == 'n') {
 			prompt_notice();
+		} else if (keycode == 'M' || keycode == 'm') {
+			prompt_emblem();
 		} else if (keycode == 'E' || keycode == 'e') {
 			if (const GuildMember* m = selected_member()) {
 				GuildExpelPacket(m->id, m->name).dispatch();
@@ -286,7 +288,14 @@ namespace ms
 
 	void UIGuild::prompt_create()
 	{
-		
+		// 第二轮补齐：BtCreate/C 键此前 prompt_create 空体，建公会无反应。
+		// GuildCreatePacket = 0x02 + name（s9 GuildOperationHandler case 0x02）。
+		UI::get().emplace<UISoftKey>([](const std::string& name) {
+			if (name.empty())
+				return;
+			GuildCreatePacket(name).dispatch();
+			LOG(LOG_DEBUG, "UIGuild: Create name=" << name);
+		}, []() {}, Locale::text("guild.create_prompt"));
 	}
 
 	void UIGuild::prompt_invite()
@@ -299,12 +308,45 @@ namespace ms
 			LOG(LOG_DEBUG, "UIGuild: Invite target=" << pre);
 			return;
 		}
-		
+		UI::get().emplace<UISoftKey>([](const std::string& name) {
+			if (name.empty())
+				return;
+			GuildInvitePacket(name).dispatch();
+			LOG(LOG_DEBUG, "UIGuild: Invite target=" << name);
+		}, []() {}, Locale::text("guild.invite_prompt"));
 	}
 
 	void UIGuild::prompt_notice()
 	{
-		
+		// 第二轮补齐：GuildNoticePacket 早已存在，但 prompt_notice 空体 →
+		// BtNotice/N 键点击无任何效果。接 SoftKey 输入公会公告。
+		UI::get().emplace<UISoftKey>([](const std::string& notice) {
+			GuildNoticePacket(notice).dispatch();
+			LOG(LOG_DEBUG, "UIGuild: Notice len=" << notice.size());
+		}, []() {}, Locale::text("guild.notice_prompt"));
+	}
+
+	void UIGuild::prompt_emblem()
+	{
+		// 第二轮补齐：s9 GuildOperationHandler case 0x0f 完整，但客户端无发包。
+		// 用 SoftKey 复合输入 bg,bgcolor,logo,logocolor（不发明编辑器坐标 UI）。
+		UI::get().emplace<UISoftKey>([](const std::string& tip) {
+			int vals[4] = { 0, 0, 0, 0 };
+			size_t pos = 0; int n = 0;
+			for (;;) {
+				size_t comma = tip.find(',', pos);
+				std::string part = tip.substr(pos, comma == std::string::npos ? std::string::npos : comma - pos);
+				try { if (n < 4) vals[n++] = std::stoi(part); } catch (...) {}
+				if (comma == std::string::npos) break;
+				pos = comma + 1;
+			}
+			if (n < 4)
+				return;
+			GuildChangeEmblemPacket(
+				static_cast<int16_t>(vals[0]), static_cast<int8_t>(vals[1]),
+				static_cast<int16_t>(vals[2]), static_cast<int8_t>(vals[3])).dispatch();
+			LOG(LOG_DEBUG, "UIGuild: emblem bg=" << vals[0] << " logo=" << vals[2]);
+		}, []() {}, Locale::text("guild.emblem_hint"));
 	}
 
 	void UIGuild::prompt_deny()
@@ -317,6 +359,11 @@ namespace ms
 			LOG(LOG_DEBUG, "UIGuild: DenyGuild from=" << pre);
 			return;
 		}
-		
+		UI::get().emplace<UISoftKey>([](const std::string& from) {
+			if (from.empty())
+				return;
+			DenyGuildRequestPacket(from).dispatch();
+			LOG(LOG_DEBUG, "UIGuild: DenyGuild from=" << from);
+		}, []() {}, Locale::text("guild.deny_prompt"));
 	}
 }

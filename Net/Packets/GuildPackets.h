@@ -100,6 +100,23 @@ namespace ms
 		}
 	};
 
+	// 修改公会徽章（s9 GuildOperationHandler case 0x0f：
+	//   short bg, byte bgcolor, short logo, byte logocolor；会长在公会大厅才可改）。
+	// 第二轮补齐：此前客户端只收 GuildMarkChanged 广播、无发包能力。
+	class GuildChangeEmblemPacket : public OutPacket
+	{
+	public:
+		GuildChangeEmblemPacket(int16_t bg, int8_t bgcolor, int16_t logo, int8_t logocolor)
+			: OutPacket(OutPacket::Opcode::GUILD_OPERATION)
+		{
+			write_byte(0x0F);
+			write_short(bg);
+			write_byte(bgcolor);
+			write_short(logo);
+			write_byte(logocolor);
+		}
+	};
+
 	// Opcode: DENY_GUILD_REQUEST(127 / 0x7F) — string inviter/guild name
 	class DenyGuildRequestPacket : public OutPacket
 	{

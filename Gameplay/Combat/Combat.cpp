@@ -388,6 +388,10 @@ namespace ms
 		case SkillId::Id::RUSH_DK:
 			apply_rush(result);
 			break;
+		case SkillId::Id::RECOIL_SHOT:
+			// 激退射杀：施放即后跃（空挥也退），落点纯客户端表现，不动服务端。
+			player.apply_recoil(player.get_skills().get_level(SkillId::Id::RECOIL_SHOT));
+			break;
 		default:
 			break;
 		}

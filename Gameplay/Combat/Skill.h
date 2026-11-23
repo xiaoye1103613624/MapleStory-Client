@@ -51,6 +51,9 @@ namespace ms
 		std::unique_ptr<SkillBullet> bullet;
 		std::unique_ptr<SkillSound> sound;
 		std::unique_ptr<SkillUseEffect> useeffect;
+		// 第二轮：prepare/keydown/keydownend/screen/special/tile 额外施放特效
+		// （与主 useeffect 并列播，不改既有 effect 选择逻辑）。
+		std::unique_ptr<SkillUseEffect> extrauseeffect;
 		std::unique_ptr<SkillHitEffect> hiteffect;
 
 		int32_t skillid;

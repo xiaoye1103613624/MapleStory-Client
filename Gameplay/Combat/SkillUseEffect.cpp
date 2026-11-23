@@ -19,8 +19,50 @@
 
 #include "../../Util/Misc.h"
 
+#ifdef USE_NX
+#include <nlnx/nx.hpp>
+#endif
+
 namespace ms
 {
+	// 第二轮：技能 WZ 额外施放特效节点（prepare/keydown/keydownend/screen/
+	// special/tile，D3 跨 img 实证为 CANVAS 帧动画）。走 Effect 基类 =
+	// show_attack_effect，尊重 SysOptSkillEffects 画面开关。
+	ExtraNodeUseEffect::ExtraNodeUseEffect(nl::node src) : effect(src) {}
+
+	void ExtraNodeUseEffect::apply(Char& target) const
+	{
+		effect.apply(target);
+	}
+
+	void CompositeUseEffect::add(std::unique_ptr<SkillUseEffect> e)
+	{
+		effects.push_back(std::move(e));
+	}
+
+	void CompositeUseEffect::apply(Char& target) const
+	{
+		for (const auto& e : effects)
+			e->apply(target);
+	}
+
+	// 按节点名从 Effect/BasicEff.img 加载施放动画。
+	// 与 SingleUseEffect 的差别：后者读 Skill.img/<skill>/effect，而瞬移(Flying/Teleport)
+	// 与二段跳(Flying) 的动画是原生直接挂在 BasicEff.img 上的，Skill.img 里没有 effect 节点。
+	// Effect 基类会读取节点自身的 z 并调用 show_attack_effect，保留画面效果开关语义。
+	BasicEffUseEffect::BasicEffUseEffect(const std::string& path)
+		: effect(nl::nx::Effect["BasicEff.img"][path])
+	{
+		// 关键节点日志：确认动画节点是否命中（Release 下 LOG 为 no-op，无额外开销）
+		LOG(LOG_DEBUG, "[SkillUseEffect] BasicEffUseEffect load path=" << path
+			<< " valid=" << (nl::nx::Effect["BasicEff.img"][path] ? 1 : 0));
+	}
+
+	void BasicEffUseEffect::apply(Char& target) const
+	{
+		effect.apply(target);
+	}
+
 	SingleUseEffect::SingleUseEffect(nl::node src) : effect(src["effect"]) {}
 
 	void SingleUseEffect::apply(Char& target) const

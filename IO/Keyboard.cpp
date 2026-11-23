@@ -122,7 +122,9 @@ namespace ms
 
 	int32_t Keyboard::rightctrlcode() const
 	{
-		return GLFW_KEY_LEFT_CONTROL;
+		// 第二轮修复：右 Ctrl 此前误返回 LEFT_CONTROL，导致 UI.cpp:285 左/右 ctrl
+		// 两项同值，右 Ctrl 无法参与 Ctrl+C/V。对照 MinMS UI.cpp:367-369 显式区分左右。
+		return GLFW_KEY_RIGHT_CONTROL;
 	}
 
 	std::map<int32_t, Keyboard::Mapping> Keyboard::get_maplekeys() const

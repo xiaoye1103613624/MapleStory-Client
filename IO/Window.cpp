@@ -23,6 +23,7 @@
 #include "../Character/Player.h"
 #include "../Data/JobData.h"
 #include "../Gameplay/Stage.h"
+#include "../Graphics/GraphicsGL.h"
 
 #include "../Configuration.h"
 #include "../Util/PerfLog.h"
@@ -526,6 +527,12 @@ namespace ms
 		SDL_SetWindowTitle(glwnd, Configuration::get().get_title().c_str());
 		SDL_SetWindowSize(glwnd, width, height);
 		SDL_SetWindowFullscreen(glwnd, fullscreen);
+		// 2026-11-21 用户要求：大分辨率进入/切档后窗口要在屏幕中间居中。
+		// 旧实现只 SetWindowSize、左上角固定不动 → 尺寸变大后窗口整体向右下扩张
+		// （窗口中心 = 左上角 + 半宽，占屏后明显偏右下）。窗口化时每次重设尺寸后
+		// 重新居中；全屏交由 SDL 全屏逻辑，不干预位置。
+		if (!fullscreen)
+			SDL_SetWindowPosition(glwnd, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		SDL_ShowWindow(glwnd);
 
 		if (!SDL_GL_MakeCurrent(glwnd, glcontext))
@@ -566,12 +573,12 @@ namespace ms
 
 			if (stbi == NULL)
 			{
-#ifdef __ANDROID__
-				LOG(LOG_WARN, "Icon not found, skipping on Android: " << iconpath);
+				// 缺 Icon.png 不得中止启动：此前 Windows 路径直接 MISSING_ICON
+				// 返回，窗口/GL 已半初始化，进程退出静态析构常触发 0xC0000374。
+				// 与 Android 一致——跳过图标，窗口照常可用。
+				LOG(LOG_WARN, "Icon not found, skipping: " << iconpath
+					<< " (" << (stbi_failure_reason() ? stbi_failure_reason() : "?") << ")");
 				icon_applied = true;
-#else
-				return Error(Error::Code::MISSING_ICON, stbi_failure_reason());
-#endif
 			}
 			else
 			{
@@ -602,6 +609,14 @@ namespace ms
 	bool Window::not_closed() const
 	{
 		return !close_requested;
+	}
+
+	void Window::request_close()
+	{
+		// [退出防护] 曾几何时 close_requested 只在构造期置 false，全仓无处置 true，
+		// not_closed() 恒真 —— 主循环只能靠 UI::quit() 退出。确认退出时显式置位，
+		// 让 running() 的窗口门闩真正生效。
+		close_requested = true;
 	}
 
 	void Window::update()
@@ -774,7 +789,12 @@ namespace ms
 				}
 				catch (...)
 				{
-					// 装图异常也必须揭开黑罩，否则永久黑屏+BGM。
+					// 装图异常必须揭开黑罩，否则永久黑屏+BGM。
+					// [商城黑屏根治] fadeout 回调普遍先 lock GL 再 load，异常若发生在
+					// unlock 之前（Stage::load / change_state 抛错），只揭黑罩仍会因
+					// GraphicsGL::draw 的 `if (locked) return` 永久黑屏。这里无条件
+					// 补 unlock，与三条正常退出路径的显式 unlock 形成幂等双保险。
+					GraphicsGL::get().unlock();
 					opacity = 1.0f;
 					opcstep = 0.0f;
 					throw;
@@ -810,7 +830,13 @@ namespace ms
 						input_events++;
 
 					if (keycode != 0)
+					{
+						// 第二轮 P1：SDL3 的 KEY_DOWN 对长按会带 repeat=true。
+						// 道具/技能/宏热键由 UI::send_key 的 one-shot 守卫统一吞；
+						// 这里只把 repeat 的 KEY_DOWN 仍当 pressed 传给 UI（保持移动/方向键
+						// 等连续语义），真正的去重在 UI.cpp:323 一带按 mapping.type 精准处理。
 						UI::get().send_key(keycode, event.type == SDL_EVENT_KEY_DOWN);
+					}
 
 					break;
 				}
@@ -959,6 +985,9 @@ namespace ms
 		// 这样 initwindow/reinit（清 atlas）发生在 StatusBar 重建之前。
 		if (ResolutionTiers::apply_deferred_viewsize())
 		{
+			// 游戏内切档：同步刷新背景平铺（A+C 方案）。此时 Stage 可能尚未 ACTIVE
+			// （登录态），on_viewport_changed 只碰背景对象，安全。
+			Stage::get().on_viewport_changed();
 			LOG(LOG_INFO, "[MR] Window applied deferred viewport "
 				<< Constants::Constants::get().get_viewwidth() << "x"
 				<< Constants::Constants::get().get_viewheight());

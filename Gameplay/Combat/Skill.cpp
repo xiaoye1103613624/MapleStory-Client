@@ -160,11 +160,60 @@ namespace ms
 			bullet = std::make_unique<RegularBullet>();
 			projectile = false;
 		}
+
+		// 2026-11-23 校准：瞬移 / 二段跳的施放动画原生直接挂在 Effect/BasicEff.img，
+		// Skill.img 的 <skill>/effect 节点里没有对应条目 —— 上面 else 分支必然落到
+		// NoUseEffect，这正是用户报「没有动效」的根因。这里在 useeffect 已确定之后
+		// 统一覆盖（不改动前面 effect 选择逻辑，零回归面）：
+		//   TryRegisterTeleport@0x957b74 播 BasicEff.img/Teleport
+		//   DoActiveSkill_BoundJump@0x96be38 播 BasicEff.img/Flying
+		// 走 BasicEffUseEffect -> show_attack_effect，尊重 SysOptSkillEffects 画面开关。
+		if (SkillId::is_teleport(skillid))
+		{
+			useeffect = std::make_unique<BasicEffUseEffect>("Teleport");
+			LOG(LOG_DEBUG, "[Skill] teleport useeffect=BasicEff/Teleport skillid=" << skillid);
+		}
+		else if (SkillId::is_flash_jump(skillid))
+		{
+			useeffect = std::make_unique<BasicEffUseEffect>("Flying");
+			LOG(LOG_DEBUG, "[Skill] flashjump useeffect=BasicEff/Flying skillid=" << skillid);
+		}
+
+		// 第二轮补齐：orange-wz 跨 img 实证 live Skill/*.img 含 6 类额外特效节点
+		// （prepare/keydown/keydownend/screen/special/tile，多为 CANVAS 帧动画）。
+		// 首轮只探 210.img 误判为"资源缺源"，此处按节点存在逐个挂接，原地逐帧播放。
+		// receiver/finish 全库无源，不接；special/tile 的多段落点物理本端 EffectLayer
+		// 不支持，降级为原地动画（诚实的可见近似，真机观感待验）。
+		{
+			auto composite = std::make_unique<CompositeUseEffect>();
+			static const char* extra_nodes[] = {
+				"prepare", "keydown", "keydownend", "screen", "special", "tile"
+			};
+			int added = 0;
+			for (const char* node_name : extra_nodes)
+			{
+				nl::node extra = src[node_name];
+				if (!extra || extra.size() == 0)
+					continue;
+				// tile/sub 节点是 LIST（含 0/1/2 子帧），其余取第 0 帧动画。
+				// z 由 Effect(src) 内部读 anim["z"]（默认 0）。
+				nl::node anim = extra["0"].size() > 0 ? extra["0"] : extra;
+				composite->add(std::make_unique<ExtraNodeUseEffect>(anim));
+				++added;
+			}
+			if (added > 0)
+			{
+				extrauseeffect = std::move(composite);
+				LOG(LOG_DEBUG, "[Skill] extra vfx nodes=" << added << " skillid=" << skillid);
+			}
+		}
 	}
 
 	void Skill::apply_useeffects(Char& user) const
 	{
 		useeffect->apply(user);
+		if (extrauseeffect)
+			extrauseeffect->apply(user);
 
 		sound->play_use();
 	}
@@ -296,11 +345,18 @@ namespace ms
 
 	SpecialMove::ForbidReason Skill::can_use(int32_t level, Weapon::Type weapon, const Job& job, uint16_t hp, uint16_t mp, uint16_t bullets) const
 	{
-		if (level <= 0 || level > SkillData::get(skillid).get_masterlevel())
+		if (level <= 0)
 			return FBR_OTHER;
 
-		if (job.can_use(skillid) == false)
+		// 脚本/道具习得技能在 WZ 未装载或 level 表为空时 masterlevel=0，
+		// 旧判 level>0 会误拒；仅在 WZ 有有效上限时才钳等级。
+		const int32_t wz_master = SkillData::get(skillid).get_masterlevel();
+		if (wz_master > 0 && level > wz_master)
 			return FBR_OTHER;
+
+		// 技能书 level>0（含 help/脚本/GM 授予）即以持有为准；不再用 job.can_use
+		// 二次拦截——跨职学来的瞬移/二段跳否则永远 FBR_OTHER。
+		(void)job;
 
 		const SkillData::Stats stats = SkillData::get(skillid).get_stats(level);
 
@@ -310,10 +366,16 @@ namespace ms
 		if (mp < stats.mpcost)
 			return FBR_MPCOST;
 
+		const bool is_atk = SkillData::get(skillid).is_attack();
 		Weapon::Type reqweapon = SkillData::get(skillid).get_required_weapon();
 
-		if (weapon != reqweapon && reqweapon != Weapon::NONE)
+		// 攻击技仍校验武器；瞬移/二段跳等非攻击技允许脚本跨职持有后直接用。
+		if (is_atk && weapon != reqweapon && reqweapon != Weapon::NONE)
 			return FBR_WEAPONTYPE;
+
+		// 非攻击位移技不耗飞镖；旧逻辑对 CLAW 一律查子弹会误拒二段跳。
+		if (!is_atk || stats.bulletcost <= 0)
+			return FBR_NONE;
 
 		switch (weapon)
 		{

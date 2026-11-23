@@ -159,7 +159,32 @@ namespace ms
 			TRIPLE_THROW = 4121007,
 
 			// Bandit
-			MESO_EXPLOSION = 4211006
+			MESO_EXPLOSION = 4211006,
+
+			// Night Walker / Soul Master 二段跳；Evan / FP Cygnus 瞬移（脚本常发）
+			FLASH_JUMP_NW = 14101004,
+			FLASH_JUMP_DUAL = 11101005,
+			TELEPORT_FP_CYGNUS = 12101003,
+			TELEPORT_EVAN = 22101001,
+			// Gunslinger 激退射杀：施放时角色向后跳。s9 SkillFactory 已识别该技能，
+			// 本地位移纯客户端表现（MinMS SkillId.h:379 / Combat.cpp:2053）。
+			RECOIL_SHOT = 5201006
 		};
+
+		static constexpr bool is_flash_jump(int32_t skill_id)
+		{
+			return skill_id == FLASH_JUMP
+				|| skill_id == FLASH_JUMP_NW
+				|| skill_id == FLASH_JUMP_DUAL;
+		}
+
+		static constexpr bool is_teleport(int32_t skill_id)
+		{
+			return skill_id == TELEPORT_FP
+				|| skill_id == IL_TELEPORT
+				|| skill_id == PRIEST_TELEPORT
+				|| skill_id == TELEPORT_FP_CYGNUS
+				|| skill_id == TELEPORT_EVAN;
+		}
 	}
 }

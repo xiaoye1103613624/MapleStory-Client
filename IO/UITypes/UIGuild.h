@@ -81,6 +81,7 @@ namespace ms
 		void prompt_create();
 		void prompt_invite();
 		void prompt_notice();
+		void prompt_emblem();
 		void prompt_deny();
 		const GuildMember* selected_member() const;
 

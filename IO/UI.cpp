@@ -23,6 +23,9 @@
 #include "Window.h"
 
 #include "../Configuration.h"
+#include "../Net/Packets/CashShopPackets.h"
+#include "../Net/Packets/GameplayPackets.h"   // EnterCashShopPacket（open_cashshop_entry 原生分支）
+#include "../Net/Handlers/CashShopWindowSync.h"
 #include "../Util/Misc.h"
 #include "../Util/PerfLog.h"
 #include "../Util/ResolutionTiers.h"
@@ -30,6 +33,7 @@
 #include "UITypes/UIChannel.h"
 #include "UITypes/UIChat.h"
 #include "UITypes/UIChatBar.h"
+#include "UITypes/UIWindowCashShop.h"
 #include "UITypes/UIJoypad.h"
 #include "UITypes/UINpcTalk.h"
 #include "UITypes/UIOptionMenu.h"
@@ -69,6 +73,10 @@ namespace ms
 	void UI::update()
 	{
 		state->update();
+
+		// 窗口内商城（方案 C）：收包线程只入队，这里在主线程每帧消费并
+		// 转发给 UIWindowCashShop（包括 OPEN 时 emplace 窗口）。
+		CashShopWindowSync::pump();
 
 		scrollingnotice.update();
 
@@ -111,6 +119,9 @@ namespace ms
 	void UI::quit()
 	{
 		quitted = true;
+		// [退出防护] 联动窗口门闩：此前 close_requested 恒 false，running() 只靠
+		// 本标志退出；两处一起置位，避免"UI 已退但窗口还认为开着"的不一致态。
+		Window::get().request_close();
 	}
 
 	bool UI::not_quitted() const
@@ -309,6 +320,19 @@ namespace ms
 		else
 		{
 			Keyboard::Mapping mapping = keyboard.get_mapping(keycode);
+
+			// 第二轮 P1 修复：道具/技能/宏热键是 one-shot，长按出现的 repeat
+			// （SDL KEY_DOWN 的 event.key.repeat，本端按 pressed 直传）必须吞掉，
+			// 否则按住药水键会连发清空整叠。对照 MinMS IO/UI.cpp:401-408。
+			// 注意 is_key_down[keycode] 在本帧末(:553)才更新，故此处为真表示"上一帧已按下"。
+			if (pressed && is_key_down[keycode]
+				&& (mapping.type == KeyType::Id::ITEM
+					|| mapping.type == KeyType::Id::SKILL
+					|| mapping.type == KeyType::Id::MACRO))
+			{
+				return;
+			}
+
 			// SoftKey 字母捷径（UIAdmin / UIBuffList / UIShortCut / UIStatusBar / UIGameMenu…）
 			// 用 ASCII 比较 'A'/'S'/'D'/'4'。未绑定键 get_mapping → NONE/0，捷径永不触发。
 			// GLFW 可打印键码与 ASCII 同值（A=65…Z=90，'4'=52），未绑定时把 keycode
@@ -444,7 +468,9 @@ namespace ms
 					types.emplace_back(UIElement::Type::STATSINFO);
 					types.emplace_back(UIElement::Type::ITEMINVENTORY);
 					types.emplace_back(UIElement::Type::EQUIPINVENTORY);
-					types.emplace_back(UIElement::Type::ADDONEQUIP);
+					types.emplace_back(UIElement::Type::TOTEMEQUIP);
+					types.emplace_back(UIElement::Type::ANDROIDEQUIP);
+					types.emplace_back(UIElement::Type::MYSTICBADGE);
 					types.emplace_back(UIElement::Type::SKILLBOOK);
 					types.emplace_back(UIElement::Type::QUESTLOG);
 					types.emplace_back(UIElement::Type::USERLIST);
@@ -456,6 +482,16 @@ namespace ms
 					// 落到 MAINMENU，把目录气球盖在还开着的设置窗上。
 					types.emplace_back(UIElement::Type::GAMEOPT);
 					types.emplace_back(UIElement::Type::SYSOPT);
+
+					// 侧栏扩展三窗（2026-11-21）：ESC 也要能关，补齐白名单。
+					// 三个窗口均已实现 send_key(escape→deactivate)，此前漏登记导致 ESC 落到全局开目录。
+					types.emplace_back(UIElement::Type::DAILYCHECKIN);
+					types.emplace_back(UIElement::Type::DAMAGERANK);
+					types.emplace_back(UIElement::Type::COLORPRISM);
+					// 192 ShortCutUI 横向弹层：ESC 交由其 send_key 关闭。
+					types.emplace_back(UIElement::Type::CONTENTSSHORTCUT);
+				// 窗口内商城（方案 C）：FOCUSED 窗，ESC 交由其 send_key 关闭。
+				types.emplace_back(UIElement::Type::WINDOWCASHSHOP);
 				}
 				else if (enter)
 				{
@@ -470,7 +506,9 @@ namespace ms
 					// Game
 					types.emplace_back(UIElement::Type::ITEMINVENTORY);
 					types.emplace_back(UIElement::Type::EQUIPINVENTORY);
-					types.emplace_back(UIElement::Type::ADDONEQUIP);
+					types.emplace_back(UIElement::Type::TOTEMEQUIP);
+					types.emplace_back(UIElement::Type::ANDROIDEQUIP);
+					types.emplace_back(UIElement::Type::MYSTICBADGE);
 					types.emplace_back(UIElement::Type::SKILLBOOK);
 					types.emplace_back(UIElement::Type::QUESTLOG);
 					types.emplace_back(UIElement::Type::USERLIST);
@@ -622,9 +660,10 @@ namespace ms
 		state->show_text(parent, text);
 	}
 
-	void UI::show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal)
+	void UI::show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal,
+		const std::vector<MapTooltipPlayer>& players)
 	{
-		state->show_map(parent, title, description, mapid, bolded, portal);
+		state->show_map(parent, title, description, mapid, bolded, portal, players);
 	}
 
 	Keyboard& UI::get_keyboard()
@@ -655,5 +694,23 @@ namespace ms
 			game->apply_hud_theme();
 		else
 			LOG(LOG_WARN, "UI::apply_hud_theme: not in GAME state");
+	}
+
+	void UI::open_cashshop_entry()
+	{
+		if (Setting<WindowCashShopEnabled>::get().load())
+		{
+			// 方案 C：窗口内商城。清空上一个会话残留的收包事件，再打开窗口；
+			// 窗口构造完成后会自行发 REQUEST_CATALOG 拉取分类索引/余额。
+			CashShopWindowSync::clear();
+			emplace<UIWindowCashShop>();
+			LOG(LOG_INFO, "UI::open_cashshop_entry: window cash shop (ui.cashshop.window_mode=true)");
+		}
+		else
+		{
+			// 默认路径：原生商城（0x28），行为与改动前完全一致。
+			EnterCashShopPacket().dispatch();
+			LOG(LOG_DEBUG, "UI::open_cashshop_entry: native cash shop (default)");
+		}
 	}
 }
