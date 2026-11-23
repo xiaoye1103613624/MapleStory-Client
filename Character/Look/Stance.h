@@ -70,6 +70,10 @@ namespace ms
 		Id by_id(uint8_t id);
 		Id by_string(const std::string& name);
 
+		// 攻击包 display 字段（body action 的 wire 索引，对齐 MinMS/Angel CAvatar 表）。
+		uint8_t body_action(Id value);
+		uint8_t body_action_by_name(const std::string& name);
+
 		bool is_climbing(Id value);
 		Id baseof(Id value);
 		Id secondof(Id value);

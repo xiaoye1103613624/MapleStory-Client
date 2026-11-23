@@ -41,8 +41,10 @@ namespace ms
 
 	void Physics::move_object(PhysicsObject& phobj) const
 	{
-		// Determine which platform the object is currently on
-		fht.update_fh(phobj);
+		// 飞行怪豁免 update_fh：其 restick 分支会把 phobj.y 直接钉到 ground，
+		// 导致悬浮怪（帕普拉图斯本体/龙王飞龙）沿地面行走（MinMS Physics.cpp:48-58）。
+		if (phobj.type != PhysicsObject::Type::FLYING)
+			fht.update_fh(phobj);
 
 		// 履带位移每 tick 重算：先清零，避免离地/换类型后残留上一 tick 的推送量。
 		phobj.hbelt = 0.0;
@@ -56,7 +58,8 @@ namespace ms
 			break;
 		case PhysicsObject::Type::FLYING:
 			move_flying(phobj);
-			fht.limit_movement(phobj);
+			// 只做水平墙体钳制，不用 limit_movement 的垂直吸附。
+			fht.limit_horizontal(phobj);
 			break;
 		case PhysicsObject::Type::SWIMMING:
 			move_swimming(phobj);
@@ -165,9 +168,9 @@ namespace ms
 		return Point<int16_t>(position.x(), ground - 1);
 	}
 
-	Point<int16_t> Physics::get_spawn_point(Point<int16_t> position, uint16_t fhid) const
+	SpawnPoint Physics::resolve_spawn_point(Point<int16_t> position, uint16_t fhid) const
 	{
-		return fht.get_spawn_point(position, fhid);
+		return fht.resolve_spawn_point(position, fhid);
 	}
 
 	const FootholdTree& Physics::get_fht() const

@@ -41,6 +41,8 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
+		void prompt_new_note();
+
 		enum Buttons : uint16_t { BtClose, BtOpen, BtSave, BtDelete };
 
 		bool has_assets;

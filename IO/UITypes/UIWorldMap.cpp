@@ -23,6 +23,8 @@
 
 #include "../UI.h"
 
+#include "../../Character/PartyModel.h"
+#include "../KeyAction.h"
 #include "../../Constants.h"
 #include "../../Gameplay/Stage.h"
 #include "../../IO/Components/MapleButton.h"
@@ -39,6 +41,10 @@
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
+
+#include <algorithm>
+#include <iomanip>
+#include <sstream>
 
 namespace ms
 {
@@ -65,9 +71,16 @@ namespace ms
 		nl::node MapHelper = nl::nx::Map["MapHelper.img"]["worldMap"];
 
 		cur_pos = MapHelper["curPos"];
+		party_pos = MapHelper["partyPos"]; // 队友点位（095 SetWorldMap SP_2317 partyPos 同款）
 
 		for (size_t i = 0; i < MAPSPOT_TYPE_MAX; i++)
 			npc_pos[i] = MapHelper["npcPos" + std::to_string(i)];
+
+		// 任务标记图标（2B 快照包驱动）：本端无 QuestGuide/QuestMark，
+		// 用 UIWindow.img/QuestIcon(0..9 十帧动画) 作"可接灯泡"；
+		// Quest/notice1 作"可交付书"（缺帧时退化为不画，安全）。
+		quest_bulb = Animation(nl::nx::UI["QuestIcon"]);
+		quest_book = Animation(nl::nx::UI["Quest"]["notice1"]);
 
 		// 大地图窗框：Border{0..7} 拼九切片（件→边框映射与算式见 evidence/w11-map/coords.md）。
 		// 底图固定 640x470（WorldMap.img BaseImg），顶/底/侧带高宽从各 Border 件 WxH 推出。
@@ -120,6 +133,31 @@ namespace ms
 		search_background = backgrnd;
 		search_notice = WorldMapSearch["notice"];
 
+		// 192 原生搜索结果行：field/mob/npc 各有 mouseOverBase(115x13) + icon(11x11)。
+		// origin 归零，按白名单区左上坐标排布，避免「下拉条」漂到输入框右下。
+		const char* result_keys[3] = { "resultField", "resultMob", "resultNpc" };
+		for (uint8_t i = 0; i < 3; i++)
+		{
+			nl::node row = WorldMapSearch[result_keys[i]];
+			if (row)
+			{
+				result_row_bg[i] = row["mouseOverBase"];
+				result_row_icon[i] = row["icon"];
+				if (result_row_bg[i].is_valid())
+				{
+					Point<int16_t> o = result_row_bg[i].get_origin();
+					if (o.x() || o.y())
+						result_row_bg[i].shift(o);
+				}
+				if (result_row_icon[i].is_valid())
+				{
+					Point<int16_t> o = result_row_icon[i].get_origin();
+					if (o.x() || o.y())
+						result_row_icon[i].shift(o);
+				}
+			}
+		}
+
 		// 两侧把手箭头：复用原生 Basic.img/BtHide 的 normal 帧（13x12 黄绿底白左箭头）。
 		// BtHide 是按钮容器（normal/mouseOver/pressed 子帧），必须取到 bitmap 帧，
 		// 直接 Texture(容器) 会 is_valid()==false 导致箭头不渲染。
@@ -155,14 +193,27 @@ namespace ms
 		int16_t search_limit = 8;
 
 		search_text = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Rectangle<int16_t>(get_search_pos(), get_search_pos() + search_text_dim), search_limit);
+		// FreeType 基线机制：bounds y=25 是基线，字形顶上移约 10px。
+		// backgrnd 输入圆角框实测 y≈24..64（中心≈44），故 text_shift 下移到 25
+		// 让墨迹落在框中心（用户 2026-11-22 21:41 反馈"内容在框下方/不在框内"）。
+		search_text.set_text_shift(Point<int16_t>(0, 25));
 		// 地图名检索支持中文：开启系统 IME（focus_textfield 据此启动 SDL 文本输入）。
 		search_text.set_accept_unicode(true);
+		// 回车搜索：输入框聚焦时按键被 focused 元素拦截，UIWorldMap::send_key 收不到；
+		// 正道是 Textfield 的 RETURN → onreturn 回调（Keyboard.cpp 回车映射为
+		// KeyAction::RETURN=62，不是字面 13）。BtAllsearch 按钮仍走 submit_native_search。
+		search_text.set_enter_callback([this](std::string) {
+			submit_native_search();
+		});
 
 		mob_panel.set_select_callback([this](int32_t mob_id)
 		{
 			on_mob_selected(mob_id);
 		});
 		mob_panel.set_content_height(bg_dimensions.y());
+		// 用户决策：移除自定义右侧搜索面板，改用 192 原生搜索轨（WorldMapSearch）。
+		// 面板数据逻辑保留作 fallback/内部选中，但不再显示与接收输入。
+		map_search_panel.set_visible(false);
 		map_search_panel.set_content_height(bg_dimensions.y());
 		map_search_panel.set_select_callback([this](int32_t id)
 		{
@@ -221,17 +272,42 @@ namespace ms
 		if (search)
 		{
 			search_background.draw(position + background_dimensions);
-			search_notice.draw(position + background_dimensions);
-			search_text.draw(Point<int16_t>(1, -5));
+			// notice 是空结果占位（origin=-28,-221 相对搜索轨锚点居中）；
+			// 有结果时隐藏，避免与列表叠在一起。
+			if (native_results.empty())
+				search_notice.draw(position + background_dimensions);
+			// 竖杠对齐：draw 不再用硬编码 -5（那是旧的木牌基线补偿，与本端
+			// 原生搜索轨槽不符，光标竖杠明显偏高）；与 update 统一的锚点由
+			// Textfield 内部 bounds + text_shift 决定，这里只传零偏移。
+			search_text.draw(Point<int16_t>(0, 0));
+
+			// 结果列表画在搜索轨白框内容区内（非输入框旁下拉）。
+			Point<int16_t> result_origin = get_native_result_origin();
+			const uint8_t row_max = native_row_max();
+			uint8_t shown = 0;
+			for (size_t i = native_result_offset; i < native_results.size() && shown < row_max; i++, shown++)
+			{
+				const SearchRow& row = native_results[i];
+				Point<int16_t> rowpos = result_origin + Point<int16_t>(0, shown * NATIVE_ROW_H);
+				uint8_t kind = row.kind < 3 ? row.kind : 0;
+				if (native_hover_row == static_cast<int16_t>(shown) && result_row_bg[kind].is_valid())
+					result_row_bg[kind].draw(rowpos);
+				if (result_row_icon[kind].is_valid())
+					result_row_icon[kind].draw(rowpos + Point<int16_t>(1, (NATIVE_ROW_H - result_row_icon[kind].height()) / 2));
+				// 文字墨迹在行内垂直居中（Text::draw 传基线，中文行高≈13，
+				// 旧代码 draw(rowpos+14,0) 让文字压到下一行 → 重叠）。
+				Text label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, row.label, 104);
+				const int16_t ink_top = rowpos.y() + (NATIVE_ROW_H - label.height()) / 2;
+				label.draw(Point<int16_t>(rowpos.x() + 14, label.y_for_ink_top(ink_top)));
+			}
 		}
 
 		// 底图本身带 origin (320, 235)，加回 origin 才能把可见左上角落在 base_position。
 		base_img.draw(position + base_position + base_img.get_origin());
 
-		// 两侧收起/展开箭头：已移入地图框内，必须在底图之后绘制，否则被底图覆盖；
-		// 悬停有 tip（见 send_cursor），点击切换收起/展开。
+		// 收起/展开箭头：仅左侧保留（左信息面板在用）。右侧搜索面板已移除，
+		// 右箭头是无功能孤儿控件 → 用户 2026-11-21 要求删除。
 		draw_tab(get_left_tab_rect(), left_state, true);
-		draw_tab(get_right_tab_rect(), right_state, false);
 
 		if (link_images.size() > 0)
 		{
@@ -251,7 +327,9 @@ namespace ms
 			}
 		}
 
-		if (show_path_img)
+		// 装饰级指路（1A）：hover 或选中点位时画该 spot 自带的 path 位图，
+		// 仅作"路线示意"，不是 A→B 真寻路（095/2016 同族原生也无寻路）。
+		if (show_path_img && path_img.is_valid())
 			path_img.draw(position + base_anchor);
 
 		for (auto spot : map_spots)
@@ -266,15 +344,61 @@ namespace ms
 					if (id == selected_map_id)
 					{
 						Point<int16_t> marker_dim = spot.second.marker.get_dimensions();
-						ColorBox highlight(marker_dim.x() + 8, marker_dim.y() + 8, Color::Name::YELLOW, 0.35f);
-						// 光晕包住 marker 的可见框（左上角 = 锚点 - marker.origin），四边各外扩 4。
-						highlight.draw(spot_pos - spot.second.marker.get_origin() - Point<int16_t>(4, 4));
+						// 加粗双层高亮（原单层 0.35 太淡，用户反馈"看不出选中"）。
+						ColorBox glow(marker_dim.x() + 12, marker_dim.y() + 12, Color::Name::YELLOW, 0.28f);
+						ColorBox ring(marker_dim.x() + 6, marker_dim.y() + 6, Color::Name::YELLOW, 0.55f);
+						Point<int16_t> hb = spot_pos - spot.second.marker.get_origin();
+						glow.draw(hb - Point<int16_t>(6, 6));
+						ring.draw(hb - Point<int16_t>(3, 3));
 						break;
 					}
 				}
 			}
 
 			spot.second.marker.draw(spot_pos);
+		}
+
+		// 队友点位（095 SetWorldMap SP_2317 partyPos 同款）：读 PartyModel 常驻 mapid，
+		// 定位到队员所在地图的 spot 上（地图粒度，服务端不下发地图内 x/y）。
+		{
+			const auto& party = PartyModel::get().data();
+			for (const auto& member : party.members)
+			{
+				if (!member.online || member.mapid <= 0)
+					continue;
+				for (const auto& spot : map_spots)
+				{
+					bool hit = false;
+					for (int32_t id : spot.second.map_ids)
+						if (id == member.mapid) { hit = true; break; }
+					if (hit)
+					{
+						party_pos.draw(spot.first + position + base_anchor, alpha);
+						break;
+					}
+				}
+			}
+		}
+
+		// 任务标记（2B 快照包 0x17C）：可接=灯泡动画、可交付=书图标，常驻显示。
+		for (const auto& mark : map_quest_marks)
+		{
+			if (!mark.can_accept && !mark.can_complete)
+				continue;
+			for (const auto& spot : map_spots)
+			{
+				bool hit = false;
+				for (int32_t id : spot.second.map_ids)
+					if (id == mark.mapid) { hit = true; break; }
+				if (!hit)
+					continue;
+				Point<int16_t> mp = spot.first + position + base_anchor;
+				if (mark.can_accept)
+					quest_bulb.draw(mp, alpha);
+				else if (mark.can_complete)
+					quest_book.draw(mp, alpha);
+				break;
+			}
 		}
 
 		bool found = false;
@@ -299,39 +423,8 @@ namespace ms
 			}
 		}
 
-		// 玩家层（0x178）：选中地图当前在线玩家。逐行画在底图右上区。
-		// 服务端 WorldMapPlayersHandler.MAX_PLAYERS=40；可视区按行高截断。
-		// 注：原生 BeiDou 大地图无「在线玩家列表」UI（IDA 仅见 MapLink/linkMap
-		// 加载），本层为 s9 自定义协议挂接，布局取右上可读区而非原生节点。
-		if (players_mapid == selected_map_id && !map_players.empty())
-		{
-			int16_t line_y = 24;
-			Point<int16_t> anchor = position + base_anchor + Point<int16_t>(-138, -150);
-
-			{
-				Text hdr(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
-					Locale::format("worldmap.players.online", std::to_string(map_players.size())));
-				hdr.draw(anchor + Point<int16_t>(0, line_y));
-				line_y += 16;
-			}
-
-			for (const auto& p : map_players)
-			{
-				// lv/名字/频道；短行文本按半透明底衬保证可读（底图是彩色地图）
-				std::string line = std::to_string(static_cast<int>(p.level)) + " " + p.name
-					+ " c" + std::to_string(static_cast<int>(p.channel));
-
-				ColorBox row(150, 12, Color::Name::WHITE, 0.55f);
-				row.draw(anchor + Point<int16_t>(-2, line_y - 1));
-
-				Text t(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line);
-				t.draw(anchor + Point<int16_t>(0, line_y));
-
-				line_y += 13;
-				if (line_y > 220)
-					break;
-			}
-		}
+		// 在线玩家已改由悬浮 tooltip 的 Players 分区呈现（见 send_cursor / MapTooltip::set_players），
+		// 不再在底图右上固定层绘制，避免与 tooltip 双绘重叠。
 
 		UIElement::draw_buttons(alpha);
 	}
@@ -344,17 +437,33 @@ namespace ms
 		{
 			mapid = mid;
 
-			int32_t prefix = mapid / 10000000;
-			std::string parent = "WorldMap0" + std::to_string(prefix);
-			user_map = parent;
+			// 分区名 = "WorldMap" + 3 位 prefix（WorldMap000/010/050…）。旧代码
+			// "WorldMap0"+prefix 对 prefix=0/2/5/55 拼成 WorldMap00/02/05/055 全错，
+			// 静默回落到 WorldMap.img（副本/跨大陆地图显示不对的根因之一）。
+			const int32_t prefix = static_cast<int32_t>(mapid / 10000000);
+			std::ostringstream poss;
+			poss << "WorldMap" << std::setw(3) << std::setfill('0') << prefix;
+			user_map = poss.str();
 
 			update_world(user_map);
+
+			// 任务标记快照（2B 0x17C→请求 0x11E）：切到新分区按 prefix 请求一次，
+			// 去重靠 quests_req_region，避免每帧发包。
+			if (active && quests_req_region != prefix)
+			{
+				quests_req_region = prefix;
+				WorldMapQuestMarksRequestPacket(prefix).dispatch();
+				LOG(LOG_DEBUG, "[UIWorldMap] quest marks request prefix=" << prefix);
+			}
 		}
 
 		search_text.update(get_search_pos(), search_text_dim);
 
 		for (size_t i = 0; i < MAPSPOT_TYPE_MAX; i++)
 			npc_pos[i].update(1);
+		party_pos.update(1);
+		quest_bulb.update(1);
+		quest_book.update(1);
 
 		cur_pos.update();
 
@@ -381,6 +490,8 @@ namespace ms
 		}
 		else
 		{
+			// 打开大地图：清 quest 请求去重，让 update() 按当前分区重新拉一次快照。
+			quests_req_region = -1;
 			// 打开大地图：默认两侧收起，纯看地图更干净（低分辨率也不会被挤爆）。
 			left_state = SideState::COLLAPSED;
 			right_state = SideState::COLLAPSED;
@@ -430,8 +541,16 @@ namespace ms
 				
 			}
 		}
-		else if (keycode == 'T' || keycode == 't' || keycode == 13)
+		else if (keycode == 'T' || keycode == 't' || keycode == KeyAction::Id::RETURN)
 		{
+			// 搜索轨开启且输入框有内容时，回车/RETURN 提交原生搜索；否则仍是传送。
+			// （输入框聚焦时走 set_enter_callback 回调，这里覆盖非聚焦场景；
+			//  KeyAction::RETURN=62，旧代码写 13 永远不命中 → 回车无效。）
+			if (search && !search_text.get_text().empty())
+			{
+				submit_native_search();
+				return;
+			}
 			if (selected_map_id != 0)
 			{
 				request_teleport(selected_map_id);
@@ -469,6 +588,17 @@ namespace ms
 		}
 	}
 
+	void UIWorldMap::send_scroll(double yoffset)
+	{
+		// 左侧信息面板不是 UIElement，收不到 UIStateGame::send_scroll 广播；
+		// 由本窗（唯一宿主）按光标门控转发给它的怪物/掉落双 slider。
+		if (kUseMapInfoPanel && info_panel.is_visible()
+			&& info_panel.get_bounds().contains(UI::get().get_cursor_position()))
+		{
+			info_panel.send_scroll(yoffset);
+		}
+	}
+
 	UIElement::Type UIWorldMap::get_type() const
 	{
 		return TYPE;
@@ -488,10 +618,9 @@ namespace ms
 		if (map_search_panel.is_visible() && map_search_panel.get_bounds().contains(cursor_position))
 			return true;
 
-		// 两侧收起/展开把手（已移入地图框内）也必须并入命中区，
+		// 左侧收起/展开把手（右箭头已按用户要求删除）并入命中区，
 		// 否则 get_front 派发不到本元素 → 点击把手变成「点击窗外」（地图失活/穿透）。
-		if (get_left_tab_rect().contains(cursor_position)
-			|| get_right_tab_rect().contains(cursor_position))
+		if (get_left_tab_rect().contains(cursor_position))
 			return true;
 
 		return false;
@@ -515,10 +644,20 @@ namespace ms
 				return Button::State::NORMAL;
 			case Buttons::BT_SEARCH:
 				set_search(!search);
-				toggle_right();
 				return Button::State::NORMAL;
 			case Buttons::BT_SEARCH_CLOSE:
 				set_search(false);
+				return Button::State::NORMAL;
+			case Buttons::BT_ALLSEARCH:
+				submit_native_search();
+				return Button::State::NORMAL;
+			case Buttons::BT_AUTOFLY:
+				Sound(Sound::Name::BUTTONCLICK).play();
+				autofly_to_selected();
+				return Button::State::NORMAL;
+			case Buttons::BT_NAVIREG:
+				Sound(Sound::Name::BUTTONCLICK).play();
+				toggle_navi_register();
 				return Button::State::NORMAL;
 			default:
 				return Button::State::DISABLED;
@@ -541,27 +680,18 @@ namespace ms
 
 	Cursor::State UIWorldMap::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
-		// 两侧把手：悬停显示 tip，点击切换收起/展开。把手已移入地图框内，
-		// 优先判定以拦截边缘的点击。
+		// 左侧把手：悬停显示 tip，点击切换收起/展开。右侧箭头已删除（无功能孤儿控件）。
 		const Rectangle<int16_t> ltab = get_left_tab_rect();
-		const Rectangle<int16_t> rtab = get_right_tab_rect();
 
-		if (ltab.contains(cursorpos) || rtab.contains(cursorpos))
+		if (ltab.contains(cursorpos))
 		{
-			if (ltab.contains(cursorpos))
-				UI::get().show_text(Tooltip::Parent::WORLDMAP,
-					left_state == SideState::COLLAPSED ? Locale::text("uiworldmap.557") : Locale::text("uiworldmap.557"));
-			else
-				UI::get().show_text(Tooltip::Parent::WORLDMAP,
-					right_state == SideState::COLLAPSED ? Locale::text("uiworldmap.560") : Locale::text("uiworldmap.560"));
+			// 展开/收起态给不同提示。
+			const bool expanded_like = (left_state == SideState::EXPANDING || left_state == SideState::EXPANDED);
+			UI::get().show_text(Tooltip::Parent::WORLDMAP,
+				expanded_like ? Locale::text("uiworldmap.558") : Locale::text("uiworldmap.557"));
 
 			if (clicked)
-			{
-				if (ltab.contains(cursorpos))
-					toggle_left();
-				else
-					toggle_right();
-			}
+				toggle_left();
 
 			return clicked ? Cursor::State::CLICKING : Cursor::State::CANCLICK;
 		}
@@ -590,6 +720,26 @@ namespace ms
 				return search_state == Cursor::State::IDLE ? Cursor::State::IDLE : search_state;
 		}
 
+		// 192 原生搜索结果行命中：悬停高亮 + 点击选中该图。
+		native_hover_row = -1;
+		if (search && !native_results.empty())
+		{
+			Point<int16_t> result_origin = get_native_result_origin();
+			const uint8_t row_max = native_row_max();
+			for (uint8_t i = 0; i < row_max && native_result_offset + i < native_results.size(); i++)
+			{
+				Rectangle<int16_t> rb(result_origin + Point<int16_t>(0, i * NATIVE_ROW_H),
+					result_origin + Point<int16_t>(120, (i + 1) * NATIVE_ROW_H));
+				if (rb.contains(cursorpos))
+				{
+					native_hover_row = static_cast<int16_t>(i);
+					if (clicked)
+						on_native_result_selected(native_results[native_result_offset + i]);
+					return clicked ? Cursor::State::CLICKING : Cursor::State::CANCLICK;
+				}
+			}
+		}
+
 		if (Cursor::State new_state = search_text.send_cursor(cursorpos, clicked))
 			return new_state;
 
@@ -611,7 +761,25 @@ namespace ms
 
 			int32_t spot_map_id = path.second.map_ids.empty() ? 0 : path.second.map_ids[0];
 
-			UI::get().show_map(Tooltip::Parent::WORLDMAP, path.second.title, path.second.description, spot_map_id, path.second.bolded, false);
+			// 悬浮即按需请求该地图在线玩家（服务端 750ms 缓存 + hover 去重），
+			// 数据回包后由 set_map_players 合并进 tooltip 的 Players 分区。
+			if (spot_map_id > 0 && hover_req_mapid != spot_map_id)
+			{
+				hover_req_mapid = spot_map_id;
+				WorldMapPlayersPacket(spot_map_id).dispatch();
+			}
+
+			// 仅当回包归属与悬浮地图一致时把玩家塞进 tooltip，避免显示上一张图的列表。
+			std::vector<MapTooltipPlayer> tip_players;
+			if (players_mapid == spot_map_id)
+			{
+				tip_players.reserve(map_players.size());
+				for (const auto& p : map_players)
+					tip_players.push_back(MapTooltipPlayer{ p.name, p.level, p.channel });
+			}
+
+			UI::get().show_map(Tooltip::Parent::WORLDMAP, path.second.title, path.second.description,
+				spot_map_id, path.second.bolded, false, tip_players);
 
 			if (clicked && spot_map_id != 0)
 				select_map_spot(spot_map_id);
@@ -640,9 +808,181 @@ namespace ms
 		{
 			search_text.set_state(Textfield::State::DISABLED);
 			dimension = bg_dimensions;
+			clear_native_search();
 		}
 
 		sync_side_panels();
+	}
+
+	void UIWorldMap::clear_native_search()
+	{
+		native_results.clear();
+		native_result_offset = 0;
+		native_hover_row = -1;
+	}
+
+	uint8_t UIWorldMap::native_row_max() const
+	{
+		// 白框内容区高度 → 可排行数（含行距），有余量防溢出底边。
+		const int16_t area_h = RESULT_AREA_BOTTOM - RESULT_AREA_TOP;
+		int16_t rows = static_cast<int16_t>(area_h / NATIVE_ROW_H);
+		if (rows < 1)
+			rows = 1;
+		if (rows > 40)
+			rows = 40; // search 结果本身也截断在 40
+		return static_cast<uint8_t>(rows);
+	}
+
+	Point<int16_t> UIWorldMap::get_native_result_origin() const
+	{
+		// 搜索轨背板 147x537，origin(0,0)，白框内容区 x≈8..137 / y≈18..525。
+		// 结果起点 = RESULT_AREA_TOP（用户 2026-11-22 红框标注 y≈86），缩进 10px
+		// 进白框，保证结果行落在灰框内、不与输入行/标题重叠。
+		return position + background_dimensions + Point<int16_t>(10, RESULT_AREA_TOP);
+	}
+
+	void UIWorldMap::submit_native_search()
+	{
+		// 192 原生轨统一检索：输入地图名/街名/怪物名/NPC 名 → 命中统一索引 → 结果行高亮。
+		// kind 分流结果行图标：0=field 1=mob 2=npc（对齐 resultField/Mob/Npc 素材）。
+		clear_native_search();
+
+		std::string q = string_format::tolower(search_text.get_text());
+		if (q.empty())
+			return;
+
+		static const auto& index = []() -> const std::vector<NxHelper::Map::MapSearchEntry>& {
+			static const std::vector<NxHelper::Map::MapSearchEntry> data = NxHelper::Map::get_map_search_index();
+			return data;
+		}();
+
+		for (const auto& e : index)
+		{
+			std::string nm = string_format::tolower(e.name);
+			std::string st = string_format::tolower(e.street);
+			if (nm.find(q) != std::string::npos || st.find(q) != std::string::npos)
+			{
+				std::string label;
+				uint8_t kind = e.kind;
+				if (kind == 0)
+				{
+					// 地图：名字 (+街名)，前缀地点图标。
+					label = e.name.empty() ? e.street : e.name;
+					if (!e.street.empty() && e.street != e.name)
+						label += " - " + e.street;
+				}
+				else
+				{
+					// 怪物/NPC：名字 + 类型标注，易与地图结果区分。
+					label = e.name;
+					if (kind == 1)
+						label += " (怪物)";
+					else
+						label += " (NPC)";
+				}
+				native_results.push_back(SearchRow{ e.id, label, kind });
+				if (native_results.size() >= 40)
+					break;
+			}
+		}
+	}
+
+	int32_t UIWorldMap::resolve_spot_mapid(int32_t map_id) const
+	{
+		if (map_id <= 0)
+			return map_id;
+
+		// 精确命中：某 spot 的 map_ids 直接包含该 mapid。
+		for (const auto& spot : map_spots)
+			for (int32_t id : spot.second.map_ids)
+				if (id == map_id)
+					return map_id; // 已在 spot 里，直接用原 id
+
+		// 近似命中：细分 mapid 不在任何 spot 的 mapNo 里（如 100040100），
+		// 退而取同 prefix 的第一个 spot 的代表 mapid，供高亮/点位显示。
+		// 若整个分区都没 spot，则返回原 id（至少左侧信息面板仍可用精确 id）。
+		const int64_t prefix = static_cast<int64_t>(map_id / 10000000);
+		for (const auto& spot : map_spots)
+		{
+			for (int32_t id : spot.second.map_ids)
+			{
+				if (static_cast<int64_t>(id / 10000000) == prefix)
+					return id;
+			}
+		}
+		return map_id;
+	}
+
+	void UIWorldMap::on_native_result_selected(const SearchRow& row)
+	{
+		if (row.kind == 0)
+		{
+			// 地图结果：搜索索引给的是细分 mapid，可能与 spot 的 mapNo 粒度不一致；
+			// 反查到同分区 spot 的代表 id 做选中/高亮，左侧信息面板用同一个 id。
+			select_map_spot(resolve_spot_mapid(row.mapid));
+			return;
+		}
+
+		// 怪物/NPC 结果：反查其出现的地图 id，跳到该分区并选中点位，
+		// 再让左侧信息面板显示该怪的掉落/属性。找不到栖地图时只做提示，
+		// 不臆造行为（避免静默跳错图）。
+		int32_t map_of = NxHelper::Map::find_map_of_life(row.mapid, row.kind);
+		if (map_of <= 0)
+		{
+			UI::get().show_text(Tooltip::Parent::WORLDMAP,
+				Locale::text("uiworldmap.search_life_nowhere"));
+			LOG(LOG_WARN, "[UIWorldMap] search life id=" << row.mapid
+				<< " kind=" << static_cast<int>(row.kind) << " has no map");
+			return;
+		}
+
+		jump_to_map_region(map_of);
+		select_map_spot(map_of);
+
+		if (kUseMapInfoPanel && row.kind == 1)
+		{
+			// 怪物：联动左侧信息面板详情 + 拉掉落（与点选怪物行同路径）。
+			info_panel.set_mob(row.mapid);
+			if (!right_pinned)
+				expand_right();
+		}
+
+		LOG(LOG_INFO, "[UIWorldMap] search life selected id=" << row.mapid
+			<< " kind=" << static_cast<int>(row.kind) << " map=" << map_of);
+	}
+
+	void UIWorldMap::autofly_to_selected()
+	{
+		if (selected_map_id <= 0)
+		{
+			UI::get().show_text(Tooltip::Parent::WORLDMAP, Locale::text("uiworldmap.autofly_nosel"));
+			return;
+		}
+		// 装饰级指路（1A）：选中点位的 path 位图已在 draw 中常亮（黄高亮=相邻点位），
+		// 明确提示"路线示意，非自动寻路"，避免玩家误以为是 A→B 原生寻路。
+		UI::get().show_text(Tooltip::Parent::WORLDMAP, Locale::text("uiworldmap.autofly_route"));
+		// 192「可以自动飞行」在当前技术栈以 !mapwarp 完成到达（服务端 MapWarpCommand）。
+		request_teleport(selected_map_id);
+	}
+
+	void UIWorldMap::toggle_navi_register()
+	{
+		if (selected_map_id <= 0)
+		{
+			UI::get().show_text(Tooltip::Parent::WORLDMAP, Locale::text("uiworldmap.navireg_nosel"));
+			return;
+		}
+		auto it = std::find(registered_maps.begin(), registered_maps.end(), selected_map_id);
+		if (it != registered_maps.end())
+		{
+			registered_maps.erase(it);
+			UI::get().show_text(Tooltip::Parent::WORLDMAP, Locale::text("uiworldmap.navireg_del"));
+		}
+		else
+		{
+			registered_maps.push_back(selected_map_id);
+			UI::get().show_text(Tooltip::Parent::WORLDMAP, Locale::text("uiworldmap.navireg_add"));
+		}
 	}
 
 	void UIWorldMap::update_world(std::string map)
@@ -1019,20 +1359,31 @@ namespace ms
 			map_search_panel.doubleclick(cursorpos);
 	}
 
-	// mapid → 所属分区：原生分区名就是 "WorldMap0" + mapid/10000000，与本文件
-	// update() 里算玩家当前图 parent 的口径完全一致，因此不需要另建反向索引表。
+	void UIWorldMap::show_map_region(int32_t map_id)
+	{
+		if (!is_active())
+			makeactive();
+		jump_to_map_region(map_id);
+	}
+
+	// mapid → 所属分区：分区名 = "WorldMap" + 3 位 prefix，与 update() 同口径。
 	void UIWorldMap::jump_to_map_region(int32_t map_id)
 	{
 		if (map_id <= 0)
 			return;
 
-		const std::string region = "WorldMap0" + std::to_string(map_id / 10000000);
+		std::ostringstream ross;
+		ross << "WorldMap" << std::setw(3) << std::setfill('0') << (map_id / 10000000);
+		const std::string region = ross.str();
 
-		// 分区不存在时不跳：update_world 对缺失节点会回落到 WorldMap.img 默认图，
-		// 静默换图会让人以为「跳错了地方」，所以这里显式拒绝并留日志。
+		// 不支持场景（095 MarkMapLocation_InWorldMap@0x823480 同款）：分区不存在
+		// （副本/事件/跨大陆无法在世界地图定位）→ UIOk Notice 弹窗提示，不再静默失败。
 		if (!nl::nx::Map["WorldMap"][region + ".img"])
 		{
 			LOG(LOG_WARN, "[UIWorldMap] jump_to_map_region: no such region " << region << " (map=" << map_id << ")");
+			UI::get().emplace<UIOk>(
+				Locale::text("uiworldmap.navi_unsupported"),
+				[](bool) {});
 			return;
 		}
 
@@ -1044,6 +1395,7 @@ namespace ms
 
 		LOG(LOG_INFO, "[UIWorldMap] jumped to region " << region << " map=" << map_id);
 	}
+
 
 	void UIWorldMap::request_teleport(int32_t map_id)
 	{
@@ -1073,6 +1425,17 @@ namespace ms
 
 		map_players = std::move(players);
 		players_mapid = map_id;
+	}
+
+	void UIWorldMap::set_quest_marks(int32_t prefix, std::vector<WorldMapQuestMarks>&& marks)
+	{
+		// 乱序陈旧应答丢弃：只接受当前分区的快照（切分区后旧包作废）。
+		if (prefix != mapid / 10000000)
+			return;
+
+		map_quest_marks = std::move(marks);
+		marks_region = prefix;
+		LOG(LOG_INFO, "[UIWorldMap] quest marks prefix=" << prefix << " n=" << map_quest_marks.size());
 	}
 
 	void UIWorldMap::on_mob_selected(int32_t mob_id)

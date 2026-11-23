@@ -24,6 +24,15 @@
 
 namespace ms
 {
+	// 落点解析结果：坐标 + 实际落脚的 foothold id。
+	// 必须一起返回——只回写坐标不回写 fh 时，Npc 仍持有 spawn 包里的旧 fh，
+	// 首帧 update_fh 会按旧 fh 重算 ground 并把 onground 判 false，继续坠落。
+	struct SpawnPoint
+	{
+		Point<int16_t> position;
+		uint16_t fhid = 0;
+	};
+
 	// The collection of platforms in a maple map
 	// Used for collision-detection
 	class FootholdTree
@@ -37,6 +46,8 @@ namespace ms
 
 		// Takes an accelerated PhysicsObject and limits its movement based on the platforms in this tree
 		void limit_movement(PhysicsObject& touse) const;
+		// 飞行怪专用：只做水平墙体钳制，不做垂直 foothold 吸附（MinMS FootholdTree.h:43）。
+		void limit_horizontal(PhysicsObject& touse) const;
 		// Updates a PhysicsObject's fhid based on it's position
 		void update_fh(PhysicsObject& touse) const;
 		// Determine the point on the ground below the specified position
@@ -45,7 +56,13 @@ namespace ms
 		// 不能复用 get_y_below：包里 y 槽传的是 wz 的 cy，实测比平台线低 5~17px，
 		// 按坐标反查要求 ground >= y，会把正下方那块平台判成"不够低"而选到下一层，
 		// NPC 于是"跑到路下面"；再找不到就退到 borders 之外，表现为 NPC 不见了。
-		Point<int16_t> get_spawn_point(Point<int16_t> position, uint16_t fhid) const;
+		// 返回解析后的实际 fhid，供 Npc/Spawn 回写 phobj.fhid，避免首帧再坠落。
+		SpawnPoint resolve_spawn_point(Point<int16_t> position, uint16_t fhid) const;
+		// spawn 包声明的 fh 是否在本图存在且可用（非竖墙）——A 重锚门禁用：
+		// 存在则保留该包（新图包），不存在即旧图残留，按 x 重锚或丢弃。
+		bool has_foothold(uint16_t fhid) const;
+		// 该平台是否水平覆盖 x（重锚后校验，避免把点落到平台端点外）
+		bool covers_x(uint16_t fhid, double fx) const;
 		// Returns the leftmost and rightmost platform positions of the map
 		Range<int16_t> get_walls() const;
 		// Returns the topmost and bottommost platform positions of the map
@@ -53,6 +70,10 @@ namespace ms
 
 	private:
 		uint16_t get_fhid_below(double fx, double fy) const;
+		// 按 x 就近选平台（不依赖包里的 y/cy）：spawn 包 y 槽是 wz cy，比平台线低 5~17px，
+		// get_fhid_below 的 ground>=y 判据会因此跳过正确平台选中下一层。
+		// 新图重锚时 x 在平台外返回 0，交由调用方丢弃该包。
+		uint16_t get_fhid_at_x(double fx) const;
 		double get_wall(uint16_t fhid, bool left, double fy) const;
 		double get_edge(uint16_t fhid, bool left) const;
 		const Foothold& get_fh(uint16_t fhid) const;

@@ -18,6 +18,7 @@
 #include "Combat.h"
 
 #include "../../Character/SkillId.h"
+#include "../../Data/SkillData.h"
 #include "../../IO/Messages.h"
 
 #include "../../Net/Packets/AttackAndSkillPackets.h"
@@ -42,6 +43,25 @@ namespace ms
 		bool is_combo_finisher(int32_t skillid)
 		{
 			return skillid == 21100004 || skillid == 21110004 || skillid == 21120006;
+		}
+
+		// 攻击包 display 字段（s9 PacketCreator.addAttackBody 原样广播给其他客户端）。
+		// MinMS Combat.cpp:174-190：组合动作走 body_action_by_name（alert2→41…），
+		// 基本站姿走 body_action(stance)。旧实现恒 0 → 他人看到固定默认姿态。
+		void fill_attack_wire_action(AttackResult& result, const Player& player)
+		{
+			result.stance = static_cast<uint8_t>(player.get_look().get_stance());
+			const std::string& action = player.get_look().get_action_name();
+			if (!action.empty())
+			{
+				if (uint8_t wire = Stance::body_action_by_name(action))
+				{
+					result.display = wire;
+					return;
+				}
+			}
+			result.display = Stance::body_action(
+				result.stance != 0 ? Stance::by_id(result.stance) : Stance::STAND1);
 		}
 	}
 
@@ -125,10 +145,24 @@ namespace ms
 
 	void Combat::use_move(int32_t move_id)
 	{
-		if (!player.can_attack())
+		if (player.get_char_state() == Char::State::DIED || player.is_attacking())
 			return;
 
 		const SpecialMove& move = get_move(move_id);
+
+		// MinMS Combat::use_move：仅普攻/攻击技能走 can_attack / can_cast_attack；
+		// 瞬移/二段跳等非攻击位移技能不拦武器与落地，否则空中二段跳永远发不出去。
+		if (!move.is_skill())
+		{
+			if (!player.can_attack())
+				return;
+		}
+		else if (move.is_attack())
+		{
+			if (!player.can_cast_attack())
+				return;
+		}
+
 		SpecialMove::ForbidReason reason = player.can_use(move);
 		Weapon::Type weapontype = player.get_stats().get_weapontype();
 
@@ -186,6 +220,7 @@ namespace ms
 			// (30 << 4) & 0xFF = 0，服务端一个伤害块都不读，伤害全丢。
 			uint8_t mobcount = attack.mobcount > 15 ? 15 : attack.mobcount;
 			AttackResult result = attack;
+			fill_attack_wire_action(result, player);
 
 			MapObjects* mob_objs = mobs.get_mobs();
 			MapObjects* reactor_objs = reactors.get_reactors();
@@ -247,6 +282,11 @@ namespace ms
 			move.apply_useeffects(player);
 			move.apply_actions(player, Attack::Type::MAGIC);
 
+			// 2026-11-22：瞬移/二段跳等非攻击位移技能走这条分支。旧实现只播特效
+			// + 发 UseSkillPacket，从不调用 apply_use_movement（该函数仅攻击分支 :200
+			// 调用），所以技能"发出去了但人不动"。在这里补上本地位移。
+			apply_use_movement(move);
+
 			int32_t moveid = move.get_id();
 			int32_t level = player.get_skills().get_level(moveid);
 			// CHAKRA / MONSTER_MAGNET 等非攻击白名单也走 SKILL_EFFECT。
@@ -307,12 +347,33 @@ namespace ms
 
 	void Combat::apply_use_movement(const SpecialMove& move)
 	{
-		switch (move.get_id())
+		// 2026-11-22：原四个 case 全是空语句 —— 瞬移/二段跳发包正常但客户端
+		// 本地零位移，用户报「学来的技能用不了」。接 MinMS Combat::apply_use_movement
+		// / apply_teleport 同源的 Player 位移；MP/最终坐标仍由 s9 权威结算。
+		const int32_t skillid = move.get_id();
+		const int32_t level = player.get_skills().get_level(skillid);
+
+		switch (skillid)
 		{
+		case SkillId::Id::FLASH_JUMP:
+		case SkillId::Id::FLASH_JUMP_NW:
+		case SkillId::Id::FLASH_JUMP_DUAL:
+			player.apply_flash_jump(skillid, level);
+			break;
 		case SkillId::Id::TELEPORT_FP:
 		case SkillId::Id::IL_TELEPORT:
 		case SkillId::Id::PRIEST_TELEPORT:
-		case SkillId::Id::FLASH_JUMP:
+		case SkillId::Id::TELEPORT_FP_CYGNUS:
+		case SkillId::Id::TELEPORT_EVAN:
+		{
+			// 瞬移距离取技能 hrange*100（v83 基础约 130），缺省 130。
+			int16_t range = 130;
+			const auto& stats = SkillData::get(skillid).get_stats(level > 0 ? level : 1);
+			if (stats.hrange > 0.0f)
+				range = static_cast<int16_t>(stats.hrange * 100.0f);
+			player.apply_teleport(skillid, range);
+			break;
+		}
 		default:
 			break;
 		}
@@ -360,7 +421,11 @@ namespace ms
 		// 本就接近淡出尾声，观感无损，尖峰负载有界。
 		Point<int16_t> head_position = mobs.get_mob_head_position(effect.target_oid);
 		damagenumbers.push_back(effect.number);
-		damagenumbers.back().set_x(head_position.x());
+		// 多段伤害的末段到达时怪物可能已被击杀回收，此时 get_mob_head_position
+		// 返回 (0,0)，照旧 set_x(0) 会把数字甩到地图左侧固定位置。
+		// 仅在怪物仍存在时跟随其最新位置；否则保留 place_numbers 锁定的 x。
+		if (head_position.x() != 0 || head_position.y() != 0)
+			damagenumbers.back().set_x(head_position.x());
 
 		while (damagenumbers.size() > MAX_DAMAGE_NUMBERS)
 			damagenumbers.pop_front();
@@ -504,14 +569,16 @@ namespace ms
 	std::vector<DamageNumber> Combat::place_numbers(int32_t oid, const damage::DamageLines& damagelines)
 	{
 		std::vector<DamageNumber> numbers;
-		int16_t head = mobs.get_mob_head_position(oid).y();
+		Point<int16_t> headpos = mobs.get_mob_head_position(oid);
+		int16_t head = headpos.y();
 
 		for (auto& line : damagelines)
 		{
 			int64_t amount = line.first;
 			bool critical = line.second;
 			DamageNumber::Type type = critical ? DamageNumber::Type::CRITICAL : DamageNumber::Type::NORMAL;
-			numbers.emplace_back(type, amount, head, 0, player.get_damage_skin());
+			// 生成时就锁定怪物头部 x：后续延迟派发若遇怪物回收，位置不会退化成 0。
+			numbers.emplace_back(type, amount, head, headpos.x(), player.get_damage_skin());
 
 			head -= DamageNumber::rowheight(critical);
 		}

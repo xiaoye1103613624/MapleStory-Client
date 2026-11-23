@@ -40,6 +40,8 @@ namespace ms
 		void set_view(Range<int16_t> hborders, Range<int16_t> vborders);
 		// Start a short screen tremble (FieldEffect mode 1). duration_ms≈delay from packet.
 		void tremble(int8_t type, int32_t duration_ms);
+		// 清屏/换图时复位震屏偏移（MinMS clear_tremble）。
+		void clear_tremble();
 		// Return the current position.
 		Point<int16_t> position() const;
 		// Return the interpolated position.
@@ -61,5 +63,9 @@ namespace ms
 
 		int32_t tremble_remain = 0;
 		int8_t tremble_type = 0;
+		// 震屏用独立偏移，绝不回写 x/y（MinMS tremble_ox/oy），
+		// 否则每帧 x.get() 含上帧抖动 → 随机游走漂移。
+		double tremble_ox = 0.0;
+		double tremble_oy = 0.0;
 	};
 }

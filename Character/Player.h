@@ -27,6 +27,7 @@
 
 
 #include "Inventory/Inventory.h"
+#include "Look/TamingMobLook.h"
 
 #include "../Gameplay/Playable.h"
 
@@ -72,6 +73,8 @@ namespace ms
 		bool is_attacking() const;
 		// Return whether the player can attack or not
 		bool can_attack() const;
+		// 攻击技能/普攻共用门禁（不含落地/空中细分；MinMS Player::can_cast_attack）
+		bool can_cast_attack() const;
 		// Return whether the player can use a skill or not
 		SpecialMove::ForbidReason can_use(const SpecialMove& move) const;
 		// Create an attack struct using the player's stats
@@ -79,6 +82,17 @@ namespace ms
 
 		// Execute a rush movement
 		void rush(double targetx);
+
+		// 2026-11-22：脚本/四转职业技能的本地位移（MinMS Combat::apply_use_movement/
+		// apply_teleport 同源）。服务端仍权威结算 MP 与位置回包，这里只补原生手感。
+		// apply_flash_jump: 二段跳（4111006），仅在空中且本次离地未用过时给冲量。
+		bool apply_flash_jump(int32_t skillid, int32_t level);
+		// apply_teleport: 法师/祭司瞬移（2101002/2201002/2301001），按方向键或朝向
+		// 在 foothold 上选落点并直接位移；返回是否成功位移。
+		bool apply_teleport(int32_t skillid, int32_t range);
+		// 着地时复位二段跳一次性限制（由 PlayerStandState::initialize 调用）。
+		void reset_flash_jump() { flash_jump_used = false; }
+		bool has_flash_jumped() const { return flash_jump_used; }
 
 		// Check whether the player is invincible
 		bool is_invincible() const override;
@@ -104,6 +118,8 @@ namespace ms
 		void add_cooldown(int32_t skill_id, int32_t time);
 		// Check if a skill is on cooldown
 		bool has_cooldown(int32_t skill_id) const;
+		// 剩余冷却毫秒（无冷却返回 0），供快捷格 CD 遮罩绘制。
+		int32_t get_cooldown_remaining(int32_t skill_id) const;
 
 		// Change the player's level, display the "level up" effect.
 		void change_level(uint16_t level);
@@ -174,6 +190,14 @@ namespace ms
 		CharStats stats;
 		Inventory inventory;
 		SkillBook skillbook;
+
+		// 二段跳一次性限制：一次离地只允许一次，着地由 PlayerStandState 复位。
+		bool flash_jump_used = false;
+		// 瞬移本地节流（毫秒）：对齐 Angel TryRegisterTeleport@0x957b74 的 120ms
+		// 间隔，服务端 SPECIAL_MOVE 回包不保证到达（单机/离线端），故本地自守门，
+		// 避免连按方向键瞬间多次位移造成「没有间隔 / 卡地图」。在 Player::update
+		// 随其它 CD 一起按 TIMESTEP 递减。
+		int32_t teleport_throttle = 0;
 		QuestLog questlog;
 		TeleportRock teleportrock;
 		MonsterBook monsterbook;
@@ -200,5 +224,9 @@ namespace ms
 		int32_t damageSkin = 0;
 
 		const FootholdTree* sandbox_fht = nullptr;
+
+		// 最小坐骑预览（MONSTER_RIDING + TAMEDMOB）；非完整 CActionMan。
+		mutable TamingMobLook mount_look;
+		void sync_mount_look() const;
 	};
 }

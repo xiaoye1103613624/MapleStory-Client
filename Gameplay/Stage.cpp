@@ -19,9 +19,11 @@
 
 #include "../Configuration.h"
 #include "../MapleStory.h"
+#include "../Graphics/GraphicsGL.h"
 #include "../Character/SkillMacros.h"
 #include "../Weather/WeatherFx.h"
 #include "../Weather/WeatherState.h"
+#include "../Weather/WeatherSkyTable.h"
 #include "../Weather/WeatherBackLayers.h"
 #include "../Weather/WeatherLamps.h"
 #include "../Weather/WeatherGround.h"
@@ -126,7 +128,15 @@ namespace ms
 		return char_entry.id != 0 && char_entry.id == cid;
 	}
 
-	void Stage::clear()
+	void Stage::on_viewport_changed()
+	{
+		// 视口切档主动刷新背景平铺（A+C 方案）。Background::draw 也每帧实时重算，
+		// 这里让切换当帧立即正确，不依赖下一帧。天气天空层 draw_list 已按当前
+		// Constants 实时计算 cover/平铺，无需重建素材（重建会丢天空门禁状态）。
+		backgrounds.on_viewport_changed();
+	}
+
+	void Stage::clear(bool keep_weather)
 	{
 		state = State::INACTIVE;
 
@@ -142,12 +152,17 @@ namespace ms
 		hot_accum_ms = 0;
 		touching_reactor_oid = 0;
 
-		// 天气系统：换线/断线回 stock，等服务端进图补发 0x373D 重新同步。
-		weather::State::get().clear();
-		weather::Fx::get().reset();
-		weather::BackLayers::get().clear();
-		weather::Lamps::get().clear();
-		weather::Ground::get().clear();
+		// 天气系统：换图/退商城（keep_weather=true）保留 State/Fx/Lamps，避免
+		// clear→0x373D apply 之间 ≥200ms 的"闪白天"窗口，也避免路灯 stagger 重置。
+		// 服务端每次进图都补发 0x373D(snap=true) 权威覆盖；登录/退出彻底清空。
+		if (!keep_weather)
+		{
+			weather::State::get().clear();
+			weather::Fx::get().reset();
+			weather::BackLayers::get().clear();
+			weather::Lamps::get().clear();
+			weather::Ground::get().clear();
+		}
 	}
 
 	void Stage::load_map(int32_t mapid)
@@ -174,9 +189,17 @@ namespace ms
 
 		tilesobjs = MapTilesObjs(src);
 		backgrounds = MapBackgrounds(src["back"]);
-		// 天气素材层：按 back/0 的 (bS,no) 天空门禁决定是否注入（对齐插件 FieldHasSky）。
-		// 不 gate 服务端状态——0x373D 在进图之后才到，gate 会让会话首图恒白天。
-		weather::BackLayers::get().on_map_loaded(backgrounds.get_backmost_bs(), backgrounds.get_backmost_no());
+		// 天气门禁：nosky + skytable + 水下例外（对齐插件 FieldHasSky / IsUnderwaterMap）。
+		// 不 gate 服务端 0x373D 状态——进图包在装图之后才到；门禁只决定本图能不能画天气。
+		{
+			bool allow_falling = false, allow_tint = false;
+			weather::field_gate(mapid,
+				backgrounds.get_backmost_bs().c_str(), backgrounds.get_backmost_no(),
+				allow_falling, allow_tint);
+			weather::State::get().set_field_gate(allow_falling, allow_tint);
+			weather::BackLayers::get().on_map_loaded(mapid,
+				backgrounds.get_backmost_bs(), backgrounds.get_backmost_no());
+		}
 		weather::Ground::get().on_map_loaded();
 		physics = Physics(src["foothold"]);
 		mapinfo = MapInfo(src, physics.get_fht().get_walls(), physics.get_fht().get_borders());
@@ -192,6 +215,7 @@ namespace ms
 		Point<int16_t> spawnpoint = portals.get_portal_by_id(portalid);
 		Point<int16_t> startpos = physics.get_y_below(spawnpoint);
 		player.respawn(startpos, mapinfo.is_underwater());
+		camera.clear_tremble(); // 换图清屏复位震屏偏移（MinMS Stage.cpp:277）
 		camera.set_position(startpos);
 		camera.set_view(mapinfo.get_walls(), mapinfo.get_borders());
 	}
@@ -211,13 +235,25 @@ namespace ms
 		//   2) 注入的天空素材（渐变/月/星/云/沙暴/彩虹/雪远）
 		//   3) 地图山树 back/2+ —— 永远盖在天气之上，树不会被天气吞掉
 		// 三段都走 MapBackgrounds 的区间重载，原生逐层绘制算法一行未改。
+		// 2026-11-23 用户拍板口径（最新）：**地图自带背景 back 全部压暗**（天空 back/0-1
+		// 与山树 back/2+ 都压），注入的夜空/月、瓦片/物件、NPC/怪物、角色、UI 一律不压暗。
+		const bool night_active = weather::Fx::get().night_level() > 0.01f
+			&& weather::State::get().allow_tint();
+		const Color fg_tint = night_active ? weather::Fx::get().scene_tint() : Color(1.0f, 1.0f, 1.0f, 1.0f);
+		GraphicsGL& gl = GraphicsGL::get();
+
 		const size_t sky_end = backgrounds.size() < 2 ? backgrounds.size() : 2;
-		backgrounds.drawbackgrounds(viewx, viewy, alpha, 0, sky_end);
-		weather::BackLayers::get().draw_sky(viewx, viewy, alpha);
-		backgrounds.drawbackgrounds(viewx, viewy, alpha, sky_end, backgrounds.size());
+		if (night_active) gl.push_tint(fg_tint);
+		backgrounds.drawbackgrounds(viewx, viewy, alpha, 0, sky_end); // 天空 back/0-1：压暗
+		if (night_active) gl.pop_tint();
+		weather::BackLayers::get().draw_sky(viewx, viewy, alpha);     // 注入夜空/月/云/星/彩虹：不压
+		if (night_active) gl.push_tint(fg_tint);
+		backgrounds.drawbackgrounds(viewx, viewy, alpha, sky_end, backgrounds.size()); // 山树 back/2+：压暗
+		if (night_active) gl.pop_tint();
 
 		for (auto id : Layer::IDs)
 		{
+			// 瓦片/物件/反应器/NPC/怪物/角色/掉落/标记：全部不压暗。
 			tilesobjs.draw(id, viewpos, alpha);
 			reactors.draw(id, viewx, viewy, alpha);
 			npcs.draw(id, viewx, viewy, alpha);
@@ -241,14 +277,21 @@ namespace ms
 		// 自绘雨雪/花瓣/沙尘粒子（A 方案：GraphicsGL 直接画，真机可见）。
 		weather::Fx::get().draw_particles(viewx, viewy);
 
-		// 天气昼夜夜色：场景绘制完成后、UI 绘制前叠加，只压场景不压 UI。
-		// D1 核心闭环用全屏半透明叠加近似 bundle 的逐层 multiply（见 WeatherFx.h 注释）。
-		// 天气地面层（水坑/积雪/溅射）：角色之后、夜色叠加之前。
+		// 天气地面层（水坑/积雪/溅射）：角色之后、夜色光照之前。
 		weather::Ground::get().draw(viewpos, player.get_position(), &physics.get_fht());
-		weather::Fx::get().draw();
+		// 夜色已改为 Stage::draw 开头的分层 push_tint（Fx::draw 保留空实现兼容旧调用）。
+		// 2026-11-23：只保留月光光晕（玩家/NPC 光晕已删除），强度随夜色深入。
+		weather::Fx::get().draw_lights();
 		weather::Fx::get().draw_lightning();
 		// 路灯暖色光晕（世界坐标按 viewx/viewy 换算），盖在场景之上、UI 之下。
 		weather::Lamps::get().draw(viewx, viewy, alpha);
+
+		// 2026-11-23 夜色只压场景、不压 UI：把场景批次（含夜色乘色/灯光/光晕）
+		// 在此即时提交。修复前所有 quad 挤到帧末唯一 flush()，乘色在 UI 绘制后
+		// 才作用于整屏 framebuffer，导致所有窗口/道具/文字一起变暗——与
+		// Stage.cpp:266「只压场景不压 UI」的设计意图相悖。UI 在此之后由
+		// MapleStory.cpp:236 绘制，在帧末 flush() 中提交，不受夜色影响。
+		GraphicsGL::get().flush_scene();
 	}
 
 	void Stage::update()
@@ -437,15 +480,18 @@ namespace ms
 			}
 		}
 
-		// 天气系统：固定逻辑步长推进本地时钟与夜色趋近（与 MapleStory 主循环 timestep 同口径）。
+		// 天气系统：固定逻辑步长推进本地时钟与夜色趋近。
+		// TIMESTEP 本身就是毫秒（主循环用 TIMESTEP*1000 转微秒给 Timer）；
+		// 这里绝不能再 *1000，否则本地时钟/粒子相位快约 1000 倍、包间昼夜狂闪。
 		// 未收到 0x373D 时 Fx::update 内部零开销返回，不影响 stock 表现。
-		weather::Fx::get().update(static_cast<int64_t>(Constants::TIMESTEP) * 1000);
+		weather::Fx::get().update(static_cast<int64_t>(Constants::TIMESTEP));
 		// 天气前景素材层：每帧按天空/时钟驱动雨/雾/雪 alpha + 动画；不改原生背景逻辑。
 		// flags 带 SNAP 时（进图包）直接到位。
 		weather::BackLayers::get().update((weather::State::get().flags() & weather::FLAG_SNAP) != 0,
 			static_cast<uint16_t>(Constants::TIMESTEP));
-		// 天气路灯：按当前夜色强度推进光晕 fade。
-		weather::Lamps::get().update(weather::Fx::get().night_level());
+		// 天气路灯：按当前夜色强度推进光晕 fade；进图 SNAP 时直接到位不暖灯。
+		weather::Lamps::get().update(weather::Fx::get().night_level(),
+			(weather::State::get().flags() & weather::FLAG_SNAP) != 0);
 		// 天气地面层：推进积雪/水坑/溅射动画 + 环境音状态桩。
 		weather::Ground::get().update(static_cast<uint16_t>(Constants::TIMESTEP));
 		weather::Ground::get().update_ambient();
@@ -637,8 +683,20 @@ namespace ms
 			case KeyType::Id::ACTION:
 				playable->send_action(KeyAction::actionbyid(action), down);
 				break;
+			case KeyType::Id::ITEM:
+				// 2026-11-22：道具绑到快捷键后按下去没反应 —— Stage::send_key
+				// 旧 switch 只有 ACTION/SKILL/MACRO/FACE，ITEM 被静默吞掉，
+				// 快捷栏单击（activate_*_qs_slot）虽调到此处也永不下发 USE_ITEM(72)。
+				// 与 MinMS UIStateGame→Stage::send_key(ITEM)→Player::use_item 同源：
+				// 只在按下沿用一次，避免 UIStatusBar 的 true/false 成对调用消耗两个。
+				if (down)
+					player.use_item(action);
+				break;
 			case KeyType::Id::SKILL:
-				combat.use_move(action);
+				// MinMS Stage::send_key：技能只在按下沿触发；松开沿再 use_move
+				// 会让瞬移连放两次、二段跳二次空包（仍发 USE_SKILL(91)）。
+				if (down)
+					combat.use_move(action);
 				break;
 			case KeyType::Id::MACRO:
 				// Angel v43[7]=1 + CMacroSysMan::Update：整行宏绑到键位后，按键

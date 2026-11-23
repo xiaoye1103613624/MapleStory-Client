@@ -113,15 +113,7 @@ namespace ms
 		} else if (keycode == 'O' || keycode == 'o') {
 			button_pressed(BtOpen);
 		} else if (keycode == 'N' || keycode == 'n') {
-			std::string pre;
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				pre = ci->get_target_name();
-			if (!pre.empty()) {
-				std::string to = pre;
-				
-			} else {
-				
-			}
+			prompt_new_note();
 		} else if (keycode == 'X' || keycode == 'x') {
 			if (selected >= 0 && selected < static_cast<int>(notes.size())) {
 				std::vector<int32_t> ids{ notes[static_cast<size_t>(selected)].id };
@@ -137,6 +129,34 @@ namespace ms
 		} else if (keycode == 'L' || keycode == 'l') {
 			show_tip("List " + std::to_string(notes.size()));
 		}
+	}
+
+	void UIMemo::prompt_new_note()
+	{
+		// s9 NoteActionHandler action0: string name + string message
+		std::string pre;
+		if (auto ci = UI::get().get_element<UICharInfo>())
+			pre = ci->get_target_name();
+		auto send = [pre](const std::string& input) {
+			std::string to = pre;
+			std::string message = input;
+			if (pre.empty()) {
+				// 复合输入：收件人|正文
+				size_t bar = input.find('|');
+				if (bar == std::string::npos || bar == 0)
+					return;
+				to = input.substr(0, bar);
+				message = input.substr(bar + 1);
+			}
+			if (to.empty() || message.empty())
+				return;
+			NoteSendPacket(to, message).dispatch();
+			LOG(LOG_DEBUG, "UIMemo: NoteSend to=" << to << " len=" << message.size());
+		};
+		std::string hint = pre.empty()
+			? Locale::text("memo.new_hint")
+			: Locale::format_all("memo.new_hint_pre", { pre });
+		UI::get().emplace<UISoftKey>(send, []() {}, hint);
 	}
 
 	UIElement::Type UIMemo::get_type() const { return TYPE; }
@@ -162,19 +182,8 @@ namespace ms
 					: Locale::text("memo.no_note"));
 				break;
 			case BtSave:
-			{
-				// SoftKey: CharInfo 名则只问正文；否则 收件人名 → 正文
-				std::string pre;
-				if (auto ci = UI::get().get_element<UICharInfo>())
-					pre = ci->get_target_name();
-				if (!pre.empty()) {
-					std::string to = pre;
-					
-				} else {
-					
-				}
+				prompt_new_note();
 				break;
-			}
 			default:
 				break;
 		}

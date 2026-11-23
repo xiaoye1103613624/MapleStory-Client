@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStatusBar.h"
 
+#include <fstream>
+
 #include "../../Util/HudLayout.h"
 #include "../../Util/ResolutionTiers.h"
 
@@ -132,6 +134,59 @@ namespace ms
 		KeyConfig::Key::Q, KeyConfig::Key::W, KeyConfig::Key::E, KeyConfig::Key::R, KeyConfig::Key::T,
 		KeyConfig::Key::Z, KeyConfig::Key::X, KeyConfig::Key::C, KeyConfig::Key::V
 	};
+
+	// 2026-11-20 IDA 实证（MapleStoryT.exe s_ptShortKeyPos@0x279c390，28 项运行时常量）：
+	//   列 x = 7, 40, 73, 106 | 150, 183, 216, 249 | 282, 315, 348, 381 | 414, 447
+	//   行 y = 15, 48
+	//   → 列距 33、行距 33、**每 4 列一组**、组间 gap 11（106→150）。
+	//   索引顺序 = 逐组「上行4格 → 下行4格」，共 4+4+4+2 = 14 列 × 2 行 = 28 格。
+	//   这同时解释了用户「按键映射参照 083 的 13 格、多余按规律往后延续」：
+	//   083 是 13 列×2=26 格，192 在其后续到 28 格，坐标规律完全相同（pitch33）。
+	// 旧表 pitch35/无组间隔是错的（图标偏移的根因之一），此处按 IDA 实表生成。
+	constexpr int16_t QS_COL_X[14] = {
+		7, 40, 73, 106,
+		150, 183, 216, 249,
+		282, 315, 348, 381,
+		414, 447
+	};
+	constexpr int16_t QS_ROW_Y[2] = { 15, 48 };
+	constexpr int16_t QS_GRID_SLOTS = 28; // 14 列 × 2 行（IDA m_nQuickSlotDisplayNo 上限）
+
+	// 按 IDA 索引顺序生成格子相对坐标：每组 4 列走完上下两行再进下一组。
+	constexpr auto make_qs_pos()
+	{
+		std::array<Point<int16_t>, QS_GRID_SLOTS> pos{};
+		size_t idx = 0;
+		for (int group = 0; group < 4; ++group)
+		{
+			for (int row = 0; row < 2; ++row)
+			{
+				for (int c = 0; c < 4; ++c)
+				{
+					const int col = group * 4 + c;
+					if (col >= 14 || idx >= QS_GRID_SLOTS)
+						continue;
+					pos[idx++] = Point<int16_t>(QS_COL_X[col], QS_ROW_Y[row]);
+				}
+			}
+		}
+		return pos;
+	}
+	constexpr auto MODERN_QS_POS = make_qs_pos();
+
+	// 键序 = 083 CLASSIC_QS_KEYS[26] 全 26 个 + 按同规律续 2 个（Z/X 之后接 C/V 已用尽，
+	// 续 Q/W 的下一组：NUM6/NUM7），保证 28 格都有确定键位。
+	constexpr uint8_t MODERN_QS_KEYS[QS_GRID_SLOTS] = {
+		KeyConfig::Key::LEFT_SHIFT, KeyConfig::Key::INSERT, KeyConfig::Key::HOME, KeyConfig::Key::PAGE_UP,
+		KeyConfig::Key::NUM1, KeyConfig::Key::NUM2, KeyConfig::Key::NUM3, KeyConfig::Key::NUM4,
+		KeyConfig::Key::NUM5, KeyConfig::Key::A, KeyConfig::Key::S, KeyConfig::Key::D,
+		KeyConfig::Key::F, KeyConfig::Key::LEFT_CONTROL, KeyConfig::Key::DELETE, KeyConfig::Key::END,
+		KeyConfig::Key::PAGE_DOWN, KeyConfig::Key::Q, KeyConfig::Key::W, KeyConfig::Key::E,
+		KeyConfig::Key::R, KeyConfig::Key::T, KeyConfig::Key::Z, KeyConfig::Key::X,
+		KeyConfig::Key::C, KeyConfig::Key::V,
+		// 28 格比 083 的 26 格多 2 个，按同规律往后延续（数字键序 6、7）。
+		KeyConfig::Key::NUM6, KeyConfig::Key::NUM7
+	};
 	// key/0..6 贴纸索引（Shift/Ins/Hm/Pup/Ctrl/Del/End）；-1 = 无贴纸，走 KEYNAME。
 	constexpr int8_t CLASSIC_QS_KEYCAP[26] = {
 		0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -221,6 +276,9 @@ namespace ms
 		const bool slots32 = (CLASSIC_QS_SLOTS == 32);
 		const int16_t content_w = HudLayout::hud_content_w(VWIDTH, slots32);
 		const int16_t hud_cx = HudLayout::hud_center_x(VWIDTH, content_w);
+		// 2026-11-21：多分辨率重锚同步 backgrnd 内容宽/中心。
+		classic_content_w = content_w;
+		classic_content_cx = hud_cx;
 
 		quickslot_pos = Point<int16_t>(
 			HudLayout::qs_x_in_group(VWIDTH, slots32),
@@ -301,9 +359,65 @@ namespace ms
 		nl::node quickSlot = mainBar["quickSlot"];
 		nl::node submenu = mainBar["submenu"];
 
-		exp_pos = Point<int16_t>(0, 87);
+		// ============ 2026-11-20 多分辨自适应底部布局（用户裁决版） ============
+		// 用户要求：
+		//  ① 血量条**中轴居中**于视口（不是左缘居中）：status_x = (VWIDTH - 198)/2
+		//  ② 主功能菜单移到**等级行上方**（血条框之上，水平居中）
+		//  ③ 快捷键贴右、**按整格截断**（不允许半格在视口内）；宽度够全部显示
+		//  ④ 底部整体（聊天/信息/菜单/快捷键）自适应；宽度过大时整体居中
+		// IDA 复用：s_ptShortKeyPos 28 格坐标（pitch33、4列一组 gap11）、格数 8/28 规则。
+		constexpr int16_t MENU_PITCH = 35;       // 菜单六钮步距（素材 origin 级差）
+		constexpr int16_t MENU_W_TOTAL = 6 * 35; // 六钮总宽
+		// 2026-11-23 用户反馈：底部两排功能菜单离经验条太近，整体右移一点。
+		// 只平移主功能菜单条（下排），血条/经验条/快捷栏锚点不变。
+		constexpr int16_t MENU_X_SHIFT = 48;
+		constexpr int16_t STATUS_W = 198;        // status/backgrnd 素材宽
+		constexpr int16_t QS_PITCH_X = 33;       // IDA 列距（s_ptShortKeyPos）
+		constexpr int16_t QS_CELL = 32;          // 格边长
+		constexpr int16_t QS_PAD_R = 4;          // 底板右留白
 
-		sprites.emplace_back(EXPBar["backgrnd"], DrawArgument(Point<int16_t>(0, 87), Point<int16_t>(VWIDTH, 0)));
+		// 经验条顶（相对底栏 position）。
+		constexpr int16_t EXP_BOTTOM = 87;
+		// 素材尺寸固定（不随视口缩放）：status/cover 204×70、menu 钮 37、quickSlot/backgrnd 557×67。
+		constexpr int16_t STATUS_H = 70;        // mainBar/status/layer:cover
+		constexpr int16_t MENU_H = 37;          // mainBar/menu/button:* normal/0
+		constexpr int16_t QS_H = 67;            // mainBar/quickSlot/backgrnd
+
+		// ① 血条中轴居中：让 198 宽素材的**中心**落在视口中心。
+		const int16_t status_x = static_cast<int16_t>((VWIDTH - STATUS_W) / 2);
+
+		// ③ 快捷键：贴右缘，按整列计算可见列数（不出现半格）。
+		//    QS 底板结构：首列 x=7、列距 33、末列右缘 = 7+(cols-1)*33+32。
+		//    先按 IDA 上限（小分辨率 8 / 其余 28）取需求格数，再按实际可用宽向下取整到整列。
+		auto qs_span_w = [QS_PITCH_X, QS_CELL, QS_PAD_R](int16_t cols) -> int16_t
+		{
+			// 可见宽度 = 首列偏移 7 + (cols-1)*33 + 格宽 32 + 右留白 4
+			return static_cast<int16_t>(7 + (cols - 1) * QS_PITCH_X + QS_CELL + QS_PAD_R);
+		};
+		// 上限列数：28 格 = 14 列；小分辨率 8 格 = 4 列（IDA m_nQuickSlotDisplayNo）。
+		const bool qs_small = (VWIDTH <= 1024 && VHEIGHT <= 768);
+		int16_t qs_max_cols = qs_small ? 4 : 14;
+		// 让 QS 起点不压到血条（血条右缘 = status_x + 198），可用宽 = VWIDTH - (status_x+198) - gap。
+		const int16_t qs_avail_min_x = static_cast<int16_t>(status_x + STATUS_W + 8);
+		int16_t qs_cols = qs_max_cols;
+		while (qs_cols > 1 && qs_avail_min_x + qs_span_w(qs_cols) > VWIDTH)
+			--qs_cols;
+		const int16_t qs_visible_w = qs_span_w(qs_cols);
+		const int16_t qs_x = static_cast<int16_t>(VWIDTH - qs_visible_w - 2);
+
+
+		// ② 主功能菜单移到等级行上方、水平居中（血条框顶 = EXP_BOTTOM - STATUS_H）。
+		const int16_t menu_x = static_cast<int16_t>((VWIDTH - MENU_W_TOTAL) / 2 + MENU_X_SHIFT);
+		const int16_t menu_y = static_cast<int16_t>(EXP_BOTTOM - STATUS_H - MENU_H - 6);
+
+		// 经验条：**关键** EXPBar/<w>/layer:back 的 origin=(0,-23)（orange-wz 实测），
+		// draw(pos) 视觉左上 = pos - origin，故 pos.y 必须 = 期望视觉顶 + origin.y。
+		// 此前直接用 EXP_BOTTOM 当 pos.y → 视觉顶被推到 EXP_BOTTOM+23，1280x720 下
+		// 落到视口最底边之外，用户报「底部经验条不见了」的真因。
+		constexpr int16_t EXP_ORIGIN_Y = -23; // EXPBar/1920/layer:back origin.y
+		exp_pos = Point<int16_t>(0, static_cast<int16_t>(EXP_BOTTOM + EXP_ORIGIN_Y + 14));
+
+		sprites.emplace_back(EXPBar["backgrnd"], DrawArgument(Point<int16_t>(0, EXP_BOTTOM), Point<int16_t>(VWIDTH, 0)));
 		sprites.emplace_back(EXPBarRes["layer:back"], exp_pos);
 
 		int16_t exp_max = VWIDTH - 16;
@@ -330,75 +444,30 @@ namespace ms
 		else
 			quickslot_min = 0;
 
-		if (layout_w == 800)
 		{
-			hpmp_pos = Point<int16_t>(412, 40);
-			hpset_pos = Point<int16_t>(530, 70);
-			mpset_pos = Point<int16_t>(528, 86);
-			statset_pos = Point<int16_t>(427, 111);
-			levelset_pos = Point<int16_t>(461, 48);
-			namelabel_pos = Point<int16_t>(487, 40);
-			quickslot_pos = Point<int16_t>(579, 0);
+			// 全档统一「从右往左链式」坐标：QS 贴右缘 → 菜单在其左 → 血条再左。
+			// 任意视口宽（800/1024/1280/1366/1920）都不重叠，不再维护分档硬编码。
+			hpmp_pos = Point<int16_t>(status_x, EXP_BOTTOM - STATUS_H);
+			// 相对偏移按 status/layer:cover(204x70) 内部布局（素材原坐标，不缩放）：
+			// 「等级」二字是 backgrnd 上烤好的（约 x2..44），数字紧跟其后 → +65；
+			// HP 条 y≈26..40、MP 条 y≈42..56，数值居中于条内。
+			levelset_pos = Point<int16_t>(static_cast<int16_t>(hpmp_pos.x() + 65), static_cast<int16_t>(hpmp_pos.y() + 6));
+			hpset_pos = Point<int16_t>(static_cast<int16_t>(hpmp_pos.x() + 96), static_cast<int16_t>(hpmp_pos.y() + 30));
+			mpset_pos = Point<int16_t>(static_cast<int16_t>(hpmp_pos.x() + 90), static_cast<int16_t>(hpmp_pos.y() + 46));
+			// 经验条文字「<exp>[<pct>%]」：与 layer:back 绿条同步（绿条已下移 14px 贴底），
+			// 文字在绿条内垂直居中（绿条 10px 高、字模 9px → +1）。
+			statset_pos = Point<int16_t>(static_cast<int16_t>(VWIDTH * 21 / 100 + 120), static_cast<int16_t>(EXP_BOTTOM + 15));
+			namelabel_pos = Point<int16_t>(static_cast<int16_t>(hpmp_pos.x() + 112), hpmp_pos.y());
+			quickslot_pos = Point<int16_t>(qs_x, EXP_BOTTOM - QS_H);
 
-			// Menu
-			menu_pos = Point<int16_t>(682, -280);
-			setting_pos = menu_pos + Point<int16_t>(0, 168);
-			community_pos = menu_pos + Point<int16_t>(-26, 196);
-			character_pos = menu_pos + Point<int16_t>(-61, 168);
-			event_pos = menu_pos + Point<int16_t>(-94, 252);
-		}
-		else
-		{
-			hpmp_pos = Point<int16_t>(416 + pos_adj, 40);
-			hpset_pos = Point<int16_t>(550 + pos_adj, 70);
-			mpset_pos = Point<int16_t>(546 + pos_adj, 86);
-			statset_pos = Point<int16_t>(539 + pos_adj, 111);
-			levelset_pos = Point<int16_t>(465 + pos_adj, 48);
-			namelabel_pos = Point<int16_t>(493 + pos_adj, 40);
-			quickslot_pos = Point<int16_t>(628 + pos_adj, 37);
-
-			// Menu
-			menu_pos = Point<int16_t>(720 + pos_adj, -280);
+			// Menu：六钮横排，子菜单窗口在其上方。
+			menu_pos = Point<int16_t>(menu_x, EXP_BOTTOM - MENU_H);
 			setting_pos = menu_pos + Point<int16_t>(0, 168);
 			community_pos = menu_pos + Point<int16_t>(-26, 196);
 			character_pos = menu_pos + Point<int16_t>(-61, 168);
 			event_pos = menu_pos + Point<int16_t>(-94, 252);
 		}
 
-		if (layout_w == 1280)
-		{
-			statset_pos = Point<int16_t>(580 + pos_adj, 111);
-			quickslot_pos = Point<int16_t>(622 + pos_adj, 37);
-
-			// Menu
-			menu_pos += Point<int16_t>(-7, 0);
-			setting_pos += Point<int16_t>(-7, 0);
-			community_pos += Point<int16_t>(-7, 0);
-			character_pos += Point<int16_t>(-7, 0);
-			event_pos += Point<int16_t>(-7, 0);
-		}
-		else if (layout_w == 1366)
-		{
-			quickslot_pos = Point<int16_t>(623 + pos_adj, 37);
-
-			// Menu
-			menu_pos += Point<int16_t>(-5, 0);
-			setting_pos += Point<int16_t>(-5, 0);
-			community_pos += Point<int16_t>(-5, 0);
-			character_pos += Point<int16_t>(-5, 0);
-			event_pos += Point<int16_t>(-5, 0);
-		}
-		else if (layout_w == 1920)
-		{
-			quickslot_pos = Point<int16_t>(900 + pos_adj, 37);
-
-			// Menu
-			menu_pos += Point<int16_t>(272, 0);
-			setting_pos += Point<int16_t>(272, 0);
-			community_pos += Point<int16_t>(272, 0);
-			character_pos += Point<int16_t>(272, 0);
-			event_pos += Point<int16_t>(272, 0);
-		}
 
 		hpmp_sprites.emplace_back(status["backgrnd"], hpmp_pos - Point<int16_t>(1, 0));
 		hpmp_sprites.emplace_back(status["layer:cover"], hpmp_pos - Point<int16_t>(1, 0));
@@ -420,38 +489,44 @@ namespace ms
 		hpmpset = Charset(status["gauge"]["number"], Charset::Alignment::RIGHT);
 		levelset = Charset(status["lvNumber"], Charset::Alignment::LEFT);
 
-		namelabel = OutlinedText(Text::Font::A13M, Text::Alignment::LEFT, Color::Name::GALLERY, Color::Name::TUNA);
+		// 名字在血条背景(198宽)内水平居中 → CENTER 对齐，x=背景中心。
+		namelabel = OutlinedText(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::GALLERY, Color::Name::TUNA);
 
 		quickslot[0] = quickSlot["backgrnd"];
 		quickslot[1] = quickSlot["layer:cover"];
+		// 192 CLayoutMan::AddSingleLayerRemoveOrigin：底板/遮罩去掉 canvas origin。
+		// StatusBar3 backgrnd origin=(-12,-3)、cover=(-10,0)；不清零则
+		// s_ptShortKeyPos 相对控件 TL 的槽相对底板偏左上（空/偏移）。
+		if (quickslot[0])
+			quickslot[0].shift(quickslot[0].get_origin());
+		if (quickslot[1])
+			quickslot[1].shift(quickslot[1].get_origin());
 
-		Point<int16_t> buttonPos = Point<int16_t>(591 + pos_adj, 73);
+		// menu 六钮：WZ 用共享 CreateCtrl + origin.x 横排，但 Texture::sanitize 会清掉
+		// |ox|>132（Menu=-174 / Setting=-139）→ 叠成「缺失」。这里按语义序显式 TL。
+		// 2026-11-20 用户裁决：主功能菜单移到**等级行上方**（menu_y），水平居中（menu_x）。
+		constexpr int16_t MENU_COUNT = 6;
+		constexpr int16_t MENU_BTN_H = 37; // orange-wz: menu/normal/0 高 36~37
+		constexpr int16_t STATUS_BAR_W = 198; // orange-wz: mainBar/status/backgrnd 198×37
+		constexpr int16_t STATUS_BAR_H = 37;
+		Point<int16_t> menu_strip = Point<int16_t>(menu_x, menu_y);
 
-		if (layout_w == 1024)
-			buttonPos += Point<int16_t>(38, 0);
-		else if (layout_w == 1280)
-			buttonPos += Point<int16_t>(31, 0);
-		else if (layout_w == 1366)
-			buttonPos += Point<int16_t>(33, 0);
-		else if (layout_w == 1920)
-			buttonPos += Point<int16_t>(310, 0);
-
-		buttons[Buttons::BT_CASHSHOP] = std::make_unique<MapleButton>(menu["button:CashShop"], buttonPos);
-		buttons[Buttons::BT_MENU] = std::make_unique<MapleButton>(menu["button:Menu"], buttonPos);
-		buttons[Buttons::BT_OPTIONS] = std::make_unique<MapleButton>(menu["button:Setting"], buttonPos);
-		buttons[Buttons::BT_CHARACTER] = std::make_unique<MapleButton>(menu["button:Character"], buttonPos);
-		buttons[Buttons::BT_COMMUNITY] = std::make_unique<MapleButton>(menu["button:Community"], buttonPos);
-		buttons[Buttons::BT_EVENT] = std::make_unique<MapleButton>(menu["button:Event"], buttonPos);
-
-		if (quickslot_active && layout_w > 800)
-		{
-			buttons[Buttons::BT_CASHSHOP]->set_active(false);
-			buttons[Buttons::BT_MENU]->set_active(false);
-			buttons[Buttons::BT_OPTIONS]->set_active(false);
-			buttons[Buttons::BT_CHARACTER]->set_active(false);
-			buttons[Buttons::BT_COMMUNITY]->set_active(false);
-			buttons[Buttons::BT_EVENT]->set_active(false);
-		}
+		auto place_menu = [&](Buttons id, nl::node src, int16_t idx, const char* tag) {
+			const Point<int16_t> tl = menu_strip + Point<int16_t>(static_cast<int16_t>(idx * MENU_PITCH), 0);
+			if (!try_maple_btn(buttons, id, src, tl, tag))
+			{
+				UiAssetResolve::diag_once(tag, "mainBar/menu button missing");
+				return;
+			}
+			if (Button* b = button_at(id))
+				b->set_active(true);
+		};
+		place_menu(Buttons::BT_CASHSHOP, menu["button:CashShop"], 0, "statusbar.modern.menu.CashShop");
+		place_menu(Buttons::BT_MENU, menu["button:Menu"], 1, "statusbar.modern.menu.Menu");
+		place_menu(Buttons::BT_OPTIONS, menu["button:Setting"], 2, "statusbar.modern.menu.Setting");
+		place_menu(Buttons::BT_CHARACTER, menu["button:Character"], 3, "statusbar.modern.menu.Character");
+		place_menu(Buttons::BT_COMMUNITY, menu["button:Community"], 4, "statusbar.modern.menu.Community");
+		place_menu(Buttons::BT_EVENT, menu["button:Event"], 5, "statusbar.modern.menu.Event");
 
 		std::string fold = "button:Fold";
 		std::string extend = "button:Extend";
@@ -467,38 +542,16 @@ namespace ms
 		else
 			quickslot_qs_adj = Point<int16_t>(211, 0);
 
-		if (layout_w == 800)
+		// 展开/收起（切换快捷键尺寸）钮：图4 实测为 quickSlot/button:Fold|Extend 竖条
+		// （12/13×71，origin(-3,-1)/(-2,-1)），贴在**底板左缘外侧**、底边与底板齐平。
+		// 旧实现放在 quickslot_pos-(2,0) 且绘制在底板之前 → 被底板整块盖住，
+		// 用户报「左侧切换尺寸的 UI 没实现」的真因（按钮存在但看不见）。
 		{
-			Point<int16_t> quickslot_qs = Point<int16_t>(579, 0);
-
-			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
-			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
-		}
-		else if (layout_w == 1024)
-		{
-			Point<int16_t> quickslot_qs = Point<int16_t>(627 + pos_adj, 37);
-
-			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
-			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
-		}
-		else if (layout_w == 1280)
-		{
-			Point<int16_t> quickslot_qs = Point<int16_t>(621 + pos_adj, 37);
-
-			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
-			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
-		}
-		else if (layout_w == 1366)
-		{
-			Point<int16_t> quickslot_qs = Point<int16_t>(623 + pos_adj, 37);
-
-			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
-			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
-		}
-		else // layout_w == 1920 (and nearest-snap fallbacks)
-		{
-			Point<int16_t> quickslot_qs = Point<int16_t>(900 + pos_adj, 37);
-
+			constexpr int16_t BAR_W = 13;  // button:Extend 宽 13（Fold 12）
+			constexpr int16_t BAR_H = 71;  // origin(-3,-1) → 视觉高 71
+			const Point<int16_t> quickslot_qs(
+				static_cast<int16_t>(quickslot_pos.x() - BAR_W),
+				static_cast<int16_t>(EXP_BOTTOM - BAR_H));
 			buttons[Buttons::BT_FOLD_QS] = std::make_unique<MapleButton>(quickSlot[fold], quickslot_qs);
 			buttons[Buttons::BT_EXTEND_QS] = std::make_unique<MapleButton>(quickSlot[extend], quickslot_qs);
 		}
@@ -561,35 +614,38 @@ namespace ms
 		// Y/chrome use layout_w (nearest enum); width still follows real VWIDTH.
 		if (layout_w == 800)
 		{
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
+			// 2026-11-19 图2校准：整组底栏贴视口底（不是悬空）。经验条高24、
+			// exp_pos.y=87 → position.y = VHEIGHT - 87 - 24 = VHEIGHT-111，
+			// 经验条底正好落在 VHEIGHT。血条/菜单/QS 相对 EXP_BOTTOM=87 底对齐不变。
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 111));
 			position_x = 410;
 			position_y = position.y();
 			dimension = Point<int16_t>(VWIDTH - position_x, 140);
 		}
 		else if (layout_w == 1024)
 		{
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 111)); // 底栏贴视口底
 			position_x = 410;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
 		else if (layout_w == 1280)
 		{
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 111)); // 底栏贴视口底
 			position_x = 500;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
 		else if (layout_w == 1366)
 		{
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 111)); // 底栏贴视口底
 			position_x = 585;
 			position_y = position.y() + 42;
 			dimension = Point<int16_t>(VWIDTH - position_x, 75);
 		}
 		else // 1920
 		{
-			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 120));
+			position = Point<int16_t>(0, static_cast<int16_t>(VHEIGHT - 111)); // 底栏贴视口底
 			position_x = 860;
 			position_y = position.y() + 40;
 			dimension = Point<int16_t>(VWIDTH - position_x, 80);
@@ -598,6 +654,54 @@ namespace ms
 		if (layout_w != VWIDTH)
 			LOG(LOG_INFO, "[MR] StatusBar modern layout_w=" << layout_w
 				<< " for VWIDTH=" << VWIDTH);
+
+		// 2026-11-20 格数与布局同源（避免两处算法不一致导致画到视口外）：
+		//   qs_cols 已在布局段按「IDA 上限 8/28 → 向下取整到整列 → 不压血条」算出，
+		//   这里直接换算格数 = 列数 × 2（上下两行），保证最后一列完整、不出现半格。
+		//   IDA 依据：CQuickSlot::ChangeScreenResolution@0x169b710 的
+		//   m_nQuickSlotDisplayNo（800×600/1024×768→8，其余→28）。
+		{
+			modern_qs_count = std::min(
+				static_cast<size_t>(MODERN_QS_SLOTS),
+				static_cast<size_t>(qs_cols) * 2);
+		}
+
+		// 键帽：优先 StatusBar3.img/KeyConfig/key（本包已入库），再回退 UIWindow。
+#ifdef USE_NX
+		nl::node qskey = UiAssetResolve::status_bar_root()["KeyConfig"]["key"];
+		if (!qskey)
+			qskey = nl::nx::UI["UIWindow.img"]["KeyConfig"]["quickslotConfig"]["key"];
+		if (!qskey)
+			qskey = nl::nx::UI["UIWindow2.img"]["KeyConfig"]["quickslotConfig"]["key"];
+		if (qskey)
+		{
+			for (int id = 1; id <= 88; ++id)
+			{
+				nl::node n = qskey[std::to_string(id)];
+				if (n)
+					classic_qs_cap[id] = Texture(n);
+			}
+		}
+		{
+			nl::node itemno = nl::nx::UI["Basic.img"]["ItemNo"];
+			if (itemno)
+			{
+				classic_qs_itemno = Charset(itemno, Charset::Alignment::LEFT);
+				classic_qs_itemno_ok = true;
+			}
+		}
+#endif
+		classic_qs_keytext = OutlinedText(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::DARKGREY);
+		quickslot_active = true;
+		quickslot_adj = Point<int16_t>(0, 0);
+		if (buttons[Buttons::BT_FOLD_QS] && buttons[Buttons::BT_EXTEND_QS])
+		{
+			buttons[Buttons::BT_EXTEND_QS]->set_active(false);
+			buttons[Buttons::BT_FOLD_QS]->set_active(true);
+		}
+		refresh_modern_qs_icons();
+		LOG(LOG_INFO, "UIStatusBar modern quickSlot slots=" << modern_qs_count
+			<< " caps=" << (classic_qs_cap[2] ? 1 : 0));
 	}
 
 	void UIStatusBar::draw(float alpha) const
@@ -609,9 +713,6 @@ namespace ms
 		}
 
 		UIElement::draw_sprites(alpha);
-
-		for (size_t i = 0; i <= Buttons::BT_EVENT; i++)
-			buttons.at(i)->draw(position);
 
 		hpmp_sprites[0].draw(position, alpha);
 
@@ -651,26 +752,49 @@ namespace ms
 			position + levelset_pos
 		);
 
-		namelabel.draw(position + namelabel_pos);
+		// 2026-11-19 图1校准：角色名与「等级 N」同一行（图1「等级200 yyy天堂2」）。
+		// Text::draw(pos) 的 pos.y 是**行顶**（含 ink_offset 上空白），必须经
+		// y_for_ink_top 把「等级行墨迹顶」换算成行顶，否则名字下沉压血条。
+		{
+			const int16_t ink_top = levelset_pos.y(); // 与等级同一墨迹顶
+			namelabel.draw(position + Point<int16_t>(
+				namelabel_pos.x(), namelabel.y_for_ink_top(ink_top)));
+		}
 
-		// 多分辨率兜底：非枚举宽度下若这两个钮创建失败，不能用 at() 抛异常。
+		{
+			const Point<int16_t> qs_draw = position + quickslot_pos
+				+ ((VWIDTH > 800 && VWIDTH < 1366) ? Point<int16_t>(-1, 0) : Point<int16_t>(0, 0))
+				+ quickslot_adj;
+			// 底板裁剪精确到「最后一格右缘」：由**实际格数**反算，保证右侧不出现半格/残边
+			// （用户要求：截断必须落在格边界）。cols = modern_qs_count / 2（上下两行）。
+			const int16_t cols = static_cast<int16_t>((modern_qs_count + 1) / 2);
+			const int16_t avail_w = static_cast<int16_t>(7 + (cols - 1) * 33 + 32 + 4);
+			const int16_t bw = quickslot[0].width();
+			const int16_t crop_r = static_cast<int16_t>(std::max(0, bw - avail_w));
+			quickslot[0].draw(qs_draw, Range<int16_t>(0, 0), Range<int16_t>(0, crop_r));
+			const int16_t cw = quickslot[1].width();
+			const int16_t crop_r2 = static_cast<int16_t>(std::max(0, cw - avail_w));
+			quickslot[1].draw(qs_draw, Range<int16_t>(0, 0), Range<int16_t>(0, crop_r2));
+		}
+
+		draw_modern_quickslot(alpha);
+
+		// 切换快捷键尺寸钮（Fold/Extend 竖条）必须在底板之后画，否则被背板整块盖住
+		// —— 这是「左侧切换尺寸 UI 看不见」的修复点。位置在底板左缘外侧，不与底板重叠。
 		if (const auto fold_it = buttons.find(Buttons::BT_FOLD_QS);
 			fold_it != buttons.end() && fold_it->second)
 			fold_it->second->draw(position + quickslot_adj);
 
 		if (const auto extend_it = buttons.find(Buttons::BT_EXTEND_QS);
 			extend_it != buttons.end() && extend_it->second)
-			extend_it->second->draw(position + quickslot_adj - quickslot_qs_adj);
+			extend_it->second->draw(position + quickslot_adj);
 
-		if (VWIDTH > 800 && VWIDTH < 1366)
+		// 六钮后画，避免被 quickSlot backgrnd/cover 盖住（800 档尤甚）。
+		for (uint16_t bid : { Buttons::BT_CASHSHOP, Buttons::BT_MENU, Buttons::BT_OPTIONS,
+			Buttons::BT_CHARACTER, Buttons::BT_COMMUNITY, Buttons::BT_EVENT })
 		{
-			quickslot[0].draw(position + quickslot_pos + Point<int16_t>(-1, 0) + quickslot_adj);
-			quickslot[1].draw(position + quickslot_pos + Point<int16_t>(-1, 0) + quickslot_adj);
-		}
-		else
-		{
-			quickslot[0].draw(position + quickslot_pos + quickslot_adj);
-			quickslot[1].draw(position + quickslot_pos + quickslot_adj);
+			if (const auto it = buttons.find(bid); it != buttons.end() && it->second)
+				it->second->draw(position);
 		}
 
 #pragma region Menu
@@ -744,6 +868,17 @@ namespace ms
 
 	void UIStatusBar::update()
 	{
+		// 2026-11-22 兜底：起拖后图标交给 UIStateGame 的 draggedicon，后续
+		// send_cursor 不再派发到本窗；若松手落在空白处（drop_on_stage，未走
+		// send_icon），瞬态就无人复位。检测到主键已松开即清掉，避免快捷格
+		// 被 :2964/:2969 的 qs_dragging 守卫永久吞掉单击/拖拽。
+		if (qs_dragging && !UI::get().is_primary_down())
+		{
+			qs_dragging = false;
+			qs_drag_slot = -1;
+			qs_pressed = false;
+		}
+
 		if (classic_mode)
 		{
 			update_classic();
@@ -809,6 +944,15 @@ namespace ms
 
 		for (size_t i = Buttons::BT_EVENT_SCHEDULE; i <= Buttons::BT_EVENT_DAILY; i++)
 			buttons[i]->set_position(event_pos + pos_adj);
+
+		// 绑定变化后刷新 modern 快捷格图标（每秒一次足够）。
+		static int modern_qs_refresh_ms = 0;
+		modern_qs_refresh_ms += Constants::TIMESTEP;
+		if (modern_qs_refresh_ms >= 1000)
+		{
+			modern_qs_refresh_ms = 0;
+			refresh_modern_qs_icons();
+		}
 	}
 
 	Button::State UIStatusBar::button_pressed(uint16_t id)
@@ -817,15 +961,15 @@ namespace ms
 		{
 			case Buttons::BT_CLASSIC_SHOP:
 			{
-				// ENTER_CASHSHOP(40) 已核实 == s9 ENTER_CASHSHOP(0x28)，EnterCashShopHandler
-				// 完整可用（open-issues C5 的「40 vs 229」结论过时——那是 CASHSHOP_OPERATION 的
-				// 对比，进商城走的是独立 opcode）。与 BT_CASHSHOP 同路径直接进商城。
-				EnterCashShopPacket().dispatch();
+				// 窗口内商城（方案 C）总开关：true→UIWindowCashShop，false→原生商城。
+				// helper 内部对 false 路径等价于旧的 EnterCashShopPacket().dispatch()。
+				UI::get().open_cashshop_entry();
 				break;
 			}
 			case Buttons::BT_CASHSHOP:
 			{
-				EnterCashShopPacket().dispatch();
+				// 与 BT_CLASSIC_SHOP 共用同一入口 helper（配置开关决定窗口/原生）。
+				UI::get().open_cashshop_entry();
 				break;
 			}
 			case Buttons::BT_CLASSIC_MENU:
@@ -1583,8 +1727,18 @@ namespace ms
 
 		if (!character_active && !community_active && !event_active && !menu_active && !setting_active)
 		{
-			pos = Point<int16_t>(position_x, position_y);
-			bounds = Rectangle<int16_t>(pos, pos + dimension);
+			if (!classic_mode)
+			{
+				// modern：底栏全宽可点（含 QS 左侧 menu 六钮与 quickSlot 顶带）。
+				bounds = Rectangle<int16_t>(
+					Point<int16_t>(0, position.y()),
+					Point<int16_t>(VWIDTH, static_cast<int16_t>(VHEIGHT)));
+			}
+			else
+			{
+				pos = Point<int16_t>(position_x, position_y);
+				bounds = Rectangle<int16_t>(pos, pos + dimension);
+			}
 		}
 		else
 		{
@@ -1653,19 +1807,27 @@ namespace ms
 			toggle_qs(!quickslot_active);
 	}
 
-	void UIStatusBar::toggle_qs(bool quick_slot_active)
+	void UIStatusBar::toggle_qs(bool enabled)
 	{
 		if (classic_mode)
 		{
-			quickslot_active = quick_slot_active;
+			quickslot_active = enabled;
 			sync_classic_qs_buttons();
 			return;
 		}
 
-		if (quickslot_active == quick_slot_active)
+		// 2026-11-19 真机反馈「点展开布局没变」根因：旧代码参数名 quick_slot_active
+		// 遮蔽成员 quickslot_active，本行 `if (quickslot_active == quick_slot_active)`
+		// 恒为真 → 永远 return，展开/收缩逻辑从未执行。参数改名 enabled 后正确比较。
+		if (quickslot_active == enabled)
 			return;
 
-		quickslot_active = quick_slot_active;
+		quickslot_active = enabled;
+
+		// IDA CQuickSlot::Toggle@0x16972a0：切换 m_bShowSlide，整层
+		// RelMove(m_nInitX, m_nInitY + (收起?67:0))——不是改槽数，是整层下移 67px
+		// 让第二行滑出可视区。modern_qs_count 保持恒定。
+		quickslot_adj = Point<int16_t>(0, enabled ? 0 : 67);
 
 		// 修复：禁止 operator[] 只读访问（可能插入空 unique_ptr 再解引用）。
 		auto btn_at = [this](uint16_t id) -> Button*
@@ -1679,14 +1841,12 @@ namespace ms
 		if (Button* b = btn_at(Buttons::BT_EXTEND_QS))
 			b->set_active(!quickslot_active);
 
-		if (VWIDTH > 800)
+		// menu 六钮始终可见（横排在 QS 左侧），不随 QS 折叠互斥。
+		for (uint16_t bid : { Buttons::BT_CASHSHOP, Buttons::BT_MENU, Buttons::BT_OPTIONS,
+			Buttons::BT_CHARACTER, Buttons::BT_COMMUNITY, Buttons::BT_EVENT })
 		{
-			for (uint16_t bid : { Buttons::BT_CASHSHOP, Buttons::BT_MENU, Buttons::BT_OPTIONS,
-				Buttons::BT_CHARACTER, Buttons::BT_COMMUNITY, Buttons::BT_EVENT })
-			{
-				if (Button* b = btn_at(bid))
-					b->set_active(!quickslot_active);
-			}
+			if (Button* b = btn_at(bid))
+				b->set_active(true);
 		}
 	}
 
@@ -1936,28 +2096,43 @@ namespace ms
 	float UIStatusBar::getexppercent() const
 	{
 		int32_t level = stats.get_stat(MapleStat::Id::LEVEL);
-
+		// s9 999 级场景：满级后 required_exp 仍是超大值，直接相除会让 EXP 条错显。
+		// MinMS UIStatusBar.cpp:1061-1073 满级直接返回 0。
+		if (level >= ExpTable::LEVELCAP)
+			return 0.0f;
 		int64_t exp = stats.get_exp();
-
-		return static_cast<float>(
-			static_cast<double>(exp) / ExpTable::required_exp(level)
-			);
+		int64_t need = ExpTable::required_exp(level);
+		if (need <= 0)
+			return 0.0f;
+		float ratio = static_cast<float>(static_cast<double>(exp) / static_cast<double>(need));
+		if (ratio < 0.0f) ratio = 0.0f;
+		if (ratio > 1.0f) ratio = 1.0f;
+		return ratio;
 	}
 
 	float UIStatusBar::gethppercent() const
 	{
 		int32_t hp = stats.get_stat(MapleStat::Id::HP);
 		int32_t maxhp = stats.get_total(EquipStat::Id::HP);
-
-		return static_cast<float>(hp) / maxhp;
+		// 防 max<=0 除零（inf/NaN 会污染进度条绘制）。
+		if (maxhp <= 0)
+			return 0.0f;
+		float ratio = static_cast<float>(hp) / static_cast<float>(maxhp);
+		if (ratio < 0.0f) ratio = 0.0f;
+		if (ratio > 1.0f) ratio = 1.0f;
+		return ratio;
 	}
 
 	float UIStatusBar::getmppercent() const
 	{
 		int32_t mp = stats.get_stat(MapleStat::Id::MP);
 		int32_t maxmp = stats.get_total(EquipStat::Id::MP);
-
-		return static_cast<float>(mp) / maxmp;
+		if (maxmp <= 0)
+			return 0.0f;
+		float ratio = static_cast<float>(mp) / static_cast<float>(maxmp);
+		if (ratio < 0.0f) ratio = 0.0f;
+		if (ratio > 1.0f) ratio = 1.0f;
+		return ratio;
 	}
 
 	void UIStatusBar::init_classic()
@@ -2123,6 +2298,9 @@ namespace ms
 			: HudLayout::qs_panel_w(VWIDTH, slots32);
 		const int16_t content_w = HudLayout::hud_content_w(VWIDTH, slots32);
 		const int16_t hud_cx = HudLayout::hud_center_x(VWIDTH, content_w);
+		// 2026-11-21：backgrnd 只覆盖整组内容宽（含快捷格），居中于 hud_cx。
+		classic_content_w = content_w;
+		classic_content_cx = hud_cx;
 
 		// QS 组内 x：宽屏 = 800（或紧视口 vw-qs_w）；窄屏 = grid-qs08。y=-8 见历史截图取证。
 		quickslot_pos = Point<int16_t>(
@@ -2228,6 +2406,230 @@ namespace ms
 		// init 时两颗箭头刚 add_btn 完都还是 MapleButton 默认态，必须按当前
 		// quickslot_active 同步一次，否则进图首帧方向错 / 两颗箭头重叠双显。
 		sync_classic_qs_buttons();
+	}
+
+	Point<int16_t> UIStatusBar::modern_qs_cell_at(size_t slot) const
+	{
+		const Point<int16_t> qs_nudge =
+			(VWIDTH > 800 && VWIDTH < 1366) ? Point<int16_t>(-1, 0) : Point<int16_t>(0, 0);
+		const Point<int16_t> base = position + quickslot_pos + quickslot_adj + qs_nudge;
+
+		if (slot >= MODERN_QS_SLOTS)
+			return base;
+
+		return base + MODERN_QS_POS[slot];
+	}
+
+	// 2026-11-19 新增：modern(192) 快捷格命中测试（拖放 / 点击共用）。
+	// 返回命中格索引，-1 = 未命中。格 32×32，与 draw_modern_quickslot 同一几何。
+	int16_t UIStatusBar::modern_qs_slot_at(Point<int16_t> cursor_position) const
+	{
+		const size_t count = std::min(modern_qs_count, MODERN_QS_SLOTS);
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			const Point<int16_t> cell = modern_qs_cell_at(i);
+			if (Rectangle<int16_t>(cell, cell + Point<int16_t>(32, 32)).contains(cursor_position))
+				return static_cast<int16_t>(i);
+		}
+
+		return -1;
+	}
+
+	bool UIStatusBar::cursor_on_interactive(Point<int16_t> cursor_position) const
+	{
+		if (classic_mode)
+			return false;
+
+		for (const auto& btit : buttons)
+		{
+			if (!btit.second || !btit.second->is_active())
+				continue;
+			if (btit.second->bounds(position).contains(cursor_position))
+				return true;
+		}
+
+		if (quickslot_active)
+		{
+			const size_t count = std::min(modern_qs_count, MODERN_QS_SLOTS);
+			for (size_t i = 0; i < count; ++i)
+			{
+				const Point<int16_t> cell = modern_qs_cell_at(i);
+				if (Rectangle<int16_t>(cell, cell + Point<int16_t>(32, 32)).contains(cursor_position))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	void UIStatusBar::refresh_modern_qs_icons()
+	{
+		const Keyboard& keyboard = UI::get().get_keyboard();
+
+#ifdef USE_NX
+		nl::node key_icons = UiAssetResolve::status_bar_root()["KeyConfig"]["icon"];
+		if (!key_icons)
+			key_icons = nl::nx::UI["UIWindow.img"]["KeyConfig"]["icon"];
+		if (!key_icons)
+			key_icons = nl::nx::UI["UIWindow2.img"]["KeyConfig"]["icon"];
+#endif
+
+		const size_t count = std::min(modern_qs_count, MODERN_QS_SLOTS);
+		for (size_t i = 0; i < MODERN_QS_SLOTS; i++)
+		{
+			classic_qs_icons[i] = Texture();
+			classic_qs_names[i].clear();
+			classic_qs_counts[i].clear();
+			if (i >= count)
+				continue;
+
+			// 2026-11-19 用户裁决：去掉「前8槽走玩家可改绑定」，20 格统一按
+			// 083 同构键位表 MODERN_QS_KEYS 显示（192 2×10 与 083 前20同构）。
+			const uint8_t maple_key = MODERN_QS_KEYS[i];
+
+			Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
+
+			if (mapping.type == KeyType::Id::SKILL)
+			{
+				const SkillData& skill = SkillData::get(mapping.action);
+				const Texture& icon = skill.get_icon(SkillData::Icon::NORMAL);
+				if (icon.is_valid())
+					classic_qs_icons[i] = icon;
+				classic_qs_names[i] = skill.get_name();
+			}
+			else if (mapping.type == KeyType::Id::ITEM)
+			{
+				const ItemData& item = ItemData::get(mapping.action);
+				if (item)
+				{
+					classic_qs_icons[i] = item.get_icon(false);
+					int16_t qty = Stage::get().get_player().get_inventory().get_total_item_count(mapping.action);
+					if (qty > 1)
+						classic_qs_counts[i] = std::to_string(qty);
+				}
+			}
+#ifdef USE_NX
+			else if (mapping.type == KeyType::Id::MACRO)
+			{
+				nl::node mi = nl::nx::UI["UIWindow.img"]["SkillMacro"]["Macroicon"][mapping.action];
+				if (mi["icon"])
+				{
+					Texture mtex = mi["icon"];
+					mtex.shift(mtex.get_origin());
+					classic_qs_icons[i] = mtex;
+				}
+			}
+			else if (mapping.type == KeyType::Id::MENU || mapping.type == KeyType::Id::ACTION
+				|| mapping.type == KeyType::Id::FACE)
+			{
+				nl::node n = key_icons[std::to_string(mapping.action)];
+				if (!n)
+					n = key_icons[mapping.action];
+				if (n)
+					classic_qs_icons[i] = Texture(n);
+			}
+#endif
+		}
+	}
+
+	void UIStatusBar::draw_modern_quickslot(float) const
+	{
+		if (!quickslot_active)
+			return;
+
+		const size_t count = std::min(modern_qs_count, MODERN_QS_SLOTS);
+		const int16_t right_limit = static_cast<int16_t>(VWIDTH - 34); // 格右缘不得超出客户端
+
+		for (size_t i = 0; i < count; i++)
+		{
+			const Point<int16_t> cell_pos = modern_qs_cell_at(i);
+			// 展开态格数可能超出右缘 → 跳过，避免 UI 溢出客户端。
+			if (cell_pos.x() + 32 > right_limit)
+				continue;
+
+			// 2026-11-19 图1校准：图标整格居中（origin 抵消后视觉左上 = cell + (32-dim)/2）。
+			// 键帽本就压在图标左上角（图1 正确端同样如此），不是错误重叠。
+			// 此前「图标在键帽下方区居中」的 CAP_H 方案反而让图标下移出格，已回退。
+			if (classic_qs_icons[i])
+			{
+				const Point<int16_t> org = classic_qs_icons[i].get_origin();
+				const Point<int16_t> dim = classic_qs_icons[i].get_dimensions();
+				const Point<int16_t> lt = cell_pos + Point<int16_t>(
+					static_cast<int16_t>((32 - dim.x()) / 2),
+					static_cast<int16_t>((32 - dim.y()) / 2));
+				classic_qs_icons[i].draw(lt + org);
+			}
+
+			// 与图标一致：键帽也统一按 083 同构表显示，不再用玩家可改绑定。
+			const uint8_t mk = MODERN_QS_KEYS[i];
+
+			int16_t cap_id = static_cast<int16_t>(mk);
+			switch (mk)
+			{
+			case KeyConfig::Key::RIGHT_CONTROL: cap_id = KeyConfig::Key::LEFT_CONTROL; break;
+			case KeyConfig::Key::RIGHT_SHIFT: cap_id = KeyConfig::Key::LEFT_SHIFT; break;
+			case KeyConfig::Key::RIGHT_ALT: cap_id = KeyConfig::Key::LEFT_ALT; break;
+			default: break;
+			}
+
+			// StatusBar3 KeyConfig/key/* 为顶带小条（约 28×9）；画在格内顶部偏下 1px，
+			// 避免压住格子上边框（图1 键帽在格内、不越界）。
+			constexpr Point<int16_t> CAP_TOP(2, 1);
+			if (cap_id > 0 && cap_id < static_cast<int16_t>(classic_qs_cap.size()) && classic_qs_cap[cap_id])
+			{
+				classic_qs_cap[cap_id].draw(cell_pos + CAP_TOP);
+			}
+			else
+			{
+				// 切图缺失时用短名回退，避免空格完全无键位提示。
+				const char* name = "";
+				switch (mk)
+				{
+				case KeyConfig::Key::LEFT_SHIFT: case KeyConfig::Key::RIGHT_SHIFT: name = "Sft"; break;
+				case KeyConfig::Key::LEFT_CONTROL: case KeyConfig::Key::RIGHT_CONTROL: name = "Ctl"; break;
+				case KeyConfig::Key::INSERT: name = "Ins"; break;
+				case KeyConfig::Key::HOME: name = "Hm"; break;
+				case KeyConfig::Key::PAGE_UP: name = "Pup"; break;
+				case KeyConfig::Key::DELETE: name = "Del"; break;
+				case KeyConfig::Key::END: name = "End"; break;
+				case KeyConfig::Key::PAGE_DOWN: name = "Pdn"; break;
+				case KeyConfig::Key::NUM1: name = "1"; break;
+				case KeyConfig::Key::NUM2: name = "2"; break;
+				case KeyConfig::Key::NUM3: name = "3"; break;
+				case KeyConfig::Key::NUM4: name = "4"; break;
+				case KeyConfig::Key::NUM5: name = "5"; break;
+				case KeyConfig::Key::NUM6: name = "6"; break;
+				case KeyConfig::Key::NUM7: name = "7"; break;
+				case KeyConfig::Key::NUM8: name = "8"; break;
+				case KeyConfig::Key::Q: name = "Q"; break;
+				case KeyConfig::Key::W: name = "W"; break;
+				case KeyConfig::Key::E: name = "E"; break;
+				case KeyConfig::Key::R: name = "R"; break;
+				case KeyConfig::Key::A: name = "A"; break;
+				case KeyConfig::Key::S: name = "S"; break;
+				case KeyConfig::Key::D: name = "D"; break;
+				case KeyConfig::Key::F: name = "F"; break;
+				case KeyConfig::Key::Z: name = "Z"; break;
+				case KeyConfig::Key::X: name = "X"; break;
+				case KeyConfig::Key::C: name = "C"; break;
+				case KeyConfig::Key::V: name = "V"; break;
+				default: break;
+				}
+				if (name[0])
+				{
+					classic_qs_keytext.change_text(name);
+					classic_qs_keytext.draw(cell_pos + Point<int16_t>(2, 0));
+				}
+			}
+
+			if (classic_qs_itemno_ok && !classic_qs_counts[i].empty())
+			{
+				classic_qs_itemno.draw(
+					classic_qs_counts[i],
+					DrawArgument(cell_pos + Point<int16_t>(16, 18)));
+			}
+		}
 	}
 
 	void UIStatusBar::refresh_classic_qs_icons()
@@ -2338,6 +2740,36 @@ namespace ms
 		return -1;
 	}
 
+	// 2026-11-19 modern(192) 快捷格：单击使用（keydown → keyup 由 caller 配对）。
+	void UIStatusBar::activate_modern_qs_slot(size_t slot)
+	{
+		if (slot >= MODERN_QS_SLOTS)
+			return;
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(MODERN_QS_KEYS[slot]);
+
+		if (mapping.type == KeyType::Id::NONE)
+			return;
+
+		Sound(Sound::Name::BUTTONCLICK).play();
+		Stage::get().send_key(mapping.type, mapping.action, true);
+	}
+
+	void UIStatusBar::release_modern_qs_slot(size_t slot)
+	{
+		if (slot >= MODERN_QS_SLOTS)
+			return;
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(MODERN_QS_KEYS[slot]);
+
+		if (mapping.type == KeyType::Id::NONE)
+			return;
+
+		Stage::get().send_key(mapping.type, mapping.action, false);
+	}
+
 	void UIStatusBar::activate_classic_qs_slot(size_t slot)
 	{
 		if (slot >= CLASSIC_QS_SLOTS)
@@ -2356,17 +2788,76 @@ namespace ms
 		Stage::get().send_key(mapping.type, mapping.action, true);
 	}
 
+	void UIStatusBar::show_qs_tooltip(int16_t slot)
+	{
+		// 2026-11-23：原生快捷格 hover 提示（对应 083 CUIStatusBar::ProcessToolTip/
+		// SetShortcutTooltip）。此前本端快捷栏 send_cursor 只返回 CANCLICK，技能/
+		// 消耗物品悬停无任何提示。按当前模式解析 slot 对应的键位映射，再用与
+		// UIKeyConfig 相同的 KEYCONFIG parent 挂 tooltip。
+		if (slot < 0)
+			return;
+
+		const Keyboard& keyboard = UI::get().get_keyboard();
+		uint8_t maple_key;
+
+		if (classic_mode)
+		{
+			// 8 槽布局触发键可被 CHANGE_QUICKSLOT 改；26/32 宽格用固定表。
+			maple_key = (classic_qs_count == 8 && static_cast<size_t>(slot) < 8)
+				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+				: CLASSIC_QS_KEYS[static_cast<size_t>(slot) % CLASSIC_QS_SLOTS];
+		}
+		else
+		{
+			maple_key = MODERN_QS_KEYS[static_cast<size_t>(slot) % MODERN_QS_SLOTS];
+		}
+
+		Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
+
+		if (mapping.type == KeyType::Id::ITEM)
+		{
+			UI::get().show_item(Tooltip::Parent::KEYCONFIG, mapping.action);
+		}
+		else if (mapping.type == KeyType::Id::SKILL)
+		{
+			const SkillBook& book = Stage::get().get_player().get_skills();
+			int32_t level = book.get_level(mapping.action);
+			int32_t masterlevel = book.get_masterlevel(mapping.action);
+			int64_t expiration = book.get_expiration(mapping.action);
+			UI::get().show_skill(Tooltip::Parent::KEYCONFIG, mapping.action,
+				level, masterlevel, expiration);
+		}
+		// MACRO/其它类型原生无 tooltip，保持不挂。
+	}
+
+	// 原生「拖出快捷格即清除绑定」（MinMS UIStatusBar.cpp:915-935 unbind_key）：
+	// 拖到非快捷区域松手时解除源格绑定，本地立即生效 + 135 包持久化 + 重绘。
+	void UIStatusBar::QsIconType::drop_on_stage() const
+	{
+		if (source_key == 0)
+			return;
+		Keyboard& kb = UI::get().get_keyboard();
+		kb.remove(source_key);
+		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> cleared;
+		cleared.emplace_back(static_cast<KeyConfig::Key>(source_key), KeyType::Id::NONE, KeyAction::Id::LENGTH);
+		ChangeKeyMapPacket(cleared).dispatch();
+		// 重绘由 UIStateGame 松手后的 redraw_quickslots 收口，此处不重复。
+	}
+
 	void UIStatusBar::setup_qs_drag_icon(size_t slot, Point<int16_t> cursor_position)
 	{
 		const Keyboard& keyboard = UI::get().get_keyboard();
-		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
-			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
-			: CLASSIC_QS_KEYS[slot];
+		uint8_t maple_key = classic_mode
+			? ((classic_qs_count == 8 && slot < 8)
+				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+				: CLASSIC_QS_KEYS[slot])
+			: MODERN_QS_KEYS[std::min(slot, MODERN_QS_SLOTS - 1)];
 		Keyboard::Mapping mapping = keyboard.get_maple_mapping(maple_key);
 
 		qs_icon_type = std::make_unique<QsIconType>();
 		qs_icon_type->bind_type = mapping.type;
 		qs_icon_type->bind_action = mapping.action;
+		qs_icon_type->source_key = maple_key;
 
 		Texture tex;
 		int16_t count = -1;
@@ -2387,10 +2878,50 @@ namespace ms
 				tex = Texture(mi["icon"]);
 #endif
 		}
+		else if (mapping.type == KeyType::Id::MENU || mapping.type == KeyType::Id::ACTION
+			|| mapping.type == KeyType::Id::FACE)
+		{
+			// 原生「自带按键图标」(功能键)：与 refresh_modern_qs_icons /
+			// refresh_classic_qs_icons 的绘制端同源（同为 MENU/ACTION/FACE，
+			// 不含 CASH——KeyConfig/icon 未给 CASH 图标，避免抓起空贴图），
+			// 取 KeyConfig/icon/<action>。
+			// 功能键此前无此分支 → 抓起空贴图，表现为「拖不动」；补齐后拖拽预览
+			// 与技能/道具一致。图标 origin (0,32) 一并抹平，避免预览上浮一格。
+#ifdef USE_NX
+			nl::node key_icons = UiAssetResolve::status_bar_root()["KeyConfig"]["icon"];
+			if (!key_icons)
+				key_icons = nl::nx::UI["UIWindow.img"]["KeyConfig"]["icon"];
+			if (!key_icons)
+				key_icons = nl::nx::UI["UIWindow2.img"]["KeyConfig"]["icon"];
+			if (key_icons)
+			{
+				nl::node n = key_icons[std::to_string(mapping.action)];
+				if (!n)
+					n = key_icons[mapping.action];
+				if (n)
+				{
+					tex = Texture(n);
+					tex.shift(tex.get_origin());
+				}
+			}
+#endif
+		}
+
+		// 2026-11-22 修「抓起的消耗品图标浮在鼠标上方」：
+		// 道具 get_icon(false) 贴图 origin.y≈32（底边锚点）。快捷栏原位图标是裸
+		// Texture，draw 时用 cell_pos+origin.y 补偿；但 drag icon 是 Icon 对象，
+		// QsIconType.get_type()==KEY → Icon 构造不会像 ITEM 型那样自动 shift(0,32)，
+		// 于是 dragdraw=cursor-offset-origin 少减了 32 → 图标整体上浮一格（32px）。
+		// 仅对道具补齐（技能/宏贴图 origin 口径不同，勿动），与背包道具 drag 一致。
+		if (mapping.type == KeyType::Id::ITEM)
+			tex.shift(Point<int16_t>(0, 32));
 
 		qs_drag_icon = Icon(std::move(qs_icon_type), tex, count);
 		// 拖拽偏移 = 光标相对起点格左上角；drag_icon 后图标跟手，不会跳格。
-		qs_drag_icon.start_drag(cursor_position - classic_qs_cell_at(slot, classic_qs_cols));
+		const Point<int16_t> origin_cell = classic_mode
+			? classic_qs_cell_at(slot, classic_qs_cols)
+			: modern_qs_cell_at(std::min(slot, MODERN_QS_SLOTS - 1));
+		qs_drag_icon.start_drag(cursor_position - origin_cell);
 		UI::get().drag_icon(&qs_drag_icon);
 	}
 
@@ -2419,10 +2950,15 @@ namespace ms
 	// 反向扫描先命中它，拖到快捷格的图标从此再也到不了 UIKeyConfig。
 	bool UIStatusBar::send_icon(const Icon& icon, Point<int16_t> cursor_position)
 	{
-		if (!classic_mode || !quickslot_active)
+		// 2026-11-19 用户报「快捷键上道具/按键/技能无法拖拽」根因：
+		// 原守卫 `!classic_mode` 直接 return false，modern(192) 模式下快捷格
+		// 永远不接受拖放。现代分支改用 modern_qs_cell_at + MODERN_QS_KEYS。
+		if (!classic_mode && !quickslot_active)
 			return false;
 
-		int16_t slot = classic_qs_slot_at(cursor_position);
+		int16_t slot = classic_mode
+			? classic_qs_slot_at(cursor_position)
+			: modern_qs_slot_at(cursor_position);
 
 		if (slot < 0)
 			return false;
@@ -2453,26 +2989,45 @@ namespace ms
 		}
 		else
 		{
-			return false;
+			// 原生「自带功能键」(MENU/ACTION/FACE/CASH) 无 skill/item/macro id，
+			// 靠 QsIconType::get_binding 透出的 (KeyType,KeyAction) 识别落点。
+			// 这条通道只对快捷栏自身拖出的 QsIconType 生效；装备/背包等其它
+			// Icon::Type 用默认 get_binding=false，穿戴/卸下路径不受影响。
+			uint8_t btype_raw = 0;
+			if (!icon.get_binding(btype_raw, baction)
+				|| KeyType::typebyid(btype_raw) == KeyType::Id::NONE)
+				return false;
+			btype = static_cast<KeyType::Id>(btype_raw);
 		}
 
 		const Keyboard& keyboard = UI::get().get_keyboard();
-		uint8_t maple_key = (classic_qs_count == 8 && slot < 8)
-			? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
-			: CLASSIC_QS_KEYS[slot];
+		uint8_t maple_key = classic_mode
+			? ((classic_qs_count == 8 && slot < 8)
+				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(slot)))
+				: CLASSIC_QS_KEYS[slot])
+			: MODERN_QS_KEYS[static_cast<size_t>(slot)];
 
 		// 同一物品/技能拖到多个快捷格时不应出现多份：原位置若有相同绑定则先清空
 		//（语义＝移动，与 UIKeyConfig::stage_mapping 的去重一致）。否则旧格仍显示同一图标。
 		Keyboard& kb = UI::get().get_keyboard();
-		const size_t scan_count = std::min(classic_qs_count, CLASSIC_QS_SLOTS);
+		// 原生「移动」语义：去重扫描必须按当前模式的键位表走。
+		// 旧实现 modern 也扫 CLASSIC_QS_KEYS/classic_qs_count → 功能键/技能/道具
+		// 从 modern 格拖走时旧格清不掉（旧格仍显示同一图标）。
+		const size_t scan_count = classic_mode
+			? std::min(classic_qs_count, CLASSIC_QS_SLOTS)
+			: std::min(modern_qs_count, MODERN_QS_SLOTS);
 		std::vector<std::tuple<KeyConfig::Key, KeyType::Id, int32_t>> clears;
 		for (size_t i = 0; i < scan_count; ++i)
 		{
 			if (i == slot)
 				continue;
-			uint8_t other_key = (classic_qs_count == 8 && i < 8)
-				? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(i)))
-				: CLASSIC_QS_KEYS[i];
+			uint8_t other_key;
+			if (classic_mode)
+				other_key = (classic_qs_count == 8 && i < 8)
+					? static_cast<uint8_t>(keyboard.get_quickslot_key(static_cast<uint8_t>(i)))
+					: CLASSIC_QS_KEYS[i];
+			else
+				other_key = MODERN_QS_KEYS[i];
 			if (other_key == maple_key)
 				continue;
 			Keyboard::Mapping om = keyboard.get_maple_mapping(other_key);
@@ -2489,66 +3044,114 @@ namespace ms
 		ChangeKeyMapPacket(updated).dispatch();
 		redraw_quickslots();
 		Sound(Sound::Name::BUTTONCLICK).play();
+
+		// 2026-11-22：落点结算后必须清拖拽瞬态。旧实现只在这里 return true，
+		// 起拖时置位的 qs_dragging/qs_drag_slot 从不复位 → 以后每次点快捷格
+		// 都被 :2964/:2969 的 `if (qs_dragging) return CANCLICK` 吞掉，
+		// 单击使用彻底失效（药水拖上去也用不了的根因之一）。
+		qs_dragging = false;
+		qs_drag_slot = -1;
+		qs_pressed = false;
+
 		return true;
 	}
 
 	Cursor::State UIStatusBar::send_cursor(bool clicked, Point<int16_t> cursor_position)
 	{
-		if (classic_mode && quickslot_active)
+		// 2026-11-20 【拖拽根因修复】`clicked` 语义 = 「左键当前是否按住」，不是「刚按下」。
+		// 旧代码把每次 clicked==true 都当成新按下 → 拖动经过每个格都把 qs_drag_slot
+		// 重设成当前格、并 return CLICKING，起拖分支（qs_dragging）永远进不去。
+		// 真机 trace 铁证：at=(821)slot=0 drag_slot=0 → at=(854)slot=1 **drag_slot=1**
+		// （起点被覆盖）→ dragging 恒 0 → 拖放从未生效。
+		// 修法：用 qs_pressed 判「按下边沿」，按住期间只做拖动检测，松开时结算。
+		if (quickslot_active)
 		{
-			int16_t slot = classic_qs_slot_at(cursor_position);
+			const int16_t slot = classic_mode
+				? classic_qs_slot_at(cursor_position)
+				: modern_qs_slot_at(cursor_position);
 
-			if (clicked)
-			{
-				// 按下：先记候选起点，暂不触发使用——待松开时按「是否移动」区分单击/拖拽。
-				if (slot >= 0)
-				{
-					qs_drag_slot = static_cast<int16_t>(slot);
-					qs_press_pos = cursor_position;
-					qs_dragging = false;
-					return Cursor::State::CLICKING;
-				}
-				return UIElement::send_cursor(clicked, cursor_position);
-			}
-
-			// 移动/松开阶段。
+			// ---- ① 起拖检测放在最前：不依赖 clicked 真假 ----
+			// 真机 trace 铁证：鼠标仍按住时 clicked 会由 1 变 0（框架只在 down 帧传 1），
+			// 若把 clicked==false 当"松开"就会在移动帧清状态 → 起拖永不触发。
+			// 故：只要已记录起点且位移超阈值，无论 clicked 真假都起拖。
 			if (qs_drag_slot >= 0 && !qs_dragging)
 			{
-				// 超过阈值且已离开起点格 → 起拖换位（图标交给 UI 拖系统，drop 到目标格由 send_icon 处理）。
-				Point<int16_t> delta = cursor_position - qs_press_pos;
-				int16_t adx = delta.x() < 0 ? static_cast<int16_t>(-delta.x()) : delta.x();
-				int16_t ady = delta.y() < 0 ? static_cast<int16_t>(-delta.y()) : delta.y();
-				if ((adx > QS_DRAG_THRESHOLD || ady > QS_DRAG_THRESHOLD)
-					&& slot != qs_drag_slot)
+				const Point<int16_t> delta = cursor_position - qs_press_pos;
+				const int16_t adx = delta.x() < 0 ? static_cast<int16_t>(-delta.x()) : delta.x();
+				const int16_t ady = delta.y() < 0 ? static_cast<int16_t>(-delta.y()) : delta.y();
+				if (adx > QS_DRAG_THRESHOLD || ady > QS_DRAG_THRESHOLD)
 				{
 					setup_qs_drag_icon(static_cast<size_t>(qs_drag_slot), cursor_position);
 					qs_dragging = true;
 				}
 			}
 
-			if (!qs_dragging && qs_drag_slot >= 0 && slot == qs_drag_slot)
+			if (clicked)
 			{
-				// 未拖动且仍在原格松开 = 单击使用：keydown → keyup 一次，避免连击残留。
-				activate_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
-				release_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
-				qs_drag_slot = -1;
-			}
-			else if (!qs_dragging && qs_drag_slot >= 0)
-			{
-				// 松开时不在原格但未达阈值：视为取消，清状态（无 keyup，因为没 keydown）。
-				qs_drag_slot = -1;
+				// ---- ② down/按住帧：**同格内绝不刷新起点** ----
+				// 若每帧都重置 qs_press_pos，delta 永远等于「相邻两帧间距」(~5px)，
+				// 永远超不过阈值 → 起拖永不触发（真机 trace 已证实）。
+				if (!qs_dragging)
+				{
+					// 2026-11-20 回归修复：只有落在快捷格内的按下才进入拖/用判定并吞掉
+					// 本次点击。旧代码在此处**无条件** return CLICKING，导致点在
+					// 商城/帮助/目录/界面等主功能按钮（slot<0）时永远到不了
+					// UIElement::send_cursor，于是「上面一排图标 + 下面几个大按钮
+					// 点击全部失效」。恢复 HEAD 口径：非快捷格交回基类派发。
+					if (slot >= 0)
+					{
+						if (slot != qs_drag_slot)
+						{
+							qs_drag_slot = static_cast<int16_t>(slot);
+							qs_press_pos = cursor_position;
+						}
+						return Cursor::State::CLICKING;
+					}
+					// 非快捷格（主功能按钮 / 空白区）：交回基类派发，按钮正常响应。
+					return UIElement::send_cursor(clicked, cursor_position);
+				}
+				return Cursor::State::CANCLICK; // 拖拽中
 			}
 
-			// 起拖后 qs_dragging 保持，直到下一次按下（新交互）时重置；
-			// 落点结算由 UIStateGame::drop_icon → 目标格 send_icon 完成。
+			// ---- ③ up/移动帧 ----
+			// 已起拖：等 UIStateGame::drop_icon → 目标格 send_icon 结算，这里只保持状态。
+			if (qs_dragging)
+				return Cursor::State::CANCLICK;
+
+			// 未起拖且点击落在原格 → 单击使用；否则取消。
+			if (qs_drag_slot >= 0)
+			{
+				if (slot == qs_drag_slot)
+				{
+					if (classic_mode)
+					{
+						activate_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
+						release_classic_qs_slot(static_cast<size_t>(qs_drag_slot));
+					}
+					else
+					{
+						activate_modern_qs_slot(static_cast<size_t>(qs_drag_slot));
+						release_modern_qs_slot(static_cast<size_t>(qs_drag_slot));
+					}
+				}
+				qs_drag_slot = -1;
+				qs_pressed = false;
+			}
 
 			if (slot >= 0)
+			{
+				// 2026-11-23：快捷格 hover 弹 tooltip（原生 CUIStatusBar::ProcessToolTip）。
+				// 只在「未拖拽 + 鼠标停留在该格」时挂；每帧 UIStateGame 会先 clear，
+				// 故这里持续重挂即可，移开后（slot<0）本帧不挂即自然消失。
+				show_qs_tooltip(slot);
 				return Cursor::State::CANCLICK;
+			}
 		}
-		else if (qs_drag_slot >= 0)
+		else if (qs_drag_slot >= 0 || qs_pressed)
 		{
 			qs_drag_slot = -1;
 			qs_dragging = false;
+			qs_pressed = false;
 		}
 
 		return UIElement::send_cursor(clicked, cursor_position);
@@ -2556,15 +3159,20 @@ namespace ms
 
 	void UIStatusBar::draw_classic(float alpha) const
 	{
-		// R16 定版（docs/features/ui-v83-window-restore/evidence/w4-chatbar/coords.md §1'）：
-		// base/backgrnd(817x71) 通栏铺满 VWIDTH，落点 (0, vh-71)；白色输入带是它
-		// 自身烘焙的一条（带顶 = 底栏顶+4、内高 26、x3..820 通栏）。内容/按钮组按
-		// hud_cx 居中，但底条贴图本身不居中。此前 [用户暂关] 注释掉后底栏只剩
-		// backgrnd2 的 570 宽半透明带 → 白带只到 x≈548、chatTarget 失去底衬
-		// （真机 2026-11-15 图2）。按截图/IMG 还原，恢复通栏绘制。
+		// 2026-11-21 用户要求：StatusBar.img/base/backgrnd 与底部信息栏整组一起居中。
+		// 坐标基准：position.x 就是「内容组左缘」（= HudLayout::hud_center_x(VWIDTH,
+		// content_w) = (VWIDTH-content_w)/2，见 init_classic/update_screen :308/:2366），
+		// 血量/名牌/QS/数值全部以 position 为原点绘制，整组左缘=position.x、宽=content_w
+		// 恰好居中于视口。因此背景板必须覆盖同一矩形：左缘=position.x，宽=content_w。
+		// 历史 bug：曾把 classic_content_cx（同是左缘）误当视口中心再减 bg_w/2，
+		// 1920 档算出 -306，把背景推到屏幕左外、右侧露空。
 		if (classic_backgrnd)
+		{
+			const int16_t bg_w = classic_content_w > 0 ? classic_content_w : VWIDTH;
+			const int16_t bg_x = position.x();	// 与信息栏整组同源左缘 → 一起居中
 			classic_backgrnd.draw(DrawArgument(
-				Point<int16_t>(0, position.y()), Point<int16_t>(VWIDTH, 0)));
+				Point<int16_t>(bg_x, position.y()), Point<int16_t>(bg_w, 0)));
+		}
 
 		if (classic_backgrnd2)
 			classic_backgrnd2.draw(position);
@@ -2625,12 +3233,26 @@ namespace ms
 			}
 		}
 
-		// 闪光只在数值变化的那一小段播放（5 帧 x130ms）；常驻覆盖会把整条量规洗成粉色。
-		if (classic_hp_flash > 0)
-			classic_hp_flash_sprite.draw(position, alpha);
+		// 低血/低蓝时按 WZ hpFlash/mpFlash 周期播放（5帧×delay，循环由 update 驱动）。
+		{
+			const uint8_t hp_warn_draw = Setting<SysOptHpWarn>::get().load();
+			const uint8_t mp_warn_draw = Setting<SysOptMpWarn>::get().load();
+			const float hp_pct_draw = gethppercent();
+			const float mp_pct_draw = getmppercent();
+			const bool hp_low_draw = hp_warn_draw > 0
+				&& hp_pct_draw > 0.0f
+				&& hp_pct_draw <= static_cast<float>(hp_warn_draw) / 100.0f;
+			const bool mp_low_draw = mp_warn_draw > 0
+				&& mp_pct_draw > 0.0f
+				&& mp_pct_draw <= static_cast<float>(mp_warn_draw) / 100.0f;
 
-		if (classic_mp_flash > 0)
-			classic_mp_flash_sprite.draw(position, alpha);
+			// classic_*_flash：-1=无素材；>=0=有素材。低量期间每帧绘制（update 驱动循环）。
+			if (hp_low_draw && classic_hp_flash >= 0)
+				classic_hp_flash_sprite.draw(position, alpha);
+
+			if (mp_low_draw && classic_mp_flash >= 0)
+				classic_mp_flash_sprite.draw(position, alpha);
+		}
 
 		int32_t level = stats.get_stat(MapleStat::Id::LEVEL);
 		int32_t hp = stats.get_stat(MapleStat::Id::HP);
@@ -2737,6 +3359,23 @@ namespace ms
 					// 看不到技能图标」。按自身 origin 自适应后，26/32 宽格与 8 槽窄格一并修正。
 					const int16_t icon_dy = classic_qs_icons[i].get_origin().y();
 					classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, icon_dy));
+
+					// 快捷格技能冷却遮罩（MinMS UIStatusBar.cpp:440-459）：
+					// 本端 SkillData::Stats 不解析 WZ cooltime，无法给出精确剩余比例，
+					// 故按「在冷却中 → 半透明黑遮罩」给出可用的视觉反馈，不发明数值。
+					{
+						const Keyboard& kb = UI::get().get_keyboard();
+						const uint8_t mk = (classic_qs_count == 8 && i < 8)
+							? static_cast<uint8_t>(kb.get_quickslot_key(static_cast<uint8_t>(i)))
+							: CLASSIC_QS_KEYS[i];
+						const Keyboard::Mapping cm = kb.get_maple_mapping(mk);
+						if (cm.type == KeyType::Id::SKILL
+							&& Stage::get().get_player().get_cooldown_remaining(cm.action) > 0)
+						{
+							ColorBox(30, 30, Color::Name::BLACK, 0.6f).draw(
+								DrawArgument(cell_pos + Point<int16_t>(0, icon_dy)));
+						}
+					}
 				}
 
 				// 键帽层：原生切图 quickslotConfig/key/<mapleKey> 画在图标之上（占格顶带）。
@@ -2912,12 +3551,6 @@ namespace ms
 			start_button_blink(Buttons::BT_CLASSIC_STAT);
 		blink_last_level = blink_level;
 
-		if (classic_hp_flash > 0)
-			classic_hp_flash_sprite.update();
-
-		if (classic_mp_flash > 0)
-			classic_mp_flash_sprite.update();
-
 		expbar.update(getexppercent());
 
 		float hp = gethppercent();
@@ -2937,49 +3570,42 @@ namespace ms
 		const uint8_t hp_warn = Setting<SysOptHpWarn>::get().load();
 		const uint8_t mp_warn = Setting<SysOptMpWarn>::get().load();
 
-		const bool hp_low = hp_warn > 0 && hp <= static_cast<float>(hp_warn) / 100.0f;
-		const bool mp_low = mp_warn > 0 && mp <= static_cast<float>(mp_warn) / 100.0f;
+		const bool hp_low = hp_warn > 0 && hp > 0.0f && hp <= static_cast<float>(hp_warn) / 100.0f;
+		const bool mp_low = mp_warn > 0 && mp > 0.0f && mp <= static_cast<float>(mp_warn) / 100.0f;
 
-		// 报警节拍修复（2026-11-17）：旧代码 `flash==0 && low → flash=5` 在 flash
-		// 归零的同一帧就重启动画，5 帧放完立刻重放，没有静默间隔 → 持续 ~10Hz 狂闪，
-		// 与注释「5 帧闪 + 1 帧间隔」及「报警」语义都不符，低血 0 时尤其刺眼。
-		// 复用 classic_last_hp/mp（公共头布局冻结，不能加成员）作静默倒计时（单位：帧）：
-		//   -1 = 尚未报警过；>0 = 静默中逐帧递减；<=0 = 允许启动下一轮。
-		// 血回到阈值以上时把倒计时清零，下次再低血可立即报警一次。
-		// 静默 60 帧 ≈ 1 秒（60fps），闪一次后歇一秒，而非连续闪。
-		constexpr float ALERT_COOLDOWN_FRAMES = 60.0f;
+		// 对齐 MinMS UIStatusBar：低血/低蓝期间持续 update WZ 闪光动画（5 帧周期循环），
+		// 阈值内一直重播；不再用「下降穿越」只闪一次后永远静音。
+		const bool hp_flash_active = hp_low;
+		const bool mp_flash_active = mp_low;
 
-		if (classic_hp_flash > 0)
+		if (classic_hp_flash >= 0)
 		{
-			--classic_hp_flash;
-			if (classic_hp_flash == 0)
-				classic_last_hp = ALERT_COOLDOWN_FRAMES;  // 本轮播完，进入静默
+			if (hp_flash_active)
+			{
+				classic_hp_flash_sprite.update();
+				classic_hp_flash = 1;
+			}
+			else
+			{
+				classic_hp_flash = 0;
+			}
 		}
-		else
-		{
-			if (classic_last_hp > 0.0f)
-				classic_last_hp -= 1.0f;                  // 静默期倒计时
-			if (hp_low && classic_last_hp <= 0.0f)
-				classic_hp_flash = 5;                     // 静默结束才允许重启
-		}
-		if (!hp_low)
-			classic_last_hp = 0.0f;                        // 血量恢复，清除静默
 
-		if (classic_mp_flash > 0)
+		if (classic_mp_flash >= 0)
 		{
-			--classic_mp_flash;
-			if (classic_mp_flash == 0)
-				classic_last_mp = ALERT_COOLDOWN_FRAMES;
+			if (mp_flash_active)
+			{
+				classic_mp_flash_sprite.update();
+				classic_mp_flash = 1;
+			}
+			else
+			{
+				classic_mp_flash = 0;
+			}
 		}
-		else
-		{
-			if (classic_last_mp > 0.0f)
-				classic_last_mp -= 1.0f;
-			if (mp_low && classic_last_mp <= 0.0f)
-				classic_mp_flash = 5;
-		}
-		if (!mp_low)
-			classic_last_mp = 0.0f;
+
+		classic_last_hp = hp;
+		classic_last_mp = mp;
 
 		hpbar.update(hp);
 		mpbar.update(mp);

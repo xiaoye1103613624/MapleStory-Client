@@ -47,6 +47,11 @@ namespace ms
 		accuracy = info["acc"];
 		avoid = info["eva"];
 		knockback = info["pushed"];
+		{
+			int32_t raw_maxhp = static_cast<int32_t>(info["maxHP"].get_integer());
+			maxhp = raw_maxhp > 0 ? raw_maxhp : 1;
+			hp_est = maxhp;
+		}
 		speed = info["speed"];
 		flyspeed = info["flySpeed"];
 		touchdamage = info["bodyAttack"].get_bool();
@@ -188,6 +193,11 @@ namespace ms
 		counter = 0;
 
 		namelabel = Text(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NAMETAG, name);
+
+		// 等级名牌：真实等级来自本构造开头读取的 WZ info/level（Mob.img/<id>/info/level），
+		// 纯代码动态拼「Lv:N」，与名称同构（同字体/同 NAMETAG 底框）；底部与名称水平并排。
+		levellabel = Text(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NAMETAG,
+			"Lv:" + std::to_string(level));
 
 		if (newspawn)
 		{
@@ -346,12 +356,10 @@ namespace ms
 
 					break;
 				case Stance::HIT:
-					if (canmove)
-					{
-						double KBFORCE = phobj.onground ? 0.2 : 0.1;
-						phobj.hforce = flip ? -KBFORCE : KBFORCE;
-					}
-
+					// Angel CMob::ShowHitEffect（IDA 0xc671e0）只 SetOneTimeAction，
+					// 不在客户端叠持续 hforce。旧 KBFORCE 0.2/0.1 会在 HIT 窗口持续
+					// 推怪；一击必杀时 kill 包晚到就会「die 动画 + 向后滑」。
+					// 致死已在 apply_damage(lethal)/apply_death/kill 清冲量；此处不再推。
 					break;
 				case Stance::JUMP:
 					phobj.vforce = -5.0;
@@ -669,7 +677,23 @@ namespace ms
 			const MobInfoTier tier = mob_info_tier();
 
 			if (tier.name)
-				namelabel.draw(absp);
+			{
+				// 2026-11-21 名牌水平居中修复（IDA 取证：CMob::MakeNameTag @0xc84f40
+				// m_nNameTagPosX = totalWidth / -2；原生按"整块名牌总宽一半"挂到实体 x）。
+				// 旧实现把 namelabel 单独居中在 absp.x、等级牌挂左侧，导致
+				// [等级+间隙+名称] 整组相对怪物中心左偏 (levelW+GAP)/2。
+				// 现在按总宽算整块左边界，再分别算两块中心，使整组水平中心落在 absp.x。
+				constexpr int16_t LEVEL_TAG_GAP = 4;	// NAMETAG 底框左右各外扩约 1~3px，避免贴死
+				const int16_t name_w = namelabel.width();
+				const int16_t level_w = levellabel.width();
+				const int16_t total_w = static_cast<int16_t>(level_w + LEVEL_TAG_GAP + name_w);
+				const int16_t group_left = static_cast<int16_t>(absp.x() - total_w / 2);
+
+				const int16_t level_x = static_cast<int16_t>(group_left + level_w / 2);
+				const int16_t name_x = static_cast<int16_t>(group_left + level_w + LEVEL_TAG_GAP + name_w / 2);
+				levellabel.draw(Point<int16_t>(level_x, absp.y()));
+				namelabel.draw(Point<int16_t>(name_x, absp.y()));
+			}
 
 			if (tier.hp && showhp && !dying && !hpgauguehide_ && hppercent > 0)
 				hpbar.draw(headpos, hppercent, hptagcolor_);
@@ -756,6 +780,10 @@ namespace ms
 				set_stance(skillstance);
 				next_skill_id = skillid;
 				next_skill_level = skilllevel;
+				// 旁观/非受控怪的施法特效：s9 不单独下发 VFX 包，纯客户端驱动。
+				// 旧实现只有受控支（update_movement:548）会播，多人同屏只看得到
+				// skill{n} 动画、看不到 effect/hit/tile。节点缺失时 play_ 内自有守卫。
+				play_mob_skill_effect(skillid, skilllevel);
 			}
 			else
 			{
@@ -813,6 +841,11 @@ namespace ms
 		if (boss)
 			trigger_death_tremble();
 
+		// 致死瞬间清 HIT 击退冲量，避免「死亡动画 + 滑行」叠播。
+		phobj.hforce = 0.0;
+		phobj.hspeed = 0.0;
+		hp_est = 0;
+		counter = 0;
 		dying = true;
 	}
 
@@ -823,9 +856,15 @@ namespace ms
 			int16_t delta = playerlevel - level;
 
 			if (delta > 9)
+			{
 				namelabel.change_color(Color::Name::YELLOW);
+				levellabel.change_color(Color::Name::YELLOW);
+			}
 			else if (delta < -9)
+			{
 				namelabel.change_color(Color::Name::RED);
+				levellabel.change_color(Color::Name::RED);
+			}
 		}
 
 		if (percent > 100)
@@ -834,6 +873,9 @@ namespace ms
 			percent = 0;
 
 		hppercent = percent;
+		// 用服务端百分比回校本地估算 HP（一击必杀跳过击退依赖此值）。
+		if (maxhp > 0)
+			hp_est = static_cast<int32_t>((static_cast<int64_t>(maxhp) * percent) / 100);
 		showhp.set_for(2000);
 	}
 
@@ -865,6 +907,32 @@ namespace ms
 		}
 
 		effects.add(animation, DrawArgument(shift, f), z);
+	}
+
+	void Mob::show_hit_spark()
+	{
+		// 原生还原（2026-11-21）：Angel CMob::ShowHitEffect@0x66fb4d 的受击火花语义
+		// + MinMS Mob.cpp:7331-7347 —— BasicEff.img/CoolHit，绘制在怪物原点上方 15px。
+		// CoolHit 经 orange-wz 实测为单帧无 delay canvas(107x39, origin 49,37)。
+		// 与技能效果开关同源（SysOptSkillEffects），关掉画面效果时不显示。
+		if (!active)
+			return;
+
+		if (!Setting<SysOptSkillEffects>::get().load())
+			return;
+
+		nl::node coolhit = nl::nx::Effect["BasicEff.img"]["CoolHit"];
+		if (!coolhit || coolhit.size() == 0)
+			return;
+
+		constexpr int16_t MOB_HIT_EFFECT_Y_OFFSET = -15;
+		// 2026-11-23 偏差修复：effects 由 Mob::draw 以屏幕坐标 absp 作父位传入
+		// （drawbelow/drawabove(absp) → Sprite::stateargs+parentpos），DrawArgument
+		// 必须是「相对怪物原点」的偏移。旧实现塞 phobj.get_x/get_y()（世界坐标），
+		// 最终绘制 = 世界坐标 + 屏幕坐标，火花被甩到离怪几百像素。
+		// MinMS Mob.cpp:7331-7347 / 本仓 show_effect:888-905 均为相对偏移。
+		Point<int16_t> spark_pos(0, MOB_HIT_EFFECT_Y_OFFSET);
+		effects.add(Animation(coolhit), DrawArgument(spark_pos, flip), 0);
 	}
 
 	float Mob::calculate_hitchance(int16_t leveldelta, int32_t player_accuracy) const
@@ -1023,15 +1091,38 @@ namespace ms
 		return damage::DamageLine(intdamage, iscritical);
 	}
 
-	void Mob::apply_damage(int32_t damage, bool toleft)
+	void Mob::apply_damage(int32_t damage, bool toleft, bool lethal)
 	{
-		hitsound.play();
+		if (damage > 0)
+			hitsound.play();
 
 		if (dying && stance != Stance::DIE)
 		{
 			apply_death();
+			return;
 		}
-		else if (control && is_alive() && damage >= knockback)
+
+		// Angel OnHit：HP<=0 时不 GenerateMovePath。本地用 WZ maxHP + show_hp 估算；
+		// damage>=hp_est 或调用方 lethal=true → 跳过 HIT 滑行，等 kill 包播 die。
+		if (!lethal && is_alive() && damage > 0 && hp_est > 0 && damage >= hp_est)
+			lethal = true;
+
+		if (damage > 0 && hp_est > 0)
+		{
+			hp_est -= damage;
+			if (hp_est < 0)
+				hp_est = 0;
+		}
+
+		if (lethal)
+		{
+			phobj.hforce = 0.0;
+			phobj.hspeed = 0.0;
+			show_hit_spark();
+			return;
+		}
+
+		if (control && is_alive() && damage >= knockback)
 		{
 			// 对齐 Angel OnHit：控制怪本地受击进 HIT，但不提前触发 generate_move_path
 			//（原 counter=170 会让 30 帧后立即反向行走，观感像「被打飞出」）。
@@ -1041,6 +1132,12 @@ namespace ms
 			set_stance(Stance::HIT);
 
 			// 受击不主动发移动包（Angel 命中只 ShowHitEffect，位置仍由服务端路径决定）。
+
+			// 原生还原（2026-11-21）：对齐 Angel CMob::ShowHitEffect@0x66fb4d 受击火花语义
+			// 与 MinMS Mob.cpp:7331-7347 —— 命中时在怪物原点上方 15px 播 BasicEff/CoolHit。
+			// CoolHit 经 orange-wz 实测为单帧无 delay 的 canvas(107x39, origin 49,37)，
+			// 故每次新建 Animation 播放（与 FieldMarker 同口径），无需缓存成员。
+			show_hit_spark();
 		}
 	}
 
@@ -1066,6 +1163,11 @@ namespace ms
 			set_stance(death_stances[randomizer.next_int<size_t>(death_stances.size())]);
 		else
 			set_stance(Stance::DIE);
+
+		// 死亡切姿态时清掉受击冲量，避免 HIT 击退与 die 动画叠在一起滑出。
+		phobj.hforce = 0.0;
+		phobj.hspeed = 0.0;
+		counter = 0;
 
 		diesound.play();
 		dying = true;

@@ -17,12 +17,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Player.h"
 
+#include <nlnx/nx.hpp>
+
 #include "CombatPanelStats.h"
 #include "PlayerStates.h"
+#include "SkillId.h"
 
+#include "../Data/SkillData.h"
 #include "../Data/WeaponData.h"
 #include "../Data/SetItemData.h"
+#include "../Data/SkillData.h"
 #include "../IO/UI.h"
+#include "../Gameplay/Stage.h"
 
 #include "../IO/UITypes/UIStatsInfo.h"
 #include "../Net/Packets/CommonPackets.h"
@@ -80,8 +86,10 @@ namespace ms
 				EquipSlot::Id::SHIELD, EquipSlot::Id::WEAPON,
 				EquipSlot::Id::RING1, EquipSlot::Id::RING2,
 				EquipSlot::Id::RING3, EquipSlot::Id::RING4,
+				EquipSlot::Id::RING5, EquipSlot::Id::RING6,
 				EquipSlot::Id::PENDANT1, EquipSlot::Id::PENDANT2,
-				EquipSlot::Id::SHOULDER, EquipSlot::Id::MEDAL, EquipSlot::Id::BELT,
+				EquipSlot::Id::SHOULDER, EquipSlot::Id::POCKET,
+				EquipSlot::Id::MEDAL, EquipSlot::Id::BELT,
 				EquipSlot::Id::BADGE, EquipSlot::Id::TOTEM1, EquipSlot::Id::TOTEM2,
 				EquipSlot::Id::TOTEM3, EquipSlot::Id::TOTEM4,
 				EquipSlot::Id::EMBLEM, EquipSlot::Id::ANDROID_SLOT, EquipSlot::Id::HEART
@@ -148,16 +156,19 @@ namespace ms
 					}
 					else if (key == "DAMAGE")
 					{
-						// 参考 README 的 damR/fdR 口径：百分比累加到 damagepercent。
-						stats.add_damagepercent(tier.value / 100.0f);
+						// 服务端 0x175 synced 后 damR/fdR 以 CombatPanelStats 为准，避免双计。
+						if (!CombatPanelStats::get().synced)
+							stats.add_damagepercent(tier.value / 100.0f);
 					}
 					else if (key == "BOSS")
 					{
-						stats.add_bossdmg(tier.value / 100.0f);
+						if (!CombatPanelStats::get().synced)
+							stats.add_bossdmg(tier.value / 100.0f);
 					}
 					else if (key == "IGNOREDEF")
 					{
-						stats.add_ignoredef(tier.value / 100.0f);
+						if (!CombatPanelStats::get().synced)
+							stats.add_ignoredef(tier.value / 100.0f);
 					}
 					// 基础百分比（按裸属性，服务端 0x176 tier 下发）：走 add_percent。
 					else if (key == "HP_RATE")
@@ -328,10 +339,37 @@ namespace ms
 				UseItemPacket(slot, itemid).dispatch();
 	}
 
+	void Player::sync_mount_look() const
+	{
+		// 骑乘 buff + 已装备坐骑 → 加载 TamingMob 帧；否则清空。
+		if (has_buff(Buffstat::Id::MONSTER_RIDING))
+		{
+			int32_t mid = inventory.get_item_id(InventoryType::Id::EQUIPPED,
+				static_cast<int16_t>(EquipSlot::Id::TAMEDMOB));
+			if (mid > 0)
+			{
+				mount_look.set_itemid(mid);
+				const bool moving = (state == Char::State::WALK || state == Char::State::FALL
+					|| state == Char::State::SWIM);
+				mount_look.set_moving(moving);
+				return;
+			}
+		}
+		mount_look.clear();
+	}
+
 	void Player::draw(Layer::Id layer, double viewx, double viewy, float alpha) const
 	{
-		if (layer == get_layer())
-			Char::draw(viewx, viewy, alpha);
+		if (layer != get_layer())
+			return;
+
+		sync_mount_look();
+		if (mount_look.is_valid())
+		{
+			Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
+			mount_look.draw(absp, !facing_right, alpha);
+		}
+		Char::draw(viewx, viewy, alpha);
 	}
 
 	int8_t Player::update(const Physics& physics)
@@ -344,6 +382,10 @@ namespace ms
 			physics.move_object(phobj);
 
 			bool aniend = Char::update(physics, get_stancespeed());
+
+			sync_mount_look();
+			if (mount_look.is_valid())
+				mount_look.update();
 
 			if (aniend && attacking)
 			{
@@ -395,6 +437,15 @@ namespace ms
 				it = cooldowns.erase(it);
 			else
 				++it;
+		}
+
+		// 瞬移本地节流递减（与技能 CD 同一时基，按 TIMESTEP=8ms/帧）。
+		// 不依赖服务端 add_cooldown（use_move 路径从不下发），纯本地守门。
+		if (teleport_throttle > 0)
+		{
+			teleport_throttle -= Constants::TIMESTEP;
+			if (teleport_throttle < 0)
+				teleport_throttle = 0;
 		}
 
 		// CANCEL_DEBUFF(99)：疾病类临时状态本地倒计时到期后发空包。
@@ -479,9 +530,15 @@ namespace ms
 		return attacking;
 	}
 
+	bool Player::can_cast_attack() const
+	{
+		return !attacking && state != Char::State::DIED && !is_sitting()
+			&& look.get_equips().has_weapon();
+	}
+
 	bool Player::can_attack() const
 	{
-		return !attacking && !is_climbing() && !is_sitting() && look.get_equips().has_weapon();
+		return can_cast_attack() && !is_climbing();
 	}
 
 	SpecialMove::ForbidReason Player::can_use(const SpecialMove& move) const
@@ -499,7 +556,22 @@ namespace ms
 		if (has_cooldown(move.get_id()))
 			return SpecialMove::ForbidReason::FBR_COOLDOWN;
 
+		// MinMS Player::can_use：二段跳仅空中且本段离地未用过；地上按键直接拒，
+		// 避免仍发 USE_SKILL(91) 扣 MP / 被服务端拒包却本地零位移。
+		{
+			const int32_t sid = move.get_id();
+			if (SkillId::is_flash_jump(sid)
+				&& (phobj.onground || flash_jump_used))
+				return SpecialMove::ForbidReason::FBR_OTHER;
+		}
+
 		int32_t level = skillbook.get_level(move.get_id());
+		int32_t masterlevel = skillbook.get_masterlevel(move.get_id());
+		if (masterlevel == 0)
+			masterlevel = SkillData::get(move.get_id()).get_masterlevel();
+		if (masterlevel > 0 && level > masterlevel)
+			return SpecialMove::ForbidReason::FBR_OTHER;
+
 		Weapon::Type weapon = get_weapontype();
 		const Job& job = stats.get_job();
 		int32_t hp = stats.get_stat(MapleStat::Id::HP);
@@ -636,6 +708,157 @@ namespace ms
 		}
 	}
 
+	bool Player::apply_flash_jump(int32_t skillid, int32_t level)
+	{
+		// MinMS Combat::apply_use_movement :1691-1718 同源：
+		// 只能在空中、本次离地未用过。WZ 只给 mpCon，位移是客户端冲量。
+		// 服务端在 SPECIAL_MOVE 回包里权威结算 MP/位置，这里只给本地手感。
+		if (phobj.onground || flash_jump_used)
+			return false;
+
+		const int32_t lv = level > 0 ? level : get_skills().get_level(skillid);
+		const double lvval = static_cast<double>(lv < 1 ? 1 : lv);
+		const double h = 3.2 + 0.12 * lvval;
+		const double v = -(1.8 + 0.04 * lvval);
+
+		phobj.hspeed = getflip() ? h : -h;
+		if (phobj.vspeed > v)
+			phobj.vspeed = v;
+
+		// FALL 态并清 onground，让物理下一帧按新冲量继续飞行。
+		if (state != Char::State::FALL)
+			set_state(Char::State::FALL);
+		phobj.onground = false;
+		flash_jump_used = true;
+		return true;
+	}
+
+	bool Player::apply_teleport(int32_t skillid, int32_t range)
+	{
+		// 对齐 Angel TryRegisterTeleport@0x957b74：120ms 本地节流 + foothold 落点吸附。
+		// 单机端服务端 SPECIAL_MOVE 回包不保证到达，节流与落点校验都放本地，
+		// 根治「没有间隔」「瞬移进不可站立区域卡地图」两个用户可见问题。
+		(void)skillid;
+
+		// 本地节流门禁：120ms 内只允许一次，重复施放直接丢弃（返回 false）。
+		if (teleport_throttle > 0)
+		{
+			LOG(LOG_DEBUG, "[Player] apply_teleport throttled remain=" << teleport_throttle);
+			return false;
+		}
+
+		// 方向键优先，否则沿用朝向（原生瞬时位移无滑行，靠落点吸附定位）。
+		int16_t hdir = (is_key_down(KeyAction::Id::RIGHT) ? 1 : 0)
+			- (is_key_down(KeyAction::Id::LEFT) ? 1 : 0);
+		int16_t vdir = (is_key_down(KeyAction::Id::DOWN) ? 1 : 0)
+			- (is_key_down(KeyAction::Id::UP) ? 1 : 0);
+
+		if (hdir == 0 && vdir == 0)
+			hdir = getflip() ? 1 : -1;
+
+		int16_t dist = range > 0 ? range : 130;
+		if (dist > 400)
+			dist = 400;
+
+		phobj.hspeed = 0.0;
+		phobj.hforce = 0.0;
+
+		bool moved = false;
+
+		if (hdir != 0)
+		{
+			// 取当前地图 foothold 树（商城预览优先沙盒），校验目标点下方是否有可站立平台。
+			const FootholdTree* fht = sandbox_fht;
+			if (!fht)
+				fht = &Stage::get().get_physics().get_fht();
+
+			const int16_t from_x = phobj.get_x();
+			const int16_t feet_y = phobj.get_y();
+			const Range<int16_t> walls = fht->get_walls();
+
+			// 按 1/4 递进回溯：满距离 → 3/4 → 1/2 → 1/4，取第一个有落脚点的 x。
+			// resolve_spawn_point(x, 0) 内部走 get_fhid_at_x：只要 x 水平覆盖任一
+			// 非墙 foothold 就回其 fhid，否则回 0 —— 判据只依赖 x 覆盖，稳定且
+			// 不受 spawn 包 y/cy 偏差影响；这里仅用其 fhid 做「有无落脚」判定。
+			bool landed = false;
+			int16_t landed_x = from_x;
+			for (int step = 4; step >= 1; --step)
+			{
+				int32_t cand = static_cast<int32_t>(from_x)
+					+ hdir * static_cast<int32_t>(dist * step / 4);
+
+				// 先夹到 int16 可表示范围，避免转型回绕。
+				if (cand < -32768) cand = -32768;
+				if (cand > 32767) cand = 32767;
+				int16_t cx = static_cast<int16_t>(cand);
+
+				// 地图边界兜底：即便 foothold 查询异常也不越出可走范围。
+				if (!walls.empty() && !walls.contains(cx))
+					continue;
+
+				SpawnPoint probe = fht->resolve_spawn_point(Point<int16_t>(cx, feet_y), 0);
+				if (probe.fhid != 0)
+				{
+					landed = true;
+					landed_x = cx;
+					break;
+				}
+			}
+
+			if (landed)
+			{
+				// 落点合法：吸附到 foothold 覆盖的 x，onground=false 交物理自然落地。
+				phobj.set_x(landed_x);
+				phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
+				moved = true;
+				LOG(LOG_DEBUG, "[Player] apply_teleport land x=" << landed_x
+					<< " from=" << from_x << " dist=" << dist);
+			}
+			else
+			{
+				// 全不合法：保持原位与原 onground/state，避免卡在中间态。
+				LOG(LOG_DEBUG, "[Player] apply_teleport no valid foothold, keep x=" << from_x);
+				return true;
+			}
+		}
+		else if (vdir != 0)
+		{
+			// 垂直瞬移不改变 x，无落点问题，沿用短冲量（最终由服务端回包校准）。
+			phobj.vforce += vdir * (dist / 20.0);
+			moved = true;
+		}
+
+		if (moved)
+		{
+			phobj.onground = false;
+			if (state != Char::State::FALL)
+				set_state(Char::State::FALL);
+
+			// 瞬移光圈：MinMS Combat.cpp:1783-1786（BasicEff.img/Teleport，
+			// 受 SysOptSkillEffects 开关约束）。D3 已实测 live WZ 有该节点。
+			static Animation tp_effect;
+			static bool tp_loaded = false;
+			static bool tp_ok = false;
+			if (!tp_loaded)
+			{
+				nl::node tp = nl::nx::Effect["BasicEff.img"]["Teleport"];
+				if (tp && tp.size() > 0)
+				{
+					tp_effect = Animation(tp);
+					tp_ok = true;
+				}
+				tp_loaded = true;
+			}
+			if (tp_ok)
+				show_attack_effect(tp_effect, 0);
+
+			// 对齐 Angel 120ms：仅成功位移后置位，下一次施放需等节流走完。
+			teleport_throttle = 120;
+		}
+
+		return true;
+	}
+
 	bool Player::is_invincible() const
 	{
 		if (state == Char::State::DIED)
@@ -741,6 +964,12 @@ namespace ms
 			return false;
 
 		return iter->second > 0;
+	}
+
+	int32_t Player::get_cooldown_remaining(int32_t skill_id) const
+	{
+		auto iter = cooldowns.find(skill_id);
+		return iter == cooldowns.end() ? 0 : iter->second;
 	}
 
 	void Player::change_level(uint16_t level)

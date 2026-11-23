@@ -18,11 +18,15 @@
 #include "Npc.h"
 
 #include "../../Constants.h"
+#include "../../Data/QuestData.h"
+#include "../../Character/QuestLog.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/Misc.h"
 
 #include <codecvt>
 #include <vector>
+#include <unordered_set>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -36,9 +40,21 @@ namespace ms
 		constexpr int16_t kNpcPathFlushMs = 1000;
 		// 控制器本地水平力（比 Mob 弱；仅本端授控可动 NPC）
 		constexpr double kNpcWalkForce = 0.08;
+
+		// NPC 头顶任务标记：可接任务集全局缓存（1 秒刷新一次），
+		// 避免每个 NPC 每 500ms 都全扫 Check.img（数百 NPC × 上千任务）。
+		struct QuestMarkCache
+		{
+			std::vector<int16_t> available;
+			std::unordered_set<int32_t> available_npcs;
+			uint32_t tick = 0;
+		};
+		QuestMarkCache quest_mark_cache;
+		constexpr uint32_t kQuestMarkRefreshTicks = 60; // ~1s @ 60fps
 	}
 
-	Npc::Npc(int32_t id, int32_t o, bool fl, uint16_t f, bool cnt, Point<int16_t> position) : MapObject(o)
+	Npc::Npc(int32_t id, int32_t o, bool fl, uint16_t f, bool cnt, Point<int16_t> position,
+		int16_t rmin, int16_t rmax) : MapObject(o)
 	{
 		// 与 Mob 对齐用 extend_id：原来的 7 - strid.size() 遇到 8 位 id 会无符号下溢，
 		// insert(0, 巨值, '0') 直接抛 length_error，把整个 spawn 打崩。
@@ -137,12 +153,20 @@ namespace ms
 		flip = !fl;
 		control = cnt;
 		stance = "stand";
+		rx_min = rmin;
+		rx_max = rmax;
 		path_accum_ms = 0;
 		path_start_x = position.x();
 		path_start_y = position.y();
 
 		phobj.fhid = f;
 		set_position(position);
+
+		// 对齐 Angel CNpc::GetDCRange@0x6d3fde + CVecCtrlNpc 的活动范围约束：
+		// movable NPC 无条件置 TURNATEDGES，使平台边缘/台阶处由 FootholdTree::limit_movement
+		// 转向（Mob.cpp:175 同款）。没有范围（rx_min==rx_max）时靠这条兜住"走下台阶"。
+		if (movable)
+			phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
 
 		if (control && movable)
 			LOG(LOG_DEBUG, "Npc control oid=" << oid << " id=" << npcid << " movable=1");
@@ -195,6 +219,54 @@ namespace ms
 			namelabel.draw(absp + Point<int16_t>(0, -4));
 			funclabel.draw(absp + Point<int16_t>(0, 18));
 		}
+
+		// NPC 头顶任务标记（MinMS QuestNpcMarkers 语义子集）：
+		// 可接任务集 1 秒全局刷新一次；本 NPC 状态每 500ms 重算。
+		if (++quest_mark_cache.tick >= kQuestMarkRefreshTicks)
+		{
+			quest_mark_cache.tick = 0;
+			Player& pl = Stage::get().get_player();
+			quest_mark_cache.available = QuestData::list_available(
+				static_cast<int16_t>(pl.get_level()),
+				pl.get_stats().get_job().get_id(),
+				pl.get_quests());
+			quest_mark_cache.available_npcs.clear();
+			for (int16_t qid : quest_mark_cache.available)
+			{
+				const QuestData& qd = QuestData::get(qid);
+				if (qd)
+					quest_mark_cache.available_npcs.insert(static_cast<int32_t>(qd.get_npc()));
+			}
+		}
+		if (++quest_mark_tick >= 30)
+		{
+			quest_mark_tick = 0;
+			const QuestLog& log = Stage::get().get_player().get_quests();
+			bool inprogress = false;
+			// 1) 进行中：已接且本 NPC 是任务发布者。
+			for (const auto& q : log.get_started())
+			{
+				const QuestData& qd = QuestData::get(static_cast<int32_t>(q.first));
+				if (qd && qd.get_npc() == npcid)
+				{
+					inprogress = true;
+					break;
+				}
+			}
+			// 2) 可接：本 NPC 在全局可接发布者集合中。
+			bool available = quest_mark_cache.available_npcs.count(npcid) > 0;
+			quest_mark_kind = inprogress ? 2 : (available ? 1 : 0);
+		}
+		if (quest_mark_kind > 0)
+		{
+			// QuestIcon/<kind>/0 是标记动画（D3 orange-wz 实测节点在位）。
+			nl::node qnode = nl::nx::UI["UIWindow.img"]["QuestIcon"][std::to_string(quest_mark_kind)]["0"];
+			if (qnode)
+			{
+				Animation mark(qnode);
+				mark.draw(DrawArgument(absp + Point<int16_t>(0, -70)), alpha);
+			}
+		}
 	}
 
 	int8_t Npc::update(const Physics& physics)
@@ -216,6 +288,16 @@ namespace ms
 
 			physics.move_object(phobj);
 
+			// Angel GetDCRange@0x6d3fde 等价：活动范围夹取。越界则钉回边界 + 翻向 + 回 stand，
+			// 立即上行一次新坐标，避免服务端仍按旧方向插值。
+			clamp_to_move_range();
+			if (just_bounced)
+			{
+				if (phobj.fhid > 0)
+					try_flush_movepath();   // 立即上行新坐标，避免服务端按旧方向插值
+				just_bounced = false;
+			}
+
 			path_accum_ms = static_cast<int16_t>(path_accum_ms + Constants::TIMESTEP);
 			if (path_accum_ms >= kNpcPathFlushMs && phobj.fhid > 0)
 				try_flush_movepath();
@@ -230,6 +312,8 @@ namespace ms
 		else
 		{
 			physics.move_object(phobj);
+			// 非授控 NPC 同样受活动范围约束（包坐标越界/物理漂移兜底）。
+			clamp_to_move_range();
 
 			if (animations.count(stance))
 			{
@@ -245,6 +329,31 @@ namespace ms
 		}
 
 		return phobj.fhlayer;
+	}
+
+	void Npc::clamp_to_move_range()
+	{
+		// 范围无效（包未下发 rx0/rx1，两值相等）时不夹取，仅靠 TURNATEDGES 在台阶边缘转向。
+		if (rx_min == rx_max)
+			return;
+
+		const double x = phobj.crnt_x();
+		if (x > rx_max)
+		{
+			phobj.limitx(rx_max);   // 钉回右界并清 hspeed
+			phobj.hforce = 0.0;
+			flip = true;            // 触右界翻向左
+			set_stance("stand");
+			just_bounced = true;
+		}
+		else if (x < rx_min)
+		{
+			phobj.limitx(rx_min);   // 钉回左界并清 hspeed
+			phobj.hforce = 0.0;
+			flip = false;           // 触左界翻向右
+			set_stance("stand");
+			just_bounced = true;
+		}
 	}
 
 	void Npc::try_flush_movepath()

@@ -24,6 +24,7 @@
 #include "../Components/MapleButton.h"
 #include "UIDelivery.h"
 #include "UISoftKey.h"
+#include "UINotice.h"
 #include "UIItemInventory.h"
 #include "UIStoreBank.h"
 #include "../../Data/ItemData.h"
@@ -242,11 +243,11 @@ namespace ms
 					itemid = Stage::get().get_player().get_inventory().get_item_id(inv_tab, inv_slot);
 			}
 			if (inv_slot > 0 && itemid > 0) {
-				int16_t slot = inv_slot;
-				int32_t id = itemid;
-				
-			} else {
-				
+				int16_t quantity = Stage::get().get_player().get_inventory().get_item_count(inv_tab, inv_slot);
+				if (quantity <= 0)
+					quantity = 1;
+				StorageStorePacket(inv_slot, itemid, quantity).dispatch();
+				LOG(LOG_DEBUG, "UIStorage: store slot=" << inv_slot << " id=" << itemid);
 			}
 		} else if (keycode == 'D' || keycode == 'd') {
 			auto ui = UI::get().get_element<UIDelivery>();
@@ -261,7 +262,23 @@ namespace ms
 
 	void UIStorage::prompt_meso(bool deposit)
 	{
-		bool d = deposit;
-		
+		// s9 StorageProcessor case 7: writeLong(meso)，正数=取出、负数=存入。
+		// 输入上限取当前持有金币/仓库金币的较大者，避免本地输入超过持有量。
+		int64_t limit = deposit
+			? Stage::get().get_player().get_inventory().get_meso()
+			: meso;
+		if (limit <= 0)
+			limit = 1;
+		UI::get().emplace<UIEnterNumber>(
+			Locale::text(deposit ? "storage.deposit_qty" : "storage.withdraw_qty"),
+			[deposit](int32_t n) {
+				if (n <= 0)
+					return;
+				StorageMesoPacket(deposit ? -static_cast<int64_t>(n) : static_cast<int64_t>(n)).dispatch();
+				LOG(LOG_DEBUG, "UIStorage: meso " << (deposit ? "deposit " : "withdraw ") << n);
+			},
+			limit > 2147483647LL ? 2147483647 : static_cast<int32_t>(limit),
+			1
+		);
 	}
 }

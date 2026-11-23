@@ -132,7 +132,6 @@ namespace ms
 	{
 		int8_t invent = 0;
 		int16_t slot = 0;
-		int16_t qty = 1;
 		if (auto inv = UI::get().get_element<UIItemInventory>()) {
 			slot = inv->get_selected_slot();
 			if (slot > 0)
@@ -141,14 +140,47 @@ namespace ms
 		std::string pre;
 		if (auto ci = UI::get().get_element<UICharInfo>())
 			pre = ci->get_target_name();
-		auto ask_meso = [this, invent, slot, qty](const std::string& name) {
+
+		// 第二问：金币[,数量]（s9 DueyHandler op2: invent/slot/amount/meso/name）
+		auto ask_meso = [this, invent, slot](const std::string& name, const std::string& rest) {
 			if (name.empty()) return;
-			
+			int64_t mesos = 0;
+			int16_t qty = 1;
+			try {
+				size_t p = rest.find(',');
+				if (p == std::string::npos) {
+					if (!rest.empty()) mesos = std::stoll(rest);
+				} else {
+					mesos = std::stoll(rest.substr(0, p));
+					qty = static_cast<int16_t>(std::stoi(rest.substr(p + 1)));
+				}
+			} catch (...) {}
+			if (mesos < 0) mesos = 0;
+			if (qty < 1) qty = 1;
+			DueySendPacket(invent, slot, qty, mesos, name, false, "").dispatch();
+			show_notice(Locale::format_all("delivery.sent", { name, std::to_string(mesos) }));
+			LOG(LOG_DEBUG, "UIDelivery: DueySend name=" << name
+				<< " meso=" << mesos << " qty=" << qty
+				<< " inv=" << (int)invent << " slot=" << slot);
 		};
+
+		// 单一输入：name|meso[,qty]（沿用 UICashShop 软键盘复合输入惯例）。
+		// 若从角色信息窗带来了目标名，作为提示展示，仍由用户输入完整串。
+		auto ask_name_then_meso = [this, ask_meso](const std::string& input) {
+			std::string name = input;
+			std::string rest;
+			size_t bar = input.find('|');
+			if (bar != std::string::npos) {
+				name = input.substr(0, bar);
+				rest = input.substr(bar + 1);
+			}
+			ask_meso(name, rest);
+		};
+
+		std::string hint = Locale::text("delivery.send_hint");
 		if (!pre.empty())
-			ask_meso(pre);
-		else
-			;
+			hint = Locale::format_all("delivery.send_hint_pre", { pre });
+		UI::get().emplace<UISoftKey>(ask_name_then_meso, []() {}, hint);
 	}
 
 	void UIDelivery::draw(float inter) const
@@ -237,11 +269,23 @@ namespace ms
 					LOG(LOG_DEBUG, "UIDelivery: SoftKey DueySend from inv name=" << name
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
-				if (!pre.empty()) {
-					
-				} else {
-					
-				}
+				// 有目标名：只需补 meso[,qty]；否则：name|meso[,qty]
+				std::string hint = pre.empty()
+					? Locale::text("delivery.send_hint")
+					: Locale::text("delivery.qty_hint");
+				UI::get().emplace<UISoftKey>([pre, send_spec](const std::string& input) {
+					if (pre.empty()) {
+						std::string name = input, rest;
+						size_t bar = input.find('|');
+						if (bar != std::string::npos) {
+							name = input.substr(0, bar);
+							rest = input.substr(bar + 1);
+						}
+						send_spec(name, rest);
+					} else {
+						send_spec(pre, input);
+					}
+				}, []() {}, hint);
 			} else {
 				std::string pre;
 				if (auto ci = UI::get().get_element<UICharInfo>())
@@ -278,25 +322,34 @@ namespace ms
 					LOG(LOG_DEBUG, "UIDelivery: SoftKey DueySend name=" << name
 						<< " meso=" << mesos << " inv=" << (int)invent << " slot=" << slot);
 				};
-				if (!pre.empty()) {
-					
-				} else {
-					
-				}
+				std::string hint = pre.empty()
+					? Locale::text("delivery.send_hint")
+					: Locale::text("delivery.qty_hint");
+				UI::get().emplace<UISoftKey>([pre, parse_rest](const std::string& input) {
+					if (pre.empty()) {
+						std::string name = input, rest;
+						size_t bar = input.find('|');
+						if (bar != std::string::npos) {
+							name = input.substr(0, bar);
+							rest = input.substr(bar + 1);
+						}
+						parse_rest(name, rest);
+					} else {
+						parse_rest(pre, input);
+					}
+				}, []() {}, hint);
 			}
 		}
 		else if (keycode == 'X' || keycode == 'x') {
 			if (selected >= 0 && selected < static_cast<int16_t>(packages.size()))
 				discard_selected();
-			else {
-				
-			}
+			else
+				show_notice(Locale::text("delivery.none_selected"));
 		} else if (keycode == 'K' || keycode == 'k') {
 			if (selected >= 0 && selected < static_cast<int16_t>(packages.size()))
 				claim_selected();
-			else {
-				
-			}
+			else
+				show_notice(Locale::text("delivery.none_selected"));
 		} else if (keycode == 'F' || keycode == 'f') {
 			DueyOpenRecvPacket().dispatch();
 			show_notice("Refresh…");

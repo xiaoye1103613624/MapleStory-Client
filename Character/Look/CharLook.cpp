@@ -637,6 +637,11 @@ namespace ms
 		return stance.get();
 	}
 
+	const std::string& CharLook::get_action_name() const
+	{
+		return actionstr;
+	}
+
 	const Body* CharLook::get_body() const
 	{
 		return body;

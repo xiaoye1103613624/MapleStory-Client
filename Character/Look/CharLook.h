@@ -59,6 +59,8 @@ namespace ms
 		uint16_t get_attackdelay(size_t no, uint8_t first_frame) const;
 		uint8_t get_frame() const;
 		Stance::Id get_stance() const;
+		// 攻击包 display 用：当前组合动作名（空串表示走 stance 默认）。
+		const std::string& get_action_name() const;
 
 		const Body* get_body() const;
 		const Hair* get_hair() const;

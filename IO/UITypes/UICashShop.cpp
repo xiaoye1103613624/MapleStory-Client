@@ -54,6 +54,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <vector>
 
 #ifdef USE_NX
@@ -188,6 +189,9 @@ namespace ms
 			sprites.emplace_back(CSItemSearch["backgrnd"], search_pos);
 		if (CSItemSearch["search"])
 			sprites.emplace_back(CSItemSearch["search"], search_pos + Point<int16_t>(0, 0));
+		// F 搜索钮：CSItemSearch/BtSearch（live WZ 实测存在），点击弹 UISoftKey 本地输入。
+		try_maple_btn(buttons, Buttons::BtSearch, CSItemSearch["BtSearch"],
+			search_pos + Point<int16_t>(0, 0), "UICashShop");
 
 		// CCSWnd_Char OnCreate：BtBuyAvatar(16,237) / Default(101,237) / Takeoff(187,237)。
 		try_maple_btn(buttons, Buttons::BtBuyAvatar, CSChar["BtBuyAvatar"],
@@ -200,6 +204,22 @@ namespace ms
 			Point<int16_t>(WND_CHAR_X + 16, WND_CHAR_Y + 260), "UICashShop");
 		try_maple_btn(buttons, Buttons::BtInventory, CSChar["BtInventory"],
 			Point<int16_t>(WND_CHAR_X + 101, WND_CHAR_Y + 260), "UICashShop");
+
+		// E 扩栏五钮：CSInventory/BtEx*（live WZ 实测存在），竖排在背包格右侧。
+		// 无服务端 opcode，点击只给 locale 提示 cashshop.ext_hint，不发明包。
+		{
+			nl::node CSInventory = CashShop["CSInventory"];
+			const nl::node ext_nodes[5] = {
+				CSInventory["BtExEquip"], CSInventory["BtExConsume"], CSInventory["BtExInstall"],
+				CSInventory["BtExEtc"], CSInventory["BtExTrunk"]
+			};
+			for (uint8_t i = 0; i < 5; i++)
+			{
+				try_maple_btn(buttons, Buttons::BtExtEquip + i, ext_nodes[i],
+					Point<int16_t>(EXT_BTN_X, static_cast<int16_t>(EXT_BTN_Y0 + EXT_BTN_DY * i)),
+					"UICashShop");
+			}
+		}
 
 		if (CSStatus["Number"])
 			charge_charset = Charset(CSStatus["Number"], Charset::Alignment::RIGHT);
@@ -230,6 +250,10 @@ namespace ms
 				Point<int16_t>(static_cast<int16_t>(plate_x + 80), static_cast<int16_t>(plate_y + 53)), "UICashShop");
 			try_maple_btn(buttons, Buttons::BtGift + static_cast<uint16_t>(i), CSList["BtGift"],
 				Point<int16_t>(static_cast<int16_t>(plate_x + 119), static_cast<int16_t>(plate_y + 53)), "UICashShop");
+			// B 购物车钮：CSList/BtReserve（live WZ 实测存在），放在 BtGift 右侧 +148。
+			// 无服务端 opcode，点击只写 UIStateCashShop::local_cart_sns + locale 提示。
+			try_maple_btn(buttons, Buttons::BtCart + static_cast<uint16_t>(i), CSList["BtReserve"],
+				Point<int16_t>(static_cast<int16_t>(plate_x + 148), static_cast<int16_t>(plate_y + 53)), "UICashShop");
 
 			// Align with MinMS: A13B/BLACK, LEFT-aligned = dark ink on the light card bg.
 			// 2026-11-18：与 MinMS 对齐，商品名/价/折扣统一 A13B（旧折扣行降级 A11M
@@ -252,6 +276,11 @@ namespace ms
 		// 页码 A13B/BLACK 落在列表底边浅色条（旧 A11B/WHITE 看不清）。
 		page_label = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, "");
 		sync_page_chrome();
+
+		// 4 模式 tab 文字（locale 新键，zh/en 双语）；选中态用 ColorBox 底层着色。
+		for (uint8_t i = 0; i < 4; i++)
+			mode_labels[i] = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::YELLOW,
+			                      Locale::text("cashshop.mode" + std::to_string(i)));
 
 		update_items();
 		dimension = Texture(backgrnd).get_dimensions();
@@ -322,6 +351,9 @@ namespace ms
 		if (preview_effect_item_id > 0 && !preview_effect_below)
 			preview_effect.draw(DrawArgument(position + Point<int16_t>(WND_CHAR_X, WND_CHAR_Y) + preview_feet_art()), 0.0f);
 
+		// D 4 模式 tab：C++ 运行时绘制于预览井底 y≈214，ColorBox 选中底色 + A11B 文字。
+		draw_mode_tabs();
+
 		// CSTab 子窗 @ (272,17)；Tab 贴图 508×78。
 		if (menu_index < 9)
 			menu_tabs[menu_index].draw(position + Point<int16_t>(WND_TAB_X, WND_TAB_Y), inter);
@@ -366,8 +398,11 @@ namespace ms
 		// 偏右且整体偏上，数字压在蓝字标签行。现对齐到框右侧 x=485、y=546 起。
 		auto draw_balance = [&](int32_t value, int16_t y)
 		{
+			// I 余额千分位：与商品价同口径套 string_format::split_number。
+			std::string balance_text = std::to_string(value);
+			string_format::split_number(balance_text);
 			Text label(Text::Font::A13B, Text::Alignment::RIGHT, Color::Name::BLACK,
-			           std::to_string(value));
+			           balance_text);
 			label.draw(position + Point<int16_t>(484, y));
 		};
 		draw_balance(nx, static_cast<int16_t>(WND_STATUS_Y + 16));   // 546
@@ -448,6 +483,11 @@ namespace ms
 		// ---- 左侧「已购道具」2x6 格（2026-11-18 补齐）：数据取自服务端权威
 		// cash_inventory（0x4B/0x57/0x89），格子是 backgrnd 烘焙的白槽。 ----
 		{
+			// E 「商品选购」Text 按钮：标题条右侧，点击切回热卖主页签（menu_index=1）。
+			Text buy_select(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::YELLOW,
+			                Locale::text("cashshop.buy_select"));
+			buy_select.draw(position + Point<int16_t>(BUY_SELECT_X, BUY_SELECT_Y));
+
 			const auto& inv = UIStateCashShop::cash_inventory;
 			uint8_t drawn = 0;
 			for (uint8_t i = 0; i < PURCH_ROWS * PURCH_COLS && drawn < inv.size(); i++)
@@ -473,6 +513,21 @@ namespace ms
 				if (tab.width() > 0)
 					tab.draw(position + Point<int16_t>(BAG_TAB_X,
 						static_cast<int16_t>(BAG_TAB_Y0 + BAG_TAB_DY * t)), inter);
+			}
+			// E 扩栏五钮文字：装备窗/消耗窗/设置窗/其他窗/仓库（locale）。
+			{
+				static const char* const EXT_KEYS[5] = {
+					"cashshop.ext_equip", "cashshop.ext_consume", "cashshop.ext_setup",
+					"cashshop.ext_etc", "cashshop.ext_trunk"
+				};
+				for (uint8_t i = 0; i < 5; i++)
+				{
+					Text label(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::YELLOW,
+					           Locale::text(EXT_KEYS[i]));
+					label.draw(position + Point<int16_t>(
+						static_cast<int16_t>(EXT_BTN_X - 2),
+						static_cast<int16_t>(EXT_BTN_Y0 + EXT_BTN_DY * i + 3)));
+				}
 			}
 			const auto& inv = UIStateCashShop::cash_inventory;
 			const size_t skip = PURCH_ROWS * PURCH_COLS; // 前 12 件画在已购区
@@ -543,13 +598,32 @@ namespace ms
 					GraphicsGL::get().clear();
 					ChangeMapPacket().dispatch();
 
-					// EXIT-button fallback: the empty CHANGEMAP packet above relies on
-					// the server replying SET_FIELD/PLAYER_LOGIN to unlock GraphicsGL.
-					// If that reply never arrives (or throws) the lock() below is never
-					// released => frozen screen, dead EXIT/ESC, uncloseable client.
-					// Mirror the two working exit paths (UIQuit + exit_cashshop):
-					// restore GAME state locally and unlock unconditionally (idempotent).
+					// [商城黑屏根治] 旧实现只切 GAME state + unlock，画面恢复全押在
+					// 服务端 SET_FIELD 回包上：回包迟到/丢失时 Stage 仍是商城预览
+					// (Stage::clear 后 INACTIVE)，draw 全跳过 => 永久黑屏但进程还活着。
+					// 对齐 ESC 路径 exit_cashshop()：本地即时 load 真实地图 + transfer，
+					// 服务端回包随后权威刷新一次（同 mapid 幂等），两路状态一致。
+					// load 抛错也被捕获，不阻断后面的 enable/unlock（见下）。
 					UI::get().change_state(UI::State::GAME);
+
+					try
+					{
+						Stage& stage = Stage::get();
+						Player& player = stage.get_player();
+						int32_t mapid = player.get_stats().get_mapid();
+						uint8_t portalid = player.get_stats().get_portal();
+						stage.load(mapid, portalid);
+						stage.transfer_player();
+					}
+					catch (const std::exception& ex)
+					{
+						LOG(LOG_ERROR, "UICashShop BtExit local restore failed: " << ex.what());
+					}
+					catch (...)
+					{
+						LOG(LOG_ERROR, "UICashShop BtExit local restore failed: unknown");
+					}
+
 					UI::get().enable();
 					Timer::get().start();
 					GraphicsGL::get().unlock();
@@ -557,7 +631,8 @@ namespace ms
 			);
 
 			GraphicsGL::get().lock();
-			Stage::get().clear();
+			// 退出商城回游戏：保留天气，避免闪白天/路灯重暖（服务端会补 0x373D）。
+			Stage::get().clear(true);
 			Timer::get().start();
 
 			return Button::State::NORMAL;
@@ -606,29 +681,79 @@ namespace ms
 		}
 		case Buttons::BtCoupon:
 		{
-			// SoftKey：空 → UICoupon；有 CharInfo 名则 bday,sn[,msg]；否则全字段
+			// 2026-11-23 全量补齐：空 → UICoupon；bday,sn[,msg] 或 bday,sn,name,msg → GiftPacket(0x04)。
+			// 包体 CashShopPackets.h 现成、服务端 CashOperationHandler.java:195 已支持，无新 opcode。
 			std::string pre;
 			if (auto ci = UI::get().get_element<UICharInfo>())
 				pre = ci->get_target_name();
-			if (!pre.empty()) {
-				std::string name = pre;
-				
-			} else {
-				
-			}
+			UI::get().emplace<UISoftKey>([pre](const std::string& tip) {
+				if (tip.empty()) {
+					auto coupon = UI::get().get_element<UICoupon>();
+					if (!coupon) coupon = UI::get().emplace<UICoupon>();
+					else if (!coupon->is_active()) coupon->makeactive();
+					return;
+				}
+				size_t c1 = tip.find(',');
+				if (c1 == std::string::npos) return;
+				size_t c2 = tip.find(',', c1 + 1);
+				size_t c3 = (c2 == std::string::npos) ? std::string::npos : tip.find(',', c2 + 1);
+				try {
+					int32_t birthday = std::stoi(tip.substr(0, c1));
+					int32_t sn = 0; std::string name = pre, msg;
+					if (c2 == std::string::npos) {
+						sn = std::stoi(tip.substr(c1 + 1));
+					} else if (c3 == std::string::npos) {
+						sn = std::stoi(tip.substr(c1 + 1, c2 - c1 - 1));
+						msg = tip.substr(c2 + 1);
+					} else {
+						sn = std::stoi(tip.substr(c1 + 1, c2 - c1 - 1));
+						name = tip.substr(c2 + 1, c3 - c2 - 1);
+						msg = tip.substr(c3 + 1);
+					}
+					if (sn > 0 && !name.empty())
+						CashShopGiftPacket(birthday, sn, name, msg).dispatch();
+				} catch (...) {}
+			}, []() {}, pre.empty() ? "bday,sn,name,msg|empty=Coupon" : "bday,sn[,msg]");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtHelp:
 		{
-			// 全客户端「帮助/问号」统一走 ENTER_MTS，落点由服务端 use_mts 决定。
-			EnterMtsPacket().dispatch();
-			LOG(LOG_INFO, "UICashShop: Help -> ENTER_MTS");
+			// 原生 BtHelp 是「帮助/说明」，此前误接 ENTER_MTS（把帮助钮跳到拍卖），
+			// 与 Angel CCashShop 语义不符。本包无独立帮助 UI，按「不发明能力」
+			// 改为在底部信息条显示本地帮助提示，不发任何包。
+			cs_meta_label.change_text(Locale::text("cashshop.help_hint"));
+			LOG(LOG_INFO, "UICashShop: BtHelp -> local help hint");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtInventory:
 		{
-			// SoftKey：空 → 背包；t,cashId → Take；p,cashId[,inv] → Put
-			
+			// 2026-11-23 全量补齐：空 → 背包；t,cashId → Take(0x0D)；p,cashId[,inv] → Put(0x0E)。
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				if (tip.empty()) {
+					auto inv = UI::get().get_element<UIItemInventory>();
+					if (!inv)
+						inv = UI::get().emplace<UIItemInventory>(Stage::get().get_player().get_inventory());
+					else if (!inv->is_active()) inv->makeactive();
+					return;
+				}
+				std::string t = tip;
+				for (auto& ch : t) if (ch >= 'A' && ch <= 'Z') ch = static_cast<char>(ch - 'A' + 'a');
+				try {
+					if (t.size() >= 2 && t[0] == 't' && (t[1] == ',' || t[1] == ':')) {
+						int32_t cashId = std::stoi(tip.substr(2));
+						if (cashId > 0) CashShopTakePacket(cashId).dispatch();
+						return;
+					}
+					if (t.size() >= 2 && t[0] == 'p' && (t[1] == ',' || t[1] == ':')) {
+						std::string rest = tip.substr(2);
+						size_t c = rest.find(',');
+						int32_t cashId = 0; int8_t invt = 1;
+						if (c == std::string::npos) cashId = std::stoi(rest);
+						else { cashId = std::stoi(rest.substr(0, c)); invt = static_cast<int8_t>(std::stoi(rest.substr(c + 1))); }
+						if (cashId > 0) CashShopPutPacket(cashId, invt).dispatch();
+					}
+				} catch (...) {}
+			}, []() {}, "t,cashId|p,cashId[,inv]");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtChargeRefresh:
@@ -640,21 +765,57 @@ namespace ms
 			LOG(LOG_DEBUG, "UICashShop: BtChargeRefresh CHECK_CASH items=" << items.size());
 			return Button::State::NORMAL;
 		}
+		case Buttons::BtSearch:
+		{
+			// 2026-11-23 全量补齐：弹 UISoftKey 输入 → 本地商品名子串过滤（不发明服务端搜索包）。
+			// 输入为空清过滤；提交后 rebuild_items 用 search_query 过滤并回列表第一页。
+			UI::get().emplace<UISoftKey>(
+				[this](const std::string& entered) {
+					search_query = entered;
+					list_offset = 0;
+					rebuild_items();
+					LOG(LOG_INFO, "UICashShop: local search filter len=" << entered.size());
+				},
+				[]() {},
+				Locale::text("cashshop.search_hint"),
+				UISoftKey::Mode::Text);
+			return Button::State::NORMAL;
+		}
 		case Buttons::BtWish:
 		{
-			// SoftKey：单个 SN 或逗号分隔最多 10 个 → CashOperation 0x05
-			
+			// 2026-11-23 全量补齐：逗号分隔 SN（最多10个）→ WishPacket(0x05)。
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				std::array<int32_t, 10> sns{}; size_t n = 0; size_t start = 0;
+				while (n < sns.size()) {
+					size_t c = tip.find(',', start);
+					std::string part = (c == std::string::npos) ? tip.substr(start) : tip.substr(start, c - start);
+					try { int32_t sn = std::stoi(part); if (sn > 0) sns[n++] = sn; } catch (...) {}
+					if (c == std::string::npos) break;
+					start = c + 1;
+				}
+				if (n) CashShopWishPacket(sns).dispatch();
+			}, []() {}, "SN[,SN...] (max 10)");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtMileage:
 		{
-			// Mileage = buy 时 useNX=2（MAPLE_POINT），无独立 action
-			
+			// 2026-11-23 全量补齐：Mileage = useNX=2（MAPLE_POINT）买 SN。
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				try { int32_t sn = std::stoi(tip); if (sn > 0) CashShopBuyPacket(2, sn).dispatch(); } catch (...) {}
+			}, []() {}, "Mileage SN");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtDetailPackage:
 		{
-			
+			// 2026-11-23 全量补齐：礼包购买 PackagePacket(0x1E)，输入 useNX,sn 或 sn。
+			UI::get().emplace<UISoftKey>([](const std::string& s) {
+				try {
+					size_t comma = s.find(','); int32_t useNX = 1, sn = 0;
+					if (comma == std::string::npos) sn = std::stoi(s);
+					else { useNX = std::stoi(s.substr(0, comma)); sn = std::stoi(s.substr(comma + 1)); }
+					if (sn > 0) CashShopPackagePacket(useNX, sn).dispatch();
+				} catch (...) {}
+			}, []() {}, "useNX,sn");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtNonGrade:
@@ -668,8 +829,10 @@ namespace ms
 		}
 		case Buttons::BtBuyAvatar:
 		{
-			// try-on 无独立 opcode；购买走现有 0x03 SoftKey
-			
+			// 2026-11-23 全量补齐：对齐 MinMS 同名键走购买（0x03），输入 SN。
+			UI::get().emplace<UISoftKey>([](const std::string& s) {
+				try { int32_t sn = std::stoi(s); if (sn > 0) CashShopBuyPacket(1, sn).dispatch(); } catch (...) {}
+			}, []() {}, "Buy SN");
 			return Button::State::NORMAL;
 		}
 		case Buttons::BtDefaultAvatar:
@@ -693,12 +856,57 @@ namespace ms
 		}
 		case Buttons::BtSaveAvatar:
 		{
-			// Save 无 s9 CashOperation — SoftKey 切本地预览背景页 0..2
-			
+			// Save 无 s9 CashOperation：切本地预览背景页 0..2（保留既有降级语义，给可见反馈）。
+			preview_background = (preview_background + 1) % 3;
+			LOG(LOG_INFO, "UICashShop: SaveAvatar local preview bg=" << preview_background);
+			UI::get().emplace<UIOk>(Locale::text("cashshop.save_preview_hint"), [](bool) {});
 			return Button::State::NORMAL;
 		}
 		default:
 			break;
+		}
+
+		// 2026-11-23 全量补齐：扩栏五钮接真实发包（包体与服务端口令现成）。
+		// 输入 cash 数量（可选 ,sn）：0=Equip/Consume/Install/Etc 用 0x06 invType，4=Trunk 用 0x07。
+		if (buttonid >= Buttons::BtExtEquip && buttonid < Buttons::BtExtEquip + 5)
+		{
+			const uint16_t ext_idx = static_cast<uint16_t>(buttonid - Buttons::BtExtEquip);
+			UI::get().emplace<UISoftKey>([ext_idx](const std::string& tip) {
+				try {
+					int32_t cash = std::stoi(tip); int32_t sn = 0;
+					size_t c = tip.find(',');
+					if (c != std::string::npos) sn = std::stoi(tip.substr(c + 1));
+					if (ext_idx < 4) {
+						if (sn > 0) CashShopInvSlotSnPacket(cash, sn).dispatch();
+						else CashShopInvSlotPacket(cash, static_cast<int8_t>(ext_idx)).dispatch();
+					} else {
+						if (sn > 0) CashShopStorageSlotPacket(cash, sn).dispatch();
+						else CashShopStorageSlotPacket(cash).dispatch();
+					}
+				} catch (...) {}
+			}, []() {}, "cash[,sn]");
+			return Button::State::NORMAL;
+		}
+
+		// 2026-11-23 全量补齐：购物车钮改为 toggle（再加=移除），给可见计数反馈。
+		// 保持用户 11-21 拍板口径：9号 tab 仍以服务端权威 cash_inventory 为准，
+		// local_cart_sns 只是"待购暂存"，不发明服务端 cart opcode。
+		if (buttonid >= Buttons::BtCart && buttonid < Buttons::BtCart + MAX_ITEMS)
+		{
+			const int16_t index = static_cast<int16_t>(buttonid - Buttons::BtCart) + list_offset;
+			if (index < 0 || index >= static_cast<int16_t>(items.size()))
+				return Button::State::NORMAL;
+			const int32_t sn = items[static_cast<size_t>(index)].get_sn();
+			if (sn <= 0)
+				return Button::State::NORMAL;
+			auto& cart = UIStateCashShop::local_cart_sns;
+			auto it = std::find(cart.begin(), cart.end(), sn);
+			const bool added = (it == cart.end());
+			if (added) cart.push_back(sn); else cart.erase(it);
+			LOG(LOG_INFO, "UICashShop: local cart toggle sn=" << sn << (added ? " add" : " remove") << " size=" << cart.size());
+			UI::get().emplace<UIOk>(Locale::format(added ? "cashshop.cart_added" : "cashshop.cart_removed",
+			                                       std::to_string(cart.size())), [](bool) {});
+			return Button::State::NORMAL;
 		}
 
 		if (buttonid >= Buttons::BtGift && buttonid < Buttons::BtGift + MAX_ITEMS)
@@ -721,9 +929,23 @@ namespace ms
 				pre = ci->get_target_name();
 			std::string confirm = Locale::format_all("cashshop.gift_confirm", {
 				iname, std::to_string(price), std::to_string(sn) });
-			UI::get().emplace<UIYesNo>(confirm, [sn, pre](bool yes) {
+			UI::get().emplace<UIYesNo>(confirm, [sn, pre, iname](bool yes) {
 				if (!yes) return;
-				
+				// s9 CashOperationHandler action 0x04：gift(birthday, sn, name, msg)。
+				// birthday 原生用 0（非生日礼物），name 取 CharInfo 目标名或用户输入。
+				auto dispatch_gift = [sn](const std::string& name) {
+					if (name.empty())
+						return;
+					CashShopGiftPacket(0, sn, name, "").dispatch();
+					LOG(LOG_INFO, "UICashShop: gift sn=" << sn << " name=" << name);
+				};
+				if (!pre.empty()) {
+					dispatch_gift(pre);
+				} else {
+					UI::get().emplace<UISoftKey>([dispatch_gift](const std::string& name) {
+						dispatch_gift(name);
+					}, []() {}, Locale::text("cashshop.gift_name_hint"));
+				}
 			});
 			return Button::State::NORMAL;
 		}
@@ -820,11 +1042,53 @@ namespace ms
 			}
 		}
 
+		// D 4 模式 tab 命中（点击切 mode）：0 热点推荐 / 1 购买试穿 / 2 我的现状 / 3 原型。
+		// Tooltip::Parent 无 CASHSHOP 枚举，按"照抄 UIStateGame"口径用 SHOP。
+		{
+			const int8_t mt = hit_mode_tab(cursor_relative);
+			if (mt >= 0)
+			{
+				if (clicked && mode_tab != static_cast<uint8_t>(mt))
+				{
+					mode_tab = static_cast<uint8_t>(mt);
+					if (mode_tab == 1)
+					{
+						// 购买试穿：进入 try-on 模式，无需额外状态（货板点击即试穿）。
+						LOG(LOG_INFO, "UICashShop: mode=try-on");
+					}
+					else if (mode_tab == 2)
+					{
+						reset_preview_to_baseline();
+						LOG(LOG_INFO, "UICashShop: mode=my-look reset baseline");
+					}
+					else if (mode_tab == 3)
+					{
+						// 原型：本端口无 reset_preview_to_prototype，按拍板决策回落基线。
+						reset_preview_to_baseline();
+						LOG(LOG_INFO, "UICashShop: mode=prototype fallback baseline");
+					}
+					else
+					{
+						LOG(LOG_INFO, "UICashShop: mode=hot-recs");
+					}
+					clear_tooltip_shop();
+				}
+				return Cursor::State::IDLE;
+			}
+		}
+
 		// list_slider 已移除（2026-11-18），分页统一由箭头按钮 + change_list_page 处理。
 
 		// 货板左区（图标）点击试穿；购买/礼物钮仍走 MapleButton。
 		if (try_on_plate_at(cursor_relative, clicked))
+		{
+			// G 装备 tooltip：悬停商品卡显示 item tooltip（装备号段自动走 EquipTooltip）。
+			show_item_at_plate(cursor_relative);
 			return clicked ? Cursor::State::CLICKING : Cursor::State::IDLE;
+		}
+
+		// G 热销榜图标悬停：按榜单 SN 回查目录 itemid 显示 tooltip。
+		show_best_tooltip(cursor_relative);
 
 		return UIElement::send_cursor(clicked, cursorpos);
 	}
@@ -858,29 +1122,40 @@ namespace ms
 		if (!pressed)
 			return;
 		if (escape) { exit_cashshop(); return; }
-		if (keycode == 'B' || keycode == 'b' || keycode == 'S' || keycode == 's')
+		if (keycode == 'B' || keycode == 'b')
 		{
-			
+			button_pressed(Buttons::BtBuyAvatar);
+		}
+		else if (keycode == 'S' || keycode == 's')
+		{
+			button_pressed(Buttons::BtSearch);
 		}
 		else if (keycode == 'G' || keycode == 'g')
 		{
-			std::string pre;
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				pre = ci->get_target_name();
-			if (!pre.empty()) {
-				std::string name = pre;
-				
-			} else {
-				
-			}
+			// 礼物快捷键：按 SN 送礼（复用 BtGift 的 s9 action 0x04 逻辑）。
+			UI::get().emplace<UISoftKey>([](const std::string& tip) {
+				try {
+					int32_t sn = std::stoi(tip);
+					if (sn <= 0) return;
+					std::string name;
+					if (auto ci = UI::get().get_element<UICharInfo>())
+						name = ci->get_target_name();
+					auto give = [sn](const std::string& n) {
+						if (!n.empty()) CashShopGiftPacket(0, sn, n, "").dispatch();
+					};
+					if (!name.empty()) give(name);
+					else UI::get().emplace<UISoftKey>([give](const std::string& n) { give(n); },
+						[]() {}, Locale::text("cashshop.gift_name_hint"));
+				} catch (...) {}
+			}, []() {}, "SN");
 		}
 		else if (keycode == 'T' || keycode == 't')
 		{
-			
+			button_pressed(Buttons::BtTakeoffAvatar);
 		}
 		else if (keycode == 'P' || keycode == 'p')
 		{
-			
+			button_pressed(Buttons::BtSaveAvatar);
 		}
 		else if (keycode == 'W' || keycode == 'w')
 		{
@@ -892,8 +1167,8 @@ namespace ms
 		}
 		else if (keycode == 'K' || keycode == 'k')
 		{
-			// Package buy 0x1E：useNX,sn 或单 sn
-			
+			// 礼包购买：复用 BtDetailPackage（打开礼包详情），不发明新 opcode。
+			button_pressed(Buttons::BtDetailPackage);
 		}
 		else if (keycode == 'D' || keycode == 'd')
 		{
@@ -901,18 +1176,18 @@ namespace ms
 		}
 		else if (keycode == 'I' || keycode == 'i')
 		{
-			// Inv slot：cash,type 或 cash,sn（第三段 sn 用 s 前缀）
-			
+			// 背包扩容：s9 无对应 opcode，复用扩展钮的本地提示。
+			button_pressed(Buttons::BtExtConsume);
 		}
 		else if (keycode == 'X' || keycode == 'x')
 		{
-			// Storage：cash 或 cash,sn
-			
+			// 仓库扩容：同上，本地提示。
+			button_pressed(Buttons::BtExtTrunk);
 		}
 		else if (keycode == 'C' || keycode == 'c')
 		{
-			// Char slot：cash,sn
-			
+			// 角色栏扩容：同上，本地提示。
+			button_pressed(Buttons::BtExtEquip);
 		}
 		else if (keycode == 'A' || keycode == 'a')
 		{
@@ -996,7 +1271,20 @@ namespace ms
 			return;
 		const int32_t sn = pending_buy_sn;
 		pending_buy_sn = 0;
+		// 购物车完整生命周期：购买成功后从待购暂存移除该 sn（不删 cash_inventory！）。
+		{
+			auto& cart = UIStateCashShop::local_cart_sns;
+			auto it = std::find(cart.begin(), cart.end(), sn);
+			if (it != cart.end()) cart.erase(it);
+		}
 		refresh_cs_meta();
+		// 2026-11-23 K 项补齐：停在当前 tab 立即重建 items，避免必须切 tab 才见新货。
+		// 仅当本 UI 处于 active 时重建，杜绝后台/关闭态的无效重绘。
+		if (is_active())
+		{
+			rebuild_items();
+			update_items();
+		}
 		LOG(LOG_DEBUG, "UICashShop: purchase confirmed sn=" << sn
 			<< " inv=" << UIStateCashShop::cash_inventory.size());
 	}
@@ -1414,6 +1702,11 @@ namespace ms
 		}
 	}
 
+	// A 徽章 label 推导：唯一有据可依的是服务端/Commodity 的 priority>=8（热卖标记，
+	// 与 matches_sub 里装备"热销按 priority>=8"同口径）。period/price 无法可靠
+	// 判定 NEW/SALE/EVENT 等标签，故其余一律 NONE——不臆测，避免误导玩家。
+	// 判定内联在 rebuild_items 成员上下文：Item 是 UICashShop 私有嵌套类，
+	// 若抽成命名空间级自由函数，其签名里的 Item::Label 会在类外作用域解析而触发 C2248。
 	void UICashShop::rebuild_items()
 	{
 		refresh_best_icons();
@@ -1445,7 +1738,8 @@ namespace ms
 				{
 					if (c.sn != sn)
 						continue;
-					items.emplace_back(c.itemid, c.sn, c.price, Item::Label::NONE, 0, static_cast<uint16_t>(c.count));
+					const Item::Label label = c.priority >= 8 ? Item::HOT : Item::NONE;
+					items.emplace_back(c.itemid, c.sn, c.price, label, 0, static_cast<uint16_t>(c.count));
 					break;
 				}
 			}
@@ -1462,7 +1756,17 @@ namespace ms
 				continue;
 			if (active_sub_count() > 0 && !matches_sub(c))
 				continue;
-			items.emplace_back(c.itemid, c.sn, c.price, Item::Label::NONE, 0, static_cast<uint16_t>(c.count));
+			// 2026-11-23 全量补齐：本地搜索过滤（BtSearch 写 search_query）。大小写不敏感子串匹配。
+			if (!search_query.empty())
+			{
+				std::string lname = c.name, lq = search_query;
+				std::transform(lname.begin(), lname.end(), lname.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+				std::transform(lq.begin(), lq.end(), lq.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+				if (lname.find(lq) == std::string::npos)
+					continue;
+			}
+			const Item::Label label = c.priority >= 8 ? Item::HOT : Item::NONE;
+			items.emplace_back(c.itemid, c.sn, c.price, label, 0, static_cast<uint16_t>(c.count));
 		}
 		sync_page_chrome();
 	}
@@ -1477,7 +1781,29 @@ namespace ms
 	{
 		const int16_t pages = list_page_count();
 		const int16_t cur = static_cast<int16_t>(list_offset / MAX_ITEMS);
-		page_label.change_text(std::to_string(cur + 1) + "/" + std::to_string(pages < 1 ? 1 : pages));
+		// H 页码列表串：当前页 <N> / 其它页 [M]，最多当前页附近 5 个 + 末页。
+		// 前后翻页仍由现有箭头按钮承担，change_list_page 不变。
+		{
+			std::string label;
+			int16_t page_total = pages < 1 ? 1 : pages;
+			// 窗口：优先以当前页居中取 5 页，夹到 [0, page_total)。
+			int16_t from = static_cast<int16_t>(std::max<int16_t>(0, cur - 2));
+			int16_t to = static_cast<int16_t>(std::min<int16_t>(page_total - 1, from + 4));
+			from = static_cast<int16_t>(std::max<int16_t>(0, std::min<int16_t>(from, to - 4)));
+			for (int16_t p = from; p <= to; p++)
+			{
+				if (!label.empty())
+					label += " ";
+				if (p == cur)
+					label += "<" + std::to_string(p + 1) + ">";
+				else
+					label += "[" + std::to_string(p + 1) + "]";
+			}
+			// 末页不在窗口内时补上（例：16 页第 1 页 → "<1> [2] [3] [4] [5] [16]"）。
+			if (to < page_total - 1)
+				label += " [" + std::to_string(page_total) + "]";
+			page_label.change_text(label);
+		}
 		if (auto it = buttons.find(Buttons::BtPagePrev); it != buttons.end() && it->second)
 			it->second->set_state(cur <= 0 ? Button::State::DISABLED : Button::State::NORMAL);
 		if (auto it = buttons.find(Buttons::BtPageNext); it != buttons.end() && it->second)
@@ -1511,6 +1837,9 @@ namespace ms
 				it->second->set_active(buyable);
 			if (auto it = buttons.find(Buttons::BtGift + static_cast<uint16_t>(i)); it != buttons.end() && it->second)
 				it->second->set_active(buyable);
+			// B 购物车钮与购买/礼物同启用条件，避免空卡也能点。
+			if (auto it = buttons.find(Buttons::BtCart + static_cast<uint16_t>(i)); it != buttons.end() && it->second)
+				it->second->set_active(buyable);
 
 			std::string name = "";
 			std::string price_text = "";
@@ -1532,7 +1861,9 @@ namespace ms
 				const bool locker_view = (menu_index == 8);
 				if (locker_view)
 				{
-					price_text = "x" + std::to_string(item.count > 0 ? item.count : 1);
+					// L locker 持有数走 locale 格式 cashshop.hold_count="x{}"，不再硬编码。
+					price_text = Locale::format("cashshop.hold_count",
+					                            std::to_string(item.count > 0 ? item.count : 1));
 				}
 				else
 				{
@@ -1546,9 +1877,10 @@ namespace ms
 						uint32_t discount = item.discount_price;
 						price_text = std::to_string(discount);
 
-						float_t percent = (float)discount / price;
-						std::string percent_str = std::to_string(percent);
-						percent_text = "(" + percent_str.substr(2, 1) + "%)";
+						// C 折扣百分比：0.5 要显示 50% 而不是 substr(2,1) 截出的 5%。
+						// 用 std::lround(percent*100) 四舍五入到整数百分比。
+						float_t percent = static_cast<float_t>(discount) / static_cast<float_t>(price);
+						percent_text = "(" + std::to_string(static_cast<int>(std::lround(percent * 100.0))) + "%)";
 					}
 
 					string_format::split_number(price_text);
@@ -1584,6 +1916,91 @@ namespace ms
 		{  },
 		{  },
 	};
+
+	// D 4 模式 tab（运行时绘制，零资源改动）：C++ 画 ColorBox + Text，
+	// 选中态用不同底色。位置在预览井底 y≈214，避开 BtBuyAvatar(237)/Default(260)。
+	void UICashShop::draw_mode_tabs() const
+	{
+		for (uint8_t i = 0; i < 4; i++)
+		{
+			const int16_t tx = static_cast<int16_t>(WND_CHAR_X + MODE_TAB_X + MODE_TAB_W * i);
+			// 选中 = 不透明黄底 + 黑字；未选 = 半透明白底 + 黄字。不是资源贴图而是运行时几何。
+			ColorBox bg(MODE_TAB_W - 2, MODE_TAB_H,
+				i == mode_tab ? Color::Name::YELLOW : Color::Name::WHITE,
+				i == mode_tab ? 0.55f : 0.18f);
+			bg.draw(DrawArgument(position + Point<int16_t>(tx, MODE_TAB_Y)));
+			mode_labels[i].draw(position + Point<int16_t>(
+				static_cast<int16_t>(tx + MODE_TAB_W / 2),
+				static_cast<int16_t>(MODE_TAB_Y + MODE_TAB_H / 2 - mode_labels[i].height() / 2)));
+		}
+	}
+
+	int8_t UICashShop::hit_mode_tab(Point<int16_t> cursor_relative) const
+	{
+		const int16_t x = cursor_relative.x();
+		const int16_t y = cursor_relative.y();
+		if (y < WND_CHAR_Y + MODE_TAB_Y || y >= WND_CHAR_Y + MODE_TAB_Y + MODE_TAB_H)
+			return -1;
+		const int16_t left = static_cast<int16_t>(WND_CHAR_X + MODE_TAB_X);
+		if (x < left || x >= left + MODE_TAB_W * 4)
+			return -1;
+		return static_cast<int8_t>((x - left) / MODE_TAB_W);
+	}
+
+	// G tooltip：商城态用 SHOP 父类型（Tooltip::Parent 无 CASHSHOP 枚举）。
+	// UI::show_item 落到 UIStateCashShop::show_item，装备号段自动走 EquipTooltip。
+	void UICashShop::clear_tooltip_shop() const
+	{
+		UI::get().clear_tooltip(Tooltip::Parent::SHOP);
+	}
+
+	void UICashShop::show_item_at_plate(Point<int16_t> cursor_relative) const
+	{
+		for (size_t i = 0; i < MAX_ITEMS; i++)
+		{
+			const int16_t index = static_cast<int16_t>(i + list_offset);
+			if (index < 0 || index >= static_cast<int16_t>(items.size()))
+				continue;
+			const int col = static_cast<int>(i % 2);
+			const int row = static_cast<int>(i / 2);
+			const int16_t plate_x = static_cast<int16_t>(WND_LIST_X + PLATE_DX * col);
+			const int16_t plate_y = static_cast<int16_t>(WND_LIST_Y + 2 + PLATE_DY * row);
+			Rectangle<int16_t> icon_hit(
+				Point<int16_t>(plate_x, plate_y),
+				Point<int16_t>(static_cast<int16_t>(plate_x + 78), static_cast<int16_t>(plate_y + PLATE_H)));
+			if (!icon_hit.contains(cursor_relative))
+				continue;
+			UI::get().show_item(Tooltip::Parent::SHOP, items[static_cast<size_t>(index)].get_item_id());
+			return;
+		}
+	}
+
+	void UICashShop::show_best_tooltip(Point<int16_t> cursor_relative) const
+	{
+		for (uint8_t i = 0; i < BEST_ROWS; i++)
+		{
+			const int16_t bx = BEST_ITEM_X;
+			const int16_t by = static_cast<int16_t>(BEST_ITEM_Y0 + BEST_ITEM_DY * i);
+			Rectangle<int16_t> slot_hit(Point<int16_t>(bx, by),
+			                            Point<int16_t>(static_cast<int16_t>(bx + BEST_ITEM_SLOT),
+			                                           static_cast<int16_t>(by + BEST_ITEM_SLOT)));
+			if (!slot_hit.contains(cursor_relative))
+				continue;
+			// 由榜单 SN 回查目录取 itemid（与 refresh_best_icons 同源口径）。
+			const std::vector<int32_t>& best = UIStateCashShop::cash_best_sellers;
+			if (i >= best.size())
+				return;
+			for (const CashCommodity& c : UIStateCashShop::cashshop_commodities)
+			{
+				if (c.sn == best[i] && c.itemid > 0)
+				{
+					UI::get().show_item(Tooltip::Parent::SHOP, c.itemid);
+					return;
+				}
+			}
+			return;
+		}
+	}
 
 	int8_t UICashShop::active_sub_count() const
 	{

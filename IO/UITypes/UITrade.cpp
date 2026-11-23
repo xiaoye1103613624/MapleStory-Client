@@ -23,9 +23,11 @@
 #include "../UI.h"
 #include "../Components/MapleButton.h"
 #include "UISoftKey.h"
+#include "UINotice.h"
 #include "UIItemInventory.h"
 #include "UIStatusMessenger.h"
 #include "../../Data/ItemData.h"
+#include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/TradePackets.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
@@ -319,12 +321,30 @@ namespace ms
 
 	void UITrade::prompt_meso()
 	{
-		
+		if (self_locked)
+			return;
+		int64_t carried = Stage::get().get_player().get_inventory().get_meso();
+		UI::get().emplace<UIEnterNumber>(
+			Locale::text("trade.meso_prompt"),
+			[](int32_t n) {
+				if (n < 0)
+					return;
+				TradeSetMesoPacket(static_cast<int64_t>(n)).dispatch();
+				LOG(LOG_DEBUG, "UITrade: set meso " << n);
+			},
+			carried > 2147483647LL ? 2147483647 : static_cast<int32_t>(carried),
+			0
+		);
 	}
 
 	void UITrade::prompt_chat()
 	{
-		
+		UI::get().emplace<UISoftKey>([](const std::string& msg) {
+			if (msg.empty())
+				return;
+			TradeChatPacket(msg).dispatch();
+			LOG(LOG_DEBUG, "UITrade: chat len=" << msg.size());
+		}, []() {}, Locale::text("trade.chat_prompt"));
 	}
 
 	void UITrade::send_key(int32_t keycode, bool pressed, bool escape)
@@ -371,11 +391,17 @@ namespace ms
 			{
 				uint8_t iv = inv_type;
 				int16_t pos = inv_slot;
-				
+				int16_t quantity = Stage::get().get_player().get_inventory().get_item_count(
+					static_cast<InventoryType::Id>(iv), pos);
+				if (quantity <= 0)
+					quantity = 1;
+				TradeAddItemPacket(iv, pos, quantity, auto_slot).dispatch();
+				LOG(LOG_DEBUG, "UITrade: hotkey add slot=" << pos << " qty=" << quantity << " target=" << auto_slot);
 			}
 			else
 			{
-				
+				if (auto sm = UI::get().get_element<UIStatusMessenger>())
+					sm->show_status(Color::Name::YELLOW, Locale::text("trade.no_item_selected"));
 			}
 		}
 	}

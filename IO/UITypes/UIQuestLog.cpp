@@ -7,9 +7,12 @@
 
 #include "../../Gameplay/Stage.h"
 #include "../../Data/QuestData.h"
+#include "../UITypes/UIWorldMap.h"
+#include "../UITypes/UINotice.h"
 #include "../../Net/Packets/QuestPackets.h"
 #include "../../Util/Misc.h"
 #include "../../Util/Locale.h"
+#include "../../Util/QuestTextFormatter.h"
 #include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -24,18 +27,31 @@
 
 namespace ms
 {
-	// 底带：backgrnd 实测两条深蓝线在 y367 / y391（带内 23px），17 高按钮居中 → 左上角 y=370。
+	// 底带：r07 IMG 一手校正（orange-wz 10012 + 128B key + autoParse:true）。
+	// Quest/backgrnd = 245x396 origin(0,0)；Quest/BtDetail/BtGiveup/BtOK/BtNo 帧0 = 57x17、
+	// BtMarkNpc = 81x17、BtAlert = 56x16 —— 底带按钮墨迹高 16~17px。
+	// backgrnd 底缘实测两条深蓝线在 y367 / y391（带内 23px）：带中线 = 367 + 23/2 = 378。
+	// 按钮垂直位置按「带中线 - 自身高/2」逐颗反解，取代原来写死的 BAND_Y=370
+	// （原来对所有按钮一律 370，16px 的 BtAlert 就会比 17px 的高出半像素）。
 	static constexpr int16_t BAND_TOP = 367;
-	static constexpr int16_t BAND_Y = 370;
+	static constexpr int16_t BAND_H = 23;
+	static constexpr int16_t BAND_MID = BAND_TOP + BAND_H / 2; // = 378
 	// 角锚内缩（conventions §3.2）：标题条 k=7（关闭钮实测左上 226、展开钮 528），底带 k=9（寻找NPC位置右缘 538）。
 	static constexpr int16_t TITLE_INSET = 7;
 	static constexpr int16_t BAND_INSET = 9;
 	static constexpr int16_t BTN_GAP = 6;
 	static constexpr int16_t TITLE_Y = 5;
-	// 分类条：黑描边 x2/66/131/196、y22..40，内衬粉底 x4..64 y24..39（参考截图 1:1 实测）。
+	// 分类条：r07 IMG 一手校正。Quest/Tab/enabled = 50x15 / 50x15 / 27x15，
+	// disabled = 50x14 / 49x14 / 27x14，全部 origin(0,0) —— 字图必须按自身尺寸水平居中，
+	// 不能拿 64/65/65 的自绘格宽当字图宽（原实现已用 glyph.width() 居中，本批把墨迹顶
+	// 换算改走 Text::y_for_ink_top，去掉手抄的 +4/+3）。
 	static constexpr int16_t TAB_FILL_INSET = 2;
 	static constexpr int16_t TAB_FILL_H = 16;
 	static constexpr int16_t DETAIL_ROW_H = 19;
+	// 行文字墨迹顶相对行框的居中目标：IMG 行底色框 19px 高；墨迹顶 = 行框中线 - 半个墨迹高。
+	// A11 单行墨迹高约 11px（Graphics/Text 现取字形度量），故目标墨迹顶 = row_top + (19 - 11)/2 = +4。
+	// 绘制点统一由 Text::y_for_ink_top 反解（Text.h:164），不再写死 row_top+4/+3。
+	static constexpr int16_t ROW_INK_CENTER = 4;
 
 	UIQuestLog::UIQuestLog(const QuestLog& questlog) :
 		UIDragElement<PosQUEST>(Point<int16_t>(245, 45)),
@@ -132,8 +148,10 @@ namespace ms
 				glyph = alt;
 			}
 
-			// 字图水平居中在分类格里，垂直落在内衬里（实测字图 y24 起）；原点加回去才是左上角。
-			Point<int16_t> tl(tab_x[i] + (tab_w[i] - w) / 2, tab_y + TAB_FILL_INSET);
+			// r07 IMG 一手：Tab 字图 enabled=50/50/27x15、disabled=50/49/27x14，
+			// origin(0,0)。水平按自身宽 w 居中在自绘格 tab_w[i] 内（不是拿格宽当字图宽），
+			// 垂直落在内衬 tab_y+TAB_FILL_INSET；原点加回去才是左上角。
+			Point<int16_t> tl(tab_x[i] + (tab_w[i] - w) / 2, tab_y + TAB_FILL_INSET + (TAB_FILL_H - sh) / 2);
 			tl = tl + glyph.get_origin();
 
 			// 原生"选中=白字(disabled)、未选=粉字(enabled)"，TwoSpriteButton 的选中态取第二参。
@@ -267,7 +285,10 @@ namespace ms
 					icon_header->draw(position + Point<int16_t>(11, row_top + 2));
 
 				Text header(Text::Font::A11B, Text::Alignment::LEFT, Color::Name::WHITE, r.label);
-				header.draw(position + Point<int16_t>(29, row_top + 4));
+				// 墨迹顶落在行框中线（row_top + ROW_INK_CENTER），绘制点交给唯一真源反解；
+				// 原来写死 row_top+4 是「把绘制点当墨迹顶」，SimHei→思源宋体后字形 bitmap_top
+				// 变了就整列偏移。见 Text.h:146-164 / r07 §4。
+				header.draw(position + Point<int16_t>(29, header.y_for_ink_top(row_top + ROW_INK_CENTER)));
 			}
 			else
 			{
@@ -275,11 +296,13 @@ namespace ms
 					row_highlight.draw(position + Point<int16_t>(27, row_top));
 
 				if (icon)
-					icon->draw(position + Point<int16_t>(12, row_top + 3));
+					// 图标 13~15px 高（IMG 一手）：在 19px 行框里按中线居中。
+					icon->draw(position + Point<int16_t>(12, row_top + (row_height - icon->height()) / 2));
 
 				Text name(Text::Font::A11M, Text::Alignment::LEFT,
 					r.id == selected_id ? Color::Name::WHITE : Color::Name::BLACK, r.label);
-				name.draw(position + Point<int16_t>(29, row_top + 3));
+				// 同上：普通任务行文字用 y_for_ink_top 反解，取代手抄的 row_top+3。
+				name.draw(position + Point<int16_t>(29, name.y_for_ink_top(row_top + ROW_INK_CENTER)));
 			}
 		}
 
@@ -443,6 +466,13 @@ namespace ms
 
 	void UIQuestLog::send_key(int32_t keycode, bool pressed, bool escape)
 	{
+		// 原 CUIQuestInfo 有独立 OnKey；旧实现空体使任务窗自身 ESC/快捷键无效
+		// （关闭此前靠 UIStateGame 的全局 ESC 兜底）。这里给本窗显式关闭语义。
+		if (pressed && escape)
+		{
+			deactivate();
+			return;
+		}
 	}
 
 	void UIQuestLog::send_scroll(double yoffset)
@@ -497,6 +527,35 @@ namespace ms
 		}
 	}
 
+	// r07：可读 NPC 名。原生 QuestInfo/MedalQuestInfo 的 sName/sLevelLimit 都是可读串，
+	// 当前端 Check.img 只给 npc id，故走 String/Npc.img/<id>/name（本包已证存在，
+	// 参照 UINpcTalk.cpp:938 的既有取法）。取不到返回空串，绝不显示裸 id。
+	std::string UIQuestLog::npc_name(int32_t npcid) const
+	{
+		if (npcid <= 0)
+			return {};
+
+#ifdef USE_NX
+		const std::string name = nl::nx::String["Npc.img"][std::to_string(npcid)]["name"].get_string();
+		return name;
+#else
+		return {};
+#endif
+	}
+
+	// r07：可读前置任务名。优先取 QuestData 已缓存的 QuestInfo.img/<id>/name；
+	// QuestData 在无 String/Quest.img 时 name 会回退为 "Quest <id>"，此时用可读占位，
+	// 避免把一个 fallback 串当正式名字反复展示。
+	std::string UIQuestLog::quest_name_readable(int16_t questid) const
+	{
+		if (questid <= 0)
+			return {};
+
+		const QuestData& qd = QuestData::get(questid);
+		// r07：只有数据侧真给了名字才用；"Quest <id>" 兜底一律视为不可读。
+		return qd.has_real_name() ? qd.get_name() : std::string();
+	}
+
 	// 三个分类页统一按区域分组：分组标题行可点，点一次收起该区域、再点展开。
 	// 原来只有"可开始"分组，且 select_row 直接吞掉标题行点击 → 用户看到的"不能展开收缩"。
 	void UIQuestLog::append_grouped(const std::vector<int16_t>& ids)
@@ -533,7 +592,9 @@ namespace ms
 			{
 				Row r;
 				r.header = false;
-				r.label = QuestData::get(id).get_name();
+				// r07：无真实任务名时用可读占位，不把 "Quest <id>" 裸 id 当名字展示。
+				const QuestData& qd = QuestData::get(id);
+				r.label = qd.has_real_name() ? qd.get_name() : Locale::text("quest.name_unknown");
 				r.id = id;
 				r.area = a;
 				rows.push_back(r);
@@ -648,7 +709,8 @@ namespace ms
 		}
 
 		const QuestData& qd = QuestData::get(selected_id);
-		detail_title.change_text(qd.get_name());
+		// r07：标题同样不展示 "Quest <id>" 裸 id 兜底。
+		detail_title.change_text(qd.has_real_name() ? qd.get_name() : Locale::text("quest.name_unknown"));
 
 		// 折行宽度 = 正文区宽度：原来不给 maxwidth，长句一路横铺，
 		// 越过右板边框画到窗口外面（用户看到的"任务信息超出了界面显示"）。
@@ -656,32 +718,70 @@ namespace ms
 
 		if (detail_mode)
 		{
-			// 详细态：只读 QuestData 已缓存的字段，不涉及任何封包。
+			// r07 字段级还原：详情态字段顺序对齐 Angel QuestInfo 的语义
+			// （sName → sLevelLimit(可读串) → 区域 → NPC 名 → 前置任务名），
+			// 全部来自 QuestData/String 已有字段，不发任何封包。
+			// D4 硬约束：去掉自造的 quest.detail.id / quest.detail.npc / quest.detail.pre
+			// 三个「std::to_string(裸id)」字段，改为可读名 / 可读占位。
 			std::vector<std::string> lines;
-			lines.push_back(Locale::format("quest.detail.id", std::to_string(qd.get_id())));
 
+			// 1) 任务名（原生 sName）：标题栏已显示，这里不再重复裸 id；
+			//    若 QuestData 名字是 fallback "Quest <id>"，用可读提示代替。
+			const std::string qname = quest_name_readable(qd.get_id());
+			lines.push_back(Locale::format("quest.detail.name",
+				qname.empty() ? Locale::text("quest.detail.name_unknown") : qname));
+
+			// 2) 等级限制（原生 sLevelLimit 是可读串；本包 Check.img 只给 min/max 整数，
+			//    用区间文案承载，仍是「等级范围」语义而非自造字段）。
 			if (qd.get_max_level() > 0)
 				lines.push_back(Locale::format_all("quest.detail.level_range",
 					{ std::to_string(qd.get_min_level()), std::to_string(qd.get_max_level()) }));
 			else if (qd.get_min_level() > 0)
 				lines.push_back(Locale::format("quest.detail.min_level", std::to_string(qd.get_min_level())));
+			else
+				lines.push_back(Locale::text("quest.detail.level_none"));
 
+			// 3) 所属区域（area_name 已有可读映射）。
 			lines.push_back(Locale::format("quest.detail.area", area_name(qd.get_area())));
 
-			if (qd.get_npc() > 0)
-				lines.push_back(Locale::format("quest.detail.npc", std::to_string(qd.get_npc())));
+			// 4) 相关 NPC：改为 String/Npc.img 可读名；取不到时按「未标注」占位，
+			//    不显示裸数字 id。
+			const std::string npcn = npc_name(qd.get_npc());
+			if (!npcn.empty())
+				lines.push_back(Locale::format("quest.detail.npc_name", npcn));
+			else
+				lines.push_back(Locale::text("quest.detail.npc_unknown"));
 
-			if (qd.get_prequests().empty())
-				lines.push_back(Locale::text("quest.detail.pre_none"));
+			// 5) 前置任务：逐个用 QuestData 名字解析；无前置或名字不可读都给可读占位。
+			std::vector<std::string> pre_names;
+			for (int16_t p : qd.get_prequests())
+			{
+				const std::string pn = quest_name_readable(p);
+				if (!pn.empty())
+					pre_names.push_back(pn);
+			}
+
+			if (pre_names.empty())
+			{
+				lines.push_back(Locale::text(
+					qd.get_prequests().empty() ? "quest.detail.pre_none" : "quest.detail.pre_unknown"));
+			}
 			else
 			{
 				std::string pre;
-				for (int16_t p : qd.get_prequests())
-					pre += std::to_string(p) + " ";
-				// 值 `前置任务: {}` 的尾空格会被加载器 trim 掉，故把 id 串当实参填进占位符，
-				// 而不是在代码里拼 `Locale::text(...) + pre`。
+				for (size_t i = 0; i < pre_names.size(); i++)
+				{
+					if (i)
+						pre += "、";
+					pre += pre_names[i];
+				}
 				lines.push_back(Locale::format("quest.detail.pre", pre));
 			}
+
+			LOG(LOG_DEBUG, "UIQuestLog: detail fields quest=" << qd.get_id()
+				<< " name=" << (qname.empty() ? "?" : qname)
+				<< " npc_name=" << (npcn.empty() ? "?" : npcn)
+				<< " pre_count=" << pre_names.size());
 
 			for (const std::string& line : lines)
 				detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line, wrap);
@@ -691,6 +791,27 @@ namespace ms
 
 		// 按当前分类页取对应状态摘要（0/1/2），避免把三页拼成一坨。
 		const std::string& sum = qd.get_summary_for_tab(tab);
+
+		// 摘要空时给可读占位，而不是留一整片空白（本包无 String/Quest.img，
+		// QuestInfo 分状态页可能缺失；原生 QuestInfo::asSummary 为空时也有提示）。
+		if (sum.empty())
+		{
+			detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT,
+				Color::Name::BLACK, Locale::text("quest.detail.summary_none"), wrap);
+			return;
+		}
+
+		// r08：QuestInfo 摘要里带 #p/#t/#i/#c 等令牌（活数据实证：10000/0 的
+		// "从#b#p9310088##k那里收到了紧急信息"、10002/1 的 "#b#t4031988##k"）。
+		// GraphicsGL::LayoutBuilder 只吃 '#p'/'#t' 前缀、把中间裸数字当正文画，
+		// 正是屏幕出现 9310088/4031988 裸 ID 的根因。用共享 formatter 先展开成
+		// 可读名/持有数；NPC 9310088 在 live String/Npc.img 不存在（orange-wz
+		// 10012 实查「节点路径不存在」），按原生「取不到即吞令牌」语义用可读占位
+		// 补主语，绝不漏裸数字。
+		// 换行说明：活数据里 CRLF 是字面 '\\r\\n'（4 个 ASCII 字符，非真实 0x0D/0x0A），
+		// 故下面 find('\\n') 通常找不到、整段一次展开；LayoutBuilder 会把 '\\r\\n'
+		// 转义解释成断行（GraphicsGL.cpp:1009-1024），保留原文字节即可正确排版。
+		const std::string npc_fallback = Locale::text("quest.detail.npc_unknown_inline");
 		size_t start = 0;
 
 		while (start <= sum.size())
@@ -701,7 +822,9 @@ namespace ms
 				? sum.substr(start)
 				: sum.substr(start, nl - start);
 
-			detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, line, wrap);
+			const std::string formatted = QuestTextFormatter::format(line, 0, npc_fallback, true);
+			detail_lines.emplace_back(Text::Font::A11M, Text::Alignment::LEFT,
+				Color::Name::BLACK, formatted, wrap);
 
 			if (nl == std::string::npos)
 				break;
@@ -715,6 +838,7 @@ namespace ms
 		if (tabid > 2)
 			return;
 
+		LOG(LOG_INFO, "UIQuestLog: tab change " << tab << " -> " << tabid);
 		tab = tabid;
 		// round89 W/L/E：对齐 083 CUIQuestInfo::OnTabChanged @0x87fd4f 首行 *(this + 369) = -1;
 		// 切换分类页签必须先清选中，再由 rebuild_list() 自动选第一条可见任务（TryShowTopQuest /
@@ -725,6 +849,9 @@ namespace ms
 		for (uint16_t i = 0; i < 3; i++)
 			buttons[Buttons::TAB0 + i]->set_state(i == tabid ? Button::State::PRESSED : Button::State::NORMAL);
 
+		// r09：底带按钮集合随页签 + 详情态变化（见 relayout_slots），
+		// 必须重新 relayout_slots() 才能把可见按钮按右锚重新摆位，否则沿用上一页坐标。
+		layout();
 		activate_buttons();
 		rebuild_list();
 		// 分类页切换后摘要页（QuestInfo 0/1/2）要跟着换。
@@ -833,9 +960,93 @@ namespace ms
 			npc_portrait = Texture(src);
 	}
 
+	// r10：NPC → 所在地图反查。Etc/NpcLocation.img/<npcid> 的每个子节点就是一张地图 id
+	// （活数据实证：9000034「工作人员O」有 8 个 mapid）。对齐 MinMS UIQuestLog.cpp:45-69。
+	// 本包 nx 有 Etc 卷（nlnx/nx.hpp:31），数据文件 live Data/Etc/NpcLocation.img 已存在。
+	std::vector<int32_t> UIQuestLog::npc_location_maps(int32_t npcid)
+	{
+		std::vector<int32_t> maps;
+
+		if (npcid <= 0)
+			return maps;
+
+#ifdef USE_NX
+		nl::node loc = nl::nx::Etc["NpcLocation.img"][std::to_string(npcid)];
+
+		for (nl::node entry : loc)
+		{
+			const int32_t mapid = static_cast<int32_t>(static_cast<int64_t>(entry));
+
+			if (mapid > 0)
+				maps.push_back(mapid);
+		}
+#endif
+		return maps;
+	}
+
+	// r10：「寻找NPC位置」点击处理，对齐 MinMS UIQuestLog.cpp:678-736：
+	//  反查地图 → 打开/复用 UIWorldMap 并 jump_to_map_region(首处) → 弹 UIOk 列出地图名。
+	// 纯客户端本地查表，零封包（与 request_teleport 的付费传送是两回事）。
+	void UIQuestLog::show_npc_locations(int32_t npcid)
+	{
+		if (npcid <= 0)
+			return;
+
+		const std::vector<int32_t> maps = npc_location_maps(npcid);
+		std::string npcname = npc_name(npcid);
+
+		if (npcname.empty())
+			npcname = Locale::text("quest.npc_locations.unknown_npc");
+
+		// 拼可读列表（最多列 6 处，超出给总数），文案走 Locale。
+		std::string body = Locale::format("quest.npc_locations.header", npcname);
+
+		if (maps.empty())
+		{
+			body += "\n" + Locale::text("quest.npc_locations.none");
+		}
+		else
+		{
+			const size_t limit = maps.size() < 6 ? maps.size() : 6;
+
+			for (size_t i = 0; i < limit; i++)
+			{
+				const NxHelper::Map::MapInfo info = NxHelper::Map::get_map_info_by_id(maps[i]);
+				std::string name = !info.full_name.empty() ? info.full_name
+					: (!info.name.empty() ? info.name : Locale::format("quest.npc_locations.map_fallback", std::to_string(maps[i])));
+				body += "\n" + name;
+			}
+
+			if (maps.size() > limit)
+				body += "\n" + Locale::format("quest.npc_locations.more", std::to_string(maps.size()));
+		}
+
+		// 打开/复用世界地图，定位首个 NPC 出没地图（本端 jump_to_map_region 已含切分区+选中点位）。
+		if (!maps.empty())
+		{
+			auto wm = UI::get().get_element<UIWorldMap>();
+
+			if (!wm)
+				wm = UI::get().emplace<UIWorldMap>();
+			else if (!wm->is_active())
+				wm->makeactive();
+
+			if (wm)
+			{
+				// center_on_screen() 在本端 UIElement 是 protected（:371/:381），外部不可调；
+				// jump_to_map_region 已含 clear_side_panels+update_world+select_map_spot，
+				// 窗口定位由 UIWorldMap 自身构造/update_screen 处理，无需外部居中。
+				wm->show_map_region(maps.front());
+			}
+		}
+
+		UI::get().emplace<UIOk>(body, [](bool) {});
+		LOG(LOG_INFO, "UIQuestLog: show_npc_locations npc=" << npcid << " maps=" << maps.size());
+	}
+
 	// 命中区必须等于绘制区。展开态原来写的是 left_width + right_width - bg_right_pos.x() = 307，
 	// 那是把右板宽度往左投影的笔误；真实绘制宽度是 bg_right_pos.x() + right_width = 548。
-	// 于是 x307 以右的 241px —— 正好盖着底带的「详细」「寻找NPC位置」和右板滚动条 ——
+	// 于是 x307 以右的 241px —— 正好盖着底带的「寻找NPC位置 / 放弃」和右板滚动条 ——
 	// 被 UIElement::is_in_range 判在窗口外，点击根本传不进来，表现为"按了没反应"。
 	void UIQuestLog::update_dimension()
 	{
@@ -860,18 +1071,37 @@ namespace ms
 			slot_tl[Buttons::COLLAPSE] = Point<int16_t>(
 				panel_right - slot_dim[Buttons::COLLAPSE].x() - TITLE_INSET, TITLE_Y);
 
-		// 底带按钮行：寻找NPC位置贴实测右锚，其余依次左移（内容区下方的同一行）。
+		// 底带按钮行：r09 按「详情态 / 摘要态」× 页签只摆**可见**的几颗，从右锚依次左移。
+		// 原生逻辑（用户 2026-11-23 当面确认 + r07 IDA m_bDetailOpen/m_pBtMyLocation）：
+		//   · 「详细」(BtDetail) 是详情页展开开关，恒显；
+		//   · 「寻找NPC位置」(BtMarkNpc) **只在详情页(detail_mode)显示**；
+		//   · 摘要态按页签：tab0 只有「详细」；tab1 进行中 = 放弃(红)+任务讯息(灰)+详细；
+		//     tab2 已完成 = 放弃(灰)+任务讯息(灰)+详细。
+		// 本端旧实现把「寻找NPC位置」常显在摘要态、且一次排开 6 颗靠 active 隐藏，
+		// 导致按钮错位 —— 这正是用户指出的问题。
+		// 顺序为「右→左」：向量首元素贴右缘；「详细」恒为最左一颗（与截图一致）。
+		static const uint16_t band_detail[] = { Buttons::MARKNPC, Buttons::DETAIL };
+		static const uint16_t band_tab0[] = { Buttons::DETAIL };
+		static const uint16_t band_tab12[] = { Buttons::GIVEUP, Buttons::ALERT, Buttons::DETAIL };
+		const uint16_t* band = detail_mode ? band_detail
+			: ((tab == 0) ? band_tab0 : band_tab12);
+		const size_t band_count = detail_mode ? 2 : ((tab == 0) ? 1 : 3);
+
 		int16_t x = panel_right - BAND_INSET;
 
-		for (uint16_t id : { Buttons::MARKNPC, Buttons::DETAIL, Buttons::GIVEUP, Buttons::OK, Buttons::NO, Buttons::ALERT })
+		for (size_t i = 0; i < band_count; i++)
 		{
+			const uint16_t id = band[i];
 			const int16_t w = slot_dim[id].x();
 
 			if (w <= 0)
 				continue;
 
 			x -= w;
-			slot_tl[id] = Point<int16_t>(x, BAND_Y);
+			// 垂直居中：带中线减自身高度一半（BtMarkNpc/Giveup/Detail 17px → y=369~370；
+			// BtAlert 16px → y=370）。IMG 一手尺寸来自 orange-wz get_node_tree_json 帧0。
+			const int16_t top = static_cast<int16_t>(BAND_MID - slot_dim[id].y() / 2);
+			slot_tl[id] = Point<int16_t>(x, top);
 			x -= BTN_GAP;
 		}
 
@@ -920,14 +1150,29 @@ namespace ms
 
 		act(CLOSE, true);
 		act(COLLAPSE, true);
-		act(MARKNPC, true);
+
+		// r09 底带显隐（用户当面确认的原生逻辑，见 relayout_slots 注释）：
+		//   · 「详细」恒显，是详情页展开开关；
+		//   · 「寻找NPC位置」只在详情页(detail_mode=true)显示；
+		//   · 「放弃 / 任务讯息」只在摘要态的 tab1/tab2 显示（详情页里让位给寻找NPC）。
 		act(DETAIL, true);
-		// 放弃只对"正在进行"有意义（发已有的 QuestActionPacket(3)）。
-		act(GIVEUP, tab == 1);
-		// 接受/拒绝/任务讯息：参考截图底带里没有这三颗，且无对应窗口可开 → 预留不显示。
-		act(OK, false);
+		act(MARKNPC, detail_mode);
+		act(ALERT, !detail_mode && (tab == 1 || tab == 2));
+		act(GIVEUP, !detail_mode && (tab == 1 || tab == 2));
+		act(OK, false);       // 接受/拒绝只在接受确认弹层出现，本窗底带不显示
 		act(NO, false);
-		act(ALERT, false);
+
+		// 任务讯息在原生里恒为灰（无对应窗口可开），放弃在「已完成」页也是灰。
+		// set_state(DISABLED) 仍绘 disabled 贴图（Button.cpp:55-58 is_active 只挡点击），
+		// 正是原生 tab2「放弃」灰态的观感。
+		auto setstate = [&](uint16_t id, Button::State s)
+		{
+			auto iter = buttons.find(id);
+			if (iter != buttons.end() && iter->second)
+				iter->second->set_state(s);
+		};
+		setstate(ALERT, Button::State::DISABLED);
+		setstate(GIVEUP, tab == 1 ? Button::State::NORMAL : Button::State::DISABLED);
 	}
 
 	void UIQuestLog::set_collapsed(bool is_collapsed)
@@ -963,7 +1208,12 @@ namespace ms
 				set_collapsed(!collapsed);
 				return Button::State::NORMAL;
 			case Buttons::DETAIL:
+				LOG(LOG_INFO, "UIQuestLog: detail mode " << detail_mode << " -> " << !detail_mode);
 				detail_mode = !detail_mode;
+				// r09：切详情态会改变底带按钮集合（详情态显示「寻找NPC位置」，
+				// 摘要态显示「放弃/任务讯息」），必须重排坐标 + 重算显隐。
+				layout();
+				activate_buttons();
 				update_detail();
 				update_sliders();
 				return Button::State::NORMAL;
@@ -973,14 +1223,21 @@ namespace ms
 					QuestActionPacket(3, selected_id).dispatch();
 				return Button::State::NORMAL;
 			case Buttons::MARKNPC:
+			{
+				// r10：接上原生/MinMS 同款「寻找NPC位置」——纯本地查 Etc/NpcLocation.img，
+				// 打开世界图定位 NPC 出没地图并弹列表。零封包（对齐 MinMS UIQuestLog.cpp:678-736）。
+				const int32_t npcid = selected_id > 0 ? QuestData::get(selected_id).get_npc() : 0;
+
+				if (npcid > 0)
+					show_npc_locations(npcid);
+
+				return Button::State::NORMAL;
+			}
 			case Buttons::OK:
 			case Buttons::NO:
 			case Buttons::ALERT:
-				// 显式预留（不是漏实现）：
-				//  MARKNPC「寻找NPC位置」原生是"把该任务 NPC 所在地图在世界地图上高亮点出"，
-				//    需要 npc→map 反查表（服务端数据）+ UIWorldMap 的标记入口，本包两者都没有，
-				//    且没有任何可对照的封包证据 —— 不发明协议，见 notes/open-issues.md。
-				//  OK/NO/ALERT 只在"接受/完成确认"弹层里出现，本窗口底带不显示（activate_buttons 已置 false）。
+				// ALERT「任务讯息」原生恒灰（本窗只显示、不弹窗），set_state(DISABLED) 已挡点击。
+				// OK/NO 只在"接受/完成确认"弹层里出现，本窗口底带不显示。
 				return Button::State::NORMAL;
 			default:
 				return Button::State::NORMAL;

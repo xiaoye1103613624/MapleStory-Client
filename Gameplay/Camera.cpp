@@ -44,6 +44,15 @@ namespace ms
 		if (ms > 2000)
 			ms = 2000;
 		tremble_remain = ms;
+		tremble_ox = 0.0;
+		tremble_oy = 0.0;
+	}
+
+	void Camera::clear_tremble()
+	{
+		tremble_remain = 0;
+		tremble_ox = 0.0;
+		tremble_oy = 0.0;
 	}
 
 	void Camera::update(Point<int16_t> position)
@@ -79,15 +88,28 @@ namespace ms
 		else if (next_y < vbounds.second() + VHEIGHT)
 			next_y = vbounds.second() + VHEIGHT;
 
+		// 震屏用独立偏移 + 每帧衰减，不写回 x/y（MinMS Camera.cpp:125-203）：
+		// 旧实现把抖动累加进 x/y，下一帧 x.get() 已含上帧抖动 → 随机游走漂移。
 		if (tremble_remain > 0)
 		{
-			int amp = tremble_type != 0 ? 8 : 4;
-			next_x += static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
-			next_y += static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
-			// ~16ms/frame
+			int amp = (tremble_type != 0 ? 8 : 4);
+			tremble_ox = static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
+			tremble_oy = static_cast<double>((std::rand() % (amp * 2 + 1)) - amp);
+			// ~16ms/frame，每帧衰减幅度（MinMS 0.85/0.92，这里取 0.9）。
 			tremble_remain -= 16;
 			if (tremble_remain < 0)
+			{
 				tremble_remain = 0;
+				tremble_ox = tremble_oy = 0.0;
+			}
+			// 幅度按剩余时间线性收敛，避免恒定幅度到最后一帧突然消失。
+			tremble_ox *= static_cast<double>(tremble_remain) / 400.0;
+			tremble_oy *= static_cast<double>(tremble_remain) / 400.0;
+			if (tremble_remain > 400)
+			{
+				tremble_ox = tremble_ox * 400.0 / static_cast<double>(tremble_remain);
+				tremble_oy = tremble_oy * 400.0 / static_cast<double>(tremble_remain);
+			}
 		}
 
 		x = next_x;
@@ -117,22 +139,22 @@ namespace ms
 
 	Point<int16_t> Camera::position() const
 	{
-		auto shortx = static_cast<int16_t>(std::round(x.get()));
-		auto shorty = static_cast<int16_t>(std::round(y.get()));
+		auto shortx = static_cast<int16_t>(std::round(x.get() + tremble_ox));
+		auto shorty = static_cast<int16_t>(std::round(y.get() + tremble_oy));
 
 		return { shortx, shorty };
 	}
 
 	Point<int16_t> Camera::position(float alpha) const
 	{
-		auto interx = static_cast<int16_t>(std::round(x.get(alpha)));
-		auto intery = static_cast<int16_t>(std::round(y.get(alpha)));
+		auto interx = static_cast<int16_t>(std::round(x.get(alpha) + tremble_ox));
+		auto intery = static_cast<int16_t>(std::round(y.get(alpha) + tremble_oy));
 
 		return { interx, intery };
 	}
 
 	Point<double> Camera::realposition(float alpha) const
 	{
-		return { x.get(alpha), y.get(alpha) };
+		return { x.get(alpha) + tremble_ox, y.get(alpha) + tremble_oy };
 	}
 }

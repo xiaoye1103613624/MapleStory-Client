@@ -42,6 +42,15 @@ namespace ms
 		int8_t channel = 0;
 	};
 
+	// s2c WORLD_MAP_QUEST_MARKS(0x17C) 回包单元：某地图的任务标记。
+	// 由服务端按角色实时 canStart/canComplete 判定（2B 快照包）。
+	struct WorldMapQuestMarks
+	{
+		int32_t mapid = 0;
+		bool can_accept = false;  // 有可接任务 → 灯泡
+		bool can_complete = false;// 有可交付任务 → 书
+	};
+
 	class UIWorldMap : public UIDragElement<PosMAP>
 	{
 	public:
@@ -61,6 +70,9 @@ namespace ms
 		void remove_cursor() override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_pos) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
+		// 滚轮门控：光标落在左侧信息面板时转发给它的双 slider（面板非 UIElement，
+		// 收不到 UIStateGame::send_scroll 的广播）。
+		void send_scroll(double yoffset) override;
 		// 双击右侧搜索结果行 → 跳到该图所属分区并选中点位（todo 8）。
 		void doubleclick(Point<int16_t> cursorpos) override;
 
@@ -74,6 +86,12 @@ namespace ms
 		// WORLD_MAP_PLAYERS(0x178) 回包入口：只有 mapid 与当前选中一致才缓存，
 		// 防止连续切换选中后旧应答覆盖新应答（服务端 CACHE_TTL_MS=750，乱序可达）。
 		void set_map_players(int32_t map_id, std::vector<WorldMapPlayer>&& players);
+
+		// WORLD_MAP_QUEST_MARKS(0x17C) 回包入口：整分区任务标记快照（带 prefix 防乱序）。
+		void set_quest_marks(int32_t prefix, std::vector<WorldMapQuestMarks>&& marks);
+
+		// 任务日志「寻找 NPC 位置」等外部入口：跳到目标图所属分区并选中。
+		void show_map_region(int32_t map_id);
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -190,6 +208,9 @@ namespace ms
 
 		Animation cur_pos;
 		Animation npc_pos[MAPSPOT_TYPE_MAX];
+		Animation party_pos;    // MapHelper/worldMap/partyPos（队友点位，常驻显示）
+		Animation quest_bulb;   // QuestGuide/QuestMark（可接灯泡动画层）
+		Animation quest_book;   // QuestGuide/QuestMarkComplete（可交付书动画层）
 
 		Textfield search_text;
 
@@ -202,6 +223,47 @@ namespace ms
 		// 与 selected_map_id 不一致时不显示（陈旧应答丢弃）。
 		std::vector<WorldMapPlayer> map_players;
 		int32_t players_mapid = 0;
+		// hover tooltip 按需请求去重：同一地图只发一次 0x178，避免每帧发包。
+		int32_t hover_req_mapid = 0;
+
+		// 任务标记快照（0x17C）：marks_region 防乱序，quests_req_region 发请求去重。
+		std::vector<WorldMapQuestMarks> map_quest_marks;
+		int32_t marks_region = -1;
+		int32_t quests_req_region = -1;
+
+		// 192 顶栏功能：搜索 / 自动飞行(!mapwarp 到达) / 登记指路(本地收藏)。
+		void submit_native_search();
+		void clear_native_search();
+		void autofly_to_selected();
+		void toggle_navi_register();
+		std::vector<int32_t> registered_maps; // 已登记的地图 id（会话内）
+		struct SearchRow
+		{
+			int32_t mapid = 0;
+			std::string label;
+			uint8_t kind = 0; // 0=field 1=mob 2=npc
+		};
+		// 点击搜索结果行：地图→选中点位；怪物/NPC→反查所属地图并联动左侧信息面板。
+		// 声明必须在 SearchRow 定义之后（C++ 不允许前向使用嵌套类型）。
+		void on_native_result_selected(const SearchRow& row);
+		// 搜索结果地图 mapid 与 spot mapNo 粒度不一致：反查包含该 mapid 的 spot
+		// （或同 prefix 的最近 spot）作代表，供高亮/选中；找不到返回原 id。
+		int32_t resolve_spot_mapid(int32_t map_id) const;
+		std::vector<SearchRow> native_results;
+		int16_t native_result_offset = 0;
+		int16_t native_hover_row = -1; // 可见行下标 0..native_row_max()-1；-1=无悬停
+		Texture result_row_bg[3];
+		Texture result_row_icon[3];
+		// 原生 resultField/Mob/Npc mouseOverBase 实测 115x13；中文 A11M 行高约 13-14，
+		// 行距须 ≥16 否则文字上下重叠（用户 2026-11-22 21:41 反馈）。取 18 留余量。
+		static constexpr int16_t NATIVE_ROW_H = 18;
+		static constexpr int16_t NATIVE_ROW_TEXT_H = 13; // 结果文字行高（A11M 中文）
+		// backgrnd 实测：输入圆角框 y≈24..64；结果灰框从 y≈68 起、x≈8..140。
+		// 结果列表从灰框内 y≈70 起（往右上、落在灰框内），不再压在输入行上。
+		static constexpr int16_t RESULT_AREA_TOP = 70;
+		static constexpr int16_t RESULT_AREA_BOTTOM = 520;
+		uint8_t native_row_max() const; // 由 backgrnd 高度与上面白框区算出的可见行数
+		Point<int16_t> get_native_result_origin() const;
 
 		Point<int16_t> bg_dimensions;
 		Point<int16_t> bg_search_dimensions;

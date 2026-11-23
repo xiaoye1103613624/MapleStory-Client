@@ -120,6 +120,38 @@ namespace ms
 		borders = { static_cast<int16_t>(y - 300), static_cast<int16_t>(y + 100) };
 	}
 
+	void FootholdTree::limit_horizontal(PhysicsObject& phobj) const
+	{
+		// 与 limit_movement 的水平段同源（MinMS FootholdTree.cpp:235-271），
+		// 但不含垂直 limity(ground)：飞行 template 怪必须悬浮而非被钉在地面行走。
+		if (!phobj.hmobile())
+			return;
+
+		double crnt_x = phobj.crnt_x();
+		double next_x = phobj.next_x();
+		bool left = phobj.hspeed < 0.0f;
+		double wall = get_wall(phobj.fhid, left, phobj.next_y());
+		bool collision = left
+			? crnt_x >= wall && next_x <= wall
+			: crnt_x <= wall && next_x >= wall;
+
+		if (!collision && phobj.is_flag_set(PhysicsObject::Flag::TURNATEDGES))
+		{
+			wall = get_edge(phobj.fhid, left);
+			collision = left
+				? crnt_x >= wall && next_x <= wall
+				: crnt_x <= wall && next_x >= wall;
+			if (!collision)
+				collision = left ? next_x < wall : next_x > wall;
+		}
+
+		if (collision)
+		{
+			phobj.limitx(wall);
+			phobj.clear_flag(PhysicsObject::Flag::TURNATEDGES);
+		}
+	}
+
 	void FootholdTree::limit_movement(PhysicsObject& phobj) const
 	{
 		if (phobj.hmobile())
@@ -316,37 +348,50 @@ namespace ms
 
 	double FootholdTree::get_edge(uint16_t curid, bool left) const
 	{
-		const Foothold& fh = get_fh(curid);
+		// 2026-11-22：按 Angel 原生 `CVecCtrlMob::CollisionDetectWalk/Float` 的
+		// foothold 邻接语义重写。旧实现「连续 ≥3 段就返回地图墙」是自造规则：
+		// 长平台上的怪会越过平台末端一直走到地图边界，再从边缘掉到下层平台。
+		// 原生按真实邻板可达性在链末端翻向，不存在「第 3 段」阈值。
+		// 这里沿 prev/next 链走到真正的末端（邻板不存在或 blocking），返回该板末端；
+		// 64 段上限防地图数据成环导致死循环。
+		//
+		// 注意：get_edge 的返回值是「钳位墙」，命中后 limit_movement 会 limitx 并翻向，
+		// 故应返回末端板的外侧边界（向左链最左端的 l()，向右链最右端的 r()）。
+		uint16_t walk = curid;
+		uint16_t last = curid;
+		constexpr int MAX_FH_CHAIN = 64;
 
 		if (left)
 		{
-			uint16_t previd = fh.prev();
-
-			if (!previd)
-				return fh.l();
-
-			const Foothold& prev = get_fh(previd);
-			uint16_t prev_previd = prev.prev();
-
-			if (!prev_previd)
-				return prev.l();
-
-			return walls.first();
+			for (int i = 0; i < MAX_FH_CHAIN; i++)
+			{
+				const Foothold& cur = get_fh(walk);
+				const uint16_t previd = cur.prev();
+				if (!previd)
+					return cur.l(); // 链到头：当前板即最左端
+				const Foothold& prev = get_fh(previd);
+				if (prev.is_blocking(cur.vertical()))
+					return cur.l(); // 邻板不可走：钳在当前板左缘（原生翻向点）
+				last = previd;
+				walk = previd;
+			}
+			return get_fh(last).l(); // 链过长保护：取已走过的最左板
 		}
 		else
 		{
-			uint16_t nextid = fh.next();
-
-			if (!nextid)
-				return fh.r();
-
-			const Foothold& next = get_fh(nextid);
-			uint16_t next_nextid = next.next();
-
-			if (!next_nextid)
-				return next.r();
-
-			return walls.second();
+			for (int i = 0; i < MAX_FH_CHAIN; i++)
+			{
+				const Foothold& cur = get_fh(walk);
+				const uint16_t nextid = cur.next();
+				if (!nextid)
+					return cur.r(); // 链到头：当前板即最右端
+				const Foothold& next = get_fh(nextid);
+				if (next.is_blocking(cur.vertical()))
+					return cur.r(); // 邻板不可走：钳在当前板右缘（原生翻向点）
+				last = nextid;
+				walk = nextid;
+			}
+			return get_fh(last).r(); // 链过长保护：取已走过的最右板
 		}
 	}
 
@@ -373,6 +418,46 @@ namespace ms
 		return ret;
 	}
 
+	uint16_t FootholdTree::get_fhid_at_x(double fx) const
+	{
+		// 按 x 取最靠上（y 最小）的水平平台，完全不依赖包里 y/cy。
+		// 与 get_fhid_below 的区别：后者要求 ground>=y，NPC 的 cy 比平台低 5~17px
+		// 会被跳过选到下一层；这里只看 x 覆盖，取最上层落脚点。
+		uint16_t ret = 0;
+		double top = borders.second();
+
+		int16_t x = static_cast<int16_t>(fx);
+		auto range = footholdsbyx.equal_range(x);
+
+		for (auto iter = range.first; iter != range.second; ++iter)
+		{
+			const Foothold& fh = footholds.at(iter->second);
+			if (fh.is_wall())
+				continue;
+
+			double y = fh.ground_below(fx);
+			if (top >= y)
+			{
+				top = y;
+				ret = fh.id();
+			}
+		}
+
+		return ret;
+	}
+
+	bool FootholdTree::has_foothold(uint16_t fhid) const
+	{
+		auto iter = footholds.find(fhid);
+		return iter != footholds.end() && !iter->second.is_wall();
+	}
+
+	bool FootholdTree::covers_x(uint16_t fhid, double fx) const
+	{
+		auto iter = footholds.find(fhid);
+		return iter != footholds.end() && iter->second.hcontains(static_cast<int16_t>(fx));
+	}
+
 	int16_t FootholdTree::get_y_below(Point<int16_t> position) const
 	{
 		if (uint16_t fhid = get_fhid_below(position.x(), position.y()))
@@ -387,15 +472,32 @@ namespace ms
 		}
 	}
 
-	Point<int16_t> FootholdTree::get_spawn_point(Point<int16_t> position, uint16_t fhid) const
+	SpawnPoint FootholdTree::resolve_spawn_point(Point<int16_t> position, uint16_t fhid) const
 	{
 		auto iter = footholds.find(fhid);
 
-		// fh 在本图不存在、或者指的是竖墙（ground_below 会对 0 宽做除法）时退回按坐标反查。
-		if (iter == footholds.end() || iter->second.is_wall())
-			return Point<int16_t>(position.x(), get_y_below(position));
+		// 正常路径：包里的 fh 在本图存在、非墙、且水平覆盖包的 x。
+		// 保留服务端声明的 fh 与坐标——新图包走这条，不受重锚影响。
+		if (iter != footholds.end() && !iter->second.is_wall()
+			&& iter->second.hcontains(position.x()))
+		{
+			return { Point<int16_t>(position.x(),
+						static_cast<int16_t>(iter->second.ground_below(position.x()))), fhid };
+		}
 
-		return Point<int16_t>(position.x(), static_cast<int16_t>(iter->second.ground_below(position.x())));
+		// 回退路径：fh 指向旧图 / 竖墙 / x 落在平台外（切图残留包或 fh 失效）。
+		// 不再用 get_y_below（cy 偏差会选到下一层），改按 x 就近取最上层平台，
+		// 并回写实际 fhid。x 外无平台（ret==0）时给 borders.second()，但 fhid 保持 0，
+		// 让上层据此丢弃该包，而不是让 NPC 掉进地图边界。
+		uint16_t resolved = get_fhid_at_x(position.x());
+		if (resolved != 0)
+		{
+			const Foothold& fh = get_fh(resolved);
+			return { Point<int16_t>(position.x(),
+						static_cast<int16_t>(fh.ground_below(position.x()))), resolved };
+		}
+
+		return { Point<int16_t>(position.x(), borders.second()), 0 };
 	}
 
 	Range<int16_t> FootholdTree::get_walls() const
