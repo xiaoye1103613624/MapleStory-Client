@@ -22,20 +22,30 @@
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIAdmin.h"
 #include "../../IO/UITypes/UIChatBar.h"
+#include "../../IO/UITypes/UISideIconBar.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../Util/SideMenuConfig.h"
+#include "../../Util/DamageSkinState.h"
+#include "../../Util/BeautyState.h"
 #include "../../IO/Window.h"
 #include "../../Graphics/Color.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Gameplay/Combat/Damage.h"
 #include "../../Character/CombatPanelStats.h"
+#include "../../Character/SkillBonusCache.h"
+#include "../../Character/SkillStatOverrideCache.h"
+#include "../../Data/SkillData.h"
 #include "../../Character/Player.h"
+#include "../../Data/EquipGrowthData.h"
 #include "../../Data/SetItemData.h"
 #include "../../Weather/WeatherState.h"
 #include "../../Weather/WeatherConfig.h"
+#include "../../Weather/WeatherLamps.h"
 #include "../../Util/PerfLog.h"
 
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 namespace ms
@@ -166,6 +176,148 @@ namespace ms
 		Stage::get().get_player().recalc_stats(true);
 	}
 
+	void SetSkillBonusHandler::handle(InPacket& recv) const
+	{
+		// wire: short count + { int skillId, int addLevel } × count
+		if (recv.available() < 2)
+			return;
+
+		const int16_t count = recv.read_short();
+		std::unordered_map<int32_t, int32_t> levels;
+
+		for (int16_t i = 0; i < count; ++i)
+		{
+			if (recv.available() < 8)
+				break;
+
+			const int32_t skill_id = recv.read_int();
+			const int32_t add = recv.read_int();
+
+			if (skill_id > 0 && add != 0)
+				levels[skill_id] = add;
+		}
+
+		SkillBonusCache::get().replace_all(levels);
+		LOG(LOG_DEBUG, "SET_SKILL_BONUS 0x17A entries=" << levels.size());
+	}
+
+	void SkillStatOverrideHandler::handle(InPacket& recv) const
+	{
+		// wire: short skillCount + { int skillId, byte levelCount,
+		//       每级 { byte level, byte fieldCount, 每字段 { byte keyIdx, int value } } }
+		if (recv.available() < 2)
+			return;
+
+		const int16_t count = recv.read_short();
+		auto& touched = SkillStatOverrideCache::get();
+
+		if (count <= 0)
+		{
+			// 清覆盖：对本包之前登记过的技能清 overlay，然后清空登记表 → 全部回退 NX。
+			for (int32_t skill_id : touched.touched())
+			{
+				const SkillData& sd = SkillData::get(skill_id);
+				const_cast<SkillData&>(sd).clear_overlay();
+			}
+			touched.clear();
+			LOG(LOG_DEBUG, "SKILL_STAT_OVERRIDE 0x3745 clear all");
+			return;
+		}
+
+		for (int16_t i = 0; i < count; ++i)
+		{
+			if (recv.available() < 5)
+				break;
+			const int32_t skill_id = recv.read_int();
+			const int32_t level_count = recv.read_byte();
+			if (skill_id <= 0)
+				continue;
+			touched.touch(skill_id);
+			const SkillData& sd = SkillData::get(skill_id);
+			SkillData& mutable_sd = const_cast<SkillData&>(sd);
+
+			for (int32_t j = 0; j < level_count; ++j)
+			{
+				if (recv.available() < 2)
+					break;
+				const int32_t level = recv.read_byte();
+				const int32_t field_count = recv.read_byte();
+				std::unordered_map<int32_t, int32_t> fields;
+				for (int32_t k = 0; k < field_count; ++k)
+				{
+					if (recv.available() < 5)
+						break;
+					const int32_t key_idx = recv.read_byte();
+					const int32_t value = recv.read_int();
+					fields[key_idx] = value;
+				}
+				mutable_sd.apply_overlay(level, fields);
+			}
+		}
+		LOG(LOG_DEBUG, "SKILL_STAT_OVERRIDE 0x3745 skills=" << count);
+	}
+
+	void EquipGrowthTipHandler::handle(InPacket& recv) const
+	{
+		// wire 对齐 ijl15 EquipGrowthBridge / PacketCreator.equipGrowthTip：
+		// int itemId | byte hasData | string text | byte hasBonus + short[15]? | byte hasFlame + short[15]?
+		if (recv.available() < 5)
+			return;
+
+		const int32_t item_id = recv.read_int();
+		const bool has_data = recv.read_byte() != 0;
+		const std::string text = recv.read_string();
+
+		int16_t bonus[EquipGrowthData::BONUS_SLOTS] = {};
+		bool has_bonus = false;
+		int16_t flame[EquipGrowthData::BONUS_SLOTS] = {};
+		bool has_flame = false;
+
+		if (recv.available() >= 1)
+		{
+			const uint8_t flag = static_cast<uint8_t>(recv.read_byte());
+
+			if (flag != 0 && recv.available() >= EquipGrowthData::BONUS_SLOTS * 2)
+			{
+				has_bonus = true;
+
+				for (int i = 0; i < EquipGrowthData::BONUS_SLOTS; ++i)
+					bonus[i] = recv.read_short();
+			}
+		}
+
+		if (recv.available() >= 1)
+		{
+			const uint8_t flag = static_cast<uint8_t>(recv.read_byte());
+
+			if (flag != 0 && recv.available() >= EquipGrowthData::BONUS_SLOTS * 2)
+			{
+				has_flame = true;
+
+				for (int i = 0; i < EquipGrowthData::BONUS_SLOTS; ++i)
+					flame[i] = recv.read_short();
+			}
+		}
+
+		EquipGrowthData::TipEntry existing;
+		int32_t item_level = 0;
+		int32_t scroll = 0;
+
+		if (EquipGrowthData::try_get(item_id, existing))
+		{
+			item_level = existing.item_level;
+			scroll = existing.scroll;
+		}
+
+		EquipGrowthData::set_server_tip(item_id, has_data, text,
+			has_bonus ? bonus : nullptr, has_bonus,
+			has_flame ? flame : nullptr, has_flame,
+			item_level, scroll);
+
+		LOG(LOG_DEBUG, "EQUIP_GROWTH_TIP 0x17B item=" << item_id
+			<< " has=" << (has_data ? 1 : 0) << " textLen=" << text.size());
+	}
+
 	void WeatherSyncHandler::handle(InPacket& recv) const
 	{
 		// wire 逐字段对齐 BeiDou WeatherPackets.java:82-109（opcode 已被 PacketSwitch 读掉）：
@@ -221,7 +373,8 @@ namespace ms
 	void WeatherIntensityHandler::handle(InPacket& recv) const
 	{
 		// wire: short version | byte[9] intensity(0轻/1中/2强)，共 11 字节（opcode 已读）。
-		if (recv.available() < 10)
+		// 2026-11-22：原 <10 会让 10B 截断包在第 11 次 read_byte 越界抛 PacketError。
+		if (recv.available() < 11)
 			return;
 		const uint16_t version = static_cast<uint16_t>(recv.read_short());
 		uint8_t rows[9] = {1, 1, 1, 1, 2, 2, 1, 1, 2};
@@ -233,11 +386,27 @@ namespace ms
 			<< ',' << static_cast<int>(rows[4]) << ',' << static_cast<int>(rows[5]));
 	}
 
+	void WeatherElementHandler::handle(InPacket& recv) const
+	{
+		// 2026-11-23 V2 0x3742：short version | short gameDate(MMdd) | byte[16] elements。
+		if (recv.available() < 4)
+			return;
+		const uint16_t version = static_cast<uint16_t>(recv.read_short());
+		const int game_date = recv.read_short();
+		uint8_t rows[weather::EL_COUNT] = {};
+		const size_t want = recv.available() < weather::EL_COUNT
+			? static_cast<size_t>(recv.available()) : static_cast<size_t>(weather::EL_COUNT);
+		for (size_t i = 0; i < want; ++i)
+			rows[i] = static_cast<uint8_t>(recv.read_byte());
+		weather::State::get().apply_elements(static_cast<uint8_t>(version), game_date, rows, want);
+		LOG(LOG_DEBUG, "[Weather] 0x3742 v=" << version << " date=" << game_date
+			<< " fog=" << static_cast<int>(rows[weather::EL_FOG]));
+	}
+
 	void LampPreviewHandler::handle(InPacket& recv) const
 	{
 		// wire: byte mode(0 place/1 clear) | byte lampId | int mapId | int x | int y
 		// 16 字节含 opcode，opcode 已读掉 → 这里 14 字节定长。
-		// D1 核心闭环只解析并缓存；实际灯 sprite 渲染在 WeatherLamps（后续层）。
 		if (recv.available() < 14)
 			return;
 		const uint8_t mode = static_cast<uint8_t>(recv.read_byte());
@@ -246,8 +415,111 @@ namespace ms
 		const int32_t x = recv.read_int();
 		const int32_t y = recv.read_int();
 
-		(void)mode; (void)lamp_id; (void)map_id; (void)x; (void)y;  // 预留给 WeatherLamps
+		weather::Lamps::get().apply_preview(mode, lamp_id, map_id, x, y);
 		LOG(LOG_DEBUG, "[Weather] 0x373F lamp preview mode=" << static_cast<int>(mode)
 			<< " lamp=" << static_cast<int>(lamp_id) << " map=" << map_id << " @(" << x << ',' << y << ')');
+	}
+
+	void SideMenuSyncHandler::handle(InPacket& recv) const
+	{
+		// wire: int revision | maple string (UTF-8 JSON body)
+		if (recv.available() < 6)
+			return;
+		const int32_t revision = recv.read_int();
+		const std::string json = recv.read_string();
+		LOG(LOG_INFO, "SideMenuSync: recv revision=" << revision
+			<< " json_bytes=" << json.size());
+
+		if (!SideMenuConfig::apply_remote_json(json))
+			return;
+
+		if (auto bar = UI::get().get_element<UISideIconBar>())
+			bar->reload_config();
+	}
+
+	// ---- 伤害皮肤 picker 下行 ----
+	void DamageSkinCatalogHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 2)
+			return;
+		const int16_t count = recv.read_short();
+		std::map<int32_t, int64_t> prices;
+		for (int16_t i = 0; i < count && recv.available() >= 12; ++i)
+		{
+			const int32_t id = recv.read_int();
+			const int64_t price = recv.read_long();
+			prices[id] = price;
+		}
+		DamageSkinState::set_catalog(prices);
+		LOG(LOG_INFO, "DamageSkinCatalog: entries=" << prices.size());
+	}
+
+	void DamageSkinInventoryHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 6)
+			return;
+		const int32_t active = recv.read_int();
+		const int16_t count = recv.read_short();
+		std::set<int32_t> owned;
+		for (int16_t i = 0; i < count && recv.available() >= 4; ++i)
+			owned.insert(recv.read_int());
+		DamageSkinState::set_inventory(active, owned);
+		LOG(LOG_INFO, "DamageSkinInventory: active=" << active << " owned=" << owned.size());
+	}
+
+	void DamageSkinResultHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 10)
+			return;
+		const int32_t op = recv.read_byte();
+		const bool ok = recv.read_byte() != 0;
+		const int32_t skin = recv.read_int();
+		const int32_t mesos = recv.read_int();
+		DamageSkinState::set_result(op, ok, skin, mesos);
+		LOG(LOG_INFO, "DamageSkinResult: op=" << op << " ok=" << ok
+			<< " skin=" << skin << " mesos=" << mesos);
+	}
+
+	void DamageSkinBroadcastHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 8)
+			return;
+		// 他人皮肤 id 由 DAMAGE_MONSTER 包逐次携带；这里仅记录日志，不改全局状态。
+		const int32_t cid = recv.read_int();
+		const int32_t skin = recv.read_int();
+		LOG(LOG_DEBUG, "[DamageSkin] broadcast cid=" << cid << " skin=" << skin);
+	}
+
+	void BeautyResultHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 1) return;
+		const int32_t resp = recv.read_byte();
+		if (resp == 0)
+		{
+			BeautyState::mark_opened();
+			return;
+		}
+		if (resp != 1 || recv.available() < 43) return;
+		const int32_t unlocked = recv.read_byte();
+		std::array<int32_t, 6> hair{}, face{}, skin{};
+		std::array<bool, 6> hs{}, fs{}, ss{};
+		for (int i = 0; i < 6; ++i) hair[i] = recv.read_int();
+		for (int i = 0; i < 6; ++i) face[i] = recv.read_int();
+		for (int i = 0; i < 6; ++i) skin[i] = recv.read_int();
+		for (int i = 0; i < 6; ++i) hs[i] = recv.read_byte() != 0;
+		for (int i = 0; i < 6; ++i) fs[i] = recv.read_byte() != 0;
+		for (int i = 0; i < 6; ++i) ss[i] = recv.read_byte() != 0;
+		// 跳过 rows 明细（每 row: byte type,slot,gender + 10×int = 43 字节）
+		if (recv.available() >= 1)
+		{
+			const int rows = recv.read_byte();
+			for (int r = 0; r < rows && recv.available() >= 43; ++r)
+			{
+				recv.skip(3);          // type, slot, gender
+				for (int f = 0; f < 10; ++f) recv.read_int();
+			}
+		}
+		BeautyState::apply(unlocked, hair, face, skin, hs, fs, ss);
+		LOG(LOG_INFO, "[Beauty] data unlocked=" << unlocked);
 	}
 }

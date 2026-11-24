@@ -135,8 +135,22 @@ namespace ms
 				// 表现为「连接加载条卡住不动，过一会才动」。）
 				if (!ms::res::ResourceService::get().game_roots_ready())
 				{
+					// [退出防护] 该自旋曾不检查退出标志：后台预热线程异常导致
+					// game_roots_ready 永不落地时，窗口照常泵帧看似"活着"，但
+					// 退出请求被吞，进程关不掉。加超时 + 退出门闩，超时后放行
+					// 登录流程（资源未就绪最多显示不全，不再永久卡死）。
+					const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(60);
 					while (!ms::res::ResourceService::get().game_roots_ready())
 					{
+						if (!UI::get().not_quitted() || !Window::get().not_closed()
+							|| std::chrono::steady_clock::now() >= deadline)
+						{
+							LOG(LOG_WARN, "[RES] wait game_roots aborted: quitted="
+								<< (UI::get().not_quitted() ? 0 : 1)
+								<< " closed=" << (Window::get().not_closed() ? 0 : 1)
+								<< " timeout=" << (std::chrono::steady_clock::now() >= deadline ? 1 : 0));
+							break;
+						}
 						Window::get().poll_events();
 						UI::get().update();
 						Window::get().begin();

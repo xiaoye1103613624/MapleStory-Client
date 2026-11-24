@@ -50,4 +50,11 @@ namespace ms
 	{
 		void handle(InPacket& recv) const override;
 	};
+
+	// s2c WORLD_MAP_QUEST_MARKS = 0x17C：分区任务标记快照
+	// body: int prefix / short mapCount / mapCount×{ int mapid, byte flags(bit0=可接,bit1=可交付) }
+	class WorldMapQuestMarksHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
 }

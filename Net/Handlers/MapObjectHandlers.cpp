@@ -767,13 +767,15 @@ namespace ms
 		bool flip = recv.read_bool();
 		uint16_t fh = recv.read_short();
 
-		recv.read_short(); // 'rx'
-		recv.read_short(); // 'ry'
+		// s9 PacketCreator.spawnNPC(:1441-1442) 这两 short 是 rx0/rx1（活动左右边界绝对坐标，
+		// s9 常见 rx0=x+50 右界 / rx1=x-50 左界，方向相反）；NpcSpawn 构造内归一化 min/max。
+		int16_t rx0 = recv.read_short();
+		int16_t rx1 = recv.read_short();
 		while (recv.available())
 			recv.skip_byte();
 
 		Stage::get().get_npcs().spawn(
-			{ oid, id, position, flip, fh }
+			{ oid, id, position, flip, fh, false, rx0, rx1 }
 		);
 		// 进图刷 NPC 太密，不 tip
 		(void)id;
@@ -806,15 +808,16 @@ namespace ms
 			bool flip = recv.read_bool();
 			uint16_t fh = recv.read_short();
 
-			recv.read_short();	// 'rx'
-			recv.read_short();	// 'ry'
+			// 同 SpawnNpcHandler：rx0/rx1 = 活动左右边界（绝对坐标，NpcSpawn 内归一化）。
+			int16_t rx0 = recv.read_short();
+			int16_t rx1 = recv.read_short();
 			recv.read_bool();	// 'minimap'
 			while (recv.available())
 				recv.skip_byte();
 
 			// SPAWN_NPC_C：本端成为控制器 → control=true，可发 NPC_ACTION 移动
 			Stage::get().get_npcs().spawn(
-				{ oid, id, position, flip, fh, true }
+				{ oid, id, position, flip, fh, true, rx0, rx1 }
 			);
 			(void)id;
 		}

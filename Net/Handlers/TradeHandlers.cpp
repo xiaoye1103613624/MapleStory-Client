@@ -285,7 +285,7 @@ namespace ms
 					}
 					break;
 				}
-				if (sub == 0x05) // 雇佣商人开张：0x05, 0x04, ...
+				if (sub == 0x05) // 雇佣商人开张：0x05, 0x04, ...（本版按访客格式；owner 自营块二期）
 				{
 					recv.read_byte();  // 0x04
 					recv.read_short(); // visitorSlot + 1

@@ -58,14 +58,17 @@ namespace ms
 	};
 
 	// Packet which requests a dialog with a server-sided NPC
-	// Opcode: TALK_TO_NPC(58)。构造时顺带派发 NPC_ACTION 对话姿态，
-	// 所有 TalkToNPC 调用点（点击/SoftKey/快捷）自动继承，避免漏发。
+	// Opcode: TALK_TO_NPC(58)。
+	// 2026-11-23 修复：去掉此前构造内顺带派发的 NPC_ACTION(197) 伴随包。
+	// IDA 095 实证原生 TalkToNpc 是单包（无 197），且 s9 NPCTalkHandler 不依赖
+	// NPCAnimationHandler 的 197 广播（后者只把动画原样回广播给周围玩家）。
+	// 多余的 197 包 + 连点会让服务端 c.getCM()!=null 分支静默 enableActions()
+	// 拒绝对话（表现为"半天才打开/打不开"）。对话起手只发 TALK_TO_NPC 单包。
 	class TalkToNPCPacket : public OutPacket
 	{
 	public:
 		TalkToNPCPacket(int32_t oid) : OutPacket(OutPacket::Opcode::TALK_TO_NPC)
 		{
-			NpcActionTalkPacket(oid).dispatch();
 			write_int(oid);
 		}
 	};

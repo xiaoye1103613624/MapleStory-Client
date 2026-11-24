@@ -88,6 +88,25 @@ namespace ms
 				-static_cast<int16_t>(EquipSlot::wire_bodypart(src)), dest, 1) {}
 	};
 
+	// 宠物装备穿戴：目标为官方 BodyPart 绝对值（21..48），wire 发负槽。
+	// 不经 EquipSlot::wire_bodypart（宠物位刻意不进 EquipSlot::Id）。
+	class EquipPetItemPacket : public MoveItemPacket
+	{
+	public:
+		EquipPetItemPacket(int16_t src_equip_slot, int16_t bodypart)
+			: MoveItemPacket(InventoryType::Id::EQUIP, src_equip_slot,
+				-bodypart, 1) {}
+	};
+
+	// 宠物装备卸下：src 为 BodyPart 绝对值。
+	class UnequipPetItemPacket : public MoveItemPacket
+	{
+	public:
+		UnequipPetItemPacket(int16_t bodypart, int16_t dest_equip_slot)
+			: MoveItemPacket(InventoryType::Id::EQUIPPED, -bodypart,
+				dest_equip_slot, 1) {}
+	};
+
 	// A packet which requests that an 'USE' item is used
 	// Opcode: USE_ITEM(72)；技能书特例：USE_SKILL_BOOK(82 / 0x52)；
 	// 召唤袋特例：USE_SUMMON_BAG(75 / 0x4B)；

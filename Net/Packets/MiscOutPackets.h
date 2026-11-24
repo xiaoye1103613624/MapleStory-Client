@@ -44,6 +44,17 @@ namespace ms
 		}
 	};
 
+	// 世界地图任务标记快照请求：写当前分区 prefix（mapid/10000000）。
+	// 服务端按 prefix 返回 {mapid→{可接[],可交付[]}}（回包 0x17C）。
+	class WorldMapQuestMarksRequestPacket : public OutPacket
+	{
+	public:
+		WorldMapQuestMarksRequestPacket(int32_t prefix) : OutPacket(OutPacket::Opcode::WORLD_MAP_QUEST_MARKS_REQUEST)
+		{
+			write_int(prefix);
+		}
+	};
+
 	class WorldMapDropRequestPacket : public OutPacket
 	{
 	public:

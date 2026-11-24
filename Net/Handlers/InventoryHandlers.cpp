@@ -23,7 +23,9 @@
 #include "../../IO/UI.h"
 
 #include "../../IO/UITypes/UIEquipInventory.h"
-#include "../../IO/UITypes/UIAddonEquip.h"
+#include "../../IO/UITypes/UITotemEquip.h"
+#include "../../IO/UITypes/UIAndroidEquip.h"
+#include "../../IO/UITypes/UIMysticBadge.h"
 #include "../../IO/UITypes/UIItemInventory.h"
 #include "../../IO/UITypes/UISkillBook.h"
 #include "../../IO/UITypes/UIKeyConfig.h"
@@ -171,7 +173,9 @@ namespace ms
 				shop->modify(mod.type);
 
 			auto eqinvent = UI::get().get_element<UIEquipInventory>();
-			auto addequip = UI::get().get_element<UIAddonEquip>();
+			auto totemeq = UI::get().get_element<UITotemEquip>();
+			auto android = UI::get().get_element<UIAndroidEquip>();
+			auto mystic = UI::get().get_element<UIMysticBadge>();
 			auto itinvent = UI::get().get_element<UIItemInventory>();
 
 			switch (move)
@@ -182,10 +186,13 @@ namespace ms
 				case InventoryType::Id::EQUIPPED:
 					if (eqinvent)
 						eqinvent->modify(mod.pos, mod.mode, mod.arg);
-					// ④ 扩展装备子窗与主装备窗同源刷新（modify 内部按 SLOTS 过滤，
-					// 非扩展槽位是 no-op，不会误画）。
-					if (addequip)
-						addequip->modify(mod.pos, mod.mode, mod.arg);
+					// 图腾 / 神秘 / Android(+心脏) 与主装备窗同源刷新；Addon 已删开窗。
+					if (totemeq)
+						totemeq->modify(mod.pos, mod.mode, mod.arg);
+					if (android)
+						android->modify(mod.pos, mod.mode, mod.arg);
+					if (mystic)
+						mystic->modify(mod.pos, mod.mode, mod.arg);
 
 					Stage::get().get_player().change_equip(-mod.pos);
 					Stage::get().get_player().change_equip(-mod.arg);
@@ -208,8 +215,12 @@ namespace ms
 				{
 					if (eqinvent)
 						eqinvent->modify(-mod.pos, 3, 0);
-					if (addequip)
-						addequip->modify(-mod.pos, 3, 0);
+					if (totemeq)
+						totemeq->modify(-mod.pos, 3, 0);
+					if (android)
+						android->modify(-mod.pos, 3, 0);
+					if (mystic)
+						mystic->modify(-mod.pos, 3, 0);
 
 					if (itinvent)
 						itinvent->modify(InventoryType::Id::EQUIP, mod.arg, mod.mode, 0);
@@ -220,8 +231,12 @@ namespace ms
 				{
 					if (eqinvent)
 						eqinvent->modify(-mod.arg, 0, 0);
-					if (addequip)
-						addequip->modify(-mod.arg, 0, 0);
+					if (totemeq)
+						totemeq->modify(-mod.arg, 0, 0);
+					if (android)
+						android->modify(-mod.arg, 0, 0);
+					if (mystic)
+						mystic->modify(-mod.arg, 0, 0);
 
 					if (itinvent)
 						itinvent->modify(InventoryType::Id::EQUIP, mod.pos, Inventory::Modification::REMOVE, 0);

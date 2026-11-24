@@ -27,6 +27,11 @@ namespace
 
 		return true;
 	}
+
+	// 2026-11-20：废弃 UTF-8 快路径。GBK 双字节常与 UTF-8 2/3 字节形态重叠，
+	// is_strict_utf8_with_multibyte 对 GB2312 汉字区误判率约 14%，会把 owner/
+	// 聊天等 GBK 原文原样喂给 Text → 乱码（见 chat-group-charset-rca）。
+	// 本部署 language=3 封包恒 GBK，非 ASCII 一律 CP936→UTF-8。
 }
 #endif
 
@@ -36,7 +41,7 @@ namespace ms
 	{
 #ifdef _WIN32
 		// 纯 ASCII 时 CP936 与 UTF-8 同形，直接原样返回：既省一次转换，
-		// 也保证 175 个既有 read_string 调用点的 ASCII 字段字节级不变。
+		// 也保证既有 read_string 调用点的 ASCII 字段字节级不变。
 		if (bytes.empty() || is_ascii(bytes))
 			return bytes;
 

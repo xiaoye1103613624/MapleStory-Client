@@ -3,11 +3,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "WaveAShellHandlers.h"
 
+// 窗口内商城（方案 C）：收包线程只解析 + 入队，主线程 pump 消费。
+#include "CashShopWindowSync.h"
+
 // UpdateHpMpAlertHandler 回灌本地设置需要 Setting<SysOptHpWarn/MpWarn>。
 // QuickslotInitHandler 的真机验收判据走 perf::mark（Release 唯一观测通道）。
 #include "../../Configuration.h"
 #include "../../Util/PerfLog.h"
 #include "../../IO/UI.h"
+#include "../../Character/DamageRank.h"
+#include "../../IO/UITypes/UIDamageRank.h"
+#include "../../IO/UITypes/UIChatEmoticon.h"
+#include "../../IO/UITypes/UIDailyCheckin.h"
+#include "../../IO/UITypes/UIDailyGift.h"
+#include "../../IO/UITypes/UIColorPrism.h"
+#include "../../IO/UITypes/UIWitchForest.h"
+#include "../../IO/UITypes/UIBreakthroughStone.h"
+#include "../../IO/UITypes/UIEnhance.h"
+#include "../../Graphics/TintContext.h"
 #include "../../IO/UITypes/UIViciousHammer.h"
 #include "../../IO/UITypes/UIVegaSpell.h"
 #include "../../IO/UITypes/UICashGachapon.h"
@@ -77,9 +90,13 @@
 #include "../../Util/Misc.h"
 
 #include <algorithm>
+#include <array>
 #include <vector>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
+#include <cmath>       // std::lround：0x184 浮点色相量化到整数度
+#include <cstring>     // std::memcpy：float ↔ IEEE754 bit 位还原
 
 namespace ms
 {
@@ -3303,46 +3320,277 @@ namespace ms
 
 	void DptTrackerHandler::handle(InPacket& recv) const
 	{
+		// 协议权威：s9 PacketCreator.dptReset/dptPlayerUpdate/dptSkillUpdate
+		// (util/PacketCreator.java:341-368)。字段顺序与长度守卫逐项对齐。
 		int8_t mode = recv.available() ? recv.read_byte() : 0;
-		std::string tip;
+		bool changed = false;
 		if (mode == 0)
 		{
+			DamageRank::get().reset();
+			changed = true;
 			LOG(LOG_DEBUG, "DPT reset");
-			tip = "DPT reset";
 		}
 		else if (mode == 1)
 		{
-			int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
-			int32_t job = recv.available() >= 4 ? recv.read_int() : 0;
-			std::string name = recv.available() ? recv.read_string() : "";
-			int64_t dmg = 0;
-			if (recv.available() >= 8)
-				dmg = recv.read_long();
+			const int32_t cid = recv.available() >= 4 ? recv.read_int() : 0;
+			const int32_t job = recv.available() >= 4 ? recv.read_int() : 0;
+			const std::string name = recv.available() ? recv.read_string() : "";
+			const uint64_t dmg = recv.available() >= 8
+				? static_cast<uint64_t>(recv.read_long()) : 0;
+			DamageRank::get().upsert_player(cid, name, job, dmg);
+			changed = true;
 			LOG(LOG_DEBUG, "DPT player " << name << " cid=" << cid << " job=" << job << " dmg=" << dmg);
-			tip = "DPT " + name + " " + std::to_string(dmg);
-			(void)cid;
-			(void)job;
 		}
 		else if (mode == 2)
 		{
-			int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
-			std::string sname = recv.available() ? recv.read_string() : "";
+			const int32_t skill = recv.available() >= 4 ? recv.read_int() : 0;
+			const std::string sname = recv.available() ? recv.read_string() : "";
+			const uint64_t delta = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			const uint64_t total = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			const uint64_t maxd = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			const uint64_t mind = recv.available() >= 8 ? static_cast<uint64_t>(recv.read_long()) : 0;
+			const int32_t count = recv.available() >= 4 ? recv.read_int() : 0;
+			DamageRank::get().upsert_skill(skill, sname, delta, total, maxd, mind, count);
+			changed = true;
 			LOG(LOG_DEBUG, "DPT skill " << sname << " id=" << skill << " rem=" << recv.available());
-			tip = "DPT skill " + (sname.empty() ? std::to_string(skill) : sname);
 		}
 		else
 		{
 			LOG(LOG_DEBUG, "DPT mode=" << (int)mode);
-			tip = "DPT";
 		}
 		while (recv.available())
 			recv.skip_byte();
-		if (!tip.empty())
+
+		// 仅在窗口已打开时刷新，避免后台收包凭空弹窗（入口统一走侧边栏图标）。
+		if (changed)
 		{
-			auto ui = UI::get().get_element<UIAdmin>();
-			if (!ui) ui = UI::get().emplace<UIAdmin>();
-			else if (!ui->is_active()) ui->makeactive();
-			if (ui) ui->set_message(tip);
+			if (auto ui = UI::get().get_element<UIDamageRank>())
+				ui->reload();
+		}
+	}
+
+	void ChatEmoticonHandler::handle(InPacket& recv) const
+	{
+		// s9 PacketCreator.chatEmoticon: writeInt(charId) + writeInt(emoticonId)。
+		if (recv.available() < 8)
+			return;
+		const int32_t char_id = recv.read_int();
+		const int32_t emoticon_id = recv.read_int();
+		while (recv.available())
+			recv.skip_byte();
+		UIChatEmoticon::show_overhead(char_id, emoticon_id);
+		LOG(LOG_DEBUG, "CHAT_EMOTICON char=" << char_id << " id=" << emoticon_id);
+	}
+
+	void DailyCheckinHandler::handle(InPacket& recv) const
+	{
+		// s9 PacketCreator.dailyCheckinSnapshot: byte respType(=1), byte currentDay,
+		// int claimedMask, byte justClaimed, byte count, count×int iconId, count×string tooltip.
+		if (recv.available() < 8) return;
+		const uint8_t resp = static_cast<uint8_t>(recv.read_byte());
+		if (resp != 1) return;
+		const int8_t current_day = static_cast<int8_t>(recv.read_byte());
+		const int32_t mask = recv.read_int();
+		const int8_t just_claimed = static_cast<int8_t>(recv.read_byte());
+		if (!recv.available()) return;
+		const int32_t count = recv.read_byte();
+		// 服务端 28 天的 iconItemId + tooltip（需求包 §6：一格一主icon + hover多件明细）。
+		std::vector<int32_t> icon_ids;
+		std::vector<std::string> tooltips;
+		icon_ids.reserve(count);
+		tooltips.reserve(count);
+		for (int32_t i = 0; i < count && recv.available() >= 4; ++i)
+			icon_ids.push_back(recv.read_int());
+		for (int32_t i = 0; i < count && recv.available() >= 2; ++i)
+			tooltips.push_back(recv.read_string());
+		while (recv.available()) recv.skip_byte();
+
+		if (auto ui = UI::get().get_element<UIDailyCheckin>())
+			ui->apply_snapshot(current_day, mask, just_claimed, icon_ids, tooltips);
+		LOG(LOG_DEBUG, "DAILY_CHECKIN day=" << (int)current_day << " mask=" << mask
+			<< " icons=" << icon_ids.size() << " tips=" << tooltips.size());
+	}
+
+	void DailyGiftHandler::handle(InPacket& recv) const
+	{
+		// 192 每日礼物 S→C 0x3722，双端协定逐字节对齐：
+		//   byte respType
+		//   0 SNAPSHOT : byte currentDay, int claimedMask, byte levelMin, byte questDone,
+		//                int killCount, byte premiumLeft,
+		//                int[28] rewardItemIds, int[28] rewardCounts
+		//   1 CLAIM_RES: byte resultCode(0成功/1等级不足/2杀怪不足/3已领过/4非当前日/5月限尽),
+		//                byte day, int itemId, int count
+		// 侧栏点击仅发 0x3721 OPEN；快照到达时窗口可能未开，handler 负责 emplace+activate。
+		if (recv.available() < 1)
+			return;
+
+		const uint8_t resp_type = static_cast<uint8_t>(recv.read_byte());
+
+		if (resp_type == 0)
+		{
+			// 固定头 1(currentDay)+4(mask)+1(levelMin)+1(questDone)+4(killCount)+1(premiumLeft)=12
+			if (recv.available() < 12)
+			{
+				LOG(LOG_WARN, "[DailyGift] 0x3722 SNAPSHOT truncated header, bytes=" << recv.available());
+				return;
+			}
+
+			const int8_t current_day = static_cast<int8_t>(recv.read_byte());
+			const int32_t claimed_mask = recv.read_int();
+			const int8_t level_min = static_cast<int8_t>(recv.read_byte());
+			const int8_t quest_done = static_cast<int8_t>(recv.read_byte());
+			const int32_t kill_count = recv.read_int();
+			const int8_t premium_left = static_cast<int8_t>(recv.read_byte());
+
+			// 两组定长 28 项 int 数组；每项独立守卫，缺包时该格保持 0（UI 画空槽），不越界。
+			std::array<int32_t, 28> reward_item_ids{};
+			std::array<int32_t, 28> reward_counts{};
+			for (size_t i = 0; i < reward_item_ids.size() && recv.available() >= 4; ++i)
+				reward_item_ids[i] = recv.read_int();
+			for (size_t i = 0; i < reward_counts.size() && recv.available() >= 4; ++i)
+				reward_counts[i] = recv.read_int();
+			while (recv.available())
+				recv.skip_byte();
+
+			// 真窗可能尚未构造（侧栏点击只发 OPEN）：此时 emplace + activate，
+			// 构造体内会再发一次 OPEN，服务端回包时窗口已存在，直接进入 apply_snapshot。
+			auto ui = UI::get().get_element<UIDailyGift>();
+			if (!ui)
+				ui = UI::get().emplace<UIDailyGift>();
+			else if (!ui->is_active())
+				ui->makeactive();
+
+			if (ui)
+				ui->apply_snapshot(current_day, claimed_mask, level_min, quest_done,
+					kill_count, premium_left, reward_item_ids, reward_counts);
+
+			LOG(LOG_INFO, "[DailyGift] 0x3722 SNAPSHOT day=" << static_cast<int>(current_day)
+				<< " mask=" << claimed_mask << " levelMin=" << static_cast<int>(level_min)
+				<< " questDone=" << static_cast<int>(quest_done) << " kills=" << kill_count
+				<< " premiumLeft=" << static_cast<int>(premium_left));
+			return;
+		}
+
+		if (resp_type == 1)
+		{
+			// 领奖结果固定 1+1+4+4=10 字节；窗口在点击时必已打开，找不到则仅告警。
+			if (recv.available() < 10)
+			{
+				LOG(LOG_WARN, "[DailyGift] 0x3722 CLAIM_RES truncated, bytes=" << recv.available());
+				return;
+			}
+
+			const int8_t result_code = static_cast<int8_t>(recv.read_byte());
+			const int8_t day = static_cast<int8_t>(recv.read_byte());
+			const int32_t item_id = recv.read_int();
+			const int32_t count = recv.read_int();
+			while (recv.available())
+				recv.skip_byte();
+
+			if (auto ui = UI::get().get_element<UIDailyGift>())
+				ui->on_claim_result(result_code, day, item_id, count);
+
+			LOG(LOG_INFO, "[DailyGift] 0x3722 CLAIM_RES code=" << static_cast<int>(result_code)
+				<< " day=" << static_cast<int>(day) << " item=" << item_id << " count=" << count);
+			return;
+		}
+
+		LOG(LOG_WARN, "[DailyGift] 0x3722 unknown respType=" << static_cast<int>(resp_type));
+		while (recv.available())
+			recv.skip_byte();
+	}
+
+	void ColoringPrismHandler::handle(InPacket& recv) const
+	{
+		// 七彩棱镜中文包 S→C 0x184，逐字对齐 ColoringPrismPackets.build（指南 §3.3）：
+		//   byte respType
+		//     0 OPEN      无后续字段。
+		//     1 DYE_LIST  short count, count×{int itemId, int hueBits, int satBits, int lightBits}
+		//     2 DYE_MERGE int charId, short count, count×{同上}
+		// float 位用 memcpy 还原（等价 Float.intBitsToFloat），禁止强转丢位。
+		// D1：旧巴西服 0x372F 的 SNAPSHOT/RESULT/REMOTE_TABLE 三态已废弃。
+		if (!recv.available()) return;
+		const uint8_t resp = static_cast<uint8_t>(recv.read_byte());
+
+		// resp=0 OPEN：开窗（构造/激活），并把已有本人染色同步进窗口。
+		if (resp == 0)
+		{
+			LOG(LOG_INFO, "[ColorPrism] 0x184 OPEN");
+			UIColorPrism::ensure_open();
+			return;
+		}
+
+		// resp=1 DYE_LIST 无 charId（服务端只带条目）；resp=2 DYE_MERGE 先读 charId。
+		int32_t char_id = 0;
+		if (resp == 2)
+		{
+			if (recv.available() < 4) return;
+			char_id = recv.read_int();
+		}
+		else if (resp != 1)
+		{
+			LOG(LOG_WARN, "[ColorPrism] 0x184 unknown respType=" << (int)resp);
+			while (recv.available()) recv.skip_byte();
+			return;
+		}
+
+		if (recv.available() < 2) return;
+		int16_t raw_count = recv.read_short();
+		int32_t count = raw_count > 0 ? raw_count : 0;
+		if (count > 256) count = 256;   // 与服务端 MAX_ENTRIES 对齐，防御越界。
+
+		std::vector<UIColorPrism::DyeEntry> entries;
+		entries.reserve(static_cast<size_t>(count));
+		for (int32_t i = 0; i < count; ++i)
+		{
+			if (recv.available() < 4 + 4 + 4 + 4) break;  // itemId + 3× float bits
+			UIColorPrism::DyeEntry e;
+			e.item_id = recv.read_int();
+			const int32_t hb = recv.read_int();
+			const int32_t sb = recv.read_int();
+			const int32_t lb = recv.read_int();
+			std::memcpy(&e.hue, &hb, sizeof(e.hue));
+			std::memcpy(&e.sat, &sb, sizeof(e.sat));
+			std::memcpy(&e.light, &lb, sizeof(e.light));
+			entries.push_back(e);
+		}
+		// 尾段保护：包体读净，避免残留字节污染下一包（正常路径已读空）。
+		while (recv.available()) recv.skip_byte();
+
+		// 协议浮点 → 既有渲染引擎 TintCache::HSL，让预览/地图立即显示染色。
+		// hue 折进 [0,360) 走「正旋转」语义（TintCache 负值代表绝对色相，不适用本包）。
+		const int32_t own_oid = Stage::get().get_player().get_oid();
+		std::unordered_map<int32_t, TintCache::HSL> hsl_map;
+		for (const auto& e : entries)
+		{
+			TintCache::HSL hsl;
+			int32_t deg = static_cast<int32_t>(std::lround(e.hue)) % 360;
+			if (deg < 0) deg += 360;
+			hsl.hue = static_cast<int16_t>(deg);
+			auto to100 = [](float v) -> int8_t {
+				int r = static_cast<int>(std::lround(v * 100.0f));
+				return static_cast<int8_t>(r < -100 ? -100 : (r > 100 ? 100 : r));
+			};
+			hsl.chroma = to100(e.sat);
+			hsl.bright = to100(e.light);
+			hsl_map.emplace(e.item_id, hsl);
+		}
+
+		if (resp == 1)
+		{
+			// 本人完整列表：替换本地 oid 的整张表，并同步给窗口（滑条/预览）。
+			TintContext::get().set_char_tints(own_oid, hsl_map);
+			if (auto ui = UI::get().get_element<UIColorPrism>())
+				ui->apply_dye_list(entries);
+			LOG(LOG_INFO, "[ColorPrism] 0x184 DYE_LIST entries=" << entries.size());
+		}
+		else
+		{
+			// 他人染色：按 charId 合并进 TintContext；窗口侧仅记录（他人预览降级）。
+			TintContext::get().set_char_tints(char_id, hsl_map);
+			if (auto ui = UI::get().get_element<UIColorPrism>())
+				ui->apply_dye_merge(char_id, entries);
+			LOG(LOG_INFO, "[ColorPrism] 0x184 DYE_MERGE char=" << char_id << " entries=" << entries.size());
 		}
 	}
 
@@ -4813,6 +5061,304 @@ namespace ms
 		else if (!ui->is_active()) ui->makeactive();
 		if (ui)
 			ui->set_message(tip);
+	}
+
+	// 192 魔女森林快照（s9 WitchForestSnapshot）：
+	//   respType=0 状态 -> long nxCredit, int totalDraws, int secondsLeft
+	//   respType=1 结果 -> byte drawType, byte count, count×{int itemId,int qty,byte grade}, long nxAfter
+	void WitchForestHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 2) return;
+		const uint8_t resp = static_cast<uint8_t>(recv.read_byte());
+
+		// 窗口尚未创建时先建（服务端 OPEN 回包即开窗，仿 CashGachaponOpenHandler）。
+		auto ui = UI::get().get_element<UIWitchForest>();
+		if (!ui) ui = UI::get().emplace<UIWitchForest>();
+		else if (!ui->is_active()) ui->makeactive();
+		if (!ui) return;
+
+		if (resp == 0)
+		{
+			// long nxCredit, int totalDraws, int secondsLeft, byte miracle(0/1)
+			if (recv.available() < 13) return;
+			const int64_t nx = recv.read_long();
+			const int32_t draws = recv.read_int();
+			const int32_t secs = recv.read_int();
+			const int8_t mrc = static_cast<int8_t>(recv.read_byte());
+			ui->apply_state(nx, draws, secs, mrc);
+			LOG(LOG_DEBUG, "WITCH_FOREST state nx=" << nx << " draws=" << draws << " secs=" << secs << " miracle=" << (int)mrc);
+		}
+		else if (resp == 1)
+		{
+			// byte drawType, byte count, count×{int id,int qty,byte grade}, long nxAfter, byte special
+			if (recv.available() < 2) return;
+			const int8_t drawtype = static_cast<int8_t>(recv.read_byte());
+			const int32_t count = static_cast<int32_t>(recv.read_byte());
+			std::vector<int32_t> ids, qtys;
+			std::vector<int8_t> grades;
+			ids.reserve(count); qtys.reserve(count); grades.reserve(count);
+			for (int32_t i = 0; i < count && recv.available() >= 9; ++i)
+			{
+				ids.push_back(recv.read_int());
+				qtys.push_back(recv.read_int());
+				grades.push_back(static_cast<int8_t>(recv.read_byte()));
+			}
+			const int64_t nxafter = recv.available() >= 8 ? recv.read_long() : 0;
+			const bool special = recv.available() >= 1 ? (recv.read_byte() != 0) : false;
+			ui->apply_result(drawtype, count, ids, qtys, grades, nxafter, special);
+			LOG(LOG_DEBUG, "WITCH_FOREST result type=" << (int)drawtype << " count=" << count << " nx=" << nxafter << " special=" << special);
+		}
+	}
+
+	// 192 突破石快照（s9 BreakthroughStoneSnapshot）：
+	//   respType=0 状态 -> long limitBreak, int stoneCount
+	//   respType=1 结果 -> byte success, long before, long after, int itemId, int remaining
+	void BreakthroughStoneHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 2) return;
+		const uint8_t resp = static_cast<uint8_t>(recv.read_byte());
+
+		auto ui = UI::get().get_element<UIBreakthroughStone>();
+		if (!ui) ui = UI::get().emplace<UIBreakthroughStone>();
+		else if (!ui->is_active()) ui->makeactive();
+		if (!ui) return;
+
+		if (resp == 0)
+		{
+			if (recv.available() < 12) return;
+			const int64_t lb = recv.read_long();
+			const int32_t count = recv.read_int();
+			ui->apply_state(lb, count);
+			LOG(LOG_DEBUG, "BREAKTHROUGH state lb=" << lb << " stones=" << count);
+		}
+		else if (resp == 1)
+		{
+			if (recv.available() < 1) return;
+			const bool success = recv.read_byte() != 0;
+			if (recv.available() < 20) return;
+			const int64_t before = recv.read_long();
+			const int64_t after = recv.read_long();
+			recv.read_int(); // itemId（客户端仅展示，不参与逻辑）
+			const int32_t remaining = recv.read_int();
+			ui->apply_result(success, before, after, remaining);
+			LOG(LOG_DEBUG, "BREAKTHROUGH result success=" << success << " " << before << "->" << after);
+		}
+	}
+
+	// ---- 窗口内商城（方案 C）S→C 同步解析 ----
+	// opcode 由 PacketSwitch::forward 已 read_short 吃掉，这里第一个字节就是 resp。
+	// 逐字段先解析到局部变量，整包合法后再 enqueue 一条事件；任何截断/越界整包丢弃，
+	// 不把半成品交给 UI，符合参考包"truncated chunk rejected whole"的守卫口径。
+	void CashShopWindowSyncHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 1)
+		{
+			LOG(LOG_WARN, "CashShopWindowSync: empty packet dropped");
+			return;
+		}
+
+		const int8_t resp = recv.read_byte();
+		CashShopWindowEvent ev;
+		ev.kind = resp;
+
+		// 三币种读取：OPEN / CASH 共用。
+		auto read_cash = [&recv](CashShopWindowEvent& out) -> bool
+		{
+			// 3 × int32 = 12 bytes
+			if (recv.available() < 12)
+				return false;
+			out.cash[0] = recv.read_int();  // NX_CREDIT
+			out.cash[1] = recv.read_int();  // MAPLE_POINT
+			out.cash[2] = recv.read_int();  // NX_PREPAID
+			return true;
+		};
+
+		switch (resp)
+		{
+		case 0:  // OPEN + 3×int
+		case 3:  // CASH + 3×int
+		{
+			if (!read_cash(ev))
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: OPEN/CASH truncated (need 12 bytes)");
+				return;
+			}
+			LOG(LOG_DEBUG, "CashShopWindowSync: " << (resp == 0 ? "OPEN" : "CASH")
+				<< " NX=" << ev.cash[0] << " Maple=" << ev.cash[1] << " Prepaid=" << ev.cash[2]);
+			break;
+		}
+		case 1:  // CATALOG: flag, tab, cat, short count, count×{int,int,short,byte,byte,string}
+		{
+			if (recv.available() < 5)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: CATALOG header truncated");
+				return;
+			}
+			ev.clear = recv.read_byte();
+			ev.tab = recv.read_byte();
+			ev.cat = recv.read_byte();
+			ev.rowCount = recv.read_short();
+			// 守卫：单包条数上限（参考包 kMaxEntriesPerChunk=2048），防止畸形 count 撑爆内存。
+			if (ev.rowCount < 0 || ev.rowCount > 2048)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: CATALOG count out of range=" << ev.rowCount);
+				return;
+			}
+			ev.rows.reserve(static_cast<size_t>(ev.rowCount));
+			for (int16_t i = 0; i < ev.rowCount; ++i)
+			{
+				// 每条固定 4+4+2+1+1 = 12 字节 + string(2 字节长度前缀)，先查最小长度。
+				if (recv.available() < 14)
+				{
+					LOG(LOG_WARN, "CashShopWindowSync: CATALOG row " << i << " truncated, chunk dropped");
+					return;
+				}
+				CashShopWindowCatalogRow row;
+				row.itemId = recv.read_int();
+				row.price = recv.read_int();
+				row.count = recv.read_short();
+				row.tab = recv.read_byte();
+				row.cat = recv.read_byte();
+				row.name = recv.read_string();  // read_string 自带长度前缀与边界检查
+				ev.rows.push_back(std::move(row));
+			}
+			LOG(LOG_DEBUG, "CashShopWindowSync: CATALOG tab=" << static_cast<int>(ev.tab)
+				<< " cat=" << static_cast<int>(ev.cat) << " rows=" << ev.rowCount
+				<< " clear=" << static_cast<int>(ev.clear));
+			break;
+		}
+		case 5:  // INDEX: short n + n×{byte tab, byte cat, int count}
+		{
+			if (recv.available() < 2)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: INDEX header truncated");
+				return;
+			}
+			const int16_t n = recv.read_short();
+			if (n < 0 || n > 4096)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: INDEX count out of range=" << n);
+				return;
+			}
+			ev.index.reserve(static_cast<size_t>(n));
+			for (int16_t i = 0; i < n; ++i)
+			{
+				if (recv.available() < 6)
+				{
+					LOG(LOG_WARN, "CashShopWindowSync: INDEX row " << i << " truncated, dropped");
+					return;
+				}
+				CashShopWindowIndexRow row;
+				row.tab = recv.read_byte();
+				row.cat = recv.read_byte();
+				row.count = recv.read_int();
+				if (row.count >= 0)
+					ev.index.push_back(std::move(row));
+			}
+			LOG(LOG_DEBUG, "CashShopWindowSync: INDEX rows=" << ev.index.size());
+			break;
+		}
+		case 6:  // TAXONOMY: short n + n×{int,int,byte,string,byte,byte,int,string}
+		{
+			if (recv.available() < 2)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: TAXONOMY header truncated");
+				return;
+			}
+			const int16_t n = recv.read_short();
+			if (n < 0 || n > 4096)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: TAXONOMY count out of range=" << n);
+				return;
+			}
+			ev.taxonomy.reserve(static_cast<size_t>(n));
+			for (int16_t i = 0; i < n; ++i)
+			{
+				// 固定 4+4+1+1+1+1+4 = 16 字节 + 2×string(各 2 字节长度前缀)
+				if (recv.available() < 20)
+				{
+					LOG(LOG_WARN, "CashShopWindowSync: TAXONOMY row " << i << " truncated, dropped");
+					return;
+				}
+				CashShopWindowTaxonomyRow row;
+				row.id = recv.read_int();
+				row.parentId = recv.read_int();
+				row.clickType = recv.read_byte();
+				row.clickParam = recv.read_string();
+				row.legacyTab = recv.read_byte();
+				row.legacyCat = recv.read_byte();
+				row.itemCount = recv.read_int();
+				row.name = recv.read_string();
+				ev.taxonomy.push_back(std::move(row));
+			}
+			LOG(LOG_DEBUG, "CashShopWindowSync: TAXONOMY rows=" << ev.taxonomy.size());
+			break;
+		}
+		case 2:  // BUY: byte code + int itemId
+		{
+			if (recv.available() < 5)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: BUY result truncated");
+				return;
+			}
+			ev.code = recv.read_byte();
+			ev.itemId = recv.read_int();
+			LOG(LOG_DEBUG, "CashShopWindowSync: BUY code=" << static_cast<int>(ev.code)
+				<< " item=" << ev.itemId);
+			break;
+		}
+		case 4:  // BUY_CART: byte code + int itemId + byte delivered + int spent
+		{
+			if (recv.available() < 10)
+			{
+				LOG(LOG_WARN, "CashShopWindowSync: BUY_CART result truncated");
+				return;
+			}
+			ev.code = recv.read_byte();
+			ev.itemId = recv.read_int();
+			ev.delivered = recv.read_byte();
+			ev.spent = recv.read_int();
+			LOG(LOG_DEBUG, "CashShopWindowSync: BUY_CART code=" << static_cast<int>(ev.code)
+				<< " item=" << ev.itemId << " delivered=" << static_cast<int>(ev.delivered)
+				<< " spent=" << ev.spent);
+			break;
+		}
+		default:
+			LOG(LOG_WARN, "CashShopWindowSync: unknown resp=" << static_cast<int>(resp) << ", dropped");
+			return;
+		}
+
+		// 只在收包线程入队；主线程会在 UI::update 中 pump。
+		CashShopWindowSync::enqueue(std::move(ev));
+	}
+
+	// ---- 192 UI_004 强化族结果快照（0x371E）----
+	// 装备数值由服务端标准 equip 包（ItemParser.add_equip）重建 Equip 后刷新；
+	// 本回包只负责让强化壳显示结果状态（成功/失败/破坏）与 BtOnemore。
+	void EnhanceResultHandler::handle(InPacket& recv) const
+	{
+		if (recv.available() < 3)
+			return;
+
+		const uint8_t action = static_cast<uint8_t>(recv.read_byte());
+		const uint8_t result = static_cast<uint8_t>(recv.read_byte());
+		const int16_t equip_slot = recv.read_short();
+
+		// 读剩余字段（即使暂不使用，也消费掉以保持包游标对齐）。
+		for (int i = 0; i < 5; ++i) recv.read_short();   // potential1/2/3 + bonus1/2
+		recv.read_short();                               // spark
+		recv.read_short();                               // soul
+		if (recv.available() >= 1) recv.read_byte();     // starForce
+		if (recv.available() >= 2) { recv.read_short(); recv.read_short(); } // vicious/slots
+
+		if (auto ui = UI::get().get_element<UIEnhance>())
+		{
+			if (ui->get_action() == action || action == 0)
+				ui->apply_result(result);
+		}
+
+		LOG(LOG_DEBUG, "[DBG-ENH] result action=" << static_cast<int>(action)
+			<< " result=" << static_cast<int>(result) << " eq=" << equip_slot);
 	}
 }
 

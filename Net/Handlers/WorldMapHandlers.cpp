@@ -41,4 +41,35 @@ namespace ms
 
 		LOG(LOG_INFO, "[WorldMap] players map=" << mapid << " n=" << players.size());
 	}
+
+	void WorldMapQuestMarksHandler::handle(InPacket& recv) const
+	{
+		// 与服务端写出顺序对齐：int prefix → short mapCount →
+		// mapCount × { int mapid, byte flags(bit0=可接/灯泡, bit1=可交付/书) }
+		const int32_t prefix = recv.read_int();
+		const int16_t mapCount = recv.read_short();
+
+		std::vector<WorldMapQuestMarks> marks;
+		if (mapCount > 0 && mapCount < 10000)
+		{
+			marks.reserve(static_cast<size_t>(mapCount));
+			for (int16_t i = 0; i < mapCount && recv.available() >= 5; i++)
+			{
+				WorldMapQuestMarks m;
+				m.mapid = recv.read_int();
+				const uint8_t flags = recv.read_byte();
+				m.can_accept = (flags & 0x01) != 0;
+				m.can_complete = (flags & 0x02) != 0;
+				marks.push_back(std::move(m));
+			}
+		}
+
+		while (recv.available())
+			recv.skip_byte();
+
+		if (auto wmap = UI::get().get_element<UIWorldMap>())
+			wmap->set_quest_marks(prefix, std::move(marks));
+
+		LOG(LOG_INFO, "[WorldMap] quest marks prefix=" << prefix << " n=" << marks.size());
+	}
 }

@@ -26,11 +26,15 @@
 #include "../../Configuration.h"
 #include "../../Util/ResolutionTiers.h"
 
+#include "../../Character/CombatPanelStats.h"
+#include "../../Character/SkillBonusCache.h"
+#include "../../Data/EquipGrowthData.h"
 #include "../../Gameplay/Stage.h"
 #include "../../IO/UI.h"
 #include "../../IO/Window.h"
 
 #include "../../IO/UITypes/UICharSelect.h"
+#include "../../IO/UITypes/UIMiniMap.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
 #include "../../Graphics/Color.h"
 
@@ -94,6 +98,9 @@ namespace ms
 		}
 
 		ResolutionTiers::apply_viewsize(width, height);
+		// 视口切换后主动刷新背景平铺（多分辨率自适应 A+C）：进游戏/换图/退出商城
+		// 都经过这里。Background::draw/天气 draw_list 另每帧实时重算作双保险。
+		Stage::get().on_viewport_changed();
 		LOG(LOG_INFO, "[MR] enter game viewport " << width << "x" << height << " tier=" << chosen);
 	}
 
@@ -155,16 +162,26 @@ namespace ms
 					Stage::get().load(mapid, portalid);
 					enter_game_log("[SetField] Stage::load ok");
 
-					// 切图残留二次清理：transition 入口 clear()(:222) 与新图 load()
-					// 之间隔着一个 fadeout 异步窗口，期间 :145 的 poll_events 可能把
-					// 上一张图的 drop/NPC/mob spawn 包重新入队；load() 只重建地图数据，
-					// 不清这些队列。若不清，淡入后旧包在新图 foothold 上实例化 →
-					// NPC 用旧 fh 坐标找不到落脚点被重力拉下 / drop 重播下落动画。
-					// 此处（load 后、下面的 poll_events 前）清一次，与入口 clear() 闭环。
-					Stage::get().get_npcs().clear_spawns();
-					Stage::get().get_mobs().clear_spawns();
-					Stage::get().get_drops().clear_spawns();
-					enter_game_log("[SetField] clear_spawns after load done");
+					// load 后按【当前图 foothold】重锚 spawn 队列（A+B 修复）：
+					// - 旧图残留包（fh 指向旧图/x 无平台）→ 丢弃，不再掉到下方平台
+					// - 新图提前包（fh 落在新图）→ 保留，不会像一刀切 clear 那样全灭
+					// 与 MapNpcs::instantiate 时的 resolve 幂等，双保险。
+					Stage::get().get_npcs().reanchor_spawns(Stage::get().get_physics());
+					// 2026-11-21：怪物侧对称重锚 —— 过滤 fadeout 窗口混入的旧图怪包，
+					// 根治"野外门→城镇后怪物跑到新地图"。与 NPC 同款，不误删新图合法刷怪。
+					Stage::get().get_mobs().reanchor_spawns(Stage::get().get_physics());
+					// 2026-11-21：掉落物侧对称重锚 —— 过滤 fadeout 窗口混入的旧图 drop 包，
+					// 根治"换图后地上出现旧图掉落动画"。与 NPC/Mob 同款，不误删新图合法掉落。
+					Stage::get().get_drops().reanchor_spawns(Stage::get().get_physics());
+					enter_game_log("[SetField] reanchor_spawns (npc+mob+drop) after load done");
+
+					// 2026-11-21：显式触发小地图"非玩家"列表重建（换图刷新新入口）。
+					// 原实现靠 UIMiniMap::update 每帧 mapid 差分：fadeout 时 clear() 已清
+					// npcs 但 mapid 未变 → 不刷；load 设新 mapid 后 npcs 为空 → 刷出空
+					// 列表，之后 spawn 进来 mapid 不再变 → 永不刷新。这里在 load+reanchor
+					// 成功后主动重建一次，UIMiniMap::update 的 size/oid 签名检测作兜底。
+					if (auto minimap = UI::get().get_element<UIMiniMap>())
+						minimap->refresh_npclist();
 
 					Window::get().poll_events();
 					seg("after_stage_load");
@@ -231,7 +248,8 @@ namespace ms
 			});
 
 		GraphicsGL::get().lock();
-		Stage::get().clear();
+		// 换图保留天气状态：消除 clear→0x373D 之间的"闪白天"，路灯不重新暖灯。
+		Stage::get().clear(true);
 		Timer::get().start();
 	}
 
@@ -286,6 +304,10 @@ namespace ms
 	void SetFieldHandler::set_field(InPacket& recv) const
 	{
 		enter_game_log("[SetField] set_field ENTRY avail=" + std::to_string(recv.available()));
+		// 进图/换频重载角色：清战斗面板与 tip 缓存，等服务端 refreshSetBonus / 0x17B 重填。
+		CombatPanelStats::get().clear();
+		SkillBonusCache::get().clear();
+		EquipGrowthData::clear_all();
 		recv.skip(23);
 		enter_game_log("[SetField] set_field after_skip avail=" + std::to_string(recv.available()));
 

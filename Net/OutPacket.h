@@ -301,9 +301,36 @@ namespace ms
 			WORLD_MAP_PLAYERS = 277,
 			/// s9 RecvOpcode.WORLD_MAP_DROP_REQUEST = 0x116
 			WORLD_MAP_DROP_REQUEST = 278,
+			/// 世界地图任务标记快照请求 = 0x11E（客户端→服务端，回包 0x17C）
+			WORLD_MAP_QUEST_MARKS_REQUEST = 0x11E,
+			/// BeiDou RecvOpcode.SET_ITEM_BONUS_REQUEST = 0x177（悬停按需拉套装文案）
+			SET_ITEM_BONUS_REQUEST = 0x177,
+			/// BeiDou RecvOpcode.EQUIP_GROWTH_TIP_REQUEST = 0x17D
+			EQUIP_GROWTH_TIP_REQUEST = 0x17D,
 			/// s9 RecvOpcode.SET_HPMPALERT = 0x1000（扩展通道）：
 			/// body = byte hp_step + byte mp_step（0..19 挡位，每挡 5%；服务端限幅）
 			SET_HPMPALERT = 4096,
+			/// s9 RecvOpcode.CHAT_EMOTICON = 0x3715（Kaentake 动态聊天表情，int emoticonId）
+			CHAT_EMOTICON = 14101,
+			/// s9 RecvOpcode.DAILY_CHECKIN = 0x3717（每日签到，byte action[+byte day]）
+			DAILY_CHECKIN = 14103,
+			/// s9 RecvOpcode.DAILY_GIFT_ACTION = 0x3721（192 每日礼物，双端协定）：
+			/// C→S 包体 = byte action(0 OPEN / 1 CLAIM) + [byte day]；
+			/// 服务端回 0x3722 快照 / 领奖结果，详见 DailyGiftPackets.h 与 DailyGiftHandler。
+			DAILY_GIFT_ACTION = 14113,
+			/// s9 RecvOpcode.WITCH_FOREST_ACTION = 0x3719（192 魔女森林抽奖，byte action[+byte drawType]）
+			WITCH_FOREST_ACTION = 14105,
+			/// s9 RecvOpcode.BREAKTHROUGH_STONE_ACTION = 0x371B（192 突破石，byte action[+int itemId]）
+			BREAKTHROUGH_STONE_ACTION = 14107,
+			/// s9 RecvOpcode.ENHANCE_ACTION = 0x371D（192 UI_004 强化族通用请求）
+			/// payload: byte action + short cashSlot + int cashId + short equipSlot
+			///          + short matSlot + byte mode（见 CONTRACT.md）
+			ENHANCE_ACTION = 14109,
+			/// s9 RecvOpcode.COLORING_PRISM_ACTION = 0x11D（七彩棱镜中文包，C→S）。
+			/// D1 切换：旧巴西服 WEAPON_TINT_ACTION(0x372E) 已随服务端一起废弃并移除；
+			/// 方向独立的 0x11D 在 Out 枚举中空闲（In 枚举的 COCONUT_HIT=285 属另一张表，不冲突）。
+			/// 包体首字节 byte action：0 REQUEST / 1 CONFIRM / 2 CLEAR（指南 §3.4）。
+			COLORING_PRISM_ACTION = 0x11D,
 			/// s9 RecvOpcode.RING_ACTION = 0x89 → RingActionHandler。
 			/// 求婚/订婚答复/解约/婚礼请柬/心愿单，全走首字节 mode 分发。
 			RING_ACTION = 137,
@@ -314,7 +341,18 @@ namespace ms
 			/// 仪式中宾客/新人点击祝福对话；服务端按 action 回 OnWeddingProgress。
 			/// 注：s9 另有 WEDDING_TALK_MORE = 0x8B 与之一值一 handler，本端不重复建枚举
 			/// （会被 opcode 门禁判为「声明未构造」死项）。
-			WEDDING_TALK = 139
+			WEDDING_TALK = 139,
+			/// 窗口内商城 C→S 动作（方案 C）。0x3730 = 14128，与 S10
+			/// CashShopWindowPackets.java 逐字节对齐：首字节 action（0 REQUEST_CATALOG /
+			/// 1 BUY / 2 BUY_CART / 3 REQUEST_CATEGORY / 4 CLICK_CATEGORY /
+			/// 5 EXPAND_SLOTS），详见 CashShopWindowPackets.h。
+			/// 注意：InPacket 枚举的 LIMIT_BREAK_SYNC=0x3730 是 S→C 方向的另一张表，不冲突。
+			CASHSHOP_WINDOW_ACTION = 14128,
+			/// 伤害皮肤选择（C→S，与 s9 RecvOpcode 0x3746/0x3747 对齐）：int skinId
+			DAMAGE_SKIN_APPLY = 14150,     // 0x3746 应用已拥有皮肤
+			DAMAGE_SKIN_PURCHASE = 14151,  // 0x3747 游戏币购买皮肤
+			/// 美容院 C→S 0x174（十进制 372）：byte action + 载荷
+			BEAUTY_ACTION = 372
 		};
 
 	protected:

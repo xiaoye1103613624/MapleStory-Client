@@ -680,6 +680,37 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// Kaentake 动态聊天表情广播（S->C 0x3716）：charId + emoticonId → 头顶动画。
+	class ChatEmoticonHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 每日签到快照（S->C 0x3718）。
+	class DailyCheckinHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 192 每日礼物 S->C 0x3722：respType=0 配置快照 / =1 领奖结果。
+	// 首包可能先于窗口发出，handler 负责 emplace + activate（侧栏点击只发 0x3721 OPEN）。
+	class DailyGiftHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 七彩棱镜染色下发（S->C 0x184，中文包）。
+	// respType：0 OPEN 开窗 / 1 DYE_LIST 本人 / 2 DYE_MERGE 他人。
+	// D1：旧巴西服 WeaponTintHandler(0x372F) 已移除，代之以本 handler。
+	class ColoringPrismHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
 	class UpdateHpMpAlertHandler : public PacketHandler
 	{
 	public:
@@ -1017,6 +1048,36 @@ namespace ms
 	};
 
 	class KoreanInternetCafeHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 192 魔女森林 / 突破石快照（0x371A / 0x371C）
+	class WitchForestHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	class BreakthroughStoneHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 192 UI_004 强化族结果快照（0x371E）：解析增强字段 → 更新本地 Equip
+	// → 刷新 UIEnhance / 装备栏 / Tooltip。见 CONTRACT.md。
+	class EnhanceResultHandler : public PacketHandler
+	{
+	public:
+		void handle(InPacket& recv) const override;
+	};
+
+	// 窗口内商城（方案 C）S→C 同步（0x3731 = 14129）。
+	// 收包线程只做「逐字段解析 + enqueue」，绝不在 handler 内 emplace/操作 UI；
+	// 主线程由 UI::update → CashShopWindowSync::pump 消费。
+	class CashShopWindowSyncHandler : public PacketHandler
 	{
 	public:
 		void handle(InPacket& recv) const override;

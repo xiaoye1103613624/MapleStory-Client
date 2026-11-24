@@ -48,6 +48,27 @@ namespace ms
 		void handle(InPacket& recv) const override;
 	};
 
+	// 技能窗 (+N)（SendOpcode.SET_SKILL_BONUS = 0x17A）
+	class SetSkillBonusHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 技改方案覆盖包（SendOpcode.SKILL_STAT_OVERRIDE = 0x3745）
+	// wire: short skillCount + { int skillId, byte levelCount,
+	//       每级 { byte level, byte fieldCount, 每字段 { byte keyIdx, int value } } }
+	// 空表（skillCount=0）= 清覆盖，回退 Skill.nx。
+	class SkillStatOverrideHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 装备成长 companion tip（SendOpcode.EQUIP_GROWTH_TIP = 0x17B）
+	class EquipGrowthTipHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
 	// 天气世界状态同步（SendOpcode.WEATHER_SYNC = 0x373D，2026-11-18）
 	// 服务端权威时钟/天空：落地到 weather::State；宽容解码兼容老 19B 包。
 	class WeatherSyncHandler : public PacketHandler
@@ -56,7 +77,7 @@ namespace ms
 	};
 
 	// 路灯预览（SendOpcode.LAMP_PREVIEW = 0x373F）：GM !lamp 本地放置/清除。
-	// D1 核心闭环暂只落地解析与状态缓存，实际灯渲染走 WeatherLamps（后续层）。
+	// 落地到 weather::Lamps::apply_preview（白天也可见，方便量坐标）。
 	class LampPreviewHandler : public PacketHandler
 	{
 		void handle(InPacket& recv) const override;
@@ -65,6 +86,45 @@ namespace ms
 	// 天气强度档（SendOpcode.WEATHER_INTENSITY = 0x3741）：
 	// wire = short version | byte[9] intensities(0轻/1中/2强)，落地到 weather::Config。
 	class WeatherIntensityHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 2026-11-23 V2：气象现象强度/游戏日期（SendOpcode.WEATHER_ELEMENT = 0x3742）。
+	// wire = short version | short gameDate(MMdd) | byte[16] elements(0..3)，落地 weather::State。
+	class WeatherElementHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 侧栏菜单同步（SendOpcode.SIDE_MENU_SYNC = 0x3743）：
+	// wire = int revision | maple-string UTF-8 JSON（side_menu schema）。
+	// 落盘 side_menu.json 并热重载 UISideIconBar；revision 不新则忽略。
+	class SideMenuSyncHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 伤害皮肤 picker 下行（S→C 0x3746..0x3749），落 DamageSkinState，由 picker 读取。
+	class DamageSkinCatalogHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+	class DamageSkinInventoryHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+	class DamageSkinResultHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+	class DamageSkinBroadcastHandler : public PacketHandler
+	{
+		void handle(InPacket& recv) const override;
+	};
+
+	// 美容院下行（S→C 0x174）：byte respType(0 OPEN / 1 DATA) + 造型槽数据。
+	class BeautyResultHandler : public PacketHandler
 	{
 		void handle(InPacket& recv) const override;
 	};
