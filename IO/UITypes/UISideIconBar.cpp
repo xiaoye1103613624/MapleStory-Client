@@ -70,10 +70,29 @@ namespace ms
 	{
 		layout_policy = LayoutPolicy::None;
 		active = Setting<SideIconsEnabled>::get().load();
+		load_flyout_panel();
 		reload_config();
 		update_screen(
 			Constants::Constants::get().get_viewwidth(),
 			Constants::Constants::get().get_viewheight());
+	}
+
+	void UISideIconBar::load_flyout_panel()
+	{
+#ifdef USE_NX
+		// 复用 ShortCutUI 三段底板；目录展开贴右侧，观感对齐高版本左侧功能框。
+		nl::node shortroot = UiAssetResolve::window4("ShortCutUI");
+		if (UiAssetResolve::usable(shortroot["top"]))
+			tex_fly_top = Texture(shortroot["top"]);
+		if (UiAssetResolve::usable(shortroot["middle"]))
+			tex_fly_middle = Texture(shortroot["middle"]);
+		if (UiAssetResolve::usable(shortroot["bottom"]))
+			tex_fly_bottom = Texture(shortroot["bottom"]);
+		if (!tex_fly_top.is_valid() || !tex_fly_middle.is_valid() || !tex_fly_bottom.is_valid())
+		{
+			LOG(LOG_WARN, "UISideIconBar: ShortCutUI top/middle/bottom missing; flyout panel bg incomplete");
+		}
+#endif
 	}
 
 	void UISideIconBar::reload_config()
@@ -126,6 +145,8 @@ namespace ms
 	void UISideIconBar::close_flyout()
 	{
 		expanded_folder_id.clear();
+		fly_panel_lines = 0;
+		fly_panel_rel = Point<int16_t>(0, 0);
 		clear_flyout_buttons();
 	}
 
@@ -240,6 +261,8 @@ namespace ms
 
 	void UISideIconBar::layout_flyout()
 	{
+		fly_panel_lines = 0;
+		fly_panel_rel = Point<int16_t>(0, 0);
 		if (fly_button_ids.empty() || expanded_folder_id.empty())
 			return;
 
@@ -263,8 +286,8 @@ namespace ms
 
 		const Rectangle<int16_t> fb = fit->second->bounds(position);
 		// 避免 Win32 RECT 字段名宏/解析歧义：用 Point 访问而非 right()/top()。
-		int16_t start_x = static_cast<int16_t>(fb.get_right_bottom().x() + FLY_GAP);
-		int16_t start_y = fb.get_left_top().y();
+		int16_t panel_abs_x = static_cast<int16_t>(fb.get_right_bottom().x() + FLY_GAP);
+		int16_t panel_abs_y = fb.get_left_top().y();
 
 		const int16_t vw = view_w > 0
 			? view_w
@@ -273,6 +296,27 @@ namespace ms
 			? view_h
 			: Constants::Constants::get().get_viewheight();
 
+		const int16_t rows = static_cast<int16_t>(
+			(fly_button_ids.size() + static_cast<size_t>(FLY_COLS) - 1) / static_cast<size_t>(FLY_COLS));
+		fly_panel_lines = rows;
+		const int16_t panel_h = static_cast<int16_t>(
+			FLY_TOP_H + FLY_MIDDLE_H * rows + FLY_BOTTOM_H);
+
+		// 贴目录右侧；越界时整体左移/上移夹回视口。
+		if (panel_abs_x + FLY_PANEL_W > vw)
+			panel_abs_x = static_cast<int16_t>(std::max<int16_t>(0, vw - FLY_PANEL_W));
+		if (panel_abs_y + panel_h > vh)
+			panel_abs_y = static_cast<int16_t>(std::max<int16_t>(0, vh - panel_h));
+		if (panel_abs_y < 0)
+			panel_abs_y = 0;
+
+		fly_panel_rel = Point<int16_t>(
+			static_cast<int16_t>(panel_abs_x - position.x()),
+			static_cast<int16_t>(panel_abs_y - position.y()));
+
+		// 图标格点对齐 ShortCutUI IDA 公式（相对面板左上）：
+		//   x = ((56-iconW)>>1) + 56*col + 10
+		//   y = 92*row + 33
 		for (size_t i = 0; i < fly_button_ids.size(); ++i)
 		{
 			auto it = buttons.find(fly_button_ids[i]);
@@ -281,35 +325,30 @@ namespace ms
 
 			const int col = static_cast<int>(i % FLY_COLS);
 			const int row = static_cast<int>(i / FLY_COLS);
-			int16_t x = static_cast<int16_t>(start_x + col * FLY_PITCH_X);
-			int16_t y = static_cast<int16_t>(start_y + row * FLY_PITCH_Y);
+			const int16_t icon_w = std::max<int16_t>(it->second->width(), 1);
+			const int16_t cell_x = static_cast<int16_t>(
+				((FLY_PITCH_X - icon_w) >> 1) + FLY_PITCH_X * col + FLY_ICON_X_PAD);
+			const int16_t cell_y = static_cast<int16_t>(FLY_PITCH_Y * row + FLY_TOP_H);
 
-			// Clamp into viewport (flyout positions are absolute; button pos is relative to element).
-			int16_t rel_x = static_cast<int16_t>(x - position.x());
-			int16_t rel_y = static_cast<int16_t>(y - position.y());
+			const int16_t abs_x = static_cast<int16_t>(panel_abs_x + cell_x);
+			const int16_t abs_y = static_cast<int16_t>(panel_abs_y + cell_y);
+			const int16_t rel_x = static_cast<int16_t>(abs_x - position.x());
+			const int16_t rel_y = static_cast<int16_t>(abs_y - position.y());
 
 			const Point<int16_t> org = it->second->origin();
 			it->second->set_position(Point<int16_t>(
 				static_cast<int16_t>(rel_x + org.x()),
 				static_cast<int16_t>(rel_y + org.y())));
 			it->second->set_active(true);
-
-			// Soft clamp: if past right edge, shift column start left next rebuild via start_x.
-			(void)vw;
-			(void)vh;
 		}
 
-		// Expand element hit box to cover flyout so clicks are received.
-		// 原实现此处 dimensional.x() 自叠加写错、且把高度直接压成 extra_h（覆盖 root 竖栏高度），
-		// 修正为：宽度 = root 宽 + flyout 横跨宽；高度 = max(root 高, flyout 起始 y + 行数高)。
-		const int16_t cols_used = static_cast<int16_t>(
-			std::min<int16_t>(FLY_COLS, static_cast<int16_t>(fly_button_ids.size())));
-		const int16_t rows = static_cast<int16_t>((fly_button_ids.size() + FLY_COLS - 1) / FLY_COLS);
-		const int16_t fly_w = static_cast<int16_t>(FLY_GAP + cols_used * FLY_PITCH_X);
-		const int16_t fly_h = static_cast<int16_t>((start_y - position.y()) + rows * FLY_PITCH_Y);
+		// 命中盒覆盖竖栏 + 右侧面板。
+		const int16_t fly_w = static_cast<int16_t>(FLY_GAP + FLY_PANEL_W);
+		const int16_t fly_bottom = static_cast<int16_t>(
+			(panel_abs_y - position.y()) + panel_h);
 		dimension = Point<int16_t>(
 			static_cast<int16_t>(dimension.x() + fly_w),
-			static_cast<int16_t>(std::max<int16_t>(dimension.y(), fly_h)));
+			static_cast<int16_t>(std::max<int16_t>(dimension.y(), fly_bottom)));
 	}
 
 	void UISideIconBar::defer_rebuild()
@@ -404,6 +443,26 @@ namespace ms
 	{
 		if (!active)
 			return;
+
+		// 先画 ShortCutUI 三段底板，再画竖栏/成员按钮（成员叠在框内）。
+		if (!expanded_folder_id.empty() && fly_panel_lines > 0
+			&& tex_fly_top.is_valid() && tex_fly_middle.is_valid() && tex_fly_bottom.is_valid())
+		{
+			const float fade = fade_alpha();
+			const Point<int16_t> panel_pos(position + fly_panel_rel);
+			tex_fly_top.draw(DrawArgument(panel_pos) + fade);
+			for (int16_t r = 0; r < fly_panel_lines; ++r)
+			{
+				const Point<int16_t> row_pos(
+					panel_pos.x(),
+					static_cast<int16_t>(panel_pos.y() + FLY_TOP_H + FLY_MIDDLE_H * r));
+				tex_fly_middle.draw(DrawArgument(row_pos) + fade);
+			}
+			tex_fly_bottom.draw(DrawArgument(Point<int16_t>(
+				panel_pos.x(),
+				static_cast<int16_t>(panel_pos.y() + FLY_TOP_H + FLY_MIDDLE_H * fly_panel_lines))) + fade);
+		}
+
 		UIElement::draw(inter);
 	}
 

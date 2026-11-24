@@ -21,6 +21,7 @@
 #include "../IO/UITypes/UIMedal.h"
 #include "../IO/UITypes/UIMonsterBook.h"
 #include "../IO/UITypes/UIMysticBadge.h"
+#include "../IO/UITypes/UIEquipInventory.h"
 #include "../IO/UITypes/UINotice.h"
 #include "../IO/UITypes/UIOptionMenu.h"
 #include "../IO/UITypes/UIQuestLog.h"
@@ -87,7 +88,13 @@ namespace ms
 				add("alliance", u8"联盟", "Alliance", [] { UI::get().emplace<UIAlliance>(); });
 				add("chatemoticon", u8"聊天表情", "ChatEmoticon", [] { UI::get().emplace<UIChatEmoticon>(); });
 				add("mysticbadge", u8"神秘徽章", "MysticBadge", [] {
-					UI::get().emplace<UIMysticBadge>(Stage::get().get_player().get_inventory());
+					// 神秘徽章原生跟装备窗左侧停靠（sync_side_panels）；单独 emplace 会落在 (0,0)。
+					auto& inv = Stage::get().get_player().get_inventory();
+					auto eq = UI::get().get_element<UIEquipInventory>();
+					if (!eq)
+						eq = UI::get().emplace<UIEquipInventory>(inv);
+					if (eq)
+						eq->makeactive(); // makeactive → sync_side_panels → emplace/anchor mystic
 				});
 				add("medal", u8"勋章", "Medal", [] { UI::get().emplace<UIMedal>(); });
 				add("family", u8"家族", "Family", [] { UI::get().emplace<UIFamily>(); });

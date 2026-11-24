@@ -78,6 +78,10 @@ namespace ms
 		}
 #endif
 
+		// SideMenu / 快捷入口打开时避免落在 (0,0)；分辨率变化保持居中。
+		layout_policy = LayoutPolicy::Center;
+		center_on_screen();
+
 		list_origin = Point<int16_t>(24, 86);
 		load_recipes();
 		

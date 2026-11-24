@@ -5,6 +5,7 @@
 
 #include "../UIElement.h"
 #include "../../Util/SideMenuConfig.h"
+#include "../../Graphics/Texture.h"
 
 #include <string>
 #include <vector>
@@ -48,10 +49,16 @@ namespace ms
 			BT_FLY0 = 200
 		};
 
+		// 目录右侧 flyout：复用 192 ShortCutUI 三段底板与格距（贴目录右，非屏幕居中）。
 		static constexpr int16_t SLOT_GAP = 4;
 		static constexpr int16_t FLY_GAP = 8;
+		static constexpr int16_t FLY_PANEL_W = 353;
+		static constexpr int16_t FLY_TOP_H = 33;
+		static constexpr int16_t FLY_MIDDLE_H = 92;
+		static constexpr int16_t FLY_BOTTOM_H = 33;
 		static constexpr int16_t FLY_PITCH_X = 56;
-		static constexpr int16_t FLY_PITCH_Y = 56;
+		static constexpr int16_t FLY_PITCH_Y = 92;
+		static constexpr int16_t FLY_ICON_X_PAD = 10;
 		static constexpr int16_t FLY_COLS = 6;
 		static constexpr int16_t MARGIN_X = 4;
 		static constexpr int16_t MAX_ROOT = 16;
@@ -68,6 +75,7 @@ namespace ms
 		void dispatch_npc_script(const std::string& arg);
 		bool try_make_frame_button(uint16_t id, const std::string& icon_key, size_t atlas_slot);
 		bool make_btmain_button();
+		void load_flyout_panel();
 
 		SideMenuConfig::Document doc;
 		std::vector<SideMenuConfig::Item> root;
@@ -75,6 +83,12 @@ namespace ms
 		std::vector<SideMenuConfig::Item> fly_items;
 		std::vector<uint16_t> fly_button_ids;
 		std::string expanded_folder_id;
+		// flyout 底板相对本 element 原点的左上角；lines = middle 重复行数。
+		Point<int16_t> fly_panel_rel;
+		int16_t fly_panel_lines = 0;
+		Texture tex_fly_top;
+		Texture tex_fly_middle;
+		Texture tex_fly_bottom;
 		int16_t view_w = 800;
 		int16_t view_h = 600;
 		int reload_cooldown = 0;

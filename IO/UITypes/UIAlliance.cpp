@@ -72,6 +72,10 @@ namespace ms
 			buttons[Buttons::BtNotice] = std::make_unique<MapleButton>(bnotice, Point<int16_t>(260, dimension.y() - 36));
 #endif
 
+		// SideMenu / 快捷入口打开时避免落在 (0,0)；分辨率变化保持居中。
+		layout_policy = LayoutPolicy::Center;
+		center_on_screen();
+
 		// 打开即请求联盟信息（服务端回 getAllianceInfo 0x0C）
 		AllianceActionPacket(0x01).dispatch();
 	}
