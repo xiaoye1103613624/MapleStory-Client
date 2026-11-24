@@ -100,5 +100,26 @@ namespace ms
 		mutable std::vector<int32_t> draw_order;
 		// ui.buff_timer：是否在图标上叠加剩余时间文本。
 		bool show_timer;
+
+		// 右上角 buff 下方的游戏内时间 hh:mm（2026-11-23）。数据源为天气世界
+		// 状态 State::minute_of_day()，与夜色同源；无 0x373D（has_state=false）
+		// 时不画。非交互文本，不影响 is_in_range/rightclick 命中。
+		Text timeclock_label;
+		Text timeclock_outline;
+		int16_t timeclock_shown_minute = -1;
+		int16_t timeclock_shown_date = -1;   // 2026-11-23 V2：MMdd，换日也需重排文本
+
+		// 2026-11-23 天气图标：时间大字右侧的短标签（晴/阴/雨/雪/雷/雾）。
+		// 用 CJK 单字而非 emoji：字体为 SourceHanSerifSC，emoji 码点缺字会变方块。
+		Text weatherglyph_label;
+		Text weatherglyph_outline;
+		std::string weatherglyph_shown_key;
+
+		// 2026-11-23 天气×元素 HUD 提示：在时间行下方显示当前天气眷顾的元素。
+		// 客户端不改协议：只按天气 State::sky() 做本地映射（与 DB 种子表一致），
+		// 倍率由服务端权威，客户端只显示元素名，不显示具体数值。
+		Text elementhint_label;
+		Text elementhint_outline;
+		std::string elementhint_shown_key;
 	};
 }

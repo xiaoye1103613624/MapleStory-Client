@@ -23,6 +23,13 @@ namespace ms
 		pressed = false;
 	}
 
+	void LocalTwoSpriteButton::set_position(Point<int16_t> newpos)
+	{
+		// 与 TwoSpriteButton 一致：同步基类 position 与实际绘制用的 pos。
+		Button::set_position(newpos);
+		pos = newpos;
+	}
+
 	void LocalTwoSpriteButton::draw(Point<int16_t> parentpos) const
 	{
 		if (!active)

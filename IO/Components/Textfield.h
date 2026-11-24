@@ -52,6 +52,17 @@ namespace ms
 		void set_limit(size_t limit);
 		/// 文字相对 bounds 左上角的绘制偏移（FreeType 基线在 y，木牌矮槽需下移）。
 		void set_text_shift(Point<int16_t> shift) { text_shift = shift; }
+		/// 把当前文字墨迹垂直居中到高 box_height 的槽：绘制点 y 须先减掉
+		/// 该 Text 自身的 ink_offset（Text.h:146-164），再按墨迹高度居中。
+		/// 背包页码框 24x16 用此法避免数字掉到框外下方（2026-11-23）。
+		void center_text_vertically(int16_t box_height)
+		{
+			// 单行文字：layout height == linespace，墨迹只占其中 linespace-ink_offset
+			// 那一段；按墨迹高居中才不会偏上（Text.cpp:161 / GraphicsGL.cpp:483）。
+			const int16_t ink_height = textlabel.height() - textlabel.ink_offset();
+			const int16_t ink_top = static_cast<int16_t>((box_height - ink_height) / 2);
+			text_shift = Point<int16_t>(text_shift.x(), textlabel.y_for_ink_top(ink_top));
+		}
 		/// 允许接收 UTF-8（IME/剪贴板中文）。默认 false（账号/密码等仍限 ASCII）。
 		void set_accept_unicode(bool accept) { accept_unicode = accept; }
 		/// 仅接收 0-9 数字（背包页码输入框）。默认 false。

@@ -1,23 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 //	D1 / 分号键「勋章」窗（v83 MEDAL = CUIMedalQuestInfo，Angel ctor @0x840170）
 //
-//	原生模型（2026-11-11 turn8 取证，evidence/d1b_ida.json + d1c_detail.json）：
-//	  ctor CreateWnd 260x374；CCtrlTab 4 页签 + 初始 SetTab(100) —— 「基本」页
-//	  不是页签 0，而是 tab==100 的「已获得全量列表」特殊态（Draw @0x843bf6：
-//	  v6==100 分支步进 49 双行文本；v6 0..3 分支步进 23 分类目录）。
-//	  中文勋章框.png 5 页签 = [基本(=100 全量) | 职业 | 一般 | 挑战 | 活动]，
-//	  分类页签 0..3 ↔ medalCategory 1/缺失/2/3（探针分布 1:16/2:28/3:2/缺失:26）。
-//	  数据源 = QuestInfo.img viewMedalItem≠0（82 条）× QuestLog::is_completed。
-//	  行点击（OnMouseButton @0x841678）：命中行→选中；再点已选中行→ToggleDetail
-//	  → CUIMedalQuestInfoDetail 305x373（Angel ctor @0x83d255）。P1：无 114xxxx
-//	    图标素材时以文本 Detail 浮层（305x373 ColorBox）呈现任务名/道具号/摘要。
-//	  状态文本 SP_5301「可获得」/SP_5302「挑战中」（IsStateButton 语义，
-//	  本地以 meets_requirements 近似，注释标明）。
+//	原生模型（2026-11-11 turn8 取证 + W2 2026-11-20 IMG 复核）：
+//	  ctor CreateWnd 260x374；CCtrlTab + 初始 SetTab(100) 「基本」= 已获得全量。
+//	  Draw @0x843bf6：tab==100 步进 49；分类 0..3 步进 23。
+//	  行点击 OnMouseButton @0x841678 → 再点 ToggleDetail → Detail 305x373 @0x83d255。
+//	  数据源 QuestInfo.img viewMedalItem × QuestLog::is_completed。
 //
-//	素材判定（探针否定，不盲改）：
-//	  · Title 根件对 勋章框.png SAD=46~214 无一坐实（d1b_title_assets.json）→
-//	    窗框保留 ColorBox 复用件，不换 Title。
-//	  · Item.nx 无 114xxxx 勋章画布 → 图标列仍预留；String/Eqp 有名则文本态显示。
+//	素材（W2 / orange-wz live UIWindow.img/Title）：
+//	  Title/backgrnd 260x374、Title/Tab/{enabled,disabled}/0..4、
+//	  Title/backgrnd3|5 305x373 Detail 框 —— 有节点则优先真材，缺则 ColorBox 兜底。
+//	  历史 SAD 否定仅针对截帧像素匹配，不否决节点存在时的源码级绑定。
+//	  114xxxx 无画布 → 文本态；禁止盲补 WZ。
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
@@ -161,6 +155,14 @@ namespace ms
 		Text title;
 		Text count_label;
 		Text empty_hint;
+
+		// W2：UIWindow.img/Title 真材（有则优先生效）
+		bool has_title_frame = false;
+		bool has_detail_frame = false;
+		Texture title_frame;			// Title/backgrnd 260x374
+		Texture detail_tex;				// Title/backgrnd3 305x373
+		std::vector<Texture> tab_on;	// Title/Tab/enabled/0..4
+		std::vector<Texture> tab_off;	// Title/Tab/disabled/0..4
 
 		ColorBox detail_frame;
 		ColorBox detail_back;

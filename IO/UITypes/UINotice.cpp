@@ -23,6 +23,7 @@
 
 #include "../../Audio/Audio.h"
 #include "../../Util/Misc.h"
+#include "../../Util/Locale.h"
 #include "../../Util/ResolutionTiers.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -384,13 +385,13 @@ namespace ms
 		if (num < 1)
 		{
 			numfield.set_state(Textfield::State::DISABLED);
-			UI::get().emplace<UIOk>("You may only enter a number equal to or higher than 1.", okhandler);
+			UI::get().emplace<UIOk>(Locale::text("uinotice.num_min1"), okhandler);
 			return;
 		}
 		else if (num > max)
 		{
 			numfield.set_state(Textfield::State::DISABLED);
-			UI::get().emplace<UIOk>("You may only enter a number equal to or lower than " + std::to_string(max) + ".", okhandler);
+			UI::get().emplace<UIOk>(Locale::format("uinotice.num_max", std::to_string(max)), okhandler);
 			return;
 		}
 		else
@@ -400,6 +401,125 @@ namespace ms
 		}
 
 		buttons[Buttons::OK]->set_state(Button::State::NORMAL);
+	}
+
+	UIEnterString::UIEnterString(std::string message, std::function<void(std::string)> handler,
+		size_t limit, bool accept_unicode)
+		: UINotice(message, NoticeType::ENTERNUMBER)
+	{
+		strhandler = std::move(handler);
+		maxlen = limit > 0 ? limit : 12;
+
+		nl::node basic = nl::nx::UI["Basic.img"];
+		const int16_t by = button_row_y();
+		const int16_t btns_w = 47;
+		const int16_t right_margin = 21;
+		const int16_t gap = 10;
+		const int16_t cancel_x = static_cast<int16_t>(box_width() - right_margin - btns_w);
+		const int16_t ok_x = static_cast<int16_t>(cancel_x - gap - btns_w);
+
+		buttons[Buttons::OK] = std::make_unique<MapleButton>(basic["BtOK2"], Point<int16_t>(ok_x, by));
+		buttons[Buttons::CANCEL] = std::make_unique<MapleButton>(basic["BtCancel2"], Point<int16_t>(cancel_x, by));
+
+		Point<int16_t> field_pos = Point<int16_t>(10, panel_bottom() + 10);
+		Point<int16_t> field_dim = Point<int16_t>(240, 16);
+
+		strfield = Textfield(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+			Rectangle<int16_t>(field_pos, field_pos + field_dim), maxlen);
+		if (accept_unicode)
+			strfield.set_accept_unicode(true);
+
+		strfield.set_enter_callback(
+			[&](std::string text)
+			{
+				handlestring(std::move(text));
+			}
+		);
+		strfield.set_key_callback(
+			KeyAction::Id::ESCAPE,
+			[&]()
+			{
+				deactivate();
+			}
+		);
+		strfield.set_state(Textfield::State::FOCUSED);
+	}
+
+	void UIEnterString::draw(float alpha) const
+	{
+		UINotice::draw(true);
+		UIElement::draw(alpha);
+		strfield.draw(position);
+	}
+
+	void UIEnterString::update()
+	{
+		UIElement::update();
+		strfield.update();
+	}
+
+	Cursor::State UIEnterString::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	{
+		if (strfield.get_state() == Textfield::State::NORMAL)
+		{
+			Cursor::State nstate = strfield.send_cursor(cursorpos - position, clicked);
+			if (nstate != Cursor::State::IDLE)
+				return nstate;
+		}
+		return UIElement::send_cursor(clicked, cursorpos);
+	}
+
+	void UIEnterString::send_key(int32_t keycode, bool pressed, bool escape)
+	{
+		if (!pressed) return;
+		if (keycode == KeyAction::Id::RETURN)
+		{
+			handlestring(strfield.get_text());
+		}
+		else if (escape)
+		{
+			deactivate();
+		}
+	}
+
+	UIElement::Type UIEnterString::get_type() const
+	{
+		return TYPE;
+	}
+
+	Button::State UIEnterString::button_pressed(uint16_t buttonid)
+	{
+		switch (buttonid)
+		{
+			case Buttons::OK:
+				handlestring(strfield.get_text());
+				break;
+			case Buttons::CANCEL:
+				deactivate();
+				break;
+		}
+		return Button::State::NORMAL;
+	}
+
+	void UIEnterString::handlestring(std::string text)
+	{
+		// trim ends
+		while (!text.empty() && (text.back() == ' ' || text.back() == '\t'))
+			text.pop_back();
+		size_t start = 0;
+		while (start < text.size() && (text[start] == ' ' || text[start] == '\t'))
+			++start;
+		if (start > 0)
+			text = text.substr(start);
+
+		if (text.empty())
+			return;
+		if (text.size() > maxlen)
+			text.resize(maxlen);
+
+		if (strhandler)
+			strhandler(text);
+		deactivate();
 	}
 
 	UIOk::UIOk(std::string message, std::function<void(bool ok)> oh) : UINotice(message, NoticeType::OK)

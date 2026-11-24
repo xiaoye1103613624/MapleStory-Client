@@ -506,17 +506,25 @@ private:
 	bool find_megaphone(int16_t& slot, int32_t& itemid) const;
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
+// 个人店开店壳：窗内 Textfield 店名 + BtStart CREATE（514 优先）；货架见 UIMerchant。
 class UIPersonalShop : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::PERSONALSHOP;
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIPersonalShop();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	UIElement::Type get_type() const override;
 	void set_tip(const std::string& tip);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture backgrnd; Text tip_label;
+	enum Buttons : uint16_t { BtStart, BtExit, BtClose };
+	void do_create();
+	void do_exit();
+	bool has_assets = false; Texture backgrnd; Text tip_label; Textfield title_field;
 };
 class UIMemberShop : public UIDragElement<PosNOTICE> {
 public:
@@ -524,10 +532,17 @@ public:
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIMemberShop();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	UIElement::Type get_type() const override;
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture backgrnd; Text tip_label;
+	enum Buttons : uint16_t { BtStart, BtExit };
+	void do_create();
+	void do_exit();
+	bool has_assets = false; Texture backgrnd; Text tip_label; Textfield title_field;
 };
 /// 兼容壳：构造时委托 [`UITrade`]（Angel CTradingRoomDlg 唯一真窗）。
 class UITradingRoom : public UIDragElement<PosNOTICE> {
@@ -541,17 +556,25 @@ public:
 private:
 	bool has_assets = false; Texture backgrnd; Text tip_label;
 };
+// 雇佣商人开店壳：店名 Textfield + BtStart CREATE type5（503）；货架见 UIMerchant。
 class UIEntrustedShop : public UIDragElement<PosNOTICE> {
 public:
 	static constexpr Type TYPE = UIElement::Type::ENTRUSTEDSHOP;
 	static constexpr bool FOCUSED = true; static constexpr bool TOGGLED = false;
 	UIEntrustedShop();
 	void draw(float inter) const override;
+	void update() override;
 	void send_key(int32_t keycode, bool pressed, bool escape) override;
+	Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 	UIElement::Type get_type() const override;
 	void set_tip(const std::string& tip);
+protected:
+	Button::State button_pressed(uint16_t buttonid) override;
 private:
-	bool has_assets = false; Texture backgrnd; Text tip_label;
+	enum Buttons : uint16_t { BtStart, BtExit, BtClose };
+	void do_create();
+	void do_exit();
+	bool has_assets = false; Texture backgrnd; Text tip_label; Textfield title_field;
 };
 /// 兼容壳：Angel CCashTradingRoomDlg 出站仍走 PLAYER_INTERACTION(123)，委托 UITrade。
 class UICashTradingRoom : public UIDragElement<PosNOTICE> {

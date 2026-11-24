@@ -46,7 +46,7 @@ namespace ms
 		virtual bool in_combobox(Point<int16_t> cursorpos);
 		virtual uint16_t get_selected() const;
 
-		void set_position(Point<int16_t> position);
+		virtual void set_position(Point<int16_t> position);
 		void set_state(State state);
 		void set_active(bool active);
 		void toggle_pressed();

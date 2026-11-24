@@ -177,7 +177,7 @@ namespace ms
 		try_btn(Buttons::BtArrayGet, collect["BtArrayGet"], bottom_window_adj);
 		try_btn(Buttons::BtArrayName, collect["BtArrayName"], bottom_window_adj);
 
-		medal_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, Locale::text("charinfo.medal_stub"));
+		medal_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "-");
 		medal_total = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR, "2");
 
 		collect_dimensions = Texture(collect_backgrnd).get_dimensions();
@@ -575,9 +575,6 @@ namespace ms
 		Rectangle<int16_t> bottom_bounds = Rectangle<int16_t>(Point<int16_t>(0, 0), Point<int16_t>(0, 0));
 		Rectangle<int16_t> right_bounds = Rectangle<int16_t>(Point<int16_t>(0, 0), Point<int16_t>(0, 0));
 
-		int16_t cur_x = cursorpos.x();
-		int16_t cur_y = cursorpos.y();
-
 		if (personality_enabled)
 		{
 			bottom_bounds = Rectangle<int16_t>(position, position + personality_dimensions);
@@ -596,26 +593,65 @@ namespace ms
 			bottom_bounds.shift(bottom_window_adj);
 		}
 
+		// 旧 item_enabled 只覆盖 UserInfo/item 小浮层；六子窗改走 active_panel + 独立底板。
 		if (item_enabled)
 		{
 			right_bounds = Rectangle<int16_t>(position, position + item_dimensions);
 			right_bounds.shift(right_window_adj);
 		}
 
-		return bounds.contains(cursorpos) || farm_bounds.contains(cursorpos) || bottom_bounds.contains(cursorpos) || right_bounds.contains(cursorpos);
+		auto panel_bounds = [&](const Sprite& bg, bool use_panel_offset) -> Rectangle<int16_t>
+		{
+			if (bg.width() <= 0 || bg.height() <= 0)
+				return Rectangle<int16_t>(Point<int16_t>(0, 0), Point<int16_t>(0, 0));
+
+			Point<int16_t> origin = use_panel_offset ? (position + panel_offset) : position;
+			return Rectangle<int16_t>(origin, origin + Point<int16_t>(bg.width(), bg.height()));
+		};
+
+		Rectangle<int16_t> sub_bounds(Point<int16_t>(0, 0), Point<int16_t>(0, 0));
+
+		switch (active_panel)
+		{
+		case SubPanel::ITEM:
+			sub_bounds = panel_bounds(panel_bg_item, true);
+			break;
+		case SubPanel::WISH:
+			sub_bounds = panel_bounds(panel_bg_wish, true);
+			break;
+		case SubPanel::EXCLUDE:
+			sub_bounds = panel_bounds(panel_bg_exclude, true);
+			break;
+		case SubPanel::PET:
+			sub_bounds = panel_bounds(panel_bg_pet, false);
+			break;
+		case SubPanel::MOUNT:
+			sub_bounds = panel_bounds(panel_bg_mount, false);
+			break;
+		case SubPanel::MEDAL:
+			sub_bounds = panel_bounds(panel_bg_medal, false);
+			break;
+		default:
+			break;
+		}
+
+		return bounds.contains(cursorpos)
+			|| farm_bounds.contains(cursorpos)
+			|| bottom_bounds.contains(cursorpos)
+			|| right_bounds.contains(cursorpos)
+			|| sub_bounds.contains(cursorpos);
 	}
 
 	Cursor::State UICharInfo::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
 		Cursor::State state = UIDragElement<PosCHARINFO>::send_cursor(clicked, cursorpos);
 
-		// 道具/想买的 子窗：悬浮到含装备的槽位弹 item tooltip（含装备属性）；移开清除。
-		// 命中矩形按当前展开的面板与 panel_offset 平移，避免与主窗其它按钮冲突。
+		// 道具/想买的：每帧重挂 tip（UIStateGame 派发入口先清 tooltip，仅 on-change 会一闪即没）。
 		int16_t new_hover = -1;
 		if (active_panel == SubPanel::ITEM || active_panel == SubPanel::WISH)
 		{
 			const std::vector<ItemSlotView>& views = (active_panel == SubPanel::ITEM) ? item_views : wish_views;
-			Point<int16_t> org = position + panel_offset;  // 道具/想买的同为 240x162 右侧浮层
+			Point<int16_t> org = position + panel_offset;
 			for (size_t i = 0; i < views.size(); i++)
 			{
 				if (!views[i].itemid)
@@ -631,22 +667,21 @@ namespace ms
 				}
 			}
 		}
-		if (new_hover != hovered_slot)
+
+		hovered_slot = new_hover;
+		if (hovered_slot >= 0)
 		{
-			hovered_slot = new_hover;
-			if (hovered_slot >= 0)
-			{
-				int32_t iid = (hovered_slot < 100)
-					? (hovered_slot < static_cast<int16_t>(item_views.size()) ? item_views[hovered_slot].itemid : 0)
-					: ((hovered_slot - 100) < static_cast<int16_t>(wish_views.size()) ? wish_views[hovered_slot - 100].itemid : 0);
-				if (iid)
-					UI::get().show_item(Tooltip::Parent::ITEMINVENTORY, iid);
-				else
-					UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
-			}
+			int32_t iid = (hovered_slot < 100)
+				? (hovered_slot < static_cast<int16_t>(item_views.size()) ? item_views[hovered_slot].itemid : 0)
+				: ((hovered_slot - 100) < static_cast<int16_t>(wish_views.size()) ? wish_views[hovered_slot - 100].itemid : 0);
+			if (iid)
+				UI::get().show_item(Tooltip::Parent::ITEMINVENTORY, iid);
 			else
 				UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
 		}
+		else
+			UI::get().clear_tooltip(Tooltip::Parent::ITEMINVENTORY);
+
 		return state;
 	}
 
@@ -878,21 +913,22 @@ namespace ms
 		full_data = data;
 		has_full_data = true;
 
-		// 宠物：名字 + Lv，亲密/饱清拼在名字下（backgrnd2 每只一栏）
+		// 宠物：名字 + Lv/亲密度/饱清感（空态 "-"，避免整片空白被误判未实现）
 		for (size_t i = 0; i < pet_name_texts.size(); i++)
 		{
-			if (i < data.pets.size())
+			if (i < data.pets.size() && data.pets[i].itemid != 0)
 			{
 				const auto& p = data.pets[i];
 				pet_name_texts[i].change_text(p.name.empty() ? "-" : p.name);
-				pet_level_texts[i].change_text("Lv." + std::to_string(p.level)
-					+ "  Tame:" + std::to_string(p.tameness)
-					+ "  Full:" + std::to_string(p.fullness));
+				pet_level_texts[i].change_text(
+					"Lv." + std::to_string(p.level)
+					+ "  " + std::to_string(p.tameness)
+					+ "  " + std::to_string(p.fullness));
 			}
 			else
 			{
-				pet_name_texts[i].change_text("");
-				pet_level_texts[i].change_text("");
+				pet_name_texts[i].change_text("-");
+				pet_level_texts[i].change_text("-");
 			}
 		}
 
@@ -1001,8 +1037,19 @@ namespace ms
 		if (panel_bg_mount.width() > 0) panel_bg_mount.draw(position, inter);
 		// backgrnd5(275x361) 下半：「种类/等级/经验值/疲劳度」标签烘焙在 y≈290/310，
 		// 值画右侧空栏：种类值 x≈110,y≈290；经验值 x≈270,y≈290；等级值 x≈110,y≈310；疲劳度 x≈270,y≈310。
+		// 有坐骑时在左侧预览区画道具图标（非完整骑乘合并）。
+		if (full_data.mount.id != 0)
+		{
+			const ItemData& mid = ItemData::get(full_data.mount.id);
+			if (mid)
+			{
+				Texture icon = mid.get_icon(false);
+				if (icon.width() > 0)
+					icon.draw(DrawArgument(position + Point<int16_t>(40, 220)));
+			}
+		}
 		mount_info_text.draw(position + Point<int16_t>(110, 288));   // 种类 + Lv
-		mount_exinfo_text.draw(position + Point<int16_t>(270, 288)); // 经验 / 疲劳
+		mount_exinfo_text.draw(position + Point<int16_t>(110, 308)); // 经验 / 疲劳（左列下移避免压种类行）
 	}
 
 	void UICharInfo::draw_wish_panel(float inter) const

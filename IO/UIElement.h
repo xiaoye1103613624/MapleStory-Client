@@ -210,6 +210,8 @@ namespace ms
 			QUIT,
 			CHARINFO,
 			CASHSHOP,
+			/// 窗口内商城（方案 C）：游戏态内嵌 760×495 商城窗，与原生 CASHSHOP 态并存。
+			WINDOWCASHSHOP,
 			STORAGE,
 			TRADE,
 			GUILD,
@@ -221,6 +223,9 @@ namespace ms
 			MONSTERBOOK,
 			MAKER,
 			ALLIANCE,
+			/// 联盟职衔名编辑浮窗（CWndAllianceGrade；UNION BtInfo/0x809 Toggle）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			ALLIANCE_GRADE,
 			// v83 目录气球的两颗独立设置窗（游戏设置 / 系统设置）。本包无
 			// StatusBar3.img/OptionMenu，UIOptionMenu 只剩空壳，故另立两型。
 			// 注意：这两项让 UIElement::Type::NUM_TYPES 变大，而
@@ -233,11 +238,55 @@ namespace ms
 			SYSOPT,
 			SPECIALUI,
 			MEDAL,			// D1 分号键勋章窗（两根 IMG 均无 Medal 根 -> 门禁 18 复用件）
-			/// ④ 扩展（辅助）装备独立子窗（UIWindow.img/AddonEquip/backgrnd，
-			/// 8 格 = 图腾×4 + 纹章/机器人/心脏/徽章；2026-11-12 装备槽位扩展）。
-			/// 新增项会改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild，
-			/// 增量编译会留下按旧尺寸编译的目标文件（见上方 GAMEOPT/SYSOPT 注释）。
+			/// ④ 已废弃开窗路径（D-ADDON）：原 AddonEquip 分流后不再 emplace；
+			/// 枚举位保留以免打乱后续 Type 序。内容见主栏 / UITotemEquip / UIAndroidEquip。
 			ADDONEQUIP,
+			/// ④b 192 Equip/totem 三格图腾侧栏（取代 Addon 上排）。新增项改变 EnumMap 尺寸 → Rebuild。
+			TOTEMEQUIP,
+			/// ⑤ 神秘徽章装备栏（UIWindow.img/MysticBadge；MYSTIC1..6 = BP70–75）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			MYSTICBADGE,
+			/// ⑥ 192 原生机器人栏（UIWindow4 Equip/Android；ANDROID1..7 = BP1200–1206）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			ANDROIDEQUIP,
+			/// 左侧功能竖栏（图2红框 SideIconBar；配置表驱动，classic/modern 皆可显示）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			SIDEICONBAR,
+			/// 个人伤害统计窗（UIDamageRank；侧边栏图标入口，DPT_TRACKER 0x3714 下发）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			DAMAGERANK,
+			/// 动态聊天表情选择窗（UIChatEmoticon；聊天栏表情按钮入口，CHAT_EMOTICON 0x3715/0x3716）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			CHATEMOTICON,
+			/// 每日签到窗（UIDailyCheckin；侧栏图标/@daily 入口，DAILY_CHECKIN 0x3717/0x3718）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			DAILYCHECKIN,
+			/// 七彩棱镜染色窗（UIColorPrism；侧栏图标入口，中文包 0x11D/0x184）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			COLORPRISM,
+			/// 192 魔女森林抽奖窗（UIWitchForest；侧栏/@witchforest 入口，0x3719/0x371A）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			WITCHFOREST,
+			/// 192 突破石提升破功值窗（UIBreakthroughStone；侧栏入口，0x371B/0x371C）。
+			/// 新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			BREAKTHROUGHSTONE,
+			/// 192 ShortCutUI 屏幕居中横向弹层（ContentsShortcut；由竖栏 btMain
+			/// 点击/悬浮 toggle 打开，6 列图标 + toolTip）。新增项改变 EnumMap
+			/// <Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild（增量会留旧尺寸目标文件）。
+			CONTENTSSHORTCUT,
+			/// 192 强化族通用壳（UIEnhance；双击 5062魔方/557锤/553印章/石净化等道具进入，
+			/// 覆盖魔方/白金魔方/白金锤/潜能/附加/炼金/合成/星岩等 UI_004 面板）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			ENHANCE,
+			/// 伤害皮肤选择窗（UIDamageSkinPicker；侧栏入口，私有 0x3746..0x3749）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			DAMAGESKINPICKER,
+			/// 美容院造型槽窗（UIBeautySalon；侧栏/@beauty 入口，私有 0x174）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			BEAUTYSALON,
+			/// 融合外观窗（UIAnvilDialog；侧栏入口，C→S USE_CASH_ITEM 0x4F 新 layout）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			ANVILDIALOG,
 			NUM_TYPES
 		};
 
@@ -248,8 +297,8 @@ namespace ms
 		// 视口变化时由 UIState 广播（含 inactive）；默认按 layout_policy 套用 HudLayout。
 		virtual void update_screen(int16_t new_width, int16_t new_height);
 
-		void makeactive();
-		void deactivate();
+		virtual void makeactive();
+		virtual void deactivate();
 		bool is_active() const;
 
 		/// D3 窗口开合淡入系数（083 CWvsContext::UI_Toggle 的视觉层）。
@@ -263,6 +312,23 @@ namespace ms
 		// 把本窗体贴到宿主窗体右侧（原生「技能组合栏」相对技能窗的位置关系）：
 		// 右侧放不下翻到左侧，最后夹回视口。调用前 dimension 必须已是位图真身尺寸。
 		void anchor_right_of(const UIElement& host, int16_t gap = 8);
+
+		// 贴到指定盒子右侧、顶边齐（角色装备 base_dimension，不含展开宠物宽）。
+		// 右侧放不下翻到盒子左侧，最后夹回视口。
+		void anchor_right_of_box(Point<int16_t> box_pos, Point<int16_t> box_size, int16_t gap = 0);
+
+		// 把本窗体贴到宿主窗体左侧、顶边齐（辅助装备相对角色装备）：
+		// 左侧放不下翻到右侧，最后夹回视口。调用前 dimension 必须已是位图真身尺寸。
+		void anchor_left_of(const UIElement& host, int16_t gap = 0);
+
+		// 把本窗体贴到宿主下方、左缘对齐（神秘徽章相对辅助装备）：
+		// 下方放不下翻到宿主上方，最后夹回视口。
+		void anchor_below_of(const UIElement& host, int16_t gap = 0);
+
+		// 侧栏叠放：右缘贴齐 left_host 左缘（不盖住 left_host），顶边在 above 底边之下。
+		// 用于「辅助装备 + 神秘徽章」同列贴在角色装备左侧：宽窗按自身宽度左吸，
+		// 避免仅用 anchor_below_of（继承 above 的 x）时宽面板伸进主窗。
+		void anchor_left_of_below(const UIElement& left_host, const UIElement& above, int16_t gap = 0);
 
 		/// 静态文案绑定：窗体 ctor 里登记文案对象与 Locale 键，切语言后由
 		/// UIState 的 update 派发点调 refresh_localized() 统一重取 —— 于是

@@ -25,6 +25,7 @@
 #include "../../Audio/Audio.h"
 #include "../../Graphics/DrawArgument.h"
 #include "../../Graphics/Texture.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -143,7 +144,7 @@ namespace ms
 				[&]()
 				{
 					clear_tooltip();
-					show_text("and the numbers and letters can only be entered using a mouse.", 175, true, 1);
+					show_text(Locale::text("uisoftkey.mouse_only"), 175, true, 1);
 				}
 			);
 		}
@@ -282,9 +283,9 @@ namespace ms
 				clear_tooltip();
 
 				if (mode == Mode::Pic)
-					show_text("The PIC needs to be at least 6 characters long.");
+					show_text(Locale::text("uisoftkey.pic_min6"));
 				else
-					show_text("Please enter at least 1 character.");
+					show_text(Locale::text("uisoftkey.min1"));
 			}
 
 			return Button::State::NORMAL;
@@ -396,7 +397,7 @@ namespace ms
 		if (reptitive)
 		{
 			clear_tooltip();
-			show_text("Your 2nd password cannot contain three of the same character in a row.", 220, true, 1);
+			show_text(Locale::text("uisoftkey.pic_no_triple"), 220, true, 1);
 
 			return false;
 		}
@@ -408,7 +409,7 @@ namespace ms
 		if (requirements)
 		{
 			clear_tooltip();
-			show_text("Your 2nd password must have at least two of the following: uppercase letters, lowercase letters, numbers, and special characters.", 242, true, 1);
+			show_text(Locale::text("uisoftkey.pic_requirements"), 242, true, 1);
 
 			return false;
 		}

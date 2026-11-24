@@ -61,9 +61,16 @@ namespace ms
 		else
 			textures[Button::State::NORMAL] = normal["0"];
 
+		// ShortCutUI/contentsIcon 等常只有 normal；缺态回退到 normal，保证悬停/按下仍可见。
 		textures[Button::State::PRESSED] = src["pressed"]["0"];
 		textures[Button::State::MOUSEOVER] = src["mouseOver"]["0"];
 		textures[Button::State::DISABLED] = src["disabled"]["0"];
+		if (!textures[Button::State::PRESSED].is_valid())
+			textures[Button::State::PRESSED] = textures[Button::State::NORMAL];
+		if (!textures[Button::State::MOUSEOVER].is_valid())
+			textures[Button::State::MOUSEOVER] = textures[Button::State::NORMAL];
+		if (!textures[Button::State::DISABLED].is_valid())
+			textures[Button::State::DISABLED] = textures[Button::State::NORMAL];
 
 		active = true;
 		position = pos;

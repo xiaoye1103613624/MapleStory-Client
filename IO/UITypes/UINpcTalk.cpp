@@ -31,6 +31,7 @@
 #include "../../Data/SkillData.h"
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/ResolutionTiers.h"
 
@@ -61,17 +62,21 @@ namespace ms
 		}
 
 		// BeiDou StringPool（tools/beidou_stringpool.py / IDA sub_406455）：校验 tip 817–821。
-		constexpr const char* TIP_817 = "Only numbers are allowed.";
-		constexpr const char* TIP_818 = "You may only enter a number \r\nequal to or higher than %d.";
-		constexpr const char* TIP_819 = "You may only enter a number \r\nequal to or lower than %d.";
-		constexpr const char* TIP_820 = "Please enter more than %d digits.";
-		constexpr const char* TIP_821 = "Please enter at least %d characters.";
+		// 2026-11-21 i18n 收口：改为 locale 键，format_tip 经 Locale::format 替换 {}。
+		constexpr const char* TIP_817 = "uinpctalk.tip817";
+		constexpr const char* TIP_818 = "uinpctalk.tip818";
+		constexpr const char* TIP_819 = "uinpctalk.tip819";
+		constexpr const char* TIP_820 = "uinpctalk.tip820";
+		constexpr const char* TIP_821 = "uinpctalk.tip821";
 
-		std::string format_tip(const char* fmt, int32_t value)
+		std::string format_tip(const char* key, int32_t value)
 		{
-			char buf[192];
-			std::snprintf(buf, sizeof(buf), fmt, value);
-			return std::string(buf);
+			return Locale::format(key, std::to_string(value));
+		}
+
+		std::string tip_text(const char* key)
+		{
+			return Locale::text(key);
 		}
 	}
 
@@ -699,7 +704,16 @@ namespace ms
 			clear_input_field();
 			deactivate();
 
-			NpcTalkMorePacket(wire_msgtype(), 0).dispatch();
+			// ESC 收口 response 必须与 Close 按钮逐类型一致：
+			//   Say/NEXT/PREV/YesNo/AcceptDecline → -1（原生 DoModal==close；MinMS close/escape=-1；
+			//   s9 NPCScriptManager.nextLevel:221 仅 mode==-1 才 dispose，mode==0 是回退上一页）；
+			//   GetText/GetNumber/AskBoxText/Simple → 0（与 button_pressed 各 CLOSE 分支同形）。
+			// 旧实现恒发 0 → Say/YesNo 下 ESC 走 status-- 而非关闭，与点 Close(-1) 行为不一致。
+			// 注：is_avatar_talk() 已在上方分支 return，其 cancel=0 不受此处影响。
+			const int8_t last_msg = wire_msgtype();
+			const bool end_as_zero = is_input_talk() || type == TalkType::SENDSIMPLE;
+			NpcTalkMorePacket(last_msg, end_as_zero
+				? static_cast<int8_t>(0) : static_cast<int8_t>(-1)).dispatch();
 			return;
 		}
 		if (!pressed) return;
@@ -1855,7 +1869,7 @@ namespace ms
 				if (ch < '0' || ch > '9')
 				{
 					LOG(LOG_DEBUG, "UINpcTalk: GetNumber reject non-digit");
-					show_input_tip(TIP_817);
+					show_input_tip(tip_text(TIP_817));
 					return false;
 				}
 			}
@@ -1903,7 +1917,7 @@ namespace ms
 			}
 			catch (...)
 			{
-				show_input_tip(TIP_817);
+				show_input_tip(tip_text(TIP_817));
 				return false;
 			}
 		}

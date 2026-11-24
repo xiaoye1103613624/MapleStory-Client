@@ -48,7 +48,8 @@ namespace ms
 		void show_item(Tooltip::Parent, int32_t) override {}
 		void show_skill(Tooltip::Parent, int32_t, int32_t, int32_t, int64_t) override {}
 		void show_text(Tooltip::Parent parent, std::string text) override;
-		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool) {}
+		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool,
+			const std::vector<MapTooltipPlayer>& = {}) override {}
 
 		// VIEW_ALL_CHAR 累积缓冲：由 ViewAllCharHandler 填充（按世界收集角色列表），
 		// 由 UIViewAllChar（view-all-char todo 落地）消费后展示。

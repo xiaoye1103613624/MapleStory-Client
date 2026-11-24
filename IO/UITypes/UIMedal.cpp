@@ -90,6 +90,60 @@ namespace ms
 		select_tab(0);
 
 #ifdef USE_NX
+		// W2：Title 真材优先（orange-wz：backgrnd 260x374 / Tab 0..4 / backgrnd3 Detail）。
+		nl::node title_root = UiAssetResolve::window("Title");
+		if (title_root)
+		{
+			if (nl::node bg = title_root["backgrnd"])
+			{
+				title_frame = Texture(bg);
+				has_title_frame = static_cast<bool>(title_frame);
+				if (has_title_frame)
+				{
+					Point<int16_t> o = title_frame.get_origin();
+					if (o.x() || o.y())
+						title_frame.shift(o);
+					Point<int16_t> d = title_frame.get_dimensions();
+					if (d.x() > 0 && d.y() > 0)
+						dimension = d;
+				}
+			}
+
+			nl::node tab_en = title_root["Tab"]["enabled"];
+			nl::node tab_dis = title_root["Tab"]["disabled"];
+			tab_on.resize(TAB_COUNT);
+			tab_off.resize(TAB_COUNT);
+			for (int16_t i = 0; i < TAB_COUNT; ++i)
+			{
+				const std::string key = std::to_string(i);
+				if (tab_en && tab_en[key])
+					tab_on[static_cast<size_t>(i)] = Texture(tab_en[key]);
+				if (tab_dis && tab_dis[key])
+					tab_off[static_cast<size_t>(i)] = Texture(tab_dis[key]);
+			}
+
+			nl::node det = title_root["backgrnd3"] ? title_root["backgrnd3"] : title_root["backgrnd5"];
+			if (det)
+			{
+				detail_tex = Texture(det);
+				has_detail_frame = static_cast<bool>(detail_tex);
+				if (has_detail_frame)
+				{
+					Point<int16_t> o = detail_tex.get_origin();
+					if (o.x() || o.y())
+						detail_tex.shift(o);
+				}
+			}
+
+			LOG(LOG_INFO, "UIMedal: Title assets frame=" << has_title_frame
+				<< " detail=" << has_detail_frame
+				<< " tabs_on=" << tab_on.size());
+		}
+		else
+		{
+			UiAssetResolve::diag_once("medal.title", "UIWindow.img/Title 缺失 —— ColorBox 兜底");
+		}
+
 		nl::node close = UiAssetResolve::close_btn();
 
 		if (close)
@@ -160,10 +214,15 @@ namespace ms
 		if (!detail_open)
 			return;
 
-		// 贴在主窗右侧，尺寸对齐原生 Detail 305x373。
-		const Point<int16_t> dp = position + Point<int16_t>(FRAME_W + 4, 0);
-		detail_frame.draw(DrawArgument(dp) + fade);
-		detail_back.draw(DrawArgument(dp + Point<int16_t>(1, 1)) + fade);
+		// 贴在主窗右侧，尺寸对齐原生 Detail 305x373（Angel ToggleDetail @0x83d255）。
+		const Point<int16_t> dp = position + Point<int16_t>(static_cast<int16_t>(dimension.x() + 4), 0);
+		if (has_detail_frame && detail_tex)
+			detail_tex.draw(DrawArgument(dp) + fade);
+		else
+		{
+			detail_frame.draw(DrawArgument(dp) + fade);
+			detail_back.draw(DrawArgument(dp + Point<int16_t>(1, 1)) + fade);
+		}
 		detail_title.draw(DrawArgument(dp + Point<int16_t>(10, 8)) + fade);
 
 		int16_t y = 36;
@@ -386,31 +445,44 @@ namespace ms
 		// D3：自绘 ColorBox/Text 手动乘淡入（推进点 UIElement::draw_buttons 每帧 tick）。
 		const float fade = fade_alpha();
 
-		// —— 框架（勋章框.png 量测色带，UIMedal.h 注释）——
-		frame_edge.draw(DrawArgument(position) + fade);						// 外沿浅灰边框
-		frame_back.draw(DrawArgument(position + Point<int16_t>(1, 1)) + fade);	// 白底（标题区）
-		// 顶 1px 深蓝线 (85,119,153) @y1 + 标题下 1px 蓝线 (119,153,187) @y22
-		title_line_top.draw(DrawArgument(position + Point<int16_t>(1, 1)) + fade);
-		title_line_bot.draw(DrawArgument(position + Point<int16_t>(1, TITLE_H)) + fade);
-		list_back.draw(DrawArgument(position + Point<int16_t>(2, TITLE_H + 1)) + fade);	// 页签带灰底
-
-		title.draw(DrawArgument(position + Point<int16_t>(8, 5)) + fade);	// 「勋章」黑字左对齐
-
-		for (int16_t i = 0; i < static_cast<int16_t>(tab_plate.size()); ++i)
+		if (has_title_frame && title_frame)
 		{
-			const int16_t tx = static_cast<int16_t>(TAB_X0 + i * (TAB_W + TAB_GAP));
-
-			// 选中态颜色在 select_tab() 写侧已置（draw 是 const 路径）
-			tab_plate[i].draw(DrawArgument(position + Point<int16_t>(tx, TAB_Y)) + fade);
-			tab_label[i].draw(DrawArgument(position + Point<int16_t>(tx, static_cast<int16_t>(TAB_Y + 2))) + fade);
+			// W2：Title/backgrnd 真材已含标题/外框；页签用 Tab enabled/disabled。
+			title_frame.draw(DrawArgument(position) + fade);
+		}
+		else
+		{
+			// ColorBox 兜底（无 Title 节点时）。
+			frame_edge.draw(DrawArgument(position) + fade);
+			frame_back.draw(DrawArgument(position + Point<int16_t>(1, 1)) + fade);
+			title_line_top.draw(DrawArgument(position + Point<int16_t>(1, 1)) + fade);
+			title_line_bot.draw(DrawArgument(position + Point<int16_t>(1, TITLE_H)) + fade);
+			list_back.draw(DrawArgument(position + Point<int16_t>(2, TITLE_H + 1)) + fade);
+			title.draw(DrawArgument(position + Point<int16_t>(8, 5)) + fade);
+			count_bar_bg.draw(DrawArgument(position + Point<int16_t>(5, COUNT_Y)) + fade);
+			list_panel.draw(DrawArgument(position + Point<int16_t>(LIST_X, LIST_Y)) + fade);
+			bottom_bar.draw(DrawArgument(position + Point<int16_t>(1, BOTBAR_Y)) + fade);
 		}
 
-		// 计数条白底 y46..79（量测 count_bar y0=46 y1=79）+ 文字深灰居中
-		count_bar_bg.draw(DrawArgument(position + Point<int16_t>(5, COUNT_Y)) + fade);
-		count_label.draw(DrawArgument(position + Point<int16_t>(0, COUNT_Y + 4)) + fade);
+		for (int16_t i = 0; i < TAB_COUNT; ++i)
+		{
+			const int16_t tx = static_cast<int16_t>(TAB_X0 + i * (TAB_W + TAB_GAP));
+			const bool sel = (i == active_tab);
+			const size_t idx = static_cast<size_t>(i);
 
-		// 列表面板：浅蓝白 (238,238,255) y78..350（空列表时整片可见 = 原生观感）
-		list_panel.draw(DrawArgument(position + Point<int16_t>(LIST_X, LIST_Y)) + fade);
+			if (sel && idx < tab_on.size() && tab_on[idx])
+				tab_on[idx].draw(DrawArgument(position + Point<int16_t>(tx, TAB_Y)) + fade);
+			else if (!sel && idx < tab_off.size() && tab_off[idx])
+				tab_off[idx].draw(DrawArgument(position + Point<int16_t>(tx, TAB_Y)) + fade);
+			else if (idx < tab_plate.size())
+			{
+				tab_plate[idx].draw(DrawArgument(position + Point<int16_t>(tx, TAB_Y)) + fade);
+				if (idx < tab_label.size())
+					tab_label[idx].draw(DrawArgument(position + Point<int16_t>(tx, static_cast<int16_t>(TAB_Y + 2))) + fade);
+			}
+		}
+
+		count_label.draw(DrawArgument(position + Point<int16_t>(0, COUNT_Y + 4)) + fade);
 
 		const int16_t rh = row_h();
 		const int16_t first = static_cast<int16_t>(scroll / rh);
@@ -457,9 +529,6 @@ namespace ms
 		scroll_track.draw(DrawArgument(position + Point<int16_t>(SB_X, static_cast<int16_t>(LIST_Y + SB_BTN_H))) + fade);
 		scroll_thumb.draw(DrawArgument(position + Point<int16_t>(SB_X, LIST_Y + SB_BTN_H)) + fade);
 		scroll_btn_bot.draw(DrawArgument(position + Point<int16_t>(SB_X, static_cast<int16_t>(LIST_BOT - SB_BTN_H))) + fade);
-
-		// 底条：蓝灰 (153,187,204) y351..371
-		bottom_bar.draw(DrawArgument(position + Point<int16_t>(1, BOTBAR_Y)) + fade);
 
 		draw_detail(fade);
 		UIElement::draw_buttons(inter);

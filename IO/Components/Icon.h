@@ -58,6 +58,18 @@ namespace ms
 			// Angel CUIMacroSysEx::OnMouseButton v43[8]=row：整行宏图标携带宏下标，
 			// 拖到快捷格/键位窗时据此构造 KeyType::MACRO 绑定（get_skill_id()==0 的 KEY 型图标）。
 			virtual int32_t get_macro_index() const { return -1; }
+		// 原生快捷栏「自带功能键」(MENU/ACTION/FACE) 拖拽身份：
+		// 技能/道具图标分别由 get_skill_id()/get_item_id() 表达落点绑定，功能键没有这三者，
+		// 需一条独立通道把 (KeyType, KeyAction) 透给状态栏 send_icon 完成换位绑定。
+		// 带默认实现的虚方法（而非纯虚）：装备/背包/技能等其它 Type 无需改动，
+		// 穿戴/卸下装备链路零影响；只有 QsIconType 按需 override。
+		// 返回 true 表示 out_type/out_action 有效。
+		virtual bool get_binding(uint8_t& out_type, int32_t& out_action) const
+		{
+			(void)out_type;
+			(void)out_action;
+			return false;
+		}
 			// Angel CUIMacroSysEx::OnMouseButton 的 BeginDragDrop 载荷带源坐标；
 			// 组合栏内部抓起的图标需要让 UIStateGame 在松手时无条件结算（移动/移除/绑键）。
 			virtual bool is_macro_source() const { return false; }
@@ -86,6 +98,8 @@ namespace ms
 		int32_t get_item_id() const;
 		InventoryType::Id get_inventory_tab() const;
 		int32_t get_skill_id() const;
+		// 见 Type::get_binding：功能键拖拽载荷透出 (KeyType, KeyAction)。
+		bool get_binding(uint8_t& out_type, int32_t& out_action) const;
 		int32_t get_macro_index() const { return type ? type->get_macro_index() : -1; }
 		bool is_macro_source() const { return type && type->is_macro_source(); }
 
@@ -94,7 +108,7 @@ namespace ms
 		void start_drag(Point<int16_t> offset);
 		void reset();
 		int16_t get_count() const;
-		bool get_drag();
+		bool get_drag() const;
 
 		//———————————————— 本格几何（R27-B3-4）————————————————
 		// 原生图标只有一种落法：画在哪一格，点哪一格就算命中，抓起来就按那一点偏移。
@@ -120,6 +134,15 @@ namespace ms
 		void draw_at(Point<int16_t> parent) const;
 		void start_drag_at(Point<int16_t> parent, Point<int16_t> cursor);
 		void start_drag_at(Point<int16_t> parent, Point<int16_t> cell_position, Point<int16_t> cursor);
+
+		// 2026-11-22：拖拽落点应取「图标视觉中心」而非原始光标点。
+		// dragdraw 画在 cursor-cursoroffset，若命中判定用原始 cursor，则从格子
+		// 底部抓起时预览图标在上一格、光标已在下一格（键位窗 PUP/PDN 相邻即复现：
+		// 拖到 PUP 却绑到 PDN）。返回预览图标中心，供落点命中统一使用。
+		Point<int16_t> get_drag_drop_point(Point<int16_t> cursor) const
+		{
+			return cursor - cursoroffset + Point<int16_t>(cell_width / 2, cell_height / 2);
+		}
 
 	private:
 		std::unique_ptr<Type> type;

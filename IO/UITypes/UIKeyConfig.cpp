@@ -964,6 +964,12 @@ namespace ms
 
 	bool UIKeyConfig::send_icon(const Icon& icon, Point<int16_t> cursorpos)
 	{
+		// 2026-11-22 修「拖技能到 PUP 却绑到 PDN」：落点必须用拖动图标的视觉中心，
+		// 不是原始光标点。dragdraw 画在 cursor-cursoroffset；从 "1" 图标底部抓起时
+		// offset.y≈30，用户把图标视觉放到 PUP 中心时光标已落入相邻的 PDN 命中区，
+		// stage_mapping(key_by_position(原始cursor)) 就绑到 PDN，PDN 冒出白色图标。
+		Point<int16_t> drop = icon.get_drag() ? icon.get_drag_drop_point(cursorpos) : cursorpos;
+
 		for (auto iter : unbound_actions_pos)
 		{
 			Rectangle<int16_t> icon_rect = Rectangle<int16_t>(
@@ -971,14 +977,17 @@ namespace ms
 				position + iter.second + Point<int16_t>(32, 32)
 				);
 
-			if (icon_rect.contains(cursorpos))
-				icon.drop_on_bindings(cursorpos, true);
+			if (icon_rect.contains(drop))
+			{
+				icon.drop_on_bindings(drop, true);
+				break; // 命中一个未绑定格即止，避免重复 drop_on_bindings
+			}
 		}
 
-		KeyConfig::Key fkey = key_by_position(cursorpos);
+		KeyConfig::Key fkey = key_by_position(drop);
 
 		if (fkey != KeyConfig::Key::LENGTH)
-			icon.drop_on_bindings(cursorpos, false);
+			icon.drop_on_bindings(drop, false);
 
 		return true;
 	}

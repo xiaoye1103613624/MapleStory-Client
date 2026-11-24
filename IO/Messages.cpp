@@ -20,22 +20,25 @@
 #include "UI.h"
 
 #include "UITypes/UIChatBar.h"
+#include "../Util/Locale.h"
 
 namespace ms
 {
+	// 2026-11-21 i18n 收口：消息表存 locale 键而非硬编码英文。
+	// InChatMessage::drop 经 Locale::text 解析；缺键回退 zh-CN，再回退键名。
 	const EnumMap<Messages::Type, const char*> Messages::messages =
 	{
 		"",
-		"You cannot use this skill with this weapon.",
-		"You do not have enough hp to use this skill.",
-		"You do not have enough mp to use this skill.",
-		"You do not have enough arrows to use this attack.",
-		"You do not have enough bullets to use this attack.",
-		"You do not have enough throwing stars to use this attack.",
-		"You cannot use this skill as it is on cooldown.",
-		"The scroll lights up and it's mysterious powers have been transferred to the item.",
-		"The scroll lights up but the item remains as if nothing happened.",
-		"The item has been destroyed due to the overwhelming power of the scroll."
+		"message.skill.weapon",
+		"message.skill.hp",
+		"message.skill.mp",
+		"message.skill.arrows",
+		"message.skill.bullets",
+		"message.skill.stars",
+		"message.skill.cooldown",
+		"message.scroll.success",
+		"message.scroll.fail",
+		"message.scroll.destroy"
 	};
 
 	InChatMessage::InChatMessage(Messages::Type t)
@@ -49,7 +52,7 @@ namespace ms
 			return;
 
 		if (auto chatbar = UI::get().get_element<UIChatBar>())
-			chatbar->show_message(Messages::messages[type], UIChatBar::RED);
+			chatbar->show_message(Locale::text(Messages::messages[type]), UIChatBar::RED);
 	}
 
 	ForbidSkillMessage::ForbidSkillMessage(SpecialMove::ForbidReason reason, Weapon::Type weapon) : InChatMessage(message_by_reason(reason, weapon)) {}

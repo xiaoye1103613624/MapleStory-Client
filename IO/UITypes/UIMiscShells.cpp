@@ -126,7 +126,7 @@ namespace {
 		void set_count(int16_t) override {}
 		Icon::IconType get_type() override { return Icon::IconType::SKILL; }
 		int32_t get_skill_id() const override { return skill_id; }
-		bool is_macro_source() const override { return true; }
+		// 方案 A：删除 is_macro_source()=true，宏图标走原生 DragDrop 单模型。
 	private:
 		int32_t skill_id;
 	};
@@ -152,7 +152,7 @@ namespace {
 		void set_count(int16_t) override {}
 		Icon::IconType get_type() override { return Icon::IconType::KEY; }
 		int32_t get_macro_index() const override { return macro_index; }
-		bool is_macro_source() const override { return true; }
+		// 方案 A：删除 is_macro_source()=true，整行宏图标走原生 DragDrop 单模型。
 	private:
 		int16_t macro_index;
 	};
@@ -190,17 +190,18 @@ int32_t nearest_reactor_oid()
 template <typename TipFn>
 void softkey_or_inv_set_item(TipFn tip_fn)
 {
+	// 正途：背包选中格 → SET_ITEMS（不再弹 SoftKey；无选中则提示）。
 	if (auto inv = UI::get().get_element<UIItemInventory>()) {
 		int16_t pos = inv->get_selected_slot();
 		if (pos > 0) {
 			int8_t iv = static_cast<int8_t>(inv->get_tab());
-			HiredMerchantSetItemPacket(iv, pos, 1, 0).dispatch();
+			HiredMerchantSetItemPacket(iv, pos, 1, 1).dispatch();
 			tip_fn(Locale::format("shop.setitem_slot", std::to_string(pos)));
 			LOG(LOG_DEBUG, "Shop: SetItem from inv tab=" << (int)iv << " pos=" << pos);
 			return;
 		}
 	}
-	
+	tip_fn(Locale::text("merchant.put_need_inv"));
 }
 bool load_window_bg(const char* name, Texture& out, Point<int16_t>& dim) {
 #ifdef USE_NX
@@ -1741,17 +1742,13 @@ bool UIInitialQuiz::try_submit()
 	// IDA 7EAE53：len ∈ [min,max]；tip StringPool 3920/3921（英文明文占位）
 	if (len < min_len)
 	{
-		char buf[128];
-		std::snprintf(buf, sizeof(buf), "Please enter at least %d characters.", min_len);
-		show_tip(buf);
+		show_tip(Locale::format("uimiscshells.quiz_min", std::to_string(min_len)));
 		LOG(LOG_DEBUG, "UIInitialQuiz: reject len=" << len << " < min=" << min_len);
 		return false;
 	}
 	if (len > max_len)
 	{
-		char buf[128];
-		std::snprintf(buf, sizeof(buf), "Please enter no more than %d characters.", max_len);
-		show_tip(buf);
+		show_tip(Locale::format("uimiscshells.quiz_max", std::to_string(max_len)));
 		LOG(LOG_DEBUG, "UIInitialQuiz: reject len=" << len << " > max=" << max_len);
 		return false;
 	}
@@ -2156,34 +2153,37 @@ void UIAskPet::draw(float inter) const
 			static_cast<int16_t>(NAMETAG_X + BAR_W / 2), NAMETAG_Y));
 	}
 
-	// 等级在 nameTag 左侧；亲密/饱食条在 nameTag 下方（UtilDlgEx 无专用 gage 节点，ColorBox 按条宽对齐 nameTag）。
+	// 等级在 nameTag 左侧；亲密/饱食条在 nameTag 下方。
+	// UtilDlgEx 无专用 gage canvas（a11m 实证）→ ColorBox 几何条对齐 nameTag 宽，带 1px 描边。
 	level_label.draw(position + Point<int16_t>(
 		static_cast<int16_t>(NAMETAG_X - 40), static_cast<int16_t>(NAMETAG_Y + 2)));
 
 	if (e && e->has_stats)
 	{
 		const int16_t bar_x = NAMETAG_X;
-		const int16_t close_y = static_cast<int16_t>(NAMETAG_Y + 22);
-		const int16_t full_y = static_cast<int16_t>(close_y + BAR_H + 10);
-		ColorBox(BAR_W, BAR_H, Color::Name::DARKGREY, 0.85f)
-			.draw(position + Point<int16_t>(bar_x, close_y));
+		const int16_t close_y = static_cast<int16_t>(NAMETAG_Y + 24);
+		const int16_t full_y = static_cast<int16_t>(close_y + BAR_H + 14);
+		auto draw_bar = [&](int16_t y, int fill_w, Color::Name fill)
+		{
+			ColorBox(static_cast<int16_t>(BAR_W + 2), static_cast<int16_t>(BAR_H + 2),
+				Color::Name::BLACK, 1.0f)
+				.draw(position + Point<int16_t>(static_cast<int16_t>(bar_x - 1), static_cast<int16_t>(y - 1)));
+			ColorBox(BAR_W, BAR_H, Color::Name::DARKGREY, 0.9f)
+				.draw(position + Point<int16_t>(bar_x, y));
+			if (fill_w > 0)
+				ColorBox(static_cast<int16_t>(fill_w), BAR_H, fill, 1.0f)
+					.draw(position + Point<int16_t>(bar_x, y));
+		};
 		const int16_t cw = static_cast<int16_t>(
 			std::max(0, std::min(static_cast<int>(BAR_W),
 				static_cast<int>(BAR_W) * static_cast<int>(e->closeness) / CLOSE_MAX)));
-		if (cw > 0)
-			ColorBox(cw, BAR_H, Color::Name::YELLOW, 1.0f)
-				.draw(position + Point<int16_t>(bar_x, close_y));
-		close_label.draw(position + Point<int16_t>(bar_x, static_cast<int16_t>(close_y - 14)));
-
-		ColorBox(BAR_W, BAR_H, Color::Name::DARKGREY, 0.85f)
-			.draw(position + Point<int16_t>(bar_x, full_y));
 		const int16_t fw = static_cast<int16_t>(
 			std::max(0, std::min(static_cast<int>(BAR_W),
 				static_cast<int>(BAR_W) * static_cast<int>(e->fullness) / FULL_MAX)));
-		if (fw > 0)
-			ColorBox(fw, BAR_H, Color::Name::LIGHTGREEN, 1.0f)
-				.draw(position + Point<int16_t>(bar_x, full_y));
+		close_label.draw(position + Point<int16_t>(bar_x, static_cast<int16_t>(close_y - 14)));
+		draw_bar(close_y, cw, Color::Name::YELLOW);
 		full_label.draw(position + Point<int16_t>(bar_x, static_cast<int16_t>(full_y - 14)));
+		draw_bar(full_y, fw, Color::Name::LIGHTGREEN);
 	}
 
 	UIElement::draw_buttons(inter);
@@ -2860,102 +2860,148 @@ void UIMegaphoneBasic::send_key(int32_t keycode, bool pressed, bool escape)
 UIElement::Type UIMegaphoneBasic::get_type() const { return TYPE; }
 
 UIPersonalShop::UIPersonalShop()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("personalshop.shop_softkey_c_title_o_a_b_x"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Locale::text("personalshop.create_hint"))
+	, title_field(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Rectangle<int16_t>(Point<int16_t>(24, 72), Point<int16_t>(300, 96)), 24)
 {
-	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 280); dragarea = Point<int16_t>(320, 20);
+	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 200); dragarea = Point<int16_t>(320, 20);
 	has_assets = load_window_bg("PersonalShop", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UIPersonalShop: missing");
+	if (has_assets) {
+		// 开店壳用完整底板过大；缩到标题区高度，钮落在可见区。
+		dimension = Point<int16_t>(std::min<int16_t>(dimension.x(), 340), 180);
+		dragarea = Point<int16_t>(dimension.x(), 20);
+	} else {
+		LOG(LOG_WARN, "UIPersonalShop: missing");
+	}
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("PersonalShop");
+	try_maple_btn(buttons, BtStart, root["BtStart"], Point<int16_t>(40, 120), "UIPersonalShop");
+	try_maple_btn(buttons, BtExit, root["BtExit"], Point<int16_t>(120, 120), "UIPersonalShop");
+	try_maple_btn(buttons, BtClose, root["BtClose"], Point<int16_t>(200, 120), "UIPersonalShop");
+#endif
+	title_field.set_state(Textfield::State::FOCUSED);
+	title_field.set_enter_callback([this](std::string) { do_create(); });
 	center_on_screen();
-	
+	LOG(LOG_DEBUG, "UIPersonalShop: open create shell");
 }
-void UIPersonalShop::draw(float) const
+void UIPersonalShop::draw(float inter) const
 {
-	if (has_assets && backgrnd) backgrnd.draw(position);
-	tip_label.draw(position + Point<int16_t>(12, 40));
+	if (has_assets && backgrnd) {
+		// 只画底板左上角裁切感：整图绘制，壳尺寸已限制拖拽区。
+		backgrnd.draw(position);
+	}
+	tip_label.draw(position + Point<int16_t>(16, 40));
+	title_field.draw(position);
+	UIElement::draw_buttons(inter);
+}
+void UIPersonalShop::update()
+{
+	title_field.update();
+	UIElement::update();
+}
+Cursor::State UIPersonalShop::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
+	Cursor::State tf = title_field.send_cursor(cursorpos - position, clicked);
+	if (tf != Cursor::State::IDLE)
+		return tf;
+	return st;
+}
+void UIPersonalShop::do_create()
+{
+	std::string title = title_field.get_text();
+	dispatch_shop_create_or_open(title, true, tip_label);
+	auto merch = UI::get().get_element<UIMerchant>();
+	if (!merch) merch = UI::get().emplace<UIMerchant>();
+	else if (!merch->is_active()) merch->makeactive();
+}
+void UIPersonalShop::do_exit()
+{
+	MinigameExitPacket().dispatch();
+	deactivate();
+}
+Button::State UIPersonalShop::button_pressed(uint16_t buttonid)
+{
+	if (buttonid == BtStart) { do_create(); return Button::State::NORMAL; }
+	if (buttonid == BtExit || buttonid == BtClose) { do_exit(); return Button::State::NORMAL; }
+	return Button::State::DISABLED;
 }
 void UIPersonalShop::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) {
-		MinigameExitPacket().dispatch();
-		deactivate();
-		return;
-	}
+	if (pressed && escape) { do_exit(); return; }
 	if (!pressed) return;
-	if (keycode == 'X' || keycode == 'x') {
-		MinigameExitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.exit"));
-		LOG(LOG_DEBUG, "UIPersonalShop: Exit");
-		deactivate();
-		return;
-	}
-	if (keycode == 'C' || keycode == 'c') {
-		// 再开店：SoftKey 店名 → CREATE（514 优先）
-		
-	} else if (keycode == 'O' || keycode == 'o') {
-		HiredMerchantOpenPacket().dispatch();
-		tip_label.change_text(Locale::text("common.open_store"));
-		// Angel CPersonalShopDlg 货架由 ROOM 刷新；主动拉起 UIMerchant 作原生货架面。
-		auto merch = UI::get().get_element<UIMerchant>();
-		if (!merch) merch = UI::get().emplace<UIMerchant>();
-		else if (!merch->is_active()) merch->makeactive();
-		LOG(LOG_DEBUG, "UIPersonalShop: Open + UIMerchant");
-	} else if (keycode == 'A' || keycode == 'a') {
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	} else if (keycode == 'B' || keycode == 'b') {
-		
-	} else if (keycode == 'M' || keycode == 'm') {
-		auto ui = UI::get().get_element<UIMemberShop>();
-		if (!ui) ui = UI::get().emplace<UIMemberShop>();
-		else if (!ui->is_active()) ui->makeactive();
-	}
+	if (keycode == 'X' || keycode == 'x') { do_exit(); return; }
+	// 店名输入由 UI::focusedtextfield 路由物理键；此处只处理未聚焦时的开业。
+	if (keycode == 13 || keycode == 257 || keycode == 335 || keycode == '\r')
+		do_create();
 }
 UIElement::Type UIPersonalShop::get_type() const { return TYPE; }
 void UIPersonalShop::set_tip(const std::string& tip) { tip_label.change_text(tip); }
 
 UIMemberShop::UIMemberShop()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("membershop.membershop_softkey_title"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Locale::text("personalshop.create_hint"))
+	, title_field(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Rectangle<int16_t>(Point<int16_t>(24, 72), Point<int16_t>(260, 96)), 24)
 {
-	position = Point<int16_t>(280, 140); dimension = Point<int16_t>(280, 220); dragarea = Point<int16_t>(280, 20);
+	position = Point<int16_t>(280, 140); dimension = Point<int16_t>(280, 180); dragarea = Point<int16_t>(280, 20);
 	has_assets = load_window_bg("MemberShop", backgrnd, dimension);
 	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
 	else LOG(LOG_WARN, "UIMemberShop: missing");
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("PersonalShop");
+	try_maple_btn(buttons, BtStart, root["BtStart"], Point<int16_t>(40, 120), "UIMemberShop");
+	try_maple_btn(buttons, BtExit, root["BtExit"], Point<int16_t>(120, 120), "UIMemberShop");
+#endif
+	title_field.set_state(Textfield::State::FOCUSED);
+	title_field.set_enter_callback([this](std::string) { do_create(); });
 	center_on_screen();
-	
 }
-void UIMemberShop::draw(float) const
+void UIMemberShop::draw(float inter) const
 {
 	if (has_assets && backgrnd) backgrnd.draw(position);
 	tip_label.draw(position + Point<int16_t>(12, 40));
+	title_field.draw(position);
+	UIElement::draw_buttons(inter);
+}
+void UIMemberShop::update()
+{
+	title_field.update();
+	UIElement::update();
+}
+Cursor::State UIMemberShop::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
+	Cursor::State tf = title_field.send_cursor(cursorpos - position, clicked);
+	if (tf != Cursor::State::IDLE) return tf;
+	return st;
+}
+void UIMemberShop::do_create()
+{
+	dispatch_shop_create_or_open(title_field.get_text(), true, tip_label);
+	auto merch = UI::get().get_element<UIMerchant>();
+	if (!merch) merch = UI::get().emplace<UIMerchant>();
+	else if (!merch->is_active()) merch->makeactive();
+}
+void UIMemberShop::do_exit()
+{
+	MinigameExitPacket().dispatch();
+	deactivate();
+}
+Button::State UIMemberShop::button_pressed(uint16_t buttonid)
+{
+	if (buttonid == BtStart) { do_create(); return Button::State::NORMAL; }
+	if (buttonid == BtExit) { do_exit(); return Button::State::NORMAL; }
+	return Button::State::DISABLED;
 }
 void UIMemberShop::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) {
-		MinigameExitPacket().dispatch();
-		deactivate();
-		return;
-	}
+	if (pressed && escape) { do_exit(); return; }
 	if (!pressed) return;
-	if (keycode == 'X' || keycode == 'x') {
-		MinigameExitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.exit"));
-		LOG(LOG_DEBUG, "UIMemberShop: Exit");
-		deactivate();
-		return;
-	}
-	if (keycode == 'C' || keycode == 'c') {
-		
-	} else if (keycode == 'O' || keycode == 'o') {
-		HiredMerchantOpenPacket().dispatch();
-		tip_label.change_text(Locale::text("common.open_store"));
-		auto merch = UI::get().get_element<UIMerchant>();
-		if (!merch) merch = UI::get().emplace<UIMerchant>();
-		else if (!merch->is_active()) merch->makeactive();
-	} else if (keycode == 'A' || keycode == 'a') {
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	} else if (keycode == 'B' || keycode == 'b') {
-		
-	}
+	if (keycode == 'X' || keycode == 'x') { do_exit(); return; }
+	if (keycode == 13 || keycode == 257 || keycode == 335 || keycode == '\r')
+		do_create();
 }
 UIElement::Type UIMemberShop::get_type() const { return TYPE; }
 
@@ -2994,49 +3040,78 @@ void UITradingRoom::send_key(int32_t keycode, bool pressed, bool escape)
 UIElement::Type UITradingRoom::get_type() const { return TYPE; }
 
 UIEntrustedShop::UIEntrustedShop()
-	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, Locale::text("entrustedshop.entrusted_softkey_o_open"))
+	: tip_label(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Locale::text("entrustedshop.create_hint"))
+	, title_field(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
+		Rectangle<int16_t>(Point<int16_t>(24, 72), Point<int16_t>(300, 96)), 24)
 {
-	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 280); dragarea = Point<int16_t>(320, 20);
-	has_assets = load_window_bg("EntrustedShop", backgrnd, dimension);
-	if (has_assets) dragarea = Point<int16_t>(dimension.x(), 20);
-	else LOG(LOG_WARN, "UIEntrustedShop: missing");
+	position = Point<int16_t>(260, 100); dimension = Point<int16_t>(320, 180); dragarea = Point<int16_t>(320, 20);
+	// EntrustedShop 资源仅 Arrange/Coin；开店壳底板复用 PersonalShop。
+	has_assets = load_window_bg("PersonalShop", backgrnd, dimension);
+	if (!has_assets)
+		has_assets = load_window_bg("EntrustedShop", backgrnd, dimension);
+	if (has_assets) {
+		dimension = Point<int16_t>(std::min<int16_t>(dimension.x(), 340), 180);
+		dragarea = Point<int16_t>(dimension.x(), 20);
+	} else {
+		LOG(LOG_WARN, "UIEntrustedShop: missing");
+	}
+#ifdef USE_NX
+	nl::node root = UiAssetResolve::window("PersonalShop");
+	try_maple_btn(buttons, BtStart, root["BtStart"], Point<int16_t>(40, 120), "UIEntrustedShop");
+	try_maple_btn(buttons, BtExit, root["BtExit"], Point<int16_t>(120, 120), "UIEntrustedShop");
+	try_maple_btn(buttons, BtClose, root["BtClose"], Point<int16_t>(200, 120), "UIEntrustedShop");
+#endif
+	title_field.set_state(Textfield::State::FOCUSED);
+	title_field.set_enter_callback([this](std::string) { do_create(); });
 	center_on_screen();
-	
+	LOG(LOG_DEBUG, "UIEntrustedShop: open create shell");
 }
-void UIEntrustedShop::draw(float) const
+void UIEntrustedShop::draw(float inter) const
 {
 	if (has_assets && backgrnd) backgrnd.draw(position);
-	tip_label.draw(position + Point<int16_t>(12, 40));
+	tip_label.draw(position + Point<int16_t>(16, 40));
+	title_field.draw(position);
+	UIElement::draw_buttons(inter);
+}
+void UIEntrustedShop::update()
+{
+	title_field.update();
+	UIElement::update();
+}
+Cursor::State UIEntrustedShop::send_cursor(bool clicked, Point<int16_t> cursorpos)
+{
+	Cursor::State st = UIElement::send_cursor(clicked, cursorpos);
+	Cursor::State tf = title_field.send_cursor(cursorpos - position, clicked);
+	if (tf != Cursor::State::IDLE) return tf;
+	return st;
+}
+void UIEntrustedShop::do_create()
+{
+	// prefer_player_shop=false → 503 雇佣商人优先，createType 5
+	dispatch_shop_create_or_open(title_field.get_text(), false, tip_label);
+	auto merch = UI::get().get_element<UIMerchant>();
+	if (!merch) merch = UI::get().emplace<UIMerchant>();
+	else if (!merch->is_active()) merch->makeactive();
+}
+void UIEntrustedShop::do_exit()
+{
+	MinigameExitPacket().dispatch();
+	deactivate();
+}
+Button::State UIEntrustedShop::button_pressed(uint16_t buttonid)
+{
+	if (buttonid == BtStart) { do_create(); return Button::State::NORMAL; }
+	if (buttonid == BtExit || buttonid == BtClose) { do_exit(); return Button::State::NORMAL; }
+	return Button::State::DISABLED;
 }
 void UIEntrustedShop::send_key(int32_t keycode, bool pressed, bool escape)
 {
-	if (pressed && escape) {
-		MinigameExitPacket().dispatch();
-		deactivate();
-		return;
-	}
+	if (pressed && escape) { do_exit(); return; }
 	if (!pressed) return;
-	if (keycode == 'X' || keycode == 'x') {
-		MinigameExitPacket().dispatch();
-		tip_label.change_text(Locale::text("common.exit"));
-		LOG(LOG_DEBUG, "UIEntrustedShop: Exit");
-		deactivate();
-		return;
-	}
-	if (keycode == 'O' || keycode == 'o') {
-		HiredMerchantOpenPacket().dispatch();
-		tip_label.change_text(Locale::text("common.open_store"));
-		auto merch = UI::get().get_element<UIMerchant>();
-		if (!merch) merch = UI::get().emplace<UIMerchant>();
-		else if (!merch->is_active()) merch->makeactive();
-		LOG(LOG_DEBUG, "UIEntrustedShop: Open + UIMerchant");
-	} else if (keycode == 'A' || keycode == 'a') {
-		softkey_or_inv_set_item([this](const std::string& t) { tip_label.change_text(t); });
-	} else if (keycode == 'B' || keycode == 'b') {
-		
-	} else if (keycode == 'S' || keycode == 's' || keycode == 'T' || keycode == 't') {
-		
-	}
+	if (keycode == 'X' || keycode == 'x') { do_exit(); return; }
+	if (keycode == 13 || keycode == 257 || keycode == 335 || keycode == '\r')
+		do_create();
 }
 UIElement::Type UIEntrustedShop::get_type() const { return TYPE; }
 void UIEntrustedShop::set_tip(const std::string& tip) { tip_label.change_text(tip); }
@@ -3144,14 +3219,10 @@ UIAranSkillGuide::UIAranSkillGuide()
 			from_sb = sb->get_selected_skill_id();
 		auto use_or_tip = [this](int32_t id, const std::string& tip) {
 			if (id > 0) {
-				int32_t lv = 1;
-				try {
-					lv = Stage::get().get_player().get_skills().get_level(id);
-					if (lv <= 0) lv = 1;
-				} catch (...) {}
-				UseSkillPacket(id, lv).dispatch();
+				// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+				Stage::get().get_combat().use_move(id);
 				tip_label.change_text(Locale::format("aranskillguide.skill", std::to_string(id)));
-				LOG(LOG_DEBUG, "UIAranSkillGuide: UseSkill id=" << id << " lv=" << lv);
+				LOG(LOG_DEBUG, "UIAranSkillGuide: use_move id=" << id);
 				return;
 			}
 			if (tip.empty()) { tip_label.change_text(Locale::text("common.empty")); return; }
@@ -3179,12 +3250,8 @@ void UIAranSkillGuide::send_key(int32_t keycode, bool pressed, bool escape)
 		if (auto sb = UI::get().get_element<UISkillBook>())
 			from_sb = sb->get_selected_skill_id();
 		if (from_sb > 0) {
-			int32_t lv = 1;
-			try {
-				lv = Stage::get().get_player().get_skills().get_level(from_sb);
-				if (lv <= 0) lv = 1;
-			} catch (...) {}
-			UseSkillPacket(from_sb, lv).dispatch();
+			// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+			Stage::get().get_combat().use_move(from_sb);
 			tip_label.change_text(Locale::format("aranskillguide.skill", std::to_string(from_sb)));
 		} else {
 			
@@ -3283,14 +3350,10 @@ UISkillEx::UISkillEx()
 			from_sb = sb->get_selected_skill_id();
 		auto use_id = [this](int32_t id) {
 			if (id <= 0) { tip_label.change_text(Locale::text("skillex.bad_id")); return; }
-			int32_t lv = 1;
-			try {
-				lv = Stage::get().get_player().get_skills().get_level(id);
-				if (lv <= 0) lv = 1;
-			} catch (...) {}
-			UseSkillPacket(id, lv).dispatch();
-			tip_label.change_text(Locale::format_all("skillex.use_lv", {std::to_string(id), std::to_string(lv)}));
-			LOG(LOG_DEBUG, "UISkillEx: UseSkill id=" << id << " lv=" << lv);
+			// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+			Stage::get().get_combat().use_move(id);
+			tip_label.change_text(Locale::format("skillex.use", std::to_string(id)));
+			LOG(LOG_DEBUG, "UISkillEx: use_move id=" << id);
 		};
 		if (from_sb > 0) {
 			use_id(from_sb);
@@ -3311,12 +3374,8 @@ void UISkillEx::send_key(int32_t keycode, bool pressed, bool escape)
 		if (auto sb = UI::get().get_element<UISkillBook>())
 			from_sb = sb->get_selected_skill_id();
 		if (from_sb > 0) {
-			int32_t lv = 1;
-			try {
-				lv = Stage::get().get_player().get_skills().get_level(from_sb);
-				if (lv <= 0) lv = 1;
-			} catch (...) {}
-			UseSkillPacket(from_sb, lv).dispatch();
+			// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+			Stage::get().get_combat().use_move(from_sb);
 			tip_label.change_text(Locale::format("skillex.use", std::to_string(from_sb)));
 		} else {
 			
@@ -3715,12 +3774,8 @@ void UIShortCut::send_key(int32_t keycode, bool pressed, bool escape)
 			if (auto sb = UI::get().get_element<UISkillBook>())
 				from_sb = sb->get_selected_skill_id();
 			if (from_sb > 0) {
-				int32_t lv = 1;
-				try {
-					lv = Stage::get().get_player().get_skills().get_level(from_sb);
-					if (lv <= 0) lv = 1;
-				} catch (...) {}
-				UseSkillPacket(from_sb, lv).dispatch();
+				// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+				Stage::get().get_combat().use_move(from_sb);
 				LOG(LOG_DEBUG, "UIShortCut: UseSkill id=" << from_sb);
 			} else {
 				
@@ -4742,10 +4797,11 @@ bool UISkillMacroEx::drop_skill(int32_t skill_id, Point<int16_t> cursor_position
 	{
 		const int32_t skill_id = icon.get_skill_id();
 
-		// Angel BeginDragDrop 的宏图标(v43[7]=1)不是技能图标：get_skill_id()==0，
-		// 但松手落在组合栏内也必须消费掉，否则 draggedicon 永远挂在鼠标上。
+		// 方案 A：整行宏图标（get_skill_id()==0）落到宏面板内即消费（DragDrop
+		// 松手结算）；落在窗外返回 false 让 drop_icon 转交给快捷栏/键位窗/舞台。
+		// 旧 is_macro_source() 判定已随黏住态一并删除。
 		if (skill_id <= 0)
-			return icon.is_macro_source() && is_in_range(cursor_position);
+			return is_in_range(cursor_position);
 
 		// 窗外交给别的元素 / 保持拖拽；窗内投放一律消费图标（Angel 拖放结束即收起图标）。
 		// 是否写入由 drop_skill 按 (行,列) 决定：命中格才写，没命中不写、也不全局顺序填格。
@@ -5968,13 +6024,9 @@ void UIGameMenu::send_key(int32_t keycode, bool pressed, bool escape)
 		if (auto sb = UI::get().get_element<UISkillBook>())
 			from_sb = sb->get_selected_skill_id();
 		if (from_sb > 0) {
-			int32_t lv = 1;
-			try {
-				lv = Stage::get().get_player().get_skills().get_level(from_sb);
-				if (lv <= 0) lv = 1;
-			} catch (...) {}
-			UseSkillPacket(from_sb, lv).dispatch();
-			LOG(LOG_DEBUG, "UIGameMenu: UseSkill id=" << from_sb << " lv=" << lv);
+			// USE_SKILL(91) via Combat::use_move：本地位移（瞬移/二段跳）+ 发包
+			Stage::get().get_combat().use_move(from_sb);
+			LOG(LOG_DEBUG, "UIGameMenu: use_move id=" << from_sb);
 		} else {
 			
 		}

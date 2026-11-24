@@ -188,12 +188,17 @@ namespace ms
 		return type ? type->get_skill_id() : 0;
 	}
 
+	bool Icon::get_binding(uint8_t& out_type, int32_t& out_action) const
+	{
+		return type ? type->get_binding(out_type, out_action) : false;
+	}
+
 	int16_t Icon::get_count() const
 	{
 		return count;
 	}
 
-	bool Icon::get_drag()
+	bool Icon::get_drag() const
 	{
 		return dragged;
 	}

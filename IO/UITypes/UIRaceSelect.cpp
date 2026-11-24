@@ -20,6 +20,7 @@
 
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
+#include "../../Graphics/LocalPngTexture.h"
 #include "../../Graphics/Text.h"
 #include "../Components/LocalTwoSpriteButton.h"
 #include "../../Net/Packets/SelectCharPackets.h"
@@ -47,6 +48,9 @@ namespace ms
 		classic_mode(false), selected_class(Classes::EXPLORERS), index_shift(0), selected_index(0),
 		class_count(0), buttonIntervalX(0)
 	{
+		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
+			classic_local_ok[i] = false;
+
 		for (uint16_t i = 0; i < INDEX_COUNT; i++)
 		{
 			class_index[i] = 0;
@@ -110,7 +114,8 @@ namespace ms
 
 		dimension = Point<int16_t>(kClassicWndW, kClassicWndH);
 
-		// 前三职业走原生 RaceSelect/{knight,normal,aran}；龙神/双刀优先同名节点，缺则回落 aran/normal 卡面。
+		// 前三职业走原生 RaceSelect/{knight,normal,aran}；龙神/双刀优先 RaceSelect/{evan,dual}
+		//（自 192 RaceSelect_new/button/4|/8 转钥入库，见 create-char-192-ui-fusion）；缺则回落 aran/normal。
 		nl::node nodes[CLASSIC_CLASS_COUNT] = {
 			RaceSelect["knight"],
 			RaceSelect["normal"],
@@ -118,7 +123,8 @@ namespace ms
 			RaceSelect["evan"] ? RaceSelect["evan"] : (RaceSelect["Evan"] ? RaceSelect["Evan"] : RaceSelect["aran"]),
 			RaceSelect["dual"] ? RaceSelect["dual"] : (RaceSelect["dualBlade"] ? RaceSelect["dualBlade"] : RaceSelect["normal"])
 		};
-		const char* btn_names[CLASSIC_CLASS_COUNT] = { "BtKnight", "BtNormal", "BtAran", "BtAran", "BtNormal" };
+		// BtEvan / BtDual：与入库节点名对齐；旧包无专属按钮时仍回落扫描 BtAran/BtNormal。
+		const char* btn_names[CLASSIC_CLASS_COUNT] = { "BtKnight", "BtNormal", "BtAran", "BtEvan", "BtDual" };
 
 		// 五卡横排压缩进 700 窗宽（原三卡 104/293/511）。
 		classic_card_pos[0] = Point<int16_t>(40, 90);
@@ -129,14 +135,22 @@ namespace ms
 		classic_text_pos = Point<int16_t>(118, 311);
 		classic_select_pos = Point<int16_t>(530, 422);
 
+		// 龙神/双刀：优先 Login.img RaceSelect/{evan,dual}；LocalPng 仅作无节点时的离线兜底。
+		static const char* kLocalStem[CLASSIC_CLASS_COUNT] = {
+			nullptr, nullptr, nullptr, "evan", "dual"
+		};
+
 		for (uint16_t i = 0; i < CLASSIC_CLASS_COUNT; i++)
 		{
 			nl::node card = nodes[i];
 			nl::node btn = card[btn_names[i]];
 			if (!btn)
 			{
-				// 回落卡可能无同名按钮，改扫 card 下第一个含 normal 的子节点
-				btn = card["BtKnight"] ? card["BtKnight"] : (card["BtNormal"] ? card["BtNormal"] : card["BtAran"]);
+				// 回落卡可能无同名按钮：优先专属名，再扫 classic 三键
+				btn = card["BtEvan"] ? card["BtEvan"]
+					: (card["BtDual"] ? card["BtDual"]
+					: (card["BtKnight"] ? card["BtKnight"]
+					: (card["BtNormal"] ? card["BtNormal"] : card["BtAran"])));
 			}
 
 			classic_card[i] = btn["normal"]["0"];
@@ -150,6 +164,55 @@ namespace ms
 			{
 				card_size = Point<int16_t>(120, 160);
 				card_origin = Point<int16_t>(0, 0);
+			}
+
+			classic_local_ok[i] = false;
+			const bool wz_dedicated =
+				(i == 3 && (RaceSelect["evan"] || RaceSelect["Evan"])) ||
+				(i == 4 && (RaceSelect["dual"] || RaceSelect["dualBlade"]));
+			const bool wz_card_ok = wz_dedicated && card_size.x() > 0;
+			if (kLocalStem[i] != nullptr && !wz_card_ok)
+			{
+				const std::string stem = kLocalStem[i];
+				const std::string prefix = "UI/Creation/RaceSelect/" + stem;
+				const std::string docs = "docs/features/create-char-192-ui-fusion-2026-11/resources/cards/" + stem;
+				constexpr size_t kBase = 0x52534556ull; // 'RSEV'
+				const size_t id = kBase + static_cast<size_t>(i) * 8;
+				const bool n_ok = classic_local_normal[i].load(id + 0, {
+					prefix + "_normal.png", docs + "_normal.png" });
+				const bool o_ok = classic_local_over[i].load(id + 1, {
+					prefix + "_over.png", docs + "_over.png" });
+				const bool on_ok = classic_local_on[i].load(id + 2, {
+					prefix + "_on.png", docs + "_on.png" });
+				const bool t_ok = classic_local_text[i].load(id + 3, {
+					prefix + "_text.png", docs + "_text.png" });
+				classic_local_ok[i] = n_ok && o_ok && on_ok;
+				if (classic_local_ok[i])
+				{
+					card_size = Point<int16_t>(
+						classic_local_normal[i].width(),
+						classic_local_normal[i].height());
+					card_origin = Point<int16_t>(0, 0);
+					LoginUiAssets::log_info(
+						std::string("[RaceSelect] local card fallback stem=") + stem
+						+ " size=" + std::to_string(card_size.x()) + "x"
+						+ std::to_string(card_size.y())
+						+ " text=" + (t_ok ? "1" : "0"));
+				}
+				else
+				{
+					LoginUiAssets::log_error(
+						std::string("[RaceSelect] local card missing stem=") + stem
+						+ " n=" + std::to_string(n_ok) + " o=" + std::to_string(o_ok)
+						+ " on=" + std::to_string(on_ok));
+				}
+			}
+			else if (wz_card_ok && kLocalStem[i] != nullptr)
+			{
+				LoginUiAssets::log_info(
+					std::string("[RaceSelect] wz card OK stem=") + kLocalStem[i]
+					+ " size=" + std::to_string(card_size.x()) + "x"
+					+ std::to_string(card_size.y()));
 			}
 
 			buttons[Buttons::CLASS0 + i] = std::make_unique<AreaButton>(
@@ -384,24 +447,39 @@ namespace ms
 			{
 				Point<int16_t> card_pos = position + classic_card_pos[i];
 				bool selected = (i == selected_index);
+				const bool use_local = classic_local_ok[i];
 
-				if (selected)
+				if (use_local)
+				{
+					if (selected)
+						classic_local_on[i].draw(card_pos);
+					else if (mouseover[i])
+						classic_local_over[i].draw(card_pos);
+					else
+						classic_local_normal[i].draw(card_pos);
+				}
+				else if (selected)
 					classic_on_ani[i].draw(card_pos, inter);
 				else if (mouseover[i])
 					classic_card_over[i].draw(card_pos);
 				else
 					classic_card[i].draw(card_pos);
 
+				const int16_t cw = use_local ? classic_local_normal[i].width() : classic_card[i].width();
+				const int16_t ch = use_local ? classic_local_normal[i].height() : classic_card[i].height();
 				// 标签画在卡面下方居中，便于区分回落贴图的龙神/双刀
 				Point<int16_t> label_pos = card_pos + Point<int16_t>(
-					static_cast<int16_t>(classic_card[i].width() / 2),
-					static_cast<int16_t>(classic_card[i].height() + 4));
-				if (classic_card[i].width() <= 0)
+					static_cast<int16_t>(cw / 2),
+					static_cast<int16_t>(ch + 4));
+				if (cw <= 0)
 					label_pos = card_pos + Point<int16_t>(60, 164);
 				classic_card_label[i].draw(label_pos);
 			}
 
-			classic_text[selected_index].draw(position + classic_text_pos);
+			if (classic_local_ok[selected_index] && classic_local_text[selected_index].is_valid())
+				classic_local_text[selected_index].draw(position + classic_text_pos);
+			else
+				classic_text[selected_index].draw(position + classic_text_pos);
 
 			// IDA OnCreate canvas blit textGL @ (315, 52).
 			if (classic_text_gl.is_valid())

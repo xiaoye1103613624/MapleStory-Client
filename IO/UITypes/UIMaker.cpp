@@ -37,9 +37,9 @@
 namespace ms
 {
 	UIMaker::UIMaker() :
-		title(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, "Maker"),
+		title(Text::Font::A12M, Text::Alignment::CENTER, Color::Name::WHITE, Locale::text("uimaker.title")),
 		status(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::EMPEROR,
-			"No maker recipes available.")
+			Locale::text("uimaker.empty"))
 	{
 		dimension = Point<int16_t>(380, 460);
 

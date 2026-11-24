@@ -650,6 +650,9 @@ namespace ms
 		// UIOptionMenu.h 被 4 个 TU 包含，给它加数据成员要走全量 Rebuild。
 		// 窗体每次打开都由 UI::emplace 重建（UIMiscShells.cpp），构造函数里复位。
 		uint16_t sysopt_open = 0;
+		// 语言 / 主题下拉的展开态（0=收起），与 sysopt_open 互斥。
+		uint16_t lang_open = 0;
+		uint16_t theme_open = 0;
 
 		// 多分辨率：全部放文件作用域，不给 UIOptionMenu.h 加数据成员
 		// （该类头被多个 TU 包含，加成员会踩增量构建旧 obj 坑、需整工程 Rebuild）。
@@ -663,7 +666,8 @@ namespace ms
 		// 普通「确定」（无分辨率变更）落盘后也要关窗；commit 只排队，本窗下一帧
 		// update 见到此标记即销毁（与分辨率变更走同一「先关窗再切档」口径）。
 		bool sysopt_committed = false;
-		// HUD ThemePack：0=classic，1=modern（与 UiTheme::ThemeId 对齐；文件作用域避免改头布局）。
+		// HUD ThemePack 下拉序号：0=083(Classic083) / 1=192(StatusBar2_192)。
+		// 095 为预留置灰项（无对应 ThemeId），不落盘、不切换。移除旧的 modern 语义。
 		uint8_t sysopt_hud_theme = 0;
 	}
 
@@ -732,6 +736,8 @@ namespace ms
 
 		// 展开后的条目命中区，行顶 = 盒体下沿 + 行高*i；收起时整排置灰不激活。
 		sysopt_open = 0;
+		lang_open = 0;
+		theme_open = 0;
 		sysopt_committed = false;
 
 		for (uint8_t i = 0; i < SCREENSHOT_PATH_COUNT; i++)
@@ -756,15 +762,25 @@ namespace ms
 				Point<int16_t>(RES_COMBO_W, RES_COMBO_H));
 
 		set_combo_rows(false, false);
-		set_res_rows(false);
 
-		// 语言切换命中区（无贴图，运行时自绘「语言：xxx」，点一下在 zh-CN/en-US 间切换）。
+		// 语言下拉盒体：点击展开 CN/EN 两条（向上展开，避免超出窗口命中区）。
 		buttons[LANGUAGE] = std::make_unique<AreaButton>(
-			Point<int16_t>(COMBO_X, LANG_Y), Point<int16_t>(LANG_W, COMBO_H));
+			Point<int16_t>(LANG_X, LANG_Y), Point<int16_t>(LANG_W + 18, COMBO_H));
+		for (uint8_t i = 0; i < LANG_COUNT; i++)
+			buttons[LANG_OPT0 + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(LANG_X, LANG_Y - COMBO_H * (LANG_COUNT - i)),
+				Point<int16_t>(LANG_W + 18, COMBO_H));
 
-		// HUD ThemePack：主题项（自绘「主题：083 Classic/Modern」），点一下切换并即时重建底栏。
+		// 主题下拉盒体：083 / 192 / 095(预留置灰)，点击展开三条（向上）。
 		buttons[HUD_THEME] = std::make_unique<AreaButton>(
-			Point<int16_t>(THEME_X, THEME_Y), Point<int16_t>(THEME_W, COMBO_H));
+			Point<int16_t>(THEME_X, THEME_Y), Point<int16_t>(THEME_W + 18, COMBO_H));
+		for (uint8_t i = 0; i < THEME_COUNT; i++)
+			buttons[THEME_OPT0 + i] = std::make_unique<AreaButton>(
+				Point<int16_t>(THEME_X, THEME_Y - COMBO_H * (THEME_COUNT - i)),
+				Point<int16_t>(THEME_W + 18, COMBO_H));
+
+		// 展开条目默认置灰不激活，点盒体展开时才由 set_meta_rows 打开。
+		set_meta_rows(false, false);
 
 		// 同 UIGameOpt：传按钮根节点，不是 ["normal"][0] 叶子。
 		nl::node bt_ok = Basic["BtOK2"];
@@ -800,7 +816,10 @@ namespace ms
 		// 当前语言序号：ui.language 是 zh-CN（默认）/ en-US。
 		language = (Configuration::get().get_ui_language() == "en-US") ? 1 : 0;
 
-		sysopt_hud_theme = (UiTheme::resolve() == UiTheme::ThemeId::Classic083) ? 0 : 1;
+		// 设置界面只暴露 083 / 192 两档（095 预留置灰、Modern 已移除）。
+		// resolve() 可能落到 ModernStatusBar3：映射回 083，避免下拉无对应高亮。
+		const UiTheme::ThemeId cur_theme = UiTheme::resolve();
+		sysopt_hud_theme = (cur_theme == UiTheme::ThemeId::StatusBar2_192) ? 1 : 0;
 
 		// 多分辨率：显示真实当前档，不能恒显示 0 档（rs.cpp L1988-1996 的坑）。
 		// game_tier=255 表示旧配置未显式选档，按 window.game_width/height 反查。
@@ -837,18 +856,8 @@ namespace ms
 		for (uint8_t i = 0; i < SL_COUNT; i++)
 		{
 			sliders[i].draw(position);
-
-			// 仅背景音乐 / 效果音响两条音量滑条有「小 / 大」端点标记（原生烘焙在
-			// 轨道端、会被满值时的滑钮压住）；按用户要求绘到轨道上方（y = 行顶 - 12），
-			// 保证不被遮挡。其余滑条无此标记，不画。
-			if (i == SL_BGM || i == SL_SFX)
-			{
-				const int16_t ry = SLIDER_ROW[i] - 12;
-				Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, "小")
-					.draw(position + Point<int16_t>(TRACK_X0, ry));
-				Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "大")
-					.draw(position + Point<int16_t>(TRACK_X1, ry));
-			}
+			// 「小 / 大」端点字已烘焙在 SysOpt/backgrnd 轨道两端；2026-11-22 去掉本端
+			// 自绘的重复版本（曾导致「小」出现两次、「大」底部被遮挡后重影）。
 		}
 
 		// 勾选态与 CHECK_BOX 表同序：背景音乐静音 / 效果音响静音 / 画面效果 /
@@ -875,22 +884,22 @@ namespace ms
 		draw_combo(COMBO_Y_MOB, combo_item(MOB_INFO_KEY, mob_info));
 		draw_resolution_combo();
 
-		// 语言切换项：运行时自绘「语言：当前语言」，点一下在 zh-CN / en-US 间切换。
-		Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-			Locale::text("sysopt.label.language") + std::string("：")
-				+ Locale::text(std::string(LANGUAGE_KEY) + std::to_string(language)),
-			LANG_W - 6)
-			.draw(position + Point<int16_t>(COMBO_X + 6, LANG_Y + 1));
+		// 语言标签 + 下拉盒体（CN / EN）。
+		Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Locale::text("sysopt.label.language"))
+			.draw(position + Point<int16_t>(LANG_LABEL_X, LANG_Y + 2));
+		draw_meta_combo(LANG_X, LANG_Y, LANG_W,
+			Locale::text(std::string(LANGUAGE_KEY) + std::to_string(language)));
 
-		// HUD ThemePack 主题项（先验/正式入口共用 apply）。
+		// 主题标签 + 下拉盒体（083 / 192 / 095预留）。
+		Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			Locale::text("sysopt.label.theme"))
+			.draw(position + Point<int16_t>(THEME_LABEL_X, THEME_Y + 2));
 		{
-			const char* theme_name = (sysopt_hud_theme == 0)
-				? UiTheme::display_name(UiTheme::ThemeId::Classic083)
-				: UiTheme::display_name(UiTheme::ThemeId::ModernStatusBar3);
-			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-				std::string("主题：") + theme_name,
-				THEME_W - 6)
-				.draw(position + Point<int16_t>(THEME_X + 2, THEME_Y + 1));
+			const char* theme_key = (sysopt_hud_theme == 1)
+				? "sysopt.combo.theme.1"                 // 192
+				: "sysopt.combo.theme.0";                 // 083
+			draw_meta_combo(THEME_X, THEME_Y, THEME_W, Locale::text(theme_key));
 		}
 
 		UIElement::draw_buttons(inter);
@@ -902,6 +911,11 @@ namespace ms
 			draw_combo_list(COMBO_Y_MOB, MOB_INFO_COUNT, MOB_INFO_KEY, mob_info);
 		else if (sysopt_open == SCREENSHOT_PATH)
 			draw_combo_list(COMBO_Y_PATH, SCREENSHOT_PATH_COUNT, SCREENSHOT_PATH_KEY, screenshot_path);
+		else if (lang_open)
+			draw_meta_list(LANG_X, LANG_Y, LANG_W, LANGUAGE_KEY, LANG_COUNT, language, 0xFF);
+		else if (theme_open)
+			draw_meta_list(THEME_X, THEME_Y, THEME_W, "sysopt.combo.theme.", THEME_COUNT,
+				sysopt_hud_theme, 2); // 095(序号2)置灰
 	}
 
 	// 下拉项文字裁剪到 maxw 像素内，超出加省略号（避免「MapleStory文件夹」等长项溢出盒体）。
@@ -982,9 +996,90 @@ namespace ms
 
 		for (uint8_t i = 0; i < count; i++)
 		{
-			Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::BLACK,
-				fit_combo_text(combo_item(key_prefix, i), Text::Font::A12M, COMBO_TOTAL_W - 8))
+			Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+				fit_combo_text(combo_item(key_prefix, i), Text::Font::A11M, COMBO_TOTAL_W - 8))
 				.draw(lt + Point<int16_t>(6, COMBO_H * i + 1));
+		}
+	}
+
+	// 通用下拉盒体：Basic.img/ComboBox 三段贴图铺出 (w+18)x17，当前项文字用 A11M 防溢出。
+	void UISysOpt::draw_meta_combo(int16_t x, int16_t y, int16_t w, const std::string& current) const
+	{
+		nl::node src = nl::nx::UI["Basic.img"]["ComboBox"]["normal"][0];
+		if (!UiAssetResolve::usable(src))
+			return;
+
+		Texture left(src);
+		Texture mid(nl::nx::UI["Basic.img"]["ComboBox"]["normal"][1]);
+		Texture arrow(nl::nx::UI["Basic.img"]["ComboBox"]["normal"][2]);
+
+		Point<int16_t> lp(position.x() + x, position.y() + y);
+		left.draw(lp);
+		lp.shift_x(left.width());
+		int16_t mid_w = mid.width() < 1 ? 1 : mid.width();
+		int16_t drawn = 0;
+		while (drawn < w)
+		{
+			mid.draw(lp);
+			lp.shift_x(mid_w);
+			drawn += mid_w;
+		}
+		arrow.draw(lp);
+
+		// A11M（较小字号）+ 省略号裁剪，保证 CN/EN、083/192/095 不溢出盒体。
+		Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK,
+			fit_combo_text(current, Text::Font::A11M, w - 4), w - 4, false)
+			.draw(Point<int16_t>(position.x() + x + 5, position.y() + y + 2));
+	}
+
+	// 通用下拉列表：向上展开（count 行，行顶 = y - count*COMBO_H），高亮当前行，
+	// disabled 序号画灰且不可选。文字基线 +2 与收起态一致，避免「选中不对齐」。
+	void UISysOpt::draw_meta_list(int16_t x, int16_t y, int16_t w, const char* key_prefix,
+		uint8_t count, uint8_t selected, uint8_t disabled) const
+	{
+		const int16_t total_w = w + 18;
+		const Point<int16_t> lt(position.x() + x, position.y() + y - COMBO_H * count);
+
+		ColorBox frame(total_w, COMBO_H * count + 2, Color::Name::DUSTYGRAY, 1.0f);
+		ColorBox inner(total_w - 2, COMBO_H * count, Color::Name::GALLERY, 1.0f);
+		frame.draw(lt);
+		inner.draw(lt + Point<int16_t>(1, 1));
+
+		if (selected < count)
+		{
+			ColorBox current(total_w - 2, COMBO_H - 2, Color::Name::GRAYOLIVE, 1.0f);
+			current.draw(lt + Point<int16_t>(1, 1 + COMBO_H * selected));
+		}
+
+		for (uint8_t i = 0; i < count; i++)
+		{
+			const std::string label = Locale::text(std::string(key_prefix) + std::to_string(i));
+			const Color::Name color = (i == disabled) ? Color::Name::GRAY : Color::Name::BLACK;
+			Text(Text::Font::A11M, Text::Alignment::LEFT, color,
+				fit_combo_text(label, Text::Font::A11M, total_w - 8))
+				.draw(lt + Point<int16_t>(5, COMBO_H * i + 2));
+		}
+	}
+
+	// 展开条目命中区开关（语言 / 主题互斥，收起时整排置灰）。
+	void UISysOpt::set_meta_rows(bool show_lang, bool show_theme)
+	{
+		for (uint8_t i = 0; i < LANG_COUNT; i++)
+		{
+			if (const auto& row = buttons.find(LANG_OPT0 + i); row != buttons.end())
+			{
+				row->second->set_active(show_lang);
+				row->second->set_state(Button::State::NORMAL);
+			}
+		}
+		for (uint8_t i = 0; i < THEME_COUNT; i++)
+		{
+			if (const auto& row = buttons.find(THEME_OPT0 + i); row != buttons.end())
+			{
+				// 095(序号2)永远置灰不可点。
+				row->second->set_active(show_theme && i != 2);
+				row->second->set_state(Button::State::NORMAL);
+			}
 		}
 	}
 
@@ -1074,13 +1169,14 @@ namespace ms
 
 	void UISysOpt::apply_hud_theme_pref(uint8_t ordinal)
 	{
-		const UiTheme::ThemeId want = ordinal
-			? UiTheme::ThemeId::ModernStatusBar3
+		// 设置界面两档：0=083(Classic083) / 1=192(StatusBar2_192)。095 预留不进此路径。
+		const UiTheme::ThemeId want = (ordinal == 1)
+			? UiTheme::ThemeId::StatusBar2_192
 			: UiTheme::ThemeId::Classic083;
 		const UiTheme::ThemeId applied = UiTheme::set_theme(want, true);
 		Configuration::get().save();
 		UI::get().apply_hud_theme();
-		sysopt_hud_theme = (applied == UiTheme::ThemeId::Classic083) ? 0 : 1;
+		sysopt_hud_theme = (applied == UiTheme::ThemeId::StatusBar2_192) ? 1 : 0;
 		LOG(LOG_INFO, "UISysOpt: HUD theme -> " << UiTheme::to_config(applied));
 	}
 
@@ -1178,7 +1274,10 @@ namespace ms
 
 			sysopt_open = reopen ? buttonid : 0;
 			sysopt_res_open = false;
+			lang_open = false;
+			theme_open = false;
 			set_res_rows(false);
+			set_meta_rows(false, false);
 			set_combo_rows(sysopt_open == Buttons::MOB_INFO, sysopt_open == Buttons::SCREENSHOT_PATH);
 
 			LOG(LOG_INFO, "UISysOpt: combo " << buttonid << " " << (sysopt_open ? "expanded" : "collapsed"));
@@ -1186,26 +1285,55 @@ namespace ms
 			return Button::State::IDENTITY;
 		}
 		case Buttons::LANGUAGE:
-			language = language ? 0 : 1;
-			apply_language(language);
+			// 点盒体展开/收起 CN/EN（不再直接切换），与其它下拉互斥。
+			lang_open = !lang_open;
+			theme_open = false;
+			sysopt_open = 0;
+			sysopt_res_open = false;
+			set_combo_rows(false, false);
+			set_res_rows(false);
+			set_meta_rows(lang_open, false);
 			return Button::State::IDENTITY;
 		case Buttons::HUD_THEME:
+			// 点盒体展开/收起 083/192/095（095 置灰）。
+			theme_open = !theme_open;
+			lang_open = false;
+			sysopt_open = 0;
+			sysopt_res_open = false;
+			set_combo_rows(false, false);
+			set_res_rows(false);
+			set_meta_rows(false, theme_open);
+			return Button::State::IDENTITY;
+		case Buttons::LANG_OPT0:
+		case Buttons::LANG_OPT1:
+			language = static_cast<uint8_t>(buttonid - Buttons::LANG_OPT0);
+			apply_language(language);
+			lang_open = false;
+			set_meta_rows(false, false);
+			LOG(LOG_INFO, "UISysOpt: language ordinal " << unsigned(language));
+			return Button::State::IDENTITY;
+		case Buttons::THEME_OPT0:
+		case Buttons::THEME_OPT1:
 		{
-			// Prefer the other pack when both exist; otherwise keep current.
-			const uint8_t next = sysopt_hud_theme ? 0 : 1;
-			const UiTheme::ThemeId want = next
-				? UiTheme::ThemeId::ModernStatusBar3
+			const uint8_t ordinal = static_cast<uint8_t>(buttonid - Buttons::THEME_OPT0);
+			if (ordinal == 2) // 095 预留置灰：不应用
+			{
+				LOG(LOG_INFO, "UISysOpt: theme 095 reserved (no-op)");
+				return Button::State::IDENTITY;
+			}
+			const UiTheme::ThemeId want = (ordinal == 1)
+				? UiTheme::ThemeId::StatusBar2_192
 				: UiTheme::ThemeId::Classic083;
-
 			if (!UiTheme::can_use(want))
 			{
 				LOG(LOG_WARN, "UISysOpt: HUD theme pack missing for "
 					<< UiTheme::to_config(want));
 				return Button::State::IDENTITY;
 			}
-
-			sysopt_hud_theme = next;
-			apply_hud_theme_pref(sysopt_hud_theme);
+			sysopt_hud_theme = ordinal;
+			apply_hud_theme_pref(ordinal);
+			theme_open = false;
+			set_meta_rows(false, false);
 			return Button::State::IDENTITY;
 		}
 		case Buttons::MOB_OPT0:
@@ -1232,10 +1360,13 @@ namespace ms
 			return Button::State::IDENTITY;
 		case Buttons::RESOLUTION:
 		{
-			// 第三个下拉：与另两个互斥，展开时收起它们。
+			// 第三个下拉：与另两个及语言/主题互斥，展开时收起它们。
 			sysopt_res_open = !sysopt_res_open;
 			sysopt_open = 0;
+			lang_open = false;
+			theme_open = false;
 			set_combo_rows(false, false);
+			set_meta_rows(false, false);
 			set_res_rows(sysopt_res_open);
 
 			LOG(LOG_INFO, "[MR] UISysOpt resolution combo "
@@ -1268,7 +1399,10 @@ namespace ms
 		case Buttons::CANCEL:
 			load_values();
 			sysopt_res_open = false;
+			lang_open = false;
+			theme_open = false;
 			set_res_rows(false);
+			set_meta_rows(false, false);
 			sysopt_pending_apply = false;
 			ResolutionTiers::clear_deferred_viewsize();
 			deactivate();
@@ -1433,7 +1567,10 @@ namespace ms
 			sysopt_pending_apply = false;
 			ResolutionTiers::clear_deferred_viewsize();
 			sysopt_res_open = false;
+			lang_open = false;
+			theme_open = false;
 			set_res_rows(false);
+			set_meta_rows(false, false);
 			deactivate();
 		}
 	}

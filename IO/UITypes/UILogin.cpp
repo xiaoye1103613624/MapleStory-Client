@@ -79,12 +79,12 @@ namespace ms
 		if (!version_pos.x() && !version_pos.y())
 			version_pos = Point<int16_t>(1061, 9);
 
-		// 品牌字标：本地 PNG 覆盖层（atlas id 避开 nlnx bitmap id 空间）。
-		// 缺素材时 login_logo.is_valid()==false，draw 自动 no-op，保持原行为。
-		constexpr size_t ATLAS_LOGIN_LOGO = 0x4C4F474Full;	// 'LOGO'
-		login_logo.load(ATLAS_LOGIN_LOGO, {
-			"UI/Creation/LoginLogo_override.png",
-			"docs/features/login-flow-ui-ida-align/resources/creation/LoginLogo_override.png" });
+		// 品牌字标：已移除 BeiDouMS 本地 PNG 覆盖层，恢复 v83 原生 logo。
+		// 原生字标由登录 Map Obj 在 Gameplay/MapleMap/Obj.cpp 换成
+		// UI/Login.img/Title/MSTitle（"MapleStory" + 红枫叶 + Beta Version），
+		// 经 LoginBackground 先绘制；此处不再覆盖。login_logo 成员保留仅便回滚。
+		// 历史：此前为贴合 BeiDou 目标端加过 LoginLogo_override.png 覆盖层，
+		// 用户 2026-11-21 要求换回原生（参照 angel/minms），故停用覆盖。
 
 		// 兼容数据命名：部分 v83 私服（如 BeiDou)把登录面板放在 Login.img/Title 而非 Title_new
 		nl::node Title_new = Login["Title_new"];
@@ -388,9 +388,8 @@ namespace ms
 
 		UIElement::draw(alpha);
 
-		// 背景（LoginBackground/Map Obj LOGO）已先画；此处整块覆盖品牌字标。
-		if (login_logo.is_valid())
-			login_logo.draw(Point<int16_t>(434, 80));
+		// 品牌字标由 LoginBackground 的 Map Obj（Obj.cpp → MSTitle）绘制，含 a0/a1 淡入；
+		// 原 BeiDouMS 覆盖层已移除，此处不再叠图，露出原生 MapleStory 字标。
 
 		version.draw(version_pos - Point<int16_t>(0, 5));
 

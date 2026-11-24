@@ -21,6 +21,7 @@
 
 #include "../Components/Textfield.h"
 
+#include "../../Graphics/LocalPngTexture.h"
 #include "../../Graphics/Sprite.h"
 #include "../../Graphics/Texture.h"
 #include "../../Template/BoolPair.h"
@@ -171,6 +172,13 @@ namespace ms
 		uint16_t classic_classes[CLASSIC_CLASS_COUNT];
 		// 五职业团卡面下方文字标签（龙神/双刀无专属 RaceSelect 图时用于辨认）
 		Text classic_card_label[CLASSIC_CLASS_COUNT];
+		// 192 抽卡 PNG 兜底（orange-wz 暂无法改写本端旧 Login.img 时启用；
+		// 优先读 UI/Creation/RaceSelect/*.png，见 create-char-192-ui-fusion）。
+		bool classic_local_ok[CLASSIC_CLASS_COUNT];
+		LocalPngTexture classic_local_normal[CLASSIC_CLASS_COUNT];
+		LocalPngTexture classic_local_over[CLASSIC_CLASS_COUNT];
+		LocalPngTexture classic_local_on[CLASSIC_CLASS_COUNT];
+		LocalPngTexture classic_local_text[CLASSIC_CLASS_COUNT];
 		// 左侧栏四块（职业团页 step3）：与正确端一致，照 UICommonCreation
 		// 已验证 classic 侧栏；本页 position=(240,40)，装饰以屏幕绝对坐标绘制。
 		Sprite rs_step;

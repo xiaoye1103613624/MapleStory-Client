@@ -52,7 +52,8 @@ namespace ms
 		void show_item(Tooltip::Parent parent, int32_t itemid) override;
 		void show_skill(Tooltip::Parent parent, int32_t skill_id, int32_t level, int32_t masterlevel, int64_t expiration) override;
 		void show_text(Tooltip::Parent parent, std::string text) override;
-		void show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal) override;
+		void show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal,
+			const std::vector<MapTooltipPlayer>& players = {}) override;
 
 		Iterator pre_add(UIElement::Type type, bool toggled, bool focused);
 		void remove(UIElement::Type type) override;
@@ -96,11 +97,8 @@ namespace ms
 
 		Optional<Icon> draggedicon;
 
-		// 点击式抓取（用户 m02404/m02463）：宏源图标抓起后黏在光标上，松手不结算，
-		// 下一次点击才落点。pending=刚抓起、即将到来的 IDLE 是抓取那一下的松手；
-		// sticky=已黏住等待点击落下。非宏源（背包/装备/技能窗）不启用，保持原生按住拖。
-		bool macro_sticky_pending = false;
-		bool macro_sticky = false;
+		// 方案 A（2026-11-22）：已删除本端自研的 macro_sticky 点击黏住态。
+		// Angel/MinMS/192 三家原生均为 DragDrop（按住拖、松手落），无黏住态。
 
 		std::map<Icon::IconType, UIElement::Type> icon_map =
 		{

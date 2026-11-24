@@ -21,6 +21,7 @@
 #include "UINotice.h"
 #include "UIViciousHammer.h"
 #include "UIVegaSpell.h"
+#include "UIEnhance.h"
 #include "UIMiscShells.h"
 #include "UICharInfo.h"
 #include "UIChatBar.h"
@@ -322,30 +323,38 @@ namespace ms
 		}
 
 		// 展开态翻页三件套：锚定 BtCashshop（"扩充道具栏"）左侧，位置固定、
-		// 不受其是否显示影响。BtCashshop 贴图左上角 = (bg_full_dimensions.x()-113, 266)。
+		// 不受其是否显示影响。素材 Basic.img/BtHide3(左←上一页) / BtHide2(右→下一页)，
+		// 与 BtCashshop(93x18 @ y266) 按垂直中线水平对齐。
 		{
-			// 三件套固定在 BtCashshop（"扩充道具栏"）左侧，位置固定、不受其显隐影响。
-			// cashshop 贴图左上角 = (bg_full_dimensions.x()-113, 266)，箭头按 14px 估宽。
-			nl::node arrows = UiAssetResolve::window("MonsterBook");
-			const int16_t anchor_x = bg_full_dimensions.x() - 113;
-			const int16_t anchor_y = 266;
-			const int16_t arrow_w = 14;   // MonsterBook 翻页箭头估宽
+			nl::node basic = nl::nx::UI["Basic.img"];
+			const int16_t cash_x = bg_full_dimensions.x() - 113;
+			const int16_t cash_y = 266;
+			const int16_t cash_h = 18;    // Item/BtCashshop normal 实测
+			const int16_t arrow_w = 12;   // BtHide2/BtHide3 实测
+			const int16_t arrow_h = 12;
 			const int16_t gap_edge = 8;   // 与 cashshop 的间距
 			const int16_t gap_inner = 3;  // 三件套两两间距
-			// 从 cashshop 左边缘往左排：下一页 → 输入框 → 上一页，互不重叠。
-			const int16_t next_x = anchor_x - gap_edge - arrow_w;
+			const int16_t center_y = static_cast<int16_t>(cash_y + cash_h / 2);
+			const int16_t arrow_y = static_cast<int16_t>(center_y - arrow_h / 2); // 269
 			page_input_dim = Point<int16_t>(24, 16);
+			const int16_t input_y = static_cast<int16_t>(center_y - page_input_dim.y() / 2); // 267
+			// 从 cashshop 左边缘往左排：下一页 → 输入框 → 上一页，互不重叠。
+			const int16_t next_x = cash_x - gap_edge - arrow_w;
 			const int16_t input_x = next_x - gap_inner - page_input_dim.x();
 			const int16_t prev_x = input_x - gap_inner - arrow_w;
-			try_maple_btn(buttons, Buttons::BT_PAGE_PREV, arrows["arrowLeft"], Point<int16_t>(prev_x, anchor_y));
-			try_maple_btn(buttons, Buttons::BT_PAGE_NEXT, arrows["arrowRight"], Point<int16_t>(next_x, anchor_y));
+			try_maple_btn(buttons, Buttons::BT_PAGE_PREV, basic["BtHide3"], Point<int16_t>(prev_x, arrow_y));
+			try_maple_btn(buttons, Buttons::BT_PAGE_NEXT, basic["BtHide2"], Point<int16_t>(next_x, arrow_y));
 
 			// 页码输入框兼作页码显示：仅数字、默认 1；浅灰底板让黑字可见（Release 也画）。
-			page_input_pos = Point<int16_t>(input_x, anchor_y + 1);
+			page_input_pos = Point<int16_t>(input_x, input_y);
 			page_input = Textfield(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::BLACK,
 				Rectangle<int16_t>(page_input_pos, page_input_pos + page_input_dim), 3);
 			page_input.set_digits_only(true);
 			page_input.change_text("1");
+			// 页码数字垂直居中于 24x16 浅灰框：Textfield 默认 text_shift=(0,0)，
+			// FreeType 按行顶/基线绘字，16px 矮槽不补偿就把「1」画到框外下方
+			// （用户截图实证）。用 y_for_ink_top 按当前字模现取墨迹度量，不手抄常数。
+			page_input.center_text_vertically(page_input_dim.y());
 			page_input_frame = ColorBox(page_input_dim.x(), page_input_dim.y(), Color(0xDDDDDDFFu), 1.0f);
 			page_input.set_enter_callback([&](std::string s) {
 				if (s.empty())
@@ -821,6 +830,16 @@ namespace ms
 						// 发给服务端 → 服务端 back ItemEff → Sound::Sound(204xxxx) 查不到
 						// prefix 02040000 回退 02000000（药水音）=> "卷轴用药水音效"真因。
 						// 加 break 截断误发；音效资源缺 204 的问题随之不再触发。
+						// UI_004 协同机族(16/17)：20484xx 是「2合1道具融合机」，不是砸卷。
+						// 必须抢在通用 204 砸卷分支之前精确拦截，否则会被误开 UIEnchantSkill。
+						if (item_id / 1000 == 2048 && item_id / 10000 == 204) {
+							uint8_t act = (item_id == 2048403) ? 17 : 16;  // 2048403=卷轴协同,其余=协同机
+							UI::get().remove(UIElement::Type::ENHANCE);
+							UI::get().emplace<UIEnhance>(act);
+							LOG(LOG_DEBUG, "[DBG-ENH] open synergy action=" << static_cast<int>(act)
+								<< " id=" << item_id << " slot=" << slot);
+							break;
+						}
 						if (item_id / 10000 == 204) {
 							auto ui = UI::get().get_element<UIEnchantSkill>();
 							if (!ui) ui = UI::get().emplace<UIEnchantSkill>();
@@ -865,6 +884,38 @@ namespace ms
 					{
 						// 现金道具双击：开对应壳（拖装备由各 UI 自己处理）
 						int32_t prefix = item_id / 10000;
+						// UI_004 强化族：双击魔方/印章/石净化等道具 → 通用强化壳 UIEnhance。
+						// 映射依据 CONTRACT.md 族 id 表；锤(557)/维加(561)/保护(559)走各自既有壳。
+						// UI_004 药剂罐(18)：5820000(永久)/5820001(7天) 双击开罐。
+						if (item_id == 5820000 || item_id == 5820001) {
+							UI::get().remove(UIElement::Type::ENHANCE);
+							UI::get().emplace<UIEnhance>(18);
+							break;
+						}
+						uint8_t enh_action = 0;
+						if (item_id == 5062006 || item_id == 5062005) enh_action = 3;       // 白金/惊人魔方
+						else if (item_id == 5062010 || item_id == 5062090) enh_action = 2;    // 黑/记忆魔方(Before/After)
+						else if (item_id == 5062503) enh_action = 5;                          // 白附加魔方
+						else if (item_id == 5062500 || item_id == 5062501) enh_action = 4;    // 附加魔方
+						else if (item_id == 5530111 || item_id == 5530124 || item_id == 5530341) enh_action = 12; // 潜能印章
+						else if (item_id == 5530268 || item_id == 5530269 || item_id == 5530342) enh_action = 13; // 附加印章
+						else if (item_id == 5062400) enh_action = 19;                         // 神奇铁砧/大师作品
+						else if (item_id == 5060023) enh_action = 14;                         // 混沌净化石(石净化)
+						else if (item_id / 1000 == 5062) enh_action = 6;                      // 其余 5062xxx → 通用神奇魔方
+						if (enh_action != 0) {
+							// 单例 TYPE 只能一个实例：换族先 remove 再 emplace，保证 action 正确。
+							if (auto old = UI::get().get_element<UIEnhance>()) {
+								if (old->get_action() == enh_action && old->is_active()) {
+									old->makeactive();
+									break;
+								}
+							}
+							UI::get().remove(UIElement::Type::ENHANCE);
+							UI::get().emplace<UIEnhance>(enh_action);
+							LOG(LOG_DEBUG, "[DBG-ENH] open action=" << static_cast<int>(enh_action)
+								<< " id=" << item_id << " slot=" << slot);
+							break;
+						}
 						if (Stage::get().get_player().get_stats().get_stat(MapleStat::Id::HP) == 0) {
 							// W3：死亡态现金外观/效果 → USE_DEATHITEM
 							UseDeathItemPacket(item_id).dispatch();
@@ -1611,7 +1662,7 @@ namespace ms
 
 		if (alerted)
 		{
-			UI::get().emplace<UIOk>("You cannot complete this action right now.\\nEvade the attack and try again.", [](bool) {});
+			UI::get().emplace<UIOk>(Locale::text("uiiteminventory.alerted"), [](bool) {});
 			return false;
 		}
 

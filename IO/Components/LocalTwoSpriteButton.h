@@ -20,6 +20,7 @@ namespace ms
 
 		void draw(Point<int16_t> parentpos) const override;
 		void update() override {}
+		void set_position(Point<int16_t> position) override;
 		Rectangle<int16_t> bounds(Point<int16_t> parentpos) const override;
 		int16_t width() const override;
 		Point<int16_t> origin() const override;

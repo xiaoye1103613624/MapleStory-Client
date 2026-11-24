@@ -75,12 +75,18 @@ namespace ms
 
 		void add_keymapping(uint8_t no, uint8_t type, int32_t action);
 
+		/// 主菜单/底栏/指令共用的"商城"入口。
+		/// ui.cashshop.window_mode=true → 打开 UIWindowCashShop（窗口内商城）；
+		/// false（默认）或缺配置 → 走原生商城 EnterCashShopPacket。
+		void open_cashshop_entry();
+
 		void clear_tooltip(Tooltip::Parent parent);
 		void show_equip(Tooltip::Parent parent, int16_t slot);
 		void show_item(Tooltip::Parent parent, int32_t item_id);
 		void show_skill(Tooltip::Parent parent, int32_t skill_id, int32_t level, int32_t masterlevel, int64_t expiration);
 		void show_text(Tooltip::Parent parent, std::string text);
-		void show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal);
+		void show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal,
+			const std::vector<MapTooltipPlayer>& players = {});
 
 		Keyboard& get_keyboard();
 

@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIChatBar.h"
 #include "UIChat.h"
+#include "UIChatEmoticon.h"
 #include "UIUserList.h"
 #include "../../Character/BuddyListModel.h"
 #include "UICharInfo.h"
@@ -320,14 +321,29 @@ namespace ms
 			return;
 		}
 
-		nl::node ingame = UiAssetResolve::status_bar_root()["chat"]["ingame"];
+		// 2026-11-19 modern 聊天修复（证据：evidence/wz-statusbar3-chat-qs-2026-11-19.md）
+		// 原注释断言「StatusBar.img 没有 chat/ingame」是错的：orange-wz 实测 live
+		// StatusBar3.img/chat/ingame 完整存在（view/input/filter 三子树）。真因是
+		// input 下这批按钮的 normal/0 多为 1x1 占位帧（WZ 用 UOL 指到别处，本端 nx
+		// 解析成空帧），且两个按钮名写错（itemLink / chatEmoticon 在 input 下不存在）。
+		// 结果：input_btns_x = 1+3 = 4px，5 个按钮全叠在一起 = 用户报的「聊天残缺/功能不完善」。
+		// 修法：节点回退到 chat/common/Bt*_outside（18x18 真实纹理），保留按钮对象
+		// （toggle_input/update_view 里无空指针检查，跳过创建会 0xc0000005）。
+		nl::node sbroot = UiAssetResolve::status_bar_root();
+		nl::node ingame = sbroot["chat"]["ingame"];
 		nl::node input = ingame["input"];
+		nl::node chatroot = sbroot["chat"];
+		nl::node common = chatroot["common"];
 
-		// 本包（v83 BeiDou）只有 classic StatusBar.img，没有 chat/ingame：走到这里
-		// 说明 is_classic_hud() 判假了，下面这批贴图/按钮会全部空掉，必须留痕。
 		if (!UiAssetResolve::usable(ingame))
 			UiAssetResolve::diag_once("chatbar.modern.chat_ingame",
-				"StatusBar.img/chat/ingame missing -> modern chat view/input textures and BtMax/BtMin/BtChat are empty");
+				"StatusBar3.img/chat/ingame missing -> modern chat view/input textures empty");
+
+		// 输入行按钮节点选择：优先 input 下同名节点；若 normal/0 是 1x1 占位，
+		// 回退到 chat/common/Bt*_outside 的真实 18x18 纹理节点。
+		auto usable_button = [](nl::node n) -> bool {
+			return n && Texture(n["normal"]["0"]).width() > 1;
+		};
 
 		nl::node view = ingame["view"];
 		nl::node max = view["max"];
@@ -383,19 +399,77 @@ namespace ms
 
 		Point<int16_t> input_btns_pos = Point<int16_t>(input_max_x - (input_bg_x - user_view_x) + input_origin_x - 17, 15 + input_origin_y + 1);
 		int16_t input_btns_padding = 3;
-		input_btns_x = Texture(input["button:chat"]["normal"]["0"]).width() + input_btns_padding;
 
-		buttons[Buttons::BtChat] = std::make_unique<MapleButton>(input["button:chat"], input_btns_pos + Point<int16_t>(input_btns_x * 0, 0));
-		buttons[Buttons::BtItemLink] = std::make_unique<MapleButton>(input["button:itemLink"], input_btns_pos + Point<int16_t>(input_btns_x * 1, 0));
-		buttons[Buttons::BtChatEmoticon] = std::make_unique<MapleButton>(input["button:chatEmoticon"], input_btns_pos + Point<int16_t>(input_btns_x * 2, 0));
-		buttons[Buttons::BtHelp] = std::make_unique<MapleButton>(input["button:help"], input_btns_pos + Point<int16_t>(input_btns_x * 3, 0));
-		buttons[Buttons::BtOutChat] = std::make_unique<MapleButton>(input["button:outChat"], input_btns_pos + Point<int16_t>(input_btns_x * 4, 0));
+		// 每颗按钮按「真实纹理节点」选源：input 下的 1x1 占位改用 common 下
+		// 对应的 18x18 outside 变体。间距随真实宽度算（18+3=21px），5 颗不再叠一起。
+		// 节点名也在此纠正：itemLink→BtLink_outside（input 下无 button:itemLink），
+		// chatEmoticon→BtChatEmoticon_outside（input 下无 button:chatEmoticon）。
+		nl::node n_chat = usable_button(input["button:chat"]) ? input["button:chat"] : common["BtChat_outside"];
+		nl::node n_link = usable_button(input["button:Link"]) ? input["button:Link"] : common["BtLink_outside"];
+		nl::node n_emot = usable_button(chatroot["chatCommandMenu"]["button:chatEmoticon"])
+			? chatroot["chatCommandMenu"]["button:chatEmoticon"] : common["BtChatEmoticon_outside"];
+		nl::node n_help = usable_button(input["button:help"]) ? input["button:help"] : common["BtHelp_outside"];
+		nl::node n_out = usable_button(input["button:outChat"]) ? input["button:outChat"] : common["BtInChat_outside"];
+
+		input_btns_x = static_cast<int16_t>(Texture(n_chat["normal"]["0"]).width()) + input_btns_padding;
+		if (input_btns_x <= input_btns_padding)
+			input_btns_x = 18 + input_btns_padding; // 兜底：节点全失效时按 18px 排布
+
+		buttons[Buttons::BtChat] = std::make_unique<MapleButton>(n_chat, input_btns_pos + Point<int16_t>(input_btns_x * 0, 0));
+		buttons[Buttons::BtItemLink] = std::make_unique<MapleButton>(n_link, input_btns_pos + Point<int16_t>(input_btns_x * 1, 0));
+		buttons[Buttons::BtChatEmoticon] = std::make_unique<MapleButton>(n_emot, input_btns_pos + Point<int16_t>(input_btns_x * 2, 0));
+		buttons[Buttons::BtHelp] = std::make_unique<MapleButton>(n_help, input_btns_pos + Point<int16_t>(input_btns_x * 3, 0));
+		buttons[Buttons::BtOutChat] = std::make_unique<MapleButton>(n_out, input_btns_pos + Point<int16_t>(input_btns_x * 4, 0));
 
 		buttons[Buttons::BtChat]->set_active(false);
 		buttons[Buttons::BtItemLink]->set_active(false);
 		buttons[Buttons::BtChatEmoticon]->set_active(false);
 		buttons[Buttons::BtHelp]->set_active(false);
 		buttons[Buttons::BtOutChat]->set_active(false);
+
+		// 聊天目标：StatusBar3 的目标框/分页在 chat/common/chatTarget（base=底框，
+		// all/friend/...=分页钮）。modern 分支过去完全没建目标 UI，导致切 modern
+		// 后没有「全部/好友/组队...」切换入口。这里初始化目标框贴图 + 复用 classic
+		// 已经验证过的目标文字/列表机制（set_classic_* 不判 classic_mode，天然通用）。
+		classic_chat_target = Texture(common["chatTarget"]["base"]);
+		classic_target_text = Text(
+			Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
+			Locale::text("chat.target.all")
+		);
+		classic_target_list_texts.clear();
+		for (uint8_t i = 0; i < ChatTargetIndex::TARGET_COUNT; ++i)
+			classic_target_list_texts.emplace_back(Text::Font::A11M,
+				Text::Alignment::LEFT, Color::Name::WHITE, chat_target_name(i));
+		classic_target_list_back = ColorBox(TARGET_LIST_W, TARGET_LIST_ROW_H, Color(0x999999FFu), 1.0f);
+		classic_target_list_inner = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 2, Color(0x335577FFu), 1.0f);
+		classic_target_list_mark = ColorBox(TARGET_LIST_W - 2, TARGET_LIST_ROW_H - 1, Color(0x5599BBFFu), 1.0f);
+		// 目标切换触发钮：用 input/button:chat（聊天目标箭头）或 common 变体；
+		// button_pressed(BtWhisper) 已实现「展开目标列表」，此处只需建对象。
+		nl::node n_whisper = usable_button(input["button:chat"]) ? input["button:chat"] : common["BtChat_outside"];
+		buttons[Buttons::BtWhisper] = std::make_unique<MapleButton>(n_whisper,
+			get_input_position() + Point<int16_t>(0, 0));
+		target_ui_ready = true;
+
+		// 192 频道分组页签（图2「全体/战斗/组队/好友/公会/联合」）：StatusBar3
+		// chat/common/chatTarget/{all,friend,party,guild,association,afctv} 各含
+		// normal/pressed/mouseOver/disabled 四态，是标准 MapleButton 资源。
+		// 顺序按 MessageGroup：ALL, BATTLE, PARTY, FRIEND, GUILD, ALLIANCE。
+		// 节点名与语义并非逐一对应（afctv=直播），用其四态位图做页签底、文字另绘。
+		{
+			// 节点顺序对齐 MessageGroup(ALL/BATTLE/PARTY/FRIEND/GUILD/ALLIANCE)：
+			// 全体=all 战斗=afctv(底图) 组队=party 好友=friend 公会=guild 联合=association。
+			static const char* const TAB_NODES[6] = {
+				"all", "afctv", "party", "friend", "guild", "association"
+			};
+			for (int i = 0; i < 6; ++i)
+			{
+				nl::node tab = common["chatTarget"][TAB_NODES[i]];
+				if (UiAssetResolve::usable(tab))
+					buttons[static_cast<uint16_t>(Buttons::BtFilter0 + i)] =
+						std::make_unique<MapleButton>(tab, Point<int16_t>(0, 0));
+			}
+			filter_tabs_ready = true;
+		}
 
 		int16_t input_text_limit = 70;
 		int16_t input_text_marker_height = 11;
@@ -441,6 +515,15 @@ namespace ms
 		);
 
 		dragarea = drag.get_dimensions();
+
+		// 2026-11-19 根因修复：modern 分支 position 从未赋值(恒0,0)，聊天整体飘在
+		// 屏幕中部而非贴底。这里锚定左下角：输入带底缘距视口底 2px，左缘 2px。
+		// get_input_position()=position+(0,15)，input 高 input_bg_y → position.y=vh-15-input_bg_y-2。
+		if (!classic_mode)
+		{
+			const int16_t vh = Constants::Constants::get().get_viewheight();
+			position = Point<int16_t>(2, static_cast<int16_t>(vh - 15 - input_bg_y - 2));
+		}
 
 		toggle_view(Setting<ChatViewMax>::get().load(), false);
 
@@ -609,6 +692,41 @@ namespace ms
 			return;
 		}
 
+		// 192 频道分组页签（图2「全体/战斗/组队/好友/公会/联合」）：画在历史框顶带
+		// （drag 把柄上方一行），6 个依次横排。StatusBar3 的 chatTarget 位图烤的是
+		// 英文标签且顺序不符，故页签底用 ColorBox 自绘、文字用中文 Text，
+		// 当前 active_message_group 高亮。索引与 MessageGroup 前 6 项同序。
+		if (filter_tabs_ready)
+		{
+			constexpr int16_t TAB_W = 48;
+			constexpr int16_t TAB_H = 18;
+			static const char* const TAB_NAMES[6] = {
+				"全体", "战斗", "组队", "好友", "公会", "联合"
+			};
+			const Point<int16_t> tab_base = position
+				- Point<int16_t>(drag.get_origin().abs().x() - 2, top_y + center_y + user_view_y + 18);
+			for (int i = 0; i < 6; ++i)
+			{
+				const Point<int16_t> tl = tab_base + Point<int16_t>(static_cast<int16_t>(i * TAB_W), 0);
+				const bool selected = (static_cast<uint8_t>(active_message_group) == static_cast<uint8_t>(i));
+				// 用 192 原生 chat/common/chatTarget/* 四态位图（用户要求原生分栏样式），
+				// 选中=pressed 态；不再自绘 ColorBox。按钮位置与绘制对齐做点击命中。
+				const auto it = buttons.find(static_cast<uint16_t>(Buttons::BtFilter0 + i));
+				if (it != buttons.end() && it->second)
+				{
+					it->second->set_position(tl);
+					it->second->set_state(selected ? Button::State::PRESSED : Button::State::NORMAL);
+					it->second->draw(Point<int16_t>(0, 0));
+				}
+				// 原生位图烤字是 好友/家族/联盟/시청자，与图2语义不符：用同色内框
+				// 盖住烤字、保留原生边框，再叠中文语义字（全体/战斗/组队/好友/公会/联合）。
+				ColorBox(TAB_W - 5, TAB_H - 6, selected ? Color(0x3A4046FFu) : Color(0x2E3338FFu), 1.0f)
+					.draw(tl + Point<int16_t>(2, 3));
+				Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::WHITE, TAB_NAMES[i])
+					.draw(tl + Point<int16_t>(TAB_W / 2, 3));
+			}
+		}
+
 		if (view_max)
 		{
 			Range<int16_t> vertical = Range<int16_t>(0, 0);
@@ -628,6 +746,10 @@ namespace ms
 
 			for (int i = message_history.size() - 1; i >= 0; i--)
 			{
+				// 192 频道分组过滤：全体=显示所有；否则只显示该组消息。
+				if (active_message_group != MessageGroup::ALL
+					&& message_history[i].group != active_message_group)
+					continue;
 				if (message_y <= center_y + user_view_y)
 				{
 					message_history[i].text.draw(position - Point<int16_t>(drag.get_origin().x() - 2, 5) - Point<int16_t>(0, message_y));
@@ -719,6 +841,51 @@ namespace ms
 				message_history[size - 1].text.draw(position - Point<int16_t>(0, top_y + center_y) + Point<int16_t>(drag.get_origin().abs().x(), drag.height()) + Point<int16_t>(2, 7));
 		}
 
+		// modern 聊天目标 UI：复用 classic 那套列表/文字机制（节点与按钮在构造里
+		// 已按 StatusBar3 实际结构建好）。绘制顺序与 classic 一致：列表压在历史框
+		// 之上，目标框底与文字最后画，触发钮永不被末行盖住。
+		if (target_ui_ready)
+		{
+			Point<int16_t> input_pos = get_input_position();
+
+			if (classic_target_list_open)
+			{
+				const Point<int16_t> list_pos = classic_target_list_position();
+				const int16_t list_h = static_cast<int16_t>(
+					classic_target_list_texts.size() * TARGET_LIST_ROW_H);
+				classic_target_list_back.setheight(list_h);
+				classic_target_list_inner.setheight(list_h - 2);
+				classic_target_list_mark.setheight(TARGET_LIST_ROW_H - 1);
+				classic_target_list_back.draw(list_pos);
+				classic_target_list_inner.draw(list_pos + Point<int16_t>(1, 1));
+				if (classic_target_hover < classic_target_list_texts.size())
+					classic_target_list_mark.draw(list_pos + Point<int16_t>(1, 1
+						+ static_cast<int16_t>(classic_target_hover * TARGET_LIST_ROW_H)));
+				for (size_t i = 0; i < classic_target_list_texts.size(); ++i)
+				{
+					const int16_t row_ink = static_cast<int16_t>(
+						list_pos.y() + static_cast<int16_t>(i * TARGET_LIST_ROW_H) + 2);
+					classic_target_list_texts[i].draw(DrawArgument(Point<int16_t>(
+						static_cast<int16_t>(list_pos.x() + 4),
+						classic_target_list_texts[i].y_for_ink_top(row_ink))));
+				}
+			}
+
+			// 目标框底：StatusBar3 chat/common/chatTarget/base；失效则用纯色兜底，
+			// 绝不整片留空（真机观感「聊天残缺」的底线）。
+			if (classic_chat_target)
+				classic_chat_target.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+			else
+				ColorBox(CHAT_TARGET_W, CHAT_TARGET_H, Color(0x1B3159FFu), 1.0f)
+					.draw(input_pos + Point<int16_t>(0, TARGET_BOX_Y));
+
+			int16_t tx = TARGET_TEXT_X;
+			if (const int16_t tw = classic_target_text.width(); tw > CHAT_TARGET_W - TARGET_TEXT_X)
+				tx = std::max<int16_t>(TARGET_BT_W, CHAT_TARGET_W - tw);
+			classic_target_text.draw(DrawArgument(input_pos + Point<int16_t>(
+				tx, classic_target_text.y_for_ink_top(TARGET_TEXT_INK_TOP))));
+		}
+
 		if (name_menu_open)
 			draw_name_menu();
 		UIElement::draw(inter);
@@ -757,6 +924,19 @@ namespace ms
 	{
 		switch (buttonid)
 		{
+			case ms::UIChatBar::BtFilter0:
+			case ms::UIChatBar::BtFilter0 + 1:
+			case ms::UIChatBar::BtFilter0 + 2:
+			case ms::UIChatBar::BtFilter0 + 3:
+			case ms::UIChatBar::BtFilter0 + 4:
+			case ms::UIChatBar::BtFilter5:
+			{
+				// 192 频道分组页签：索引与 MessageGroup 前 6 项同序。
+				const uint8_t idx = static_cast<uint8_t>(buttonid - Buttons::BtFilter0);
+				active_message_group = static_cast<MessageGroup>(idx);
+				LOG(LOG_INFO, "UIChatBar: filter tab -> group=" << static_cast<int>(idx));
+				return Button::State::NORMAL;
+			}
 			case ms::UIChatBar::BtMax:
 			{
 				// Angel OnButtonClicked 1004 → SetChatType(3)。
@@ -779,7 +959,9 @@ namespace ms
 			}
 			case ms::UIChatBar::BtChatEmoticon:
 			{
-				
+				// Kaentake 动态聊天表情：打开表情选择窗（聊天栏原生按钮入口）。
+				UI::get().emplace<UIChatEmoticon>();
+				LOG(LOG_INFO, "UIChatBar: emoticon button -> UIChatEmoticon");
 				return Button::State::NORMAL;
 			}
 			case ms::UIChatBar::BtChat:
@@ -872,6 +1054,16 @@ namespace ms
 
 			if (bounds.contains(cursor_position) || input_bounds.contains(cursor_position))
 				return true;
+
+			// modern 目标列表画在输入行上方，落在聊天栏矩形之外；不纳入命中区
+			// 的话 UIStateGame 会把点列表行的事件派给场景，目标切换点不中。
+			if (target_ui_ready && classic_target_list_open)
+			{
+				const Point<int16_t> lt = classic_target_list_position();
+				const Point<int16_t> rb = lt + Point<int16_t>(TARGET_LIST_W, TARGET_COUNT * TARGET_LIST_ROW_H);
+				if (Rectangle<int16_t>(lt, rb).contains(cursor_position))
+					return true;
+			}
 
 			return false;
 		}
@@ -1114,6 +1306,32 @@ namespace ms
 					return new_state;
 
 			return UIElement::send_cursor(clicked, cursor_position);
+		}
+
+		// modern 目标列表命中：列表画在输入行上方、天然在聊天栏矩形之外，
+		// 必须先于拖拽/输入判定处理，否则点击被下面八向命中区吞掉（与 classic
+		// 同一教训）。复用 classic 的 in_classic_target_row / pick_classic_target。
+		if (target_ui_ready && classic_target_list_open)
+		{
+			for (size_t i = 0; i < classic_target_list_texts.size(); ++i)
+			{
+				if (!in_classic_target_row(cursor_position, i))
+					continue;
+				classic_target_hover = i;
+				if (clicked)
+				{
+					pick_classic_target(i);
+					classic_target_list_open = false;
+					return Cursor::State::CLICKING;
+				}
+				return Cursor::State::CANCLICK;
+			}
+			if (clicked)
+			{
+				classic_target_list_open = false;
+				return Cursor::State::CLICKING;
+			}
+			return Cursor::State::IDLE;
 		}
 
 		if (view_input && temp_view_y == 0 && temp_view_x == 0)
@@ -1824,8 +2042,9 @@ namespace ms
 	void UIChatBar::toggle_classic_target_list(bool open)
 	{
 		// 收起态（灰带）没有 chatTarget 框，箭头钮也被 sync_classic_buttons 关了，
-		// 列表无处贴附，原生此时也不给选。
-		if (open && !classic_log_open && !view_input)
+		// 列表无处贴附，原生此时也不给选。modern（target_ui_ready）的目标框随
+		// 输入行常驻，不受 classic_log_open 约束，只要输入行在就允许展开列表。
+		if (open && !target_ui_ready && !classic_log_open && !view_input)
 			return;
 
 		classic_target_list_open = open;
@@ -1864,7 +2083,12 @@ namespace ms
 		// 末行与触发钮互不遮挡；原生视频帧 HL→箭头 gap≈2。
 		const int16_t list_h = static_cast<int16_t>(TARGET_COUNT * TARGET_LIST_ROW_H);
 
-		return Point<int16_t>(position.x(), position.y() + TARGET_BOX_Y - 1 - list_h);
+		// modern：输入行画在 get_input_position()（= position+(0,15)），目标框底
+		// 与该输入行同源。列表必须以输入行为锚，否则沿用 classic 的 position
+		// 会整体高 15px、点不中列表行。
+		const Point<int16_t> anchor = target_ui_ready ? get_input_position() : position;
+
+		return Point<int16_t>(anchor.x(), anchor.y() + TARGET_BOX_Y - 1 - list_h);
 	}
 
 	bool UIChatBar::in_classic_target_row(Point<int16_t> cursor_position, size_t row) const
@@ -2153,11 +2377,24 @@ namespace ms
 		return Color::Name::WHITE;
 	}
 
+	// 192 频道分组：入站频道 → MessageGroup，供页签过滤。ALL=全体(显示所有)。
+	static UIChatBar::MessageGroup group_of_channel(UIChatBar::ChatChannel ch)
+	{
+		switch (ch)
+		{
+		case UIChatBar::ChatChannel::PARTY:    return UIChatBar::MessageGroup::PARTY;
+		case UIChatBar::ChatChannel::BUDDY:    return UIChatBar::MessageGroup::FRIEND;
+		case UIChatBar::ChatChannel::GUILD:    return UIChatBar::MessageGroup::GUILD;
+		case UIChatBar::ChatChannel::ALLIANCE: return UIChatBar::MessageGroup::ALLIANCE;
+		default:                               return UIChatBar::MessageGroup::ALL;
+		}
+	}
+
 	void UIChatBar::show_message(const std::string& message, ChatChannel ch)
 	{
 		Color::Name color = channel_color(ch);
 
-		message_history.push_back(Message(MessageGroup::ALL, ch, Text(Text::Font::A11M, Text::Alignment::LEFT, color, message)));
+		message_history.push_back(Message(group_of_channel(ch), ch, Text(Text::Font::A11M, Text::Alignment::LEFT, color, message)));
 		trim_message_history();
 
 		// 行数变了要重算可滚范围；贴在最新一条（offset==0）时保持贴底，
@@ -2171,7 +2408,7 @@ namespace ms
 		Color::Name color = channel_color(ch);
 		// 显示串 = prefix + speaker + " : " + message（与既有 "Name : ..." 格式一致）。
 		std::string full = prefix + speaker + " : " + message;
-		Message msg(MessageGroup::ALL, ch, Text(Text::Font::A11M, Text::Alignment::LEFT, color, full));
+		Message msg(group_of_channel(ch), ch, Text(Text::Font::A11M, Text::Alignment::LEFT, color, full));
 		msg.speaker = speaker;
 		msg.prefix = prefix;
 		msg.clickable = !speaker.empty();
@@ -2705,12 +2942,9 @@ namespace ms
 				}
 				else if (verb == "shop" || verb == "cashshop")
 				{
-					// 现金商城入口：ENTER_CASHSHOP(0x28) → s9 EnterCashShopHandler
-					// → openCashShop + showCashInventory + showGifts + showWishList + showCash。
-					// 服务端对已在商城/活动中/迷你副本地图会回 enableActions 或 serverNotice，
-					// 客户端无需预判。
-					EnterCashShopPacket().dispatch();
-					LOG(LOG_DEBUG, "UIChatBar: /shop EnterCashShop");
+					// 与底栏"商城"按钮共用入口 helper：配置开关决定窗口商城或原生商城。
+					UI::get().open_cashshop_entry();
+					LOG(LOG_DEBUG, "UIChatBar: /shop open_cashshop_entry");
 					keep_input_focus();
 					return;
 				}

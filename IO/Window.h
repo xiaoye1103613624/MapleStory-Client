@@ -51,6 +51,9 @@ namespace ms
 		void apply_vsync() const;
 
 		bool not_closed() const;
+		/// 请求真正关闭窗口：置位 close_requested，让主循环 running() 结束。
+		/// 仅在确认退出（UILoginNotice / UIQuitConfirm 的 RETURN）时调用。
+		void request_close();
 		void update();
 		void begin() const;
 		void end() const;

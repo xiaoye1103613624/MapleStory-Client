@@ -183,6 +183,9 @@ namespace ms
 		{
 			BtMax,
 			BtMin,
+			// 192 聊天频道分组页签（全体/战斗/组队/好友/公会/联合）
+			BtFilter0,
+			BtFilter5 = BtFilter0 + 5,
 			BtChat,
 			BtHelp,
 			BtItemLink,
@@ -268,6 +271,14 @@ namespace ms
 		int recent_count = 0;
 
 		bool classic_mode;
+		// modern 主题是否已建好聊天目标 UI（目标框贴图 + BtWhisper + 文字/列表）。
+		// modern 分支复用 classic 的 set_classic_target / 目标列表机制，用此标记
+		// 在 draw/send_cursor/is_in_range 里启用同一套逻辑；classic 下恒为 false
+		// （classic 走原有 classic_mode 分支），避免两套机制互相干扰。
+		bool target_ui_ready = false;
+		// 192 频道分组页签：当前高亮的频道组（MessageGroup），ALL=全体。
+		MessageGroup active_message_group = MessageGroup::ALL;
+		bool filter_tabs_ready = false;
 		Texture classic_input_bg;
 		Texture classic_chat_target;
 

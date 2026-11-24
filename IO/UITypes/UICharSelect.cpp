@@ -1726,7 +1726,7 @@ namespace ms
 				}
 			};
 
-			UI::get().emplace<UISoftKey>(verifypic, []() {}, "Please re-enter your new PIC.", Point<int16_t>(24, 0), UISoftKey::Mode::Pic);
+			UI::get().emplace<UISoftKey>(verifypic, []() {}, Locale::text("uicharselect.reenter_pic"), Point<int16_t>(24, 0), UISoftKey::Mode::Pic);
 			};
 
 			UI::get().emplace<UISoftKey>(enterpic, []() {}, "Your new PIC must at least be 6 characters long.", Point<int16_t>(24, 0), UISoftKey::Mode::Pic);

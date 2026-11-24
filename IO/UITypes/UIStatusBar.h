@@ -60,6 +60,9 @@ namespace ms
 		void update_screen(int16_t new_width, int16_t new_height) override;
 
 		bool is_in_range(Point<int16_t> cursor_position) const override;
+		/// modern：光标是否落在底栏可点控件上（六钮 / Fold·Extend / 快捷格）。
+		/// UIStateGame::get_front 用它避免 CHATBAR 宽命中区抢走菜单/QS 点击。
+		bool cursor_on_interactive(Point<int16_t> cursor_position) const;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursor_position) override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		// turn13：宏/技能图标拖到底部快捷格 = 直接绑定该格键位（原生 KeyConfig 语义）。
@@ -75,7 +78,13 @@ namespace ms
 		bool is_menu_active();
 		bool is_classic() const { return classic_mode; }
 		// L5：KeyConfig 保存/恢复默认/清空后强制刷新快捷栏图标（083 ReDrawQuickslot / InvalidateRect 等价）。
-		void redraw_quickslots() { refresh_classic_qs_icons(); }
+		void redraw_quickslots()
+		{
+			if (classic_mode)
+				refresh_classic_qs_icons();
+			else
+				refresh_modern_qs_icons();
+		}
 		// P1/T4：任务进度更新时点亮菜单「任务」钮（非 UtilDlgEx KEY_ANI 四主窗指引链）。
 		void blink_menu_quest() { start_button_blink(BT_MENU_QUEST); }
 		// P2/T4：对齐 Angel CUtilDlgEx::Draw @0x9a4256 → SetButtonBlink(idx,1)，
@@ -100,21 +109,37 @@ namespace ms
 		void draw_classic(float alpha) const;
 		void update_classic();
 		void refresh_classic_qs_icons();
+		/// modern StatusBar3：按 192 CQuickSlot::s_ptShortKeyPos 画技能/键帽。
+		void refresh_modern_qs_icons();
+		void draw_modern_quickslot(float alpha) const;
+		Point<int16_t> modern_qs_cell_at(size_t slot) const;
+		/// modern(192) 快捷格命中测试：返回格索引，-1 未命中（拖放/点击共用）。
+		int16_t modern_qs_slot_at(Point<int16_t> cursor_position) const;
 		/// classic 快捷格左上角（屏幕坐标）；几何全部来自 base/quickSlot* 图集本身。
 		Point<int16_t> classic_qs_cell_at(size_t slot, int16_t cols) const;
 		/// 经典 quickSlot 槽格命中：返回槽下标，未命中为 -1。
 		int16_t classic_qs_slot_at(Point<int16_t> cursor_position) const;
 		/// 点击快捷格：按 KeyConfig 映射释放技能/使用道具（对齐参考端 OnButton 快捷栏）。
-		void activate_classic_qs_slot(size_t slot);
+		void activate_classic_qs_slot(size_t slot);		/// modern(192) 快捷格单击使用 / 释放（与 classic 同套 keydown-keyup 语义）。
+		void activate_modern_qs_slot(size_t slot);
+		void release_modern_qs_slot(size_t slot);
 		/// 松开快捷格：补发 keyup，避免 keysdown[ATTACK] 残留导致无限连击。
 		void release_classic_qs_slot(size_t slot);
 		/// 按当前绑定配置拖拽图标并交给 UI 拖拽系统（供快捷格换位）。
 		void setup_qs_drag_icon(size_t slot, Point<int16_t> cursor_position);
+		/// 2026-11-23：快捷格 hover 提示。原生 083 CUIStatusBar 有
+		/// SetShortcutTooltip/ProcessToolTip，本端此前从未实现（技能/消耗物品
+		/// 悬停无 tooltip）。按 slot 解析当前键位映射，SKILL→show_skill、ITEM→show_item；
+		/// 每帧由 UIStateGame 先 clear_tooltip 再由本函数重挂，故只管挂、不管清。
+		void show_qs_tooltip(int16_t slot);
 
 		// 快捷格拖拽换位：按下记起点，超阈值起拖（不触发使用），松开未动则单击使用。
 		int16_t qs_drag_slot = -1;			// 按住的快捷格（-1=无）
 		Point<int16_t> qs_press_pos;			// 按下时光标位置（判阈值）
 		bool qs_dragging = false;			// 已起拖（拖图标换位）
+		/// 按下边沿标记：send_cursor 的 clicked 是「左键当前按住」而非「刚按下」，
+		/// 必须自己判边沿，否则拖动时每帧都会重设 qs_drag_slot → 起拖永不触发。
+		bool qs_pressed = false;
 		Icon qs_drag_icon;					// 拖拽载荷（由 UI 拖系统持有指针，必须是持久成员）
 
 		// 快捷格拖拽图标身份：按绑定类型填标准 getter，让 send_icon 现有 SKILL/ITEM/MACRO
@@ -124,18 +149,33 @@ namespace ms
 		public:
 			KeyType::Id bind_type = KeyType::Id::NONE;
 			int32_t bind_action = 0;
-			void drop_on_stage() const override {}
+			uint8_t source_key = 0; // 起拖的 maple key，拖出场景时用来解除绑定
+			void drop_on_stage() const override;
 			void drop_on_equips(EquipSlot::Id) const override {}
 			bool drop_on_items(InventoryType::Id, EquipSlot::Id, int16_t, bool) const override { return true; }
 			void drop_on_bindings(Point<int16_t>, bool) const override {}
 			void set_count(int16_t) override {}
 			Icon::IconType get_type() override { return Icon::IconType::KEY; }
-			// 走黏住态（macro_sticky）：起拖松手后图标仍挂光标，下一次点击目标格才落点，
-			// 绕开 UIStateGame 对普通 Icon「松手在快捷栏不结算」的既有缺口（:853-867）。
-			bool is_macro_source() const override { return true; }
+			// 2026-11-22：快捷栏图标按 MinMS `CUIStatusbar::send_cursor` 原生「松手落点」
+			// 模型处理，不走 UIStateGame 的 macro_sticky 黏住态（那是组合栏专用）。
+			// 旧值 true 会让快捷栏换位变成「拖→松→点→松」四步，且起拖松手后
+			// 图标一直挂光标、qs_dragging 永不复位 → 单击使用彻底失效。
+			bool is_macro_source() const override { return false; }
 			int32_t get_item_id() const override { return bind_type == KeyType::Id::ITEM ? bind_action : 0; }
 			int32_t get_skill_id() const override { return bind_type == KeyType::Id::SKILL ? bind_action : 0; }
 			int32_t get_macro_index() const override { return bind_type == KeyType::Id::MACRO ? bind_action : -1; }
+			// 原生快捷栏「自带功能键」(MENU/ACTION/FACE) 拖拽身份：这类键没有 skill/item/macro id，
+			// 靠 (KeyType,KeyAction) 透给 UIStatusBar::send_icon 落点完成换位绑定。
+			// 仅功能键返回 true；技能/道具/宏/装备仍走各自 getter，行为不变。
+			bool get_binding(uint8_t& out_type, int32_t& out_action) const override
+			{
+				if (bind_type != KeyType::Id::MENU && bind_type != KeyType::Id::ACTION
+					&& bind_type != KeyType::Id::FACE && bind_type != KeyType::Id::CASH)
+					return false;
+				out_type = static_cast<uint8_t>(bind_type);
+				out_action = bind_action;
+				return true;
+			}
 		};
 		std::unique_ptr<QsIconType> qs_icon_type;
 
@@ -250,10 +290,20 @@ namespace ms
 		Point<int16_t> lvbadge_pos;
 
 		static constexpr size_t CLASSIC_QS_SLOTS = 26;
-		std::string classic_qs_names[CLASSIC_QS_SLOTS];	// SKILL/MACRO 绑定名（随图标刷新）
-		std::string classic_qs_counts[CLASSIC_QS_SLOTS];	// ITEM 绑定数量字符串（ItemNo 字模绘制，替代名称）
+		/// 192 CUIStatusBar::CQuickSlot：800/1024→8，其它分辨率→28（ChangeScreenResolution）。
+		static constexpr size_t MODERN_QS_SLOTS = 28; // 14列×2行（IDA s_ptShortKeyPos 实测）
+		// 【硬约束】QS 槽位数组必须按 max(CLASSIC_QS_SLOTS, MODERN_QS_SLOTS) 分配：
+		//   - refresh_classic_qs_icons() 遍历 0..CLASSIC_QS_SLOTS-1
+		//   - refresh_modern_qs_icons()  遍历 0..MODERN_QS_SLOTS-1
+		// 任一方上限大于数组尺寸都会越界写（曾两次触发：26<28 / 20<26，表现为
+		// c0000005 崩溃或相邻成员被清零导致快捷键画到 (0,0)）。
+		static constexpr size_t QS_SLOTS_MAX =
+			(CLASSIC_QS_SLOTS > MODERN_QS_SLOTS) ? CLASSIC_QS_SLOTS : MODERN_QS_SLOTS;
+		std::string classic_qs_names[QS_SLOTS_MAX];	// SKILL/MACRO 绑定名（随图标刷新）
+		std::string classic_qs_counts[QS_SLOTS_MAX];	// ITEM 绑定数量字符串（ItemNo 字模绘制，替代名称）
 		int16_t classic_qs_cols = 13;		// 面板列数：32 格=16 / 26 格=13 / 8 格=4
 		size_t classic_qs_count = CLASSIC_QS_SLOTS;
+		size_t modern_qs_count = 8;
 
 		// Classic StatusBar.img chrome
 		Texture classic_backgrnd;
@@ -271,7 +321,7 @@ namespace ms
 		int8_t classic_mp_flash = -1;
 		float classic_last_hp = -1.0f;
 		float classic_last_mp = -1.0f;
-		Texture classic_qs_icons[CLASSIC_QS_SLOTS];
+		Texture classic_qs_icons[QS_SLOTS_MAX];
 
 		Point<int16_t> exp_pos;
 		Point<int16_t> hpmp_pos;
@@ -296,6 +346,10 @@ namespace ms
 		bool quickslot_active;
 		int16_t VWIDTH;
 		int16_t VHEIGHT;
+		// 2026-11-21 用户要求：StatusBar.img/base/backgrnd 不再通栏拉伸到 VWIDTH，
+		// 只覆盖「含快捷格的整组内容宽」（HudLayout::hud_content_w），居中于 hud_cx。
+		int16_t classic_content_w = 0;
+		int16_t classic_content_cx = 0;
 
 		bool menu_active;
 		bool setting_active;

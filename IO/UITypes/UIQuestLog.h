@@ -93,6 +93,13 @@ namespace ms
 		void draw_chain_page_gauge() const;
 		bool has_chain_pages() const;
 		std::string area_name(int32_t area) const;
+		// 可读 NPC 名：String/Npc.img/<id>/name（本包已证存在，见 r07 §3）。
+		// 原生 QuestInfo::sName / MedalQuestInfo::sName 都是可读串而非裸 id；
+		// 取不到时返回空串，由调用方决定是否回退，绝不把裸 id 当名字显示。
+		std::string npc_name(int32_t npcid) const;
+		// 可读前置任务名：优先 QuestData::get_name()（QuestInfo.img/<id>/name），
+		// 取不到时才降级为占位文案；与原生 sPrefix/sName 语义对齐。
+		std::string quest_name_readable(int16_t questid) const;
 		void set_collapsed(bool collapsed);
 		void relayout_slots();
 		void layout();
@@ -110,6 +117,12 @@ namespace ms
 		// 正文总高折算成滚动格数（一格 = DETAIL_ROW_H），滚动条按格数而非段落数计。
 		int16_t detail_total_notches() const;
 		void load_npc_portrait(int16_t quest_id);
+		// r10：找到 NPC 所在地图（Etc/NpcLocation.img/<npcid> 的子节点即 mapid），
+		// 对齐 MinMS UIQuestLog.cpp:45-69 的 npc_location_maps()。
+		static std::vector<int32_t> npc_location_maps(int32_t npcid);
+		// r10：「寻找NPC位置」点击处理——反查地图 → 打开/复用 UIWorldMap 并定位首处 →
+		// 弹 UIOk 列出所在地图。对齐 MinMS UIQuestLog.cpp:678-736 + UIWorldMap.cpp:458-474。
+		void show_npc_locations(int32_t npcid);
 
 		const QuestLog& questlog;
 
@@ -119,7 +132,8 @@ namespace ms
 		int16_t detail_scroll;
 
 		bool collapsed;
-		// true = 详细 (level/area/pre-quest lines from QuestData), false = 简述 (summary).
+		// true = 详细（QuestData 字段：等级/区域/NPC名/前置名，对齐 Angel QuestInfo 语义），
+		// false = 简述（QuestInfo.img 分状态页 asSummary）。
 		bool detail_mode;
 
 		Texture bg_left;

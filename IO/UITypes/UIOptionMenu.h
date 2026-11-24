@@ -231,7 +231,7 @@ namespace ms
 			MOB_INFO,
 			SCREENSHOT_PATH,
 			LANGUAGE,
-			HUD_THEME,	// ThemePack: classic ↔ modern (runtime apply)
+			HUD_THEME,	// ThemePack: 083 / 192 / 095(预留置灰) (runtime apply)
 			CANCEL,
 			OK,
 			// 两个下拉展开后的条目钮；后缀数字就是原生注册表里存的那个序号。
@@ -241,6 +241,13 @@ namespace ms
 			MOB_OPT3,
 			PATH_OPT0,
 			PATH_OPT1,
+			// 语言下拉展开的条目：0=CN / 1=EN。
+			LANG_OPT0,
+			LANG_OPT1,
+			// 主题下拉展开的条目：0=083 / 1=192 / 2=095(预留置灰，点了也不应用)。
+			THEME_OPT0,
+			THEME_OPT1,
+			THEME_OPT2,
 			// 多分辨率：第三个下拉（窗口大小）的盒体与 9 个档位条目。
 			RESOLUTION,
 			RES_OPT0,
@@ -274,6 +281,12 @@ namespace ms
 		void draw_combo(int16_t y, const std::string& option) const;
 		// 展开态：条目列表画在盒体正下方，画 count 行并高亮当前序号那一行。
 		void draw_combo_list(int16_t y, uint8_t count, const char* key_prefix, uint8_t selected) const;
+		// 通用下拉：盒体（指定 x/w）+ 向上展开的条目列表，条目可单独置灰。
+		void draw_meta_combo(int16_t x, int16_t y, int16_t w, const std::string& current) const;
+		void draw_meta_list(int16_t x, int16_t y, int16_t w, const char* key_prefix,
+			uint8_t count, uint8_t selected, uint8_t disabled) const;
+		// 语言 / 主题下拉展开条目命中区开关（互斥；095 恒置灰）。
+		void set_meta_rows(bool show_lang, bool show_theme);
 		// 条目命中区随展开态开关；全关时两个下拉都只响应盒体本身。
 		void set_combo_rows(bool show_mob, bool show_path);
 		// 多分辨率：第三个下拉的收起态 / 展开态绘制与 9 个条目命中区开关。
@@ -312,15 +325,23 @@ namespace ms
 		// 条目数：原生汉化表里怪物情报紧邻四条、截图保存位置紧邻两条（见 .cpp 的取证注释）。
 		static constexpr uint8_t MOB_INFO_COUNT = 4;
 		static constexpr uint8_t SCREENSHOT_PATH_COUNT = 2;
-		// 语言切换：底板无独立行；落在 396 底板底部按钮条左侧（OK 左），避免叠到滑条/勾选行。
+		// 语言下拉：落在 396 底板底部按钮条左侧（OK 左），与主题下拉并排两列。
+		// 盒体复用 Basic.img/ComboBox 三段贴图；标签画在盒体左侧。
 		static constexpr int16_t LANG_Y = 366;
-		static constexpr int16_t LANG_W = 150;
+		static constexpr int16_t LANG_X = 88;
+		static constexpr int16_t LANG_W = 66;          // 盒体宽度（CN/EN 足够）
+		static constexpr int16_t LANG_LABEL_X = 6;     // 「语言」标签起点
 		static constexpr uint8_t LANG_COUNT = 2;
 		static constexpr const char* LANGUAGE_KEY = "sysopt.combo.language.";
-		// HUD ThemePack：语言项左侧；点击在 classic/modern 间切换并即时 apply。
-		static constexpr int16_t THEME_X = 6;
+		// HUD ThemePack：主题下拉，位于底板最左列；083 / 192 可选，095 预留置灰。
+		static constexpr int16_t THEME_X = 50;
 		static constexpr int16_t THEME_Y = 366;
-		static constexpr int16_t THEME_W = 145;
+		static constexpr int16_t THEME_W = 66;         // 盒体宽度（083/192/095 足够）
+		static constexpr int16_t THEME_LABEL_X = 6;    // 「主题」标签起点
+		static constexpr uint8_t THEME_COUNT = 3;      // 0=083 1=192 2=095(灰)
+		// 下拉列表向上展开（底部按钮条空间不足，向下会超出窗口命中区）。
+		static constexpr int16_t META_COMBO_Y = 366;
+		static constexpr int16_t META_LIST_H = COMBO_H; // 每档行高沿用原生 17
 		void apply_hud_theme_pref(uint8_t ordinal);
 		// 多分辨率新增行（窗口大小）：洋红带 y333..360（中心≈346）；盒体 18px 顶边 343。
 		// 列表向上展开（9*18=162px，从 y=181 到 343，完整落在 299x396 底板内）。

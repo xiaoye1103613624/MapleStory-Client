@@ -130,17 +130,99 @@ namespace ms
 
 	void UIElement::anchor_right_of(const UIElement& host, int16_t gap)
 	{
+		anchor_right_of_box(host.position, host.dimension, gap);
+	}
+
+	void UIElement::anchor_right_of_box(Point<int16_t> box_pos, Point<int16_t> box_size, int16_t gap)
+	{
 		const int16_t vieww = Constants::Constants::get().get_viewwidth();
 		const int16_t viewh = Constants::Constants::get().get_viewheight();
 
-		int16_t x = static_cast<int16_t>(host.position.x() + host.dimension.x() + gap);
-		int16_t y = host.position.y();
+		int16_t x = static_cast<int16_t>(box_pos.x() + box_size.x() + gap);
+		int16_t y = box_pos.y();
 
 		if (static_cast<int32_t>(x) + dimension.x() > vieww)
-			x = static_cast<int16_t>(host.position.x() - dimension.x() - gap);
+			x = static_cast<int16_t>(box_pos.x() - dimension.x() - gap);
 
 		if (x < 0)
 			x = 0;
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(viewh - dimension.y());
+		if (y < 0)
+			y = 0;
+
+		position = Point<int16_t>(x, y);
+	}
+
+	void UIElement::anchor_left_of(const UIElement& host, int16_t gap)
+	{
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		int16_t x = static_cast<int16_t>(host.position.x() - dimension.x() - gap);
+		int16_t y = host.position.y();
+
+		if (x < 0)
+			x = static_cast<int16_t>(host.position.x() + host.dimension.x() + gap);
+
+		if (static_cast<int32_t>(x) + dimension.x() > vieww)
+			x = static_cast<int16_t>(vieww - dimension.x());
+		if (x < 0)
+			x = 0;
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(viewh - dimension.y());
+		if (y < 0)
+			y = 0;
+
+		position = Point<int16_t>(x, y);
+	}
+
+	void UIElement::anchor_below_of(const UIElement& host, int16_t gap)
+	{
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		int16_t x = host.position.x();
+		int16_t y = static_cast<int16_t>(host.position.y() + host.dimension.y() + gap);
+
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(host.position.y() - dimension.y() - gap);
+
+		if (static_cast<int32_t>(x) + dimension.x() > vieww)
+			x = static_cast<int16_t>(vieww - dimension.x());
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(viewh - dimension.y());
+		if (y < 0)
+			y = 0;
+
+		position = Point<int16_t>(x, y);
+	}
+
+	void UIElement::anchor_left_of_below(const UIElement& left_host, const UIElement& above, int16_t gap)
+	{
+		const int16_t vieww = Constants::Constants::get().get_viewwidth();
+		const int16_t viewh = Constants::Constants::get().get_viewheight();
+
+		// 右缘 = left_host 左缘，保证本窗绝不水平伸进 left_host（神秘 187 > Addon 152）。
+		int16_t x = static_cast<int16_t>(left_host.position.x() - dimension.x());
+		int16_t y = static_cast<int16_t>(above.position.y() + above.dimension.y() + gap);
+
+		if (x < 0)
+			x = static_cast<int16_t>(left_host.position.x() + left_host.dimension.x());
+
+		if (static_cast<int32_t>(y) + dimension.y() > viewh)
+			y = static_cast<int16_t>(above.position.y() - dimension.y() - gap);
+
+		if (static_cast<int32_t>(x) + dimension.x() > vieww)
+			x = static_cast<int16_t>(vieww - dimension.x());
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
 		if (static_cast<int32_t>(y) + dimension.y() > viewh)
 			y = static_cast<int16_t>(viewh - dimension.y());
 		if (y < 0)

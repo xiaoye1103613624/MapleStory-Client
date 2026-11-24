@@ -56,6 +56,7 @@ namespace ms
 		void set_content_height(int16_t worldmap_height);
 
 		bool is_visible() const;
+		void set_visible(bool value) { visible = value; }
 		Point<int16_t> get_dimensions() const;
 		Rectangle<int16_t> get_bounds() const;
 

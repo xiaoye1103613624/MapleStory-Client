@@ -30,6 +30,7 @@
 #include "../../Gameplay/Stage.h"
 
 #include "../../Net/Packets/PlayerPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/PerfLog.h"
 #include "../../Util/UiAssetResolve.h"
 
@@ -1001,7 +1002,7 @@ namespace ms
 			case Buttons::BT_HYPERSTATCLOSE:
 			{
 				if (player.get_level() < 140)
-					UI::get().emplace<UIOk>("You can use the Hyper Stat at Lv. 140 and above.", [](bool) {});
+					UI::get().emplace<UIOk>(Locale::text("uistatsinfo.hyper_lv140"), [](bool) {});
 
 				break;
 			}

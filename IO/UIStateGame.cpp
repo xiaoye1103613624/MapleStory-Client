@@ -17,9 +17,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIStateGame.h"
 
+#include <fstream>
+
 
 #include "UI.h"
 #include "Window.h"
+
+#include "../Data/EquipData.h"
 
 #include "UITypes/UIBuffList.h"
 #include "UITypes/UICooldownList.h"
@@ -34,12 +38,12 @@
 #include "UITypes/UIChatBar.h"
 #include "UITypes/UIMessenger.h"
 #include "UITypes/UIEquipInventory.h"
-#include "UITypes/UIAddonEquip.h"
 #include "UITypes/UIEvent.h"
 #include "UITypes/UISpecial.h"
 #include "UITypes/UIItemInventory.h"
 #include "UITypes/UIKeyConfig.h"
 #include "UITypes/UIMiniMap.h"
+#include "UITypes/UISideIconBar.h"
 #include "UITypes/UIQuestLog.h"
 #include "UITypes/UIQuit.h"
 #include "UITypes/UIShop.h"
@@ -78,6 +82,7 @@ namespace ms
 {
 	UIStateGame::UIStateGame() : stats(Stage::get().get_player().get_stats()), dragged(nullptr)
 	{
+
 		focused = UIElement::Type::NONE;
 		tooltipparent = Tooltip::Parent::NONE;
 
@@ -98,6 +103,7 @@ namespace ms
 		}
 
 		emplace<UIMiniMap>(stats);
+		emplace<UISideIconBar>();
 		emplace<UIBuffList>();
 		emplace<UICooldownList>();
 		emplace<UITemporaryStatView>();
@@ -111,7 +117,9 @@ namespace ms
 		// Shop window is inactive until an NPC opens it; still construct only
 		// when shop UI assets exist so missing Shop2 cannot affect enter-game.
 		if (UiAssetResolve::usable(UiAssetResolve::shop_root()))
+		{
 			emplace<UIShop>(look, inventory);
+		}
 
 		VWIDTH = Constants::Constants::get().get_viewwidth();
 		VHEIGHT = Constants::Constants::get().get_viewheight();
@@ -271,7 +279,6 @@ namespace ms
 	{
 		draggedicon->reset();
 		draggedicon = {};
-		macro_sticky = macro_sticky_pending = false;
 	}
 
 	void UIStateGame::remove_cursors()
@@ -298,22 +305,19 @@ namespace ms
 
 	void UIStateGame::doubleclick(Point<int16_t> pos)
 	{
-		// #2 drag-release misfire fix (RCA: Window.cpp:371-374): on left-button up,
-		// the double-click detector (down/up time window) fires here BEFORE
-		// send_cursor(false). During a drag-to-swap, mouse-down already grabbed the
-		// icon into draggedicon and there is NO second down to drop_icon+remove_icon,
-		// so it is still set here; forwarding to the front inventory would let
-		// UIItemInventory::doubleclick issue an unconditional UseItemPacket ->
-		// unintended item consumption / crash. Skip front-UI doubleclick while dragging.
-		// Normal two-click双击: the second down already did drop_icon+remove_icon, so
-		// draggedicon is empty here and 双击使用道具 is unaffected. 地图双击保留。
-		if (!draggedicon)
+		// 对齐 MinMS UIStateGame::doubleclick：命中 UI 必转发后 return，
+		// 绝不能落到「地图角色 → 个人情报」。
+		// 本端 send_cursor 在 mousedown 即 drag_icon；双击序列的第二次按下
+		// 会先置 draggedicon。若此处再 `if (!draggedicon)` 跳过，双击穿/卸
+		// 永远不触发（2026-11-22 回归）。MinMS 无此门闩——取消未松手的
+		// 拖拽（不 drop）再转发 doubleclick。
+		if (UIElement* front = get_front(pos))
 		{
-			if (UIElement* front = get_front(pos))
-			{
-				front->doubleclick(pos);
-				return;
-			}
+			if (draggedicon)
+				remove_icon();
+
+			front->doubleclick(pos);
+			return;
 		}
 
 		// 双击地图角色 → 个人情报（Angel / 正确截图：双击开 UserInfo）。
@@ -489,16 +493,10 @@ namespace ms
 							}
 							case KeyAction::Id::EQUIPMENT:
 							{
-								if (UiAssetResolve::usable(UiAssetResolve::window4("Equip")))
+								// 只开主装备窗；辅助装备由 UIEquipInventory::sync_side_panels
+								// 贴左上并同开同关（StatusBar 装备钮同路径）。
+								if (UiAssetResolve::usable(UiAssetResolve::equip_panel_root()))
 									emplace<UIEquipInventory>(
-										Stage::get().get_player().get_inventory()
-										);
-
-								// ④ 扩展（辅助）装备独立子窗：与主装备窗同按键开合。
-								// 底板 UIWindow.img/AddonEquip/backgrnd（v5 PNG 经 MCP 入库）；
-								// 节点缺失时 ctor 自行降级为 inactive，不弹空壳。
-								if (UiAssetResolve::usable(UiAssetResolve::window4("AddonEquip")))
-									emplace<UIAddonEquip>(
 										Stage::get().get_player().get_inventory()
 										);
 
@@ -809,60 +807,18 @@ namespace ms
 	{
 		if (draggedicon)
 		{
-			if (cursor_state == Cursor::State::CLICKING)
-			{
-				// 黏住态的点击=落点手势：按下帧不结算，留到松手(IDLE)帧，
-				// 让 Window.cpp 的 doubleclick（在 send_cursor(false) 之前触发）
-				// 仍看到 draggedicon，被 doubleclick 的守卫吞掉，避免误触前窗双击。
-				if (macro_sticky)
-					return Cursor::State::GRABBING;
-
-				if (drop_icon(*draggedicon, cursor_position))
-					remove_icon();
-
-				return cursor_state;
-			}
-
-			// 松手投放：SDL3 的「按住拖到组合栏再松开」= MOUSEBUTTONUP → send_cursor(false)
-			// → IDLE（UI.cpp:162-166）；旧引擎只在 CLICKING 才 drop_icon（两击模型），
-			// 松手一律 GRABBING ⇒ 图标永远挂在鼠标上。这是前两轮「拖拽不到」的漏根因。
-			// Angel BeginDragDrop 的 Draggable 回调（off_B39810）：从组合栏内部
-			// 抓起的图标，松手一律结算（落回格=移动 / 落键位=绑定 / 落空白=移除）。
-			// 旧逻辑只在「光标仍在组合栏内」才 drop_icon，拖出窗外就恒 GRABBING，
-			// 图标永远挂在鼠标上 —— 正是「技能放上去以后不能拖拽移除走」的死路。
-			// 松手(IDLE)才结算；MOUSE_MOTION 的 GRABBING 必须保持拖拽。
-			// 旧代码不判 cursor_state，按下抓图标后移动第一像素即 drop+remove，
-			// 图标永远拖不出组合栏 —— 真机「抓不起来/拖不走」的真正根因。
-			if (cursor_state == Cursor::State::IDLE && draggedicon->is_macro_source())
-			{
-				// 抓取那一下的松手：进入黏住态，图标继续挂在光标上，不下落。
-				if (macro_sticky_pending)
-				{
-					macro_sticky_pending = false;
-					macro_sticky = true;
-					return Cursor::State::GRABBING;
-				}
-
-				// 黏住态落点：松手帧结算（按下帧已 defer）。
-				if (drop_icon(*draggedicon, cursor_position))
-					remove_icon();
-
-				macro_sticky = false;
-				return Cursor::State::IDLE;
-			}
-
+			// 2026-11-22 按方案 A 彻底对齐原生（Angel CDraggableSkill::OnDropped
+			// @0x4faa22 / CUIStatusBar::GetShortCutIndexByPos @0x8de8d5 的 DragDrop
+			// 模型 + MinMS UIStateGame::send_cursor:505-523）：
+			// 单一拖拽模型——按住拖动（CLICKING/其它帧一律 GRABBING，不结算），
+			// 松手（IDLE）帧落点并清除。**删除本端自研的 macro_sticky 点击黏住态**
+			// （三家原生都没有，是本端历史补丁，反复导致技能宏/快捷栏拖拽回归）。
 			if (cursor_state == Cursor::State::IDLE)
 			{
-				if (auto* macro = get(UIElement::Type::SKILLMACROEX))
-				{
-					if (macro->is_active() && macro->is_in_range(cursor_position))
-					{
-						if (drop_icon(*draggedicon, cursor_position))
-							remove_icon();
+				drop_icon(*draggedicon, cursor_position);
+				remove_icon();
 
-						return Cursor::State::IDLE;
-					}
-				}
+				return Cursor::State::IDLE;
 			}
 
 			return Cursor::State::GRABBING;
@@ -998,11 +954,8 @@ namespace ms
 	void UIStateGame::drag_icon(Icon* drgic)
 	{
 		draggedicon = drgic;
-
-		// 宏源（组合栏技能格 / 行尾宏选择图标）默认进入点击式黏住：
-		// 抓起那一下的松手不结算，等下一次点击再落点；非宏源维持原生按住拖。
-		macro_sticky_pending = drgic && drgic->is_macro_source();
-		macro_sticky = false;
+		// 方案 A：不再区分宏源/普通源，统一 DragDrop 按住拖松手落。
+		(void)drgic;
 	}
 
 	void UIStateGame::clear_tooltip(Tooltip::Parent parent)
@@ -1031,6 +984,21 @@ namespace ms
 
 	void UIStateGame::show_item(Tooltip::Parent parent, int32_t itemid)
 	{
+		// 2026-11-20 用户实拍「卷轴显示成装备 tooltip」根因：
+		// 旧判定 `EquipData::get(itemid)` 走 Cache::get → 任何有效道具都会构造出
+		// EquipData，且 is_valid()==itemdata.is_valid() 对卷轴/消耗品同样为 true，
+		// 于是 2041043（披风魔法防御卷轴）被误当装备画成需求/属性/对比。
+		// 原生只有装备号段（100..194 + 254 cash 特殊）才有 EquipTooltip；
+		// 消耗(2xx)/安装(3xx)/etc(4xx)/cash 普通(5xx)一律走 ItemTooltip
+		// （名称居中 + 图标 + 说明），这才是原生卷轴 tip 的样子。
+		if (itemid && itemid / 1000000 == 1)
+		{
+			eqtooltip.set_equip_itemid(itemid);
+			tooltip = eqtooltip;
+			tooltipparent = parent;
+			return;
+		}
+
 		ittooltip.set_item(itemid);
 
 		if (itemid)
@@ -1062,11 +1030,13 @@ namespace ms
 		}
 	}
 
-	void UIStateGame::show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal)
+	void UIStateGame::show_map(Tooltip::Parent parent, std::string title, std::string description, int32_t mapid, bool bolded, bool portal,
+		const std::vector<MapTooltipPlayer>& players)
 	{
 		matooltip.set_title(parent, title, bolded);
 		matooltip.set_desc(description);
 		matooltip.set_mapid(mapid, portal);
+		matooltip.set_players(players);
 
 		if (!title.empty())
 		{
@@ -1146,10 +1116,10 @@ namespace ms
 					if (draggedicon)
 					{
 						if (element->get_type() == icon_map[draggedicon.get()->get_type()]
-							|| (macro_sticky && element->get_type() == UIElement::Type::SKILLMACROEX))
+							|| element->get_type() == UIElement::Type::SKILLMACROEX)
 						{
-							// 组合栏关闭时若有黏住的宏图标：remove_cursor 已按 H3 写回源格，
-							// 这里收掉光标上的副本，防止残留幽灵图标。
+							// 方案 A：关闭来源窗（含宏面板）时收掉光标上的拖拽副本，
+							// 防止残留幽灵图标；宏图标源格写回由 remove_cursor() 负责。
 							remove_icon();
 						}
 					}
@@ -1262,6 +1232,13 @@ namespace ms
 
 	UIElement* UIStateGame::get_front(Point<int16_t> cursor_position)
 	{
+		// modern 底栏六钮 / quickSlot：CHATBAR 宽命中区常盖住右侧菜单，须先让 STATUSBAR 吃点。
+		if (auto* sb = dynamic_cast<UIStatusBar*>(elements[UIElement::Type::STATUSBAR].get()))
+		{
+			if (sb->is_active() && sb->cursor_on_interactive(cursor_position))
+				return sb;
+		}
+
 		// 聊天栏输入行锁定（2026-11-15 用户真机反馈）：点快捷键展开/收缩钮等任意
 		// 路径把 STATUSBAR 提升到 elementorder 尾部后，get_front 反向扫描先命中
 		// 状态栏（其命中区 = 整条底栏 dimension (VWIDTH,80)），聊天栏的「+」/
