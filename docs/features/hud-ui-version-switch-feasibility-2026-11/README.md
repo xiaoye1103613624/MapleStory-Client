@@ -2,24 +2,33 @@
 
 ## 一句话
 
-运行时在 **083 Classic**（`StatusBar.img`）与 **Modern**（`StatusBar3.img`）底栏+聊天之间切换；配置键 `ui.theme`；协议仍锁 s9/083。
+运行时在 **083 Classic**（`StatusBar.img`）与 **Modern**（`StatusBar3.img`）底栏+聊天之间切换；配置键 `ui.theme`；协议仍锁 s9/083。另有配置表驱动的左侧功能竖栏（`UISideIconBar`）。
 
 ## 入口
 
 | 入口 | 操作 |
 |---|---|
-| 小地图标题栏 `UI` 钮（`BT_MIN` 左侧） | 单击 Classic↔Modern，即时重建 |
+| 小地图标题栏 Theme MapleButton（`BT_MIN` 左侧，`Basic.img/BtHide`） | 单击 Classic↔Modern，即时重建 |
 | 系统设置底部「主题：…」 | 单击切换并落盘 |
+| 左侧竖栏图标 / 折叠钮 | 开已有窗；`side_icons.ini` 可增减换绑 |
 
 ## 核心 API
 
 - `Util/UiTheme.*` — `ThemeId` / `LayoutFamily` / `set_theme` / `toggle` / `resolve`
 - `UiAssetResolve::is_classic_hud()` / `status_bar_root()` — 跟随 ThemePack
 - `UIStateGame::apply_hud_theme()` / `UI::apply_hud_theme()` — `remove`+`emplace` STATUSBAR+CHATBAR
+- `Util/SideIconConfig.*` + `UISideIconBar` — `side_icons.ini` 槽位表
 
 ## 配置
 
-`ui.theme` = `auto` | `classic` | `modern`（缺包安全回退）
+`ui.theme` = `auto` | `classic` | `modern`（缺包安全回退）  
+`ui.side_icons` = `true` \| `false`（竖栏总开关）  
+`side_icons.ini` — 槽位增减/换绑（见 [notes/side-icon-binding.md](notes/side-icon-binding.md)）
+
+## 资源
+
+- StatusBar3 入库索引：[resources/STATUSBAR3-INDEX.md](resources/STATUSBAR3-INDEX.md)
+- 验收：[notes/acceptance-statusbar3-sidedock.md](notes/acceptance-statusbar3-sidedock.md)
 
 ## 整窗映射预留（下一阶段）
 

@@ -92,6 +92,14 @@ namespace ms
 		int8_t hit_category_sub_tab(Point<int16_t> cursor_relative) const;
 		/// 背包类型切换页签命中（Base/Tab2 0..4，竖排 5 个）。-1 表示未命中。
 		int8_t hit_bag_tab(Point<int16_t> cursor_relative) const;
+		/// 4 模式 tab（热点推荐/购买试穿/我的现状/原型）：C++ 运行时横排绘制于
+		/// 预览井底部 y≈218，避开 BtBuyAvatar(237)/Default(260) 等字符按钮。
+		void draw_mode_tabs() const;
+		int8_t hit_mode_tab(Point<int16_t> cursor_relative) const;
+		// G 装备/道具 tooltip：统一经 UI::show_item(SHOP, itemid)，移出经 clear_tooltip。
+		void clear_tooltip_shop() const;
+		void show_item_at_plate(Point<int16_t> cursor_relative) const;
+		void show_best_tooltip(Point<int16_t> cursor_relative) const;
 		bool matches_sub(const CashCommodity& c) const;
 
 		/// 预览试穿（MinMS apply_try_on 子集：脸/发/装备；无宠物/特效沙盒）。
@@ -129,6 +137,12 @@ namespace ms
 		static constexpr int16_t PREVIEW_LADDER_Y1 = 10;
 		static constexpr int16_t PREVIEW_LADDER_Y2 = 134;
 		static constexpr int16_t PREVIEW_SPAWN_X = 86;
+		// 4 模式 tab：横排落在预览井底 y≈214（井底 205 与 BtBuyAvatar 237 之间的空档），
+		// 4 等分宽 212，避开已有角色立绘与角色按钮。ColorBox 选中底色 + A11B 文字。
+		static constexpr int16_t MODE_TAB_X = 24;
+		static constexpr int16_t MODE_TAB_Y = 214;
+		static constexpr int16_t MODE_TAB_W = 53;
+		static constexpr int16_t MODE_TAB_H = 20;
 		static constexpr int16_t WND_TAB_X = 272;
 		static constexpr int16_t WND_TAB_Y = 17;
 		static constexpr int16_t WND_LIST_X = 275;
@@ -165,6 +179,13 @@ namespace ms
 		// 已购道具：2 行 x 6 列，白格 31x31，x=21..191 (dx=35)，y=349..379 (dy=35)。
 		// 背包：3 行 x 4 列，白格 31x31，x=23..158 (dx=35)，y=481..581 (dy=35)。
 		static constexpr int16_t PURCH_X0 = 21;
+		// 「商品选购」Text 按钮落在已购道具标题条右侧（标题 y≈322，格顶 349）。
+		static constexpr int16_t BUY_SELECT_X = 150;
+		static constexpr int16_t BUY_SELECT_Y = 322;
+		// CSInventory 扩栏五钮：竖排在背包格右侧 x≈196，BtEx* 间距 22。
+		static constexpr int16_t EXT_BTN_X = 196;
+		static constexpr int16_t EXT_BTN_Y0 = 478;
+		static constexpr int16_t EXT_BTN_DY = 22;
 		static constexpr int16_t PURCH_Y0 = 349;
 		static constexpr int16_t PURCH_DX = 35;
 		static constexpr int16_t PURCH_DY = 35;
@@ -286,7 +307,18 @@ namespace ms
 			BtPagePrev = BtBuy + MAX_ITEMS,
 			BtPageNext,
 			// CSList/BtGift：与 BtBuy 同槽位偏移，枚举从 BtBuy+MAX_ITEMS 起
-			BtGift = BtPageNext + 1
+			BtGift = BtPageNext + 1,
+			// CSList/BtReserve（live WZ 实测存在）：购物车钮，与 BtBuy/BtGift 同槽位偏移。
+			// s9 无购物车 opcode，点击只写 UIStateCashShop::local_cart_sns 本地容器 + locale 提示。
+			BtCart = BtGift + MAX_ITEMS,
+			// CSInventory 扩栏五钮（live WZ 实测）：无服务端 opcode，点击只给 locale 提示。
+			BtExtEquip,
+			BtExtConsume,
+			BtExtInstall,
+			BtExtEtc,
+			BtExtTrunk,
+			// CSItemSearch/BtSearch：点击弹 UISoftKey 本地输入，不发明搜索包。
+			BtSearch
 		};
 
 		Point<int16_t> BestNew_dim;
@@ -361,5 +393,13 @@ namespace ms
 
 		int16_t list_offset;
 		Text page_label;
+
+		// 4 模式 tab 当前选中态：0=热点推荐(默认) 1=购买试穿 2=我的现状 3=原型。
+		uint8_t mode_tab = 0;
+		Text mode_labels[4];
+
+		// 2026-11-23 全量补齐：本地搜索过滤串（BtSearch 写，rebuild_items 读）与预览背景页（BtSaveAvatar）。
+		std::string search_query;
+		uint8_t preview_background = 0;
 	};
 }

@@ -1,0 +1,1047 @@
+# 萧曳客户端本地化 — 简体中文（默认）
+# 键名稳定；新增 UI 文案请同步 en-US.ini
+
+login.quit_confirm=确定要退出游戏吗？
+worldselect.stub_view_map=查看世界地图功能暂未开放。
+worldselect.stub_view_all=查看所有角色功能暂未开放。
+worldselect.hint_select_world=请选择要进入的大区。
+worldselect.label_view_all=查看所有角色
+
+# 装备 tooltip（IO/Components/EquipTooltip）—— 非位图文案一律走 i18n
+equip.label_type=装备分类：{}
+equip.label_wepspeed=攻击速度：{}
+equip.label_slots=可升级次数：{}
+equip.label_hammers=金锤子已提高的强化次数：{}
+equip.label_atkinc=攻击力增加
+equip.label_itemid=道具ID：{}
+equip.label_max=上限
+equip.trade.untradable=不可交易
+equip.trade.unique=唯一道具
+equip.trade.both=唯一道具，不可交易
+equip.gender.male=(男)
+equip.gender.female=(女)
+equip.pot.hidden=(潜在属性)
+equip.pot.rare=(稀有物品)
+equip.pot.epic=(史诗物品)
+equip.pot.unique=(独特物品)
+equip.pot.legendary=(传说物品)
+
+# 属性名：键后缀 = EquipStat::names 原文（空格折成下划线）
+equip.stat.STR=力量：{}
+equip.stat.DEX=敏捷：{}
+equip.stat.INT=智力：{}
+equip.stat.LUK=运气：{}
+equip.stat.MaxHP=最大HP：{}
+equip.stat.MaxMP=最大MP：{}
+equip.stat.Attack_Power=攻击力：{}
+equip.stat.Magic_Attack=魔法力：{}
+equip.stat.Defense=防御力：{}
+equip.stat.MAGIC_DEFENSE=魔法防御力：{}
+equip.stat.ACCURACY=命中率：{}
+equip.stat.AVOID=回避率：{}
+equip.stat.HANDS=双手攻击：{}
+equip.stat.Speed=速度：{}
+equip.stat.Jump=跳跃力：{}
+
+# 装备/武器类型：键后缀 = EquipData::get_type() 原文
+equip.type.HAT=帽子
+equip.type.FACE_ACCESSORY=脸部
+equip.type.EYE_ACCESSORY=眼部
+equip.type.EARRINGS=耳环
+equip.type.TOP=上衣
+equip.type.OVERALL=套装
+equip.type.BOTTOM=下装
+equip.type.SHOES=鞋子
+equip.type.GLOVES=手套
+equip.type.SHIELD=盾牌
+equip.type.CAPE=披风
+equip.type.RING=戒指
+equip.type.PENDANT=项链
+equip.type.BELT=腰带
+equip.type.MEDAL=徽章
+equip.type.ONE_HANDED_SWORD=单手剑
+equip.type.ONE_HANDED_AXE=单手斧
+equip.type.ONE_HANDED_MACE=单手槌
+equip.type.DAGGER=短剑
+equip.type.WAND=魔杖
+equip.type.STAFF=权杖
+equip.type.TWO_HANDED_SWORD=双手剑
+equip.type.TWO_HANDED_AXE=双手斧
+equip.type.TWO_HANDED_MACE=双手槌
+equip.type.SPEAR=长枪
+equip.type.POLEARM=长杆武器
+equip.type.BOW=弓
+equip.type.CROSSBOW=弩
+equip.type.CLAW=爪
+equip.type.KNUCKLE=拳套
+equip.type.GUN=火枪
+equip.type.CASH=时装
+
+# 攻击速度：键后缀 = WeaponData::getspeedstring() 原文
+equip.speed.FAST_(1)=快 (1)
+equip.speed.FAST_(2)=快 (2)
+equip.speed.FAST_(3)=快 (3)
+equip.speed.FAST_(4)=快 (4)
+equip.speed.NORMAL_(5)=普通 (5)
+equip.speed.NORMAL_(6)=普通 (6)
+equip.speed.SLOW_(7)=慢 (7)
+equip.speed.SLOW_(8)=慢 (8)
+equip.speed.SLOW_(9)=慢 (9)
+
+# 怪物手册（IO/UITypes/UIMonsterBook）
+monsterbook.title=怪物手册
+monsterbook.label_cover=封面：{}
+monsterbook.label_cards=卡片：{}
+monsterbook.label_level=等级 {}
+monsterbook.stub_mob=怪物编号 {}
+
+# 技能书封（IO/UITypes/UISkillBook）—— 覆盖 String/Skill.img/<ns>/bookName
+# 只登记有原生截图证据的命名空间；其余职业仍走 String 包原文，不凭空编。
+skill.bookname.000=冒险家技能
+
+# 聊天栏目标（IO/UITypes/UIChatBar 的 chatTarget 下拉）与悄悄话弹层
+# 原生 v83 中文包文案按「对所有人 / 悄悄话 / 组队 / 公会」四项；弹层提示句取自
+# 原生截帧（evidence/w4-chatbar/whisper-dlg-prep.md §3）。
+# Angel MakeCtrlEdit @0x8dfb36 八项顺序（视频/截图同）：对好友…对所有人。
+chat.target.buddy=对好友
+chat.target.group=对群
+chat.target.party=对组队
+chat.target.guild=对家族
+chat.target.alliance=对联盟
+chat.target.spouse=对夫妻
+chat.target.whisper=悄悄话
+chat.target.all=对所有人
+chat.buddy.none_online=没有可聊天的好友。
+chat.spouse.unavailable=你还没有结婚，或配偶目前不在线。
+whisper.hint_target=请输入悄悄话的对象。
+
+# Messenger 聊天室（IO/UITypes/UIMessenger）—— 聊天历史行是「非位图文字」，走 i18n。
+# 注意：出站包 payload 里的名字仍是协议侧字段（自己无房时占位 "Me"），不随语言变；
+# 这里只本地化「显示给用户看的那一行」。
+messenger.self=我
+messenger.no_room=还没有开启 Messenger 聊天室。
+messenger.invited=已邀请 {}
+messenger.declined=已拒绝 {}
+messenger.prompt_chat=请输入要发送的内容
+messenger.prompt_decline=请输入要拒绝的邀请方名字
+messenger.prompt_invite=请输入要邀请的角色名
+
+# 系统设置（IO/UITypes/UISysOpt）两个下拉的条目文案，键名后缀就是注册表里存的序号。
+# 窗体行标题（截图保存位置 / 怪物情报）是 UIWindow.img/SysOpt/backgrnd 里烘焙好的位图，
+# 不归 i18n；只有条目文字由客户端自绘。
+# 顺序与文案取自原生汉化表 ijl15.dll：怪物情报 @0x293ec 起四条以 \0 紧邻分隔，
+# 截图保存位置 @0x2177c 起两条紧邻；再用原生截帧「系统设置.png」的当前项
+# （名字和HP都显示 / MapleStory文件夹）对注册表 soMobInfo=3、soScreenShot=0 交叉验证。
+sysopt.combo.screenshot.0=MapleStory文件夹
+sysopt.combo.screenshot.1=桌面
+sysopt.combo.mobinfo.0=不显示
+sysopt.combo.mobinfo.1=只显示名字
+sysopt.combo.mobinfo.2=只显示HP
+sysopt.combo.mobinfo.3=名字和HP都显示
+
+# 多分辨率 · 系统设置新增「窗口大小」行（v83 原生无此行，档位表来自插件 rs_tier_dims）。
+# 文案与 rs.cpp L1974-1984 的 9 条 CCtrlComboBox 条目完全一致；纯数字+字母，无本地化差异。
+sysopt.label.resolution=窗口大小
+sysopt.combo.resolution.0=800 x 600
+sysopt.combo.resolution.1=1024 x 768
+sysopt.combo.resolution.2=1366 x 768
+sysopt.combo.resolution.3=1600 x 900
+sysopt.combo.resolution.4=1920 x 1080
+sysopt.combo.resolution.5=1280 x 720
+sysopt.combo.resolution.6=1440 x 900
+sysopt.combo.resolution.7=1680 x 1050
+sysopt.combo.resolution.8=2560 x 1440
+sysopt.label.language=语言
+sysopt.combo.language.0=简体中文
+sysopt.combo.language.1=英语
+
+# R27-B1c：以下条目**没有原生文案依据**，值先保持原样 —— 本批通的是「键位 + 机制」，
+# 不是翻译。日后逐条取证（String.img / IDA / 原生截帧）只改 ini 的值，代码不用动。
+# 逐条台账见 evidence/r27-b1c-i18n-scan/pending-copy.md。
+#
+# NO-NATIVE 版本号前缀（UILogin / UICharSelect / UIRaceSelect / UICommonCreation 四处同源）。
+# 站点原来写的是 "Ver. " + 版本号；加载器会 trim 掉值两端空白，所以那个空格只能待在
+# 模板里 —— 占位符两侧的空格由各语言自己决定，这是 Locale::format 的既定约定。
+version.prefix=Ver. {}
+
+# NO-NATIVE 角色选择窗「排行」行（本包自造中文，原生排行是另一套 UI，无对应文案依据）。
+# 升降后缀同理：整条模板给 Locale::format，不拆成「数字 + 独立后缀」，否则中文会拿到
+# "名次 上" 这种断不成句的东西，且值两端的空白会被 trim 掉。
+charselect.rank_unavailable=排行不可用
+charselect.rank_up={} up
+charselect.rank_down={} down
+
+# NO-NATIVE 地图侧栏（UIMapInfoPanel / UIMapMobPanel / UIMapDropPanel）。
+# 这三块面板是本包自造的 UI，原生 v83 没有对应窗体，文案不存在依据；mappanel.mesos
+# 与 mapdrop.unknown_item 的英文就是站点原值。
+mappanel.select_monster=Select a monster
+mappanel.no_monsters=No monsters on this map
+mappanel.no_drop_data=No drop data
+mappanel.mesos=mesos
+mapdrop.unknown_item=Unknown
+
+# NO-NATIVE 好友/黑名单窗（UIUserList）与查看全部角色（UIViewAllChar）。
+# userlist.cur_location / viewallchar.world 带占位符：前半截是文案、后半截是数据，
+# 拆开存会导致中文拿到「我的位置 - 世界1」这种半句。
+userlist.none=none
+userlist.cur_location=My Location - {}
+userlist.default_group=Default Group (0/0)
+userlist.friend_group=Default Group
+userlist.location=目前位置
+userlist.union_none=还未加入联盟。
+userlist.need_data=暂无可用数据
+userlist.use_alliance_window=请在联盟窗内完成该操作
+
+# 背包丢金币（UIItemInventory BT_COIN → UIEnterNumber，2026-11-11）
+inventory.drop_meso=要丢弃多少金币？
+# 背包整理/聚集/展开/收起/槽位合并悬停提示（083 CUIItem::OnChildNotify 0x7D4/7D5/7D6/7D7/2003）
+inventory.tip_sort=整理背包
+inventory.tip_gather=聚集同类道具
+inventory.tip_expand=展开背包
+inventory.tip_collapse=收起背包
+inventory.tip_slotmerge=槽位合并
+drop.picked_up=获得了道具。
+
+# 技能组合栏（UISkillMacroEx，对照「技能框+技能组合框.png」）
+skill.macro.name_hint=取个个性技能名
+skill.macro.show_name=显示个性技能名
+# V4/V5（2026-11-16）：Angel SP_3296_IT_IS_SAVED / SP_272_CURSING_IS_NOT_ALLOWED。
+skill.macro.saved=已保存。
+skill.macro.cursing=技能组合名不可包含脏话。
+viewallchar.world=World {}
+
+# NO-NATIVE 手柄设置窗未绑定键位时显示的占位。
+joypad.none=None
+
+# NO-NATIVE 区服选择的两条延迟警告整句（国服路径走不到，仍按决策 A 接机制）。
+region.warn_na=Warning: You may experience latency and connection issues when connecting to the NA server from Europe.
+region.warn_eu=Warning: You may experience latency and connection issues when connecting to the EU server from North America.
+# NO-NATIVE R27-B1c-4 中文硬编码批次（UIBuddyList / UIParty / UIStorage / UITrade /
+# UIMapSearchPanel / UIMapInfoPanel / UIDailyGift）。这批站点上写的本来就是中文，zh 侧
+# 逐字照抄、零编造风险；en 侧先同值占位（决策 B：本批通的是键位与机制，不是翻译），
+# 日后取证只改值，代码不动。带 {} 的是「文案 + 数据」模板：数字/名字当值喂进来，
+# 空格一律留在代码里拼（加载器 trim 掉值两端空白，写进模板会丢）。
+buddylist.title=好友 ({})
+common.channel=频道{}
+common.offline=离线
+party.title=队伍 #{}
+storage.meso=金币: {}
+trade.title=交易
+trade.waiting=（等待对方）
+trade.meso=金币: {}
+trade.locked=[锁定]
+trade.self_locked=[已确认]
+trade.partner_locked=对方已确认
+trade.slots_full=交易栏已满（最多 9 件）
+trade.invite_hint=请右键其他角色选择「交易」来发起交易
+trade.invite_ask={} 想与你交易，是否接受？
+trade.shell_redirect=已打开原生面交窗
+trade.result.success=交易成功
+trade.result.no_response=交易无响应
+trade.result.partner_cancel=对方取消了交易
+trade.result.unsuccessful=交易失败
+trade.result.unique_limit=无法携带更多唯一道具
+trade.result.another_map=双方不在同一地图，无法交易
+trade.result.damaged=客户端文件损坏，无法交易
+trade.result.unknown=交易结束（代码 {}）
+mapsearch.list_header=地图列表
+mapsearch.title=地图搜索
+mapsearch.no_data=未选择地图
+mapsearch.cost=费用: {}
+mapsearch.street=街: {}
+mapsearch.tab_unloaded=（该分类数据未加载）
+mapwarp.insufficient=金币不足，传送需要 {} 金币。
+worldmap.players.online=在线: {}
+mapinfo.type_boss=BOSS
+mapinfo.type_normal=普通
+mapinfo.title=地图信息
+mapinfo.attr=属性: {}
+mapinfo.resist=抗性: {}
+dailygift.banner_sub=丰厚礼物，天天相送！
+dailygift.banner_main=冒险岛每日礼物
+dailygift.rule_1=· 击杀等级范围内怪物达到 300 只可领取当日礼物
+dailygift.rule_2=· 需角色等级 33 级以上
+dailygift.rule_3=· 每个账号每日限领 1 次（本版假数据）
+dailygift.rule_4=· 格子中部道具槽预留，本版不渲染物品
+dailygift.rule_5=· 点击格子即可假领取并显示已领取标识
+dailygift.rule_6=· 无协议：不会真实入包 / 不计真实杀怪
+dailygift.progress=等级范围怪物
+dailygift.claim=领取礼物
+dailygift.day_prefix=第
+dailygift.day_suffix=天
+dailygift.date_month=月
+dailygift.date_day=日
+
+# NO-NATIVE R27-B1c-5a 壳窗批次（UIVegaSpell / UIRpsGame / UIPlant+UIRaise /
+# UIViciousHammer / UIWedding）。这批源码写的本来就是英文，zh 侧照抄原文 = 运行时
+# 像素级零变化，en 侧同值；换中文须有 v83 原生文案依据（String.img / IDA），禁止凭
+# 记忆编，所以这里只建键、不翻译。带 {} 的是「文案 + 数据」模板（format / format_all
+# 按 {} 出现顺序依次填），值里不留首尾空白 —— 加载器会 trim。
+vegaspell.hint_init=Drop equip + scroll
+vegaspell.hint_drop=Drop equip / scroll / vega
+vegaspell.status_scrolling=Scrolling…
+vegaspell.status_success=Success!
+vegaspell.status_failed=Failed.
+vegaspell.status_result_op=Result op=0x{}
+vegaspell.slot_equip_at=Equip @{}
+vegaspell.slot_scroll_at=Scroll @{}
+vegaspell.slot_vega_at=Vega @{}
+vegaspell.slot_equip_num=Equip #{}
+vegaspell.slot_scroll_num=Scroll #{}
+vegaspell.prompt_equip_slot=Equip slot
+vegaspell.prompt_scroll_slot=Scroll slot
+vegaspell.need_equip_scroll=Need equip + scroll
+vegaspell.no_vega_in_cash=No Vega Spell in Cash
+vegaspell.sent=Vega sent…
+rps.title=Rock Paper Scissors
+rps.round_result=You:{} NPC:{}
+rps.pick_rock=Rock
+rps.pick_paper=Paper
+rps.pick_scissor=Scissor
+rps.started=Started
+rps.continued=Continue
+rps.retry=Retry
+# 禁译：这一条是给软键盘回调解析器看的**输入语法**（rock/paper/scissor 关键字），
+# 不是给人读的整句；换成中文会让 `t == "rock"` 那套比较永远匹配不上。接键只为「站点归零」。
+rps.softkey_choices=rock|paper|scissor
+plant.title=Plant
+plant.use_slot=Use #{}
+plant.use_item=Use {}
+plant.open_item_ui=OpenItemUI {}
+plant.info_number=infoNumber
+plant.water_of_life=WaterOfLife
+plant.softkey_hint=Plant itemid|tip
+raise.title=Raise
+raise.softkey_hint=Raise itemid|tip
+hammer.hint_drop=Drop an equip here
+hammer.used=Hammer used: {}
+hammer.need_equip_tab=Need an equip from Equip tab
+hammer.equip_slot=Equip slot {}
+hammer.equip_num=Equip #{}
+hammer.softkey_equip_slot=Equip inv slot
+hammer.drop_first=Drop an equip first
+hammer.no_hammer_cash=No Vicious Hammer in Cash
+hammer.sent=Hammer sent…
+wedding.hint_softkey=Wedding — SoftKey guest
+wedding.guest=Guest: {}
+wedding.invited=Invited {}
+wedding.progress=Step {}  G:{} B:{}
+wedding.softkey_invite_msg=Invite msg
+wedding.softkey_guest=Wedding guest
+wedding.softkey_target=Propose to (character name)
+wedding.ask_engage={} has requested engagement. Will you accept this proposal?
+wedding.no_invitation=No wedding invitation ticket (or no engagement) in ETC inventory.
+wedding.softkey_take=Take gift # (0-based)
+wedding.softkey_send=Gift slot[,qty]
+wedding.softkey_wishlist=Wishlist items, comma separated (max 10)
+wedding.result_updated=Marriage / engagement updated
+wedding.result_msg=Marriage result {}
+wedding.now_engaged=You are now engaged.
+wedding.registry_loaded=Wedding Gift Registry loaded.
+wedding.wishlist_shown=Gifts ({})
+wedding.gift_sent=Gift sent
+wedding.gift_dup=You cannot give more than one present for each wishlist.
+wedding.gift_failed=Failed to send the gift.
+wedding.gift_taken=Gift collected ({})
+wedding.gift_mode=Wedding gift mode {}
+wedding.break_confirm=Break the engagement/marriage? This cannot be undone.
+wedding.proposal_cancelled=Proposal withdrawn.
+wedding.talk_sent=Wedding blessing sent.
+wedding.no_relationship=You have no engagement or marriage on record.
+wedding.no_break_item=No engagement token / wedding ring found in inventory.
+
+# NO-NATIVE R27-B1c-5b 壳窗批次（UIAdmin / UIAlliance / UIAriantMatch / UICashGachapon /
+# UICashShop / UICharInfo / UIClock / UIDailyGift / UIDelivery / UIFamily / UIFamilyTree /
+# UIMTS / UIMaker / UIMapleTV / UIMegaphone / UIMemo / UIMinigame / UIMonsterBook /
+# UIMonsterCarnival / UINewYearsCard / UIPartyRace / UIPartySearch / UIRemoteGachapon / UIStoreBank）。
+# 值 = 改动前代码里的英文原字面量（用户 2026-11-02 决策 B：「保持英文原值，只建键」）；
+# zh 侧先落英文、不编中文译文，等有 v83 String.img / IDA 依据再换。`{{}}` 是变量插点位。
+admin.title=Admin — SoftKey announce
+admin.show_users=ShowUsers
+admin.alert_admins=AlertAdmins
+alliance.name_line=Alliance: {}
+alliance.notice_line=Notice: {}
+alliance.guilds_header=Guilds ({}):
+ariants.title=Ariant
+ariants.result=Result {}
+gachapon.jackpot=JACKPOT #{} x{} left={}
+gachapon.reward=Gacha #{} x{} left={}
+gachapon.failed=Gacha failed
+cashshop.stub_job=Illium
+cashshop.stub_name=ShomeiZekkou
+cashshop.job_unknown=未知职业
+cashshop.name_unknown=未知角色
+cashshop.meta=仓库 {} 礼物 {} 心愿 {}
+cashshop.meta_stor=仓位{}
+cashshop.bought=已购买 #{}
+cashshop.buy_confirm=确认购买「{}」？\n价格：{} 点券\n商品号：{}
+cashshop.buy_price={} 点券
+cashshop.buy_warn=购买后无法取消或退款。是否购买上述物品？
+cashshop.gift_confirm=确认将「{}」作为礼物送出？\n价格：{} 点券\n商品号：{}
+cashshop.gift_ok=礼物已送出 → {} #{}
+cashshop.msg=商城提示 0x{}
+cashshop.inv_slots=背包栏位 → {}
+cashshop.storage_slots=仓库栏位 → {}
+cashshop.char_slots=角色栏 → {}
+cashshop.refund=退款 +{} 枫叶点数
+cashshop.ring=戒指 → {}
+cashshop.package=礼包 ×{}
+cashshop.quest_item=任务道具 #{}
+cashshop.name_change_ok=改名可用
+cashshop.world_transfer_ok=转区可用
+cashshop.name_in_use={} 已被使用
+cashshop.name_available={} 可用
+cashshop.mode_unhandled=商城模式 0x{}
+cashshop.fail.timeout=请求超时，请稍后再试
+cashshop.fail.cash=点券不足
+cashshop.fail.age=未满年龄限制，无法赠送
+cashshop.fail.limit=已达购买或赠送上限
+cashshop.fail.same_account=无法赠送给同账号角色
+cashshop.fail.name=角色名错误
+cashshop.fail.gender=性别限制，无法购买
+cashshop.fail.inventory=背包已满
+cashshop.fail.coupon_expired=优惠券已过期
+cashshop.fail.coupon_used=优惠券已使用
+cashshop.fail.coupon_pcbang=仅限网吧优惠券
+cashshop.fail.stock=该商品已售罄
+cashshop.fail.generic=购买失败（代码 {}）
+cashshop.empty_notice=当前无可购商品
+cashshop.currency=点券
+charinfo.medal_stub=Junior Adventurer
+charinfo.pet_wish=Pet {} Wish {}
+charinfo.medal_id=Medal#{}
+charinfo.married=Married
+charinfo.book_count=Book {}
+charinfo.prompt_note=请输入便签正文
+charinfo.prompt_note_to=请输入收件人角色名
+clock.seconds_left={}s
+clock.title=Clock
+clock.zero=0s
+dailygift.title=DAILY GIFT
+delivery.row_meso={}  {}m
+delivery.row_item=item:{}
+delivery.no_packages=No packages.
+delivery.count={} package(s)
+delivery.updated=Package updated.
+delivery.sending_to=Sending to {}…
+delivery.sent=Send {} m={}
+delivery.discard_id=Discard id={}
+delivery.claim_id=Claim id={}
+delivery.fee_help=Fee = TradeFee(mesos) + 5000 (normal)
+delivery.fee_calc=TradeFee({})+5000 = {}
+family.none=(还没有冒险学院)
+family.junior_count={}/{}
+family.rep_value={}/{}
+family.today_value=+{}
+family.priv_none=(无学院特权数据)
+family.priv_used=该特权今日已使用。
+family.rep_gain=名声 {} ({})
+family.ask_separate=要分离同学 {} 吗？
+family.ask_separate_cid=要分离同学 cid {} 吗？
+family.ask_leave=要脱离长辈并分家吗？
+family.softkey_junior=同学名
+family.softkey_junior_cid=同学 cid（空=脱离）
+family.softkey_precept=学院箴言
+family.softkey_member=学院成员名
+family.softkey_inviter_name=邀请人名
+family.softkey_inviter_cid=邀请人 cid
+familytree.header=Family Tree
+familytree.level=Lv.{}
+familytree.online=[ON]
+familytree.offline=[OFF]
+familytree.rep=rep {}
+familytree.pedigree=Pedigree ({} members)
+familytree.can_add=— can add junior
+maker.bad_item_id=Bad item id
+maker.craft=Craft {}
+maker.no_recipe=No recipe {}
+maker.cost_meso={} meso
+maker.cost_req=(Lv{})
+mapletv.no_512=No 512* map effect
+megaphone.empty=Empty
+megaphone.no_539=No 539*
+megaphone.sent=Sent…
+minigame.ready=Ready
+minigame.start=Start
+minigame.omok=Omok {}
+minigame.card=Card {}
+monsterbook.cover_id=Cover id={}
+monsterbook.not_found=Not found
+carnival.cp_initial=CP 0/0
+carnival.enemy_initial=EN 0/0
+carnival.title=Carnival
+carnival.cp=CP {}/{}
+carnival.enemy=EN {}/{}
+mts.title=MTS / ITC
+mts.list_line=tab{} type{} p{} n={} slots={}
+mts.cash_line=NX={} MP={}
+mts.status_default=MTS
+mts.item_slot=#{}@{}
+mts.more=…+{}
+mts.no_items=(no items)
+nycard.need_receiver=Need receiver
+nycard.to=To {} — msg SoftKey
+nycard.no_card=No New Year card
+nycard.sent_to=Sent to {}
+partyrace.stage_initial=Stage 0
+partyrace.score_initial=R 0 : 0 B
+partyrace.stage=Stage {}
+partyrace.score=R {} : {} B
+partysearch.range=Range {}
+partysearch.jobs_mask=Jobs mask={}
+partysearch.searching=Searching Lv.{} …
+partysearch.idle=Idle — press Start to search
+remotegacha.box_mode=Gacha box mode={}
+memo.count={} note(s)
+memo.sel_from=Sel {}
+memo.sent_to=Sent→{}
+memo.discard_id=Discard id={}
+memo.notes_count=Notes: {}
+memo.none_selected=No note selected
+memo.no_note=No note
+storebank.mesos=Mesos: {}
+storebank.getall_sent=GetAll sent
+
+# ==== R27-B1c-5c 中文盲区四窗：UIQuestLog / UIGuild / UIMerchant（值为改动前原字面量，决策 B 不翻译）====
+quest.area.20=彩虹岛
+quest.area.30=金银岛
+quest.detail.id=任务编号: {}
+quest.detail.level_range=等级范围: {} ~ {}
+quest.detail.min_level=需要等级: {}
+quest.detail.area=所属区域: {}
+quest.detail.npc=相关NPC编号: {}
+quest.detail.pre_none=前置任务: 无
+quest.detail.pre=前置任务: {}
+# IDA pool 4497 "Chain Quest" + 格式 "%s ( %d / %d )"；中文端用「连锁任务」宋体标签。
+quest.chain_page=连锁任务 ( {} / {} )
+guild.title_plain=公会
+guild.title_named=公会: {}
+guild.member_rank=职位{}
+guild.member_online=[在线]
+guild.member_offline=[离线]
+guild.page_none=没有参加的家族
+guild.notice_none=暂无家族公告
+guild.need_select=请先选中一名家族成员
+guild.invite_prompt=输入要邀请的玩家名
+guild.notice_prompt=输入家族公告
+guild.whisper_prompt=输入悄悄话内容
+guildbbs.title=公会公告板
+guildbbs.list_tip=本页 {} 帖
+guildbbs.view_tip=帖 {}
+guildbbs.notice_row=[公告] {}
+guildbbs.write_hint=发帖：软键盘输入标题与正文；1/2/3 选图标
+guildbbs.write_notice_hint=发公告帖：软键盘输入标题与正文
+guildbbs.write_edit_hint=编辑帖：软键盘输入新标题与正文
+guildbbs.none_selected=未选择帖子
+guildbbs.none_reply=未选择回复
+guildboss.title=公会副本
+guildboss.healer_y=治疗精灵 Y={}
+guildboss.pulley_state=滑轮状态={}
+merchant.owner_shop={} 的商店
+
+# NO-NATIVE R27-B1c-6 壳窗·UIMiscShells 批次（134 键 / 261 站点：change_text + Text ctor +
+# sm_tip 第二显示通道 + ctor 成员初始化档）。值 = 改动前代码里的英文原字面量逐字重建，
+# 变量插点位换成 `{}`（决策 B：保持英文原值、只建键；界面仍是英文，中文措辞输入见
+# pending-copy.md §B1c-6）。跨窗同值归 common.*。
+common.open_store=Open store…
+shop.no_514_503_permit=No 514/503 permit
+shop.create=Create: {}
+personalshop.open=PlayerShop open
+miniroom.err_free_market=Stores only in the free market
+miniroom.err_channel=Can't open store on this channel
+miniroom.err_establish=Can't establish miniroom
+miniroom.err_enter=You may not enter this store
+miniroom.err_maintenance=Owner undergoing store maintenance
+miniroom.err_generic=MiniRoom error {}
+report.report_softkey_name=Report — SoftKey name
+report.reported=Reported {}
+common.empty_name=Empty name
+report.target_softkey_enter=Target: {} — SoftKey/Enter
+coupon.coupon_enter_for_code=Coupon — Enter for code
+coupon.empty_code=Empty code
+common.sent=Sent…
+claim.claim_softkey_to_msg=Claim — SoftKey to/msg
+claim.need_name=Need name
+common.note=Note → {}
+incubator.drop_egg_softkey_slot=Drop egg / SoftKey slot
+incubator.egg_enter=Egg #{} — Enter
+incubator.drop_an_egg_first=Drop an egg first
+incubator.no_incubator=No Incubator
+common.drop_equip_softkey_slot=Drop equip / SoftKey slot
+common.equip_enter=Equip #{} — Enter
+common.need_equip=Need equip
+common.equip_enter_to_use=Equip #{} — Enter to use
+common.drop_an_equip_first=Drop an equip first
+karmascissors.no_karma_scissors=No Karma Scissors
+enchantskill.e_equip_s_scroll_enter=E=equip S=scroll Enter
+enchantskill.enchant_slot=Enchant slot #{}
+enchantskill.scroll=Scroll {}→{}
+enchantskill.need_scroll_equip=请先放入装备再拖入卷轴
+enchantskill.equip=Equip #{}
+enchantskill.scroll_2=Scroll #{}
+enchantskill.scroll_3=Scroll {}
+enchantskill.need_bag_equip=已经穿上的装备请直接把卷轴拖到装备栏
+enchantskill.drop_hint=把背包装备放进来，再把卷轴拖到窗口上
+enchantskill.cannot_scroll=这个道具无法使用卷轴
+enchantskill.need_spirit=需要技能「匠人之魂」
+enchantskill.result.ok=卷轴发出光芒，神秘的力量被传入了物品。
+enchantskill.result.ok_white=物品升级成功，过程中使用了祝福卷轴。
+enchantskill.result.fail=卷轴发出光芒，但物品好像什么也没发生。
+enchantskill.result.fail_white=升级失败，但因使用了祝福卷轴，升级次数没有减少。
+enchantskill.result.destroy=物品因卷轴的强大力量而损毁了。
+itemprotector.no_item_protector=No Item Protector
+teleport.teleport_rock=Teleport Rock
+teleport.no_teleport_rock=No Teleport Rock
+teleport.need_map_name=Need map/name
+teleport.warp_map=Warp map…
+teleport.warp_to=Warp to {}
+teleport.need_vip_rock_for_name=Need VIP rock for name
+teleport.saved_map=Saved map…
+teleport.no_saved_map_softkey=No saved map — SoftKey
+teleport.warp=Warp #{}
+speedquiz.quiz_softkey_answer=Quiz — SoftKey answer
+speedquiz.empty_answer=Empty answer
+speedquiz.ans=Ans: {}
+ranking.ranking_softkey_name=Ranking — SoftKey name
+ranking.find=Find: {}
+itemmegaphone.drop_item_softkey_msg=Drop item + SoftKey msg
+itemmegaphone.item_tab=Item tab={} #{}
+itemmegaphone.no_item=No item
+common.empty_msg=Empty msg
+itemmegaphone.no_item_megaphone=No Item Megaphone
+counsel.counsel_softkey_to_msg=Counsel — SoftKey to/msg
+counsel.whisper=Whisper → {}
+muruengraid.raid_softkey_note=Raid — SoftKey note
+common.empty=Empty
+muruengraid.note=Note: {}
+createcygnus.cygnus_softkey_name=Cygnus — SoftKey name
+createcygnus.name=Name: {}
+megaphonebasic.megaphone_softkey_msg=Megaphone — SoftKey msg
+megaphonebasic.no_megaphone=No Megaphone
+personalshop.shop_softkey_c_title_o_a_b_x=Shop — SoftKey/C title | O A B X
+common.exit=Exit…
+common.buy=Buy {}
+membershop.membershop_softkey_title=MemberShop — SoftKey title
+tradingroom.trade_softkey_meso_chat_c_x=Trade — SoftKey meso/chat | C/X
+common.meso=Meso {}
+common.chat_sent=Chat sent…
+common.confirm=Confirm…
+common.transaction=Transaction…
+common.visit=Visit…
+common.additem=AddItem #{}
+cashtradingroom.additem=AddItem {}
+entrustedshop.entrusted_softkey_o_open=Entrusted — SoftKey / O=open
+cashtradingroom.cashtrade_softkey_meso_chat_c_x=CashTrade — SoftKey meso/chat | C/X
+itemsearch.search_softkey_query=Search — SoftKey query
+common.q=Q: {}
+common.empty_query=Empty query
+aranskillguide.aran_guide_softkey_tip=Aran guide — SoftKey tip
+aranskillguide.skill=Skill {}
+monsterkilling.mobkill_softkey_tip=MobKill — SoftKey tip
+skillex.skillex_softkey_skillid=SkillEx — SoftKey skillid
+skillex.bad_id=Bad id
+skillex.use_lv=Use {} lv{}
+skillex.use=Use {}
+book.book_softkey_page=Book — SoftKey page
+book.cover=Cover: {}
+book.page=Page: {}
+questalarm.start=Start {}
+gmboard.gmboard_softkey_announce=GMBoard — SoftKey announce
+gmboard.showusers=ShowUsers
+gmboard.alertadmins=AlertAdmins
+shortcut.1_0_a_z_symbols_gamemenu=1-0 A-Z $+symbols(~GameMenu)
+cancelrequests.enter_cancel_esc_close=Enter=cancel  Esc=close
+cancelrequests.cancelled=Cancelled…
+itemmove.drop_item_softkey_dst=Drop item / SoftKey dst
+itemmove.marked_tab_softkey_dst=Marked tab={} #{} — SoftKey dst
+itemmove.moved=Moved #{}→{}
+itemmove.src_softkey_dst=Src #{} — SoftKey dst
+itemmove.moved_2=Moved →{}
+itemmove.move=Move {}
+fadeyesno.y_enter_yes_n_esc_no=Y/Enter=Yes  N/Esc=No
+contextmenu.info=Info
+contextmenu.whisper=Whisper
+contextmenu.party=Party
+contextmenu.report=Report
+contextmenu.trade=Trade
+contextmenu.buddy=Buddy
+contextmenu.messenger=Messenger
+contextmenu.guild=Guild
+contextmenu.family=Family
+contextmenu.fame=Fame
+eventwindow.event_softkey_note_e_uievent=Event — SoftKey note / E=UIEvent
+multiline.multiline_softkey_text=MultiLine — SoftKey text
+multiline.no_chalk_kite=No chalk/kite
+macro.macro_softkey_name=Macro — SoftKey name
+common.saved=Saved: {}
+common.assigned=Assigned {}
+common.macro_full=Macro full
+utildlgexavatar.avatar_softkey_emote=Avatar — SoftKey emote
+utildlgexavatar.emote=Emote {}
+utildlgexmultipet.multipet_softkey_name=MultiPet — SoftKey name
+utildlgexmultipet.no_517_tag=No 517* tag
+utildlgexmultipet.rename=Rename: {}
+exceptionitemsearch.exsearch_softkey_query=ExSearch — SoftKey query
+mobgage.mob=Mob
+mobgage.txt={}%
+skillup.skill_up=Skill Up
+skillup.sp=SP {}
+macroskill.macroskill_softkey_name=MacroSkill — SoftKey name
+questicon.q=Q{}
+questicon.done=Done {}
+questicon.forfeit=Forfeit {}
+minigametable.table=Table
+minigametable.place_p=Place ({},{}) p={}
+minigametable.card=Card #{}
+minigametable.omok=Omok {}
+teleport.tip_first_map=Enter=1st map #{} | SoftKey map/name | S=save
+teleport.tip_vip_map=Enter=1st map VIP#{} | SoftKey map/name | S=save
+teleport.tip_empty=Enter=1st map (empty) | SoftKey map/name | S=save
+# NO-NATIVE R27-B1c-7 接线器补收的尺盲区显示站点（跨行成员初始化 / tip_fn 回调转发；
+# 非软键盘提示，按决策 A 该接的都接了）。值 = 改动前原英文字面量，决策 B 不翻译。
+shop.setitem_slot=SetItem #{}
+shop.setitem=SetItem {}
+contextmenu.title_fallback=Menu
+gamemenu.tip_hints=1-9 shells Esc=close X=face SoftKey hub
+cube.prompt_slot=输入要重洗的装备背包槽位
+# UIKeyConfig 三处确认框（Angel 083 CNoticeDlg @ CUIKeyConfig::CNoticeDlg 0x83665b）。
+keyconfig.confirm_default=确定要恢复默认设置吗？
+keyconfig.confirm_clear=确定要清除所有键位绑定吗？
+keyconfig.confirm_save=要保存本次修改吗？
+monsterbook.info_id=卡片编号：{}
+monsterbook.info_level=卡片等级：{}
+monsterbook.no_selection=未选择卡片
+monsterbook.tab_reserved=该页签数据源（String/MonsterBook.img）本端未接入
+monsterbook.tab_empty=（无数据）
+monsterbook.maps=地图：{}
+monsterbook.rewards=掉落：{}
+monsterbook.mob_id=怪物编号：{}
+uimedal.item_id=道具 {}
+uimedal.detail_title=勋章详情
+uimedal.detail_qid=任务：{}
+uimedal.detail_item=勋章道具：{}
+uimedal.detail_cat=分类：{}
+uimedal.detail_close=再点关闭详情
+quest.progress_tip={} ({})
+
+# --- i18n auto-migrated (plain display strings) ---
+uichatbar.2062=密语
+uichatbar.2063=查看角色信息
+uichatbar.2064=加好友
+uichatbar.2095=UIChatNameMenu: 找不到角色 oid（可能不在当前地图）：
+uichatbar.2581=说话速度太快，请稍后再试。
+uichatbar.2595=你这句说了太多遍了。
+uigmcommandlist.38=GM 命令 (点击填充)
+uigender.129=女
+uigender.131=男
+uimaker.77=UIWindow.img/Maker BtStart|BtCancel 缺件 —— 底部两颗钮未创建
+uimapinfopanel.223=地图信息
+uimapsearchpanel.185=地图搜索
+uimedal.23=勋章
+uimedal.24=获得过的勋章个数:0个
+uimedal.25=基本
+uimedal.tab.1=职业
+uimedal.tab.2=一般
+uimedal.tab.3=挑战
+uimedal.tab.4=活动
+uirecommendworld.183=暂无可用世界
+uirecommendworld.204=(未知世界)
+uispecial.21=福利中心
+uispecial.name.0=每日签到
+uispecial.name.1=兑换中心
+uispecial.name.2=排行榜
+uispecial.name.3=转职
+uispecial.name.4=传送
+uitemporarystatview.26=临时属性
+uitemporarystatview.98=状态
+uiworldmap.557=怪物 / 掉落信息 ▸ 点击展开 (X)
+uiworldmap.560=地图搜索 ▸ 点击展开 (P)
+window.611=破功值同步: 
+window.691=【破功值：
+window.721= 延迟:
+window.723= 延迟:--
+window.729=【当前时间：
+window.740=【在线时长：
+waveashellhandlers.1058=Incubator 鈫?#
+
+# ==== R27-B1c-8 Configuration.cpp SETTINGS_ORDER 段标题/描述（决策 B：中文原生文案，en 同值占位）====
+config.section.1=登录服务器
+config.comment.server.ip=登录服 IP 地址
+config.comment.server.port=登录服端口，需与服务端配置一致
+config.section.2=数据源
+config.comment.data.format=数据源格式：auto / img（生产推荐）/ wz / nx
+config.comment.data.dir=经典 .img 数据根目录，data.format=img 或定位时使用
+config.comment.data.keymode=密钥模式：auto / builtin / external
+config.comment.data.keyfile=外部密钥文件路径，可为空
+config.section.3=补丁
+config.comment.patch.enabled=是否启用启动差异资源同步
+config.comment.patch.url=manifest 完整 URL，空则跳过
+config.comment.patch.channel=补丁频道，与 manifest.channel 比对
+config.comment.patch.timeout_ms=HTTP 超时毫秒
+config.comment.patch.retries=失败重试次数
+config.comment.patch.allow_skip=失败时是否允许继续进游戏
+config.section.4=启动
+config.comment.boot.logo=是否播放 Nexon 片头（任意键鼠可跳过）
+config.comment.boot.logo.frame_ms=片头每帧毫秒，限幅 10~1000
+config.section.5=窗口
+config.comment.window.width=窗口宽度，读取后同步到运行时常量
+config.comment.window.height=窗口高度，读取后同步到运行时常量
+config.comment.window.fullscreen=是否全屏启动
+config.comment.window.vsync=是否开启垂直同步
+config.comment.window.game_width=进入游戏后的视口宽度（登录仍用 window.width）
+config.comment.window.game_height=进入游戏后的视口高度（登录仍用 window.height）
+config.comment.window.game_tier=游戏分辨率档位 0..8；255 = 未显式选档，按宽高走
+config.section.6=字体
+config.comment.font.path.normal=常规字体文件路径
+config.comment.font.path.bold=粗体字体文件路径
+config.section.7=音频
+config.comment.audio.bgm.volume=背景音乐音量 0-100
+config.comment.audio.sfx.volume=音效音量 0-100
+config.section.8=登录
+config.comment.login.save=是否记住上次使用的账号名
+config.comment.login.account=上次使用的账号名，可为空
+config.comment.login.world=上次选择的区服序号
+config.comment.login.channel=上次选择的频道序号
+config.comment.login.region=上次选择的地区序号
+config.comment.login.character=上次选择的角色槽位
+config.comment.login.auto=opt-in 自动登录开关（口令 login.pass 有意不落盘，只走 xy-config）
+config.section.9=聊天栏
+config.comment.chat.max=聊天栏是否展开
+config.comment.chat.x=聊天栏宽度
+config.comment.chat.y=聊天栏高度
+config.section.10=小地图
+config.comment.minimap.type=小地图类型（2 = 常规样式）
+config.comment.minimap.simple=是否使用简约模式
+config.comment.minimap.default_helpers=是否绘制默认标志物（NPC/传送点等）
+config.section.11=系统设置
+config.comment.ui.sysopt.quality=画质调整 0-100（特效密度上限；过半同步开 VSync）
+config.comment.ui.sysopt.mouse_speed=鼠标速度调整 0-100（按 0..19 档反推，默认档 9）
+config.comment.ui.sysopt.hp_warn=HP 警报阈值 0-100（0 = 不报警）
+config.comment.ui.sysopt.mp_warn=MP 警报阈值 0-100（0 = 不报警）
+config.comment.ui.sysopt.skill_effects=技能使用时允许画面效果
+config.comment.ui.sysopt.window_mode=窗口化模式（window.fullscreen 的镜像，启动时回灌）
+config.comment.ui.sysopt.alt_enter=允许 ALT+回车切换画面模式
+config.comment.ui.sysopt.mob_info=怪物情报 0..3（0不显示/1名字/2HP/3名字和HP）
+config.comment.ui.sysopt.screenshot_path=截图保存位置 0..1（0客户端目录/1桌面）
+config.section.12=游戏设置
+config.comment.ui.gameopt.mask=游戏设置勾选位掩码
+config.section.13=自动喝药
+config.comment.ui.autopot.hp_item=HP 自动喝药绑定的道具 ID
+config.comment.ui.autopot.mp_item=MP 自动喝药绑定的道具 ID
+config.section.14=界面
+config.comment.ui.buff_timer=是否在 buff 图标上显示剩余时间
+config.comment.ui.softkey.hotkeys=是否允许普通按键弹出软键盘（默认关；选角密码输入不受影响）
+config.comment.ui.equip_compare=装备悬停时是否显示同部位已装备物品对比
+config.comment.ui.damage_skin=伤害皮肤 ID（0=默认；以服务端下发为准）
+config.comment.ui.language=界面语言：zh-CN（默认）/ en-US；改后热重载
+config.comment.ui.maplepoints.local=本地点券缓存（登录后以服务端下发的为准）
+config.section.15=界面位置
+config.comment.ui.position.stats=角色属性面板
+config.comment.ui.position.eqinv=装备栏
+config.comment.ui.position.inv=消耗/其他栏
+config.comment.ui.position.skill=技能面板
+config.comment.ui.position.quest=任务面板
+config.comment.ui.position.map=世界地图
+config.comment.ui.position.userlist=用户列表
+config.comment.ui.position.chat=聊天栏
+config.comment.ui.position.minimap=小地图
+config.comment.ui.position.shop=NPC 商店
+config.comment.ui.position.notice=公告面板
+config.comment.ui.position.maplechat=枫叶聊天/排行榜
+config.comment.ui.position.channel=频道选择
+config.comment.ui.position.joypad=手柄面板
+config.comment.ui.position.event=活动面板
+config.comment.ui.position.keyconfig=按键设置
+config.comment.ui.position.optionmenu=系统选项
+config.comment.ui.position.charinfo=角色信息
+config.comment.ui.position.messenger=信使聊天室
+config.comment.ui.position.partysearch=组队搜索
+config.comment.ui.position.delivery=快递Duey
+config.comment.ui.position.storebank=寄存StoreBank
+config.comment.ui.position.vicioushammer=金锤子
+config.comment.ui.position.vegaspell=星卷Vega
+config.comment.ui.position.cashgachapon=现金扭蛋
+config.comment.ui.position.remotegachapon=远程扭蛋
+config.comment.ui.position.family=家族
+config.comment.ui.position.familytree=家族树
+config.comment.ui.position.memo=便签Memo
+config.comment.ui.position.gameopt=游戏设置窗
+config.comment.ui.position.sysopt=系统设置窗
+config.comment.ui.position.dailygift=每日礼物
+config.comment.ui.position.partyrace=组队竞赛
+config.section.16=伤害
+config.comment.damage.formula_v2=是否启用原生取证补齐的伤害公式（关闭则保持旧结果）
+config.comment.damage.long_lines=伤害行 12 字节模式，必须与 s9 服务端成对开启
+config.comment.damage.cap=单段伤害上限，默认 2^53 = 9007199254740992
+config.section.17=调试
+config.comment.debug.packet_dump=是否输出收发包调试日志（生产勿开）
+config.comment.debug.perf_log=分段耗时落盘 boot_perf.log（基线采集用，生产勿开）
+config.comment.debug.gm_smoke=GM 冒烟自驱动：进图 3s 自动发一次刷怪包（生产必关）
+config.comment.debug.gm_smoke_mob=自驱动刷怪 mobId（默认 100100 绿水灵）
+config.comment.debug.gm_smoke_count=自驱动刷怪数量 1..50（默认 3）
+
+# ==== R27-B1c-8 Job.cpp 职业名（决策 B：中文原生，en 同值占位；运行时随语言现取）====
+job.0=新手
+job.100=战士
+job.110=剑客
+job.111=勇士
+job.112=英雄
+job.120=准骑士
+job.121=骑士
+job.122=圣骑士
+job.130=枪战士
+job.131=龙骑士
+job.132=黑骑士
+job.200=法师
+job.210=法师(火,毒)
+job.211=巫师(火,毒)
+job.212=魔导师(火,毒)
+job.220=法师(冰,雷)
+job.221=巫师(冰,雷)
+job.222=魔导师(冰,雷)
+job.230=牧师
+job.231=祭司
+job.232=主教
+job.300=弓箭手
+job.310=猎人
+job.311=射手
+job.312=神射手
+job.320=弩弓手
+job.321=游侠
+job.322=箭神
+job.400=飞侠
+job.410=刺客
+job.411=无影人
+job.412=隐士
+job.420=侠客
+job.421=独行客
+job.422=侠盗
+job.430=见习刀客
+job.431=双刀客
+job.432=双刀侠
+job.433=血刀
+job.434=暗影双刀
+job.500=海盗
+job.510=拳手
+job.511=斗士
+job.512=冲锋队长
+job.520=火枪手
+job.521=大副
+job.522=船长
+job.1000=初心者
+job.1100=魂骑士(1转)
+job.1110=魂骑士(2转)
+job.1111=魂骑士(3转)
+job.1112=魂骑士(4转)
+job.1200=炎术士(1转)
+job.1210=炎术士(2转)
+job.1211=炎术士(3转)
+job.1212=炎术士(4转)
+job.1300=风灵使者(1转)
+job.1310=风灵使者(2转)
+job.1311=风灵使者(3转)
+job.1312=风灵使者(4转)
+job.1400=夜行者(1转)
+job.1410=夜行者(2转)
+job.1411=夜行者(3转)
+job.1412=夜行者(4转)
+job.1500=奇袭者(1转)
+job.1510=奇袭者(2转)
+job.1511=奇袭者(3转)
+job.1512=奇袭者(4转)
+job.2000=战童
+job.2001=龙初心
+job.2100=战神(1转)
+job.2110=战神(2转)
+job.2111=战神(3转)
+job.2112=战神(4转)
+job.2200=龙神(1转)
+job.2210=龙神(2转)
+job.2211=龙神(3转)
+job.2212=龙神(4转)
+job.2213=龙神(5转)
+job.2214=龙神(6转)
+job.2215=龙神(7转)
+job.2216=龙神(8转)
+job.2217=龙神(9转)
+job.2218=龙神(10转)
+job.910=管理员
+
+# ==== R27-B1c-8 格式串（{} 占位，决策 B 同值占位）====
+misc.billion={}亿
+misc.ten_thousand={}万
+uimiscshells.intimacy=亲密 {}
+uimiscshells.fullness=饱食 {}
+uimedal.count=获得过的勋章个数:{}个
+uimedal.obtained=已获得
+uimedal.challenging=挑战中
+uimedal.obtainable=可获得
+uimedal.empty=该页签暂无勋章任务
+
+# ==== 右下角状态栏 / 聊天栏 获取提示（SHOW_STATUS_INFO 等；决策：接 Locale 框架）====
+# 物品名来自 String.img（数据已本地化），这里只拼句子模板；{} 为占位符。
+status.inv_full=无法再获得道具。
+status.tab.Eqp=装备
+status.tab.Use=消耗
+status.tab.Setup=设置
+status.tab.Etc=其他
+status.tab.Cash=现金
+status.tab.Unknown=未知
+status.item.lost_one=失去了道具（{} - {}）
+status.item.lost_many=失去了道具（{} - {} x{}）
+status.item.gained_one=获得了道具（{} - {}）
+status.item.gained_many=获得了道具（{} - {} x{}）
+status.meso.lost=失去了金币（{}）
+status.meso.gained=获得了金币（+{}）
+status.exp.gained=经验值增加了（+{}）
+status.exp.bonus=额外经验值（+{}）
+status.fame.lost=人气降低了（{}）
+status.fame.gained=人气增加了（+{}）
+status.gp.lost=公会点数减少了（{}）
+status.gp.gained=公会点数增加了（+{}）
+quest.forfeited=已放弃任务：{}
+quest.completed=已完成任务：{}
+quest.updated=任务更新：{}
+status.item_inchat.lost=失去道具：{}（{}）
+status.item_inchat.gained=获得道具：{}（+{}）
+
+# ⑦ 095 潜能条目文案（2026-11-12）。键 = 潜能条目 id（Equip::get_potential 的值）。
+# live 包内无 Potential.img / PotentialOption.img，故走本地词表；
+# 缺键时 EquipTooltip 会退化成「潜能 N」而不是留空。
+# 当前 s9 的魔方重洗随机生成 1..50（CashOperationHandler action 0x40），
+# 这里覆盖 1..12 常见档，其余按编号显示，运营可续补。
+equip.potline.1=力量 +3
+equip.potline.2=敏捷 +3
+equip.potline.3=智力 +3
+equip.potline.4=运气 +3
+equip.potline.5=最大HP +30
+equip.potline.6=最大MP +30
+equip.potline.7=物理攻击力 +1
+equip.potline.8=魔法攻击力 +1
+equip.potline.9=物理防御力 +10
+equip.potline.10=魔法防御力 +10
+equip.potline.11=命中率 +2
+equip.potline.12=回避率 +2
+
+# ⑦ 095 强化三件套（2026-11-12 Round 15）。键 = 词条 id。
+# 火花 = AdditionalOption（额外属性）；宝珠 = Soul（灵魂武器技能）。
+# 星之力是星数（0..25），由代码直接生成「星之力 N ****」，不需要词条。
+equip.spark.1=力量 +5
+equip.spark.2=敏捷 +5
+equip.spark.3=智力 +5
+equip.spark.4=运气 +5
+equip.spark.5=最大HP +50
+equip.spark.6=最大MP +50
+equip.spark.7=物理攻击力 +2
+equip.spark.8=魔法攻击力 +2
+equip.spark.9=全属性 +3
+equip.spark.10=伤害 +3%
+equip.soul.1=灵魂冲击
+equip.soul.2=灵魂爆发
+equip.soul.3=灵魂守护
+equip.soul.4=灵魂疾风
+equip.soul.5=灵魂治愈
+
+# 登录链错误提示（三弹窗中文化；UILoginNotice WRONG_PASSWORD/UNKNOWN_ERROR）
+login.err_wrong_password=密码错误，请重新输入。
+login.err_unknown_error=发生未知错误，请稍后再试。

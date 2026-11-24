@@ -326,6 +326,14 @@ namespace ms
 		MTS_OPERATION = 348,
 		UPDATE_HPMPAALERT = 0x1000,
 		DPT_TRACKER = 0x3714,
+		CHAT_EMOTICON = 0x3716,
+		DAILY_CHECKIN = 0x3718,
+		/// 192 每日礼物 S→C 0x3722（双端协定）：respType=0 配置快照 / =1 领奖结果。
+		/// 对应 C→S 0x3721（OutPacket::Opcode::DAILY_GIFT_ACTION）。
+		DAILY_GIFT_SNAPSHOT = 0x3722,
+		/// s9 SendOpcode.COLORING_PRISM = 0x184（七彩棱镜中文包 S→C）。
+		/// D1：旧巴西服 WEAPON_TINT_SYNC(0x372F) 连同 WeaponTintHandler 一并移除。
+		COLORING_PRISM = 0x184,
 		GUEST_ID_LOGIN = 1,
 		HOUR_CHANGED = 85,
 		MINIMAP_ON_OFF = 86,
@@ -411,16 +419,46 @@ namespace ms
 		WORLD_MAP_DROP_RESULT = 377,
 		/// 世界地图玩家列表回复（对接 s9 SendOpcode.WORLD_MAP_PLAYERS = 0x178）
 		WORLD_MAP_PLAYERS = 376,
+		/// 世界地图任务标记快照回复 = 0x17C（可接灯泡/可交付书）
+		WORLD_MAP_QUEST_MARKS = 0x17C,
 
 		LIMIT_BREAK_SYNC = 0x3730,
+		/// 窗口内商城（方案 C）S→C 同步：resp(byte) + 分支字段，详见
+		/// CashShopWindowSyncHandler。0x3731 = 14129，与 C→S 的 0x3730 相邻但不冲突
+		/// （InPacket / OutPacket 是两张独立 opcode 表）。
+		CASHSHOP_WINDOW_SYNC = 14129,
+		/// 美容院下行 0x174（byte respType: 0 OPEN / 1 DATA）
+		BEAUTY_RESULT = 0x174,
 		/// BeiDou SendOpcode.SET_ITEM_FINAL_DAMAGE — 战斗面板显示同步
 		SET_ITEM_FINAL_DAMAGE = 0x175,
 		/// BeiDou SendOpcode.SET_ITEM_SKILL_BONUS = 0x176 — 套装展示文案/映射（服务端权威）
 		SET_ITEM_SKILL_BONUS = 0x176,
+		/// BeiDou SendOpcode.SET_SKILL_BONUS = 0x17A（从 0x179 迁出，避 WORLD_MAP_DROP_RESULT）
+		SET_SKILL_BONUS = 0x17A,
+		/// BeiDou SendOpcode.EQUIP_GROWTH_TIP = 0x17B
+		EQUIP_GROWTH_TIP = 0x17B,
 		/// 天气系统：世界时钟/天空同步（0x373D）与路灯预览（0x373F），双端实测无占用
 		WEATHER_SYNC = 0x373D,
+		LAMP_PREVIEW = 0x373F,
 		/// 天气现实化：强度档下发（0x3741），0x3740 保留 recv twin 未用
-		WEATHER_INTENSITY = 0x3741
+		WEATHER_INTENSITY = 0x3741,
+		// 2026-11-23 V2：气象现象强度 + 游戏日期（WeatherElementPackets.java）。
+		WEATHER_ELEMENT = 0x3742,
+		/// 侧栏统一菜单同步（side_menu.json），0x3742 保留
+		SIDE_MENU_SYNC = 0x3743,
+		/// 技改方案覆盖包（s9 SendOpcode.SKILL_STAT_OVERRIDE = 0x3745）；0x3744 保留 recv twin
+		SKILL_STAT_OVERRIDE = 0x3745,
+		/// 192 魔女森林快照（s9 SendOpcode.WITCH_FOREST_SNAPSHOT = 0x371A）
+		WITCH_FOREST_SNAPSHOT = 0x371A,
+		/// 192 突破石快照（s9 SendOpcode.BREAKTHROUGH_STONE_SNAPSHOT = 0x371C）
+		BREAKTHROUGH_STONE_SNAPSHOT = 0x371C,
+		/// 192 UI_004 强化族结果快照（s9 SendOpcode.ENHANCE_RESULT = 0x371E）
+		ENHANCE_RESULT = 0x371E,
+		/// 伤害皮肤 picker（s9 SendOpcode 0x3746..0x3749）
+		DAMAGE_SKIN_CATALOG = 0x3746,
+		DAMAGE_SKIN_INVENTORY = 0x3747,
+		DAMAGE_SKIN_RESULT = 0x3748,
+		DAMAGE_SKIN_BROADCAST = 0x3749
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -685,6 +723,10 @@ namespace ms
 		emplace<MTS_OPERATION, MtsOperationHandler>();
 		emplace<UPDATE_HPMPAALERT, UpdateHpMpAlertHandler>();
 		emplace<DPT_TRACKER, DptTrackerHandler>();
+		emplace<CHAT_EMOTICON, ChatEmoticonHandler>();
+		emplace<DAILY_CHECKIN, DailyCheckinHandler>();
+		emplace<DAILY_GIFT_SNAPSHOT, DailyGiftHandler>();
+		emplace<COLORING_PRISM, ColoringPrismHandler>();
 		emplace<GUEST_ID_LOGIN, GuestIdLoginHandler>();
 		emplace<HOUR_CHANGED, HourChangedHandler>();
 		emplace<MINIMAP_ON_OFF, MinimapOnOffHandler>();
@@ -785,20 +827,41 @@ namespace ms
 
 		// 北斗自定义包：破功值（伤害上限）同步
 		emplace<LIMIT_BREAK_SYNC, LimitBreakSyncHandler>();
+		emplace<CASHSHOP_WINDOW_SYNC, CashShopWindowSyncHandler>();
 
 		// 套装/战斗面板属性显示同步（0x175）
 		emplace<SET_ITEM_FINAL_DAMAGE, SetItemFinalDamageHandler>();
 		// 套装展示文案/映射下发（0x176，服务端权威）
 		emplace<SET_ITEM_SKILL_BONUS, SetItemSkillBonusHandler>();
+		// 技能窗 (+N) 加成（0x17A）
+		emplace<SET_SKILL_BONUS, SetSkillBonusHandler>();
+		// 技改方案覆盖包（0x3745）
+		emplace<SKILL_STAT_OVERRIDE, SkillStatOverrideHandler>();
+		// 装备成长 companion tip（0x17B）
+		emplace<EQUIP_GROWTH_TIP, EquipGrowthTipHandler>();
 
 		// 天气系统：世界状态同步 + 路灯预览（走 0x37xx 稀疏表）
 		emplace<WEATHER_SYNC, WeatherSyncHandler>();
 		emplace<LAMP_PREVIEW, LampPreviewHandler>();
 		emplace<WEATHER_INTENSITY, WeatherIntensityHandler>();
+		emplace<WEATHER_ELEMENT, WeatherElementHandler>();
+		emplace<SIDE_MENU_SYNC, SideMenuSyncHandler>();
+		emplace<BEAUTY_RESULT, BeautyResultHandler>();
+		// 伤害皮肤 picker（0x3746..0x3749）
+		emplace<DAMAGE_SKIN_CATALOG, DamageSkinCatalogHandler>();
+		emplace<DAMAGE_SKIN_INVENTORY, DamageSkinInventoryHandler>();
+		emplace<DAMAGE_SKIN_RESULT, DamageSkinResultHandler>();
+		emplace<DAMAGE_SKIN_BROADCAST, DamageSkinBroadcastHandler>();
 
 		// 世界地图掉落查询回复
 		emplace<WORLD_MAP_DROP_RESULT, WorldMapDropResultHandler>();
 		emplace<WORLD_MAP_PLAYERS, WorldMapPlayersHandler>();
+		emplace<WORLD_MAP_QUEST_MARKS, WorldMapQuestMarksHandler>();
+
+		// 192 魔女森林 / 突破石快照
+		emplace<WITCH_FOREST_SNAPSHOT, WitchForestHandler>();
+		emplace<BREAKTHROUGH_STONE_SNAPSHOT, BreakthroughStoneHandler>();
+		emplace<ENHANCE_RESULT, EnhanceResultHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -1177,11 +1240,18 @@ namespace ms
 			case 354: opcode_msg = "VICIOUS_HAMMER"; break;
 			case 358: opcode_msg = "VEGA_SCROLL"; break;
 			case 0x3730: opcode_msg = "LIMIT_BREAK_SYNC"; break;
+			case 14129: opcode_msg = "CASHSHOP_WINDOW_SYNC"; break;
 			case 0x175: opcode_msg = "SET_ITEM_FINAL_DAMAGE"; break;
 			case 0x176: opcode_msg = "SET_ITEM_SKILL_BONUS"; break;
+			case 0x17A: opcode_msg = "SET_SKILL_BONUS"; break;
+			case 0x17B: opcode_msg = "EQUIP_GROWTH_TIP"; break;
+			case 0x17C: opcode_msg = "WORLD_MAP_QUEST_MARKS"; break;
 			case 0x373D: opcode_msg = "WEATHER_SYNC"; break;
 			case 0x373F: opcode_msg = "LAMP_PREVIEW"; break;
 			case 0x3741: opcode_msg = "WEATHER_INTENSITY"; break;
+			case 0x3742: opcode_msg = "WEATHER_ELEMENT"; break;
+			case 0x3743: opcode_msg = "SIDE_MENU_SYNC"; break;
+			case 0x3745: opcode_msg = "SKILL_STAT_OVERRIDE"; break;
 			default: break;
 		}
 

@@ -607,7 +607,7 @@ namespace ms
 		LOG(LOG_DEBUG, "CashShopNamePossible: error=" << (int)error);
 		while (recv.available())
 			recv.skip_byte();
-		cs_tip(error ? ("Name change err " + std::to_string(error)) : "Name change possible");
+		cs_tip(error ? Locale::format("cashshop.name_change_err", std::to_string(error)) : Locale::text("cashshop.name_change_ok"));
 	}
 
 	void CashShopTransferWorldPossibleHandler::handle(InPacket& recv) const
@@ -627,7 +627,7 @@ namespace ms
 		LOG(LOG_DEBUG, "CashShopTransferWorld: error=" << (int)error << " list=" << list);
 		while (recv.available())
 			recv.skip_byte();
-		cs_tip(error ? ("World transfer err " + std::to_string(error)) : "World transfer ok");
+		cs_tip(error ? Locale::format("cashshop.world_transfer_err", std::to_string(error)) : Locale::text("cashshop.world_transfer_ok"));
 	}
 
 	void CashItemGachaponResultHandler::handle(InPacket& recv) const
@@ -687,14 +687,14 @@ namespace ms
 			if (ui)
 				ui->set_result(reward_id, qty, remaining, jackpot);
 			else
-				cs_tip((jackpot ? "JACKPOT #" : "Gacha #") + std::to_string(reward_id)
-					+ " x" + std::to_string(qty));
+				cs_tip(Locale::format_all(jackpot ? "cashshop.gacha_jackpot" : "cashshop.gacha_result",
+					{ std::to_string(reward_id), std::to_string(qty) }));
 			return;
 		}
 		LOG(LOG_DEBUG, "CashItemGacha: sub=0x" << std::hex << (int)(uint8_t)sub);
 		while (recv.available())
 			recv.skip_byte();
-		cs_tip("Cash Gacha 0x" + std::to_string(static_cast<int>(static_cast<uint8_t>(sub))));
+		cs_tip(Locale::format("cashshop.fail.generic", std::to_string(static_cast<int>(static_cast<uint8_t>(sub)))));
 	}
 
 	void SetCashShopHandler::handle(InPacket& recv) const

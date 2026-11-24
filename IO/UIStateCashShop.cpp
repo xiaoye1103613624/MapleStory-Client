@@ -32,6 +32,7 @@ namespace ms
 	std::array<int32_t, 10> UIStateCashShop::cash_wishlist{};
 	int16_t UIStateCashShop::cash_storage_slots = 0;
 	int16_t UIStateCashShop::cash_char_slots = 0;
+	std::vector<int32_t> UIStateCashShop::local_cart_sns;
 
 	UIStateCashShop::UIStateCashShop()
 	{
@@ -62,6 +63,11 @@ namespace ms
 
 		if (focused_el)
 			focused_el->draw(inter);
+
+		// 商城 tooltip 每帧最后绘制（与 UIStateGame 同口径：光标下方 +22px）。
+		// 商城态没有装备/技能窗，只有 item/equip/text 三类会被派发。
+		if (tooltip)
+			tooltip->draw(cursor + Point<int16_t>(0, 22));
 	}
 
 	void UIStateCashShop::update()
@@ -75,6 +81,18 @@ namespace ms
 				element->refresh_localized();
 				element->update();
 			}
+		}
+	}
+
+	void UIStateCashShop::send_close()
+	{
+		// [退出防护] 商城态点窗口 X / SDL_QUIT 曾为空实现——"点关闭没反应"。
+		// 与 ESC 路径一致走 exit_cashshop()：本地即时换图 + 服务端权威刷新，
+		// 不用 UI::quit() 直接杀进程（原生行为是退回游戏）。
+		if (auto cs = static_cast<UICashShop*>(get(UIElement::Type::CASHSHOP)))
+		{
+			if (cs->is_active())
+				cs->exit_cashshop();
 		}
 	}
 
@@ -99,9 +117,73 @@ namespace ms
 		}
 	}
 
+	// ---- tooltip：严格照抄 UIStateGame.cpp:1010-1080 的实现模式 ----
+	// 商城态不产生 equip(slot)/skill/map 场景，但 clear/show_item/show_text
+	// 三条热路径须与 GAME 态同构，否则 UICashShop::send_cursor 调 UI::show_item
+	// 时 UI::state->show_item 落到本 state 的空 stub，tooltip 永远不显示。
+	void UIStateCashShop::clear_tooltip(Tooltip::Parent parent)
+	{
+		if (parent == tooltipparent)
+		{
+			eqtooltip.set_equip(Tooltip::Parent::NONE, 0);
+			ittooltip.set_item(0);
+			tetooltip.set_text("");
+			tooltip = {};
+			tooltipparent = Tooltip::Parent::NONE;
+		}
+	}
+
+	void UIStateCashShop::show_equip(Tooltip::Parent parent, int16_t slot)
+	{
+		eqtooltip.set_equip(parent, slot);
+
+		if (slot)
+		{
+			tooltip = eqtooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateCashShop::show_item(Tooltip::Parent parent, int32_t itemid)
+	{
+		// 与 UIStateGame::show_item 同口径：装备号段（1xxxxxx）走 EquipTooltip，
+		// 消耗/安装/etc/普通 cash 走 ItemTooltip。不臆造新判定。
+		if (itemid && itemid / 1000000 == 1)
+		{
+			eqtooltip.set_equip_itemid(itemid);
+			tooltip = eqtooltip;
+			tooltipparent = parent;
+			return;
+		}
+
+		ittooltip.set_item(itemid);
+
+		if (itemid)
+		{
+			tooltip = ittooltip;
+			tooltipparent = parent;
+		}
+	}
+
+	void UIStateCashShop::show_text(Tooltip::Parent parent, std::string text)
+	{
+		tetooltip.set_text(text);
+
+		if (!text.empty())
+		{
+			tooltip = tetooltip;
+			tooltipparent = parent;
+		}
+	}
+
 	Cursor::State UIStateCashShop::send_cursor(Point<int16_t> cursor_position, Cursor::State cursor_state)
 	{
 		bool clicked = cursor_state == Cursor::State::CLICKING || cursor_state == Cursor::State::VSCROLLIDLE;
+
+		// 与 UIStateGame::send_cursor 同口径：每帧派发入口先清 tooltip，
+		// UICashShop::send_cursor 命中商品/热销图标时同帧重挂，移出即消失。
+		if (tooltipparent != Tooltip::Parent::NONE)
+			clear_tooltip(tooltipparent);
 
 		if (auto focusedelement = get(focused))
 		{

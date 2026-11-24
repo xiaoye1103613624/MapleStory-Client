@@ -19,6 +19,13 @@
 
 #include "UIState.h"
 
+#include "Components/EquipTooltip.h"
+#include "Components/ItemTooltip.h"
+#include "Components/MapTooltip.h"
+#include "Components/TextTooltip.h"
+
+#include "../../Template/Optional.h"
+
 #include <array>
 #include <cstdint>
 #include <string>
@@ -73,15 +80,19 @@ namespace ms
 		void send_key(KeyType::Id type, int32_t action, bool pressed, bool escape) override;
 		Cursor::State send_cursor(Point<int16_t> cursor_position, Cursor::State cursor_state) override;
 		void send_scroll(double yoffset) override {}
-		void send_close() override {}
+		void send_close() override;
 
 		void drag_icon(Icon*) override {}
-		void clear_tooltip(Tooltip::Parent) override {}
-		void show_equip(Tooltip::Parent, int16_t) override {}
-		void show_item(Tooltip::Parent, int32_t) override {}
+		// 商城 tooltip：照抄 UIStateGame 的同名实现（equip 号段走 EquipTooltip，
+		// 其余走 ItemTooltip）。本 state 无 drag_icon/show_skill/show_map 场景，
+		// 仍保持空 stub，不臆造行为。
+		void clear_tooltip(Tooltip::Parent parent) override;
+		void show_equip(Tooltip::Parent parent, int16_t slot) override;
+		void show_item(Tooltip::Parent parent, int32_t itemid) override;
 		void show_skill(Tooltip::Parent, int32_t, int32_t, int32_t, int64_t) override {}
-		void show_text(Tooltip::Parent, std::string) override {}
-		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool) override {}
+		void show_text(Tooltip::Parent parent, std::string text) override;
+		void show_map(Tooltip::Parent, std::string, std::string, int32_t, bool, bool,
+			const std::vector<MapTooltipPlayer>& = {}) override {}
 
 		Iterator pre_add(UIElement::Type type, bool toggled, bool focused) override;
 		void remove(UIElement::Type type) override;
@@ -99,6 +110,13 @@ namespace ms
 
 		EnumMap<UIElement::Type, UIElement::UPtr, UIElement::Type::NUM_TYPES> elements;
 		UIElement::Type focused;
+
+		// tooltip 四件套与当前父类型：与 UIStateGame 同构，draw 末尾统一绘制。
+		EquipTooltip eqtooltip;
+		ItemTooltip ittooltip;
+		TextTooltip tetooltip;
+		Optional<Tooltip> tooltip;
+		Tooltip::Parent tooltipparent = Tooltip::Parent::NONE;
 
 	public:
 		// 由 SetCashShopHandler 解析 getCSPacket 后填充，UICashShop 构造时消费。
@@ -121,5 +139,9 @@ namespace ms
 		static std::array<int32_t, 10> cash_wishlist;
 		static int16_t cash_storage_slots;
 		static int16_t cash_char_slots;
+
+		// 购物车（BtReserve）：s9 无购物车 opcode，纯本地容器；只存 SN，
+		// 供"已加入购物车（本地）"提示与去重判断，不参与任何发包。
+		static std::vector<int32_t> local_cart_sns;
 	};
 }

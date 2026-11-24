@@ -1,17 +1,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	This file is part of the continued Journey MMORPG client					//
 //	Copyright (C) 2015-2019  Daniel Allendorf, Ryan Payton						//
-//																				//
+//																						//
 //	This program is free software: you can redistribute it and/or modify		//
 //	it under the terms of the GNU Affero General Public License as published by	//
 //	the Free Software Foundation, either version 3 of the License, or			//
-//	(at your option) any later version.											//
-//																				//
+//	(at your option) any later version.												//
+//																						//
 //	This program is distributed in the hope that it will be useful,				//
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of				//
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the				//
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of					//
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the					//
 //	GNU Affero General Public License for more details.							//
-//																				//
+//																						//
 //	You should have received a copy of the GNU Affero General Public License	//
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
@@ -20,20 +20,22 @@
 #include "UISoftKey.h"
 
 #include "../UI.h"
-
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Data/ItemData.h"
 #include "../../MapleStory.h"
+#include "../../Net/Packets/DailyGiftPackets.h"
+#include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <vector>
 
-#include "../../Util/Locale.h"
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -47,8 +49,6 @@ namespace ms
 		claim_hover = false;
 		claim_pressed = false;
 		has_newitem_flash = false;
-		fake_kill_current = 120;
-		fake_kill_need = 300;
 		progress_visual = 0.0f;
 		open_alpha = 0.0f;
 		flash_slot = -1;
@@ -57,13 +57,44 @@ namespace ms
 		date_day_start = 1;
 		date_month_end = 10;
 		date_day_end = 31;
+		// 真数据未到前的保守初值：全锁、无图标，避免闪出「假可领」误导。
+		for (int16_t i = 0; i < kTotalDays; ++i)
+			cells[i] = CellVisual::Locked;
 
 		init_layout();
 		init_digit_glyphs();
-		init_fake_data();
+		rebuild_cells();
+		refresh_status_texts();
+		result_text = Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::YELLOW, "");
+
+		// 192 原生资源优先：UiAssetResolve::window4("dailyGift")（节点名小写，与
+		// ShortCutUI 范式一致）。资源由 lead 统一入库；有则画整窗 backgrnd，
+		// 无则回退既有 ColorBox 灰框。原生节点缺失不应影响协议/交互。
+#ifdef USE_NX
+		// 192 原生资源经 orange-wz batch_convert_key(192零IV→GMS) 后，以独立
+		// Data/UI/DailyGiftStage.img 入库（散装 img 会由 ImgFiles 合并进 UI.nx）。
+		// 先查独立 img 根，再回退 window4("dailyGift")，兼容并进 UIWindow4.img 的历史方案。
+		nl::node gift = nl::nx::UI["DailyGiftStage.img"]["dailyGift"];
+		if (!gift)
+			gift = UiAssetResolve::window4("dailyGift");
+		nl::node bg = gift["backgrnd"];
+		if (UiAssetResolve::usable(bg))
+		{
+			native_bg = Texture(bg);
+			has_native_bg = native_bg.is_valid();
+			if (has_native_bg)
+			{
+				// 原生 741×647 整窗：以贴图真实尺寸为准，保持既有拖动/关闭行为。
+				const Point<int16_t> native_dim(native_bg.width(), native_bg.height());
+				dimension = native_dim;
+				dragarea = Point<int16_t>(native_dim.x(), kTitleH);
+			}
+		}
+		if (!has_native_bg)
+			LOG(LOG_WARN, "[DailyGift] 192 native window4(\"dailyGift\")/backgrnd unavailable; gray-box fallback");
+#endif
 
 		nl::node close = UiAssetResolve::close_btn();
-
 		if (close)
 			buttons[Buttons::CLOSE] = std::make_unique<MapleButton>(close, Point<int16_t>(kWinW - 22, 3));
 
@@ -89,10 +120,18 @@ namespace ms
 			has_newitem_flash = true;
 		}
 
-		dimension = Point<int16_t>(kWinW, kWinH);
-		dragarea = Point<int16_t>(kWinW, kTitleH);
+		if (!has_native_bg)
+		{
+			dimension = Point<int16_t>(kWinW, kWinH);
+			dragarea = Point<int16_t>(kWinW, kTitleH);
+		}
 
-		LOG(LOG_INFO, "UIDailyGift open (grey-box; digits 0-9 composed; no item icons)");
+		// 构造即请求配置快照（侧栏点击发 OPEN → 0x3722/0 → handler emplace 本窗）。
+		// 若 handler 是 emplace 本窗后到达的快照，本次 OPEN 回包时本窗已存在，
+		// 直接进入 apply_snapshot，不会重复开窗。
+		DailyGiftOpenPacket().dispatch();
+		LOG(LOG_INFO, "[DailyGift] open; native_bg=" << has_native_bg
+			<< "; 0x3721 OPEN dispatched");
 	}
 
 	void UIDailyGift::init_layout()
@@ -110,7 +149,7 @@ namespace ms
 		slot_pressed = ColorBox(kSlotW, kSlotH, Color::Name::BLACK, 0.35f);
 		slot_claimed = ColorBox(kSlotW - 2, kSlotH - 2, Color::Name::DARKGREY, 0.7f);
 		slot_highlight = ColorBox(kSlotW, kSlotH, Color::Name::SUPERNOVA, 1.0f);
-		// 道具槽预留：仅空槽底板，本版不渲染物品
+		// 道具槽底板：真图标先画在其上，再叠底板透明蒙层统一观感。
 		item_slot_empty = ColorBox(36, 36, Color::Name::MINESHAFT, 0.55f);
 		claimed_badge = ColorBox(18, 18, Color::Name::PERSIANGREEN, 1.0f);
 		progress_track = ColorBox(160, 10, Color::Name::DARKGREY, 1.0f);
@@ -118,9 +157,7 @@ namespace ms
 		claim_btn = ColorBox(130, 36, Color::Name::PERSIANGREEN, 1.0f);
 		flash_box = ColorBox(kSlotW, kSlotH, Color::Name::WHITE, 0.6f);
 
-		// 这一片文案只在 init_texts() 写、之后只 draw（已逐个全文核过没有第二个写入点）
-		// => 全部进绑定表，切语言时已经开着的窗立刻换字。title_text 的 "DAILY GIFT" 是
-		// 英文原值，按批次归 B1c-5 的英文档，本批只动中文。
+		// 静态文案进 locale 绑定表（切语言后已开窗立刻换字）；动态值另走 change_text。
 		title_text = Text(Text::Font::A11B, Text::Alignment::CENTER, Color::Name::YELLOW);
 		bind_text(title_text, "dailygift.title");
 		banner_sub = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
@@ -139,6 +176,8 @@ namespace ms
 		claim_label = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE);
 		bind_text(claim_label, "dailygift.claim");
 		claimed_mark = Text(Text::Font::A12B, Text::Alignment::CENTER, Color::Name::WHITE, "V");
+
+		status_text = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, "");
 	}
 
 	void UIDailyGift::init_digit_glyphs()
@@ -151,8 +190,6 @@ namespace ms
 			digit_glyphs_date[i] = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, ch);
 		}
 
-		// 「第 N 天」「M 月 D 日」这四个单位词也是常量，而且版式按 width() 排版 —— 换语言
-		// 后宽度自然变，绑定后切语言立刻重排，不需要额外处理。" ~ " 与 "!" 是标点，留英文档。
 		day_prefix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
 		bind_text(day_prefix, "dailygift.day_prefix");
 		day_suffix = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE);
@@ -165,22 +202,74 @@ namespace ms
 		date_bang = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, "!");
 	}
 
-	void UIDailyGift::init_fake_data()
+	void UIDailyGift::apply_snapshot(int8_t cd, int32_t mask, int8_t lmin, int8_t qdone,
+		int32_t kills, int8_t premium, const std::array<int32_t, kTotalDays>& ids,
+		const std::array<int32_t, kTotalDays>& counts)
+	{
+		current_day = cd;
+		claimed_mask = mask;
+		level_min = lmin;
+		quest_done = qdone;
+		kill_count = kills;
+		premium_left = premium;
+		reward_item_ids = ids;
+		reward_counts = counts;
+		has_snapshot = true;
+
+		refresh_icon_textures();
+		rebuild_cells();
+		refresh_status_texts();
+
+		LOG(LOG_INFO, "[DailyGift] apply_snapshot day=" << static_cast<int>(cd)
+			<< " mask=" << mask << " levelMin=" << static_cast<int>(lmin)
+			<< " questDone=" << static_cast<int>(qdone) << " kills=" << kills
+			<< " premiumLeft=" << static_cast<int>(premium));
+	}
+
+	void UIDailyGift::refresh_icon_textures()
+	{
+		// 28 格真图标：ItemData::get(id).get_icon(false)（NORMAL，非 cash 变体）。
+		// 服务端未下发 / id<=0 的格子留空 Texture，draw_slot 走空槽底板，不崩。
+		for (int16_t i = 0; i < kTotalDays; ++i)
+		{
+			reward_icons[i] = Texture();
+			if (reward_item_ids[i] > 0)
+				reward_icons[i] = ItemData::get(reward_item_ids[i]).get_icon(false);
+		}
+	}
+
+	void UIDailyGift::rebuild_cells()
 	{
 		for (int16_t i = 0; i < kTotalDays; ++i)
 		{
 			const int16_t day = static_cast<int16_t>(i + 1);
-			cells[i] = is_highlight_day(day) ? CellVisual::Highlight : CellVisual::Available;
+			const bool claimed = (claimed_mask & (1 << i)) != 0;
+			if (claimed)
+				cells[i] = CellVisual::Claimed;
+			else if (has_snapshot && day <= current_day)
+				cells[i] = CellVisual::Available;
+			else
+				cells[i] = CellVisual::Locked;
 		}
 
-		const float ratio = fake_kill_need > 0
-			? static_cast<float>(fake_kill_current) / static_cast<float>(fake_kill_need)
+		// 进度条动画目标（真 killCount / 300）。
+		const float target = kKillTarget > 0
+			? std::min(1.0f, static_cast<float>(std::max(0, kill_count)) / static_cast<float>(kKillTarget))
 			: 0.0f;
-		progress_visual = ratio;
+		progress_visual = target;
+	}
+
+	void UIDailyGift::refresh_status_texts()
+	{
+		// 等级门 + premiumLeft 均来自快照，事件驱动更新，故不进 locale 绑定表。
+		const std::string gate = Locale::format("dailygift.level_gate", std::to_string(static_cast<int>(level_min)));
+		const std::string prem = Locale::format("dailygift.premium_left", std::to_string(static_cast<int>(premium_left)));
+		status_text.change_text(gate + "   " + prem);
 	}
 
 	bool UIDailyGift::is_highlight_day(int16_t day_1based) const
 	{
+		// premium 日的金色角标仅作视觉装饰；可领/已领/锁定仍以 cells 为准。
 		for (int16_t d : kHighlightDays)
 		{
 			if (d == day_1based)
@@ -296,8 +385,16 @@ namespace ms
 		const float alpha = open_alpha;
 		(void)inter;
 
-		window_bg.draw(DrawArgument(position, alpha));
-		title_bar.draw(DrawArgument(position, alpha));
+		if (has_native_bg)
+		{
+			// 192 原生整窗 backgrnd（741×647）：整窗一张贴图，格子/文字仍按其上布局绘制。
+			native_bg.draw(DrawArgument(position, alpha));
+		}
+		else
+		{
+			window_bg.draw(DrawArgument(position, alpha));
+			title_bar.draw(DrawArgument(position, alpha));
+		}
 		title_text.draw(DrawArgument(position + Point<int16_t>(kWinW / 2, 3), alpha));
 
 		const Point<int16_t> banner_pos = position + Point<int16_t>(4, kTitleH + 2);
@@ -324,47 +421,74 @@ namespace ms
 		draw_progress_bar(position + Point<int16_t>(kWinW - 180, footer_y + 18));
 		draw_claim_button(position + Point<int16_t>(kWinW - 150, kWinH - 52));
 
+		// 等级门 / premiumLeft 与最近领奖结果提示（动态文案）。
+		status_text.draw(DrawArgument(position + Point<int16_t>(14, footer_y + 4), alpha));
+		result_text.draw(DrawArgument(position + Point<int16_t>(kWinW / 2, kWinH - 72), alpha));
+
 		UIElement::draw_buttons(alpha);
 	}
 
 	void UIDailyGift::draw_slot(int16_t day_index, float alpha) const
 	{
 		const Point<int16_t> abs = position + slot_origin(day_index);
-		const bool claimed = cells[day_index] == CellVisual::Claimed;
-		const bool highlight = cells[day_index] == CellVisual::Highlight ||
-			(cells[day_index] != CellVisual::Claimed && is_highlight_day(static_cast<int16_t>(day_index + 1)));
+		const CellVisual state = cells[day_index];
+		const bool claimed = state == CellVisual::Claimed;
+		const bool locked = state == CellVisual::Locked;
+		const bool available = state == CellVisual::Available;
 
-		if (highlight && !claimed)
-			slot_highlight.draw(DrawArgument(abs, alpha));
+		if (available)
+			slot_highlight.draw(DrawArgument(abs, alpha)); // 可领格高亮
 		else
 			slot_border.draw(DrawArgument(abs, alpha));
 
 		slot_fill.draw(DrawArgument(abs + Point<int16_t>(1, 1), alpha));
 
-		if (claimed)
-			slot_claimed.draw(DrawArgument(abs + Point<int16_t>(1, 1), alpha * 0.9f));
-
-		if (hover_slot == day_index && !claimed)
-			slot_hover.draw(DrawArgument(abs, alpha));
-		if (pressed_slot == day_index && !claimed)
-			slot_pressed.draw(DrawArgument(abs, alpha));
-
-		draw_day_label(static_cast<int16_t>(day_index + 1), abs, alpha);
-
-		ColorBox mvp(12, 12, highlight ? Color::Name::SUPERNOVA : Color::Name::ORANGE, 1.0f);
-		mvp.draw(DrawArgument(abs + Point<int16_t>(3, 3), alpha));
-
-		// 中部道具槽预留：空槽，不填 ItemData / 假道具 / 图标 / 名称
-		item_slot_empty.draw(DrawArgument(abs + Point<int16_t>((kSlotW - 36) / 2, 26), alpha));
-
-		if (claimed)
+		// 真图标：服务端下发 rewardItemIds[day] → ItemData 图标画在格子内容区中央。
+		// 锁定格整体压暗（灰蒙），已领格另叠灰蒙 + 对勾。
+		const Texture& icon = reward_icons[day_index];
+		if (icon.is_valid())
 		{
+			const Point<int16_t> icon_pos(
+				static_cast<int16_t>((kSlotW - icon.width()) / 2),
+				26);
+			icon.draw(DrawArgument(abs + icon_pos, locked ? alpha * 0.35f : alpha));
+		}
+		else
+		{
+			item_slot_empty.draw(DrawArgument(abs + Point<int16_t>((kSlotW - 36) / 2, 26), alpha));
+		}
+
+		if (locked)
+		{
+			// 未解锁：整格灰蒙，不带对勾。
+			ColorBox lock( kSlotW - 2, kSlotH - 2, Color::Name::DARKGREY, 0.65f);
+			lock.draw(DrawArgument(abs + Point<int16_t>(1, 1), alpha));
+		}
+		else if (claimed)
+		{
+			// 已领：灰蒙 + 对勾。
+			slot_claimed.draw(DrawArgument(abs + Point<int16_t>(1, 1), alpha * 0.9f));
 			claimed_badge.draw(DrawArgument(abs + Point<int16_t>(kSlotW - 22, 4), alpha));
 			claimed_mark.draw(DrawArgument(abs + Point<int16_t>(kSlotW - 13, 5), alpha));
 		}
 
+		if (hover_slot == day_index && !claimed && !locked)
+			slot_hover.draw(DrawArgument(abs, alpha));
+		if (pressed_slot == day_index && !claimed && !locked)
+			slot_pressed.draw(DrawArgument(abs, alpha));
+
+		draw_day_label(static_cast<int16_t>(day_index + 1), abs, alpha);
+
+		// premium 日金色角标（视觉装饰，与领取状态无关）。
+		if (is_highlight_day(static_cast<int16_t>(day_index + 1)))
+		{
+			ColorBox mvp(12, 12, Color::Name::SUPERNOVA, 1.0f);
+			mvp.draw(DrawArgument(abs + Point<int16_t>(3, 3), alpha));
+		}
+
 		if (flash_slot == day_index && flash_remain > 0)
 		{
+			// 视觉闪光仅由本地点击触发；格子是否变「已领」完全由 0x3722 结果驱动。
 			const float flash_a = alpha * (static_cast<float>(flash_remain) / 18.0f);
 			if (has_newitem_flash)
 				newitem_flash.draw(DrawArgument(abs + Point<int16_t>(1, 1), flash_a), 1.0f);
@@ -385,14 +509,13 @@ namespace ms
 			fill.draw(origin + Point<int16_t>(0, 16));
 		}
 
-		// 进度数字用 0-9 拼装：CCC / NNN
+		// 进度数字用 0-9 拼装：真 killCount / 300。
 		Point<int16_t> num_pos = origin + Point<int16_t>(0, 30);
-		num_pos = num_pos + Point<int16_t>(draw_digits(fake_kill_current, num_pos, 1.0f, true), 0);
-		// 补一位使三位数观感（假进度常 <100）
+		num_pos = num_pos + Point<int16_t>(draw_digits(kill_count, num_pos, 1.0f, true), 0);
 		Text slash(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::LIGHTGREEN, " / ");
 		slash.draw(num_pos);
 		num_pos = num_pos + Point<int16_t>(slash.width(), 0);
-		draw_digits(fake_kill_need, num_pos, 1.0f, true);
+		draw_digits(kKillTarget, num_pos, 1.0f, true);
 	}
 
 	void UIDailyGift::draw_claim_button(Point<int16_t> origin) const
@@ -425,8 +548,8 @@ namespace ms
 				open_alpha = 1.0f;
 		}
 
-		const float target = fake_kill_need > 0
-			? static_cast<float>(fake_kill_current) / static_cast<float>(fake_kill_need)
+		const float target = kKillTarget > 0
+			? std::min(1.0f, static_cast<float>(std::max(0, kill_count)) / static_cast<float>(kKillTarget))
 			: 0.0f;
 		const float step = (target - progress_visual) / 12.0f;
 		if (std::abs(step) > 0.0001f)
@@ -455,13 +578,13 @@ namespace ms
 		claim_pressed = false;
 	}
 
-	Cursor::State UIDailyGift::send_cursor(bool clicked, Point<int16_t> cursorpos)
+	Cursor::State UIDailyGift::send_cursor(bool clicked, Point<int16_t> cursor_offset)
 	{
-		Cursor::State drag_state = UIDragElement::send_cursor(clicked, cursorpos);
+		Cursor::State drag_state = UIDragElement::send_cursor(clicked, cursor_offset);
 		if (dragged)
 			return drag_state;
 
-		Point<int16_t> cursor_offset = cursorpos - position;
+		Point<int16_t> local = cursor_offset - position;
 
 		const int16_t claim_x = kWinW - 150;
 		const int16_t claim_y = kWinH - 52;
@@ -469,11 +592,11 @@ namespace ms
 			Point<int16_t>(claim_x, claim_y),
 			Point<int16_t>(claim_x + 130, claim_y + 36));
 
-		claim_hover = claim_rc.contains(cursor_offset);
+		claim_hover = claim_rc.contains(local);
 		if (!clicked)
 			claim_pressed = false;
 
-		int16_t slot = slot_at(cursor_offset);
+		int16_t slot = slot_at(local);
 		hover_slot = slot;
 
 		if (clicked)
@@ -487,7 +610,7 @@ namespace ms
 			pressed_slot = -1;
 		}
 
-		Cursor::State btn_state = UIElement::send_cursor(clicked, cursorpos);
+		Cursor::State btn_state = UIElement::send_cursor(clicked, cursor_offset);
 		if (btn_state == Cursor::State::CANCLICK || claim_hover || slot >= 0)
 			return Cursor::State::CANCLICK;
 
@@ -500,7 +623,7 @@ namespace ms
 		if (!pressed) return;
 		if (keycode == 'C' || keycode == 'c' || keycode == 'S' || keycode == 's')
 		{
-			
+			// 保留既有空行为（关闭/Layout 等不变）。
 		}
 	}
 
@@ -519,13 +642,12 @@ namespace ms
 
 		if (buttonid == Buttons::CLAIM)
 		{
-			for (int16_t i = 0; i < kTotalDays; ++i)
+			// 底部「领取礼物」：领当前日（若可领）。
+			if (has_snapshot && current_day > 0 && current_day <= kTotalDays)
 			{
-				if (cells[i] != CellVisual::Claimed)
-				{
-					fake_claim_slot(i);
-					break;
-				}
+				const int16_t idx = static_cast<int16_t>(current_day - 1);
+				if (cells[idx] == CellVisual::Available)
+					request_claim(current_day);
 			}
 			return Button::State::NORMAL;
 		}
@@ -533,20 +655,25 @@ namespace ms
 		if (buttonid >= Buttons::SLOT_BASE && buttonid < Buttons::SLOT_BASE + kTotalDays)
 		{
 			const int16_t idx = static_cast<int16_t>(buttonid - Buttons::SLOT_BASE);
-			fake_claim_slot(idx);
+			request_claim(static_cast<int16_t>(idx + 1));
 			return Button::State::NORMAL;
 		}
 
 		return Button::State::NORMAL;
 	}
 
-	void UIDailyGift::fake_claim_slot(int16_t day_index)
+	void UIDailyGift::request_claim(int16_t day)
 	{
-		if (day_index < 0 || day_index >= kTotalDays)
+		const int16_t idx = static_cast<int16_t>(day - 1);
+		if (!has_snapshot || idx < 0 || idx >= kTotalDays)
 			return;
-		if (cells[day_index] == CellVisual::Claimed)
-			return;
-		try_claim(static_cast<int16_t>(day_index + 1));
+		if (cells[idx] != CellVisual::Available)
+			return; // 已领 / 未解锁不可发领取包
+
+		// 真实领取只发 0x3721 CLAIM；本地仅保留闪光动画，不预置「已领」态。
+		DailyGiftClaimPacket(day).dispatch();
+		play_claim_flash(idx);
+		LOG(LOG_INFO, "[DailyGift] 0x3721 CLAIM day=" << day);
 	}
 
 	void UIDailyGift::play_claim_flash(int16_t day_index)
@@ -560,49 +687,38 @@ namespace ms
 
 	void UIDailyGift::close()
 	{
-		LOG(LOG_INFO, "UIDailyGift close");
+		LOG(LOG_INFO, "[DailyGift] close");
 		deactivate();
 	}
 
-	bool UIDailyGift::try_claim(int16_t day)
+	void UIDailyGift::on_claim_result(int8_t result_code, int8_t day, int32_t item_id, int32_t count)
 	{
-		const int16_t idx = static_cast<int16_t>(day - 1);
-		if (idx < 0 || idx >= kTotalDays)
-			return false;
-		if (cells[idx] == CellVisual::Claimed)
-			return false;
+		// 真实结果由服务端驱动：仅成功码把对应格置为已领；失败码给出可见提示。
+		static const char* kFailHint[] = {
+			"", "等级不足", "杀怪不足", "已领过", "非当前日", "月限已尽"
+		};
 
-		cells[idx] = CellVisual::Claimed;
-		play_claim_flash(idx);
-		LOG(LOG_INFO, "UIDailyGift fake claim day=" << day);
-		return true;
-	}
-
-	void UIDailyGift::on_claim_result(int16_t day, bool success, int32_t result_code)
-	{
-		(void)day;
-		(void)success;
-		(void)result_code;
-	}
-
-	void UIDailyGift::set_kill_progress(int32_t current, int32_t need)
-	{
-		fake_kill_current = current;
-		fake_kill_need = need > 0 ? need : 300;
-	}
-
-	void UIDailyGift::set_account_daily_limit(bool reached)
-	{
-		(void)reached;
-	}
-
-	void UIDailyGift::set_level_gate(int16_t min_level)
-	{
-		(void)min_level;
-	}
-
-	void UIDailyGift::set_mvp_tier(int8_t tier)
-	{
-		(void)tier;
+		if (result_code == 0)
+		{
+			const int16_t idx = static_cast<int16_t>(day - 1);
+			if (idx >= 0 && idx < kTotalDays)
+			{
+				claimed_mask |= (1 << idx);
+				cells[idx] = CellVisual::Claimed;
+			}
+			result_text.change_text(Locale::format("dailygift.claim_ok",
+				std::to_string(static_cast<int>(day)) + " x" + std::to_string(count)));
+			LOG(LOG_INFO, "[DailyGift] claim OK day=" << static_cast<int>(day)
+				<< " item=" << item_id << " count=" << count);
+		}
+		else
+		{
+			const int code = static_cast<int>(result_code);
+			const std::string hint = (code >= 1 && code <= 5)
+				? kFailHint[code] : "领取失败";
+			result_text.change_text(Locale::format("dailygift.claim_fail", hint));
+			// 失败不推进格子状态；闪光结束后自然消失，不残留假已领。
+			LOG(LOG_WARN, "[DailyGift] claim FAIL code=" << code << " day=" << static_cast<int>(day));
+		}
 	}
 }
