@@ -163,12 +163,15 @@ namespace ms
 		// Use the playerlevel to determine color of NameTag
 		void show_hp(int8_t percentage, uint16_t playerlevel);
 		// Show an effect at the mob's position
-		void show_effect(const Animation& animation, int8_t pos, int8_t z, bool flip);
+		void show_effect(const Animation& animation, int8_t pos, int8_t z, bool flip,
+			uint16_t delay_ms = 0);
+		// 受击火花（Angel ShowHitEffect / MinMS show_hit_spark）：CoolHit @ 原点上方 15px
+		void show_hit_spark();
 
 		// Calculate the damage to this mob with the specified attack
 		damage::DamageLines calculate_damage(const Attack& attack);
 		// Apply damage to the mob
-		void apply_damage(int32_t damage, bool toleft);
+		void apply_damage(int32_t damage, bool toleft, bool lethal = false);
 
 		// Create a touch damage attack to the player
 		MobAttack create_touch_attack() const;
@@ -254,7 +257,14 @@ namespace ms
 		uint16_t accuracy;
 		uint16_t avoid;
 		uint16_t knockback;
+		// WZ info/maxHP：客户端估算剩余 HP，供一击必杀跳过 HIT 击退（Angel OnHit
+		// 在 HP<=0 时不走 GenerateMovePath）。show_hp 百分比会回校。
+		int32_t maxhp = 1;
+		int32_t hp_est = 1;
 		bool undead;
+		// 四源对照 A1：WZ info/elemAttr（字母+强度码成对，如 "F3"=火弱点×1.5），
+		// 供技能元素克制客户端表现层判定（s9 服务端权威结算，不改实际数字）。
+		std::string elemattr;
 		// v2：WZ info/boss 标记，用于 BOSS 增伤词缀（原生 boss 判定资源节点）。
 		bool boss;
 		bool touchdamage;
@@ -266,6 +276,9 @@ namespace ms
 
 		EffectLayer effects;
 		Text namelabel;
+		// 等级名牌「Lv:N」：与名称同构的独立 NAMETAG 框，底部并排显示在名称前方（左侧）。
+		// 独立于 namelabel，便于各自染色/隐藏，不与名称拼成一段文本。
+		Text levellabel;
 		MobHpBar hpbar;
 		Randomizer randomizer;
 

@@ -24,6 +24,7 @@
 #include "../../Net/Packets/GameplayPackets.h"
 
 #include <algorithm>
+#include <cctype>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -56,6 +57,8 @@ namespace ms
 		flyspeed = info["flySpeed"];
 		touchdamage = info["bodyAttack"].get_bool();
 		undead = info["undead"].get_bool();
+		// 四源对照 A1：怪物元素抗性/弱点表（WZ info/elemAttr，如 "F3"/"I2"/"L1"）。
+		elemattr = info["elemAttr"].get_string();
 		boss = info["boss"].get_bool();
 		noflip = info["noFlip"].get_bool();
 		notattack = info["notAttack"].get_bool();
@@ -564,12 +567,34 @@ namespace ms
 		if (!skillnode)
 			return;
 
+		// 四源对照 A6：原生 effectAfter 在 Mob.img/<mobId>/info/skill/<i>
+		// （字段 skill/level/action/effectAfter，单位 ms；live 实测如 8800000
+		// 的 140/141 技能 effectAfter=176）。按当前 skillid+level 匹配取延迟，
+		// 0 时用 1 避免施法当帧漏播（095 tStart==0→1 等价保护）。
+		uint16_t delay_ms = 1;
+		nl::node skillinfo = nl::nx::Mob[std::to_string(id) + ".img"]["info"]["skill"];
+		if (skillinfo)
+		{
+			for (const auto& si : skillinfo)
+			{
+				if (static_cast<int32_t>(si["skill"]) != id
+					|| static_cast<int32_t>(si["level"]) != lv)
+					continue;
+				int32_t after = static_cast<int32_t>(si["effectAfter"]);
+				uint32_t capped = after > 0 ? static_cast<uint32_t>(after) : 1;
+				if (capped > 65535)
+					capped = 65535;
+				delay_ms = static_cast<uint16_t>(capped);
+				break;
+			}
+		}
+
 		if (nl::node e = skillnode["effect"])
-			show_effect(Animation(e), 0, 0, flip);
+			show_effect(Animation(e), 0, 0, flip, delay_ms);
 		if (nl::node h = skillnode["hit"])
-			show_effect(Animation(h), 0, 0, flip);
+			show_effect(Animation(h), 0, 0, flip, delay_ms);
 		if (nl::node t = skillnode["tile"])
-			show_effect(Animation(t), 0, 0, flip);
+			show_effect(Animation(t), 0, 0, flip, delay_ms);
 	}
 
 	void Mob::set_next_skill(bool use, int8_t id, int8_t level)
@@ -879,7 +904,7 @@ namespace ms
 		showhp.set_for(2000);
 	}
 
-	void Mob::show_effect(const Animation& animation, int8_t pos, int8_t z, bool f)
+	void Mob::show_effect(const Animation& animation, int8_t pos, int8_t z, bool f, uint16_t delay_ms)
 	{
 		if (!active)
 			return;
@@ -906,7 +931,8 @@ namespace ms
 			break;
 		}
 
-		effects.add(animation, DrawArgument(shift, f), z);
+		// 四源对照 A6：用 EffectLayer 的 delay_ms 先等再播（原生 effectAfter 延迟）。
+		effects.add(animation, DrawArgument(shift, f), z, 1.0f, delay_ms);
 	}
 
 	void Mob::show_hit_spark()
@@ -1011,6 +1037,40 @@ namespace ms
 
 			mindamage += defmin * ignored;
 			maxdamage += defmax * ignored;
+		}
+
+		// 四源对照 A1：元素克制（MinMS Mob.cpp:7438-7475 adjust_attack_damage 同源，
+		// 标注为现代化增强、非 083 原生逐证）。技能 elemAttr 首字母 F/I/L/S/H/D，
+		// 怪物 info/elemAttr 为「字母+强度码」成对串：1=免疫(返回1.0)、2=弱点×0.5、
+		// 3=抗性×1.5。s9 服务端权威结算伤害，此处只调客户端飘字表现层。
+		if (!attack.element.empty() && elemattr.size() >= 2)
+		{
+			const char atk = static_cast<char>(std::toupper(
+				static_cast<unsigned char>(attack.element.front())));
+			for (size_t i = 0; i + 1 < elemattr.size(); i += 2)
+			{
+				const char me = static_cast<char>(std::toupper(
+					static_cast<unsigned char>(elemattr[i])));
+				if (me != atk)
+					continue;
+				switch (elemattr[i + 1])
+				{
+				case '1':  // 免疫
+					mindamage = maxdamage = 1.0;
+					break;
+				case '2':  // 弱点：伤害减半（MinMS ×0.5）
+					mindamage *= 0.5;
+					maxdamage *= 0.5;
+					break;
+				case '3':  // 抗性：伤害×1.5（MinMS ×1.5）
+					mindamage *= 1.5;
+					maxdamage *= 1.5;
+					break;
+				default:
+					break;
+				}
+				break;
+			}
 		}
 
 		// BOSS 增伤：WZ info/boss 标记（构造时读取）。

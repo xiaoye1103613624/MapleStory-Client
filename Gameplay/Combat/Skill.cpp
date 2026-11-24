@@ -187,7 +187,7 @@ namespace ms
 		{
 			auto composite = std::make_unique<CompositeUseEffect>();
 			static const char* extra_nodes[] = {
-				"prepare", "keydown", "keydownend", "screen", "special", "tile"
+				"prepare", "keydown", "keydownend", "screen", "special", "tile", "finish"
 			};
 			int added = 0;
 			for (const char* node_name : extra_nodes)
@@ -259,6 +259,9 @@ namespace ms
 		attack.critical += stats.critical;
 
 		attack.ignoredef += stats.ignoredef;
+
+		// 四源对照 A1：技能元素属性透传到攻击链，供 Mob 弱点/免疫判定。
+		attack.element = SkillData::get(skillid).get_element();
 
 		// criticalDamage 是百分比（105 = +5% 暴伤），叠加到官方暴击倍率区间（基准 1.35）。
 		if (stats.criticaldamage > 100.0f)

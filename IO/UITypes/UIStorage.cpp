@@ -40,21 +40,21 @@ namespace ms
 		capacity(0), meso(0),
 		mesolabel(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK)
 	{
-		// 本包 UI.nx 根下没有 Storage.img（v83 真身是 UIWindow.img/Trunk 463x318，
-		// 件表见 notes/asset-node-inventory.md §1.5）；换根需要 Trunk 内各钮的原生坐标，
-		// 目前既无参考截图也无 IDA 证据 ⇒ 底衬与 BtArrange/BtMesoIn/BtMesoOut 显式预留。
-		// 关闭钮与其它功能窗共用同一颗描边 X（UiAssetResolve::close_btn() → BtClose2）。
-		nl::node storage = nl::nx::UI["Storage.img"];
+		// 四源对照 A3 修复：v83 仓库真身是 UIWindow.img/Trunk（orange-wz 实测
+		// backgrnd 463×318），本包根下没有 Storage.img。按钮坐标从 Angel v83
+		// CTrunkDlg::OnCreate@0x7c618e 逐字取：BtSort(154,55)/BtInCoin(236,294)/
+		// BtOutCoin(5,294)。关闭钮仍共用描边 X（原生走系统 X，非 Trunk/BtExit）。
+		nl::node storage = nl::nx::UI["UIWindow.img"]["Trunk"];
 		if (storage["backgrnd"])
 			sprites.emplace_back(Sprite(storage["backgrnd"], Point<int16_t>(0, 0)));
 
 		const Point<int16_t> btnpos[] = {
-			Point<int16_t>(20, 320),   // BtArrange
-			Point<int16_t>(120, 320),  // BtMesoIn
-			Point<int16_t>(220, 320),  // BtMesoOut
+			Point<int16_t>(154, 55),   // BtSort  (整理)
+			Point<int16_t>(236, 294),  // BtInCoin(存钱)
+			Point<int16_t>(5, 294),    // BtOutCoin(取钱)
 			Point<int16_t>(300, 20)    // BtClose
 		};
-		const char* btnname[] = { "BtArrange", "BtMesoIn", "BtMesoOut" };
+		const char* btnname[] = { "BtSort", "BtInCoin", "BtOutCoin" };
 		for (uint16_t i = 0; i < 3; i++)
 			try_maple_btn(buttons, i, storage[btnname[i]], btnpos[i], "UIStorage");
 

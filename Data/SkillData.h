@@ -50,6 +50,9 @@ namespace ms
 			float hrange;
 			Rectangle<int16_t> range;
 
+			// 默认构造：overlay_stats/ stats 的 unordered_map::operator[] 需要可默认构造的 Stats。
+			// 全字段零初始化，语义等同「该等级未配置」（get_stats 对缺失等级本就返回默认 object）。
+			constexpr Stats() : damage(0.0f), matk(0), fixdamage(0), mastery(0), attackcount(0), mobcount(0), bulletcount(0), bulletcost(0), hpcost(0), mpcost(0), chance(0.0f), critical(0.0f), ignoredef(0.0f), criticaldamage(0.0f), hrange(0.0f), range() {}
 			constexpr Stats(float damage, int32_t matk, int32_t fixdamage, int32_t mastery, uint8_t attackcount, uint8_t mobcount, uint8_t bulletcount, int16_t bulletcost, int32_t hpcost, int32_t mpcost, float chance, float critical, float ignoredef, float hrange, Rectangle<int16_t> range, float criticaldamage = 0.0f) : damage(damage), matk(matk), fixdamage(fixdamage), mastery(mastery), attackcount(attackcount), mobcount(mobcount), bulletcount(bulletcount), bulletcost(bulletcost), hpcost(hpcost), mpcost(mpcost), chance(chance), critical(critical), ignoredef(ignoredef), criticaldamage(criticaldamage), hrange(hrange), range(range) {}
 		};
 
@@ -82,7 +85,16 @@ namespace ms
 		Weapon::Type get_required_weapon() const;
 		// Return the stats of one level
 		// If there are no stats for that level, a default object is returned.
+		// 技改覆盖：若该等级有服务端下发的覆盖字段，返回叠加后的 overlay 副本，否则回退 Skill.nx 原值。
 		const Stats& get_stats(int32_t level) const;
+		// WZ elemAttr 首字母（F/I/L/S/H/D；空=无属性）。四源对照 A1 供攻击链元素克制判定。
+		const std::string& get_element() const;
+
+		// 技改覆盖包入口：把 (字段下标 → 值) 叠加到指定等级的 overlay 副本；返回是否实际改动。
+		// 字段下标见 SkillStatOverrideCache.h / 服务端 SkillFieldMeta.FIELDS。
+		bool apply_overlay(int32_t level, const std::unordered_map<int32_t, int32_t>& fields);
+		// 清空本技能全部 overlay，回到 Skill.nx 原值。
+		void clear_overlay();
 
 		// Return the name of the skill
 		const std::string& get_name() const;
@@ -113,6 +125,9 @@ namespace ms
 		int32_t flags_of(int32_t id) const;
 
 		std::unordered_map<int32_t, Stats> stats;
+		// 技改覆盖副本：level → 在 Skill.nx 原值上叠加服务端覆盖后的 Stats。
+		// 用独立表而非改 stats，避免污染 Cache 里的原始 NX 数据（清覆盖可完整回退）。
+		std::unordered_map<int32_t, Stats> overlay_stats;
 		std::string element;
 		Weapon::Type reqweapon;
 		int32_t masterlevel;

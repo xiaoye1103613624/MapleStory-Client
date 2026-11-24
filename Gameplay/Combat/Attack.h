@@ -22,6 +22,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 namespace ms
 {
@@ -74,6 +75,9 @@ namespace ms
 		Point<int16_t> origin;
 		Rectangle<int16_t> range;
 		float hrange = 1.0f;
+		// 技能元素属性（WZ elemAttr 首字母 F/I/L/S/H/D；空=无属性）。
+		// 四源对照 A1：SkillData 已解析但攻击链此前未消费，补此字段供怪物弱点判定。
+		std::string element;
 		bool toleft = false;
 	};
 

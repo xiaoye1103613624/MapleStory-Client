@@ -247,6 +247,11 @@ namespace ms
 
 	const SkillData::Stats& SkillData::get_stats(int32_t level) const
 	{
+		// 技改覆盖优先：有 overlay 副本则返回它，否则回退 Skill.nx 原值。
+		auto ov = overlay_stats.find(level);
+		if (ov != overlay_stats.end())
+			return ov->second;
+
 		auto iter = stats.find(level);
 
 		if (iter == stats.end())
@@ -257,6 +262,44 @@ namespace ms
 		}
 
 		return iter->second;
+	}
+
+	const std::string& SkillData::get_element() const
+	{
+		return element;
+	}
+
+	bool SkillData::apply_overlay(int32_t level, const std::unordered_map<int32_t, int32_t>& fields)
+	{
+		auto base = stats.find(level);
+		if (base == stats.end() || fields.empty())
+			return false;
+
+		// 以当前有效值（可能已有 overlay）为底再叠加，保证多次下发同等级是累进覆盖。
+		Stats s = get_stats(level);
+		for (const auto& kv : fields)
+		{
+			switch (kv.first)
+			{
+			case 0:  s.damage = static_cast<float>(kv.second) / 100.0f; break; // damage WZ 是百分整数
+			case 1:  s.attackcount = static_cast<uint8_t>(kv.second); break;
+			case 2:  s.mobcount = static_cast<uint8_t>(kv.second); break;
+			case 3:  s.mpcost = kv.second; break;   // mpCon
+			case 4:  s.hpcost = kv.second; break;   // hpCon
+			case 9:  s.matk = kv.second; break;     // mad
+			case 11: s.fixdamage = kv.second; break;
+			case 12: s.bulletcount = static_cast<uint8_t>(kv.second); break;
+			case 13: s.bulletcost = static_cast<int16_t>(kv.second); break;
+			default: break; // 5 time / 6 cooltime / 7 x / 8 y / 10 watk：客户端 Stats 无对应字段，忽略
+			}
+		}
+		overlay_stats[level] = s;
+		return true;
+	}
+
+	void SkillData::clear_overlay()
+	{
+		overlay_stats.clear();
 	}
 
 	const std::string& SkillData::get_name() const

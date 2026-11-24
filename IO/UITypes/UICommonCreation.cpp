@@ -102,6 +102,18 @@ namespace ms
 		nl::node Login = nl::nx::UI["Login.img"];
 		nl::node Common = Login["Common"];
 
+		// 四源对照 A4：把建角职业（s9 job id 0..4）告知 LoginBackground，供
+		// step4 相机子步偏移使用（当前建角走 step3+场景 overlay，默认不生效）。
+		{
+			int job = -1;
+			if (classType == "cygnusKnight" || classType == "knight") job = 0;
+			else if (classType == "adventurer" || classType == "normal") job = 1;
+			else if (classType == "aran") job = 2;
+			else if (classType == "evan") job = 3;
+			else if (classType == "dualBlade" || classType == "dual") job = 4;
+			LoginBackground::get().set_creation_job(job);
+		}
+
 		if (LoginUiAssets::use_classic_creation())
 		{
 			classic_mode = true;

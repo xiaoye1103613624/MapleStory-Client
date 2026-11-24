@@ -674,6 +674,29 @@ namespace ms
 		return UIDragElement<PosMONSTERBOOK>::send_cursor(clicked, cursorpos);
 	}
 
+	void UIMonsterBook::rightclick(Point<int16_t> cursorpos)
+	{
+		// 四源对照 A5：v83/Angel 无独立 Register/Release 包，原生右键语义 =
+		// 设/取消封面，统一走 MONSTER_BOOK_COVER(0x39)+cardId（192 ContextMenu
+		// 的 Register/Release 最终也只落到 SetBookCover）。s9 接受 0 或 238xxxx。
+		int32_t idx = cell_at(cursorpos);
+		if (idx < 0 || idx >= static_cast<int32_t>(cards.size()))
+			return;
+		select_card_by_index(idx);
+		int16_t suffix = cards[static_cast<size_t>(idx)].id;
+		if (suffix <= 0)
+			return;
+		int32_t card_itemid = 2380000 + static_cast<int32_t>(suffix);
+		// 已是封面则取消（发 0），否则设为封面（发完整卡片 id）。
+		int32_t to_send = (Stage::get().get_player().get_monsterbook().get_cover() == card_itemid)
+			? 0 : card_itemid;
+		MonsterBookSetCoverPacket(to_send).dispatch();
+		status_line.change_text(Locale::text(to_send == 0
+			? "monsterbook.cover_cleared" : "monsterbook.cover_set"));
+		LOG(LOG_DEBUG, "UIMonsterBook: rightclick cover card_itemid=" << to_send
+			<< " suffix=" << suffix);
+	}
+
 	void UIMonsterBook::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		if (pressed && escape) { deactivate(); return; }
@@ -684,9 +707,14 @@ namespace ms
 			case 'C': case 'c':
 				if (selected_card_id > 0)
 				{
-					MonsterBookSetCoverPacket(selected_card_id).dispatch();
+					// 四源对照 A5 修复：s9 MonsterBookCoverHandler 只接受 id==0 或
+					// id/10000==238（完整卡片道具 id）。本端 card.id 存的是 item%10000
+					// suffix，直接发 suffix 会被服务端拒 → 还原成 2380000+suffix。
+					int32_t card_itemid = 2380000 + static_cast<int32_t>(selected_card_id);
+					MonsterBookSetCoverPacket(card_itemid).dispatch();
 					status_line.change_text(Locale::format("monsterbook.cover_id", std::to_string(selected_card_id)));
-					LOG(LOG_DEBUG, "UIMonsterBook: cover selected=" << selected_card_id);
+					LOG(LOG_DEBUG, "UIMonsterBook: cover card_itemid=" << card_itemid
+						<< " suffix=" << selected_card_id);
 					refresh_info();
 				}
 				break;

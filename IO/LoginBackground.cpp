@@ -86,6 +86,32 @@ namespace ms
 		};
 	}
 
+	void LoginBackground::set_creation_job(int job)
+	{
+		if (creation_job == job)
+			return;
+		creation_job = job;
+		// 若当前正处于 step4，职业切换需重新计算补间终点（原生 OnNewCharJobSel）。
+		if (step == 4)
+		{
+			tween_from = current_offset();
+			tween_to = target_offset(step);
+			if (creation_job >= 0 && creation_job <= 4)
+			{
+				static const int ui_race[5] = { 4, 1, 0, 3, 2 };
+				tween_to.y -= 600.0 * ui_race[creation_job];
+			}
+			tween_start = now_ms();
+			tween_duration = 300;
+			tween_active = true;
+		}
+	}
+
+	void LoginBackground::clear_creation_job()
+	{
+		creation_job = -1;
+	}
+
 	void LoginBackground::set_step(int value)
 	{
 		if (value == step)

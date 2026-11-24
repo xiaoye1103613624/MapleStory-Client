@@ -49,6 +49,13 @@ namespace ms
 		// step: 0=login, 1=world select, 2=char select (camera -8-600*step)
 		void set_step(int value);
 
+		// 四源对照 A4：v83 GetStepHeight 在 step4 叠加建角职业子步。
+		// 当前端建角走 step3+整屏场景 overlay，默认不启用；此接口供需要
+		// step4 相机对位的路径显式调用。job 为 s9 job id（0..4），
+		// 内部按 095 ConvertSelectedRaceToUIRace 映射 {0:4,1:1,2:0,3:3,4:2}。
+		void set_creation_job(int job);
+		void clear_creation_job();
+
 		int get_step() const
 		{
 			return step;
@@ -80,6 +87,12 @@ namespace ms
 				Constants::Constants::get().get_viewheight() / 2
 			);
 			Offset offset = target_offset(step);
+			// 四源对照 A4：step4 + 已选建角职业时叠加子步偏移（默认不启用）。
+			if (step == 4 && creation_job >= 0 && creation_job <= 4)
+			{
+				static const int ui_race[5] = { 4, 1, 0, 3, 2 };
+				offset.y -= 600.0 * ui_race[creation_job];
+			}
 
 			return Point<int16_t>(
 				static_cast<int16_t>(center.x() - offset.x),
@@ -129,6 +142,7 @@ namespace ms
 		bool has_forest;
 		bool has_frame;
 		int step;
+		int creation_job = -1; // -1=未选建角职业（step4 子步偏移不启用）
 
 		Offset tween_from;
 		Offset tween_to;
