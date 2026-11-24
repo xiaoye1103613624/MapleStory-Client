@@ -138,6 +138,16 @@ namespace ms
 		return scales.first;
 	}
 
+	uint8_t Frame::end_opacity() const
+	{
+		return opacities.second;
+	}
+
+	uint16_t Frame::end_scale() const
+	{
+		return scales.second;
+	}
+
 	uint16_t Frame::get_delay() const
 	{
 		return delay;
@@ -174,12 +184,32 @@ namespace ms
 	}
 
 	Animation::Animation(nl::node src)
+		: Animation(src, 0, false, false, false)
+	{
+		// 委托完整构造（三客户端校准后统一走一条装载路径，零行为变化）。
+	}
+
+	Animation::Animation(nl::node src, int16_t start_frame, bool force_zigzag,
+		bool settle_static, bool keep_order)
+		: settle_static(settle_static), settled(false), delay_scale(1.0f)
 	{
 		bool istexture = src.data_type() == nl::node::type::bitmap;
 
 		if (istexture)
 		{
 			frames.push_back(src);
+		}
+		else if (keep_order)
+		{
+			// 按 WZ 子节点原始顺序逐帧装载，不做 set 去重/排序（MinMS Animation.cpp:212-225）。
+			// 用于 uol/重复帧名表达的回摆 clip；三客户端资源实证当前样本无重复，但保留接口。
+			for (auto sub : src)
+			{
+				if (sub.data_type() == nl::node::type::bitmap)
+					frames.push_back(sub);
+			}
+			if (frames.empty())
+				frames.push_back(Frame());
 		}
 		else
 		{
@@ -191,7 +221,7 @@ namespace ms
 				{
 					int16_t fid = string_conversion::or_default<int16_t>(sub.name(), -1);
 
-					if (fid >= 0)
+					if (fid >= start_frame)
 						frameids.insert(fid);
 				}
 			}
@@ -215,12 +245,13 @@ namespace ms
 			frames[0].freeze_opacity_if_static();
 		}
 
-		zigzag = src["zigzag"].get_bool();
+		zigzag = force_zigzag || src["zigzag"].get_bool();
 
 		reset();
 	}
 
 	Animation::Animation(nl::node src, nl::node texture_override)
+		: settle_static(false), settled(false), delay_scale(1.0f)
 	{
 		bool istexture = src.data_type() == nl::node::type::bitmap;
 		bool has_override = texture_override.data_type() == nl::node::type::bitmap;
@@ -274,6 +305,7 @@ namespace ms
 	}
 
 	Animation::Animation()
+		: settle_static(false), settled(false), delay_scale(1.0f)
 	{
 		animated = false;
 		zigzag = false;
@@ -290,6 +322,8 @@ namespace ms
 		xyscale.set(frames[0].start_scale());
 		delay = frames[0].get_delay();
 		framestep = 1;
+		settled = false;
+		delay_scale = 1.0f;
 	}
 
 	void Animation::draw(const DrawArgument& args, float alpha) const
@@ -309,11 +343,20 @@ namespace ms
 
 	bool Animation::update()
 	{
-		return update(Constants::TIMESTEP);
+		return update(Constants::TIMESTEP, true);
 	}
 
 	bool Animation::update(uint16_t timestep)
 	{
+		return update(timestep, true);
+	}
+
+	bool Animation::update(uint16_t timestep, bool loop)
+	{
+		// oneshot 冻结哨兵：settled 或 0xFFFF 已到达 → 不再推进。
+		if (settled || delay == 0xFFFF)
+			return true;
+
 		const Frame& framedata = get_frame();
 
 		opacity += framedata.opcstep(timestep);
@@ -328,11 +371,42 @@ namespace ms
 		if (xyscale.last() < 0.0f)
 			opacity.set(0.0f);
 
-		if (timestep >= delay)
+		// delay_scale 慢放（MinMS Animation.cpp:351-369，Papulatus 展开用）。
+		uint16_t eff_timestep = timestep;
+		if (delay_scale > 1.0f)
+		{
+			uint32_t scaled = static_cast<uint32_t>(delay * delay_scale);
+			if (scaled > 65000)
+				scaled = 65000;
+			// 逐 tick 扣除实际时间，未耗尽则本帧不推进。
+			static thread_local uint32_t scaled_left = 0;
+			if (scaled_left == 0)
+				scaled_left = static_cast<uint32_t>(scaled);
+			if (scaled_left > timestep)
+			{
+				scaled_left -= timestep;
+				frame.normalize();
+				return false;
+			}
+			eff_timestep = static_cast<uint16_t>(timestep - scaled_left);
+			scaled_left = 0;
+		}
+
+		if (eff_timestep >= delay)
 		{
 			int16_t lastframe = static_cast<int16_t>(frames.size() - 1);
 			int16_t nextframe;
 			bool ended;
+
+			// settle_static：播到末帧后冻结（一次性技能特效「播出即保持」）。
+			if (settle_static && framestep == 1 && frame == lastframe)
+			{
+				opacity.set(framedata.end_opacity());
+				xyscale.set(framedata.end_scale());
+				settled = true;
+				delay = 0xFFFF;
+				return true;
+			}
 
 			if (zigzag && lastframe > 0)
 			{
@@ -343,6 +417,14 @@ namespace ms
 				}
 				else if (framestep == -1 && frame == 0)
 				{
+					if (!loop)
+					{
+						// oneshot ping-pong 完成 → 冻结在 0 帧（≈站姿）。
+						opacity.set(framedata.end_opacity());
+						xyscale.set(framedata.end_scale());
+						delay = 0xFFFF;
+						return true;
+					}
 					framestep = -framestep;
 					ended = true;
 				}
@@ -357,6 +439,13 @@ namespace ms
 			{
 				if (frame == lastframe)
 				{
+					if (!loop)
+					{
+						opacity.set(framedata.end_opacity());
+						xyscale.set(framedata.end_scale());
+						delay = 0xFFFF;
+						return true;
+					}
 					nextframe = 0;
 					ended = true;
 				}
@@ -367,8 +456,8 @@ namespace ms
 				}
 			}
 
-			uint16_t delta = timestep - delay;
-			float threshold = static_cast<float>(delta) / timestep;
+			uint16_t delta = eff_timestep - delay;
+			float threshold = static_cast<float>(delta) / eff_timestep;
 			frame.next(nextframe, threshold);
 
 			delay = frames[nextframe].get_delay();
@@ -385,7 +474,7 @@ namespace ms
 		{
 			frame.normalize();
 
-			delay -= timestep;
+			delay -= eff_timestep;
 
 			return false;
 		}
@@ -402,13 +491,83 @@ namespace ms
 
 		for (int16_t i = 0; i < frame_id; i++)
 		{
-			if (i >= frames.size())
+			if (i >= static_cast<int16_t>(frames.size()))
 				break;
 
-			total += frames[frame_id].get_delay();
+			// 修复共享 bug（MinMS Animation.cpp:675 同源）：原写 frames[frame_id]
+			// 导致每帧重复加同一帧 delay。应累加 frames[i]。
+			total += frames[i].get_delay();
 		}
 
 		return total;
+	}
+
+	uint16_t Animation::total_delay() const
+	{
+		uint16_t total = 0;
+		for (const auto& f : frames)
+			total += f.get_delay();
+		return total;
+	}
+
+	int16_t Animation::get_frame_index() const
+	{
+		return frame.get();
+	}
+
+	size_t Animation::get_frame_count() const
+	{
+		return frames.size();
+	}
+
+	bool Animation::is_zigzag() const
+	{
+		return zigzag;
+	}
+
+	void Animation::set_zigzag(bool enabled)
+	{
+		zigzag = enabled;
+	}
+
+	void Animation::freeze_at(int16_t frame_id)
+	{
+		int16_t last = static_cast<int16_t>(frames.empty() ? 0 : frames.size() - 1);
+		if (frame_id < 0) frame_id = 0;
+		if (frame_id > last) frame_id = last;
+		frame.set(frame_id);
+		opacity.set(frames[frame_id].start_opacity());
+		xyscale.set(frames[frame_id].start_scale());
+		delay = 0xFFFF; // 冻结哨兵
+		framestep = 1;
+		settled = false;
+	}
+
+	void Animation::thaw_and_reverse()
+	{
+		if (frames.size() <= 1)
+			return;
+		zigzag = true;
+		framestep = -1;
+		settled = false;
+		delay = frames[frame.get()].get_delay();
+		opacity.set(frames[frame.get()].start_opacity());
+		xyscale.set(frames[frame.get()].start_scale());
+	}
+
+	void Animation::set_delay_scale(float scale)
+	{
+		delay_scale = scale;
+	}
+
+	int32_t Animation::get_delay_left() const
+	{
+		return delay;
+	}
+
+	int16_t Animation::get_framestep() const
+	{
+		return framestep;
 	}
 
 	Point<int16_t> Animation::get_origin() const

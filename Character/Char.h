@@ -99,6 +99,16 @@ namespace ms
 
 		// Display an animation as an effect with the character
 		void show_attack_effect(Animation animation, int8_t z);
+		// MinMS 现代化特效入口（三端标注：非 083 原生复刻）：
+		// 下落/粒子（special 类）+ 固定偏移延时爆发（Big Bang 类）。
+		void show_falling_effect(Animation animation, Point<int16_t> start_offset,
+			Point<int16_t> fall_delta, uint16_t delay_ms, uint16_t duration_ms,
+			bool flip, int8_t z, bool follow = true, float angle = 0.0f);
+		void show_particle_effect(Animation animation, Point<int16_t> start_offset,
+			Point<int16_t> fall_delta, uint16_t life_ms, int8_t z, bool flip,
+			bool follow, float angle = 0.0f);
+		void show_offset_effect(Animation animation, Point<int16_t> offset,
+			uint16_t delay_ms, bool flip);
 		// Display an animation as an effect on top of the character
 		void show_effect_id(CharEffect::Id toshow);
 		// Display the iron body skill animation
@@ -186,11 +196,12 @@ namespace ms
 		Text namelabel;
 		ChatBalloon chatballoon;
 		EffectLayer effects;
+		// follow=false 的世界锚定粒子：上一帧位置，用于算出本帧 movement 抵消。
+		Point<int16_t> ring_prev_position;
 		Afterimage afterimage;
 		TimedBool invincible;
 		TimedBool ironbody;
-		// 受击瞬时红闪（show_damage 触发 300ms，盖过 invincible 灰度）。
-		TimedBool hitflash;
+		// 原生还原 2026-11-21：移除自创 hitflash 红闪成员（Angel/MinMS 无此通道）。
 		std::list<DamageNumber> damagenumbers;
 		// 分身残影开关（SHADOWPARTNER），绘制滞后半透明复制体。
 		bool shadowpartner = false;

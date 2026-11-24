@@ -48,6 +48,8 @@ namespace ms
 
 		for (const auto& layer : effects)
 			total += layer.second.size();
+		total += falls.size();
+		total += offsets.size();
 
 		return total;
 	}
@@ -57,6 +59,10 @@ namespace ms
 		for (auto iter = effects.begin(); iter != effects.upper_bound(-1); ++iter)
 			for (auto& effect : iter->second)
 				effect.draw(position, alpha);
+		// 下落/粒子按 z 分流：z<0 在身体后面（对齐 MinMS EffectLayer.cpp:38-42）。
+		for (const auto& fall : falls)
+			if (fall.get_z() < 0)
+				fall.draw(position, alpha);
 	}
 
 	void EffectLayer::drawabove(Point<int16_t> position, float alpha) const
@@ -64,9 +70,15 @@ namespace ms
 		for (auto iter = effects.upper_bound(-1); iter != effects.end(); ++iter)
 			for (auto& effect : iter->second)
 				effect.draw(position, alpha);
+		for (const auto& fall : falls)
+			if (fall.get_z() >= 0)
+				fall.draw(position, alpha);
+		// offset 恒在施法者身前（对齐 MinMS EffectLayer.cpp:61-64）。
+		for (const auto& off : offsets)
+			off.draw(position, alpha);
 	}
 
-	void EffectLayer::update()
+	void EffectLayer::update(Point<int16_t> movement)
 	{
 		for (auto& effectlist : effects)
 		{
@@ -77,14 +89,55 @@ namespace ms
 				}
 			);
 		}
+		falls.remove_if([movement](FallEffect& fall)
+		{
+			return fall.update(movement);
+		});
+		offsets.remove_if([](OffsetEffect& off)
+		{
+			return off.update();
+		});
 	}
 
-	void EffectLayer::add(const Animation& animation, const DrawArgument& args, int8_t z, float speed)
+	void EffectLayer::add(const Animation& animation, const DrawArgument& args, int8_t z, float speed, uint16_t delay_ms)
 	{
 		if (count() >= effect_cap())
 			return;
 
-		effects[z].emplace_back(animation, args, speed);
+		effects[z].emplace_back(animation, args, speed, delay_ms);
+	}
+
+	void EffectLayer::add_fall(const Animation& animation, Point<int16_t> start_offset,
+		Point<int16_t> fall_delta, uint16_t delay_ms, uint16_t duration_ms,
+		bool flip, int8_t z, bool follow, float angle)
+	{
+		if (count() >= effect_cap())
+			return;
+		if (duration_ms == 0)
+			duration_ms = 1;
+		falls.emplace_back(animation, start_offset, fall_delta, delay_ms,
+			duration_ms, flip, z, follow, false, angle);
+	}
+
+	void EffectLayer::add_particle(const Animation& animation, Point<int16_t> start_offset,
+		Point<int16_t> fall_delta, uint16_t life_ms, int8_t z,
+		bool flip, bool follow, float angle)
+	{
+		if (count() >= effect_cap())
+			return;
+		if (life_ms == 0)
+			life_ms = 1;
+		// 粒子 = mirror 的 FallEffect（MinMS EffectLayer.cpp:131-151，delay=0）。
+		falls.emplace_back(animation, start_offset, fall_delta, 0,
+			life_ms, flip, z, follow, true, angle);
+	}
+
+	void EffectLayer::add_offset(const Animation& animation, Point<int16_t> offset,
+		uint16_t delay_ms, bool flip)
+	{
+		if (count() >= effect_cap())
+			return;
+		offsets.emplace_back(animation, offset, delay_ms, flip);
 	}
 
 	void EffectLayer::add(const Animation& animation, const DrawArgument& args, int8_t z)

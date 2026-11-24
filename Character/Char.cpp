@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Char.h"
+#include "../Graphics/TintContext.h"
 
 #include "../Data/WeaponData.h"
 #include "../Configuration.h"
@@ -32,10 +33,14 @@ namespace ms
 	// GM 隐身本地视觉提示：自身角色半透明渲染的不透明度（0=全透，1=不透明）。
 	constexpr float HIDDEN_ALPHA = 0.4f;
 
-	Char::Char(int32_t o, const CharLook& lk, const std::string& name) : MapObject(o), look(lk), look_preview(lk), namelabel(Text(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NAMETAG, name)) {}
+	Char::Char(int32_t o, const CharLook& lk, const std::string& name) : MapObject(o), look(lk), look_preview(lk), namelabel(Text(Text::Font::A13M, Text::Alignment::CENTER, Color::Name::WHITE, Text::Background::NAMETAG, name)), ring_prev_position() {}
 
 	void Char::draw(double viewx, double viewy, float alpha) const
 	{
+		// ColorPrism: push this character's id so draw-time tint routing (Texture::draw)
+		// applies their own colours to the shared Clothing frames. RAII pops on exit.
+		TintContext::Scope tint_scope(get_oid());
+
 		Point<int16_t> absp = phobj.get_absolute(viewx, viewy, alpha);
 
 		effects.drawbelow(absp, alpha);
@@ -54,12 +59,9 @@ namespace ms
 			color = Color::Code::CWHITE;
 		}
 
-		// 受击瞬时红闪（300ms，叠加/覆盖 invincible 灰度）。
-		if (hitflash)
-		{
-			float hf = 0.35f + 0.4f * hitflash.alpha();
-			color = Color(1.0f, hf, hf, 1.0f);
-		}
+		// 原生还原（2026-11-21）：Angel CUserLocal::SetDamaged@0x9581a9 与 MinMS
+		// Char.cpp:338-358 的受击视觉只有灰度乘色闪 + emotion sprite，没有独立红闪通道。
+		// 已移除本端自创的 hitflash 300ms 红闪（原 Char.cpp:62-67）；保留上面的灰度闪。
 
 		// GM 隐身本地视觉提示：隐身时自身角色整体半透明渲染（远端角色 hidden 恒 false）。
 		if (hidden)
@@ -119,11 +121,14 @@ namespace ms
 			}
 		);
 
-		effects.update();
+		// follow=false 的粒子按世界锚定：用本帧位移抵消相对偏移（MinMS Char.cpp:600-606）。
+		const Point<int16_t> cur_position = get_position();
+		const Point<int16_t> movement = cur_position - ring_prev_position;
+		ring_prev_position = cur_position;
+		effects.update(movement);
 		chatballoon.update();
 		invincible.update();
 		ironbody.update();
-		hitflash.update();
 
 		for (auto& shield : shields)
 			shield.second.update();
@@ -216,9 +221,41 @@ namespace ms
 		if (!Setting<SysOptSkillEffects>::get().load())
 			return;
 
-		float attackspeed = get_real_attackspeed();
+		// 技能施放特效按 WZ 自身帧 delay 播放（原生 CUser::ShowSkillEffect 取 UOL 后
+		// 直接投 CAnimationDisplayer::Effect_SkillUse，不把角色攻速传给动画）。
+		// 旧实现传 get_real_attackspeed()=1.7-speed/10 当 EffectLayer 动画倍速：
+		// 高攻速角色 speed>=12 时倍速<0.5 让 18 帧法阵拖到 4 秒以上，speed>=17
+		// 时倍速归零、timestep=0 使动画永不推进，紫圈永久残留（用户 2026-11-22
+		// 龙咆哮实机现象）。怪物受击侧 Mob::show_effect 一直用固定 1.0f，两侧统一。
+		effects.add(toshow, DrawArgument(facing_right), z, 1.0f);
+	}
 
-		effects.add(toshow, DrawArgument(facing_right), z, attackspeed);
+	void Char::show_falling_effect(Animation animation, Point<int16_t> start_offset,
+		Point<int16_t> fall_delta, uint16_t delay_ms, uint16_t duration_ms,
+		bool flip, int8_t z, bool follow, float angle)
+	{
+		if (!Setting<SysOptSkillEffects>::get().load())
+			return;
+		effects.add_fall(animation, start_offset, fall_delta, delay_ms,
+			duration_ms, flip, z, follow, angle);
+	}
+
+	void Char::show_particle_effect(Animation animation, Point<int16_t> start_offset,
+		Point<int16_t> fall_delta, uint16_t life_ms, int8_t z, bool flip,
+		bool follow, float angle)
+	{
+		if (!Setting<SysOptSkillEffects>::get().load())
+			return;
+		effects.add_particle(animation, start_offset, fall_delta, life_ms,
+			z, flip, follow, angle);
+	}
+
+	void Char::show_offset_effect(Animation animation, Point<int16_t> offset,
+		uint16_t delay_ms, bool flip)
+	{
+		if (!Setting<SysOptSkillEffects>::get().load())
+			return;
+		effects.add_offset(animation, offset, delay_ms, flip);
 	}
 
 	void Char::show_effect_id(CharEffect::Id toshow)
@@ -238,9 +275,14 @@ namespace ms
 
 		damagenumbers.emplace_back(DamageNumber::Type::TOPLAYER, damage, start_y, x);
 
+		// 原生还原（2026-11-21）：对齐 Angel SetDamaged@0x9581a9 / MinMS
+		// Char.cpp:1257-1277 —— Miss(damage<=0) 只飘伤害数字，不进警戒姿态、不闪；
+		// 命中才 set_alerted(5000)，无敌窗 2000→1500ms（MinMS invincible.set_for(1500)）。
+		if (damage <= 0)
+			return;
+
 		look.set_alerted(5000);
-		invincible.set_for(2000);
-		hitflash.set_for(300);
+		invincible.set_for(1500);
 	}
 
 	void Char::set_shadowpartner(bool on)
