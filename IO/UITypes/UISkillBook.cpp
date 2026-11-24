@@ -865,16 +865,9 @@ namespace ms
 			else if (keycode == 'U' || keycode == 'u' || keycode == 'F' || keycode == 'f')
 			{
 				if (selected_skill_id > 0) {
-					int32_t id = selected_skill_id;
-					int32_t lv = 1;
-					try {
-						lv = Stage::get().get_player().get_skills().get_level(id);
-						if (lv <= 0) lv = 1;
-					} catch (...) {}
-					UseSkillPacket(id, lv).dispatch();
-					LOG(LOG_DEBUG, "UISkillBook: UseSkill selected id=" << id << " lv=" << lv);
-				} else {
-					
+					// 与 doubleclick 同路：Combat::use_move（含瞬移/二段跳本地位移 + USE_SKILL 91）
+					Stage::get().get_combat().use_move(selected_skill_id);
+					LOG(LOG_DEBUG, "UISkillBook: use_move selected id=" << selected_skill_id);
 				}
 			}
 			else if (keycode == 'T' || keycode == 't')

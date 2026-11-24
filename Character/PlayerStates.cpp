@@ -88,6 +88,8 @@ namespace ms
 	void PlayerStandState::initialize(Player& player) const
 	{
 		player.get_phobj().type = PhysicsObject::Type::NORMAL;
+		// 2026-11-22：着地复位二段跳一次性限制（MinMS Player::can_use 着地复位同源）。
+		player.reset_flash_jump();
 	}
 
 	void PlayerStandState::send_action(Player& player, KeyAction::Id ka, bool down) const
