@@ -33,6 +33,7 @@ namespace ms
 	{
 		std::vector<std::unique_ptr<nl::img_file>> ImgSource::s_files;
 		std::vector<ImgSource::map_slot> ImgSource::s_map_files;
+		std::vector<ImgSource::map_slot> ImgSource::s_query_files;
 		std::map<std::string, std::string> ImgSource::s_dirs;
 		std::set<std::string> ImgSource::s_loaded;
 		int32_t ImgSource::s_bound_mapid = -2;
@@ -551,6 +552,114 @@ namespace ms
 				<< " file=" << hit.generic_string());
 		}
 
+		nl::node ImgSource::ensure_map_query(int32_t mapid)
+		{
+			if (mapid <= 0)
+				return nl::node{};
+
+			std::lock_guard<std::mutex> map(s_load_mtx);
+
+			// 【预绑定后端 · 2026-11-21 回归修复】wz / nx / .nxcache mmap 在 open()
+			// 时已把全部地图绑进 Map002，直接只读查询即可命中。关键：这里**绝不**
+			// 调用 ensure_map() 重绑 Map002、也绝不淘汰 s_map_files —— 那会让当前
+			// 渲染持有的 nl::node 悬垂，正是 0xc0000374 堆损坏的根因（见
+			// docs/features/worldmap-hover-crash-rootfix-2026-11/README.md）。
+			// 本分支纯读，不写任何全局根；节点在查询期间有效，调用方（get_life_on_map/
+			// get_mobs_on_map）即时把字段拷贝成 std::string/数值，不长期持有。
+			{
+				const int pre = static_cast<int>(mapid / 100000000);
+				std::ostringstream preoss;
+				preoss << std::setw(9) << std::setfill('0') << mapid;
+				const std::string preid = preoss.str();
+				nl::node prebound = RootTable::root(RootId::Map002);
+				if (prebound)
+				{
+					nl::node hit = prebound["Map"]["Map" + std::to_string(pre)][preid + ".img"];
+					if (hit)
+						return hit;
+				}
+			}
+
+			// 命中查询缓存：提到队尾（MRU），不碰全局 Map002 / s_map_files。
+			for (auto qi = s_query_files.begin(); qi != s_query_files.end(); ++qi)
+			{
+				if (qi->mapid != mapid)
+					continue;
+
+				nl::node root = qi->file->root();
+				if (qi + 1 != s_query_files.end())
+				{
+					map_slot hit_slot = std::move(*qi);
+					s_query_files.erase(qi);
+					s_query_files.push_back(std::move(hit_slot));
+				}
+				const int prefix = static_cast<int>(mapid / 100000000);
+				std::ostringstream idoss;
+				idoss << std::setw(9) << std::setfill('0') << mapid;
+				return root["Map"]["Map" + std::to_string(prefix)][idoss.str() + ".img"];
+			}
+
+			auto it = s_dirs.find("Map");
+			if (it == s_dirs.end())
+				return nl::node{};
+
+			const int prefix = static_cast<int>(mapid / 100000000);
+			std::ostringstream idoss;
+			idoss << std::setw(9) << std::setfill('0') << mapid;
+			const std::string id9 = idoss.str();
+			const std::string basename = id9 + ".img";
+
+			fs::path base = fs::u8path(it->second);
+			fs::path candidates[] = {
+				base / "Map" / ("Map" + std::to_string(prefix)) / basename,
+				base / ("Map" + std::to_string(prefix)) / basename,
+				base / basename
+			};
+
+			fs::path hit;
+			std::error_code ec;
+			for (const fs::path& c : candidates)
+			{
+				if (fs::is_regular_file(c, ec))
+				{
+					hit = c;
+					break;
+				}
+			}
+
+			if (hit.empty())
+			{
+				LOG(LOG_ERROR, "[IMG] ensure_map_query: map file missing mapid=" << mapid);
+				return nl::node{};
+			}
+
+			std::ifstream f(hit, std::ios::binary);
+			if (!f)
+				return nl::node{};
+
+			std::vector<char> bytes((std::istreambuf_iterator<char>(f)),
+				std::istreambuf_iterator<char>());
+			if (bytes.empty())
+				return nl::node{};
+
+			const std::string newrel = "Map/Map" + std::to_string(prefix) + "/" + basename;
+			std::vector<std::pair<std::string, std::vector<char>>> maps;
+			maps.emplace_back(newrel, std::move(bytes));
+
+			auto file = std::make_unique<nl::img_file>();
+			file->open_tree(std::move(maps));
+			nl::node root = file->root();
+			s_query_files.push_back({ mapid, std::move(file) });
+
+			while (s_query_files.size() > QUERY_MAP_KEEP)
+				s_query_files.erase(s_query_files.begin());
+
+			LOG(LOG_INFO, "[IMG] ensure_map_query ok mapid=" << mapid
+				<< " file=" << hit.generic_string());
+
+			return root["Map"]["Map" + std::to_string(prefix)][id9 + ".img"];
+		}
+
 		void ImgSource::ensure(RootId id)
 		{
 			// 访问计时（内存诊断）：每次 ensure 都刷新该根最后访问时间，
@@ -636,13 +745,24 @@ namespace ms
 			// 等 s_bg_loading 自然落定（后台在装载循环末尾清零），再持锁
 			// 清表 —— 只验一次+拿锁再放，会漏"标志已置但线程还在排队拿锁"
 			// 的窗口。常态（进游戏后才可能退出）标志早已为 false，零等待。
+			// [退出防护] 加 60s 上限：detach 线程异常未落标志时不能永久自旋
+			// 卡死退出；超时后按"装载已停滞"处理，继续清表（互斥锁仍保护容器）。
+			const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(60);
 			while (s_bg_loading.load())
+			{
+				if (std::chrono::steady_clock::now() >= deadline)
+				{
+					LOG(LOG_WARN, "[IMG] close(): bg_loading wait timed out, proceed");
+					break;
+				}
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			}
 
 			std::lock_guard<std::mutex> load(s_load_mtx);
 
 			s_files.clear();
 			s_map_files.clear();
+			s_query_files.clear();
 			s_dirs.clear();
 			s_loaded.clear();
 			s_bound_mapid = -2;

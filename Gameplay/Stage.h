@@ -46,7 +46,14 @@ namespace ms
 		// Loads the map to display
 		void load(int32_t mapid, int8_t portalid);
 		// Remove all map objects and graphics
-		void clear();
+		// keep_weather=true：换图/退商城时保留天气状态，避免 clear→0x373D apply
+		// 之间出现"闪白天"窗口与路灯重新暖灯。登录/退出仍用默认 false 彻底清空。
+		void clear(bool keep_weather = false);
+
+		// 视口分辨率变化钩子（多分辨率自适应）：进游戏 / 游戏内切档后由
+		// SetFieldHandlers::apply_game_viewsize 调用，主动刷新背景平铺参数。
+		// 即便漏调，Background::draw 每帧也会按 Constants 实时重算，属双保险。
+		void on_viewport_changed();
 
 		// Construct the player from a character entry
 		void loadplayer(const CharEntry& entry);
@@ -74,6 +81,8 @@ namespace ms
 		// Check if the specified id is the player's id
 		bool is_player(int32_t cid) const;
 
+		// 返回当前地图物理世界（foothold 树），切图 spawn 重锚/落点校验用
+		const Physics& get_physics() const;
 		// Returns a reference to the NPCs on the current map
 		MapNpcs& get_npcs();
 		// Returns a reference to the other characters on the current map

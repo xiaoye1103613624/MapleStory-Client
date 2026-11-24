@@ -4,6 +4,7 @@
 #include "UiTheme.h"
 
 #include "UiAssetResolve.h"
+#include "UiThemeLayout.h"
 #include "../Configuration.h"
 #include "Misc.h"
 
@@ -13,34 +14,31 @@ namespace ms
 	{
 		namespace
 		{
+			// 策略优先级：Auto 按 192 > modern3 > classic 探测（高版本资源存在即优先）。
+			// 新增版本只需在这里加一项 + 注册策略，不再散落 if/else。
+			static const ThemeId kProbeOrder[] = {
+				ThemeId::StatusBar2_192,
+				ThemeId::ModernStatusBar3,
+				ThemeId::Classic083
+			};
+
 			ThemeId clamp_to_available(ThemeId want)
 			{
-				const bool has_classic = UiAssetResolve::has_statusbar_classic();
-				const bool has_modern = UiAssetResolve::has_statusbar3();
-
-				if (want == ThemeId::Classic083)
+				if (want != ThemeId::Auto)
 				{
-					if (has_classic)
-						return ThemeId::Classic083;
-					if (has_modern)
-						return ThemeId::ModernStatusBar3;
-					return ThemeId::Auto;
+					const UiThemeLayout::IThemeLayout* p = UiThemeLayout::get(want);
+					if (p && p->available())
+						return want;
+					// 请求的主题不可用：按优先级回退到第一个可用策略。
+					want = ThemeId::Auto;
 				}
 
-				if (want == ThemeId::ModernStatusBar3)
+				for (ThemeId id : kProbeOrder)
 				{
-					if (has_modern)
-						return ThemeId::ModernStatusBar3;
-					if (has_classic)
-						return ThemeId::Classic083;
-					return ThemeId::Auto;
+					const UiThemeLayout::IThemeLayout* p = UiThemeLayout::get(id);
+					if (p && p->available())
+						return id;
 				}
-
-				// Auto: prefer modern when present (legacy UiAssetResolve::is_classic_hud).
-				if (has_modern)
-					return ThemeId::ModernStatusBar3;
-				if (has_classic)
-					return ThemeId::Classic083;
 				return ThemeId::Auto;
 			}
 		}
@@ -57,9 +55,8 @@ namespace ms
 
 		LayoutFamily layout_family()
 		{
-			return resolve() == ThemeId::Classic083
-				? LayoutFamily::ClassicV83
-				: LayoutFamily::ModernMainBar;
+			const UiThemeLayout::IThemeLayout* p = UiThemeLayout::active();
+			return p ? p->family() : LayoutFamily::ClassicV83;
 		}
 
 		bool is_classic_layout()
@@ -71,11 +68,8 @@ namespace ms
 		{
 			if (id == ThemeId::Auto)
 				return UiAssetResolve::has_game_hud();
-			if (id == ThemeId::Classic083)
-				return UiAssetResolve::has_statusbar_classic();
-			if (id == ThemeId::ModernStatusBar3)
-				return UiAssetResolve::has_statusbar3();
-			return false;
+			const UiThemeLayout::IThemeLayout* p = UiThemeLayout::get(id);
+			return p && p->available();
 		}
 
 		ThemeId set_theme(ThemeId id, bool persist)
@@ -97,18 +91,17 @@ namespace ms
 		ThemeId toggle(bool persist)
 		{
 			const ThemeId cur = resolve();
-			ThemeId next = (cur == ThemeId::Classic083)
-				? ThemeId::ModernStatusBar3
-				: ThemeId::Classic083;
-
-			if (!can_use(next))
+			// 在所有可用策略间循环（192 > modern3 > classic），保证多版本都可切换。
+			for (ThemeId id : kProbeOrder)
 			{
-				LOG(LOG_WARN, "UiTheme: toggle skipped; target pack missing ("
-					<< to_config(next) << ")");
-				return cur;
+				if (id == cur)
+					continue;
+				if (can_use(id))
+					return set_theme(id, persist);
 			}
-
-			return set_theme(next, persist);
+			// 只有一个可用主题：无其它目标可切。
+			LOG(LOG_WARN, "UiTheme: toggle skipped; only one theme pack available");
+			return cur;
 		}
 
 		const char* to_config(ThemeId id)
@@ -117,6 +110,7 @@ namespace ms
 			{
 			case ThemeId::Classic083:		return "classic";
 			case ThemeId::ModernStatusBar3:	return "modern";
+			case ThemeId::StatusBar2_192:	return "192";
 			case ThemeId::Auto:
 			default:						return "auto";
 			}
@@ -128,6 +122,8 @@ namespace ms
 				return ThemeId::Classic083;
 			if (s == "modern" || s == "statusbar3" || s == "sb3")
 				return ThemeId::ModernStatusBar3;
+			if (s == "192" || s == "statusbar2" || s == "sb2")
+				return ThemeId::StatusBar2_192;
 			return ThemeId::Auto;
 		}
 
@@ -137,6 +133,7 @@ namespace ms
 			{
 			case ThemeId::Classic083:		return "083 Classic";
 			case ThemeId::ModernStatusBar3:	return "Modern";
+			case ThemeId::StatusBar2_192:	return "192 Classic";
 			case ThemeId::Auto:
 			default:						return "Auto";
 			}

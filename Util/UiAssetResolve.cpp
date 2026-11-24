@@ -4,6 +4,7 @@
 #include "UiAssetResolve.h"
 
 #include "UiTheme.h"
+#include "UiThemeLayout.h"
 
 #include <fstream>
 #include <mutex>
@@ -56,6 +57,35 @@ namespace ms
 			return legacy;
 		}
 
+		nl::node window_enh(const char* name)
+		{
+			// D2=B: enhancement UIs live in a dedicated UIWindow2Enh.img so the
+			// 64MB 192 pack never bloats UI.nx. Fall back to the classic window
+			// root for nodes the standalone pack does not carry.
+			nl::node enh = nl::nx::UI["UIWindow2Enh.img"][name];
+
+			if (enh)
+				return enh;
+
+			nl::node win = nl::nx::UI["UIWindow2.img"][name];
+
+			if (win)
+				return win;
+
+			return nl::nx::UI["UIWindow.img"][name];
+		}
+
+		nl::node tooltip()
+		{
+			// D4=B: 192 graphical tooltip root (Item/Equip/{Star,AddOption,Summary,...}).
+			nl::node tt = nl::nx::UI["UIToolTip.img"];
+
+			if (tt)
+				return tt;
+
+			return nl::node();
+		}
+
 		nl::node window4(const char* name)
 		{
 			nl::node w4 = nl::nx::UI["UIWindow4.img"][name];
@@ -76,18 +106,65 @@ namespace ms
 			return legacy;
 		}
 
+		namespace
+		{
+			bool looks_like_native_equip_shell(nl::node equip)
+			{
+				// 192 UIWindow4 Equip：多页签壳（Tab / Android / Cash / Pet…），
+				// 与 classic UIWindow.img/Equip（单页 + pet / BtPet*）结构不同。
+				if (!equip)
+					return false;
+
+				if (equip["Tab"] || equip["Android"] || equip["Dragon"] || equip["Mechanic"])
+					return true;
+
+				// 原生壳根级无 pet 子节点；classic 有。
+				if (equip["backgrnd"] && !equip["pet"] && (equip["Equip"] || equip["Cash"]))
+					return true;
+
+				return false;
+			}
+		}
+
+		nl::node equip_native_root()
+		{
+			nl::node w4 = nl::nx::UI["UIWindow4.img"]["Equip"];
+
+			if (looks_like_native_equip_shell(w4))
+				return w4;
+
+			return window4("Equip");
+		}
+
+		nl::node equip_panel_root()
+		{
+			nl::node classic = nl::nx::UI["UIWindow.img"]["Equip"];
+			nl::node w4 = nl::nx::UI["UIWindow4.img"]["Equip"];
+
+			// 192 多页签已入库时，主角色装备栏继续吃 classic，避免 backgrnd/pet 错位。
+			if (looks_like_native_equip_shell(w4) && usable(classic))
+				return classic;
+
+			if (usable(w4) && !looks_like_native_equip_shell(w4))
+				return w4;
+
+			if (usable(classic))
+				return classic;
+
+			return window4("Equip");
+		}
+
 		nl::node status_bar_root()
 		{
-			// ThemePack: layout family picks the resource root when both packs exist.
-			if (UiTheme::is_classic_layout())
+			// ThemePack 策略：资源根由当前生效策略决定；新增版本不再改这里。
+			const UiThemeLayout::IThemeLayout* p = UiThemeLayout::active();
+			if (p)
 			{
-				if (has_statusbar_classic())
-					return nl::nx::UI["StatusBar.img"];
-				if (has_statusbar3())
-					return nl::nx::UI["StatusBar3.img"];
-				return nl::nx::UI["StatusBar.img"];
+				nl::node root = p->status_bar_root();
+				if (usable(root))
+					return root;
 			}
-
+			// 兜底：任何策略资源缺失时保底可用包，避免 HUD 消失。
 			if (has_statusbar3())
 				return nl::nx::UI["StatusBar3.img"];
 			return nl::nx::UI["StatusBar.img"];
@@ -105,6 +182,9 @@ namespace ms
 
 		bool has_game_hud()
 		{
+			const UiThemeLayout::IThemeLayout* p = UiThemeLayout::active();
+			if (p && p->available())
+				return true;
 			return has_statusbar3() || has_statusbar_classic();
 		}
 

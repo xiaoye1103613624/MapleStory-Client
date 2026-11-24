@@ -464,4 +464,73 @@ namespace ms
 		return true;
 #endif
 	}
+
+	// 2026-11-22 环境音循环（天气 rain/wind）。创建 loop stream、按 per-channel
+	// 音量播放（跟随 SFX slider，而非 BGM 的全局 GVOL_STREAM）。重复 play 会
+	// 先停上一条，避免切天空时两条环境音叠加。
+	AmbientSound::AmbientSound() : stream(0)
+	{
+	}
+
+	AmbientSound::~AmbientSound()
+	{
+		stop();
+	}
+
+	void AmbientSound::play(nl::audio src, float volume)
+	{
+#ifdef USE_BASS
+		const void* data = reinterpret_cast<const void*>(src.data());
+		if (!data)
+			return;
+
+		stop();
+		HSTREAM s = create_bgm_stream(data, src.length(), true);
+		if (!s)
+		{
+			audio_log(std::string("[Ambient][WARN] StreamCreate failed len=")
+				+ std::to_string(src.length())
+				+ " err=" + std::to_string(BASS_ErrorGetCode()));
+			return;
+		}
+
+		if (volume < 0.0f) volume = 0.0f;
+		if (volume > 1.0f) volume = 1.0f;
+		BASS_ChannelSetAttribute(s, BASS_ATTRIB_VOL, volume);
+		BASS_Start();
+		if (!BASS_ChannelPlay(s, true))
+		{
+			audio_log(std::string("[Ambient][WARN] ChannelPlay failed err=")
+				+ std::to_string(BASS_ErrorGetCode()));
+			BASS_StreamFree(s);
+			return;
+		}
+		stream = static_cast<uint64_t>(s);
+#else
+		(void)src;
+		(void)volume;
+#endif
+	}
+
+	void AmbientSound::stop()
+	{
+#ifdef USE_BASS
+		if (stream)
+		{
+			HSTREAM s = static_cast<HSTREAM>(stream);
+			BASS_ChannelStop(s);
+			BASS_StreamFree(s);
+			stream = 0;
+		}
+#endif
+	}
+
+	bool AmbientSound::is_playing() const
+	{
+#ifdef USE_BASS
+		return stream != 0 && BASS_ChannelIsActive(static_cast<HSTREAM>(stream)) == BASS_ACTIVE_PLAYING;
+#else
+		return false;
+#endif
+	}
 }

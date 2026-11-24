@@ -1,0 +1,460 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "features": [
+    {
+      "id": "questlog",
+      "title": "任务日志",
+      "openKey": "QuestLog",
+      "enabled": true
+    },
+    {
+      "id": "event",
+      "title": "活动",
+      "openKey": "Event",
+      "enabled": true
+    },
+    {
+      "id": "eventwindow",
+      "title": "活动窗",
+      "openKey": "EventWindow",
+      "enabled": true
+    },
+    {
+      "id": "dailygift",
+      "title": "每日礼物",
+      "openKey": "DailyGift",
+      "enabled": true
+    },
+    {
+      "id": "damagerank",
+      "title": "伤害统计",
+      "openKey": "DamageRank",
+      "enabled": true
+    },
+    {
+      "id": "dailycheckin",
+      "title": "每日签到",
+      "openKey": "DailyCheckin",
+      "enabled": true
+    },
+    {
+      "id": "colorprism",
+      "title": "装备染色",
+      "openKey": "ColorPrism",
+      "enabled": true
+    },
+    {
+      "id": "witchforest",
+      "title": "魔女森林",
+      "openKey": "WitchForest",
+      "enabled": true
+    },
+    {
+      "id": "breakthroughstone",
+      "title": "突破石",
+      "openKey": "BreakthroughStone",
+      "enabled": true
+    },
+    {
+      "id": "enhance",
+      "title": "强化",
+      "openKey": "Enhance",
+      "enabled": true
+    },
+    {
+      "id": "alliance",
+      "title": "联盟",
+      "openKey": "Alliance",
+      "enabled": true
+    },
+    {
+      "id": "chatemoticon",
+      "title": "聊天表情",
+      "openKey": "ChatEmoticon",
+      "enabled": true
+    },
+    {
+      "id": "mysticbadge",
+      "title": "神秘徽章",
+      "openKey": "MysticBadge",
+      "enabled": true
+    },
+    {
+      "id": "medal",
+      "title": "勋章",
+      "openKey": "Medal",
+      "enabled": true
+    },
+    {
+      "id": "family",
+      "title": "家族",
+      "openKey": "Family",
+      "enabled": true
+    },
+    {
+      "id": "maker",
+      "title": "专业技术",
+      "openKey": "Maker",
+      "enabled": true
+    },
+    {
+      "id": "worldmap",
+      "title": "世界地图",
+      "openKey": "WorldMap",
+      "enabled": true
+    },
+    {
+      "id": "mapinfo",
+      "title": "地图信息",
+      "openKey": "MapInfo",
+      "enabled": true
+    },
+    {
+      "id": "monsterbook",
+      "title": "怪物卡片",
+      "openKey": "MonsterBook",
+      "enabled": true
+    },
+    {
+      "id": "windowcashshop",
+      "title": "现金商店窗",
+      "openKey": "WindowCashShop",
+      "enabled": true
+    },
+    {
+      "id": "optionmenu",
+      "title": "选项菜单",
+      "openKey": "OptionMenu",
+      "enabled": true
+    },
+    {
+      "id": "sysopt",
+      "title": "系统设置",
+      "openKey": "SysOpt",
+      "enabled": true
+    },
+    {
+      "id": "gameopt",
+      "title": "游戏设置",
+      "openKey": "GameOpt",
+      "enabled": true
+    }
+  ],
+  "icons": [
+    {
+      "key": "GalaxyStar"
+    },
+    {
+      "key": "EventList"
+    },
+    {
+      "key": "Daily"
+    },
+    {
+      "key": "dailyGift"
+    },
+    {
+      "key": "Content"
+    },
+    {
+      "key": "attendance"
+    },
+    {
+      "key": "Achieve"
+    },
+    {
+      "key": "collection"
+    },
+    {
+      "key": "mapleHelper"
+    },
+    {
+      "key": "Xmas"
+    },
+    {
+      "key": "Absolute"
+    },
+    {
+      "key": "19thEvent"
+    },
+    {
+      "key": "13thBalloon"
+    },
+    {
+      "key": "mapleStyle"
+    },
+    {
+      "key": "mapleAlarm"
+    },
+    {
+      "key": "itemCollection"
+    }
+  ],
+  "items": [
+    {
+      "id": "leaf_quest",
+      "parentId": null,
+      "kind": "leaf",
+      "enabled": true,
+      "title": "任务",
+      "iconKey": "EventList",
+      "order": 5,
+      "action": "Builtin",
+      "arg": "questlog"
+    },
+    {
+      "id": "folder_daily",
+      "parentId": null,
+      "kind": "folder",
+      "enabled": true,
+      "title": "日常",
+      "iconKey": "Daily",
+      "order": 10,
+      "action": "Builtin",
+      "arg": ""
+    },
+    {
+      "id": "folder_combat",
+      "parentId": null,
+      "kind": "folder",
+      "enabled": true,
+      "title": "战斗",
+      "iconKey": "GalaxyStar",
+      "order": 20,
+      "action": "Builtin",
+      "arg": ""
+    },
+    {
+      "id": "folder_event",
+      "parentId": null,
+      "kind": "folder",
+      "enabled": true,
+      "title": "活动",
+      "iconKey": "dailyGift",
+      "order": 30,
+      "action": "Builtin",
+      "arg": ""
+    },
+    {
+      "id": "folder_tools",
+      "parentId": null,
+      "kind": "folder",
+      "enabled": true,
+      "title": "工具",
+      "iconKey": "Content",
+      "order": 40,
+      "action": "Builtin",
+      "arg": ""
+    },
+    {
+      "id": "leaf_checkin",
+      "parentId": "folder_daily",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "每日签到",
+      "iconKey": "attendance",
+      "order": 10,
+      "action": "Builtin",
+      "arg": "dailycheckin"
+    },
+    {
+      "id": "leaf_dailygift",
+      "parentId": "folder_daily",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "每日礼物",
+      "iconKey": "dailyGift",
+      "order": 20,
+      "action": "Builtin",
+      "arg": "dailygift"
+    },
+    {
+      "id": "leaf_event",
+      "parentId": "folder_daily",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "活动",
+      "iconKey": "EventList",
+      "order": 30,
+      "action": "Builtin",
+      "arg": "event"
+    },
+    {
+      "id": "leaf_medal",
+      "parentId": "folder_daily",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "勋章",
+      "iconKey": "Achieve",
+      "order": 40,
+      "action": "Builtin",
+      "arg": "medal"
+    },
+    {
+      "id": "leaf_dpt",
+      "parentId": "folder_combat",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "伤害统计",
+      "iconKey": "GalaxyStar",
+      "order": 10,
+      "action": "Builtin",
+      "arg": "damagerank"
+    },
+    {
+      "id": "leaf_witch",
+      "parentId": "folder_combat",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "魔女森林",
+      "iconKey": "Absolute",
+      "order": 20,
+      "action": "Builtin",
+      "arg": "witchforest"
+    },
+    {
+      "id": "leaf_breakthrough",
+      "parentId": "folder_combat",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "突破石",
+      "iconKey": "collection",
+      "order": 30,
+      "action": "Builtin",
+      "arg": "breakthroughstone"
+    },
+    {
+      "id": "leaf_enhance",
+      "parentId": "folder_combat",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "强化",
+      "iconKey": "Content",
+      "order": 40,
+      "action": "Builtin",
+      "arg": "enhance"
+    },
+    {
+      "id": "leaf_cashwin",
+      "parentId": "folder_event",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "现金商店窗",
+      "iconKey": "19thEvent",
+      "order": 10,
+      "action": "Builtin",
+      "arg": "windowcashshop"
+    },
+    {
+      "id": "leaf_emoticon",
+      "parentId": "folder_event",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "聊天表情",
+      "iconKey": "13thBalloon",
+      "order": 20,
+      "action": "Builtin",
+      "arg": "chatemoticon"
+    },
+    {
+      "id": "leaf_mystic",
+      "parentId": "folder_event",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "神秘徽章",
+      "iconKey": "mapleHelper",
+      "order": 30,
+      "action": "Builtin",
+      "arg": "mysticbadge"
+    },
+    {
+      "id": "leaf_dye",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "装备染色",
+      "iconKey": "mapleStyle",
+      "order": 10,
+      "action": "Builtin",
+      "arg": "colorprism"
+    },
+    {
+      "id": "leaf_worldmap",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "世界地图",
+      "iconKey": "mapleAlarm",
+      "order": 20,
+      "action": "Builtin",
+      "arg": "worldmap"
+    },
+    {
+      "id": "leaf_mapinfo",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "地图信息",
+      "iconKey": "itemCollection",
+      "order": 30,
+      "action": "Builtin",
+      "arg": "mapinfo"
+    },
+    {
+      "id": "leaf_mobbook",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "怪物卡片",
+      "iconKey": "collection",
+      "order": 40,
+      "action": "Builtin",
+      "arg": "monsterbook"
+    },
+    {
+      "id": "leaf_maker",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "专业技术",
+      "iconKey": "Content",
+      "order": 50,
+      "action": "Builtin",
+      "arg": "maker"
+    },
+    {
+      "id": "leaf_family",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "家族",
+      "iconKey": "Achieve",
+      "order": 60,
+      "action": "Builtin",
+      "arg": "family"
+    },
+    {
+      "id": "leaf_alliance",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "联盟",
+      "iconKey": "GalaxyStar",
+      "order": 70,
+      "action": "Builtin",
+      "arg": "alliance"
+    },
+    {
+      "id": "leaf_option",
+      "parentId": "folder_tools",
+      "kind": "leaf",
+      "enabled": true,
+      "title": "选项",
+      "iconKey": "EventList",
+      "order": 80,
+      "action": "Builtin",
+      "arg": "optionmenu"
+    }
+  ]
+}

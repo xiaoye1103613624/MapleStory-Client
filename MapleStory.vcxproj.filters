@@ -72,6 +72,9 @@
     <ClCompile Include="Character\Look\PetLook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Character\Look\TamingMobLook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\Look\Stance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,6 +96,18 @@
     <ClCompile Include="Character\CombatPanelStats.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Character\SkillBonusCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\SkillStatOverrideCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Data\EquipGrowthData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Components\GrowthTooltip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Weather\WeatherConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,8 +118,14 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Weather\WeatherBackLayers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Weather\WeatherLamps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Weather\WeatherGround.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\EquipStat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -318,6 +339,8 @@
     <ClCompile Include="Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\Components\AreaButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -392,6 +415,24 @@
     </ClCompile>
     <ClCompile Include="IO\UITypes\UICooldownList.cpp">
       <Filter>IO\UITypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UISideIconBar.cpp">
+      <Filter>IO\UITypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIContentsShortcut.cpp">
+      <Filter>IO\UITypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\SideIconConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\SideMenuConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\FeatureRegistry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Components\LocalFrameButton.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIBuffList.cpp">
       <Filter>Source Files</Filter>
@@ -495,6 +536,9 @@
     <ClCompile Include="IO\UITypes\UIRemoteGachapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIAllianceGrade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIFamily.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -534,10 +578,22 @@
     <ClCompile Include="IO\UITypes\UIChatBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIEnhance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIEquipInventory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIAndroidEquip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIMysticBadge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIDailyCheckin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIDailyGift.cpp">
@@ -595,6 +651,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIShop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIWindowCashShop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UISkillBook.cpp">
@@ -738,6 +797,9 @@
     <ClCompile Include="Util\Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util\MobElemAttr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Util\BootSplash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -750,6 +812,9 @@
     <ClCompile Include="Util\UiTheme.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util\UiThemeLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Util\UiAssetResolve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -760,6 +825,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\NxFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\QuestTextFormatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UICommonCreation.cpp">
@@ -869,6 +937,12 @@
     <ClInclude Include="Character\Look\PetLook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Character\Look\PetBodyPart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\Look\TamingMobLook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Character\Look\Stance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -900,8 +974,14 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Weather\WeatherBackLayers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Weather\WeatherLamps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Weather\WeatherGround.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Character\EquipStat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1145,6 +1225,8 @@
     <ClInclude Include="Graphics\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Graphics\Utf8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1225,6 +1307,24 @@
     </ClInclude>
     <ClInclude Include="IO\UITypes\UICooldownList.h">
       <Filter>IO\UITypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UISideIconBar.h">
+      <Filter>IO\UITypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIContentsShortcut.h">
+      <Filter>IO\UITypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\SideIconConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\SideMenuConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\FeatureRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Components\LocalFrameButton.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIBuffList.h">
       <Filter>Header Files</Filter>
@@ -1331,6 +1431,9 @@
     <ClInclude Include="Character\SkillMacros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\UITypes\UIAllianceGrade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\UITypes\UIFamily.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1370,7 +1473,16 @@
     <ClInclude Include="IO\UITypes\UIEquipInventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\UITypes\UIAndroidEquip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIMysticBadge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IO\UITypes\UIEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIDailyCheckin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIDailyGift.h">
@@ -1437,6 +1549,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIShop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIWindowCashShop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\CashShopWindowSync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\CashShopWindowPackets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UISkillBook.h">
@@ -1700,6 +1821,9 @@
     <ClInclude Include="Util\UiTheme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util\UiThemeLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Util\QuadTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1716,6 +1840,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\NxFiles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\QuestTextFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UICommonCreation.h">

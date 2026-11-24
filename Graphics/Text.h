@@ -44,6 +44,12 @@ namespace ms
 			A15B,
 			A18M,
 			A18B,
+			// 右上角游戏时间专用：22px（2026-11-23 用户要求从 44px 缩小一半）。
+			// drawtext 直接按字形像素度量画 quad（不读 DrawArgument 的 xscale/yscale），
+			// 所以字号只能靠新增真实字号，不能靠缩放参数。
+			A22M,
+			// 历史 44px 档保留枚举位，避免旧引用编译失败；不再 addfont。
+			A44M,
 			NUM_FONTS
 		};
 

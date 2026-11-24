@@ -18,6 +18,11 @@ namespace ms
 	{
 	public:
 		Locale();
+		~Locale() override;
+
+		/// false after ~Locale — Configuration::save() and other atexit paths
+		/// must not touch the translation maps (static destruction order UB).
+		static bool alive();
 
 		/// 按 Configuration::ui.language 重新加载（热重载 / 启动时调用）。
 		void reload();
@@ -46,6 +51,9 @@ namespace ms
 		/// 静态便捷入口（避免与 Singleton::get 混淆）。
 		static std::string text(const std::string& key)
 		{
+			if (!alive())
+				return key;
+
 			return Locale::get().tr(key);
 		}
 
@@ -54,6 +62,9 @@ namespace ms
 		/// 避免把没核对过的职业名一并编出来。
 		static std::string text_or(const std::string& key, const std::string& fallback)
 		{
+			if (!alive())
+				return fallback;
+
 			return Locale::get().has(key) ? Locale::get().tr(key) : fallback;
 		}
 
@@ -76,6 +87,9 @@ namespace ms
 			if (raw.empty())
 				return raw;
 
+			if (!alive())
+				return raw;
+
 			return Locale::get().tr(enum_key(prefix, raw));
 		}
 
@@ -83,7 +97,7 @@ namespace ms
 		/// 尾随空格没法直接存 —— 空格写在占位符两侧，由各语言自己决定要不要。
 		static std::string format(const std::string& key, const std::string& value)
 		{
-			std::string out = Locale::get().tr(key);
+			std::string out = alive() ? Locale::get().tr(key) : key;
 			size_t ph = out.find("{}");
 
 			if (ph == std::string::npos)
@@ -101,7 +115,7 @@ namespace ms
 		/// 宁可在界面上看出错位，也不要在取值时抛异常。
 		static std::string format_all(const std::string& key, std::initializer_list<std::string> values)
 		{
-			std::string out = Locale::get().tr(key);
+			std::string out = alive() ? Locale::get().tr(key) : key;
 			for (const std::string& v : values)
 			{
 				size_t ph = out.find("{}");

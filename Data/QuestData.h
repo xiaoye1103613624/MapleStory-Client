@@ -21,6 +21,9 @@ namespace ms
 
 		int16_t get_id() const;
 		const std::string& get_name() const;
+		// r07：名字是否为数据侧真实名（false = 本包无 QuestInfo.name/String/Quest.img，
+		// 当前 get_name() 返回的是 "Quest <id>" 兜底串）。调用方据此显示可读占位而非裸 id。
+		bool has_real_name() const;
 		const std::string& get_summary() const;
 		// QuestInfo.img/<id>/{0,1,2…} 分状态摘要；tab 0/1/2 对应可接/进行/完成。
 		const std::string& get_summary_for_tab(uint16_t tab) const;
@@ -62,5 +65,6 @@ namespace ms
 		std::vector<int16_t> jobs;
 		std::vector<int16_t> prequests;
 		bool valid;
+		bool real_name; // QuestInfo/String 是否真的给了名字（false = "Quest <id>" 兜底）
 	};
 }

@@ -24,6 +24,21 @@ namespace ms
 		// Prefer UIWindow4.img[name], else UIWindow2, else UIWindow.
 		nl::node window4(const char* name);
 
+		// 角色装备主面板根：优先 classic `UIWindow.img/Equip`（单页 + pet）。
+		// 当 live `UIWindow4.img/Equip` 已是 192 多页签壳（含 Tab/Android）时，
+		// `window4("Equip")` 仍返回原生壳供 Android/totem/Tab 接线；主窗不得被顶掉。
+		nl::node equip_panel_root();
+
+		// 192 原生 Equip 多页签壳（Android/Dragon/Mechanic/…）。无则退回 window4("Equip")。
+		nl::node equip_native_root();
+
+		// UI_004 强化功能族专用根：独立 UIWindow2Enh.img（192 强化节点子集）。
+		// 不合并进 UIWindow2.img，避免 64MB 全量撑大 UI.nx（AGENTS §3.1 / D2=B）。
+		nl::node window_enh(const char* name);
+
+		// 192 装备 tooltip 图形根：独立 UIToolTip.img（Star/AddOption/Summary/LookAhead）。
+		nl::node tooltip();
+
 		// ThemePack-aware StatusBar root (classic StatusBar.img vs StatusBar3.img).
 		nl::node status_bar_root();
 		bool has_statusbar3();

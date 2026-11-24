@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Misc.h"
+#include "MobElemAttr.h"
 #include "Locale.h"
 
 #include "Resource/ImgSource.h"
@@ -26,6 +27,7 @@
 
 #include <algorithm>
 #include <locale>
+#include <map>
 #include <sstream>
 #include <unordered_set>
 
@@ -155,6 +157,9 @@ namespace ms
 				};
 			}
 
+			// 前向声明：life_map_index() 定义于本文件后段（扫一次 Map002 建 (kind,id)->map 表）。
+			static const std::map<std::pair<uint8_t, int32_t>, int32_t>& life_map_index();
+
 			std::vector<MapSearchEntry> get_map_search_index()
 			{
 				static std::vector<MapSearchEntry> cache;
@@ -196,15 +201,118 @@ namespace ms
 					}
 				}
 
+				// 192 原生搜索轨"搜怪物名"：追加怪物/NPC 名字条目。
+				// 方案B（用户 2026-11-21 拍板）：只收录至少在一张地图 life 里出现过的
+				// 实体，避免"搜到却提示未在任何地图出现"的死结果。
+				{
+					const auto& lifeidx = life_map_index();
+					nl::node mobimg = nl::nx::String["Mob.img"];
+					if (mobimg)
+					{
+						for (nl::node m : mobimg)
+						{
+							try
+							{
+								std::string nm = m["name"].get_string();
+								int32_t id = std::stoi(m.name());
+								if (id > 0 && !nm.empty()
+									&& lifeidx.find(std::make_pair(static_cast<uint8_t>(1), id)) != lifeidx.end())
+									cache.push_back({ id, nm, "", 1, 0 });
+							}
+							catch (...)
+							{
+								// 忽略非数字键 / 缺 name 的异常条目。
+							}
+						}
+					}
+
+					nl::node npcimg = nl::nx::String["Npc.img"];
+					if (npcimg)
+					{
+						for (nl::node n : npcimg)
+						{
+							try
+							{
+								std::string nm = n["name"].get_string();
+								int32_t id = std::stoi(n.name());
+								if (id > 0 && !nm.empty()
+									&& lifeidx.find(std::make_pair(static_cast<uint8_t>(2), id)) != lifeidx.end())
+									cache.push_back({ id, nm, "", 2, 0 });
+							}
+							catch (...)
+							{
+							}
+						}
+					}
+				}
+
+				// 排序保序：地图在前、怪物/NPC 在后，各自按 id 升序。
 				std::sort(cache.begin(), cache.end(),
 					[](const MapSearchEntry& a, const MapSearchEntry& b)
 					{
+						if (a.kind != b.kind)
+							return a.kind < b.kind;
 						return a.id < b.id;
 					});
 
 				built = true;
 
 				return cache;
+			}
+
+			// 反查某实体(mob/npc)首次出现的地图 id。
+			// 首次调用**单次**扫 Map002 建好 (kind,id)->map 全量反查表，后续 O(1)；
+			// 绝不每次点击都全表扫描（8M 节点会卡死 UI）。
+			static const std::map<std::pair<uint8_t, int32_t>, int32_t>& life_map_index()
+			{
+				static std::map<std::pair<uint8_t, int32_t>, int32_t> index;
+				static bool built = false;
+				if (built)
+					return index;
+
+				nl::node root = nl::nx::Map002;
+				if (root)
+				{
+					// Map002 结构：Map/Map<prefix>/<id9>.img/life/<i>/{id,type}
+					for (nl::node cat : root["Map"])
+					{
+						for (nl::node mapimg : cat)
+						{
+							std::string name = mapimg.name();
+							if (name.size() < 5 || name.substr(name.size() - 4) != ".img")
+								continue;
+							int32_t mapid = 0;
+							try
+							{
+								mapid = std::stoi(name.substr(0, name.size() - 4));
+							}
+							catch (...)
+							{
+								continue;
+							}
+							for (nl::node life : mapimg["life"])
+							{
+								std::string t = life["type"].get_string();
+								if (t != "m" && t != "n")
+									continue;
+								uint8_t kind = (t == "m") ? 1 : 2;
+								int32_t id = static_cast<int32_t>(life["id"]);
+								if (id <= 0)
+									continue;
+								index.emplace(std::make_pair(kind, id), mapid); // 只记首次出现
+							}
+						}
+					}
+				}
+				built = true;
+				return index;
+			}
+
+			int32_t find_map_of_life(int32_t life_id, uint8_t kind)
+			{
+				const auto& index = life_map_index();
+				auto it = index.find(std::make_pair(kind, life_id));
+				return it == index.end() ? 0 : it->second;
 			}
 
 			std::string get_map_category(int32_t mapid)
@@ -253,11 +361,29 @@ namespace ms
 				return "etc";
 			}
 
+			// 【查询专用地图 node】读取任意地图的 life/mob 数据时必须用这个，而不是
+			// get_map_node_name()：后者走 ensure_map() 会重绑全局 nl::nx::Map002 并
+			// LRU 淘汰当前渲染仍持有的地图 file，导致 node 悬垂 → 0xc0000374 堆损坏。
+			// ensure_map_query() 用独立 file 缓存，绝不触碰 Map002 / s_map_files。
+			// 返回的 node 仅在其 file 留在查询缓存期间有效（QUERY_MAP_KEEP=32），
+			// 调用方须即时把需要的字段拷贝成 std::string/数值，不得长期持有。
+			static nl::node query_map_node(int32_t mapid)
+			{
+				if (mapid <= 0)
+					return nl::node{};
+				return res::ImgSource::ensure_map_query(mapid);
+			}
+
 			std::unordered_map<int64_t, std::pair<std::string, std::string>> get_life_on_map(int32_t mapid)
 			{
 				std::unordered_map<int64_t, std::pair<std::string, std::string>> map_life;
+				// 查询任意地图 life 必须走隔离缓存：绝不重绑渲染用的全局 Map002。
+				if (mapid <= 0)
+					return map_life;
 
-				nl::node portal = get_map_node_name(mapid);
+				nl::node portal = query_map_node(mapid);
+				if (!portal)
+					return map_life;
 
 				for (nl::node life : portal["life"])
 				{
@@ -295,7 +421,8 @@ namespace ms
 				std::vector<MapMobInfo> result;
 				std::unordered_set<int32_t> seen;
 
-				nl::node portal = get_map_node_name(mapid);
+				// 手册/侧栏查任意地图 mob，走隔离缓存，绝不重绑渲染用 Map002。
+				nl::node portal = query_map_node(mapid);
 
 				if (!portal)
 					return result;
@@ -324,6 +451,8 @@ namespace ms
 					entry.max_hp = info["maxHP"] ? static_cast<int32_t>(info["maxHP"].get_integer()) : 0;
 					entry.exp = info["exp"] ? static_cast<int32_t>(info["exp"].get_integer()) : 0;
 					entry.boss = info["boss"] ? (info["boss"].get_integer() != 0) : false;
+					if (const char* code = data::mob_elem_attr(life_id))
+						entry.elem_attr = code;
 					result.push_back(std::move(entry));
 				}
 
@@ -340,6 +469,13 @@ namespace ms
 
 			nl::node get_map_node_name(int32_t mapid)
 			{
+				// 世界地图悬停到无 map_ids 的点位会传 mapid=0（UIWorldMap.cpp:667 的
+				// spot_map_id 兜底）。0 是非法地图，ensure_map(0)→load_single_map(0)
+				// 拼出不存在的 img 路径并写全局 nl::node，实测触发 0xc0000374 堆损坏。
+				// 源头拦截：非法 id 直接返回空节点，绝不起加载。
+				if (mapid <= 0)
+					return nl::node{};
+
 				// Map002 是按需懒加载源（默认只绑玩家当前所在地图），
 				// 世界地图/任务窗查询任意地图前必须先装载该 img，否则恒为空节点。
 				res::ImgSource::ensure_map(mapid);

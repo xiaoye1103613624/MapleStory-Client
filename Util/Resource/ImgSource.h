@@ -52,7 +52,15 @@ namespace ms
 			static void ensure_char_select();
 
 			// 按需装载单张地图到 Map002（避免进图时扫全 Map/ 导致未响应）。
+			// 仅供【渲染当前地图】路径使用；会重绑全局 nl::nx::Map002 并淘汰 s_map_files。
 			static void ensure_map(int32_t mapid);
+
+			// 【查询专用】返回指定地图 img 的 node（Map/Map<prefix>/<id>.img），
+			// 使用与渲染 Map002 完全隔离的独立 file 缓存，绝不重绑全局 nl::nx::Map002、
+			// 绝不淘汰 s_map_files。用于世界地图 hover / 手册等读取任意地图 life 的场景：
+			// 这些场景若在渲染图之外重绑 Map002，会让渲染持有的 node 悬垂 → 0xC0000374。
+			// 返回的 node 只在下一次 ensure_map_query 调用前可靠（查询方须即时拷贝所需文本）。
+			static nl::node ensure_map_query(int32_t mapid);
 
 			// 释放所有 img_file 实例与目录记录，并清空 RootTable。
 			static void close();
@@ -84,6 +92,13 @@ namespace ms
 				std::unique_ptr<nl::img_file> file;
 			};
 			static std::vector<map_slot> s_map_files;
+			// 查询专用地图 file 缓存（与世界地图 hover / 手册的 life 查询）。
+			// 刻意与 s_map_files / Map002 完全隔离：查询任意地图绝不重绑全局
+			// nl::nx::Map002，否则当前地图渲染持有的 node 会因 file 被淘汰而悬垂
+			// （node.hpp:62-64 明示 file 删除后 node 失效且 operator bool 检测不出）→
+			// 0xc0000374 堆损坏闪退。同一把 s_load_mtx 保护。
+			static std::vector<map_slot> s_query_files;
+			static constexpr size_t QUERY_MAP_KEEP = 32;
 			// 标准根名 -> 目录路径（字符串，避免头暴露 filesystem）。
 			static std::map<std::string, std::string> s_dirs;
 			// 已加载的物理根标识（标准根名；Map 的 helper 标识为 "Map"，地图标识为 "Map002"）。

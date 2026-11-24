@@ -54,15 +54,17 @@ namespace ms
 		return false;
 	}
 
-	// [DBG-INIT] 联调诊断桩：闭环后不再落文件（no-op），保留以便将来联调。
-	// Android 恢复落文件：无控制台、Release 下 LOG() 为 no-op，init 阶段
-	// 只能靠这个文件化日志观察（输出到应用外部存储根 = 进程 cwd）。
+	// [DBG-INIT] 启动面包屑：Windows/Android 均落盘 _init_debug.log（cwd）。
+	// Release 下 LOG() 为 no-op，堆损坏排查时靠此文件定位最后成功阶段。
 	static void dbginit(const std::string& stage)
 	{
-#ifdef __ANDROID__
 		std::ofstream f("_init_debug.log", std::ios::app);
-		f << stage << '\n';
-#endif
+		if (!f)
+			return;
+		const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()).count();
+		f << ms << ' ' << stage << '\n';
+		f.flush();
 	}
 
 	Error init()
@@ -93,8 +95,11 @@ namespace ms
 			}
 		}
 		dbginit("window:ok");
+		ms::perf::mark("BOOT", "after_window");
 		// Pre-WZ: procedural spinner (1B/2A). Post-WZ: Logo.img/Nexon, then login.
 		BootSplash::get().pump("Loading...");
+		dbginit("splash1:ok");
+		ms::perf::mark("BOOT", "after_splash1");
 
 		// 差异资源同步必须在 ResourceService 之前：按最终 img/wz/nx 文件更新本地。
 		{
@@ -105,6 +110,7 @@ namespace ms
 			}
 		}
 		dbginit("patch:ok");
+		ms::perf::mark("BOOT", "after_patch");
 		BootSplash::get().pump("Loading data...");
 
 		// 数据源（img / wz / nx）在运行时按 data.format 选择，统一经由资源门面装载。
@@ -119,19 +125,23 @@ namespace ms
 				<< ms::res::ResourceService::get().diagnostics(true));
 		}
 		dbginit("resource:ok");
+		ms::perf::mark("BOOT", "after_resource");
 		// img：登录根就绪后立即在后台预热选角根（Character/Item/… +
 		// BodyDrawInfo）。它与片头/登录界面并行，等用户点完连接时通常
 		// 已装载完——此前这一步在登录响应后同步执行，会冻结 Wait 弹窗
 		// 半分钟级（表现=「连接加载条卡住不动，过一会才动」）。
 		ms::res::ResourceService::get().prewarm_game_roots();
+		dbginit("prewarm:ok");
 		BootSplash::get().try_load_nexon();
 		BootSplash::get().pump("Connecting...");
+		dbginit("splash_connect:ok");
 
 		if (Error error = Session::get().init()) {
 			dbginit(std::string("session:FAIL ") + error.get_message());
 			return error;
 		}
 		dbginit("session:ok");
+		ms::perf::mark("BOOT", "after_session");
 		BootSplash::get().pump("Connecting...");
 
 		if (Error error = Sound::init()) {
@@ -139,6 +149,7 @@ namespace ms
 			return error;
 		}
 		dbginit("sound:ok");
+		ms::perf::mark("BOOT", "after_sound");
 		BootSplash::get().pump("Preparing...");
 
 		if (Error error = Music::init()) {
@@ -146,6 +157,7 @@ namespace ms
 			return error;
 		}
 		dbginit("music:ok");
+		ms::perf::mark("BOOT", "after_music");
 		BootSplash::get().pump("Preparing...");
 
 		Char::init();
@@ -304,7 +316,13 @@ namespace ms
 			}
 		}
 
+		dbginit(std::string("loop:exit connected=")
+			+ (Session::get().is_connected() ? "1" : "0")
+			+ " ui=" + (UI::get().not_quitted() ? "1" : "0")
+			+ " win=" + (Window::get().not_closed() ? "1" : "0"));
+		ms::perf::mark("BOOT", "loop_exit");
 		Sound::close();
+		dbginit("sound:closed");
 	}
 
 	void start()
@@ -323,32 +341,32 @@ namespace ms
 				else
 					LOG(LOG_ERROR, message);
 
-				#ifdef __ANDROID__
-				// Release 构建下 LOG() 是 no-op，错误原因必须落到文件才能诊断。
 				dbginit(std::string("start:init FAILED ") + message + (args ? args : ""));
-				#endif
 
 				if (can_retry)
 					LOG(LOG_INFO, "Enter 'retry' to try again.");
 
+				// Windows 子系统无控制台：cin 会立刻 EOF，禁止阻塞/空转。
 				std::string command;
-				std::cin >> command;
+				if (std::cin.good())
+					std::cin >> command;
 
 				if (can_retry && command == "retry")
 					start();
 			}
 			else
 			{
+				dbginit("loop:enter");
 				loop();
+				dbginit("loop:done");
 			}
 		}
 		catch (const std::exception& ex)
 		{
 			LOG(LOG_ERROR, "MapleStory::start uncaught: " << ex.what());
-#ifdef __ANDROID__
 			dbginit(std::string("start:UNCAUGHT ") + ex.what());
-#endif
 		}
+		dbginit("start:return");
 	}
 }
 
@@ -410,9 +428,17 @@ int main(int argc, char** argv)
 	if (ms::has_argument(arg_count, arg_values, "--resource-probe"))
 		return ms::ResourceProbe::run_probe(ms::has_argument(arg_count, arg_values, "--verbose"));
 
+	{
+		std::ofstream f("_init_debug.log", std::ios::trunc);
+		f << "WinMain enter\n";
+	}
 	ms::HardwareInfo();
 	ms::ScreenResolution();
 	ms::start();
+	{
+		std::ofstream f("_init_debug.log", std::ios::app);
+		f << "WinMain exit\n";
+	}
 
 	return 0;
 }

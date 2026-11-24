@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "GraphicsGL.h"
 #include "Utf8.h"
+#include <cmath>
 
 #include "../Configuration.h"
 #include "../Data/ItemData.h"
@@ -211,6 +212,42 @@ namespace ms
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ATLASW, ATLASH, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
+		// 径向渐变纹理：中心 alpha=255 → 边缘 alpha=0，smoothstep 平滑衰减，
+		// 采样线性过滤保证光晕边缘无矩形、无硬边（灯光/月光/角色光共用）。
+		glGenTextures(1, &glow_texture_id);
+		glBindTexture(GL_TEXTURE_2D, glow_texture_id);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		{
+			const int n = GLOW_TEX_SIZE;
+			std::vector<uint8_t> px(static_cast<size_t>(n) * n * 4, 0);
+			const float c = (n - 1) * 0.5f;
+			for (int y = 0; y < n; y++)
+			{
+				for (int x = 0; x < n; x++)
+				{
+					const float dx = (x - c) / c;
+					const float dy = (y - c) / c;
+					const float d = std::sqrt(dx * dx + dy * dy); // 0 中心 .. 1 边缘（对角≈1.41）
+					float a = 1.0f - d;
+					if (a < 0.0f) a = 0.0f;
+					// smoothstep：中段变化快、两端平缓，光晕更"柔"更自然。
+					a = a * a * (3.0f - 2.0f * a);
+					// RGB 也写渐变值：flush 绘制时临时把 fontregion 设为 0，
+					// 统一走 shader 的 texture2D(rgba)*colormod 分支，RGB×A 双重衰减更柔。
+					const uint8_t av = static_cast<uint8_t>(a * 255.0f + 0.5f);
+					const size_t i = (static_cast<size_t>(y) * n + x) * 4;
+					px[i + 0] = av; px[i + 1] = av; px[i + 2] = av;
+					px[i + 3] = av;
+				}
+			}
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, n, n, 0, GL_RGBA, GL_UNSIGNED_BYTE, px.data());
+		}
+		glBindTexture(GL_TEXTURE_2D, atlas); // 还原，后续字体/资源照常用 atlas
+
 		fontborder.set_y(1);
 
 		const std::string FONT_NORMAL = Setting<FontPathNormal>().get().load();
@@ -234,6 +271,10 @@ namespace ms
 		addfont(FONT_BOLD_STR, Text::Font::A15B, 0, 15);
 		addfont(FONT_NORMAL_STR, Text::Font::A18M, 0, 18);
 		addfont(FONT_BOLD_STR, Text::Font::A18B, 0, 18);
+		// 游戏时间 HUD 字体：22px（2026-11-23 用户要求从 44 缩小一半）。
+		addfont(FONT_NORMAL_STR, Text::Font::A22M, 0, 22);
+		// A44M 保留加载（NUM_FONTS 循环按满槽遍历，留空 face 有崩溃风险）。
+		addfont(FONT_NORMAL_STR, Text::Font::A44M, 0, 44);
 
 		// 预留 CJK 字形区（每字体一块 WIDE_BLOCK²，紧跟 ASCII 条带之下），
 		// 并把总字体条带高度计入 fontymax——位图打包从 border=(0,fontymax)
@@ -844,6 +885,9 @@ namespace ms
 		return inserted;
 	}
 
+	// 分层夜色：合并 tint 栈（前置声明，定义在 drawscreenmultiply 之后）。
+	static Color combined_tint(const std::vector<Color>& stack);
+
 	void GraphicsGL::draw(const nl::bitmap& bmp, const Rectangle<int16_t>& rect, const Range<int16_t>& vertical, const Range<int16_t>& horizontal, const Color& color, float angle)
 	{
 		if (locked)
@@ -869,12 +913,14 @@ namespace ms
 		offset.left += horizontal.first();
 		offset.right -= horizontal.second();
 
+		// 分层夜色：场景 sprite quad 乘当前 tint（alpha 保留）。UI/粒子不走此函数。
+		const Color tinted = tint_stack.empty() ? color : color * combined_tint(tint_stack);
 		quads.emplace_back(
 			rect.left() + horizontal.first(),
 			rect.right() - horizontal.second(),
 			rect.top() + vertical.first(),
 			rect.bottom() - vertical.second(),
-			offset, color, angle
+			offset, tinted, angle
 		);
 	}
 
@@ -1933,6 +1979,61 @@ namespace ms
 	{
 		drawrectangle(0, 0, VWIDTH, VHEIGHT, red, green, blue, alpha);
 	}
+	void GraphicsGL::drawrectangle_mul(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue)
+	{
+		if (locked)
+			return;
+		// alpha=1：乘色强度由 rgb 决定（越暗压得越黑），不再叠加 alpha。
+		quads_mul.emplace_back(x, x + width, y, y + height, nulloffset, Color(red, green, blue, 1.0f), 0.0f);
+	}
+
+	void GraphicsGL::drawscreenmultiply(float red, float green, float blue, float amount)
+	{
+		if (locked || amount <= 0.0f)
+			return;
+		if (amount > 1.0f) amount = 1.0f;
+		// 乘色系数 = lerp(1, tint, amount)，amount 平滑过渡无跳变；不再用半透明灰蒙版洗白画面。
+		const float mr = 1.0f + (red - 1.0f) * amount;
+		const float mg = 1.0f + (green - 1.0f) * amount;
+		const float mb = 1.0f + (blue - 1.0f) * amount;
+		drawrectangle_mul(0, 0, VWIDTH, VHEIGHT, mr, mg, mb);
+	}
+
+	void GraphicsGL::push_tint(const Color& color)
+	{
+		tint_stack.push_back(color);
+	}
+
+	void GraphicsGL::pop_tint()
+	{
+		if (!tint_stack.empty())
+			tint_stack.pop_back();
+	}
+
+	// 当前场景 tint（栈顶所有 tint 相乘，alpha 恒 1 不改透明度）。
+	static Color combined_tint(const std::vector<Color>& stack)
+	{
+		Color c(1.0f, 1.0f, 1.0f, 1.0f);
+		for (const Color& t : stack)
+			c = c * t;
+		return c;
+	}
+
+	void GraphicsGL::draw_glow(int16_t x, int16_t y, int16_t radius,
+		float red, float green, float blue, float intensity)
+	{
+		if (locked || radius <= 0 || intensity <= 0.0f)
+			return;
+		if (x + radius < 0 || x - radius > VWIDTH || y + radius < 0 || y - radius > VHEIGHT)
+			return;
+		// texcoord 用 1..GLOW_TEX_SIZE（避开 y==0 的纯色分支），覆盖整张渐变纹理。
+		const Offset off(0, 1, GLOW_TEX_SIZE, GLOW_TEX_SIZE - 1);
+		glow_quads.emplace_back(
+			static_cast<GLshort>(x - radius), static_cast<GLshort>(x + radius),
+			static_cast<GLshort>(y - radius), static_cast<GLshort>(y + radius),
+			off, Color(red, green, blue, intensity), 0.0f);
+	}
+
 
 	void GraphicsGL::lock()
 	{
@@ -1949,23 +2050,8 @@ namespace ms
 		return locked;
 	}
 
-	void GraphicsGL::flush(float opacity)
+	void GraphicsGL::draw_batches()
 	{
-		bool coverscene = opacity != 1.0f;
-
-		if (coverscene)
-		{
-			float complement = 1.0f - opacity;
-			Color color = Color(0.0f, 0.0f, 0.0f, complement);
-
-			quads.emplace_back(SCREEN.left(), SCREEN.right(), SCREEN.top(), SCREEN.bottom(), nulloffset, color, 0.0f);
-		}
-
-		// 中性黑兜底：任何一帧 quads 为空（换图装图竞态、atlas_clear_pending
-		// 延迟清理、Stage 尚未激活）时露出的应是黑底而非刺眼纯白。
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
 		GLsizeiptr csize = quads.size() * sizeof(Quad);
 		GLsizeiptr fsize = quads.size() * Quad::LENGTH;
 
@@ -2002,6 +2088,42 @@ namespace ms
 		glDisableVertexAttribArray(attribute_coord);
 		glDisableVertexAttribArray(attribute_color);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		// 乘色批次（夜色 multiply）：主批次之后、加色之前单独一次 draw。
+		// 混合 GL_DST_COLOR/GL_ZERO => 结果 = dst * src.rgb，逐像素压暗而非盖灰蒙版。
+		if (!quads_mul.empty())
+		{
+			const GLsizeiptr msize = quads_mul.size() * sizeof(Quad);
+			const GLsizeiptr mfsize = quads_mul.size() * Quad::LENGTH;
+			glBlendFunc(GL_DST_COLOR, GL_ZERO);
+			glEnableVertexAttribArray(attribute_coord);
+			glEnableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, msize, quads_mul.data(), GL_STREAM_DRAW);
+#ifdef USE_OPENGL_ES
+			{
+				const size_t icount = quads_mul.size() * 6;
+				std::vector<GLushort> indices(icount);
+				for (size_t i = 0; i < quads_mul.size(); ++i)
+				{
+					GLushort b = static_cast<GLushort>(i * 4);
+					indices[i*6+0]=b; indices[i*6+1]=b+1; indices[i*6+2]=b+2;
+					indices[i*6+3]=b; indices[i*6+4]=b+2; indices[i*6+5]=b+3;
+				}
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(GLushort), indices.data(), GL_STREAM_DRAW);
+				glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(icount), GL_UNSIGNED_SHORT, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			}
+#else
+			glDrawArrays(GL_QUADS, 0, mfsize);
+#endif
+			glDisableVertexAttribArray(attribute_coord);
+			glDisableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			quads_mul.clear();
+		}
 
 		// 加色批次（灯光/光晕/光池）：主批次画完后单独一次 draw。
 		// 混合切到 GL_SRC_ALPHA/GL_ONE（dst + src*alpha），画完立即还原，
@@ -2045,8 +2167,94 @@ namespace ms
 			quads_add.clear();
 		}
 
+		// 径向光晕批次：独立渐变纹理 + 加色混合，边缘由纹理 alpha 平滑到 0（无矩形边）。
+		// 临时把 shader 的 atlassize 指向渐变纹理尺寸、fontregion=0，使其统一走
+		// texture2D(rgba)*colormod 分支；绘制完恢复 atlas/atlassize/fontregion。
+		if (!glow_quads.empty() && glow_texture_id != 0)
+		{
+			const GLsizeiptr gsize = glow_quads.size() * sizeof(Quad);
+			const GLsizeiptr gfsize = glow_quads.size() * Quad::LENGTH;
+
+			glBindTexture(GL_TEXTURE_2D, glow_texture_id);
+			glUniform2f(uniform_atlassize, GLOW_TEX_SIZE, GLOW_TEX_SIZE);
+			glUniform1i(uniform_fontregion, 0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			glEnableVertexAttribArray(attribute_coord);
+			glEnableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, gsize, glow_quads.data(), GL_STREAM_DRAW);
+#ifdef USE_OPENGL_ES
+			{
+				const size_t icount = glow_quads.size() * 6;
+				std::vector<GLushort> indices(icount);
+				for (size_t i = 0; i < glow_quads.size(); ++i)
+				{
+					GLushort b = static_cast<GLushort>(i * 4);
+					indices[i * 6 + 0] = b;
+					indices[i * 6 + 1] = b + 1;
+					indices[i * 6 + 2] = b + 2;
+					indices[i * 6 + 3] = b;
+					indices[i * 6 + 4] = b + 2;
+					indices[i * 6 + 5] = b + 3;
+				}
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), indices.data(), GL_STREAM_DRAW);
+				glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(icount), GL_UNSIGNED_SHORT, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			}
+#else
+			glDrawArrays(GL_QUADS, 0, gfsize);
+#endif
+			glDisableVertexAttribArray(attribute_coord);
+			glDisableVertexAttribArray(attribute_color);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			// 恢复主 atlas 的 uniform 状态，供下一帧/其它绘制使用。
+			glBindTexture(GL_TEXTURE_2D, atlas);
+			glUniform2f(uniform_atlassize, ATLASW, ATLASH);
+			glUniform1i(uniform_fontregion, fontymax);
+			glow_quads.clear();
+		}
+	}
+
+	void GraphicsGL::flush_scene()
+	{
+		// 一帧唯一一次清屏放在这里（Stage::draw 末尾、UI 之前）：先清黑底，
+		// 再把场景主批次 + 夜色乘色 + 灯光/光晕即时提交。这样夜色只乘场景，
+		// 之后 UI::draw 入队的 quad 在帧末 flush() 中绘制，不再被压暗。
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		draw_batches();
+		// 主批次已提交并复制进 VBO，清空以便 UI 从空队列开始。
+		if (!locked)
+			quads.clear();
+		scene_flushed_ = true;
+	}
+
+	void GraphicsGL::flush(float opacity)
+	{
+		if (!scene_flushed_)
+		{
+			// 无 Stage 场景的帧（登录/过场）：本帧还没有清屏，这里兜底。
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+
+		// fade 黑幕覆盖整帧（作用于已提交到 framebuffer 的场景 + 本批 UI）。
+		// 原 flush 在批次首尾临时压入/弹出，这里等价保留在 UI 批次上。
+		const bool coverscene = opacity != 1.0f;
+		if (coverscene)
+		{
+			const float complement = 1.0f - opacity;
+			const Color color = Color(0.0f, 0.0f, 0.0f, complement);
+			quads.emplace_back(SCREEN.left(), SCREEN.right(), SCREEN.top(), SCREEN.bottom(), nulloffset, color, 0.0f);
+		}
+
+		draw_batches();
+
 		if (coverscene)
 			quads.pop_back();
+		scene_flushed_ = false;   // 下一帧复位
 	}
 
 	void GraphicsGL::read_pixels(int16_t width, int16_t height, uint8_t* out) const
@@ -2213,12 +2421,13 @@ namespace ms
 		offset.bottom -= vertical.second();
 		offset.left += horizontal.first();
 		offset.right -= horizontal.second();
+		const Color tinted = tint_stack.empty() ? color : color * combined_tint(tint_stack);
 		quads.emplace_back(
 			rect.left() + horizontal.first(),
 			rect.right() - horizontal.second(),
 			rect.top() + vertical.first(),
 			rect.bottom() - vertical.second(),
-			offset, color, angle
+			offset, tinted, angle
 		);
 	}
 

@@ -133,7 +133,8 @@ namespace ms
 	max_level(0),
 	npc(0),
 	area(0),
-	valid(false)
+	valid(false),
+	real_name(false)
 	{
 		std::string sid = std::to_string(id);
 
@@ -185,6 +186,10 @@ namespace ms
 				area = static_cast<int32_t>(info["area"].get_integer());
 		}
 
+		// 本包不暴露 String/Quest.img，QuestInfo.img/<id>/name 也可能为空。
+		// 保留 "Quest <id>" 仅作最后兜底（避免空名破坏列表/排序），但记录它**不是**真实名，
+		// 由 has_real_name() 告知 UI 侧改用可读占位，不把裸 id 当正式任务名展示（r07）。
+		real_name = !name.empty();
 		if (name.empty())
 			name = "Quest " + sid;
 
@@ -225,6 +230,11 @@ namespace ms
 	const std::string& QuestData::get_name() const
 	{
 		return name;
+	}
+
+	bool QuestData::has_real_name() const
+	{
+		return real_name;
 	}
 
 	const std::string& QuestData::get_summary() const

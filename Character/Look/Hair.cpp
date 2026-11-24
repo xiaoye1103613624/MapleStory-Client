@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Hair.h"
+#include "../../Graphics/TintContext.h"
 
 #include <iostream>
 
@@ -28,6 +29,7 @@ namespace ms
 	Hair::Hair(int32_t hairid, const BodyDrawInfo& drawinfo)
 	{
 		nl::node hairnode = nl::nx::Character["Hair"]["000" + std::to_string(hairid) + ".img"];
+		TintContext::get().register_tree(hairnode, 1); // ColorPrism HAIR sentinel
 
 		for (auto stance_iter : Stance::names)
 		{

@@ -18,6 +18,7 @@
 #include "Texture.h"
 
 #include "GraphicsGL.h"
+#include "TintContext.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -30,10 +31,12 @@ namespace ms
 {
 	static Point<int16_t> sanitize_origin(Point<int16_t> origin, Point<int16_t> dimensions)
 	{
-		// BeiDou .nxcache / 个别 img 向量会给出远超画布的 origin（如 1156,8531），
-		// 导致整页 UI 飘走、像「没背景 / 双框 / 卷轴错位」。超出合理范围则归零。
-		const int32_t lim_x = std::max<int32_t>(64, std::abs(dimensions.x()) * 2 + 64);
-		const int32_t lim_y = std::max<int32_t>(64, std::abs(dimensions.y()) * 2 + 64);
+		// 仅过滤明显损坏的向量（nxcache/脏 img 曾见 1156,8531）。
+		// 不可按「画布尺寸×2」截断：192 WorldMapSearch/notice origin=(-28,-221)、
+		// StatusBar3 Menu ox≈-174 等是合法的父节点相对落点；旧阈值会把提示文案
+		// 打回输入框旁、菜单钮叠死。下限 1024 仍能拦掉千级脏数据。
+		const int32_t lim_x = std::max<int32_t>(1024, std::abs(dimensions.x()) * 8 + 256);
+		const int32_t lim_y = std::max<int32_t>(1024, std::abs(dimensions.y()) * 8 + 256);
 
 		if (std::abs(static_cast<int32_t>(origin.x())) > lim_x
 			|| std::abs(static_cast<int32_t>(origin.y())) > lim_y)
@@ -93,6 +96,27 @@ namespace ms
 	{
 		if (!is_valid())
 			return;
+
+		// ColorPrism: draw-time per-character tint. Shared Clothing can't carry a baked
+		// colour, so ask the active draw context for this frame's HSL and redirect to a
+		// cached recoloured raw-atlas id. No tint pushed => original path, zero change.
+		TintCache::HSL hsl;
+		if (TintContext::get().resolve_hsl(bitmap.id(), hsl))
+		{
+			const size_t raw = TintCache::get().tinted(*this, hsl);
+			if (raw)
+			{
+				GraphicsGL::get().draw_raw_ex(
+					raw,
+					args.get_rectangle(origin, dimensions),
+					vertical,
+					horizontal,
+					args.get_color(),
+					args.get_angle()
+				);
+				return;
+			}
+		}
 
 		GraphicsGL::get().draw(
 			bitmap,

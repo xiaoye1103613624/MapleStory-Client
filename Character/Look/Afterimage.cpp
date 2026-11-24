@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Afterimage.h"
 
+#include "../../Graphics/TintContext.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -33,6 +34,8 @@ namespace ms
 		{
 			std::string strid = string_format::extend_id(skill_id, 7);
 			src = nl::nx::Skill[string_format::skill_namespace(skill_id) + ".img"]["skill"][strid]["afterimage"][name][stance_name];
+			// ColorPrism: skill afterimage frames tint under skillId + SKILL_BIAS.
+			TintContext::get().register_tree(src, skill_id + 30000000);
 		}
 
 		if (!src)

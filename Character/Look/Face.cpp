@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Face.h"
+#include "../../Graphics/TintContext.h"
 
 #include <iostream>
 
@@ -69,6 +70,7 @@ namespace ms
 	{
 		std::string strid = "000" + std::to_string(faceid);
 		nl::node facenode = nl::nx::Character["Face"][strid + ".img"];
+		TintContext::get().register_tree(facenode, 2); // ColorPrism FACE sentinel
 
 		for (auto iter : Expression::names)
 		{

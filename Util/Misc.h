@@ -120,21 +120,33 @@ namespace ms
 				int32_t exp = 0;
 				// boss flag from Mob.img/info/boss; false when the node is missing.
 				bool boss = false;
+				// 192 elemAttr code (I/L/F/S/H/D/P + 0..3); empty when no data.
+				std::string elem_attr;
 			};
 
 			// Unique mobs on a map (life type "m"), sorted by level then id.
 			std::vector<MapMobInfo> get_mobs_on_map(int32_t mapid);
 
 			// One searchable entry for the map-search panel.
+			// kind 区分结果类型：0=地图(field) 1=怪物(mob) 2=NPC。
+			// mapid 字段：对地图是地图 id；对 mob/npc 是其实体 id（跳转/选中时
+			// 由调用方按 kind 分流），map_of 记录该实体首次出现的地图 id。
 			struct MapSearchEntry
 			{
 				int32_t id = 0;
 				std::string name;
 				std::string street;
+				uint8_t kind = 0;
+				int32_t map_of = 0;
 			};
 
-			// All maps with name/street, built once and cached. Used by UIMapSearchPanel.
+			// 统一检索索引：地图名/街名 + 怪物名 + NPC 名，built once and cached。
+			// 供 192 原生搜索轨与 UIMapSearchPanel 共用。
 			std::vector<MapSearchEntry> get_map_search_index();
+
+			// 反查某实体(mob/npc)首次出现的地图 id；找不到返回 0。带 memo 缓存，
+			// 只在选中搜索结果的怪物/NPC 行时调用，不在启动阶段扫全图。
+			int32_t find_map_of_life(int32_t life_id, uint8_t kind);
 
 			// Returns the name of the node, under which the argument map id is in
 			nl::node get_map_node_name(int32_t mapid);

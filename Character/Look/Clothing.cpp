@@ -16,6 +16,7 @@
 //	along with this program.  If not, see <https://www.gnu.org/licenses/>.		//
 //////////////////////////////////////////////////////////////////////////////////
 #include "Clothing.h"
+#include "../../Graphics/TintContext.h"
 
 #include "../../Data/WeaponData.h"
 
@@ -202,7 +203,11 @@ namespace ms
 						}
 					}
 
-					stances[stance][z].emplace(frame, partnode)->second.shift(shift);
+					auto& tex = stances[stance][z].emplace(frame, partnode)->second;
+				// ColorPrism: register this frame's bitmap -> itemId so draw-time tint routing
+				// can find this character's HSL without baking colour into the shared Clothing.
+				TintContext::get().register_bitmap(tex.get_bitmap_id(), itemid);
+				tex.shift(shift);
 				}
 			}
 		}

@@ -38,7 +38,11 @@ namespace ms
 		inline constexpr int16_t QS_WIDE_MIN_W =
 			static_cast<int16_t>(HUD_DESIGN_W + QS_PANEL_W_26);
 		// 宽/窄屏按钮簇相对 QS 左缘的间隙（与 UIStatusBar init_classic 同源）。
-		inline constexpr int16_t QS_GROUP_GAP_WIDE = 241;
+		// 2026-11-23 用户要求：底部按钮簇往右移、靠近右侧快捷栏。
+		// 原 241 在 1280 宽屏下末钮右缘距 QS 左缘约 19px；改 228 右移 13px，
+		// 留约 5-6px（4/8 网格容差）。group_x=qs_x-gap，三处（init_classic/
+		// update_screen/iconMemo）共用此常量，改一处即同步，避免上下排错位。
+		inline constexpr int16_t QS_GROUP_GAP_WIDE = 228;
 		inline constexpr int16_t QS_GROUP_GAP_NARROW = 75;
 
 		// 仅当视口装得下「800 信息栏 + 宽 QS」才用 26/32；否则强制 QS08。

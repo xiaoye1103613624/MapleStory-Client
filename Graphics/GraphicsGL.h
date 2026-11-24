@@ -90,8 +90,21 @@ namespace ms
 		// 与普通 alpha 批次分开收集，flush 时用 GL_SRC_ALPHA/GL_ONE 单独画一批，
 		// 因此不影响任何既有 drawrectangle 的混合语义。
 		void drawrectangle_add(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue, float alpha);
+		// 乘色混合矩形（原生 Multiply 语义）：结果 = dst * src.rgb。用于夜色逐像素压暗，
+		// 而不是盖一层半透明灰（那会把画面洗白/洗灰）。与 alpha/add 批次分开收集。
+		void drawrectangle_mul(int16_t x, int16_t y, int16_t width, int16_t height, float red, float green, float blue);
 		// Fill the screen with the specified color
 		void drawscreenfill(float red, float green, float blue, float alpha);
+		// 全屏乘色：src.rgb = lerp(1, tint, amount)，amount=0 不变、=1 全量乘 tint。
+		void drawscreenmultiply(float red, float green, float blue, float amount);
+		// 径向平滑光晕：以 (x,y) 为圆心、radius 为半径，颜色随距离由亮到暗平滑衰减，
+		// 边缘 alpha→0（独立渐变纹理，绝无矩形边）。进入加色批次，flush 末段统一绘制。
+		void draw_glow(int16_t x, int16_t y, int16_t radius, float red, float green, float blue, float intensity);
+		// 2026-11-23 分层夜色：对后续 Texture::draw 提交的场景 quad 乘一个 tint（RGB 乘、alpha 保留）。
+		// 只作用于 draw(bitmap,...) / draw_raw_ex(...)，不影响 drawrectangle/draw_glow/粒子/UI。
+		// 原生 weather.cpp:2043-2052 ApplySceneryNow：tiles/objs/backs 全压、NPC 0.45、角色不压。
+		void push_tint(const Color& color);
+		void pop_tint();
 
 		// Lock the current scene
 		void lock();
@@ -101,6 +114,11 @@ namespace ms
 
 		// Draw the buffer contents with the specified scene opacity
 		void flush(float opacity);
+		// 场景批次即时提交：夜色 multiply / 灯光 / 光晕只作用于场景，
+		// 在其后绘制的 UI 不再被乘色压暗。必须在 Stage::draw() 末尾、UI 绘制前调用。
+		// 修复前所有 quad 挤到帧末唯一 flush()，乘色覆盖整屏导致所有窗口变暗
+		// （Stage.cpp:266 注释「只压场景不压 UI」与代码相悖）。
+		void flush_scene();
 		// Clear the buffer contents
 		void clearscene();
 
@@ -116,6 +134,9 @@ namespace ms
 		void read_pixels(int16_t width, int16_t height, uint8_t* out) const;
 
 	private:
+		// 批次绘制核心（主 quad → 乘色 → 加色 → 光晕），供 flush/flush_scene 复用。
+		// scene_only=true 时只绘制并清空乘色/加色/光晕与主 quad，不施加 fade 黑幕。
+		void draw_batches();
 		void clearinternal();
 		bool addfont(const char* name, Text::Font id, FT_UInt width, FT_UInt height);
 
@@ -345,6 +366,8 @@ namespace ms
 		static const GLshort MINLOSIZE = 32;
 
 		bool locked;
+		// 本帧是否已在 Stage::draw 末尾提交过场景批次（glClear 只做一次）。
+		bool scene_flushed_ = false;
 		// 帧内 quads 非空且未锁定时禁止 clearinternal，延到 clearscene；
 		// 锁定装图时立刻回收，避免黑屏。
 		bool atlas_clear_pending;
@@ -353,9 +376,17 @@ namespace ms
 		// 加色批次（灯光专用）：flush 时在主批次之后单独一次 draw，混合模式
 		// 临时切到 GL_SRC_ALPHA/GL_ONE 再还原。
 		std::vector<Quad> quads_add;
+		// 乘色批次（夜色 multiply）：flush 时单独一次 draw，混合 GL_DST_COLOR/GL_ZERO。
+		std::vector<Quad> quads_mul;
+		// 径向光晕批次：flush 末段绑定独立渐变纹理 + 加色混合绘制（灯/角色/月光源）。
+		std::vector<Quad> glow_quads;
+		// 分层夜色 tint 栈：栈顶为当前场景乘色（alpha=1 只压 RGB）。空栈=不变。
+		std::vector<Color> tint_stack;
 		GLuint VBO;
 		GLuint EBO;
 		GLuint atlas;
+		GLuint glow_texture_id = 0;   // 独立径向渐变纹理（中心不透明→边缘透明）
+		static const GLshort GLOW_TEX_SIZE = 128;
 
 		GLint shaderProgram;
 		GLint attribute_coord;

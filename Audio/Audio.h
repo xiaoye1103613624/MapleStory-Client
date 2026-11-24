@@ -109,4 +109,27 @@ namespace ms
 	private:
 		std::string path;
 	};
+
+	// 2026-11-22：环境音循环句柄（天气 rain/wind）。
+	// 原生 weathersound 需要持续 loop + 切换时 stop；Sound 的 sample 只有一次性
+	// play()，故独立用 BASS stream（create_bgm_stream loop=true）实现，不污染 UI 音效。
+	// 非 BASS 构建下所有方法为 no-op。
+	class AmbientSound
+	{
+	public:
+		AmbientSound();
+		~AmbientSound();
+
+		AmbientSound(const AmbientSound&) = delete;
+		AmbientSound& operator=(const AmbientSound&) = delete;
+
+		// 用 nl::audio 节点加载并循环播放；重复调用会先停掉上一条。
+		void play(nl::audio src, float volume);
+		// 停止并释放当前循环流。
+		void stop();
+		bool is_playing() const;
+
+	private:
+		uint64_t stream; // BASS HSTREAM (reinterpret_cast), 0 = 无
+	};
 }

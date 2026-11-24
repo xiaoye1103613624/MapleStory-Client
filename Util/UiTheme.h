@@ -13,10 +13,11 @@ namespace ms
 	{
 		enum class ThemeId : uint8_t
 		{
-			Auto = 0,			// follow pack probe (StatusBar3 if present)
-			Classic083,			// StatusBar.img layout family
-			ModernStatusBar3	// StatusBar3.img / mainBar layout family
-			// Reserved for future packs (StatusBar2 / 192skin): extend here.
+			Auto = 0,			// follow pack probe (best available pack)
+			Classic083,			// StatusBar.img layout family (083)
+			ModernStatusBar3,	// StatusBar3.img / mainBar layout family
+			StatusBar2_192		// 192 / MapleStoryT: StatusBar2.img + UIWindow2/4（ResMan 分卷）
+			// 新增版本：加枚举 + 在 UiThemeLayout.cpp 注册一个策略即可，勿在消费端堆 if/else。
 		};
 
 		enum class LayoutFamily : uint8_t

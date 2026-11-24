@@ -298,6 +298,7 @@ namespace ms
 
 		if (eqslot == EquipSlot::Id::RING1)
 		{
+			// 高版本序靠后：先填 RING2→3→4→1，再填 sidecar RING5→6。
 			if (!has_equipped(EquipSlot::Id::RING2))
 				return EquipSlot::Id::RING2;
 
@@ -307,12 +308,59 @@ namespace ms
 			if (!has_equipped(EquipSlot::Id::RING4))
 				return EquipSlot::Id::RING4;
 
+			if (!has_equipped(EquipSlot::Id::RING1))
+				return EquipSlot::Id::RING1;
+
+			if (!has_equipped(EquipSlot::Id::RING5))
+				return EquipSlot::Id::RING5;
+
+			if (!has_equipped(EquipSlot::Id::RING6))
+				return EquipSlot::Id::RING6;
+
 			return EquipSlot::Id::RING1;
 		}
-		else
+
+		// 图腾：192 Equip/totem 可视 3 格；TOTEM4 废弃新穿（存量仍可下行/卸下）。
+		if (eqslot == EquipSlot::Id::TOTEM1)
 		{
-			return eqslot;
+			const EquipSlot::Id totems[] = {
+				EquipSlot::Id::TOTEM1, EquipSlot::Id::TOTEM2,
+				EquipSlot::Id::TOTEM3
+			};
+			for (EquipSlot::Id s : totems)
+				if (!has_equipped(s))
+					return s;
+			return EquipSlot::Id::TOTEM1;
 		}
+
+		if (eqslot == EquipSlot::Id::MYSTIC1)
+		{
+			const EquipSlot::Id mystics[] = {
+				EquipSlot::Id::MYSTIC1, EquipSlot::Id::MYSTIC2,
+				EquipSlot::Id::MYSTIC3, EquipSlot::Id::MYSTIC4,
+				EquipSlot::Id::MYSTIC5, EquipSlot::Id::MYSTIC6
+			};
+			for (EquipSlot::Id s : mystics)
+				if (!has_equipped(s))
+					return s;
+			return EquipSlot::Id::MYSTIC1;
+		}
+
+		if (eqslot == EquipSlot::Id::ANDROID1 || eqslot == EquipSlot::Id::ANDROID_SLOT)
+		{
+			const EquipSlot::Id androids[] = {
+				EquipSlot::Id::ANDROID1, EquipSlot::Id::ANDROID2,
+				EquipSlot::Id::ANDROID3, EquipSlot::Id::ANDROID4,
+				EquipSlot::Id::ANDROID5, EquipSlot::Id::ANDROID6,
+				EquipSlot::Id::ANDROID7
+			};
+			for (EquipSlot::Id s : androids)
+				if (!has_equipped(s))
+					return s;
+			return EquipSlot::Id::ANDROID1;
+		}
+
+		return eqslot;
 	}
 
 	int16_t Inventory::find_free_slot(InventoryType::Id type) const

@@ -36,9 +36,31 @@ namespace ms
 		}
 	}
 
+	namespace
+	{
+		// Gate for static teardown: Configuration::~Configuration may call
+		// Locale::text after Locale's singleton destructor already ran.
+		bool g_locale_alive = false;
+	}
+
 	Locale::Locale()
 	{
+		g_locale_alive = true;
 		reload();
+	}
+
+	Locale::~Locale()
+	{
+		// Clear before member dtors so a racing save() sees empty-but-valid maps
+		// only while alive is still true; afterwards tr/has must no-op.
+		g_locale_alive = false;
+		primary.clear();
+		fallback_zh.clear();
+	}
+
+	bool Locale::alive()
+	{
+		return g_locale_alive;
 	}
 
 	bool Locale::load_file(const std::string& path, std::unordered_map<std::string, std::string>& out) const
@@ -96,6 +118,9 @@ namespace ms
 
 	std::string Locale::tr(const std::string& key) const
 	{
+		if (!g_locale_alive)
+			return key;
+
 		auto it = primary.find(key);
 		if (it != primary.end())
 			return it->second;
@@ -109,6 +134,9 @@ namespace ms
 
 	bool Locale::has(const std::string& key) const
 	{
+		if (!g_locale_alive)
+			return false;
+
 		return primary.find(key) != primary.end() || fallback_zh.find(key) != fallback_zh.end();
 	}
 }

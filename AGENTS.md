@@ -31,6 +31,30 @@ orange-wz MCP → （仅当服务端返回 `IMG 解析失败` / `Index N out of 
 - live 改写安全流：关闭客户端 → 复制 live 到 staging → `load_files` → `mutate_nodes` / `copy_paste_nodes` → `save_as` 到**不同** output 路径 → `unload_all` → 原子替换回 live。**禁止** `save_as` 回写与 loaded 根相同路径；**禁止**用 `Copy-Item` / `robocopy` 裸拷 `.img`。
 - 图标默认 ARGB4444；`config.ini` 不带 UTF-8 BOM；只改 `Item` 时须用 `analyze_resource_links` 同步 `String` / `Character`。
 
+## 3.1 跨客户端资源迁移：密钥转换硬门禁（YG 2026-11-18）
+
+> **醒目：下次资源迁移 / 移植一定要注意密钥转换，不能直接复制或移动。**
+
+跨客户端、跨 IV、跨 key 规格的 `.img` / `.wz`（例：192「新版本客户端」零 IV `AAAAAA==` → xy GMS IV `TSPHKw==`）**一律禁止**：
+
+- `Copy-Item` / `robocopy` / 资源管理器拖拽 / 直接 `Move-Item` 把源包文件塞进 live `Data`
+- 只 `create_img_file(目标key)` + `copy_paste` + `save_as` 却**不做**显式 `change_key` / `batch_convert_key`（易留下源侧加密语义残留，orange-wz 能读、本端 img 解析器堆损坏）
+
+**强制流水线**：
+
+```text
+load_files(源路径, key=源规格, exclusive:false)
+  → create_img_file / 导出（建议先与源同 key，避免跨钥粘贴歧义）
+  → copy_paste_nodes / mutate_nodes（按需）
+  → save_as 到异于 loaded 根的 staging 路径
+  → **优先** `batch_convert_key(目标key, verify:true)`（独立输出目录）；`change_key(save/verify)` 本轮实测可能「verified:true」但落盘仍按源 IV 可解、目标 IV 解失败，**不得单独作为过门证据**
+  → save_as 最终产物（异路径）→ unload_all
+  → 原子替换进 live（客户端未占用）
+  → --resource-probe / 短启验收：目标 .img 须出现在 UI 根且进程不 0xc0000374
+```
+
+**本轮教训（StatusBar3）**：从 192 `UI_002.wz` 抽 `StatusBar3.img` 入库 xy 时，首次用 `create_img_file(GMS)` + `copy_paste(192 零 IV 源)` + `save_as`，**未**走显式 `batch_convert_key`。坏包约 1.8MB、orange-wz 可解析，但客户端 `--resource-probe` UI 根仍 20 且不含 `StatusBar3`，带全量包启动 → `ntdll` `0xc0000374` 堆损坏一闪而过；移走后可活。随后 `batch_convert_key(新版本→GMS, verify:true)` 产物与首次坏包 **SHA256 完全一致** → 首次包已是 GMS 密文，闪退另有本端解析兼容问题；但跨端流程仍必须强制显式转 key + 本端 probe/短启，不得宣称「已入库可测」。
+
 ## 4. 客户端配置
 
 - `C:\Users\11036\.cursor\mcp.json` 已有 `orange-wz` HTTP 项。

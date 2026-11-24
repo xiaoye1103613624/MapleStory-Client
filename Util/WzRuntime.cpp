@@ -439,26 +439,32 @@ namespace nl {
 
         auto const format1 = input_file.read_cint();
         auto const format2 = static_cast<unsigned>(input_file.read<uint8_t>());
-        if (input_file.read<uint32_t>() != 0)
-            throw std::runtime_error("Invalid WZ Canvas header");
+        auto const pixel_count = static_cast<size_t>(width) * static_cast<size_t>(height);
+        auto const output_size = pixel_count * 4u;
+        if (input_file.read<uint32_t>() != 0) {
+            destination.assign(output_size, '\0');
+            return;
+        }
 
         auto compressed_length = input_file.read<uint32_t>();
         auto const stored_length = compressed_length;
-        if (input_file.read<uint8_t>() != 0)
-            throw std::runtime_error("Invalid WZ Canvas payload header");
-
-        auto const pixel_count = static_cast<size_t>(width) * static_cast<size_t>(height);
-        auto const output_size = pixel_count * 4u;
+        if (input_file.read<uint8_t>() != 0) {
+            destination.assign(output_size, '\0');
+            return;
+        }
 
         size_t source_width = static_cast<size_t>(width);
         size_t source_height = static_cast<size_t>(height);
         if (format2 == 4) {
-            if ((width % 16) != 0 || (height % 16) != 0)
-                throw std::runtime_error("Invalid WZ Canvas scaled dimensions");
+            if ((width % 16) != 0 || (height % 16) != 0) {
+                destination.assign(output_size, '\0');
+                return;
+            }
             source_width /= 16;
             source_height /= 16;
         } else if (format2 != 0) {
-            throw std::runtime_error("Unsupported WZ Canvas secondary format");
+            destination.assign(output_size, '\0');
+            return;
         }
 
         auto const source_pixels = source_width * source_height;
@@ -481,7 +487,8 @@ namespace nl {
                 static_cast<int>(source_width), static_cast<int>(source_height), squish::kDxt5));
             break;
         default:
-            throw std::runtime_error("Unsupported WZ Canvas pixel format");
+            destination.assign(output_size, '\0');
+            return;
         }
 
         auto const buffer_size = std::max({output_size, expected_decompressed,
@@ -609,22 +616,10 @@ namespace nl {
         }
 
         if (!decoded) {
-            std::ostringstream message;
-            message << "Unable to inflate WZ Canvas payload"
-                << " width=" << width << " height=" << height
-                << " format1=" << format1 << " format2=" << format2
-                << " expected=" << expected_decompressed
-                << " stored=" << stored_length
-                << " direct_result=" << direct_result << " direct_written=" << direct_written
-                << " decrypted=" << (decrypted ? 1 : 0)
-                << " decrypted_key=" << decrypted_key
-                << " decrypted_result=" << decrypted_result
-                << " decrypted_written=" << decrypted_written << " prefix=";
-            auto const prefix_length = std::min<size_t>(8, stored_length);
-            for (size_t i = 0; i < prefix_length; ++i)
-                message << std::hex << std::setfill('0') << std::setw(2)
-                    << static_cast<unsigned>(original[i]);
-            throw std::runtime_error(message.str());
+            // Blank instead of throw: a single bad Canvas (e.g. migrated
+            // StatusBar3) must not abort the whole UI root / crash the process.
+            destination.assign(static_cast<size_t>(output_size), '\0');
+            return;
         }
 
         input.swap(output);

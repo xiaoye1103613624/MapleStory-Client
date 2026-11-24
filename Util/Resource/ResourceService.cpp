@@ -174,7 +174,24 @@ namespace ms
 		{
 			ImgSource::set_bg_loading(true);
 			ImgSource::set_pump_enabled(false);
-			ensure_game_roots();
+
+			// [退出防护] detach 线程无人 join：任何一步抛异常都会使
+			// game_roots_ready / bg_loading 标志永不落地，连带 LoginHandlers
+			// 自旋 + ImgSource::close 自旋一起卡死。各步独立兜底，异常只记日志，
+			// 保证标志和控制状态在退出路径上一定被恢复。
+			try
+			{
+				ensure_game_roots();
+			}
+			catch (const std::exception& ex)
+			{
+				LOG(LOG_ERROR, "[RES] prewarm ensure_game_roots FAILED: " << ex.what());
+			}
+			catch (...)
+			{
+				LOG(LOG_ERROR, "[RES] prewarm ensure_game_roots FAILED: unknown");
+			}
+
 			// 就绪标志必须紧跟选角根：LoginResultHandler 登录成功时泵 Wait
 			// 弹窗等的就是这个门。
 			// 【2026-11-04 自纠回归】上一批我把 store(true) 挪到了
@@ -185,7 +202,20 @@ namespace ms
 			// ensure_map_roots 撞上进行中的后台装载 = 拿锁等一根，仍优于
 			// 旧的整段同步 7.5s）。
 			game_roots_ready_.store(true);
-			ImgSource::ensure_remaining();
+
+			try
+			{
+				ImgSource::ensure_remaining();
+			}
+			catch (const std::exception& ex)
+			{
+				LOG(LOG_ERROR, "[RES] prewarm ensure_remaining FAILED: " << ex.what());
+			}
+			catch (...)
+			{
+				LOG(LOG_ERROR, "[RES] prewarm ensure_remaining FAILED: unknown");
+			}
+
 			ImgSource::set_pump_enabled(true);
 			ImgSource::set_bg_loading(false);
 			LOG(LOG_INFO, "[RES] prewarm done (char-select released early, remaining in bg)");

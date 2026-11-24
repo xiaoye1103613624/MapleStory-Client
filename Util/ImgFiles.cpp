@@ -252,14 +252,40 @@ namespace ms
 					if (strcmp(root, "Map") != 0)
 					{
 						fs::path nxpath = cache / (std::string(root) + ".nx");
-						if (nx_is_complete(nxpath, ec))
-							continue; // reuse only a validated, complete conversion
+						std::vector<std::string> imgs = gather(rootdir);
 
-						// A truncated/unvalidated cache is worthless and dangerous:
+						// 完整性不够：源 .img 晚于缓存时也必须重建，否则会出现
+						// 「Eqp.img 已补名称 / SetItemInfo 已更新，但 String.nx / Etc.nx
+						// 仍是旧快照 → tip 无名、套装件只显示数字」这类静默过期。
+						bool reuse = nx_is_complete(nxpath, ec);
+
+						if (reuse && !imgs.empty())
+						{
+							std::error_code tec;
+							auto nx_time = fs::last_write_time(nxpath, tec);
+
+							if (!tec)
+							{
+								for (const std::string& img : imgs)
+								{
+									auto img_time = fs::last_write_time(img, tec);
+
+									if (!tec && img_time > nx_time)
+									{
+										reuse = false;
+										break;
+									}
+								}
+							}
+						}
+
+						if (reuse)
+							continue;
+
+						// A truncated/unvalidated/stale cache is worthless and dangerous:
 						// remove it, then rebuild atomically.
 						fs::remove(nxpath, ec);
 
-						std::vector<std::string> imgs = gather(rootdir);
 						if (imgs.empty())
 							continue;
 

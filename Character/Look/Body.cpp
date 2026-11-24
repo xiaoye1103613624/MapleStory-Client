@@ -17,6 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "Body.h"
 
+#include "../../Graphics/TintContext.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -30,6 +31,9 @@ namespace ms
 		std::string strid = string_format::extend_id(skin, 2);
 		nl::node bodynode = nl::nx::Character["000020" + strid + ".img"];
 		nl::node headnode = nl::nx::Character["000120" + strid + ".img"];
+		// ColorPrism: SKIN sentinel — body and head canvases (weapontint.cpp 000020NN/000120NN 口径).
+		TintContext::get().register_tree(bodynode, 3);
+		TintContext::get().register_tree(headnode, 3);
 
 		for (auto iter : Stance::names)
 		{
