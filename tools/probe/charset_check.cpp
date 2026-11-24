@@ -90,6 +90,12 @@ int main()
 		expect("ascii from_internal identity", ms::packet_from_internal(ascii), ascii);
 	}
 
+	// 线上误发 UTF-8 时：入站不得再按 CP936 转，应原样保留（防「娆㈣繋」）
+	{
+		const std::string utf8_notice = "\xE6\xAC\xA2\xE8\xBF\x8E\xE6\x9D\xA5\xE5\x88\xB0"; // 欢迎来到
+		expect("utf8 wire to_internal identity", ms::packet_to_internal(utf8_notice), utf8_notice);
+	}
+
 	// 非法 GBK 入站：只观测不判定（Windows best-fit 的行为不在 CP936 规范里），
 	// 断言的是"不崩、不吞掉两侧完好的字节"。
 	{

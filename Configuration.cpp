@@ -142,6 +142,8 @@ namespace ms
 		{ "config.section.14",	"ui.equip_compare",			"config.comment.ui.equip_compare" },
 		{ "config.section.14",	"ui.damage_skin",			"config.comment.ui.damage_skin" },
 		{ "config.section.14",	"ui.language",			"config.comment.ui.language" },
+		{ "config.section.14",	"ui.theme",			"config.comment.ui.theme" },
+		{ "config.section.14",	"ui.side_icons",			"config.comment.ui.side_icons" },
 		{ "config.section.14",	"ui.maplepoints.local",			"config.comment.ui.maplepoints.local" },
 
 		// 界面位置（关闭客户端时的最后窗口位置）
@@ -177,6 +179,8 @@ namespace ms
 		{ "config.section.15",	"ui.position.gameopt",			"config.comment.ui.position.gameopt" },
 		{ "config.section.15",	"ui.position.sysopt",			"config.comment.ui.position.sysopt" },
 		{ "config.section.15",	"ui.position.dailygift",			"config.comment.ui.position.dailygift" },
+		{ "config.section.15",	"ui.position.witchforest",			"config.comment.ui.position.witchforest" },
+		{ "config.section.15",	"ui.position.breakthroughstone",	"config.comment.ui.position.breakthroughstone" },
 		{ "config.section.15",	"ui.position.partyrace",			"config.comment.ui.position.partyrace" },
 
 		// 伤害
@@ -238,6 +242,7 @@ namespace ms
 		settings.emplace<EquipCompare>();
 		settings.emplace<UiLanguage>();
 		settings.emplace<HudTheme>();
+		settings.emplace<SideIconsEnabled>();
 		settings.emplace<FontPathNormal>();
 		settings.emplace<FontPathBold>();
 		settings.emplace<BGMVolume>();
@@ -293,6 +298,7 @@ namespace ms
 		settings.emplace<PosSTOREBANK>();
 		settings.emplace<PosVICIOUSHAMMER>();
 		settings.emplace<PosVEGASPELL>();
+		settings.emplace<PosENHANCE>();
 		settings.emplace<PosCASHGACHAPON>();
 		settings.emplace<PosREMOTEGACHAPON>();
 		settings.emplace<PosFAMILY>();
@@ -318,6 +324,10 @@ namespace ms
 		// 所以凡是「指望退出时自动落盘」的设置其实都没落盘。要立刻生效的项必须自己显式
 		// 调 Configuration::get().save()（UIChatBar 老 HUD 拖框高即如此）。
 		// 证据：evidence/w4-chatbar/coords-expand.md §6.1。
+		//
+		// Release 退出闪退真因（2026-11-18 dump）：Locale 单例常先于 Configuration
+		// 析构，save() 里 Locale::text → unordered_map::find 空桶 AV（0xC0000005 @
+		// xhash）。Locale::alive() 门闩已兜底；此处再跳过无 Locale 的注释翻译路径。
 #ifndef _DEBUG
 		save();
 #endif

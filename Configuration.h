@@ -582,6 +582,21 @@ namespace ms
 		HudTheme() : StringEntry("ui.theme", "auto") {}
 	};
 
+	// Left-side icon dock (ui.side_icons): show UISideIconBar when true.
+	struct SideIconsEnabled : public Configuration::BoolEntry
+	{
+		SideIconsEnabled() : BoolEntry("ui.side_icons", "true") {}
+	};
+
+	// 窗口内商城（方案 C）总开关。
+	// true  → 主菜单"商城"入口打开 UIWindowCashShop（游戏态内嵌窗，服务端 DB 目录）；
+	// false → 走原生商城 EnterCashShopPacket（默认，缺配置时 Setting<T>::get().load()
+	//         返回本 defaultentry 的 "false"，因此老客户端/未配置用户行为完全不变）。
+	struct WindowCashShopEnabled : public Configuration::BoolEntry
+	{
+		WindowCashShopEnabled() : BoolEntry("ui.cashshop.window_mode", "false") {}
+	};
+
 	// The normal font which will be used
 	// 常规字体文件路径（相对客户端工作目录，UTF-8 路径可直接填写）。
 	struct FontPathNormal : public Configuration::StringEntry
@@ -781,6 +796,13 @@ namespace ms
 		PosSHOP() : PointEntry("ui.position.shop", "(146, 48)") {}
 	};
 
+	// 窗口内商城默认位置（760x495 底板，首次打开居中；用户拖动后由
+	// UIDragElement 自动 save 到该键）。
+	struct PosWINDOWCASHSHOP : public Configuration::PointEntry
+	{
+		PosWINDOWCASHSHOP() : PointEntry("ui.position.windowcashshop", "(260, 100)") {}
+	};
+
 	// The default position of UINotice
 	// 公告面板默认位置。
 	struct PosNOTICE : public Configuration::PointEntry
@@ -953,6 +975,60 @@ namespace ms
 		PosMONSTERBOOK() : PointEntry("ui.position.monsterbook", "(200, 100)") {}
 	};
 
+	// 个人伤害统计（UIDamageRank）窗默认位置；首次打开按视口居中，拖动后持久化。
+	struct PosDAMAGERANK : public Configuration::PointEntry
+	{
+		PosDAMAGERANK() : PointEntry("ui.position.damagerank", "(200, 100)") {}
+	};
+
+	// 动态聊天表情选择窗（UIChatEmoticon）默认位置。
+	struct PosCHATEMOTICON : public Configuration::PointEntry
+	{
+		PosCHATEMOTICON() : PointEntry("ui.position.chatemoticon", "(300, 200)") {}
+	};
+
+	// 每日签到窗（UIDailyCheckin）默认位置。
+	struct PosDAILYCHECKIN : public Configuration::PointEntry
+	{
+		PosDAILYCHECKIN() : PointEntry("ui.position.dailycheckin", "(250, 120)") {}
+	};
+
+	// 七彩棱镜染色窗（UIColorPrism）默认位置。
+	struct PosCOLORPRISM : public Configuration::PointEntry
+	{
+		PosCOLORPRISM() : PointEntry("ui.position.colorprism", "(320, 150)") {}
+	};
+
+	// 192 魔女森林抽奖窗（UIWitchForest）默认位置。底板 803x713，居中最稳妥。
+	struct PosWITCHFOREST : public Configuration::PointEntry
+	{
+		PosWITCHFOREST() : PointEntry("ui.position.witchforest", "(120, 30)") {}
+	};
+
+	// 192 突破石窗（UIBreakthroughStone）默认位置。底板 196x285。
+	struct PosBREAKTHROUGHSTONE : public Configuration::PointEntry
+	{
+		PosBREAKTHROUGHSTONE() : PointEntry("ui.position.breakthroughstone", "(420, 180)") {}
+	};
+
+	// 伤害皮肤选择窗（UIDamageSkinPicker）默认位置。
+	struct PosDAMAGESKINPICKER : public Configuration::PointEntry
+	{
+		PosDAMAGESKINPICKER() : PointEntry("ui.position.damageskinpicker", "(360, 120)") {}
+	};
+
+	// 美容院造型槽窗（UIBeautySalon）默认位置。
+	struct PosBEAUTYSALON : public Configuration::PointEntry
+	{
+		PosBEAUTYSALON() : PointEntry("ui.position.beautysalon", "(300, 100)") {}
+	};
+
+	// 融合外观窗（UIAnvilDialog）默认位置。
+	struct PosANVILDIALOG : public Configuration::PointEntry
+	{
+		PosANVILDIALOG() : PointEntry("ui.position.anvildialog", "(340, 140)") {}
+	};
+
 	// PartySearch（组队搜索）窗默认位置。
 	struct PosPARTYSEARCH : public Configuration::PointEntry
 	{
@@ -977,6 +1053,12 @@ namespace ms
 	struct PosVEGASPELL : public Configuration::PointEntry
 	{
 		PosVEGASPELL() : PointEntry("ui.position.vegaspell", "(320, 120)") {}
+	};
+
+	// UI_004 强化族通用壳默认位置（魔方/锤/印章/合成等居中显示）。
+	struct PosENHANCE : public Configuration::PointEntry
+	{
+		PosENHANCE() : PointEntry("ui.position.enhance", "(320, 140)") {}
 	};
 
 	struct PosCASHGACHAPON : public Configuration::PointEntry

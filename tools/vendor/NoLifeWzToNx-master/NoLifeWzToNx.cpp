@@ -428,11 +428,13 @@ struct wztonx {
             in.skip(slen * 2u);
             auto mask = 0xAAAAu;
             wstr_buf.resize(slen);
-            for (auto i = 0u; i < std::min(slen, 0x10000u); ++i) {
+            // key_gms is 65536 bytes ⇒ 32768 char16_t keystream slots.
+            constexpr uint32_t kUtf16KeySlots = 65536u / 2u;
+            for (auto i = 0u; i < std::min(slen, kUtf16KeySlots); ++i) {
                 wstr_buf[i] = static_cast<char16_t>(ows[i] ^ u16key[i] ^ mask);
                 ++mask;
             }
-            for (auto i = 0x10000u; i < slen; ++i) {
+            for (auto i = kUtf16KeySlots; i < slen; ++i) {
                 wstr_buf[i] = static_cast<char16_t>(ows[i] ^ mask);
                 ++mask;
             }
@@ -724,8 +726,11 @@ struct wztonx {
         nodes_to_sort.emplace_back(ni, count);
     }
     void extended_property(id_t prop_node, size_t p_offset) {
-        auto & n = nodes[prop_node];
-        auto & st = strings[read_prop_string(p_offset)];
+        // IMPORTANT: read_prop_string → add_string may reallocate `strings`.
+        // Never hold a reference into `strings` across that call (StatusBar3 /
+        // high-string-count imgs used to trip heap corruption 0xC0000374 here).
+        id_t const type_id = read_prop_string(p_offset);
+        std::string const st = strings[type_id];
         if (st == "Property") {
             in.skip(2);
             sub_property(prop_node, p_offset);
@@ -744,10 +749,12 @@ struct wztonx {
             nn.data.bitmap.width = static_cast<uint16_t>(in.read_cint());
             nn.data.bitmap.height = static_cast<uint16_t>(in.read_cint());
         } else if (st == "Shape2D#Vector2D") {
+            auto & n = nodes[prop_node];
             n.data_type = node::type::vector;
             n.data.vector[0] = in.read_cint();
             n.data.vector[1] = in.read_cint();
         } else if (st == "Shape2D#Convex2D") {
+            auto & n = nodes[prop_node];
             auto count = static_cast<id_t>(in.read_cint());
             auto ni = static_cast<id_t>(nodes.size());
             n.num = static_cast<uint16_t>(count);
@@ -761,6 +768,7 @@ struct wztonx {
             }
             nodes_to_sort.emplace_back(ni, count);
         } else if (st == "Sound_DX8") {
+            auto & n = nodes[prop_node];
             n.data_type = node::type::audio;
             n.data.audio.id = static_cast<uint32_t>(audios.size());
             audio a;
@@ -772,6 +780,7 @@ struct wztonx {
             a.base = in.base;
             audios.push_back(a);
         } else if (st == "UOL") {
+            auto & n = nodes[prop_node];
             in.skip(1);
             n.data_type = node::type::uol;
             n.data.string = read_prop_string(p_offset);
