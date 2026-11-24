@@ -1,13 +1,14 @@
 # 背包上限×2 + 展开态交互增强 — 可行性与方案调研
 
 > 调研日期：2026-11-17 ｜ 分支：`feature/dev_0.0.1`
-> 状态：**代码已实现、双端已构建；真机首轮暴露 3 处 UI 缺陷已修（见 §8），等待复验**
+> 状态：**代码已实现、双端已构建；真机首轮 3 处 UI 缺陷已修（§8）；2026-11-20 翻页素材改 BtHide2/BtHide3 并对齐（见 [notes/page-chrome-bthide-align-2026-11-20.md](notes/page-chrome-bthide-align-2026-11-20.md)），待真机复验**
 > 详细代码级证据见 [notes/inventory-ui-findings.md](notes/inventory-ui-findings.md)；
 > 实现计划/构建证据/P0 修复见 [notes/implementation-plan.md](notes/implementation-plan.md)。
 >
 > **已拍板（用户 m00159）**：选**方案 B**，翻页三件套整体置于展开态**右下角**，排列为
 > `上一页 → 输入框 → 下一页`；输入框仅数字、默认 `1`、上限为服务端值、超上限钳到服务端值、
 > 数值随翻页联动变化。布局与规则见 §4.2.1，真机修复见 §8。
+> **素材（2026-11-20）**：上一页=`Basic.img/BtHide3`、下一页=`Basic.img/BtHide2`，与「扩充道具栏」中线水平对齐。
 
 ---
 

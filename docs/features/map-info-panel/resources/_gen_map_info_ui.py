@@ -363,13 +363,14 @@ def build_info_backgrnd(tiles) -> tuple[Image.Image, dict]:
     # Vertically center 5×5 inside lower well if extra space
     gy0 = grid_top + max(0, ((y + lower_h - 3) - grid_top - grid_h) // 2)
 
+    # 2026-11-22 用户明确要求：移除底板自带的 5×5 格子（烤死在 PNG 里），
+    # 改由运行时按自己的网格绘制格子。否则运行时格与烤格两套叠加、永远对不齐。
+    # 这里不再画 rect(...)/高光线，只保留位置元数据供对齐参考。
     slot_positions = []
     for r in range(rows_vis):
         for c in range(cols):
             sx = gx0 + c * (SLOT_SIZE + SLOT_GAP)
             sy = gy0 + r * (SLOT_SIZE + SLOT_GAP)
-            rect(dr, (sx, sy, sx + SLOT_SIZE - 1, sy + SLOT_SIZE - 1), C_SLOT, C_SLOT_LINE)
-            dr.line([(sx + 1, sy + 1), (sx + SLOT_SIZE - 2, sy + 1)], fill=(255, 255, 255, 200))
             slot_positions.append({"x": sx, "y": sy, "col": c, "row": r})
 
     layout["lower"] = {

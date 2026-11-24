@@ -4,17 +4,18 @@
 
 - IDA r18 / 工作区 `UIMedal`
 
-## 本波
+## 本波 / W2 续（2026-11-20）
 
-- Medal 窗落地已入账；详情窗 `CUIMedalQuestInfoDetail` 内容显式预留
+- Medal 窗落地已入账；Detail ToggleDetail 文本浮层已接。
+- W2：`UIWindow.img/Title` 真材（backgrnd 260×374 / Tab / backgrnd3 Detail）优先于 ColorBox；见 `userlist-five-tabs/notes/w2-medal-family-2026-11-20.md`。
 
 ## 勋章图标 — 为何不能做（资源）
 
 - 缺口是 **114xxxx 等具体勋章图标素材**，非窗体逻辑
-- W1：无 orange-wz 证据证明「缺节点且可按面最小补齐」前禁止盲改 WZ
+- 无 orange-wz 证据证明「缺节点且可按面最小补齐」前禁止盲改 WZ
 - 缺图标时保持文本态，避免用错误占位图污染道具表
 
-**结论**：不能做（缺资源且无法安全补齐）。
+**结论**：图标列仍预留文本态（缺资源且无法安全补齐）。
 
 ## DamageSkin 同类备注
 

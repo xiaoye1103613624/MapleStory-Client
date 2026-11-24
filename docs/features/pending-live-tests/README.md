@@ -176,13 +176,14 @@
 ### 4. PersonalShop FM
 - **前置**：角色在**自由市场房间**（`910xxxxxx` 且 `>910000000`，入口 `910000000` 不算）；现金栏持有 `514xxxx`（个人店）或 `503xxxx`（雇佣商人）。
 - **操作**：
-  1. （负向）在非 FM 图双击许可证或 SoftKey 店名 → 应红字 tip「Stores only in the free market」，**不发包**。
-  2. 进 FM 房间；双击 `514*` → 开 `UIPersonalShop` SoftKey；或开 PersonalShop 后 `C`/SoftKey 输入店名。
+  1. （负向）在非 FM 图双击许可证 → 开店壳输入店名点开业 → 应红字 tip「商店只能开在自由市场」，**不发包**。
+  2. 进 FM 房间；双击 `514*` → `UIPersonalShop` 窗内 Textfield 输入店名 → BtStart / 回车。
   3. 确认出站 `PLAYER_INTERACTION(123)` CREATE：`00 | createType(4=514/5=503) | mapleStr title | 00 00 00 | int cashItemId`。
-  4. 成功：个人店应开 `UIMerchant` 货架（ROOM sub=4）；雇佣商人 ROOM sub=5；店名 tip 更新。
-  5. （可选）非 FM 若绕过客户端仍发包，服务端回 MiniRoomError 15 → 红字 tip，**不得**误开交易窗。
-- **期望**：仅 FM 可 CREATE；错误码 15 可见；店面/货架出现。
-- **功能文档**：[softkey-tails](../softkey-tails/) · [notes/personalshop-fm-2026-11-05.md](../softkey-tails/notes/personalshop-fm-2026-11-05.md)
+  4. 成功：`UIMerchant`（`UIWindow.img/PersonalShop`）货架；个人店 ROOM sub=4；雇佣商人 ROOM sub=5。
+  5. 访客选格 + BtBuy；店主背包选中 + BtItem 上架。
+  6. （可选）非 FM 若绕过客户端仍发包，服务端回 MiniRoomError 15 → 红字 tip，**不得**误开交易窗。
+- **期望**：仅 FM 可 CREATE；错误码 15 可见；原生 PersonalShop 底板/钮；无 SoftKey。
+- **功能文档**：[hired-merchant-native-restore-2026-11](../hired-merchant-native-restore-2026-11/) · [softkey-tails/notes/personalshop-fm-2026-11-05.md](../softkey-tails/notes/personalshop-fm-2026-11-05.md)
 
 ### 5. Messenger 立绘
 - **前置**：已登录进图；`UIWindow.img/Messenger` 资源可用；建议再开第二角色测对方立绘。

@@ -3,6 +3,8 @@
 > 目标：`goal-11388c42`「以 Angel(13339) 的 083/v83 带符号 IDB 为权威校准源，逐功能完整校验并校准当前 MapleStory-Client 的功能、业务、逻辑、UI、排版、样式、交互」。本面 = ⑪任务(Quest)，round33/90。
 > 方法：REA → IDA(Angel 13339 / BeiDou 13337) → IMG(orange-wz MCP，ACTIVE) 只读取证 → 七维对照清单 → 决策点 + 一次性 Plan → 交用户裁决后再进实现。
 > 性质：校准/对照/决策点/Plan 文档，**非实现提交**；全程只读，未改游戏源码/协议/WZ/IMG/XML，未建 git commit。
+>
+> **r08 增补（2026-11-23）**：用户确认「改全」后，本面首次进入实现——修复任务描述裸 ID（`#p/#t` 未展开）与底带按钮逐页显隐/右锚错位。见 [`notes/r08-bare-id-and-band-fix-2026-11.md`](notes/r08-bare-id-and-band-fix-2026-11.md)。Release 构建通过（EXITCODE=0），**真机未验收**。原 P0 校准文档的「全程只读」性质到 r07 为止，r08 起不再适用。
 
 ## 0. 五条结论
 
@@ -307,7 +309,11 @@ docs/features/quest-angel-calibration-2026-11/
 ├── notes/
 │   ├── r01-angel-native-quest-facts.md         (153/34 + 6 处 COutPacket(107) 逐字)
 │   ├── r03-img-gate-fallback.md                (ACTIVE 门禁 + 12 次 IMG 解析失败 + .nx 回退)
-│   └── r05-quest-four-state-audit.md           (销案8/推翻1/新增8/遗留5)
+│   ├── r05-quest-four-state-audit.md           (销案8/推翻1/新增8/遗留5)
+│   ├── r07-field-level-2026-11.md              (字段级还原 + IMG origin 一手)
+│   ├── r08-bare-id-and-band-fix-2026-11.md     (裸 ID 修复有效; 按钮结论已被 r09 纠正作废)
+│   ├── r09-band-button-correction-2026-11.md   (底带按钮二维显隐纠正: 详细=详情开关, 寻找NPC仅详情态)
+│   └── r10-find-npc-location-2026-11.md        (寻找NPC位置功能移植 MinMS: 本地查表+世界图定位, 我的文件零error/全量受并行WIP阻塞/真机未验)
 └── evidence/
     ├── angel-quest-symbol-inventory.json       (153 funcs / 34 classes)
     ├── angel-quest-decompile.json              (DONE 153/153 ok, physical_keys=153)
@@ -315,7 +321,8 @@ docs/features/quest-angel-calibration-2026-11/
     ├── angel-beidou-quest-ea-bytelevel-audit.json (VERDICT 153/153 by bytes, eleven_face_consistency)
     ├── angel-quest-facts.md                    (2367 行 / 106561 B / 36 opcode 常量含假阳性)
     ├── orange-wz-quest-structure.json          (Data/Quest 6 真 .img 子节点)
-    └── nx-quest-content-probe.json             (Quest.nx root_children=6 / sections=6)
+    ├── nx-quest-content-probe.json             (Quest.nx root_children=6 / sections=6)
+    └── orange-wz-quest-tree-r08.json           (r08: UIWindow.img/Quest 全子树 + 按钮精灵, 128B key/autoParse)
 ```
 
 ### 9.2 复现命令

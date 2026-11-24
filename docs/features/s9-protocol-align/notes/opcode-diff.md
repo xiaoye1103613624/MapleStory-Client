@@ -192,3 +192,18 @@ s9 `Client.java:207-235` 的派发是：读 opcode（`:213`）→ `getHandler(op
 | body 是否随之对齐 | P2 切片 S6/S7/S8（opcode 对了不代表字段对了） |
 | ~~客户端 `RECALCULATE_STATS` 有无其他引用方~~ | **已核（T6）**：注销后剩余引用只有枚举本体 `PacketSwitch.cpp:85`、注释 `:726-731`、调试名表 `:874`，以及 handler 自身 `PlayerHandlers.h:75`/`.cpp:245` —— 构建 `EXITCODE=0`，无悬空调用。代价见 §4 末"连带后果" |
 | s9 那 8 个"定义未注册"的 opcode | 已核客户端零发送 ⇒ 本协议层无影响；剩下的是"北斗是否需要这些功能"，归 T14 缺失系统归因清单 |
+
+## 8. 复核（2026-11-20 · userlist 收口波）
+
+`python tools/gen_opcode_matrix.py` 重生成 → `--check` **GATE OK**（s9 head `966d633eba`）。
+
+本波触发漂移事实（已写入矩阵，非臆造 opcode）：
+
+| 变更 | 说明 |
+|------|------|
+| `ALLIANCE_OPERATION/143` `client_sent_count` | UNION Kick/ChangeMaster/Grade 包构造点增加 |
+| `+ EQUIP_GROWTH_TIP_REQUEST/381` | 既有 `SetItemPackets` 出站；CLIENT_ONLY |
+| `+ SET_ITEM_BONUS_REQUEST/375` | 既有出站；MATCHED_NO_HANDLER |
+| `SET_SKILL_BONUS/378` s2c 字段刷新 | 与本波业务无关的既有漂移一并收口 |
+
+权威数字以 `protocol/opcode-matrix.json` `_meta` 为准（本次 `generated_at=2026-11-20T16:19:59`）。

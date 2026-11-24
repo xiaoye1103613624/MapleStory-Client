@@ -1,4 +1,6 @@
-﻿# 每日签到 UI
+# 每日签到 UI
+
+> **交叉引用（2026-11-18）**：本目录仅归档 UI 位图素材。逻辑层（双端原生实现，独立表 checkin_state + 28 格窗 + @daily）见 `docs/features/daily-checkin-native-port-2026-11/README.md`。本版逻辑窗零专用 WZ 依赖，本美术尚未入库，入库与否不影响功能可跑。
 
 ## 用途
 
