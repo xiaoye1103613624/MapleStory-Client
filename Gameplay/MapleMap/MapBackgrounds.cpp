@@ -23,19 +23,8 @@
 #include <nlnx/nx.hpp>
 #endif
 
-#include <cmath>
-#include <vector>
-
 namespace ms
 {
-	namespace
-	{
-		// 高分 type=0 半透明淡出延展（docs/features/map-bg-viewport-fallback）。
-		constexpr float kBgFadeRatio = 0.55f;
-		constexpr int kBgMaxHCopies = 3;   // 单侧最多水平级数
-		constexpr int kBgMaxVCopies = 4;   // 单侧最多竖直级数
-		constexpr float kBgMinOpc = 0.05f;
-	}
 	Background::Background(nl::node src)
 	{
 		// 视口相关成员统一交给 refresh_viewport()：构造期先按当前 Constants 初始化一次，
@@ -147,151 +136,6 @@ namespace ms
 		}
 	}
 
-	void Background::draw_normal_with_fade(int16_t ix, int16_t iy, float alpha) const
-	{
-		const Point<int16_t> origin = animation.get_origin();
-		const Point<int16_t> dim = animation.get_dimensions();
-		const int16_t dim_x = dim.x();
-		const int16_t dim_y = dim.y();
-		const float base_opc = opacity / 255.0f;
-
-		// 无有效画布时只画本体，避免步进 0 死循环。
-		if (dim_x <= 0 || dim_y <= 0)
-		{
-			animation.draw(DrawArgument(Point<int16_t>(ix, iy), flipped, base_opc), alpha);
-			return;
-		}
-
-		struct Copy
-		{
-			int16_t x;
-			int16_t y;
-			bool flip;
-			float opc;
-		};
-
-		const auto screen_rect = [&](int16_t px, int16_t py, bool flip_flag) -> Rectangle<int16_t> {
-			return DrawArgument(Point<int16_t>(px, py), flip_flag, 1.0f)
-				.get_rectangle(origin, dim);
-		};
-
-		// ---- 水平：本体 + 左右镜像淡出列（最多单侧 kBgMaxHCopies）----
-		std::vector<Copy> cols;
-		cols.push_back({ ix, iy, flipped, base_opc });
-
-		auto h_span = [&](int32_t& out_l, int32_t& out_r) {
-			out_l = cols.front().x;
-			out_r = cols.front().x;
-			bool first = true;
-			for (const Copy& c : cols)
-			{
-				const Rectangle<int16_t> r = screen_rect(c.x, c.y, c.flip);
-				const int32_t l = r.left();
-				const int32_t rr = r.right();
-				if (first)
-				{
-					out_l = l;
-					out_r = rr;
-					first = false;
-				}
-				else
-				{
-					if (l < out_l)
-						out_l = l;
-					if (rr > out_r)
-						out_r = rr;
-				}
-			}
-		};
-
-		int32_t span_l = 0;
-		int32_t span_r = 0;
-		h_span(span_l, span_r);
-
-		for (int k = 1; k <= kBgMaxHCopies; ++k)
-		{
-			if (span_l <= 0 && span_r >= VWIDTH)
-				break;
-
-			const float opc = base_opc * std::pow(kBgFadeRatio, static_cast<float>(k));
-			if (opc < kBgMinOpc)
-				break;
-
-			const bool mirror = (k % 2) == 1;
-			const bool nf = flipped ^ mirror;
-			const int32_t dx = static_cast<int32_t>(dim_x) * k;
-
-			if (span_l > 0)
-			{
-				const int16_t nx = static_cast<int16_t>(ix - dx);
-				cols.push_back({ nx, iy, nf, opc });
-				const Rectangle<int16_t> r = screen_rect(nx, iy, nf);
-				if (r.left() < span_l)
-					span_l = r.left();
-				if (r.right() > span_r)
-					span_r = r.right();
-			}
-
-			if (span_r < VWIDTH)
-			{
-				const int16_t nx = static_cast<int16_t>(ix + dx);
-				cols.push_back({ nx, iy, nf, opc });
-				const Rectangle<int16_t> r = screen_rect(nx, iy, nf);
-				if (r.left() < span_l)
-					span_l = r.left();
-				if (r.right() > span_r)
-					span_r = r.right();
-			}
-		}
-
-		// ---- 竖直：对每个水平基线实例向上下淡出（不再镜像翻倍）----
-		std::vector<Copy> draws = cols;
-
-		for (const Copy& base : cols)
-		{
-			Rectangle<int16_t> vr = screen_rect(base.x, base.y, base.flip);
-			int32_t top = vr.top();
-			int32_t bottom = vr.bottom();
-
-			for (int k = 1; k <= kBgMaxVCopies; ++k)
-			{
-				if (top <= 0 && bottom >= VHEIGHT)
-					break;
-
-				const float opc = base.opc * std::pow(kBgFadeRatio, static_cast<float>(k));
-				if (opc < kBgMinOpc)
-					break;
-
-				const int32_t dy = static_cast<int32_t>(dim_y) * k;
-
-				if (top > 0)
-				{
-					const int16_t ny = static_cast<int16_t>(base.y - dy);
-					draws.push_back({ base.x, ny, base.flip, opc });
-					const Rectangle<int16_t> r = screen_rect(base.x, ny, base.flip);
-					if (r.top() < top)
-						top = r.top();
-					if (r.bottom() > bottom)
-						bottom = r.bottom();
-				}
-
-				if (bottom < VHEIGHT)
-				{
-					const int16_t ny = static_cast<int16_t>(base.y + dy);
-					draws.push_back({ base.x, ny, base.flip, opc });
-					const Rectangle<int16_t> r = screen_rect(base.x, ny, base.flip);
-					if (r.top() < top)
-						top = r.top();
-					if (r.bottom() > bottom)
-						bottom = r.bottom();
-				}
-			}
-		}
-
-		for (const Copy& c : draws)
-			animation.draw(DrawArgument(Point<int16_t>(c.x, c.y), c.flip, c.opc), alpha);
-	}
-
 	void Background::draw(double viewx, double viewy, float alpha) const
 	{
 		// A 方案核心：绘制期实时按当前视口重算平铺参数，视口变了立刻适配，
@@ -342,14 +186,6 @@ namespace ms
 
 		int16_t ix = static_cast<int16_t>(std::round(x));
 		int16_t iy = static_cast<int16_t>(std::round(y));
-
-		// type=0：高分下单张盖不住视口 → 半透明淡出延展（全局 backgrounds/foregrounds）。
-		// 平铺/滚动类保持原 ceil 平铺，不做整层复制。
-		if (type == Type::NORMAL)
-		{
-			draw_normal_with_fade(ix, iy, alpha);
-			return;
-		}
 
 		// int16_t 在 2560 档 + cx=1 兜底时会溢出（cx*htile 远超 32767），
 		// 平铺跨度改 int32_t，循环变量同样放宽，避免高分下少铺/死循环。
