@@ -1,14 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 //	Alliance ALLIANCE_OPERATION handler
+//	W1.5：回包写 AllianceModel + 刷新 UIUserList UNION 页（R28-B2 不为回包开窗）。
 ////////////////////////////////////////////////////////////////////////////////
 #include "AllianceHandlers.h"
 
+#include "../../Character/AllianceModel.h"
 #include "../../IO/UI.h"
 #include "../../IO/UITypes/UIAlliance.h"
+#include "../../IO/UITypes/UIAllianceGrade.h"
 #include "../../IO/UITypes/UIChatBar.h"
 #include "../../IO/UITypes/UINotice.h"
 #include "../../IO/UITypes/UIOptionMenu.h"
 #include "../../IO/UITypes/UIStatusMessenger.h"
+#include "../../IO/UITypes/UIUserList.h"
 #include "../../Net/Packets/AlliancePackets.h"
 #include "../../Util/Misc.h"
 
@@ -16,28 +20,46 @@ namespace ms
 {
 	namespace
 	{
-		// 对齐 s9 GuildPackets.getGuildInfo：解析一个公会块并返回名称
-		std::string parse_guild_info_name(InPacket& recv)
+		void refresh_userlist()
+		{
+			if (auto ui = UI::get().get_element<UIUserList>())
+				ui->refresh_from_models();
+		}
+
+		// 对齐 s9 GuildPackets.getGuildInfo：解析一个公会块，写入 AllianceModel 成员。
+		std::string parse_guild_block(InPacket& recv, AllianceData& out)
 		{
 			if (!recv.available())
 				return {};
+
 			int32_t gid = recv.read_int();
 			std::string gname = recv.read_string();
 			for (int r = 0; r < 5; r++)
 				recv.read_string();
+
 			uint8_t members = recv.read_byte();
+			std::vector<int32_t> ids;
+			ids.reserve(members);
 			for (uint8_t m = 0; m < members && recv.available(); m++)
-				recv.read_int();
+				ids.push_back(recv.read_int());
+
 			for (uint8_t m = 0; m < members && recv.available(); m++)
 			{
-				recv.skip_padded_string(13);
-				recv.skip_int(); // job
-				recv.skip_int(); // level
-				recv.skip_int(); // guildRank
-				recv.skip_int(); // online
+				AllianceMember am;
+				am.guild_id = gid;
+				am.guild_name = gname;
+				am.id = (m < ids.size()) ? ids[m] : 0;
+				am.name = recv.read_padded_string(13);
+				am.job = recv.read_int();
+				am.level = recv.read_int();
+				am.guild_rank = recv.read_int();
+				am.online = (recv.read_int() == 1);
 				recv.skip_int(); // signature
-				recv.skip_int(); // allianceRank
+				am.alliance_rank = recv.read_int();
+				if (am.id > 0)
+					out.members.push_back(am);
 			}
+
 			recv.skip_int();   // capacity
 			recv.skip_short(); // logoBG
 			recv.skip_byte();  // logoBGColor
@@ -48,6 +70,12 @@ namespace ms
 			recv.skip_int();   // allianceId
 			(void)gid;
 			return gname;
+		}
+
+		std::string parse_guild_info_name(InPacket& recv)
+		{
+			AllianceData tmp;
+			return parse_guild_block(recv, tmp);
 		}
 	}
 
@@ -65,8 +93,7 @@ namespace ms
 		};
 
 		auto ensure_ui = []() -> Optional<UIAlliance> {
-			// R28-B2：联盟数据只回写「已在场且活动」的窗，绝不为回包开窗。
-			// 开窗方（UIAlliance ctor 发 0x01 请求）自会在活动态收到 0x0C。
+			// R28-B2：联盟浮窗只回写「已在场且活动」；UNION 页读 AllianceModel。
 			auto ui = UI::get().get_element<UIAlliance>();
 			if (ui && ui->is_active())
 				return ui;
@@ -80,23 +107,25 @@ namespace ms
 			case 0x0C: // getAllianceInfo
 			{
 				recv.read_byte(); // flag (1)
-				int32_t id = recv.read_int();
-				std::string name = recv.read_string();
-				std::vector<std::string> ranks(5);
+				AllianceData a;
+				a.id = recv.read_int();
+				a.name = recv.read_string();
 				for (int i = 0; i < 5; i++)
-					ranks[i] = recv.read_string();
+					a.rank_titles[i] = recv.read_string();
 				uint8_t guildCount = recv.read_byte();
-				int32_t capacity = recv.read_int();
-				std::vector<int32_t> guilds;
+				a.capacity = recv.read_int();
 				for (uint8_t i = 0; i < guildCount && recv.available(); i++)
-					guilds.push_back(recv.read_int());
-				std::string notice = recv.read_string();
-				(void)capacity;
+					a.guild_ids.push_back(recv.read_int());
+				a.notice = recv.read_string();
+				AllianceModel::get().set(a);
+				refresh_userlist();
 				if (auto ui = ensure_ui())
-					ui->set_alliance(id, name, ranks, guilds, notice);
+					ui->set_alliance(a.id, a.name,
+						std::vector<std::string>(a.rank_titles, a.rank_titles + 5),
+						a.guild_ids, a.notice);
 				while (recv.available())
 					recv.skip_byte();
-				(void)name;
+				LOG(LOG_DEBUG, "AllianceInfo: 0x0C id=" << a.id << " name=" << a.name);
 				break;
 			}
 			case 0x1C: // allianceNotice
@@ -105,6 +134,8 @@ namespace ms
 				std::string notice = recv.read_string();
 				while (recv.available())
 					recv.skip_byte();
+				AllianceModel::get().set_notice(notice);
+				refresh_userlist();
 				if (auto ui = ensure_ui())
 				{
 					ui->set_notice(notice);
@@ -113,16 +144,15 @@ namespace ms
 				ensure_sm(Color::Name::YELLOW, notice.empty() ? "Alliance notice" : notice);
 				break;
 			}
-			case 0x02: // sendShowInfo（对应 c2s 0x01 刷新）：aid + cid，数据已在 0x0C/0x0F
+			case 0x02: // sendShowInfo echo
 			{
 				while (recv.available())
 					recv.skip_byte();
 				LOG(LOG_DEBUG, "Alliance: show info echo (0x02)");
 				break;
 			}
-			case 0x03: // allianceInvite —— 他盟邀请本盟加入
+			case 0x03: // allianceInvite
 			{
-				// s9 GuildPackets.allianceInvite：int allianceid + string(邀请人/本盟会名) + short 0。
 				int32_t aid = recv.read_int();
 				std::string from = recv.available() ? recv.read_string() : "";
 				while (recv.available())
@@ -137,36 +167,42 @@ namespace ms
 					? std::string("Guild alliance invitation.")
 					: ("Invitation from " + from + ". Join the alliance?");
 				UI::get().emplace<UIYesNo>(msg, [aid](bool yes) {
-					// s9 AllianceOperationHandler case 0x04：int allianceid（仅盟主可发）。
+					if (!yes)
+						return;
 					AllianceAcceptPacket(aid).dispatch();
-					LOG(LOG_DEBUG, "AllianceInvite: accept=" << yes << " aid=" << aid);
+					LOG(LOG_DEBUG, "AllianceInvite: accept aid=" << aid);
 				});
 				break;
 			}
-			case 0x0D: // getGuildAlliances —— 全量公会块（含名称）
+			case 0x0D: // getGuildAlliances — 全量公会块（含成员）
 			{
-				// s9 写的是 int count（GuildPackets.java:413），不是 byte。
 				const int32_t count = recv.read_int();
-				std::vector<std::string> gnames;
+				AllianceData a = AllianceModel::get().data();
+				a.members.clear();
+				a.guild_names.clear();
 				for (int32_t i = 0; i < count && recv.available(); i++)
-					gnames.push_back(parse_guild_info_name(recv));
+					a.guild_names.push_back(parse_guild_block(recv, a));
 				while (recv.available())
 					recv.skip_byte();
-				LOG(LOG_DEBUG, "AllianceInfo: 0x0D guilds=" << gnames.size());
-				// R28-B2：窗不在场不弹窗，仅记数据（下次开窗自取）。
+				AllianceModel::get().set(a);
+				refresh_userlist();
+				LOG(LOG_DEBUG, "AllianceInfo: 0x0D guilds=" << a.guild_names.size()
+					<< " members=" << a.members.size());
 				if (auto ui = UI::get().get_element<UIAlliance>())
 				{
 					if (ui->is_active())
-						ui->set_guild_names(gnames);
+						ui->set_guild_names(a.guild_names);
 				}
 				break;
 			}
-			case 0x1D: // disbandAlliance：本盟被踢/联盟解散 → 只清窗内数据
+			case 0x1D: // disband / expel
 			{
 				if (recv.available() >= 4)
-					recv.read_int(); // alliance id
+					recv.read_int();
 				while (recv.available())
 					recv.skip_byte();
+				AllianceModel::get().clear();
+				refresh_userlist();
 				LOG(LOG_DEBUG, "Alliance: disband/expel (0x1D)");
 				if (auto ui = UI::get().get_element<UIAlliance>())
 				{
@@ -178,21 +214,40 @@ namespace ms
 				}
 				break;
 			}
-			case 0x0E: // allianceMemberOnline：int aid + gid + cid + bool online（不弹窗）
+			case 0x0E: // member online/offline：aid + gid + cid + bool
 			{
+				if (recv.available() >= 13)
+				{
+					recv.read_int(); // aid
+					recv.read_int(); // gid
+					int32_t cid = recv.read_int();
+					bool online = recv.read_bool();
+					AllianceModel::get().set_member_online(cid, online);
+					refresh_userlist();
+				}
 				while (recv.available())
 					recv.skip_byte();
 				LOG(LOG_DEBUG, "Alliance: member online/offline (0x0E)");
 				break;
 			}
-			case 0x18: // updateAllianceJobLevel：aid + gid + cid + level + job（不弹窗）
+			case 0x18: // updateAllianceJobLevel：aid + gid + cid + level + job
 			{
+				if (recv.available() >= 20)
+				{
+					recv.read_int(); // aid
+					recv.read_int(); // gid
+					int32_t cid = recv.read_int();
+					int32_t level = recv.read_int();
+					int32_t job = recv.read_int();
+					AllianceModel::get().set_member_job_level(cid, level, job);
+					refresh_userlist();
+				}
 				while (recv.available())
 					recv.skip_byte();
 				LOG(LOG_DEBUG, "Alliance: member job/level update (0x18)");
 				break;
 			}
-			case 0x1A: // changeAllianceRankTitle：int aid + 5 × string
+			case 0x1A: // changeAllianceRankTitle
 			{
 				if (recv.available() >= 4)
 					recv.read_int();
@@ -201,46 +256,53 @@ namespace ms
 					ranks.push_back(recv.read_string());
 				while (recv.available())
 					recv.skip_byte();
+				AllianceModel::get().set_ranks(ranks);
+				refresh_userlist();
 				LOG(LOG_DEBUG, "Alliance: rank titles (0x1A) n=" << ranks.size());
 				if (auto ui = UI::get().get_element<UIAlliance>())
 				{
 					if (ui->is_active())
 						ui->set_ranks(ranks);
 				}
+				if (auto grade = UI::get().get_element<UIAllianceGrade>())
+				{
+					if (grade->is_active())
+						grade->reload_from_model();
+				}
 				break;
 			}
 			case 0x0F: // updateAllianceInfo
 			{
-				int32_t id = recv.read_int();
-				std::string name = recv.read_string();
-				std::vector<std::string> ranks(5);
+				AllianceData a;
+				a.id = recv.read_int();
+				a.name = recv.read_string();
 				for (int i = 0; i < 5; i++)
-					ranks[i] = recv.read_string();
+					a.rank_titles[i] = recv.read_string();
 				uint8_t guildCount = recv.read_byte();
-				std::vector<int32_t> guilds;
 				for (uint8_t i = 0; i < guildCount && recv.available(); i++)
-					guilds.push_back(recv.read_int());
-				int32_t capacity = recv.read_int();
+					a.guild_ids.push_back(recv.read_int());
+				a.capacity = recv.read_int();
 				recv.skip_short(); // s9 writeShort(0)
-				std::vector<std::string> gnames;
+				a.notice = AllianceModel::get().data().notice;
 				for (uint8_t i = 0; i < guildCount && recv.available(); i++)
-					gnames.push_back(parse_guild_info_name(recv));
+					a.guild_names.push_back(parse_guild_block(recv, a));
 				while (recv.available())
 					recv.skip_byte();
-				(void)capacity;
+				AllianceModel::get().set(a);
+				refresh_userlist();
 				if (auto ui = ensure_ui())
 				{
-					std::string notice = ui->get_notice();
-					ui->set_alliance(id, name, ranks, guilds, gnames, notice);
-					LOG(LOG_DEBUG, "AllianceInfo: 0x0F guilds=" << guilds.size()
-						<< " names=" << gnames.size());
+					ui->set_alliance(a.id, a.name,
+						std::vector<std::string>(a.rank_titles, a.rank_titles + 5),
+						a.guild_ids, a.guild_names, a.notice);
+					LOG(LOG_DEBUG, "AllianceInfo: 0x0F guilds=" << a.guild_ids.size()
+						<< " members=" << a.members.size());
 					break;
 				}
-				if (!name.empty())
-					ensure_sm(Color::Name::YELLOW, "Alliance: " + name);
-				LOG(LOG_DEBUG, "AllianceInfo: 0x0F guilds=" << guilds.size()
-					<< " names=" << gnames.size());
-				(void)name;
+				if (!a.name.empty())
+					ensure_sm(Color::Name::YELLOW, "Alliance: " + a.name);
+				LOG(LOG_DEBUG, "AllianceInfo: 0x0F guilds=" << a.guild_ids.size()
+					<< " members=" << a.members.size());
 				break;
 			}
 			default:

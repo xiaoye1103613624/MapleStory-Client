@@ -42,19 +42,21 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
+		// Angel CUIUserList 顶层页签顺序（OnCreate / SetButton @0x91e073）：
+		// FRIEND=0 / PARTY=1 / GUILD=2 / GUILD_ALLIANCE=3 / BLACKLIST=4。
+		// 子页签（PARTY_MINE 等）数值不再与 Buttons::BT_TAB_* 巧合对齐；
+		// change_*_tab / button_pressed 必须显式映射，禁止 change_tab(buttonid)。
 		enum Tab
 		{
 			FRIEND,
 			PARTY,
 			GUILD,
+			UNION,
 			BLACKLIST,
 			PARTY_MINE,
 			PARTY_SEARCH,
 			FRIEND_ALL,
-			FRIEND_ONLINE,
-			// 顶层第 4 格「家族联盟」。排在末尾避开上面四个子页签值；
-			// 顶层页签 → 按钮 id 一律走 tab_button() 显式映射，不再用 BT_TAB_FRIEND + tab。
-			UNION
+			FRIEND_ONLINE
 		};
 
 		void change_tab(uint8_t tabid);
@@ -84,6 +86,8 @@ namespace ms
 		void draw_party_tab(float alpha) const;
 		void draw_blacklist_tab(float alpha) const;
 		void draw_union_tab(float alpha) const;
+		// W1.5：联盟成员行命中（cid）；未入盟恒 0。
+		int32_t union_row_at(Point<int16_t> cursorpos) const;
 		// r3：数据驱动按钮态（Angel CTabFriend::OnClick 行级规则 / 空态整组灰）
 		void set_page_buttons(uint8_t page);
 		void update_friend_button_states();
@@ -244,12 +248,16 @@ namespace ms
 		Text blacklist_none_text;
 		Slider blacklist_slider;
 		// 家族联盟：GuildUnion/guildinfo0,2,3,4,5,6,7 + 独立 backgrnd
+		// W1.5：入盟态读 AllianceModel（Angel CTabGuildAlliance GUILDITEM 行）。
 		Texture union_notice_bar;		// guildinfo6 282x20
 		Texture union_banner;			// guildinfo0 281x27
 		Texture union_col_header;		// guildinfo2 281x18
 		Texture union_col_header2;		// guildinfo3 281x18
 		Texture union_separator;		// guildinfo4 281x1
 		Text union_none_text;			// 还未加入联盟。
+		Text union_notice_text;			// 入盟公告
+		Text union_count_text;			// 在线/总数
+		int32_t union_selected_cid = 0;
 		Slider union_slider;
 		// 家族页补齐
 		Texture guild_col_header2;		// guildinfo3 281x18

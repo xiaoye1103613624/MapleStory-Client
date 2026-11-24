@@ -17,9 +17,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIAlliance.h"
 #include "UICharInfo.h"
-#include "UISoftKey.h"
+#include "UIChatBar.h"
+#include "UINotice.h"
 
 #include "../UI.h"
+#include "../../Character/AllianceModel.h"
 #include "../Components/MapleButton.h"
 #include "../../Net/Packets/AlliancePackets.h"
 #include "../../Util/UiAssetResolve.h"
@@ -88,7 +90,25 @@ namespace ms
 		alliance_notice = notice;
 		this->guilds = guilds;
 		this->guild_names = gnames;
-		(void)ranks;
+		rank_titles = ranks;
+
+		// 与 UIUserList UNION 页共读 AllianceModel（handler 主写；浮窗兜底同步）。
+		AllianceData a = AllianceModel::get().data();
+		a.id = id;
+		a.name = name;
+		a.notice = notice;
+		a.guild_ids = guilds;
+		a.guild_names = gnames;
+		for (int i = 0; i < 5; i++)
+			a.rank_titles[i] = (i < static_cast<int>(ranks.size())) ? ranks[i] : std::string();
+		if (id <= 0)
+			AllianceModel::get().clear();
+		else
+		{
+			// 保留已解析 members（0x0D/0x0F）；仅刷新头信息。
+			a.members = AllianceModel::get().data().members;
+			AllianceModel::get().set(a);
+		}
 
 		name_label.change_text(Locale::format("alliance.name_line", name));
 		notice_label.change_text(Locale::format("alliance.notice_line", notice));
@@ -162,11 +182,23 @@ namespace ms
 				deactivate();
 				return Button::State::NORMAL;
 			case Buttons::BtInvite:
-				
+			{
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_guild_name"),
+					[](std::string gname) {
+						AllianceInvitePacket(gname).dispatch();
+						LOG(LOG_DEBUG, "UIAlliance: Invite guild=" << gname);
+					}, 14, true);
 				return Button::State::NORMAL;
+			}
 			case Buttons::BtNotice:
-				
+			{
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_notice"),
+					[](std::string notice) {
+						AllianceNoticePacket(notice).dispatch();
+						LOG(LOG_DEBUG, "UIAlliance: Notice len=" << notice.size());
+					}, 100, true);
 				return Button::State::NORMAL;
+			}
 		}
 
 		return Button::State::DISABLED;
@@ -177,21 +209,26 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'N' || keycode == 'n') {
-			std::string cur = get_notice();
-			
+			UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_notice"),
+				[](std::string notice) {
+					AllianceNoticePacket(notice).dispatch();
+				}, 100, true);
 		} else if (keycode == 'I' || keycode == 'i') {
-			
+			UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_guild_name"),
+				[](std::string gname) {
+					AllianceInvitePacket(gname).dispatch();
+				}, 14, true);
 		} else if (keycode == 'D' || keycode == 'd') {
-			// DENY_ALLIANCE_REQUEST：CharInfo 名作 inviter → 只问 guild
-			std::string pre;
-			if (auto ci = UI::get().get_element<UICharInfo>())
-				pre = ci->get_target_name();
-			if (!pre.empty()) {
-				std::string inviter = pre;
-				
-			} else {
-				
-			}
+			// DENY_ALLIANCE_REQUEST 需 inviter+guild 两字段；先收 inviter，再收 guild。
+			UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+				[](std::string inviter) {
+					UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_guild_name"),
+						[inviter](std::string guild) {
+							DenyAllianceRequestPacket(inviter, guild).dispatch();
+							LOG(LOG_DEBUG, "UIAlliance: Deny inviter=" << inviter
+								<< " guild=" << guild);
+						}, 14, true);
+				}, 12);
 		} else if (keycode == 'R' || keycode == 'r') {
 			AllianceActionPacket(0x01).dispatch();
 			LOG(LOG_DEBUG, "UIAlliance: Refresh");

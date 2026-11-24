@@ -18,14 +18,15 @@
 #include "UIUserList.h"
 #include "UICharInfo.h"
 #include "UIChatBar.h"
+#include "UIAllianceGrade.h"
 #include "UIGuildBBS.h"
 #include "UIMessenger.h"
+#include "UINotice.h"
 #include "UIPartySearch.h"
-#include "UISoftKey.h"
-
 #include "../UI.h"
 #include "../../IO/Components/MapleButton.h"
 #include "../../IO/Components/TwoSpriteButton.h"
+#include "../../Character/AllianceModel.h"
 #include "../../Character/BuddyListModel.h"
 #include "../../Character/GuildModel.h"
 #include "../../Character/Job.h"
@@ -408,6 +409,23 @@ namespace ms
 			if (blacklist_count_text.get_text() != cnt)
 				blacklist_count_text.change_text(cnt);
 		}
+		else if (tab == Tab::UNION)
+		{
+			const AllianceData& a = AllianceModel::get().data();
+			const std::string notice = a.notice.empty()
+				? Locale::text("guild.notice_none") : a.notice;
+			if (union_notice_text.get_text() != notice)
+				union_notice_text.change_text(notice);
+
+			int online_n = 0;
+			for (const auto& m : a.members)
+				if (m.online)
+					online_n++;
+			const std::string cnt = "[" + std::to_string(online_n) + "/"
+				+ std::to_string(a.members.size()) + "]";
+			if (union_count_text.get_text() != cnt)
+				union_count_text.change_text(cnt);
+		}
 	}
 
 	void UIUserList::set_guild_buttons(bool on)
@@ -563,14 +581,16 @@ namespace ms
 	Cursor::State UIUserList::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
 		// 成员行不是 Button：点选只更新选中态，事件仍交回基类处理按钮/拖拽。
+		// W1：顶层 tab 存 Tab::*（UNION=3 / BLACKLIST=4），禁止再跟 Buttons::BT_TAB_*
+		// 比较——BT_TAB_BLACKLIST 仍为 3，会与 Tab::UNION 撞值导致拒绝列表行命中失效。
 		if (clicked)
 		{
-			if (tab == Buttons::BT_TAB_GUILD)
+			if (tab == Tab::GUILD)
 			{
 				if (int32_t cid = guild_row_at(cursorpos))
 					guild_selected_cid = cid;
 			}
-			else if (tab == Buttons::BT_TAB_FRIEND || tab == Tab::FRIEND_ALL || tab == Tab::FRIEND_ONLINE)
+			else if (tab == Tab::FRIEND)
 			{
 				if (int32_t cid = friend_row_at(cursorpos))
 				{
@@ -584,7 +604,7 @@ namespace ms
 					update_friend_button_states();
 				}
 			}
-			else if (tab == Buttons::BT_TAB_PARTY || tab == Tab::PARTY_MINE)
+			else if (tab == Tab::PARTY)
 			{
 				if (int32_t cid = party_row_at(cursorpos))
 				{
@@ -593,12 +613,22 @@ namespace ms
 					LOG(LOG_DEBUG, "UIUserList: party select cid=" << cid);
 				}
 			}
-			else if (tab == Buttons::BT_TAB_BLACKLIST)
+			else if (tab == Tab::BLACKLIST)
 			{
 				if (int32_t row = blacklist_row_at(cursorpos))
 				{
 					blacklist_selected = (row == blacklist_selected) ? 0 : row;
 					update_blacklist_button_states();
+				}
+			}
+			else if (tab == Tab::UNION)
+			{
+				if (int32_t cid = union_row_at(cursorpos))
+				{
+					union_selected_cid = cid;
+					page_selected_row = cid;
+					update_union_button_states();
+					LOG(LOG_DEBUG, "UIUserList: union select cid=" << cid);
 				}
 			}
 		}
@@ -735,14 +765,34 @@ namespace ms
 			}
 			else if (keycode == 'W' || keycode == 'w')
 			{
+				// Angel SetWhisperTarget+StartChat：有名 → ChatBar 密语频道；无名 → 提示用物理键盘。
+				// 禁止 emplace SoftKeyboard.img 软键盘弹窗。
 				std::string pre;
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					pre = ci->get_target_name();
-				if (!pre.empty()) {
-					std::string name = pre;
-					
-				} else {
-					
+				if (pre.empty())
+				{
+					if (const Buddy* b = BuddyListModel::get().find(friend_selected_cid))
+						pre = b->name;
+				}
+				if (!pre.empty())
+				{
+					if (auto chat = UI::get().get_element<UIChatBar>())
+						chat->set_whisper_target(pre);
+					else
+						UI::get().emplace<UIChatBar>()->set_whisper_target(pre);
+				}
+				else
+				{
+					auto chatbar = UI::get().get_element<UIChatBar>();
+					if (!chatbar)
+						chatbar = UI::get().emplace<UIChatBar>();
+					if (chatbar)
+					{
+						chatbar->toggle_input(true);
+						chatbar->show_message(Locale::text("whisper.hint_target").c_str(),
+							UIChatBar::MessageType::YELLOW);
+					}
 				}
 			}
 		}
@@ -755,12 +805,20 @@ namespace ms
 
 	Button::State UIUserList::button_pressed(uint16_t buttonid)
 	{
+		// SoftKey 物理键口径：缺名/公告时展开 ChatBar + Locale 提示，禁止 SoftKeyboard 弹窗。
 		auto guild_hint = [](const char* key)
 		{
 			const std::string msg = Locale::text(key);
+			auto chatbar = UI::get().get_element<UIChatBar>();
 
-			if (auto chatbar = UI::get().get_element<UIChatBar>())
+			if (!chatbar)
+				chatbar = UI::get().emplace<UIChatBar>();
+
+			if (chatbar)
+			{
+				chatbar->toggle_input(true);
 				chatbar->show_message(msg.c_str(), UIChatBar::MessageType::YELLOW);
+			}
 		};
 
 		switch (buttonid)
@@ -769,16 +827,25 @@ namespace ms
 				deactivate();
 				break;
 			case Buttons::BT_TAB_FRIEND:
+				change_tab(Tab::FRIEND);
+				return Button::State::PRESSED;
 			case Buttons::BT_TAB_PARTY:
+				change_tab(Tab::PARTY);
+				return Button::State::PRESSED;
 			case Buttons::BT_TAB_GUILD:
+				change_tab(Tab::GUILD);
+				return Button::State::PRESSED;
+			case Buttons::BT_TAB_UNION:
+				change_tab(Tab::UNION);
+				return Button::State::PRESSED;
 			case Buttons::BT_TAB_BLACKLIST:
-				change_tab(buttonid);
+				change_tab(Tab::BLACKLIST);
 				return Button::State::PRESSED;
 			case Buttons::BT_TAB_PARTY_MINE:
-				change_party_tab(buttonid);
+				change_party_tab(Tab::PARTY_MINE);
 				return Button::State::PRESSED;
 			case Buttons::BT_TAB_PARTY_SEARCH:
-				change_party_tab(buttonid);
+				change_party_tab(Tab::PARTY_SEARCH);
 				// 顶层 UIWindow.img/PartySearch 独立壳（与页内嵌网格并存）
 				if (UiAssetResolve::usable(UiAssetResolve::window("PartySearch")))
 					UI::get().emplace<UIPartySearch>();
@@ -790,12 +857,14 @@ namespace ms
 					UI::get().emplace<UIPartySearch>();
 				break;
 			case Buttons::BT_TAB_FRIEND_ALL:
+				change_friend_tab(Tab::FRIEND_ALL);
+				return Button::State::PRESSED;
 			case Buttons::BT_TAB_FRIEND_ONLINE:
-				change_friend_tab(buttonid);
+				change_friend_tab(Tab::FRIEND_ONLINE);
 				return Button::State::PRESSED;
 			case Buttons::BT_TAB_BLACKLIST_INDIVIDUAL:
 			case Buttons::BT_TAB_BLACKLIST_GUILD:
-				change_blacklist_tab(buttonid);
+				change_blacklist_tab(buttonid == Buttons::BT_TAB_BLACKLIST_INDIVIDUAL ? 0 : 1);
 				return Button::State::PRESSED;
 			case Buttons::BT_FRIEND_MESSENGER:
 			{
@@ -816,21 +885,23 @@ namespace ms
 					BuddyAddPacket(pre, "Default Group").dispatch();
 					LOG(LOG_DEBUG, "UIUserList: BuddyAdd target=" << pre);
 				} else {
-					
+					// Angel CUtilDlgEx 输名 → UIEnterString（物理键 Textfield，禁 SoftKeyboard）。
+					UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+						[](std::string name) {
+							BuddyAddPacket(name, "Default Group").dispatch();
+							LOG(LOG_DEBUG, "UIUserList: BuddyAdd target=" << name);
+						}, 12);
 				}
 				break;
 			}
 			case Buttons::BT_FRIEND_ADD_GROUP:
 			{
-				std::string pre;
-				if (auto ci = UI::get().get_element<UICharInfo>())
-					pre = ci->get_target_name();
-				if (!pre.empty()) {
-					std::string name = pre;
-					
-					break;
-				}
-				
+				// s9 BuddylistModify 无独立「建组」opcode；组名仅作本地筛选 + 后续加友 group 字段。
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_group"),
+					[](std::string group) {
+						BuddyListModel::get().set_active_group(group);
+						LOG(LOG_DEBUG, "UIUserList: active buddy group=" << group);
+					}, 13, true);
 				break;
 			}
 			case Buttons::BT_PARTY_CREATE:
@@ -842,13 +913,21 @@ namespace ms
 				std::string pre;
 				if (auto ci = UI::get().get_element<UICharInfo>())
 					pre = ci->get_target_name();
+				if (pre.empty())
+				{
+					if (const Buddy* b = BuddyListModel::get().find(friend_selected_cid))
+						pre = b->name;
+				}
 				if (!pre.empty()) {
 					PartyInvitePacket(pre).dispatch();
 					LOG(LOG_DEBUG, "UIUserList: PartyInvite target=" << pre);
 					break;
 				}
-				// SoftKey：纯数字 → PartyJoin(partyid)；否则 → PartyInvite(name)
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						PartyInvitePacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: PartyInvite target=" << name);
+					}, 12);
 				break;
 			}
 			case Buttons::BT_PARTY_LEAVE:
@@ -857,13 +936,15 @@ namespace ms
 				break;
 			case Buttons::BT_PARTY_SETTINGS:
 			{
-				// CharInfo 有 cid → Expel；有名无 cid → Deny；否则 SoftKey
+				// CharInfo 有 cid → Expel；有名无 cid → Deny；否则提示选中/物理键输入。
 				int32_t from_cid = 0;
 				std::string from_name;
 				if (auto ci = UI::get().get_element<UICharInfo>()) {
 					from_cid = ci->get_target_cid();
 					from_name = ci->get_target_name();
 				}
+				if (from_cid <= 0 && party_selected_cid > 0)
+					from_cid = party_selected_cid;
 				if (from_cid > 0) {
 					PartyExpelPacket(from_cid).dispatch();
 					LOG(LOG_DEBUG, "UIUserList: PartyExpel cid=" << from_cid);
@@ -871,7 +952,11 @@ namespace ms
 					DenyPartyRequestPacket(from_name).dispatch();
 					LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << from_name);
 				} else {
-					
+					UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+						[](std::string name) {
+							DenyPartyRequestPacket(name).dispatch();
+							LOG(LOG_DEBUG, "UIUserList: DenyParty from=" << name);
+						}, 12);
 				}
 				break;
 			}
@@ -922,7 +1007,11 @@ namespace ms
 					add_local(pre);
 					FindPlayerPacket(pre).dispatch();
 				} else {
-					
+					UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+						[add_local](std::string name) {
+							add_local(name);
+							FindPlayerPacket(name).dispatch();
+						}, 12);
 				}
 				break;
 			}
@@ -938,13 +1027,15 @@ namespace ms
 				}
 				break;
 			}
-			case Buttons::BT_TAB_UNION:
-				change_tab(Tab::UNION);
-				return Button::State::PRESSED;
 			case Buttons::BT_GUILD_NOTICE:
 			{
 				// s9 GuildOperationHandler case 0x10：0x10 + string（限 100 字）。
-				
+				// Angel CUtilDlgEx INPUT_STR → UIEnterString（禁 SoftKeyboard）。
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_notice"),
+					[](std::string notice) {
+						GuildNoticePacket(notice).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: GuildNotice len=" << notice.size());
+					}, 100, true);
 				break;
 			}
 			case Buttons::BT_GUILD_INVITE:
@@ -960,7 +1051,11 @@ namespace ms
 					break;
 				}
 
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						GuildInvitePacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: GuildInvite target=" << name);
+					}, 12);
 				break;
 			}
 			case Buttons::BT_GUILD_WITHDRAW:
@@ -1001,8 +1096,12 @@ namespace ms
 						break;
 					case Buttons::BT_GUILD_WHISPER:
 					{
+						// Angel SetWhisperTarget+StartChat → ChatBar 密语频道（物理键盘输入正文）。
 						const std::string name = m->name;
-						
+						if (auto chat = UI::get().get_element<UIChatBar>())
+							chat->set_whisper_target(name);
+						else
+							UI::get().emplace<UIChatBar>()->set_whisper_target(name);
 						break;
 					}
 					case Buttons::BT_GUILD_RANKUP:
@@ -1073,17 +1172,27 @@ namespace ms
 			case Buttons::BT_FRIEND_PARTY:
 				button_pressed(Buttons::BT_PARTY_INVITE);
 				break;
+			case Buttons::BT_FRIEND_CHAT:
+				// Angel BtChat(2016) → Messenger::TryNew + SendInviteMsg
+				button_pressed(Buttons::BT_FRIEND_MESSENGER);
+				break;
 			case Buttons::BT_FRIEND_WHISPER:
 			case Buttons::BT_FRIEND_MESSAGE:
 			case Buttons::BT_FRIEND_GROUP_WHISPER:
 			case Buttons::BT_PARTY_WHISPER:
 			case Buttons::BT_UNION_WHISPER:
 			{
-				// P1：已选中行则直接 whisper；否则 SoftKey 输名（对齐家族页 GUILD_WHISPER）。
+				// Angel SetWhisperTarget+StartChat → ChatBar::set_whisper_target；
+				// 无选中名：展开 ChatBar + 提示，物理键盘输入对象（禁 SoftKey 弹窗）。
 				std::string pre;
 				if (buttonid == Buttons::BT_PARTY_WHISPER)
 				{
 					if (const PartyMember* m = PartyModel::get().find(party_selected_cid))
+						pre = m->name;
+				}
+				else if (buttonid == Buttons::BT_UNION_WHISPER)
+				{
+					if (const AllianceMember* m = AllianceModel::get().find(union_selected_cid))
 						pre = m->name;
 				}
 				else if (const Buddy* b = BuddyListModel::get().find(friend_selected_cid))
@@ -1093,11 +1202,24 @@ namespace ms
 
 				if (!pre.empty())
 				{
-					
+					if (auto chat = UI::get().get_element<UIChatBar>())
+						chat->set_whisper_target(pre);
+					else
+						UI::get().emplace<UIChatBar>()->set_whisper_target(pre);
 					break;
 				}
 
-				
+				{
+					auto chatbar = UI::get().get_element<UIChatBar>();
+					if (!chatbar)
+						chatbar = UI::get().emplace<UIChatBar>();
+					if (chatbar)
+					{
+						chatbar->toggle_input(true);
+						chatbar->show_message(Locale::text("whisper.hint_target").c_str(),
+							UIChatBar::MessageType::YELLOW);
+					}
+				}
 				break;
 			}
 			case Buttons::BT_FRIEND_WHERE:
@@ -1115,8 +1237,22 @@ namespace ms
 						break;
 					}
 				}
+				if (buttonid == Buttons::BT_UNION_WHERE)
+				{
+					if (const AllianceMember* m = AllianceModel::get().find(union_selected_cid))
+					{
+						FindPlayerPacket(m->name).dispatch();
+						break;
+					}
+					guild_hint("guild.need_select");
+					break;
+				}
 
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						FindPlayerPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: FindPlayer target=" << name);
+					}, 12);
 				break;
 			}
 			case Buttons::BT_FRIEND_DELETE2:
@@ -1128,7 +1264,7 @@ namespace ms
 					break;
 				}
 
-				
+				guild_hint("guild.need_select");
 				break;
 			}
 			case Buttons::BT_PARTY_CREATE2:
@@ -1144,7 +1280,15 @@ namespace ms
 			case Buttons::BT_PARTY_CHANGE_BOSS:
 			{
 				const bool leader = buttonid == Buttons::BT_PARTY_CHANGE_BOSS;
-				
+				if (party_selected_cid > 0)
+				{
+					if (leader)
+						PartyChangeLeaderPacket(party_selected_cid).dispatch();
+					else
+						PartyExpelPacket(party_selected_cid).dispatch();
+					break;
+				}
+				guild_hint("guild.need_select");
 				break;
 			}
 			case Buttons::BT_PARTY_SEARCH2:
@@ -1174,25 +1318,126 @@ namespace ms
 				break;
 			case Buttons::BT_UNION_INVITE:
 			{
-				
+				// Angel sub_914CFE @0x914cfe：CUtilDlgEx 输公会名 → Encode1(3)+EncodeStr。
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_guild_name"),
+					[](std::string gname) {
+						AllianceInvitePacket(gname).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: AllianceInvite guild=" << gname);
+					}, 14, true);
 				break;
 			}
 			case Buttons::BT_UNION_NOTICE:
 			{
-				
+				// Angel sub_915214 @0x915214：Encode1(10)+EncodeStr（限 100）。
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_notice"),
+					[](std::string notice) {
+						AllianceNoticePacket(notice).dispatch();
+						LOG(LOG_DEBUG, "UIUserList: AllianceNotice len=" << notice.size());
+					}, 100, true);
 				break;
 			}
 			case Buttons::BT_UNION_WITHDRAW:
-			case Buttons::BT_UNION_KICK:
-			case Buttons::BT_UNION_CHANGE:
-			case Buttons::BT_UNION_UP:
-			case Buttons::BT_UNION_DOWN:
-			case Buttons::BT_UNION_INFO:
+			{
+				// s9 / UIAlliance BtLeave：AllianceActionPacket(0x02) 退盟。
+				if (!AllianceModel::get().data().in_alliance())
+				{
+					guild_hint("userlist.need_data");
+					break;
+				}
+				AllianceActionPacket(0x02).dispatch();
+				LOG(LOG_DEBUG, "UIUserList: Alliance leave (0x02)");
+				break;
+			}
 			case Buttons::BT_UNION_PARTYINVITE:
 			{
-				// 2026-11-11：不再弹 UIAlliance 360x320 浮窗。083 联盟操作挂在
-				// 本共用窗页签内；协议 action 字节未逐条对拍前只提示，避免错窗。
-				guild_hint("userlist.need_data");
+				// Angel CTabGuildAlliance::OnPartyInvite @0x9153dc → SendJoinPartyMsg。
+				if (const AllianceMember* m = AllianceModel::get().find(union_selected_cid))
+				{
+					if (!m->name.empty())
+					{
+						PartyInvitePacket(m->name).dispatch();
+						break;
+					}
+				}
+				guild_hint("guild.need_select");
+				break;
+			}
+			case Buttons::BT_UNION_INFO:
+			{
+				// Angel CUIUserList OnButtonClicked case 0x809 @0x91d29d：
+				// ToggleAllianceGrade（位图 GuildUnion/BtInfo @≈(238,363)）。
+				// 与 BtChange(0x80C ChangeMaster) / BtUp·BtDown(0x09 成员职级) 不同。
+				if (!AllianceModel::get().data().in_alliance())
+				{
+					guild_hint("userlist.union_none");
+					break;
+				}
+				if (auto existing = UI::get().get_element<UIAllianceGrade>())
+				{
+					existing->deactivate();
+					break;
+				}
+				UI::get().emplace<UIAllianceGrade>();
+				LOG(LOG_DEBUG, "UIUserList: ToggleAllianceGrade open");
+				break;
+			}
+			case Buttons::BT_UNION_KICK:
+			{
+				// Angel sub_914EB4 + s9 0x06：guildid + allianceid（驱逐选中成员所属公会）。
+				const AllianceMember* m = AllianceModel::get().find(union_selected_cid);
+				const AllianceData& a = AllianceModel::get().data();
+				if (!m || m->guild_id <= 0 || !a.in_alliance())
+				{
+					guild_hint("guild.need_select");
+					break;
+				}
+				if (m->id == Stage::get().get_player().get_oid())
+				{
+					guild_hint("userlist.need_data");
+					break;
+				}
+				AllianceKickPacket(m->guild_id, a.id).dispatch();
+				LOG(LOG_DEBUG, "UIUserList: AllianceKick guild=" << m->guild_id
+					<< " alliance=" << a.id);
+				break;
+			}
+			case Buttons::BT_UNION_CHANGE:
+			{
+				// Angel sub_915983 / s9 0x07：Encode4(cid) 转让盟主。
+				const AllianceMember* m = AllianceModel::get().find(union_selected_cid);
+				if (!m || m->id <= 0)
+				{
+					guild_hint("guild.need_select");
+					break;
+				}
+				if (m->id == Stage::get().get_player().get_oid())
+				{
+					guild_hint("userlist.need_data");
+					break;
+				}
+				AllianceChangeMasterPacket(m->id).dispatch();
+				LOG(LOG_DEBUG, "UIUserList: AllianceChangeMaster cid=" << m->id);
+				break;
+			}
+			case Buttons::BT_UNION_UP:
+			case Buttons::BT_UNION_DOWN:
+			{
+				// Angel sub_91505B / s9 0x09：cid + raise(1=升/0=降)。
+				const AllianceMember* m = AllianceModel::get().find(union_selected_cid);
+				if (!m || m->id <= 0)
+				{
+					guild_hint("guild.need_select");
+					break;
+				}
+				if (m->id == Stage::get().get_player().get_oid())
+				{
+					guild_hint("userlist.need_data");
+					break;
+				}
+				const bool raise = (buttonid == Buttons::BT_UNION_UP);
+				AllianceGradeChangePacket(m->id, raise).dispatch();
+				LOG(LOG_DEBUG, "UIUserList: AllianceGrade "
+					<< (raise ? "up" : "down") << " cid=" << m->id);
 				break;
 			}
 			case Buttons::BT_GUILD_BOARD:
@@ -1209,6 +1454,15 @@ namespace ms
 	{
 		uint8_t oldtab = tab;
 		tab = tabid;
+
+		// W1.5：切入联盟页且家族已挂 allianceId、模型尚空 → 用既有 0x01 拉全量。
+		if (tabid == Tab::UNION
+			&& !AllianceModel::get().data().in_alliance()
+			&& GuildModel::get().data().allianceId > 0)
+		{
+			AllianceActionPacket(0x01).dispatch();
+			LOG(LOG_DEBUG, "UIUserList: UNION tab request AllianceInfo (0x01)");
+		}
 
 		auto set_act = [&](uint16_t id, bool act)
 		{
@@ -1241,7 +1495,7 @@ namespace ms
 
 		set_st(tab_button(tab), Button::State::PRESSED);
 
-		if (tab == Buttons::BT_TAB_PARTY)
+		if (tab == Tab::PARTY)
 		{
 			set_act(Buttons::BT_PARTY_CREATE, true);
 			set_act(Buttons::BT_PARTY_INVITE, true);
@@ -1259,7 +1513,7 @@ namespace ms
 			set_act(Buttons::BT_PARTY_SEARCH_LEVEL, false);
 		}
 
-		if (tab == Buttons::BT_TAB_FRIEND)
+		if (tab == Tab::FRIEND)
 		{
 			set_act(Buttons::BT_FRIEND_ADD, true);
 			set_act(Buttons::BT_FRIEND_ADD_GROUP, true);
@@ -1282,7 +1536,7 @@ namespace ms
 			set_act(Buttons::BT_FRIEND_GROUP_0, false);
 		}
 
-		if (tab == Buttons::BT_TAB_BLACKLIST)
+		if (tab == Tab::BLACKLIST)
 		{
 			set_act(Buttons::BT_BLACKLIST_ADD, true);
 			set_act(Buttons::BT_BLACKLIST_DELETE, true);
@@ -1324,13 +1578,18 @@ namespace ms
 			if (it != buttons.end() && it->second)
 				it->second->set_active(act);
 		};
+		auto party_sub_btn = [](uint8_t t) -> uint16_t
+		{
+			return (t == Tab::PARTY_SEARCH)
+				? Buttons::BT_TAB_PARTY_SEARCH
+				: Buttons::BT_TAB_PARTY_MINE;
+		};
 
 		if (oldtab != party_tab)
-			set_st(Buttons::BT_TAB_FRIEND + oldtab, Button::State::NORMAL);
+			set_st(party_sub_btn(oldtab), Button::State::NORMAL);
 
-		set_st(Buttons::BT_TAB_FRIEND + party_tab, Button::State::PRESSED);
-
-		set_act(Buttons::BT_PARTY_SEARCH_LEVEL, party_tab == Buttons::BT_TAB_PARTY_SEARCH);
+		set_st(party_sub_btn(party_tab), Button::State::PRESSED);
+		set_act(Buttons::BT_PARTY_SEARCH_LEVEL, party_tab == Tab::PARTY_SEARCH);
 	}
 
 	void UIUserList::change_friend_tab(uint8_t tabid)
@@ -1344,11 +1603,17 @@ namespace ms
 			if (it != buttons.end() && it->second)
 				it->second->set_state(st);
 		};
+		auto friend_sub_btn = [](uint8_t t) -> uint16_t
+		{
+			return (t == Tab::FRIEND_ONLINE)
+				? Buttons::BT_TAB_FRIEND_ONLINE
+				: Buttons::BT_TAB_FRIEND_ALL;
+		};
 
 		if (oldtab != friend_tab)
-			set_st(Buttons::BT_TAB_FRIEND + oldtab, Button::State::NORMAL);
+			set_st(friend_sub_btn(oldtab), Button::State::NORMAL);
 
-		set_st(Buttons::BT_TAB_FRIEND + friend_tab, Button::State::PRESSED);
+		set_st(friend_sub_btn(friend_tab), Button::State::PRESSED);
 	}
 
 	void UIUserList::change_blacklist_tab(uint8_t tabid)
@@ -1362,11 +1627,17 @@ namespace ms
 			if (it != buttons.end() && it->second)
 				it->second->set_state(st);
 		};
+		auto bl_sub_btn = [](uint8_t t) -> uint16_t
+		{
+			return (t == 1)
+				? Buttons::BT_TAB_BLACKLIST_GUILD
+				: Buttons::BT_TAB_BLACKLIST_INDIVIDUAL;
+		};
 
 		if (oldtab != blacklist_tab)
-			set_st(Buttons::BT_TAB_FRIEND + oldtab, Button::State::NORMAL);
+			set_st(bl_sub_btn(oldtab), Button::State::NORMAL);
 
-		set_st(Buttons::BT_TAB_FRIEND + blacklist_tab, Button::State::PRESSED);
+		set_st(bl_sub_btn(blacklist_tab), Button::State::PRESSED);
 	}
 
 	void UIUserList::bind_runtime_assets()
@@ -1553,6 +1824,8 @@ namespace ms
 		blacklist_count_text = label(Color::Name::WHITE);
 		blacklist_none_text = label(Color::Name::BLACK);
 		union_none_text = label(Color::Name::BLACK);
+		union_notice_text = label(Color::Name::BLACK);
+		union_count_text = label(Color::Name::WHITE);
 		guild_online_count_text = label(Color::Name::WHITE);
 		guild_offline_count_text = label(Color::Name::WHITE);
 		guild_none_row_text = label(Color::Name::BLACK);
@@ -1567,6 +1840,7 @@ namespace ms
 		blacklist_count_text.change_text("0/26");
 		blacklist_none_text.change_text(Locale::text("userlist.none"));
 		union_none_text.change_text(Locale::text("userlist.union_none"));
+		union_count_text.change_text("[0/0]");
 		guild_online_count_text.change_text("[0/0]");
 		guild_offline_count_text.change_text("[0/0]");
 		guild_none_row_text.change_text(Locale::text("userlist.none"));
@@ -1667,8 +1941,10 @@ namespace ms
 				update_friend_button_states();
 				break;
 			case Tab::PARTY:
-				// Angel 组员页无行级 disable 函数 → SetButton 语义 = 整组 enable。
+				// Angel 组员页无行级 disable 函数 → SetButton 语义 = 整组 enable；
+				// 已有队伍时 BtCreate 置灰（update_party_button_states）。
 				group(party_btns, std::size(party_btns), true, Button::State::NORMAL);
+				update_party_button_states();
 				break;
 			case Tab::GUILD:
 			{
@@ -1793,23 +2069,36 @@ namespace ms
 
 	void UIUserList::update_union_button_states()
 	{
-		// r3：oracle 联盟帧——未入盟 4×3 全灰 + 右上笔形钮常亮。
-		// 联盟成员列表数据模型未建（s9 Alliance 下发链路待真机验证），入盟态
-		// 按钮点亮与行渲染留待 alliance 数据流轮次（notes r1 §7-8）。
-		static const uint16_t all[] = {
-			BT_UNION_INVITE, BT_UNION_WITHDRAW, BT_UNION_WHERE, BT_UNION_WHISPER,
-			BT_UNION_UP, BT_UNION_DOWN, BT_UNION_KICK, BT_UNION_CHAT,
-			BT_UNION_PARTYINVITE, BT_UNION_INFO, BT_UNION_CHANGE
-		};
-		for (uint16_t id : all)
+		// W1.5/收口：对齐 Angel SetButton + CTabGuildAlliance 行级。
+		// 未入盟：操作钮 DISABLED，笔形 Btnotice 常亮。
+		// 入盟：Invite/Withdraw/Chat/Notice 常亮；Kick/Change/Up/Down 随选中亮
+		// （Angel sub_914EB4/915983/91505B + s9 0x06/0x07/0x09 字段已对拍）。
+		const bool in_all = AllianceModel::get().data().in_alliance();
+		const bool has_sel = in_all && union_selected_cid > 0
+			&& AllianceModel::get().find(union_selected_cid) != nullptr;
+
+		auto st = [&](uint16_t id, Button::State s)
 		{
 			auto it = buttons.find(id);
 			if (it != buttons.end() && it->second)
-				it->second->set_state(Button::State::DISABLED);
-		}
+				it->second->set_state(s);
+		};
 
-		if (auto it = buttons.find(BT_UNION_NOTICE); it != buttons.end() && it->second)
-			it->second->set_state(Button::State::NORMAL);
+		st(BT_UNION_INVITE, in_all ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_WITHDRAW, in_all ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_CHAT, in_all ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_WHERE, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_WHISPER, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_PARTYINVITE, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		// BtInfo = 职衔名窗 Toggle：入盟即亮（不依赖行选中）。
+		st(BT_UNION_INFO, in_all ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_KICK, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_CHANGE, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_UP, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_DOWN, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+
+		// Btnotice 常亮（Angel/oracle）；点按 → UIEnterString 公告。
+		st(BT_UNION_NOTICE, Button::State::NORMAL);
 	}
 
 	void UIUserList::update_blacklist_button_states()
@@ -2014,13 +2303,102 @@ namespace ms
 		return (rel.y() - BLACKLIST_ROW_Y) / BLACKLIST_ROW_H + 1;
 	}
 
+	int32_t UIUserList::union_row_at(Point<int16_t> cursorpos) const
+	{
+		const AllianceData& a = AllianceModel::get().data();
+		if (!a.in_alliance())
+			return 0;
+
+		const Point<int16_t> rel(
+			static_cast<int16_t>(cursorpos.x() - position.x()),
+			static_cast<int16_t>(cursorpos.y() - position.y()));
+
+		if (rel.x() < 12 || rel.x() > 280)
+			return 0;
+
+		constexpr int16_t ROW_Y = 140;
+		constexpr int16_t ROW_H = 17;
+		constexpr int16_t MAX_ROWS = 10;
+
+		if (rel.y() < ROW_Y)
+			return 0;
+
+		const int16_t row = static_cast<int16_t>((rel.y() - ROW_Y) / ROW_H);
+		if (row < 0 || row >= MAX_ROWS)
+			return 0;
+
+		int16_t drawn = 0;
+		for (const auto& m : a.members)
+		{
+			if (drawn == row)
+				return m.id;
+			if (++drawn >= MAX_ROWS)
+				break;
+		}
+		return 0;
+	}
+
 	void UIUserList::draw_union_tab(float) const
 	{
-		// 空态（尚未加入联盟）：只画提示条 +「还未加入联盟。」，
-		// 不再无条件叠 guildinfo0/2/3/4 四件家族页烘焙件（2026-11-11）。
+		const AllianceData& a = AllianceModel::get().data();
+
+		// 空态（尚未加入联盟）：只画提示条 +「还未加入联盟。」
+		if (!a.in_alliance())
+		{
+			if (union_notice_bar)
+				union_notice_bar.draw(position + Point<int16_t>(12, 52));
+			union_none_text.draw(position + Point<int16_t>(104, 58));
+			union_slider.draw(position);
+			return;
+		}
+
+		// 入盟态：公告条 + 横幅/列头 + 成员行（Angel CTabGuildAlliance GUILDITEM）。
 		if (union_notice_bar)
 			union_notice_bar.draw(position + Point<int16_t>(12, 52));
-		union_none_text.draw(position + Point<int16_t>(104, 58));	// r3 oracle：文字起点 x104
+		union_notice_text.draw(position + Point<int16_t>(16, 56));
+
+		if (union_banner)
+			union_banner.draw(position + Point<int16_t>(12, 78));
+		union_count_text.draw(position + Point<int16_t>(240, 83));
+
+		if (union_col_header)
+			union_col_header.draw(position + Point<int16_t>(12, 110));
+
+		constexpr int16_t ROW_Y = 140;
+		constexpr int16_t ROW_H = 17;
+		constexpr int16_t MAX_ROWS = 10;
+		int16_t y = ROW_Y;
+		int16_t drawn = 0;
+
+		for (const auto& m : a.members)
+		{
+			if (drawn >= MAX_ROWS)
+				break;
+
+			const Color::Name cname = (m.id == union_selected_cid)
+				? Color::Name::TORCHRED : Color::Name::BLACK;
+			Text name(Text::Font::A11M, Text::Alignment::LEFT, cname, m.name);
+			name.draw(position + Point<int16_t>(27, y));
+
+			Text job(Text::Font::A11M, Text::Alignment::LEFT, cname,
+				Job(static_cast<uint16_t>(m.job)).get_name());
+			job.draw(position + Point<int16_t>(114, y));
+
+			Text lv(Text::Font::A11M, Text::Alignment::LEFT, cname, std::to_string(m.level));
+			lv.draw(position + Point<int16_t>(179, y));
+
+			const std::string rank = (m.alliance_rank >= 1 && m.alliance_rank <= 5)
+				? a.rank_titles[m.alliance_rank - 1] : std::string();
+			Text rk(Text::Font::A11M, Text::Alignment::LEFT, cname, rank);
+			rk.draw(position + Point<int16_t>(222, y));
+
+			y = static_cast<int16_t>(y + ROW_H);
+			drawn++;
+		}
+
+		if (drawn == 0)
+			guild_none_row_text.draw(position + Point<int16_t>(27, ROW_Y));
+
 		union_slider.draw(position);
 	}
 

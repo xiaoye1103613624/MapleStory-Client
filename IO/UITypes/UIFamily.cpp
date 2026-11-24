@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 //	学院（Family）UI + OPEN_FAMILY 出站 —— 2026-11-07 原生「学院.png」重排
+//	W2（2026-11-20）：复核 Family 节点 / 特权翻页 / FamilyUse；禁 SoftKey 弹窗。
 ////////////////////////////////////////////////////////////////////////////////
 #include "UIFamily.h"
 #include "UICharInfo.h"
 #include "UIChatBar.h"
 #include "UIFamilyTree.h"
-#include "UISoftKey.h"
 #include "UINotice.h"
 
 #include "../UI.h"
@@ -16,6 +16,7 @@
 #include "../../Util/Misc.h"
 
 #include "../../Util/Locale.h"
+#include <cstdio>
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif
@@ -24,6 +25,19 @@ namespace ms
 {
 	namespace
 	{
+		void chat_hint(const char* key)
+		{
+			auto chatbar = UI::get().get_element<UIChatBar>();
+			if (!chatbar)
+				chatbar = UI::get().emplace<UIChatBar>();
+			if (chatbar)
+			{
+				chatbar->toggle_input(true);
+				chatbar->show_message(Locale::text(key).c_str(),
+					UIChatBar::MessageType::YELLOW);
+			}
+		}
+
 		// s9 desc 里的 #c 色标与 \\n 转义：loadFamily 下发的是原文（含 "#c1.5倍#"
 		// 高亮标记与换行）。窗内先按行拆分并剥掉成对 #c...# 标记体（保留内容），
 		// 与原生观感一致（原生用色字，本端先保文字正确）。
@@ -43,7 +57,6 @@ namespace ms
 				}
 				if (c == '#' && i + 1 < raw.size() && raw[i + 1] == 'c')
 				{
-					// "#c" 标记：跳过 2 字符；闭合的独立 "#" 也跳过
 					i += 1;
 					continue;
 				}
@@ -85,19 +98,14 @@ namespace ms
 		auto put = [&](Buttons id, const char* name, int16_t x, int16_t y) {
 			if (root[name]) buttons[id] = std::make_unique<MapleButton>(root[name], Point<int16_t>(x, y));
 		};
-		// 落位 = academy_top/priv_3x 实测行带（evidence/）；BtClose 12x12 右上。
+		// 落位 = academy_top/priv_3x 实测行带；IMG Family 子树橙色-wz 复核 2026-11-20。
 		put(BtClose, "BtClose", static_cast<int16_t>(dimension.x() - 21), 5);
-		// 确认（BtOK 40x22）：原生底部居中（academy_bottom_3x y≈368..383 实测 x≈95..131）
 		put(BtOK, "BtOK", 92, static_cast<int16_t>(dimension.y() - 26));
-		// 校谱（BtTree 55x18）：同学行右侧，紧挨「登录同学」（实测 y≈77..92）
 		put(BtTree, "BtTree", 166, 76);
-		// 翻页 13x13：[01/11] 计数框两侧（实测 y≈152..166）
 		put(BtLeft, "BtLeft", 12, 152);
 		put(BtRight, "BtRight", 196, 152);
-		// 同学行：登录同学（BtJuniorEntry 69x18）+ 箴言（BtFamilyPrecept 11x20）
 		put(BtJunior, "BtJuniorEntry", 96, 76);
 		put(BtPrecept, "BtFamilyPrecept", 160, 76);
-		// 使用特权（BtSpecial 57x18）：面板右下（实测 y≈322..337 x≈154..207）
 		put(BtSpecial, "BtSpecial", 150, 322);
 
 		refresh_from_model();
@@ -126,13 +134,14 @@ namespace ms
 		if (!defs.empty())
 		{
 			const FamilyPrivilegeDef& d = defs[priv_index];
-			priv_title_label.change_text(d.name);
-			// 两个数值位分离（原生「消耗名声 300」「限制次数 0/1」各有烘焙标签）：
-			// 值各自右对齐到对应标签的空白槽（academy_priv_3x 实测 x≈140 / x≈214）。
+			// 特权名旁附页码 [01/11]（底图计数框烘焙位；无独立 canvas 时文本叠绘）。
+			const int32_t page_n = static_cast<int32_t>(defs.size());
+			char pagebuf[24];
+			std::snprintf(pagebuf, sizeof(pagebuf), " [%02d/%02d]",
+				priv_index + 1, page_n);
+			priv_title_label.change_text(d.name + pagebuf);
 			priv_cost_label.change_text(std::to_string(d.rep_cost));
 			priv_limit_label.change_text(priv_used_text());
-			// 描述多行：Text 带 maxwidth 自动换行 + 手动 \n 已折进原文，
-			// 这里把 s9 的 \\n 转义换成真空行（Text 支持 \n）。
 			std::string desc;
 			for (const std::string& line : split_priv_desc(d.desc))
 			{
@@ -187,7 +196,7 @@ namespace ms
 		}
 		if (d.ordinal == 1)
 		{
-			// SUMMON_FAMILY 需要目标名：CharInfo 预名，否则 SoftKey。
+			// SUMMON_FAMILY 需要目标名：CharInfo 预名，否则物理键盘 / ChatBar 提示。
 			std::string pre;
 			if (auto ci = UI::get().get_element<UICharInfo>())
 				pre = ci->get_target_name();
@@ -195,12 +204,15 @@ namespace ms
 				FamilyUsePacket(1, pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamily: Use summon target=" << pre);
 			} else {
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						FamilyUsePacket(1, name).dispatch();
+						LOG(LOG_DEBUG, "UIFamily: Use summon target=" << name);
+					}, 12);
 			}
 			return;
 		}
-		// FAMILY_REUINION(0) 无目标；其余 ordinal 原生也走「使用」→ s9 FamilyUseHandler
-		// 只实现 0/1 两支，其它 ordinal 服务端回 FAMILY_RESULT 错误码，照发不误。
+		// FAMILY_REUINION(0) 无目标；其余 ordinal 照发 FamilyUse（s9 只实现 0/1）。
 		FamilyUsePacket(d.ordinal).dispatch();
 		LOG(LOG_DEBUG, "UIFamily: Use ordinal=" << d.ordinal);
 	}
@@ -209,16 +221,15 @@ namespace ms
 	{
 		if (!has_assets) return;
 		if (backgrnd) backgrnd.draw(position);
-		// 动态件落位（相对窗左上；行带 = academy_top/priv_3x 实测）
-		banner_label.draw(position + Point<int16_t>(112, 30));		// 蓝横幅内居中
-		precept_label.draw(position + Point<int16_t>(8, 58));			// 白箴言行
-		junior_label.draw(position + Point<int16_t>(92, 78));			// 同学 0/2（右对齐到 x92）
-		rep_label.draw(position + Point<int16_t>(212, 108));			// 名声度值（右对齐）
-		today_label.draw(position + Point<int16_t>(212, 126));		// 今日名声（右对齐）
-		priv_title_label.draw(position + Point<int16_t>(112, 156));	// 特权名（计数框行居中）
-		priv_cost_label.draw(position + Point<int16_t>(140, 180));	// 消耗名声 值（右对齐）
-		priv_limit_label.draw(position + Point<int16_t>(214, 180));	// 限制次数 值（右对齐）
-		priv_desc_label.draw(position + Point<int16_t>(10, 200));		// 描述多行
+		banner_label.draw(position + Point<int16_t>(112, 30));
+		precept_label.draw(position + Point<int16_t>(8, 58));
+		junior_label.draw(position + Point<int16_t>(92, 78));
+		rep_label.draw(position + Point<int16_t>(212, 108));
+		today_label.draw(position + Point<int16_t>(212, 126));
+		priv_title_label.draw(position + Point<int16_t>(112, 156));
+		priv_cost_label.draw(position + Point<int16_t>(140, 180));
+		priv_limit_label.draw(position + Point<int16_t>(214, 180));
+		priv_desc_label.draw(position + Point<int16_t>(10, 200));
 		UIElement::draw_buttons(inter);
 	}
 
@@ -227,22 +238,26 @@ namespace ms
 		if (pressed && escape) { deactivate(); return; }
 		if (!pressed) return;
 		if (keycode == 'A' || keycode == 'a') {
-			// SoftKey inviter cid → name → y/n；CharInfo 齐全则只问 y/n
 			int32_t pre_id = 0;
 			std::string pre_name;
 			if (auto ci = UI::get().get_element<UICharInfo>()) {
 				pre_id = ci->get_target_cid();
 				pre_name = ci->get_target_name();
 			}
-			auto ask_yn = [](int32_t id, const std::string& name) {
-				
-			};
 			if (pre_id > 0 && !pre_name.empty()) {
-				ask_yn(pre_id, pre_name);
-			} else if (pre_id > 0) {
-				
+				UI::get().emplace<UIYesNo>(
+					Locale::format("family.ask_add", pre_name),
+					[pre_id, pre_name](bool yes) {
+						if (!yes) return;
+						FamilyAddPacket(pre_name).dispatch();
+						LOG(LOG_DEBUG, "UIFamily: Add senior/junior id=" << pre_id);
+					});
 			} else {
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						FamilyAddPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIFamily: Add name=" << name);
+					}, 12);
 			}
 		} else if (keycode == 'J' || keycode == 'j') {
 			std::string pre;
@@ -252,10 +267,19 @@ namespace ms
 				FamilyAddPacket(pre).dispatch();
 				LOG(LOG_DEBUG, "UIFamily: Add junior=" << pre);
 			} else {
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						FamilyAddPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIFamily: Add junior=" << name);
+					}, 12);
 			}
 		} else if (keycode == 'P' || keycode == 'p') {
-			
+			// 箴言：Angel CUtilDlgEx → UIEnterString（禁 SoftKeyboard）。
+			UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_precept"),
+				[](std::string msg) {
+					FamilyPreceptPacket(msg).dispatch();
+					LOG(LOG_DEBUG, "UIFamily: Precept len=" << msg.size());
+				}, 100, true);
 		} else if (keycode == 'T' || keycode == 't') {
 			OpenFamilyPedigreePacket().dispatch();
 			UI::get().emplace<UIFamilyTree>();
@@ -270,7 +294,6 @@ namespace ms
 		} else if (keycode == 'U' || keycode == 'u') {
 			use_selected();
 		} else if (keycode == 'X' || keycode == 'x') {
-			// FamilyTree 选中 / CharInfo cid → YesNo Separate；否则 SoftKey
 			int32_t from_tree = 0;
 			std::string from_name;
 			if (auto tree = UI::get().get_element<UIFamilyTree>()) {
@@ -293,7 +316,7 @@ namespace ms
 					LOG(LOG_DEBUG, "UIFamily: Separate junior cid=" << from_tree);
 				});
 			} else {
-				
+				chat_hint("guild.need_select");
 			}
 		}
 	}
@@ -316,10 +339,18 @@ namespace ms
 			if (!pre.empty()) {
 				FamilyAddPacket(pre).dispatch();
 			} else {
-				
+				UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_name"),
+					[](std::string name) {
+						FamilyAddPacket(name).dispatch();
+						LOG(LOG_DEBUG, "UIFamily: Add junior=" << name);
+					}, 12);
 			}
 		} else if (id == BtPrecept) {
-			
+			UI::get().emplace<UIEnterString>(Locale::text("userlist.enter_precept"),
+				[](std::string msg) {
+					FamilyPreceptPacket(msg).dispatch();
+					LOG(LOG_DEBUG, "UIFamily: Precept len=" << msg.size());
+				}, 100, true);
 		} else if (id == BtSpecial) {
 			use_selected();
 		} else if (id == BtLeft) {

@@ -21,8 +21,8 @@
 
 namespace ms
 {
-	// 雇佣商人 box 出现在地图上的回包（SPAWN/DESTROY/UPDATE_HIRED_MERCHANT），与 s9 对齐。
-	// 当前端暂不在地图上渲染 box（无地图对象交互），仅解析以规避未处理告警，字段供后续接地图对象。
+	// SPAWN/DESTROY/UPDATE_HIRED_MERCHANT → FieldMarker::CHARBOX 店招（s9 对齐）。
+	// 点击进店进 UIMerchant：二期预留。
 	class HiredMerchantSpawnHandler : public PacketHandler
 	{
 	public:

@@ -1,25 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 //	Wave A · 学院（Family）信息窗 —— 2026-11-07 按原生「学院.png」重排
 //
-//	术语钉死（用户指正）：本窗 = 中文客户端「学院」= s9 Family 系统
-//	（同学/名声度/名人冒险家特权）。与「家族」= Guild（公会，UIUserList 第 3 页）
-//	是两个不同系统，勿再混。
+//	术语钉死：本窗 = 中文「学院」= s9 Family（同学/名声/名人特权）。
+//	≠「家族」Guild；≠ 095 韩系 Academy（本线不做）。
 //
-//	布局事实源：
-//	  底图 UIWindow.img/Family/backgrnd 224x392（烘焙「学院」标题、名声度/今天
-//	  获得的名声标签、特权面板框、[01/11] 计数框 —— 这些不重绘）。
-//	  动态件落位按 docs/features/social-loop-audit-2026-11/evidence/
-//	  academy_top_3x.png / academy_priv_3x.png 行带实测（tools/_measure_academy.py）：
-//	    蓝横幅名行  y≈24..50（居中）      → 有学院名 / 「(还没有冒险学院)」
-//	    箴言白行    y≈58..70（左 8）      → family.message
-//	    同学 x≈112 y≈77..92（右对齐）     → juniors "/" juniors_max
-//	    名声度值    右缘 x≈212 y≈107..122 → cur_rep "/" tot_rep
-//	    今日名声    右缘 x≈212 y≈124..139 → "+" today_rep
-//	    特权名行    y≈156..168（居中）     → defs[cur].name
-//	    消耗/限制   y≈178..190            → rep_cost / used+1 "/" usage_limit
-//	    描述多行    y≈196..300            → desc（\n 分行，#c 色标剥离）
-//	  钮（BtLeft/BtRight 13x13 在计数框两侧，实测 y≈150；BtSpecial 使用特权
-//	  右下；BtJuniorEntry/BtFamilyPrecept 同学行；BtTree 谱系；BtOK 确认）。
+//	W2（2026-11-20）：orange-wz 复核 UIWindow.img/Family（backgrnd 224x392 +
+//	BtLeft/BtRight/BtSpecial/…）；特权翻页 + FamilyUsePacket 已闭环。
+//	输名/箴言 = 物理键盘 / ChatBar（禁止 SoftKeyboard.img 弹窗）。
+//	截图仅终验微调。
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 

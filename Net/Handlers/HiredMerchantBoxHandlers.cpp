@@ -50,10 +50,10 @@ namespace ms
 		if (markers.contains(oid))
 			markers.set_label(oid, label);
 		else
-			markers.spawn(oid, FieldMarker::Kind::KITE, Point<int16_t>(x, y), label);
-		// 场标已显，不 tip
+			markers.spawn(oid, FieldMarker::Kind::CHARBOX, Point<int16_t>(x, y), label);
+		// 场标已显；点击进店本版预留（见 hired-merchant-native-restore notes）。
 		LOG(LOG_DEBUG, "HiredMerchantSpawn owner=" << owner << " item=" << itemId
-			<< " (" << x << "," << y << ")");
+			<< " (" << x << "," << y << ") kind=CHARBOX");
 	}
 
 	// removeHiredMerchantBox: int id

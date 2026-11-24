@@ -18,9 +18,11 @@
 #pragma once
 
 #include "../UIElement.h"
+#include "../Components/Textfield.h"
 
 #include "../../Data/ItemData.h"
 #include "../../Graphics/Text.h"
+#include "../../Graphics/Texture.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -28,8 +30,9 @@
 
 namespace ms
 {
-	// 个人商店 / 雇佣商人窗口：展示店主上架道具并支持购买。
-	// 数据来自 s9 getHiredMerchant(PACKET: PLAYER_INTERACTION action ROOM=5) 与 updateHiredMerchant(action 0x19)。
+	// 个人商店 / 雇佣商人货架窗。
+	// 资源：UIWindow.img/PersonalShop（对齐 Angel CPersonalShopDlg / s9 ROOM）。
+	// 数据：PLAYER_INTERACTION ROOM sub=4|5 与 updateHiredMerchant(0x19)。
 	class UIMerchant : public UIElement
 	{
 	public:
@@ -40,7 +43,7 @@ namespace ms
 		UIMerchant();
 
 		void draw(float inter) const override;
-		void update() override {}
+		void update() override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos) override;
 
@@ -48,7 +51,6 @@ namespace ms
 
 		UIElement::Type get_type() const override;
 
-		// 由 HiredMerchantHandler 调用：用服务端下发的商品列表刷新。
 		struct MerchItem
 		{
 			int32_t itemid;
@@ -61,22 +63,41 @@ namespace ms
 
 	private:
 		static constexpr uint8_t MAX_SLOTS = 16u;
+		// 货架列表区：select 162×35；Angel GetItemIndexFromPoint x<396。
+		static constexpr int16_t ITEM_X = 14;
+		static constexpr int16_t ITEM_Y0 = 76;
+		static constexpr int16_t ITEM_ROW = 35;
+		static constexpr int16_t ITEM_W = 162;
+		static constexpr int16_t VISIBLE_ROWS = 12;
 
 		enum Buttons : uint16_t
 		{
 			BtClose,
-			BtBuy
+			BtExit,
+			BtBuy,
+			BtStart,
+			BtInfo,
+			BtItem
 		};
 
-		Sprite background;
+		void request_buy();
+		void request_put_item();
+		void request_open_store();
+		void send_exit();
+		int8_t hit_slot(Point<int16_t> rel) const;
+
+		Texture background;
+		Texture select_tex;
+		Texture soldout_tex;
 		bool has_background = false;
-#ifdef USE_NX
-		nl::node bt_close_node;
-		nl::node bt_buy_node;
-#endif
+		bool has_select = false;
+		bool has_soldout = false;
+
 		Text owner_label;
+		Text tip_label;
 		Text price_labels[MAX_SLOTS];
 		std::vector<MerchItem> merch_items;
 		int8_t selected_slot = -1;
+		int16_t scroll = 0;
 	};
 }
