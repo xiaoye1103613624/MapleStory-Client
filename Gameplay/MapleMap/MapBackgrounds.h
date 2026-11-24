@@ -64,6 +64,9 @@ namespace ms
 		void settype(Type type);
 		// refresh_viewport 已移至 public（外层 MapBackgrounds 需调用）。
 
+		// 高分分级兜底：type=0 单张层按视口缺口半透明淡出复制（水平镜像 + 竖直延展）。
+		void draw_normal_with_fade(int16_t ix, int16_t iy, float alpha) const;
+
 		Type type = Type::NORMAL;
 		int16_t VWIDTH;
 		int16_t VHEIGHT;

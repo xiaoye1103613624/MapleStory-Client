@@ -26,13 +26,10 @@
   - `WeatherFx::draw()` 改为 `drawscreenmultiply(night_mul_*, strength)`，`factor = lerp(1, nightTint, nightLevel)`，天亮不改画面、深夜原生压暗；`night_mul_*` 含 golden hour 色温（update 里算好）。
 - **文档核查结论**：用户"原始文档没有具体逻辑"基本属实——项目文档只写了"全屏 tint 近似"（PLAN P5.1 / STATUS:173）、昼夜 smoothstep 与路灯细节（realism-design），**月/星/云/蒙版各层 alpha 曲线与 multiply 混合模式只在 bundle 源码里，没抄进项目文档**。本次把关键逻辑落到实现与本文档。
 
-## 4. 底部蓝带（未完成，需用户拍板）
+## 4. 底部蓝带（2026-11-24 已由代码兜底闭合）
 - 视频/像素取证：蓝带 = RGB(60,99,161) = 顶端天空色 = 天空基座 `back/0`（TILED 铺满）经夜色 tint；**不是**兜底 fill（兜底 RGB(107,168,219) 出现 0 次）。
 - 根因（IDA + 源码，行号级）：NORMAL(type=0) 背景层不随视口延展（`MapBackgrounds.cpp` draw 的 htile/vtile 对 type0 恒 1）；真 v83 原生**无 1080p 游戏视口**（docs/multi-resolution:37 分辨率是插件新增），高视口下 back/2 山体底边到草带之间露出 sky base。不是相机 clamp 失效，也不是 letterbox 缺失（原生 letterbox 是黑色、按地图 Info 配置）。
-- **未改代码**，因为 IDA 指明首选修法是"资源/平铺补齐"（改 WZ/IMG 给山体下补植被使其覆盖到 1080p），需资源编辑 + 视觉验收；次选"相机可视范围约束"有玩家偏位副作用；两者属价值/范围判断，交用户拍板：
-  - A. 资源补齐（最贴原生，需 orange-wz 改 live back 层 + 逐档验收）；
-  - B. 相机 clamp 约束（不改资源，但靠近地图底部时角色可能偏离屏幕中心）；
-  - C. 接受为已知问题（真 v83 本无此视口）。
+- **闭合方案（用户拍板）**：不走全量补资源 / 相机收紧；改为全局「分级代码兜底」——type0 按视口缺口半透明淡出复制（水平镜像 + 竖直延展），平铺类保持原动态平铺。实现与验收见 [`../map-bg-viewport-fallback/README.md`](../map-bg-viewport-fallback/README.md)。
 
 ## 5. 构建与部署
 - 脚本 `tools/_adaptive_build.bat`，Release x64 v142，隔离 IntDir。
@@ -46,9 +43,9 @@
 - [ ] 夜间月亮/路灯亮度稳定，不再逐帧明暗跳（建议再录 4s 视频抽帧对拍）；
 - [ ] 月亮被平台/石墙正确遮挡，不再画在前景；
 - [ ] 夜色为逐像素压暗（不发灰发白），golden hour 黄昏偏暖；
-- [ ] 底部蓝带按用户拍板方案处理。
+- [x] 底部蓝带：已拍板并落地为代码兜底（见 map-bg-viewport-fallback；真机观感仍待抽检）。
 
 ## 7. 如实声明
-- 已构建、已部署 live 正式 exe 并实时核对 SHA（含防回滚复核）。底部蓝带**未修**，明确列为待拍板项。
+- 已构建、已部署 live 正式 exe 并实时核对 SHA（含防回滚复核）。底部蓝带后续由 map-bg-viewport-fallback 代码兜底（2026-11-24）。
 - 真机未验收；IDA 用的 IDB 是现代客户端（非 v83），结构性结论可用、地址不可直接映射 v83，已在报告注明。
 - 仍缺失（bundle 有、本端未补）：星×2、云×3、彩虹 arc、路灯真 sprite/光池/NPC 分层 relight、地面物理/音效。均属"完整还原"范畴，未在本次"闪烁/层级/multiply"修复内，未宣称闭环。
