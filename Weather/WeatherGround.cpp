@@ -18,12 +18,14 @@
 #include "WeatherState.h"
 #include "WeatherConfig.h"
 #include "../Audio/Audio.h"
+#include "../Configuration.h"
 #include "../Constants.h"
 #include "../Gameplay/Stage.h"
 #include "../Util/Resource/ResourceService.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
+#include <nlnx/audio.hpp>
 #endif
 
 namespace ms
@@ -260,11 +262,10 @@ namespace ms
 			if (!active_)
 				return;
 			const State& st = State::get();
-			if (!st.has_state())
-			{
-				clear();
+			// 室内/水下不积雪不积水（对齐 g_bFallingSkyField）。不 clear()：
+			// active_ 表示资源已装好，换图时 on_map_loaded 会重建。
+			if (!st.has_state() || !st.allow_falling())
 				return;
-			}
 			const Sky sky = st.sky();
 			loaded_sky_ = sky;
 			elapsed_ms_ += timestep;
@@ -276,16 +277,57 @@ namespace ms
 
 		void Ground::update_ambient() const
 		{
-			// 原生 Audio::Sound 只有一次性 play()（Audio.h:71-80），无 loop/stop 句柄，
-			// bundle weathersound.cpp 的 rain/wind 持续 loop 无法等价实现。
-			// 不臆造 API：本版仅记录当前天空供未来扩展，实际不发声（如实标注）。
-			const_cast<Ground*>(this)->last_ambient_sky_ = loaded_sky_;
+			// 2026-11-22：环境音 loop 落地（原为桩）。bundle weathersound.cpp 锚定
+			// Sound/Weather.img/{rain,wind,splash}：雨/风暴播 rain，雪/叶/花/沙暴播 wind，
+			// 晴天/阴天停。跟随 SFX slider（AmbientSound 用 per-channel 音量）。
+			// 只在 sky 变化时切换，避免每帧重建 stream。资源节点由 sound_img 独立加载。
+			Ground* self = const_cast<Ground*>(this);
+
+			if (loaded_sky_ == last_ambient_sky_)
+				return;
+
+			self->last_ambient_sky_ = loaded_sky_;
+
+#ifdef USE_NX
+			static const nl::node weather_img = weather::sound_img("Weather.img");
+
+			const char* node = nullptr;
+			switch (loaded_sky_)
+			{
+			case Sky::RAIN:
+			case Sky::STORM:
+				node = "rain";
+				break;
+			case Sky::SNOW:
+			case Sky::BLIZZARD:
+			case Sky::LEAVES:
+			case Sky::BLOSSOM:
+			case Sky::SANDSTORM:
+				node = "wind";
+				break;
+			default:
+				break;
+			}
+
+			if (!node || !weather_img)
+			{
+				self->ambient_.stop();
+				return;
+			}
+
+			nl::audio src = weather_img[node];
+			uint8_t sfx = Setting<SFXVolume>::get().load();
+			float volume = static_cast<float>(sfx) / 100.0f;
+			self->ambient_.play(src, volume);
+#else
+			self->ambient_.stop();
+#endif
 		}
 
 		void Ground::draw(const DrawArgument& viewpos, const Point<int16_t>& player_world,
 			const FootholdTree* fht)
 		{
-			if (!active_)
+			if (!active_ || !State::get().allow_falling())
 				return;
 
 			const int16_t vw = Constants::Constants::get().get_viewwidth();
@@ -422,6 +464,7 @@ namespace ms
 
 		void Ground::clear()
 		{
+			ambient_.stop(); // 换线/断线：停掉天气环境音循环
 			last_ambient_sky_ = Sky::CLEAR;
 			accum_patches_.clear();
 			puddles_.clear();

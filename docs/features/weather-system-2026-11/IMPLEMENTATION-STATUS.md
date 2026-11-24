@@ -3,6 +3,22 @@
 > 状态：**双端核心闭环已提交；完整版扩展轮（批次1-4 + web 前端 + 服务端 timing）代码已落地、编译级验证通过，待整工程链接 + 真机验收**。
 > 本文件是"候选完成 + 证据链 + 剩余风险"，不是最终验收。
 
+## 权威服务端与审计修复（2026-11-20）
+
+**权威服务端树**：`E:\project\BeiDou-Server_s9`（含 timing / intensity 0x3741 / smoothstep）。  
+**不要**用 `E:\project\BeiDou-Server` 当天气生产树（含未加户外门禁的 Combat/Debuff/Nocturnal，且缺 0x3741）。
+
+**常理审计修复（客户端，BUILD=0 → `E:\MXD\BeiDou-Client-xy\MapleStory.exe`）**：
+
+| 项 | 修法 |
+|---|---|
+| P0 时钟快 1000× | `Stage::update`：`Fx::update(TIMESTEP)`（ms）；主循环 `TIMESTEP*1000` 是微秒，不可再乘 |
+| P0 室内下雨/夜色 | `WeatherSkyTable` 移植 264 条 nosky；`field_gate` → `State::allow_falling/allow_tint`；Fx/Ground/Lamps/BackLayers 统一门禁；水下 `230xxxxxx` 可暗不落雨 |
+| P1 彩虹倒计时 | `WeatherState::tick` 用 `rainbow_ms_carry_` 按 ms 累加 |
+| P1 `!lamp` 预览 | `LampPreviewHandler` → `Lamps::apply_preview`（白天也可见） |
+
+真机验收清单：户外雨丝速度正常、室内（魔法密林武器店）无雨无蒙版、雨转晴彩虹约 3 分钟淡出、`!lamp` 预览可见。详见 [`notes/audit-fix-2026-11-20.md`](notes/audit-fix-2026-11-20.md)。
+
 ## 完整版扩展轮（2026-11-18 晚 ~ 11-19，用户"全都做"）
 
 用户拍板全批次 + 一次成型。_client 未提交改动如下（均以 v142 隔离编译 CL_EXIT=0 验证）：

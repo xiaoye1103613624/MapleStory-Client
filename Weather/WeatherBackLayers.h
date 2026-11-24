@@ -18,6 +18,8 @@
 #include "../Graphics/DrawArgument.h"
 
 #include <cstddef>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 namespace ms
@@ -29,11 +31,10 @@ namespace ms
 		public:
 			static BackLayers& get();
 
-			// bs/no = 地图 back/0 的基座（来自 MapBackgrounds::get_backmost_bs/no）。
-			// 对齐插件 FieldHasSky：仅当 (bs,no) 命中天空表才注入天空/雨层；
+			// map_id + bs/no = FieldHasSky（nosky 例外 + 天空表）；
 			// 且**不要求 has_state()**——服务端 0x373D 在进图之后才到，
 			// 若在此处 gate 状态，每个会话首图会恒为白天（weather.cpp:2079-2084）。
-			void on_map_loaded(const std::string& bs, int32_t no);
+			void on_map_loaded(int32_t map_id, const std::string& bs, int32_t no);
 			void on_map_loaded();
 			void update(bool snap, uint16_t timestep);
 
@@ -57,10 +58,16 @@ namespace ms
 				double rx = 0, ry = 0;
 				int type = 0;                     // 083 Background::Type 同编码
 				int16_t cx = 0, cy = 0;           // 平铺间距（0=用画布尺寸）
-				int htile = 1, vtile = 1;
+				int htile = 1, vtile = 1;         // 绘制期实时按当前视口重算
+				bool cover = false;               // 天空渐变层：cover 拉伸铺满视口，永不露底
 				double acc_x = 0, acc_y = 0;      // HMOVE/VMOVE 累计位移
 				float current = 0.0f;
 				int kind = 0;                     // K_* 驱动源
+				// 2026-11-23 V2 P2：天体层条件（-1=不限）。按 State flags 的时段档/冷热季匹配。
+				int8_t cond_cold = -1;            // 0=暖季 1=冷季
+				int8_t cond_band = -1;            // 0凌晨 1早 2中 3晚夜
+				float night_min = -1.0f;          // 天体层：>=0 时要求 night_level 不低于此值
+				float night_max = -1.0f;          // 天体层：>=0 时要求 night_level 不高于此值
 			};
 
 			std::vector<Layer> sky_;    // 背景天空层

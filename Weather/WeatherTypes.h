@@ -79,8 +79,30 @@ namespace ms
 		{
 			FLAG_SNAP = 0x01,     // 直接跳到目标，不做淡入淡出（进图用）
 			FLAG_FROZEN = 0x02,   // GM 冻结时钟：客户端停止推进本地副本，避免抖动
-			FLAG_BARESKY = 0x04   // 测试：隐藏地图自身天空，只留注入层
+			FLAG_BARESKY = 0x04,  // 测试：隐藏地图自身天空，只留注入层
+			// 2026-11-23 V2 P0：flags 空闲 5bit（服务端 WeatherService.v2FlagBits()）。
+			FLAG_BAND_MASK = 0x18,   // bit3-4 时段档 0凌晨/1早/2中/3晚夜
+			FLAG_SEASON_COLD = 0x20  // bit5 冷季（冬/秋）
 		};
+
+		// 2026-11-23 V2：气象现象强度索引（wire byte[N]），与服务端
+		// WeatherElementPackets.IDX_* 逐字一致，不可重排。
+		enum Element : uint8_t
+		{
+			EL_FOG = 0, EL_HAZE, EL_SAND, EL_WIND, EL_TORNADO, EL_HAIL,
+			EL_FROST, EL_ICE, EL_SNOW_COVER, EL_THUNDER, EL_AURORA,
+			EL_RAIN, EL_SNOWFALL, EL_DEW, EL_LIGHT, EL_RESERVED,
+			EL_COUNT = 16
+		};
+
+		inline uint8_t time_band(uint8_t flags)
+		{
+			return static_cast<uint8_t>((flags & FLAG_BAND_MASK) >> 3);
+		}
+		inline bool season_cold(uint8_t flags)
+		{
+			return (flags & FLAG_SEASON_COLD) != 0;
+		}
 
 		inline Sky sanitize_sky(uint8_t raw)
 		{

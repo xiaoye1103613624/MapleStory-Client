@@ -37,11 +37,15 @@ namespace ms
 	namespace weather
 	{
 
-		// 与 bundle weather.cpp:363-366 一致。
-		static constexpr int DAWN_START = 5 * 60;
-		static constexpr int DAWN_END = 7 * 60;
-		static constexpr int DUSK_START = 17 * 60;
-		static constexpr int DUSK_END = 19 * 60;
+		// 2026-11-23 用户拍板：夜色时段改为黄昏 15:00→17:00 由浅变深、
+		// 黎明 04:00→06:00 由深变浅，更像现实天黑节奏。smoothstep 曲线不变、
+		// 最黑强度不变（仍由 tint ramp + boost 决定，见 :136-149）。
+		// 三端不变量：必须与 WeatherBackLayers.cpp:62-63 及服务端
+		// BeiDou-Server_s9/WeatherService.java:290-293 逐字一致；服务端需重启生效。
+		static constexpr int DAWN_START = 4 * 60;
+		static constexpr int DAWN_END = 6 * 60;
+		static constexpr int DUSK_START = 15 * 60;
+		static constexpr int DUSK_END = 17 * 60;
 
 		// golden hour（bundle weather.cpp:377-383）：黎明偏粉、黄昏偏金。
 		static constexpr float DAWN_R = 0xF2f, DAWN_G = 0x9Ef, DAWN_B = 0xB8f;
@@ -105,9 +109,10 @@ namespace ms
 			const uint32_t window_ms = 12000u; // 12s 一个窗口
 			const uint32_t window = age_ms / window_ms;
 			const uint32_t h = lightning_hash(seed ^ (window * 0x9E3779B9u));
-			if (h % 5u == 0u) return 0.0f;     // 静默窗
+			if (h % 10u == 0u) return 0.0f;    // 静默窗（10%，原 20% 太稀疏）
 			const uint32_t within = age_ms % window_ms;
-			const uint32_t earliest = 700u, pulse = 900u;
+			// 2026-11-23：闪电可见时长 0.9s→1.5s，让有雨天更容易看到。
+			const uint32_t earliest = 500u, pulse = 1500u;
 			if (within < earliest || within >= earliest + pulse) return 0.0f;
 			const float t = static_cast<float>(within - earliest) / static_cast<float>(pulse);
 			// 双闪 envelope：起-落-再起-落（bundle LightningEnvelope 的简化）
@@ -164,8 +169,10 @@ namespace ms
 				tg += (wg - tg) * warm;
 				tb += (wb - tb) * warm;
 			}
-
-			// snap（进图）直接到位；否则按 profile.fade_step 趋近。
+			// 2026-11-22 修复色相瞬跳：原 night_mul_* 用 target 直算、无平滑，
+			// draw() 却只用平滑的 night_level 作强度 → 0x373D 到达瞬间色相瞬跳。
+			// 改为：先平滑 tr/tg/tb（bundle weather.cpp:168-175 fade 追赶），
+			// 再用平滑值算乘色系数。强度仍由 night_level_ 平滑驱动。
 			const bool snap = (st.flags() & FLAG_SNAP) != 0;
 			const float step = snap ? 1.0f : (prof.fade_step > 0.0f ? prof.fade_step : 0.015f);
 			tint_r_ = step_toward(tint_r_, tr, step);
@@ -173,31 +180,71 @@ namespace ms
 			tint_b_ = step_toward(tint_b_, tb, step);
 			night_level_ = step_toward(night_level_, target_night, step);
 
-			// 风暴闪电（bundle :1062-1069）：仅 STORM 且雨强足够时按 token/age 同步脉冲。
-			if (st.sky() == Sky::STORM && prof.rain >= 0.70f && st.sky_elapsed_ms() > 0)
+			const float smooth_r = tint_r_;
+			const float smooth_g = tint_g_;
+			const float smooth_b = tint_b_;
+			night_mul_r_ = base_r * dim + (smooth_r - night_level_ * (base_r * dim));
+			night_mul_g_ = base_g * dim + (smooth_g - night_level_ * (base_g * dim));
+			night_mul_b_ = base_b * dim + (smooth_b - night_level_ * (base_b * dim));
+
+			// 2026-11-23：闪电触发放宽到"任意有雨天"（RAIN 或 STORM）。
+			// 原 STORM-only + rain>=0.70 与 STORM 实际 rain=0.38 不匹配 → 从不触发。
+			const bool has_rain = (st.sky() == Sky::RAIN || st.sky() == Sky::STORM);
+			if (has_rain && prof.rain >= 0.20f && st.sky_elapsed_ms() > 0)
 				lightning_ = lightning_pulse(static_cast<uint32_t>(st.sky_elapsed_ms()), st.sky_token());
 			else
 				lightning_ = 0.0f;
 		}
 
-		void Fx::draw() const
-		{
-			const State& st = State::get();
-			if (!st.has_state())
-				return;
+	void Fx::draw() const
+	{
+		const State& st = State::get();
+		// 室内无夜色；水下允许 tint（allow_tint && !allow_falling）。
+		if (!st.has_state() || !st.allow_tint())
+			return;
 
-			// 全屏夜色叠加：叠加色是"盖上去的暗色"(tint_*)，透明度随夜色强度。
-			// 真机 2026-11-18 灰白蒙版根因：初值 tint=白(1.0) 且 fade_step 慢，
-			// 白天/过渡期用白色叠加 alpha>0 → 灰白。修法=初值改暗(Fx.h) + 双重硬门。
-			const float strength = night_level_;
-			if (strength <= 0.03f)   // 白天完全不画（原 0.001 太小，微小夜色也叠一层）
-				return;
-			// 保险：任一通道异常偏白(>0.75)说明状态污染，本帧跳过绝不画白蒙版。
-			if (tint_r_ > 0.75f || tint_g_ > 0.75f || tint_b_ > 0.75f)
-				return;
-			const float alpha = strength * 0.55f;  // 上限 0.55，避免把场景压成纯黑
-			GraphicsGL::get().drawscreenfill(tint_r_, tint_g_, tint_b_, alpha);
+		// 2026-11-21 夜间逻辑根治：原生 bundle 是「逐层 multiply 乘色」——把场景 RGB
+		// 按夜色调色板逐像素压暗（weather.cpp:908-920 Argb / 939-941 SceneryColor），
+		// 2026-11-23 精确复刻：原生 weather.cpp:2043-2052 ApplySceneryNow 只对
+		// tiles/objs/backs（全强度）与 NPC（0.45）逐层乘色，玩家角色/UI 不压暗。
+		// 不再全屏 multiply（那会把角色和前景一起压黑，与原生相反）。
+		// 分层 tint 由 Stage::draw 通过 GraphicsGL::push_tint(scene_tint()) 实现。
+	}
+
+	Color Fx::scene_tint() const
+	{
+		const float strength = night_level_;
+		const float r = 1.0f + (night_mul_r_ - 1.0f) * strength;
+		const float g = 1.0f + (night_mul_g_ - 1.0f) * strength;
+		const float b = 1.0f + (night_mul_b_ - 1.0f) * strength;
+		return Color(r, g, b, 1.0f);
+	}
+
+
+	// 2026-11-23 用户拍板：删除玩家/NPC 光晕（不压暗后太亮），只保留月光光晕。
+	// 光晕强度随夜色深度（night_level）从淡到亮、天亮时归零，与夜景深入同步。
+	void Fx::draw_lights() const
+	{
+		const State& st = State::get();
+		if (!st.has_state() || !st.allow_tint())
+			return;
+		const float night = night_level_;
+		if (night <= 0.01f)
+			return;
+
+		const int16_t vw = Constants::Constants::get().get_viewwidth();
+		const int16_t vh = Constants::Constants::get().get_viewheight();
+		GraphicsGL& g = GraphicsGL::get();
+
+		// 月光光晕：月盘屏幕坐标 (346+vw/2, -275+vh/2)（与 WeatherBackLayers kSkyDefs 同源）。
+		// 强度 ∝ night：黄昏淡入、深夜最亮、黎明淡出，与夜景深入同步。
+		{
+			const int16_t mx = static_cast<int16_t>(346 + vw / 2);
+			const int16_t my = static_cast<int16_t>(-275 + vh / 2);
+			const int16_t mr = static_cast<int16_t>(300 * night);
+			g.draw_glow(mx, my, mr, 0.86f, 0.90f, 1.0f, 0.42f * night);
 		}
+	}
 
 		// 天气粒子：使用 live 真实美术 Effect/WeatherParticles.img
 		// （snowFall / blizzardSnow / leafMix / blossomMix / sandGrit；节点与画布尺寸经 _wz 实测：
@@ -237,9 +284,66 @@ namespace ms
 			}
 			cache.emplace(filename, root);
 			return root;
+			}
+
+			// 2026-11-23 闪电：Direction3.img/effect/skill/thunder/0/0..14（15 帧 delay=70ms）。
+		const std::vector<Texture>& thunder_frames()
+		{
+			static std::vector<Texture> frames;
+			static bool tried = false;
+			if (!tried)
+			{
+				tried = true;
+				nl::node root = effect_img("Direction3.img");
+				nl::node seq = root["effect"]["skill"]["thunder"]["0"];
+				if (seq)
+				{
+					for (int i = 0; i < 32; i++)
+					{
+						nl::node f = seq[std::to_string(i)];
+						if (!f) break;
+						if (f.data_type() == nl::node::type::bitmap)
+							frames.emplace_back(f);
+					}
+				}
+			}
+			return frames;
 		}
 
-		static const std::vector<Texture>& particle_frames(const char* name)
+		nl::node sound_img(const char* filename)
+			{
+			static std::map<std::string, nl::node> cache;
+			static std::map<std::string, std::unique_ptr<nl::img_file>> files;
+
+			auto it = cache.find(filename);
+			if (it != cache.end())
+				return it->second;
+
+			nl::node root;
+			const std::string& base = res::ResourceService::get().base();
+			std::string path = base + "/Sound/" + filename;
+			std::ifstream in(path, std::ios::binary);
+			if (in)
+			{
+				std::vector<char> buf((std::istreambuf_iterator<char>(in)),
+					std::istreambuf_iterator<char>());
+				try
+				{
+					auto f = std::make_unique<nl::img_file>();
+					f->open_single(std::move(buf));
+					root = f->root();
+					files.emplace(filename, std::move(f));
+				}
+				catch (...)
+				{
+					root = nl::node();
+				}
+			}
+			cache.emplace(filename, root);
+			return root;
+			}
+
+			static const std::vector<Texture>& particle_frames(const char* name)
 		{
 			static std::map<std::string, std::vector<Texture>> cache;
 			auto it = cache.find(name);
@@ -276,7 +380,8 @@ namespace ms
 		void Fx::draw_particles(double viewx, double viewy) const
 		{
 			const State& st = State::get();
-			if (!st.has_state())
+			// 仅开放天空落雨雪；水下/室内绝不落粒子（对齐 g_bFallingSkyField=bSky）。
+			if (!st.has_state() || !st.allow_falling())
 				return;
 
 			const Sky sky = st.sky();
@@ -384,9 +489,30 @@ namespace ms
 		// 闪电独立绘制：即使白天(bundle 要求 rain>=0.7 才闪，通常夜色>0)，也必须画在 tint 之后。
 		void Fx::draw_lightning() const
 		{
-			if (lightning_ <= 0.01f)
+			const State& st = State::get();
+			if (!st.allow_falling() || lightning_ <= 0.01f)
 				return;
-			// 白蓝闪光，alpha 随脉冲；上限 0.55 避免瞬间全白刺眼。
+
+			// 2026-11-23：叠加 Direction3.img/effect/skill/thunder 逐帧（delay=70ms），
+			// 画在天空中上部；按 lightning_ 脉冲强度淡入淡出。
+			const std::vector<Texture>& frames = thunder_frames();
+			if (!frames.empty())
+			{
+				const int16_t vw = Constants::Constants::get().get_viewwidth();
+				const uint32_t phase = static_cast<uint32_t>(st.sky_elapsed_ms());
+				const size_t fi = (phase / 70u) % frames.size();
+				const Texture& tex = frames[fi];
+				// 放大 2 倍铺在天空中上部；alpha 随脉冲。
+				const float scale = 2.0f;
+				const int16_t w = static_cast<int16_t>(tex.width() * scale);
+				const int16_t h = static_cast<int16_t>(tex.height() * scale);
+				const int16_t x = static_cast<int16_t>(vw / 2 - w / 2);
+				const int16_t y = 40;
+				tex.draw(DrawArgument(Point<int16_t>(x, y), Point<int16_t>(0, 0),
+					Point<int16_t>(w, h), 1.0f, 1.0f, lightning_, 0.0f));
+			}
+
+			// 保留白蓝全屏脉冲（bundle 夜色释放语义）：alpha 随脉冲，上限 0.55。
 			GraphicsGL::get().drawscreenfill(0.85f, 0.90f, 1.0f, lightning_ * 0.55f);
 		}
 

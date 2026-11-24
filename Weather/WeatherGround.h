@@ -21,6 +21,7 @@
 
 #include "../Graphics/Animation.h"
 #include "../Graphics/DrawArgument.h"
+#include "../Audio/Audio.h"
 #include "../Template/Point.h"
 
 #include <cstddef>
@@ -112,7 +113,8 @@ namespace ms
 			// 确定性伪随机（同 sky 同帧序列可复现，便于真机对照；不引入 <random> 状态）。
 			uint32_t next_rand() const;
 
-			// 环境音：原生 Audio 无 loop 句柄，此处仅记录上次天空用于未来扩展（本版不发声）。
+			// 2026-11-22：环境音循环句柄。按 sky 切 rain/wind，切天空/清场时 stop。
+			AmbientSound ambient_;
 			Sky last_ambient_sky_ = Sky::CLEAR;
 		};
 	}
