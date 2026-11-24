@@ -18,10 +18,15 @@
 #include "EquipTooltip.h"
 
 #include "../../Configuration.h"
+#include "../../Data/EquipData.h"
 #include "../../Data/WeaponData.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Graphics/EquipStarPixels.h"
+#include "../../Graphics/EquipGradePixels.h"
 #include "../../Util/Locale.h"
+#include "../../Util/UiAssetResolve.h"
+
+#include <algorithm>
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -38,17 +43,31 @@ namespace ms
 		constexpr int16_t BODY_LEFT_X = 9;
 	}
 
-	// 2026-11-17 [悬停][套装][对比]：套装面板插在主窗与对比窗之间时，
-	// 对比窗整体右移「套装窗起点偏移 + 套装宽 + 缝隙」；set 无效时保持
-	// 原 PREVIEW_OFFSET，与 m00832「两窗留 6px 缝隙」修复完全一致。
+	// 停靠链 [悬停][套装?][成长?][对比]
+	int16_t EquipTooltip::set_panel_offset() const
+	{
+		return PREVIEW_OFFSET;
+	}
+
+	int16_t EquipTooltip::growth_panel_offset() const
+	{
+		if (settip.valid())
+			return set_panel_offset() + SetTooltip::FRAME_WIDTH + 12 + 6;
+
+		return PREVIEW_OFFSET;
+	}
+
 	int16_t EquipTooltip::set_aware_preview_offset() const
 	{
-		if (!settip.valid())
-			return PREVIEW_OFFSET;
+		int16_t off = PREVIEW_OFFSET;
 
-		// 套装窗内容起点 = 主窗起点 + FRAME_WIDTH + 18（= PREVIEW_OFFSET=282），
-		// 背板右缘 = 起点 + SetTooltip::FRAME_WIDTH + 6，再留 6px 缝隙给对比窗。
-		return PREVIEW_OFFSET + SetTooltip::FRAME_WIDTH + 12 + 6;
+		if (settip.valid())
+			off = set_panel_offset() + SetTooltip::FRAME_WIDTH + 12 + 6;
+
+		if (growthtip.valid())
+			off = growth_panel_offset() + GrowthTooltip::FRAME_WIDTH + 12 + 6;
+
+		return off;
 	}
 
 	// 正文行「标签：值」的拆分与摆放（2026-11-11 用户实拍反馈）。
@@ -66,6 +85,31 @@ namespace ms
 	{
 		// 全角「：」的 UTF-8 三字节序列。
 		constexpr const char* FULLWIDTH_COLON = "\xEF\xBC\x9A";
+
+		// 2026-11-20 用户裁决 q2：长标签（≥6 汉字，如「金锤子已提高的强化次数」「所有者」）
+		// 若仍把冒号压中轴，标签会左伸到框外、值被顶出右侧边框 → 这类行改左对齐。
+		// 短标签（力量/攻击力/道具ID…）维持冒号中轴。locale 为 UTF-8（每汉字 3 字节），
+		// 统计首个字节落在 0xE0..0xEF 的 UTF-8 三字节序列数即汉字数。
+		size_t utf8_han_count(const std::string& text)
+		{
+			size_t n = 0;
+
+			for (size_t i = 0; i + 2 < text.size(); ++i)
+			{
+				const uint8_t c = static_cast<uint8_t>(text[i]);
+
+				if (c >= 0xE0 && c <= 0xEF && (static_cast<uint8_t>(text[i + 1]) & 0xC0) == 0x80
+					&& (static_cast<uint8_t>(text[i + 2]) & 0xC0) == 0x80)
+				{
+					++n;
+					i += 2;
+				}
+			}
+
+			return n;
+		}
+
+		constexpr size_t LONG_LABEL_HAN = 6;  // ≥6 汉字视为长标签，冒号不居中
 
 		// 拆出整串里最后一个冒号：中文 locale 用全角「：」，英文 locale 用半角 ':'。
 		// 只认最后一个，避免本地化文本里出现别的冒号（例如「上限」拼接）。
@@ -90,9 +134,15 @@ namespace ms
 		label = Text();
 		colon = Text();
 		value = Text();
-		centered = center_colon;
 
 		const size_t pos = last_colon(full);
+
+		center_whole = false;
+		// q2：长标签冒号不居中，防溢出 264px 框宽。判定基于冒号左侧标签的汉字数。
+		centered = center_colon;
+
+		if (pos != std::string::npos && utf8_han_count(full.substr(0, pos)) >= LONG_LABEL_HAN)
+			centered = false;
 
 		// 正文行（含 inc 属性与元信息）统一纯白，与顶部职业/需求位图字模(255,255,255)同色。
 		// 旧实现标签用 TOOLTIPBODY 奶油(255,238,204)，实测最亮仅(250,233,200)，
@@ -118,10 +168,43 @@ namespace ms
 		value = Text(Text::Font::A11M, Text::Alignment::LEFT, valuecolor, full.substr(pos + cw));
 	}
 
+	// 2026-11-21 用户实拍「装备只有 ID 没有名称」根因：String/Eqp.img 无该 id 的
+	// name 节点 → ItemData::get_name() 空 → 旧代码回退裸数字 ID（如 1152060）。
+	// 原生对无名装备显示「部位/分类」的可读名，这里用本端已有的 equip.type.* 文案：
+	// 「护肩(装备分类：护肩)」这类重复不可取，直接用本地化分类名做标题。
+	std::string equip_fallback_name(const EquipData& equipdata, int32_t item_id)
+	{
+		const std::string rawtype = equipdata.get_type();
+		if (!rawtype.empty())
+		{
+			const std::string localized = Locale::enum_text("equip.type.", rawtype);
+			// enum_text 缺键会回显 "equip.type.XXX"；只有含本地化结果才用。
+			if (!localized.empty() && localized.find("equip.type.") == std::string::npos)
+				return localized;
+		}
+		return "装备" + std::to_string(item_id);
+	}
+
+	void EquipTooltip::BodyLine::build_centered(const std::string& full, Color::Name valuecolor)
+	{
+		label = Text();
+		colon = Text();
+		value = Text(Text::Font::A11M, Text::Alignment::CENTER, valuecolor, full);
+		centered = false;
+		center_whole = true;
+	}
+
 	int16_t EquipTooltip::BodyLine::draw(Point<int16_t> pos) const
 	{
 		if (empty())
 			return 0;
+
+		// 2026-11-20 trade/owner 整串居中：以 tip 中线为轴，与无冒号居中行同口径。
+		if (center_whole && !value.empty())
+		{
+			value.draw(pos + Point<int16_t>(BODY_CENTER_X, 0));
+			return static_cast<int16_t>(BODY_CENTER_X + value.width() / 2);
+		}
 
 		const int16_t lw = label.width();
 		const int16_t cw = colon.width();
@@ -165,12 +248,12 @@ namespace ms
 		constexpr int16_t REQ_VALUE_DX = 50;     // 数字紧跟标签，47px 位图 + 3px 间隙
 		// 5x7 字模相对 47x11 标签下沉 2px，视觉与标签中线齐（2026-11-11 用户实拍）。
 		constexpr int16_t REQ_VALUE_DY = 2;
-		constexpr int16_t GROWTH_LEV_Y = 72;     // 第 7 行「道具等级」（紧跟 6 行需求）
-		constexpr int16_t GROWTH_EXP_Y = 84;     // 第 8 行「道具经验」
-		// 需求块推进：6 行 / 8 行分别 77 / 101；基准 41 与需求块起点前移 47 同步。
+		constexpr int16_t GROWTH_LEV_Y = 84;     // 第 7 行「道具等级」（紧跟 6 行需求，行距 14）
+		constexpr int16_t GROWTH_EXP_Y = 98;     // 第 8 行「道具经验」
+		// 需求块推进：6 行 / 8 行分别 87 / 115（行距 14；旧 12px 会叠字）。
 		constexpr int16_t REQ_SHIFT_LEGACY = 41;
-		constexpr int16_t REQ_SHIFT_BASE = 77;
-		constexpr int16_t REQ_SHIFT_GROWTH = 101;
+		constexpr int16_t REQ_SHIFT_BASE = 87;
+		constexpr int16_t REQ_SHIFT_GROWTH = 115;
 		// 框体基准高度：内容整体较原布局上移 73px，同步收紧 73px，背板底边距不变。
 		constexpr int16_t HEIGHT_BASE = 540 + 15 - 73;
 		// 079 原生 1:1 (m00303)：名称墨团 y95..110、图标框顶 y138 ⇒ 名称底到图标 28px。
@@ -186,7 +269,20 @@ namespace ms
 		constexpr int16_t NAME_INK_H = 15;            // A14B 名称墨高
 		constexpr int16_t STAR_TOP = -6;              // 星排顶（背板顶沿），星 13px 高，底=STAR_TOP+13=7 正好贴名称顶
 		constexpr int16_t SUBLINE_STEP = 18;          // 名称下方各词条（潜能等级/交易/所有者）统一行距
-		constexpr int16_t SUBLINE_FIRST = NAME_Y + NAME_INK_H + 2; // 首行词条 = 名称墨底 + 2px = 24
+		// 2026-11-21 用户实拍「名称/不可交易/所有者贴在一起、间距不一样」根因：
+		// 旧 SUBLINE_FIRST = 名称墨底+2 = 24，名称(A14B,墨底 y22)到首行只有 2px，
+		// 而词条相互是 18px draw-y（A11M 墨高≈11 ⇒ 视觉空隙≈7px）。
+		// 让首行也留同样的视觉空隙：名称墨底(NAME_Y+NAME_INK_H=22) + (SUBLINE_STEP-11=7) = 29。
+		// 这样 名称→trade、trade→owner、owner→需求 三段空隙一致。
+		constexpr int16_t SUBLINE_FIRST = NAME_Y + NAME_INK_H + (SUBLINE_STEP - 11); // = 29
+
+		// 分隔线以下正文区间距体系（2026-11-20 用户 q1：同类词条上下间距一致）。
+		// 元信息/属性/可升级/金锤/潜能/火花/宝珠/星之力所有行统一 LINE_STEP；
+		// 潜能块、强化块与主属性块之间统一 BLOCK_GAP；描述前统一 DESC_GAP。
+		// 主窗与对比窗共用同一组常量，消除原 15 / 6+15 / 13 的散落魔数。
+		constexpr int16_t LINE_STEP = 15;   // 正文相邻行统一行距（原 stat_y=15、潜能/强化行距=15）
+		constexpr int16_t BLOCK_GAP = 6;    // 潜能块/强化块与主属性块之间的留白（原 shift_y(6)）
+		constexpr int16_t DESC_GAP = 13;    // 描述行前的留白（原 shift_y(13)）
 	}
 
 	// 道具图标底板（2026-11-15 按 079 参照帧还原）：UIWindow.img/IconBase/0 是
@@ -210,6 +306,14 @@ namespace ms
 
 		// 原生职业行下方分隔线为 1px 纯白（参考帧 y237 全宽 255,255,255），旧 α0.4 偏灰。
 		separator = ColorLine(FRAME_WIDTH, Color::Name::WHITE, 1.0f, false);
+
+		// 095 布局分组标题：潜在属性(绿) / 附加潜能(紫)，参考图「● 潜在属性 / ● 附加潜能」。
+		pot_title = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GREEN,
+			Locale::text("equip.potential.title"));
+		bonus_title = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::VIOLET,
+			Locale::text("equip.bonus.title"));
+		pot_title_preview = pot_title;
+		bonus_title_preview = bonus_title;
 
 		// 2026-11-15 按 079 参照帧还原：图标背后就是 UIWindow.img/IconBase/0
 		//（32x32 白底 + 黑描边 + 蓝角），与道具图标同为 2x 绘制。
@@ -261,12 +365,14 @@ namespace ms
 		// 2026-11-08 原生复校：需求块是单列 8 行、行距 12px（req_6x.png 逐像素取样），
 		// 旧两列 15px 布局与原生不符且缺「要求人气/道具等级/道具经验」三行。
 		// 47x11 标签位图 + 数字：行距 12px 才不会像 9px 那样叠成糊块。
+		// 需求标签位图高约 11~13px；旧步进 12 在中文抗锯齿下会上下叠字。
+		constexpr int16_t REQ_ROW = 14;
 		reqstatpositions[MapleStat::Id::LEVEL] = Point<int16_t>(REQ_LABEL_X, 0);
-		reqstatpositions[MapleStat::Id::STR] = Point<int16_t>(REQ_LABEL_X, 12);
-		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(REQ_LABEL_X, 24);
-		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(REQ_LABEL_X, 36);
-		reqstatpositions[MapleStat::Id::LUK] = Point<int16_t>(REQ_LABEL_X, 48);
-		reqstatpositions[MapleStat::Id::FAME] = Point<int16_t>(REQ_LABEL_X, 60);
+		reqstatpositions[MapleStat::Id::STR] = Point<int16_t>(REQ_LABEL_X, REQ_ROW);
+		reqstatpositions[MapleStat::Id::DEX] = Point<int16_t>(REQ_LABEL_X, REQ_ROW * 2);
+		reqstatpositions[MapleStat::Id::INT] = Point<int16_t>(REQ_LABEL_X, REQ_ROW * 3);
+		reqstatpositions[MapleStat::Id::LUK] = Point<int16_t>(REQ_LABEL_X, REQ_ROW * 4);
+		reqstatpositions[MapleStat::Id::FAME] = Point<int16_t>(REQ_LABEL_X, REQ_ROW * 5);
 
 		reqset[false] = Charset(EquipCannot, Charset::Alignment::LEFT);
 		reqset[true] = Charset(EquipCan, Charset::Alignment::LEFT);
@@ -291,6 +397,76 @@ namespace ms
 			std::vector<uint8_t>(equipstar::YELLOW_BGRA, equipstar::YELLOW_BGRA + equipstar::W * equipstar::H * 4));
 		star_gray.set(equipstar::ID_GRAY, equipstar::W, equipstar::H,
 			std::vector<uint8_t>(equipstar::GRAY_BGRA, equipstar::GRAY_BGRA + equipstar::W * equipstar::H * 4));
+
+		// 品级角标 6 档：192 Grade/0..5 的 BGRA 常量直传 atlas（EquipGradePixels.h）。
+#define SET_GRADE_TEX(idx, NM) \
+		grade_tex[idx].set(equipgrade::ID_##NM, equipgrade::W_##NM, equipgrade::H_##NM, \
+			std::vector<uint8_t>(equipgrade::NM##_BGRA, equipgrade::NM##_BGRA + equipgrade::W_##NM * equipgrade::H_##NM * 4))
+		SET_GRADE_TEX(0, NONE);
+		SET_GRADE_TEX(1, HIDDEN);
+		SET_GRADE_TEX(2, RARE);
+		SET_GRADE_TEX(3, EPIC);
+		SET_GRADE_TEX(4, UNIQUE);
+		SET_GRADE_TEX(5, LEGENDARY);
+#undef SET_GRADE_TEX
+
+		// ===== 192 UIToolTip.img 图形化增强资源（构造期一次性加载）=====
+		// 契约 docs/features/ui004-enhancement-ui-port-2026-11/CONTRACT.md：
+		// 解析入口 UiAssetResolve::tooltip() → nl::nx::UI["UIToolTip.img"]。
+		// 结构：Item/Equip/Star/{Star0,Star1}/Star(canvas)、AddOption/0..5、
+		//       Summary/{incline,decline,icon}。
+		// 保守原则：每个节点单独判空，缺哪个就留哪个空 Texture；下方所有绘制点
+		// 都走 if (tex) 守卫，缺资源时现有文本 / 内嵌 BGRA 像素星照常显示。
+		{
+			nl::node tt = UiAssetResolve::tooltip();
+			int star_loaded = 0;
+			int addopt_loaded = 0;
+			int summary_loaded = 0;
+
+			if (tt)
+			{
+				nl::node equip192 = tt["Item"]["Equip"];
+
+				// 星之力两态 canvas（11×10，各自 origin 由 Texture 读出）。
+				nl::node star0 = equip192["Star"]["Star0"]["Star"];
+				nl::node star1 = equip192["Star"]["Star1"]["Star"];
+
+				if (star0) { star0Tex = Texture(star0); starTex[0] = star0Tex; ++star_loaded; }
+				if (star1) { star1Tex = Texture(star1); starTex[1] = star1Tex; ++star_loaded; }
+
+				// 潜能品级小图标（0..5），用字符串名索引避免 operator[](uint) 的歧义。
+				nl::node addopt = equip192["AddOption"];
+
+				for (int i = 0; i < 6; ++i)
+				{
+					nl::node grade = addopt[std::to_string(i)];
+
+					if (grade)
+					{
+						addOptionTex[i] = Texture(grade);
+						++addopt_loaded;
+					}
+				}
+
+				// 卷轴差值箭头（incline=正 / decline=负）+ 百分比数字图标。
+				nl::node summary = equip192["Summary"];
+				nl::node inc = summary["incline"];
+				nl::node dec = summary["decline"];
+				nl::node ico = summary["icon"];
+
+				if (inc) { summaryInclineTex = Texture(inc); ++summary_loaded; }
+				if (dec) { summaryDeclineTex = Texture(dec); ++summary_loaded; }
+				if (ico) { summaryIconTex = Texture(ico); ++summary_loaded; }
+			}
+
+			// [DBG-TT] 构造期一次性诊断：192 资源是否命中、各加载了几张。
+			// 仅 _DEBUG 下输出（Release 的 LOG 宏为空实现），不污染上线日志。
+			LOG(LOG_DEBUG, "[DBG-TT] EquipTooltip ctor: tooltip_root="
+				<< static_cast<bool>(tt) << " star=" << star_loaded
+				<< " addOption=" << addopt_loaded
+				<< " summary=" << summary_loaded
+				<< " (0=全部缺失,走原有回退)");
+		}
 
 		invpos = 0;
 		invpos_preview = 0;
@@ -318,6 +494,37 @@ namespace ms
 		}
 	}
 
+	void EquipTooltip::set_equip_itemid(int32_t item_id)
+	{
+		const EquipData& ed = EquipData::get(item_id);
+
+		if (!ed)
+		{
+			itemid_cache = 0;
+			itemid_equip.reset();
+			set_equip(Tooltip::Parent::NONE, 0);
+			return;
+		}
+
+		// item 变了要打穿 set_equip 的 invpos 早退（同为 -1）。
+		if (itemid_cache != item_id)
+			invpos = 0;
+
+		EnumMap<EquipStat::Id, uint16_t> stats;
+
+		for (auto es : EquipStat::values)
+		{
+			const int16_t v = ed.get_defstat(es);
+			stats[es] = static_cast<uint16_t>(std::max<int16_t>(0, v));
+		}
+
+		itemid_equip = std::make_unique<Equip>(
+			item_id, 0, "", 0, ed.get_slots(), 0, stats,
+			0, 0, 0, 0, 0, 0, 0, 0);
+		itemid_cache = item_id;
+		set_equip(Tooltip::Parent::ITEMINVENTORY, -1);
+	}
+
 	void EquipTooltip::set_equip(Tooltip::Parent parent, int16_t ivp)
 	{
 		// 早退只跳过「同一槽位重复悬停」的重建，但 ⑤ 套装件数依赖**已穿戴集合**，
@@ -338,6 +545,13 @@ namespace ms
 
 		equip_snapshot_hash = snapshot_hash;
 
+		// 背包/已装备槽位路径清掉 itemid 合成源；清除(0)同样收口。
+		if (ivp >= 0)
+		{
+			itemid_cache = 0;
+			itemid_equip.reset();
+		}
+
 		invpos = ivp;
 		invpos_preview = 0;
 
@@ -350,6 +564,10 @@ namespace ms
 		has_owner_preview = false;
 		req_shift = REQ_SHIFT_BASE;
 		req_shift_preview = REQ_SHIFT_BASE;
+
+		// 192 Summary 箭头：每次重新悬停清空符号缓存，避免沿用上一件装备的箭头方向。
+		std::fill(std::begin(scroll_sign), std::end(scroll_sign), int8_t(0));
+		std::fill(std::begin(scroll_sign_preview), std::end(scroll_sign_preview), int8_t(0));
 
 		const Player& player = Stage::get().get_player();
 
@@ -369,10 +587,17 @@ namespace ms
 		}
 
 		const Inventory& inventory = player.get_inventory();
-		auto oequip = inventory.get_equip(invtype, invpos);
+		Optional<const Equip> oequip;
+
+		if (ivp < 0 && itemid_equip)
+			oequip = Optional<const Equip>(*itemid_equip);
+		else
+			oequip = inventory.get_equip(invtype, invpos);
+
 		const CharStats& stats = player.get_stats();
 
-		if (show_compare && invtype == InventoryType::Id::EQUIP && oequip)
+		// itemid 模式与背包装备同口径：可与本机同部位已装备做对比。
+		if (show_compare && (invtype == InventoryType::Id::EQUIP || ivp < 0) && oequip)
 		{
 			const int32_t item_id = oequip.get()->get_item_id();
 			const EquipData& equipdata = EquipData::get(item_id);
@@ -512,8 +737,12 @@ namespace ms
 					}
 
 					std::string namestr = itemdata.get_name();
+
+					// 2026-11-21：无名装备用本地化分类名兜底，不再露裸 ID。
+					if (namestr.empty())
+						namestr = equip_fallback_name(equipdata, item_id);
+
 					const int8_t reqGender = itemdata.get_gender();
-					const bool female = stats.get_female();
 
 					switch (reqGender)
 					{
@@ -537,6 +766,31 @@ namespace ms
 
 					// 079 原生 1:1 名称墨高约 16px、粗白字；A12B 实测仅 11px（m00304 ①）。
 					name_preview = Text(Text::Font::A14B, Text::Alignment::CENTER, namecolor, namestr, 400);
+
+					// 095 品级副标题（对比窗侧）：镜像主窗，数据源为已装备 equip。
+					has_rank_line_preview = false;
+
+					if (equip.get_potrank() != Equip::Potential::POT_NONE)
+					{
+						const char* rank_key = nullptr;
+
+						switch (equip.get_potrank())
+						{
+						case Equip::Potential::POT_HIDDEN:    rank_key = "equip.rank.hidden"; break;
+						case Equip::Potential::POT_RARE:      rank_key = "equip.rank.rare"; break;
+						case Equip::Potential::POT_EPIC:      rank_key = "equip.rank.epic"; break;
+						case Equip::Potential::POT_UNIQUE:    rank_key = "equip.rank.unique"; break;
+						case Equip::Potential::POT_LEGENDARY: rank_key = "equip.rank.legendary"; break;
+						default: break;
+						}
+
+						if (rank_key)
+						{
+							rank_line_preview = Text(Text::Font::A11M, Text::Alignment::CENTER,
+								namecolor, Locale::text(rank_key));
+							has_rank_line_preview = true;
+						}
+					}
 					// 2026-11-11 用户实拍：右上「攻击力增加」整行移除（历史误接的 equip.label_atkinc）。
 
 					std::string desctext = itemdata.get_desc();
@@ -560,7 +814,7 @@ namespace ms
 					// 079 原生（m00304 ④）：交易词条在名称区下方独立叠高行，
 					// 不再计入分隔线以下属性块高度。
 					if (has_trade_preview)
-						trade_line_preview.build(tlab, Color::Name::ORANGE, true);
+						trade_line_preview.build_centered(tlab, Color::Name::ORANGE);
 					}
 
 					// 所有者行（对比窗侧）：数据源为已装备物品 equip（:352），
@@ -570,7 +824,7 @@ namespace ms
 						has_owner_preview = !owner.empty();
 						if (has_owner_preview)
 						{
-							owner_line_preview.build(Locale::format("equip.owner", owner), Color::Name::ORANGE, true);
+							owner_line_preview.build_centered(Locale::format("equip.owner", owner), Color::Name::ORANGE);
 							height_preview += 14;
 						}
 					}
@@ -593,12 +847,10 @@ namespace ms
 					{
 						slots_preview.build(Locale::format("equip.label_slots", std::to_string(equip.get_slots())), Color::Name::WHITE, true);
 
-						std::string vicious = std::to_string(equip.get_vicious());
-
-						if (equip.get_vicious() > 1)
-							vicious.append(" " + Locale::text("equip.label_max") + " ");
-
-						hammers_preview.build(Locale::format("equip.label_hammers", vicious), Color::Name::WHITE, true);
+						// 原生只显示次数；旧逻辑在 vicious>1 时拼接「上限」造成「2 上限」。
+						hammers_preview.build(
+							Locale::format("equip.label_hammers", std::to_string(equip.get_vicious())),
+							Color::Name::WHITE, true);
 					}
 					else
 					{
@@ -607,6 +859,27 @@ namespace ms
 
 					statlabels_preview.clear();
 					statdeltas_preview.clear();
+
+					const EquipData& hover_data = EquipData::get(oequip.get()->get_item_id());
+					bool hover_blank = true;
+					bool hover_has_def = false;
+					bool equip_blank = true;
+					bool equip_has_def = false;
+
+					for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
+					{
+						if (oequip.get()->get_stat(es) > 0)
+							hover_blank = false;
+						if (hover_data.get_defstat(es) > 0)
+							hover_has_def = true;
+						if (equip.get_stat(es) > 0)
+							equip_blank = false;
+						if (equipdata.get_defstat(es) > 0)
+							equip_has_def = true;
+					}
+
+					const bool hover_use_def = hover_blank && hover_has_def;
+					const bool equip_use_def = equip_blank && equip_has_def;
 
 					// 095 潜能行（对比窗侧）：镜像主窗 set_equip 的 :852-888 口径，
 					// 数据源为已装备物品 equip（:352），文案走 locale equip.potline.*，
@@ -632,11 +905,16 @@ namespace ms
 							potlines_preview[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 								content, FRAME_WIDTH - 20);
 							haspotlines_preview[i] = true;
-							pot_height_preview += 15;
+							pot_height_preview += LINE_STEP;
 						}
 
 						if (pot_height_preview > 0)
-							height_preview += pot_height_preview + 6;
+							// 095 分组标题行补偿（与主窗对称）。
+							if (haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2])
+								pot_height_preview += LINE_STEP;
+							if (haspotlines_preview[3] || haspotlines_preview[4])
+								pot_height_preview += LINE_STEP;
+							height_preview += pot_height_preview + BLOCK_GAP;
 					}
 
 					// 095 强化三件套（对比窗侧）：镜像主窗 :890-941，火花/宝珠 WHITE、
@@ -656,7 +934,7 @@ namespace ms
 							spark_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 								content, FRAME_WIDTH - 20);
 							has_spark_line_preview = true;
-							extra_height_preview += 15;
+							extra_height_preview += LINE_STEP;
 						}
 
 						if (int16_t slid = equip.get_soul(); slid > 0)
@@ -667,7 +945,7 @@ namespace ms
 							soul_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 								content, FRAME_WIDTH - 20);
 							has_soul_line_preview = true;
-							extra_height_preview += 15;
+							extra_height_preview += LINE_STEP;
 						}
 
 						starforce_preview = equip.get_starforce();
@@ -679,27 +957,29 @@ namespace ms
 							star_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW,
 								"星之力 " + std::to_string(sf) + " " + stars, FRAME_WIDTH - 20);
 							has_star_line_preview = true;
-							extra_height_preview += 15;
+							extra_height_preview += LINE_STEP;
 						}
 
 						if (extra_height_preview > 0)
-							height_preview += extra_height_preview + 6;
+							height_preview += extra_height_preview + BLOCK_GAP;
 					}
 
 					for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 					{
-						const uint16_t equipped_value = equip.get_stat(es);
-						const uint16_t hovered_value = oequip.get()->get_stat(es);
+						const uint16_t equipped_value = equip_use_def
+							? equipdata.get_defstat(es) : equip.get_stat(es);
+						const uint16_t hovered_value = hover_use_def
+							? hover_data.get_defstat(es) : oequip.get()->get_stat(es);
 
-						// 两侧都没有数值就不占行；任一侧存在才输出，才能展示「新装备多出的属性」
-						if (equipped_value == 0 && hovered_value == 0)
+						// 对比窗只列「已装备自身有的属性」；悬停独有属性不在此补 0 行。
+						if (equipped_value == 0)
 						{
 							height_preview -= 18;
 							continue;
 						}
 
-						// 已装备物品自身的卷轴加成，保持与普通 tooltip 一致
-						int16_t scroll = equipped_value - equipdata.get_defstat(es);
+						// 已装备物品自身的卷轴加成（白）；对比差值另用绿/红接在右侧
+						int16_t scroll = static_cast<int16_t>(equipped_value) - equipdata.get_defstat(es);
 						std::string statstr = std::to_string(equipped_value);
 
 						if (scroll != 0)
@@ -711,11 +991,13 @@ namespace ms
 
 						statlabels_preview[es].build(Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr), Color::Name::WHITE, true);
 
-						// 悬停物品相对已装备物品的差值：正数绿色 (+N)，负数红色 (N)
 						int32_t diff = static_cast<int32_t>(hovered_value) - static_cast<int32_t>(equipped_value);
 
 						if (diff != 0)
 						{
+							// 192 Summary 箭头方向缓存：供 draw_preview 在差值文本旁叠加 incline/decline。
+							scroll_sign_preview[es] = diff > 0 ? 1 : -1;
+
 							std::string diffstr = " (";
 
 							if (diff > 0)
@@ -726,7 +1008,7 @@ namespace ms
 							statdeltas_preview[es] = Text(
 								Text::Font::A11M,
 								Text::Alignment::LEFT,
-								diff > 0 ? Color::Name::GREEN : Color::Name::RED,
+								diff > 0 ? Color::Name::LIGHTGREEN : Color::Name::TORCHRED,
 								diffstr
 							);
 						}
@@ -744,11 +1026,12 @@ namespace ms
 
 		int32_t item_id = equip.get_item_id();
 
-		// ⑤ 套装 companion 面板：与 Player::recalc_stats 的注入走同一份
-		// Data/SetItemData + 同一套「已穿戴 itemid」口径，保证面板显示的
-		// 档位与实际生效属性永远一致（不会各说各话）。
-		// 不属于任何套装时 settip.valid() 为 false，draw 自动跳过。
-		settip.set_item(item_id, equipped_snapshot);
+		// companion：套装 + 成长（成长无数据时 valid=false，自动跳过）。
+		// 2026-11-21：把悬停装备的强化等级传给套装面板做成员名 Lv: 前缀。
+		settip.set_item(item_id, equipped_snapshot, equip.get_level());
+		growthtip.set_item(item_id,
+			static_cast<int32_t>(equip.get_itemlevel()),
+			static_cast<int32_t>(equip.get_level()));
 
 		const EquipData& equipdata = EquipData::get(item_id);
 		const ItemData& itemdata = equipdata.get_itemdata();
@@ -869,8 +1152,12 @@ namespace ms
 		}
 
 		std::string namestr = itemdata.get_name();
+
+		// 2026-11-21：无名装备用本地化分类名兜底，不再露裸 ID。
+		if (namestr.empty())
+			namestr = equip_fallback_name(equipdata, item_id);
+
 		const int8_t reqGender = itemdata.get_gender();
-		const bool female = stats.get_female();
 
 		switch (reqGender)
 		{
@@ -895,6 +1182,33 @@ namespace ms
 		// 079 原生 1:1 名称墨高约 16px、粗白字；A12B 实测仅 11px（m00304 ①）。
 		// A14B 墨高约 15px，是「加大加粗」后的 079 口径。
 		name = Text(Text::Font::A14B, Text::Alignment::CENTER, namecolor, namestr, 400);
+
+		// 095 品级副标题（参考图「SS级（传说极品）」）：由潜能等级 get_potrank() 映射，
+		// 画在名称下方、交易词条上方；POT_NONE 不显示。颜色跟随名称品质色（namecolor）。
+		has_rank_line = false;
+
+		if (equip.get_potrank() != Equip::Potential::POT_NONE)
+		{
+			const char* rank_key = nullptr;
+
+			switch (equip.get_potrank())
+			{
+			case Equip::Potential::POT_HIDDEN:    rank_key = "equip.rank.hidden"; break;
+			case Equip::Potential::POT_RARE:      rank_key = "equip.rank.rare"; break;
+			case Equip::Potential::POT_EPIC:      rank_key = "equip.rank.epic"; break;
+			case Equip::Potential::POT_UNIQUE:    rank_key = "equip.rank.unique"; break;
+			case Equip::Potential::POT_LEGENDARY: rank_key = "equip.rank.legendary"; break;
+			default: break;
+			}
+
+			if (rank_key)
+			{
+				rank_line = Text(Text::Font::A11M, Text::Alignment::CENTER,
+					namecolor, Locale::text(rank_key));
+				has_rank_line = true;
+			}
+		}
+
 		// 2026-11-11 用户实拍：右上「攻击力增加」整行移除（历史误接的 equip.label_atkinc）。
 
 		std::string desctext = itemdata.get_desc();
@@ -917,7 +1231,8 @@ namespace ms
 		// 079 原生（m00304 ④）：交易词条在名称区下方独立叠高行，
 		// 不再计入分隔线以下属性块高度。
 		if (has_trade)
-			trade_line.build(tlab, Color::Name::ORANGE, true);
+			// 2026-11-20：与 owner 行同口径整串居中，消除两行上下/水平不齐。
+			trade_line.build_centered(tlab, Color::Name::ORANGE);
 		}
 
 		// 所有者行（095/服务端 owner 字段）：owner 非空才显示，空 owner 不留空行。
@@ -927,7 +1242,8 @@ namespace ms
 		has_owner = !owner.empty();
 		if (has_owner)
 		{
-			owner_line.build(Locale::format("equip.owner", owner), Color::Name::ORANGE, true);
+			// 2026-11-20：整串居中（含「所有者：」），与 trade 行视觉中心一致。
+			owner_line.build_centered(Locale::format("equip.owner", owner), Color::Name::ORANGE);
 			height += 14;
 		}
 		}
@@ -950,12 +1266,10 @@ namespace ms
 		{
 			slots.build(Locale::format("equip.label_slots", std::to_string(equip.get_slots())), Color::Name::WHITE, true);
 
-			std::string vicious = std::to_string(equip.get_vicious());
-
-			if (equip.get_vicious() > 1)
-				vicious.append(" " + Locale::text("equip.label_max") + " ");
-
-			hammers.build(Locale::format("equip.label_hammers", vicious), Color::Name::WHITE, true);
+			// 原生只显示次数；禁止再拼 locale「上限」。
+			hammers.build(
+				Locale::format("equip.label_hammers", std::to_string(equip.get_vicious())),
+				Color::Name::WHITE, true);
 		}
 		else
 		{
@@ -963,22 +1277,97 @@ namespace ms
 		}
 
 		statlabels.clear();
+		statdeltas.clear();
+
+		// 包内属性全 0 但 WZ 有基础值（服务端未填 / 脏数据）时，回退显示 WZ 默认。
+		bool hover_stat_blank = true;
+		bool hover_has_def = false;
 
 		for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 		{
 			if (equip.get_stat(es) > 0)
-			{
-				int16_t delta = equip.get_stat(es) - equipdata.get_defstat(es);
-				std::string statstr = std::to_string(equip.get_stat(es));
+				hover_stat_blank = false;
+			if (equipdata.get_defstat(es) > 0)
+				hover_has_def = true;
+		}
 
-				if (delta != 0)
+		const bool hover_use_def = hover_stat_blank && hover_has_def;
+
+		// 对比开启时取同部位已装备，供悬停 tip 右侧绿/红差值。
+		Optional<const Equip> compare_equipped;
+		const EquipData* compare_data = nullptr;
+		bool compare_use_def = false;
+
+		if (show_compare && invpos_preview == 1)
+		{
+			EquipSlot::Id eqslot = equipdata.get_eqslot();
+
+			if (inventory.has_equipped(eqslot))
+			{
+				compare_equipped = inventory.get_equip(InventoryType::Id::EQUIPPED, eqslot);
+
+				if (compare_equipped)
+				{
+					compare_data = &EquipData::get(compare_equipped.get()->get_item_id());
+					bool c_blank = true;
+					bool c_has = false;
+
+					for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
+					{
+						if (compare_equipped.get()->get_stat(es) > 0)
+							c_blank = false;
+						if (compare_data->get_defstat(es) > 0)
+							c_has = true;
+					}
+
+					compare_use_def = c_blank && c_has;
+				}
+			}
+		}
+
+		for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
+		{
+			const uint16_t shown = hover_use_def ? equipdata.get_defstat(es) : equip.get_stat(es);
+
+			if (shown > 0)
+			{
+				int16_t scroll = static_cast<int16_t>(shown) - equipdata.get_defstat(es);
+				std::string statstr = std::to_string(shown);
+
+				if (scroll != 0)
 				{
 					statstr.append(" (");
-					statstr.append((delta < 0) ? "-" : "+");
-					statstr.append(std::to_string(abs(delta)) + ")");
+					statstr.append((scroll < 0) ? "-" : "+");
+					statstr.append(std::to_string(abs(scroll)) + ")");
 				}
 
 				statlabels[es].build(Locale::format(Locale::enum_key("equip.stat.", EquipStat::names[es]), statstr), Color::Name::WHITE, true);
+
+				if (compare_equipped && compare_data)
+				{
+					const uint16_t equipped_value = compare_use_def
+						? compare_data->get_defstat(es) : compare_equipped.get()->get_stat(es);
+					const int32_t diff = static_cast<int32_t>(shown) - static_cast<int32_t>(equipped_value);
+
+					if (diff != 0)
+					{
+						// 192 Summary 箭头方向缓存：供 draw 在差值文本旁叠加 incline/decline。
+						scroll_sign[es] = diff > 0 ? 1 : -1;
+
+						std::string diffstr = " (";
+
+						if (diff > 0)
+							diffstr += "+";
+
+						diffstr += std::to_string(diff) + ")";
+
+						statdeltas[es] = Text(
+							Text::Font::A11M,
+							Text::Alignment::LEFT,
+							diff > 0 ? Color::Name::LIGHTGREEN : Color::Name::TORCHRED,
+							diffstr);
+					}
+				}
 			}
 			else
 			{
@@ -1017,11 +1406,18 @@ namespace ms
 				potlines[i] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 					content, FRAME_WIDTH - 20);
 				haspotlines[i] = true;
-				pot_height += 15;
+				pot_height += LINE_STEP;
 			}
 
 			if (pot_height > 0)
-				height += pot_height + 6;
+			{
+				// 095 分组标题行补偿：潜在/附加两组各有一条圆点标题。
+				if (haspotlines[0] || haspotlines[1] || haspotlines[2])
+					pot_height += LINE_STEP;
+				if (haspotlines[3] || haspotlines[4])
+					pot_height += LINE_STEP;
+				height += pot_height + BLOCK_GAP;
+			}
 		}
 
 		// ⑦ 095 强化三件套（Round 15）：火花 / 宝珠 / 星之力。
@@ -1044,7 +1440,7 @@ namespace ms
 				spark_line = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 					content, FRAME_WIDTH - 20);
 				has_spark_line = true;
-				extra_height += 15;
+				extra_height += LINE_STEP;
 			}
 
 			if (int16_t slid = equip.get_soul(); slid > 0)
@@ -1056,7 +1452,7 @@ namespace ms
 				soul_line = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE,
 					content, FRAME_WIDTH - 20);
 				has_soul_line = true;
-				extra_height += 15;
+				extra_height += LINE_STEP;
 			}
 
 			starforce = equip.get_starforce();
@@ -1071,11 +1467,11 @@ namespace ms
 				star_line = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW,
 					"星之力 " + std::to_string(sf) + " " + stars, FRAME_WIDTH - 20);
 				has_star_line = true;
-				extra_height += 15;
+				extra_height += LINE_STEP;
 			}
 
 			if (extra_height > 0)
-				height += extra_height + 6;
+				height += extra_height + BLOCK_GAP;
 		}
 	}
 
@@ -1106,6 +1502,23 @@ namespace ms
 
 			icon.draw(DrawArgument(iconpos, ICON_BOX_SCALE, ICON_BOX_SCALE));
 		}
+	}
+
+	void EquipTooltip::draw_grade_badge(Point<int16_t> pos, Equip::Potential rank) const
+	{
+		// 095/192 品级角标：按潜能等级画在道具图标框右上角。
+		// 索引与 Equip::Potential 枚举顺序一致（NONE=0..LEGENDARY=5）。
+		const int idx = static_cast<int>(rank);
+
+		if (idx < 0 || idx >= 6 || !grade_tex[idx].is_valid())
+			return;
+
+		// 图标框 64x64（32*2x），角标锚在框右上：小角标贴角内，大角标略外扩。
+		const Point<int16_t> boxpos = pos + Point<int16_t>(ICON_BOX_X, ICON_BOX_Y);
+		const int16_t badge_x = boxpos.x() + ICON_BOX_SIZE * ICON_BOX_SCALE - grade_tex[idx].width() + 2;
+		const int16_t badge_y = boxpos.y() - 2;
+
+		grade_tex[idx].draw(Point<int16_t>(badge_x, badge_y));
 	}
 
 	void EquipTooltip::draw_job_line(Point<int16_t> pos, const std::vector<uint8_t>& allowedjobs) const
@@ -1158,10 +1571,45 @@ namespace ms
 		constexpr int16_t STAR_W = 13;
 		constexpr int16_t STAR_H = 13;
 
-		if (sf_value == 0 || !star_yellow.is_valid() || !star_gray.is_valid())
+		if (sf_value == 0)
 			return 0;
 
 		uint8_t sf = sf_value > STAR_SLOTS ? STAR_SLOTS : sf_value;
+
+		// ===== 192 星形 canvas 优先（UiAssetResolve::tooltip()）=====
+		// Item/Equip/Star/Star0/Star(亮) 与 Star1/Star(暗) 是带 origin 的 canvas。
+		// 用它替代内嵌 BGRA 常量。两态任一缺失即整段回退到下方 095 像素星逻辑，
+		// 绝不因新资源缺失导致星区空白或崩溃。
+		const bool has192 = starTex[0] && starTex[1];
+
+		if (has192)
+		{
+			// 画布宽高/origin 直接取自 canvas（192 星 11×10，非 095 的 13×13）。
+			const Point<int16_t> dim = starTex[0].get_dimensions();
+			const int16_t tex_w = dim.x();
+			const int16_t tex_h = dim.y();
+			const int16_t step = static_cast<int16_t>(tex_w + 2);   // 与 095 一致的 2px 间隙
+			const int16_t total_w = static_cast<int16_t>((STAR_SLOTS - 1) * step + tex_w);
+			const int16_t start_x = static_cast<int16_t>((FRAME_WIDTH - total_w) / 2);
+
+			for (uint8_t i = 0; i < STAR_SLOTS; ++i)
+			{
+				const Texture& tex = starTex[i < sf ? 0 : 1];   // 前 sf 颗亮，其余暗
+				const Point<int16_t> sp = pos + Point<int16_t>(start_x + i * step, 0);
+
+				// canvas 有自身 origin：draw 的 pos 就是 origin 落点，按原点对齐即可
+				// （与 Texture::draw 的 origin 语义一致，见 Graphics/Texture.cpp）。
+				if (tex)
+					tex.draw(sp);
+			}
+
+			return tex_h;
+		}
+
+		// ===== 095 回退：内嵌 BGRA 像素星（EquipStarPixels.h）=====
+		if (!star_yellow.is_valid() || !star_gray.is_valid())
+			return 0;
+
 		int16_t total_w = static_cast<int16_t>((STAR_SLOTS - 1) * STAR_STEP + STAR_W);
 		int16_t start_x = static_cast<int16_t>((FRAME_WIDTH - total_w) / 2);
 
@@ -1177,12 +1625,58 @@ namespace ms
 		return STAR_H;
 	}
 
+	void EquipTooltip::draw_pot_grade_icon(Point<int16_t> linepos, int16_t text_w,
+		Equip::Potential rank) const
+	{
+		// 192 潜能品级小图标（Item/Equip/AddOption/0..5）叠加在潜能文本行末尾。
+		// rank 与索引一一对应（NONE=0..LEGENDARY=5，见 Equip::Potential）。
+		// NONE 不画；纹理缺失静默跳过，文本回退逻辑完全不变。
+		const int idx = static_cast<int>(rank);
+
+		if (idx <= 0 || idx >= 6)
+			return;
+
+		const Texture& tex = addOptionTex[idx];
+
+		if (!tex)
+			return;
+
+		// 行首原点 + 文本墨宽 + 4px 间隙；y 用纹理自身 origin 对齐文本行基线区。
+		const Point<int16_t> ipos(linepos.x() + text_w + 4, linepos.y());
+		tex.draw(ipos);
+	}
+
+	void EquipTooltip::draw_summary_arrow(Point<int16_t> textpos, int16_t text_w,
+		int8_t sign) const
+	{
+		// 192 Summary 差值箭头叠加在文本 "( +N )/( -N )" 之后：
+		// sign>0 → incline（上箭头/增），sign<0 → decline（下箭头/减）；0 不画。
+		// 纹理缺失静默跳过，文本本身照常显示（保守增强）。
+		const Texture* tex = nullptr;
+
+		if (sign > 0)
+			tex = &summaryInclineTex;
+		else if (sign < 0)
+			tex = &summaryDeclineTex;
+
+		if (!tex || !(*tex))
+			return;
+
+		const Point<int16_t> apos(textpos.x() + text_w + 2, textpos.y());
+		tex->draw(apos);
+	}
+
 	void EquipTooltip::draw(Point<int16_t> pos) const
 	{
 		if (invpos == 0)
 			return;
 
-		draw_preview(pos);
+		// 2026-11-20 用户实拍「几个 tooltip 顶部不在一条水平线」根因：
+		// 主窗/套装/成长/对比四片各自从「被 shift_y 污染后的 pos」推顶，且 height
+		// 是 set_equip 的另一套启发式累加 → 顶沿随道具内容漂移。
+		// 统一以「夹取后的入口 pos」为唯一锚点 base_pos：所有 companion 面板顶 =
+		// base_pos.y()，主窗背板顶 = base_pos.y()-6，四窗顶沿严格同一水平线。
+		// （base_pos 在下方夹取完成后赋值。）
 
 		int16_t max_width = Constants::Constants::get().get_viewwidth();
 		int16_t max_height = Constants::Constants::get().get_viewheight();
@@ -1190,11 +1684,12 @@ namespace ms
 		int16_t cur_width = pos.x() + FRAME_WIDTH + 12;
 		int16_t cur_height = pos.y() + 36;
 
-		// 2026-11-17 布局 [悬停][套装][对比]：套装插在主窗与对比窗之间。
-		// 右边界取「当前存在的最右一窗」：套装 > 主窗；对比窗 > 套装。
-		// 每个 if 用覆盖式赋值（非累加），保证三窗共用同一右界口径。
+		// 布局 [悬停][套装?][成长?][对比]：右界取最右一窗。
 		if (settip.valid())
-			cur_width = pos.x() + PREVIEW_OFFSET + SetTooltip::FRAME_WIDTH + 12;
+			cur_width = pos.x() + set_panel_offset() + SetTooltip::FRAME_WIDTH + 12;
+
+		if (growthtip.valid())
+			cur_width = pos.x() + growth_panel_offset() + GrowthTooltip::FRAME_WIDTH + 12;
 
 		if (invpos_preview == 1)
 			cur_width = pos.x() + set_aware_preview_offset() + FRAME_WIDTH + 12;
@@ -1207,6 +1702,9 @@ namespace ms
 		if (settip.valid() && settip.height() > cur_height - (pos.y() + 36))
 			cur_height = pos.y() + 36 + settip.height();
 
+		if (growthtip.valid() && growthtip.height() > cur_height - (pos.y() + 36))
+			cur_height = pos.y() + 36 + growthtip.height();
+
 		int16_t adj_x = cur_width - max_width;
 		int16_t adj_y = cur_height - max_height;
 
@@ -1216,8 +1714,67 @@ namespace ms
 		if (adj_y > 0)
 			pos.shift_y(adj_y * -1);
 
-		// 图2/装备tip参照帧定案：装备 tooltip 带原生十字织纹背板
-		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height + 32);
+		// 夹取会平移整组窗口；锚点必须取夹取后的 pos，否则 companion 面板
+		// 会在靠右/靠下时与主窗脱节（旧 pos.y()-height 同样没跟夹取同步）。
+		const Point<int16_t> base_pos = pos;
+
+		// 对比窗用同一锚点起画（内部不再单独夹取），保证四窗顶沿一致。
+		// 右向偏移仍在 draw_preview 内部按 set_aware_preview_offset 处理。
+		draw_preview(pos);
+
+		// 2026-11-20 用户实拍「底部空白有时长有时短」根因：
+		// 背板高度用 set_equip 的启发式 height（混 -18/-36/+14/desc.height()+10），
+		// 与实际绘制的 shift_y 总和不相等 → 内容越短空白越大。
+		// 改为「绘制前先算真实内容底」：先按 draw 的同一条 shift 链把 pos 推到底，
+		// 得到 content_bottom，再回头画背板（y 仍从 base_pos 起，高度由内容底决定）。
+		// 由于下方绘制链会原地修改 pos，这里先用一个副本推算出高度。
+		Point<int16_t> measure = pos;
+		{
+			int16_t sub_y = SUBLINE_FIRST;
+			if (prank != Equip::Potential::POT_NONE) sub_y += SUBLINE_STEP;
+			if (has_rank_line) sub_y += SUBLINE_STEP;
+			if (has_trade) sub_y += SUBLINE_STEP;
+			if (has_owner) sub_y += SUBLINE_STEP;
+			measure.shift_y((sub_y > HEADER_SHIFT) ? sub_y : HEADER_SHIFT);
+			measure.shift_y(req_shift);
+			measure.shift_y(37); // 职业行/分隔线
+			measure.shift_y(LINE_STEP * 2); // itemid/category 两行
+			if (is_weapon) measure.shift_y(LINE_STEP);
+			for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP;
+				es = static_cast<EquipStat::Id>(es + 1))
+				if (!statlabels[es].empty()) measure.shift_y(LINE_STEP);
+			if (hasslots) { measure.shift_y(LINE_STEP); measure.shift_y(LINE_STEP); }
+			bool anypot = false;
+			for (bool h : haspotlines) anypot = anypot || h;
+			if (anypot)
+			{
+				measure.shift_y(BLOCK_GAP);
+				if (haspotlines[0] || haspotlines[1] || haspotlines[2])
+					measure.shift_y(LINE_STEP);
+				if (haspotlines[3] || haspotlines[4])
+					measure.shift_y(LINE_STEP);
+				for (bool h : haspotlines) if (h) measure.shift_y(LINE_STEP);
+			}
+			if (has_spark_line || has_soul_line || has_star_line)
+			{
+				measure.shift_y(BLOCK_GAP);
+				if (has_spark_line) measure.shift_y(LINE_STEP);
+				if (has_soul_line) measure.shift_y(LINE_STEP);
+				if (has_star_line) measure.shift_y(LINE_STEP);
+			}
+			if (hasdesc)
+			{
+				measure.shift_y(DESC_GAP);
+				// desc 是最后一行，draw 后不再 shift，必须显式加上它的墨高，
+				// 否则背板会截断底部描述（这正是「底部空白时长时短」的另一半根因）。
+				measure.shift_y(desc.height() + 3);
+			}
+		}
+		// 内容从 base_pos.y() 起到 measure.y() 止；背板顶沿 -6、底沿 +6，
+		// 故背板高度 = 内容跨度 + 12，底边恒为内容底 +6，与词条多少无关。
+		const int16_t content_extent = static_cast<int16_t>(measure.y() - base_pos.y());
+		backdrop.draw_equip(base_pos + Point<int16_t>(-6, -6),
+			FRAME_WIDTH + 12, content_extent + 12);
 
 		// 095 星之力：名称上方一整排星（黄=激活/灰=未激活），画在背板顶沿。
 		draw_stars(pos + Point<int16_t>(0, STAR_TOP), starforce);
@@ -1231,6 +1788,13 @@ namespace ms
 		if (prank != Equip::Potential::POT_NONE)
 		{
 			potflag.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
+			sub_y += SUBLINE_STEP;
+		}
+
+		// 095 品级副标题（参考图「SS级（传说极品）」）：名称区第二行。
+		if (has_rank_line)
+		{
+			rank_line.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
 			sub_y += SUBLINE_STEP;
 		}
 
@@ -1254,6 +1818,7 @@ namespace ms
 		pos.shift_y((sub_y > HEADER_SHIFT) ? sub_y : HEADER_SHIFT);
 
 		draw_item_icon(pos, itemicon);
+		draw_grade_badge(pos, prank);
 
 		// 需求块：单列 12px，6 条固定需求 + 可选成长 2 行（图标右侧前置区，Can/Cannot 色保留）。
 		for (MapleStat::Id ms : requirements)
@@ -1309,7 +1874,8 @@ namespace ms
 
 		// 分隔线以下（用户 2026-11-12）：整区水平居中；inc 行冒号中轴+全白；
 		// 元信息冒号中轴+纯白；交易限制橙字居中。前置需求/职业块在上方不改。
-		int16_t stat_y = 15;
+		// q1（2026-11-20）：行距统一走 LINE_STEP，与对比窗共用同一常量。
+		const int16_t stat_y = LINE_STEP;
 
 		itemid.draw(pos);
 		pos.shift_y(stat_y);
@@ -1325,12 +1891,29 @@ namespace ms
 			pos.shift_y(stat_y);
 		}
 
-		for (const BodyLine& line : statlabels.values())
+		for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP; es = static_cast<EquipStat::Id>(es + 1))
 		{
+			const BodyLine& line = statlabels[es];
+
 			if (line.empty())
 				continue;
 
-			line.draw(pos);
+			int16_t right = line.draw(pos);
+			const Text& diff = statdeltas[es];
+
+			if (!diff.empty())
+				// 2026-11-21 用户实拍「对比差值画到 tooltip 外面」根因：
+				// BodyLine::draw 返回的 right 是相对 tip 的 x（0..FRAME_WIDTH），
+				// 旧代码把它当绝对屏幕坐标画 → 差值跑到屏幕左侧（红框处）。
+				// 必须加 pos.x() 才是屏幕坐标。
+				diff.draw(Point<int16_t>(pos.x() + right, pos.y()));
+
+			// 192 Summary 箭头增强：在差值文本 "( +N )" 尾部叠加 incline/decline。
+			// 纹理缺失或 sign=0 时 draw_summary_arrow 静默跳过；文本保留不受影响。
+			if (scroll_sign[es] != 0)
+				draw_summary_arrow(
+					Point<int16_t>(pos.x() + right, pos.y()), diff.width(), scroll_sign[es]);
+
 			pos.shift_y(stat_y);
 		}
 
@@ -1352,15 +1935,46 @@ namespace ms
 
 			if (any)
 			{
-				pos.shift_y(6);
+				pos.shift_y(BLOCK_GAP);
 
-				for (size_t i = 0; i < 5; ++i)
+				// 095 布局：潜在属性(主 i=0..2)与附加潜能(i=3..4)各带圆点标题行。
+				bool has_main = haspotlines[0] || haspotlines[1] || haspotlines[2];
+				bool has_bonus = haspotlines[3] || haspotlines[4];
+
+				if (has_main)
 				{
-					if (!haspotlines[i])
-						continue;
+					pot_title.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+					pos.shift_y(LINE_STEP);
 
-					potlines[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-					pos.shift_y(15);
+					for (size_t i = 0; i < 3; ++i)
+					{
+						if (!haspotlines[i])
+							continue;
+
+						potlines[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+						// 192 潜能品级小图标增强：接在文本行尾，纹理缺失/无等级时静默跳过。
+						draw_pot_grade_icon(
+							pos + Point<int16_t>(BODY_LEFT_X, 0), potlines[i].width(), prank);
+						pos.shift_y(LINE_STEP);
+					}
+				}
+
+				if (has_bonus)
+				{
+					bonus_title.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+					pos.shift_y(LINE_STEP);
+
+					for (size_t i = 3; i < 5; ++i)
+					{
+						if (!haspotlines[i])
+							continue;
+
+						potlines[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+						// 192 潜能品级小图标增强：接在文本行尾，纹理缺失/无等级时静默跳过。
+						draw_pot_grade_icon(
+							pos + Point<int16_t>(BODY_LEFT_X, 0), potlines[i].width(), prank);
+						pos.shift_y(LINE_STEP);
+					}
 				}
 			}
 		}
@@ -1368,50 +1982,62 @@ namespace ms
 		// ⑦ 095 强化三件套（Round 15）：紧接潜能行之后，缺项跳过。
 		if (has_spark_line || has_soul_line || has_star_line)
 		{
-			pos.shift_y(6);
+			pos.shift_y(BLOCK_GAP);
 
 			if (has_spark_line)
 			{
 				spark_line.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 
 			if (has_soul_line)
 			{
 				soul_line.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 
 			if (has_star_line)
 			{
 				star_line.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 		}
 
 		if (hasdesc)
 		{
-			pos.shift_y(13);
+			pos.shift_y(DESC_GAP);
 			separator.draw(pos);
 			desc.draw(pos + Point<int16_t>(BODY_CENTER_X, 3));
 		}
 
-		// ⑤ 套装 companion 面板：2026-11-17 布局 [悬停][套装][对比]，
-		// 套装固定插在主窗右侧（对比窗左侧），与是否显示对比窗无关。
+		// companion：[悬停][套装][成长]；对比窗由 draw_preview 按 set_aware_preview_offset 排布。
+		// 2026-11-20：顶沿改用统一锚点 base_pos.y()，与主窗背板顶 (base_pos.y-6)
+		// 严格对齐；旧的 pos.y()-height 依赖两套独立累加，必然逐道具漂移。
+		const int16_t tip_top = base_pos.y();
+
 		if (settip.valid())
 		{
-			// 顶端对齐：pos 在绘制末尾已被需求块下推，故用「tip 起点 y」对齐，
-			// 起点 = 当前 pos.y - 已下推量（height 是需求块之后的总高）。
-			int16_t tip_top = pos.y() - height;
-			// 主窗背板右缘 = X + FRAME_WIDTH + 6，再留 12px 缝隙 → 套装起点。
-			int16_t set_x = pos.x() + PREVIEW_OFFSET;
-			Point<int16_t> setpos(set_x, tip_top);
+			Point<int16_t> setpos(base_pos.x() + set_panel_offset(), tip_top);
 
-			// 右侧溢出时翻到左侧（与原生「放不下就翻边」同策略）。
 			if (setpos.x() + SetTooltip::FRAME_WIDTH > max_width)
-				setpos = Point<int16_t>(pos.x() - SetTooltip::FRAME_WIDTH - 12, tip_top);
+				setpos = Point<int16_t>(base_pos.x() - SetTooltip::FRAME_WIDTH - 12, tip_top);
 
 			settip.draw(setpos);
+		}
+
+		if (growthtip.valid())
+		{
+			Point<int16_t> gpos(base_pos.x() + growth_panel_offset(), tip_top);
+
+			if (gpos.x() + GrowthTooltip::FRAME_WIDTH > max_width)
+			{
+				const int16_t left = settip.valid()
+					? (base_pos.x() - SetTooltip::FRAME_WIDTH - GrowthTooltip::FRAME_WIDTH - 24)
+					: (base_pos.x() - GrowthTooltip::FRAME_WIDTH - 12);
+				gpos = Point<int16_t>(left, tip_top);
+			}
+
+			growthtip.draw(gpos);
 		}
 	}
 
@@ -1420,29 +2046,69 @@ namespace ms
 		if (invpos_preview == 0)
 			return;
 
-		// 总右界与 draw() 完全一致（基于未平移的 X），保证两窗同量夹取；
-		// 旧实现先 shift_x(FRAME_WIDTH) 再算 cur_width，让两片背板重叠 12px。
+		// 2026-11-20：垂直夹取上移到 draw() 统一处理（含主窗/套装/成长/对比的
+		// 最大内容底），这里不再单独按 height_preview 夹 y —— 两窗各夹各的正是
+		// 「几个 tooltip 顶部不在一条水平线」的成因之一。
 		int16_t max_width = Constants::Constants::get().get_viewwidth();
-		int16_t max_height = Constants::Constants::get().get_viewheight();
 		int16_t preview_off = set_aware_preview_offset();
 		int16_t cur_width = pos.x() + preview_off + FRAME_WIDTH + 12;
 
-		int16_t cur_height = pos.y() + height_preview + 36;
-
 		int16_t adj_x = cur_width - max_width;
-		int16_t adj_y = cur_height - max_height;
 
 		if (adj_x > 0)
 			pos.shift_x(adj_x * -1);
 
-		if (adj_y > 0)
-			pos.shift_y(adj_y * -1);
-
 		// 2026-11-17 [悬停][套装][对比]：对比窗从套装窗右侧起排。
 		pos.shift_x(preview_off);
 
-		// 装备 tooltip 预览层同带织纹背板
-		backdrop.draw_equip(pos + Point<int16_t>(-6, -6), FRAME_WIDTH + 12, height_preview + 32);
+		// 2026-11-20：与主窗同口径的真实内容高度测算，消除底部空白时长时短。
+		const Point<int16_t> preview_base = pos;
+		Point<int16_t> pmeasure = pos;
+		{
+			int16_t sub_y = SUBLINE_FIRST;
+			if (prank_preview != Equip::Potential::POT_NONE) sub_y += SUBLINE_STEP;
+			if (has_rank_line_preview) sub_y += SUBLINE_STEP;
+			if (has_trade_preview) sub_y += SUBLINE_STEP;
+			if (has_owner_preview) sub_y += SUBLINE_STEP;
+			pmeasure.shift_y((sub_y > HEADER_SHIFT) ? sub_y : HEADER_SHIFT);
+			pmeasure.shift_y(req_shift_preview);
+			pmeasure.shift_y(37);
+			pmeasure.shift_y(LINE_STEP * 2);
+			if (is_weapon_preview) pmeasure.shift_y(LINE_STEP);
+			for (EquipStat::Id es = EquipStat::Id::STR; es <= EquipStat::Id::JUMP;
+				es = static_cast<EquipStat::Id>(es + 1))
+				if (!statlabels_preview[es].empty()) pmeasure.shift_y(LINE_STEP);
+			if (hasslots_preview) { pmeasure.shift_y(LINE_STEP); pmeasure.shift_y(LINE_STEP); }
+			bool anypot = false;
+			for (bool h : haspotlines_preview) anypot = anypot || h;
+			if (anypot)
+			{
+				pmeasure.shift_y(BLOCK_GAP);
+				if (haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2])
+					pmeasure.shift_y(LINE_STEP);
+				if (haspotlines_preview[3] || haspotlines_preview[4])
+					pmeasure.shift_y(LINE_STEP);
+				for (bool h : haspotlines_preview) if (h) pmeasure.shift_y(LINE_STEP);
+			}
+			if (has_spark_line_preview || has_soul_line_preview || has_star_line_preview)
+			{
+				pmeasure.shift_y(BLOCK_GAP);
+				if (has_spark_line_preview) pmeasure.shift_y(LINE_STEP);
+				if (has_soul_line_preview) pmeasure.shift_y(LINE_STEP);
+				if (has_star_line_preview) pmeasure.shift_y(LINE_STEP);
+			}
+			if (hasdesc_preview)
+			{
+				// 预览侧 desc 实际是 shift_y(-4) 后 separator + 文本 draw 在 +8。
+				pmeasure.shift_y(-4);
+				pmeasure.shift_y(desc_preview.height() + 8);
+			}
+		}
+		const int16_t preview_extent = static_cast<int16_t>(pmeasure.y() - preview_base.y());
+
+		// 装备 tooltip 预览层同带织纹背板（背板顶沿 -6，高度 = 内容跨度 +12）。
+		backdrop.draw_equip(preview_base + Point<int16_t>(-6, -6),
+			FRAME_WIDTH + 12, preview_extent + 12);
 
 		// 095 星之力（对比窗侧）：已装备物品星数，画在背板顶沿。
 		draw_stars(pos + Point<int16_t>(0, STAR_TOP), starforce_preview);
@@ -1455,6 +2121,13 @@ namespace ms
 		if (prank_preview != Equip::Potential::POT_NONE)
 		{
 			potflag_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
+			sub_y += SUBLINE_STEP;
+		}
+
+		// 095 品级副标题（对比窗侧）：镜像主窗，名称区第二行。
+		if (has_rank_line_preview)
+		{
+			rank_line_preview.draw(pos + Point<int16_t>(BODY_CENTER_X, sub_y));
 			sub_y += SUBLINE_STEP;
 		}
 
@@ -1477,6 +2150,7 @@ namespace ms
 		// 2026-11-11：攻击力增加行（equip.label_atkinc）属历史误接，原生 tip 无此行，
 		// 已整段移除。图标与主窗体共用 draw_item_icon（IconBase 位图底板 2x + 中心对齐）。
 		draw_item_icon(pos, itemicon_preview);
+		draw_grade_badge(pos, prank_preview);
 
 		for (MapleStat::Id ms : requirements)
 		{
@@ -1527,7 +2201,7 @@ namespace ms
 
 		pos.shift_y(37);
 
-		int16_t stat_y = 15;
+		const int16_t stat_y = LINE_STEP;
 
 		itemid_preview.draw(pos);
 		pos.shift_y(stat_y);
@@ -1552,11 +2226,16 @@ namespace ms
 
 			int16_t right = line.draw(pos);
 
-			// 差值紧跟居中后的属性文本右缘。
+			// 差值紧跟居中后的属性文本右缘（2026-11-21：right 是相对坐标，须加 pos.x()）。
 			const Text& diff = statdeltas_preview[es];
 
 			if (!diff.empty())
-				diff.draw(Point<int16_t>(right, pos.y()));
+				diff.draw(Point<int16_t>(pos.x() + right, pos.y()));
+
+			// 192 Summary 箭头增强（对比窗侧）：镜像主窗，在差值文本尾部叠加箭头。
+			if (scroll_sign_preview[es] != 0)
+				draw_summary_arrow(
+					Point<int16_t>(pos.x() + right, pos.y()), diff.width(), scroll_sign_preview[es]);
 
 			pos.shift_y(stat_y);
 		}
@@ -1578,38 +2257,69 @@ namespace ms
 
 			if (any_preview)
 			{
-				pos.shift_y(6);
-				for (size_t i = 0; i < 5; ++i)
+				pos.shift_y(BLOCK_GAP);
+
+				// 095 分组标题（对比窗侧）：潜在/附加各一条圆点标题。
+				bool has_main = haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2];
+				bool has_bonus = haspotlines_preview[3] || haspotlines_preview[4];
+
+				if (has_main)
 				{
-					if (!haspotlines_preview[i])
-						continue;
-					potlines_preview[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-					pos.shift_y(15);
+					pot_title_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+					pos.shift_y(LINE_STEP);
+
+					for (size_t i = 0; i < 3; ++i)
+					{
+						if (!haspotlines_preview[i])
+							continue;
+						potlines_preview[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+						// 192 潜能品级小图标增强（对比窗侧）：接在文本行尾。
+						draw_pot_grade_icon(
+							pos + Point<int16_t>(BODY_LEFT_X, 0), potlines_preview[i].width(), prank_preview);
+						pos.shift_y(LINE_STEP);
+					}
+				}
+
+				if (has_bonus)
+				{
+					bonus_title_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+					pos.shift_y(LINE_STEP);
+
+					for (size_t i = 3; i < 5; ++i)
+					{
+						if (!haspotlines_preview[i])
+							continue;
+						potlines_preview[i].draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
+						// 192 潜能品级小图标增强（对比窗侧）：接在文本行尾。
+						draw_pot_grade_icon(
+							pos + Point<int16_t>(BODY_LEFT_X, 0), potlines_preview[i].width(), prank_preview);
+						pos.shift_y(LINE_STEP);
+					}
 				}
 			}
 		}
 
-		// 095 强化三件套（对比窗侧）：镜像主窗 :1186-1208，缺项跳过不留空行。
+		// 095 强化三件套（对比窗侧）：镜像主窗，缺项跳过不留空行。
 		if (has_spark_line_preview || has_soul_line_preview || has_star_line_preview)
 		{
-			pos.shift_y(6);
+			pos.shift_y(BLOCK_GAP);
 
 			if (has_spark_line_preview)
 			{
 				spark_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 
 			if (has_soul_line_preview)
 			{
 				soul_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 
 			if (has_star_line_preview)
 			{
 				star_line_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
-				pos.shift_y(15);
+				pos.shift_y(LINE_STEP);
 			}
 		}
 

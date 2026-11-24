@@ -63,27 +63,41 @@ namespace ms
 			case Id::RING2:
 			case Id::RING3:
 			case Id::RING4:
+			case Id::RING5:		// ⑤⑥ 六戒 sidecar -52/-53
+			case Id::RING6:
 			case Id::PENDANT1:
 			case Id::TAMEDMOB:
 			case Id::SADDLE:
 			case Id::SHOULDER:	// ② 护肩 -20
+			case Id::POCKET:	// 口袋 -33（非 cash −133）
 			case Id::MEDAL:
 			case Id::BELT:
 			case Id::PENDANT2:	// ③ 第二项链 -51
 			case Id::BADGE:		// ④ 徽章 -54
-			case Id::TOTEM1:	// ④ 图腾 -55..-58
+			case Id::TOTEM1:	// ④ 图腾 -55..-57；TOTEM4 仅兼容存量
 			case Id::TOTEM2:
 			case Id::TOTEM3:
 			case Id::TOTEM4:
 			case Id::EMBLEM:		// ④ 纹章 -59
-			case Id::ANDROID_SLOT:	// ④ 机器人 -60
+			case Id::ANDROID_SLOT:	// ④ 旧 Addon 机器人 -60（过渡）
 			case Id::HEART:		// ④ 心脏 -61
+			case Id::MYSTIC1:	// ⑤ 神秘徽章 -70..-75
+			case Id::MYSTIC2:
+			case Id::MYSTIC3:
+			case Id::MYSTIC4:
+			case Id::MYSTIC5:
+			case Id::MYSTIC6:
+			case Id::ANDROID1:	// ⑥ 原生 Android -1200..-1206
+			case Id::ANDROID2:
+			case Id::ANDROID3:
+			case Id::ANDROID4:
+			case Id::ANDROID5:
+			case Id::ANDROID6:
+			case Id::ANDROID7:
 				return static_cast<int16_t>(slot);
 			default:
-				// NONE / BOOK / TOP_DEFAULT / BOTTOM_DEFAULT，以及任何落在
-				// 21..48（宠物座位）或 52/53（六戒 sidecar）、62+（辅助武器）
-				// 的越界值：不上 wire。返回 0 会让调用方发出 action=0 的包，
-				// 所以调用点必须先判 slot != NONE；服务端 isAllowed(0,..) 也返 false。
+				// NONE / BOOK / TOP_DEFAULT / BOTTOM_DEFAULT，以及宠物座位
+				// （除已占用的 POCKET=33）与辅助武器等越界值：不上 wire。
 				return 0;
 			}
 		}
@@ -99,11 +113,15 @@ namespace ms
 				bodypart = static_cast<int16_t>(-bodypart);
 
 			// cash 镜像 -1xx / -15x 归一化到正常位。
-			if (bodypart >= 101 && bodypart <= 199)
+			// 例外：133 = 2 号宠拾取袋（S10）；若减 100 会撞角色口袋 BP33 → 不归一，交 PetBodyPart。
+			if (bodypart >= 101 && bodypart <= 199 && bodypart != 133)
 				bodypart -= 100;
 
-			// 与 wire_bodypart 的白名单严格互逆；33（口袋 = 宠物座位 BP33）、
-			// 52/53（六戒 sidecar）、62（辅助武器）不在表内 → NONE。
+			// 原生 Android cash 镜像 1300–1306 → 1200–1206。
+			if (bodypart >= 1300 && bodypart <= 1306)
+				bodypart = static_cast<int16_t>(bodypart - 100);
+
+			// 与 wire_bodypart 白名单互逆；133 / 62 / 其它宠装 BP → NONE。
 			switch (bodypart)
 			{
 			case 1: return Id::HAT;
@@ -125,9 +143,12 @@ namespace ms
 			case 18: return Id::TAMEDMOB;
 			case 19: return Id::SADDLE;
 			case 20: return Id::SHOULDER;
+			case 33: return Id::POCKET;
 			case 49: return Id::MEDAL;
 			case 50: return Id::BELT;
 			case 51: return Id::PENDANT2;
+			case 52: return Id::RING5;
+			case 53: return Id::RING6;
 			case 54: return Id::BADGE;
 			case 55: return Id::TOTEM1;
 			case 56: return Id::TOTEM2;
@@ -136,6 +157,19 @@ namespace ms
 			case 59: return Id::EMBLEM;
 			case 60: return Id::ANDROID_SLOT;
 			case 61: return Id::HEART;
+			case 70: return Id::MYSTIC1;
+			case 71: return Id::MYSTIC2;
+			case 72: return Id::MYSTIC3;
+			case 73: return Id::MYSTIC4;
+			case 74: return Id::MYSTIC5;
+			case 75: return Id::MYSTIC6;
+			case 1200: return Id::ANDROID1;
+			case 1201: return Id::ANDROID2;
+			case 1202: return Id::ANDROID3;
+			case 1203: return Id::ANDROID4;
+			case 1204: return Id::ANDROID5;
+			case 1205: return Id::ANDROID6;
+			case 1206: return Id::ANDROID7;
 			default: return Id::NONE;
 			}
 		}
@@ -170,13 +204,15 @@ namespace ms
 			if (islot == "Tm")	return Id::TAMEDMOB;
 			if (islot == "Sd")	return Id::SADDLE;
 			if (islot == "Sh")	return Id::SHOULDER;
+			if (islot == "Po")	return Id::POCKET;
 			if (islot == "Me")	return Id::MEDAL;
 			if (islot == "Be")	return Id::BELT;
 			if (islot == "Ba")	return Id::BADGE;
 			if (islot == "To")	return Id::TOTEM1;
 			if (islot == "Em")	return Id::EMBLEM;
-			if (islot == "Dr")	return Id::ANDROID_SLOT;
+			if (islot == "Dr")	return Id::ANDROID1;	// 原生首槽 1200（旧 Addon 60 仅兼容下行）
 			if (islot == "Ht")	return Id::HEART;
+			if (islot == "Mb")	return Id::MYSTIC1;
 
 			return Id::NONE;
 		}
@@ -201,12 +237,15 @@ namespace ms
 			case Id::RING1:
 			case Id::RING2:
 			case Id::RING3:
-			case Id::RING4: return "RING";
+			case Id::RING4:
+			case Id::RING5:
+			case Id::RING6: return "RING";
 			case Id::PENDANT1:
 			case Id::PENDANT2: return "PENDANT";
 			case Id::TAMEDMOB: return "TAMING";
 			case Id::SADDLE: return "SADDLE";
 			case Id::SHOULDER: return "SHOULDER";
+			case Id::POCKET: return "POCKET";
 			case Id::MEDAL: return "MEDAL";
 			case Id::BELT: return "BELT";
 			case Id::BADGE: return "BADGE";
@@ -215,8 +254,21 @@ namespace ms
 			case Id::TOTEM3:
 			case Id::TOTEM4: return "TOTEM";
 			case Id::EMBLEM: return "EMBLEM";
-			case Id::ANDROID_SLOT: return "ANDROID";
+			case Id::ANDROID_SLOT:
+			case Id::ANDROID1:
+			case Id::ANDROID2:
+			case Id::ANDROID3:
+			case Id::ANDROID4:
+			case Id::ANDROID5:
+			case Id::ANDROID6:
+			case Id::ANDROID7: return "ANDROID";
 			case Id::HEART: return "HEART";
+			case Id::MYSTIC1:
+			case Id::MYSTIC2:
+			case Id::MYSTIC3:
+			case Id::MYSTIC4:
+			case Id::MYSTIC5:
+			case Id::MYSTIC6: return "MYSTIC";
 			default: return "CASH";
 			}
 		}

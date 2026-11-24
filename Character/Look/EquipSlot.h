@@ -79,20 +79,26 @@ namespace ms
 			TAMEDMOB = 18,		// 190xxxx  Tm
 			SADDLE = 19,		// 191xxxx  Sd
 			SHOULDER = 20,		// ② 护肩 115xxxx Sh（参考文档与 S10 同为 -20）
+			// 口袋 116xxxx Po：官方 BP33 / wire −33（192 Equip/Equip/Slots/33）。
+			// 与宠物座位的冲突解法见 PetBodyPart.h：BP33 从宠装表剔除；
+			// cash −133（2 号宠拾取袋，S10 注）单独保留为宠装，不归一进 POCKET。
+			POCKET = 33,
 			MEDAL = 49,			// 114xxxx  Me
 			BELT = 50,			// 113xxxx  Be
-			PENDANT2 = 51,		// ③ 第二项链（v083 原生 BP51，112xxxx Pe）
-			// 不引入 POCKET(-33)：-33 / cash -133 归一化后是 BP33，落在
-			// PET_BODY_PARTS 宠物座位里（S10 原文注 -133 = 2 号宠拾取袋），
-			// 会让口袋装备与宠物装备互相冒名。口袋也不在用户 7 项内。
-			// 不引入六戒 -52/-53：用户 ① 只要右上 2 格，且这两个位是 sidecar。
-			BADGE = 54,			// ④ 徽章 Ba
-			TOTEM1 = 55,		// ④ 图腾 To
+			PENDANT2 = 51,		// ③ 第二项链（v083 原生 BP51，112xxxx Pe）— 锁定不改号
+			// ⑤⑥ 六戒 sidecar：S10 EquipSlot.RING 含 −52/−53；国服 CMS079 六戒
+			// 社区/私服映射同值（MapleWiki: ChinaMS 可佩 6 戒；本仓 official-slot-mapping）。
+			// UI：主栏右上空白 (104,32)/(137,32)，压在 RING3/4 上方。
+			RING5 = 52,
+			RING6 = 53,
+			BADGE = 54,			// ④ 徽章 Ba（已迁主栏 HV）
+			TOTEM1 = 55,		// ④ 图腾 To（主路径仅 1..3；见 UITotemEquip）
 			TOTEM2 = 56,
 			TOTEM3 = 57,
-			TOTEM4 = 58,
+			TOTEM4 = 58,		// 废弃新穿：仅兼容存量下行/卸下；find_equipslot 不再选中
 			EMBLEM = 59,		// ④ 纹章 119xxxx Em
-			ANDROID_SLOT = 60,	// ④ 机器人 166xxxx Dr
+			// ④ 旧 Addon 机器人位（过渡遗留）。新穿戴走 ANDROID1=1200。
+			ANDROID_SLOT = 60,	// deprecated：166xxxx 旧 BP60
 			HEART = 61,			// ④ 心脏（用户文案「新增」）167xxxx Ht
 			// 以下三项不是官方穿戴位，只在本端做占位/外观键，wire_bodypart 返回 0。
 			// 必须排在 61 之后，避免与上面的官方编号抢 key（旧值 52/60/61 会
@@ -100,7 +106,24 @@ namespace ms
 			BOOK = 62,
 			TOP_DEFAULT = 63,
 			BOTTOM_DEFAULT = 64,
-			LENGTH = 65
+			// ⑤ 神秘徽章栏 6 格（sidecar 70–75；避开宠物 21–48 / Addon 54–61 /
+			// 非穿戴 62–64）。islot=`Mb`；与 UIMysticBadge 窗同源。
+			MYSTIC1 = 70,
+			MYSTIC2 = 71,
+			MYSTIC3 = 72,
+			MYSTIC4 = 73,
+			MYSTIC5 = 74,
+			MYSTIC6 = 75,
+			// ⑥ 192 原生 Android 栏（Angel CAndroidTab / UIWindow4 Equip/Android）。
+			// 枚举值 == BodyPart；EnumMap/Enumeration 按 LENGTH 建表，空洞可接受。
+			ANDROID1 = 1200,
+			ANDROID2 = 1201,
+			ANDROID3 = 1202,
+			ANDROID4 = 1203,
+			ANDROID5 = 1204,
+			ANDROID6 = 1205,
+			ANDROID7 = 1206,
+			LENGTH = 1207
 		};
 
 		Id by_id(size_t id);
@@ -113,8 +136,8 @@ namespace ms
 
 		// wire BodyPart 绝对值 → 逻辑槽位（下行包解析用）。
 		// cash 镜像 -1xx / -15x 归一化后按正常位取；未识别返回 NONE。
-		// 比 by_id() 更安全：宠物座位 BP(21..48)、六戒 sidecar(52/53)、
-		// 辅助武器(62) 都不在本表，收到即 NONE，不会被当成角色装备槽。
+		// 比 by_id() 更安全：未识别 BP / 辅助武器(62) / 宠装专用 −133(归一前)
+		// 返回 NONE；六戒 52/53、口袋 33 已在白名单。
 		Id from_wire_bodypart(int16_t bodypart);
 
 		// WZ `info/islot` 字符串 → 逻辑槽位（2026-11-12 Round 7 新增）。

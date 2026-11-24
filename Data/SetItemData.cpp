@@ -13,6 +13,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <fstream>
+#include <functional>
 #include <sstream>
 
 namespace ms
@@ -76,6 +77,10 @@ namespace ms
 			{ "incJUMP",    "JUMP"    },
 			{ "incAllStat", "ALLSTAT" },
 			{ "damR",       "DAMAGE"  },
+			{ "bdR",        "BOSS"    },
+			{ "ignoreDEF",  "IGNOREDEF" },
+			{ "ignorePdr",  "IGNOREDEF" },
+			{ "ignoreMobpdpR", "IGNOREDEF" },
 		};
 
 		auto map_key = [](const std::string& wz) -> const char* {
@@ -111,17 +116,48 @@ namespace ms
 			def.name = setnode["setItemName"].get_string();
 			def.complete_count = static_cast<int16_t>(setnode["completeCount"].get_integer());
 
-			// ItemID 是 LIST，子节点 1..N，值为 itemId（get_integer 自动处理 SHORT/INT）。
-			for (const auto& itemnode : setnode["ItemID"])
+			// Desc/<slotKey>：OR 组展示文案（如 weapon →「…武器中选1」）。
+			for (const auto& descnode : setnode["Desc"])
 			{
-				int32_t item_id = static_cast<int32_t>(itemnode.get_integer());
+				std::string key = descnode.name();
+				std::string text = descnode.get_string();
 
-				if (item_id > 0)
-				{
-					def.item_ids.push_back(item_id);
-					item_to_set[item_id] = set_id;
-				}
+				if (!key.empty() && !text.empty())
+					def.slot_desc[key] = text;
 			}
+
+			// ItemID：平铺 INT，或嵌套 OR 组（含 representName/typeName 元数据，跳过字符串子节点）。
+			std::function<void(const nl::node&)> collect_items;
+			collect_items = [&](const nl::node& node) {
+				for (const auto& child : node)
+				{
+					const std::string cname = child.name();
+
+					if (cname == "representName" || cname == "typeName")
+					{
+						std::string rep = child.get_string();
+
+						if (!rep.empty() && def.slot_desc.find("group") == def.slot_desc.end())
+							def.slot_desc["group"] = rep;
+
+						continue;
+					}
+
+					int32_t item_id = static_cast<int32_t>(child.get_integer());
+
+					if (item_id > 0)
+					{
+						def.item_ids.push_back(item_id);
+						item_to_set[item_id] = set_id;
+						continue;
+					}
+
+					// 嵌套 LIST：继续递归（高版本 OR 组）。
+					if (child.begin() != child.end())
+						collect_items(child);
+				}
+			};
+			collect_items(setnode["ItemID"]);
 
 			// Effect 是 LIST，子节点名为件套数（"2"/"4"…），其下为 inc* 属性。
 			for (const auto& tiernode : setnode["Effect"])
@@ -293,10 +329,32 @@ namespace ms
 
 	// ---- 服务端下发缓存（0x176，服务端权威优先）----
 	std::unordered_map<int32_t, std::string> SetItemData::server_text;
+	std::unordered_map<int32_t, bool> SetItemData::bonus_pending;
 
 	void SetItemData::set_server_text(int32_t set_id, const std::string& text)
 	{
 		server_text[set_id] = text;
+		clear_bonus_pending(set_id);
+	}
+
+	bool SetItemData::begin_bonus_request(int32_t set_id)
+	{
+		if (set_id <= 0)
+			return false;
+
+		if (has_server_text(set_id))
+			return false;
+
+		if (bonus_pending[set_id])
+			return false;
+
+		bonus_pending[set_id] = true;
+		return true;
+	}
+
+	void SetItemData::clear_bonus_pending(int32_t set_id)
+	{
+		bonus_pending.erase(set_id);
 	}
 
 	std::string SetItemData::get_server_text(int32_t set_id)

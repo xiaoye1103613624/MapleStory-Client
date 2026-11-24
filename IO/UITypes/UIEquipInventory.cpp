@@ -17,6 +17,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIEquipInventory.h"
 
+#include "UIAndroidEquip.h"
+#include "UIMysticBadge.h"
+#include "UITotemEquip.h"
+#include "UIAddonEquip.h"
 #include "UIMiscShells.h"
 #include "UISoftKey.h"
 #include "UIViciousHammer.h"
@@ -28,6 +32,7 @@
 #include "../UITypes/UIItemInventory.h"
 
 #include "../../Audio/Audio.h"
+#include "../../Character/Look/PetBodyPart.h"
 #include "../../Data/ItemData.h"
 #include "../../Gameplay/Stage.h"
 
@@ -89,7 +94,8 @@ namespace ms
 	UIEquipInventory::UIEquipInventory(const Inventory& invent) : UIDragElement<PosEQINV>(), inventory(invent)
 	{
 		nl::node close = basic_close_btn();
-		nl::node Equip = UiAssetResolve::window4("Equip");
+		// 主面板走 classic Equip；192 UIWindow4/Equip（含 Android Tab）经 equip_native_root。
+		nl::node Equip = UiAssetResolve::equip_panel_root();
 
 		if (!UiAssetResolve::usable(Equip))
 		{
@@ -109,7 +115,17 @@ namespace ms
 		// （StatusBar.img 在不在）选，两个谓词不同源，一旦一个成立一个不成立就是
 		// 「底图 v83 单张、坐标另一套 6 列」的整窗错位；那套 6 列分支与后面的
 		// 页签/totem 分支在本包里永不可达，已按裁决删除（单一版式、单一路径）。
-		iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(71, 32);
+		// 2026-11-20 用户实拍：头盔图标跑到「帽子」格右侧空白列。
+		// orange-wz 实读 live UIWindow.img/Equip/backgrnd（175x304, origin(0,0)）：
+		// 烘焙的「帽子」格在 x≈39..70，与「额饰」(FACE) 同列 x=38；
+		// 旧值 71 落在第三列（背面/武器列）的空槽，故图标右移一格。
+		// 与同列 FACE(38,65) 保持同一列锚点，y 沿用原有 32（凹槽下移 3px 由 draw 补偿）。
+		iconpositions[EquipSlot::Id::HAT] = Point<int16_t>(38, 32);
+		// 六戒 +2：右上空白、压在 RING3/4 上方（layout-plan §3.1；D-RING 锁定）。
+		iconpositions[EquipSlot::Id::RING5] = Point<int16_t>(104, 32);
+		iconpositions[EquipSlot::Id::RING6] = Point<int16_t>(137, 32);
+		// Addon 分流：纹章落主栏顶行空格（帽右邻列已给六戒，取中列）。
+		iconpositions[EquipSlot::Id::EMBLEM] = Point<int16_t>(71, 32);
 		iconpositions[EquipSlot::Id::MEDAL] = Point<int16_t>(5, 65);
 		iconpositions[EquipSlot::Id::FACE] = Point<int16_t>(38, 65);
 		iconpositions[EquipSlot::Id::RING3] = Point<int16_t>(104, 65);
@@ -129,6 +145,10 @@ namespace ms
 		iconpositions[EquipSlot::Id::RING1] = Point<int16_t>(104, 164);
 		iconpositions[EquipSlot::Id::RING2] = Point<int16_t>(137, 164);
 		iconpositions[EquipSlot::Id::SHOES] = Point<int16_t>(71, 197);
+		// 口袋：鞋行右侧空格（对齐 192 主栏口袋语义；classic HV 落位）。
+		iconpositions[EquipSlot::Id::POCKET] = Point<int16_t>(104, 197);
+		// 徽章：鞋行最右空格（从 Addon 迁入主栏 HV）。
+		iconpositions[EquipSlot::Id::BADGE] = Point<int16_t>(137, 197);
 		iconpositions[EquipSlot::Id::TAMEDMOB] = Point<int16_t>(5, 230);
 		iconpositions[EquipSlot::Id::SADDLE] = Point<int16_t>(38, 230);
 
@@ -141,6 +161,7 @@ namespace ms
 		// backgrnd 上合法空格（实测 978/1024 白底蓝边），与 RING4(137,65) 同列。
 		// 护肩不在 TINTABLE_SLOTS，恒保持底图原样（可用态）。
 		iconpositions[EquipSlot::Id::SHOULDER] = Point<int16_t>(137, 98);
+		// 徽章列左侧：勋章下方空格作徽章备用锚已改到鞋行；此处留 (5,98) 不绑。
 
 		nl::node backgrnd = Equip["backgrnd"];
 
@@ -234,6 +255,9 @@ namespace ms
 		build_disabled_cells();
 		build_pet_disabled_cells();
 		load_icons();
+
+		// 首开即拉起辅助装备并贴左上（资源缺失时 sync 内部降级）。
+		sync_side_panels();
 	}
 
 	void UIEquipInventory::draw(float alpha) const
@@ -301,6 +325,23 @@ namespace ms
 			// 压向右下、盖住下一格的标签（用户报的「装备 ui 位置偏移」）。
 			iter.second->set_cell(ip);
 			iter.second->draw_at(position);
+		}
+
+		// 宠物装备图标（相对 pet 面板 canvas）
+		if (pet_panel_open)
+		{
+			size_t n = 0;
+			const int16_t* parts = PetBodyPart::tab_parts(current_pet_tab_index(), n);
+			for (size_t i = 0; parts && i < n && i < PetBodyPart::CELL_COUNT; i++)
+			{
+				auto it = pet_icons.find(parts[i]);
+				if (it == pet_icons.end() || !it->second)
+					continue;
+				Point<int16_t> cell = pet_panel_pos
+					+ Point<int16_t>(PetBodyPart::CELLS[i].x, PetBodyPart::CELLS[i].y);
+				it->second->set_cell(cell);
+				it->second->draw_at(position);
+			}
 		}
 	}
 
@@ -387,8 +428,34 @@ namespace ms
 		if (dragged)
 		{
 			clear_tooltip();
-
+			// 拖主窗时辅助（及预留神秘）跟位，同帧贴靠。
+			sync_side_panels();
 			return dstate;
+		}
+
+		// 宠物面板优先：展开时命中 pet 格再回落到角色装。
+		if (pet_panel_open)
+		{
+			int16_t pbp = pet_bodypart_by_position(cursorpos);
+			if (pbp != 0)
+			{
+				selected_pet_bodypart = pbp;
+				auto it = pet_icons.find(pbp);
+				if (it != pet_icons.end() && it->second)
+				{
+					if (pressed)
+					{
+						it->second->start_drag_at(position, cursorpos);
+						UI::get().drag_icon(it->second.get());
+						clear_tooltip();
+						return Cursor::State::GRABBING;
+					}
+					show_pet_equip_tooltip(pbp);
+					return Cursor::State::CANGRAB;
+				}
+				clear_tooltip();
+				return Cursor::State::IDLE;
+			}
 		}
 
 		EquipSlot::Id slot = slot_by_position(cursorpos);
@@ -467,6 +534,17 @@ namespace ms
 
 	void UIEquipInventory::doubleclick(Point<int16_t> cursorpos)
 	{
+		if (pet_panel_open)
+		{
+			int16_t pbp = pet_bodypart_by_position(cursorpos);
+			if (pbp != 0 && pet_equipped_itemid(pbp) > 0)
+			{
+				if (int16_t freeslot = inventory.find_free_slot(InventoryType::Id::EQUIP))
+					UnequipPetItemPacket(pbp, freeslot).dispatch();
+				return;
+			}
+		}
+
 		EquipSlot::Id slot = slot_by_position(cursorpos);
 
 		if (icons[slot])
@@ -485,6 +563,20 @@ namespace ms
 
 	bool UIEquipInventory::send_icon(const Icon& icon, Point<int16_t> cursorpos)
 	{
+		// 拖到宠物面板格子 → 穿戴宠物装备（MOVE_ITEM 负槽）。
+		if (pet_panel_open)
+		{
+			int16_t pbp = pet_bodypart_by_position(cursorpos);
+			if (pbp != 0 && pet_slot_available()
+				&& icon.get_inventory_tab() == InventoryType::Id::EQUIP
+				&& icon.get_inventory_slot() > 0)
+			{
+				EquipPetItemPacket(icon.get_inventory_slot(), pbp).dispatch();
+				Sound(Sound::Name::DRAGEND).play();
+				return true;
+			}
+		}
+
 		if (EquipSlot::Id slot = slot_by_position(cursorpos))
 			icon.drop_on_equips(slot);
 
@@ -494,8 +586,125 @@ namespace ms
 	void UIEquipInventory::toggle_active()
 	{
 		clear_tooltip();
-
 		UIElement::toggle_active();
+		// makeactive/deactivate 已 virtual 并会 sync；此处再 sync 一次兜底
+		// （若基类 toggle 路径未来改动仍保证侧板一致）。
+		sync_side_panels();
+	}
+
+	void UIEquipInventory::makeactive()
+	{
+		UIElement::makeactive();
+		sync_side_panels();
+	}
+
+	void UIEquipInventory::deactivate()
+	{
+		UIElement::deactivate();
+		sync_side_panels();
+	}
+
+	void UIEquipInventory::remove_cursor()
+	{
+		UIDragElement::remove_cursor();
+		sync_side_panels();
+	}
+
+	void UIEquipInventory::sync_side_panels()
+	{
+		// 顶对齐横排（D-ADDON 后）：
+		//   [神秘] [机器人(+心脏)] [角色装备] [图腾×3]←贴 base_dimension 右缘
+		// Addon 窗已从开窗流删除；若会话残留则强制 deactivate。
+		const nl::node native_equip = UiAssetResolve::equip_native_root();
+		const bool have_android_src =
+			UiAssetResolve::usable(native_equip["Android"]["backgrnd"])
+			&& UiAssetResolve::usable(native_equip["backgrnd2"]);
+		const bool have_totem_src = UiAssetResolve::usable(native_equip["totem"]["backgrnd"]);
+		const bool have_mystic_src = UiAssetResolve::usable(
+			UiAssetResolve::window4("MysticBadge"));
+
+		auto deactivate_side = [](auto elem)
+		{
+			if (elem && elem->is_active())
+				elem->deactivate();
+		};
+
+		if (!active)
+		{
+			deactivate_side(UI::get().get_element<UIAndroidEquip>());
+			deactivate_side(UI::get().get_element<UITotemEquip>());
+			deactivate_side(UI::get().get_element<UIAddonEquip>());
+			deactivate_side(UI::get().get_element<UIMysticBadge>());
+			return;
+		}
+
+		// 分流后删除：永不再打开 Addon。
+		deactivate_side(UI::get().get_element<UIAddonEquip>());
+
+		Optional<UIAndroidEquip> android;
+
+		if (have_android_src)
+		{
+			android = UI::get().get_element<UIAndroidEquip>();
+
+			if (!android)
+				android = UI::get().emplace<UIAndroidEquip>(inventory);
+
+			if (android)
+			{
+				if (!android->is_active())
+					android->makeactive();
+
+				android->anchor_left_of(*this, 0);
+			}
+		}
+		else
+		{
+			deactivate_side(UI::get().get_element<UIAndroidEquip>());
+		}
+
+		if (have_mystic_src)
+		{
+			auto mystic = UI::get().get_element<UIMysticBadge>();
+
+			if (!mystic)
+				mystic = UI::get().emplace<UIMysticBadge>(inventory);
+
+			if (mystic)
+			{
+				if (!mystic->is_active())
+					mystic->makeactive();
+
+				if (android)
+					mystic->anchor_left_of(*android, 0);
+				else
+					mystic->anchor_left_of(*this, 0);
+			}
+		}
+		else
+		{
+			deactivate_side(UI::get().get_element<UIMysticBadge>());
+		}
+
+		if (have_totem_src)
+		{
+			auto totem = UI::get().get_element<UITotemEquip>();
+
+			if (!totem)
+				totem = UI::get().emplace<UITotemEquip>(inventory);
+
+			if (totem)
+			{
+				if (!totem->is_active())
+					totem->makeactive();
+
+				totem->anchor_right_of_box(position, base_dimension, 0);
+			}
+		}
+		else
+		{
+			deactivate_side(UI::get().get_element<UITotemEquip>());
+		}
 	}
 
 	void UIEquipInventory::modify(int16_t pos, int8_t mode, int16_t arg)
@@ -503,6 +712,25 @@ namespace ms
 		// 2026-11-12：EquipSlot::Id 的枚举值就是官方 BodyPart 绝对值，
 		// 但 InventoryHandlers 传进来的是 wire 原值（负）或绝对值（正）两套口径，
 		// 必须经 from_wire_bodypart() 归一化后再用；直接 by_id() 收到负数会越界。
+		int16_t abspos = pos < 0 ? static_cast<int16_t>(-pos) : pos;
+		int16_t absarg = arg < 0 ? static_cast<int16_t>(-arg) : arg;
+
+		// 宠物座位：刷新 pet 面板图标（不进角色 EquipSlot）。
+		if (PetBodyPart::is_pet_bodypart(abspos)
+			|| PetBodyPart::is_pet_bodypart(static_cast<int16_t>(abspos - 100)))
+		{
+			int16_t bp = PetBodyPart::is_pet_bodypart(abspos) ? abspos
+				: static_cast<int16_t>(abspos - 100);
+			update_pet_slot(bp);
+		}
+		if (PetBodyPart::is_pet_bodypart(absarg)
+			|| PetBodyPart::is_pet_bodypart(static_cast<int16_t>(absarg - 100)))
+		{
+			int16_t bp = PetBodyPart::is_pet_bodypart(absarg) ? absarg
+				: static_cast<int16_t>(absarg - 100);
+			update_pet_slot(bp);
+		}
+
 		EquipSlot::Id eqpos = EquipSlot::from_wire_bodypart(pos);
 		EquipSlot::Id eqarg = EquipSlot::from_wire_bodypart(arg);
 
@@ -659,7 +887,17 @@ namespace ms
 				b->set_active(pet_panel_open);
 
 		if (pet_panel_open)
-			change_pet_tab(pet_tab);
+		{
+			uint16_t tab = pet_tab;
+			if (tab < Buttons::BT_PET_TAB0 || tab >= Buttons::BT_PET_TABE)
+				tab = Buttons::BT_PET_TAB0;
+			change_pet_tab(tab);
+		}
+		else
+		{
+			pet_icons.clear();
+			selected_pet_bodypart = 0;
+		}
 
 		dimension = pet_panel_open ? expanded_dimension : base_dimension;
 	}
@@ -677,7 +915,85 @@ namespace ms
 				// 不能用 Button::State::DISABLED 表示未选页，因为 Button::is_active() 排除 DISABLED → 点不中。
 				b->set_state(i == pet_tab ? Button::State::PRESSED : Button::State::NORMAL);
 
-		// 预留：BtPet1/2/3 三页宠物装备槽的穿戴/卸下（Equip/pet 下无 Slots 子节点，槽位数据待协议批次）
+		load_pet_icons();
+	}
+
+	uint8_t UIEquipInventory::current_pet_tab_index() const
+	{
+		if (pet_tab < Buttons::BT_PET_TAB0 || pet_tab >= Buttons::BT_PET_TABE)
+			return 0;
+		return static_cast<uint8_t>(pet_tab - Buttons::BT_PET_TAB0);
+	}
+
+	int32_t UIEquipInventory::pet_equipped_itemid(int16_t bodypart) const
+	{
+		int32_t id = inventory.get_item_id(InventoryType::Id::EQUIPPED, bodypart);
+		if (id == 0)
+			id = inventory.get_item_id(InventoryType::Id::EQUIPPED, PetBodyPart::cash_mirror(bodypart));
+		return id;
+	}
+
+	void UIEquipInventory::update_pet_slot(int16_t bodypart)
+	{
+		if (!PetBodyPart::is_pet_bodypart(bodypart))
+			return;
+
+		int32_t item_id = pet_equipped_itemid(bodypart);
+		if (item_id)
+		{
+			const Texture& texture = ItemData::get(item_id).get_icon(false);
+			pet_icons[bodypart] = std::make_unique<Icon>(
+				std::make_unique<PetEquipIcon>(bodypart),
+				texture,
+				-1);
+		}
+		else
+		{
+			pet_icons.erase(bodypart);
+		}
+		clear_tooltip();
+	}
+
+	void UIEquipInventory::load_pet_icons()
+	{
+		pet_icons.clear();
+		selected_pet_bodypart = 0;
+
+		size_t n = 0;
+		const int16_t* parts = PetBodyPart::tab_parts(current_pet_tab_index(), n);
+		for (size_t i = 0; parts && i < n; i++)
+			update_pet_slot(parts[i]);
+	}
+
+	int16_t UIEquipInventory::pet_bodypart_by_position(Point<int16_t> cursorpos) const
+	{
+		if (!pet_panel_open)
+			return 0;
+
+		size_t n = 0;
+		const int16_t* parts = PetBodyPart::tab_parts(current_pet_tab_index(), n);
+		if (!parts)
+			return 0;
+
+		for (size_t i = 0; i < n && i < PetBodyPart::CELL_COUNT; i++)
+		{
+			Point<int16_t> cell = pet_panel_pos
+				+ Point<int16_t>(PetBodyPart::CELLS[i].x, PetBodyPart::CELLS[i].y);
+			Rectangle<int16_t> rect(position + cell,
+				position + cell + Point<int16_t>(Icon::cell_width, Icon::cell_height));
+			if (rect.contains(cursorpos))
+				return parts[i];
+		}
+		return 0;
+	}
+
+	void UIEquipInventory::show_pet_equip_tooltip(int16_t bodypart)
+	{
+		int32_t itemid = pet_equipped_itemid(bodypart);
+		if (itemid > 0)
+			UI::get().show_item(Tooltip::Parent::EQUIPINVENTORY, itemid);
+		else
+			clear_tooltip();
 	}
 
 	UIEquipInventory::EquipIcon::EquipIcon(EquipSlot::Id s)
@@ -726,5 +1042,34 @@ namespace ms
 	Icon::IconType UIEquipInventory::EquipIcon::get_type()
 	{
 		return Icon::IconType::EQUIP;
+	}
+
+	UIEquipInventory::PetEquipIcon::PetEquipIcon(int16_t bp) : bodypart(bp)
+	{
+	}
+
+	void UIEquipInventory::PetEquipIcon::drop_on_stage() const
+	{
+		Sound(Sound::Name::DRAGEND).play();
+	}
+
+	bool UIEquipInventory::PetEquipIcon::drop_on_items(InventoryType::Id tab, EquipSlot::Id, int16_t slot, bool) const
+	{
+		if (tab != InventoryType::Id::EQUIP)
+		{
+			if (auto iteminventory = UI::get().get_element<UIItemInventory>())
+			{
+				if (iteminventory->is_active())
+				{
+					iteminventory->change_tab(InventoryType::Id::EQUIP);
+					return false;
+				}
+			}
+			return true;
+		}
+
+		if (slot > 0)
+			UnequipPetItemPacket(bodypart, slot).dispatch();
+		return true;
 	}
 }

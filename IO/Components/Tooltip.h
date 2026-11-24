@@ -19,8 +19,19 @@
 
 #include "../../Template/Point.h"
 
+#include <string>
+#include <vector>
+
 namespace ms
 {
+	// 世界地图悬浮提示的在线玩家行（跨 UI/UIState/MapTooltip 共享，避免头文件反向依赖）。
+	struct MapTooltipPlayer
+	{
+		std::string name;
+		int16_t level = 0;
+		int8_t channel = 0;
+	};
+
 	// Interface for tooltips
 	// Window with helpful information that appears on mouse hover at a specific location
 	class Tooltip

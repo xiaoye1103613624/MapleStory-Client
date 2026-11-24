@@ -14,16 +14,23 @@
 //	  TOTEM1..4 = -55..-58 / EMBLEM = -59 / ANDROID_SLOT = -60 /
 //	  HEART = -61 / BADGE = -54。
 //	穿戴包由 EquipItemPacket 统一走 EquipSlot::wire_bodypart() 转换，本类不碰 wire。
+//
+//	定位：跟随者窗。贴角色装备 base_dimension 右侧、顶边齐（宠物栏上方）；
+//	非 192 原生「辅助」面板（192 无 AddonEquip，仅有 Equip/totem 页签）。
+//	开/关由宿主 sync_side_panels 驱动。
 ////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../UIDragElement.h"
+#include "../UIElement.h"
+
+#include "../../Graphics/Texture.h"
 
 #include <array>
+#include <memory>
 
 namespace ms
 {
-	class UIAddonEquip : public UIDragElement<PosEQINV>
+	class UIAddonEquip : public UIElement
 	{
 	public:
 		static constexpr Type TYPE = UIElement::Type::ADDONEQUIP;
@@ -48,25 +55,24 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
-		static constexpr size_t SLOT_COUNT = 8;
+		// 机器人已迁 UIAndroidEquip（BP1200）；本窗保留图腾/纹章/心脏/徽章。
+		static constexpr size_t SLOT_COUNT = 7;
 
-		/// 8 个扩展槽，顺序 = 位图阅读顺序（上排 4 图腾，下排 4 件）。
 		static constexpr std::array<EquipSlot::Id, SLOT_COUNT> SLOTS = {
 			EquipSlot::Id::TOTEM1,
 			EquipSlot::Id::TOTEM2,
 			EquipSlot::Id::TOTEM3,
 			EquipSlot::Id::TOTEM4,
 			EquipSlot::Id::EMBLEM,
-			EquipSlot::Id::ANDROID_SLOT,
 			EquipSlot::Id::HEART,
 			EquipSlot::Id::BADGE
 		};
 
-		/// 位图内格左上角（v5 manifest 实测），与命中区/图标绘制同源。
+		/// 位图内格左上角（v5）；(44,65) 原「机器人」水印格空出不绑槽（穿戴走 UIAndroidEquip）。
 		static constexpr std::array<Point<int16_t>, SLOT_COUNT> CELLS = {
 			Point<int16_t>(11, 32), Point<int16_t>(44, 32),
 			Point<int16_t>(77, 32), Point<int16_t>(110, 32),
-			Point<int16_t>(11, 65), Point<int16_t>(44, 65),
+			Point<int16_t>(11, 65),
 			Point<int16_t>(77, 65), Point<int16_t>(110, 65)
 		};
 
@@ -94,6 +100,8 @@ namespace ms
 		EquipSlot::Id slot_by_position(Point<int16_t> position) const;
 		void show_equip(EquipSlot::Id slot);
 		void clear_tooltip();
+		/// ESC / 假关闭钮：转宿主同关，禁止单独关辅助。
+		void close_with_host();
 
 		const Inventory& inventory;
 		Texture backgrnd;

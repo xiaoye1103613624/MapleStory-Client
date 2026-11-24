@@ -21,6 +21,7 @@
 #include "../UIDragElement.h"
 
 #include <array>
+#include <unordered_map>
 
 namespace ms
 {
@@ -37,6 +38,9 @@ namespace ms
 		void draw(float inter) const override;
 
 		void toggle_active() override;
+		void makeactive() override;
+		void deactivate() override;
+		void remove_cursor() override;
 		bool send_icon(const Icon& icon, Point<int16_t> position) override;
 
 		void doubleclick(Point<int16_t> position) override;
@@ -53,6 +57,9 @@ namespace ms
 		Button::State button_pressed(uint16_t buttonid) override;
 
 	private:
+		/// 辅助装备（及预留神秘装备）贴靠 + 生命周期：主窗驱动。
+		void sync_side_panels();
+
 		void show_equip(EquipSlot::Id slot);
 		void clear_tooltip();
 		void load_icons();
@@ -64,6 +71,14 @@ namespace ms
 		bool slot_available(EquipSlot::Id slot) const;
 		// 从底图裁出可判定槽位的改色版本，与 TINTABLE_SLOTS 一一对应。
 		void build_disabled_cells();
+
+		// 宠物装备面板：页内 bodypart ↔ 图标
+		uint8_t current_pet_tab_index() const;
+		void load_pet_icons();
+		void update_pet_slot(int16_t bodypart);
+		int16_t pet_bodypart_by_position(Point<int16_t> cursorpos) const;
+		int32_t pet_equipped_itemid(int16_t bodypart) const;
+		void show_pet_equip_tooltip(int16_t bodypart);
 
 		class EquipIcon : public Icon::Type
 		{
@@ -79,6 +94,23 @@ namespace ms
 
 		private:
 			EquipSlot::Id source;
+		};
+
+		// 宠物装备图标：卸下走 UnequipPetItemPacket（原始负槽）。
+		class PetEquipIcon : public Icon::Type
+		{
+		public:
+			explicit PetEquipIcon(int16_t bodypart);
+
+			void drop_on_stage() const override;
+			void drop_on_equips(EquipSlot::Id) const override {}
+			bool drop_on_items(InventoryType::Id tab, EquipSlot::Id eqslot, int16_t slot, bool equip) const override;
+			void drop_on_bindings(Point<int16_t>, bool) const override {}
+			void set_count(int16_t) override {}
+			Icon::IconType get_type() override { return Icon::IconType::EQUIP; }
+
+		private:
+			int16_t bodypart;
 		};
 
 		enum Buttons : uint16_t
@@ -136,5 +168,9 @@ namespace ms
 		Point<int16_t> pet_panel_pos;
 		Point<int16_t> base_dimension;
 		Point<int16_t> expanded_dimension;
+
+		// key = BodyPart 绝对值（21..48）；仅当前页装载。
+		std::unordered_map<int16_t, std::unique_ptr<Icon>> pet_icons;
+		int16_t selected_pet_bodypart = 0;
 	};
 }

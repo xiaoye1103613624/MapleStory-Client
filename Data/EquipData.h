@@ -41,6 +41,8 @@ namespace ms
 		int16_t get_reqstat(MapleStat::Id stat) const;
 		// Returns a default stat
 		int16_t get_defstat(EquipStat::Id stat) const;
+		// Returns upgrade slots (WZ info/tuc)
+		uint8_t get_slots() const;
 		// Returns the equip slot
 		EquipSlot::Id get_eqslot() const;
 		// Returns the category name

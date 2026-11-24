@@ -20,6 +20,8 @@
 #include "TextTooltip.h"
 #include "Tooltip.h"
 
+#include <vector>
+
 #include "../../Graphics/Geometry.h"
 
 namespace ms
@@ -34,6 +36,7 @@ namespace ms
 		void set_title(Tooltip::Parent parent, std::string title, bool bolded);
 		void set_desc(std::string description);
 		void set_mapid(int32_t mapid, bool portal);
+		void set_players(const std::vector<MapTooltipPlayer>& players);
 
 		void reset();
 
@@ -62,6 +65,10 @@ namespace ms
 
 		Texture Mob;
 		Texture Npc;
+		// 世界地图 tip 每行生命按自身 id 取的真实图标（MonsterBook.img/icon 在本端不存在）。
+		// mob_icon_stand[0..] 对应 mob_labels[0..]，npc 同理；空则不画。
+		Texture mob_icon_stand[MAX_LIFE];
+		Texture npc_icon_stand[MAX_LIFE];
 		//Texture Party;
 
 		Tooltip::Parent parent;
@@ -73,6 +80,10 @@ namespace ms
 		Text desc_label;
 		Text mob_labels[MAX_LIFE];
 		Text npc_labels[MAX_LIFE];
+		Text mob_count_header;   // "Monsters (N):" 数量统计头（世界地图 tip）
+		Text npc_count_header;   // "NPCs (N):"
+		Text player_header;
+		Text player_labels[MAX_LIFE];
 
 		int16_t fillwidth;
 		int16_t fillheight;

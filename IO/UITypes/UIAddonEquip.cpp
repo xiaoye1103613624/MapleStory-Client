@@ -4,7 +4,7 @@
 #include "UIAddonEquip.h"
 
 #include "../UI.h"
-#include "../Components/MapleButton.h"
+#include "UIEquipInventory.h"
 #include "UIItemInventory.h"
 
 #include "../../Audio/Audio.h"
@@ -20,8 +20,11 @@
 namespace ms
 {
 	UIAddonEquip::UIAddonEquip(const Inventory& invent)
-		: UIDragElement<PosEQINV>(), inventory(invent)
+		: UIElement(Point<int16_t>(0, 0), Point<int16_t>(0, 0), true), inventory(invent)
 	{
+		// 跟随者：不存档坐标、不随分辨率 SavedPos 重锚；位置由宿主 sync_side_panels 写入。
+		set_layout_policy(LayoutPolicy::None);
+
 		// 底板经 orange-wz MCP 从 docs/features/addon-equipment/ui/window/v5/normal.png
 		// 入库为 UIWindow.img/AddonEquip/backgrnd（152×105 ARGB4444）。
 		// 节点缺失时优雅降级：不创建窗、不落 (0,0) 空壳。
@@ -46,7 +49,6 @@ namespace ms
 		backgrnd = Texture(bg);
 		bg_origin = backgrnd.get_origin();
 		dimension = backgrnd.get_dimensions();
-		dragarea = Point<int16_t>(dimension.x(), 20);
 
 		if (bg)
 			sprites.emplace_back(bg);
@@ -144,20 +146,13 @@ namespace ms
 
 	Cursor::State UIAddonEquip::send_cursor(bool pressed, Point<int16_t> cursorpos)
 	{
-		Cursor::State dstate = UIDragElement::send_cursor(pressed, cursorpos);
-
-		if (dragged)
-		{
-			clear_tooltip();
-			return dstate;
-		}
-
+		// 无窗体标题拖拽：只处理槽位图标拖 / hover，再交给基类按钮命中。
 		EquipSlot::Id slot = slot_by_position(cursorpos);
 
 		if (slot == EquipSlot::Id::NONE)
 		{
 			clear_tooltip();
-			return Cursor::State::IDLE;
+			return UIElement::send_cursor(pressed, cursorpos);
 		}
 
 		selected_slot = slot;
@@ -188,6 +183,20 @@ namespace ms
 		return Cursor::State::IDLE;
 	}
 
+	void UIAddonEquip::close_with_host()
+	{
+		clear_tooltip();
+
+		if (auto host = UI::get().get_element<UIEquipInventory>())
+		{
+			if (host->is_active())
+				host->toggle_active();
+			return;
+		}
+
+		UIElement::deactivate();
+	}
+
 	void UIAddonEquip::send_key(int32_t keycode, bool pressed, bool escape)
 	{
 		if (!pressed)
@@ -195,7 +204,7 @@ namespace ms
 
 		if (escape)
 		{
-			toggle_active();
+			close_with_host();
 			return;
 		}
 
@@ -251,6 +260,13 @@ namespace ms
 
 	void UIAddonEquip::toggle_active()
 	{
+		// 跟随者：独立 toggle 转宿主同开同关；宿主不在时才本地翻转。
+		if (auto host = UI::get().get_element<UIEquipInventory>())
+		{
+			host->toggle_active();
+			return;
+		}
+
 		clear_tooltip();
 		UIElement::toggle_active();
 	}
@@ -268,7 +284,7 @@ namespace ms
 	Button::State UIAddonEquip::button_pressed(uint16_t buttonid)
 	{
 		if (buttonid == 0)
-			toggle_active();
+			close_with_host();
 
 		return Button::State::NORMAL;
 	}

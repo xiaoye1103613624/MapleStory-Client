@@ -8,7 +8,9 @@
 //	  ② 兜底 = Data/SetItem.txt（load()），仅当 WZ 根不可用时降级。
 //	只映射本端 EquipStat 支持属性子集的 Effect 键，其余（activeSkill/Option/
 //	incMHPr/incMMPr/nbdR 等）按用户裁决跳过并在可行性文档标注。
-//	加成权威仍在客户端本地结算（Player::apply_set_item_bonuses），不做协议。
+//	权威模型（2026-11-20 1A）：
+//	  · 战斗 / 展示文案：服务端 0x175 / 0x176（synced 后覆盖本地 % 注入）
+//	  · 本地 WZ/txt + apply_set_item_bonuses：离线/未同步兜底；悬停可 0x177 按需拉文案
 //
 //	txt 行格式（# 注释，空行忽略）：
 //	  SET <setId> <name> <completeCount>
@@ -45,6 +47,9 @@ namespace ms
 			int16_t complete_count;
 			std::vector<int32_t> item_ids;
 			std::vector<Tier> tiers;
+			/// Desc/<slotKey> → 展示文案（如 weapon →「冒险岛宝石武器中选1」）。
+			/// 高版本 OR 组代表名；平铺多职业武器时用此折叠为一行。
+			std::unordered_map<std::string, std::string> slot_desc;
 		};
 
 		/// 从 live WZ Etc/SetItemInfo.img 加载（主源）。只映射本端支持的
@@ -79,10 +84,15 @@ namespace ms
 		/// 服务端下发的套装档位加成（0x176 tier 列表），供 Player 本地注入复活。
 		static void set_server_tier(int32_t set_id, int16_t count, const std::string& stat_key, int32_t value);
 
+		/// 0x177 按需拉取去重：无文案且未 pending 时返回 true。
+		static bool begin_bonus_request(int32_t set_id);
+		static void clear_bonus_pending(int32_t set_id);
+
 	private:
 		static std::unordered_map<int32_t, Definition> definitions;
 		static std::unordered_map<int32_t, int32_t> item_to_set;
 		static std::unordered_map<int32_t, std::string> server_text;
+		static std::unordered_map<int32_t, bool> bonus_pending;
 		static bool loaded;
 	};
 }

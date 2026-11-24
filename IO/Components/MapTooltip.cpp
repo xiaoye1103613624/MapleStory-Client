@@ -21,6 +21,7 @@
 
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/Locale.h"
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -31,14 +32,79 @@ namespace ms
 	// TODO: Get number of available quests
 	MapTooltip::MapTooltip() : parent(Tooltip::Parent::NONE), title(""), description(""), fillwidth(0), fillheight(0)
 	{
-		// Mob/Npc 图标在包内 UIWindow.img/ToolTip 下不存在（仅 Equip/cash/mesos），取到空纹理即不绘。
-		nl::node WorldMap = UiAssetResolve::window("ToolTip")["WorldMap"];
-
-		Mob = WorldMap["Mob"];
-		Npc = WorldMap["Npc"];
-
+		// 2026-11-21 方案A：世界地图 tip 每行生命按自身 id 取真实图标
+		// （Mob/<id>.img/stand 首帧 / Npc 站姿），不再依赖本端不存在的
+		// String/MonsterBook.img/icon（.nx 实测该节点缺失 → 空纹理无图标）。
+		// Mob/Npc 分区头图退化为「首行图标」，在 set_worldmap_mapid 里按各行真实 id 填。
 		// TODO: Get list of where party members are
 		//Party = WorldMap["Party"];
+	}
+
+	namespace
+	{
+		// 取某生命 id 的站姿首帧图标：mob 走 Mob/<id7>.img/stand/0，npc 走 Npc 站姿。
+		// 返回空纹理则不画（安全，不崩）。
+		static Texture life_stand_icon(int64_t life_id, const std::string& type)
+		{
+#ifdef USE_NX
+			if (type == "m")
+			{
+				std::string strid = ms::string_format::extend_id(static_cast<int32_t>(life_id), 7);
+				nl::node src = nl::nx::Mob[strid + ".img"]["stand"];
+				if (!src)
+					return {};
+				if (nl::node z = src["0"])
+					return Texture(z);
+				auto it = src.begin();
+				if (it != src.end())
+					return Texture(*it);
+			}
+			else if (type == "n")
+			{
+				std::string strid = ms::string_format::extend_id(static_cast<int32_t>(life_id), 7);
+				// NPC 站姿通常在 Npc/<id>.img/stand（部分版本在默认帧）。
+				nl::node src = nl::nx::Npc[strid + ".img"]["stand"];
+				if (src)
+				{
+					if (nl::node z = src["0"])
+						return Texture(z);
+					auto it = src.begin();
+					if (it != src.end())
+						return Texture(*it);
+				}
+			}
+#endif
+			return {};
+		}
+
+		// 世界地图 tip 每行"行带"高度：图标按此高缩放，文字墨迹也在行带内垂直居中，
+		// 二者共享同一条水平中心线（用户 2026-11-22 21:36 反馈"图标没和名称对齐"）。
+		static constexpr int16_t LIFE_ROW_H = 24;
+		static constexpr int16_t LIFE_ICON_W = 24;   // 图标绘制槽宽（居中用）
+		static constexpr int16_t LIFE_ICON_X = 2;    // 图标槽相对行起点 x
+		static constexpr int16_t LIFE_TEXT_X = 28;   // 文字左边缘（图标槽右侧留 2px）
+
+		// 把图标缩放到不超过 (w,h)，并让"可见框左上角"精确落在 slot_tl。
+		// DrawArgument(pos,scale,scale) 以 pos 为 center，可见框左上 = pos - origin*scale，
+		// 故 pos = slot_tl + origin*scale（补偿 origin，避免站姿帧 origin 非0导致偏移）。
+		static void draw_life_icon(const Texture& icon, Point<int16_t> slot_tl)
+		{
+			if (!icon.is_valid())
+				return;
+
+			int16_t iw = icon.width();
+			int16_t ih = icon.height();
+			float scale = 1.0f;
+			int16_t max_dim = iw > ih ? iw : ih;
+			if (max_dim > LIFE_ROW_H && max_dim > 0)
+				scale = static_cast<float>(LIFE_ROW_H) / static_cast<float>(max_dim);
+
+			Point<int16_t> o = icon.get_origin();
+			Point<int16_t> pos(
+				static_cast<int16_t>(slot_tl.x() + o.x() * scale),
+				static_cast<int16_t>(slot_tl.y() + o.y() * scale));
+			icon.draw(DrawArgument(pos, scale, scale));
+		}
 	}
 
 	void MapTooltip::draw(Point<int16_t> position) const
@@ -130,6 +196,9 @@ namespace ms
 
 	void MapTooltip::set_mapid(int32_t mapid, bool portal)
 	{
+		// 世界地图悬停无关联点位传 mapid=0：不加载地图、不填生命行，直接返回。
+		if (mapid <= 0)
+			return;
 		std::unordered_map<int64_t, std::pair<std::string, std::string>> life = NxHelper::Map::get_life_on_map(mapid);
 
 		switch (parent)
@@ -159,7 +228,15 @@ namespace ms
 		{
 			mob_labels[i].change_text("");
 			npc_labels[i].change_text("");
+			player_labels[i].change_text("");
+			mob_icon_stand[i] = Texture{};
+			npc_icon_stand[i] = Texture{};
 		}
+		Mob = Texture{};
+		Npc = Texture{};
+		mob_count_header.change_text("");
+		npc_count_header.change_text("");
+		player_header.change_text("");
 
 		fillwidth = 0;
 		fillheight = 0;
@@ -200,11 +277,28 @@ namespace ms
 					separator.draw(position + SEPARATOR_ADJ);
 					position.shift_y(10);
 
-					Mob.draw(position + LIFE_ICON_ADJ);
+					if (!mob_count_header.empty())
+					{
+						mob_count_header.draw(position + LIFE_LABEL_ADJ);
+						position.shift_y(mob_count_header.height() + 1);
+					}
 				}
 
-				mob.draw(position + LIFE_LABEL_ADJ);
-				position.shift_y(mob.height() + 1);
+				// 统一行带：图标槽(LIFE_ROW_H 高)与文字墨迹都在行带内垂直居中，
+				// 二者中心落在同一条水平线（用户 21:36 反馈对齐问题）。
+				{
+					const Point<int16_t> row_tl = position;
+					const Texture& ic = mob_icon_stand[i];
+					const int16_t max_dim = ic.is_valid() ? (ic.width() > ic.height() ? ic.width() : ic.height()) : 0;
+					const float s = (max_dim > LIFE_ROW_H && max_dim > 0)
+						? static_cast<float>(LIFE_ROW_H) / static_cast<float>(max_dim) : 1.0f;
+					const int16_t vis_h = ic.is_valid() ? static_cast<int16_t>(ic.height() * s) : 0;
+					draw_life_icon(ic, row_tl + Point<int16_t>(LIFE_ICON_X, (LIFE_ROW_H - vis_h) / 2));
+					// 文字墨迹居中：把墨迹顶放到行带中 (LIFE_ROW_H - 字高)/2 处。
+					const int16_t ink_y = row_tl.y() + (LIFE_ROW_H - mob.height()) / 2;
+					mob.draw(Point<int16_t>(row_tl.x() + LIFE_TEXT_X, mob.y_for_ink_top(ink_y)));
+				}
+				position.shift_y(LIFE_ROW_H + 1);
 			}
 		}
 
@@ -221,11 +315,46 @@ namespace ms
 					separator.draw(position + SEPARATOR_ADJ);
 					position.shift_y(10);
 
-					Npc.draw(position + LIFE_ICON_ADJ);
+					if (!npc_count_header.empty())
+					{
+						npc_count_header.draw(position + LIFE_LABEL_ADJ);
+						position.shift_y(npc_count_header.height() + 1);
+					}
 				}
 
-				npc.draw(position + LIFE_LABEL_ADJ);
-				position.shift_y(npc.height() + 1);
+				// 统一行带：图标槽与文字墨迹共享水平中心线（同 mob 分支）。
+				{
+					const Point<int16_t> row_tl = position;
+					const Texture& ic = npc_icon_stand[i];
+					const int16_t max_dim = ic.is_valid() ? (ic.width() > ic.height() ? ic.width() : ic.height()) : 0;
+					const float s = (max_dim > LIFE_ROW_H && max_dim > 0)
+						? static_cast<float>(LIFE_ROW_H) / static_cast<float>(max_dim) : 1.0f;
+					const int16_t vis_h = ic.is_valid() ? static_cast<int16_t>(ic.height() * s) : 0;
+					draw_life_icon(ic, row_tl + Point<int16_t>(LIFE_ICON_X, (LIFE_ROW_H - vis_h) / 2));
+					const int16_t ink_y = row_tl.y() + (LIFE_ROW_H - npc.height()) / 2;
+					npc.draw(Point<int16_t>(row_tl.x() + LIFE_TEXT_X, npc.y_for_ink_top(ink_y)));
+				}
+				position.shift_y(LIFE_ROW_H + 1);
+			}
+		}
+
+		// 在线玩家分区（s9 WORLD_MAP_PLAYERS）：与怪物/NPC 三分区呈现。
+		if (!player_header.empty())
+		{
+			separator.draw(position + SEPARATOR_ADJ);
+			position.shift_y(10);
+
+			player_header.draw(position + LIFE_LABEL_ADJ);
+			position.shift_y(player_header.height() + 2);
+
+			for (uint8_t i = 0; i < MAX_LIFE; i++)
+			{
+				Text row = player_labels[i];
+				if (!row.empty())
+				{
+					row.draw(position + LIFE_LABEL_ADJ);
+					position.shift_y(row.height() + 1);
+				}
 			}
 		}
 	}
@@ -416,27 +545,71 @@ namespace ms
 			if (life_object.first == "m" && m < MAX_LIFE)
 			{
 				mob_labels[m] = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::CHARTREUSE, life_object.second);
-				fillheight += mob_labels->height() + 1;
+				mob_icon_stand[m] = life_stand_icon(l.first, "m");
+				if (m == 0)
+					Mob = mob_icon_stand[m]; // 分区头图 = 首行真实图标
+				fillheight += LIFE_ROW_H + 1; // 与 draw_worldmap 统一行带一致
 
 				m++;
 			}
 			else if (life_object.first == "n" && n < MAX_LIFE)
 			{
 				npc_labels[n] = Text(Text::Font::A12M, Text::Alignment::LEFT, Color::Name::MALIBU, life_object.second);
+				npc_icon_stand[n] = life_stand_icon(l.first, "n");
+				if (n == 0)
+					Npc = npc_icon_stand[n];
 
 				if (m > 0 && n == 0)
 					fillheight += 8;
 
-				fillheight += npc_labels->height() + 1;
+				fillheight += LIFE_ROW_H + 1; // 与 draw_worldmap 统一行带一致
 
 				n++;
 			}
+		}
+
+		// 数量统计头（世界地图 tip）：与参考包 BuildCountHeader 同语义，怪物/NPC 各一行 "Monsters (N):"。
+		if (m > 0)
+		{
+			mob_count_header.change_text(Locale::format("worldmap.monsters.count", std::to_string(m)));
+			fillheight += mob_count_header.height() + 1;
+		}
+		if (n > 0)
+		{
+			npc_count_header.change_text(Locale::format("worldmap.npcs.count", std::to_string(n)));
+			fillheight += npc_count_header.height() + 1;
 		}
 
 		fillheight -= 3;
 
 		if (desc_empty && m == 0 && n == 0)
 			fillheight -= 8;
+	}
+
+	void MapTooltip::set_players(const std::vector<MapTooltipPlayer>& players)
+	{
+		// 玩家分区追加在 set_mapid 之后：仅 WORLDMAP  displaying 时有效。
+		if (parent != Tooltip::Parent::WORLDMAP || players.empty())
+			return;
+
+		player_header = Text(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::EMPEROR,
+			Locale::format("worldmap.players.online", std::to_string(players.size())));
+		fillwidth = std::max(fillwidth, static_cast<int16_t>(player_header.width()));
+		fillheight += 10 + player_header.height() + 2;
+
+		uint8_t shown = 0;
+		for (const auto& p : players)
+		{
+			if (shown >= MAX_LIFE)
+				break;
+
+			std::string line = "[Lv." + std::to_string(p.level) + "] " + p.name
+				+ " (Ch." + std::to_string(p.channel) + ")";
+			player_labels[shown] = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::WHITE, line);
+			fillwidth = std::max(fillwidth, static_cast<int16_t>(player_labels[shown].width()));
+			fillheight += player_labels[shown].height() + 1;
+			shown++;
+		}
 	}
 
 	void MapTooltip::set_minimap_mapid(std::unordered_map<int64_t, std::pair<std::string, std::string>> life, bool portal)

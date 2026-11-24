@@ -23,6 +23,50 @@
 
 namespace ms
 {
+	namespace
+	{
+		// 高版本武器细分类型（2026-11-20）。证据：v214 源码
+		// net/swordie/ms/enums/WeaponType.java:7-50 + ItemConstants.java:1507-1528，
+		// val = id/1000%1000。返回 locale equip.type.* 的 UPPER_SNAKE 键；
+		// 未命中的副武器细分（135 段调谐器/灵符/护符等）本机无实证，返回 nullptr 不编造。
+		const char* high_version_weapon_type(int32_t id)
+		{
+			if (id / 1000000 != 1)
+				return nullptr;
+
+			const int val = static_cast<int>((id / 1000) % 1000);
+
+			switch (val)
+			{
+			case 212: return "SHINING_ROD";     // 魔道书 (Luminous)
+			case 213: return "BLADECASTER";     // 能量剑 (Adele)
+			case 214: return "WHISPER_SHOT";    // 双弩枪系 (Kain)
+			case 215: return "REN_SWORD";       // Ren 武器
+			case 222: return "SOUL_SHOOTER";    // 灵魂手铳/呼吸手铳 (Angelic Buster)
+			case 232: return "DESPERADO";       // 亡命剑 (Demon Avenger)
+			case 242: return "CHAIN_SWORD";     // 链剑 (Xenon)
+			case 252: return "MEMORY_STAFF";    // MemoryStaff (Lynn)
+			case 262: return "PSY_LIMITER";     // ESP限制器 (Kinesis)
+			case 272: return "CHAIN";           // 锁链 (Cadena)
+			case 282: return "GAUNTLET";        // 拳封 (Illium)
+			case 292: return "RITUAL_FAN";      // 符/灵符 (HoYoung)
+			case 342: return "KATARA";          // 双刀副手
+			case 362: return "CANE";            // 手杖 (Phantom)
+			case 403: return "FIST";            // 拳套 (Mo Xuan)
+			case 404: return "CHAKRAM";         // 环刃 (Khali)
+			case 522: return "DUAL_BOWGUN";     // 双弩枪 (Mercedes)
+			case 532: return "HAND_CANNON";     // 手炮 (Cannoneer)
+			case 542: return "KATANA";          // 武士刀 (Hayato)
+			case 552: return "FAN";             // 扇/扇坠 (Kanna)
+			case 562: return "BIG_SWORD";       // 大剑 (Zero)
+			case 572: return "LONG_SWORD";      // 长剑 (Zero)
+			case 582: return "ARM_CANNON";      // 机甲手枪 (Blaster)
+			case 592: return "ANCIENT_BOW";     // 远古弓 (Pathfinder)
+			default: return nullptr;
+			}
+		}
+	}
+
 	EquipData::EquipData(int32_t id) : itemdata(ItemData::get(id))
 	{
 		std::string strid = "0" + std::to_string(id);
@@ -75,9 +119,8 @@ namespace ms
 		//   · 严禁把 134/135 当辅助武器：live 里 prefix 134 = 111 个 .img，是 v083
 		//     原始武器号段（index 34 落在既有 WEAPON_OFFSET..+WEAPON_TYPES 分支），
 		//     覆盖它会把 111 件原始武器全部误判成 SUBWEAPON。
-		//   · 严禁加 116 口袋 / POCKET(-33)：-33 与 -133 归一化后是 BP33，而
-		//     BP33 ∈ PET_BODY_PARTS(21..48) 是宠物座位，S10 原文注明
-		//     -133 = 2 号宠拾取袋 → 会把口袋装备判成宠物装备。口袋也不在用户 7 项内。
+		//   · 116 口袋 / POCKET(-33)：2026-11-23 立项。BP33 从 PetBodyPart 剔除；
+		//     cash −133 仍为宠装拾取袋（from_wire 不归一 133）。见 PetBodyPart.h。
 		//   · 109 盾牌不走这里（既有 index 9 = SHIELD 分支已正确覆盖），避免动原始链路。
 		const int32_t prefix = id / 10000;
 
@@ -122,6 +165,10 @@ namespace ms
 			type = "SHOULDER";
 			eqslot = EquipSlot::Id::SHOULDER;
 			return;
+		case 116:	// 口袋 → -33
+			type = "POCKET";
+			eqslot = EquipSlot::Id::POCKET;
+			return;
 		case 118:	// 徽章 → -54
 			type = "BADGE";
 			eqslot = EquipSlot::Id::BADGE;
@@ -134,9 +181,9 @@ namespace ms
 			type = "TOTEM";
 			eqslot = EquipSlot::Id::TOTEM1;
 			return;
-		case 166:	// 机器人 → -60
+		case 166:	// 机器人 → 原生 -1200（旧 Addon -60 仅兼容）
 			type = "ANDROID";
-			eqslot = EquipSlot::Id::ANDROID_SLOT;
+			eqslot = EquipSlot::Id::ANDROID1;
 			return;
 		case 167:	// 心脏 → -61
 			type = "HEART";
@@ -216,14 +263,27 @@ namespace ms
 			size_t weaponindex = index - WEAPON_OFFSET;
 			type = types[weaponindex];
 			eqslot = EquipSlot::Id::WEAPON;
+
+			// 高版本武器细分（2026-11-20）：v83 号段表只认 130-149 的传统武器，
+			// 高版本新增职业武器（能量剑/ESP限制器/远古弓等）落在 121-129/152-159
+			// 段，v83 index 口径下落空档。按 mid3=id/1000%1000 从 v214 源码实证表补齐。
+			// 只覆盖 type 文案，槽位仍为 WEAPON，不改 islot/协议/背包逻辑。
+			if (const char* hi = high_version_weapon_type(id))
+				type = hi;
 		}
-		else if (!islot_weapon)
+		else if (islot_weapon)
+		{
+			// islot=Wp 但号段落在 v83 武器表外（高版本/异常号段）：
+			// 优先查高版本细分表，命中则写具体类型；否则保留 islot 分支兜底
+			// 的 type_name(WEAPON)，不覆盖成 CASH/NONE。
+			if (const char* hi = high_version_weapon_type(id))
+				type = hi;
+		}
+		else
 		{
 			type = "CASH";
 			eqslot = EquipSlot::Id::NONE;
 		}
-		// islot=Wp 但号段落在武器表外（高版本/异常号段）：保留上方 islot 分支
-		// 已写入的 eqslot=WEAPON 与 type_name(WEAPON) 兜底，不覆盖成 CASH/NONE。
 	}
 
 	bool EquipData::is_valid() const
@@ -249,6 +309,11 @@ namespace ms
 	int16_t EquipData::get_defstat(EquipStat::Id stat) const
 	{
 		return defstats[stat];
+	}
+
+	uint8_t EquipData::get_slots() const
+	{
+		return slots;
 	}
 
 	EquipSlot::Id EquipData::get_eqslot() const
