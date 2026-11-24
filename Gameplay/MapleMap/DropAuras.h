@@ -67,6 +67,7 @@ namespace ms
 		std::array<bool, GRADE_MAX + 1> back_ok{};
 		Animation fall;
 		bool fall_ok = false;
+
 		bool loaded = false;
 	};
 }

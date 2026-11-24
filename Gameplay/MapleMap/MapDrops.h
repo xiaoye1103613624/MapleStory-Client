@@ -45,6 +45,9 @@ namespace ms
 		// Remove all drops
 		void clear();
 		void clear_spawns();	// 切图窗口期残留 spawn 队列清理（不动场上对象）
+		// 切图后按当前图 foothold 重锚/丢弃 spawn 队列（对称 MapNpcs/MapMobs::reanchor_spawns）：
+		// fadeout 窗口内混入的旧图 drop 包在这里被过滤，避免"换图后掉落动画残留"。
+		void reanchor_spawns(const Physics& physics);
 
 		// Find a drop which can be picked up at the specified position
 		using Loot = std::pair<int32_t, Point<int16_t>>;

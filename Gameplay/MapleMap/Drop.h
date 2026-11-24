@@ -51,6 +51,11 @@ namespace ms
 		// 光环推进（在 update 里调一次）；返回是否仍需要绘制光环。
 		void update_aura();
 
+		// ⑥ B 方案：把特效动画的几何中心对齐装备锚点 absp。
+		// DrawArgument(pos) 让图片 origin 落在 pos；要让图片中心落在 absp，
+		// 需 pos = absp + origin - dimensions/2（飞行中/落地后统一以装备为中心）。
+		static Point<int16_t> centered_pos(Point<int16_t> absp, const Animation& anim);
+
 		Linear<float> opacity;
 		Linear<float> angle;
 

@@ -45,6 +45,13 @@ namespace ms
 			int32_t target_id = sub["tm"];
 			Point<int16_t> position = { sub["x"], sub["y"] };
 
+			// 2026-11-23: 隐藏「无效装饰传送门」的空中光柱。
+			// 明珠港 104000000 浮空岛有 4 个 pt=6(WARP)/tm=999999999 的门，
+			// Portal.h:72 WarpInfo::valid = mapid < 999999999，即无传送目标的纯装饰。
+			// 用户确认为本端画面光柱来源并要求隐藏；这类门不进渲染列表，对玩法零影响。
+			if (type == Portal::WARP && target_id >= 999999999)
+				continue;
+
 			bool intramap = target_id == mapid;
 			const Animation* shared = nullptr;
 			Portal::HideAnims hide{};

@@ -12,6 +12,7 @@
 #include "../../MapleStory.h"
 #include "../../Util/Locale.h"
 #include "../../Util/Misc.h"
+#include "../../Util/MobElemAttr.h"
 #include "../../Net/Packets/MiscOutPackets.h"
 
 #ifdef USE_NX
@@ -62,11 +63,22 @@ namespace ms
 	static constexpr int16_t MOB_ROW_H = 78;
 	static constexpr int16_t MOB_VISIBLE = 3;
 	static constexpr int16_t ICON_BOX = 40;
+	// mob_row_bg 左上灰底实测：内边距 (2,4)，图标在灰底内居中。
+	static constexpr int16_t ICON_PLATE_X = 2;
+	static constexpr int16_t ICON_PLATE_Y = 4;
+	static constexpr int16_t TEXT_X = ICON_BOX + 6; // 灰底右侧 2px 缝
+	// 相对原 6/24/42/58 整组上移一行（≈12px），贴齐图标顶。
+	static constexpr int16_t TEXT_NAME_Y = 0;
+	static constexpr int16_t TEXT_TYPE_Y = 16;
+	static constexpr int16_t TEXT_STAT_Y = 32;
+	static constexpr int16_t TEXT_ATTR_Y = 48;
 	static constexpr int16_t UPPER_SCROLL_X = 210;
 	static constexpr int16_t UPPER_SCROLL_Y = 44;
 	static constexpr int16_t UPPER_SCROLL_H = 233;
+	static constexpr int16_t SLOT_ICON_MAX = 28; // 30 槽内留边
 
-	static constexpr int16_t TAB_Y = 285;
+	// 底板实测蓝灰条 y=285..303（高 19）；Tab 18px 贴条顶光学居中。
+	static constexpr int16_t TAB_Y = 286;
 	static constexpr int16_t TAB_H = 18;
 	static constexpr int16_t TAB_W[4] = { 50, 50, 50, 53 };
 	static constexpr int16_t TAB_X[4] = { 18, 68, 118, 168 };
@@ -75,21 +87,25 @@ namespace ms
 	static constexpr int16_t LOWER_Y = 309;
 	static constexpr int16_t LOWER_W = 203;
 	static constexpr int16_t LOWER_H = 174;
-	static constexpr int16_t GRID_COLS = 5;
-	static constexpr int16_t GRID_VISIBLE = 5;
-	static constexpr int16_t SLOT = 32;
-	static constexpr int16_t SLOT_GAP = 2;
-	static constexpr int16_t GRID_X = 30;
-	static constexpr int16_t GRID_Y = 312;
-	static constexpr int16_t LOWER_SCROLL_X = 210;
-	static constexpr int16_t LOWER_SCROLL_Y = 311;
+	// 2026-11-22 修正：底板 PNG 已移除自带的 5×5 烤格，运行时按 4×4 画唯一一套格子。
+	static constexpr int16_t GRID_COLS = 4;
+	static constexpr int16_t GRID_VISIBLE = 4;
+	static constexpr int16_t SLOT = 38;
+	static constexpr int16_t SLOT_GAP = 4;
+	static constexpr int16_t GRID_X = 22;    // 4*38+3*4=164，well 内水平居中
+	static constexpr int16_t GRID_Y = 313;
+	// 右侧滑块：用户 2026-11-22 23:39 红竖框实测 x≈195..211（面板坐标），
+	// 旧 x=215 落框外右侧；滑块位图自身 origin 右偏≈8px，锚点取 199 使可见中心≈203 落框内。
+	static constexpr int16_t LOWER_SCROLL_X = 199;
+	static constexpr int16_t LOWER_SCROLL_Y = 310;
 	static constexpr int16_t LOWER_SCROLL_H = 170;
 
-	static constexpr int16_t MESO_X = 18;
-	static constexpr int16_t MESO_Y = 489;
-	static constexpr int16_t MESO_W = 159;
+	// 底部 mesos 白框：probe 实测纯白区 x=19..176 / y=490..505（y=483 是上描边）。
+	// 金币墨迹须落白框内（用户红横框对应此白框），垂直居中。
+	static constexpr int16_t MESO_X = 19;
+	static constexpr int16_t MESO_FIELD_W = 157; // 白框宽到 mesos 标签前
+	static constexpr int16_t MESO_Y = 490;       // 白框真正上沿（非描边）
 	static constexpr int16_t MESO_H = 16;
-	static constexpr int16_t MESO_LABEL_X = 181;
 
 	static constexpr char TAB_NAMES[4][9] = { "all", "equip", "consume", "etc" };
 
@@ -103,33 +119,36 @@ namespace ms
 		panel_height(HEIGHT),
 		active_tab(Tab::ALL)
 	{
-		// D5：标题「地图信息」烤进底板顶脊（原生管线产物）。客户端运行时优先，
-		// 仓库 chrome 兜底；标题由 PNG 携带，程序侧不重复绘制。
-		chrome.load(ATLAS_ID, {
+		// 每张 LocalPngTexture 独立 atlas id（对齐 UIMapSearchPanel）。
+		size_t atlas = ATLAS_BASE;
+
+		// D5：标题「地图信息」烤进底板顶脊。客户端运行时优先，仓库 chrome 兜底。
+		chrome.load(atlas++, {
 			"UI/MapInfo/info_panel_backgrnd.png",
+			"docs/features/map-info-panel/ui/info_panel_backgrnd/v2/info_panel_backgrnd.png",
 			"docs/features/map-info-panel/resources/chrome/info_panel_backgrnd.png",
 		});
 
 		if (!chrome.is_valid())
 			LOG(LOG_WARN, "[UIMapInfoPanel] chrome PNG missing — panel will be empty frame");
 
-		row_selected.load(ATLAS_ID, {
+		row_selected.load(atlas++, {
 			"UI/MapInfo/list_row_selected.png",
 			"docs/features/map-info-panel/ui/list_row_selected/v2/list_row_selected.png",
 			"docs/features/map-info-panel/resources/chrome/list_row_selected.png",
 		});
-		slot.load(ATLAS_ID, {
+		slot.load(atlas++, {
 			"UI/MapInfo/slot.png",
 			"docs/features/map-info-panel/ui/slot/v2/slot.png",
 			"docs/features/map-info-panel/resources/chrome/slot.png",
 		});
 
 		// v2 原生风：怪物行交替底纹（含图标灰底）。缺图则回退到无底纹（旧观感）。
-		row_bg_a.load(ATLAS_ID, {
+		row_bg_a.load(atlas++, {
 			"UI/MapInfo/mob_row_bg_a.png",
 			"docs/features/map-info-panel/ui/mob_row_bg/v2/mob_row_bg_a.png",
 		});
-		row_bg_b.load(ATLAS_ID, {
+		row_bg_b.load(atlas++, {
 			"UI/MapInfo/mob_row_bg_b.png",
 			"docs/features/map-info-panel/ui/mob_row_bg/v2/mob_row_bg_b.png",
 		});
@@ -140,20 +159,20 @@ namespace ms
 			LocalPngTexture ssrc;
 			std::string key(TAB_NAMES[i]);
 
-			nsrc.load(ATLAS_ID, {
+			nsrc.load(atlas++, {
 				"UI/MapInfo/Tab/disabled/" + key + ".png",
 				"docs/features/map-info-panel/ui/tab/v2/" + key + "_disabled.png",
 			});
-			ssrc.load(ATLAS_ID, {
+			ssrc.load(atlas++, {
 				"UI/MapInfo/Tab/enabled/" + key + ".png",
 				"docs/features/map-info-panel/ui/tab/v2/" + key + "_enabled.png",
 			});
 
 			tab_buttons[i] = std::make_unique<LocalTwoSpriteButton>(
-				nsrc, ssrc, Point<int16_t>(TAB_X[i], TAB_Y));
+				std::move(nsrc), std::move(ssrc), Point<int16_t>(TAB_X[i], TAB_Y));
 
-			// ALL tab active by default (enabled sprite); others disabled.
-			tab_buttons[i]->set_state(i == 0 ? Button::State::MOUSEOVER : Button::State::NORMAL);
+			// 激活态用 PRESSED（与 UIMapSearchPanel 一致）；未激活 NORMAL。
+			tab_buttons[i]->set_state(i == 0 ? Button::State::PRESSED : Button::State::NORMAL);
 		}
 
 		mob_slider = Slider(
@@ -217,7 +236,7 @@ namespace ms
 		locale_binds.bind(empty_drops_label, "mappanel.no_drop_data");
 		meso_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK);
 		locale_binds.bind(meso_label, "mappanel.mesos");
-		meso_amount = Text(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BLACK, "0");
+		meso_amount = Text(Text::Font::A11B, Text::Alignment::RIGHT, Color::Name::BLACK, "-");
 
 		// D5：标题烤进底板，程序侧不画（防双字）。绑定仍在，供日后切回无字底板复用。
 		title_text = Text(Text::Font::A13B, Text::Alignment::CENTER, Color::Name::BLACK, Locale::text("uimapinfopanel.223"));
@@ -289,7 +308,10 @@ namespace ms
 
 	void UIMapInfoPanel::set_content_height(int16_t worldmap_height)
 	{
-		panel_height = worldmap_height > 0 ? worldmap_height : HEIGHT;
+		// 底板按设计稿 240×537 绘制，禁止随世界地图框高拉伸——拉伸后
+		// GRID/TAB/MESO 常量仍按 537 坐标系，格子会溢出下框（真机已踩）。
+		(void)worldmap_height;
+		panel_height = HEIGHT;
 		mob_slider.setvertical(Range<int16_t>(UPPER_SCROLL_Y, UPPER_SCROLL_Y + UPPER_SCROLL_H));
 		drop_slider.setvertical(Range<int16_t>(LOWER_SCROLL_Y, LOWER_SCROLL_Y + LOWER_SCROLL_H));
 	}
@@ -325,7 +347,7 @@ namespace ms
 			return;
 
 		if (chrome.is_valid())
-			chrome.draw(position, WIDTH, panel_height);
+			chrome.draw(position); // 固定 240×537，不拉伸
 
 		// D5：标题烤进底板，程序侧不画（防双字）。
 		(void)title_text;
@@ -354,7 +376,7 @@ namespace ms
 				if (stripe.is_valid())
 					stripe.draw(row_pos);
 				else
-					icon_back.draw(row_pos + Point<int16_t>(2, 4));
+					icon_back.draw(row_pos + Point<int16_t>(ICON_PLATE_X, ICON_PLATE_Y));
 
 				if (static_cast<int16_t>(idx) == selected_index && row_selected.is_valid())
 					row_selected.draw(row_pos);
@@ -362,12 +384,20 @@ namespace ms
 				const MobRow& row = mob_rows[idx];
 
 				if (row.icon.is_valid())
-					row.icon.draw(DrawArgument(row_pos + Point<int16_t>(2, 4), row.icon_scale, row.icon_scale));
+				{
+					// 图标在 40×40 灰底内居中（origin 已归零）。
+					const int16_t iw = static_cast<int16_t>(row.icon.width() * row.icon_scale);
+					const int16_t ih = static_cast<int16_t>(row.icon.height() * row.icon_scale);
+					Point<int16_t> icon_pos = row_pos + Point<int16_t>(
+						ICON_PLATE_X + (ICON_BOX - iw) / 2,
+						ICON_PLATE_Y + (ICON_BOX - ih) / 2);
+					row.icon.draw(DrawArgument(icon_pos, row.icon_scale, row.icon_scale));
+				}
 
-				row.name_label.draw(row_pos + Point<int16_t>(ICON_BOX + 4, 4));
-				row.type_label.draw(row_pos + Point<int16_t>(ICON_BOX + 4, 22));
-				row.stat_label.draw(row_pos + Point<int16_t>(ICON_BOX + 4, 40));
-				row.attr_label.draw(row_pos + Point<int16_t>(ICON_BOX + 4, 58));
+				row.name_label.draw(row_pos + Point<int16_t>(TEXT_X, TEXT_NAME_Y));
+				row.type_label.draw(row_pos + Point<int16_t>(TEXT_X, TEXT_TYPE_Y));
+				row.stat_label.draw(row_pos + Point<int16_t>(TEXT_X, TEXT_STAT_Y));
+				row.attr_label.draw(row_pos + Point<int16_t>(TEXT_X, TEXT_ATTR_Y));
 			}
 		}
 
@@ -407,42 +437,64 @@ namespace ms
 							GRID_X + c * (SLOT + SLOT_GAP),
 							GRID_Y + r * (SLOT + SLOT_GAP));
 
+						// 底板烤格已移除（用户 2026-11-22 要求），运行时画唯一一套 4×4 格子。
 						if (slot.is_valid())
-							slot.draw(cell_pos);
+							slot.draw(cell_pos, SLOT, SLOT);
 
 						const DropCell& cell = drop_cells[idx];
 
+						// 格内分区：上方图标区居中，下方爆率条（运行时画，底板已无烤格）。
+						const int16_t bar_h = 13;
+						const int16_t icon_area_h = SLOT - bar_h; // 图标区 = 格高 - 爆率条
 						if (cell.icon.is_valid())
 						{
-							// Origin normalized to (0,0); center the icon in the 32x32 slot.
+							float scale = 1.0f;
+							int16_t max_dim = cell.icon.width() > cell.icon.height()
+								? cell.icon.width() : cell.icon.height();
+							if (max_dim > icon_area_h && max_dim > 0)
+								scale = static_cast<float>(icon_area_h) / static_cast<float>(max_dim);
+
+							const int16_t iw = static_cast<int16_t>(cell.icon.width() * scale);
+							const int16_t ih = static_cast<int16_t>(cell.icon.height() * scale);
+							// 水平居中整格、垂直居中图标区 → 每个图标落在其格子中心。
 							Point<int16_t> off(
-								static_cast<int16_t>((SLOT - cell.icon.width()) / 2),
-								static_cast<int16_t>((SLOT - cell.icon.height()) / 2));
-							cell.icon.draw(cell_pos + off);
+								static_cast<int16_t>((SLOT - iw) / 2),
+								static_cast<int16_t>((icon_area_h - ih) / 2));
+							cell.icon.draw(DrawArgument(cell_pos + off, scale, scale));
 						}
 
 						if (static_cast<size_t>(idx) == static_cast<size_t>(hover_drop_idx))
 							drop_hover.draw(cell_pos);
 
-						// ItemNo 数量字：背包同款位图字库（Basic.img/ItemNo，8x11），
-						// 右下角，仅数量 >1 时显示（min==max 取 min，否则取上限）。
-						// 百分比让位到右上角，避免与数量字叠在同一角。
+						// 数量字：右上（避开底部爆率条）；ItemNo 字库无 "." 和 "%"，
+						// 故数量只用纯数字，爆率改用 Text（支持小数点/百分号）。
 						int16_t qty = (cell.min_qty == cell.max_qty) ? cell.min_qty : cell.max_qty;
+						static const Charset countset(nl::nx::UI["Basic.img"]["ItemNo"], Charset::Alignment::RIGHT);
 
 						if (qty > 1)
-						{
-							static const Charset countset(nl::nx::UI["Basic.img"]["ItemNo"], Charset::Alignment::RIGHT);
-							countset.draw(std::to_string(qty), DrawArgument(cell_pos + Point<int16_t>(SLOT - 1, SLOT - 12)));
-						}
+							countset.draw(std::to_string(qty), DrawArgument(cell_pos + Point<int16_t>(SLOT - 2, 0)));
 
 						if (cell.chance > 0.0)
 						{
+							// 用户 2026-11-22 18:04 反馈"看不清爆率"：根因是 Text::draw 的
+							// 传入点为基线，字形顶在基线上方约 9px —— 旧代码把基线放在
+							// bar_pos.y+0，导致字大半画在深色条上方、压在图标/蓝格线上。
+							// 修复：深色条加深到 0.78、基线放进条内靠下（字形完整落在条中），
+							// 字号 A12B 更亮，LEFT+显式居中避免 CENTER 与手算叠加偏左。
+							// bar_h 与上方图标区共用同一个 13px 分区高度。
 							std::ostringstream oss;
 							oss << std::fixed
 								<< std::setprecision(cell.chance < 0.01 ? 1 : 0)
 								<< (cell.chance * 100.0) << "%";
-							Text rate(Text::Font::A11M, Text::Alignment::RIGHT, Color::Name::BROWN, oss.str());
-							rate.draw(cell_pos + Point<int16_t>(SLOT - 2, 1));
+							const std::string rate_text = oss.str();
+							const Point<int16_t> bar_pos = cell_pos + Point<int16_t>(0, SLOT - 13);
+							ColorBox rate_bg(SLOT, 13, Color::Name::BLACK, 0.78f);
+							rate_bg.draw(bar_pos);
+							Text rate(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::YELLOW, rate_text);
+							const int16_t rx = cell_pos.x() + static_cast<int16_t>((SLOT - rate.width()) / 2);
+							// 墨迹顶对齐到黑条内 (bar_pos.y+1)，确保整行字落在灰/黑背景中。
+							const int16_t ink_top = bar_pos.y() + 1;
+							rate.draw(Point<int16_t>(rx, rate.y_for_ink_top(ink_top)));
 						}
 					}
 				}
@@ -452,21 +504,13 @@ namespace ms
 				drop_slider.draw(position);
 		}
 
-		// Meso bar (bottom). Prefer the per-mob meso drop range from the drop table.
-		std::string meso_str;
-		if (!meso_drop_range.empty())
-		{
-			meso_str = meso_drop_range;
-		}
-		else
-		{
-			int64_t meso = Stage::get().get_player().get_inventory().get_meso();
-			meso_str = std::to_string(meso);
-			string_format::split_number(meso_str);
-		}
+		// 底栏 mesos 前白框：金币区间画在框内垂直居中（用户 2026-11-22 要求）。
+		std::string meso_str = meso_drop_range.empty() ? "-" : meso_drop_range;
 		meso_amount.change_text(meso_str);
-		meso_amount.draw(position + Point<int16_t>(MESO_X + MESO_W, MESO_Y));
-		meso_label.draw(position + Point<int16_t>(MESO_LABEL_X, MESO_Y));
+		const int16_t meso_ink_top = MESO_Y + (MESO_H - meso_amount.height()) / 2;
+		meso_amount.draw(Point<int16_t>(
+			position.x() + MESO_X + MESO_FIELD_W - 2,
+			position.y() + meso_amount.y_for_ink_top(meso_ink_top)));
 	}
 
 	void UIMapInfoPanel::update()
@@ -494,44 +538,60 @@ namespace ms
 		UI::get().clear_tooltip(Tooltip::Parent::WORLDMAP);
 	}
 
+	void UIMapInfoPanel::send_scroll(double yoffset)
+	{
+		if (!visible)
+			return;
+
+		Point<int16_t> cursor = UI::get().get_cursor_position();
+		Point<int16_t> local = cursor - position;
+
+		// 上区怪物列表：按列表区判定；下区掉落网格：按网格区判定。
+		Rectangle<int16_t> ma = mob_list_area();
+		Rectangle<int16_t> ga = drop_grid_area();
+
+		if (ma.contains(local) && mob_slider.isenabled())
+			mob_slider.send_scroll(yoffset);
+		else if (ga.contains(local) && drop_slider.isenabled())
+			drop_slider.send_scroll(yoffset);
+	}
+
 	Cursor::State UIMapInfoPanel::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
 		if (!visible || !get_bounds().contains(cursorpos))
 			return Cursor::State::IDLE;
 
-		// Tabs — hover + click, mirror UIMapSearchPanel.
+		// Tabs — hover + click；激活态固定 PRESSED（enabled 精灵）。
 		for (size_t i = 0; i < static_cast<size_t>(Tab::LENGTH); i++)
 		{
 			auto* btn = tab_buttons[i].get();
+			const bool is_active = (i == static_cast<size_t>(active_tab));
 			Rectangle<int16_t> b = btn->bounds(position);
 
 			if (b.contains(cursorpos))
 			{
-				if (btn->get_state() == Button::State::NORMAL)
+				if (!is_active && btn->get_state() == Button::State::NORMAL)
 				{
 					Sound(Sound::Name::BUTTONOVER).play();
 					btn->set_state(Button::State::MOUSEOVER);
-					return Cursor::State::CANCLICK;
 				}
-				else if (btn->get_state() == Button::State::MOUSEOVER)
-				{
-					if (clicked)
-					{
-						Sound(Sound::Name::BUTTONCLICK).play();
-						set_tab(static_cast<Tab>(i));
-						return Cursor::State::CLICKING;
-					}
 
-					return Cursor::State::CANCLICK;
+				if (clicked && !is_active)
+				{
+					Sound(Sound::Name::BUTTONCLICK).play();
+					set_tab(static_cast<Tab>(i));
+					return Cursor::State::CLICKING;
 				}
 
 				return Cursor::State::CANCLICK;
 			}
-			else if (btn->get_state() == Button::State::MOUSEOVER)
+			else if (!is_active && btn->get_state() == Button::State::MOUSEOVER)
 			{
-				// Revert hover: keep highlighted only if this tab is the active one.
-				btn->set_state(i == static_cast<size_t>(active_tab)
-					? Button::State::MOUSEOVER : Button::State::NORMAL);
+				btn->set_state(Button::State::NORMAL);
+			}
+			else if (is_active && btn->get_state() != Button::State::PRESSED)
+			{
+				btn->set_state(Button::State::PRESSED);
 			}
 		}
 
@@ -568,9 +628,15 @@ namespace ms
 		// Lower drop grid hover -> item tooltip + cell highlight.
 		if (selected_mob_id != 0 && !drop_cells.empty())
 		{
+			// drop_grid_area() 返回面板局部坐标；命中判定必须加 position 转全局。
+			// 旧版直接拿局部矩形比全局 cursorpos → 命中区错位到屏幕左上，
+			// 只有前几个格子"碰巧"落在错误区里才弹 tooltip（用户实测时有时无）。
 			Rectangle<int16_t> g = drop_grid_area();
+			Rectangle<int16_t> g_abs(
+				position + Point<int16_t>(g.left(), g.top()),
+				position + Point<int16_t>(g.right(), g.bottom()));
 
-			if (g.contains(cursorpos))
+			if (g_abs.contains(cursorpos))
 			{
 				int16_t lx = cursorpos.x() - (position.x() + GRID_X);
 				int16_t ly = cursorpos.y() - (position.y() + GRID_Y);
@@ -657,10 +723,33 @@ namespace ms
 			}
 			row.stat_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::BLACK, stat.str());
 
-			// 「属性/抗性」的值本包还没接数据，先填占位符 "-" —— 所以模板留 `{}`、占位符当值
-			// 喂进去，日后接真数据只改这里的实参，不用再动键位。
+			// 属性/抗性接 192 elemAttr 数据（I/L/F=属性攻击，S/H/D/P=抗性）。
+			std::string attack_attrs;
+			std::string resist_attrs;
+			std::string decoded = data::elem_attr_display(mob.elem_attr);
+			if (decoded.empty())
+			{
+				attack_attrs = "-";
+				resist_attrs = "-";
+			}
+			else
+			{
+				// decoded 形如 "冰:弱 火:抵抗 毒:免疫"；按关键字归类到两栏。
+				std::stringstream ss(decoded);
+				std::string token;
+				while (ss >> token)
+				{
+					bool is_attack = token.find("冰:") == 0 || token.find("雷:") == 0 || token.find("火:") == 0;
+					std::string& bucket = is_attack ? attack_attrs : resist_attrs;
+					if (!bucket.empty())
+						bucket += " ";
+					bucket += token;
+				}
+				if (attack_attrs.empty()) attack_attrs = "-";
+				if (resist_attrs.empty()) resist_attrs = "-";
+			}
 			row.attr_label = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::GRAY,
-				Locale::format("mapinfo.attr", "-") + "  " + Locale::format("mapinfo.resist", "-"));
+				Locale::format("mapinfo.attr", attack_attrs) + "  " + Locale::format("mapinfo.resist", resist_attrs));
 
 			mob_rows.push_back(std::move(row));
 		}
@@ -674,6 +763,7 @@ namespace ms
 	void UIMapInfoPanel::rebuild_drops()
 	{
 		drop_cells.clear();
+		meso_drop_range.clear();
 
 		if (selected_mob_id == 0)
 		{
@@ -688,9 +778,11 @@ namespace ms
 			// Meso drop: drive the meso bar instead of the item grid.
 			if (d.item_id == 0)
 			{
-				meso_drop_range = (d.min_qty == d.max_qty)
-					? std::to_string(d.min_qty)
-					: (std::to_string(d.min_qty) + "~" + std::to_string(d.max_qty));
+				std::string lo = std::to_string(d.min_qty);
+				std::string hi = std::to_string(d.max_qty);
+				string_format::split_number(lo);
+				string_format::split_number(hi);
+				meso_drop_range = (d.min_qty == d.max_qty) ? lo : (lo + "~" + hi);
 				continue;
 			}
 
@@ -725,7 +817,7 @@ namespace ms
 		active_tab = tab;
 
 		for (size_t i = 0; i < static_cast<size_t>(Tab::LENGTH); i++)
-			tab_buttons[i]->set_state(i == static_cast<size_t>(tab) ? Button::State::MOUSEOVER : Button::State::NORMAL);
+			tab_buttons[i]->set_state(i == static_cast<size_t>(tab) ? Button::State::PRESSED : Button::State::NORMAL);
 
 		rebuild_drops();
 	}

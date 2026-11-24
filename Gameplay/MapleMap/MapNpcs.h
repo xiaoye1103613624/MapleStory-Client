@@ -42,6 +42,9 @@ namespace ms
 		// Remove all NPCs
 		void clear();
 		void clear_spawns();	// 切图窗口期残留 spawn 队列清理（不动场上对象）
+		// load 后对新旧 spawn 包重锚：fh/位置在当前图的 foothold 上重解析，
+		// 丢弃当前图无平台可落的旧图残留包，保留新图包——替代一刀切 clear_spawns。
+		void reanchor_spawns(const Physics& physics);
 
 		// Returns a reference to the MapObject's object
 		MapObjects* get_npcs();

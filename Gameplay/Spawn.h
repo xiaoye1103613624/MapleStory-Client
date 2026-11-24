@@ -29,10 +29,19 @@ namespace ms
 	class NpcSpawn
 	{
 	public:
-		NpcSpawn(int32_t oid, int32_t npcid, Point<int16_t> position, bool mirrored, uint16_t fh, bool control = false);
+		// rx0/rx1：服务端下发的活动左右边界（绝对坐标；s9 常见 rx0=x+50/rx1=x-50，方向相反）。
+		// 构造内归一化到 [min,max]，范围无效（两值相等或包内为 0）时 moverange 关闭。
+		NpcSpawn(int32_t oid, int32_t npcid, Point<int16_t> position, bool mirrored, uint16_t fh,
+			bool control = false, int16_t rx0 = 0, int16_t rx1 = 0);
 
 		int32_t get_oid() const;
 		std::unique_ptr<MapObject> instantiate(const Physics& physics) const;
+		// 重锚用：读取/改写 spawn 包声明的 fh（切图后按当前图 foothold 重解析）。
+		uint16_t get_fh() const;
+		void set_fh(uint16_t nfhid);
+		Point<int16_t> get_position() const;
+		int16_t get_rx_min() const;
+		int16_t get_rx_max() const;
 
 	private:
 		int32_t oid;
@@ -41,6 +50,8 @@ namespace ms
 		bool flip;
 		uint16_t fh;
 		bool control;
+		int16_t rx_min;         // 归一化左界（活动范围）
+		int16_t rx_max;         // 归一化右界
 	};
 
 	class MobSpawn
@@ -59,6 +70,8 @@ namespace ms
 		// 同 oid 重新下发时这些字段要覆盖到已有对象上（服务端换控制器发的是整包 spawn）
 		int8_t get_stance() const;
 		uint16_t get_fh() const;
+		// 重锚用：切图后按当前图 foothold 重解析 spawn 声明的 fh（对齐 NpcSpawn::set_fh）
+		void set_fh(uint16_t nfhid);
 		int8_t get_team() const;
 		bool is_newspawn() const;
 		Point<int16_t> get_position() const;
@@ -109,6 +122,9 @@ namespace ms
 		int32_t get_itemid() const;
 		int32_t get_oid() const;
 		int8_t get_grade() const;
+		// 重锚用：掉落目的地（落地 y 的权威来源，Drop::basey 由 dest.y()-4 决定）。
+		Point<int16_t> get_destination() const;
+		void set_destination(Point<int16_t> ndest);
 		std::unique_ptr<MapObject> instantiate(const Animation& icon) const;
 		std::unique_ptr<MapObject> instantiate(const Texture& icon) const;
 

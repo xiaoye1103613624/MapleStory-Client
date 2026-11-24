@@ -7,6 +7,8 @@
 
 #include "../../Util/Misc.h"
 
+#include <string>
+
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
 #endif

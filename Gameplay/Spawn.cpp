@@ -25,14 +25,59 @@
 
 #include "../Character/OtherChar.h"
 
+#include <algorithm>
+
 namespace ms
 {
-	NpcSpawn::NpcSpawn(int32_t o, int32_t i, Point<int16_t> p, bool fl, uint16_t f, bool cnt)
-		: oid(o), id(i), position(p), flip(fl), fh(f), control(cnt) {}
+	NpcSpawn::NpcSpawn(int32_t o, int32_t i, Point<int16_t> p, bool fl, uint16_t f, bool cnt,
+		int16_t rx0, int16_t rx1)
+		: oid(o), id(i), position(p), flip(fl), fh(f), control(cnt),
+		rx_min(0), rx_max(0)
+	{
+		// s9 写的是 rx0=x+50(右)/rx1=x-50(左)，方向相反；归一化后 min=左界 max=右界。
+		// 两值相等（包未给范围）时保持 0/0，Npc 侧据此关闭范围夹取。
+		if (rx0 != rx1)
+		{
+			int16_t lo = std::min(rx0, rx1);
+			int16_t hi = std::max(rx0, rx1);
+			// 兜底：绝对范围必须包含 spawn 的 x；若不包含，说明 rx 是相对偏移/脏数据，
+			// 宁可关闭范围（仍有 TURNATEDGES 台阶转向兜底），也不要把 NPC 钉到错误坐标。
+			if (lo <= p.x() && p.x() <= hi)
+			{
+				rx_min = lo;
+				rx_max = hi;
+			}
+		}
+	}
 
 	int32_t NpcSpawn::get_oid() const
 	{
 		return oid;
+	}
+
+	uint16_t NpcSpawn::get_fh() const
+	{
+		return fh;
+	}
+
+	void NpcSpawn::set_fh(uint16_t nfhid)
+	{
+		fh = nfhid;
+	}
+
+	Point<int16_t> NpcSpawn::get_position() const
+	{
+		return position;
+	}
+
+	int16_t NpcSpawn::get_rx_min() const
+	{
+		return rx_min;
+	}
+
+	int16_t NpcSpawn::get_rx_max() const
+	{
+		return rx_max;
 	}
 
 	std::unique_ptr<MapObject> NpcSpawn::instantiate(const Physics& physics) const
@@ -40,8 +85,12 @@ namespace ms
 		// 走服务端声明的 fh，而不是按坐标反查：NPC 包 y 槽是 wz 的 cy（实测比平台线低 5~17px），
 		// get_y_below 会挑到下面一层平台，NPC 就"站到路下面"去了；反查不到时被丢到地图边界外，
 		// 表现为 NPC 不见了。怪物包传的是真 y，所以一直是好的——这里跟怪物对齐。
-		auto spawnposition = physics.get_spawn_point(position, fh);
-		return std::make_unique<Npc>(id, oid, flip, fh, control, spawnposition);
+		// 切图重锚：resolve 返回的 fhid 是落点解析后的真实 fh——fh 有效则保留（新图包），
+		// fh 指向旧图则按 x 就近重锚并回写，保证 phobj.fhid 与落点平台一致，首帧不再坠落。
+		SpawnPoint resolved = physics.resolve_spawn_point(position, fh);
+		if (resolved.fhid == 0)
+			return nullptr; // 当前图在包 x 处无任何平台 = 旧图残留包，丢弃而非掉进边界
+		return std::make_unique<Npc>(id, oid, flip, resolved.fhid, control, resolved.position, rx_min, rx_max);
 	}
 
 	MobSpawn::MobSpawn(int32_t o, int32_t i, int8_t m, int8_t st, uint16_t f, bool ns, int8_t t, Point<int16_t> p,
@@ -56,6 +105,12 @@ namespace ms
 	int32_t MobSpawn::get_oid() const
 	{
 		return oid;
+	}
+
+	void MobSpawn::set_fh(uint16_t nfhid)
+	{
+		// 切图重锚：把 spawn 声明的 fh 改成当前图 foothold 解析后的真实值。
+		fh = nfhid;
 	}
 
 	std::unique_ptr<MapObject> MobSpawn::instantiate() const
@@ -137,6 +192,16 @@ namespace ms
 	int8_t DropSpawn::get_grade() const
 	{
 		return grade;
+	}
+
+	Point<int16_t> DropSpawn::get_destination() const
+	{
+		return dest;
+	}
+
+	void DropSpawn::set_destination(Point<int16_t> ndest)
+	{
+		dest = ndest;
 	}
 
 	std::unique_ptr<MapObject> DropSpawn::instantiate(const Animation& icon) const

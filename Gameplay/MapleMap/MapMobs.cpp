@@ -18,6 +18,8 @@
 #include "MapMobs.h"
 #include "Mob.h"
 
+#include "../Physics/Physics.h"
+
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -123,10 +125,33 @@ namespace ms
 		std::queue<MobSpawn>().swap(spawns);
 	}
 
+	void MapMobs::reanchor_spawns(const Physics& physics)
+	{
+		// 对齐 MapNpcs::reanchor_spawns（MapNpcs.cpp:72-93）：
+		// MobSpawn::instantiate 不查物理，旧图残留包会带旧 fh/坐标实体化到新图。
+		// 这里按当前图 foothold 重锚：fh 有效则保留（新图合法包），当前图 x 处无
+		// 落脚点则丢弃（旧图残留）。与 NPC 同款，不另起炉灶。
+		std::queue<MobSpawn> kept;
+		while (!spawns.empty())
+		{
+			MobSpawn spawn = std::move(spawns.front());
+			spawns.pop();
+
+			SpawnPoint resolved = physics.resolve_spawn_point(spawn.get_position(), spawn.get_fh());
+			if (resolved.fhid == 0)
+				continue; // 旧图残留包：当前图无落脚点，丢弃
+
+			spawn.set_fh(resolved.fhid);
+			kept.push(std::move(spawn));
+		}
+		spawns.swap(kept);
+	}
+
 	void MapMobs::clear()
 	{
 		mobs.clear();
 		clear_spawns();
+		removal.clear();	// 补齐漏清的显式回收队列（MapMobs.h:85），零风险
 	}
 
 	void MapMobs::set_control(int32_t oid, bool control)
@@ -174,11 +199,11 @@ namespace ms
 		}
 	}
 
-	void MapMobs::apply_damage(int32_t oid, int32_t damage, bool toleft, const AttackUser& user, const SpecialMove& move)
+	void MapMobs::apply_damage(int32_t oid, int32_t damage, bool toleft, const AttackUser& user, const SpecialMove& move, bool lethal)
 	{
 		if (Optional<Mob> mob = mobs.get(oid))
 		{
-			mob->apply_damage(damage, toleft);
+			mob->apply_damage(damage, toleft, lethal);
 
 			// TODO: Maybe move this into the method above too?
 			move.apply_hiteffects(user, *mob);

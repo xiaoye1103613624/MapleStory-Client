@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include "UIMiniMap.h"
 
+#include "UICharInfo.h"
+#include "UIMiscShells.h"
 #include "UISoftKey.h"
 #include "UIWorldMap.h"
 
@@ -26,9 +28,13 @@
 #include "../Components/AreaButton.h"
 #include "../Components/MapleButton.h"
 
+#include "../../Character/Char.h"
+#include "../../Gameplay/MapleMap/MapObject.h"
 #include "../../Gameplay/MapleMap/Npc.h"
 #include "../../Gameplay/Stage.h"
 #include "../../Net/Packets/GameplayPackets.h"
+#include "../../Net/Packets/NpcInteractionPackets.h"
+#include "../../Net/Packets/PlayerInteractionPackets.h"
 #include "../../Util/HudLayout.h"
 #include "../../Util/Misc.h"
 #include "../../Util/UiAssetResolve.h"
@@ -38,7 +44,9 @@
 #include "../../Graphics/Geometry.h"
 #include "../../Graphics/Text.h"
 
+#include <algorithm>
 #include <cmath>
+#include <utility>   // std::move（npc 签名缓存）
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -112,9 +120,35 @@ namespace ms
 			else
 				UiAssetResolve::diag_once("minimap btmax", "Basic.img/BtMax missing");
 
-			// ThemePack 先验入口：标题栏缩放钮左侧 24x12 热区（自绘「UI」标签）。
-			buttons[Buttons::BT_THEME] = std::make_unique<AreaButton>(
-				Point<int16_t>(0, 0), Point<int16_t>(24, 12));
+			// ThemePack：优先 BtClaim（比 BtHide 更易辨认），避免被当成「隐藏」钮。
+			nl::node bttheme = basic["BtClaim"];
+			if (!UiAssetResolve::usable(bttheme))
+				bttheme = basic["BtHide"];
+			if (UiAssetResolve::usable(bttheme))
+				buttons[Buttons::BT_THEME] = std::make_unique<MapleButton>(bttheme, Point<int16_t>(0, 0));
+			else
+			{
+				UiAssetResolve::diag_once("minimap bttheme", "Basic.img/BtClaim|BtHide missing");
+				buttons[Buttons::BT_THEME] = std::make_unique<AreaButton>(
+					Point<int16_t>(0, 0), Point<int16_t>(24, 12));
+			}
+
+			// NPC 列表钮：Heaven/原生 MiniMap/BtNpc。live xy UIWindow.img/MiniMap
+			// 仅有 title/MinMap/MaxMap/Min/BtMap（orange-wz 2026-11-20），无 BtNpc/
+			// ListNpc → 列表不可开；有件时再接线，避免「有 NPC 却无钮」。
+			nl::node btnpc = MiniMap["BtNpc"];
+			if (UiAssetResolve::usable(btnpc))
+				buttons[Buttons::BT_NPC] = std::make_unique<MapleButton>(btnpc, Point<int16_t>(0, 0));
+			else if (UiAssetResolve::usable(listNpc))
+			{
+				// 有 ListNpc 九切片但缺 BtNpc：热区兜底，与 Theme AreaButton 同口径。
+				buttons[Buttons::BT_NPC] = std::make_unique<AreaButton>(
+					Point<int16_t>(0, 0), Point<int16_t>(24, 12));
+				UiAssetResolve::diag_once("minimap btnpc", "MiniMap/BtNpc missing, AreaButton fallback");
+			}
+			else
+				UiAssetResolve::diag_once("minimap listnpc",
+					"MiniMap/ListNpc+BtNpc missing — NPC list blocked (need asset import)");
 		}
 
 		region_text = OutlinedText(Text::Font::A12B, Text::Alignment::LEFT, Color::Name::WHITE, Color::Name::BLACK);
@@ -157,8 +191,22 @@ namespace ms
 					Color(0x26445BFFu), 0.5f).draw(DrawArgument(position + Point<int16_t>(6, 29)));
 
 				if (has_map)
-					map_sprite.draw(DrawArgument(position
-						+ Point<int16_t>(map_draw_origin_x, map_draw_origin_y)));
+				{
+					const Point<int16_t> md = map_sprite.get_dimensions();
+					const int16_t vw = map_view_w > 0 ? map_view_w : static_cast<int16_t>(normal_dimensions.x() - 12);
+					const int16_t vh = map_view_h > 0 ? map_view_h : static_cast<int16_t>(normal_dimensions.y() - 43);
+					const int16_t sx = std::clamp<int16_t>(map_scr_x, 0, std::max<int16_t>(0, static_cast<int16_t>(md.x() - vw)));
+					const int16_t sy = std::clamp<int16_t>(map_scr_y, 0, std::max<int16_t>(0, static_cast<int16_t>(md.y() - vh)));
+					const int16_t crop_r = static_cast<int16_t>(std::max(0, md.x() - sx - vw));
+					const int16_t crop_b = static_cast<int16_t>(std::max(0, md.y() - sy - vh));
+					// 先把画布原点挪到 -scr，再 crop 左右上下，使可见区左上角落在 map_draw_origin。
+					map_sprite.draw(
+						DrawArgument(position + Point<int16_t>(
+							static_cast<int16_t>(map_draw_origin_x - sx),
+							static_cast<int16_t>(map_draw_origin_y - sy))),
+						Range<int16_t>(sy, crop_b),
+						Range<int16_t>(sx, crop_r));
+				}
 			}
 
 			// 29px 顶带里「小地图」是 MinMap/nw 烤死的艺术字（60x29 装饰帽），只占到 local y≈20；
@@ -170,9 +218,15 @@ namespace ms
 			if (has_map)
 			{
 				Animation portal_marker = Animation(marker["portal"]);
+				const Point<int16_t> scr(map_scr_x, map_scr_y);
 
 				for (auto& sprite : static_marker_info)
-					portal_marker.draw(position + sprite.second, inter);
+				{
+					// 192：视口外传送门标记不画，避免溢出小地图窗体。
+					if (!canvas_pos_in_view(std::get<2>(sprite)))
+						continue;
+					portal_marker.draw(position + std::get<1>(sprite) - scr, inter);
+				}
 
 				draw_movable_markers(position, inter);
 
@@ -194,8 +248,21 @@ namespace ms
 					Color(0x26445BFFu), 0.5f).draw(DrawArgument(position + Point<int16_t>(6, 72)));
 
 				if (has_map)
-					map_sprite.draw(DrawArgument(position
-						+ Point<int16_t>(map_draw_origin_x, map_draw_origin_y + MAX_ADJ)));
+				{
+					const Point<int16_t> md = map_sprite.get_dimensions();
+					const int16_t vw = map_view_w > 0 ? map_view_w : static_cast<int16_t>(max_dimensions.x() - 12);
+					const int16_t vh = map_view_h > 0 ? map_view_h : static_cast<int16_t>(max_dimensions.y() - 87);
+					const int16_t sx = std::clamp<int16_t>(map_scr_x, 0, std::max<int16_t>(0, static_cast<int16_t>(md.x() - vw)));
+					const int16_t sy = std::clamp<int16_t>(map_scr_y, 0, std::max<int16_t>(0, static_cast<int16_t>(md.y() - vh)));
+					const int16_t crop_r = static_cast<int16_t>(std::max(0, md.x() - sx - vw));
+					const int16_t crop_b = static_cast<int16_t>(std::max(0, md.y() - sy - vh));
+					map_sprite.draw(
+						DrawArgument(position + Point<int16_t>(
+							static_cast<int16_t>(map_draw_origin_x - sx),
+							static_cast<int16_t>(map_draw_origin_y + MAX_ADJ - sy))),
+						Range<int16_t>(sy, crop_b),
+						Range<int16_t>(sx, crop_r));
+				}
 			}
 
 			// 72px 顶带（MaxMap/nw 逐行实测）：y0..4 黑框、**y5..18 白色标题条**、
@@ -211,9 +278,14 @@ namespace ms
 			if (has_map)
 			{
 				Animation portal_marker(marker["portal"]);
+				const Point<int16_t> scr(map_scr_x, map_scr_y);
 
 				for (auto& sprite : static_marker_info)
-					portal_marker.draw(position + sprite.second + Point<int16_t>(0, MAX_ADJ), inter);
+				{
+					if (!canvas_pos_in_view(std::get<2>(sprite)))
+						continue;
+					portal_marker.draw(position + std::get<1>(sprite) - scr + Point<int16_t>(0, MAX_ADJ), inter);
+				}
 
 				draw_movable_markers(position + Point<int16_t>(0, MAX_ADJ), inter);
 
@@ -223,17 +295,6 @@ namespace ms
 		}
 
 		UIElement::draw(inter);
-
-		// ThemePack 快捷钮标签（AreaButton 无贴图）。
-		auto theme_it = buttons.find(Buttons::BT_THEME);
-
-		if (theme_it != buttons.end() && theme_it->second && theme_it->second->is_active())
-		{
-			ColorBox(24, 12, Color::Name::BLACK, 0.55f)
-				.draw(position + Point<int16_t>(bt_theme_x, BTN_MIN_Y));
-			Text(Text::Font::A11M, Text::Alignment::CENTER, Color::Name::YELLOW, "UI")
-				.draw(position + Point<int16_t>(static_cast<int16_t>(bt_theme_x + 12), BTN_MIN_Y - 1));
-		}
 	}
 
 	void UIMiniMap::update()
@@ -333,6 +394,18 @@ namespace ms
 			update_static_markers();
 			toggle_buttons();
 			update_npclist();
+			// mapid 差分路径：重建后同步签名基准，避免同一帧的签名检测再刷一次。
+			refresh_npclist_signature();
+		}
+		else
+		{
+			// 兜底：mapid 未变但 npc 容器已换（fadeout clear / 新图 spawn）。
+			// 时序漏洞：SetFieldHandlers::transition 在 fadeout 时就 Stage::clear()
+			// 清了 npcs 但 mapid 仍是旧值 → mapid 差分不触发；load_map 设新 mapid
+			// 后 npcs 可能为空 → 差分刷出空列表，之后 spawn 进来 mapid 不再变 →
+			// 永不刷新。这里按 {size, oid} 签名补一道每帧检测（has_npcs 同源）。
+			if (npclist_signature_changed())
+				update_npclist();
 		}
 
 		if (type == Type::MIN)
@@ -358,6 +431,10 @@ namespace ms
 		if (selected >= 0)
 			selected_marker.update();
 
+		// 每帧按玩家刷新局部视口（对齐 192 CalculateScr）。
+		if (has_map && type != Type::MIN)
+			refresh_map_viewport();
+
 		UIElement::update();
 	}
 
@@ -372,16 +449,27 @@ namespace ms
 
 	Cursor::State UIMiniMap::send_cursor(bool clicked, Point<int16_t> cursorpos)
 	{
-		Cursor::State dstate = UIDragElement::send_cursor(clicked, cursorpos);
-
-		if (dragged)
-			return dstate;
-
 		Point<int16_t> cursor_relative = cursorpos - position;
 
-		if (listNpc_slider.isenabled())
+		// 修复"单击发包慢"：先算 NPC 命中区，再决定是否让 UIDragElement 起拖。
+		// 原顺序是 UIDragElement::send_cursor 先跑，绿点/列表行落在 dragarea
+		// （NORMAL/MAX 顶带 20px，见 toggle_buttons 的 dragarea 赋值）里时会被
+		// 拖拽态吞掉点击；参考 UIDamageRank.cpp:285-299 把命中区从 dragarea 摘出。
+		// 这里不改 dragarea 成员尺寸（那会永久破坏顶带拖拽），而是：命中 NPC
+		// 交互区时本帧跳过基类拖拽起手，未命中才照常交给基类。
+
+		// 列表行命中 oid（未命中返回 0）；列表滚动条优先，避免与列表点击混。
+		int32_t list_hit_oid = 0;
+		bool list_hover_valid = false;
+		int16_t list_hover_index = -1;
+
+		if (listNpc_enabled && listNpc_slider.isenabled())
 			if (Cursor::State new_state = listNpc_slider.send_cursor(cursor_relative, clicked))
+			{
+				// 滚动条占用本次点击，清掉可能残留的待发包目标。
+				pending_talk_oid = 0;
 				return new_state;
+			}
 
 		if (listNpc_enabled)
 		{
@@ -391,38 +479,98 @@ namespace ms
 			if (list_bounds.contains(relative_point))
 			{
 				int16_t list_index = listNpc_offset + relative_point.y() / LISTNPC_ITEM_HEIGHT;
-				bool in_list = list_index < listNpc_names.size();
+				bool in_list = list_index >= 0 && list_index < static_cast<int16_t>(listNpc_names.size());
 
-				if (clicked)
-					select_npclist(in_list ? list_index : -1);
-				else if (in_list)
-					UI::get().show_text(Tooltip::Parent::MINIMAP, listNpc_full_names[list_index]);
-
-				return Cursor::State::IDLE;
+				if (in_list)
+				{
+					list_hover_valid = true;
+					list_hover_index = list_index;
+					if (list_index < static_cast<int16_t>(listNpc_list.size()))
+						list_hit_oid = listNpc_list[list_index].oid;
+				}
 			}
 		}
 
-		bool found = false;
-		auto npcs = Stage::get().get_npcs().get_npcs();
+		// 场景 NPC 绿点命中 oid（与 draw_movable_markers 同公式）。
+		const int32_t marker_hit_oid = hit_npc_marker(cursor_relative);
+		const int32_t hit_oid = list_hit_oid ? list_hit_oid : marker_hit_oid;
 
-		for (auto npc = npcs->begin(); npc != npcs->end(); npc++)
+		Cursor::State dstate;
+
+		if (hit_oid && clicked && !dragged)
 		{
-			Point<int16_t> npc_pos = (npc->second->get_position() + center_offset) / scale + Point<int16_t>(map_draw_origin_x, map_draw_origin_y);
-			Rectangle<int16_t> marker_spot = Rectangle<int16_t>(npc_pos - Point<int16_t>(4, 8), npc_pos);
+			// 命中 NPC 交互区且尚未起拖：本帧不调基类，避免 dragarea 把点击吞成拖拽。
+			dstate = Cursor::State::CANCLICK;
+		}
+		else
+		{
+			dstate = UIDragElement::send_cursor(clicked, cursorpos);
 
-			if (type == Type::MAX)
-				marker_spot.shift(Point<int16_t>(0, MAX_ADJ));
-
-			if (marker_spot.contains(cursor_relative))
+			if (dragged)
 			{
-				found = true;
+				// 真正进入拖拽：丢弃待发包目标，松手不误触发交谈。
+				pending_talk_oid = 0;
+				return dstate;
+			}
+		}
 
-				auto n = static_cast<Npc*>(npc->second.get());
-				std::string name = n->get_name();
-				std::string func = n->get_func();
+		// 松手判定（2026-11-23 修复）：up 事件由 Window.cpp:375 send_cursor(false)
+		// 派发；此前额外要求 !is_primary_down()，但窗口失焦时 UI.cpp 会强制清
+		// primary_down，且鼠标移动帧也可能满足该条件 → pending 被误判/漏结算，
+		// 表现为"有时点不开、要点好几次"。改为：只要本帧是 up(!clicked) 且
+		// 此前在同一目标按下过(pending!=0)即结算；pending 在发包/拖拽/滚动时清零，
+		// hover 帧不会误发（pending 只在 down 时 arm）。
+		const bool mouse_up = !clicked;
 
-				UI::get().show_map(Tooltip::Parent::MINIMAP, name, func, {}, true, false);
-				break;
+		if (mouse_up && pending_talk_oid != 0)
+		{
+			const int32_t confirm_oid = pending_talk_oid;
+			pending_talk_oid = 0;
+
+			// 松手仍落在同一目标才确认；拖到别处松开则取消（防止拖拽误发）。
+			if (confirm_oid == hit_oid)
+			{
+				// 单包 TALK_TO_NPC(58)（2026-11-23 已去 197 伴随包，对齐 095 原生）。
+				TalkToNPCPacket(confirm_oid).dispatch();
+				LOG(LOG_DEBUG, "UIMiniMap: talk-to-npc on mouse-up oid=" << confirm_oid); // debug 节点：上线可关
+			}
+			else
+			{
+				LOG(LOG_DEBUG, "UIMiniMap: talk-to-npc cancelled (release off target) oid=" << confirm_oid);
+			}
+		}
+
+		if (clicked && hit_oid)
+		{
+			// 按下记录意图；列表行同时选中（选中态属 UI 反馈，保留按下即生效）。
+			pending_talk_oid = hit_oid;
+
+			if (list_hover_valid)
+				select_npclist(list_hover_index);
+
+			LOG(LOG_DEBUG, "UIMiniMap: talk-to-npc armed on mouse-down oid=" << hit_oid);
+		}
+
+		if (list_hover_valid)
+		{
+			if (!clicked)
+				UI::get().show_text(Tooltip::Parent::MINIMAP, listNpc_full_names[list_hover_index]);
+
+			return Cursor::State::IDLE;
+		}
+
+		bool found = false;
+
+		// NPC 图标悬停提示（发包已统一到上面的 mouse-up 确认路径）。
+		if (marker_hit_oid)
+		{
+			found = true;
+
+			// 与场景 MapNpcs 悬停一致：显示 NPC 名/功能地图提示（不发包）。
+			if (Optional<MapObject> obj = Stage::get().get_npcs().get_npcs()->get(marker_hit_oid))
+			{
+				auto* n = static_cast<Npc*>(obj.get());
+				UI::get().show_map(Tooltip::Parent::MINIMAP, n->get_name(), n->get_func(), {}, true, false);
 			}
 		}
 
@@ -430,14 +578,17 @@ namespace ms
 		{
 			for (auto& sprite : static_marker_info)
 			{
-				Rectangle<int16_t> marker_spot = Rectangle<int16_t>(sprite.second, sprite.second + 8);
+				if (!canvas_pos_in_view(std::get<2>(sprite)))
+					continue;
+
+				Rectangle<int16_t> marker_spot = Rectangle<int16_t>(std::get<1>(sprite), std::get<1>(sprite) + 8);
 
 				if (type == Type::MAX)
 					marker_spot.shift(Point<int16_t>(0, MAX_ADJ));
 
 				if (marker_spot.contains(cursor_relative))
 				{
-					nl::node portal_tm = Map["portal"][sprite.first]["tm"];
+					nl::node portal_tm = Map["portal"][std::get<0>(sprite)]["tm"];
 					std::string portal_cat = NxHelper::Map::get_map_category(portal_tm);
 					nl::node portal_name = nl::nx::String["Map.img"][portal_cat][portal_tm]["mapName"];
 
@@ -555,10 +706,15 @@ namespace ms
 			case BT_BIG:
 			{
 				big_map = !big_map;
-				// D10（2026-11-11 仲裁，notes/d5-d10-arbitration.md）：orange-wz 实测
-				// UIWindow.img/MiniMap 只有 BtMap/MaxMap/Min/MinMap/title 五子，
-				// 无 BtSmall/BtBig 素材 → 滚动地图无件无据，显式预留（与
-				// ui-v83-window-restore/README.md:101 口径一致），不编造滚动排版。
+				// D10：本包无 BtSmall/BtBig 贴图（预留枚举）；逻辑仍驱动 BigShow pane。
+				// 与 192 ToggleMap/SetLayer：允许时全图，否则 210×112 局部视口。
+				if (has_map)
+				{
+					const Point<int16_t> md = map_sprite.get_dimensions();
+					apply_big_map_policy(md.x(), md.y());
+				}
+				update_canvas();
+				update_dimensions();
 				toggle_buttons();
 				break;
 			}
@@ -839,27 +995,90 @@ namespace ms
 
 		int16_t mark_text_width = 48 + std::max(region_text.width(), town_text.width()) + 10;
 
-		// 内容区尺寸：宽度取地图与文字二者较大，高度至少容纳地图。
-		int16_t body_w = std::max(std::max<int16_t>(106, mark_text_width - 12), map_dimensions.x());
-		int16_t body_h = std::max<int16_t>(40, map_dimensions.y());
-
+		// 内容区 = 本地视口 pane（MapleStoryT SetLayer / CalculateScr）。
+		// BigShow：pane = 全 canvas；否则 canvas≥280 → 210、≥150 → 112。
 		const int16_t n_top = 29, n_bot = 14, n_cap = 60;
 		const int16_t m_top = 72, m_bot = 15;
 		const int16_t side = 6;
+
+		int16_t body_w = std::max<int16_t>(106, mark_text_width - 12);
+		int16_t body_h = 40;
+		if (has_map)
+		{
+			apply_big_map_policy(map_dimensions.x(), map_dimensions.y());
+
+			int16_t pane_w = map_dimensions.x();
+			int16_t pane_h = map_dimensions.y();
+			if (!big_map)
+			{
+				if (pane_w >= BIG_TOGGLE_W)
+					pane_w = MAX_PANE_W;
+				if (pane_h >= BIG_TOGGLE_H)
+					pane_h = MAX_PANE_H;
+			}
+
+			body_w = std::max(body_w, pane_w);
+			body_h = std::max<int16_t>(40, pane_h);
+		}
+
+		// ToggleMap 同款屏边：超限再钳（与禁用 BigShow 阈值同源）。
+		{
+			const int16_t vw = Constants::Constants::get().get_viewwidth();
+			const int16_t vh = Constants::Constants::get().get_viewheight();
+			const int16_t max_body_w = std::max<int16_t>(106, static_cast<int16_t>(vw - 50 - side * 2));
+			const int16_t max_body_h = std::max<int16_t>(40, static_cast<int16_t>(vh - 150 - n_top - n_bot));
+			if (body_w > max_body_w)
+				body_w = max_body_w;
+			if (body_h > max_body_h)
+				body_h = max_body_h;
+		}
+
+		// map_view_* = 内容视口（标题加宽不得撑大）。
+		map_view_w = has_map ? std::min(body_w, map_dimensions.x()) : body_w;
+		map_view_h = has_map ? std::min(body_h, map_dimensions.y()) : body_h;
+		if (has_map && !big_map)
+		{
+			if (map_dimensions.x() >= BIG_TOGGLE_W)
+				map_view_w = std::min(map_view_w, MAX_PANE_W);
+			if (map_dimensions.y() >= BIG_TOGGLE_H)
+				map_view_h = std::min(map_view_h, MAX_PANE_H);
+		}
+		map_scr_x = 0;
+		map_scr_y = 0;
 
 		int16_t W = body_w + side * 2;
 		int16_t H_normal = body_h + n_top + n_bot;
 		int16_t H_max = body_h + m_top + m_bot;
 
-		// 地图画布居中于内容区；MAX 由 draw 端叠加 MAX_ADJ 使画布落到 72 顶带下。
-		map_draw_origin_x = static_cast<int16_t>(side + std::max<int16_t>(0, (body_w - map_dimensions.x()) / 2));
+		// 标题栏必须装下 Theme + Min/Max + Map（及可选 NPC）—— 窄竖图时否则
+		// BT_THEME 会被挤到负 x / 文字底下（截图「只见大地图」）。
+		// 注意：加宽只服务标题钮，不放大 map_view_*（仍钳在 MAX_PANE_*，禁止 overview）。
+		{
+			const int16_t btn_strip = static_cast<int16_t>(
+				bt_theme_width + bt_min_width + bt_max_width + bt_map_width + 24);
+			const int16_t min_w_for_btns = static_cast<int16_t>(
+				std::max(mark_text_width, combined_text_width) + btn_strip + 12);
+			if (W < min_w_for_btns)
+			{
+				W = min_w_for_btns;
+				body_w = static_cast<int16_t>(W - side * 2);
+				H_normal = body_h + n_top + n_bot;
+				H_max = body_h + m_top + m_bot;
+			}
+		}
+
+		// 视口左上角落在内容区内；canvas 小于 pane 时居中，否则贴左上由 scroll 裁剪。
+		// map_view_* 保持 MAX_PANE 钳制值（标题加宽不撑大视口）。
+		map_draw_origin_x = static_cast<int16_t>(side + std::max<int16_t>(0, (body_w - std::min(map_dimensions.x(), map_view_w)) / 2));
 		map_draw_origin_y = n_top;
+		refresh_map_viewport();
 		middle_right_x = W;
 
 		// Min 三切片收缩条（左8 / 中平铺 / 右4，高20）。注册 BT_MIN/BT_MAX 后背景条
 		// 必须容纳两颗 12x12 缩放钮：宽度与 toggle_buttons():548 的 min_dimensions
 		// 对齐（combined_text_width + 11 + bt_min_width + bt_max_width + bt_map_width + 7）。
-		int16_t W_min = combined_text_width + bt_min_width + bt_max_width + bt_map_width + 18;
+		// 收缩条宽度须含 BT_THEME（toggle_buttons MIN 态会占位）。
+		int16_t W_min = combined_text_width + bt_theme_width + bt_min_width + bt_max_width + bt_map_width + 18;
 		int16_t body_w_min = W_min - 8 - 4;
 
 		min_sprites.emplace_back(slice(Min["w"], 0, 0, 0, 0));
@@ -885,6 +1104,74 @@ namespace ms
 		max_dimensions = Point<int16_t>(W, H_max);
 	}
 
+	Point<int16_t> UIMiniMap::map_marker_offset() const
+	{
+		return Point<int16_t>(
+			static_cast<int16_t>(map_draw_origin_x - map_scr_x),
+			static_cast<int16_t>(map_draw_origin_y - map_scr_y));
+	}
+
+	void UIMiniMap::apply_big_map_policy(int16_t canvas_w, int16_t canvas_h)
+	{
+		// MapleStoryT CUIMiniMap::ToggleMap：过小或超屏禁止 BigShow。
+		const int16_t sw = Constants::Constants::get().get_viewwidth();
+		const int16_t sh = Constants::Constants::get().get_viewheight();
+		if ((canvas_w <= BIG_TOGGLE_W && canvas_h <= BIG_TOGGLE_H)
+			|| canvas_w > sw - 50
+			|| canvas_h > sh - 150)
+		{
+			big_map = false;
+		}
+	}
+
+	bool UIMiniMap::canvas_pos_in_view(Point<int16_t> canvas_pos) const
+	{
+		// IsPtInViewRange：0 <= rel <= pane（含上界）；退化态不裁。
+		if (!has_map || map_view_w <= 0 || map_view_h <= 0)
+			return true;
+		const int16_t rx = static_cast<int16_t>(canvas_pos.x() - map_scr_x);
+		const int16_t ry = static_cast<int16_t>(canvas_pos.y() - map_scr_y);
+		return rx >= 0 && rx <= map_view_w
+			&& ry >= 0 && ry <= map_view_h;
+	}
+
+	void UIMiniMap::refresh_map_viewport()
+	{
+		if (!has_map || map_view_w <= 0 || map_view_h <= 0)
+		{
+			map_scr_x = 0;
+			map_scr_y = 0;
+			return;
+		}
+
+		const Point<int16_t> md = map_sprite.get_dimensions();
+		if (md.x() <= 0 || md.y() <= 0)
+		{
+			map_scr_x = 0;
+			map_scr_y = 0;
+			return;
+		}
+
+		const int16_t vw = std::min(map_view_w, md.x());
+		const int16_t vh = std::min(map_view_h, md.y());
+
+		// CalculateScr 同构（canvas 空间）：scr = (CX+local)>>mag − pane/2，再夹边。
+		// scale==2^mag 时等价于 (player+center_offset)/scale − pane/2。
+		const Point<int16_t> player_pos = Stage::get().get_player().get_position();
+		const Point<int16_t> mm = (player_pos + center_offset) / scale;
+		int16_t sx = static_cast<int16_t>(mm.x() - vw / 2);
+		int16_t sy = static_cast<int16_t>(mm.y() - vh / 2);
+		const int16_t max_sx = static_cast<int16_t>(std::max(0, md.x() - vw));
+		const int16_t max_sy = static_cast<int16_t>(std::max(0, md.y() - vh));
+		if (sx < 0) sx = 0;
+		if (sy < 0) sy = 0;
+		if (sx > max_sx) sx = max_sx;
+		if (sy > max_sy) sy = max_sy;
+		map_scr_x = sx;
+		map_scr_y = sy;
+		// 不回写缩小 map_view_*：保留 update_canvas 设定的 pane，避免每帧漂移。
+	}
+
 	void UIMiniMap::draw_movable_markers(Point<int16_t> init_pos, float alpha) const
 	{
 		if (!has_map)
@@ -892,6 +1179,7 @@ namespace ms
 
 		Animation marker_sprite;
 		Point<int16_t> sprite_offset;
+		const Point<int16_t> base = map_marker_offset();
 
 		/// NPCs
 		MapObjects* npcs = Stage::get().get_npcs().get_npcs();
@@ -901,7 +1189,11 @@ namespace ms
 		for (auto npc = npcs->begin(); npc != npcs->end(); ++npc)
 		{
 			Point<int16_t> npc_pos = npc->second.get()->get_position();
-			marker_sprite.draw((npc_pos + center_offset) / scale - sprite_offset + Point<int16_t>(map_draw_origin_x, map_draw_origin_y) + init_pos, alpha);
+			Point<int16_t> canvas_pos = (npc_pos + center_offset) / scale;
+			// 192：视口外 NPC 标记不画，否则溢出小地图窗体。
+			if (!canvas_pos_in_view(canvas_pos))
+				continue;
+			marker_sprite.draw(canvas_pos - sprite_offset + base + init_pos, alpha);
 		}
 
 		/// Other characters
@@ -912,13 +1204,16 @@ namespace ms
 		for (auto chr = chars->begin(); chr != chars->end(); ++chr)
 		{
 			Point<int16_t> chr_pos = chr->second.get()->get_position();
-			marker_sprite.draw((chr_pos + center_offset) / scale - sprite_offset + Point<int16_t>(map_draw_origin_x, map_draw_origin_y) + init_pos, alpha);
+			Point<int16_t> canvas_pos = (chr_pos + center_offset) / scale;
+			if (!canvas_pos_in_view(canvas_pos))
+				continue;
+			marker_sprite.draw(canvas_pos - sprite_offset + base + init_pos, alpha);
 		}
 
 		/// Player
 		Point<int16_t> player_pos = Stage::get().get_player().get_position();
 		sprite_offset = player_marker.get_dimensions() / Point<int16_t>(2, 0);
-		player_marker.draw((player_pos + center_offset) / scale - sprite_offset + Point<int16_t>(map_draw_origin_x, map_draw_origin_y) + init_pos, alpha);
+		player_marker.draw((player_pos + center_offset) / scale - sprite_offset + base + init_pos, alpha);
 	}
 
 	void UIMiniMap::update_static_markers()
@@ -935,14 +1230,17 @@ namespace ms
 		marker_sprite = Animation(marker["portal"]);
 		Point<int16_t> marker_offset = marker_sprite.get_dimensions() / Point<int16_t>(2, 0);
 
+		// 存「pane 原点 + 画布坐标」、不含 scroll；draw 时再减 map_scr_*。
 		for (nl::node portal = portals.begin(); portal != portals.end(); ++portal)
 		{
 			int portal_type = portal["pt"];
 
 			if (portal_type == 2)
 			{
-				Point<int16_t> marker_pos = (Point<int16_t>(portal["x"], portal["y"]) + center_offset) / scale - marker_offset + Point<int16_t>(map_draw_origin_x, map_draw_origin_y);
-				static_marker_info.emplace_back(portal.name(), marker_pos);
+				Point<int16_t> canvas_pos = (Point<int16_t>(portal["x"], portal["y"]) + center_offset) / scale;
+				Point<int16_t> marker_pos = canvas_pos - marker_offset
+					+ Point<int16_t>(map_draw_origin_x, map_draw_origin_y);
+				static_marker_info.emplace_back(portal.name(), marker_pos, canvas_pos);
 			}
 		}
 	}
@@ -976,6 +1274,59 @@ namespace ms
 		}
 	}
 
+	bool UIMiniMap::npclist_signature_changed()
+	{
+		// 签名 = 当前 npcs 容器的 size + 每个 oid（按容器迭代序）。
+		// size 变化（含 0↔N）或任一条目 oid 变化即判定列表内容已失效。
+		auto npcs = Stage::get().get_npcs().get_npcs();
+		const size_t sig_size = npcs->size();
+		std::vector<int32_t> sig_oids;
+		sig_oids.reserve(sig_size);
+
+		for (auto npc = npcs->begin(); npc != npcs->end(); ++npc)
+			sig_oids.push_back(npc->second->get_oid());
+		// unordered_map 迭代序不保证稳定，排序消除仅因哈希桶重排造成的假阳性。
+		std::sort(sig_oids.begin(), sig_oids.end());
+
+		const bool changed = !listNpc_sig_valid
+			|| sig_size != listNpc_sig_size
+			|| sig_oids != listNpc_sig_oids;
+
+		if (changed)
+		{
+			listNpc_sig_size = sig_size;
+			listNpc_sig_oids = std::move(sig_oids);
+			listNpc_sig_valid = true;
+			LOG(LOG_DEBUG, "UIMiniMap: npc signature changed size=" << sig_size << " map=" << mapid);
+		}
+
+		return changed;
+	}
+
+	void UIMiniMap::refresh_npclist_signature()
+	{
+		// 重建列表后同步签名基准（不触发重建本身）。
+		auto npcs = Stage::get().get_npcs().get_npcs();
+		listNpc_sig_size = npcs->size();
+		listNpc_sig_oids.clear();
+		listNpc_sig_oids.reserve(listNpc_sig_size);
+
+		for (auto npc = npcs->begin(); npc != npcs->end(); ++npc)
+			listNpc_sig_oids.push_back(npc->second->get_oid());
+		std::sort(listNpc_sig_oids.begin(), listNpc_sig_oids.end());
+
+		listNpc_sig_valid = true;
+	}
+
+	void UIMiniMap::refresh_npclist()
+	{
+		// 换图成功后的显式重建入口（SetFieldHandlers 在 reanchor 之后调用）。
+		// 只重建列表数据，不动 mapid/地图资源（那些由 update() 的 mapid 差分负责）。
+		LOG(LOG_DEBUG, "UIMiniMap: refresh_npclist (explicit, map=" << mapid << ")");
+		update_npclist();
+		refresh_npclist_signature();
+	}
+
 	void UIMiniMap::update_npclist()
 	{
 		listNpc_sprites.clear();
@@ -992,7 +1343,10 @@ namespace ms
 
 		for (auto npc = npcs->begin(); npc != npcs->end(); ++npc)
 		{
-			listNpc_list.emplace_back(npc->second.get());
+			// 存值快照，不持裸指针（NPC 对象可能在同 oid 下被 replace/delete）。
+			listNpc_list.push_back(NpcListEntry{
+				npc->second->get_oid(),
+				npc->second->get_position() });
 
 			auto n = static_cast<Npc*>(npc->second.get());
 			std::string name = n->get_name();
@@ -1070,8 +1424,24 @@ namespace ms
 				highlight.draw(listNpc_pos);
 			}
 
-			npc_marker.draw(DrawArgument(listNpc_pos + Point<int16_t>(0, 2), false, npc_marker.get_dimensions() / 2), alpha);
-			listNpc_names[listNpc_offset + i].draw(DrawArgument(listNpc_pos + Point<int16_t>(14, -2)));
+			// 绿点与名字按行高 LISTNPC_ITEM_HEIGHT 垂直居中（原写死 (0,2)/(14,-2)
+			// 不随行高/字形变化，换字体或调行高即偏移）。
+			// 绿点：保留原 draw 结构（center=dims/2、flip=false；缩放为 1 时 center 在
+			// Texture::get_rectangle 里相消，pos 即 marker 原点落点），只把写死的 y=2
+			// 换成按当前帧高度算的 (行高-图高)/2，使绿点随行高/帧尺寸自适应居中。
+			const Point<int16_t> marker_dims = npc_marker.get_dimensions();
+			const int16_t marker_y = static_cast<int16_t>((LISTNPC_ITEM_HEIGHT - marker_dims.y()) / 2);
+			npc_marker.draw(DrawArgument(listNpc_pos + Point<int16_t>(0, marker_y), false, marker_dims / 2), alpha);
+
+			// 名字：Text::draw 的 pos.y 是"行顶"（含 ink_offset 上空白），不是墨迹顶。
+			// 目标墨迹顶取行高中线（与 UIStatsInfo.cpp:468 / UIDamageRank.cpp:759 同口径），
+			// 再由 y_for_ink_top 按本行文字的当前字形反解绘制 y，避免手抄 bitmap_top
+			// 导致的 1~3px 下沉（Graphics/Text.h:146-164 是垂直落位唯一真源）。
+			const Text& npc_name = listNpc_names[listNpc_offset + i];
+			const int16_t name_ink_h = std::min<int16_t>(LISTNPC_INK_HEIGHT, LISTNPC_ITEM_HEIGHT);
+			const int16_t name_ink_top = static_cast<int16_t>((LISTNPC_ITEM_HEIGHT - name_ink_h) / 2);
+			listNpc_names[listNpc_offset + i].draw(
+				DrawArgument(listNpc_pos + Point<int16_t>(14, npc_name.y_for_ink_top(name_ink_top))));
 
 			listNpc_pos.shift_y(LISTNPC_ITEM_HEIGHT);
 		}
@@ -1082,11 +1452,163 @@ namespace ms
 		if (selected >= 0)
 		{
 			Point<int16_t> npc_pos =
-				(listNpc_list[selected]->get_position() + center_offset) / scale +
-				Point<int16_t>(map_draw_origin_x, map_draw_origin_y - npc_marker.get_dimensions().y() + (type == Type::MAX ? MAX_ADJ : 0));
+				(listNpc_list[selected].position + center_offset) / scale +
+				map_marker_offset() +
+				Point<int16_t>(0, static_cast<int16_t>(-npc_marker.get_dimensions().y() + (type == Type::MAX ? MAX_ADJ : 0)));
 
 			selected_marker.draw(position + npc_pos, 0.5f);
 		}
+	}
+
+
+	int32_t UIMiniMap::hit_npc_marker(Point<int16_t> cursor_relative) const
+	{
+		if (!has_map || type == Type::MIN)
+			return 0;
+
+		auto npcs = Stage::get().get_npcs().get_npcs();
+
+		for (auto npc = npcs->begin(); npc != npcs->end(); ++npc)
+		{
+			Point<int16_t> canvas_pos = (npc->second->get_position() + center_offset) / scale;
+			if (!canvas_pos_in_view(canvas_pos))
+				continue;
+
+			Point<int16_t> npc_pos = canvas_pos + map_marker_offset();
+			Rectangle<int16_t> marker_spot = Rectangle<int16_t>(npc_pos - Point<int16_t>(4, 8), npc_pos);
+
+			if (type == Type::MAX)
+				marker_spot.shift(Point<int16_t>(0, MAX_ADJ));
+
+			if (marker_spot.contains(cursor_relative))
+				return npc->second->get_oid();
+		}
+
+		return 0;
+	}
+
+	bool UIMiniMap::hit_player_marker(Point<int16_t> cursor_relative, int32_t& cid, std::string& name, bool& is_self) const
+	{
+		cid = 0;
+		name.clear();
+		is_self = false;
+
+		if (!has_map || type == Type::MIN)
+			return false;
+
+		const Point<int16_t> base = map_marker_offset();
+
+		// 他角：marker["another"]，热区按绘制尺寸与半宽偏移对齐。
+		Animation other_marker = Animation(marker["another"]);
+		Point<int16_t> other_dims = other_marker.get_dimensions();
+		Point<int16_t> other_off = other_dims / Point<int16_t>(2, 0);
+		MapObjects* chars = Stage::get().get_chars().get_chars();
+
+		for (auto chr = chars->begin(); chr != chars->end(); ++chr)
+		{
+			Point<int16_t> canvas_pos = (chr->second->get_position() + center_offset) / scale;
+			if (!canvas_pos_in_view(canvas_pos))
+				continue;
+
+			Point<int16_t> draw_pos = canvas_pos - other_off + base;
+			if (type == Type::MAX)
+				draw_pos.shift(Point<int16_t>(0, MAX_ADJ));
+
+			Rectangle<int16_t> spot(draw_pos, draw_pos + other_dims);
+			if (!spot.contains(cursor_relative))
+				continue;
+
+			auto* ch = static_cast<Char*>(chr->second.get());
+			cid = ch->get_oid();
+			name = ch->get_name();
+			is_self = false;
+			return true;
+		}
+
+		// 自己：marker["user"] / player_marker。
+		Point<int16_t> self_dims = player_marker.get_dimensions();
+		Point<int16_t> self_off = self_dims / Point<int16_t>(2, 0);
+		Point<int16_t> player_pos = Stage::get().get_player().get_position();
+		Point<int16_t> canvas_pos = (player_pos + center_offset) / scale;
+		if (!canvas_pos_in_view(canvas_pos))
+			return false;
+
+		Point<int16_t> draw_pos = canvas_pos - self_off + base;
+		if (type == Type::MAX)
+			draw_pos.shift(Point<int16_t>(0, MAX_ADJ));
+
+		Rectangle<int16_t> spot(draw_pos, draw_pos + self_dims);
+		if (!spot.contains(cursor_relative))
+			return false;
+
+		Player& self = Stage::get().get_player();
+		cid = self.get_oid();
+		name = self.get_name();
+		is_self = true;
+		return true;
+	}
+
+	void UIMiniMap::doubleclick(Point<int16_t> cursorpos)
+	{
+		// 2026-11-23 修复：双击 NPC（场景绿点 / 右侧 NPC 列表行）也要打开对话框。
+		// 此前本函数只处理玩家 marker（CharInfo），NPC 双击直接 return —— 用户
+		// "双击小地图NPC/列表NPC 半天打不开"的根因之一（双击事件被吃掉但无动作）。
+		// 发包仍走单包 TALK_TO_NPC(58)，与单击同语义。
+		Point<int16_t> cursor_relative = cursorpos - position;
+		int32_t npc_oid = 0;
+
+		// 右侧 NPC 列表行命中（与 send_cursor 同几何）。
+		if (listNpc_enabled)
+		{
+			Point<int16_t> rel = cursor_relative - Point<int16_t>(10 + (type == Type::MAX ? max_dimensions : normal_dimensions).x(), 23);
+			Rectangle<int16_t> list_bounds = Rectangle<int16_t>(0, LISTNPC_ITEM_WIDTH, 0, LISTNPC_ITEM_HEIGHT * 8);
+			if (list_bounds.contains(rel))
+			{
+				const int16_t idx = listNpc_offset + static_cast<int16_t>(rel.y() / LISTNPC_ITEM_HEIGHT);
+				if (idx >= 0 && idx < static_cast<int16_t>(listNpc_list.size()))
+					npc_oid = listNpc_list[idx].oid;
+			}
+		}
+		// 场景 NPC 绿点命中。
+		if (npc_oid == 0)
+			npc_oid = hit_npc_marker(cursor_relative);
+
+		if (npc_oid > 0)
+		{
+			TalkToNPCPacket(npc_oid).dispatch();
+			LOG(LOG_DEBUG, "UIMiniMap: talk-to-npc on doubleclick oid=" << npc_oid);
+			return;
+		}
+
+		// 对齐 UIStateGame：他角 CharInfoRequestPacket；自己 UICharInfo。不实现原生 opcode 407。
+		int32_t cid = 0;
+		std::string name;
+		bool is_self = false;
+
+		if (!hit_player_marker(cursor_relative, cid, name, is_self))
+			return;
+
+		if (is_self)
+			UI::get().emplace<UICharInfo>(cid);
+		else
+			CharInfoRequestPacket(cid).dispatch();
+	}
+
+	void UIMiniMap::rightclick(Point<int16_t> cursorpos)
+	{
+		// 对齐场景右击：他角/自己均可 UIContextMenu::open_at。
+		int32_t cid = 0;
+		std::string name;
+		bool is_self = false;
+
+		if (!hit_player_marker(cursorpos - position, cid, name, is_self))
+			return;
+
+		auto cm = UI::get().get_element<UIContextMenu>();
+		if (!cm)
+			cm = UI::get().emplace<UIContextMenu>();
+		if (cm)
+			cm->open_at(cursorpos, cid, name);
 	}
 
 	void UIMiniMap::select_npclist(int16_t choice)

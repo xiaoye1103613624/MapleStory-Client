@@ -34,6 +34,9 @@ namespace ms
 
 		void draw(double viewx, double viewy, float alpha) const;
 		void update();
+		// 视口切换钩子：由外层 MapBackgrounds 在三处切换点主动调用（cpp:294-300），
+		// 故须 public。[编译修复 2026-11-21] 并行改动把声明留在 private 致 C2248。
+		void refresh_viewport();
 
 	private:
 		enum Type
@@ -59,7 +62,9 @@ namespace ms
 		}
 
 		void settype(Type type);
+		// refresh_viewport 已移至 public（外层 MapBackgrounds 需调用）。
 
+		Type type = Type::NORMAL;
 		int16_t VWIDTH;
 		int16_t VHEIGHT;
 		int16_t WOFFSET;
@@ -88,6 +93,18 @@ namespace ms
 		void drawbackgrounds(double viewx, double viewy, float alpha) const;
 		void drawforegrounds(double viewx, double viewy, float alpha) const;
 		void update();
+
+		// ---- 多分辨率自适应（A+C 方案，2026-11-21）----
+		// 背景平铺块数历史上在构造期按"当时"的 VWIDTH/VHEIGHT 缓存；而游戏视口是在
+		// MapBackgrounds 构造之后才由 SetFieldHandlers::apply_game_viewsize() 切换的，
+		// 之后游戏内切档也没有任何入口重算 —— 结果高分辨率下背景只按旧视口平铺，
+		// 四边露底（黑）。修复分两层：
+		//   1) Background::draw/MapBackgrounds::drawbackgrounds 绘制期实时从 Constants 读视口，
+		//      平铺块数现算（A：动态平铺），不再依赖构造期快照；
+		//   2) 兜底色由纯黑改为天空色（C），残余 1px 缝隙不可见。
+		// on_viewport_changed 目前仅作显式刷新钩子（清掉任何视口相关缓存），供三处视口
+		// 切换点调用；即使调用方漏调，绘制期实时计算也能正确适配，双保险。
+		void on_viewport_changed();
 
 		// ---- 天气扩展（纯新增，不改动上面任何既有方法的行为）----
 		// 只画 backgrounds[begin,end) 区间：让调用方能把天气天空素材插在

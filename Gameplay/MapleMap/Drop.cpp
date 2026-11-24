@@ -49,7 +49,8 @@ namespace ms
 			aura_back.reset();
 		}
 
-		if (auras.has_pillar())
+		// 光柱共用一套素材：仅潜能品级 grade>=1 才挂，普通掉落不播。
+		if (grade >= 1 && auras.has_pillar())
 		{
 			aura_pillar = auras.pillar();
 			aura_pillar_ok = true;
@@ -216,21 +217,31 @@ namespace ms
 		}
 	}
 
+	Point<int16_t> Drop::centered_pos(Point<int16_t> absp, const Animation& anim)
+	{
+		// DrawArgument(pos) 令图片 origin 落在 pos；几何中心 = pos - origin + dims/2。
+		// 要几何中心落在 absp：pos = absp + origin - dims/2。
+		Point<int16_t> origin = anim.get_origin();
+		Point<int16_t> dims = anim.get_dimensions();
+		return absp + Point<int16_t>(origin.x() - dims.x() / 2, origin.y() - dims.y() / 2);
+	}
+
 	void Drop::draw_aura_back(Point<int16_t> absp, float alpha) const
 	{
-		// back 层画在图标之下；光柱最先画（参考实现里它是 z 更低的一层，
-		// 且 y 上移 16px，见 dropitemaura.cpp:148 的 effY = dropY - 16）。
+		// 层级（自底向上）：光柱 → aura.back → 图标 → aura.front。
+		// ⑥ 光效几何中心统一对齐装备锚点 absp（飞行中/落地后一致）。
+		// 光柱：几何中心对齐装备（去掉参考实现的 -16 落点上移，B 方案以装备为中心）。
 		if (aura_pillar_ok && !pillar_done)
-			aura_pillar.draw(DrawArgument(absp - Point<int16_t>(0, 16), 1.0f), alpha);
+			aura_pillar.draw(DrawArgument(centered_pos(absp, aura_pillar), 1.0f), alpha);
 
 		if (aura_back_ok)
-			aura_back.draw(DrawArgument(absp, 1.0f), alpha);
+			aura_back.draw(DrawArgument(centered_pos(absp, aura_back), 1.0f), alpha);
 	}
 
 	void Drop::draw_aura_front(Point<int16_t> absp, float alpha) const
 	{
 		if (aura_front_ok)
-			aura_front.draw(DrawArgument(absp, 1.0f), alpha);
+			aura_front.draw(DrawArgument(centered_pos(absp, aura_front), 1.0f), alpha);
 	}
 
 	Rectangle<int16_t> Drop::bounds() const

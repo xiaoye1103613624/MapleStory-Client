@@ -32,7 +32,9 @@ namespace ms
 	public:
 		static constexpr int16_t WIDTH = 240;
 		static constexpr int16_t HEIGHT = 537;
-		static constexpr size_t ATLAS_ID = 0x4D50494Eull; // 'MPIN'
+		// LocalPngTexture GPU id 基址；每张 PNG 须 atlas++，禁止共用同一 id
+		//（ensure_raw 同 id 只上传首次 → 页签/格子会被底板裁片顶替）。
+		static constexpr size_t ATLAS_BASE = 0x4D50494Eull; // 'MPIN'
 
 		enum class Tab : uint8_t
 		{
@@ -64,6 +66,8 @@ namespace ms
 		void update();
 		void remove_cursor();
 		Cursor::State send_cursor(bool clicked, Point<int16_t> cursorpos);
+		// 滚轮：光标落在上区怪物列表走 mob_slider，落在下区掉落网格走 drop_slider。
+		void send_scroll(double yoffset);
 
 	private:
 		struct MobRow

@@ -27,10 +27,10 @@ namespace ms
 {
 	Background::Background(nl::node src)
 	{
-		VWIDTH = Constants::Constants::get().get_viewwidth();
-		VHEIGHT = Constants::Constants::get().get_viewheight();
-		WOFFSET = VWIDTH / 2;
-		HOFFSET = VHEIGHT / 2;
+		// 视口相关成员统一交给 refresh_viewport()：构造期先按当前 Constants 初始化一次，
+		// 之后每次 draw 再按"当时的" Constants 重算 —— 游戏视口在本对象构造之后才切到
+		// game_* 档位、且游戏内可随时切档，构造期快照必然过期（高分露底根因）。
+		refresh_viewport();
 
 		nl::node backsrc = nl::nx::Map001["Back"];
 
@@ -56,13 +56,55 @@ namespace ms
 		moveobj.set_x(src["x"]);
 		moveobj.set_y(src["y"]);
 
-		Type type = typebyid(src["type"]);
+		type = typebyid(src["type"]);
 
 		settype(type);
 	}
 
+	void Background::refresh_viewport()
+	{
+		// 每次绘制/视口变化时调用：视口尺寸来自 Constants 的当前值（进游戏后由
+		// SetFieldHandlers::apply_game_viewsize 写成 game_* 档位，游戏内切档亦会更新）。
+		// 平铺块数用 ceil 而非整除：VWIDTH/cx 向下取整会少铺一列，高分辨率下右/下露底。
+		VWIDTH = Constants::Constants::get().get_viewwidth();
+		VHEIGHT = Constants::Constants::get().get_viewheight();
+		WOFFSET = VWIDTH / 2;
+		HOFFSET = VHEIGHT / 2;
+
+		if (cx > 0 && cy > 0)
+		{
+			const auto ceil_div = [](int32_t total, int32_t unit) -> int16_t {
+				return static_cast<int16_t>((total + unit - 1) / unit);
+			};
+
+			// +3 保留原生视差冗余（rx/ry 平移与滚动余量），ceil 保证任何档位都铺满。
+			switch (type)
+			{
+			case Type::HTILED:
+			case Type::HMOVEA:
+				htile = static_cast<int16_t>(ceil_div(VWIDTH, cx) + 3);
+				break;
+			case Type::VTILED:
+			case Type::VMOVEA:
+				vtile = static_cast<int16_t>(ceil_div(VHEIGHT, cy) + 3);
+				break;
+			case Type::TILED:
+			case Type::HMOVEB:
+			case Type::VMOVEB:
+				htile = static_cast<int16_t>(ceil_div(VWIDTH, cx) + 3);
+				vtile = static_cast<int16_t>(ceil_div(VHEIGHT, cy) + 3);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	void Background::settype(Type type)
 	{
+		// 保存类型供 refresh_viewport 每次按视口重算 htile/vtile。
+		this->type = type;
+
 		int16_t dim_x = animation.get_dimensions().x();
 		int16_t dim_y = animation.get_dimensions().y();
 
@@ -78,23 +120,8 @@ namespace ms
 		htile = 1;
 		vtile = 1;
 
-		switch (type)
-		{
-		case Type::HTILED:
-		case Type::HMOVEA:
-			htile = VWIDTH / cx + 3;
-			break;
-		case Type::VTILED:
-		case Type::VMOVEA:
-			vtile = VHEIGHT / cy + 3;
-			break;
-		case Type::TILED:
-		case Type::HMOVEB:
-		case Type::VMOVEB:
-			htile = VWIDTH / cx + 3;
-			vtile = VHEIGHT / cy + 3;
-			break;
-		}
+		// 构造期也算一次（refresh_viewport 里是同一套 ceil 公式）。
+		refresh_viewport();
 
 		switch (type)
 		{
@@ -111,6 +138,10 @@ namespace ms
 
 	void Background::draw(double viewx, double viewy, float alpha) const
 	{
+		// A 方案核心：绘制期实时按当前视口重算平铺参数，视口变了立刻适配，
+		// 不再依赖构造期快照（进游戏切 game_* 档位、游戏内切档都不通知本类）。
+		const_cast<Background*>(this)->refresh_viewport();
+
 		double x;
 
 		if (moveobj.hmobile())
@@ -156,12 +187,15 @@ namespace ms
 		int16_t ix = static_cast<int16_t>(std::round(x));
 		int16_t iy = static_cast<int16_t>(std::round(y));
 
-		int16_t tw = cx * htile;
-		int16_t th = cy * vtile;
+		// int16_t 在 2560 档 + cx=1 兜底时会溢出（cx*htile 远超 32767），
+		// 平铺跨度改 int32_t，循环变量同样放宽，避免高分下少铺/死循环。
+		int32_t tw = static_cast<int32_t>(cx) * htile;
+		int32_t th = static_cast<int32_t>(cy) * vtile;
 
-		for (int16_t tx = 0; tx < tw; tx += cx)
-			for (int16_t ty = 0; ty < th; ty += cy)
-				animation.draw(DrawArgument(Point<int16_t>(ix + tx, iy + ty), flipped, opacity / 255), alpha);
+		for (int32_t tx = 0; tx < tw; tx += cx)
+			for (int32_t ty = 0; ty < th; ty += cy)
+				animation.draw(DrawArgument(Point<int16_t>(
+					static_cast<int16_t>(ix + tx), static_cast<int16_t>(iy + ty)), flipped, opacity / 255), alpha);
 	}
 
 	void Background::update()
@@ -220,8 +254,18 @@ namespace ms
 	// 后续区间调用不再重复铺底，避免把已画好的天空/山树盖掉。
 	void MapBackgrounds::drawbackgrounds(double viewx, double viewy, float alpha, size_t begin, size_t end) const
 	{
-		if (begin == 0 && (black || backgrounds.empty()))
-			GraphicsGL::get().drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
+		// C 方案：begin==0 时先铺一层全屏底色。旧实现只在 black/空背景时铺纯黑，
+		// 有天空背景的地图根本不铺底 —— 平铺舍入缝隙直接露出 GL clear 色（黑/白块）。
+		// 现在所有地图都铺底：室内(no back base, black)保留深色，户外铺天空蓝，
+		// 任何分辨率下残余 1px 缝隙都与天空相近而不可见。
+		// 注意：这段只执行一次（begin==0），后续区间调用不再铺，避免盖掉天空/山树。
+		if (begin == 0)
+		{
+			if (black)
+				GraphicsGL::get().drawscreenfill(0.0f, 0.0f, 0.0f, 1.0f);
+			else
+				GraphicsGL::get().drawscreenfill(0.42f, 0.66f, 0.86f, 1.0f);
+		}
 
 		if (begin >= backgrounds.size())
 			return;
@@ -243,5 +287,16 @@ namespace ms
 
 		for (auto& foreground : foregrounds)
 			foreground.update();
+	}
+
+	void MapBackgrounds::on_viewport_changed()
+	{
+		// 显式刷新钩子（三处视口切换点调用）。Background 每次 draw 都会实时重算，
+		// 这里再主动刷新一次，保证切换当帧即使尚未 draw 也持有正确的平铺参数。
+		for (auto& background : backgrounds)
+			background.refresh_viewport();
+
+		for (auto& foreground : foregrounds)
+			foreground.refresh_viewport();
 	}
 }

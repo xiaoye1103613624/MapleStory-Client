@@ -45,6 +45,9 @@ namespace ms
 		// Remove all mobs.
 		void clear();
 		void clear_spawns();	// 切图窗口期残留 spawn 队列清理（不动场上对象）
+		// 切图后按当前图 foothold 重锚/丢弃 spawn 队列（对齐 MapNpcs::reanchor_spawns）：
+		// fadeout 窗口内混入的旧图怪包在这里被过滤，避免"怪物跑到新地图"。
+		void reanchor_spawns(const Physics& physics);
 
 		// Update who a mob is controlled by.
 		void set_control(int32_t oid, bool control);
@@ -59,7 +62,7 @@ namespace ms
 		// Calculate the results of an attack.
 		void send_attack(AttackResult& result, const Attack& attack, const std::vector<int32_t>& targets, uint8_t mobcount);
 		// Applies damage to a mob.
-		void apply_damage(int32_t oid, int32_t damage, bool toleft, const AttackUser& user, const SpecialMove& move);
+		void apply_damage(int32_t oid, int32_t damage, bool toleft, const AttackUser& user, const SpecialMove& move, bool lethal = false);
 
 		// Check if the mob with the specified oid exists.
 		bool contains(int32_t oid) const;

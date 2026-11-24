@@ -25,6 +25,7 @@
 #include "../../MapleStory.h"
 
 #include <iostream>
+#include <utility>   // std::move（reanchor_spawns 队列迁移）
 
 #ifdef USE_NX
 #include <nlnx/nx.hpp>
@@ -127,6 +128,47 @@ namespace ms
 		// 若旧图 drop 包已入队未实例化，它会挺过 clear() 并在新图 foothold 上
 		// 重播下落动画（切图时看到的"掉落"）。队列必须清空。
 		std::queue<DropSpawn>().swap(spawns);
+	}
+
+	void MapDrops::reanchor_spawns(const Physics& physics)
+	{
+		// 对称 MapNpcs::reanchor_spawns (MapNpcs.cpp:72-93) / MapMobs::reanchor_spawns
+		// (MapMobs.cpp:128-148)：load 后按【当前图 foothold】重锚 spawn 队列，
+		// 而不是一刀切 clear_spawns（那会误杀 fadeout 窗口内提前发来的新图合法掉落包）。
+		// 与 NPC/Mob 不同点：DropSpawn 没有 fh 字段，落点权威是 dest（Drop::basey
+		// = dest.y()-4，DROPPED→FLOATING 后 set_position(dest.x(), dest.y()-4)），
+		// 故以 dest 为输入、fh 传 0 走 resolve_spawn_point 的"按 x 就近取最上层平台"
+		// 回退路径，回写解析后的 dest；当前图 x 处无落脚点（fhid==0）则丢弃该包。
+		std::queue<DropSpawn> kept;
+		size_t checked = 0;
+		size_t dropped = 0;
+
+		while (!spawns.empty())
+		{
+			DropSpawn spawn = std::move(spawns.front());
+			spawns.pop();
+			++checked;
+
+			SpawnPoint resolved = physics.resolve_spawn_point(spawn.get_destination(), 0);
+			if (resolved.fhid == 0)
+			{
+				// 旧图残留包：当前图无落脚点，丢弃（与新图掉落动画残留根因对应）。
+				++dropped;
+				continue;
+			}
+
+			spawn.set_destination(resolved.position);
+			kept.push(std::move(spawn));
+		}
+		spawns.swap(kept);
+		// 注意：swap 后 kept 为空、保留下来的包在 spawns 里，日志取 spawns.size()。
+		// 上线级里程碑：仅在发生丢弃时打 WARN（换图窗口期有旧图残留包属异常但可自愈），
+		// 正常 0 丢弃不刷屏；详情走 DEBUG。
+		LOG(LOG_DEBUG, "MapDrops: reanchor_spawns checked=" << checked
+			<< " kept=" << spawns.size() << " dropped=" << dropped);
+		if (dropped > 0)
+			LOG(LOG_WARN, "MapDrops: reanchor_spawns dropped " << dropped
+				<< " stale drop spawn(s) with no foothold on current map");
 	}
 
 	void MapDrops::clear()

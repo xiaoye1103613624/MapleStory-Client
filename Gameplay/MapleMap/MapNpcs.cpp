@@ -41,7 +41,10 @@ namespace ms
 			if (npcs.contains(oid))
 				npcs.remove(oid);
 
-			npcs.add(spawn.instantiate(physics));
+			// 旧图残留 spawn 包在当前图 x 处无平台时 instantiate 返回 nullptr，
+			// 直接丢弃——不再让 NPC 用旧 fh 在新图落地后被重力拉到下方平台。
+			if (auto obj = spawn.instantiate(physics))
+				npcs.add(std::move(obj));
 		}
 
 		npcs.update(physics);
@@ -64,6 +67,29 @@ namespace ms
 		// 新图找不到 foothold → onground=false → 被 GRAVFORCE 拉着坠落
 		// （"切图时 NPC 掉落"）。待生成队列必须清空。
 		std::queue<NpcSpawn>().swap(spawns);
+	}
+
+	void MapNpcs::reanchor_spawns(const Physics& physics)
+	{
+		// load 后对新旧 spawn 包按【当前图 foothold】重锚，替代一刀切 clear_spawns：
+		// - fh/位置仍落在新图平台上 → 原样保留（服务端 fadeout 期间提前发来的新图包不被误杀）
+		// - fh 指向旧图/竖墙/x 无平台 → resolve 回退按 x 就近选平台并回写 fh；
+		//   当前图 x 处完全无平台则丢弃（旧图残留，避免掉进地图边界下方）。
+		// 与 instantiate 时的 resolve 幂等，双保险。
+		std::queue<NpcSpawn> kept;
+		while (!spawns.empty())
+		{
+			NpcSpawn spawn = std::move(spawns.front());
+			spawns.pop();
+
+			SpawnPoint resolved = physics.resolve_spawn_point(spawn.get_position(), spawn.get_fh());
+			if (resolved.fhid == 0)
+				continue; // 旧图残留包：当前图无落脚点，丢弃
+
+			spawn.set_fh(resolved.fhid);
+			kept.push(std::move(spawn));
+		}
+		spawns.swap(kept);
 	}
 
 	void MapNpcs::clear()
