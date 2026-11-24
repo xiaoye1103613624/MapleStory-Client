@@ -736,9 +736,15 @@ namespace ms
 			return false;
 
 		const int32_t lv = level > 0 ? level : get_skills().get_level(skillid);
-		const double lvval = static_cast<double>(lv < 1 ? 1 : lv);
-		const double h = 3.2 + 0.12 * lvval;
-		const double v = -(1.8 + 0.04 * lvval);
+		// 三端 IDA 校准（cal-move）：083 BoundJump@0x96be38 / 095 @0x93fdf0 同为
+		// h=±(40*(lv/4)+350) px/s、v=-(20*(lv/4)+250) px/s；192 演进为 +450/+350。
+		// 原生是 px/s，本端物理是 px/tick（TIMESTEP=8ms），故统一乘 scale 换算，
+		// 与同文件 apply_recoil 的口径一致。此前 MinMS 冲量 (3.2+0.12lv px/tick)
+		// 斜率/基数都与三端不同（lv30 时 850 vs 原生 650 px/s）。
+		const double scale = static_cast<double>(Constants::TIMESTEP) / 1000.0;
+		const int32_t q = (lv > 0 ? lv : 1) / 4;
+		const double h = (40.0 * static_cast<double>(q) + 350.0) * scale;
+		const double v = -(20.0 * static_cast<double>(q) + 250.0) * scale;
 
 		phobj.hspeed = getflip() ? h : -h;
 		if (phobj.vspeed > v)
@@ -775,9 +781,9 @@ namespace ms
 		if (hdir == 0 && vdir == 0)
 			hdir = getflip() ? 1 : -1;
 
+		// 原生直接取 SKILLLEVELDATA.nRange（三端无 400 硬上限），本端 range 已由
+		// Combat::apply_use_movement 从 stats.hrange*100 传入，此处仅兜默认。
 		int16_t dist = range > 0 ? range : 130;
-		if (dist > 400)
-			dist = 400;
 
 		phobj.hspeed = 0.0;
 		phobj.hforce = 0.0;
@@ -795,32 +801,31 @@ namespace ms
 			const int16_t feet_y = phobj.get_y();
 			const Range<int16_t> walls = fht->get_walls();
 
-			// 按 1/4 递进回溯：满距离 → 3/4 → 1/2 → 1/4，取第一个有落脚点的 x。
-			// resolve_spawn_point(x, 0) 内部走 get_fhid_at_x：只要 x 水平覆盖任一
-			// 非墙 foothold 就回其 fhid，否则回 0 —— 判据只依赖 x 覆盖，稳定且
-			// 不受 spawn 包 y/cy 偏差影响；这里仅用其 fhid 做「有无落脚」判定。
+			// 三端 IDA 校准（cal-move）：083 TryRegisterTeleport@0x957b74 /
+			// 095 @0x913690 / 192 @0x1901190 均为「单步 ±nRange → 上下 foothold
+			// 取近者 → CanGoThrough 怪体过滤」，无 1/4 递进回溯、无 400 硬上限。
+			// 本端 FootholdTree 无 CanGoThrough/ground_above 原语、无倒立状态，
+			// 故做能对齐的部分（单步落点 + 下方 foothold 可站判定），
+			// 怪体阻挡/倒立取反显式降级，不发明不存在的引擎能力。
 			bool landed = false;
 			int16_t landed_x = from_x;
-			for (int step = 4; step >= 1; --step)
 			{
-				int32_t cand = static_cast<int32_t>(from_x)
-					+ hdir * static_cast<int32_t>(dist * step / 4);
-
-				// 先夹到 int16 可表示范围，避免转型回绕。
+				int32_t cand = static_cast<int32_t>(from_x) + hdir * static_cast<int32_t>(dist);
 				if (cand < -32768) cand = -32768;
 				if (cand > 32767) cand = 32767;
 				int16_t cx = static_cast<int16_t>(cand);
 
-				// 地图边界兜底：即便 foothold 查询异常也不越出可走范围。
-				if (!walls.empty() && !walls.contains(cx))
-					continue;
-
-				SpawnPoint probe = fht->resolve_spawn_point(Point<int16_t>(cx, feet_y), 0);
-				if (probe.fhid != 0)
+				if (walls.empty() || walls.contains(cx))
 				{
-					landed = true;
-					landed_x = cx;
-					break;
+					// 下方 foothold 有平台线即可站（原生取上下最近者，本端只有下方查询；
+					// get_y_below 返回 borders.second 表示无平台）。
+					int16_t ground = fht->get_y_below(Point<int16_t>(cx, feet_y));
+					SpawnPoint probe = fht->resolve_spawn_point(Point<int16_t>(cx, feet_y), 0);
+					if (probe.fhid != 0 && ground < 32767)
+					{
+						landed = true;
+						landed_x = cx;
+					}
 				}
 			}
 

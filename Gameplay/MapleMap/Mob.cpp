@@ -1039,14 +1039,20 @@ namespace ms
 			maxdamage += defmax * ignored;
 		}
 
-		// 四源对照 A1：元素克制（MinMS Mob.cpp:7438-7475 adjust_attack_damage 同源，
-		// 标注为现代化增强、非 083 原生逐证）。技能 elemAttr 首字母 F/I/L/S/H/D，
-		// 怪物 info/elemAttr 为「字母+强度码」成对串：1=免疫(返回1.0)、2=弱点×0.5、
-		// 3=抗性×1.5。s9 服务端权威结算伤害，此处只调客户端飘字表现层。
-		if (!attack.element.empty() && elemattr.size() >= 2)
+		// 三端 IDA 校准（cal-move）：083 CalcDamage/PDamage 无元素伤害倍率（本段属
+		// 跨版本增强）；095 get_damage_adjusted_by_elemAttr@0x7231E0 / 192 @0xFCC020
+		// 语义 = digit1 免疫(1-dAdjust)=0、digit2(1-0.5)=×0.5 抗性减半、
+		// digit3 (0.5+1)=×1.5 弱点增伤(夹伤害下限)。技能 elemAttr 字母索引
+		// P0/I1/F2/L3/S4/H5/D6/U7(/G8)；怪物 info/elemAttr 为「字母+强度码」成对串。
+		// 三端均要求 技能ID有效+等级>0 才调整（普攻不参与）。
+		// 本端差异：s9 服务端不做元素倍率、伤害以客户端发包为准；原生 digit1 归零，
+		// 本端保留 1 点兜底（避免 s9 damage=0 边界），属已知偏离，显式标注。
+		if (attack.skill > 0 && !attack.element.empty() && elemattr.size() >= 2)
 		{
 			const char atk = static_cast<char>(std::toupper(
 				static_cast<unsigned char>(attack.element.front())));
+			const double orig_min = mindamage;
+			const double orig_max = maxdamage;
 			for (size_t i = 0; i + 1 < elemattr.size(); i += 2)
 			{
 				const char me = static_cast<char>(std::toupper(
@@ -1055,16 +1061,16 @@ namespace ms
 					continue;
 				switch (elemattr[i + 1])
 				{
-				case '1':  // 免疫
+				case '1':  // 免疫：原生×0，本端 s9 兜底 1 点（偏离已标注）
 					mindamage = maxdamage = 1.0;
 					break;
-				case '2':  // 弱点：伤害减半（MinMS ×0.5）
+				case '2':  // 抗性：伤害减半（三端 (1-0.5)）
 					mindamage *= 0.5;
 					maxdamage *= 0.5;
 					break;
-				case '3':  // 抗性：伤害×1.5（MinMS ×1.5）
-					mindamage *= 1.5;
-					maxdamage *= 1.5;
+				case '3':  // 弱点：伤害×1.5，夹下限为原伤害（三端原生语义）
+					mindamage = std::max(orig_min, mindamage * 1.5);
+					maxdamage = std::max(orig_max, maxdamage * 1.5);
 					break;
 				default:
 					break;
