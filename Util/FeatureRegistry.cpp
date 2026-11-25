@@ -12,6 +12,7 @@
 #include "../IO/UITypes/UIBattleStats.h"
 #include "../IO/UITypes/UIAuction.h"
 #include "../IO/UITypes/UIFamiliar.h"
+#include "../IO/UITypes/UIVMatrix.h"
 #include "../IO/UITypes/UIDamageSkinPicker.h"
 #include "../IO/UITypes/UIBeautySalon.h"
 #include "../IO/UITypes/UIAnvilDialog.h"
@@ -118,6 +119,9 @@ namespace ms
 				// 197 TMS280 精灵收藏：此处仅注册 builtin id（@familiar / open_ui），
 				// 按需求不挂侧栏图标（StatusBar 入口由 lead 后续接）。
 				add("familiar", u8"精灵收藏", "Familiar", [] { UI::get().emplace<UIFamiliar>(); });
+				// 197 TMS280 V 矩阵/核心：此处仅注册 builtin id（@vmatrix / open_ui），
+				// 按需求不挂侧栏图标（StatusBar/原生入口由 lead 后续接）。
+				add("vmatrix", u8"V 矩阵", "VMatrix", [] { UI::get().emplace<UIVMatrix>(); });
 
 				return t;
 			}

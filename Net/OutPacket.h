@@ -363,7 +363,12 @@ namespace ms
 			/// 197 TMS280 精灵收藏 C→S（RecvOpcode.FAMILIAR_ACTION = 0x3760 = 14176）：
 			/// 包体 = int mode(0进入/1召唤切换/2升级) + 按模式 int familiarId。
 			/// 详见 Net/Packets/FamiliarPackets.h；与 S→C 0x3761/0x3762 分属两张表。
-			FAMILIAR_ACTION = 14176
+			FAMILIAR_ACTION = 14176,
+			/// 197 TMS280 V 矩阵/核心 C→S（RecvOpcode.VCORE_ACTION = 0x3770 = 14192）：
+			/// 包体 = int action(0装备/1卸下/4强化/5分解) + 按 action 字段，
+			/// 字段按服务端 VCoreHandler.java 真实布局，详见 Net/Packets/VCorePackets.h。
+			/// 与 S→C 0x3771/0x3772 分属两张表。
+			VCORE_ACTION = 14192
 		};
 
 	protected:

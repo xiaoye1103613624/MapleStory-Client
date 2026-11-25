@@ -572,10 +572,16 @@
     <ClCompile Include="Net\Handlers\FamiliarHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Net\Handlers\VCoreHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IO\UITypes\UIAuction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\UITypes\UIFamiliar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIVMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp">
@@ -1485,6 +1491,12 @@
     <ClInclude Include="Net\Handlers\FamiliarHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Net\Handlers\VCoreHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\VCorePackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Net\Packets\AuctionPackets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1501,6 +1513,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\UIFamiliarState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIVMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\VCoreState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WorldMapHandlers.h">

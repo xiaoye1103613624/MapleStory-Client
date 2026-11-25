@@ -45,6 +45,7 @@
 #include "Handlers/TestingHandlers.h"
 #include "Handlers/AuctionHandlers.h"
 #include "Handlers/FamiliarHandlers.h"
+#include "Handlers/VCoreHandlers.h"
 
 #include "../Configuration.h"
 
@@ -477,7 +478,13 @@ namespace ms
 		/// FAMILIAR_LIST 0x3761：int count + ×{... 详见 FamiliarHandlers.h}
 		/// FAMILIAR_RESULT 0x3762：int mode + int code + int familiarId
 		FAMILIAR_LIST = 0x3761,
-		FAMILIAR_RESULT = 0x3762
+		FAMILIAR_RESULT = 0x3762,
+		/// 197 TMS280 V 矩阵/核心 S→C（s9 SendOpcode / 服务端 impl-vcore agent）：
+		/// VCORE_LIST 0x3771：int count + ×{int vcoreid, byte slot, byte level,
+		///                     int skill1, int skill2, int skill3, int index}
+		/// VCORE_RESULT 0x3772：int action + int code + int vcoreid
+		VCORE_LIST = 0x3771,
+		VCORE_RESULT = 0x3772
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -895,6 +902,10 @@ namespace ms
 		// 197 TMS280 精灵收藏 S→C 两连包（0x3761/0x3762）
 		emplace<FAMILIAR_LIST, FamiliarListHandler>();
 		emplace<FAMILIAR_RESULT, FamiliarResultHandler>();
+
+		// 197 TMS280 V 矩阵/核心 S→C 两连包（0x3771/0x3772）
+		emplace<VCORE_LIST, VCoreListHandler>();
+		emplace<VCORE_RESULT, VCoreResultHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -1293,6 +1304,8 @@ namespace ms
 			case 0x3754: opcode_msg = "AUCTION_BUY_RESULT"; break;
 			case 0x3761: opcode_msg = "FAMILIAR_LIST"; break;
 			case 0x3762: opcode_msg = "FAMILIAR_RESULT"; break;
+			case 0x3771: opcode_msg = "VCORE_LIST"; break;
+			case 0x3772: opcode_msg = "VCORE_RESULT"; break;
 			default: break;
 		}
 
