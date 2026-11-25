@@ -403,6 +403,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIFamiliar.cpp" />
     <ClCompile Include="IO\UITypes\UIVMatrix.cpp" />
     <ClCompile Include="Net\Handlers\VCoreHandlers.cpp" />
+    <ClCompile Include="IO\UITypes\UIForce.cpp" />
+    <ClCompile Include="Net\Handlers\ForceHandlers.cpp" />
     <ClCompile Include="IO\UITypes\UIWindowCashShop.cpp" />
     <ClCompile Include="Net\Handlers\DueyHandlers.cpp" />
     <ClCompile Include="Net\Handlers\FredrickHandlers.cpp" />
@@ -842,6 +844,10 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\VCoreState.h" />
     <ClInclude Include="Net\Packets\VCorePackets.h" />
     <ClInclude Include="Net\Handlers\VCoreHandlers.h" />
+    <ClInclude Include="IO\UITypes\UIForceState.h" />
+    <ClInclude Include="IO\UITypes\UIForce.h" />
+    <ClInclude Include="Net\Packets\ForcePackets.h" />
+    <ClInclude Include="Net\Handlers\ForceHandlers.h" />
     <ClInclude Include="Net\Handlers\DueyHandlers.h" />
     <ClInclude Include="IO\UITypes\UICharSelect.h" />
     <ClInclude Include="IO\UITypes\UIChat.h" />

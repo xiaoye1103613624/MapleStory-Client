@@ -584,6 +584,12 @@
     <ClCompile Include="IO\UITypes\UIVMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IO\UITypes\UIForce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\Handlers\ForceHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1519,6 +1525,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO\UITypes\VCoreState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIForceState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\ForcePackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\ForceHandlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WorldMapHandlers.h">

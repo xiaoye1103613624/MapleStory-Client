@@ -303,6 +303,10 @@ namespace ms
 			/// 197 TMS280 V 矩阵/核心窗（UIVMatrix；VMatrixUI.img/VMatrix，@vmatrix 入口，
 			/// C→S 0x3770 / S→C 0x3771..0x3772）。新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
 			VMATRIX,
+			/// 197 TMS280 神秘之力/奥术之力窗（UIForce；UIArcaneForce.img/ArcEquip +
+			/// UIAuthenticForce.img/AutEquip，@force 入口，C→S 0x3780 / S→C 0x3781）。
+			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
+			FORCE,
 			NUM_TYPES
 		};
 

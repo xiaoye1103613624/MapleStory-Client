@@ -368,7 +368,11 @@ namespace ms
 			/// 包体 = int action(0装备/1卸下/4强化/5分解) + 按 action 字段，
 			/// 字段按服务端 VCoreHandler.java 真实布局，详见 Net/Packets/VCorePackets.h。
 			/// 与 S→C 0x3771/0x3772 分属两张表。
-			VCORE_ACTION = 14192
+			VCORE_ACTION = 14192,
+			/// 197 TMS280 神秘之力/奥术之力 C→S（RecvOpcode.FORCE_ACTION = 0x3780 = 14208）：
+			/// 包体 = int mode(0查询/1升级神秘/2升级奥术)，无其它载荷。
+			/// 详见 Net/Packets/ForcePackets.h；与 S→C 0x3781 分属两张表。
+			FORCE_ACTION = 14208
 		};
 
 	protected:

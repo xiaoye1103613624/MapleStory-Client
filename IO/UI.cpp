@@ -514,6 +514,8 @@ namespace ms
 				types.emplace_back(UIElement::Type::FAMILIAR);
 				// 197 V 矩阵：Esc 交由 UIVMatrix::send_key 关闭。
 				types.emplace_back(UIElement::Type::VMATRIX);
+				// 197 神秘/奥术之力：Esc 交由 UIForce::send_key 关闭。
+				types.emplace_back(UIElement::Type::FORCE);
 				}
 				else if (enter)
 				{

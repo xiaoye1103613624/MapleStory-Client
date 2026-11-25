@@ -46,6 +46,7 @@
 #include "Handlers/AuctionHandlers.h"
 #include "Handlers/FamiliarHandlers.h"
 #include "Handlers/VCoreHandlers.h"
+#include "Handlers/ForceHandlers.h"
 
 #include "../Configuration.h"
 
@@ -484,7 +485,11 @@ namespace ms
 		///                     int skill1, int skill2, int skill3, int index}
 		/// VCORE_RESULT 0x3772：int action + int code + int vcoreid
 		VCORE_LIST = 0x3771,
-		VCORE_RESULT = 0x3772
+		VCORE_RESULT = 0x3772,
+		/// 197 TMS280 神秘之力/奥术之力 S→C（s9 SendOpcode / 服务端 impl-force agent）：
+		/// FORCE_INFO 0x3781：int arcaneForce + int authenticForce + int arcaneLevel
+		///                     + int authenticLevel（4×int = 16B）
+		FORCE_INFO = 0x3781
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -906,6 +911,9 @@ namespace ms
 		// 197 TMS280 V 矩阵/核心 S→C 两连包（0x3771/0x3772）
 		emplace<VCORE_LIST, VCoreListHandler>();
 		emplace<VCORE_RESULT, VCoreResultHandler>();
+
+		// 197 TMS280 神秘之力/奥术之力 S→C（0x3781）
+		emplace<FORCE_INFO, ForceInfoHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -1306,6 +1314,7 @@ namespace ms
 			case 0x3762: opcode_msg = "FAMILIAR_RESULT"; break;
 			case 0x3771: opcode_msg = "VCORE_LIST"; break;
 			case 0x3772: opcode_msg = "VCORE_RESULT"; break;
+			case 0x3781: opcode_msg = "FORCE_INFO"; break;
 			default: break;
 		}
 
