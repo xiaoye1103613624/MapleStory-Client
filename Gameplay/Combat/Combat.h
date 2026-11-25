@@ -26,6 +26,7 @@
 
 #include "../../Character/Player.h"
 #include "../../Template/TimedQueue.h"
+#include <chrono>
 
 namespace ms
 {
@@ -41,6 +42,10 @@ namespace ms
 
 		// Make the player use a special move
 		void use_move(int32_t move_id);
+		// KeyDown 蓄力：按下沿开始/松开沿释放（三端原生 is_keydown_skill + OnKeyDownSkillEnd）。
+		// 返回 true 表示该技能是蓄力技能且本次按键已被状态机接管（调用方不再按普通键处理）。
+		bool begin_keydown(int32_t move_id);
+		bool end_keydown(int32_t move_id);
 		// Angel CMacroSysMan::Update 语义：宏的三个技能入队，每个等前一个
 		// 真正可攻击（动画硬直结束）后再放，间隔 MACRO_GAP 帧防同帧连发。
 		void use_macro(int32_t skill1, int32_t skill2, int32_t skill3);
@@ -104,6 +109,12 @@ namespace ms
 		// 终极攻击延迟队列（MinMS Combat.cpp:201/204）：普攻命中后按 finalAttack
 		// 链接+武器+prop 概率入队，等主攻击动作播完再施放 FA 技能（发攻击包）。
 		TimedQueue<int32_t> pending_final_attacks;
+
+		// KeyDown 蓄力状态（MinMS/CUserLocal +3147 起始时刻 / +2745 active）。
+		// 用 steady_clock 毫秒计时；charge 钳制 [30, cap]，cap=1000 或 2000。
+		int32_t keydown_skill = 0;
+		std::chrono::steady_clock::time_point keydown_start{};
+		int32_t pending_charge = 0; // 本次释放要写进攻击包的 charge
 
 		std::list<BulletEffect> bullets;
 		std::list<DamageNumber> damagenumbers;

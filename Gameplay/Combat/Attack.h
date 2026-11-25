@@ -70,6 +70,8 @@ namespace ms
 		uint8_t speed = 0;
 		uint8_t stance = 0;
 		int32_t skill = 0;
+		// 蓄力毫秒数（KeyDown 状态机）：仅 has_charge_field 技能发包时消费。
+		int32_t charge = 0;
 		int32_t bullet = 0;
 
 		Point<int16_t> origin;
@@ -124,6 +126,7 @@ namespace ms
 			type = attack.type;
 			hitcount = attack.hitcount;
 			skill = attack.skill;
+			charge = attack.charge;
 			speed = attack.speed;
 			stance = attack.stance;
 			bullet = attack.bullet;

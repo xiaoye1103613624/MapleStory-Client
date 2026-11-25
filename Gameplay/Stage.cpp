@@ -690,8 +690,16 @@ namespace ms
 			case KeyType::Id::SKILL:
 				// MinMS Stage::send_key：技能只在按下沿触发；松开沿再 use_move
 				// 会让瞬移连放两次、二段跳二次空包（仍发 USE_SKILL(91)）。
+				// KeyDown 蓄力技例外（三端原生）：按下沿起手、松开沿按蓄力时长施放。
 				if (down)
-					combat.use_move(action);
+				{
+					if (!combat.begin_keydown(action))
+						combat.use_move(action);
+				}
+				else
+				{
+					combat.end_keydown(action);
+				}
 				break;
 			case KeyType::Id::MACRO:
 				// Angel v43[7]=1 + CMacroSysMan::Update：整行宏绑到键位后，按键

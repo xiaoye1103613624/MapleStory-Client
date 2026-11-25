@@ -154,6 +154,65 @@ namespace ms
 		macro_cooldown = 1;
 	}
 
+	// 三端原生对齐（Angel is_keydown_skill@0x4fb08f 白名单 + sub_500971 上限）：
+	// 蓄力技按下沿只起手不施放，松开沿按按住毫秒数发攻击包。
+	static bool is_keydown_cast_skill(int32_t id)
+	{
+		switch (id)
+		{
+			case 1121001: case 1221001: case 1321001: // 战士 三转持续
+			case 2121001: case 2221001: case 2321001: // 法师 BIG_BANG
+			case 3121004: case 3221001:              // 弓手 连射
+			case 22121000: case 22151001:             // Evan 冰/火Breath
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	static int32_t keydown_cap(int32_t id)
+	{
+		// Angel sub_500971：战士/法师/BIG_BANG=1000ms，弓手/Evan=2000ms。
+		switch (id)
+		{
+			case 3121004: case 3221001:
+			case 22121000: case 22151001:
+				return 2000;
+			default:
+				return 1000;
+		}
+	}
+
+	bool Combat::begin_keydown(int32_t move_id)
+	{
+		if (!is_keydown_cast_skill(move_id))
+			return false;
+		if (player.get_char_state() == Char::State::DIED || player.is_attacking())
+			return false;
+		keydown_skill = move_id;
+		keydown_start = std::chrono::steady_clock::now();
+		return true; // 已接管：本次不按普通键施放
+	}
+
+	bool Combat::end_keydown(int32_t move_id)
+	{
+		if (keydown_skill != move_id)
+			return false;
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now() - keydown_start).count();
+		int32_t charge = static_cast<int32_t>(elapsed);
+		if (charge < 30)
+			charge = 30;
+		const int32_t cap = keydown_cap(move_id);
+		if (charge > cap)
+			charge = cap;
+		keydown_skill = 0;
+		pending_charge = charge; // use_move 内取用后立即清零
+		use_move(move_id);
+		pending_charge = 0;
+		return true;
+	}
+
 	void Combat::use_move(int32_t move_id)
 	{
 		if (player.get_char_state() == Char::State::DIED || player.is_attacking())
@@ -193,6 +252,12 @@ namespace ms
 		if (move.is_attack())
 		{
 			Attack attack = player.prepare_attack(move.is_skill());
+			// KeyDown 蓄力：把松手时算出的 charge 写进攻击包（has_charge_field 技能消费）。
+			if (pending_charge > 0)
+			{
+				attack.charge = pending_charge;
+				pending_charge = 0;
+			}
 
 			move.apply_useeffects(player);
 			move.apply_actions(player, attack.type);
