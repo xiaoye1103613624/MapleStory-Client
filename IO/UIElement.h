@@ -294,6 +294,12 @@ namespace ms
 			/// 战斗统计窗（UIBattleStats，192 Battle Analysis；侧栏/状态栏入口，0x3BC/0x3BD）。
 			/// 新增项改变 EnumMap<Type,UPtr,NUM_TYPES> 尺寸 → 必须整工程 Rebuild。
 			BATTLESTATS,
+			/// 拍卖行窗（UIAuction；192 UIAuction.img，Status栏拍卖按钮 / @auction 入口，
+			/// C→S 0x3751 / S→C 0x3750..0x3754）。新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			AUCTION,
+			/// 197 TMS280 精灵收藏窗（UIFamiliar；UIFamiliar.img/book，@familiar 入口，
+			/// C→S 0x3760 / S→C 0x3761..0x3762）。新增项改变 EnumMap 尺寸 → 必须整工程 Rebuild。
+			FAMILIAR,
 			NUM_TYPES
 		};
 

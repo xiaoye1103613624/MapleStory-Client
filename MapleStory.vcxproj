@@ -219,6 +219,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="Weather\WeatherBackLayers.cpp" />
     <ClCompile Include="Weather\WeatherLamps.cpp" />
     <ClCompile Include="Weather\WeatherGround.cpp" />
+    <ClCompile Include="Weather\WeatherWind.cpp" />
+    <ClCompile Include="Weather\WeatherSway.cpp" />
     <ClCompile Include="Character\EquipStat.cpp" />
     <ClCompile Include="Character\ExpTable.cpp" />
     <ClCompile Include="Character\Inventory\Equip.cpp" />
@@ -395,6 +397,10 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClCompile Include="IO\UITypes\UIFamilyTree.cpp" />
     <ClCompile Include="IO\UITypes\UIMemo.cpp" />
     <ClCompile Include="Net\Handlers\WaveAShellHandlers.cpp" />
+    <ClCompile Include="Net\Handlers\AuctionHandlers.cpp" />
+    <ClCompile Include="Net\Handlers\FamiliarHandlers.cpp" />
+    <ClCompile Include="IO\UITypes\UIAuction.cpp" />
+    <ClCompile Include="IO\UITypes\UIFamiliar.cpp" />
     <ClCompile Include="IO\UITypes\UIWindowCashShop.cpp" />
     <ClCompile Include="Net\Handlers\DueyHandlers.cpp" />
     <ClCompile Include="Net\Handlers\FredrickHandlers.cpp" />
@@ -610,6 +616,8 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="Weather\WeatherBackLayers.h" />
     <ClInclude Include="Weather\WeatherLamps.h" />
     <ClInclude Include="Weather\WeatherGround.h" />
+    <ClInclude Include="Weather\WeatherWind.h" />
+    <ClInclude Include="Weather\WeatherSway.h" />
     <ClInclude Include="IO\UITypes\UIStatsLayoutV4.h" />
     <ClInclude Include="Character\EquipStat.h" />
     <ClInclude Include="Character\ExpTable.h" />
@@ -820,6 +828,14 @@ xcopy /y /d /i "$(ProjectDir)locale\*.ini" "$(OutDir)locale\"</Command>
     <ClInclude Include="IO\UITypes\UIGuildBBS.h" />
     <ClInclude Include="IO\UITypes\UIGuildBoss.h" />
     <ClInclude Include="Net\Handlers\WaveAShellHandlers.h" />
+    <ClInclude Include="Net\Handlers\AuctionHandlers.h" />
+    <ClInclude Include="Net\Handlers\FamiliarHandlers.h" />
+    <ClInclude Include="Net\Packets\AuctionPackets.h" />
+    <ClInclude Include="Net\Packets\FamiliarPackets.h" />
+    <ClInclude Include="IO\UITypes\UIAuction.h" />
+    <ClInclude Include="IO\UITypes\UIAuctionState.h" />
+    <ClInclude Include="IO\UITypes\UIFamiliar.h" />
+    <ClInclude Include="IO\UITypes\UIFamiliarState.h" />
     <ClInclude Include="Net\Handlers\DueyHandlers.h" />
     <ClInclude Include="IO\UITypes\UICharSelect.h" />
     <ClInclude Include="IO\UITypes\UIChat.h" />

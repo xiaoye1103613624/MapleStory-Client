@@ -221,6 +221,11 @@ namespace ms
 		BodyLine slots_preview;
 		BodyLine hammers;
 		BodyLine hammers_preview;
+		// 197 武器级突破上限行（方案 C）：有突破值时才显示，主窗/对比窗各一条。
+		bool has_breakthrough_line = false;
+		bool has_breakthrough_line_preview = false;
+		Text breakthrough_line;
+		Text breakthrough_line_preview;
 		// 交易限制行：079 原生在名称区下方叠高展示（m00304 ④），
 		// 不属于分隔线以下属性块；对照 Angel 上游 ItemTooltip 名称下 quality 行。
 		BodyLine trade_line;
@@ -256,13 +261,14 @@ namespace ms
 		Equip::Potential prank;
 		Equip::Potential prank_preview;
 
-		// 095 潜能/魔方：3 条主潜能 + 2 条 bonus 潜能行（值为 PotentialOption.img 行 id）。
-		bool haspotlines[5] = {};
-		Text potlines[5];
-		bool haspotlines_preview[5] = {};
-		Text potlines_preview[5];
+		// 095 潜能/魔方：3 条主潜能 + 3 条 bonus 潜能行（值为 PotentialOption / 197 option id）。
+		// 2026-11-25 D2：bonus 扩到 3 槽，对齐 197 六槽模型。
+		bool haspotlines[6] = {};
+		Text potlines[6];
+		bool haspotlines_preview[6] = {};
+		Text potlines_preview[6];
 		// 095 布局：潜在属性(绿●) / 附加潜能(紫●) 分组标题行。
-		// i=0..2 归潜在，i=3..4 归附加；各块仅在该组有词条时画标题。
+		// i=0..2 归潜在，i=3..5 归附加；各块仅在该组有词条时画标题。
 		Text pot_title;
 		Text bonus_title;
 		Text pot_title_preview;

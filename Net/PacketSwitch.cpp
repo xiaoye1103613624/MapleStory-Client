@@ -43,6 +43,8 @@
 #include "Handlers/QuestHandlers.h"
 #include "Handlers/SetFieldHandlers.h"
 #include "Handlers/TestingHandlers.h"
+#include "Handlers/AuctionHandlers.h"
+#include "Handlers/FamiliarHandlers.h"
 
 #include "../Configuration.h"
 
@@ -457,11 +459,25 @@ namespace ms
 		BREAKTHROUGH_STONE_SNAPSHOT = 0x371C,
 		/// 192 UI_004 强化族结果快照（s9 SendOpcode.ENHANCE_RESULT = 0x371E）
 		ENHANCE_RESULT = 0x371E,
+		/// 魔女森林全服获奖广播（s9 SendOpcode.WITCH_FOREST_BROADCAST = 0x371F）
+		WITCH_FOREST_BROADCAST = 0x371F,
 		/// 伤害皮肤 picker（s9 SendOpcode 0x3746..0x3749）
 		DAMAGE_SKIN_CATALOG = 0x3746,
 		DAMAGE_SKIN_INVENTORY = 0x3747,
 		DAMAGE_SKIN_RESULT = 0x3748,
-		DAMAGE_SKIN_BROADCAST = 0x3749
+		DAMAGE_SKIN_BROADCAST = 0x3749,
+		/// 192 拍卖行 S→C 五连包（s9 SendOpcode AUCTION_*，注意 0x3751 与 C→S
+		/// AUCTION_ACTION 同值但分属 In/Out 两张表，不冲突）。
+		AUCTION_MESSAGE = 0x3750,
+		AUCTION_LIST = 0x3751,
+		AUCTION_SELL_LIST = 0x3752,
+		AUCTION_COMPLETE_LIST = 0x3753,
+		AUCTION_BUY_RESULT = 0x3754,
+		/// 197 TMS280 精灵收藏 S→C（s9 SendOpcode / 服务端 impl-familiar agent）：
+		/// FAMILIAR_LIST 0x3761：int count + ×{... 详见 FamiliarHandlers.h}
+		/// FAMILIAR_RESULT 0x3762：int mode + int code + int familiarId
+		FAMILIAR_LIST = 0x3761,
+		FAMILIAR_RESULT = 0x3762
 	};
 
 	PacketSwitch::PacketSwitch()
@@ -867,6 +883,18 @@ namespace ms
 		emplace<WITCH_FOREST_SNAPSHOT, WitchForestHandler>();
 		emplace<BREAKTHROUGH_STONE_SNAPSHOT, BreakthroughStoneHandler>();
 		emplace<ENHANCE_RESULT, EnhanceResultHandler>();
+		emplace<WITCH_FOREST_BROADCAST, WitchForestBroadcastHandler>();
+
+		// 192 拍卖行 S→C 五连包（0x3750..0x3754）
+		emplace<AUCTION_MESSAGE, AuctionMessageHandler>();
+		emplace<AUCTION_LIST, AuctionListHandler>();
+		emplace<AUCTION_SELL_LIST, AuctionSellListHandler>();
+		emplace<AUCTION_COMPLETE_LIST, AuctionCompleteListHandler>();
+		emplace<AUCTION_BUY_RESULT, AuctionBuyResultHandler>();
+
+		// 197 TMS280 精灵收藏 S→C 两连包（0x3761/0x3762）
+		emplace<FAMILIAR_LIST, FamiliarListHandler>();
+		emplace<FAMILIAR_RESULT, FamiliarResultHandler>();
 	}
 
 	void PacketSwitch::forward(const int8_t* bytes, size_t length) const
@@ -1257,6 +1285,14 @@ namespace ms
 			case 0x3742: opcode_msg = "WEATHER_ELEMENT"; break;
 			case 0x3743: opcode_msg = "SIDE_MENU_SYNC"; break;
 			case 0x3745: opcode_msg = "SKILL_STAT_OVERRIDE"; break;
+			case 0x371F: opcode_msg = "WITCH_FOREST_BROADCAST"; break;
+			case 0x3750: opcode_msg = "AUCTION_MESSAGE"; break;
+			case 0x3751: opcode_msg = "AUCTION_LIST"; break;
+			case 0x3752: opcode_msg = "AUCTION_SELL_LIST"; break;
+			case 0x3753: opcode_msg = "AUCTION_COMPLETE_LIST"; break;
+			case 0x3754: opcode_msg = "AUCTION_BUY_RESULT"; break;
+			case 0x3761: opcode_msg = "FAMILIAR_LIST"; break;
+			case 0x3762: opcode_msg = "FAMILIAR_RESULT"; break;
 			default: break;
 		}
 

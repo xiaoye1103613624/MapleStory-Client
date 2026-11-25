@@ -68,7 +68,11 @@ namespace ms
 			{ 17, "ScrollSynergyMachine",      "ench.hint.scroll_synergy" },
 			{ 18, "itemPot",                   "ench.hint.item_pot" },
 			{ 19, "MasterPiece",               "ench.hint.masterpiece" },
-			{ 20, "SoulCollector",             "ench.hint.soul_collector" }
+			{ 20, "SoulCollector",             "ench.hint.soul_collector" },
+			// 21 星之力（197 MapStarForceUI：本端用 toolTip StarForce 节点回退，无独立面板时优雅降级）。
+			{ 21, "MapStarForceUI",            "ench.hint.star_force" },
+			// 22 涅槃火焰/火花（197 无独立 UI，走通用壳 + 装备 tooltip 显示）。
+			{ 22, "MiracleCube",               "ench.hint.flame" }
 		};
 
 		// 按 action 查表；找不到（越界/0）时退到族 1，保证 UI 永远有背景可画。
@@ -128,15 +132,18 @@ namespace ms
 			case 18: fallback = "物品罐：放入材料后开启"; break;
 			case 19: fallback = "大师作品：放入装备与材料后合成"; break;
 			case 20: fallback = "灵魂收集：放入装备后收集灵魂"; break;
+			case 21: fallback = "星之力：放入装备和星星后点击开始强化"; break;
+			case 22: fallback = "涅槃火焰：放入装备后点击重设附加属性"; break;
 			default: fallback = "放入装备或材料后点击确认"; break;
 		}
 
 		return Locale::text_or(m.hint_key, fallback);
 	}
 
-	UIEnhance::UIEnhance(uint8_t a)
+	UIEnhance::UIEnhance(uint8_t a, const std::string& node_override)
 		: UIDragElement<PosENHANCE>()
 		, action(a)
+		, node_override(node_override)
 		, mode(0)
 		, equip_slot(0)
 		, equip_itemid(0)
@@ -153,11 +160,26 @@ namespace ms
 		dragarea = Point<int16_t>(dimension.x(), 20);
 
 #ifdef USE_NX
-		// 族元数据表决定加载哪张面板；window_enh 自带回退链。
-		nl::node root = UiAssetResolve::window_enh(node_name_for(a));
+		// 族元数据表决定加载哪张面板；node_override 非空时加载 192 变体节点，
+		// window_enh 自带 UIWindow2Enh→UIWindow2→UIWindow 回退链。
+		const char* resolved_node = node_override.empty() ? node_name_for(a) : node_override.c_str();
+		nl::node root = UiAssetResolve::window_enh(resolved_node);
+		if (!root) {
+			// 变体节点缺失时回退到族默认节点，绝不因变体资源缺而开空白窗。
+			if (!node_override.empty()) {
+				LOG(LOG_WARN, "[DBG-ENH] UIEnhance: variant node missing=" << resolved_node
+					<< " fallback to family node=" << node_name_for(a));
+				resolved_node = node_name_for(a);
+				root = UiAssetResolve::window_enh(resolved_node);
+			}
+		}
 		if (!root) {
 			LOG(LOG_WARN, "[DBG-ENH] UIEnhance: missing action=" << static_cast<int>(a)
-				<< " node=" << node_name_for(a));
+				<< " node=" << resolved_node << " — SoftKey shell 预留");
+			UiAssetResolve::diag_once(
+				std::string("Enhance ") + resolved_node,
+				"Enhance panel missing — SoftKey shell 预留");
+			active = false;
 			return;
 		}
 		has_assets = true;
@@ -198,7 +220,7 @@ namespace ms
 		}
 
 		LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: open action=" << static_cast<int>(a)
-			<< " node=" << node_name_for(a)
+			<< " node=" << resolved_node
 			<< " dim=" << dimension.x() << "x" << dimension.y()
 			<< " buttons=" << buttons.size());
 #endif
@@ -228,20 +250,40 @@ namespace ms
 
 		if (tab == InventoryType::Id::EQUIP) {
 			// 与 UIViciousHammer.cpp:81-98 一致：EQUIP 图标设目标装备槽。
-			equip_slot = icon.get_inventory_slot();
-			equip_itemid = icon.get_item_id();
-			equip_icon = ItemData::get(equip_itemid).get_icon(false);
-			status.change_text(slot_text("enh.equip_slot", "装备槽 ", equip_slot));
-			LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: equip slot=" << equip_slot
-				<< " id=" << equip_itemid);
+			// 铁砧族(19)需要两件 Equip：第一件=功能件(equip_slot)，第二件=外形件(matSlot)。
+			// 已放功能件且再拖一件 Equip 时落入 matSlot（两件不同槽由服务端校验）。
+			if (equip_slot != 0 && equip_slot != icon.get_inventory_slot()) {
+				matSlot = icon.get_inventory_slot();
+				mat_icon = ItemData::get(icon.get_item_id()).get_icon(false);
+				status.change_text(slot_text("enh.mat_slot", "外形槽 ", matSlot));
+				LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: mat equipslot=" << matSlot
+					<< " id=" << icon.get_item_id());
+			} else {
+				equip_slot = icon.get_inventory_slot();
+				equip_itemid = icon.get_item_id();
+				equip_icon = ItemData::get(equip_itemid).get_icon(false);
+				status.change_text(slot_text("enh.equip_slot", "装备槽 ", equip_slot));
+				LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: equip slot=" << equip_slot
+					<< " id=" << equip_itemid);
+			}
 		} else if (tab == InventoryType::Id::CASH || tab == InventoryType::Id::USE) {
 			// CASH/USE 图标设消耗材料槽（魔方/锤/印章/炼金材料等）。
-			cashSlot = icon.get_inventory_slot();
-			cashId = icon.get_item_id();
-			cash_icon = ItemData::get(cashId).get_icon(false);
-			status.change_text(slot_text("enh.cash_slot", "材料槽 ", cashSlot));
-			LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: cash slot=" << cashSlot
-				<< " id=" << cashId);
+			// 协同(16)/卷轴协同(17)/宝石炼金(15)/灵魂(20)需要第二材料：
+			// 第一件落 cashSlot/cashId，第二件落 matSlot。
+			if (cashSlot != 0 && cashSlot != icon.get_inventory_slot()) {
+				matSlot = icon.get_inventory_slot();
+				mat_icon = ItemData::get(icon.get_item_id()).get_icon(false);
+				status.change_text(slot_text("enh.mat_slot", "材料槽2 ", matSlot));
+				LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: mat slot=" << matSlot
+					<< " id=" << icon.get_item_id());
+			} else {
+				cashSlot = icon.get_inventory_slot();
+				cashId = icon.get_item_id();
+				cash_icon = ItemData::get(cashId).get_icon(false);
+				status.change_text(slot_text("enh.cash_slot", "材料槽 ", cashSlot));
+				LOG(LOG_DEBUG, "[DBG-ENH] UIEnhance: cash slot=" << cashSlot
+					<< " id=" << cashId);
+			}
 		} else {
 			// 其它页签（SETUP/ETC 等）不参与强化，明确提示，不静默吞掉。
 			status.change_text(Locale::text_or("enh.need_equip_or_cash", "请拖入装备或消耗材料"));
@@ -264,6 +306,8 @@ namespace ms
 			equip_icon.draw(position + Point<int16_t>(48, 58));
 		if (cash_icon)
 			cash_icon.draw(position + Point<int16_t>(104, 58));
+		if (mat_icon)
+			mat_icon.draw(position + Point<int16_t>(160, 58));
 
 		UIElement::draw_buttons(inter);
 	}
@@ -280,6 +324,22 @@ namespace ms
 		// Enter / 小键盘 Enter：确认发包（参考 UIViciousHammer.cpp:112-137 的 13）。
 		if (keycode == 13) {
 			button_pressed(BtOk);
+			return;
+		}
+
+		// P 键：发送预览包（mode=1，不消耗、不落库；黑/白魔方生成 Before→After 候选）。
+		// Y 键：发送应用预览包（mode=2，取回上一次预览值落地）。
+		// 这是 set_mode() 之外的客户端可达入口——服务端 applyCube 的 MODE_PREVIEW /
+		// MODE_APPLY_PREVIEW 分支（EnhanceHandler.java:698-719）此前无 UI 触发。
+		if (keycode == 'P' || keycode == 'p' || keycode == 'Y' || keycode == 'y') {
+			const uint8_t old_mode = mode;
+			const uint8_t preview_mode = (keycode == 'P' || keycode == 'p') ? 1 : 2;
+			mode = preview_mode;
+			send_action();
+			mode = old_mode;
+			status.change_text(Locale::text_or(
+				preview_mode == 2 ? "ench.preview_applied" : "ench.preview_sent",
+				preview_mode == 2 ? "已应用预览结果" : "已发送预览请求（P 预览 / Y 应用）"));
 			return;
 		}
 

@@ -355,7 +355,15 @@ namespace ms
 			BEAUTY_ACTION = 372,
 			/// 战斗统计请求（C→S 0x3BC，对齐 192 RequestOnCalc@0x62ee00）：
 			/// 3×byte(bOn, bIsNew, bClear)；服务端回 0x3BC 1B 许可 + 0x3BD 数据。
-			BATTLE_STATS_REQUEST = 956
+			BATTLE_STATS_REQUEST = 956,
+			/// s9 RecvOpcode.AUCTION_ACTION = 0x3751（14161，192 拍卖行）。
+			/// C→S 包体 = int mode + 按模式字段，详见 Net/Packets/AuctionPackets.h。
+			/// 与 S→C 0x3751（AUCTION_LIST）分属 In/Out 两张表，不冲突。
+			AUCTION_ACTION = 14161,
+			/// 197 TMS280 精灵收藏 C→S（RecvOpcode.FAMILIAR_ACTION = 0x3760 = 14176）：
+			/// 包体 = int mode(0进入/1召唤切换/2升级) + 按模式 int familiarId。
+			/// 详见 Net/Packets/FamiliarPackets.h；与 S→C 0x3761/0x3762 分属两张表。
+			FAMILIAR_ACTION = 14176
 		};
 
 	protected:

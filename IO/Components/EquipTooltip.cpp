@@ -857,6 +857,18 @@ namespace ms
 						height_preview -= 36;
 					}
 
+					// 197 武器级突破上限（对比窗侧）：镜像主窗 :1276-1290。
+					has_breakthrough_line_preview = (equip.get_total_limit_break() > 0);
+					if (has_breakthrough_line_preview)
+					{
+						const int64_t lb_total = equip.get_total_limit_break();
+						const int32_t used = equip.get_add_limit_num() > 0 ? 1 : 0;
+						breakthrough_line_preview = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW,
+							Locale::format_all("equip.breakthrough", { std::to_string(lb_total), std::to_string(used) }),
+							FRAME_WIDTH - 20);
+						height_preview += LINE_STEP;
+					}
+
 					statlabels_preview.clear();
 					statdeltas_preview.clear();
 
@@ -887,7 +899,7 @@ namespace ms
 					{
 						int16_t pot_height_preview = 0;
 
-						for (size_t i = 0; i < 5; ++i)
+						for (size_t i = 0; i < 6; ++i)
 						{
 							haspotlines_preview[i] = false;
 
@@ -912,7 +924,7 @@ namespace ms
 							// 095 分组标题行补偿（与主窗对称）。
 							if (haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2])
 								pot_height_preview += LINE_STEP;
-							if (haspotlines_preview[3] || haspotlines_preview[4])
+							if (haspotlines_preview[3] || haspotlines_preview[4] || haspotlines_preview[5])
 								pot_height_preview += LINE_STEP;
 							height_preview += pot_height_preview + BLOCK_GAP;
 					}
@@ -1276,6 +1288,19 @@ namespace ms
 			height -= 36;
 		}
 
+		// 197 武器级突破上限（方案 C，2026-11-25）：突破卷累计或突破石加成 > 0 才出行，
+		// 与 197 tooltip「突破上限武器 / 突破上限 +N / 可突破次数」语义对齐。无突破值不显示，避免误导。
+		has_breakthrough_line = (equip.get_total_limit_break() > 0);
+		if (has_breakthrough_line)
+		{
+			const int64_t lb_total = equip.get_total_limit_break();
+			const int32_t used = equip.get_add_limit_num() > 0 ? 1 : 0;
+			breakthrough_line = Text(Text::Font::A11M, Text::Alignment::LEFT, Color::Name::YELLOW,
+				Locale::format_all("equip.breakthrough", { std::to_string(lb_total), std::to_string(used) }),
+				FRAME_WIDTH - 20);
+			height += LINE_STEP;
+		}
+
 		statlabels.clear();
 		statdeltas.clear();
 
@@ -1385,7 +1410,7 @@ namespace ms
 		{
 			int16_t pot_height = 0;
 
-			for (size_t i = 0; i < 5; ++i)
+			for (size_t i = 0; i < 6; ++i)
 			{
 				haspotlines[i] = false;
 
@@ -1414,7 +1439,7 @@ namespace ms
 				// 095 分组标题行补偿：潜在/附加两组各有一条圆点标题。
 				if (haspotlines[0] || haspotlines[1] || haspotlines[2])
 					pot_height += LINE_STEP;
-				if (haspotlines[3] || haspotlines[4])
+				if (haspotlines[3] || haspotlines[4] || haspotlines[5])
 					pot_height += LINE_STEP;
 				height += pot_height + BLOCK_GAP;
 			}
@@ -1751,7 +1776,7 @@ namespace ms
 				measure.shift_y(BLOCK_GAP);
 				if (haspotlines[0] || haspotlines[1] || haspotlines[2])
 					measure.shift_y(LINE_STEP);
-				if (haspotlines[3] || haspotlines[4])
+				if (haspotlines[3] || haspotlines[4] || haspotlines[5])
 					measure.shift_y(LINE_STEP);
 				for (bool h : haspotlines) if (h) measure.shift_y(LINE_STEP);
 			}
@@ -1925,6 +1950,13 @@ namespace ms
 			pos.shift_y(stat_y);
 		}
 
+		// 197 武器突破上限行：紧跟金锤子之后，与 height 里的 LINE_STEP 补偿一一对应。
+		if (has_breakthrough_line)
+		{
+			breakthrough_line.draw(DrawArgument(pos));
+			pos.shift_y(stat_y);
+		}
+
 		// ⑦ 095 潜能行：画在「可升级次数/金锤子」之后、「描述」之前，
 		// 顺序与原生 tip 的「附加属性块」位置一致。
 		{
@@ -1939,7 +1971,7 @@ namespace ms
 
 				// 095 布局：潜在属性(主 i=0..2)与附加潜能(i=3..4)各带圆点标题行。
 				bool has_main = haspotlines[0] || haspotlines[1] || haspotlines[2];
-				bool has_bonus = haspotlines[3] || haspotlines[4];
+				bool has_bonus = haspotlines[3] || haspotlines[4] || haspotlines[5];
 
 				if (has_main)
 				{
@@ -1964,7 +1996,7 @@ namespace ms
 					bonus_title.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
 					pos.shift_y(LINE_STEP);
 
-					for (size_t i = 3; i < 5; ++i)
+					for (size_t i = 3; i < 6; ++i)
 					{
 						if (!haspotlines[i])
 							continue;
@@ -2086,7 +2118,7 @@ namespace ms
 				pmeasure.shift_y(BLOCK_GAP);
 				if (haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2])
 					pmeasure.shift_y(LINE_STEP);
-				if (haspotlines_preview[3] || haspotlines_preview[4])
+				if (haspotlines_preview[3] || haspotlines_preview[4] || haspotlines_preview[5])
 					pmeasure.shift_y(LINE_STEP);
 				for (bool h : haspotlines_preview) if (h) pmeasure.shift_y(LINE_STEP);
 			}
@@ -2248,6 +2280,13 @@ namespace ms
 			pos.shift_y(stat_y);
 		}
 
+		// 197 武器突破上限行（对比窗侧）：紧跟金锤子之后，与 height_preview 补偿对应。
+		if (has_breakthrough_line_preview)
+		{
+			breakthrough_line_preview.draw(DrawArgument(pos));
+			pos.shift_y(stat_y);
+		}
+
 		// 095 潜能行（对比窗侧）：镜像主窗 :1163-1184 的顺序与配色，
 		// 画在 slots/hammers 之后、描述之前，数据源为已装备物品。
 		{
@@ -2261,7 +2300,7 @@ namespace ms
 
 				// 095 分组标题（对比窗侧）：潜在/附加各一条圆点标题。
 				bool has_main = haspotlines_preview[0] || haspotlines_preview[1] || haspotlines_preview[2];
-				bool has_bonus = haspotlines_preview[3] || haspotlines_preview[4];
+				bool has_bonus = haspotlines_preview[3] || haspotlines_preview[4] || haspotlines_preview[5];
 
 				if (has_main)
 				{
@@ -2285,7 +2324,7 @@ namespace ms
 					bonus_title_preview.draw(pos + Point<int16_t>(BODY_LEFT_X, 0));
 					pos.shift_y(LINE_STEP);
 
-					for (size_t i = 3; i < 5; ++i)
+					for (size_t i = 3; i < 6; ++i)
 					{
 						if (!haspotlines_preview[i])
 							continue;

@@ -144,6 +144,9 @@ namespace ms
 			// 只发了潜能 10B 的旧服务端不会被多读；完全不发强化段的老服全 0。
 			int16_t spark_id = 0, soul_id = 0;
 			uint8_t star_force = 0;
+			// 2026-11-25 D2 三端同步：第 6 槽附加潜能 bonusPotential3。
+			// 服务端把它追加在强化三件套 5B 之后（包尾 +15，2B），旧服不发则保持 0。
+			int16_t bp3 = 0;
 
 			// ⚠️ 同上加_equip：available() 返回 bool，原 `available() >= 5` 恒为 false，
 			// 必须改 length() 才能正确读取 s9 发的 5 字节强化三件套（火花+宝珠+星之力）。
@@ -153,8 +156,33 @@ namespace ms
 				soul_id = recv.read_short();
 				star_force = static_cast<uint8_t>(recv.read_byte());
 			}
+			// 第 6 槽：在读完 5B 强化三件套后再按剩余字节门控读取（追加在包尾，不平移前 15B）。
+			if (recv.length() >= 2)
+			{
+				bp3 = recv.read_short();
+			}
+			// 2026-11-25 197 独立品级：potState/addState 各 1B，继续追加在包尾。
+			// 0 = 旧服务端（回退到 id 分段推品级）；1..4 / 17..20 = 197 state。
+			uint8_t pot_state = 0, add_state = 0;
+			if (recv.length() >= 2)
+			{
+				pot_state = static_cast<uint8_t>(recv.read_byte());
+				add_state = static_cast<uint8_t>(recv.read_byte());
+			}
 
-			inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force);
+			// 197 武器级突破上限（方案 C，2026-11-25）：long limitBreak + long addLimitPoint + int addLimitNum，
+			// 服务端追加在 potState/addState 之后（PacketCreator.addItemInfo）。按剩余字节门控读取；
+			// 旧服务端不下发这 20B 时保持 0，不影响前段字段（追加不平移）。
+			int64_t limit_break = 0, add_limit_point = 0;
+			int32_t add_limit_num = 0;
+			if (recv.length() >= 20)
+			{
+				limit_break = recv.read_long();
+				add_limit_point = recv.read_long();
+				add_limit_num = recv.read_int();
+			}
+
+			inventory.add_equip(invtype, slot, id, cash, expire, slots, level, stats, owner, flag, itemlevel, itemexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force, bp3, pot_state, add_state, limit_break, add_limit_point, add_limit_num);
 		}
 
 		void parse_item(InPacket& recv, InventoryType::Id invtype, int16_t slot, Inventory& inventory)

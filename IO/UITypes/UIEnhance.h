@@ -29,7 +29,9 @@ namespace ms
 		static constexpr bool TOGGLED = true;
 
 		// action 取 CONTRACT.md 族 id 表 1..20；越界值在 cpp 内退到族 1 元数据。
-		explicit UIEnhance(uint8_t action = 1);
+		// node_override：可选，指定要加载的 UIWindow2Enh.img 节点名（192 变体魔方/协同面板）。
+		// 空串=按族默认节点；非空=覆盖为变体节点，服务端逻辑与 action 不变（零协议改动）。
+		explicit UIEnhance(uint8_t action = 1, const std::string& node_override = "");
 
 		void draw(float inter) const override;
 		void send_key(int32_t keycode, bool pressed, bool escape) override;
@@ -46,6 +48,9 @@ namespace ms
 		void set_mode(uint8_t m) { mode = m; }
 
 		uint8_t get_action() const { return action; }
+
+		// 当前变体面板节点名（空串=族默认）；供双击换变体时判断是否需重开。
+		const std::string& get_node_override() const { return node_override; }
 
 	protected:
 		Button::State button_pressed(uint16_t buttonid) override;
@@ -69,6 +74,7 @@ namespace ms
 		static std::string hint_for(uint8_t action);
 
 		uint8_t action;
+		std::string node_override;  // 非空时覆盖族默认 UI 节点名（192 变体面板）
 		uint8_t mode;
 		int16_t equip_slot;
 		int32_t equip_itemid;
@@ -80,6 +86,7 @@ namespace ms
 		Texture backgrnd;
 		Texture equip_icon;
 		Texture cash_icon;
+		Texture mat_icon;     // 第二材料槽图标（铁砧外形件/协同第二材料）
 		Text hint;         // 族默认提示（元数据 locale key 解析后的文案）
 		Text status;       // 动态状态：装备槽 / 材料 / 发包 / 结果
 

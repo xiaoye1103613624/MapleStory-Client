@@ -40,7 +40,8 @@ namespace ms
 		// 095 强化（Round 15）：火花 / 宝珠 / 星之力。
 		// 新增参数带默认值 → 既有 add_equip 调用点无需改动，旧服务端不下发时全 0。
 		Equip(int32_t item_id, int64_t expiration, const std::string& owner, int16_t flags, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, uint8_t itemlevel, int16_t itemexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2,
-			int16_t spark_id = 0, int16_t soul_id = 0, uint8_t star_force = 0);
+			int16_t spark_id = 0, int16_t soul_id = 0, uint8_t star_force = 0, int16_t bp3 = 0, uint8_t pot_state = 0, uint8_t add_state = 0,
+			int64_t limit_break = 0, int64_t add_limit_point = 0, int32_t add_limit_num = 0);
 
 		int32_t get_item_id() const;
 		int64_t get_expiration() const;
@@ -55,7 +56,8 @@ namespace ms
 		int32_t get_vicious() const;
 		Potential get_potrank() const;
 		EquipQuality::Id get_quality() const;
-		// 095 潜能/魔方：3 条主潜能 + 2 条 bonus 潜能（值为 Potential.img 行 id，0 = 空）。
+		// 095 潜能/魔方：3 条主潜能 + 3 条 bonus 潜能（值为 Potential.img / 197 option id，0 = 空）。
+		// 2026-11-25 D2：bonus 扩到第 3 槽，对齐 197 六槽模型。
 		int16_t get_potential(size_t index) const;
 		int16_t get_bonus_potential(size_t index) const;
 
@@ -66,6 +68,12 @@ namespace ms
 		int16_t get_soul() const;
 		// 星之力（StarForce）：强化星数 0..25，非词条 id。
 		uint8_t get_starforce() const;
+
+		// 197 TMS280 武器级突破上限（方案 C，2026-11-25）：数值加数，非 flag。
+		int64_t get_limit_break() const;        // 突破上限卷累计
+		int64_t get_add_limit_point() const;    // 极限突破石一次性加成
+		int32_t get_add_limit_num() const;      // 0=未用 / 1=已用
+		int64_t get_total_limit_break() const;  // 前两者之和
 
 	private:
 		EnumMap<EquipStat::Id, uint16_t> stats;
@@ -83,10 +91,17 @@ namespace ms
 		int16_t potential3;
 		int16_t bonusPotential1;
 		int16_t bonusPotential2;
+		int16_t bonusPotential3;  // 2026-11-25 D2：第 6 槽（附加潜能 3）
+		uint8_t potState;         // 197 主潜能品级 state：0=旧id分段回退 / 1..4
+		uint8_t addState;         // 197 附加潜能品级 state
 		// ⑦ 095 强化（Round 15）
 		int16_t spark;
 		int16_t soul;
 		uint8_t starforce;
+		// 197 武器突破上限三字段（追加在装备包尾；旧包不读保持 0）
+		int64_t limitBreak;
+		int64_t addLimitPoint;
+		int32_t addLimitNum;
 		Potential potrank;
 		EquipQuality::Id quality;
 	};

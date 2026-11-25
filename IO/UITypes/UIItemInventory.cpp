@@ -49,6 +49,7 @@
 
 #include "../Components/MapleButton.h"
 #include "../Components/TwoSpriteButton.h"
+#include "../../Graphics/Texture.h"
 #include "../UITypes/UIKeyConfig.h"
 
 #include "../../Data/EquipData.h"
@@ -64,6 +65,7 @@
 #include "../../Configuration.h"
 #include "../../Util/Locale.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/UiWindowOpen.h"
 #include "../../Util/Misc.h"
 
 #ifdef USE_NX
@@ -82,6 +84,48 @@ namespace ms
 			// 原生标题栏用的是描边 X（BtClose2）。
 			return UiAssetResolve::close_btn();
 		}
+
+		// HScr5/enabled 的 prev0/next0 是三帧动画节点，没有 MapleButton 要求的
+		// normal/0 / pressed/0 / disabled/0 结构；直接继承 Button 画Texture，
+		// 保持与 Slider 上下箭头同一套资源语言（2026-11-25 用户指正）。
+		class HScrArrowButton : public Button
+		{
+		public:
+			HScrArrowButton(nl::node normal, nl::node pressed, nl::node disabled, Point<int16_t> pos)
+				: normal_(normal), pressed_(pressed), disabled_(disabled)
+			{
+				position = pos;
+				state = State::NORMAL;
+				active = true;
+			}
+
+			void draw(Point<int16_t> parentpos) const override
+			{
+				if (!active)
+					return;
+
+				const Texture& tex = (state == State::DISABLED) ? disabled_
+					: ((state == State::PRESSED || state == State::MOUSEOVER) ? pressed_ : normal_);
+				tex.draw(position + parentpos);
+			}
+
+			void update() override {}
+
+			Rectangle<int16_t> bounds(Point<int16_t> parentpos) const override
+			{
+				const Point<int16_t> absp = parentpos + position - normal_.get_origin();
+				return Rectangle<int16_t>(absp, absp + normal_.get_dimensions());
+			}
+
+			int16_t width() const override { return normal_.width(); }
+			Point<int16_t> origin() const override { return normal_.get_origin(); }
+			Cursor::State send_cursor(bool, Point<int16_t>) override { return Cursor::State::IDLE; }
+
+		private:
+			Texture normal_;
+			Texture pressed_;
+			Texture disabled_;
+		};
 
 		// v83 Item/Tab has exactly indices 0..4 (装备/消耗/设置/其它/特殊). The baked labels
 		// fix the index->category order; DEC has no tab and index "5" resolves to nothing.
@@ -323,27 +367,35 @@ namespace ms
 		}
 
 		// 展开态翻页三件套：锚定 BtCashshop（"扩充道具栏"）左侧，位置固定、
-		// 不受其是否显示影响。素材 Basic.img/BtHide3(左←上一页) / BtHide2(右→下一页)，
-		// 与 BtCashshop(93x18 @ y266) 按垂直中线水平对齐。
+		// 不受其是否显示影响。箭头改用原生横向滚动条 Basic.img/HScr5/enabled
+		// 的 prev0/next0（13x15，蓝底白左右箭头，pressed 取 prev1/next1，
+		// disabled 取 HScr5/disabled/prev|next），与 BtCashshop(93x18 @ y266)
+		// 按垂直中线水平对齐。2026-11-25 用户指出 BtHide2/3 不是翻页原生箭头。
 		{
 			nl::node basic = nl::nx::UI["Basic.img"];
+			nl::node hscr_enabled = basic["HScr5"]["enabled"];
+			nl::node hscr_disabled = basic["HScr5"]["disabled"];
 			const int16_t cash_x = bg_full_dimensions.x() - 113;
 			const int16_t cash_y = 266;
 			const int16_t cash_h = 18;    // Item/BtCashshop normal 实测
-			const int16_t arrow_w = 12;   // BtHide2/BtHide3 实测
-			const int16_t arrow_h = 12;
+			const int16_t arrow_w = 13;   // HScr5/enabled/prev0|next0 实测
+			const int16_t arrow_h = 15;
 			const int16_t gap_edge = 8;   // 与 cashshop 的间距
 			const int16_t gap_inner = 3;  // 三件套两两间距
 			const int16_t center_y = static_cast<int16_t>(cash_y + cash_h / 2);
-			const int16_t arrow_y = static_cast<int16_t>(center_y - arrow_h / 2); // 269
+			const int16_t arrow_y = static_cast<int16_t>(center_y - arrow_h / 2); // 268
 			page_input_dim = Point<int16_t>(24, 16);
 			const int16_t input_y = static_cast<int16_t>(center_y - page_input_dim.y() / 2); // 267
 			// 从 cashshop 左边缘往左排：下一页 → 输入框 → 上一页，互不重叠。
 			const int16_t next_x = cash_x - gap_edge - arrow_w;
 			const int16_t input_x = next_x - gap_inner - page_input_dim.x();
 			const int16_t prev_x = input_x - gap_inner - arrow_w;
-			try_maple_btn(buttons, Buttons::BT_PAGE_PREV, basic["BtHide3"], Point<int16_t>(prev_x, arrow_y));
-			try_maple_btn(buttons, Buttons::BT_PAGE_NEXT, basic["BtHide2"], Point<int16_t>(next_x, arrow_y));
+			buttons[Buttons::BT_PAGE_PREV] = std::make_unique<HScrArrowButton>(
+				hscr_enabled["prev0"], hscr_enabled["prev1"], hscr_disabled["prev"],
+				Point<int16_t>(prev_x, arrow_y));
+			buttons[Buttons::BT_PAGE_NEXT] = std::make_unique<HScrArrowButton>(
+				hscr_enabled["next0"], hscr_enabled["next1"], hscr_disabled["next"],
+				Point<int16_t>(next_x, arrow_y));
 
 			// 页码输入框兼作页码显示：仅数字、默认 1；浅灰底板让黑字可见（Release 也画）。
 			page_input_pos = Point<int16_t>(input_x, input_y);
@@ -351,9 +403,12 @@ namespace ms
 				Rectangle<int16_t>(page_input_pos, page_input_pos + page_input_dim), 3);
 			page_input.set_digits_only(true);
 			page_input.change_text("1");
-			// 页码数字垂直居中于 24x16 浅灰框：Textfield 默认 text_shift=(0,0)，
-			// FreeType 按行顶/基线绘字，16px 矮槽不补偿就把「1」画到框外下方
-			// （用户截图实证）。用 y_for_ink_top 按当前字模现取墨迹度量，不手抄常数。
+			// 页码数字水平居中于 24x16 浅灰框：LayoutBuilder::add_line 的 CENTER
+			// 是"以 draw 原点为中心"（x -= ax/2，GraphicsGL.cpp:1542），而
+			// Textfield::draw 把 draw 原点放在 bounds 左上角（Textfield.cpp:55-70）。
+			// 若 text_shift.x=0，数字中心落在框左缘 → 视觉严重偏左。补半框宽。
+			// 垂直方向沿用 y_for_ink_top 现取字模墨迹，不在源码里抄死像素常数。
+			page_input.set_text_shift(Point<int16_t>(page_input_dim.x() / 2, 0));
 			page_input.center_text_vertically(page_input_dim.y());
 			page_input_frame = ColorBox(page_input_dim.x(), page_input_dim.y(), Color(0xDDDDDDFFu), 1.0f);
 			page_input.set_enter_callback([&](std::string s) {
@@ -389,6 +444,8 @@ namespace ms
 #endif
 
 		set_full(false);
+		// 多分辨率：首次打开（未拖过）按当前视口居中（set_full 已定 dimension）。
+		center_if_position_unset(dimension);
 		clear_new();
 		load_icons();
 	}
@@ -711,18 +768,14 @@ namespace ms
 			case Buttons::BT_APPRAISE:
 			case Buttons::BT_APPRAISE_SM:
 			{
-				auto ui = UI::get().get_element<UIVegaSpell>();
-				if (!ui) ui = UI::get().emplace<UIVegaSpell>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIVegaSpell>("VegaSpell", "VegaSpell");
 				LOG(LOG_DEBUG, "UIItemInventory: Appraise → UIVegaSpell");
 				return Button::State::NORMAL;
 			}
 			case Buttons::BT_TOAD:
 			case Buttons::BT_TOAD_SM:
 			{
-				auto ui = UI::get().get_element<UIPlant>();
-				if (!ui) ui = UI::get().emplace<UIPlant>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIPlant>("plant", "plant");
 				LOG(LOG_DEBUG, "UIItemInventory: Toad → UIPlant");
 				return Button::State::NORMAL;
 			}
@@ -893,6 +946,17 @@ namespace ms
 							break;
 						}
 						uint8_t enh_action = 0;
+						// 192 变体面板节点覆盖（零协议：复用既有 action，仅换 UIWindow2Enh.img 面板）。
+						// 道具 ID 来自 tools/_192txt/Cash.u8.txt 一手证据；证据不足的变体（Memorial/
+						// NewYear/InGame 系列/LunchMaker/ABsoulRecharge）不臆造映射，保持族默认节点。
+						const char* enh_node = "";
+						switch (item_id) {
+							case 5062100: enh_node = "MiracleCube_8th";  break; // 枫叶魔方(8周年)
+							case 5062103: enh_node = "MiracleCube_9th";  break; // 梦幻魔方(9周年)
+							case 5062022: enh_node = "Cube_Reflect";     break; // 闪耀镜射魔方
+							case 5821000: enh_node = "PotEmbiggener";    break; // 罐子扩容器
+							default: break;
+						}
 						if (item_id == 5062006 || item_id == 5062005) enh_action = 3;       // 白金/惊人魔方
 						else if (item_id == 5062010 || item_id == 5062090) enh_action = 2;    // 黑/记忆魔方(Before/After)
 						else if (item_id == 5062503) enh_action = 5;                          // 白附加魔方
@@ -901,17 +965,20 @@ namespace ms
 						else if (item_id == 5530268 || item_id == 5530269 || item_id == 5530342) enh_action = 13; // 附加印章
 						else if (item_id == 5062400) enh_action = 19;                         // 神奇铁砧/大师作品
 						else if (item_id == 5060023) enh_action = 14;                         // 混沌净化石(石净化)
+						else if (item_id == 5064501 || item_id == 5064502) enh_action = 22;   // 涅槃火焰/火花(197)
 						else if (item_id / 1000 == 5062) enh_action = 6;                      // 其余 5062xxx → 通用神奇魔方
 						if (enh_action != 0) {
-							// 单例 TYPE 只能一个实例：换族先 remove 再 emplace，保证 action 正确。
+							// 单例 TYPE 只能一个实例：换族/换变体面板先 remove 再 emplace。
+							// 同 action 不同变体（如 8th vs 9th 魔方）也要重开，否则节点不刷新。
 							if (auto old = UI::get().get_element<UIEnhance>()) {
-								if (old->get_action() == enh_action && old->is_active()) {
+								if (old->get_action() == enh_action && old->is_active()
+									&& old->get_node_override() == enh_node) {
 									old->makeactive();
 									break;
 								}
 							}
 							UI::get().remove(UIElement::Type::ENHANCE);
-							UI::get().emplace<UIEnhance>(enh_action);
+							UI::get().emplace<UIEnhance>(enh_action, enh_node);
 							LOG(LOG_DEBUG, "[DBG-ENH] open action=" << static_cast<int>(enh_action)
 								<< " id=" << item_id << " slot=" << slot);
 							break;
@@ -928,92 +995,56 @@ namespace ms
 							LOG(LOG_DEBUG, "UIItemInventory: SPAWN_PET slot=" << slot
 								<< " id=" << item_id << " lead=" << lead);
 						} else if (item_id == 5451000) {
-							auto ui = UI::get().get_element<UIRemoteGachapon>();
-							if (!ui) ui = UI::get().emplace<UIRemoteGachapon>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIRemoteGachapon>("RemoteGachapon", "RemoteGachapon");
 						} else if (prefix == 557) {
-							auto ui = UI::get().get_element<UIViciousHammer>();
-							if (!ui) ui = UI::get().emplace<UIViciousHammer>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIViciousHammer>("ViciousHammer", "ViciousHammer");
 						} else if (prefix == 561) {
-							auto ui = UI::get().get_element<UIVegaSpell>();
-							if (!ui) ui = UI::get().emplace<UIVegaSpell>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIVegaSpell>("VegaSpell", "VegaSpell");
 						} else if (prefix == 559) {
-							auto ui = UI::get().get_element<UIItemProtector>();
-							if (!ui) ui = UI::get().emplace<UIItemProtector>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIItemProtector>("ItemProtector", "ItemProtector");
 						} else if (prefix == 552) {
-							auto ui = UI::get().get_element<UIKarmaScissors>();
-							if (!ui) ui = UI::get().emplace<UIKarmaScissors>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIKarmaScissors>("KarmaScissors", "KarmaScissors");
 						} else if (prefix == 514) {
 							// 514* 个人商店许可证：开 PersonalShop（ctor SoftKey 店名 → CREATE，需 FM）
-							auto ui = UI::get().get_element<UIPersonalShop>();
-							if (!ui) ui = UI::get().emplace<UIPersonalShop>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIPersonalShop>("PersonalShop", "PersonalShop");
 							LOG(LOG_DEBUG, "UIItemInventory: PersonalShop permit id=" << item_id);
 						} else if (prefix == 503) {
 							// 503* 雇佣商人许可证：开 EntrustedShop（SoftKey 店名 → CREATE type5）
-							auto ui = UI::get().get_element<UIEntrustedShop>();
-							if (!ui) ui = UI::get().emplace<UIEntrustedShop>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIEntrustedShop>("EntrustedShop", "EntrustedShop");
 							LOG(LOG_DEBUG, "UIItemInventory: EntrustedShop permit id=" << item_id);
 						} else if (prefix == 545) {
 							// 545* 远程雇佣商人：开 EntrustedShop + OPEN_STORE
-							auto ui = UI::get().get_element<UIEntrustedShop>();
-							if (!ui) ui = UI::get().emplace<UIEntrustedShop>();
-							else if (!ui->is_active()) ui->makeactive();
-							HiredMerchantOpenPacket().dispatch();
+							if (open_window_gated<UIEntrustedShop>("EntrustedShop", "EntrustedShop"))
+								HiredMerchantOpenPacket().dispatch();
 						} else if (prefix == 506) {
-							auto ui = UI::get().get_element<UIIncubator>();
-							if (!ui) ui = UI::get().emplace<UIIncubator>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIIncubator>("Incubator", "Incubator");
 						} else if (prefix == 522) {
-							auto ui = UI::get().get_element<UICashGachapon>();
-							if (!ui) ui = UI::get().emplace<UICashGachapon>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UICashGachapon>("CashGachapon", "CashGachapon");
 						} else if (prefix == 515 || prefix == 519 || prefix == 523 || prefix == 524 || prefix == 525) {
 							// 美发/整形/其它简易现金券：SoftKey 确认后 USE_CASH basic
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
 							
 						} else if (prefix == 543) {
-							auto ui = UI::get().get_element<UIRemoteGachapon>();
-							if (!ui) ui = UI::get().emplace<UIRemoteGachapon>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIRemoteGachapon>("RemoteGachapon", "RemoteGachapon");
 						} else if (prefix == 505) {
-							auto ui = UI::get().get_element<UIReset>();
-							if (!ui) ui = UI::get().emplace<UIReset>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIReset>("Reset", "Reset");
 						} else if (prefix == 517) {
-							auto ui = UI::get().get_element<UIUtilDlgExPet>();
-							if (!ui) ui = UI::get().emplace<UIUtilDlgExPet>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIUtilDlgExPet>("UtilDlgEx_Pet", "UtilDlgEx_Pet");
 						} else if (prefix == 504) {
-							auto ui = UI::get().get_element<UITeleport>();
-							if (!ui) ui = UI::get().emplace<UITeleport>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UITeleport>("Teleport", "Teleport");
 						} else if (prefix == 507) {
 							int32_t sub = (item_id / 1000) % 10;
 							if (sub == 6) {
-								auto ui = UI::get().get_element<UIItemMegaphone>();
-								if (!ui) ui = UI::get().emplace<UIItemMegaphone>();
-								else if (!ui->is_active()) ui->makeactive();
+								open_window_gated<UIItemMegaphone>("ItemMegaphone", "ItemMegaphone");
 							} else if (sub == 3 || sub == 7) {
 								// 5073*/5077* → ArtMegaphone 壳
-								auto ui = UI::get().get_element<UIArtMegaphone>();
-								if (!ui) ui = UI::get().emplace<UIArtMegaphone>();
-								else if (!ui->is_active()) ui->makeactive();
+								open_window_gated<UIArtMegaphone>("ArtMegaphone", "ArtMegaphone");
 							} else {
-								auto ui = UI::get().get_element<UIMegaphoneBasic>();
-								if (!ui) ui = UI::get().emplace<UIMegaphoneBasic>();
-								else if (!ui->is_active()) ui->makeactive();
+								open_window_gated<UIMegaphoneBasic>("Megaphone", "Megaphone");
 							}
 						} else if (prefix == 539) {
-							auto ui = UI::get().get_element<UIAvatarMegaphone>();
-							if (!ui) ui = UI::get().emplace<UIAvatarMegaphone>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIAvatarMegaphone>("AvatarMegaphone", "AvatarMegaphone");
 							int16_t cash_slot = slot;
 							int32_t cash_id = item_id;
 							
@@ -1078,9 +1109,7 @@ namespace ms
 							WeddingOpenInvitationPacket(slot, item_id).dispatch();
 							LOG(LOG_DEBUG, "UIItemInventory: open invitation slot=" << slot
 								<< " id=" << item_id);
-							auto ui = UI::get().get_element<UIWedding>();
-							if (!ui) ui = UI::get().emplace<UIWedding>();
-							else if (!ui->is_active()) ui->makeactive();
+							open_window_gated<UIWedding>("Wedding", "Wedding");
 							break;
 						}
 						// 订婚凭据 4031357..4031364（s9 EMPTY_ENGAGEMENT_BOX_* / ENGAGEMENT_RING_*）：
@@ -1097,8 +1126,19 @@ namespace ms
 							break;
 						}
 						// W4：金/银宝箱
-						if (item_id == 4280000 || item_id == 4280001)
+						if (item_id == 4280000 || item_id == 4280001) {
 							UseTreasureChestPacket(slot, item_id).dispatch();
+							break;
+						}
+						// 2026-11-25 星之力强化（197 星星道具 4001839，Etc.u8.txt:5127）：
+						// 双击星星 → 开通用强化壳 action=21，服务端走 197 星之力算法闭环。
+						// 192 原生走 MapStarForceUI/NPC，本端用通用壳（诚实标注差异）。
+						if (item_id == 4001839) {
+							UI::get().remove(UIElement::Type::ENHANCE);
+							UI::get().emplace<UIEnhance>(21);
+							LOG(LOG_DEBUG, "[DBG-ENH] open star force id=" << item_id << " slot=" << slot);
+							break;
+						}
 						break;
 					}
 					default:

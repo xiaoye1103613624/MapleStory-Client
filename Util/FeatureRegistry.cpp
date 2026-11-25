@@ -10,6 +10,8 @@
 #include "../IO/UITypes/UIDailyGift.h"
 #include "../IO/UITypes/UIDamageRank.h"
 #include "../IO/UITypes/UIBattleStats.h"
+#include "../IO/UITypes/UIAuction.h"
+#include "../IO/UITypes/UIFamiliar.h"
 #include "../IO/UITypes/UIDamageSkinPicker.h"
 #include "../IO/UITypes/UIBeautySalon.h"
 #include "../IO/UITypes/UIAnvilDialog.h"
@@ -74,7 +76,7 @@ namespace ms
 				add("questlog", u8"任务日志", "QuestLog", [] {
 					UI::get().emplace<UIQuestLog>(Stage::get().get_player().get_quests());
 				});
-				add("event", u8"活动", "Event", [] { UI::get().emplace<UIEvent>(); });
+				add("event", u8"活动", "Event", [] { open_event_window(); });
 				add("eventwindow", u8"活动窗", "EventWindow", [] { UI::get().emplace<UIEventWindow>(); });
 				add("dailygift", u8"每日礼物", "DailyGift", [] { UI::get().emplace<UIDailyGift>(); });
 				add("damagerank", u8"伤害统计", "DamageRank", [] { UI::get().emplace<UIDamageRank>(); });
@@ -110,6 +112,12 @@ namespace ms
 				add("optionmenu", u8"选项菜单", "OptionMenu", [] { UI::get().emplace<UIOptionMenu>(); });
 				add("sysopt", u8"系统设置", "SysOpt", [] { UI::get().emplace<UISysOpt>(); });
 				add("gameopt", u8"游戏设置", "GameOpt", [] { UI::get().emplace<UIGameOpt>(); });
+				// 192 拍卖行：原生由 StatusBar 拍卖按钮打开；此处仅注册 builtin id，
+				// 按需求不挂侧栏图标（StatusBar 原生入口由后续 lead 接）。
+				add("auction", u8"拍卖行", "Auction", [] { UI::get().emplace<UIAuction>(); });
+				// 197 TMS280 精灵收藏：此处仅注册 builtin id（@familiar / open_ui），
+				// 按需求不挂侧栏图标（StatusBar 入口由 lead 后续接）。
+				add("familiar", u8"精灵收藏", "Familiar", [] { UI::get().emplace<UIFamiliar>(); });
 
 				return t;
 			}

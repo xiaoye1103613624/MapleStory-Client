@@ -40,6 +40,7 @@
 #include "UIKeyConfig.h"
 #include "UIMaker.h"
 #include "UIMonsterBook.h"
+#include "UIAuction.h"   // 2026-11-25 拍卖行入口（BT_MENU_AUCTION → UIAuction）
 #include "UIMonsterCarnival.h"
 #include "UIBattleStats.h"
 #include "UIOptionMenu.h"
@@ -73,6 +74,7 @@
 #include "../../Net/Packets/NpcInteractionPackets.h"
 #include "../../Net/Packets/PlayerPackets.h"
 #include "../../Util/UiAssetResolve.h"
+#include "../../Util/UiWindowOpen.h"
 #include "../../Util/Misc.h"
 #include "../KeyConfig.h"
 #include "../KeyType.h"
@@ -1157,30 +1159,24 @@ namespace ms
 			}
 			case Buttons::BT_MENU_CLAIM:
 			{
-				auto claim = UI::get().get_element<UIClaim>();
-				if (!claim)
-					claim = UI::get().emplace<UIClaim>();
-				else if (!claim->is_active())
-					claim->makeactive();
-				auto duey = UI::get().get_element<UIDelivery>();
-				if (!duey)
-					UI::get().emplace<UIDelivery>();
-				else if (!duey->is_active())
-					duey->makeactive();
+				open_window_gated<UIClaim>("Claim", "Claim");
+				open_window_gated<UIDelivery>("Delivery", "Delivery");
 				remove_menus();
 				break;
 			}
 			case Buttons::BT_MENU_MEDAL:
 			{
-				UI::get().emplace<UIDailyGift>();
+				// DailyGift 真根在 DailyGiftStage.img（非 UIWindow.img/DailyGift），
+				// ctor 自带灰底回退；勿用 window() 门控误杀。
+				auto ui = UI::get().get_element<UIDailyGift>();
+				if (!ui) ui = UI::get().emplace<UIDailyGift>();
+				else if (!ui->is_active()) ui->makeactive();
 				remove_menus();
 				break;
 			}
 			case Buttons::BT_MENU_ACHIEVEMENT:
 			{
-				auto ui = UI::get().get_element<UIQuestAlarm>();
-				if (!ui) ui = UI::get().emplace<UIQuestAlarm>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIQuestAlarm>("QuestAlarm", "QuestAlarm");
 				remove_menus();
 				break;
 			}
@@ -1200,10 +1196,12 @@ namespace ms
 			}
 			case Buttons::BT_MENU_AUCTION:
 			{
-				// 拍卖行入口同样只有 ENTER_MTS 一条通道（此前用 FindPlayer 冒充检索，
-				// 属自创代理）；服务端 use_mts=false 时该包回脚本中心对话。
-				EnterMtsPacket().dispatch();
-				LOG(LOG_INFO, "UIStatusBar: Auction -> ENTER_MTS");
+				// 2026-11-25 197 拍卖行闭环：点 StatusBar 拍卖按钮 → 开原生 UIAuction 窗
+				// （读 UIAuction.img + 走 AUCTION_ACTION 协议，对端 s9 AuctionHandler）。
+				// 旧 ENTER_MTS 走脚本中心/MTS，与 192 原生拍卖行不是同一功能，已替换。
+				UI::get().remove(UIElement::Type::AUCTION);
+				UI::get().emplace<UIAuction>();
+				LOG(LOG_INFO, "UIStatusBar: Auction -> UIAuction (197 auction protocol)");
 				remove_menus();
 				break;
 			}
@@ -1227,11 +1225,7 @@ namespace ms
 			}
 			case Buttons::BT_MENU_FISHING:
 			{
-				auto plant = UI::get().get_element<UIPlant>();
-				if (!plant)
-					plant = UI::get().emplace<UIPlant>();
-				else if (!plant->is_active())
-					plant->makeactive();
+				open_window_gated<UIPlant>("plant", "plant");
 				remove_menus();
 				break;
 			}
@@ -1268,7 +1262,11 @@ namespace ms
 			}
 			case Buttons::BT_SETTING_JOYPAD:
 			{
-				UI::get().emplace<UIJoypad>();
+				if (UiAssetResolve::usable(UiAssetResolve::window("JoyPad")))
+					UI::get().emplace<UIJoypad>();
+				else
+					UiAssetResolve::diag_once("statusbar JoyPad",
+						"JoyPad missing — SoftKey shell 预留");
 
 				remove_menus();
 				break;
@@ -1408,7 +1406,8 @@ namespace ms
 			}
 			case Buttons::BT_EVENT_SCHEDULE:
 			{
-				UI::get().emplace<UIEvent>();
+				// 与 SoftKey/键盘 V 同入口：有 EventList → UIEvent，否则回退 UISpecial。
+				open_event_window();
 				auto ew = UI::get().get_element<UIEventWindow>();
 				if (!ew)
 					ew = UI::get().emplace<UIEventWindow>();
@@ -1420,8 +1419,9 @@ namespace ms
 			}
 			case Buttons::BT_EVENT_DAILY:
 			{
-				UI::get().emplace<UIDailyGift>();
-
+				auto ui = UI::get().get_element<UIDailyGift>();
+				if (!ui) ui = UI::get().emplace<UIDailyGift>();
+				else if (!ui->is_active()) ui->makeactive();
 				remove_menus();
 				break;
 			}
@@ -1698,27 +1698,19 @@ namespace ms
 			}
 			else if (keycode == 'A' || keycode == 'a')
 			{
-				auto ui = UI::get().get_element<UIAdmin>();
-				if (!ui) ui = UI::get().emplace<UIAdmin>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIAdmin>("Admin", "Admin");
 			}
 			else if (keycode == 'Y' || keycode == 'y')
 			{
-				auto ui = UI::get().get_element<UIFamily>();
-				if (!ui) ui = UI::get().emplace<UIFamily>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIFamily>("Family", "Family");
 			}
 			else if (keycode == 'V' || keycode == 'v')
 			{
-				auto ui = UI::get().get_element<UICoupon>();
-				if (!ui) ui = UI::get().emplace<UICoupon>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UICoupon>("Coupon", "Coupon");
 			}
 			else if (keycode == 'M' || keycode == 'm')
 			{
-				auto ui = UI::get().get_element<UIMaker>();
-				if (!ui) ui = UI::get().emplace<UIMaker>();
-				else if (!ui->is_active()) ui->makeactive();
+				open_window_gated<UIMaker>("Maker", "Maker");
 			}
 		}
 	}
@@ -3363,20 +3355,34 @@ namespace ms
 					const int16_t icon_dy = classic_qs_icons[i].get_origin().y();
 					classic_qs_icons[i].draw(cell_pos + Point<int16_t>(0, icon_dy));
 
-					// 快捷格技能冷却遮罩（MinMS UIStatusBar.cpp:440-459）：
-					// 本端 SkillData::Stats 不解析 WZ cooltime，无法给出精确剩余比例，
-					// 故按「在冷却中 → 半透明黑遮罩」给出可用的视觉反馈，不发明数值。
+					// 快捷格技能冷却遮罩（四源深核 D2，2026-11-24）：
+					// 旧实现整格二元黑（只判 remaining>0）；MinMS UIStatusBar.cpp:440-459
+					// 按 remain/total 精确比例从顶部裁切黑罩。total 来自 s9 234 包下发的
+					// cooltime 秒（PlayerHandlers.cpp AddCooldownHandler），Player 同存总时长。
+					// 不解析 WZ cooltime，避免与服务端权威值双源冲突。
 					{
 						const Keyboard& kb = UI::get().get_keyboard();
 						const uint8_t mk = (classic_qs_count == 8 && i < 8)
 							? static_cast<uint8_t>(kb.get_quickslot_key(static_cast<uint8_t>(i)))
 							: CLASSIC_QS_KEYS[i];
 						const Keyboard::Mapping cm = kb.get_maple_mapping(mk);
-						if (cm.type == KeyType::Id::SKILL
-							&& Stage::get().get_player().get_cooldown_remaining(cm.action) > 0)
+						if (cm.type == KeyType::Id::SKILL)
 						{
-							ColorBox(30, 30, Color::Name::BLACK, 0.6f).draw(
-								DrawArgument(cell_pos + Point<int16_t>(0, icon_dy)));
+							const Player& player = Stage::get().get_player();
+							const int32_t remain = player.get_cooldown_remaining(cm.action);
+							const int32_t total = player.get_cooldown_total(cm.action);
+							if (remain > 0 && total > 0)
+							{
+								// remain/total 越大，剩余越多 → 遮罩越高；从格顶向下裁切。
+								const float frac = std::min(1.0f,
+									static_cast<float>(remain) / static_cast<float>(total));
+								const int16_t h = static_cast<int16_t>(30 * frac);
+								if (h > 0)
+								{
+									ColorBox(30, h, Color::Name::BLACK, 0.6f).draw(
+										DrawArgument(cell_pos + Point<int16_t>(0, 30 - h)));
+								}
+							}
 						}
 					}
 				}

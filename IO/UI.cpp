@@ -95,12 +95,27 @@ namespace ms
 
 	void UI::change_state(State id)
 	{
+		current_state = id;
+
+		// 登录 / 全屏商城：视口锁定，丢弃任何排队中的游戏档位切换，避免态内热切。
+		// 游戏态不在这里写 Constants——由 SET_FIELD / SysOpt 延迟队列负责。
+		if (id == State::LOGIN || id == State::CASHSHOP)
+			ResolutionTiers::clear_deferred_viewsize();
+
 		// 从游戏/商城返回登录或选角时恢复登录视口 1280×720（UI/Login.img/Common/frame
 		// 原生尺寸）。UIStateLogin 在下一行构造，读到的已是登录尺寸；实际建窗由下一帧
 		// Window::check_events 完成。启动时 UI::init() 也走这里，值相同不会重复建窗。
 		if (id == State::LOGIN)
+		{
 			ResolutionTiers::apply_viewsize(
 				ResolutionTiers::LOGIN_W, ResolutionTiers::LOGIN_H);
+		}
+		else if (id == State::CASHSHOP)
+		{
+			// 与 SetCashShopHandler::transition 双保险：任何入口切到全屏商城都落 800×600。
+			ResolutionTiers::apply_viewsize(
+				ResolutionTiers::CASHSHOP_W, ResolutionTiers::CASHSHOP_H);
+		}
 
 		switch (id)
 		{
@@ -493,6 +508,10 @@ namespace ms
 					types.emplace_back(UIElement::Type::CONTENTSSHORTCUT);
 				// 窗口内商城（方案 C）：FOCUSED 窗，ESC 交由其 send_key 关闭。
 				types.emplace_back(UIElement::Type::WINDOWCASHSHOP);
+				// 192 拍卖行：Esc 交由 UIAuction::send_key 关闭。
+				types.emplace_back(UIElement::Type::AUCTION);
+				// 197 精灵收藏：Esc 交由 UIFamiliar::send_key 关闭。
+				types.emplace_back(UIElement::Type::FAMILIAR);
 				}
 				else if (enter)
 				{
@@ -544,7 +563,16 @@ namespace ms
 				// 面板保持隐藏态，需要时仍可由管理面板/专门入口显式打开。
 				if (escape)
 				{
-					state->send_key(map_type, map_action, pressed, escape);
+					// 四源深核 2026-11-24：通用 Esc 兜底。白名单窗没命中时先关最上层
+					// active 功能窗；关掉了就不再落到全局主菜单/退出确认。
+					if (pressed && state && state->close_top_window())
+					{
+						sent = true;
+					}
+					else
+					{
+						state->send_key(map_type, map_action, pressed, escape);
+					}
 				}
 				else if (enter)
 				{

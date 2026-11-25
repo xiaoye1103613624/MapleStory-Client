@@ -126,6 +126,12 @@
     <ClCompile Include="Weather\WeatherGround.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Weather\WeatherWind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weather\WeatherSway.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Character\EquipStat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -560,6 +566,18 @@
     <ClCompile Include="Net\Handlers\WaveAShellHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Net\Handlers\AuctionHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\Handlers\FamiliarHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIAuction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\UITypes\UIFamiliar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Net\Handlers\WorldMapHandlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -980,6 +998,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Weather\WeatherGround.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherWind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Weather\WeatherSway.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Character\EquipStat.h">
@@ -1453,6 +1477,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WaveAShellHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\AuctionHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Handlers\FamiliarHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\AuctionPackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Packets\FamiliarPackets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIAuction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIAuctionState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIFamiliar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\UITypes\UIFamiliarState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net\Handlers\WorldMapHandlers.h">

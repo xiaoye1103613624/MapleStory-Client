@@ -144,12 +144,12 @@ namespace ms
 		return {};
 	}
 
-	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2, int16_t spark_id, int16_t soul_id, uint8_t star_force)
+	void Inventory::add_equip(InventoryType::Id invtype, int16_t slot, int32_t item_id, bool cash, int64_t expire, uint8_t slots, uint8_t level, const EnumMap<EquipStat::Id, uint16_t>& stats, const std::string& owner, int16_t flag, uint8_t ilevel, uint16_t iexp, int32_t vicious, int16_t p1, int16_t p2, int16_t p3, int16_t bp1, int16_t bp2, int16_t spark_id, int16_t soul_id, uint8_t star_force, int16_t bp3, uint8_t pot_state, uint8_t add_state, int64_t limit_break, int64_t add_limit_point, int32_t add_limit_num)
 	{
 		equips.emplace(
 			std::piecewise_construct,
 			std::forward_as_tuple(add_slot(invtype, slot, item_id, 1, cash)),
-			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force)
+			std::forward_as_tuple(item_id, expire, owner, flag, slots, level, stats, ilevel, iexp, vicious, p1, p2, p3, bp1, bp2, spark_id, soul_id, star_force, bp3, pot_state, add_state, limit_break, add_limit_point, add_limit_num)
 			);
 	}
 
