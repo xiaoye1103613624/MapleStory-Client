@@ -80,6 +80,10 @@ namespace ms
 		// r3：灰显语义（DISABLED 贴图仍在绘制，不响应光标）——Angel SetButton
 		// 「页签整组 enable/disable」的对位实现。on=false → DISABLED，不再隐藏。
 		void set_guild_buttons(bool on);
+		// 功能前置：玩家自身公会/联盟职位（rank≤2=会长/副会长，有管理权；
+		// rank 5=最低级）。从成员列表按自身 oid 取，无需新协议字段。
+		int32_t self_guild_rank() const;
+		int32_t self_alliance_rank() const;
 		// 2026-11-08 五页签运行时节点还原（evidence/userlist_runtime_nodes.txt 为权威）
 		void bind_runtime_assets();
 		void draw_friend_tab(float alpha) const;

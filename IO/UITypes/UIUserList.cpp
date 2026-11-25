@@ -428,6 +428,26 @@ namespace ms
 		}
 	}
 
+	int32_t UIUserList::self_guild_rank() const
+	{
+		// 玩家自身公会职位：从成员列表按 oid 取（s9 guildRank 1=会长,2=副会长,5=最低级；
+		// GuildOperationHandler 管理操作要求 rank<=2）。找不到返回 6（视为无权限）。
+		const int32_t self = Stage::get().get_player().get_oid();
+		if (const GuildMember* m = GuildModel::get().find(self))
+			return m->rank;
+		return 6;
+	}
+
+	int32_t UIUserList::self_alliance_rank() const
+	{
+		// 联盟职位（s9 allianceRank 1=盟主,2=副盟主,5=最低级；
+		// AllianceOperationHandler:68 要求 rank<=2）。找不到返回 6。
+		const int32_t self = Stage::get().get_player().get_oid();
+		if (const AllianceMember* m = AllianceModel::get().find(self))
+			return m->alliance_rank;
+		return 6;
+	}
+
 	void UIUserList::set_guild_buttons(bool on)
 	{
 		// r3：Angel 家族页空态是「4×3 按钮整组灰显仍可见」（oracle 家族帧），
@@ -448,8 +468,28 @@ namespace ms
 				it->second->set_state(on ? Button::State::NORMAL : Button::State::DISABLED);
 		}
 
+		// 功能前置（s9 GuildOperationHandler 权威）：管理类按钮仅 rank<=2
+		// （会长/副会长）可操作，普通成员灰掉，避免"点了被服务端拒"。
+		// 邀请/踢人/升降职/公告属管理；退出/位置/悄悄话/对话/留言板/组队邀请/资料
+		// 对所有成员开放。
+		if (on)
+		{
+			const bool can_manage = self_guild_rank() <= 2;
+			static const uint16_t manage_btns[] = {
+				Buttons::BT_GUILD_INVITE, Buttons::BT_GUILD_KICK,
+				Buttons::BT_GUILD_RANKUP, Buttons::BT_GUILD_RANKDOWN
+			};
+			for (uint16_t id : manage_btns)
+			{
+				auto it = buttons.find(id);
+				if (it != buttons.end() && it->second)
+					it->second->set_state(can_manage ? Button::State::NORMAL : Button::State::DISABLED);
+			}
+		}
+
+		// Btnotice 笔形钮：会长/副会长可改公告（s9 case 0x0D），普通成员灰掉。
 		if (auto it = buttons.find(Buttons::BT_GUILD_NOTICE); it != buttons.end() && it->second)
-			it->second->set_state(Button::State::NORMAL);
+			it->second->set_state(on && self_guild_rank() <= 2 ? Button::State::NORMAL : Button::State::DISABLED);
 	}
 
 	int32_t UIUserList::guild_row_at(Point<int16_t> cursorpos, bool* online_list) const
@@ -2092,13 +2132,18 @@ namespace ms
 		st(BT_UNION_PARTYINVITE, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
 		// BtInfo = 职衔名窗 Toggle：入盟即亮（不依赖行选中）。
 		st(BT_UNION_INFO, in_all ? Button::State::NORMAL : Button::State::DISABLED);
-		st(BT_UNION_KICK, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
-		st(BT_UNION_CHANGE, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
-		st(BT_UNION_UP, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
-		st(BT_UNION_DOWN, has_sel ? Button::State::NORMAL : Button::State::DISABLED);
+		// 功能前置（s9 AllianceOperationHandler:68/151）：管理类按钮需
+		// allianceRank<=2（盟主/副盟主），否则即便选中行也灰掉。
+		const bool can_manage = in_all && self_alliance_rank() <= 2;
+		st(BT_UNION_KICK, (has_sel && can_manage) ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_CHANGE, (has_sel && can_manage) ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_UP, (has_sel && can_manage) ? Button::State::NORMAL : Button::State::DISABLED);
+		st(BT_UNION_DOWN, (has_sel && can_manage) ? Button::State::NORMAL : Button::State::DISABLED);
+		// 邀请新公会进盟也需管理权。
+		st(BT_UNION_INVITE, can_manage ? Button::State::NORMAL : Button::State::DISABLED);
 
-		// Btnotice 常亮（Angel/oracle）；点按 → UIEnterString 公告。
-		st(BT_UNION_NOTICE, Button::State::NORMAL);
+		// Btnotice 公告：盟主/副盟主可改（allianceRank<=2），普通成员灰掉。
+		st(BT_UNION_NOTICE, can_manage ? Button::State::NORMAL : Button::State::DISABLED);
 	}
 
 	void UIUserList::update_blacklist_button_states()
