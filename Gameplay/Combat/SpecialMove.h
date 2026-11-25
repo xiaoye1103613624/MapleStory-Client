@@ -49,6 +49,8 @@ namespace ms
 
 		virtual bool is_attack() const = 0;
 		virtual bool is_skill() const = 0;
+		// 是否终极攻击被动（skillType3），延迟触发时走独立攻击路径。
+		virtual bool is_final_attack() const { return false; }
 		virtual int32_t get_id() const = 0;
 
 		virtual ForbidReason can_use(int32_t level, Weapon::Type weapon, const Job& job, uint16_t hp, uint16_t mp, uint16_t bullets) const = 0;

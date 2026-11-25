@@ -126,6 +126,13 @@ namespace ms
 		{
 			action = std::make_unique<SingleAction>(src);
 		}
+		else if (data.is_final_attack())
+		{
+			// 三端原生对齐（MinMS Skill.cpp:331-336）：终极攻击被动播 OF 动作池，
+			// 不用常规 O1/O2/O3。
+			action = std::make_unique<FinalAttackAction>();
+			overregular = true;
+		}
 		else if (data.is_attack())
 		{
 			bool bylevel = src["level"]["1"]["action"].data_type() == nl::node::type::string;
@@ -385,6 +392,11 @@ namespace ms
 	bool Skill::is_attack() const
 	{
 		return SkillData::get(skillid).is_attack();
+	}
+
+	bool Skill::is_final_attack() const
+	{
+		return SkillData::get(skillid).is_final_attack();
 	}
 
 	bool Skill::is_skill() const

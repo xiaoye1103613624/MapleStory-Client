@@ -48,6 +48,14 @@ namespace ms
 		bool is_appointed() const override { return false; }
 	};
 
+	// 终极攻击被动动作（MinMS SkillAction.cpp:62）：播 OF/STABOF 攻击池，
+	// 不重定向 ladder2（is_appointed 保持默认 true 但 FA 不在攀爬时施放）。
+	class FinalAttackAction : public SkillAction
+	{
+	public:
+		void apply(Char& target, Attack::Type atype) const override;
+	};
+
 	class SingleAction : public SkillAction
 	{
 	public:

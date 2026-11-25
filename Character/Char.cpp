@@ -393,6 +393,15 @@ namespace ms
 		look.set_alerted(5000);
 	}
 
+	void Char::attack_final()
+	{
+		// 三端原生对齐（MinMS Char.cpp:1432-1439）：终极攻击播 OF 动作，
+		// 结束 hold 态、进入 attacking、保持警戒。仅表现层，伤害由 s9 权威结算。
+		look.attack_final();
+		attacking = true;
+		look.set_alerted(5000);
+	}
+
 	void Char::set_afterimage(int32_t skill_id)
 	{
 		int32_t weapon_id = look.get_equips().get_weapon();

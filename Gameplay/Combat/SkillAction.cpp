@@ -42,6 +42,11 @@ namespace ms
 		target.attack(degenerate);
 	}
 
+	void FinalAttackAction::apply(Char& target, Attack::Type) const
+	{
+		target.attack_final();
+	}
+
 	SingleAction::SingleAction(nl::node src)
 	{
 		action = src["action"]["0"].get_string();

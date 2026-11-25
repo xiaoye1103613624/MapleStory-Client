@@ -118,6 +118,39 @@ namespace ms
 		if (src["hit"].size() > 0 || src["ball"].size() > 0)
 			inferred = ATTACK;
 
+		// 三端原生对齐（MinMS SkillData.cpp:422-455，live WZ 实证）：
+		// skill/<攻击技>/finalAttack/<FA技能id>/<i>=武器类型（30/40/31…），
+		// 只有装备武器 Maple 类型命中其一才延迟触发该终极攻击。
+		for (nl::node fa : src["finalAttack"])
+		{
+			const int32_t fa_id = string_conversion::or_zero<int32_t>(fa.name());
+			if (fa_id <= 0)
+				continue;
+			FinalAttackLink link;
+			link.skill_id = fa_id;
+			for (nl::node wt : fa)
+			{
+				const int32_t weapon_type = static_cast<int32_t>(wt.get_integer(0));
+				if (weapon_type > 0)
+					link.weapon_types.push_back(weapon_type);
+			}
+			final_attack_links.push_back(std::move(link));
+		}
+
+		// skillType==3 + hit 的被动是终极攻击：虽为 passive，仍按攻击包下发。
+		skill_type = static_cast<int32_t>(src["skillType"].get_integer(0));
+		if (passive && skill_type == 3 && src["hit"].size() > 0)
+		{
+			for (const auto& entry : stats)
+			{
+				if (entry.second.damage > 0.0f)
+				{
+					inferred |= ATTACK; // 合并进下面统一的 flags 赋值，避免读未初始化值
+					break;
+				}
+			}
+		}
+
 		flags = inferred | flags_of(id);
 		invisible = src["invisible"].get_bool();
 
@@ -227,7 +260,20 @@ namespace ms
 
 	bool SkillData::is_attack() const
 	{
+		// 保持既有语义（!passive && ATTACK）：当前端没有 MinMS 那套
+		// crash/seal/summon 的 flags&=~ATTACK 排除，贸然放开 passive 会回归。
+		// 终极攻击被动由 is_final_attack() 单独识别并在 Combat 里走攻击路径。
 		return !passive && (flags & ATTACK);
+	}
+
+	bool SkillData::is_final_attack() const
+	{
+		return passive && skill_type == 3 && (flags & ATTACK);
+	}
+
+	const std::vector<SkillData::FinalAttackLink>& SkillData::get_final_attack_links() const
+	{
+		return final_attack_links;
 	}
 
 	bool SkillData::is_invisible() const

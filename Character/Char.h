@@ -92,6 +92,8 @@ namespace ms
 		void attack(Stance::Id stance);
 		// Change the character's stance to it's regular attack
 		void attack(bool degenerate);
+		// 终极攻击动作（skillType3 被动延迟触发，MinMS Char.cpp:1432 同源）
+		void attack_final();
 		// Set the afterimage for an attack
 		void set_afterimage(int32_t skill_id);
 		// Return the current afterimage

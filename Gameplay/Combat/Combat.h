@@ -73,6 +73,10 @@ namespace ms
 		};
 
 		void apply_attack(const AttackResult& attack);
+		// 普攻命中后按 WZ finalAttack 链接决定是否延迟触发终极攻击（MinMS Combat.cpp:1157）。
+		void maybe_queue_final_attack(const SpecialMove& move, const AttackResult& result);
+		// 终极攻击施放（被动 is_attack()=false，走独立攻击路径发包）。
+		void cast_final_attack(int32_t fa_id);
 		void apply_move(const SpecialMove& move);
 		std::vector<int32_t> find_closest(MapObjects* objs, Rectangle<int16_t> range, Point<int16_t> origin, uint8_t objcount, bool use_mobs) const;
 		void apply_use_movement(const SpecialMove& move);
@@ -97,6 +101,9 @@ namespace ms
 		TimedQueue<AttackResult> attackresults;
 		TimedQueue<BulletEffect> bulleteffects;
 		TimedQueue<DamageEffect> damageeffects;
+		// 终极攻击延迟队列（MinMS Combat.cpp:201/204）：普攻命中后按 finalAttack
+		// 链接+武器+prop 概率入队，等主攻击动作播完再施放 FA 技能（发攻击包）。
+		TimedQueue<int32_t> pending_final_attacks;
 
 		std::list<BulletEffect> bullets;
 		std::list<DamageNumber> damagenumbers;

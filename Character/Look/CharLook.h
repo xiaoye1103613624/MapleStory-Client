@@ -48,6 +48,9 @@ namespace ms
 
 		void attack(bool degenerate);
 		void attack(Stance::Id stance);
+		// 终极攻击动作（skillType3 被动延迟触发）：按武器 attack 类随机取 OF 池
+		// （SWINGOF/STABOF/SWINGPF…），三端原生对齐 MinMS CharLook.cpp:598。
+		void attack_final();
 		void set_stance(Stance::Id stance);
 		void set_expression(Expression::Id expression);
 		void set_action(const std::string& action);

@@ -18,6 +18,7 @@
 #include "CharLook.h"
 
 #include "../../Data/WeaponData.h"
+#include <array>
 
 namespace ms
 {
@@ -438,6 +439,51 @@ namespace ms
 		}
 
 		weapon.get_usesound(degenerate).play();
+	}
+
+	void CharLook::attack_final()
+	{
+		// 三端原生对齐（MinMS CharLook.cpp:598-625，Angel get_random_melee_attack_action
+		// skillType==3 表）：终极攻击播 OF 动作池，按武器 attack 类别随机选 stance。
+		int32_t weapon_id = equips.get_weapon();
+		if (weapon_id <= 0)
+			return;
+		const WeaponData& weapon = WeaponData::get(weapon_id);
+		uint8_t attacktype = weapon.get_attack();
+
+		// Angel 的 skillType3 动作表（Body action id → OF stance 池）：
+		// 1 单手/单斧 → SWINGOF|STABOF；2 枪 → SWINGPF|STABTF；
+		// 5 双手 → SWINGTF|STABOF；6 法杖 → SWINGOF；7 爪 → SWINGOF|STABOF；9 枪械 → SHOOTF。
+		static const std::array<std::vector<Stance::Id>, 10> final_stances = { {
+			{ Stance::NONE },
+			{ Stance::SWINGOF, Stance::STABOF },
+			{ Stance::SWINGPF, Stance::STABTF },
+			{ Stance::NONE },
+			{ Stance::NONE },
+			{ Stance::SWINGTF, Stance::STABOF },
+			{ Stance::SWINGOF },
+			{ Stance::SWINGOF, Stance::STABOF },
+			{ Stance::NONE },
+			{ Stance::SHOOTF }
+		} };
+		Stance::Id atkstance = Stance::NONE;
+		if (stance == Stance::PRONE)
+			atkstance = Stance::PRONESTAB;
+		else if (attacktype < final_stances.size())
+		{
+			const auto& pool = final_stances[attacktype];
+			if (!pool.empty() && pool[0] != Stance::NONE)
+				atkstance = pool[randomizer.next_int(pool.size())];
+		}
+		if (atkstance == Stance::NONE)
+			atkstance = getattackstance(attacktype, false); // 无 FA 池则回退常规攻击
+		if (atkstance == Stance::NONE)
+			atkstance = Stance::SWINGOF;
+
+		stance.set(equips.adjust_stance(atkstance));
+		stframe.set(0);
+		stelapsed = 0;
+		weapon.get_usesound(false).play();
 	}
 
 	void CharLook::attack(Stance::Id newstance)

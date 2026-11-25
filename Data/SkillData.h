@@ -21,6 +21,7 @@
 #include "../Template/Cache.h"
 
 #include "../Character/Inventory/Weapon.h"
+#include <vector>
 
 namespace ms
 {
@@ -73,10 +74,22 @@ namespace ms
 			NUM_ICONS
 		};
 
+		// 终极攻击链接：WZ skill/<攻击技>/finalAttack/<FA技能id>/<i>=武器类型。
+		// 三端原生对齐（MinMS SkillData.h:128-135，Angel TryDoingMeleeAttack）：
+		// 攻击命中后按链接表+武器类型+prop概率，延迟触发对应的 skillType3 被动攻击。
+		struct FinalAttackLink
+		{
+			int32_t skill_id = 0;
+			std::vector<int32_t> weapon_types;
+		};
+		const std::vector<FinalAttackLink>& get_final_attack_links() const;
+
 		// Return whether the skill is passive
 		bool is_passive() const;
 		// Return whether the skill is an attack skill
 		bool is_attack() const;
+		// 是否终极攻击被动（WZ skillType==3）：延迟触发的追加攻击。
+		bool is_final_attack() const;
 		// Return whether this skill is invisible in the skill book UI
 		bool is_invisible() const;
 		// Return the default masterlevel
@@ -132,8 +145,10 @@ namespace ms
 		Weapon::Type reqweapon;
 		int32_t masterlevel;
 		int32_t flags;
+		int32_t skill_type = 0; // WZ skill/<id>/skillType（3=终极攻击被动）
 		bool passive;
 		bool invisible;
+		std::vector<FinalAttackLink> final_attack_links;
 
 		std::string name;
 		std::string desc;

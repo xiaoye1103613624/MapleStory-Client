@@ -19,6 +19,7 @@
 
 #include "../../Character/SkillId.h"
 #include "../../Data/SkillData.h"
+#include "../../Util/Randomizer.h"
 #include "../../IO/Messages.h"
 
 #include "../../Net/Packets/AttackAndSkillPackets.h"
@@ -68,7 +69,16 @@ namespace ms
 	Combat::Combat(Player& in_player, MapChars& in_chars, MapMobs& in_mobs, MapReactors& in_reactors) : player(in_player), chars(in_chars), mobs(in_mobs), reactors(in_reactors),
 		attackresults([&](const AttackResult& attack) { apply_attack(attack); }),
 		bulleteffects([&](const BulletEffect& effect) { apply_bullet_effect(effect); }),
-		damageeffects([&](const DamageEffect& effect) { apply_damage_effect(effect); }) {}
+		damageeffects([&](const DamageEffect& effect) { apply_damage_effect(effect); }),
+		pending_final_attacks([&](int32_t fa_id) {
+			if (fa_id == 0)
+				return;
+			// FA 延迟到点：终极攻击被动 is_attack()=false（走不了 apply_move 的
+			// 攻击门禁），改走专用 cast —— 直接 prepare_attack + 发包，s9 按
+			// skill=fa_id 结算。仅当玩家仍持有该被动时施放。
+			if (player.get_skilllevel(fa_id) > 0)
+				cast_final_attack(fa_id);
+		}) {}
 
 	void Combat::draw(double viewx, double viewy, float alpha) const
 	{
@@ -101,6 +111,7 @@ namespace ms
 		attackresults.update();
 		bulleteffects.update();
 		damageeffects.update();
+		pending_final_attacks.update();
 
 		bullets.remove_if(
 			[&](BulletEffect& mb)
@@ -229,6 +240,9 @@ namespace ms
 			std::vector<int32_t> reactor_targets = find_closest(reactor_objs, range, origin, mobcount, false);
 
 			mobs.send_attack(result, attack, mob_targets, mobcount);
+			// 终极攻击：普攻/攻击技能命中后按 WZ finalAttack 链接延迟追加（MinMS Combat.cpp:1153）。
+			if (!mob_targets.empty())
+				maybe_queue_final_attack(move, result);
 			result.attacker = player.get_oid();
 			extract_effects(player, move, result);
 
@@ -298,6 +312,87 @@ namespace ms
 				SkillEffectPacket(moveid, level, dir, speed, dir).dispatch();
 			}
 			UseSkillPacket(moveid, level).dispatch();
+		}
+	}
+
+	void Combat::cast_final_attack(int32_t fa_id)
+	{
+		// 三端原生对齐（MinMS Combat.cpp:1157-1232 -> apply_attack_cast）：
+		// 终极攻击被动 is_attack()=false 走不了 apply_move 的攻击门禁，
+		// 这里直接 prepare_attack + 命中判定 + 发包，s9 按 skill=fa_id 结算。
+		if (player.get_char_state() == Char::State::DIED)
+			return;
+		const SpecialMove& move = get_move(fa_id);
+		Attack attack = player.prepare_attack(true); // FA 属技能攻击
+		move.apply_useeffects(player);
+		move.apply_actions(player, attack.type);     // FinalAttackAction -> attack_final()
+		player.set_afterimage(fa_id);
+		move.apply_stats(player, attack);
+
+		Point<int16_t> origin = attack.origin;
+		Rectangle<int16_t> range = attack.range;
+		int16_t hrange = static_cast<int16_t>(range.left() * attack.hrange);
+		if (attack.toleft)
+			range = { static_cast<int16_t>(origin.x() + hrange), static_cast<int16_t>(origin.x() + range.right()),
+					  static_cast<int16_t>(origin.y() + range.top()), static_cast<int16_t>(origin.y() + range.bottom()) };
+		else
+			range = { static_cast<int16_t>(origin.x() - range.right()), static_cast<int16_t>(origin.x() - hrange),
+					  static_cast<int16_t>(origin.y() + range.top()), static_cast<int16_t>(origin.y() + range.bottom()) };
+
+		uint8_t mobcount = attack.mobcount > 15 ? 15 : attack.mobcount;
+		AttackResult result = attack;
+		fill_attack_wire_action(result, player);
+		std::vector<int32_t> targets = find_closest(mobs.get_mobs(), range, origin, mobcount, true);
+		mobs.send_attack(result, attack, targets, mobcount);
+		result.attacker = player.get_oid();
+		extract_effects(player, move, result);
+		AttackPacket(result).dispatch();
+	}
+
+	void Combat::maybe_queue_final_attack(const SpecialMove& move, const AttackResult& result)
+	{
+		// 三端原生对齐（MinMS Combat.cpp:1157-1232，Angel TryDoingMeleeAttack）：
+		// 只有攻击技能命中怪物才查 finalAttack 链接；普攻(null)不触发。
+		if (result.mobcount == 0 || !move.is_skill())
+			return;
+		const SkillData& data = SkillData::get(move.get_id());
+		const auto& links = data.get_final_attack_links();
+		if (links.empty())
+			return;
+
+		// Angel get_weapon_type：itemId/10000%100；本端 Weapon::Type 存 130/140，折回 Maple 码。
+		int32_t maple_weapon = static_cast<int32_t>(player.get_stats().get_weapontype());
+		if (maple_weapon >= 100)
+			maple_weapon %= 100;
+
+		Randomizer rng;
+		for (const auto& link : links)
+		{
+			const int32_t fa_id = link.skill_id;
+			if (fa_id == 0 || fa_id == move.get_id())
+				continue;
+			const int32_t level = player.get_skilllevel(fa_id);
+			if (level <= 0)
+				continue;
+			// 武器类型白名单（live WZ 30/40/31...），空表=不限制。
+			if (!link.weapon_types.empty())
+			{
+				bool weapon_ok = false;
+				for (int32_t wt : link.weapon_types)
+					if (wt == maple_weapon) { weapon_ok = true; break; }
+				if (!weapon_ok)
+					continue;
+			}
+			// prop 是百分率（WZ 2/4/6... → stats.chance），rand 判定。
+			const float prop = SkillData::get(fa_id).get_stats(level).chance;
+			if (prop <= 0.0f || !rng.below(prop))
+				continue;
+			// 等主攻击动作播完再触发（MinMS delay=attack_anim_duration, 下限 280ms）。
+			int32_t delay = player.get_attackdelay(0);
+			if (delay < 280)
+				delay = 280;
+			pending_final_attacks.push(delay, fa_id);
+			return;
 		}
 	}
 
