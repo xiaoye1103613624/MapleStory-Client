@@ -99,6 +99,43 @@ VMatrix→VMatrixUI.img、Union→GuildUI.img/GuildUI2.img、StarForce→UIWindo
 Soul→SoulUI.img、Maker→UIWindow2.img/Maker、Guild→GuildUI.img。**所有系统 192 都有原生 UI 资源**，
 但当前客户端**没有任何一个对应的 UI 类**（除 UIMaker/UIEnchantSkill），需从零写渲染+交互+协议解析。
 
+### 5. V 矩阵 / 核心（C1）—— 双端闭环（构建验证通过）
+- 资源：192 VMatrixUI.img（UI_008.wz）转 key 入库 live（SHA `86b8acb3…`），probe children=4。
+- 服务端：VCoreSkillEntry/VCoreService/VCoreHandler，opcode 0x3770-0x3772，V1.11.32 建表。
+- 客户端：UIVMatrix/VCoreState/VCorePackets/VCoreHandlers，单击装备/Shift 分解，opcode matrix MATCHED/HANDLED。
+- 提交：客户端 bbe5cc5b / 服务端 5ab1fdbf2a。
+
+### 6. 神秘/奥术之力（C4 数值部分）—— 双端闭环（构建验证通过）
+- 资源：192 UIArcaneForce.img / UIAuthenticForce.img（UI_002.wz）转 key 入库，probe 均 children=1。
+- 服务端：ArcaneForceService(197 配置 arc=10/attribute=100)/ForceHandler，opcode 0x3780-0x3781，V1.11.33 建表。
+- 客户端：UIForce/ForcePackets/ForceHandlers，opcode matrix MATCHED/HANDLED。
+- 提交：客户端 e7ed90df / 服务端 605da9bab5。
+- 边界：神秘之力属地图门槛值，不进伤害乘区；Force Atom 技能特效明确排除。
+
+### 7. 公会技能（B5 增量）—— 双端闭环（构建验证通过）
+- 服务端：GuildSkillService(197 校验 91000000)/GuildSkillHandler，opcode 0x3790-0x3792，V1.11.34 建表。
+- 客户端：UIGuildSkill/GuildSkillState/GuildSkillPackets/Handlers，opcode matrix MATCHED/HANDLED。
+- 提交：客户端 e9b34b3a / 服务端 716f3a8f60。
+
+### 判定为「非缺口 / 无 192 配套」而不移植的项
+- MTS/现金商店：s9 已有 MTSHandler/CashShopWindowHandler 等完整链路。
+- 装备制作：s9 MakerProcessor(453 行) 已有。
+- 家族联盟：s9 Alliance.java + 客户端 UIUserList::UNION 已有。
+- Union 棋盘（197 MapleUnion）：192 无对应原生 UI（搜索仅命中 GuildUI 的公会联盟），不配套，不移植。
+
+### VSkill（C3）—— 阻塞：需整体重构效果引擎，未实现
+只读评估（eval-vskill）：VSkill.java(3726 行 / 448 个 case) 是 `MapleSkillEffect` hook 实现，
+11 个方法签名引用 s9 完全不存在的类型（MapleStatInfo/ForceAtomInfo/MapleSecondAtom/ExtraSkill/indie* buffstat），
+s9 StatEffect(2010 行) 无 hook 插入点。硬做等于重写效果引擎（跨 5+ 核心类、全职业技能回归风险极高），
+非"移植一个文件"。**如实标记为阻塞，未实现，需用户单独立项决定是否重构框架**。
+
+## 最终构建/部署（2026-11-25 17:51）
+- 客户端全量构建（build_guildskill_20261125.bat，含全部 8 系统）：EXITCODE=0。
+- live exe SHA `64c39fce…` 已实时核对一致（部署前发现被登录器/其它会话回滚为 `2514950e…`，已重新覆盖）。
+- 服务端 jar `91e3e007…`，含全部新 class。
+- opcode matrix：c2s MATCHED=165 / s2c HANDLED=343，无新增冲突（collisions 仅 2 处历史项）。
+- 所有系统**未做真机发包/点测验收**。
+
 ## 未完成（诚实边界）
 - 客户端 UI 类：UIAuction/UIFamiliar/UIVMatrix/UIUnion/UISoul 等全部未写 →
   拍卖/精灵/V矩阵/联盟/灵魂充能/Familiar 等系统**服务端逻辑可跑，但玩家无法从客户端操作**，不算完整闭环。
