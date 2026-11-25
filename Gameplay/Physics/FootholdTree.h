@@ -52,6 +52,9 @@ namespace ms
 		void update_fh(PhysicsObject& touse) const;
 		// Determine the point on the ground below the specified position
 		int16_t get_y_below(Point<int16_t> position) const;
+		// 三端瞬移对齐：取指定 x 上方（ground<=position.y）最近的 foothold y。
+		// 无平台时返回 borders.first()。对称于 get_y_below。
+		int16_t get_y_above(Point<int16_t> position) const;
 		// 把 life 放到它自己声明的那块 foothold 上（fh 来自服务端 spawn 包）。
 		// 不能复用 get_y_below：包里 y 槽传的是 wz 的 cy，实测比平台线低 5~17px，
 		// 按坐标反查要求 ground >= y，会把正下方那块平台判成"不够低"而选到下一层，
@@ -68,8 +71,21 @@ namespace ms
 		// Returns the topmost and bottommost platform positions of the map
 		Range<int16_t> get_borders() const;
 
+		// 遍历全部非墙 foothold（天气堆积按平台采样用）。
+		template <typename Fn>
+		void for_each_floor(Fn&& fn) const
+		{
+			for (const auto& kv : footholds)
+			{
+				if (!kv.second.is_wall())
+					fn(kv.second);
+			}
+		}
+
 	private:
 		uint16_t get_fhid_below(double fx, double fy) const;
+		// 取 x 覆盖范围内 ground<=fy 的最高 foothold id（0=无，瞬移上方落点用）。
+		uint16_t get_fhid_above(double fx, double fy) const;
 		// 按 x 就近选平台（不依赖包里的 y/cy）：spawn 包 y 槽是 wz cy，比平台线低 5~17px，
 		// get_fhid_below 的 ground>=y 判据会因此跳过正确平台选中下一层。
 		// 新图重锚时 x 在平台外返回 0，交由调用方丢弃该包。

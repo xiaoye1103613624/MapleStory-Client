@@ -789,6 +789,7 @@ namespace ms
 		phobj.hforce = 0.0;
 
 		bool moved = false;
+		bool snapped = false; // 瞬时吸附落点（水平/垂直），不走 FALL 下坠
 
 		if (hdir != 0)
 		{
@@ -809,6 +810,7 @@ namespace ms
 			// 怪体阻挡/倒立取反显式降级，不发明不存在的引擎能力。
 			bool landed = false;
 			int16_t landed_x = from_x;
+			int16_t landed_y = feet_y;
 			{
 				int32_t cand = static_cast<int32_t>(from_x) + hdir * static_cast<int32_t>(dist);
 				if (cand < -32768) cand = -32768;
@@ -817,26 +819,42 @@ namespace ms
 
 				if (walls.empty() || walls.contains(cx))
 				{
-					// 下方 foothold 有平台线即可站（原生取上下最近者，本端只有下方查询；
-					// get_y_below 返回 borders.second 表示无平台）。
-					int16_t ground = fht->get_y_below(Point<int16_t>(cx, feet_y));
-					SpawnPoint probe = fht->resolve_spawn_point(Point<int16_t>(cx, feet_y), 0);
-					if (probe.fhid != 0 && ground < 32767)
+					// 三端原生水平分支同时查 GetFootholdUnderneath(yMin=cy+80) 与
+					// GetFootholdAbove(yMax=cy-80)，取离当前 y 更近者，落点 y=ground-1。
+					// 本端补 get_y_above 后两端都可查，取 |ground-feet_y| 更近者。
+					int16_t below = fht->get_y_below(Point<int16_t>(cx, feet_y));
+					int16_t above = fht->get_y_above(Point<int16_t>(cx, feet_y));
+					bool has_below = below != fht->get_borders().second();
+					bool has_above = above != fht->get_borders().first() && above <= feet_y;
+					int16_t ground = 0;
+					if (has_below && has_above)
+						ground = (std::abs(below - feet_y) <= std::abs(above - feet_y)) ? below : above;
+					else if (has_below)
+						ground = below;
+					else if (has_above)
+						ground = above;
+
+					if ((has_below || has_above)
+						&& fht->resolve_spawn_point(Point<int16_t>(cx, feet_y), 0).fhid != 0)
 					{
 						landed = true;
 						landed_x = cx;
+						landed_y = static_cast<int16_t>(ground - 1);
 					}
 				}
 			}
 
 			if (landed)
 			{
-				// 落点合法：吸附到 foothold 覆盖的 x，onground=false 交物理自然落地。
+				// 瞬时吸附落点：x/y 都直接写到 foothold（原生 y=ground-1），不走 FALL 下坠。
 				phobj.set_x(landed_x);
+				phobj.set_y(static_cast<double>(landed_y));
 				phobj.set_flag(PhysicsObject::Flag::TURNATEDGES);
+				phobj.onground = true;
 				moved = true;
+				snapped = true;
 				LOG(LOG_DEBUG, "[Player] apply_teleport land x=" << landed_x
-					<< " from=" << from_x << " dist=" << dist);
+					<< " y=" << landed_y << " from=" << from_x << " dist=" << dist);
 			}
 			else
 			{
@@ -847,16 +865,48 @@ namespace ms
 		}
 		else if (vdir != 0)
 		{
-			// 垂直瞬移不改变 x，无落点问题，沿用短冲量（最终由服务端回包校准）。
-			phobj.vforce += vdir * (dist / 20.0);
-			moved = true;
+			// 三端 IDA 校准（tp-deep）：083 TryRegisterTeleport@0x957b74 / 095 @0x913690
+			// 垂直分支全程无 vforce/impact/SetState(FALL)/跳跃动画——是瞬时坐标吸附：
+			// UP 用 GetFootholdAbove、DOWN 用 GetFootholdUnderneath 取落点，y=ground-1，
+			// 然后 SetMovePathAttribute(4)（无插值）。用户明确指出「向上瞬移没有跳跃动作」，
+			// 旧实现 vforce+FALL 物理上就是一次跳跃+落地，与原生冲突，此处改吸附。
+			const FootholdTree* fht = sandbox_fht;
+			if (!fht)
+				fht = &Stage::get().get_physics().get_fht();
+
+			const int16_t from_y = phobj.get_y();
+			const int16_t target_y = static_cast<int16_t>(
+				from_y + static_cast<int32_t>(vdir) * dist);
+			// UP(vdir<0) 取上方落点，DOWN(vdir>0) 取下方落点；两者都要求可达。
+			int16_t ground = (vdir < 0)
+				? fht->get_y_above(Point<int16_t>(phobj.get_x(), from_y))
+				: fht->get_y_below(Point<int16_t>(phobj.get_x(), target_y));
+			bool has_landing = (vdir < 0)
+				? (ground != fht->get_borders().first() && ground <= from_y)
+				: (ground != fht->get_borders().second() && ground >= from_y);
+			if (!has_landing)
+			{
+				LOG(LOG_DEBUG, "[Player] vertical teleport no foothold, keep y=" << from_y);
+				return true; // 原生 return 0：落点非法→完全不移动
+			}
+			phobj.set_y(static_cast<double>(ground - 1));
+			phobj.vspeed = 0.0;
+			phobj.vforce = 0.0;
+			phobj.onground = true; // 吸附到平台，不需要下坠
+			snapped = true;
+			LOG(LOG_DEBUG, "[Player] vertical teleport snap from=" << from_y
+				<< " to=" << (ground - 1) << " vdir=" << vdir);
 		}
 
 		if (moved)
 		{
-			phobj.onground = false;
-			if (state != Char::State::FALL)
-				set_state(Char::State::FALL);
+			// 瞬时吸附（水平/垂直）不走 FALL 下坠；只有未吸附的位移分支才交物理。
+			if (!snapped)
+			{
+				phobj.onground = false;
+				if (state != Char::State::FALL)
+					set_state(Char::State::FALL);
+			}
 
 			// 瞬移光圈：MinMS Combat.cpp:1783-1786（BasicEff.img/Teleport，
 			// 受 SysOptSkillEffects 开关约束）。D3 已实测 live WZ 有该节点。

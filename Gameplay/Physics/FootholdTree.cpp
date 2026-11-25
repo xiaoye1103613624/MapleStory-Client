@@ -472,6 +472,33 @@ namespace ms
 		}
 	}
 
+	uint16_t FootholdTree::get_fhid_above(double fx, double fy) const
+	{
+		uint16_t ret = 0;
+		double comp = borders.first();
+		auto range = footholdsbyx.equal_range(static_cast<int16_t>(fx));
+		for (auto iter = range.first; iter != range.second; ++iter)
+		{
+			const Foothold& fh = footholds.at(iter->second);
+			if (fh.is_wall())
+				continue;
+			double ycomp = fh.ground_below(fx);
+			if (comp <= ycomp && ycomp <= fy)
+			{
+				comp = ycomp;
+				ret = fh.id();
+			}
+		}
+		return ret;
+	}
+
+	int16_t FootholdTree::get_y_above(Point<int16_t> position) const
+	{
+		if (uint16_t fhid = get_fhid_above(position.x(), position.y()))
+			return static_cast<int16_t>(get_fh(fhid).ground_below(position.x()));
+		return borders.first();
+	}
+
 	SpawnPoint FootholdTree::resolve_spawn_point(Point<int16_t> position, uint16_t fhid) const
 	{
 		auto iter = footholds.find(fhid);
